@@ -61,7 +61,7 @@ public import Mathlib.Logic.Embedding.Set
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.RepresentationTheory.Rep.Basic
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.RingTheory.DedekindDomain.Dvr
 public import Mathlib.RingTheory.DiscreteValuationRing.TFAE
 public import Mathlib.RingTheory.Ideal.GoingUp
@@ -74,7 +74,42 @@ public import Mathlib.Tactic.IntervalCases
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Ring
 
+import MathlibExt.AlgebraicGeometry.EllipticCurve.TorsionCardinality
+
 @[expose] public noncomputable section
+
+/-!
+# Function-field pullbacks on a Weierstrass curve
+
+For a Weierstrass curve `W` over `F` and a field `K` over `F`, this file works in the function
+field of `W⁄K`. It defines the generic point `genericPoint W K`, the pullback of functions along
+translation by a point (`transEquiv W K S`, an algebra automorphism), the pullback along
+multiplication by an integer `n` (`mulPull W K n h`), and the place `placeOf W K P hP` of a nonzero
+affine point. `mulPull W K n h` takes a proof `h : MulGood W K n` that `n • genericPoint W K` is
+nonzero and is not the base change of a point over `K`; when `K` is algebraically closed, `W` is
+elliptic and `(n : K) ≠ 0`, `zsmul_genericPoint_good` provides it.
+
+Valuations at places are those of `IsDedekindDomain.HeightOneSpectrum.valuation`: a value below
+`1` means that the function vanishes there, so `WithZero.exp (-1)` is a simple zero and
+`WithZero.exp 1` is a simple pole.
+
+## Main results
+
+* `WeierstrassCurve.Affine.eq_zero_of_forall_transEquiv_eq`: let `g` be a function that is fixed
+  by translation by every `n`-torsion point and that, at every affine point `P` with `n • P ≠ 0`,
+  has a simple zero when `n • P = T` and valuation `1` otherwise. Then `T = 0`.
+* `WeierstrassCurve.Affine.eq_zero_of_forall_transEquiv_eq_of_pole`: the same with a simple pole
+  in place of the simple zero.
+* `WeierstrassCurve.Affine.finrank_fieldRange_mulPull_le`: the function field has degree at most
+  `n.natAbs ^ 2` over the image of `mulPull W K n h`.
+* `WeierstrassCurve.Affine.Point.exists_zsmul_eq_of_isAlgClosed`: over an algebraically closed
+  field, every point is divisible by every nonzero integer.
+
+The two nondegeneracy results assume that `(n : K) ≠ 0`, that the coordinate ring of `W⁄K` is a
+Dedekind domain, and, as the hypothesis `hpull`, that for every affine point `P` with
+`n • P ≠ 0`, the pullback along `mulPull` of a function vanishing to order at least `k` at
+`n • P` vanishes to order at least `k` at `P`.
+-/
 
 
 /-
@@ -409,12 +444,7 @@ end inertia430
 
 end Ideal
 
-namespace WeierstrassCurve.Affine
-
-scoped notation3:max W' "⟮" S "⟯" =>
-  WeierstrassCurve.Affine.Point (WeierstrassCurve.Affine.baseChange W' S)
-
-end WeierstrassCurve.Affine
+open scoped WeierstrassCurve.Affine
 
 namespace WeierstrassCurve
 
@@ -488,7 +518,8 @@ lemma addMulSub_two_zero : addMulSub W 2 0 = W 1 ^ 2 := (sq _).symm
 lemma addMulSub_three_one : addMulSub W 3 1 = W 2 * W 1 := rfl
 
 lemma addMulSub_even (m n : ℤ) : addMulSub W (2 * m) (2 * n) = W (m + n) * W (m - n) := by
-  simp_rw [addMulSub, ← left_distrib, ← mul_sub_left_distrib, Int.mul_tdiv_cancel_left _ two_ne_zero]
+  simp_rw [addMulSub, ← left_distrib, ← mul_sub_left_distrib,
+    Int.mul_tdiv_cancel_left _ two_ne_zero]
 
 lemma addMulSub_odd (m n : ℤ) :
     addMulSub W (2 * m + 1) (2 * n + 1) = W (m + n + 1) * W (m - n) := by
@@ -993,37 +1024,6 @@ lemma normEDS_six_eq_mul : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c :
   rw [preNormEDS_one, preNormEDS_two, preNormEDS_four, if_neg (by decide)]
   ring
 
-namespace EllSequence
-
-variable (W₁ compl₂ : ℤ → R) (m : ℤ)
-
-def compl' : ℕ → R
-  | 0 => 0
-  | 1 => 1
-  | (n + 2) => letI k := n / 2 + 1
-    have : k < n + 2 := by omega
-    if hn : Even n
-      then compl₂ ((k : ℤ) * m) * compl' k
-      else
-        have : k + 1 < n + 2 := by
-          obtain ⟨j, hj⟩ := Nat.not_even_iff_odd.mp hn; omega
-        W₁ (((k : ℤ) + 1) * m + 1) * W₁ (((k : ℤ) + 1) * m - 1) * compl' k ^ 2
-      - W₁ ((k : ℤ) * m + 1) * W₁ ((k : ℤ) * m - 1) * compl' (k + 1) ^ 2
-
-def compl (n : ℤ) : R := (n.sign : ℤ) * compl' W₁ compl₂ m n.natAbs
-
-lemma compl_ofNat (n : ℕ) : compl W₁ compl₂ m n = compl' W₁ compl₂ m n := by
-  by_cases hn : n = 0
-  · simp [hn, compl, compl']
-  · simp [compl, Int.sign_natCast_of_ne_zero hn]
-
-lemma compl_neg (n : ℤ) : compl W₁ compl₂ m (-n) = -compl W₁ compl₂ m n := by
-  simp [compl]
-
-def complEDS := compl (normEDS b c d) (compl₂EDS b c d) m
-
-end EllSequence
-
 end Complement
 
 section Map
@@ -1033,30 +1033,8 @@ variable {b c d}
 lemma map_compl₂EDS (n : ℤ) : f (compl₂EDS b c d n) = compl₂EDS (f b) (f c) (f d) n :=
   map_complEDS₂ f b c d n
 
-lemma EllSequence.map_compl' (W₁ compl₂ : ℤ → R) (m : ℤ) (n : ℕ) :
-    f (compl' W₁ compl₂ m n) = compl' (f ∘ W₁) (f ∘ compl₂) m n := by
-  refine n.strong_induction_on fun n ih ↦ ?_
-  obtain _|_|n := n
-  iterate 2 simp [compl']
-  rw [compl']; conv_rhs => rw [compl']
-  split_ifs with hn
-  · rw [map_mul, ih _ (by omega)]; rfl
-  simp_rw [map_sub, map_mul, map_pow]
-  rw [ih _ (by omega), ih]; · rfl
-  have := (Nat.not_even_iff_odd.mp hn).pos
-  omega
-
-lemma EllSequence.map_compl (W₁ compl₂ : ℤ → R) (m n : ℤ) :
-    f (compl W₁ compl₂ m n) = compl (f ∘ W₁) (f ∘ compl₂) m n := by
-  simp [compl, map_compl']
-
 private lemma map_normEDS_fl (n : ℤ) : f (normEDS b c d n) = normEDS (f b) (f c) (f d) n :=
   map_normEDS f b c d n
-
-lemma EllSequence.map_complEDS (m n : ℤ) :
-    f (EllSequence.complEDS b c d m n) = EllSequence.complEDS (f b) (f c) (f d) m n := by
-  simp_rw [EllSequence.complEDS, EllSequence.map_compl, Function.comp_def, map_normEDS_fl,
-    map_compl₂EDS]
 
 lemma map_addMulSub (m n : ℤ) : f (addMulSub W m n) = addMulSub (f ∘ W) m n := by
   simp_rw [addMulSub, map_mul, Function.comp]
@@ -1086,11 +1064,6 @@ lemma compl₂EDS_eq_aeval :
     compl₂EDS b c d =
       (aeval (Param.rec b c d) <| compl₂EDS (X (R := ℤ) B) (X C) (X D) ·) := by
   simp_rw [map_compl₂EDS, aeval_X]
-
-lemma complEDS_eq_aeval :
-    EllSequence.complEDS b c d =
-      (aeval (Param.rec b c d) <| EllSequence.complEDS (X (R := ℤ) B) (X C) (X D) · ·) := by
-  simp_rw [EllSequence.map_complEDS, aeval_X]
 
 end Map
 
@@ -1129,28 +1102,12 @@ protected lemma IsEllSequence'.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
       convert congr($h₄ * $h₂ ^ 3 - $h₁ * $h₃ ^ 3) <;> omega
   | neg ih n => rw [ellW.neg one two, ellU.neg (h1 ▸ one) (h2 ▸ two), ih]
 
-lemma normEDS_two_three_two : normEDS 2 3 2 = id := by
-  apply IsEllSequence'.normEDS.ext isEllSequence'_id <;>
-    simp only [normEDS_one, normEDS_two, normEDS_three, normEDS_four]
-  exacts [mem_nonZeroDivisors_of_ne_zero one_ne_zero,
-    mem_nonZeroDivisors_of_ne_zero two_ne_zero, rfl, rfl, rfl, rfl]
-
 lemma compl₂EDS_two_three_two (n : ℤ) : compl₂EDS (2 : ℤ) 3 2 n = 2 := by
   obtain rfl | hn := eq_or_ne n 0
   · exact compl₂EDS_zero ..
   · have := normEDS_mul_compl₂EDS (2 : ℤ) 3 2 n
-    rwa [normEDS_two_three_two, id_eq, id_eq, mul_comm,
+    rwa [normEDS_two_three_two, normEDS_two_three_two, mul_comm,
       mul_cancel_right_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero hn)] at this
-
-lemma universalNormEDS_ne_zero {n : ℤ} (hn : n ≠ 0) : universalNormEDS n ≠ 0 := by
-  intro h
-  refine hn ?_
-  apply_fun aeval (Param.rec (2 : ℤ) 3 2) at h
-  simpa [universalNormEDS, map_normEDS_fl, normEDS_two_three_two] using h
-
-lemma universalNormEDS_mem_nonZeroDivisors {n : ℤ} (hn : n ≠ 0) :
-    universalNormEDS n ∈ (MvPolynomial Param ℤ)⁰ :=
-  mem_nonZeroDivisors_of_ne_zero (universalNormEDS_ne_zero hn)
 
 section Divisibility
 
@@ -1158,64 +1115,29 @@ variable (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
   (dvd₁₂ : W 1 ∣ W 2) (dvd₁₃ : W 1 ∣ W 3) (dvd₂₄ : W 2 ∣ W 4)
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
-theorem IsEllSequence'.eq_normEDS_of_dvd : ∃ b c d, W = (W 1 * normEDS b c d ·) := by
+theorem IsEllSequence'.eq_normEDS_of_dvd :
+    ∃ b c d, W = (fun n => W 1 * _root_.normEDS b c d n) := by
   obtain ⟨b, h₁₂⟩ := dvd₁₂
   obtain ⟨c, h₁₃⟩ := dvd₁₃
   obtain ⟨d, h₂₄⟩ := dvd₂₄
-  exact ⟨b, c, d, ellW.ext (IsEllSequence'.normEDS.smul _) one two (by simp) (by simp [h₁₂])
+  have hU : IsEllSequence' (fun n => W 1 * _root_.normEDS b c d n) :=
+    (IsEllSequence'.smul IsEllSequence'.normEDS (W 1))
+  exact ⟨b, c, d, ellW.ext (ellU := hU) one two (by simp) (by simp [h₁₂])
     (by simp [h₁₃]) (by rw [h₂₄, h₁₂, normEDS_four]; ring)⟩
 
 include one two in
 
 theorem IsEllDivSequence'.eq_normEDS (h : IsEllDivSequence' W) :
-    ∃ b c d, W = (W 1 * normEDS b c d ·) :=
-  h.1.eq_normEDS_of_dvd one two (h.2 _ _ ⟨2, rfl⟩) (h.2 _ _ ⟨3, rfl⟩) (h.2 _ _ ⟨2, rfl⟩)
+    ∃ b c d, W = (fun n => W 1 * _root_.normEDS b c d n) :=
+  (IsEllSequence'.eq_normEDS_of_dvd (ellW := h.1) one two (h.2 _ _ ⟨2, rfl⟩)
+    (h.2 _ _ ⟨3, rfl⟩) (h.2 _ _ ⟨2, rfl⟩))
 
 section Complement
 
-variable (W₁ compl₂ : ℤ → R)
-  (h₁ : ∀ m, W 1 * W₁ m = W m) (h₂ : ∀ m, W m * compl₂ m = W (2 * m)) (m n : ℤ)
-
-include ellW one two h₁ h₂ in
-
-lemma IsEllSequence'.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W m ∈ R⁰) :
-    W m * compl W₁ compl₂ m n = W (n * m) := by
-  induction n using Int.negInduction with
-  | nat n =>
-    refine n.strong_induction_on fun n ih ↦ ?_
-    obtain _ | n := n
-    · simp [EllSequence.compl, ellW.zero 1 two]
-    obtain _ | n := n
-    · simp [EllSequence.compl, compl']
-    rw [EllSequence.compl, Int.sign_eq_one_of_pos (by omega),
-      Int.natAbs_natCast, compl', Int.cast_one, one_mul]
-    obtain ⟨k, rfl|rfl⟩ := n.even_or_odd'
-    · rw [dif_pos (even_two_mul _), k.mul_div_cancel_left zero_lt_two, mul_comm (compl₂ _),
-        ← mul_assoc, ← compl_ofNat, ih _ (by omega), h₂, ← mul_assoc, add_assoc, ← two_mul,
-        ← left_distrib, Nat.cast_mul]; rfl
-    simp_rw [dif_neg (Nat.not_even_two_mul_add_one _), show (2 * k + 1) / 2 = k by omega]
-    rw [← mul_cancel_right_mem_nonZeroDivisors (mul_mem mem <| pow_mem one 2)]
-    have := (ellW ((k + 1 + 1) * m) ((k + 1) * m) 1).symm
-    simp_rw [← right_distrib, ← mul_sub_right_distrib, add_sub_cancel_left,
-      ← h₁ (_ + 1), ← h₁ (_ - 1), ← Nat.cast_one (R := ℤ), ← Nat.cast_add] at this
-    rw [← ih _ (by omega), ← ih _ (by omega)] at this
-    simp_rw [compl_ofNat, Nat.cast_add] at this ⊢
-    convert this using 1
-    · ring_nf
-    rw [Nat.cast_mul]; ring_nf
-  | neg hn n => rw [neg_mul, ellW.neg one two, compl_neg, mul_neg, hn]
-
-lemma normEDS_mul_complEDS (m n : ℤ) :
-    normEDS b c d m * EllSequence.complEDS b c d m n = normEDS b c d (n * m) := by
-  obtain rfl|hm := eq_or_ne m 0
-  · simp
-  rw [normEDS_eq_aeval, universalNormEDS, complEDS_eq_aeval, ← map_mul]; congr 1
-  have := @universalNormEDS_mem_nonZeroDivisors
-  exact IsEllSequence'.normEDS.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (this one_ne_zero)
-    (this two_ne_zero) _ _ (fun _ ↦ by simp) (fun _ ↦ normEDS_mul_compl₂EDS _ _ _ _) _ _ (this hm)
+variable (m n : ℤ)
 
 lemma normEDS_mul_complEDS_div (hm : m ≠ 0) (n : ℤ) (dvd : m ∣ n) :
-    normEDS b c d m * EllSequence.complEDS b c d m (n / m) = normEDS b c d n := by
+    normEDS b c d m * complEDS b c d m (n / m) = normEDS b c d n := by
   obtain ⟨n, rfl⟩ := dvd
   rw [Int.mul_ediv_cancel_left _ hm, normEDS_mul_complEDS, mul_comm]
 
@@ -1257,7 +1179,7 @@ lemma invarDenom_eq_redInvarDenom_mul :
 
   have dvd_sub {a b c : ℤ} (h : a % b = c) : b ∣ a - c := by
     rw [← h, Int.emod_def, sub_sub_cancel]
-    exact dvd_mul_right _ _
+    apply dvd_mul_right
   have mul_eq := @normEDS_mul_complEDS_div _ _ b c d
   rw [invarDenom, redInvarDenom]; split_ifs with h h h h h h
   · rw [← mul_eq _ h6 _ (Int.dvd_of_emod_eq_zero h), normEDS_six_eq_mul]; ring
@@ -1277,13 +1199,13 @@ lemma invarDenom_eq_redInvarDenom_mul :
   all_goals rw [normEDS_three, normEDS_two]; ring
 
 @[simp] lemma redInvarDenom_zero : redInvarDenom b c d 0 = 0 := by
-  simp [redInvarDenom, complEDS, compl', compl]
+  simp [redInvarDenom]
 
 @[simp] lemma redInvarDenom_one : redInvarDenom b c d 1 = 0 := by
-  simp [redInvarDenom, complEDS, compl', compl]
+  simp [redInvarDenom]
 
 @[simp] lemma redInvarDenom_two : redInvarDenom b c d 2 = 1 := by
-  simp [redInvarDenom, complEDS, compl', compl]
+  simp [redInvarDenom]
 
 lemma map_compl₂EDSAux : f (compl₂EDSAux b c d m) = compl₂EDSAux (f b) (f c) (f d) m := by
   have mp : ∀ n : ℤ, f (preNormEDS (b ^ 4) c d n) = preNormEDS (f b ^ 4) (f c) (f d) n :=
@@ -1317,7 +1239,7 @@ protected theorem IsEllDivSequence'.normEDS : IsEllDivSequence' (normEDS b c d) 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
 
 lemma IsEllSequence'.isDivSequence_of_dvd : IsDivSequence' W := by
-  obtain ⟨b, c, d, h⟩ := ellW.eq_normEDS_of_dvd one two dvd₁₂ dvd₁₃ dvd₂₄
+  obtain ⟨b, c, d, h⟩ := (IsEllSequence'.eq_normEDS_of_dvd (ellW := ellW) one two dvd₁₂ dvd₁₃ dvd₂₄)
   rw [h]; exact IsDivSequence'.normEDS.smul _
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
@@ -1423,8 +1345,6 @@ protected abbrev Ring : Type := curve.CoordinateRing
 
 protected abbrev Field : Type := FractionRing Univ.Ring
 
-instance : CommRing Poly := Polynomial.commRing
-
 lemma Poly.two_ne_zero : (2 : Poly) ≠ 0 :=
   Polynomial.C_ne_zero.mpr <| Polynomial.C_ne_zero.mpr fun h ↦ two_ne_zero' (α := ℤ) <|
     MvPolynomial.C_injective _ _ <| by rwa [← MvPolynomial.C_0] at h
@@ -1458,11 +1378,21 @@ instance : pointedCurve.IsElliptic where
     simpa only [pointedCurve, baseChange, map_Δ, map_ne_zero_iff _ algebraMap_field_injective]
       using Δ_curve_ne_zero
 
+open Polynomial (CC)
+
+@[simp] lemma pointedCurve_a₁ : pointedCurve.a₁ = polyToField (CC curve.a₁) := rfl
+@[simp] lemma pointedCurve_a₂ : pointedCurve.a₂ = polyToField (CC curve.a₂) := rfl
+@[simp] lemma pointedCurve_a₃ : pointedCurve.a₃ = polyToField (CC curve.a₃) := rfl
+@[simp] lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := rfl
+@[simp] lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := rfl
+
 open Polynomial in
 lemma equation_point : pointedCurve.toAffine.Equation (polyToField (C X)) (polyToField Y) := by
-  simp_rw [Affine.Equation, pointedCurve, baseChange, algebraMap_field_eq_comp, ← map_map,
-    Affine.map_polynomial, map_mapRingHom_evalEval, evalEval, eval_map,
-    eval_C_X_eval₂_map_C_X, polyToField_polynomial]
+  have h := polyToField_polynomial
+  simp only [Affine.polynomial, map_add, map_sub, map_mul, map_pow] at h
+  rw [Affine.equation_iff', pointedCurve_a₁, pointedCurve_a₂, pointedCurve_a₃, pointedCurve_a₄,
+    pointedCurve_a₆]
+  linear_combination h
 
 open Polynomial Affine in
 
@@ -1474,14 +1404,6 @@ def Affine.point : curve⟮Univ.Field⟯ :=
 
 def Jacobian.point : Jacobian.Point (WeierstrassCurve.baseChange curve Univ.Field) :=
   Jacobian.Point.fromAffine Affine.point
-
-open Polynomial (CC)
-
-@[simp] lemma pointedCurve_a₁ : pointedCurve.a₁ = polyToField (CC curve.a₁) := rfl
-@[simp] lemma pointedCurve_a₂ : pointedCurve.a₂ = polyToField (CC curve.a₂) := rfl
-@[simp] lemma pointedCurve_a₃ : pointedCurve.a₃ = polyToField (CC curve.a₃) := rfl
-@[simp] lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := rfl
-@[simp] lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := rfl
 
 abbrev curvePoly : WeierstrassCurve Poly := WeierstrassCurve.baseChange curve Poly
 
@@ -1540,7 +1462,7 @@ lemma ringEval_comp_mk : (ringEval eqn).comp (AdjoinRoot.mk _) = polyEval W x y 
   RingHom.ext (ringEval_mk eqn)
 
 lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.specialize := by
-  ext <;> simp [polyEval]
+  ext <;> simp [polyEval, -AddMonoidAlgebra.coe_algebraMap]
 
 lemma ringEval_comp_eq_specialize : (ringEval eqn).comp (algebraMap _ _) = W.specialize := by
   rw [algebraMap_ring_eq_comp, ← RingHom.comp_assoc, ringEval_comp_mk, polyEval_comp_eq_specialize]
@@ -1772,7 +1694,7 @@ lemma smulX_sub_sub_smulX_add (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
     smulX (n - m) - smulX (n + m) = (ψᵤ (2 * n) * ψᵤ (2 * m)) / (ψᵤ (n + m) * ψᵤ (n - m)) ^ 2 := by
   rw [smulX_sub_smulX sub_ne add_ne]; ring_nf
 
-lemma smulX_neg : smulX (-n) = smulX n := by simp_rw [smulX, φ_neg, ψᵤ, ψ_neg, ← map_pow, neg_sq]
+lemma smulX_neg : smulX (-n) = smulX n := by simp_rw [smulX, φ_neg, ψᵤ, ψ_neg, map_neg, neg_sq]
 
 lemma smulX_ne_zero (h0 : n ≠ 0) : smulX n ≠ 0 :=
   div_ne_zero polyToField_φ_ne_zero (pow_ne_zero _ <| ψᵤ_ne_zero h0)
@@ -1793,7 +1715,7 @@ lemma smulX_eq_smulX_iff : smulX m = smulX n ↔ m = n ∨ m = -n := by
   · contrapose! h; exact smulX_ne_smulX h.1 h.2
   · rintro (rfl|rfl); exacts [rfl, smulX_neg]
 
-private lemma smulY_sub_negY_aux {F} [Field F] {a₁ a₃ x y z : F} (h0 : z ≠ 0) :
+private lemma smulY_sub_negY_aux {G} [_root_.Field G] {a₁ a₃ x y z : G} (h0 : z ≠ 0) :
     y / z ^ 3 - (-(y / z ^ 3) - a₁ * (x / z ^ 2) - a₃) =
       z * (2 * y + a₁ * x * z + a₃ * z ^ 3) / z ^ 4 := by
   field_simp; ring
@@ -1817,9 +1739,10 @@ def slopeOne : Univ.Field :=
 lemma slopeOne_eq_neg_div : slopeOne = -polyToField curve.polynomialX / ψᵤ 2 := by
   rw [slopeOne, Affine.slope_of_Y_ne rfl smulY_one_ne_negY, smulY_one_sub_negY, Affine.polynomialX]
   congr
-  simp [algebraMap_field_eq_comp, Polynomial.algebraMap_apply, map_ofNat]
+  simp [algebraMap_field_eq_comp, Polynomial.algebraMap_apply, map_ofNat,
+    -AddMonoidAlgebra.coe_algebraMap]
 
-private lemma addX_smul_one_smul_one_aux {F} [Field F] {a₁ a₂ x dx dy : F} (h0 : dy ≠ 0) :
+private lemma addX_smul_one_smul_one_aux {G} [_root_.Field G] {a₁ a₂ x dx dy : G} (h0 : dy ≠ 0) :
     (-dx / dy) ^ 2 + a₁ * (-dx / dy) - a₂ - x - x - x =
       (dx ^ 2 - a₁ * dx * dy - (3 * x + a₂) * dy ^ 2) / dy ^ 2 := by
 
@@ -1833,7 +1756,8 @@ lemma addX_smul_one_smul_one :
     ψ_two, ψ_three, C_Ψ₃_eq, polyToField_polynomial, pointedCurve_a₁, pointedCurve_a₂, smulX_one]
   ring
 
-private lemma addY_smul_one_smul_one_aux {F} [Field F] {a₁ a₃ dx dy x y ψ₃ t : F} (h0 : dy ≠ 0) :
+private lemma addY_smul_one_smul_one_aux {G} [_root_.Field G]
+    {a₁ a₃ dx dy x y ψ₃ t : G} (h0 : dy ≠ 0) :
     ((a₁ * dy - dx) * ψ₃ + 0 * t + (-y - (a₁ * x + a₃)) * dy ^ 3) / dy ^ 3 =
       -(-dx / dy * (x - ψ₃ / dy ^ 2 - x) + y) - a₁ * (x - ψ₃ / dy ^ 2) - a₃ := by
   field_simp; ring
@@ -1847,7 +1771,7 @@ lemma addY_smul_one_smul_one :
   simp only [map_add, map_sub, map_mul, map_pow, map_neg, polyToField_polynomial, mul_zero]
   exact addY_smul_one_smul_one_aux (ψᵤ_ne_zero two_ne_zero)
 
-private lemma smulY_neg_aux {F} [Field F] {a₁ a₃ x y z : F} (hz : z ≠ 0) :
+private lemma smulY_neg_aux {G} [_root_.Field G] {a₁ a₃ x y z : G} (hz : z ≠ 0) :
     (y + a₁ * x * z + a₃ * z ^ 3) / (-z) ^ 3 = -(y / z ^ 3) - a₁ * (x / z ^ 2) - a₃ := by
   rw [neg_pow]; field_simp; ring
 
@@ -1864,7 +1788,7 @@ lemma smulY_neg (h0 : n ≠ 0) :
     map_add, map_neg, map_mul, map_pow, ψᵤ]
   exact smulY_neg_aux (ψᵤ_ne_zero h0)
 
-private lemma smulX_add_aux {F} [Field F] {m n m₂ n₂ a s : F}
+private lemma smulX_add_aux {G} [_root_.Field G] {m n m₂ n₂ a s : G}
     (hm : m ≠ 0) (hn : n ≠ 0) (ha : a ≠ 0) (hs : s ≠ 0) :
     n₂ / n ^ 4 * (m₂ / m ^ 4) / (a * s / (n * m) ^ 2) ^ 2 = n₂ * m₂ / (a * s) ^ 2 := by
   field_simp
@@ -1877,7 +1801,7 @@ lemma smulX_add (hm : m ≠ 0) (hn : n ≠ 0) (add_ne : n + m ≠ 0) (sub_ne : n
   simp_rw [smulY_sub_negY hm, smulY_sub_negY hn, smulX_sub_smulX hm hn]
   apply smulX_add_aux <;> apply ψᵤ_ne_zero <;> assumption
 
-private lemma smulY_add_sub_negY_aux {F} [Field F] {m n m₂ n₂ a s am an : F}
+private lemma smulY_add_sub_negY_aux {G} [_root_.Field G] {m n m₂ n₂ a s am an : G}
     (hm : m ≠ 0) (hn : n ≠ 0) (ha : a ≠ 0) (hs : s ≠ 0) :
     (m₂ / m ^ 4 * (an * m / (a * n) ^ 2) - n₂ / n ^ 4 * (am * n / (a * m) ^ 2))
       / (a * s / (n * m) ^ 2)
@@ -1914,7 +1838,8 @@ theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
     · exact (h0 rfl).elim
     · simp_rw [zero_add, Nat.cast_one, one_zsmul, smulX_one, smulY_one]
       exact ⟨(pointedCurve.toAffine.equation_iff_nonsingular_of_Δ_ne_zero
-        (by simpa only [pointedCurve, baseChange, map_Δ, map_ne_zero_iff _ algebraMap_field_injective]
+        (by simpa only [pointedCurve, baseChange, map_Δ,
+          map_ne_zero_iff _ algebraMap_field_injective]
           using Δ_curve_ne_zero)).mp equation_point, rfl⟩
     all_goals obtain ⟨ns, eq⟩ := ih 1 (by omega) one_ne_zero
     · erw [← addX_smul_one_smul_one, ← addY_smul_one_smul_one, zero_add, add_zsmul _ 1 1, eq]
@@ -2002,7 +1927,8 @@ lemma dblZ_smulPoly : dblZ curvePoly (smulPoly n) = curve.ψ (2 * n) := by
   rw [← ψc_spec _ n]; congr; convert curve.ωe_spec n using 1; ring
 
 lemma nonsingular_smulField : Nonsingular curveField (smulField n) := by
-  simpa only [zsmul_point_eq_smulField, Jacobian.nonsingularLift_iff] using (n • Jacobian.point).nonsingular
+  simpa only [zsmul_point_eq_smulField, Jacobian.nonsingularLift_iff]
+    using (n • Jacobian.point).nonsingular
 
 lemma dblXYZ_smulField : dblXYZ curveField (smulField n) = smulField (2 * n) := by
   obtain rfl | hn := eq_or_ne n 0
@@ -2020,8 +1946,8 @@ lemma dblXYZ_smulField : dblXYZ curveField (smulField n) = smulField (2 * n) := 
     rw [two_zsmul, Point.add_point, zsmul_point_eq_smulField, addMap_eq, add_self]
   refine (equiv_iff_eq_of_Z_eq ?_ (ψᵤ_ne_zero <| mul_ne_zero two_ne_zero hn)).mp
     (Quotient.exact ?_)
-  · simp only [smulField, smulPoly, fin3_def_ext, Function.comp, ← dblZ_smulPoly, ← map_dblZ]
-    rfl
+  · simp only [smulField, smulPoly, fin3_def_ext, Function.comp, ← dblZ_smulPoly]
+    exact map_dblZ (W' := curvePoly) polyToField _
   rw [← h2, ← mul_zsmul]
   exact zsmul_point_eq_smulField
 
@@ -2042,13 +1968,20 @@ lemma ωe_neg_eq_neg_negY : curve.ωe (-n) = -negY curvePoly (smulPoly n) := by
   ring
 
 lemma smulPoly_neg : smulPoly (-n) = (-1 : Poly) • neg curvePoly (smulPoly n) := by
-  simp [smulPoly, ωe_neg_eq_neg_negY, neg, smul_fin3, (show Odd 3 by decide).neg_pow]
+  simp only [smulPoly, φ_neg, ωe_neg_eq_neg_negY, ψ_neg, neg, Fin.isValue, Matrix.cons_val_zero,
+    Matrix.cons_val, smul_fin3, Nat.succ_eq_add_one, Nat.reduceAdd, Matrix.cons_val_one,
+    Matrix.vecCons_inj, and_true]
+  refine ⟨?_, ?_, ?_⟩ <;> ring
 
 lemma smulRing_neg : smulRing (-n) = (-1 : Univ.Ring) • neg curveRing (smulRing n) := by
   simp_rw [smulRing, smulPoly_neg, Jacobian.comp_smul, ← Jacobian.map_neg, map_neg, map_one]; rfl
 
 lemma smulField_neg : smulField (-n) = (-1 : Univ.Field) • neg curveField (smulField n) := by
-  simp_rw [smulField, smulPoly_neg, Jacobian.comp_smul, ← Jacobian.map_neg, map_neg, map_one]; rfl
+  rw [smulField, smulPoly_neg]
+  refine (Jacobian.comp_smul (R := Poly) (S := Univ.Field) polyToField _ _).trans ?_
+  rw [map_neg, map_one]
+  exact congrArg _
+    (Jacobian.map_neg (R := Poly) (S := Univ.Field) (W' := curvePoly) polyToField _).symm
 
 lemma smulPoly_zero : smulPoly 0 = ![1, 1, 0] := by simp [smulPoly]
 lemma smulField_zero : smulField 0 = ![1, 1, 0] := by simp [smulField, smulPoly_zero, comp_fin3]
@@ -2063,8 +1996,9 @@ lemma addXYZ_smulField :
   obtain rfl | ne_neg := eq_or_ne n (-m)
   · rw [← one_smul (M := Univ.Field) (smulField m), smulField_neg, neg_add_cancel,
       addXYZ_smul, one_mul, neg_one_sq (R := Univ.Field), addXYZ_neg nonsingular_smulField.1,
-      one_smul, ← neg_add', ← two_mul, ψ_neg, map_neg, ← dblZ_smulPoly, ← map_dblZ, smulField_zero]
-    rfl
+      one_smul, ← neg_add', ← two_mul, ψ_neg, map_neg, ← dblZ_smulPoly, smulField_zero]
+    congr 2
+    exact map_dblZ (W' := curvePoly) polyToField _
   have hne : ¬ smulField m ≈ smulField n := fun heq ↦ zsmul_point_ne h <| by
     rw [Point.ext_iff, zsmul_point_eq_smulField, zsmul_point_eq_smulField]
     exact Quotient.sound heq
@@ -2077,7 +2011,8 @@ lemma addXYZ_smulField :
       rw [smul_eq _ (ψᵤ_ne_zero <| sub_ne_zero_of_ne h.symm).isUnit,
         ← zsmul_point_eq_smulField, add_comm, add_zsmul, key])
   · conv_rhs => rw [smulField, comp_fin3, smul_fin3, (fin3_def_ext _ _ _).2.2, mul_comm]
-    simp_rw [addXYZ, fin3_def_ext, ← map_mul, ← addZ_smulPoly, ← map_addZ]
+    simp_rw [addXYZ, fin3_def_ext, ← map_mul, ← addZ_smulPoly]
+    exact map_addZ polyToField (smulPoly m) (smulPoly n)
   · rw [(smul_fin3_ext _ _).2.2]
     apply mul_ne_zero <;> apply ψᵤ_ne_zero <;> omega
 
@@ -3055,47 +2990,44 @@ theorem mulHom_injective {n : ℤ} (h : MulGood W K n) :
     Function.Injective (pointHom (n • genericPoint W K) h.1) :=
   pointHom_injective_of_ne_baseChange _ _ h.2
 
-open Classical in
-
-noncomputable def mulPull (n : ℤ) : (W⁄K).FunctionField →ₐ[K] (W⁄K).FunctionField :=
-  if h : MulGood W K n then pointPull (n • genericPoint W K) h.1 (mulHom_injective W K h)
-  else AlgHom.id K _
+noncomputable def mulPull (n : ℤ) (h : MulGood W K n) :
+    (W⁄K).FunctionField →ₐ[K] (W⁄K).FunctionField :=
+  pointPull (n • genericPoint W K) h.1 (mulHom_injective W K h)
 
 theorem mulPull_eq {n : ℤ} (h : MulGood W K n) :
-    mulPull W K n = pointPull (n • genericPoint W K) h.1 (mulHom_injective W K h) := by
-  rw [mulPull, dif_pos h]
+    mulPull W K n h = pointPull (n • genericPoint W K) h.1 (mulHom_injective W K h) := rfl
 
 theorem mulPull_algebraMap {n : ℤ} (h : MulGood W K n) (g : (W⁄K).CoordinateRing) :
-    mulPull W K n (algebraMap _ _ g) = pointHom (n • genericPoint W K) h.1 g := by
+    mulPull W K n h (algebraMap _ _ g) = pointHom (n • genericPoint W K) h.1 g := by
   rw [mulPull_eq W K h, pointPull_algebraMap]
 
 theorem mulPull_comp_algebraMap {n : ℤ} (h : MulGood W K n) :
-    (mulPull W K n : (W⁄K).FunctionField →+* (W⁄K).FunctionField).comp
+    (mulPull W K n h : (W⁄K).FunctionField →+* (W⁄K).FunctionField).comp
       (algebraMap (W⁄K).CoordinateRing (W⁄K).FunctionField) = pointHom (n • genericPoint W K) h.1 :=
   RingHom.ext fun g => mulPull_algebraMap W K h g
 
 theorem mulPull_genericX' {n : ℤ} (h : MulGood W K n) :
-    mulPull W K n (genericX W K) = (n • genericPoint W K).xc := by
+    mulPull W K n h (genericX W K) = (n • genericPoint W K).xc := by
   rw [genericX, mulPull_algebraMap W K h, pointHom_mk_C_X]
 
 theorem mulPull_genericY' {n : ℤ} (h : MulGood W K n) :
-    mulPull W K n (genericY W K) = (n • genericPoint W K).yc := by
+    mulPull W K n h (genericY W K) = (n • genericPoint W K).yc := by
   rw [genericY, mulPull_algebraMap W K h, pointHom_mk_Y]
 
 theorem map_mulPull_genericPoint' {n : ℤ} (h : MulGood W K n) :
-    Point.map (mulPull W K n) (genericPoint W K) = n • genericPoint W K := by
+    Point.map (mulPull W K n h) (genericPoint W K) = n • genericPoint W K := by
   rw [mulPull_eq W K h, map_pointPull_genericPoint]
 
 theorem mulPull_comp_pointHom {n : ℤ} (h : MulGood W K n) (P : (W⁄(W⁄K).FunctionField).Point)
-    (hP : P ≠ 0) (hP' : Point.map (mulPull W K n) P ≠ 0) :
-    (mulPull W K n).comp (pointHom P hP) = pointHom (Point.map (mulPull W K n) P) hP' := by
+    (hP : P ≠ 0) (hP' : Point.map (mulPull W K n h) P ≠ 0) :
+    (mulPull W K n h).comp (pointHom P hP) = pointHom (Point.map (mulPull W K n h) P) hP' := by
   have hP'' : Point.map (pointPull (n • genericPoint W K) h.1 (mulHom_injective W K h)) P ≠ 0 := by
     rw [← mulPull_eq W K h]; exact hP'
   rw [pointHom_congr (congrArg (fun φ => Point.map φ P) (mulPull_eq W K h)) hP' hP'', mulPull_eq W K h]
   exact pointPull_comp_pointHom _ _ _ P hP hP''
 
 theorem transEquiv_mulPull' {n : ℤ} (h : MulGood W K n) {S : (W⁄K).Point} (hS : n • S = 0)
-    (g : (W⁄K).FunctionField) : transEquiv W K S (mulPull W K n g) = mulPull W K n g := by
+    (g : (W⁄K).FunctionField) : transEquiv W K S (mulPull W K n h g) = mulPull W K n h g := by
   rw [transEquiv_apply, ← AlgHom.comp_apply]
   congr 1
   apply FunctionField.algHom_ext
@@ -3106,9 +3038,9 @@ theorem transEquiv_mulPull' {n : ℤ} (h : MulGood W K n) {S : (W⁄K).Point} (h
   exact congrArg _ (pointHom_congr hP' _ _)
 
 theorem mulPull_comp' {m n : ℤ} (hm : MulGood W K m) (hn : MulGood W K n) (hnm : MulGood W K (n * m)) :
-    (mulPull W K m).comp (mulPull W K n) = mulPull W K (n * m) := by
+    (mulPull W K m hm).comp (mulPull W K n hn) = mulPull W K (n * m) hnm := by
   apply FunctionField.algHom_ext
-  have hP' : Point.map (mulPull W K m) (n • genericPoint W K) = (n * m) • genericPoint W K := by
+  have hP' : Point.map (mulPull W K m hm) (n • genericPoint W K) = (n * m) • genericPoint W K := by
     rw [map_zsmul, map_mulPull_genericPoint' W K hm, smul_smul]
   rw [AlgHom.comp_toRingHom, RingHom.comp_assoc, mulPull_comp_algebraMap W K hn,
     mulPull_comp_algebraMap W K hnm, ← AlgHom.comp_toRingHom,
@@ -3152,20 +3084,20 @@ theorem map_negEquiv_zsmul_genericPoint (n : ℤ) :
   rw [map_zsmul, map_negEquiv_genericPoint, smul_neg]
 
 theorem negEquiv_mulPull_genericX' {n : ℤ} (h : MulGood W K n) :
-    negEquiv W K (mulPull W K n (genericX W K)) = (n • genericPoint W K).xc := by
+    negEquiv W K (mulPull W K n h (genericX W K)) = (n • genericPoint W K).xc := by
   rw [mulPull_genericX' W K h, ← AlgEquiv.coe_algHom, ← Point.xc_map (W := W) (K := K),
     map_negEquiv_zsmul_genericPoint, Point.eq_some_xc_yc h.1, Point.neg_some, Point.xc_some, Point.xc_some]
 
 theorem negEquiv_mulPull_genericY' {n : ℤ} (h : MulGood W K n) :
-    negEquiv W K (mulPull W K n (genericY W K)) =
+    negEquiv W K (mulPull W K n h (genericY W K)) =
       (W⁄(W⁄K).FunctionField).negY (n • genericPoint W K).xc (n • genericPoint W K).yc := by
   rw [mulPull_genericY' W K h, ← AlgEquiv.coe_algHom, ← Point.yc_map (W := W) (K := K),
     map_negEquiv_zsmul_genericPoint]
   conv_lhs => rw [Point.eq_some_xc_yc h.1, Point.neg_some, Point.yc_some]
 
 omit [DecidableEq K] [IsAlgClosed K] [W.IsElliptic] in
-theorem mulPull_injective [DecidableEq K] [IsAlgClosed K] [W.IsElliptic] (n : ℤ) :
-    Function.Injective (mulPull W K n) := (mulPull W K n).injective
+theorem mulPull_injective [DecidableEq K] [IsAlgClosed K] [W.IsElliptic] {n : ℤ}
+    (h : MulGood W K n) : Function.Injective (mulPull W K n h) := (mulPull W K n h).injective
 
 end TransMul
 
@@ -3584,7 +3516,7 @@ theorem valuation_mulPull_le {n : ℤ} (hgood : MulGood W K n) (Φ Ψ : K[X]) (�
     (hyP : (n • P).yc = ω.evalEval P.xc P.yc / ψ.evalEval P.xc P.yc ^ 3) (hψ : ψ.evalEval P.xc P.yc ≠ 0)
     (h : (W⁄K).FunctionField) (k : ℕ)
     (hh : (placeOf W K (n • P) hnP).valuation (W⁄K).FunctionField h ≤ exp (-(k : ℤ))) :
-    (placeOf W K P hP).valuation (W⁄K).FunctionField (mulPull W K n h) ≤ exp (-(k : ℤ)) := by
+    (placeOf W K P hP).valuation (W⁄K).FunctionField (mulPull W K n hgood h) ≤ exp (-(k : ℤ)) := by
   set v := (placeOf W K P hP).valuation (W⁄K).FunctionField with hv
   have hc1 := valuation_algebraMap_le_one W K P hP
   have hX := cong_genericX W K P hP
@@ -3813,44 +3745,8 @@ theorem WeierstrassCurve.Affine.Point.zsmul_some_eq_some_div {F : Type*} [Field 
 
 namespace FunctionFieldPullback.TwoSmul
 
-open Polynomial
-
-theorem PortCard.sub_negY_sq_eq_eval_Ψ₂Sq {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-    {x y : R} (e : W.toAffine.Equation x y) :
-    (y - W.toAffine.negY x y) ^ 2 = W.Ψ₂Sq.eval x := by
-  rw [WeierstrassCurve.Affine.equation_iff] at e
-  simp only [WeierstrassCurve.Affine.negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂,
-    WeierstrassCurve.b₄, WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-theorem PortCard.two_smul_some_eq_zero_iff {F : Type*} [Field F] [DecidableEq F]
-    (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) :
-    2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 := by
-  have key : 2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ y = W.toAffine.negY x y := by
-    rw [two_nsmul, add_eq_zero_iff_eq_neg, WeierstrassCurve.Affine.Point.neg_some,
-      WeierstrassCurve.Affine.Point.some.injEq]
-    simp
-  rw [key, ← PortCard.sub_negY_sq_eq_eval_Ψ₂Sq W h.left, pow_eq_zero_iff two_ne_zero, sub_eq_zero]
-
-theorem PortCard.Ψ₂Sq_ne_zero_of_isElliptic {F : Type*} [Field F] (W : WeierstrassCurve F)
-    [W.IsElliptic] : W.Ψ₂Sq ≠ 0 := by
-  intro h0
-  rw [WeierstrassCurve.Ψ₂Sq_eq, Cubic.toPoly_eq_zero_iff] at h0
-  have h4 : (4 : F) = 0 := congrArg Cubic.a h0
-  have hb₂ : W.b₂ = 0 := congrArg Cubic.b h0
-  have hb₆ : W.b₆ = 0 := congrArg Cubic.d h0
-  have h2 : (2 : F) = 0 := by
-    have h22 : (2 : F) * 2 = 0 := by linear_combination h4
-    rcases mul_eq_zero.mp h22 with h | h <;> exact h
-  have hΔ : W.Δ = 0 := by
-    rw [show W.Δ = -W.b₂ ^ 2 * W.b₈ - 8 * W.b₄ ^ 3 - 27 * W.b₆ ^ 2 + 9 * W.b₂ * W.b₄ * W.b₆
-      from rfl]
-    linear_combination (-W.b₂ * W.b₈ + 9 * W.b₄ * W.b₆) * hb₂ + (-27 * W.b₆) * hb₆ +
-      (-4 * W.b₄ ^ 3) * h2
-  exact W.isUnit_Δ.ne_zero hΔ
-
 theorem solution {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve F) {x y : F} (h : W.toAffine.Nonsingular x y) : 2 • WeierstrassCurve.Affine.Point.some x y h = 0 ↔ W.Ψ₂Sq.eval x = 0 :=
-  PortCard.two_smul_some_eq_zero_iff W h
+  FunctionFieldPullback.Psi2.PortCard.two_smul_some_eq_zero_iff W h
 end FunctionFieldPullback.TwoSmul
 
 
@@ -4079,1318 +3975,6 @@ end FunctionFieldPullback.Span
 theorem IsDedekindDomain.HeightOneSpectrum.exists_eq_span_singleton_of_map_eq {R : Type*} [CommRing R] [IsDedekindDomain R] {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K] (μ : K →+* K) (N : IsDedekindDomain.HeightOneSpectrum R → Option (IsDedekindDomain.HeightOneSpectrum R)) (hN : ∀ w, ∃ v, N v = some w) (hμ : ∀ v w, N v = some w → ∀ (h : K) (k : ℕ), w.valuation K h ≤ WithZero.exp (-(k : ℤ)) → v.valuation K (μ h) ≤ WithZero.exp (-(k : ℤ))) (g : K) (t₀ : IsDedekindDomain.HeightOneSpectrum R) (hg₀ : ∀ v, N v = some t₀ → v.valuation K g = WithZero.exp (-1)) (hg₁ : ∀ v w, N v = some w → w ≠ t₀ → v.valuation K g = 1) (hgμ : ∃ h, μ h = g) : ∃ r : R, t₀.asIdeal = Ideal.span {r} :=
   FunctionFieldPullback.Span.solution μ N hN hμ g t₀ hg₀ hg₁ hgμ
 
-namespace FunctionFieldPullback.Card
-
-section PortTorsionSmulFormulaEngine
-
-namespace Deep
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-section Engine
-
-variable {F : Type*} [Field F] [DecidableEq F] (W : WeierstrassCurve.Affine F)
-
-omit [DecidableEq F] in
-
-theorem sub_negY_sq_eq_Ψ₂Sq_eval {x y : F} (e : W.Equation x y) :
-    (y - W.negY x y) ^ 2 = (WeierstrassCurve.Ψ₂Sq W).eval x := by
-  rw [equation_iff] at e
-  simp only [negY, WeierstrassCurve.Ψ₂Sq, WeierstrassCurve.b₂, WeierstrassCurve.b₄,
-    WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * e
-
-end Engine
-
-end Deep
-
-end PortTorsionSmulFormulaEngine
-
-section PortGenNetIdentities
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve Polynomial
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K]
-variable (W : WeierstrassCurve F)
-
-theorem ΨSq_eval_eq_zero_of_preΨ {m : ℕ} {x₀ : K}
-    (h : ((W.baseChange K).preΨ (m : ℤ)).eval x₀ = 0) :
-    ((W.baseChange K).ΨSq m).eval x₀ = 0 := by
-  rw [preΨ_ofNat] at h
-  rw [ΨSq_ofNat, eval_mul, eval_pow, h, zero_pow two_ne_zero, zero_mul]
-
-variable [IsAlgClosed K] [DecidableEq K]
-
-theorem isCoprime_ΨSq_succ [W.IsElliptic] (n : ℕ) :
-    IsCoprime ((W.baseChange K).ΨSq n) ((W.baseChange K).ΨSq (n + 1)) := by
-  rw [Polynomial.isCoprime_iff_aeval_ne_zero_of_isAlgClosed (k := K) (K := K)]
-  intro x₀
-  by_contra hcon
-  push Not at hcon
-  obtain ⟨hn0, hn1⟩ := hcon
-  rw [coe_aeval_eq_eval] at hn0 hn1
-
-  obtain ⟨y₀, hy₀⟩ := IsAlgClosed.exists_root
-    (C (1 : K) * X ^ 2 + C ((W.baseChange K).a₁ * x₀ + (W.baseChange K).a₃) * X +
-      C (-(x₀ ^ 3 + (W.baseChange K).a₂ * x₀ ^ 2 + (W.baseChange K).a₄ * x₀ +
-        (W.baseChange K).a₆)))
-    (by rw [Polynomial.degree_quadratic one_ne_zero]; decide)
-  have heq : (W.baseChange K).toAffine.Equation x₀ y₀ := by
-    rw [Affine.equation_iff]
-    simp only [IsRoot.def, eval_add, eval_mul, eval_pow, eval_C, eval_X] at hy₀
-    linear_combination hy₀
-  have hns : (W.baseChange K).toAffine.Nonsingular x₀ y₀ :=
-    (Affine.equation_iff_nonsingular).mp heq
-
-  have hψ0 : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ = 0 := by
-    have h2 := evalEval_ψ_sq (W.baseChange K) heq (n : ℤ)
-    rw [hn0] at h2
-    exact (pow_eq_zero_iff two_ne_zero).mp h2
-  have hψ1 : ((W.baseChange K).ψ ((n : ℤ) + 1)).evalEval x₀ y₀ = 0 := by
-    have h2 := evalEval_ψ_sq (W.baseChange K) heq ((n : ℤ) + 1)
-    rw [hn1] at h2
-    exact (pow_eq_zero_iff two_ne_zero).mp h2
-
-  have h0 : (n : ℤ) • (Affine.Point.some x₀ y₀ hns) = 0 :=
-    (smul_eq_zero_iff_evalEval_ψ (W.baseChange K) hns (n : ℤ)).mpr hψ0
-  have h1 : ((n : ℤ) + 1) • (Affine.Point.some x₀ y₀ hns) = 0 :=
-    (smul_eq_zero_iff_evalEval_ψ (W.baseChange K) hns ((n : ℤ) + 1)).mpr hψ1
-  have hP : (Affine.Point.some x₀ y₀ hns : (W.baseChange K).toAffine.Point) = 0 := by
-    have hsub := sub_smul ((n : ℤ) + 1) (n : ℤ) (Affine.Point.some x₀ y₀ hns)
-    rw [h1, h0, sub_zero, add_sub_cancel_left, one_smul] at hsub
-    exact hsub
-  exact Affine.Point.some_ne_zero hns hP
-
-end Deep.Gen
-
-end PortGenNetIdentities
-
-section PortGenInduction
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
-variable (W : WeierstrassCurve F)
-
-theorem smul_formula_or_zero [W.IsElliptic] {n : ℕ} (_hn : 0 < n) {x₀ y₀ : K}
-    (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀) :
-    (((W.baseChange K).ΨSq n).eval x₀ ≠ 0 →
-      ∃ (x' y' : K) (h' : (W.baseChange K).toAffine.Nonsingular x' y'),
-        n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = Point.some x' y' h' ∧
-          x' * ((W.baseChange K).ΨSq n).eval x₀ = ((W.baseChange K).Φ n).eval x₀) ∧
-    (((W.baseChange K).ΨSq n).eval x₀ = 0 →
-      n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0) := by
-  have heq : (W.baseChange K).toAffine.Equation x₀ y₀ := h.left
-  have hψsq := (W.baseChange K).evalEval_ψ_sq heq (n : ℤ)
-  constructor
-  ·
-    intro hΨ
-    have hψ : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ ≠ 0 := by
-      intro h0
-      exact hΨ (by rw [← hψsq, h0]; exact zero_pow two_ne_zero)
-    have key := zsmul_eq_smulEval (W.baseChange K) h (n : ℤ)
-    have hVz : smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 2 ≠ 0 := hψ
-    have hV := key ▸ ((n : ℤ) • Jacobian.Point.fromAffine (Point.some x₀ y₀ h)).nonsingular
-    have hQeq : ((n : ℤ) • Jacobian.Point.fromAffine (Point.some x₀ y₀ h)) =
-        Jacobian.Point.mk hV := Jacobian.Point.ext key
-    refine ⟨smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 0 /
-        smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 2 ^ 2,
-      smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 1 /
-        smulEval (W.baseChange K) x₀ y₀ (n : ℤ) 2 ^ 3,
-      (Jacobian.nonsingular_of_Z_ne_zero hVz).mp hV, ?_, ?_⟩
-    · calc n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯)
-          = Jacobian.Point.toAffineAddEquiv (W.baseChange K)
-            ((n : ℤ) • Jacobian.Point.fromAffine (Point.some x₀ y₀ h)) := by
-            rw [map_zsmul, ← Jacobian.Point.toAffineAddEquiv_symm_apply,
-              AddEquiv.apply_symm_apply, natCast_zsmul]
-        _ = _ := by
-            rw [hQeq, Jacobian.Point.toAffineAddEquiv_apply]
-            exact Jacobian.Point.toAffineLift_of_Z_ne_zero hVz
-    · show ((W.baseChange K).φ (n : ℤ)).evalEval x₀ y₀ /
-          ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ ^ 2 *
-          ((W.baseChange K).ΨSq (n : ℤ)).eval x₀ =
-          ((W.baseChange K).Φ (n : ℤ)).eval x₀
-      rw [← hψsq, div_mul_cancel₀ _ (pow_ne_zero 2 hψ),
-        (W.baseChange K).evalEval_φ heq]
-  ·
-    intro hΨ
-    have hψ0 : ((W.baseChange K).ψ (n : ℤ)).evalEval x₀ y₀ = 0 :=
-      sq_eq_zero_iff.mp (hψsq.trans hΨ)
-    rw [← natCast_zsmul]
-    exact ((W.baseChange K).smul_eq_zero_iff_evalEval_ψ h (n : ℤ)).mpr hψ0
-
-end Deep.Gen
-
-end PortGenInduction
-
-section PortGenSmulFormula
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
-variable (W : WeierstrassCurve F)
-
-theorem smul_x_eq [W.IsElliptic] {n : ℕ} (hn : 0 < n) {x₀ y₀ : K}
-    (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
-    (hns : ((W.baseChange K).ΨSq n).eval x₀ ≠ 0) :
-    ∃ (x' y' : K) (h' : (W.baseChange K).toAffine.Nonsingular x' y'),
-      n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = Point.some x' y' h' ∧
-        x' * ((W.baseChange K).ΨSq n).eval x₀ = ((W.baseChange K).Φ n).eval x₀ :=
-  (smul_formula_or_zero W hn h).1 hns
-
-omit [DecidableEq K] in
-
-private lemma eval_ne_of_isCoprime {f g : Polynomial K} (h : IsCoprime f g) {x₀ : K}
-    (hf : f.eval x₀ = 0) (hg : g.eval x₀ = 0) : False := by
-  obtain ⟨a, b, hab⟩ := h
-  have h1 := congrArg (Polynomial.eval x₀) hab
-  simp only [eval_add, eval_mul, hf, hg, mul_zero, add_zero, eval_one] at h1
-  exact zero_ne_one h1
-
-theorem isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic] {n : ℕ} (hn : 0 < n) :
-    IsCoprime ((W.baseChange K).Φ n) ((W.baseChange K).ΨSq n) := by
-  rw [Polynomial.isCoprime_iff_aeval_ne_zero_of_isAlgClosed (k := K) (K := K)]
-  intro x₀
-  by_contra hcon
-  push Not at hcon
-  obtain ⟨hΦ0, hΨ0⟩ := hcon
-  rw [coe_aeval_eq_eval] at hΦ0 hΨ0
-  have hΦdef : (W.baseChange K).Φ (n : ℤ) =
-      X * (W.baseChange K).ΨSq (n : ℤ) -
-        (W.baseChange K).preΨ ((n : ℤ) + 1) * (W.baseChange K).preΨ ((n : ℤ) - 1) *
-          (if Even (n : ℤ) then 1 else (W.baseChange K).Ψ₂Sq) := rfl
-  have h0 : ((W.baseChange K).preΨ ((n : ℤ) + 1)).eval x₀ *
-      ((W.baseChange K).preΨ ((n : ℤ) - 1)).eval x₀ *
-      (if Even (n : ℤ) then (1 : K) else ((W.baseChange K).Ψ₂Sq).eval x₀) = 0 := by
-    have h1 := congrArg (Polynomial.eval x₀) hΦdef
-    rw [hΦ0] at h1
-    simp only [eval_sub, eval_mul, eval_X, apply_ite (Polynomial.eval x₀), eval_one, hΨ0,
-      mul_zero, zero_sub] at h1
-    linear_combination h1
-  rcases mul_eq_zero.mp h0 with h12 | hG
-  · rcases mul_eq_zero.mp h12 with hE | hF
-    ·
-      have hb : ((W.baseChange K).ΨSq ((n : ℤ) + 1)).eval x₀ = 0 := by
-        have h2 := ΨSq_eval_eq_zero_of_preΨ W (m := n + 1) (K := K)
-          (by rwa [Nat.cast_add, Nat.cast_one])
-        rwa [Nat.cast_add, Nat.cast_one] at h2
-      exact eval_ne_of_isCoprime (isCoprime_ΨSq_succ W n) hΨ0 hb
-    ·
-      have hb : ((W.baseChange K).ΨSq ((n - 1 : ℕ) : ℤ)).eval x₀ = 0 :=
-        ΨSq_eval_eq_zero_of_preΨ W (m := n - 1) (K := K)
-          (by rwa [Nat.cast_sub hn, Nat.cast_one])
-      have hA := isCoprime_ΨSq_succ W (K := K) (n - 1)
-      have hc : ((n - 1 : ℕ) : ℤ) + 1 = (n : ℤ) := by omega
-      rw [hc] at hA
-      exact eval_ne_of_isCoprime hA hb hΨ0
-  ·
-    by_cases hev : Even (n : ℤ)
-    · rw [if_pos hev] at hG
-      exact one_ne_zero hG
-    · rw [if_neg hev] at hG
-      have hnodd : ¬Even n := fun h => hev (by exact_mod_cast h)
-      have hb : ((W.baseChange K).ΨSq ((n : ℤ) + 1)).eval x₀ = 0 := by
-        have h2 : ((W.baseChange K).ΨSq ((n + 1 : ℕ) : ℤ)).eval x₀ = 0 := by
-          rw [ΨSq_ofNat, if_pos (Nat.even_add_one.mpr hnodd), eval_mul, hG, mul_zero]
-        rwa [Nat.cast_add, Nat.cast_one] at h2
-      exact eval_ne_of_isCoprime (isCoprime_ΨSq_succ W n) hΨ0 hb
-
-theorem smul_eq_zero_of_ΨSq_eval_eq_zero [W.IsElliptic] {n : ℕ} (hn : 0 < n)
-    {x₀ y₀ : K} (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
-    (hz : ((W.baseChange K).ΨSq n).eval x₀ = 0) :
-    n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0 :=
-  (smul_formula_or_zero W hn h).2 hz
-
-omit [DecidableEq K] in
-
-theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
-    (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
-  rw [ΨSq_ofNat, if_neg (Nat.not_even_iff_odd.mpr hodd), mul_one]
-
-theorem smul_eq_zero_iff_preΨ'_eval [W.IsElliptic] {n : ℕ} (hodd : Odd n)
-    (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :
-    n • (Point.some x y h : W.toAffine⟮K⟯) = 0 ↔
-      ((W.baseChange K).preΨ' n).eval x = 0 := by
-  constructor
-  · intro hsmul
-    by_contra hne
-    have hns : ((W.baseChange K).ΨSq n).eval x ≠ 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow]
-      exact pow_ne_zero 2 hne
-    obtain ⟨x', y', h', heq, -⟩ := smul_x_eq W hn h hns
-    rw [hsmul] at heq
-    exact Point.some_ne_zero h' heq.symm
-  · intro hz
-    have hz' : ((W.baseChange K).ΨSq n).eval x = 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow, hz]
-      exact zero_pow two_ne_zero
-    exact smul_eq_zero_of_ΨSq_eval_eq_zero W hn h hz'
-
-end Deep.Gen
-
-end PortGenSmulFormula
-
-section PortGenCardViaFibers
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
-variable (W : WeierstrassCurve F)
-
-def nTorsion (n : ℕ) : AddSubgroup W.toAffine⟮K⟯ where
-  carrier := {P | n • P = 0}
-  zero_mem' := smul_zero n
-  add_mem' {P Q} hP hQ := by
-    have hP' : n • P = 0 := hP
-    have hQ' : n • Q = 0 := hQ
-    show n • (P + Q) = 0
-    calc n • (P + Q) = n • P + n • Q := smul_add n P Q
-    _ = 0 := by rw [hP', hQ', add_zero]
-  neg_mem' {P} hP := by
-    have hP' : n • P = 0 := hP
-    show n • (-P) = 0
-    calc n • (-P) = -(n • P) := smul_neg n P
-    _ = 0 := by rw [hP', neg_zero]
-
-theorem squarefree_roots_nodup {R : Type*} [CommRing R] [IsDomain R] {p : R[X]}
-    (hsq : Squarefree p) : p.roots.Nodup := by
-  classical
-  rw [Multiset.nodup_iff_count_le_one]
-  intro a
-  rw [count_roots]
-  by_contra h
-  push Not at h
-  have h2 : (X - C a) * (X - C a) ∣ p := by
-    calc (X - C a) * (X - C a) = (X - C a) ^ 2 := (sq _).symm
-      _ ∣ (X - C a) ^ rootMultiplicity a p := pow_dvd_pow _ h
-      _ ∣ p := pow_rootMultiplicity_dvd p a
-  exact not_isUnit_X_sub_C a (hsq _ h2)
-
-theorem separable_of_splits_of_squarefree {L : Type*} [Field L] {p : L[X]}
-    (hp : p ≠ 0) (hs : p.Splits) (hsq : Squarefree p) : p.Separable :=
-  (nodup_roots_iff_of_splits hp hs).mp (squarefree_roots_nodup hsq)
-
-omit [DecidableEq K] in
-
-theorem wronskian_Φ_ΨSq_ne_zero [W.IsElliptic] {n : ℕ} (hn : (n : K) ≠ 0) :
-    derivative ((W.baseChange K).Φ n) * (W.baseChange K).ΨSq n -
-      (W.baseChange K).Φ n * derivative ((W.baseChange K).ΨSq n) ≠ 0 := by
-  have hn0 : n ≠ 0 := by rintro rfl; simp at hn
-  obtain rfl | h2 : n = 1 ∨ 2 ≤ n := by omega
-  · simp [Φ_one, ΨSq_one]
-  · set E := W.baseChange K with hE
-    have hnQ : ((n : ℕ) : K) ≠ 0 := hn
-    have hm4 : 4 ≤ n ^ 2 := by nlinarith
-
-    have hFlc : (E.Φ n).coeff (n ^ 2) = 1 := by
-      simpa using WeierstrassCurve.coeff_Φ E (n : ℤ)
-    have hGlc : (E.ΨSq n).coeff (n ^ 2 - 1) = (n : K) ^ 2 := by
-      simpa using WeierstrassCurve.coeff_ΨSq E (n : ℤ)
-    have hF'c : (derivative (E.Φ n)).coeff (n ^ 2 - 1) =
-        ((n ^ 2 - 1 : ℕ) : K) + 1 := by
-      rw [coeff_derivative, Nat.sub_add_cancel (by omega : 1 ≤ n ^ 2), hFlc, one_mul]
-    have hG'c : (derivative (E.ΨSq n)).coeff (n ^ 2 - 2) =
-        (n : K) ^ 2 * (((n ^ 2 - 2 : ℕ) : K) + 1) := by
-      rw [coeff_derivative, (by omega : n ^ 2 - 2 + 1 = n ^ 2 - 1), hGlc]
-
-    have hFdegle : (E.Φ n).natDegree ≤ n ^ 2 := by
-      have h := WeierstrassCurve.natDegree_Φ_le E (n : ℤ)
-      rwa [Int.natAbs_natCast] at h
-    have hGdegle : (E.ΨSq n).natDegree ≤ n ^ 2 - 1 := by
-      have h := WeierstrassCurve.natDegree_ΨSq_le E (n : ℤ)
-      rwa [Int.natAbs_natCast] at h
-    have hF'le : (derivative (E.Φ n)).natDegree ≤ n ^ 2 - 1 := by
-      have h := natDegree_derivative_le (E.Φ (n : ℤ))
-      omega
-    have hG'le : (derivative (E.ΨSq n)).natDegree ≤ n ^ 2 - 2 := by
-      have h := natDegree_derivative_le (E.ΨSq (n : ℤ))
-      omega
-    intro hzero
-    have hco : (derivative (E.Φ n) * E.ΨSq n - E.Φ n * derivative (E.ΨSq n)).coeff
-        (2 * n ^ 2 - 2) = 0 := by rw [hzero, coeff_zero]
-    have e1 : (derivative (E.Φ n) * E.ΨSq n).coeff (2 * n ^ 2 - 2) =
-        (((n ^ 2 - 1 : ℕ) : K) + 1) * (n : K) ^ 2 := by
-      rw [(by omega : 2 * n ^ 2 - 2 = (n ^ 2 - 1) + (n ^ 2 - 1)),
-        coeff_mul_add_eq_of_natDegree_le hF'le hGdegle, hF'c, hGlc]
-    have e2 : (E.Φ n * derivative (E.ΨSq n)).coeff (2 * n ^ 2 - 2) =
-        1 * ((n : K) ^ 2 * (((n ^ 2 - 2 : ℕ) : K) + 1)) := by
-      rw [(by omega : 2 * n ^ 2 - 2 = n ^ 2 + (n ^ 2 - 2)),
-        coeff_mul_add_eq_of_natDegree_le hFdegle hG'le, hFlc, hG'c]
-    rw [coeff_sub, e1, e2] at hco
-    have c1 : ((n ^ 2 - 1 : ℕ) : K) = (n : K) ^ 2 - 1 := by
-      push_cast [Nat.cast_sub (by omega : 1 ≤ n ^ 2)]
-      ring
-    have c2 : ((n ^ 2 - 2 : ℕ) : K) = (n : K) ^ 2 - 2 := by
-      push_cast [Nat.cast_sub (by omega : 2 ≤ n ^ 2)]
-      ring
-    rw [c1, c2] at hco
-    exact pow_ne_zero 2 hnQ (by linear_combination hco)
-
-theorem finite_not_squarefree_fiber [IsAlgClosed K] [W.IsElliptic] {n : ℕ}
-    (hn : (n : K) ≠ 0) :
-    {c : K | ¬ Squarefree
-      ((W.baseChange K).Φ n - C c * (W.baseChange K).ΨSq n)}.Finite := by
-  have hpos : 0 < n := Nat.pos_of_ne_zero (by rintro rfl; simp at hn)
-  set F' := (W.baseChange K).Φ n with hFdef
-  set G := (W.baseChange K).ΨSq n with hGdef
-  have hWr : derivative F' * G - F' * derivative G ≠ 0 := wronskian_Φ_ΨSq_ne_zero W hn
-  have hroots : {x : K | (derivative F' * G - F' * derivative G).IsRoot x}.Finite :=
-    finite_setOf_isRoot hWr
-  refine Set.Finite.subset (hroots.image (fun x => F'.eval x / G.eval x)) ?_
-  intro c hc
-  rw [Set.mem_setOf_eq] at hc
-  unfold Squarefree at hc
-  push Not at hc
-  obtain ⟨q, hq2, hqu⟩ := hc
-  have hqdeg : q.degree ≠ 0 := fun h => hqu (isUnit_iff_degree_eq_zero.mpr h)
-  obtain ⟨x, hx⟩ := IsAlgClosed.exists_root q hqdeg
-  have hdvd : (X - C x) * (X - C x) ∣ F' - C c * G :=
-    dvd_trans (mul_dvd_mul (dvd_iff_isRoot.mpr hx) (dvd_iff_isRoot.mpr hx)) hq2
-  obtain ⟨r, hr⟩ := hdvd
-  have hpx : (F' - C c * G).eval x = 0 := by rw [hr]; simp
-  have hp'x : (derivative (F' - C c * G)).eval x = 0 := by
-    rw [hr]
-    simp [derivative_mul, derivative_sub, derivative_X, derivative_C]
-  have hFx : F'.eval x = c * G.eval x := by
-    have h := hpx
-    simp only [eval_sub, eval_mul, eval_C] at h
-    exact sub_eq_zero.mp h
-  have hF'x : (derivative F').eval x = c * (derivative G).eval x := by
-    have h := hp'x
-    rw [derivative_sub, derivative_C_mul] at h
-    simp only [eval_sub, eval_mul, eval_C] at h
-    exact sub_eq_zero.mp h
-  have hGx : G.eval x ≠ 0 := by
-    intro hG0
-    have hF0 : F'.eval x = 0 := by rw [hFx, hG0, mul_zero]
-    obtain ⟨a, b, hab⟩ := isCoprime_Φ_ΨSq W (K := K) hpos
-    rw [← hFdef, ← hGdef] at hab
-    have h1 := congrArg (Polynomial.eval x) hab
-    rw [eval_add, eval_mul, eval_mul, eval_one, hF0, hG0, mul_zero, mul_zero,
-      add_zero] at h1
-    exact zero_ne_one h1
-  refine ⟨x, ?_, ?_⟩
-  · show (derivative F' * G - F' * derivative G).IsRoot x
-    simp only [IsRoot, eval_sub, eval_mul]
-    rw [hFx, hF'x]
-    ring
-  · show F'.eval x / G.eval x = c
-    rw [hFx, mul_div_assoc, div_self hGx, mul_one]
-
-section AlgClosed
-
-variable [IsAlgClosed K]
-
-theorem smul_surjective [W.IsElliptic] {n : ℕ} (hodd : Odd n) (hn : (n : K) ≠ 0) :
-    Function.Surjective (fun P : W.toAffine⟮K⟯ => n • P) := by
-  have hpos : 0 < n := Nat.pos_of_ne_zero (by rintro rfl; simp at hn)
-  intro Q
-  rcases Q with _ | ⟨xQ, yQ, hQ⟩
-  · refine ⟨0, ?_⟩
-    show n • (0 : W.toAffine⟮K⟯) = Point.zero
-    rw [nsmul_zero]
-    exact Point.zero_def
-  set F' := (W.baseChange K).Φ n with hFdef
-  set G := (W.baseChange K).ΨSq n with hGdef
-  have hnQ : ((n : ℕ) : K) ≠ 0 := hn
-  have hnZ : (((n : ℕ) : ℤ) : K) ≠ 0 := by exact_mod_cast hnQ
-  have hFdeg : F'.natDegree = n ^ 2 := by
-    have h := WeierstrassCurve.natDegree_Φ (W.baseChange K) (n : ℤ)
-    rw [Int.natAbs_natCast] at h
-    rw [hFdef, h]
-  have hGdeg : G.natDegree = n ^ 2 - 1 := by
-    have h := WeierstrassCurve.natDegree_ΨSq (W.baseChange K) hnZ
-    rw [Int.natAbs_natCast] at h
-    rw [hGdef, h]
-  have h1n : 1 ≤ n ^ 2 := Nat.one_le_iff_ne_zero.mpr (pow_ne_zero 2 hpos.ne')
-  set p : K[X] := F' - C xQ * G with hpdef
-  have hpdeg : p.natDegree = n ^ 2 := by
-    rw [hpdef]
-    rw [natDegree_sub_eq_left_of_natDegree_lt, hFdeg]
-    refine lt_of_le_of_lt (natDegree_C_mul_le xQ G) ?_
-    rw [hFdeg, hGdeg]
-    omega
-  have hpdegne : p.degree ≠ 0 := by
-    have hpos' : 0 < p.natDegree := by rw [hpdeg]; omega
-    exact (natDegree_pos_iff_degree_pos.mp hpos').ne'
-  obtain ⟨x₀, hx₀⟩ := IsAlgClosed.exists_root p hpdegne
-  have hpx : p.eval x₀ = 0 := hx₀
-  have hroot : F'.eval x₀ = xQ * G.eval x₀ := by
-    rw [hpdef, eval_sub, eval_mul, eval_C, sub_eq_zero] at hpx
-    exact hpx
-  have hGx : G.eval x₀ ≠ 0 := by
-    intro hG0
-    have hF0 : F'.eval x₀ = 0 := by rw [hroot, hG0, mul_zero]
-    obtain ⟨a, b, hab⟩ := isCoprime_Φ_ΨSq W (K := K) hpos
-    rw [← hFdef, ← hGdef] at hab
-    have h1 := congrArg (Polynomial.eval x₀) hab
-    rw [eval_add, eval_mul, eval_mul, eval_one, hF0, hG0, mul_zero, mul_zero,
-      add_zero] at h1
-    exact zero_ne_one h1
-
-  obtain ⟨y₀, hy₀⟩ : ∃ y : K, (W.baseChange K).toAffine.Equation x₀ y := by
-    obtain ⟨y, hy⟩ := IsAlgClosed.exists_root
-      (C 1 * X ^ 2 + C ((W.baseChange K).a₁ * x₀ + (W.baseChange K).a₃) * X
-        + C (-(x₀ ^ 3 + (W.baseChange K).a₂ * x₀ ^ 2 + (W.baseChange K).a₄ * x₀ +
-            (W.baseChange K).a₆)))
-      (by rw [degree_quadratic one_ne_zero]; norm_num)
-    refine ⟨y, ?_⟩
-    rw [WeierstrassCurve.Affine.equation_iff]
-    simp only [IsRoot, eval_add, eval_mul, eval_pow, eval_C, eval_X, one_mul] at hy
-    linear_combination hy
-  have h₀ : (W.baseChange K).toAffine.Nonsingular x₀ y₀ :=
-    WeierstrassCurve.Affine.equation_iff_nonsingular.mp hy₀
-  obtain ⟨x', y', h', hsmul, hx'⟩ := smul_x_eq W hpos h₀ hGx
-  rw [← hFdef, ← hGdef] at hx'
-  have hx'Q : x' = xQ := by
-    rw [hroot] at hx'
-    exact mul_right_cancel₀ hGx hx'
-  subst hx'Q
-  rcases WeierstrassCurve.Affine.Y_eq_of_X_eq h'.1 hQ.1 rfl with rfl | rfl
-  · exact ⟨Point.some x₀ y₀ h₀, hsmul⟩
-  · have hnegQ : -(Point.some x' yQ hQ : W.toAffine⟮K⟯) =
-        Point.some x' ((W.baseChange K).toAffine.negY x' yQ)
-          ((WeierstrassCurve.Affine.nonsingular_neg ..).mpr hQ) := Point.neg_some hQ
-    have hprev : n • (Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) =
-        -(Point.some x' yQ hQ) := by
-      rw [hnegQ]
-      exact hsmul
-    have hsn : n • -(Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) =
-        -(n • (Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯)) :=
-      neg_nsmul (Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) n
-    refine ⟨-(Point.some x₀ y₀ h₀), ?_⟩
-    show n • -(Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) = Point.some x' yQ hQ
-    rw [hsn, hprev, neg_neg]
-
-theorem card_smul_fiber [W.IsElliptic] {n : ℕ} (hodd : Odd n) (hn : (n : K) ≠ 0)
-    (Q : W.toAffine⟮K⟯) :
-    Nat.card {P : W.toAffine⟮K⟯ // n • P = Q} = Nat.card (nTorsion W (K := K) n) := by
-  obtain ⟨P₀, hP₀⟩ := smul_surjective W hodd hn Q
-  have hP₀' : n • P₀ = Q := hP₀
-  have e : nTorsion W (K := K) n ≃ {P : W.toAffine⟮K⟯ // n • P = Q} := by
-    refine Equiv.subtypeEquiv (Equiv.addRight P₀) fun P => ?_
-    show (P ∈ nTorsion W n) ↔ n • (P + P₀) = Q
-    have hsa : n • (P + P₀) = n • P + n • P₀ := nsmul_add P P₀ n
-    rw [hsa, hP₀']
-    constructor
-    · intro h
-      have h' : n • P = 0 := h
-      rw [h', zero_add]
-    · intro h
-      show n • P = 0
-      exact add_right_cancel (h.trans (zero_add Q).symm)
-  exact (Nat.card_congr e).symm
-
-private noncomputable def qpoly (x : K) : K[X] :=
-  X ^ 2 + (C ((W.baseChange K).a₁ * x + (W.baseChange K).a₃) * X +
-    C (-(x ^ 3 + (W.baseChange K).a₂ * x ^ 2 + (W.baseChange K).a₄ * x +
-      (W.baseChange K).a₆)))
-
-omit [DecidableEq K] [IsAlgClosed K] in
-private lemma degree_qpoly (x : K) : (qpoly W x).degree = 2 := by
-  have hlt : (C ((W.baseChange K).a₁ * x + (W.baseChange K).a₃) * X +
-      C (-(x ^ 3 + (W.baseChange K).a₂ * x ^ 2 + (W.baseChange K).a₄ * x +
-        (W.baseChange K).a₆))).degree < ((X : K[X]) ^ 2).degree := by
-    refine lt_of_le_of_lt degree_linear_le ?_
-    rw [degree_X_pow]
-    exact_mod_cast one_lt_two
-  unfold qpoly
-  rw [degree_add_eq_left_of_degree_lt hlt, degree_X_pow]
-  exact Nat.cast_ofNat
-
-omit [DecidableEq K] [IsAlgClosed K] in
-private lemma qpoly_ne_zero (x : K) : qpoly W x ≠ 0 := by
-  intro h
-  have hd := degree_qpoly W x
-  rw [h, degree_zero] at hd
-  simp at hd
-
-omit [DecidableEq K] [IsAlgClosed K] in
-private lemma isRoot_qpoly_iff (x y : K) :
-    (qpoly W x).IsRoot y ↔ (W.baseChange K).toAffine.Equation x y := by
-  rw [WeierstrassCurve.Affine.equation_iff]
-  unfold qpoly
-  simp only [IsRoot, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  constructor <;> intro h <;> linear_combination h
-
-omit [DecidableEq K] in
-private lemma exists_equation_y (x : K) :
-    ∃ y : K, (W.baseChange K).toAffine.Equation x y := by
-  obtain ⟨y, hy⟩ := IsAlgClosed.exists_root (qpoly W x)
-    (by rw [degree_qpoly]; norm_num)
-  exact ⟨y, (isRoot_qpoly_iff W x y).mp hy⟩
-
-private noncomputable def coords : W.toAffine⟮K⟯ → K × K
-  | .zero => (0, 0)
-  | .some x y _ => (x, y)
-
-omit [DecidableEq K] [IsAlgClosed K] in
-
-theorem Ψ₂Sq_ne_zero_of_isElliptic [W.IsElliptic] : (W.baseChange K).Ψ₂Sq ≠ 0 := by
-  intro h0
-  set E := W.baseChange K with hE
-  rw [Ψ₂Sq_eq, Cubic.toPoly_eq_zero_iff] at h0
-  have h4 : (4 : K) = 0 := congrArg Cubic.a h0
-  have hb₂ : E.b₂ = 0 := congrArg Cubic.b h0
-  have hb₆ : E.b₆ = 0 := congrArg Cubic.d h0
-  have h2 : (2 : K) = 0 := by
-    have h22 : (2 : K) * 2 = 0 := by linear_combination h4
-    rcases mul_eq_zero.mp h22 with h | h <;> exact h
-  have hΔ : E.Δ = 0 := by
-    rw [show E.Δ = -E.b₂ ^ 2 * E.b₈ - 8 * E.b₄ ^ 3 - 27 * E.b₆ ^ 2 +
-        9 * E.b₂ * E.b₄ * E.b₆ from rfl]
-    linear_combination (-E.b₂ * E.b₈ + 9 * E.b₄ * E.b₆) * hb₂ +
-      (-27 * E.b₆) * hb₆ + (-4 * E.b₄ ^ 3) * h2
-  exact E.isUnit_Δ.ne_zero hΔ
-
-theorem exists_double_fiber_card [W.IsElliptic] {n : ℕ} (hodd : Odd n)
-    (hn : (n : K) ≠ 0) :
-    ∃ Q : W.toAffine⟮K⟯,
-      Nat.card {P : W.toAffine⟮K⟯ // n • P = Q ∨ n • P = -Q} = 2 * n ^ 2 := by
-  classical
-  have hpos : 0 < n := Nat.pos_of_ne_zero (by rintro rfl; simp at hn)
-  set F' := (W.baseChange K).Φ n with hFdef
-  set G := (W.baseChange K).ΨSq n with hGdef
-  have hnQ : ((n : ℕ) : K) ≠ 0 := hn
-  have hnZ : (((n : ℕ) : ℤ) : K) ≠ 0 := by exact_mod_cast hnQ
-
-  have hB : {c : K | ¬ Squarefree (F' - C c * G)}.Finite := finite_not_squarefree_fiber W hn
-  have hΨ₂ne : (W.baseChange K).Ψ₂Sq ≠ 0 := Ψ₂Sq_ne_zero_of_isElliptic W
-  have hB' : ((fun x => F'.eval x / G.eval x) ''
-      {x : K | (W.baseChange K).Ψ₂Sq.IsRoot x}).Finite :=
-    (finite_setOf_isRoot hΨ₂ne).image _
-  obtain ⟨c, hc⟩ := (hB.union hB').infinite_compl.nonempty
-  rw [Set.mem_compl_iff, Set.mem_union] at hc
-  push Not at hc
-  obtain ⟨hcB, hcB'⟩ := hc
-  have hsqf : Squarefree (F' - C c * G) := not_not.mp hcB
-
-  obtain ⟨yQ, hyQ⟩ := exists_equation_y W c
-  have hQns : (W.baseChange K).toAffine.Nonsingular c yQ :=
-    WeierstrassCurve.Affine.equation_iff_nonsingular.mp hyQ
-  refine ⟨Point.some c yQ hQns, ?_⟩
-  set p : K[X] := F' - C c * G with hpdef
-
-  have hFdeg : F'.natDegree = n ^ 2 := by
-    have h := WeierstrassCurve.natDegree_Φ (W.baseChange K) (n : ℤ)
-    rw [Int.natAbs_natCast] at h
-    rw [hFdef, h]
-  have hGdeg : G.natDegree = n ^ 2 - 1 := by
-    have h := WeierstrassCurve.natDegree_ΨSq (W.baseChange K) hnZ
-    rw [Int.natAbs_natCast] at h
-    rw [hGdef, h]
-  have hpdeg : p.natDegree = n ^ 2 := by
-    rw [hpdef]
-    rw [natDegree_sub_eq_left_of_natDegree_lt, hFdeg]
-    refine lt_of_le_of_lt (natDegree_C_mul_le c G) ?_
-    rw [hFdeg, hGdeg]
-    have : 1 ≤ n ^ 2 := Nat.one_le_iff_ne_zero.mpr (pow_ne_zero 2 hpos.ne')
-    omega
-  have hpco : p.coeff (n ^ 2) = 1 := by
-    have hF1 : F'.coeff (n ^ 2) = 1 := by
-      have h := WeierstrassCurve.coeff_Φ (W.baseChange K) (n : ℤ)
-      rw [Int.natAbs_natCast] at h
-      rw [hFdef, h]
-    have hG0 : G.coeff (n ^ 2) = 0 := by
-      refine coeff_eq_zero_of_natDegree_lt ?_
-      rw [hGdeg]
-      have : 1 ≤ n ^ 2 := Nat.one_le_iff_ne_zero.mpr (pow_ne_zero 2 hpos.ne')
-      omega
-    rw [hpdef, coeff_sub, coeff_C_mul, hF1, hG0, mul_zero, sub_zero]
-  have hpne : p ≠ 0 := by
-    intro h
-    rw [h, coeff_zero] at hpco
-    exact zero_ne_one hpco
-
-  have hnodup : p.roots.Nodup := squarefree_roots_nodup hsqf
-  have hroots_card : p.roots.toFinset.card = n ^ 2 := by
-    rw [Multiset.toFinset_card_of_nodup hnodup,
-      ← (IsAlgClosed.splits p).natDegree_eq_card_roots, hpdeg]
-
-  have key_F : ∀ x : K, p.eval x = 0 → F'.eval x = c * G.eval x := by
-    intro x hx
-    rw [hpdef, eval_sub, eval_mul, eval_C, sub_eq_zero] at hx
-    exact hx
-  have key_G : ∀ x : K, p.eval x = 0 → G.eval x ≠ 0 := by
-    intro x hx hG0
-    have hF0 : F'.eval x = 0 := by rw [key_F x hx, hG0, mul_zero]
-    obtain ⟨a, b, hab⟩ := isCoprime_Φ_ΨSq W (K := K) hpos
-    rw [← hFdef, ← hGdef] at hab
-    have h1 := congrArg (Polynomial.eval x) hab
-    rw [eval_add, eval_mul, eval_mul, eval_one, hF0, hG0, mul_zero, mul_zero,
-      add_zero] at h1
-    exact zero_ne_one h1
-  have key_Ψ₂ : ∀ x : K, p.eval x = 0 → (W.baseChange K).Ψ₂Sq.eval x ≠ 0 := by
-    intro x hx h2
-    refine hcB' ⟨x, h2, ?_⟩
-    show F'.eval x / G.eval x = c
-    rw [key_F x hx, mul_div_assoc, div_self (key_G x hx), mul_one]
-
-  set R2fin : Finset (K × K) := p.roots.toFinset.biUnion
-    (fun x => (qpoly W x).roots.toFinset.image (fun y => (x, y))) with hR2def
-  have hmemR2 : ∀ z : K × K, z ∈ R2fin ↔
-      p.eval z.1 = 0 ∧ (W.baseChange K).toAffine.Equation z.1 z.2 := by
-    intro z
-    rw [hR2def, Finset.mem_biUnion]
-    constructor
-    · rintro ⟨x, hx, hz⟩
-      rw [Finset.mem_image] at hz
-      obtain ⟨y, hy, rfl⟩ := hz
-      rw [Multiset.mem_toFinset, mem_roots hpne] at hx
-      rw [Multiset.mem_toFinset, mem_roots (qpoly_ne_zero W x)] at hy
-      exact ⟨hx, (isRoot_qpoly_iff W x y).mp hy⟩
-    · rintro ⟨h1, h2⟩
-      refine ⟨z.1, ?_, ?_⟩
-      · rw [Multiset.mem_toFinset, mem_roots hpne]
-        exact h1
-      · rw [Finset.mem_image]
-        exact ⟨z.2, by
-          rw [Multiset.mem_toFinset, mem_roots (qpoly_ne_zero W z.1)]
-          exact (isRoot_qpoly_iff W z.1 z.2).mpr h2, rfl⟩
-
-  have hfiber2 : ∀ x ∈ p.roots.toFinset,
-      ((qpoly W x).roots.toFinset.image (fun y => (x, y))).card = 2 := by
-    intro x hx
-    rw [Multiset.mem_toFinset, mem_roots hpne] at hx
-    obtain ⟨y₀, hy₀⟩ := exists_equation_y W x
-    have hny₀ : (W.baseChange K).toAffine.Equation x
-        ((W.baseChange K).toAffine.negY x y₀) :=
-      (WeierstrassCurve.Affine.equation_neg x y₀).mpr hy₀
-    have hyne : y₀ ≠ (W.baseChange K).toAffine.negY x y₀ := by
-      intro hy
-      refine key_Ψ₂ x hx ?_
-      have hsq := sub_negY_sq_eq_Ψ₂Sq_eval ((W.baseChange K).toAffine) hy₀
-      rw [← hsq, ← hy, sub_self]
-      ring
-    rw [Finset.card_image_of_injective _ (fun a b hab => (Prod.ext_iff.mp hab).2)]
-    refine le_antisymm ?_ ?_
-    · refine le_trans (Multiset.toFinset_card_le _) (le_trans (card_roots' _) ?_)
-      rw [natDegree_eq_of_degree_eq_some (degree_qpoly W x)]
-    · have hsub : ({y₀, (W.baseChange K).toAffine.negY x y₀} : Finset K) ⊆
-          (qpoly W x).roots.toFinset := by
-        intro y hy
-        rw [Finset.mem_insert, Finset.mem_singleton] at hy
-        rw [Multiset.mem_toFinset, mem_roots (qpoly_ne_zero W x)]
-        rcases hy with rfl | rfl
-        · exact (isRoot_qpoly_iff W x y).mpr hy₀
-        · exact (isRoot_qpoly_iff W x _).mpr hny₀
-      calc 2 = ({y₀, (W.baseChange K).toAffine.negY x y₀} : Finset K).card :=
-            (Finset.card_pair hyne).symm
-        _ ≤ _ := Finset.card_le_card hsub
-
-  have hR2card : R2fin.card = 2 * n ^ 2 := by
-    rw [hR2def, Finset.card_biUnion]
-    · rw [Finset.sum_congr rfl hfiber2, Finset.sum_const, smul_eq_mul, hroots_card,
-        mul_comm]
-    · intro x₁ hx₁ x₂ hx₂ hne
-      simp only [Function.onFun]
-      rw [Finset.disjoint_left]
-      rintro z hz₁ hz₂
-      rw [Finset.mem_image] at hz₁ hz₂
-      obtain ⟨y₁, -, rfl⟩ := hz₁
-      obtain ⟨y₂, -, hz⟩ := hz₂
-      exact hne ((Prod.ext_iff.mp hz).1.symm)
-
-  set Q : W.toAffine⟮K⟯ := Point.some c yQ hQns with hQdef
-  have hQ0 : Q ≠ 0 := Point.some_ne_zero hQns
-  have hnegQ : -Q = Point.some c ((W.baseChange K).toAffine.negY c yQ)
-      ((WeierstrassCurve.Affine.nonsingular_neg ..).mpr hQns) := Point.neg_some hQns
-  have hPne0 : ∀ P : W.toAffine⟮K⟯, (n • P = Q ∨ n • P = -Q) → P ≠ 0 := by
-    rintro P hP rfl
-    rw [nsmul_zero] at hP
-    rcases hP with h | h
-    · exact hQ0 h.symm
-    · exact hQ0 (neg_eq_zero.mp h.symm)
-
-  have hmaps : Set.MapsTo (coords W) {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q}
-      ↑R2fin := by
-    rintro P hP
-    have hP0 : P ≠ 0 := hPne0 P hP
-    rcases P with _ | ⟨x, y, h⟩
-    · exact absurd Point.zero_def.symm hP0
-    · have hP' : n • (Point.some x y h : W.toAffine⟮K⟯) = Q ∨
-          n • (Point.some x y h : W.toAffine⟮K⟯) = -Q := hP
-      have hGx : G.eval x ≠ 0 := by
-        intro hG0
-        have hz : n • (Point.some x y h : W.toAffine⟮K⟯) = 0 :=
-          smul_eq_zero_of_ΨSq_eval_eq_zero W hpos h hG0
-        rw [hz] at hP'
-        rcases hP' with h' | h'
-        · exact hQ0 h'.symm
-        · exact hQ0 (neg_eq_zero.mp h'.symm)
-      obtain ⟨x', y', h', hsmul, hx'⟩ := smul_x_eq W hpos h hGx
-      have hx'c : x' = c := by
-        rw [hsmul] at hP'
-        rcases hP' with h'' | h''
-        · rw [hQdef] at h''
-          exact (Point.some.inj h'').1
-        · rw [hnegQ] at h''
-          exact (Point.some.inj h'').1
-      have hpx : p.eval x = 0 := by
-        rw [hpdef, eval_sub, eval_mul, eval_C, sub_eq_zero, ← hx'c]
-        exact hx'.symm
-      rw [Finset.mem_coe, hmemR2]
-      exact ⟨hpx, h.1⟩
-  have hinj : Set.InjOn (coords W) {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q} := by
-    rintro P₁ hP₁ P₂ hP₂ hco
-    rcases P₁ with _ | ⟨x₁, y₁, h₁⟩
-    · exact absurd Point.zero_def.symm (hPne0 _ hP₁)
-    · rcases P₂ with _ | ⟨x₂, y₂, h₂⟩
-      · exact absurd Point.zero_def.symm (hPne0 _ hP₂)
-      · simp only [coords] at hco
-        obtain ⟨hx, hy⟩ := Prod.ext_iff.mp hco
-        subst hx
-        subst hy
-        rfl
-  have hsurj : Set.SurjOn (coords W) {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q}
-      ↑R2fin := by
-    rintro z hz
-    rw [Finset.mem_coe, hmemR2] at hz
-    obtain ⟨hz1, hz2⟩ := hz
-    obtain ⟨x, y⟩ := z
-    have h : (W.baseChange K).toAffine.Nonsingular x y :=
-      WeierstrassCurve.Affine.equation_iff_nonsingular.mp hz2
-    have hGx : G.eval x ≠ 0 := key_G x hz1
-    obtain ⟨x', y', h', hsmul, hx'⟩ := smul_x_eq W hpos h hGx
-    have hx'c : x' = c := by
-      have hFc := key_F x hz1
-      rw [hFc] at hx'
-      exact mul_right_cancel₀ hGx hx'
-    subst hx'c
-    have hy' := WeierstrassCurve.Affine.Y_eq_of_X_eq h'.1 hQns.1 rfl
-    refine ⟨Point.some x y h, ?_, rfl⟩
-    rcases hy' with rfl | rfl
-    · exact Or.inl hsmul
-    · refine Or.inr ?_
-      rw [hnegQ]
-      exact hsmul
-
-  have hbij : Set.BijOn (coords W) {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q}
-      ↑R2fin := ⟨hmaps, hinj, hsurj⟩
-  calc Nat.card {P : W.toAffine⟮K⟯ // n • P = Q ∨ n • P = -Q}
-      = Set.ncard {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q} :=
-        Nat.card_coe_set_eq _
-    _ = (coords W '' {P : W.toAffine⟮K⟯ | n • P = Q ∨ n • P = -Q}).ncard :=
-        (hbij.injOn.ncard_image).symm
-    _ = (↑R2fin : Set (K × K)).ncard := by rw [hbij.image_eq]
-    _ = R2fin.card := Set.ncard_coe_finset _
-    _ = 2 * n ^ 2 := hR2card
-
-theorem card_nTorsion_odd_fibers [W.IsElliptic] {n : ℕ} (hodd : Odd n)
-    (hn : (n : K) ≠ 0) :
-    Nat.card (nTorsion W (K := K) n) = n ^ 2 := by
-  classical
-  have hn0 : n ≠ 0 := by rintro rfl; simp at hn
-  obtain ⟨Q, hQ⟩ := exists_double_fiber_card W hodd hn
-  by_cases hQQ : Q = -Q
-  ·
-    exfalso
-    simp only [← hQQ, or_self] at hQ
-    rw [card_smul_fiber W hodd hn Q] at hQ
-    have hfin : Finite (nTorsion W (K := K) n) := by
-      refine Nat.finite_of_card_ne_zero ?_
-      rw [hQ]
-      exact mul_ne_zero two_ne_zero (pow_ne_zero 2 hn0)
-    have hdvd : 2 ∣ Nat.card (nTorsion W (K := K) n) := by
-      rw [hQ]; exact dvd_mul_right 2 _
-    have hfact : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-    obtain ⟨g, hg⟩ := exists_prime_addOrderOf_dvd_card' 2 hdvd
-    have hcoe : addOrderOf (g : W.toAffine⟮K⟯) = 2 :=
-      (AddSubgroup.addOrderOf_coe g).trans hg
-    have hgn : n • (g : W.toAffine⟮K⟯) = 0 := g.2
-    have hdvdn : addOrderOf (g : W.toAffine⟮K⟯) ∣ n :=
-      addOrderOf_dvd_of_nsmul_eq_zero hgn
-    rw [hcoe] at hdvdn
-    have hodd' := Nat.odd_iff.mp hodd
-    omega
-  ·
-    have hdisj : Disjoint (fun P : W.toAffine⟮K⟯ => n • P = Q)
-        (fun P : W.toAffine⟮K⟯ => n • P = -Q) := by
-      rw [Pi.disjoint_iff]
-      intro P
-      rw [Prop.disjoint_iff]
-      rintro ⟨h1, h2⟩
-      exact hQQ (h1 ▸ h2)
-    have e := subtypeOrEquiv (fun P : W.toAffine⟮K⟯ => n • P = Q)
-      (fun P : W.toAffine⟮K⟯ => n • P = -Q) hdisj
-    rw [Nat.card_congr e] at hQ
-    haveI hfinsum : Finite ({P : W.toAffine⟮K⟯ // n • P = Q} ⊕
-        {P : W.toAffine⟮K⟯ // n • P = -Q}) := by
-      refine Nat.finite_of_card_ne_zero ?_
-      rw [hQ]
-      exact mul_ne_zero two_ne_zero (pow_ne_zero 2 hn0)
-    haveI : Finite {P : W.toAffine⟮K⟯ // n • P = Q} :=
-      Finite.of_injective
-        (Sum.inl : {P : W.toAffine⟮K⟯ // n • P = Q} →
-          {P : W.toAffine⟮K⟯ // n • P = Q} ⊕ {P : W.toAffine⟮K⟯ // n • P = -Q})
-        Sum.inl_injective
-    haveI : Finite {P : W.toAffine⟮K⟯ // n • P = -Q} :=
-      Finite.of_injective
-        (Sum.inr : {P : W.toAffine⟮K⟯ // n • P = -Q} →
-          {P : W.toAffine⟮K⟯ // n • P = Q} ⊕ {P : W.toAffine⟮K⟯ // n • P = -Q})
-        Sum.inr_injective
-    rw [Nat.card_sum, card_smul_fiber W hodd hn Q, card_smul_fiber W hodd hn (-Q),
-      ← two_mul] at hQ
-    exact Nat.eq_of_mul_eq_mul_left (by norm_num) hQ
-
-end AlgClosed
-
-end Deep.Gen
-
-end PortGenCardViaFibers
-
-section PortGenCard
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-noncomputable section
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
-variable (W : WeierstrassCurve F)
-
-theorem mem_nTorsion_two_iff {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :
-    (Point.some x y h : W.toAffine⟮K⟯) ∈ nTorsion W 2 ↔
-      y = (W.baseChange K).toAffine.negY x y := by
-  show 2 • (Point.some x y h : W.toAffine⟮K⟯) = 0 ↔ _
-  rw [two_nsmul, add_eq_zero_iff_eq_neg, Point.neg_some, Point.some.injEq]
-  simp
-
-end
-
-end Deep.Gen
-
-end PortGenCard
-
-section PortGenCardAll
-
-namespace Deep
-namespace Gen
-
-open WeierstrassCurve WeierstrassCurve.Affine Polynomial
-
-open scoped WeierstrassCurve.Affine
-
-noncomputable section
-
-variable {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
-variable (W : WeierstrassCurve F)
-
-section AlgClosed
-
-variable [IsAlgClosed K]
-
-theorem smul_surjective_all [W.IsElliptic] {n : ℕ} (hn : (n : K) ≠ 0) :
-    Function.Surjective (fun P : W.toAffine⟮K⟯ => n • P) := by
-  have hpos : 0 < n := Nat.pos_of_ne_zero (by rintro rfl; simp at hn)
-  intro Q
-  rcases Q with _ | ⟨xQ, yQ, hQ⟩
-  · refine ⟨0, ?_⟩
-    show n • (0 : W.toAffine⟮K⟯) = Point.zero
-    rw [nsmul_zero]
-    exact Point.zero_def
-  set F' := (W.baseChange K).Φ n with hFdef
-  set G := (W.baseChange K).ΨSq n with hGdef
-  have hnQ : ((n : ℕ) : K) ≠ 0 := hn
-  have hnZ : (((n : ℕ) : ℤ) : K) ≠ 0 := by exact_mod_cast hnQ
-  have hFdeg : F'.natDegree = n ^ 2 := by
-    have h := WeierstrassCurve.natDegree_Φ (W.baseChange K) (n : ℤ)
-    rw [Int.natAbs_natCast] at h
-    rw [hFdef, h]
-  have hGdeg : G.natDegree = n ^ 2 - 1 := by
-    have h := WeierstrassCurve.natDegree_ΨSq (W.baseChange K) hnZ
-    rw [Int.natAbs_natCast] at h
-    rw [hGdef, h]
-  have h1n : 1 ≤ n ^ 2 := Nat.one_le_iff_ne_zero.mpr (pow_ne_zero 2 hpos.ne')
-  set p : K[X] := F' - C xQ * G with hpdef
-  have hpdeg : p.natDegree = n ^ 2 := by
-    rw [hpdef]
-    rw [natDegree_sub_eq_left_of_natDegree_lt, hFdeg]
-    refine lt_of_le_of_lt (natDegree_C_mul_le xQ G) ?_
-    rw [hFdeg, hGdeg]
-    omega
-  have hpdegne : p.degree ≠ 0 := by
-    have hpos' : 0 < p.natDegree := by rw [hpdeg]; omega
-    exact (natDegree_pos_iff_degree_pos.mp hpos').ne'
-  obtain ⟨x₀, hx₀⟩ := IsAlgClosed.exists_root p hpdegne
-  have hpx : p.eval x₀ = 0 := hx₀
-  have hroot : F'.eval x₀ = xQ * G.eval x₀ := by
-    rw [hpdef, eval_sub, eval_mul, eval_C, sub_eq_zero] at hpx
-    exact hpx
-  have hGx : G.eval x₀ ≠ 0 := by
-    intro hG0
-    have hF0 : F'.eval x₀ = 0 := by rw [hroot, hG0, mul_zero]
-    obtain ⟨a, b, hab⟩ := isCoprime_Φ_ΨSq W (K := K) hpos
-    rw [← hFdef, ← hGdef] at hab
-    have h1 := congrArg (Polynomial.eval x₀) hab
-    rw [eval_add, eval_mul, eval_mul, eval_one, hF0, hG0, mul_zero, mul_zero,
-      add_zero] at h1
-    exact zero_ne_one h1
-  obtain ⟨y₀, hy₀⟩ : ∃ y : K, (W.baseChange K).toAffine.Equation x₀ y := by
-    obtain ⟨y, hy⟩ := IsAlgClosed.exists_root
-      (C 1 * X ^ 2 + C ((W.baseChange K).a₁ * x₀ + (W.baseChange K).a₃) * X
-        + C (-(x₀ ^ 3 + (W.baseChange K).a₂ * x₀ ^ 2 + (W.baseChange K).a₄ * x₀ +
-            (W.baseChange K).a₆)))
-      (by rw [degree_quadratic one_ne_zero]; norm_num)
-    refine ⟨y, ?_⟩
-    rw [WeierstrassCurve.Affine.equation_iff]
-    simp only [IsRoot, eval_add, eval_mul, eval_pow, eval_C, eval_X, one_mul] at hy
-    linear_combination hy
-  have h₀ : (W.baseChange K).toAffine.Nonsingular x₀ y₀ :=
-    WeierstrassCurve.Affine.equation_iff_nonsingular.mp hy₀
-  obtain ⟨x', y', h', hsmul, hx'⟩ := smul_x_eq W hpos h₀ hGx
-  rw [← hFdef, ← hGdef] at hx'
-  have hx'Q : x' = xQ := by
-    rw [hroot] at hx'
-    exact mul_right_cancel₀ hGx hx'
-  subst hx'Q
-  rcases WeierstrassCurve.Affine.Y_eq_of_X_eq h'.1 hQ.1 rfl with rfl | rfl
-  · exact ⟨Point.some x₀ y₀ h₀, hsmul⟩
-  · have hnegQ : -(Point.some x' yQ hQ : W.toAffine⟮K⟯) =
-        Point.some x' ((W.baseChange K).toAffine.negY x' yQ)
-          ((WeierstrassCurve.Affine.nonsingular_neg ..).mpr hQ) := Point.neg_some hQ
-    have hprev : n • (Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) =
-        -(Point.some x' yQ hQ) := by
-      rw [hnegQ]
-      exact hsmul
-    have hsn : n • -(Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) =
-        -(n • (Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯)) :=
-      neg_nsmul (Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) n
-    refine ⟨-(Point.some x₀ y₀ h₀), ?_⟩
-    show n • -(Point.some x₀ y₀ h₀ : W.toAffine⟮K⟯) = Point.some x' yQ hQ
-    rw [hsn, hprev, neg_neg]
-
-theorem card_smul_fiber_all [W.IsElliptic] {n : ℕ} (hn : (n : K) ≠ 0)
-    (Q : W.toAffine⟮K⟯) :
-    Nat.card {P : W.toAffine⟮K⟯ // n • P = Q} = Nat.card (nTorsion W (K := K) n) := by
-  obtain ⟨P₀, hP₀⟩ := smul_surjective_all W hn Q
-  have hP₀' : n • P₀ = Q := hP₀
-  have e : nTorsion W (K := K) n ≃ {P : W.toAffine⟮K⟯ // n • P = Q} := by
-    refine Equiv.subtypeEquiv (Equiv.addRight P₀) fun P => ?_
-    show (P ∈ nTorsion W n) ↔ n • (P + P₀) = Q
-    have hsa : n • (P + P₀) = n • P + n • P₀ := nsmul_add P P₀ n
-    rw [hsa, hP₀']
-    constructor
-    · intro h
-      have h' : n • P = 0 := h
-      rw [h', zero_add]
-    · intro h
-      show n • P = 0
-      exact add_right_cancel (h.trans (zero_add Q).symm)
-  exact (Nat.card_congr e).symm
-
-theorem card_nTorsion_two [W.IsElliptic] (h2 : (2 : K) ≠ 0) :
-    Nat.card (nTorsion W (K := K) 2) = 4 := by
-  classical
-  set E := W.baseChange K with hE
-
-  have ha : E.twoTorsionPolynomial.a ≠ 0 := by
-    show (4 : K) ≠ 0
-    rw [show (4 : K) = 2 * 2 by norm_num]
-    exact mul_ne_zero h2 h2
-  have hd : E.twoTorsionPolynomial.discr ≠ 0 :=
-    E.twoTorsionPolynomial_discr_ne_zero_of_isElliptic (isUnit_iff_ne_zero.mpr h2)
-  have hsplits : (E.twoTorsionPolynomial.toPoly.map (RingHom.id K)).Splits := by
-    rw [Polynomial.map_id]; exact IsAlgClosed.splits _
-  have hmap : Cubic.map (RingHom.id K) E.twoTorsionPolynomial = E.twoTorsionPolynomial := rfl
-  have hcard3 : E.twoTorsionPolynomial.roots.toFinset.card = 3 := by
-    have h := Cubic.card_roots_of_discr_ne_zero ha hsplits hd
-    rwa [hmap] at h
-
-  have hroot_iff : ∀ x : K, x ∈ E.twoTorsionPolynomial.roots ↔
-      4 * x ^ 3 + E.b₂ * x ^ 2 + 2 * E.b₄ * x + E.b₆ = 0 :=
-    fun x => Cubic.mem_roots_iff (Cubic.ne_zero_of_a_ne_zero ha) x
-
-  set yy : K → K := fun x => -(E.a₁ * x + E.a₃) / 2 with hyy
-  have hyneg : ∀ x : K, yy x = E.toAffine.negY x (yy x) := by
-    intro x
-    simp only [hyy, negY]
-    field_simp
-    ring
-
-  have hEq : ∀ x : K, 4 * x ^ 3 + E.b₂ * x ^ 2 + 2 * E.b₄ * x + E.b₆ = 0 →
-      E.toAffine.Equation x (yy x) := by
-    intro x hx
-    rw [equation_iff]
-    simp only [hyy]
-    simp only [b₂, b₄, b₆] at hx
-    field_simp
-    linear_combination -hx
-
-  have hEval : ∀ x y : K, E.toAffine.Equation x y → y = E.toAffine.negY x y →
-      (4 * x ^ 3 + E.b₂ * x ^ 2 + 2 * E.b₄ * x + E.b₆ = 0 ∧ y = yy x) := by
-    intro x y heq hy
-    rw [equation_iff] at heq
-    simp only [negY] at hy
-    have hy2 : 2 * y + E.a₁ * x + E.a₃ = 0 := by linear_combination hy
-    constructor
-    · simp only [b₂, b₄, b₆]
-      linear_combination (-4 : K) * heq + (2 * y + E.a₁ * x + E.a₃) * hy2
-    · simp only [hyy]
-      field_simp
-      linear_combination hy2
-
-  have hns : ∀ x ∈ E.twoTorsionPolynomial.roots.toFinset, E.toAffine.Nonsingular x (yy x) :=
-    fun x hx =>
-      equation_iff_nonsingular.mp (hEq x ((hroot_iff x).mp (Multiset.mem_toFinset.mp hx)))
-
-  set T : Finset (W.toAffine⟮K⟯) :=
-    insert 0 ((E.twoTorsionPolynomial.roots.toFinset.attach).image
-      fun p => Point.some p.1 (yy p.1) (hns p.1 p.2)) with hT
-  have hsetEq : ((nTorsion W (K := K) 2 : AddSubgroup (W.toAffine⟮K⟯)) :
-      Set (W.toAffine⟮K⟯)) = ↑T := by
-    ext P
-    rw [SetLike.mem_coe, Finset.mem_coe, hT, Finset.mem_insert, Finset.mem_image]
-    cases P with
-    | zero =>
-      exact iff_of_true (AddSubgroup.zero_mem _) (Or.inl rfl)
-    | @some x y h =>
-      rw [mem_nTorsion_two_iff]
-      constructor
-      · intro hy
-        obtain ⟨hx0, hyx⟩ := hEval x y h.left hy
-        refine Or.inr ⟨⟨x, Multiset.mem_toFinset.mpr ((hroot_iff x).mpr hx0)⟩,
-          Finset.mem_attach _ _, ?_⟩
-        simp [hyx.symm]
-      · rintro (h0 | ⟨⟨x', hx'⟩, -, hPeq⟩)
-        · exact absurd h0 (Point.some_ne_zero h)
-        · rw [Point.some.injEq] at hPeq
-          obtain ⟨hxx, hyy'⟩ := hPeq
-          subst hxx
-          rw [← hyy']
-          exact hyneg x'
-  have hcount : Nat.card (nTorsion W (K := K) 2) =
-      ((nTorsion W (K := K) 2 : Set (W.toAffine⟮K⟯))).ncard :=
-    Nat.card_coe_set_eq _
-  rw [hcount, hsetEq, Set.ncard_coe_finset]
-  have h0T : (0 : W.toAffine⟮K⟯) ∉
-      (E.twoTorsionPolynomial.roots.toFinset.attach).image
-        (fun p => Point.some p.1 (yy p.1) (hns p.1 p.2)) := by
-    simp only [Finset.mem_image]
-    rintro ⟨p, -, hp⟩
-    exact Point.some_ne_zero _ hp
-  rw [hT, Finset.card_insert_of_notMem h0T, Finset.card_image_of_injOn, Finset.card_attach,
-    hcard3]
-  intro p _ q _ hpq
-  rw [Point.some.injEq] at hpq
-  exact Subtype.ext hpq.left
-
-omit [IsAlgClosed K] in
-
-theorem card_nTorsion_one : Nat.card (nTorsion W (K := K) 1) = 1 := by
-  have hbot : nTorsion W (K := K) 1 = ⊥ := by
-    ext P
-    rw [AddSubgroup.mem_bot]
-    show 1 • P = 0 ↔ P = 0
-    rw [one_nsmul]
-  rw [hbot]
-  exact AddSubgroup.card_bot
-
-theorem card_nTorsion_prime [W.IsElliptic] {p : ℕ} (hp : p.Prime) (hn : (p : K) ≠ 0) :
-    Nat.card (nTorsion W (K := K) p) = p ^ 2 := by
-  rcases hp.eq_two_or_odd' with rfl | hodd
-  · rw [card_nTorsion_two W (by exact_mod_cast hn)]
-    norm_num
-  · exact card_nTorsion_odd_fibers W hodd hn
-
-theorem card_nTorsion_prime_pow [W.IsElliptic] {p : ℕ} (hp : p.Prime)
-    (hn : (p : K) ≠ 0) (k : ℕ) :
-    Nat.card (nTorsion W (K := K) (p ^ k)) = p ^ (2 * k) := by
-  induction k with
-  | zero => simpa using card_nTorsion_one W (K := K)
-  | succ k ih =>
-    have hpk : ((p ^ k : ℕ) : K) ≠ 0 := by push_cast; exact pow_ne_zero _ hn
-    have hpfin : Finite (nTorsion W (K := K) p) := by
-      refine Nat.finite_of_card_ne_zero ?_
-      rw [card_nTorsion_prime W hp hn]
-      exact pow_ne_zero 2 hp.pos.ne'
-    haveI := Fintype.ofFinite (nTorsion W (K := K) p)
-    have hfib : ∀ Q : W.toAffine⟮K⟯, Nat.card {P : W.toAffine⟮K⟯ // p ^ k • P = Q} =
-        Nat.card (nTorsion W (K := K) (p ^ k)) := fun Q => card_smul_fiber_all W hpk Q
-    haveI hfibfin : ∀ Q : nTorsion W (K := K) p,
-        Finite {P : W.toAffine⟮K⟯ // p ^ k • P = (Q : W.toAffine⟮K⟯)} := by
-      intro Q
-      refine Nat.finite_of_card_ne_zero ?_
-      rw [hfib, ih]
-      exact pow_ne_zero _ hp.pos.ne'
-
-    have e : nTorsion W (K := K) (p ^ (k + 1)) ≃
-        Σ Q : nTorsion W (K := K) p,
-          {P : W.toAffine⟮K⟯ // p ^ k • P = (Q : W.toAffine⟮K⟯)} := by
-      refine ⟨fun P => ⟨⟨p ^ k • (P : W.toAffine⟮K⟯), ?_⟩, ⟨(P : W.toAffine⟮K⟯), rfl⟩⟩,
-        fun x => ⟨x.2.1, ?_⟩, fun P => ?_, fun x => ?_⟩
-      · show p • (p ^ k • (P : W.toAffine⟮K⟯)) = 0
-        rw [smul_smul, ← pow_succ']
-        exact P.2
-      · show p ^ (k + 1) • (x.2.1 : W.toAffine⟮K⟯) = 0
-        rw [pow_succ', ← smul_smul, x.2.2]
-        exact x.1.2
-      · exact Subtype.ext rfl
-      · obtain ⟨⟨Qv, hQ⟩, ⟨P, hP⟩⟩ := x
-        dsimp only at hP
-        subst hP
-        rfl
-    rw [Nat.card_congr e, Nat.card_sigma]
-    have hsum : ∀ Q : nTorsion W (K := K) p,
-        Nat.card {P : W.toAffine⟮K⟯ // p ^ k • P = (Q : W.toAffine⟮K⟯)} = p ^ (2 * k) :=
-      fun Q => (hfib _).trans ih
-    rw [Finset.sum_congr rfl (fun Q _ => hsum Q), Finset.sum_const, smul_eq_mul,
-      Finset.card_univ, ← Nat.card_eq_fintype_card, card_nTorsion_prime W hp hn,
-      ← pow_add]
-    congr 1
-    omega
-
-end AlgClosed
-
-theorem card_nTorsion_mul_of_coprime {m n : ℕ} (hmn : Nat.Coprime m n) :
-    Nat.card (nTorsion W (K := K) (m * n)) =
-      Nat.card (nTorsion W (K := K) m) * Nat.card (nTorsion W (K := K) n) := by
-  set a : ℤ := Nat.gcdA m n with ha
-  set b : ℤ := Nat.gcdB m n with hb
-  have hBez : (m : ℤ) * a + (n : ℤ) * b = 1 := by
-    have h := Nat.gcd_eq_gcd_ab m n
-    rw [hmn.gcd_eq_one] at h
-    exact_mod_cast h.symm
-  have e : nTorsion W (K := K) (m * n) ≃
-      nTorsion W (K := K) m × nTorsion W (K := K) n := by
-    refine ⟨fun P => (⟨((n : ℤ) * b) • (P : W.toAffine⟮K⟯), ?_⟩,
-        ⟨((m : ℤ) * a) • (P : W.toAffine⟮K⟯), ?_⟩),
-      fun x => ⟨(x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯), ?_⟩,
-      fun P => ?_, fun x => ?_⟩
-    ·
-      show m • (((n : ℤ) * b) • (P : W.toAffine⟮K⟯)) = 0
-      have hP : ((m : ℤ) * (n : ℤ)) • (P : W.toAffine⟮K⟯) = 0 := by
-        have h := P.2
-        show _ = _
-        rw [show (m : ℤ) * (n : ℤ) = ((m * n : ℕ) : ℤ) by push_cast; ring,
-          natCast_zsmul]
-        exact h
-      rw [← natCast_zsmul, smul_smul,
-        show (m : ℤ) * ((n : ℤ) * b) = b * ((m : ℤ) * (n : ℤ)) by ring,
-        ← smul_smul, hP, smul_zero]
-    ·
-      show n • (((m : ℤ) * a) • (P : W.toAffine⟮K⟯)) = 0
-      have hP : ((m : ℤ) * (n : ℤ)) • (P : W.toAffine⟮K⟯) = 0 := by
-        have h := P.2
-        rw [show (m : ℤ) * (n : ℤ) = ((m * n : ℕ) : ℤ) by push_cast; ring,
-          natCast_zsmul]
-        exact h
-      rw [← natCast_zsmul, smul_smul,
-        show (n : ℤ) * ((m : ℤ) * a) = a * ((m : ℤ) * (n : ℤ)) by ring,
-        ← smul_smul, hP, smul_zero]
-    ·
-      show (m * n) • ((x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯)) = 0
-      have hx1 : m • (x.1 : W.toAffine⟮K⟯) = 0 := x.1.2
-      have hx2 : n • (x.2 : W.toAffine⟮K⟯) = 0 := x.2.2
-      rw [smul_add]
-      have h1 : (m * n) • (x.1 : W.toAffine⟮K⟯) = 0 := by
-        rw [mul_comm, ← smul_smul, hx1, smul_zero]
-      have h2 : (m * n) • (x.2 : W.toAffine⟮K⟯) = 0 := by
-        rw [← smul_smul, hx2, smul_zero]
-      rw [h1, h2, add_zero]
-    ·
-      apply Subtype.ext
-      show ((n : ℤ) * b) • (P : W.toAffine⟮K⟯) + ((m : ℤ) * a) • (P : W.toAffine⟮K⟯) =
-        (P : W.toAffine⟮K⟯)
-      rw [← add_zsmul, show (n : ℤ) * b + (m : ℤ) * a = 1 by linarith [hBez], one_zsmul]
-    ·
-      have hm1 : (m : ℤ) • (x.1 : W.toAffine⟮K⟯) = 0 := by
-        rw [natCast_zsmul]; exact x.1.2
-      have hn2 : (n : ℤ) • (x.2 : W.toAffine⟮K⟯) = 0 := by
-        rw [natCast_zsmul]; exact x.2.2
-      refine Prod.ext (Subtype.ext ?_) (Subtype.ext ?_)
-      · show ((n : ℤ) * b) • ((x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯)) =
-          (x.1 : W.toAffine⟮K⟯)
-        rw [smul_add]
-        have e2 : ((n : ℤ) * b) • (x.2 : W.toAffine⟮K⟯) = 0 := by
-          rw [show (n : ℤ) * b = b * (n : ℤ) by ring, ← smul_smul, hn2, smul_zero]
-        have e1 : ((n : ℤ) * b) • (x.1 : W.toAffine⟮K⟯) = (x.1 : W.toAffine⟮K⟯) := by
-          rw [show (n : ℤ) * b = 1 - (m : ℤ) * a by linarith [hBez], sub_smul, one_zsmul,
-            show (m : ℤ) * a = a * (m : ℤ) by ring, ← smul_smul, hm1, smul_zero, sub_zero]
-        rw [e1, e2, add_zero]
-      · show ((m : ℤ) * a) • ((x.1 : W.toAffine⟮K⟯) + (x.2 : W.toAffine⟮K⟯)) =
-          (x.2 : W.toAffine⟮K⟯)
-        rw [smul_add]
-        have e1 : ((m : ℤ) * a) • (x.1 : W.toAffine⟮K⟯) = 0 := by
-          rw [show (m : ℤ) * a = a * (m : ℤ) by ring, ← smul_smul, hm1, smul_zero]
-        have e2 : ((m : ℤ) * a) • (x.2 : W.toAffine⟮K⟯) = (x.2 : W.toAffine⟮K⟯) := by
-          rw [show (m : ℤ) * a = 1 - (n : ℤ) * b by linarith [hBez], sub_smul, one_zsmul,
-            show (n : ℤ) * b = b * (n : ℤ) by ring, ← smul_smul, hn2, smul_zero, sub_zero]
-        rw [e1, e2, zero_add]
-  rw [Nat.card_congr e, Nat.card_prod]
-
-theorem card_nTorsion [IsAlgClosed K] [W.IsElliptic] (n : ℕ) (hn : (n : K) ≠ 0) :
-    Nat.card (nTorsion W (K := K) n) = n ^ 2 := by
-  revert hn
-  induction n using Nat.recOnPosPrimePosCoprime with
-  | prime_pow p k hp hk =>
-    intro hn
-    have hpK : (p : K) ≠ 0 := by
-      intro h0
-      apply hn
-      push_cast
-      rw [h0]
-      exact zero_pow hk.ne'
-    rw [card_nTorsion_prime_pow W hp hpK k, ← pow_mul,
-      Nat.mul_comm]
-  | zero =>
-    intro hn
-    simp at hn
-  | one =>
-    intro _
-    simpa using card_nTorsion_one W (K := K)
-  | coprime a b ha hb hab iha ihb =>
-    intro hn
-    have haK : (a : K) ≠ 0 := by
-      intro h0; apply hn; push_cast; rw [h0, zero_mul]
-    have hbK : (b : K) ≠ 0 := by
-      intro h0; apply hn; push_cast; rw [h0, mul_zero]
-    rw [card_nTorsion_mul_of_coprime W hab, iha haK, ihb hbK, mul_pow]
-
-end
-
-end Deep.Gen
-
-end PortGenCardAll
-
-open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
-
-theorem solution {F : Type*} {K : Type*} [Field F] [Field K] [Algebra F K] [IsAlgClosed K] [DecidableEq K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℕ} (hn : (n : K) ≠ 0) : Nat.card (Submodule.torsionBy ℤ (W⁄K).Point n) = n ^ 2 := by
-  rw [← Deep.Gen.card_nTorsion W (K := K) n hn]
-  refine Nat.card_congr (Equiv.subtypeEquivRight fun P => ?_)
-  change P ∈ Submodule.torsionBy ℤ (W⁄K).Point (n : ℤ) ↔ P ∈ Deep.Gen.nTorsion W (K := K) n
-  rw [Submodule.mem_torsionBy_iff, natCast_zsmul]
-  rfl
-end FunctionFieldPullback.Card
-
-
-theorem WeierstrassCurve.card_torsion_of_isAlgClosed {F : Type*} {K : Type*} [Field F] [Field K] [Algebra F K] [IsAlgClosed K] [DecidableEq K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℕ} (hn : (n : K) ≠ 0) : Nat.card (Submodule.torsionBy ℤ (W⁄K).Point n) = n ^ 2 :=
-  FunctionFieldPullback.Card.solution W hn
-
 namespace FunctionFieldPullback.Exists
 
 section PortGenNetIdentities
@@ -5595,37 +4179,6 @@ theorem isCoprime_Φ_ΨSq [IsAlgClosed K] [W.IsElliptic] {n : ℕ} (hn : 0 < n) 
         rwa [Nat.cast_add, Nat.cast_one] at h2
       exact eval_ne_of_isCoprime (isCoprime_ΨSq_succ W n) hΨ0 hb
 
-theorem smul_eq_zero_of_ΨSq_eval_eq_zero [W.IsElliptic] {n : ℕ} (hn : 0 < n)
-    {x₀ y₀ : K} (h : (W.baseChange K).toAffine.Nonsingular x₀ y₀)
-    (hz : ((W.baseChange K).ΨSq n).eval x₀ = 0) :
-    n • (Point.some x₀ y₀ h : W.toAffine⟮K⟯) = 0 :=
-  (smul_formula_or_zero W hn h).2 hz
-
-omit [DecidableEq K] in
-
-theorem ΨSq_odd_eq_sq {n : ℕ} (hodd : Odd n) :
-    (W.baseChange K).ΨSq n = ((W.baseChange K).preΨ' n) ^ 2 := by
-  rw [ΨSq_ofNat, if_neg (Nat.not_even_iff_odd.mpr hodd), mul_one]
-
-theorem smul_eq_zero_iff_preΨ'_eval [W.IsElliptic] {n : ℕ} (hodd : Odd n)
-    (hn : 0 < n) {x y : K} (h : (W.baseChange K).toAffine.Nonsingular x y) :
-    n • (Point.some x y h : W.toAffine⟮K⟯) = 0 ↔
-      ((W.baseChange K).preΨ' n).eval x = 0 := by
-  constructor
-  · intro hsmul
-    by_contra hne
-    have hns : ((W.baseChange K).ΨSq n).eval x ≠ 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow]
-      exact pow_ne_zero 2 hne
-    obtain ⟨x', y', h', heq, -⟩ := smul_x_eq W hn h hns
-    rw [hsmul] at heq
-    exact Point.some_ne_zero h' heq.symm
-  · intro hz
-    have hz' : ((W.baseChange K).ΨSq n).eval x = 0 := by
-      rw [ΨSq_odd_eq_sq W hodd, eval_pow, hz]
-      exact zero_pow two_ne_zero
-    exact smul_eq_zero_of_ΨSq_eval_eq_zero W hn h hz'
-
 end Deep.Gen
 
 end PortGenSmulFormula
@@ -5808,7 +4361,7 @@ namespace FunctionFieldPullback.Finrank
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 open Polynomial IntermediateField
 
-theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℤ} (hgood : MulGood W K n) : FiniteDimensional (mulPull W K n).fieldRange (W⁄K).FunctionField ∧ Module.finrank (mulPull W K n).fieldRange (W⁄K).FunctionField ≤ n.natAbs ^ 2 := by
+theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℤ} (hgood : MulGood W K n) : FiniteDimensional (mulPull W K n hgood).fieldRange (W⁄K).FunctionField ∧ Module.finrank (mulPull W K n hgood).fieldRange (W⁄K).FunctionField ≤ n.natAbs ^ 2 := by
   classical
   haveI hEK : (W⁄K).IsElliptic := by
     dsimp only [Affine.baseChange, WeierstrassCurve.baseChange]; infer_instance
@@ -5837,7 +4390,7 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
 
   obtain ⟨y', h', hmul⟩ :=
     WeierstrassCurve.Affine.Point.zsmul_some_eq_some_div (W⁄L) (generic_nonsingular W K) hψ
-  have hxn : mulPull W K n gX = ((W⁄L).Φ n).eval gX / ((W⁄L).ΨSq n).eval gX := by
+  have hxn : mulPull W K n hgood gX = ((W⁄L).Φ n).eval gX / ((W⁄L).ΨSq n).eval gX := by
     rw [hXdef, mulPull_genericX' W K hgood]
     show (n • Point.some _ _ (generic_nonsingular W K)).xc = _
     rw [hmul, Point.xc_some]
@@ -5873,9 +4426,9 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
   have hιY : ((negEquiv W K : L →ₐ[K] L) gY) ^ 2 + A * (negEquiv W K : L →ₐ[K] L) gY + B = 0 := by
     rw [hιY']
     linear_combination hYq
-  have hιμ : (negEquiv W K : L →ₐ[K] L) (mulPull W K n gY) ≠ mulPull W K n gY := by
+  have hιμ : (negEquiv W K : L →ₐ[K] L) (mulPull W K n hgood gY) ≠ mulPull W K n hgood gY := by
     intro heq
-    change negEquiv W K (mulPull W K n (genericY W K)) = mulPull W K n (genericY W K) at heq
+    change negEquiv W K (mulPull W K n hgood (genericY W K)) = mulPull W K n hgood (genericY W K) at heq
     rw [negEquiv_mulPull_genericY' W K hgood, mulPull_genericY' W K hgood] at heq
 
     have hP := Point.eq_some_xc_yc hγn
@@ -5892,7 +4445,7 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
     exact IsAlgebraic.isIntegral ⟨(W⁄K).Ψ₂Sq, WeierstrassCurve.Psi2Sq_ne_zero_of_isElliptic (W⁄K), h2⟩
 
   have hgen : IntermediateField.adjoin K {gX, gY} = ⊤ := FunctionField.adjoin_X_Y_eq_top (W⁄K)
-  have key := IntermediateField.finrank_fieldRange_le_of_adjoin_pair_eq_top gX gY hgen A B hAmem hBmem hYq (mulPull W K n)
+  have key := IntermediateField.finrank_fieldRange_le_of_adjoin_pair_eq_top gX gY hgen A B hAmem hBmem hYq (mulPull W K n hgood)
     (negEquiv W K : L →ₐ[K] L) hιX hιY hιμ ((W⁄K).Φ n) ((W⁄K).ΨSq n)
     (d := n.natAbs ^ 2) (pow_pos (Int.natAbs_pos.mpr hn0) 2) ?_ ?_
   · exact key
@@ -5904,7 +4457,7 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
 end FunctionFieldPullback.Finrank
 
 
-theorem WeierstrassCurve.Affine.finrank_fieldRange_mulPull_le {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℤ} (hgood : WeierstrassCurve.Affine.MulGood W K n) : FiniteDimensional (WeierstrassCurve.Affine.mulPull W K n).fieldRange (W⁄K).FunctionField ∧ Module.finrank (WeierstrassCurve.Affine.mulPull W K n).fieldRange (W⁄K).FunctionField ≤ n.natAbs ^ 2 :=
+theorem WeierstrassCurve.Affine.finrank_fieldRange_mulPull_le {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] {n : ℤ} (hgood : WeierstrassCurve.Affine.MulGood W K n) : FiniteDimensional (WeierstrassCurve.Affine.mulPull W K n hgood).fieldRange (W⁄K).FunctionField ∧ Module.finrank (WeierstrassCurve.Affine.mulPull W K n hgood).fieldRange (W⁄K).FunctionField ≤ n.natAbs ^ 2 :=
   FunctionFieldPullback.Finrank.solution W hgood
 
 namespace FunctionFieldPullback.Main
@@ -5923,7 +4476,7 @@ lemma placeOf_congr {P Q : (W⁄K).Point} (hP : P ≠ 0) (hQ : Q ≠ 0) (h : P =
 
 end WeilND
 
-theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] [IsDedekindDomain (W⁄K).CoordinateRing] {n : ℕ} (hnK : (n : K) ≠ 0) (hpull : ∀ (P : (W⁄K).Point) (hP : P ≠ 0) (hnP : (n : ℤ) • P ≠ 0) (h : (W⁄K).FunctionField) (k : ℕ), (placeOf W K ((n : ℤ) • P) hnP).valuation (W⁄K).FunctionField h ≤ WithZero.exp (-(k : ℤ)) → (placeOf W K P hP).valuation (W⁄K).FunctionField (mulPull W K n h) ≤ WithZero.exp (-(k : ℤ))) {T : (W⁄K).Point} (g : (W⁄K).FunctionField) (hg : ∀ (P : (W⁄K).Point) (hP : P ≠ 0), (n : ℤ) • P ≠ 0 → (placeOf W K P hP).valuation (W⁄K).FunctionField g = if (n : ℤ) • P = T then WithZero.exp (-1) else 1) (hinv : ∀ S : (W⁄K).Point, (n : ℤ) • S = 0 → transEquiv W K S g = g) : T = 0 := by
+theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] [IsDedekindDomain (W⁄K).CoordinateRing] {n : ℕ} (hnK : (n : K) ≠ 0) (hpull : ∀ (hgood : MulGood W K (n : ℤ)) (P : (W⁄K).Point) (hP : P ≠ 0) (hnP : (n : ℤ) • P ≠ 0) (h : (W⁄K).FunctionField) (k : ℕ), (placeOf W K ((n : ℤ) • P) hnP).valuation (W⁄K).FunctionField h ≤ WithZero.exp (-(k : ℤ)) → (placeOf W K P hP).valuation (W⁄K).FunctionField (mulPull W K n hgood h) ≤ WithZero.exp (-(k : ℤ))) {T : (W⁄K).Point} (g : (W⁄K).FunctionField) (hg : ∀ (P : (W⁄K).Point) (hP : P ≠ 0), (n : ℤ) • P ≠ 0 → (placeOf W K P hP).valuation (W⁄K).FunctionField g = if (n : ℤ) • P = T then WithZero.exp (-1) else 1) (hinv : ∀ S : (W⁄K).Point, (n : ℤ) • S = 0 → transEquiv W K S g = g) : T = 0 := by
   classical
   by_contra hT0
   have hn0 : (n : ℤ) ≠ 0 := by
@@ -5978,15 +4531,15 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
     rw [show Module.finrank (IntermediateField.fixedField H) (W⁄K).FunctionField =
         Module.finrank (FixedPoints.subfield H (W⁄K).FunctionField) (W⁄K).FunctionField from rfl,
       FixedPoints.finrank_eq_card, Fintype.card_eq_nat_card, hcardH]
-  have hM : (mulPull W K (n : ℤ)).fieldRange ≤ IntermediateField.fixedField H := by
+  have hM : (mulPull W K (n : ℤ) hgood).fieldRange ≤ IntermediateField.fixedField H := by
     rintro x ⟨h, rfl⟩
     rw [IntermediateField.mem_fixedField_iff]
     intro σ hσ
     obtain ⟨S, hS, rfl⟩ := (hmemH σ).mp hσ
     exact transEquiv_mulPull' W K hgood hS h
-  have hEq : (mulPull W K (n : ℤ)).fieldRange = IntermediateField.fixedField H :=
+  have hEq : (mulPull W K (n : ℤ) hgood).fieldRange = IntermediateField.fixedField H :=
     IntermediateField.eq_of_le_of_finrank_le' hM (by rw [hfix]; exact hdeg)
-  have hgM : g ∈ (mulPull W K (n : ℤ)).fieldRange := by
+  have hgM : g ∈ (mulPull W K (n : ℤ) hgood).fieldRange := by
     rw [hEq, IntermediateField.mem_fixedField_iff]
     intro σ hσ
     obtain ⟨S, hS, rfl⟩ := (hmemH σ).mp hσ
@@ -6018,13 +4571,13 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
     simp only [N, hv, dite_false, Option.some.injEq]
     exact WeilND.placeOf_congr W K _ _ (by rw [hpt_of_place, hQ])
   have key := IsDedekindDomain.HeightOneSpectrum.exists_eq_span_singleton_of_map_eq (R := (W⁄K).CoordinateRing) (K := (W⁄K).FunctionField)
-    (mulPull W K (n : ℤ) : (W⁄K).FunctionField →+* (W⁄K).FunctionField) N hN ?_ g (placeOf W K T hT0) ?_ ?_ ⟨h, hh⟩
+    (mulPull W K (n : ℤ) hgood : (W⁄K).FunctionField →+* (W⁄K).FunctionField) N hN ?_ g (placeOf W K T hT0) ?_ ?_ ⟨h, hh⟩
   rotate_left
   ·
     intro v w hvw x k hx
     obtain ⟨hv, rfl⟩ := hNsome v w hvw
     rw [← hptv v]
-    exact hpull (pt v) (hpt0 v) hv x k hx
+    exact hpull hgood (pt v) (hpt0 v) hv x k hx
   ·
     intro v hv
     obtain ⟨hv', hw⟩ := hNsome v _ hv
@@ -6049,7 +4602,30 @@ theorem solution {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K]
 end FunctionFieldPullback.Main
 
 
-theorem WeierstrassCurve.Affine.eq_zero_of_forall_transEquiv_eq {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] [IsDedekindDomain (W⁄K).CoordinateRing] {n : ℕ} (hnK : (n : K) ≠ 0) (hpull : ∀ (P : (W⁄K).Point) (hP : P ≠ 0) (hnP : (n : ℤ) • P ≠ 0) (h : (W⁄K).FunctionField) (k : ℕ), (WeierstrassCurve.Affine.placeOf W K ((n : ℤ) • P) hnP).valuation (W⁄K).FunctionField h ≤ WithZero.exp (-(k : ℤ)) → (WeierstrassCurve.Affine.placeOf W K P hP).valuation (W⁄K).FunctionField (WeierstrassCurve.Affine.mulPull W K n h) ≤ WithZero.exp (-(k : ℤ))) {T : (W⁄K).Point} (g : (W⁄K).FunctionField) (hg : ∀ (P : (W⁄K).Point) (hP : P ≠ 0), (n : ℤ) • P ≠ 0 → (WeierstrassCurve.Affine.placeOf W K P hP).valuation (W⁄K).FunctionField g = if (n : ℤ) • P = T then WithZero.exp (-1) else 1) (hinv : ∀ S : (W⁄K).Point, (n : ℤ) • S = 0 → WeierstrassCurve.Affine.transEquiv W K S g = g) : T = 0 :=
+theorem WeierstrassCurve.Affine.eq_zero_of_forall_transEquiv_eq {F K : Type*} [Field F] [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic] [IsDedekindDomain (W⁄K).CoordinateRing] {n : ℕ} (hnK : (n : K) ≠ 0) (hpull : ∀ (hgood : WeierstrassCurve.Affine.MulGood W K (n : ℤ)) (P : (W⁄K).Point) (hP : P ≠ 0) (hnP : (n : ℤ) • P ≠ 0) (h : (W⁄K).FunctionField) (k : ℕ), (WeierstrassCurve.Affine.placeOf W K ((n : ℤ) • P) hnP).valuation (W⁄K).FunctionField h ≤ WithZero.exp (-(k : ℤ)) → (WeierstrassCurve.Affine.placeOf W K P hP).valuation (W⁄K).FunctionField (WeierstrassCurve.Affine.mulPull W K n hgood h) ≤ WithZero.exp (-(k : ℤ))) {T : (W⁄K).Point} (g : (W⁄K).FunctionField) (hg : ∀ (P : (W⁄K).Point) (hP : P ≠ 0), (n : ℤ) • P ≠ 0 → (WeierstrassCurve.Affine.placeOf W K P hP).valuation (W⁄K).FunctionField g = if (n : ℤ) • P = T then WithZero.exp (-1) else 1) (hinv : ∀ S : (W⁄K).Point, (n : ℤ) • S = 0 → WeierstrassCurve.Affine.transEquiv W K S g = g) : T = 0 :=
   FunctionFieldPullback.Main.solution W hnK hpull g hg hinv
+
+theorem WeierstrassCurve.Affine.eq_zero_of_forall_transEquiv_eq_of_pole {F K : Type*} [Field F]
+    [Field K] [Algebra F K] [DecidableEq K] [IsAlgClosed K] (W : WeierstrassCurve F) [W.IsElliptic]
+    [IsDedekindDomain (W⁄K).CoordinateRing] {n : ℕ} (hnK : (n : K) ≠ 0)
+    (hpull : ∀ (hgood : WeierstrassCurve.Affine.MulGood W K (n : ℤ)) (P : (W⁄K).Point) (hP : P ≠ 0)
+      (hnP : (n : ℤ) • P ≠ 0) (h : (W⁄K).FunctionField) (k : ℕ),
+      (WeierstrassCurve.Affine.placeOf W K ((n : ℤ) • P) hnP).valuation (W⁄K).FunctionField h ≤
+          WithZero.exp (-(k : ℤ)) →
+        (WeierstrassCurve.Affine.placeOf W K P hP).valuation (W⁄K).FunctionField
+            (WeierstrassCurve.Affine.mulPull W K n hgood h) ≤ WithZero.exp (-(k : ℤ)))
+    {T : (W⁄K).Point} (g : (W⁄K).FunctionField)
+    (hg : ∀ (P : (W⁄K).Point) (hP : P ≠ 0), (n : ℤ) • P ≠ 0 →
+      (WeierstrassCurve.Affine.placeOf W K P hP).valuation (W⁄K).FunctionField g =
+        if (n : ℤ) • P = T then WithZero.exp 1 else 1)
+    (hinv : ∀ S : (W⁄K).Point, (n : ℤ) • S = 0 → WeierstrassCurve.Affine.transEquiv W K S g = g) :
+    T = 0 := by
+  refine WeierstrassCurve.Affine.eq_zero_of_forall_transEquiv_eq W hnK hpull g⁻¹
+    (fun P hP hnP => ?_) (fun S hS => ?_)
+  · rw [map_inv₀, hg P hP hnP]
+    split_ifs
+    · exact (WithZero.exp_neg 1).symm
+    · exact inv_one
+  · rw [map_inv₀, hinv S hS]
 
 end
