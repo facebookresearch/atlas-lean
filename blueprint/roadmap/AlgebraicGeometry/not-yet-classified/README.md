@@ -1186,3 +1186,7 @@ Topics added since this subject's fields were last revised.
 - [Witt Quotient Action Models](witt-quotient-action-models/README.md)
 - [Grassmannian Adjoin](adjoin-eq-top-of-is-open-immersion-of-op.md)
 - [Relative Group Law End Degree Nsmul](relative-group-law-end-degree-nsmul/README.md)
+- [Centred place gate](is-centred.md)
+- [Kernel Ideal](kernel-ideal-set.md)
+- [Genus One Pic0](genus-one-pic0/README.md)
+- [Rational End](rational-end/README.md)
