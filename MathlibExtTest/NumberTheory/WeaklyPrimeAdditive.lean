@@ -43,4 +43,16 @@ example (H : ∀ a f g : ℕ, 1 ≤ a → a ≤ f → Nat.Coprime a f → 4 ∣ 
     (infinite_weaklyPrimeAdditive_length_le_four_dvd H 8 (by decide)) B
   exact ⟨n, hB, hn⟩
 
+-- A factor of four and an odd prime factor can both be prescribed.
+example (B : ℕ) : ∃ n > B, 12 ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3 := by
+  obtain ⟨n, hn, hB⟩ := Set.infinite_iff_exists_gt.mp
+    ((infinite_shortest_weaklyPrimeAdditive_dvd_iff 12 (by decide)).mpr (by decide)) B
+  exact ⟨n, hB, hn⟩
+
+-- At the next power of two the set of shortest multiples is finite.
+example : {n : ℕ | 8 ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3}.Finite := by
+  apply Set.not_infinite.mp
+  intro h
+  exact (infinite_shortest_weaklyPrimeAdditive_dvd_iff 8 (by decide)).mp h dvd_rfl
+
 end MathlibExtTest.WeaklyPrimeAdditive

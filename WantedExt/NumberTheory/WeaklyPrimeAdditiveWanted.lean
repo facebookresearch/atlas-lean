@@ -64,16 +64,6 @@ public theorem_wanted infinite_primes_dvd_four_prime_power_sum
       {x : ℕ × ℕ × ℕ × ℕ | 0 < x.1 ∧ 0 < x.2.1 ∧ 0 < x.2.2.1 ∧ 0 < x.2.2.2 ∧
         p * q * r * s ∣ p ^ x.1 + q ^ x.2.1 + r ^ x.2.2.1 + s ^ x.2.2.2}.Infinite}.Infinite
 
-/-- **Fang–Chen theorem on shortest weakly prime-additive multiples.** For every positive integer
-$m$, there are infinitely many weakly prime-additive numbers $n$ with $m \mid n$ and length
-$\kappa_n = 3$ if and only if $8 \nmid m$.
-
-Source: Wing Hong Leung, *On the Weakly Prime-Additive Numbers with Length 4*, INTEGERS 24
-(2024), Article A9, Theorem 5 (Fang and Chen, Corollary 1.1). -/
-public theorem_wanted infinite_shortest_weaklyPrimeAdditive_dvd_iff (m : ℕ) (hm : 0 < m) :
-    {n : ℕ | m ∣ n ∧ IsWeaklyPrimeAdditive n ∧ weaklyPrimeAdditiveLength n = 3}.Infinite ↔
-      ¬ 8 ∣ m
-
 end
 
 end MetaMathlibExt
