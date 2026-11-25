@@ -576,3 +576,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/InformationTheory/not-yet-classified/part-01/codec-instances/README.md"}], "id": "af_7cff879b2f52dff588c2190f", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/InformationTheory/not-yet-classified/part-01/gaussian-entropy/README.md"}], "id": "af_4444a9a1484bbc7a55db6a42", "extensions": {"org.autoform": {"navigation": "module"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/InformationTheory/not-yet-classified/part-01/leftover-hash/README.md"}], "id": "af_23fb331a82109233c1a4937f", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/InformationTheory/channel-coding/gaussian-mimo-channel/capacity-of-the-gaussian-mimo-channel-by-water-filling.md"}], "id": "af_67dbde24e2a89409f6894b08", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/InformationTheory/channel-coding/gaussian-mimo-channel/README.md"}], "id": "af_ac37ff70f8b848fbfda1454b"}
