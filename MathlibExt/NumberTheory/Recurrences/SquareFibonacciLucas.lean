@@ -189,7 +189,9 @@ private theorem period_one (n : ℕ) : lucasNumber (n + 6) % 4 = lucasNumber n %
       rw [e1, r1, r2]
       omega
 
-private theorem period (q r : ℕ) : lucasNumber (6 * q + r) % 4 = lucasNumber r % 4 := by
+/-- Lucas numbers modulo `4` have period `6`. -/
+theorem lucasNumber_six_mul_add_mod_four (q r : ℕ) :
+    lucasNumber (6 * q + r) % 4 = lucasNumber r % 4 := by
   induction q with
   | zero => simp
   | succ q ih =>
@@ -214,7 +216,7 @@ private theorem nmod6_of_square {n x : ℕ} (h : lucasNumber n = x ^ 2) :
   have hn6 : n = 6 * (n / 6) + n % 6 := (Nat.div_add_mod n 6).symm
   have e1 : lucasNumber n % 4 = lucasNumber (n % 6) % 4 := by
     conv_lhs => rw [hn6]
-    exact period (n / 6) (n % 6)
+    exact lucasNumber_six_mul_add_mod_four (n / 6) (n % 6)
   rw [h] at e1
   have hs := sq_mod4 x
   have hr : n % 6 = 0 ∨ n % 6 = 1 ∨ n % 6 = 2 ∨ n % 6 = 3 ∨ n % 6 = 4 ∨ n % 6 = 5 := by
@@ -241,7 +243,7 @@ private theorem lucas_mod4_of_even_not3 {k : ℕ} (hk : Even k) (h3 : ¬ 3 ∣ k
   have hk6' : k = 6 * (k / 6) + k % 6 := (Nat.div_add_mod k 6).symm
   have e1 : lucasNumber k % 4 = lucasNumber (k % 6) % 4 := by
     conv_lhs => rw [hk6']
-    exact period (k / 6) (k % 6)
+    exact lucasNumber_six_mul_add_mod_four (k / 6) (k % 6)
   rcases hk6 with h0 | h2 | h4
   · exfalso; apply h3
     have hdvd : 6 ∣ k := Nat.dvd_of_mod_eq_zero h0
@@ -347,8 +349,11 @@ private theorem key {k e c x n j : ℕ}
   have hnn := jacobi_sq_nonneg (y := ((x : ℕ) : ℤ)) (b := lucasNumber k)
   omega
 
-/-- Cohn's square-Lucas classification (Keskin–Yosma Theorem 2.1, third
-claim): for `0 < n`, `Lₙ = x²` forces `n ∈ {1, 3}`.
+/-- **Cohn's theorem on square Lucas numbers.** Let $L_0 = 2$, $L_1 = 1$ and
+$L_{n+2} = L_{n+1} + L_n$ be the Lucas numbers. If $n \ge 1$ and $L_n = x^2$ for some natural
+number $x$, then $n = 1$ or $n = 3$.
+
+This is the third claim of Theorem 2.1 of Keskin and Yosma, which they attribute to Cohn.
 
 Proves `Wanted` entry `cohn_square_lucas`.
 -/

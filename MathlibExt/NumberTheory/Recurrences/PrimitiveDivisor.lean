@@ -33,8 +33,11 @@ open scoped BigOperators
 
 namespace LucasSequence
 
-/-- A prime `p` is a primitive divisor of `u n` when it divides `u n` but not
-the discriminant times the product `u 1 * ... * u (n - 1)`. -/
+/-- **Primitive divisor relative to a discriminant.** Let $u_0, u_1, u_2, \dots$ be a sequence
+of integers and let $D$ be an integer (for a Lucas pair $(\alpha, \beta)$, the discriminant
+$D = (\alpha - \beta)^2$). A natural number $p$ is a primitive divisor of $u_n$ when $n \ge 1$, $p$
+is prime, $p$ divides $u_n$, and $p$ does not divide $D \, u_1 u_2 \cdots u_{n-1}$ (for $n = 1$ the
+product is empty, and the condition is that $p$ does not divide $D$). -/
 def IsPrimitiveDivisor (u : ℕ → ℤ) (discriminant : ℤ) (n p : ℕ) : Prop :=
   0 < n ∧ p.Prime ∧ (p : ℤ) ∣ u n ∧
     ¬(p : ℤ) ∣ discriminant * ∏ k ∈ Finset.Ico 1 n, u k

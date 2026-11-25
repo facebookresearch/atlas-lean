@@ -60,7 +60,10 @@ variable
   [∀ b, IsTopologicalAddGroup (E b)] [∀ b, ContinuousConstSMul ℝ (E b)]
   [FiberBundle F E] [VectorBundle ℝ F E]
 
-/-- The same smooth Riemannian metric, viewed with a lower smoothness index. -/
+/-- **Lowering the smoothness of a Riemannian metric.** Let $E$ be a real vector bundle over a
+manifold $B$, let $m \le n$ be smoothness exponents in $\mathbb{N} \cup \{\infty, \omega\}$, and
+let $g$ be a $C^n$ Riemannian metric on $E$. Then $g$, with the same inner product on every
+fiber, is a $C^m$ Riemannian metric on $E$. -/
 def ContMDiffRiemannianMetric.ofLE (g : ContMDiffRiemannianMetric IB n F E)
     {m : ℕ∞ω} (h : m ≤ n) : ContMDiffRiemannianMetric IB m F E where
   inner := g.inner
@@ -70,14 +73,21 @@ def ContMDiffRiemannianMetric.ofLE (g : ContMDiffRiemannianMetric IB n F E)
   contMDiff := g.contMDiff.of_le h
 
 omit [∀ b, IsTopologicalAddGroup (E b)] [∀ b, ContinuousConstSMul ℝ (E b)] in
-/-- The inner product of the lowered metric equals the original inner product. -/
+/-- **Lowering the smoothness keeps the inner product.** Let $E$ be a real vector bundle over a
+manifold $B$, let $m \le n$ be smoothness exponents in $\mathbb{N} \cup \{\infty, \omega\}$, and
+let $g$ be a $C^n$ Riemannian metric on $E$. For every $b \in B$, the inner product on the fiber
+$E_b$ of $g$ viewed as a $C^m$ Riemannian metric equals the inner product of $g$ on $E_b$. -/
 @[simp]
 theorem ContMDiffRiemannianMetric.ofLE_inner
     (g : ContMDiffRiemannianMetric IB n F E) {m : ℕ∞ω} (h : m ≤ n) (b : B) :
     (g.ofLE h).inner b = g.inner b :=
   rfl
 
-/-- Conformal scaling of a metric by a smooth positive function `u`. -/
+/-- **Conformal scaling of a Riemannian metric.** Let $E$ be a real vector bundle over a
+manifold $B$, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, let $g$ be a $C^n$ Riemannian
+metric on $E$, and let $u : B \to \mathbb{R}$ be a $C^n$ function with $u(b) > 0$ for every
+$b \in B$. The conformal scaling of $g$ by $u$ is the $C^n$ Riemannian metric $u g$ on $E$
+whose inner product on each fiber $E_b$ is $u(b)$ times the inner product of $g$ on $E_b$. -/
 def ContMDiffRiemannianMetric.conformalScale
     (g : ContMDiffRiemannianMetric IB n F E) (u : B → ℝ)
     (hu : ContMDiff IB 𝓘(ℝ) n u) (hpos : ∀ b, 0 < u b) :
@@ -162,7 +172,11 @@ def ContMDiffRiemannianMetric.conformalScale
   contMDiff := ContMDiff.smul_section hu g.contMDiff
 
 omit [∀ b, IsTopologicalAddGroup (E b)] in
-/-- The inner product of the conformally scaled metric. -/
+/-- **Inner product of a conformally scaled metric.** Let $E$ be a real vector bundle over a
+manifold $B$, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, let $g$ be a $C^n$ Riemannian
+metric on $E$, with inner product $g_b$ on the fiber $E_b$, and let $u : B \to \mathbb{R}$ be a
+$C^n$ function with $u(b) > 0$ for every $b \in B$. Then the conformal scaling $u g$ of $g$ by
+$u$ satisfies $(u g)_b(v, w) = u(b)\, g_b(v, w)$ for every $b \in B$ and all $v, w \in E_b$. -/
 @[simp]
 theorem ContMDiffRiemannianMetric.conformalScale_inner_apply
     (g : ContMDiffRiemannianMetric IB n F E) (u : B → ℝ)
@@ -173,7 +187,11 @@ theorem ContMDiffRiemannianMetric.conformalScale_inner_apply
   simp [smul_eq_mul]
 
 omit [∀ b, IsTopologicalAddGroup (E b)] [∀ b, ContinuousConstSMul ℝ (E b)] in
-/-- A scalar factor relating two metrics at a point with a nonzero vector is positive. -/
+/-- **A conformal factor at a point is positive.** Let $E$ be a real vector bundle over a
+manifold $B$, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $g$ and $g'$ be $C^n$
+Riemannian metrics on $E$, with inner products $g_b$ and $g'_b$ on the fiber $E_b$. Let
+$u : B \to \mathbb{R}$ and $b \in B$. If $g'_b(v, w) = u(b)\, g_b(v, w)$ for all $v, w \in E_b$
+and $E_b$ contains a nonzero vector, then $u(b) > 0$. -/
 theorem ContMDiffRiemannianMetric.pos_of_inner_eq_mul
     (g g' : ContMDiffRiemannianMetric IB n F E) {u : B → ℝ} {b : B}
     (h : ∀ v w : E b, g'.inner b v w = u b * g.inner b v w)
@@ -195,8 +213,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
   {g g' g'' : ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x)}
 
-/-- The conformal class of a `C^∞` metric: metrics pointwise proportional by a smooth
-positive factor. -/
+/-- **Conformal class of a Riemannian metric.** Let $M$ be a $C^\infty$ manifold modeled on a
+real normed space, and let $g$ be a $C^\infty$ Riemannian metric on $M$, with inner product $g_x$
+on the tangent space $T_x M$. The conformal class of $g$ is the set of $C^\infty$ Riemannian
+metrics $g'$ on $M$ for which there is a $C^\infty$ function $u : M \to \mathbb{R}$ with
+$u(x) > 0$ for all $x \in M$ and $g'_x(v, w) = u(x)\, g_x(v, w)$ for all $x \in M$ and all
+$v, w \in T_x M$. -/
 def conformalClass
     (g : ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x)) :
     Set (ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x)) :=
@@ -206,7 +228,11 @@ def conformalClass
         (∀ x, 0 < u x) ∧
           ∀ x (v w : TangentSpace I x), g'.inner x v w = u x * g.inner x v w}
 
-/-- Membership in the conformal class via a smooth exponential factor. -/
+/-- **Conformal metrics via an exponential factor.** Let $M$ be a $C^\infty$ manifold modeled on
+a real normed space, and let $g$ and $g'$ be $C^\infty$ Riemannian metrics on $M$, with inner
+products $g_x$ and $g'_x$ on the tangent space $T_x M$. Then $g'$ lies in the conformal class of
+$g$ if and only if there is a $C^\infty$ function $f : M \to \mathbb{R}$ with
+$g'_x(v, w) = e^{f(x)}\, g_x(v, w)$ for all $x \in M$ and all $v, w \in T_x M$. -/
 theorem mem_conformalClass_iff_exp :
     g' ∈ conformalClass g ↔
       ∃ f : M → ℝ,
@@ -236,13 +262,17 @@ theorem mem_conformalClass_iff_exp :
     intro x v w
     exact hinner x v w
 
-/-- Every metric lies in its own conformal class. -/
+/-- **A metric lies in its own conformal class.** Every smooth Riemannian metric $g$ on a
+smooth manifold $M$ lies in the conformal class of $g$. -/
 theorem self_mem_conformalClass : g ∈ conformalClass g := by
   refine ⟨fun _ ↦ 1, contMDiff_const, fun _ ↦ zero_lt_one, ?_⟩
   intro x v w
   simp
 
-/-- A conformally scaled metric lies in the conformal class. -/
+/-- **Conformal scalings lie in the conformal class.** Let $M$ be a $C^\infty$ manifold modeled
+on a real normed space, let $g$ be a $C^\infty$ Riemannian metric on $M$, and let
+$u : M \to \mathbb{R}$ be a $C^\infty$ function with $u(x) > 0$ for all $x \in M$. Then the
+conformal scaling $u g$ of $g$ by $u$ lies in the conformal class of $g$. -/
 theorem conformalScale_mem_conformalClass (u : M → ℝ)
     (hu : ContMDiff I 𝓘(ℝ) ∞ u) (hpos : ∀ x, 0 < u x) :
     g.conformalScale u hu hpos ∈ conformalClass g := by
@@ -250,7 +280,9 @@ theorem conformalScale_mem_conformalClass (u : M → ℝ)
   intro x v w
   exact ContMDiffRiemannianMetric.conformalScale_inner_apply g u hu hpos x v w
 
-/-- Symmetry of the conformal relation. -/
+/-- **Conformal equivalence is symmetric.** Let $M$ be a $C^\infty$ manifold modeled on a real
+normed space, and let $g$ and $g'$ be $C^\infty$ Riemannian metrics on $M$. If $g'$ lies in the
+conformal class of $g$, then $g$ lies in the conformal class of $g'$. -/
 theorem mem_conformalClass_symm :
     g' ∈ conformalClass g → g ∈ conformalClass g' := by
   intro hmem
@@ -265,7 +297,10 @@ theorem mem_conformalClass_symm :
     rw [h1, ← mul_assoc, inv_mul_cancel₀ (hne x), one_mul]
   exact h2.symm
 
-/-- Transitivity of the conformal relation. -/
+/-- **Conformal equivalence is transitive.** Let $M$ be a $C^\infty$ manifold modeled on a real
+normed space, and let $g$, $g'$ and $g''$ be $C^\infty$ Riemannian metrics on $M$. If $g'$ lies
+in the conformal class of $g$ and $g''$ lies in the conformal class of $g'$, then $g''$ lies in
+the conformal class of $g$. -/
 theorem mem_conformalClass_trans :
     g' ∈ conformalClass g → g'' ∈ conformalClass g' → g'' ∈ conformalClass g := by
   intro h1mem h2mem

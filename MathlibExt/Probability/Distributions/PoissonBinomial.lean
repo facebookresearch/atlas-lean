@@ -273,7 +273,6 @@ theorem measure_le_sum_eq_poissonBinomialTail {m : ℕ}
     simpa [Set.compl_ofPred, not_le] using this
   have hcongr : {ω | k ≤ S ω} =ᵐ[μ] (⋃ j ∈ Icc k m, S ⁻¹' {j} : Set Ω) := by
     filter_upwards [hae] with ω hω
-    simp only [eq_iff_iff]
     simp [hω]
   rw [← measureReal_def, measureReal_congr hcongr, hunion]
   rfl

@@ -20,7 +20,7 @@ J. S. B. Mitchell, arXiv:2607.06251 (2026), Section 2.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.PlanarThreeSatWanted
@@ -54,7 +54,7 @@ variables to the clauses are drawn as vertical segments". Some later restatement
 exactly three literals per clause; the at-most-three class stated here contains that class, so
 it is NP-complete under either reading.
 
-The formula uses the parent's encoding (`Cslib.Logic.PL.CNF`, variables `0, …, n - 1`, at most
+The formula uses the parent's encoding (`Cslib.Logic.LegacyPL.CNF`, variables `0, …, n - 1`, at most
 three literals per clause) and the parent's `PlanarThreeSatFeasible`; the variables of a clause
 are distinct, so that each variable-clause edge of the incidence graph has exactly one leg. The
 representation is given with natural-number coordinates, the line `l` being the `x`-axis and the
@@ -84,11 +84,11 @@ reduction from every language in `NP`
 of literals `(variable, polarity)`), the variable intervals `[aᵤ, bᵤ]`, the clause heights
 `h_c`, and for each clause the `x`-coordinates of its legs, one per literal. -/
 abbrev PlanarMonotoneRectilinearThreeSatInstance :=
-  ℕ × Cslib.Logic.PL.CNF × List (ℕ × ℕ) × List ℕ × List (List ℕ)
+  ℕ × Cslib.Logic.LegacyPL.CNF × List (ℕ × ℕ) × List ℕ × List (List ℕ)
 
 /-- The clause `c` of the formula. -/
 def clause (i : PlanarMonotoneRectilinearThreeSatInstance) (c : ℕ) :
-    Cslib.Logic.PL.CNFClause :=
+    Cslib.Logic.LegacyPL.CNFClause :=
   i.2.1.getD c []
 
 /-- The side of clause `c`: `true` (above `l`) for a positive clause, `false` (below `l`) for a

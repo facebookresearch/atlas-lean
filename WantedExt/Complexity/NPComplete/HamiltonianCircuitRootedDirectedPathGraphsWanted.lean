@@ -24,7 +24,7 @@ trees", Discrete Mathematics 13 (1975), 237-249, doi:10.1016/0012-365X(75)90021-
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted

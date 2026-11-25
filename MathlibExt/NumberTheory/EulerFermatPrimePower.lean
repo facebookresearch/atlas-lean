@@ -22,8 +22,8 @@ For a prime `p` and `1 ≤ r`, `a ^ p ^ r ≡ a ^ p ^ (r - 1) [MOD p ^ r]`.
 
 namespace Nat
 
-/-- `a ^ p ^ r ≡ a ^ p ^ (r - 1) [MOD p ^ r]` for every `a : ℕ`, prime `p` and `1 ≤ r`;
-`euler_fermat_prime_power_congruence` is the source-shaped form. -/
+/-- **Euler–Fermat congruence modulo prime powers.** For every natural number $a$, every prime $p$
+and every natural number $r \ge 1$, we have $a^{p^r} \equiv a^{p^{r-1}} \pmod{p^r}$. -/
 theorem euler_fermat_prime_power_congruence_general {a p r : ℕ} (hp : Nat.Prime p)
     (hr : 1 ≤ r) : Nat.ModEq (p ^ r) (a ^ (p ^ r)) (a ^ (p ^ (r - 1))) := by
   have hp2 : 2 ≤ p := hp.two_le
@@ -73,8 +73,10 @@ theorem euler_fermat_prime_power_congruence_general {a p r : ℕ} (hp : Nat.Prim
 
 set_option linter.unusedVariables false in
 /--
-For a positive natural `a`, a prime `p`, and `1 ≤ r`,
-`a ^ (p ^ r)` is congruent to `a ^ (p ^ (r - 1))` modulo `p ^ r`.
+**Euler–Fermat congruence modulo prime powers, for positive bases.** For every positive natural
+number $a$, every prime $p$ and every natural number $r \ge 1$, we have
+$a^{p^r} \equiv a^{p^{r-1}} \pmod{p^r}$.
+
 Source: G. Everest, A. J. van der Poorten, Y. Puri, and T. Ward,
 "Integer Sequences and Periodic Points," Journal of Integer Sequences 5 (2002),
 Article 02.2.3, Corollary `eulerfermat`;

@@ -7,5 +7,6 @@ Spin and bond configuration spaces, Bernoulli product measures and cylinder even
 - [Spin and bond configuration spaces](spin-and-bond-configuration-spaces/README.md)
 - [Bernoulli product measures and cylinder events](bernoulli-product-measures-and-cylinder-events/README.md)
 - [Gibbs conditional distributions](gibbs-conditional-distributions/README.md)
+- [Invariant random perfect matchings](invariant-random-perfect-matchings/README.md)
 - [Translation invariance and ergodicity of random fields](translation-invariance-and-ergodicity-of-random/README.md)
 - [Weak and monotone limits on configuration space](weak-and-monotone-limits-on-configuration-space/README.md)

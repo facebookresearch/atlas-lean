@@ -19,7 +19,7 @@ E102-A(9) (2019), 1118-1125, doi:10.1587/transfun.E102.A.1118; conference versio
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DosunFuwariWanted

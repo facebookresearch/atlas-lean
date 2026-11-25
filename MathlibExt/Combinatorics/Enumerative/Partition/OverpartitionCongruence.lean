@@ -8,15 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Partition.GenFun
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Multiset.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import MathlibExt.NumberTheory.QuadraticForms.ThreeSquares
+public import MathlibExt.NumberTheory.SquareRepresentationCongruences
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Combinatorics.Enumerative.Partition.Basic
-import Mathlib.Combinatorics.Enumerative.Partition.GenFun
 import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Int.Cast.Lemmas
@@ -1896,16 +1897,42 @@ end
 
 namespace MetaMathlibExt
 
-/--
-For every positive `n`, the number of overpartitions of `5n` is congruent modulo `5`
-to `(-1)ⁿ` times the number of ordered representations of `n` as three integer squares.
+open PowerSeries in
+/-- The square theta series is reciprocal to the overpartition generating function at `-X`. -/
+public theorem overpartitionOdd_square_recurrence.theta_mul_rescale_genFun :
+    squareThetaSeries * rescale (-1 : ℤ) (Nat.Partition.genFun (fun _ _ ↦ (2 : ℤ))) = 1 := by
+  suffices h : squareThetaSeries = opcTheta by rw [h, opc_theta_mul_rescale_genFun]
+  ext n
+  rw [opc_theta_coeff_eq_card, squareThetaSeries, coeff_mk, ← Nat.card_eq_finsetCard]
+  apply congrArg (Nat.cast : ℕ → ℤ)
+  apply Nat.card_congr
+  apply Equiv.subtypeEquivRight
+  intro x
+  simp only [Finset.mem_filter, Finset.mem_Icc]
+  have hs : x.natAbs ^ 2 = n ↔ x ^ 2 = (n : ℤ) := by
+    rw [← Nat.cast_inj (R := ℤ), Nat.cast_pow, Int.natAbs_sq]
+  rw [hs]
+  refine ⟨And.right, fun h => ⟨⟨?_, ?_⟩, h⟩⟩
+  · have := Int.le_self_sq (-x)
+    rw [neg_sq, h] at this
+    omega
+  · simpa [h] using Int.le_self_sq x
 
-Liuquan Wang, "Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions,"
+/--
+**Overpartitions of $5n$ modulo $5$, explicit form.** For every integer $n \ge 1$, the number of
+pairs $(P, S)$, where $P$ is a finite multiset of positive integers with sum $5n$ and $S$ is a
+finite set of natural numbers each belonging to $P$, is congruent modulo $5$ to $(-1)^n$ times the
+number of ordered triples $(x, y, z)$ of integers with $x^2 + y^2 + z^2 = n$.
+
+These pairs encode the overpartitions of $5n$: $P$ is the multiset of parts and $S$ is the set of
+overlined part sizes.
+
+Proves `Wanted` entry `overpartition_mul_five_mod_five`.
+
+Source: Liuquan Wang, "Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions,"
 Journal of Integer Sequences 17 (2014), Article 14.9.8,
 Theorem (label thm1), lines 110–114.
 `https://cs.uwaterloo.ca/journals/JIS/VOL17/Wang2/wang15.tex`
-
-Proves `Wanted` entry `overpartition_mul_five_mod_five`.
 -/
 public theorem overpartition_mul_five_mod_five
     (n : ℕ) (hn : 1 ≤ n) :
@@ -2090,7 +2117,9 @@ end MetaMathlibExt
 namespace Nat
 namespace Overpartition
 
-/-- Cardinality of overpartitions as the explicit pair subtype. -/
+/-- **Overpartitions as pairs of a multiset and a set.** For every natural number $m$, the number
+of overpartitions of $m$ equals the number of pairs $(P, S)$ in which $P$ is a finite multiset of
+positive integers with sum $m$ and $S$ is a finite set of natural numbers each belonging to $P$. -/
 public lemma natCard_eq_card_subtype (m : ℕ) :
     Nat.card (Nat.Overpartition m) =
       Nat.card { p : Multiset ℕ × Finset ℕ //
@@ -2128,7 +2157,9 @@ end Nat
 
 namespace Nat
 
-/-- Count of three-square representations as the cardinality of solutions. -/
+/-- **The three-square count counts all integer solutions.** For every natural number $n$, the
+three-square representation count $r_3(n)$ equals the number of ordered triples $(x, y, z)$ of
+integers with $x^2 + y^2 + z^2 = n$. -/
 public lemma threeSquareRepresentationCount_eq_natCard (n : ℕ) :
     threeSquareRepresentationCount n =
       Nat.card { x : ℤ × ℤ × ℤ //
@@ -2193,7 +2224,9 @@ end Nat
 
 namespace MetaMathlibExt
 
-/-- Canonical API form of the overpartition congruence. -/
+/-- **Overpartitions of $5n$ modulo $5$.** For every integer $n \ge 1$, the number of
+overpartitions of $5n$ is congruent modulo $5$ to $(-1)^n r_3(n)$, where $r_3(n)$ is the number of
+ordered triples $(x, y, z)$ of integers with $x^2 + y^2 + z^2 = n$. -/
 public theorem overpartition_card_mul_five_modEq (n : ℕ) (hn : 1 ≤ n) :
     Int.ModEq 5 (Nat.card (Nat.Overpartition (5 * n)))
       (((-1 : ℤ) ^ n) * Nat.threeSquareRepresentationCount n) := by
