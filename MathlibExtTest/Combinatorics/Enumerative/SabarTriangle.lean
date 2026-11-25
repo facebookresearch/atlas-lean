@@ -81,4 +81,16 @@ example : (∑ i ∈ Finset.range (2 * 3 - 1),
     harmonic 3 = 11 / 6 := by
   decide +kernel
 
+-- The declared formula, also evaluated directly on both sides through index seven.
+private def centralWhittRhs (n : ℕ) : ℚ :=
+  (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * whittGeneralizedCatalan 2 n / 2 ^ (n + 1) +
+    (-1) ^ (n + 1) + (-1) ^ n / 2 ^ (n + 1)
+
+example (n : ℕ) (hn : 1 ≤ n) : (sabarNumber (2 * n) n : ℚ) = centralWhittRhs n :=
+  sabarNumber_central_eq_whittGeneralizedCatalan n hn
+
+-- This includes the lower endpoint and both parities of the correction term.
+example : ∀ n ∈ Finset.Icc 1 7, (sabarNumber (2 * n) n : ℚ) = centralWhittRhs n := by
+  decide +kernel
+
 end MathlibExtTest.SabarTriangle
