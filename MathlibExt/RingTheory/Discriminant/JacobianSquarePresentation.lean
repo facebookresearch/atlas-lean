@@ -188,8 +188,8 @@ private theorem d_d (m : Finset I → M) : d x M (d x M m) = 0 := by
   classical
   funext U
   simp only [d_apply, Pi.zero_apply, smul_sum, smul_smul]
-  rw [← sum_product' univ univ (fun j i => (coef x j U * coef x i (insert j U)) • m (insert i
-      (insert j U)))]
+  rw [← sum_product' univ univ (fun j i => (coef x j U * coef x i (insert j U)) • m
+      (insert i (insert j U)))]
   refine sum_involution (fun ji _ => (ji.2, ji.1)) ?_ ?_ (fun _ _ => by simp) (fun _ _ => rfl)
   · rintro ⟨j, i⟩ -
     dsimp only
@@ -257,12 +257,12 @@ def dC (p : ℕ) : C (P := P) (I := I) M (p + 1) →ₗ[P] C (P := P) (I := I) M
 @[scoped simp] private theorem coe_dC_apply (p : ℕ) (m : C (P := P) (I := I) M (p + 1)) :
     (dC x M p m : Finset I → M) = d x M m := rfl
 
-private theorem dC_dC (p : ℕ) (m : C (P := P) (I := I) M (p + 2)) : dC x M p (dC x M (p + 1) m) =
-    0 := by
+private theorem dC_dC (p : ℕ) (m : C (P := P) (I := I) M (p + 2)) :
+    dC x M p (dC x M (p + 1) m) = 0 := by
   ext1; simp [d_d]
 
-theorem d_eq_zero_of_mem_C_zero {m : Finset I → M} (hm : m ∈ C (P := P) (I := I) M 0) : d x M m =
-    0 := by
+theorem d_eq_zero_of_mem_C_zero {m : Finset I → M} (hm : m ∈ C (P := P) (I := I) M 0) :
+    d x M m = 0 := by
   funext T
   rw [d_apply]
   refine Finset.sum_eq_zero fun i _ => ?_
@@ -271,8 +271,8 @@ theorem d_eq_zero_of_mem_C_zero {m : Finset I → M} (hm : m ∈ C (P := P) (I :
   · rw [hm _ (by rw [Finset.card_insert_of_notMem hi]; omega), smul_zero]
 
 noncomputable def complex : ChainComplex (ModuleCat.{v'} P) ℕ :=
-  ChainComplex.of (fun p => ModuleCat.of P (C (P := P) (I := I) M p)) (fun p => ModuleCat.ofHom (dC
-      x M p))
+  ChainComplex.of (fun p => ModuleCat.of P (C (P := P) (I := I) M p))
+      (fun p => ModuleCat.ofHom (dC x M p))
     fun p => by ext m : 2; exact dC_dC x M p m
 
 @[scoped simp] private theorem complex_X (p : ℕ) : (complex x M).X p = ModuleCat.of P (C (P := P)
@@ -283,8 +283,8 @@ private theorem complex_d (p : ℕ) : (complex x M).d (p + 1) p = ModuleCat.ofHo
   simp [complex]
 
 noncomputable def scZ (p : ℕ) : ShortComplex (ModuleCat.{v'} P) :=
-  ShortComplex.mk (ModuleCat.ofHom (dC x M p) : ModuleCat.of P (C (P := P) (I := I) M (p + 1)) ⟶
-      ModuleCat.of P (C (P := P) (I := I) M p))
+  ShortComplex.mk (ModuleCat.ofHom (dC x M p) : ModuleCat.of P (C (P := P) (I := I) M (p + 1))
+      ⟶ ModuleCat.of P (C (P := P) (I := I) M p))
     (ModuleCat.ofHom ((d x M).domRestrict (C (P := P) (I := I) M p)) :
       ModuleCat.of P (C (P := P) (I := I) M p) ⟶ ModuleCat.of P (Finset I → M))
     (by ext m : 2; simp [d_d])
@@ -343,8 +343,8 @@ theorem map_kerEquivZ_range (p : ℕ) :
     exact ⟨(⟨m, hm⟩ : C (P := P) (I := I) M (p + 1)), Subtype.ext hz⟩
 
 noncomputable def scZHomologyEquiv (p : ℕ) :
-    (LinearMap.ker (scZ x M p).g.hom ⧸ LinearMap.range (scZ x M p).moduleCatToCycles) ≃ₗ[P] H x M
-        p :=
+    (LinearMap.ker (scZ x M p).g.hom ⧸ LinearMap.range (scZ x M p).moduleCatToCycles) ≃ₗ[P]
+        H x M p :=
   Submodule.Quotient.equiv _ _ (kerEquivZ x M p) (map_kerEquivZ_range x M p)
 
 noncomputable def bridge (p : ℕ) : (complex x M).homology p ≅ ModuleCat.of P (H x M p) :=
@@ -738,8 +738,8 @@ def reverse (x : I → P) : HMap x M (x ∘ OrderDual.ofDual) M where
     rw [LinearMap.map_smul, Pi.smul_apply, d_reindexLin_dual, smul_smul, reindexLin_apply]
     by_cases hT : T.card = p
     · rw [hT, neg_one_pow_mul_self, one_smul]
-    · rw [d_mem_C x M hm' (T.map OrderDual.ofDual.toEmbedding) (by rwa [Finset.card_map]),
-        smul_zero]
+    · rw [d_mem_C x M hm' (T.map OrderDual.ofDual.toEmbedding)
+        (by rwa [Finset.card_map]), smul_zero]
 
 def reverseInv (x : I → P) : HMap (x ∘ OrderDual.ofDual) M x M where
   toLinearMap := reindexLin P M (OrderDual.toDual : I ≃ Iᵒᵈ)
@@ -788,14 +788,14 @@ omit [LinearOrder I] [Fintype I] in
     x i • m = 0 := Iff.rfl
 
 omit [LinearOrder I] in
-private theorem C_eq_bot_of_card_lt {p : ℕ} (hp : Fintype.card I < p) : C (P := P) (I := I) M p =
-    ⊥ := by
+private theorem C_eq_bot_of_card_lt {p : ℕ} (hp : Fintype.card I < p) : C (P := P)
+    (I := I) M p = ⊥ := by
   refine (Submodule.eq_bot_iff _).mpr fun m hm => funext fun T => hm T ?_
   have := Finset.card_le_univ T
   omega
 
-private theorem subsingleton_H_of_card_lt {p : ℕ} (hp : Fintype.card I < p) : Subsingleton (H x M
-    p) := by
+private theorem subsingleton_H_of_card_lt {p : ℕ} (hp : Fintype.card I < p) :
+    Subsingleton (H x M p) := by
   have hZ : ∀ z : Z x M p, z = 0 := fun z => by
     have h : (z : Finset I → M) ∈ C (P := P) (I := I) M p := z.2.1
     rw [C_eq_bot_of_card_lt M hp, Submodule.mem_bot] at h
@@ -963,10 +963,8 @@ private theorem HZeroEquiv_mk (z : Z x M 0) :
     HZeroEquiv x M (Submodule.Quotient.mk z) = Submodule.Quotient.mk ((z : Finset I → M) ∅) := by
   rfl
 
-private theorem HZeroEquiv_mapH {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ : M →ₗ[P] M') (h
-    : H x M
-    0) :
-    HZeroEquiv x M' ((ChainMap.ofLinearMap x φ).mapH 0 h) =
+private theorem HZeroEquiv_mapH {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ : M →ₗ[P] M')
+    (h : H x M 0) : HZeroEquiv x M' ((ChainMap.ofLinearMap x φ).mapH 0 h) =
       Submodule.mapQ _ _ φ (fun m hm => by
         refine Submodule.smul_induction_on hm (fun r hr n _ => ?_) fun a b ha hb => add_mem ha hb
         rw [Submodule.mem_comap, map_smul]
@@ -975,8 +973,8 @@ private theorem HZeroEquiv_mapH {M' : Type v'} [AddCommGroup M'] [Module P M'] (
   rfl
 
 private theorem HTopEquiv_mapH {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ : M →ₗ[P] M')
-    (h : H x M (Fintype.card I)) :
-    (HTopEquiv x M' ((ChainMap.ofLinearMap x φ).mapH _ h) : M') = φ (HTopEquiv x M h) := by
+    (h : H x M (Fintype.card I)) : (HTopEquiv x M' ((ChainMap.ofLinearMap x φ).mapH _ h) : M') =
+    φ (HTopEquiv x M h) := by
   obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ h
   rfl
 
@@ -1017,12 +1015,12 @@ private theorem d_contract_add_contract_d (i : I) (m : Finset I → M) :
       · rw [coef_of_mem x (Finset.mem_insert_of_mem hjS), coef_of_mem x hjS, zero_smul, zero_add,
           zero_smul, smul_zero]
       have hjT : j ∉ insert i S := by simp [hji, hjS]
-      rw [ite_eq_left (Finset.mem_insert_of_mem (Finset.mem_insert_self i S) : i ∈ insert j (insert
-          i S)),
+      rw [ite_eq_left (Finset.mem_insert_of_mem (Finset.mem_insert_self i S) :
+          i ∈ insert j (insert i S)),
         (Finset.erase_insert_of_ne hji).trans (congrArg _ (Finset.erase_insert hiS)),
         coef_of_not_mem x hjT, coef_of_not_mem x hjS, smul_smul, smul_smul, ← add_smul]
-      suffices h0 : sgn P j (insert i S) * x j * sgn P i (insert j S) + sgn P i S * (sgn P j S * x
-          j) = 0 by
+      suffices h0 : sgn P j (insert i S) * x j * sgn P i (insert j S) + sgn P i S *
+          (sgn P j S * x j) = 0 by
         rw [h0, zero_smul]
       rcases lt_or_gt_of_ne hji with hlt | hgt
       · rw [sgn_insert_of_lt P hjS hlt, sgn_insert_of_not_lt P (not_lt.mpr hlt.le)]; ring
@@ -1030,17 +1028,15 @@ private theorem d_contract_add_contract_d (i : I) (m : Finset I → M) :
     · intro h; exact absurd (Finset.mem_univ i) h
   · rw [ite_eq_right hi, add_zero, Finset.sum_eq_single i]
     · rw [ite_eq_left (Finset.mem_insert_self i T), Finset.erase_insert hi, coef_of_not_mem x hi,
-        smul_smul,
-        mul_right_comm, sgn_mul_self, one_mul]
+        smul_smul, mul_right_comm, sgn_mul_self, one_mul]
     · intro j _ hji
       rw [ite_eq_right, smul_zero]
       simp [Ne.symm hji, hi]
     · intro h; exact absurd (Finset.mem_univ i) h
 
 omit [Fintype I] in
-private theorem contract_mem_C (i : I) {p : ℕ} {m : Finset I → M} (hm : m ∈ C (P := P) (I := I) M
-    p) :
-    contract P M i m ∈ C (P := P) (I := I) M (p + 1) := by
+private theorem contract_mem_C (i : I) {p : ℕ} {m : Finset I → M}
+    (hm : m ∈ C (P := P) (I := I) M p) : contract P M i m ∈ C (P := P) (I := I) M (p + 1) := by
   intro T hT
   rw [contract_apply]
   split_ifs with hiT
@@ -1058,10 +1054,8 @@ private theorem smul_H_eq_zero (i : I) {p : ℕ} (h : H x M p) : x i • h = 0 :
     have h := d_contract_add_contract_d x i (z : Finset I → M)
     rwa [LinearMap.mem_ker.mp z.2.2, map_zero, add_zero] at h
 
-private theorem smul_H_eq_zero_of_mem_span {p : ℕ} (a : P) (ha : a ∈ Ideal.span (Set.range x)) (h :
-    H x M
-    p) :
-    a • h = 0 := by
+private theorem smul_H_eq_zero_of_mem_span {p : ℕ} (a : P) (ha : a ∈ Ideal.span (Set.range x))
+    (h : H x M p) : a • h = 0 := by
   induction ha using Submodule.span_induction with
   | mem r hr => obtain ⟨i, rfl⟩ := hr; exact smul_H_eq_zero i h
   | zero => exact zero_smul P h
@@ -1088,8 +1082,8 @@ private theorem H_mk_eq_zero_iff {p : ℕ} (z : Z x M p) :
   rw [Submodule.Quotient.mk_eq_zero, Submodule.mem_comap, Submodule.subtype_apply]
 
 private theorem H_mk_eq_mk_iff {p : ℕ} (z z' : Z x M p) :
-    (Submodule.Quotient.mk z : H x M p) = Submodule.Quotient.mk z' ↔ (z : Finset I → M) - z' ∈ B x
-        M p := by
+    (Submodule.Quotient.mk z : H x M p) = Submodule.Quotient.mk z' ↔ (z : Finset I → M) - z' ∈
+        B x M p := by
   rw [Submodule.Quotient.eq, Submodule.mem_comap, Submodule.subtype_apply, Submodule.coe_sub]
 
 end ClassLemmas
@@ -1136,8 +1130,8 @@ omit [Fintype I] [Fintype U] in
 private theorem not_top_lt_inlₗ (i : I) : ¬top I U < inlₗ U i := Sum.Lex.not_inr_lt_inl
 
 omit [LinearOrder I] [Fintype I] [LinearOrder U] [Fintype U] in
-private theorem inlₗ_ne_top (i : I) : inlₗ U i ≠ top I U := fun h => Sum.inl_ne_inr
-    (toLex.injective h)
+private theorem inlₗ_ne_top (i : I) : inlₗ U i ≠ top I U :=
+    fun h => Sum.inl_ne_inr (toLex.injective h)
 
 omit [LinearOrder I] [Fintype I] [LinearOrder U] [Fintype U] in
 private theorem top_notMem_map (T : Finset I) : top I U ∉ T.map (inlₗ U) := by
@@ -1145,8 +1139,8 @@ private theorem top_notMem_map (T : Finset I) : top I U ∉ T.map (inlₗ U) := 
   exact fun i _ h => inlₗ_ne_top i h
 
 variable (U) in
-noncomputable def down (S : Finset (I ⊕ₗ U)) : Finset I := S.preimage (inlₗ U) (inlₗ
-    U).injective.injOn
+noncomputable def down (S : Finset (I ⊕ₗ U)) : Finset I := S.preimage (inlₗ U)
+    (inlₗ U).injective.injOn
 
 omit [LinearOrder I] [Fintype I] [LinearOrder U] [Fintype U] [Unique U] in
 @[scoped simp] private theorem mem_down {S : Finset (I ⊕ₗ U)} {i : I} : i ∈ down U S ↔ inlₗ U i ∈
@@ -1164,8 +1158,8 @@ omit [Fintype I] [Fintype U] in
   ext i; simp [inlₗ_ne_top]
 
 omit [LinearOrder I] [Fintype I] [LinearOrder U] [Fintype U] in
-private theorem eq_map_down {S : Finset (I ⊕ₗ U)} (h : top I U ∉ S) : S = (down U S).map (inlₗ
-    U) := by
+private theorem eq_map_down {S : Finset (I ⊕ₗ U)} (h : top I U ∉ S) :
+    S = (down U S).map (inlₗ U) := by
   ext k
   rcases lex_cases k with ⟨i, rfl⟩ | rfl
   · simp
@@ -1180,19 +1174,18 @@ private theorem eq_insert_map_down {S : Finset (I ⊕ₗ U)} (h : top I U ∈ S)
   · simp only [Finset.mem_insert, true_or, iff_true]; exact h
 
 omit [LinearOrder I] [Fintype I] [LinearOrder U] [Fintype U] in
-private theorem card_down_of_notMem {S : Finset (I ⊕ₗ U)} (h : top I U ∉ S) : (down U S).card =
-    S.card := by
+private theorem card_down_of_notMem {S : Finset (I ⊕ₗ U)}
+    (h : top I U ∉ S) : (down U S).card = S.card := by
   rw [← Finset.card_map (inlₗ U), ← eq_map_down h]
 
 omit [Fintype I] [Fintype U] in
 private theorem card_insert_top_map (T : Finset I) : (insert (top I U) (T.map (inlₗ U))).card =
-    T.card +
-    1 := by
+    T.card + 1 := by
   rw [Finset.card_insert_of_notMem (top_notMem_map T), Finset.card_map]
 
 omit [Fintype I] [Fintype U] in
-private theorem card_down_of_mem {S : Finset (I ⊕ₗ U)} (h : top I U ∈ S) : (down U S).card + 1 =
-    S.card :=
+private theorem card_down_of_mem {S : Finset (I ⊕ₗ U)} (h : top I U ∈ S) :
+    (down U S).card + 1 = S.card :=
     by
   rw [← card_insert_top_map (U := U) (down U S), ← eq_insert_map_down h]
 
@@ -1208,8 +1201,8 @@ private theorem sum_lex {A : Type*} [AddCommMonoid A] (f : I ⊕ₗ U → A) :
   exact Fintype.sum_unique (fun u : U => f (toLex (Sum.inr u)))
 
 omit [Fintype I] [Fintype U] [Unique U] in
-private theorem sgn_inlₗ_map (i : I) (T : Finset I) : sgn P (inlₗ U i) (T.map (inlₗ U)) = sgn P i
-    T := by
+private theorem sgn_inlₗ_map (i : I) (T : Finset I) : sgn P (inlₗ U i)
+    (T.map (inlₗ U)) = sgn P i T := by
   rw [sgn, sgn, Finset.filter_map, Finset.card_map]
   congr 2
 
@@ -1231,8 +1224,7 @@ private theorem coef_snoc_inlₗ_map (x : I → P) (t : P) (i : I) (T : Finset I
   by_cases hi : i ∈ T
   · rw [coef_of_mem _ ((Finset.mem_map' _).mpr hi), coef_of_mem _ hi]
   · rw [coef_of_not_mem _ (fun h => hi ((Finset.mem_map' _).mp h)), coef_of_not_mem _ hi,
-      sgn_inlₗ_map,
-      snoc_inl]
+      sgn_inlₗ_map, snoc_inl]
 
 omit [Fintype I] [Fintype U] in
 private theorem coef_snoc_inlₗ_insert_top (x : I → P) (t : P) (i : I) (T : Finset I) :
@@ -1250,18 +1242,16 @@ private theorem coef_snoc_top_map (x : I → P) (t : P) (T : Finset I) :
   rw [coef_of_not_mem _ (top_notMem_map T), sgn_top_map, snoc_top]
 
 private theorem d_snoc_apply_map (x : I → P) (t : P) {M : Type v'} [AddCommGroup M] [Module P M]
-    (m : Finset (I ⊕ₗ U) → M) (T : Finset I) :
-    d (snoc U x t) M m (T.map (inlₗ U)) =
-      ∑ i, coef x i T • m ((insert i T).map (inlₗ U)) + ((-1) ^ T.card * t) • m (insert (top I U)
-          (T.map (inlₗ U))) := by
+    (m : Finset (I ⊕ₗ U) → M) (T : Finset I) : d (snoc U x t) M m (T.map (inlₗ U)) =
+      ∑ i, coef x i T • m ((insert i T).map (inlₗ U)) + ((-1) ^ T.card * t) •
+          m (insert (top I U) (T.map (inlₗ U))) := by
   rw [d_apply, sum_lex]
   congr 1
   · exact Finset.sum_congr rfl fun i _ => by rw [coef_snoc_inlₗ_map, map_insert_inlₗ]; rfl
   · rw [coef_snoc_top_map]; rfl
 
-private theorem d_snoc_apply_insert_top (x : I → P) (t : P) {M : Type v'} [AddCommGroup M] [Module
-    P M]
-    (m : Finset (I ⊕ₗ U) → M) (T : Finset I) :
+private theorem d_snoc_apply_insert_top (x : I → P) (t : P) {M : Type v'} [AddCommGroup M]
+    [Module P M] (m : Finset (I ⊕ₗ U) → M) (T : Finset I) :
     d (snoc U x t) M m (insert (top I U) (T.map (inlₗ U))) =
       ∑ i, coef x i T • m (insert (top I U) ((insert i T).map (inlₗ U))) := by
   rw [d_apply, sum_lex, coef_of_mem _ (Finset.mem_insert_self _ _), zero_smul, add_zero]
@@ -1304,14 +1294,12 @@ omit [Fintype I] [Fintype U] in
     coneProj P U M m T = m (insert (top I U) (T.map (inlₗ U))) := rfl
 
 omit [Fintype I] [Fintype U] in
-private theorem coneInclLin_apply_of_mem (m : Finset I → M) {S : Finset (I ⊕ₗ U)} (h : top I U ∈ S)
-    :
-    coneInclLin P U M m S = 0 := ite_eq_left h
+private theorem coneInclLin_apply_of_mem (m : Finset I → M) {S : Finset (I ⊕ₗ U)}
+    (h : top I U ∈ S) : coneInclLin P U M m S = 0 := ite_eq_left h
 
 omit [Fintype I] [Fintype U] in
-private theorem coneInclLin_apply_of_notMem (m : Finset I → M) {S : Finset (I ⊕ₗ U)} (h : top I U ∉
-    S) :
-    coneInclLin P U M m S = m (down U S) := ite_eq_right h
+private theorem coneInclLin_apply_of_notMem (m : Finset I → M) {S : Finset (I ⊕ₗ U)}
+    (h : top I U ∉ S) : coneInclLin P U M m S = m (down U S) := ite_eq_right h
 
 omit [Fintype I] [Fintype U] in
 @[scoped simp] private theorem coneInclLin_apply_map (m : Finset I → M) (T : Finset I) :
@@ -1325,14 +1313,12 @@ omit [Fintype I] [Fintype U] in
   coneInclLin_apply_of_mem _ _ (Finset.mem_insert_self _ _)
 
 omit [Fintype I] [Fintype U] in
-private theorem coneCoprojLin_apply_of_mem (m : Finset I → M) {S : Finset (I ⊕ₗ U)} (h : top I U ∈
-    S) :
-    coneCoprojLin P U M m S = m (down U S) := ite_eq_left h
+private theorem coneCoprojLin_apply_of_mem (m : Finset I → M) {S : Finset (I ⊕ₗ U)}
+    (h : top I U ∈ S) : coneCoprojLin P U M m S = m (down U S) := ite_eq_left h
 
 omit [Fintype I] [Fintype U] in
-private theorem coneCoprojLin_apply_of_notMem (m : Finset I → M) {S : Finset (I ⊕ₗ U)} (h : top I U
-    ∉ S) :
-    coneCoprojLin P U M m S = 0 := ite_eq_right h
+private theorem coneCoprojLin_apply_of_notMem (m : Finset I → M) {S : Finset (I ⊕ₗ U)}
+    (h : top I U ∉ S) : coneCoprojLin P U M m S = 0 := ite_eq_right h
 
 omit [Fintype I] [Fintype U] in
 @[scoped simp] private theorem coneCoprojLin_apply_map (m : Finset I → M) (T : Finset I) :
@@ -1354,8 +1340,7 @@ private theorem coneInclLin_coneRes_add (m : Finset (I ⊕ₗ U) → M) :
   · rw [coneInclLin_apply_of_mem _ _ h, coneCoprojLin_apply_of_mem _ _ h, zero_add, coneProj_apply,
       ← eq_insert_map_down h]
   · rw [coneInclLin_apply_of_notMem _ _ h, coneCoprojLin_apply_of_notMem _ _ h, add_zero,
-      coneRes_apply,
-      ← eq_map_down h]
+      coneRes_apply, ← eq_map_down h]
 
 omit [Fintype I] [Fintype U] in
 @[scoped simp] private theorem coneRes_coneInclLin (m : Finset I → M) : coneRes P U M (coneInclLin
@@ -1393,8 +1378,8 @@ omit [LinearOrder I] [Fintype I] in
     coneTw t M m T = ((-1 : P) ^ T.card * t) • m T := rfl
 
 omit [LinearOrder I] [Fintype I] in
-private theorem coneTw_of_mem_C {p : ℕ} {m : Finset I → M} (hm : m ∈ C (P := P) (I := I) M p) :
-    coneTw t M m = ((-1 : P) ^ p * t) • m := by
+private theorem coneTw_of_mem_C {p : ℕ} {m : Finset I → M}
+    (hm : m ∈ C (P := P) (I := I) M p) : coneTw t M m = ((-1 : P) ^ p * t) • m := by
   funext T
   rw [coneTw_apply, Pi.smul_apply]
   by_cases hT : T.card = p
@@ -1440,16 +1425,15 @@ private theorem d_coneCoprojLin (b : Finset I → M) :
       zero_add]
 
 omit [LinearOrder I] [Fintype I] [LinearOrder U] [Fintype U] [Unique U] in
-private theorem coneRes_mem_C {p : ℕ} {m : Finset (I ⊕ₗ U) → M} (hm : m ∈ C (P := P) (I := I ⊕ₗ U)
-    M p) :
-    coneRes P U M m ∈ C (P := P) (I := I) M p := fun T hT =>
+private theorem coneRes_mem_C {p : ℕ} {m : Finset (I ⊕ₗ U) → M}
+    (hm : m ∈ C (P := P) (I := I ⊕ₗ U) M p) : coneRes P U M m ∈ C (P := P)
+    (I := I) M p := fun T hT =>
   hm _ (by rwa [Finset.card_map])
 
 omit [Fintype I] [Fintype U] in
-private theorem coneProj_mem_C {p : ℕ} {m : Finset (I ⊕ₗ U) → M} (hm : m ∈ C (P := P) (I := I ⊕ₗ U)
-    M (p +
-    1)) :
-    coneProj P U M m ∈ C (P := P) (I := I) M p := fun T hT =>
+private theorem coneProj_mem_C {p : ℕ} {m : Finset (I ⊕ₗ U) → M}
+    (hm : m ∈ C (P := P) (I := I ⊕ₗ U) M (p + 1)) : coneProj P U M m ∈ C (P := P)
+    (I := I) M p := fun T hT =>
   hm _ (by rw [card_insert_top_map]; omega)
 
 omit [Fintype I] [Fintype U] in
@@ -1469,8 +1453,9 @@ theorem coneInclLin_mem_C {p : ℕ} {a : Finset I → M} (ha : a ∈ C (P := P) 
     exact ha _ (by rwa [card_down_of_notMem h])
 
 omit [Fintype I] [Fintype U] in
-private theorem coneCoprojLin_mem_C {p : ℕ} {b : Finset I → M} (hb : b ∈ C (P := P) (I := I) M p) :
-    coneCoprojLin P U M b ∈ C (P := P) (I := I ⊕ₗ U) M (p + 1) := by
+private theorem coneCoprojLin_mem_C {p : ℕ} {b : Finset I → M}
+    (hb : b ∈ C (P := P) (I := I) M p) : coneCoprojLin P U M b ∈ C (P := P)
+    (I := I ⊕ₗ U) M (p + 1) := by
   intro S hS
   by_cases h : top I U ∈ S
   · rw [coneCoprojLin_apply_of_mem _ _ h]
@@ -1486,14 +1471,14 @@ noncomputable def coneIncl : ChainMap x M (snoc U x t) M where
     coneInclLin P
     U M := rfl
 
-theorem coneProj_mem_Z {p : ℕ} {m : Finset (I ⊕ₗ U) → M} (hm : m ∈ Z (snoc U x t) M (p + 1)) :
-    coneProj P U M m ∈ Z x M p :=
+theorem coneProj_mem_Z {p : ℕ} {m : Finset (I ⊕ₗ U) → M}
+    (hm : m ∈ Z (snoc U x t) M (p + 1)) : coneProj P U M m ∈ Z x M p :=
   ⟨coneProj_mem_C M hm.1, by
     change d x M (coneProj P U M m) = 0
     rw [← coneProj_d, LinearMap.mem_ker.mp hm.2, map_zero]⟩
 
-theorem coneProj_mem_B {p : ℕ} {m : Finset (I ⊕ₗ U) → M} (hm : m ∈ B (snoc U x t) M (p + 1)) :
-    coneProj P U M m ∈ B x M p := by
+theorem coneProj_mem_B {p : ℕ} {m : Finset (I ⊕ₗ U) → M}
+    (hm : m ∈ B (snoc U x t) M (p + 1)) : coneProj P U M m ∈ B x M p := by
   obtain ⟨n, hn, rfl⟩ := hm
   exact ⟨coneProj P U M n, coneProj_mem_C M hn, (coneProj_d x t M n).symm⟩
 
@@ -1553,22 +1538,21 @@ private theorem cone_exact₂ (p : ℕ) :
     obtain ⟨m, rfl⟩ := Submodule.Quotient.mk_surjective _ h'
     rw [coneProjH_mk, H_mk_eq_zero_iff] at h0
     obtain ⟨n, hn, hdn⟩ := h0
-    have hm'proj : coneProj P U M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M (coneCoprojLin P U
-        M n)) = 0 := by
+    have hm'proj : coneProj P U M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M
+        (coneCoprojLin P U M n)) = 0 := by
       rw [map_sub, coneProj_d, coneProj_coneCoprojLin, hdn]; exact sub_self _
-    have hm'd : d (snoc U x t) M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M (coneCoprojLin P U M
-        n)) = 0 := by
+    have hm'd : d (snoc U x t) M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M
+        (coneCoprojLin P U M n)) = 0 := by
       rw [map_sub, d_d, sub_zero]; exact LinearMap.mem_ker.mp m.2.2
     have hm'C : (m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M (coneCoprojLin P U M n) ∈
         C (P := P) (I := I ⊕ₗ U) M (p + 1) :=
       sub_mem m.2.1 (d_mem_C _ _ (coneCoprojLin_mem_C M hn))
-    have haZ : coneRes P U M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M (coneCoprojLin P U M n))
-        ∈
-        Z x M (p + 1) := by
+    have haZ : coneRes P U M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M
+        (coneCoprojLin P U M n)) ∈ Z x M (p + 1) := by
       refine ⟨coneRes_mem_C M hm'C, ?_⟩
       change d x M _ = 0
-      have h1 := coneRes_d' x t M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M (coneCoprojLin P U
-          M n))
+      have h1 := coneRes_d' x t M ((m : Finset (I ⊕ₗ U) → M) - d (snoc U x t) M
+          (coneCoprojLin P U M n))
       rw [hm'd, map_zero, hm'proj, map_zero, add_zero] at h1
       exact h1.symm
     refine ⟨Submodule.Quotient.mk ⟨_, haZ⟩, ?_⟩
@@ -1588,8 +1572,8 @@ private theorem cone_exact₂ (p : ℕ) :
 private theorem cone_surjective₀ : Function.Surjective ((coneIncl x t M (U := U)).mapH 0) := by
   intro h'
   obtain ⟨m, rfl⟩ := Submodule.Quotient.mk_surjective _ h'
-  have hproj : coneProj P U M (m : Finset (I ⊕ₗ U) → M) = 0 := coneProj_eq_zero_of_mem_C_zero M
-      m.2.1
+  have hproj : coneProj P U M (m : Finset (I ⊕ₗ U) → M) = 0 :=
+      coneProj_eq_zero_of_mem_C_zero M m.2.1
   have haZ : coneRes P U M (m : Finset (I ⊕ₗ U) → M) ∈ Z x M 0 := by
     refine ⟨coneRes_mem_C M m.2.1, ?_⟩
     change d x M _ = 0
@@ -1671,22 +1655,22 @@ private theorem map_coneTw (f : (Finset I → M) →ₗ[P] (Finset J → N))
   conv_rhs => rw [← sum_homog (P := P) M m]
   rw [map_sum, map_sum, map_sum, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [coneTw_of_mem_C t M (homog_mem_C M p m), map_smul, coneTw_of_mem_C t N (hf p (homog_mem_C M p
-      m))]
+  rw [coneTw_of_mem_C t M (homog_mem_C M p m), map_smul,
+      coneTw_of_mem_C t N (hf p (homog_mem_C M p m))]
 
 omit [Fintype U] in
 private theorem coneRes_coneMapLin (f : ChainMap x M y N) (m : Finset (I ⊕ₗ U) → M) :
     coneRes P U N ((coneInclLin P U N ∘ₗ f.toLinearMap ∘ₗ coneRes P U M +
-      coneCoprojLin P U N ∘ₗ f.toLinearMap ∘ₗ coneProj P U M) m) = f.toLinearMap (coneRes P U M
-          m) := by
+      coneCoprojLin P U N ∘ₗ f.toLinearMap ∘ₗ coneProj P U M) m) =
+          f.toLinearMap (coneRes P U M m) := by
   rw [LinearMap.add_apply, map_add, LinearMap.comp_apply, LinearMap.comp_apply, coneRes_coneInclLin,
     LinearMap.comp_apply, LinearMap.comp_apply, coneRes_coneCoprojLin, add_zero]
 
 omit [Fintype U] in
 private theorem coneProj_coneMapLin (f : ChainMap x M y N) (m : Finset (I ⊕ₗ U) → M) :
     coneProj P U N ((coneInclLin P U N ∘ₗ f.toLinearMap ∘ₗ coneRes P U M +
-      coneCoprojLin P U N ∘ₗ f.toLinearMap ∘ₗ coneProj P U M) m) = f.toLinearMap (coneProj P U M
-          m) := by
+      coneCoprojLin P U N ∘ₗ f.toLinearMap ∘ₗ coneProj P U M) m) =
+          f.toLinearMap (coneProj P U M m) := by
   rw [LinearMap.add_apply, map_add, LinearMap.comp_apply, LinearMap.comp_apply,
       coneProj_coneInclLin,
     LinearMap.comp_apply, LinearMap.comp_apply, coneProj_coneCoprojLin, zero_add]
@@ -1697,13 +1681,11 @@ noncomputable def coneMap (f : ChainMap x M y N) : ChainMap (snoc U x t) M (snoc
   comm := by
     refine LinearMap.ext fun m => cone_ext (P := P) N ?_ ?_
     · rw [LinearMap.comp_apply, LinearMap.comp_apply, coneRes_coneMapLin, coneRes_d', coneRes_d',
-        map_add,
-        f.comm_apply, map_coneTw t M (f := f.toLinearMap) (fun p _ hm => f.map_C p hm),
+        map_add, f.comm_apply, map_coneTw t M (f := f.toLinearMap) (fun p _ hm => f.map_C p hm),
             coneRes_coneMapLin,
         coneProj_coneMapLin]
     · rw [LinearMap.comp_apply, LinearMap.comp_apply, coneProj_coneMapLin, coneProj_d, coneProj_d,
-        f.comm_apply,
-        coneProj_coneMapLin]
+        f.comm_apply, coneProj_coneMapLin]
   map_C p m hm := by
     rw [Submodule.mem_comap, LinearMap.add_apply, LinearMap.comp_apply, LinearMap.comp_apply,
       LinearMap.comp_apply, LinearMap.comp_apply]
@@ -1718,8 +1700,8 @@ noncomputable def coneMap (f : ChainMap x M y N) : ChainMap (snoc U x t) M (snoc
 @[scoped simp] private theorem coneMap_toLinearMap_apply (f : ChainMap x M y N) (m : Finset (I ⊕ₗ
     U) → M) :
     (coneMap x t M f (U := U)).toLinearMap m =
-      coneInclLin P U N (f.toLinearMap (coneRes P U M m)) + coneCoprojLin P U N (f.toLinearMap
-          (coneProj P U M m)) :=
+      coneInclLin P U N (f.toLinearMap (coneRes P U M m)) +
+          coneCoprojLin P U N (f.toLinearMap (coneProj P U M m)) :=
   rfl
 
 private theorem coneMap_mapH_inclMapH (f : ChainMap x M y N) (p : ℕ) (h : H x M p) :
@@ -1729,20 +1711,20 @@ private theorem coneMap_mapH_inclMapH (f : ChainMap x M y N) (p : ℕ) (h : H x 
   rw [HMap.mapH_mk, HMap.mapH_mk, HMap.mapH_mk, HMap.mapH_mk]
   congr 1
   apply Subtype.ext
-  change (coneMap x t M f (U := U)).toLinearMap (coneInclLin P U M z) = coneInclLin P U N
-      (f.toLinearMap z)
+  change (coneMap x t M f (U := U)).toLinearMap (coneInclLin P U M z) =
+      coneInclLin P U N (f.toLinearMap z)
   rw [coneMap_toLinearMap_apply, coneRes_coneInclLin, coneProj_coneInclLin, map_zero, map_zero,
       add_zero]
 
-private theorem coneProjH_coneMap_mapH (f : ChainMap x M y N) (p : ℕ) (h : H (snoc U x t) M (p +
-    1)) :
-    coneProjH y t N p ((coneMap x t M f).mapH (p + 1) h) = f.mapH p (coneProjH x t M p h) := by
+private theorem coneProjH_coneMap_mapH (f : ChainMap x M y N) (p : ℕ)
+    (h : H (snoc U x t) M (p + 1)) : coneProjH y t N p ((coneMap x t M f).mapH (p + 1) h) =
+    f.mapH p (coneProjH x t M p h) := by
   obtain ⟨m, rfl⟩ := Submodule.Quotient.mk_surjective _ h
   rw [HMap.mapH_mk, coneProjH_mk, coneProjH_mk, HMap.mapH_mk]
   congr 1
   apply Subtype.ext
-  change coneProj P U N ((coneMap x t M f (U := U)).toLinearMap m) = f.toLinearMap (coneProj P U M
-      m)
+  change coneProj P U N ((coneMap x t M f (U := U)).toLinearMap m) =
+      f.toLinearMap (coneProj P U M m)
   exact coneProj_coneMapLin x M f (m : Finset (I ⊕ₗ U) → M)
 
 end Cone
@@ -1789,14 +1771,14 @@ private theorem map_insert_inlₗ' (j : J) (T : Finset J) :
     (insert j T).map (inlₗ' I) = insert (inlₗ' I j) (T.map (inlₗ' I)) := Finset.map_insert _ _ _
 
 omit [Fintype J] [Fintype I] in
-private theorem sgn_inrₗ_map (i : I) (T : Finset I) : sgn P (inrₗ J i) (T.map (inrₗ J)) = sgn P i
-    T := by
+private theorem sgn_inrₗ_map (i : I) (T : Finset I) : sgn P (inrₗ J i)
+    (T.map (inrₗ J)) = sgn P i T := by
   rw [sgn, sgn, Finset.filter_map, Finset.card_map]
   congr 2
 
 omit [Fintype J] [Fintype I] in
-private theorem sgn_inlₗ'_map (j : J) (T : Finset J) : sgn P (inlₗ' I j) (T.map (inlₗ' I)) = sgn P
-    j T := by
+private theorem sgn_inlₗ'_map (j : J) (T : Finset J) : sgn P (inlₗ' I j)
+    (T.map (inlₗ' I)) = sgn P j T := by
   rw [sgn, sgn, Finset.filter_map, Finset.card_map]
   congr 2
 
@@ -1806,8 +1788,7 @@ private theorem coef_concat_inrₗ_map (i : I) (T : Finset I) :
   by_cases hi : i ∈ T
   · rw [coef_of_mem _ ((Finset.mem_map' _).mpr hi), coef_of_mem _ hi]
   · rw [coef_of_not_mem _ (fun h => hi ((Finset.mem_map' _).mp h)), coef_of_not_mem _ hi,
-      sgn_inrₗ_map,
-      concat_inrₗ]
+      sgn_inrₗ_map, concat_inrₗ]
 
 omit [Fintype J] [Fintype I] in
 private theorem coef_concat_inlₗ'_map (j : J) (T : Finset J) :
@@ -1815,8 +1796,7 @@ private theorem coef_concat_inlₗ'_map (j : J) (T : Finset J) :
   by_cases hj : j ∈ T
   · rw [coef_of_mem _ ((Finset.mem_map' _).mpr hj), coef_of_mem _ hj]
   · rw [coef_of_not_mem _ (fun h => hj ((Finset.mem_map' _).mp h)), coef_of_not_mem _ hj,
-      sgn_inlₗ'_map,
-      concat_inlₗ']
+      sgn_inlₗ'_map, concat_inlₗ']
 
 omit [Fintype J] [Fintype I] in
 private theorem coef_concat_inlₗ'_smul_mem (j : J) (S : Finset (J ⊕ₗ I)) (v : M) :
@@ -1844,14 +1824,14 @@ def peel : ChainMap (concat y x) M x (ModSpan y M) where
   comm := by
     refine LinearMap.ext fun m => funext fun T => ?_
     rw [LinearMap.comp_apply, LinearMap.comp_apply, d_apply x (ModSpan y M)]
-    change (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M)) (d (concat y x) M m
-        (T.map (inrₗ J))) =
+    change (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M))
+        (d (concat y x) M m (T.map (inrₗ J))) =
       ∑ i, coef x i T •
-        (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M)) (m ((insert i T).map (inrₗ
-            J)))
+        (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M))
+            (m ((insert i T).map (inrₗ J)))
     have hcross : ∑ j, (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M))
-        (coef (concat y x) (inlₗ' I j) (T.map (inrₗ J)) • m (insert (inlₗ' I j) (T.map (inrₗ J))))
-            = 0 :=
+        (coef (concat y x) (inlₗ' I j) (T.map (inrₗ J)) •
+            m (insert (inlₗ' I j) (T.map (inrₗ J)))) = 0 :=
       Finset.sum_eq_zero fun j _ => by
         rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
         exact coef_concat_inlₗ'_smul_mem y x M j _ _
@@ -1886,14 +1866,14 @@ def peelTop : ChainMap (concat x y) M x (ModSpan y M) where
   comm := by
     refine LinearMap.ext fun m => funext fun T => ?_
     rw [LinearMap.comp_apply, LinearMap.comp_apply, d_apply x (ModSpan y M)]
-    change (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M)) (d (concat x y) M m
-        (T.map (inlₗ' J))) =
+    change (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M))
+        (d (concat x y) M m (T.map (inlₗ' J))) =
       ∑ i, coef x i T •
-        (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M)) (m ((insert i T).map (inlₗ'
-            J)))
+        (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M))
+            (m ((insert i T).map (inlₗ' J)))
     have hcross : ∑ j, (Submodule.mkQ (Ideal.span (Set.range y) • ⊤ : Submodule P M))
-        (coef (concat x y) (inrₗ I j) (T.map (inlₗ' J)) • m (insert (inrₗ I j) (T.map (inlₗ' J))))
-            = 0 :=
+        (coef (concat x y) (inrₗ I j) (T.map (inlₗ' J)) •
+            m (insert (inrₗ I j) (T.map (inlₗ' J)))) = 0 :=
       Finset.sum_eq_zero fun j _ => by
         rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
         exact coef_concat_inrₗ_smul_mem x y M j _ _
@@ -1999,8 +1979,8 @@ omit [Fintype J] [Fintype I] [Fintype I'] [Fintype U] [Unique U] in
 private theorem liftIso_inl_inl (j : J) : liftIso J e (inlₗ U (inlₗ' I' j)) = inlₗ' I j := rfl
 
 omit [Fintype J] [Fintype I] [Fintype I'] [Fintype U] [Unique U] in
-private theorem liftIso_inl_inr (i : I') : liftIso J e (inlₗ U (inrₗ J i)) = inrₗ J (e (inlₗ U
-    i)) := rfl
+private theorem liftIso_inl_inr (i : I') : liftIso J e (inlₗ U (inrₗ J i)) =
+    inrₗ J (e (inlₗ U i)) := rfl
 
 omit [Fintype J] [Fintype I] [Fintype I'] [Fintype U] in
 private theorem liftIso_top : liftIso J e (top (J ⊕ₗ I') U) = inrₗ J (e (top I' U)) := rfl
@@ -2048,14 +2028,12 @@ private theorem reindexLin_peel (m : Finset (J ⊕ₗ I) → M) :
     rw [Finset.map_insert]
     rfl
   · rw [coneInclLin_apply_of_notMem _ _ hS, coneCoprojLin_apply_of_notMem _ _ hS, add_zero,
-      peel_apply,
-      coneRes_apply, reindexLin_apply]
+      peel_apply, coneRes_apply, reindexLin_apply]
     conv_lhs => rw [eq_map_down hS, map_map_liftIso]
 
-private theorem coneMap_mapH_bijective {c : I' → P} (t : P) {N : Type v} [AddCommGroup N] [Module P
-    N]
-    {c₂ : I → P} (f : ChainMap c M c₂ N) (hf : ∀ q, Function.Bijective (f.mapH q)) (q : ℕ) :
-    Function.Bijective ((coneMap c t M f (U := U)).mapH q) := by
+private theorem coneMap_mapH_bijective {c : I' → P} (t : P) {N : Type v} [AddCommGroup N]
+    [Module P N] {c₂ : I → P} (f : ChainMap c M c₂ N) (hf : ∀ q, Function.Bijective (f.mapH q))
+    (q : ℕ) : Function.Bijective ((coneMap c t M f (U := U)).mapH q) := by
   have hsq : ∀ r, (t • LinearMap.id : H c₂ N r →ₗ[P] H c₂ N r).comp (f.mapH r) =
       (f.mapH r).comp (t • LinearMap.id) := fun r => by
     ext h
@@ -2066,15 +2044,15 @@ private theorem coneMap_mapH_bijective {c : I' → P} (t : P) {N : Type v} [AddC
   cases q with
   | zero =>
     exact LinearMap.bijective_of_surjective_of_bijective_of_right_exact
-      (t • LinearMap.id) ((coneIncl c t M (U := U)).mapH 0) (t • LinearMap.id) ((coneIncl c₂ t N
-          (U := U)).mapH 0)
+      (t • LinearMap.id) ((coneIncl c t M (U := U)).mapH 0) (t • LinearMap.id)
+          ((coneIncl c₂ t N (U := U)).mapH 0)
       (f.mapH 0) (f.mapH 0) ((coneMap c t M f (U := U)).mapH 0) (hsq 0) (hincl 0)
       (cone_exact₁ c t M (U := U) 0) (cone_exact₁ c₂ t N (U := U) 0) (hf 0).2 (hf 0)
       (cone_surjective₀ c t M) (cone_surjective₀ c₂ t N)
   | succ p =>
     exact LinearMap.bijective_of_surjective_of_bijective_of_bijective_of_injective
-      (t • LinearMap.id) ((coneIncl c t M (U := U)).mapH (p + 1)) (coneProjH c t M (U := U) p) (t •
-          LinearMap.id)
+      (t • LinearMap.id) ((coneIncl c t M (U := U)).mapH (p + 1)) (coneProjH c t M (U := U) p)
+          (t • LinearMap.id)
       (t • LinearMap.id) ((coneIncl c₂ t N (U := U)).mapH (p + 1)) (coneProjH c₂ t N (U := U) p)
       (t • LinearMap.id)
       (f.mapH (p + 1)) (f.mapH (p + 1)) ((coneMap c t M f (U := U)).mapH (p + 1)) (f.mapH p)
@@ -2083,20 +2061,17 @@ private theorem coneMap_mapH_bijective {c : I' → P} (t : P) {N : Type v} [AddC
           (hsq p)
       (cone_exact₁ c t M (U := U) (p + 1)) (cone_exact₂ c t M (U := U) p) (cone_exact₃ c t M (U :=
           U) p)
-      (cone_exact₁ c₂ t N (U := U) (p + 1)) (cone_exact₂ c₂ t N (U := U) p) (cone_exact₃ c₂ t N
-          (U := U) p)
+      (cone_exact₁ c₂ t N (U := U) (p + 1)) (cone_exact₂ c₂ t N (U := U) p)
+          (cone_exact₃ c₂ t N (U := U) p)
       (hf (p + 1)).2 (hf (p + 1)) (hf p) (hf p).1
 
 private theorem reindex_mapH_bijective {K L : Type} [LinearOrder K] [Fintype K] [LinearOrder L]
-    [Fintype L]
-    (N : Type v) [AddCommGroup N] [Module P N] (e : K ≃o L) (c : L → P) (p : ℕ) :
-    Function.Bijective ((reindex N e c).toHMap.mapH p) :=
+    [Fintype L] (N : Type v) [AddCommGroup N] [Module P N] (e : K ≃o L) (c : L → P)
+    (p : ℕ) : Function.Bijective ((reindex N e c).toHMap.mapH p) :=
   (reindexH N e c p).symm.bijective
 
-private theorem peel_mapH_bijective_step (hIH : ∀ q, Function.Bijective ((peel y (shorten x e)
-    M).mapH q))
-    (p : ℕ) :
-    Function.Bijective ((peel y x M).mapH p) := by
+private theorem peel_mapH_bijective_step (hIH : ∀ q, Function.Bijective
+    ((peel y (shorten x e) M).mapH q)) (p : ℕ) : Function.Bijective ((peel y x M).mapH p) := by
   have key : ((reindex (ModSpan y M) e x).toHMap.comp (peel y x M).toHMap).toLinearMap =
       ((castHMap (ModSpan y M) (comp_eq_snoc x e).symm).comp
         ((coneMap (concat y (shorten x e)) (x (e (top I' U))) M (peel y (shorten x e) M) (U :=
@@ -2113,8 +2088,8 @@ private theorem peel_mapH_bijective_step (hIH : ∀ q, Function.Bijective ((peel
   have hrhs : Function.Bijective (((castHMap (ModSpan y M) (comp_eq_snoc x e).symm).mapH p) ∘
       ((coneMap (concat y (shorten x e)) (x (e (top I' U))) M (peel y (shorten x e) M) (U :=
           U)).toHMap.mapH p) ∘
-      ((castHMap M (concat_comp_liftIso y x e)).mapH p) ∘ ((reindex M (liftIso J e) (concat y
-          x)).toHMap.mapH p)) :=
+      ((castHMap M (concat_comp_liftIso y x e)).mapH p) ∘
+          ((reindex M (liftIso J e) (concat y x)).toHMap.mapH p)) :=
     (castHMap_bijective _ _ p).comp ((coneMap_mapH_bijective M _ (peel y (shorten x e) M) hIH
         p).comp
       ((castHMap_bijective _ _ p).comp (reindex_mapH_bijective M (liftIso J e) (concat y x) p)))
@@ -2157,8 +2132,8 @@ private theorem peel_mapH_bijective_of_isEmpty [IsEmpty I] (hy : ∀ p,
   | zero =>
     have hx : (Ideal.span (Set.range x) • ⊤ : Submodule P (ModSpan y M)) = ⊥ := by
       rw [Set.range_eq_empty x, Ideal.span_empty, Submodule.bot_smul]
-    have hle : (Ideal.span (Set.range y) • ⊤ : Submodule P M) ≤ Ideal.span (Set.range (concat y x))
-        • ⊤ :=
+    have hle : (Ideal.span (Set.range y) • ⊤ : Submodule P M) ≤
+        Ideal.span (Set.range (concat y x)) • ⊤ :=
       Submodule.smul_mono_left (Ideal.span_mono fun a ⟨j, hj⟩ => ⟨inlₗ' I j, hj⟩)
     constructor
     · rw [injective_iff_map_eq_zero]
@@ -2175,8 +2150,8 @@ private theorem peel_mapH_bijective_of_isEmpty [IsEmpty I] (hy : ∀ p,
     · intro h'
       obtain ⟨z', rfl⟩ := Submodule.Quotient.mk_surjective _ h'
       obtain ⟨v, hv⟩ := Submodule.Quotient.mk_surjective _ ((z' : Finset I → ModSpan y M) ∅)
-      have hC : (Pi.single (∅ : Finset (J ⊕ₗ I)) v : Finset (J ⊕ₗ I) → M) ∈ C (P := P) (I := J ⊕ₗ
-          I) M 0 :=
+      have hC : (Pi.single (∅ : Finset (J ⊕ₗ I)) v : Finset (J ⊕ₗ I) → M) ∈ C (P := P)
+          (I := J ⊕ₗ I) M 0 :=
         fun T hT => Pi.single_eq_of_ne (M := fun _ => M) (fun h : T = ∅ => hT
             (by rw [h, Finset.card_empty])) v
       let z₀ : Z (concat y x) M 0 := ⟨Pi.single ∅ v, hC, LinearMap.mem_ker.mpr
@@ -2223,8 +2198,8 @@ variable (x : I → P) (y : J → P) (M : Type v) [AddCommGroup M] [Module P M]
 
 omit [CommRing P] [Fintype I] [Fintype J] in
 private theorem concat_dual :
-    (concat x y ∘ (OrderDual.ofDual : (I ⊕ₗ J)ᵒᵈ ≃ I ⊕ₗ J)) ∘ (OrderIso.sumLexDualAntidistrib I
-        J).symm =
+    (concat x y ∘ (OrderDual.ofDual : (I ⊕ₗ J)ᵒᵈ ≃ I ⊕ₗ J)) ∘
+        (OrderIso.sumLexDualAntidistrib I J).symm =
       concat (y ∘ OrderDual.ofDual) (x ∘ OrderDual.ofDual) := by
   funext k
   rcases lex_cases₂ k with ⟨j, rfl⟩ | ⟨i, rfl⟩ <;> rfl
@@ -2296,8 +2271,9 @@ section Exterior
 
 variable {R : Type u'} [CommRing R] {M : Type v'} [AddCommGroup M] [Module R M]
 
-private theorem removeNth_succ_eq_cons {α : Type*} {n : ℕ} (k : Fin (n + 1)) (v : Fin (n + 2) → α) :
-    Fin.removeNth k.succ v = Fin.cons (v 0) (Fin.removeNth k (Fin.tail v)) := by
+private theorem removeNth_succ_eq_cons {α : Type*} {n : ℕ} (k : Fin (n + 1))
+    (v : Fin (n + 2) → α) : Fin.removeNth k.succ v = Fin.cons (v 0)
+    (Fin.removeNth k (Fin.tail v)) := by
   ext j
   refine Fin.cases ?_ (fun j => ?_) j
   · simp [Fin.removeNth_apply]
@@ -2312,11 +2288,11 @@ private theorem contractLeft_ιMulti_succ (d : Module.Dual R M) :
       contractLeft_one, mul_zero, sub_zero, Fin.sum_univ_one]
     simp
   | n + 1, v => by
-    rw [ιMulti_succ_apply, ExteriorAlgebra.ι, contractLeft_ι_mul, contractLeft_ιMulti_succ d
-        (Matrix.vecTail v)]
+    rw [ιMulti_succ_apply, ExteriorAlgebra.ι, contractLeft_ι_mul,
+        contractLeft_ιMulti_succ d (Matrix.vecTail v)]
     conv_rhs => rw [Fin.sum_univ_succ]
-    rw [Fin.val_zero, pow_zero, one_mul, Fin.removeNth_zero, show Fin.tail v = Matrix.vecTail v
-        from rfl,
+    rw [Fin.val_zero, pow_zero, one_mul, Fin.removeNth_zero,
+        show Fin.tail v = Matrix.vecTail v from rfl,
       sub_eq_add_neg, Finset.mul_sum, ← Finset.sum_neg_distrib]
     congr 1
     refine Finset.sum_congr rfl fun k _ => ?_
@@ -2329,8 +2305,7 @@ private theorem contractLeft_ιMulti_succ (d : Module.Dual R M) :
     ring
 
 private theorem contractLeft_ιMulti_of_forall_eq_zero (d : Module.Dual R M) {n : ℕ} (v : Fin n → M)
-    (hv : ∀ i, d (v i) = 0) :
-    contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R n v) = 0 := by
+    (hv : ∀ i, d (v i) = 0) : contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R n v) = 0 := by
   cases n with
   | zero => rw [ιMulti_zero_apply, contractLeft_one]
   | succ n => rw [contractLeft_ιMulti_succ]; simp [hv]
@@ -2365,9 +2340,8 @@ noncomputable def koszulD (d : Module.Dual R M) (n : ℕ) : ⋀[R]^(n + 1) M →
 private theorem koszulD_apply_coe (d : Module.Dual R M) (n : ℕ) (x : ⋀[R]^(n + 1) M) :
     (koszulD d n x : ExteriorAlgebra R M) = contractLeft (Q := (0 : QuadraticForm R M)) d x := rfl
 
-private theorem koszulD_comp_koszulD (d : Module.Dual R M) (n : ℕ) : koszulD d n ∘ₗ koszulD d (n +
-    1) =
-    0 := by
+private theorem koszulD_comp_koszulD (d : Module.Dual R M)
+    (n : ℕ) : koszulD d n ∘ₗ koszulD d (n + 1) = 0 := by
   refine LinearMap.ext fun x => Subtype.ext ?_
   rw [LinearMap.comp_apply, koszulD_apply_coe, koszulD_apply_coe, LinearMap.zero_apply,
     ZeroMemClass.coe_zero]
@@ -2375,8 +2349,8 @@ private theorem koszulD_comp_koszulD (d : Module.Dual R M) (n : ℕ) : koszulD d
 
 private theorem koszulD_ιMulti (d : Module.Dual R M) {n : ℕ} (v : Fin (n + 1) → M) :
     koszulD d n (exteriorPower.ιMulti R (n + 1) v) =
-      ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) • exteriorPower.ιMulti R n (Fin.removeNth k
-          v) := by
+      ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) •
+          exteriorPower.ιMulti R n (Fin.removeNth k v) := by
   apply Subtype.ext
   simp only [koszulD_apply_coe, exteriorPower.ιMulti_apply_coe, contractLeft_ιMulti_succ]
   rw [AddSubmonoidClass.coe_finsetSum]
@@ -2387,12 +2361,14 @@ variable {I : Type} [LinearOrder I] {n : ℕ}
 def eraseNth (s : Set.powersetCard I (n + 1)) (k : Fin (n + 1)) : Set.powersetCard I n :=
   ofFinEmbEquiv ((Fin.succAboveOrderEmb k).trans (ofFinEmbEquiv.symm s))
 
-private theorem ofFinEmbEquiv_symm_eraseNth (s : Set.powersetCard I (n + 1)) (k : Fin (n + 1)) :
-    ofFinEmbEquiv.symm (eraseNth s k) = (Fin.succAboveOrderEmb k).trans (ofFinEmbEquiv.symm s) :=
+private theorem ofFinEmbEquiv_symm_eraseNth (s : Set.powersetCard I (n + 1))
+    (k : Fin (n + 1)) : ofFinEmbEquiv.symm (eraseNth s k) =
+    (Fin.succAboveOrderEmb k).trans (ofFinEmbEquiv.symm s) :=
   Equiv.symm_apply_apply _ _
 
-private theorem coe_ofFinEmbEquiv_symm_eraseNth (s : Set.powersetCard I (n + 1)) (k : Fin (n + 1)) :
-    ⇑(ofFinEmbEquiv.symm (eraseNth s k)) = Fin.removeNth k ⇑(ofFinEmbEquiv.symm s) := by
+private theorem coe_ofFinEmbEquiv_symm_eraseNth (s : Set.powersetCard I (n + 1))
+    (k : Fin (n + 1)) : ⇑(ofFinEmbEquiv.symm (eraseNth s k)) =
+    Fin.removeNth k ⇑(ofFinEmbEquiv.symm s) := by
   rw [ofFinEmbEquiv_symm_eraseNth]; rfl
 
 private theorem mem_eraseNth_iff (s : Set.powersetCard I (n + 1)) (k : Fin (n + 1)) (i : I) :
@@ -2423,10 +2399,8 @@ private theorem card_filter_lt_ofFinEmbEquiv_symm (s : Set.powersetCard I n) (k 
     ext j; simp [(ofFinEmbEquiv.symm s).lt_iff_lt]
   rw [this, Fin.card_Iio]
 
-private theorem koszulD_basis (b : Module.Basis I R M) (d : Module.Dual R M) (s : Set.powersetCard
-    I (n +
-    1)) :
-    koszulD d n (b.exteriorPower (n + 1) s) =
+private theorem koszulD_basis (b : Module.Basis I R M) (d : Module.Dual R M)
+    (s : Set.powersetCard I (n + 1)) : koszulD d n (b.exteriorPower (n + 1) s) =
       ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (b (ofFinEmbEquiv.symm s k))) •
         b.exteriorPower n (eraseNth s k) := by
   rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, koszulD_ιMulti]
@@ -2450,8 +2424,8 @@ private theorem dualVec_apply (x v : I → P) : dualVec x v = ∑ i, x i * v i :
   simp only [dualVec, LinearMap.coe_sum, Finset.sum_apply, LinearMap.smul_apply, LinearMap.coe_proj,
     Function.eval, smul_eq_mul]
 
-private theorem dualVec_single [DecidableEq I] (x : I → P) (i : I) : dualVec x (Pi.single i 1) = x
-    i := by
+private theorem dualVec_single [DecidableEq I] (x : I → P)
+    (i : I) : dualVec x (Pi.single i 1) = x i := by
   rw [dualVec_apply, Finset.sum_eq_single i (fun j _ hj => by rw [Pi.single_eq_of_ne hj, mul_zero])
     (fun h => (h (Finset.mem_univ i)).elim), Pi.single_eq_same, mul_one]
 
@@ -2464,8 +2438,8 @@ section Chains
 
 variable {P : Type u} [CommRing P] {I : Type} (M : Type v) [AddCommGroup M] [Module P M]
 
-private theorem single_mem_C [DecidableEq I] {p : ℕ} (S : Finset I) (hS : S.card = p) (m : M) :
-    Pi.single S m ∈ C (P := P) (I := I) M p :=
+private theorem single_mem_C [DecidableEq I] {p : ℕ} (S : Finset I) (hS : S.card = p)
+    (m : M) : Pi.single S m ∈ C (P := P) (I := I) M p :=
   fun T hT => Pi.single_eq_of_ne (M := fun _ => M) (fun h : T = S => hT (by rw [h, hS])) m
 
 def C.equivFun (p : ℕ) : C (P := P) (I := I) M p ≃ₗ[P] (Set.powersetCard I p → M) where
@@ -2487,13 +2461,12 @@ def C.equivFun (p : ℕ) : C (P := P) (I := I) M p ≃ₗ[P] (Set.powersetCard I
 
 variable {M}
 
-private theorem C.equivFun_apply {p : ℕ} (m : C (P := P) (I := I) M p) (s : Set.powersetCard I p) :
-    C.equivFun M p m s = (m : Finset I → M) s := rfl
+private theorem C.equivFun_apply {p : ℕ} (m : C (P := P) (I := I) M p)
+    (s : Set.powersetCard I p) : C.equivFun M p m s = (m : Finset I → M) s := rfl
 
-private theorem C.equivFun_symm_apply {p : ℕ} (c : Set.powersetCard I p → M) (T : Finset I) (hT :
-    T.card =
-    p) :
-    ((C.equivFun (P := P) M p).symm c : Finset I → M) T = c ⟨T, mem_iff.mpr hT⟩ := dite_eq_left hT
+private theorem C.equivFun_symm_apply {p : ℕ} (c : Set.powersetCard I p → M) (T : Finset I)
+    (hT : T.card = p) : ((C.equivFun (P := P) M p).symm c : Finset I → M) T = c ⟨T,
+    mem_iff.mpr hT⟩ := dite_eq_left hT
 
 end Chains
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
@@ -2516,17 +2489,15 @@ private theorem toExterior_apply {p : ℕ} (m : C (P := P) (I := I) P p) :
         I).exteriorPower p s := by
   rw [toExterior, LinearEquiv.trans_apply, Module.Basis.equivFun_symm_apply]; rfl
 
-private theorem toExterior_symm_apply {p : ℕ} (ω : ⋀[P]^p (I → P)) (T : Finset I) (hT : T.card = p)
-    :
-    ((toExterior P I p).symm ω : Finset I → P) T = ((Pi.basisFun P I).exteriorPower p).repr ω ⟨T,
+private theorem toExterior_symm_apply {p : ℕ} (ω : ⋀[P]^p (I → P)) (T : Finset I)
+    (hT : T.card = p) : ((toExterior P I p).symm ω : Finset I → P) T =
+    ((Pi.basisFun P I).exteriorPower p).repr ω ⟨T,
         mem_iff.mpr hT⟩ := by
   rw [toExterior, LinearEquiv.trans_symm, LinearEquiv.trans_apply, LinearEquiv.symm_symm,
     C.equivFun_symm_apply _ T hT, Module.Basis.equivFun_apply]
 
-private theorem toExterior_symm_apply_of_card_ne {p : ℕ} (ω : ⋀[P]^p (I → P)) (T : Finset I) (hT :
-    T.card ≠
-    p) :
-    ((toExterior P I p).symm ω : Finset I → P) T = 0 :=
+private theorem toExterior_symm_apply_of_card_ne {p : ℕ} (ω : ⋀[P]^p (I → P)) (T : Finset I)
+    (hT : T.card ≠ p) : ((toExterior P I p).symm ω : Finset I → P) T = 0 :=
   ((toExterior P I p).symm ω).2 T hT
 
 private theorem toExterior_single (S : Finset I) {p : ℕ} (hS : S.card = p) :
@@ -2616,10 +2587,9 @@ private theorem d_single (x : I → P) {p : ℕ} (s : Set.powersetCard I (p + 1)
 
 set_option synthInstance.maxHeartbeats 200000 in
 -- Instance search through these linear-equivalence coercions is slow.
-private theorem toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P) (hm : m ∈ C (P := P) (I := I) P
-    (p +
-    1)) :
-    toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ = koszulD (dualVec x) p (toExterior P I (p + 1) ⟨m,
+private theorem toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P)
+    (hm : m ∈ C (P := P) (I := I) P (p + 1)) : toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ =
+    koszulD (dualVec x) p (toExterior P I (p + 1) ⟨m,
         hm⟩) := by
   rw [← LinearEquiv.eq_symm_apply]
   apply Subtype.ext
@@ -2635,8 +2605,8 @@ private theorem coe_toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P) (h
     I) P (p
     + 1)) :
     ((toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ : ⋀[P]^p (I → P)) : ExteriorAlgebra P (I → P)) =
-      contractLeft (Q := (0 : QuadraticForm P (I → P))) (dualVec x) (toExterior P I (p + 1) ⟨m,
-          hm⟩) := by
+      contractLeft (Q := (0 : QuadraticForm P (I → P))) (dualVec x)
+          (toExterior P I (p + 1) ⟨m, hm⟩) := by
   rw [toExterior_d]; rfl
 
 private theorem d_toExterior_symm (x : I → P) {p : ℕ} (ω : ⋀[P]^(p + 1) (I → P)) :
@@ -2656,16 +2626,12 @@ section Cycle
 variable {P : Type u} [CommRing P]
 
 omit [CommRing P] in
-private theorem concat_inl {J I : Type} [LinearOrder J] [Fintype J] [LinearOrder I] [Fintype I] (f
-    : J → P)
-    (x : I → P)
-    (j : J) : concat f x (toLex (Sum.inl j)) = f j := rfl
+private theorem concat_inl {J I : Type} [LinearOrder J] [Fintype J] [LinearOrder I] [Fintype I]
+    (f : J → P) (x : I → P) (j : J) : concat f x (toLex (Sum.inl j)) = f j := rfl
 
 omit [CommRing P] in
-private theorem concat_inr {J I : Type} [LinearOrder J] [Fintype J] [LinearOrder I] [Fintype I] (f
-    : J → P)
-    (x : I → P)
-    (i : I) : concat f x (toLex (Sum.inr i)) = x i := rfl
+private theorem concat_inr {J I : Type} [LinearOrder J] [Fintype J] [LinearOrder I] [Fintype I]
+    (f : J → P) (x : I → P) (i : I) : concat f x (toLex (Sum.inr i)) = x i := rfl
 
 variable {n : ℕ}
 
@@ -2688,14 +2654,14 @@ private theorem card_inrBlock (n : ℕ) : (inrBlock n).card = n := by simp [inrB
 private theorem ofFinEmbEquiv_symm_inlBlock :
     ofFinEmbEquiv.symm ⟨inlBlock n, mem_iff.mpr (card_inlBlock n)⟩ = inlOrderEmb n := by
   rw [ofFinEmbEquiv_symm_apply]
-  exact (Finset.orderEmbOfFin_unique' (card_inlBlock n) fun j => Finset.mem_map_of_mem _
-      (Finset.mem_univ j)).symm
+  exact (Finset.orderEmbOfFin_unique' (card_inlBlock n)
+      fun j => Finset.mem_map_of_mem _ (Finset.mem_univ j)).symm
 
 private theorem ofFinEmbEquiv_symm_inrBlock :
     ofFinEmbEquiv.symm ⟨inrBlock n, mem_iff.mpr (card_inrBlock n)⟩ = inrOrderEmb n := by
   rw [ofFinEmbEquiv_symm_apply]
-  exact (Finset.orderEmbOfFin_unique' (card_inrBlock n) fun j => Finset.mem_map_of_mem _
-      (Finset.mem_univ j)).symm
+  exact (Finset.orderEmbOfFin_unique' (card_inrBlock n)
+      fun j => Finset.mem_map_of_mem _ (Finset.mem_univ j)).symm
 
 def cycleVec (g : Matrix (Fin n) (Fin n) P) (j : Fin n) : Fin n ⊕ₗ Fin n → P :=
   Pi.single (toLex (Sum.inl j)) 1 - ∑ i, g j i • Pi.single (toLex (Sum.inr i)) 1
@@ -2723,9 +2689,8 @@ private theorem tateChain_mem_C (g : Matrix (Fin n) (Fin n) P) : tateChain g ∈
 
 set_option synthInstance.maxHeartbeats 200000 in
 -- Instance search through these linear-equivalence coercions is slow.
-theorem d_tateChain (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P) (hf : ∀ j, f j = ∑ i,
-    g j i * x i) :
-    d (concat f x) P (tateChain g) = 0 := by
+theorem d_tateChain (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
+    (hf : ∀ j, f j = ∑ i, g j i * x i) : d (concat f x) P (tateChain g) = 0 := by
   cases n with
   | zero =>
     funext T
@@ -2738,10 +2703,8 @@ theorem d_tateChain (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P) (hf : ∀
     rw [this, map_zero]
     rfl
 
-private theorem tateChain_apply (g : Matrix (Fin n) (Fin n) P) (T : Finset (Fin n ⊕ₗ Fin n)) (hT :
-    T.card =
-    n) :
-    tateChain g T = (Matrix.of fun i j => cycleVec g i (ofFinEmbEquiv.symm ⟨T,
+private theorem tateChain_apply (g : Matrix (Fin n) (Fin n) P) (T : Finset (Fin n ⊕ₗ Fin n))
+    (hT : T.card = n) : tateChain g T = (Matrix.of fun i j => cycleVec g i (ofFinEmbEquiv.symm ⟨T,
         mem_iff.mpr hT⟩ j)).det := by
   rw [tateChain, toExterior_symm_apply _ T hT, exteriorPower.basis_repr_apply, tateCycle,
     exteriorPower.ιMultiDual_apply_ιMulti]
@@ -2762,9 +2725,8 @@ private theorem tateChain_inlBlock (g : Matrix (Fin n) (Fin n) P) : tateChain g 
     ext i j; exact cycleVec_inl g i j
   rw [this, Matrix.det_one]
 
-private theorem tateChain_inrBlock (g : Matrix (Fin n) (Fin n) P) : tateChain g (inrBlock n) = (-1)
-    ^ n *
-    g.det := by
+private theorem tateChain_inrBlock (g : Matrix (Fin n) (Fin n) P) :
+    tateChain g (inrBlock n) = (-1) ^ n * g.det := by
   rw [tateChain_apply g _ (card_inrBlock n), ofFinEmbEquiv_symm_inrBlock]
   have : (Matrix.of fun i j => cycleVec g i (inrOrderEmb n j)) = -g := by
     ext i j; exact cycleVec_inr g i j
@@ -2781,8 +2743,8 @@ variable {P : Type u} [CommRing P] {I : Type} [LinearOrder I] [Fintype I] (x : I
 
 private theorem subsingleton_H_of_isWeaklyRegular_of_step
     (step : ∀ (N : Type v) [AddCommGroup N] [Module P N] (r : P), r ∈ Ideal.span (Set.range x) →
-      IsSMulRegular N r → ∀ p : ℕ, Subsingleton (H x (QuotSMulTop r N) (p + 1)) → Subsingleton (H x
-          N p))
+      IsSMulRegular N r → ∀ p : ℕ, Subsingleton (H x (QuotSMulTop r N) (p + 1)) →
+          Subsingleton (H x N p))
     (M : Type v) [AddCommGroup M] [Module P M] (rs : List P)
     (hreg : RingTheory.Sequence.IsWeaklyRegular M rs) (hrs : ∀ r ∈ rs, r ∈ Ideal.span (Set.range x))
     (p : ℕ) (hp : Fintype.card I < p + rs.length) : Subsingleton (H x M p) := by
@@ -2884,8 +2846,8 @@ private theorem subsingleton_H_of_subsingleton_H_quotSMulTop (hr : IsSMulRegular
   have hS := smulSC_shortExact x r hr
   have hex := hS.homology_exact₁ (p + 1) p rfl
   have hzero : HomologicalComplex.homologyMap (smulSC x (N := N) r).f p = 0 := by
-    change HomologicalComplex.homologyMap (ChainMap.ofLinearMap x (r • LinearMap.id : N →ₗ[P]
-        N)).toHom p = 0
+    change HomologicalComplex.homologyMap (ChainMap.ofLinearMap x
+        (r • LinearMap.id : N →ₗ[P] N)).toHom p = 0
     rw [← cancel_mono (bridge x N p).hom, ChainMap.homologyMap_bridge, Limits.zero_comp]
     have h0 : (ChainMap.ofLinearMap x (r • LinearMap.id : N →ₗ[P] N)).mapH p = 0 :=
       LinearMap.ext fun h => (mapH_ofLinearMap_smul_id x r p h).trans (htpy h)
@@ -2900,10 +2862,8 @@ private theorem subsingleton_H_of_subsingleton_H_quotSMulTop (hr : IsSMulRegular
     (bridge x N p).toLinearEquiv.symm.toEquiv.subsingleton
   exact this
 
-private theorem subsingleton_H_of_isWeaklyRegular (M : Type v) [AddCommGroup M] [Module P M] {r :
-    ℕ} (y :
-    Fin r → P)
-    (hy : RingTheory.Sequence.IsWeaklyRegular M (List.ofFn y)) (hyx : ∀ k,
+private theorem subsingleton_H_of_isWeaklyRegular (M : Type v) [AddCommGroup M] [Module P M]
+    {r : ℕ} (y : Fin r → P) (hy : RingTheory.Sequence.IsWeaklyRegular M (List.ofFn y)) (hyx : ∀ k,
         y k ∈ Ideal.span (Set.range x))
     (p : ℕ) (hp : Fintype.card I < p + r) : Subsingleton (H x M p) :=
   subsingleton_H_of_isWeaklyRegular_of_step x
@@ -2912,12 +2872,10 @@ private theorem subsingleton_H_of_isWeaklyRegular (M : Type v) [AddCommGroup M] 
     M (List.ofFn y) hy (fun a ha => by obtain ⟨k, rfl⟩ := List.mem_ofFn.mp ha; exact hyx k) p
     (by rwa [List.length_ofFn])
 
-private theorem subsingleton_H_of_isWeaklyRegular_of_card_eq (M : Type v) [AddCommGroup M] [Module
-    P M] {r
-    : ℕ}
-    (y : Fin r → P) (hy : RingTheory.Sequence.IsWeaklyRegular M (List.ofFn y))
-    (hyx : ∀ k, y k ∈ Ideal.span (Set.range x)) (hr : r = Fintype.card I) (p : ℕ) (hp : 0 < p) :
-    Subsingleton (H x M p) :=
+private theorem subsingleton_H_of_isWeaklyRegular_of_card_eq (M : Type v) [AddCommGroup M]
+    [Module P M] {r : ℕ} (y : Fin r → P) (hy : RingTheory.Sequence.IsWeaklyRegular M (List.ofFn y))
+    (hyx : ∀ k, y k ∈ Ideal.span (Set.range x)) (hr : r = Fintype.card I) (p : ℕ)
+    (hp : 0 < p) : Subsingleton (H x M p) :=
   subsingleton_H_of_isWeaklyRegular x M y hy hyx p (by omega)
 
 end Func
@@ -2929,9 +2887,8 @@ section Wiebe
 
 variable {P : Type u} [CommRing P] {n : ℕ} (x f : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
 
-private theorem mem_span_of_eq (hf : ∀ i, f i = ∑ j, g i j * x j) (i : Fin n) : f i ∈ Ideal.span
-    (Set.range
-    x) := by
+private theorem mem_span_of_eq (hf : ∀ i, f i = ∑ j, g i j * x j)
+    (i : Fin n) : f i ∈ Ideal.span (Set.range x) := by
   rw [hf i]
   exact Ideal.sum_mem _ fun j _ => Ideal.mul_mem_left _ _ (Ideal.subset_span ⟨j, rfl⟩)
 
@@ -2983,8 +2940,8 @@ private theorem coe_wiebeMap_mk (hf : ∀ i, f i = ∑ j, g i j * x j) (a : P) :
     (wiebeMap x f g hf (Ideal.Quotient.mk _ a) : P ⧸ Ideal.span (Set.range f)) =
       Ideal.Quotient.mk _ (a * g.det) := by
   change ((LinearMap.toSpanSingleton P _ ⟨_, mk_det_mem_torsionBySet x f g hf⟩ a :
-    Submodule.torsionBySet P (P ⧸ Ideal.span (Set.range f)) (Set.range x)) : P ⧸ Ideal.span
-        (Set.range f)) = _
+    Submodule.torsionBySet P (P ⧸ Ideal.span (Set.range f)) (Set.range x)) :
+        P ⧸ Ideal.span (Set.range f)) = _
   rw [LinearMap.toSpanSingleton_apply, Submodule.coe_smul, Algebra.smul_def,
       Ideal.Quotient.algebraMap_eq,
     map_mul]
@@ -3071,20 +3028,20 @@ variable {P : Type u} [CommRing P] {n : ℕ} (x f : Fin n → P) (g : Matrix (Fi
 private theorem mem_smul_top_iff {I : Ideal P} {a : P} : a ∈ I • (⊤ : Submodule P P) ↔ a ∈ I := by
   rw [show I • (⊤ : Submodule P P) = I * ⊤ from rfl, Ideal.mul_top]
 
-noncomputable def tateZ (hf : ∀ i, f i = ∑ j, g i j * x j) : Z (concat f x) P (Fintype.card (Fin
-    n)) :=
+noncomputable def tateZ (hf : ∀ i, f i = ∑ j, g i j * x j) :
+    Z (concat f x) P (Fintype.card (Fin n)) :=
   ⟨tateChain g, ⟨by rw [Fintype.card_fin]; exact tateChain_mem_C g,
     LinearMap.mem_ker.mpr (d_tateChain f x g hf)⟩⟩
 
 @[scoped simp] private theorem coe_tateZ (hf : ∀ i, f i = ∑ j, g i j * x j) :
     ((tateZ x f g hf : Z (concat f x) P _) : Finset (Fin n ⊕ₗ Fin n) → P) = tateChain g := rfl
 
-noncomputable def tateClass (hf : ∀ i, f i = ∑ j, g i j * x j) : H (concat f x) P (Fintype.card
-    (Fin n)) :=
+noncomputable def tateClass (hf : ∀ i, f i = ∑ j, g i j * x j) :
+    H (concat f x) P (Fintype.card (Fin n)) :=
   Submodule.Quotient.mk (tateZ x f g hf)
 
-private theorem coe_HTopEquiv_peel_smul_tateClass (hf : ∀ i, f i = ∑ j, g i j * x j) (a : P) :
-    ((HTopEquiv x (ModSpan f P) ((peel f x P).mapH _ (a • tateClass x f g hf)) :
+private theorem coe_HTopEquiv_peel_smul_tateClass (hf : ∀ i, f i = ∑ j, g i j * x j)
+    (a : P) : ((HTopEquiv x (ModSpan f P) ((peel f x P).mapH _ (a • tateClass x f g hf)) :
         annihilatedBy x (ModSpan f P)) : ModSpan f P) =
       Submodule.Quotient.mk (a * ((-1) ^ n * g.det)) := by
   rw [map_smul, map_smul, Submodule.coe_smul, tateClass, ChainMap.mapH, HMap.mapH_mk, HTopEquiv_mk,
@@ -3093,8 +3050,8 @@ private theorem coe_HTopEquiv_peel_smul_tateClass (hf : ∀ i, f i = ∑ j, g i 
   rw [tateChain_inrBlock, ← Submodule.Quotient.mk_smul]
   rfl
 
-private theorem coe_HTopEquiv_peelTop_smul_tateClass (hf : ∀ i, f i = ∑ j, g i j * x j) (a : P) :
-    ((HTopEquiv f (ModSpan x P) ((peelTop f x P).mapH _ (a • tateClass x f g hf)) :
+private theorem coe_HTopEquiv_peelTop_smul_tateClass (hf : ∀ i, f i = ∑ j, g i j * x j)
+    (a : P) : ((HTopEquiv f (ModSpan x P) ((peelTop f x P).mapH _ (a • tateClass x f g hf)) :
         annihilatedBy f (ModSpan x P)) : ModSpan x P) =
       Submodule.Quotient.mk a := by
   rw [map_smul, map_smul, Submodule.coe_smul, tateClass, ChainMap.mapH, HMap.mapH_mk, HTopEquiv_mk,
@@ -3122,9 +3079,8 @@ private theorem wiebeMap_bijective (hf : ∀ i, f i = ∑ j, g i j * x j)
   have hu : (-1 : P) ^ n * (-1) ^ n = 1 := by rw [← pow_add, ← two_mul, pow_mul]; simp
   let E₁ : H (concat f x) P (Fintype.card (Fin n)) ≃ₗ[P] annihilatedBy x (ModSpan f P) :=
     (LinearEquiv.ofBijective _ (peel_bijective f x P hfK _)).trans (HTopEquiv x (ModSpan f P))
-  have hE₁ : ∀ a : P, ((E₁ (a • tateClass x f g hf) : annihilatedBy x (ModSpan f P)) : ModSpan f P)
-      =
-      Submodule.Quotient.mk (a * ((-1) ^ n * g.det)) := fun a =>
+  have hE₁ : ∀ a : P, ((E₁ (a • tateClass x f g hf) : annihilatedBy x (ModSpan f P)) :
+      ModSpan f P) = Submodule.Quotient.mk (a * ((-1) ^ n * g.det)) := fun a =>
     coe_HTopEquiv_peel_smul_tateClass x f g hf a
   constructor
   · rw [injective_iff_map_eq_zero]
@@ -3134,8 +3090,8 @@ private theorem wiebeMap_bijective (hf : ∀ i, f i = ∑ j, g i j * x j)
     have h1 : E₁ (((-1) ^ n * a) • tateClass x f g hf) = 0 := by
       apply Subtype.ext
       rw [hE₁, Submodule.coe_zero, Submodule.Quotient.mk_eq_zero, mem_smul_top_iff,
-        show (-1 : P) ^ n * a * ((-1) ^ n * g.det) = ((-1 : P) ^ n * (-1) ^ n) * (a * g.det)
-            by ring, hu,
+        show (-1 : P) ^ n * a * ((-1) ^ n * g.det) = ((-1 : P) ^ n * (-1) ^ n) *
+            (a * g.det) by ring, hu,
         one_mul]
       exact hq
     have h2 : ((-1) ^ n * a) • tateClass x f g hf = 0 := E₁.injective (by rw [h1, map_zero])
@@ -3160,8 +3116,8 @@ private theorem wiebeMap_bijective (hf : ∀ i, f i = ∑ j, g i j * x j)
     simp only [LinearEquiv.apply_symm_apply] at hb'
     rw [hE₁, Submodule.Quotient.eq, mem_smul_top_iff] at hb'
     refine ⟨Ideal.Quotient.mk _ (b * (-1) ^ n), Subtype.ext ?_⟩
-    rw [coe_wiebeMap_mk, ← hs, Ideal.Quotient.eq, show b * (-1) ^ n * g.det - s = -(s - b * ((-1) ^
-        n * g.det)) by ring]
+    rw [coe_wiebeMap_mk, ← hs, Ideal.Quotient.eq, show b * (-1) ^ n * g.det - s =
+        -(s - b * ((-1) ^ n * g.det)) by ring]
     exact neg_mem hb'
 
 private theorem colon_span_eq_sup_span_det_of_isWeaklyRegular
@@ -3225,16 +3181,12 @@ private theorem X_pow_dvd_upperPart (i : σ) (N : ℕ) (h : MvPowerSeries σ R) 
     (X i : MvPowerSeries σ R) ^ N ∣ upperPart i N h :=
   X_pow_dvd_iff.mpr fun m hm => by rw [coeff_upperPart, ite_eq_right (not_le.mpr hm)]
 
-private theorem coeff_sub_upperPart_of_le {i : σ} {N : ℕ} (h : MvPowerSeries σ R) {m : σ →₀ ℕ} (hm
-    : N ≤ m
-    i) :
-    coeff m (h - upperPart i N h) = 0 := by
+private theorem coeff_sub_upperPart_of_le {i : σ} {N : ℕ} (h : MvPowerSeries σ R) {m : σ →₀ ℕ}
+    (hm : N ≤ m i) : coeff m (h - upperPart i N h) = 0 := by
   rw [map_sub, coeff_upperPart, ite_eq_left hm, sub_self]
 
-private theorem coeff_sub_upperPart_of_lt {i : σ} {N : ℕ} (h : MvPowerSeries σ R) {m : σ →₀ ℕ} (hm
-    : m i <
-    N) :
-    coeff m (h - upperPart i N h) = coeff m h := by
+private theorem coeff_sub_upperPart_of_lt {i : σ} {N : ℕ} (h : MvPowerSeries σ R) {m : σ →₀ ℕ}
+    (hm : m i < N) : coeff m (h - upperPart i N h) = coeff m h := by
   rw [map_sub, coeff_upperPart, ite_eq_right (not_le.mpr hm), sub_zero]
 
 private theorem coeff_eq_zero_of_mem_span (T : Set σ) (N : σ → ℕ) {h : MvPowerSeries σ R}
@@ -3296,8 +3248,8 @@ private theorem mem_span_X_pow_iff (S : Finset σ) (N : σ → ℕ) (h : MvPower
 private theorem mem_span_range_X_iff [Fintype σ] (h : MvPowerSeries σ R) :
     h ∈ Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ↔ constantCoeff h = 0 := by
   have hset : Set.range (X : σ → MvPowerSeries σ R) =
-      (fun i => (X i : MvPowerSeries σ R) ^ (fun _ => 1) i) '' (↑(Finset.univ : Finset σ) : Set
-          σ) := by
+      (fun i => (X i : MvPowerSeries σ R) ^ (fun _ => 1) i) ''
+          (↑(Finset.univ : Finset σ) : Set σ) := by
     rw [Finset.coe_univ, Set.image_univ]
     exact congrArg Set.range (funext fun i => (pow_one _).symm)
   rw [hset, mem_span_X_pow_iff, ← coeff_zero_eq_constantCoeff_apply]
@@ -3313,8 +3265,8 @@ section Regular
 
 variable {R : Type*} [CommRing R]
 
-private theorem isSMulRegular_quotient_ideal (I : Ideal R) (r : R) (H : ∀ h, r * h ∈ I → h ∈ I) :
-    IsSMulRegular (R ⧸ (I • ⊤ : Submodule R R)) r := by
+private theorem isSMulRegular_quotient_ideal (I : Ideal R) (r : R)
+    (H : ∀ h, r * h ∈ I → h ∈ I) : IsSMulRegular (R ⧸ (I • ⊤ : Submodule R R)) r := by
   have hI : (I • ⊤ : Submodule R R) = I := by rw [Ideal.smul_eq_mul, Ideal.mul_top]
   intro a b hab
   obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ a
@@ -3370,10 +3322,9 @@ section Powers
 
 variable {k : Type u} [Field k] {σ : Type*}
 
-private theorem exists_X_pow_mem (I : Ideal (MvPowerSeries σ k)) [Module.Finite k (MvPowerSeries σ
-    k ⧸ I)]
-    (i : σ) :
-    ∃ N : ℕ, (X i : MvPowerSeries σ k) ^ N ∈ I := by
+private theorem exists_X_pow_mem (I : Ideal (MvPowerSeries σ k))
+    [Module.Finite k (MvPowerSeries σ k ⧸ I)] (i : σ) : ∃ N :
+    ℕ, (X i : MvPowerSeries σ k) ^ N ∈ I := by
   obtain ⟨p, pmonic, hp⟩ : IsIntegral k (Ideal.Quotient.mk I (X i)) :=
       Algebra.IsIntegral.isIntegral _
   have hpI : Polynomial.aeval (X i : MvPowerSeries σ k) p ∈ I := by
@@ -3407,10 +3358,8 @@ section Socle
 
 variable {B : Type*} [CommRing B]
 
-private theorem exists_mul_ne_zero_and_forall_mul_eq_zero (𝔪 : Ideal B) (h𝔪 : IsNilpotent 𝔪) {y :
-    B} (hy :
-    y ≠ 0) :
-    ∃ w : B, w * y ≠ 0 ∧ ∀ v ∈ 𝔪, v * (w * y) = 0 := by
+private theorem exists_mul_ne_zero_and_forall_mul_eq_zero (𝔪 : Ideal B) (h𝔪 : IsNilpotent 𝔪)
+    {y : B} (hy : y ≠ 0) : ∃ w : B, w * y ≠ 0 ∧ ∀ v ∈ 𝔪, v * (w * y) = 0 := by
   classical
   let Q : ℕ → Prop := fun t => ∀ w ∈ 𝔪 ^ t, w * y = 0
   obtain ⟨R, hR⟩ := h𝔪
@@ -3434,11 +3383,11 @@ section Main
 
 variable {k : Type u} [Field k] {n : ℕ}
 
-private theorem span_range_X_ne_top : Ideal.span (Set.range (X : Fin n → MvPowerSeries (Fin n) k))
-    ≠ ⊤ := by
+private theorem span_range_X_ne_top : Ideal.span (Set.range
+    (X : Fin n → MvPowerSeries (Fin n) k)) ≠ ⊤ := by
   intro h
-  have h1 : (1 : MvPowerSeries (Fin n) k) ∈ Ideal.span (Set.range (X : Fin n → MvPowerSeries (Fin
-      n) k)) := by
+  have h1 : (1 : MvPowerSeries (Fin n) k) ∈ Ideal.span (Set.range
+      (X : Fin n → MvPowerSeries (Fin n) k)) := by
     rw [h]; trivial
   rw [mem_span_range_X_iff, map_one] at h1
   exact one_ne_zero h1
@@ -3476,8 +3425,8 @@ private theorem main (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
     have := hle hv
     rwa [Submodule.mem_colon_singleton, smul_eq_mul, Submodule.mem_bot] at this
   have h𝔪nil : IsNilpotent 𝔪 := by
-    have hfg : 𝔪.FG := ⟨Finset.univ.image fun j : Fin n => Ideal.Quotient.mk (Ideal.span (Set.range
-        f)) (X j), by
+    have hfg : 𝔪.FG := ⟨Finset.univ.image fun j : Fin n => Ideal.Quotient.mk
+        (Ideal.span (Set.range f)) (X j), by
       rw [Finset.coe_image, Finset.coe_univ, Set.image_univ]⟩
     refine (Ideal.FG.isNilpotent_iff_le_nilradical hfg).mpr (Ideal.span_le.mpr ?_)
     rintro v ⟨j, rfl⟩
@@ -3498,8 +3447,8 @@ private theorem main (g : Matrix (Fin n) (Fin n) (MvPowerSeries (Fin n) k))
   have hz : w * y = Ideal.Quotient.mk (Ideal.span (Set.range f)) b * d := by
     rw [← hzt, ← habd, map_add, Ideal.Quotient.eq_zero_iff_mem.mpr ha, zero_add, map_mul]
   have hb𝔪 : Ideal.Quotient.mk (Ideal.span (Set.range f)) (b - C (constantCoeff b)) ∈ 𝔪 := by
-    have hmem : b - C (constantCoeff b) ∈ Ideal.span (Set.range (X : Fin n → MvPowerSeries (Fin n)
-        k)) := by
+    have hmem : b - C (constantCoeff b) ∈ Ideal.span (Set.range
+        (X : Fin n → MvPowerSeries (Fin n) k)) := by
       rw [mem_span_range_X_iff, map_sub, constantCoeff_C, sub_self]
     have := Ideal.mem_map_of_mem (Ideal.Quotient.mk (Ideal.span (Set.range f))) hmem
     rwa [Ideal.map_span, ← Set.range_comp] at this
@@ -3543,8 +3492,8 @@ private theorem solution {k : Type u} [Field k] {n : ℕ}
     (hf : ∀ i, f i = ∑ j, g i j * MvPowerSeries.X j)
     [Module.Finite k (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range f))] :
     ∃ l : (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range f)) →ₗ[k] k,
-      Function.Bijective ((LinearMap.mul k (MvPowerSeries (Fin n) k ⧸ Ideal.span (Set.range
-          f))).compr₂ l) := by
+      Function.Bijective ((LinearMap.mul k (MvPowerSeries (Fin n) k ⧸ Ideal.span
+          (Set.range f))).compr₂ l) := by
   obtain ⟨hs0, hsJ⟩ := JacobianSquarePresentation.QuotientDetMem.solution g f hf
   obtain ⟨l, hl⟩ := Module.Projective.exists_dual_ne_zero k hs0
   refine ⟨l, ?_⟩
@@ -3726,8 +3675,8 @@ noncomputable def theta : Module.Dual R (Q f) →ₗ[R] Q f where
   toFun φ := Algebra.TensorProduct.lid R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f))
         (LinearMap.rTensor (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) φ
           (Algebra.TensorProduct.map
-              (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) (Ideal.Quotient.mkₐ R (Ideal.span
-                  (Set.range f)))
+              (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
+                  (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
             (Matrix.det (Matrix.of a))))
   map_add' φ ψ := by simp [LinearMap.rTensor_add]
   map_smul' r φ := by simp [LinearMap.rTensor_smul]
@@ -3840,8 +3789,8 @@ private lemma finite_baseChange [Module.Finite R (Q f)] : Module.Finite S (Q (fS
   Module.Finite.equiv (delta f S).toLinearEquiv
 
 private lemma key (φ : Module.Dual R (Q f)) (φ' : Module.Dual S (Q (fS f S)))
-    (h : ∀ p : MvPolynomial (Fin m) R, φ' (Ideal.Quotient.mk _ (mapP S p)) = algebraMap R S (φ
-        (Ideal.Quotient.mk _ p)))
+    (h : ∀ p : MvPolynomial (Fin m) R, φ' (Ideal.Quotient.mk _ (mapP S p)) =
+        algebraMap R S (φ (Ideal.Quotient.mk _ p)))
     (z : MvPolynomial (Fin m) R ⊗[R] MvPolynomial (Fin m) R) :
     Algebra.TensorProduct.lid S (Q (fS f S)) (LinearMap.rTensor (Q (fS f S)) φ'
         (Algebra.TensorProduct.map (Ideal.Quotient.mkₐ S (Ideal.span (Set.range (fS f S))))
@@ -3905,9 +3854,8 @@ private lemma bijective_iff :
 end general
 
 private lemma bijective_of_bijective_baseChange {k : Type*} (K : Type*) [Field k] [Field K]
-    [Algebra k K]
-    {V W : Type*} [AddCommGroup V] [Module k V] [AddCommGroup W] [Module k W] (T : V →ₗ[k] W)
-    (h : Function.Bijective (T.baseChange K)) : Function.Bijective T := by
+    [Algebra k K] {V W : Type*} [AddCommGroup V] [Module k V] [AddCommGroup W] [Module k W]
+    (T : V →ₗ[k] W) (h : Function.Bijective (T.baseChange K)) : Function.Bijective T := by
   rw [← Module.FaithfullyFlat.lTensor_bijective_iff_bijective k K T,
       ← LinearMap.baseChange_eq_lTensor]
   exact h
@@ -3928,20 +3876,20 @@ private theorem solution
       (b : Fin m → Fin m → MvPolynomial (Fin m) K ⊗[K] MvPolynomial (Fin m) K),
       (∀ i, g i ⊗ₜ[K] (1 : MvPolynomial (Fin m) K) - (1 : MvPolynomial (Fin m) K) ⊗ₜ[K] g i =
         ∑ j, b i j * (MvPolynomial.X j ⊗ₜ[K] 1 - 1 ⊗ₜ[K] MvPolynomial.X j)) →
-      Function.Bijective (fun φ : Module.Dual K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g))
-          =>
+      Function.Bijective (fun φ : Module.Dual K (MvPolynomial (Fin m) K ⧸ Ideal.span
+          (Set.range g)) =>
       Algebra.TensorProduct.lid K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g))
         (LinearMap.rTensor (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)) φ
           (Algebra.TensorProduct.map
-              (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g))) (Ideal.Quotient.mkₐ K (Ideal.span
-                  (Set.range g)))
+              (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
+                  (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
             (Matrix.det (Matrix.of b)))))) :
     Function.Bijective (fun φ : Module.Dual R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) =>
       Algebra.TensorProduct.lid R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f))
         (LinearMap.rTensor (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) φ
           (Algebra.TensorProduct.map
-              (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) (Ideal.Quotient.mkₐ R (Ideal.span
-                  (Set.range f)))
+              (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
+                  (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
             (Matrix.det (Matrix.of a))))) := by
   change Function.Bijective (theta f a)
   apply JacobianSquarePresentation.BijectiveBaseChange.solution
@@ -3968,29 +3916,26 @@ namespace Ws47
 namespace DLB
 
 private theorem adjugate_mulVec_mulVec {n : Type*} [Fintype n] [DecidableEq n] {S : Type*}
-    [CommRing S]
-    (A : Matrix n n S) (v : n → S) : A.adjugate.mulVec (A.mulVec v) = A.det • v := by
+    [CommRing S] (A : Matrix n n S) (v : n → S) : A.adjugate.mulVec (A.mulVec v) = A.det • v := by
   rw [Matrix.mulVec_mulVec, Matrix.adjugate_mul]
   ext i
   simp [Matrix.mulVec, dotProduct, Matrix.smul_apply, Matrix.one_apply, Finset.sum_ite_eq, ite_mul]
 
 private theorem map_det_mul_map_eq_zero {R P B : Type*} [CommRing R] [CommRing P] [Algebra R P]
-    [Semiring
-    B] [Algebra R B]
-    (π : P ⊗[R] P →ₐ[R] B) {m : ℕ} (x f : Fin m → P) (a : Fin m → Fin m → P ⊗[R] P)
-    (ha : ∀ i, f i ⊗ₜ[R] (1 : P) - (1 : P) ⊗ₜ[R] f i = ∑ j, a i j * (x j ⊗ₜ[R] 1 - 1 ⊗ₜ[R] x j))
-    (hf : ∀ i, π (f i ⊗ₜ[R] (1 : P) - (1 : P) ⊗ₜ[R] f i) = 0) (j : Fin m) :
-    π (Matrix.det (Matrix.of a)) * π (x j ⊗ₜ[R] 1 - 1 ⊗ₜ[R] x j) = 0 := by
+    [Semiring B] [Algebra R B] (π : P ⊗[R] P →ₐ[R] B) {m : ℕ} (x f : Fin m → P)
+    (a : Fin m → Fin m → P ⊗[R] P) (ha : ∀ i, f i ⊗ₜ[R] (1 : P) - (1 : P) ⊗ₜ[R] f i = ∑ j,
+    a i j * (x j ⊗ₜ[R] 1 - 1 ⊗ₜ[R] x j)) (hf : ∀ i, π (f i ⊗ₜ[R] (1 : P) - (1 : P) ⊗ₜ[R] f i) = 0)
+    (j : Fin m) : π (Matrix.det (Matrix.of a)) * π (x j ⊗ₜ[R] 1 - 1 ⊗ₜ[R] x j) = 0 := by
   classical
-  have hmat : (Matrix.of a).mulVec (fun j => x j ⊗ₜ[R] (1 : P) - 1 ⊗ₜ[R] x j) = fun i => f i ⊗ₜ[R]
-      1 - 1 ⊗ₜ[R] f i := by
+  have hmat : (Matrix.of a).mulVec (fun j => x j ⊗ₜ[R] (1 : P) - 1 ⊗ₜ[R] x j) =
+      fun i => f i ⊗ₜ[R] 1 - 1 ⊗ₜ[R] f i := by
     funext i
     simp only [Matrix.mulVec, dotProduct, Matrix.of_apply]
     exact (ha i).symm
   have hcramer : Matrix.det (Matrix.of a) * (x j ⊗ₜ[R] (1 : P) - 1 ⊗ₜ[R] x j) =
       ∑ i, (Matrix.of a).adjugate j i * (f i ⊗ₜ[R] 1 - 1 ⊗ₜ[R] f i) := by
-    have h := congrArg (fun v => v j) (adjugate_mulVec_mulVec (Matrix.of a) (fun j => x j ⊗ₜ[R] (1
-        : P) - 1 ⊗ₜ[R] x j))
+    have h := congrArg (fun v => v j) (adjugate_mulVec_mulVec (Matrix.of a)
+        (fun j => x j ⊗ₜ[R] (1 : P) - 1 ⊗ₜ[R] x j))
     simp only [Pi.smul_apply, smul_eq_mul] at h
     rw [← h, hmat]
     rfl
@@ -3998,10 +3943,9 @@ private theorem map_det_mul_map_eq_zero {R P B : Type*} [CommRing R] [CommRing P
   refine Finset.sum_eq_zero fun i _ => ?_
   rw [map_mul, hf, mul_zero]
 
-private theorem balanced_of_adjoin {R A : Type*} [CommRing R] [CommRing A] [Algebra R A] (Δ : A
-    ⊗[R] A) (S
-    : Set A)
-    (hS : Algebra.adjoin R S = ⊤) (hgen : ∀ x ∈ S, (x ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] x) * Δ)
+private theorem balanced_of_adjoin {R A : Type*} [CommRing R] [CommRing A] [Algebra R A]
+    (Δ : A ⊗[R] A) (S : Set A) (hS : Algebra.adjoin R S = ⊤)
+    (hgen : ∀ x ∈ S, (x ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] x) * Δ)
         (s : A) :
     (s ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] s) * Δ := by
   have hs : s ∈ Algebra.adjoin R S := by rw [hS]; exact Algebra.mem_top
@@ -4044,8 +3988,8 @@ private theorem solution
         by
       rw [MvPolynomial.adjoin_range_X]; exact Algebra.mem_top
     have hrange : (Set.range fun j : Fin m => (Ideal.Quotient.mk (Ideal.span (Set.range f))
-        (MvPolynomial.X j))) =
-        (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) '' Set.range (MvPolynomial.X : Fin m →
+        (MvPolynomial.X j))) = (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) ''
+        Set.range (MvPolynomial.X : Fin m →
             MvPolynomial (Fin m) R) := by
       ext y; simp [Ideal.Quotient.mkₐ_eq_mk]
     rw [hrange, ← AlgHom.map_adjoin]
@@ -4093,9 +4037,8 @@ private theorem Ws47.DLB.lid_rTensor_comp_mulLeft
     | zero => simp
     | tmul x y => simp [Algebra.TensorProduct.tmul_mul_tmul]
     | add x y hx hy => simp only [map_add, mul_add, hx, hy]
-  have h4 : ∀ w : R ⊗[R] A, Algebra.TensorProduct.lid R A (LinearMap.lTensor R (LinearMap.mulLeft R
-      s) w) =
-      s * Algebra.TensorProduct.lid R A w := by
+  have h4 : ∀ w : R ⊗[R] A, Algebra.TensorProduct.lid R A
+      (LinearMap.lTensor R (LinearMap.mulLeft R s) w) = s * Algebra.TensorProduct.lid R A w := by
     intro w
     induction w using TensorProduct.induction_on with
     | zero => simp
@@ -4138,10 +4081,8 @@ private theorem thetaₗ_comp_mulLeft (hbal : ∀ s : A, (s ⊗ₜ[K] (1 : A)) *
         (K := K) Δ φ :=
   Ws47.DLB.lid_rTensor_comp_mulLeft K A Δ hbal φ s
 
-private theorem bijective_thetaₗ_of_injective [FiniteDimensional K A] (hinj : Function.Injective
-    (thetaₗ
-    (K := K) Δ)) :
-    Function.Bijective (thetaₗ (K := K) Δ) := by
+private theorem bijective_thetaₗ_of_injective [FiniteDimensional K A]
+    (hinj : Function.Injective (thetaₗ (K := K) Δ)) : Function.Bijective (thetaₗ (K := K) Δ) := by
   refine ⟨hinj, (LinearMap.injective_iff_surjective_of_finrank_eq_finrank ?_).mp hinj⟩
   exact Subspace.dual_finrank_eq
 
@@ -4149,16 +4090,16 @@ private theorem injective_thetaₗ_of_forall_factor
     (hbal : ∀ s : A, (s ⊗ₜ[K] (1 : A)) * Δ = ((1 : A) ⊗ₜ[K] s) * Δ)
     {ι : Type*} [Finite ι] (𝔫 : ι → Ideal A) (N : ℕ)
     (hcrt : Function.Bijective (RingHom.pi fun i => Ideal.Quotient.mk (𝔫 i ^ N)))
-    (hloc : ∀ (i : ι) (χ : Module.Dual K A), (∀ x ∈ 𝔫 i ^ N, χ x = 0) → thetaₗ (K := K) Δ χ = 0 → χ
-        = 0) :
+    (hloc : ∀ (i : ι) (χ : Module.Dual K A), (∀ x ∈ 𝔫 i ^ N, χ x = 0) → thetaₗ (K := K) Δ χ = 0 →
+        χ = 0) :
     Function.Injective (thetaₗ (K := K) Δ) := by
   classical
   have := Fintype.ofFinite ι
   set π : A →+* ((i : ι) → A ⧸ 𝔫 i ^ N) := RingHom.pi fun i => Ideal.Quotient.mk (𝔫 i ^ N) with hπ
   have hsurj := hcrt.2
   choose e he using fun i => hsurj (Pi.single i 1)
-  have hπe : ∀ i j, Ideal.Quotient.mk (𝔫 j ^ N) (e i) = Pi.single (M := fun j => A ⧸ 𝔫 j ^ N) i 1
-      j := fun i j => by
+  have hπe : ∀ i j, Ideal.Quotient.mk (𝔫 j ^ N) (e i) =
+      Pi.single (M := fun j => A ⧸ 𝔫 j ^ N) i 1 j := fun i j => by
     have := congrArg (fun v => v j) (he i); (simp [hπ] at this; exact this)
   have hsum : ∑ i, e i = 1 := by
     apply hcrt.1
@@ -4200,8 +4141,8 @@ private theorem apply_mk_det_ne_zero (q : Matrix (Fin m) (Fin m) (MvPowerSeries 
     (f : Fin m → MvPowerSeries (Fin m) K) (hf : ∀ i, f i = ∑ j, q i j * MvPowerSeries.X j)
     [Module.Finite K (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f))]
     (l : (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f)) →ₗ[K] K)
-    (hl : Function.Bijective ((LinearMap.mul K (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range
-        f))).compr₂ l)) :
+    (hl : Function.Bijective ((LinearMap.mul K (MvPowerSeries (Fin m) K ⧸ Ideal.span
+        (Set.range f))).compr₂ l)) :
     l (Ideal.Quotient.mk (Ideal.span (Set.range f)) q.det) ≠ 0 := by
   classical
   obtain ⟨hs0, hsJ⟩ := JacobianSquarePresentation.QuotientDetMem.solution q f hf
@@ -4232,17 +4173,17 @@ private theorem apply_mk_det_ne_zero (q : Matrix (Fin m) (Fin m) (MvPowerSeries 
   obtain ⟨φ, rfl⟩ := Ideal.Quotient.mk_surjective r
   rw [LinearMap.compr₂_apply, LinearMap.compr₂_apply, LinearMap.mul_apply', LinearMap.mul_apply',
       zero_mul, map_zero]
-  have hC : ∀ c : K, s * Ideal.Quotient.mk (Ideal.span (Set.range f)) (MvPowerSeries.C c) = c •
-      s := by
+  have hC : ∀ c : K, s * Ideal.Quotient.mk (Ideal.span (Set.range f))
+      (MvPowerSeries.C c) = c • s := by
     intro c
     have h1 : (c • s : MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f)) =
-        algebraMap K (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f)) c * s := Algebra.smul_def
-            c s
+        algebraMap K (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f)) c * s :=
+            Algebra.smul_def c s
     rw [h1, mul_comm]
     change _ = Ideal.Quotient.mk _ (algebraMap K (MvPowerSeries (Fin m) K) c) * s
     congr 2
-  have hsplit : s * Ideal.Quotient.mk (Ideal.span (Set.range f)) φ = MvPowerSeries.constantCoeff φ
-      • s := by
+  have hsplit : s * Ideal.Quotient.mk (Ideal.span (Set.range f)) φ =
+      MvPowerSeries.constantCoeff φ • s := by
     have hφ : φ = MvPowerSeries.C (MvPowerSeries.constantCoeff φ) +
         (φ - MvPowerSeries.C (MvPowerSeries.constantCoeff φ)) := by ring
     conv_lhs => rw [hφ]
@@ -4260,8 +4201,8 @@ local notation "P" => MvPolynomial (Fin m) K
 local notation "A" => MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)
 
 noncomputable def Δb : A ⊗[K] A :=
-  Algebra.TensorProduct.map (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g))) (Ideal.Quotient.mkₐ K
-      (Ideal.span (Set.range g)))
+  Algebra.TensorProduct.map (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
+      (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
     (Matrix.det (Matrix.of b))
 
 noncomputable def evR (ξ : Fin m → K) : MvPolynomial (Fin m) K ⊗[K] MvPolynomial (Fin m) K →ₐ[K]
@@ -4276,8 +4217,8 @@ noncomputable def transl (ξ : Fin m → K) : MvPolynomial (Fin m) K →ₐ[K] M
   MvPolynomial.aeval fun j => MvPolynomial.X j + MvPolynomial.C (ξ j)
 
 omit g b in
-theorem transl_comp_transl_neg (ξ : Fin m → K) : (transl (K := K) ξ).comp (transl (-ξ)) = AlgHom.id
-    K P := by
+theorem transl_comp_transl_neg (ξ : Fin m → K) : (transl (K := K) ξ).comp (transl (-ξ)) =
+    AlgHom.id K P := by
   apply MvPolynomial.algHom_ext
   intro j
   simp [transl]
@@ -4328,14 +4269,15 @@ set_option synthInstance.maxHeartbeats 800000 in
 private theorem eval_thetaₗ_Δb (ξ : Fin m → K) (hI : ∀ a ∈ Ideal.span (Set.range g),
     MvPolynomial.aeval ξ a = 0)
     (φ : Module.Dual K A) :
-    Ideal.Quotient.liftₐ (Ideal.span (Set.range g)) (MvPolynomial.aeval ξ) hI (thetaₗ (K := K) (Δb
-        g b) φ) =
+    Ideal.Quotient.liftₐ (Ideal.span (Set.range g)) (MvPolynomial.aeval ξ)
+        hI (thetaₗ (K := K) (Δb g b) φ) =
       φ (Ideal.Quotient.mk (Ideal.span (Set.range g)) (Matrix.det (Matrix.of (bAt b ξ)))) := by
   classical
   set ε := Ideal.Quotient.liftₐ (Ideal.span (Set.range g)) (MvPolynomial.aeval ξ) hI with hεdef
   have hε : ∀ p, ε (Ideal.Quotient.mk _ p) = MvPolynomial.aeval ξ p := fun _ => rfl
-  have key : ∀ z : P ⊗[K] P, Algebra.TensorProduct.rid K K A (LinearMap.lTensor A ε.toLinearMap
-      (Algebra.TensorProduct.map (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
+  have key : ∀ z : P ⊗[K] P, Algebra.TensorProduct.rid K K A
+      (LinearMap.lTensor A ε.toLinearMap (Algebra.TensorProduct.map
+      (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
         (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g))) z)) =
       Ideal.Quotient.mk (Ideal.span (Set.range g)) (evR ξ z) := by
     intro z
@@ -4382,8 +4324,8 @@ private theorem exists_local_model (ξ : Fin m → K) (𝔫 : Ideal A) [𝔫.IsM
     intro j; simp [hσ, transl]
   let g' : Fin m → P := fun i => σ (g i)
   let f : Fin m → MvPowerSeries (Fin m) K := fun i => (g' i : MvPowerSeries (Fin m) K)
-  let q : Matrix (Fin m) (Fin m) (MvPowerSeries (Fin m) K) := fun i j => ((σ (bAt b ξ i j) : P) :
-      MvPowerSeries (Fin m) K)
+  let q : Matrix (Fin m) (Fin m) (MvPowerSeries (Fin m) K) :=
+      fun i j => ((σ (bAt b ξ i j) : P) : MvPowerSeries (Fin m) K)
   have hgb : ∀ i, g i = ∑ j, bAt b ξ i j * (MvPolynomial.X j - MvPolynomial.C (ξ j)) := by
     intro i
     have := g_sub_C_eq_sum_bAt g b hb ξ i
@@ -4408,17 +4350,17 @@ private theorem exists_local_model (ξ : Fin m → K) (𝔫 : Ideal A) [𝔫.IsM
     rfl
   let τ : A ≃ₐ[K] (P ⧸ Ideal.span (Set.range g')) := Ideal.quotientEquivAlg _ _ σ hIJ
   have hτ : ∀ p, τ (Ideal.Quotient.mk _ p) = Ideal.Quotient.mk _ (σ p) := fun _ => rfl
-  let 𝔫' : Ideal (P ⧸ Ideal.span (Set.range g')) := Ideal.map (τ : A →+* (P ⧸ Ideal.span (Set.range
-      g'))) 𝔫
+  let 𝔫' : Ideal (P ⧸ Ideal.span (Set.range g')) := Ideal.map
+      (τ : A →+* (P ⧸ Ideal.span (Set.range g'))) 𝔫
   have h𝔫'max : 𝔫'.IsMaximal := Ideal.IsMaximal.map_bijective _
       (by exact τ.bijective) inferInstance
   have h𝔫'X : ∀ j, Ideal.Quotient.mk (Ideal.span (Set.range g')) (MvPolynomial.X j) ∈ 𝔫' := by
     intro j
-    have h1 : Ideal.Quotient.mk (Ideal.span (Set.range g)) (MvPolynomial.X j - MvPolynomial.C (ξ
-        j)) ∈ 𝔫 :=
+    have h1 : Ideal.Quotient.mk (Ideal.span (Set.range g))
+        (MvPolynomial.X j - MvPolynomial.C (ξ j)) ∈ 𝔫 :=
       (h𝔫 _).mpr (by simp)
-    have h2 : τ (Ideal.Quotient.mk (Ideal.span (Set.range g)) (MvPolynomial.X j - MvPolynomial.C (ξ
-        j))) ∈ 𝔫' :=
+    have h2 : τ (Ideal.Quotient.mk (Ideal.span (Set.range g))
+        (MvPolynomial.X j - MvPolynomial.C (ξ j))) ∈ 𝔫' :=
       Ideal.mem_map_of_mem (τ : A →+* (P ⧸ Ideal.span (Set.range g'))) h1
     rwa [hτ, hσX] at h2
   let τN : (A ⧸ 𝔫 ^ N) ≃ₐ[K] ((P ⧸ Ideal.span (Set.range g')) ⧸ 𝔫' ^ N) :=
@@ -4434,32 +4376,31 @@ private theorem exists_local_model (ξ : Fin m → K) (𝔫 : Ideal A) [𝔫.IsM
     rw [Ideal.map_bot] at hj
     rw [← hj, ← Ideal.map_pow, hN, Ideal.map_bot]
   obtain ⟨e₁⟩ := JacobianSquarePresentation.ArtinianQuotientPow.solution _ 𝔫' N hN'
-  have : Module.Finite K (Localization.AtPrime 𝔫') := Module.Finite.equiv (e₁.restrictScalars
-      K).toLinearEquiv
+  have : Module.Finite K (Localization.AtPrime 𝔫') := Module.Finite.equiv
+      (e₁.restrictScalars K).toLinearEquiv
   obtain ⟨e₂, he₂⟩ :=
     MvPolynomial.exists_algEquiv_localization_atPrime_mvPowerSeries_quotient_apply_mk K g' 𝔫' h𝔫'X
   have hfin : Module.Finite K (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f)) :=
     Module.Finite.equiv e₂.toLinearEquiv
   let Φ : (A ⧸ 𝔫 ^ N) ≃ₐ[K] (MvPowerSeries (Fin m) K ⧸ Ideal.span (Set.range f)) :=
     (τN.trans (e₁.restrictScalars K)).trans e₂
-  have hdet : ((σ (Matrix.det (Matrix.of (bAt b ξ))) : P) : MvPowerSeries (Fin m) K) = Matrix.det
-      q := by
-    let ρ : P →+* MvPowerSeries (Fin m) K := MvPolynomial.coeToMvPowerSeries.ringHom.comp (σ : P
-        →+* P)
+  have hdet : ((σ (Matrix.det (Matrix.of (bAt b ξ))) : P) : MvPowerSeries (Fin m) K) =
+      Matrix.det q := by
+    let ρ : P →+* MvPowerSeries (Fin m) K := MvPolynomial.coeToMvPowerSeries.ringHom.comp
+        (σ : P →+* P)
     have hρ : ∀ p, ((σ p : P) : MvPowerSeries (Fin m) K) = ρ p := fun _ => rfl
     rw [hρ, RingHom.map_det]
     congr 1
   refine ⟨q, f, hf, hfin, Φ, ?_⟩
   have he₁ : ∀ x, e₁ (Ideal.Quotient.mk (𝔫' ^ N) x) = algebraMap _ (Localization.AtPrime 𝔫') x :=
     fun x => e₁.commutes x
-  calc Φ (Ideal.Quotient.mk (𝔫 ^ N) (Ideal.Quotient.mk (Ideal.span (Set.range g)) (Matrix.det
-      (Matrix.of (bAt b ξ)))))
-      = e₂ (e₁.restrictScalars K (τN (Ideal.Quotient.mk (𝔫 ^ N)
+  calc Φ (Ideal.Quotient.mk (𝔫 ^ N) (Ideal.Quotient.mk (Ideal.span (Set.range g))
+      (Matrix.det (Matrix.of (bAt b ξ))))) = e₂ (e₁.restrictScalars K (τN (Ideal.Quotient.mk (𝔫 ^ N)
           (Ideal.Quotient.mk (Ideal.span (Set.range g)) (Matrix.det (Matrix.of (bAt b ξ))))))) :=
               rfl
     _ = e₂ (algebraMap _ (Localization.AtPrime 𝔫')
-          (Ideal.Quotient.mk (Ideal.span (Set.range g')) (σ (Matrix.det (Matrix.of (bAt b
-              ξ)))))) := by
+          (Ideal.Quotient.mk (Ideal.span (Set.range g'))
+              (σ (Matrix.det (Matrix.of (bAt b ξ)))))) := by
         rw [AlgEquiv.restrictScalars_apply, hτN, hτ, he₁]
     _ = Ideal.Quotient.mk (Ideal.span (Set.range f)) (Matrix.det q) := by
         rw [he₂, hdet]
@@ -4502,24 +4443,24 @@ private theorem exists_frobenius_form_factor (ξ : Fin m → K) (𝔫 : Ideal A)
 
 private theorem functional_eq_zero_of_forall_mem_pow (ξ : Fin m → K) (𝔫 : Ideal A) [𝔫.IsMaximal]
     (h𝔫 : ∀ p : P, Ideal.Quotient.mk (Ideal.span (Set.range g)) p ∈ 𝔫 ↔ MvPolynomial.aeval ξ p = 0)
-    (N : ℕ) (hN : (Ideal.jacobson (⊥ : Ideal A)) ^ N = ⊥)
-    (χ : Module.Dual K A) (hχ : ∀ x ∈ 𝔫 ^ N, χ x = 0) (hθ : thetaₗ (K := K) (Δb g b) χ = 0) : χ =
+    (N : ℕ) (hN : (Ideal.jacobson (⊥ : Ideal A)) ^ N = ⊥) (χ : Module.Dual K A)
+    (hχ : ∀ x ∈ 𝔫 ^ N, χ x = 0) (hθ : thetaₗ (K := K) (Δb g b) χ = 0) : χ =
         0 := by
   classical
   obtain ⟨lam, h1, h2, h3⟩ := exists_frobenius_form_factor g b hb ξ 𝔫 h𝔫 N hN
   have hbal : ∀ s : A, (s ⊗ₜ[K] (1 : A)) * Δb g b = ((1 : A) ⊗ₜ[K] s) * Δb g b :=
     fun s => JacobianSquarePresentation.BezoutianTmul.solution K g b hb s
-  have hle : (𝔫 ^ N).restrictScalars K ≤ LinearMap.ker χ := fun x hx => LinearMap.mem_ker.mpr (hχ x
-      hx)
+  have hle : (𝔫 ^ N).restrictScalars K ≤ LinearMap.ker χ :=
+      fun x hx => LinearMap.mem_ker.mpr (hχ x hx)
   let ψ : Module.Dual K (A ⧸ 𝔫 ^ N) :=
-    (((𝔫 ^ N).restrictScalars K).liftQ χ hle).comp (Submodule.Quotient.restrictScalarsEquiv K (𝔫 ^
-        N)).symm.toLinearMap
+    (((𝔫 ^ N).restrictScalars K).liftQ χ hle).comp (Submodule.Quotient.restrictScalarsEquiv K
+        (𝔫 ^ N)).symm.toLinearMap
   have hψ : ∀ x, ψ (Ideal.Quotient.mk (𝔫 ^ N) x) = χ x := fun x => rfl
   obtain ⟨c, hc⟩ := h1 ψ
   obtain ⟨c', rfl⟩ := Ideal.Quotient.mk_surjective c
   set y := thetaₗ (K := K) (Δb g b) (lam.comp (Ideal.Quotient.mkₐ K (𝔫 ^ N)).toLinearMap) with hy
-  have hχ' : χ = (lam.comp (Ideal.Quotient.mkₐ K (𝔫 ^ N)).toLinearMap).comp (LinearMap.mulLeft K
-      c') := by
+  have hχ' : χ = (lam.comp (Ideal.Quotient.mkₐ K (𝔫 ^ N)).toLinearMap).comp
+      (LinearMap.mulLeft K c') := by
     refine LinearMap.ext fun x => ?_
     rw [← hψ x, hc]
     simp [map_mul]
@@ -4554,12 +4495,13 @@ private theorem functional_eq_zero_of_forall_mem_pow (ξ : Fin m → K) (𝔫 : 
   refine LinearMap.ext fun x => ?_
   simp only [LinearMap.comp_apply, LinearMap.mulLeft_apply, AlgHom.toLinearMap_apply,
       LinearMap.zero_apply]
-  rw [Ideal.Quotient.mkₐ_eq_mk, Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mul_mem_right x _
-      hc'mem), map_zero]
+  rw [Ideal.Quotient.mkₐ_eq_mk, Ideal.Quotient.eq_zero_iff_mem.mpr
+      (Ideal.mul_mem_right x _ hc'mem), map_zero]
 
 omit g b hb in
-private theorem iInf_le_prod_of_pairwise_isCoprime' {R : Type*} [CommRing R] {ι : Type*} [Fintype ι]
-    (I : ι → Ideal R) (h : Pairwise (Function.onFun IsCoprime I)) : ⨅ i, I i ≤ ∏ i, I i := by
+private theorem iInf_le_prod_of_pairwise_isCoprime' {R : Type*} [CommRing R] {ι : Type*}
+    [Fintype ι] (I : ι → Ideal R) (h : Pairwise (Function.onFun IsCoprime I)) :
+    ⨅ i, I i ≤ ∏ i, I i := by
   classical
   suffices hs : ∀ s : Finset ι, ⨅ i, I i ≤ ∏ i ∈ s, I i from hs Finset.univ
   intro s
@@ -4587,8 +4529,8 @@ private theorem crt_bijective {R : Type*} [CommRing R] {ι : Type*} [Finite ι] 
   rw [hcomp]
   exact e.bijective.comp hmk
 
-private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective (thetaₗ (K := K) (Δb g
-    b)) := by
+private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective
+    (thetaₗ (K := K) (Δb g b)) := by
   classical
   have : IsArtinianRing A := IsArtinianRing.of_finite K _
   obtain ⟨N, hN0⟩ := IsArtinianRing.isNilpotent_jacobson_bot (R := A)
@@ -4599,8 +4541,8 @@ private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective (the
   have hbal : ∀ s : A, (s ⊗ₜ[K] (1 : A)) * Δb g b = ((1 : A) ⊗ₜ[K] s) * Δb g b :=
     fun s => JacobianSquarePresentation.BezoutianTmul.solution K g b hb s
 
-  have hcop : Pairwise (Function.onFun IsCoprime fun i : ↥{I : Ideal A | I.IsMaximal} => i.1 ^
-      N) := by
+  have hcop : Pairwise (Function.onFun IsCoprime fun i :
+      ↥{I : Ideal A | I.IsMaximal} => i.1 ^ N) := by
     intro i j hij
     have : (i.1).IsMaximal := i.2
     have : (j.1).IsMaximal := j.2
@@ -4612,8 +4554,8 @@ private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective (the
     refine Ideal.pow_right_mono ?_ N
     refine Ideal.prod_le_inf.trans ?_
     rw [Ideal.jacobson]
-    exact le_sInf fun J hJ => Finset.inf_le (Finset.mem_univ (⟨J, hJ.2⟩ : ↥{I : Ideal A |
-        I.IsMaximal}))
+    exact le_sInf fun J hJ => Finset.inf_le (Finset.mem_univ (⟨J,
+        hJ.2⟩ : ↥{I : Ideal A | I.IsMaximal}))
   have hcrt := crt_bijective (fun i : ↥{I : Ideal A | I.IsMaximal} => i.1 ^ N) hcop hinf
 
   refine bijective_thetaₗ_of_injective _ (injective_thetaₗ_of_forall_factor (K := K) (Δb g b) hbal
@@ -4637,16 +4579,16 @@ private theorem solution
       TensorProduct.lid K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g))
         (LinearMap.rTensor (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)) φ
           (Algebra.TensorProduct.map
-              (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g))) (Ideal.Quotient.mkₐ K (Ideal.span
-                  (Set.range g)))
+              (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
+                  (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
             (Matrix.det (Matrix.of b))))) := by
   have key := Ws47.CB3.bijective_thetaₗ_Δb g b hb
   have hfun : (fun φ : Module.Dual K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)) =>
       TensorProduct.lid K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g))
         (LinearMap.rTensor (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)) φ
           (Algebra.TensorProduct.map
-              (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g))) (Ideal.Quotient.mkₐ K (Ideal.span
-                  (Set.range g)))
+              (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
+                  (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
             (Matrix.det (Matrix.of b))))) = ⇑(Ws47.CB3.thetaₗ (K := K) (Ws47.CB3.Δb g b)) := by
     funext φ
     rfl
@@ -4671,8 +4613,8 @@ private theorem solution
       TensorProduct.lid R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f))
         (LinearMap.rTensor (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) φ
           (Algebra.TensorProduct.map
-              (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) (Ideal.Quotient.mkₐ R (Ideal.span
-                  (Set.range f)))
+              (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
+                  (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
             (Matrix.det (Matrix.of a))))) := by
   exact JacobianSquarePresentation.BezoutianField.solution R f a ha
     (fun K _ _ g _ b hb => JacobianSquarePresentation.BezoutianAlgClosed.solution K g b hb)
@@ -4711,9 +4653,9 @@ private theorem main (R : Type*) [CommRing R] {m : ℕ} (g : MvPolynomial (Fin m
     obtain ⟨a, ha⟩ := hp
     refine ⟨fun k => a k * (X n ⊗ₜ[R] 1) + if k = n then (1 : MvPolynomial (Fin m) R) ⊗ₜ[R] p else
         0, ?_⟩
-    have key : (p * X n) ⊗ₜ[R] (1 : MvPolynomial (Fin m) R) - (1 : MvPolynomial (Fin m) R) ⊗ₜ[R] (p
-        * X n) =
-        (p ⊗ₜ[R] (1 : MvPolynomial (Fin m) R) - (1 : MvPolynomial (Fin m) R) ⊗ₜ[R] p) * (X n ⊗ₜ[R]
+    have key : (p * X n) ⊗ₜ[R] (1 : MvPolynomial (Fin m) R) - (1 : MvPolynomial (Fin m) R) ⊗ₜ[R]
+        (p * X n) = (p ⊗ₜ[R] (1 : MvPolynomial (Fin m) R) - (1 : MvPolynomial (Fin m) R) ⊗ₜ[R] p) *
+        (X n ⊗ₜ[R]
             1) +
           ((1 : MvPolynomial (Fin m) R) ⊗ₜ[R] p) * (X n ⊗ₜ[R] 1 - 1 ⊗ₜ[R] X n) := by
       simp only [sub_mul, mul_sub, Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
@@ -4761,9 +4703,8 @@ private theorem contract_tmul (j : Fin m) (u v : MvPolynomial (Fin m) R) :
   simp only [contract, LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_apply,
     LinearMap.mul'_apply, Derivation.coeFn_coe]
 
-private theorem contract_mul_X_sub (j k : Fin m) (w : MvPolynomial (Fin m) R ⊗[R] MvPolynomial (Fin
-    m) R) :
-    contract R j (w * (X k ⊗ₜ[R] 1 - 1 ⊗ₜ[R] X k)) =
+private theorem contract_mul_X_sub (j k : Fin m) (w : MvPolynomial (Fin m) R ⊗[R] MvPolynomial
+    (Fin m) R) : contract R j (w * (X k ⊗ₜ[R] 1 - 1 ⊗ₜ[R] X k)) =
       -(if k = j then Algebra.TensorProduct.lmul' R w else 0) := by
   classical
   induction w using TensorProduct.induction_on with
@@ -4825,8 +4766,8 @@ private theorem solution
       Ideal.Quotient.mk (Ideal.span (Set.range f)) (Matrix.det (Matrix.of fun i j =>
           MvPolynomial.pderiv j (f i))) := by
   classical
-  have hcomm : (Algebra.TensorProduct.lmul' (S := MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range
-      f)) R).comp
+  have hcomm : (Algebra.TensorProduct.lmul' (S := MvPolynomial (Fin m) R ⧸ Ideal.span
+      (Set.range f)) R).comp
         (Algebra.TensorProduct.map (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
             (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))) =
       (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))).comp (Algebra.TensorProduct.lmul' (S :=
@@ -4924,8 +4865,8 @@ private theorem solution
         [Module.Free R A]
     (τ : Module.Dual R A) (Δ : A ⊗[R] A)
     (hbal : ∀ s : A, (s ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] s) * Δ)
-    (hbij : Function.Bijective (fun φ : Module.Dual R A => TensorProduct.lid R A (LinearMap.rTensor
-        A φ Δ)))
+    (hbij : Function.Bijective (fun φ : Module.Dual R A => TensorProduct.lid R A
+        (LinearMap.rTensor A φ Δ)))
     (hτ : TensorProduct.lid R A (LinearMap.rTensor A τ Δ) = 1) (x : A) :
     Algebra.trace R A x = τ (LinearMap.mul' R A Δ * x) :=
   Ws23.CoreD.main R A τ Δ hbal hτ x
@@ -4957,9 +4898,8 @@ private theorem Ws47.DLB.lid_rTensor_comp_mulLeft
     | zero => simp
     | tmul x y => simp [Algebra.TensorProduct.tmul_mul_tmul]
     | add x y hx hy => simp only [map_add, mul_add, hx, hy]
-  have h4 : ∀ w : R ⊗[R] A, Algebra.TensorProduct.lid R A (LinearMap.lTensor R (LinearMap.mulLeft R
-      s) w) =
-      s * Algebra.TensorProduct.lid R A w := by
+  have h4 : ∀ w : R ⊗[R] A, Algebra.TensorProduct.lid R A
+      (LinearMap.lTensor R (LinearMap.mulLeft R s) w) = s * Algebra.TensorProduct.lid R A w := by
     intro w
     induction w using TensorProduct.induction_on with
     | zero => simp
@@ -5049,8 +4989,8 @@ private theorem of_dual_mul_mul_eq (b : Basis ι R A) (τ : Dual R A) (c : A) :
   rw [smul_mul_assoc, map_smul, smul_eq_mul]
 
 private theorem main3 (b : Basis ι R A) (τ : Dual R A) (c : A) :
-    (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c * (Matrix.of fun i j => τ (b i
-        * b j)).det := by
+    (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c *
+        (Matrix.of fun i j => τ (b i * b j)).det := by
   rw [of_dual_mul_mul_eq R A b τ c, Matrix.det_mul, Matrix.det_transpose,
       Algebra.norm_eq_matrix_det b]
 
@@ -5061,8 +5001,8 @@ end Ws23.DLB
 private theorem solution
     (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι R A) (τ : Module.Dual R A) (c : A) :
-    (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c * (Matrix.of fun i j => τ (b i
-        * b j)).det :=
+    (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c *
+        (Matrix.of fun i j => τ (b i * b j)).det :=
   Ws23.DLB.main3 R A b τ c
 end JacobianSquarePresentation.DetDualNorm
 
@@ -5126,17 +5066,17 @@ set_option autoImplicit false
 open scoped TensorProduct
 
 private theorem solution
-    {R : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing R] {A : Type*} [CommRing A] [Algebra R
-        A]
+    {R : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing R] {A : Type*} [CommRing A]
+        [Algebra R A]
     [Module.Free R A] [Module.Finite R A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι R A)
     {m : ℕ} (f : Fin m → MvPolynomial (Fin m) R)
     (e : (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) ≃ₐ[R] A) :
-    Associated (Algebra.discr R b) (Algebra.norm R (e (Ideal.Quotient.mk _ (Matrix.det (Matrix.of
-        fun i j => MvPolynomial.pderiv j (f i)))))) := by
+    Associated (Algebra.discr R b) (Algebra.norm R (e (Ideal.Quotient.mk _
+        (Matrix.det (Matrix.of fun i j => MvPolynomial.pderiv j (f i)))))) := by
   classical
-  have : Module.Free R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) := Module.Free.of_equiv
-      e.toLinearEquiv.symm
+  have : Module.Free R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) :=
+      Module.Free.of_equiv e.toLinearEquiv.symm
   have : Module.Finite R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) :=
       Module.Finite.equiv e.toLinearEquiv.symm
   obtain ⟨τ, hτbij, htr⟩ :=
@@ -5144,8 +5084,8 @@ private theorem solution
   set J : MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f) :=
     Ideal.Quotient.mk (Ideal.span (Set.range f)) (Matrix.det (Matrix.of fun i j =>
         MvPolynomial.pderiv j (f i))) with hJ
-  let b' : Module.Basis ι R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) := b.map
-      e.toLinearEquiv.symm
+  let b' : Module.Basis ι R (MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)) :=
+      b.map e.toLinearEquiv.symm
   have hb' : ∀ i, b' i = e.symm (b i) := fun i => by simp [b']
   have hdisc : Algebra.discr R b = (Matrix.of fun i j => τ (J * b' i * b' j)).det := by
     rw [Algebra.discr_eq_discr_of_algEquiv b e.symm, Algebra.discr_def]
@@ -5155,8 +5095,8 @@ private theorem solution
     simp only [Function.comp_apply, hb']
   have hnorm : Algebra.norm R (e J) = Algebra.norm R J := Algebra.norm_eq_of_algEquiv e J
   rw [hdisc, JacobianSquarePresentation.DetDualNorm.solution R _ b' τ J]
-  change Associated (Algebra.norm R J * (Matrix.of fun i j => τ (b' i * b' j)).det) (Algebra.norm R
-      (e _))
+  change Associated (Algebra.norm R J * (Matrix.of fun i j => τ (b' i * b' j)).det)
+      (Algebra.norm R (e _))
   rw [hnorm]
   obtain ⟨u, hu⟩ := JacobianSquarePresentation.IsUnitDetDual.solution R _ b' τ hτbij
   rw [← hu]
