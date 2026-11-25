@@ -1,11 +1,8 @@
 # Eisenberg–Gale convex program for linear Fisher markets
 
-A *linear Fisher market* has a finite nonempty set $B$ of buyers and a finite nonempty set $A$ of divisible goods, each available in one unit. Buyer $i$ has money $e_i > 0$ and linear utility $u_i(x) = \sum_j u_{ij} x_{ij}$, where $u_{ij} \ge 0$. Prices $p \ge 0$ and an allocation $x \ge 0$ with $\sum_i x_{ij} \le 1$ form a *market equilibrium* if:
-1. every good with $p_j > 0$ is fully sold;
-2. each buyer receives only goods maximizing $u_{ij}/p_j$;
-3. each buyer spends all her money, $\sum_j p_j x_{ij} = e_i$.
+Let a [linear Fisher market](linear-fisher-markets.md) be given, with buyers $i \in B$, goods $j \in A$, budgets $e_i > 0$ and utilities $u_i(x) = \sum_j u_{ij} x_{ij}$, and with *market equilibrium* in the sense of that page: each buyer's bundle maximizes her utility among bundles of cost at most $e_i$, and every good with positive price is fully sold. At an equilibrium all prices are positive, since a free good valued by some buyer would be demanded without bound; so the bang per buck $u_{ij}/p_j$ is defined, and an equilibrium is equivalently characterized by: every good is fully sold, each buyer receives only goods maximizing $u_{ij}/p_j$, and each buyer spends all her money.
 
-Assume every good is valued by some buyer and every buyer values some good. Consider the Eisenberg–Gale convex program:
+Consider the Eisenberg–Gale convex program:
 
 $$
 \text{maximize } \sum_{i \in B} e_i \log u_i \quad\text{subject to}\quad u_i = \sum_{j} u_{ij} x_{ij}, \quad \sum_{i} x_{ij} \le 1, \quad x_{ij} \ge 0.
