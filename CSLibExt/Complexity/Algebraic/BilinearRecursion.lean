@@ -13,12 +13,14 @@ public import CSLibExt.Complexity.Algebraic.MatrixMultiplication
 public import CSLibExt.Complexity.Algebraic.MatrixMultiplicationExponent
 
 /-!
-# Bilinear block encoder and decoder for recursive matrix multiplication
+# Recursive bilinear matrix-multiplication circuits
 
 Given a trilinear decomposition of `q`-by-`q` matrix multiplication, the block
 encoder forms, for each term, the two block linear combinations of the input
-matrices, and the block decoder reassembles the per-term outputs into the output
-blocks.
+matrices, the block decoder reassembles the per-term outputs into the output
+blocks, and `recursiveCircuit` iterates the construction to multiply
+`q ^ k`-by-`q ^ k` matrices: encode, run one recursive copy per term in
+parallel, decode.
 -/
 
 set_option autoImplicit false
@@ -70,6 +72,22 @@ noncomputable def blockDecoder {F : Type u} [Field F] {q : ℕ}
       (terms[t]).right (((finPowSuccEquiv q k) L).1, ((finPowSuccEquiv q k) I).1))
     (fun (I, L) t =>
       (t, (((finPowSuccEquiv q k) I).2, ((finPowSuccEquiv q k) L).2)))
+
+/-- The `k`-fold block recursion of a fixed trilinear decomposition: encode the
+two `q^(k+1)`-block matrices per term, run `terms.length` copies of the level-`k`
+circuit in parallel, and decode. At level 0 it is the one-gate outer-product
+circuit. Correctness is the companion theorem `recursiveCircuit_isMatrixMultiplication`
+(companion stage). -/
+noncomputable def recursiveCircuit {F : Type u} [Field F] {q : ℕ}
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q))) :
+    (k : ℕ) → MatrixArithmeticCircuit F (q ^ k) (q ^ k) (q ^ k)
+  | 0 => outerMatrixCircuit F 1 1
+  | k + 1 => (blockDecoder terms k).subst
+      (((recursiveCircuit terms k).parallel terms.length).subst
+        (blockEncoder terms k))
 
 end
 

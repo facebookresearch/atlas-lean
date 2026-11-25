@@ -64,4 +64,28 @@ noncomputable example {F : Type u} [Field F]
       (Fin (2 ^ (1 + 1)) × Fin (2 ^ (1 + 1))) :=
   blockDecoder terms 1
 
+noncomputable example {F : Type u} [Field F]
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2))) :
+    MatrixArithmeticCircuit F 1 1 1 :=
+  recursiveCircuit terms 0
+
+noncomputable example {F : Type u} [Field F]
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2))) :
+    MatrixArithmeticCircuit F 2 2 2 :=
+  recursiveCircuit terms 1
+
+noncomputable example {F : Type u} [Field F]
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2))) :
+    MatrixArithmeticCircuit F 4 4 4 :=
+  recursiveCircuit terms 2
+
 end Cslib.Complexity.Algebraic
