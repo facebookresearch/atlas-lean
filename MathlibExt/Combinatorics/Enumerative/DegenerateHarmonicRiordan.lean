@@ -14,6 +14,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.RingTheory.PowerSeries.Derivative
+import Mathlib.RingTheory.PowerSeries.WellKnown
 
 /-!
 # Generalized degenerate harmonic numbers and Riordan arrays
@@ -23,6 +24,7 @@ degenerate harmonic numbers. At `α = 1`, Pascal's identity expresses the partia
 in terms of a single binomial coefficient. The Chu–Vandermonde identity then evaluates its
 alternating binomial transform. A differential equation for the generating series of the harmonic
 terms gives the shifted alternating exponential sum for every positive scale parameter.
+The partial-sum recursion gives alternating and binomial sums of hyperharmonic numbers.
 -/
 
 namespace MetaMathlibExt
@@ -526,6 +528,78 @@ theorem degenerateHarmonicRank_shifted_exp_weighted_sum {lam α : ℝ} (hlam : 0
       refine Finset.sum_congr rfl fun m hm => sub_eq_zero.mp ?_
       simpa only [R, map_sub] using vanish m (Finset.mem_range_succ_iff.mp hm)
     _ = _ := by simp [coeff_C_mul, coeff_X]
+
+namespace degenerateHyperharmonic_alternating_and_binomial_sums
+
+-- Start at index one, so taking a partial sum multiplies the series by 1 / (1 - X).
+private lemma order_series (lam α : ℝ) (r : ℕ) :
+    (invOneSubPow ℝ r).val * mk (fun n => generalizedDegenerateHarmonic lam α (n + 1)) =
+      mk (fun n => generalizedDegenerateHyperharmonic lam α (r + 1) (n + 1)) := by
+  induction r with
+  | zero => simp [invOneSubPow_zero, generalizedDegenerateHyperharmonic_one]
+  | succ r ih =>
+    rw [invOneSubPow_add, Units.val_mul, mul_right_comm, ih]
+    ext n
+    rw [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+    simp only [invOneSubPow_val_succ_eq_mk_add_choose, coeff_mk, Nat.choose_zero_right,
+      Nat.cast_one, mul_one]
+    rw [generalizedDegenerateHyperharmonic, ← Finset.Ico_add_one_right_eq_Icc,
+      Finset.sum_Ico_eq_sum_range, Nat.add_sub_cancel]
+    simp only [Nat.add_comm 1]
+
+end degenerateHyperharmonic_alternating_and_binomial_sums
+
+open degenerateHyperharmonic_alternating_and_binomial_sums in
+/-- **Alternating and binomial sums of degenerate hyperharmonic numbers.** Let $\lambda > 0$ and
+$\alpha > 0$ be real numbers and let $n$ be a natural number. Write $H_{m,\lambda}(\alpha)$ for the
+generalized degenerate harmonic numbers, $H^s_{m,\lambda}(\alpha)$ for the generalized degenerate
+hyperharmonic numbers of order $s$, and $D_{n,\lambda}$ for the degenerate Daehee numbers. Then
+$$
+\sum_{k=0}^{n} (-1)^k H^{k+1}_{n-k+1,\lambda}(\alpha) =
+\frac{(-1)^n D_{n,\lambda}}{\alpha^{n+1}\, n!},
+$$
+and for every natural number $r$,
+$$
+\sum_{k=0}^{n} \binom{k+r}{r} H_{n-k+1,\lambda}(\alpha) = H^{r+2}_{n+1,\lambda}(\alpha).
+$$
+
+Source: Ömer Duran, Neşe Ömür and Sibel Koparal, *Generalized Degenerate Harmonic Numbers and
+Their Applications with Riordan Arrays*, INTEGERS 24 (2024), Article A41, Theorem 1
+(`integers-2024-A41-thm-1`). -/
+theorem degenerateHyperharmonic_alternating_and_binomial_sums {lam α : ℝ}
+    (hlam : 0 < lam) (hα : 0 < α) (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1),
+        (-1 : ℝ) ^ k * generalizedDegenerateHyperharmonic lam α (k + 1) (n - k + 1) =
+      (-1) ^ n * degenerateDaehee lam n / (α ^ (n + 1) * n.factorial) ∧
+    ∀ r : ℕ, ∑ k ∈ Finset.range (n + 1),
+        ((k + r).choose r : ℝ) * generalizedDegenerateHarmonic lam α (n - k + 1) =
+      generalizedDegenerateHyperharmonic lam α (r + 2) (n + 1) := by
+  constructor
+  · let diagonal (k : ℕ) := (-1 : ℝ) ^ k *
+      generalizedDegenerateHyperharmonic lam α k (n + 1 - k)
+    have step (r m : ℕ) :
+        generalizedDegenerateHyperharmonic lam α (r + 1) (m + 1) =
+          generalizedDegenerateHyperharmonic lam α (r + 1) m +
+            generalizedDegenerateHyperharmonic lam α r (m + 1) := by
+      simp only [generalizedDegenerateHyperharmonic, Finset.sum_Icc_succ_top (Nat.le_add_left 1 m)]
+    calc
+      _ = ∑ k ∈ Finset.range (n + 1), (diagonal k - diagonal (k + 1)) := by
+        refine Finset.sum_congr rfl fun k hk => ?_
+        have hkn := Finset.mem_range_succ_iff.mp hk
+        simp only [diagonal, show n + 1 - k = n - k + 1 by omega, Nat.add_sub_add_right]
+        rw [step k (n - k), pow_succ]
+        ring
+      _ = diagonal 0 - diagonal (n + 1) := Finset.sum_range_sub' _ _
+      _ = _ := by
+        simp [diagonal, generalizedDegenerateHyperharmonic, degenerateHarmonicTerm,
+          degenerateDaehee]
+        field_simp
+  · intro r
+    have h := congrArg (coeff n) (order_series lam α (r + 1))
+    simp only [invOneSubPow_val_succ_eq_mk_add_choose, coeff_mul,
+      Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, coeff_mk] at h
+    rw [← h]
+    exact Finset.sum_congr rfl fun k _ => by rw [Nat.add_comm k r]
 
 end
 

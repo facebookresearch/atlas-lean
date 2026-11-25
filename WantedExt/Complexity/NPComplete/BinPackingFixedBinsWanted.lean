@@ -26,7 +26,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BinPackingWanted
+public import CSLibExt.Computability.Complexity.Karp.BinPacking
 
 @[expose] public section
 
