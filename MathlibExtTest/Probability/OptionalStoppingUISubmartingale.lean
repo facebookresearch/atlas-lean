@@ -93,7 +93,7 @@ private theorem uniformIntegrable_one_sub_pow :
     linarith
   refine ⟨UnifIntegrable.ae_mono (unifIntegrable_const le_rfl ENNReal.one_ne_top (memLp_const 1))
       (fun _ => aestronglyMeasurable_const) (fun n => ?_),
-    Real.toNNReal 1, fun n => ?_⟩
+    (iSup_le fun n => ?_).trans_lt (ENNReal.coe_lt_top (r := Real.toNNReal 1))⟩
   · apply Filter.Eventually.of_forall
     intro ω
     rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
@@ -137,8 +137,7 @@ example :
     simp [integral_const]
   have hIntLim : ∫ ω, ℱ.limitProcess (fun (n : ℕ) (_ : Ω) => 1 - (1 / 2 : ℝ) ^ n) μ ω ∂μ = 1 := by
     have hlim : ∀ᵐ ω ∂μ, ℱ.limitProcess (fun (n : ℕ) (_ : Ω) => 1 - (1 / 2 : ℝ) ^ n) μ ω = 1 := by
-      obtain ⟨C, hC⟩ := hui.2
-      filter_upwards [hsub.ae_tendsto_limitProcess hC] with ω hω
+      filter_upwards [hsub.ae_tendsto_limitProcess hui.iSup_eLpNorm_lt] with ω hω
       refine tendsto_nhds_unique hω ?_
       have hpow : Filter.Tendsto (fun n => (1 / 2 : ℝ) ^ n) Filter.atTop (𝓝 0) :=
         tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)

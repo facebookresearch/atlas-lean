@@ -2,6 +2,7 @@
 
 Counting basic objects under simple constraints: subsets, multisets and functions with prescribed values, Schreier-type and weighted Schreier sets, combinations avoiding given differences, necklaces and counting up to rotation, fibre and double counting, introductory catalogues of special counting sequences, and small extremal puzzles such as the bridge and torch problem.
 
+- [Counting binary phylogenetic trees](counting-binary-phylogenetic-trees/README.md)
 - [Bridge and torch problem](bridge-and-torch-problem/README.md)
 - [Combinations without specified separations](combinations-without-specified-separations/README.md)
 - [Fibre and double counting](fibre-and-double-counting/README.md)

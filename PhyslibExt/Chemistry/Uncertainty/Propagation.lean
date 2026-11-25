@@ -164,9 +164,10 @@ lemma measurementFunction_variance_affineCombination {Ω ι : Type*} {mΩ : Meas
 
 -/
 
-/-- **First-order law of propagation of uncertainty, correlated inputs.** If the measurement
-function `f` has Fréchet derivative `f'` at the input estimate `x`, the variance of the
-first-order Taylor linearization `ω ↦ f x + f' (X ω - x)` is
+/-- **First-order law of propagation of uncertainty, correlated inputs.** For inputs `X i` with
+finite second moments on a probability space: if the measurement function `f` has Fréchet
+derivative `f'` at the input estimate `x`, the variance of the first-order Taylor linearization
+`ω ↦ f x + f' (X ω - x)` is
 `∑ i, ∑ j, cᵢ * cⱼ * cov[X i, X j]`, where `cᵢ = ∂f/∂xᵢ (x) = fderiv ℝ f x (Pi.single i 1)` are
 the sensitivity coefficients. It is `measurementFunction_variance_affineCombination` applied to
 the coefficients `f' (Pi.single i 1)`, which equal `cᵢ` by `HasFDerivAt.fderiv`. The identity is
@@ -204,7 +205,8 @@ lemma measurementFunction_linearizedVariance_firstOrder {Ω ι : Type*}
 on an open set `U` containing the input estimate `x` (for instance an open set containing a box
 around `x`), then `fderiv ℝ f x` is the derivative of `f` at `x` and the first-order law
 `measurementFunction_linearizedVariance_firstOrder` holds for the linearization
-`ω ↦ f x + fderiv ℝ f x (X ω - x)`. -/
+`ω ↦ f x + fderiv ℝ f x (X ω - x)` of inputs `X i` with finite second moments on a probability
+space. -/
 lemma measurementFunction_linearizedVariance_firstOrder_of_contDiffOn {Ω ι : Type*}
     {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] [Fintype ι] [DecidableEq ι]
     {f : (ι → ℝ) → ℝ} {U : Set (ι → ℝ)} {x : ι → ℝ} (hU : IsOpen U) (hf : ContDiffOn ℝ 1 f U)
@@ -216,10 +218,11 @@ lemma measurementFunction_linearizedVariance_firstOrder_of_contDiffOn {Ω ι : T
     ((hf.differentiableOn one_ne_zero x hx).differentiableAt (hU.mem_nhds hx)).hasFDerivAt X hX
 
 /-- **First-order law of propagation, uncorrelated inputs.** If `f` has derivative `f'` at `x`,
-the inputs have standard uncertainties `u i` (`Var[X i] = u i ^ 2`) and are pairwise
-uncorrelated, then the first-order combined variance is `∑ i, (∂f/∂xᵢ (x) * u i) ^ 2`. Only
-`u i ^ 2` enters, so the sign convention `0 ≤ u i` is not needed. Pairwise independent inputs
-are uncorrelated by `ProbabilityTheory.IndepFun.covariance_eq_zero`. -/
+the inputs `X i`, with finite second moments on a probability space, have standard uncertainties
+`u i` (`Var[X i] = u i ^ 2`) and are pairwise uncorrelated, then the first-order combined variance
+is `∑ i, (∂f/∂xᵢ (x) * u i) ^ 2`. Only `u i ^ 2` enters, so the sign convention `0 ≤ u i` is not
+needed. Pairwise independent inputs are uncorrelated by
+`ProbabilityTheory.IndepFun.covariance_eq_zero`. -/
 lemma measurementFunction_linearizedVariance_firstOrder_uncorrelated {Ω ι : Type*}
     {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] [Fintype ι] [DecidableEq ι]
     {f : (ι → ℝ) → ℝ} {f' : (ι → ℝ) →L[ℝ] ℝ} {x : ι → ℝ} (hf : HasFDerivAt f f' x)
@@ -312,7 +315,9 @@ lemma measurementFunction_firstOrder_remainder_le {ι : Type*} [Fintype ι]
 -/
 
 /-- The power-law measurement function `y = ∏ i, x i ^ p i` with integer exponents `p i`. It
-covers products (`p i = 1`), quotients (`p i = -1` on the denominators) and powers. -/
+covers products (`p i = 1`), quotients (`p i = -1` on the denominators) and powers. For
+`x i = 0` and `p i < 0` the factor is `0` by the convention `0⁻¹ = 0`, so a zero denominator
+makes `y = 0`; the intended domain is `x i ≠ 0` wherever `p i < 0`. -/
 noncomputable def powerLaw {ι : Type*} [Fintype ι] (p : ι → ℤ) (x : ι → ℝ) : ℝ :=
   ∏ i, x i ^ p i
 
@@ -366,7 +371,8 @@ lemma hasFDerivAt_log_powerLaw {ι : Type*} [Fintype ι] [DecidableEq ι] (p : �
 
 /-- **First-order relative-uncertainty rule for products, quotients and powers.** Let
 `y = ∏ i, x i ^ p i` with integer exponents `p i` and nonzero input estimates `x i ≠ 0`. Let the
-inputs have standard uncertainties `u i` (`Var[X i] = u i ^ 2`) and be uncorrelated,
+inputs `X i` have finite second moments on a probability space, standard uncertainties `u i`
+(`Var[X i] = u i ^ 2`), and be uncorrelated,
 `cov[X i, X j] = 0` for `i ≠ j`. (Zero covariance is uncorrelatedness, not independence: dependent
 variables can have zero covariance. Independence implies uncorrelatedness.) Then the first-order
 combined standard
@@ -392,7 +398,8 @@ lemma relativeUncertainty_powerLaw_firstOrder {Ω ι : Type*} {mΩ : MeasurableS
   field_simp
 
 /-- **The relative-uncertainty rule as the first-order law for `log |y|`.** Under the
-hypotheses of `relativeUncertainty_powerLaw_firstOrder`, the first-order variance of
+hypotheses of `relativeUncertainty_powerLaw_firstOrder` (inputs with finite second moments on a
+probability space, `x i ≠ 0`, `Var[X i] = u i ^ 2`, zero covariances), the first-order variance of
 `Real.log y` (which is `log |y|`, also for negative `y`), with sensitivity coefficients
 `p i / x i` from `hasFDerivAt_log_powerLaw`, is the same sum `∑ i, (p i * u i / x i) ^ 2`. -/
 lemma linearizedVariance_log_powerLaw_firstOrder {Ω ι : Type*} {mΩ : MeasurableSpace Ω}
@@ -440,15 +447,17 @@ noncomputable def sigFigShift (k : ℕ+) (x : ℝ) : ℤ :=
 /-- Rounding to `k` significant figures, for a positive count `k : ℕ+`, a reporting function
 `ℝ → ℝ`: `roundSigFig k x = round (x * 10 ^ e) / 10 ^ e` with
 `e = sigFigShift k x = k - 1 - ⌊log₁₀ |x|⌋`, so the result is an integer multiple of
-`10 ^ (-e)`. Ties are rounded upward, since Mathlib's `round x = ⌊x + 1 / 2⌋`; OpenStax §1.5
-instead rounds a dropped `5` to an even digit, and the conventions differ only at exact ties.
+`10 ^ (-e)`. It is defined for every real `x`: at `x = 0` the convention `log₁₀ 0 = 0` gives
+`e = k - 1`, and the value is `0`. Ties are rounded upward, since Mathlib's
+`round x = ⌊x + 1 / 2⌋`; OpenStax §1.5 instead rounds a dropped `5` to an even digit, and the
+conventions differ only at exact ties.
 Significant figures are reporting only, never a substitute for the propagation laws of sections B
 and C: see `exists_roundSigFig_add_ne`. -/
 noncomputable def roundSigFig (k : ℕ+) (x : ℝ) : ℝ :=
   round (x * 10 ^ sigFigShift k x) / 10 ^ sigFigShift k x
 
-/-- The decimal exponent `⌊log₁₀ |x|⌋` is the unique integer `m` with
-`10 ^ m ≤ |x| < 10 ^ (m + 1)`. -/
+/-- If an integer `m` satisfies `10 ^ m ≤ |x| < 10 ^ (m + 1)`, then the decimal exponent
+`⌊log₁₀ |x|⌋` equals `m`. -/
 lemma floor_logb_ten_abs_eq {x : ℝ} {m : ℤ} (h1 : (10 : ℝ) ^ m ≤ |x|)
     (h2 : |x| < 10 ^ (m + 1)) : ⌊Real.logb 10 |x|⌋ = m := by
   have hx : 0 < |x| := lt_of_lt_of_le (zpow_pos (by norm_num) m) h1
@@ -468,9 +477,9 @@ lemma roundSigFig_eq_of_zpow_le_of_lt {k : ℕ+} {x : ℝ} {m : ℤ} (h1 : (10 :
 
 /-- **Rounding to significant figures is well defined.** `roundSigFig k` is a total function
 `ℝ → ℝ`, with ties broken by `round`. For `x ≠ 0` and a positive count `k : ℕ+` the textbook
-description determines it: there is exactly one decimal exponent `m`, the place `10 ^ m` of the
-leading significant digit, with `10 ^ m ≤ |x| < 10 ^ (m + 1)`, and `roundSigFig k x` rounds `x`
-at the place `10 ^ (m + 1 - k)` for that `m`. -/
+description determines it: there is exactly one integer `m` such that both
+`10 ^ m ≤ |x| < 10 ^ (m + 1)` and `roundSigFig k x` rounds `x` at the place `10 ^ (m + 1 - k)`.
+This `m` is the decimal exponent, the place `10 ^ m` of the leading significant digit. -/
 lemma roundSigFig_wellDefined (k : ℕ+) {x : ℝ} (hx : x ≠ 0) :
     ∃! m : ℤ, (10 : ℝ) ^ m ≤ |x| ∧ |x| < 10 ^ (m + 1) ∧
       roundSigFig k x = round (x * 10 ^ ((k : ℤ) - 1 - m)) / 10 ^ ((k : ℤ) - 1 - m) := by

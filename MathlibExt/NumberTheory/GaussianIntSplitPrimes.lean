@@ -31,7 +31,9 @@ namespace GaussianInt
 
 @[expose] public section
 
-/-- A prime `p ≡ 1 mod 4` splits: some Gaussian prime has norm `p`. -/
+/-- **Primes congruent to 1 mod 4 split in the Gaussian integers.** Let $p$ be a prime with
+$p \equiv 1 \pmod 4$. Then there is a prime element $\pi = a + bi$ of $\mathbb{Z}[i]$ whose norm
+$N(\pi) = a^2 + b^2$ equals $p$. -/
 public theorem gaussianInt_split_prime {p : ℕ} [Fact p.Prime] (h : p % 4 = 1) :
     ∃ π : ℤ[i], Zsqrtd.norm π = p ∧ Prime π := by
   have hne : p % 4 ≠ 3 := by omega
@@ -46,7 +48,10 @@ public theorem gaussianInt_split_prime {p : ℕ} [Fact p.Prime] (h : p % 4 = 1) 
   exact Fact.out
 
 
-/-- The conjugate of a norm-`p` element is prime and `p = π * star π`. -/
+/-- **Factoring a prime as a Gaussian integer times its conjugate.** Let $p$ be a prime, write
+$N(a + bi) = a^2 + b^2$ for the norm on $\mathbb{Z}[i]$, and let $\pi \in \mathbb{Z}[i]$ satisfy
+$N(\pi) = p$. Then $p = \pi \bar{\pi}$ in $\mathbb{Z}[i]$, where $\bar{\pi}$ is the complex
+conjugate of $\pi$, and $\bar{\pi}$ is a prime element of $\mathbb{Z}[i]$. -/
 public theorem gaussianInt_split_conj {p : ℕ} [Fact p.Prime] {π : ℤ[i]}
     (hnorm : Zsqrtd.norm π = p) :
     (p : ℤ[i]) = π * star π ∧ Prime (star π) := by
@@ -59,7 +64,11 @@ public theorem gaussianInt_split_conj {p : ℕ} [Fact p.Prime] {π : ℤ[i]}
     exact Fact.out
 
 
-/-- For `p ≡ 1 mod 4`, `π` and its conjugate are not associates. -/
+/-- **Gaussian integers of split prime norm are not associate to their conjugates.** Write
+$N(a + bi) = a^2 + b^2$ for the norm on $\mathbb{Z}[i]$. Let $p$ be a prime with
+$p \equiv 1 \pmod 4$ and let $\pi \in \mathbb{Z}[i]$ satisfy $N(\pi) = p$. Then the complex
+conjugate $\bar{\pi}$ is not associated to $\pi$: there is no unit $u$ of $\mathbb{Z}[i]$ with
+$\bar{\pi} u = \pi$. -/
 public theorem gaussianInt_split_nonassociated {p : ℕ} [Fact p.Prime] {π : ℤ[i]}
     (hnorm : Zsqrtd.norm π = p) (h1 : p % 4 = 1) :
     ¬ Associated (star π) π := by
@@ -172,7 +181,11 @@ public noncomputable instance gaussianIntReprFintype (n : ℕ) :
   exact Subtype.ext (Zsqrtd.ext hpair.1 hpair.2)
 
 
-/-- There are `4 * (e + 1)` Gaussian integers of norm `p ^ e`. -/
+/-- **Number of Gaussian integers of norm a power of a split prime.** Write
+$N(a + bi) = a^2 + b^2$ for the norm on $\mathbb{Z}[i]$. Let $p$ be a prime with
+$p \equiv 1 \pmod 4$, let $e$ be a natural number, and suppose $\pi \in \mathbb{Z}[i]$ is a prime
+element with $N(\pi) = p$. Then exactly $4(e + 1)$ Gaussian integers $\alpha$ satisfy
+$|N(\alpha)| = p^e$. -/
 public theorem gaussianInt_card_repr_prime_pow {p e : ℕ} [Fact p.Prime]
     (h1 : p % 4 = 1) {π : ℤ[i]} (hnorm : Zsqrtd.norm π = p)
     (hprime : Prime π) :

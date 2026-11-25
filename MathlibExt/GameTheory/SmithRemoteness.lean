@@ -25,9 +25,12 @@ even remoteness, and one more than the largest remoteness of an option otherwise
 
 namespace MetaMathlibExt.SpragueGrundy
 
-/-- Smith's remoteness function of an impartial game: `0` at terminal positions; otherwise one
-more than the least even remoteness of an option, if an option has even remoteness, and one more
-than the largest remoteness of an option if every option has odd remoteness.
+/-- **Smith's remoteness function.** For an impartial game $G$, the remoteness $R(p)$ of a
+position $p$ of $G$ is defined by well-founded recursion along moves; the options of $p$ are the
+positions reachable from $p$ in one move. If $p$ has no options, then $R(p) = 0$. Otherwise, if
+some option $q$ of $p$ has $R(q)$ even, then $R(p)$ is $1$ plus the least even value of $R(q)$
+over the options $q$ of $p$; if every option $q$ of $p$ has $R(q)$ odd, then $R(p)$ is $1$ plus
+the largest value of $R(q)$ over the options $q$ of $p$.
 
 Source: C. A. B. Smith, *Graphs and composite games*, J. Combin. Theory 1 (1966), 51–81; as
 recalled in Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
@@ -39,7 +42,11 @@ noncomputable def smithRemoteness (G : ImpartialGame) : G.Pos → ℕ :=
     if hE : (V.filter Even).Nonempty then 1 + (V.filter Even).min' hE
     else if hV : V.Nonempty then 1 + V.max' hV else 0
 
-/-- The defining recursion of `smithRemoteness`.
+/-- **Recursion for Smith's remoteness.** Let $G$ be an impartial game, $p$ a position of $G$, and
+$R$ the set of remotenesses of the options of $p$ (the positions reachable from $p$ in one move).
+If $R$ contains an even number, the remoteness of $p$ is $1$ plus the least even element of $R$;
+otherwise, if $R$ is nonempty, it is $1$ plus the largest element of $R$; and if $R$ is empty,
+it is $0$.
 
 Source: C. A. B. Smith, *Graphs and composite games*, J. Combin. Theory 1 (1966), 51–81. -/
 theorem smithRemoteness_eq (G : ImpartialGame) (p : G.Pos) :
@@ -56,7 +63,8 @@ theorem smithRemoteness_eq (G : ImpartialGame) (p : G.Pos) :
     simp
   rw [smithRemoteness, WellFounded.fix_eq, key]
 
-/-- A terminal position has remoteness `0`.
+/-- **Smith's remoteness vanishes at terminal positions.** In an impartial game, the remoteness
+of a terminal position (a position with no moves) is $0$.
 
 Source: C. A. B. Smith, *Graphs and composite games*, J. Combin. Theory 1 (1966), 51–81. -/
 theorem smithRemoteness_of_moves_eq_empty (G : ImpartialGame) (p : G.Pos)

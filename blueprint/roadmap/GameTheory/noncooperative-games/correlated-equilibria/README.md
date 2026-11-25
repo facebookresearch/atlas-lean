@@ -10,6 +10,7 @@ A correlated equilibrium (Aumann 1974) is a probability distribution on strategy
 - [The set of correlated equilibria is compact](is-compact-set-of-is-correlated-eq.md)
 - [Correlated equilibria are coarse correlated equilibria](is-coarse-correlated-eq.md)
 - [A pure Nash equilibrium is a correlated equilibrium](is-correlated-eq-dirac.md)
+- [CE polytope and linear-programming computation](ce-polytope-and-linear-programming-computation.md)
 
 ## Nash equilibria as product distributions
 

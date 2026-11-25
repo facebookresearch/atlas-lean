@@ -26,7 +26,7 @@ private def oneRow : Matrix (Fin 1) (Fin 2) ℝ := !![1, 1]
 private theorem oneRow_tu : oneRow.IsTotallyUnimodular := by
   convert (identity_tu 1).submatrix id (fun _ : Fin 2 => (0 : Fin 1))
   ext i j
-  fin_cases i; fin_cases j <;> norm_num [oneRow, one_apply]
+  fin_cases i; fin_cases j <;> norm_num [oneRow, Matrix.one_apply]
 
 -- A signed basis with determinant -1 and a negative coordinate.
 private theorem signed_solution : ∃ z : Fin 1 → ℤ, ∀ i,

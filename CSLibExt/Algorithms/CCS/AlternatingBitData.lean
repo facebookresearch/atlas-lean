@@ -44,7 +44,11 @@ namespace Cslib.Algorithms.CCS.AlternatingBitData
 open Cslib.CCS (Label)
 open Cslib.CCS.Recursive Cslib.LTS
 
-/-- Channel names; `b` is a sequence bit and `d` a data bit. -/
+/-- **Channel names of the alternating-bit protocol with data.** For bits $b$ and $d$, where $b$ is
+a sequence bit and $d$ a data bit, the channel names are $\mathsf{acc}(d)$ (accept the data bit
+$d$ from the user), $\mathsf{del}(d)$ (deliver the data bit $d$ to the user), $\mathsf{send}(b, d)$
+(sender to data channel), $\mathsf{recv}(b, d)$ (data channel to receiver), $\mathsf{reply}(b)$
+(receiver to acknowledgement channel) and $\mathsf{ack}(b)$ (acknowledgement channel to sender). -/
 inductive Name
   /-- Accept a data bit from the user. -/
   | acc (d : Bool)
@@ -60,7 +64,11 @@ inductive Name
   | ack (b : Bool)
   deriving DecidableEq
 
-/-- Sender states. -/
+/-- **Sender states of the alternating-bit protocol with data.** For bits $b$ and $d$, a sender
+state is $\mathsf{accept}(b)$, ready to accept a message to be sent with sequence bit $b$;
+$\mathsf{transmit}(b, d)$, about to transmit the data bit $d$ with sequence bit $b$; or
+$\mathsf{await}(b, d)$, waiting for the acknowledgement of $b$ while holding $d$ for
+retransmission. -/
 inductive Sender
   /-- Ready to accept a message, to be sent with sequence bit `b`. -/
   | accept (b : Bool)
@@ -70,7 +78,10 @@ inductive Sender
   | await (b d : Bool)
   deriving DecidableEq
 
-/-- Receiver states. -/
+/-- **Receiver states of the alternating-bit protocol with data.** For bits $b$ and $d$, a receiver
+state is $\mathsf{expect}(b)$, expecting a frame with sequence bit $b$; $\mathsf{deliver}(b, d)$,
+about to deliver the data bit $d$ of a frame with sequence bit $b$; or $\mathsf{reply}(b)$, about
+to acknowledge $b$. -/
 inductive Receiver
   /-- Expecting a frame with sequence bit `b`. -/
   | expect (b : Bool)
@@ -80,38 +91,67 @@ inductive Receiver
   | reply (b : Bool)
   deriving DecidableEq
 
-/-- Sender transitions. -/
+/-- **Sender transitions of the alternating-bit protocol with data.** The transitions of each
+sender state, as a list of pairs of a label and a successor state, for bits $b$ and $d$:
+$\mathsf{accept}(b)$ inputs on $\mathsf{acc}(d)$ and moves to $\mathsf{transmit}(b, d)$, for
+$d = \mathrm{false}$ and then $d = \mathrm{true}$; $\mathsf{transmit}(b, d)$ outputs on
+$\mathsf{send}(b, d)$ and moves to $\mathsf{await}(b, d)$; and $\mathsf{await}(b, d)$ inputs on
+$\mathsf{ack}(b)$ and moves to $\mathsf{accept}(\lnot b)$, inputs on $\mathsf{ack}(\lnot b)$ and
+stays in $\mathsf{await}(b, d)$, or times out by a silent step $\tau$ back to
+$\mathsf{transmit}(b, d)$, in this order. -/
 def senderSteps : Sender → List (Label Name × Sender)
   | .accept b => [(.input (.acc false), .transmit b false), (.input (.acc true), .transmit b true)]
   | .transmit b d => [(.output (.send b d), .await b d)]
   | .await b d =>
       [(.input (.ack b), .accept (!b)), (.input (.ack (!b)), .await b d), (.tau, .transmit b d)]
 
-/-- Lossy one-place data channel, holding a sequence bit and a data bit. -/
+/-- **Data-channel transitions of the alternating-bit protocol with data.** The data channel is a
+lossy one-place channel whose content is either empty or a pair $(b, d)$ of a sequence bit $b$
+and a data bit $d$. Its transitions, as a list of pairs of a label and a successor content: the
+empty channel inputs on $\mathsf{send}(b, d)$ and then holds $(b, d)$, for the four pairs $(b, d)$
+in the order $(\mathrm{false}, \mathrm{false})$, $(\mathrm{false}, \mathrm{true})$,
+$(\mathrm{true}, \mathrm{false})$, $(\mathrm{true}, \mathrm{true})$; a channel holding $(b, d)$
+either outputs on $\mathsf{recv}(b, d)$ and becomes empty, or loses the frame by a silent step
+$\tau$ and becomes empty. -/
 def dataSteps : Option (Bool × Bool) → List (Label Name × Option (Bool × Bool))
   | none => [false, true].flatMap fun b => [false, true].map fun d =>
       (.input (.send b d), some (b, d))
   | some (b, d) => [(.output (.recv b d), none), (.tau, none)]
 
-/-- Receiver transitions: deliver the data of an expected frame, acknowledge a
-duplicate again. -/
+/-- **Receiver transitions of the alternating-bit protocol with data.** The transitions of each
+receiver state, as a list of pairs of a label and a successor state, for bits $b$ and $d$:
+$\mathsf{expect}(b)$ inputs on $\mathsf{recv}(b, d)$ and moves to $\mathsf{deliver}(b, d)$, or
+inputs a duplicate on $\mathsf{recv}(\lnot b, d)$ and moves to the state $\mathsf{reply}(\lnot b)$,
+these two for $d = \mathrm{false}$ and then for $d = \mathrm{true}$; $\mathsf{deliver}(b, d)$
+outputs on $\mathsf{del}(d)$ and moves to the state $\mathsf{reply}(b)$; and the state
+$\mathsf{reply}(b)$ outputs on the channel $\mathsf{reply}(b)$ and moves to
+$\mathsf{expect}(\lnot b)$. So the receiver delivers the data of an expected frame and
+acknowledges a duplicate again. -/
 def receiverSteps : Receiver → List (Label Name × Receiver)
   | .expect b => [false, true].flatMap fun d =>
       [(.input (.recv b d), .deliver b d), (.input (.recv (!b) d), .reply (!b))]
   | .deliver b d => [(.output (.del d), .reply b)]
   | .reply b => [(.output (.reply b), .expect (!b))]
 
-/-- Lossy one-place acknowledgement channel. -/
+/-- **Acknowledgement channel of the alternating-bit protocol with data.** The transitions of the
+lossy one-place acknowledgement channel: when empty, it can take an input on $\mathrm{reply}_b$
+for either bit $b$ and then holds $b$; when holding $b$, it can either output on $\mathrm{ack}_b$
+or lose $b$ by a silent step, and in both cases it becomes empty. -/
 def ackSteps : Option Bool → List (Label Name × Option Bool)
   | none => [(.input (.reply false), some false), (.input (.reply true), some true)]
   | some b => [(.output (.ack b), none), (.tau, none)]
 
-/-- The one-place buffer of bits: empty (`none`) or holding a bit. -/
+/-- **Transitions of the one-place buffer of bits.** When empty, the buffer can take an input on
+$\mathrm{acc}_d$ for either bit $d$ and then holds $d$; when holding $d$, its only transition is
+an output on $\mathrm{del}_d$, after which it is empty. -/
 def bufferSteps : Option Bool → List (Label Name × Option Bool)
   | none => [(.input (.acc false), some false), (.input (.acc true), some true)]
   | some d => [(.output (.del d), none)]
 
-/-- Process constants: one per state of each agent. -/
+/-- **Process constants of the alternating-bit protocol with data.** There is one process constant
+for each sender state, each content of the data channel (empty, or a sequence bit with a data
+bit), each receiver state, each content of the acknowledgement channel (empty, or a bit), and each
+content of the one-place buffer of bits (empty, or a bit). -/
 inductive Agent
   | sender (s : Sender)
   | data (c : Option (Bool × Bool))
@@ -119,8 +159,13 @@ inductive Agent
   | ack (c : Option Bool)
   | buffer (content : Option Bool)
 
-/-- The recursive specification: each constant is the choice of its listed
-transitions. -/
+/-- **Recursive specification of the alternating-bit protocol with data.** There is a separate
+process constant $X_s$ for each state $s$ of each of five components: the sender, the lossy data
+channel, the receiver, the lossy acknowledgement channel and the one-place buffer of bits. If
+$(a_1, s_1), \dots, (a_n, s_n)$ are the listed transitions of $s$ in its component, then the body
+of $X_s$ is the choice of prefixes $a_1.X_{s_1} + (a_2.X_{s_2} + \dots + (a_n.X_{s_n} + 0))$,
+where each $X_{s_i}$ is the constant of the same component and $0$ is the inactive process; the
+body is $0$ when $s$ has no listed transitions. -/
 def spec : Specification Name Agent
   | .sender s => sumOf ((senderSteps s).map fun y => (y.1, .constant (.sender y.2)))
   | .data c => sumOf ((dataSteps c).map fun y => (y.1, .constant (.data y.2)))
@@ -128,19 +173,33 @@ def spec : Specification Name Agent
   | .ack c => sumOf ((ackSteps c).map fun y => (y.1, .constant (.ack y.2)))
   | .buffer q => sumOf ((bufferSteps q).map fun y => (y.1, .constant (.buffer y.2)))
 
-/-- The labelled transition system of the specification. -/
+/-- **Transition system of the alternating-bit protocol with data.** The labelled transition
+system whose states are the CCS processes over the protocol's channel names and process
+constants, whose labels are the CCS labels over its channel names, and whose transitions are
+generated by the protocol's recursive specification. -/
 abbrev lts : LTS (Process Name Agent) (Label Name) := Process.lts spec
 
-/-- The internal channels, all restricted. -/
+/-- **Internal channels of the alternating-bit protocol with data.** The list of the channel names
+that the protocol restricts: $\mathsf{send}(b, d)$ followed by $\mathsf{recv}(b, d)$ for the pairs
+$(b, d)$ in the order $(\mathrm{false}, \mathrm{false})$, $(\mathrm{false}, \mathrm{true})$,
+$(\mathrm{true}, \mathrm{false})$, $(\mathrm{true}, \mathrm{true})$, then
+$\mathsf{reply}(\mathrm{false})$, $\mathsf{reply}(\mathrm{true})$, $\mathsf{ack}(\mathrm{false})$
+and $\mathsf{ack}(\mathrm{true})$. -/
 def internal : List Name :=
   ([false, true].flatMap fun b => [false, true].flatMap fun d => [.send b d, .recv b d]) ++
     [.reply false, .reply true, .ack false, .ack true]
 
-/-- Protocol configurations: sender, data channel, receiver, acknowledgement
-channel. -/
+/-- **Configurations of the alternating-bit protocol with data.** A configuration consists of a
+sender state, the content of the data channel (empty, or a pair of a sequence bit and a data
+bit), a receiver state, and the content of the acknowledgement channel (empty, or a bit). -/
 abbrev Config := ((Sender × Option (Bool × Bool)) × Receiver) × Option Bool
 
-/-- The protocol process in a configuration. -/
+/-- **The alternating-bit protocol with data in a configuration.** For a configuration $c$ made of
+a sender state $s$, a data-channel content $d$, a receiver state $r$ and an
+acknowledgement-channel content $k$, the protocol process at $c$ is
+$((X_s \mid X_d) \mid X_r) \mid X_k$ with every internal channel restricted, where $X_s$, $X_d$,
+$X_r$ and $X_k$ are the process constants of these states. The internal channels are all channel
+names other than accepting and delivering a data bit. -/
 def system (c : Config) : Process Name Agent :=
   .restriction internal
     (.parallel
@@ -148,7 +207,13 @@ def system (c : Config) : Process Name Agent :=
         (.constant (.receiver c.1.2)))
       (.constant (.ack c.2)))
 
-/-- The configuration-level transitions of the protocol. -/
+/-- **Transitions of the alternating-bit protocol with data.** For a configuration, made of a
+sender state, a data-channel content, a receiver state and an acknowledgement-channel content,
+the transitions are those of the parallel composition of the sender, the data channel, the
+receiver and the acknowledgement channel, where one component moves alone or two components
+synchronize on complementary labels in a silent step. Of these, only the silent steps and the
+actions on names that are not internal channels are kept; the internal channels are the sending,
+receiving, reply and acknowledgement channels. -/
 def configSteps : Config → List (Label Name × Config) :=
   restrictSteps internal
     (parSteps (parSteps (parSteps senderSteps dataSteps) receiverSteps) ackSteps)
@@ -159,25 +224,34 @@ theorem realizes_system : Realizes spec system configSteps :=
     (Realizes.constant Agent.receiver receiverSteps fun _ => rfl)).parallel
     (Realizes.constant Agent.ack ackSteps fun _ => rfl)).restriction internal
 
-/-- The buffer process with the given content. -/
+/-- **The one-place buffer of bits with given content.** For a content $q$, which is either empty
+or a bit, the process constant of the one-place buffer of bits holding $q$. -/
 def buffer (q : Option Bool) : Process Name Agent := .constant (.buffer q)
 
 theorem realizes_buffer : Realizes spec buffer bufferSteps :=
   Realizes.constant Agent.buffer bufferSteps fun _ => rfl
 
-/-- The initial configuration: sender ready with bit `false`, channels empty,
-receiver expecting `false`. -/
+/-- **Initial configuration of the alternating-bit protocol with data.** The configuration in
+which the sender is in state $\mathsf{accept}(\mathrm{false})$, ready to accept a message to be
+sent with sequence bit false, the data channel and the acknowledgement channel are empty, and
+the receiver is in state $\mathsf{expect}(\mathrm{false})$, expecting a frame with sequence bit
+false. -/
 def initial : Config := (((.accept false, none), .expect false), none)
 
-/-- The alternating-bit protocol with data. -/
+/-- **The alternating-bit protocol with data.** The protocol process in its initial
+configuration: the sender is ready to accept a data bit, to be sent with sequence bit false, the
+data channel and the acknowledgement channel are empty, and the receiver expects a frame with
+sequence bit false. The four agents run in parallel, with all internal channels restricted. -/
 def abpData : Process Name Agent := system initial
 
-/-- The empty one-place buffer of bits. -/
+/-- **The empty one-place buffer of bits.** The process constant of the one-place buffer of bits
+with empty content. -/
 def buf : Process Name Agent := buffer none
 
-/-- The weak-bisimulation certificate: every reachable configuration with the
-buffer content it simulates, listed so that every pair reaches the visible
-actions of its buffer state through pairs listed earlier. -/
+/-- **Weak-bisimulation certificate for the alternating-bit protocol with data.** A list of 220
+pairs, each a protocol configuration together with the buffer content it simulates: every
+reachable configuration with the buffer content it simulates, listed so that every pair reaches
+the visible actions of its buffer state through pairs listed earlier. -/
 def certificate : List (Config × Option Bool) := [
   ((((.accept true, none), .expect true), some false), none),
   ((((.transmit false true, none), .deliver false true), none), some true),
@@ -409,7 +483,12 @@ theorem abpData_weaklyBisimilar_buffer : lts.HomWeakBisimilarity abpData buf :=
   weaklyBisimilar_of_certCheck realizes_system realizes_buffer certCheck_certificate
     (x := initial) (y := none) (by decide +kernel)
 
-/-- The protocol is even observation congruent to the buffer. -/
+/-- **The alternating-bit protocol with data is observation congruent to the buffer.** In the
+labelled transition system of the protocol's recursive specification, the alternating-bit protocol
+with data is observation congruent (rooted weakly bisimilar) to the empty one-place buffer of
+bits: every transition of either process with some label is matched by the other process through
+silent steps, then one actual step with the same label, then silent steps, and the two resulting
+processes are weakly bisimilar. -/
 theorem abpData_observationCongruent_buffer :
     lts.RootedWeaklyBisimilar abpData buf :=
   rootedWeaklyBisimilar_of_certCheck realizes_system realizes_buffer certCheck_certificate

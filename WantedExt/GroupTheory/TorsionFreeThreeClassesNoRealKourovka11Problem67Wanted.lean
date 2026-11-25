@@ -32,23 +32,31 @@ UM-00700759 (`KOU-11.67`), dataset ulamai/UnsolvedMath v1.8.0.
 Torsion-free and "exactly three classes" are as in Kourovka 11.42.
 -/
 
-/-- Kourovka 11.67 (B. Neumann): there is a torsion-free group with exactly three conjugacy classes
-in which no nontrivial conjugacy class contains a pair of mutually inverse elements, i.e. no
-`g ≠ 1` is conjugate to `g⁻¹`. -/
+/-- **Kourovka Problem 11.67 (statement).** The statement that there is a torsion-free group $G$ (no
+element of $G$ other than the identity has finite order) with exactly three conjugacy classes in
+which no element $g \neq 1$ is conjugate to its inverse $g^{-1}$, that is, no nontrivial conjugacy
+class contains a pair of mutually inverse elements.
+
+The problem was posed by B. Neumann. -/
 def torsionFreeThreeClassesNoInverseConj : Prop :=
   ∃ (G : Type) (_ : Group G), (∀ g : G, g ≠ 1 → ¬ IsOfFinOrder g) ∧
     Nat.card (ConjClasses G) = 3 ∧ ∀ g : G, g ≠ 1 → ¬ IsConj g g⁻¹
 
 /--
-Resolved true: Bagayoko constructs a linearly ordered group with exactly three conjugacy classes
-(positive transseries under composition); an ordered group is torsion-free, and conjugation
-preserves positivity, so no `g ≠ 1` is conjugate to `g⁻¹`. The Kourovka Notebook (21st issue) marks
-11.67 solved, "Yes, there does". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
-in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.67 (B.
-Neumann); resolution: V. Bagayoko, Ordered groups of formal series, and a conjugacy problem,
-arXiv:2509.09186 (2025), main result: a linearly ordered group `(𝕋^{>ℝ}, ∘, <)` of transseries under
-composition with exactly three conjugacy classes; the Kourovka Notebook (21st issue) marks 11.67
-solved, https://arxiv.org/abs/2509.09186.
+**Bagayoko's theorem (Kourovka Problem 11.67).** There is a torsion-free group $G$ (no element of
+$G$ other than the identity has finite order) with exactly three conjugacy classes in which no
+element $g \neq 1$ is conjugate to its inverse $g^{-1}$.
+
+Bagayoko's example is a linearly ordered group with exactly three conjugacy classes, the positive
+transseries under composition; an ordered group is torsion-free, and conjugation preserves
+positivity, so no $g \neq 1$ is conjugate to $g^{-1}$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.67 (B. Neumann); resolution: V.
+Bagayoko, Ordered groups of formal series, and a conjugacy problem, arXiv:2509.09186 (2025), main
+result: a linearly ordered group `(𝕋^{>ℝ}, ∘, <)` of transseries under composition with exactly
+three conjugacy classes; the Kourovka Notebook (21st issue) marks 11.67 solved,
+https://arxiv.org/abs/2509.09186.
 -/
 public theorem_wanted torsionFreeThreeClassesNoInverseConj_holds :
     torsionFreeThreeClassesNoInverseConj

@@ -1,0 +1,3 @@
+# PARTITION INTO CLIQUES as a decision problem
+
+The decision problem PARTITION INTO CLIQUES accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for PARTITION INTO CLIQUES and feasible for it: for some $m \le K$, some map $c$ from the vertices to $\{0, \dots, m-1\}$ makes every block $c^{-1}(j)$ a clique (a set of pairwise adjacent vertices) of the graph of the instance. It rejects every bitstring that does not decode to such an instance. It differs from CLIQUE COVER only on instances with $K = 0$ or $K > n$, which it rejects.

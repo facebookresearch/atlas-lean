@@ -51,6 +51,11 @@ four-point body has `ω_B = (0, 0, 1 + 2 t)` and needs the torque `(0, 0, 20)`, 
 shaft power `20 (1 + 2 t)`; the sign-flipped torque fails, and with zero initial rate and unit
 angular acceleration the construction has the body angular velocity of the spin-up.
 
+Without torque, the axisymmetric inertia `diag(1, 1, 2)` with `A = ω₃ = 1` gives the precession
+`ω_B(t) = (cos t, sin t, 1)` with the gyroscopic term `(0, -1, 0)` at `t = 0`, and the Euler port
+recovers its angular acceleration `(0, 1, 0)` there; a prolate body precesses against its spin,
+and equal inertias give no precession.
+
 The file activates no matrix norm: every regularity fact is stated and proved as a client would,
 with Mathlib's default instances on matrices or entry by entry.
 
@@ -69,6 +74,7 @@ with Mathlib's default instances on matrices or entry by entry.
 - E. Euler's equations
 - F. Consumers of the Euler lemmas
 - G. A constructed torque-driven rotation
+- H. Torque-free axisymmetric precession
 
 ## iv. References
 
@@ -707,5 +713,74 @@ example (t : Time) :
       (by norm_num) (by norm_num) t).1,
     (fixedAxisMotion_neg_torque (ω₀ := 1) fourPointBody_centerOfMass fourPointBody_inertia
       (by norm_num) (by norm_num) t).2⟩
+
+
+/-! ## H. Torque-free axisymmetric precession -/
+
+-- A nonzero gyroscopic term: `I_⊥ = 1`, `I₃ = 2`, `A = ω₃ = 1` give `ν = 1` and `ω_B(t) = (cos t,
+-- sin t, 1)`, which solves Euler's equations without torque and has the gyroscopic term `(0, -1,
+-- 0)` at `t = 0`.
+example :
+    axisymmetricPrecessionRate 1 2 1 = 1 ∧
+      (∀ t : Time, axisymmetricPrecession 1 2 1 1 t = ![Real.cos t.val, Real.sin t.val, 1]) ∧
+      (∀ t : Time, Matrix.diagonal ![1, 1, 2] *ᵥ ∂ₜ (axisymmetricPrecession 1 2 1 1) t +
+          axisymmetricPrecession 1 2 1 1 t ⨯₃
+            (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 t) = 0) ∧
+      axisymmetricPrecession 1 2 1 1 0 ⨯₃
+          (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 0) = ![0, -1, 0] := by
+  have hν : axisymmetricPrecessionRate 1 2 1 = 1 := by
+    norm_num [axisymmetricPrecessionRate]
+  refine ⟨hν, fun t => ?_, fun t => axisymmetricPrecession_euler one_pos 2 1 1 t, ?_⟩
+  · simp [axisymmetricPrecession, hν]
+  · rw [axisymmetricPrecession_gyroscopic_zero]
+    norm_num
+
+-- Equal inertias degenerate: `I_⊥ = I₃ = I` gives zero precession `ν = 0`, the constant body
+-- angular velocity `(A, 0, ω₃)` and no gyroscopic term, so this case alone cannot exercise the
+-- gyroscopic term.
+example (I A ω₃ : ℝ) (t : Time) :
+    axisymmetricPrecessionRate I I ω₃ = 0 ∧ axisymmetricPrecession I I A ω₃ t = ![A, 0, ω₃] ∧
+      axisymmetricPrecession I I A ω₃ t ⨯₃
+          (Matrix.diagonal ![I, I, I] *ᵥ axisymmetricPrecession I I A ω₃ t) = 0 := by
+  have hν : axisymmetricPrecessionRate I I ω₃ = 0 := by
+    simp [axisymmetricPrecessionRate]
+  have hω : axisymmetricPrecession I I A ω₃ t = ![A, 0, ω₃] := by
+    simp [axisymmetricPrecession, hν]
+  refine ⟨hν, hω, ?_⟩
+  rw [hω]
+  ext i
+  fin_cases i <;> simp [Matrix.mulVec_diagonal, cross_apply]
+  ring
+
+-- The precession of the inertia `diag(1, 1, 2)` with `A = ω₃ = 1` has at `t = 0` the angular
+-- acceleration `(0, 1, 0)`, which the Euler port recovers from zero torque: `diag(1, 1, 2)` is
+-- positive definite and `I⁻¹ (0 - ω_B × (I ω_B)) = (0, 1, 0)`.
+example :
+    ∂ₜ (axisymmetricPrecession 1 2 1 1) 0 = ![0, 1, 0] ∧
+      (Matrix.diagonal ![(1 : ℝ), 1, 2]).PosDef ∧
+      (Matrix.diagonal ![(1 : ℝ), 1, 2])⁻¹ *ᵥ (0 - axisymmetricPrecession 1 2 1 1 0 ⨯₃
+        (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 0)) = ![0, 1, 0] := by
+  have hν : axisymmetricPrecessionRate 1 2 1 = 1 := by norm_num [axisymmetricPrecessionRate]
+  have hd : ∂ₜ (axisymmetricPrecession 1 2 1 1) 0 = ![0, 1, 0] := by
+    rw [(deriv_axisymmetricPrecession 1 2 1 1 0).2, hν]
+    ext i
+    fin_cases i <;> simp [Time.zero_val]
+  obtain ⟨hpos, hsolve⟩ := axisymmetricPrecession_euler_solve one_pos two_pos 1 1 0
+  exact ⟨hd, hpos, hsolve.symm.trans hd⟩
+
+-- The gyroscopic term of this precession is nonzero at `t = 0`: `I_⊥ = 1 ≠ 2 = I₃` and
+-- `A ω₃ = 1 ≠ 0`.
+example : axisymmetricPrecession 1 2 1 1 0 ⨯₃
+    (Matrix.diagonal ![1, 1, 2] *ᵥ axisymmetricPrecession 1 2 1 1 0) ≠ 0 :=
+  axisymmetricPrecession_gyroscopic_ne_zero (by norm_num) (by norm_num)
+
+-- A prolate body precesses against its spin: `I_⊥ = 2 > 1 = I₃` with `ω₃ = 2` gives the rate
+-- `ν = -1`, and the precession still solves Euler's equations without torque.
+example (A : ℝ) (t : Time) :
+    axisymmetricPrecessionRate 2 1 2 = -1 ∧
+      Matrix.diagonal ![2, 2, 1] *ᵥ ∂ₜ (axisymmetricPrecession 2 1 A 2) t +
+          axisymmetricPrecession 2 1 A 2 t ⨯₃
+            (Matrix.diagonal ![2, 2, 1] *ᵥ axisymmetricPrecession 2 1 A 2 t) = 0 :=
+  ⟨by norm_num [axisymmetricPrecessionRate], axisymmetricPrecession_euler two_pos 1 A 2 t⟩
 
 end PhyslibExtTest.Mechanics.RigidMotionPorts
