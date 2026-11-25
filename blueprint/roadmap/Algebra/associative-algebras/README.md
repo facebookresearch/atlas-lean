@@ -4,11 +4,13 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 
 - [Algebraic quotients by two-sided nonunital subalgebras](../not-yet-classified/quotient/README.md)
 - [Antipode of a Hopf algebra](antipode-of-a-hopf-algebra/README.md)
+- [Bialgebra scalar extension through an algebra tower](bialgebra-scalar-extension-through-an-algebra-to/README.md)
 - [Ideals and quotients of nonunital ground algebras](ideals-and-quotients-of-nonunital-ground-algebra/README.md)
 - [Jacobson's commutativity theorem](jacobson-s-commutativity-theorem/README.md)
 - [Köthe's conjecture](k-the-s-conjecture/README.md)
 - [Lifting original vectors into a possibly nonunital algebra](lifting-original-vectors-into-a-possibly-nonunit/README.md)
 - [Linear coordinates of a k-split nonunital ideal extension](linear-coordinates-of-a-k-split-nonunital-ideal/README.md)
+- [Naturality of Hopf antipodes](naturality-of-hopf-antipodes/README.md)
 - [Splitting of quaternion algebras](splitting-of-quaternion-algebras/README.md)
 - [The actual augmentation kernel of the tensor algebra](the-actual-augmentation-kernel-of-the-tensor-alg/README.md)
 - [Amitsur–Levitzki theorem](amitsur-levitzki.md)

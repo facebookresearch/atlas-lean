@@ -1,0 +1,17 @@
+# Finite cofree complexes
+
+- [Injective Cofree](injective-cofree.md)
+- [Injective Cofree d](injective-cofree-d.md)
+- [Injective Cofree d next](injective-cofree-d-next.md)
+- [Injective Cofree Hom](injective-cofree-hom.md)
+- [Injective Cofree Hom fst](injective-cofree-hom-fst.md)
+- [Injective Cofree Hom snd](injective-cofree-hom-snd.md)
+- [Injective Cofree snd](injective-cofree-snd.md)
+- [Injective Cofree hom ext](injective-cofree-hom-ext.md)
+- [Injective Cofree Hom Equiv](injective-cofree-hom-equiv.md)
+- [Injective Cofree Hom precomp](injective-cofree-hom-precomp.md)
+- [Injective Cofree Map](injective-cofree-map.md)
+- [Injective Cofree Hom naturality](injective-cofree-hom-naturality.md)
+- [Injective Cofree injective](injective-cofree-injective.md)
+- [Injective Cofree Hom mono](injective-cofree-hom-mono.md)
+- [Enough Injectives of rel next](enough-injectives-of-rel-next.md)

@@ -1,0 +1,18 @@
+# The opposite equivalence of derived categories and reflected bounds
+
+- [Cochain Equivalence](cochain-equivalence.md)
+- [Cochain Homology Iso](cochain-homology-iso.md)
+- [Cochain map quasi Iso iff](cochain-map-quasi-iso-iff.md)
+- [Cochain inverse map quasi Iso](cochain-inverse-map-quasi-iso.md)
+- [Forward Inverts](forward-inverts.md)
+- [Inverse Inverts](inverse-inverts.md)
+- [Forward](forward.md)
+- [Backward](backward.md)
+- [Forward Fac](forward-fac.md)
+- [Backward Fac](backward-fac.md)
+- [Equivalence](equivalence.md)
+- [Equivalence functor eq](equivalence-functor-eq.md)
+- [Equivalence inverse eq](equivalence-inverse-eq.md)
+- [Reflect](reflect.md)
+- [Inverse is LE of is GE](inverse-is-le-of-is-ge.md)
+- [Is LE iff reflect is GE](is-le-iff-reflect-is-ge.md)

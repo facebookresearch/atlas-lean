@@ -1,0 +1,41 @@
+# Canonical simplex parameter minimum
+
+## Parameter Comparison
+
+- [Source Coordinate](source-coordinate.md)
+- [Domain Coordinate](domain-coordinate.md)
+- [External Coordinate](external-coordinate.md)
+- [Minimum Coordinate](minimum-coordinate.md)
+- [Pullback Coordinates](pullback-coordinates.md)
+- [Domain Coordinates](domain-coordinates.md)
+- [Minimum Coordinates](minimum-coordinates.md)
+- [Pullback Coordinates apply](pullback-coordinates-apply.md)
+- [Domain Coordinates apply](domain-coordinates-apply.md)
+- [Minimum Coordinates apply](minimum-coordinates-apply.md)
+- [Minimum le domain](minimum-le-domain.md)
+- [Minimum le pullback](minimum-le-pullback.md)
+- [Minimum To Domain](minimum-to-domain.md)
+- [Minimum To Pullback](minimum-to-pullback.md)
+- [Minimum To Domain app](minimum-to-domain-app.md)
+- [Minimum To Pullback app](minimum-to-pullback-app.md)
+- [Minimum Coordinates graph](minimum-coordinates-graph.md)
+- [Domain Coordinates graph](domain-coordinates-graph.md)
+- [Pullback Coordinates naturality](pullback-coordinates-naturality.md)
+- [Domain Coordinates naturality](domain-coordinates-naturality.md)
+- [Minimum Coordinates naturality](minimum-coordinates-naturality.md)
+
+## Simplex Parameter Comparison
+
+- [Lifted Coordinates](lifted-coordinates.md)
+- [Coordinate Map](coordinate-map.md)
+- [Lifted Coordinates apply](lifted-coordinates-apply.md)
+- [Coordinate Map apply](coordinate-map-apply.md)
+- [Pullback Map](pullback-map.md)
+- [Domain Map](domain-map.md)
+- [Minimum Map](minimum-map.md)
+- [Pullback Map apply](pullback-map-apply.md)
+- [Pullback Map eq whisker Right](pullback-map-eq-whisker-right.md)
+- [Domain Map apply](domain-map-apply.md)
+- [Minimum Map fst apply](minimum-map-fst-apply.md)
+- [Minimum Map snd apply](minimum-map-snd-apply.md)
+- [Coordinate Map naturality](coordinate-map-naturality.md)

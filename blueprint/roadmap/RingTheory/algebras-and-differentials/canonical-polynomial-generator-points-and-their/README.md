@@ -1,0 +1,15 @@
+# Canonical polynomial generator points and their epi images
+
+- [Index](index-2.md)
+- [Underlying](underlying.md)
+- [Point](point.md)
+- [Index Hom](index-hom.md)
+- [Index Hom point](index-hom-point.md)
+- [Index Hom left Inverse](index-hom-left-inverse.md)
+- [Point injective](point-injective.md)
+- [Is Generator](is-generator.md)
+- [Positive face point](positive-face-point.md)
+- [Degeneracy preimage generator](degeneracy-preimage-generator.md)
+- [Epi image generator](epi-image-generator.md)
+- [Epi preimage generator](epi-preimage-generator.md)
+- [Variables](variables.md)

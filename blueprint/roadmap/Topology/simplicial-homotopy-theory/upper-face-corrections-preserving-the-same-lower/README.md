@@ -1,0 +1,16 @@
+# Upper-face corrections preserving the SAME lower and later group faces
+
+- [Upper Error](upper-error.md)
+- [Correct Upper](correct-upper.md)
+- [Correct Upper face](correct-upper-face.md)
+- [Upper Error lower face one](upper-error-lower-face-one.md)
+- [Correct Upper preserves lower](correct-upper-preserves-lower.md)
+- [Upper Tail Deg](upper-tail-deg.md)
+- [Upper Error later face one](upper-error-later-face-one.md)
+- [Correct Upper preserves later](correct-upper-preserves-later.md)
+- [Upper Pass](upper-pass.md)
+- [Upper Pass last](upper-pass-last.md)
+- [Upper Pass cast Succ](upper-pass-cast-succ.md)
+- [Upper Pass faces](upper-pass-faces.md)
+- [Horn Filler](horn-filler.md)
+- [Horn Filler face](horn-filler-face.md)
