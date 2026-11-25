@@ -36,10 +36,11 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.Monoidal
+public import MathlibExt.AlgebraicGeometry.Modules.Monoidal
+public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import Mathlib.AlgebraicGeometry.AffineScheme
 public import Mathlib.AlgebraicGeometry.Restrict
-public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
+import MathlibExt.Algebra.Category.ModuleCat.PresheafTensorFormulae
 import Mathlib.RingTheory.LocalProperties.Exactness
 import Mathlib.RingTheory.Localization.BaseChange
 
@@ -48,9 +49,9 @@ import Mathlib.RingTheory.Localization.BaseChange
 
 For sheaves of modules `L` and `M` on a scheme `X` and an open `U`, sections `s` of `L` and `t`
 of `M` over `U` give a section `tensorSections s t` of `L ⊗ M` over `U`; this is bilinear over
-`Γ(X, U)` (`Scheme.Modules.tensorSectionsBilin`). When `L` and `M` are invertible and `U` is
-affine, the induced map `Γ(L, U) ⊗[Γ(X, U)] Γ(M, U) → Γ(L ⊗ M, U)` is bijective
-(`Scheme.Modules.IsInvertible.bijective_lift_tensorSectionsBilin`).
+`Γ(X, U)` (`Scheme.Modules.tensorSectionsBilin`). When `L` and `M` are invertible (`IsLineBundle`)
+and `U` is affine, the induced map `Γ(L, U) ⊗[Γ(X, U)] Γ(M, U) → Γ(L ⊗ M, U)` is bijective
+(`IsLineBundle.bijective_lift_tensorSectionsBilin`).
 -/
 
 @[expose] public section
@@ -60,32 +61,13 @@ set_option backward.isDefEq.respectTransparency false
 universe u
 
 open CategoryTheory MonoidalCategory Opposite TensorProduct TopologicalSpace
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle)
 
 noncomputable section
 
 namespace AlgebraicGeometry.Scheme.Modules
 
 variable {X : Scheme.{u}}
-
-/-- An invertible sheaf: every point has a neighbourhood over which the sheaf is isomorphic to
-the structure sheaf. -/
-structure IsInvertible (M : X.Modules) : Prop where
-  /-- Every point has a neighbourhood over which `M` is trivial. -/
-  exists_trivialization : ∀ x : X, ∃ (U : X.Opens), x ∈ U ∧
-    Nonempty ((Scheme.Modules.pullback U.ι).obj M ≅
-      SheafOfModules.unit U.toScheme.ringCatSheaf)
-
-/-- The pullback of the structure sheaf is the structure sheaf. -/
-def pullbackUnitIso {Y Z : Scheme.{u}} (f : Y ⟶ Z) :
-    (Scheme.Modules.pullback f).obj (SheafOfModules.unit Z.ringCatSheaf) ≅
-      SheafOfModules.unit Y.ringCatSheaf := by
-  haveI h : IsIso (SheafOfModules.pullbackObjUnitToUnit f.toRingCatSheafHom) := inferInstance
-  exact @asIso _ _ _ _ _ h
-
-/-- The structure sheaf is invertible. -/
-theorem isInvertible_unit (Y : Scheme.{u}) :
-    IsInvertible (SheafOfModules.unit Y.ringCatSheaf) :=
-  ⟨fun _ => ⟨⊤, trivial, ⟨pullbackUnitIso _⟩⟩⟩
 
 section Hom
 
@@ -336,9 +318,6 @@ private def restrictRingCatSheafHom : (W : Scheme.{u}).ringCatSheaf ⟶
 private def restrictFunctor' : X.Modules ⥤ (W : Scheme.{u}).Modules :=
   SheafOfModules.pushforward (restrictRingCatSheafHom W)
 
-private lemma image_le (W' : (W : Scheme.{u}).Opens) : W.ι ''ᵁ W' ≤ W :=
-  (W.ι.image_le_opensRange W').trans_eq W.opensRange_ι
-
 variable {W} in
 private lemma image_preimage_of_le {W₂ : X.Opens} (h : W₂ ≤ W) : W.ι ''ᵁ (W.ι ⁻¹ᵁ W₂) = W₂ := by
   rw [Scheme.Hom.image_preimage_eq_opensRange_inf, Scheme.Opens.opensRange_ι]
@@ -356,7 +335,7 @@ private def smulSectionHom : SheafOfModules.unit ((W : X.Opens) : Scheme.{u}).ri
     (restrictFunctor' W).obj N :=
   ⟨{ app := fun W' => ModuleCat.ofHom
       { toFun := fun a =>
-          (secX W W'.unop a • N.presheaf.map (homOfLE (image_le W W'.unop)).op τ : Γ(N, W.ι ''ᵁ
+          (secX W W'.unop a • N.presheaf.map (homOfLE (W.ι_image_le W'.unop)).op τ : Γ(N, W.ι ''ᵁ
             W'.unop))
         map_add' := fun a b => add_smul (secX W W'.unop a) (secX W W'.unop b) _
         map_smul' := fun r a => mul_smul (secX W W'.unop r) (secX W W'.unop a) _ }
@@ -365,9 +344,9 @@ private def smulSectionHom : SheafOfModules.unit ((W : X.Opens) : Scheme.{u}).ri
        apply LinearMap.ext
        intro a
        change secX W W''.unop (X.presheaf.map (W.ι.opensFunctor.map i.unop).op (secX W W'.unop a)) •
-           N.presheaf.map (homOfLE (image_le W W''.unop)).op τ =
+           N.presheaf.map (homOfLE (W.ι_image_le W''.unop)).op τ =
          N.presheaf.map (W.ι.opensFunctor.map i.unop).op
-           (secX W W'.unop a • N.presheaf.map (homOfLE (image_le W W'.unop)).op τ)
+           (secX W W'.unop a • N.presheaf.map (homOfLE (W.ι_image_le W'.unop)).op τ)
        rw [Scheme.Modules.map_smul]
        congr 1
        change _ = (N.presheaf.map _ ≫ N.presheaf.map _) τ
@@ -377,7 +356,7 @@ private def smulSectionHom : SheafOfModules.unit ((W : X.Opens) : Scheme.{u}).ri
 private lemma smulSectionHom_app_apply (W' : (((W : X.Opens) : Scheme.{u}).Opens)ᵒᵖ) (a : Γ(W,
   W'.unop)) :
     (smulSectionHom N W τ).val.app W' a =
-      secX W W'.unop a • N.presheaf.map (homOfLE (image_le W W'.unop)).op τ := rfl
+      secX W W'.unop a • N.presheaf.map (homOfLE (W.ι_image_le W'.unop)).op τ := rfl
 
 variable {N W τ}
 
@@ -455,7 +434,7 @@ private theorem isIso_smulSectionHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (
     refine fun x hx => ?_
     have hx' : W.ι.base x ∈ W.ι ''ᵁ W' := ⟨x, hx, rfl⟩
     obtain ⟨W₂, i₂, hxW₂, z, hz⟩ := exists_local_preimage (L := L) (M := M) y hx'
-    have h₂W : W₂ ≤ W := i₂.le.trans (image_le W W')
+    have h₂W : W₂ ≤ W := i₂.le.trans (W.ι_image_le W')
     obtain ⟨g, hg⟩ := (bijective_smul_tmul_res hs ht (h₂W.trans hWU) (h₂W.trans hWV)).2 z
     dsimp only at hg
     have e₃ : W.ι ''ᵁ (W.ι ⁻¹ᵁ W₂) ≤ W₂ := (image_preimage_of_le h₂W).le
@@ -467,7 +446,7 @@ private theorem isIso_smulSectionHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (
     have key' := congrArg ((L ⊗ M).presheaf.map (homOfLE e₃).op) key
     rw [Scheme.Modules.map_smul] at key'
     change secX W _ (X.presheaf.map (homOfLE e₃).op g) •
-        (L ⊗ M).presheaf.map (homOfLE (image_le W _)).op (τW (s := s) (t := t) W hWU) =
+        (L ⊗ M).presheaf.map (homOfLE (W.ι_image_le _)).op (τW (s := s) (t := t) W hWU) =
       (L ⊗ M).presheaf.map (W.ι.opensFunctor.map (homOfLE (pre_le W' W₂ i₂.le))).op y
     convert key' using 2
     · change _ = ((L ⊗ M).presheaf.map _ ≫ (L ⊗ M).presheaf.map _) _
@@ -480,14 +459,14 @@ private theorem isIso_smulSectionHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (
     constructor
     intro W' a b hab
     refine fun x hx => ?_
-    have hab' : secX W W'.unop a • (L ⊗ M).presheaf.map (homOfLE (image_le W W'.unop)).op
+    have hab' : secX W W'.unop a • (L ⊗ M).presheaf.map (homOfLE (W.ι_image_le W'.unop)).op
           (τW (s := s) (t := t) W hWU) =
-        secX W W'.unop b • (L ⊗ M).presheaf.map (homOfLE (image_le W W'.unop)).op
+        secX W W'.unop b • (L ⊗ M).presheaf.map (homOfLE (W.ι_image_le W'.unop)).op
           (τW (s := s) (t := t) W hWU) := hab
     rw [map_τW, ← tsApp_smul, ← tsApp_smul] at hab'
     have hx' : W.ι.base x ∈ W.ι ''ᵁ W'.unop := ⟨x, hx, rfl⟩
     obtain ⟨W₂, i₂, hxW₂, h₂⟩ := exists_local_eq _ _ hab' hx'
-    have h₂W : W₂ ≤ W := i₂.le.trans (image_le W W'.unop)
+    have h₂W : W₂ ≤ W := i₂.le.trans (W.ι_image_le W'.unop)
     erw [map_smul_tmul, map_smul_tmul] at h₂
     have h₃ : X.presheaf.map i₂.op (secX W W'.unop a) = X.presheaf.map i₂.op (secX W W'.unop b) :=
       by
@@ -546,7 +525,7 @@ variable {C : Type u} [Category.{u} C] {R : Cᵒᵖ ⥤ CommRingCat.{u}}
   (F : PresheafOfModules.{u} (R ⋙ forget₂ CommRingCat RingCat))
 
 /-- A compatible family of generators of `F` below `X₀` freely generating each section module. -/
-structure TrivializationBelow (X₀ : Cᵒᵖ) where
+private structure TrivializationBelow (X₀ : Cᵒᵖ) where
   gen : ∀ {Y : Cᵒᵖ} (_ : X₀ ⟶ Y), F.obj Y
   compat : ∀ {Y Z : Cᵒᵖ} (f : X₀ ⟶ Y) (g : Y ⟶ Z), F.map g (gen f) = gen (f ≫ g)
   bij : ∀ {Y : Cᵒᵖ} (f : X₀ ⟶ Y), Function.Bijective (fun a : R.obj Y => a • gen f)
@@ -561,24 +540,13 @@ namespace Modules
 
 namespace FrameBridge
 
-open TopologicalSpace Opposite PresheafOfModules.FrameBridge
+open TopologicalSpace Opposite PresheafOfModules.FrameBridge FrameTensor
 
 variable {X : Scheme.{u}}
 
 variable (U : X.Opens)
 
-/-- The identity comparison of structure sheaves for an open subscheme. -/
-noncomputable def restrictRingCatSheafHom : (U : Scheme.{u}).ringCatSheaf ⟶
-    (U.ι.opensFunctor.sheafPushforwardContinuous RingCat.{u}
-      (Opens.grothendieckTopology (U : Scheme.{u})) (Opens.grothendieckTopology X)).obj
-        X.ringCatSheaf :=
-  ⟨𝟙 _⟩
-
-/-- Restriction of sheaves of modules to an open subscheme, as a pushforward. -/
-noncomputable def restrictFunctor' : X.Modules ⥤ (U : Scheme.{u}).Modules :=
-  SheafOfModules.pushforward (restrictRingCatSheafHom U)
-
-lemma restrictFunctor'_eq : restrictFunctor' U = Modules.restrictFunctor U.ι := by
+private lemma restrictFunctor'_eq : restrictFunctor' U = Modules.restrictFunctor U.ι := by
   dsimp only [restrictFunctor', Modules.restrictFunctor, restrictRingCatSheafHom]
   congr 2
   ext V : 2
@@ -587,30 +555,29 @@ lemma restrictFunctor'_eq : restrictFunctor' U = Modules.restrictFunctor U.ι :=
   rfl
 
 /-- Restriction to an open subscheme agrees with pullback along its inclusion. -/
-noncomputable def restrictFunctor'IsoPullback : restrictFunctor' U ≅ Modules.pullback U.ι :=
+private noncomputable def restrictFunctor'IsoPullback :
+    restrictFunctor' U ≅ Modules.pullback U.ι :=
   eqToIso (restrictFunctor'_eq U) ≪≫ restrictFunctorIsoPullback U.ι
 
 variable {U} (L : X.Modules)
 
-lemma image_preimage_of_le {V : X.Opens} (h : V ≤ U) : U.ι ''ᵁ (U.ι ⁻¹ᵁ V) = V := by
-  rw [Scheme.Hom.image_preimage_eq_opensRange_inf, Scheme.Opens.opensRange_ι]
-  exact inf_eq_right.mpr h
-
-section
-
-variable (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
-
 /-- The generator of `L` over `U.ι ᵁ W` coming from a trivialization. -/
-noncomputable def gen₀ (W : (U : Scheme.{u}).Opens) : L.val.obj (op (U.ι ''ᵁ W)) :=
+private noncomputable def gen₀
+    (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
+    (W : (U : Scheme.{u}).Opens) : L.val.obj (op (U.ι ''ᵁ W)) :=
   (e.inv.val.app (op W)).hom (1 : Γ(U, W))
 
-lemma gen₀_spec (W : (U : Scheme.{u}).Opens) (b : Γ(X, U.ι ''ᵁ W)) :
+private lemma gen₀_spec
+    (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
+    (W : (U : Scheme.{u}).Opens) (b : Γ(X, U.ι ''ᵁ W)) :
     (e.inv.val.app (op W)).hom b = b • gen₀ L e W := by
   have := (e.inv.val.app (op W)).hom.map_smul b (1 : Γ(U, W))
   rw [smul_eq_mul, mul_one] at this
   exact this
 
-lemma gen₀_bijective (W : (U : Scheme.{u}).Opens) :
+private lemma gen₀_bijective
+    (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
+    (W : (U : Scheme.{u}).Opens) :
     Function.Bijective (fun b : Γ(X, U.ι ''ᵁ W) => b • gen₀ L e W) := by
   have h : Function.Bijective ((e.inv.val.app (op W)).hom) := by
     refine Function.bijective_iff_has_inverse.2 ⟨(e.hom.val.app (op W)).hom, fun b => ?_, fun m =>
@@ -619,28 +586,31 @@ lemma gen₀_bijective (W : (U : Scheme.{u}).Opens) :
     · exact congr($(e.hom_inv_id).val.app (op W) |>.hom m)
   exact (funext (gen₀_spec L e W) ▸ h :)
 
-lemma gen₀_map {W W' : (U : Scheme.{u}).Opens} (i : W' ⟶ W) :
+private lemma gen₀_map
+    (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
+    {W W' : (U : Scheme.{u}).Opens} (i : W' ⟶ W) :
     L.val.map (U.ι.opensFunctor.map i).op (gen₀ L e W) = gen₀ L e W' := by
   have := PresheafOfModules.naturality_apply e.inv.val i.op (1 : Γ(U, W))
   rw [show ((SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf).val.map i.op) (1 : Γ(U, W)) =
     (1 : Γ(U, W')) from ((U : Scheme.{u}).presheaf.map i.op).hom.map_one] at this
   exact this.symm
 
-omit e in
-lemma bijective_smul_map_eqToHom {A B : X.Opens} (q : A = B) (t : L.val.obj (op A))
+private lemma bijective_smul_map_eqToHom {A B : X.Opens} (q : A = B) (t : L.val.obj (op A))
     (t' : L.val.obj (op B)) (ht : t' = L.val.map (eqToHom q.symm : B ⟶ A).op t)
     (h : Function.Bijective (fun b : Γ(X, A) => b • t)) :
     Function.Bijective (fun a : Γ(X, B) => a • t') := by
   subst q
   have e1 : t' = t := by
     rw [ht, eqToHom_refl, op_id]
-    exact PresheafOfModules.InternalHom.map_id_apply (R := X.sheaf.obj) L.val _ _
+    exact PresheafOfModules.map_id_apply L.val _ _
   subst e1
   exact h
 
 /-- The generators coming from a trivialization of `L` over `U`. -/
-noncomputable def trivializationBelow : TrivializationBelow L.val (op U) where
-  gen {Y} f := L.val.map (eqToHom (image_preimage_of_le (U := U) f.unop.le).symm :
+private noncomputable def trivializationBelow
+    (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf) :
+    TrivializationBelow L.val (op U) where
+  gen {Y} f := L.val.map (eqToHom (image_preimage_of_le (W := U) f.unop.le).symm :
       Y.unop ⟶ U.ι ''ᵁ (U.ι ⁻¹ᵁ Y.unop)).op (gen₀ L e (U.ι ⁻¹ᵁ Y.unop))
   compat {Y Z} f g := by
     have hle : U.ι ⁻¹ᵁ Z.unop ≤ U.ι ⁻¹ᵁ Y.unop := fun x hx => g.unop.le hx
@@ -651,14 +621,12 @@ noncomputable def trivializationBelow : TrivializationBelow L.val (op U) where
       (fun φ : (op (U.ι ''ᵁ (U.ι ⁻¹ᵁ Y.unop)) ⟶ Z) =>
         ((L.val.map φ).hom : L.val.obj (op (U.ι ''ᵁ (U.ι ⁻¹ᵁ Y.unop))) → L.val.obj Z))
       (Subsingleton.elim _ _)) _
-  bij {Y} f := bijective_smul_map_eqToHom L (image_preimage_of_le (U := U) f.unop.le) _ _ rfl
+  bij {Y} f := bijective_smul_map_eqToHom L (image_preimage_of_le (W := U) f.unop.le) _ _ rfl
     (gen₀_bijective L e _)
-
-end
 
 end FrameBridge
 
-open FrameBridge in
+open FrameBridge FrameTensor in
 /-- A trivialization of `M` over `U` gives a frame of `M` on `U`. -/
 theorem exists_isFrameOn_of_pullback_iso_unit {X : Scheme.{u}} {M : X.Modules} (U : X.Opens)
     (eU : (Modules.pullback U.ι).obj M ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf) :
@@ -1118,14 +1086,13 @@ private theorem theta_bijective_of_isFrameOn {s : Γ(L, D)} {t : Γ(M, D)}
   exact (ρ.bijective.comp (TensorProduct.lid Γ(X, D) Γ(X, D)).bijective).comp
     (TensorProduct.congr σ τ).symm.bijective
 
-private theorem exists_basicOpen_isFrameOn (hL : Scheme.Modules.IsInvertible L) (hM :
-  Scheme.Modules.IsInvertible M)
+private theorem exists_basicOpen_isFrameOn (hL : IsLineBundle L) (hM : IsLineBundle M)
     (U : X.Opens) (hU : IsAffineOpen U) {x : X} (hx : x ∈ U) :
     ∃ f : Γ(X, U), x ∈ X.basicOpen f ∧
       (∃ s : Γ(L, X.basicOpen f), Scheme.Modules.IsFrameOn s (X.basicOpen f)) ∧
       (∃ t : Γ(M, X.basicOpen f), Scheme.Modules.IsFrameOn t (X.basicOpen f)) := by
-  obtain ⟨WL, hxL, ⟨eL⟩⟩ := hL.1 x
-  obtain ⟨WM, hxM, ⟨eM⟩⟩ := hM.1 x
+  obtain ⟨WL, hxL, ⟨eL⟩⟩ := hL x
+  obtain ⟨WM, hxM, ⟨eM⟩⟩ := hM x
   obtain ⟨sL, hsL⟩ := Scheme.Modules.exists_isFrameOn_of_pullback_iso_unit WL eL
   obtain ⟨sM, hsM⟩ := Scheme.Modules.exists_isFrameOn_of_pullback_iso_unit WM eM
   obtain ⟨f, hfle, hxf⟩ := hU.exists_basicOpen_le (⟨x, (⟨hxL, hxM⟩ : x ∈ WL ⊓ WM)⟩ : (WL ⊓ WM :
@@ -1137,10 +1104,10 @@ private theorem exists_basicOpen_isFrameOn (hL : Scheme.Modules.IsInvertible L) 
 
 end Frames
 
-private theorem locallyFramed_of_isInvertible {N : X.Modules} (hN : Scheme.Modules.IsInvertible N) :
+private theorem locallyFramed_of_isLineBundle {N : X.Modules} (hN : IsLineBundle N) :
     ∀ x : X, ∃ (V : X.Opens) (s : Γ(N, V)), x ∈ V ∧ IsFrameOn s V := by
   intro x
-  obtain ⟨V, hxV, ⟨e⟩⟩ := hN.1 x
+  obtain ⟨V, hxV, ⟨e⟩⟩ := hN x
   obtain ⟨s, hs⟩ := Scheme.Modules.exists_isFrameOn_of_pullback_iso_unit V e
   exact ⟨V, s, hxV, hs⟩
 
@@ -1161,8 +1128,7 @@ section Global
 
 variable {L M : X.Modules}
 
-private theorem main (hL : Scheme.Modules.IsInvertible L) (hM : Scheme.Modules.IsInvertible M) (U :
-  X.affineOpens) :
+private theorem main (hL : IsLineBundle L) (hM : IsLineBundle M) (U : X.affineOpens) :
     Function.Bijective (theta L M U) := by
   let s : Set Γ(X, U) := {f | (∃ s : Γ(L, X.basicOpen f), Scheme.Modules.IsFrameOn s (X.basicOpen
     f)) ∧
@@ -1172,8 +1138,8 @@ private theorem main (hL : Scheme.Modules.IsInvertible L) (hM : Scheme.Modules.I
     intro x hx
     obtain ⟨f, hxf, hfL, hfM⟩ := exists_basicOpen_isFrameOn hL hM (U : X.Opens) U.2 hx
     exact TopologicalSpace.Opens.mem_iSup.mpr ⟨⟨f, hfL, hfM⟩, hxf⟩
-  have hL' := locallyFramed_of_isInvertible hL
-  have hM' := locallyFramed_of_isInvertible hM
+  have hL' := locallyFramed_of_isLineBundle hL
+  have hM' := locallyFramed_of_isLineBundle hM
   have hLM := locallyFramed_tensor hL' hM'
   have : ∀ r : s, IsLocalizedModule.Away r.1 (resBO L (U : X.Opens) r.1) := fun r =>
     isLocalizedModule_resBO L U r.1 hL' U.2
@@ -1202,15 +1168,21 @@ end Global
 
 end TensorSectionsAux
 
+end AlgebraicGeometry.Scheme.Modules
+
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+open _root_.AlgebraicGeometry
+
 /-- For invertible sheaves `L` and `M` on a scheme `X` and an affine open `U`, the map
 `Γ(L, U) ⊗[Γ(X, U)] Γ(M, U) → Γ(L ⊗ M, U)` induced by `tensorSections` is bijective. -/
-theorem IsInvertible.bijective_lift_tensorSectionsBilin
-    {X : Scheme.{u}} {L M : X.Modules} (hL : IsInvertible L) (hM : IsInvertible M) (U :
-      X.affineOpens) :
-    Function.Bijective (TensorProduct.lift (tensorSectionsBilin L M U) :
+theorem IsLineBundle.bijective_lift_tensorSectionsBilin
+    {X : Scheme.{u}} {L M : X.Modules} (hL : IsLineBundle L) (hM : IsLineBundle M)
+    (U : X.affineOpens) :
+    Function.Bijective (TensorProduct.lift (Scheme.Modules.tensorSectionsBilin L M U) :
       Γ(L, U) ⊗[Γ(X, U)] Γ(M, U) →ₗ[Γ(X, U)] Γ(L ⊗ M, U)) :=
-  TensorSectionsAux.main hL hM U
+  Scheme.Modules.TensorSectionsAux.main hL hM U
 
-end AlgebraicGeometry.Scheme.Modules
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 end

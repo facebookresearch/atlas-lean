@@ -45,6 +45,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Modules.InvertibleTensorSections
+public import MathlibExt.AlgebraicGeometry.LineBundlePullback
 public import MathlibExt.Algebra.Category.ModuleCat.Presheaf.PullbackMonoidal
 public import Mathlib.AlgebraicGeometry.IdealSheaf.Functorial
 public import Mathlib.CategoryTheory.Localization.Monoidal.Functor
@@ -78,6 +79,9 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory AlgebraicGeometry Opp
 noncomputable section
 
 set_option backward.isDefEq.respectTransparency false
+
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+  (IsLineBundle pullbackStructureModuleIso)
 
 namespace AlgebraicGeometry.Scheme.Modules
 
@@ -139,11 +143,11 @@ lemma zeroSchemeIdeal_eq_of_isLeast {s : 𝟙_ X.Modules ⟶ M} {P : X.IdealShea
 
 def pullbackSection {X' : Scheme.{u}} (F : X' ⟶ X) (s : 𝟙_ X.Modules ⟶ M) :
     𝟙_ X'.Modules ⟶ (Scheme.Modules.pullback F).obj M :=
-  (Scheme.Modules.pullbackUnitIso F).inv ≫ (Scheme.Modules.pullback F).map s
+  (pullbackStructureModuleIso F).inv ≫ (Scheme.Modules.pullback F).map s
 
 @[simp] lemma pullbackSection_def {X' : Scheme.{u}} (F : X' ⟶ X) (s : 𝟙_ X.Modules ⟶ M) :
     pullbackSection F s =
-      (Scheme.Modules.pullbackUnitIso F).inv ≫ (Scheme.Modules.pullback F).map s :=
+      (pullbackStructureModuleIso F).inv ≫ (Scheme.Modules.pullback F).map s :=
   rfl
 
 def restrictIsoOfLE {U W : X.Opens} (h : W ≤ U)
@@ -153,22 +157,14 @@ def restrictIsoOfLE {U W : X.Opens} (h : W ≤ U)
     (restrictFunctorComp (X.homOfLE h) U.ι).app M ≪≫
     (restrictFunctor (X.homOfLE h)).mapIso ((restrictFunctorIsoPullback U.ι).app M ≪≫ e) ≪≫
     (restrictFunctorIsoPullback (X.homOfLE h)).app _ ≪≫
-    Scheme.Modules.pullbackUnitIso (X.homOfLE h)
-
-theorem IsInvertible.exists_restrict_iso (hM : Scheme.Modules.IsInvertible M) {V : X.Opens} {x : X}
-    (hx : x ∈ V) :
-    ∃ U : X.affineOpens, x ∈ U.1 ∧ U.1 ≤ V ∧
-      Nonempty (M.restrict U.1.ι ≅ 𝟙_ (U.1 : Scheme.{u}).Modules) := by
-  obtain ⟨U₀, hxU₀, ⟨e⟩⟩ := hM.exists_trivialization x
-  obtain ⟨_, ⟨U, hU, rfl⟩, hxU, hUle⟩ :=
-    X.isBasis_affineOpens.exists_subset_of_mem_open (show x ∈ V ⊓ U₀ from ⟨hx, hxU₀⟩)
-      (V ⊓ U₀).isOpen
-  exact ⟨⟨U, hU⟩, hxU, fun y hy => (hUle hy).1, ⟨restrictIsoOfLE (fun y hy => (hUle hy).2) e⟩⟩
+    pullbackStructureModuleIso (X.homOfLE h)
 
 end ZeroSchemeDefs
 
 section TensorPowDefs
 variable {X : Scheme.{u}}
+-- `SchemeModulesTensor.power` iterates `SchemeModulesTensor.moduleTensor`; this iterates the
+-- tensor product of the monoidal structure on `X.Modules`, which the lemmas below are about.
 def tensorPow (L : X.Modules) : ℕ → X.Modules
   | 0 => 𝟙_ X.Modules
   | n + 1 => tensorPow L n ⊗ L
@@ -182,63 +178,25 @@ def tensorPowOneIso (L : X.Modules) : L.tensorPow 1 ≅ L := λ_ L
 
 end TensorPowDefs
 
-theorem IsInvertible.pullback {X Y : Scheme.{u}} (f : X ⟶ Y) {L : Y.Modules}
-    (hL : Scheme.Modules.IsInvertible L) :
-    Scheme.Modules.IsInvertible ((Scheme.Modules.pullback f).obj L) := by
-  refine ⟨fun x => ?_⟩
-  obtain ⟨U, hyU, ⟨eU⟩⟩ := hL.1 (f.base x)
-  refine ⟨f ⁻¹ᵁ U, hyU, ⟨?_⟩⟩
-  have hfact : (f ⁻¹ᵁ U).ι ≫ f = (f ∣_ U) ≫ U.ι := (morphismRestrict_ι f U).symm
-  exact
-    (pullbackComp _ _).app L ≪≫
-    (pullbackCongr hfact).app L ≪≫
-    ((pullbackComp _ _).app L).symm ≪≫
-    (Modules.pullback (f ∣_ U)).mapIso eU ≪≫
-    pullbackUnitIso (f ∣_ U)
+end AlgebraicGeometry.Scheme.Modules
 
-instance preservesBinaryProducts_opensMap {X Y : Scheme.{u}} (f : X ⟶ Y) :
-    Limits.PreservesLimitsOfShape (CategoryTheory.Discrete WalkingPair)
-      (TopologicalSpace.Opens.map f.base) where
-  preservesLimit {K} := ⟨fun {c} hc => ⟨
-    { lift := fun s => homOfLE (by
-        have hinf : K.obj ⟨WalkingPair.left⟩ ⊓
-            K.obj ⟨WalkingPair.right⟩ ≤ c.pt :=
-          leOfHom (hc.lift
-            { pt := K.obj ⟨WalkingPair.left⟩ ⊓
-                K.obj ⟨WalkingPair.right⟩
-              π := CategoryTheory.Discrete.natTrans (fun j => match j with
-                | ⟨WalkingPair.left⟩ =>
-                  homOfLE inf_le_left
-                | ⟨WalkingPair.right⟩ =>
-                  homOfLE inf_le_right) })
-        have h₁ : s.pt ≤ (TopologicalSpace.Opens.map f.base).obj
-            (K.obj ⟨WalkingPair.left⟩) :=
-          leOfHom (s.π.app ⟨WalkingPair.left⟩)
-        have h₂ : s.pt ≤ (TopologicalSpace.Opens.map f.base).obj
-            (K.obj ⟨WalkingPair.right⟩) :=
-          leOfHom (s.π.app ⟨WalkingPair.right⟩)
-        exact (le_inf h₁ h₂).trans
-          (leOfHom
-            ((TopologicalSpace.Opens.map f.base).map
-              (homOfLE hinf))))
-      fac := fun s j => Subsingleton.elim _ _
-      uniq := fun s m _ => Subsingleton.elim _ _ }⟩⟩
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
-instance preservesTerminal_opensMap {X Y : Scheme.{u}} (f : X ⟶ Y) :
-    Limits.PreservesLimitsOfShape (CategoryTheory.Discrete PEmpty.{1})
-      (TopologicalSpace.Opens.map f.base) where
-  preservesLimit {K} := ⟨fun {c} hc => ⟨
-    { lift := fun s => homOfLE (by
-        have htop : (⊤ : Y.Opens) ≤ c.pt := leOfHom (hc.lift
-          { pt := ⊤, π := CategoryTheory.Discrete.natTrans (fun j => j.as.elim) })
-        exact le_top.trans (leOfHom
-          ((TopologicalSpace.Opens.map f.base).map (homOfLE htop))))
-      fac := fun s j => Subsingleton.elim _ _
-      uniq := fun s m _ => Subsingleton.elim _ _ }⟩⟩
+open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
 
-instance preservesFiniteProducts_opensMap {X Y : Scheme.{u}} (f : X ⟶ Y) :
-    Limits.PreservesFiniteProducts (TopologicalSpace.Opens.map f.base) :=
-  Limits.PreservesFiniteProducts.of_preserves_binary_and_terminal _
+theorem IsLineBundle.exists_restrict_iso {X : Scheme.{u}} {M : X.Modules} (hM : IsLineBundle M)
+    {V : X.Opens} {x : X} (hx : x ∈ V) :
+    ∃ U : X.affineOpens, x ∈ U.1 ∧ U.1 ≤ V ∧
+      Nonempty (M.restrict U.1.ι ≅ 𝟙_ (U.1 : Scheme.{u}).Modules) := by
+  obtain ⟨U₀, hxU₀, ⟨e⟩⟩ := hM x
+  obtain ⟨_, ⟨U, hU, rfl⟩, hxU, hUle⟩ :=
+    X.isBasis_affineOpens.exists_subset_of_mem_open (show x ∈ V ⊓ U₀ from ⟨hx, hxU₀⟩)
+      (V ⊓ U₀).isOpen
+  exact ⟨⟨U, hU⟩, hxU, fun y hy => (hUle hy).1, ⟨restrictIsoOfLE (fun y hy => (hUle hy).2) e⟩⟩
+
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+namespace AlgebraicGeometry.Scheme.Modules
 
 abbrev pullback₀ {X Y : Scheme.{u}} (f : X ⟶ Y) : Y.PresheafOfModules ⥤ X.PresheafOfModules :=
   PresheafOfModules.PullbackMonoidal.pb (TopologicalSpace.Opens.map f.base)
@@ -281,7 +239,7 @@ noncomputable def trivializationOfLE {X : Scheme.{u}} {U V : X.Opens} (h : V ≤
   (Modules.pullbackCongr (X.homOfLE_ι h).symm).app L ≪≫
     ((Modules.pullbackComp (X.homOfLE h) U.ι).symm).app L ≪≫
     (Modules.pullback (X.homOfLE h)).mapIso e ≪≫
-    Scheme.Modules.pullbackUnitIso (X.homOfLE h)
+    pullbackStructureModuleIso (X.homOfLE h)
 
 namespace ZeroSchemeLoc
 
@@ -553,7 +511,7 @@ lemma ideal_piece (j : Idx M) (V : (j.1.1 : Scheme.{u}).affineOpens) :
     (piece s j).ideal V = Ideal.span {(id (cf s j.2.hom V.1) : Γ((j.1.1 : Scheme.{u}), V.1))} :=
   rfl
 
-def cover (hM : Scheme.Modules.IsInvertible M) : X.OpenCover :=
+def cover (hM : IsLineBundle M) : X.OpenCover :=
   Scheme.Cover.mkOfCovers (Idx M) (fun j => (j.1.1 : Scheme.{u})) (fun j => j.1.1.ι) (fun x => by
     obtain ⟨U, hxU, -, ⟨τ⟩⟩ := hM.exists_restrict_iso (V := ⊤) (x := x) trivial
     exact ⟨⟨U, τ⟩, ⟨x, hxU⟩, rfl⟩)
@@ -624,7 +582,7 @@ lemma coeff_eq_cX (φ : M.restrict U.ι ⟶ 𝟙_ (U : Scheme.{u}).Modules) :
   exact congrFun (congrArg (fun k => ⇑(ConcreteCategory.hom (X.presheaf.map k)))
     (Subsingleton.elim _ _)) _
 
-variable (hM : Scheme.Modules.IsInvertible M)
+variable (hM : IsLineBundle M)
 
 def P : X.IdealSheafData :=
   (Scheme.IdealSheafData.exists_comap_eq_of_openCover (cover hM) (fun j => piece s j)
@@ -705,8 +663,14 @@ theorem zeroSchemeIdeal_eq_P : zeroSchemeIdeal s = P s hM :=
 end ZeroSchemeLoc
 
 
-theorem IsInvertible.coeffIdeal_le_and_ideal_zeroSchemeIdeal_eq
-    {X : Scheme.{u}} {M : X.Modules} (hM : Scheme.Modules.IsInvertible M) (s : 𝟙_ X.Modules ⟶ M) :
+end AlgebraicGeometry.Scheme.Modules
+
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
+
+theorem IsLineBundle.coeffIdeal_le_and_ideal_zeroSchemeIdeal_eq
+    {X : Scheme.{u}} {M : X.Modules} (hM : IsLineBundle M) (s : 𝟙_ X.Modules ⟶ M) :
     (∀ V : X.affineOpens,
         Scheme.Modules.coeffIdeal s V.1 ≤ (Scheme.Modules.zeroSchemeIdeal s).ideal V) ∧
     ∀ (U : X.affineOpens) (τ : M.restrict U.1.ι ≅ 𝟙_ (U.1 : Scheme.{u}).Modules),
@@ -719,6 +683,10 @@ theorem IsInvertible.coeffIdeal_le_and_ideal_zeroSchemeIdeal_eq
   refine ⟨h, le_antisymm ?_ (ZeroSchemeLoc.coeffIdeal_le_P s hM U)⟩
   rw [h]
   exact (Ideal.span_singleton_le_iff_mem _).mpr (Scheme.Modules.coeff_mem_coeffIdeal s U.1 τ.hom)
+
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+namespace AlgebraicGeometry.Scheme.Modules
 
 
 namespace PullSections
@@ -759,15 +727,15 @@ lemma pullSec_smul (N : X.Modules) (U : X.Opens) (r : Γ(X, U)) (m : Γ(N, U)) :
     pullSec F N U (r • m) = F.app U r • pullSec F N U m :=
   Scheme.Modules.Hom.app_smul (unitApp F N) r m
 
-lemma pullbackUnitIso_hom_pullSec (U : X.Opens) (r : Γ(X, U)) :
-    (Scheme.Modules.pullbackUnitIso F).hom.app (F ⁻¹ᵁ U)
+lemma pullbackStructureModuleIso_hom_pullSec (U : X.Opens) (r : Γ(X, U)) :
+    (pullbackStructureModuleIso F).hom.app (F ⁻¹ᵁ U)
         (pullSec F (𝟙_ X.Modules) U (toUnitSection U r)) =
       toUnitSection (F ⁻¹ᵁ U) (F.app U r) := by
   have key0 := SheafOfModules.pullbackPushforwardAdjunction_homEquiv_pullbackObjUnitToUnit
     F.toRingCatSheafHom
   rw [Adjunction.homEquiv_unit] at key0
   have key : unitApp F (𝟙_ X.Modules) ≫
-      (Scheme.Modules.pushforward F).map (Scheme.Modules.pullbackUnitIso F).hom =
+      (Scheme.Modules.pushforward F).map (pullbackStructureModuleIso F).hom =
       (SheafOfModules.unitToPushforwardObjUnit F.toRingCatSheafHom :
         (𝟙_ X.Modules) ⟶ (Scheme.Modules.pushforward F).obj (𝟙_ X'.Modules)) := key0
   have h := congrArg (fun k => Scheme.Modules.Hom.app k U (toUnitSection U r)) key
@@ -864,17 +832,17 @@ lemma inv_app_hom_app {Y : Scheme.{u}} {N N' : Y.Modules} (e : N ≅ N') (W : Y.
 lemma pullbackSection_app (U : X.Opens) :
     (pullbackSection F s).app (F ⁻¹ᵁ U) (toUnitSection (F ⁻¹ᵁ U) 1) =
       pullSec F M U (s.app U (toUnitSection U 1)) := by
-  have h1 : (Scheme.Modules.pullbackUnitIso F).hom.app (F ⁻¹ᵁ U)
+  have h1 : (pullbackStructureModuleIso F).hom.app (F ⁻¹ᵁ U)
       (pullSec F (𝟙_ X.Modules) U (toUnitSection U 1)) = toUnitSection (F ⁻¹ᵁ U) 1 := by
-    rw [pullbackUnitIso_hom_pullSec, map_one]
-  have h2 : (Scheme.Modules.pullbackUnitIso F).inv.app (F ⁻¹ᵁ U) (toUnitSection (F ⁻¹ᵁ U) 1) =
+    rw [pullbackStructureModuleIso_hom_pullSec, map_one]
+  have h2 : (pullbackStructureModuleIso F).inv.app (F ⁻¹ᵁ U) (toUnitSection (F ⁻¹ᵁ U) 1) =
       pullSec F (𝟙_ X.Modules) U (toUnitSection U 1) := by
     rw [← h1, inv_app_hom_app]
-  change ((Scheme.Modules.pullbackUnitIso F).inv ≫ (Scheme.Modules.pullback F).map s).app (F ⁻¹ᵁ U)
+  change ((pullbackStructureModuleIso F).inv ≫ (Scheme.Modules.pullback F).map s).app (F ⁻¹ᵁ U)
     (toUnitSection (F ⁻¹ᵁ U) 1) = _
   rw [Scheme.Modules.Hom.comp_app]
   change ((Scheme.Modules.pullback F).map s).app (F ⁻¹ᵁ U)
-    ((Scheme.Modules.pullbackUnitIso F).inv.app (F ⁻¹ᵁ U) (toUnitSection (F ⁻¹ᵁ U) 1)) = _
+    ((pullbackStructureModuleIso F).inv.app (F ⁻¹ᵁ U) (toUnitSection (F ⁻¹ᵁ U) 1)) = _
   rw [h2, map_pullSec]
 
 lemma G_comp {U : X.Opens} {Ω : X'.Opens} (hΩ : Ω ≤ F ⁻¹ᵁ U) :
@@ -889,7 +857,7 @@ def triv {U : X.Opens} (τ : M.restrict U.ι ≅ 𝟙_ (U : Scheme.{u}).Modules)
   ((pullbackComp (F.resLE U Ω hΩ) U.ι).app M).symm ≪≫
   (Scheme.Modules.pullback (F.resLE U Ω hΩ)).mapIso
     (((restrictFunctorIsoPullback U.ι).app M).symm ≪≫ τ) ≪≫
-  Scheme.Modules.pullbackUnitIso (F.resLE U Ω hΩ)
+  pullbackStructureModuleIso (F.resLE U Ω hΩ)
 
 lemma V₀_eq {U : X.Opens} {Ω : X'.Opens} (hΩ : Ω ≤ F ⁻¹ᵁ U) :
     (Ω.ι ≫ F) ⁻¹ᵁ U = (F.resLE U Ω hΩ ≫ U.ι) ⁻¹ᵁ U := by
@@ -917,7 +885,7 @@ lemma app_triv_sAt {U : X.Opens} (τ : M.restrict U.ι ≅ 𝟙_ (U : Scheme.{u}
   unfold triv
   simp only [Iso.trans_hom, Iso.app_hom, Iso.symm_hom, Functor.mapIso_hom, Iso.trans_hom,
     Scheme.Modules.Hom.comp_app]
-  change (Scheme.Modules.pullbackUnitIso (F.resLE U Ω hΩ)).hom.app _
+  change (pullbackStructureModuleIso (F.resLE U Ω hΩ)).hom.app _
     (((Scheme.Modules.pullback (F.resLE U Ω hΩ)).map
       (((restrictFunctorIsoPullback U.ι).inv.app M) ≫ τ.hom)).app _
       (((pullbackComp (F.resLE U Ω hΩ) U.ι).inv.app M).app _
@@ -937,26 +905,26 @@ lemma app_triv_sAt {U : X.Opens} (τ : M.restrict U.ι ≅ 𝟙_ (U : Scheme.{u}
   change ((((pullbackComp (F.resLE U Ω hΩ) U.ι).inv.app M) ≫
     ((Scheme.Modules.pullback (F.resLE U Ω hΩ)).map
       (((restrictFunctorIsoPullback U.ι).inv.app M) ≫ τ.hom)) ≫
-    (Scheme.Modules.pullbackUnitIso (F.resLE U Ω hΩ)).hom).app ((Ω.ι ≫ F) ⁻¹ᵁ U)
+    (pullbackStructureModuleIso (F.resLE U Ω hΩ)).hom).app ((Ω.ι ≫ F) ⁻¹ᵁ U)
       (((Scheme.Modules.pullback (F.resLE U Ω hΩ ≫ U.ι)).obj M).presheaf.map
         (eqToHom (show (Ω.ι ≫ F) ⁻¹ᵁ U = (F.resLE U Ω hΩ ≫ U.ι) ⁻¹ᵁ U by rw [G_comp])).op
         (pullSec (F.resLE U Ω hΩ ≫ U.ι) M U sU))) = _
   rw [app_map, Scheme.Modules.Hom.comp_app, Scheme.Modules.Hom.comp_app]
   refine congrArg ((𝟙_ (Ω : Scheme.{u}).Modules).presheaf.map _) ?_
-  change (Scheme.Modules.pullbackUnitIso (F.resLE U Ω hΩ)).hom.app _
+  change (pullbackStructureModuleIso (F.resLE U Ω hΩ)).hom.app _
     (((Scheme.Modules.pullback (F.resLE U Ω hΩ)).map
       (((restrictFunctorIsoPullback U.ι).inv.app M) ≫ τ.hom)).app _
       (((pullbackComp (F.resLE U Ω hΩ) U.ι).inv.app M).app ((F.resLE U Ω hΩ ≫ U.ι) ⁻¹ᵁ U)
         (pullSec (F.resLE U Ω hΩ ≫ U.ι) M U sU))) = _
   rw [pullbackComp_inv_app_pullSec (F.resLE U Ω hΩ) U.ι M U sU]
-  change (Scheme.Modules.pullbackUnitIso (F.resLE U Ω hΩ)).hom.app ((F.resLE U Ω hΩ) ⁻¹ᵁ (U.ι ⁻¹ᵁ
+  change (pullbackStructureModuleIso (F.resLE U Ω hΩ)).hom.app ((F.resLE U Ω hΩ) ⁻¹ᵁ (U.ι ⁻¹ᵁ
       U))
       (((Scheme.Modules.pullback (F.resLE U Ω hΩ)).map
         (((restrictFunctorIsoPullback U.ι).inv.app M) ≫
             τ.hom)).app ((F.resLE U Ω hΩ) ⁻¹ᵁ (U.ι ⁻¹ᵁ U))
         (pullSec (F.resLE U Ω hΩ) _ (U.ι ⁻¹ᵁ U) (pullSec U.ι M U sU))) = _
   rw [map_pullSec, Scheme.Modules.Hom.comp_app]
-  change (Scheme.Modules.pullbackUnitIso (F.resLE U Ω hΩ)).hom.app _
+  change (pullbackStructureModuleIso (F.resLE U Ω hΩ)).hom.app _
       (pullSec (F.resLE U Ω hΩ) _ (U.ι ⁻¹ᵁ U)
         (τ.hom.app (U.ι ⁻¹ᵁ U)
           (((restrictFunctorIsoPullback U.ι).inv.app M).app (U.ι ⁻¹ᵁ U) (pullSec U.ι M U sU)))) = _
@@ -969,7 +937,7 @@ lemma app_triv_sAt {U : X.Opens} (τ : M.restrict U.ι ≅ 𝟙_ (U : Scheme.{u}
   have hτ : τ.hom.app (U.ι ⁻¹ᵁ U) (sAt s U (U.ι ⁻¹ᵁ U)) =
       toUnitSection (X := (U : Scheme.{u})) (U.ι ⁻¹ᵁ U) (cf s τ.hom (U.ι ⁻¹ᵁ U)) := rfl
   rw [hτ]
-  exact pullbackUnitIso_hom_pullSec (F.resLE U Ω hΩ) (U.ι ⁻¹ᵁ U) (cf s τ.hom (U.ι ⁻¹ᵁ U))
+  exact pullbackStructureModuleIso_hom_pullSec (F.resLE U Ω hΩ) (U.ι ⁻¹ᵁ U) (cf s τ.hom (U.ι ⁻¹ᵁ U))
 
 lemma gen_eq (U : X.affineOpens) (τ : M.restrict U.1.ι ≅ 𝟙_ (U.1 : Scheme.{u}).Modules)
     (Ω : X'.affineOpens) (hΩ : (Ω : X'.Opens) ≤ F ⁻¹ᵁ (U : X.Opens)) :
@@ -992,19 +960,19 @@ lemma gen_eq (U : X.affineOpens) (τ : M.restrict U.1.ι ≅ 𝟙_ (U.1 : Scheme
   simp only [← Functor.map_comp]
   erw [Scheme.Hom.appLE_map]
 
-lemma ideal_eq_of_le (hM : Scheme.Modules.IsInvertible M) (U : X.affineOpens) (τ : M.restrict
+lemma ideal_eq_of_le (hM : IsLineBundle M) (U : X.affineOpens) (τ : M.restrict
     U.1.ι ≅ 𝟙_ (U.1 : Scheme.{u}).Modules)
     (Ω : X'.affineOpens) (hΩ : (Ω : X'.Opens) ≤ F ⁻¹ᵁ (U : X.Opens)) :
     ((zeroSchemeIdeal s).comap F).ideal Ω = (zeroSchemeIdeal (pullbackSection F s)).ideal Ω := by
   rw [IdealSheafComapMulAux.ideal_comap_of_le _ F U Ω hΩ,
     ((hM.coeffIdeal_le_and_ideal_zeroSchemeIdeal_eq s).2 U τ).1, Ideal.map_span,
     Set.image_singleton]
-  have hM' : Scheme.Modules.IsInvertible ((Scheme.Modules.pullback F).obj M) := hM.pullback F
+  have hM' : IsLineBundle ((Scheme.Modules.pullback F).obj M) := hM.pullback F
   rw [((hM'.coeffIdeal_le_and_ideal_zeroSchemeIdeal_eq (pullbackSection F s)).2 Ω
     (triv F τ hΩ)).1]
   exact congrArg (fun x => Ideal.span ({x} : Set Γ(X', Ω.1))) (gen_eq F s U τ Ω hΩ)
 
-theorem comap_zeroSchemeIdeal_eq (hM : Scheme.Modules.IsInvertible M) :
+theorem comap_zeroSchemeIdeal_eq (hM : IsLineBundle M) :
     (zeroSchemeIdeal s).comap F = zeroSchemeIdeal (pullbackSection F s) := by
   refine Scheme.IdealSheafData.ext (funext fun Ω₀ => ?_)
   refine ideal_eq_of_forall_exists_basicOpen _ _ Ω₀ fun z hz => ?_
@@ -1016,12 +984,23 @@ theorem comap_zeroSchemeIdeal_eq (hM : Scheme.Modules.IsInvertible M) :
 end ZeroSchemeBC
 
 
-theorem IsInvertible.comap_zeroSchemeIdeal
-    {X X' : Scheme.{u}} (F : X' ⟶ X) {M : X.Modules} (hM : Scheme.Modules.IsInvertible M)
+end AlgebraicGeometry.Scheme.Modules
+
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
+
+theorem IsLineBundle.comap_zeroSchemeIdeal
+    {X X' : Scheme.{u}} (F : X' ⟶ X) {M : X.Modules} (hM : IsLineBundle M)
     (s : 𝟙_ X.Modules ⟶ M) :
     (Scheme.Modules.zeroSchemeIdeal s).comap F =
       Scheme.Modules.zeroSchemeIdeal (Scheme.Modules.pullbackSection F s) :=
   ZeroSchemeBC.comap_zeroSchemeIdeal_eq F s hM
+
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+namespace AlgebraicGeometry.Scheme.Modules
+
 namespace ZeroSchemeComp
 
 open AlgebraicGeometry.Scheme.Modules
@@ -1062,17 +1041,28 @@ theorem zeroSchemeIdeal_comp_eq_of_isIso
   refine le_antisymm (zeroSchemeIdeal_comp_le s f) ?_
   have h := zeroSchemeIdeal_comp_le (s ≫ f) (inv f)
   rwa [Category.assoc, IsIso.hom_inv_id, Category.comp_id] at h
-theorem IsInvertible.tensor {X : AlgebraicGeometry.Scheme.{u}}
-    {L M : X.Modules} (hL : AlgebraicGeometry.Scheme.Modules.IsInvertible L)
-    (hM : AlgebraicGeometry.Scheme.Modules.IsInvertible M) :
-    AlgebraicGeometry.Scheme.Modules.IsInvertible (L ⊗ M) := by
-  refine ⟨fun x => ?_⟩
-  obtain ⟨U, hxU, ⟨eU⟩⟩ := hL.1 x
-  obtain ⟨U', hxU', ⟨eU'⟩⟩ := hM.1 x
+end AlgebraicGeometry.Scheme.Modules
+
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
+
+theorem IsLineBundle.tensor {X : AlgebraicGeometry.Scheme.{u}}
+    {L M : X.Modules} (hL : IsLineBundle L)
+    (hM : IsLineBundle M) :
+    IsLineBundle (L ⊗ M) := by
+  intro x
+  obtain ⟨U, hxU, ⟨eU⟩⟩ := hL x
+  obtain ⟨U', hxU', ⟨eU'⟩⟩ := hM x
   refine ⟨U ⊓ U', ⟨hxU, hxU'⟩, ⟨?_⟩⟩
   exact pullbackTensorObjIso (U ⊓ U').ι L M ≪≫
     (trivializationOfLE inf_le_left L eU ⊗ᵢ trivializationOfLE inf_le_right M eU') ≪≫
     λ_ (𝟙_ _)
+
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+namespace AlgebraicGeometry.Scheme.Modules
+
 namespace TensorHomApp
 
 open Functor.LaxMonoidal Functor.OplaxMonoidal
@@ -1235,6 +1225,8 @@ section PullbackLocalSection
 
 variable {X Y : Scheme.{u}} (φ : X ⟶ Y) {L : Y.Modules} {U : Y.Opens}
 
+-- This is `ModuleTensorPullbackSections.localPullback` (equal by `rfl`, checked in the test
+-- file); that module's imports are much heavier than this file's.
 /-- The image of a local section under the unit of the pullback-pushforward adjunction. -/
 def pullbackLocalSection (s : Γ(L, U)) : Γ((Modules.pullback φ).obj L, φ ⁻¹ᵁ U) :=
   ((Modules.pullbackPushforwardAdjunction φ).unit.app L).app U s
@@ -1674,7 +1666,7 @@ theorem coeff_tens :
   rfl
 
 include eL eM in
-theorem ideal_eq (hL : IsInvertible L) (hM : IsInvertible M) :
+theorem ideal_eq (hL : IsLineBundle L) (hM : IsLineBundle M) :
     (zeroSchemeIdeal (tens s s')).ideal U =
         (zeroSchemeIdeal s).ideal U * (zeroSchemeIdeal s').ideal U := by
   obtain ⟨h1,
@@ -1693,7 +1685,7 @@ noncomputable def restrictTriv {L : X.Modules} {U₀ : X.Opens} {U : X.Opens} (h
     (Scheme.Modules.pullback (X.homOfLE h)).mapIso e ≪≫
     pullbackTensorUnitObjIso (X.homOfLE h)
 
-theorem main {L M : X.Modules} (hL : IsInvertible L) (hM : IsInvertible M)
+theorem main {L M : X.Modules} (hL : IsLineBundle L) (hM : IsLineBundle M)
     (s : 𝟙_ X.Modules ⟶ L) (s' : 𝟙_ X.Modules ⟶ M) :
     zeroSchemeIdeal ((λ_ (𝟙_ X.Modules)).inv ≫
         (s ⊗ₘ s')) = zeroSchemeIdeal s * zeroSchemeIdeal s' := by
@@ -1701,8 +1693,8 @@ theorem main {L M : X.Modules} (hL : IsInvertible L) (hM : IsInvertible M)
       (zeroSchemeIdeal ((λ_ (𝟙_ X.Modules)).inv ≫ (s ⊗ₘ s'))).ideal U
         = (zeroSchemeIdeal s).ideal U * (zeroSchemeIdeal s').ideal U := by
     intro x
-    obtain ⟨UL, hxL, ⟨eL0⟩⟩ := hL.exists_trivialization x
-    obtain ⟨UM, hxM, ⟨eM0⟩⟩ := hM.exists_trivialization x
+    obtain ⟨UL, hxL, ⟨eL0⟩⟩ := hL x
+    obtain ⟨UM, hxM, ⟨eM0⟩⟩ := hM x
     obtain ⟨_, ⟨U, hU, rfl⟩, hxU, hUle⟩ :=
       X.isBasis_affineOpens.exists_subset_of_mem_open (show x ∈ UL ⊓ UM from ⟨hxL,
           hxM⟩) (UL ⊓ UM).isOpen
@@ -1716,13 +1708,23 @@ theorem main {L M : X.Modules} (hL : IsInvertible L) (hM : IsInvertible M)
 
 end ZeroSchemeTensor
 
-theorem IsInvertible.zeroSchemeIdeal_tensorHom
-    {X : Scheme.{u}} {L M : X.Modules} (hL : Scheme.Modules.IsInvertible L) (hM :
-        Scheme.Modules.IsInvertible M)
+end AlgebraicGeometry.Scheme.Modules
+
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
+
+theorem IsLineBundle.zeroSchemeIdeal_tensorHom
+    {X : Scheme.{u}} {L M : X.Modules} (hL : IsLineBundle L) (hM :
+        IsLineBundle M)
     (s : 𝟙_ X.Modules ⟶ L) (s' : 𝟙_ X.Modules ⟶ M) :
     Scheme.Modules.zeroSchemeIdeal ((λ_ (𝟙_ X.Modules)).inv ≫ (s ⊗ₘ s')) =
       Scheme.Modules.zeroSchemeIdeal s * Scheme.Modules.zeroSchemeIdeal s' :=
   ZeroSchemeTensor.main hL hM s s'
+
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+namespace AlgebraicGeometry.Scheme.Modules
 
 set_option autoImplicit false
 section translate_product
@@ -1752,7 +1754,7 @@ theorem T_inv_mul (y : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t) :
   exact congrArg CommaMorphism.left (h2.symm.trans h1)
 
 theorem support_zeroSchemeIdeal_pullbackSection {X' : Scheme.{u}} (F : X' ⟶ X) {M : X.Modules}
-    (hM : Scheme.Modules.IsInvertible M) (s : 𝟙_ X.Modules ⟶ M) :
+    (hM : IsLineBundle M) (s : 𝟙_ X.Modules ⟶ M) :
     ((Scheme.Modules.zeroSchemeIdeal (Scheme.Modules.pullbackSection F s)).support : Set X') =
       F.base ⁻¹' ((Scheme.Modules.zeroSchemeIdeal s).support : Set X) := by
   rw [← hM.comap_zeroSchemeIdeal F s, Scheme.IdealSheafData.support_comap]
@@ -1761,10 +1763,10 @@ theorem support_zeroSchemeIdeal_pullbackSection {X' : Scheme.{u}} (F : X' ⟶ X)
 end TranslateProduct
 
 open TranslateProduct in
-theorem exists_hom_tensorPow_three_aux
+private theorem exists_hom_tensorPow_three_aux
     (k : Type u) [Field k] {X : Scheme.{u}} (t : X ⟶ Spec (CommRingCat.of k))
     [GrpObj (Over.mk t)] [IsCommMonObj (Over.mk t)]
-    (L : X.Modules) (hL : Scheme.Modules.IsInvertible L)
+    (L : X.Modules) (hL : IsLineBundle L)
     (hsq : ∀ x y : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t,
       Nonempty (
         (Scheme.Modules.pullback (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫
@@ -1788,7 +1790,7 @@ theorem exists_hom_tensorPow_three_aux
   let c : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t := (a * b)⁻¹
   let Lp : (Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t) → X.Modules := fun x =>
     (Scheme.Modules.pullback (T t x)).obj L
-  have hLp : ∀ x, Scheme.Modules.IsInvertible (Lp x) := fun x => hL.pullback _
+  have hLp : ∀ x, IsLineBundle (Lp x) := fun x => hL.pullback _
   let θp : ∀ x, 𝟙_ X.Modules ⟶ Lp x := fun x => Scheme.Modules.pullbackSection (T t x) θ
   let sab : 𝟙_ X.Modules ⟶ Lp a ⊗ Lp b := (λ_ (𝟙_ X.Modules)).inv ≫ (θp a ⊗ₘ θp b)
   let s₀ : 𝟙_ X.Modules ⟶ Lp c ⊗ (Lp a ⊗ Lp b) := (λ_ (𝟙_ X.Modules)).inv ≫ (θp c ⊗ₘ sab)
@@ -1807,8 +1809,8 @@ theorem exists_hom_tensorPow_three_aux
   have hZ : Scheme.Modules.zeroSchemeIdeal s₀ =
       Scheme.Modules.zeroSchemeIdeal (θp c) *
         (Scheme.Modules.zeroSchemeIdeal (θp a) * Scheme.Modules.zeroSchemeIdeal (θp b)) := by
-    rw [Scheme.Modules.IsInvertible.zeroSchemeIdeal_tensorHom (hLp c) ((hLp a).tensor (hLp b)),
-      Scheme.Modules.IsInvertible.zeroSchemeIdeal_tensorHom (hLp a) (hLp b)]
+    rw [(hLp c).zeroSchemeIdeal_tensorHom ((hLp a).tensor (hLp b)),
+      (hLp a).zeroSchemeIdeal_tensorHom (hLp b)]
   rw [hZ, Scheme.IdealSheafData.support_mul, Scheme.IdealSheafData.support_mul]
   simp only [TopologicalSpace.Closeds.coe_sup]
   rw [support_zeroSchemeIdeal_pullbackSection (T t c) hL θ,
@@ -1821,13 +1823,15 @@ end translate_product
 end AlgebraicGeometry.Scheme.Modules
 
 open scoped CategoryTheory.MonObj in
-/-- A section of the tensor cube of an invertible sheaf whose zero support is the
-union of the three translated zero supports. -/
+/-- For a commutative group scheme `t : X ⟶ Spec k` over a field and an invertible sheaf `L` with
+the theorem-of-the-square isomorphisms `hsq`, every section `θ` of `L` gives a section of
+`L.tensorPow 3` whose zero support is the union of the zero supports of `θ` translated by `a`,
+`b` and `(a * b)⁻¹`. -/
 public theorem
     AlgebraicGeometry.Scheme.Modules.exists_hom_tensorPow_three_support_zeroSchemeIdeal_eq
     (k : Type u) [Field k] {X : Scheme.{u}} (t : X ⟶ Spec (CommRingCat.of k))
     [GrpObj (Over.mk t)] [IsCommMonObj (Over.mk t)]
-    (L : X.Modules) (hL : Scheme.Modules.IsInvertible L)
+    (L : X.Modules) (hL : IsLineBundle L)
     (hsq : ∀ x y : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t,
       Nonempty (
         (Scheme.Modules.pullback (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫
