@@ -27,7 +27,7 @@ Clauses are lists of literals, so the width of a clause counts its distinct lite
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNFClause
 
@@ -154,4 +154,4 @@ theorem not_cnfSat_of_isResolutionRefutation {φ : CNF} {π : List CNFClause}
 
 end CNF
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

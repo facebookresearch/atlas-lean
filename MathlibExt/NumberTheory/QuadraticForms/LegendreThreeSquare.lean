@@ -151,7 +151,7 @@ private theorem even_padicValInt_sq_add_mul_sq_of_not_isSquare {p : ℕ} [Fact p
       Even (padicValInt p (X ^ 2 + d * T ^ 2)) := by
     intro N
     induction N using Nat.strong_induction_on with
-    | h N ih =>
+    | ind N ih =>
       intro X T hNT
       by_cases h0 : X ^ 2 + d * T ^ 2 = 0
       · rw [h0, padicValInt.zero]
@@ -390,7 +390,7 @@ private theorem ankeny_exists_two_sq_of_rep {m k : ℕ} (hm : Squarefree m)
         exact e6.symm
       exact (ZMod.exists_sq_eq_neg_one_iff.mp ⟨_, hsq1⟩) hq4
     have hmul : padicValInt q ((k : ℤ) * (N : ℤ))
-        = padicValNat q k + padicValNat q N := by
+        = multiplicity q k + multiplicity q N := by
       have hk0 : (k : ℤ) ≠ 0 := by
         have := hk
         omega
@@ -399,7 +399,8 @@ private theorem ankeny_exists_two_sq_of_rep {m k : ℕ} (hm : Squarefree m)
         omega
       rw [padicValInt.mul hk0 hN0', padicValInt.of_nat, padicValInt.of_nat]
     have heven := even_padicValInt_sq_add_mul_sq_of_not_isSquare (p := q) hnsqB X T
-    rw [← hrep, hmul, padicValNat.eq_zero_of_not_dvd hqk, zero_add] at heven
+    rw [← hrep, hmul, multiplicity_eq_zero_of_not_dvd hqk, zero_add] at heven
+    rw [Nat.padicValNat_def]
     exact heven
 
 /-- Jacobi step, case `m ≡ 1 (mod 4)`: `-m` is a nonzero square in `ZMod q`. -/
@@ -1144,18 +1145,20 @@ private theorem odd_mod_eight {c : ℕ} (h : Odd c) :
   obtain ⟨t, ht⟩ := h
   omega
 
-/-- Legendre's three-square theorem: a natural number `n` is a sum of three
-    squares provided it is not of the form `4 ^ a * (8 * b + 7)`.
-    Source: Soufiane Mezroui, Abdelmalek Azizi, and M'hammed Ziane,
-    "On a Conjecture of Farhi", Journal of Integer Sequences 17 (2014),
-    source TeX lines 122-127,
-    https://cs.uwaterloo.ca/journals/JIS/VOL17/Mezroui/soufiane4.tex
-    (full source SHA-256
-    `e3121b115a35156b3aae46f175bfb165ab45588165b59569ce5d9061c52c104f`,
-    normalized theorem-span SHA-256
-    `fd5d4315a995eda1995848786e22b3563ea1dd2080f3a1598e907d36082a6180`).
+/-- **Legendre's three-square theorem.** Every natural number $n$ that is not of the form
+$4^a (8b + 7)$ with natural numbers $a, b$ is a sum of three squares: there are natural numbers
+$x, y, z$ with $x^2 + y^2 + z^2 = n$.
 
-    Proves `Wanted` entry `exists_three_squares_of_not_four_pow_mul_eight_mul_add_seven`. -/
+Proves `Wanted` entry `exists_three_squares_of_not_four_pow_mul_eight_mul_add_seven`.
+
+Source: Soufiane Mezroui, Abdelmalek Azizi, and M'hammed Ziane,
+"On a Conjecture of Farhi", Journal of Integer Sequences 17 (2014),
+source TeX lines 122-127,
+https://cs.uwaterloo.ca/journals/JIS/VOL17/Mezroui/soufiane4.tex
+(full source SHA-256
+`e3121b115a35156b3aae46f175bfb165ab45588165b59569ce5d9061c52c104f`,
+normalized theorem-span SHA-256
+`fd5d4315a995eda1995848786e22b3563ea1dd2080f3a1598e907d36082a6180`). -/
 theorem exists_three_squares_of_not_four_pow_mul_eight_mul_add_seven
     (n : Nat)
     (h : ¬ ∃ a b : Nat, n = 4 ^ a * (8 * b + 7)) :

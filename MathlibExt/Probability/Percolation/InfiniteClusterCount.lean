@@ -18,10 +18,8 @@ import Mathlib.MeasureTheory.MeasurableSpace.NCard
 For a probability measure on bond configurations of `ℤ^d` that is ergodic under lattice
 translations, the number `N(ω) ∈ ℕ∪{∞}` of infinite open clusters is measurable and translation
 invariant, hence almost surely equal to a constant in `ℕ∞`. This is the Newman–Schulman step,
-which the Burton–Keane argument starts from. Nothing more is proved here: neither `N ∈ {0, 1, ∞}`
-nor the Burton–Keane uniqueness `N ≤ 1` is proved anywhere in this library. Translation ergodicity
-of Bernoulli product measures is proved in PhyslibExt (`RandomCluster/Ergodicity`,
-`bernoulli_isErgodic`), not in MathlibExt.
+which the Burton–Keane argument starts from. The Bernoulli specialization and uniqueness
+theorem are in `MathlibExt.Probability.Percolation.BurtonKeane`.
 
 ## Main definitions
 

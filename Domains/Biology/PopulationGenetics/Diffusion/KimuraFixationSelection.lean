@@ -252,8 +252,9 @@ private theorem hasDerivAt_kimuraFixation_sigma_zero_aux {x : ℝ} (_hx : x ∈ 
     rw [hceq]
     exact htmp (by simpa using hc0)
 
-/-- Allele-label symmetry of Kimura's formula: relabeling the two alleles sends frequency `x`
-to `1 - x` and selection `σ` to `-σ`; formula level only. -/
+/-- Allele-label symmetry of Kimura's formula, for all real `σ` and `x`: relabeling the two
+alleles sends frequency `x` to `1 - x` and selection `σ` to `-σ`; formula level only, a statement
+about fixation probabilities for `x ∈ [0, 1]`. -/
 theorem kimuraFixation_neg (σ x : ℝ) :
     kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x) := by
   by_cases h : σ = 0
@@ -381,9 +382,9 @@ theorem strictMono_kimuraFixation_in_sigma {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1
       linarith [hconv]
   exact strictMono_of_hasDerivAt_pos hall hpos
 
-/-- Neutral perturbation: the first-order effect of weak genic selection on the fixation
-probability at neutrality is `x (1 - x)`; endpoints give derivative `0`, matching the constant
-values there. -/
+/-- Neutral perturbation: for `x ∈ [0, 1]`, the first-order effect of weak genic selection on
+the fixation probability at neutrality is `x (1 - x)`; endpoints give derivative `0`, matching
+the constant values there. -/
 theorem hasDerivAt_kimuraFixation_sigma_zero {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
     HasDerivAt (fun σ => kimuraFixation σ x) (x * (1 - x)) 0 := by
   obtain rfl | h0 := eq_or_lt_of_le hx.1

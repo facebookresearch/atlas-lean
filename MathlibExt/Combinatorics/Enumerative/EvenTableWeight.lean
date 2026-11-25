@@ -31,8 +31,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- An even `k × n` table: `k` is even, every row is a permutation of `Fin n`, and every
-value occurring in a column has even multiplicity. -/
+/-- **Even table.** For natural numbers $k$ and $n$, an even $k \times n$ table is a $k \times n$
+array of entries from $\{0, 1, \dots, n-1\}$ such that $k$ is even, every row is a permutation of
+$\{0, 1, \dots, n-1\}$, and in every column each value that occurs there occurs an even number
+of times. -/
 structure EvenTable (k n : ℕ) where
   entries : Fin k → Fin n → Fin n
   isEven : Even k
@@ -40,7 +42,11 @@ structure EvenTable (k n : ℕ) where
   colEven : ∀ (j : Fin n) (v : Fin n), (∃ i, entries i j = v) →
     Even ((List.ofFn fun i => entries i j).count v)
 
-/-- The weight of an even table is the product of its column weights. -/
+/-- **Weight of an even table.** Let $M$ be a commutative monoid and $f : \mathbb{N} \to M$. The
+weight of an even $k \times n$ table $t$ with respect to $f$ is the product of the column weights
+of its $n$ columns with respect to $f$:
+$$\prod_{j=0}^{n-1} \prod_{v=0}^{n-1} f(m_j(v)),$$
+where $m_j(v)$ is the number of times the value $v$ occurs in column $j$ of $t$. -/
 def evenTableWeight {M : Type*} [CommMonoid M] {k n : ℕ}
     (factor : ℕ → M) (t : EvenTable k n) : M :=
   ∏ j, columnWeight n factor (List.ofFn fun i => t.entries i j)

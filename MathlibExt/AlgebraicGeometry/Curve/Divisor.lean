@@ -19,15 +19,17 @@ combinations of those points.
 
 @[expose] public section
 
-/-- A divisor on a curve with point type `C` is a finitely supported integer-valued function on
-`C`. Its support is available as `Finsupp.support`. -/
+/-- **Divisors on a curve.** For a set $C$ (the points of a curve), a divisor on $C$ is a finitely
+supported function $D \colon C \to \mathbb{Z}$. Its support is the finite set of points
+$P \in C$ with $D(P) \neq 0$. -/
 abbrev CurveDivisor (C : Type*) := C →₀ ℤ
 
 namespace CurveDivisor
 
 variable {C : Type*}
 
-/-- The coefficient of a point in a curve divisor. -/
+/-- **Coefficient of a divisor at a point.** For a divisor $D$ on a set of points $C$ and a
+point $P \in C$, the coefficient of $D$ at $P$ is the integer $D(P)$. -/
 def coeff (D : CurveDivisor C) (P : C) : ℤ := D P
 
 @[simp]
