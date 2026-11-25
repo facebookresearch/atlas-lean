@@ -35,7 +35,7 @@ public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.RingTheory.TensorProduct.Basic
 
-import Mathlib.RingTheory.Flat.Basic
+import MathlibExt.Algebra.TensorProduct.PointSeparation
 
 @[expose] public section
 
@@ -80,30 +80,18 @@ public theorem evalPointsAlgHom_includeRight
 
 /-- Two algebra endomorphisms of a Hopf algebra that agree after
 composition with every point into the algebraic closure are equal,
-provided the evaluation map from the base change is bijective. -/
+provided the evaluation map from the base change is bijective. Only
+injectivity is used; `Algebra.TensorProduct.algHom_eq_of_forall_point_comp_eq`
+is the general form. -/
 public theorem algHom_eq_of_forall_comp_eq_of_bijective_evalPoints
     (D : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
     (A : Type u) [CommRing A] [HopfAlgebra ↥(IntermediateField.fixedField D) A]
-    [Module.Finite ↥(IntermediateField.fixedField D) A]
-    [Finite (WithConv (A →ₐ[↥(IntermediateField.fixedField D)] AlgebraicClosure ℚ))]
     (hev : Function.Bijective (evalPointsAlgHom D A))
     (u u' : A →ₐ[↥(IntermediateField.fixedField D)] A)
     (h : ∀ ν : A →ₐ[↥(IntermediateField.fixedField D)] AlgebraicClosure ℚ,
       ν.comp u = ν.comp u') :
-    u = u' := by
-  have hinc : Function.Injective
-      (Algebra.TensorProduct.includeRight :
-        A →ₐ[↥(IntermediateField.fixedField D)]
-          AlgebraicClosure ℚ ⊗[↥(IntermediateField.fixedField D)] A) :=
-    Algebra.TensorProduct.includeRight_injective
-      (RingHom.injective (algebraMap ↥(IntermediateField.fixedField D)
-        (AlgebraicClosure ℚ)))
-  apply AlgHom.ext
-  intro a
-  apply hinc
-  apply hev.1
-  rw [evalPointsAlgHom_includeRight, evalPointsAlgHom_includeRight]
-  funext ν
-  exact DFunLike.congr_fun (h (WithConv.ofConv ν)) a
+    u = u' :=
+  Algebra.TensorProduct.algHom_eq_of_forall_point_comp_eq (fun ν => WithConv.ofConv ν)
+    hev.1 fun ν => h (WithConv.ofConv ν)
 
 end HopfAlgebra

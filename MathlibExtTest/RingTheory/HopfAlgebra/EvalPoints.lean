@@ -15,6 +15,8 @@ public import MathlibExt.RingTheory.HopfAlgebra.EvalPoints
 open scoped TensorProduct
 
 -- Consumer with the original binders and the original inline evaluation map.
+-- The source spells the product map with the now-deprecated `Pi.algHom`.
+set_option linter.deprecated false in
 example
     (D : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
     (A : Type) [CommRing A] [HopfAlgebra ↥(IntermediateField.fixedField D) A]
@@ -40,12 +42,10 @@ example
     u = u' :=
   HopfAlgebra.algHom_eq_of_forall_comp_eq_of_bijective_evalPoints D A hev u u' h
 
--- Higher-universe consumer.
+-- Higher-universe consumer, with no finiteness assumption on the algebra or its points.
 example
     (D : Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
     (A : Type 1) [CommRing A] [HopfAlgebra ↥(IntermediateField.fixedField D) A]
-    [Module.Finite ↥(IntermediateField.fixedField D) A]
-    [Finite (WithConv (A →ₐ[↥(IntermediateField.fixedField D)] AlgebraicClosure ℚ))]
     (hev : Function.Bijective (HopfAlgebra.evalPointsAlgHom D A))
     (u u' : A →ₐ[↥(IntermediateField.fixedField D)] A)
     (h : ∀ ν : A →ₐ[↥(IntermediateField.fixedField D)] AlgebraicClosure ℚ,
