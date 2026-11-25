@@ -6,4 +6,4 @@ density at `(τ, y)` is the matrix of covariances of the velocity components,
 `Rⱼᵢ(τ, y) = ∫ (uⱼ - ∫ uⱼ dμ) (uᵢ - ∫ uᵢ dμ) dμ`, all functions taken at `(τ, y)`. For a probability
 measure and square-integrable components it is `𝔼[u′ⱼ u′ᵢ]`, with the fluctuation `u′ = u - 𝔼[u]`;
 otherwise the integrals follow the convention that a non-integrable function has integral `0`.
-Acting on the mean flow it enters as the stress `-ρ Rⱼᵢ` for a constant density `ρ`.
+For a constant density `ρ`, the Reynolds stress proper is `-ρ Rⱼᵢ`.

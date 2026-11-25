@@ -7,5 +7,5 @@ temperature is
 
 with `D₀` the [boundary constant](counterflow-inlet-diff.md), `s` the
 [counterflow rate](counterflow-rate.md) and `I(s, x)` the
-[exponential integral](exp-decay-integral.md). It is meant for `C_h, C_c > 0`; with `u / 0 = 0`,
-`K / C_h = 0` when `C_h = 0`.
+[exponential decay formula](exp-decay-integral.md). It is meant for `C_h, C_c > 0`; with
+`u / 0 = 0`, `K / C_h = 0` when `C_h = 0`.

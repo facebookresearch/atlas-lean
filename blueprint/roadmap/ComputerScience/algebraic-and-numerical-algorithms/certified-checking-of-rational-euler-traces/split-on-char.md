@@ -1,5 +1,6 @@
 # Splitting a character list at a separator
 
-For a character `sep` and a list of characters, the split is the list of the maximal pieces between
-occurrences of `sep`, the separators dropped: `k` separators give `k + 1` pieces, possibly empty,
-and the empty list gives one empty piece.
+For a character `sep`, the split of a list of characters is defined by recursion: the empty list
+gives one empty piece; a list starting with `sep` gives an empty piece followed by the split of the
+rest; a list starting with another character gives the split of the rest with that character added
+at the front of its first piece. The separators are dropped.

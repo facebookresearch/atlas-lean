@@ -2,5 +2,6 @@
 
 The property-variation class of a convection problem is either small to moderate (fluid properties
 evaluated at one reference temperature represent the flow) or large (a property-ratio correction,
-such as the wall-viscosity factor `(μ_m / μ_s)^n`, is needed). A correlation applies only to
-requests in its class.
+such as the wall-viscosity factor `(μ_m / μ_s)^n`, is needed). The
+[applicability condition](applies.md) of a correlation to a request includes that the request is in
+the correlation's class.

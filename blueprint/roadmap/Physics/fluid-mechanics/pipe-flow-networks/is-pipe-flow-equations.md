@@ -10,6 +10,6 @@ net inflows) and $H$ (heads) real functions on $V$. The pipe-flow equations hold
 In matrix form these are $B q = d$ and $-B^\top H = (r_e q_e |q_e|)_e$ with the signed incidence
 matrix $B_{ie} = [h(e) = i] - [t(e) = i]$; parallel and antiparallel arcs stay distinct, and a loop
 arc has a zero column. Here $H$ is the piezometric head, $q_e$ the volumetric flow from $t(e)$ to
-$h(e)$ and $d_i$ is positive at consumers and negative at sources. The resistances are
-unconstrained, so a negative resistance (an active element) can satisfy the equations;
+$h(e)$ and $d_i$ is positive at consumers and negative at sources. No sign is imposed on the
+resistances (a negative resistance would model an active element);
 [passive pipe flows](is-passive-pipe-flow.md) add $r_e \geq 0$.

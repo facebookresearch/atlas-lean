@@ -22,7 +22,7 @@
 ## The counterflow solution
 
 - [Decay rate of the stream temperature difference in counterflow](counterflow-rate.md)
-- [The integral of exp(−s y) from 0 to x in closed form](exp-decay-integral.md)
+- [Exponential decay formula (1 − exp(−s x))/s, with value x at s = 0](exp-decay-integral.md)
 - [Boundary constant of the counterflow solution](counterflow-inlet-diff.md)
 - [Hot-stream temperature of the counterflow solution](counterflow-hot-temp.md)
 - [Cold-stream temperature of the counterflow solution](counterflow-cold-temp.md)
