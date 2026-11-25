@@ -162,6 +162,43 @@ private lemma alternating_choose_sum {t m : ℕ} (ht : t ≤ m) (r : ℕ) :
         · simp [Nat.sub_ne_zero_of_lt hlt, hlt.ne']
   · simp [Icc_eq_empty_of_lt (Nat.lt_of_not_ge hr), ne_of_lt (Nat.lt_of_not_ge hr)]
 
+-- For threshold `q + 1`, adding one more eligible pair changes the sum by the
+-- exactly-`q` indicator: Pascal's second term counts subsets containing the new pair.
+private lemma threshold_choose_sum (q m : ℕ) (t : ℕ) (ht : t ≤ q + m + 1) :
+    (∑ i ∈ range (m + 1), (-1 : ℤ) ^ i * ((q + i).choose q : ℤ) *
+      (t.choose (q + i + 1) : ℤ)) = if q < t then 1 else 0 := by
+  induction t with
+  | zero => simp
+  | succ t ih =>
+    have hdelta := alternating_choose_sum (t := t) (m := q + m) (by omega) q
+    rw [← Ico_add_one_right_eq_Icc, sum_Ico_eq_sum_range,
+      show q + m + 1 - q = m + 1 by omega] at hdelta
+    simp only [Nat.add_sub_cancel_left] at hdelta
+    calc
+      _ = (∑ i ∈ range (m + 1), (-1 : ℤ) ^ i * ((q + i).choose q : ℤ) *
+            (t.choose (q + i + 1) : ℤ)) +
+          (∑ i ∈ range (m + 1), (-1 : ℤ) ^ i * ((q + i).choose q : ℤ) *
+            (t.choose (q + i) : ℤ)) := by
+        rw [← sum_add_distrib]
+        apply sum_congr rfl
+        intro i _
+        rw [Nat.choose_succ_succ, Nat.cast_add, mul_add, add_comm]
+      _ = _ := by
+        rw [ih (by omega), hdelta]
+        split_ifs <;> omega
+
+private lemma alternating_choose_threshold {t m r : ℕ} (ht : t ≤ m) (hr : 1 ≤ r) :
+    (∑ j ∈ Icc r m, (-1 : ℤ) ^ (j - r) * ((j - 1).choose (r - 1) : ℤ) *
+      (t.choose j : ℤ)) = if r ≤ t then 1 else 0 := by
+  by_cases hm : r ≤ m
+  · rw [← Ico_add_one_right_eq_Icc, sum_Ico_eq_sum_range, show m + 1 - r = m - r + 1 by omega]
+    simp only [Nat.add_sub_cancel_left]
+    have h := threshold_choose_sum (r - 1) (m - r) t (by omega)
+    have hpred (i : ℕ) : r - 1 + i = r + i - 1 := by omega
+    have hshift (i : ℕ) : r + i - 1 + 1 = r + i := by omega
+    simpa only [hpred, hshift, show r - 1 < t ↔ r ≤ t by omega] using h
+  · simp [Icc_eq_empty_of_lt (Nat.lt_of_not_ge hm), show ¬ r ≤ t by omega]
+
 end CoprimePairs
 
 -- The finite counting argument also applies to tuples of length zero or one.
@@ -193,6 +230,34 @@ public theorem exactly_coprime_pairs_inclusion_exclusion {k : ℕ} (hk : 2 ≤ k
         simp [edges, Fintype.card_product_filter_lt, Nat.choose_two_right]
   simp_rw [CoprimePairs.sum_coprimalityIndicator_powersetCard]
   exact (CoprimePairs.alternating_choose_sum hbound r).symm
+
+-- The finite counting argument also applies to tuples of length zero or one.
+set_option linter.unusedVariables false in
+/-- **Inclusion–exclusion for at least $r$ coprime pairs.** Let $k \ge 2$ and $r \ge 1$, and let
+$n = (n_1, \dots, n_k)$ be a tuple of natural numbers (zero allowed). Let $\beta'_r(n)$ be $1$ if
+$\gcd(n_a, n_b) = 1$ for at least $r$ pairs $a < b$, and $0$ otherwise. For a set $E$ of pairs
+$(a, b)$ with $1 \le a < b \le k$, let $\delta_E(n)$ be $1$ if $\gcd(n_a, n_b) = 1$ for every
+$(a, b) \in E$, and $0$ otherwise. Then
+$$\beta'_r(n) = \sum_{j=r}^{k(k-1)/2} (-1)^{j-r} \binom{j-1}{r-1} \sum_{|E| = j} \delta_E(n),$$
+where the inner sum runs over all sets $E$ of exactly $j$ such pairs.
+
+Source: László Tóth, *On the Asymptotic Density of k-tuples of Positive
+Integers with Pairwise Non-Coprime Components*, Journal of Integer Sequences 27
+(2024), Article 24.8.5, Lemma 6 (`jis-2024-24.8.5-lem-6`). -/
+public theorem at_least_coprime_pairs_inclusion_exclusion {k : ℕ} (hk : 2 ≤ k)
+    (r : ℕ) (hr : 1 ≤ r) (n : Fin k → ℕ) :
+    (if r ≤ coprimePairCount n then 1 else 0 : ℤ) =
+      ∑ j ∈ Icc r (k * (k - 1) / 2), (-1 : ℤ) ^ (j - r) * ((j - 1).choose (r - 1) : ℤ) *
+        ∑ E ∈ (univ.filter fun e : Fin k × Fin k => e.1 < e.2).powersetCard j,
+          (coprimalityIndicator E n : ℤ) := by
+  let edges := univ.filter fun e : Fin k × Fin k => e.1 < e.2
+  have hbound : coprimePairCount n ≤ k * (k - 1) / 2 := by
+    calc
+      coprimePairCount n ≤ edges.card := card_filter_le _ _
+      _ = k * (k - 1) / 2 := by
+        simp [edges, Fintype.card_product_filter_lt, Nat.choose_two_right]
+  simp_rw [CoprimePairs.sum_coprimalityIndicator_powersetCard]
+  exact (CoprimePairs.alternating_choose_threshold hbound hr).symm
 
 end
 
