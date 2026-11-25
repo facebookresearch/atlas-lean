@@ -418,11 +418,9 @@ def brauns : ℕ → List α → List (Tree α)
       nodes ts ((x :: xs').take (2 ^ k)) (ts.drop (2 ^ k))
 termination_by _k xs => xs.length
 decreasing_by
-  all_goals
-    simp only [List.length_drop, List.length_cons]
-  all_goals
-    have hpos : 0 < 2 ^ k := pow_pos (by norm_num) k
-  all_goals omega
+  simp only [List.length_drop, List.length_cons]
+  have hpos : 0 < 2 ^ k := pow_pos (by norm_num) k
+  omega
 
 /-- (11.17) `length_brauns`. -/
 theorem brauns_length (k : ℕ) (xs : List α) :
