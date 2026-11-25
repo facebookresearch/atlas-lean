@@ -64,4 +64,12 @@ example : ∑ k ∈ range (2 + 1), (Nat.choose 2 k : ℚ) / 2 ^ k * ((2 * k).cho
   rw [sum_choose_centralBinom_div_two_pow]
   norm_num [sum_range_succ, Nat.choose]
 
+-- At n = 3 and x = 2, the alternating signs and both power scalings contribute.
+example :
+    ∑ k ∈ range (3 + 1),
+        (-1) ^ (3 - k) * ((2 * k).choose k : ℂ) / 2 ^ (2 * k) * (Nat.choose 3 k : ℂ) *
+          (1 - 2 : ℂ) ^ (3 - k) = 63 / 16 := by
+  rw [sum_centralBinom_choose_one_sub_pow_symm]
+  norm_num [sum_range_succ, Nat.choose]
+
 end MetaMathlibExt
