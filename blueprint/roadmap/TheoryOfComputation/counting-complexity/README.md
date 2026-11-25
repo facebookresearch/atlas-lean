@@ -9,3 +9,4 @@
 - [Unbounded-error probabilistic time (PP)](unbounded-error-probabilistic-time-pp/README.md)
 - [Stockmeyer: approximate counting of #P functions in BPP^NP](stockmeyer-approximate-counting.md)
 - [Toda's theorem: PH is contained in $\mathsf{P}^{\#\mathsf{P}}$](toda.md)
+- [Counting and the polynomial hierarchy](counting-and-the-polynomial-hierarchy/README.md)

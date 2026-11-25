@@ -69,9 +69,10 @@ public theorem_wanted hasDerivAt_root_log_survival (N : ℕ) (p m : ℕ → ℝ)
     ∃ R : ℝ → ℝ, R 0 = r ∧ (∀ᶠ u in 𝓝 0, lotkaSum N (scaleSurvival p a u) m (R u) = 1) ∧
       HasDerivAt R (survivalIndicator N p m r a) 0
 
-/-- **Hamilton's fecundity sensitivity** (Hamilton 1966). Under the same hypotheses, for an
-age `1 ≤ a ≤ N` the root `R(ε)` after changing `m_a` to `m_a + ε` exists near `ε = 0`, equals
-`r` at `0`, and has derivative `e^{-ra} l_a / T` there.
+/-- **Hamilton's fecundity sensitivity** (Hamilton 1966). With `p_a > 0` for all `a`, `m_x ≥ 0`
+for all `x`, some `m_x > 0` with `1 ≤ x ≤ N`, and `r` solving the discrete Euler–Lotka equation
+`lotkaSum N p m r = 1`, for an age `1 ≤ a ≤ N` the root `R(ε)` after changing `m_a` to `m_a + ε`
+exists near `ε = 0`, equals `r` at `0`, and has derivative `e^{-ra} l_a / T` there.
 
 Sources: Hamilton (1966); Baudisch (2005), eq. (4a). -/
 public theorem_wanted hasDerivAt_root_fecundity (N : ℕ) (p m : ℕ → ℝ)
@@ -81,10 +82,11 @@ public theorem_wanted hasDerivAt_root_fecundity (N : ℕ) (p m : ℕ → ℝ)
       (∀ᶠ ε in 𝓝 0, lotkaSum N p (Function.update m a (m a + ε)) (R ε) = 1) ∧
       HasDerivAt R (exp (-(r * a)) * survivorship p a / generationTime N p m r) 0
 
-/-- **The force of selection on survival declines with age** (Hamilton 1966). Under the same
-hypotheses: the survival indicator equals `1/T` at every age `a` with no reproduction at ages
-`1, …, a`; it never increases from `a` to `a + 1`; and it strictly decreases from `a` to `a + 1`
-whenever `a + 1 ≤ N` and `m_{a+1} > 0`.
+/-- **The force of selection on survival declines with age** (Hamilton 1966). With `p_a > 0` for
+all `a`, `m_x ≥ 0` for all `x`, some `m_x > 0` with `1 ≤ x ≤ N`, and `r` solving the discrete
+Euler–Lotka equation `lotkaSum N p m r = 1`: the survival indicator equals `1/T` at every age
+`a` with no reproduction at ages `1, …, a`; it never increases from `a` to `a + 1`; and it
+strictly decreases from `a` to `a + 1` whenever `a + 1 ≤ N` and `m_{a+1} > 0`.
 
 Sources: Hamilton (1966); Jones, "Notes on Hamilton (1966)". -/
 public theorem_wanted survivalIndicator_antitone (N : ℕ) (p m : ℕ → ℝ)

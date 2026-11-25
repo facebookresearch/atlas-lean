@@ -60,8 +60,11 @@ structure IsLifeTable (l μ b : ℝ → ℝ) (ω r : ℝ) : Prop where
   b_eq_zero : ∀ x, ω < x → b x = 0
   char_eq : ∫ x in Ioi 0, exp (-(r * x)) * l x * b x = 1
 
-/-- **Normalization and balance equation of reproductive value** (Fisher 1930, ch. II):
-`v(0) = 1`, and for `0 < x`, `v'(x) = (μ(x) + r) v(x) - b(x) v(0)`.
+/-- **Normalization and balance equation of reproductive value** (Fisher 1930, ch. II). Under
+the continuous life-table assumptions `IsLifeTable l μ b ω r` (`ω > 0`, `l(0) = 1`, `l > 0` on
+`[0, ∞)` with `l' = -μ l`, continuous `μ`, continuous `b ≥ 0` vanishing after `ω`, and
+`∫_0^∞ e^{-rx} l(x) b(x) dx = 1`), we have `v(0) = 1`, and for every `x > 0`,
+`v'(x) = (μ(x) + r) v(x) - b(x) v(0)`.
 
 Source: Fisher (1930), ch. II, pp. 27–29. -/
 public theorem_wanted reproductiveValue_zero_and_hasDerivAt {l μ b : ℝ → ℝ} {ω r : ℝ}
@@ -70,9 +73,10 @@ public theorem_wanted reproductiveValue_zero_and_hasDerivAt {l μ b : ℝ → �
       ∀ x, 0 < x → HasDerivAt (reproductiveValue l b r)
         ((μ x + r) * reproductiveValue l b r x - b x * reproductiveValue l b r 0) x
 
-/-- **Fisher's theorem on total reproductive value** (Fisher 1930, ch. II). Let `n(x, t)` be
-continuous on `[0, ∞) × [0, ∞)`, solve `∂_t n + ∂_x n = -μ n` in characteristic form, and
-satisfy the birth condition `n(0, t) = ∫_0^ω b(x) n(x, t) dx`. Then for every `t ≥ 0`,
+/-- **Fisher's theorem on total reproductive value** (Fisher 1930, ch. II). Under the continuous
+life-table assumptions `IsLifeTable l μ b ω r`, let `n(x, t)` be continuous on `[0, ∞) × [0, ∞)`,
+solve `∂_t n + ∂_x n = -μ n` in characteristic form, and satisfy the birth condition
+`n(0, t) = ∫_0^ω b(x) n(x, t) dx`. Then for every `t ≥ 0`,
 `∫_0^ω n(x, t) v(x) dx = e^{rt} ∫_0^ω n(x, 0) v(x) dx`, whatever the initial age distribution.
 
 Source: Fisher (1930), ch. II, "Reproductive value", pp. 27–30. -/

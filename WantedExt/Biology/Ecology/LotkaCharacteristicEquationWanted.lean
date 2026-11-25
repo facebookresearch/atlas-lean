@@ -59,34 +59,36 @@ structure IsNetMaternity (φ : ℝ → ℝ) : Prop where
   not_ae_eq_zero : ¬ φ =ᵐ[volume] 0
   integrable_exp : ∀ s : ℝ, Integrable (fun a => exp (-(s * a)) * φ a)
 
-/-- **Shape of the characteristic function** (Fisher 1930, ch. II): `f` is continuous and
-strictly decreasing on `ℝ`, with `f(s) → ∞` as `s → -∞` and `f(s) → 0` as `s → ∞`.
+/-- **Shape of the characteristic function** (Fisher 1930, ch. II). Assuming `IsNetMaternity φ`
+(measurable, nonnegative, vanishing on negative ages, not almost everywhere zero, with
+`a ↦ e^{-sa} φ(a)` integrable for every `s : ℝ`), `charFun φ` is continuous and strictly
+decreasing on `ℝ`, with `charFun φ s → ∞` as `s → -∞` and `charFun φ s → 0` as `s → ∞`.
 
 Source: Fisher (1930), ch. II, pp. 26–27. -/
 public theorem_wanted charFun_shape {φ : ℝ → ℝ} (hφ : IsNetMaternity φ) :
     Continuous (charFun φ) ∧ StrictAnti (charFun φ) ∧
       Tendsto (charFun φ) atBot atTop ∧ Tendsto (charFun φ) atTop (𝓝 0)
 
-/-- **Unique real root** (Sharpe–Lotka 1911; Fisher 1930, ch. II): the characteristic equation
-`∫ e^{-ra} φ(a) da = 1` has exactly one real solution `r`.
+/-- **Unique real root** (Sharpe–Lotka 1911; Fisher 1930, ch. II). Assuming `IsNetMaternity φ`,
+the characteristic equation `∫ e^{-ra} φ(a) da = 1` has exactly one real solution `r`.
 
 Source: Sharpe and Lotka (1911); Fisher (1930), ch. II. -/
 public theorem_wanted existsUnique_charFun_eq_one {φ : ℝ → ℝ} (hφ : IsNetMaternity φ) :
     ∃! r : ℝ, charFun φ r = 1
 
-/-- **Sign of the intrinsic rate** (Fisher 1930, ch. II): if `r` is the real root, then
-`r > 0 ↔ R₀ > 1`, `r = 0 ↔ R₀ = 1` and `r < 0 ↔ R₀ < 1`, where `R₀ = ∫ φ = f(0)` is the net
-reproduction number.
+/-- **Sign of the intrinsic rate** (Fisher 1930, ch. II). Assuming `IsNetMaternity φ`, if `r` is
+the real root of `charFun φ r = 1`, then `r > 0 ↔ R₀ > 1`, `r = 0 ↔ R₀ = 1` and
+`r < 0 ↔ R₀ < 1`, where `R₀ = ∫ φ = charFun φ 0` is the net reproduction number.
 
 Source: Fisher (1930), ch. II, pp. 26–27. -/
 public theorem_wanted sign_of_charFun_eq_one {φ : ℝ → ℝ} (hφ : IsNetMaternity φ) {r : ℝ}
     (hr : charFun φ r = 1) :
     (0 < r ↔ 1 < ∫ a, φ a) ∧ (r = 0 ↔ ∫ a, φ a = 1) ∧ (r < 0 ↔ ∫ a, φ a < 1)
 
-/-- **Dominance of the real root** (Lotka; Jones, "Analyzing the characteristic equation"):
-since `φ` is a density, every complex root `z ≠ r` of `∫ e^{-za} φ(a) da = 1` satisfies
-`Re z < r`. (For a law on an arithmetic lattice of span `d` this fails: `r + 2πik/d` are
-roots.)
+/-- **Dominance of the real root** (Lotka; Jones, "Analyzing the characteristic equation").
+Assuming `IsNetMaternity φ`, if `r` is the real root of `charFun φ r = 1`, then since `φ` is a
+density, every complex root `z ≠ r` of `∫ e^{-za} φ(a) da = 1` satisfies `Re z < r`. (For a law
+on an arithmetic lattice of span `d` this fails: `r + 2πik/d` are roots.)
 
 Source: Jones, "Population growth in continuous time", Stanford lecture notes. -/
 public theorem_wanted re_lt_of_charFunComplex_eq_one {φ : ℝ → ℝ} (hφ : IsNetMaternity φ)
