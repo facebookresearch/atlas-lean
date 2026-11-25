@@ -318,7 +318,6 @@ private def adjRightIso :
   rw [Monad.forget_map, Monad.forget_map, emRightModule_action_f]
   simp only [adjRightModule_action_app]
   simp
-  rfl
 
 /-- Left-module comparison over the free–forgetful monad: the terminal-index
 module of `adjAlg alg` agrees with the restricted terminal-index module of

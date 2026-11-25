@@ -104,7 +104,7 @@ theorem fromModule_ofFinite (n : ℕ) (B : Matrix (Fin n) (Fin n) A) :
     fromModule k A (StableModule.ofFinite k A n B) = ofFinite k A n B := rfl
 
 /-- The k-linear equivalence between the stable matrix ring carrier and the stable matrix module.
- -/
+-/
 def moduleEquiv : Stable k A ≃ₗ[k] StableModule k A :=
   { toModule k A with
     invFun := fromModule k A
