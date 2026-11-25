@@ -10,7 +10,15 @@ module
 
 public import MathlibExt.Probability.ChineseRestaurant
 public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Tactic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.SimpRw
+import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Tauto
 
 /-!
 # Neutral freeze-and-merge jumps
@@ -20,6 +28,32 @@ two-element subsets for unordered mergers. `eventLaw` assigns the specified neut
 jump probabilities; `step` applies those events, and `run` iterates them from active
 singletons. The process stutters after all blocks freeze. These are embedded discrete
 jumps; no continuous-time genealogy coupling is asserted.
+
+This is the embedded jump chain of the coalescent of Donnelly and Tavaré (1986, §2), with the
+age order of the new classes forgotten as in Watterson (1984). Active blocks are their old
+equivalence classes, frozen blocks are their new classes, and a freeze is a mutation. From `k`
+active blocks, given that a jump occurs, a specified pair merges with probability
+`2 / (k (θ + k - 1))` and a specified block freezes with probability `θ / (k (θ + k - 1))`:
+Donnelly and Tavaré (1986), (2.9)–(2.11) and cases (a′), (b′), pp. 4–5. The terminal formula
+`terminalLaw_apply` is their Theorem 2.2 (p. 6) at `k = 0`, the labeled Ewens sampling formula
+(Ewens 1972).
+
+## Main results
+
+* `step_applyEvent`: each legal event has its neutral probability.
+* `run_all_frozen`: after `n` jumps every block is frozen.
+* `terminalLaw_eq_crp`: the terminal partition law is the Chinese restaurant process.
+* `terminalLaw_apply`: the labeled Ewens sampling formula for the terminal partition.
+
+## References
+
+* P. Donnelly and S. Tavaré, *The ages of alleles and a coalescent*, Adv. Appl. Probab. 18
+  (1986), 1–19, §2: the jump probabilities (2.9)–(2.11) and the embedded chain, pp. 4–5;
+  Theorem 2.2, p. 6.
+* G. A. Watterson, *Lines of descent and the coalescent*, Theor. Popul. Biol. 26 (1984),
+  77–92.
+* W. J. Ewens, *The sampling theory of selectively neutral alleles*, Theor. Popul. Biol. 3
+  (1972), 87–112.
 -/
 
 @[expose] public section
@@ -58,38 +92,39 @@ private lemma union_notMem_rest (n : ℕ)
   have heq := π.eq_of_mem_parts (mem_sdiff.mp h).1 (hp hB) hu hx
   exact (mem_sdiff.mp h).2 (heq ▸ hB)
 
-/-- Replace a nonempty family of parts by its union, preserving the native partition. -/
-def mergePartition (n : ℕ)
+private lemma existsUnique_mem_merge (n : ℕ)
     (π : Finpartition (univ : Finset (Fin n))) (p : Finset (Finset (Fin n)))
-    (hp : p ⊆ π.parts) (hne : p.Nonempty) : Finpartition (univ : Finset (Fin n)) :=
-  Finpartition.ofExistsUnique (insert (p.biUnion id) (π.parts \ p))
-    (fun _ _ ↦ subset_univ _)
-    (by
-      intro x hx
-      obtain ⟨B, ⟨hB, hxB⟩, huniq⟩ := π.existsUnique_mem hx
-      by_cases hBp : B ∈ p
-      · refine ⟨p.biUnion id, ⟨mem_insert_self _ _, mem_biUnion.mpr ⟨B, hBp, hxB⟩⟩, ?_⟩
-        rintro C ⟨hC, hxC⟩
-        rcases mem_insert.mp hC with rfl | hC
-        · rfl
-        · have heq := huniq C ⟨(mem_sdiff.mp hC).1, hxC⟩
-          exact False.elim ((mem_sdiff.mp hC).2 (heq ▸ hBp))
-      · refine ⟨B, ⟨mem_insert_of_mem (mem_sdiff.mpr ⟨hB, hBp⟩), hxB⟩, ?_⟩
-        rintro C ⟨hC, hxC⟩
-        rcases mem_insert.mp hC with rfl | hC
-        · obtain ⟨D, hD, hxD⟩ := mem_biUnion.mp hxC
-          have heq := huniq D ⟨hp hD, hxD⟩
-          exact False.elim (hBp (heq ▸ hD))
-        · exact huniq C ⟨(mem_sdiff.mp hC).1, hxC⟩)
-    (by
-      simp only [mem_insert, mem_sdiff, not_or]
-      constructor
-      · obtain ⟨B, hB⟩ := hne
-        obtain ⟨x, hx⟩ := π.nonempty_of_mem_parts (hp hB)
-        intro heq
-        have : x ∈ p.biUnion id := mem_biUnion.mpr ⟨B, hB, hx⟩
-        simp [← heq] at this
-      · exact fun h ↦ π.bot_notMem h.1)
+    (hp : p ⊆ π.parts) :
+    ∀ x ∈ (univ : Finset (Fin n)), ∃! B ∈ insert (p.biUnion id) (π.parts \ p), x ∈ B := by
+  intro x hx
+  obtain ⟨B, ⟨hB, hxB⟩, huniq⟩ := π.existsUnique_mem hx
+  by_cases hBp : B ∈ p
+  · refine ⟨p.biUnion id, ⟨mem_insert_self _ _, mem_biUnion.mpr ⟨B, hBp, hxB⟩⟩, ?_⟩
+    rintro C ⟨hC, hxC⟩
+    rcases mem_insert.mp hC with rfl | hC
+    · rfl
+    · have heq := huniq C ⟨(mem_sdiff.mp hC).1, hxC⟩
+      exact False.elim ((mem_sdiff.mp hC).2 (heq ▸ hBp))
+  · refine ⟨B, ⟨mem_insert_of_mem (mem_sdiff.mpr ⟨hB, hBp⟩), hxB⟩, ?_⟩
+    rintro C ⟨hC, hxC⟩
+    rcases mem_insert.mp hC with rfl | hC
+    · obtain ⟨D, hD, hxD⟩ := mem_biUnion.mp hxC
+      have heq := huniq D ⟨hp hD, hxD⟩
+      exact False.elim (hBp (heq ▸ hD))
+    · exact huniq C ⟨(mem_sdiff.mp hC).1, hxC⟩
+
+private lemma empty_notMem_merge (n : ℕ)
+    (π : Finpartition (univ : Finset (Fin n))) (p : Finset (Finset (Fin n)))
+    (hp : p ⊆ π.parts) (hne : p.Nonempty) :
+    ∅ ∉ insert (p.biUnion id) (π.parts \ p) := by
+  simp only [mem_insert, mem_sdiff, not_or]
+  constructor
+  · obtain ⟨B, hB⟩ := hne
+    obtain ⟨x, hx⟩ := π.nonempty_of_mem_parts (hp hB)
+    intro heq
+    have : x ∈ p.biUnion id := mem_biUnion.mpr ⟨B, hB, hx⟩
+    simp [← heq] at this
+  · exact fun h ↦ π.bot_notMem h.1
 
 /-- Freeze one specified active block without changing the partition or any other mark. -/
 def freeze (n : ℕ) (s : State n) (B : s.active) : State n where
@@ -101,7 +136,10 @@ def freeze (n : ℕ) (s : State n) (B : s.active) : State n where
 their marks. The jump law only calls this with a two-element collection. -/
 def merge (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
     (hp : p ⊆ s.active) (hne : p.Nonempty) : State n where
-  partition := mergePartition n s.partition p (hp.trans s.active_subset) hne
+  partition := Finpartition.ofExistsUnique (insert (p.biUnion id) (s.partition.parts \ p))
+    (fun _ _ ↦ subset_univ _)
+    (by exact existsUnique_mem_merge n s.partition p (hp.trans s.active_subset))
+    (by exact empty_notMem_merge n s.partition p (hp.trans s.active_subset) hne)
   active := insert (p.biUnion id) (s.active \ p)
   active_subset := by
     intro B hB
@@ -176,7 +214,7 @@ theorem merge_frozen (n : ℕ) (s : State n) (p : Finset (Finset (Fin n)))
   classical
   have hU := union_notMem_rest n s.partition p (hp.trans s.active_subset) hne
   ext B
-  simp only [frozen, merge, mergePartition, Finpartition.ofExistsUnique_parts,
+  simp only [frozen, merge, Finpartition.ofExistsUnique_parts,
     mem_sdiff, mem_insert]
   constructor
   · rintro ⟨hB, hBa⟩
@@ -289,7 +327,8 @@ theorem applyEvent_injective (n : ℕ) (s : State n) :
       exact congrArg Sum.inr (Subtype.ext heq)
 
 /-- Each freeze has weight `θ / [k(θ+k-1)]`; each specified unordered merger has
-weight `2 / [k(θ+k-1)]`, matching pair rate one and mutation rate `θ/2`. -/
+weight `2 / [k(θ+k-1)]`, matching pair rate one and mutation rate `θ/2`. These are the
+embedded jump probabilities of Donnelly and Tavaré (1986), p. 5, cases (a′) and (b′). -/
 def eventWeight (θ : ℝ) (n : ℕ) (s : State n) : Event n s → ℝ
   | Sum.inl _ => θ / denominator θ s.active.card
   | Sum.inr _ => 2 / denominator θ s.active.card
@@ -1235,7 +1274,8 @@ theorem terminalLaw_eq_crp (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
   exact terminal_of_harmonic θ hθ n (potential_harmonic θ hθ n)
 
 /-- Each particular labeled partition has the full Ewens probability, obtained from
-the terminal-law equality and the native `crp_apply` and `crpProb` declarations. -/
+the terminal-law equality and the native `crp_apply` and `crpProb` declarations. This is
+Theorem 2.2 of Donnelly and Tavaré (1986), p. 6, at `k = 0`. -/
 theorem terminalLaw_apply (θ : ℝ) (hθ : 0 < θ) (n : ℕ)
     (π : Finpartition (univ : Finset (Fin n))) :
     terminalLaw θ hθ n π = ENNReal.ofReal
