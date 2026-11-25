@@ -146,7 +146,7 @@ theorem horizontalFilteredTotalHomotopyHom_toTotal (k n m : ℕ) :
       rw [← Category.assoc, horizontalFilteredTotalι_toTotal,
         ιTotal_verticalTotalHomotopy_hom]
       rfl
-    simpa only [horizontalFilteredTotalι] using hComponent
+    simpa only [horizontalFilteredTotalι, id_eq] using hComponent
   · rw [horizontalFilteredTotalHomotopyHom_zero h k n m hnm,
       (verticalTotalHomotopy h).zero n m hnm]
     simp

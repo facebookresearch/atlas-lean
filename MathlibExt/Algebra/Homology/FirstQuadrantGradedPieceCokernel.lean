@@ -170,6 +170,7 @@ theorem horizontalFirstPageFiltrationMap_succ_monoIso (p : ℕ) :
         ((horizontalTotalFiltration K).toMonoOver.map (homOfLE (Nat.le_succ p)))
   simpa only [H, G, E, Functor.comp_map, Functor.comp_obj, Functor.mapIso_hom,
     horizontalFirstPageFiltrationMap, horizontalCompleteFiltrationCochainDiagram,
+    horizontalCompleteTotalFiltration,
     horizontalCompleteFiltrationCochainMonoUpperSuccIso,
     horizontalCompleteFiltrationCochainMonoLowerSuccIso,
     horizontalCompleteTotalFiltration_diagram_map,
