@@ -63,3 +63,9 @@
   the precision matrix.
 - [Causal Bayesian networks](../causal-bayesian-networks/README.md): the same networks read
   causally, with interventions.
+
+- [Conditional independence given the Markov blanket](cond-indep-markov-blanket.md)
+
+- [The Markov blanket d-separates a node from all other nodes](d-separated-markov-blanket.md)
+
+- [Markov Blanket](markov-blanket.md)

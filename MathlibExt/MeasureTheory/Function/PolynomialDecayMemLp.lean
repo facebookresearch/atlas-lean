@@ -34,9 +34,11 @@ The a.e. version restores the bound stated in the source's prose; the
 pointwise version remains available as a corollary.
 -/
 
-/-- **Polynomial decay implies `L^p` membership.** If `f : ℝ → E` is a.e. strongly
-measurable and `‖f x‖ ≤ C * (1 + |x|) ^ (-q)` almost everywhere, where
-`C ≥ 0` and `q > 1`, then `f ∈ L^p (ℝ)` for every `1 ≤ p ≤ ∞`. -/
+/-- **Polynomial decay implies $L^p$ membership.** Let $E$ be a normed additive commutative group
+and let $f : \mathbb{R} \to E$ be almost everywhere strongly measurable. Suppose there are real
+numbers $C \ge 0$ and $q > 1$ such that $\|f(x)\| \le C (1 + |x|)^{-q}$ for almost every
+$x \in \mathbb{R}$. Then $f \in L^p(\mathbb{R})$, with respect to Lebesgue measure, for every
+$p \in [1, \infty]$. -/
 theorem memLp_of_polynomial_decay_ae
     {E : Type*} [NormedAddCommGroup E]
     {f : ℝ → E} (hf_meas : AEStronglyMeasurable f volume)
@@ -98,8 +100,11 @@ theorem memLp_of_polynomial_decay_ae
           · rw [← lintegral_enorm_of_nonneg (fun x => Real.rpow_nonneg (by positivity) _)]
             exact hasFiniteIntegral_iff_enorm.mp hint.hasFiniteIntegral
 
-/-- Pointwise polynomial decay implies `L^p` membership. This preserves the
-pointwise interface and follows from `memLp_of_polynomial_decay_ae`. -/
+/-- **Pointwise polynomial decay implies $L^p$ membership.** Let $E$ be a normed additive
+commutative group and let $f : \mathbb{R} \to E$ be almost everywhere strongly measurable. Suppose
+there are real numbers $C \ge 0$ and $q > 1$ such that $\|f(x)\| \le C (1 + |x|)^{-q}$ for every
+$x \in \mathbb{R}$. Then $f \in L^p(\mathbb{R})$, with respect to Lebesgue measure, for every
+$p \in [1, \infty]$. -/
 theorem memLp_of_polynomial_decay
     {E : Type*} [NormedAddCommGroup E]
     {f : ℝ → E} (hf_meas : AEStronglyMeasurable f volume)

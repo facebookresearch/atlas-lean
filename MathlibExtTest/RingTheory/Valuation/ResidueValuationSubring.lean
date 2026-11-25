@@ -15,12 +15,12 @@ public import MathlibExt.RingTheory.Valuation.ResidueValuationSubring
 universe u
 
 /-- Consumer with the original binders. -/
-theorem exactSource {L : Type u} [Field L] (A S : ValuationSubring L) (h : A ≤ S) :
+private theorem exactSource {L : Type u} [Field L] (A S : ValuationSubring L) (h : A ≤ S) :
     ringKrullDim A = ringKrullDim (A.residueValuationSubring S h) + ringKrullDim S :=
   ValuationSubring.ringKrullDim_eq_ringKrullDim_residueValuationSubring_add A S h
 
 /-- Higher-universe consumer. -/
-theorem exactSourceHigherUniverse {L : Type 2} [Field L]
+private theorem exactSourceHigherUniverse {L : Type 2} [Field L]
     (A S : ValuationSubring L) (h : A ≤ S) :
     ringKrullDim A = ringKrullDim (A.residueValuationSubring S h) + ringKrullDim S :=
   ValuationSubring.ringKrullDim_eq_ringKrullDim_residueValuationSubring_add A S h

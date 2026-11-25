@@ -29,13 +29,19 @@ continuous eigenfunctions, where the interval fails). The sharper
 Sources entry and omitted; no spectral computation is supplied here.
 -/
 
-/-- Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue lower
+/-- **Mayer–Roepstorff lower bound for the Wirsing constant.** The
+Wirsing constant is at least $0.30366299$.
+
+Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue lower
 bound `0.30366299`, certified via generalized Temple inequalities.
 Known literature result; its proof is not supplied here. -/
 theorem_wanted mayerRoepstorffLowerBound_wanted :
     (30366299 / 100000000 : ℝ) ≤ wirsingConstant
 
-/-- Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue upper
+/-- **Mayer–Roepstorff upper bound for the Wirsing constant.** The
+Wirsing constant is at most $0.30366327$.
+
+Source: Mayer and Roepstorff (1987), eq. (5.20), catalogue upper
 bound `0.30366327`. Known literature result; its proof is not
 supplied here. -/
 theorem_wanted mayerRoepstorffUpperBound_wanted :

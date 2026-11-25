@@ -353,18 +353,22 @@ open NumberField IsDedekindDomain
 
 private theorem norm_algebraMap_completion {K : Type*} [Field K] (w : InfinitePlace K) (x : K) :
     ‖algebraMap K w.Completion x‖ = w x := by
-  rw [show algebraMap K w.Completion x = (((WithAbs.equiv w.1).symm x : WithAbs w.1) :
-    w.Completion) from rfl,
-    NumberField.InfinitePlace.Completion.norm_coe]
+  have hco : algebraMap K w.Completion x = (((WithAbs.equiv w.1).symm x : WithAbs w.1) :
+      w.Completion) := by
+    rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+      Algebra.algebraMap_self_apply, WithAbs.equiv_symm_apply]
+  rw [hco, NumberField.InfinitePlace.Completion.norm_coe]
   simp
 
 private theorem denseRange_algebraMap_completion {K : Type*} [Field K] (w : InfinitePlace K) :
     DenseRange (algebraMap K w.Completion) := by
-  have h := UniformSpace.Completion.denseRange_coe (α := WithAbs w.1)
-  exact (NumberField.InfinitePlace.Completion.ofCompletion_surjective w).denseRange.comp
-    (h.comp (WithAbs.equiv w.1).symm.surjective.denseRange (UniformSpace.Completion.continuous_coe
-      _))
-    (NumberField.InfinitePlace.Completion.continuous_ofCompletion w)
+  have h : ⇑(algebraMap K w.Completion) =
+      ((↑) : WithAbs w.1 → w.Completion) ∘ (WithAbs.equiv w.1).symm := by
+    funext x
+    rw [Function.comp_apply, AbsoluteValue.Completion.algebraMap_def,
+      WithAbs.algebraMap_right_apply, Algebra.algebraMap_self_apply, WithAbs.equiv_symm_apply]
+  exact h ▸ (AbsoluteValue.Completion.denseRange_coe w.1).comp
+    (WithAbs.equiv w.1).symm.surjective.denseRange (AbsoluteValue.Completion.continuous_coe w.1)
 
 
 private theorem isNontrivial_and_pairwise_not_isEquiv {K : Type*} [Field K] [NumberField K]

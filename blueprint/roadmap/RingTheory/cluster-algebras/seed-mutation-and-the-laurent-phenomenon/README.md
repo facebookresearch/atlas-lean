@@ -15,6 +15,7 @@ two](../cluster-algebras-of-rank-two/README.md).
 - [Cluster variables of a seed pattern](cluster-variables.md)
 - [Initial cluster of the ambient field](initial-cluster.md)
 - [Laurent polynomials in the initial cluster](laurent-subalgebra.md)
+- [Rank-two Laurent phenomenon in any field](rank-two-seq-mem.md)
 - [Laurent phenomenon (coefficient-free)](laurent-phenomenon.md)
 - [Laurent phenomenon in rank two](rank-two-seq-mem-laurent-subalgebra.md)
 - [Somos-4 sequence](somos4.md)

@@ -19,7 +19,9 @@ public import Mathlib.Tactic.Ring
 ## i. Overview
 
 Linear 1D shallow water, `ηt + H * ux = 0` and `ut + g * ηx = 0` with `g, H > 0`, implies the wave
-  equation `ηtt = g * H * ηxx` and wave speed `√(gH)`. The spatial partial derivatives `ηx, ux` are
+  equation `ηtt = g * H * ηxx` and wave speed `√(gH)`. This system is the linearization, about
+  `h = H` and `u = 0`, of the nonlinear primitive form in
+  `PhyslibExt.EarthScience.ShallowWaterNonlinear`. The spatial partial derivatives `ηx, ux` are
   given as `HasDerivAt` witnesses for the space slices, the PDEs are stated as `HasDerivAt` for the
   time slices, and mixed-derivative commutation and second-`x`-derivative differentiability are
   explicit hypotheses. The algebraic core `wave_eq_of_deriv_system` uses Lean's totalized `deriv`
@@ -55,7 +57,7 @@ namespace EarthScience
 /-- Algebraic core of `shallow_water_wave_eq`, with the spatial partials written as Lean's
 totalized `deriv`. If, for every `t, x`, `∂ₜη = -H ∂ₓu` and `∂ₜu = -g ∂ₓη` hold as `HasDerivAt`
 statements for the time slices, the mixed-derivative commutation `∂ₜ∂ₓu = ∂ₓ∂ₜu` holds as a
-`HasDerivAt` statement, and the second `x`-derivative of `η` is differentiable, then
+`HasDerivAt` statement, and the `x`-derivative of `η` is differentiable in `x`, then
 `∂ₜ²η = g * H * ∂ₓ²η` at every `t, x`. Since `deriv` is `0` wherever a slice is not
 differentiable, these hypotheses do not require `η t` or `u t` to be differentiable in `x`, so
 they are not by themselves the shallow-water PDE; `shallow_water_wave_eq` adds that requirement. -/

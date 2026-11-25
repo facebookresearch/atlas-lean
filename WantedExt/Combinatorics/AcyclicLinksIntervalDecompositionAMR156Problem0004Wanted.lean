@@ -40,26 +40,54 @@ acyclicity over `ℚ` (universal coefficients), so their counterexample applies.
 
 open MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
-/-- `K` has a rank-`k` interval decomposition with a subcomplex of bottoms: a family `B` of faces,
-closed under subsets, and tops `top F ∈ K` with `F ⊆ top F` and `|top F| = |F| + k`, such that every
-face of `K` lies in exactly one interval `[F, top F]` with `F ∈ B`. -/
+/-- **Rank-$k$ interval decomposition with a subcomplex of bottoms.** For a natural number $k$, a
+finite family $K$ of finite subsets of $\mathbb{N}$ has a rank-$k$ interval decomposition with a
+subcomplex of bottoms if there are a finite family $B$ of finite subsets of $\mathbb{N}$, closed
+under taking subsets, and an assignment of a finite set $\mathrm{top}(F) \subseteq \mathbb{N}$ to
+each finite set $F \subseteq \mathbb{N}$, such that every $F \in B$ satisfies
+$F \subseteq \mathrm{top}(F)$, $|\mathrm{top}(F)| = |F| + k$ and $\mathrm{top}(F) \in K$, and every
+$\sigma \in K$ lies in the interval $[F, \mathrm{top}(F)] = \{G : F \subseteq G \subseteq
+\mathrm{top}(F)\}$ for exactly one $F \in B$. -/
 def HasRankIntervalDecomposition (K : Finset (Finset ℕ)) (k : ℕ) : Prop :=
   ∃ (B : Finset (Finset ℕ)) (top : Finset ℕ → Finset ℕ), (∀ F ∈ B, ∀ G ⊆ F, G ∈ B) ∧
     (∀ F ∈ B, F ⊆ top F ∧ (top F).card = F.card + k ∧ top F ∈ K) ∧
     ∀ σ ∈ K, ∃! F, F ∈ B ∧ F ⊆ σ ∧ σ ⊆ top F
 
-/-- Stanley's Problem 5 (Positivity Problems; Conjecture 2.4 of Stanley, Discrete Math. 120
-(1993)), with `k = j + 2`: if the link of every face with fewer than `k` vertices (faces of
-dimension at most `j`, including `link(∅) = K`) is acyclic over `ℚ`, then `K` is partitioned into
-intervals `[F, F']` with `dim F' - dim F = k` whose bottom elements form a subcomplex. -/
+/-- **Stanley's interval-decomposition conjecture for complexes with acyclic links.** The statement
+that for every integer $k \ge 1$ and every finite simplicial complex $K$ on the vertex set
+$\mathbb{N}$ (a finite family of finite subsets of $\mathbb{N}$ closed under taking subsets): if the
+link $\mathrm{lk}_K(F) = \{G \in K : G \cap F = \emptyset,\ G \cup F \in K\}$ of every face
+$F \in K$ with fewer than $k$ vertices (including $\mathrm{lk}_K(\emptyset) = K$) is acyclic over
+$\mathbb{Q}$ (all of its reduced rational homology vanishes), then $K$ has a rank-$k$ interval
+decomposition with a subcomplex of bottoms: there are a family $B$ of finite subsets of
+$\mathbb{N}$, closed under taking subsets, and faces $\mathrm{top}(F) \in K$ for $F \in B$ with
+$F \subseteq \mathrm{top}(F)$ and $|\mathrm{top}(F)| = |F| + k$, such that every face of $K$ lies
+in the interval $[F, \mathrm{top}(F)]$ for exactly one $F \in B$.
+
+This is Stanley's Problem 5 (Positivity Problems; Conjecture 2.4 of Stanley, Discrete Math. 120
+(1993)) with $k = j + 2$: the faces with fewer than $k$ vertices are the faces of dimension at most
+$j$, and for an interval $[F, F']$ with $F' = \mathrm{top}(F)$, the condition $|F'| = |F| + k$
+means $\dim F' - \dim F = k$. -/
 def acyclicLinksIntervalDecomposition : Prop :=
   ∀ k : ℕ, 1 ≤ k → ∀ K : Finset (Finset ℕ), IsSimplicialComplex K →
     (∀ F ∈ K, F.card < k → IsRationallyAcyclic (link K F)) → HasRankIntervalDecomposition K k
 
 /--
-Resolved false: Doolittle and Goeckner constructed a `2`-fold acyclic simplicial complex (`j = 0`)
-that cannot be written as a disjoint union of rank `2` boolean intervals at all, a counterexample to
-Stanley's conjecture (Problem 5); the case `j = -1` is Stanley's theorem. Source: R. P. Stanley,
+**Stanley's interval-decomposition conjecture for complexes with acyclic links is false.** It is
+not true that for every integer $k \ge 1$ and every finite simplicial complex $K$ on the vertex set
+$\mathbb{N}$ (a finite family of finite subsets of $\mathbb{N}$ closed under taking subsets) such
+that the link $\mathrm{lk}_K(F) = \{G \in K : G \cap F = \emptyset,\ G \cup F \in K\}$ of every
+face $F \in K$ with fewer than $k$ vertices is acyclic over $\mathbb{Q}$ (all of its reduced
+rational homology vanishes), there are a family $B$ of finite subsets of $\mathbb{N}$, closed under
+taking subsets, and faces $\mathrm{top}(F) \in K$ for $F \in B$ with $F \subseteq \mathrm{top}(F)$
+and $|\mathrm{top}(F)| = |F| + k$, such that every face of $K$ lies in the interval
+$[F, \mathrm{top}(F)]$ for exactly one $F \in B$.
+
+Doolittle and Goeckner constructed a complex with $k = 2$ (a $2$-fold acyclic complex) that cannot
+be partitioned into intervals $[F, F']$ with $|F'| = |F| + 2$ at all; the case $k = 1$ is
+Stanley's theorem.
+
+Source: R. P. Stanley,
 Positivity Problems and Conjectures in Algebraic Combinatorics (1999), Problem 5 (interval
 decompositions of complexes with acyclic links); resolution: J. Doolittle and B. Goeckner, Resolving
 Stanley's conjecture on k-fold acyclic complexes, FPSAC 2019 (Sém. Lothar. Combin. 82B, Article 46),
