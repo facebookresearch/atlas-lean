@@ -14828,7 +14828,6 @@
   "WantedExt/Analysis/WignerSemicircleWanted": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
   "WantedExt/Analysis/WirsingConstantWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin–Wirsing operator"},
   "WantedExt/Biology/PopulationGenetics/Coalescent/LambdaCoalescentWanted": {"to": "Biology/coalescent-theory", "title": "Λ-coalescents"},
-  "WantedExt/Biology/PopulationGenetics/Coalescent/VariableSFSWanted": {"to": "Biology/coalescent-theory", "title": "Site frequency spectrum under variable population size"},
   "WantedExt/CategoryTheory/FundamentalToposWanted": {"to": "CategoryTheory/topos-theory", "title": "Elementary toposes"},
   "WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted": {"to": "GameTheory/combinatorial-games", "title": "Accelerated Zeckendorf game"},
   "WantedExt/Combinatorics/AccessibleSetsWanted": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
