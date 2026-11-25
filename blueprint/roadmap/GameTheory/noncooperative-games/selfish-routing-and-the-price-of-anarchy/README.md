@@ -38,6 +38,7 @@ Nonatomic routing games: infinitely many users each control a negligible amount 
 - [Equilibrium of Braess's network without the shortcut](braess-before-is-wardrop.md)
 - [Equilibrium of Braess's network with the shortcut](braess-after-is-wardrop.md)
 - [Braess's paradox](braess-paradox.md)
+- [Wardrop equilibria are the minimizers of the Beckmann potential](wardrop-equilibria-minimize-the-beckmann-potential.md)
 
 ## Related topics
 

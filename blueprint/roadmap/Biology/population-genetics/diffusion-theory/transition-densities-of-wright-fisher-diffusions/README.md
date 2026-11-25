@@ -11,3 +11,5 @@
 - [Alternating-series bounds for the line-of-descent probabilities](alternating-series-bounds-for-q-n-t.md)
 
 - [Orthonormal normalization of shifted Jacobi polynomials](jacobi-and-gegenbauer-polynomials-on-0-1.md)
+
+- [Jacobi series of the Wright–Fisher transition density with mutation](jacobi-series-of-the-mutation-transition-density.md)

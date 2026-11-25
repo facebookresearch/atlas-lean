@@ -8,3 +8,5 @@
 - [For bounded sequences the odd parity condition is the negation of the even one](parity-odd-iff-not-parity-even.md)
 - [Max-parity with priorities 1 and 2 is the Büchi condition](parity-even-iff-frequently-two.md)
 - [Prefix independence of the largest infinitely occurring value](is-max-inf-occ-drop-iff.md)
+
+- [Reversing priorities exchanges the min-parity and max-parity conditions](reversing-priorities-exchanges-min-parity-and.md)
