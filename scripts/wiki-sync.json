@@ -13386,6 +13386,7 @@
 "Cslib.Algorithms.Lean.FloatingPoint.fl_eq_self": "14fa6ee98efe7cf4",
 "Cslib.Algorithms.Lean.FloatingPoint.fl_sub_eq": "300cabfb249aa877",
 "Cslib.Algorithms.Lean.FloatingPoint.fl_sub_eq_sub": "c4eaf1e78524acc2",
+"Cslib.Algorithms.Lean.FloatingPoint.fusedProductResidual": "aed330462686fcf6",
 "Cslib.Algorithms.Lean.FloatingPoint.isFloatIn_fl": "8a49e4d1b087a762",
 "Cslib.Algorithms.Lean.FloatingPoint.isFloatIn_sub": "2f72de4c137bee07",
 "Cslib.Algorithms.Lean.FloatingPoint.isFloat_fl": "6b0fecb085e09a9f",
