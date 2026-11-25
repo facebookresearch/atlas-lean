@@ -16,9 +16,8 @@ factor $\alpha\tau$, while the accumulation picks up the factor $\tau$ from the 
 under a change of mass unit. Converting between a wet and a dry moisture basis changes the composition basis and is not a unit
 change of this kind, and affine temperature scales such as Celsius are not admissible in laws stated for absolute temperature.
 
-## Depends on
-
-## Proof depends on
+The Lean statement uses a derivative within the original time set $I$ and, after conversion, within
+$\{s \mid \tau s \in I\}$. It expresses the balance in each species coordinate.
 
 ## Sources
 
