@@ -53,13 +53,18 @@ noncomputable def euclidDist (p q : ℝ × ℝ) : ℝ :=
 noncomputable def ellipsePoint (a b t : ℝ) : ℝ × ℝ :=
   (a * Real.cos t, b * Real.sin t)
 
-/-- `p` lies on the confocal caustic `x²/(a² - λ) + y²/(b² - λ) = 1`. -/
+/-- `p` lies on the confocal caustic `x²/(a² - λ) + y²/(b² - λ) = 1`. The predicate takes any real
+`a`, `b` and `λ`, with division by zero read as `0`, so for degenerate values it does not describe
+that caustic: `a = 0`, `b = 1`, `λ = 0` and `p = (0, 1)` satisfy it. The statements that use it
+assume `0 < b < a` and `0 < λ < b²`, where the caustic is a confocal ellipse inside the table. -/
 def OnCaustic (a b lam : ℝ) (p : ℝ × ℝ) : Prop :=
   p.1 ^ 2 / (a ^ 2 - lam) + p.2 ^ 2 / (b ^ 2 - lam) = 1
 
 /-- An `N`-periodic orbit with turning number one of the billiard in the ellipse
 `x²/a² + y²/b² = 1`, all of whose sides are tangent to the confocal caustic
-`x²/(a² - λ) + y²/(b² - λ) = 1`. -/
+`x²/(a² - λ) + y²/(b² - λ) = 1`. The structure takes any real `a`, `b` and `λ`, with division by
+zero read as `0` in its caustic conditions; the statements that use it assume `0 < b < a` and
+`0 < λ < b²`, where the caustic is a confocal ellipse inside the table. -/
 structure PonceletOrbit (a b lam : ℝ) (N : ℕ) where
   /-- The eccentric anomaly of the vertex `P_i`. -/
   anomaly : ℕ → ℝ

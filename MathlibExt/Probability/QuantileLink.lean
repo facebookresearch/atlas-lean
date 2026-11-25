@@ -42,7 +42,7 @@ revision): apply `MeasureTheory.Measure.ext_of_Iic` -- it suffices to
 agree on every `Set.Iic t` -- with `MeasureTheory.Measure.map_apply`
 (measurability of `fun x => cdf μ x` is `(cdf μ).mono.measurable`).
 For `t ∈ Ioo 0 1`, `{x | cdf μ x ≤ t} = Set.Iic (cdfQuantile μ t)` by
-`StrictMono.le_iff_le hmono` and (PIN-COPY)
+`StrictMono.le_iff_le hmono` and
 `cdf_cdfQuantile_eq_of_continuous`, so by
 `ProbabilityTheory.ofReal_cdf` the pushforward's mass on `Set.Iic t`
 is `ENNReal.ofReal t`, as is Lebesgue's.  For `t < 0` the preimage is
@@ -139,7 +139,7 @@ theorem cdf_mem_Ioo_of_strictMono (μ : Measure ℝ)
   exact ⟨(cdf_nonneg μ (x - 1)).trans_lt (hmono (sub_one_lt x)),
     (hmono (lt_add_one x)).trans_le (cdf_le_one μ (x + 1))⟩
 
-/-- F12-L-QUANTILE-LINK v2: equipercentile linking over the actual
+/-- equipercentile linking over the actual
 Atlas objects.
 
 Let `μ, ν` be probability measures on `ℝ` with continuous, strictly
@@ -155,12 +155,12 @@ Proof route for (1) -- a composition, not an assumption:
 by `Measure.map_map (measurable_cdfQuantile ν) (cdf μ).mono.measurable`,
 `= Measure.map (cdfQuantile ν) ((volume : Measure ℝ).restrict (Icc 0 1))`
 by `cdf_pushforward_eq_volume_restrict_Icc μ hμcont hμmono`,
-`= ν` by (PIN-COPY) `map_cdfQuantile_restrict_Icc ν`.
+`= ν` by `map_cdfQuantile_restrict_Icc ν`.
 
 Proof route for (2): for the first roundtrip, `cdf μ x ∈ Ioo 0 1` by
-`cdf_mem_Ioo_of_strictMono μ hμmono`, so (PIN-COPY)
+`cdf_mem_Ioo_of_strictMono μ hμmono`, so
 `cdf_cdfQuantile_eq_of_continuous ν hνcont` gives
-`cdf ν (cdfQuantile ν (cdf μ x)) = cdf μ x`, and (PIN-COPY)
+`cdf ν (cdfQuantile ν (cdf μ x)) = cdf μ x`, and
 `cdfQuantile_cdf_of_strictMono μ hμmono` finishes.  The second
 roundtrip is symmetric, using `cdf_mem_Ioo_of_strictMono ν hνmono`,
 `cdf_cdfQuantile_eq_of_continuous μ hμcont`, and
