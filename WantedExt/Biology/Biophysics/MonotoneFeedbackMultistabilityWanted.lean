@@ -36,9 +36,12 @@ solution maps are given as data with their defining properties (existence, invar
 and uniqueness), as the source assumes. Global asymptotic stability within `X` is Lyapunov
 stability together with attraction of every solution from `X`. The correspondence of equilibria
 is `u ↦ k_X(u)`; the closed loop requires `h(X) ⊆ U`. "Almost all initial conditions" is
-Lebesgue-almost every point of `X`, and convergence to a set is convergence of the distance to
-it. Strong monotonicity of the closed loop is a hypothesis of the second part, as in the source.
-This is the theorem used by Angeli, Ferrell and Sontag (PNAS 2004) for bistable positive
+Lebesgue-almost every point of `X`. Convergence to the set of stable equilibria is stated as
+convergence of the trajectory to one of them, `k_X(u)` for a fixed point `u` with `k_Y'(u) < 1`;
+this is what the source's argument through the generic convergence theorem for strongly monotone
+systems yields, and unlike a distance to the set it does not hold trivially when the set is
+empty. Strong monotonicity of the closed loop is a hypothesis of the second part, as in the
+source. This is the theorem used by Angeli, Ferrell and Sontag (PNAS 2004) for bistable positive
 feedback loops.
 
 Sources: D. Angeli, E. D. Sontag, "Multi-stability in monotone input/output systems", Systems
@@ -57,7 +60,6 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Function.EssSup
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
-public import Mathlib.Topology.MetricSpace.HausdorffDistance
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 @[expose] public section
@@ -175,11 +177,11 @@ let `ψ t ξ` be the solution map of the closed loop `ẋ = f(x, h(x))`: for `ξ
 solution on `[0, ∞)` that stays in `X`. Suppose the input/output characteristic `kY = h ∘ kX` has
 non-degenerate fixed points on `U`, the closed loop is strongly monotone (`ξ₁ - ξ₂ ∈ K` and
 `ξ₁ ≠ ξ₂` imply `ψ t ξ₁ - ψ t ξ₂ ∈ int K` for every `t > 0`), and every closed-loop trajectory
-from `X` is bounded. Then for Lebesgue-almost every `ξ ∈ X`, the distance from `ψ t ξ` to the set
-`{kX u | u ∈ U, kY u = u, kY'(u) < 1}` tends to `0`.
+from `X` is bounded. Then for Lebesgue-almost every `ξ ∈ X` there is a fixed point `u ∈ U` of
+`kY` with `kY'(u) < 1` such that `ψ t ξ → kX u` as `t → ∞`.
 
 Source: D. Angeli, E. D. Sontag, Systems Control Lett. 51 (2004) 185–202, Theorem 2. -/
-theorem_wanted ae_tendsto_infDist_stableEquilibria (sys : IOSystem n) (hmono : sys.IsMonotone)
+theorem_wanted ae_tendsto_stableEquilibrium (sys : IOSystem n) (hmono : sys.IsMonotone)
     {kX : ℝ → Fin n → ℝ} (hk : sys.IsNondegenerateCharacteristic kX)
     (hhU : ∀ x ∈ sys.X, sys.h x ∈ sys.U) (ψ : ℝ → (Fin n → ℝ) → Fin n → ℝ)
     (hψ : ∀ ξ ∈ sys.X, IsSolution (fun x _ => sys.f x (sys.h x)) ξ (fun t => ψ t ξ) ∧
@@ -188,9 +190,7 @@ theorem_wanted ae_tendsto_infDist_stableEquilibria (sys : IOSystem n) (hmono : s
     (hstrong : ∀ ξ₁ ∈ sys.X, ∀ ξ₂ ∈ sys.X, ξ₁ - ξ₂ ∈ sys.K → ξ₁ ≠ ξ₂ →
       ∀ t, 0 < t → ψ t ξ₁ - ψ t ξ₂ ∈ interior sys.K)
     (hbdd : ∀ ξ ∈ sys.X, Bornology.IsBounded (Set.range fun t : Set.Ici (0 : ℝ) => ψ t ξ)) :
-    ∀ᵐ ξ ∂(volume.restrict sys.X), Tendsto
-      (fun t => Metric.infDist (ψ t ξ)
-        (kX '' {u | u ∈ sys.U ∧ sys.h (kX u) = u ∧ deriv (sys.h ∘ kX) u < 1}))
-      atTop (𝓝 0)
+    ∀ᵐ ξ ∂(volume.restrict sys.X), ∃ u ∈ sys.U, sys.h (kX u) = u ∧
+      deriv (sys.h ∘ kX) u < 1 ∧ Tendsto (fun t => ψ t ξ) atTop (𝓝 (kX u))
 
 end WantedExt.Biology.Biophysics.MonotoneFeedbackMultistabilityWanted

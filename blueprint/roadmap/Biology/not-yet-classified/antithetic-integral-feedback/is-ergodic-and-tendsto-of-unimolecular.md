@@ -3,7 +3,9 @@
 **Antithetic control of unimolecular networks** (Briat–Gupta–Khammash 2016, Theorem 2). Let
 `net` be an open-loop network (propensities nonnegative, and positive only where the jump stays
 in `ℕ^{d+1}`) with state space `𝒮 ⊆ ℕ^{d+1}`: nonempty, closed under open-loop
-steps, and irreducible (every state of `𝒮` reaches every other by open-loop steps). Suppose
+steps and under the actuation (adding one molecule of `X_1`, index `0`), so that `𝒮 × ℕ × ℕ` is
+closed under every closed-loop transition, and irreducible (every state of `𝒮` reaches every
+other by open-loop steps). Suppose
 `net` is unimolecular on `𝒮`: `prop j x = ∑_i W j i * x i + w₀ j` for `x ∈ 𝒮`, with `w₀ j ≥ 0`.
 Let `S` be the stoichiometry matrix and `A = S W`. Assume `A` is Hurwitz stable, the output
 controllability condition `A⁻¹ ℓ 0 ≠ 0` holds, and the set-point `μ/θ` (with `μ, θ > 0`) is

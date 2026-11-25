@@ -37,7 +37,11 @@ after the last jump time `≤ t`. Ergodicity requires non-explosion and pointwis
 time-`t` law to a stationary law `π` (stationary meaning that the time-`t` law stays `π` from the
 initial law `π`) from every initial state of the closed-loop state space; uniqueness of `π` among
 stationary laws on that space follows. Moments are bounded uniformly in `t ≥ 0`. All controller
-parameters `μ, θ, η, k` are positive. The actuated species is `X_1`, indexed `0` here.
+parameters `μ, θ, η, k` are positive. The actuated species is `X_1`, indexed `0` here. In
+Theorem 2 the closed-loop state space is `𝒮 × ℕ × ℕ`: `𝒮` is required to be closed under the
+open-loop reactions and under the actuation `X_1 → X_1 + 1`, so every closed-loop trajectory
+started there stays there and the unimolecular form of the propensities is used only on states
+the closed loop can reach.
 
 Sources: C. Briat, A. Gupta, M. Khammash, "Antithetic integral feedback ensures robust perfect
 adaptation in noisy biomolecular networks", Cell Systems 2 (2016) 15–26, controller (2),
@@ -198,7 +202,9 @@ def IsHurwitz {m : Type*} [Fintype m] [DecidableEq m] (A : Matrix m m ℝ) : Pro
 /-- **Antithetic control of unimolecular networks** (Briat–Gupta–Khammash 2016, Theorem 2). Let
 `net` be an open-loop network (propensities nonnegative, and positive only where the jump stays
 in `ℕ^{d+1}`) with state space `𝒮 ⊆ ℕ^{d+1}`: nonempty, closed under open-loop
-steps, and irreducible (every state of `𝒮` reaches every other by open-loop steps). Suppose
+steps and under the actuation (adding one molecule of `X_1`, index `0`), so that `𝒮 × ℕ × ℕ` is
+closed under every closed-loop transition, and irreducible (every state of `𝒮` reaches every
+other by open-loop steps). Suppose
 `net` is unimolecular on `𝒮`: `prop j x = ∑_i W j i * x i + w₀ j` for `x ∈ 𝒮`, with `w₀ j ≥ 0`.
 Let `S` be the stoichiometry matrix and `A = S W`. Assume `A` is Hurwitz stable, the output
 controllability condition `A⁻¹ ℓ 0 ≠ 0` holds, and the set-point `μ/θ` (with `μ, θ > 0`) is
@@ -211,6 +217,7 @@ Source: C. Briat, A. Gupta, M. Khammash, Cell Systems 2 (2016) 15–26, Theorem 
 theorem_wanted isErgodic_and_tendsto_of_unimolecular (net : OpenLoop d K)
     {𝒮 : Set (Fin (d + 1) → ℕ)} (hne : 𝒮.Nonempty)
     (hclosed : ∀ x ∈ 𝒮, ∀ y, net.Step x y → y ∈ 𝒮)
+    (hact : ∀ x ∈ 𝒮, Function.update x 0 (x 0 + 1) ∈ 𝒮)
     (hirr : ∀ x ∈ 𝒮, ∀ y ∈ 𝒮, Relation.ReflTransGen net.Step x y)
     (W : Matrix (Fin K) (Fin (d + 1)) ℝ) (w₀ : Fin K → ℝ) (hw₀ : ∀ j, 0 ≤ w₀ j)
     (hlin : ∀ j, ∀ x ∈ 𝒮, net.prop j x = ∑ i, W j i * x i + w₀ j)

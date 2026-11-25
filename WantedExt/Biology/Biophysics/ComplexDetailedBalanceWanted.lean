@@ -75,13 +75,13 @@ all vertices `i`, `j` (on non-edges both sides vanish by reversibility). -/
 def IsDetailedBalanced (y : V → S → ℕ) (κ : V → V → ℝ) : Prop :=
   ∃ c : S → ℝ, (∀ s, 0 < c s) ∧ ∀ i j, κ i j * monomial c (y i) = κ j i * monomial c (y j)
 
-/-- The rate constants are formally balanced: for every cycle `v_0, …, v_{m-1}` (`m ≥ 3`) of
-distinct vertices with `κ (v k) (v (k + 1)) > 0` cyclically, the product of the rate constants
-along the cycle equals the product along the reversed cycle. -/
+/-- The rate constants are formally balanced: for every cycle `v_0, …, v_{m+2}` of `m + 3 ≥ 3`
+distinct vertices with `κ (v i) (v (i + 1)) > 0` for every `i` (indices mod `m + 3`), the product
+of the rate constants along the cycle equals the product along the reversed cycle. -/
 def IsFormallyBalanced (κ : V → V → ℝ) : Prop :=
   ∀ (m : ℕ) (v : Fin (m + 3) → V), Function.Injective v →
-    (∀ k, 0 < κ (v k) (v (k + 1))) →
-      ∏ k, κ (v k) (v (k + 1)) = ∏ k, κ (v (k + 1)) (v k)
+    (∀ i, 0 < κ (v i) (v (i + 1))) →
+      ∏ i, κ (v i) (v (i + 1)) = ∏ i, κ (v (i + 1)) (v i)
 
 /-- **Complex balance under formal balance is detailed balance** (Dickenstein–Pérez Millán 2011,
 Theorem 1.1). Let `V` and `S` be finite, let `y : V → S → ℕ` label the vertices by complexes

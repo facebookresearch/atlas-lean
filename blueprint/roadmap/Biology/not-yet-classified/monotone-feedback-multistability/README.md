@@ -17,4 +17,4 @@
 
 - [Has Nondegenerate Fixed Points](has-nondegenerate-fixed-points.md)
 - [Equilibria of the positive feedback loop](bij-on-fixed-points-equilibria.md)
-- [Generic convergence of the positive feedback loop](ae-tendsto-inf-dist-stable-equilibria.md)
+- [Generic convergence of the positive feedback loop](ae-tendsto-stable-equilibrium.md)
