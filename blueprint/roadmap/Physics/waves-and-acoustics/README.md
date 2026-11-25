@@ -9,3 +9,5 @@ Linear waves and acoustics: frequency, wavenumber and wavelength, travelling-wav
 - [Sound transmission through a limp panel: the mass law](sound-transmission-through-a-limp-panel-the-mass/README.md)
 - [Sabine reverberation](sabine-reverberation/README.md)
 - [Energy of coupled structural–acoustic systems](energy-of-coupled-structural-acoustic-systems/README.md)
+
+- [Rectangular waveguides](rectangular-waveguides/README.md)
