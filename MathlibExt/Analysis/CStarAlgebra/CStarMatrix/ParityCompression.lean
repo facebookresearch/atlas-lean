@@ -1,0 +1,284 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.Padding
+import Mathlib.Tactic.SplitIfs
+
+/-!
+# Finite parity row insertion and compression
+
+These are the actual entrywise complex-linear maps used to construct the
+stable fold. Sizes are explicitly `N` and `2 * N`, including size zero.
+Only finite padding compatibility and the algebraic adjoint identity are
+proved here; no norm bound, completion or multiplier is assumed or installed.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped BigOperators Matrix
+
+namespace CStarMatrix
+
+universe u
+
+/-- For natural numbers `N` and `ε : Fin 2`. The parity row embedding `i ↦ 2*i + ε`.
+-/
+def parityRowEmbedding (N : ℕ) (ε : Fin 2) : Fin N ↪ Fin (2 * N) := by
+  refine ⟨fun i => ⟨2 * i.val + ε.val, ?_⟩, ?_⟩
+  · have hi := i.is_lt
+    have hε := ε.is_lt
+    omega
+  · intro i j h
+    apply Fin.ext
+    have hv := congrArg Fin.val h
+    change 2 * i.val + ε.val = 2 * j.val + ε.val at hv
+    omega
+
+@[simp]
+theorem parityRowEmbedding_val (N : ℕ) (ε : Fin 2) (i : Fin N) :
+    (parityRowEmbedding N ε i).val = 2 * i.val + ε.val :=
+  rfl
+
+/-- Let `A` be a complex module. For natural numbers `N` and `ε : Fin 2`. Insert the rows into their
+even or odd positions and zero-pad columns.
+-/
+def parityRowInsertLinear {A : Type u} [AddCommMonoid A] [Module ℂ A]
+    (N : ℕ) (ε : Fin 2) :
+    CStarMatrix (Fin N) (Fin N) A →ₗ[ℂ]
+      CStarMatrix (Fin (2 * N)) (Fin (2 * N)) A where
+  toFun X i j :=
+    if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+      X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩
+    else 0
+  map_add' X Y := by
+    ext i j
+    change
+      (if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+        ofMatrix.symm X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩ +
+          ofMatrix.symm Y ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩
+      else (0 : A)) =
+        (if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+          ofMatrix.symm X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩ else 0) +
+        (if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+          ofMatrix.symm Y ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩ else 0)
+    split_ifs <;> first | rfl | simp only [zero_add]
+  map_smul' z X := by
+    ext i j
+    change
+      (if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+        z • ofMatrix.symm X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩
+      else (0 : A)) =
+        z • (if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+          ofMatrix.symm X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩ else 0)
+    split_ifs <;> first | rfl | simp only [smul_zero]
+
+/-- Let `A` be a complex module. For natural numbers `N` and `ε : Fin 2`. Sample exactly the even or odd
+source rows that occur within the finite stage.
+-/
+def parityRowCompressLinear {A : Type u} [AddCommMonoid A] [Module ℂ A]
+    (N : ℕ) (ε : Fin 2) :
+    CStarMatrix (Fin N) (Fin N) A →ₗ[ℂ] CStarMatrix (Fin N) (Fin N) A where
+  toFun X i j :=
+    if h : 2 * i.val + ε.val < N then
+      X ⟨2 * i.val + ε.val, h⟩ j
+    else 0
+  map_add' X Y := by
+    ext i j
+    change
+      (if h : 2 * i.val + ε.val < N then
+        ofMatrix.symm X ⟨2 * i.val + ε.val, h⟩ j +
+          ofMatrix.symm Y ⟨2 * i.val + ε.val, h⟩ j
+      else (0 : A)) =
+        (if h : 2 * i.val + ε.val < N then
+          ofMatrix.symm X ⟨2 * i.val + ε.val, h⟩ j else 0) +
+        (if h : 2 * i.val + ε.val < N then
+          ofMatrix.symm Y ⟨2 * i.val + ε.val, h⟩ j else 0)
+    split_ifs <;> first | rfl | simp only [zero_add]
+  map_smul' z X := by
+    ext i j
+    change
+      (if h : 2 * i.val + ε.val < N then
+        z • ofMatrix.symm X ⟨2 * i.val + ε.val, h⟩ j
+      else (0 : A)) =
+        z • (if h : 2 * i.val + ε.val < N then
+          ofMatrix.symm X ⟨2 * i.val + ε.val, h⟩ j else 0)
+    split_ifs <;> first | rfl | simp only [smul_zero]
+
+theorem parityRowInsertLinear_apply {A : Type u} [AddCommMonoid A] [Module ℂ A]
+    (N : ℕ) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A)
+    (i j : Fin (2 * N)) :
+    parityRowInsertLinear N ε X i j =
+      if h : i.val / 2 < N ∧ j.val < N ∧ i.val % 2 = ε.val then
+        X ⟨i.val / 2, h.1⟩ ⟨j.val, h.2.1⟩
+      else 0 :=
+  rfl
+
+theorem parityRowCompressLinear_apply {A : Type u} [AddCommMonoid A] [Module ℂ A]
+    (N : ℕ) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A)
+    (i j : Fin N) :
+    parityRowCompressLinear N ε X i j =
+      if h : 2 * i.val + ε.val < N then X ⟨2 * i.val + ε.val, h⟩ j else 0 :=
+  rfl
+
+/-- Let `A` be a complex module. For natural numbers `N`, `ε : Fin 2`, `X : CStarMatrix (Fin N) (Fin N)
+A`, `i : Fin N`, `j : Fin (2 * N)` and `hj : j.val < N`. Every retained parity row has precisely its
+entry.
+-/
+theorem parityRowInsertLinear_apply_row {A : Type u}
+    [AddCommMonoid A] [Module ℂ A]
+    (N : ℕ) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A)
+    (i : Fin N) (j : Fin (2 * N)) (hj : j.val < N) :
+    parityRowInsertLinear N ε X (parityRowEmbedding N ε i) j = X i ⟨j.val, hj⟩ := by
+  have hε := ε.is_lt
+  have hdiv : (2 * i.val + ε.val) / 2 = i.val := by omega
+  have hmod : (2 * i.val + ε.val) % 2 = ε.val := by omega
+  simp only [parityRowInsertLinear_apply, parityRowEmbedding_val, hdiv, hmod,
+    i.is_lt, hj, and_true, ↓reduceDIte]
+
+/-- Let `A` be a complex module. For natural numbers `N`, `ε : Fin 2`, `X : CStarMatrix (Fin N) (Fin N)
+A` and `i` and `j : Fin (2 * N)`. Assume `N ≤ j.val`. Added columns in the inserted square are zero.
+-/
+theorem parityRowInsertLinear_apply_of_col {A : Type u}
+    [AddCommMonoid A] [Module ℂ A]
+    (N : ℕ) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A)
+    (i j : Fin (2 * N)) (hj : N ≤ j.val) :
+    parityRowInsertLinear N ε X i j = 0 := by
+  rw [parityRowInsertLinear_apply]
+  exact dite_eq_right (fun h => (Nat.not_lt_of_ge hj) h.2.1)
+
+section Ring
+
+variable {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
+
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `N`, `ε : Fin 2`, `Y : CStarMatrix (Fin N) (Fin N) A`, `i : Fin N`,
+`j : Fin (2 * N)` and `hj : j.val < N`. Compression is exactly row sampling in the zero-padded
+source matrix.
+-/
+theorem parityRowCompressLinear_eq_padded_entry
+    (N : ℕ) (ε : Fin 2) (Y : CStarMatrix (Fin N) (Fin N) A)
+    (i : Fin N) (j : Fin (2 * N)) (hj : j.val < N) :
+    parityRowCompressLinear N ε Y i ⟨j.val, hj⟩ =
+      zeroExtendStarAlgHom (by omega : N ≤ 2 * N) Y
+        (parityRowEmbedding N ε i) j := by
+  by_cases hi : 2 * i.val + ε.val < N <;>
+    simp only [parityRowCompressLinear_apply, zeroExtendStarAlgHom_apply_entry,
+      parityRowEmbedding_val, hi, hj, ↓reduceDIte]
+
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `N` and `M`, `ε : Fin 2` and `X : CStarMatrix (Fin N) (Fin N) A`.
+Assume `N ≤ M`. Row sampling commutes with every upper-left finite padding map.
+-/
+theorem parityRowCompressLinear_padding
+    {N M : ℕ} (h : N ≤ M) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A) :
+    parityRowCompressLinear M ε (zeroExtendStarAlgHom h X) =
+      zeroExtendStarAlgHom h (parityRowCompressLinear N ε X) := by
+  ext i j
+  have hε := ε.is_lt
+  have hi := i.is_lt
+  have hj := j.is_lt
+  simp only [parityRowCompressLinear_apply, zeroExtendStarAlgHom_apply_entry]
+  split_ifs <;> first | rfl | (exfalso; omega)
+
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `N` and `M`, `ε : Fin 2` and `X : CStarMatrix (Fin N) (Fin N) A`.
+Assume `N ≤ M`. Row insertion commutes with padding, with the doubled sizes explicitly cast.
+-/
+theorem parityRowInsertLinear_padding
+    {N M : ℕ} (h : N ≤ M) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A) :
+    parityRowInsertLinear M ε (zeroExtendStarAlgHom h X) =
+      zeroExtendStarAlgHom (by omega : 2 * N ≤ 2 * M)
+        (parityRowInsertLinear N ε X) := by
+  ext i j
+  have hε := ε.is_lt
+  have hi := i.is_lt
+  have hj := j.is_lt
+  simp only [parityRowInsertLinear_apply, zeroExtendStarAlgHom_apply_entry]
+  split_ifs <;> first | rfl | (exfalso; omega)
+
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `N`, `ε : Fin 2` and `X` and `Y : CStarMatrix (Fin N) (Fin N) A`.
+The exact finite adjoint identity on the same matrix products and padding map.
+-/
+theorem parityRowInsertLinear_adjoint
+    (N : ℕ) (ε : Fin 2) (X Y : CStarMatrix (Fin N) (Fin N) A) :
+    star (parityRowInsertLinear N ε X) *
+        zeroExtendStarAlgHom (by omega : N ≤ 2 * N) Y =
+      zeroExtendStarAlgHom (by omega : N ≤ 2 * N)
+        (star X * parityRowCompressLinear N ε Y) := by
+  classical
+  apply CStarMatrix.ext
+  intro i j
+  have hε := ε.is_lt
+  by_cases hi : i.val < N
+  · by_cases hj : j.val < N
+    · change (∑ k : Fin (2 * N),
+          star (parityRowInsertLinear N ε X k i) *
+            zeroExtendStarAlgHom (by omega : N ≤ 2 * N) Y k j) =
+        zeroExtendStarAlgHom (by omega : N ≤ 2 * N)
+          (star X * parityRowCompressLinear N ε Y) i j
+      conv_rhs => rw [zeroExtendStarAlgHom_apply_entry, dite_eq_left hi, dite_eq_left hj]
+      change (∑ k : Fin (2 * N),
+          star (parityRowInsertLinear N ε X k i) *
+            zeroExtendStarAlgHom (by omega : N ≤ 2 * N) Y k j) =
+        ∑ l : Fin N, star (X l ⟨i.val, hi⟩) *
+          parityRowCompressLinear N ε Y l ⟨j.val, hj⟩
+      symm
+      refine Fintype.sum_of_injective (parityRowEmbedding N ε)
+        (parityRowEmbedding N ε).injective _ _ ?_ ?_
+      · intro k hk
+        have hparity : k.val % 2 ≠ ε.val := by
+          intro hp
+          have hsmall : k.val / 2 < N := by
+            have hbound := k.is_lt
+            omega
+          apply hk
+          refine ⟨⟨k.val / 2, hsmall⟩, ?_⟩
+          apply Fin.ext
+          change 2 * (k.val / 2) + ε.val = k.val
+          omega
+        have hfalse : ¬ (k.val / 2 < N ∧ i.val < N ∧ k.val % 2 = ε.val) := by
+          intro hh
+          exact hparity hh.2.2
+        rw [parityRowInsertLinear_apply, dite_eq_right hfalse, star_zero, zero_mul]
+      · intro l
+        rw [parityRowInsertLinear_apply_row N ε X l i hi,
+          ← parityRowCompressLinear_eq_padded_entry N ε Y l j hj]
+    · change (∑ k : Fin (2 * N),
+          star (parityRowInsertLinear N ε X k i) *
+            zeroExtendStarAlgHom (by omega : N ≤ 2 * N) Y k j) =
+        zeroExtendStarAlgHom (by omega : N ≤ 2 * N)
+          (star X * parityRowCompressLinear N ε Y) i j
+      simp only [zeroExtendStarAlgHom_apply_entry, hi, hj, ↓reduceDIte]
+      apply Finset.sum_eq_zero
+      intro k _
+      by_cases hk : k.val < N <;>
+        simp only [hk, ↓reduceDIte, mul_zero]
+  · change (∑ k : Fin (2 * N),
+        star (parityRowInsertLinear N ε X k i) *
+          zeroExtendStarAlgHom (by omega : N ≤ 2 * N) Y k j) =
+      zeroExtendStarAlgHom (by omega : N ≤ 2 * N)
+        (star X * parityRowCompressLinear N ε Y) i j
+    conv_rhs => rw [zeroExtendStarAlgHom_apply_entry, dite_eq_right hi]
+    apply Finset.sum_eq_zero
+    intro k _
+    rw [parityRowInsertLinear_apply_of_col N ε X k i (Nat.le_of_not_gt hi),
+      star_zero, zero_mul]
+
+end Ring
+
+
+end CStarMatrix

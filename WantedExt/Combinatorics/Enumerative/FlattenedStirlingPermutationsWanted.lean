@@ -108,15 +108,6 @@ public theorem_wanted isGreatest_flattenedStirling_runCount (n : ℕ) (hn : 1 �
         IsStirlingPermutation n w ∧ IsFlattenedWord w ∧ wordRunCount w = r}
       ⌈(2 * n : ℚ) / 3⌉₊
 
-/-- **Closed form for flattened Stirling permutations with two runs.** For every natural number
-$n \ge 1$, the number $|\mathrm{flat}_2(Q_{n+1})|$ of flattened Stirling permutations of order
-$n + 1$ with exactly two runs equals $3(2^n - 1) - 2n$.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Corollary 2. -/
-public theorem_wanted flattenedStirlingRunCount_two_closed (n : ℕ) (hn : 1 ≤ n) :
-    (flattenedStirlingRunCount (n + 1) 2 : ℤ) = 3 * (2 ^ n - 1) - 2 * n
-
 /-- **A binomial–Stirling formula for flattened Stirling permutations.** For every natural number
 $n$, the number of flattened Stirling permutations of order $n + 1$ is
 $$

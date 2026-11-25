@@ -13,3 +13,4 @@ Topics added since this subject's fields were last revised.
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
+- [String Overlap](string-overlap/README.md)
