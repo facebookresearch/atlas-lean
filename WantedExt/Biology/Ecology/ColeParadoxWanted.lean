@@ -19,7 +19,7 @@ Cole calls this setting biologically unattainable; with juvenile or adult mortal
 equivalence changes, which is outside Cole's statement.
 
 Sources: L. C. Cole, "The population consequences of life history phenomena", Q. Rev. Biol.
-29 (1954) 103–137, pp. 118–119, eqs. (21), (23), (24).
+29 (1954) 103–137, pp. 117–119, eqs. (21), (23), (24).
 -/
 module
 
@@ -35,16 +35,16 @@ namespace WantedExt.Biology.Ecology.ColeParadoxWanted
 per year and `λ > 0`, the discrete Euler–Lotka equation `∑_{x ≥ 1} b λ^{-x} = 1` holds (as a
 convergent series) if and only if `λ = b + 1`.
 
-Source: Cole (1954), p. 119, eq. (23). -/
+Source: Cole (1954), p. 118, eq. (23). -/
 public theorem_wanted perennial_hasSum_iff {b lam : ℝ} (hb : 0 < b) (hlam : 0 < lam) :
     HasSum (fun x : ℕ => b * lam⁻¹ ^ (x + 1)) 1 ↔ lam = b + 1
 
-/-- **Cole's paradox** (Cole 1954, pp. 118–119). Let the annual have growth factor `B > 0` and
+/-- **Cole's paradox** (Cole 1954, pp. 117–118). Let the annual have growth factor `B > 0` and
 the immortal perennial with `b > 0` offspring per year have growth factor `λ > 0` solving
 `∑_{x ≥ 1} b λ^{-x} = 1`. Then the two intrinsic rates agree, `ln B = ln λ`, if and only if
 `B = b + 1`.
 
-Source: Cole (1954), pp. 118–119, eqs. (21), (23). -/
+Source: Cole (1954), pp. 117–118, eqs. (21), (23). -/
 public theorem_wanted log_annual_eq_log_perennial_iff {B b lam : ℝ} (hB : 0 < B) (hb : 0 < b)
     (hlam : 0 < lam) (hper : HasSum (fun x : ℕ => b * lam⁻¹ ^ (x + 1)) 1) :
     Real.log B = Real.log lam ↔ B = b + 1

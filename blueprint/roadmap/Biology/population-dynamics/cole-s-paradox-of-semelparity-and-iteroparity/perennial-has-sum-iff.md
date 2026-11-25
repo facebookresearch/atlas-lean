@@ -6,4 +6,4 @@ convergent series) if and only if `λ = b + 1`.
 
 ## Sources
 
-- Cole (1954), p. 119, eq. (23).
+- Cole (1954), p. 118, eq. (23).

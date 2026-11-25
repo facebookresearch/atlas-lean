@@ -8,4 +8,4 @@ the continuous life-table assumptions `IsLifeTable l μ b ω r` (`ω > 0`, `l(0)
 
 ## Sources
 
-- Fisher (1930), ch. II, pp. 27–29.
+- Fisher (1930), ch. II, pp. 27, 30.

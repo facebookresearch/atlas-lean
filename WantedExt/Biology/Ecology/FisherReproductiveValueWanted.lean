@@ -66,7 +66,7 @@ the continuous life-table assumptions `IsLifeTable l μ b ω r` (`ω > 0`, `l(0)
 `∫_0^∞ e^{-rx} l(x) b(x) dx = 1`), we have `v(0) = 1`, and for every `x > 0`,
 `v'(x) = (μ(x) + r) v(x) - b(x) v(0)`.
 
-Source: Fisher (1930), ch. II, pp. 27–29. -/
+Source: Fisher (1930), ch. II, pp. 27, 30. -/
 public theorem_wanted reproductiveValue_zero_and_hasDerivAt {l μ b : ℝ → ℝ} {ω r : ℝ}
     (h : IsLifeTable l μ b ω r) :
     reproductiveValue l b r 0 = 1 ∧
