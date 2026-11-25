@@ -34,6 +34,21 @@ public import Mathlib.AlgebraicGeometry.Morphisms.FlatRank
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
 public import MathlibExt.AlgebraicGeometry.SchemeHomOver
 
+/-!
+# Degrees of endomorphisms of relative group laws
+
+An endomorphism of a relative group law is a scheme endomorphism over the base
+that preserves the group law on points over every test scheme. Its kernel is
+the pullback of the endomorphism along the identity section, and over a field
+its degree is the rank of the kernel at the closed point when the kernel is
+finite over the base, and `0` otherwise. On a commutative law, multiplication
+by `n` is such an endomorphism.
+
+The source states the kernel and the degree for an arbitrary scheme
+endomorphism over the base; here they take an endomorphism of the law, so
+that the pullback along the identity section is a kernel.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits
@@ -95,19 +110,103 @@ theorem nsmul_one_point (G : RelativeGroupLaw R f) {T : Scheme.{u}}
   | zero => rfl
   | succ n ih => rw [nsmul_succ, ih, G.mul_one]
 
+/-- The `n`-fold sum of a point is its `n`-th power in the group of points. -/
+theorem nsmul_eq_pow (G : RelativeGroupLaw R f) {T : Scheme.{u}}
+    (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
+    letI := G.pointGroup t
+    G.nsmul t n x = x ^ n := by
+  let := G.pointGroup t
+  induction n with
+  | zero =>
+    rw [nsmul_zero, pow_zero]
+    rfl
+  | succ n ih =>
+    rw [nsmul_succ, ih, pow_succ]
+    rfl
+
+/-- On a commutative relative group law, the `n`-fold sum of a product of
+points is the product of their `n`-fold sums. -/
+theorem IsCommutative.nsmul_mul {G : RelativeGroupLaw R f} (hc : G.IsCommutative)
+    {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ)
+    (x y : Over.mk t ⟶ Over.mk f) :
+    G.nsmul t n (G.mul t x y) = G.mul t (G.nsmul t n x) (G.nsmul t n y) := by
+  let := G.pointCommGroup hc t
+  simp only [G.nsmul_eq_pow]
+  exact mul_pow x y n
+
+/-- The `n`-fold sum commutes with base change of points along a morphism of
+test schemes over the base. -/
+theorem homMk_comp_nsmul (G : RelativeGroupLaw R f) {T T' : Scheme.{u}}
+    (t : T ⟶ Spec (CommRingCat.of R)) (t' : T' ⟶ Spec (CommRingCat.of R))
+    (ψ : T' ⟶ T) (hψ : ψ ≫ t = t') (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
+    Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ G.nsmul t n x =
+      G.nsmul t' n (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ x) := by
+  induction n with
+  | zero => exact G.one_natural t t' ψ hψ
+  | succ n ih => rw [nsmul_succ, nsmul_succ, G.mul_natural, ih]
+
 /-- The identity endomorphism of `A` over the base, as a point of the
 relative group law over the base itself. -/
 noncomputable def idPoint : SchemeHomOver f f :=
   Over.homMk (𝟙 A) (Category.id_comp f)
 
-/-- The identity endomorphism over the base. -/
-noncomputable def idEnd : SchemeHomOver f f :=
-  idPoint
+@[simp]
+theorem comp_idPoint {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of R)}
+    (x : Over.mk t ⟶ Over.mk f) : x ≫ idPoint = x :=
+  Over.OverMorphism.ext (by simp [idPoint])
 
-theorem idEnd_left : (idEnd (f := f)).left = 𝟙 A :=
+/-- Composing a point with the `n`-fold sum of the universal point gives the
+`n`-fold sum of the point. -/
+theorem comp_nsmul_idPoint (G : RelativeGroupLaw R f) {T : Scheme.{u}}
+    (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
+    x ≫ G.nsmul f n idPoint = G.nsmul t n x := by
+  have h := G.homMk_comp_nsmul f t x.left (Over.w x) n idPoint
+  have hx : Over.homMk (U := Over.mk t) (V := Over.mk f) x.left (Over.w x) = x :=
+    Over.OverMorphism.ext rfl
+  rwa [comp_idPoint, hx] at h
+
+/-- An endomorphism of a relative group law: a scheme endomorphism over the
+base whose action on points over every test scheme preserves the group law. -/
+@[ext]
+structure End (G : RelativeGroupLaw R f) where
+  /-- The underlying scheme endomorphism over the base. -/
+  hom : SchemeHomOver f f
+  /-- Composition with the endomorphism preserves the product of points. -/
+  map_mul : ∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
+    (x y : Over.mk t ⟶ Over.mk f), G.mul t x y ≫ hom = G.mul t (x ≫ hom) (y ≫ hom)
+
+/-- An endomorphism of a relative group law fixes the identity point. -/
+theorem End.map_one {G : RelativeGroupLaw R f} (β : G.End) {T : Scheme.{u}}
+    (t : T ⟶ Spec (CommRingCat.of R)) : G.one t ≫ β.hom = G.one t := by
+  let := G.pointGroup t
+  refine mul_left_cancel (a := G.one t ≫ β.hom) (c := 1) ?_
+  change G.mul t (G.one t ≫ β.hom) (G.one t ≫ β.hom) = G.mul t (G.one t ≫ β.hom) (G.one t)
+  rw [← β.map_mul, G.one_mul, G.mul_one]
+
+/-- The identity endomorphism of a relative group law. -/
+noncomputable def idEnd (G : RelativeGroupLaw R f) : G.End where
+  hom := idPoint
+  map_mul t x y := by simp only [comp_idPoint]
+
+theorem idEnd_left (G : RelativeGroupLaw R f) : G.idEnd.hom.left = 𝟙 A :=
   rfl
 
-/-- Multiplication by `n` as a scheme endomorphism over the base. -/
+/-- Multiplication by `n` on a commutative relative group law, as an
+endomorphism of the law. -/
+noncomputable def nsmulEnd (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    G.End where
+  hom := G.nsmul f n idPoint
+  map_mul t x y := by
+    simp only [comp_nsmul_idPoint]
+    exact hc.nsmul_mul t n x y
+
+@[simp]
+theorem nsmulEnd_hom (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    (G.nsmulEnd hc n).hom = G.nsmul f n idPoint :=
+  rfl
+
+/-- Multiplication by `n` as a scheme endomorphism over the base. On a
+commutative law it underlies the endomorphism `nsmulEnd`. -/
 noncomputable def schemeNsmul (G : RelativeGroupLaw R f) (n : ℕ) : A ⟶ A :=
   (G.nsmul f n idPoint).left
 
@@ -115,70 +214,85 @@ theorem schemeNsmul_comp (G : RelativeGroupLaw R f) (n : ℕ) :
     G.schemeNsmul n ≫ f = f :=
   Over.w (G.nsmul f n idPoint)
 
-/-- The scheme-theoretic kernel of multiplication by `n`: the pullback of
-multiplication by `n` along the identity section. -/
-noncomputable def schemeKer (G : RelativeGroupLaw R f) (n : ℕ) : Scheme.{u} :=
-  pullback (G.schemeNsmul n) (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+theorem nsmulEnd_hom_left (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    (G.nsmulEnd hc n).hom.left = G.schemeNsmul n :=
+  rfl
+
+/-- The scheme-theoretic kernel of multiplication by `n` on a commutative
+relative group law: the pullback of multiplication by `n` along the identity
+section. -/
+noncomputable def schemeKer (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    Scheme.{u} :=
+  pullback (G.nsmulEnd hc n).hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
 
 /-- The structure morphism of the kernel of multiplication by `n`. -/
-noncomputable def schemeKerStr (G : RelativeGroupLaw R f) (n : ℕ) :
-    G.schemeKer n ⟶ Spec (CommRingCat.of R) :=
-  pullback.snd (G.schemeNsmul n) (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+noncomputable def schemeKerStr (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    G.schemeKer hc n ⟶ Spec (CommRingCat.of R) :=
+  pullback.snd (G.nsmulEnd hc n).hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+/-- The kernel of an endomorphism of a relative group law: the pullback of
+the endomorphism along the identity section. -/
+noncomputable def endKer (G : RelativeGroupLaw R f) (β : G.End) : Scheme.{u} :=
+  pullback β.hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+/-- The structure morphism of the kernel of an endomorphism. -/
+noncomputable def endKerStr (G : RelativeGroupLaw R f) (β : G.End) :
+    G.endKer β ⟶ Spec (CommRingCat.of R) :=
+  pullback.snd β.hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+/-- The inclusion of the kernel of an endomorphism into `A`. -/
+noncomputable def endKerι (G : RelativeGroupLaw R f) (β : G.End) :
+    G.endKer β ⟶ A :=
+  pullback.fst β.hom.left (G.one (𝟙 (Spec (CommRingCat.of R)))).left
+
+theorem endKerι_comp (G : RelativeGroupLaw R f) (β : G.End) :
+    G.endKerι β ≫ β.hom.left =
+      G.endKerStr β ≫ (G.one (𝟙 (Spec (CommRingCat.of R)))).left :=
+  pullback.condition
+
+/-- The kernel of multiplication by `n`, as an endomorphism, is `schemeKer`. -/
+theorem endKer_nsmulEnd (G : RelativeGroupLaw R f) (hc : G.IsCommutative) (n : ℕ) :
+    G.endKer (G.nsmulEnd hc n) = G.schemeKer hc n :=
+  rfl
+
+instance isIso_endKerStr_idEnd (G : RelativeGroupLaw R f) :
+    IsIso (G.endKerStr G.idEnd) := by
+  change IsIso (pullback.snd (𝟙 A) (G.one (𝟙 (Spec (CommRingCat.of R)))).left)
+  infer_instance
 
 section Field
 
 variable {K : Type u} [Field K] {B : Scheme.{u}} {g : B ⟶ Spec (CommRingCat.of K)}
 
-/-- The kernel scheme of a scheme endomorphism over the base: the pullback
-of the endomorphism along the identity section. -/
-noncomputable def endKer (G : RelativeGroupLaw K g) (β : SchemeHomOver g g) : Scheme.{u} :=
-  pullback β.left (G.one (𝟙 (Spec (CommRingCat.of K)))).left
-
-/-- The structure morphism of the kernel of a scheme endomorphism. -/
-noncomputable def endKerStr (G : RelativeGroupLaw K g) (β : SchemeHomOver g g) :
-    G.endKer β ⟶ Spec (CommRingCat.of K) :=
-  pullback.snd β.left (G.one (𝟙 (Spec (CommRingCat.of K)))).left
-
-/-- The inclusion of the kernel of a scheme endomorphism into `B`. -/
-noncomputable def endKerι (G : RelativeGroupLaw K g) (β : SchemeHomOver g g) :
-    G.endKer β ⟶ B :=
-  pullback.fst β.left (G.one (𝟙 (Spec (CommRingCat.of K)))).left
-
-theorem endKerι_comp (G : RelativeGroupLaw K g) (β : SchemeHomOver g g) :
-    G.endKerι β ≫ β.left =
-      G.endKerStr β ≫ (G.one (𝟙 (Spec (CommRingCat.of K)))).left :=
-  pullback.condition
-
-/-- The degree of a scheme endomorphism of a relative group law over a
-field: the rank at the closed point of its kernel when the kernel is
-finite over the base, and `0` otherwise. -/
-noncomputable def endDegree (G : RelativeGroupLaw K g) (β : SchemeHomOver g g) :
-    ℕ := by
+/-- The degree of an endomorphism of a relative group law over a field: the
+rank at the closed point of its kernel when the kernel is finite over the
+base, and `0` otherwise. -/
+noncomputable def endDegree (G : RelativeGroupLaw K g) (β : G.End) : ℕ := by
   classical
   exact if IsFinite (G.endKerStr β) then
     (G.endKerStr β).finrank (IsLocalRing.closedPoint K) else 0
 
-theorem endDegree_of_isFinite (G : RelativeGroupLaw K g) (β : SchemeHomOver g g)
+theorem endDegree_of_isFinite (G : RelativeGroupLaw K g) (β : G.End)
     [h : IsFinite (G.endKerStr β)] :
     G.endDegree β = (G.endKerStr β).finrank (IsLocalRing.closedPoint K) := by
-  rw [endDegree, if_pos h]
+  rw [endDegree, ite_eq_left h]
 
-theorem endDegree_of_not_isFinite (G : RelativeGroupLaw K g) (β : SchemeHomOver g g)
+theorem endDegree_of_not_isFinite (G : RelativeGroupLaw K g) (β : G.End)
     (h : ¬ IsFinite (G.endKerStr β)) : G.endDegree β = 0 := by
-  rw [endDegree, if_neg h]
+  rw [endDegree, ite_eq_right h]
 
-theorem endKer_nsmul_idPoint (G : RelativeGroupLaw K g) (n : ℕ) :
-    G.endKer (G.nsmul g n idPoint) = G.schemeKer n :=
-  rfl
-
-instance isIso_endKerStr_idEnd (G : RelativeGroupLaw K g) :
-    IsIso (G.endKerStr (idEnd (f := g))) := by
-  change IsIso (pullback.snd (𝟙 B) (G.one (𝟙 (Spec (CommRingCat.of K)))).left)
-  infer_instance
+/-- When the kernel of multiplication by `n` is finite over the base, the
+degree of multiplication by `n` is the rank of that kernel at the closed
+point. -/
+theorem endDegree_nsmulEnd (G : RelativeGroupLaw K g) (hc : G.IsCommutative) (n : ℕ)
+    [IsFinite (G.schemeKerStr hc n)] :
+    G.endDegree (G.nsmulEnd hc n) =
+      (G.schemeKerStr hc n).finrank (IsLocalRing.closedPoint K) :=
+  have : IsFinite (G.endKerStr (G.nsmulEnd hc n)) := ‹IsFinite (G.schemeKerStr hc n)›
+  G.endDegree_of_isFinite (G.nsmulEnd hc n)
 
 theorem endDegree_idEnd (G : RelativeGroupLaw K g) :
-    G.endDegree (idEnd (f := g)) = 1 := by
-  haveI : IsFinite (G.endKerStr (idEnd (f := g))) := inferInstance
+    G.endDegree G.idEnd = 1 := by
   rw [endDegree_of_isFinite]
   exact congrFun (Scheme.Hom.finrank_eq_one_of_isIso _) _
 

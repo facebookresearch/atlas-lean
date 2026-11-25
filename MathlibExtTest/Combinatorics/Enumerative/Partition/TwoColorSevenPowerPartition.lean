@@ -1,0 +1,35 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import MathlibExt.Combinatorics.Enumerative.Partition.TwoColorSevenPowerPartition
+
+open MetaMathlibExt
+
+-- A ceiling in the exponent would incorrectly require seven to divide this entry.
+example : garvanM 2 1 = 10 ∧ ¬ 7 ∣ garvanM 2 1 := by decide
+
+-- A negative numerator occurs even at a nonzero entry.
+example : garvanM 7 2 = 1 := by decide
+
+-- The table ends at column fourteen, and the recurrence starts in column three.
+example : garvanM 7 14 = 7 ^ 20 ∧ garvanM 7 15 = 0 ∧ garvanM 8 2 = 0 := by decide
+
+-- All three shifted bounds apply to nonzero entries beyond the initial rows.
+example : 7 ^ 4 ∣ garvanM 8 5 ∧ 7 ^ 4 ∣ garvanM 9 5 ∧ 7 ^ 3 ∣ garvanM 10 5 :=
+  (seven_pow_dvd_garvanM 2 3 (by decide) (by decide)).2
+
+-- At the first allowed multiple the second color gives one extra partition.
+example : twoColorMultiplePartitionCount 1 1 = 2 := by
+  simp [twoColorMultiplePartitionCount, Finset.sum_range_succ]
+
+-- On their first recursive step the odd and even vectors use different rows of the matrix.
+example :
+    garvanYOdd 1 2 1 = 7 * garvanM 5 2 + 49 * garvanM 9 3 ∧
+    garvanYEven 1 2 1 = 7 * garvanM 4 2 + 49 * garvanM 8 3 := by decide

@@ -59,42 +59,59 @@ def edgeRestriction (f : MvPolynomial (Fin 2) k)
       MvPolynomial.monomial e (f.coeff e)
     else 0
 
-/-- Membership characterization for the Newton support. -/
+/-- **Membership in the Newton support.** Let $f$ be a polynomial in two variables over a
+commutative semiring $k$. A point $x \in \mathbb{R}^2$ lies in the Newton support of $f$ if and
+only if $x$ is the exponent vector $e \in \mathbb{N}^2$ of some monomial with nonzero coefficient
+in $f$, viewed as a point of $\mathbb{R}^2$. -/
 theorem mem_newtonSupport {f : MvPolynomial (Fin 2) k}
     {x : Fin 2 → Real} :
     x ∈ newtonSupport f ↔ ∃ e ∈ f.support, exponentToReal e = x := by
   simp [newtonSupport]
 
-/-- Newton support of zero is empty. -/
+/-- **The Newton support of the zero polynomial is empty.** For every commutative semiring $k$, the
+Newton support of the zero polynomial in two variables over $k$ is the empty subset of
+$\mathbb{R}^2$. -/
 @[simp]
 theorem newtonSupport_zero :
     newtonSupport (0 : MvPolynomial (Fin 2) k) = ∅ := by
   simp [newtonSupport]
 
-/-- Newton polygon of zero is empty. -/
+/-- **The Newton polygon of the zero polynomial is empty.** For every commutative semiring $k$, the
+Newton polygon of the zero polynomial in two variables over $k$ is the empty subset of
+$\mathbb{R}^2$. -/
 @[simp]
 theorem newtonPolygon_zero :
     newtonPolygon (0 : MvPolynomial (Fin 2) k) = ∅ := by
   simp [newtonPolygon, newtonSupport_zero]
 
-/-- Support is contained in its convex hull polygon. -/
+/-- **The Newton support lies in the Newton polygon.** For every polynomial $f$ in two variables
+over a commutative semiring $k$, the Newton support of $f$ is contained in the Newton polygon of
+$f$, the convex hull of the Newton support in $\mathbb{R}^2$. -/
 theorem newtonSupport_subset_newtonPolygon (f : MvPolynomial (Fin 2) k) :
     newtonSupport f ⊆ newtonPolygon f :=
   subset_convexHull ℝ _
 
-/-- Interior is contained in the polygon. -/
+/-- **The interior of the Newton polygon lies in the polygon.** For every polynomial $f$ in two
+variables over a commutative semiring $k$, the interior of the Newton polygon of $f$ in
+$\mathbb{R}^2$ is contained in the Newton polygon of $f$. -/
 theorem newtonPolygonInterior_subset_newtonPolygon
     (f : MvPolynomial (Fin 2) k) :
     newtonPolygonInterior f ⊆ newtonPolygon f :=
   interior_subset
 
-/-- Restriction to the empty set vanishes. -/
+/-- **Edge restriction to the empty set.** For every polynomial $f$ in two variables over a
+commutative semiring $k$, the restriction of $f$ to the empty set, that is, the sum of the terms
+of $f$ whose exponent vector, viewed as a point of $\mathbb{R}^2$, lies in $\emptyset$, is the
+zero polynomial. -/
 @[simp]
 theorem edgeRestriction_empty (f : MvPolynomial (Fin 2) k) :
     edgeRestriction f ∅ = 0 := by
   simp [edgeRestriction]
 
-/-- Restriction to the universal set recovers `f`. -/
+/-- **Edge restriction to the whole plane.** For every polynomial $f$ in two variables over a
+commutative semiring $k$, the restriction of $f$ to all of $\mathbb{R}^2$, that is, the sum of the
+terms of $f$ whose exponent vector, viewed as a point of $\mathbb{R}^2$, lies in $\mathbb{R}^2$, is
+$f$ itself. -/
 @[simp]
 theorem edgeRestriction_univ (f : MvPolynomial (Fin 2) k) :
     edgeRestriction f Set.univ = f := by

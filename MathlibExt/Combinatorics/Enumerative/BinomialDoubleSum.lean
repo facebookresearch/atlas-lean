@@ -240,18 +240,20 @@ private theorem S_add_two (n : ℕ) :
     rw [hci, hfib]
 
 /--
-The binomial double sum equals a power of two minus a Fibonacci number.
+**A binomial double sum equal to a power of two minus a Fibonacci number.** For every natural
+number $n$,
+
+$$\sum_{k=0}^{\lfloor n/2 \rfloor} \sum_{q=0}^{n-2k} \binom{n-k}{q} = 2^{n+1} - F_{n+2},$$
+
+where $F_m$ is the $m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$.
+
+Proves `Wanted` entry `binomial_double_sum_eq_pow_sub_fib`.
 
 Source: Denis Neiter and Amsha Proag, "Links Between Sums Over Paths in
 Bernoulli's Triangles and the Fibonacci Numbers," Journal of Integer
 Sequences 19 (2016), Article 16.8.3, Theorem (label theoremS2),
 lines 247–252,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Proag/proag3.tex
-
-`Finset.range (n / 2 + 1)` encodes the source sum over `k = 0..⌊n/2⌋`; the
-inner `Finset.range (n - 2*k + 1)` sums `q = 0..n-2k`; `Nat.fib` is the
-source's `F`.
-Proves `Wanted` entry `binomial_double_sum_eq_pow_sub_fib`.
 -/
 theorem binomial_double_sum_eq_pow_sub_fib (n : ℕ) :
     (∑ k ∈ Finset.range (n / 2 + 1),

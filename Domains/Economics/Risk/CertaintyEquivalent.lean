@@ -42,7 +42,7 @@ namespace MathlibExt.Economics.Risk
 
 open Convexity MathlibExt.Economics.ExpectedUtility
 
-/-- `c` is a certainty equivalent on the interval `I` of the finite monetary lottery that pays
+/-- `c` is a certainty equivalent on the set `I` of the finite monetary lottery that pays
 `z x` in state `x` with probability `p.weights x`, for the Bernoulli utility `u`: the sure amount
 `c ∈ I` has the same utility as the lottery, `u c = E_p[u ∘ z]`. -/
 def IsCertaintyEquivalent {X : Type*} [Fintype X] (I : Set ℝ) (u : ℝ → ℝ) (z : X → ℝ)

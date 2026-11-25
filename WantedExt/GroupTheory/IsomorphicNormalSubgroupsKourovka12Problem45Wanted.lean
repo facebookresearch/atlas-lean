@@ -35,8 +35,10 @@ Free of infinite rank means isomorphic to the free group on an infinite type; si
 are abstract.
 -/
 
-/-- Kourovka 12.45 (P. Hall): a nontrivial group that is isomorphic to each of its nontrivial
-normal subgroups is free of infinite rank, simple, or infinite cyclic. -/
+/-- **Hall's question on groups isomorphic to their nontrivial normal subgroups (Kourovka 12.45).**
+The statement that every nontrivial group that is isomorphic to each of its nontrivial normal
+subgroups is free of infinite rank (isomorphic to the free group on an infinite set), simple, or
+infinite cyclic. -/
 def isoToNormalSubgroupsFreeSimpleOrCyclic : Prop :=
   ∀ (G : Type) [Group G], Nontrivial G →
     (∀ N : Subgroup G, N.Normal → N ≠ ⊥ → Nonempty (N ≃* G)) →
@@ -44,9 +46,13 @@ def isoToNormalSubgroupsFreeSimpleOrCyclic : Prop :=
       (IsCyclic G ∧ Infinite G)
 
 /--
-Resolved false: the Kourovka Archive answers 12.45 No (V. N. Obraztsov, 1997): some nontrivial group
-isomorphic to each of its nontrivial normal subgroups is neither free of infinite rank, nor simple,
-nor infinite cyclic. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**A group isomorphic to its nontrivial normal subgroups need not be free of infinite rank, simple
+or infinite cyclic.** There is a nontrivial group $G$ that is isomorphic to each of its nontrivial
+normal subgroups and is neither free of infinite rank (isomorphic to the free group on an infinite
+set), nor simple, nor infinite cyclic. That is, the answer to Kourovka Problem 12.45 is negative
+(V. N. Obraztsov, 1997).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 12.45 (P. Hall; J. C. Lennox); resolution: V. N. Obraztsov, Proc. London Math. Soc. (3) 75
 (1997), 79-98, Kourovka Archive, Problem 12.45: No.

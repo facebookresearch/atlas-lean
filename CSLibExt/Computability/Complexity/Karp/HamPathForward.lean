@@ -36,7 +36,7 @@ every clause `j` with `c j = i` between the two vertices of the pair of `j`.
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 open scoped List
 
 /-! ### The path -/

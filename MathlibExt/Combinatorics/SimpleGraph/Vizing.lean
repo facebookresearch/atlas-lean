@@ -1175,10 +1175,14 @@ private theorem exists_isProperSym2Coloring_of_degree_lt
   exact key _ G rfl hdeg
 
 /--
-Every finite simple graph has edge chromatic number at most max degree plus one.
-Source: V. G. Vizing, Diskret. Analiz 3 (1964), 25-30.
+**Vizing's theorem.** Let $G$ be a simple graph on a finite vertex set and let $\Delta$ be its
+maximum degree. Then $G$ has a proper edge coloring with $\Delta + 1$ colors: there is an
+assignment of colors from $\{0, 1, \dots, \Delta\}$ to the edges of $G$ such that any two
+distinct edges sharing a vertex receive different colors.
 
 Proves `Wanted` entry `vizing`.
+
+Source: V. G. Vizing, Diskret. Analiz 3 (1964), 25-30.
 -/
 theorem vizing :
     ∀ {V : Type*} (G : _root_.SimpleGraph V) [Fintype V] [DecidableRel G.Adj],
