@@ -17,7 +17,7 @@ Section 4, Theorem 3 (Existence of a Winning Preference for second-order Copelan
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Sets
 public import MathlibExt.Computability.BinaryNatEncoding

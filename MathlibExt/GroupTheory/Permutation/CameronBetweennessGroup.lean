@@ -302,8 +302,13 @@ private lemma smul_eq_of_map (k : ℕ) (x y : ↥(Set.powersetCard ℚ k))
     rw [Equiv.ofBijective_apply, hmap j]
     exact hj
 
-/-- The betweenness automorphism group of `ℚ` is closed in the pointwise topology and
-highly homogeneous (one orbit on `k`-sets for all `k`).
+/-- **The betweenness group of the rationals is closed and highly homogeneous.** Let $G$ be the
+group of permutations $\sigma$ of $\mathbb{Q}$ preserving strict betweenness in both directions:
+for all $a, b, c \in \mathbb{Q}$, $b$ lies strictly between $a$ and $c$ (that is, $a < b < c$ or
+$c < b < a$) if and only if $\sigma(b)$ lies strictly between $\sigma(a)$ and $\sigma(c)$. Then
+$G$ is closed in the topology of pointwise convergence on the permutations of $\mathbb{Q}$, where
+$\mathbb{Q}$ carries the discrete topology, and $G$ is highly homogeneous: for every natural
+number $k$ it has a single orbit on the $k$-element subsets of $\mathbb{Q}$.
 
 Source: Daniele A. Gewurz and Francesca Merola, "Sequences realized as Parker vectors
 of oligomorphic permutation groups," Journal of Integer Sequences 6,

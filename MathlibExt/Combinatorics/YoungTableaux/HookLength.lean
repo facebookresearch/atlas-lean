@@ -24,8 +24,8 @@ For a Young diagram `λ` (Mathlib's `YoungDiagram`, cells `(i, j)` indexed from 
 * `finite_standardYoungTableau`: there are finitely many such tableaux, so `f^λ` is their actual
   number.
 
-The hook length formula and `∑_{λ ⊢ n} (f^λ)² = n!` are recorded in
-`WantedExt.Combinatorics.YoungTableaux.HookLengthWanted`.
+The hook length formula is recorded in `WantedExt.Combinatorics.YoungTableaux.HookLengthWanted`.
+The sum of squares identity is proved in `MathlibExt.Combinatorics.YoungTableaux.SumSYTCountSq`.
 Source: Stanley, *Topics in Algebraic Combinatorics*, author's draft of
 1 February 2013 (https://math.mit.edu/~rstan/algcomb/algcomb.pdf), Chapter 8; published as
 *Algebraic Combinatorics: Walks, Trees, Tableaux, and More* (Springer, 2013).

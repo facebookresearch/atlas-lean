@@ -23,16 +23,16 @@ excluded ball.
 
 ## ii. Key results
 
-- `OrbitalPerturbations.norm_inverseSquareField`: away from the origin
-  the field has magnitude `μ / ‖r‖^2`.
-- `OrbitalPerturbations.inverseSquareField_lipschitz_exterior`: outside
-  the ball of radius `rmin > 0`, the field is Lipschitz with the
-  conservative constant `4μ / rmin^3`.
-- `OrbitalPerturbations.inverseSquareField_lipschitzOnWith`: the same
-  bound in Mathlib's bundled `LipschitzOnWith` form on
+- `OrbitalPerturbations.norm_inverseSquareField`: for `μ ≥ 0`, away from
+  the origin the field has magnitude `μ / ‖r‖^2`.
+- `OrbitalPerturbations.inverseSquareField_lipschitz_exterior`: for
+  `μ ≥ 0`, outside the ball of radius `rmin > 0`, the field is Lipschitz
+  with the conservative constant `4μ / rmin^3`.
+- `OrbitalPerturbations.inverseSquareField_lipschitzOnWith`: for `μ ≥ 0`
+  and `rmin > 0`, the same bound in Mathlib's bundled `LipschitzOnWith` form on
   `{r | rmin ≤ ‖r‖}`, for downstream Lipschitz API consumers.
-- `OrbitalPerturbations.j2Accel_norm_le`: the J2 perturbing
-  acceleration is bounded by `3 * |J2| * μ * R^2 / rmin^4` outside
+- `OrbitalPerturbations.j2Accel_norm_le`: for `μ > 0` and `rmin > 0`, the
+  J2 perturbing acceleration is bounded by `3 * |J2| * μ * R^2 / rmin^4` outside
   the ball of radius `rmin`, from the normalized squared magnitude
   `5u^2 - 2u + 1 ≤ 4` for `u = z^2 / ‖r‖^2 ∈ [0, 1]`.
 
@@ -62,8 +62,8 @@ namespace OrbitalPerturbations
 
 /-- The inverse-square field `μ • r / ‖r‖^3` (outward radial form) on a real inner-product space, as the scalar multiple
 `(μ / ‖r‖^3) • r`. It is intended for points away from the origin; at
-`r = 0` the scalar factor is Lean's junk value for division by zero and
-the field value is `0`. For `μ > 0` this field points parallel to
+`r = 0` its value is `0` (with the convention `x / 0 = 0` the scalar
+factor is `0`). For `μ > 0` this field points parallel to
 `r` (outward from the origin); the gravitational acceleration toward
 an attracting body at the origin is its negative,
 `-(μ / ‖r‖^3) • r`. -/
@@ -71,7 +71,7 @@ noncomputable def inverseSquareField {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] (μ : ℝ) (r : E) : E :=
   (μ / ‖r‖ ^ 3) • r
 
-/-- Away from the origin, the inverse-square field has magnitude
+/-- For `μ ≥ 0`, away from the origin the inverse-square field has magnitude
 `μ / ‖r‖^2`. -/
 lemma norm_inverseSquareField {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] {μ : ℝ} (hμ : 0 ≤ μ) {r : E} (hr : r ≠ 0) :
@@ -84,7 +84,7 @@ lemma norm_inverseSquareField {E : Type*} [NormedAddCommGroup E]
   rw [norm_smul, Real.norm_of_nonneg hnn]
   field_simp
 
-/-- Exterior Lipschitz bound for the inverse-square field: outside the
+/-- Exterior Lipschitz bound for the inverse-square field: for `μ ≥ 0`, outside the
 excluded ball of radius `rmin > 0`, the field is Lipschitz with constant
 `4μ / rmin^3`. The constant is conservative, not claimed sharp, and the
 estimate is direct algebra from the reverse triangle inequality, with no
@@ -198,8 +198,8 @@ lemma inverseSquareField_lipschitz_exterior {E : Type*}
           add_le_add hterm1 hterm2
       _ = (4 * μ / rmin ^ 3) * ‖r - s‖ := by ring
 
-/-- The exterior Lipschitz bound in Mathlib's standard bundled form:
-the inverse-square field is Lipschitz on the exterior set
+/-- The exterior Lipschitz bound in Mathlib's standard bundled form: for `μ ≥ 0`
+and `rmin > 0`, the inverse-square field is Lipschitz on the exterior set
 `{r | rmin ≤ ‖r‖}` with constant `4μ / rmin^3`. This is the form
 downstream `LipschitzOnWith` API consumes; the pointwise norm form is
 `inverseSquareField_lipschitz_exterior`. -/
@@ -224,15 +224,14 @@ coordinate `z = r 2` and `u = z^2 / ‖r‖^2`, and `ẑ = single 2 z` the
 axial projection of `r`:
 `a = -(3 * J2 * μ * R^2 / (2 * ‖r‖^5)) * ((1 - 5u) • r + 2 • ẑ)`.
 
-Convention: this is the acceleration from the geopotential term
-`-(μ / ‖r‖) * J2 * (R / ‖r‖)^2 * P₂(z / ‖r‖)` with Legendre
-polynomial `P₂`, so positive `J2` is the oblate case (Earth:
-`J2 ≈ 1.083e-3`); equivalently the negative of the gradient of the
-full potential's `J2` part with the opposite geodetic sign
-convention is not used. This matches the component formulas in
-Vallado, *Fundamentals of Astrodynamics and Applications*. At
-`r = 0` the scalar factor is Lean's junk value; the field is read
-away from the origin. -/
+Convention: away from the origin this is the gradient of the geopotential
+term `-(μ / ‖r‖) * J2 * (R / ‖r‖)^2 * P₂(z / ‖r‖)` with Legendre
+polynomial `P₂` (geodesy sign convention: the acceleration is the gradient
+of the potential), so positive `J2` is the oblate case (Earth:
+`J2 ≈ 1.083e-3`). This matches the component formulas in
+Vallado, *Fundamentals of Astrodynamics and Applications*. The field is
+read away from the origin; at `r = 0` its value is `0` (with the
+convention `x / 0 = 0` the scalar factor is `0`). -/
 noncomputable def j2Accel (μ R J2 : ℝ) (r : EuclideanSpace ℝ (Fin 3)) :
     EuclideanSpace ℝ (Fin 3) :=
   -(3 * J2 * μ * R ^ 2 / (2 * ‖r‖ ^ 5)) •

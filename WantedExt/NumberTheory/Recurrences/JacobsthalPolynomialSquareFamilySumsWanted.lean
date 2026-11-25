@@ -25,7 +25,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
-public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.Recurrences.JacobsthalPolynomialSquareFamilySums
 
 namespace MetaMathlibExt
 
@@ -39,17 +39,25 @@ local notation "𝔣" => generalizedFibonacciPolynomial 0 1 X 1
 /-- The Lucas polynomials `l_n(x)`. -/
 local notation "𝔩" => generalizedFibonacciPolynomial 2 X X 1
 
-/-- The Jacobsthal polynomials `J_n(x)`. -/
-local notation "𝔍" => generalizedFibonacciPolynomial 0 1 1 X
+/-- **Reciprocal sums of shifted squares of Fibonacci and Lucas polynomials (Koshy–Gao,
+Theorem 2.1).** Let $f_n(x)$ and $l_n(x)$ be the Fibonacci and Lucas polynomials, given by
+$z_{n+2} = x z_{n+1} + z_n$ with initial values $f_0 = 0$, $f_1 = 1$ and $l_0 = 2$, $l_1 = x$.
+Let $x > 0$ be real, let $k$, $p$, $r$, $t$ be positive integers with $t \le 2p$, and let
+$\alpha = (x + \sqrt{x^2 + 4})/2$. Then
+$$
+\sum_{n=0}^{\infty} \frac{(-1)^{tk} f_r(x) f_{2pk}(x)}
+{f_{(2pn+p+t)k}(x)^2 - (-1)^{tk} f_{pk}(x)^2} =
+\frac{f_{tk+r}(x)}{f_{tk}(x)} - \alpha^r
+$$
+and
+$$
+\sum_{n=0}^{\infty} \frac{(-1)^{tk+1} (x^2 + 4) f_r(x) f_{2pk}(x)}
+{l_{(2pn+p+t)k}(x)^2 + (-1)^{tk} (x^2 + 4) f_{pk}(x)^2} =
+\frac{l_{tk+r}(x)}{l_{tk}(x)} - \alpha^r.
+$$
 
-/-- The Jacobsthal-Lucas polynomials `j_n(x)`. -/
-local notation "𝔧" => generalizedFibonacciPolynomial 2 1 1 X
-
-/-- Theorem 2.1 (quoted from Koshy): for real `x > 0` and positive integers `k`, `p`, `r`, `t`
-with `t ≤ 2p`, `α = (x + √(x² + 4))/2` and `g ∈ {f, l}`,
-`Σ_{n≥1} (-1)^{tk} μ ν* f_r f_{2pk} / (g_{(2pn+t-p)k}² - (-1)^{tk} μ ν* f_{pk}²)
-  = g_{tk+r}/g_{tk} - α^r`, where `μ ν* = 1` for `g = f` and `μ ν* = -(x² + 4)` for `g = l`
-(the two cases as a conjunction; summation index shifted to start at `0`).
+In the source the sums run over $n \ge 1$, with $(2pn + t - p)k$ in place of $(2pn + p + t)k$;
+here the summation index is shifted to start at $n = 0$.
 
 Source: Thomas Koshy and Zhenguang Gao, *Sums Involving a Family of Jacobsthal Polynomial
 Squares*, The Fibonacci Quarterly 62 (2024), Article koshy12202023,
@@ -63,29 +71,6 @@ public theorem_wanted tsum_gibonacciPoly_sq_sub_family {x : ℝ} (hx : 0 < x) {k
         (aeval x (𝔩 ((2 * p * n + p + t) * k)) ^ 2 +
           (-1) ^ (t * k) * (x ^ 2 + 4) * aeval x (𝔣 (p * k)) ^ 2) =
       aeval x (𝔩 (t * k + r)) / aeval x (𝔩 (t * k)) - ((x + √(x ^ 2 + 4)) / 2) ^ r
-
-/-- Theorem 3.1: for real `x > 0` and positive integers `k`, `p`, `r`, `t` with `t ≤ 2p`,
-`w = (1 + √(4x + 1))/2` and `c ∈ {J, j}`,
-`Σ_{n≥1} (-1)^{tk} D* ν* x^{(2pn+t-2p)k} J_r J_{2pk} /
-  (c_{(2pn+t-p)k}² - (-1)^{tk} D* ν* x^{(2pn+t-2p)k} J_{pk}²) = c_{tk+r}/c_{tk} - w^r`, where
-`D* ν* = 1` for `c = J` and `D* ν* = -(4x + 1)` for `c = j` (the two cases as a conjunction;
-summation index shifted to start at `0`).
-
-Source: Thomas Koshy and Zhenguang Gao, *Sums Involving a Family of Jacobsthal Polynomial
-Squares*, The Fibonacci Quarterly 62 (2024), Article koshy12202023,
-Theorem 3.1 (`fq-2024-koshy12202023-thm-3.1`). -/
-public theorem_wanted tsum_jacobsthalPoly_sq_sub_family {x : ℝ} (hx : 0 < x) {k p r t : ℕ}
-    (hk : 0 < k) (hp : 0 < p) (hr : 0 < r) (ht₀ : 0 < t) (ht : t ≤ 2 * p) :
-    ∑' n : ℕ, (-1) ^ (t * k) * x ^ ((2 * p * n + t) * k) * aeval x (𝔍 r) *
-          aeval x (𝔍 (2 * p * k)) /
-        (aeval x (𝔍 ((2 * p * n + p + t) * k)) ^ 2 -
-          (-1) ^ (t * k) * x ^ ((2 * p * n + t) * k) * aeval x (𝔍 (p * k)) ^ 2) =
-      aeval x (𝔍 (t * k + r)) / aeval x (𝔍 (t * k)) - ((1 + √(4 * x + 1)) / 2) ^ r ∧
-    ∑' n : ℕ, (-1) ^ (t * k + 1) * (4 * x + 1) * x ^ ((2 * p * n + t) * k) * aeval x (𝔍 r) *
-          aeval x (𝔍 (2 * p * k)) /
-        (aeval x (𝔧 ((2 * p * n + p + t) * k)) ^ 2 +
-          (-1) ^ (t * k) * (4 * x + 1) * x ^ ((2 * p * n + t) * k) * aeval x (𝔍 (p * k)) ^ 2) =
-      aeval x (𝔧 (t * k + r)) / aeval x (𝔧 (t * k)) - ((1 + √(4 * x + 1)) / 2) ^ r
 
 end
 

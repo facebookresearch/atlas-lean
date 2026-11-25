@@ -25,7 +25,7 @@ example (B : Matrix (Fin 2) (Fin 3) ℂ) : (dilation B).IsHermitian := isHermiti
 example : dilation (!![1, 0] : Matrix (Fin 1) (Fin 2) ℂ) * dilation !![1, 0] =
     fromBlocks !![1] 0 0 !![1, 0; 0, 0] := by
   rw [dilation_mul_self]
-  congr 1 <;> ext i j <;> fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two]
+  congr 1 <;> ext i j <;> fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
 
 /-- Real scalars pass through the dilation of a complex matrix. -/
 example (r : ℝ) (B : Matrix (Fin 2) (Fin 2) ℂ) : dilation (r • B) = r • dilation B :=

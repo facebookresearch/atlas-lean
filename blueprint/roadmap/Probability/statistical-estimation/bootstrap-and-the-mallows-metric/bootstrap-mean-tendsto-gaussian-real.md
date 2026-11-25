@@ -15,7 +15,7 @@ Bickel and Freedman's proof: the conditional law of $\sqrt m (\mu^*_m - \mu_n)$ 
 - [Almost sure convergence of the empirical law in the Mallows metric](tendsto-wasserstein-empirical.md): statement (2.1), $F_n \to F$ in $d_2$.
 - [Mallows' contraction of normalised sums](wasserstein-two-normalized-sum-le.md): statement (2.2), $d_2(F_n^{(m)}, F^{(m)}) \le d_2(F_n, F)$.
 - [Lindeberg–Feller central limit theorem](../../central-limit-theorems/lindeberg-feller-central-limit-theorem/README.md): the ordinary central limit theorem for $F^{(m)}$, its i.i.d. special case.
-- [Convergence in $W_p$ implies weak convergence](../../../MeasureTheory/optimal-transport/wasserstein-distances/tendsto-of-tendsto-wasserstein.md): to pass from $d_2$ to weak convergence.
+- [Convergence in $W_p$ implies weak convergence](../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-convergence/tendsto-of-tendsto-wasserstein.md): to pass from $d_2$ to weak convergence.
 
 ## Sources
 

@@ -23,17 +23,27 @@ Source: <https://cs.uwaterloo.ca/journals/JIS/VOL27/Brietzke/bri3.tex>.
 
 namespace MetaMathlibExt
 
-/-- Morgan-Voyce coefficient array entry `d(n, k)`: `binom{n + k}{n - k}` for
-`k ≤ n` and `0` otherwise, giving the lower-triangular Riordan array
-`(1 / (1 - x), x / (1 - x) ^ 2)` identified as OEIS A085478.
-Source statement `jis_9df126595a4035315bd915ac`,
+/-- **Morgan–Voyce coefficients.** For natural numbers $n$ and $k$, the Morgan–Voyce coefficient
+$d(n, k)$ is the binomial coefficient $\binom{n + k}{n - k}$ if $k \le n$, and $0$ if $k > n$.
+
+These numbers form the lower-triangular Riordan array
+$\left(\frac{1}{1 - x}, \frac{x}{(1 - x)^2}\right)$, OEIS A085478.
+
+Source: statement `jis_9df126595a4035315bd915ac`,
 concept `jis_sem_455f7ec0e8ec92a0f271843b`. -/
 def morganVoyceCoeff (n k : ℕ) : ℕ :=
   if k ≤ n then (n + k).choose (n - k) else 0
 
-/-- Morgan-Voyce polynomial of index `n`: the polynomial whose coefficients are
-the entries `d(n, k)` of the Riordan array `(1 / (1 - x), x / (1 - x) ^ 2)`.
-Source statement `jis_9df126595a4035315bd915ac`,
+/-- **Morgan–Voyce polynomials.** For a semiring $R$ and a natural number $n$, the Morgan–Voyce
+polynomial of index $n$ over $R$ is
+$$b_n(x) = \sum_{k=0}^{n} d(n, k)\, x^k \in R[x],$$
+where $d(n, k) = \binom{n + k}{n - k}$ is the Morgan–Voyce coefficient, read in $R$ through the
+map from the natural numbers.
+
+The coefficients of $b_n$ form row $n$ of the Riordan array
+$\left(\frac{1}{1 - x}, \frac{x}{(1 - x)^2}\right)$, OEIS A085478.
+
+Source: statement `jis_9df126595a4035315bd915ac`,
 concept `jis_sem_455f7ec0e8ec92a0f271843b` (OEIS A085478). -/
 noncomputable def morganVoycePolynomial (R : Type*) [Semiring R] (n : ℕ) :
     Polynomial R :=

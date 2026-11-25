@@ -11,6 +11,13 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Policy gradients for softmax policies](policy-gradients-for-softmax-policies/README.md)
 - [Linear quadratic regulator](linear-quadratic-regulator/README.md)
 
+- [Multi-armed bandits](multi-armed-bandits/README.md)
+- [Asynchronous stochastic approximation: convergence by box shrinking](asynchronous-stochastic-approximation-convergence-by-box-shr.md)
+- [Generative-model sample bound (restricted, non-minimax)](generative-model-sample-bound.md)
+- [Policy gradient theorem](policy-gradient-theorem.md)
+- [Tabular Q-learning and TD(0) converge](tabular-q-learning-and-td-converge.md)
+- [Boundedness of asynchronous stochastic-approximation iterates](boundedness-of-asynchronous-stochastic-approximation-iterate.md)
+
 ## Related topics
 
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)

@@ -851,8 +851,14 @@ private theorem key_convergence
       (fun n => hmnle n n le_rfl (by omega)) (fun n => hleMx n n le_rfl (by omega))
   exact ⟨mstar, hCpos, hblim⟩
 
-/-- `binet` without the hypotheses `hlam_simple` and `hlam_dom`: a positive root `lam` of the
-characteristic polynomial already gives the asymptotics and the ratio limit. -/
+/-- **Binet asymptotics for weighted generalized Fibonacci sequences, positive-root form.**
+Let $r \ge 2$, let $A_1, \dots, A_r$ and $c_1, \dots, c_r$ be nonnegative real numbers with
+$A_r > 0$ and $c_j > 0$ for some $j$, and suppose that the indices $j$ with $A_j > 0$ have
+greatest common divisor $1$. Let $a_0, a_1, a_2, \dots$ be the real sequence with
+$a_n = c_{n+1}$ for $0 \le n < r$ and $a_n = \sum_{j=1}^{r} A_j a_{n-j}$ for $n \ge r$, and let
+$p(x) = x^r - \sum_{j=1}^{r} A_j x^{r-j}$ be its characteristic polynomial. Let $\lambda > 0$
+be a root of $p$. Then there is a constant $C > 0$ such that $a_n = C \lambda^n + o(\lambda^n)$
+as $n \to \infty$, and $a_{n+1} / a_n \to \lambda$. -/
 theorem binet_general
     (r : ℕ) (hr : 2 ≤ r)
     (A c : Fin r → ℝ)
@@ -924,14 +930,18 @@ theorem binet_general
 
 set_option linter.unusedVariables false in
 /--
-Weighted `r`-generalized Fibonacci Binet asymptotics with ratio limit: there is
-`C > 0` with `a n = C * lam ^ n + o(lam ^ n)`, and `a (n+1) / a n → lam`.
-Zero-based `a : ℕ → ℝ` corresponds to one-based `a_{n+1}`; `c`, `A : Fin r → ℝ`
-correspond to `c_{k+1}`, `A_{k+1}`; `ha_init` and `ha_rec` encode
-`a_n = c_n` for `n = 1, ..., r` and `a_n = ∑ A_k a_{n-k}` for `n > r`. The
-dominant-root assumptions (`hlam_pos`, `hlam_root`, `hlam_simple`, `hlam_dom`)
-encode the source's "dominant root, a simple positive root of the
-characteristic polynomial."
+**Binet asymptotics for weighted generalized Fibonacci sequences.** Let $r \ge 2$, let
+$A_1, \dots, A_r$ and $c_1, \dots, c_r$ be nonnegative real numbers with $A_r > 0$ and $c_j > 0$
+for some $j$, and suppose that the indices $j$ with $A_j > 0$ have greatest common divisor $1$.
+Let $a_0, a_1, a_2, \dots$ be the real sequence with $a_n = c_{n+1}$ for $0 \le n < r$ and
+$a_n = \sum_{j=1}^{r} A_j a_{n-j}$ for $n \ge r$, and let $p(x) = x^r - \sum_{j=1}^{r} A_j x^{r-j}$
+be its characteristic polynomial. Let $\lambda > 0$ be a root of $p$ that is not a root of the
+derivative $p'$, and such that every complex root $z$ of $p$ satisfies $|z| \le \lambda$, with
+$|z| = \lambda$ only for $z = \lambda$. Then there is a constant $C > 0$ such that
+$a_n = C \lambda^n + o(\lambda^n)$ as $n \to \infty$, and $a_{n+1} / a_n \to \lambda$.
+
+The source indexes the sequence from $1$; the $a_n$ here is the source's $a_{n+1}$, and $A_j$,
+$c_j$ are the source's weights and initial values.
 
 Source: Passawan Noppakaew and Thanakorn Prinyasart, "Complete Sequences of
 Weighted r-Generalized Fibonacci Powers," Journal of Integer Sequences 24
