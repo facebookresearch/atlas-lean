@@ -14,7 +14,7 @@ $D_{\mathrm{ref}}$ or $z$ is needed, reading a division by zero as $0$.
 
 In the model, $D_{\mathrm{ref}} > 0$ is the decimal reduction time at the reference temperature $T_{\mathrm{ref}}$, $z > 0$ is
 the temperature rise that divides it by ten, and $F(t)$ is the time at $T_{\mathrm{ref}}$ with the same lethal effect.
-Temperatures and $z$ are measured in one unit, and times and $D_{\mathrm{ref}}$ in one unit. Here $N$ is a concentration or
+Temperatures and $z$ share one unit, and times and $D_{\mathrm{ref}}$ share another. Here $N$ is a concentration or
 mean, not an integer count of survivors; product safety and count inference are outside this result.
 
 For every such $M$, the product $M(t)\exp\bigl(\int_0^t k(T(s))\,ds\bigr)$ has derivative zero within $[0, t_f]$, so it keeps
