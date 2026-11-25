@@ -1,4 +1,4 @@
-# Gaussian concentration with total mass M on the line
+# Gaussian concentration on the line, of total mass M for D, t > 0
 
 For real `M`, `D`, `x` and `t`, the Gaussian is
 

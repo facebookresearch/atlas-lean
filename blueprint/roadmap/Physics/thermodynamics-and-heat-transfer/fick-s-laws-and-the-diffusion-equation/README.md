@@ -7,7 +7,7 @@
 
 ## The Gaussian on the line
 
-- [Gaussian concentration with total mass M on the line](gauss.md)
+- [Gaussian concentration on the line, of total mass M for D, t > 0](gauss.md)
 - [Spatial derivative of the Gaussian for D > 0 and t > 0](gauss-xderiv-value.md)
 - [Second spatial derivative of the Gaussian for D > 0 and t > 0](gauss-xxderiv-value.md)
 - [Time derivative of the Gaussian for D > 0 and t > 0](gauss-tderiv-value.md)
