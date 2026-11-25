@@ -74548,7 +74548,7 @@
 "MetaMathlibExt.BridgeTorchGeneralizations.IsBridgeSchedule": "4e31f2bef375f4f2",
 "MetaMathlibExt.BridgeTorchGeneralizations.IsStarSchedule": "8043435bdaaa4154",
 "MetaMathlibExt.BridgeTorchGeneralizations.IsStarStep": "f6bc3a56db3fcb31",
-"MetaMathlibExt.BridgeTorchGeneralizations.StarMove": "45bf51f99e56065f",
+"MetaMathlibExt.BridgeTorchGeneralizations.StarMove": "2ece96812d81773a",
 "MetaMathlibExt.BridgeTorchGeneralizations.StarMove.dst": "e9167652ffe4bba2",
 "MetaMathlibExt.BridgeTorchGeneralizations.StarMove.src": "a07d68881787791e",
 "MetaMathlibExt.BridgeTorchGeneralizations.bagWeight": "5c6c7289cb670362",

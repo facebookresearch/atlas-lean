@@ -22,9 +22,8 @@ and a schedule ends when everyone is on the right bank with the torch.
 `bridgeTime c n` is the optimal total time (`T(n) = bridgeTime 2 n`,
 `T₃(n) = bridgeTime 3 n`). The model and the capacity-2 and capacity-3 records
 were checked against the arXiv version (arXiv:2608.05190v1) of the paper; the
-admissible bags of Section 3.3 and the star model of Section 5 are taken from
-the journal version (JIS TeX source `ern6.tex`), which is the only version that
-states them.
+admissible bags of Section 3.3 and the star model of Section 4, Definition 25,
+are taken from the journal version (JIS TeX source `ern6.tex`).
 -/
 module
 

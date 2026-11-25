@@ -18,9 +18,8 @@ groups (Problems 8.69, 8.70, 8.71, 9.2) use `IsConjugacySeparable` of `KourovkaN
 Locally finite groups use `IsLocallyFinite` below and locally normal groups (Problems 6.8, 6.9)
 use `IsLocallyNormal`; Mathlib and MathlibExt have neither predicate (checked 2026-11-13).
 Polycyclic and almost polycyclic groups (Problems 1.84, 2.16, 8.70, 11.5, 13.11) use
-`IsPolycyclic` and `IsAlmostPolycyclic`, and Chernikov groups (Problems 1.81, 1.90, 4.36, 8.80,
-11.116) use `IsChernikov`; Mathlib and MathlibExt have none of these predicates (checked
-2026-11-13).
+`IsPolycyclic` and `IsAlmostPolycyclic` below. Chernikov groups (Problems 1.81, 1.90, 4.36, 8.80,
+11.116) use `IsChernikov` from `MathlibExt.GroupTheory.Chernikov`.
 -/
 
 module
