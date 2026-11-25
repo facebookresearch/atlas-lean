@@ -308,6 +308,7 @@ python -m unittest \
   scripts.test_generate_wiki_navigation \
   scripts.test_generate_wiki_docstrings \
   scripts.test_sync_wiki \
+  scripts.test_graph_batch \
   scripts.test_import_mathgraph \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_extract_mathlib_graph \
@@ -603,6 +604,78 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
 model-driven audit, or required personal token.
+
+### Graph-sync batches
+
+A graph-sync batch is one pull request that brings the wiki in step with all
+the Lean merged into `main` since the last batch. For each documented
+declaration merged without a page it adds the page and its annotation row and
+lists the page on its folder page; it writes the docstring digests the scoped
+sync writes; it places new modules in `scripts/taxonomy.json` and drops the
+places of modules that are gone. One batch is open at a time, made on a fresh
+`main` every one or two hours by whoever runs the batches. The site builds
+`main` once a day, so readers never see the gap.
+
+```sh
+git fetch https://github.com/facebookresearch/atlas-lean.git main
+git switch --detach FETCH_HEAD
+python3 scripts/graph_batch.py make --body batch.md
+```
+
+`make` runs on a clean checkout, with Autoform installed as for the sync. It
+starts from the commit the last batch brought the graph up to, which that
+batch's commit names in a `Graph-sync-through:` trailer
+(`python3 scripts/graph_batch.py base` prints it); the first batch gives its
+base with `--base`. Then it:
+
+1. places each module that neither its own placement nor its folder's covers:
+   as a merged pull request's `Place:` line asks, for a module that pull
+   request's merge changed; else, for a module new since the base, where the
+   module whose declarations it took, by name, is placed, as a proof takes the
+   place of the wanted statement it moves. A module it cannot place goes to
+   `not-yet-classified/`, where the sync puts any unplaced module;
+2. drops the placement of each module that no longer exists, as a file or as a
+   folder;
+3. runs the scoped sync over every Lean change since the base, on `main`'s wiki
+   and baseline: from a local commit that has `main`'s tree but the base's Lean;
+4. commits all of it as one commit on top of `main`, with `Graph-sync-base:`
+   and `Graph-sync-through:` trailers, and checks that commit as `verify` does.
+
+A `Place:` line, one per module in a pull request's description, reads
+`Place: <module> -> <field>` or `Place: <module> -> <field> | <topic>`: the
+module as `scripts/taxonomy.json` keys it, a path without `.lean`, and a field
+or subfield of the taxonomy, such as `Algebra/groups`. Without a topic, the
+module takes its docstring's `# ` heading, or else its name, as its topic's
+title, unless it takes declarations from a module placed in the same field,
+whose topic it then joins. A line counts only for a module that its pull
+request's merge changed and that nothing places yet. `make` reads the lines
+after the merge, as untrusted text, and the batch's description lists each
+placement with where it comes from.
+
+`--body FILE` writes the pull request's description: the placements, what
+`make` left for an editor (lines it could not follow, modules it could not
+place), and the pages whose declaration's docstring changed while no pull
+request recorded its digest, to check. Push the commit to a branch of its own
+and open the pull request with that description.
+
+`python3 scripts/graph_batch.py verify <commit>`, run from a checkout of
+`main` that has the batch's `Graph-sync-through:` commit, checks that the
+commit is a batch and exactly what `make` writes: one commit on that commit,
+changing only the taxonomy, pages and folder pages, links files and the
+baseline; its taxonomy `main`'s with the placements `make` computes applied,
+byte for byte; and its wiki in step, with changes that are exactly what the
+scoped sync writes, fresh article ids aside (the `--check` above). From a
+newer `main`, it also checks that the batch still merges cleanly into it, and
+that the scoped check finds nothing the merge breaks, such as a second page
+for one declaration. The batch's reviewer runs it on the exact head, then reads
+the placements and the notes; the pages are the sync's, made from docstrings
+that the Lean pull requests' reviews covered.
+
+A batch is never updated. When `verify`, run from an up-to-date `main`, fails,
+or when the merge queue removes the batch, close it and make the next one from
+a fresh `main`: the next batch starts where the last merged one ended, so a
+closed batch loses nothing. Never merge `main` into a batch: `verify` refuses
+anything but one commit on the commit it names.
 
 ### Mathlib-credited pages
 
