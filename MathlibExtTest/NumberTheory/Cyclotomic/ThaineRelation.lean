@@ -16,7 +16,7 @@ public import MathlibExt.NumberTheory.Cyclotomic.UnitsOmegaEigenspaceFinrank
 
 open scoped NumberField nonZeroDivisors
 
-open NumberField JacobiSumStickelberger Stickelberger ExtCitation.Cyclotomic
+open NumberField Stickelberger
 
 universe u
 
@@ -42,7 +42,7 @@ theorem exactSource_omegaIdempotent_two_cycloUnitTwo_ne_zero (hp5 : 5 ≤ p)
 
 section Thaine
 
-attribute [-simp] ExtCitation.Cyclotomic.unitsEnd_proj
+attribute [-simp] Stickelberger.unitsEnd_proj
 
 set_option backward.isDefEq.respectTransparency false
 

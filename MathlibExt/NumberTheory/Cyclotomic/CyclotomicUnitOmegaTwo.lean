@@ -403,11 +403,9 @@ private theorem omegaIdemp_ne_zero_of_equivariant {i : ℕ} {N : Type*} [AddComm
 
 end Stickelberger
 
-open NumberField IsCyclotomicExtension JacobiSumStickelberger
+open NumberField IsCyclotomicExtension Stickelberger
 
-namespace ExtCitation
-namespace Cyclotomic
-open ExtCitation.Cyclotomic ExtCitation
+namespace Stickelberger
 
 variable (p : ℕ) [Fact p.Prime]
 
@@ -441,11 +439,11 @@ private theorem clRingAction_apply_of_pow_eq (d : (ZMod p)ˣ) {x : 𝓞 K} (hx :
     algebraMap_galRestrict_apply, map_pow]
   exact cycloGalEquiv_symm_apply_of_pow_eq p K d hxK
 
-end ExtCitation.Cyclotomic
+end Stickelberger
 
-open NumberField JacobiSumStickelberger Stickelberger ExtCitation.Cyclotomic
+open NumberField Stickelberger
 
-attribute [local instance] ExtCitation.Cyclotomic.instIsCycExt
+attribute [local instance] Stickelberger.instIsCycExt
 
 namespace Aux2Glue
 
@@ -504,11 +502,11 @@ end Functional
 
 private lemma omegaIdempotent_eq {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
     (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M) (i : ℕ) :
-    ExtCitation.Cyclotomic.omegaIdempotent p ρ i = Stickelberger.omegaIdemp ρ i := rfl
+    Stickelberger.omegaIdempotent p ρ i = Stickelberger.omegaIdemp ρ i := rfl
 
 end Aux2Glue
 
-namespace ExtCitation.Cyclotomic
+namespace Stickelberger
 
 variable (p : ℕ) [Fact p.Prime]
 
@@ -528,4 +526,4 @@ public theorem omegaIdempotent_two_cycloUnitTwo_ne_zero (hp5 : 5 ≤ p)
     Aux1B2.Ψ_one_add_zeta p hζ hp5 c₂ (by rw [hc]; congr 1)]
   exact Aux1B2.four_inv_ne_zero p hp5
 
-end ExtCitation.Cyclotomic
+end Stickelberger

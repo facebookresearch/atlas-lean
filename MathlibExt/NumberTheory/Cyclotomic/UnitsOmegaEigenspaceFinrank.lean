@@ -111,11 +111,9 @@ private theorem omegaIdemp_ne_zero_of_equivariant {i : ℕ} {N : Type*} [AddComm
 end Stickelberger
 
 section Aux2Dirwit
-open NumberField IsCyclotomicExtension JacobiSumStickelberger
+open NumberField IsCyclotomicExtension Stickelberger
 
-namespace ExtCitation
-namespace Cyclotomic
-open ExtCitation.Cyclotomic ExtCitation
+namespace Stickelberger
 
 variable (p : ℕ) [Fact p.Prime]
 
@@ -149,7 +147,7 @@ private theorem clRingAction_apply_of_pow_eq (d : (ZMod p)ˣ) {x : 𝓞 K} (hx :
     algebraMap_galRestrict_apply, map_pow]
   exact cycloGalEquiv_symm_apply_of_pow_eq p K d hxK
 
-end ExtCitation.Cyclotomic
+end Stickelberger
 end Aux2Dirwit
 
 noncomputable section
@@ -677,7 +675,7 @@ open scoped W2Units
 
 namespace Aux1Bridge
 
-open NumberField NumberField.Units JacobiSumStickelberger W2Units
+open NumberField NumberField.Units Stickelberger W2Units
 
 variable (p : ℕ) [hp : Fact p.Prime]
 variable (K : Type*) [Field K] [NumberField K]
@@ -855,7 +853,7 @@ open scoped W2Units
 
 namespace Aux1Herbrand
 
-open NumberField NumberField.Units JacobiSumStickelberger Stickelberger ExtCitation.Cyclotomic
+open NumberField NumberField.Units Stickelberger
 open W2Units Aux1Bridge
 
 variable (p : ℕ) [hp : Fact p.Prime]
@@ -912,7 +910,7 @@ open scoped W2Units
 
 namespace Aux1Dim
 
-open NumberField JacobiSumStickelberger Stickelberger ExtCitation.Cyclotomic Finset
+open NumberField Stickelberger Finset
 
 variable (p : ℕ) [hp : Fact p.Prime]
 
@@ -1011,13 +1009,12 @@ private theorem finrank_unitsOmegaEigenspace_two' (hp5 : 5 ≤ p) :
 end Aux1Dim
 open scoped W2Units
 
-namespace ExtCitation.Cyclotomic
+namespace Stickelberger
 
-open _root_.ExtCitation.Cyclotomic ExtCitation.Cyclotomic in
 /-- For `p ≥ 5`, the `ω²`-eigenspace of the units of `𝓞 (ℚ(ζ_p))` modulo `p`-th powers
 is one-dimensional over `ZMod p`. -/
 public theorem finrank_unitsOmegaEigenspace_two (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p) :
     Module.finrank (ZMod p) (unitsOmegaEigenspace p 2) = 1 :=
   Aux1Dim.finrank_unitsOmegaEigenspace_two' p hp5
 
-end ExtCitation.Cyclotomic
+end Stickelberger

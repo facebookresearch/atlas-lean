@@ -44,10 +44,10 @@ import MathlibExt.NumberTheory.Cyclotomic.UnitsOmegaEigenspaceFinrank
 set_option autoImplicit false
 set_option backward.isDefEq.respectTransparency false
 
-open NumberField JacobiSumStickelberger Stickelberger
+open NumberField Stickelberger
 open scoped nonZeroDivisors
 
-attribute [local instance] ExtCitation.Cyclotomic.instIsCycExt
+attribute [local instance] Stickelberger.instIsCycExt
 
 open NumberField IsCyclotomicExtension Polynomial UniqueFactorizationMonoid
 
@@ -761,8 +761,7 @@ private theorem bookkeeping {R : Type*} [CommRing R] [IsDedekindDomain R]
 
 end ThaineAux
 
-open NumberField JacobiSumStickelberger Stickelberger
-open ExtCitation.Cyclotomic
+open NumberField Stickelberger
 
 namespace ThaineReduce
 
@@ -892,7 +891,7 @@ end Stub
 
 end ThaineReduce
 
-open NumberField JacobiSumStickelberger IsCyclotomicExtension
+open NumberField Stickelberger IsCyclotomicExtension
 
 namespace ThaineReduce
 
@@ -1031,8 +1030,7 @@ open scoped ThaineReduce
 
 namespace ThaineReduce
 
-open NumberField JacobiSumStickelberger Stickelberger IsCyclotomicExtension
-open ExtCitation.Cyclotomic
+open NumberField Stickelberger IsCyclotomicExtension
 
 section Pack
 
@@ -1144,7 +1142,7 @@ open scoped ThaineReduce
 
 namespace ThaineReduce
 
-open NumberField JacobiSumStickelberger IsCyclotomicExtension
+open NumberField Stickelberger IsCyclotomicExtension
 
 private theorem eigen_pow_of_sq_rel {G : Type*} [CommGroup G] (φ : G →* G) (q : ℕ) (δ δ₀ w v : G)
     (m k : ℕ) (hv : φ δ = δ ^ k * v ^ q) (hrel : δ ^ 2 = δ₀ ^ m * w ^ q) :
@@ -3133,9 +3131,9 @@ private theorem reduce_lift (p : ℕ) [hp : Fact p.Prime] (hp5 : 5 ≤ p) (ℓ :
   have : NeZero ℓ := ⟨hℓ.out.ne_zero⟩
   have hp2 : p ≠ 2 := by omega
   obtain ⟨m, w, δ₀, n, a, hrel, hδ₀, ha⟩ := ThaineReduce.reduce_out p hp2 Kplus hKplus Δact hΔact δ
-    hδeig (ExtCitation.Cyclotomic.finrank_unitsOmegaEigenspace_two p hp5)
+    hδeig (Stickelberger.finrank_unitsOmegaEigenspace_two p hp5)
     (fun ζ hζ c₂ hc =>
-      ExtCitation.Cyclotomic.omegaIdempotent_two_cycloUnitTwo_ne_zero p hp5 ζ hζ c₂ hc)
+      Stickelberger.omegaIdempotent_two_cycloUnitTwo_ne_zero p hp5 ζ hζ c₂ hc)
   have hz := IsCyclotomicExtension.zeta_spec p ℚ (CyclotomicField p ℚ)
   have hzne : IsCyclotomicExtension.zeta p ℚ (CyclotomicField p ℚ) ≠ 0 :=
     hz.ne_zero hp.out.ne_zero
@@ -3576,7 +3574,7 @@ private theorem engine_out (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
 end ThaineAssembly
 open scoped ThaineReduce
 
-namespace ExtCitation.Cyclotomic
+namespace Stickelberger
 
 open ThaineAssembly in
 /-- **Thaine's relation** in the totally real subfield of `ℚ(ζ_p)`, `p ≥ 5`: given a degree-one
@@ -3648,4 +3646,4 @@ public theorem thaine_relation_plusField (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p
     (ℓ : 𝓞 Kplus) a₀ hℓ0 ha₀ hπ W hrel
   exact ⟨α, hα, t, ht, J, hJ⟩
 
-end ExtCitation.Cyclotomic
+end Stickelberger
