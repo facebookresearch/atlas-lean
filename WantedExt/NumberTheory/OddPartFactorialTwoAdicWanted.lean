@@ -104,21 +104,6 @@ public theorem_wanted exists_twoAdic_oddPart_factorial_limit :
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2])
 
 /--
-**Shifting the odd numbers below $2^e$ by $2^e$.** For every natural number $e \ge 2$, let $S_e$ be
-the set of odd integers $i$ with $1 \le i < 2^e$. Then
-$$
-\prod_{i \in S_e} i \equiv \prod_{i \in S_e} (2^e + i) \pmod{2^{2e}}.
-$$
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Proposition 9.
--/
-public theorem_wanted oddSet_product_congr_shift (e : ℕ) (he : 2 ≤ e) :
-    (2 : ℤ) ^ (2 * e) ∣
-      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) -
-        (∏ i ∈ oddBelowTwoPow e, ((2 ^ e + i : ℕ) : ℤ))
-
-/--
 **A 2-adic limit of normalized odd double factorials.** Write $(2^e - 1)!!$ for the product of
 the odd natural numbers from $1$ to $2^e - 1$. There is a 2-adic integer $w$ such that for every
 natural number $e \ge 3$, $2^{e-1}$ divides $w - \lfloor ((2^e - 1)!! - 1) / 2^e \rfloor$ in
