@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Order.Bounds.Defs
 public import MathlibExt.GameTheory.ImpartialPebblingGame
+public import MathlibExt.GameTheory.PebblingCompleteEven
 public import MathlibExt.GameTheory.PebblingCompleteThree
 public import MathlibExt.GameTheory.PebblingCompleteTwo
 
@@ -79,16 +80,6 @@ Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (
 Article 24.5.8, Theorem 1(d), quoting Fiorini, Lind, Woldar, and Wong (2021). -/
 public theorem_wanted isLeast_pebblingAllNTotals_complete_odd (n : ℕ) (hn : 5 ≤ n)
     (hodd : Odd n) : IsLeast (pebblingAllNTotals (⊤ : SimpleGraph (Fin n)) 1) (n + 2)
-
-/-- **All-N threshold of $(2:1)$-pebbling on $K_n$ for even $n$.** For every even $n \ge 6$, the
-least number $m$ such that every $(2:1)$-pebbling game on the complete graph $K_n$ with $m$
-pebbles in total is an N-game, written $m^{(2:1)}(K_n)$, exists and equals $n + 7$.
-
-Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
-Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
-Article 24.5.8, Theorem 1(e), quoting Fiorini, Lind, Woldar, and Wong (2021). -/
-public theorem_wanted isLeast_pebblingAllNTotals_complete_even (n : ℕ) (hn : 6 ≤ n)
-    (heven : Even n) : IsLeast (pebblingAllNTotals (⊤ : SimpleGraph (Fin n)) 1) (n + 7)
 
 /-! ### `(k+1:k)`-pebbling on `K_3` -/
 
