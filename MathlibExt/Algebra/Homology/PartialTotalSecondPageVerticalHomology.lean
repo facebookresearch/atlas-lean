@@ -158,10 +158,16 @@ private theorem partialTotalSignedCoordinateSquare
     (r₀ : B₀ ⟶ C₀) (r₁ : B₁ ⟶ C₁) (f : B₀ ⟶ B₁) (g : C₀ ⟶ C₁)
     (hh : h ≫ e₁.hom = u • (e₀.hom ≫ f)) (hf : f ≫ r₁ = r₀ ≫ g) :
     h ≫ (e₁.hom ≫ r₁) = (e₀.hom ≫ r₀) ≫ (u • g) := by
-  rw [← Category.assoc, hh]
-  simp only [Linear.units_smul_comp, Category.assoc]
-  rw [hf]
-  simp only [Linear.comp_units_smul]
+  calc
+    h ≫ (e₁.hom ≫ r₁) = (u • (e₀.hom ≫ f)) ≫ r₁ := by
+      rw [← Category.assoc, hh]
+    _ = u • ((e₀.hom ≫ f) ≫ r₁) :=
+      Linear.units_smul_comp u (e₀.hom ≫ f) r₁
+    _ = u • ((e₀.hom ≫ r₀) ≫ g) := by
+      congr 1
+      rw [Category.assoc, hf, ← Category.assoc]
+    _ = (e₀.hom ≫ r₀) ≫ (u • g) :=
+      (Linear.comp_units_smul (e₀.hom ≫ r₀) u g).symm
 
 private theorem partialTotalIsoCoordinateComm
     {D : Type*} [Category D] {A₀ A₁ B₀ B₁ C₀ C₁ : D}
@@ -181,9 +187,7 @@ private theorem partialTotalConeCoordinateCollapse
     (hb : b ≫ dR = dS) (ha : a ≫ dS = r₁) :
     a ≫ b ≫ z ≫ t = r₁ ≫ δR ≫ g ≫ r₀ := by
   rw [ht]
-  simp only [Category.assoc]
   rw [reassoc_of% hz, hs]
-  simp only [Category.assoc]
   rw [reassoc_of% hb, reassoc_of% ha]
 
 private theorem partialTotalUnfoldMiddleThreeEq
