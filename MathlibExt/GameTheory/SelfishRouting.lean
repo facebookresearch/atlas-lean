@@ -45,6 +45,10 @@ games of Roughgarden and Tardos (2004), for which all results below hold.
 
 ## Main results
 
+* `RoutingInstance.exists_isFeasible_iff`: a feasible flow exists exactly when the
+  demand is nonnegative and vanishes on commodities no path serves;
+  `RoutingInstance.not_exists_sum_eq_of_forall_commodity_ne`: positive demand on an
+  unserved commodity is met by no path flow at all.
 * `IsWardrop.smul_sum_pathLatency_mul_le`: if `f` is a Wardrop flow for `r` and `g`
   is feasible for `c • r`, then `c ∑ₚ ℓₚ(f) fₚ ≤ ∑ₚ ℓₚ(f) gₚ`
   (the cost of `f` is `∑ᵢ Lᵢ rᵢ`, Lemma 2.3, and every path has latency at least `Lᵢ`).
@@ -101,6 +105,65 @@ variable (N : RoutingInstance E ι P)
 exactly `r i` units of commodity `i`. -/
 def IsFeasible (r : ι → ℝ) (f : P → ℝ) : Prop :=
   (∀ p, 0 ≤ f p) ∧ ∀ i, ∑ p with N.commodity p = i, f p = r i
+
+omit [Fintype E] [DecidableEq E] in
+/-- Demand admission for a routing instance: a feasible flow for `r` exists exactly
+when `r` is nonnegative and vanishes on every commodity that no path serves. The
+latency and edge sets of the instance play no role. -/
+theorem exists_isFeasible_iff (r : ι → ℝ) :
+    (∃ f : P → ℝ, N.IsFeasible r f) ↔
+      (∀ i, 0 ≤ r i) ∧ ∀ i, (∀ p, N.commodity p ≠ i) → r i = 0 := by
+  constructor
+  · rintro ⟨f, hf⟩
+    have hnonneg : ∀ p, 0 ≤ f p := hf.1
+    have hdem : ∀ i, ∑ p with N.commodity p = i, f p = r i := hf.2
+    refine ⟨fun i => ?_, fun i hi => ?_⟩
+    · rw [← hdem i]
+      exact Finset.sum_nonneg fun p _ => hnonneg p
+    · have hfilter : Finset.univ.filter (fun p => N.commodity p = i) = ∅ :=
+        Finset.filter_false_of_mem fun p _ hp => hi p hp
+      have h := hdem i
+      rw [hfilter, Finset.sum_empty] at h
+      exact h.symm
+  · rintro ⟨hpos, hvan⟩
+    refine ⟨fun p =>
+        r (N.commodity p) /
+          ((Finset.univ.filter fun q => N.commodity q = N.commodity p).card : ℝ),
+      fun p => div_nonneg (hpos _) (Nat.cast_nonneg _), fun i => ?_⟩
+    by_cases hempty : Finset.univ.filter (fun p => N.commodity p = i) = ∅
+    · have hi : ∀ p, N.commodity p ≠ i := by
+        intro p hp
+        exact (Finset.filter_eq_empty_iff.mp hempty) (Finset.mem_univ p) hp
+      rw [hempty, Finset.sum_empty]
+      exact (hvan i hi).symm
+    · have hcard0 : (Finset.univ.filter fun p => N.commodity p = i).card ≠ 0 :=
+        fun hc => hempty (Finset.card_eq_zero.mp hc)
+      have hcard : ((Finset.univ.filter fun p => N.commodity p = i).card : ℝ) ≠ 0 :=
+        Nat.cast_ne_zero.mpr hcard0
+      dsimp only
+      have hcongr : ∀ p ∈ Finset.univ.filter (fun p => N.commodity p = i),
+          r (N.commodity p) / ((Finset.univ.filter fun q => N.commodity q = N.commodity p).card : ℝ)
+            = r i / ((Finset.univ.filter fun p => N.commodity p = i).card : ℝ) := by
+        intro p hp
+        have hmem : N.commodity p = i := (Finset.mem_filter.mp hp).2
+        simp only [hmem]
+      rw [Finset.sum_congr rfl hcongr, Finset.sum_const, nsmul_eq_mul, ← mul_div_assoc]
+      exact mul_div_cancel_left₀ _ hcard
+
+omit [Fintype E] [DecidableEq E] in
+/-- Rejection: positive demand on a commodity that no path serves cannot be met by
+any path flow, nonnegative or not; the demand equations alone already fail. The
+demand equations are the second clause of `IsFeasible`, so in particular no feasible
+flow exists. -/
+theorem not_exists_sum_eq_of_forall_commodity_ne {r : ι → ℝ} {i : ι}
+    (hi : ∀ p, N.commodity p ≠ i) (hr : 0 < r i) :
+    ¬∃ f : P → ℝ, ∀ j, ∑ p with N.commodity p = j, f p = r j := by
+  rintro ⟨f, hf⟩
+  have hfilter : Finset.univ.filter (fun p => N.commodity p = i) = ∅ :=
+    Finset.filter_false_of_mem fun p _ hp => hi p hp
+  have h := hf i
+  rw [hfilter, Finset.sum_empty] at h
+  exact hr.ne' h.symm
 
 /-- The flow on edge `e`: the total flow of the paths using `e`. -/
 def edgeFlow (f : P → ℝ) (e : E) : ℝ :=

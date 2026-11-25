@@ -1078,8 +1078,8 @@ private theorem zagTriangle_merge_pow_left {α : Type*} [Finite α]
   let g := f * zagTriangle a b c
   let L := zagReturnTime f b
   induction r using Nat.case_strong_induction_on with
-  | hz => omega
-  | hi r ih =>
+  | zero => omega
+  | succ r ih =>
       by_cases hrz : r = 0
       · subst r
         have hab_ne : a ≠ b := fun h => hab (h.sameCycle f)
@@ -1117,8 +1117,8 @@ private theorem zagTriangle_merge_pow_middle {α : Type*} [Finite α]
   let g := f * zagTriangle a b c
   let L := zagReturnTime f c
   induction r using Nat.case_strong_induction_on with
-  | hz => omega
-  | hi r ih =>
+  | zero => omega
+  | succ r ih =>
       by_cases hrz : r = 0
       · subst r
         simp [Equiv.Perm.mul_apply]
@@ -1421,8 +1421,8 @@ private theorem zagFirstSwap_pow_between {n : ℕ}
   let H := zagCycleHit π a b hab
   let h := π * Equiv.swap a c
   induction r using Nat.case_strong_induction_on with
-  | hz => omega
-  | hi r ih =>
+  | zero => omega
+  | succ r ih =>
       by_cases hrz : r = 0
       · subst r
         calc
@@ -1597,8 +1597,8 @@ private theorem zagCutAfterSwap_same_image {n : ℕ}
       ((π * Equiv.swap a c) ^ r) a = (π ^ (t + r)) a := by
     intro r hr0 hrd
     induction r using Nat.case_strong_induction_on with
-    | hz => omega
-    | hi r ih =>
+    | zero => omega
+    | succ r ih =>
         by_cases hrz : r = 0
         · subst r
           calc
@@ -4862,19 +4862,10 @@ private theorem zagFinRotate_pow_base {n : ℕ} (i : Fin n) :
   apply Fin.ext
   simp [Fin.add_def, zagBasePoint, Nat.mod_eq_of_lt i.isLt]
 
-private theorem zagConj_pow {n m : ℕ}
-    (e r : Equiv.Perm (Fin n)) :
-    (e * r * e⁻¹) ^ m = e * r ^ m * e⁻¹ := by
-  induction m with
-  | zero => simp
-  | succ m ih =>
-      rw [pow_succ', pow_succ', ih]
-      group
-
 private theorem zagHorizontal_pow_base {n : ℕ}
     (e : Equiv.Perm (Fin n)) (i : Fin n) :
     (zagHorizontal e ^ i.val) (e (zagBasePoint i)) = e i := by
-  rw [zagHorizontal, zagConj_pow]
+  rw [zagHorizontal, conj_pow]
   simp only [Equiv.Perm.mul_apply]
   change e (((finRotate n) ^ i.val) (e.symm (e (zagBasePoint i)))) = e i
   rw [e.symm_apply_apply, zagFinRotate_pow_base]
@@ -6117,7 +6108,7 @@ private theorem zagCyclePairs_cross_mul_gap
     (n + 1).choose 2 * Nat.card (ZagCyclePairs n k) =
       (n - 1).factorial * Nat.stirlingFirst (n + 1) k := by
   induction r using Nat.strong_induction_on generalizing k with
-  | h r ih =>
+  | ind r ih =>
       have hparity : Even (n - k) := ⟨r, by omega⟩
       have hpairs := zagCyclePairs_recurrence n k hn hk hkn hparity
       have hstirling := zagStirlingFirst_recurrence n k hn hk hkn
@@ -6165,19 +6156,24 @@ private theorem zagCyclePairs_cross_mul
   omega
 
 /--
-Zagier's formula for the probability that the product of two uniformly chosen cyclic
-permutations of `Fin n` has exactly `k` cycles:
-`(1 + (-1) ^ (n - k)) / Nat.factorial (n + 1) * Nat.stirlingFirst (n + 1) k`.
-Cyclicity is encoded as cycle-type-plus-fixed-points count equal to one.
+**Zagier's formula for products of two cyclic permutations.** Let $n$ and $k$ be integers
+with $n \ge 1$ and $1 \le k \le n$. Call a permutation of an $n$-element set cyclic when it has
+exactly one cycle, fixed points counted as cycles. Write $c(n+1, k)$ for the unsigned Stirling
+number of the first kind, the number of permutations of $n + 1$ elements with exactly $k$
+cycles. If $\sigma$ and $\tau$ are chosen independently and uniformly among the cyclic
+permutations of an $n$-element set, then the probability that $\sigma\tau$ has exactly $k$
+cycles, fixed points included, is
 
-Source: R. Cori and G. Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
-Integer Sequences 28 (2025), Article 25.3.3, Theorem [Zagier], lines 351-359,
-<https://cs.uwaterloo.ca/journals/JIS/VOL28/Hetyei/hetyei2.tex>, quoting D. Zagier.
+$$\frac{1 + (-1)^{n-k}}{(n+1)!} \, c(n+1, k).$$
 
 Proof: We formalize the plane-permutation transposition and reflection bijections of
 Chen and Reidys, arXiv:1502.07674, lines 786-1074, and their specialization to Zagier's
 recurrence, lines 1167-1370. A generating-polynomial coefficient identity supplies the
 matching Stirling recurrence; descending induction on the cycle count finishes.
+
+Source: R. Cori and G. Hetyei, *On Reduced Unicellular Hypermonopoles*, Journal of
+Integer Sequences 28 (2025), Article 25.3.3, Theorem [Zagier], lines 351-359,
+<https://cs.uwaterloo.ca/journals/JIS/VOL28/Hetyei/hetyei2.tex>, quoting D. Zagier.
 
 Proves `Wanted` entry `zagier_probability_product_two_cyclic_permutations`.
 -/

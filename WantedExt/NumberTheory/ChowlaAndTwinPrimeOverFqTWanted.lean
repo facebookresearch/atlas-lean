@@ -61,7 +61,12 @@ open scoped Asymptotics Polynomial
 
 variable {F : Type*} [Field F]
 
-/-- `|F[T]/(f)| = |F| ^ deg(f)`; see Equation (1.1) in the paper. -/
+/-- **Size of the quotient of $F[T]$ by a nonzero polynomial.** Let $F$ be a field and let
+$f \in F[T]$ be a nonzero polynomial. Then the cardinality of the quotient ring $F[T]/(f)$ is
+$|F|^{\deg f}$, where cardinalities are natural numbers and an infinite set has cardinality $0$.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, Equation (1.1). -/
 theorem cardQuot_span_eq_pow_natDegree {f : F[X]} (hf : f ≠ 0) :
     (Ideal.span {f}).cardQuot = Nat.card F ^ f.natDegree := by
   have : FiniteDimensional F (F[X] ⧸ Ideal.span {f}) := (AdjoinRoot.powerBasis hf).finite
@@ -70,7 +75,13 @@ theorem cardQuot_span_eq_pow_natDegree {f : F[X]} (hf : f ≠ 0) :
 
 variable [Finite F]
 
-/-- `|F[T]/(f)|` defines a norm on `F[T]`; see Equation (1.1) in the paper. -/
+/-- **The norm on $F[T]$.** Let $F$ be a finite field. The ring norm on the polynomial ring $F[T]$
+sends $f$ to the number of elements of the quotient ring $F[T]/(f)$, written
+$|f| = |F[T]/(f)|$; for $f = 0$ the quotient is infinite and $|0| = 0$. It is a ring norm: $|f| = 0$
+only for $f = 0$, $|-f| = |f|$, $|f + g| \le |f| + |g|$ and $|fg| \le |f|\,|g|$.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, Equation (1.1). -/
 noncomputable def ringNorm : RingNorm (F[X]) where
   toFun f := (Ideal.span {f}).cardQuot
   map_zero' := by simp
@@ -108,17 +119,30 @@ noncomputable scoped instance : NormedCommRing (F[X]) where
   __ := ringNorm.toNormedRing
   mul_comm := mul_comm
 
-/-- The norm of `f ∈ F[T]` is `|F[T]/(f)|`; see Equation (1.1) in the paper. -/
+/-- **The norm of a polynomial is the size of its quotient ring.** Let $F$ be a finite field and
+give $F[T]$ its ring norm. For every $f \in F[T]$, the norm $|f|$ equals the number of elements of
+the quotient ring $F[T]/(f)$, where an infinite quotient (the case $f = 0$) counts as $0$.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, Equation (1.1). -/
 theorem norm_eq_cardQuot (f : F[X]) : ‖f‖ = (Ideal.span {f}).cardQuot := by
   rfl
 
-/-- The norm of a nonzero `f ∈ F[T]` is `|F| ^ deg(f)`; see Equation (1.1) in the paper. -/
+/-- **Norm of a nonzero polynomial.** Let $F$ be a finite field and give $F[T]$ its ring norm.
+For every nonzero $f \in F[T]$, the norm of $f$ is $|f| = |F|^{\deg f}$, where $|F|$ is the number
+of elements of $F$.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, Equation (1.1). -/
 theorem norm_eq_pow_natDegree {f : F[X]} (hf : f ≠ 0) : ‖f‖ = Nat.card F ^ f.natDegree := by
   rw [norm_eq_cardQuot, cardQuot_span_eq_pow_natDegree hf, Nat.cast_pow]
 
 variable (F) in
-/-- The primes of a polynomial ring are the monic irreducibles;
-see the sentence after Equation (1.4) in the paper. -/
+/-- **Primes of $F[T]$.** Let $F$ be a finite field. The primes of the polynomial ring $F[T]$ are
+its monic irreducible polynomials.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, the sentence after Equation (1.4). -/
 def primes : Set F[X] :=
   {P : F[X] | P.Monic ∧ Irreducible P}
 
@@ -127,13 +151,27 @@ noncomputable instance : Norm (primes F) where
   norm := fun ⟨P, _, _⟩ ↦ ‖P‖
 
 open Classical in
-/-- The real-valued indicator function associated to a predicate;
-see Equation (1.4) in the paper. -/
+/-- **Indicator of a statement.** For a proposition $P$, the indicator $\mathbf{1}_P$ is the real
+number $1$ if $P$ holds and $0$ otherwise.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, Equation (1.4). -/
 noncomputable def indicator (pred : Prop) : ℝ := if pred then 1 else 0
 
 open Classical in
-/-- The Hardy-Littlewood constant associated to prime tuples of the form `{f, f + h}`;
-see Equation (1.4) in the paper. -/
+/-- **Singular series for twin primes in $F[T]$.** Let $F$ be a finite field with $q$ elements and
+let $h \in F[T]$. The Hardy–Littlewood constant of the prime pair $\{f, f + h\}$ is the infinite
+product over all primes $P$ of $F[T]$ (the monic irreducible polynomials)
+$$\mathfrak{S}_q(h) =
+\prod_P \frac{1 - |P|^{-1} - |P|^{-1}\,\mathbf{1}_{P \nmid h}}{(1 - |P|^{-1})^2},$$
+where $|P|$ is the norm of $P$ and $\mathbf{1}_{P \nmid h}$ is $1$ if $P$ does not divide $h$ and
+$0$ otherwise.
+
+The product is an unconditional infinite product of real numbers; when it does not converge its
+value is taken to be $1$.
+
+Source: W. Sawin and M. Shusterman, *On the Chowla and twin primes conjectures over
+$\mathbb{F}_q[T]$*, Annals of Math. 196 (2) 2022, Equation (1.4). -/
 noncomputable def 𝔖_q (h : F[X]) : ℝ :=
   ∏' P : primes F, (1 - ‖P‖⁻¹ - ‖P‖⁻¹ * indicator (¬ (P : F[X]) ∣ h)) / (1 - ‖P‖⁻¹) ^ 2
 
@@ -145,14 +183,16 @@ local notation "q" => p ^ n
 local notation "𝔽_q" => GaloisField p n
 
 /--
-Statement of Theorem 1.1:
+**Twin prime asymptotic over $\mathbb{F}_q[T]$ for large $q$.** Let $p$ be an odd prime and let
+$q$ be a power of $p$ with $q > 685090\,p^2$; write $\mathbb{F}_q$ for the finite field with $q$
+elements. Then there is a real number $\varepsilon > 0$ such that for every nonzero
+$h \in \mathbb{F}_q[T]$, as $X \to \infty$ through the powers of $q$,
+$$\#\{f \in \mathbb{F}_q[T] : |f| = X,\ f \text{ and } f + h \text{ are prime}\} =
+\frac{\mathfrak{S}_q(h)\, X}{(\log_q X)^2} + O\bigl(X^{1 - \varepsilon}\bigr),$$
+where $|f| = |\mathbb{F}_q[T]/(f)|$ is the norm of $f$, the primes of $\mathbb{F}_q[T]$ are its
+monic irreducible polynomials, $\mathfrak{S}_q(h)$ is the singular series for twin primes, and
+the implied constant may depend on $h$ (but $\varepsilon$ does not).
 
-For an odd prime number `p`, and a power `q` of `p` satisfying
-`q > 685090 * p ^ 2`, the following holds. For any nonzero `h ∈ 𝔽_q[T]`, we have
-`#{f ∈ 𝔽_q[T] : |f| = X, f and f + h are prime} ∼ 𝔖_q(h) X / log_q^2 (X)`
-as `X → ∞` through the powers of `q`.
-
-Moreover, we have a power saving (depending on q) in the asymptotic above.
 Source: W. Sawin and M. Shusterman, `On the Chowla and twin primes conjectures over 𝔽_q[T]`, Annals of Math, 196 (2) 2022. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2022-196-2-ChowlaAndTwinPrimeOverFqT.lean Via leanprover/lean-eval@38361be, problem `annals_chowla_and_twin_prime_over_fq_t`.
 -/
 public theorem_wanted theorem_1_1 (hp : Odd p) (hq : q > 685090 * p ^ 2) :
@@ -161,7 +201,9 @@ public theorem_wanted theorem_1_1 (hp : Odd p) (hq : q > 685090 * p ^ 2) :
         𝔖_q h * X / (Real.logb q X) ^ 2) =O[Filter.atTop] (fun X : powers q ↦ (X : ℝ) ^ (1 - ε))
 
 variable (F) in
-/-- The set of monic polynomials in `F[T]` with norm at most `X`. -/
+/-- **Monic polynomials of bounded norm.** Let $F$ be a finite field and let $X$ be a real number.
+This is the set of monic polynomials $f \in F[T]$ whose norm $|f| = |F[T]/(f)|$, the number of
+elements of the quotient ring $F[T]/(f)$, satisfies $|f| \le X$. -/
 def monicBounded (X : ℝ) : Set (F[X]) :=
   {f : F[X] | f.Monic ∧ ‖f‖ ≤ X}
 
@@ -169,11 +211,16 @@ def monicBounded (X : ℝ) : Set (F[X]) :=
 local notation "e" => Real.exp 1
 
 /--
-Statement of Theorem 1.3:
+**Chowla's conjecture over $\mathbb{F}_q[T]$ for large $q$.** Let $p$ be an odd prime, let $k \ge 1$
+be a natural number, and let $q$ be a power of $p$ with $q > p^2 k^2 e^2$, where $e$ is Euler's
+number; write $\mathbb{F}_q$ for the finite field with $q$ elements. Let
+$h_1, \dots, h_k \in \mathbb{F}_q[T]$ be distinct polynomials. Then, as the real number $X$ tends
+to $\infty$,
+$$\sum_{f \text{ monic},\ |f| \le X} \mu(f + h_1)\,\mu(f + h_2) \cdots \mu(f + h_k) = o(X),$$
+where the sum runs over the monic $f \in \mathbb{F}_q[T]$ of norm $|f| = |\mathbb{F}_q[T]/(f)|$ at
+most $X$, and $\mu$ is the Möbius function of $\mathbb{F}_q[T]$: $\mu(g) = (-1)^r$ if $g$ is
+squarefree with $r$ irreducible factors, and $\mu(g) = 0$ otherwise.
 
-For an odd prime number `p`, an integer `k ≥ 1`, and a power `q` of `p` satisfying `q > p²k²e²`,
-the following holds. For every fixed choice of `k` distinct polynomials `h₁,...,hₖ ∈ 𝔽_q[T]`,
-we have `∑ (f ∈ 𝔽_q[T]⁺, |f| ≤ X), μ(f + h₁) μ(f + h₂) ... μ(f + hₖ) = o(X)`, `X → ∞`.
 Source: W. Sawin and M. Shusterman, `On the Chowla and twin primes conjectures over 𝔽_q[T]`, Annals of Math, 196 (2) 2022. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2022-196-2-ChowlaAndTwinPrimeOverFqT.lean Via leanprover/lean-eval@38361be, problem `annals_chowla_and_twin_prime_over_fq_t`.
 -/
 public theorem_wanted theorem_1_3 (hp : Odd p) (k : ℕ) (hk : k ≥ 1) (hq : q > p ^ 2 * k ^ 2 * e ^ 2)

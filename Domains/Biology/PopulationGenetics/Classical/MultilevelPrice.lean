@@ -168,7 +168,9 @@ with group weights proportional to group size and group mean fitness/trait
 `w̄ Δz̄ = Cov_k(W_k, Z_k) + E_k[Cov_j(w_kj, z_kj)] + E[w (z' - z)]`,
 
 where all covariances and expectations are population moments. Only the
-global hypothesis `∑ i, w i ≠ 0` is required. -/
+global hypothesis `∑ i, w i ≠ 0` is required. It makes the population nonempty but allows empty
+groups, for which `q k = 0` and `W k`, `Z k` and the within-group average are `0` (an average
+over no members is `0`). -/
 theorem multilevel_price {κ : Type*} [Fintype κ] {α : κ → Type*} [∀ k, Fintype (α k)]
     (w z z' : (Σ k, α k) → ℝ) (q W Z : κ → ℝ)
     (hq : ∀ k, q k = (Fintype.card (α k) : ℝ) / Fintype.card (Σ k, α k))

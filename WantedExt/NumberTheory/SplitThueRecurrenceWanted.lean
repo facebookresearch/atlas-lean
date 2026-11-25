@@ -33,12 +33,22 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The hypotheses of Hilgart's Theorem 1 on `d ≥ 3` integer sequences `G 1, …, G d`:
-each `G i` is a simple linear recurrence `G i n = ∑_{r ∈ R i} c i r * r ^ n` with
-dominant root `γ i` (all other roots of smaller modulus);
-`0 ≤ γ 1 < ⋯ < γ (d - 2) < γ (d - 1) = γ d`; the constant terms of the dominant roots of
-`G (d - 1)` and `G d` agree; `G (d - 1)` and `G d` have second dominant roots `δ (d - 1)`,
-`δ d` with `|δ (d - 1)| < |δ d| < γ (d - 2)` and `γ (d - 2) ^ 2 < γ |δ d|`.
+/-- **Split Thue recurrence family.** Let $d \in \mathbb{N}$, let $G_i(n)$ be integers for
+$i, n \in \mathbb{N}$, and let $\gamma_i \in \mathbb{R}$ and $\delta_i \in \mathbb{C}$ for
+$i \in \mathbb{N}$. Then $(d, G, \gamma, \delta)$ is a split Thue recurrence family when $d \ge 3$
+and there are finite sets $R_i \subseteq \mathbb{C}$ and complex numbers $c_i(r)$
+($i \in \mathbb{N}$, $r \in \mathbb{C}$) such that: for every $1 \le i \le d$, $c_i(r) \ne 0$
+for all $r \in R_i$, $G_i(n) = \sum_{r \in R_i} c_i(r) r^n$ for all $n$, $\gamma_i \in R_i$,
+and $|r| < \gamma_i$ for all $r \in R_i$ with $r \ne \gamma_i$; $\gamma_1 \ge 0$, $\gamma$ is
+strictly increasing on $\{1, \dots, d - 1\}$, and $\gamma_{d-1} = \gamma_d$;
+$c_{d-1}(\gamma_{d-1}) = c_d(\gamma_d)$; for $i \in \{d - 1, d\}$, $\delta_i \in R_i$,
+$\delta_i \ne \gamma_i$, and $|r| < |\delta_i|$ for all $r \in R_i$ other than $\gamma_i$ and
+$\delta_i$; and $|\delta_{d-1}| < |\delta_d| < \gamma_{d-2}$ and
+$\gamma_{d-2}^2 < \gamma_d |\delta_d|$.
+
+In words: each $G_i$ is a simple linear recurrence with dominant root $\gamma_i$, the sequences
+$G_{d-1}$ and $G_d$ share their dominant root and its coefficient, and $\delta_{d-1}$, $\delta_d$
+are their second dominant roots.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Theorem 1 (conditions 1-3); dominant roots taken real and
@@ -56,7 +66,8 @@ public def IsSplitThueRecurrenceFamily (d : ℕ) (G : ℕ → ℕ → ℤ) (γ :
       ∀ r ∈ R i, r ≠ γ i → r ≠ δ i → ‖r‖ < ‖δ i‖) ∧
     ‖δ (d - 1)‖ < ‖δ d‖ ∧ ‖δ d‖ < γ (d - 2) ∧ γ (d - 2) ^ 2 < γ d * ‖δ d‖
 
-/-- The hypotheses force `d ≥ 3`.
+/-- **A split Thue recurrence family has at least three sequences.** If $(d, G, \gamma, \delta)$
+is a split Thue recurrence family, then $d \ge 3$.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Theorem 1 (the conditions mention `γ (d - 2)`). -/
@@ -64,9 +75,11 @@ public theorem IsSplitThueRecurrenceFamily.three_le {d : ℕ} {G : ℕ → ℕ �
     {δ : ℕ → ℂ} (h : IsSplitThueRecurrenceFamily d G γ δ) : 3 ≤ d :=
   h.1
 
-/-- Characteristic example: `G 1 n = 3 ^ n`, `G 2 n = 5 ^ n + 1`, `G 3 n = 5 ^ n + 2 ^ n`
-(dominant roots `3, 5, 5`; second dominant roots `1, 2`) satisfy the hypotheses with
-`d = 3`.
+/-- **Example of a split Thue recurrence family.** Let $G_1(n) = 3^n$, $G_2(n) = 5^n + 1$ and
+$G_i(n) = 5^n + 2^n$ for $i \notin \{1, 2\}$; let $\gamma_1 = 3$ and $\gamma_i = 5$ for
+$i \ne 1$; and let $\delta_2 = 1$ and $\delta_i = 2$ for $i \ne 2$. Then $(3, G, \gamma, \delta)$
+is a split Thue recurrence family: the dominant roots of $G_1, G_2, G_3$ are $3, 5, 5$ and the
+second dominant roots of $G_2, G_3$ are $1, 2$.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Theorem 1 (conditions 1-3). -/
@@ -97,9 +110,11 @@ public theorem isSplitThueRecurrenceFamily_example :
   · norm_num
   · norm_num
 
-/-- Main theorem: under the hypotheses, every integer solution of
-`(x - G 1 n * y) ⋯ (x - G d n * y) - y ^ d = ±1` with `|y| ≥ 2` has
-`max (log |x|, log |y|, n) ≤ κ` for a constant `κ` depending only on the sequences.
+/-- **Hilgart's theorem on split families of Thue equations.** Let $(d, G, \gamma, \delta)$ be a
+split Thue recurrence family. Then there is $\kappa \in \mathbb{R}$ such that for every
+$n \in \mathbb{N}$ and all integers $x, y$ with $|y| \ge 2$ and
+$$(x - G_1(n) y) \cdots (x - G_d(n) y) - y^d = \pm 1$$
+we have $\log |x| \le \kappa$, $\log |y| \le \kappa$ and $n \le \kappa$ (where $\log 0 = 0$).
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Theorem 1 (`integers-2025-A35-thm-1`). The computability
@@ -112,8 +127,12 @@ public theorem_wanted splitThue_recurrence_solutions_bounded {d : ℕ} {G : ℕ 
         (∏ i ∈ Finset.Icc 1 d, (x - G i n * y)) - y ^ d = -1) →
       Real.log |(x : ℝ)| ≤ κ ∧ Real.log |(y : ℝ)| ≤ κ ∧ (n : ℝ) ≤ κ
 
-/-- For all large `n`, the only integer solutions of
-`(x - G 1 n * y) ⋯ (x - G d n * y) - y ^ d = ±1` are `(±1, 0)` and `±(G i n, 1)`.
+/-- **Split Thue families eventually have only trivial solutions.** Let $(d, G, \gamma, \delta)$
+be a split Thue recurrence family. Then there is $n_0$ such that for every $n \ge n_0$ and all
+integers $x, y$,
+$$(x - G_1(n) y) \cdots (x - G_d(n) y) - y^d = \pm 1$$
+holds if and only if $(x, y) = (\pm 1, 0)$ or, for some $1 \le i \le d$,
+$(x, y) = (G_i(n), 1)$ or $(x, y) = (-G_i(n), -1)$.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Corollary 1 (`integers-2025-A35-cor-1`). The
@@ -127,11 +146,18 @@ public theorem_wanted splitThue_recurrence_solutions_eventually_trivial {d : ℕ
       ((x = 1 ∨ x = -1) ∧ y = 0) ∨
         ∃ i ∈ Finset.Icc 1 d, (x = G i n ∧ y = 1) ∨ (x = -G i n ∧ y = -1)
 
-/-- Roots of `fₙ(x, 1)`: for large `n` all roots of `∏ (x - G k n) - 1` are real, an
-admissible labelling `α⁽ⁱ⁾` exists, and every admissible labelling satisfies
-`α⁽ⁱ⁾ = G i n + (1 + O(γ_ε⁻ⁿ)) / ∏_{k ≠ i} (G i n - G k n)`, where
-`γ_ε = γ i ^ (i - 1) * ∏_{k = i+1}^{d-2} γ k * γ ^ 2` for `i ≤ d - 2` and
-`γ_ε = γ ^ (d - 2) * |δ d|` for `i ∈ {d - 1, d}` (`γ = γ d`).
+/-- **Asymptotics of the roots of a split Thue family.** Let $(d, G, \gamma, \delta)$ be a split
+Thue recurrence family. Call reals $\alpha_i(n)$ ($i, n \in \mathbb{N}$) an admissible labelling
+if there is $N$ such that for all $n \ge N$ and $1 \le i \le d$,
+$\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1$. Then, first,
+there is $N$ such that for all $n \ge N$ every $z \in \mathbb{C}$ with
+$\prod_{k=1}^{d} (z - G_k(n)) = 1$ is real; second, an admissible labelling exists; third, for
+every admissible labelling $\alpha$ and every $1 \le i \le d$ there are $C \in \mathbb{R}$ and
+$N$ such that for all $n \ge N$
+$$|(\alpha_i(n) - G_i(n)) \prod_{k \ne i} (G_i(n) - G_k(n)) - 1| \le C \Gamma_i^{-n},$$
+where the product is over $1 \le k \le d$ with $k \ne i$, and
+$\Gamma_i = \gamma_i^{i-1} (\prod_{k=i+1}^{d-2} \gamma_k) \gamma_d^2$ if $i \le d - 2$ and
+$\Gamma_i = \gamma_d^{d-2} |\delta_d|$ otherwise.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Lemma 1 (`integers-2025-A35-lem-1`). The `O`-term is
@@ -150,9 +176,14 @@ public theorem_wanted splitThue_recurrence_roots_asymptotic {d : ℕ} {G : ℕ �
           C * ((if i ≤ d - 2 then γ i ^ (i - 1) * (∏ k ∈ Finset.Icc (i + 1) (d - 2), γ k) *
             γ d ^ 2 else γ d ^ (d - 2) * ‖δ d‖)⁻¹) ^ n
 
-/-- Growth of the roots: for an admissible labelling, `|α⁽ⁱ⁾| = Ω(γ i ^ n)`, and for
-`i ≠ j`, `|α⁽ⁱ⁾ - α⁽ʲ⁾|` and `|α⁽ⁱ⁾ - G j n|` are `Ω(|δ d| ^ n)` when `{i, j} = {d - 1, d}`
-and `Ω(max (γ i) (γ j) ^ n)` otherwise.
+/-- **Growth of the roots of a split Thue family.** Let $(d, G, \gamma, \delta)$ be a split Thue
+recurrence family, and let $\alpha_i(n)$ ($i, n \in \mathbb{N}$) be reals for which there is $N$
+such that for all $n \ge N$ and $1 \le i \le d$, $\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$
+and $|\alpha_i(n) - G_i(n)| < 1$. Then there are $c > 0$ and $N'$ such that for all $n \ge N'$
+and $1 \le i \le d$ we have $|\alpha_i(n)| \ge c \gamma_i^n$, and for every $1 \le j \le d$ with
+$j \ne i$ both $|\alpha_i(n) - \alpha_j(n)|$ and $|\alpha_i(n) - G_j(n)|$ are at least
+$c |\delta_d|^n$ if $\{i, j\} = \{d - 1, d\}$, and at least $c \max(\gamma_i, \gamma_j)^n$
+otherwise.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Lemma 2 (`integers-2025-A35-lem-2`), including its last
@@ -171,8 +202,14 @@ public theorem_wanted splitThue_recurrence_roots_growth {d : ℕ} {G : ℕ → �
           c * max (γ i) (γ j) ^ n ≤ |α n i - α n j| ∧
             c * max (γ i) (γ j) ^ n ≤ |α n i - G j n|)
 
-/-- The `k × k` matrix `B_k = (log η_j⁽ⁱ⁾)_{i, j ≤ k}`, `η_j⁽ⁱ⁾ = α⁽ⁱ⁾ - G j n`, has
-`det B_k = Θ(n ^ k)` for every `1 ≤ k ≤ d - 1`.
+/-- **Determinants of logarithms in a split Thue family.** Let $(d, G, \gamma, \delta)$ be a
+split Thue recurrence family, let $\alpha_i(n)$ ($i, n \in \mathbb{N}$) be reals for which there
+is $N$ such that for all $n \ge N$ and $1 \le i \le d$,
+$\prod_{l=1}^{d} (\alpha_i(n) - G_l(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1$, and let
+$1 \le k \le d - 1$. Let $B_k(n)$ be the $k \times k$ matrix with entries
+$\log |\alpha_i(n) - G_j(n)|$ for $1 \le i, j \le k$, where $\log 0 = 0$. Then there are
+$c_1 > 0$, $c_2 > 0$ and $N'$ such that $c_1 n^k \le |\det B_k(n)| \le c_2 n^k$ for all
+$n \ge N'$.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Lemma 3 (`integers-2025-A35-lem-3`). `Real.log` is the

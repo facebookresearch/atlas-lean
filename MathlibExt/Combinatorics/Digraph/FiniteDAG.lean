@@ -19,7 +19,7 @@ import Mathlib.Order.Extension.Linear
 Acyclicity of a `Digraph` as irreflexivity of the transitive closure of adjacency (no
 directed cycle), its equivalence with well-foundedness on a finite vertex type,
 topological orders as bijections onto positions in which every edge points forward,
-roots and leaves, and directed paths.
+roots, leaves and parents, rooted trees, and directed paths.
 
 ## Main results
 
@@ -31,6 +31,11 @@ roots and leaves, and directed paths.
   topological order; the directed 3-cycle has none.
 * `Digraph.IsAcyclic.roots_nonempty`, `Digraph.IsAcyclic.leaves_nonempty`: a nonempty
   finite DAG has a root and a leaf.
+* `Digraph.parentsOf`, `Digraph.mem_parentsOf`: the parents (direct predecessors) of a
+  vertex, as a finset.
+* `Digraph.IsRootedTree`: rooted trees (arborescences): acyclic digraphs in which every
+  vertex is reachable from the root and every other vertex has exactly one parent.
+* `Digraph.isAcyclic_of_le`: a subgraph of an acyclic digraph is acyclic.
 * `Digraph.finite_paths`: a finite digraph has finitely many directed paths, and in a
   DAG every directed walk is a path.
 
@@ -65,6 +70,18 @@ edge (the empty list and single vertices included). -/
 def paths : Set (List V) :=
   {p | p.IsChain G.Adj ∧ p.Nodup}
 
+/-- The parents (direct predecessors) of `v`: the vertices `u` with an edge `u → v`. -/
+def parentsOf [Fintype V] [DecidableRel G.Adj] (v : V) : Finset V :=
+  {u | G.Adj u v}
+
+/-- A **rooted tree** (arborescence) with root `r`: acyclic, `r` has no parent, every other
+vertex has exactly one parent, and every vertex is reachable from `r`. (Reachability is
+needed only for infinite `V`; on a finite vertex type it follows from the first three
+conditions by chasing parents.) -/
+def IsRootedTree (r : V) : Prop :=
+  G.IsAcyclic ∧ (∀ u, ¬ G.Adj u r) ∧ (∀ v, v ≠ r → ∃! u, G.Adj u v) ∧
+    ∀ v, Relation.ReflTransGen G.Adj r v
+
 variable {G}
 
 theorem mem_roots [Fintype V] [DecidableRel G.Adj] {v : V} :
@@ -75,9 +92,18 @@ theorem mem_leaves [Fintype V] [DecidableRel G.Adj] {v : V} :
     v ∈ G.leaves ↔ ∀ w, ¬ G.Adj v w := by
   simp [leaves]
 
+theorem mem_parentsOf [Fintype V] [DecidableRel G.Adj] {u v : V} :
+    u ∈ G.parentsOf v ↔ G.Adj u v := by
+  simp [parentsOf]
+
 /-- An acyclic digraph has no loops. -/
 theorem IsAcyclic.irrefl (h : G.IsAcyclic) (v : V) : ¬ G.Adj v v :=
   fun hv => h v (Relation.TransGen.single hv)
+
+/-- A subgraph of an acyclic digraph is acyclic. -/
+theorem isAcyclic_of_le {G H : Digraph V} (hGH : ∀ u v, H.Adj u v → G.Adj u v)
+    (hG : G.IsAcyclic) : H.IsAcyclic := fun v hv =>
+  hG v (Relation.TransGen.mono (r := H.Adj) (p := G.Adj) (fun a b h => hGH a b h) v v hv)
 
 /-- On a finite vertex type, acyclicity is well-foundedness of adjacency (the form used by
 parent relations, where `G.Adj Y X` means `Y` is a parent of `X`). -/

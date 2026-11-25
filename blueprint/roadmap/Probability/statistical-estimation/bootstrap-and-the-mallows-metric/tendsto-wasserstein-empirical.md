@@ -8,7 +8,7 @@ For $p = 2$ on the line this is statement (2.1) of Bickel and Freedman, "$F_n \R
 
 ## Informally uses
 
-- [The Wasserstein distance metrizes weak convergence in $P_p$](../../../MeasureTheory/optimal-transport/wasserstein-distances/tendsto-wasserstein-iff.md): Bickel and Freedman's Lemma 8.3, convergence in $d_p$ as weak convergence plus convergence of $p$-th moments.
+- [The Wasserstein distance metrizes weak convergence in $P_p$](../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-convergence/tendsto-wasserstein-iff.md): Bickel and Freedman's Lemma 8.3, convergence in $d_p$ as weak convergence plus convergence of $p$-th moments.
 - [Strong law of large numbers](../../laws-of-large-numbers/strong-law-of-large-numbers/README.md): for the $p$-th moments and for test functions.
 
 ## Sources

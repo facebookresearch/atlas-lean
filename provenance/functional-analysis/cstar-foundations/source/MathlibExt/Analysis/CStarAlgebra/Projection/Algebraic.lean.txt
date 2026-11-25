@@ -1,0 +1,154 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Algebra.Star.Projection
+public import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Instances
+import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
+
+/-!
+# Algebraic equivalence of star projections
+
+Algebraically equivalent star projections in a complex C-star algebra are
+Murray--von Neumann equivalent.  The proof constructs the partial isometry by
+taking an inverse square root in the projection corner, using the ambient
+nonunital continuous functional calculus.
+-/
+
+@[expose] public section
+
+namespace StarProjection
+
+universe u
+
+variable {A : Type u}
+
+/-- If two star projections factor in opposite orders through the same two
+elements, then they are Murray--von Neumann equivalent. -/
+theorem murrayVonNeumannEquivalent_of_mul_eq_mul
+    [NonUnitalCStarAlgebra A]
+    (p q : StarProjection A) {x y : A}
+    (hp : (p : A) = x * y) (hq : (q : A) = y * x) :
+    MurrayVonNeumannEquivalent p q := by
+  let _ := CStarAlgebra.spectralOrder A
+  let _ := CStarAlgebra.spectralOrderedRing A
+  let a : A := y * (p : A)
+  let b : A := x * (q : A)
+  have hpEq : (p : A) * p = p := p.property.isIdempotentElem.eq
+  have hqEq : (q : A) * q = q := q.property.isIdempotentElem.eq
+  have hpSelf : Star.star (p : A) = p := p.property.isSelfAdjoint.star_eq
+  have hqSelf : Star.star (q : A) = q := q.property.isSelfAdjoint.star_eq
+  have hpx : (p : A) * x = x * q := by
+    calc
+      (p : A) * x = (x * y) * x := by rw [hp]
+      _ = x * (y * x) := by rw [mul_assoc]
+      _ = x * q := by rw [← hq]
+  have hqy : (q : A) * y = y * p := by
+    calc
+      (q : A) * y = (y * x) * y := by rw [hq]
+      _ = y * (x * y) := by rw [mul_assoc]
+      _ = y * p := by rw [← hp]
+  have hqa : (q : A) * a = a := by
+    dsimp [a]
+    calc
+      (q : A) * (y * p) = ((q : A) * y) * p := by rw [mul_assoc]
+      _ = (y * p) * p := by rw [hqy]
+      _ = y * p := by rw [mul_assoc, hpEq]
+  have hab : a * b = (q : A) := by
+    calc
+      a * b = (y * p) * (x * q) := rfl
+      _ = y * (((p : A) * x) * q) := by simp only [mul_assoc]
+      _ = y * ((x * q) * q) := by rw [hpx]
+      _ = y * (x * q) := by rw [mul_assoc, hqEq]
+      _ = (y * x) * q := by rw [mul_assoc]
+      _ = (q : A) * q := by rw [hq]
+      _ = q := hqEq
+  have hba : b * a = (p : A) := by
+    calc
+      b * a = (x * q) * (y * p) := rfl
+      _ = x * (((q : A) * y) * p) := by simp only [mul_assoc]
+      _ = x * ((y * p) * p) := by rw [hqy]
+      _ = x * (y * p) := by rw [mul_assoc, hpEq]
+      _ = (x * y) * p := by rw [mul_assoc]
+      _ = (p : A) * p := by rw [hp]
+      _ = p := hpEq
+  have hstarBA : Star.star b * Star.star a = (q : A) := by
+    have h := congrArg Star.star hab
+    simpa only [star_mul, hqSelf] using h
+  have hstarAB : Star.star a * Star.star b = (p : A) := by
+    have h := congrArg Star.star hba
+    simpa only [star_mul, hpSelf] using h
+  have hstarAq : Star.star a * (q : A) = Star.star a := by
+    have h := congrArg Star.star hqa
+    simpa only [star_mul, hqSelf] using h
+  let c : A := Star.star a * a
+  let d : A := b * Star.star b
+  have hcd : c * d = (p : A) := by
+    dsimp [c, d]
+    calc
+      (Star.star a * a) * (b * Star.star b) =
+          Star.star a * ((a * b) * Star.star b) := by
+        simp only [mul_assoc]
+      _ = Star.star a * ((q : A) * Star.star b) := by rw [hab]
+      _ = (Star.star a * q) * Star.star b := by rw [mul_assoc]
+      _ = Star.star a * Star.star b := by rw [hstarAq]
+      _ = p := hstarAB
+  have hdc : d * c = (p : A) := by
+    dsimp [c, d]
+    calc
+      (b * Star.star b) * (Star.star a * a) =
+          b * ((Star.star b * Star.star a) * a) := by
+        simp only [mul_assoc]
+      _ = b * ((q : A) * a) := by rw [hstarBA]
+      _ = b * a := by rw [hqa]
+      _ = p := hba
+  have hdcComm : Commute d c := by
+    rw [Commute]
+    exact hdc.trans hcd.symm
+  let s : A := CFC.sqrt d
+  have hsNonneg : 0 ≤ s := by
+    exact CFC.sqrt_nonneg d
+  have hsSelf : IsSelfAdjoint s := hsNonneg.isSelfAdjoint
+  have hss : s * s = d := by
+    exact CFC.sqrt_mul_sqrt_self d (mul_star_self_nonneg b)
+  have hsc : Commute s c := by
+    change Commute (cfcₙ NNReal.sqrt d) c
+    exact hdcComm.cfcₙ_nnreal NNReal.sqrt
+  let v : A := a * s
+  have hstarv : Star.star v = s * Star.star a := by
+    change Star.star (a * s) = s * Star.star a
+    rw [star_mul, hsSelf.star_eq]
+  refine ⟨v, ?_, ?_⟩
+  · calc
+      (p : A) = c * d := hcd.symm
+      _ = c * (s * s) := by rw [hss]
+      _ = (c * s) * s := (mul_assoc c s s).symm
+      _ = (s * c) * s := congrArg (fun z ↦ z * s) hsc.eq.symm
+      _ = s * (c * s) := mul_assoc s c s
+      _ = Star.star v * v := by
+        rw [hstarv]
+        change s * ((Star.star a * a) * s) =
+          (s * Star.star a) * (a * s)
+        simp only [mul_assoc]
+  · have hadstar : a * d * Star.star a = (q : A) := by
+      dsimp [d]
+      calc
+        a * (b * Star.star b) * Star.star a =
+            (a * b) * (Star.star b * Star.star a) := by
+          simp only [mul_assoc]
+        _ = (q : A) * q := by rw [hab, hstarBA]
+        _ = q := hqEq
+    calc
+      (q : A) = a * d * Star.star a := hadstar.symm
+      _ = a * (s * s) * Star.star a := by rw [hss]
+      _ = v * Star.star v := by
+        rw [hstarv]
+        change a * (s * s) * Star.star a =
+          (a * s) * (s * Star.star a)
+        simp only [mul_assoc]
+
+end StarProjection

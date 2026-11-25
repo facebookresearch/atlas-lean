@@ -34,13 +34,15 @@ ordinary Hoare validity for heap-free commands.
 
 namespace Cslib.IMP
 
-/-- Heap assertions used as separation-logic preconditions and
-postconditions. -/
+/-- **Heap assertion.** A heap assertion is a predicate on a store and a heap: it assigns a
+proposition to every store $s$ and every heap $h$. Heap assertions serve as the preconditions
+and postconditions of separation logic. -/
 abbrev HAssertion := State → Heap → Prop
 
 namespace HAssertion
 
-/-- Pointwise implication between heap assertions. -/
+/-- **Entailment of heap assertions.** A heap assertion $P$ entails a heap assertion $Q$ when, for
+every store $s$ and every heap $h$, if $P$ holds of $s$ and $h$, then $Q$ holds of $s$ and $h$. -/
 def Entails (P Q : HAssertion) : Prop :=
   ∀ ⦃s h⦄, P s h → Q s h
 
@@ -51,28 +53,37 @@ theorem Entails.trans {P Q R : HAssertion}
     (h1 : P.Entails Q) (h2 : Q.Entails R) : P.Entails R :=
   fun {_s _h} h => h2 (h1 h)
 
-/-- The empty-heap assertion. -/
+/-- **Empty-heap assertion.** The heap assertion $\mathrm{emp}$ holds of a store $s$ and a heap
+$h$ exactly when $h$ is the empty heap, whatever the store $s$ is. -/
 def emp : HAssertion := fun _ h => h = ∅
 
-/-- A pure fact holding on the empty heap. -/
+/-- **Pure assertion.** For a proposition $p$, the pure assertion of $p$ holds of a store $s$ and
+a heap $h$ exactly when $h$ is the empty heap and $p$ is true. -/
 def pure (p : Prop) : HAssertion := fun _ h => h = ∅ ∧ p
 
-/-- The singleton heap mapping `a` to `v`. -/
+/-- **Points-to assertion.** For natural numbers $a$ and $v$, the assertion $a \mapsto v$ holds of
+a store $s$ and a heap $h$ exactly when $h$ is the singleton heap that maps the address $a$ to the
+value $v$ and allocates no other address. -/
 def pointsTo (a v : Nat) : HAssertion :=
   fun _ h => h = Finmap.singleton a v
 
-/-- Separating conjunction: the heap splits into disjoint parts
-satisfying each conjunct. -/
+/-- **Separating conjunction.** For heap assertions $P$ and $Q$, the assertion $P \star Q$ holds
+of a store $s$ and a heap $h$ when there are disjoint heaps $h_1$ and $h_2$ with
+$h = h_1 \cup h_2$ such that $P(s, h_1)$ and $Q(s, h_2)$. -/
 def star (P Q : HAssertion) : HAssertion :=
   fun s h => ∃ h₁ h₂, Heap.Disjoint h₁ h₂ ∧ h = h₁ ∪ h₂ ∧ P s h₁ ∧ Q s h₂
 
 scoped infixr:60 " ⋆ " => star
 
-/-- Existential quantification over addresses or values. -/
+/-- **Existential heap assertion.** For a function $p$ assigning a heap assertion $p(n)$ to each
+natural number $n$ (an address or a value), the assertion $\exists n,\ p(n)$ holds of a store $s$
+and a heap $h$ exactly when $p(n)$ holds of $s$ and $h$ for some natural number $n$. -/
 def hexists (p : Nat → HAssertion) : HAssertion :=
   fun s h => ∃ a, p a s h
 
-/-- Ordinary conjunction of heap assertions on the same heap. -/
+/-- **Conjunction of heap assertions.** For heap assertions $P$ and $Q$, the assertion
+$P \wedge Q$ holds of a store $s$ and a heap $h$ exactly when $P$ holds of $s$ and $h$ and $Q$
+holds of $s$ and the same heap $h$. -/
 def hand (P Q : HAssertion) : HAssertion :=
   fun s h => P s h ∧ Q s h
 
@@ -246,8 +257,12 @@ private theorem erase_singleton_self (a v : Nat) :
       Finmap.lookup_eq_none.mpr (by rw [Finmap.mem_singleton]; exact hx),
       Finmap.lookup_empty]
 
-/-- Fault-avoiding validity of a separation-logic triple: from `P`, the
-command never faults, and every terminating execution ends in `Q`. -/
+/-- **Separation-logic triple validity.** For heap assertions $P$, $Q$ and a heap command $c$,
+the triple $\lbrace P \rbrace\ c\ \lbrace Q \rbrace$ is valid (in the fault-avoiding sense)
+when, for every store $s$ and heap $h$ with $P(s, h)$, the configuration $(c, s, h)$ is safe
+(no configuration reachable from it is stuck at a command other than $\mathtt{skip}$), and
+whenever $(c, s, h)$ reaches $(\mathtt{skip}, s', h')$ in finitely many heap steps,
+$Q(s', h')$ holds. -/
 def SepValid (P : HAssertion) (c : HeapCmd) (Q : HAssertion) : Prop :=
   ∀ ⦃s h⦄, P s h → Safe (c, s, h) ∧
     ∀ ⦃s' h'⦄, HSteps (c, s, h) (.skip, s', h') → Q s' h'
@@ -423,10 +438,12 @@ theorem ite {P Q : HAssertion} {guard : BExp} {t e : HeapCmd}
       · obtain ⟨-, hterm⟩ := helse ⟨hpre, hg⟩
         exact hterm htail
 
-/-- The invariant rule for while loops. Safety follows because every
-reachable configuration stays in a loop phase or has exited to `skip`;
-termination follows by head induction on the execution, stepping
-through the phases. -/
+/-- **Separation-logic while rule.** Let $I$ be a heap assertion, $b$ a Boolean expression and
+$c$ a heap command. Write $I \wedge b$ for the assertion that holds of a store $s$ and a heap
+$h$ when $I(s, h)$ holds and $b$ evaluates to true in $s$, and $I \wedge \neg b$ for the one
+that holds when $I(s, h)$ holds and $b$ evaluates to false in $s$. If the triple
+$\lbrace I \wedge b \rbrace\ c\ \lbrace I \rbrace$ is valid, then so is the triple
+$\lbrace I \rbrace\ \mathtt{while}\ b\ \mathtt{do}\ c\ \lbrace I \wedge \neg b \rbrace$. -/
 theorem whileLoop {I : HAssertion} {guard : BExp} {body : HeapCmd}
     (hbody : SepValid (fun s h => I s h ∧ guard.eval s = true) body I) :
     SepValid I (.while guard body)
@@ -569,10 +586,12 @@ theorem free {Q : HAssertion} (addr : AExp) :
     rw [hh, erase_singleton_self]
     exact hQ
 
-/-- The frame rule: a valid triple stays valid when a disjoint frame
-heap satisfying `R` is added, provided `R` does not mention variables
-the command may modify. Framed safety and termination both go through
-projection of framed executions to the small heap. -/
+/-- **Frame rule.** Let $P$, $Q$ and $R$ be heap assertions and $c$ a heap command. Suppose the
+separation-logic triple with precondition $P$, command $c$ and postcondition $Q$ is valid, and
+suppose that whenever $R$ holds of a store $s$ and a heap $h$, it also holds of $s'$ and $h$ for
+every store $s'$ that agrees with $s$ on every variable outside the set of variables that $c$ may
+assign to. Then the triple with precondition $P \star R$, command $c$ and postcondition
+$Q \star R$ is valid, where $\star$ denotes separating conjunction. -/
 theorem frame {P Q R : HAssertion} {c : HeapCmd}
     (hvalid : SepValid P c Q)
     (hR : ∀ ⦃s h s'⦄, R s h →
@@ -601,9 +620,14 @@ theorem frame {P Q R : HAssertion} {c : HeapCmd}
     rw [HAssertion.star_def]
     exact ⟨h₂, hf, hd₂, hEq, hQ, hR'⟩
 
-/-- Ordinary Hoare validity embeds into separation validity at every
-heap: embedded commands are safe, never touch the heap, and terminate
-exactly when the plain command does. -/
+/-- **Hoare validity embeds into separation validity.** Let $P$ and $Q$ be store assertions and
+$c$ a command of plain IMP. If the partial-correctness Hoare triple with precondition $P$, command
+$c$ and postcondition $Q$ is valid, then the separation-logic triple for the embedding of $c$ into
+heap IMP is valid with the precondition that holds of a store $s$ and any heap exactly when $P(s)$
+holds and the postcondition that holds of a store $s$ and any heap exactly when $Q(s)$ holds.
+
+Embedded commands are always safe, never change the heap, and terminate exactly when the plain
+command does. -/
 theorem of_valid {P Q : Assertion} {c : Cmd} (hvalid : Valid P c Q) :
     SepValid (fun s _ => P s) c.toHeap (fun s _ => Q s) := by
   intro s h hpre
@@ -614,8 +638,15 @@ theorem of_valid {P Q : Assertion} {c : Cmd} (hvalid : Valid P c Q) :
   subst hc
   exact Valid.iff_terminates.mp hvalid hpre hSteps
 
-/-- Hoare validity framed by an arbitrary heap assertion whose store
-dependence avoids the embedded command's modified variables. -/
+/-- **Framed embedding of Hoare validity.** Let $P$ and $Q$ be store assertions, $R$ a heap
+assertion and $c$ a command of plain IMP, and write $\hat c$ for the embedding of $c$ into heap
+IMP. Suppose the partial-correctness Hoare triple with precondition $P$, command $c$ and
+postcondition $Q$ is valid, and suppose that whenever $R$ holds of a store $s$ and a heap $h$, it
+also holds of $s'$ and $h$ for every store $s'$ that agrees with $s$ on every variable outside the
+set of variables that $\hat c$ may assign to. Write $\tilde P$ and $\tilde Q$ for the heap
+assertions that hold of a store $s$ and any heap exactly when $P(s)$, respectively $Q(s)$, holds.
+Then the separation-logic triple with precondition $\tilde P \star R$, command $\hat c$ and
+postcondition $\tilde Q \star R$ is valid, where $\star$ denotes separating conjunction. -/
 theorem of_valid_frame {P Q : Assertion} {R : HAssertion} {c : Cmd}
     (h : Valid P c Q)
     (hR : ∀ ⦃s h s'⦄, R s h →

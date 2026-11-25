@@ -187,8 +187,14 @@ def omega (α : ℕ → ℚ) (j : ℕ) : ℚ :=
   ∑ l ∈ Finset.range j,
     (Nat.descFactorial (j - 1) l : ℚ) * α l
 
-/-- The paper's `Λ(α, k₁, k₂) = ∑_{l=0}^{k₁-1} C(k₁-1, l)
-(l+k₂-k₁)!/(k₂-k₁)! α_{l+k₂-k₁}`. -/
+/-- **The sum $\Lambda(\alpha, k_1, k_2)$.** For a sequence $\alpha = (\alpha_0, \alpha_1, \dots)$
+of rationals and natural numbers $k_1, k_2$,
+$$
+\Lambda(\alpha, k_1, k_2) = \sum_{0 \le l < k_1} \binom{k_1-1}{l}
+\frac{(l+k_2-k_1)!}{(k_2-k_1)!} \, \alpha_{l+k_2-k_1},
+$$
+an empty sum, equal to $0$, when $k_1 = 0$. The differences of natural numbers in the summand are
+truncated at $0$ (this matters only when $k_2 < k_1$). -/
 def lambda (α : ℕ → ℚ) (k₁ k₂ : ℕ) : ℚ :=
   ∑ l ∈ Finset.range k₁, (Nat.choose (k₁ - 1) l : ℚ) *
     ((l + k₂ - k₁).factorial : ℚ) / (k₂ - k₁).factorial *
@@ -250,8 +256,10 @@ theorem omega_succ (α : ℕ → ℚ) (j : ℕ) :
   push_cast
   field_simp
 
-/-- **Lemma 2**: the `j`-th column sum of `R_α` is
-`∑_{i=1}^j R_{i,j} = α_{j-1}`.
+/-- **Column sums of the matrix $R_\alpha$.** Let $\alpha \colon \mathbb{N} \to \mathbb{Q}$, let
+$\Psi_\alpha(k) = \sum_{l=0}^{k-1} \alpha_l / (k-1-l)!$, and let $R_\alpha$ be the matrix with
+entries $R_{i,j} = \frac{(-1)^{j-i}}{(j-i)!} \Psi_\alpha(i)$ for $1 \le i \le j$ and
+$R_{i,j} = 0$ for $i > j$. Then for every $j \ge 1$, $\sum_{i=1}^{j} R_{i,j} = \alpha_{j-1}$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Nima
 Salehy, and Navid Salehy, "Some Identities Involving
@@ -687,9 +695,16 @@ theorem rTildeMatrix_eq_inv (α : ℕ → ℚ) (n : ℕ)
 
 -- The nonvanishing hypothesis `h` is part of the source statement but is not
 -- needed (see `sum_rEntry_mul_descFactorial`).
-/-- **Proposition 8**: under the nonvanishing condition,
-`∑_{k₁=1}^i ∑_{k₂=k₁}^j S(i,k₁) (j-1)↓_{k₂-1}
-Λ(α,k₁,k₂) = j^{i-1} Ω(α,j)`.
+/-- **Stirling and falling-factorial sum of the $\Lambda$ coefficients.** Let
+$\alpha \colon \mathbb{N} \to \mathbb{Q}$, let $S(i, k)$ denote the Stirling numbers of the
+second kind, let $m^{\underline{l}} = m(m-1)\cdots(m-l+1)$ be the falling factorial, let
+$\Omega(\alpha, j) = \sum_{l=0}^{j-1} (j-1)^{\underline{l}} \, \alpha_l$, and for $k_1 \le k_2$
+let $\Lambda(\alpha, k_1, k_2) = \sum_{l=0}^{k_1-1} \binom{k_1-1}{l}
+\frac{(l+k_2-k_1)!}{(k_2-k_1)!} \, \alpha_{l+k_2-k_1}$. If $i, j \ge 1$ and
+$\prod_{k=1}^{\max(i,j)} \Omega(\alpha, k) \ne 0$, then
+
+$$\sum_{k_1=1}^{i} \sum_{k_2=k_1}^{j} S(i,k_1) \, (j-1)^{\underline{k_2-1}} \,
+\Lambda(\alpha, k_1, k_2) = j^{i-1} \, \Omega(\alpha, j).$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Nima
 Salehy, and Navid Salehy, "Some Identities Involving
@@ -815,9 +830,12 @@ theorem sum_signed_psi_eq (α : ℕ → ℚ) (i j : ℕ)
         · exact uEntry_eq_lambda α i j hi hij
         · exact uEntry_eq_zero_of_lt α i j (by omega)
 
-/-- **Corollary 10**: `∑_{k₁=1}^i ∑_{k₂=1}^j
-(-1)^{j-k₂} s(i,k₁) k₂^{k₁-1} / ((j-k₂)! (k₂-1)!) =
-δ_{i,j}`.
+/-- **Kronecker-delta identity for signed Stirling numbers of the first kind.** Let $s(i, k)$
+denote the signed Stirling numbers of the first kind and $\delta_{i,j}$ the Kronecker delta
+($1$ if $i = j$ and $0$ otherwise). Then for all integers $i, j \ge 1$, in $\mathbb{Q}$,
+
+$$\sum_{k_1=1}^{i} \sum_{k_2=1}^{j}
+\frac{(-1)^{j-k_2} \, s(i,k_1) \, k_2^{k_1-1}}{(j-k_2)! \, (k_2-1)!} = \delta_{i,j}.$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Nima
 Salehy, and Navid Salehy, "Some Identities Involving
