@@ -18,6 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
 public import Mathlib.Algebra.Group.Nat.Defs
+public import MathlibExt.Combinatorics.Additive.MonochromaticSquareSumErdosProblem439
 
 @[expose] public section
 
@@ -33,35 +34,12 @@ the statement for colourings of `ℤ`, which restrict to the positive integers. 
 question is stated for every `k ≥ 2`. formal-conjectures has no statement of this problem.
 -/
 
-/-- **Erdős Problem 439 for squares.** The statement that for every colouring of the positive
-integers with finitely many colours there are distinct positive integers $x$ and $y$ of the same
-colour such that $x + y$ is a perfect square. -/
-def monochromaticSquareSum : Prop :=
-  ∀ r : ℕ, ∀ c : ℕ → Fin r, ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ≠ y ∧ c x = c y ∧ IsSquare (x + y)
-
 /-- **Erdős Problem 439 for $k$-th powers.** The statement that for every integer $k \ge 2$ and
 every colouring of the positive integers with finitely many colours there are distinct positive
 integers $x$ and $y$ of the same colour such that $x + y = z^k$ for some natural number $z$. -/
 def monochromaticPowerSum : Prop :=
   ∀ k : ℕ, 2 ≤ k → ∀ r : ℕ, ∀ c : ℕ → Fin r,
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ≠ y ∧ c x = c y ∧ ∃ z : ℕ, x + y = z ^ k
-
-/--
-**Erdős Problem 439 for squares is true.** For every colouring of the positive integers with
-finitely many colours there are distinct positive integers $x$ and $y$ of the same colour such
-that $x + y$ is a perfect square.
-
-This is the case $f(z) = z^2$ of a theorem of Khalfalah and Szemerédi on monochromatic
-solutions of $x + y = f(z)$; Erdős, Sárközy and Sós had proved the cases of $2$ and $3$ colours.
-
-Source: T. F. Bloom, Erdős Problems, Problem #439,
-https://www.erdosproblems.com/439 (status PROVED); resolution: A. Khalfalah and E. Szemerédi, On the
-number of monochromatic solutions of x + y = z², Combin. Probab. Comput. (2006), 213-227, main
-theorem (a conjecture of Erdős, Roth, Sárközy and Sós): for every nonconstant f ∈ ℤ[z] with 2 ∣ f(z)
-for some z ∈ ℤ, every finite colouring of the integers has x ≠ y of the same colour with x + y =
-f(z) (abstract; erdosproblems.com/439), https://doi.org/10.1017/S0963548305007169.
--/
-public theorem_wanted monochromaticSquareSum_holds : monochromaticSquareSum
 
 /--
 **Erdős Problem 439 for $k$-th powers is true.** For every integer $k \ge 2$ and every colouring
