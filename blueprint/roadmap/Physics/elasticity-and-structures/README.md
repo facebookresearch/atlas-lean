@@ -1,11 +1,10 @@
 # Elasticity and structural mechanics
 
-Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, elasticity boundary-value problems, weak formulations and virtual work, prismatic bars and shafts, Euler–Bernoulli beams and their vibration modes, column buckling, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, plasticity and viscoelasticity, laminates and plates, contact, friction and lubrication, aeroelastic divergence and flutter, and rigid footings on elastic foundations.
+Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, elasticity boundary-value problems, weak formulations and virtual work, prismatic bars and shafts, Euler–Bernoulli beams and their vibration modes, column buckling, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, plasticity and viscoelasticity, laminates and plates, contact, friction and lubrication, aeroelastic divergence and flutter, the vibrations of a monatomic chain, rigid footings on elastic foundations, and geotechnical limit analysis.
 
 - [Aeroelastic divergence and flutter](aeroelastic-divergence-and-flutter/README.md)
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
 - [Cauchy stress, small strain and Mohr's circle](cauchy-stress-small-strain-and-mohr-s-circle/README.md)
-- [Euler buckling of columns](euler-buckling-of-columns/README.md)
 - [Euler–Bernoulli beam under uniform load](euler-bernoulli-beam-under-uniform-load/README.md)
 - [Isotropic elastic energy](isotropic-elastic-energy/README.md)
 - [Laminate stiffness and lamina rotation](laminate-stiffness-and-lamina-rotation/README.md)
@@ -16,6 +15,7 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Stiffness method for beams and frames](stiffness-method-for-beams-and-frames/README.md)
 - [Truss equilibrium, load envelopes and load inference](truss-equilibrium-load-envelopes-and-load-infere/README.md)
 - [Vibration modes of Euler–Bernoulli beams](vibration-modes-of-euler-bernoulli-beams/README.md)
+- [Vibrations of a monatomic chain](vibrations-of-a-monatomic-chain/README.md)
 - [Kern rule for eccentrically loaded footings](kern-condition-iff.md)
 - [Contact and tribology](contact-and-tribology/README.md)
 - [Plasticity](plasticity/README.md)
