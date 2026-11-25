@@ -9,4 +9,4 @@ partial derivative in the entry `a_ij` is `v_i w_j / ⟨v, w⟩`.
 
 ## Sources
 
-- Caswell (1978); Magnus (1985), Theorem 2.
+- H. Caswell, "A general formula for the sensitivity of population growth rate to changes in life history parameters", Theor. Popul. Biol. 14 (1978) 215–230, doi:10.1016/0040-5809(78)90025-4 (restated in H. de Kroon, J. van Groenendael and J. Ehrlén, "Elasticities: a review of methods and model limitations", Ecology 81 (2000) 607–618); J. R. Magnus, "On differentiating eigenvalues and eigenvectors", Econometric Theory 1 (1985) 179–191, Theorem 2, eq. (17).

@@ -55,7 +55,12 @@ there is a function `Λ` of the entries, with `Λ(A) = lam`, that is differentia
 value at every matrix near `A` is a root of that matrix's characteristic polynomial, and whose
 partial derivative in the entry `a_ij` is `v_i w_j / ⟨v, w⟩`.
 
-Sources: Caswell (1978); Magnus (1985), Theorem 2. -/
+Sources: H. Caswell, "A general formula for the sensitivity of population growth rate to changes
+in life history parameters", Theor. Popul. Biol. 14 (1978) 215–230,
+doi:10.1016/0040-5809(78)90025-4 (restated in H. de Kroon, J. van Groenendael and J. Ehrlén,
+"Elasticities: a review of methods and model limitations", Ecology 81 (2000) 607–618);
+J. R. Magnus, "On differentiating eigenvalues and eigenvectors", Econometric Theory 1 (1985)
+179–191, Theorem 2, eq. (17). -/
 public theorem_wanted eigenvalue_sensitivity (a : Fin n → Fin n → ℝ) (lam : ℝ)
     (hsimple : IsSimpleEigenvalue a lam) (w v : Fin n → ℝ) (hw : w ≠ 0) (hv : v ≠ 0)
     (hAw : Matrix.of a *ᵥ w = lam • w) (hvA : v ᵥ* Matrix.of a = lam • v) :

@@ -46,10 +46,10 @@ open MeasureTheory Set Real
 noncomputable def reproductiveValue (l b : ℝ → ℝ) (r x : ℝ) : ℝ :=
   exp (r * x) / l x * ∫ y in Ioi x, exp (-(r * y)) * l y * b y
 
-/-- Standing hypotheses on a **continuous life table** with last reproductive age `ω`:
-survival `l` is positive on `[0, ∞)` with `l(0) = 1` and `l' = -μ l` there (`μ` continuous),
-fecundity `b` is continuous and nonnegative on `[0, ∞)` and vanishes after `ω`, and `r` is the
-root of the characteristic equation `∫_0^∞ e^{-rx} l(x) b(x) dx = 1`. -/
+/-- Standing hypotheses on a **continuous life table** with last reproductive age `ω > 0`:
+`pos_omega` requires `0 < ω`, survival `l` is positive on `[0, ∞)` with `l(0) = 1` and `l' = -μ l`
+there (`μ` continuous), fecundity `b` is continuous and nonnegative on `[0, ∞)` and vanishes after
+`ω`, and `r` is the root of the characteristic equation `∫_0^∞ e^{-rx} l(x) b(x) dx = 1`. -/
 structure IsLifeTable (l μ b : ℝ → ℝ) (ω r : ℝ) : Prop where
   pos_omega : 0 < ω
   l_zero : l 0 = 1
