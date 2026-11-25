@@ -149,7 +149,7 @@ public theorem_wanted splitThue_recurrence_solutions_eventually_trivial {d : ℕ
 /-- **Asymptotics of the roots of a split Thue family.** Let $(d, G, \gamma, \delta)$ be a split
 Thue recurrence family. Call reals $\alpha_i(n)$ ($i, n \in \mathbb{N}$) an admissible labelling
 if there is $N$ such that for all $n \ge N$ and $1 \le i \le d$,
-$\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1$. Then, first,
+$\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1/2$. Then, first,
 there is $N$ such that for all $n \ge N$ every $z \in \mathbb{C}$ with
 $\prod_{k=1}^{d} (z - G_k(n)) = 1$ is real; second, an admissible labelling exists; third, for
 every admissible labelling $\alpha$ and every $1 \le i \le d$ there are $C \in \mathbb{R}$ and
@@ -168,9 +168,9 @@ public theorem_wanted splitThue_recurrence_roots_asymptotic {d : ℕ} {G : ℕ �
     {γ : ℕ → ℝ} {δ : ℕ → ℂ} (hF : IsSplitThueRecurrenceFamily d G γ δ) :
     (∃ N : ℕ, ∀ n ≥ N, ∀ z : ℂ, ∏ k ∈ Finset.Icc 1 d, (z - G k n) = 1 → z.im = 0) ∧
     (∃ α : ℕ → ℕ → ℝ, ∃ N : ℕ, ∀ n ≥ N, ∀ i ∈ Finset.Icc 1 d,
-      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1) ∧
+      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1 / 2) ∧
     ∀ α : ℕ → ℕ → ℝ, (∃ N : ℕ, ∀ n ≥ N, ∀ i ∈ Finset.Icc 1 d,
-      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1) →
+      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1 / 2) →
       ∀ i ∈ Finset.Icc 1 d, ∃ (C : ℝ) (N : ℕ), ∀ n ≥ N,
         |(α n i - G i n) * ∏ k ∈ (Finset.Icc 1 d).erase i, ((G i n : ℝ) - G k n) - 1| ≤
           C * ((if i ≤ d - 2 then γ i ^ (i - 1) * (∏ k ∈ Finset.Icc (i + 1) (d - 2), γ k) *
@@ -206,7 +206,7 @@ public theorem_wanted splitThue_recurrence_roots_growth {d : ℕ} {G : ℕ → �
 /-- **Determinants of logarithms in a split Thue family.** Let $(d, G, \gamma, \delta)$ be a
 split Thue recurrence family, let $\alpha_i(n)$ ($i, n \in \mathbb{N}$) be reals for which there
 is $N$ such that for all $n \ge N$ and $1 \le i \le d$,
-$\prod_{l=1}^{d} (\alpha_i(n) - G_l(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1$, and let
+$\prod_{l=1}^{d} (\alpha_i(n) - G_l(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1/2$, and let
 $1 \le k \le d - 1$. Let $B_k(n)$ be the $k \times k$ matrix with entries
 $\log |\alpha_i(n) - G_j(n)|$ for $1 \le i, j \le k$, where $\log 0 = 0$. Then there are
 $c_1 > 0$, $c_2 > 0$ and $N'$ such that $c_1 n^k \le |\det B_k(n)| \le c_2 n^k$ for all
@@ -220,8 +220,8 @@ large `n`. -/
 public theorem_wanted splitThue_recurrence_logUnitDet_asymptotic {d : ℕ} {G : ℕ → ℕ → ℤ}
     {γ : ℕ → ℝ} {δ : ℕ → ℂ} (hF : IsSplitThueRecurrenceFamily d G γ δ)
     (α : ℕ → ℕ → ℝ) (hα : ∃ N : ℕ, ∀ n ≥ N, ∀ i ∈ Finset.Icc 1 d,
-      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1) (k : ℕ) (hk : 1 ≤ k) (hkd : k
-          ≤ d - 1) :
+      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1 / 2)
+    (k : ℕ) (hk : 1 ≤ k) (hkd : k ≤ d - 1) :
     ∃ c₁ > 0, ∃ c₂ > 0, ∃ N : ℕ, ∀ n ≥ N,
       c₁ * (n : ℝ) ^ k ≤
           |(Matrix.of fun a b : Fin k => Real.log (α n ((a : ℕ) + 1) - G ((b : ℕ) + 1) n)).det| ∧

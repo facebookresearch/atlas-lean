@@ -3,7 +3,7 @@
 Let $(d, G, \gamma, \delta)$ be a split
 Thue recurrence family. Call reals $\alpha_i(n)$ ($i, n \in \mathbb{N}$) an admissible labelling
 if there is $N$ such that for all $n \ge N$ and $1 \le i \le d$,
-$\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1$. Then, first,
+$\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$ and $|\alpha_i(n) - G_i(n)| < 1/2$. Then, first,
 there is $N$ such that for all $n \ge N$ every $z \in \mathbb{C}$ with
 $\prod_{k=1}^{d} (z - G_k(n)) = 1$ is real; second, an admissible labelling exists; third, for
 every admissible labelling $\alpha$ and every $1 \le i \le d$ there are $C \in \mathbb{R}$ and
