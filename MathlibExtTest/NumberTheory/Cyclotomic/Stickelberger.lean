@@ -23,9 +23,12 @@ theorem exactSource_clGalAction_clProj_mk0 (p : ℕ) [NeZero p]
     Stickelberger.clGalAction p K d
         (Stickelberger.clProj p (𝓞 K)
           (Additive.ofMul (ClassGroup.mk0 P))) =
-      Stickelberger.clProj p (𝓞 K) (Additive.ofMul
-        (ClassGroup.mk0 (Ideal.mapNonZero
-          (Stickelberger.clRingAction p K d) P))) :=
+      Stickelberger.clProj p (𝓞 K) (Additive.ofMul (ClassGroup.mk0
+        ⟨(P : Ideal (𝓞 K)).map (Stickelberger.clRingAction p K d),
+          mem_nonZeroDivisors_iff_ne_zero.mpr <|
+            (Ideal.map_eq_bot_iff_of_injective
+              (Stickelberger.clRingAction p K d).injective).not.mpr
+              (mem_nonZeroDivisors_iff_ne_zero.mp P.2)⟩)) :=
   Stickelberger.clGalAction_clProj_mk0 p K d P
 
 open Stickelberger

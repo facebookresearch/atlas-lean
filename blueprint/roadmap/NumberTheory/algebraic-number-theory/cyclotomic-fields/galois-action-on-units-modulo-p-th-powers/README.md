@@ -1,6 +1,5 @@
 # Galois action on units modulo p-th powers
 
-- [Map Non Zero](map-non-zero.md)
 - [Gal Restrict Ring Aut](gal-restrict-ring-aut.md)
 - [Cl End Hom](cl-end-hom.md)
 - [Cl Ring Action](cl-ring-action.md)

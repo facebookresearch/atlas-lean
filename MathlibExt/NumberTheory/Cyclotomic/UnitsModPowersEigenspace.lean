@@ -69,7 +69,8 @@ variable {R : Type*} [CommRing R]
 variable {R' : Type*} [CommRing R']
 
 /-- The image of a nonzero ideal under a ring isomorphism, as a nonzero ideal. -/
-def Ideal.mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)⁰) : (Ideal R')⁰ :=
+private def Ideal.mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)⁰) :
+    (Ideal R')⁰ :=
   ⟨(P : Ideal R).map (g : R →+* R'), by
     have hinj : Function.Injective ((g : R →+* R') : R → R') := g.injective
     refine mem_nonZeroDivisors_iff_ne_zero.mpr fun hbot => ?_
@@ -77,7 +78,7 @@ def Ideal.mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)�
     rw [Ideal.zero_eq_bot] at hbot ⊢
     exact (Ideal.map_eq_bot_iff_of_injective hinj).mp hbot⟩
 
-@[simp] lemma Ideal.coe_mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)⁰) :
+private lemma Ideal.coe_mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)⁰) :
     (Ideal.mapNonZero g P : Ideal R') = (P : Ideal R).map (g : R →+* R') := rfl
 
 variable [IsDedekindDomain R] [IsDedekindDomain R']
@@ -153,7 +154,10 @@ variable [IsDedekindDomain R] in
 omit [NeZero p] in
 theorem clEnd_clProj_mk0 (g : R ≃+* R) (P : (Ideal R)⁰) :
     clEnd p g (clProj p R (Additive.ofMul (ClassGroup.mk0 P))) =
-      clProj p R (Additive.ofMul (ClassGroup.mk0 (Ideal.mapNonZero g P))) :=
+      clProj p R (Additive.ofMul (ClassGroup.mk0 ⟨(P : Ideal R).map g,
+        mem_nonZeroDivisors_iff_ne_zero.mpr <|
+          (Ideal.map_eq_bot_iff_of_injective g.injective).not.mpr
+            (mem_nonZeroDivisors_iff_ne_zero.mp P.2)⟩)) :=
   (clEnd_clProj p g _).trans
     (congrArg (fun C => clProj p R (Additive.ofMul C)) (ClassGroup.mulEquiv_mk0 g P))
 
@@ -203,8 +207,10 @@ noncomputable def clGalAction [IsCyclotomicExtension {p} ℚ K] :
 theorem clGalAction_clProj_mk0 [IsCyclotomicExtension {p} ℚ K] (d : (ZMod p)ˣ)
     (P : (Ideal (𝓞 K))⁰) :
     clGalAction p K d (clProj p (𝓞 K) (Additive.ofMul (ClassGroup.mk0 P))) =
-      clProj p (𝓞 K) (Additive.ofMul (ClassGroup.mk0
-        (Ideal.mapNonZero (clRingAction p K d) P))) :=
+      clProj p (𝓞 K) (Additive.ofMul (ClassGroup.mk0 ⟨(P : Ideal (𝓞 K)).map (clRingAction p K d),
+        mem_nonZeroDivisors_iff_ne_zero.mpr <|
+          (Ideal.map_eq_bot_iff_of_injective (clRingAction p K d).injective).not.mpr
+            (mem_nonZeroDivisors_iff_ne_zero.mp P.2)⟩)) :=
   clEnd_clProj_mk0 p (clRingAction p K d) P
 
 end Cyclotomic
