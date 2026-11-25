@@ -448,7 +448,7 @@ theorem Module.End.exists_ne_zero_forall_apply_eq_smul_of_ringHom {K V T : Type*
     rw [Module.mem_annihilator] at ht
     refine (Ideal.mem_bot).mpr (hfaith t fun x hx => ?_)
     have := congrArg Subtype.val (ht ⟨x, hx⟩)
-    simp at this
+    simp only [SetLike.val_smul, ZeroMemClass.coe_zero] at this
     exact this
   have : (RingHom.ker χ).IsPrime := RingHom.ker_isPrime χ
   obtain ⟨𝔓, h𝔓min, h𝔓le⟩ :=
@@ -505,8 +505,8 @@ end Eigenvector
 
 namespace CuspForm
 
-/-- Under an integral structure, every ring homomorphism from the Hecke algebra to `ℂ` is
-the system of Hecke eigenvalues of a nonzero cusp form. -/
+/-- Under an integral structure in weight `k ≥ 1`, every ring homomorphism from the Hecke algebra
+to `ℂ` is the system of Hecke eigenvalues of a nonzero cusp form. -/
 theorem HasIntegralStructure.exists_ne_zero_forall_apply_eq_smul {N : ℕ} [NeZero N] {k : ℤ}
     (hN : HasIntegralStructure N k) (hk : 1 ≤ k) {S : Set ℕ}
     (χ : heckeAlgebra N k S →+* ℂ) :

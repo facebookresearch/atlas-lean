@@ -151,138 +151,8 @@ namespace ModularFormClass
 
 open ModularForm
 
-private theorem qCoeff_const_smul {f : ℍ → ℂ} (hper : Periodic (f ∘ ofComplex) 1)
-    (hhol : MDiff f) (hbdd : IsBoundedAtImInfty f) (c : ℂ) (n : ℕ) :
-    qCoeff (c • f) n = c * qCoeff f n := by
-  simp only [qCoeff]
-  rw [UpperHalfPlane.qExpansion_smul (analyticAt_cuspFunction_zero one_pos hper hhol hbdd)]
-  simp
-
-private theorem periodic_const_smul {f : ℍ → ℂ} (hper : Periodic (f ∘ ofComplex) 1) (c : ℂ) :
-    Periodic ((c • f) ∘ ofComplex) 1 := fun z ↦ by
-  simpa using congrArg (c * ·) (hper z)
-
-private theorem eq_of_forall_qCoeff_eq_bare {f g : ℍ → ℂ} (hfper : Periodic (f ∘ ofComplex) 1)
-    (hfhol : MDiff f) (hfbdd : IsBoundedAtImInfty f) (hgper : Periodic (g ∘ ofComplex) 1)
-    (hghol : MDiff g) (hgbdd : IsBoundedAtImInfty g) (h : ∀ n : ℕ, qCoeff f n = qCoeff g n) :
-    f = g := by
-  funext τ
-  have hf := UpperHalfPlane.hasSum_qExpansion one_pos hfper hfhol hfbdd τ
-  have hg := UpperHalfPlane.hasSum_qExpansion one_pos hgper hghol hgbdd τ
-  simp only [qCoeff_eq] at h
-  simp only [h] at hf
-  exact hf.unique hg
-
-private theorem bdd_of_mem_strictPeriods {F : Type*} [FunLike F ℍ ℂ]
-    {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [ModularFormClass F Γ k] (f : F)
-    (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) : IsBoundedAtImInfty ⇑f :=
-  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  bdd_at_infty f
-
-private theorem eq_of_forall_qCoeff_eq_class {F : Type*} [FunLike F ℍ ℂ]
-    {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [ModularFormClass F Γ k] (f g : F)
-    (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (h : ∀ n : ℕ, qCoeff f n = qCoeff g n) : ⇑f = ⇑g :=
-  eq_of_forall_qCoeff_eq_bare (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
-    (ModularFormClass.holo f) (bdd_of_mem_strictPeriods f hΓ)
-    (SlashInvariantFormClass.periodic_comp_ofComplex g hΓ) (ModularFormClass.holo g)
-    (bdd_of_mem_strictPeriods g hΓ) h
-
-/-! The regularity of `heckeU` and `heckeT` at `i∞`. -/
-
-private theorem heckeUpperMatrix_one_zero (p j : ℕ) :
-    ((heckeUpperMatrix p j : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = 0 := by
-  rcases eq_or_ne p 0 with rfl | hp
-  · simp
-  · rw [val_heckeUpperMatrix hp]; rfl
-
-private theorem heckeDiagMatrix_one_zero (p : ℕ) :
-    ((heckeDiagMatrix p : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = 0 := by
-  rcases eq_or_ne p 0 with rfl | hp
-  · simp
-  · rw [val_heckeDiagMatrix hp]; rfl
-
-private theorem isBoundedAtImInfty_heckeU {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
-    (hf : IsBoundedAtImInfty f) : IsBoundedAtImInfty (heckeU k p f) :=
-  Finset.sum_induction _ (fun g : ℍ → ℂ => IsBoundedAtImInfty g)
-    (fun _ _ ha hb => ha.add hb) UpperHalfPlane.zero_form_isBoundedAtImInfty
-    (fun j _ => hf.slash k (heckeUpperMatrix_one_zero p j))
-
-private theorem isBoundedAtImInfty_heckeT {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
-    (hf : IsBoundedAtImInfty f) : IsBoundedAtImInfty (heckeT k p f) :=
-  (isBoundedAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
-
-private theorem apply_eq_of_coe_eq_add_nat {f : ℍ → ℂ} (hf : Periodic (f ∘ ofComplex) 1)
-    {τ₁ τ₂ : ℍ} (m : ℕ) (h : (τ₁ : ℂ) = τ₂ + m) : f τ₁ = f τ₂ := by
-  have h1 : (f ∘ ofComplex) ((τ₂ : ℂ) + m) = (f ∘ ofComplex) (τ₂ : ℂ) := by
-    have := hf.nat_mul m
-    rw [mul_one] at this
-    exact this (τ₂ : ℂ)
-  simp only [comp_apply] at h1
-  rw [← h, ofComplex_apply, ofComplex_apply] at h1
-  exact h1
-
-private theorem heckeUpperMatrix_smul_vadd {p : ℕ} (hp : p ≠ 0) (j : ℕ) (τ : ℍ) :
-    heckeUpperMatrix p j • ((1 : ℝ) +ᵥ τ) = heckeUpperMatrix p (j + 1) • τ := by
-  apply UpperHalfPlane.ext
-  rw [coe_heckeUpperMatrix_smul hp, coe_heckeUpperMatrix_smul hp, coe_vadd]
-  push_cast
-  ring
-
-private theorem coe_heckeUpperMatrix_smul_self {p : ℕ} (hp : p ≠ 0) (τ : ℍ) :
-    ((heckeUpperMatrix p p • τ : ℍ) : ℂ) = (heckeUpperMatrix p 0 • τ : ℍ) + (1 : ℕ) := by
-  have hp' : (p : ℂ) ≠ 0 := by exact_mod_cast hp
-  rw [coe_heckeUpperMatrix_smul hp, coe_heckeUpperMatrix_smul hp]
-  field_simp
-  push_cast
-  ring
-
-private theorem coe_heckeDiagMatrix_smul_vadd {p : ℕ} (hp : p ≠ 0) (τ : ℍ) :
-    ((heckeDiagMatrix p • ((1 : ℝ) +ᵥ τ) : ℍ) : ℂ) = (heckeDiagMatrix p • τ : ℍ) + (p : ℕ) := by
-  rw [coe_heckeDiagMatrix_smul hp, coe_heckeDiagMatrix_smul hp, coe_vadd]
-  push_cast
-  ring
-
-private theorem sum_heckeUpperMatrix_smul_vadd {f : ℍ → ℂ} {p : ℕ} (hp : p ≠ 0)
-    (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
-    ∑ j ∈ Finset.range p, f (heckeUpperMatrix p j • ((1 : ℝ) +ᵥ τ))
-      = ∑ j ∈ Finset.range p, f (heckeUpperMatrix p j • τ) := by
-  simp only [heckeUpperMatrix_smul_vadd hp]
-  have h0 := Finset.sum_range_succ' (fun j => f (heckeUpperMatrix p j • τ)) p
-  have h1 := Finset.sum_range_succ (fun j => f (heckeUpperMatrix p j • τ)) p
-  rw [apply_eq_of_coe_eq_add_nat hf 1 (coe_heckeUpperMatrix_smul_self hp τ)] at h1
-  exact add_right_cancel (h0.symm.trans h1)
-
-private theorem periodic_comp_ofComplex_of_vadd {g : ℍ → ℂ}
-    (hg : ∀ τ : ℍ, g ((1 : ℝ) +ᵥ τ) = g τ) : Periodic (g ∘ ofComplex) 1 := by
-  intro w
-  by_cases hw : 0 < Complex.im w
-  · have hw' : 0 < Complex.im (w + 1) := by simp [hw]
-    simp only [comp_apply, ofComplex_apply_of_im_pos hw', ofComplex_apply_of_im_pos hw]
-    convert hg ⟨w, hw⟩ using 2
-    apply UpperHalfPlane.ext
-    simp [add_comm]
-  · have hw1 : Complex.im (w + 1) ≤ 0 := by simpa using hw
-    have hw0 : Complex.im w ≤ 0 := not_lt.mp hw
-    simp only [comp_apply, ofComplex_apply_eq_of_im_nonpos hw1 hw0]
-
-private theorem periodic_heckeU_comp_ofComplex {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
-    (hf : Periodic (f ∘ ofComplex) 1) : Periodic (heckeU k p f ∘ ofComplex) 1 := by
-  refine periodic_comp_ofComplex_of_vadd fun τ ↦ ?_
-  by_cases hp : p = 0
-  · simp only [hp, heckeU_zero_left, Pi.zero_apply]
-  · rw [heckeU_apply k hp, heckeU_apply k hp, sum_heckeUpperMatrix_smul_vadd hp hf]
-
-private theorem periodic_heckeT_comp_ofComplex {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
-    (hf : Periodic (f ∘ ofComplex) 1) : Periodic (heckeT k p f ∘ ofComplex) 1 := by
-  refine periodic_comp_ofComplex_of_vadd fun τ ↦ ?_
-  by_cases hp : p = 0
-  · simp only [hp, heckeT_zero_left]
-    exact apply_eq_of_coe_eq_add_nat hf 1 (by rw [coe_vadd]; push_cast; ring)
-  · rw [heckeT_apply k hp, heckeT_apply k hp, sum_heckeUpperMatrix_smul_vadd hp hf,
-      apply_eq_of_coe_eq_add_nat hf p (coe_heckeDiagMatrix_smul_vadd hp τ)]
-
-/-- A modular form `f` for a group with `1` as a strict period satisfies `T_p f = c • f` exactly
-when its `q`-coefficients satisfy the corresponding eigenvalue equations. -/
+/-- A modular form `f` for a group with `1` as a strict period satisfies `T_p f = c • f`, for
+`p ≠ 0`, exactly when its `q`-coefficients satisfy the corresponding eigenvalue equations. -/
 theorem heckeT_eq_smul_iff {F : Type*} [FunLike F UpperHalfPlane ℂ]
     {Γ : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ)} {k : ℤ} [ModularFormClass F Γ k] (f : F)
     (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) {p : ℕ} (hp : p ≠ 0) (c : ℂ) :
@@ -291,18 +161,26 @@ theorem heckeT_eq_smul_iff {F : Type*} [FunLike F UpperHalfPlane ℂ]
         = c * ModularFormClass.qCoeff f n := by
   have hper := SlashInvariantFormClass.periodic_comp_ofComplex f hΓ
   have hhol := ModularFormClass.holo f
-  have hbdd := bdd_of_mem_strictPeriods f hΓ
-  constructor
-  · intro h n
-    rw [← ModularFormClass.qCoeff_heckeT f hΓ hp n, h, qCoeff_const_smul hper hhol hbdd]
-  · intro h
-    refine eq_of_forall_qCoeff_eq_bare (periodic_heckeT_comp_ofComplex k p hper)
-      (mdifferentiable_heckeT hhol k p) (isBoundedAtImInfty_heckeT k p hbdd)
-      (periodic_const_smul hper c) (hhol.const_smul c) (hbdd.const_smul_left c) fun n ↦ ?_
-    rw [ModularFormClass.qCoeff_heckeT f hΓ hp n, h n, qCoeff_const_smul hper hhol hbdd]
+  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
+  have hbdd := bdd_at_infty f
+  have hsmul (n : ℕ) : qCoeff (c • ⇑f) n = c * qCoeff f n := by
+    simp [qCoeff_eq, ModularForm.qExpansion_smul one_pos hΓ c f]
+  refine ⟨fun h n ↦ by rw [← ModularFormClass.qCoeff_heckeT f hΓ hp n, h, hsmul], fun h ↦ ?_⟩
+  have hcper : Periodic ((c • ⇑f) ∘ ofComplex) 1 := hper.smul c
+  have hTper := periodic_heckeT_comp_ofComplex k p hper
+  have hThol := mdifferentiable_heckeT hhol k p
+  have hTbdd := isBoundedAtImInfty_heckeT k p hbdd
+  refine sub_eq_zero.mp ((qExpansion_eq_zero_iff (f := heckeT k p ⇑f - c • ⇑f) one_pos
+    (by simpa using hTper.sub hcper) (hThol.sub (hhol.const_smul c))
+    (hTbdd.sub (hbdd.const_smul_left c))).mp ?_)
+  rw [qExpansion_sub (analyticAt_cuspFunction_zero one_pos hTper hThol hTbdd)
+    (analyticAt_cuspFunction_zero one_pos hcper (hhol.const_smul c) (hbdd.const_smul_left c)),
+    sub_eq_zero]
+  refine PowerSeries.ext fun n ↦ ?_
+  rw [← qCoeff_eq, ← qCoeff_eq, ModularFormClass.qCoeff_heckeT f hΓ hp n, h n, hsmul]
 
-/-- A modular form `f` for a group with `1` as a strict period satisfies `U_p f = c • f` exactly
-when its `q`-coefficients satisfy the corresponding eigenvalue equations. -/
+/-- A modular form `f` for a group with `1` as a strict period satisfies `U_p f = c • f`, for
+`p ≠ 0`, exactly when its `q`-coefficients satisfy the corresponding eigenvalue equations. -/
 theorem heckeU_eq_smul_iff {F : Type*} [FunLike F UpperHalfPlane ℂ]
     {Γ : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ)} {k : ℤ} [ModularFormClass F Γ k] (f : F)
     (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) {p : ℕ} (hp : p ≠ 0) (c : ℂ) :
@@ -311,15 +189,23 @@ theorem heckeU_eq_smul_iff {F : Type*} [FunLike F UpperHalfPlane ℂ]
         = c * ModularFormClass.qCoeff f n := by
   have hper := SlashInvariantFormClass.periodic_comp_ofComplex f hΓ
   have hhol := ModularFormClass.holo f
-  have hbdd := bdd_of_mem_strictPeriods f hΓ
-  constructor
-  · intro h n
-    rw [← ModularFormClass.qCoeff_heckeU f hΓ hp n, h, qCoeff_const_smul hper hhol hbdd]
-  · intro h
-    refine eq_of_forall_qCoeff_eq_bare (periodic_heckeU_comp_ofComplex k p hper)
-      (mdifferentiable_heckeU hhol k p) (isBoundedAtImInfty_heckeU k p hbdd)
-      (periodic_const_smul hper c) (hhol.const_smul c) (hbdd.const_smul_left c) fun n ↦ ?_
-    rw [ModularFormClass.qCoeff_heckeU f hΓ hp n, h n, qCoeff_const_smul hper hhol hbdd]
+  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
+  have hbdd := bdd_at_infty f
+  have hsmul (n : ℕ) : qCoeff (c • ⇑f) n = c * qCoeff f n := by
+    simp [qCoeff_eq, ModularForm.qExpansion_smul one_pos hΓ c f]
+  refine ⟨fun h n ↦ by rw [← ModularFormClass.qCoeff_heckeU f hΓ hp n, h, hsmul], fun h ↦ ?_⟩
+  have hcper : Periodic ((c • ⇑f) ∘ ofComplex) 1 := hper.smul c
+  have hUper := periodic_heckeU_comp_ofComplex k p hper
+  have hUhol := mdifferentiable_heckeU hhol k p
+  have hUbdd := isBoundedAtImInfty_heckeU k p hbdd
+  refine sub_eq_zero.mp ((qExpansion_eq_zero_iff (f := heckeU k p ⇑f - c • ⇑f) one_pos
+    (by simpa using hUper.sub hcper) (hUhol.sub (hhol.const_smul c))
+    (hUbdd.sub (hbdd.const_smul_left c))).mp ?_)
+  rw [qExpansion_sub (analyticAt_cuspFunction_zero one_pos hUper hUhol hUbdd)
+    (analyticAt_cuspFunction_zero one_pos hcper (hhol.const_smul c) (hbdd.const_smul_left c)),
+    sub_eq_zero]
+  refine PowerSeries.ext fun n ↦ ?_
+  rw [← qCoeff_eq, ← qCoeff_eq, ModularFormClass.qCoeff_heckeU f hΓ hp n, h n, hsmul]
 
 end ModularFormClass
 
@@ -800,12 +686,17 @@ theorem exists_isNormalizedEigenform_of_forall_heckeTLin_eq_smul {N : ℕ} [NeZe
       (fun p hp hpN n => hcoeffT 1 p hp hpN n) (fun p hp hpN n => hcoeffU 1 p hp hpN n)
       (by rw [one_smul]; exact h10)
     rw [one_smul] at hall
-    refine DFunLike.coe_injective <|
-      ModularFormClass.eq_of_forall_qCoeff_eq_class h₀ 0 hΓ fun n => ?_
-    rw [qCoeff_zero']
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · exact CuspForm.qCoeff_zero h₀
-    · exact hall n hn.ne'
+    have hq : ∀ n : ℕ, ModularFormClass.qCoeff ⇑h₀ n
+        = ModularFormClass.qCoeff ⇑(0 : CuspForm (CongruenceSubgroup.Gamma0 N) 2) n := by
+      intro n
+      rw [qCoeff_zero']
+      rcases Nat.eq_zero_or_pos n with rfl | hn
+      · exact CuspForm.qCoeff_zero h₀
+      · exact hall n hn.ne'
+    exact DFunLike.coe_injective <| congrArg (fun F : ModularForm _ 2 ↦ ⇑F) <|
+      ModularForm.qExpansion_injective one_pos hΓ (a₁ := ModularFormClass.modularForm h₀)
+        (a₂ := ModularFormClass.modularForm (0 : CuspForm (CongruenceSubgroup.Gamma0 N) 2))
+        (PowerSeries.ext hq)
   set d : ℂ := (ModularFormClass.qCoeff ⇑h₀ 1)⁻¹ with hd
   set h : CuspForm (CongruenceSubgroup.Gamma0 N) 2 := d • h₀ with hhd
   have hb1 : ModularFormClass.qCoeff ⇑h 1 = 1 := by

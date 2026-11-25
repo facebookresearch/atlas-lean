@@ -60,10 +60,10 @@ open CongruenceSubgroup EisensteinWeightOne
 namespace CuspForm
 
 /-- **Deligne–Serre lifting in weight two.** If the weight-two cusp forms on `Γ₀(N)` have an
-integral basis and `bridgeProduct a` is, modulo `3`, a `T_ℓ`-eigenvector with eigenvalue `a ℓ`
-for every prime `ℓ ∤ N` and is realized by an integral cusp form, then some normalized
-eigenform on `Γ₀(N)` has Hecke eigenvalues congruent to `a ℓ` modulo a maximal ideal above
-`3` of the algebraic integers, for every prime `ℓ ∤ N`. -/
+integral basis, `a 1 = 1`, and `bridgeProduct a` is, modulo `3`, a `T_ℓ`-eigenvector with
+eigenvalue `a ℓ` for every prime `ℓ ∤ N` and is realized by an integral cusp form, then some
+normalized eigenform on `Γ₀(N)` has Hecke eigenvalues congruent to `a ℓ` modulo a maximal ideal
+above `3` of the algebraic integers, for every prime `ℓ ∤ N`. -/
 theorem exists_isNormalizedEigenform_congruent_of_heckeT_congr
     {N : ℕ} [NeZero N] (h : HasIntegralBasis N) {a : ℕ → ℤ} (h1 : a 1 = 1)
     (hT : ∀ ℓ : ℕ, ℓ.Prime → ¬ ℓ ∣ N → ∀ n : ℕ, (3 : ℤ) ∣ PowerSeries.coeff n

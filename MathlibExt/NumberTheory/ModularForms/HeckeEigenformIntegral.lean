@@ -246,21 +246,6 @@ private theorem exists_ringHom_complex_injective_aux (A : Type*) [CommRing A] [I
   exact ⟨ψ.toRingHom.comp (algebraMap A (FractionRing A)),
     ψ.toRingHom.injective.comp (IsFractionRing.injective A (FractionRing A))⟩
 
-private theorem charZero_quotient_aux {T : Type*} [CommRing T] (𝔭 : Ideal T)
-    (h𝔭 : ∀ (n : ℤ), (algebraMap ℤ T) n ∈ 𝔭 → n = 0) : CharZero (T ⧸ 𝔭) := by
-  refine ⟨fun m n hmn => ?_⟩
-  have h : algebraMap ℤ T ((m : ℤ) - (n : ℤ)) ∈ 𝔭 := by
-    rw [map_sub]
-    have hcast : ∀ k : ℕ, (Ideal.Quotient.mk 𝔭) (algebraMap ℤ T (k : ℤ)) = (k : T ⧸ 𝔭) := by
-      intro k
-      simp
-    have hm : (Ideal.Quotient.mk 𝔭) (algebraMap ℤ T (m : ℤ)) =
-        (Ideal.Quotient.mk 𝔭) (algebraMap ℤ T (n : ℤ)) := by
-      rw [hcast m, hcast n, hmn]
-    rwa [← sub_eq_zero, ← map_sub, Ideal.Quotient.eq_zero_iff_mem] at hm
-  have hzero := h𝔭 _ h
-  omega
-
 namespace CuspForm
 
 variable {N : ℕ}
@@ -278,7 +263,11 @@ theorem exists_isNormalizedEigenform_ker_le_of_isPrime [NeZero N]
   have : Module.Finite ℤ (heckeAlgebra N 2 {ℓ | ℓ ∣ N}) :=
     hN.moduleFinite_heckeAlgebra (by norm_num) _
   have : IsDomain (heckeAlgebra N 2 {ℓ | ℓ ∣ N} ⧸ 𝔭) := Ideal.Quotient.isDomain 𝔭
-  have : CharZero (heckeAlgebra N 2 {ℓ | ℓ ∣ N} ⧸ 𝔭) := charZero_quotient_aux 𝔭 hchar
+  have : CharZero (heckeAlgebra N 2 {ℓ | ℓ ∣ N} ⧸ 𝔭) := charZero_of_inj_zero fun n hn => by
+    have hmem : algebraMap ℤ (heckeAlgebra N 2 {ℓ | ℓ ∣ N}) n ∈ 𝔭 := by
+      rw [← Ideal.Quotient.eq_zero_iff_mem, map_natCast, map_natCast]
+      exact hn
+    exact_mod_cast hchar n hmem
   have : Module.Finite ℤ (heckeAlgebra N 2 {ℓ | ℓ ∣ N} ⧸ 𝔭) := Module.Finite.quotient ℤ 𝔭
   obtain ⟨φ, hφ⟩ := exists_ringHom_complex_injective_aux (heckeAlgebra N 2 {ℓ | ℓ ∣ N} ⧸ 𝔭)
   let χ : heckeAlgebra N 2 {ℓ | ℓ ∣ N} →+* ℂ := φ.comp (Ideal.Quotient.mk 𝔭)
