@@ -31,11 +31,13 @@ Its conclusion is that for every choice of positive rate constants, each positiv
 stoichiometric compatibility class contains at most one positive equilibrium, and exactly one
 when the network is weakly reversible.
 
-This file proves the linear-algebra part of the theorem: what hypothesis 2 says and what it
+This file proves the linear-algebra part of the theorem for finite networks (`[Finite S]`,
+`[Finite ρ]`, and finitely many linkage classes): what hypothesis 2 says and what it
 does to the equilibrium equations. The stoichiometric subspace is always the sum
-`𝒮 = ∑_θ 𝒮_θ`, so `∑_θ δ_θ ≤ δ`. Equality holds exactly when the sum is direct, and then
-the mass-action field vanishes iff its restriction to each linkage class does, so the
-equilibrium equations decouple across linkage classes (Feinberg 1995; Boros 2012).
+`𝒮 = ∑_θ 𝒮_θ`, so `∑_θ δ_θ ≤ δ`. Under these finiteness hypotheses, equality holds exactly when
+the sum is direct, and then the mass-action field vanishes iff its restriction to each linkage
+class does, so the equilibrium equations decouple across linkage classes (Feinberg 1995; Boros
+2012).
 
 ## Main definitions
 
@@ -190,7 +192,8 @@ private lemma finrank_iSup_add_finrank_ker {ι M : Type*} [Fintype ι] [AddCommG
       funext i
       exact Subtype.ext (h univ (fun i => (v i : M)) (fun i _ => (v i).2) hv i (mem_univ i))
 
-/-- `dim (∑_θ 𝒮_θ) ≤ ∑_θ dim 𝒮_θ`, i.e. `s ≤ ∑_θ s_θ`. -/
+/-- For a network with finitely many species (`[Finite S]`) and finitely many linkage classes,
+`dim (∑_θ 𝒮_θ) ≤ ∑_θ dim 𝒮_θ`, i.e. `s ≤ ∑_θ s_θ`. -/
 theorem finrank_stoichiometricSubspace_le_sum [Finite S]
     [Fintype N.linkageGraph.ConnectedComponent] :
     finrank ℝ N.stoichiometricSubspace ≤
@@ -199,8 +202,9 @@ theorem finrank_stoichiometricSubspace_le_sum [Finite S]
   rw [stoichiometricSubspace_eq_iSup]
   omega
 
-/-- `s = ∑_θ s_θ` exactly when the linkage-class stoichiometric subspaces are independent,
-i.e. `𝒮 = ⊕_θ 𝒮_θ`. -/
+/-- For a network with finitely many species (`[Finite S]`) and finitely many linkage classes,
+`s = ∑_θ s_θ` holds iff the linkage-class stoichiometric subspaces are independent,
+i.e. `𝒮 = ⊕_θ 𝒮_θ`. (Finiteness is required because `finrank` vanishes in infinite dimension.) -/
 theorem finrank_stoichiometricSubspace_eq_sum_iff [Finite S]
     [Fintype N.linkageGraph.ConnectedComponent] :
     finrank ℝ N.stoichiometricSubspace =
@@ -283,7 +287,9 @@ theorem deficiency_sub_sum_linkageClassDeficiency [Finite S] [Finite ρ]
   rw [hn, hℓ]
   ring
 
-/-- **The linkage-class deficiencies sum to at most the deficiency**, `∑_θ δ_θ ≤ δ`.
+/-- **The linkage-class deficiencies sum to at most the deficiency**, `∑_θ δ_θ ≤ δ`, for a network
+with finitely many species (`[Finite S]`), finitely many reactions (`[Finite ρ]`), and finitely
+many linkage classes.
 
 Source: Feinberg (1987); Feinberg (1995). -/
 theorem sum_linkageClassDeficiency_le [Finite S] [Finite ρ]
@@ -296,7 +302,9 @@ theorem sum_linkageClassDeficiency_le [Finite S] [Finite ρ]
   linarith
 
 /-- **`∑_θ δ_θ = δ` iff the linkage-class stoichiometric subspaces are independent**, i.e.
-`𝒮 = ⊕_θ 𝒮_θ`. This is hypothesis 2 of the deficiency-one theorem.
+`𝒮 = ⊕_θ 𝒮_θ`, for a network with finitely many species (`[Finite S]`), finitely many reactions
+(`[Finite ρ]`), and finitely many linkage classes. This is hypothesis 2 of the deficiency-one
+theorem.
 
 Source: Feinberg (1987); Feinberg (1995). -/
 theorem sum_linkageClassDeficiency_eq_iff [Finite S] [Finite ρ]
