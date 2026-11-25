@@ -14,12 +14,14 @@ items (maximal Kendall tau).
 
 module
 
-public import CSLibExt.InformationRetrieval.RankDistances
+public import MathlibExt.Combinatorics.Enumerative.RankDistances
 
 @[expose] public section
 
 open scoped BigOperators
-open Finset RankDistances
+open Finset MetaMathlibExt
+
+namespace MetaMathlibExt.Test.RankDistances
 
 /-- The transposition of the two items of `Fin 2` has Kendall tau `1`
 against the identity ranking: the single pair is discordant. -/
@@ -54,3 +56,5 @@ theorem distances_fin_three_bounds :
     kendallTau (1 : Equiv.Perm (Fin 3)) 1 = 0 ∧
     spearmanFootrule (1 : Equiv.Perm (Fin 3)) 1 = 0 := by
   exact ⟨kendallTau_self 1, spearmanFootrule_self 1⟩
+
+end MetaMathlibExt.Test.RankDistances

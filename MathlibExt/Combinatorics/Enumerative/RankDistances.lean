@@ -41,7 +41,7 @@ import Mathlib.Tactic.Ring
 open scoped BigOperators
 open Finset
 
-namespace RankDistances
+namespace MetaMathlibExt
 
 /-- Items `i` and `j` are discordant between rankings `σ` and `τ` when
 they appear in opposite orders: one ranking puts `i` ahead of `j` and
@@ -790,4 +790,4 @@ theorem spearmanFootrule_le_two_mul_kendallTau {n : ℕ} (σ τ : Equiv.Perm (Fi
   rw [spearmanFootrule_relabel, kendallTau_relabel]
   exact upper_bound_one _
 
-end RankDistances
+end MetaMathlibExt
