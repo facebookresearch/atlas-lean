@@ -228,10 +228,6 @@ def Z (p : ℕ) : Submodule P (Finset I → M) := C M p ⊓ LinearMap.ker (d x M
 
 def B (p : ℕ) : Submodule P (Finset I → M) := (C M (p + 1)).map (d x M)
 
-private theorem B_le_Z (p : ℕ) : B x M p ≤ Z x M p := by
-  rintro _ ⟨m, hm, rfl⟩
-  exact ⟨d_mem_C x M hm, by simp [LinearMap.mem_ker, d_d]⟩
-
 abbrev H (p : ℕ) : Type (max v 0) := Z x M p ⧸ (B x M p).comap (Z x M p).subtype
 
 example (p : ℕ) : Module P (H x M p) := inferInstance
@@ -274,10 +270,6 @@ noncomputable def complex : ChainComplex (ModuleCat.{v'} P) ℕ :=
   ChainComplex.of (fun p => ModuleCat.of P (C (P := P) (I := I) M p))
       (fun p => ModuleCat.ofHom (dC x M p))
     fun p => by ext m : 2; exact dC_dC x M p m
-
-@[scoped simp] private theorem complex_X (p : ℕ) : (complex x M).X p = ModuleCat.of P (C (P := P)
-    (I := I)
-    M p) := rfl
 
 private theorem complex_d (p : ℕ) : (complex x M).d (p + 1) p = ModuleCat.ofHom (dC x M p) := by
   simp [complex]
@@ -434,7 +426,6 @@ def comp (g : HMap y N w O) (f : HMap x M y N) : HMap x M w O where
   map_Z p _ hz := g.map_Z p (f.map_Z p hz)
   map_B p _ hz := g.map_B p (f.map_B p hz)
 
-@[scoped simp] private theorem id_toLinearMap : (HMap.id x M).toLinearMap = LinearMap.id := rfl
 @[scoped simp] private theorem comp_toLinearMap (g : HMap y N w O) (f : HMap x M y N) :
     (g.comp f).toLinearMap = g.toLinearMap ∘ₗ f.toLinearMap := rfl
 
@@ -457,14 +448,6 @@ def mapHEquiv (f : HMap x M y N) (g : HMap y N x M)
   LinearEquiv.ofLinearMap (f.mapH p) (g.mapH p)
     (by rw [← mapH_comp, mapH_congr (f := f.comp g) (g := HMap.id y N) hgf, mapH_id])
     (by rw [← mapH_comp, mapH_congr (f := g.comp f) (g := HMap.id x M) hfg, mapH_id])
-
-@[scoped simp] private theorem mapHEquiv_apply (f : HMap x M y N) (g : HMap y N x M) (hfg hgf) (p :
-    ℕ)
-    (z : H x M p) : f.mapHEquiv g hfg hgf p z = f.mapH p z := rfl
-
-@[scoped simp] private theorem mapHEquiv_symm_apply (f : HMap x M y N) (g : HMap y N x M) (hfg hgf)
-    (p : ℕ)
-    (z : H y N p) : (f.mapHEquiv g hfg hgf p).symm z = g.mapH p z := rfl
 
 end HMap
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
@@ -495,24 +478,9 @@ def toHMap (f : ChainMap x M y N) : HMap x M y N where
 
 abbrev mapH (f : ChainMap x M y N) (p : ℕ) : H x M p →ₗ[P] H y N p := f.toHMap.mapH p
 
-variable (x M) in
-protected def id : ChainMap x M x M where
-  toLinearMap := LinearMap.id
-  comm := rfl
-  map_C _ _ hm := hm
-
-def comp (g : ChainMap y N w O) (f : ChainMap x M y N) : ChainMap x M w O where
-  toLinearMap := g.toLinearMap ∘ₗ f.toLinearMap
-  comm := by rw [LinearMap.comp_assoc, f.comm, ← LinearMap.comp_assoc, g.comm, LinearMap.comp_assoc]
-  map_C p _ hm := g.map_C p (f.map_C p hm)
-
 def mapC (f : ChainMap x M y N) (p : ℕ) :
     C (P := P) (I := I) M p →ₗ[P] C (P := P) (I := J) N p :=
   f.toLinearMap.restrict fun _ hm => f.map_C p hm
-
-@[scoped simp] private theorem coe_mapC (f : ChainMap x M y N) (p : ℕ) (m : C (P := P) (I := I) M
-    p) :
-    (f.mapC p m : Finset J → N) = f.toLinearMap m := rfl
 
 noncomputable def toHom (f : ChainMap x M y N) : complex x M ⟶ complex y N where
   f p := ModuleCat.ofHom (f.mapC p)
@@ -553,11 +521,6 @@ def ofLinearMap {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ : M →ₗ[P]
     change φ (m T) = 0
     rw [hm T hT, map_zero]
 
-@[scoped simp] private theorem ofLinearMap_apply {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ
-    : M
-    →ₗ[P] M')
-    (m : Finset I → M) (T : Finset I) : (ofLinearMap x φ).toLinearMap m T = φ (m T) := rfl
-
 end ChainMap
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
   JacobianSquarePresentation.KoszulColon.Koszul.ChainMap
@@ -593,10 +556,6 @@ def reindexLin (e : I ≃ J) : (Finset J → M) ≃ₗ[P] (Finset I → M) where
 omit [LinearOrder I] [Fintype I] [LinearOrder J] [Fintype J] in
 @[scoped simp] private theorem reindexLin_apply (e : I ≃ J) (m : Finset J → M) (S : Finset I) :
     reindexLin P M e m S = m (S.map e.toEmbedding) := rfl
-
-omit [LinearOrder I] [Fintype I] [LinearOrder J] [Fintype J] in
-@[scoped simp] private theorem reindexLin_symm (e : I ≃ J) :
-    (reindexLin P M e).symm = reindexLin P M e.symm := rfl
 
 omit [LinearOrder I] [Fintype I] [LinearOrder J] [Fintype J] in
 private theorem reindexLin_mem_C_iff (e : I ≃ J) {p : ℕ} {m : Finset J → M} :
@@ -652,10 +611,6 @@ def reindexH (e : I ≃o J) (x : J → P) (p : ℕ) : H (x ∘ e) M p ≃ₗ[P] 
     (LinearMap.ext fun m => (reindexLin P M e.toEquiv).apply_symm_apply m)
     (LinearMap.ext fun m => (reindexLin P M e.toEquiv).symm_apply_apply m) p)
 
-private theorem reindexH_symm_mk (e : I ≃o J) (x : J → P) (p : ℕ) (z : Z x M p) :
-    (reindexH M e x p).symm (Submodule.Quotient.mk z) =
-      Submodule.Quotient.mk ((reindex M e x).toHMap.mapZ p z) := rfl
-
 private theorem neg_one_pow_mul_self (n : ℕ) : ((-1 : P) ^ n) * (-1) ^ n = 1 := by
   rw [← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow]
 
@@ -663,12 +618,6 @@ omit [LinearOrder I] [Fintype I] in
 private theorem map_toDual_map_ofDual (S : Finset I) :
     (S.map OrderDual.toDual.toEmbedding).map OrderDual.ofDual.toEmbedding = S := by
   rw [Finset.map_map, ← OrderDual.toDual_symm_eq,
-    Function.Embedding.equiv_toEmbedding_trans_symm_toEmbedding, Finset.map_refl]
-
-omit [LinearOrder I] [Fintype I] in
-private theorem map_ofDual_map_toDual (T : Finset Iᵒᵈ) :
-    (T.map OrderDual.ofDual.toEmbedding).map OrderDual.toDual.toEmbedding = T := by
-  rw [Finset.map_map, ← OrderDual.ofDual_symm_eq,
     Function.Embedding.equiv_toEmbedding_trans_symm_toEmbedding, Finset.map_refl]
 
 omit [Fintype I] in
@@ -780,10 +729,6 @@ def annihilatedBy : Submodule P M where
   add_mem' ha hb i := by simp [smul_add, ha i, hb i]
   zero_mem' i := smul_zero _
   smul_mem' c m hm i := by rw [smul_comm, hm i, smul_zero]
-
-omit [LinearOrder I] [Fintype I] in
-@[scoped simp] private theorem mem_annihilatedBy {m : M} : m ∈ annihilatedBy x M ↔ ∀ i,
-    x i • m = 0 := Iff.rfl
 
 omit [LinearOrder I] in
 private theorem C_eq_bot_of_card_lt {p : ℕ} (hp : Fintype.card I < p) : C (P := P)
@@ -961,21 +906,6 @@ private theorem HZeroEquiv_mk (z : Z x M 0) :
     HZeroEquiv x M (Submodule.Quotient.mk z) = Submodule.Quotient.mk ((z : Finset I → M) ∅) := by
   rfl
 
-private theorem HZeroEquiv_mapH {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ : M →ₗ[P] M')
-    (h : H x M 0) : HZeroEquiv x M' ((ChainMap.ofLinearMap x φ).mapH 0 h) =
-      Submodule.mapQ _ _ φ (fun m hm => by
-        refine Submodule.smul_induction_on hm (fun r hr n _ => ?_) fun a b ha hb => add_mem ha hb
-        rw [Submodule.mem_comap, map_smul]
-        exact Submodule.smul_mem_smul hr Submodule.mem_top) (HZeroEquiv x M h) := by
-  obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ h
-  rfl
-
-private theorem HTopEquiv_mapH {M' : Type v'} [AddCommGroup M'] [Module P M'] (φ : M →ₗ[P] M')
-    (h : H x M (Fintype.card I)) : (HTopEquiv x M' ((ChainMap.ofLinearMap x φ).mapH _ h) : M') =
-    φ (HTopEquiv x M h) := by
-  obtain ⟨z, rfl⟩ := Submodule.Quotient.mk_surjective _ h
-  rfl
-
 end Ends
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
   JacobianSquarePresentation.KoszulColon.Koszul.ChainMap
@@ -1060,11 +990,6 @@ private theorem smul_H_eq_zero_of_mem_span {p : ℕ} (a : P) (ha : a ∈ Ideal.s
   | add r s _ _ hr hs => rw [add_smul, hr, hs, add_zero]
   | smul r s _ hs => rw [smul_eq_mul, mul_smul, hs, smul_zero]
 
-variable (x M) in
-private theorem span_range_le_annihilator (p : ℕ) :
-    Ideal.span (Set.range x) ≤ Module.annihilator P (H x M p) := fun a ha =>
-  Module.mem_annihilator.mpr fun h => smul_H_eq_zero_of_mem_span a ha h
-
 end Htpy
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
   JacobianSquarePresentation.KoszulColon.Koszul.ChainMap
@@ -1117,9 +1042,6 @@ private theorem lex_cases (k : I ⊕ₗ U) : (∃ i, k = inlₗ U i) ∨ k = top
   rcases k with i | u
   · exact Or.inl ⟨i, rfl⟩
   · exact Or.inr (by rw [Subsingleton.elim u default]; rfl)
-
-omit [Fintype I] [Fintype U] [Unique U] in
-private theorem inlₗ_lt_inlₗ {i j : I} : inlₗ U i < inlₗ U j ↔ i < j := Sum.Lex.inl_lt_inl_iff
 
 omit [Fintype I] [Fintype U] in
 private theorem inlₗ_lt_top (i : I) : inlₗ U i < top I U := Sum.Lex.inl_lt_inr _ _
@@ -1384,11 +1306,6 @@ private theorem coneTw_of_mem_C {p : ℕ} {m : Finset I → M}
   · rw [hT]
   · rw [hm T hT, smul_zero, smul_zero]
 
-omit [LinearOrder I] [Fintype I] in
-private theorem coneTw_mem_C {p : ℕ} {m : Finset I → M} (hm : m ∈ C (P := P) (I := I) M p) :
-    coneTw t M m ∈ C (P := P) (I := I) M p := by
-  rw [coneTw_of_mem_C t M hm]; exact Submodule.smul_mem _ _ hm
-
 private theorem coneProj_d (m : Finset (I ⊕ₗ U) → M) :
     coneProj P U M (d (snoc U x t) M m) = d x M (coneProj P U M m) := by
   funext T
@@ -1464,10 +1381,6 @@ noncomputable def coneIncl : ChainMap x M (snoc U x t) M where
   toLinearMap := coneInclLin P U M
   comm := LinearMap.ext fun a => (d_coneInclLin x t M a).symm
   map_C _ _ ha := coneInclLin_mem_C M ha
-
-@[scoped simp] private theorem coneIncl_toLinearMap : (coneIncl x t M (U := U)).toLinearMap =
-    coneInclLin P
-    U M := rfl
 
 theorem coneProj_mem_Z {p : ℕ} {m : Finset (I ⊕ₗ U) → M}
     (hm : m ∈ Z (snoc U x t) M (p + 1)) : coneProj P U M m ∈ Z x M p :=
@@ -1884,9 +1797,6 @@ def peelTop : ChainMap (concat x y) M x (ModSpan y M) where
     change Submodule.Quotient.mk (m (T.map (inlₗ' J))) = 0
     rw [hm _ (by rwa [Finset.card_map]), Submodule.Quotient.mk_zero]
 
-@[scoped simp] private theorem peelTop_apply (m : Finset (I ⊕ₗ J) → M) (T : Finset I) :
-    (peelTop x y M).toLinearMap m T = Submodule.Quotient.mk (m (T.map (inlₗ' J))) := rfl
-
 end PeelTop
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
   JacobianSquarePresentation.KoszulColon.Koszul.ChainMap
@@ -1972,16 +1882,6 @@ variable (y : J → P) (x : I → P) (M : Type v) [AddCommGroup M] [Module P M] 
 variable (J) in
 def liftIso (e : I' ⊕ₗ U ≃o I) : (J ⊕ₗ I') ⊕ₗ U ≃o J ⊕ₗ I :=
   (OrderIso.sumLexAssoc J I' U).trans (OrderIso.sumLexCongr (OrderIso.refl J) e)
-
-omit [Fintype J] [Fintype I] [Fintype I'] [Fintype U] [Unique U] in
-private theorem liftIso_inl_inl (j : J) : liftIso J e (inlₗ U (inlₗ' I' j)) = inlₗ' I j := rfl
-
-omit [Fintype J] [Fintype I] [Fintype I'] [Fintype U] [Unique U] in
-private theorem liftIso_inl_inr (i : I') : liftIso J e (inlₗ U (inrₗ J i)) =
-    inrₗ J (e (inlₗ U i)) := rfl
-
-omit [Fintype J] [Fintype I] [Fintype I'] [Fintype U] in
-private theorem liftIso_top : liftIso J e (top (J ⊕ₗ I') U) = inrₗ J (e (top I' U)) := rfl
 
 def shorten : I' → P := fun i => x (e (inlₗ U i))
 
@@ -2284,17 +2184,6 @@ private theorem contractLeft_ιMulti_of_forall_eq_zero (d : Module.Dual R M) {n 
   | zero => rw [ιMulti_zero_apply, contractLeft_one]
   | succ n => rw [contractLeft_ιMulti_succ]; simp [hv]
 
-private theorem contractLeft_eq_zero_of_mem_exteriorPower_zero (d : Module.Dual R M) {x :
-    ExteriorAlgebra R
-    M}
-    (hx : x ∈ ⋀[R]^0 M) : contractLeft (Q := (0 : QuadraticForm R M)) d x = 0 := by
-  rw [← ιMulti_span_fixedDegree] at hx
-  induction hx using Submodule.span_induction with
-  | mem y hy => obtain ⟨v, rfl⟩ := hy; rw [ιMulti_zero_apply, contractLeft_one]
-  | zero => rw [map_zero]
-  | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
-  | smul r y _ hy => rw [map_smul, hy, smul_zero]
-
 private theorem contractLeft_apply_ιMulti_removeNth (d : Module.Dual R M) {n : ℕ}
     (v : Fin (n + 1) → M) :
     exteriorPower.contractLeft R M d n (exteriorPower.ιMulti R (n + 1) v) =
@@ -2411,9 +2300,6 @@ def C.equivFun (p : ℕ) : C (P := P) (I := I) M p ≃ₗ[P] (Set.powersetCard I
 
 variable {M}
 
-private theorem C.equivFun_apply {p : ℕ} (m : C (P := P) (I := I) M p)
-    (s : Set.powersetCard I p) : C.equivFun M p m s = (m : Finset I → M) s := rfl
-
 private theorem C.equivFun_symm_apply {p : ℕ} (c : Set.powersetCard I p → M) (T : Finset I)
     (hT : T.card = p) : ((C.equivFun (P := P) M p).symm c : Finset I → M) T = c ⟨T,
     mem_iff.mpr hT⟩ := dite_eq_left hT
@@ -2445,10 +2331,6 @@ private theorem toExterior_symm_apply {p : ℕ} (ω : ⋀[P]^p (I → P)) (T : F
         mem_iff.mpr hT⟩ := by
   rw [toExterior, LinearEquiv.trans_symm, LinearEquiv.trans_apply, LinearEquiv.symm_symm,
     C.equivFun_symm_apply _ T hT, Module.Basis.equivFun_apply]
-
-private theorem toExterior_symm_apply_of_card_ne {p : ℕ} (ω : ⋀[P]^p (I → P)) (T : Finset I)
-    (hT : T.card ≠ p) : ((toExterior P I p).symm ω : Finset I → P) T = 0 :=
-  ((toExterior P I p).symm ω).2 T hT
 
 private theorem toExterior_single (S : Finset I) {p : ℕ} (hS : S.card = p) :
     toExterior P I p ⟨Pi.single S 1, single_mem_C P S hS 1⟩ = (Pi.basisFun P I).exteriorPower p ⟨S,
@@ -2550,14 +2432,6 @@ private theorem toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P)
   conv_lhs => rw [eq_sum_single hm, map_sum]
   simp only [map_smul, d_single]
 
-private theorem coe_toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P) (hm : m ∈ C (P := P) (I :=
-    I) P (p
-    + 1)) :
-    ((toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ : ⋀[P]^p (I → P)) : ExteriorAlgebra P (I → P)) =
-      contractLeft (Q := (0 : QuadraticForm P (I → P))) (dualVec x)
-          (toExterior P I (p + 1) ⟨m, hm⟩) := by
-  rw [toExterior_d]; rfl
-
 private theorem d_toExterior_symm (x : I → P) {p : ℕ} (ω : ⋀[P]^(p + 1) (I → P)) :
     d x P ((toExterior P I (p + 1)).symm ω) =
       (toExterior P I p).symm (exteriorPower.contractLeft _ _ (dualVec x) p ω) := by
@@ -2589,9 +2463,6 @@ def inlOrderEmb (n : ℕ) : Fin n ↪o Fin n ⊕ₗ Fin n :=
 
 def inrOrderEmb (n : ℕ) : Fin n ↪o Fin n ⊕ₗ Fin n :=
   OrderEmbedding.ofStrictMono (fun i => toLex (Sum.inr i)) fun _ _ h => Sum.Lex.inr_lt_inr_iff.mpr h
-
-private theorem inlOrderEmb_apply (j : Fin n) : inlOrderEmb n j = toLex (Sum.inl j) := rfl
-private theorem inrOrderEmb_apply (i : Fin n) : inrOrderEmb n i = toLex (Sum.inr i) := rfl
 
 def inlBlock (n : ℕ) : Finset (Fin n ⊕ₗ Fin n) := Finset.univ.map (inlₗ' (Fin n))
 
@@ -2944,15 +2815,6 @@ private theorem colon_det_eq_of_injective (hf : ∀ i, f i = ∑ j, g i j * x j)
   · intro a ha
     rw [Ideal.mem_colon_span_singleton]
     exact mul_det_mem_span_of_mem x f g hf ha
-
-private theorem det_not_mem_span_of_injective (hf : ∀ i, f i = ∑ j, g i j * x j)
-    (hi : Function.Injective (wiebeMap x f g hf)) (hx : Ideal.span (Set.range x) ≠ ⊤) :
-    g.det ∉ Ideal.span (Set.range f) := by
-  intro h
-  apply hx
-  rw [Ideal.eq_top_iff_one]
-  exact (colon_det_eq_of_injective x f g hf hi).le (Ideal.mem_colon_span_singleton.mpr
-      (by rwa [one_mul]))
 
 end Wiebe
 open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
@@ -4879,8 +4741,6 @@ variable (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 def dualMulMap (τ : Dual R A) : A →ₗ[R] Dual R A := (LinearMap.mul R A).compr₂ τ
-
-private theorem dualMulMap_apply (τ : Dual R A) (a x : A) : dualMulMap R A τ a x = τ (a * x) := rfl
 
 private theorem coe_dualMulMap (τ : Dual R A) :
     ⇑(dualMulMap R A τ) = fun a : A => τ.comp (LinearMap.mulLeft R a) := by
