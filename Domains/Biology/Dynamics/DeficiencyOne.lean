@@ -27,9 +27,9 @@ the span `𝒮_θ` of the reaction vectors of the reactions in the class. Its hy
 2. `∑_θ δ_θ = δ`, and
 3. each linkage class contains exactly one terminal strong linkage class.
 
-Its conclusion is that each positive stoichiometric compatibility class contains at most one
-positive equilibrium, and exactly one for every choice of rate constants when the network is
-weakly reversible.
+Its conclusion is that for every choice of positive rate constants, each positive
+stoichiometric compatibility class contains at most one positive equilibrium, and exactly one
+when the network is weakly reversible.
 
 This file proves the linear-algebra part of the theorem: what hypothesis 2 says and what it
 does to the equilibrium equations. The stoichiometric subspace is always the sum
