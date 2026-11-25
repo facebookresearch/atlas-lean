@@ -3,11 +3,6 @@
 ## Proof-facing lemmas
 
 - [Absolutely Continuous tilted of absolutely Continuous](absolutely-continuous-tilted-of-absolute.md)
-- [Integral le integral llr](integral-le-integral-llr.md)
-
-## Headline
-
-- [Normalized KL test bound](of-real-integral-le-kl-div.md)
 
 ## Validation
 

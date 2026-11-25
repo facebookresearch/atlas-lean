@@ -1,8 +1,6 @@
 # Kullback-Leibler divergence between real Gaussians
 
 - [Scalar Gaussian KLReal](scalar-gaussian-klreal.md)
-- [Scalar Gaussian KLReal eq multivariate Gaussian KLReal](scalar-gaussian-klreal-eq-multivariate-g.md)
-- [Scalar Gaussian divergence](kl-div-gaussian-real.md)
 - [Kl Div gaussian Real of pos](kl-div-gaussian-real-of-pos.md)
 - [Scalar Gaussian KLReal self](scalar-gaussian-klreal-self.md)
 - [Kl Div gaussian Real self](kl-div-gaussian-real-self.md)

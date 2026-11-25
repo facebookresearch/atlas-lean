@@ -11,10 +11,6 @@
 - [Of Real integral sq error eq lintegral](of-real-integral-sq-error-eq-lintegral.md)
 - [Finite-distortion equivalence](mem-distortion-feasible-iff.md)
 
-## Headline
-
-- [Gaussian rate-distortion as a shared variational target](rate-distortion-eq-i-inf-integrable.md)
-
 ## Reconstruction kernels by standard-Borel disintegration
 
 - [Eq comp Prod cond Kernel of map fst eq](eq-comp-prod-cond-kernel-of-map-fst-eq.md)

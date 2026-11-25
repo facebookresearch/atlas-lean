@@ -6,8 +6,6 @@
 - [Map prod gaussian Real scalar Coord](map-prod-gaussian-real-scalar-coord.md)
 - [Mem Lp id map scalar Coord](mem-lp-id-map-scalar-coord.md)
 - [Gaussian Kernel KLReal scalar Coord](gaussian-kernel-klreal-scalar-coord.md)
-- [Scalar Gaussian channel kernel divergence](kl-div-comp-prod-gaussian-noise-kernel.md)
-- [Kl Div comp Prod gaussian Noise Kernel of scalar Power Bound](kl-div-comp-prod-gaussian-noise-kernel-o.md)
 - [Not mem Lp two of lintegral sq eq top](not-mem-lp-two-of-lintegral-sq-eq-top.md)
 - [Not scalar Power Bound of lintegral sq eq top](not-scalar-power-bound-of-lintegral-sq-e.md)
 - [Scalar Gaussian Kernel KLReal dirac](scalar-gaussian-kernel-klreal-dirac.md)

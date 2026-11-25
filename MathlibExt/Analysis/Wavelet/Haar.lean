@@ -25,7 +25,8 @@ Section 4, after (70)). Its dyadic dilates and translates `H_{j,k}(x) = 2^{j/2} 
 the Haar system, which is orthonormal in `L²(ℝ)` (`integral_haarSystem_mul_haarSystem`). Its
 completeness, that is that the Haar system is an orthonormal basis of `L²(ℝ)` and that
 `1_{[0,1)}` with the `H_{j,k}` fitted to `[0,1)` is an orthonormal basis of `L²[0,1)`
-(DeVore (3.47)), is recorded in `WantedExt.Analysis.Wavelet.HaarBasisWanted`.
+(DeVore (3.47)), is proved in `MathlibExt.Analysis.Wavelet.HaarBasis` and
+`MathlibExt.Analysis.Wavelet.HaarBasisUnitInterval`.
 
 ## Main declarations
 

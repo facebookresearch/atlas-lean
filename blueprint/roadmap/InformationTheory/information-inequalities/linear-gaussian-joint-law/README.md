@@ -27,7 +27,3 @@
 - [Pos Semidef of covariance](pos-semidef-of-covariance.md)
 - [Pos Def output covariance](pos-def-output-covariance.md)
 - [Output moments of const input](output-moments-of-const-input.md)
-
-## The leaf bundle
-
-- [Linear Gaussian channel: joint law and moments](linear-gaussian-channel-law-and-moments.md)

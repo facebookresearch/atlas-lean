@@ -24,8 +24,6 @@
 - [Absolute continuity, density discharged](multivariate-gaussian-absolutely-continu.md)
 - [Llr multivariate Gaussian ae](llr-multivariate-gaussian-ae.md)
 - [Integrable llr multivariate Gaussian](integrable-llr-multivariate-gaussian.md)
-- [Kullback-Leibler divergence between multivariate Gaussians](kl-div-multivariate-gaussian.md)
-- [Equal covariances](kl-div-multivariate-gaussian-same-covari.md)
 - [Kl Div multivariate Gaussian nondiagonal](kl-div-multivariate-gaussian-nondiagonal.md)
 - [Violated premise](kl-div-multivariate-gaussian-zero-covari.md)
 - [Kl Div multivariate Gaussian zero covariance ne](kl-div-multivariate-gaussian-zero-covari-2.md)
