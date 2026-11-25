@@ -33,6 +33,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresQuadruple
 public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresQuintuple
 
 set_option autoImplicit false
@@ -100,31 +101,6 @@ theorem_wanted exists_isSemiMagicRoots_f_of_pairwiseSumsSquares_quintuple
         e 0 0 ^ 2 = f 0 0 ^ 2 ∧ e 1 1 ^ 2 = f 1 1 ^ 2 ∧
           e 2 2 ^ 2 = f 2 2 ^ 2 ∧
           a4 = f 0 2 ^ 2 ∧ a5 = f 2 0 ^ 2
-
-/-- **Extending the triples to quadruples with square pairwise sums.** Let $E = (e_{ij})$,
-$G = (g_{ij})$ and $H = (h_{ij})$ be $3 \times 3$ integer matrices, each of whose squared entries
-have all three row sums and all three column sums equal to one common integer, such that
-$e_{12}^2 = g_{12}^2$, $e_{13}^2 = g_{13}^2$, $e_{21}^2 = g_{21}^2$, $e_{31}^2 = g_{31}^2$,
-$e_{11}^2 = h_{11}^2$, $e_{22}^2 = h_{22}^2$, $g_{11}^2 = h_{12}^2$ and $g_{22}^2 = h_{31}^2$. Put
-$(a_1, a_2, a_3, a_4) = (e_{13}^2, e_{31}^2, e_{22}^2, g_{22}^2)$ and
-$(b_1, b_2, b_3, b_4) = (0, e_{21}^2 - e_{13}^2, e_{11}^2 - e_{22}^2, g_{11}^2 - g_{22}^2)$. Then
-$a_i + b_j$ is the square of an integer for all $1 \le i, j \le 4$.
-
-Source: Ajai Choudhry, "Two Sets of Integers Such That All
-Elements of the Sumset of the Two Sets Are Perfect Squares",
-Lemma 2. -/
-theorem_wanted pairwiseSumsSquares_quadruple_of_isSemiMagicRoots
-    (e g h : Fin 3 → Fin 3 → ℤ)
-    (he : IsSemiMagicRoots e) (hg : IsSemiMagicRoots g)
-    (hh : IsSemiMagicRoots h)
-    (h25 : e 0 1 ^ 2 = g 0 1 ^ 2 ∧ e 0 2 ^ 2 = g 0 2 ^ 2 ∧
-      e 1 0 ^ 2 = g 1 0 ^ 2 ∧ e 2 0 ^ 2 = g 2 0 ^ 2)
-    (h26 : e 0 0 ^ 2 = h 0 0 ^ 2 ∧ e 1 1 ^ 2 = h 1 1 ^ 2)
-    (h27 : g 0 0 ^ 2 = h 0 1 ^ 2 ∧ g 1 1 ^ 2 = h 2 0 ^ 2) :
-    PairwiseSumsSquares
-      ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2, g 1 1 ^ 2]
-      ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2,
-        g 0 0 ^ 2 - g 1 1 ^ 2]
 
 /-- **Quadruple extensions come from two further semi-magic squares.** Let $E = (e_{ij})$ be a
 $3 \times 3$ integer matrix whose squared entries $e_{ij}^2$ have all three row sums and all three
