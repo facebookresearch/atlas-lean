@@ -1,0 +1,187 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.Matrix
+import Mathlib.Analysis.CStarAlgebra.Hom
+import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+
+/-!
+# Nonunital matrix faithfulness and rectangular Gram foundations
+
+The existing right matrix representation is faithful without a coefficient
+unit. A complete rectangular adjointable map has a positive adjoint composite
+in the canonical endomorphism order.
+
+The latter proof uses the actual WithCStarModule Hilbert product and its
+constructed continuous linear equivalence with the underlying product. It
+does not replace the Hilbert-product norm by a supnorm or assume equality of
+independent order/module dictionaries. No tensor carrier is constructed.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped CStarModule.Right RightActions
+
+namespace CStarModule.AdjointableOperator
+
+universe uB uI uE uF
+
+variable {B : Type uB} [NonUnitalCStarAlgebra B]
+variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. For possibly nonunital B, the finite square-matrix column action is injective,
+including for an empty index type. -/
+theorem rightMatrixHom_injective {I : Type uI} [Fintype I] :
+    Function.Injective (rightMatrixHom (B := B) (ι := I)) := by
+  intro M N hMN
+  apply CStarMatrix.ext
+  intro i j
+  let d : B := M i j - N i j
+  have hprod : M i j * star d = N i j * star d := by
+    have h := congrArg
+      (fun A : End B (CStarModule.Right.FiniteStandard B I) =>
+        A (CStarModule.Right.finiteSingle j (star d)) i) hMN
+    simpa only [rightMatrixHom_apply, rightMatrix_finiteSingle] using h
+  have hd : d * star d = 0 := by
+    change (M i j - N i j) * star d = 0
+    rw [sub_mul, hprod, sub_self]
+  exact sub_eq_zero.mp (mul_star_self_eq_zero.mp hd)
+
+section Rectangular
+
+variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
+variable [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
+
+/-- Let B be a possibly nonunital complex C-star algebra and E and F complete right Hilbert
+B-modules. For complete right Hilbert B-modules E and F, the adjoint of an adjointable map
+from E to F composed with that map is nonnegative in the endomorphism C-star order. -/
+theorem adjoint_comp_self_nonneg (T : AdjointableOperator B E F) :
+    @LE.le (End B E) (CStarAlgebra.spectralOrder (End B E)).toLE
+      0 (T.adjointOperator.comp T) := by
+  let D := WithCStarModule Bᵐᵒᵖ (E × F)
+  let U : D ≃L[ℂ] (E × F) := WithCStarModule.equivL ℂ
+  let l : E →L[ℂ] D :=
+    U.symm.toContinuousLinearMap.comp (ContinuousLinearMap.inl ℂ E F)
+  let p : D →L[ℂ] E :=
+    (ContinuousLinearMap.fst ℂ E F).comp U.toContinuousLinearMap
+  let r : F →L[ℂ] D :=
+    U.symm.toContinuousLinearMap.comp (ContinuousLinearMap.inr ℂ E F)
+  let q : D →L[ℂ] F :=
+    (ContinuousLinearMap.snd ℂ E F).comp U.toContinuousLinearMap
+  have hl (x : E) : U (l x) = (x, 0) := by
+    change U (U.symm (x, 0)) = (x, 0)
+    exact U.apply_symm_apply (x, 0)
+  have hp (d : D) : p d = (U d).1 := by
+    change (U d).1 = (U d).1
+    rfl
+  have hr (y : F) : U (r y) = (0, y) := by
+    change U (U.symm (0, y)) = (0, y)
+    exact U.apply_symm_apply (0, y)
+  have hq (d : D) : q d = (U d).2 := by
+    change (U d).2 = (U d).2
+    rfl
+  have hinner (d e : D) :
+      CStarModule.rightInner (B := B) d e =
+        CStarModule.rightInner (B := B) (U d).1 (U e).1 +
+          CStarModule.rightInner (B := B) (U d).2 (U e).2 := by
+    change MulOpposite.unop (inner Bᵐᵒᵖ d e) =
+      MulOpposite.unop (inner Bᵐᵒᵖ (U d).1 (U e).1) +
+        MulOpposite.unop (inner Bᵐᵒᵖ (U d).2 (U e).2)
+    rw [WithCStarModule.prod_inner, MulOpposite.unop_add]
+    rfl
+  let J : AdjointableOperator B E D :=
+    { toContinuousLinearMap := l
+      adjoint := p
+      isAdjointPair' := (isAdjointPair_iff_adjoint_inner l p).2 <| by
+        intro x d
+        simp only [hinner, hl, hp, CStarModule.rightInner_zero_left, add_zero] }
+  let K : AdjointableOperator B F D :=
+    { toContinuousLinearMap := r
+      adjoint := q
+      isAdjointPair' := (isAdjointPair_iff_adjoint_inner r q).2 <| by
+        intro y d
+        simp only [hinner, hr, hq, CStarModule.rightInner_zero_left, zero_add] }
+  have hJ (x : E) : J.adjointOperator (J x) = x := by
+    change p (l x) = x
+    rw [hp, hl]
+  have hK (y : F) : K.adjointOperator (K y) = y := by
+    change q (r y) = y
+    rw [hq, hr]
+  let ι : End B E →⋆ₙₐ[ℂ] End B D :=
+    { toFun := fun A => (J.comp A).comp J.adjointOperator
+      map_zero' := by
+        ext d
+        change J ((0 : End B E) (J.adjointOperator d)) = 0
+        rw [zero_apply, map_zero]
+      map_add' := by
+        intro A C
+        ext d
+        change J ((A + C) (J.adjointOperator d)) =
+          J (A (J.adjointOperator d)) + J (C (J.adjointOperator d))
+        rw [add_apply, map_add]
+      map_smul' := by
+        intro c A
+        ext d
+        change J ((c • A) (J.adjointOperator d)) =
+          c • J (A (J.adjointOperator d))
+        rw [smul_apply, map_smul]
+      map_mul' := by
+        intro A C
+        ext d
+        change J ((A * C) (J.adjointOperator d)) =
+          J (A (J.adjointOperator (J (C (J.adjointOperator d)))))
+        simp only [mul_apply, hJ]
+      map_star' := by
+        intro A
+        change (J.comp (star A)).comp J.adjointOperator =
+          ((J.comp A).comp J.adjointOperator).adjointOperator
+        ext d
+        simp only [comp_adjointOperator, adjointOperator_adjointOperator,
+          comp_apply, star_apply, adjointOperator_apply] }
+  have hι : Function.Injective ι := by
+    intro A C hAC
+    ext x
+    have h := congrArg
+      (fun Q : End B D => J.adjointOperator (Q (J x))) hAC
+    change J.adjointOperator
+        (J (A (J.adjointOperator (J x)))) =
+      J.adjointOperator (J (C (J.adjointOperator (J x)))) at h
+    simpa only [hJ] using h
+  let S : End B D := (K.comp T).comp J.adjointOperator
+  have himage : ι (T.adjointOperator.comp T) = star S * S := by
+    change (J.comp (T.adjointOperator.comp T)).comp J.adjointOperator =
+      S.adjointOperator.comp S
+    ext d
+    simp only [S, comp_adjointOperator, adjointOperator_adjointOperator,
+      comp_apply, hK]
+  let : PartialOrder (End B E) := CStarAlgebra.spectralOrder (End B E)
+  let : StarOrderedRing (End B E) := CStarAlgebra.spectralOrderedRing (End B E)
+  let : PartialOrder (End B D) := CStarAlgebra.spectralOrder (End B D)
+  let : StarOrderedRing (End B D) := CStarAlgebra.spectralOrderedRing (End B D)
+  have hpos : (0 : End B D) ≤ ι (T.adjointOperator.comp T) := by
+    rw [himage]
+    exact star_mul_self_nonneg S
+  exact (NonUnitalStarAlgHom.map_le_map_iff ι hι).mp
+    (by simpa only [map_zero] using hpos)
+
+end Rectangular
+
+end CStarModule.AdjointableOperator

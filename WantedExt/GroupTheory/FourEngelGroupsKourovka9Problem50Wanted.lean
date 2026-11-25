@@ -20,7 +20,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.GroupTheory.Solvable
-public import WantedExt.GroupTheory.EngelElementLengthPolynomialKourovka11Problem88Wanted
+public import MathlibExt.GroupTheory.EngelElementLengthPolynomialKourovka11Problem88
 public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
