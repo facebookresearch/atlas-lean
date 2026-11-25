@@ -49,24 +49,45 @@ public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.Pullbacks
 public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.Topology.KrullDimension
+public import MathlibExt.AlgebraicGeometry.BundleTrace
+public import MathlibExt.AlgebraicGeometry.ProjSpace
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
+public import MathlibExt.AlgebraicGeometry.RelativeGroupLawEndDegree
 public import MathlibExt.AlgebraicGeometry.SchemeHomOver
+public import MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 
 
 /-!
 # Polarised abelian schemes with quaternion multiplication
 
-A polarised abelian scheme is an abelian scheme equipped with a
-polarisation line bundle and a full level structure. A quaternion
+A polarised abelian scheme is an abelian scheme equipped with a very
+ample polarisation line bundle and a full level structure. A quaternion
 multiplication structure is an action of an order in a quaternion
-algebra by group endomorphisms, compatible with the level points and
-with a canonical polarisation. Pullback of such a structure along a
-ring homomorphism is transitive.
+algebra by group endomorphisms, compatible with the level points, whose
+polarisation is locally the cube of a canonical polarisation for the
+action. Pullback of such a structure along a ring homomorphism is
+transitive.
+
+## Implementation notes
+
+Very ampleness is `Scheme.Modules.ClosedImmersionBySections`: some
+presentation of the sheaf by global sections maps the scheme to
+projective space over the base by a closed immersion.
+
+The tensor product of sheaves of modules is
+`SchemeModulesTensor.moduleTensor`, the sheafified tensor product of the
+underlying presheaves of modules, and the dual of a sheaf of modules is
+its Hom sheaf `BundleTrace.homSheaf` into the structure sheaf. These
+agree up to canonical isomorphism with the monoidal operations of the
+source, and the conditions below use them only up to local isomorphism
+(`LocIsoOnBase`).
 -/
 
 @[expose] public noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.BundleTrace (homSheaf)
+open MathlibExt.AlgebraicGeometry.SchemeModulesTensor (moduleTensor)
 
 open scoped Quaternion
 
@@ -146,20 +167,6 @@ abbrev pushPt {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
 
 namespace RelativeGroupLaw
 
-/-- Commutativity of a relative group law. -/
-def IsCommutative {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    (L : RelativeGroupLaw R f) : Prop :=
-  ∀ {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R))
-    (P Q : SchemeHomOver t f), L.mul t P Q = L.mul t Q P
-
-/-- The `n`-fold sum of a point. -/
-def nsmul {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    (L : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) :
-    ℕ → SchemeHomOver t f → SchemeHomOver t f
-  | 0, _ => L.one t
-  | n + 1, P => L.mul t (nsmul L t n P) P
-
 /-- Finite linear combinations of points with natural coefficients. -/
 def finComb {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     (L : RelativeGroupLaw R f) {T : Scheme.{u}}
@@ -191,6 +198,60 @@ structure IsInvertible {X : Scheme.{u}} (M : X.Modules) : Prop where
   exists_trivialization : ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
     Nonempty ((pullback U.ι).obj M ≅ SheafOfModules.unit U.toScheme.ringCatSheaf)
 
+section ProjPresentation
+
+attribute [local instance] MvPolynomial.gradedAlgebra
+
+variable {X : Scheme.{u}}
+
+/-- A presentation of `M` by `N + 1` global sections `σ i` over `Spec R`: a
+morphism `toProj` from `X` to projective `N`-space over `R`, lying over `f`,
+such that on every open contained in the preimage of the chart `D₊(X i)` the
+section `σ i` freely generates `M`, and on the preimage of `D₊(X i)` the
+pullback of the coordinate ratio `X j / X i` carries `σ i` to `σ j`. -/
+structure ProjPresentation (M : X.Modules) (f : X ⟶ Spec (.of R)) (N : ℕ) where
+  /-- The global sections. -/
+  σ : Fin (N + 1) → Γ(M, ⊤)
+  /-- The morphism to projective `N`-space over `R`. -/
+  toProj : X ⟶ Proj (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+  /-- The morphism to projective space lies over `f`. -/
+  toProj_π : toProj ≫ ProjSpace.π R N = f
+  /-- On every open contained in the preimage of `D₊(X i)`, the section
+  `σ i` freely generates `M`. -/
+  frame : ∀ (i : Fin (N + 1)) (V : X.Opens),
+    V ≤ toProj ⁻¹ᵁ Proj.basicOpen (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+      (MvPolynomial.X i) →
+    Function.Bijective fun g : Γ(X, V) =>
+      g • (M.presheaf.map (homOfLE (le_top : V ≤ ⊤)).op (σ i) : Γ(M, V))
+  /-- On the preimage of `D₊(X i)`, the pullback of the coordinate ratio
+  `X j / X i` carries `σ i` to `σ j`. -/
+  app_ratio_smul : ∀ i j : Fin (N + 1),
+    (toProj.app (Proj.basicOpen (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+        (MvPolynomial.X i))
+      (Proj.awayToSection (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+        (MvPolynomial.X i)
+        (HomogeneousLocalization.Away.mk
+          (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+          ((MvPolynomial.mem_homogeneousSubmodule 1 _).mpr
+            (MvPolynomial.isHomogeneous_X R i)) 1 (MvPolynomial.X j)
+          (by
+            simpa using (MvPolynomial.mem_homogeneousSubmodule 1 _).mpr
+              (MvPolynomial.isHomogeneous_X R j))))) •
+        M.presheaf.map (homOfLE (le_top : toProj ⁻¹ᵁ
+          Proj.basicOpen (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+            (MvPolynomial.X i) ≤ ⊤)).op (σ i) =
+      M.presheaf.map (homOfLE (le_top : toProj ⁻¹ᵁ
+          Proj.basicOpen (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
+            (MvPolynomial.X i) ≤ ⊤)).op (σ j)
+
+/-- `M` is very ample relative to `f`: some presentation of `M` by global
+sections over `Spec R` maps `X` to projective space over `R` by a closed
+immersion. -/
+def ClosedImmersionBySections (M : X.Modules) (f : X ⟶ Spec (.of R)) : Prop :=
+  ∃ (N : ℕ) (𝔓 : M.ProjPresentation f N), IsClosedImmersion 𝔓.toProj
+
+end ProjPresentation
+
 end Scheme.Modules
 
 /-- Two sheaves of modules are locally isomorphic over the base. -/
@@ -199,6 +260,90 @@ def LocIsoOnBase {S' : Type u} [CommRing S'] {X : Scheme.{u}}
   ∀ s : ↥(Spec (CommRingCat.of S')), ∃ U : (Spec (CommRingCat.of S')).Opens,
     s ∈ U ∧ Nonempty ((Scheme.Modules.pullback (g ⁻¹ᵁ U).ι).obj M ≅
       (Scheme.Modules.pullback (g ⁻¹ᵁ U).ι).obj M')
+
+namespace Polarisation
+
+variable {S : Type u} [CommRing S] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S))
+  (L : RelativeGroupLaw S f)
+
+/-- The inversion morphism `A ⟶ A` of a relative group law: the inverse of
+the tautological point `𝟙 A`. -/
+def negMor : A ⟶ A :=
+  (L.inv f (𝟙 (Over.mk f))).left
+
+/-- The addition morphism `A ×_S A ⟶ A` of a relative group law: the
+product of the two projections. -/
+def addMor : pullback f f ⟶ A :=
+  (L.mul (pullback.fst f f ≫ f)
+    (Over.homMk (U := Over.mk (pullback.fst f f ≫ f)) (V := Over.mk f)
+      (pullback.fst f f) rfl)
+    (Over.homMk (U := Over.mk (pullback.fst f f ≫ f)) (V := Over.mk f)
+      (pullback.snd f f) pullback.condition.symm)).left
+
+/-- A sheaf of modules is symmetric if its pullback along the inversion is
+locally isomorphic to it over the base. -/
+def IsSymmetric (𝓛 : A.Modules) : Prop :=
+  LocIsoOnBase f ((Scheme.Modules.pullback (negMor f L)).obj 𝓛) 𝓛
+
+/-- The Mumford bundle `m^* 𝓛 ⊗ (p₁^* 𝓛^∨ ⊗ p₂^* 𝓛^∨)` on `A ×_S A`, where
+`m` is the addition, `p₁` and `p₂` are the projections, and `𝓛^∨` is the
+Hom sheaf from `𝓛` to the structure sheaf. -/
+def mumfordBundle (𝓛 : A.Modules) : (pullback f f).Modules :=
+  moduleTensor _ ((Scheme.Modules.pullback (addMor f L)).obj 𝓛)
+    (moduleTensor _
+      ((Scheme.Modules.pullback (pullback.fst f f)).obj
+        (homSheaf A 𝓛 (SheafOfModules.unit A.ringCatSheaf)))
+      ((Scheme.Modules.pullback (pullback.snd f f)).obj
+        (homSheaf A 𝓛 (SheafOfModules.unit A.ringCatSheaf))))
+
+/-- The slice `A ×_S T ⟶ A ×_S A`, `(a, s) ↦ (a, x s)`, of a point `x` of
+`A` over `T`. -/
+def sliceAt {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of S)} (x : SchemeHomOver t f) :
+    pullback f t ⟶ pullback f f :=
+  pullback.lift (pullback.fst f t) (pullback.snd f t ≫ x.left) (by
+    have hx : x.left ≫ f = t := Over.w x
+    rw [Category.assoc, hx]
+    exact pullback.condition)
+
+/-- The kernel of the Mumford map of `𝓛` is trivial: a point over an affine
+base at whose slice the Mumford bundle is locally trivial over the base is
+the identity. -/
+def KernelTrivial (𝓛 : A.Modules) : Prop :=
+  ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶ Spec (CommRingCat.of S))
+    (x : SchemeHomOver t f),
+    LocIsoOnBase (pullback.snd f t)
+        ((Scheme.Modules.pullback (sliceAt f x)).obj (mumfordBundle f L 𝓛))
+        (SheafOfModules.unit (pullback f t).ringCatSheaf) →
+      x = L.one t
+
+/-- The kernel of the Mumford map of `𝓛` is the two-torsion: the Mumford
+bundle is locally trivial over the base at the slice of a point over an
+affine base exactly when the point is two-torsion. -/
+def KernelIsTwoTorsion (𝓛 : A.Modules) : Prop :=
+  ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶ Spec (CommRingCat.of S))
+    (x : SchemeHomOver t f),
+    LocIsoOnBase (pullback.snd f t)
+        ((Scheme.Modules.pullback (sliceAt f x)).obj (mumfordBundle f L 𝓛))
+        (SheafOfModules.unit (pullback f t).ringCatSheaf) ↔
+      L.mul t x x = L.one t
+
+/-- Rosati compatibility of an action `ι` with an involution `star`: for each
+`b`, the pullbacks of the Mumford bundle along `1 × ι b` and `ι (star b) × 1`
+are locally isomorphic over the base. -/
+def RosatiCompatible (𝓛 : A.Modules) {I : Type*} (ι : I → (A ⟶ A))
+    (hι : ∀ b, ι b ≫ f = f) (star : I → I) : Prop :=
+  ∀ b : I,
+    LocIsoOnBase (pullback.fst f f ≫ f)
+      ((Scheme.Modules.pullback
+          (pullback.lift (pullback.fst f f) (pullback.snd f f ≫ ι b)
+            (by rw [Category.assoc, hι]; exact pullback.condition))).obj
+        (mumfordBundle f L 𝓛))
+      ((Scheme.Modules.pullback
+          (pullback.lift (pullback.fst f f ≫ ι (star b)) (pullback.snd f f)
+            (by rw [Category.assoc, hι]; exact pullback.condition))).obj
+        (mumfordBundle f L 𝓛))
+
+end Polarisation
 
 /-- The finrank of the global sections of a sheaf on a geometric fibre. -/
 noncomputable def Scheme.Modules.geomFibreH0Finrank {S : Type u} [CommRing S]
@@ -246,16 +391,20 @@ def IsTangentVector {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of S)}
     (P : SchemeHomOver (tangentBase k sk) f) : Prop :=
   tangentZero k ≫ P.left = (L.one (geomPoint k sk)).left
 
-/-- Canonical polarisation data for an action on an abelian scheme:
-an invertible sheaf, symmetric up to local isomorphism over the base,
-which becomes a cube of a trivialised bundle after a faithfully flat
-base change, has positive geometric fibre rank, and whose cube is
-locally isomorphic to the given polarisation. -/
+/-- Canonical polarisation data for an action `act` with involution `star`
+on a relative group law `L`: an invertible sheaf `𝓛` that is symmetric,
+whose Mumford kernel is the two-torsion, such that after a faithfully flat
+base change `S → S'`, for every group law `L'` on the base change
+compatible with `L`, the pullback of `𝓛` is locally isomorphic over the
+base to `𝓛₀ ⊗ [-1]^* 𝓛₀` for an invertible `𝓛₀` with trivial Mumford
+kernel, which has positive geometric fibre rank, and which is Rosati
+compatible with `act` and `star`. -/
 def IsCanonicalPolData {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S))
-    (L : RelativeGroupLaw S f) {I : Type} (act : I → (A ⟶ A))
+    (L : RelativeGroupLaw S f) {I : Type*} (act : I → (A ⟶ A))
     (act_over : ∀ x : I, act x ≫ f = f) (star : I → I) (𝓛 : A.Modules) :
     Prop :=
-  Scheme.Modules.IsInvertible 𝓛 ∧
+  Scheme.Modules.IsInvertible 𝓛 ∧ Polarisation.IsSymmetric f L 𝓛 ∧
+  Polarisation.KernelIsTwoTorsion f L 𝓛 ∧
   (∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
     Module.FaithfullyFlat S S' ∧
     ∀ (L' : RelativeGroupLaw S'
@@ -263,18 +412,28 @@ def IsCanonicalPolData {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S))
       (∀ (T : Scheme.{u}) (t' : T ⟶ Spec (CommRingCat.of S'))
         (P Q : SchemeHomOver t'
           (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))),
-          pullPt (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
-            pullback.condition (L'.mul t' P Q) =
-            L.mul (t' ≫ Spec.map (CommRingCat.ofHom (algebraMap S S')))
+          (L'.mul t' P Q).left ≫
+              pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))) =
+            (L.mul (t' ≫ Spec.map (CommRingCat.ofHom (algebraMap S S')))
               (pullPt (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
                 pullback.condition P)
               (pullPt (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
-                pullback.condition Q)) →
+                pullback.condition Q)).left) →
       ∃ 𝓛₀ : (pullback f (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
-        Scheme.Modules.IsInvertible 𝓛₀) ∧
+        Scheme.Modules.IsInvertible 𝓛₀ ∧
+        Polarisation.KernelTrivial
+          (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S')))) L' 𝓛₀ ∧
+        LocIsoOnBase (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
+          ((Scheme.Modules.pullback
+            (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))).obj 𝓛)
+          (moduleTensor _ 𝓛₀
+            ((Scheme.Modules.pullback
+              (Polarisation.negMor
+                (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
+                L')).obj 𝓛₀))) ∧
   (∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
     0 < Scheme.Modules.geomFibreH0Finrank f 𝓛 k sk) ∧
-  (∀ b : I, act (star b) ≫ f = f → act b ≫ f = f)
+  Polarisation.RosatiCompatible f L 𝓛 act act_over star
 
 /-- A polarised abelian scheme of dimension `g`, polarisation degree
 parameter `d` and level `n` over `S`. -/
@@ -320,6 +479,10 @@ structure PolarisedAbelianScheme (g d n : ℕ) (S : Type u) [CommRing S] :
   pol : A.Modules
   /-- The polarisation sheaf is invertible. -/
   pol_isInvertible : Scheme.Modules.IsInvertible pol
+  /-- The polarisation sheaf is very ample relative to the base: some
+  presentation of it by global sections maps `A` to projective space over
+  `S` by a closed immersion. -/
+  pol_veryAmple : Scheme.Modules.ClosedImmersionBySections pol f
   /-- The polarisation has geometric fibre rank `d`. -/
   pol_finrank : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
     Scheme.Modules.geomFibreH0Finrank f pol k sk = d
@@ -364,8 +527,8 @@ variable {a b : ℚ}
 
 /-- A quaternion multiplication structure on a polarised abelian scheme:
 an action of the order `Λ` by group endomorphisms, with the trace
-identity on tangent spaces, a distinguished level point, and a canonical
-polarisation. -/
+identity on tangent spaces, a distinguished level point, and a
+polarisation that is locally the cube of a canonical polarisation. -/
 structure QMStructure (Λ : Submodule ℤ ℍ[ℚ, a, b]) (star : ↥Λ → ↥Λ)
     (β : Fin (2 * 2) → ↥Λ) {d m : ℕ} {S : Type u} [CommRing S]
     (X : PolarisedAbelianScheme 2 d m S) : Type (u + 1) where
@@ -406,10 +569,12 @@ structure QMStructure (Λ : Submodule ℤ ℍ[ℚ, a, b]) (star : ↥Λ → ↥�
   /-- The distinguished point matches the level points under the action. -/
   level_match : ∀ j : Fin (2 * 2),
     pushPt (act (β j)) (act_over (β j)) P = X.P j
-  /-- The polarisation is canonical for the action. -/
+  /-- The polarisation is locally isomorphic over the base to the cube
+  `polE ⊗ polE ⊗ polE` of a canonical polarisation `polE` for the
+  action. -/
   pol_canonical : ∃ polE : X.A.Modules,
     IsCanonicalPolData X.f X.L act act_over star polE ∧
-    LocIsoOnBase X.f X.pol polE
+    LocIsoOnBase X.f X.pol (moduleTensor X.A polE (moduleTensor X.A polE polE))
 
 namespace QMStructure
 

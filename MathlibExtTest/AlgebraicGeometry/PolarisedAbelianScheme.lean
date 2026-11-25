@@ -17,6 +17,7 @@ public import MathlibExt.AlgebraicGeometry.PolarisedAbelianScheme
 @[expose] public section
 
 open CategoryTheory AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.SchemeModulesTensor (moduleTensor)
 
 open scoped Quaternion
 
@@ -46,5 +47,31 @@ example {X : Scheme.{u}} (𝓛 : X.Modules)
       Nonempty ((Scheme.Modules.pullback U.ι).obj 𝓛 ≅
         SheafOfModules.unit U.toScheme.ringCatSheaf) :=
   h.exists_trivialization x
+
+/-- A canonical polarisation is symmetric, its Mumford kernel is the
+two-torsion, and it is Rosati compatible with the action. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of S)}
+    {L : RelativeGroupLaw S f} {I : Type} {act : I → (A ⟶ A)}
+    {act_over : ∀ x : I, act x ≫ f = f} {star : I → I} {𝓛 : A.Modules}
+    (h : IsCanonicalPolData f L act act_over star 𝓛) :
+    Polarisation.IsSymmetric f L 𝓛 ∧ Polarisation.KernelIsTwoTorsion f L 𝓛 ∧
+      Polarisation.RosatiCompatible f L 𝓛 act act_over star :=
+  ⟨h.2.1, h.2.2.1, h.2.2.2.2.2⟩
+
+/-- The polarisation of a quaternion multiplication structure is locally
+the cube of a canonical polarisation. -/
+example {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {star : ↥Λ → ↥Λ}
+    {β : Fin (2 * 2) → ↥Λ} {d m : ℕ} {S : Type u} [CommRing S]
+    {X : PolarisedAbelianScheme 2 d m S} (s : QMStructure Λ star β X) :
+    ∃ polE : X.A.Modules, IsCanonicalPolData X.f X.L s.act s.act_over star polE ∧
+      LocIsoOnBase X.f X.pol (moduleTensor X.A polE (moduleTensor X.A polE polE)) :=
+  s.pol_canonical
+
+/-- The polarisation of a polarised abelian scheme is very ample: some
+presentation of it by global sections maps the scheme to projective space
+by a closed immersion. -/
+example {g d n : ℕ} {S : Type u} [CommRing S] (X : PolarisedAbelianScheme g d n S) :
+    ∃ (N : ℕ) (𝔓 : X.pol.ProjPresentation X.f N), IsClosedImmersion 𝔓.toProj :=
+  X.pol_veryAmple
 
 end AlgebraicGeometry.PolarisedAbelianScheme.QMStructure
