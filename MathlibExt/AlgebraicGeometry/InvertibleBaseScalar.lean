@@ -34,31 +34,25 @@ module
 
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.GammaSpecAdjunction
+public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 /-!
 # Endomorphisms of invertible sheaves are base scalars
 
 An invertible sheaf is a module sheaf that is locally isomorphic to the
-structure sheaf. Every endomorphism of an invertible sheaf is, on each
-open, multiplication by the restriction of a unique global section. When
-the global sections of the base scheme are exactly the base ring, that
-section comes from a unique base scalar.
+structure sheaf (`CoherentCurveLinearSeries.IsLineBundle`). Every endomorphism
+of an invertible sheaf is, on each open, multiplication by the restriction of a
+unique global section. When the global sections of `X` are exactly the base
+ring (the map from the base ring to them is bijective), that section comes from
+a unique base scalar.
 -/
 
-@[expose] public section
-
 open CategoryTheory CategoryTheory.Limits TopologicalSpace Opposite
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle structureModule)
 
 universe u
 
 namespace AlgebraicGeometry.Scheme.Modules
-
-/-- An invertible sheaf: locally isomorphic to the structure sheaf. -/
-structure IsInvertible {X : Scheme.{u}} (M : X.Modules) : Prop where
-  /-- Every point has a neighbourhood over which `M` is trivial. -/
-  exists_trivialization : ∀ x : X, ∃ (U : X.Opens), x ∈ U ∧
-    Nonempty ((Scheme.Modules.pullback U.ι).obj M ≅
-      SheafOfModules.unit U.toScheme.ringCatSheaf)
 
 variable {X : Scheme.{u}}
 
@@ -70,40 +64,17 @@ lemma Hom.app_naturality {M N : X.Modules} (φ : M ⟶ N) {U V : X.Opens} (i : U
   simp only [ConcreteCategory.comp_apply] at h'
   exact h'
 
-noncomputable abbrev resTop (s : Γ(X, ⊤)) (U : X.Opens) : Γ(X, U) :=
-  X.presheaf.map (homOfLE le_top : U ⟶ ⊤).op s
+noncomputable def unitOne (U : X.Opens) : Γ(structureModule X, U) := (1 : Γ(X, U))
 
-@[simp] lemma map_resTop (s : Γ(X, ⊤)) {U V : X.Opens} (i : U ⟶ V) :
-    X.presheaf.map i.op (resTop s V) = resTop s U := by
-  simp only [resTop, ← CommRingCat.comp_apply, ← Functor.map_comp]
-  rfl
+def toΓ {U : X.Opens} (x : Γ(structureModule X, U)) : Γ(X, U) := x
 
-@[simp] lemma resTop_top (s : Γ(X, ⊤)) : resTop s ⊤ = s := by
-  simp [resTop]
-
-lemma smul_res_comm (s : Γ(X, ⊤)) (M : X.Modules) (U : X.Opens) (r : Γ(X, U)) (m : Γ(M, U)) :
-    resTop s U • r • m = r • resTop s U • m := by
-  rw [smul_smul, smul_smul, mul_comm]
-
-lemma map_resTop_smul (s : Γ(X, ⊤)) (M : X.Modules) {U V : X.Opens} (i : U ⟶ V) (x : Γ(M, V)) :
-    M.presheaf.map i.op (resTop s V • x) = resTop s U • M.presheaf.map i.op x := by
-  rw [Modules.map_smul, map_resTop]
-
-
-noncomputable abbrev unitModule (X : Scheme.{u}) : X.Modules :=
-  SheafOfModules.unit X.ringCatSheaf
-
-noncomputable def unitOne (U : X.Opens) : Γ(unitModule X, U) := (1 : Γ(X, U))
-
-def toΓ {U : X.Opens} (x : Γ(unitModule X, U)) : Γ(X, U) := x
-
-lemma eq_toΓ_smul_unitOne {U : X.Opens} (x : Γ(unitModule X, U)) : x = toΓ x • unitOne U :=
+lemma eq_toΓ_smul_unitOne {U : X.Opens} (x : Γ(structureModule X, U)) :
+    x = toΓ x • unitOne U :=
   (mul_one (toΓ x)).symm
 
 lemma map_unitOne {U V : X.Opens} (i : U ⟶ V) :
-    (unitModule X).presheaf.map i.op (unitOne V) = unitOne U :=
+    (structureModule X).presheaf.map i.op (unitOne V) = unitOne U :=
   map_one (X.presheaf.map i.op).hom
-
 
 variable (M : X.Modules) (g : M ⟶ M)
 
@@ -180,9 +151,9 @@ lemma represents_unique_of_trivOn {V : X.Opens} (hV : TrivOn M V) {s s' : Γ(X, 
   have h' := (he V le_rfl).1 h
   simpa using h'
 
-lemma trivOn_of_iso (U : X.Opens) (τ : (Modules.pullback U.ι).obj M ≅ unitModule U) :
+lemma trivOn_of_iso (U : X.Opens) (τ : (Modules.pullback U.ι).obj M ≅ structureModule U) :
     TrivOn M (U.ι ''ᵁ ⊤) := by
-  let τ' : M.restrict U.ι ≅ unitModule (U : Scheme.{u}) :=
+  let τ' : M.restrict U.ι ≅ structureModule (U : Scheme.{u}) :=
     (restrictFunctorIsoPullback U.ι).app M ≪≫ τ
   let e : Γ(M, U.ι ''ᵁ ⊤) := τ'.inv.app ⊤ (unitOne ⊤)
   refine ⟨e, fun W hW => ?_⟩
@@ -190,35 +161,43 @@ lemma trivOn_of_iso (U : X.Opens) (τ : (Modules.pullback U.ι).obj M ≅ unitMo
     ⟨U.ι ⁻¹ᵁ W, by
       rw [Scheme.Hom.image_preimage_eq_opensRange_inf, Scheme.Opens.opensRange_ι,
         inf_eq_right.mpr (hW.trans_eq (Scheme.Opens.ι_image_top U))]⟩
-
   have key : ∀ r : Γ(X, U.ι ''ᵁ W'),
       r • M.presheaf.map (homOfLE hW).op e =
-        τ'.inv.app W' (@id Γ(unitModule (U : Scheme.{u}), W') r) := by
+        τ'.inv.app W' (@id Γ(structureModule (U : Scheme.{u}), W') r) := by
     intro r
-    have hr : (@id Γ(unitModule (U : Scheme.{u}), W') r) =
-        toΓ (@id Γ(unitModule (U : Scheme.{u}), W') r) • unitOne W' :=
+    have hr : (@id Γ(structureModule (U : Scheme.{u}), W') r) =
+        toΓ (@id Γ(structureModule (U : Scheme.{u}), W') r) • unitOne W' :=
       eq_toΓ_smul_unitOne _
     rw [hr, Hom.app_smul]
-
     have hn := Hom.app_naturality τ'.inv (homOfLE (le_top : W' ≤ ⊤)) (unitOne ⊤)
     rw [map_unitOne] at hn
     rw [hn]
-
-    change _ = ((U.ι.appIso W').inv.hom (toΓ (@id Γ(unitModule (U : Scheme.{u}), W') r))) •
+    change _ = ((U.ι.appIso W').inv.hom
+        (toΓ (@id Γ(structureModule (U : Scheme.{u}), W') r))) •
       M.presheaf.map (homOfLE hW).op e
     rw [Scheme.Opens.ι_appIso]
     rfl
   have hbij : Function.Bijective (τ'.inv.app W') :=
     ConcreteCategory.bijective_of_isIso (τ'.inv.app W')
   rw [show (fun r : Γ(X, U.ι ''ᵁ W') => r • M.presheaf.map (homOfLE hW).op e) =
-      fun r => τ'.inv.app W' (@id Γ(unitModule (U : Scheme.{u}), W') r) from funext key]
+      fun r => τ'.inv.app W' (@id Γ(structureModule (U : Scheme.{u}), W') r) from funext key]
   exact hbij
 
+end AlgebraicGeometry.Scheme.Modules
 
-theorem IsInvertible.existsUnique_represents (hM : Scheme.Modules.IsInvertible M) (g : M ⟶ M) :
+namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+
+open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.Scheme.Modules
+
+variable {X : Scheme.{u}}
+
+/-- Every endomorphism of an invertible sheaf is multiplication by a
+unique global section of the structure sheaf. -/
+public theorem IsLineBundle.existsUnique_app_eq_smul {M : X.Modules}
+    (hM : IsLineBundle M) (g : M ⟶ M) :
     ∃! s : Γ(X, ⊤), ∀ (U : X.Opens) (x : Γ(M, U)),
       g.app U x = X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op s • x := by
-  choose U hxU hτ using hM.exists_trivialization
+  choose U hxU hτ using hM
   have htriv : ∀ x, TrivOn M (U x) := fun x => by
     have h := trivOn_of_iso (M := M) (U x) (hτ x).some
     rwa [Scheme.Opens.ι_image_top] at h
@@ -236,47 +215,39 @@ theorem IsInvertible.existsUnique_represents (hM : Scheme.Modules.IsInvertible M
   apply X.sheaf.eq_of_locally_eq' U ⊤ (fun i => homOfLE le_top) hcov
   intro i
   exact represents_unique_of_trivOn (htriv i) (hrep'.restrict le_top) (hrep.restrict le_top)
-/-- Every endomorphism of an invertible sheaf is multiplication by a
-unique global section of the structure sheaf. -/
-theorem IsInvertible.existsUnique_app_eq_smul {M : X.Modules}
-    (hM : IsInvertible M) (g : M ⟶ M) :
-    ∃! s : Γ(X, ⊤), ∀ (U : X.Opens) (x : Γ(M, U)),
-      g.app U x = X.presheaf.map (homOfLE (le_top : U ≤ ⊤)).op s • x :=
-  IsInvertible.existsUnique_represents hM g
 
-end AlgebraicGeometry.Scheme.Modules
+end MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 namespace AlgebraicGeometry.DescentCharacter
 
 variable {X : Scheme.{u}} {R : Type u} [CommRing R]
 
 /-- The section of the structure sheaf over `U` coming from `c : R`. -/
-noncomputable def baseSection (f : X ⟶ Spec (CommRingCat.of R)) (c : R) (U : X.Opens) :
-    Γ(X, U) :=
+@[expose] public noncomputable def baseSection (f : X ⟶ Spec (CommRingCat.of R)) (c : R)
+    (U : X.Opens) : Γ(X, U) :=
   X.presheaf.map (homOfLE (le_top (a := U))).op
     (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c))
 
 /-- `σ` is multiplication by the base scalar `c` on every open. -/
-noncomputable def IsBaseScalar (f : X ⟶ Spec (CommRingCat.of R)) {M : X.Modules}
-    (σ : M ⟶ M) (c : R) : Prop :=
+@[expose] public noncomputable def IsBaseScalar (f : X ⟶ Spec (CommRingCat.of R))
+    {M : X.Modules} (σ : M ⟶ M) (c : R) : Prop :=
   ∀ (U : X.Opens) (s : Γ(M, U)), σ.app U s = baseSection f c U • s
 
 /-- An endomorphism of an invertible sheaf is uniquely multiplication
 by a base scalar when global functions equal the base ring. -/
-theorem existsUnique_isBaseScalar_of_isInvertible_of_bijective
+public theorem existsUnique_isBaseScalar_of_isLineBundle_of_bijective
     (f : X ⟶ Spec (CommRingCat.of R))
     (hH0 : Function.Bijective fun c : R =>
       f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c))
-    {M : X.Modules} (hM : Scheme.Modules.IsInvertible M) (σ : M ⟶ M) :
+    {M : X.Modules} (hM : IsLineBundle M) (σ : M ⟶ M) :
     ∃! c : R, IsBaseScalar f σ c := by
-  obtain ⟨s, hs, huniq⟩ :=
-    AlgebraicGeometry.Scheme.Modules.IsInvertible.existsUnique_app_eq_smul hM σ
+  obtain ⟨s, hs, huniq⟩ := hM.existsUnique_app_eq_smul σ
   obtain ⟨c, hc⟩ := hH0.2 s
   simp only at hc
   refine ⟨c, ?_, ?_⟩
   · intro U x
     rw [hs U x]
-    show _ = X.presheaf.map (homOfLE (le_top (a := U))).op
+    change _ = X.presheaf.map (homOfLE (le_top (a := U))).op
       (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c)) • x
     rw [hc]
   · intro c' hc'
@@ -284,7 +255,7 @@ theorem existsUnique_isBaseScalar_of_isInvertible_of_bijective
       huniq (f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c'))
         (fun U x => hc' U x)
     apply hH0.1
-    show f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c') =
+    change f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c') =
       f.appTop ((Scheme.ΓSpecIso (CommRingCat.of R)).inv c)
     rw [h1]
     exact hc.symm
