@@ -1,5 +1,14 @@
 /-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+/-
 # A bounded L^1 function on R^d is L^2 with an interpolation bound
+
+The following OpenBMB notice applies to the adapted statement and its documentation.
 
 Copyright (c) 2026 OpenBMB
 
@@ -25,8 +34,18 @@ Attribution and modification notice: the statement below is taken from openbmb/m
 commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_41.lean`
 (MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
 Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. The imported statement keeps its
-name, signature, and source docstring here; this move supplies a proof and narrows the imports.
+openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
+`theorem ma_proofbench_l1_41 … := by sorry` into the Batteries `theorem_wanted`
+`memLp_two_and_eLpNorm_two_le_of_bounded_of_memLp_one`; moved the informal problem statement
+docstring onto it and placed the declarations in namespace
+`MathlibExt.Analysis.FunctionalAnalysis.BoundedL1MemL2NormBoundWanted`; replaced `import
+Mathlib` by `public import Mathlib` under the module system.
+Later changes (ATLAS, 2026): that docstring was restated to match the Lean statement, and the
+wanted declaration then moved from
+`WantedExt/Analysis/FunctionalAnalysis/BoundedL1MemL2NormBoundWanted.lean` to this module with
+its ATLAS name, namespace, statement and docstring unchanged, so the name and the docstring are
+ATLAS's, not the benchmark's. The benchmark gives no proof (`by sorry`); this move supplies one
+and narrows the imports to the modules used.
 -/
 module
 
