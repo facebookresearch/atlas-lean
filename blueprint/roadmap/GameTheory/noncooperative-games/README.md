@@ -18,6 +18,13 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Blackwell approachability](blackwell-approachability/README.md)
 - [Adaptive heuristics](adaptive-heuristics/README.md)
 - [Mean field games](mean-field-games/README.md)
+- [Best-response (support) condition](best-response-condition.md)
+- [Explicit encoding and size of finite games](explicit-encoding-and-size-of-finite-games.md)
+- [Equilibrium search problems](equilibrium-search-problems.md)
+- [Equilibrium search is total and polynomially verifiable](equilibrium-search-is-total-and-polynomially-verifiable.md)
+- [Polynomial-time verification of (approximate) equilibria](polynomial-time-verification-of-equilibria.md)
+- [Optimal mixed strategy to commit to (two-player normal form)](optimal-mixed-strategy-to-commit-to.md)
+- [Commitment is worth at least any Nash equilibrium](commitment-is-worth-at-least-any-nash-equilibrium.md)
 
 ## Related topics
 
@@ -26,3 +33,11 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Online learning and boosting](../../ComputerScience/machine-learning/online-learning-and-boosting/README.md): Hedge and weighted majority, the no-regret algorithms used in repeated games.
 - [Matchings and flows](../../GraphTheory/matchings-and-flows/README.md): network flows, the combinatorial model behind routing games.
 - [Mechanism design](../mechanism-design/README.md): designing the game so that its equilibria, in dominant strategies or Bayesian Nash, achieve a given outcome.
+
+## Research directions
+
+- [Undiscounted equilibria of multiplayer stochastic games](undiscounted-equilibria-of-stochastic-games.md)
+- [Polynomial-time approximate Nash equilibria in bimatrix games](polynomial-time-approximate-nash-equilibria-in-bimatrix-games.md)
+- [Optimal rate of sequential calibration](optimal-rate-of-sequential-calibration.md)
+
+- [Maximum number of Nash equilibria in bimatrix games](maximum-number-of-nash-equilibria-in-bimatrix-games.md)
