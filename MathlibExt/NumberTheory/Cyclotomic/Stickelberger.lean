@@ -38,6 +38,32 @@ public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 public import Mathlib.NumberTheory.ClassNumber.AdmissibleAbsoluteValue
 public import Mathlib.RingTheory.ClassGroup.Basic
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
+import Mathlib.FieldTheory.Finite.Basic
+
+/-!
+# The Stickelberger endomorphism
+
+For a prime `p` and a `ZMod p`-module `A` with an action `ρ` of `(ZMod p)ˣ`, this file
+defines the endomorphism `stickelbergerEnd ρ = ∑ ρ (c⁻¹)` over the exponents
+`0 < c < p / 2`, the `ω ^ i` eigenvector condition `IsOmegaEigenvector`, and the
+quotient `ModP p M = M / pM` of an abelian group with the induced action of the class
+group of a domain.
+
+## Main results
+
+* `Stickelberger.stickelbergerEnd_apply_of_isOmegaEigenvector`: on an `ω ^ i`
+  eigenvector, `stickelbergerEnd ρ` acts as the scalar `∑ c⁻¹ ^ i`.
+* `Stickelberger.stickelbergerEnd_apply_of_isOmegaEigenvector_sub_two`: for `i = p - 2`
+  this scalar is `eigenvalueScalar p = ∑ c`.
+
+## References
+
+The Stickelberger element of `ℚ(ζ_p)` is `θ = ∑_{a=1}^{p-1} (a / p) σ_a⁻¹`
+(L. C. Washington, *Introduction to Cyclotomic Fields*, 2nd ed., GTM 83, §6.2).
+A direct computation gives `(2 - σ_2) θ = ∑_{p/2 < a < p} σ_a⁻¹ = σ_{-1} ∑_{0 < c < p/2} σ_c⁻¹`,
+so the sum used here is an element of the Stickelberger ideal; this identity is not
+formalized in this file.
+-/
 
 @[expose] public section
 
@@ -54,7 +80,8 @@ def exponentSet (p : ℕ) : Finset ℕ :=
   simp only [exponentSet, Finset.mem_filter, Finset.mem_range]
   exact ⟨fun h => h.2, fun h => ⟨by omega, h⟩⟩
 
-/-- The sum of the Stickelberger exponents. -/
+/-- The sum of the Stickelberger exponents; see
+`stickelbergerEnd_apply_of_isOmegaEigenvector_sub_two` for its role as an eigenvalue. -/
 def eigenvalueScalar (p : ℕ) : ℕ := ∑ c ∈ exponentSet p, c
 
 variable {p : ℕ}
@@ -89,12 +116,34 @@ def StickelbergerAnnihilates [Fact p.Prime] (ρ : (ZMod p)ˣ →* Module.End (ZM
 def IsOmegaEigenvector (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) (i : ℕ) (a : A) : Prop :=
   ∀ d : (ZMod p)ˣ, ρ d a = ((d : ZMod p) ^ i) • a
 
-/-- The Stickelberger endomorphism annihilates every element exactly when
-its defining sum acts as zero on the module. -/
-theorem stickelbergerAnnihilates_iff [Fact p.Prime] {A : Type*} [AddCommGroup A]
-    [Module (ZMod p) A] (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
-    StickelbergerAnnihilates ρ ↔ ∀ a : A, stickelbergerEnd ρ a = 0 :=
-  Iff.rfl
+/-- On an `ω ^ i` eigenvector, the Stickelberger endomorphism acts as the scalar
+`∑ c⁻¹ ^ i` over the Stickelberger exponents. -/
+theorem stickelbergerEnd_apply_of_isOmegaEigenvector [Fact p.Prime]
+    {ρ : (ZMod p)ˣ →* Module.End (ZMod p) A} {i : ℕ} {a : A}
+    (ha : IsOmegaEigenvector ρ i a) :
+    stickelbergerEnd ρ a = (∑ c ∈ exponentSet p, ((c : ZMod p)⁻¹) ^ i) • a := by
+  unfold stickelbergerEnd
+  simp only [LinearMap.coe_sum, Finset.sum_apply]
+  rw [Finset.sum_smul, ← Finset.sum_attach (exponentSet p) (fun c => ((c : ZMod p)⁻¹) ^ i • a)]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  rw [ha, Units.val_inv_eq_inv_val, coe_expUnit]
+
+/-- On an `ω ^ (p - 2)` eigenvector, the Stickelberger endomorphism acts as
+`eigenvalueScalar p`, since `c⁻¹ ^ (p - 2) = c` in `ZMod p` by Fermat's little theorem. -/
+theorem stickelbergerEnd_apply_of_isOmegaEigenvector_sub_two [Fact p.Prime]
+    {ρ : (ZMod p)ˣ →* Module.End (ZMod p) A} {a : A}
+    (ha : IsOmegaEigenvector ρ (p - 2) a) :
+    stickelbergerEnd ρ a = (eigenvalueScalar p : ZMod p) • a := by
+  rw [stickelbergerEnd_apply_of_isOmegaEigenvector ha, eigenvalueScalar, Nat.cast_sum]
+  congr 1
+  refine Finset.sum_congr rfl fun c hc => ?_
+  have hc0 : (c : ZMod p) ≠ 0 := by
+    rw [← coe_expUnit hc]
+    exact Units.ne_zero _
+  have hpow : (c : ZMod p) ^ (p - 2) * c = 1 := by
+    rw [← pow_succ, show p - 2 + 1 = p - 1 by have := (Fact.out : p.Prime).two_le; omega]
+    exact ZMod.pow_card_sub_one_eq_one hc0
+  rw [inv_pow, inv_eq_of_mul_eq_one_right hpow]
 
 /-- A zero vector is an omega eigenvector for every exponent. -/
 theorem isOmegaEigenvector_zero {A : Type*} [AddCommGroup A]
@@ -105,13 +154,14 @@ theorem isOmegaEigenvector_zero {A : Type*} [AddCommGroup A]
 
 end Stickelberger
 
-namespace JacobiSumStickelberger
+namespace Stickelberger
 
 
 section ModP
 
 variable (p : ℕ) (M : Type*) [AddCommGroup M]
 
+/-- The subgroup `p • M` of multiples of `p`. -/
 def nsmulRange : AddSubgroup M where
   carrier := Set.range fun x : M => p • x
   add_mem' := by
@@ -126,11 +176,13 @@ def nsmulRange : AddSubgroup M where
 
 lemma nsmul_mem_nsmulRange (x : M) : p • x ∈ nsmulRange p M := ⟨x, rfl⟩
 
+/-- The quotient `M / pM`. -/
 abbrev ModP : Type _ := M ⧸ nsmulRange p M
 
 instance instModuleZModModP [NeZero p] : Module (ZMod p) (ModP p M) :=
   QuotientAddGroup.zmodModule (nsmul_mem_nsmulRange p M)
 
+/-- The projection `M → M / pM`. -/
 def ModP.proj : M →+ ModP p M := QuotientAddGroup.mk' (nsmulRange p M)
 
 @[simp] lemma ModP.proj_apply (x : M) : ModP.proj p M x = QuotientAddGroup.mk x := rfl
@@ -147,6 +199,7 @@ lemma nsmulRange_le_comap (f : M →+ M) : nsmulRange p M ≤ (nsmulRange p M).c
   exact ⟨f x, (map_nsmul f p x).symm⟩
 
 variable {M} in
+/-- The endomorphism of `M / pM` induced by an endomorphism of `M`. -/
 def ModP.mapHom (f : M →+ M) : ModP p M →+ ModP p M :=
   QuotientAddGroup.map (nsmulRange p M) (nsmulRange p M) f (nsmulRange_le_comap p f)
 
@@ -155,6 +208,7 @@ variable {M} in
     ModP.mapHom p f (ModP.proj p M x) = ModP.proj p M (f x) := rfl
 
 variable {M} in
+/-- `ModP.mapHom` as a `ZMod p`-linear endomorphism. -/
 noncomputable def ModP.mapEnd [NeZero p] (f : M →+ M) : Module.End (ZMod p) (ModP p M) :=
   (ModP.mapHom p f).toZModLinearMap p
 
@@ -169,8 +223,10 @@ section ClassGroupCarrier
 variable (p : ℕ) [NeZero p]
 variable (R : Type*) [CommRing R] [IsDomain R]
 
+/-- The class group of `R` modulo `p`-th powers, as a `ZMod p`-module. -/
 abbrev ClGalModule : Type _ := ModP p (Additive (ClassGroup R))
 
+/-- The projection from the class group to `ClGalModule p R`. -/
 noncomputable def clProj : Additive (ClassGroup R) →+ ClGalModule p R :=
   ModP.proj p (Additive (ClassGroup R))
 
@@ -180,6 +236,7 @@ theorem clProj_surjective : Function.Surjective (clProj p R) :=
 
 variable {R}
 
+/-- The endomorphism of `ClGalModule p R` induced by a ring automorphism of `R`. -/
 noncomputable def clEnd (g : R ≃+* R) : Module.End (ZMod p) (ClGalModule p R) :=
   ModP.mapEnd p (MonoidHom.toAdditive (ClassGroup.mulEquiv g).toMonoidHom)
 
@@ -189,5 +246,4 @@ noncomputable def clEnd (g : R ≃+* R) : Module.End (ZMod p) (ClGalModule p R) 
 
 end ClassGroupCarrier
 
-
-end JacobiSumStickelberger
+end Stickelberger
