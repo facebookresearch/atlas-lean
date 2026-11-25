@@ -17,7 +17,8 @@ import Mathlib.Tactic.Linarith
 
 The remainders of Koizumi's pseudo-greedy expansion tend to zero for every positive
 initial value, so the reciprocals of the expansion terms sum to that value. The gap
-sequence gives a recurrence for successive expansion terms.
+sequence gives a recurrence for successive expansion terms, and a zero gap stays zero at the
+next step.
 -/
 
 open Filter Topology
@@ -185,6 +186,24 @@ theorem pseudoGreedyExpansion_succ_eq {r : ℝ} (hr : 0 < r) (n : ℕ) :
   rw [hgap, pseudoGreedyGap, hnext, inv_div]
   field_simp [(sub_pos.mpr hua).ne']
   ring
+
+/-- **A vanishing gap stays zero.** Let $r > 0$ be a real number and let $(\varepsilon_n)$ be
+the gap sequence of its pseudo-greedy expansion. For every $n \ge 0$, if $\varepsilon_n = 0$,
+then $\varepsilon_{n+1} = 0$.
+
+Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
+Sequences*, INTEGERS 26 (2026), Article A28, Lemma 3 (`integers-2026-A28-lem-3`). -/
+theorem pseudoGreedyGap_succ_eq_zero {r : ℝ} (hr : 0 < r) {n : ℕ}
+    (h : pseudoGreedyGap r n = 0) : pseudoGreedyGap r (n + 1) = 0 := by
+  let a := pseudoGreedyExpansion r n
+  have hrec := pseudoGreedyExpansion_succ_eq hr n
+  rw [h, sub_zero, div_one, one_mul, pseudoGreedyGap] at hrec
+  have hround : (pseudoGreedyRemainder r (n + 1))⁻¹ + 1 = ((a ^ 2 - a + 1 : ℤ) : ℝ) := by
+    push_cast
+    dsimp only [a]
+    linarith
+  rw [pseudoGreedyGap, pseudoGreedyExpansion, hround, Int.floor_intCast_add]
+  norm_num
 
 end
 
