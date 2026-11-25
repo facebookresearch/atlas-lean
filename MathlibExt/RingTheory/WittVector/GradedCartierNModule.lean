@@ -230,11 +230,13 @@ theorem nMap_nMk {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     D.nMap D' f hV hPi (D.nMk (m, m')) = D'.nMk (f m, f m') :=
   rfl
 
-/-- Base change of graded Cartier module data, stated with the target ring
-map `j'` implicit. -/
+/-- Base change of graded Cartier module data along `φ` into a target over
+an arbitrary coefficient map `j'`: the first clause requires
+`j' = φ.comp j`, and the others are the clauses of `IsBaseChangeAlong`. -/
 def IsBaseChangeAlong' {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
     (φ : B →+* B') (D : GradedCartierModuleData p j)
     (D' : GradedCartierModuleData p j') (f : D.M →+ D'.M) : Prop :=
+  j' = φ.comp j ∧
   (∀ (w : WittVector p B) (x : D.M), f (w • x) = WittVector.map φ w • f x) ∧
   (∀ x, f (D.frobenius x) = D'.frobenius (f x)) ∧
   (∀ x, f (D.verschiebung x) = D'.verschiebung (f x)) ∧
@@ -242,6 +244,12 @@ def IsBaseChangeAlong' {B' : Type u} [CommRing B'] {j' : Zp2 p →+* B'}
   (∀ (i : Fin 2) (x : D.M), x ∈ D.piece i → f x ∈ D'.piece i) ∧
   (∃ γ : Fin 2 → D.M, D.IsHomogeneousVBasis γ ∧
     D'.IsHomogeneousVBasis (fun i => f (γ i)))
+
+theorem isBaseChangeAlong'_iff {B' : Type u} [CommRing B'] (φ : B →+* B')
+    (D : GradedCartierModuleData p j)
+    (D' : GradedCartierModuleData p (φ.comp j)) (f : D.M →+ D'.M) :
+    IsBaseChangeAlong' φ D D' f ↔ IsBaseChangeAlong φ D D' f :=
+  ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
 
 /-- A Cartier `L`-map: a Frobenius-semilinear map to the `N`-module that
 sends Verschiebung to the uniformizer and lifts Frobenius through
@@ -261,13 +269,14 @@ structure IsCanonicalLMap (L : D.M →+ D.NMod) : Prop where
   /-- The map is a Cartier `L`-map. -/
   isCartierLMap : D.IsCartierLMap L
   /-- The map lifts from a special Cartier module over a surjectively
-  `p`-torsion-free presented base. -/
+  `p`-torsion-free presented base, whose coefficient map `jS` satisfies
+  `j = φ.comp jS` (the first clause of `IsBaseChangeAlong'`). -/
   exists_lift : ∃ (S : Type u) (_ : CommRing S) (jS : Zp2 p →+* S) (φ : S →+* B)
     (_ : Function.Surjective φ) (_ : ∀ s : S, (p : S) * s = 0 → s = 0)
     (Dl : GradedCartierModuleData.{u, v} p jS) (_ : Dl.IsSpecialCartierModule)
     (f : Dl.M →+ D.M) (hf : IsBaseChangeAlong' φ Dl D f)
     (Ll : Dl.M →+ Dl.NMod) (_ : Dl.IsCartierLMap Ll),
-    ∀ x : Dl.M, L (f x) = Dl.nMap D f hf.2.2.1 hf.2.2.2.1 (Ll x)
+    ∀ x : Dl.M, L (f x) = Dl.nMap D f hf.2.2.2.1 hf.2.2.2.2.1 (Ll x)
 
 /-- The canonical `L`-map chosen from a proof of its existence. -/
 noncomputable def cartierL (h : ∃ L : D.M →+ D.NMod, D.IsCanonicalLMap L) : D.M →+ D.NMod :=
