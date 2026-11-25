@@ -8,6 +8,5 @@ Greedy choice and exchange arguments: the matroid greedy algorithm and its chara
 - [Graphic matroid](graphic-matroid/README.md)
 
 - [Single-machine scheduling](single-machine-scheduling/README.md)
-- [The shortest-processing-time rule minimizes total completion time](shortest-processing-time-rule.md)
 - [Smith's rule minimizes total weighted completion time](smith-s-rule-for-weighted-completion-time.md)
 - [The earliest-due-date rule minimizes maximum lateness](earliest-due-date-rule.md)
