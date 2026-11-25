@@ -186,6 +186,7 @@ variable {M₁ M₂ M₃ M₄ : Ab.{u}}
 @[simp] lemma rightUnitor_hom_apply (x : M₁) (a : ULift.{u} ℤ) :
     (ρ_ M₁).hom (x ⊗ₜ a) = a.down • x := rfl
 
+/-- The braiding of additive groups swaps the factors of a pure tensor. -/
 @[simp] lemma braiding_hom_apply (x : M₁) (y : M₂) :
     (β_ M₁ M₂).hom (x ⊗ₜ y) = y ⊗ₜ x := rfl
 
