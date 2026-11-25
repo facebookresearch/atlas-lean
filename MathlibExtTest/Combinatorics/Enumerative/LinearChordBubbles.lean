@@ -33,3 +33,11 @@ example : (∑ p ∈ Finset.Icc 1 (4 : ℕ), (p : ℚ) * bubbleCount 2 p) = 6 :=
 example : (∑ p ∈ Finset.Icc 1 (8 : ℕ), (p : ℚ) * bubbleCount 4 p) = 630 := by
   convert sum_mul_bubbleCount 4 (by decide) using 1
   norm_num [Nat.factorial]
+
+-- Two singleton bubbles in the nested diagram and one full bubble in the crossing diagram.
+example : (∑ p ∈ Finset.Icc 1 (4 : ℕ), (bubbleCount 2 p : ℚ)) = 3 := by decide +kernel
+
+-- Evaluate the total for eight vertices via the closed formula rather than enumerating diagrams.
+example : (∑ p ∈ Finset.Icc 1 (8 : ℕ), (bubbleCount 4 p : ℚ)) = 165 := by
+  convert sum_bubbleCount (n := 4) (hn := by decide) using 1
+  norm_num [Nat.factorial]

@@ -671,6 +671,39 @@ theorem mean_bubble_size (n : ℕ) (hn : 2 ≤ n) :
       have h4 : (4 * n - 5 : ℚ) ≠ 0 := by linarith
       field_simp [h1, h4, hD.ne'])
 
+open mean_bubble_size sum_mul_bubbleCount in
+/-- **Total number of bubbles in linear chord diagrams.** For every natural number $n \ge 2$,
+let $B_{n,p}$ be the total number of bubbles of size $p$ over all linear chord diagrams on $2n$
+vertices. Then
+$$\sum_{p=1}^{2n} B_{n,p} = \frac{(2n-2)!\,(4n-5)}{2^{n-1}\,(n-1)!}.$$
+
+The hypothesis $n \ge 2$ is needed: for $n = 1$ the left side is $0$ and the right side is $-1$.
+
+Source: Donovan Young, *Counting Bubbles in Linear Chord Diagrams*, Journal of Integer
+Sequences 27 (2024), Article 24.4.2, Lemma 3 (`jis-2024-24.4.2-lem-3`). -/
+theorem sum_bubbleCount (n : ℕ) (hn : 2 ≤ n) :
+    (∑ p ∈ Finset.Icc 1 (2 * n), (bubbleCount n p : ℚ)) =
+      (2 * n - 2).factorial * (4 * n - 5 : ℚ) / (2 ^ (n - 1) * (n - 1).factorial) := by
+  have hmoment : moment n true = ∑ p ∈ Finset.Icc 1 (2 * n), (bubbleCount n p : ℚ) := by
+    simp [moment]
+  rw [← hmoment]
+  have hq : (2 : ℚ) ≤ n := by exact_mod_cast hn
+  calc
+    moment n true = (4 * n - 5) * (diagrams n).card / (2 * n - 1) := by
+      rw [(moments hn).2]
+      field_simp [show (2 * n - 1 : ℚ) ≠ 0 by linarith, show (2 * n - 3 : ℚ) ≠ 0 by linarith]
+      ring
+    _ = _ := by
+      rw [diagram_count (by omega)]
+      obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+      have hfac : (2 * (k + 2)).factorial = (2 * k + 2 + 1 + 1).factorial :=
+        congrArg Nat.factorial (by omega)
+      rw [hfac, show 2 * (k + 2) - 2 = 2 * k + 2 by omega, show k + 2 - 1 = k + 1 by omega]
+      simp only [Nat.factorial_succ, pow_succ]
+      push_cast at hq ⊢
+      field_simp [show (2 * ((k : ℚ) + 2) - 1) ≠ 0 by linarith]
+      ring
+
 end
 
 end MetaMathlibExt
