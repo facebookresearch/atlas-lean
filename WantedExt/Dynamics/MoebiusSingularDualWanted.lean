@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Dynamics.MoebiusSingularDual
 
@@ -28,25 +27,3 @@ below are written out from the printed product matrices (which use `V_δ = (2 δ
 The endpoint inequality, central equations and singularity theorem are proved in
 `MathlibExt.Dynamics.MoebiusSingularDual`.
 -/
-
-namespace MetaMathlibExt
-
-@[expose] public section
-
-/-- **Fixed points of a Moebius dual branch.** Let $\beta, \gamma, \eta$ be real numbers with
-$\beta \ne 2$ and $3 - 2\beta + (2 - \beta)\eta \ne 0$. Then
-$(-2 + 2\beta + \gamma + (-1 + \beta + \gamma)\eta)/(3 - 2\beta + (2 - \beta)\eta) = \eta$
-if and only if $\eta = -1$ or $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$.
-
-The paper's further side conditions on $\beta$ and $\gamma$ are not used.
-
-Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
-Article A17, Lemma 1 (`integers-2024-A17-lem-1`). -/
-public theorem_wanted moebius_fixedPoint_eq_iff (β γ η : ℝ) (hβ : β ≠ 2)
-    (hden : 3 - 2 * β + (2 - β) * η ≠ 0) :
-    (-2 + 2 * β + γ + (-1 + β + γ) * η) / (3 - 2 * β + (2 - β) * η) = η ↔
-      η = -1 ∨ η = (-2 + 2 * β + γ) / (2 - β)
-
-end
-
-end MetaMathlibExt

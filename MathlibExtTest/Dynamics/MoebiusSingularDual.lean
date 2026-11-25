@@ -79,4 +79,19 @@ example :
       apply moebius_naturalDual_singular α β 0 0 <;> norm_num [α, β]
     _ = _ := by norm_num [η, β]
 
+-- With β = 0 and γ = 4, the two fixed points are distinct: -1 and 1, but not 0.
+example :
+    ((-2 : ℝ) + 2 * 0 + 4 + (-1 + 0 + 4) * (-1)) / (3 - 2 * 0 + (2 - 0) * (-1)) = -1 :=
+  (moebius_fixedPoint_eq_iff 0 4 (-1) (by norm_num) (by norm_num)).2 (Or.inl rfl)
+
+example :
+    ((-2 : ℝ) + 2 * 0 + 4 + (-1 + 0 + 4) * 1) / (3 - 2 * 0 + (2 - 0) * 1) = 1 :=
+  (moebius_fixedPoint_eq_iff 0 4 1 (by norm_num) (by norm_num)).2 (Or.inr (by norm_num))
+
+example :
+    ((-2 : ℝ) + 2 * 0 + 4 + (-1 + 0 + 4) * 0) / (3 - 2 * 0 + (2 - 0) * 0) ≠ 0 := by
+  intro h
+  have h' := (moebius_fixedPoint_eq_iff 0 4 0 (by norm_num) (by norm_num)).1 h
+  norm_num at h'
+
 end MathlibExtTest.Dynamics.MoebiusSingularDual
