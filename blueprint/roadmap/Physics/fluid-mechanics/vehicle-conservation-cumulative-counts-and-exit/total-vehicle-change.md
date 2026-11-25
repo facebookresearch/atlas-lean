@@ -10,3 +10,5 @@ once as an inflow, so only the two external faces remain.
 Equivalently, the change is `dx dt` times the total discrete balance of the face fluxes, the inflow
 minus the outflow per unit width summed over the cells:
 `∑_{i < n} dx (k_i' - k_i) = dx dt ∑_{i < n} (F_i - F_{i+1}) / dx`.
+
+The other form has its own page: [Total vehicle change equals the discrete flux balance](total-vehicle-change-eq-discrete.md).

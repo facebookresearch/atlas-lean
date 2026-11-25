@@ -6,3 +6,5 @@ real `Cv`.
 Written out, for all real `Cv`, `U₀`, `T₀` and `T`, the function `T' ↦ U₀ + Cv (T' - T₀)` (the
 [internal energy](internal-energy.md) with reference energy `U₀` at `T₀`) has derivative `Cv` at
 `T`.
+
+The other form has its own page: [Derivative of the linear internal energy](../internal-energy-at-constant-heat-capacity/internal-energy-has-deriv-at.md).

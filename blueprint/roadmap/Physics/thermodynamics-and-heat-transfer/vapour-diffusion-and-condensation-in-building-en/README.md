@@ -14,4 +14,5 @@
 - [Vapour pressure at an interface of layers in series](vapor-interface-pressure.md)
 - [The zeroth interface pressure is the inner boundary pressure](vapor-interface-pressure-zero.md)
 - [For nonzero total resistance, the last interface pressure is p_out](vapor-interface-pressure-last.md)
+- [Vapor Series Flux mul total](vapor-series-flux-mul-total.md)
 - [Adjacent interface pressures differ by the flux times the resistance](vapor-interface-pressure-succ-sub.md)

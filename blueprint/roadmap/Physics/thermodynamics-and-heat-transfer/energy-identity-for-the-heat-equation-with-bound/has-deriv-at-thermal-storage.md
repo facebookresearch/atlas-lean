@@ -9,3 +9,5 @@ Equivalently, in zone form with boundary inputs `b i` and heating powers `P i` (
 `C i v i(t) = ∑_j G i j (T j(t) - T i(t)) + b i(t) + P i(t)`, the total heat inventory `∑_i C i T i`
 has derivative `∑_i (b i(t) + P i(t))` at `t`. Only data at the time `t` is used, and no sign
 condition on the capacities or conductances is needed.
+
+The other form has its own page: [Zone heat inventory balance](../heat-balance-of-lumped-thermal-networks/heat-inventory-has-deriv-at.md).

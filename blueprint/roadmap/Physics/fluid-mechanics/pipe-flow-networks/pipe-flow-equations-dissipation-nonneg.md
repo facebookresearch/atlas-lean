@@ -8,3 +8,5 @@ $-\sum_{i \in V} H_i d_i \geq 0$: the [dissipation](pipe-flow-equations-dissipat
 $\sum_e r_e q_e^2 |q_e|$ is nonnegative. Equivalently, the pairing is nonnegative for every
 [passive pipe flow](is-passive-pipe-flow.md), which is exactly a solution of the pipe-flow equations
 with $r_e \geq 0$ for every arc.
+
+The other form has its own page: [Passive pipe flow dissipates energy](passive-pipe-flow-dissipation-nonneg.md).

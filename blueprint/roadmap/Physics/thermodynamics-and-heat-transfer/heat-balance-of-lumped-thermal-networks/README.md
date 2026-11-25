@@ -16,3 +16,4 @@
 - [Feedthrough matrix of the zone thermal network](thermal-d.md)
 - [Zone thermal network as a state-space plant](thermal-plant.md)
 - [For C i > 0 plant trajectories are exactly the zone-equation solutions](thermal-trajectory-iff.md)
+- [Zone heat inventory balance](heat-inventory-has-deriv-at.md)

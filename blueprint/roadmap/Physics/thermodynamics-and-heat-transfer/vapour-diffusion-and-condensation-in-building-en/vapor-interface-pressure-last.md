@@ -6,3 +6,5 @@ all `n` layers is `p_n = p_out`. Equivalently, since `p_n = p_in - g ∑_{i < n}
 [steady series flux](vapor-series-flux.md) `g`, the flux times the total resistance is the drop:
 `g ∑_{i < n} R_i = p_in - p_out`. With zero total resistance the flux is `0` by the convention
 `u / 0 = 0` and `p_n = p_in` instead.
+
+The other form has its own page: [Vapor Series Flux mul total](vapor-series-flux-mul-total.md).

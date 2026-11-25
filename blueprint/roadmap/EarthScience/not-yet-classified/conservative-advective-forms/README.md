@@ -1,4 +1,3 @@
 # Conservative Advective Forms
 
-- [Flux divergence eq advective](flux-divergence-eq-advective.md)
-- [Conservative and advective forms of the advection-diffusion-reaction equation](conservative-advective-pde-equiv.md)
+The pages of this module are now under [Reactive transport](../../hydrology-and-surface-processes/part-02/reactive-transport/README.md).

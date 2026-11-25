@@ -1,4 +1,3 @@
 # Advection Diffusion Reaction
 
-- [Integrated advection-diffusion-reaction balance](integrated-advection-diffusion-reaction.md)
-- [Mass balance for advection, diffusion and first-order decay](mass-balance-advection-diffusion-reactio.md)
+The pages of this module are now under [Reactive transport](../../hydrology-and-surface-processes/part-02/reactive-transport/README.md).

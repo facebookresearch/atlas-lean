@@ -1,4 +1,3 @@
 # Zone Heat Inventory
 
-- [Zone heat inventory balance](heat-inventory-has-deriv-at.md)
-- [Zone heat inventory balance](heat-inventory-deriv.md)
+The pages of this module are now under [Heat balance of lumped thermal networks](../../../thermodynamics-and-heat-transfer/heat-balance-of-lumped-thermal-networks/README.md).

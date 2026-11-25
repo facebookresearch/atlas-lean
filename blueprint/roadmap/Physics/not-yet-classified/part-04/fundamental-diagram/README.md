@@ -1,6 +1,3 @@
 # Fundamental Diagram
 
-- [Greenshields Flux](greenshields-flux.md)
-- [Greenshields flux range](greenshields-flux-nonneg-le.md)
-- [Greenshields flux at half the jam density](greenshields-flux-half.md)
-- [Capacity attainment](greenshields-flux-capacity-attained.md)
+The pages of this module are now under [Greenshields fundamental diagram](../../../fluid-mechanics/greenshields-fundamental-diagram/README.md).

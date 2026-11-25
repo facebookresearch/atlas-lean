@@ -1,4 +1,3 @@
 # Phase Equilibrium
 
-- [Clapeyron relation](clapeyron-dp-d-t.md)
-- [Latent-heat form of the Clapeyron equation](clapeyron-latent-heat-form.md)
+The pages of this module are now under [Clapeyron and Clausius–Clapeyron relations](../../../Chemistry/chemical-thermodynamics/clapeyron-and-clausius-clapeyron-relations/README.md).

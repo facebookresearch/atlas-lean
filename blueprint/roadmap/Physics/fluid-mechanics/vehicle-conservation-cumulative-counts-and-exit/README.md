@@ -3,6 +3,7 @@
 ## Cumulative counts on a link
 
 - [Link count after n steps from the cumulative inflows and outflows](cumulative-link-inventory.md)
+- [Cumulative link inventory as summed net inflow](cumulative-link-inventory-sub.md)
 - [Cell-chain total: initial count plus boundary inflow minus outflow](cumulative-inventory-vehicle-accounting.md)
 
 ## Exit times under first in, first out
@@ -17,3 +18,4 @@
 ## Vehicle accounting over a chain of cells
 
 - [Vehicle accounting over a finite chain of cells](total-vehicle-change.md)
+- [Total vehicle change equals the discrete flux balance](total-vehicle-change-eq-discrete.md)

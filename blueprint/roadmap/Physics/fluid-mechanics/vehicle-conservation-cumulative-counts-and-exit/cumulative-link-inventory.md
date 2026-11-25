@@ -11,3 +11,5 @@ step `0`. No first-in first-out order or delay is derived from this aggregate co
 
 Equivalently, the change of the count is the summed net inflow:
 `N(n) - N(0) = ∑_{j < n} dt (Fin(j) - Fout(j))`.
+
+The other form has its own page: [Cumulative link inventory as summed net inflow](cumulative-link-inventory-sub.md).

@@ -1,5 +1,3 @@
 # Shock Ordering
 
-- [Shock speed](shock-speed.md)
-- [Shock speed lies between characteristic speeds for a concave flux](shock-speed-between-of-concave.md)
-- [Strict Lax ordering of the shock speed](shock-speed-strict-between-of-strict-con.md)
+The pages of this module are now under [Conservation laws with concave flux](../../../../Analysis/partial-differential-equations/conservation-laws-with-concave-flux/README.md).

@@ -1,11 +1,3 @@
 # Advection Diffusion Nondimensional
 
-- [Nondimensional advection-diffusion equation](advection-diffusion-nondimensional.md)
-
-## B. Péclet number
-
-- [The Péclet number is positive](peclet-pos.md)
-
-## C. Concrete witness
-
-- [Péclet number example](peclet-example.md)
+The pages of this module are now under [Reactive transport](../../hydrology-and-surface-processes/part-02/reactive-transport/README.md).

@@ -13,3 +13,5 @@ the outside one when `h_out A = 0`, and a layer term when `k i A = 0`. In the ph
 The same formula is the total resistance of the wall: the inside film, the layers and the outside
 film in series. On the physical domain, with `L i ≥ 0` allowed, it is
 [positive](thermal-total-resistance-pos.md).
+
+The other form has its own page: [Total thermal resistance of a layered wall](thermal-total-resistance.md).

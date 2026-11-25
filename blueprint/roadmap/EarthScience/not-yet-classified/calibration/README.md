@@ -1,5 +1,3 @@
 # Calibration
 
-- [Calibration estimator error](calibration-estimator-error.md)
-- [Calibrated value](calibrated-value.md)
-- [Expectation of the calibration estimator](calibration-estimator-expectation.md)
+The pages of this module are now under [Inverting a known linear calibration](../../../Physics/quantities-and-measurement/inverting-a-known-linear-calibration/README.md).

@@ -9,3 +9,5 @@ right side is `0`.
 
 Equivalently, the calibrated value is the true value plus the scaled error:
 `(a x + b + ε - b) / a = x + ε / a`.
+
+The other form has its own page: [Calibrated value](calibrated-value.md).

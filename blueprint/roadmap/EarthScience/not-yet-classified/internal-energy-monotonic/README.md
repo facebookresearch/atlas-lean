@@ -1,4 +1,3 @@
 # Internal Energy Monotonic
 
-- [Internal Energy strict Mono](internal-energy-strict-mono.md)
-- [Derivative of the linear internal energy](internal-energy-has-deriv-at.md)
+The pages of this module are now under [Internal energy at constant heat capacity](../../../Chemistry/chemical-thermodynamics/internal-energy-at-constant-heat-capacity/README.md).

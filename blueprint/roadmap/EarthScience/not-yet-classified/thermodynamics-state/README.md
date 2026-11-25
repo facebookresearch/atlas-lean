@@ -1,5 +1,3 @@
 # Thermodynamics State
 
-- [Isochoric temperature change](isochoric-temperature-change.md)
-- [Isochoric heating](isochoric-heating.md)
-- [Zero heat input gives zero temperature change](isochoric-zero-heating.md)
+The pages of this module are now under [Internal energy at constant heat capacity](../../../Chemistry/chemical-thermodynamics/internal-energy-at-constant-heat-capacity/README.md).

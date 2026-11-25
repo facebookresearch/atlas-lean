@@ -1,4 +1,3 @@
 # Integrated Clausius Clapeyron
 
-- [Clausius-Clapeyron equation, differential form](clausius-clapeyron-differential.md)
-- [Integrated Clausius-Clapeyron equation](integrated-clausius-clapeyron.md)
+The pages of this module are now under [Clapeyron and Clausius–Clapeyron relations](../../../Chemistry/chemical-thermodynamics/clapeyron-and-clausius-clapeyron-relations/README.md).
