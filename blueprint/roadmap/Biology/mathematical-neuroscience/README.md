@@ -15,3 +15,4 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [FitzHugh–Nagumo model](fitzhugh-nagumo-model/README.md)
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
+- [Coupled biological oscillators](coupled-oscillators/README.md)
