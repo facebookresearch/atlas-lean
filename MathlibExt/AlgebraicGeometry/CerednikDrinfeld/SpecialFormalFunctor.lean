@@ -3595,8 +3595,8 @@ theorem exists_pow_ne : ∃ ω : GaloisField p 2, ω ^ p ≠ ω := by
   push Not at h
   have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
   set P : Polynomial (GaloisField p 2) := Polynomial.X ^ p - Polynomial.X with hP
-  have hP0 : P ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero _ hp1
-  have hdeg : P.natDegree = p := FiniteField.X_pow_card_sub_X_natDegree_eq _ hp1
+  have hP0 : P ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hp1
+  have hdeg : P.natDegree = p := Polynomial.natDegree_X_pow_sub_X hp1
   have hroots : ∀ ω : GaloisField p 2, ω ∈ P.roots := by
     intro ω
     rw [Polynomial.mem_roots hP0, Polynomial.IsRoot, Polynomial.eval_sub, Polynomial.eval_pow,
