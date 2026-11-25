@@ -192,6 +192,35 @@ public theorem seededPartialSums_succ_zero {M : Type*} [AddCommMonoid M] (s a : 
     (k : ℕ) : seededPartialSums s a (k + 1) 0 = s k := by
   simp [seededPartialSums]
 
+/-- **Effect of the seed on seeded partial sums.** Let $R$ be a commutative ring, let
+$a = (a_n)_{n \ge 0}$ and $b = (b_n)_{n \ge 0}$ be sequences in $R$, and write $t^b_{k,n}$ for
+the seeded partial sums of $a$ with seed sequence $b$ and $t^0_{k,n}$ for those with the zero
+seed sequence. Then for all $k, n \ge 0$,
+$t^b_{k,n} - t^0_{k,n} = \sum_{i<k} \binom{n}{i} b_{k-1-i}$, where the binomial coefficients
+are read as elements of $R$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.2
+(`fq-2024-chu08302024rev-lem-3.2`). -/
+public theorem seededPartialSums_sub_zero {R : Type*} [CommRing R] (b a : ℕ → R)
+    (k n : ℕ) :
+    seededPartialSums b a k n - seededPartialSums 0 a k n =
+      ∑ i ∈ Finset.range k, (n.choose i : R) * b (k - 1 - i) := by
+  induction k generalizing n with
+  | zero => simp [seededPartialSums]
+  | succ k ih =>
+    induction n with
+    | zero => simp [seededPartialSums_succ_zero, Finset.sum_range_succ']
+    | succ n hn =>
+      have step (s : ℕ → R) : seededPartialSums s a (k + 1) (n + 1) =
+          seededPartialSums s a (k + 1) n + seededPartialSums s a k n := by
+        simp [seededPartialSums, Finset.sum_range_succ, add_assoc]
+      rw [step, step, add_sub_add_comm, hn, ih]
+      simp only [Finset.sum_range_succ' _ k, Nat.add_sub_cancel, Nat.sub_zero,
+        Nat.choose_zero_right, Nat.cast_one, one_mul, Nat.choose_succ_succ', Nat.cast_add,
+        add_mul, Finset.sum_add_distrib, Nat.sub_sub, Nat.add_comm 1]
+      ac_rfl
+
 /-- **The first iterated partial sum.** Let $M$ be an additive commutative monoid and let
 $(a_n)_{n \ge 0}$ be a sequence in $M$. For every $m \ge 0$, the $1$-fold iterated partial sum
 of $(a_n)$ at $m$ is the ordinary partial sum: $P^{(1)}((a_n)_{n \ge 0})(m) = \sum_{i<m} a_i$.

@@ -7,12 +7,9 @@ realized history, and the observed reward is $X_t = X_{T_{A_t}(t),\,A_t}$, the n
 stack, where $T_i(t)$ is the number of times arm $i$ has been chosen in rounds $1, \dots, t$. The resulting law of the
 interaction $(A_1, X_1, \dots, A_n, X_n)$ is the same as in the canonical bandit model.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Stochastic k-armed bandits: canonical history law and regret.
+- [Stochastic k-armed bandits: canonical history law and regret](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 
 ## Sources
 
