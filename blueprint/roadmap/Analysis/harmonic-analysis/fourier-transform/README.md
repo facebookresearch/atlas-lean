@@ -18,3 +18,5 @@ The Fourier transform on R^n and Schwartz functions: convolution, Bochner, Hausd
 - [Fourier inversion formula](fourier-inv-fourier-eq.md)
 - [Fourier transform on the Schwartz space](fourier-transform-clm.md)
 - [Paley–Wiener theorem on a real vector space](paley-wiener-theorem-on-a-real-vector-space.md)
+- [Discrete-time Fourier transform of absolutely summable sequences](discrete-time-fourier-transform-of-summable-sequences.md)
+- [Discrete-time Fourier transform of square-summable sequences](discrete-time-fourier-transform-of-square-summable-sequences.md)
