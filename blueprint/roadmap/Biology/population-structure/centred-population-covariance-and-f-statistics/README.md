@@ -23,3 +23,8 @@
 - [Nonnegativity of the matching star-tree edge lengths](star-len-nonneg.md)
 - [Star tree with matching lengths and admixture model have equal f3](f3-star-eq-f3-admix.md)
 - [At α = 0 the admixture model has the frequencies of a star tree](exists-star-freq-eq-of-admix-zero.md)
+
+## f2 and other network distances
+
+- [f2, independent-lineage distance and average network distance differ on admixture graphs](f2-drift-metric-versus-network-average-distance.md)
+- [Which drift models have the f-statistics of a star tree](f-equivalence-classes-of-drift-models.md)

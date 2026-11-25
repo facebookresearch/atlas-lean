@@ -5,6 +5,8 @@
 - [Fundamental matrix of a linear system](fundamental-matrix-linear-system.md)
 - [Liouville's formula for the principal matrix solution](fundamental-matrix-liouville-det.md)
 
+- [Variation of constants for time-varying linear systems](variation-of-parameters-time-varying.md)
+
 ## Scalar linear relaxation
 
 - [Variation-of-constants solution of a linear relaxation equation](relaxation.md)
