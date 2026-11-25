@@ -8,16 +8,9 @@ total number of plays so far. After any number $n$ of plays, its expected regret
 
 $$8 \sum_{i : \mu_i < \mu^*} \frac{\ln n}{\Delta_i} + \Big(1 + \frac{\pi^2}{3}\Big) \sum_{j=1}^K \Delta_j.$$
 
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Proof prerequisite: Equality in law of the reward-stack and canonical bandit models.
-
 ## Proof depends on
 
+- [Equality in law of the reward-stack and canonical bandit models](equality-in-law-of-the-reward-stack-and-canonical-bandit-models.md)
 - [Regret decomposition for stochastic bandits](regret-decomposition-for-stochastic-bandits.md)
 
 ## Sources

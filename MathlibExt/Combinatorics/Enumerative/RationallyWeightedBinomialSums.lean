@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Intervals
@@ -434,6 +435,28 @@ public theorem sum_pow_mul_choose_mul_secondOrder (a b : ℝ) (W : ℕ → ℝ)
   simpa only [Finset.mul_sum, mul_assoc, Nat.add_zero] using
     congrArg ((Nat.stirlingSecond r i : ℝ) * ·)
       (sum_pow_mul_choose_mul_secondOrder.factorial_moment a b W hW N i 0)
+
+/-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
+($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
+kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling factorial, with $(N)_0 = 1$. For all natural
+numbers $N$ and $r$, with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r \binom{N}{k} L_k = \sum_{i=0}^{r} S(r, i) \, (N)_i \, L_{2N-i},$$
+where the terms with $i > N$ vanish because $(N)_i = 0$.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
+public theorem sum_pow_mul_choose_mul_lucasNumber (N r : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), k ^ r * N.choose k * lucasNumber k =
+      ∑ i ∈ Finset.range (r + 1),
+        Nat.stirlingSecond r i * N.descFactorial i * lucasNumber (2 * N - i) := by
+  have hL (n : ℕ) :
+      (lucasNumber (n + 2) : ℝ) = 1 * (lucasNumber (n + 1) : ℝ) + 1 * (lucasNumber n : ℝ) := by
+    rw [one_mul, one_mul, ← Nat.cast_add]
+    rfl
+  have h := sum_pow_mul_choose_mul_secondOrder 1 1 (fun n ↦ (lucasNumber n : ℝ)) hL N r
+  simp only [one_pow, mul_one] at h
+  exact_mod_cast h
 
 open Polynomial in
 /-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and

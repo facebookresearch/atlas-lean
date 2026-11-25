@@ -1,0 +1,16 @@
+# Scalar Kronecker
+
+- [Scalar Kronecker](scalar-kronecker.md)
+- [Scalar Kronecker apply](scalar-kronecker-apply.md)
+- [Scalar Kronecker mul](scalar-kronecker-mul.md)
+- [Scalar Kronecker Fin](scalar-kronecker-fin.md)
+- [Scalar Kronecker Fin apply](scalar-kronecker-fin-apply.md)
+- [Scalar Kronecker Fin zero right](scalar-kronecker-fin-zero-right.md)
+- [Scalar Kronecker Fin zero left](scalar-kronecker-fin-zero-left.md)
+- [Scalar Kronecker Fin add right](scalar-kronecker-fin-add-right.md)
+- [Scalar Kronecker Fin add left](scalar-kronecker-fin-add-left.md)
+- [Scalar Kronecker Fin sub right](scalar-kronecker-fin-sub-right.md)
+- [Scalar Kronecker Fin sub left](scalar-kronecker-fin-sub-left.md)
+- [Scalar Kronecker Fin mul](scalar-kronecker-fin-mul.md)
+- [Scalar Kronecker Fin star](scalar-kronecker-fin-star.md)
+- [Scalar Kronecker Fin map](scalar-kronecker-fin-map.md)
