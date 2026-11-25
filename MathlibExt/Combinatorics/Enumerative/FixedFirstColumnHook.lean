@@ -13,9 +13,10 @@ import Mathlib.RingTheory.Ideal.Quotient.Basic
 import Mathlib.Data.List.Sort
 
 /-!
-# Fixed first-column hooks from a part of prescribed size
+# Fixed first-column hook generating functions
 
-The generating function counts partitions by splitting their rows above and below the fixed hook.
+Split a partition into rows above and below the fixed hook, prescribing either the length of
+its row or the length of the hook itself.
 -/
 
 namespace MetaMathlibExt
@@ -374,5 +375,211 @@ public theorem fixedFirstColumnHook_part_genFun (n k : ℕ) (h : ℤ) (hk : 1 �
   rw [mul_right_comm _ (gaussBinom X (s + d + n) n), mul_right_comm _ (qPochFin X (s + d))⁻¹]
   exact coeff_box_stable (s + d) n
     (X ^ ((s + d + 1) * k + s) * gaussBinom X (s + (k - 1)) (k - 1))
+
+namespace fixedFirstColumnHook_hook_genFun
+
+open Finset
+
+-- With `d` rows above the hook and hook row length `l`, its leg has `k - l` rows.
+private def hookShapes (n k d : ℕ) : Finset Shape :=
+  (Icc 1 k).sigma fun l => box d n ×ˢ box (k - l) (l - 1)
+
+private theorem mem_hookShapes {n k d l : ℕ} {u v : List ℕ} :
+    (⟨l, u, v⟩ : Shape) ∈ hookShapes n k d ↔
+      l ∈ Icc 1 k ∧ u ∈ box d n ∧ v ∈ box (k - l) (l - 1) := by
+  simp [hookShapes]
+
+private def hookPartitions (n k d : ℕ) : Finset n.Partition :=
+  univ.filter fun p => d + 1 ≤ n ∧ 1 ≤ partitionRowLen p (d + 1) ∧
+    partitionHookLength p (d + 1) 1 = k
+
+private theorem mem_hookPartitions {n k d : ℕ} {p : n.Partition} :
+    p ∈ hookPartitions n k d ↔ d + 1 ≤ n ∧ 1 ≤ partitionRowLen p (d + 1) ∧
+      partitionHookLength p (d + 1) 1 = k := by
+  simp [hookPartitions]
+
+private theorem hookPartition_of_shape {n k d l : ℕ} {u v : List ℕ} (hl : l ∈ Icc 1 k)
+    (hu : u ∈ box d n) (hv : v ∈ box (k - l) (l - 1)) (p : n.Partition)
+    (hp : p.parts = ↑(rows l (u, v))) : p ∈ hookPartitions n k d := by
+  obtain ⟨hl₀, hlk⟩ := mem_Icc.mp hl
+  have hu' := ((mem_box _ _ _).mp hu).1
+  obtain ⟨hv', _, hbound⟩ := (mem_box _ _ _).mp hv
+  have hrow := row_at p (u.map (· + l)) (v.map (· + 1)) hp (by simp) (by
+    rintro x hx
+    obtain ⟨a, ha, rfl⟩ := List.mem_map.mp hx
+    have := hbound a ha
+    omega)
+  rw [List.length_map, hu'] at hrow
+  have hlen : (rows l (u, v)).length = d + (k - l + 1) := by simp [rows, hu', hv']
+  have hsize := List.length_le_sum_of_one_le _ (rows_pos hl₀ (u, v))
+  have hsum := p.parts_sum
+  rw [hp, Multiset.sum_coe] at hsum
+  rw [hlen, hsum] at hsize
+  refine mem_hookPartitions.mpr ⟨by omega, hrow ▸ hl₀, ?_⟩
+  rw [partitionHookLength, hrow, col_one, hp, Multiset.coe_card, hlen]
+  omega
+
+private theorem exists_hookShape {n k d : ℕ} (p : n.Partition)
+    (hp : p ∈ hookPartitions n k d) : ∃ t ∈ hookShapes n k d, p.parts = ↑(rows t.1 t.2) := by
+  obtain ⟨_, hrow, hhook⟩ := mem_hookPartitions.mp hp
+  let L := p.parts.sort (· ≥ ·)
+  have hL : (↑L : Multiset ℕ) = p.parts := Multiset.sort_eq ..
+  have hi : d < L.length := by
+    have ⟨j, hj⟩ : ((Icc 1 n).filter (fun j => d + 1 ≤ partitionColLen p j)).Nonempty :=
+      card_pos.mp hrow
+    have hc := (mem_filter.mp hj).2.trans (Multiset.card_le_card (Multiset.filter_le _ _))
+    rw [← hL, Multiset.coe_card] at hc
+    omega
+  let u := L.take d
+  let l := L[d]
+  let v := L.drop (d + 1)
+  have hsplit : u ++ l :: v = L := by
+    simpa only [u, l, v, List.getElem_cons_drop hi] using List.take_append_drop d L
+  have hparts : p.parts = ↑(u ++ l :: v) := by rw [hsplit, hL]
+  have hsorted : (u ++ l :: v).Pairwise (· ≥ ·) :=
+    hsplit ▸ Multiset.pairwise_sort p.parts (· ≥ ·)
+  obtain ⟨hu, hv, huv⟩ := List.pairwise_append.mp hsorted
+  obtain ⟨hvl, hv⟩ := List.pairwise_cons.mp hv
+  have hul (x) (hx : x ∈ u) : l ≤ x := huv x hx l List.mem_cons_self
+  have hud : u.length = d := List.length_take.trans (Nat.min_eq_left hi.le)
+  have he := row_at p u v hparts hul hvl
+  rw [hud] at he
+  rw [partitionHookLength, he, col_one, hparts, Multiset.coe_card, List.length_append,
+    List.length_cons, hud] at hhook
+  have hvk : v.length = k - l := by omega
+  have hl₀ : 1 ≤ l := he ▸ hrow
+  have hv₀ (x) (hx : x ∈ v) : 1 ≤ x := p.parts_pos (by simp [hparts, hx])
+  have unshift (xs : List ℕ) (a : ℕ) (ha : ∀ x ∈ xs, a ≤ x) :
+      (xs.map (· - a)).map (· + a) = xs := by
+    rw [List.map_map]
+    exact (List.map_congr_left (g := id) (fun x hx => Nat.sub_add_cancel (ha x hx))).trans
+      (List.map_id xs)
+  refine ⟨⟨l, u.map (· - l), v.map (· - 1)⟩, mem_hookShapes.mpr
+    ⟨mem_Icc.mpr ⟨hl₀, by omega⟩, (mem_box _ _ _).mpr ⟨by simpa using hud,
+      hu.map _ (fun _ _ e => Nat.sub_le_sub_right e _), ?_⟩,
+      (mem_box _ _ _).mpr ⟨by simpa using hvk,
+        hv.map _ (fun _ _ e => Nat.sub_le_sub_right e _), ?_⟩⟩, ?_⟩
+  · intro x hx
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+    exact (Nat.sub_le _ _).trans (Nat.Partition.le_of_mem_parts (p := p) (by simp [hparts, hy]))
+  · intro x hx
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+    exact Nat.sub_le_sub_right (hvl y hy) _
+  · simpa only [rows, unshift u l hul, unshift v 1 hv₀] using hparts
+
+private theorem hookShapes_inj {n k d : ℕ} {t t' : Shape}
+    (ht : t ∈ hookShapes n k d) (ht' : t' ∈ hookShapes n k d)
+    (he : (↑(rows t.1 t.2) : Multiset ℕ) = ↑(rows t'.1 t'.2)) : t = t' := by
+  obtain ⟨l, u, v⟩ := t
+  obtain ⟨l', u', v'⟩ := t'
+  obtain ⟨hl, hu, hv⟩ := mem_hookShapes.mp ht
+  obtain ⟨hl', hu', hv'⟩ := mem_hookShapes.mp ht'
+  have hlrows := List.Perm.eq_of_pairwise'
+    (rows_sorted (mem_Icc.mp hl).1 hu hv) (rows_sorted (mem_Icc.mp hl').1 hu' hv')
+    (Multiset.coe_eq_coe.mp he)
+  have hlu : (u.map (· + l)).length = (u'.map (· + l')).length := by
+    simp [((mem_box _ _ _).mp hu).1, ((mem_box _ _ _).mp hu').1]
+  obtain ⟨eu, ev⟩ := List.append_inj hlrows hlu
+  have el : l = l' := (List.cons.inj ev).1
+  subst l'
+  have inj (a : ℕ) : Function.Injective (List.map (· + a) : List ℕ → List ℕ) :=
+    List.map_injective_iff.mpr fun _ _ e => Nat.add_right_cancel e
+  rw [show u = u' from inj l eu, show v = v' from inj 1 (List.cons.inj ev).2]
+
+private theorem count_hookShapes (n k d : ℕ) :
+    ((hookPartitions n k d).card : ℚ) =
+      coeff n (∑ t ∈ hookShapes n k d, (X : ℚ⟦X⟧) ^ (rows t.1 t.2).sum) := by
+  let S := (hookShapes n k d).filter fun t => n = (rows t.1 t.2).sum
+  let assemble (t : Shape) (ht : t ∈ S) : n.Partition :=
+    ⟨↑(rows t.1 t.2), fun hx => rows_pos (mem_Icc.mp (mem_hookShapes.mp (mem_filter.mp ht).1).1).1
+      t.2 _ hx, (Multiset.sum_coe _).trans (mem_filter.mp ht).2.symm⟩
+  have e : S.card = (hookPartitions n k d).card := by
+    apply card_bij assemble
+    · rintro ⟨l, u, v⟩ ht
+      obtain ⟨hl, hu, hv⟩ := mem_hookShapes.mp (mem_filter.mp ht).1
+      exact hookPartition_of_shape hl hu hv _ rfl
+    · intro t ht t' ht' e
+      exact hookShapes_inj (mem_filter.mp ht).1 (mem_filter.mp ht').1
+        (congrArg Nat.Partition.parts e)
+    · intro p hp
+      obtain ⟨t, ht, he⟩ := exists_hookShape p hp
+      have hn := p.parts_sum
+      rw [he, Multiset.sum_coe] at hn
+      exact ⟨t, mem_filter.mpr ⟨ht, hn.symm⟩, Nat.Partition.ext he.symm⟩
+  rw [← e, map_sum]
+  simpa only [coeff_X_pow] using
+    (sum_boole (R := ℚ) (fun t : Shape => n = (rows t.1 t.2).sum) (hookShapes n k d)).symm
+
+private theorem weighted_hookShapes (n k d : ℕ) :
+    ∑ t ∈ hookShapes n k d, (X : ℚ⟦X⟧) ^ (rows t.1 t.2).sum =
+      ∑ l ∈ Icc 1 k, X ^ (k + l * d) * gaussBinom X (d + n) n * gaussBinom X (k - 1) (l - 1) := by
+  unfold hookShapes
+  rw [← sum_sigma' _ _ (fun l uv => (X : ℚ⟦X⟧) ^ (rows l uv).sum)]
+  apply sum_congr rfl
+  intro l hl
+  obtain ⟨hl₀, hlk⟩ := mem_Icc.mp hl
+  rw [← show k - l + (l - 1) = k - 1 by omega, sum_product, ← sum_box, ← sum_box,
+    mul_assoc, sum_mul, mul_sum]
+  apply sum_congr rfl
+  intro u hu
+  rw [mul_sum, mul_sum]
+  apply sum_congr rfl
+  intro v hv
+  rw [rows_sum, ((mem_box _ _ _).mp hu).1, ((mem_box _ _ _).mp hv).1,
+    show (d + 1) * l + (k - l) = k + l * d by rw [add_mul, one_mul, Nat.mul_comm d]; omega]
+  simp only [pow_add, mul_assoc]
+
+end fixedFirstColumnHook_hook_genFun
+
+open Finset fixedFirstColumnHook_hook_genFun
+
+/-- **Partitions with a fixed first-column hook of given size.** Let $n$ and $k$ be natural numbers
+with $k \ge 1$ and let $h < k$ be an integer. The number of partitions $\lambda$ of $n$ that have an
+$h$-fixed hook in column $1$ at some row $s$ whose hook length is $h_{s,1}(\lambda) = k$ is the
+coefficient of $q^n$ in
+$$\sum_{l=1}^{k} \frac{q^{k+l(k-h-1)}}{(q;q)_{k-h-1}} \binom{k-1}{l-1}_q,$$
+where $(q;q)_j = \prod_{i<j} (1 - q^{i+1})$ is the finite $q$-Pochhammer symbol and
+$\binom{a}{b}_q$ is the Gaussian binomial coefficient.
+
+Such a hook sits in row $s = k - h \ge 1$.
+
+Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
+(2025), Article A28, Theorem 10 (`integers-2025-A28-thm-10`). -/
+public theorem fixedFirstColumnHook_hook_genFun (n k : ℕ) (h : ℤ) (hk : 1 ≤ k)
+    (hh : h < k) :
+    (((Finset.univ : Finset n.Partition).filter (fun p =>
+        ((Finset.Icc 1 n).filter (fun s =>
+          IsFixedColumnHook p 1 s h ∧ partitionHookLength p s 1 = k)).Nonempty)).card : ℚ) =
+      coeff n (∑ l ∈ Finset.Icc 1 k, X ^ ((k : ℤ) + l * (k - h - 1)).toNat *
+        (qPochFin (X : ℚ⟦X⟧) ((k : ℤ) - h - 1).toNat)⁻¹ * gaussBinom X (k - 1) (l - 1)) := by
+  let d := ((k : ℤ) - h - 1).toNat
+  have hd : (d : ℤ) = k - h - 1 := Int.toNat_of_nonneg (by omega)
+  have hk₀ : (0 : ℤ) < k := by exact_mod_cast hk
+  have hcount : (Finset.univ : Finset n.Partition).filter (fun p =>
+      ((Icc 1 n).filter (fun s =>
+        IsFixedColumnHook p 1 s h ∧ partitionHookLength p s 1 = k)).Nonempty) =
+      hookPartitions n k d := by
+    ext p
+    simp only [mem_filter, mem_univ, true_and, mem_hookPartitions]
+    constructor
+    · rintro ⟨s, hs⟩
+      obtain ⟨hs, ⟨_, _, hrow, he⟩, hk'⟩ := mem_filter.mp hs
+      have es : s = d + 1 := by omega
+      subst s
+      exact ⟨(mem_Icc.mp hs).2, hrow, hk'⟩
+    · rintro ⟨hs, hrow, hk'⟩
+      exact ⟨d + 1, mem_filter.mpr ⟨mem_Icc.mpr ⟨by omega, hs⟩,
+        ⟨by omega, le_rfl, hrow, by omega⟩, hk'⟩⟩
+  rw [hcount, count_hookShapes, weighted_hookShapes, map_sum, map_sum]
+  apply sum_congr rfl
+  intro l _
+  have hexp : ((k : ℤ) + l * (k - h - 1)).toNat = k + l * d := by
+    rw [← hd, Int.toNat_add hk₀.le (by positivity)]
+    simp only [← Int.natCast_mul, Int.toNat_natCast]
+  rw [hexp]
+  change coeff n (X ^ (k + l * d) * gaussBinom X (d + n) n * gaussBinom X (k - 1) (l - 1)) =
+    coeff n (X ^ (k + l * d) * (qPochFin X d)⁻¹ * gaussBinom X (k - 1) (l - 1))
+  rw [mul_right_comm _ (gaussBinom X (d + n) n), mul_right_comm _ (qPochFin X d)⁻¹]
+  exact coeff_box_stable d n _
 
 end MetaMathlibExt
