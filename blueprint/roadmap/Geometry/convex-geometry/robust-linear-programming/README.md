@@ -5,6 +5,8 @@ In robust optimization (Ben-Tal and Nemirovski) the data of a linear program are
 - [Minimum of a linear form over the unit ball](forall-norm-le-one-le-add-inner-iff.md)
 - [Robust counterpart of a linear constraint under ellipsoidal uncertainty](robust-linear-constraint-iff.md)
 - [Robust counterpart of a linear objective under ellipsoidal uncertainty](robust-objective-le-iff.md)
+- [Robust counterparts for finite, box and polyhedral uncertainty](finite-box-and-polyhedral-robust-counterparts.md)
+- [Duality for distributional robustness over a finite transport ball](finite-support-wasserstein-robustness.md)
 
 ## Related topics
 

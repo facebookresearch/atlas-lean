@@ -1,0 +1,358 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+import Mathlib.Data.Matrix.Composition
+
+/-!
+# Flattening nested C-star matrices
+
+This file identifies a matrix of rectangular matrices with a single matrix
+whose row and column indices are products.  The construction is algebraic:
+it does not use norms, completeness, positivity, or nonempty index types.
+
+For finite square indices, flattening respects multiplication and conjugate
+transpose and hence gives a star-algebra equivalence.  A second equivalence
+uses `finProdFinEquiv` to replace product indices by `Fin (m * n)`.
+-/
+
+@[expose] public section
+
+namespace CStarMatrix
+
+universe uR uA um un uk ui uj
+
+/-- Flatten a matrix of rectangular matrices by pairing its outer and inner
+row indices, and likewise its outer and inner column indices. -/
+def flatten
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix m n (CStarMatrix i j A)) :
+    CStarMatrix (m × i) (n × j) A :=
+  Matrix.comp m n i j A M
+
+/-- Exact entry action of nested-matrix flattening. -/
+@[simp]
+theorem flatten_apply
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix m n (CStarMatrix i j A))
+    (a : m) (b : n) (r : i) (s : j) :
+    flatten M (a, r) (b, s) = M a b r s :=
+  rfl
+
+/-- Unflatten a product-indexed matrix into a matrix of rectangular
+matrices. -/
+def unflatten
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix (m × i) (n × j) A) :
+    CStarMatrix m n (CStarMatrix i j A) :=
+  (Matrix.comp m n i j A).symm M
+
+/-- Exact entry action of nested-matrix unflattening. -/
+@[simp]
+theorem unflatten_apply
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix (m × i) (n × j) A)
+    (a : m) (b : n) (r : i) (s : j) :
+    unflatten M a b r s = M (a, r) (b, s) :=
+  rfl
+
+/-- Unflattening after flattening is the identity. -/
+@[simp]
+theorem unflatten_flatten
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix m n (CStarMatrix i j A)) :
+    unflatten (flatten M) = M :=
+  rfl
+
+/-- Flattening after unflattening is the identity. -/
+@[simp]
+theorem flatten_unflatten
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix (m × i) (n × j) A) :
+    flatten (unflatten M) = M :=
+  rfl
+
+/-- Nested rectangular matrices are equivalent to matrices on product index
+types. -/
+def flattenEquiv
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA} :
+    CStarMatrix m n (CStarMatrix i j A) ≃
+      CStarMatrix (m × i) (n × j) A where
+  toFun := flatten
+  invFun := unflatten
+  left_inv := unflatten_flatten
+  right_inv := flatten_unflatten
+
+/-- The forward action of `flattenEquiv` is `flatten`. -/
+@[simp]
+theorem flattenEquiv_apply
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix m n (CStarMatrix i j A)) :
+    flattenEquiv M = flatten M :=
+  rfl
+
+/-- The inverse action of `flattenEquiv` is `unflatten`. -/
+@[simp]
+theorem flattenEquiv_symm_apply
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    (M : CStarMatrix (m × i) (n × j) A) :
+    flattenEquiv.symm M = unflatten M :=
+  rfl
+
+/-- Flattening as an additive equivalence. -/
+def flattenAddEquiv
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA} [Add A] :
+    CStarMatrix m n (CStarMatrix i j A) ≃+
+      CStarMatrix (m × i) (n × j) A where
+  __ := flattenEquiv
+  map_add' _ _ := rfl
+
+/-- Flattening as a linear equivalence. -/
+def flattenLinearEquiv
+    (R : Type uR)
+    {m : Type um} {n : Type un} {i : Type ui} {j : Type uj}
+    {A : Type uA}
+    [Semiring R] [AddCommMonoid A] [Module R A] :
+    CStarMatrix m n (CStarMatrix i j A) ≃ₗ[R]
+      CStarMatrix (m × i) (n × j) A where
+  __ := flattenAddEquiv
+  map_smul' _ _ := rfl
+
+private theorem fintype_sum_apply
+    {β : Type*} [Fintype β]
+    {m : Type um} {n : Type un} {A : Type uA}
+    [AddCommMonoid A]
+    (f : β → CStarMatrix m n A) (a : m) (b : n) :
+    (∑ x, f x) a b = ∑ x, f x a b := by
+  classical
+  let s : Finset β := Finset.univ
+  change (s.sum f) a b = s.sum (fun x => f x a b)
+  induction s using Finset.induction_on with
+  | empty => rfl
+  | insert x s hx ih =>
+      rw [Finset.sum_insert hx, Finset.sum_insert hx]
+      simpa only [CStarMatrix.add_apply] using congrArg (f x a b + ·) ih
+
+set_option backward.isDefEq.respectTransparency.types false in
+/-- Flattening converts nested multiplication into multiplication over the
+product intermediate index. -/
+@[simp]
+theorem flatten_mul
+    {m : Type um} {n : Type un} {k : Type uk} {i : Type ui}
+    {A : Type uA}
+    [Fintype n] [Fintype i] [AddCommMonoid A] [Mul A]
+    (M : CStarMatrix m n (CStarMatrix i i A))
+    (N : CStarMatrix n k (CStarMatrix i i A)) :
+    flatten (M * N) = flatten M * flatten N := by
+  ext ⟨a, r⟩ ⟨c, t⟩
+  calc
+    flatten (M * N) (a, r) (c, t) =
+        (∑ b : n, M a b * N b c) r t := rfl
+    _ = ∑ b : n, (M a b * N b c) r t :=
+      fintype_sum_apply (fun b => M a b * N b c) r t
+    _ = ∑ b : n, ∑ s : i, M a b r s * N b c s t := by
+      apply Finset.sum_congr rfl
+      intro b _
+      rfl
+    _ = ∑ bs : n × i, M a bs.1 r bs.2 * N bs.1 c bs.2 t :=
+      (Fintype.sum_prod_type
+        (fun bs : n × i => M a bs.1 r bs.2 * N bs.1 c bs.2 t)).symm
+    _ = (flatten M * flatten N) (a, r) (c, t) := rfl
+
+/-- Flattening commutes with conjugate transpose. -/
+@[simp]
+theorem flatten_conjTranspose
+    {m : Type um} {n : Type un} {i : Type ui} {A : Type uA}
+    [Star A]
+    (M : CStarMatrix m n (CStarMatrix i i A)) :
+    flatten (CStarMatrix.conjTranspose M) =
+      CStarMatrix.conjTranspose (flatten M) := by
+  ext ⟨b, s⟩ ⟨a, r⟩
+  rfl
+
+/-- On finite square indices, flattening is a star-algebra equivalence. -/
+def flattenStarAlgEquiv
+    (R : Type uR)
+    {m : Type um} {i : Type ui} {A : Type uA}
+    [Fintype m] [Fintype i]
+    [Semiring R] [AddCommMonoid A] [Mul A] [Module R A] [Star A] :
+    CStarMatrix m m (CStarMatrix i i A) ≃⋆ₐ[R]
+      CStarMatrix (m × i) (m × i) A where
+  __ := flattenLinearEquiv R
+  map_mul' := flatten_mul
+  map_star' := flatten_conjTranspose
+
+/-- The square star-algebra equivalence acts by `flatten`. -/
+@[simp]
+theorem flattenStarAlgEquiv_apply
+    (R : Type uR)
+    {m : Type um} {i : Type ui} {A : Type uA}
+    [Fintype m] [Fintype i]
+    [Semiring R] [AddCommMonoid A] [Mul A] [Module R A] [Star A]
+    (M : CStarMatrix m m (CStarMatrix i i A)) :
+    flattenStarAlgEquiv R M = flatten M :=
+  rfl
+
+/-- Flatten nested finite matrices and canonically reindex product indices by
+`finProdFinEquiv`. -/
+def flattenFin
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin m) (Fin n)
+      (CStarMatrix (Fin p) (Fin q) A)) :
+    CStarMatrix (Fin (m * p)) (Fin (n * q)) A :=
+  Matrix.reindex
+    (finProdFinEquiv : Fin m × Fin p ≃ Fin (m * p))
+    (finProdFinEquiv : Fin n × Fin q ≃ Fin (n * q))
+    (flatten M)
+
+/-- Exact entry action of finite nested-matrix flattening.  Flat indices are
+decomposed using the inverse of `finProdFinEquiv`. -/
+@[simp]
+theorem flattenFin_apply
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin m) (Fin n)
+      (CStarMatrix (Fin p) (Fin q) A))
+    (x : Fin (m * p)) (y : Fin (n * q)) :
+    flattenFin M x y =
+      M
+        ((finProdFinEquiv : Fin m × Fin p ≃ Fin (m * p)).symm x).1
+        ((finProdFinEquiv : Fin n × Fin q ≃ Fin (n * q)).symm y).1
+        ((finProdFinEquiv : Fin m × Fin p ≃ Fin (m * p)).symm x).2
+        ((finProdFinEquiv : Fin n × Fin q ≃ Fin (n * q)).symm y).2 :=
+  rfl
+
+/-- Undo `flattenFin` by reindexing flat finite indices back to products and
+then unflattening. -/
+def unflattenFin
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin (m * p)) (Fin (n * q)) A) :
+    CStarMatrix (Fin m) (Fin n)
+      (CStarMatrix (Fin p) (Fin q) A) :=
+  unflatten <|
+    Matrix.reindex
+      (finProdFinEquiv : Fin m × Fin p ≃ Fin (m * p)).symm
+      (finProdFinEquiv : Fin n × Fin q ≃ Fin (n * q)).symm
+      M
+
+/-- Exact entry action of finite nested-matrix unflattening. -/
+@[simp]
+theorem unflattenFin_apply
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin (m * p)) (Fin (n * q)) A)
+    (a : Fin m) (b : Fin n) (r : Fin p) (s : Fin q) :
+    unflattenFin M a b r s =
+      M
+        (finProdFinEquiv (a, r))
+        (finProdFinEquiv (b, s)) :=
+  rfl
+
+/-- `unflattenFin` is a left inverse of `flattenFin`. -/
+@[simp]
+theorem unflattenFin_flattenFin
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin m) (Fin n)
+      (CStarMatrix (Fin p) (Fin q) A)) :
+    unflattenFin (flattenFin M) = M := by
+  apply CStarMatrix.ext
+  intro a b
+  apply CStarMatrix.ext
+  intro r s
+  simp
+
+/-- `unflattenFin` is a right inverse of `flattenFin`. -/
+@[simp]
+theorem flattenFin_unflattenFin
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin (m * p)) (Fin (n * q)) A) :
+    flattenFin (unflattenFin M) = M := by
+  apply CStarMatrix.ext
+  intro x y
+  change M
+      ((finProdFinEquiv : Fin m × Fin p ≃ Fin (m * p))
+        ((finProdFinEquiv : Fin m × Fin p ≃ Fin (m * p)).symm x))
+      ((finProdFinEquiv : Fin n × Fin q ≃ Fin (n * q))
+        ((finProdFinEquiv : Fin n × Fin q ≃ Fin (n * q)).symm y)) = M x y
+  rw [Equiv.apply_symm_apply, Equiv.apply_symm_apply]
+
+/-- Canonical finite-product flattening as an equivalence. -/
+def flattenFinEquiv
+    {m n p q : ℕ} {A : Type uA} :
+    CStarMatrix (Fin m) (Fin n)
+        (CStarMatrix (Fin p) (Fin q) A) ≃
+      CStarMatrix (Fin (m * p)) (Fin (n * q)) A where
+  toFun := flattenFin
+  invFun := unflattenFin
+  left_inv := unflattenFin_flattenFin
+  right_inv := flattenFin_unflattenFin
+
+/-- The forward action of `flattenFinEquiv` is `flattenFin`. -/
+@[simp]
+theorem flattenFinEquiv_apply
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin m) (Fin n)
+      (CStarMatrix (Fin p) (Fin q) A)) :
+    flattenFinEquiv M = flattenFin M :=
+  rfl
+
+/-- The inverse action of `flattenFinEquiv` is `unflattenFin`. -/
+@[simp]
+theorem flattenFinEquiv_symm_apply
+    {m n p q : ℕ} {A : Type uA}
+    (M : CStarMatrix (Fin (m * p)) (Fin (n * q)) A) :
+    flattenFinEquiv.symm M = unflattenFin M :=
+  rfl
+
+/-- Square finite nested matrices are star-algebra equivalent to matrices of
+size the product of the two sizes. -/
+def flattenFinStarAlgEquiv
+    (R : Type uR) (A : Type uA) (m n : ℕ)
+    [Semiring R] [AddCommMonoid A] [Mul A] [Module R A] [Star A] :
+    CStarMatrix (Fin m) (Fin m)
+        (CStarMatrix (Fin n) (Fin n) A) ≃⋆ₐ[R]
+      CStarMatrix (Fin (m * n)) (Fin (m * n)) A :=
+  (flattenStarAlgEquiv R).trans
+    (CStarMatrix.reindexₐ R A
+      (finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n)))
+
+/-- The canonical finite square star-algebra equivalence acts by
+`flattenFin`. -/
+@[simp]
+theorem flattenFinStarAlgEquiv_apply
+    (R : Type uR) (A : Type uA) (m n : ℕ)
+    [Semiring R] [AddCommMonoid A] [Mul A] [Module R A] [Star A]
+    (M : CStarMatrix (Fin m) (Fin m)
+      (CStarMatrix (Fin n) (Fin n) A)) :
+    flattenFinStarAlgEquiv R A m n M = flattenFin M :=
+  rfl
+
+/-- Entry formula for the canonical finite square star-algebra equivalence. -/
+@[simp]
+theorem flattenFinStarAlgEquiv_apply_entry
+    (R : Type uR) (A : Type uA) (m n : ℕ)
+    [Semiring R] [AddCommMonoid A] [Mul A] [Module R A] [Star A]
+    (M : CStarMatrix (Fin m) (Fin m)
+      (CStarMatrix (Fin n) (Fin n) A))
+    (x y : Fin (m * n)) :
+    flattenFinStarAlgEquiv R A m n M x y =
+      M
+        ((finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n)).symm x).1
+        ((finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n)).symm y).1
+        ((finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n)).symm x).2
+        ((finProdFinEquiv : Fin m × Fin n ≃ Fin (m * n)).symm y).2 :=
+  rfl
+
+end CStarMatrix
+
+end

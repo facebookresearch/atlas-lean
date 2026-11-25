@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import MathlibExt.NumberTheory.WatsonAlternatingBounds
+public import MathlibExt.NumberTheory.WatsonCotangentDerivatives
 
 namespace MetaMathlibExt
 
@@ -88,19 +89,6 @@ public theorem_wanted watson_cos_sum_almost_asymptotic
             Real.log (2 * Real.sin (Real.pi * (ν : ℝ) / (n : ℝ))) +
           2 * (∑ r ∈ Finset.Icc 1 (N - 1), watsonExpansionTerm r n ν) +
           2 * remainder * watsonExpansionTerm N n ν
-
-/--
-**The odd cotangent derivatives in Watson's expansion are negative.** Let $r$, $n$ and $\nu$ be
-natural numbers with $r \ge 1$ and $1 \le \nu \le n - 1$. Then
-$\mathcal{H}_{2r-1}(\nu/n) = \cot^{(2r-1)}(\pi\nu/n)$, the $(2r-1)$st derivative of the cotangent
-evaluated at $\pi\nu/n$, is strictly negative.
-
-Source: Iaroslav V. Blagouchine, *On a Generalization of Watson’s Trigonometric Sum (On Dowker’s Sum
-of Order One Half)*, INTEGERS 25 (2025), Article A30, Theorem 3 (printed as Theorem 4).
--/
-public theorem_wanted watson_odd_cotangent_deriv_neg
-    (r n ν : ℕ) (hr : 1 ≤ r) (hνpos : 1 ≤ ν) (hνmax : ν ≤ n - 1) :
-    watsonOddCotangentDeriv r n ν < 0
 
 /--
 **Complete asymptotic expansion of Watson's alternating cosecant sum.** For natural numbers $N$

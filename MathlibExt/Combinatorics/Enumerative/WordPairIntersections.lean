@@ -165,4 +165,18 @@ public theorem nonIntersectingWordPairs_card_eq_coeff (k n r : ℕ) (hn : 1 ≤ 
   simp_rw [coeff_stirling_factor, coeff_geometric_factor _ _ hr, ← mul_assoc]
   constructor <;> exact_mod_cast count_pairs k n r hn hr
 
+/-- **Non-intersecting pairs of words of equal length.**
+Let $S(n, j)$ denote the Stirling numbers of the second kind.
+For natural numbers $k$ and $n \ge 1$, the number of pairs $(u, v)$ of words
+of length $n$ over an alphabet of $k$ letters such that no letter occurs in both $u$ and $v$ is
+$\sum_{j=1}^{k-1} \binom{k}{j} \, j! \, S(n, j) \, (k-j)^n$.
+
+Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24
+(2024), Article A107, Corollary 2 (`integers-2024-A107-cor-2`). -/
+public theorem nonIntersectingWordPairs_sameLength_card (k n : ℕ) (hn : 1 ≤ n) :
+    ((Finset.univ : Finset ((Fin n → Fin k) × (Fin n → Fin k))).filter fun p =>
+      Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card =
+      ∑ j ∈ Finset.Icc 1 (k - 1), k.choose j * j.factorial * Nat.stirlingSecond n j * (k - j) ^ n :=
+  count_pairs k n n hn hn
+
 end MetaMathlibExt

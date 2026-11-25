@@ -1,0 +1,198 @@
+/-
+  Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.ChoiRank
+
+/-!
+# Choi rank at most one and single-Kraus characterization
+
+This module proves that a completely positive map has Choi rank at most one
+iff it is a single-Kraus map, with full support for zero maps and empty
+input/output types, and refines the exact rank-zero and rank-one cases.
+
+## Main results
+
+* `choiRank_singleKraus_le_one`
+* `choiRank_le_one_iff_exists_singleKraus`
+* `choiRank_singleKraus_eq_zero_iff`
+* `choiRank_singleKraus_eq_one_of_ne_zero`
+* `choiRank_eq_one_iff_exists_ne_zero_singleKraus`
+
+-/
+
+@[expose] public section
+
+open Matrix Submodule
+open scoped Matrix.Norms.L2Operator CStarAlgebra MatrixOrder ComplexOrder
+
+namespace CompletelyPositiveMap
+
+variable {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
+
+/-- The Choi rank of a single-Kraus map `X ↦ K * X * Kᴴ` is at most one. -/
+theorem choiRank_singleKraus_le_one (K : Matrix m n ℂ) :
+    choiRank (singleKraus K) ≤ 1 := by
+  let K₁ : Fin 1 → Matrix m n ℂ := fun _ => K
+  have h_eq : kraus K₁ = singleKraus K := by
+    calc kraus K₁ = singleKraus (K₁ 0) := kraus_fin_one K₁
+      _ = singleKraus K := rfl
+  calc choiRank (singleKraus K) = choiRank (kraus K₁) := by rw [← h_eq]
+    _ ≤ Fintype.card (Fin 1) := choiRank_kraus_le_card K₁
+    _ = 1 := by simp
+
+/-- A completely positive map has Choi rank at most one iff it is a single-Kraus map.
+This includes the zero map and holds for empty input/output types without `Nonempty`. -/
+theorem choiRank_le_one_iff_exists_singleKraus
+    (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    choiRank φ ≤ 1 ↔ ∃ K : Matrix m n ℂ, φ = singleKraus K := by
+  constructor
+  · intro h_le
+    have h_cases : choiRank φ = 0 ∨ choiRank φ = 1 := by
+      rwa [Nat.le_one_iff_eq_zero_or_eq_one] at h_le
+    rcases h_cases with h0 | h1
+    · obtain ⟨K₀, hK₀⟩ := exists_kraus_choiRank φ
+      refine ⟨0, ?_⟩
+      apply DFunLike.ext
+      intro X
+      have hφX : φ X = kraus K₀ X := DFunLike.congr_fun hK₀ X
+      calc φ X = kraus K₀ X := hφX
+        _ = ∑ i : Fin (choiRank φ), K₀ i * X * (K₀ i)ᴴ := by
+          simp [kraus_apply]
+        _ = 0 := by
+          have h_card : Fintype.card (Fin (choiRank φ)) = 0 := by
+            rw [Fintype.card_fin, h0]
+          have h_univ_empty : (Finset.univ : Finset (Fin (choiRank φ))) = ∅ := by
+            rw [← Finset.card_eq_zero]
+            simp [h_card]
+          have h_sum_univ : (∑ i : Fin (choiRank φ), K₀ i * X * (K₀ i)ᴴ) =
+              ∑ i ∈ (Finset.univ : Finset (Fin (choiRank φ))), K₀ i * X * (K₀ i)ᴴ := rfl
+          rw [h_sum_univ, h_univ_empty]
+          simp
+        _ = singleKraus (0 : Matrix m n ℂ) X := by
+          simp [singleKraus_apply]
+    · obtain ⟨K₁, hK₁⟩ := exists_kraus_choiRank φ
+      let i₀ : Fin (choiRank φ) := ⟨0, by
+        have : (0 : ℕ) < 1 := Nat.zero_lt_one
+        rw [← h1] at this
+        exact this⟩
+      have h_all_eq : ∀ i : Fin (choiRank φ), i = i₀ := by
+        intro i
+        have hi_lt1 : i.val < 1 := Nat.lt_of_lt_of_eq i.isLt h1
+        have hi_eq0 : i.val = 0 := Nat.lt_one_iff.mp hi_lt1
+        ext
+        simp [i₀, hi_eq0]
+      refine ⟨K₁ i₀, ?_⟩
+      apply DFunLike.ext
+      intro X
+      have hφX : φ X = kraus K₁ X := DFunLike.congr_fun hK₁ X
+      calc φ X = kraus K₁ X := hφX
+        _ = ∑ i : Fin (choiRank φ), K₁ i * X * (K₁ i)ᴴ := by
+          simp [kraus_apply]
+        _ = K₁ i₀ * X * (K₁ i₀)ᴴ := by
+          rw [Fintype.sum_eq_single i₀]
+          intro j hj
+          exfalso
+          exact hj (h_all_eq j)
+        _ = singleKraus (K₁ i₀) X := rfl
+  · intro h_ex
+    obtain ⟨K, hK⟩ := h_ex
+    calc choiRank φ = choiRank (singleKraus K) := by rw [hK]
+      _ ≤ 1 := choiRank_singleKraus_le_one K
+
+private theorem choiRank_singleKraus_eq_finrank_span_vec_singleton
+    (K : Matrix m n ℂ) :
+    choiRank (singleKraus K) =
+      Module.finrank ℂ (ℂ ∙ Matrix.vec K) := by
+  let K₁ : Fin 1 → Matrix m n ℂ := fun _ => K
+  have h_eq : kraus K₁ = singleKraus K := by
+    calc kraus K₁ = singleKraus (K₁ 0) := kraus_fin_one K₁
+      _ = singleKraus K := rfl
+  have h_rank_eq : choiRank (singleKraus K) = choiRank (kraus K₁) := by
+    rw [← h_eq]
+  have h_fin : choiRank (kraus K₁) =
+      Module.finrank ℂ (Submodule.span ℂ (Set.range (fun i => Matrix.vec (K₁ i)))) :=
+    choiRank_kraus_eq_finrank_span_vec K₁
+  have h_range : Set.range (fun i : Fin 1 => Matrix.vec (K₁ i)) = {Matrix.vec K} := by
+    ext x
+    constructor
+    · intro hx
+      obtain ⟨i, hi⟩ := hx
+      rw [← hi]
+      rfl
+    · intro hx
+      rw [Set.mem_singleton_iff] at hx
+      rw [hx]
+      exact ⟨0, rfl⟩
+  have h_span : Submodule.span ℂ (Set.range (fun i : Fin 1 => Matrix.vec (K₁ i))) =
+      ℂ ∙ Matrix.vec K := by
+    rw [h_range]
+  calc choiRank (singleKraus K) = choiRank (kraus K₁) := h_rank_eq
+    _ = Module.finrank ℂ (Submodule.span ℂ (Set.range (fun i => Matrix.vec (K₁ i)))) := h_fin
+    _ = Module.finrank ℂ (ℂ ∙ Matrix.vec K) := by rw [h_span]
+
+/-- A single-Kraus map has Choi rank zero iff its Kraus operator is zero. -/
+theorem choiRank_singleKraus_eq_zero_iff (K : Matrix m n ℂ) :
+    choiRank (singleKraus K) = 0 ↔ K = 0 := by
+  have h_eq := choiRank_singleKraus_eq_finrank_span_vec_singleton K
+  constructor
+  · intro h_zero
+    have h_vec_zero : Matrix.vec K = 0 := by
+      by_contra h_ne
+      have h_one : Module.finrank ℂ (ℂ ∙ Matrix.vec K) = 1 :=
+        finrank_span_singleton h_ne
+      rw [h_eq] at h_zero
+      rw [h_one] at h_zero
+      exact Nat.one_ne_zero h_zero
+    rwa [Matrix.vec_eq_zero_iff] at h_vec_zero
+  · intro hK
+    rw [hK]
+    have h_vec : Matrix.vec (0 : Matrix m n ℂ) = 0 := by simp
+    have h_span : (ℂ ∙ Matrix.vec (0 : Matrix m n ℂ)) = (⊥ : Submodule ℂ (n × m → ℂ)) := by
+      rw [h_vec]
+      exact span_singleton_eq_bot.mpr rfl
+    calc choiRank (singleKraus (0 : Matrix m n ℂ))
+        = Module.finrank ℂ (ℂ ∙ Matrix.vec (0 : Matrix m n ℂ)) := by
+          exact choiRank_singleKraus_eq_finrank_span_vec_singleton 0
+      _ = Module.finrank ℂ (⊥ : Submodule ℂ (n × m → ℂ)) := by rw [h_span]
+      _ = 0 := by
+        simp [finrank_bot]
+
+/-- A nonzero single-Kraus map has Choi rank exactly one. Requires `K ≠ 0`. -/
+theorem choiRank_singleKraus_eq_one_of_ne_zero {K : Matrix m n ℂ} (hK : K ≠ 0) :
+    choiRank (singleKraus K) = 1 := by
+  have h_vec_ne : Matrix.vec K ≠ 0 := by
+    intro h_eq
+    have : K = 0 := by
+      rw [← Matrix.vec_eq_zero_iff]
+      exact h_eq
+    exact hK this
+  have h_eq := choiRank_singleKraus_eq_finrank_span_vec_singleton K
+  calc choiRank (singleKraus K) = Module.finrank ℂ (ℂ ∙ Matrix.vec K) := h_eq
+    _ = 1 := finrank_span_singleton h_vec_ne
+
+/-- A completely positive map has Choi rank one iff it is a nonzero single-Kraus map. -/
+theorem choiRank_eq_one_iff_exists_ne_zero_singleKraus
+    (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    choiRank φ = 1 ↔ ∃ K : Matrix m n ℂ, K ≠ 0 ∧ φ = singleKraus K := by
+  constructor
+  · intro h_one
+    have h_le : choiRank φ ≤ 1 := by rw [h_one]
+    obtain ⟨K, hK_eq⟩ := (choiRank_le_one_iff_exists_singleKraus φ).mp h_le
+    have hK_ne : K ≠ 0 := by
+      intro hK_zero
+      have h_zero : choiRank (singleKraus K) = 0 := by
+        exact (choiRank_singleKraus_eq_zero_iff K).mpr hK_zero
+      have h_φ_zero : choiRank φ = 0 := by
+        calc choiRank φ = choiRank (singleKraus K) := by rw [hK_eq]
+          _ = 0 := h_zero
+      rw [h_one] at h_φ_zero
+      exact Nat.one_ne_zero h_φ_zero
+    exact ⟨K, hK_ne, hK_eq⟩
+  · intro h_ex
+    obtain ⟨K, hK_ne, hK_eq⟩ := h_ex
+    calc choiRank φ = choiRank (singleKraus K) := by rw [hK_eq]
+      _ = 1 := choiRank_singleKraus_eq_one_of_ne_zero hK_ne
+
+end CompletelyPositiveMap
