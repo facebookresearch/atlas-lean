@@ -35,20 +35,19 @@ public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Independence.Basic
+public import MathlibExt.Probability.Statistics.Measurement.Scales
 
 @[expose] public section
 
 namespace WantedExt.Probability.Statistics.WilcoxonSignedRankWanted
 
 open MeasureTheory ProbabilityTheory
+open MathlibExt.Probability.Statistics.Measurement (sampleRank)
 
-/-- The rank of `|x_i|` among `|x_1|, …, |x_n|`: the number of `j` with `|x_j| ≤ |x_i|`. -/
-noncomputable def absRank {n : ℕ} (x : Fin n → ℝ) (i : Fin n) : ℕ :=
-  (Finset.univ.filter fun j => |x j| ≤ |x i|).card
-
-/-- The signed-rank statistic `W⁺`, the sum of the ranks of `|x_i|` over the positive `x_i`. -/
+/-- The signed-rank statistic `W⁺`, the sum over the positive `x_i` of the rank
+`sampleRank (fun j => |x j|) i = 1 + #{j | |x_j| < |x_i|}` of `|x_i|`. -/
 noncomputable def signedRankStatistic {n : ℕ} (x : Fin n → ℝ) : ℕ :=
-  ∑ i ∈ Finset.univ.filter (fun i => 0 < x i), absRank x i
+  ∑ i ∈ Finset.univ.filter (fun i => 0 < x i), sampleRank (fun j => |x j|) i
 
 /-- The number `c_n(t)` of subsets of `{1, …, n}` with sum `t`. -/
 def subsetSumCount (n t : ℕ) : ℕ :=

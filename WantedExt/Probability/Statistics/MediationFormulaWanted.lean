@@ -25,7 +25,13 @@ given `Z = z` is independence under the conditional measure `μ[|Z = z]`.
 In the additive linear mediation model the natural indirect effect is the product of
 coefficients; that case is already proved in
 `CSLibExt.MachineLearning.GraphicalModels.LinearMediation` (`naturalIndirectEffect_eq`,
-`totalEffect_eq_add`).
+`totalEffect_eq_add`). For finite structural causal models the mediation formula is proved in
+`CSLibExt.MachineLearning.GraphicalModels.MediationFormula`
+(`FiniteSCM.nde_eq_mediationFormulaNDE`, `FiniteSCM.nie_eq_mediationFormulaNIE`) under the same
+four no-confounding conditions and positivity; the statement here is for general potential
+outcomes on an arbitrary probability space. The natural indirect effect here follows the
+`TE - NDE` convention, `E[Y(x₁, M(x₁))] - E[Y(x₁, M(x₀))]`, whereas `FiniteSCM.nie` follows
+Pearl (2001), `E[Y(x₀, M(x₁))] - E[Y(x₀, M(x₀))]`.
 
 Sources: J. Pearl, "Direct and indirect effects", Proc. 17th Conf. Uncertainty in Artificial
 Intelligence (2001) 411–420 (arXiv:1301.2300); T. J. VanderWeele and S. Vansteelandt,

@@ -38,12 +38,14 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Topology.ContinuousMap.Bounded.Basic
 public import MathlibExt.Probability.Distributions.ChiSquare
+public import MathlibExt.Probability.Statistics.Measurement.Scales
 
 @[expose] public section
 
 namespace WantedExt.Probability.Statistics.KruskalWallisWanted
 
 open MeasureTheory ProbabilityTheory Filter Topology
+open MathlibExt.Probability.Statistics.Measurement (sampleRank)
 
 variable {C N : ℕ}
 
@@ -129,16 +131,12 @@ public theorem_wanted kruskalWallis_two_samples (g : Fin N → Fin 2)
     kruskalWallis g σ = 12 * ((rankSum g σ 0 : ℝ) - sampleSize g 0 * (N + 1) / 2) ^ 2 /
       ((N + 1) * sampleSize g 0 * (N - sampleSize g 0))
 
-/-- The rank of `x_k` among `x_1, …, x_N`, minus one: the number `#{j | x_j < x_k}` of smaller
-observations. -/
-noncomputable def sampleRank (x : Fin N → ℝ) (k : Fin N) : ℕ :=
-  (Finset.univ.filter fun j => x j < x k).card
-
 /-- **Distribution-freeness** (Kruskal and Wallis 1952, Section 1; Kruskal 1952, p. 525). Let `μ`
 be a probability measure, `X_1, …, X_N : Ω → ℝ` independent measurable random variables with a
 common law (`X_k` and `X_l` have the same law for all `k, l`) that has no atoms, and `g` an
 assignment of the `N` positions to `C` samples. For every real `h`, the probability that the
-ranks `k ↦ #{j | X_j < X_k}` form a permutation `σ` of `Fin N` whose Kruskal–Wallis statistic is
+ranks `sampleRank (fun j => X_j) k = 1 + #{j | X_j < X_k}` are `σ k + 1` for a permutation `σ` of
+`Fin N` whose Kruskal–Wallis statistic is
 `h` equals the number of permutations `σ` with `H(σ) = h`, divided by `N!`. (The ranks form a
 permutation almost surely, so this is the law of `H` of the sample ranks.)
 
@@ -149,12 +147,12 @@ public theorem_wanted kruskalWallis_distributionFree {Ω : Type*} [MeasurableSpa
     (μ : Measure Ω) [IsProbabilityMeasure μ] (X : Fin N → Ω → ℝ) (hX : ∀ k, Measurable (X k))
     (hind : iIndepFun X μ) (hid : ∀ k l, μ.map (X k) = μ.map (X l))
     (hcont : ∀ k, NoAtoms (μ.map (X k))) (g : Fin N → Fin C) (h : ℝ) :
-    μ.real {ω | ∃ σ : Equiv.Perm (Fin N), (∀ k, (σ k : ℕ) = sampleRank (fun j => X j ω) k) ∧
+    μ.real {ω | ∃ σ : Equiv.Perm (Fin N), (∀ k, (σ k : ℕ) + 1 = sampleRank (fun j => X j ω) k) ∧
         kruskalWallis g σ = h} =
       ((Finset.univ.filter fun σ : Equiv.Perm (Fin N) => kruskalWallis g σ = h).card : ℝ) /
         N.factorial
 
-/-- **The chi-square limit** (Kruskal 1952, Section 4). Let `C ≥ 1`, and for each `m` let `g m` be
+/-- **The chi-square limit** (Kruskal 1952, Section 4). Let `C ≥ 2`, and for each `m` let `g m` be
 an assignment of `N_m` positions to `C` samples of sizes `n_i(m)`, with `N_m → ∞` and
 `n_i(m) / N_m → ν_i > 0` for every `i`. Then under the uniform law on rankings, the Kruskal–Wallis
 statistic converges in distribution to the chi-square law with `C - 1` degrees of freedom: for
@@ -163,7 +161,7 @@ every bounded continuous `f : ℝ → ℝ`, the null mean of `f(H)` tends to `�
 Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
 23 (1952) 525–540, pp. 527–528, Section 4 (via the Wald–Wolfowitz permutation central limit
 theorem). -/
-public theorem_wanted tendsto_kruskalWallis_chiSquare (hC : 1 ≤ C) (Nm : ℕ → ℕ)
+public theorem_wanted tendsto_kruskalWallis_chiSquare (hC : 2 ≤ C) (Nm : ℕ → ℕ)
     (g : (m : ℕ) → Fin (Nm m) → Fin C) (ν : Fin C → ℝ) (hν : ∀ i, 0 < ν i)
     (hNm : Tendsto Nm atTop atTop)
     (hfrac : ∀ i, Tendsto (fun m => (sampleSize (g m) i : ℝ) / Nm m) atTop (𝓝 (ν i)))
