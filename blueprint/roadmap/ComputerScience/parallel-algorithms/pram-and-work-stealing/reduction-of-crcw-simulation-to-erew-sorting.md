@@ -9,18 +9,12 @@ In a priority CRCW PRAM, concurrent reads of one memory cell are allowed, and am
 2. The requests are sorted by address, ties broken by processor index.
 3. Each position compares its address with that of its left neighbor, in $O(1)$ exclusive steps (each position first copies its address into a second array and then reads its left neighbor's copy), to mark the first request for each address. That request belongs to the lowest-index processor accessing the cell.
 4. The processors at marked positions perform the single access to their cells: one read in the read phase, the winning write in the write phase.
-5. Read values are broadcast to the remaining requests of each run of equal addresses by recursive doubling in $O(\log p)$ steps.
+5. Read values are replicated to the remaining requests of each run of equal addresses by a parallel prefix computation in $O(\log p)$ steps.
 6. The results are returned to the requesting processors by indexing on processor number.
 
-Every step accesses each cell at most once.
-
-## Expansion
-
-This page becomes ready once:
-
-- The statement must be checked against the cited sources
+Every step accesses each cell at most once. With sorting in $O(\log p)$ steps this gives the $\Theta(\log p)$ slowdown of the emulation of a priority CRCW PRAM by an EREW PRAM.
 
 ## Sources
 
-- B. Parhami, lecture slides for Part II, "Extreme Models", of *Introduction to Parallel Processing: Algorithms and Architectures* (Plenum Press, 1999), Fall 2008, Chapter 5: the CRCW submodels including priority, and Theorem 5.1 with its justification by sorting the addresses, removing duplicates, accessing memory, and broadcasting by recursive doubling (Fig. 5.2). The steps above make the general sorting bound explicit.
+- B. Parhami, lecture slides for Part II, "Extreme Models", of *Introduction to Parallel Processing: Algorithms and Architectures* (Plenum Press, 1999), Fall 2008, Chapter 5: the CRCW submodels including priority, and Theorem 5.1 (a $p$-processor priority CRCW PRAM is emulated by a $p$-processor EREW PRAM with slowdown $\Theta(\log p)$) with its justification: write the addresses in a list, sort them, remove duplicate addresses, access the data, and replicate it by parallel prefix computation, each step taking constant or $O(\log p)$ time. The steps above make the dependence on the sorting time explicit.
 - J. JáJá, *An Introduction to Parallel Algorithms*, Addison-Wesley, 1992.

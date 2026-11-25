@@ -1,6 +1,6 @@
 # Oblivious transfer from the decisional Diffie–Hellman assumption
 
-In 1-out-of-2 oblivious transfer the sender holds $x_0, x_1 \in \{0,1\}^n$ and the receiver a bit $b$; the receiver should learn $x_b$ and nothing else, and the
+In 1-out-of-2 oblivious transfer over a cyclic group $\mathbb{G}$ the sender holds messages $x_0, x_1 \in \mathbb{G}$ and the receiver a bit $b$; the receiver should learn $x_b$ and nothing else, and the
 sender nothing. Assume a public-key encryption scheme in which a public key can be sampled from the public-key space without learning a
 corresponding secret key. The protocol:
 
@@ -10,7 +10,7 @@ corresponding secret key. The protocol:
 
 The protocol is secure against semi-honest adversaries. The sender's view consists of two public keys with the same distribution, so it is
 simulated by two random public keys. The receiver's view is simulated from $b$ and $x_b$ by encrypting $x_b$ under its key and an arbitrary value under
-the obliviously sampled key, which is indistinguishable by the semantic security of the scheme. ElGamal encryption in a cyclic group satisfies the
+the obliviously sampled key, which is indistinguishable by the semantic security of the scheme. ElGamal encryption in $\mathbb{G}$, whose messages are group elements, satisfies the
 hypotheses under the decisional Diffie–Hellman assumption: a public key is a uniform group element, which can be sampled without its discrete
 logarithm, and ElGamal is CPA-secure when DDH is hard.
 

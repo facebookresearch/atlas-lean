@@ -1,6 +1,8 @@
 # Cost-instrumented computations
 
-A cost-instrumented computation with cost values in $T$ and results in $\alpha$ is a pair $(\mathrm{ret}, \mathrm{time})$ with $\mathrm{ret} \in \alpha$ and $\mathrm{time} \in T$, usually with $T = \mathbb{N}$ counting operations. Returning a value costs nothing, $\mathrm{pure}(a) = (a, 0)$; sequencing adds costs, so if $m = (a, t)$ and $f(a) = (b, t')$ then $m \mathbin{>\!\!>\!\!=} f = (b, t + t')$; and $\mathrm{tick}(c) = ((), c)$ charges $c$ units. When $T$ is an additive monoid these operations form a lawful monad. Correctness is stated about $\mathrm{ret}$ and cost about $\mathrm{time}$. The charges are written into the program and are not checked against a machine, so each algorithm fixes its cost model: which operations cost one unit (for example comparisons or arithmetic operations), which are free, and whether recursive calls are charged. Worst-case bounds compare $\mathrm{time}$ as a function of the input size.
+Running-time statements for algorithms are often made in a cost-instrumented style. An algorithm is written so that it returns its result together with a cost annotation, usually a natural number counting operations: returning a value adds no cost, running one step after another adds their costs, and an explicit charge records the cost of a primitive step. Correctness claims are then stated about the returned result and cost claims about the accumulated annotation, as a function of the input size for worst-case bounds.
+
+The charges are part of the algorithm's text and are not checked against a machine model, so every such statement has to say which cost model it uses: which operations are charged one unit (for example comparisons or arithmetic operations), which are free, and whether recursive calls are charged. Bounds proved for different cost models are not comparable without a translation between the models.
 
 ## Sources
 

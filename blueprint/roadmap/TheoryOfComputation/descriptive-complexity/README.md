@@ -6,3 +6,5 @@ Logical characterizations of complexity classes on finite structures: Fagin's th
 - [Immerman–Vardi theorem](immerman-vardi-theorem/README.md)
 - [Transitive closure logic and NL](transitive-closure-logic-and-nl/README.md)
 - [Finite model theory](finite-model-theory/README.md)
+
+- [Pebble games with counting and the Sherali–Adams hierarchy](pebble-games-with-counting.md)

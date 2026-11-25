@@ -2,13 +2,14 @@
 
 For a function $f : \{0,1\}^n \to \{0,1\}^n$, the Feistel round maps $(L, R)$ to $(R, L \oplus f(R))$; it is a permutation of $\{0,1\}^{2n}$ for every $f$. Let $F$ be a pseudorandom function on $X = \{0,1\}^n$ and $N = 2^n$. For every adversary $A$ making at most $Q$ queries to the three-round Feistel network with independent keys and round functions $F(k_i, \cdot)$, there is a PRF adversary $B$ with
 
-$$\mathrm{Adv}^{\mathrm{BC}}[A] \le 3\cdot \mathrm{Adv}^{\mathrm{PRF}}[B, F] + \frac{Q^2}{N} + \frac{Q^2}{2N^2}.$$
+$$\mathrm{Adv}^{\mathrm{PRP}}[A] \le 3\cdot \mathrm{Adv}^{\mathrm{PRF}}[B, F] + \frac{Q^2}{N} + \frac{Q^2}{2N^2}.$$
 
-Consequently, for a family indexed by a security parameter in which $F$ is a secure PRF and $N$ is superpolynomial, the three-round network is a secure block cipher on $2n$-bit blocks.
+Consequently, for a family indexed by a security parameter in which $F$ is a secure PRF and $N$ is superpolynomial, the three-round network is a secure pseudorandom permutation on $2n$-bit blocks.
 
 ## Depends on
 
 - [PRF advantage](../pseudorandom-functions/prf-advantage.md)
+- [PRP advantage](../pseudorandom-permutations/prp-advantage.md)
 
 ## Proof depends on
 

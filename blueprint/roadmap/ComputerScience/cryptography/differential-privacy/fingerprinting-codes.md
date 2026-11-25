@@ -9,7 +9,7 @@ $\mathrm{Gen}$ outputs a codebook $C \in \{0,1\}^{n \times d}$ and, for every po
 1. $\Pr[c' \in F(C_S) \wedge \mathrm{Trace}(C, c') = \bot] \le \xi$;
 2. $\Pr[\mathrm{Trace}(C, c') \in [n] \setminus S] \le \xi$;
 
-the probabilities taken over the coins of $\mathrm{Gen}$, $\mathrm{Trace}$ and $A$. Tardos's construction gives, for every $d$ and $\xi$, an $(n, d)$-fingerprinting code with
+the probabilities taken over the coins of $\mathrm{Gen}$, $\mathrm{Trace}$ and $A$. Tardos's construction gives, for every $d$ and every $\xi \in (0, 1)$, an $(n, d)$-fingerprinting code with
 security $\xi$ for $n = \tilde\Omega(\sqrt{d / \log(1/\xi)})$. Bun, Ullman and Vadhan use such codes to lower-bound the sample complexity of approximate
 differential privacy.
 

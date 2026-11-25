@@ -1,5 +1,6 @@
 # Distributed execution models
 
+- [The WF1 rule for leads-to](the-wf1-rule-for-leads-to.md)
 - [Timed message-passing runs](timed-message-passing-runs.md)
 - [Fail-stop, omission and Byzantine faults](fail-stop-omission-and-byzantine-faults.md)
 - [Partial synchrony](partial-synchrony.md)
