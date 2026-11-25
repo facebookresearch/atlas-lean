@@ -87,15 +87,15 @@ private lemma signedTwoBit_fixture :
   have r_neg35 : round ((-3 / 5 : ℝ) / 1) = -1 := by
     norm_num [round_eq]
   have c_neg2 : code 1 (-2) 1 (-2) = -2 := by
-    unfold code
+    unfold MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp.code
     rw [r_neg2]
     decide
   have c_1 : code 1 (-2) 1 1 = 1 := by
-    unfold code
+    unfold MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp.code
     rw [r_1]
     decide
   have c_neg35 : code 1 (-2) 1 (-3 / 5) = -1 := by
-    unfold code
+    unfold MathlibExt.Analysis.Numerical.SaturatingRoundHalfUp.code
     rw [r_neg35]
     decide
   exact ⟨L_neg2, L_neg1, L_0, L_1, hstep, c_neg2, c_1, c_neg35⟩

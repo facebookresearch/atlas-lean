@@ -96,8 +96,9 @@ theorem production_decay_hasDerivAt (P lam N0 t : ℝ) (hlam : 0 < lam) :
   ring
 
 /-- The production-decay formula equals `N0` at `t = 0`, for every real `P`,
-`λ` and `N0`. For `λ = 0` this is an identity of the formula only (Lean's
-`P/0 = 0`), not of the physical zero-decay solution `N0 + P*t`. -/
+`λ` and `N0`. With the convention `x / 0 = 0`, at `λ = 0` the formula is the constant `N0`, not
+the physical zero-decay solution `N0 + P*t`; the value at `t = 0` holds there because both decay
+factors equal `1`. -/
 theorem production_decay_initial (P lam N0 : ℝ) :
     N0 * Real.exp (-lam * 0) + (P / lam) * (1 - Real.exp (-lam * 0)) = N0 := by
   simp

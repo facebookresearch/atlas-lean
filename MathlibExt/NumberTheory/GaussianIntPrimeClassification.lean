@@ -65,9 +65,9 @@ private theorem prime_mk_of_sq_add_sq {a b p : ℕ} (hp : p.Prime)
   exact ⟨gaussianInt_prime_of_natAbs_norm_prime (by rw [hpos]; exact hp),
     gaussianInt_prime_of_natAbs_norm_prime (by rw [hneg]; exact hp)⟩
 
-/-- A prime `p ≡ 1 (mod 4)` splits in `ℤ[i]` in the explicit form
-`a + bi`, `a - bi` with `a ^ 2 + b ^ 2 = p`, both factors prime.
-This is the `a, b` form of `GaussianInt.gaussianInt_split_prime`. -/
+/-- **Explicit Gaussian prime factors of a prime congruent to 1 mod 4.** Let $p$ be a prime with
+$p \equiv 1 \pmod 4$. Then there are natural numbers $a$ and $b$ with $a^2 + b^2 = p$ such that
+both $a + bi$ and $a - bi$ are prime elements of the Gaussian integers $\mathbb{Z}[i]$. -/
 public theorem gaussianInt_split_prime_sq_add_sq {p : ℕ} [Fact p.Prime]
     (h : p % 4 = 1) :
     ∃ a b : ℕ, a ^ 2 + b ^ 2 = p ∧ Prime (⟨(a : ℤ), (b : ℤ)⟩ : GaussianInt) ∧
@@ -95,10 +95,10 @@ private theorem mod_four_eq_one_of_prime_of_ne_two {p : ℕ} (hp : p.Prime)
     omega
   omega
 
-/-- **Classification of the Gaussian primes.** Every prime of `ℤ[i]` is
-associated to a rational prime `p ≡ 3 (mod 4)`, to a factor `a + bi` or
-`a - bi` of a rational prime `p ≡ 1 (mod 4)` with `a ^ 2 + b ^ 2 = p`,
-or to `1 + i`. -/
+/-- **Classification of the Gaussian primes.** Every prime element $z$ of the Gaussian integers
+$\mathbb{Z}[i]$ is associated to one of the following: a rational prime $p$ with
+$p \equiv 3 \pmod 4$; one of $a + bi$ and $a - bi$, where $a$ and $b$ are natural numbers with
+$a^2 + b^2 = p$ for some rational prime $p \equiv 1 \pmod 4$; or $1 + i$. -/
 public theorem gaussianInt_prime_associated (z : GaussianInt) (hz : Prime z) :
     (∃ p : ℕ, p.Prime ∧ p % 4 = 3 ∧ Associated z (p : GaussianInt)) ∨
       (∃ a b p : ℕ, p.Prime ∧ p % 4 = 1 ∧ a ^ 2 + b ^ 2 = p ∧

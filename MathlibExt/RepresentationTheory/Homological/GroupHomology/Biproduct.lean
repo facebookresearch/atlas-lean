@@ -91,30 +91,49 @@ instance functor_preservesBinaryBiproducts (k G : Type u)
     PreservesBinaryBiproducts (functor k G n) :=
   preservesBinaryBiproducts_of_preservesBiproducts _
 
-/-- Group homology of a direct sum is the direct sum of the group
-homologies (Corollary 23.22). -/
+/-- **Group homology of a direct sum.** Let $k$ be a commutative ring, $G$ a group, $A$ and $B$
+representations of $G$ over $k$, and $n \in \mathbb{N}$, and write $H_n(G, M)$ for the $n$th group
+homology of a representation $M$. This is the isomorphism
+$H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ obtained by applying the $n$th group homology
+functor, which is additive, to the biproduct $A \oplus B$.
+
+Source: NumberTheoryI, Section 23.4, Corollary 23.22. -/
 noncomputable def biprodIso (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     groupHomology (A ⊞ B) n ≅ groupHomology A n ⊞ groupHomology B n :=
   (functor k G n).mapBiprod A B
 
-/-- The forward map of `biprodIso` is the lift of the maps induced by
-the two projections. -/
+/-- **Forward map of the direct-sum isomorphism in group homology.** Let $k$ be a commutative
+ring, $G$ a group, $A$ and $B$ representations of $G$ over $k$, and $n \in \mathbb{N}$, and write
+$H_n(G, M)$ for the $n$th group homology of a representation $M$. The forward map of the
+isomorphism $H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ is the map into the biproduct
+whose components are the maps $H_n(G, A \oplus B) \to H_n(G, A)$ and
+$H_n(G, A \oplus B) \to H_n(G, B)$ induced by the projections $A \oplus B \to A$ and
+$A \oplus B \to B$. -/
 theorem biprodIso_hom (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     (biprodIso k G A B n).hom =
       biprod.lift (groupHomology.map (MonoidHom.id G) biprod.fst n)
         (groupHomology.map (MonoidHom.id G) biprod.snd n) := rfl
 
-/-- The backward map of `biprodIso` is the descent of the maps induced
-by the two inclusions. -/
+/-- **Inverse map of the direct-sum isomorphism in group homology.** Let $k$ be a commutative
+ring, $G$ a group, $A$ and $B$ representations of $G$ over $k$, and $n \in \mathbb{N}$, and write
+$H_n(G, M)$ for the $n$th group homology of a representation $M$. The inverse map of the
+isomorphism $H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ is the map out of the biproduct
+whose components are the maps $H_n(G, A) \to H_n(G, A \oplus B)$ and
+$H_n(G, B) \to H_n(G, A \oplus B)$ induced by the inclusions $A \to A \oplus B$ and
+$B \to A \oplus B$. -/
 theorem biprodIso_inv (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     (biprodIso k G A B n).inv =
       biprod.desc (groupHomology.map (MonoidHom.id G) biprod.inl n)
         (groupHomology.map (MonoidHom.id G) biprod.inr n) := rfl
 
-/-- `biprodIso` commutes with the first projection. -/
+/-- **Direct-sum isomorphism in group homology and the first projection.** Let $k$ be a
+commutative ring, $G$ a group, $A$ and $B$ representations of $G$ over $k$, and $n \in \mathbb{N}$,
+and write $H_n(G, M)$ for the $n$th group homology of a representation $M$. The isomorphism
+$H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ followed by the projection onto $H_n(G, A)$
+equals the map $H_n(G, A \oplus B) \to H_n(G, A)$ induced by the projection $A \oplus B \to A$. -/
 theorem biprodIso_hom_fst (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     (biprodIso k G A B n).hom ≫ biprod.fst =
@@ -122,7 +141,11 @@ theorem biprodIso_hom_fst (k G : Type u) [CommRing k] [Group G]
   rw [biprodIso_hom]
   exact biprod.lift_fst _ _
 
-/-- `biprodIso` commutes with the second projection. -/
+/-- **Direct-sum isomorphism in group homology and the second projection.** Let $k$ be a
+commutative ring, $G$ a group, $A$ and $B$ representations of $G$ over $k$, and $n \in \mathbb{N}$,
+and write $H_n(G, M)$ for the $n$th group homology of a representation $M$. The isomorphism
+$H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ followed by the projection onto $H_n(G, B)$
+equals the map $H_n(G, A \oplus B) \to H_n(G, B)$ induced by the projection $A \oplus B \to B$. -/
 theorem biprodIso_hom_snd (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     (biprodIso k G A B n).hom ≫ biprod.snd =
@@ -130,14 +153,24 @@ theorem biprodIso_hom_snd (k G : Type u) [CommRing k] [Group G]
   rw [biprodIso_hom]
   exact biprod.lift_snd _ _
 
-/-- `biprodIso` commutes with the first inclusion. -/
+/-- **Direct-sum isomorphism in group homology and the first inclusion.** Let $k$ be a
+commutative ring, $G$ a group, $A$ and $B$ representations of $G$ over $k$, and $n \in \mathbb{N}$,
+and write $H_n(G, M)$ for the $n$th group homology of a representation $M$. The inclusion of
+$H_n(G, A)$ into $H_n(G, A) \oplus H_n(G, B)$ followed by the inverse of the isomorphism
+$H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ equals the map
+$H_n(G, A) \to H_n(G, A \oplus B)$ induced by the inclusion $A \to A \oplus B$. -/
 theorem biprodIso_inv_inl (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     biprod.inl ≫ (biprodIso k G A B n).inv =
       groupHomology.map (MonoidHom.id G) biprod.inl n := by
   rw [biprodIso_inv, biprod.inl_desc]
 
-/-- `biprodIso` commutes with the second inclusion. -/
+/-- **Direct-sum isomorphism in group homology and the second inclusion.** Let $k$ be a
+commutative ring, $G$ a group, $A$ and $B$ representations of $G$ over $k$, and $n \in \mathbb{N}$,
+and write $H_n(G, M)$ for the $n$th group homology of a representation $M$. The inclusion of
+$H_n(G, B)$ into $H_n(G, A) \oplus H_n(G, B)$ followed by the inverse of the isomorphism
+$H_n(G, A \oplus B) \cong H_n(G, A) \oplus H_n(G, B)$ equals the map
+$H_n(G, B) \to H_n(G, A \oplus B)$ induced by the inclusion $B \to A \oplus B$. -/
 theorem biprodIso_inv_inr (k G : Type u) [CommRing k] [Group G]
     (A B : Rep k G) (n : ℕ) :
     biprod.inr ≫ (biprodIso k G A B n).inv =

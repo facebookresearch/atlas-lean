@@ -1,42 +1,53 @@
 name: Bump guard
 
-# Validate any PR that touches the Lean/Mathlib pin files. Runs on
-# pull_request_target so the guard script is always the trusted base
-# version, never PR-modified code; it reads the PR's pin files as data
-# via the API and runs no PR code. Fails the PR when the pin change is
-# neither a forward move to a single final release tag shared by every
-# pinned dependency (with a manifest exactly derived from those tags)
-# nor a same-pin change (new dependency/library at the current pin, with
-# the config extended monotonically in the same PR).
+# Validate any PR that touches the Lean/Mathlib pin files. The guard
+# script always comes from a checkout of the base (the PR's base branch,
+# or the merge group's base SHA), never from the PR's tree; it reads the
+# PR's pin files as data via the API and runs no PR code. Fails the PR
+# when the pin change is neither a forward move to a single final
+# release tag shared by every pinned dependency (with a manifest exactly
+# derived from those tags) nor a same-pin change (new dependency/library
+# at the current pin, with the config extended monotonically in the same
+# PR).
 # Runs for every PR (no paths filter: path filtering only considers a
 # bounded file list) and on `edited` (a base retarget emits `edited`,
 # not `synchronize`, and must revalidate against the new base).
 # See scripts/bump/pinned_bump.py (guard).
 #
-# Base advance: a pull_request_target run does NOT rerun when the base
+# Trigger: pull_request, not pull_request_target. From 2 December 2026
+# GitHub blocks pull_request_target runs by default in public
+# repositories unless an Actions event policy allows them, and a
+# required check that never runs blocks every PR. The guard needs only
+# read access, which a pull_request run has, fork PRs included. As on
+# merge_group, a pull_request run takes this workflow file from the PR's
+# tree: the guard catches mistaken pin changes, while a PR that edits
+# this workflow is left to review.
+#
+# Base advance: a pull_request run does NOT rerun when the base
 # branch advances, so a still-green guard can go stale (two bump PRs
 # pass against the same base; the older one merges after the newer and
 # downgrades the pins). This workflow therefore also runs on
 # merge_group, revalidating the PR against the merge group's current
 # base before it can merge via the merge queue. The merge-group run
 # checks out the merge group's base SHA, so the guard script it runs
-# is trusted base code, not merge-group tree code. This only helps
+# is base code, not merge-group tree code. This only helps
 # when the repo uses the merge queue for these PRs; a repo merging
 # directly should additionally enable "Require branches to be up to
 # date before merging" in branch protection.
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, edited]
   merge_group:
+    types: [checks_requested]
 
 permissions:
   contents: read
   pull-requests: read
 
-# github.ref is the base ref under pull_request_target, and the merge
-# group ref under merge_group, so key the concurrency group by PR
-# number / merge-group head ref: one PR's activity must not cancel
+# github.ref is the PR's own refs/pull/<number>/merge under pull_request,
+# and the merge group ref under merge_group. The group is keyed by PR
+# number / merge-group head ref, so one PR's activity never cancels
 # another PR's guard run.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.merge_group.head_ref || github.event.pull_request.number }}
@@ -47,10 +58,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      # Trusted base code only: the PR's base ref under
-      # pull_request_target, the merge group's base SHA under
-      # merge_group. Never check out the PR / merge-group tree here:
-      # that tree can contain PR-modified guard code.
+      # Base code only: the PR's base branch under pull_request, the
+      # merge group's base SHA under merge_group. Never check out the
+      # PR / merge-group tree here: that tree can contain PR-modified
+      # guard code.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.ref }}
@@ -99,6 +110,169 @@ jobs:
             python3 scripts/bump/pinned_bump.py config-paths --kind "$1" \
               --pr-config /tmp/guard/pr/scripts/bump/pinned_deps.json
           }
+          # Every GitHub API read goes through gh_api, which retries a
+          # transient failure: one flaky answer used to fail this required
+          # check, and in a merge group that removes the PR from the queue
+          # and rebuilds every group behind it. `gh_api PATH KIND` prints the
+          # value that KIND names in the JSON that PATH returns (see
+          # GH_API_VALUE). Each attempt is judged by its HTTP status
+          # (`gh api --include`), never by gh's message:
+          # - 200 with a strict JSON body: GH_API_VALUE decides at once. A
+          #   valid answer without the value (a directory, a file over
+          #   1 MB, invalid base64) fails the read;
+          # - 404: returns 44 at once, the only result a caller may take to
+          #   mean that the file is absent;
+          # - no answer (a network error, or none within 30 seconds), a 200
+          #   whose body is empty, cut off or not strict JSON, 408, 429, 5xx or a
+          #   rate-limited 403: tried up to 5 times, waiting about 2, 4, 8
+          #   and 16 seconds plus jitter in between, or as long as a rate
+          #   limit asks (see gh_api_rate_limit_wait), then returns 1. A rate
+          #   limit that asks for more than 60 seconds returns 1 at once, as
+          #   does a second fallback wait: retrying earlier would fail again;
+          # - any other status: returns 1 at once.
+          # A failure leaves gh's last message on stderr. Retry notices go
+          # to the job log (fd 3), never to the caller's stderr.
+          exec 3>&2
+          gh_api_notice() {
+            local text="$2"
+            text="${text//'%'/%25}"
+            text="${text//$'\r'/%0D}"
+            text="${text//$'\n'/%0A}"
+            echo "::$1::$text" >&3
+          }
+          # `gh_api_rate_limit_wait CODE RAW`: how long a rate-limited 403 or
+          # 429 asks to wait before a retry, as "SECONDS header" or "60
+          # fallback", or nothing when it is not rate-limited: Retry-After;
+          # else, when no request is left, until X-RateLimit-Reset; else
+          # GitHub's one-minute fallback, for a 429 or a 403 whose message
+          # names its secondary rate limit.
+          gh_api_rate_limit_wait() {
+            awk -v code="$1" -v now="$(date +%s)" '
+              NR == 1 { next }
+              !body && /^\r?$/ { body = 1; next }
+              !body {
+                line = tolower($0); sub(/\r$/, "", line)
+                if (line ~ /^retry-after: *[0-9]+$/) { sub(/^retry-after: */, "", line); retry = line + 0; has_retry = 1 }
+                if (line ~ /^x-ratelimit-remaining: *0$/) exhausted = 1
+                if (line ~ /^x-ratelimit-reset: *[0-9]+$/) { sub(/^x-ratelimit-reset: */, "", line); reset = line + 0 }
+                next
+              }
+              tolower($0) ~ /secondary rate limit/ { secondary = 1 }
+              END {
+                if (has_retry) print retry " header"
+                else if (exhausted && reset) print (reset > now ? reset - now + 1 : 1) " header"
+                else if (exhausted || code == 429 || secondary) print "60 fallback"
+              }' "$2"
+          }
+          gh_api() {
+            local path="$1" value="$2" attempt=1 delay=2 fallbacks=0 raw json out err status code transient wait kind pause too_long
+            raw="$(mktemp)"
+            json="$(mktemp)"
+            out="$(mktemp)"
+            err="$(mktemp)"
+            while :; do
+              status=0
+              timeout --kill-after=5 30 gh api --include "$path" >"$raw" 2>"$err" || status=$?
+              code="$(sed -n '1s/^HTTP\/[0-9.]* \([0-9][0-9][0-9]\).*/\1/p' "$raw")"
+              if [ "$code" = 200 ] && [ "$status" -eq 0 ]; then
+                # The body follows the status line, the headers and a blank line.
+                awk 'body { print; next } NR > 1 && /^\r?$/ { body = 1 }' "$raw" >"$json" || status=$?
+                if [ "$status" -eq 0 ]; then
+                  python3 -c "$GH_API_VALUE" "$value" <"$json" >"$out" 2>>"$err" || status=$?
+                fi
+                if [ "$status" -eq 0 ]; then
+                  cat "$out" || status=$?
+                fi
+                if [ "$status" -ne 3 ]; then
+                  if [ "$status" -ne 0 ]; then
+                    { cat "$err"; echo "gh api $path failed: the answer lacks the $value"; } >&2
+                  fi
+                  rm -f "$raw" "$json" "$out" "$err"
+                  return "$status"
+                fi
+                status=0
+                echo "gh api $path: the answer is not strict JSON" >>"$err"
+              fi
+              case "$status" in
+                124|137) echo "gh api: no answer within 30 seconds" >>"$err" ;;
+              esac
+              wait=""
+              case "$code" in
+                403|429) wait="$(gh_api_rate_limit_wait "$code" "$raw")" ;;
+              esac
+              kind="${wait#* }"
+              wait="${wait%% *}"
+              # GitHub asks for a longer wait after each fallback, so a second
+              # one exceeds the 60 seconds the guard waits.
+              if [ "$kind" = fallback ]; then
+                fallbacks=$((fallbacks + 1))
+                wait=$((wait * fallbacks))
+              fi
+              case "$code" in
+                404)
+                  { cat "$err"; echo "gh api $path: HTTP 404"; } >&2
+                  rm -f "$raw" "$json" "$out" "$err"
+                  return 44
+                  ;;
+                ''|200|408|429|5[0-9][0-9]) transient=true ;;
+                403) if [ -n "$wait" ]; then transient=true; else transient=false; fi ;;
+                *) transient=false ;;
+              esac
+              pause=$((delay + RANDOM % delay))
+              if [ -n "$wait" ] && [ "$wait" -gt "$pause" ]; then
+                pause="$wait"
+              fi
+              too_long=false
+              if [ -n "$wait" ] && [ "$wait" -gt 60 ]; then
+                too_long=true
+              fi
+              if [ "$transient" = true ] && [ "$attempt" -lt 5 ] && [ "$too_long" = false ]; then
+                gh_api_notice warning "gh api $path: attempt $attempt of 5 failed (${code:-no answer}), retrying in $pause s: $(head -c 300 "$err")"
+                sleep "$pause"
+                delay=$((delay * 2))
+                attempt=$((attempt + 1))
+                continue
+              fi
+              if [ "$transient" = true ] && [ "$too_long" = true ]; then
+                gh_api_notice error "gh api $path: rate limited for $wait s, longer than the guard waits: $(head -c 300 "$err")"
+              elif [ "$transient" = true ]; then
+                gh_api_notice error "gh api $path failed 5 times (${code:-no answer}): $(head -c 300 "$err")"
+              fi
+              { cat "$err"; echo "gh api $path failed: ${code:+HTTP }${code:-no answer}"; } >&2
+              rm -f "$raw" "$json" "$out" "$err"
+              return 1
+            done
+          }
+          # `python3 -c "$GH_API_VALUE" KIND < BODY` writes the value that KIND
+          # names: the decoded bytes of a file (content) or a compare's
+          # merge-base SHA (merge-base). It exits 3 when BODY is not strict
+          # JSON (UTF-8, no NaN or Infinity) and 1 when it lacks the value.
+          GH_API_VALUE='
+          import base64, json, re, sys
+          def constant(name):
+              raise ValueError(name)
+          try:
+              answer = json.loads(sys.stdin.buffer.read().decode("utf-8"), parse_constant=constant)
+          except ValueError:
+              sys.exit(3)
+          if sys.argv[1] == "merge-base":
+              commit = answer.get("merge_base_commit") if isinstance(answer, dict) else None
+              sha = commit.get("sha") if isinstance(commit, dict) else None
+              if not (isinstance(sha, str) and re.fullmatch("[0-9a-f]{40}", sha)):
+                  sys.exit("the compare answer has no merge-base SHA")
+              print(sha)
+          elif sys.argv[1] == "content":
+              if not (isinstance(answer, dict) and answer.get("encoding") == "base64"
+                      and isinstance(answer.get("content"), str)):
+                  sys.exit("the contents answer has no base64 content")
+              try:
+                  data = base64.b64decode(answer["content"].replace("\n", ""), validate=True)
+              except ValueError:
+                  sys.exit("the contents answer has invalid base64 content")
+              sys.stdout.buffer.write(data)
+          else:
+              sys.exit("unknown value: " + sys.argv[1])
+          '
           if [ "$EVENT_NAME" = "merge_group" ]; then
             BASE_REF="$MERGE_GROUP_BASE_SHA"
             HEAD_SHA="$MERGE_GROUP_HEAD_SHA"
@@ -106,17 +280,17 @@ jobs:
             BASE_REF="$PR_BASE_REF"
             HEAD_SHA="$PR_HEAD_SHA"
           fi
-          MERGE_BASE_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"
+          MERGE_BASE_SHA="$(gh_api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" merge-base)"
           # Download one file into one guard tree. Required files fail
-          # closed on any API error; ledger files tolerate a 404
-          # (the tree predates the ledgers) and fail on any other error.
+          # closed on any API error; optional files tolerate a 404 (the
+          # tree predates them) and fail on any other error.
           download_one() {
             _dir="$1"; _ref="$2"; _file="$3"; _required="$4"
             # Containment: the resolved destination must stay beneath
             # its guard-tree root. A PR-controlled path with .. segments
             # must never redirect a download outside the tree -- in
-            # particular over the trusted checkout's guard script, which
-            # this workflow executes below under pull_request_target.
+            # particular over the base checkout's guard script, which
+            # this workflow executes below.
             # Checked BEFORE mkdir, so traversal cannot create dirs either.
             _dest="$(realpath -m "/tmp/guard/${_dir}/${_file}")"
             case "$_dest" in
@@ -128,12 +302,15 @@ jobs:
             esac
             mkdir -p "$(dirname "$_dest")"
             _err="$(mktemp)"
-            if gh api "repos/${GITHUB_REPOSITORY}/contents/${_file}?ref=${_ref}" --jq '.content' 2>"$_err" | base64 -d > "$_dest"; then
+            _status=0
+            gh_api "repos/${GITHUB_REPOSITORY}/contents/${_file}?ref=${_ref}" content >"$_dest" 2>"$_err" || _status=$?
+            if [ "$_status" -eq 0 ]; then
               rm -f "$_err"
               return 0
             fi
-            if [ "$_required" = "false" ] && grep -qi "404\|not found" "$_err"; then
-              rm -f "$_err" "$_dest"
+            rm -f "$_dest"
+            if [ "$_required" = "false" ] && [ "$_status" -eq 44 ]; then
+              rm -f "$_err"
               return 0
             fi
             cat "$_err" >&2

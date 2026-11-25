@@ -72,14 +72,27 @@ private def runStages {n : Nat} (initial : Vector (Vector Bool n) n) :
       let previous ← runStages initial pivots (by omega)
       buildStage previous ⟨pivots, by omega⟩ n (by omega)
 
-/-- Execute initialization followed by the first `pivots` saved-matrix stages. -/
+/-- **Staged transitive-closure computation.** Let $A$ be a Boolean adjacency matrix on the
+vertices $0, \dots, n-1$ and let $k \le n$. The computation first builds the $n \times n$ Boolean
+matrix $T^{(0)}$ whose entry $(i, j)$ is true exactly when $i = j$ or $A_{ij}$ is true. Then, for
+$p = 0, \dots, k - 1$, it builds a new matrix $T^{(p+1)}$ from the saved matrix $T^{(p)}$ by
+$T^{(p+1)}_{ij} = T^{(p)}_{ij} \lor (T^{(p)}_{ip} \land T^{(p)}_{pj})$, and it returns $T^{(k)}$.
+One time unit is charged for each cell assignment. -/
 @[no_expose]
 def transitiveClosureStages {n : Nat} (adjacency : Fin n → Fin n → Bool)
     (pivots : Nat) (hpivots : pivots ≤ n) : TimeM Nat (Vector (Vector Bool n) n) := do
   let initial ← buildInitial adjacency n (by omega)
   runStages initial pivots hpivots
 
-/-- Compute reflexive transitive closure by the CLRS saved-matrix recurrence. -/
+/-- **Saved-matrix transitive-closure algorithm.** Given a Boolean adjacency matrix $A$ on the
+vertices $0, 1, \dots, n-1$, the algorithm first builds the matrix $t^{(0)}$ with $t^{(0)}_{ij}$
+true exactly when $i = j$ or $A_{ij}$ is true. Then, for $k = 0, 1, \dots, n-1$ in turn, it
+builds a new matrix $t^{(k+1)}$ with
+$t^{(k+1)}_{ij} = t^{(k)}_{ij} \lor (t^{(k)}_{ik} \land t^{(k)}_{kj})$ for all $i, j$, reading
+every operand from the saved matrix $t^{(k)}$, and it returns $t^{(n)}$. One time unit is
+charged for each cell assignment; reads, Boolean operations and matrix allocation are free.
+
+This is the saved-matrix recurrence of CLRS for the reflexive transitive closure. -/
 @[no_expose]
 def transitiveClosure {n : Nat} (adjacency : Fin n → Fin n → Bool) :
     TimeM Nat (Fin n → Fin n → Bool) := do
@@ -208,7 +221,10 @@ private lemma runStages_time {n : Nat} (initial : Vector (Vector Bool n) n)
       rw [ih (by omega), buildStage_time]
       simp [Nat.add_mul]
 
-/-- Before any pivot, a cell is the diagonal test or the corresponding input edge. -/
+/-- **Initial matrix of the transitive-closure computation.** Let $A$ be a Boolean adjacency
+matrix on the vertices $0, \dots, n-1$. For all vertices $i$ and $j$, the entry $(i, j)$ of the
+matrix produced by the staged transitive-closure computation with no pivot stages is true if and
+only if $i = j$ or $A_{ij}$ is true. -/
 theorem transitiveClosureStages_zero_cell {n : Nat} (adjacency : Fin n → Fin n → Bool)
     (i j : Fin n) :
     ((transitiveClosureStages adjacency 0 (by omega)).ret.get i).get j =
@@ -216,7 +232,13 @@ theorem transitiveClosureStages_zero_cell {n : Nat} (adjacency : Fin n → Fin n
   simp only [transitiveClosureStages, TimeM.ret_bind, runStages, TimeM.ret_pure]
   exact buildInitial_ret adjacency n (by omega) i.val j.val i.isLt j.isLt
 
-/-- Stage `k + 1` reads every operand from the complete saved result of stage `k`. -/
+/-- **Transition recurrence of the transitive-closure stages.** Let $A$ be a Boolean adjacency
+matrix on the vertices $0, \dots, n-1$, and for $m \le n$ let $T^{(m)}$ be the matrix produced by
+the staged transitive-closure computation on $A$ after its first $m$ pivot stages. For every
+$k < n$ and all vertices $i$ and $j$,
+$$T^{(k+1)}_{ij} = T^{(k)}_{ij} \lor \bigl(T^{(k)}_{ik} \land T^{(k)}_{kj}\bigr).$$
+
+Every operand of stage $k + 1$ is read from the complete matrix saved after stage $k$. -/
 theorem transitiveClosureStages_succ_cell {n : Nat} (adjacency : Fin n → Fin n → Bool)
     (k : Nat) (hk : k < n) (i j : Fin n) :
     let previous := (transitiveClosureStages adjacency k (by omega)).ret
@@ -234,13 +256,19 @@ private lemma transitiveClosureStages_time_raw {n : Nat}
   simp only [transitiveClosureStages, TimeM.time_bind]
   rw [buildInitial_time, runStages_time]
 
-/-- Initialization performs exactly `n²` cell assignments. -/
+/-- **Cost of initializing the transitive-closure matrix.** For every Boolean adjacency matrix on
+$n$ vertices, the staged transitive-closure computation with no pivot stages (only the
+initialization of the $n \times n$ matrix) charges exactly $n^2$ time units, one for each cell
+assignment. -/
 theorem transitiveClosure_initializations {n : Nat} (adjacency : Fin n → Fin n → Bool) :
     (transitiveClosureStages adjacency 0 (by omega)).time = n ^ 2 := by
   rw [transitiveClosureStages_time_raw]
   simp [pow_two]
 
-/-- Each saved transition stage performs exactly `n²` new-cell assignments. -/
+/-- **Cost of one transition stage.** For every Boolean adjacency matrix on $n$ vertices and every
+$k < n$, the time charged by the staged transitive-closure computation with $k + 1$ pivot stages
+minus the time charged with $k$ pivot stages equals $n^2$: one time unit for each cell assignment
+of the new stage. -/
 theorem transitiveClosure_stage_assignments {n : Nat} (adjacency : Fin n → Fin n → Bool)
     (k : Nat) (hk : k < n) :
     (transitiveClosureStages adjacency (k + 1) (by omega)).time -
@@ -248,7 +276,12 @@ theorem transitiveClosure_stage_assignments {n : Nat} (adjacency : Fin n → Fin
   rw [transitiveClosureStages_time_raw, transitiveClosureStages_time_raw]
   simp [pow_two, Nat.add_sub_add_left, Nat.add_mul]
 
-/-- All `n` transition stages together perform exactly `n³` cell assignments. -/
+/-- **Cost of the transition stages of transitive closure.** Charge one time unit for each cell
+assignment. For every Boolean adjacency matrix on $n$ vertices, let $a$ be the cost of running the
+initialization of the saved-matrix transitive-closure algorithm followed by all $n$ of its
+stages, and let $b$ be the cost of running the initialization alone. Then $a - b = n^3$, where the
+subtraction is subtraction of natural numbers, truncated at $0$. That is, the $n$ transition
+stages together perform exactly $n^3$ cell assignments. -/
 theorem transitiveClosure_transition_assignments {n : Nat}
     (adjacency : Fin n → Fin n → Bool) :
     (transitiveClosureStages adjacency n (by omega)).time -
@@ -497,8 +530,12 @@ private lemma path_stage_succ_iff {n k : Nat} (hk : k < n)
       refine ⟨left ++ right.tail, hleft.append_tail hright, ?_⟩
       exact internalVerticesBelow_append_tail rfl hleft hright hleftBelow hrightBelow
 
-/-- A saved-stage cell is true exactly when a canonical path exists whose internal vertices are
-among the admitted pivots. -/
+/-- **Invariant of the transitive-closure stages.** Let $A$ be a Boolean adjacency matrix of a
+directed graph on the vertices $0, \dots, n-1$ and let $k \le n$. For all vertices $i$ and $j$, the
+entry $(i, j)$ of the matrix produced by the staged transitive-closure computation after its first
+$k$ pivot stages is true if and only if there are vertices $i = v_0, v_1, \dots, v_m = j$ with
+$m \ge 0$ such that each $A_{v_t v_{t+1}}$ is true and every intermediate vertex
+$v_1, \dots, v_{m-1}$ is less than $k$. -/
 theorem transitiveClosureStages_cell_eq_true_iff {n : Nat}
     (adjacency : Fin n → Fin n → Bool) (pivots : Nat) (hpivots : pivots ≤ n)
     (i j : Fin n) :
@@ -516,7 +553,10 @@ theorem transitiveClosureStages_cell_eq_true_iff {n : Nat}
       rw [ih (by omega), ih (by omega), ih (by omega)]
       exact (path_stage_succ_iff hpivot adjacency i j).symm
 
-/-- The returned Boolean is true exactly for canonical reflexive-transitive reachability. -/
+/-- **Correctness of the transitive-closure algorithm.** Let $A$ be a Boolean adjacency matrix
+of a directed graph on the vertices $0, \dots, n-1$. For all vertices $i$ and $j$, the entry
+$(i, j)$ of the matrix returned by the transitive-closure algorithm on $A$ is true if and only if
+$j$ is reachable from $i$ by a sequence of zero or more edges of the graph. -/
 theorem transitiveClosure_cell_eq_true_iff {n : Nat}
     (adjacency : Fin n → Fin n → Bool) (i j : Fin n) :
     (transitiveClosure adjacency).ret i j = true ↔
@@ -534,19 +574,24 @@ theorem transitiveClosure_cell_eq_true_iff {n : Nat}
     intro vertex _
     exact vertex.isLt
 
-/-- The same run performs `n²` initialization assignments and `n³` transition assignments. -/
+/-- **Running time of the transitive-closure algorithm.** For every Boolean adjacency matrix on
+$n$ vertices, the transitive-closure algorithm charges exactly $n^2 + n^3$ time units: $n^2$ cell
+assignments to initialize the matrix and $n^2$ in each of the $n$ transition stages. -/
 theorem transitiveClosure_time {n : Nat} (adjacency : Fin n → Fin n → Bool) :
     (transitiveClosure adjacency).time = n ^ 2 + n ^ 3 := by
   simp only [transitiveClosure, TimeM.time_bind, TimeM.time_pure]
   rw [transitiveClosureStages_time_raw]
   simp [pow_succ, Nat.mul_assoc]
 
-/-- The empty graph performs no cell assignments. -/
+/-- **Cost of transitive closure on the empty graph.** For the graph with no vertices, the
+transitive-closure algorithm charges $0$ time units: it performs no cell assignments. -/
 theorem transitiveClosure_time_zero (adjacency : Fin 0 → Fin 0 → Bool) :
     (transitiveClosure adjacency).time = 0 := by
   simpa using transitiveClosure_time adjacency
 
-/-- A singleton graph performs one initialization and one transition assignment. -/
+/-- **Cost of transitive closure on one vertex.** For every Boolean adjacency matrix on a single
+vertex, the transitive-closure algorithm charges exactly $2$ time units: one cell assignment for
+the initialization and one for the single transition stage. -/
 theorem transitiveClosure_time_one (adjacency : Fin 1 → Fin 1 → Bool) :
     (transitiveClosure adjacency).time = 2 := by
   simpa using transitiveClosure_time adjacency

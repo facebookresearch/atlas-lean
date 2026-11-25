@@ -113,24 +113,29 @@ namespace MathlibExt.Biology.StatisticalGenetics.PearsonLimit
 
 /-! ### Hardy–Weinberg proportions and the fitted statistic -/
 
-/-- **Hardy–Weinberg genotype proportions** at allele frequency `p`: the probabilities
-`((1 - p)², 2 p (1 - p), p²)` of carrying `0, 1, 2` copies of the counted allele. -/
+/-- **Hardy–Weinberg genotype proportions** at allele frequency `p`: the weights
+`((1 - p)², 2 p (1 - p), p²)` of carrying `0, 1, 2` copies of the counted allele. They sum to `1`
+for every real `p` and are probabilities for `0 ≤ p ≤ 1`; for `p` outside `[0, 1]` the middle weight
+is negative. -/
 def hweProb (p : ℝ) : Fin 3 → ℝ := ![(1 - p) ^ 2, 2 * p * (1 - p), p ^ 2]
 
 /-- The **sample allele frequency** `p̂ = (n₁ + 2 n₂) / (2 (n₀ + n₁ + n₂))` of the counted allele
-from genotype counts `n` (`0` when there are no individuals). -/
+from genotype counts `n` (`0` when `n₀ + n₁ + n₂ = 0`, for example when there are no individuals, by
+the convention `x / 0 = 0`). -/
 noncomputable def alleleFreqHat (n : Fin 3 → ℝ) : ℝ := (n 1 + 2 * n 2) / (2 * ∑ i, n i)
 
 /-- **Pearson's Hardy–Weinberg statistic with estimated allele frequency**: Pearson's statistic of
 the genotype counts `n` of `N` individuals against the Hardy–Weinberg proportions at the sample
-allele frequency, `∑ᵢ (nᵢ - N hweProb p̂ i)² / (N hweProb p̂ i)`. -/
+allele frequency, `∑ᵢ (nᵢ - N hweProb p̂ i)² / (N hweProb p̂ i)`. With the convention `x / 0 = 0`, a
+class with `N hweProb p̂ i = 0` contributes `0`. -/
 noncomputable def hweStat (N : ℕ) (n : Fin 3 → ℝ) : ℝ :=
   pearsonStatistic N (hweProb (alleleFreqHat n)) n
 
-/-- The **estimated inbreeding coefficient**
-`F̂ = (4 n₀ n₂ - n₁²) / ((2 n₀ + n₁)(n₁ + 2 n₂))`. For a polymorphic table it equals
-`1 - H_obs / H_exp`, observed over Hardy–Weinberg-expected heterozygosity at `p̂`
-(`inbreedingHat_eq_one_sub`); it is `0` for a monomorphic table, by `x / 0 = 0`. -/
+/-- The **estimated inbreeding coefficient** `F̂ = (4 n₀ n₂ - n₁²) / ((2 n₀ + n₁)(n₁ + 2 n₂))`. For
+a polymorphic table it equals `1 - H_obs / H_exp`, observed over Hardy–Weinberg-expected
+heterozygosity at `p̂` (`inbreedingHat_eq_one_sub`); it is `0` when `2 n₀ + n₁ = 0` or
+`n₁ + 2 n₂ = 0` (for nonnegative counts, a monomorphic or empty table), by the convention
+`x / 0 = 0`. -/
 noncomputable def inbreedingHat (n : Fin 3 → ℝ) : ℝ :=
   (4 * n 0 * n 2 - n 1 ^ 2) / ((2 * n 0 + n 1) * (n 1 + 2 * n 2))
 
@@ -154,9 +159,9 @@ theorem hweProb_pos {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) (i : Fin 3) : 0 < hweP
   · change 0 < p ^ 2
     positivity
 
-/-- For a polymorphic table (both alleles observed), the estimated inbreeding coefficient is
-`1 - H_obs / H_exp` with observed heterozygosity `H_obs = n₁ / ∑ n` and Hardy–Weinberg-expected
-heterozygosity `H_exp = 2 p̂ (1 - p̂)`. -/
+/-- If `2 n₀ + n₁ ≠ 0`, `n₁ + 2 n₂ ≠ 0` and `∑ n ≠ 0` (for nonnegative counts: both alleles
+observed), the estimated inbreeding coefficient is `1 - H_obs / H_exp` with observed heterozygosity
+`H_obs = n₁ / ∑ n` and Hardy–Weinberg-expected heterozygosity `H_exp = 2 p̂ (1 - p̂)`. -/
 theorem inbreedingHat_eq_one_sub {n : Fin 3 → ℝ} (h0 : 2 * n 0 + n 1 ≠ 0)
     (h2 : n 1 + 2 * n 2 ≠ 0) (hN : ∑ i, n i ≠ 0) :
     inbreedingHat n = 1 - (n 1 / ∑ i, n i) / (2 * alleleFreqHat n * (1 - alleleFreqHat n)) := by
@@ -441,12 +446,13 @@ theorem tendstoInDistribution_hweStat (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hw
   · exact (hweStat_cellCount_eq X N ω hp0.ne' hq.ne').symm
   · simp
 
-/-- **With `p` known, the Hardy–Weinberg Pearson statistic is asymptotically `χ²₂`.** Under the
-hypotheses of `tendstoInDistribution_hweStat`, Pearson's statistic against the *true*
-Hardy–Weinberg proportions, `∑ᵢ (nᵢ - N hweProb p i)² / (N hweProb p i)`, converges in
-distribution to `χ²₂` (`3` cells, `3 - 1` degrees of freedom; the canonical simple-null
-`ProbabilityTheory.tendstoInDistribution_pearsonStatistic`). Estimating `p` by `p̂` lowers the
-limit to `χ²₁`. -/
+/-- **With `p` known, the Hardy–Weinberg Pearson statistic is asymptotically `χ²₂`.** For genotypes
+`X 0, X 1, …` that are i.i.d. under a probability measure in Hardy–Weinberg proportions
+`P(X 0 = i) = hweProb p i` at `0 < p < 1`, Pearson's statistic against the *true* Hardy–Weinberg
+proportions, `∑ᵢ (nᵢ - N hweProb p i)² / (N hweProb p i)`, converges in distribution to `χ²₂` (`3`
+cells, `3 - 1` degrees of freedom; the canonical simple-null
+`ProbabilityTheory.tendstoInDistribution_pearsonStatistic`). Estimating `p` by `p̂` lowers the limit
+to `χ²₁`. -/
 theorem tendstoInDistribution_pearsonStatistic_hweProb
     (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hweProb p i) (hp0 : 0 < p) (hp1 : p < 1)
     (hindep : iIndepFun X P) (hident : ∀ m, IdentDistrib (X m) (X 0) P P)
@@ -458,10 +464,11 @@ theorem tendstoInDistribution_pearsonStatistic_hweProb
     (by simpa using hZ)
 
 omit [IsProbabilityMeasure P] in
-/-- **Monomorphic locus: the statistic is almost surely `0`.** If the allele frequency is `p = 0`
-or `p = 1` (Hardy–Weinberg proportions `(1, 0, 0)` or `(0, 0, 1)`), then almost surely every
-individual has the same homozygous genotype and the fitted statistic is `0` for every sample
-size. -/
+/-- **Monomorphic locus: the statistic is almost surely `0`.** Let the genotypes `X 0, X 1, …` be
+identically distributed under a finite measure `P` (no independence is needed) with
+`P(X 0 = i) = hweProb p i`. If the allele frequency is `p = 0` or `p = 1` (Hardy–Weinberg
+proportions `(1, 0, 0)` or `(0, 0, 1)`), then almost surely every individual has the same homozygous
+genotype and the fitted statistic is `0` for every sample size. -/
 theorem hweStat_ae_eq_zero_of_monomorphic [IsFiniteMeasure P]
     (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hweProb p i)
     (hident : ∀ m, IdentDistrib (X m) (X 0) P P) (hp : p = 0 ∨ p = 1) :
@@ -489,7 +496,8 @@ theorem hweStat_ae_eq_zero_of_monomorphic [IsFiniteMeasure P]
   · filter_upwards [hnot 1 (by simp), hnot 0 (by simp)] with ω h1 h0 N
     exact hzero ω N (hcount ω 1 h1 N) (Or.inl (hcount ω 0 h0 N))
 
-/-- **A monomorphic locus has no `χ²₁` limit.** At `p = 0` or `p = 1` the fitted statistic
+/-- **A monomorphic locus has no `χ²₁` limit.** For genotypes that are identically distributed under
+a probability measure with `P(X 0 = i) = hweProb p i`, at `p = 0` or `p = 1` the fitted statistic
 converges in distribution to the Dirac mass at `0` (it is almost surely `0`), so it does not
 converge to `χ²₁`: the hypothesis `0 < p < 1` of `tendstoInDistribution_hweStat` cannot be
 dropped. -/

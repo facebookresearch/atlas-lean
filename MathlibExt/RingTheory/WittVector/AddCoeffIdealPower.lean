@@ -129,17 +129,19 @@ private theorem sub_one_mul_geom_add_one (p e : ℕ) (hp : 1 ≤ p) :
 private theorem padicValNat_factorial_prime_pow (p : ℕ) [hp : Fact p.Prime] (e : ℕ) :
     padicValNat p (p ^ e).factorial = ∑ k ∈ Finset.range e, p ^ k := by
   induction e with
-  | zero => simp
+  | zero => simp [Nat.padicValNat_def]
   | succ e IH =>
-    rw [pow_succ, mul_comm, padicValNat_factorial_mul, IH, Finset.sum_range_succ]
+    rw [Nat.padicValNat_def] at IH ⊢
+    rw [pow_succ, mul_comm, multiplicity_factorial_mul, IH, Finset.sum_range_succ]
 
 private theorem sub_one_mul_padicValNat_factorial_prime_pow (p : ℕ) [hp : Fact p.Prime]
     (e : ℕ) : (p - 1) * padicValNat p (p ^ e).factorial + 1 = p ^ e := by
   rw [padicValNat_factorial_prime_pow, sub_one_mul_geom_add_one p e hp.out.one_lt.le]
 
 private theorem padicValNat_le_of_dvd (p : ℕ) [hp : Fact p.Prime] {a b : ℕ} (hb : b ≠ 0)
-    (h : a ∣ b) : padicValNat p a ≤ padicValNat p b :=
-  (padicValNat_dvd_iff_le hb).mp (pow_padicValNat_dvd.trans h)
+    (h : a ∣ b) : padicValNat p a ≤ padicValNat p b := by
+  simp only [Nat.padicValNat_def]
+  exact (multiplicity_dvd_iff_le hb).mp ((pow_multiplicity_dvd p a).trans h)
 
 private theorem sum_mul_sub_one_le (p : ℕ) [hp : Fact p.Prime] {ι : Type*}
     (s : Finset ι) (a e : ι → ℕ) :
@@ -165,6 +167,7 @@ private theorem sum_mul_sub_one_le (p : ℕ) [hp : Fact p.Prime] {ι : Type*}
   have hle := padicValNat_le_of_dvd p (Nat.factorial_ne_zero _) hdvd
   have hval : padicValNat p (∏ t ∈ s, ((p ^ e t).factorial) ^ a t) =
       ∑ t ∈ s, a t * padicValNat p (p ^ e t).factorial := by
+    simp only [Nat.padicValNat_def]
     rw [← Nat.factorization_def _ hp.out, Nat.factorization_prod fun t _ =>
       pow_ne_zero _ (Nat.factorial_ne_zero _)]
     rw [Finsupp.finsetSum_apply]
@@ -195,8 +198,9 @@ private theorem sub_one_mul_padicValNat_factorial_add_le (p : ℕ) [hp : Fact p.
     rw [← h2]
     exact Nat.mul_dvd_mul_left _ h1
   have hle := padicValNat_le_of_dvd p (Nat.factorial_ne_zero _) hdvd
-  rw [padicValNat.mul (pow_ne_zero _ hp.out.ne_zero) (Nat.factorial_ne_zero _),
-    padicValNat.prime_pow] at hle
+  rw [Nat.padicValNat_def,
+    Nat.multiplicity_mul (pow_ne_zero _ hp.out.ne_zero) (Nat.factorial_ne_zero _),
+    Nat.multiplicity_prime_pow, ← Nat.padicValNat_def] at hle
   have hmono : (p - 1) * (padicValNat p M.factorial + n) ≤
       (p - 1) * padicValNat p (p ^ n).factorial :=
     Nat.mul_le_mul_left _ (by omega)
