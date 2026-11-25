@@ -18,10 +18,6 @@ $K_f = 3$ give $k_{\mathrm{obs}} = 3/4$ and overall factor $3/8$, while using $3
 This is the film model of a single catalyst pellet. Two-film transfer between a gas and a liquid with Henry's law has a
 different interface condition and is not a case of it; nonisothermal pellets are also outside this result.
 
-## Depends on
-
-## Proof depends on
-
 ## Sources
 
-- J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd edition, paperback, seventh printing (November 2026), Nob Hill Publishing; freely distributed by the authors at <https://sites.engineering.ucsb.edu/~jbraw/chemreacfun/> (page numbers below are the printed ones): Section 7.3, the internal effectiveness factor normalized at the surface concentration, Equations 7.24–7.28 (pp. 366–367); Section 7.4.5, the flux boundary condition with external mass-transfer coefficient, Equation 7.53, and the Biot number, Equation 7.55 (pp. 381–382). The lumped surface balance and its solution are derived above.
+- J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd edition, paperback, seventh printing (November 2026), Nob Hill Publishing; freely distributed by the authors at <https://sites.engineering.ucsb.edu/~jbraw/chemreacfun/> (page numbers below are the printed ones): Section 7.4, the internal effectiveness factor normalized at the surface concentration, Equations 7.24–7.28 (pp. 366–367); Section 7.4.5, the flux boundary condition with external mass-transfer coefficient, Equation 7.53, and the Biot number, Equation 7.55 (pp. 381–382). The lumped surface balance and its solution are derived above.
