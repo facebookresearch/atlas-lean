@@ -19,7 +19,7 @@ tournament not containing `T*` as a subtournament contains a transitive tourname
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.TransitiveSubtournamentLogErdosProblem1216Wanted
+public import MathlibExt.Combinatorics.Digraph.TransitiveSubtournament
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 @[expose] public section

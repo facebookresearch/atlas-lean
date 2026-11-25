@@ -29,6 +29,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ArndtU
 public import MathlibExt.Combinatorics.Enumerative.ArndtVFixed
+public import MathlibExt.Combinatorics.Enumerative.ParityRestrictedCompositions
 public import MathlibExt.Combinatorics.Enumerative.ArndtNegativeEven
 public import MathlibExt.NumberTheory.PadovanSequence
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFunctionsWanted
@@ -36,17 +37,6 @@ public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFun
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Compositions into even or small odd parts.** For natural numbers $k$ and $n$,
-$c^{2k+1}_e(n)$ is the number of compositions of $n$ (sequences of positive integers of any
-length, including the empty one, that sum to $n$) in which every part is even or at most
-$2k + 1$. In particular $c^{2k+1}_e(0) = 1$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Definition 5. -/
-def evenOrSmallOddCompositionCount (k n : ℕ) : ℕ :=
-  ∑ m ∈ Finset.range (n + 1), ((Finset.Nat.antidiagonalTuple m n).filter fun c =>
-    ∀ i, 0 < c i ∧ (Even (c i) ∨ c i ≤ 2 * k + 1)).card
 
 /-- **Compositions of $5$ into even or small odd parts.** $c^1_e(5) = 10$ and $c^3_e(5) = 15$,
 where $c^{2k+1}_e(n)$ is the number of compositions of $n$ in which every part is even or at
@@ -102,28 +92,6 @@ Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositio
 public theorem_wanted kArndtTotalCount_neg_odd (j n : ℕ) :
     kArndtTotalCount (-(2 * j + 1 : ℤ)) n = evenOrSmallOddCompositionCount j n
 
-/-- **Recurrences for even-or-small-odd and odd-or-small-even compositions.** For natural
-numbers $k$ and $n$, let $c^{2k+1}_e(n)$ be the number of compositions of $n$ in which every part
-is even or at most $2k + 1$, and $c^{2k}_o(n)$ the number in which every part is odd or at most
-$2k$. If $k \ge 1$ and $n \ge 3$, then
-$$c^{2k+1}_e(n) = c^{2k+1}_e(n - 1) + 2c^{2k+1}_e(n - 2) - c^{2k+1}_e(n - 3 - 2k)$$
-and
-$$c^{2k}_o(n) = c^{2k}_o(n - 1) + 2c^{2k}_o(n - 2) - c^{2k}_o(n - 2 - 2k),$$
-where the last term is read as $0$ when its argument is negative.
-
-Both recurrences fail at $n = 2$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Corollary 1 (`integers-2026-A64-cor-1`). -/
-public theorem_wanted evenOrSmallOdd_oddOrSmallEven_recurrence (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 3 ≤ n) :
-    ((evenOrSmallOddCompositionCount k n : ℤ) =
-        evenOrSmallOddCompositionCount k (n - 1) + 2 * evenOrSmallOddCompositionCount k (n - 2) -
-          if 2 * k + 3 ≤ n then (evenOrSmallOddCompositionCount k (n - 3 - 2 * k) : ℤ)
-          else 0) ∧
-      (oddOrSmallEvenCompositionCount k n : ℤ) =
-        oddOrSmallEvenCompositionCount k (n - 1) + 2 * oddOrSmallEvenCompositionCount k (n - 2) -
-          if 2 * k + 2 ≤ n then (oddOrSmallEvenCompositionCount k (n - 2 - 2 * k) : ℤ) else 0
 
 end
 

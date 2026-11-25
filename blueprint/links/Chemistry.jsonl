@@ -1332,3 +1332,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/analytical-chemistry/x-ray-diffraction/README.md"}], "id": "af_ef58dd6070cfaafa60b1a618"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/stochastic-batch-reactors/stochastic-reactor-paths-and-open-reactors.md"}], "id": "af_e765e42f4ab79e9ee6ae21b3", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/stochastic-batch-reactors/README.md"}], "id": "af_7133cef28afe201d0ad35798"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Chemistry/chemical-kinetics/plug-flow-reactor/stirred-tank-outperforms-plug-flow-for-autocatalysis.md"}], "id": "af_b3d44976e541760272c8937e", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
