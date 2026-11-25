@@ -36,30 +36,46 @@ automorphism of finite order, such as the order-4 counterexample, `φ(A) ⊆ A` 
 `φ(A) = A`). No normality or index condition is imposed on `A` or `B`.
 -/
 
-/-- `δ_φ(x) = x⁻¹ φ(x)`, the commutator `[x, φ]` (Kourovka convention `[x, y] = x⁻¹ y⁻¹ x y`, with
-`φ` acting as `x ↦ φ x`). Its iterates are `[x, ₙ φ]`. -/
+/-- **The commutator of an element with an automorphism.** For an automorphism $\varphi$ of a
+group $G$ and $x \in G$, $\delta_\varphi(x) = x^{-1} \varphi(x)$. This is the commutator
+$[x, \varphi]$ in the Kourovka convention $[x, y] = x^{-1} y^{-1} x y$, with $\varphi$ acting as
+$x \mapsto \varphi(x)$; the iterates $\delta_\varphi^n(x)$ are the iterated commutators
+$[x, {}_n \varphi]$, with $[x, {}_0 \varphi] = x$. -/
 def delta {G : Type*} [Group G] (φ : MulAut G) (x : G) : G := x⁻¹ * φ x
 
-/-- `φ` is a nil-automorphism: for every `a ∈ G` some iterated commutator `[a, ₙ φ]` is trivial. -/
+/-- **Nil-automorphisms.** An automorphism $\varphi$ of a group $G$ is a nil-automorphism if for
+every $a \in G$ there is $n \ge 0$ with $\delta_\varphi^n(a) = 1$, where
+$\delta_\varphi(x) = x^{-1} \varphi(x)$; that is, some iterated commutator $[a, {}_n \varphi]$ is
+trivial. -/
 def IsNilAutomorphism {G : Type*} [Group G] (φ : MulAut G) : Prop :=
   ∀ a : G, ∃ n : ℕ, (delta φ)^[n] a = 1
 
-/-- `φ` is an `e`-automorphism: for any two `φ`-invariant subgroups `A ⊄ B` (`φ(A) = A` and
-`φ(B) = B`), some `a ∈ A \ B` has `[a, φ] ∈ B`. -/
+/-- **$e$-automorphisms.** An automorphism $\varphi$ of a group $G$ is an $e$-automorphism if for
+any two subgroups $A$ and $B$ of $G$ with $\varphi(A) = A$, $\varphi(B) = B$ and
+$A \not\subseteq B$, some $a \in A \setminus B$ has $[a, \varphi] = a^{-1} \varphi(a) \in B$. -/
 def IsEAutomorphism {G : Type*} [Group G] (φ : MulAut G) : Prop :=
   ∀ A B : Subgroup G, (∀ x, φ x ∈ A ↔ x ∈ A) → (∀ x, φ x ∈ B ↔ x ∈ B) → ¬ A ≤ B →
     ∃ a ∈ A, a ∉ B ∧ delta φ a ∈ B
 
-/-- Kourovka 11.23 (V. G. Vilyatser): every `e`-automorphism of a group is a nil-automorphism. -/
+/-- **Vilyatser's question on $e$-automorphisms (Kourovka 11.23).** The proposition that every
+$e$-automorphism $\varphi$ of a group $G$ is a nil-automorphism of $G$. -/
 def eAutomorphismIsNil : Prop :=
   ∀ (G : Type) [Group G] (φ : MulAut G), IsEAutomorphism φ → IsNilAutomorphism φ
 
 /--
-Resolved false: Muliarchyk proves that the cyclic shift of order four on the fourth direct power of
-the first Grigorchuk group is an `e`-automorphism (for arbitrary invariant subgroups) but not a
-nil-automorphism (via Bartholdi's characterization of the Engel elements of the Grigorchuk group);
-the preprint states that the work was carried out with assistance from ChatGPT. The Kourovka
-Notebook (21st issue) marks 11.23 solved, "No, not every". Source: E. I. Khukhro and V. D. Mazurov
+**An $e$-automorphism need not be a nil-automorphism.** Vilyatser's assertion in Kourovka
+Problem 11.23 is false: there are a group $G$ and an automorphism $\varphi$ of $G$ that is an
+$e$-automorphism (for any subgroups $A$ and $B$ of $G$ with $\varphi(A) = A$, $\varphi(B) = B$ and
+$A \not\subseteq B$, some $a \in A \setminus B$ has $a^{-1} \varphi(a) \in B$) but not a
+nil-automorphism: writing $\delta(x) = x^{-1} \varphi(x)$, some $a \in G$ has $\delta^n(a) \ne 1$
+for every $n \ge 0$.
+
+Muliarchyk shows that the cyclic shift of order four on the fourth direct power of the first
+Grigorchuk group is such an automorphism, using Bartholdi's characterization of the Engel elements
+of the Grigorchuk group; the preprint states that the work was carried out with assistance from
+ChatGPT. The Kourovka Notebook (21st issue) marks 11.23 solved, "No, not every".
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Problem 11.23 (V. G. Vilyatser); resolution: K. Muliarchyk, An e-automorphism that is not a
 nil-automorphism, preprint (2026), main theorem: the cyclic shift

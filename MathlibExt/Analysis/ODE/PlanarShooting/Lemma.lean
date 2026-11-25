@@ -54,16 +54,16 @@ later trapping-region argument, which also continues the branch past `z = 0`.
 
 ## Existing contracts audited
 
-`WantedExt/Dynamics/StableUnstableManifoldsWanted.lean` (set-level Hadamard–Perron) concerns
+`MathlibExt/Dynamics/StableUnstableManifolds.lean` (set-level Hadamard–Perron) concerns
 iterates of a `C¹` map on `ℝⁿ`. It gives neither a flow-invariant curve, nor tangency, nor a
-choice of branch, so it cannot supply this lemma even once proved. It is weaker still: its
+choice of branch, so it cannot supply this lemma. It is weaker still: its
 conclusion `Ws ∩ Wu = {x₀}` also holds when `Wu = {x₀}`, so it does not even promise a
 nontrivial unstable set.
 `WantedExt/Analysis/ODE/LinearizedInstabilityWanted.lean` only asserts that some nearby
 solution segment escapes. Neither contract is used or modified here.
 
 The downstream consumer is `MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le` in
-`MathlibExt/Biology/Dynamics/FisherKPPExistence.lean`. This file proves only the quadrant property
+`Domains/Biology/Dynamics/FisherKPPExistence.lean`. This file proves only the quadrant property
 `0 < U < 1`, `U' < 0`. Entry of the branch into the open trapping triangle
 `{U < 1, U' < 0, U' + μ U > 0}` with `μ = c / (2 D)` is proved in `PlanarShooting.InvariantRegion`
 (`eventually_mem_trappingTriangle_atBot`).

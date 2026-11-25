@@ -23,7 +23,7 @@ Mathlib has the cardinal-valued `LinearMap.rank_add_le` and `LinearMap.rank_fins
 linear maps but no statement about `Matrix.rank`. The proof: the column space of `A + B` lies in
 the sum of the column spaces. It is stated for arbitrary row and column index types (only the
 columns need to be finite) and an arbitrary field. `MathlibExt.Probability.Statistics.PCA` and
-`MathlibExt.Biology.Omics.CovarianceBridge` use it for real `Fin a × Fin b` matrices.
+`Domains.Biology.Omics.CovarianceBridge` use it for real `Fin a × Fin b` matrices.
 
 ## Main results
 

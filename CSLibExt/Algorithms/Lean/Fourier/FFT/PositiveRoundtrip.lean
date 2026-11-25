@@ -44,7 +44,10 @@ private theorem ifft_pos_samples (d : Nat) (xs : Vector ℂ (2 ^ d)) :
   rw [ZMod.natCast_zmod_val] at h
   exact (Array.getElem_eq_getD (h := by simpa using ZMod.val_lt j) 0).symm.trans h
 
-/-- Execute positive-sign forward and source inverse on every admitted vector. -/
+/-- **Inverse FFT after FFT at the positive root is the identity.** Let $d$ be a natural number,
+$N = 2^d$ and $\omega = e^{2\pi i/N}$. For every vector $x \in \mathbb{C}^N$, running the
+radix-two FFT with root $\omega$ on $x$ and then the inverse FFT with root $\omega$ on its output
+returns $x$. -/
 theorem ifft_fft_stdAddChar_one (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     (ifft d (ZMod.stdAddChar (1 : ZMod (2 ^ d)))
       (fft d (ZMod.stdAddChar (1 : ZMod (2 ^ d))) xs).ret).ret = xs := by
@@ -59,7 +62,10 @@ theorem ifft_fft_stdAddChar_one (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     ZMod.val_natCast_of_lt hk]
   exact (Array.getElem_eq_getD (h := by simpa using hk) 0).symm
 
-/-- Execute positive-sign source inverse and forward on every admitted vector. -/
+/-- **FFT after inverse FFT at the positive root is the identity.** Let $d$ be a natural number,
+$N = 2^d$ and $\omega = e^{2\pi i/N}$. For every vector $x \in \mathbb{C}^N$, running the inverse
+FFT with root $\omega$ on $x$ and then the radix-two FFT with root $\omega$ on its output
+returns $x$. -/
 theorem fft_ifft_stdAddChar_one (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     (fft d (ZMod.stdAddChar (1 : ZMod (2 ^ d)))
       (ifft d (ZMod.stdAddChar (1 : ZMod (2 ^ d))) xs).ret).ret = xs := by

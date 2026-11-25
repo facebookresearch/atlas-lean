@@ -519,7 +519,7 @@ private theorem adoExists_replicate_perm {d B : ℕ} [NeZero d] (w : List (Fin d
   obtain ⟨i, hi⟩ := Fintype.exists_le_card_fiber_of_mul_le_card
     (fun j : Fin w.length => v.get j) (by simpa using h)
   have hicount : B ≤ w.count i := by
-    rw [Fin.card_filter_univ_eq_vector_get_eq_count i v] at hi
+    rw [← List.Vector.count_toList i v] at hi
     simpa [v] using hi
   have hsub : (List.replicate B i).Sublist w :=
     List.replicate_sublist_iff.mpr hicount
@@ -582,7 +582,7 @@ private theorem adoWord_mem_bounded_modWords
       (UniversalEnvelopingAlgebra.ι K (b i)) ^ B ∈ adoModWords Q b B)
     (w : List (Fin d)) : adoWord b w ∈ adoModWords Q b (d * B) := by
   induction hlen : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
       by_cases hw : w.length < d * B
       · apply Submodule.mem_sup_right
         exact Submodule.subset_span (adoWord_mem_wordsLt b hw)
@@ -597,7 +597,7 @@ private theorem adoWord_mem_bounded_modWords
           rintro u ⟨v, hv, rfl⟩
           exact ih v.length (by simpa [hlen] using hv) v rfl
 
-private def adoAllWords
+private noncomputable def adoAllWords
     {K L : Type*} [Field K] [LieRing L] [LieAlgebra K L]
     {d : ℕ} (b : Module.Basis (Fin d) K L) : Set (adoUEA K L) :=
   Set.range (adoWord b)
@@ -853,7 +853,7 @@ private theorem adoDerivation_pow_mul_eq_zero
     {x y : A} {a b : ℕ} (hx : (d ^ a) x = 0) (hy : (d ^ b) y = 0) :
     (d ^ (a + b)) (x * y) = 0 := by
   induction h : a + b using Nat.strong_induction_on generalizing a b x y with
-  | h n ih =>
+  | ind n ih =>
       subst n
       obtain rfl | a := a
       · have hx0 : x = 0 := by simpa using hx
@@ -2105,17 +2105,20 @@ termination_by Module.finrank K L
 decreasing_by exact hfin
 
 /--
-Every finite-dimensional Lie algebra `L` over a field `K` of characteristic zero admits a faithful
-finite-dimensional representation `ρ : L →ₗ⁅K⁆ Module.End K (Fin n → K)` that is injective.
-Source: I. D. Ado, Bull. Soc. Phys.-Math. Kazan 7 (1935) and 1947 char-zero theorem; Bourbaki, Lie
-Groups and Lie Algebras; Lean states char-zero finite-dimensional version while modern theorem
-extends to arbitrary fields.
+**Ado's theorem.** Every finite-dimensional Lie algebra $L$ over a field $K$ of
+characteristic zero has a faithful finite-dimensional representation: there are a natural
+number $n$ and an injective homomorphism of Lie algebras over $K$ from $L$ into the Lie algebra
+of $K$-linear endomorphisms of $K^n$ with the commutator bracket.
 
 Proves `Wanted` entry `ado`.
 
 Proof: Following Tao's 2011 route, the nilpotent and solvable cases are proved by induction using
 finite-dimensional quotients of universal enveloping algebras. The general case uses the Levi
 decomposition and combines the resulting radical representation with the adjoint representation.
+
+Source: I. D. Ado, Bull. Soc. Phys.-Math. Kazan 7 (1935) and 1947 char-zero theorem; Bourbaki, Lie
+Groups and Lie Algebras; Lean states char-zero finite-dimensional version while modern theorem
+extends to arbitrary fields.
 -/
 public theorem ado
     {K L : Type*} [Field K] [CharZero K] [LieRing L] [LieAlgebra K L]

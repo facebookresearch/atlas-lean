@@ -68,7 +68,7 @@ noncomputable def algebraicConnectivity (w : E → ℝ) : ℝ :=
 
 omit [DecidableEq E] [Fintype E] in
 /-- The Rayleigh form of the operator of a matrix `M` at `toLp v` is `vᵀ M v`. -/
-private theorem rayleighForm_toLp (M : Matrix V V ℝ) (v : V → ℝ) :
+theorem rayleighForm_toLp (M : Matrix V V ℝ) (v : V → ℝ) :
     rayleighForm (toEuclideanLin M) (WithLp.toLp 2 v) = v ⬝ᵥ (M *ᵥ v) := by
   simp [rayleighForm, Matrix.toLpLin_toLp, EuclideanSpace.inner_toLp_toLp]
 

@@ -5,3 +5,5 @@ Deterministic, nondeterministic, two-way and ε-automata, transducers, regular e
 - [Automata and regular expressions](automata-and-expressions/README.md)
 - [Automaton minimization](minimization/README.md)
 - [Syntactic monoids and algebraic recognition](syntactic-monoids/README.md)
+
+- [First-order definable word languages are exactly the star-free languages](first-order-definable-languages-are-star-free.md)
