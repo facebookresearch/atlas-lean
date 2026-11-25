@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
+public import MathlibExt.Combinatorics.Additive.ConsecutiveWeightedZeroSumProd
 public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
 public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
@@ -98,21 +99,6 @@ public theorem_wanted consecutive_prod_ring_ge {R R' M N : Type*} [Ring R] [Ring
       ∃ a : Fin k → R × R', (∀ i ∈ Finset.Icc s t, a i ∈ A ×ˢ B) ∧
         ∑ i ∈ Finset.Icc s t, ((a i).1 • (x i).1, (a i).2 • (x i).2) = 0} c) :
     cA * cB ≤ c
-
-/-- **Consecutive weighted zero-sum constant of a product of modules.** Let $R$ be a ring and
-$A \subseteq R$. For an $R$-module $P$, let $C_A(P)$ be the least positive integer $k$, if one
-exists, such that every sequence $x_1, \dots, x_k$ in $P$ has indices $s \le t$ and weights
-$a_s, \dots, a_t \in A$ with $a_s x_s + \dots + a_t x_t = 0$. If $M$ and $N$ are $R$-modules
-for which $C_A(M)$, $C_A(N)$ and $C_A(M \times N)$ all exist, then
-$C_A(M \times N) \ge C_A(M) \, C_A(N)$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 2.4 (`integers-2024-A38-thm-2-4`). -/
-public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup M]
-    [Module R M] [AddCommGroup N] [Module R N] (A : Set R) {cM cN c : ℕ}
-    (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
-    (h : IsLeast (consecutiveSet R (M × N) A) c) :
-    cM * cN ≤ c
 
 /-- **Griffiths' criterion for unit-weighted zero sums modulo a prime power.** Let $p$ be a prime,
 let $r$ and $k$ be natural numbers, put $n = p^r$, and let

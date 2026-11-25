@@ -10502,6 +10502,7 @@
   "MathlibExt/Combinatorics/Additive/CombinatorialNullstellensatz": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/CommonDifferenceProgressions": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Vosper's theorem"},
   "MathlibExt/Combinatorics/Additive/ConsecutiveOrthogonal": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
+  "MathlibExt/Combinatorics/Additive/ConsecutiveWeightedZeroSumProd": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/Combinatorics/Additive/ConsecutiveZeroSum": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/Combinatorics/Additive/Convolution": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
   "MathlibExt/Combinatorics/Additive/CoprimeDenominatorProgressions": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
