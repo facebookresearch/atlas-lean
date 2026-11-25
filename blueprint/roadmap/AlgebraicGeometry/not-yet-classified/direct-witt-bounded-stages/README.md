@@ -1,0 +1,16 @@
+# Direct Witt Bounded Stages
+
+- [Functor Iso](functor-iso.md)
+- [Bounded Subfunctor](bounded-subfunctor.md)
+- [Bounded Functor](bounded-functor.md)
+- [Bounded Inclusion](bounded-inclusion.md)
+- [Bounded Subfunctor le](bounded-subfunctor-le.md)
+- [Bounded Transition](bounded-transition.md)
+- [Bounded Equiv](bounded-equiv.md)
+- [Bounded Iso](bounded-iso.md)
+- [Bounded Iso inclusion](bounded-iso-inclusion.md)
+- [Bounded Iso transition](bounded-iso-transition.md)
+- [Stage Points](stage-points.md)
+- [Stage Points transition](stage-points-transition.md)
+- [Ind Comparison](ind-comparison.md)
+- [Ind Comparison normalized](ind-comparison-normalized.md)

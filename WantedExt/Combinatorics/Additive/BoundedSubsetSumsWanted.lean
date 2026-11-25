@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Scalar
 public import Mathlib.Data.Int.Interval
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Additive.BoundedSubsequenceSums
+public import MathlibExt.Combinatorics.Additive.YangChen
 
 /-!
 # Subset and subsequence sums with bounded numbers of terms (statements)
@@ -40,22 +41,6 @@ namespace MetaMathlibExt
 open scoped Pointwise
 
 /-! ## The generalized `h`-fold sumset (Yang and Chen) -/
-
-/-- **Yang–Chen lower bound for generalized $h$-fold sumsets.** Let $k, h \in \mathbb{N}$ and let
-$\bar r = (r_0, \dots, r_{k-1})$ be positive integers with $2 \le h \le r_0 + \dots + r_{k-1}$, and
-let $L(\bar r, h)$ be the Yang–Chen bound. For all integers $a_0 < a_1 < \dots < a_{k-1}$, the
-generalized $h$-fold sumset $h^{(\bar r)}A$ of $A = (a_0, \dots, a_{k-1})$ has at least
-$L(\bar r, h)$ elements; and there exist integers $a_0 < a_1 < \dots < a_{k-1}$ for which
-$h^{(\bar r)}A$ has exactly $L(\bar r, h)$ elements.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Theorem 2 (Yang and Chen) (`integers-2024-A116-thm-2`). -/
-public theorem_wanted yangChen_card_generalizedHFoldSumset_ge {k : ℕ} (r : Fin k → ℕ)
-    (hr : ∀ i, 0 < r i) (h : ℕ) (hh : 2 ≤ h) (hhr : h ≤ ∑ i, r i) :
-    (∀ a : Fin k → ℤ, StrictMono a →
-      yangChenBound r h ≤ (generalizedHFoldSumset a r h).card) ∧
-    ∃ a : Fin k → ℤ, StrictMono a ∧
-      ((generalizedHFoldSumset a r h).card : ℤ) = yangChenBound r h
 
 /-- **Yang–Chen inverse theorem for at least five terms.** Let $k \ge 5$ and $h \ge 2$ be integers,
 let $\bar r = (r_0, \dots, r_{k-1})$ be positive integers with $h \le r_0 + \dots + r_{k-1} - 2$,
@@ -104,29 +89,6 @@ public theorem_wanted yangChen_card_generalizedHFoldSumset_eq_four (a : Fin 4 �
       a 1 - a 0 = a 3 - a 2)) ∧
     (2 ≤ r 1 ∨ 2 ≤ r 2 → (((generalizedHFoldSumset a r h).card : ℤ) = yangChenBound r h ↔
       (Set.range a).IsAPOfLength 4))
-
-/-! ## Subset sums as generalized `h`-fold sumsets -/
-
-/-- **Bounded subsequence sums as a generalized h-fold sumset when zero is not a term.** Let $G$
-be an abelian group and let $a_1, \dots, a_k$ be distinct nonzero elements of $G$. Let
-$t_1, \dots, t_k$ be positive integers, let $\mathcal{A}$ be the sequence in which each $a_i$
-occurs $t_i$ times, and let $h = t_1 + \dots + t_k$ be its length. If $\alpha, \beta$ are natural
-numbers with $\alpha \ge 1$ and $\alpha + \beta \le h - 1$, then $\Sigma^\beta_\alpha(\mathcal{A})$,
-the set of sums of subsequences of $\mathcal{A}$ with at least $\alpha$ and at most $h - \beta$
-terms, equals the generalized $(h - \beta)$-fold sumset $(h - \beta)^{(\bar r)} A_0$ of
-$A_0 = (a_0, a_1, \dots, a_k)$, where $a_0 = 0$, with
-$\bar r = (h - \alpha - \beta, t_1, \dots, t_k)$, that is, the set of sums
-$\sum_{j=0}^{k} s_j a_j$ with $0 \le s_j \le r_j$ for all $j$ and $\sum_j s_j = h - \beta$.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Lemma 4 (`integers-2024-A116-lem-4`). -/
-public theorem_wanted boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_not_mem
-    {G : Type*} [AddCommGroup G] [DecidableEq G] {k : ℕ} (b : Fin k → G)
-    (hb : Function.Injective b) (hb0 : ∀ i, b i ≠ 0) (t : Fin k → ℕ) (ht : ∀ i, 0 < t i)
-    (h : ℕ) (hh : h = ∑ i, t i) (α β : ℕ) (hα : 1 ≤ α) (hαβ : α + β + 1 ≤ h) :
-    boundedSubsequenceSums α β (repetitionSequence b t) =
-      generalizedHFoldSumset (Fin.cons 0 b : Fin (k + 1) → G)
-        (Fin.cons (h - α - β) t : Fin (k + 1) → ℕ) (h - β)
 
 /-! ## Direct and inverse theorems for subset sums -/
 

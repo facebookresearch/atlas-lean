@@ -24,7 +24,8 @@ import Mathlib.Tactic.Ring
 
 This file collects the definitions for Davis's study of the odd part of `(2^e)!`. It proves the
 odd-part bijection on the upper dyadic half and congruences for odd double factorials and their
-normalized quotients.
+normalized quotients. It also counts the odd square roots of each residue congruent to one modulo
+eight.
 -/
 
 @[expose] public section
@@ -531,5 +532,89 @@ public theorem oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
   have hexact := Int.mul_ediv_cancel' (oddDoubleFactorial_normalized_congr e he).1
   simpa only [pow_succ, mul_one, hexact, sub_add_cancel] using
     (hparity.mul_left' (c := 2 ^ e)).add_right 1
+
+namespace square_mod_twoPower_fiber_card
+
+/-- In either odd class modulo four, the root parameter runs through exactly two lifts
+of a single residue modulo `2^k`. -/
+private theorem roots_in_class (k r c w : ℕ) (hr : Odd r) (hc : r ^ 2 = 8 * c + 1)
+    (hw : w < 2 ^ k) :
+    ∃ a < 2 ^ k, ∀ t < 2 * 2 ^ k,
+      (4 * t + r) ^ 2 % (8 * 2 ^ k) = 8 * w + 1 ↔ t = a ∨ t = a + 2 ^ k := by
+  let f (t : ℕ) := 2 * t ^ 2 + r * t + c
+  -- In the difference f(a) - f(b), the factor 2(a + b) + r is odd and can be cancelled.
+  have congr_iff (a b : ℕ) : f a ≡ f b [MOD 2 ^ k] ↔ a ≡ b [MOD 2 ^ k] := by
+    constructor
+    · intro h
+      have hodd : Odd (2 * (a + b) + r) := (even_two_mul _).add_odd hr
+      apply Nat.ModEq.cancel_left_of_coprime (hodd.coprime_two_left.pow_left k)
+      convert (Nat.ModEq.add_right_cancel' c h).add_right (2 * a * b) using 1 <;> ring
+    · intro h
+      exact (((h.pow 2).mul_left 2).add (h.mul_left r)).add_right c
+  let g (a : Fin (2 ^ k)) : Fin (2 ^ k) := ⟨f a % 2 ^ k, Nat.mod_lt _ (by positivity)⟩
+  have inj : Function.Injective g := by
+    intro a b h
+    exact Fin.ext (((congr_iff a b).mp (congrArg Fin.val h)).eq_of_lt_of_lt a.isLt b.isLt)
+  obtain ⟨a, ha⟩ := Finite.surjective_of_injective inj ⟨w, hw⟩
+  have ha' : f a ≡ w [MOD 2 ^ k] := by
+    simpa only [Nat.ModEq, Nat.mod_eq_of_lt hw] using congrArg Fin.val ha
+  refine ⟨a, a.isLt, fun t ht ↦ ?_⟩
+  have hs : (4 * t + r) ^ 2 = 8 * f t + 1 := by
+    rw [add_sq, hc]
+    dsimp [f]
+    ring
+  calc
+    _ ↔ 8 * f t + 1 ≡ 8 * w + 1 [MOD 8 * 2 ^ k] := by
+      rw [hs, Nat.ModEq, Nat.mod_eq_of_lt (show 8 * w + 1 < 8 * 2 ^ k by omega)]
+    _ ↔ f t ≡ w [MOD 2 ^ k] := by
+      rw [Nat.ModEq.add_iff_right (Nat.ModEq.refl 1), Nat.ModEq.mul_left_cancel_iff' (by decide)]
+    _ ↔ t ≡ a.val [MOD 2 ^ k] := by
+      rw [← congr_iff t a]
+      exact ⟨fun h ↦ h.trans ha'.symm, fun h ↦ h.trans ha'⟩
+    _ ↔ _ := by
+      rw [Nat.ModEq, Nat.mod_eq_of_lt a.isLt]
+      by_cases h : t < 2 ^ k
+      · rw [Nat.mod_eq_of_lt h]
+        omega
+      · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (show t - 2 ^ k < 2 ^ k by omega)]
+        omega
+
+end square_mod_twoPower_fiber_card
+
+open square_mod_twoPower_fiber_card in
+/--
+**Each residue $1 \bmod 8$ has four odd square roots modulo $2^e$.** Let $e \ge 3$ and let $S_e$
+be the set of odd natural numbers $i$ with $1 \le i < 2^e$. For every natural number $v < 2^e$
+with $v \equiv 1 \pmod 8$, exactly four elements $i \in S_e$ satisfy $i^2 \bmod 2^e = v$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Lemma 20.
+-/
+public theorem square_mod_twoPower_fiber_card
+    (e : ℕ) (he : 3 ≤ e) (v : ℕ) (hv : v < 2 ^ e) (hv8 : v % 8 = 1) :
+    ({i ∈ oddBelowTwoPow e | i ^ 2 % 2 ^ e = v}).card = 4 := by
+  obtain ⟨k, rfl⟩ : ∃ k, e = k + 3 := ⟨e - 3, by omega⟩
+  let n := 2 ^ k
+  have hm : 2 ^ (k + 3) = 8 * n := by simp [n, pow_add, Nat.mul_comm]
+  rw [hm] at hv ⊢
+  obtain ⟨w, rfl⟩ : ∃ w, v = 8 * w + 1 := ⟨v / 8, by omega⟩
+  have hw : w < n := by omega
+  obtain ⟨a, ha, h₁⟩ := roots_in_class k 1 0 w (by decide) (by decide) hw
+  obtain ⟨b, hb, h₃⟩ := roots_in_class k 3 1 w (by decide) (by decide) hw
+  change a < n at ha
+  change b < n at hb
+  apply Finset.card_eq_four.mpr
+  refine ⟨4 * a + 1, 4 * (a + n) + 1, 4 * b + 3, 4 * (b + n) + 3,
+    by omega, by omega, by omega, by omega, by omega, by omega, ?_⟩
+  ext i
+  simp only [Finset.mem_filter, mem_oddSet, hm, Nat.odd_iff, Finset.mem_insert,
+    Finset.mem_singleton]
+  by_cases hi : i < 8 * n ∧ i % 2 = 1
+  · obtain ⟨t, rfl | rfl⟩ : ∃ t, i = 4 * t + 1 ∨ i = 4 * t + 3 := ⟨i / 4, by omega⟩
+    · rw [h₁ t (by omega)]
+      omega
+    · rw [h₃ t (by omega)]
+      omega
+  · omega
 
 end MetaMathlibExt

@@ -10,8 +10,12 @@ module
 
 import Mathlib.Algebra.CharP.Algebra
 import Mathlib.Algebra.CharP.Lemmas
+public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Algebra.Module.Torsion.Free
 public import Mathlib.Algebra.MonoidAlgebra.MapDomain
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Int.Interval
+public import Mathlib.Data.Matrix.Basis
 public import Mathlib.Data.ZMod.Basic
 
 /-!
@@ -20,7 +24,8 @@ public import Mathlib.Data.ZMod.Basic
 Kohen's Cartier operator extracts the coefficients at multiples of an exponent scale.
 It transfers a dilation of exponents from one factor of a constant term to the other.
 Under Kohen's defining congruence for $\tilde P$, the constant terms of $P^n$ and $\tilde P^n$
-agree modulo $p$ for every $n$.
+agree modulo $p$ for every $n$. The powers of the zero-digit matrix stabilize at the matrix
+unit indexed by the origin.
 -/
 
 namespace MetaMathlibExt
@@ -55,6 +60,68 @@ public theorem coeff_laurentCartier {R : Type*} [Semiring R] {r k : ℕ} (hk : k
     (f : AddMonoidAlgebra R (Fin r → ℤ)) (j : Fin r → ℤ) :
     (laurentCartier k f).coeff j = f.coeff (k • j) := by
   simp [laurentCartier, hk]
+
+-- Keep the two proofs of origin membership inline in the matrix indices.
+set_option backward.proofsInPublic true in
+/-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
+$r, m \ge 0$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$, and let
+$\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p\mathbb{Z}$ whose $(i, j)$ entry is $1$
+if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for every $s' \ge s$,
+$\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other entries are $0$.
+
+Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
+Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
+Lemma 11 (`jis-2026-26.4.2-lem-11`). -/
+public theorem exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : ℕ) :
+    ∃ s : ℕ, ∀ s' ≥ s,
+      (Matrix.of fun i j : ↥(Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) =>
+        if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod p) else 0) ^ s' =
+        Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1 := by
+  let T := Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m
+  let A := Matrix.of fun i j : ↥T => if i.val = p • j.val then (1 : ZMod p) else 0
+  let z : ↥T := ⟨0, by simp [T]⟩
+  -- A nonzero entry of a power follows a chain of dilations inside the box.
+  have support (n : ℕ) (i j : ↥T) (h : (A ^ n) i j ≠ 0) : i.val = p ^ n • j.val := by
+    induction n generalizing i j with
+    | zero =>
+      by_contra hne
+      have hij : i ≠ j := by simpa using hne
+      simp [hij] at h
+    | succ n ih =>
+      rw [pow_succ, Matrix.mul_apply] at h
+      obtain ⟨k, _, hk⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
+      have hkj : k.val = p • j.val := by
+        by_contra hne
+        simp only [A, Matrix.of_apply, ite_eq_right hne, mul_zero, ne_self_iff_false] at hk
+      rw [ih i k (left_ne_zero_of_mul hk), hkj, smul_smul, pow_succ]
+  have origin (n : ℕ) : (A ^ n) z z = 1 := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      rw [pow_succ, Matrix.mul_apply]
+      have hz (k : ↥T) : A k z = if k = z then 1 else 0 := by
+        simp [A, z, Subtype.ext_iff]
+      simpa [hz, mul_ite] using ih
+  refine ⟨m, ?_⟩
+  change ∀ n ≥ m, A ^ n = Matrix.single z z 1
+  intro n hn
+  ext i j
+  by_cases hij : z = i ∧ z = j
+  · obtain ⟨rfl, rfl⟩ := hij
+    simpa using origin n
+  rw [Matrix.single_apply, ite_eq_right hij]
+  by_contra h
+  have heq := support n i j h
+  have hi : i.val = 0 := by
+    funext t
+    have hbox := Finset.mem_Icc.mp (Fintype.mem_piFinset.mp i.property t)
+    have hc := congrFun heq t
+    simp only [Pi.smul_apply, nsmul_eq_mul] at hc
+    apply Int.eq_zero_of_dvd_of_natAbs_lt_natAbs ⟨j.val t, hc⟩
+    exact (show (i.val t).natAbs ≤ m by omega).trans_lt (hn.trans_lt (n.lt_pow_self hp.one_lt))
+  have hj : j.val = 0 := smul_right_injective (Fin r → ℤ) (pow_ne_zero n hp.ne_zero)
+    (by simpa only [smul_zero] using heq.symm.trans hi)
+  exact hij ⟨Subtype.ext hi.symm, Subtype.ext hj.symm⟩
 
 namespace constantTerm_pow_mul_modEq_tilde
 

@@ -15,6 +15,7 @@ public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
+public import MathlibExt.NumberTheory.Cyclotomic.ComposedFactorization
 public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
 public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
 public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
@@ -159,27 +160,6 @@ public theorem_wanted prime_ramified_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (h
       if k ≤ b then (∀ i < k - 1, 0 < r₀ i) ∧ 1 + p * R₀ (k - 1) ≤ x ∧
         1 + p ^ 2 * R₀ (k - 1) * R₁ k ≤ x ^ p
       else (∀ i < k, 0 < r₀ i) ∧ 1 + R₀ k ≤ x ∧ 1 + p * R₀ k * R₁ k ≤ x ^ p)
-
-/-- **Factorization into composed cyclotomic polynomials.** Let $x$ be the indeterminate of the
-polynomial ring $\mathbb{Z}[x]$. Let $m$ be a natural number, let $p_1, \dots, p_m$ be primes,
-not necessarily distinct, let $a_1, \dots, a_m$ be natural numbers, and put
-$n = \prod_{i=1}^m p_i^{a_i}$. For $1 \le i \le m$ let $x_i = x^{N_i}$ with
-$N_i = \prod_{1 \le r < i} p_r^{a_r}$. Then
-$$x^n - 1 = (x - 1) \prod_{i=1}^m \prod_{j=1}^{a_i} \Phi_{p_i}(x_i^{p_i^{j-1}}),$$
-where $\Phi_p$ is the $p$-th cyclotomic polynomial over $\mathbb{Z}$ and $\Phi_{p_i}(\cdot)$
-denotes composition of polynomials.
-
-The source takes the prime factorization of $n$; the identity needs only that each $p_i$ is
-prime. The definition of $x_i$ follows the arXiv version of the source (arXiv:2412.00010),
-which the journal statement refers to as "$x_k$ as above".
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 4 (`integers-2026-A95-prop-4`). -/
-public theorem_wanted X_pow_sub_one_eq_mul_prod_cyclotomic_comp (m : ℕ) (p a : ℕ → ℕ)
-    (hp : ∀ i ∈ Finset.Icc 1 m, (p i).Prime) :
-    (X ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1 : ℤ[X]) =
-      (X - 1) * ∏ i ∈ Finset.Icc 1 m, ∏ j ∈ Finset.Icc 1 (a i),
-        (cyclotomic (p i) ℤ).comp (X ^ ((∏ r ∈ Finset.Ico 1 i, p r ^ a r) * p i ^ (j - 1)))
 
 /-- **Cohen's prime sieve for the line problem.** Let $q$ and $n$ be natural numbers, let $\omega$
 be the number of distinct prime factors of $q^n - 1$, and let $S$ be a set of $s$ prime factors of

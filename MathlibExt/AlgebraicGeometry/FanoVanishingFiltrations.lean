@@ -89,7 +89,7 @@ structure DivisorialModel {X : ComplexVariety} {n : ℕ} (F : FanoData X n) wher
   [integralY : IsIntegral Y.left]
   [smoothY : SmoothOfRelativeDimension n Y.hom]
   [properY : IsProper Y.hom]
-  projectiveY : IsProjectiveVariety Y
+  projectiveY : ProjectiveSpace.IsProjective Y
   morphism : Y ⟶ X
   [properMorphism : IsProper morphism.left]
   birational : IsBirationalMorphism morphism.left
