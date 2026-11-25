@@ -143,10 +143,11 @@ theorem continuous_groupLeftCompletion (x : p.NonUnitalCompletion) :
 theorem continuous_groupRightCompletion (x : p.NonUnitalCompletion) :
     Continuous (fun g : G => groupRightCompletion μ α p g x) := by
   have h := ((continuous_groupLeftCompletion μ α p hp (star x)).comp continuous_inv).star
-  have hfun : (fun g : G => star (groupLeftCompletion μ α p g⁻¹ (star x))) =
+  have hfun : star (fun g : G => groupLeftCompletion μ α p g⁻¹ (star x)) =
       fun g : G => groupRightCompletion μ α p g x := by
     funext g
-    simpa only [inv_inv, star_star] using star_groupLeftCompletion μ α p g⁻¹ (star x)
+    simpa only [Pi.star_apply, inv_inv, star_star] using
+      star_groupLeftCompletion μ α p g⁻¹ (star x)
   simp only [Function.comp_def] at h
   rw [hfun] at h
   exact h
