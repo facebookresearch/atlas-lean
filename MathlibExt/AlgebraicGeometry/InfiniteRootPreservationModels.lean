@@ -41,7 +41,10 @@ open InfiniteRootSectionModels FiniteRootTowers
 
 variable {S : Scheme.{0}}
 
-/-- Source-integration proofs for the fixed native relative base change. -/
+/-- Base changes of the stack $R$ over $S$ are stacks: an instance of this class asserts that, for
+every morphism of schemes $b : T \to S$, the base change of $R$ along $b$, obtained by composing $R$
+with the functor from schemes over $T$ to schemes over $S$ induced by $b$
+(`RootEtaleRestrictions.pseudofunctor b R`), is a stack for the fppf topology over $T$. -/
 class HasBaseChanges (R : Stack S) : Prop where
   isStack : ∀ (T : Scheme.{0}) (b : T ⟶ S),
     (RootEtaleRestrictions.pseudofunctor b R).IsStack (Scheme.fppfTopology.over T)

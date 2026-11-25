@@ -107,8 +107,8 @@ def polynomialAction (C : CharacterChernData Q D K characterOne) :
     Module (Polynomial ℚ) (GradedChow Q D K) :=
   Module.compHom (GradedChow Q D K) (polynomialAction Q D K C).toRingHom
 
-/-- The localized coefficients `ℚ[X, X⁻¹]`; Mathlib's `LaurentPolynomial.isLocalization` makes
-them the localization of `ℚ[X]` at `X`. -/
+/-- The coefficient ring `ℚ[X, X⁻¹]` of Laurent polynomials over `ℚ`: the localization of `ℚ[X]`
+obtained by inverting `X` (`LaurentPolynomial.isLocalization`). -/
 abbrev Coefficients := LaurentPolynomial ℚ
 
 /-- The actual localized equivariant module, via extension along X to T. -/

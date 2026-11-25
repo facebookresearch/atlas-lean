@@ -156,10 +156,14 @@ structure AlongCotangentRepresentation (C : CotangentContext R G) (f : X ⟶ Y)
     WeakEquivalence (fibreMap (homFamilyProjection C.dgKernels L) DF.projection map over
       (ComposableArrows.mk₀ t))
 
-/-- The actual cotangent differential is the full Yoneda transpose of the native f-map, relative to
-the chosen along representation `C`. It therefore depends on `C`: changing `C` by an automorphism
-`φ` of `f^* L_Y` replaces `df` by `df ∘ φ⁻¹` (for `f = id`, `df = -id` is possible). The chain rule
-and `d(id) = id` need the canonical representation and are not requested. -/
+/-- The cotangent differential of a morphism of prestacks $f : X \to Y$ over $k$, relative to the
+chosen representation `C`, by $f^*L_Y$, of the deformations of $Y$ along $f$ (`DF`); here $f^*L_Y$
+is the image under the DG pullback model `PB` of the cotangent object $L_Y$ of `CY`. It consists of
+a closed degree-zero morphism $df : f^*L_Y \to L_X$ to the cotangent object $L_X$ of `CX`, the
+precomposition with $df$ on left slices of the DG nerve (`SlicePrecomposition`), and an edge, in
+the mapping space over the coefficient tests, from precomposition with $df$ followed by `C` to the
+representation of the derivations of $X$ by $L_X$ followed by the map `m` from derivations of $X$
+to deformations of $Y$ along $f$: $df$ is the Yoneda transpose of the map induced by $f$. -/
 structure CotangentDifferential (CX : CotangentContext R G) {GY : QCohEnhancement M U Y}
     (CY : CotangentContext R GY) (f : X ⟶ Y) (PB : PullbackDGModel f GY G)
     {A : AlongLiftProjection M R CX.kernels f CX.projection}

@@ -105,8 +105,9 @@ def fibre (s : S) : AbelianScheme (Spec (S.residueField s)) :=
 /-- The actual identity section. -/
 abbrev zero : 𝟙_ (Over S) ⟶ A.model := η[A.model]
 
-/-- Actual T-valued points. With `CategoryTheory.MonObj` open, they form a commutative group
-by Mathlib's `CategoryTheory.Hom.commGroup`. -/
+/-- The `T`-valued points of `A`, for a scheme `T` over `S`: the morphisms `T ⟶ A` over `S`. They
+form a commutative group under the group law of `A` (`CategoryTheory.Hom.commGroup`, a scoped
+instance in `CategoryTheory.MonObj`). -/
 abbrev Points (T : Over S) := T ⟶ A.model
 
 /-- Multiplication by n is the actual internal power map. -/

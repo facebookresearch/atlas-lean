@@ -65,14 +65,24 @@ def compositionComplexIso {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) (P : 
 
 variable [HasDerivedPullbacks.{u}]
 
-/-- Completed-source derived identity, fixed by the native cochain counit. -/
+/-- Identity data for derived pullback on a scheme $X$, for the derived pullbacks given by
+`HasDerivedPullbacks`: a natural isomorphism from the derived pullback $L(\mathrm{id}_X)^*$ along
+the identity to the identity functor of the derived category of $\mathcal{O}_X$-modules, whose
+component at every cochain complex $P$ of $\mathcal{O}_X$-modules is the counit
+$L(\mathrm{id}_X)^* P \to \mathrm{id}_X^* P$ followed by the termwise identity-pullback isomorphism
+$\mathrm{id}_X^* P \cong P$ (`identityComplexIso`). -/
 structure IdentityData (X : Scheme.{u}) where
   comparison : derivedPullback (𝟙 X) ≅ 𝟭 (FourierMukai.D X)
   normalization : ∀ P : Cochains X,
     comparison.hom.app (DerivedCategory.Q.obj P) =
       (derivedPullbackCounit (𝟙 X)).app P ≫ DerivedCategory.Q.map (identityComplexIso X P).hom
 
-/-- Completed-source derived composition, fixed by the complete native counit square. -/
+/-- Composition data for derived pullback along morphisms of schemes $f : X \to Y$ and
+$g : Y \to Z$, for the derived pullbacks given by `HasDerivedPullbacks`: a natural isomorphism
+$Lf^* \circ Lg^* \cong L(g \circ f)^*$ such that, at every cochain complex $P$ of
+$\mathcal{O}_Z$-modules, its component followed by the counit $L(g \circ f)^* P \to (g \circ f)^* P$
+equals $Lf^*$ of the counit $Lg^* P \to g^* P$, then the counit $Lf^* (g^* P) \to f^* g^* P$, then
+the termwise composition isomorphism $f^* g^* P \cong (g \circ f)^* P$ (`compositionComplexIso`). -/
 structure CompositionData {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) where
   comparison : derivedPullback g ⋙ derivedPullback f ≅ derivedPullback (f ≫ g)
   normalization : ∀ P : Cochains Z,
@@ -81,8 +91,14 @@ structure CompositionData {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) where
         (derivedPullbackCounit f).app (pulledComplex g P) ≫
         DerivedCategory.Q.map (compositionComplexIso f g P).hom
 
-/-- Full actual derived pullback coherence. All operations are the native
-operators above; this is conditional integration of the completed source laws. -/
+/-- Coherence of derived pullback of complexes of module sheaves on schemes, for the derived
+pullbacks given by `HasDerivedPullbacks`: identity data (`IdentityData`) for every scheme and
+composition data (`CompositionData`) for every composable pair of morphisms, satisfying the
+coherence conditions of a pseudofunctor. For $f : X \to Y$, $g : Y \to Z$ and $h : Z \to W$, the two
+isomorphisms $Lf^* Lg^* Lh^* \cong L(h \circ g \circ f)^*$ built from the composition data agree;
+the composition isomorphism $L(\mathrm{id}_X)^* Lf^* \cong Lf^*$ is the identity comparison of $X$
+applied to $Lf^*$; and $Lf^* L(\mathrm{id}_Y)^* \cong Lf^*$ is $Lf^*$ applied to the identity
+comparison of $Y$. -/
 structure Coherence where
   identity : ∀ X : Scheme.{u}, IdentityData X
   composition : ∀ {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z), CompositionData f g
