@@ -25,6 +25,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Undirected Hamiltonian cycle](undirected-hamiltonian-cycle/README.md)
 - [Undirected Hamiltonian path](undirected-hamiltonian-path/README.md)
 - [Vertex-disjoint paths in digraphs](vertex-disjoint-paths-in-digraphs/README.md)
+- [Fixed-point-free graph involutions](fixed-point-free-graph-involutions/README.md)
 - [Hamiltonian paths and circuits in restricted graph classes](hamiltonian-paths-and-circuits-in-restricted-gra/README.md)
 - [Rural postman problem](rural-postman-problem/README.md)
 - [Shortest path with forbidden pairs](shortest-path-with-forbidden-pairs/README.md)

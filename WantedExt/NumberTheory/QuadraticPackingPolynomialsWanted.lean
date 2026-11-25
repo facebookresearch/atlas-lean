@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.ModEq
 public import MathlibExt.NumberTheory.QuadraticPackingPolynomials
+public import MathlibExt.NumberTheory.QuadraticPackingPolynomialsShearedCriterion
 
 /-!
 # Quadratic packing polynomials on sectors of `ℝ²`
@@ -117,32 +118,6 @@ public theorem_wanted quadraticPackingPolynomial_staircaseFirstHeight {m n k : �
     (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
     (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
     staircaseFirstHeight m n k = n / Nat.gcd (m - 1) n - 1
-
-/-- **Sheared criterion for quadratic packing polynomials.** Let $m, n$ be coprime positive
-integers, let $l = \gcd(m - 1, n)$, and assume that $n/l$ divides $l$. Let $k$ be a positive
-integer with $k \equiv (m - 1)/l \pmod{n/l}$, let $F$ be a real number, and let
-$\hat P(x, y) = \frac{n}{2} x \left(x - \frac{k}{n/l}\right) + x + \frac{k}{n/l} y + F$. Let
-$M(x, y) = (x - \frac{m - 1}{n} y, y)$ and let $\hat I(n/m) = M(I(n/m))$ be the image under $M$
-of the lattice points $I(n/m)$ of the sector of slope $n/m$. Then $\hat P$ is a quadratic
-packing polynomial on $\hat I(n/m)$ if and only if
-$\{\hat P(i/(n/l), \bar y_i) : 0 \le i < k\} = \{0, 1, \dots, k - 1\}$, where $\bar y_i$ is the
-height of the first step of the $i$-th staircase of the sector of slope $n/m$.
-
-The divisibility $n/l \mid l$ is a standing assumption of the source, made explicit here.
-
-Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
-R^2*, INTEGERS 25 (2025), Article A81, Lemma 4 (`integers-2025-A81-lem-4`). -/
-public theorem_wanted isQuadraticPackingPolynomial_sheared_iff {m n k : ℕ} (hm : 0 < m)
-    (hn : 0 < n) (hmn : Nat.Coprime m n) (hl : n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n)
-    (hk : 0 < k) (hkm : k ≡ (m - 1) / Nat.gcd (m - 1) n [MOD n / Nat.gcd (m - 1) n])
-    (F : ℝ) :
-    let l : ℝ := Nat.gcd (m - 1) n
-    let Phat : ℝ → ℝ → ℝ := fun x y => (n : ℝ) / 2 * x * (x - k / (n / l)) + x + k / (n / l) * y + F
-    IsQuadraticPackingPolynomial
-        ((fun p : ℝ × ℝ => (p.1 - ((m : ℝ) - 1) / n * p.2, p.2)) ''
-          sectorLatticePoints ((n : ℝ) / m)) Phat ↔
-      (fun i : ℕ => Phat (i / (n / l)) (staircaseFirstHeight m n i)) '' Set.Iio k =
-        ((↑) : ℕ → ℝ) '' Set.Iio k
 
 /-- **Constant term of a quadratic packing polynomial on a rational sector.** Let $m, n$ be
 coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
