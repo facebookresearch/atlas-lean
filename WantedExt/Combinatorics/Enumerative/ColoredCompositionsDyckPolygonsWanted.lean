@@ -14,6 +14,7 @@ public import MathlibExt.Combinatorics.Enumerative.ColoredCompositionPartialBell
 public import MathlibExt.Combinatorics.Enumerative.ColoredCompositionsDyckPolygons
 public import MathlibExt.Combinatorics.Enumerative.ColoredDyckPathPartialBell
 public import MathlibExt.Combinatorics.Enumerative.ColoredPolygonDissectionComposition
+public import MathlibExt.Combinatorics.Enumerative.ColoredPolygonDissectionPartialBell
 public import MathlibExt.Combinatorics.Enumerative.PartialBellPolynomial
 
 /-!
@@ -38,24 +39,6 @@ Compositions, Dyck Paths, and Polygon Partitions*, Journal of Integer Sequences
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Birmajer–Gil–Weiner formula for colored polygon partitions.** Let
-$\gamma = (\gamma_1, \gamma_2, \dots)$ be a sequence of natural numbers and let $p_{n,k}(\gamma)$
-be the number of partitions of a rooted convex $(n+2)$-gon by $k - 1$ noncrossing diagonals into
-$k$ polygons in which each $(j+2)$-gon carries one of $\gamma_j$ colors. For all natural numbers
-$n \ge 1$ and $k \ge 1$, as rational numbers,
-$$p_{n,k}(\gamma) = \frac{1}{n+1}\binom{n+k}{k}\frac{k!}{n!}B_{n,k}(1!\gamma_1, 2!\gamma_2, \dots)$$
-where $B_{n,k}$ is the partial Bell polynomial.
-
-Source: Gil, Hoover, and Shearer, *Bijections Between Colored Compositions, Dyck
-Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
-24.5.2, Proposition 3 (`jis-2024-24.5.2-prop-3`), citing Birmajer, Gil, and
-Weiner. -/
-public theorem_wanted coloredPolygonDissectionCount_eq_partialBell (γ : ℕ → ℕ) {n k : ℕ}
-    (hn : 1 ≤ n) (hk : 1 ≤ k) :
-    (coloredPolygonDissectionCount γ n k : ℚ) =
-      1 / (n + 1 : ℚ) * ((n + k).choose k : ℚ) * ((k.factorial : ℚ) / n.factorial) *
-        partialBellPolynomial n k (fun j => (j.factorial : ℚ) * γ j)
 
 /-- **Colored compositions and colored Dyck paths.** Let $\gamma = (\gamma_1, \gamma_2, \dots)$
 be a sequence of natural numbers. Let $c_{n,k}(\gamma)$ be the number of compositions of $n$ with

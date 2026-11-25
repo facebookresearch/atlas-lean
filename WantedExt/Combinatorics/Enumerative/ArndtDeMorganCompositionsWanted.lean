@@ -30,7 +30,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ArndtU
 public import MathlibExt.Combinatorics.Enumerative.ArndtVFixed
 public import MathlibExt.Combinatorics.Enumerative.ParityRestrictedCompositions
-public import MathlibExt.Combinatorics.Enumerative.ArndtNegativeEven
+public import MathlibExt.Combinatorics.Enumerative.ArndtOddCompositions
 public import MathlibExt.NumberTheory.PadovanSequence
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFunctionsWanted
 
@@ -47,16 +47,6 @@ Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositio
 theorem evenOrSmallOddCompositionCount_five :
     evenOrSmallOddCompositionCount 0 5 = 10 ∧ evenOrSmallOddCompositionCount 1 5 = 15 := by
   decide
-
-/-- **Arndt compositions and compositions into odd parts are equinumerous.** For every natural
-number $n$, the number $a(n, 0)$ of Arndt compositions of $n$ (compositions $(c_1, \dots, c_m)$
-of $n$ with $c_{2i-1} > c_{2i}$ whenever $2i \le m$) equals the number $c^0_o(n)$ of compositions
-of $n$ into odd parts. This includes $n = 0$, where both counts are $1$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Theorem 1 (`integers-2026-A64-thm-1`). -/
-public theorem_wanted kArndtTotalCount_zero_eq_odd_compositions (n : ℕ) :
-    kArndtTotalCount 0 n = oddOrSmallEvenCompositionCount 0 n
 
 /-- **Compositions fixed by $U$ and their Padovan count.** A composition $(c_1, \dots, c_m)$ of
 $n$ is fixed by the map $U$ if and only if $c_i = 1$ for every odd $i$ and $c_i$ is even for

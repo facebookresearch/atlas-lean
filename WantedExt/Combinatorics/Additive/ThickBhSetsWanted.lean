@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Minpoly.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Combinatorics.Additive.BhSet
-public import MathlibExt.Combinatorics.Additive.SingerSet
+public import MathlibExt.Combinatorics.Additive.BoseSet
 
 /-!
 # Constructing thick `B_h`-sets
@@ -33,36 +33,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter
-
-/-- **Generalized Bose set.** Let $F$ be a finite field with $q$ elements, $K$ a field extension
-of $F$, $h$ and $b$ natural numbers and $\theta \in K$. The generalized Bose set
-$\mathrm{Bose}_h(q, b)$ is the set of residues $a \in \mathbb{Z}/(q^h - 1)\mathbb{Z}$ such that
-$\theta^a = \theta^b + v$ for some $v \in F$, where $\theta^a$ is computed with the least
-nonnegative representative of $a$ (for $h = 0$ the modulus is $0$, $a$ ranges over $\mathbb{Z}$
-and $\theta^a$ means $\theta^{|a|}$).
-
-In the paper $K$ has degree $h$ over $F$ and $\theta$ generates $K^\times$; the definition does
-not need these assumptions.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Definition 1. -/
-public def boseSet (F : Type*) {K : Type*} [Field F] [Fintype F] [Field K] [Algebra F K]
-    (h : ℕ) (θ : K) (b : ℕ) : Set (ZMod (Fintype.card F ^ h - 1)) :=
-  {a | ∃ v : F, θ ^ a.val = θ ^ b + algebraMap F K v}
-
-/-- **Membership in a Bose set.** Let $F$ be a finite field with $q$ elements, let $K$ be a field
-extension of $F$, let $\theta \in K$, and let $h$ and $b$ be natural numbers. A residue
-$a \in \mathbb{Z}/(q^h - 1)\mathbb{Z}$ lies in the Bose set $\mathrm{Bose}_h(q, b)$ built from
-$F$, $K$ and $\theta$ if and only if $\theta^a = \theta^b + v$ for some $v \in F$, where
-$\theta^a$ means $\theta$ raised to the least nonnegative representative of $a$ (or to $|a|$
-when $h = 0$, since then $\mathbb{Z}/(q^h - 1)\mathbb{Z} = \mathbb{Z}$).
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Definition 1. -/
-public theorem mem_boseSet {F K : Type*} [Field F] [Fintype F] [Field K] [Algebra F K]
-    (h : ℕ) (θ : K) (b : ℕ) (a : ZMod (Fintype.card F ^ h - 1)) :
-    a ∈ boseSet F h θ b ↔ ∃ v : F, θ ^ a.val = θ ^ b + algebraMap F K v :=
-  Iff.rfl
 
 /-- **Maximum size of a $B_h$-set in $\{1, \dots, n\}$.** For natural numbers $h$ and $n$, $R_h(n)$
 is the largest number of elements of a $B_h$-set of natural numbers contained in
@@ -161,26 +131,6 @@ public theorem_wanted isBhSet_singerSet {F K : Type*} [Field F] [Fintype F] [Fie
     (hb : (minpoly F (θ ^ b)).natDegree = h + 1) :
     AdditiveCombinatorics.IsBhSet (singerSet F h θ b) h ∧
       (singerSet F h θ b).ncard = Fintype.card F + 1
-
-/-- **Affine equivalences between Bose sets.** Let $F$ be a finite field with $q$ elements and
-characteristic $p$, let $h \ge 2$, let $K$ be a field extension of $F$ of degree $h$, and let
-$\theta \in K$ have order $|K| - 1$, that is, generate $K^\times$. Let $b$ and $e$ be natural
-numbers such that the minimal polynomials of $\theta^b$ and $\theta^e$ over $F$ both have
-degree $h$. Suppose that (i) $b \equiv e \pmod{(q^h - 1)/(q - 1)}$, or
-(ii) $\theta^b - \theta^e \in F$, or (iii) $b \equiv p^i e \pmod{q^h - 1}$ for some natural
-number $i$. Then the Bose sets $\mathrm{Bose}_h(q, b)$ and $\mathrm{Bose}_h(q, e)$ built from
-$F$, $K$ and $\theta$ are affinely equivalent.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Theorem 4 (items (i)–(iii)) (`jis-2024-24.1.2-thm-4`). -/
-public theorem_wanted zModAffinelyEquivalent_boseSet {F K : Type*} [Field F] [Fintype F]
-    [Field K] [Fintype K] [Algebra F K] {h : ℕ} (hh : 2 ≤ h) (hK : Module.finrank F K = h)
-    {θ : K} (hθ : orderOf θ = Fintype.card K - 1) {b e : ℕ}
-    (hb : (minpoly F (θ ^ b)).natDegree = h) (he : (minpoly F (θ ^ e)).natDegree = h)
-    (hbe : b ≡ e [MOD (Fintype.card F ^ h - 1) / (Fintype.card F - 1)] ∨
-      θ ^ b - θ ^ e ∈ Set.range (algebraMap F K) ∨
-      ∃ i : ℕ, b ≡ ringChar F ^ i * e [MOD Fintype.card F ^ h - 1]) :
-    ZModAffinelyEquivalent (boseSet F h θ b) (boseSet F h θ e)
 
 /-- **Unconditional bounds for $R_h(n)$ and $R_h^{-1}(k)$.** Let $h \ge 2$. Write $R_h(n)$ for the
 largest size of a $B_h$-set contained in $\{1, \dots, n\}$, with $R_h(0) = 0$, and $R_h^{-1}(k)$

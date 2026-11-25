@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightClosedForm
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthClosedForm
 public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthGeneratingFunction
@@ -48,6 +49,8 @@ The univariate generating function of `hsp(n)` in Lemma 1, (5) is proved in
 `MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`, and the bivariate
 generating function of `hsp(n, k)` in Lemma 1 in
 `MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction`.
+The closed form of `hsp(n)` in Corollary 1, (6) is proved in
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightClosedForm`.
 
 Not stated (see the source audit table): the bivariate part of Lemma 2 (false as
 extracted), Theorem 2(b) (false as extracted) and the variances of Theorem 6 (false as printed in the journal).
@@ -58,27 +61,6 @@ open MeasureTheory ProbabilityTheory PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Closed form for the total symmetric peak height over compositions.** For $n \ge 0$ let
-$\mathrm{hsp}(n)$ be the sum, over all compositions $c$ of $n$, of the symmetric peak height
-sum of the sequence of parts of $c$, and let $\omega_\pm = 1 \pm i\sqrt{3}$. Then for every
-$n \ge 0$, as complex numbers,
-$$
-\mathrm{hsp}(n) = \frac{2^n}{2} \cdot \frac{7n - 24}{49} +
-\frac{(-33 - 15 i \sqrt{3})(-2)^n}{441\, \omega_+^{n+1}} +
-\frac{(-33 + 15 i \sqrt{3})(-2)^n}{441\, \omega_-^{n+1}} + \frac{1}{3}.
-$$
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Corollary 1, (6) (`integers-2026-A65-cor-1`). -/
-public theorem_wanted symmetricPeakHeightSum_compositions_closed_form (n : ℕ) :
-    ((∑ c : Composition n, symmetricPeakHeightSum c.blocks : ℕ) : ℂ) =
-      (2 : ℂ) ^ n / 2 * (7 * n - 24) / 49 +
-        (-33 - 15 * Complex.I * (Real.sqrt 3 : ℂ)) * (-2) ^ n /
-          (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
-        (-33 + 15 * Complex.I * (Real.sqrt 3 : ℂ)) * (-2) ^ n /
-          (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 3
 
 /-- **Total symmetric peak height over compositions with a fixed number of parts.** For
 $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with exactly

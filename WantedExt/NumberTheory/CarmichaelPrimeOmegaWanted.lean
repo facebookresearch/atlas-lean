@@ -15,6 +15,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.CarmichaelNumber
 public import MathlibExt.Combinatorics.Additive.ZeroSumSubsequenceCount
+public import MathlibExt.NumberTheory.CarmichaelPrimeOmegaRange
 
 /-!
 # Carmichael numbers with a prime number of prime factors
@@ -68,35 +69,6 @@ public theorem_wanted exists_card_smooth_shifted_primes_ge (θ : ℝ) (hθ : θ 
       γ * y ^ θ / Real.log (y ^ θ) ≤
         ({q : ℕ | q.Prime ∧ y ^ θ / Real.log y ≤ q ∧ (q : ℝ) ≤ y ^ θ ∧
           ∀ p : ℕ, p.Prime → p ∣ q - 1 → (p : ℝ) ≤ y}.ncard : ℝ)
-
-/-- **Carmichael numbers with a prime number of prime factors in a range.** Assume Heath-Brown's
-conjecture in the following form: there is a real constant $C$ such that for every natural
-number $d \ge 2$ and every natural number $c$ coprime to $d$ there is a prime $p \equiv c
-\pmod{d}$ with $p \le C d (\log d)^2$. Let $1 < \theta < 2$, and let $\gamma > 0$ be such that
-for all sufficiently large real $y$, the number of primes $q$ with
-$y^\theta / \log y \le q \le y^\theta$ such that every prime divisor of $q - 1$ is at most $y$
-is at least $\gamma y^\theta / \log(y^\theta)$. Then there is a real $Y$ such that for every real
-$y > Y$ there is a Carmichael number $n$ with $e^{(\gamma/4) y^\theta \log y} \le n \le
-e^{e^{19 \theta y}}$ whose number of prime factors counted with multiplicity, $\Omega(n)$, is
-prime.
-
-The paper's proof uses its Lemma 2, which assumes Heath-Brown's conjecture (the paper's
-Conjecture 3); here that assumption is an explicit hypothesis, as in Theorem 1.
-
-Source: Thomas Wright, *Carmichael Numbers with a Prime Number of Prime Factors*, INTEGERS 24
-(2024), Article A97, Theorem 3 (`integers-2024-A97-thm-3`). -/
-public theorem_wanted exists_carmichael_prime_cardFactors_between_of_heathBrown
-    (hHB : ∃ C : ℝ, ∀ d : ℕ, 2 ≤ d → ∀ c : ℕ, Nat.Coprime c d →
-      ∃ p : ℕ, p.Prime ∧ p ≡ c [MOD d] ∧ (p : ℝ) ≤ C * d * Real.log d ^ 2)
-    (θ : ℝ) (hθ : θ ∈ Set.Ioo 1 2) (γ : ℝ) (hγ : 0 < γ)
-    (hQ : ∃ Y : ℝ, ∀ y : ℝ, Y < y →
-      γ * y ^ θ / Real.log (y ^ θ) ≤
-        ({q : ℕ | q.Prime ∧ y ^ θ / Real.log y ≤ q ∧ (q : ℝ) ≤ y ^ θ ∧
-          ∀ p : ℕ, p.Prime → p ∣ q - 1 → (p : ℝ) ≤ y}.ncard : ℝ)) :
-    ∃ Y : ℝ, ∀ y : ℝ, Y < y → ∃ n : ℕ, n.IsCarmichael ∧
-      (ArithmeticFunction.cardFactors n).Prime ∧
-      Real.exp (γ / 4 * y ^ θ * Real.log y) ≤ n ∧
-      (n : ℝ) ≤ Real.exp (Real.exp (19 * θ * y))
 
 end
 
