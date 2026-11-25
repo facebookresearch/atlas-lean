@@ -13,7 +13,7 @@ defined and positive.
 
 ## Background
 
-- One Hestenes–Stiefel conjugate gradient step: the linear conjugate gradient
+- [One Hestenes–Stiefel conjugate gradient step](../../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/step.md): the linear conjugate gradient
   method for $Ax = b$ that the nonlinear methods reduce to on strictly convex quadratics with exact
   line searches.
 

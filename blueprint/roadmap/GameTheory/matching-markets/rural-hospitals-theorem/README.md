@@ -4,7 +4,7 @@ In the medical residency market, some hospitals, often rural ones, fill fewer po
 
 This topic treats the marriage case, where every quota equals one: in a finite market where agents may remain single, every stable matching matches the same men and the same women. The women play Roth's hospitals and the men his students; for a woman the statement is the Theorem with quota one: single at one stable matching, single at all. Roth's college-admissions setting has quotas larger than one and responsive preferences.
 
-A matching with singles is a partial bijection $\mu$ between the men $M$ and the women $W$: $\mu(m)$ is the partner of man $m$ and $\mu^{-1}(w)$ that of woman $w$, if any; an agent without a partner is single. A perfect matching $\mu : M \to W$ of the stable marriage problem is the partial bijection in which everybody has a partner; when every partner is preferred to remaining single, the two notions of stability agree, and every stable matching with singles is then perfect, so the theorem says nothing new in that model.
+A matching with singles is a partial bijection $\mu$ between the men $M$ and the women $W$: $\mu(m)$ is the partner of man $m$ and $\mu^{-1}(w)$ that of woman $w$, if any; an agent without a partner is single. A perfect matching $\mu : M \to W$ of the [stable marriage problem](../../../GraphTheory/matchings-and-flows/stable-marriage-problem/README.md) is the partial bijection in which everybody has a partner; when every partner is preferred to remaining single, the two notions of stability agree, and every stable matching with singles is then perfect, so the theorem says nothing new in that model.
 
 ## The model with singles
 

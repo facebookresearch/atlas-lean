@@ -7,3 +7,7 @@ of $a$ in $\{0, \dots, q-1\}$ if $q \ge 1$ and $|a|$ if $q = 0$. For every secre
 $x \in \mathbb{Z}/q\mathbb{Z}$, every message $m \in G$ and every encryption randomness
 $y \in \mathbb{Z}/q\mathbb{Z}$, decrypting with $x$ the ElGamal encryption of $m$ under the
 public key $g^x$ with randomness $y$ returns $m$.
+
+## Related topics
+
+- [Correctness of ElGamal as a public-key encryption scheme](../cpa-security-of-elgamal/scheme-correct.md): the same property for the scheme with randomized key generation and encryption.

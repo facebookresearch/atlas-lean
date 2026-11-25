@@ -12,7 +12,7 @@ algorithm uses $h > 0$.
 
 ## Background
 
-- Gradient descent: without the noise term the step is a gradient step on $f$ with step $h$.
+- [Gradient descent](../../../../Analysis/convex-analysis-and-variations/gradient-descent/README.md): without the noise term the step is a gradient step on $f$ with step $h$.
 
 ## Sources
 

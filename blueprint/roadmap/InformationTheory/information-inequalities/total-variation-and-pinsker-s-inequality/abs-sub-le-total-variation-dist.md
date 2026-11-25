@@ -5,7 +5,7 @@ $|\mu(B) - \nu(B)| \le \mathrm{TV}(\mu, \nu)$, where $\mathrm{TV}(\mu, \nu) = \s
 
 ## Background
 
-- Total variation distance:
+- [Total variation distance](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md):
   the supremum definition used here.
 
 ## Sources

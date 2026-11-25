@@ -183,7 +183,8 @@ theorem sum_cov_eq (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A) :
   exact Finset.sum_congr rfl (fun e _ => cov_eq p A hA e)
 
 /-- **Russo's formula**, covariance form: for increasing `A` and `p ∉ {0, 1}`,
-`d/dp ℙ_p(A) = (p(1 - p))⁻¹ ∑_e (ℙ_p(A ∩ {ω_e = 1}) - ℙ_p(ω_e = 1) ℙ_p(A))`. -/
+`d/dp ℙ_p(A) = (p(1 - p))⁻¹ ∑_e (ℙ_p(A ∩ {ω_e = 1}) - ℙ_p(ω_e = 1) ℙ_p(A))`.
+The same identity holds for every event: `StatMech.BeffaraDC.hasDerivAt_prob_eq_sum_cov`. -/
 theorem russoFormula (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
     (hp0 : p ≠ 0) (hp1 : p ≠ 1) :
     deriv (fun p => prob p A) p
@@ -193,8 +194,11 @@ theorem russoFormula (p : ℝ) (A : Set (ConfigSpace E)) (hA : IsIncreasing A)
   have hne : p * (1 - p) ≠ 0 := mul_ne_zero hp0 (by intro h; exact hp1 (by linarith))
   field_simp
 
-/-- The influence `I_e^p(A) = ℙ_p(e is pivotal for A)` of the coordinate `e` on the event `A`
-under the `p`-biased product measure.
+/-- The influence of the coordinate `e` on the event `A` at parameter `p`: the weight
+`pivotalProb p A e` of the configurations at which `e` is pivotal. For `0 ≤ p ≤ 1` it is the
+probability `I_e^p(A) = ℙ_p(e is pivotal for A)` under the `p`-biased product measure. It is
+defined for every real `p` because Russo's formula `deriv_eq_total_influence` is a polynomial
+identity in `p`; outside `[0, 1]` it is not a probability (it can be negative or exceed `1`).
 
 See also `MathlibExt.Analysis.Fourier.BooleanCubeInfluence.boolInfluence`, the influence of a
 real function on the uniform Boolean cube (the case `p = 1/2`, in Fourier normalization). -/

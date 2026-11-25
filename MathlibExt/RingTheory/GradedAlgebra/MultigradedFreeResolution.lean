@@ -56,9 +56,10 @@ namespace MetaMathlibExt
 
 variable {K : Type*} [Field K] {n : ℕ}
 
-/-- A `MvPolynomial (Fin n) K`-linear map is degree-zero when it sends each
-homogeneous piece of the source grading into the same-degree piece of the
-target grading. -/
+/-- **Degree-zero homomorphisms of multigraded modules.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, and let $M$ and $N$ be multigraded $R$-modules with homogeneous pieces
+$M_\alpha$ and $N_\alpha$ for $\alpha \in \mathbb{Z}^n$. An $R$-linear map $f : M \to N$ is
+degree-zero when $f(M_\alpha) \subseteq N_\alpha$ for every $\alpha \in \mathbb{Z}^n$. -/
 public def IsDegreeZero {M N : Type*} [AddCommGroup M]
     [Module (MvPolynomial (Fin n) K) M] [Module K M] [AddCommGroup N]
     [Module (MvPolynomial (Fin n) K) N] [Module K N]
@@ -67,9 +68,12 @@ public def IsDegreeZero {M N : Type*} [AddCommGroup M]
     (f : M →ₗ[MvPolynomial (Fin n) K] N) : Prop :=
   ∀ (α : Fin n →₀ Int) (m : M), m ∈ gM.component α → f m ∈ gN.component α
 
-/-- A multigraded free module: a `ℤⁿ`-graded module over
-`MvPolynomial (Fin n) K` equipped with an actual basis whose basis vectors
-are homogeneous of prescribed degrees. -/
+/-- **Multigraded free module.** Let $K$ be a field, let $R = K[x_1, \dots, x_n]$, and let
+$\iota$ be an index type. A multigraded free module structure on an $R$-module $F$ consists of a
+multigraded $R$-module structure on $F$, with homogeneous pieces $F_\alpha$ for
+$\alpha \in \mathbb{Z}^n$, together with an $R$-basis $(b_j)_{j \in \iota}$ of $F$ and a degree
+$d_j \in \mathbb{Z}^n$ for each $j \in \iota$ such that $b_j \in F_{d_j}$ for every
+$j \in \iota$. -/
 public structure MultigradedFreeModule (K : Type*) [Field K] (n : ℕ)
     (F : Type*) [AddCommGroup F] [Module (MvPolynomial (Fin n) K) F]
     [Module K F] (ι : Type*) where
@@ -82,11 +86,14 @@ public structure MultigradedFreeModule (K : Type*) [Field K] (n : ℕ)
   /-- Each basis vector is homogeneous of its prescribed degree. -/
   basis_mem : ∀ (i : ι), basis i ∈ graded.component (degree i)
 
-/-- A multigraded free resolution: Mathlib's actual `ProjectiveResolution` of
-`M`, with each term carrying a `MultigradedFreeModule` structure and with
-degree-zero successor differentials and augmentation. The `K`-module structure
-on each resolution term is the local `Module.compHom` instance via
-`MvPolynomial.C`; no global `Module K` instance is installed. -/
+/-- **Multigraded free resolution.** Let $K$ be a field, let $R = K[x_1, \dots, x_n]$, let $M$ be
+a multigraded $R$-module, let $\cdots \to P_1 \to P_0 \to M$ be a projective resolution of $M$
+over $R$, and for each $i \in \mathbb{N}$ let $\iota_i$ be an index type. A multigraded free
+resolution structure on this resolution consists of a multigraded free module structure on each
+$P_i$ with basis indexed by $\iota_i$, such that every differential $P_{i+1} \to P_i$ and the
+augmentation $P_0 \to M$ are degree-zero for these gradings and the given grading of $M$.
+
+Each $P_i$ is regarded as a $K$-vector space by restricting scalars along $K \to R$. -/
 public structure MultigradedFreeResolution (K : Type*) [Field K] (n : ℕ)
     (M : Type*) [AddCommGroup M] [Module (MvPolynomial (Fin n) K) M]
     [Module K M]

@@ -17,7 +17,7 @@ E. D. Demaine, S. Eisenstat and M. Rudoy, "Solving the Rubik's Cube Optimally is
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

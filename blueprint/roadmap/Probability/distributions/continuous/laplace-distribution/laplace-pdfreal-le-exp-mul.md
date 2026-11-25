@@ -7,7 +7,7 @@ $$
 $$
 
 by the triangle inequality $|z - m'| \le |z - m| + |m - m'|$. This pointwise ratio bound is the whole
-privacy proof of the Laplace mechanism.
+privacy proof of the [Laplace mechanism](../../../../ComputerScience/cryptography/laplace-and-exponential-mechanisms/README.md).
 
 ## Sources
 

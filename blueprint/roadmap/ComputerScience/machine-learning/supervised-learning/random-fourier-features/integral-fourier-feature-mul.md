@@ -13,7 +13,7 @@ Proof: averaging over the phase gives $\cos\langle\omega, x - y\rangle$ ([phase 
 
 ## Background
 
-- Bochner's theorem: background, how the source obtains $p$ from the kernel: a continuous positive-definite function with value $1$ at $0$ is the characteristic function of a probability measure (the source uses it on $\mathbb{R}^d$).
+- [Bochner's theorem](../../../../Probability/characteristic-functions/bochner-s-theorem/bochner.md): background, how the source obtains $p$ from the kernel: a continuous positive-definite function with value $1$ at $0$ is the characteristic function of a probability measure (the source uses it on $\mathbb{R}^d$).
 
 ## Sources
 

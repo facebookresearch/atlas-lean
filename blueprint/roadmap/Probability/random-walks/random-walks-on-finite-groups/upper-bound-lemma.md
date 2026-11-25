@@ -18,10 +18,10 @@ which needs no choice of inner product in the form above. The Saint-Flour notes 
 with $=$; their proof (Cauchy–Schwarz, then Plancherel) gives $\le$, which is what is stated.
 
 The proof is Diaconis's: with $f = P - U$, Cauchy–Schwarz gives
-$(\sum_s |f(s)|)^2 \le |G| \sum_s f(s)^2$; the Plancherel formula
+$(\sum_s |f(s)|)^2 \le |G| \sum_s f(s)^2$; the [Plancherel formula](../../../RepresentationTheory/finite-group-representations/fourier-transform-on-finite-groups/plancherel.md)
 turns the right side into $\sum_i d_i \operatorname{Tr}(\hat f(V_i) \hat f(V_i)^*)$; the trivial
 term vanishes because $f$ has total mass $0$, and $\hat f(V_i) = \hat P(V_i)$ for non-trivial
-$V_i$ because the uniform distribution has zero transform there.
+$V_i$ because [the uniform distribution has zero transform there](../../../RepresentationTheory/finite-group-representations/fourier-transform-on-finite-groups/fourier-uniform-eq-zero.md).
 
 For a finite abelian group every $d_i = 1$ and the $V_i$ are the characters; that case is stated
 with the discrete Fourier transform in

@@ -19,4 +19,4 @@ general laws of $X$.
 
 ## Background
 
-- Tweedie's formula: the one-dimensional formula for an arbitrary prior on the mean, with the posterior mean identified with a conditional expectation when the prior has a finite first moment; it covers the general one-dimensional case that this page leaves open.
+- [Tweedie's formula](../../../../Probability/bayesian-statistics/empirical-bayes-and-tweedie-s-formula/gaussian-posterior-mean-eq-add-mul-deriv.md): the one-dimensional formula for an arbitrary prior on the mean, with the posterior mean identified with a conditional expectation when the prior has a finite first moment; it covers the general one-dimensional case that this page leaves open.

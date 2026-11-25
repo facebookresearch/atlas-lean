@@ -13,7 +13,7 @@ $Z = 0$ or $e^{-\Phi}$ is not integrable, the posterior is the zero measure and 
 
 ## Background
 
-- The Metropolis–Hastings kernel is reversible:
+- [The Metropolis–Hastings kernel is reversible](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/is-reversible-mh-kernel.md):
   the finite-state Metropolis–Hastings algorithm with general proposals, where the acceptance ratio
   involves the proposal densities.
 

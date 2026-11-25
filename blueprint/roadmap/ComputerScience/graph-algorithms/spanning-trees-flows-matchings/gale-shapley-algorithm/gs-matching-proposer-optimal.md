@@ -6,7 +6,7 @@ to his partner in the Gale-Shapley matching.
 
 ## Background
 
-- Existence of a man-optimal stable matching, through the men's join: a proof for arbitrary finite sides of equal size whose optimality step does not follow the algorithm (the existence of a stable matching is still taken from the Gale–Shapley theorem).
+- [Existence of a man-optimal stable matching, through the men's join](../../../../GameTheory/matching-markets/lattice-of-stable-matchings/exists-stable-forall-not-lt.md): a proof for arbitrary finite sides of equal size whose optimality step does not follow the algorithm (the existence of a stable matching is still taken from the Gale–Shapley theorem).
 
 ## Sources
 

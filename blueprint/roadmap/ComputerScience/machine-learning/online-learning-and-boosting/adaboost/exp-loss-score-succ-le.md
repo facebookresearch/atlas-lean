@@ -13,7 +13,7 @@ This is Breiman's observation, recalled in "Explaining AdaBoost". Schapire stres
 
 ## Background
 
-- Regret of entropic mirror descent for prediction with expert advice: AdaBoost's reweighting $D_{t+1}(i) \propto D_t(i)\, e^{-\alpha_t y_i h_t(x_i)}$ is the multiplicative-weights update over the training points with loss vector $(y_i h_t(x_i))_i$ and step $\alpha_t$, the entropic prox step of mirror descent; boosting runs it on examples, Hedge on experts.
+- [Regret of entropic mirror descent for prediction with expert advice](../../../../Analysis/convex-analysis-and-variations/mirror-descent/multiplicative-weights-regret-le.md): AdaBoost's reweighting $D_{t+1}(i) \propto D_t(i)\, e^{-\alpha_t y_i h_t(x_i)}$ is the multiplicative-weights update over the training points with loss vector $(y_i h_t(x_i))_i$ and step $\alpha_t$, the entropic prox step of mirror descent; boosting runs it on examples, Hedge on experts.
 
 ## Sources
 

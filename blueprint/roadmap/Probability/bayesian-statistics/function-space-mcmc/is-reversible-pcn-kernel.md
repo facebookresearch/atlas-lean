@@ -17,7 +17,7 @@ absolutely continuous.
 
 ## Background
 
-- Detailed balance implies reversibility:
+- [Detailed balance implies reversibility](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/is-reversible-pmf-kernel.md):
   the same notion of reversibility on a finite state space.
 
 ## Sources

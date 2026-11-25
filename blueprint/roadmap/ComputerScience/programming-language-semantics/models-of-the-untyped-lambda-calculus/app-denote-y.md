@@ -4,7 +4,7 @@ In the graph model, under every valuation $\rho$ of the free variables and $bs$ 
 
 ## Background
 
-- Scott's first recursion theorem in `P(ω)`: the set-level statement, to which this reduces by unfolding the denotation of $Y$.
+- [Scott's first recursion theorem in `P(ω)`](../../../Order/fixed-points-domain-theory/scott-s-graph-model/app-graph-diag.md): the set-level statement, to which this reduces by unfolding the denotation of $Y$.
 - [The paradoxical combinator $Y$](y.md): the term.
 
 ## Sources

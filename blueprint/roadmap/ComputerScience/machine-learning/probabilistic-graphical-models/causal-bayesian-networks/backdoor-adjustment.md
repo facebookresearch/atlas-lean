@@ -15,7 +15,7 @@ with $P(X_Z = z) = 0$ is $0$.
 
 ## Background
 
-- Strong ignorability:
+- [Strong ignorability](../../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/strongly-ignorable.md):
   the potential-outcome condition under which the same adjustment formula holds; Pearl (2009,
   *Statistics Surveys*, §4.2, eqs. (39)–(40)) explains the back-door criterion as a graphical
   test for conditional ignorability.

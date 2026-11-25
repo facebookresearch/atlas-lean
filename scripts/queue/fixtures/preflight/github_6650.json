@@ -1,0 +1,338 @@
+{
+ "pulls/6650": {
+  "number": 6650,
+  "title": "MathlibExt: Segre embedding and Chow data into a single projective space",
+  "state": "open",
+  "draft": false,
+  "merged": false,
+  "mergeable": null,
+  "mergeable_state": "unknown",
+  "node_id": "PR_kwDOSoxG9M8AAAABRT05JQ",
+  "changed_files": 4,
+  "head": {
+   "sha": "1eb2325e6be4eda8208113075c8c73fe487672b9",
+   "ref": "chow-datum-projective-conversion"
+  },
+  "base": {
+   "ref": "main",
+   "sha": "5c77d5224cebd12e0808329f65611358b2a85d9a"
+  }
+ },
+ "reviews": [
+  {
+   "id": 6025013658,
+   "user": {
+    "login": "github-actions[bot]"
+   },
+   "state": "APPROVED",
+   "commit_id": "1eb2325e6be4eda8208113075c8c73fe487672b9",
+   "submitted_at": "2026-11-23T16:09:09Z",
+   "body": "<!-- codex-automatic-review -->\n\n## Codex review\n\nThis is a formal review. It carries a verdict and counts toward the PR review status.\n\n### Findings\n\nNo actionable findings.\n\n### Summary\n\nAdds projective-space infrastructure, a closed Segre embedding and its finite iteration, Chow datum structures, and conversion from product-valued to single-projective-space Chow data, with consumer tests.\n\n### "
+  }
+ ],
+ "check_runs": {
+  "total_count": 16,
+  "check_runs": [
+   {
+    "id": 137827371862,
+    "name": "report-failure",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-11-23T16:09:12Z",
+    "completed_at": "2026-11-23T16:09:11Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137827371862",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137827371862",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137827370793,
+    "name": "cancel-rejected-build",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-11-23T16:09:12Z",
+    "completed_at": "2026-11-23T16:09:11Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137827370793",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137827370793",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137827366818,
+    "name": "codex-verdict",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:09:15Z",
+    "completed_at": "2026-11-23T16:09:19Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137827366818",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137827366818",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825371534,
+    "name": "codex-verdict",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-11-23T16:06:17Z",
+    "completed_at": "2026-11-23T16:06:06Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825371534",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825371534",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825368115,
+    "name": "public-references",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:20Z",
+    "completed_at": "2026-11-23T16:06:56Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212642203/job/137825368115",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212642203/job/137825368115",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825357402,
+    "name": "Meta CLA Check",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:15Z",
+    "completed_at": "2026-11-23T16:06:15Z",
+    "details_url": "https://code.facebook.com/cla/",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/runs/137825357402",
+    "app": {
+     "id": 1425812,
+     "slug": "meta-cla"
+    }
+   },
+   {
+    "id": 137825317258,
+    "name": "report-failure",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-11-23T16:06:12Z",
+    "completed_at": "2026-11-23T16:06:06Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825317258",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825317258",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825258921,
+    "name": "cancel-rejected-build",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-11-23T16:06:07Z",
+    "completed_at": "2026-11-23T16:06:06Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825258921",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825258921",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825257897,
+    "name": "codex",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-11-23T16:06:07Z",
+    "completed_at": "2026-11-23T16:06:06Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825257897",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639206/job/137825257897",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825250488,
+    "name": "codex",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:11Z",
+    "completed_at": "2026-11-23T16:09:11Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137825250488",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212639790/job/137825250488",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825248235,
+    "name": "source-diagnostics",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:10Z",
+    "completed_at": "2026-11-23T16:07:50Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212640221/job/137825248235",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212640221/job/137825248235",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825246461,
+    "name": "build",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:11Z",
+    "completed_at": "2026-11-23T16:17:27Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887/job/137825246461",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887/job/137825246461",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825246255,
+    "name": "repository integrity",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:10Z",
+    "completed_at": "2026-11-23T16:07:33Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887/job/137825246255",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887/job/137825246255",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825245600,
+    "name": "check the graph",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:09Z",
+    "completed_at": "2026-11-23T16:09:09Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887/job/137825245600",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887/job/137825245600",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825245358,
+    "name": "graph sync",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:09Z",
+    "completed_at": "2026-11-23T16:09:46Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638780/job/137825245358",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638780/job/137825245358",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   },
+   {
+    "id": 137825243859,
+    "name": "guard",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-23T16:06:09Z",
+    "completed_at": "2026-11-23T16:06:44Z",
+    "details_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638358/job/137825243859",
+    "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638358/job/137825243859",
+    "app": {
+     "id": 15368,
+     "slug": "github-actions"
+    }
+   }
+  ]
+ },
+ "rules": [
+  {
+   "type": "merge_queue",
+   "parameters": {
+    "merge_method": "MERGE",
+    "max_entries_to_build": 100,
+    "min_entries_to_merge": 1,
+    "max_entries_to_merge": 30,
+    "min_entries_to_merge_wait_minutes": 0,
+    "grouping_strategy": "ALLGREEN",
+    "check_response_timeout_minutes": 360
+   },
+   "ruleset_source_type": "Repository",
+   "ruleset_source": "facebookresearch/atlas-lean",
+   "ruleset_id": 27847151
+  },
+  {
+   "type": "required_status_checks",
+   "parameters": {
+    "strict_required_status_checks_policy": false,
+    "do_not_enforce_on_create": false,
+    "required_status_checks": [
+     {
+      "context": "repository integrity",
+      "integration_id": 15368
+     },
+     {
+      "context": "build",
+      "integration_id": 15368
+     },
+     {
+      "context": "source-diagnostics",
+      "integration_id": 15368
+     },
+     {
+      "context": "guard",
+      "integration_id": 15368
+     }
+    ]
+   },
+   "ruleset_source_type": "Repository",
+   "ruleset_source": "facebookresearch/atlas-lean",
+   "ruleset_id": 27847151
+  },
+  {
+   "type": "non_fast_forward",
+   "ruleset_source_type": "Repository",
+   "ruleset_source": "facebookresearch/atlas-lean",
+   "ruleset_id": 27847151
+  },
+  {
+   "type": "deletion",
+   "ruleset_source_type": "Repository",
+   "ruleset_source": "facebookresearch/atlas-lean",
+   "ruleset_id": 27847151
+  }
+ ],
+ "run": {
+  "id": 45212638887,
+  "name": "CI",
+  "event": "pull_request",
+  "created_at": "2026-11-23T16:06:05Z",
+  "run_attempt": 1,
+  "html_url": "https://github.com/facebookresearch/atlas-lean/actions/runs/45212638887",
+  "head_sha": "1eb2325e6be4eda8208113075c8c73fe487672b9",
+  "path": ".github/workflows/ci.yml"
+ },
+ "run_id": 45212638887,
+ "job_id": 137825246461,
+ "codex_verdict_run": {
+  "id": 45212639790,
+  "path": ".github/workflows/codex.yml",
+  "event": "pull_request",
+  "name": "Codex"
+ },
+ "codex_verdict_job_id": 137827366818
+}

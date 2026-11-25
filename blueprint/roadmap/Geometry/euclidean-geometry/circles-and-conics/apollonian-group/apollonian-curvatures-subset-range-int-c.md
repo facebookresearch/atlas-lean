@@ -9,7 +9,7 @@ integral as well.
 
 ## Related topics
 
-- Local-global conjecture for Apollonian circle packings:
+- [Local-global conjecture for Apollonian circle packings](../../../../NumberTheory/arithmetic-geometry/local-global-conjecture-for-apollonian-circle-pa/README.md):
   which integers occur as curvatures of an integral packing.
 
 ## Sources

@@ -15,7 +15,7 @@ The proof specialises Sion's minimax theorem to the bilinear payoff on the produ
 
 ## Background
 
-- Strong linear programming duality:
+- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md):
   background, the classical alternative proof, in which the optimal strategies of the two players
   are optimal solutions of a primal–dual pair of linear programs.
 

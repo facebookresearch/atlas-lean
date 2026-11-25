@@ -12,4 +12,4 @@ $$\theta \mapsto \frac{1}{2n} \|y - X\theta\|_2^2 + \lambda \|\theta\|_1.$$
 
 ## Background
 
-- Lasso objective in machine learning: the same objective with the unnormalized residual sum of squares, studied there as a MAP estimate.
+- [Lasso objective in machine learning](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/lasso.md): the same objective with the unnormalized residual sum of squares, studied there as a MAP estimate.

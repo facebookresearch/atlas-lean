@@ -31,7 +31,12 @@ namespace MetaMathlibExt
 
 open scoped Matrix
 
-/-- Jacobian matrix of `f` at `x`: the `n × m` matrix of first partials.
+/-- **Jacobian matrix.** For $f : \mathbb{R}^m \to \mathbb{R}^n$ and $x \in \mathbb{R}^m$, the
+Jacobian matrix of $f$ at $x$ is the $n \times m$ real matrix whose $(i, j)$ entry is the partial
+derivative of the $i$-th component $f_i$ of $f$ in the $j$-th coordinate direction at $x$: the
+derivative at $t = 0$ of $t \mapsto f_i(x + t e_j)$, where $e_j$ is the $j$-th standard basis
+vector of $\mathbb{R}^m$. A partial derivative that does not exist is taken to be $0$.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential calculus`, entry `Jacobian matrix` (unmapped);
 W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9;
@@ -40,8 +45,13 @@ noncomputable def jacobianMatrix {m n : ℕ} (f : (Fin m → ℝ) → (Fin n →
     (x : Fin m → ℝ) : Matrix (Fin n) (Fin m) ℝ :=
   fun i j => deriv (fun t : ℝ => f (x + t • Pi.single j (1 : ℝ)) i) 0
 
-/-- Characteristic spec: the `(i, j)` entry is the partial of component `i`
-along the `j`-th coordinate axis.
+/-- **Entries of the Jacobian matrix are partial derivatives.** Let
+$f : \mathbb{R}^m \to \mathbb{R}^n$ and $x \in \mathbb{R}^m$. For every row index $i$ and column
+index $j$, the $(i, j)$ entry of the Jacobian matrix of $f$ at $x$ is the derivative at $t = 0$
+of $t \mapsto f_i(x + t e_j)$, where $f_i$ is the $i$-th component of $f$ and $e_j$ is the
+$j$-th standard basis vector of $\mathbb{R}^m$. This derivative is taken to be $0$ when it does
+not exist.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential calculus`, entry `Jacobian matrix` (unmapped);
 W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9. -/
@@ -62,8 +72,11 @@ private theorem jacobian_hasDerivAt_along_single {m n : ℕ}
   simpa [Function.comp_def] using
     hf.hasFDerivAt.comp_hasDerivAt_of_eq (0 : ℝ) hline (by simp)
 
-/-- At a differentiability point, a Jacobian entry is the corresponding coordinate of the
-Fréchet derivative on a standard basis vector. -/
+/-- **Jacobian entries at a point of differentiability.** Let $f : \mathbb{R}^m \to \mathbb{R}^n$
+be differentiable at $x \in \mathbb{R}^m$. Then for every row index $i$ and column index $j$, the
+$(i, j)$ entry of the Jacobian matrix of $f$ at $x$ is the $i$-th coordinate of $Df(x)\, e_j$,
+where $Df(x)$ is the Fréchet derivative of $f$ at $x$ and $e_j$ is the $j$-th standard basis
+vector of $\mathbb{R}^m$. -/
 theorem jacobianMatrix_apply_of_differentiableAt {m n : ℕ}
     (f : (Fin m → ℝ) → (Fin n → ℝ)) (x : Fin m → ℝ)
     (hf : DifferentiableAt ℝ f x) (i : Fin n) (j : Fin m) :
@@ -71,7 +84,10 @@ theorem jacobianMatrix_apply_of_differentiableAt {m n : ℕ}
   rw [jacobianMatrix_apply]
   exact (hasDerivAt_pi.mp (jacobian_hasDerivAt_along_single f x hf j) i).deriv
 
-/-- At a differentiability point, the Jacobian is the matrix of the Fréchet derivative. -/
+/-- **The Jacobian is the matrix of the derivative.** Let $f : \mathbb{R}^m \to \mathbb{R}^n$ be
+differentiable at $x \in \mathbb{R}^m$. Then the Jacobian matrix of $f$ at $x$ is the matrix, in
+the standard bases of $\mathbb{R}^m$ and $\mathbb{R}^n$, of the Fréchet derivative of $f$ at $x$,
+viewed as a linear map $\mathbb{R}^m \to \mathbb{R}^n$. -/
 theorem jacobianMatrix_eq_toMatrix'_fderiv {m n : ℕ}
     (f : (Fin m → ℝ) → (Fin n → ℝ)) (x : Fin m → ℝ)
     (hf : DifferentiableAt ℝ f x) :
@@ -80,7 +96,9 @@ theorem jacobianMatrix_eq_toMatrix'_fderiv {m n : ℕ}
   rw [jacobianMatrix_apply_of_differentiableAt f x hf, LinearMap.toMatrix'_apply]
   rfl
 
-/-- The Jacobian of a matrix acting by multiplication is the matrix itself at every point. -/
+/-- **Jacobian of a linear map given by a matrix.** Let $M$ be a real $n \times m$ matrix. At every
+point $x \in \mathbb{R}^m$, the Jacobian matrix of the map $y \mapsto M y$ from $\mathbb{R}^m$ to
+$\mathbb{R}^n$ is $M$. -/
 theorem jacobianMatrix_fun_mulVec {m n : ℕ}
     (M : Matrix (Fin n) (Fin m) ℝ) (x : Fin m → ℝ) :
     jacobianMatrix (fun y => M *ᵥ y) x = M := by
@@ -93,16 +111,20 @@ theorem jacobianMatrix_fun_mulVec {m n : ℕ}
   rw [L.fderiv]
   simp [L]
 
-/-- The Jacobian matrix represents the Frechet derivative on coordinates.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential calculus`, entry `Jacobian matrix` (unmapped);
-W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9.
+/-- **The Jacobian matrix computes the derivative.** Let $f : \mathbb{R}^m \to \mathbb{R}^n$ be
+differentiable at $x \in \mathbb{R}^m$, and let $J$ be the Jacobian matrix of $f$ at $x$. Then for
+every $v \in \mathbb{R}^m$, the product $J v$ equals $Df(x)\, v$, the Fréchet derivative of $f$ at
+$x$ applied to $v$.
+
+Proof: The Jacobian is the matrix of the Fréchet derivative (Wikipedia, "Jacobian matrix and
+determinant": it represents the total derivative), and multiplying a vector by the matrix of a
+linear map applies the map to that vector.
 
 Proves `Wanted` entry `jacobianMatrix_mulVec_eq_fderiv`.
 
-Proof: The Jacobian is the matrix of `fderiv` (Wikipedia, "Jacobian matrix and determinant":
-it represents the total derivative), by `jacobianMatrix_eq_toMatrix'_fderiv`; then use
-`LinearMap.toMatrix'_mulVec`.
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential calculus`, entry `Jacobian matrix` (unmapped);
+W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9.
 -/
 theorem jacobianMatrix_mulVec_eq_fderiv {m n : ℕ}
     (f : (Fin m → ℝ) → (Fin n → ℝ)) (x : Fin m → ℝ)
@@ -111,15 +133,20 @@ theorem jacobianMatrix_mulVec_eq_fderiv {m n : ℕ}
   rw [jacobianMatrix_eq_toMatrix'_fderiv f x hf, LinearMap.toMatrix'_mulVec]
   rfl
 
-/-- Chain rule for Jacobian matrices.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential calculus`, entries `Jacobian matrix` and `chain rule`;
-W. Rudin, Principles of Mathematical Analysis, 3rd ed., Theorem 9.15.
+/-- **Chain rule for Jacobian matrices.** Let $f : \mathbb{R}^m \to \mathbb{R}^n$,
+$g : \mathbb{R}^n \to \mathbb{R}^p$ and $x \in \mathbb{R}^m$, and write $J_h(y)$ for the Jacobian
+matrix of $h$ at $y$. If $f$ is differentiable at $x$ and $g$ is differentiable at $f(x)$, then
+$J_{g \circ f}(x) = J_g(f(x))\, J_f(x)$, a product of a $p \times n$ and an $n \times m$ matrix.
+
+Proof: As in Wikipedia, "Jacobian matrix and determinant" (chain rule), write each Jacobian as
+the matrix of the Fréchet derivative, then use the chain rule for Fréchet derivatives and the
+fact that the matrix of a composition of linear maps is the product of their matrices.
 
 Proves `Wanted` entry `jacobianMatrix_comp`.
 
-Proof: As in Wikipedia, "Jacobian matrix and determinant" (chain rule), rewrite the Jacobians as
-matrices of Fréchet derivatives, then apply `fderiv_comp` and `LinearMap.toMatrix'_comp`.
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential calculus`, entries `Jacobian matrix` and `chain rule`;
+W. Rudin, Principles of Mathematical Analysis, 3rd ed., Theorem 9.15.
 -/
 theorem jacobianMatrix_comp {m n p : ℕ}
     (f : (Fin m → ℝ) → (Fin n → ℝ)) (g : (Fin n → ℝ) → (Fin p → ℝ))

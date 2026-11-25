@@ -14,7 +14,7 @@ The key length $n^2$ is a choice: with $n$-bit keys a distinguisher could hard-w
 ## Background
 
 - [Shannon's circuit-size lower bound](../../circuit-complexity/shannon-s-circuit-size-lower-bound/README.md): almost all Boolean functions need large circuits, which is why lower-bound properties tend to be large.
-- Pseudorandom functions: the
+- [Pseudorandom functions](../../../ComputerScience/cryptography/symmetric-key/pseudorandom-functions/README.md): the
   cryptographic security experiment for keyed function families; security against truth-table
   distinguishers is the same requirement, with distinguishers of size polynomial in $2^n$ that read
   the whole truth table.

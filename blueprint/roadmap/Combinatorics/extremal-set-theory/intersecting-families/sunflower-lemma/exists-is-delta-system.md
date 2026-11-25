@@ -14,7 +14,7 @@ The lemma is the combinatorial step of Razborov's approximation method: it shows
 
 ## Related topics
 
-- Monotone circuit lower bound for clique: Razborov's approximation method, where the lemma bounds the error of each approximation step.
+- [Monotone circuit lower bound for clique](../../../../TheoryOfComputation/circuit-complexity/monotone-circuit-lower-bound-for-clique/README.md): Razborov's approximation method, where the lemma bounds the error of each approximation step.
 
 ## Sources
 

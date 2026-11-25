@@ -9,4 +9,4 @@ Condition 1 is the Kalman rank condition $\operatorname{rank} [B, AB, \dots, A^{
 
 ## Informally uses
 
-- Triangularization: an endomorphism of a nonzero finite-dimensional complex space has an eigenvector.
+- [Triangularization](../../../LinearAlgebra/eigenvalues-and-canonical-forms/triangularization/README.md): an endomorphism of a nonzero finite-dimensional complex space has an eigenvector.

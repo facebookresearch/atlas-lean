@@ -20,6 +20,8 @@ model.
 - [Universal confidence set for an i.i.d. sample](measure-not-mem-universal-confidence-set-2.md)
 - [Type I error of the split likelihood ratio test](measure-split-lrt-reject-le.md)
 - [Split likelihood ratio test for an i.i.d. sample](measure-split-lrt-reject-le-pi.md)
+- [Universal confidence set with real densities](universal-confidence-set-2.md)
+- [Coverage of the universal confidence set with real densities](measure-not-mem-universal-confidence-set-3.md)
 
 ## Related topics
 

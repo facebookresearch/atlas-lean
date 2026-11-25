@@ -21,6 +21,8 @@ cloned by a single complex linear isometry `H ⊗ H ≃ₗᵢ H ⊗ H` with a fi
 
 * `MathlibExt.QuantumInformation.Finite.NoCloning.no_cloning_two_state` – no isometry
   clones two unit states with `0 < ‖⟪ψ, φ⟫‖ < 1` simultaneously.
+* `MathlibExt.QuantumInformation.Finite.NoCloning.no_cloning_linear` – if `H` contains two
+  orthonormal vectors, no linear map `H ⊗ H → H ⊗ H` (unitary or not) clones every unit vector.
 
 ## Source
 
@@ -43,9 +45,11 @@ open TensorProduct
 
 namespace MathlibExt.QuantumInformation.Finite.NoCloning
 
-/-- Two-state pure-state no-cloning obstruction: in a complex inner-product space,
-non-orthogonal non-identical unit vectors cannot both be exactly cloned by a single
-complex linear isometry `H ⊗ H ≃ₗᵢ H ⊗ H` with a fixed blank state.
+/-- **No-cloning theorem for two states.** Let $H$ be a complex inner product space and let
+$\psi, \varphi, b \in H$ be unit vectors with $0 < |\langle \psi, \varphi \rangle| < 1$. Then there
+is no $\mathbb{C}$-linear isometric isomorphism $U$ of $H \otimes_{\mathbb{C}} H$ onto itself with
+$U(\psi \otimes b) = \psi \otimes \psi$ and $U(\varphi \otimes b) = \varphi \otimes \varphi$.
+
 Source: W. K. Wootters and W. H. Zurek, "A single quantum cannot be cloned",
 Nature 299 (1982), 802-803, DOI 10.1038/299802a0. -/
 public theorem no_cloning_two_state
@@ -71,5 +75,47 @@ public theorem no_cloning_two_state
   · have h1 : ⟪ψ, φ⟫_ℂ = 1 := sub_eq_zero.mp hz
     rw [h1, norm_one] at hlt
     exact lt_irrefl _ hlt
+
+/-- **No-cloning theorem (linear form).** Let `H` be a complex inner-product space containing two
+orthonormal vectors `e₁` and `e₂`, and let `b ∈ H` be any blank state. Then no `ℂ`-linear map
+`U : H ⊗ H → H ⊗ H` satisfies `U (ψ ⊗ b) = ψ ⊗ ψ` for every unit vector `ψ`. Linearity alone
+forbids it: for `φ = (e₁ + e₂) / √2`, linearity gives
+`U (φ ⊗ b) = (e₁ ⊗ e₁ + e₂ ⊗ e₂) / √2`, which has no `e₁ ⊗ e₂` component, while `φ ⊗ φ` does.
+Unitarity is not used, so the statement covers every isometry and every unitary.
+Source: W. K. Wootters and W. H. Zurek, "A single quantum cannot be cloned",
+Nature 299 (1982), 802-803, DOI 10.1038/299802a0 (the linearity argument). -/
+public theorem no_cloning_linear
+    {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] (e₁ e₂ b : H)
+    (h₁ : ‖e₁‖ = 1) (h₂ : ‖e₂‖ = 1) (h₁₂ : ⟪e₁, e₂⟫_ℂ = 0) :
+    ¬ ∃ U : (H ⊗[ℂ] H) →ₗ[ℂ] (H ⊗[ℂ] H),
+      ∀ ψ : H, ‖ψ‖ = 1 → U (ψ ⊗ₜ[ℂ] b) = ψ ⊗ₜ[ℂ] ψ := by
+  rintro ⟨U, hU⟩
+  have h11 : ⟪e₁, e₁⟫_ℂ = 1 := by rw [inner_self_eq_norm_sq_to_K, h₁]; norm_num
+  have h22 : ⟪e₂, e₂⟫_ℂ = 1 := by rw [inner_self_eq_norm_sq_to_K, h₂]; norm_num
+  have h21 : ⟪e₂, e₁⟫_ℂ = 0 := by rw [← inner_conj_symm, h₁₂, map_zero]
+  have hs : (0 : ℝ) < Real.sqrt 2 := by positivity
+  set c : ℂ := ((Real.sqrt 2 : ℝ) : ℂ)⁻¹ with hc
+  have hc0 : c ≠ 0 := by rw [hc]; exact inv_ne_zero (by exact_mod_cast hs.ne')
+  set φ : H := c • (e₁ + e₂) with hφ
+  have hsum : ‖e₁ + e₂‖ = Real.sqrt 2 := by
+    rw [← Real.sqrt_sq (norm_nonneg _), sq,
+      norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero _ _ h₁₂, h₁, h₂]
+    norm_num
+  have hnorm : ‖φ‖ = 1 := by
+    rw [hφ, norm_smul, hsum, hc, norm_inv, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos hs, inv_mul_cancel₀ hs.ne']
+  -- Linearity: `U (φ ⊗ b) = (c • e₁) ⊗ e₁ + (c • e₂) ⊗ e₂`.
+  have hlin : U (φ ⊗ₜ[ℂ] b) = (c • e₁) ⊗ₜ[ℂ] e₁ + (c • e₂) ⊗ₜ[ℂ] e₂ := by
+    rw [hφ, smul_add, add_tmul, map_add, ← smul_tmul', ← smul_tmul', map_smul, map_smul,
+      hU e₁ h₁, hU e₂ h₂, smul_tmul', smul_tmul']
+  have hcl := hU φ hnorm
+  rw [hlin] at hcl
+  -- Compare the `e₁ ⊗ e₂` components: `0 = c * c`.
+  have key := congrArg (fun z => ⟪e₁ ⊗ₜ[ℂ] e₂, z⟫_ℂ) hcl
+  simp only [hφ, inner_smul_right, inner_add_right, TensorProduct.inner_tmul,
+    h11, h22, h₁₂, h21] at key
+  apply hc0
+  have : c * c = 0 := by linear_combination -key
+  exact mul_self_eq_zero.1 this
 
 end MathlibExt.QuantumInformation.Finite.NoCloning

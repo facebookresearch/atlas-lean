@@ -17,7 +17,7 @@ saddle point of the game attains them. The common value is the value of the game
 
 ## Background
 
-- Strong linear programming duality:
+- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md):
   background, the theorem is equivalent to the duality of a pair of linear programs (Dantzig 1951).
 - [Hedge algorithm](../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/README.md):
   background, Freund and Schapire's learning proof: if both players run a no-regret algorithm

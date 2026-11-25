@@ -11,7 +11,7 @@ is infinite.
 
 ## Background
 
-- Le Cam's two-point bound with Pinsker's inequality:
+- [Le Cam's two-point bound with Pinsker's inequality](../../../Probability/statistical-estimation/minimax-lower-bounds/mul-one-sub-sqrt-kl-div-le-minimax.md):
   the main application: minimax lower bounds in terms of divergences.
 
 ## Sources

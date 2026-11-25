@@ -12,7 +12,7 @@ order is reversed.
 ## Background
 
 - [Information cell](cell.md): the meet cell of the true state.
-- Epistemic logic: the syntactic
+- [Epistemic logic](../../../Logic/modal-logic/epistemic-logic/README.md): the syntactic
   counterpart, multi-agent S5 on Kripke models, whose accessibility relations play the role of
   the partitions here.
 

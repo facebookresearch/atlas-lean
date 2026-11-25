@@ -18,7 +18,10 @@ import Mathlib.Tactic.NormNum
   `1 / 4` attains the residual bound;
 * the same bar and coefficient: the displacement error at the interior node, its energy and its
   squared `L²` norm carry the three different reconstruction factors `1`, `K` and `L / 3`;
-* zero rigidity, where Lean's `x / 0 = 0` makes the residual bound vanish.
+* zero rigidity, where Lean's `x / 0 = 0` makes the residual bound vanish;
+* the quadratic load `Q * (x / L) ^ 2` on the same bar with `Q = 4`: amplitude `18`,
+  exact-load coefficient `21 / 32`, midpoint-quadrature coefficient `45 / 64`, difference
+  `3 / 64`.
 -/
 
 @[expose] public section
@@ -85,6 +88,19 @@ example :
   refine ⟨?_, by norm_num⟩
   rw [hc]
   norm_num
+
+/-! ## B. The quadratic load on the same bar -/
+
+/-- Nonunit fixture `EA = 2`, `L = 3`, `Q = 4`: `β = 18`, exact coefficient `21 / 32`, midpoint
+coefficient `45 / 64`, difference `3 / 64`. -/
+example :
+    quadAmplitude 2 3 4 = 18 ∧ quadCoeff 2 3 4 = 21 / 32 ∧ quadMidpointCoeff 2 3 4 = 45 / 64 ∧
+      quadMidpointCoeff 2 3 4 - quadCoeff 2 3 4 = 3 / 64 := by
+  have hβ : quadAmplitude 2 3 4 = 18 := by norm_num [quadAmplitude]
+  have hc := (quadCoeff_eq (EA := 2) (L := 3) (by norm_num) (by norm_num) 4).1
+  have hm := quadMidpointCoeff_eq (EA := 2) (L := 3) (by norm_num) (by norm_num) 4
+  rw [hβ] at hc hm
+  refine ⟨hβ, by rw [hc]; norm_num, by rw [hm]; norm_num, by rw [hc, hm]; norm_num⟩
 
 end PhyslibExtTest.Numerical.PhysicalGalerkinError
 

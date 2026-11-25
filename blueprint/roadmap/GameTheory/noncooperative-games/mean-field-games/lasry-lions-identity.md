@@ -23,13 +23,13 @@ into $\int\!\!\int (m_1 - m_2)(F(x, m_1) - F(x, m_2)) \le 0$, and monotonicity f
 
 ## Background
 
-- Fokker–Planck equation:
+- [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the forward equation of the system, transporting the distribution of players along the optimal
   drift $-Du$.
-- Viscosity solutions of Hamilton–Jacobi equations:
+- [Viscosity solutions of Hamilton–Jacobi equations](../../../Analysis/partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/README.md):
   the backward equation of the system is a Hamilton–Jacobi–Bellman equation; in the first-order
   case of the theory it is solved in the viscosity sense.
-- Wasserstein distances:
+- [Wasserstein distances](../../../MeasureTheory/optimal-transport/wasserstein-distances/README.md):
   the existence theory of the system measures the dependence of $F$ and $G$ on $m$ in the
   Kantorovich–Rubinstein distance $d_1$.
 

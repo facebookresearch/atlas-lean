@@ -27,15 +27,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Euler product `f_k = (q^k; q^k)_∞ = ∏_{m ≥ 1} (1 - q^{k m})` as an integer power series
-(infinite product in the coefficientwise topology; used for `k ≥ 1`).
+/-- **The Euler products of partition theory.** For a natural number $k$, the Euler product
+$f_k = (q^k; q^k)_\infty = \prod_{m \ge 1} (1 - q^{km})$ is this infinite product in the ring of
+integer power series in $q$, taken in the coefficientwise topology. It is used for $k \ge 1$.
 
 Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
 Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 2. -/
 noncomputable def qEulerProduct (k : ℕ) : ℤ⟦X⟧ :=
   ∏' m : ℕ, (1 - X ^ (k * (m + 1)))
 
-/-- `f_1` is Euler's product `∏ (1 - q^m)`, Mathlib's `pentagonalSeries`.
+/-- **Pentagonal series expansion of the first Euler product.** The Euler product
+$f_1 = \prod_{m \ge 1} (1 - q^m)$ equals the pentagonal series
+$\sum_{j \in \mathbb{Z}} (-1)^j q^{j(3j-1)/2}$ as an integer power series.
 
 Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
 Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 2. -/
@@ -43,7 +46,8 @@ theorem qEulerProduct_one : qEulerProduct 1 = pentagonalSeries ℤ := by
   simp only [qEulerProduct, one_mul]
   exact WithPiTopology.tprod_one_sub_X_pow ℤ
 
-/-- For `k ≥ 1`, `f_k = ∏_{m ≥ 1} (1 - q^{k m})` has constant coefficient `1`.
+/-- **Constant term of the Euler products.** For every natural number $k \ge 1$, the integer power
+series $f_k = \prod_{m \ge 1} (1 - q^{km})$ has constant coefficient $1$.
 
 Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
 Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Section 1

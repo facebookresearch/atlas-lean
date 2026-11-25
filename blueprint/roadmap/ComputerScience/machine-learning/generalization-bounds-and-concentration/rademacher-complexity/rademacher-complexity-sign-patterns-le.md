@@ -4,7 +4,7 @@ Let $n \ge 1$ and let $\mathcal{A}$ be a nonempty family of subsets of the sampl
 
 $$R(A) \le \sqrt{\frac{2 \log \sum_{k=0}^{d} \binom{n}{k}}{n}}.$$
 
-Each sign pattern has Euclidean norm $\sqrt{n}$, so Massart's lemma gives $R(A) \le \sqrt{2 \log \lvert \mathcal{A} \rvert / n}$, and the Sauer–Shelah lemma (a family has at most as many members as the family of sets it shatters, which has at most $\sum_{k \le d} \binom{n}{k}$ members) bounds $\lvert \mathcal{A} \rvert$ by $\sum_{k \le d} \binom{n}{k}$. With the counting bound $\sum_{k \le d} \binom{n}{k} \le (en/d)^d$ this becomes the familiar $O(\sqrt{d \log(n/d) / n})$ rate, [stated explicitly](rademacher-complexity-sign-patterns-le-v.md).
+Each sign pattern has Euclidean norm $\sqrt{n}$, so Massart's lemma gives $R(A) \le \sqrt{2 \log \lvert \mathcal{A} \rvert / n}$, and the Sauer–Shelah lemma (a family has at most as many members as the family of sets it shatters, which has at most $\sum_{k \le d} \binom{n}{k}$ members) bounds $\lvert \mathcal{A} \rvert$ by $\sum_{k \le d} \binom{n}{k}$. With the [counting bound](../../../../Combinatorics/binomial-coefficients/binomial-sums/bounds-on-partial-sums-of-binomial-coefficients/sum-choose-le-exp-mul-div-pow.md) $\sum_{k \le d} \binom{n}{k} \le (en/d)^d$ this becomes the familiar $O(\sqrt{d \log(n/d) / n})$ rate, [stated explicitly](rademacher-complexity-sign-patterns-le-v.md).
 
 ## Informally uses
 

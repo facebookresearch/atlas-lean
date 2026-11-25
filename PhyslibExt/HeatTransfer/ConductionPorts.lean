@@ -12,7 +12,8 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-public import MathlibExt.Biology.Biophysics.MembraneCable
+public import MathlibExt.Analysis.ODE.SteadyCableTransfer
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
@@ -21,6 +22,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import PhyslibExt.Engineering.ZoneQuadraticDissipation
 
 /-!
 # Heat conduction ports: quadratic energy identity with boundary work
@@ -42,11 +44,26 @@ model; it is not claimed to be thermodynamic stored energy.
 
 Section D treats a straight fin (conductivity `k`, cross-section `A`,
 perimeter `P`, film coefficient `h`, length `L`) as the steady passive
-cable of `MathlibExt.Biology.Biophysics.MembraneCable`: the temperature
+cable of `MathlibExt.Analysis.ODE.SteadyCableTransfer`: the temperature
 excess `θ = T - Ta` is the voltage, the conducted heat rate `q` (in the
 `+x` direction) is the axial current, `ri = 1 / (k A)` and
 `rm = 1 / (h P)`. The existing sealed-end and transfer solutions then
 give the fin results; no new ODE solution is built.
+
+Section E states the lumped thermal-network balances in the form used
+here: finitely many nodes with heat capacities `C i`, symmetric
+conductances `G i j = G j i` and external inputs `Q i`, obeying
+`C i * T i' = ∑ j, G i j * (T j - T i) + Q i` at one time `t`.
+Conduction between nodes cancels in the stored heat `∑ i, C i * T i`,
+and without inputs the different, quadratic functional
+`∑ i, C i * T i ^ 2 / 2` has rate
+`-∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2`. Both identities are the
+zone-network results `ZoneHeatInventory.heat_inventory_hasDerivAt` and
+`ZoneHeatInventory.quadratic_dissipation_hasDerivAt` with no heating
+power and no boundary conductance; they assume only symmetry. Capacity
+nonnegativity makes the functional nonnegative and conductance
+nonnegativity makes its rate nonpositive. No convergence theorem for
+connected networks is claimed.
 
 ## ii. Key results
 
@@ -88,6 +105,14 @@ give the fin results; no new ODE solution is built.
   tip `q L = h A θ L` through the transfer solution;
   `ConductionPorts.IsFinSteadyState.heatRate_pos_of_base_pos`: a hot
   base feeds heat into the fin.
+- `ConductionPorts.hasDerivAt_thermalStorage`: the stored heat of a
+  thermal network has rate `∑ i, Q i` (symmetric conductances).
+- `ConductionPorts.hasDerivAt_quadraticFunctional`: without inputs the
+  quadratic functional has rate
+  `-∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2` (symmetric conductances);
+  `ConductionPorts.quadraticFunctional_nonneg` (nonnegative capacities)
+  and `ConductionPorts.quadraticFunctional_rate_nonpos` (nonnegative
+  conductances) give the signs.
 
 ## iii. Table of contents
 
@@ -95,6 +120,7 @@ give the fin results; no new ODE solution is built.
 - B. Outward Robin/Neumann dissipation
 - C. Fixtures
 - D. Fins as passive cables
+- E. Thermal networks: storage and quadratic decay
 
 ## iv. References
 
@@ -861,5 +887,68 @@ lemma IsFinSteadyState.heatRate_pos_of_base_pos {k A h P Ta L : ℝ} {T q : ℝ 
   exact mul_pos (mul_pos (fin_sqrt_pos hk hA hh hP) hθ) ht
 
 end FinCable
+
+
+/-! ## E. Thermal networks: storage and quadratic decay -/
+
+section ThermalNetwork
+
+variable {ι : Type*} [Fintype ι]
+
+/-- Storage balance at time `t`: if `dT i` is the derivative of `T i` at `t`, the conductances
+are symmetric and every node obeys `C i * dT i = ∑ j, G i j * (T j t - T i t) + Q i` at `t`, the
+stored heat `∑ i, C i * T i` has derivative `∑ i, Q i` at `t`: conduction between nodes cancels.
+This is `ZoneHeatInventory.heat_inventory_hasDerivAt` with inputs `Q` and no heating power. -/
+lemma hasDerivAt_thermalStorage {C : ι → ℝ} {G : ι → ι → ℝ} (hG : ∀ i j, G i j = G j i)
+    {T : ι → ℝ → ℝ} {dT Q : ι → ℝ} {t : ℝ}
+    (hT : ∀ i, HasDerivAt (T i) (dT i) t)
+    (hbal : ∀ i, C i * dT i = ∑ j, G i j * (T j t - T i t) + Q i) :
+    HasDerivAt (fun τ => ∑ i, C i * T i τ) (∑ i, Q i) t := by
+  have h := ZoneHeatInventory.heat_inventory_hasDerivAt C G T (fun i _ => dT i)
+    (fun i _ => Q i) (fun _ _ => 0) t hG hT (fun i => by simpa using hbal i)
+  simpa using h
+
+/-- Quadratic Lyapunov identity at time `t`: with symmetric conductances and no external inputs,
+the functional `∑ i, C i * T i ^ 2 / 2` has derivative
+`-∑ i, ∑ j, G i j * (T i t - T j t) ^ 2 / 2` at `t`. This is
+`ZoneHeatInventory.quadratic_dissipation_hasDerivAt` with no boundary conductance, zero
+reference and no heating power. -/
+lemma hasDerivAt_quadraticFunctional {C : ι → ℝ} {G : ι → ι → ℝ} (hG : ∀ i j, G i j = G j i)
+    {T : ι → ℝ → ℝ} {dT : ι → ℝ} {t : ℝ}
+    (hT : ∀ i, HasDerivAt (T i) (dT i) t)
+    (hbal : ∀ i, C i * dT i = ∑ j, G i j * (T j t - T i t)) :
+    HasDerivAt (fun τ => ∑ i, C i * T i τ ^ 2 / 2)
+      (-∑ i, ∑ j, G i j * (T i t - T j t) ^ 2 / 2) t := by
+  have h := ZoneHeatInventory.quadratic_dissipation_hasDerivAt C G (fun _ => 0) 0 T
+    (fun i _ => dT i) (fun _ _ => 0) t hG hT (fun i => by simpa using hbal i)
+  convert h using 1
+  · funext s
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    ring
+  · simp only [zero_mul, Finset.sum_const_zero, add_zero, mul_zero, sub_zero]
+    congr 1
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    ring
+
+/-- The quadratic functional is nonnegative for nonnegative capacities. -/
+lemma quadraticFunctional_nonneg {C : ι → ℝ} (hC : ∀ i, 0 ≤ C i) (T : ι → ℝ) :
+    0 ≤ ∑ i, C i * T i ^ 2 / 2 := by
+  refine Finset.sum_nonneg fun i _ => ?_
+  have := hC i
+  positivity
+
+/-- The rate of the quadratic functional is nonpositive for nonnegative conductances. -/
+lemma quadraticFunctional_rate_nonpos {G : ι → ι → ℝ} (hGnn : ∀ i j, 0 ≤ G i j) (T : ι → ℝ) :
+    -∑ i, ∑ j, G i j * (T i - T j) ^ 2 / 2 ≤ 0 := by
+  rw [neg_nonpos]
+  refine Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ => ?_
+  have := hGnn i j
+  positivity
+
+end ThermalNetwork
 
 end ConductionPorts

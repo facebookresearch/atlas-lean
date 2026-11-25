@@ -183,7 +183,8 @@ noncomputable def riemann (F : Filtration ℝ≥0 mΩ) (g : ℝ → ℝ) (t : �
     Finset.single_le_sum (f := fun k : Fin n ↦ |g ((t * (k.castSucc : ℕ) / n : ℝ≥0) : ℝ)|)
       (fun _ _ ↦ abs_nonneg _) (Finset.mem_univ k)
 
-private theorem time_le {t : ℝ≥0} {n k : ℕ} (hk : k ≤ n) : t * k / n ≤ t := by
+/-- For `k ≤ n`, `t * k / n ≤ t` in `ℝ≥0`. -/
+theorem mul_natCast_div_le_self {t : ℝ≥0} {n k : ℕ} (hk : k ≤ n) : t * k / n ≤ t := by
   rcases Nat.eq_zero_or_pos n with hn | hn
   · simp [hn]
   · rw [div_le_iff₀ (by exact_mod_cast hn)]
@@ -205,7 +206,8 @@ theorem itoIntegral_riemann (F : Filtration ℝ≥0 mΩ) (g : ℝ → ℝ) (t : 
     (B (min (t * ((k + 1 : ℕ) : ℝ≥0) / n) t) ω - B (min (t * (k : ℕ) / n) t) ω)) n).trans ?_
   refine Finset.sum_congr rfl fun k hk ↦ ?_
   have hk' : k < n := Finset.mem_range.mp hk
-  rw [min_eq_left (time_le hk'), min_eq_left (time_le hk'.le), coe_time,
+  rw [min_eq_left (mul_natCast_div_le_self hk'), min_eq_left (mul_natCast_div_le_self hk'.le),
+    coe_time,
     show (t : ℝ) * (k + 1) / n = ((t * ((k + 1 : ℕ) : ℝ≥0) / n : ℝ≥0) : ℝ) by
       rw [coe_time]; push_cast; ring,
     ← coe_time, Real.toNNReal_coe, Real.toNNReal_coe]
