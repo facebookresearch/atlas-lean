@@ -18,9 +18,13 @@ public import Mathlib.Topology.Algebra.Module.Multilinear.Basic
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook27Wanted
 
-/-- A function `F : E → ℂ` on a complex Banach space is a (continuous) polynomial
-function if it is a finite sum of homogeneous terms, each given by a continuous
-multilinear map applied diagonally. -/
+/-- **Continuous polynomial functions on a complex normed space.** Let $E$ be a complex normed
+space. A function $F : E \to \mathbb{C}$ is a continuous polynomial function if there are a
+natural number $n$, natural numbers $m_1, \dots, m_n$ and continuous $\mathbb{C}$-multilinear
+maps $A_i : E^{m_i} \to \mathbb{C}$, with $A_i$ taking $m_i$ arguments, such that
+$F(x) = \sum_{i=1}^{n} A_i(x, \dots, x)$ for every $x \in E$.
+
+A $0$-multilinear map is a constant, so constant functions are polynomial functions. -/
 def IsPolynomialOn (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (F : E → ℂ) : Prop :=
   ∃ (n : ℕ) (m : Fin n → ℕ)
@@ -28,15 +32,19 @@ def IsPolynomialOn (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     ∀ x, F x = ∑ i, A i fun _ => x
 
 /--
-Mazur-Orlicz, Problem 27 of the Scottish Book. Original question: if complex
-polynomials `F, G` on a complex space of type (B) both tend to `0` along a
-sequence `x_n` in the unit ball, is there a common zero `x₀` with
-`F x₀ = 0` and `G x₀ = 0`? The answer is positive. This file formalizes the
-contrapositive Bezout identity recorded in the addendum in the Scottish Book
-(Mazur-Orlicz, 4 April 1939): if `F` and `G` have no common zero, there are
-complex polynomials `φ, ψ` with `F φ + G ψ = 1` throughout `E`. The original
-question follows from this by contradiction: along the sequence `x_n` both
-`F x_n` and `G x_n` tend to `0`, while `F x_n * φ x_n + G x_n * ψ x_n = 1`.
+**Bezout identity for polynomials without a common zero.** Let $E$ be a complex Banach space
+and let $F, G : E \to \mathbb{C}$ be continuous polynomial functions with no common zero, that
+is, $G(x) \neq 0$ whenever $F(x) = 0$. Then there are continuous polynomial functions
+$\varphi, \psi : E \to \mathbb{C}$ such that $F(x) \varphi(x) + G(x) \psi(x) = 1$ for every
+$x \in E$.
+
+This is the identity recorded in the addendum to Problem 27 of the Scottish Book (Mazur-Orlicz,
+4 April 1939). The problem asks whether two complex polynomials on a complex Banach space that
+both tend to $0$ along a sequence $(x_n)$ in the unit ball must have a common zero. The answer
+is positive and follows from the identity by contradiction: continuous polynomials are bounded
+on the unit ball, so $F(x_n) \varphi(x_n) + G(x_n) \psi(x_n)$ would tend to $0$, yet it equals
+$1$.
+
 Source: S. Mazur and W. Orlicz, Problem 27 of the Scottish Book, with the
 positive answer via the Bezout identity in the addendum; see the commentary in
 R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).

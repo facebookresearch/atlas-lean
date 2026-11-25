@@ -37,20 +37,35 @@ variable {R S G : Type*} [CommRing R] [CommRing S] [Algebra R S]
   [Group G] [MulSemiringAction G S] [SMulCommClass G R S]
   [Finite G] [Algebra.IsInvariant R S G]
 
-/-- The conjugacy class of the arithmetic Frobenius element `arithFrobAt R G Q`
-at an unramified prime `Q` with finite residue field. -/
+/-- **Frobenius conjugacy class.** Let $S$ be a commutative algebra over a commutative ring $R$,
+and let a finite group $G$ act on $S$ by $R$-algebra automorphisms such that every element of
+$S$ fixed by $G$ is the image of an element of $R$. Let $Q$ be a prime of $S$ with $S/Q$ finite
+at which $S$ is unramified over $R$ (the localization $S_Q$ is formally unramified over $R$).
+The Frobenius conjugacy class at $Q$ is the conjugacy class in $G$ of the chosen arithmetic
+Frobenius element $\mathrm{Frob}_Q$ at $Q$: an element $\sigma \in G$ with
+$\sigma(x) \equiv x^q \pmod Q$ for all $x \in S$, where $q$ is the number of elements of $R$
+modulo the preimage of $Q$ in $R$, chosen so that the elements chosen at primes with the same
+preimage in $R$ are conjugate. -/
 noncomputable def arithFrobConjClass (Q : Ideal S) [Q.IsPrime] [Finite (S ⧸ Q)]
     [Algebra.IsUnramifiedAt R Q] : ConjClasses G :=
   ConjClasses.mk (arithFrobAt R G Q)
 
-/-- The chosen Frobenius element lies in its conjugacy class. -/
+/-- **The Frobenius element lies in the Frobenius conjugacy class.** Let a finite group $G$ act
+on a commutative algebra $S$ over a commutative ring $R$ by $R$-algebra automorphisms such that
+every element of $S$ fixed by $G$ is the image of an element of $R$. For every prime $Q$ of $S$
+with $S/Q$ finite at which $S$ is unramified over $R$, the chosen arithmetic Frobenius element
+$\mathrm{Frob}_Q$ at $Q$ belongs to the Frobenius conjugacy class at $Q$. -/
 theorem arithFrobConjClass_mem_carrier (Q : Ideal S) [Q.IsPrime] [Finite (S ⧸ Q)]
     [Algebra.IsUnramifiedAt R Q] :
     arithFrobAt R G Q ∈ (arithFrobConjClass (R := R) (G := G) Q).carrier :=
   ConjClasses.mem_carrier_mk
 
-/-- Primes of `S` lying over the same prime of `R` give the same Frobenius
-conjugacy class. -/
+/-- **The Frobenius conjugacy class depends only on the prime below.** Let a finite group $G$
+act on a commutative algebra $S$ over a commutative ring $R$ by $R$-algebra automorphisms such
+that every element of $S$ fixed by $G$ is the image of an element of $R$. Let $Q$ and $Q'$ be
+primes of $S$ with $S/Q$ and $S/Q'$ finite at which $S$ is unramified over $R$. If $Q$ and $Q'$
+have the same preimage in $R$, then the Frobenius conjugacy classes at $Q$ and $Q'$ are
+equal. -/
 theorem arithFrobConjClass_eq_of_under_eq (Q Q' : Ideal S) [Q.IsPrime]
     [Finite (S ⧸ Q)] [Algebra.IsUnramifiedAt R Q] [Q'.IsPrime]
     [Finite (S ⧸ Q')] [Algebra.IsUnramifiedAt R Q']

@@ -1,0 +1,97 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Unitization
+public import MathlibExt.Algebra.Algebra.Unitization.Unital
+
+/-!
+# Unitization of a unital C-star algebra
+
+The canonical unitization of a unital complex C-star algebra is star-algebra
+equivalent to the product of the scalars and the original algebra.
+-/
+
+@[expose] public section
+
+open scoped CStarAlgebra
+
+namespace Unitization
+
+noncomputable section
+
+universe u v
+
+/-- The canonical star algebra homomorphism from a unital algebra's
+unitization to the scalar/algebra product. -/
+def unitalProdStarAlgHom
+    (A : Type u) [CStarAlgebra A] :
+    Unitization ℂ A →⋆ₐ[ℂ] ℂ × A where
+  __ := Unitization.unitalProdAlgHom ℂ A
+  map_star' := by
+    intro x
+    change
+      ((fstStarAlgHom A).prod
+          (Unitization.starLift (NonUnitalStarAlgHom.id ℂ A))) (star x) =
+        star (((fstStarAlgHom A).prod
+          (Unitization.starLift (NonUnitalStarAlgHom.id ℂ A))) x)
+    exact map_star _ x
+
+@[simp]
+theorem unitalProdStarAlgHom_apply
+    (A : Type u) [CStarAlgebra A] (x : Unitization ℂ A) :
+    unitalProdStarAlgHom A x =
+      (x.fst, x.fst • (1 : A) + x.snd) := by
+  change Unitization.unitalProdAlgHom ℂ A x = _
+  exact Unitization.unitalProdAlgHom_apply ℂ A x
+
+/-- The canonical star-algebra equivalence from the unitization of a unital
+complex C-star algebra to the product of the scalars and the algebra. -/
+noncomputable def unitalProdStarAlgEquiv
+    (A : Type u) [CStarAlgebra A] :
+    Unitization ℂ A ≃⋆ₐ[ℂ] ℂ × A :=
+  StarAlgEquiv.ofAlgEquiv (Unitization.unitalProdAlgEquiv ℂ A) fun x => by
+    change unitalProdStarAlgHom A (star x) = star (unitalProdStarAlgHom A x)
+    exact map_star _ x
+
+/-- Exact forward action of the canonical product equivalence. -/
+@[simp]
+theorem unitalProdStarAlgEquiv_apply
+    (A : Type u) [CStarAlgebra A] (x : Unitization ℂ A) :
+    unitalProdStarAlgEquiv A x =
+      (x.fst, x.fst • (1 : A) + x.snd) := by
+  change Unitization.unitalProdAlgEquiv ℂ A x = _
+  exact Unitization.unitalProdAlgEquiv_apply ℂ A x
+
+/-- Exact inverse action of the canonical product equivalence. -/
+@[simp]
+theorem unitalProdStarAlgEquiv_symm_apply
+    (A : Type u) [CStarAlgebra A] (x : ℂ × A) :
+    (unitalProdStarAlgEquiv A).symm x =
+      Unitization.inl x.1 +
+        Unitization.inr (R := ℂ) (A := A) (x.2 - x.1 • (1 : A)) := by
+  change (Unitization.unitalProdAlgEquiv ℂ A).symm x = _
+  exact Unitization.unitalProdAlgEquiv_symm_apply ℂ A x
+
+/-- Naturality of the canonical product equivalence.  Under it, the
+unitization of a unital star homomorphism is the product map `(id, phi)`. -/
+theorem unitalProdStarAlgEquiv_naturality
+    {A : Type u} {B : Type v}
+    [CStarAlgebra A] [CStarAlgebra B]
+    (phi : A →⋆ₐ[ℂ] B) :
+    (unitalProdStarAlgEquiv B).toStarAlgHom.comp
+        (Unitization.starMap phi.toNonUnitalStarAlgHom) =
+      ((StarAlgHom.fst ℂ ℂ A).prod
+        (phi.comp (StarAlgHom.snd ℂ ℂ A))).comp
+          (unitalProdStarAlgEquiv A).toStarAlgHom := by
+  apply StarAlgHom.ext
+  intro x
+  induction x using Unitization.ind with
+  | inl_add_inr c a =>
+      apply Prod.ext <;>
+        simp [Unitization.algebraMap_eq_inl]
+
+end
+
+end Unitization

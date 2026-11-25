@@ -30,12 +30,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The polynomial `1 + X + ⋯ + X ^ (b - 1)` for a source-valid base `b ≥ 2`. -/
+/-- **Base polynomial of the $b$-nomial coefficients.** For a natural number $b \ge 2$, this is
+the integer polynomial $1 + X + \dots + X^{b-1} = \sum_{i=0}^{b-1} X^i \in \mathbb{Z}[X]$. -/
 noncomputable def bNomialBase (b : ℕ) (_hb : 2 ≤ b) : Polynomial ℤ :=
   ∑ i ∈ Finset.range b, X ^ i
 
-/-- The type-1 `b`-nomial coefficient in row `n` and integer-indexed column `k`.
-It is zero for negative `k`. -/
+/-- **Type-1 $b$-nomial coefficients.** For natural numbers $b \ge 2$ and $n$ and an integer
+$k$, the type-1 $b$-nomial coefficient in row $n$ and column $k$ is the coefficient of $X^k$ in
+$(1 + X + \dots + X^{b-1})^n \in \mathbb{Z}[X]$ when $k \ge 0$, and $0$ when $k < 0$. -/
 noncomputable def bNomialCoefficient (b : ℕ) (hb : 2 ≤ b) (n : ℕ) (k : ℤ) : ℤ :=
   if k < 0 then 0 else ((bNomialBase b hb) ^ n).coeff k.toNat
 

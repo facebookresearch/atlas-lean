@@ -26,9 +26,8 @@ is relevant. For a target FDR level `q` it uses the data-dependent threshold
 with `𝒲 = {|W_j|} \ {0}` and `T = +∞` if the set is empty, and selects `Ŝ = {j : W_j ≥ T}`. The
 offset `c = 0` is the knockoff filter and `c = 1` the knockoff+ filter. This module defines the
 threshold and the selected set as functions of the vector `W` and proves their deterministic
-properties. The FDR guarantees, which depend only on the null statistics having i.i.d. fair signs
-independent of `|W|` (see `flipSigns`), are recorded as wanted statements in
-`WantedExt.Probability.KnockoffFDRWanted`.
+properties. The FDR guarantees use invariance of the joint law of `W` under null sign flips,
+expressed using `flipSigns`.
 
 ## Main definitions
 

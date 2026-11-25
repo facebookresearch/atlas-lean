@@ -155,7 +155,12 @@ private lemma key_identity (z : ℂ) (hz : ∀ r : ℕ, (z + (r : ℂ)) ≠ 0) (
     _ = 0 + F 0 := by rw [hzero]
     _ = 1 / (Nat.factorial n : ℂ) := by rw [zero_add, hF0]
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.1), printed
+/-- **Ramanujan's exponential transformation of a factorial series (Chapter 3, Entry 2).** For all
+complex numbers $x$ and $z$ such that $z + r \ne 0$ for every natural number $r$, the series
+$\sum_{j \ge 0} \frac{x^{j+1}}{(z+j)\, j!}$ converges absolutely, and its sum is
+$e^x \sum_{j \ge 0} \frac{(-1)^j x^{j+1}}{z(z+1)\cdots(z+j)}$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.1), printed
     p. 46 / PDF p. 56.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry2`.
 -/
@@ -229,7 +234,11 @@ end Entry2
 
 namespace Entry2Leftsummable
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.1), printed
+/-- **Convergence of the left side of Ramanujan's Chapter 3, Entry 2.** For all complex numbers
+$x$ and $z$ such that $z + r \ne 0$ for every natural number $r$, the series
+$\sum_{j \ge 0} \frac{x^{j+1}}{(z+j)\, j!}$ converges absolutely.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.1), printed
     p. 46 / PDF p. 56.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry2_leftsummable`.
 -/

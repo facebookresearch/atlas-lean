@@ -33,12 +33,11 @@ open Cardinal Ordinal
 universe u
 
 /--
-This proposition asserts the ordinal Ramsey property `α → (β, c)²`.
-
-It states that for any 2-coloring of the complete graph on the ordinal `α`,
-one of the following must hold:
-* There is a red clique which is order-isomorphic to `β`.
-* There is a blue clique of cardinality `c`.
+**Ordinal–cardinal Ramsey property.** For ordinals $\alpha$, $\beta$ and a cardinal $c$, the
+partition property $\alpha \to (\beta, c)^2$ holds if for every coloring of the edges of the
+complete graph on the ordinals less than $\alpha$ in red and blue, either some set of vertices
+whose order type is $\beta$ has all its edges red, or some set of vertices of cardinality exactly
+$c$ has all its edges blue.
 -/
 def OrdinalCardinalRamsey (α β : Ordinal.{u}) (c : Cardinal.{u}) : Prop :=
   -- For any 2-coloring of `α`,
