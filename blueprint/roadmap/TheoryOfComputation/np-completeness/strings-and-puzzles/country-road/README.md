@@ -1,0 +1,15 @@
+# Country Road
+
+- [Instances of COUNTRY ROAD](country-road-instance.md)
+- [Number of rows of a COUNTRY ROAD grid](rows.md)
+- [Number of columns of a COUNTRY ROAD grid](cols.md)
+- [Number of regions of a COUNTRY ROAD instance](region-count.md)
+- [Cells of a COUNTRY ROAD grid](cell.md)
+- [Grid graph of a COUNTRY ROAD instance](grid.md)
+- [Region of a cell in COUNTRY ROAD](region.md)
+- [Number entry of a region](clue.md)
+- [Well-formed COUNTRY ROAD instances](well-formed.md)
+- [Loops satisfying the COUNTRY ROAD rules](solves.md)
+- [Feasible COUNTRY ROAD instances](country-road-feasible.md)
+- [COUNTRY ROAD as a decision problem](country-road-dec.md)
+- [COUNTRY ROAD is NP-complete](country-road-np-complete.md)

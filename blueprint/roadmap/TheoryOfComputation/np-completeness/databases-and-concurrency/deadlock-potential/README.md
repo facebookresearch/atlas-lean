@@ -1,0 +1,15 @@
+# Deadlock potential
+
+- [Instances of DEADLOCK POTENTIAL](deadlock-potential-instance.md)
+- [Number of resources](num-resources.md)
+- [Number of processes](num-processes.md)
+- [Resource bounds](bound.md)
+- [Number of steps of a process](proc-length.md)
+- [Allocation vectors of steps](alloc.md)
+- [Resource usage of a partial schedule](usage.md)
+- [Legal partial schedules](is-legal.md)
+- [Deadlocked schedules](is-deadlocked.md)
+- [Well-formed DEADLOCK POTENTIAL instances](well-formed.md)
+- [Feasible DEADLOCK POTENTIAL instances](deadlock-potential-feasible.md)
+- [DEADLOCK POTENTIAL as a decision problem](deadlock-potential-dec.md)
+- [DEADLOCK POTENTIAL is NP-complete](deadlock-potential-np-complete.md)
