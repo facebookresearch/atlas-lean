@@ -50,5 +50,3 @@ Meta-analysis combines evidence from several studies and measures how much their
 
 - [Meta-analysis](meta-analysis/README.md)
 - [Large-deviation bound for the biased empirical MMD](measure-real-abs-mmd-biased-sub-mmd-gt-l.md)
-
-- [Bayes rule for binary classification with misclassification costs](bayes-rule-for-binary-classification.md)

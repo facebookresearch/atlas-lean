@@ -1,6 +1,6 @@
 # Reduction law for knowledge after an announcement
 
-In an [epistemic model](model.md), $[\varphi!]K_i\psi$ holds at a world exactly when $\varphi \to K_i[\varphi!]\psi$ holds there: after announcing $\varphi$, agent $i$ knows $\psi$ exactly when, if the announcement can be made, $i$ knew that $\psi$ holds after it.
+In an [epistemic model](../model.md), $[\varphi!]K_i\psi$ holds at a world exactly when $\varphi \to K_i[\varphi!]\psi$ holds there: after announcing $\varphi$, agent $i$ knows $\psi$ exactly when, if the announcement can be made, $i$ knew that $\psi$ holds after it.
 
 ## Sources
 

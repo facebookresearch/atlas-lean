@@ -8,8 +8,8 @@ The deterministic rule $\delta^*(x) = 1$ if $\pi_0 (C_{10} - C_{00})\, p_0(x) < 
 
 ## Background
 
-- [Neyman–Pearson lemma for two dominated simple hypotheses](neyman-pearson-dominated-two-simple.md)
-- [A posterior argmax classifier has minimal 0-1 risk](../../ComputerScience/machine-learning/supervised-learning/bayes-classifier/avg-risk-le.md), the same optimality for a joint law of input and label
+- [Neyman–Pearson lemma for two dominated simple hypotheses](../../../../Probability/hypothesis-testing/neyman-pearson-dominated-two-simple.md)
+- [A posterior argmax classifier has minimal 0-1 risk](avg-risk-le.md), the same optimality for a joint law of input and label
 
 ## Sources
 

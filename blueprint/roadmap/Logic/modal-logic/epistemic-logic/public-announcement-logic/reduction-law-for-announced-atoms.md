@@ -1,6 +1,6 @@
-# Announcements distribute over implication
+# Reduction law for announced atoms
 
-In an [epistemic model](model.md), $[\varphi!](\psi \to \chi)$ holds at a world exactly when $[\varphi!]\psi \to [\varphi!]\chi$ holds there, under [satisfaction](sat.md) of epistemic formulas with announcements.
+In an [epistemic model](../model.md), the announcement $[\varphi!]a$ of a formula $\varphi$ followed by an atom $a$ holds at a world $w$ exactly when $\varphi$ holding at $w$ implies $a$ holding at $w$, under [satisfaction](../sat.md) of epistemic formulas with announcements.
 
 ## Sources
 

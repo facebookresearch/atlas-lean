@@ -1,10 +1,10 @@
 # Public announcements with common knowledge do not reduce
 
-Add a common-knowledge operator $C_G$ for groups $G$ of agents to the epistemic language with announcements $[F!]G$, interpreted as in [soundness and completeness of public announcement logic](public-announcement-logic.md). Then some formula of the language with announcements and common knowledge is not equivalent, over all [epistemic models](model.md), to any announcement-free formula of epistemic logic with common knowledge: announcements with common knowledge are strictly more expressive than epistemic logic with common knowledge.
+Add a common-knowledge operator $C_G$ for groups $G$ of agents to the epistemic language with announcements $[F!]G$, interpreted as in [soundness and completeness of public announcement logic](public-announcement-logic.md). Then some formula of the language with announcements and common knowledge is not equivalent, over all [epistemic models](../model.md), to any announcement-free formula of epistemic logic with common knowledge: announcements with common knowledge are strictly more expressive than epistemic logic with common knowledge.
 
 ## Depends on
 
-- [Epistemic models](model.md)
+- [Epistemic models](../model.md)
 - [Soundness and completeness of public announcement logic](public-announcement-logic.md)
 
 ## Sources
