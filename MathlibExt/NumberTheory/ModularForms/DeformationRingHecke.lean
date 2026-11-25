@@ -75,7 +75,8 @@ open Polynomial
 
 namespace ResidualGaloisRep
 
-/-- Scalar extension of a residual representation along a field homomorphism. -/
+/-- Scalar extension of a residual representation along a field homomorphism.
+Both fields and the representation space live in one universe `u`. -/
 def baseChangeAlong {k : Type u} [Field k] {k' : Type u} [Field k'] (φ : k →+* k')
     (ρ : ResidualGaloisRep.{u, u} k) : ResidualGaloisRep.{u, u} k' :=
   letI : Algebra k k' := φ.toAlgebra
