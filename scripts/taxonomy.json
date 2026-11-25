@@ -19768,7 +19768,9 @@
   "MathlibExt/Topology/Category/TopCat/ProdPushoutSymm": {"to": "Topology/categorical-topology", "title": "Fixed-right product-pushout symmetry adapter"},
   "MathlibExt/Topology/Category/TopCat/PushoutOpenComplement": {"to": "Topology/categorical-topology", "title": "PushoutOpenComplement"},
   "MathlibExt/Topology/Category/TopCat/Subspace": {"to": "Topology/categorical-topology", "title": "Subspace inclusions and maps in TopCat"},
-  "MathlibExt/RingTheory/HopfAlgebra/Hom": {"to": "Algebra/associative-algebras", "title": "Naturality of Hopf antipodes"}
+  "MathlibExt/RingTheory/HopfAlgebra/Hom": {"to": "Algebra/associative-algebras", "title": "Naturality of Hopf antipodes"},
+  "MathlibExt/RingTheory/Bialgebra/BaseChange": {"to": "Algebra/associative-algebras", "title": "Bialgebra scalar extension through an algebra tower"}
+
 
 
   },

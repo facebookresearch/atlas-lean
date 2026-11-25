@@ -4,6 +4,7 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 
 - [Algebraic quotients by two-sided nonunital subalgebras](../not-yet-classified/quotient/README.md)
 - [Antipode of a Hopf algebra](antipode-of-a-hopf-algebra/README.md)
+- [Bialgebra scalar extension through an algebra tower](bialgebra-scalar-extension-through-an-algebra-to/README.md)
 - [Ideals and quotients of nonunital ground algebras](ideals-and-quotients-of-nonunital-ground-algebra/README.md)
 - [Jacobson's commutativity theorem](jacobson-s-commutativity-theorem/README.md)
 - [Köthe's conjecture](k-the-s-conjecture/README.md)
