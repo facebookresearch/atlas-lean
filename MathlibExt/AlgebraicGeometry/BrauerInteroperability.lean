@@ -70,8 +70,9 @@ def unitsGModule : ContinuousGModule.{0, 0} (Field.absoluteGaloisGroup K) :=
         unitAction K p.1 p.2)
       exact (unitsRepContinuousSMul K).continuous_smul⟩, ⟨rfl⟩⟩
 
-/-- The actual second derived-invariants carrier; enough injectives is an
-explicit source provider, rather than an unproved project instance. -/
+/-- The second right derived functor of invariants on discrete $G_K$-modules, for $G_K$ the
+absolute Galois group of $K$ and assuming that discrete $G_K$-modules have enough injectives,
+applied to the units of the separable closure: $H^2(G_K, (K^{\mathrm{sep}})^\times)$. -/
 abbrev DerivedH2 [EnoughInjectives
     (ContinuousGModule.{0, 0} (Field.absoluteGaloisGroup K))] :=
   (derivedCohomology (Field.absoluteGaloisGroup K) 2).obj (unitsGModule K)
@@ -134,8 +135,10 @@ theorem fieldComparison_geometric (B : FieldGmComparison K)
     (c : TwoCocycles K) (R : GeometricCocycleRealization K c) :
     fieldComparison K B (geometricCechClass R) = cocycleClass K c := B.normalized c R
 
-/-- Every cocycle has an actual geometric Ext class inside the normalized provider.
-This is computed from its Čech roof, rather than being a separately supplied class map. -/
+/-- The class in $H^2_{\mathrm{et}}(\operatorname{Spec} K, \mathbb{G}_m)$ of a continuous
+two-cocycle $c$ of the absolute Galois group of $K$ with values in $(K^{\mathrm{sep}})^\times$:
+the Čech class of the realization of $c$ on a finite Galois covering of $\operatorname{Spec} K$
+that `B` assigns to $c$. -/
 def fieldGeometricClass (B : FieldGmComparison K) (c : TwoCocycles K) :
     GmH2 (Spec (.of K)) := geometricCechClass (B.realization c)
 
