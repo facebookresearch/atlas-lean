@@ -51,24 +51,28 @@ open MeasureTheory ProbabilityTheory Matrix
 
 namespace ProbabilityTheory
 
-/-- The population standard deviation `√Var[f; μ]` of a real function `f` under the measure `μ`.
--/
+/-- The square root `√Var[f; μ]` of Mathlib's variance of `f` under `μ`. When `μ` is a
+probability measure and `f` is square-integrable, this is the population standard deviation of
+`f`. -/
 noncomputable def populationSD {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (f : Ω → ℝ) : ℝ := √Var[f; μ]
 
-/-- The Pearson quotient `cov[f, g; μ] / (populationSD μ f * populationSD μ g)`. It is the
-correlation of `f` and `g` when both variances are positive (and `0`, by Lean's convention for
-division by zero, when either variance is zero). -/
+/-- The totalized quotient `cov[f, g; μ] / (populationSD μ f * populationSD μ g)` (equal to `0`
+by Lean's convention for division by zero when either variance is zero). When `μ` is a
+probability measure, `f` and `g` are square-integrable, and both variances are positive, this is
+the Pearson correlation of `f` and `g`. -/
 noncomputable def pearsonRatio {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (f g : Ω → ℝ) : ℝ := cov[f, g; μ] / (populationSD μ f * populationSD μ g)
 
-/-- The standardized score `(f ω - μ[f]) / populationSD μ f`, the deviation from the population
-mean in units of the population standard deviation (meaningful when `Var[f; μ] > 0`). -/
+/-- The totalized quotient `(f ω - μ[f]) / populationSD μ f`. When `μ` is a probability measure,
+`f` is square-integrable, and `Var[f; μ] > 0`, this is the standardized score of `f` in units of
+its population standard deviation. -/
 noncomputable def standardizedValue {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (f : Ω → ℝ) (ω : Ω) : ℝ := (f ω - μ[f]) / populationSD μ f
 
-/-- The standardized upper event `{ω | μ[f] + z * populationSD μ f ≤ f ω}`: the outcomes whose
-score is at least `z` population standard deviations above the population mean. -/
+/-- The set `{ω | μ[f] + z * populationSD μ f ≤ f ω}`. When `μ` is a probability measure and `f`
+is square-integrable, this is the upper-tail event of outcomes whose score is at least `z`
+population standard deviations above the population mean. -/
 noncomputable def standardizedUpperEvent {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (f : Ω → ℝ) (z : ℝ) : Set Ω := {ω | μ[f] + z * populationSD μ f ≤ f ω}
 

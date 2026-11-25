@@ -1,4 +1,5 @@
 # Standardized Value
 
-The standardized score `(f ω - μ[f]) / populationSD μ f`, the deviation from the population
-mean in units of the population standard deviation (meaningful when `Var[f; μ] > 0`).
+The totalized quotient `(f ω - μ[f]) / populationSD μ f`. When `μ` is a probability measure,
+`f` is square-integrable, and `Var[f; μ] > 0`, this is the standardized score of `f` in units of
+its population standard deviation.
