@@ -26,3 +26,22 @@ example : eulerMahonian (ZMod 8) 3 2 3 = 5 := by decide
 
 -- The last link position is constant beyond the end of the shape.
 example : diamondLinkPos [1, 2] 3 = 5 := by decide
+
+-- The triples (0, 1, 2) and (1, 1, 1) both contribute to a * b^2.
+example : multifoldDiamondCount [1] 1 2 = 2 := by decide
+
+-- After clearing the three denominator factors, the coefficient of a * b^2 vanishes.
+example : MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) 1 + Finsupp.single 1 2)
+    ((1 - MvPowerSeries.X 0 * MvPowerSeries.X 1 ^ 2) *
+      ((1 - MvPowerSeries.X 0 * MvPowerSeries.X 1) * (1 - MvPowerSeries.X 1)) *
+      multifoldDiamondSeries [1]) = 0 := by
+  have h : (1 - MvPowerSeries.X 0 * MvPowerSeries.X 1 ^ 2) *
+      ((1 - MvPowerSeries.X 0 * MvPowerSeries.X 1) * (1 - MvPowerSeries.X 1)) *
+      multifoldDiamondSeries [1] = 1 := by
+    simpa [Finset.Icc_self, Finset.prod_range_succ, eulerMahonian_one, mul_comm, mul_left_comm]
+      using partitionDiamond_genFun 1 1 le_rfl le_rfl
+  rw [h, MvPowerSeries.coeff_one]
+  apply ite_eq_right
+  intro he
+  have h1 := congrArg (fun e : Fin 2 →₀ ℕ => e 1) he
+  simp at h1
