@@ -9,6 +9,7 @@
 - [The f4 matrix rank is at most the rank of the right contrasts](rank-f4-matrix-le-rank-contrast-right.md)
 - [The f4 matrix rank is at most the rank of the left contrasts](rank-f4-matrix-le-rank-contrast-left.md)
 - [Right populations with the reference's weights give a zero f4 matrix](f4-matrix-eq-zero-of-weight-right-succ-e.md)
+- [The generic rank of the f4 matrix is the common independent-set number](generic-rank-of-f4-matrices-equals-the-common-in.md)
 
 ## Individuals of the global-ancestry model
 
