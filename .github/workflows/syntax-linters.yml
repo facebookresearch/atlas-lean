@@ -1,0 +1,112 @@
+name: Syntax linters
+
+# lakefile.toml builds the production libraries with Mathlib's standard linter
+# set, so every build already runs these linters, but no check reads their
+# warnings. This job reports the warnings on the lines that a pull request adds
+# (scripts/check_syntax_linters.py), so existing code does not fail it.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  syntax-linters:
+    name: syntax linters
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The test merge and its first parent, the commit it is tested against.
+          fetch-depth: 2
+
+      - name: Test the check
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts -p test_lean_changes.py -v
+          python3 -m unittest discover -s scripts -p test_check_syntax_linters.py -v
+
+      # A pull request that changes no production Lean file has nothing to
+      # lint. One that changes the toolchain or the manifest has no build to
+      # restore, so its files are linted by the pull requests after it.
+      - name: Decide what to lint
+        id: scope
+        run: |
+          set -euo pipefail
+          base="$(git rev-parse HEAD^1)"
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          if ! git diff --quiet "$base" HEAD -- lean-toolchain lake-manifest.json; then
+            echo "This pull request changes the toolchain or the manifest; nothing is linted."
+            echo "lint=false" >> "$GITHUB_OUTPUT"
+          elif git diff --quiet "$base" HEAD -- 'MathlibExt/*.lean' 'CSLibExt/*.lean' \
+              'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean'; then
+            echo "This pull request changes no Lean file of the production libraries."
+            echo "lint=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "lint=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # As in ci.yml: the restored build and the caches need the space.
+      - name: Free disk space for Lean caches
+        if: steps.scope.outputs.lint == 'true'
+        run: |
+          set -euo pipefail
+          df -h / || true
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
+
+      - name: Install elan v4.2.4
+        if: steps.scope.outputs.lint == 'true'
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        if: steps.scope.outputs.lint == 'true'
+        run: lake exe cache get
+
+      # The builds that ci.yml saves from main, so that only the changed files
+      # and the modules that main has not built yet are built here.
+      - name: Restore package builds
+        if: steps.scope.outputs.lint == 'true'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .lake/packages/cslib/.lake/build
+            .lake/packages/Physlib/.lake/build
+          key: lake-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      - name: Restore local build
+        if: steps.scope.outputs.lint == 'true'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ steps.scope.outputs.base }}
+          restore-keys: |
+            lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      - name: Report Mathlib linter warnings on added lines
+        if: steps.scope.outputs.lint == 'true'
+        run: python3 scripts/check_syntax_linters.py --base HEAD^1
