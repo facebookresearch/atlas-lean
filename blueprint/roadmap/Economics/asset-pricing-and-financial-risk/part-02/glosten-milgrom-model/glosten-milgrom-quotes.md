@@ -1,6 +1,6 @@
 # Sequential Glosten–Milgrom model: quotes as conditional expectations
 
-An asset has value $V \in \{V_L, V_H\}$ with $V_L < V_H$ and prior $\theta_0 = \mathbb P(V = V_H) \in (0, 1)$. In each period $t = 1, 2, \dots$ one trader arrives: with probability $\mu \in [0, 1)$ an informed trader, who buys if $V = V_H$ and sells if $V = V_L$, and otherwise an uninformed trader, who buys or sells with probability $1/2$ each, independently of $V$ and of the past. A competitive risk-neutral market maker posts, given the history $\mathcal H_{t-1}$ of past trades,
+An asset has value $V \in \{V_L, V_H\}$ with $V_L < V_H$ and prior $\theta_0 = \mathbb P(V = V_H) \in (0, 1)$. In each period $t = 1, 2, \dots$ one trader arrives. The trader types are drawn independently across periods and independently of $V$: in each period the trader is informed with probability $\mu \in [0, 1)$ and uninformed otherwise. An informed trader buys if $V = V_H$ and sells if $V = V_L$; an uninformed trader buys or sells with probability $1/2$ each, independently of $V$, of all trader types and of the orders in other periods. A competitive risk-neutral market maker posts, given the history $\mathcal H_{t-1}$ of past trades,
 
 $$a_t = \mathbb E[V \mid \mathcal H_{t-1}, \text{buy at } t], \qquad b_t = \mathbb E[V \mid \mathcal H_{t-1}, \text{sell at } t].$$
 
