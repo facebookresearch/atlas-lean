@@ -1,0 +1,3 @@
+# Refined maximum Nash welfare allocations are Pareto optimal
+
+For finitely many agents with additive, nonnegative valuations over finitely many indivisible goods, call an allocation a maximum Nash welfare allocation in the refined sense when it first maximizes the number of agents who receive positive value and, among allocations with that number, maximizes the product of those agents' values. Every such allocation is Pareto optimal. Maximizing the plain product of all agents' values does not suffice: when every allocation gives some agent value zero, all allocations have product zero, including Pareto-dominated ones.

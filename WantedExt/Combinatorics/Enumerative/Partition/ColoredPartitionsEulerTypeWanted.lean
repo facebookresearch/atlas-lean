@@ -11,6 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Bell
 public import Mathlib.Data.Set.Card
+public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsDifferentColors
+public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsFullyDifferent
+public import MathlibExt.Combinatorics.Enumerative.Partition.DistinctConstantBlockPartitions
 
 /-!
 # Colored partitions and Euler-type identities (statements)
@@ -31,52 +34,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Colored partitions with distinct colors.** A colored part is a pair $(m, j)$ of integers
-with $1 \le j \le m$, read as the part $m$ in color $j$. For every $n \ge 0$, the number of
-nonempty finite sets of colored parts $(m, j)$ with $m \le n$ in which no two colored parts have
-the same color $j$ is $(n + 1)! - 1$.
-
-A colored partition whose parts have pairwise different colors has no repeated colored part, so
-it is the same as a finite set of colored parts; the empty partition is not counted.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Theorem 1 (`integers-2026-A20-thm-1`). -/
-public theorem_wanted card_coloredPartitions_differentColors (n : ℕ) :
-    (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun x : ℕ × ℕ => x.2 ≤ x.1)).powerset.filter
-      (fun T => T.Nonempty ∧ (T.image Prod.snd).card = T.card)).card = (n + 1).factorial - 1
-
-/-- **Formula for colored partitions into fully different parts.** A colored part is a pair
-$(m, j)$ of integers with $1 \le j \le m$, read as the part $m$ in color $j$. For $n \ge 0$, let
-$\mathrm{pf}_c(n)$ be the number of finite sets of colored parts whose sizes $m$ sum to $n$ and
-in which no two colored parts have the same size and no two have the same color. Then
-$\mathrm{pf}_c(n)$ is the sum, over all partitions of $n$ into distinct parts
-$p_1 > p_2 > \cdots > p_k$, of the product $p_k (p_{k-1} - 1) \cdots (p_1 - (k - 1))$.
-
-The identity is stated for all $n \ge 0$; at $n = 0$ both sides equal $1$, while the paper states
-it for $n \ge 1$.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Theorem 2 (`integers-2026-A20-thm-2`). -/
-public theorem_wanted card_coloredPartitions_fullyDifferent (n : ℕ) :
-    (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun x : ℕ × ℕ => x.2 ≤ x.1)).powerset.filter
-      (fun T => ∑ x ∈ T, x.1 = n ∧ (T.image Prod.fst).card = T.card ∧
-        (T.image Prod.snd).card = T.card)).card =
-      ∑ μ ∈ Nat.Partition.distincts n,
-        ((μ.parts.sort (· ≤ ·)).mapIdx fun i q => q - i).prod
-
-/-- **Colored partitions into fully different parts with bounded size.** A colored part is a pair
-$(m, j)$ of integers with $1 \le j \le m$, read as the part $m$ in color $j$. For every $n \ge 0$,
-the number of nonempty finite sets of colored parts $(m, j)$ with $m \le n$ in which no two
-colored parts have the same size $m$ and no two have the same color $j$ is $B_{n+1} - 1$, where
-$B_k$ denotes the $k$-th Bell number.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Theorem 3 (`integers-2026-A20-thm-3`). -/
-public theorem_wanted card_coloredPartitions_fullyDifferent_le (n : ℕ) :
-    (((Finset.Icc 1 n ×ˢ Finset.Icc 1 n).filter (fun x : ℕ × ℕ => x.2 ≤ x.1)).powerset.filter
-      (fun T => T.Nonempty ∧ (T.image Prod.fst).card = T.card ∧
-        (T.image Prod.snd).card = T.card)).card = Nat.bell (n + 1) - 1
-
 /-- **Constant-block partitions and double compositions.** For $n \ge 0$, count the pairs
 $(A, P)$ where $A$ is a multiset of $n$ positive integers whose distinct elements are exactly
 $1, \dots, k$ for some $k \ge 0$, and $P$ is a partition of $A$ into constant blocks, that is,
@@ -94,24 +51,6 @@ public theorem_wanted ncard_constantBlockPartitions_eq_doubleCompositions (n : �
         (∀ b ∈ P, ∃ x c : ℕ, 0 < c ∧ b = Multiset.replicate c x) ∧ P.join.card = n ∧
           ∃ k : ℕ, P.join.toFinset = Finset.Icc 1 k}.ncard =
       ∑ c : Composition n, (c.blocks.map fun m => Fintype.card (Nat.Partition m)).prod
-
-/-- **Distinct constant-block partitions and colored compositions.** For $n \ge 0$, count the
-pairs $(A, P)$ where $A$ is a multiset of $n$ positive integers whose distinct elements are
-exactly $1, \dots, k$ for some $k \ge 0$, and $P$ is a partition of $A$ into pairwise distinct
-constant blocks, that is, a multiset of pairwise distinct nonempty multisets, each with all its
-elements equal, whose sum is $A$. The number of such pairs equals the number of compositions of
-$n$ in which each summand $m$ is colored by a partition of $m$ into distinct parts:
-$$\sum_{(c_1, \dots, c_r)} q(c_1) \cdots q(c_r),$$
-where the sum runs over all compositions $(c_1, \dots, c_r)$ of $n$ and $q(m)$ is the number of
-partitions of $m$ into distinct parts.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Corollary 1 (`integers-2026-A20-cor-1`). -/
-public theorem_wanted ncard_distinctConstantBlockPartitions_eq_coloredCompositions (n : ℕ) :
-    {P : Multiset (Multiset ℕ) |
-        P.Nodup ∧ (∀ b ∈ P, ∃ x c : ℕ, 0 < c ∧ b = Multiset.replicate c x) ∧
-          P.join.card = n ∧ ∃ k : ℕ, P.join.toFinset = Finset.Icc 1 k}.ncard =
-      ∑ c : Composition n, (c.blocks.map fun m => (Nat.Partition.distincts m).card).prod
 
 /-- **Generalized Euler partition theorem.** Let $S$ be a set of compositions (finite sequences
 of positive integers) such that doubling every summand of a member of $S$ gives a member of $S$,

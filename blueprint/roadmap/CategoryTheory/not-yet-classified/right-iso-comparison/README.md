@@ -1,0 +1,16 @@
+# Right Iso Comparison
+
+- [Common forward](common-forward.md)
+- [Common inverse](common-inverse.md)
+- [Transported](transported.md)
+- [Comparison](comparison.md)
+- [Forward](forward.md)
+- [Inverse](inverse.md)
+- [Transported unit](transported-unit.md)
+- [Transported counit](transported-counit.md)
+- [Unit](unit.md)
+- [Counit](counit.md)
+- [Inverse unit](inverse-unit.md)
+- [Inverse counit](inverse-counit.md)
+- [Unit postcompose](unit-postcompose.md)
+- [Eq comp map inv](eq-comp-map-inv.md)

@@ -20,3 +20,7 @@ gives the inequality.
 
 - [Weyl's inequality for singular values](abs-singular-values-sub-le.md)
 - [Upper half of Weyl's inequality for singular values](singular-values-add-le.md): the upper half, used in the proof
+
+## Background
+
+- [Singular values](../../singular-values/README.md): the sequence $\sigma_0 \ge \sigma_1 \ge \cdots$, followed by zeros, that the inequality is about

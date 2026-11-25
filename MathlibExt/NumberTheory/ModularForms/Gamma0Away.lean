@@ -68,7 +68,7 @@ def Gamma0Away : Subgroup (SL(2, ZAway q)) where
     intro a ha
     simp only [Set.mem_setOf_eq] at ha ⊢
     rw [SpecialLinearGroup.SL2_inv_expl a]
-    simp only [Matrix.cons_val', Matrix.cons_val_zero, Matrix.cons_val_one]
+    simp only [SpecialLinearGroup.coe_mk]
     exact dvd_neg.mpr ha
 
 theorem mem_Gamma0Away {N q : ℕ} {g : SL(2, ZAway q)} :

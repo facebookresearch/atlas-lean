@@ -14,3 +14,4 @@ Multiplying the gamma density by $e^{tx}$ replaces the rate $r$ by $r - t$. As l
 - [Exponential moments of the gamma law are finite exactly below the rate](integrable-exp-set-gamma-measure.md): exact range of exponential moments
 - [A neighbourhood of zero of exponential integrability for the gamma distribution](ioo-subset-interior-integrable-exp-set-g.md): lemma: the moment generating function is finite near $0$
 - [Moment generating function determines the gamma law](eq-gamma-measure-of-mgf-eq.md): uniqueness: the mgf determines the law
+- [Laplace transform of the gamma density](lintegral-gamma-pdf-mul-exp.md): the moment generating function at $-c \le 0$, as an integral against the density

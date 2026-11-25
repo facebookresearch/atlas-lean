@@ -20,3 +20,6 @@ All $\binom{N}{n}$ sets of $n$ items are equally likely, and the numerator count
 - [Hypergeometric mass vanishes above the number of marked items](hypergeometric-real-of-lt-2.md): basic property: support (number of marked items)
 - [Normalization of the hypergeometric distribution](sum-hypergeometric-real.md): basic property: normalisation (Vandermonde)
 - [Mean of the hypergeometric distribution](sum-mul-hypergeometric-real.md): basic property: the mean $nK/N$
+- [Second factorial moment of the hypergeometric distribution](sum-mul-sub-one-mul-hypergeometric-real.md): basic property: the second factorial moment
+- [Variance of the hypergeometric distribution](sum-sq-sub-mean-mul-hypergeometric-real.md): basic property: the variance
+- [Marked items in a uniform random sample](marked-items-in-a-uniform-random-sample.md): a model: the count of marked items in a uniformly random n-subset has this law
