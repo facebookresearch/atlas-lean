@@ -97343,6 +97343,7 @@
 "Module.End.wordKer_succ": "d47466de44f9fc66",
 "Module.End.wordKer_zero": "b045b0189a1e12bb",
 "Module.Flat.kernel_of_surjective": "e4c99bf051aa8109",
+"Module.Grassmannian.adjoin_eq_top_of_isOpenImmersion_of_opensRange_eq": "152d413234d38440",
 "Module.Invertible.of_projective_of_forall_finrank_eq_one": "363424a36afccfee",
 "Module.alternating_length_of_exact_chain": "b8ed651b24014a1a",
 "Module.alternating_sum_of_consecutive_ranges": "1c77c4f140ff45b9",
