@@ -36,3 +36,9 @@
 - [Consistency of the partition-valued coalescents](sum-time-law-restrict.md)
 - [Path probability of the Kingman coalescent jump chain](path-prob.md)
 - [Consistency of the jump chains](sum-path-prob-restrict.md)
+
+- [Holding times and jump chain of Kingman's n-coalescent are independent](holding-times-and-jump-chain-of-kingman-s-n-coal.md)
+- [Path laws of Kingman's coalescent on a finite sample are consistent under restriction](strong-path-level-restriction-consistency-of-the.md)
+- [Extension kernels for consistent laws of coalescent paths](extension-kernels-for-consistent-laws-of-coalesc.md)
+- [Kingman's coalescent on the natural numbers](kingman-coalescent-on-n-as-a-time-indexed-cadlag.md)
+- [Kingman's coalescent comes down from infinity](kingman-s-coalescent-comes-down-from-infinity.md)
