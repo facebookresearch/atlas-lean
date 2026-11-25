@@ -4,7 +4,7 @@ A polynomial of degree less than $d$ over a field is determined by its values at
 
 ## Proof depends on
 
-- [FFT linear convolution returns the product polynomial (MIT/CLRS sign)](../../algebraic-and-numerical-algorithms/fast-fourier-transform/fft-polynomial-fft-linear-std-add-char-o.md)
+- [FFT linear convolution returns the product polynomial (MIT/CLRS sign)](fft-polynomial-fft-linear-std-add-char-o.md)
 
 ## Expansion
 
