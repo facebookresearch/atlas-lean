@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Tactic.NormNum
 import MathlibExt.Combinatorics.Enumerative.AscentSequenceQuadrupleCardFormulas
 
 namespace MetaMathlibExt
@@ -47,5 +48,41 @@ example : ((quadrupleVSet 4 1).ncard : ℤ) = 0 := by
 example : ((quadrupleVSet 10 1).ncard : ℤ) = 169 := by
   rw [quadrupleUSet_quadrupleVSet_card_formulas.2.2 10 (by decide)]
   decide
+
+private theorem count_at_eleven (f : ℕ → ℕ)
+    (hf : f ∈ [fun n => (quadrupleUSet n 1).ncard, fun n => (quadrupleVSet n 1).ncard]) :
+    f 11 = 482 := by
+  obtain ⟨hzero, h₆, hrec⟩ := quadrupleUSet_quadrupleVSet_recurrence f hf
+  have h₇ : f 7 = 5 := by
+    have h := hrec 7 (by decide)
+    norm_num [h₆, hzero 4 (by decide), hzero 5 (by decide)] at h
+    exact_mod_cast h
+  have h₈ : f 8 = 18 := by
+    have h := hrec 8 (by decide)
+    norm_num [h₇, h₆, hzero 5 (by decide)] at h
+    exact_mod_cast h
+  have h₉ : f 9 = 57 := by
+    have h := hrec 9 (by decide)
+    norm_num [h₈, h₇, h₆] at h
+    exact_mod_cast h
+  have h₁₀ : f 10 = 169 := by
+    have h := hrec 10 (by decide)
+    norm_num [h₉, h₈, h₇] at h
+    exact_mod_cast h
+  have h := hrec 11 (by decide)
+  norm_num [h₁₀, h₉, h₈] at h
+  exact_mod_cast h
+
+-- The recurrence includes length zero and the transition to the first nonempty length.
+example : ((quadrupleUSet 0 1).ncard = 0 ∧ (quadrupleUSet 6 1).ncard = 1) ∧
+    ((quadrupleVSet 0 1).ncard = 0 ∧ (quadrupleVSet 6 1).ncard = 1) := by
+  have hu := quadrupleUSet_quadrupleVSet_recurrence (fun n => (quadrupleUSet n 1).ncard) (by simp)
+  have hv := quadrupleUSet_quadrupleVSet_recurrence (fun n => (quadrupleVSet n 1).ncard) (by simp)
+  exact ⟨⟨hu.1 0 (by decide), hu.2.1⟩, ⟨hv.1 0 (by decide), hv.2.1⟩⟩
+
+-- Starting with the initial values, iterate the signed recurrence for both families.
+example : (quadrupleUSet 11 1).ncard = 482 ∧ (quadrupleVSet 11 1).ncard = 482 :=
+  ⟨count_at_eleven (fun n => (quadrupleUSet n 1).ncard) (by simp),
+    count_at_eleven (fun n => (quadrupleVSet n 1).ncard) (by simp)⟩
 
 end MetaMathlibExt
