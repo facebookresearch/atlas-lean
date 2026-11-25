@@ -274,19 +274,6 @@ public theorem_wanted extremely_lucky_unlucky_car (n : ℕ) (w : Fin (2 * n) →
       k < j ∧ k.val + 1 ∉ stirlingLuckySet w).card = i - 1) :
     w j = n - i + 1 ∧ stirlingDisplacement w j = 2 * i - 1
 
-/-- **Extremely lucky Stirling permutations are determined by their displacements.** Let $w$ and
-$w'$ be Stirling permutations of order $n$, and suppose that $w$ is extremely lucky, that is, its
-set $\mathrm{Lucky}(w)$ of lucky cars has exactly $n$ elements. If every car has the same
-displacement in $w'$ as in $w$ (that is, $\mathrm{dis}(w') = \mathrm{dis}(w)$), then $w' = w$.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Theorem 5.8 (`jis-2024-24.6.7-thm-43`). -/
-public theorem_wanted extremely_lucky_eq_of_displacement_eq (n : ℕ) (w w' : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) (hw' : IsStirlingPermutation n w')
-    (hl : (stirlingLuckySet w).card = n)
-    (hd : ∀ i, stirlingDisplacement w' i = stirlingDisplacement w i) : w' = w
-
 /-- **Stirling permutations with $n$ nonzero displacements.** For every natural number $n$, the
 number of Stirling permutations $w$ of order $n$ in which exactly $n$ cars have nonzero
 displacement (equivalently, whose displacement composition $\mathrm{dis}(w)$ has exactly $n$

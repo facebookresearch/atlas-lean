@@ -1,5 +1,6 @@
 """Real Lean regressions for isolated compiled policy audits (build-tier only)."""
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -124,24 +125,54 @@ class CompiledAuditTests(unittest.TestCase):
 
     def test_domain_import_boundary(self):
         sources = {
-            'Domains.AuditFixture.Model': 'module\npublic def domainFixture : Nat := 1\n',
+            'PhyslibExt.AuditFixture.Model': 'module\npublic def physicsFixture : Nat := 1\n',
+            'Domains.AuditFixture.Model': (
+                'module\npublic import PhyslibExt.AuditFixture.Model\n'
+                'public def domainFixture : Nat := physicsFixture\n'),
             'DomainsTest.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
-            'WantedExt.AuditFixture.Model': 'module\npublic import Domains.AuditFixture.Model\n',
-            'MathlibExt.AuditFixture.Reverse': 'module\npublic import Domains.AuditFixture.Model\n',
+            'WantedExt.AuditFixture.Model': (
+                'module\npublic import Batteries.Util.ProofWanted\n'
+                'public import Domains.AuditFixture.Model\n'
+                'public theorem_wanted domainFixtureWanted : domainFixture = 1\n'),
+            'WantedExt.AuditFixture.Physics': (
+                'module\npublic import Batteries.Util.ProofWanted\n'
+                'public import PhyslibExt.AuditFixture.Model\n'
+                'public theorem_wanted physicsFixtureWanted : physicsFixture = 1\n'),
         }
+        allowed = list(sources)
+        forbidden = {}
+        for library in ('MathlibExt', 'CSLibExt', 'PhyslibExt'):
+            forbidden[f'{library}.AuditFixture.DomainImport'] = 'Domains.AuditFixture.Model'
+        for library in audit.ROOTS:
+            if library != 'WantedExt':
+                forbidden[f'{library}.AuditFixture.WantedImport'] = 'WantedExt.AuditFixture.Model'
+        for library in ('MathlibExt', 'CSLibExt', 'PhyslibExt', 'Domains', 'WantedExt'):
+            forbidden[f'{library}.AuditFixture.TestImport'] = 'DomainsTest.AuditFixture.Model'
+        forbidden['WantedExt.AuditFixture.FoundationTestImport'] = PAIR[0]
+        for module, target in forbidden.items():
+            sources[module] = f'module\npublic import {target}\n'
         for module, source in sources.items():
             path = self.fixture.joinpath(*module.split('.')).with_suffix('.lean')
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(source)
         subprocess.run(['lake', 'build', *('+' + name for name in sources)], cwd=self.fixture, check=True)
-        allowed = ['Domains.AuditFixture.Model', 'DomainsTest.AuditFixture.Model']
         self.assertEqual(audit.audit(self.fixture, allowed, self.checker)['checkedModules'], allowed)
+        for module, target in forbidden.items():
+            with self.subTest(module=module), self.assertRaisesRegex(
+                    audit.AuditFailure, re.escape(f'{module} must not import {target}')):
+                audit.audit(self.fixture, [module], self.checker)
+
+    def test_domain_wanted_declaration_still_fails(self):
+        module = 'Domains.AuditFixture.WantedDeclaration'
+        path = self.fixture.joinpath(*module.split('.')).with_suffix('.lean')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            'module\npublic import Batteries.Util.ProofWanted\n'
+            'public theorem_wanted misplacedDomainWanted : True\n')
+        subprocess.run(['lake', 'build', '+' + module], cwd=self.fixture, check=True)
         with self.assertRaisesRegex(audit.AuditFailure,
-                                    r'MathlibExt\.AuditFixture\.Reverse must not import Domains\.AuditFixture\.Model'):
-            audit.audit(self.fixture, ['MathlibExt.AuditFixture.Reverse'], self.checker)
-        with self.assertRaisesRegex(audit.AuditFailure,
-                                    r'WantedExt\.AuditFixture\.Model must not import Domains\.AuditFixture\.Model'):
-            audit.audit(self.fixture, ['WantedExt.AuditFixture.Model'], self.checker)
+                                    re.escape(f'{module} contains a wanted declaration outside WantedExt')):
+            audit.audit(self.fixture, [module], self.checker)
 
     def test_forbidden_axiom_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'depends on forbidden axioms'):
