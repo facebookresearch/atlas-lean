@@ -38,10 +38,12 @@ open _root_.MathlibExt.AlgebraicGeometry.StableBundleModuli
 
 universe u
 
-/-- A genuine global universal stable family on a finite-type separated parameter scheme over an
-algebraically closed field: its universal bundle is a stable family, and every stable family over
-a parameter scheme of finite type is its pullback along a unique map, up to a base twist. No
-universal object or conclusion is supplied as an assumption to the nonexistence theorem. -/
+/-- A global universal family of stable bundles of rank $r > 0$ and degree $d$ on a smooth proper
+integral curve $C$ over an algebraically closed field $k$: a separated $k$-scheme $M$ with a bundle
+on $C \times M$ that is a family of such stable bundles (so $M$ is of finite type over $k$), such
+that for every family $E$ of such stable bundles over a $k$-scheme $T$ of finite type there is a
+unique map $f : T \to M$ for which the pullback of the universal bundle along $f$, tensored with the
+pullback of some line bundle on $T$, is isomorphic to $E$. -/
 structure GlobalUniversalStableFamily {k : Type u} [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [IsIntegral C.left] (r : ℕ) (hr : 0 < r) (d : ℤ) where
