@@ -27,4 +27,9 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Two-process bakery algorithm](two-process-bakery-algorithm/README.md)
 - [Vector clocks](vector-clocks/README.md)
 
+- [Round-robin scheduling](round-robin-scheduling/README.md)
+- [Local distributed algorithms](local-distributed-algorithms/README.md)
+- [Distributed execution models](distributed-execution-models/README.md)
+
+- [Shared-memory objects](shared-memory-objects/README.md)
 - [Sampled registers and polling drivers](sampled-registers-and-polling-drivers/README.md)
