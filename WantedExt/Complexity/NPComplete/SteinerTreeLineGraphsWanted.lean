@@ -22,7 +22,7 @@ Computer Science 867 (2021), 30-39, doi:10.1016/j.tcs.2021.03.012 (Lemma 8 and O
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.LineGraph

@@ -194,7 +194,11 @@ private theorem schroder_abel_convolution (w : ℂ) : ∀ (n : ℕ) (x y : ℂ),
       rw [hzero, sub_self] at h
       exact sub_eq_zero.mp h
 
-/-- Abel's binomial identity for the scaled Abel polynomials used in Schröder's series. -/
+/-- **Abel's binomial identity.** For a complex number $w$, let $A_0(x) = 1$ and
+$A_j(x) = x (x + j w)^{j-1}$ for $j \ge 1$. Then for all complex numbers $x$, $y$ and every
+natural number $n$,
+$$\sum_{j=0}^{n} \binom{n}{j} A_j(x) A_{n-j}(y) = A_n(x + y).$$
+-/
 theorem schroder_abel_binomial (w x y : ℂ) (n : ℕ) :
     (∑ j ∈ Finset.range (n + 1), (n.choose j : ℂ) *
         (if j = 0 then 1 else x * (x + (j : ℂ) * w) ^ (j - 1)) *
@@ -773,17 +777,23 @@ private lemma schroder_rescale_term (z w : ℂ) (hw : w ≠ 0) (k : ℕ) :
       rw [pow_succ]
       ring
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Corollary to Entry 13, formula
-    (13.8), printed p. 70 / PDF p. 80.
+/-- **Schröder's exponential series.** Let $z$ and $w$ be complex numbers with
+$|w| \le |e^{w-1}|$ and $|w| \le 1$. Then the series
+$$1 + \sum_{k=1}^{\infty} \frac{z (z + k w)^{k-1} e^{-k w}}{k!}$$
+converges unconditionally, and its sum is $e^z$.
 
-    `{w | ‖w‖ ≤ ‖exp (w - 1)‖}` has a bounded lobe containing `0` and an unbounded lobe, meeting
-    only at `w = 1`. `hw1` selects the bounded lobe (given `hw`, it is equivalent to `w.re ≤ 1`);
-    on the unbounded lobe the identity fails in general.
+The set of complex numbers $w$ with $|w| \le |e^{w-1}|$ has a bounded lobe containing $0$ and an
+unbounded lobe, which meet only at $w = 1$. The condition $|w| \le 1$ selects the bounded lobe
+(given the first condition, it is equivalent to $\operatorname{Re} w \le 1$); on the unbounded
+lobe the identity fails in general.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry13_corollary_schroder`.
 
 Proof: Following Berndt's formula (13.8), we use Abel's binomial identity, a Cauchy product and a
-holomorphic ODE; radial continuity selects the unit-disk branch of `u ↦ u * exp (-u)`.
+holomorphic ODE; radial continuity selects the unit-disk branch of $u \mapsto u e^{-u}$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Corollary to Entry 13, formula
+    (13.8), printed p. 70 / PDF p. 80.
 -/
 theorem ramanujan_part1_ch3_entry13_corollary_schroder
     (z w : ℂ) (hw : ‖w‖ ≤ ‖Complex.exp (w - 1)‖) (hw1 : ‖w‖ ≤ 1) :

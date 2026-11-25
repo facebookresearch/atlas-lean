@@ -34,6 +34,9 @@ $H^1_0(U)$ for Poisson's equation; and interior $H^2$ regularity.
 - [Existence and uniqueness of weak solutions of the Dirichlet problem for Poisson's equation](exists-unique-weak-solution-poisson.md)
 - [The hypotheses of interior $H^2$ regularity are satisfiable](interior-h2-regularity-hypotheses-laplac.md)
 - [Interior $H^2$ regularity](interior-h2-regularity.md)
+- [Elements of H¹₀(0, 1) as primitives of square-integrable derivatives](weak-h10.md)
+- [Weak solutions of steady diffusion on (0, 1) exist and are unique](weak-diffusion-exists-unique.md)
+- [Integration by parts of a primitive against a function of H¹₀(0, 1)](weak-diffusion-ibp.md)
 
 ## Related topics
 

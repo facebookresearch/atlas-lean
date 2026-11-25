@@ -12,12 +12,12 @@ outer measure.
 For Lebesgue measure on $\mathbb{R}^d$ this says that Tao's definition of Lebesgue measurability
 (Definition 1.2.2, Littlewood's first principle: "every measurable set is nearly open") agrees
 with null-measurability for Lebesgue measure. By
-[Vitali's theorem](../../measures/vitali-nonmeasurable.md), some subset of $\mathbb{R}$ admits no
+[Vitali's theorem](../../measures/vitali-set/vitali-nonmeasurable.md), some subset of $\mathbb{R}$ admits no
 such approximation.
 
 ## Background
 
-- [Vitali's theorem](../../measures/vitali-nonmeasurable.md): background; the non-measurable set it
+- [Vitali's theorem](../../measures/vitali-set/vitali-nonmeasurable.md): background; the non-measurable set it
   provides is one for which open outer approximation fails.
 
 ## Sources

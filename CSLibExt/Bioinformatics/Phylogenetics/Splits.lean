@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
-public import MathlibExt.Biology.Phylogenetics.Buneman
+public import MathlibExt.Combinatorics.Enumerative.UnrootedBinaryTreeCount
+public import MathlibExt.Combinatorics.SimpleGraph.TreeMetric
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.SymmDiff
 import Mathlib.Tactic.FieldSimp

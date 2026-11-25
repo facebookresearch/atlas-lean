@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "CSLibExtTest/Security/Noninterference/Examples.lean", "disposition": "attributed", "notice": "/-\nPorted from fairinternal/formal-math at `7f0f951227ee766bba21a6d5a5e56d9065fe85aa`.\nOriginal formalization by Zeina Migeed (@migeed-z); ported with permission.\n-/", "published_sha256": "f634eca44d7ac3f46805b1b9044eebe1ccc111902e66efe484ac100b6b31e835", "upstream_sha256": "21687ee3a69407fdaafd107484790264e088f2b4847af4d82f98160dcac36b46"}
+  ]
+}

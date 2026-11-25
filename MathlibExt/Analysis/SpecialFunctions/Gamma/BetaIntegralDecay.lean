@@ -93,7 +93,7 @@ public theorem intervalIntegral_pow_mul_one_sub_rpow_le (m : ℕ) (hm : 1 ≤ m)
       ∫ u in Ioi (0 : ℝ), u ^ β * Real.exp (-(m * u)) := by
     rw [integral_of_le zero_le_one]
     simp_rw [mul_comm (Real.exp _)]
-    refine setIntegral_mono_set ?_ ?_ Ioc_subset_Ioi_self.eventuallyLE
+    refine setIntegral_mono_set ?_ ?_ Ioc_subset_Ioi_self.eventuallySubset
     · simpa only [neg_mul, Real.rpow_one] using
         integrableOn_rpow_mul_exp_neg_mul_rpow (by linarith : -1 < β) one_pos hm_pos
     · filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx

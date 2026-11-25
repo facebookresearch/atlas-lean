@@ -76,8 +76,12 @@ section TM2ToTM1
 
 variable {K : Type*} [DecidableEq K] {Γ : K → Type*} {Λ σ : Type*} (M : Λ → TM2.Stmt Γ Λ σ)
 
-/-- Walking right towards the top of stack `k` takes one emulator step per cell: a counted form
-of `TM2to1.tr_respects_aux₁`. -/
+/-- **The emulator walks right to the top of a stack.** Let $M$ be a multi-stack machine, $k$ a
+stack, $L$ tape contents whose $k$-th track lists a stack $S$ from bottom to top, and
+$n \le |S|$. In the $\mathrm{TM1}$ emulator of $M$, the configuration in the state that walks to
+stack $k$ (for a given stack action and continuation), with internal state $v$ and head at the
+bottom marker of $L$, reaches in exactly $n$ steps the same configuration with the head moved
+$n$ cells to the right. -/
 theorem relatesInSteps_go {k : K} (o : StAct K Γ σ k) (q : TM2.Stmt Γ Λ σ) (v : σ)
     {S : List (Γ k)} {L : ListBlank (∀ k, Option (Γ k))}
     (hL : L.map (proj k) = ListBlank.mk (S.map some).reverse) (n : ℕ) (H : n ≤ S.length) :
@@ -95,8 +99,11 @@ theorem relatesInSteps_go {k : K} (o : StAct K Γ σ k) (q : TM2.Stmt Γ Λ σ) 
     · rfl
     · rwa [List.length_reverse]
 
-/-- Walking back left to the bottom takes one emulator step per cell: a counted form of
-`TM2to1.tr_respects_aux₃`. -/
+/-- **The emulator walks back to the bottom.** Let $M$ be a multi-stack machine and $L$ tape
+contents. For every $n$, in the $\mathrm{TM1}$ emulator of $M$, the configuration in the return
+state (for a given continuation), with internal state $v$ and head $n$ cells to the right of the
+bottom marker of $L$, reaches in exactly $n$ steps the same configuration with the head at the
+bottom marker. -/
 theorem relatesInSteps_ret {q : TM2.Stmt Γ Λ σ} {v : σ} {L : ListBlank (∀ k, Option (Γ k))}
     (n : ℕ) :
     RelatesInSteps (fun a b ↦ b ∈ TM1.step (tr M) a)
@@ -130,10 +137,16 @@ private theorem stepBound_mono {a b : ℕ} (H : ℕ) (h : a ≤ b) :
     a * (2 * (H + a) + 2) ≤ b * (2 * (H + b) + 2) :=
   Nat.mul_le_mul h (by omega)
 
-/-- **Running one statement on the emulator**, counted: from the bottom of stacks of height at
-most `H`, the emulator runs the translation `trNormal N` of a statement `N` to a configuration
-related to the result of `N` in at most `sizeOf N * (2 * (H + sizeOf N) + 2)` steps. A counted
-form of the induction in `TM2to1.tr_respects`. -/
+/-- **Running one statement on the emulator.** Let $M$ be a multi-stack machine and $N$ a
+statement over the same stack alphabets, labels and internal states, and write $|N|$ for the
+structural size of $N$. Let $H \in \mathbb{N}$, let $v$ be an internal state, let $S$ be a
+family of stacks $S_k$, each of height at most $H$, and let $L$ be tape contents whose $k$-th
+track lists $S_k$ from bottom to top, for every $k$. Running the translation of $N$ in the
+$\mathrm{TM1}$ emulator of $M$ from state $v$, with the head at the bottom marker of $L$, gives
+a configuration that reaches, in some number $m \le |N| (2 (H + |N|) + 2)$ of emulator steps,
+a configuration representing the result of running $N$ from state $v$ on the stacks $S$: it
+has the corresponding label and the same internal state, and its head is at the bottom marker
+of a tape whose $k$-th track lists the $k$-th resulting stack from bottom to top. -/
 theorem exists_relatesInSteps_stepAux (N : TM2.Stmt Γ Λ σ) :
     ∀ (H : ℕ) (v : σ) (S : ∀ k, List (Γ k)) (L : ListBlank (∀ k, Option (Γ k))),
       (∀ k, L.map (proj k) = ListBlank.mk ((S k).map some).reverse) →
@@ -210,9 +223,16 @@ theorem exists_relatesInSteps_stepAux (N : TM2.Stmt Γ Λ σ) :
     intro H v S L hL hS
     exact ⟨_, 0, ⟨_, hL⟩, .refl _, Nat.zero_le _⟩
 
-/-- **One multi-stack step costs at most `1 + B (2 (H + B) + 2)` steps of the `TM1`
-emulator**, when every statement of the machine has size at most `B` and every stack has height
-at most `H`. A counted form of `TM2to1.tr_respects`. -/
+/-- **One multi-stack step costs at most $1 + B(2(H + B) + 2)$ emulator steps.** Let $M$ be a
+multi-stack machine in which the statement of every label has size at most $B$, and consider its
+emulation by a single-tape machine with an internal store that keeps the stacks side by side on
+its tape. Let $c$ be a configuration of $M$ in which every stack has height at most $H$, and let
+$c_1$ be a configuration of the emulator that represents $c$. If $M$ moves from $c$ to $c'$ in one
+step, then there is a configuration $c_1'$ of the emulator that represents $c'$ and that the
+emulator reaches from $c_1$ in at most $1 + B(2(H + B) + 2)$ steps.
+
+The size of a statement is its structural size as a term. This is a counted form of the
+correctness of the emulation. -/
 theorem exists_relatesWithinSteps_tm1_of_step {B H : ℕ} (hB : ∀ l, sizeOf (M l) ≤ B)
     {c c' : TM2.Cfg Γ Λ σ} {c₁ : TM1.Cfg (Γ' K Γ) (Λ' K Γ Λ σ) σ} (hc : TrCfg c c₁)
     (hH : ∀ k, (c.stk k).length ≤ H) (h : TM2.step M c = some c') :
@@ -345,8 +365,11 @@ private theorem moves_tr (l : Λ' K Γ Λ σ) : moves (tr M l) ≤ 2 := by
   | go k s q => cases s <;> simp [tr, trStAct, moves]
   | ret q => simp [tr, moves, moves_trNormal]
 
-/-- **Each step of the `TM1` emulator is at most three single-tape steps**: `m` steps of
-`TM2to1.tr M` take at most `3 m` steps of `MetaMathlibExt.TM2ToTM0.tr M`. -/
+/-- **Each step of the $\mathrm{TM1}$ emulator is at most three single-tape steps.** Let $M$ be
+a multi-stack machine with a default label and a default internal state. If the
+$\mathrm{TM1}$ emulator of $M$ goes from $c$ to $c'$ in exactly $m$ steps, then the
+single-tape emulation of $M$ goes from the single-tape form of $c$ to the single-tape form of
+$c'$ in at most $3m$ steps. -/
 theorem relatesWithinSteps_tm0_of_relatesInSteps_tm1 [Inhabited Λ] [Inhabited σ]
     {c c' : TM1.Cfg (Γ' K Γ) (Λ' K Γ Λ σ) σ} {m : ℕ}
     (h : RelatesInSteps (fun a b ↦ b ∈ TM1.step (tr M) a) c c' m) :
@@ -364,9 +387,11 @@ open scoped MetaMathlibExt.TM2ToTM0
 
 attribute [local instance] FinTM2.ΛFin
 
-/-- The machine constant of the emulation time bound: `3 (2 B + 1) + P`, where `B` is the total
-size of the statements of `tm` (so each statement has size at most `B`) and
-`P = TM2Composition.pushBound tm` bounds the pushes of one step. -/
+/-- **Emulation constant.** For a bundled multi-stack machine $M$, the emulation constant is
+$C = 3(2B + 1) + P$, where $B = \sum_l |M(l)|$ is the total structural size of the statements
+$M(l)$ over all labels $l$ (so each statement has size at most $B$), and $P$ is the push bound
+of $M$, the total number of push instructions in its statements, which bounds the number of
+pushes in one step. -/
 noncomputable def emulationConstant (tm : FinTM2) : ℕ :=
   3 * (2 * ∑ l, sizeOf (tm.m l) + 1) + MetaMathlibExt.TM2Composition.pushBound tm
 
@@ -386,11 +411,13 @@ private theorem bound_succ {X P B C t n k : ℕ} (hC : 3 * (2 * B + 1) + P ≤ C
       C * t * (X + C * (t + 1) + 1) + C * (X + C * (t + 1) + 1) := by ring
   omega
 
-/-- **Quadratic overhead of the single-tape emulation.** If a bundled multi-stack machine `tm`
-reaches `c` in `t` steps on the input `L`, then its single-tape emulation
-`MetaMathlibExt.TM2ToTM0.tr tm.m` reaches a configuration related to `c` (through a `TM1`
-configuration `c₁` of `TM2to1.tr`) in `n ≤ C t (|L| + C t + 1)` steps, with
-`C = emulationConstant tm`. -/
+/-- **Quadratic overhead of the single-tape emulation.** Let $M$ be a bundled multi-stack
+machine with emulation constant $C$, and $L$ an input for its input stack. If $M$, started on
+$L$, reaches a configuration $c$ after $t$ steps, then the single-tape emulation of $M$,
+started on the encoding of $L$, reaches in some number $n \le C t (|L| + C t + 1)$ of steps the
+single-tape form of a configuration of the $\mathrm{TM1}$ emulator of $M$ that represents $c$:
+it has the corresponding label and the same internal state, and its head is at the bottom
+marker of a tape whose $k$-th track lists the $k$-th stack of $c$ from bottom to top. -/
 theorem exists_tm0_run_of_tm2_run (tm : FinTM2) (L : List (tm.Γ tm.k₀)) {c : tm.Cfg} {t : ℕ}
     (h : (flip bind tm.step)^[t] (some (initList tm L)) = some c) :
     ∃ (c₁ : TM1.Cfg (Γ' tm.K tm.Γ) (Λ' tm.K tm.Γ tm.Λ tm.σ) tm.σ) (n : ℕ),
@@ -423,9 +450,15 @@ theorem exists_tm0_run_of_tm2_run (tm : FinTM2) (L : List (tm.Γ tm.k₀)) {c : 
     obtain ⟨k, hk, hr₀⟩ := relatesWithinSteps_tm0_of_relatesInSteps_tm1 tm.m hr₁
     exact ⟨c₁', n + k, hc₁', hr.trans hr₀, bound_succ le_rfl hn (hk.trans (by omega))⟩
 
-/-- **Halting runs.** If a bundled multi-stack machine `tm` halts after `t` steps on the input
-`L`, then its single-tape emulation halts within `C t (|L| + C t + 1)` steps, with
-`C = emulationConstant tm`, in a configuration related to the halting one. -/
+/-- **Single-tape emulation of halting multi-stack runs.** Let $M$ be a bundled multi-stack
+machine with emulation constant $C$, and $L$ an input for its input stack. If $M$, started on
+$L$, reaches after $t$ steps a configuration $c$ from which it does not step, then the
+single-tape emulation of $M$, started on the encoding of $L$, reaches in some number
+$n \le C t (|L| + C t + 1)$ of steps a configuration from which it does not step. That
+configuration is the single-tape form of a configuration of the $\mathrm{TM1}$ emulator of $M$
+that represents $c$: it has the corresponding label and the same internal state, and its head
+is at the bottom marker of a tape whose $k$-th track lists the $k$-th stack of $c$ from bottom
+to top. -/
 theorem exists_tm0_halt_of_tm2_halt (tm : FinTM2) (L : List (tm.Γ tm.k₀)) {c : tm.Cfg} {t : ℕ}
     (h : (flip bind tm.step)^[t] (some (initList tm L)) = some c) (hc : tm.step c = none) :
     ∃ (c₁ : TM1.Cfg (Γ' tm.K tm.Γ) (Λ' tm.K tm.Γ tm.Λ tm.σ) tm.σ) (n : ℕ),

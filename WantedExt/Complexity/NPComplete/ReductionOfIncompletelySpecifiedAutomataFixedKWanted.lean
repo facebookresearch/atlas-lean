@@ -20,7 +20,7 @@ doi:10.1109/T-C.1973.223655 (the reference Garey and Johnson give for [AL7]).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ReductionOfIncompletelySpecifiedAutomataWanted

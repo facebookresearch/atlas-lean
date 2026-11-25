@@ -81,6 +81,17 @@ theorem coeff_toPolynomial {s : Nat} (w : BitVec s) (i : Nat) :
       BitVec.getLsbD_of_ge w i (Nat.le_of_not_gt hi)]
     rfl
 
+/-- The zero bit vector gives the zero polynomial. -/
+theorem toPolynomial_zero (s : Nat) : (0#s).toPolynomial = 0 := by
+  ext i
+  simp [coeff_toPolynomial]
+
+/-- For positive width, the bit vector `1` gives the polynomial `1`. -/
+theorem toPolynomial_one {s : Nat} (hs : 0 < s) : (1#s).toPolynomial = 1 := by
+  ext i
+  rw [coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
+  simp [hs]
+
 /-- Extracting the coefficients of an encoded word recovers the original fixed-width word. -/
 @[simp] theorem toBitVec_toPolynomial {s : Nat} (w : BitVec s) :
     w.toPolynomial.toBitVec s = w := by

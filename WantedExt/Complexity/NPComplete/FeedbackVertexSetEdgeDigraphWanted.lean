@@ -21,7 +21,7 @@ Matematico di Palermo 9 (1960), 161-168, doi:10.1007/BF02854581 (edge digraphs).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

@@ -26,8 +26,13 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch2
 
 namespace Entry4AlternatingForm
 
-/-- `ramanujan_part1_ch2_entry4_alternating_form` without the hypothesis `0 < n`; the statement also
-  holds at `n = 0`. -/
+/-- **Alternating form of Ramanujan's identity for $1/((4k)^3 - 4k)$, including $n = 0$.** For
+every natural number $n$,
+$$
+1 + 2 \sum_{k=1}^{n} \frac{1}{(4k)^3 - 4k} =
+\sum_{k=1}^{4n+1} \frac{(-1)^{k+1}}{k} + \frac{1}{2} \sum_{k=1}^{2n} \frac{(-1)^{k+1}}{k}.
+$$
+-/
 theorem ramanujan_part1_ch2_entry4_alternating_form_general (n : ℕ) :
     (1 : ℝ) + 2 * ∑ k ∈ Finset.Icc 1 n, (1 / ((4 * (k : ℝ)) ^ 3 - 4 * (k : ℝ))) =
     (∑ k ∈ Finset.Icc 1 (4 * n + 1), ((-1 : ℝ) ^ (k + 1) / (k : ℝ))) +
@@ -125,7 +130,14 @@ theorem ramanujan_part1_ch2_entry4_alternating_form_general (n : ℕ) :
   exact gen n
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Alternating form of Ramanujan's sum identity for $1/((4k)^3 - 4k)$.** For every positive
+integer $n$,
+$$
+1 + 2 \sum_{k=1}^{n} \frac{1}{(4k)^3 - 4k} =
+\sum_{k=1}^{4n+1} \frac{(-1)^{k+1}}{k} + \frac{1}{2} \sum_{k=1}^{2n} \frac{(-1)^{k+1}}{k}.
+$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     4, formula (4.1), printed p. 28 / PDF p. 38.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry4_alternating_form`.
 -/

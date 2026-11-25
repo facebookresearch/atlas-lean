@@ -63,14 +63,17 @@ namespace EarthScience
 
 /-- Isothermal ideal-gas pressure profile `p(z) = p0 * exp(-g * z / (R * T))`,
 with surface pressure `p0`, constant gravity `g`, mass-specific gas constant
-`R`, temperature `T`, and height `z` measured upward. The physical regime is
+`R`, temperature `T`, and height `z` measured upward. With the convention
+`x / 0 = 0`, it is the constant `p0` when `R * T = 0`. The physical regime is
 `p0, g, R, T > 0`; each lemma below states the hypotheses it needs. -/
 noncomputable def isothermalPressure (p0 g R T z : ℝ) : ℝ :=
   p0 * Real.exp (-g * z / (R * T))
 
 /-- Hydrostatic balance: the isothermal profile satisfies
 `p'(z) = -(p(z) / (R * T)) * g`, i.e. `p' = -rho * g` with ideal-gas density
-`rho = p / (R * T)`. The derivative identity needs no sign hypotheses. -/
+`rho = p / (R * T)`. The derivative identity needs no sign hypotheses; with
+`x / 0 = 0`, the profile is the constant `p0` and both sides are `0` when
+`R * T = 0`. -/
 lemma hasDerivAt_isothermalPressure (p0 g R T z : ℝ) :
     HasDerivAt (isothermalPressure p0 g R T)
       (-(isothermalPressure p0 g R T z / (R * T)) * g) z := by
@@ -88,12 +91,14 @@ lemma hasDerivAt_isothermalPressure (p0 g R T z : ℝ) :
   convert hmul using 1
   ring
 
-/-- Surface condition: the isothermal profile has `p(0) = p0`. -/
+/-- Surface condition: for all real `p0`, `g`, `R` and `T`, the isothermal profile has `p(0) = p0`.
+This includes `R * T = 0`, where the convention `x / 0 = 0` makes the profile the constant `p0`. -/
 lemma isothermalPressure_zero (p0 g R T : ℝ) : isothermalPressure p0 g R T 0 = p0 := by
   simp [isothermalPressure]
 
 /-- Positivity: with surface pressure `p0 > 0`, the isothermal profile is
-positive at every height. -/
+positive at every height, for all real `g`, `R` and `T`. This includes `R * T = 0`, where the
+convention `x / 0 = 0` makes the profile the constant `p0`. -/
 lemma isothermalPressure_pos {p0 : ℝ} (hp0 : 0 < p0) (g R T z : ℝ) :
     0 < isothermalPressure p0 g R T z :=
   mul_pos hp0 (Real.exp_pos _)
@@ -109,8 +114,8 @@ lemma isothermalPressure_strictAnti {p0 g R T : ℝ} (hp0 : 0 < p0) (hg : 0 < g)
     (div_lt_div_iff_of_pos_right (mul_pos hR hT)).mpr hneg
   exact mul_lt_mul_of_pos_left (Real.exp_strictMono hdiv) hp0
 
-/-- One scale height: at `z = R * T / g` the isothermal pressure is
-`p0 / exp 1`. -/
+/-- One scale height: for nonzero `g`, `R` and `T`, at `z = R * T / g` the
+isothermal pressure is `p0 / exp 1`. -/
 lemma isothermalPressure_scaleHeight (p0 : ℝ) {g R T : ℝ} (hg : g ≠ 0) (hR : R ≠ 0)
     (hT : T ≠ 0) : isothermalPressure p0 g R T (R * T / g) = p0 / Real.exp 1 := by
   have hRT : R * T ≠ 0 := mul_ne_zero hR hT
