@@ -230,31 +230,6 @@ public theorem_wanted nondecreasingDyck_subword_UUUD :
       (nondecreasingDyckSubwordTotal [U, U, U, D] n : ℤ) =
         (n : ℤ) * (Nat.fib (2 * n - 5) : ℤ) - (lucasNumber (2 * n - 6) : ℤ)
 
-/-- **Recurrence for the subword $U^m$ in non-decreasing Dyck paths.** Let $m \ge 1$. Let
-$d_w(n)$ be the total number of occurrences of the subword $w$ over all non-decreasing Dyck paths
-of semilength $n$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every
-$n > m$,
-$$d_{U^m}(n) = 3\,d_{U^m}(n-1) - d_{U^m}(n-2) + F_{2(n-m)} + F_{2(n-2)} -
-\sum_{k=1}^{m-2} k\,F_{2(n-k-2)}$$
-(the sum is empty when $m \le 2$); moreover $d_{U^m}(n) = 0$ for every $n < m$, and
-$d_{U^m}(m) = 1$.
-
-The source writes $n \le m$ for the vanishing case, which contradicts $d_{U^m}(m) = 1$; the
-vanishing case is stated for $n < m$.
-
-Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
-Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 13
-(`jis-2025-25.1.6-thm-13`). -/
-public theorem_wanted nondecreasingDyck_subword_U_pow (m : ℕ) (hm : 1 ≤ m) :
-    (∀ n : ℕ, m < n →
-      (nondecreasingDyckSubwordTotal (List.replicate m U) n : ℤ) =
-        3 * (nondecreasingDyckSubwordTotal (List.replicate m U) (n - 1) : ℤ)
-          - (nondecreasingDyckSubwordTotal (List.replicate m U) (n - 2) : ℤ)
-          + (Nat.fib (2 * (n - m)) : ℤ) + (Nat.fib (2 * (n - 2)) : ℤ)
-          - ∑ k ∈ Finset.Icc 1 (m - 2), (k : ℤ) * (Nat.fib (2 * (n - k - 2)) : ℤ)) ∧
-    (∀ n : ℕ, n < m → nondecreasingDyckSubwordTotal (List.replicate m U) n = 0) ∧
-    nondecreasingDyckSubwordTotal (List.replicate m U) m = 1
-
 /-- **Recurrence for the subword $U^mD$ in non-decreasing Dyck paths.** Let $m \ge 1$. Let
 $d_w(n)$ be the total number of occurrences of the subword $w$ over all non-decreasing Dyck paths
 of semilength $n$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every
