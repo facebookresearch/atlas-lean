@@ -66,3 +66,34 @@ example :
     (Finset.univ.filter fun i => stirlingDisplacement (n := 2) ![1, 1, 2, 2] i = 0).card = 1 ∧
       (Finset.univ.filter fun i => stirlingDisplacement (n := 2) ![1, 2, 2, 1] i = 0).card = 2 :=
   by decide
+
+-- An extremely lucky word with a nested pair and nonconsecutive lucky positions.
+example (v : Fin (2 * 3) → ℕ) (hv : IsStirlingPermutation 3 v)
+    (hd : ∀ i, stirlingDisplacement v i = (![0, 0, 1, 0, 3, 5] : Fin (2 * 3) → ℕ) i) :
+    v = ![1, 3, 3, 2, 2, 1] := by
+  have hvec : (fun i => stirlingDisplacement (n := 3) ![1, 3, 3, 2, 2, 1] i) =
+      ![0, 0, 1, 0, 3, 5] := by decide
+  exact extremely_lucky_eq_of_displacement_eq (n := 3) (w := ![1, 3, 3, 2, 2, 1]) (w' := v)
+    (hw := by unfold IsStirlingPermutation; decide) (hw' := hv) (hl := by decide)
+    (hd := fun i => (hd i).trans (congrFun hvec i).symm)
+
+-- Distinct presentations of the empty word satisfy all the hypotheses.
+example : (fun _ : Fin (2 * 0) => 7) = (Fin.elim0 : Fin (2 * 0) → ℕ) :=
+  extremely_lucky_eq_of_displacement_eq 0 Fin.elim0 (fun _ => 7)
+    (by simp [IsStirlingPermutation]) (by simp [IsStirlingPermutation]) (by decide)
+    (fun i => Fin.elim0 i)
+
+-- The paper's collision: dropping maximal luck would destroy uniqueness.
+example :
+    let u : Fin (2 * 3) → ℕ := ![1, 1, 3, 3, 2, 2]
+    let v : Fin (2 * 3) → ℕ := ![3, 3, 1, 1, 2, 2]
+    IsStirlingPermutation 3 u ∧ IsStirlingPermutation 3 v ∧ u ≠ v ∧
+      (stirlingLuckySet u).card < 3 ∧ (stirlingLuckySet v).card < 3 ∧
+      ∀ i, stirlingDisplacement v i = stirlingDisplacement u i := by
+  dsimp only
+  refine ⟨by unfold IsStirlingPermutation; decide, by unfold IsStirlingPermutation; decide,
+    ?_, by decide, by decide, by decide⟩
+  intro h
+  have hzero := congrFun h (0 : Fin (2 * 3))
+  change (1 : ℕ) = 3 at hzero
+  omega
