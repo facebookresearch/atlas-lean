@@ -13299,6 +13299,7 @@
   "MathlibExt/NumberTheory/ShadowMarkoffPolygon": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Shadow Markov triples"},
   "MathlibExt/NumberTheory/ShadowMarkoffTree": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Shadow Markov triples"},
   "MathlibExt/NumberTheory/ShakovTwoRegular": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Shakov's 2-regular sequence"},
+  "MathlibExt/NumberTheory/ShiftedFloorThresholdCounts": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/SierpinskiRepinteger18107": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SierpinskiRieselRepdigits": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SignedBinarySum": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Signed binary representations"},
