@@ -11,6 +11,9 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Myerson–Satterthwaite theorem](myerson-satterthwaite.md)
 - [Bilateral trade](bilateral-trade/README.md)
 - [Screening with two types](screening-with-two-types/README.md)
+- [Bilateral trade impossibility (dominant-strategy form)](bilateral-trade-impossibility.md)
+- [Characterization of proper scoring rules](characterization-of-proper-scoring-rules.md)
+- [Scoring rules and properness for finite outcomes](remaining-clauses-of-scoring-rules-and-properness.md)
 
 ## Related topics
 
