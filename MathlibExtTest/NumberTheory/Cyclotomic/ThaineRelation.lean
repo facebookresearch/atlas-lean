@@ -42,7 +42,6 @@ theorem exactSource_omegaIdempotent_two_cycloUnitTwo_ne_zero (hp5 : 5 ≤ p)
 
 section Thaine
 
-attribute [-instance] ExtCitation.Cyclotomic.instIsCycExt
 attribute [-simp] ExtCitation.Cyclotomic.unitsEnd_proj
 
 set_option backward.isDefEq.respectTransparency false
@@ -76,6 +75,7 @@ end Thaine
 
 end ExactSource
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The relation applies to a totally real field in any universe. -/
 example (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
     (Kplus : Type u) [Field Kplus] [NumberField Kplus] [IsTotallyReal Kplus]

@@ -79,7 +79,7 @@ private theorem isOmegaEigenvector_omegaIdemp (i : ℕ) (a : M) :
   congr 1
   rw [map_sum, smul_sum]
   refine Fintype.sum_bijective (d' * ·) (Group.mulLeft_bijective d') _ _ fun d => ?_
-  simp only [map_mul, Module.End.mul_apply, map_smul, smul_smul]
+  simp only [map_mul, mul_apply_eq_comp, map_smul, smul_smul]
   congr 1
   push_cast
   rw [mul_pow, mul_inv, ← mul_assoc,

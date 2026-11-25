@@ -372,7 +372,7 @@ private theorem isOmegaEigenvector_omegaIdemp (i : ℕ) (a : M) :
   congr 1
   rw [map_sum, smul_sum]
   refine Fintype.sum_bijective (d' * ·) (Group.mulLeft_bijective d') _ _ fun d => ?_
-  simp only [map_mul, Module.End.mul_apply, map_smul, smul_smul]
+  simp only [map_mul, mul_apply_eq_comp, map_smul, smul_smul]
   congr 1
   push_cast
   rw [mul_pow, mul_inv, ← mul_assoc,
@@ -444,6 +444,8 @@ private theorem clRingAction_apply_of_pow_eq (d : (ZMod p)ˣ) {x : 𝓞 K} (hx :
 end ExtCitation.Cyclotomic
 
 open NumberField JacobiSumStickelberger Stickelberger ExtCitation.Cyclotomic
+
+attribute [local instance] ExtCitation.Cyclotomic.instIsCycExt
 
 namespace Aux2Glue
 

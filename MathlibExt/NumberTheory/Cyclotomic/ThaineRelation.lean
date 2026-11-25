@@ -47,6 +47,8 @@ set_option backward.isDefEq.respectTransparency false
 open NumberField JacobiSumStickelberger Stickelberger
 open scoped nonZeroDivisors
 
+attribute [local instance] ExtCitation.Cyclotomic.instIsCycExt
+
 open NumberField IsCyclotomicExtension Polynomial UniqueFactorizationMonoid
 
 namespace ThaineAux
@@ -779,7 +781,7 @@ private theorem isOmegaEigenvector_omegaIdempotent {M : Type*} [AddCommGroup M] 
       mul_inv_cancel₀ (pow_ne_zero _ (Units.ne_zero d)), one_mul]
   simp only [omegaIdempotent, LinearMap.smul_apply, LinearMap.coe_sum, Finset.sum_apply,
     map_smul, map_sum]
-  simp_rw [← Module.End.mul_apply, ← map_mul]
+  simp_rw [← mul_apply_eq_comp, ← map_mul]
   rw [hreindex, smul_comm ((d : ZMod p) ^ i)]
   congr 1
   rw [Finset.smul_sum]
@@ -981,11 +983,11 @@ private theorem coe_algebraMap_norm_eq (τ₀ : (CyclotomicField p ℚ) ≃ₐ[K
     (hτ₀ : τ₀ ≠ 1)
     (hall : ∀ σ : (CyclotomicField p ℚ) ≃ₐ[Kplus] (CyclotomicField p ℚ), σ = 1 ∨ σ = τ₀)
     (x : 𝓞 (CyclotomicField p ℚ)) :
-    ((algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ)) (RingOfIntegers.norm Kplus x) :
+    ((algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ)) (NumberField.RingOfIntegers.norm Kplus x) :
         𝓞 (CyclotomicField p ℚ)) : CyclotomicField p ℚ) =
       (x : CyclotomicField p ℚ) * τ₀ (x : CyclotomicField p ℚ) := by
   classical
-  rw [RingOfIntegers.coe_algebraMap_norm, Algebra.norm_eq_prod_automorphisms,
+  rw [NumberField.RingOfIntegers.coe_algebraMap_norm, Algebra.norm_eq_prod_automorphisms,
     univ_eq_pair p Kplus τ₀ hall, Finset.prod_pair (Ne.symm hτ₀), AlgEquiv.one_apply]
 
 omit hp in
@@ -1012,14 +1014,15 @@ include hKplus in
 private theorem sq_eq_of_map_eq (δ : (𝓞 Kplus)ˣ) (u w : (𝓞 (CyclotomicField p ℚ))ˣ) (m : ℕ)
     (h : Units.map (algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ))).toMonoidHom δ =
       u ^ m * w ^ p) :
-    δ ^ 2 = (Units.map (RingOfIntegers.norm Kplus) u) ^ m *
-      (Units.map (RingOfIntegers.norm Kplus) w) ^ p := by
-  have h' := congrArg (Units.map (RingOfIntegers.norm Kplus (L := CyclotomicField p ℚ))) h
+    δ ^ 2 = (Units.map (NumberField.RingOfIntegers.norm Kplus) u) ^ m *
+      (Units.map (NumberField.RingOfIntegers.norm Kplus) w) ^ p := by
+  have h' := congrArg
+    (Units.map (NumberField.RingOfIntegers.norm Kplus (L := CyclotomicField p ℚ))) h
   rw [map_mul, map_pow, map_pow] at h'
   rw [← h']
   apply Units.ext
   rw [Units.val_pow_eq_pow_val, Units.coe_map, Units.coe_map, RingHom.toMonoidHom_eq_coe,
-    MonoidHom.coe_ofClass, RingOfIntegers.norm_algebraMap, hKplus]
+    MonoidHom.coe_ofClass, NumberField.RingOfIntegers.norm_algebraMap, hKplus]
 
 end KplusFrame
 
@@ -1090,8 +1093,8 @@ private theorem reduce_out (hp2 : p ≠ 2)
     (hB2 ζI (by rw [RingOfIntegers.coe_eq_algebraMap, hζIK]; exact hζK) u hu')
   set nn : (ZMod p)ˣ → ℕ := fun d =>
     (((Nat.card (ZMod p)ˣ : ℕ) : ZMod p)⁻¹ * (((d : ZMod p)) ^ 2)⁻¹).val with hnn
-  refine ⟨m, Units.map (RingOfIntegers.norm Kplus (L := CyclotomicField p ℚ)) w,
-    Units.map (RingOfIntegers.norm Kplus (L := CyclotomicField p ℚ))
+  refine ⟨m, Units.map (NumberField.RingOfIntegers.norm Kplus (L := CyclotomicField p ℚ)) w,
+    Units.map (NumberField.RingOfIntegers.norm Kplus (L := CyclotomicField p ℚ))
       (∏ d : (ZMod p)ˣ,
         (Units.mapEquiv (clRingAction p (CyclotomicField p ℚ) d).toMulEquiv u) ^ nn d), nn, ?_⟩
   obtain ⟨τ₀, hτ₀, hall, hτ₀x⟩ := exists_involution p Kplus hKplus
@@ -1553,10 +1556,10 @@ section NF
 variable [NumberField Kplus] [NumberField L] [IsCyclotomicExtension {ℓ} Kplus L]
 
 private lemma isUnit_of_norm_one' (x : 𝓞 L) (hx : Algebra.norm Kplus (x : L) = 1) : IsUnit x := by
-  rw [← RingOfIntegers.isUnit_norm Kplus]
-  suffices h : RingOfIntegers.norm Kplus x = 1 by rw [h]; exact isUnit_one
+  rw [← NumberField.RingOfIntegers.isUnit_norm Kplus]
+  suffices h : NumberField.RingOfIntegers.norm Kplus x = 1 by rw [h]; exact isUnit_one
   apply RingOfIntegers.coe_injective
-  simp only [RingOfIntegers.coe_norm, hx, map_one]
+  simp only [NumberField.RingOfIntegers.coe_norm, hx, map_one]
 
 private lemma isUnit_PdInt (ad : 𝓞 Kplus) (ζℓ : 𝓞 L)
     (hN : Algebra.norm Kplus (aeval (ζℓ : L) (Pd' (ad : Kplus))) = 1) :
@@ -1916,7 +1919,7 @@ private theorem exists_mul_eq_pow_mul (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime] (
     intro hle
     have := (le_count_iff_le_pow hD0 h𝔓p h𝔓0 1).mpr (by simpa [pow_one] using hle)
     omega
-  obtain ⟨d₁, hd₁D, hd₁𝔓⟩ := SetLike.not_le_iff_exists.mp hDnle
+  obtain ⟨d₁, hd₁D, hd₁𝔓⟩ := IsConcreteLE.not_le_iff_exists.mp hDnle
 
   obtain ⟨C, hC⟩ : 𝔓 ^ a ∣ Ideal.span {β} := Ideal.dvd_iff_le.mpr ha
   have hd₁0 : d₁ ≠ 0 := fun h => hd₁𝔓 (h ▸ Ideal.zero_mem _)
