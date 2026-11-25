@@ -22,3 +22,4 @@ All $\binom{N}{n}$ sets of $n$ items are equally likely, and the numerator count
 - [Mean of the hypergeometric distribution](sum-mul-hypergeometric-real.md): basic property: the mean $nK/N$
 - [Second factorial moment of the hypergeometric distribution](sum-mul-sub-one-mul-hypergeometric-real.md): basic property: the second factorial moment
 - [Variance of the hypergeometric distribution](sum-sq-sub-mean-mul-hypergeometric-real.md): basic property: the variance
+- [Marked items in a uniform random sample](marked-items-in-a-uniform-random-sample.md): a model: the count of marked items in a uniformly random n-subset has this law

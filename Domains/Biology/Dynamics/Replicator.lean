@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Dynamics.Replicator.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Analysis.Calculus.Deriv.Add
@@ -25,7 +26,8 @@ replicator equation (Taylor and Jonker 1978) is
 
   `x_i' = x_i (f_i(x) - f̄(x))`.
 
-`IsSolution f x` states that `x : ℝ → ι → ℝ` solves it for all `t ≥ 0`.
+`IsSolution f x` states that `x : ℝ → ι → ℝ` solves it for all `t ≥ 0`. The definitions
+`meanFitness`, `IsSolution` and `IsRestPoint` are in `MathlibExt.Dynamics.Replicator.Basic`.
 
 ## Main results
 
@@ -55,21 +57,6 @@ open Set Finset
 namespace MathlibExt.Biology.Dynamics.Replicator
 
 variable {ι : Type*} [Fintype ι]
-
-/-- The mean fitness `f̄(x) = ∑ i, x i * f x i` of the population state `x` for the fitness
-function `f`. -/
-def meanFitness (f : (ι → ℝ) → ι → ℝ) (x : ι → ℝ) : ℝ :=
-  ∑ i, x i * f x i
-
-/-- `x` solves the replicator equation `x_i' = x_i (f_i(x) - f̄(x))` for all times `t ≥ 0`. -/
-structure IsSolution (f : (ι → ℝ) → ι → ℝ) (x : ℝ → ι → ℝ) : Prop where
-  /-- Each frequency grows at the rate of its excess fitness. -/
-  hasDerivAt : ∀ i t, 0 ≤ t →
-    HasDerivAt (fun s => x s i) (x t i * (f (x t) i - meanFitness f (x t))) t
-
-/-- `x` is a rest point of the replicator equation: `x_i (f_i(x) - f̄(x)) = 0` for all `i`. -/
-def IsRestPoint (f : (ι → ℝ) → ι → ℝ) (x : ι → ℝ) : Prop :=
-  ∀ i, x i * (f x i - meanFitness f x) = 0
 
 /-- **Rest points in the interior are equalizers.** If every strategy is present (`x i > 0`),
 then `x` is a rest point iff every strategy has fitness equal to the mean fitness. -/

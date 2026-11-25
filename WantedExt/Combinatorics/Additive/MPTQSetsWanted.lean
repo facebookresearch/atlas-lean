@@ -94,18 +94,6 @@ INTEGERS 24 (2024), Article A96, Theorem 3 (`integers-2024-A96-thm-3`). -/
 public theorem_wanted not_isMPTQSet_of_card_eq_five {A : Finset ℝ} (hcard : A.card = 5) :
     ¬ IsMPTQSet A
 
-/-- **Adjoining multiples by a coprime prime preserves the MPTQ property.** Let $A$ be a finite
-set of integers and $p$ a prime number such that every element of $A$ is coprime to $p$, and let
-$pA = \{pa : a \in A\}$. Regarding sets of integers as sets of real numbers, $A \cup pA$ is an
-MPTQ set if and only if $A$ is an MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Theorem 4 (`integers-2024-A96-thm-4`). -/
-public theorem_wanted isMPTQSet_union_prime_mul_iff (A : Finset ℤ) {p : ℕ} (hp : p.Prime)
-    (hcop : ∀ a ∈ A, IsCoprime a (p : ℤ)) :
-    IsMPTQSet ((A ∪ A.image ((p : ℤ) * ·)).image ((↑) : ℤ → ℝ)) ↔
-      IsMPTQSet (A.image ((↑) : ℤ → ℝ))
-
 end
 
 end MetaMathlibExt

@@ -20,6 +20,9 @@ dissipative (orbits eventually bounded); without it the condition can hold while
 (`y' = y (1 + y)` in dimension one), so only the replicator form, on the compact simplex, is
 recorded here.
 
+The replicator equation and its rest points are the library predicates `IsSolution` and
+`IsRestPoint` of `MathlibExt.Biology.Dynamics.Replicator` (`MathlibExt.Dynamics.Replicator.Basic`).
+
 Recorded here: the replicator permanence criterion, with permanence stated as a uniform
 eventual lower bound `δ` on all coordinates of all interior orbits on `[0, ∞)`. Jansen (1987) was
 read only in its abstract.
@@ -33,6 +36,7 @@ Math. 91 (1981) 233–240.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Dynamics.Replicator.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Data.Matrix.Mul
 
@@ -40,24 +44,21 @@ public import Mathlib.Data.Matrix.Mul
 
 namespace WantedExt.Biology.Ecology.ReplicatorPermanenceWanted
 
-open Matrix
-
-/-- `x` solves the **replicator equation** `xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` on `[0, ∞)`. -/
-def IsSolution {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (x : ℝ → ι → ℝ) : Prop :=
-  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (fun i => x t i * ((A *ᵥ x t) i - x t ⬝ᵥ (A *ᵥ x t))) t
+open Matrix MathlibExt.Biology.Dynamics.Replicator
 
 /-- `b` is a **rest point on the boundary of the simplex**: `b` is in the simplex (every
-`bᵢ ≥ 0`, `∑ bᵢ = 1`), some coordinate vanishes, and `bᵢ ((A b)ᵢ - bᵀ A b) = 0` for every `i`. -/
+`bᵢ ≥ 0`, `∑ bᵢ = 1`), some coordinate vanishes, and `b` is a rest point of the replicator
+equation, `IsRestPoint (fun z => A *ᵥ z) b` (`bᵢ ((A b)ᵢ - bᵀ A b) = 0` for every `i`). -/
 def IsBoundaryRestPoint {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (b : ι → ℝ) : Prop :=
-  (∀ i, 0 ≤ b i) ∧ ∑ i, b i = 1 ∧ (∃ i, b i = 0) ∧
-    ∀ i, b i * ((A *ᵥ b) i - b ⬝ᵥ (A *ᵥ b)) = 0
+  (∀ i, 0 ≤ b i) ∧ ∑ i, b i = 1 ∧ (∃ i, b i = 0) ∧ IsRestPoint (fun z => A *ᵥ z) b
 
-/-- The replicator equation is **permanent**: there is `δ > 0` such that every solution on
-`[0, ∞)` starting in the interior of the simplex (every `xᵢ(0) > 0`, `∑ xᵢ(0) = 1`) eventually
-has every coordinate at least `δ`: some `T` has `xᵢ(t) ≥ δ` for all `t ≥ T` and all `i`. -/
+/-- The replicator equation of the matrix game `A` is **permanent**: there is `δ > 0` such that
+every solution `x` on `[0, ∞)` (`IsSolution (fun z => A *ᵥ z) x`) starting in the interior of the
+simplex (every `xᵢ(0) > 0`, `∑ xᵢ(0) = 1`) eventually has every coordinate at least `δ`: some `T`
+has `xᵢ(t) ≥ δ` for all `t ≥ T` and all `i`. -/
 def IsPermanent {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) : Prop :=
-  ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → ι → ℝ, IsSolution A x → (∀ i, 0 < x 0 i) → ∑ i, x 0 i = 1 →
-    ∃ T : ℝ, ∀ t : ℝ, T ≤ t → ∀ i, δ ≤ x t i
+  ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → ι → ℝ, IsSolution (fun z => A *ᵥ z) x → (∀ i, 0 < x 0 i) →
+    ∑ i, x 0 i = 1 → ∃ T : ℝ, ∀ t : ℝ, T ≤ t → ∀ i, δ ≤ x t i
 
 /-- **Permanence criterion** (Hofbauer and Sigmund 2003, Theorem 5; Jansen 1987): let `A` be a
 real square matrix indexed by a finite type. If there is `p` in the interior of the simplex

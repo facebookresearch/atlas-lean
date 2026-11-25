@@ -33,6 +33,8 @@ close to `p` stay close to `p` and converge to `p`.
 * `IsNash A p`: `p` is a symmetric Nash equilibrium, `q · A p ≤ p · A p` for all mixed `q`.
 * `IsESS A p`: `p` is evolutionarily stable in the sense of Maynard Smith and Price: for every
   mixed `q ≠ p`, either `q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`.
+
+  (`IsNash` and `IsESS` are defined in `MathlibExt.Dynamics.Replicator.Basic`.)
 * `relEntropy p y = ∑ i, p i * (log (p i) - log (y i))`, the Lyapunov function. It equals
   `log P(p) - log P(y)` for the Hofbauer–Sigmund function `P(y) = ∏ i, y i ^ p i`.
 
@@ -100,19 +102,6 @@ open Set Finset Filter Topology Matrix Real
 namespace MathlibExt.Biology.Dynamics.Replicator
 
 variable {ι : Type*} [Fintype ι]
-
-/-- `p` is a **symmetric Nash equilibrium** of the matrix game `A`: `p` is a mixed strategy and
-no mixed strategy `q` earns more against `p` than `p` itself, `q · A p ≤ p · A p`. -/
-def IsNash (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  ((∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1) ∧
-    ∀ q : ι → ℝ, (∀ i, 0 ≤ q i) ∧ ∑ i, q i = 1 → q ⬝ᵥ A *ᵥ p ≤ p ⬝ᵥ A *ᵥ p
-
-/-- `p` is an **evolutionarily stable state** of the matrix game `A` (Maynard Smith and Price
-1973; Hofbauer–Sigmund 1998, (6.3)–(6.4)): for every mixed strategy `q ≠ p`, either
-`q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`. -/
-def IsESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  ((∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1) ∧ ∀ q : ι → ℝ, (∀ i, 0 ≤ q i) ∧ ∑ i, q i = 1 → q ≠ p →
-    q ⬝ᵥ A *ᵥ p < p ⬝ᵥ A *ᵥ p ∨ (q ⬝ᵥ A *ᵥ p = p ⬝ᵥ A *ᵥ p ∧ q ⬝ᵥ A *ᵥ q < p ⬝ᵥ A *ᵥ q)
 
 /-- The Lyapunov function `relEntropy p y = ∑ i, p i * (log (p i) - log (y i))` (the relative
 entropy of `p` with respect to `y`). It equals `log P(p) - log P(y)` for the Hofbauer–Sigmund

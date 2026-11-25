@@ -15,8 +15,10 @@ in the boundary or is empty, the orbit going to infinity. For the replicator equ
 `xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` with no rest point in the interior of the simplex, every interior
 orbit converges to the boundary of the simplex (Hofbauer and Sigmund 2003, after Theorem 3). The
 two forms are linked by Hofbauer's orbital equivalence (proved on main in
-`Domains.Biology.Dynamics.ReplicatorLotkaVolterra`); the argument is a Farkas-type separation
-followed by time averaging.
+`Domains.Biology.Dynamics.ReplicatorLotkaVolterra`). The replicator equation and its rest points
+are the library predicates `IsSolution` and `IsRestPoint` of
+`MathlibExt.Biology.Dynamics.Replicator` (`MathlibExt.Dynamics.Replicator.Basic`); the argument
+is a Farkas-type separation followed by time averaging.
 
 Recorded here: both forms, for solutions on `[0, ∞)` starting in the open orthant, respectively
 in the interior of the simplex. "Converges to the boundary" is stated as
@@ -31,6 +33,7 @@ J. Hofbauer and K. Sigmund, *Evolutionary Games and Population Dynamics*, Cambri
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Dynamics.Replicator.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
@@ -39,16 +42,12 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 namespace WantedExt.Biology.Ecology.LotkaVolterraNoInteriorEquilibriumWanted
 
-open Filter Topology Matrix
+open Filter Topology Matrix MathlibExt.Biology.Dynamics.Replicator
 
 /-- `y` solves the **Lotka–Volterra system** `yᵢ' = yᵢ (rᵢ + (C y)ᵢ)` on `[0, ∞)`. -/
 def IsLVSolution {ι : Type*} [Fintype ι] (r : ι → ℝ) (C : Matrix ι ι ℝ) (y : ℝ → ι → ℝ) :
     Prop :=
   ∀ t : ℝ, 0 ≤ t → HasDerivAt y (fun i => y t i * (r i + (C *ᵥ y t) i)) t
-
-/-- `x` solves the **replicator equation** `xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` on `[0, ∞)`. -/
-def IsReplicatorSolution {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (x : ℝ → ι → ℝ) : Prop :=
-  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (fun i => x t i * ((A *ᵥ x t) i - x t ⬝ᵥ (A *ᵥ x t))) t
 
 /-- `z` is in the **interior of the simplex**: every coordinate positive, coordinates sum to `1`. -/
 def InInteriorSimplex {ι : Type*} [Fintype ι] (z : ι → ℝ) : Prop :=
@@ -68,16 +67,17 @@ public theorem_wanted not_mapClusterPt_of_no_interior_eq {ι : Type*} [Fintype �
     ¬ MapClusterPt p atTop y
 
 /-- **Convergence to the boundary of the simplex** (Hofbauer and Sigmund 2003, §3): let `A` be a
-real square matrix indexed by a finite type, and suppose the replicator equation has no rest point
-in the interior of the simplex: no `z` with every `zᵢ > 0`, `∑ zᵢ = 1` and `(A z)ᵢ = zᵀ A z` for
-every `i`. Then every solution `x` on `[0, ∞)` with `x(0)` in the interior of the simplex
-converges to the boundary: `∏ᵢ xᵢ(t) → 0` as `t → ∞`.
+real square matrix indexed by a finite type, and suppose the replicator equation
+`xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` (`IsSolution (fun z => A *ᵥ z)`) has no rest point in the interior
+of the simplex: no `z` with every `zᵢ > 0`, `∑ zᵢ = 1` and `IsRestPoint (fun z => A *ᵥ z) z`
+(that is, `zᵢ ((A z)ᵢ - zᵀ A z) = 0` for every `i`). Then every solution `x` on `[0, ∞)` with
+`x(0)` in the interior of the simplex converges to the boundary: `∏ᵢ xᵢ(t) → 0` as `t → ∞`.
 
 Source: Hofbauer and Sigmund (2003), §3. -/
 public theorem_wanted tendsto_boundary_of_no_interior_rest_point {ι : Type*} [Fintype ι]
     (A : Matrix ι ι ℝ)
-    (hno : ¬ ∃ z : ι → ℝ, InInteriorSimplex z ∧ ∀ i, (A *ᵥ z) i = z ⬝ᵥ (A *ᵥ z))
-    (x : ℝ → ι → ℝ) (hx : IsReplicatorSolution A x) (hx₀ : InInteriorSimplex (x 0)) :
+    (hno : ¬ ∃ z : ι → ℝ, InInteriorSimplex z ∧ IsRestPoint (fun z => A *ᵥ z) z)
+    (x : ℝ → ι → ℝ) (hx : IsSolution (fun z => A *ᵥ z) x) (hx₀ : InInteriorSimplex (x 0)) :
     Tendsto (fun t => ∏ i, x t i) atTop (𝓝 0)
 
 end WantedExt.Biology.Ecology.LotkaVolterraNoInteriorEquilibriumWanted

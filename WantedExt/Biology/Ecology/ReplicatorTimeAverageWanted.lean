@@ -18,6 +18,9 @@ proof integrates `(ln xᵢ)' - (ln xⱼ)' = (A x)ᵢ - (A x)ⱼ`: the left side 
 averages is an interior rest point. For the predator–prey case this contains Volterra's law of
 averages.
 
+The replicator equation and its rest points are the library predicates `IsSolution` and
+`IsRestPoint` of `MathlibExt.Biology.Dynamics.Replicator` (`MathlibExt.Dynamics.Replicator.Basic`).
+
 Recorded here: convergence of the time averages for solutions on `[0, ∞)` whose coordinates stay
 above a fixed `δ > 0`. Volterra's third law (the effect of harvesting) is not formalized.
 
@@ -29,6 +32,7 @@ doi:10.1090/S0273-0979-03-00988-1, Theorem 4.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Dynamics.Replicator.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
@@ -37,20 +41,18 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 namespace WantedExt.Biology.Ecology.ReplicatorTimeAverageWanted
 
-open Filter Topology Matrix
+open Filter Topology Matrix MathlibExt.Biology.Dynamics.Replicator
 
-/-- `x` solves the **replicator equation** `xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` on `[0, ∞)`. -/
-def IsSolution {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (x : ℝ → ι → ℝ) : Prop :=
-  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (fun i => x t i * ((A *ᵥ x t) i - x t ⬝ᵥ (A *ᵥ x t))) t
-
-/-- `z` is an **interior rest point** of the replicator equation: every `zᵢ > 0`, `∑ zᵢ = 1`,
-and every strategy earns the mean payoff, `(A z)ᵢ = zᵀ A z`. -/
+/-- `z` is an **interior rest point** of the replicator equation of the matrix game `A`: every
+`zᵢ > 0`, `∑ zᵢ = 1`, and `z` is a rest point, `IsRestPoint (fun z => A *ᵥ z) z` (since every
+`zᵢ > 0`, every strategy then earns the mean payoff `(A z)ᵢ = zᵀ A z`). -/
 def IsInteriorRestPoint {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (z : ι → ℝ) : Prop :=
-  (∀ i, 0 < z i) ∧ ∑ i, z i = 1 ∧ ∀ i, (A *ᵥ z) i = z ⬝ᵥ (A *ᵥ z)
+  (∀ i, 0 < z i) ∧ ∑ i, z i = 1 ∧ IsRestPoint (fun z => A *ᵥ z) z
 
 /-- **Convergence of time averages** (Schuster, Sigmund, Hofbauer and Wolff 1981, §5 B; Hofbauer
 and Sigmund 2003, Theorem 4): let `A` be a real square matrix indexed by a finite type, and
-suppose `p` is the unique interior rest point of the replicator equation. Let `x` be a solution
+suppose `p` is the unique interior rest point of the replicator equation
+`xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)`. Let `x` be a solution (`IsSolution (fun z => A *ᵥ z) x`)
 on `[0, ∞)` with `x(0)` in the interior of the simplex (every `xᵢ(0) > 0`, `∑ xᵢ(0) = 1`) that
 stays bounded away from the boundary: there is `δ > 0` with `xᵢ(t) ≥ δ` for every `i` and every
 `t ≥ 0`. Then for every `i`, the time average `(1/T) ∫₀ᵀ xᵢ(t) dt` converges to `pᵢ` as
@@ -60,7 +62,7 @@ Sources: Schuster, Sigmund, Hofbauer and Wolff (1981), §5; Hofbauer and Sigmund
 Theorem 4. -/
 public theorem_wanted tendsto_timeAverage {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ)
     (p : ι → ℝ) (hp : IsInteriorRestPoint A p) (huniq : ∀ z, IsInteriorRestPoint A z → z = p)
-    (x : ℝ → ι → ℝ) (hx : IsSolution A x) (hx₀ : (∀ i, 0 < x 0 i) ∧ ∑ i, x 0 i = 1)
+    (x : ℝ → ι → ℝ) (hx : IsSolution (fun z => A *ᵥ z) x) (hx₀ : (∀ i, 0 < x 0 i) ∧ ∑ i, x 0 i = 1)
     (δ : ℝ) (hδ : 0 < δ) (hbdd : ∀ t : ℝ, 0 ≤ t → ∀ i, δ ≤ x t i) (i : ι) :
     Tendsto (fun T : ℝ => T⁻¹ * ∫ t in (0 : ℝ)..T, x t i) atTop (𝓝 (p i))
 
