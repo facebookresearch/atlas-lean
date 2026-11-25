@@ -324,7 +324,6 @@ section Divisible
 variable {τ : Type*}
 
 include p in
-
 private theorem pow_card_eq_subst_X_pow (g : MvPowerSeries τ k) :
     g ^ Fintype.card k = subst (fun s : τ => (X s : MvPowerSeries τ k) ^ Fintype.card k) g := by
   obtain ⟨n, hp, hn⟩ := FiniteField.card k p
@@ -421,7 +420,6 @@ section Exists
 variable {τ : Type*} [Fintype τ] [DecidableEq τ]
 
 open scoped Classical in
-
 private def pdiv (x : WittVector p k) : WittVector p k :=
   if h : ∃ y : WittVector p k, x = (p : WittVector p k) * y then h.choose else 0
 

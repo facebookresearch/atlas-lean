@@ -132,7 +132,6 @@ theorem IsRegularLocalRing.adjoinRoot_of_monic_of_coeff_mem_maximalIdeal_of_coef
   have hinj : Function.Injective (algebraMap S (AdjoinRoot g)) :=
     algebraMap_injective_of_monic g hg hn
   have : Nontrivial (AdjoinRoot g) := hinj.nontrivial
-
   set x : AdjoinRoot g := AdjoinRoot.root g with hx
   set φ : S →+* AdjoinRoot g := algebraMap S (AdjoinRoot g) with hφ
   set M : Ideal (AdjoinRoot g) := Ideal.span {x} ⊔ (maximalIdeal S).map φ with hM
@@ -170,10 +169,8 @@ theorem IsRegularLocalRing.adjoinRoot_of_monic_of_coeff_mem_maximalIdeal_of_coef
     IsLocalRing.of_unique_max_ideal
       ⟨M, hMmax, fun Q hQ => (hMmax.eq_of_le hQ.ne_top (hMle Q hQ)).symm⟩
   have hmaxT : maximalIdeal (AdjoinRoot g) = M := (IsLocalRing.eq_maximalIdeal hMmax).symm
-
   have hdim : ringKrullDim (AdjoinRoot g) = ringKrullDim S :=
     ringKrullDim_eq_of_integral_of_injective hinj
-
   obtain ⟨s, hscard, hsspan⟩ :=
     Submodule.FG.exists_span_finset_card_eq_spanFinrank (IsNoetherian.noetherian (maximalIdeal S))
   have hsspan' : Ideal.span (s : Set S) = maximalIdeal S := hsspan

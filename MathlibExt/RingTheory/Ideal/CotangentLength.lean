@@ -53,7 +53,6 @@ variable {𝒪 : Type*} [CommRing 𝒪] [IsDomain 𝒪]
 private theorem length_quotient_span_mul (a b : 𝒪) (hb : b ≠ 0) :
     Module.length 𝒪 (𝒪 ⧸ Ideal.span {a * b}) =
       Module.length 𝒪 (𝒪 ⧸ Ideal.span {a}) + Module.length 𝒪 (𝒪 ⧸ Ideal.span {b}) := by
-
   let f : (𝒪 ⧸ Ideal.span {a}) →ₗ[𝒪] (𝒪 ⧸ Ideal.span {a * b}) :=
     Submodule.mapQ (Ideal.span {a}) (Ideal.span {a * b}) (LinearMap.lsmul 𝒪 𝒪 b) (by
       intro x hx
@@ -215,7 +214,6 @@ variable {𝒪 : Type*} [CommRing 𝒪] [IsDomain 𝒪] [IsPrincipalIdealRing �
   {R : Type*} [CommRing R] [Algebra 𝒪 R]
 
 omit [IsDomain 𝒪] [IsPrincipalIdealRing 𝒪] in
-
 private theorem basisFun_det_eq {n : ℕ} (v : Fin n → (Fin n → 𝒪)) :
     (Pi.basisFun 𝒪 (Fin n)).det v = (Matrix.of fun i j => v j i).det := by
   rw [Basis.det_apply]
@@ -233,7 +231,6 @@ private theorem length_quotient_eta_le_length_cotangent (π : R →ₐ[𝒪] �
     · rintro ⟨i, rfl⟩; exact (s.equivFin.symm i).2
     · intro hx; exact ⟨s.equivFin ⟨x, hx⟩, by simp [a]⟩
   have hI : Ideal.span (Set.range a) = RingHom.ker π := by rw [hrange, hs]
-
   set ψ := psi π a hI
   have hψ := psi_surjective π a hI
   set N := LinearMap.ker ψ
@@ -248,12 +245,10 @@ private theorem length_quotient_eta_le_length_cotangent (π : R →ₐ[𝒪] �
       rw [Module.finrank_eq_card_basis snf.bN, Module.finrank_fin_fun, Fintype.card_fin, hmn]
     set c := Submodule.smithNormalFormCoeffs e h
     have hc : ∀ i, c i ≠ 0 := Submodule.smithNormalFormCoeffs_ne_zero e h
-
     have hlen : Module.length 𝒪 ((Fin n → 𝒪) ⧸ N) =
         Module.length 𝒪 (𝒪 ⧸ Ideal.span {∏ i, c i}) := by
       rw [(Submodule.quotientEquivPiSpan N e h).length_eq, Module.length_pi_of_fintype,
         length_quotient_span_prod _ _ (fun i _ => hc i)]
-
     have hprod : (∏ i, c i) ∈ (RingHom.ker π).annihilator.map π := by
       let v : Fin n → (Fin n → 𝒪) :=
         fun j => (Submodule.smithNormalFormBotBasis e h j : (Fin n → 𝒪))
@@ -269,7 +264,6 @@ private theorem length_quotient_eta_le_length_cotangent (π : R →ₐ[𝒪] �
       have := Ideal.mul_mem_right (↑u⁻¹ : 𝒪) _ hdet
       rwa [mul_assoc, Units.mul_inv, mul_one] at this
     rw [hlen]
-
     refine Module.length_le_of_surjective
       (Submodule.mapQ (Ideal.span {∏ i, c i})
         ((RingHom.ker π).annihilator.map π) LinearMap.id ?_) ?_
@@ -311,7 +305,6 @@ public theorem AlgHom.length_quotient_congruenceIdeal_le_length_cotangent
     (hπ : πT.comp φ = πR) (hfg : (RingHom.ker πR).FG) :
     Module.length 𝒪 (𝒪 ⧸ (RingHom.ker πT).annihilator.map πT) ≤
       Module.length 𝒪 (RingHom.ker πR).Cotangent := by
-
   have hη : (RingHom.ker πR).annihilator.map πR ≤ (RingHom.ker πT).annihilator.map πT := by
     refine Ideal.map_le_iff_le_comap.mpr fun x hx => ?_
     rw [Ideal.mem_comap, show πR x = πT (φ x) from (AlgHom.congr_fun hπ x).symm]

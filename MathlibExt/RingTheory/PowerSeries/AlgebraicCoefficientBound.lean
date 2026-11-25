@@ -87,7 +87,6 @@ private theorem norm_coeff_mul_pow_le_pn {x : ℝ} (hx : 0 ≤ x) {n N : ℕ} (h
 private theorem pn_mul_le {x : ℝ} (hx : 0 ≤ x) (N : ℕ) (f g : ℂ⟦X⟧) :
     pn N x (f * g) ≤ pn N x f * pn N x g := by
   unfold pn
-
   have h1 : ∀ k ∈ range N, ‖PowerSeries.coeff k (f * g)‖ * x ^ k ≤
       ∑ i ∈ range (k + 1), (‖PowerSeries.coeff i f‖ * x ^ i) *
         (‖PowerSeries.coeff (k - i) g‖ * x ^ (k - i)) := by
@@ -107,7 +106,6 @@ private theorem pn_mul_le {x : ℝ} (hx : 0 ≤ x) (N : ℕ) (f g : ℂ⟦X⟧) 
             rw [← pow_add, Nat.add_sub_cancel' hik]
           rw [this]; ring
   refine (sum_le_sum h1).trans ?_
-
   rw [sum_sigma']
   set F : ℕ → ℝ := fun i => ‖PowerSeries.coeff i f‖ * x ^ i with hF
   set G : ℕ → ℝ := fun j => ‖PowerSeries.coeff j g‖ * x ^ j with hG

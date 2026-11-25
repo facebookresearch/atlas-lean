@@ -221,7 +221,6 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
   have hnk_pos' : (0 : ℝ) < ((n - k : ℕ) : ℝ) := Nat.cast_pos.mpr hnk_pos
   have hpi_pos : (0 : ℝ) < Real.pi := Real.pi_pos
   have hexp1_pos : (0 : ℝ) < Real.exp 1 := Real.exp_pos 1
-
   have hstir_n_pos : (0 : ℝ) < Stirling.stirlingSeq n := by
     have h := Stirling.stirlingSeq'_pos (n - 1)
     rwa [show n - 1 + 1 = n from Nat.sub_one_add_one_eq_of_pos hn] at h
@@ -231,15 +230,10 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
   have hstir_nk_pos : (0 : ℝ) < Stirling.stirlingSeq (n - k) := by
     have h := Stirling.stirlingSeq'_pos (n - k - 1)
     rwa [show n - k - 1 + 1 = n - k from Nat.sub_one_add_one_eq_of_pos hnk_pos] at h
-
   rw [binomProbHalf, Nat.cast_choose ℝ hkn']
-
   rw [factorial_eq_stirlingSeq_mul n hn, factorial_eq_stirlingSeq_mul k hk,
       factorial_eq_stirlingSeq_mul (n - k) hnk_pos]
-
   rw [gaussianApproxHalf]
-
-
   have h2n_pos : (0 : ℝ) < 2 * (n : ℝ) := by linarith
   have h2k_pos : (0 : ℝ) < 2 * (k : ℝ) := by linarith
   have h2nk_pos : (0 : ℝ) < 2 * ((n - k : ℕ) : ℝ) := by linarith
@@ -249,7 +243,6 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
   have hne_pos : (0 : ℝ) < (n : ℝ) / Real.exp 1 := _root_.div_pos hn_pos hexp1_pos
   have hke_pos : (0 : ℝ) < (k : ℝ) / Real.exp 1 := _root_.div_pos hk_pos hexp1_pos
   have hnke_pos : (0 : ℝ) < ((n - k : ℕ) : ℝ) / Real.exp 1 := _root_.div_pos hnk_pos' hexp1_pos
-
   have hpow_e_cancel : ((n : ℝ) / Real.exp 1) ^ n /
       (((k : ℝ) / Real.exp 1) ^ k * (((n - k : ℕ) : ℝ) / Real.exp 1) ^ (n - k)) =
       (n : ℝ) ^ n / ((k : ℝ) ^ k * ((n - k : ℕ) : ℝ) ^ (n - k)) := by
@@ -262,13 +255,10 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
       rw [← pow_add, Nat.add_sub_cancel' hkn']
     field_simp
     linarith [hekn]
-
-
   have hsqrt_simplify : Real.sqrt (2 * (n : ℝ)) /
       (Real.sqrt (2 * (k : ℝ)) * Real.sqrt (2 * ((n - k : ℕ) : ℝ)) *
        Real.sqrt (2 / (Real.pi * (n : ℝ)))) =
       Real.sqrt (Real.pi * (n : ℝ) ^ 2 / (4 * (k : ℝ) * ((n - k : ℕ) : ℝ))) := by
-
     have hLHS_pos : (0 : ℝ) < Real.sqrt (2 * (n : ℝ)) /
         (Real.sqrt (2 * (k : ℝ)) * Real.sqrt (2 * ((n - k : ℕ) : ℝ)) *
          Real.sqrt (2 / (Real.pi * (n : ℝ)))) := by
@@ -278,11 +268,8 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
     have hRHS_pos : (0 : ℝ) < Real.sqrt (Real.pi * (n : ℝ) ^ 2 /
         (4 * (k : ℝ) * ((n - k : ℕ) : ℝ))) :=
       Real.sqrt_pos.mpr (by positivity)
-
-
     rw [← Real.sqrt_sq (le_of_lt hLHS_pos)]
     congr 1
-
     rw [div_pow, Real.sq_sqrt (le_of_lt h2n_pos),
         mul_pow, mul_pow, Real.sq_sqrt (le_of_lt h2k_pos),
         Real.sq_sqrt (le_of_lt h2nk_pos),
@@ -290,11 +277,8 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
           (mul_pos hpi_pos hn_pos)))]
     field_simp
     ring
-
-
   rw [show Real.exp (-(((k : ℝ) - (n : ℝ) / 2) ^ 2 / ((n : ℝ) / 2))) =
     (Real.exp (((k : ℝ) - (n : ℝ) / 2) ^ 2 / ((n : ℝ) / 2)))⁻¹ from Real.exp_neg _]
-
   have hSn_ne : Stirling.stirlingSeq n ≠ 0 := ne_of_gt hstir_n_pos
   have hSk_ne : Stirling.stirlingSeq k ≠ 0 := ne_of_gt hstir_k_pos
   have hSnk_ne : Stirling.stirlingSeq (n - k) ≠ 0 := ne_of_gt hstir_nk_pos
@@ -315,18 +299,11 @@ lemma binomProb_div_gaussianApprox_eq (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (hkn
   have hn_pow_ne : (n : ℝ) ^ n ≠ 0 := ne_of_gt (pow_pos hn_pos n)
   have hk_pow_ne : (k : ℝ) ^ k ≠ 0 := ne_of_gt (pow_pos hk_pos k)
   have hnk_pow_ne : ((n - k : ℕ) : ℝ) ^ (n - k) ≠ 0 := ne_of_gt (pow_pos hnk_pos' (n - k))
-
   rw [← hsqrt_simplify]
-
-
   have hinv_pow : (Real.exp 1)⁻¹ ^ n = (Real.exp 1)⁻¹ ^ k * (Real.exp 1)⁻¹ ^ (n - k) := by
     rw [← pow_add, Nat.add_sub_cancel' hkn']
-
-
   simp only [div_eq_mul_inv, mul_pow] at *
   rw [hinv_pow] at hne_pow_ne ⊢
-
-
   field_simp
 
 set_option maxHeartbeats 800000 in

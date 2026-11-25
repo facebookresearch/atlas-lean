@@ -836,7 +836,6 @@ theorem toMu_toMuInv {φ : FixFreeFormula Atom} {ψ : MuFormula Atom}
           have hinj : (φ'.box : FixFreeFormula Atom) = φ := Option.some.inj h
           subst hinj
           simp only [FixFreeFormula.toMu, ih h']
-
   | dia ψ' ih =>
       simp only [toMuInv] at h
       cases h' : toMuInv ψ' with

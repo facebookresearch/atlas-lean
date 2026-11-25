@@ -597,7 +597,6 @@ theorem pairwise_indep_slln
     have hfin := summable_chebyshev_subseq A hA_meas hA_indep hES_top _ hε
     filter_upwards [ae_eventually_notMem hfin] with ω hω
     exact hω.mono (fun k hk => not_le.mp hk)
-
   filter_upwards [hφ_ae] with ω hω_subseq
   rw [Metric.tendsto_atTop]
   intro ε hε
@@ -639,14 +638,12 @@ theorem pairwise_indep_slln
   set r₁ := partialSumIndicators A (φ (k + 1)) ω / (∫ ω', partialSumIndicators A (φ (k + 1)) ω' ∂μ)
   set ρ := (∫ ω', partialSumIndicators A (φ (k + 1)) ω' ∂μ) / (∫ ω', partialSumIndicators A (φ k) ω' ∂μ)
   have hρ_pos : 0 < ρ := div_pos hEφk1 hEφk
-
   have hub_eq : partialSumIndicators A (φ (k + 1)) ω /
       (∫ ω', partialSumIndicators A (φ k) ω' ∂μ) = r₁ * ρ := by
     simp only [r₁, ρ]; field_simp
   have hlb_eq : partialSumIndicators A (φ k) ω /
       (∫ ω', partialSumIndicators A (φ (k + 1)) ω' ∂μ) = r₀ / ρ := by
     simp only [r₀, ρ]; field_simp
-
   have h_lower : r₀ / ρ ≤
       partialSumIndicators A n ω / (∫ ω', partialSumIndicators A n ω' ∂μ) := by
     rw [← hlb_eq]
@@ -664,7 +661,6 @@ theorem pairwise_indep_slln
       _ ≤ partialSumIndicators A (φ (k + 1)) ω / (∫ ω', partialSumIndicators A (φ k) ω' ∂μ) :=
           div_le_div_of_nonneg_right hSn_ub hEφk.le
   rw [Real.dist_eq]
-
   have hub_bound : |r₁ * ρ - 1| < ε := by
     have heq : r₁ * ρ - 1 = (r₁ - 1) * (ρ - 1) + (r₁ - 1) + (ρ - 1) := by ring
     rw [heq]
@@ -680,7 +676,6 @@ theorem pairwise_indep_slln
           linarith
       _ = δ ^ 2 + 2 * δ := by ring
       _ < ε := hδ_sq_bound
-
   have hlb_bound : |r₀ / ρ - 1| < ε := by
     have hρ_lb : 1 / 2 < ρ := by
       have := (abs_sub_lt_iff.mp h_ρk).2; linarith
@@ -696,7 +691,6 @@ theorem pairwise_indep_slln
           div_le_div_of_nonneg_left (by linarith) (by linarith) (le_of_lt hρ_lb)
       _ = 4 * δ := by ring
       _ ≤ ε := by linarith
-
   set q := partialSumIndicators A n ω / (∫ ω', partialSumIndicators A n ω' ∂μ) with hq_def
   have hq_lb : 1 - ε < q := by
     have := (abs_sub_lt_iff.mp hlb_bound).2

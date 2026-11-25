@@ -356,7 +356,6 @@ noncomputable def bornLandeEnergy (N_A M zPlus zMinus e eps0 r₀ n : ℝ) : ℝ
   -(N_A * M * zPlus * zMinus * e ^ 2 / (4 * Real.pi * eps0 * r₀)) * (1 - 1 / n)
 
 /-- The Born-Lande lattice energy is negative when all parameters are positive and `1 < n`. -/
-
 lemma bornLandeEnergy_neg_of_pos (N_A M zPlus zMinus e eps0 r₀ n : ℝ)
     (hNA : 0 < N_A) (hM : 0 < M) (hZp : 0 < zPlus) (hZm : 0 < zMinus)
     (he : 0 < e) (heps : 0 < eps0) (hr : 0 < r₀) (hn : 1 < n) :
@@ -374,7 +373,6 @@ lemma bornLandeEnergy_neg_of_pos (N_A M zPlus zMinus e eps0 r₀ n : ℝ)
   exact neg_lt_zero.mpr (mul_pos hmain hfac)
 
 /-- The Born-Lande factor `1 - 1 / n` lies strictly between `0` and `1`. -/
-
 lemma bornLandeEnergy_factor_mem (n : ℝ) (hn : 1 < n) : 0 < 1 - 1 / n ∧ 1 - 1 / n < 1 := by
   have hnpos : (0 : ℝ) < n := by linarith
   constructor

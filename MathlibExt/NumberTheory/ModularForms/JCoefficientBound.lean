@@ -433,25 +433,21 @@ private theorem coeff_etaProd_eq_coeff_partialEta {k n : ℕ} (hk : k ≤ n) :
 private theorem coeff_dedekindEtaUnitInv_eq_coeff_partialGeom_pow (n : ℕ) :
     ∀ k ≤ n, PowerSeries.coeff k dedekindEtaUnitInv =
       PowerSeries.coeff k (partialGeom (n + 1) ^ 24) := by
-
   have hunits : ∀ k ≤ n, PowerSeries.coeff k dedekindEtaUnit =
       PowerSeries.coeff k (partialEta (n + 1) ^ 24) := by
     intro k hk
     rw [dedekindEtaUnit]
     exact coeff_pow_congr (fun k hk => coeff_etaProd_eq_coeff_partialEta hk) 24 k hk
-
   have hinv : partialEta (n + 1) ^ 24 * partialGeom (n + 1) ^ 24 = 1 := by
     rw [← mul_pow, partialEta_mul_partialGeom, one_pow]
   exact coeff_inv_congr dedekindEtaUnit_mul_inv hinv hunits
 
 private theorem one_le_coeff_partialGeom_pow (n k : ℕ) :
     1 ≤ PowerSeries.coeff k (partialGeom (n + 1) ^ 24) := by
-
   have hsplit : partialGeom (n + 1) =
       (∏ i ∈ Finset.range n, geomSeries (i + 2)) * geomSeries 1 :=
     Finset.prod_range_succ' (fun i => geomSeries (i + 1)) n
   rw [hsplit, mul_pow]
-
   have htail_nonneg : ∀ j, 0 ≤ PowerSeries.coeff j
       ((∏ i ∈ Finset.range n, geomSeries (i + 2)) ^ 24) :=
     coeff_pow_nonneg
@@ -460,7 +456,6 @@ private theorem one_le_coeff_partialGeom_pow (n k : ℕ) :
       ((∏ i ∈ Finset.range n, geomSeries (i + 2)) ^ 24) = 1 := by
     rw [map_pow, map_prod]
     simp only [constantCoeff_geomSeries, Finset.prod_const_one, one_pow]
-
   have hhead : ∀ j, 1 ≤ PowerSeries.coeff j (geomSeries 1 ^ 24) :=
     one_le_coeff_pow (fun j => le_of_eq (coeff_geomSeries_one j).symm) 23
   exact one_le_coeff_mul_of_nonneg htail_nonneg htail_cc hhead k

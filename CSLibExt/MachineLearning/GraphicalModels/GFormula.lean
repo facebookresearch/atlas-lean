@@ -639,7 +639,6 @@ private def gf_aux_agree {𝓛 : Type*} {K : ℕ} (m : ℕ) (l l' : Fin (K + 1) 
   ∀ j : Fin (K + 1), j.val < m → l' j = l j
 
 open Classical in
-
 private noncomputable def gf_aux_weight {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω]
     (M : POModel Ω 𝓛 𝓐 K) (a : Fin (K + 1) → 𝓐) (l' : Fin (K + 1) → 𝓛) : ℝ :=
   cmean M.p (M.Ycf a) (univ.filter (M.HistT K l' a)) * ∏ k : Fin (K + 1), M.condL a l' k
@@ -791,7 +790,6 @@ private theorem gf_aux_prod_split {K m : ℕ} (hm : m < K + 1) (f : Fin (K + 1) 
   exact mul_comm _ _
 
 open Classical in
-
 private theorem gf_aux_fiber {𝓛 : Type*} {K m : ℕ} [Fintype 𝓛]
     (l : Fin (K + 1) → 𝓛) (hm : m < K + 1) (W : (Fin (K + 1) → 𝓛) → ℝ) :
     ∑ l' ∈ univ.filter (gf_aux_agree m l), W l' =
@@ -839,7 +837,6 @@ private theorem gf_aux_sum_zero_of_prob_zero {Ω : Type*} (p : Ω → ℝ) (hp0 
   exact Finset.sum_eq_zero fun ω hω => by rw [h0 ω hω, zero_mul]
 
 open Classical in
-
 private theorem gf_aux_cmean_consistent {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω]
     (M : POModel Ω 𝓛 𝓐 K) (a : Fin (K + 1) → 𝓐)
     (hcons : M.Consistent a) (l : Fin (K + 1) → 𝓛) :
@@ -859,7 +856,6 @@ private theorem gf_aux_cmean_consistent {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintyp
     rw [hY]
 
 open Classical in
-
 private theorem gf_aux_induct {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
     (M : POModel Ω 𝓛 𝓐 K) (a : Fin (K + 1) → 𝓐)
     (hp0 : ∀ ω, 0 ≤ M.p ω) (hpos : M.Positive a) (hexch : M.MeanSeqExch a) :

@@ -119,7 +119,6 @@ noncomputable instance : DecidableEq PersistenceBar :=
   Classical.decEq _
 
 /-- Distance between endpoints. `none` is `⊤` in `WithTop ℝ`. This is used below to define distance between the death values of two bars, recalling that death values (but not birth values) can be positive infinity -/
-
 noncomputable def withTopDist (x y : WithTop ℝ) : ENNReal :=
   match x, y with
   | none, none => (0 : ENNReal)
@@ -127,14 +126,12 @@ noncomputable def withTopDist (x y : WithTop ℝ) : ENNReal :=
   | _, _ => ⊤
 
 /-- Distance to the diagonal, i.e. half the length. -/
-
 noncomputable def PersistenceBar.distToDiagonal (b : PersistenceBar) : ENNReal :=
   match b.death with
   | none => ⊤
   | some d => ENNReal.ofReal ((d - b.birth) / 2)
 
 /-- `L∞` distance between two bars, `⊤` when degrees differ. -/
-
 noncomputable def PersistenceBar.dist (b₁ b₂ : PersistenceBar) : ENNReal :=
   if b₁.degree = b₂.degree then
     ENNReal.ofReal |b₁.birth - b₂.birth| ⊔ withTopDist b₁.death b₂.death
@@ -142,7 +139,6 @@ noncomputable def PersistenceBar.dist (b₁ b₂ : PersistenceBar) : ENNReal :=
 
 /-- A partial matching. The two `≤` conditions already control
     multiplicities, so no `Nodup` is needed. -/
-
 structure Matching (B C : Barcode) where
   pairs : Multiset (PersistenceBar × PersistenceBar)
   fst_le : pairs.map Prod.fst ≤ B
@@ -150,7 +146,6 @@ structure Matching (B C : Barcode) where
   degree_eq : ∀ p ∈ pairs, p.1.degree = p.2.degree
 
 /-- Empty matching: use `∅`, not `0`, for the empty multiset. This shows that the set of Matchings is not empty, justifying the later use of sInf -/
-
 def Matching.empty (B C : Barcode) : Matching B C where
   pairs := ∅
   fst_le := by simp
@@ -158,7 +153,6 @@ def Matching.empty (B C : Barcode) : Matching B C where
   degree_eq := by simp
 
 /-- Cost of a matching: max of matched cost and unmatched diagonal cost. -/
-
 noncomputable def Matching.cost {B C : Barcode} (M : Matching B C) : ENNReal :=
   (M.pairs.map (fun p => p.1.dist p.2)).sup ⊔
   ((B - M.pairs.map Prod.fst).map PersistenceBar.distToDiagonal).sup ⊔
@@ -166,7 +160,6 @@ noncomputable def Matching.cost {B C : Barcode} (M : Matching B C) : ENNReal :=
 
 /-- Bottleneck distance as an `sInf` over costs, instead of `⨅` over
     the `Matching` type. -/
-
 noncomputable def bottleneckDist (B C : Barcode) : ENNReal :=
   sInf { δ : ENNReal | ∃ M : Matching B C, M.cost ≤ δ }
 

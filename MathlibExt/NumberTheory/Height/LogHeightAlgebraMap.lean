@@ -163,7 +163,6 @@ private lemma mwabs_content_formula {F : Type*} [Field F] [NumberField F]
         rw [NumberField.FinitePlace.finprod_finitePlace_pow_multiplicity hJ_ne]
 
 omit [NumberField K] [NumberField L] in
-
 private lemma mwabs_content_map [Algebra K L] {ι : Type*} (y : ι → 𝓞 K) :
     (⨆ i, Ideal.span {algebraMap (𝓞 K) (𝓞 L) (y i)})
       = (⨆ i, Ideal.span {y i}).map (algebraMap (𝓞 K) (𝓞 L)) := by
@@ -171,7 +170,6 @@ private lemma mwabs_content_map [Algebra K L] {ι : Type*} (y : ι → 𝓞 K) :
   exact iSup_congr fun i => by rw [Ideal.map_span, Set.image_singleton]
 
 omit [NumberField K] [NumberField L] in
-
 private lemma mwabs_coe_algebraMap [Algebra K L] (y : 𝓞 K) :
     ((algebraMap (𝓞 K) (𝓞 L) y : 𝓞 L) : L) = algebraMap K L (y : K) := rfl
 
@@ -299,7 +297,6 @@ private lemma mwabs_finprod_finitePlace [Algebra K L] {ι : Type*} [Finite ι] {
   exact mul_left_cancel₀ hPne hint
 
 open scoped Classical in
-
 private lemma mwabs_arch [Algebra K L] {ι : Type*} [Finite ι] (x : ι → K) :
     (∏ w : InfinitePlace L, (⨆ i, w (algebraMap K L (x i))) ^ w.mult)
       = (∏ v : InfinitePlace K, (⨆ i, v (x i)) ^ v.mult) ^ Module.finrank K L := by

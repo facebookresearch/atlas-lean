@@ -189,7 +189,6 @@ private lemma InitProp.mul (h𝔪 : Ideal.span (Set.range t) = 𝔪) (c : MvPoly
     fun n _ => InitProp.mul_of_isHomogeneous h𝔪 (homogeneousComponent_isHomogeneous n c) hQ
 
 variable (𝔪 t I) in
-
 private def initIdeal (h𝔪 : Ideal.span (Set.range t) = 𝔪) : Ideal (MvPolynomial σ (A ⧸ 𝔪)) where
   carrier := {Q | InitProp 𝔪 t I Q}
   add_mem' := InitProp.add

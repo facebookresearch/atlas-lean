@@ -168,14 +168,12 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
       ∀ a, f a = !![1, a; 0, 1] * m * !![1, -a; 0, 1] - m := by
   have h2 : (2 : F) ≠ 0 := two_ne_zero'
   have h3 : (3 : F) = 0 := three_eq_zero
-
   obtain ⟨α, hα⟩ : ∃ α : F → F, ∀ a, f a 0 1 = α a := ⟨_, fun _ => rfl⟩
   obtain ⟨β, hβ⟩ : ∃ β : F → F, ∀ a, f a 0 0 = β a := ⟨_, fun _ => rfl⟩
   obtain ⟨γ, hγ⟩ : ∃ γ : F → F, ∀ a, f a 1 0 = γ a := ⟨_, fun _ => rfl⟩
   have hδ : ∀ a, f a 1 1 = - β a := fun a => by rw [htr a, hβ]
   have hfa : ∀ a, f a = !![β a, α a; γ a, -β a] := fun a => by
     rw [Matrix.eta_fin_two (f a), hα, hβ, hγ, hδ]
-
   have E00 : ∀ a b, β (a + b) = β b + a * γ b + β a := fun a b => by
     have h := hadd a b
     rw [hfa (a + b), hfa b, hfa a, conj_uni] at h
@@ -193,7 +191,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
     rw [hfa (a + b), hfa b, hfa a, conj_uni] at h
     obtain ⟨-, -, h10, -⟩ := entries_eq h
     simpa using h10
-
   have T00 : ∀ s a : F, s ≠ 0 → β (s ^ 2 * a) = β a := fun s a hs => by
     have h := htor s a hs
     rw [hfa (s ^ 2 * a), hfa a, conj_tor] at h
@@ -212,7 +209,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
     simp at h10
     rw [h10]
     field_simp
-
   have hβ00 : β 0 = 0 := by
     have h := E00 0 0
     rw [add_zero] at h
@@ -229,7 +225,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
   ·
     have hs2 : s ^ 2 ≠ 1 := fun h => hs4 (by
       rw [show (4 : ℕ) = 2 * 2 from rfl, pow_mul, h, one_pow])
-
     have hγlin : ∀ a, γ a = a * γ 1 := fun a => by
       have h1 := E00 a 1
       have h1' : β (a + 1) = β a + 1 * γ a + β 1 := by rw [add_comm a 1]; exact E00 1 a
@@ -242,7 +237,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
       · exact absurd (sub_eq_zero.1 h) hs4
       · exact h
     have hγ0 : ∀ a, γ a = 0 := fun a => by rw [hγlin, hγ1, mul_zero]
-
     have hβlin : ∀ a, β a = a * β 1 := fun a => by
       have h1 := E01 a 1
       have h1' : α (a + 1) = α a - 2 * 1 * β a - 1 ^ 2 * γ a + α 1 := by
@@ -260,7 +254,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
       · exact absurd (sub_eq_zero.1 h) hs2
       · exact h
     have hβ0 : ∀ a, β a = 0 := fun a => by rw [hβlin, hβ1, mul_zero]
-
     have hαadd : ∀ a b, α (a + b) = α a + α b := fun a b => by
       linear_combination E01 a b - 2 * a * hβ0 b - a ^ 2 * hγ0 b
     have hαneg : ∀ a, α (-a) = - α a := fun a => by
@@ -281,7 +274,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
             rw [hαadd, hαneg, hαsq, hαsq]
         _ = c * α a := by rw [← sub_eq_add_neg, ← sub_mul, hpm]
     have hα1 : ∀ a, α a = a * α 1 := fun a => by rw [← hαlin, mul_one]
-
     refine ⟨!![α 1, 0; 0, -α 1], by simp, fun a => ?_⟩
     rw [hfa a, conj_uni]
     ext i j
@@ -300,7 +292,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
     have hα3 : α (1 + (1 + 1)) = α (1 + 1) - 2 * 1 * β (1 + 1) - 1 ^ 2 * γ (1 + 1) + α 1 :=
       E01 1 (1 + 1)
     rw [h1110, hα00] at hα3
-
     have hg : γ 1 = 0 := by
       linear_combination -hα3 - hα2 + 2 * hβ2 + hγ2 + (2 * γ 1 - α 1 + 2 * β 1) * h3
     have hg2 : γ (1 + 1) = 0 := by rw [hγ2, hg, add_zero]
@@ -311,7 +302,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
       rw [hneg, hα2, hg]
       linear_combination (α 1 - β 1) * h3
     have e3 : γ (-1) = 0 := by rw [hneg, hg2]
-
     refine ⟨!![α 1 + β 1, 0; β 1, -(α 1 + β 1)], by simp, fun a => ?_⟩
     rw [hfa a, conj_uni]
     rcases hB a with rfl | rfl | rfl
@@ -333,7 +323,6 @@ private theorem key [CharP F 3] (f : F → Matrix (Fin 2) (Fin 2) F)
       · simp [e1]
 
 open Classical in
-
 private noncomputable def sec (v : Fin 2 → F) : SL(2, F) :=
   if h0 : v 0 ≠ 0 then
     ⟨!![v 0, 0; v 1, (v 0)⁻¹], by rw [Matrix.det_fin_two_of, mul_inv_cancel₀ h0]; ring⟩
@@ -523,19 +512,16 @@ private theorem exists_eq_coboundary [Finite F] [CharP F 3] (he_inj : Function.I
         ((g⁻¹ : SL(2, F)) : Matrix (Fin 2) (Fin 2) F))
     (x : cocycles₁ A) : ∃ m : A, ∀ g, x g = A.ρ g m - m := by
   have hx : IsCoc A x := (mem_cocycles₁_iff x).1 x.2
-
   obtain ⟨m₁, h₁⟩ := torus_coboundary hx
   obtain ⟨c₁, hc₁⟩ : ∃ c₁ : SL(2, F) → A, ∀ g, c₁ g = x g - (A.ρ g m₁ - m₁) :=
     ⟨_, fun _ => rfl⟩
   have hc₁coc : IsCoc A c₁ := isCoc_sub hx m₁ hc₁
   have hc₁T : ∀ s : Fˣ, c₁ (tor s) = 0 := fun s => by rw [hc₁, h₁, sub_self]
-
   obtain ⟨m₂, h₂⟩ := uni_coboundary e he_inj he_range he_act hc₁coc hc₁T
   obtain ⟨c₂, hc₂⟩ : ∃ c₂ : SL(2, F) → A, ∀ g, c₂ g = c₁ g - (A.ρ g m₂ - m₂) :=
     ⟨_, fun _ => rfl⟩
   have hc₂coc : IsCoc A c₂ := isCoc_sub hc₁coc m₂ hc₂
   have hc₂U : ∀ a, c₂ (uni a) = 0 := fun a => by rw [hc₂, h₂, sub_self]
-
   obtain ⟨m₃, h₃⟩ := coboundary_of_vanish_uni hc₂coc hc₂U
   refine ⟨m₁ + m₂ + m₃, fun g => ?_⟩
   have h := h₃ g

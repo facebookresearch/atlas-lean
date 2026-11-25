@@ -35,7 +35,6 @@ namespace MetaMathlibExt
 (c,d)-biclique if there exist nonempty and disjoint subsets X,Y ⊂ V such that |X| = c, |Y| =d, and ∀
 x ∈ X, y ∈ Y, we have (x,y) ∈ E.
 -/
-
 def _root_.SimpleGraph.ContainsBiclique {V : Type*} [Fintype V] (G : SimpleGraph V)
     (c d : ℕ) : Prop :=
   ∃ (S T : Finset V), S.card = c ∧ T.card = d ∧ Disjoint S T ∧
@@ -45,7 +44,6 @@ def _root_.SimpleGraph.ContainsBiclique {V : Type*} [Fintype V] (G : SimpleGraph
 /-- Let G be a finite simple graph. The biclique number ω_b(G) is the maximum positive integer t
 such that G contains a K_{c,d} as a (not necessarily induced) subgraph, with 0<c,d and c +d = t.
 -/
-
 noncomputable def _root_.SimpleGraph.bicliqueNumber {V : Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
   sSup { t : ℕ |  ∃ c d, c + d = t ∧ 0 < c ∧ 0 < d ∧ G.ContainsBiclique c d}
 

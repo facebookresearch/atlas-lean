@@ -102,7 +102,6 @@ private theorem algebraMap_quotient_injective_of_mem_minimalPrimes
   exact notMem_nonZeroDivisors_of_mem_mem_minimalPrimes hmem hP hnzd
 
 variable (𝒪) in
-
 private abbrev IntClosure (P : Ideal T) [P.IsPrime] : Type v :=
   integralClosure 𝒪 (FractionRing (T ⧸ P))
 

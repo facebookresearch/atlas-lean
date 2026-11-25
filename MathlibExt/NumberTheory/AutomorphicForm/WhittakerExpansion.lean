@@ -310,13 +310,11 @@ theorem isClosed_principalSubgroup :
   rw [← isOpen_compl_iff, isOpen_iff_mem_nhds]
   intro x hx
   obtain ⟨K, hKcomp, hKx⟩ := exists_compact_mem_nhds x
-
   have hfin : (K ∩ (AdeleRing.principalSubgroup (𝓞 F) F : Set _)).Finite := by
     refine ((NumberField.AdeleRing.finite_setOf_algebraMap_mem_of_isCompact F
       hKcomp).image (algebraMap F (AdeleRing (𝓞 F) F))).subset ?_
     rintro y ⟨hyK, ξ, rfl⟩
     exact ⟨ξ, hyK, rfl⟩
-
   have hxnot : x ∉ K ∩ (AdeleRing.principalSubgroup (𝓞 F) F : Set _) := fun h => hx h.2
   refine Filter.mem_of_superset
     (Filter.inter_mem hKx (hfin.isClosed.compl_mem_nhds hxnot)) ?_
@@ -371,7 +369,6 @@ theorem star_quotChar (α : F) :
   ext q
   obtain ⟨x, rfl⟩ := QuotientAddGroup.mk_surjective q
   simp only [ContinuousMap.star_apply, quotChar_apply_mk, RCLike.star_def, map_neg, neg_mul]
-
   have h1 : ‖ψ (algebraMap F (AdeleRing (𝓞 F) F) α * x)‖ = 1 :=
     NumberField.AdelicFourier.norm_apply_eq_one_of_isGlobalAddChar F hψ _
   rw [← Complex.inv_eq_conj h1, ← ψ.map_neg_eq_inv]
@@ -385,7 +382,6 @@ theorem quotChar_separatesPoints (q₁ q₂ : AQuot F) (hne : q₁ ≠ q₂) :
     apply hne
     rw [QuotientAddGroup.eq]
     exact ⟨-β, by rw [map_neg, hβ]; ring⟩
-
   have hR2 : ¬ (∀ ξ : F, ψ ((x - y) * algebraMap F (AdeleRing (𝓞 F) F) ξ) = 1) := fun h =>
     hxy (NumberField.AdelicFourier.mem_range_algebraMap_of_forall_apply_mul_eq_one F hψ (x - y) h)
   push Not at hR2
@@ -765,7 +761,6 @@ theorem quotientAddGroup_mk_injOn_adelicBox :
   intro x hx y hy hxy
   rw [QuotientAddGroup.eq] at hxy
   obtain ⟨β, hβ⟩ := hxy
-
   have huniq := existsUnique_algebraMap_add_mem_adelicBox F x
   have h0 : algebraMap F (AdeleRing (𝓞 F) F) 0 + x ∈ adelicBox F := by
     rw [map_zero, zero_add]; exact hx
@@ -1019,7 +1014,6 @@ theorem summable_G_shifted
   rw [norm_mul, NumberField.AdelicFourier.norm_apply_eq_one_of_isGlobalAddChar F hψ, mul_one]
 
 open scoped Classical in
-
 theorem integral_cond_addChar_algebraMap_sub
     (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (hψ : IsGlobalAddChar F ψ) (α β : F) :
     ∫ x, ψ (algebraMap F (AdeleRing (𝓞 F) F) (α - β) * x)
@@ -1043,7 +1037,6 @@ theorem integral_cond_addChar_algebraMap_sub
     rw [setIntegral_adelicBox_addChar_neg_algebraMap_mul F ψ hψ (neg_ne_zero.mpr hne), smul_zero]
 
 open scoped Classical in
-
 theorem integral_G_mul_addChar
     (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (hψ : IsGlobalAddChar F ψ)
     (W : F → ℂ) (hsum : Summable W) (β : F) :
@@ -1052,7 +1045,6 @@ theorem integral_G_mul_addChar
       ∂(@ProbabilityTheory.cond _ (adeleBorel (𝓞 F) F) (adelicAddHaar (𝓞 F) F)
         (adelicBox F)) = W β := by
   set ν := @ProbabilityTheory.cond _ (adeleBorel (𝓞 F) F) (adelicAddHaar (𝓞 F) F) (adelicBox F)
-
   have hrew : ∀ x, (∑' α : F, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) α * x)) *
       ψ (-(algebraMap F (AdeleRing (𝓞 F) F) β * x))
         = ∑' α : F, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) (α - β) * x) := by
@@ -1061,7 +1053,6 @@ theorem integral_G_mul_addChar
     congr 1 with α
     rw [mul_assoc, ← ψ.map_add_eq_mul, ← sub_eq_add_neg, ← sub_mul, ← map_sub]
   simp_rw [hrew]
-
   have hswap : HasSum (fun α : F => ∫ x, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) (α - β) * x) ∂ν)
       (∫ x, ∑' α : F, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) (α - β) * x) ∂ν) := by
     refine hasSum_integral_of_dominated_convergence (fun α _ => ‖W α‖)
@@ -1074,7 +1065,6 @@ theorem integral_G_mul_addChar
     · exact integrable_const _
     · filter_upwards with x
       exact (summable_G_shifted F ψ hψ W hsum β x).hasSum
-
   have heval : ∀ α : F, ∫ x, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) (α - β) * x) ∂ν
       = W α * (if α = β then 1 else 0) := by
     intro α
@@ -1083,7 +1073,6 @@ theorem integral_G_mul_addChar
       (∫ x, ∑' α : F, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) (α - β) * x) ∂ν) := by
     refine hswap.congr_fun ?_
     intro α; rw [heval α]
-
   have hval : HasSum (fun α : F => W α * (if α = β then 1 else 0)) (W β) := by
     have : (fun α : F => W α * (if α = β then 1 else 0))
         = (fun α : F => if α = β then W β else 0) := by
@@ -1124,11 +1113,9 @@ theorem innerSolution
     (adelicBox F) with hν_def
   set G : AdeleRing (𝓞 F) F → ℂ :=
     fun x => ∑' α : F, W α * ψ (algebraMap F (AdeleRing (𝓞 F) F) α * x) with hG_def
-
   have hW_int : ∀ α : F, W α =
       ∫ x, h x * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) α * x)) ∂ν := by
     intro α; exact whittakerCoefficient_eq_integral F _ ψ φ α g
-
   have hG_coef : ∀ β : F,
       ∫ x, G x * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) β * x)) ∂ν = W β :=
     fun β => integral_G_mul_addChar F ψ hψ W hsum β
@@ -1145,16 +1132,12 @@ theorem innerSolution
       integrable_cond_of_continuous F ((continuous_G F ψ hψ W hsum).mul hψβ)
     simp_rw [sub_mul]
     rw [integral_sub hint_h hint_G, ← hW_int β, hG_coef β, sub_self]
-
   have hG_cont : Continuous G := continuous_G F ψ hψ W hsum
   have hdiff_cont : Continuous (fun x => h x - G x) := hcont.sub hG_cont
-
   have hzero : h 0 - G 0 = 0 :=
     d2_completeness_hole F ψ hψ (fun x => h x - G x) hdiff_cont hdiff_coef
   have h0 : h 0 = G 0 := sub_eq_zero.mp hzero
-
   have hh0 : h 0 = φ g := by simp only [hh_def, unipotentGL2_zero, one_mul]
-
   have hG_at0 : HasSum (fun α : F => W α) (G 0) := by
     have hG0_eq : G 0 = ∑' α : F, W α := by
       simp only [hG_def, mul_zero, AddChar.map_zero_eq_one, mul_one]

@@ -315,7 +315,6 @@ abbrev AugmentationType := AssociatedPeriodAugmentationSources.Source
     (NaturalPeriodMaps.structuralFullMap p K B X Y f PX PY SX SY E Q N hp PM)) PD.fullTerms
 
 variable [PullbackSourceUnit Q.functor SY.naiveStructuralFull (basePeriod p K B X Y f PX PY SY E Q) (periodUnitY p K B X Y f PX PY SY E Q)]
-
   [PullbackSourceUnit Q.functor (Zhat p Y.left PY) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (baseZUnit (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q))]
   [PullbackSourceUnit (𝟭 (AnalyticProObjectSites.ProEtaleSite p X.left)) (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (basePeriod p K B X Y f PX PY SY E Q) (basePeriodZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (SY := SY) (E := E) (Q := Q) (FY := FY) (IY := IY))]
   [PreservesFiniteLimits (NativeScalarProjectionMaps.scalarY SY.regular SY.naiveStructuralFull SY.scalars.originalToFull)]

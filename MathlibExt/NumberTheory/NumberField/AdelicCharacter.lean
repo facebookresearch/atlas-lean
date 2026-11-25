@@ -178,11 +178,9 @@ local notation "𝔸f" => FiniteAdeleRing (RingOfIntegers F) F
 local notation "𝔸i" => InfiniteAdeleRing F
 
 open Classical in
-
 def archSingle (w : InfinitePlace F) (s : w.Completion) : 𝔸i := Pi.single w s
 
 open Classical in
-
 def finSingle (v : HeightOneSpectrum (RingOfIntegers F)) (t : v.adicCompletion F) : 𝔸f :=
   RestrictedProduct.single
     (fun u : HeightOneSpectrum (RingOfIntegers F) => u.adicCompletionIntegers F) v t
@@ -289,7 +287,6 @@ theorem latticeC_nonneg : 0 ≤ latticeC F :=
 variable {F}
 
 omit [NumberField F] in
-
 theorem normAtPlace_mixedEmbedding_mul (w : InfinitePlace F) (η : F) (x : E) :
     normAtPlace w (mixedEmbedding F η * x) = w η * normAtPlace w x := by
   by_cases hw : IsReal w
@@ -509,7 +506,6 @@ theorem exists_level_smul_integral_subset {U : Set 𝔸f} (hU : U ∈ nhds (0 : 
     exact this.preimage_mem_nhds (by rwa [hsm0])
   rw [nhds_pi, Filter.mem_pi] at hV
   obtain ⟨I, hIfin, t, ht, hsub⟩ := hV
-
   choose k hk using fun v : HeightOneSpectrum (NumberField.RingOfIntegers F) =>
     exists_pow_subset_of_mem_nhds (ht v)
   choose π hπmem hπne using fun v : HeightOneSpectrum (NumberField.RingOfIntegers F) =>
@@ -519,7 +515,6 @@ theorem exists_level_smul_integral_subset {U : Set 𝔸f} (hU : U ∈ nhds (0 : 
     rw [hNdef]
     exact Finset.prod_ne_zero_iff.mpr fun v _ => pow_ne_zero _ (hπne v)
   refine ⟨N, hN0, fun r hr => ?_⟩
-
   have hNval : ∀ v ∈ hIfin.toFinset, v.intValuation N ≤ exp (-(k v : ℤ)) := by
     intro v hv
     rw [hNdef, map_prod]
@@ -535,7 +530,6 @@ theorem exists_level_smul_integral_subset {U : Set 𝔸f} (hU : U ∈ nhds (0 : 
           * v.intValuation (π v ^ k v)
         ≤ 1 * exp (-(k v : ℤ)) := mul_le_mul' h2 h1
       _ = exp (-(k v : ℤ)) := one_mul _
-
   set Nbar : F := algebraMap (NumberField.RingOfIntegers F) F N with hNbar
   have hmem : ∀ v : HeightOneSpectrum (NumberField.RingOfIntegers F),
       algebraMap F (v.adicCompletion F) Nbar * r v ∈ v.adicCompletionIntegers F := by
@@ -582,7 +576,6 @@ local notation "𝔸i" => InfiniteAdeleRing F
 local notation "E" => mixedSpace F
 
 omit [NumberField F] in
-
 theorem norm_apply_eq_normAtPlace (s : 𝔸i) (w : InfinitePlace F) :
     ‖s w‖ = normAtPlace w (ringEquiv_mixedSpace F s) := by
   by_cases hw : w.IsReal
@@ -632,10 +625,8 @@ theorem exists_principal_add_level (N : RingOfIntegers F) (hN : N ≠ 0) (xf : �
   have hNb0 : Nb ≠ 0 := fun h => hN (by
     have := IsFractionRing.to_map_eq_zero_iff.mp (hNb ▸ h)
     exact this)
-
   obtain ⟨k, hk⟩ := hdens_of_board (F := F) xf
   set u : 𝔸f := xf - algebraMap F 𝔸f k with hu
-
   obtain ⟨k₂, hk₂⟩ := hdens_of_board (F := F) (algebraMap F 𝔸f Nb⁻¹ * u)
   set r : 𝔸f := algebraMap F 𝔸f Nb⁻¹ * u - algebraMap F 𝔸f k₂ with hr
   refine ⟨k + Nb * k₂, r, fun v => hk₂ v, ?_⟩
@@ -864,7 +855,6 @@ theorem exists_minkowskiBound_mul_inv_pow_lt (v₀ : HeightOneSpectrum (RingOfIn
     FractionalIdeal (RingOfIntegers F)⁰ F) : ℝ) with hq
   have hA₀0 : 0 ≤ A₀ := by rw [hA₀]; exact_mod_cast absNorm_nonneg _
   have hq0 : 0 ≤ q := by rw [hq]; exact_mod_cast absNorm_nonneg _
-
   have habs : ∀ m : ℕ, (absNorm ((NbU * P⁻¹ ^ m :
       (FractionalIdeal (RingOfIntegers F)⁰ F)ˣ) :
       FractionalIdeal (RingOfIntegers F)⁰ F) : ℝ) = A₀ * q ^ m := by
@@ -872,7 +862,6 @@ theorem exists_minkowskiBound_mul_inv_pow_lt (v₀ : HeightOneSpectrum (RingOfIn
     rw [Units.val_mul, map_mul, Units.val_pow_eq_pow_val, map_pow, hA₀, hq]
     push_cast
     ring
-
   have hNq : (Ideal.absNorm (v₀.asIdeal : Ideal (RingOfIntegers F)) : ℝ) * q = 1 := by
     have h1 : absNorm ((P : FractionalIdeal (RingOfIntegers F)⁰ F))
         * absNorm ((P⁻¹ : (FractionalIdeal (RingOfIntegers F)⁰ F)ˣ) :
@@ -899,7 +888,6 @@ theorem exists_minkowskiBound_mul_inv_pow_lt (v₀ : HeightOneSpectrum (RingOfIn
     have h2n : 2 ≤ Ideal.absNorm (v₀.asIdeal : Ideal (RingOfIntegers F)) := by omega
     exact_mod_cast h2n
   have hq1 : q < 1 := by nlinarith
-
   by_cases hD : T / B₁ = ⊤
   · refine ⟨0, ?_⟩
     rcases ENNReal.div_eq_top.mp hD with ⟨hT, hB⟩ | ⟨hTtop, _⟩
@@ -912,7 +900,6 @@ theorem exists_minkowskiBound_mul_inv_pow_lt (v₀ : HeightOneSpectrum (RingOfIn
   · have hD0 : T / B₁ ≠ 0 := by
       refine ENNReal.div_ne_zero.mpr ⟨hT0, hB₁top⟩
     have hDtop : (T / B₁).toReal > 0 := ENNReal.toReal_pos hD0 hD
-
     obtain ⟨m, hm⟩ := exists_pow_lt_of_lt_one
       (div_pos hDtop (by linarith : (0 : ℝ) < A₀ + 1)) hq1
     refine ⟨m, ?_⟩
@@ -1179,14 +1166,12 @@ theorem mem_range_algebraMap_of_forall_apply_mul_eq_one_of_faithful
   classical
   obtain ⟨U, hU, hUkill⟩ := exists_nhds_forall_perp_imp_global hψ
   obtain ⟨C, hCcomp, hboxC⟩ := AdelicBox.exists_isCompact_adelicBox_subset F
-
   obtain ⟨k₀, hk₀, -⟩ := AdelicBox.existsUnique_algebraMap_add_mem_adelicBox F y
   set b : 𝔸 := ι k₀ + y with hbdef
   have hbperp : ∀ ξ : F, ψ (b * ι ξ) = 1 := perp_add (perp_principal hψ k₀) hy
   suffices hb : b ∈ Set.range ι by
     obtain ⟨s, hs⟩ := hb
     exact ⟨s - k₀, by rw [map_sub, hs, hbdef]; ring⟩
-
   set S : Set 𝔸 := C ∩ {z : 𝔸 | ∀ ξ : F, ψ (z * ι ξ) = 1} with hSdef
   have hScomp : IsCompact S := hCcomp.inter_right (isClosed_perp hψ)
   have hSsep : ∀ z ∈ S, ∀ w ∈ S, w - z ∈ U → w = z := by
@@ -1207,7 +1192,6 @@ theorem mem_range_algebraMap_of_forall_apply_mul_eq_one_of_faithful
           (Filter.mem_inf_of_right (Filter.mem_principal_self S))))
     obtain ⟨w, hwU, hwne, hwS⟩ := hmem3
     exact hwne (hSsep z hzS w hwS hwU)
-
   have hbox : ∀ c : F, ∃ k : F, ι k + ι c * b ∈ AdelicBox.adelicBox F := fun c =>
     (AdelicBox.existsUnique_algebraMap_add_mem_adelicBox F (ι c * b)).exists
   choose kc hkc using hbox

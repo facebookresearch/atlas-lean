@@ -130,7 +130,6 @@ private theorem isPushout_shear : IsPushout (ofHom s) (ofHom s) (ofHom inl) (ofH
   have hw : inl.comp t = inr.comp s := by
     have := hP.w
     simpa [← CommRingCat.ofHom_comp] using congrArg CommRingCat.Hom.hom this.symm |>.symm
-
   have cond : ∀ sq : Limits.PushoutCocone (ofHom s) (ofHom s),
       sq.inl.hom.comp s = sq.inr.hom.comp s := fun sq => by
     have := congrArg CommRingCat.Hom.hom sq.condition
@@ -244,14 +243,12 @@ private theorem exists_comul₁ : ∃ c : B →+* P₁ t,
   exists_comul hequiv (inl₁ t) (inr₁ t) (inl₁_comp_t t)
 
 include hgen hequiv in
-
 private theorem exists_theta : ∃ (c : B →+* P₁ t) (θ : P₂ A B ≃+* P₁ t),
     c.comp (algebraMap A B) = (inl₁ t).comp (algebraMap A B) ∧ c.comp t = (inr₁ t).comp t ∧
     (∀ b : B, θ (b ⊗ₜ 1) = inl₁ t b) ∧ (∀ b : B, θ (1 ⊗ₜ b) = c b) := by
   obtain ⟨c, hcs, hct⟩ := exists_comul₁ (t := t) hequiv
   have h₁ := isPushout_shear hgen hequiv (isPushout_P₁ t) hcs hct
   have h₂ := isPushout_P₂ (A := A) (B := B)
-
   let e : CommRingCat.of (P₂ A B) ≅ CommRingCat.of (P₁ t) := h₂.isoIsPushout _ _ h₁
   refine ⟨c, e.commRingCatIsoToRingEquiv, hcs, hct, fun b => ?_, fun b => ?_⟩
   · change e.hom.hom (b ⊗ₜ[A] 1) = inl₁ t b
@@ -280,7 +277,6 @@ private theorem smul_P₁_def (t : A →+* B) (b : B) (z : P₁ t) : b • z = i
   rfl
 
 include hgen hequiv in
-
 private theorem exists_linearEquiv_P₂_P₁ : Nonempty (P₂ A B ≃ₗ[B] P₁ t) := by
   obtain ⟨c, θ, -, -, hθl, -⟩ := exists_theta (t := t) hgen hequiv
   refine ⟨{ θ with
@@ -296,7 +292,6 @@ private theorem rankAtStalk_P₁_eq [Module.Finite A B] [Module.Flat A B] (t : A
   Module.rankAtStalk_baseChange (R := A) (M := B) (S := Tgt t) 𝔯
 
 include hgen hequiv in
-
 private theorem rankAtStalk_comap_algebraMap_eq_rankAtStalk_comap [Module.Finite A B] [Module.Flat
   A B]
     (𝔯 : PrimeSpectrum B) :
@@ -326,7 +321,6 @@ variable {A B C : Type u} [CommRing A] [CommRing B] [CommRing C] [Algebra A B] [
 
 omit [Module.Finite A B] [Module.Projective A B] in
 include hinj hinv in
-
 private theorem eq_zero_or_eq_one_of_isIdempotentElem [IsLocalRing C] {e : A} (he :
   IsIdempotentElem e)
     (hst : algebraMap A B e = t e) : e = 0 ∨ e = 1 := by
@@ -757,7 +751,6 @@ private theorem L1_aeval_self (b : S) : aeval b (charpoly R S r hr b) = 0 := by
   refine Module.eq_zero_of_localization_maximal
     (fun P _ => Localization.AtPrime P ⊗[R] S)
     (fun P _ => TensorProduct.mk R (Localization.AtPrime P) S 1) _ fun P hP => ?_
-
   have h1 : (TensorProduct.mk R (Localization.AtPrime P) S 1) (aeval b (charpoly R S r hr b)) =
       aeval ((1 : Localization.AtPrime P) ⊗ₜ[R] b)
         ((charpoly R S r hr b).map (algebraMap R (Localization.AtPrime P))) := by
@@ -850,22 +843,18 @@ omit [Module.Finite A B] [Module.Projective A B] in
 private theorem algebraMap_P₁_apply (t : A →+* B) (b : B) : algebraMap B (P₁ t) b = inl₁ t b := rfl
 
 include hgen hequiv in
-
 private theorem charpoly_map_algebraMap_eq_map (f : A) :
     (charpoly A B r hr (t f)).map (algebraMap A B) = (charpoly A B r hr (t f)).map t := by
-
   have hr₂ : ∀ p, Module.rankAtStalk (R := B) (P₂ A B) p = r := fun p => by
     rw [Module.rankAtStalk_baseChange]; exact hr _
   have hr₁ : ∀ p, Module.rankAtStalk (R := Tgt t) (P₁ t) p = r := fun p => by
     rw [Module.rankAtStalk_baseChange]; exact hr _
   have hr₁' : ∀ p, Module.rankAtStalk (R := B) (P₁ t) p = r := hr₁
-
   have e₂ := L1_map_baseChange A B r hr B hr₂ (t f)
   have e₁ := L1_map_baseChange A B r hr (Tgt t) hr₁ (t f)
   rw [e₂]
   change _ = (charpoly A B r hr (t f)).map (algebraMap A (Tgt t))
   rw [e₁]
-
   obtain ⟨c, θ, hcs, hct, hθl, hθr⟩ := exists_theta (t := t) hgen hequiv
   let θ' : P₂ A B ≃ₐ[B] P₁ t :=
     AlgEquiv.ofRingEquiv (f := θ) (fun b => by
@@ -881,7 +870,6 @@ private theorem charpoly_map_algebraMap_eq_map (f : A) :
   rfl
 
 include hgen hequiv in
-
 private theorem coeff_charpoly_invariant (f : A) (i : ℕ) :
     algebraMap A B ((charpoly A B r hr (t f)).coeff i) = t ((charpoly A B r hr (t f)).coeff i) := by
   have := congrArg (fun P : B[X] => P.coeff i) (charpoly_map_algebraMap_eq_map (t := t) hgen hequiv
@@ -981,7 +969,6 @@ omit [Algebra C A] in
 include hx in
 private theorem vB_injective : Function.Injective (vB t x) := by
   classical
-
   let e : (Fin r → A) ≃ₗ[A] B := LinearEquiv.ofBijective (vA t x) (by
     convert hx using 1
     funext a
@@ -1029,7 +1016,6 @@ private theorem t_injective : Function.Injective t := by
   exact Function.LeftInverse.injective (g := e) fun a => RingHom.congr_fun het a
 
 include hequiv hinj hinv hx in
-
 private theorem vC_bijective : Function.Bijective fun w : Fin r → C => ∑ i,
   algebraMap C A (w i) * x i := by
   have hfun : (fun w : Fin r → C => ∑ i, algebraMap C A (w i) * x i) = vC (C := C) x := by
@@ -1037,7 +1023,6 @@ private theorem vC_bijective : Function.Bijective fun w : Fin r → C => ∑ i,
   rw [hfun]
   obtain ⟨c, hcs, hct⟩ := exists_comul hequiv (inl₁ t) (inr₁ t) (inl₁_comp_t t)
   have hst : ∀ a : A, (algebraMap A B a = t a) ↔ a ∈ Set.range (algebraMap C A) := hinv
-
   have hcomm : ∀ w : Fin r → C, t (vC (C := C) x w) = vA t x (fun i => algebraMap C A (w i)) := by
     intro w
     rw [vC_apply, vA_apply, map_sum]
@@ -1058,7 +1043,6 @@ private theorem vC_bijective : Function.Bijective fun w : Fin r → C => ∑ i,
     intro a
     obtain ⟨α, hα⟩ := hx.2 (t a)
     have hα' : vA t x α = t a := by rw [vA_apply]; exact hα
-
     have h3 : (fun i => t (α i)) = fun i => algebraMap A B (α i) := by
       apply vB_injective x hx
       rw [vB_comp_t, vB_comp_s x hcs hct, hα',
@@ -1658,7 +1642,6 @@ variable (hgen : (algebraMap A B).range ⊔ t.range = ⊤)
   (hequiv : ∀ (T : Type u) [CommRing T], _root_.Equivalence (Rel (algebraMap A B) t T))
 
 include hgen hequiv in
-
 private theorem exists_antipodeAlgEquiv : ∃ ι : B ≃ₐ[A] Tgt t,
     (∀ a, ι (t a) = Tgt.of t (algebraMap A B a)) ∧
     (∀ a, ι (algebraMap A B a) = Tgt.of t (t a)) := by
@@ -1678,7 +1661,6 @@ private theorem exists_antipodeAlgEquiv : ∃ ι : B ≃ₐ[A] Tgt t,
     exact congrArg _ (RingHom.congr_fun hιs a)
 
 omit [Algebra A B] in
-
 private def counitTgt (e : B →+* A) (he : e.comp t = RingHom.id A) : Tgt t →ₐ[A] A :=
   { e.comp (Tgt.of t).symm.toRingHom with
     commutes' := fun a => by
@@ -1982,7 +1964,6 @@ variable [IsLocalRing C] [Module.Finite A B] [Module.Projective A B]
   (r : ℕ) (hr : ∀ p, Module.rankAtStalk (R := A) B p = r)
 
 omit [IsLocalRing C] [Module.Finite A B] [Module.Projective A B] in
-
 private def ofResidue (I : Ideal C) {W : Type u} [AddCommGroup W] [Module C W]
     [Module (C ⧸ I) W] [IsScalarTower C (C ⧸ I) W] (N : Submodule C W) : Submodule (C ⧸ I) W where
   carrier := N
@@ -2098,7 +2079,6 @@ variable [IsLocalRing C] [Module.Finite A B] [Module.Projective A B]
   (hinv : ∀ a : A, algebraMap A B a = t a ↔ a ∈ Set.range (algebraMap C A))
 
 omit [IsLocalRing C] [Module.Projective A B] in
-
 private theorem range_linearCombination_eq_top (ℳ : Finset (Ideal A))
     (hall : ∀ 𝔪 : Ideal A, 𝔪.IsMaximal → 𝔪 ∈ ℳ) {r : ℕ} (x : Fin r → A)
     (hx : ∀ 𝔪 ∈ ℳ, Submodule.span (A ⧸ 𝔪) (Set.range fun j => Tfib t 𝔪 hinv (x j)) = ⊤) :
@@ -2107,7 +2087,6 @@ private theorem range_linearCombination_eq_top (ℳ : Finset (Ideal A))
   set N : Submodule A B := LinearMap.range (Fintype.linearCombination A (fun j => t (x j))) with hN
   have hNspan : N = Submodule.span A (Set.range fun j => t (x j)) :=
     Fintype.range_linearCombination A _
-
   have step1 : ∀ 𝔪 ∈ ℳ, (⊤ : Submodule A B) ≤ N ⊔ 𝔪 • ⊤ := by
     intro 𝔪 h𝔪 b _
     have hb : (1 : A ⧸ 𝔪) ⊗ₜ[A] b ∈
@@ -2119,14 +2098,12 @@ private theorem range_linearCombination_eq_top (ℳ : Finset (Ideal A))
     rw [Submodule.map_span, ← Set.range_comp] at hb'
     simp only [LinearEquiv.coe_coe, Function.comp_def, Tfib_apply,
       TensorProduct.quotTensorEquivQuotSMul_mk_one_tmul] at hb'
-
     have : Submodule.Quotient.mk b ∈ N.map (𝔪 • (⊤ : Submodule A B)).mkQ := by
       rw [hNspan, Submodule.map_span, ← Set.range_comp]
       exact hb'
     have hmem : b ∈ (N.map (𝔪 • (⊤ : Submodule A B)).mkQ).comap (𝔪 • (⊤ : Submodule A B)).mkQ :=
       this
     rwa [Submodule.comap_map_mkQ, sup_comm] at hmem
-
   have step2 : ∀ S : Finset (Ideal A), S ⊆ ℳ → (⊤ : Submodule A B) ≤ N ⊔ (S.prod id) • ⊤ := by
     intro S
     induction S using Finset.induction_on with
@@ -2144,7 +2121,6 @@ private theorem range_linearCombination_eq_top (ℳ : Finset (Ideal A))
         _ = N ⊔ (𝔪 • N ⊔ (𝔪 * S.prod id) • ⊤) := by rw [Submodule.smul_sup, Submodule.mul_smul]
         _ ≤ N ⊔ (𝔪 * S.prod id) • ⊤ :=
           sup_le le_sup_left (sup_le (Submodule.smul_le_right.trans le_sup_left) le_sup_right)
-
   have hjac : ℳ.prod id ≤ Ideal.jacobson ⊥ := by
     apply le_sInf
     rintro J ⟨-, hJ⟩
@@ -2266,7 +2242,6 @@ private theorem isPushout_of_bijective_theta (hθ : Function.Bijective (theta t 
       (CommRingCat.ofHom (algebraMap A B)) (CommRingCat.ofHom t) := by
   let e : A ⊗[C] A ≃+* B := RingEquiv.ofBijective (theta t hinv) hθ
   have h := CommRingCat.isPushout_tensorProduct C A A
-
   refine (h.of_iso (Iso.refl _) (Iso.refl _) (Iso.refl _) e.toCommRingCatIso ?_ ?_ ?_ ?_)
   · simp
   · simp
@@ -2360,7 +2335,6 @@ private theorem flat_of_forall_exists_faithfullyFlat {M : Type u} [AddCommGroup 
   refine Module.flat_of_isLocalized_maximal C M (fun P _ => Localization.AtPrime P ⊗[C] M)
     (fun P _ => TensorProduct.mk C (Localization.AtPrime P) M 1) fun P hP => ?_
   obtain ⟨C', _, _, _, _, _, hflat⟩ := H P
-
   have : Module.Flat C' (C' ⊗[Localization.AtPrime P] (Localization.AtPrime P ⊗[C] M)) :=
     Module.Flat.of_linearEquiv
       (TensorProduct.AlgebraTensorModule.cancelBaseChange C (Localization.AtPrime P) C' C' M)

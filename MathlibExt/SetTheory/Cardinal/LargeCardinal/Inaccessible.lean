@@ -81,7 +81,6 @@ def IsInaccessibleFixedPoint.{u} (κ : Cardinal.{u}) : Prop :=
 fixed point (`IsInaccessible.beth_ord`) and `beth` is strictly monotone.
 
 Source: Below an inaccessible κ, each ℶ_o with o < κ.ord lies below κ. -/
-
 theorem _root_.Cardinal.IsInaccessible.beth_lt.{u} {κ : Cardinal.{u}} (hκ : κ.IsInaccessible)
     {o : Ordinal.{u}} (ho : o < κ.ord) : (ℶ_ o : Cardinal.{u}) < κ := by
   rw [← hκ.beth_ord]
@@ -91,7 +90,6 @@ theorem _root_.Cardinal.IsInaccessible.beth_lt.{u} {κ : Cardinal.{u}} (hκ : κ
 via `IsInaccessible.aleph_ord`.
 
 Source: Below an inaccessible κ, each ℵ_o with o < κ.ord lies below κ. -/
-
 theorem Cardinal.IsInaccessible.aleph_lt.{u} {κ : Cardinal.{u}} (hκ : κ.IsInaccessible)
     {o : Ordinal.{u}} (ho : o < κ.ord) : (ℵ_ o : Cardinal.{u}) < κ := by
   rw [← hκ.aleph_ord]
@@ -117,7 +115,6 @@ particular a weakly inaccessible one): above any `a < κ` sits
 limit.
 
 Source: Regular cardinals are unbounded below any uncountable limit cardinal. -/
-
 theorem exists_regular_between.{u} {κ : Cardinal.{u}} (hlt : ℵ₀ < κ)
     (hlim : Order.IsSuccLimit κ) {a : Cardinal.{u}} (ha : a < κ) :
     ∃ r : Cardinal.{u}, a < r ∧ r < κ ∧ r.IsRegular := by
@@ -134,7 +131,6 @@ case is `power_lt_aleph0`.
 the `ℵ₀ ≤ μ` restriction is load-bearing for the same reason as there.
 
 Source: Under GCH below κ, a weakly inaccessible κ is inaccessible. -/
-
 theorem IsWeaklyInaccessible.isInaccessible_of_gch.{u} {κ : Cardinal.{u}}
     (hκ : IsWeaklyInaccessible κ)
     (hgch : ∀ μ : Cardinal.{u}, μ < κ → ℵ₀ ≤ μ →
@@ -153,7 +149,6 @@ theorem IsWeaklyInaccessible.isInaccessible_of_gch.{u} {κ : Cardinal.{u}}
 infiniteness hypothesis is needed — it is automatic by `IsStrongLimit.aleph0_le`.
 
 Source: Below a strong limit κ, x < κ and y < κ imply x ^ y < κ. -/
-
 theorem _root_.Cardinal.IsStrongLimit.power_lt.{u} {κ x y : Cardinal.{u}} (hκ : κ.IsStrongLimit)
     (hx : x < κ) (hy : y < κ) : x ^ y < κ :=
   calc x ^ y ≤ (2 ^ x) ^ y := power_le_power_right (cantor x).le
@@ -215,7 +210,6 @@ In particular the least inaccessible — if one exists — is neither Mahlo (see
 point (`not_isInaccessibleFixedPoint_of_inaccessibleBelow_eq_empty` above).
 
 Source: If any inaccessible cardinal exists, some inaccessible has no inaccessibles below it. -/
-
 theorem exists_isInaccessible_inaccessibleBelow_eq_empty.{u}
     (h : ∃ κ : Cardinal.{u}, κ.IsInaccessible) :
     ∃ κ : Cardinal.{u}, κ.IsInaccessible ∧ inaccessibleBelow κ = ∅ := by
@@ -229,7 +223,6 @@ below `κ` (`IsStrongLimit.power_lt`), while every `y < κ` sits below
 `IsStrongLimit.aleph0_le`.
 
 Source: For 2 ≤ x < κ with κ a strong limit, x ^< κ = κ. -/
-
 theorem Cardinal.IsStrongLimit.powerlt_eq_self.{u} {κ x : Cardinal.{u}}
     (hκ : κ.IsStrongLimit) (hx2 : 2 ≤ x) (hx : x < κ) : x ^< κ = κ := by
   apply le_antisymm
@@ -248,7 +241,6 @@ limit ordinal (`isSuccLimit_add`), and below `κ` since
 `(a.ord + ω).card = a.ord.card + ℵ₀ < κ` (`add_lt_of_lt`).
 
 Source: Above any a < κ with κ inaccessible sits a strong limit cardinal below κ. -/
-
 theorem Cardinal.IsInaccessible.exists_isStrongLimit_between.{u} {κ : Cardinal.{u}}
     (hκ : κ.IsInaccessible) {a : Cardinal.{u}} (ha : a < κ) :
     ∃ μ : Cardinal.{u}, a < μ ∧ μ < κ ∧ μ.IsStrongLimit := by
@@ -269,7 +261,6 @@ theorem Cardinal.IsInaccessible.exists_isStrongLimit_between.{u} {κ : Cardinal.
 Spelled with Mathlib's `Ordinal.IsInitial`.
 
 Source: regularBelow κ is the set of initial ordinals below κ whose cardinals are regular. -/
-
 def regularBelow.{u} (κ : Cardinal.{u}) : Set (Set.Iio κ.ord) :=
   {α | α.val.card.IsRegular ∧ α.val.IsInitial}
 
@@ -277,7 +268,6 @@ def regularBelow.{u} (κ : Cardinal.{u}) : Set (Set.Iio κ.ord) :=
 `κ = ℵ₀` fails the fixed-point equation since `ℶ_ω > ℶ_0 = ℵ₀`.
 
 Source: A regular beth fixed point is uncountable. -/
-
 theorem aleph0_lt_of_isRegular_beth_ord.{u} {κ : Cardinal.{u}}
     (hreg : κ.IsRegular) (hbeth : (ℶ_ κ.ord : Cardinal.{u}) = κ) : ℵ₀ < κ := by
   have hle := hreg.aleph0_le
@@ -320,7 +310,6 @@ is automatic by `aleph0_lt_of_isRegular_beth_ord`): this packages
 `of_isRegular_beth_ord` with Mathlib's `IsInaccessible.beth_ord`.
 
 Source: κ is inaccessible if and only if κ is regular and a beth fixed point. -/
-
 theorem Cardinal.isInaccessible_iff_isRegular_beth_ord.{u} {κ : Cardinal.{u}} :
     κ.IsInaccessible ↔ κ.IsRegular ∧ (ℶ_ κ.ord : Cardinal.{u}) = κ := by
   constructor
@@ -333,7 +322,6 @@ theorem Cardinal.isInaccessible_iff_isRegular_beth_ord.{u} {κ : Cardinal.{u}} :
 (`card_type`): the companion to the upper bound `mk_inaccessibleBelow_le`.
 
 Source: Below an inaccessible fixed point κ there are exactly κ inaccessible cardinals. -/
-
 theorem IsInaccessibleFixedPoint.mk_inaccessibleBelow.{u} {κ : Cardinal.{u}}
     (h : IsInaccessibleFixedPoint κ) :
     #↥(inaccessibleBelow κ) = Cardinal.lift.{u+1} κ := by
@@ -387,7 +375,6 @@ the `ω`-chain `μ 0 = succ (max a ℵ₀)`, `μ (n+1) = succ (μ n)` stays belo
 lies below some `μ n` (`exists_lt_of_lt_ciSup`).
 
 Source: Above any a < κ with κ weakly inaccessible sits a limit cardinal below κ. -/
-
 theorem IsWeaklyInaccessible.exists_isSuccLimit_between.{u} {κ : Cardinal.{u}}
     (hκ : IsWeaklyInaccessible κ) {a : Cardinal.{u}} (ha : a < κ) :
     ∃ μ : Cardinal.{u}, a < μ ∧ μ < κ ∧ Order.IsSuccLimit μ := by
@@ -439,7 +426,6 @@ theorem IsWeaklyInaccessible.exists_isSuccLimit_between.{u} {κ : Cardinal.{u}}
 between itself and its own initial ordinal.
 
 Source: The supremum of a bounded set of initial ordinals is initial. -/
-
 theorem sSup_initial_of_forall_initial.{u} {T : Set Ordinal.{u}} (hbdd : BddAbove T)
     (h : ∀ t ∈ T, t.IsInitial) : (sSup T).IsInitial := by
   have hle : (sSup T).card.ord ≤ sSup T := Cardinal.ord_card_le _

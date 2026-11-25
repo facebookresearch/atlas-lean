@@ -198,7 +198,6 @@ private theorem exists_mul_eq_of_mem (hp : p.Prime) (hA : A.LiesOverPrime p) (z 
     (heightOneSpectrumBelow A L hp hA).exists_primeCompl_mul_eq_or_mul_eq (K := L) z
   · exact ⟨n, d, d.2, h⟩
   · refine ⟨d, n, ?_, h⟩
-
     have hd : A.valuation (algebraMap L (AlgebraicClosure ℚ) ((d : 𝓞 L) : L)) = 1 :=
       (notMem_primeBelow_iff A L).mp d.2
     rw [notMem_primeBelow_iff A L]
@@ -290,7 +289,6 @@ private theorem dvd_ramificationIdx_of_valuation_pow_eq (hp : p.Prime) (hA : A.L
   set e := Ideal.ramificationIdx' (Ideal.span {(p : ℤ)}) (primeBelow A L) with he
   set w := (heightOneSpectrumBelow A L hp hA).valuation L with hw
   have hequiv := isEquiv_valuation_comap_adicValuation A L hp hA
-
   have hval' : w (z ^ m) = w ((p : L) ^ a) := by
     refine (hequiv.eq_iff).mp ?_
     simp only [Valuation.comap_apply, map_pow, map_natCast]
@@ -303,7 +301,6 @@ private theorem dvd_ramificationIdx_of_valuation_pow_eq (hp : p.Prime) (hA : A.L
     exact WithZero.exp_ne_zero hval'.symm
   rw [← WithZero.exp_log hz0, ← WithZero.exp_nsmul, WithZero.exp_inj, nsmul_eq_mul, nsmul_eq_mul,
     mul_neg] at hval'
-
   have hdvd : (m : ℤ) ∣ (a : ℤ) * (e : ℤ) := by
     rw [← dvd_neg, ← hval']
     exact dvd_mul_right _ _

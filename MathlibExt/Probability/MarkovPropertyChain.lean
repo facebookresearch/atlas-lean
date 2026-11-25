@@ -175,14 +175,11 @@ theorem markov_property_full
     =ᵐ[P_μ]
       fun ω => markovExpectation S κ Y (ω n) := by
   intro P_μ
-
   set g := fun ω : ℕ → S => markovExpectation S κ Y (ω n) with hg_def
   set f := Y ∘ shiftPath n with hf_def
   have hle : pathFiltration S n ≤ MeasurableSpace.pi := (pathFiltration S).le' n
-
   obtain ⟨C, hC⟩ := hY_bdd
   have hf_bdd : ∀ ω, |f ω| ≤ C := fun ω => hC (shiftPath n ω)
-
   have hg_bdd : ∀ ω : ℕ → S, |g ω| ≤ C := by
     intro ω
     simp only [hg_def, markovExpectation]
@@ -201,15 +198,12 @@ theorem markov_property_full
       _ = C := by
             rw [MeasureTheory.integral_const, smul_eq_mul, mul_comm]
             simp
-
   have hf_sm : @Measurable _ _ MeasurableSpace.pi _ f := hY_meas.comp (measurable_shiftPath n)
   have hf_int : Integrable f P_μ := by
     apply Integrable.of_bound hf_sm.aestronglyMeasurable C
     exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hf_bdd ω)
-
   have hg_meas_pi : Measurable (markovExpectation S κ Y) :=
     measurable_markovExpectation S κ Y hY_meas ⟨C, hC⟩
-
   have hn_meas : @Measurable _ _ (pathFiltration S n) _ (fun ω : ℕ → S => ω n) := by
     rw [measurable_iff_comap_le]
     exact le_iSup₂ (f := fun (i : ℕ) (_ : i ≤ n) =>
@@ -217,14 +211,12 @@ theorem markov_property_full
   have hg_meas : @Measurable _ _ (pathFiltration S n) _ g := hg_meas_pi.comp hn_meas
   have hg_aesm : AEStronglyMeasurable (m := pathFiltration S n) g P_μ :=
     hg_meas.aestronglyMeasurable
-
   have hg_int_finite : ∀ s, @MeasurableSet _ (pathFiltration S n) s → P_μ s < ⊤ →
       IntegrableOn g s P_μ := by
     intro s _ hs_lt
     apply IntegrableOn.of_bound hs_lt
       (hg_meas_pi.comp (measurable_pi_apply n)).aestronglyMeasurable.restrict C
     exact ae_of_all _ (fun ω => by rw [Real.norm_eq_abs]; exact hg_bdd ω)
-
   have hg_eq : ∀ s : Set (ℕ → S), @MeasurableSet _ (pathFiltration S n) s → P_μ s < ⊤ →
       ∫ x in s, g x ∂P_μ = ∫ x in s, f x ∂P_μ := by
     intro s hs _

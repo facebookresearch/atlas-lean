@@ -192,7 +192,6 @@ lemma orderedDifferential_smul_slot (before suffix : List (W K A)) (a : A) (x : 
       eq_neg_of_add_eq_zero_left (ExteriorAlgebra.ι_add_mul_swap w (D K A a))
     rw [← mul_assoc (ExteriorAlgebra.ι A w) (ExteriorAlgebra.ι A (D K A a)),
       hs, neg_mul, mul_assoc]
-
     abel
 
 
@@ -257,7 +256,6 @@ lemma orderedDifferential_swap_adjacent (before suffix : List (W K A)) (x y : W 
       have hxy' := congrArg (fun z : E K A =>
         orderedProduct K A before * (z * orderedProduct K A suffix)) hxy
       simpa only [mul_neg, neg_mul, ← mul_assoc] using hxy'
-
     rw [hp, mul_neg]
     abel
 

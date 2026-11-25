@@ -110,36 +110,29 @@ private theorem finrank_frobeniusSubfield_eq [FiniteDimensional E M]
   set Mp : Subfield M := frobeniusSubfield M p with hMp
   set Ep' : Subfield M := frobeniusSubfieldImageInM (E := E) (M := M) p with hEp'
   set E' : Subfield M := (algebraMap E M).fieldRange with hE'
-
   have hfrob : Subfield.relfinrank Ep' Mp = Subfield.relfinrank E' (⊤ : Subfield M) := by
     have h1 := Subfield.relfinrank_comap_comap_eq_relfinrank_of_le (A := Ep') (B := Mp)
       (frobenius M p) (by rw [hMp]; exact le_refl _)
     rw [comap_frobenius_frobeniusSubfield, comap_frobenius_frobeniusSubfieldImageInM] at h1
     exact h1.symm
-
   have htowerE : Subfield.relfinrank Ep' E' * Subfield.relfinrank E' (⊤ : Subfield M) =
       Subfield.relfinrank Ep' (⊤ : Subfield M) :=
     Subfield.relfinrank_mul_relfinrank
       (frobeniusSubfieldImageInM_le_algebraMapRange p) le_top
-
   have htowerM : Subfield.relfinrank Ep' Mp * Subfield.relfinrank Mp (⊤ : Subfield M) =
       Subfield.relfinrank Ep' (⊤ : Subfield M) :=
     Subfield.relfinrank_mul_relfinrank
       (frobeniusSubfieldImageInM_le_frobeniusSubfield p) le_top
-
   have hEp'E' : Subfield.relfinrank Ep' E' = Module.finrank (frobeniusSubfield E p) E := by
     have h1 : E' = (⊤ : Subfield E).map (algebraMap E M) := by
       rw [hE', ← RingHom.fieldRange_eq_map]
     rw [hEp', h1, Subfield.relfinrank_map_map, Subfield.relfinrank_top_right]
-
   have hMpTop : Subfield.relfinrank Mp (⊤ : Subfield M) =
       Module.finrank (frobeniusSubfield M p) M :=
     Subfield.relfinrank_top_right _
-
   have hE'pos : 0 < Subfield.relfinrank E' (⊤ : Subfield M) := by
     rw [Subfield.relfinrank_top_right, hE', finrank_algebraMapRange_eq (E := E) (M := M)]
     exact Module.finrank_pos
-
   have hcancel : Subfield.relfinrank Ep' E' = Subfield.relfinrank Mp (⊤ : Subfield M) := by
     have h := htowerE.trans htowerM.symm
     rw [hfrob, mul_comm (Subfield.relfinrank E' _)] at h
@@ -203,12 +196,10 @@ private theorem genT_not_pow (t : M) (htr : Transcendental K t) (a : ↥K⟮t⟯
     a ^ p ≠ genT t := by
   intro ha
   have ht0 : t ≠ 0 := fun h ↦ htr (h ▸ isAlgebraic_zero)
-
   have ha' : t = (↑a : M) ^ p := by
     have := congrArg (fun z : ↥K⟮t⟯ ↦ (z : M)) ha
     push_cast at this; simpa using this.symm
   obtain ⟨r, s, hrs⟩ := (IntermediateField.mem_adjoin_simple_iff K _).mp a.2
-
   have hkey : aeval t (X * s ^ p - r ^ p) = 0 := by
     simp only [map_sub, map_mul, aeval_X, map_pow]
     rw [hrs, div_pow] at ha'
@@ -217,12 +208,10 @@ private theorem genT_not_pow (t : M) (htr : Transcendental K t) (a : ↥K⟮t⟯
       exact absurd ha' ht0
     · rw [eq_div_iff (pow_ne_zero _ hs0)] at ha'
       rw [sub_eq_zero]; exact ha'
-
   have hinj : X * s ^ p - r ^ p = (0 : K[X]) := by
     have := htr
     rw [Transcendental, isAlgebraic_iff_not_injective, not_not] at this
     exact this (by simpa using hkey)
-
   have hs0 : s ≠ 0 := by
     intro h0; rw [h0] at hrs
     simp only [map_zero, div_zero] at hrs
@@ -235,7 +224,6 @@ private theorem genT_not_pow (t : M) (htr : Transcendental K t) (a : ↥K⟮t⟯
     have := sub_eq_zero.mp hinj; rw [this]
   rw [natDegree_mul X_ne_zero (pow_ne_zero _ hs0), natDegree_X, natDegree_pow,
     natDegree_pow] at hdeg
-
   have hpdvd : p ∣ 1 := by
     have h1 : p * r.natDegree - p * s.natDegree = 1 := by omega
     exact ⟨r.natDegree - s.natDegree, by rw [Nat.mul_sub, h1]⟩

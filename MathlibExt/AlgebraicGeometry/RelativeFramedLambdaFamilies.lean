@@ -29,7 +29,6 @@ nonabelian-Hodge correspondence is assumed by these data.
 set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 @[expose] public noncomputable section
-
   AlgebraicGeometry.SheafedSpace.sheaf
 
 namespace MathlibExt.AlgebraicGeometry.RelativeFramedLambdaFamilies

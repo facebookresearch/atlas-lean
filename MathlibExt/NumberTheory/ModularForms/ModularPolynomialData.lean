@@ -48,7 +48,6 @@ section QExpand
 variable {R : Type*} [CommRing R]
 
 variable (R) in
-
 def qExpand (N : ℕ) [NeZero N] : LaurentSeries R →+* LaurentSeries R :=
   HahnSeries.embDomainRingHom (AddMonoidHom.mulLeft (N : ℤ))
     (mul_right_injective₀ (by exact_mod_cast NeZero.ne N))

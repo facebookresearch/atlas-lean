@@ -176,7 +176,6 @@ private theorem exists_card_fib_eq {f g : k[X]} (hfg : IsCoprime f g)
   obtain ⟨hc0, hc1, hc2⟩ := hc
   have hdeg : (f - C c * g).natDegree = max f.natDegree g.natDegree :=
     natDegree_sub_C_mul_eq hg0 hc0 hc1
-
   have hsep : (f - C c * g).Separable := by
     rw [separable_def, Polynomial.isCoprime_iff_aeval_ne_zero_of_isAlgClosed (k := k) (K := k)]
     intro a
@@ -291,7 +290,6 @@ private theorem U_ne_C_mul_V (c : k) : U ≠ C c * V := by
   rw [this]; ring
 
 include huv hu hw hst hs hw' hU hV in
-
 private theorem exists_large_fibre :
     ∃ c : k, max s.natDegree t.natDegree * max u.natDegree v.natDegree ≤ (fib U V c).card := by
   obtain ⟨Suv, hSuv⟩ := exists_card_fib_eq huv hu hw
@@ -301,7 +299,6 @@ private theorem exists_large_fibre :
   obtain ⟨hc1, hc2⟩ := hc
   refine ⟨c, ?_⟩
   have hUVne : U - C c * V ≠ 0 := sub_ne_zero.mpr (U_ne_C_mul_V huv hu hw hst hs hU hV c)
-
   have hsub : (fib s t c).biUnion (fun w => fib u v w) ⊆ fib U V c := by
     intro x hx
     simp only [Finset.mem_biUnion] at hx

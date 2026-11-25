@@ -97,11 +97,9 @@ namespace PowerSeriesFTSym
 variable {k : Type u} [CommRing k] {r : ℕ}
 
 variable (k r) in
-
 def es (i : Fin r) : MvPolynomial (Fin r) k := MvPolynomial.esymm (Fin r) k (i + 1)
 
 variable (k r) in
-
 def ea (i : Fin r) : MvPowerSeries (Fin r) k := (es k r i : MvPowerSeries (Fin r) k)
 
 theorem esymm_isHomogeneous (n : ℕ) : (MvPolynomial.esymm (Fin r) k n).IsHomogeneous n := by
@@ -331,7 +329,6 @@ def blockPermEmbed (m : ℕ) (rs : Fin m → ℕ) :
         Pi.evalMonoidHom _ (Fin.castSucc j)))
       (Pi.evalMonoidHom _ (Fin.last m)))
     refine MonoidHom.comp ?_ (Equiv.Perm.sumCongrHom _ _)
-
     exact (Equiv.permCongrHom
       (finSumFinEquiv.trans (finCongr (Fin.sum_univ_castSucc rs).symm))).toMonoidHom
 
@@ -455,7 +452,6 @@ theorem toBlock_blockIn (j : Fin m) (i : Fin (rs j)) :
   rw [toBlock, blockIn_eq_finSigmaFinEquiv, Equiv.symm_apply_apply]
 
 variable (k m rs) in
-
 def bes (l : Fin (∑ j, rs j)) : MvPolynomial (Fin (∑ j, rs j)) k :=
   let ⟨j, i⟩ := toBlock l
   MvPolynomial.rename (blockIn (rs := rs) j) (MvPolynomial.esymm (Fin (rs j)) k (i + 1))
@@ -467,7 +463,6 @@ theorem bes_blockIn_gen (j : Fin m) (i : Fin (rs j)) :
   rw [toBlock_blockIn]
 
 variable (k m rs) in
-
 def bea (l : Fin (∑ j, rs j)) : MvPowerSeries (Fin (∑ j, rs j)) k :=
   (bes k m rs l : MvPowerSeries (Fin (∑ j, rs j)) k)
 
@@ -502,7 +497,6 @@ end BlockwiseFTSym
 namespace BlockwiseFTSym
 
 variable (k m rs) in
-
 def IsBlockSymmetric (p : MvPolynomial (Fin (∑ j, rs j)) k) : Prop :=
   ∀ σ : ∀ j, Equiv.Perm (Fin (rs j)), MvPolynomial.rename (blockPermEmbed m rs σ) p = p
 
@@ -512,7 +506,6 @@ theorem bes_isBlockSymmetric (l : Fin (∑ j, rs j)) :
   unfold bes
   rcases hjl : toBlock (rs := rs) l with ⟨j, i⟩
   simp only
-
   have hkey : ((blockPermEmbed m rs σ) : _ → _) ∘ (blockIn (rs := rs) j)
       = (blockIn (rs := rs) j) ∘ (σ j) :=
     funext fun i' => blockPermEmbed_apply σ j i'
@@ -620,7 +613,6 @@ theorem psiX_rename_blockIn_castSucc (j : Fin m)
           ∘ blockIn (rs := rs) (Fin.castSucc j)
           = (Sum.inr : Fin _ → _) ∘ blockIn (rs := rs ∘ Fin.castSucc) j from
         funext fun i => stepIdx_symm_blockIn_castSucc rs j i,
-
       ← MvPolynomial.sumAlgEquiv_comp_rename_inr k _ _,
       AlgHom.comp_assoc, MvPolynomial.rename_comp_rename]
   exact DFunLike.congr_fun key p
@@ -810,7 +802,6 @@ theorem coeff_psiX_isBlockSymmetric {p : MvPolynomial (Fin (∑ j, rs j)) k}
     (hp : IsBlockSymmetric k (m + 1) rs p) (d) :
     IsBlockSymmetric k m (rs ∘ Fin.castSucc) ((psiX k rs p).coeff d) := by
   intro σ'
-
   have key := (psiX_rename_blockPermEmbed k rs (Fin.lastCases 1 σ') p).symm
   rw [hp _, Fin.lastCases_last,
     show (fun j => Fin.lastCases (motive := fun j => Equiv.Perm (Fin (rs j))) 1 σ' (Fin.castSucc j))
@@ -826,19 +817,16 @@ theorem coeff_psiX_isBlockSymmetric {p : MvPolynomial (Fin (∑ j, rs j)) k}
 end StepEquivariance
 
 variable (k m rs) in
-
 theorem aeval_bes_injective :
     Function.Injective (MvPolynomial.aeval (R := k) (bes k m rs)) := by
   induction m with
   | zero =>
-
     have hz : ∑ j : Fin 0, rs j = 0 := by simp
     have hid : MvPolynomial.aeval (R := k) (bes k 0 rs) = AlgHom.id k _ :=
       MvPolynomial.algHom_ext fun i => (Fin.cast hz i).elim0
     rw [hid]
     exact fun _ _ h => h
   | succ m ih =>
-
     have hconj := step_conjugate k rs
     have heq : ∀ q,
         psiX k rs (MvPolynomial.aeval (bes k (m + 1) rs) q)
@@ -854,12 +842,10 @@ theorem aeval_bes_injective :
     have h' : psiX k rs (MvPolynomial.aeval _ q) = psiX k rs (MvPolynomial.aeval _ q') :=
       congrArg _ h
     rw [heq, heq] at h'
-
     have hinj1 : Function.Injective
         (MvPolynomial.aeval (R := MvPolynomial _ k)
           (es (MvPolynomial (Fin (∑ j, (rs ∘ Fin.castSucc) j)) k) (rs (Fin.last m)))) :=
       aeval_es_injective
-
     have hinj2 : Function.Injective
         (MvPolynomial.mapAlgHom (R := k) (σ := Fin (rs (Fin.last m)))
           (MvPolynomial.aeval (bes k m (rs ∘ Fin.castSucc)))) := by
@@ -870,7 +856,6 @@ theorem aeval_bes_injective :
     exact (psiX k rs).injective (hinj2 (hinj1 h'))
 
 variable (k m rs) in
-
 theorem exists_aeval_bes_eq {p : MvPolynomial (Fin (∑ j, rs j)) k}
     (hp : IsBlockSymmetric k m rs p) :
     ∃ q, MvPolynomial.aeval (R := k) (bes k m rs) q = p := by
@@ -882,14 +867,12 @@ theorem exists_aeval_bes_eq {p : MvPolynomial (Fin (∑ j, rs j)) k}
       MvPolynomial.algHom_ext fun i => (Fin.cast hz i).elim0, AlgHom.id_apply]
   | succ m ih =>
     set R' := MvPolynomial (Fin (∑ j, (rs ∘ Fin.castSucc) j)) k
-
     obtain ⟨q1, hq1⟩ := (MvPolynomial.esymmAlgHom_fin_bijective
       (R := R') (rs (Fin.last m))).2
       ⟨psiX k rs p, isSymmetric_psiX_of_isBlockSymmetric k rs hp⟩
     have hq1' : MvPolynomial.aeval (R := R') (es R' (rs (Fin.last m))) q1 = psiX k rs p := by
       have := congrArg Subtype.val hq1
       rwa [MvPolynomial.esymmAlgHom_apply] at this
-
     have hcomm : ∀ (φ : R' →ₐ[k] R') (q : MvPolynomial (Fin (rs (Fin.last m))) R'),
         MvPolynomial.map φ.toRingHom (MvPolynomial.aeval (R := R') (es R' (rs (Fin.last m))) q)
           = MvPolynomial.aeval (R := R') (es R' (rs (Fin.last m)))
@@ -923,11 +906,8 @@ theorem exists_aeval_bes_eq {p : MvPolynomial (Fin (∑ j, rs j)) k}
               (blockPermEmbed m (rs ∘ Fin.castSucc) σ')).toRingHom q1).coeff d :=
             (MvPolynomial.coeff_map _ _ _).symm
         _ = q1.coeff d := by rw [hfix]
-
     choose rfd hrfd using fun d => ih (rs := rs ∘ Fin.castSucc) (hcoeff_q1 d)
-
     refine ⟨(psiX k rs).symm (∑ d ∈ q1.support, MvPolynomial.monomial d (rfd d)), ?_⟩
-
     apply (psiX k rs).injective
     have hconj := DFunLike.congr_fun (step_conjugate k rs)
       (psiX k rs ((psiX k rs).symm (∑ d ∈ q1.support, MvPolynomial.monomial d (rfd d))))

@@ -396,18 +396,15 @@ private theorem exists_glueSubmodule_eq (J : Submodule A B) (hJB : ⊤ * J = ⊤
     ∃ u : (B ⧸ 𝔠)ˣ, glueSubmodule (A := A) 𝔠 (u : B ⧸ 𝔠) = J := by
   obtain ⟨e'⟩ := hfree
   set q := TensorProduct.quotTensorEquivQuotSMul (↥J) (𝔠A)
-
   obtain ⟨g, hg⟩ := Submodule.Quotient.mk_surjective _ (q (e'.symm 1))
   have hg' : e'.symm 1 = 1 ⊗ₜ g := by
     apply q.injective; rw [← hg, TensorProduct.quotTensorEquivQuotSMul_mk_one_tmul]
-
   have hsmul : ∀ y : ↥J, y ∈ (𝔠A) • (⊤ : Submodule A ↥J) → (y : B) ∈ 𝔠 := by
     intro y hy
     refine Submodule.smul_induction_on hy (fun c hc j _ => ?_) (fun y z hy hz => ?_)
     · rw [Submodule.coe_smul, Algebra.smul_def]
       exact 𝔠.mul_mem_right _ (Ideal.mem_comap.mp hc)
     · rw [Submodule.coe_add]; exact add_mem hy hz
-
   have star : ∀ x : ↥J, ∃ a : A, (x : B) - algebraMap A B a * g ∈ 𝔠 := by
     intro x
     obtain ⟨a, ha⟩ := Ideal.Quotient.mk_surjective (e' (1 ⊗ₜ x))
@@ -425,7 +422,6 @@ private theorem exists_glueSubmodule_eq (J : Submodule A B) (hJB : ⊤ * J = ⊤
     rw [Submodule.Quotient.eq] at h2
     have := hsmul _ h2
     rwa [Submodule.coe_sub, Submodule.coe_smul, Algebra.smul_def] at this
-
   have hone : (1 : B) ∈ ⊤ * J := by rw [hJB]; exact Submodule.mem_top
   have hunit : IsUnit (Ideal.Quotient.mk 𝔠 (g : B)) := by
     have key : ∀ r ∈ ⊤ * J, ∃ y : B ⧸ 𝔠,
@@ -444,7 +440,6 @@ private theorem exists_glueSubmodule_eq (J : Submodule A B) (hJB : ⊤ * J = ⊤
     obtain ⟨y, hy⟩ := key 1 hone
     rw [map_one] at hy
     exact IsUnit.of_mul_eq_one_right _ hy.symm
-
   have hcJ : ∀ c ∈ 𝔠, c ∈ J := by
     intro c hc
     have key : ∀ r ∈ ⊤ * J, c * r ∈ J := by

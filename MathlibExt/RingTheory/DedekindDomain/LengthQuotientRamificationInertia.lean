@@ -355,7 +355,6 @@ private theorem inertiaDeg_maximalIdeal_eq_one_of_isLocalization {R : Type*} [Co
   rw [← e'.finrank_eq, Module.finrank_self]
 
 variable (C D₁) in
-
 private def Over (B : ValuationSubring κ) : Prop :=
   (∀ c : C, algebraMap C κ c ∈ B) ∧ (∀ x : D₁, algebraMap D₁ κ x ∈ B) ∧
     ∀ c : C, algebraMap C κ c ∈ B.nonunits ↔ c ∈ maximalIdeal C
@@ -448,7 +447,6 @@ private theorem coe_algebraMap_W (v : HeightOneSpectrum D₁) (s : D₁) :
     ((algebraMap D₁ (W (κ := κ) v) s : W v) : κ) = algebraMap D₁ κ s := rfl
 
 variable (C) in
-
 private theorem over_W (v : HeightOneSpectrum D₁) [v.asIdeal.LiesOver (maximalIdeal C)] :
     Over C D₁ (W (κ := κ) v) := by
   have key : ∀ c : C, algebraMap C κ c =
@@ -745,12 +743,10 @@ section Lattice
 variable {R : Type*} [CommRing R] {M : Type*} [AddCommGroup M] [Module R M]
 
 open Pointwise in
-
 private theorem length_quotient_span_singleton_smul_top_eq (x : R) (hx : ∀ m : M, x • m = 0 → m = 0)
     (N : Submodule R M) (hN : Module.length R (M ⧸ N) ≠ ⊤) :
     Module.length R (↥N ⧸ ((Ideal.span {x} : Ideal R) • (⊤ : Submodule R ↥N))) =
       Module.length R (M ⧸ ((Ideal.span {x} : Ideal R) • (⊤ : Submodule R M))) := by
-
   set xN : Submodule R M := (Ideal.span {x} : Ideal R) • N with hxN
   set xM : Submodule R M := (Ideal.span {x} : Ideal R) • (⊤ : Submodule R M) with hxM
   have hmem_xN : ∀ m : M, m ∈ xN ↔ ∃ n ∈ N, m = x • n := fun m => by
@@ -761,7 +757,6 @@ private theorem length_quotient_span_singleton_smul_top_eq (x : R) (hx : ∀ m :
     exact ⟨fun ⟨n, _, h⟩ => ⟨n, h.symm⟩, fun ⟨n, h⟩ => ⟨n, Submodule.mem_top, h.symm⟩⟩
   have hxN_le_N : xN ≤ N := by rw [hxN]; exact Submodule.smul_le_right
   have hxN_le_xM : xN ≤ xM := by rw [hxN, hxM]; exact Submodule.smul_mono le_rfl le_top
-
   let f₁ : ↥N →ₗ[R] M ⧸ xN := xN.mkQ.comp N.subtype
   have hf₁_range : LinearMap.range f₁ = N.map xN.mkQ := by
     change LinearMap.range (xN.mkQ.comp N.subtype) = N.map xN.mkQ
@@ -782,7 +777,6 @@ private theorem length_quotient_span_singleton_smul_top_eq (x : R) (hx : ∀ m :
     rw [← (Submodule.quotientQuotientEquivQuotient xN N hxN_le_N).length_eq]
     exact Module.length_eq_add_of_exact (N.map xN.mkQ).subtype (N.map xN.mkQ).mkQ
       (Submodule.injective_subtype _) (Submodule.mkQ_surjective _) (LinearMap.exact_subtype_mkQ _)
-
   let mulx : M →ₗ[R] M :=
     { toFun := fun m => x • m
       map_add' := fun a b => smul_add x a b
@@ -812,7 +806,6 @@ private theorem length_quotient_span_singleton_smul_top_eq (x : R) (hx : ∀ m :
     rw [← (Submodule.quotientQuotientEquivQuotient xN xM hxN_le_xM).length_eq]
     exact Module.length_eq_add_of_exact (xM.map xN.mkQ).subtype (xM.map xN.mkQ).mkQ
       (Submodule.injective_subtype _) (Submodule.mkQ_surjective _) (LinearMap.exact_subtype_mkQ _)
-
   rw [e₁.length_eq, ← e₂.length_eq] at *
   rw [h₁, add_comm] at h₂
   exact (ENat.add_right_injective_of_ne_top hN) h₂

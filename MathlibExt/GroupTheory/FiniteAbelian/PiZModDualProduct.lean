@@ -107,7 +107,6 @@ private theorem tors_pi {ι : Type} [Fintype ι] (G : ι → Type) [∀ i, AddCo
 private theorem tors_zmod (n : ℕ) [NeZero n] (N : ℕ) : tors (ZMod n) N = Nat.gcd N n := by
   classical
   unfold tors
-
   let φ : ZMod n →+ ZMod n := nsmulAddMonoidHom N
   have hker : Nat.card {x : ZMod n // N • x = 0} = Nat.card φ.ker := by
     refine Nat.card_congr ⟨fun x => ⟨x.1, x.2⟩, fun y => ⟨y.1, y.2⟩, fun _ => rfl, fun _ => rfl⟩
@@ -130,7 +129,6 @@ private theorem tors_zmod (n : ℕ) [NeZero n] (N : ℕ) : tors (ZMod n) N = Nat
   have hq : 0 < n / n.gcd N := Nat.div_pos (Nat.le_of_dvd (NeZero.pos n) (Nat.gcd_dvd_left n N)) hg
   rw [Nat.gcd_comm]
   have := h1
-
   nlinarith [this, hdiv]
 
 private theorem tors_pi_zmod {ι : Type} [Fintype ι] (n : ι → ℕ) [∀ i, NeZero (n i)] (N : ℕ) :
@@ -442,7 +440,6 @@ private noncomputable def homZModEquivTorsion (n : ℕ) (D : Type*) [AddCommGrou
 private theorem nonempty_addEquiv_hom_zmod_zmod {d n : ℕ} [NeZero d] (hn : n ∣ d) :
     Nonempty ((ZMod n →+ ZMod d) ≃+ ZMod n) := by
   obtain ⟨g, hinj, hrange⟩ := exists_addMonoidHom_injective_forall_nsmul_eq_zero_iff (M := d) hn
-
   have hTR : torsionSub n (ZMod d) = g.range := by
     ext y
     rw [mem_torsionSub, AddMonoidHom.mem_range, hrange]

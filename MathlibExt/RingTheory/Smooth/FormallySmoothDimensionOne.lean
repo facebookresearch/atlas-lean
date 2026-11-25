@@ -75,7 +75,6 @@ namespace L1BE1
 private theorem isStandardSmoothOfRelativeDimension_mvPolynomial (k : Type*) [CommRing k] (n : ℕ) :
     Algebra.IsStandardSmoothOfRelativeDimension n k (MvPolynomial (Fin n) k) := by
   classical
-
   let v : PEmpty.{1} → MvPolynomial (Fin n) k := fun e => nomatch e
   let a : PEmpty.{1} → Fin n := fun e => nomatch e
   have ha : Function.Injective a := fun e => nomatch e
@@ -91,7 +90,6 @@ private theorem isStandardSmoothOfRelativeDimension_mvPolynomial (k : Type*) [Co
   let P₁ : Algebra.SubmersivePresentation k (MvPolynomial (Fin n) k ⧸ Ideal.span (Set.range v))
     (Fin n) PEmpty.{1} :=
     { toPreSubmersivePresentation := P₀, jacobian_isUnit := hjac }
-
   have hbot : Ideal.span (Set.range v) = (⊥ : Ideal (MvPolynomial (Fin n) k)) := by
     rw [Ideal.span_eq_bot]; rintro _ ⟨e, _⟩; exact nomatch e
   let e : (MvPolynomial (Fin n) k ⧸ Ideal.span (Set.range v)) ≃ₐ[k] MvPolynomial (Fin n) k :=
@@ -99,7 +97,6 @@ private theorem isStandardSmoothOfRelativeDimension_mvPolynomial (k : Type*) [Co
   let P : Algebra.SubmersivePresentation k (MvPolynomial (Fin n) k) (Fin n) PEmpty.{1} :=
     P₁.ofAlgEquiv e
   refine ⟨⟨Fin n, PEmpty.{1}, inferInstance, inferInstance, P, ?_⟩⟩
-
   simp [Algebra.Presentation.dimension]
 
 end L1BE1

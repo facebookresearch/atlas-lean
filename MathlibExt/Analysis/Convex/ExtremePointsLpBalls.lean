@@ -398,7 +398,6 @@ theorem extremePoints_closedBall_piLp_one :
         _ = ‖x‖ := by rw [hx_eq]
         _ = 1 := hnorm1
     · exact hx_eq
-
   · rintro ⟨i, c, hc, rfl⟩
     rw [mem_extremePoints_iff_left]
     refine ⟨?_, ?_⟩

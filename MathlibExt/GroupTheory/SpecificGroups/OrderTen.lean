@@ -60,22 +60,16 @@ private lemma conjugation_pow_four
   have hconj_mem : y * x * y⁻¹ ∈ Subgroup.zpowers x :=
     hN.conj_mem x (Subgroup.mem_zpowers x) y
   obtain ⟨k, hk⟩ := Subgroup.mem_zpowers_iff.mp hconj_mem
-
   have hkk : x ^ (k * k) = x := by
     have hphi : y * x ^ k * y⁻¹ = (y * x * y⁻¹) ^ k := conj_zpow.symm
     rw [hk.symm, ← zpow_mul] at hphi
-
     have hphi2 : y * (y * x * y⁻¹) * y⁻¹ = x := by
       rw [hy_inv]
       calc y * (y * x * y) * y = (y * y) * x * (y * y) := by group
         _ = x := by rw [hy_sq, one_mul, mul_one]
-
     rw [hk] at hphi
-
     rw [hphi2] at hphi
-
     exact hphi.symm
-
   have h5dvd : (5 : ℤ) ∣ k * k - 1 := by
     have h1 : x ^ (k * k - 1) = 1 := by
       have : x ^ (k * k) * x⁻¹ = 1 := by rw [hkk, mul_inv_cancel]

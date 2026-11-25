@@ -85,11 +85,9 @@ private theorem update_compat {m : ℕ} (s : M m → M (m + 1)) (hs : ∀ z, t m
 private theorem exists_forall_eq_of_surjective (ht : ∀ n, Surjective (t n)) (n : ℕ) (y : M n) :
     ∃ x : ∀ k, M k, (∀ k, t k (x (k + 1)) = x k) ∧ x n = y := by
   obtain ⟨x, hx, hxn⟩ := exists_partial t n y
-
   have hs : ∀ k, ∃ s : M k → M (k + 1), ∀ z, t k (s z) = z := fun k =>
     ⟨surjInv (ht k), surjInv_eq (ht k)⟩
   choose s hs using hs
-
   let G : ∀ j : ℕ, {z : ∀ k, M k // ∀ k, k < n + j → t k (z (k + 1)) = z k} :=
     fun j => Nat.rec (motive := fun j => {z : ∀ k, M k // ∀ k, k < n + j → t k (z (k + 1)) = z k})
       ⟨x, hx⟩
@@ -138,7 +136,6 @@ private theorem span_range_apply_eq_top (hI : ∀ n : ℕ, I ^ (n + 1) • (⊤ 
       rw [hN, Submodule.map_span, ← Set.range_comp]
       have : (t n) ∘ (fun i => g i (n + 1)) = fun i => g i n := funext fun i => hg i n
       rw [this, ih]
-
     have hsup : (⊤ : Submodule R (M (n + 1))) ≤ N ⊔ J • ⊤ := by
       intro y _
       have hy : t n y ∈ N.map (t n) := by rw [hmap]; exact Submodule.mem_top
@@ -148,7 +145,6 @@ private theorem span_range_apply_eq_top (hI : ∀ n : ℕ, I ^ (n + 1) • (⊤ 
       have : y = z + (y - z) := by abel
       rw [this]
       exact Submodule.add_mem_sup hz (hker n hker')
-
     have hJ2 : (J * J) • (⊤ : Submodule R (M (n + 1))) = ⊥ := by
       rw [eq_bot_iff, ← hI (n + 1), hJ, ← pow_add]
       exact Submodule.smul_mono_left (Ideal.pow_le_pow_right (by omega))

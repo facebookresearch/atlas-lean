@@ -59,13 +59,11 @@ private theorem eq_valuationSubringAtPrime {C K : Type*} [CommRing C] [IsDedekin
     have h : algebraMap C K s ∉ D.nonunits := fun h => hs ((hcen s).1 h)
     rw [ValuationSubring.mem_nonunits_iff_or, not_or, not_not] at h
     exact h.2
-
   have hOD : (HeightOneSpectrum.valuationSubringAtPrime K v).toSubring ≤ D.toSubring := by
     intro x hx
     rw [HeightOneSpectrum.valuationSubringAtPrime_toSubring] at hx
     obtain ⟨a, s, hs, rfl⟩ := hx
     exact mul_mem (hCD a) (hsD s hs)
-
   have hloc : IsLocalHom (Subring.inclusion hOD) := by
     constructor
     intro x0 hx0
@@ -78,7 +76,6 @@ private theorem eq_valuationSubringAtPrime {C K : Type*} [CommRing C] [IsDedekin
       v)) v.asIdeal a s]
     by_contra ha
     have ha' : a ∈ v.asIdeal := by simpa [Ideal.primeCompl] using ha
-
     have hspec := IsLocalization.mk'_spec (↥(HeightOneSpectrum.valuationSubringAtPrime K v)) a s
     have hK : ((IsLocalization.mk' (↥(HeightOneSpectrum.valuationSubringAtPrime K v)) a s :
         ↥(HeightOneSpectrum.valuationSubringAtPrime K v)) : K) * algebraMap C K (s : C) = algebraMap
@@ -94,7 +91,6 @@ private theorem eq_valuationSubringAtPrime {C K : Type*} [CommRing C] [IsDedekin
         ↥(HeightOneSpectrum.valuationSubringAtPrime K v)) : K) = algebraMap C K a * (algebraMap C K
           (s : C))⁻¹ := by
       rw [← hK, mul_assoc, mul_inv_cancel₀ hs0, mul_one]
-
     have hnu : algebraMap C K a * (algebraMap C K (s : C))⁻¹ ∈ D.nonunits := by
       rw [ValuationSubring.mem_nonunits_iff, map_mul]
       have h1 : D.valuation (algebraMap C K a) < 1 := (ValuationSubring.mem_nonunits_iff _).1 ((hcen
@@ -105,7 +101,6 @@ private theorem eq_valuationSubringAtPrime {C K : Type*} [CommRing C] [IsDedekin
           ≤ D.valuation (algebraMap C K a) * 1 := mul_le_mul_right h2 _
         _ = D.valuation (algebraMap C K a) := mul_one _
         _ < 1 := h1
-
     obtain ⟨y, hy⟩ := isUnit_iff_exists_inv.1 hx
     have hyK : ((⟨x0.1, x0.2⟩ : ↥(HeightOneSpectrum.valuationSubringAtPrime K v)) : K) * (y : K) = 1
       := by

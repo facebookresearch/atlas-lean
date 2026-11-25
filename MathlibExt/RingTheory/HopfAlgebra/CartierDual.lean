@@ -64,7 +64,6 @@ section TransposeOfComul
 variable (R : Type u) (A : Type v) [CommRing R] [AddCommMonoid A] [Module R A] [Coalgebra R A]
 
 omit [Coalgebra R A] in
-
 theorem dualDistrib_tmul_eq_mul'_comp_map (f g : Module.Dual R A) :
     TensorProduct.dualDistrib R A A (f ⊗ₜ[R] g) =
       LinearMap.mul' R R ∘ₗ TensorProduct.map f g := by
@@ -452,7 +451,6 @@ theorem dualDistrib_map_dualMul_dualMul
   | add T₁ T₂ ih₁ ih₂ => simp only [map_add, LinearMap.add_apply, ih₁, ih₂]
 
 omit [Module.Finite R A] [Module.Free R A] in
-
 theorem dualDistrib_map_dualDistrib_ttcomm :
     (TensorProduct.dualDistrib R (A ⊗[R] A) (A ⊗[R] A)) ∘ₗ
         (TensorProduct.map (TensorProduct.dualDistrib R A A)
@@ -473,7 +471,6 @@ theorem dualDistrib_map_dualDistrib_ttcomm :
   ring
 
 omit [Module.Finite R A] [Module.Free R A] in
-
 theorem dualDistrib_map_dualDistrib_ttcomm_apply
     (T : (Module.Dual R A ⊗[R] Module.Dual R A) ⊗[R]
       (Module.Dual R A ⊗[R] Module.Dual R A))

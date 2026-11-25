@@ -784,7 +784,6 @@ theorem exists_heckeConj_eq (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N) (x : Gamma
   have hdet : A 0 0 * A 1 1 - A 0 1 * A 1 0 = 1 := by
     rw [← Matrix.det_fin_two, hA]; exact (x : SL(2, ℤ)).2
   have hc'' : A 1 0 = (ℓ : ℤ) * c' := hc'
-
   let B : Matrix (Fin 2) (Fin 2) ℤ := !![A 0 0, A 0 1 * (ℓ : ℤ); c', A 1 1]
   have hB00 : B 0 0 = A 0 0 := rfl
   have hB01 : B 0 1 = A 0 1 * (ℓ : ℤ) := rfl
@@ -792,7 +791,6 @@ theorem exists_heckeConj_eq (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N) (x : Gamma
   have hB11 : B 1 1 = A 1 1 := rfl
   have hBdet : B.det = 1 := by
     rw [Matrix.det_fin_two, hB00, hB01, hB10, hB11, ← hdet, hc'']; ring
-
   have hNc : ((A 1 0 : ℤ) : ZMod N) = 0 := by
     have := Gamma0_mem.mp x.2
     simpa [hA] using this
@@ -877,7 +875,6 @@ theorem exists_mul_mem_dvd (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N) (γ : Gamma
 theorem exists_conj_mul_eq (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N) (hℓℓ' : ¬ ℓ ∣ ℓ') (γ : Gamma0 N) :
     ∃ (u : ↥(heckeUpper N ℓ)) (u' : ↥(heckeUpper N ℓ')),
       (heckeConj N ℓ u : Gamma0 N) * u' = γ := by
-
   have hk : ∃ k : ℤ, ¬ (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 1 0 * k * (ℓ' : ℤ) + (γ : SL(2, ℤ)) 1 1 := by
     by_cases hd : (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 1 1
     · refine ⟨1, fun h => ?_⟩
@@ -968,7 +965,6 @@ theorem PsiFun_injective : Function.Injective (PsiFun (m := m) σ) := by
   have hW : (q₁.out * ((σ q₁' : ↥(heckeUpper N ℓ)) : Gamma0 N))⁻¹
       * (q₂.out * ((σ q₂' : ↥(heckeUpper N ℓ)) : Gamma0 N)) ∈ heckeUpper N m :=
     QuotientGroup.eq.mp h
-
   have hU : q₁.out⁻¹ * q₂.out ∈ heckeUpper N ℓ := by
     have h1 : (q₁.out * ((σ q₁' : ↥(heckeUpper N ℓ)) : Gamma0 N))⁻¹
         * (q₂.out * ((σ q₂' : ↥(heckeUpper N ℓ)) : Gamma0 N)) ∈ heckeUpper N ℓ :=

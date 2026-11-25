@@ -98,7 +98,6 @@ private theorem eq_X_pow_of_mul : ∀ (N : ℕ) (p : K[X]), p.natDegree ≤ N �
           have := Polynomial.natDegree_X_mul hp₁
           omega
         have h1' : p₁.eval 1 = 1 := by simpa using h1
-
         have hmul₀ : ∀ s s' : K, s ≠ 0 → s' ≠ 0 → p₁.eval (s * s') = p₁.eval s * p₁.eval s' := by
           intro s s' hs hs'
           have := hmul s s' hs'
@@ -106,7 +105,6 @@ private theorem eq_X_pow_of_mul : ∀ (N : ℕ) (p : K[X]), p.natDegree ≤ N �
           have hss : s * s' ≠ 0 := mul_ne_zero hs hs'
           apply mul_left_cancel₀ hss
           linear_combination this
-
         have hmul' : ∀ s s' : K, s' ≠ 0 → p₁.eval (s * s') = p₁.eval s * p₁.eval s' := by
           intro s s' hs'
           have hid : p₁.comp (X * C s') = p₁ * C (p₁.eval s') := by
@@ -126,7 +124,6 @@ private theorem eq_X_pow_of_mul : ∀ (N : ℕ) (p : K[X]), p.natDegree ≤ N �
         have := hmul 0 s hs
         rw [zero_mul] at this
         rw [eval_one]
-
         have h2 : p.eval 0 * (p.eval s - 1) = 0 := by linear_combination -this
         rcases mul_eq_zero.mp h2 with h3 | h3
         · exact absurd h3 h0
@@ -203,7 +200,6 @@ private theorem aeval_mulV_eq {S : Type*} [CommRing S] [Algebra ℚ S] (D c : �
     MvPolynomial.aeval (mulV (algebraMap ℚ S D) (algebraMap ℚ S c) v w) P =
       MvPolynomial.aeval v P * MvPolynomial.aeval w P := by
   classical
-
   set Q : MvPolynomial (Fin 4 ⊕ Fin 4) ℚ :=
     MvPolynomial.bind₁ (mulPoly D c) P -
       MvPolynomial.rename Sum.inl P * MvPolynomial.rename Sum.inr P with hQ
@@ -439,7 +435,6 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
     IsSquare D ∨ IsSquare c := by
   by_contra hnot
   obtain ⟨hDs, hcs⟩ := not_or.mp hnot
-
   set d : ℝ := Real.sqrt D with hd_def
   set e : ℝ := Real.sqrt c with he_def
   have hd : 0 < d := Real.sqrt_pos.mpr (by exact_mod_cast hD)
@@ -450,7 +445,6 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
       exact_mod_cast hc.le)
   have hdirr : Irrational d := (irrational_sqrt_intCast_iff_of_nonneg hD.le).mpr hDs
   have heirr : Irrational e := (irrational_sqrt_intCast_iff_of_nonneg hc.le).mpr hcs
-
   set f : (Fin 4 → ℝ) → ℝ := fun v => MvPolynomial.aeval v P with hf_def
   have hfmul : ∀ v w, f (mulV (d ^ 2) (e ^ 2) v w) = f v * f w := by
     intro v w
@@ -486,7 +480,6 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
       RingHom.id_apply]
     ring
   obtain ⟨α, hα⟩ := exists_eq_prod_pow g hgmul hgone hgpoly
-
   have hfchi : ∀ v, f v = ∏ i, (chi d e v i) ^ α i := by
     intro v
     have := hα (chi d e v)
@@ -496,12 +489,10 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
     intro z
     rw [← aeval_intCast F P hF z]
     exact hfchi _
-
   have hsum : α 0 + α 1 + α 2 + α 3 = 4 := by
     have h1 : f ((2 : ℝ) • ![1, 0, 0, 0]) = 2 ^ 4 * f ![1, 0, 0, 0] := aeval_smul_real P hP 2 _
     rw [hfone, mul_one, hfchi, prod_chi_2000] at h1
     exact Nat.pow_right_injective le_rfl (by exact_mod_cast h1)
-
   have heven : ∀ i, Even (α i) := by
     have hlt : |d - e| < d + e := by
       rw [abs_sub_lt_iff]; constructor <;> linarith
@@ -527,7 +518,6 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
     rw [← Finset.prod_erase_mul _ _ (Finset.mem_univ i)] at hval
     have : ((F z : ℕ) : ℝ) < 0 := by rw [hval]; exact mul_neg_of_pos_of_neg hpos hneg
     linarith [(Nat.cast_nonneg (F z) : (0 : ℝ) ≤ F z)]
-
   have hA : α 0 + α 1 = 2 := by
     apply two_of_rat d hdirr D hd2 (α 0 + α 1) (α 2 + α 3) ((heven 0).add (heven 1)) ((heven 2).add
         (heven 3))
@@ -552,7 +542,6 @@ private theorem main (D c : ℤ) (hD : 0 < D) (hc : 0 < c)
   obtain ⟨k1, hk1⟩ := heven 1
   obtain ⟨k2, hk2⟩ := heven 2
   obtain ⟨k3, hk3⟩ := heven 3
-
   by_cases hDc : IsSquare (D * c)
   ·
     obtain ⟨r, hr⟩ := hDc

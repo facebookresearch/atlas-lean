@@ -102,7 +102,6 @@ private theorem exists_evalNewtonSlope {f : (HahnSeries ℚ K)[X]} (hf : f.Monic
         (f.coeff 0).order = (f.coeff j₀).order + j₀ • γ := by
   classical
   set δ : ℚ := (f.coeff 0).order
-
   set ψ : ℕ → ℚ := fun j => (δ - (f.coeff j).order) / (j : ℚ)
   obtain ⟨j₀, hj₀mem, hj₀max⟩ :=
     Finset.exists_max_image (evalSlopeSupport f) ψ (evalSlopeSupport_nonempty hf hdeg)
@@ -115,7 +114,6 @@ private theorem exists_evalNewtonSlope {f : (HahnSeries ℚ K)[X]} (hf : f.Monic
     have hjpos : (0 : ℚ) < (j : ℚ) := by exact_mod_cast hj1
     have hmem : j ∈ evalSlopeSupport f := mem_evalSlopeSupport.mpr ⟨hjle, hj1, hjne⟩
     have hle : ψ j ≤ γ := hj₀max j hmem
-
     rw [nsmul_eq_mul]
     have hmul : δ - (f.coeff j).order ≤ (j : ℚ) * γ := by
       rw [div_le_iff₀ hjpos] at hle; linarith [hle]
@@ -386,7 +384,6 @@ private theorem exists_kaplanskyLE_of_eval_ne_zero [IsAlgClosed K] {f : (HahnSer
   have hgdeg : 1 ≤ g.natDegree := by rw [hg, Polynomial.natDegree_taylor]; exact hdeg
   have hg0 : g.coeff 0 ≠ 0 := by rw [hg, Polynomial.taylor_coeff_zero]; exact hr
   obtain ⟨γ, hslope, j₀, hj₀1, hj₀le, hj₀ne, hj₀eq⟩ := exists_evalNewtonSlope hgmonic hgdeg
-
   have hconst : (evalEdgeForm g γ).coeff 0 ≠ 0 := by
     rw [evalEdgeForm_coeff_zero]; exact HahnSeries.leadingCoeff_ne_zero.mpr hg0
   have hj₀coeff : (evalEdgeForm g γ).coeff j₀ ≠ 0 := by
@@ -397,7 +394,6 @@ private theorem exists_kaplanskyLE_of_eval_ne_zero [IsAlgClosed K] {f : (HahnSer
       (le_trans hj₀1 (Polynomial.le_natDegree_of_ne_zero hj₀coeff))).ne')
   have hcne : c ≠ 0 := fun hc0 => by
     rw [Polynomial.IsRoot, hc0, ← Polynomial.coeff_zero_eq_eval_zero] at hc; exact hconst hc
-
   have hvanish : ∀ q ≤ (g.coeff 0).order, (g.eval (HahnSeries.single γ c)).coeff q = 0 := by
     intro q hq
     rcases lt_or_eq_of_le hq with hlt' | heq
@@ -559,18 +555,15 @@ private theorem kaplanskySlope_kaplanskyLimit {C : Set (HahnSeries ℚ K)}
 private theorem exists_kaplanskyLE_upperBound {C : Set (HahnSeries ℚ K)}
     (hC : IsChain (KaplanskyLE f) C) :
     ∃ ub, ∀ a ∈ C, KaplanskyLE f a ub := by
-
   by_cases hmax : ∃ m ∈ C, ∀ a ∈ C, KaplanskyLE f a m
   · obtain ⟨m, _, hm⟩ := hmax; exact ⟨m, hm⟩
   push Not at hmax
-
   have hnomax : ∀ a ∈ C, ∃ b ∈ C, KaplanskyLE f a b ∧ a ≠ b := by
     intro a ha
     obtain ⟨b, hb, hnle⟩ := hmax a ha
     rcases hC.total ha hb with hab | hab
     · exact ⟨b, hb, hab, fun heq => hnle (heq ▸ KaplanskyLE.refl f a)⟩
     · exact absurd hab hnle
-
   refine ⟨kaplanskyLimit hC, fun a ha => ?_⟩
   obtain ⟨b, hb, hab, hne⟩ := hnomax a ha
   have hltab : HahnSeries.addVal ℚ K (f.eval a) < HahnSeries.addVal ℚ K (f.eval b) := by

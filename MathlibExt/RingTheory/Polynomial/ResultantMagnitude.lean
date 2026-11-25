@@ -253,7 +253,6 @@ theorem psum_eq (P Q : ℚ[X]) (hP : P.Monic) (hQ : Q.Monic) (hdeg : P.natDegree
   set d := P.natDegree with hd'
   set α := (A P n).coeff (d - 1) with hα
   set β := (A Q n).coeff (d - 1) with hβ
-
   suffices hαβ : α = β by
     have h1 := hA3 hd
     have h2 := hB3 hd
@@ -262,7 +261,6 @@ theorem psum_eq (P Q : ℚ[X]) (hP : P.Monic) (hQ : Q.Monic) (hdeg : P.natDegree
     have hε0 : ((-1 : ℂ)) ^ (n * d) ≠ 0 := pow_ne_zero _ (neg_ne_zero.mpr one_ne_zero)
     exact mul_left_cancel₀ hε0 h2
   by_contra hαβ
-
   set D := A P n - A Q n with hD
   set E := A P n + A Q n with hE
   have hDdeg : D.natDegree = d - 1 ∧ D.leadingCoeff = α - β := by
