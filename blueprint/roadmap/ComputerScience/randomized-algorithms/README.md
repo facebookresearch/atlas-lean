@@ -12,4 +12,5 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Maximum load of balls into bins](maximum-load-of-balls-into-bins.md)
 - [Locality-sensitive hashing](locality-sensitive-hashing/README.md)
 - [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
+- [Monte Carlo estimation and variance reduction](monte-carlo-estimation/README.md)
 - [Probabilistic analysis tools](probabilistic-analysis-tools/README.md)

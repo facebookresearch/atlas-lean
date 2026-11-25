@@ -17,3 +17,4 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Approximation algorithms and approximation ratios](approximation-algorithms-and-approximation-ratios.md)
 
 - [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
+- [A fully polynomial-time approximation scheme for knapsack](fptas-for-the-knapsack-problem.md)

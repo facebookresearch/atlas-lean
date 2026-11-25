@@ -10,7 +10,10 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Optimal binary search tree](optimal-binary-search-tree/README.md)
 - [Rod cutting](rod-cutting/README.md)
 - [Subset sum](subset-sum/README.md)
+- [Weighted interval scheduling](weighted-interval-scheduling/README.md)
 - [Zero-one knapsack problem](zero-one-knapsack-problem/README.md)
+
+- [Backward induction for deterministic finite-horizon control](deterministic-finite-horizon-dynamic-programming.md)
 
 ## Related topics
 
