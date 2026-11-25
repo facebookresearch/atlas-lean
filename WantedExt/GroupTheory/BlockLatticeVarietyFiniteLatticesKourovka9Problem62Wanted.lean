@@ -19,7 +19,7 @@ respect to inclusion, which is subdirectly irreducible for infinite `|G|` and si
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.BlockLatticeVarietyKourovka11Problem93Wanted
+public import MathlibExt.GroupTheory.BlockLatticeVarietyKourovka11Problem93
 
 @[expose] public section
 

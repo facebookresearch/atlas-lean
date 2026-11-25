@@ -1,0 +1,3 @@
+# Well-formed instances of GRAPH COLORING ON (2K2, net)-FREE GRAPHS
+
+An instance $(n, E, K)$ is well-formed for GRAPH COLORING ON $(2K_2, \text{net})$-FREE GRAPHS when it is a well-formed GRAPH COLORING instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), $0 < K \le n$, and neither $2K_2$ (two disjoint edges) nor the net (a triangle with a pendant vertex at each corner) is an induced subgraph of the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$). Here a graph $H$ is an induced subgraph of $G$ when some injective map from the vertices of $H$ to those of $G$ preserves both adjacency and non-adjacency.

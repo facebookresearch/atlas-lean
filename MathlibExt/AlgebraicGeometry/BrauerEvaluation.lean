@@ -66,8 +66,9 @@ instance : IsGrothendieckAbelian.{1}
   exact Sheaf.isGrothendieckAbelian_of_essentiallySmall
     Scheme.etaleTopology AddCommGrpCat.{1}
 
-/-- The free abelian sheaf on the actual represented scheme functor.
-This is Mathlib's `H'` construction with the necessary universe lift. -/
+/-- The functor sending a scheme $X$ to the free abelian sheaf $\mathbb{Z}[h_X]$ on the big étale
+site of schemes: the sheafification of the presheaf $T \mapsto \mathbb{Z}[\mathrm{Hom}(T, X)]$ of
+free abelian groups on the morphisms $T \to X$. -/
 def representedFreeSheaf :
     Scheme.{0} ⥤ Sheaf Scheme.etaleTopology.{0} AddCommGrpCat.{1} :=
   yoneda ⋙ (Functor.whiskeringRight _ _ _).obj

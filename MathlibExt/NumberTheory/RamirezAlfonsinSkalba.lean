@@ -13,6 +13,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Coprime.Lemmas
 
+import Mathlib.Algebra.Order.Ring.Int
 import Mathlib.Data.Nat.ModEq
 import Mathlib.Order.Interval.Set.Nat
 import Mathlib.Tactic.Ring
@@ -22,6 +23,8 @@ import Mathlib.Tactic.Ring
 
 `MetaMathlibExt.twoGenerator_dvd_sub_of_eq` gives the divisibility relations between the
 coefficients of two representations of the same natural number.
+`MetaMathlibExt.exists_eq_of_ncard_twoGeneratorReps` gives a bounded normal form determined
+by the exact number of representations.
 `MetaMathlibExt.card_primes_ellNumericalSemigroup_eq` counts primes with more than
 `ℓ` representations up to the Frobenius bound using a translate of the semigroup.
 -/
@@ -90,6 +93,48 @@ private theorem lt_ncard_reps_iff {c d ℓ n : ℕ} (hc : 0 < c) (hd : 0 < d)
         _ = n := by rw [← hsplit, hn]
     · intro i _ j _ hij
       exact Nat.eq_of_mul_eq_mul_right hd (Nat.add_left_cancel (congrArg Prod.fst hij))
+
+/-- **Normal form of a number with exactly $\ell$ representations.** Let $c$ and $d$ be coprime
+positive integers, and let $n$ and $\ell$ be natural numbers such that the equation
+$n = cx + dy$ has exactly $\ell$ solutions $(x, y)$ in natural numbers. Then there are natural
+numbers $x_0 < d$ and $y_0 < c$ with $n = (\ell - 1)cd + cx_0 + dy_0$ in the integers.
+
+The identity is stated over the integers, so $\ell = 0$ is included (then $\ell - 1 = -1$). The
+paper's standing assumption $1 < c < d$ is weakened to $0 < c$, $0 < d$.
+
+Source: Yuchen Ding and Takao Komatsu, *On a Conjecture of Ramírez Alfonsín and
+Skałba, III*, INTEGERS 25 (2025), Article A51, Lemma 2 (`integers-2025-A51-lem-2`). -/
+public theorem exists_eq_of_ncard_twoGeneratorReps {c d : ℕ} (hc : 0 < c) (hd : 0 < d)
+    (hcd : c.Coprime d) (n ℓ : ℕ) (hℓ : {p : ℕ × ℕ | c * p.1 + d * p.2 = n}.ncard = ℓ) :
+    ∃ x₀ < d, ∃ y₀ < c, (n : ℤ) = ((ℓ : ℤ) - 1) * c * d + c * x₀ + d * y₀ := by
+  have threshold (k : ℕ) :
+      k < ℓ ↔ ∃ x y : ℕ, n = k * c * d + c * x + d * y := by
+    rw [← hℓ]
+    exact lt_ncard_reps_iff hc hd hcd
+  -- Shifting by cd gives a natural-number identity even when n has no representation.
+  obtain ⟨x, y, hxy⟩ : ∃ x y : ℕ, n + c * d = ℓ * c * d + c * x + d * y := by
+    cases ℓ with
+    | zero =>
+      obtain ⟨x, y, h⟩ := Nat.exists_add_mul_eq_of_gcd_dvd_of_mul_pred_le c d (n + c * d)
+        (by simp [hcd.gcd_eq_one])
+        ((Nat.mul_le_mul (Nat.pred_le c) (Nat.pred_le d)).trans (Nat.le_add_left ..))
+      exact ⟨x, y, by simpa [mul_comm] using h.symm⟩
+    | succ k =>
+      obtain ⟨x, y, h⟩ := (threshold k).mp (Nat.lt_succ_self k)
+      exact ⟨x, y, by rw [h, Nat.succ_mul, Nat.add_mul]; omega⟩
+  -- Either coefficient exceeding its bound would give more than ℓ representations of n.
+  have hmax := mt (threshold ℓ).mpr (Nat.lt_irrefl ℓ)
+  refine ⟨x, ?_, y, ?_, ?_⟩
+  · by_contra! hx
+    obtain ⟨a, rfl⟩ := Nat.exists_eq_add_of_le hx
+    apply hmax
+    exact ⟨a, y, by rw [Nat.mul_add] at hxy; omega⟩
+  · by_contra! hy
+    obtain ⟨b, rfl⟩ := Nat.exists_eq_add_of_le hy
+    apply hmax
+    exact ⟨x, b, by rw [Nat.mul_add, Nat.mul_comm d c] at hxy; omega⟩
+  · rw [sub_mul, sub_mul, one_mul, sub_add_eq_add_sub, sub_add_eq_add_sub, eq_sub_iff_add_eq]
+    exact_mod_cast hxy
 
 /-- **Counting primes with more than $\ell$ representations.** Let $c$ and $d$ be coprime
 natural numbers with $1 < c < d$, let $\ell$ be a natural number, and put
