@@ -11,6 +11,6 @@ When $B$ is the signed incidence matrix, $I_v$ is the current leaving the node i
 the shunt, so $S_v$ is the power that the network absorbs through node $v$. For example, one branch
 of admittance $1$ from node $0$ to node $1$ ($B_{00} = 1$, $B_{10} = -1$) with $V = (1, 0)$ and no
 shunts gives $S_0 = 1$: node $0$ supplies the power the branch dissipates. Every node carries one
-phasor, so $S_v$ is a per-phase quantity; in
-[balanced three-phase operation](sum-node-complex-power-balanced-phases.md) the three phases supply
-$3 S_v$.
+phasor, so $S_v$ is a per-phase quantity: when every node voltage is replaced, phase by phase, by
+its balanced phase set, with the same $B$, $y$ and $y^s$, the three phases together supply $3 S_v$
+([balanced three-phase operation](sum-node-complex-power-balanced-phases.md)).
