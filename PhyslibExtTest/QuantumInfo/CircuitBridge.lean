@@ -88,6 +88,25 @@ theorem outputPOVM_measure_init_false :
 
 #print axioms outputPOVM_measure_init_false
 
+/-- With one ancilla qubit (`m = 1`), the state of the input `[true]` is the product of
+`|1⟩` on the first register and `|0⟩` on the second: the input sits on the low-order
+qubit, as `qubitSplit` and `tensorProd` read it. -/
+theorem vecState_init_true_one_ancilla :
+    vecState 1 1 (bqpInitState [true] 1) =
+      MState.pure (Ket.basis 1) ⊗ᴹ MState.pure (Ket.basis 0) := by
+  have hψ : sqNorm (m := 1 + 1) (bqpInitState [true] 1) = 1 := sqNorm_bqpInitState [true] 1
+  rw [vecState_of_sqNorm_eq_one (v := 1) (m := 1) hψ, MState.relabel_pure,
+    ← MState.pure_prod_pure]
+  congr 1
+  refine Ket.ext fun x => ?_
+  obtain ⟨p, q⟩ := x
+  rw [Ket.relabel_apply, ketOfVec_apply]
+  refine (tensorProd_qubitSplit (v := 1) (m := 1) (basisState [true]) (zeroState 1) p q).trans ?_
+  fin_cases p <;> fin_cases q <;>
+    simp [basisState, zeroState, qNumOf, Ket.prod, Ket.basis, Ket.apply]
+
+#print axioms vecState_init_true_one_ancilla
+
 /-- After an `X` gate on the output qubit, the `[true]` state rejects. -/
 theorem outputPOVM_measure_after_xLow :
     (((outputPOVM 2 0).measure (circuitChannel 2 0

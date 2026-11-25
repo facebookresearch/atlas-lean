@@ -84,7 +84,8 @@ noncomputable def circuitUnitary (N : ℕ) (gs : List QGate) :
   if h : ∀ g ∈ gs, QGateWellFormed N g then ⟨circuitMatrix N gs, circuitMatrix_mem_unitaryGroup h⟩
   else 1
 
-/-- Unitary channel of a gate list on the register pair of `qubitSplit v m`. -/
+/-- Unitary channel of a gate list on the register pair of `qubitSplit v m`; the identity
+channel when some gate is not well formed. -/
 noncomputable def circuitChannel (v m : ℕ) (gs : List QGate) :
     CPTPMap (Fin (2 ^ v) × Fin (2 ^ m)) (Fin (2 ^ v) × Fin (2 ^ m)) :=
   CPTPMap.ofEquiv (qubitSplit v m).symm ∘ₘ CPTPMap.ofUnitary (circuitUnitary (v + m) gs) ∘ₘ
@@ -98,7 +99,7 @@ private lemma uConj_pure_eq {d : Type*} [Fintype d] [DecidableEq d]
   ext i j
   have hU : ((MState.pure ψ).uConj U).m
       = U.val * (MState.pure ψ).m * U.val.conjTranspose := by
-    show ((MState.pure ψ).M.conj U.val).mat = _
+    change ((MState.pure ψ).M.conj U.val).mat = _
     rw [HermitianMat.conj_apply_mat, MState.mat_M]
   rw [hU]
   have hentry : ∀ i j, (U.val * (MState.pure ψ).m * U.val.conjTranspose) i j
@@ -159,7 +160,7 @@ lemma circuitChannel_vecState {v m : ℕ} {gs : List QGate}
       = ((circuitUnitary (v + m) gs).val.mulVec (ketOfVec ψ hψ)) i := by
     intro i
     rw [ketOfVec_apply, hUval, hkeq, applyCircuit_eq_circuitMatrix_mulVec]
-    all_goals exact hgs
+    exact hgs
   have hUconj := uConj_pure_eq (ketOfVec ψ hψ) (circuitUnitary (v + m) gs)
     (ketOfVec (applyCircuit (v + m) gs ψ) hχ) hχfun
   rw [vecState_of_sqNorm_eq_one hψ, vecState_of_sqNorm_eq_one hχ]
@@ -178,7 +179,7 @@ noncomputable def outputPOVM (v m : ℕ) : POVM Bool (Fin (2 ^ v) × Fin (2 ^ m)
   nonneg := by
     intro b
     cases b
-    · show 0 ≤ 1 - outputProj v m
+    · change 0 ≤ 1 - outputProj v m
       have hsub : (1 : HermitianMat (Fin (2 ^ v) × Fin (2 ^ m)) ℂ) - outputProj v m
           = HermitianMat.diagonal ℂ (1 - fun p =>
             if qBit 0 (qubitSplit v m p).val = 1 then (1 : ℝ) else 0) := by
@@ -186,21 +187,21 @@ noncomputable def outputPOVM (v m : ℕ) : POVM Bool (Fin (2 ^ v) × Fin (2 ^ m)
         rw [← HermitianMat.diagonal_one, ← HermitianMat.diagonal_sub]
       rw [hsub, HermitianMat.diagonal_nonneg]
       intro p
-      show (0 : ℝ) ≤ 1 - (if qBit 0 (qubitSplit v m p).val = 1 then (1 : ℝ) else 0)
+      change (0 : ℝ) ≤ 1 - (if qBit 0 (qubitSplit v m p).val = 1 then (1 : ℝ) else 0)
       by_cases h : qBit 0 (qubitSplit v m p).val = 1
       · simp only [ite_eq_left h, sub_self, le_refl]
       · simp only [ite_eq_right h, sub_zero, zero_le_one]
-    · show 0 ≤ outputProj v m
+    · change 0 ≤ outputProj v m
       unfold outputProj
       rw [HermitianMat.diagonal_nonneg]
       intro p
-      show (0 : ℝ) ≤ (if qBit 0 (qubitSplit v m p).val = 1 then (1 : ℝ) else 0)
+      change (0 : ℝ) ≤ (if qBit 0 (qubitSplit v m p).val = 1 then (1 : ℝ) else 0)
       by_cases h : qBit 0 (qubitSplit v m p).val = 1
       · simp only [ite_eq_left h, zero_le_one]
       · simp only [ite_eq_right h, le_refl]
   normalized := by
     rw [Fintype.sum_bool]
-    show outputProj v m + (1 - outputProj v m) = 1
+    change outputProj v m + (1 - outputProj v m) = 1
     exact add_sub_cancel _ _
 
 lemma outputPOVM_measure_vecState {v m : ℕ} {ψ : Fin (2 ^ (v + m)) → ℂ} (hψ : sqNorm ψ = 1) :
@@ -225,15 +226,15 @@ lemma outputPOVM_measure_vecState {v m : ℕ} {ψ : Fin (2 ^ (v + m)) → ℂ} (
       ((ψ s) * (starRingEnd ℂ) (ψ s)).re else 0) := by
     unfold acceptProb
     refine Finset.sum_congr rfl fun s _ => ?_
-    show (if qBit 0 s.val = 1 then ((starRingEnd ℂ) (ψ s) * ψ s).re else 0) =
+    change (if qBit 0 s.val = 1 then ((starRingEnd ℂ) (ψ s) * ψ s).re else 0) =
       (if qBit 0 s.val = 1 then ((ψ s) * (starRingEnd ℂ) (ψ s)).re else 0)
     split_ifs with h
     · exact (hnorm (ψ s)).symm
     · rfl
   rw [vecState_of_sqNorm_eq_one hψ]
-  show inner ℝ ((outputPOVM v m).mats true)
+  change inner ℝ ((outputPOVM v m).mats true)
       (((MState.pure (ketOfVec ψ hψ)).relabel (qubitSplit v m)).M) = acceptProb ψ
-  show inner ℝ (outputProj v m)
+  change inner ℝ (outputProj v m)
       (((MState.pure (ketOfVec ψ hψ)).relabel (qubitSplit v m)).M) = acceptProb ψ
   rw [HermitianMat.inner_eq_re_trace, MState.mat_M, MState.relabel_m]
   simp only [outputProj, Matrix.trace, Matrix.diag, Matrix.mul_apply, hdiag, ite_mul,

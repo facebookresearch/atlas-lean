@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Complexity.QuantumGates.CircuitSemantics
-import Mathlib.Tactic
+public import MathlibExt.Quantum.BlockEncoding
 
 /-!
 # Circuit matrices and register-pair layouts
@@ -17,8 +17,8 @@ import Mathlib.Tactic
 The matrix of a whole gate list (the product of the gate matrices, first
 gate rightmost), its unitarity on well-formed circuits, and the layout
 equivalence that reads a register pair as low-order and high-order parts
-of one register, matching `tensorProd`. These are the matrix-side facts a
-density-operator reading of circuit vectors consumes.
+of one register, matching `tensorProd` (`tensorProd_qubitSplit`). These are
+the matrix-side facts a density-operator reading of circuit vectors consumes.
 -/
 
 @[expose] public section
@@ -28,11 +28,22 @@ namespace Cslib.Complexity.Classes
 /-- Qubit layout of a register pair: `(p, q)` is the index `p + 2 ^ v * q` of `v + m`
 qubits, the first register on the low-order `v` qubits as in `tensorProd`. -/
 def qubitSplit (v m : ℕ) : Fin (2 ^ v) × Fin (2 ^ m) ≃ Fin (2 ^ (v + m)) :=
-  (Equiv.prodComm _ _).trans (finProdFinEquiv.trans (finCongr (by rw [pow_add, mul_comm])))
+  (Equiv.prodComm _ _).trans (MathlibExt.Quantum.BlockEncoding.qubitAncillaEquiv v m)
 
 theorem qubitSplit_apply_val (v m : ℕ) (p : Fin (2 ^ v)) (q : Fin (2 ^ m)) :
     (qubitSplit v m (p, q)).val = p.val + 2 ^ v * q.val :=
   rfl
+
+theorem tensorProd_qubitSplit {v m : ℕ} (φ : Fin (2 ^ v) → ℂ) (χ : Fin (2 ^ m) → ℂ)
+    (p : Fin (2 ^ v)) (q : Fin (2 ^ m)) :
+    tensorProd φ χ (qubitSplit v m (p, q)) = φ p * χ q := by
+  have hmod : (qubitSplit v m (p, q)).val % 2 ^ v = p.val := by
+    rw [qubitSplit_apply_val, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt p.isLt]
+  have hdiv : (qubitSplit v m (p, q)).val / 2 ^ v = q.val := by
+    rw [qubitSplit_apply_val, Nat.add_mul_div_left _ _ (Nat.two_pow_pos v),
+      Nat.div_eq_of_lt p.isLt, zero_add]
+  simp only [tensorProd]
+  exact congrArg₂ (· * ·) (congrArg φ (Fin.ext hmod)) (congrArg χ (Fin.ext hdiv))
 
 /-- Matrix of a gate list: the product of the gate matrices, first gate rightmost. -/
 noncomputable def circuitMatrix (N : ℕ) (gs : List QGate) :
@@ -59,8 +70,7 @@ private theorem foldl_gateMatrix_mulVec {N : ℕ} (gs : List QGate)
 
 theorem applyCircuit_eq_circuitMatrix_mulVec {N : ℕ} {gs : List QGate}
     (hgs : ∀ g ∈ gs, QGateWellFormed N g) (ψ : Fin (2 ^ N) → ℂ) :
-    applyCircuit N gs ψ = (circuitMatrix N gs).mulVec ψ :=
-  by
+    applyCircuit N gs ψ = (circuitMatrix N gs).mulVec ψ := by
   have h := foldl_gateMatrix_mulVec gs 1 ψ hgs
   rw [Matrix.one_mulVec] at h
   simp only [circuitMatrix]
@@ -85,14 +95,12 @@ private theorem foldl_gateMatrix_mem_unitary {N : ℕ} (gs : List QGate)
 
 theorem circuitMatrix_mem_unitaryGroup {N : ℕ} {gs : List QGate}
     (hgs : ∀ g ∈ gs, QGateWellFormed N g) :
-    circuitMatrix N gs ∈ Matrix.unitaryGroup (Fin (2 ^ N)) ℂ :=
-  by
+    circuitMatrix N gs ∈ Matrix.unitaryGroup (Fin (2 ^ N)) ℂ := by
   simp only [circuitMatrix]
   exact foldl_gateMatrix_mem_unitary gs 1 hgs (Submonoid.one_mem _)
 
 theorem tensorProd_zeroState_zero {a : ℕ} (φ : Fin (2 ^ a) → ℂ) :
-    tensorProd φ (zeroState 0) = φ :=
-  by
+    tensorProd φ (zeroState 0) = φ := by
   funext s
   have hs : s.val < 2 ^ a := s.isLt
   have hdiv : s.val / 2 ^ a = 0 := Nat.div_eq_of_lt hs
