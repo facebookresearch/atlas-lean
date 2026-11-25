@@ -27,3 +27,18 @@ example (m n : ℤ) :
 example (d a : Fin 0 → ℤ) (m : ℤ) :
     IsKDescendant (ecsdAdj d a) 0 m m ∧ ¬IsDigraphCycle (ecsdAdj d a) [m] := by
   simp [isKDescendant_zero, isDigraphCycle_singleton, ecsdAdj]
+
+-- The walk 3 → 0 → 2 uses the second offset on its first edge. The all-first-offset walk ends at 10.
+example : (2 : ℤ) ≡ 10 [ZMOD 4] := by
+  have h : IsKDescendant (ecsdAdj ![-2, -2] ![2, 6]) 2 3 2 := by
+    refine ⟨0, (isKDescendant_one _ _ _).mpr ?_, ?_⟩
+    · exact (ecsdAdj_two _ _ _ _ _ _).mpr (Or.inr rfl)
+    · exact (ecsdAdj_two _ _ _ _ _ _).mpr (Or.inl rfl)
+  exact ecsd_neg_two_descendant_modEq 2 6 3 2 2 h
+
+-- Equal offsets give modulus zero, so the congruence determines the endpoint exactly.
+example (m n : ℤ) (h : IsKDescendant (ecsdAdj ![-2, -2] ![2, 2]) 2 m n) :
+    n = 4 * m - 2 := by
+  have hn := ecsd_neg_two_descendant_modEq 2 2 m n 2 h
+  change n ≡ 4 * m - 2 [ZMOD 0] at hn
+  exact Int.modEq_zero_iff.mp hn

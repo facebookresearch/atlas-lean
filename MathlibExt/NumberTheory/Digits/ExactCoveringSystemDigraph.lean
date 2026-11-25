@@ -9,9 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.List.Chain
 public import Mathlib.Order.RelIso.Basic
 import Mathlib.Algebra.Group.Units.Equiv
+import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.Algebra.Ring.Int.Defs
 import Mathlib.Tactic.Ring
 
@@ -84,6 +86,54 @@ Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 1
 theorem isKDescendant_one (R : ℤ → ℤ → Prop) (m n : ℤ) :
     IsKDescendant R 1 m n ↔ R m n := by
   simp [IsKDescendant]
+
+/-- **Descendants modulo the difference of offsets.** Let $a_1, a_2, x, y$ be integers and
+$k \in \mathbb{N}$. If $y$ is a $k$-descendant of $x$ in $G(-2n + a_1, -2n + a_2)$, that is,
+the end of a directed walk of exactly $k$ edges from $x$, then
+$$y \equiv (-2)^k x + a_1 \cdot \frac{1 - (-2)^k}{3} \pmod{|a_1 - a_2|}.$$
+The quotient is an integer because $3$ divides $1 - (-2)^k$.
+
+The exact-covering condition on $a_1, a_2$ is not needed.
+
+Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
+Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 8
+(`integers-2026-A107-thm-8`). -/
+theorem ecsd_neg_two_descendant_modEq (a₁ a₂ m n : ℤ) (k : ℕ)
+    (h : IsKDescendant (ecsdAdj ![-2, -2] ![a₁, a₂]) k m n) :
+    n ≡ (-2) ^ k * m + a₁ * ((1 - (-2) ^ k) / 3) [ZMOD |a₁ - a₂|] := by
+  -- The numerator is always an exact multiple of three.
+  have hdiv (j : ℕ) : 3 ∣ 1 - (-2 : ℤ) ^ j := by
+    induction j with
+    | zero => simp
+    | succ j ih =>
+      obtain ⟨s, hs⟩ := ih
+      refine ⟨-2 * s + 1, ?_⟩
+      rw [pow_succ]
+      omega
+  have hquot (j : ℕ) :
+      (1 - (-2 : ℤ) ^ (j + 1)) / 3 = -2 * ((1 - (-2 : ℤ) ^ j) / 3) + 1 := by
+    obtain ⟨s, hs⟩ := hdiv j
+    rw [pow_succ]
+    omega
+  have hoff : a₂ ≡ a₁ [ZMOD |a₁ - a₂|] :=
+    Int.modEq_iff_dvd.mpr (abs_dvd_self _)
+  induction k generalizing n with
+  | zero =>
+    obtain rfl := (isKDescendant_zero _ _ _).mp h
+    simp
+  | succ k ih =>
+    obtain ⟨x, hx, he⟩ := h
+    have hnext : n ≡ -2 * x + a₁ [ZMOD |a₁ - a₂|] := by
+      rcases (ecsdAdj_two _ _ _ _ _ _).mp he with rfl | rfl
+      · rfl
+      · exact (Int.ModEq.refl (-2 * x)).add hoff
+    calc
+      n ≡ -2 * x + a₁ [ZMOD |a₁ - a₂|] := hnext
+      _ ≡ -2 * ((-2) ^ k * m + a₁ * ((1 - (-2) ^ k) / 3)) + a₁ [ZMOD |a₁ - a₂|] :=
+        ((ih x hx).mul_left (-2)).add_right a₁
+      _ = (-2) ^ (k + 1) * m + a₁ * ((1 - (-2) ^ (k + 1)) / 3) := by
+        rw [hquot, pow_succ]
+        ring
 
 /-- **Cycles of a digraph on the integers.** Let $R$ be a digraph on $\mathbb{Z}$, given by its edge
 relation. A list $c = (c_1, \dots, c_t)$ of integers is a cycle of $R$ when it is nonempty, its

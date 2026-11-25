@@ -155,21 +155,6 @@ theorem_wanted ecsd_two_neg_two_cycles (a : ℕ) (ha : Odd a) :
       (IsDigraphCycle (ecsdAdj ![2, -2] ![0, (a' : ℤ)]) c ↔
         IsDigraphCycle (ecsdAdj ![2, -2] ![0, (a : ℤ)]) (c.map ((t : ℤ) * ·)))
 
-/-- **Descendants modulo the difference of offsets.** Let $a_1, a_2, x, y$ be integers and
-$k \in \mathbb{N}$. If $y$ is a $k$-descendant of $x$ in $G(-2n + a_1, -2n + a_2)$, that is,
-the end of a directed walk of exactly $k$ edges from $x$, then
-$$y \equiv (-2)^k x + a_1 \cdot \frac{1 - (-2)^k}{3} \pmod{|a_1 - a_2|}.$$
-The quotient is an integer because $3$ divides $1 - (-2)^k$.
-
-The exact-covering condition on $a_1, a_2$ is not needed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 8
-(`integers-2026-A107-thm-8`). -/
-theorem_wanted ecsd_neg_two_descendant_modEq (a₁ a₂ m n : ℤ) (k : ℕ)
-    (h : IsKDescendant (ecsdAdj ![-2, -2] ![a₁, a₂]) k m n) :
-    n ≡ (-2) ^ k * m + a₁ * ((1 - (-2) ^ k) / 3) [ZMOD |a₁ - a₂|]
-
 /-- **Cyclic vertices in every residue class.** Let $a_1, a_2$ be integers with $a_1 - a_2$
 odd. Then every residue class modulo $|a_1 - a_2|$ contains a vertex that lies on a directed
 cycle of $G(-2n + a_1, -2n + a_2)$.
