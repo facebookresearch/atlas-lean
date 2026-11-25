@@ -11,3 +11,4 @@ Structures answering range, interval or nearest-point queries: segment trees, Fe
 - [Region quadtree](region-quadtree/README.md)
 - [Segment tree](segment-tree/README.md)
 - [Sparse table](sparse-table/README.md)
+- [Advanced data structures](advanced-data-structures/README.md)
