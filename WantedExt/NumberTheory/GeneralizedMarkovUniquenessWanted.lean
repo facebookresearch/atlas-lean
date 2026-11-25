@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
 public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
 public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
+public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 
 namespace MetaMathlibExt
@@ -270,18 +271,6 @@ public theorem_wanted genMarkovTree_isGenMarkovTriple_and_once (k : ℕ) :
     (∀ w, IsGenMarkovTriple k (genMarkovTree k w).1 (genMarkovTree k w).2.1
       (genMarkovTree k w).2.2) ∧
     ∀ a b c, IsGenMarkovTriple k a b c → a < b → c < b → ∃! w, genMarkovTree k w = (a, b, c)
-
-/-- **Vieta jumping identities for generalized Markov triples.** If $(a, b, c)$ is a
-$k$-generalized Markov triple, then, as integers,
-$a^2 + kab + b^2 = c\,((3 + 3k)ab - c - k(a + b))$ and
-$b^2 + kbc + c^2 = a\,((3 + 3k)bc - a - k(b + c))$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2 (display after
-Corollary 2.2). -/
-public theorem_wanted IsGenMarkovTriple.vieta_eq {k a b c : ℕ} (h : IsGenMarkovTriple k a b c) :
-    ((a : ℤ) ^ 2 + k * a * b + b ^ 2 = c * ((3 + 3 * k) * a * b - c - k * (a + b))) ∧
-      ((b : ℤ) ^ 2 + k * b * c + c ^ 2 = a * ((3 + 3 * k) * b * c - a - k * (b + c)))
 
 /-- **Induced solution of the generalized second Markov equation.** For a natural number $k$,
 a triple $(a, b, c)$ of integers is an induced positive solution of the $k$-generalized second

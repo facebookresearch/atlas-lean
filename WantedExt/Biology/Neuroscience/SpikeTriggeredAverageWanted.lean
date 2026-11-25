@@ -65,9 +65,11 @@ measure and `Z i = (x_i, y_i)` stimulus–response pairs that are pairwise indep
 identically distributed. Assume the stimulus law `ν` of `x_0` is elliptically symmetric with
 finite second moments, `y_0 ≥ 0`, `y_0` and `y_0 ‖x_0‖` are integrable, and the LN model holds:
 `E[y_0 φ(x_0)] = E[g(k · x_0) φ(x_0)]` for every bounded measurable `φ`, for a measurable
-`g ≥ 0` with `g(k · x_0)` and `g(k · x_0) (k · x_0)` integrable, `E[g(k · x_0)] > 0` and
-`kᵀ Σ k > 0`. Then almost surely `STA_N → κ Σ k` with
-`κ = E[g(k · x_0) (k · x_0)] / (E[g(k · x_0)] · kᵀ Σ k)`.
+`g ≥ 0` with `g(k · x_0)` and `g(k · x_0) (k · x_0)` integrable, `E[g(k · x_0)] > 0`,
+`kᵀ Σ k > 0`, and nonzero gain `E[g(k · x_0) (k · x_0)] ≠ 0`. Then almost surely
+`STA_N → κ Σ k` with nonzero scalar
+`κ = E[g(k · x_0) (k · x_0)] / (E[g(k · x_0)] · kᵀ Σ k) ≠ 0`, so `Σ⁻¹ STA_N` converges to the
+nonzero multiple `κ k` of the filter `k`.
 
 Source: Paninski (2003). -/
 public theorem_wanted tendsto_spikeTriggeredAverage {Ω : Type*} [MeasurableSpace Ω]
@@ -84,7 +86,8 @@ public theorem_wanted tendsto_spikeTriggeredAverage {Ω : Type*} [MeasurableSpac
     (hLN : ∀ φ : (Fin n → ℝ) → ℝ, Measurable φ → (∃ M, ∀ x, |φ x| ≤ M) →
       ∫ ω, (Z 0 ω).2 * φ (Z 0 ω).1 ∂P = ∫ ω, g (k ⬝ᵥ (Z 0 ω).1) * φ (Z 0 ω).1 ∂P)
     (hgpos : 0 < ∫ ω, g (k ⬝ᵥ (Z 0 ω).1) ∂P)
-    (hkSk : 0 < k ⬝ᵥ covMatrix (P.map fun ω => (Z 0 ω).1) *ᵥ k) :
+    (hkSk : 0 < k ⬝ᵥ covMatrix (P.map fun ω => (Z 0 ω).1) *ᵥ k)
+    (hgain : ∫ ω, g (k ⬝ᵥ (Z 0 ω).1) * (k ⬝ᵥ (Z 0 ω).1) ∂P ≠ 0) :
     ∀ᵐ ω ∂P, Tendsto (fun N => spikeTriggeredAverage Z N ω) atTop
       (𝓝 (((∫ ω', g (k ⬝ᵥ (Z 0 ω').1) * (k ⬝ᵥ (Z 0 ω').1) ∂P) /
           ((∫ ω', g (k ⬝ᵥ (Z 0 ω').1) ∂P) *

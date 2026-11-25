@@ -5,9 +5,11 @@ measure and `Z i = (x_i, y_i)` stimulus–response pairs that are pairwise indep
 identically distributed. Assume the stimulus law `ν` of `x_0` is elliptically symmetric with
 finite second moments, `y_0 ≥ 0`, `y_0` and `y_0 ‖x_0‖` are integrable, and the LN model holds:
 `E[y_0 φ(x_0)] = E[g(k · x_0) φ(x_0)]` for every bounded measurable `φ`, for a measurable
-`g ≥ 0` with `g(k · x_0)` and `g(k · x_0) (k · x_0)` integrable, `E[g(k · x_0)] > 0` and
-`kᵀ Σ k > 0`. Then almost surely `STA_N → κ Σ k` with
-`κ = E[g(k · x_0) (k · x_0)] / (E[g(k · x_0)] · kᵀ Σ k)`.
+`g ≥ 0` with `g(k · x_0)` and `g(k · x_0) (k · x_0)` integrable, `E[g(k · x_0)] > 0`,
+`kᵀ Σ k > 0`, and nonzero gain `E[g(k · x_0) (k · x_0)] ≠ 0`. Then almost surely
+`STA_N → κ Σ k` with nonzero scalar
+`κ = E[g(k · x_0) (k · x_0)] / (E[g(k · x_0)] · kᵀ Σ k) ≠ 0`, so `Σ⁻¹ STA_N` converges to the
+nonzero multiple `κ k` of the filter `k`.
 
 ## Sources
 
