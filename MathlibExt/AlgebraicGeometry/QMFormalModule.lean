@@ -37,11 +37,16 @@ public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor
 public import MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve
 
 /-!
-# Formal coordinates and formal completion of QM moduli
+# Formal coordinates and formal-module conditions for QM moduli
 
 Formal coordinates for a relative group law along its identity section,
-and the formal-completion and formal-module predicates for fake elliptic
-curves at a ramified prime.
+and, for fake elliptic curves at a ramified prime, the formal-module
+predicates and `IsFormalCompletionAlong`, the compatibility condition
+the source states for the formal completion of QM moduli along a fibre.
+Power series are evaluated with `MvFormalGroup.nilEval`, which bounds
+each exponent by `n`; every use of it here is at points with coordinates
+in an ideal `J` with `J ^ (n + 1) = ⊥`, where it agrees with truncation at
+total degree `n`.
 
 Formal `O_D`-modules (`CerednikDrinfeld.FormalODModule`) come from
 `MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor`: a
@@ -67,14 +72,22 @@ namespace MvFormalGroup
 
 variable {B : Type u} [CommRing B]
 
-/-- Evaluation of a power series at a nilpotent point, truncated at
-order `n`. -/
+/-- Evaluation of a power series `φ` at a point `a`, after truncating `φ`
+to the monomials whose exponent in each variable is at most `n`
+(`MvPowerSeries.trunc'` at the constant bound `n`), not to the monomials
+of total degree at most `n`. The point `a` is arbitrary. When every `a i`
+lies in an ideal `J` with `J ^ (n + 1) = ⊥`, every monomial of total
+degree above `n` vanishes at `a`, so the two truncations give the same
+value. -/
 def nilEval {σ : Type*} [Fintype σ] [DecidableEq σ] {B' : Type*} [CommRing B']
     [Algebra B B'] (n : ℕ) (φ : MvPowerSeries σ B) (a : σ → B') : B' :=
   MvPolynomial.aeval a
     (MvPowerSeries.trunc' B (Finsupp.equivFunOnFinite.symm fun _ => n) φ)
 
-/-- Multiplication of nilpotent points for a formal group. -/
+/-- The formal group law of `F` evaluated with `nilEval n` at a pair of
+points `s` and `t`. The points are arbitrary; when their coordinates lie
+in an ideal `J` with `J ^ (n + 1) = ⊥`, this is the product of `s` and `t`
+under `F`. -/
 def nilMul {g : ℕ} (F : MvFormalGroup g B) {B' : Type*} [CommRing B']
     [Algebra B B'] (n : ℕ) (s t : Fin g → B') : Fin g → B' :=
   fun i => nilEval n (F.toPowerSeries i) (Sum.elim s t)
@@ -86,8 +99,10 @@ namespace AlgebraicGeometry.RelativeGroupLaw
 variable {B : Type u} [CommRing B] {A : Scheme.{u}}
   {f : A ⟶ Spec (CommRingCat.of B)}
 
-/-- Coordinates for the formal group of a relative group law along its
-identity section. -/
+/-- A coordinate family: for each `B`-algebra `B'` in the universe of `B`,
+a map from `g`-tuples in `B'` to the `B'`-points of `A` over `Spec B`.
+No condition is imposed; `IsFormalCoordinates` says when such a family
+is a system of formal coordinates for a formal group. -/
 abbrev FormalCoordinates (f : A ⟶ Spec (CommRingCat.of B)) (g : ℕ) :
     Type (u + 1) :=
   ∀ (B' : Type u) [CommRing B'] [Algebra B B'], (Fin g → B') →
@@ -106,11 +121,12 @@ def IsInfinitesimal (L : RelativeGroupLaw B f) {B' : Type u} [CommRing B']
           AlgHom.comp_algebraMap]) P =
     L.one (Spec.map (CommRingCat.ofHom (algebraMap B (B' ⧸ J))))
 
-/-- Coordinates are formal coordinates for a formal group if they are
-natural in the nilpotent point and if, on each ideal `J` with
-`J ^ (n + 1) = ⊥`, they map the points with coordinates in `J`
-bijectively onto the points infinitesimal along `J` and carry the
-truncated formal group law to the group law. -/
+/-- A coordinate family `θ` is a system of formal coordinates for the
+formal group `F` if it is natural in `B'` at points with nilpotent
+coordinates and if, for each ideal `J` with `J ^ (n + 1) = ⊥`, it maps the
+points with coordinates in `J` bijectively onto the points infinitesimal
+along `J` and carries the law `F.nilMul n` on those points to the group
+law. -/
 def IsFormalCoordinates (L : RelativeGroupLaw B f) {g : ℕ}
     (F : MvFormalGroup g B) (θ : FormalCoordinates f g) : Prop :=
   (∀ (B' : Type u) [CommRing B'] [Algebra B B'] (B'' : Type u) [CommRing B'']
@@ -135,8 +151,9 @@ def IsFormalCoordinates (L : RelativeGroupLaw B f) {g : ℕ}
           L.mul (Spec.map (CommRingCat.ofHom (algebraMap B B'))) (θ B' s)
             (θ B' t)))
 
-/-- A relative group law has a formal group along its identity section
-if it has formal coordinates for some formal group. -/
+/-- A relative group law has the formal group `F` along its identity
+section if some coordinate family is a system of formal coordinates for
+`F`. -/
 def IsFormalGroupAlong (L : RelativeGroupLaw B f) {g : ℕ}
     (F : MvFormalGroup g B) : Prop :=
   ∃ θ : FormalCoordinates f g, L.IsFormalCoordinates F θ
@@ -145,10 +162,13 @@ end AlgebraicGeometry.RelativeGroupLaw
 
 namespace CerednikDrinfeld.QM
 
-/-- A coordinate on the order `Λ` is an order coordinate at `q` if it is
-additive, unital, multiplicative with Frobenius-twisted second
-component, injective, dense modulo powers of `q`, and compatible with
-the quaternion trace. -/
+/-- A map `coord` from a subring `Λ` of `ℍ[ℚ, a, b]` to `Zp2 q × Zp2 q` is
+an order coordinate at `q` if it is additive, sends `1` to `(1, 0)`, is
+multiplicative for the product
+`(x₁, x₂) * (y₁, y₂) = (x₁ y₁ + q x₂ σ(y₂), x₁ y₂ + x₂ σ(y₁))`, with `σ`
+the Frobenius, is injective, has image meeting every class modulo `q ^ k`
+for every `k`, and sends each element whose reduced trace is an integer
+`n` to a pair whose first entry `x` satisfies `x + σ(x) = n`. -/
 structure IsOrderCoord {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b]) (q : ℕ)
     [Fact q.Prime] (coord : ↥Λ → Zp2 q × Zp2 q) : Prop where
   /-- The coordinate is additive. -/
@@ -173,10 +193,13 @@ structure IsOrderCoord {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b]) (q : ℕ)
     (m : ℍ[ℚ, a, b]) + star (m : ℍ[ℚ, a, b]) = ((n : ℚ) : ℍ[ℚ, a, b]) →
     (coord m).1 + WittVector.frobenius (coord m).1 = (n : Zp2 q)
 
-/-- Formal completion of QM moduli along a fibre: the formal
-coordinates on the second moduli problem, evaluated through series
-`φ`, agree with the map of points induced by the morphism of moduli
-problems. -/
+/-- Compatibility of coordinate families `θ` on `A` and `θ'` on `A'` with a
+morphism `h : A ⟶ A'` over `Spec B`, through the power series `φ`: for
+every `B`-algebra `B'`, ideal `J` of `B'` with `J ^ (n + 1) = ⊥` and point
+`s` with coordinates in `J`, the point `θ' B' (fun i => nilEval n (φ i) s)`
+is the image under `h` of `θ B' s`. It does not require `θ` or `θ'` to be
+formal coordinate systems, and it does not assert that `h` represents or
+identifies a formal completion; the name follows the source. -/
 def IsFormalCompletionAlong {B : Type u} [CommRing B] {A A' : Scheme.{u}}
     {f : A ⟶ Spec (CommRingCat.of B)} {f' : A' ⟶ Spec (CommRingCat.of B)}
     {g g' : ℕ}
@@ -194,9 +217,14 @@ namespace FakeEllipticCurve
 variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ} {q : ℕ} [Fact q.Prime]
   {B : Type u} [CommRing B]
 
-/-- A fake elliptic curve is a formal module over `X` via coordinates
-`θ` if `θ` is a formal coordinate system for `X` and the order action
-on points is given by the series action of the coordinate. -/
+/-- A fake elliptic curve `E` is a formal module over `X` via a coordinate
+family `θ` if `θ` is a system of formal coordinates for the formal group
+of `X` and the action of `Λ` matches that of `O_D` on `X` at points with
+coordinates in an ideal `J` with `J ^ (n + 1) = ⊥`: for `m : Λ` with
+`coord m = (c₁, c₂)`, `θ` sends the value under `nilEval n` of the series
+of `c₁ + c₂ ϖ` (the sum, for the law of `X`, of `X.act c₁` and of
+`X.act c₂` after `ϖ`) at such a point `s` to the image of `θ B' s` under
+`E.act m`. -/
 def IsFormalModuleVia (E : FakeEllipticCurve Λ N B)
     (coord : ↥Λ → Zp2 q × Zp2 q) (X : FormalODModule q B)
     (θ : AlgebraicGeometry.RelativeGroupLaw.FormalCoordinates E.f 2) :
@@ -209,8 +237,8 @@ def IsFormalModuleVia (E : FakeEllipticCurve Λ N B)
             ((X.act (coord m).2).comp X.varpi) i) s) =
         pushPt (E.act m) (E.act_over m) (θ B' s))
 
-/-- A fake elliptic curve is a formal module over `X` if it is one via
-some formal coordinates. -/
+/-- A fake elliptic curve `E` is a formal module over `X` if it is one via
+some coordinate family, in the sense of `IsFormalModuleVia`. -/
 def IsFormalModuleOf (E : FakeEllipticCurve Λ N B)
     (coord : ↥Λ → Zp2 q × Zp2 q) (X : FormalODModule q B) : Prop :=
   ∃ θ : AlgebraicGeometry.RelativeGroupLaw.FormalCoordinates E.f 2,

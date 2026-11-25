@@ -11,7 +11,7 @@ module
 public import MathlibExt.AlgebraicGeometry.QMFormalModule
 
 /-!
-# Tests for formal `O_D`-modules and QM formal completion
+# Tests for formal coordinates, formal `O_D`-modules and QM fake elliptic curves
 -/
 
 @[expose] public section
@@ -22,8 +22,8 @@ open scoped Quaternion
 
 universe u
 
-/-- A formal module over a fake elliptic curve unpacks to formal
-coordinates. -/
+/-- A fake elliptic curve that is a formal module over `X` is one via some
+coordinate family. -/
 private theorem exactSource {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ}
     {q : ℕ} [Fact q.Prime] {B : Type u} [CommRing B]
     (E : CerednikDrinfeld.QM.FakeEllipticCurve Λ N B)
@@ -70,7 +70,22 @@ example {B : Type u} [CommRing B] [Nontrivial B] {A : Scheme.{u}}
     (fun _ => Ideal.zero_mem _) (fun _ => Ideal.mem_span_singleton_self _) rfl
   simpa using congrArg (fun s => TrivSqZeroExt.snd (s 0)) hst
 
-/-- The order acts on a fake elliptic curve as a unital monoid action by
+open CategoryTheory AlgebraicGeometry in
+/-- `IsFormalCompletionAlong` is only a compatibility condition: the constant
+families at the identity point, which by the previous example are not
+formal coordinates over a nontrivial ring, satisfy it for the identity
+morphism and any series. -/
+example {B : Type u} [CommRing B] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of B)} (L : RelativeGroupLaw B f)
+    (φ : Fin 1 → MvPowerSeries (Fin 1) B) :
+    CerednikDrinfeld.QM.IsFormalCompletionAlong (g := 1) (g' := 1)
+      (fun _ _ _ _ => L.one _) (fun _ _ _ _ => L.one _) (𝟙 A)
+      (Category.id_comp f) φ := by
+  intro B' _ _ J n _ s _
+  apply Over.OverMorphism.ext
+  simp
+
+/-- `Λ` acts on a fake elliptic curve as a unital monoid action by
 endomorphisms, with no membership side conditions. -/
 example {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ} {S : Type} [CommRing S]
     (E : CerednikDrinfeld.QM.FakeEllipticCurve Λ N S) :
@@ -134,6 +149,25 @@ private theorem trunc'_X_of_eq_zero {σ R : Type*} [DecidableEq σ]
   · subst hm
     simp [Finsupp.single_le_iff, hv]
   · simp [hm]
+
+/-- Truncating at the constant order `1` keeps `X₀ X₁`, whose exponents are
+both `1`, although its total degree is `2`. -/
+private theorem trunc'_X_mul_X :
+    trunc' ℤ (Finsupp.equivFunOnFinite.symm fun _ => 1)
+        (X 0 * X 1 : MvPowerSeries (Fin 2) ℤ) =
+      MvPolynomial.X 0 * MvPolynomial.X 1 := by
+  rw [X, X, monomial_mul_monomial, MvPolynomial.X, MvPolynomial.X,
+    MvPolynomial.monomial_mul_monomial]
+  ext m
+  rw [coeff_trunc', coeff_monomial, MvPolynomial.coeff_monomial]
+  by_cases hm : m = Finsupp.single 0 1 + Finsupp.single 1 1
+  · subst hm
+    have hle : Finsupp.single (0 : Fin 2) 1 + Finsupp.single 1 1 ≤
+        Finsupp.equivFunOnFinite.symm fun _ => 1 := by
+      intro i
+      fin_cases i <;> simp
+    simp [hle]
+  · simp [hm, Ne.symm hm]
 
 /-- A family of power series is a homomorphism of additive formal groups
 when substituting a sum of two points gives the sum of the substitutions. -/
@@ -266,16 +300,17 @@ private theorem addMv_nthSeries_two {g : ℕ} {R : Type*} [CommRing R] :
   rw [h1, subst_X_add_X (by rintro (j | j) <;> simp)]
   rfl
 
-/-- At a point with coordinates in an ideal of square zero, the `2`-series
-of the additive formal group evaluates to twice the point. -/
+/-- At every point `a`, `nilEval 1` of the `2`-series of the additive formal
+group is `a i + a i`; `nilEval` takes arbitrary points. -/
 example {g : ℕ} {R B' : Type*} [CommRing R] [CommRing B'] [Algebra R B']
     (a : Fin g → B') (i : Fin g) :
     nilEval 1 ((addMv g R).nthSeries 2 i) a = a i + a i := by
   rw [addMv_nthSeries_two]
   simp [nilEval, trunc'_X_of_one_le]
 
-/-- The additive law at nilpotent points: truncation at order one gives the
-sum of the points, truncation at order zero forgets them. -/
+/-- The additive law under `nilMul`, at arbitrary points: order one gives
+the sum of the points, and order zero, which keeps only the constant
+term, gives `0`. -/
 example {g : ℕ} {R B' : Type*} [CommRing R] [CommRing B'] [Algebra R B']
     (s t : Fin g → B') :
     (addMv g R).nilMul 1 s t = s + t ∧ (addMv g R).nilMul 0 s t = 0 := by
@@ -286,5 +321,32 @@ example {g : ℕ} {R B' : Type*} [CommRing R] [CommRing B'] [Algebra R B']
   · funext i
     change nilEval 0 (X (Sum.inl i) + X (Sum.inr i)) (Sum.elim s t) = 0
     simp [nilEval, trunc'_X_of_eq_zero]
+
+/-- `nilEval` bounds each exponent, not the total degree: at every point,
+`nilEval 1` keeps the monomial `X₀ X₁` of total degree `2`. -/
+example (a : Fin 2 → ℤ) :
+    nilEval 1 (X 0 * X 1 : MvPowerSeries (Fin 2) ℤ) a = a 0 * a 1 := by
+  simp [nilEval, trunc'_X_mul_X]
+
+/-- At a point with coordinates in an ideal `J` with `J ^ (n + 1) = ⊥`,
+`nilEval n` is the evaluation of the truncation at total degree `n`: the
+monomials of higher total degree that it keeps vanish there. -/
+example {σ R B' : Type*} [Fintype σ] [DecidableEq σ] [CommRing R]
+    [CommRing B'] [Algebra R B'] {J : Ideal B'} {n : ℕ} (hJ : J ^ (n + 1) = ⊥)
+    {a : σ → B'} (ha : ∀ i, a i ∈ J) (φ : MvPowerSeries σ R) :
+    nilEval n φ a =
+      ∑ d ∈ Finset.Iic (Finsupp.equivFunOnFinite.symm fun _ => n) with d.degree ≤ n,
+        algebraMap R B' (coeff d φ) * d.prod fun i k => a i ^ k := by
+  rw [nilEval, trunc', truncFinset_apply, map_sum, Finset.sum_filter]
+  refine Finset.sum_congr rfl fun d _ => ?_
+  rw [MvPolynomial.aeval_monomial]
+  split_ifs with hd
+  · rfl
+  · have hmem : (d.prod fun i k => a i ^ k) ∈ J ^ d.degree := by
+      rw [Finsupp.prod, Finsupp.degree_apply, ← Finset.prod_pow_eq_pow_sum]
+      exact Ideal.prod_mem_prod fun i _ => Ideal.pow_mem_pow (ha i) _
+    have h0 := Ideal.pow_le_pow_right (I := J) (by omega : n + 1 ≤ d.degree) hmem
+    rw [hJ, Ideal.mem_bot] at h0
+    rw [h0, mul_zero]
 
 end MvFormalGroupTest
