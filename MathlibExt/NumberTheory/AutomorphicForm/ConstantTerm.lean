@@ -96,9 +96,11 @@ public theorem constantTerm_const (μ : Measure Q) [IsProbabilityMeasure μ]
     (u : Q → G) (c : ℂ) (g : G) : constantTerm μ u (fun _ => c) g = c := by
   simp [constantTerm, constantTermIntegrand, integral_const, measureReal_def]
 
-/-- A function is cuspidal along `u` when every constant term vanishes. -/
+/-- A function is cuspidal along `u` when, at every `g`, the constant-term integrand is
+integrable and the constant term vanishes. Integrability is required because the Bochner
+integral of a non-integrable function is `0`. -/
 public def IsCuspidalFn (μ : Measure Q) (u : Q → G) (f : G → ℂ) : Prop :=
-  ∀ g : G, constantTerm μ u f g = 0
+  ∀ g : G, Integrable (constantTermIntegrand u f g) μ ∧ constantTerm μ u f g = 0
 
 end ConstantTerm
 

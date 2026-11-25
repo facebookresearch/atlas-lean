@@ -64,3 +64,21 @@ example (F : Type) [Field F] [NumberField F]
     whittakerCoefficient F pins ψ φ 0 g
       = @constantTerm _ pins.nS _ _ pins.ν unipotentGL2 φ g :=
   whittakerCoefficient_zero_eq_constantTerm F pins ψ φ g
+
+-- Cuspidality requires integrable constant-term integrands. A nonzero constant against
+-- Lebesgue measure on `ℝ` has vanishing constant terms, because the Bochner integral of a
+-- non-integrable function is zero, but it is not cuspidal; the zero function is cuspidal.
+open MeasureTheory in
+example : (∀ g, constantTerm (volume : Measure ℝ) (Multiplicative.ofAdd : ℝ → Multiplicative ℝ)
+      (fun _ => (1 : ℂ)) g = 0) ∧
+    ¬ IsCuspidalFn (volume : Measure ℝ) (Multiplicative.ofAdd : ℝ → Multiplicative ℝ)
+      (fun _ => (1 : ℂ)) := by
+  have hni : ¬ Integrable (fun _ : ℝ => (1 : ℂ)) (volume : Measure ℝ) := by
+    rw [integrable_const_iff, not_or, not_isFiniteMeasure_iff, Real.volume_univ]
+    exact ⟨one_ne_zero, rfl⟩
+  exact ⟨fun g => integral_undef hni, fun h => hni (h 1).1⟩
+
+open MeasureTheory in
+example {Q G : Type} [MeasurableSpace Q] [Group G] (μ : Measure Q) (u : Q → G) :
+    IsCuspidalFn μ u (fun _ => (0 : ℂ)) :=
+  fun g => ⟨integrable_zero _ _ μ, constantTerm_zero μ u g⟩

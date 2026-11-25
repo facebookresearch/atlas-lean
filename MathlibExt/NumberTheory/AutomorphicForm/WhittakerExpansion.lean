@@ -829,7 +829,7 @@ theorem ae_eq_zero_cond_of_forall_integral_eq_zero
   have hcap : (∫ x in s, f x ∂ν) = ∫ x in s ∩ adelicBox F, f x ∂ν := by
     refine setIntegral_congr_set ?_
     filter_upwards [hae_box] with x hx
-    exact propext ⟨fun h => ⟨h, hx⟩, fun h => h.1⟩
+    exact ⟨fun h => ⟨h, hx⟩, fun h => h.1⟩
   rw [hcap]
 
   set E := (QuotientAddGroup.mk : AdeleRing (𝓞 F) F → AQuot F) '' (s ∩ adelicBox F) with hE
@@ -848,7 +848,7 @@ theorem ae_eq_zero_cond_of_forall_integral_eq_zero
     _ = ∫ x in (QuotientAddGroup.mk : _ → AQuot F) ⁻¹' E, f x ∂ν := by
         refine (setIntegral_congr_set ?_).symm
         filter_upwards [hae_box] with x hx
-        exact propext ⟨fun h => ⟨h, hx⟩, fun h => h.1⟩
+        exact ⟨fun h => ⟨h, hx⟩, fun h => h.1⟩
     _ = 0 := hRiesz
 
 end Bridge
