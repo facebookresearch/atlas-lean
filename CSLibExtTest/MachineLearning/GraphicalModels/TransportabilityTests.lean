@@ -46,6 +46,7 @@ namespace Cslib.MachineLearning.TransportabilityTests
 
 open Cslib.MachineLearning GraphicalModels InterveningVsConditioning Finset
   MetaMathlibExt.FiniteWeight
+open Function (updateFinset)
 
 /-! ### The quantities of the transport formula at the all-`true` assignment -/
 
@@ -66,16 +67,17 @@ noncomputable def transportRhs {D : SelectionDiagram 3} (M : DomainPair Bool D)
     (X Y Z : Finset (Fin 3)) : ℝ :=
   ∑ z : Z → Bool,
     marginal (M.source.mutilateSet X fun _ => true).joint ↑(Y ∪ Z)
-        (fill Z (fun _ => true) z) /
-        marginal (M.source.mutilateSet X fun _ => true).joint ↑Z (fill Z (fun _ => true) z) *
-      marginal M.target.joint ↑Z (fill Z (fun _ => true) z)
+        (updateFinset (fun _ => true) Z z) /
+        marginal (M.source.mutilateSet X fun _ => true).joint ↑Z
+          (updateFinset (fun _ => true) Z z) *
+      marginal M.target.joint ↑Z (updateFinset (fun _ => true) Z z)
 
 /-- The overlap hypothesis `hov` of `DomainPair.transport_formula` at the assignment
 `fun _ => true`: every value of `Z` with positive target probability has positive source
 probability. -/
 def Overlap {D : SelectionDiagram 3} (M : DomainPair Bool D) (Z : Finset (Fin 3)) : Prop :=
-  ∀ z : Z → Bool, marginal M.target.joint ↑Z (fill Z (fun _ => true) z) ≠ 0 →
-    marginal M.source.joint ↑Z (fill Z (fun _ => true) z) ≠ 0
+  ∀ z : Z → Bool, marginal M.target.joint ↑Z (updateFinset (fun _ => true) Z z) ≠ 0 →
+    marginal M.source.joint ↑Z (updateFinset (fun _ => true) Z z) ≠ 0
 
 /-! ### Diagrams on `Z → X → Y`, `Z → Y` -/
 
@@ -328,7 +330,7 @@ theorem ce1_formula : transportRhs ce1 {1} {2} {0} = 29 / 50 := by
   simp [ce1, DomainPair.source, DomainPair.target, BayesNet.mutilateSet,
     ce1TargetCpt, confoundedNet, BayesNet.paVal, coin_true, coin_false,
     Convexity.StdSimplex.weights_single, Matrix.cons_val_zero,
-    Matrix.cons_val_one, fill]
+    Matrix.cons_val_one, Function.updateFinset_def]
   norm_num
 
 /-- **The transport formula fails without S-admissibility.** In `ce1` every other hypothesis of
@@ -611,7 +613,7 @@ theorem ce2b_formula : transportRhs ce2b {0} {2} {1} = 1 / 2 := by
     BayesNet.mutilateSet, ce2bSourceCpt, ce2bTargetCpt, chainPa,
     BayesNet.paVal, coin_true, coin_false,
     Convexity.StdSimplex.weights_single, Matrix.cons_val_zero,
-    Matrix.cons_val_one, fill]
+    Matrix.cons_val_one, Function.updateFinset_def]
   norm_num
 
 /-- **The transport formula fails without the pre-treatment hypothesis.** In `ce2b` every other
@@ -657,11 +659,11 @@ noncomputable def ce3 : DomainPair Bool selZDiagram where
 /-- Overlap fails in `ce3`: `P*(Z = true) = 1` while `P(Z = true) = 0`. -/
 theorem ce3_no_overlap : ¬Overlap ce3 {0} := by
   intro hcon
-  have hx' : ∀ i : Fin 3, fill {0} (fun _ => true) (fun _ => true) i = true := by
+  have hx' : ∀ i : Fin 3, updateFinset (fun _ => true) {0} (fun _ => true) i = true := by
     intro i
-    by_cases hi : i ∈ ({0} : Finset (Fin 3)) <;> simp [fill, hi]
+    by_cases hi : i ∈ ({0} : Finset (Fin 3)) <;> simp [Function.updateFinset_def, hi]
   have htgt : marginal ce3.target.joint ↑({0} : Finset (Fin 3))
-      (fill {0} (fun _ => true) fun _ => true) ≠ 0 := by
+      (updateFinset (fun _ => true) {0} fun _ => true) ≠ 0 := by
     apply tp_aux_marginal_ne_zero
     · intro x
       exact ce3.target.toChain.joint_nonneg 3 x
@@ -670,47 +672,47 @@ theorem ce3_no_overlap : ¬Overlap ce3 {0} := by
       intro k _
       fin_cases k
       · have hpos : 0 < (ce3.target.cpt 0
-            (ce3.target.paVal 0 (fill {0} (fun _ => true) fun _ => true))).weights
-            ((fill {0} (fun _ => true) fun _ => true) (0 : Fin 3)) := by
+            (ce3.target.paVal 0 (updateFinset (fun _ => true) {0} fun _ => true))).weights
+            ((updateFinset (fun _ => true) {0} fun _ => true) (0 : Fin 3)) := by
           have he : ce3.target.cpt 0
-              (ce3.target.paVal 0 (fill {0} (fun _ => true) fun _ => true)) =
+              (ce3.target.paVal 0 (updateFinset (fun _ => true) {0} fun _ => true)) =
               coin 1 (by norm_num) (by norm_num) := rfl
           rw [he, hx' 0, coin_true]
           norm_num
         exact hpos
       · have hpos : 0 < (ce3.target.cpt 1
-            (ce3.target.paVal 1 (fill {0} (fun _ => true) fun _ => true))).weights
-            ((fill {0} (fun _ => true) fun _ => true) (1 : Fin 3)) := by
+            (ce3.target.paVal 1 (updateFinset (fun _ => true) {0} fun _ => true))).weights
+            ((updateFinset (fun _ => true) {0} fun _ => true) (1 : Fin 3)) := by
           have he : ce3.target.cpt 1
-              (ce3.target.paVal 1 (fill {0} (fun _ => true) fun _ => true)) =
+              (ce3.target.paVal 1 (updateFinset (fun _ => true) {0} fun _ => true)) =
               coin (1 / 2) (by norm_num) (by norm_num) := rfl
           rw [he, hx' 1, coin_true]
           norm_num
         exact hpos
       · have hpos : 0 < (ce3.target.cpt 2
-            (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true))).weights
-            ((fill {0} (fun _ => true) fun _ => true) (2 : Fin 3)) := by
+            (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true))).weights
+            ((updateFinset (fun _ => true) {0} fun _ => true) (2 : Fin 3)) := by
           have hr : ce3.target.cpt 2
-              (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true)) =
-              (if (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true))
+              (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true)) =
+              (if (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true))
                   ⟨⟨1, by omega⟩, Finset.mem_univ _⟩ &&
-                  (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true))
+                  (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true))
                   ⟨⟨0, by omega⟩, Finset.mem_univ _⟩ then
                 coin 1 (by norm_num) (by norm_num) else coin 0 (by norm_num)
                 (by norm_num)) := rfl
-          have hu1 : (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true))
+          have hu1 : (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true))
               ⟨⟨1, by omega⟩, Finset.mem_univ _⟩ = true := by decide
-          have hu0 : (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true))
+          have hu0 : (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true))
               ⟨⟨0, by omega⟩, Finset.mem_univ _⟩ = true := by decide
           have hce : ce3.target.cpt 2
-              (ce3.target.paVal 2 (fill {0} (fun _ => true) fun _ => true)) =
+              (ce3.target.paVal 2 (updateFinset (fun _ => true) {0} fun _ => true)) =
               coin 1 (by norm_num) (by norm_num) := by rw [hr, hu1, hu0]; rfl
           rw [hce, hx' 2, coin_true]
           norm_num
         exact hpos
   have hsrc := hcon (fun _ => true) htgt
   have hzero : marginal ce3.source.joint ↑({0} : Finset (Fin 3))
-      (fill {0} (fun _ => true) fun _ => true) = 0 := by
+      (updateFinset (fun _ => true) {0} fun _ => true) = 0 := by
     rw [marginal_coe]
     apply Finset.sum_eq_zero
     intro y hy
@@ -759,7 +761,7 @@ theorem ce3_formula : transportRhs ce3 {1} {2} {0} = 0 := by
   simp [ce3, DomainPair.source, DomainPair.target, BayesNet.mutilateSet,
     BayesNet.paVal, ce3SourceCpt, ce3TargetCpt, coin_true, coin_false,
     Convexity.StdSimplex.weights_single, Matrix.cons_val_zero,
-    Matrix.cons_val_one, fill]
+    Matrix.cons_val_one, Function.updateFinset_def]
 
 /-- **The transport formula fails without overlap.** In `ce3` every other hypothesis of
 `DomainPair.transport_formula` holds, and the target effect `1` differs from the formula's `0`. -/
@@ -831,7 +833,7 @@ theorem pi1_formula : transportRhs pi1 {1} {2} {0} = 29 / 50 := by
   simp [pi1, DomainPair.source, DomainPair.target, BayesNet.mutilateSet,
     pi1TargetCpt, confoundedNet, BayesNet.paVal, coin_true, coin_false,
     Convexity.StdSimplex.weights_single, Matrix.cons_val_zero,
-    Matrix.cons_val_one, fill]
+    Matrix.cons_val_one, Function.updateFinset_def]
   norm_num
 
 /-- The unadjusted source effect in `pi1` (`InterveningVsConditioning.confoundedNet_intervene`):

@@ -6,4 +6,5 @@ potential is the electromagnetic four-potential with time component `0` and spat
 `(A_x, A_y, A_z) = (0, a(x) f(t, z), 0)`,
 
 where `t = x⁰/c` is the physical time read from the spacetime time coordinate `x⁰` and `(x, y, z)`
-is the position. Its scalar potential is `φ = 0`. No regularity of `a` or `f` is assumed.
+is the position. Its [scalar potential](scalar-potential-separable-guide-potenti.md) is `φ = 0`. No
+regularity of `a` or `f` is assumed.

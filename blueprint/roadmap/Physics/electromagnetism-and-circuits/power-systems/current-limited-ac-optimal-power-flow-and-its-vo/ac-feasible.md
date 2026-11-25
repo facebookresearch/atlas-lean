@@ -11,8 +11,8 @@ $$I_k = \sum_{e} B_{ke}\, y_e\, (B^{\mathsf T} V)_e + y^{\mathrm{sh}}_k V_k$$
 
 for the
 [current leaving bus k into the network](../ac-power-injections-and-network-losses/node-injection.md),
-which equals $(Y V)_k$ for the [bus admittance matrix](admittance.md) $Y$, and
-$S_k = V_k \overline{I_k}$ for the
+which [equals](bus-admittance-mul-vec-eq-node-injection.md) $(Y V)_k$ for the
+[bus admittance matrix](admittance.md) $Y$, and $S_k = V_k \overline{I_k}$ for the
 [complex power](../ac-power-injections-and-network-losses/node-complex-power.md) that bus $k$
 supplies to the network (no factor $1/2$). The vector $V$ is AC feasible if
 
@@ -24,5 +24,4 @@ supplies to the network (no factor $1/2$). The vector $V$ is AC feasible if
 The generation at bus $k$ is the power it supplies to the network plus its demand, so its active and
 reactive parts are $\operatorname{Re} S_k + P^d_k$ and $\operatorname{Im} S_k + Q^d_k$. Line limits
 bound only the squared current magnitudes; apparent-power and phase-angle limits are not part of the
-problem. No ordering or sign of the data is assumed; when a lower limit exceeds an upper one, no $V$
-is feasible.
+problem. No ordering or sign of the data is assumed.

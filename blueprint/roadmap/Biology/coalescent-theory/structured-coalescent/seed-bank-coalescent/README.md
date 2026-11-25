@@ -9,3 +9,5 @@
 - [Ancestral process of the weak seed-bank model](finite-n-weak-seed-bank-ancestral-chain-with-res.md)
 - [Stationary averaging of the pair collision probability in the weak seed-bank model](stationary-averaging-of-the-pair-landing-probabi.md)
 - [Weak seed bank: Kingman coalescent with rates multiplied by 1/(E B)^2](weak-seed-bank-kingman-coalescent-with-rates-mul.md)
+
+- [Wright–Fisher diffusion with a strong seed bank](wright-fisher-diffusion-with-a-strong-seed-bank.md)

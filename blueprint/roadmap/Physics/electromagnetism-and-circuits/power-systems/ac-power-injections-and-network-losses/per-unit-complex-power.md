@@ -8,5 +8,5 @@ $S_{\mathrm{base}}$. With the convention $x / 0 = 0$, it is $0$ when $S_{\mathrm
 
 The base must be the base of the same quantity as $S$: a per-phase base for a per-phase power such
 as the [power supplied by a node](node-complex-power.md), a three-phase base for a three-phase
-power. Dividing by a positive base scales the real and the reactive part by the same positive factor
-and does not rotate $S$.
+power. Dividing by a positive base divides the real and the reactive part by the same positive
+number.

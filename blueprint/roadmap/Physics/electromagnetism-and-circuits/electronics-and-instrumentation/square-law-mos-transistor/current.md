@@ -10,7 +10,7 @@ $$I(\beta, u, V_{DS}) = \begin{cases} 0 & \text{if } u \le 0, \\
 the [triode formula](triode-current.md) and the [saturation formula](saturation-current.md) on the
 active branches. At $V_{DS} = u > 0$ the triode branch is used; both formulas give $\beta u^2 / 2$
 there. The definition covers all real inputs: for $u > 0$ the triode branch also applies to negative
-$V_{DS}$, where the current is negative when $\beta > 0$ (for example $I(1, 1, -1) = -3/2$). In the
-physical reading $\beta > 0$ is the device constant, $u = V_{GS} - V_{th}$ the gate overdrive and
-$V_{DS} \ge 0$ the drain–source voltage of a forward-biased nMOS transistor; long-channel square
-law, no channel-length modulation or body effect.
+$V_{DS}$ (for example $I(1, 1, -1) = -3/2$). In the physical reading $\beta > 0$ is the device
+constant, $u = V_{GS} - V_{th}$ the gate overdrive and $V_{DS} \ge 0$ the drain–source voltage of a
+forward-biased nMOS transistor; long-channel square law, no channel-length modulation or body
+effect.
