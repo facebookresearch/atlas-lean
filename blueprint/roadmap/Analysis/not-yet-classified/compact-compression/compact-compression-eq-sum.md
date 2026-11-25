@@ -1,3 +1,4 @@
-# Compact Compression eq sum
+# Rank-one expansion of basis compression
 
-The actual compression has exactly its original finite-frame matrix-entry rank-one expansion.
+For compact `k`, `compactCompression b s k = ∑
+i,j ∈ s, inner ℂ (b i) (k (b j)) • hilbertCompactRankOne H (b i) (b j)`.

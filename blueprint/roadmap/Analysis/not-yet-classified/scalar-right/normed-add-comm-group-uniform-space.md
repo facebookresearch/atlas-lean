@@ -1,3 +1,4 @@
-# Normed Add Comm Group uniform Space
+# Uniformity of the right scalar module
 
-The factory's uniformity is exactly the synonym's inherited uniformity.
+The uniformity of `instNormedAddCommGroup H` is the
+comap of the uniformity of `H` along `WithCStarModule.equiv ℂᵐᵒᵖ H`.

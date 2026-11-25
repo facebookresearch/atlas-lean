@@ -17,16 +17,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Pullback
 import Mathlib.Analysis.CStarAlgebra.Spectrum
 
 /-!
-# The asymptotic-algebra comparison for a literal pullback
+# Asymptotic quotients of split pullback algebras
 
-Applying the literal asymptotic-algebra functor to the two coordinate maps
-gives the canonical comparison from the asymptotic algebra of a pullback to
-the pullback of the two induced coefficient maps.
-
-The comparison is injective. If the right leg of the cospan has a
-star-homomorphic section, it is surjective and therefore gives a
-star-algebra equivalence. The file stops before finite iteration, matching
-paths, gluing, endpoint laws, or an n-homotopy relation.
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). The comparison is injective. If g has a star-homomorphic section s, it is
+also surjective and hence a complex star-algebra equivalence.
 -/
 
 @[expose] public section
@@ -49,8 +48,15 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- The canonical map from the asymptotic algebra of a literal pullback to
-the pullback of the two induced coefficient maps. -/
+/-- **Comparison from the quotient of a pullback to the pullback of quotients.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). This is the nonunital complex star homomorphism pullbackComparison f g.
+-/
 def pullbackComparison
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     AsymptoticAlgebra (NonUnitalCStarPullback.Pullback f g) →⋆ₙₐ[ℂ]
@@ -77,8 +83,15 @@ def pullbackComparison
     (map (NonUnitalCStarPullback.fstHom f g))
     (map (NonUnitalCStarPullback.sndHom f g)) hcompat
 
-/-- The first coordinate of the comparison is the induced first-coordinate
-coefficient map. -/
+/-- **First coordinate of the pullback comparison.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). With pr_A:P→A and pr_1:Pα→αA, pr_1∘Π=α(pr_A).
+-/
 theorem fstHom_comp_pullbackComparison
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     (NonUnitalCStarPullback.fstHom (map f) (map g)).comp
@@ -88,8 +101,15 @@ theorem fstHom_comp_pullbackComparison
   intro q
   rfl
 
-/-- The second coordinate of the comparison is the induced second-coordinate
-coefficient map. -/
+/-- **Second coordinate of the pullback comparison.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). With pr_B:P→B and pr_2:Pα→αB, pr_2∘Π=α(pr_B).
+-/
 theorem sndHom_comp_pullbackComparison
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     (NonUnitalCStarPullback.sndHom (map f) (map g)).comp
@@ -99,10 +119,15 @@ theorem sndHom_comp_pullbackComparison
   intro q
   rfl
 
-/-- The canonical comparison is injective.  A quotient class whose two
-coordinate classes vanish has a representative whose two coordinate
-functions tend to zero, hence the pullback-valued representative itself
-tends to zero. -/
+/-- **Injectivity of the asymptotic pullback comparison.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). The homomorphism pullbackComparison f g:αP→Pα is injective.
+-/
 theorem pullbackComparison_injective
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     Function.Injective (pullbackComparison f g) := by
@@ -196,8 +221,16 @@ theorem pullbackComparison_injective
     x - y = quotientMap (NonUnitalCStarPullback.Pullback f g) p := hp.symm
     _ = 0 := (quotientMap_eq_zero_iff p).2 hpzero
 
-/-- The canonical comparison is surjective when the right leg of the
-defining cospan has a star-homomorphic section. -/
+/-- **Surjectivity of the pullback comparison with a section.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). Assume a nonunital complex star homomorphism s:C→B satisfies g∘s=id_C.
+Then pullbackComparison f g is surjective onto Pα.
+-/
 theorem pullbackComparison_surjective_of_rightInverse
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (s : C →⋆ₙₐ[ℂ] B)
@@ -330,8 +363,16 @@ theorem pullbackComparison_surjective_of_rightInverse
       _ = quotientMap B y' := congrArg (quotientMap B) hpSnd
       _ = NonUnitalCStarPullback.sndHom (map f) (map g) q := hy'
 
-/-- The canonical comparison as a star-algebra equivalence when the right
-leg of the cospan has a star-homomorphic section. -/
+/-- **Star equivalence for an asymptotic split pullback.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+The comparison Π:αP→Pα sends the class of a bounded continuous P-valued function t↦(F(t),G(t))
+to (q_A(F),q_B(G)). Assume a nonunital complex star homomorphism s:C→B satisfies g∘s=id_C. The
+equivalence splitPullbackEquiv f g s hs:αP≃⋆ₐ[ℂ]Pα has forward map Π.
+-/
 noncomputable def splitPullbackEquiv
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (s : C →⋆ₙₐ[ℂ] B)
@@ -342,8 +383,16 @@ noncomputable def splitPullbackEquiv
     ⟨pullbackComparison_injective f g,
       pullbackComparison_surjective_of_rightInverse f g s hs⟩
 
-/-- The forward homomorphism of the split-pullback equivalence is the
-canonical comparison. -/
+/-- **Forward map of the split pullback equivalence.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+Assume a nonunital complex star homomorphism s:C→B satisfies g∘s=id_C. The forward star
+homomorphism of splitPullbackEquiv f g s hs is pullbackComparison f g, sending [(F,G)] to
+(q_A(F),q_B(G)).
+-/
 theorem splitPullbackEquiv_toNonUnitalStarAlgHom
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (s : C →⋆ₙₐ[ℂ] B)
@@ -354,8 +403,16 @@ theorem splitPullbackEquiv_toNonUnitalStarAlgHom
   intro q
   rfl
 
-/-- The first projection of the split-pullback equivalence is the induced
-first-coordinate coefficient map. -/
+/-- **First coordinate of the split pullback equivalence.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+Assume a nonunital complex star homomorphism s:C→B satisfies g∘s=id_C. For
+E=splitPullbackEquiv f g s hs and the pullback projections pr_A:P→A, pr_1:Pα→αA,
+pr_1∘E=α(pr_A).
+-/
 theorem fstHom_comp_splitPullbackEquiv
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (s : C →⋆ₙₐ[ℂ] B)
@@ -366,8 +423,16 @@ theorem fstHom_comp_splitPullbackEquiv
   rw [splitPullbackEquiv_toNonUnitalStarAlgHom]
   exact fstHom_comp_pullbackComparison f g
 
-/-- The second projection of the split-pullback equivalence is the induced
-second-coordinate coefficient map. -/
+/-- **Second coordinate of the split pullback equivalence.**
+
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+Assume a nonunital complex star homomorphism s:C→B satisfies g∘s=id_C. For
+E=splitPullbackEquiv f g s hs and the pullback projections pr_B:P→B, pr_2:Pα→αB,
+pr_2∘E=α(pr_B).
+-/
 theorem sndHom_comp_splitPullbackEquiv
     (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (s : C →⋆ₙₐ[ℂ] B)

@@ -15,16 +15,14 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Standard
 public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.OfPair
 
 /-!
-# Coordinate adjoints on the actual standard right C-star module
+# Adjointable coordinates of standard modules
 
-For complete possibly nonunital coefficients, the existing coefficient single
-and coordinate evaluation form an actual bounded adjoint pair. Their maps,
-norms and module carriers are unchanged. The pairing uses the coefficient-valued
-inner product and the source-order product `star a * coord i y`.
+For nonunital C-star `B` and arbitrary index type `I`, insertion `j_i : B → Standard B I` and
+evaluation `π_i : Standard B I → B` form an adjoint pair. Their coefficient pairing is `⟨j_i
+a,y⟩_B = star a * coord i y`.
 
-Canonical opposite-coefficient order and the actual self-module dictionary are
-activated locally before the operator types. No unit-valued basis, adjoint of an
-arbitrary bounded map, nonzero coefficient algebra or new norm is required.
+They satisfy `π_i j_i = id_B` and `π_i j_j = 0` for `i ≠ j`. Each insertion is isometric and has
+operator norm at most one, including the zero coefficient algebra. No unit in `B` is needed.
 -/
 
 @[expose] public section
@@ -37,8 +35,9 @@ universe uB uι
 
 variable {B : Type uB} [NonUnitalCStarAlgebra B] {ι : Type uι}
 
-/-- The existing coefficient single as an adjointable map, with the existing
-coordinate evaluation as its stored adjoint. -/
+/-- **Adjointable coefficient insertion.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `singleAdjointable i : B → Standard B I` is the single-coordinate
+inclusion with adjoint `coord i`. -/
 noncomputable def singleAdjointable (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -61,7 +60,8 @@ noncomputable def singleAdjointable (i : ι) :
     _ = CStarModule.rightInner (B := B) a (coord i y) := by
       rw [coord_single_self, CStarModule.Right.rightInner_self]
 
-/-- The forward bounded map is literally the original single. -/
+/-- **Forward map of coefficient insertion.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `(singleAdjointable i).toContinuousLinearMap = single i`. -/
 theorem singleAdjointable_toContinuousLinearMap (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -72,7 +72,9 @@ theorem singleAdjointable_toContinuousLinearMap (i : ι) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The reverse bounded map is literally the original coordinate evaluation. -/
+/-- **Coordinate map of the adjoint operator.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, the continuous linear map underlying `(singleAdjointable
+i).adjointOperator` is `coord i`. -/
 theorem singleAdjointable_adjoint_toContinuousLinearMap (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -84,7 +86,8 @@ theorem singleAdjointable_adjoint_toContinuousLinearMap (i : ι) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The adjointable insertion has the original pointwise value. -/
+/-- **Value of adjointable coefficient insertion.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `singleAdjointable i a = single i a` for every coefficient `a : B`. -/
 @[simp]
 theorem singleAdjointable_apply (i : ι) (a : B) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -96,7 +99,8 @@ theorem singleAdjointable_apply (i : ι) (a : B) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The stored adjoint is literally the original coordinate evaluation. -/
+/-- **Adjoint of coefficient insertion.** For a nonunital complex C-star algebra `B` and arbitrary
+index type `I`, `(singleAdjointable i).adjoint = coord i`. -/
 @[simp]
 theorem singleAdjointable_adjoint (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -108,7 +112,8 @@ theorem singleAdjointable_adjoint (i : ι) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The constructed adjoint operator has the original coordinate value. -/
+/-- **Evaluation of the coordinate adjoint.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `(singleAdjointable i).adjointOperator y = coord i y`. -/
 theorem singleAdjointable_adjoint_apply (i : ι) (y : Standard B ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -119,8 +124,9 @@ theorem singleAdjointable_adjoint_apply (i : ι) (y : Standard B ι) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- A coefficient single pairs with any vector by the literal coordinate
-product, with the coefficient starred on the left. -/
+/-- **Pairing with a coefficient single.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `⟨single i a,y⟩_B = star a * coord i y`, with the starred
+coefficient on the left. -/
 theorem rightInner_single_coord (i : ι) (a : B) (y : Standard B ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -134,8 +140,9 @@ theorem rightInner_single_coord (i : ι) (a : B) (y : Standard B ι) :
     CStarModule.rightInner (B := B) a (coord i y) at h
   simpa only [CStarModule.Right.rightInner_self] using h
 
-/-- Evaluation after insertion at the same index is the identity operator on
-the actual coefficient self-module, without assuming a coefficient unit. -/
+/-- **Evaluation after insertion.** For a nonunital complex C-star algebra `B` and arbitrary index
+type `I`, `(singleAdjointable i)* ∘ singleAdjointable i = id_B` on the coefficient
+self-module. -/
 @[simp]
 theorem singleAdjointable_adjoint_comp_self :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -152,7 +159,8 @@ theorem singleAdjointable_adjoint_comp_self :
   change coord i (single i a) = a
   exact coord_single_self i a
 
-/-- Evaluation at one index after insertion at a different index vanishes. -/
+/-- **Evaluation at a different coordinate.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, if `i ≠ j`, `(singleAdjointable i)* ∘ singleAdjointable j = 0`. -/
 @[simp]
 theorem singleAdjointable_adjoint_comp_of_ne :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -170,8 +178,9 @@ theorem singleAdjointable_adjoint_comp_of_ne :
   change coord i (single j a) = 0
   exact coord_single_ne hij a
 
-/-- Coefficient insertion is an isometry for the unchanged coefficient and
-standard-module norms, including the zero coefficient algebra. -/
+/-- **Isometric coefficient insertion.** For a nonunital complex C-star algebra `B` and arbitrary
+index type `I`, `singleAdjointable i` is an isometry between the coefficient norm and
+standard-module norm. -/
 theorem singleAdjointable_isometry (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -186,8 +195,8 @@ theorem singleAdjointable_isometry (i : ι) :
   rw [dist_eq_norm, dist_eq_norm, ← map_sub (single (B := B) i) a b]
   exact norm_single i (a - b)
 
-/-- The actual insertion operator has norm at most one. Equality with one is
-not asserted for the zero coefficient algebra. -/
+/-- **Operator norm of coefficient insertion.** For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `‖singleAdjointable i‖ ≤ 1`, including the zero algebra. -/
 theorem norm_singleAdjointable_le (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;

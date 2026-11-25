@@ -1,4 +1,4 @@
-# Standard Stabilization
+# Compact-operator stabilization of a coefficient algebra
 
-- [Standard Stabilization](standard-stabilization.md)
-- [Standard Stabilization CStar Algebra](standard-stabilization-cstar-algebra.md)
+- [Compact-operator stabilization](standard-stabilization.md)
+- [C-star structure of standard stabilization](standard-stabilization-cstar-algebra.md)

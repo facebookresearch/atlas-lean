@@ -1,4 +1,5 @@
-# Right Matrix Compact Hom coe
+# Endomorphism underlying the compact matrix action
 
-Including the compact-valued hom gives literally the original square
-matrix operator, with no alternative action or norm.
+For a nonunital complex C-star algebra
+`B` and finite index type `I`, the compact-ideal inclusion of `rightMatrixCompactHom M` equals
+`rightMatrixHom M`, the finite standard-module column operator.

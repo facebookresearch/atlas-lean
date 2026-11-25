@@ -1,3 +1,5 @@
-# Norm supported To L1 raw le
+# L¹ bound for functions supported in a compact set
 
-The original fixed-support L1 image is bounded by support measure times its sup norm.
+If K⊆G is compact and closed and b is a bounded continuous A-valued function supported in K,
+its image in the L¹ norm completion satisfies ‖ι₁(b)‖≤μ.real(K)‖b‖∞, where μ.real(K) is the
+finite real Haar measure of K.

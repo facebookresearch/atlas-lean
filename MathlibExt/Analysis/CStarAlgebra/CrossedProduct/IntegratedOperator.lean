@@ -17,13 +17,14 @@ public import Mathlib.Topology.ContinuousMap.CompactlySupported
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Vector-integrated operators of strong unitary representations
+# Vector-integrated operators of unitary representations
 
-For a coefficient star homomorphism and a strongly continuous unitary
-representation, integration on each Hilbert vector defines a bounded
-operator. Compact support supplies integrability, and the operator norm is
-bounded by the integral of the coefficient norm. Covariance is not needed
-for this construction.
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous, define I(f)ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ. Each vector integrand is
+μ-integrable. The integral defines a bounded complex linear operator I(f):H→H with ‖I(f)‖≤∫ g,
+‖f(g)‖ ∂μ. The map f↦I(f) is additive and complex-linear.
 -/
 
 @[expose] public section
@@ -47,7 +48,13 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (U : StronglyContinuousUnitaryRepresentation G H)
 variable (π : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 
-/-- Each compact coefficient function has an integrable original Hilbert-vector action. -/
+/-- **Integrability of each vector-valued representation kernel.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For a compactly
+supported continuous coefficient f:G→A and ξ∈H, g↦π(f(g))(U_g ξ) is μ-integrable.
+-/
 theorem integratedVector_integrable
     (f : CompactlySupportedContinuousMap G A) (ξ : H) :
     Integrable (fun g : G => π (f g) ((U g : H →L[ℂ] H) ξ)) μ := by
@@ -64,7 +71,14 @@ theorem integratedVector_integrable
     rfl
   exact hcont.integrable_of_hasCompactSupport hsupport
 
-/-- The actual vector integral has the compact coefficient L1 bound. -/
+/-- **Norm bound for the integrated vector.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous, define I(f)ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ. For ξ∈H, ‖I(f)ξ‖≤(∫ g, ‖f(g)‖
+∂μ)‖ξ‖.
+-/
 theorem norm_integratedVector_le
     (f : CompactlySupportedContinuousMap G A) (ξ : H) :
     ‖∫ g : G, π (f g) ((U g : H →L[ℂ] H) ξ) ∂μ‖ ≤
@@ -83,7 +97,14 @@ theorem norm_integratedVector_le
       norm_integral_le_of_norm_le hnorm (Eventually.of_forall hbound)
     _ = (∫ g : G, ‖f g‖ ∂μ) * ‖ξ‖ := integral_mul_const _ _
 
-/-- The actual operator obtained by Bochner integration on every Hilbert vector. -/
+/-- **Bounded operator defined by vector integration.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous, define I(f)ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ. The map integratedOperator μ
+U π f:H→L[ℂ]H is this vector integral operator I(f).
+-/
 def integratedOperator (f : CompactlySupportedContinuousMap G A) : H →L[ℂ] H :=
   LinearMap.mkContinuous
     { toFun := fun ξ => ∫ g : G, π (f g) ((U g : H →L[ℂ] H) ξ) ∂μ
@@ -96,20 +117,40 @@ def integratedOperator (f : CompactlySupportedContinuousMap G A) : H →L[ℂ] H
         exact integral_smul c _ }
     (∫ g : G, ‖f g‖ ∂μ) (norm_integratedVector_le μ U π f)
 
-/-- The complete vector action of the constructed operator. -/
+/-- **Vector formula for the integrated operator.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous and ξ∈H, integratedOperator μ U π f ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ.
+-/
 @[simp]
 theorem integratedOperator_apply (f : CompactlySupportedContinuousMap G A) (ξ : H) :
     integratedOperator μ U π f ξ = ∫ g : G, π (f g) ((U g : H →L[ℂ] H) ξ) ∂μ :=
   rfl
 
-/-- The operator norm has the original compact coefficient's `L¹` bound. -/
+/-- **L¹ bound for the integrated operator norm.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous, define I(f)ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ. The operator norm satisfies
+‖integratedOperator μ U π f‖≤∫ g, ‖f(g)‖ ∂μ.
+-/
 theorem norm_integratedOperator_le (f : CompactlySupportedContinuousMap G A) :
     ‖integratedOperator μ U π f‖ ≤ ∫ g : G, ‖f g‖ ∂μ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (integral_nonneg fun g => norm_nonneg (f g))
   intro ξ
   exact norm_integratedVector_le μ U π f ξ
 
-/-- Coefficient addition gives the actual sum of integrated operators. -/
+/-- **Additivity of vector-integrated operators.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous, define I(f)ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ. For compactly supported
+continuous f,k:G→A, I(f+k)=I(f)+I(k).
+-/
 @[simp]
 theorem integratedOperator_add (f k : CompactlySupportedContinuousMap G A) :
     integratedOperator μ U π (f + k) = integratedOperator μ U π f + integratedOperator μ U π k := by
@@ -120,7 +161,14 @@ theorem integratedOperator_add (f k : CompactlySupportedContinuousMap G A) :
   exact integral_add
     (integratedVector_integrable μ U π f ξ) (integratedVector_integrable μ U π k ξ)
 
-/-- Complex coefficient scaling gives the actual scaled integrated operator. -/
+/-- **Complex scaling of vector-integrated operators.**
+
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra, H a complex Hilbert space, U:G→unitary(B(H)) a strongly continuous
+unitary representation and π:A→B(H) a nonunital complex star homomorphism. For f:G→A compactly
+supported and continuous, define I(f)ξ=∫ g:G, π(f(g))(U_g ξ) ∂μ. For c∈ℂ and compactly
+supported continuous f:G→A, I(c•f)=c•I(f).
+-/
 @[simp]
 theorem integratedOperator_smul (c : ℂ) (f : CompactlySupportedContinuousMap G A) :
     integratedOperator μ U π (c • f) = c • integratedOperator μ U π f := by

@@ -1,3 +1,4 @@
-# Rank One Projection
+# One-dimensional projection of a unit vector
 
-A unit vector gives a computed actual projection with genuine one-dimensional range.
+For `v : lp(ℕ,ℂ,2)` with `‖v‖=1`, the
+projection record has value `rankOne v v`, with range the complex span of `v`.

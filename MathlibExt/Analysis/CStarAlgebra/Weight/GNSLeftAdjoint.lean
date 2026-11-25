@@ -17,18 +17,15 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import Mathlib.Tactic.FunProp
 
 /-!
-# The original weight left action and its actual adjoint
+# Adjoints of left multiplication in the weight GNS space
 
-The original star-product square differences match the left action at a
-with the left action at star a. Finite-positive weight difference equality
-therefore proves the real pairing identity. Complex linearity of the
-literal finite-square left map proves the imaginary coordinate as well.
+For an extended positive weight `φ` on a nonunital complex C-star algebra, the polarized pairing
+on `n_φ` satisfies `P(a*x,y)=P(x,a* y)`. On the seminormed domain this is `⟨L_a x,y⟩=⟨x,L_(a*)
+y⟩`.
 
-This constructs the pre-GNS adjoint pairing and its actual completed
-operator adjoint law, needed by the star-representation constructor.
-No full finite integration extension, source existence output or operator/
-inner/norm certificate is supplied. Representation faithfulness, normality,
-normal range and Tomita/modular/polar statements remain separate.
+After Hilbert completion, the bounded left operators satisfy `π(a*)=π(a)*`. The pairing and
+adjoint identities use only the weight laws and C-star positivity; no faithful or
+densely-defined weight is required.
 -/
 
 @[expose] public section
@@ -46,13 +43,18 @@ universe u
 
 variable {A : Type u} [NonUnitalCStarAlgebra A]
 
-/-- The original star-product difference matches left multiplication and its original star. -/
+/-- **Square difference for a left product.** In a nonunital complex C-star algebra,
+`(a*x+y)*(a*x+y)-(a*x-y)*(a*x-y) = (x+a* y)*(x+a* y)-(x-a* y)*(x-a* y)` for `a,x,y : A`. -/
 theorem leftSquare_difference_leftMul (a x y : A) :
     (leftSquare (a * x + y) : A) - (leftSquare (a * x - y) : A) =
       (leftSquare (x + star a * y) : A) - (leftSquare (x - star a * y) : A) := by
   simp only [leftSquare_difference, star_mul, star_star, mul_assoc]
 
-/-- Actual finite-positive value relations give the original real adjoint pairing. -/
+/-- **Real adjoint identity for the weight polarization.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. put `R(x,y)=(q(x+y)-q(x-y))/4`. For `a : A` and `x,y ∈ n_φ`, `R(a*x,y)=R(x,a*
+y)`. -/
 theorem Weight.finiteSquarePolarRe_leftMul (φ : Weight A) (a : A)
     (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe (φ.finiteSquareLeftMul a x) y =
@@ -77,7 +79,11 @@ theorem Weight.finiteSquarePolarRe_leftMul (φ : Weight A) (a : A)
   dsimp only [Weight.finiteSquarePolarRe, Weight.finiteSquareValue]
   linarith [h]
 
-/-- The actual complex weight pairing has the original left-star adjoint relation. -/
+/-- **Complex adjoint identity for the weight polarization.** Let `A` be a nonunital complex
+C-star algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real
+homogeneous weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x*
+x)).toReal` for `x ∈ n_φ`. put `P(x,y)=finiteSquarePolarInner φ x y`. For `a : A` and `x,y ∈
+n_φ`, `P(a*x,y)=P(x,a* y)`. -/
 theorem Weight.finiteSquarePolarInner_leftMul (φ : Weight A) (a : A)
     (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarInner (φ.finiteSquareLeftMul a x) y =
@@ -91,14 +97,23 @@ theorem Weight.finiteSquarePolarInner_leftMul (φ : Weight A) (a : A)
     rw [← (φ.finiteSquareLeftMul a).map_smul Complex.I x]
     exact φ.finiteSquarePolarRe_leftMul a (Complex.I • x) y
 
-/-- The actual weight pre-GNS left operator is paired with left multiplication by star a. -/
+/-- **Adjoint pairing of pre-GNS left operators.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. on the weight-seminormed type copy `PreGNS φ`, let `L_a` be left multiplication by `a`.
+Then `⟨L_a x,y⟩=⟨x,L_(a*) y⟩` for all `x,y`. -/
 theorem Weight.preGNSLeftMul_adjoint_pairing (φ : Weight A) (a : A) (x y : φ.PreGNS) :
     ⟪φ.preGNSLeftMul a x, y⟫_ℂ = ⟪x, φ.preGNSLeftMul (star a) y⟫_ℂ := by
   rw [φ.preGNS_inner, φ.preGNS_inner, φ.preGNSLeftMul_apply, φ.preGNSLeftMulLinear_apply,
     φ.preGNSLeftMul_apply, φ.preGNSLeftMulLinear_apply]
   exact φ.finiteSquarePolarInner_leftMul a (φ.preGNSLinearEquiv x) (φ.preGNSLinearEquiv y)
 
-/-- The completed bounded left operators have the actual original star/adjoint law. -/
+/-- **Adjoint law of completed left multiplication.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense
+complex-linear map `Λ : n_φ → H_φ`. if `π(a)=gnsLeftMul φ a` is the bounded extension of left
+multiplication, then `π(a*)=π(a)*` for every `a : A`. -/
 theorem Weight.gnsLeftMul_star (φ : Weight A) (a : A) :
     φ.gnsLeftMul (star a) = star (φ.gnsLeftMul a) := by
   rw [ContinuousLinearMap.star_eq_adjoint]

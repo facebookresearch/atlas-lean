@@ -1,4 +1,4 @@
-# Class Star Alg Hom eq iff
+# Equality of Calkin classes
 
-Two adjointable endomorphisms define the same Calkin class exactly when
-their difference is module-compact.
+Adjointable endomorphisms `S,T` define the same class if and
+only if `S - T ∈ K_B(E)`.

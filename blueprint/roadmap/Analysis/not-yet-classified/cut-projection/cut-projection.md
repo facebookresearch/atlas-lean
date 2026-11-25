@@ -1,3 +1,5 @@
-# Cut Projection
+# Projection onto a selected coordinate set
 
-The actual bounded adjointable diagonal selecting a set of coordinates.
+For `s : Set I`, `cutProjection s` is the
+adjointable diagonal with identity in coordinates of `s` and zero elsewhere, on the completed
+direct sum.

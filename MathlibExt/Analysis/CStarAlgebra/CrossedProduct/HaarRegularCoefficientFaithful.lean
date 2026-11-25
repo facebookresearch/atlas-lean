@@ -16,18 +16,14 @@ public import MathlibExt.Analysis.InnerProductSpace.Group.HaarL2.CompactSupportF
 public import Mathlib.Analysis.CStarAlgebra.Hom
 
 /-!
-# Faithful original regular coefficient operators on the actual Haar L2 carrier
+# Faithfulness of Haar regular coefficient operators
 
-An actual zero regular coefficient operator annihilates every original
-compact-support vector. The open-positive compact-support inclusion recovers
-its literal pointwise values. Test a compact scalar bump nonzero at the
-identity to recover the original coefficient operator rho(a).
-
-A faithful original coefficient representation therefore gives a faithful
-regular coefficient homomorphism, and the C-star homomorphism theorem gives
-its original coefficient norm. This supplies faithful regular coefficient
-maps for the reduced/full comparison without an assumed regular model or
-source norm equality. The canonical GN selection is a separate constructor.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). If Π(a)=0, then ρ(a)=0. Hence injectivity of ρ implies
+injectivity of a↦Π(a), and ‖Π(a)‖=‖a‖ for every a∈A.
 -/
 
 @[expose] public section
@@ -51,7 +47,14 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (α : PointNormCStarAction G A) (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 variable (μ : Measure G) [μ.Regular] [μ.IsHaarMeasure]
 
-/-- A zero original regular coefficient operator has zero original coefficient value under rho. -/
+/-- **A zero regular coefficient operator has zero coefficient image.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a∈A, regularCoefficientOperator α ρ μ a=0 implies ρ(a)=0.
+-/
 theorem regularCoefficientOperator_eq_zero_implies (a : A)
     (hZero : regularCoefficientOperator α ρ μ a = 0) : ρ a = 0 := by
   apply ContinuousLinearMap.ext
@@ -83,7 +86,15 @@ theorem regularCoefficientOperator_eq_zero_implies (a : A)
     simpa using congrArg Complex.re h
   exact (smul_eq_zero.mp hValue).resolve_left hScalar
 
-/-- A faithful original coefficient representation gives a faithful actual regular coefficient map. -/
+/-- **A faithful coefficient representation gives a faithful regular one.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). If ρ is injective, then regularCoefficientHom α ρ μ:A→B(K),
+a↦Π(a), is injective.
+-/
 theorem regularCoefficientHom_injective (hρ : Function.Injective ρ) :
     Function.Injective (regularCoefficientHom α ρ μ) := by
   intro a b hab
@@ -94,7 +105,15 @@ theorem regularCoefficientHom_injective (hρ : Function.Injective ρ) :
   have hOriginal := regularCoefficientOperator_eq_zero_implies α ρ μ (a - b) hZero
   exact sub_eq_zero.mp (by simpa only [map_sub] using hOriginal)
 
-/-- The actual faithful regular coefficient homomorphism has the original source C-star norm. -/
+/-- **Norm preservation of a faithful regular coefficient representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). If ρ is injective, then ‖regularCoefficientHom α ρ μ a‖=‖a‖ for
+a∈A.
+-/
 theorem norm_regularCoefficientHom (hρ : Function.Injective ρ) (a : A) :
     ‖regularCoefficientHom α ρ μ a‖ = ‖a‖ :=
   NonUnitalStarAlgHom.norm_map (regularCoefficientHom α ρ μ)

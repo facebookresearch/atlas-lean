@@ -15,13 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Compact
 public import MathlibExt.Analysis.CStarAlgebra.Multiplier.Outer
 
 /-!
-# Actual adjointable-module operators acting on their compact ideal
+# Adjointable operators as multipliers of module compacts
 
-The coefficient is the genuine operator-norm closed compact ideal of E.
-Every ambient adjointable endomorphism acts on that ideal through its actual
-left/right multiplication. No multiplier equivalence, density, surjectivity,
-module model or source theorem output is an input. This is the strict map
-needed to state Blackadar13.4.1 and its finite/standard module specializations.
+Let `B` be a nonunital complex C-star algebra with star-ordered opposite, and `E` a complete
+complex normed right C-star module over `B`. Its compact ideal `K_B(E)` is the operator-norm
+closed span of the module rank-one operators inside the adjointable algebra `End_B(E)`.
+
+An adjointable operator `T` defines a double centralizer of `K_B(E)` with left and right actions
+`k ↦ T k` and `k ↦ k T`. This gives a unital complex star homomorphism `End_B(E) → M(K_B(E))`.
+On rank-one operators, `T θ_(x,y)=θ_(T x,y)` and `θ_(x,y) T=θ_(x,T* y)`. This construction does
+not assert surjectivity or a multiplier-algebra equivalence and permits the zero module.
 -/
 
 @[expose] public section
@@ -38,7 +41,12 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ] [StarOrderedRing B�
 variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
 
-/-- The actual unital ambient-operator action on its own original compact-operator coefficient ideal. -/
+/-- **Multiplier action of adjointable module operators.** Let `B` be a nonunital complex C-star
+algebra whose opposite has a star-ordered partial order, and let `E` be a complete complex
+normed right C-star module over `B`. Write `End_B(E)` for its adjointable endomorphisms and
+`K_B(E)` for their norm-closed compact ideal. `compactMultiplierHom : End_B(E) →⋆ₐ[ℂ]
+M(K_B(E))` is the unital star homomorphism assigning to `T` the double centralizer `(k ↦ T k,
+k ↦ k T)`, with the inherited operator norm on the compact ideal. -/
 public def compactMultiplierHom :
     letI : NonUnitalCStarAlgebra (CompactEnd B E) :=
       (compactClosedStarIdeal (B := B) (E := E)).carrierCStarAlgebra;
@@ -48,7 +56,11 @@ public def compactMultiplierHom :
   let e : CompactEnd B E ≃⋆ₐ[ℂ] I := StarAlgEquiv.refl ℂ _
   exact DoubleCentralizer.multiplierExtensionUnital I e
 
-/-- Every actual compact coefficient has the original left ambient-operator action. -/
+/-- **Left multiplier action on module compacts.** Let `B` be a nonunital complex C-star algebra
+whose opposite has a star-ordered partial order, and let `E` be a complete complex normed
+right C-star module over `B`. Write `End_B(E)` for its adjointable endomorphisms and `K_B(E)`
+for their norm-closed compact ideal. for `T ∈ End_B(E)` and `k ∈ K_B(E)`, the left component
+of `compactMultiplierHom T` has underlying adjointable operator `T*k`. -/
 public theorem compactMultiplierHom_fst :
     letI : NonUnitalCStarAlgebra (CompactEnd B E) :=
       (compactClosedStarIdeal (B := B) (E := E)).carrierCStarAlgebra;
@@ -61,7 +73,11 @@ public theorem compactMultiplierHom_fst :
   let e : CompactEnd B E ≃⋆ₐ[ℂ] I := StarAlgEquiv.refl ℂ _
   exact fun T k => DoubleCentralizer.multiplierExtension_fst I e T k
 
-/-- Every actual compact coefficient has the original right ambient-operator action. -/
+/-- **Right multiplier action on module compacts.** Let `B` be a nonunital complex C-star algebra
+whose opposite has a star-ordered partial order, and let `E` be a complete complex normed
+right C-star module over `B`. Write `End_B(E)` for its adjointable endomorphisms and `K_B(E)`
+for their norm-closed compact ideal. for `T ∈ End_B(E)` and `k ∈ K_B(E)`, the right component
+of `compactMultiplierHom T` has underlying adjointable operator `k*T`. -/
 public theorem compactMultiplierHom_snd :
     letI : NonUnitalCStarAlgebra (CompactEnd B E) :=
       (compactClosedStarIdeal (B := B) (E := E)).carrierCStarAlgebra;
@@ -74,7 +90,11 @@ public theorem compactMultiplierHom_snd :
   let e : CompactEnd B E ≃⋆ₐ[ℂ] I := StarAlgEquiv.refl ℂ _
   exact fun T k => DoubleCentralizer.multiplierExtension_snd I e T k
 
-/-- The actual source multiplier action on every original module rank-one compact. -/
+/-- **Left multiplier on a module rank-one operator.** Let `B` be a nonunital complex C-star
+algebra whose opposite has a star-ordered partial order, and let `E` be a complete complex
+normed right C-star module over `B`. Write `End_B(E)` for its adjointable endomorphisms and
+`K_B(E)` for their norm-closed compact ideal. for `T ∈ End_B(E)` and `x,y ∈ E`, the left
+component sends `θ_(x,y)` to `θ_(T x,y)`, where `θ_(x,y)z=x⟨y,z⟩_B`. -/
 public theorem compactMultiplierHom_fst_rankOne :
     letI : NonUnitalCStarAlgebra (CompactEnd B E) :=
       (compactClosedStarIdeal (B := B) (E := E)).carrierCStarAlgebra;
@@ -87,7 +107,11 @@ public theorem compactMultiplierHom_fst_rankOne :
     ((compactMultiplierHom_fst (B := B) (E := E) T
       ⟨rankOne x y, rankOne_mem_compact x y⟩).trans (comp_rankOne T x y))
 
-/-- The actual right action carries the adjoint on the original rank-one source vector. -/
+/-- **Right multiplier on a module rank-one operator.** Let `B` be a nonunital complex C-star
+algebra whose opposite has a star-ordered partial order, and let `E` be a complete complex
+normed right C-star module over `B`. Write `End_B(E)` for its adjointable endomorphisms and
+`K_B(E)` for their norm-closed compact ideal. for `T ∈ End_B(E)` and `x,y ∈ E`, the right
+component sends `θ_(x,y)` to `θ_(x,T* y)`, where `θ_(x,y)z=x⟨y,z⟩_B`. -/
 public theorem compactMultiplierHom_snd_rankOne :
     letI : NonUnitalCStarAlgebra (CompactEnd B E) :=
       (compactClosedStarIdeal (B := B) (E := E)).carrierCStarAlgebra;

@@ -1,5 +1,5 @@
-# L1 Translation
+# L¹ continuity of twisted left translations
 
-- [L1 Gauge group Left](l1-gauge-group-left.md)
-- [Continuous l1 Gauge group Left sub](continuous-l1-gauge-group-left-sub.md)
-- [Tendsto l1 Gauge group Left sub](tendsto-l1-gauge-group-left-sub.md)
+- [Left Haar translations preserve the L¹ gauge](l1-gauge-group-left.md)
+- [Continuity of the L¹ translation distance](continuous-l1-gauge-group-left-sub.md)
+- [Twisted translations approach the identity in L¹](tendsto-l1-gauge-group-left-sub.md)

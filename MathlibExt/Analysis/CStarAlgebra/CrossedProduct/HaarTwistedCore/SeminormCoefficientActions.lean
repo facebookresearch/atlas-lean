@@ -17,14 +17,13 @@ public import MathlibExt.Analysis.CStarAlgebra.SquareComplement
 public import Mathlib.Analysis.CStarAlgebra.Unitization
 
 /-!
-# Original coefficient bounds in every actual C-star seminorm completion
+# Coefficient bounds in C-star seminorms
 
-The coefficient action extends to the real C-star unitization by the standard
-algebraic toAlgHom construction. A positive CFC square complement in that
-unitization gives the original cross-Gram square identity on the Haar core.
-The genuine same-seminorm separated completion then gives the coefficient
-norm bounds. No raw-core or L1 C-star structure, supplied bound, positive
-model or null-kernel conclusion is an input. The zero seminorm is allowed.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on the twisted core and a∈A, the coefficient actions L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a)
+satisfy p(L_a f)≤‖a‖p(f) and p(R_a f)≤‖a‖p(f). The coefficient unitization gives a positive
+square complement and a cross-Gram identity for these bounds.
 -/
 
 @[expose] public section
@@ -46,7 +45,13 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [MeasurableSpace G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : MeasureTheory.Measure G) (α : PointNormCStarAction G A)
 
-/-- Original left coefficient multiplication as its actual algebraic endomorphism representation. -/
+/-- **Algebra representation by left coefficient multiplication.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. The nonunital complex algebra
+homomorphism coefficientLeftHom μ α:A→End_ℂ(Carrier μ α) sends a to the linear map L_a
+f(s)=a*f(s).
+-/
 def coefficientLeftHom : A →ₙₐ[ℂ] Module.End ℂ (Carrier μ α) where
   toFun := coefficientLeft μ α
   map_zero' := by
@@ -60,24 +65,47 @@ def coefficientLeftHom : A →ₙₐ[ℂ] Module.End ℂ (Carrier μ α) where
   map_mul' := coefficientLeft_mul μ α
   map_smul' := coefficientLeft_smul μ α
 
-/-- The actual unitized action, constructed by the existing canonical toAlgHom API. -/
+/-- **Unitized left coefficient representation.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. The unital complex algebra
+homomorphism coefficientLeftUnitization μ α:Unitization ℂ A→End_ℂ(Carrier μ α) sends a
+unitized coefficient z=(c,a) to the linear action f↦c•f+L_a f, where L_a f(s)=a*f(s).
+-/
 def coefficientLeftUnitization : Unitization ℂ A →ₐ[ℂ] Module.End ℂ (Carrier μ α) :=
   (coefficientLeftHom μ α).toAlgHom
 
-/-- Unitized coefficients act by their original scalar and coefficient components. -/
+/-- **Action of a unitized coefficient.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For z=(c,a)∈Unitization ℂ A and
+f∈Carrier μ α, coefficientLeftUnitization μ α z f=c•f+coefficientLeft μ α a f, where
+coefficientLeft a f(s)=a*f(s).
+-/
 @[simp]
 theorem coefficientLeftUnitization_apply (a : Unitization ℂ A) (f : Carrier μ α) :
     coefficientLeftUnitization μ α a f = a.fst • f + coefficientLeft μ α a.snd f :=
   rfl
 
-/-- Every original pointwise value of the computed unitized coefficient action. -/
+/-- **Pointwise value of the unitized coefficient action.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For z=(c,a)∈Unitization ℂ A,
+f∈Carrier μ α and s∈G, coefficientLeftUnitization μ α z f s=c•f(s)+a*f(s).
+-/
 @[simp]
 theorem coefficientLeftUnitization_apply_pointwise
     (a : Unitization ℂ A) (f : Carrier μ α) (s : G) :
     coefficientLeftUnitization μ α a f s = a.fst • f s + a.snd * f s :=
   rfl
 
-/-- The non-scalar unitization inclusion has exactly the original coefficient action. -/
+/-- **Coefficient inclusion in the unitized action.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a∈A included as
+(0,a)∈Unitization ℂ A, coefficientLeftUnitization μ α a=coefficientLeft μ α a, the map
+f(s)↦a*f(s).
+-/
 @[simp]
 theorem coefficientLeftUnitization_inr (a : A) :
     coefficientLeftUnitization μ α (a : Unitization ℂ A) = coefficientLeft μ α a := by
@@ -86,7 +114,12 @@ theorem coefficientLeftUnitization_inr (a : A) :
   simp only [coefficientLeftUnitization_apply, Unitization.fst_inr,
     Unitization.snd_inr, zero_smul, zero_add]
 
-/-- The actual real scalar in the coefficient unitization acts by its original complex scalar. -/
+/-- **Real scalars in the unitized coefficient action.**
+
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For r∈ℝ and f∈Carrier μ α,
+coefficientLeftUnitization μ α (algebraMap ℝ (Unitization ℂ A) r) f=(r:ℂ)•f.
+-/
 theorem coefficientLeftUnitization_algebraMap (r : ℝ) (f : Carrier μ α) :
     coefficientLeftUnitization μ α (algebraMap ℝ (Unitization ℂ A) r) f = (r : ℂ) • f := by
   change coefficientLeftUnitization μ α (Unitization.inl (r : ℂ)) f = (r : ℂ) • f
@@ -101,13 +134,21 @@ section SquareComplement
 
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- The computed positive CFC square complement of the original coefficient in its real unitization. -/
+/-- **Positive square complement of a coefficient.**
+
+Let A be a nonunital complex C-star algebra and view a∈A in its complex unitization Ã. The
+element b=coefficientSquareComplement a is the positive square root of ‖a‖²1-star(a)*a in Ã.
+-/
 def coefficientSquareComplement (a : A) : Unitization ℂ A := by
   let : PartialOrder (Unitization ℂ A) := CStarAlgebra.spectralOrder _
   let : StarOrderedRing (Unitization ℂ A) := CStarAlgebra.spectralOrderedRing _
   exact CStarAlgebra.normSquareComplement (a : Unitization ℂ A)
 
-/-- The real unitization retains the original coefficient norm in the computed square identity. -/
+/-- **Square complement identity in the coefficient unitization.**
+
+Let A be a nonunital complex C-star algebra, a∈A included in Ã=Unitization ℂ A and
+b=coefficientSquareComplement a. Then star(a)*a+star(b)*b=‖a‖²1 in Ã.
+-/
 theorem coefficientSquareComplement_identity (a : A) :
     star (a : Unitization ℂ A) * (a : Unitization ℂ A) +
       star (coefficientSquareComplement a) * coefficientSquareComplement a =
@@ -128,7 +169,13 @@ variable (μ : MeasureTheory.Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable (α : PointNormCStarAction G A)
 
 omit [μ.Regular] in
-/-- Original coefficient star exchange and convolution compatibility for the actual unitization. -/
+/-- **Star exchange for the unitized coefficient action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For z∈Unitization ℂ A let L_z
+f=z.fst•f+coefficientLeft μ α z.snd f. For core coefficients f,h, star(L_z
+f)*h=star(f)*L_star(z) h, where * is twisted convolution.
+-/
 theorem coefficientLeftUnitization_star_mul (a : Unitization ℂ A) (f h : Carrier μ α) :
     star (coefficientLeftUnitization μ α a f) * h =
       star f * coefficientLeftUnitization μ α (star a) h := by
@@ -151,7 +198,14 @@ theorem coefficientLeftUnitization_star_mul (a : Unitization ℂ A) (f h : Carri
       rw [coefficientLeftUnitization_apply, Unitization.fst_star, Unitization.snd_star]
 
 omit [μ.Regular] in
-/-- The actual coefficient and computed positive complement give the original cross-Gram identity. -/
+/-- **Cross-Gram identity for a coefficient and its square complement.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a∈A put
+b=coefficientSquareComplement a, L_a f(s)=a*f(s), and L_b f=b.fst•f+coefficientLeft μ α b.snd
+f. For core coefficients f,h, star(L_a f)*L_a h+star(L_b f)*L_b h=‖a‖²•(star(f)*h), with
+twisted convolution and the real scalar embedded in ℂ.
+-/
 theorem coefficientLeft_cross_gram_square (a : A) (f h : Carrier μ α) :
     star (coefficientLeft μ α a f) * coefficientLeft μ α a h +
       star (coefficientLeftUnitization μ α (coefficientSquareComplement a) f) *
@@ -184,7 +238,13 @@ theorem coefficientLeft_cross_gram_square (a : A) (f h : Carrier μ α) :
       exact mul_smul_comm _ _ _
 
 omit [μ.Regular] in
-/-- Every actual C-star seminorm has the original coefficient norm bound, via its genuine completion. -/
+/-- **Left coefficient bound in any C-star seminorm.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, a∈A and core coefficient f, p(coefficientLeft μ α a f)≤‖a‖p(f), where coefficientLeft a
+f(s)=a*f(s).
+-/
 theorem seminorm_coefficientLeft_le (p : CStarSeminorm (Carrier μ α)) (a : A) (f : Carrier μ α) :
     p (coefficientLeft μ α a f) ≤ ‖a‖ * p f := by
   let : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
@@ -216,7 +276,13 @@ theorem seminorm_coefficientLeft_le (p : CStarSeminorm (Carrier μ α)) (a : A) 
   simpa only [X, F, q, CStarSeminorm.norm_toNonUnitalCompletion] using hBound
 
 omit [μ.Regular] in
-/-- Every actual C-star seminorm has the original right coefficient bound by star exchange. -/
+/-- **Right coefficient bound in any C-star seminorm.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, a∈A and core coefficient f, p(coefficientRight μ α a f)≤‖a‖p(f), where coefficientRight a
+f(s)=f(s)*α_s(a).
+-/
 theorem seminorm_coefficientRight_le (p : CStarSeminorm (Carrier μ α)) (a : A) (f : Carrier μ α) :
     p (coefficientRight μ α a f) ≤ ‖a‖ * p f := by
   have hStar : star (coefficientRight μ α a f) = coefficientLeft μ α (star a) (star f) :=

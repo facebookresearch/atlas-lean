@@ -23,17 +23,14 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Non-circular orbit boundedness and asymptotic contractivity
+# Bounded orbits and asymptotic contractivity
 
-The first tail bound follows from a positive pair of actual image squares.
-Small star errors are retained multiplied by the unknown image norms until
-an elementary quadratic estimate bounds both images. Only then are the
-errors made arbitrarily small. Stock unitization and zero-normalization
-reduce arbitrary nonunital families to this argument.
-
-The compact initial interval provides the global bound. No Cb/C0 quotient,
-given orbit bound, linear slice, Source theorem or nontriviality premise is
-used, and all norms and C-star orders are the actual stock dictionaries.
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+For every a∈A, the orbit {φ_t(a):t≥1} is norm-bounded, and for every ε>0 one has
+‖φ_t(a)‖<‖a‖+ε for all sufficiently large t. These are the boundedness and asymptotic
+contractivity assertions of Blackadar's Proposition25.1.3.
 -/
 
 @[expose] public section
@@ -320,8 +317,14 @@ private theorem eventually_raw_norm_lt (φ : AsymptoticMorphism A B)
     _ < (‖a‖ + ε / 2) + ε / 2 := add_lt_add ht hz
     _ = _ := by ring
 
-/-- Every actual raw orbit is globally bounded and sharply asymptotically
-contractive. These are conclusions, never additional raw-family fields. -/
+/-- **Global boundedness and sharp eventual contractivity.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+For each a∈A there exists C∈ℝ with ‖φ_t(a)‖≤C for every t∈T. Moreover, for every ε>0 there
+exists a time threshold after which ‖φ_t(a)‖<‖a‖+ε.
+-/
 theorem norm_bounded_and_eventually_contractive (φ : AsymptoticMorphism A B) (a : A) :
     (∃ C : ℝ, ∀ t : AsymptoticTime, ‖φ t a‖ ≤ C) ∧
       ∀ ε : ℝ, 0 < ε →

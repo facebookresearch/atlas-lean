@@ -1,3 +1,4 @@
-# Completed Character Hom mul
+# Composition of completed character maps
 
-Actual completed character maps compose in the original character group order.
+For unitary characters χ,η of G, the completed endomorphisms of FullCovariantCompletion μ α
+satisfy Dχη=Dχ∘Dη.

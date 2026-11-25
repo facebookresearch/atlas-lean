@@ -1,3 +1,4 @@
-# Of Hom
+# Constant lift from a multiplier homomorphism
 
-A genuine multiplier-valued homomorphism gives its constant exact lift.
+A star homomorphism `ρ : A → M(B)` gives the
+constant exact asymptotic lift `ρ_t(a) = ρ(a)` of `q ∘ ρ`.

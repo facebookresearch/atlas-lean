@@ -1,3 +1,3 @@
-# Trans aut half
+# The midpoint of a concatenated homotopy
 
-The concatenated homotopy has the common endpoint at time `1/2`.
+At t = 1/2, the concatenation of h : α → β and k : β → γ equals the common endpoint β.

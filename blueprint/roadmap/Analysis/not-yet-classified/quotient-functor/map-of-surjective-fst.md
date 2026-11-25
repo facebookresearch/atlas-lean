@@ -1,3 +1,5 @@
-# Map Of Surjective fst
+# Left multiplier action under a coefficient quotient
 
-Every original first multiplier action has its actual quotient value.
+For a surjective complex nonunital
+star homomorphism `ρ : B → D` of C-star algebras, `(mapOfSurjective ρ hρ m).fst (ρ b) =
+ρ(m.fst b)`.

@@ -1,3 +1,4 @@
-# End Star Alg Equiv apply
+# Evaluation of the endomorphism equivalence
 
-The canonical ambient equivalence acts by the existing scalar-right lift.
+For a complex Hilbert space, `endStarAlgEquiv
+H T = ofContinuousLinearMap H H T`.

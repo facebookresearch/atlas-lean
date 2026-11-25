@@ -1,3 +1,5 @@
-# Eq zero of tensor Matrix Coefficient eq zero
+# Tensor determined by its Hilbert entries
 
-Vanishing of every original tensor matrix entry forces the same raw algebraic tensor to be zero.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, if `tensorMatrixCoefficient H A ξ η z = 0` for every `ξ,η : H`, then the
+algebraic tensor `z` is zero.

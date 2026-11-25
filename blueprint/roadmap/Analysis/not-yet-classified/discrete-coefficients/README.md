@@ -1,5 +1,5 @@
-# Discrete Coefficients
+# Finite coefficients on a discrete monoid
 
-- [Discrete Coefficients Equiv](discrete-coefficients-equiv.md)
-- [Discrete Coefficients Equiv apply](discrete-coefficients-equiv-apply.md)
-- [Discrete Coefficients Equiv symm apply](discrete-coefficients-equiv-symm-apply.md)
+- [Linear equivalence with finitely supported coefficients](discrete-coefficients-equiv.md)
+- [Value of the discrete coefficient equivalence](discrete-coefficients-equiv-apply.md)
+- [Value of the inverse finite coefficient map](discrete-coefficients-equiv-symm-apply.md)

@@ -15,15 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.CompletelyPosi
 public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Bounded
 
 /-!
-# Access to the actual CP slices of asymptotic families
+# Completely positive slices as bounded linear maps
 
-The existing CP and CPC carriers provide a completely positive map witness
-for each time. The accessors choose only from that supplied evidence and
-retain the raw value. A CPC slice has its supplied pointwise contraction and
-therefore a continuous linear map of operator norm at most one.
-
-No carrier, quotient, homotopy, global instance or boundedness field changes.
-No source representative-existence theorem is used.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. Each slice defines a completely positive map and a bounded
+complex linear operator A→B with the same coefficient values. For a CP-contractive family, its
+pointwise norm bound is ‖φ_t(a)‖≤‖a‖ and the linear operator norm is at most 1.
 -/
 
 @[expose] public section
@@ -42,8 +42,15 @@ variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
 namespace CompletelyPositiveFamily
 
-/-- A CP slice chosen only from the given family's actual finite-time
-complete-positivity evidence. -/
+/-- **Completely positive map of a time slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For t≥1, CompletelyPositiveFamily.slice φ t is the completely
+positive map s_t:A→B with s_t(a)=φ_t(a).
+-/
 def slice (phi : CompletelyPositiveFamily A B) (t : AsymptoticTime) :
     CompletelyPositiveMap.Canonical A B := by
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -52,7 +59,14 @@ def slice (phi : CompletelyPositiveFamily A B) (t : AsymptoticTime) :
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact Classical.choose (phi.completelyPositive t)
 
-/-- The chosen CP witness has exactly the original raw slice values. -/
+/-- **Value of a completely positive slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For t≥1 and a∈A, CompletelyPositiveFamily.slice φ t a=φ_t(a).
+-/
 @[simp]
 theorem slice_apply (phi : CompletelyPositiveFamily A B)
     (t : AsymptoticTime) (a : A) :
@@ -63,8 +77,15 @@ theorem slice_apply (phi : CompletelyPositiveFamily A B)
   let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact Classical.choose_spec (phi.completelyPositive t) a
 
-/-- Each actual broad CP slice has the upstream continuous linear adapter,
-without a contraction assumption. -/
+/-- **Bounded complex linear map of a CP slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For t≥1, CompletelyPositiveFamily.sliceContinuousLinearMap φ
+t:A→L[ℂ]B is the bounded linear map a↦φ_t(a).
+-/
 def sliceContinuousLinearMap (phi : CompletelyPositiveFamily A B)
     (t : AsymptoticTime) : A →L[ℂ] B := by
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -73,7 +94,15 @@ def sliceContinuousLinearMap (phi : CompletelyPositiveFamily A B)
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact CompletelyPositiveMap.toContinuousLinearMap (slice phi t)
 
-/-- Continuous access retains every raw value. -/
+/-- **Value of the bounded linear CP slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For t≥1 and a∈A,
+CompletelyPositiveFamily.sliceContinuousLinearMap φ t a=φ_t(a).
+-/
 @[simp]
 theorem sliceContinuousLinearMap_apply (phi : CompletelyPositiveFamily A B)
     (t : AsymptoticTime) (a : A) :
@@ -89,8 +118,16 @@ end CompletelyPositiveFamily
 
 namespace CompletelyPositiveContraction
 
-/-- A CP slice chosen only from the supplied CP-contraction evidence.
-The norm evidence is retained by the characteristic theorem below. -/
+/-- **Completely positive map of a contractive slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For t≥1, CompletelyPositiveContraction.slice φ t:A→B is the
+completely positive map a↦φ_t(a).
+-/
 def slice (phi : CompletelyPositiveContraction A B) (t : AsymptoticTime) :
     CompletelyPositiveMap.Canonical A B := by
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -99,7 +136,16 @@ def slice (phi : CompletelyPositiveContraction A B) (t : AsymptoticTime) :
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact Classical.choose (phi.completelyPositiveContraction t)
 
-/-- The chosen CP witness has exactly the original raw slice values. -/
+/-- **Value of a completely positive contraction slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For t≥1 and a∈A, CompletelyPositiveContraction.slice φ t
+a=φ_t(a).
+-/
 @[simp]
 theorem slice_apply (phi : CompletelyPositiveContraction A B)
     (t : AsymptoticTime) (a : A) :
@@ -110,7 +156,16 @@ theorem slice_apply (phi : CompletelyPositiveContraction A B)
   let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact (Classical.choose_spec (phi.completelyPositiveContraction t)).2 a
 
-/-- The chosen slice retains its supplied pointwise contraction. -/
+/-- **Pointwise norm bound for a CP contraction slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For t≥1 and a∈A, ‖CompletelyPositiveContraction.slice φ t
+a‖≤‖a‖.
+-/
 theorem norm_slice_apply_le (phi : CompletelyPositiveContraction A B)
     (t : AsymptoticTime) (a : A) :
     ‖slice phi t a‖ ≤ ‖a‖ := by
@@ -120,7 +175,17 @@ theorem norm_slice_apply_le (phi : CompletelyPositiveContraction A B)
   let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact (Classical.choose_spec (phi.completelyPositiveContraction t)).1 a
 
-/-- The continuous linear map of an actual CPC slice, with unchanged values. -/
+/-- **Bounded linear map of a CP contraction slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For t≥1,
+CompletelyPositiveContraction.sliceContinuousLinearMap φ t:A→L[ℂ]B is the bounded complex
+linear map a↦φ_t(a).
+-/
 def sliceContinuousLinearMap (phi : CompletelyPositiveContraction A B)
     (t : AsymptoticTime) : A →L[ℂ] B := by
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -129,7 +194,16 @@ def sliceContinuousLinearMap (phi : CompletelyPositiveContraction A B)
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact CompletelyPositiveMap.toContinuousLinearMap (slice phi t)
 
-/-- Continuous access retains every raw value. -/
+/-- **Value of the bounded linear contraction slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For t≥1 and a∈A,
+CompletelyPositiveContraction.sliceContinuousLinearMap φ t a=φ_t(a).
+-/
 @[simp]
 theorem sliceContinuousLinearMap_apply (phi : CompletelyPositiveContraction A B)
     (t : AsymptoticTime) (a : A) :
@@ -141,7 +215,16 @@ theorem sliceContinuousLinearMap_apply (phi : CompletelyPositiveContraction A B)
   rw [sliceContinuousLinearMap, CompletelyPositiveMap.toContinuousLinearMap_apply,
     slice_apply]
 
-/-- The actual continuous linear slice has operator norm at most one. -/
+/-- **Operator norm of a CP contraction slice.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For a completely positive family, each
+slice φ_t is a completely positive complex-linear map for the canonical C-star positive cones,
+including all matrix levels. For a completely positive contraction family, additionally
+‖φ_t(a)‖≤‖a‖ for all a∈A and t∈T. For t≥1,
+‖CompletelyPositiveContraction.sliceContinuousLinearMap φ t‖≤1.
+-/
 theorem norm_sliceContinuousLinearMap_le_one
     (phi : CompletelyPositiveContraction A B) (t : AsymptoticTime) :
     ‖sliceContinuousLinearMap phi t‖ ≤ 1 := by

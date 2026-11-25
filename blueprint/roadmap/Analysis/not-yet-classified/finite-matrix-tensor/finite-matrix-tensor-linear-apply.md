@@ -1,3 +1,4 @@
-# Finite Matrix Tensor Linear apply
+# Formula for the finite matrix tensor map
 
-Every source matrix has exactly its original finite entry/rank-one tensor sum.
+`finiteMatrixTensorLinear v A M = ∑ i, ∑ j, M i
+j ⊗ hilbertCompactRankOne H (v i) (v j)`.

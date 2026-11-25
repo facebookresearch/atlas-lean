@@ -1,4 +1,5 @@
-# Norm right Matrix Standard Compact Hom apply
+# Norm of a standard matrix corner
 
-The corner preserves the original C-star matrix norm and inherited
-compact-operator norm, including the zero algebra and empty indices.
+For nonunital complex C-star `B`, finite `I`, arbitrary
+`κ`, and an injection `η : I ↪ κ`, `‖rightMatrixStandardCompactHom η X‖ = ‖X‖` for the
+compact-operator and C-star matrix norms.

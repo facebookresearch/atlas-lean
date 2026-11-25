@@ -19,16 +19,17 @@ public import
 public import MathlibExt.Analysis.Normed.Operator.Compact.Calkin
 
 /-!
-# Scalar-right compact operators and the Calkin algebra
+# Compact operators and Calkin algebras for scalar modules
 
-On complete complex Hilbert spaces, the canonical ScalarRight correspondence
-identifies ordinary compact operators with Hilbert-module compact operators.
-For endomorphisms it preserves identity, composition and adjoint, maps the
-ordinary compact ideal onto the module compact ideal, and descends to an
-algebra equivalence of the two quotient carriers.
+For complex Hilbert spaces `H,K`, the scalar-module operator correspondence maps the complex
+span of Hilbert-space rank-one operators onto the module rank-one span. It therefore identifies
+their norm closures, so module compactness corresponds to compactness of the bounded
+Hilbert-space map.
 
-This comparison is specific to scalar coefficients. No Banach-compactness
-claim is made for Hilbert modules over a general C-star algebra.
+For endomorphisms of `H` this is a star-algebra equivalence, and it induces linear and algebra
+equivalences between the quotients by the compact ideals. The formulas hold for
+finite-dimensional and zero Hilbert spaces as well. This comparison uses scalar coefficients
+`ℂ`.
 -/
 
 @[expose] public section
@@ -46,8 +47,9 @@ variable {H : Type u} {K : Type v}
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- The scalar-right correspondence sends the ordinary rank-one span into the
-module rank-one span. -/
+/-- **Finite-rank maps under scalar-module transport.** On complex Hilbert spaces `H,K`, a bounded
+map in the complex span of Hilbert-space rank-one operators is sent by `ofContinuousLinearMap`
+into the module rank-one span. -/
 theorem ofContinuousLinearMap_mem_finiteRank
     {T : H →L[ℂ] K}
     (hT : T ∈ InnerProductSpace.finiteRankSubmodule
@@ -97,8 +99,9 @@ theorem ofContinuousLinearMap_mem_finiteRank
     simpa only [map_smul] using
       (Submodule.smul_mem _ c hT)
 
-/-- Forgetting the scalar-right model sends the module rank-one span into the
-ordinary Hilbert-space rank-one span. -/
+/-- **Finite-rank maps under Hilbert-space recovery.** On complex Hilbert spaces,
+`toContinuousLinearMap` sends the module rank-one span into the complex span of Hilbert-space
+rank-one operators. -/
 theorem toContinuousLinearMap_mem_finiteRank
     {T :
       let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
@@ -161,8 +164,9 @@ theorem toContinuousLinearMap_mem_finiteRank
     simpa only [map_smul] using
       (Submodule.smul_mem _ c hT)
 
-/-- Under the scalar-right correspondence, module compactness is exactly
-ordinary Hilbert-space compactness. -/
+/-- **Equivalence of scalar-module and Hilbert compactness.** For complex Hilbert spaces and a
+bounded map `T`, `ofContinuousLinearMap H K T` belongs to the module compact submodule exactly
+when `T` is a compact operator. -/
 theorem ofContinuousLinearMap_mem_compact_iff
     (T : H →L[ℂ] K) :
     let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
@@ -214,8 +218,9 @@ theorem ofContinuousLinearMap_mem_compact_iff
     exact map_mem_closure (f := e) e.continuous hClosure
       (fun _ h => ofContinuousLinearMap_mem_finiteRank h)
 
-/-- The ambient linear equivalence maps the ordinary compact-operator submodule
-onto the scalar-right module compact submodule. -/
+/-- **Image of the compact-operator submodule.** On complex Hilbert spaces `H,K`, the linear
+operator equivalence maps `compactOperator (RingHom.id ℂ) H K` onto the scalar-module compact
+submodule. -/
 theorem continuousLinearMapLinearEquiv_map_compactOperator :
     let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
     let _ : NormedAddCommGroup (ScalarRight K) := instNormedAddCommGroup K
@@ -257,8 +262,9 @@ section Endomorphism
 
 variable (H)
 
-/-- The canonical star-algebra homomorphism from ordinary endomorphisms to
-scalar-right adjointable endomorphisms. -/
+/-- **Star-algebra map on Hilbert endomorphisms.** For a complex Hilbert space `H`, `T ↦
+ofContinuousLinearMap H H T` defines a star-algebra homomorphism into the adjointable
+endomorphisms of `ScalarRight H`. -/
 noncomputable def endStarAlgHom :
     let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
     let _ : Module ℂ (ScalarRight H) := instComplexModule H
@@ -308,8 +314,9 @@ noncomputable def endStarAlgHom :
           (ofContinuousLinearMap H H T).adjointOperator
         exact (ofContinuousLinearMap_adjointOperator H H T).symm }
 
-/-- The canonical star-algebra equivalence between the two endomorphism
-algebras. -/
+/-- **Star-algebra equivalence of endomorphism algebras.** For a complex Hilbert space `H`,
+bounded endomorphisms and adjointable endomorphisms of `ScalarRight H` are star-algebra
+equivalent by `T ↦ ofContinuousLinearMap H H T`. -/
 noncomputable def endStarAlgEquiv :
     let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
     let _ : Module ℂ (ScalarRight H) := instComplexModule H
@@ -340,7 +347,8 @@ noncomputable def endStarAlgEquiv :
   exact StarAlgEquiv.ofBijective (endStarAlgHom H)
     (continuousLinearMapLinearEquiv H H).bijective
 
-/-- The canonical ambient equivalence acts by the existing scalar-right lift. -/
+/-- **Evaluation of the endomorphism equivalence.** For a complex Hilbert space, `endStarAlgEquiv
+H T = ofContinuousLinearMap H H T`. -/
 @[simp]
 theorem endStarAlgEquiv_apply (T : H →L[ℂ] H) :
     let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
@@ -360,8 +368,9 @@ theorem endStarAlgEquiv_apply (T : H →L[ℂ] H) :
 
 end Endomorphism
 
-/-- The scalar-right module Calkin carrier, using the existing compact closed
-star ideal and its canonical quotient. -/
+/-- **Calkin algebra of the right scalar module.** For a complex Hilbert space `H`, this is the
+quotient of the adjointable endomorphisms of `ScalarRight H` by the closed star ideal
+generated by module rank-one operators. -/
 abbrev CalkinAlgebra (H : Type u)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] :=
   let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
@@ -379,8 +388,9 @@ abbrev CalkinAlgebra (H : Type u)
   (CStarModule.AdjointableOperator.compactClosedStarIdeal
     (B := ℂ) (E := ScalarRight H)).Quotient
 
-/-- The ambient linear equivalence descends to the ordinary and module Calkin
-quotient carriers. -/
+/-- **Linear equivalence of Calkin quotients.** For a complex Hilbert space `H`, the operator
+correspondence induces a complex-linear equivalence from the Hilbert-space Calkin algebra to
+the Calkin algebra of `ScalarRight H`. -/
 noncomputable def calkinLinearEquiv (H : Type u)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] :
     let _ : NormedAddCommGroup (ScalarRight H) := instNormedAddCommGroup H
@@ -419,8 +429,9 @@ noncomputable def calkinLinearEquiv (H : Type u)
       (B := ℂ) (E := ScalarRight H) (F := ScalarRight H))
     e continuousLinearMapLinearEquiv_map_compactOperator
 
-/-- The descended linear equivalence sends the class of an ordinary operator
-to the class of its scalar-right adjointable image. -/
+/-- **Operator classes under the Calkin linear equivalence.** For a complex Hilbert space `H`, the
+class of a bounded endomorphism `T` is sent to the class of `ofContinuousLinearMap H H T` in
+the scalar-module Calkin quotient. -/
 theorem calkinLinearEquiv_classMap
     (H : Type u)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -461,8 +472,9 @@ theorem calkinLinearEquiv_classMap
     Submodule.Quotient.mk (ofContinuousLinearMap H H T)
   rfl
 
-/-- The ordinary Banach-space Calkin algebra and the scalar-right module
-Calkin quotient are canonically algebra equivalent. -/
+/-- **Algebra equivalence of Calkin quotients.** For a complex Hilbert space `H`, the endomorphism
+algebra correspondence descends to an algebra equivalence between its Hilbert-space and right
+scalar-module Calkin algebras. -/
 noncomputable def calkinAlgEquiv
     (H : Type u)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] :
@@ -519,8 +531,9 @@ noncomputable def calkinAlgEquiv
       calkinLinearEquiv_classMap, calkinLinearEquiv_classMap,
       calkinLinearEquiv_classMap, map_mul, map_mul]
 
-/-- The quotient algebra equivalence commutes with the two actual quotient
-maps on every endomorphism. -/
+/-- **Quotient classes under the Calkin algebra equivalence.** For a complex Hilbert space `H`,
+for every bounded endomorphism `T`, the Calkin algebra equivalence sends its class to the
+class of `ofContinuousLinearMap H H T`. -/
 theorem calkinAlgEquiv_classMap
     (H : Type u)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

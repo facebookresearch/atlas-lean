@@ -1,3 +1,4 @@
-# Trivial stably strong equivalent zero
+# Liftable Busby map is stably zero
 
-Every trivial Busby map represents the same stable class as zero.
+For coherent `S`, a Busby map admitting a multiplier
+homomorphism lift is stably strongly equivalent to zero.

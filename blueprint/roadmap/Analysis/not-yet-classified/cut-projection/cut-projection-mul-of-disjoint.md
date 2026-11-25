@@ -1,3 +1,3 @@
-# Cut Projection mul of disjoint
+# Disjoint coordinate cuts
 
-Disjoint cuts have zero product.
+If `s,t` are disjoint, `cutProjection s * cutProjection t = 0`.

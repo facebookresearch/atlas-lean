@@ -1,3 +1,4 @@
-# Norm finite Inclusion adjoint Operator le
+# Operator norm bound for finite restriction
 
-The actual adjoint operator has the same zero-safe bound.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `‖(finiteInclusion η).adjointOperator‖ ≤ 1`.

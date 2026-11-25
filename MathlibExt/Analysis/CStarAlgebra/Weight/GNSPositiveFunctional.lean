@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Weight.GNSCoefficientPositive
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Positive
 
 /-!
-# The actual diagonal GNS coefficient as a positive continuous linear map
+# Positive continuous functionals from GNS vectors
 
-The existing bounded diagonal coefficient retains its exact continuous
-linear map. Its original positive compressed-weight value proves positivity
-for the canonical spectral orders, and linearity then proves monotonicity.
-The standard positive continuous linear map bundles those same values.
+For an extended positive weight on a unital complex C-star algebra, let `π : A → B(H_φ)` be the
+GNS representation and `Λ : n_φ → H_φ` the dense domain map. Each `x ∈ n_φ` defines the bounded
+complex-linear functional `ψ_x(a)=⟨Λ(x),π(a)Λ(x)⟩`.
 
-This supplies the positive-map field needed for an actual positive normal
-functional. Normal-functional membership and the computed representation's
-ultraweak continuity remain separate; no normality assumption is used here.
+For `a ≥ 0`, this equals `(φ(x* a x)).toReal ≥ 0`. Hence `ψ_x` is monotone for the spectral
+orders and defines a positive continuous linear map `A → ℂ`. Normality of the weight or
+functional is not assumed.
 -/
 
 @[expose] public section
@@ -44,7 +43,13 @@ variable {A : Type u} [CStarAlgebra A]
 
 attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
 
-/-- The same original bounded diagonal coefficient has its actual positive continuous linear map. -/
+/-- **Positive functional of a finite square GNS vector.** Let `A` be a unital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x : φ(x* x) < ∞}`, and let `Λ : n_φ → H_φ` be its
+dense GNS map. Let `π : A → B(H_φ)` be the unital star representation satisfying
+`π(a)Λ(x)=Λ(a*x)`. for `x ∈ n_φ`, `gnsDiagonalPositiveFunctional φ x :
+PositiveContinuousLinearMap ℂ A ℂ` has value `ψ_x(a)=⟨Λ x,π(a)Λ x⟩`; for `a ≥ 0`,
+`ψ_x(a)=((φ(x* a x)).toReal : ℂ) ≥ 0`. It is bounded and monotone in the spectral orders. -/
 def Weight.gnsDiagonalPositiveFunctional (φ : Weight A) (x : φ.finiteSquareSubmodule) :
     PositiveContinuousLinearMap ℂ A ℂ := by
   let ψ : StrongDual ℂ A :=
@@ -80,7 +85,12 @@ def Weight.gnsDiagonalPositiveFunctional (φ : Weight A) (x : φ.finiteSquareSub
         rw [map_sub] at h
         exact sub_nonneg.mp h }
 
-/-- Forgetting positivity retains exactly the existing bounded diagonal representation coefficient. -/
+/-- **Underlying bounded diagonal GNS coefficient.** Let `A` be a unital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x : φ(x* x) < ∞}`, and let `Λ : n_φ → H_φ` be its dense GNS
+map. Let `π : A → B(H_φ)` be the unital star representation satisfying `π(a)Λ(x)=Λ(a*x)`. for
+`x ∈ n_φ`, forgetting positivity in `gnsDiagonalPositiveFunctional φ x` gives the continuous
+complex-linear coefficient `a ↦ ⟨Λ x,π(a)Λ x⟩`. -/
 theorem Weight.gnsDiagonalPositiveFunctional_toContinuousLinearMap (φ : Weight A)
     (x : φ.finiteSquareSubmodule) :
     (φ.gnsDiagonalPositiveFunctional x).toContinuousLinearMap =

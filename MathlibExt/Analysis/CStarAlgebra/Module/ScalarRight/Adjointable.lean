@@ -15,12 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight
 public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.OfPair
 
 /-!
-# Ordinary Hilbert-space adjoint pairs on the scalar-right model
+# Adjoint pairs on right scalar modules
 
-An ordinary bounded complex-linear map and a supplied ordinary adjoint are
-transported through the exact `ScalarRight.equivL` factories and bundled as the
-existing C-star-module `AdjointableOperator`. No canonical adjoint choice,
-completeness, global instance or parallel operator carrier is introduced.
+Let `H` and `K` be complex inner-product spaces, and write `qH = equivL H` and `qK = equivL K`.
+A bounded complex-linear map `T : H →L[ℂ] K` induces `qK.symm ∘ T ∘ qH` on their right scalar
+modules.
+
+If `S : K →L[ℂ] H` satisfies `⟪T x, y⟫_ℂ = ⟪x, S y⟫_ℂ` for all `x,y`, the induced map is
+adjointable with adjoint `qH.symm ∘ S ∘ qK`. These pair constructions apply to incomplete
+inner-product spaces as well.
 -/
 
 @[expose] public section
@@ -33,8 +36,9 @@ noncomputable section
 
 universe u v
 
-/-- Transport an ordinary bounded complex-linear map to the two explicitly
-factory-equipped scalar-right models. -/
+/-- **Transport of a bounded complex-linear map.** For complex normed spaces `H,K` and `T : H
+→L[ℂ] K`, define `qK.symm ∘ T ∘ qH : ScalarRight H →L[ℂ] ScalarRight K`, where `qH = equivL H`
+and `qK = equivL K`. -/
 noncomputable def continuousLinearMap
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [NormedSpace ℂ H]
@@ -78,9 +82,9 @@ theorem continuousLinearMap_apply
   change equivL K ((equivL K).symm (T (equivL H x))) = T (equivL H x)
   exact (equivL K).apply_symm_apply _
 
-/-- Bundle an ordinary bounded adjoint pair on `H,K` as an adjointable
-operator between their exact scalar-right models. The source convention is
-conjugate-linear first and linear second. -/
+/-- **Adjointable operator from an adjoint pair.** If bounded maps `T : H →L[ℂ] K` and `S : K
+→L[ℂ] H` satisfy `⟪T x, y⟫_ℂ = ⟪x, S y⟫_ℂ`, they induce the adjointable map `qK.symm ∘ T ∘ qH`
+with adjoint `qH.symm ∘ S ∘ qK`. The spaces may be incomplete. -/
 noncomputable def ofOrdinaryAdjointPair
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H]

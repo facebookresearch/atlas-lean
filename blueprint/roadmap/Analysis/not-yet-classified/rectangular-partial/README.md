@@ -1,9 +1,9 @@
-# Rectangular Partial
+# Densely defined operators with right coefficient actions
 
-## CStar Module
+## Right C-star modules
 
-- [Densely Defined Right Partial Operator](densely-defined-right-partial-operator.md)
+- [Densely defined right-linear partial operator](densely-defined-right-partial-operator.md)
 
-## Densely Defined Right Partial Operator
+## Densely defined right-linear partial operators
 
-- [Ext](ext.md)
+- [Extensionality of dense right-linear operators](ext.md)

@@ -1,3 +1,4 @@
-# C Star Module to Inner
+# Inner product of the scalar C-star module
 
-The C-star factory uses the exact inner factory, not a second inner dictionary.
+`(cStarModule H).toInner = instInner H`, so its
+opposite-valued inner product is `MulOpposite.op ⟪q x, q y⟫_ℂ`.

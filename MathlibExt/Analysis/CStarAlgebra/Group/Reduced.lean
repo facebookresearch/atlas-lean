@@ -29,15 +29,14 @@ public import Mathlib.Topology.DenseEmbedding
 /-!
 # Reduced group C-star algebras
 
-This file constructs the reduced group C-star algebra of an arbitrary group.
-The construction starts with the left regular representation on `ℓ²(G)`,
-integrates it on the complex group algebra, and takes the norm closure of the
-resulting star subalgebra of bounded operators.
-
-The canonical trace is the vector state at the identity basis vector.  Group
-equivalences act by reindexing `ℓ²`; no map is declared for a general group
-homomorphism, since such a homomorphism need not induce a map of reduced group
-C-star algebras.
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The integrated representation is λ(a)=∑g a(g)•λ_g. Let C*_r(G)=ReducedGroupCStarAlgebra G be
+the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The canonical trace is τ(a)=⟪δ_1,aδ_1⟫_ℂ,
+where δ_1 is the identity basis vector. This vector state is tracial on C*_r(G). Group
+equivalences act by coordinate unitary conjugation, sending λ_g to λ_(e(g)).
 -/
 
 @[expose] public section
@@ -52,9 +51,19 @@ noncomputable section
 
 universe u v w
 
-/-! ## The left regular representation -/
+/-!
+## Left regular representation
 
-/-- The Hilbert space `ℓ²(G)` used by the left regular representation. -/
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. These translations form a unitary group representation on ℓ²(G).
+-/
+
+/-- **Square-summable complex group functions.**
+
+For any type G, GroupL2 G is the Hilbert space ℓ²(G) of functions ξ:G→ℂ with ∑g|ξ(g)|²<∞,
+equipped with norm ‖ξ‖²=∑g|ξ(g)|².
+-/
 abbrev GroupL2 (G : Type u) := lp (fun _ : G => ℂ) 2
 
 def leftTranslate
@@ -78,7 +87,12 @@ theorem leftTranslate_norm
   simpa only [leftTranslate, Equiv.coe_mulLeft] using
     (Equiv.mulLeft g⁻¹).tsum_eq (fun h : G => ‖xi h‖ ^ (2 : ℝ≥0∞).toReal)
 
-/-- Left translation by `g`, as a linear isometric equivalence of `ℓ²(G)`. -/
+/-- **Left regular linear isometric equivalence.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. For g∈G, leftRegularLinearIsometryEquiv g:ℓ²(G)≃ₗᵢ[ℂ]ℓ²(G) sends ξ to h↦ξ(g⁻¹*h), with
+inverse translation by g⁻¹.
+-/
 noncomputable def leftRegularLinearIsometryEquiv
     {G : Type u} [Group G] (g : G) : GroupL2 G ≃ₗᵢ[ℂ] GroupL2 G where
   toFun xi := ⟨leftTranslate g xi, leftTranslate_mem g xi⟩
@@ -103,7 +117,11 @@ theorem leftRegularLinearIsometryEquiv_apply
     leftRegularLinearIsometryEquiv g xi h = xi (g⁻¹ * h) :=
   rfl
 
-/-- The left regular unitary associated to a group element. -/
+/-- **Left regular unitary of a group element.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. For g∈G, leftRegularUnitary g is the unitary operator λ_g ξ(h)=ξ(g⁻¹*h).
+-/
 noncomputable def leftRegularUnitary
     {G : Type u} [Group G] (g : G) :
     unitary (GroupL2 G →L[ℂ] GroupL2 G) :=
@@ -116,8 +134,13 @@ theorem leftRegularUnitary_apply
       xi (g⁻¹ * h) :=
   rfl
 
-/-- The left regular representation as a group homomorphism into the unitary
-group of bounded operators. -/
+/-- **Unitary left regular group homomorphism.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The homomorphism leftRegularUnitaryHom G:G→unitary(B(ℓ²(G))) sends g
+to λ_g and satisfies λ_(g*h)=λ_g*λ_h.
+-/
 noncomputable def leftRegularUnitaryHom
     (G : Type u) [Group G] :
     G →* unitary (GroupL2 G →L[ℂ] GroupL2 G) where
@@ -137,7 +160,13 @@ theorem leftRegularUnitaryHom_apply
     leftRegularUnitaryHom G g = leftRegularUnitary g :=
   rfl
 
-/-- The left regular representation with the unitary subtype forgotten. -/
+/-- **Operator-valued left regular group homomorphism.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The homomorphism leftRegularOperatorHom G:G→B(ℓ²(G)) sends g to the
+bounded operator λ_g.
+-/
 noncomputable def leftRegularOperatorHom
     (G : Type u) [Group G] : G →* (GroupL2 G →L[ℂ] GroupL2 G) :=
   (unitary (GroupL2 G →L[ℂ] GroupL2 G)).subtype.comp
@@ -160,14 +189,19 @@ theorem star_leftRegularOperatorHom
       GroupL2 G →L[ℂ] GroupL2 G)
   rw [← Unitary.coe_star, Unitary.star_eq_inv, ← map_inv]
 
-/-- The standard basis vector at `g`. -/
+/-- **Standard group basis vector.**
+
+For any type G and g∈G, delta g is δ_g∈ℓ²(G), given by δ_g(h)=1 when h=g and 0 otherwise.
+-/
 noncomputable def delta
     {G : Type u} (g : G) : GroupL2 G := by
   classical
   exact lp.single 2 g 1
 
-/-- The scalar Kronecker delta, without exposing decidable equality as an API
-parameter. -/
+/-- **Complex Kronecker delta.**
+
+For any type G and g,h∈G, kroneckerDelta g h is 1∈ℂ when g=h and 0 otherwise.
+-/
 noncomputable def kroneckerDelta {G : Type u} (g h : G) : ℂ :=
   by
     classical
@@ -203,16 +237,30 @@ theorem leftRegularUnitary_delta
   ext k
   simp [leftRegularUnitary_apply, kroneckerDelta, eq_inv_mul_iff_mul_eq]
 
-/-! ## The complex group star algebra -/
+/-!
+## Complex group star algebra
 
-/-- The complex group algebra as a genuine distinct type.  Its algebraic
-operations are transported from `MonoidAlgebra ℂ G`, while its star below is
-the group involution rather than the coefficientwise Finsupp star. -/
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex functions on G, with
+convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)). Its algebraic elements
+have finite support, and each group element g gives the basis element [g].
+-/
+
+/-- **Complex group algebra carrier.**
+
+For any type G, ComplexGroupAlgebra G is the space of finitely supported complex functions
+G→₀ℂ. For a group G it carries convolution multiplication and the group involution
+a*(g)=conj(a(g⁻¹)).
+-/
 def ComplexGroupAlgebra (G : Type u) := MonoidAlgebra ℂ G
 
 namespace ComplexGroupAlgebra
 
-/-- The transparent carrier equivalence with Mathlib's monoid algebra. -/
+/-- **Equivalence with monoid-algebra coefficient functions.**
+
+For any type G, toMonoidAlgebraEquiv G identifies ComplexGroupAlgebra G with MonoidAlgebra ℂ
+G, the finitely supported complex coefficient functions on G.
+-/
 def toMonoidAlgebraEquiv (G : Type u) :
     ComplexGroupAlgebra G ≃ MonoidAlgebra ℂ G where
   toFun a := a
@@ -228,13 +276,27 @@ noncomputable instance instAlgebra
     {G : Type u} [Group G] : Algebra ℂ (ComplexGroupAlgebra G) :=
   Equiv.algebra ℂ (toMonoidAlgebraEquiv G)
 
-/-- The transported ring equivalence. -/
+/-- **Ring equivalence of complex group algebra carriers.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex functions on G, with
+convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)). The equivalence
+toMonoidAlgebraRingEquiv G:ℂ[G]≃+*MonoidAlgebra ℂ G preserves the finitely supported
+coefficients and convolution operations.
+-/
 noncomputable def toMonoidAlgebraRingEquiv
     (G : Type u) [Group G] :
     ComplexGroupAlgebra G ≃+* MonoidAlgebra ℂ G :=
   Equiv.ringEquiv (toMonoidAlgebraEquiv G)
 
-/-- The transported complex-algebra equivalence. -/
+/-- **Complex algebra equivalence with the monoid algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex functions on G, with
+convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)). The equivalence
+toMonoidAlgebraAlgEquiv G:ℂ[G]≃ₐ[ℂ]MonoidAlgebra ℂ G preserves coefficients, convolution and
+complex scaling.
+-/
 noncomputable def toMonoidAlgebraAlgEquiv
     (G : Type u) [Group G] :
     ComplexGroupAlgebra G ≃ₐ[ℂ] MonoidAlgebra ℂ G :=
@@ -256,7 +318,13 @@ theorem toMonoidAlgebraAlgEquiv_apply_eq_ringEquiv
     toMonoidAlgebraAlgEquiv G a = toMonoidAlgebraRingEquiv G a :=
   rfl
 
-/-- Coefficients of a complex group-algebra element. -/
+/-- **Coefficient function of a complex group-algebra element.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex functions on G, with
+convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)). For a∈ℂ[G], coeff
+a:G→₀ℂ is its finitely supported coefficient function g↦a(g).
+-/
 def coeff
     {G : Type u} [Group G] (a : ComplexGroupAlgebra G) : G →₀ ℂ :=
   (toMonoidAlgebraRingEquiv G a).coeff
@@ -299,7 +367,13 @@ theorem coeff_smul
     c • (toMonoidAlgebraRingEquiv G a).coeff
   congr 1
 
-/-- A single group element with a complex coefficient. -/
+/-- **Single group-algebra coefficient.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex functions on G, with
+convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)). For g∈G and c∈ℂ,
+single g c is c[g], whose coefficient is c at g and zero elsewhere.
+-/
 noncomputable def single
     {G : Type u} [Group G] (g : G) (c : ℂ) : ComplexGroupAlgebra G :=
   (toMonoidAlgebraRingEquiv G).symm (MonoidAlgebra.single g c)
@@ -363,7 +437,12 @@ theorem induction_linear
 
 end ComplexGroupAlgebra
 
-/-- The inversion-conjugation operation on the underlying monoid algebra. -/
+/-- **Inversion-conjugation star on the monoid algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. For a∈MonoidAlgebra ℂ G, monoidAlgebraGroupStar a has coefficient conj(a(g⁻¹)) at g.
+This is the group-algebra involution.
+-/
 def monoidAlgebraGroupStar
     {G : Type u} [Group G]
     (a : MonoidAlgebra ℂ G) : MonoidAlgebra ℂ G :=
@@ -449,7 +528,13 @@ noncomputable instance instStarModuleComplexGroupAlgebra
     ext g
     simp
 
-/-- Reindexing coefficients commutes with the group involution. -/
+/-- **Coefficient reindexing commutes with the group involution.**
+
+Let G,H be groups in independent universes and e:G≃*H a group equivalence. The coordinate
+unitary U_e:ℓ²(G)→ℓ²(H) is U_e ξ(h)=ξ(e⁻¹(h)). For a∈MonoidAlgebra ℂ G, push its coefficients
+to H by e, so a_e(h)=a(e⁻¹(h)). Then the pushforward of a*(g)=conj(a(g⁻¹)) equals
+a_e*(h)=conj(a_e(h⁻¹)).
+-/
 theorem mapDomain_monoidAlgebraGroupStar
     {G : Type u} {H : Type v} [Group G] [Group H]
     (e : G ≃* H) (a : MonoidAlgebra ℂ G) :
@@ -459,7 +544,12 @@ theorem mapDomain_monoidAlgebraGroupStar
   ext h
   simp [monoidAlgebraGroupStar, MonoidAlgebra.coeff_mapDomainRingEquiv]
 
-/-- Reindexing on the distinct complex group-algebra carriers. -/
+/-- **Ring equivalence induced by a group equivalence.**
+
+Let G,H be groups in independent universes and e:G≃*H a group equivalence. The coordinate
+unitary U_e:ℓ²(G)→ℓ²(H) is U_e ξ(h)=ξ(e⁻¹(h)). The ring equivalence groupAlgebraRingEquiv
+e:ℂ[G]≃+*ℂ[H] sends coefficients a(g) to a(e⁻¹(h)) and preserves convolution.
+-/
 noncomputable def groupAlgebraRingEquiv
     {G : Type u} {H : Type v} [Group G] [Group H]
     (e : G ≃* H) : ComplexGroupAlgebra G ≃+* ComplexGroupAlgebra H :=
@@ -477,8 +567,13 @@ theorem toMonoidAlgebraRingEquiv_groupAlgebraRingEquiv_apply
         (ComplexGroupAlgebra.toMonoidAlgebraRingEquiv G a) :=
   rfl
 
-/-- Reindexing coefficients along a group equivalence, with the group-algebra
-involution included in the bundled equivalence. -/
+/-- **Star-algebra equivalence induced by a group equivalence.**
+
+Let G,H be groups in independent universes and e:G≃*H a group equivalence. The coordinate
+unitary U_e:ℓ²(G)→ℓ²(H) is U_e ξ(h)=ξ(e⁻¹(h)). The complex star-algebra equivalence
+groupAlgebraEquiv e:ℂ[G]≃⋆ₐ[ℂ]ℂ[H] sends a to h↦a(e⁻¹(h)), preserving convolution and
+inversion-conjugation star.
+-/
 noncomputable def groupAlgebraEquiv
     {G : Type u} {H : Type v} [Group G] [Group H]
     (e : G ≃* H) : ComplexGroupAlgebra G ≃⋆ₐ[ℂ] ComplexGroupAlgebra H where
@@ -523,10 +618,26 @@ theorem groupAlgebraEquiv_single
   apply (ComplexGroupAlgebra.toMonoidAlgebraRingEquiv H).injective
   simp [groupAlgebraEquiv, ComplexGroupAlgebra.single]
 
-/-! ## The integrated representation and its closure -/
+/-!
+## Integrated representation and operator closure
 
-/-- The algebra homomorphism obtained by integrating the left regular
-representation over finitely supported coefficients. -/
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The integrated representation is λ(a)=∑g a(g)•λ_g. Let C*_r(G)=ReducedGroupCStarAlgebra G be
+the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)).
+-/
+
+/-- **Integrated algebra homomorphism of the left regular action.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The complex algebra homomorphism integratedLeftRegularAlgHom G sends a to the finite operator
+sum λ(a)=∑g a(g)•λ_g.
+-/
 noncomputable def integratedLeftRegularAlgHom
     (G : Type u) [Group G] :
     ComplexGroupAlgebra G →ₐ[ℂ] (GroupL2 G →L[ℂ] GroupL2 G) :=
@@ -550,7 +661,15 @@ theorem integratedLeftRegularAlgHom_map_star
   | single_case g c =>
       simp [integratedLeftRegularAlgHom, star_leftRegularOperatorHom]
 
-/-- The integrated left regular star representation. -/
+/-- **Integrated left regular star representation.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The unital complex star homomorphism integratedLeftRegular G:ℂ[G]→B(ℓ²(G)) sends a to λ(a)=∑g
+a(g)•λ_g.
+-/
 noncomputable def integratedLeftRegular
     (G : Type u) [Group G] :
     ComplexGroupAlgebra G →⋆ₐ[ℂ] (GroupL2 G →L[ℂ] GroupL2 G) where
@@ -571,13 +690,31 @@ theorem integratedLeftRegular_single_apply
       c * xi (g⁻¹ * h) := by
   simp [integratedLeftRegular_single]
 
-/-- The reduced group C-star algebra inside the bounded operators on `ℓ²(G)`. -/
+/-- **Closed reduced group operator subalgebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The integrated representation is λ(a)=∑g a(g)•λ_g. Let C*_r(G)=ReducedGroupCStarAlgebra G be
+the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The star subalgebra
+reducedGroupCStarSubalgebra G is C*_r(G), with the inherited operator norm.
+-/
 noncomputable def reducedGroupCStarSubalgebra
     (G : Type u) [Group G] :
     StarSubalgebra ℂ (GroupL2 G →L[ℂ] GroupL2 G) :=
   (integratedLeftRegular G).range.topologicalClosure
 
-/-- The reduced group C-star algebra of `G`. -/
+/-- **Reduced group C-star algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The integrated representation is λ(a)=∑g a(g)•λ_g. Let C*_r(G)=ReducedGroupCStarAlgebra G be
+the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The closed operator subalgebra C*_r(G) is a
+unital complex C-star algebra.
+-/
 abbrev ReducedGroupCStarAlgebra
     (G : Type u) [Group G] := reducedGroupCStarSubalgebra G
 
@@ -614,7 +751,16 @@ noncomputable instance instStarOrderedRingReducedGroupCStarAlgebra
     (G : Type u) [Group G] : StarOrderedRing (ReducedGroupCStarAlgebra G) :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The dense algebraic map into the reduced group C-star algebra. -/
+/-- **Algebraic map into the reduced group C-star algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The integrated representation is λ(a)=∑g a(g)•λ_g. Let C*_r(G)=ReducedGroupCStarAlgebra G be
+the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The unital complex star homomorphism
+algebraicMap G:ℂ[G]→C*_r(G) sends a to its integrated regular operator λ(a).
+-/
 noncomputable def algebraicMap
     (G : Type u) [Group G] :
     ComplexGroupAlgebra G →⋆ₐ[ℂ] ReducedGroupCStarAlgebra G :=
@@ -622,7 +768,16 @@ noncomputable def algebraicMap
       (StarSubalgebra.le_topologicalClosure (integratedLeftRegular G).range)).comp
     (integratedLeftRegular G).rangeRestrict
 
-/-- The algebraic group algebra has dense image in the reduced completion. -/
+/-- **Density of the algebraic group algebra in the reduced algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. Write ℂ[G]=ComplexGroupAlgebra G for the finitely supported complex
+functions on G, with convolution (a*b)(k)=∑g a(g)b(g⁻¹*k) and involution a*(g)=conj(a(g⁻¹)).
+The integrated representation is λ(a)=∑g a(g)•λ_g. Let C*_r(G)=ReducedGroupCStarAlgebra G be
+the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The map algebraicMap G:a↦λ(a) has dense
+range in C*_r(G) for the operator norm.
+-/
 theorem denseRange_algebraicMap
     (G : Type u) [Group G] : DenseRange (algebraicMap G) := by
   let S := (integratedLeftRegular G).range
@@ -650,8 +805,14 @@ theorem algebraicMap_val
       GroupL2 G →L[ℂ] GroupL2 G) = integratedLeftRegular G a :=
   rfl
 
-/-- The canonical copy of a group element in its reduced group C-star
-algebra. -/
+/-- **Canonical group element in the reduced algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). For
+g∈G, groupElement g is the element of C*_r(G) represented by the left regular operator λ_g.
+-/
 noncomputable def groupElement
     {G : Type u} [Group G] (g : G) : ReducedGroupCStarAlgebra G :=
   algebraicMap G (ComplexGroupAlgebra.single g 1)
@@ -696,7 +857,14 @@ theorem star_groupElement
   rw [← map_star]
   simp
 
-/-- A group element as a unitary of the reduced group C-star algebra. -/
+/-- **Canonical unitary of a reduced group algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). For
+g∈G, groupUnitary g is λ_g regarded as a unitary in C*_r(G), with adjoint λ_(g⁻¹).
+-/
 noncomputable def groupUnitary
     {G : Type u} [Group G] (g : G) : unitary (ReducedGroupCStarAlgebra G) :=
   ⟨groupElement g, by
@@ -710,8 +878,14 @@ theorem groupUnitary_coe
     (groupUnitary g : ReducedGroupCStarAlgebra G) = groupElement g :=
   rfl
 
-/-- The canonical group homomorphism into the unitary group of the reduced
-group C-star algebra. -/
+/-- **Group homomorphism into reduced-algebra unitaries.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The
+homomorphism groupUnitaryHom G:G→unitary(C*_r(G)) sends g to the canonical unitary λ_g.
+-/
 noncomputable def groupUnitaryHom
     (G : Type u) [Group G] : G →* unitary (ReducedGroupCStarAlgebra G) where
   toFun := groupUnitary
@@ -747,7 +921,16 @@ theorem groupUnitary_delta
   simp only [leftRegularOperatorHom_apply, delta_apply, kroneckerDelta]
   rw [eq_inv_mul_iff_mul_eq]
 
-/-! ## The canonical trace -/
+/-!
+## Canonical identity-coefficient trace
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The
+canonical trace is τ(a)=⟪δ_1,aδ_1⟫_ℂ, where δ_1 is the identity basis vector. On the algebraic
+image λ(a), τ(λ(a))=a(1). It extends as a bounded positive trace on the reduced norm closure.
+-/
 
 noncomputable def canonicalTraceLinearMap
     (G : Type u) [Group G] : ReducedGroupCStarAlgebra G →ₗ[ℂ] ℂ where
@@ -769,7 +952,16 @@ theorem norm_canonicalTraceLinearMap_apply_le
       exact a.1.le_opNorm _
     _ = ‖a‖ := by simp
 
-/-- The canonical trace as a bounded functional. -/
+/-- **Bounded canonical trace functional.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The
+canonical trace is τ(a)=⟪δ_1,aδ_1⟫_ℂ, where δ_1 is the identity basis vector. The bounded
+complex linear map canonicalTraceContinuousLinearMap G:C*_r(G)→L[ℂ]ℂ is this vector
+functional, satisfying |τ(a)|≤‖a‖.
+-/
 noncomputable def canonicalTraceContinuousLinearMap
     (G : Type u) [Group G] : ReducedGroupCStarAlgebra G →L[ℂ] ℂ :=
   LinearMap.mkContinuous (canonicalTraceLinearMap G) 1 fun a => by
@@ -795,8 +987,16 @@ theorem norm_canonicalTraceContinuousLinearMap
         (canonicalTraceContinuousLinearMap G).le_opNorm _
       _ = ‖canonicalTraceContinuousLinearMap G‖ := by simp
 
-/-- The identity-coefficient vector state on the reduced group C-star
-algebra. -/
+/-- **Canonical positive trace on the reduced group algebra.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The
+canonical trace is τ(a)=⟪δ_1,aδ_1⟫_ℂ, where δ_1 is the identity basis vector. The positive
+complex linear map canonicalTrace G:C*_r(G)→ℂ is the identity-coefficient vector state, with
+τ(1)=1.
+-/
 noncomputable def canonicalTrace
     (G : Type u) [Group G] : ReducedGroupCStarAlgebra G →ₚ[ℂ] ℂ where
   toLinearMap := canonicalTraceLinearMap G
@@ -873,7 +1073,15 @@ theorem coefficientAtOne_mul_comm
           · have hhg : h * g ≠ 1 := fun h' => hgh (mul_eq_one_symm h')
             simp [ComplexGroupAlgebra.single_mul_single, hgh, hhg]
 
-/-- The identity-coefficient state is tracial on the entire norm closure. -/
+/-- **Traciality on the reduced operator closure.**
+
+Let G be any group and ℓ²(G)=GroupL2 G the complex Hilbert space of square-summable functions
+on G. The left regular action is (λ_g ξ)(h)=ξ(g⁻¹*h), and δ_g is the basis vector taking value
+1 at g and 0 elsewhere. The integrated representation is λ(a)=∑g a(g)•λ_g. Let
+C*_r(G)=ReducedGroupCStarAlgebra G be the operator-norm closure of λ(ℂ[G]) in B(ℓ²(G)). The
+canonical trace is τ(a)=⟪δ_1,aδ_1⟫_ℂ, where δ_1 is the identity basis vector. For a,b∈C*_r(G),
+canonicalTrace G (a*b)=canonicalTrace G (b*a).
+-/
 theorem canonicalTrace_mul_comm
     {G : Type u} [Group G] (a b : ReducedGroupCStarAlgebra G) :
     canonicalTrace G (a * b) = canonicalTrace G (b * a) := by
@@ -893,7 +1101,13 @@ theorem canonicalTrace_mul_comm
         congr 1
         exact (algebraicMap G).map_mul y x
 
-/-! ## Transport along group equivalences -/
+/-!
+## Transport by group equivalences
+
+Let G,H be groups in independent universes and e:G≃*H a group equivalence. The coordinate
+unitary U_e:ℓ²(G)→ℓ²(H) is U_e ξ(h)=ξ(e⁻¹(h)). Conjugation a↦U_e*a*U_e⁻¹ identifies the
+reduced algebras C*_r(G) and C*_r(H), sending λ_g to λ_(e(g)).
+-/
 
 def reindex
     {G : Type u} {H : Type v} (e : G ≃ H) (xi : GroupL2 G) (h : H) : ℂ :=
@@ -915,7 +1129,11 @@ theorem reindex_norm
   simpa only [reindex] using
     e.symm.tsum_eq (fun g : G => ‖xi g‖ ^ (2 : ℝ≥0∞).toReal)
 
-/-- Reindexing `ℓ²` along an equivalence. -/
+/-- **Coordinate equivalence of square-summable function spaces.**
+
+Let G,H be types in independent universes and e:G≃H an equivalence. The complex linear
+isometric equivalence groupL2Equiv e:ℓ²(G)≃ₗᵢ[ℂ]ℓ²(H) sends ξ to h↦ξ(e⁻¹(h)).
+-/
 noncomputable def groupL2Equiv
     {G : Type u} {H : Type v} (e : G ≃ H) : GroupL2 G ≃ₗᵢ[ℂ] GroupL2 H where
   toFun xi := ⟨reindex e xi, reindex_mem e xi⟩
@@ -954,7 +1172,12 @@ theorem groupL2Equiv_delta
   ext h
   simp [groupL2Equiv_apply, kroneckerDelta, e.eq_symm_apply]
 
-/-- Conjugation of bounded operators by the coordinate reindexing unitary. -/
+/-- **Conjugation of regular operators by coordinate equivalence.**
+
+Let G,H be groups in independent universes and e:G≃*H a group equivalence. The coordinate
+unitary U_e:ℓ²(G)→ℓ²(H) is U_e ξ(h)=ξ(e⁻¹(h)). The complex star-algebra equivalence
+ambientEquiv e:B(ℓ²(G))≃⋆ₐ[ℂ]B(ℓ²(H)) sends T to U_e∘T∘U_e⁻¹.
+-/
 noncomputable def ambientEquiv
     {G : Type u} {H : Type v} [Group G] [Group H]
     (e : G ≃* H) :
@@ -1020,8 +1243,13 @@ theorem ambientEquiv_symm_mem_reduced
   rw [ambientEquiv_integratedLeftRegular]
   simp
 
-/-- A group equivalence induces a star-algebra equivalence of reduced group
-C-star algebras. -/
+/-- **Reduced group C-star algebras under a group equivalence.**
+
+Let G,H be groups in independent universes and e:G≃*H a group equivalence. The coordinate
+unitary U_e:ℓ²(G)→ℓ²(H) is U_e ξ(h)=ξ(e⁻¹(h)). For C*_r(G) and C*_r(H) defined as the norm
+closures of their integrated regular operators, mapEquiv e:C*_r(G)≃⋆ₐ[ℂ]C*_r(H) is induced by
+U_e-conjugation and sends λ_g to λ_(e(g)).
+-/
 noncomputable def mapEquiv
     {G : Type u} {H : Type v} [Group G] [Group H]
     (e : G ≃* H) :

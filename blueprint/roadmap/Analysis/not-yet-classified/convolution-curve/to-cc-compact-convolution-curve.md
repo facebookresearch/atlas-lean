@@ -1,3 +1,4 @@
-# To Cc compact Convolution Curve
+# The convolution kernel as a compactly supported coefficient
 
-The fixed-support Banach curve is exactly the existing original multiplier slice as a C_c value.
+Viewing Fs in Cc(G,A) gives the twisted-convolution coefficient s-dependent slice a⋅λs(h) with
+a=f(s): `toCc(Fs)=toCc(coefficientLeft (f s) (groupLeft s h))`.

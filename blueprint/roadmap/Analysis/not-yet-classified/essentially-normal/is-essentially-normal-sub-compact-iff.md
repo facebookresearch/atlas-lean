@@ -1,3 +1,4 @@
-# Is Essentially Normal sub compact iff
+# Essential normality under compact subtraction
 
-Subtracting a compact operator preserves and reflects essential normality.
+For a complex Hilbert space `H`, if `K` is
+compact, `(T-K).IsEssentiallyNormal ↔ T.IsEssentiallyNormal`.

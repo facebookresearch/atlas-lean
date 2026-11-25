@@ -14,18 +14,17 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Iterated
 
 /-!
-# The actual left-associated completed internal tensor
+# Left-associated completed internal tensors
 
-The first literal completed tensor retains its existing norm, right action
-and C-star module dictionaries. Applying the second original left action to
-that original complete module gives the left-associated carrier and pure
-triple. Both stages are the existing actual quotient/completion construction.
+For complete right modules `Eᵢ` over nonunital C-star algebras `Bᵢ` with star-compatible
+opposite orders and complex nonunital star representations `φ : B₁ → End_(B₂)(E₂)` and `χ : B₂ →
+End_(B₃)(E₃)`, first form `E₁ ⊗_φ E₂` as a right `B₂`-module. Its internal tensor with `E₃`
+through `χ` gives `(E₁ ⊗_φ E₂) ⊗_χ E₃`.
 
-No output model, norm, completeness or associator certificate is an input.
-All three coefficient and fibre universes, nonunital algebras, original
-complete modules, given opposite orders and zero/degenerate actions remain.
-Full source reassociation and the original Lance balanced-null identity are
-separate whole-open theorem proof boundaries.
+Pure triples `L(x,y,z) = (x⊗y)⊗z` are complex-trilinear and satisfy `L(x <• b,y,z) =
+L(x,φ(b)y,z)` and `L(x,y <• c,z) = L(x,y,χ(c)z)`. The right `B₃` action is on the last factor.
+The construction uses the completed coefficient inner-product norms and permits zero algebras,
+modules and representations.
 -/
 
 @[expose] public section
@@ -54,7 +53,10 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable {E₃ : Type uE₃} [NormedAddCommGroup E₃] [NormedSpace ℂ E₃]
   [SMul B₃ᵐᵒᵖ E₃] [CStarModule B₃ᵐᵒᵖ E₃] [CompleteSpace E₃]
 
-/-- The literal left-associated completed tensor with both original coefficient actions. -/
+/-- **Left-associated internal tensor carrier.** Let `Eᵢ` be complete right modules over nonunital
+C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁ → End_(B₂)(E₂)` and `χ
+: B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. form `(E₁ ⊗_φ E₂) ⊗_χ E₃` by
+using the first completed tensor as the right `B₂`-module in the second internal tensor. -/
 abbrev LeftAssociatedCompletedTensor
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (χ : B₂ →⋆ₙₐ[ℂ] AdjointableOperator.End B₃ E₃) : Type (max uE₁ uE₂ uE₃) :=
@@ -64,7 +66,10 @@ abbrev LeftAssociatedCompletedTensor
   letI : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) := completedCStarModule φ
   CompletedTensor (E₁ := CompletedTensor (E₁ := E₁) φ) χ
 
-/-- The original left-associated triple uses the first completed pure tensor as the second tensor's first vector. -/
+/-- **Pure vector of the left-associated tensor.** Let `Eᵢ` be complete right modules over
+nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁ →
+End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms.
+`leftAssociatedCompletedPure φ χ x y z` is the twice-completed pure tensor `(x⊗_φ y)⊗_χ z`. -/
 def leftAssociatedCompletedPure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (χ : B₂ →⋆ₙₐ[ℂ] AdjointableOperator.End B₃ E₃)
@@ -78,7 +83,10 @@ def leftAssociatedCompletedPure
   letI : NormedSpace ℂ (RadicalTensor (E₁ := CompletedTensor (E₁ := E₁) φ) χ) := radicalTensorNormedSpace χ
   exact completedPure χ (completedPure φ x y) z
 
-/-- The actual left-associated triple is the nested original completed pure map. -/
+/-- **Nested formula for a left-associated pure tensor.** Let `Eᵢ` be complete right modules over
+nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁ →
+End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms.
+`leftAssociatedCompletedPure φ χ x y z = completedPure χ (completedPure φ x y) z`. -/
 theorem leftAssociatedCompletedPure_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (χ : B₂ →⋆ₙₐ[ℂ] AdjointableOperator.End B₃ E₃) (x : E₁) (y : E₂) (z : E₃) :
@@ -99,7 +107,10 @@ theorem leftAssociatedCompletedPure_apply
   let : NormedSpace ℂ (RadicalTensor (E₁ := CompletedTensor (E₁ := E₁) φ) χ) := radicalTensorNormedSpace χ
   rfl
 
-/-- The original left fibre is additive in the completed pure triple. -/
+/-- **Additivity in the first factor of a left-associated tensor.** Let `Eᵢ` be complete right
+modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁
+→ End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x+x',y,z) = P(x,y,z) + P(x',y,z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_add_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -125,7 +136,10 @@ theorem leftAssociatedCompletedPure_add_left
   rw [completedPure_add_left φ]
   exact completedPure_add_left χ (completedPure φ x y) (completedPure φ x' y) z
 
-/-- The original middle fibre is additive in the completed pure triple. -/
+/-- **Additivity in the middle factor of a left-associated tensor.** Let `Eᵢ` be complete right
+modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁
+→ End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y+y',z) = P(x,y,z) + P(x,y',z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_add_middle
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -151,7 +165,10 @@ theorem leftAssociatedCompletedPure_add_middle
   rw [completedPure_add_right φ]
   exact completedPure_add_left χ (completedPure φ x y) (completedPure φ x y') z
 
-/-- The original right fibre is additive in the completed pure triple. -/
+/-- **Additivity in the final factor of a left-associated tensor.** Let `Eᵢ` be complete right
+modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁
+→ End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y,z+z') = P(x,y,z) + P(x,y,z')`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_add_right
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -176,7 +193,10 @@ theorem leftAssociatedCompletedPure_add_right
     completedPure χ (completedPure φ x y) z'
   exact completedPure_add_right χ (completedPure φ x y) z z'
 
-/-- Complex scaling in the original left fibre scales the same completed pure triple. -/
+/-- **Complex scaling in the first factor of a left-associated tensor.** Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(c • x,y,z) = c • P(x,y,z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_smul_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -200,7 +220,10 @@ theorem leftAssociatedCompletedPure_smul_left
   rw [completedPure_smul_left φ]
   exact completedPure_smul_left χ c (completedPure φ x y) z
 
-/-- Complex scaling in the original middle fibre scales the same completed pure triple. -/
+/-- **Complex scaling in the middle factor of a left-associated tensor.** Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,c • y,z) = c • P(x,y,z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_smul_middle
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -224,7 +247,10 @@ theorem leftAssociatedCompletedPure_smul_middle
   rw [completedPure_smul_right φ]
   exact completedPure_smul_left χ c (completedPure φ x y) z
 
-/-- Complex scaling in the original right fibre scales the same completed pure triple. -/
+/-- **Complex scaling in the final factor of a left-associated tensor.** Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y,c • z) = c • P(x,y,z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_smul_right
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -247,7 +273,10 @@ theorem leftAssociatedCompletedPure_smul_right
   change completedPure χ (completedPure φ x y) (c • z) = c • completedPure χ (completedPure φ x y) z
   exact completedPure_smul_right χ c (completedPure φ x y) z
 
-/-- A zero left fibre vector has the actual zero completed pure value. -/
+/-- **Zero in the first factor of a left-associated tensor.** Let `Eᵢ` be complete right modules
+over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁ →
+End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(0,y,z) = 0`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_zero_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -270,7 +299,10 @@ theorem leftAssociatedCompletedPure_zero_left
   simpa only [zero_smul] using
     leftAssociatedCompletedPure_smul_left φ χ (0 : ℂ) (0 : E₁) y z
 
-/-- A zero middle fibre vector has the actual zero completed pure value. -/
+/-- **Zero in the middle factor of a left-associated tensor.** Let `Eᵢ` be complete right modules
+over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁ →
+End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,0,z) = 0`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_zero_middle
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -293,7 +325,10 @@ theorem leftAssociatedCompletedPure_zero_middle
   simpa only [zero_smul] using
     leftAssociatedCompletedPure_smul_middle φ χ (0 : ℂ) x (0 : E₂) z
 
-/-- A zero right fibre vector has the actual zero completed pure value. -/
+/-- **Zero in the final factor of a left-associated tensor.** Let `Eᵢ` be complete right modules
+over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁ →
+End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y,0) = 0`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_zero_right
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -316,7 +351,10 @@ theorem leftAssociatedCompletedPure_zero_right
   simpa only [zero_smul] using
     leftAssociatedCompletedPure_smul_right φ χ (0 : ℂ) x y (0 : E₃)
 
-/-- The first original coefficient balances through the given first left action. -/
+/-- **Balancing the first coefficient action of a left-associated tensor.** Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x <• b,y,z) = P(x,φ(b)y,z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_balance_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -340,7 +378,10 @@ theorem leftAssociatedCompletedPure_balance_left
     completedPure χ (completedPure φ x (φ b y)) z
   rw [completedPure_balance]
 
-/-- The second original coefficient balances through the given second left action. -/
+/-- **Balancing the second coefficient action of a left-associated tensor.** Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y <• b,z) = P(x,y,χ(b)z)`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_balance_middle
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -364,7 +405,10 @@ theorem leftAssociatedCompletedPure_balance_middle
     completedPure χ (completedPure φ x y) (χ b z)
   rw [completedPure_right_smul, completedPure_balance]
 
-/-- The final original coefficient acts through the completed tensor right action. -/
+/-- **Right action in the final tensor factor of a left-associated tensor.** Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y,z <• b) = P(x,y,z) <• b`. -/
 @[simp]
 theorem leftAssociatedCompletedPure_right_smul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)

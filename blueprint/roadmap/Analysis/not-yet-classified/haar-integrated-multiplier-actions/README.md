@@ -1,10 +1,10 @@
-# Haar Integrated Multiplier Actions
+# Integrated coefficient and group multiplier actions
 
-- [Haar Integrated Hom coefficient Left](haar-integrated-hom-coefficient-left.md)
-- [Haar Integrated Hom coefficient Right](haar-integrated-hom-coefficient-right.md)
-- [Haar Integrated Hom group Left](haar-integrated-hom-group-left.md)
-- [Haar Integrated Hom group Right](haar-integrated-hom-group-right.md)
-- [Norm haar Integrated Hom coefficient Left le](norm-haar-integrated-hom-coefficient-lef.md)
-- [Norm haar Integrated Hom coefficient Right le](norm-haar-integrated-hom-coefficient-rig.md)
-- [Norm haar Integrated Hom group Left](norm-haar-integrated-hom-group-left.md)
-- [Norm haar Integrated Hom group Right](norm-haar-integrated-hom-group-right.md)
+- [Left coefficient multiplication under Haar integration](haar-integrated-hom-coefficient-left.md)
+- [Right coefficient multiplication under Haar integration](haar-integrated-hom-coefficient-right.md)
+- [Left group translation under Haar integration](haar-integrated-hom-group-left.md)
+- [Modular right translation under Haar integration](haar-integrated-hom-group-right.md)
+- [Norm bound for integrated left coefficient multiplication](norm-haar-integrated-hom-coefficient-lef.md)
+- [Norm bound for integrated right coefficient multiplication](norm-haar-integrated-hom-coefficient-rig.md)
+- [Integrated norm is invariant under left group translation](norm-haar-integrated-hom-group-left.md)
+- [Integrated norm is invariant under right group translation](norm-haar-integrated-hom-group-right.md)

@@ -1,3 +1,4 @@
-# Right smul apply
+# Right scalar multiplication under identification
 
-Existing right-action notation agrees once the exact opposite action is installed locally.
+With `instOppositeSMul H`, `equivL H (x
+<• c) = c • equivL H x` for every `x` and `c : ℂ`.

@@ -1,6 +1,6 @@
-# Calculus
+# Unitary calculus for matrix-fold Busby sums
 
-- [Sum congr strong](sum-congr-strong.md)
-- [Sum trivial](sum-trivial.md)
-- [Sum comm strong](sum-comm-strong.md)
-- [Coherent of associative](coherent-of-associative.md)
+- [Strong equivalence respects Busby sums](sum-congr-strong.md)
+- [Sum of liftable Busby maps](sum-trivial.md)
+- [Strong commutativity of compatible Busby sums](sum-comm-strong.md)
+- [Coherence from strong associativity](coherent-of-associative.md)

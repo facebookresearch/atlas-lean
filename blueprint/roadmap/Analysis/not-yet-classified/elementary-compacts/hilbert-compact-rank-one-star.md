@@ -1,3 +1,4 @@
-# Hilbert Compact Rank One star
+# Adjoint of a compact rank-one operator
 
-The original adjoint exchanges the two rank-one vectors.
+`star (hilbertCompactRankOne H x y) =
+hilbertCompactRankOne H y x`.

@@ -1,3 +1,4 @@
-# Snd mem closed Star Ideal
+# Right multiplier invariance of a closed ideal
 
-Every original second-component multiplier value of a closed-ideal element remains in that ideal.
+For a closed two-sided star ideal `I` of
+nonunital C-star `B`, `m : M(B)` and `x ∈ I`, `m.snd x ∈ I`.

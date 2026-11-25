@@ -1,3 +1,5 @@
-# Algebraic Tensor Operator
+# Algebraic compact tensor representation
 
-Lift the literal compact elementary product by the neutral complex tensor universal map.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the complex-linear map `ρ : A ⊗_ℂ K(H) → End_A(Space H A)` is determined
+by `ρ(a⊗T) = coefficientHom a * compactHilbertHom T`.

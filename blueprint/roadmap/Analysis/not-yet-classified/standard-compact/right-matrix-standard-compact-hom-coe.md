@@ -1,4 +1,5 @@
-# Right Matrix Standard Compact Hom coe
+# Inclusion-matrix-adjoint corner formula
 
-Including the corner gives the literal inclusion–matrix–adjoint
-composite, with the same original finite compact matrix operator.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the endomorphism underlying the compact corner is
+`finiteInclusion η ∘ rightMatrixCompactHom X ∘ (finiteInclusion η)*`.

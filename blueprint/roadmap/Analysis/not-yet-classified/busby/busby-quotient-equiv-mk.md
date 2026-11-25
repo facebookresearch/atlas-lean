@@ -1,3 +1,5 @@
-# Busby quotient Equiv mk
+# Busby formula through the quotient identification
 
-The Busby formula on literal quotient representatives.
+`X.busby (X.quotientEquiv
+(Submodule.Quotient.mk e)) = q(X.multiplierMap e)` for every middle-algebra representative
+`e`.

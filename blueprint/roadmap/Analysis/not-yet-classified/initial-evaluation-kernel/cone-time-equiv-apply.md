@@ -1,3 +1,4 @@
-# Cone Time Equiv apply
+# Value of the translated cone function
 
-Cone transport has the literal translated value.
+Let B be a nonunital complex C-star algebra, f∈CStarKTheory.Cone B=C₀([0,∞),B) and t≥1. Then
+coneTimeEquiv B f t=f(t-1).

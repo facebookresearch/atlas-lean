@@ -1,9 +1,9 @@
-# Gram Integrated Identity
+# Integrated identity for a Gram covariant representation
 
-- [Gram Covariant haar Integrated Hom apply generator](gram-covariant-haar-integrated-hom-apply.md)
-- [Gram Covariant haar Integrated Hom](gram-covariant-haar-integrated-hom.md)
-- [Norm gram Covariant haar Integrated Hom](norm-gram-covariant-haar-integrated-hom.md)
-- [Gram Covariant Representation essential Space eq top](gram-covariant-representation-essential.md)
-- [Nondegenerate gram Covariant Representation](nondegenerate-gram-covariant-representat.md)
-- [Exists admissible Covariant Norm Model essential Space eq top](exists-admissible-covariant-norm-model-e.md)
-- [Exists admissible Covariant Norm Model](exists-admissible-covariant-norm-model.md)
+- [Integrated Gram action on a source generator](gram-covariant-haar-integrated-hom-apply.md)
+- [Integrated Gram homomorphism equals the completed representation](gram-covariant-haar-integrated-hom.md)
+- [Faithful Gram realization preserves a C-star seminorm](norm-gram-covariant-haar-integrated-hom.md)
+- [Essential coefficient space of the Gram pair is the whole space](gram-covariant-representation-essential.md)
+- [Nondegeneracy of the Gram coefficient representation](nondegenerate-gram-covariant-representat.md)
+- [Nondegenerate covariant realization of an admissible seminorm](exists-admissible-covariant-norm-model-e.md)
+- [Covariant seminorm realization with dense coefficient span](exists-admissible-covariant-norm-model.md)

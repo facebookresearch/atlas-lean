@@ -18,12 +18,13 @@ import Mathlib.Topology.Path
 import Mathlib.Tactic.NormNum
 
 /-!
-# Point-norm homotopies through C-star automorphisms
+# Point-norm homotopies of C-star automorphisms
 
-This file packages paths whose intermediate maps are complex star-algebra
-automorphisms.  Only forward point-norm continuity is stored: continuity of
-the inverse orbits follows from isometry.  The resulting path has a canonical
-forgetful map to the weaker homomorphism-valued point-norm homotopy.
+For a nonunital complex C-star algebra A, a homotopy from α to β is a path t ↦ hₜ of
+star-algebra automorphisms on [0,1] such that t ↦ hₜ(a) is norm-continuous for every a ∈ A,
+with h₀ = α and h₁ = β. Isometry implies continuity of the inverse orbits. Reversal, inversion
+and concatenation preserve this condition, and a path determines a star homomorphism A →
+C([0,1],A).
 -/
 
 @[expose] public section
@@ -34,17 +35,33 @@ noncomputable section
 
 universe uA uB
 
-/-- A point-norm continuous path through complex star-algebra automorphisms. -/
+/-- **Point-norm automorphism homotopy.**
+
+For a nonunital complex C-star algebra A and automorphisms α, β, this structure records a path
+hₜ ∈ Aut(A), continuous in norm on each coefficient a, with endpoints α and β.
+-/
 structure AutomorphismHomotopy
     {A : Type uA} [NonUnitalCStarAlgebra A]
     (α β : A ≃⋆ₐ[ℂ] A) where
-  /-- The automorphism at one point of the unit interval. -/
+  /-- **Automorphism path.**
+
+The map t ↦ hₜ from [0,1] to complex star-algebra automorphisms of A.
+-/
   aut : unitInterval → A ≃⋆ₐ[ℂ] A
-  /-- Every coefficient varies continuously along the path. -/
+  /-- **Point-norm continuity.**
+
+For every a ∈ A, the function t ↦ hₜ(a) is continuous in the C-star norm.
+-/
   continuous_apply : ∀ a : A, Continuous fun t ↦ aut t a
-  /-- The path starts at `α`. -/
+  /-- **Initial automorphism.**
+
+The automorphism path satisfies h₀ = α.
+-/
   zero : aut 0 = α
-  /-- The path ends at `β`. -/
+  /-- **Final automorphism.**
+
+The automorphism path satisfies h₁ = β.
+-/
   one : aut 1 = β
 
 namespace AutomorphismHomotopy
@@ -52,7 +69,10 @@ namespace AutomorphismHomotopy
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable {α β γ : A ≃⋆ₐ[ℂ] A}
 
-/-- Automorphism homotopies are determined by their path of automorphisms. -/
+/-- **Equality of automorphism homotopies.**
+
+Two point-norm homotopies from α to β are equal when their paths of automorphisms are equal.
+-/
 @[ext]
 theorem ext {h k : AutomorphismHomotopy α β} (haut : h.aut = k.aut) : h = k := by
   cases h
@@ -68,7 +88,11 @@ theorem aut_zero (h : AutomorphismHomotopy α β) : h.aut 0 = α :=
 theorem aut_one (h : AutomorphismHomotopy α β) : h.aut 1 = β :=
   h.one
 
-/-- Forward point-norm continuity forces continuity of every inverse orbit. -/
+/-- **Continuity of inverse automorphism orbits.**
+
+For a point-norm homotopy h and a ∈ A, the function t ↦ hₜ⁻¹(a) is norm-continuous. No
+separate continuity condition on inverse orbits is required.
+-/
 theorem continuous_symm_apply (h : AutomorphismHomotopy α β) (a : A) :
     Continuous fun t ↦ (h.aut t).symm a := by
   rw [continuous_iff_continuousAt]
@@ -86,14 +110,20 @@ theorem continuous_symm_apply (h : AutomorphismHomotopy α β) (a : A) :
     _ = dist a (h.aut t b) := by simp [b]
     _ < ε := by simpa [b, dist_comm] using ht
 
-/-- The constant automorphism homotopy. -/
+/-- **Constant automorphism homotopy.**
+
+The constant path hₜ = α is a point-norm automorphism homotopy from α to itself.
+-/
 def refl (α : A ≃⋆ₐ[ℂ] A) : AutomorphismHomotopy α α where
   aut := fun _ ↦ α
   continuous_apply := fun _ ↦ continuous_const
   zero := rfl
   one := rfl
 
-/-- Reverse the interval parameter of an automorphism homotopy. -/
+/-- **Reversal of an automorphism homotopy.**
+
+A homotopy h from α to β gives the homotopy t ↦ h₁₋ₜ from β to α.
+-/
 def symm (h : AutomorphismHomotopy α β) : AutomorphismHomotopy β α where
   aut := fun t ↦ h.aut (unitInterval.symmHomeomorph t)
   continuous_apply := fun a ↦
@@ -101,7 +131,11 @@ def symm (h : AutomorphismHomotopy α β) : AutomorphismHomotopy β α where
   zero := by simp [h.one]
   one := by simp [h.zero]
 
-/-- Invert every automorphism along a homotopy without reversing time. -/
+/-- **Pointwise inversion of an automorphism homotopy.**
+
+The path t ↦ hₜ⁻¹ is a point-norm homotopy from α⁻¹ to β⁻¹; the interval parameter is
+unchanged.
+-/
 def inverse (h : AutomorphismHomotopy α β) :
     AutomorphismHomotopy α.symm β.symm where
   aut := fun t ↦ (h.aut t).symm
@@ -109,8 +143,11 @@ def inverse (h : AutomorphismHomotopy α β) :
   zero := by rw [h.zero]
   one := by rw [h.one]
 
-/-- Postcompose every member of an automorphism homotopy by a fixed
-automorphism. -/
+/-- **Postcomposition of an automorphism homotopy.**
+
+For an automorphism δ of A, the path t ↦ δ ∘ hₜ joins δ ∘ α to δ ∘ β and is point-norm
+continuous.
+-/
 def compLeft (h : AutomorphismHomotopy α β) (δ : A ≃⋆ₐ[ℂ] A) :
     AutomorphismHomotopy (δ * α) (δ * β) where
   aut := fun t ↦ δ * h.aut t
@@ -120,8 +157,11 @@ def compLeft (h : AutomorphismHomotopy α β) (δ : A ≃⋆ₐ[ℂ] A) :
   zero := by rw [h.zero]
   one := by rw [h.one]
 
-/-- Precompose every member of an automorphism homotopy by a fixed
-automorphism. -/
+/-- **Precomposition of an automorphism homotopy.**
+
+For an automorphism δ of A, the path t ↦ hₜ ∘ δ joins α ∘ δ to β ∘ δ and is point-norm
+continuous.
+-/
 def compRight (h : AutomorphismHomotopy α β) (δ : A ≃⋆ₐ[ℂ] A) :
     AutomorphismHomotopy (α * δ) (β * δ) where
   aut := fun t ↦ h.aut t * δ
@@ -131,8 +171,11 @@ def compRight (h : AutomorphismHomotopy α β) (δ : A ≃⋆ₐ[ℂ] A) :
   zero := by rw [h.zero]
   one := by rw [h.one]
 
-/-- Concatenate two automorphism homotopies, following the first on
-`[0, 1/2]` and the second on `[1/2, 1]`. -/
+/-- **Concatenation of automorphism homotopies.**
+
+A homotopy h from α to β and k from β to γ give a homotopy from α to γ: use h₂ₜ for t ≤ 1/2
+and k₂ₜ₋₁ for t > 1/2.
+-/
 noncomputable def trans
     (h : AutomorphismHomotopy α β) (k : AutomorphismHomotopy β γ) :
     AutomorphismHomotopy α γ := by
@@ -213,8 +256,10 @@ theorem compRight_aut_apply (h : AutomorphismHomotopy α β)
     (h.compRight δ).aut t a = h.aut t (δ a) :=
   rfl
 
-/-- On the left half of the interval, concatenation is the first path with
-the parameter doubled. -/
+/-- **Concatenation on the first half interval.**
+
+For t ≤ 1/2 and a ∈ A, the concatenated path satisfies (h.trans k)ₜ(a) = h₂ₜ(a).
+-/
 theorem trans_apply_of_le_half (h : AutomorphismHomotopy α β)
     (k : AutomorphismHomotopy β γ) (t : unitInterval)
     (ht : (t : ℝ) ≤ 1 / 2) (a : A) :
@@ -225,8 +270,10 @@ theorem trans_apply_of_le_half (h : AutomorphismHomotopy α β)
     simpa only [one_div] using ht
   simp [trans, ht']
 
-/-- On the strict right half of the interval, concatenation is the second
-path with parameter `2t - 1`. -/
+/-- **Concatenation on the second half interval.**
+
+For t > 1/2 and a ∈ A, the concatenated path satisfies (h.trans k)ₜ(a) = k₂ₜ₋₁(a).
+-/
 theorem trans_apply_of_half_lt (h : AutomorphismHomotopy α β)
     (k : AutomorphismHomotopy β γ) (t : unitInterval)
     (ht : 1 / 2 < (t : ℝ)) (a : A) :
@@ -248,7 +295,10 @@ theorem trans_aut_one (h : AutomorphismHomotopy α β)
     (k : AutomorphismHomotopy β γ) : (h.trans k).aut 1 = γ :=
   (h.trans k).one
 
-/-- The concatenated homotopy has the common endpoint at time `1/2`. -/
+/-- **The midpoint of a concatenated homotopy.**
+
+At t = 1/2, the concatenation of h : α → β and k : β → γ equals the common endpoint β.
+-/
 theorem trans_aut_half (h : AutomorphismHomotopy α β)
     (k : AutomorphismHomotopy β γ) :
     (h.trans k).aut
@@ -257,12 +307,19 @@ theorem trans_aut_half (h : AutomorphismHomotopy α β)
   intro a
   simp [trans, h.one]
 
-/-- The proposition that two automorphisms are joined by a point-norm
-automorphism homotopy. -/
+/-- **Homotopic C-star automorphisms.**
+
+Automorphisms α and β are homotopic when there exists a point-norm continuous automorphism
+path from α to β.
+-/
 def AutomorphismHomotopic (α β : A ≃⋆ₐ[ℂ] A) : Prop :=
   Nonempty (AutomorphismHomotopy α β)
 
-/-- Point-norm automorphism homotopy is an equivalence relation. -/
+/-- **Automorphism homotopy is an equivalence relation.**
+
+For every nonunital complex C-star algebra A, point-norm homotopy of star-algebra
+automorphisms is reflexive, symmetric and transitive.
+-/
 theorem automorphismHomotopic_equivalence (A : Type uA)
     [NonUnitalCStarAlgebra A] :
     Equivalence (AutomorphismHomotopic :
@@ -273,10 +330,18 @@ theorem automorphismHomotopic_equivalence (A : Type uA)
   · rintro δ ε ζ ⟨h⟩ ⟨k⟩
     exact ⟨h.trans k⟩
 
-/-! ## Forgetful map to homomorphism-valued homotopy -/
+/-!
+## Continuous-path algebra from an automorphism homotopy
 
-/-- An automorphism homotopy as one nonunital star-algebra homomorphism into
-the algebra of continuous paths. -/
+An automorphism path h yields the homomorphism a ↦ (t ↦ hₜ(a)) into C([0,1],A), and hence a
+homotopy of its endpoint star homomorphisms.
+-/
+
+/-- **Star homomorphism into the continuous-path algebra.**
+
+A point-norm automorphism homotopy h determines the nonunital complex star homomorphism A →
+C([0,1],A), a ↦ (t ↦ hₜ(a)).
+-/
 def toHomotopyMap (h : AutomorphismHomotopy α β) :
     A →⋆ₙₐ[ℂ] C(unitInterval, A) where
   toFun a := ⟨fun t ↦ h.aut t a, h.continuous_apply a⟩
@@ -291,8 +356,11 @@ theorem toHomotopyMap_apply (h : AutomorphismHomotopy α β)
     (a : A) (t : unitInterval) : h.toHomotopyMap a t = h.aut t a :=
   rfl
 
-/-- Forgetting invertibility gives a point-norm homotopy of nonunital
-star-algebra homomorphisms with the same endpoint orientation. -/
+/-- **Underlying homotopy of star homomorphisms.**
+
+An automorphism homotopy from α to β is a point-norm homotopy between the nonunital star
+homomorphisms underlying α and β.
+-/
 theorem toHomotopic (h : AutomorphismHomotopy α β) :
     NonUnitalStarAlgHom.Homotopic
       α.toNonUnitalStarAlgHom β.toNonUnitalStarAlgHom := by
@@ -304,8 +372,11 @@ theorem toHomotopic (h : AutomorphismHomotopy α β) :
     change h.aut 1 a = β a
     rw [h.one]
 
-/-- Postcomposition preserves the homomorphism homotopy underlying an
-automorphism homotopy. -/
+/-- **Postcomposition preserves the underlying homotopy.**
+
+If h joins automorphisms α and β of A and δ : A → B is a nonunital complex star homomorphism,
+then δ ∘ α and δ ∘ β are homotopic.
+-/
 theorem toHomotopic_postcomp (h : AutomorphismHomotopy α β)
     {B : Type uB} [NonUnitalCStarAlgebra B]
     (δ : A →⋆ₙₐ[ℂ] B) :
@@ -313,8 +384,11 @@ theorem toHomotopic_postcomp (h : AutomorphismHomotopy α β)
       (δ.comp β.toNonUnitalStarAlgHom) :=
   h.toHomotopic.postcomp δ
 
-/-- Precomposition preserves the homomorphism homotopy underlying an
-automorphism homotopy. -/
+/-- **Precomposition preserves the underlying homotopy.**
+
+If h joins automorphisms α and β of A and δ : B → A is a nonunital complex star homomorphism,
+then α ∘ δ and β ∘ δ are homotopic.
+-/
 theorem toHomotopic_precomp (h : AutomorphismHomotopy α β)
     {B : Type uB} [NonUnitalCStarAlgebra B]
     (δ : B →⋆ₙₐ[ℂ] A) :
@@ -322,31 +396,43 @@ theorem toHomotopic_precomp (h : AutomorphismHomotopy α β)
       (β.toNonUnitalStarAlgHom.comp δ) :=
   h.toHomotopic.precomp δ
 
-/-- Left composition of an automorphism path has the correspondingly
-postcomposed homomorphism-homotopy endpoints. -/
+/-- **Underlying homotopy after left composition.**
+
+For an automorphism δ of A, left composition of h gives a homotopy between the star
+homomorphisms underlying δ ∘ α and δ ∘ β.
+-/
 theorem compLeft_toHomotopic (h : AutomorphismHomotopy α β)
     (δ : A ≃⋆ₐ[ℂ] A) :
     NonUnitalStarAlgHom.Homotopic
       (δ * α).toNonUnitalStarAlgHom (δ * β).toNonUnitalStarAlgHom :=
   (h.compLeft δ).toHomotopic
 
-/-- Right composition of an automorphism path has the correspondingly
-precomposed homomorphism-homotopy endpoints. -/
+/-- **Underlying homotopy after right composition.**
+
+For an automorphism δ of A, right composition of h gives a homotopy between the star
+homomorphisms underlying α ∘ δ and β ∘ δ.
+-/
 theorem compRight_toHomotopic (h : AutomorphismHomotopy α β)
     (δ : A ≃⋆ₐ[ℂ] A) :
     NonUnitalStarAlgHom.Homotopic
       (α * δ).toNonUnitalStarAlgHom (β * δ).toNonUnitalStarAlgHom :=
   (h.compRight δ).toHomotopic
 
-/-- Reversing an automorphism homotopy reverses its underlying homomorphism
-homotopy. -/
+/-- **Underlying homotopy after path reversal.**
+
+Reversing an automorphism homotopy from α to β gives a homotopy of star homomorphisms from β
+to α.
+-/
 theorem toHomotopic_symm (h : AutomorphismHomotopy α β) :
     NonUnitalStarAlgHom.Homotopic
       β.toNonUnitalStarAlgHom α.toNonUnitalStarAlgHom :=
   h.toHomotopic.symm
 
-/-- Concatenating automorphism homotopies concatenates their underlying
-homomorphism homotopies. -/
+/-- **Underlying homotopy after concatenation.**
+
+Homotopies from α to β and from β to γ give a point-norm homotopy between the star
+homomorphisms underlying α and γ.
+-/
 theorem toHomotopic_trans (h : AutomorphismHomotopy α β)
     (k : AutomorphismHomotopy β γ) :
     NonUnitalStarAlgHom.Homotopic

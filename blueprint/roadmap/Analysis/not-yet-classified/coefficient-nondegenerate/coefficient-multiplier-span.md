@@ -1,3 +1,9 @@
-# Coefficient Multiplier Span
+# Span of coefficient multiplier ranges
 
-The literal complex span of the computed coefficient multiplier ranges on the actual completion.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p
+on Carrier μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for
+its dense core map. Write j_p(a)=coefficientMultiplierHom μ α p a and
+u_p(g)=groupUnitaryMultiplierHom μ α p g for the coefficient and group multipliers on Xp.
+Their dense left actions are ιp(f)↦ιp(s↦a*f(s)) and ιp(f)↦ιp(s↦α_g(f(g⁻¹*s))). The submodule
+coefficientMultiplierSpan μ α p is span_ℂ{j_p(a).fst(x):a∈A,x∈Xp}.

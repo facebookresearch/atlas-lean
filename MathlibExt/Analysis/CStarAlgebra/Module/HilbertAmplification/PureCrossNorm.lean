@@ -17,18 +17,15 @@ import Mathlib.Analysis.CStarAlgebra.Unitization
 import Mathlib.Analysis.Normed.Operator.Mul
 
 /-!
-# The original pure cross norm of the actual compact tensor action
+# Pure cross norm of compact tensor actions
 
-Original pure-vector norms and the actual action formula give a joint bound
-on the Hilbert operator and coefficient left multiplication. Two weighted
-operator-norm bounds recover the product of the two original norms without
-division or a nonzero-space assumption. The C-star regular norm of the genuine
-coefficient left multiplier supplies its original coefficient norm.
+For complex Hilbert `H`, nonunital C-star `A`, `a : A` and `T ∈ K(H)`, the elementary action has
+exact norm `‖ρ(a⊗T)‖ = ‖a‖ * ‖T‖`. Thus the induced seminorm and canonical completion image
+satisfy the same pure cross-norm equation.
 
-The exact induced source gauge and canonical completed source image therefore
-have the original pure cross norm. This is one needed field of the genuine
-cross-norm data; raw injectivity and equality with the least cross norm remain
-separate minimum bridges, and terminal Takai/equivariance proofs stay open.
+The argument uses the product norm of pure vectors and the norm of coefficient left
+multiplication. The formulas include zero factors, zero Hilbert spaces and zero coefficient
+algebras.
 -/
 
 @[expose] public section
@@ -49,7 +46,9 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- The actual elementary tensor compact-action norm is the product of the two original norms. -/
+/-- **Norm of an elementary compact tensor.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, for `a : A` and `T ∈ K(H)`, `‖algebraicCompactTensorHom H A (a⊗T)‖ = ‖a‖ *
+‖T‖`. -/
 theorem norm_algebraicCompactTensorHom_tmul (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
@@ -138,7 +137,8 @@ theorem norm_algebraicCompactTensorHom_tmul (a : A)
   change ‖P‖ = ‖a‖ * ‖T‖
   exact le_antisymm hupper hlower
 
-/-- The actual induced C-star seminorm retains the original elementary cross-norm equation. -/
+/-- **Pure cross norm of the induced seminorm.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `compactTensorSeminorm H A (a⊗T) = ‖a‖ * ‖T‖` for all `a : A`, `T ∈ K(H)`. -/
 theorem compactTensorSeminorm_tmul (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     compactTensorSeminorm H A (a ⊗ₜ[ℂ] T) = ‖a‖ * ‖T‖ := by
@@ -146,7 +146,9 @@ theorem compactTensorSeminorm_tmul (a : A)
   exact (compactTensorSeminorm_apply H A (a ⊗ₜ[ℂ] T)).trans
     (norm_algebraicCompactTensorHom_tmul H A a T)
 
-/-- The actual canonical completion image has the original product norm on every pure tensor. -/
+/-- **Norm of a pure completion image.** For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, `‖toCompactTensorCompletion H A (a⊗T)‖ = ‖a‖ * ‖T‖` in the induced completion
+norm. -/
 theorem norm_toCompactTensorCompletion_tmul (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;

@@ -1,4 +1,5 @@
-# Continuous Linear Map Linear Equiv map compact Operator
+# Image of the compact-operator submodule
 
-The ambient linear equivalence maps the ordinary compact-operator submodule
-onto the scalar-right module compact submodule.
+On complex Hilbert spaces `H,K`, the linear
+operator equivalence maps `compactOperator (RingHom.id ℂ) H K` onto the scalar-module compact
+submodule.

@@ -15,10 +15,12 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Compact
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
 
 /-!
-# The scalar representation on a nonunital coefficient self module
+# Complex scalars on a nonunital coefficient module
 
-Scalar multiplication by c is c times the genuine identity adjointable
-endomorphism of A. The coefficient algebra need not have an identity.
+For a nonunital C-star algebra `A`, regard `A` as a right module over itself with `⟨a,b⟩_A =
+star a*b`. The scalar representation is `λ(c) = c • id_A`, acting as `λ(c) a = c • a`. It is a
+complex star-algebra homomorphism into adjointable endomorphisms; the identity here is that of
+the endomorphism algebra, so `A` may be nonunital.
 -/
 
 @[expose] public section
@@ -34,8 +36,9 @@ noncomputable section
 
 universe uA
 
-/-- The original complex scalar action on the coefficient self module,
-with its canonical opposite spectral order and Hilbert-module data. -/
+/-- **Scalar representation on the coefficient self-module.** For a nonunital C-star algebra `A`,
+`scalarSelfHom A : ℂ → End_A(A)` sends `c` to `c • id_A`, acting as `a ↦ c • a` with adjoint
+`a ↦ star c • a`. -/
 def scalarSelfHom (A : Type uA) [NonUnitalCStarAlgebra A] :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;

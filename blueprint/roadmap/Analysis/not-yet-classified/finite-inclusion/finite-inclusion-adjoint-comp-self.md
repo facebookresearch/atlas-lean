@@ -1,4 +1,5 @@
-# Finite Inclusion adjoint comp self
+# Restriction after finite inclusion
 
-Restriction after inclusion is the whole identity operator on the finite
-source, without a coefficient-unit hypothesis.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `(finiteInclusion η)* ∘ finiteInclusion η = 1` on
+`FiniteStandard B I`.

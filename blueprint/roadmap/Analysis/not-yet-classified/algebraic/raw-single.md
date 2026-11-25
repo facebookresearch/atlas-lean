@@ -1,4 +1,4 @@
-# Raw Single
+# One-coordinate dependent vector
 
-The underlying classical finite-support coordinate vector.  Classical
-decidable equality is an implementation detail, not an API hypothesis.
+For `x : E i`, `rawSingle i x` is the finite-support
+vector with entry `x` at `i` and zero at every other coordinate.

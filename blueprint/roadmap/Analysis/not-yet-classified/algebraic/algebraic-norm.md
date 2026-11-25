@@ -1,3 +1,4 @@
-# Algebraic Norm
+# Inner-product norm on the algebraic sum
 
-The direct-sum norm before completion.
+The norm is defined by `‖x‖ = Real.sqrt
+‖algebraicInner x x‖`.

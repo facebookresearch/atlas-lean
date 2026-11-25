@@ -1,3 +1,4 @@
-# Cone Time Equiv symm apply
+# Inverse cone transport value
 
-The inverse uses the computed inverse time translation.
+Let B be a nonunital complex C-star algebra, F∈C₀([1,∞),B) and u≥0. Then (coneTimeEquiv
+B).symm F u=F(u+1).

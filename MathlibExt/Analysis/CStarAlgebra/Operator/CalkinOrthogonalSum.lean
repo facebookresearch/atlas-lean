@@ -16,18 +16,15 @@ public import MathlibExt.Analysis.InnerProductSpace.OrthogonalSum
 public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 
 /-!
-# Orthogonal block sums in the Calkin algebra
+# Orthogonal block sums modulo compacts
 
-The literal block diagonal of two compact operators is compact. Consequently
-the existing block-diagonal star-algebra homomorphism descends to a unital
-star-algebra homomorphism from the product of the two Calkin algebras into the
-Calkin algebra of their stock orthogonal product.
+For normed spaces over a nontrivially normed field, the rectangular block map `(x,y) ↦ (S x,T
+y)` is compact when both component maps are compact. Completeness and inner products are not
+required for this assertion.
 
-The quotient carriers, quotient norms and class maps are unchanged. The
-construction uses the stock binary quotient eliminator with compact-ideal
-compatibility, not a choice of representatives or a second quotient carrier.
-The compactness lemma permits incomplete normed spaces and rectangular maps;
-the star-algebra map uses complete complex Hilbert spaces, including zero ones.
+For complete complex Hilbert spaces `H,K`, the block diagonal descends to a unital complex star
+homomorphism `Q(H) × Q(K) → Q(H ⊕ K)`, with value `([S],[T]) ↦ [S ⊕ T]`. The orthogonal sum uses
+its two-norm, and the Calkin algebras use their quotient operator norms.
 -/
 
 @[expose] public section
@@ -48,8 +45,10 @@ variable [NormedAddCommGroup K₁] [NormedSpace 𝕜 K₁]
 variable [NormedAddCommGroup H₂] [NormedSpace 𝕜 H₂]
 variable [NormedAddCommGroup K₂] [NormedSpace 𝕜 K₂]
 
-/-- The literal orthogonal block diagonal preserves compactness, without
-completeness, inner-product or nontriviality requirements on the spaces. -/
+/-- **Compact rectangular block diagonal.** Let `𝕜` be a nontrivially normed field and
+`H₁,K₁,H₂,K₂` normed `𝕜`-spaces. If `S : H₁ →L[𝕜] H₂` and `T : K₁ →L[𝕜] K₂` are compact, then
+`(x,y) ↦ (S x,T y)` is compact between their orthogonal two-norm sums; no completeness or
+inner product is assumed. -/
 theorem isCompactOperator_blockDiagonal (S : H₁ →L[𝕜] H₂) (T : K₁ →L[𝕜] K₂)
     (hS : IsCompactOperator S) (hT : IsCompactOperator T) :
     IsCompactOperator (blockDiagonal S T) := by
@@ -94,7 +93,8 @@ variable {H : Type uH} {K : Type uK}
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- Equality of the actual upstairs classes for compact-equivalent representatives. -/
+/-- **Compact equivalence of block representatives.** For complex Hilbert spaces `H,K`, if `S-S'`
+and `T-T'` are compact on their respective spaces, then `[S ⊕ T] = [S' ⊕ T']` in `Q(H ⊕ K)`. -/
 private theorem blockDiagonalClass_respects
     (S : H →L[ℂ] H) (T : K →L[ℂ] K) (S' : H →L[ℂ] H) (T' : K →L[ℂ] K)
     (hS : (compactOperator (RingHom.id ℂ) H H).quotientRel S S')
@@ -117,8 +117,9 @@ private theorem blockDiagonalClass_respects
   rw [map_sub] at hz
   exact sub_eq_zero.mp hz
 
-/-- The actual unital star-algebra map on the two existing Calkin algebras.
-Its computational value uses only public quotient and upstairs class-map DATA. -/
+/-- **Star homomorphism of orthogonal Calkin sums.** For complex Hilbert spaces `H,K`, the map
+`Q(H) × Q(K) → Q(H ⊕ K)` is the unital complex star homomorphism represented by `(S,T) ↦ S ⊕
+T`. -/
 def blockDiagonalStarAlgHom :
     (CalkinAlgebra ℂ H × CalkinAlgebra ℂ K) →⋆ₐ[ℂ]
       CalkinAlgebra ℂ (OrthogonalSum H K) := by
@@ -204,13 +205,16 @@ def blockDiagonalStarAlgHom :
         exact map_star d (S, T)
     }
 
-/-- The descended map is represented by the literal operator block diagonal. -/
+/-- **Diagonal Calkin map on operator classes.** For complex Hilbert spaces `H,K`,
+`blockDiagonalStarAlgHom ([S],[T]) = [OrthogonalSum.blockDiagonal S T]`. -/
 theorem blockDiagonalStarAlgHom_apply (S : H →L[ℂ] H) (T : K →L[ℂ] K) :
     blockDiagonalStarAlgHom (classStarMap (H := H) S, classStarMap (H := K) T) =
       classStarMap (H := OrthogonalSum H K) (OrthogonalSum.blockDiagonal S T) :=
   rfl
 
-/-- The canonical simp form acts on the two literal quotient representatives. -/
+/-- **Diagonal map on quotient representatives.** For complex Hilbert spaces `H,K`, the pair of
+compact-ideal quotient classes of `S,T` is sent to the quotient class of their block diagonal
+`S ⊕ T`. -/
 @[simp]
 theorem blockDiagonalStarAlgHom_mk (S : H →L[ℂ] H) (T : K →L[ℂ] K) :
     blockDiagonalStarAlgHom
@@ -220,7 +224,9 @@ theorem blockDiagonalStarAlgHom_mk (S : H →L[ℂ] H) (T : K →L[ℂ] K) :
         CalkinAlgebra ℂ (OrthogonalSum H K)) :=
   rfl
 
-/-- Bundled compatibility with the standard product of the two class maps. -/
+/-- **Diagonal map and the class projections.** For complex Hilbert spaces `H,K`, the map of
+Calkin products satisfies `β ∘ (q_H × q_K) = q_(H⊕K) ∘ diag`, where `β =
+blockDiagonalStarAlgHom`. -/
 theorem blockDiagonalStarAlgHom_comp_classMaps :
     (blockDiagonalStarAlgHom (H := H) (K := K)).comp
         (((classStarMap (H := H)).comp

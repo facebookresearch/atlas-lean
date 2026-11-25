@@ -1,5 +1,4 @@
-# Standard Stabilization CStar Algebra
+# C-star structure of standard stabilization
 
-Explicit canonical C-star structure on the standard stabilization. It is
-obtained from the existing closed ideal of compact endomorphisms and is not a
-global instance.
+The closed compact endomorphism ideal of `H_B
+= Standard B ℕ` has a nonunital C-star algebra structure with its inherited operator norm.

@@ -1,11 +1,11 @@
-# GNSLeft Operator
+# Bounded left multiplication on the weight Hilbert space
 
-- [Pre GNSLeft Mul Linear](pre-gnsleft-mul-linear.md)
-- [Pre GNSLeft Mul Linear apply](pre-gnsleft-mul-linear-apply.md)
-- [Pre GNSLeft Mul Linear norm le](pre-gnsleft-mul-linear-norm-le.md)
-- [Pre GNSLeft Mul](pre-gnsleft-mul.md)
-- [Pre GNSLeft Mul apply](pre-gnsleft-mul-apply.md)
-- [Pre GNSLeft Mul original Value](pre-gnsleft-mul-original-value.md)
-- [Gns Left Mul](gns-left-mul.md)
-- [Gns Left Mul to GNS](gns-left-mul-to-gns.md)
-- [Gns Left Mul gns Map](gns-left-mul-gns-map.md)
+- [Linear left action on the weight type copy](pre-gnsleft-mul-linear.md)
+- [Left multiplication under the domain identification](pre-gnsleft-mul-linear-apply.md)
+- [Weight seminorm bound for left multiplication](pre-gnsleft-mul-linear-norm-le.md)
+- [Bounded pre-GNS left operator](pre-gnsleft-mul.md)
+- [Value of the bounded pre-GNS left operator](pre-gnsleft-mul-apply.md)
+- [Algebra value of pre-GNS left multiplication](pre-gnsleft-mul-original-value.md)
+- [Completed GNS left operator](gns-left-mul.md)
+- [Completed left action on pre-GNS vectors](gns-left-mul-to-gns.md)
+- [Completed action on finite square elements](gns-left-mul-gns-map.md)

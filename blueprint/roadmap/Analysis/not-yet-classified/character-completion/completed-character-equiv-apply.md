@@ -1,3 +1,5 @@
-# Completed Character Equiv apply
+# Character automorphism on the dense full core
 
-Every completed dual automorphism has the original raw scalar character value.
+For a Haar-core coefficient f and unitary character χ, `completedCharacterEquiv μ α χ
+(toFullCovariantCompletion μ α f) = toFullCovariantCompletion μ α (characterModulation μ α χ
+f)`, with characterModulation χ f(s)=χ(s)•f(s).

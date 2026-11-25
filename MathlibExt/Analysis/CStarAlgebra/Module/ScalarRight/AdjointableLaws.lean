@@ -14,10 +14,11 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight.AdjointableIsometry
 
 /-!
-# Identity, composition, and adjoint laws for the scalar-right correspondence
+# Identity, composition and adjoints under scalar-module transport
 
-The canonical complete-Hilbert correspondence preserves the three basic
-operator operations needed by Hilbert-module and Fredholm consumers.
+On complex Hilbert spaces, the bounded-to-adjointable operator correspondence preserves identity
+operators, composition, and the Hilbert-space adjoint. These formulas make it compatible with
+the endomorphism star algebras.
 -/
 
 @[expose] public section

@@ -1,3 +1,4 @@
-# Norm compact Compression le
+# Norm bound for basis compression
 
-The original compact operator norm bounds every finite compression.
+For compact `k` and a finite subset `s` of a Hilbert
+basis, `‖compactCompression b s k‖ ≤ ‖k‖`.

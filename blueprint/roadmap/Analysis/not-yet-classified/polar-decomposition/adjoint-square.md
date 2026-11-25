@@ -1,3 +1,4 @@
-# Adjoint Square
+# Adjoint square of a module map
 
-The endomorphism `T* T` belonging to a cross-module adjointable map.
+For an adjointable `T : E → F`, `T.adjointSquare =
+T.adjointOperator.comp T` is the endomorphism `T* T` of `E`.

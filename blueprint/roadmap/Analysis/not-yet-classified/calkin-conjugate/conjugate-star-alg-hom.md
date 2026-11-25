@@ -1,3 +1,4 @@
-# Conjugate Star Alg Hom
+# Unitary map of Calkin algebras
 
-Actual unitary transport of the original Calkin classes, using the existing quotient lift.
+For complex Hilbert spaces `H,K`, a unitary `U` gives the
+unital complex star homomorphism `[T] ↦ [U T U*]` from `Q(H)` to `Q(K)`.

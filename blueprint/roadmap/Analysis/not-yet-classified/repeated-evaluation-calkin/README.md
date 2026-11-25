@@ -1,9 +1,9 @@
-# Repeated Evaluation Calkin
+# Repeated dense evaluations in a Calkin algebra
 
-- [Scalar Hilbert](scalar-hilbert.md)
-- [Scalar Hilbert infinite](scalar-hilbert-infinite.md)
-- [Representation](representation.md)
-- [Eq zero of is Compact Operator](eq-zero-of-is-compact-operator.md)
-- [Calkin Representation](calkin-representation.md)
-- [Calkin Representation injective](calkin-representation-injective.md)
-- [Spectrum calkin Representation](spectrum-calkin-representation.md)
+- [Countable scalar Hilbert space](scalar-hilbert.md)
+- [Infinite dimension of the scalar Hilbert sum](scalar-hilbert-infinite.md)
+- [Diagonal representation by repeated evaluations](representation.md)
+- [Zero coefficient of a compact evaluation operator](eq-zero-of-is-compact-operator.md)
+- [Calkin representation of continuous functions](calkin-representation.md)
+- [Faithfulness of repeated evaluations modulo compacts](calkin-representation-injective.md)
+- [Spectrum of a repeated-evaluation Calkin class](spectrum-calkin-representation.md)

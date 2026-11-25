@@ -1,3 +1,4 @@
-# Adjoint graph eq
+# Graph of the partial adjoint
 
-The actual graph consists of all pairs satisfying the original full pairing equations.
+The graph is exactly `{(y,z) ∈ F × E | ∀ x ∈ dom T, ⟨T x,
+y⟩_B = ⟨x, z⟩_B}`.

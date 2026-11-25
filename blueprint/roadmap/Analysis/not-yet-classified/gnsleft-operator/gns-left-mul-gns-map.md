@@ -1,3 +1,7 @@
-# Gns Left Mul gns Map
+# Completed action on finite square elements
 
-The completed original-domain left action has exactly the original finite-square product.
+Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense complex-linear
+map `Λ : n_φ → H_φ`. for `a : A` and `x ∈ n_φ`, `gnsLeftMul φ a (Λ x)=Λ(a*x)`.

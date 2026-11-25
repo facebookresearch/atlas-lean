@@ -15,11 +15,13 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Ba
 public import MathlibExt.Topology.ContinuousMap.CompactlySupported.Discrete
 
 /-!
-# Original measure/action-indexed carrier with discrete finite coefficients
+# Finite coefficients on a discrete monoid
 
-The reusable compact-support/Finsupp construction belongs to the neutral
-continuous-map owner. Only the original measure/action-indexed Haar carrier wrapper is constructed
-here. The formerly unreleased generic aliases have been retired. It needs a monoid, with no inverse or Haar hypothesis.
+Let G be a discrete monoid with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Compact support on G is finite
+support, so the core Carrier μ α is complex-linearly equivalent to G→₀A, the finitely
+supported A-valued functions on G. The equivalence and its inverse preserve every coefficient
+value.
 -/
 
 @[expose] public section
@@ -41,7 +43,13 @@ variable {A : Type uA}
 variable [Monoid G] [MeasurableSpace G] [NonUnitalCStarAlgebra A]
 variable (μ : MeasureTheory.Measure G) (α : PointNormCStarAction G A)
 
-/-- The same original indexed Haar core as its literal finite complex coefficient module. -/
+/-- **Linear equivalence with finitely supported coefficients.**
+
+Let G be a discrete monoid with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. The complex linear equivalence
+discreteCoefficientsEquiv μ α:Carrier μ α≃ₗ[ℂ](G→₀A) sends a compactly supported continuous
+coefficient to its finitely supported function.
+-/
 def discreteCoefficientsEquiv : Carrier μ α ≃ₗ[ℂ] (G →₀ A) where
   toFun f := CompactlySupportedContinuousMap.toFinsupp (toCc μ α f)
   invFun x := fromCc μ α (CompactlySupportedContinuousMap.ofFinsupp x)
@@ -62,12 +70,22 @@ def discreteCoefficientsEquiv : Carrier μ α ≃ₗ[ℂ] (G →₀ A) where
     intro g
     rfl
 
-/-- The discrete Haar-core coefficient equivalence preserves every original value. -/
+/-- **Value of the discrete coefficient equivalence.**
+
+Let G be a discrete monoid with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For f∈Carrier μ α and g∈G,
+discreteCoefficientsEquiv μ α f g=f(g).
+-/
 @[simp]
 theorem discreteCoefficientsEquiv_apply (f : Carrier μ α) (g : G) :
     discreteCoefficientsEquiv μ α f g = f g := rfl
 
-/-- The inverse discrete coefficient map has the literal original finite support values. -/
+/-- **Value of the inverse finite coefficient map.**
+
+Let G be a discrete monoid with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For x:G→₀A and g∈G,
+(discreteCoefficientsEquiv μ α).symm x evaluated at g is x(g).
+-/
 @[simp]
 theorem discreteCoefficientsEquiv_symm_apply (x : G →₀ A) (g : G) :
     (discreteCoefficientsEquiv μ α).symm x g = x g := rfl

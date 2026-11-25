@@ -1,3 +1,3 @@
-# Pre Reindex Linear Equiv symm apply
+# Inverse finite reindexing
 
-The inverse reindexing formula.
+`(preReindexLinearEquiv e).symm x i = x (e i)`.

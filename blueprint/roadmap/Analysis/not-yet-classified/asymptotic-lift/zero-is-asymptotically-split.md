@@ -1,3 +1,4 @@
-# Zero is Asymptotically Split
+# Asymptotic splitting of the zero Busby map
 
-The zero extension has the exact zero asymptotic lift.
+The zero map `A → Q(B)` is asymptotically
+split by the zero multiplier-valued family.

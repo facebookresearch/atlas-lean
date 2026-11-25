@@ -1,3 +1,4 @@
-# Add
+# Addition of stable Busby classes
 
-Diagonal sum descended through stable strong equivalence.
+The operation on the coherent quotient is determined by
+`[τ₁]+[τ₂] = [S.sum τ₁ τ₂]`.

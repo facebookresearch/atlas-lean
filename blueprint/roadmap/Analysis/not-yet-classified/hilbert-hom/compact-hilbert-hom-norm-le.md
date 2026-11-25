@@ -1,3 +1,4 @@
-# Compact Hilbert Hom norm le
+# Norm bound for the compact Hilbert action
 
-The original compact operator norm bounds the restricted completed factor.
+For `T ∈ K(H)`, `‖compactHilbertHom H A T‖ ≤
+‖T‖`.

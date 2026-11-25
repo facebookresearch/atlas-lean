@@ -1,3 +1,8 @@
-# Finite Star Square GNSMap injective
+# Faithful GNS map on the finite star algebra
 
-Original positive-zero faithfulness makes the actual two-square core map injective.
+Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense complex-linear
+map `Λ : n_φ → H_φ`. Assume faithfulness: `φ(a)=0 → a=0` for every positive `a : A`. the
+restriction `Λ : D_φ → H_φ`, where `D_φ={x ∈ n_φ : x* ∈ n_φ}`, is injective.

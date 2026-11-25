@@ -1,3 +1,4 @@
-# Index one
+# Index of the identity Calkin unit
 
-The identity Calkin unit has index zero.
+For a complex Hilbert space `H`, `CalkinAlgebra.index
+(1 : Q(H)ˣ) = 0`.

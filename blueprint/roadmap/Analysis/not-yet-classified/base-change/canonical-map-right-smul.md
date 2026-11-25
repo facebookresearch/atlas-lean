@@ -1,3 +1,5 @@
-# Canonical Map right smul
+# Coefficient covariance of the canonical vector map
 
-Canonical vectors preserve the original right action along the given hom.
+For nonunital C-star algebras `B,C`
+with star-compatible opposite orders, a complete right `B`-module `E`, and a complex nonunital
+star homomorphism `f : B → C`, `canonicalMap f (x <• b) = canonicalMap f x <• f b`.

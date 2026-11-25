@@ -1,3 +1,3 @@
-# Essential Covariant Representation algebra
+# Coefficient representation after essential restriction
 
-Essential restriction retains the literal existing coefficient representation.
+The coefficient part of the essential covariant representation is the restriction of π to Eπ.

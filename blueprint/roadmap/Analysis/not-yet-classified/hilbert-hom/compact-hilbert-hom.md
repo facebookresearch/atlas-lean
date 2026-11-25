@@ -1,3 +1,4 @@
-# Compact Hilbert Hom
+# Restriction to compact Hilbert operators
 
-Restrict the actual Hilbert factor to the original full-H compact closed star ideal.
+Restrict `hilbertHom H A` to `K(H)`, obtaining a
+star-algebra map into the adjointable endomorphisms of `Space H A`.

@@ -1,4 +1,4 @@
-# Coord sum Linear Isometry Equiv inl
+# Left coordinates of completed splitting
 
-The first coordinates of the completed sum equivalence are the left
-summand coordinates.
+The first component satisfies `coord i
+(sumLinearIsometryEquiv x).1 = coord (Sum.inl i) x`.

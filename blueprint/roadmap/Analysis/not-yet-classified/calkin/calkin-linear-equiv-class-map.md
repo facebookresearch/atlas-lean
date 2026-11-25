@@ -1,4 +1,5 @@
-# Calkin Linear Equiv class Map
+# Operator classes under the Calkin linear equivalence
 
-The descended linear equivalence sends the class of an ordinary operator
-to the class of its scalar-right adjointable image.
+For a complex Hilbert space `H`, the
+class of a bounded endomorphism `T` is sent to the class of `ofContinuousLinearMap H H T` in
+the scalar-module Calkin quotient.

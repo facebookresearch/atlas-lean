@@ -1,3 +1,5 @@
-# Single Adjointable adjoint to Continuous Linear Map
+# Coordinate map of the adjoint operator
 
-The reverse bounded map is literally the original coordinate evaluation.
+For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, the continuous linear map underlying `(singleAdjointable
+i).adjointOperator` is `coord i`.

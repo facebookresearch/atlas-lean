@@ -15,20 +15,18 @@ public import MathlibExt.Analysis.CStarAlgebra.Weight.TomitaCoreAlgebra
 public import MathlibExt.Analysis.CStarAlgebra.Weight.GNSLeftRepresentation
 
 /-!
-# The original weighted core has its completed left regular representation
+# Bounded left representation of the finite GNS core algebra
 
-The original two-square algebra and its actual weighted GNS image are
-identified by their existing source algebra maps. Compose the inverse
-image map, the actual ambient core subtype and the existing completed
-weight left representation. The resulting nonunital star representation
-acts on the same original weighted Hilbert completion.
+For a faithful extended positive weight on a nonunital complex C-star algebra, identify `D_φ={x
+: φ(x* x)<∞ ∧ φ(x x*)<∞}` with its GNS image `C_φ`. For `ξ=Λ(a)` in this core, set
+`λ_φ(ξ)=π_φ(a)`, where `π_φ` is the bounded GNS left representation of `A`.
 
-Every core product has the literal value Lambda(a*x). The actual complex
-scalar, product and star laws follow from the existing star homomorphisms.
-No normed-ring estimate, star-continuity, density, star closability or
-associated-algebra/weight conclusion is supplied as an input.
-Source: Connes, Noncommutative Geometry (1994), V.3 Definition 6 and the
-original Aφ paragraph, preserved OCR 14358--14386.
+This is a nonunital complex star homomorphism `C_φ → B(H_φ)`. It obeys `λ_φ(Λ(a))Λ(x)=Λ(a*x)`
+for `x ∈ n_φ` and preserves the core with `λ_φ(ξ)η=ξ ⋅ η`. Density of the core or boundedness of
+its involution is not required.
+
+Source: Connes, Noncommutative Geometry (1994), V.3 Definition 6 and the `A_φ` paragraph, OCR
+14358--14386.
 -/
 
 @[expose] public section
@@ -44,7 +42,14 @@ universe u
 
 variable {A : Type u} [NonUnitalCStarAlgebra A]
 
-/-- The original weighted core acts by its same actual completed weight left representation. -/
+/-- **Bounded left star representation of the GNS core.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense
+complex-linear map `Λ : n_φ → H_φ`. Assume faithfulness: `φ(a)=0 → a=0` for every positive `a
+: A`. Put `D_φ={x ∈ n_φ : x* ∈ n_φ}` and `C_φ=Λ(D_φ) ⊆ H_φ`, with linear equivalence `e : D_φ
+≃ₗ[ℂ] C_φ`, `e(x)=Λ(x)`. `λ_φ=tomitaCoreLeftRepresentation φ : C_φ →⋆ₙₐ[ℂ] B(H_φ)` sends `ξ`
+to `π_φ((e⁻¹ξ : A))`, where `π_φ` is the GNS left representation of `A`. -/
 def Weight.tomitaCoreLeftRepresentation (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0) :
     letI := φ.tomitaCoreNonUnitalRing hφ;
@@ -56,7 +61,13 @@ def Weight.tomitaCoreLeftRepresentation (φ : Weight A)
     (NonUnitalStarSubalgebraClass.subtype φ.finiteStarSquareSubalgebra)).comp
       (φ.fromTomitaCoreStarAlgHom hφ)
 
-/-- Every weighted source coefficient is the original completed operator of its actual core preimage. -/
+/-- **Bounded operator of a core vector.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. Let
+`H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense complex-linear map `Λ :
+n_φ → H_φ`. Assume faithfulness: `φ(a)=0 → a=0` for every positive `a : A`. Put `D_φ={x ∈ n_φ
+: x* ∈ n_φ}` and `C_φ=Λ(D_φ) ⊆ H_φ`, with linear equivalence `e : D_φ ≃ₗ[ℂ] C_φ`, `e(x)=Λ(x)`.
+for `ξ ∈ C_φ`, `tomitaCoreLeftRepresentation φ ξ=gnsLeftRepresentation φ ((e⁻¹ξ : A))`. -/
 @[simp]
 theorem Weight.tomitaCoreLeftRepresentation_apply (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0)
@@ -69,7 +80,14 @@ theorem Weight.tomitaCoreLeftRepresentation_apply (φ : Weight A)
   let := φ.tomitaCoreStar hφ
   rfl
 
-/-- The same representation keeps every original two-square-finite algebra coefficient. -/
+/-- **Left representation of a finite star element.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense
+complex-linear map `Λ : n_φ → H_φ`. Assume faithfulness: `φ(a)=0 → a=0` for every positive `a
+: A`. Put `D_φ={x ∈ n_φ : x* ∈ n_φ}` and `C_φ=Λ(D_φ) ⊆ H_φ`, with linear equivalence `e : D_φ
+≃ₗ[ℂ] C_φ`, `e(x)=Λ(x)`. for `a ∈ D_φ`, `tomitaCoreLeftRepresentation φ
+(e(a))=gnsLeftRepresentation φ (a : A)`. -/
 theorem Weight.tomitaCoreLeftRepresentation_original (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0)
     (a : φ.finiteStarSquareSubalgebra) :
@@ -80,7 +98,14 @@ theorem Weight.tomitaCoreLeftRepresentation_original (φ : Weight A)
   let := φ.tomitaCoreStar hφ
   rw [φ.tomitaCoreLeftRepresentation_apply, LinearEquiv.symm_apply_apply]
 
-/-- The actual completed operator acts on every original finite-square vector by original multiplication. -/
+/-- **Core coefficient acting on a finite square vector.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense
+complex-linear map `Λ : n_φ → H_φ`. Assume faithfulness: `φ(a)=0 → a=0` for every positive `a
+: A`. Put `D_φ={x ∈ n_φ : x* ∈ n_φ}` and `C_φ=Λ(D_φ) ⊆ H_φ`, with linear equivalence `e : D_φ
+≃ₗ[ℂ] C_φ`, `e(x)=Λ(x)`. for `ξ ∈ C_φ` and `x ∈ n_φ`, `tomitaCoreLeftRepresentation φ ξ (Λ
+x)=Λ((e⁻¹ξ : A) * x)`. -/
 theorem Weight.tomitaCoreLeftRepresentation_gnsMap (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0)
     (ξ : φ.tomitaCore) (x : φ.finiteSquareSubmodule) :
@@ -93,7 +118,14 @@ theorem Weight.tomitaCoreLeftRepresentation_gnsMap (φ : Weight A)
   rw [φ.tomitaCoreLeftRepresentation_apply]
   exact φ.gnsLeftRepresentation_gnsMap _ x
 
-/-- The original completed left action preserves the literal weighted core and its original product. -/
+/-- **Left representation agrees with the core product.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. Let `H_φ` be the Hilbert completion for the seminorm `√q(x)`, with dense
+complex-linear map `Λ : n_φ → H_φ`. Assume faithfulness: `φ(a)=0 → a=0` for every positive `a
+: A`. Put `D_φ={x ∈ n_φ : x* ∈ n_φ}` and `C_φ=Λ(D_φ) ⊆ H_φ`, with linear equivalence `e : D_φ
+≃ₗ[ℂ] C_φ`, `e(x)=Λ(x)`. for `ξ,η ∈ C_φ`, `tomitaCoreLeftRepresentation φ ξ (η : H_φ)=(ξ ⋅ η :
+H_φ)`, where `ξ ⋅ η=e(e⁻¹ξ * e⁻¹η)`. -/
 theorem Weight.tomitaCoreLeftRepresentation_coreAction (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0)
     (ξ η : φ.tomitaCore) :

@@ -1,3 +1,4 @@
-# Essential Covariant Representation
+# Essential covariant representation
 
-The original covariant pair restricted to its actual coefficient essential Hilbert space.
+Restricting the coefficient representation π and group representation U to Eπ gives a
+covariant representation of α on Eπ.

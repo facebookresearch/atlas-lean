@@ -1,4 +1,4 @@
-# Norm raw Lift le
+# Contractivity of the algebraic universal map
 
-The algebraic universal map has the same contraction bound as the
-original C-star stage maps.
+For compatible C-star stage homomorphisms
+`g_i`, `‖S.rawLift g hg x‖ ≤ ‖x‖` on the descended algebraic limit norm.

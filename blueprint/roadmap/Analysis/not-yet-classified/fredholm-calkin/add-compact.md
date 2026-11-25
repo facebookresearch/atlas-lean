@@ -1,3 +1,4 @@
-# Add compact
+# Fredholmness under compact addition
 
-Compact perturbations preserve Fredholmness.
+For a complex Hilbert space `H`, if `T` is Fredholm
+and `K` compact, `T+K` is Fredholm.

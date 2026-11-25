@@ -18,18 +18,12 @@ public import Mathlib.CategoryTheory.EqToHom
 /-!
 # Products of finite-stage representatives
 
-The canonical finite-iteration transport is owned by `IteratedAlgebra`.
-This module uses it to package the literal representative composite
-
-```text
-(map n psi).comp phi : A -> alpha^n(alpha^m C)
-```
-
-at summed stage `n + m`.
-
-This is representative-level data only. There is no class product, path/alpha
-comparison, direct-limit operation, flattening map, associativity theorem, or
-E-theory product here.
+Let A,B,C be nonunital complex C-star algebras in independent universes and n,m∈ℕ. For a
+nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star
+norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For representatives φ:A→αⁿB and ψ:B→αᵐC, let
+θ_(n,m):αⁿ(αᵐC)→αⁿ⁺ᵐC be the canonical finite-iteration identification. The representative
+product is θ_(n,m)∘αⁿ(ψ)∘φ:A→αⁿ⁺ᵐC. At n=0 it is ordinary composition with the canonical
+target identification, and at m=0 it is αⁿ(ψ)∘φ.
 -/
 
 @[expose] public section
@@ -48,9 +42,14 @@ namespace IteratedAsymptoticAlgebra
 
 universe uA uB uC
 
-/-- Compose finite-stage representatives. The mathematical composite is
-`(map n psi).comp phi`; `iteratedAddHom` only transports its canonical
-stored carrier to the literal summed stage. -/
+/-- **Composition of representatives at summed stage.**
+
+Let A,B,C be nonunital complex C-star algebras in independent universes and n,m∈ℕ. For a
+nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star
+norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For representatives φ:A→αⁿB and ψ:B→αᵐC, let
+θ_(n,m):αⁿ(αᵐC)→αⁿ⁺ᵐC be the canonical finite-iteration identification. The homomorphism
+productRepresentative n m φ ψ is θ_(n,m)∘(IteratedAsymptoticAlgebra.map n ψ)∘φ∈HomN(n+m) A C.
+-/
 def productRepresentative (n m : ℕ)
     {A : Type uA} {B : Type uB} {C : Type uC}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -68,7 +67,12 @@ theorem productRepresentative_apply (n m : ℕ)
       iteratedAddHom n m C (map n psi (phi a)) :=
   rfl
 
-/-- At source stage zero, representative product is ordinary composition. -/
+/-- **Stage-zero iterate of a representative.**
+
+Let B,C be nonunital complex C-star algebras and m∈ℕ. For a nonunital complex C-star algebra
+X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and define α⁰X=X,
+αⁿ⁺¹X=α(αⁿX). For ψ:B→αᵐC, map 0 ψ is ψ after the canonical identification α⁰(αᵐC)=αᵐC.
+-/
 private theorem map_zero_stage_eq_eqToHom_comp
     (m : ℕ)
     {B : Type uB} {C : Type uC}
@@ -82,8 +86,15 @@ private theorem map_zero_stage_eq_eqToHom_comp
   rw [map_zero_stage]
   rfl
 
-/-- At source stage zero, representative product is ordinary composition
-followed by the explicit transport from stage `m` to literal stage `0+m`. -/
+/-- **Representative product with stage zero on the left.**
+
+Let A,B,C be nonunital complex C-star algebras in independent universes and n,m∈ℕ. For a
+nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star
+norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For representatives φ:A→αⁿB and ψ:B→αᵐC, let
+θ_(n,m):αⁿ(αᵐC)→αⁿ⁺ᵐC be the canonical finite-iteration identification. If n=0,
+productRepresentative 0 m φ ψ is ψ∘φ followed by the canonical identification of target stage
+m with 0+m.
+-/
 theorem productRepresentative_zero_left (m : ℕ)
     {A : Type uA} {B : Type uB} {C : Type uC}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -120,7 +131,14 @@ theorem productRepresentative_zero_left (m : ℕ)
       exact congrArg (fun F => F.comp (psi.comp phi))
         (iteratedAddHom_zero_left m C)
 
-/-- At coefficient stage zero, only the existing `map n` action remains. -/
+/-- **Representative product with stage zero on the right.**
+
+Let A,B,C be nonunital complex C-star algebras in independent universes and n,m∈ℕ. For a
+nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star
+norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For representatives φ:A→αⁿB and ψ:B→αᵐC, let
+θ_(n,m):αⁿ(αᵐC)→αⁿ⁺ᵐC be the canonical finite-iteration identification. If m=0,
+productRepresentative n 0 φ ψ=(IteratedAsymptoticAlgebra.map n ψ)∘φ, with ψ:B→C.
+-/
 theorem productRepresentative_zero_right (n : ℕ)
     {A : Type uA} {B : Type uB} {C : Type uC}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]

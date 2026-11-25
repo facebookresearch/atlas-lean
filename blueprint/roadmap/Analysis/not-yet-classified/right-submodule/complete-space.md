@@ -1,5 +1,5 @@
-# Complete Space
+# Completeness of a closed right submodule
 
-A closed right submodule of a complete module is complete.  The result is
-plain locally activatable data, so different closed carriers do not introduce
-competing global instances on the ambient type.
+Let `E` be a right C-star module over a
+nonunital C-star algebra `B`. If `E` is complete and `S.IsClosed`, then the subtype `S` is
+complete for its restricted norm and uniformity.

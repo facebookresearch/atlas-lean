@@ -1,4 +1,4 @@
-# Pre Sum Linear Equiv
+# Splitting finite-support sum coordinates
 
-Split a finite-support standard vector on a sum of coordinate types into
-its two components.
+The equivalence sends a vector on `I ⊕ J` to the
+pair of restrictions `i ↦ x (Sum.inl i)` and `j ↦ x (Sum.inr j)`.

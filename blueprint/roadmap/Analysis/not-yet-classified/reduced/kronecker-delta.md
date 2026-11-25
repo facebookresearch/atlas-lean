@@ -1,4 +1,3 @@
-# Kronecker Delta
+# Complex Kronecker delta
 
-The scalar Kronecker delta, without exposing decidable equality as an API
-parameter.
+For any type G and g,h∈G, kroneckerDelta g h is 1∈ℂ when g=h and 0 otherwise.

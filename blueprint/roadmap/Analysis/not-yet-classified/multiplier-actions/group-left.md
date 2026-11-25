@@ -1,3 +1,5 @@
-# Group Left
+# Left group action on the indexed core
 
-The actual inverse left group action on the same indexed compact-support functions.
+Let G be a locally compact topological group with a measurable structure, μ a measure on G, A
+a nonunital complex C-star algebra and α a point-norm action of G on A. The complex linear map
+groupLeft μ α g on Carrier μ α sends f to s↦α_g(f(g⁻¹*s)).

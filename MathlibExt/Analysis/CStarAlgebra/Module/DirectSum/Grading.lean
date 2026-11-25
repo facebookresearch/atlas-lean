@@ -15,11 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Grading.Module
 public import MathlibExt.Analysis.CStarAlgebra.Module.DirectSum.Completion
 
 /-!
-# Gradings on completed Hilbert-module direct sums
+# Coordinate gradings on completed Hilbert-module sums
 
-A family of graded complete right modules induces the coordinatewise grading
-on the literal finite-support sum and hence on its stock completion.  The
-construction works for arbitrary, including empty, index types.
+Fix a C-star grading `γ` of the coefficient algebra `B` and compatible gradings `δ_i` of
+complete right modules `E_i`. On finite-support vectors, the grading generator is `(Γ x)_i =
+δ_i.generator (x_i)`. It preserves norms and changes the coefficient inner product by
+`γ.generatorAut`.
+
+This generator extends to the completed direct sum, remains involutive, and satisfies `Γ (j_i x)
+= j_i (δ_i.generator x)`. It defines the direct-sum module grading for arbitrary, including
+empty, index types.
 -/
 
 @[expose] public section
@@ -96,7 +101,9 @@ private theorem algebraicInner_generator
   simpa only [rightInner] using
     (delta i).generator_rightInner (toDFinsupp x i) (toDFinsupp y i)
 
-/-- Coordinatewise grading generator on the algebraic finite-support sum. -/
+/-- **Coordinate grading on the algebraic sum.** For component gradings compatible with the same
+coefficient grading `γ`, the linear isometric equivalence acts by `(Γ x)_i = δ_i.generator
+x_i` on finite-support vectors. -/
 @[no_expose]
 def algebraicGenerator
     (delta : ∀ i, CStarModuleGrading gamma (E i)) :
@@ -130,8 +137,8 @@ theorem algebraicGenerator_single
   · simp only [toDFinsupp_algebraicGeneratorLinearEquiv,
       single_apply_ne hji, map_zero]
 
-/-- Canonical simp-normal form of coordinatewise generation on an algebraic
-single-coordinate vector. -/
+/-- **Algebraic grading on a one-coordinate vector.** `algebraicGenerator δ (singleLinear i x) =
+singleLinear i ((δ i).generator x)`. -/
 @[simp]
 theorem algebraicGenerator_singleLinear
     (delta : ∀ i, CStarModuleGrading gamma (E i))
@@ -205,7 +212,9 @@ private theorem completedGeneratorIsometry_involutive
     toDFinsupp_algebraicGeneratorLinearEquiv]
   exact (delta i).generator_involutive (toDFinsupp y i)
 
-/-- Coordinatewise grading generator on the completed direct sum. -/
+/-- **Grading generator on the completed sum.** The componentwise grading extends to a continuous
+complex-linear equivalence of `Completed B E`, acting on component images by `Γ j_i = j_i
+δ_i`. -/
 @[no_expose]
 def completedGenerator
     (delta : ∀ i, CStarModuleGrading gamma (E i)) :
@@ -235,8 +244,8 @@ theorem completedGenerator_single
       ((single (B := B) (E := E) i x : Algebraic B E) : Completed B E) = _
   rw [completedGeneratorIsometry_coe, algebraicGenerator_single]
 
-/-- Canonical simp-normal form of the completed generator on an embedded
-algebraic single-coordinate vector. -/
+/-- **Completed grading on an algebraic coordinate image.** The generator sends the completed
+image of `singleLinear i x` to the completed image of `singleLinear i ((δ i).generator x)`. -/
 @[simp]
 theorem completedGenerator_singleLinear
     (delta : ∀ i, CStarModuleGrading gamma (E i))
@@ -249,7 +258,9 @@ theorem completedGenerator_singleLinear
       ((singleLinear (B := B) (E := E) i x : Algebraic B E) : Completed B E) = _
   rw [completedGeneratorIsometry_coe, algebraicGenerator_singleLinear]
 
-/-- The completed direct sum carries the coordinatewise module grading. -/
+/-- **Module grading on the completed direct sum.** Compatible component gradings over `γ` induce
+the grading with generator `(Γ x)_i = δ_i.generator x_i` on the dense finite-support sum and
+its continuous extension. -/
 @[no_expose]
 def grading
     (delta : ∀ i, CStarModuleGrading gamma (E i)) :
@@ -328,8 +339,8 @@ theorem grading_generator_completedSingle
   by
     rw [grading_generator, completedGenerator_single]
 
-/-- Canonical simp-normal form of the completed direct-sum grading on an
-embedded algebraic single-coordinate vector. -/
+/-- **Direct-sum grading on embedded coordinate vectors.** The generator of `grading δ` sends the
+completed one-coordinate image of `x : E i` to that of `(δ i).generator x`. -/
 @[simp]
 theorem grading_generator_singleLinear
     (delta : ∀ i, CStarModuleGrading gamma (E i))

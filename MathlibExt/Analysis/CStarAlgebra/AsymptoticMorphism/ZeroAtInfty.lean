@@ -21,15 +21,13 @@ public import Mathlib.Topology.UniformSpace.Ascoli
 /-!
 # Uniform asymptotic morphisms on functions vanishing at infinity
 
-A uniform raw asymptotic morphism remains uniform after exact zero-normalization.
-Its normalized coefficient map acts continuously on C₀ functions and transposes
-to a bounded, whole-C₀-continuous time orbit. Compact coefficient ranges and the
-stock compact-domain Ascoli theorem upgrade all four pointwise defects to limits
-in the actual C₀ supremum norm.
-
-Only a topological parameter space is required. No local compactness,
-separation, metrizability or nonemptiness assumption is imposed, and no
-homotopy-class suspension or tensor-product identification is asserted.
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. For any topological space X, zero normalization φ0_t(a)=φ_t(a)-φ_t(0) acts on
+C₀(X,A) by F_t(f)(x)=φ0_t(f(x)). The resulting asymptotic morphism C₀(X,A)→C₀(X,B) is uniform;
+its four defects converge in the supremum norm over X.
 -/
 
 @[expose] public section
@@ -47,7 +45,15 @@ namespace AsymptoticMorphism
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- Literal zero-normalization preserves the existing uniform representative property. -/
+/-- **Zero normalization preserves uniformity.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. The family normalize φ, with values φ_t(a)-φ_t(0), also satisfies IsUniform:
+a↦(t↦φ_t(a)-φ_t(0)) is continuous into C_b(T,B).
+-/
 theorem IsUniform.normalize {φ : AsymptoticMorphism A B} (hφ : IsUniform φ) :
     IsUniform (AsymptoticMorphism.normalize φ) := by
   rcases hφ with ⟨F, hF⟩
@@ -59,10 +65,16 @@ theorem IsUniform.normalize {φ : AsymptoticMorphism A B} (hφ : IsUniform φ) :
   change (F a - F (0 : A)) t = AsymptoticMorphism.normalize φ t a
   rw [BoundedContinuousFunction.sub_apply, hF t a, hF t 0, normalize_apply]
 
-/-- The computed continuous C₀-to-bounded-orbit map of a normalized uniform family.
+/-- **Continuous bounded-orbit map on C₀ functions.**
 
-The chosen coefficient map is constrained by the existing IsUniform property;
-its output values are exposed by uniformC0Orbit_apply. -/
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. Let X be any topological space. The continuous map uniformC0Orbit φ
+hφ:C₀(X,A)→C_b(T,C₀(X,B)) sends f to the time orbit with value F(f)(t)(x)=φ_t(f(x))-φ_t(0).
+Both C₀ function spaces and the bounded-orbit space have their supremum norms.
+-/
 noncomputable def uniformC0Orbit {X : Type uX} [TopologicalSpace X]
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ) :
     C(C₀(X, A), AsymptoticTime →ᵇ C₀(X, B)) := by
@@ -86,7 +98,15 @@ noncomputable def uniformC0Orbit {X : Type uX} [TopologicalSpace X]
           (ZeroAtInftyContinuousMap.continuous_postcomp
             (X := X) (A := A) (B := AsymptoticTime →ᵇ B) F hzero) }
 
-/-- Exact normalized values of the computed orbit family. -/
+/-- **Value of the uniform C₀ orbit map.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. For any topological space X, f∈C₀(X,A), t≥1 and x∈X, uniformC0Orbit φ hφ f t
+x=φ_t(f(x))-φ_t(0).
+-/
 @[simp]
 theorem uniformC0Orbit_apply {X : Type uX} [TopologicalSpace X]
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ)
@@ -108,7 +128,16 @@ theorem uniformC0Orbit_apply {X : Type uX} [TopologicalSpace X]
   rw [ZeroAtInftyContinuousMap.flipToBCF_apply, ZeroAtInftyContinuousMap.postcomp_apply]
   exact hF t (f x)
 
-/-- The actual normalized asymptotic family on C₀, with all four sup-norm limits. -/
+/-- **Asymptotic morphism induced on C₀ functions.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. For any topological space X, uniformC0Morphism φ hφ:C₀(X,A)→C₀(X,B) is the family
+F_t(f)(x)=φ_t(f(x))-φ_t(0). Its time continuity and all four algebraic defect limits use the
+supremum norm on C₀(X,B).
+-/
 noncomputable def uniformC0Morphism {X : Type uX} [TopologicalSpace X]
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ) :
     AsymptoticMorphism C₀(X, A) C₀(X, B) := by
@@ -270,7 +299,15 @@ noncomputable def uniformC0Morphism {X : Type uX} [TopologicalSpace X]
         hF, toFun_eq_coe] using
         (AsymptoticMorphism.normalize φ).star_defect_tendsto (a : A)
 
-/-- The computed C₀ family has exactly the normalized pointwise values. -/
+/-- **Value of the induced C₀ asymptotic family.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. For any topological space X, f∈C₀(X,A), t≥1 and x∈X, uniformC0Morphism φ hφ t f
+x=φ_t(f(x))-φ_t(0).
+-/
 @[simp]
 theorem uniformC0Morphism_apply {X : Type uX} [TopologicalSpace X]
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ)
@@ -279,7 +316,15 @@ theorem uniformC0Morphism_apply {X : Type uX} [TopologicalSpace X]
   change uniformC0Orbit φ hφ f t x = AsymptoticMorphism.normalize φ t (f x)
   exact uniformC0Orbit_apply φ hφ f t x
 
-/-- Uniformity of the genuine output is witnessed by the same computed orbit map. -/
+/-- **Uniformity of the induced C₀ asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Assume a↦(t↦φ_t(a)) is continuous from A into C_b(T,B) with its supremum norm; this is
+IsUniform φ. For any topological space X, the family F=uniformC0Morphism φ hφ satisfies
+IsUniform F: f↦(t↦F_t(f)) is continuous C₀(X,A)→C_b(T,C₀(X,B)) in the supremum norms.
+-/
 theorem isUniform_uniformC0Morphism {X : Type uX} [TopologicalSpace X]
     (φ : AsymptoticMorphism A B) (hφ : IsUniform φ) :
     IsUniform (uniformC0Morphism (X := X) φ hφ) := by

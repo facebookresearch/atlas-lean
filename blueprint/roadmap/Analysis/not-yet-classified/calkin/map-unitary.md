@@ -1,3 +1,4 @@
-# Map Unitary
+# Unitary transport of Calkin classes
 
-The map of module Calkin algebras induced by unitary conjugation.
+A unitary `U : E ≃ F` induces the star-algebra map
+`Calkin B E → Calkin B F` given by `[T] ↦ [U T U*]`.

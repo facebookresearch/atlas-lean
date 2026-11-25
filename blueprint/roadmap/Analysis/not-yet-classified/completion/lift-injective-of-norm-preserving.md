@@ -1,3 +1,4 @@
-# Lift injective of norm preserving
+# Injectivity from stage norm preservation
 
-No original stage norm is lost by the extended universal map.
+If the compatible maps `g_i` preserve norms on
+each stage, their completed universal map `S.lift g hg` is injective.

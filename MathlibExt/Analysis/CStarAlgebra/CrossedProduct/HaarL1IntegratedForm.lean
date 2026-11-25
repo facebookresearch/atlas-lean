@@ -16,16 +16,18 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.L1
 public import MathlibExt.Analysis.Normed.Algebra.NonUnitalStarCompletion.Hom
 
 /-!
-# The actual Haar-integrated representation on the original L1 completion
+# Integrated representations on the L¹ crossed-product completion
 
-The literal L1 coefficient bound makes the original integrated star-algebra
-homomorphism continuous for the computed L1 source norm. The existing
-nonunital star-hom completion extension then acts on the same ordinary L1
-completion. Its dense coefficient values are the original vector integral;
-it is continuous and contractive, and these values determine it uniquely.
-
-No approximate identity, source nondegeneracy, full covariant norm
-comparison or alternative completed model is assumed by this construction.
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Let L1Completion μ α be the completion
+of the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for
+its dense coefficient map. The map Iρ extends to a continuous nonunital complex star
+homomorphism Iρ¹:L1Completion μ α→B(H) with Iρ¹(ι₁(f))=Iρ(f) and ‖Iρ¹(x)‖≤‖x‖. These values on
+the dense core determine the extension uniquely.
 -/
 
 @[expose] public section
@@ -48,7 +50,17 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
-/-- The original coefficient-integral bound makes the same integrated map L1-continuous. -/
+/-- **L¹ continuity of the integrated representation.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. On the twisted convolution core with
+seminorm ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, the map f↦Iρ(f) is continuous into B(H) with its operator norm;
+‖Iρ(f)‖≤‖f‖₁.
+-/
 theorem continuous_haarIntegratedHom_for_L1 :
     let _ : NonUnitalSeminormedRing (HaarTwistedCore.Carrier μ α) :=
       HaarTwistedCore.sourceL1SeminormedRing μ α
@@ -70,7 +82,19 @@ theorem continuous_haarIntegratedHom_for_L1 :
       simpa only [one_mul, HaarTwistedCore.l1Gauge] using norm_haarIntegratedHom_le μ ρ f)
   exact T.continuous
 
-/-- Extend the original integrated map through the same ordinary L1 completion. -/
+/-- **Integrated homomorphism on the L¹ completion.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Let L1Completion μ α be the completion
+of the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for
+its dense coefficient map. The nonunital complex star homomorphism haarL1IntegratedHom μ
+ρ:L1Completion μ α→B(H) extends Iρ from the dense core and is contractive for the L¹
+completion norm.
+-/
 def haarL1IntegratedHom :
     let _ : NonUnitalNormedRing (HaarTwistedCore.L1Completion μ α) :=
       HaarTwistedCore.l1CompletionNonUnitalNormedRing μ α
@@ -94,7 +118,18 @@ def haarL1IntegratedHom :
   exact NonUnitalStarAlgHom.fromCompletion (haarIntegratedHom μ ρ)
     (continuous_haarIntegratedHom_for_L1 μ ρ)
 
-/-- The same completed map retains every original integrated coefficient value. -/
+/-- **L¹ integrated homomorphism on dense coefficients.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Let L1Completion μ α be the completion
+of the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for
+its dense coefficient map. For every core coefficient f, haarL1IntegratedHom μ ρ
+(ι₁(f))=Iρ(f).
+-/
 theorem haarL1IntegratedHom_apply (f : HaarTwistedCore.Carrier μ α) :
     let _ : NonUnitalNormedRing (HaarTwistedCore.L1Completion μ α) :=
       HaarTwistedCore.l1CompletionNonUnitalNormedRing μ α
@@ -119,7 +154,17 @@ theorem haarL1IntegratedHom_apply (f : HaarTwistedCore.Carrier μ α) :
   exact NonUnitalStarAlgHom.fromCompletion_apply_coe (haarIntegratedHom μ ρ)
     (continuous_haarIntegratedHom_for_L1 μ ρ) f
 
-/-- Every dense coefficient acts by the literal original Haar vector integral. -/
+/-- **Vector integral on dense L¹ coefficients.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). Let L1Completion μ α be the completion of
+the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for its
+dense coefficient map. For f:G→A compactly supported and continuous and ξ∈H,
+haarL1IntegratedHom μ ρ (ι₁(f)) ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ.
+-/
 theorem haarL1IntegratedHom_apply_vector (f : HaarTwistedCore.Carrier μ α) (ξ : H) :
     let _ : NonUnitalNormedRing (HaarTwistedCore.L1Completion μ α) :=
       HaarTwistedCore.l1CompletionNonUnitalNormedRing μ α
@@ -131,7 +176,18 @@ theorem haarL1IntegratedHom_apply_vector (f : HaarTwistedCore.Carrier μ α) (ξ
       ∫ s : G, ρ.algebra (f s) ((ρ.group s : H →L[ℂ] H) ξ) ∂μ := by
   rw [haarL1IntegratedHom_apply, haarIntegratedHom_apply_vector]
 
-/-- The existing extension is continuous in the actual L1 completion topology. -/
+/-- **Continuity of the L¹ integrated homomorphism.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). Let L1Completion μ α be the completion of
+the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for its
+dense coefficient map. The homomorphism haarL1IntegratedHom μ ρ:L1Completion μ α→B(H),
+extending f↦(ξ↦∫ s, π(f(s))(U_s ξ) ∂μ), is continuous from the L¹ completion norm to the
+operator norm.
+-/
 theorem continuous_haarL1IntegratedHom :
     let _ : NonUnitalNormedRing (HaarTwistedCore.L1Completion μ α) :=
       HaarTwistedCore.l1CompletionNonUnitalNormedRing μ α
@@ -155,7 +211,17 @@ theorem continuous_haarL1IntegratedHom :
   exact NonUnitalStarAlgHom.continuous_fromCompletion (haarIntegratedHom μ ρ)
     (continuous_haarIntegratedHom_for_L1 μ ρ)
 
-/-- The original L1 bound persists on every element of the same completed algebra. -/
+/-- **Contractive norm bound on the L¹ completion.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). Let L1Completion μ α be the completion of
+the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for its
+dense coefficient map. For every x∈L1Completion μ α, ‖haarL1IntegratedHom μ ρ x‖≤‖x‖. The left
+norm is the operator norm on B(H); the right is the completed L¹ norm.
+-/
 theorem norm_haarL1IntegratedHom_le (x : HaarTwistedCore.L1Completion μ α) :
     let _ : NonUnitalNormedRing (HaarTwistedCore.L1Completion μ α) :=
       HaarTwistedCore.l1CompletionNonUnitalNormedRing μ α
@@ -189,7 +255,19 @@ theorem norm_haarL1IntegratedHom_le (x : HaarTwistedCore.L1Completion μ α) :
   change ‖haarIntegratedHom μ ρ f‖ ≤ HaarTwistedCore.l1Gauge μ α f
   exact norm_haarIntegratedHom_le μ ρ f
 
-/-- A continuous nonunital star hom with the same dense original values is this extension. -/
+/-- **Uniqueness of the continuous L¹ integrated extension.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Let L1Completion μ α be the completion
+of the compactly supported twisted convolution core in ‖f‖₁=∫ s, ‖f(s)‖ ∂μ, and write ι₁ for
+its dense coefficient map. If ψ:L1Completion μ α→B(H) is a continuous nonunital complex star
+homomorphism satisfying ψ(ι₁(f))=Iρ(f) for every core coefficient f, then
+ψ=haarL1IntegratedHom μ ρ.
+-/
 theorem haarL1IntegratedHom_unique :
     let _ : NonUnitalNormedRing (HaarTwistedCore.L1Completion μ α) :=
       HaarTwistedCore.l1CompletionNonUnitalNormedRing μ α

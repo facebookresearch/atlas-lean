@@ -1,3 +1,4 @@
-# Nonnegative Involution
+# Nonnegative-degree reflection
 
-The source's sign convention `2P - 1` on the integer-indexed completion.
+`nonnegativeInvolution = 2 * nonnegativeProjection - 1`,
+giving sign `+1` in degree zero and positive degrees and sign `-1` in negative degrees.

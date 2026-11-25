@@ -14,10 +14,10 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Basic
 
 /-!
-# The actual affine interpolation of reparametrized time
+# Affine interpolation of half-line times
 
-This constructs only the half-line time point. No homotopy or asymptotic
-defect law is assumed as data.
+For T=[1,∞), a function r:T→T, t∈T and s∈[0,1], the interpolated time r_s(t)=s*t+(1-s)*r(t)
+belongs to T. It equals r(t) at s=0 and t at s=1.
 -/
 
 @[expose] public section
@@ -27,7 +27,11 @@ set_option relaxedAutoImplicit false
 
 namespace AsymptoticMorphism
 
-/-- The printed r_s(t)=s*t+(1-s)*r(t), staying in the genuine time half-line. -/
+/-- **Blended asymptotic time.**
+
+Let T=AsymptoticTime=[1,∞), r:T→T, t∈T and s∈[0,1]. The time blendTime r t s is
+s*t+(1-s)*r(t), which is at least 1.
+-/
 def blendTime (r : AsymptoticTime → AsymptoticTime)
     (t : AsymptoticTime) (s : unitInterval) : AsymptoticTime :=
   ⟨(s : ℝ) * (t : ℝ) + (1 - (s : ℝ)) * (r t : ℝ), by

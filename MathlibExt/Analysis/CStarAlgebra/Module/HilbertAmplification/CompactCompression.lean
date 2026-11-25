@@ -16,12 +16,15 @@ public import MathlibExt.Analysis.InnerProductSpace.CompactOperator.BasisApproxi
 public import MathlibExt.Analysis.InnerProductSpace.Operator.FiniteCoordinateExpansion
 
 /-!
-# Actual finite Hilbert-basis compressions of full-H compact operators
+# Finite-basis compressions of compact operators
 
-Reuse the stock finite projections of an arbitrary Hilbert basis. The
-already proved compact-sandwich theorem supplies operator-norm convergence
-of the diagonal finite-set net. Package those actual maps in the original
-compact ideal, retaining their original matrix-entry rank-one values.
+Let `b : HilbertBasis I ℂ H` be a basis of a complex Hilbert space and `P_s` the orthogonal
+projection onto the basis coordinates in a finite set `s ⊆ I`. A compact operator `k` has
+compact compression `P_s k P_s`, with `‖P_s k P_s‖ ≤ ‖k‖`.
+
+The directed finite-subset net converges to `k` in operator norm. Its expansion is `∑ i,j ∈ s,
+⟪b_i,k b_j⟫_ℂ • θ_(b_i,b_j)`. The basis index need not be countable, and empty finite subsets
+are allowed.
 -/
 
 @[expose] public section
@@ -37,7 +40,9 @@ universe uH uI
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {ι : Type uI} (b : HilbertBasis ι ℂ H)
 
-/-- The actual two-sided finite projection compression as a linear map of the full compact ideal. -/
+/-- **Finite-basis compression of a compact operator.** For a complex Hilbert space, basis `b` and
+finite set `s`, the complex-linear map on `K(H)` sends `k` to `P_s k P_s`, where `P_s` is the
+basis projection. -/
 def compactCompression (s : Finset ι) :
     (compactEndomorphismClosedStarIdeal (H := H)).carrier →ₗ[ℂ]
       (compactEndomorphismClosedStarIdeal (H := H)).carrier where
@@ -57,14 +62,17 @@ def compactCompression (s : Finset ι) :
     rw [ContinuousLinearMap.smul_comp, ContinuousLinearMap.comp_smul]
     rfl
 
-/-- Compact compression retains exactly the original operator composition. -/
+/-- **Operator formula for compact compression.** For a Hilbert basis `b`, `compactCompression b s
+k` has bounded-operator value `P_s.comp (k.comp P_s)`, where `P_s =
+b.toUnconditionalSchauderBasis.proj s`. -/
 @[simp]
 theorem compactCompression_coe (s : Finset ι)
     (k : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     (compactCompression b s k : H →L[ℂ] H) =
       (b.toUnconditionalSchauderBasis.proj s).comp ((k : H →L[ℂ] H).comp (b.toUnconditionalSchauderBasis.proj s)) := rfl
 
-/-- The original compact operator norm bounds every finite compression. -/
+/-- **Norm bound for basis compression.** For compact `k` and a finite subset `s` of a Hilbert
+basis, `‖compactCompression b s k‖ ≤ ‖k‖`. -/
 theorem norm_compactCompression_le (s : Finset ι)
     (k : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     ‖compactCompression b s k‖ ≤ ‖k‖ := by
@@ -72,7 +80,9 @@ theorem norm_compactCompression_le (s : Finset ι)
       ((k : H →L[ℂ] H).comp (b.toUnconditionalSchauderBasis.proj s))‖ ≤ ‖(k : H →L[ℂ] H)‖
   exact HilbertBasis.norm_sandwich_le b b (k : H →L[ℂ] H) s s
 
-/-- Forward the existing compact-sandwich convergence along the diagonal finite-subset net. -/
+/-- **Norm convergence of compact compressions.** For a Hilbert basis with arbitrary index type
+and `k ∈ K(H)`, `s ↦ compactCompression b s k` tends to `k` in operator norm as the finite
+subsets increase along `atTop`. -/
 theorem compactCompression_tendsto
     (k : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     Tendsto (fun s : Finset ι => compactCompression b s k) atTop (𝓝 k) := by
@@ -89,7 +99,8 @@ theorem compactCompression_tendsto
     ((k : H →L[ℂ] H).comp (b.toUnconditionalSchauderBasis.proj s))) (k : H →L[ℂ] H) < ε
   exact hs
 
-/-- The actual compression has exactly its original finite-frame matrix-entry rank-one expansion. -/
+/-- **Rank-one expansion of basis compression.** For compact `k`, `compactCompression b s k = ∑
+i,j ∈ s, inner ℂ (b i) (k (b j)) • hilbertCompactRankOne H (b i) (b j)`. -/
 theorem compactCompression_eq_sum (s : Finset ι)
     (k : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     compactCompression b s k =

@@ -1,3 +1,5 @@
-# Finite Matrix Tensor Hom
+# Star homomorphism of a finite matrix frame
 
-The actual nonunital star homomorphism from the original C-star matrix corner.
+For an orthonormal finite family `v`, the map
+`M ↦ ∑ i,j, M i j ⊗ θ_(v i,v j)` is a nonunital complex star-algebra homomorphism into `A ⊗_ℂ
+K(H)`.

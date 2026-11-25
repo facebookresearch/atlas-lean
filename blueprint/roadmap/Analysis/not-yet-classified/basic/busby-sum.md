@@ -1,3 +1,4 @@
-# Busby Sum
+# Busby sum relative to a matrix fold
 
-Sum relative to the actual supplied matrix identifications.
+`busbySum S = S.sum`, the operation induced pointwise
+by the corona fold applied to the two-by-two diagonal.

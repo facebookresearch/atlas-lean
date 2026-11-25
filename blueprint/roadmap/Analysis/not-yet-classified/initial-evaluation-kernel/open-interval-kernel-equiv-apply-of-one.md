@@ -1,3 +1,4 @@
-# Open Interval Kernel Equiv apply of one lt
+# Interior value of the reciprocal suspension function
 
-At an interior time the literal suspension coordinate is `1/t`.
+Let B be a nonunital complex C-star algebra, f∈C₀((0,1),B) and t>1. Then
+openIntervalKernelEquiv B f t=f(1/t).

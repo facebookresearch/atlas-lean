@@ -1,3 +1,3 @@
-# Completion norm le
+# Operator norm bound after completion
 
-The completed operator needs no larger norm bound than the given operator.
+`‖completion T‖ ≤ ‖T‖` for the two completion norms.

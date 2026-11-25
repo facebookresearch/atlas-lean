@@ -1,3 +1,4 @@
-# Coefficient Left Cc
+# Left coefficient action on compactly supported functions
 
-A coefficient multiplies the original compact-support function on the left.
+Let G be a topological space and A a nonunital complex C-star algebra. For a∈A,
+coefficientLeftCc a is the complex linear map C_c(G,A)→C_c(G,A) given by f(s)↦a*f(s).

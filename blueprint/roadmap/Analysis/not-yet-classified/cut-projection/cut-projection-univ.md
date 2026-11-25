@@ -1,3 +1,4 @@
-# Cut Projection univ
+# Cut on every coordinate
 
-Selecting all coordinates gives the identity on the completion.
+Selecting all coordinates gives `cutProjection Set.univ = 1` on
+the completed sum.

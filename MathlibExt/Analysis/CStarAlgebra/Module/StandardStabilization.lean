@@ -15,12 +15,12 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Compact
 public import MathlibExt.Analysis.CStarAlgebra.Module.Standard
 
 /-!
-# Compact endomorphisms of the standard Hilbert C-star module
+# Compact-operator stabilization of a coefficient algebra
 
-This is the genuine standard-module model of stabilization: compact
-endomorphisms of the completed countable standard right module. The carrier is
-the existing closed compact-operator ideal. Its C-star dictionary is explicit
-and is not globally registered.
+For a nonunital C-star algebra `B`, let `H_B = Standard B ℕ`, the completion of finite-support
+coefficient sequences in the norm `sqrt ‖∑ n, star (x_n)*x_n‖`. Define standard stabilization as
+the compact endomorphism algebra `K_B(H_B)`, the norm-closed span of module rank-one maps. Its
+nonunital C-star norm is the inherited adjointable operator norm.
 -/
 
 @[expose] public section
@@ -36,17 +36,17 @@ namespace CStarModule.Right
 
 universe uB
 
-/-- The compact-endomorphism model of the stabilization of `B`. The canonical
-opposite spectral-order dictionaries are fixed locally in the carrier. -/
+/-- **Compact-operator stabilization.** For nonunital C-star `B`, `StandardStabilization B` is
+`K_B(Standard B ℕ)`, the compact adjointable endomorphisms of the countable standard right
+module. -/
 def StandardStabilization
     (B : Type uB) [NonUnitalCStarAlgebra B] : Type uB :=
   let _ : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder _
   let _ : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing _
   CStarModule.AdjointableOperator.CompactEnd B (H B)
 
-/-- Explicit canonical C-star structure on the standard stabilization. It is
-obtained from the existing closed ideal of compact endomorphisms and is not a
-global instance. -/
+/-- **C-star structure of standard stabilization.** The closed compact endomorphism ideal of `H_B
+= Standard B ℕ` has a nonunital C-star algebra structure with its inherited operator norm. -/
 @[instance_reducible]
 noncomputable def standardStabilizationCStarAlgebra
     (B : Type uB) [NonUnitalCStarAlgebra B] :

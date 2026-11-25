@@ -1,3 +1,4 @@
-# Is Closed adjoint graph
+# Closed graph of the partial adjoint
 
-The full witness graph is closed in the original product norm topology.
+For a densely defined right-module operator, the full
+adjoint graph is closed in the product norm topology on `F × E`.

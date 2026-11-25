@@ -1,3 +1,5 @@
-# Outer Map Of Surjective outer Quotient Map
+# Multiplier-corona quotient square
 
-The actual outer-quotient square commutes on every original multiplier.
+For a surjective complex nonunital star homomorphism `ρ
+: B → D` of C-star algebras, `outerMapOfSurjective ρ hρ (q_B m) = q_D (mapOfSurjective ρ hρ
+m)` for every multiplier `m`.

@@ -1,4 +1,4 @@
-# Essential Spectrum eq spectrum class Star Map
+# Calkin spectrum of a Hilbert operator
 
-The generic Banach-space definition uses the same class as the Hilbert
-star-algebra projection.
+For a complex Hilbert space `H`,
+`T.essentialSpectrum = spectrum ℂ (classStarMap T)` for every bounded complex-linear `T`.

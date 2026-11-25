@@ -1,4 +1,4 @@
-# Completion to Continuous Linear Map
+# Forward map of the completed operator
 
-The completed forward map is definitionally the stock completion of the
-same CLM.
+`(completion T).toContinuousLinearMap =
+ContinuousLinearMap.completion T.toContinuousLinearMap`.

@@ -1,4 +1,4 @@
-# Sum zero stable
+# Right zero law after stable equivalence
 
-Right addition by zero is an identity only after passing to stable strong
-equivalence. The right-side extra summand is `0 ⊕ 0`.
+For coherent `S`, `S.sum τ 0` is stably strongly
+equivalent to `τ`.

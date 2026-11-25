@@ -1,3 +1,5 @@
-# L1 Gauge group Left
+# Left Haar translations preserve the L¹ gauge
 
-The original inverse left translate is isometric for the literal Haar L1 gauge.
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action. For g∈G and a compactly supported continuous coefficient f,
+put L_g f(s)=α_g(f(g⁻¹*s)). Then ∫ s, ‖L_g f(s)‖ ∂μ=∫ s, ‖f(s)‖ ∂μ.

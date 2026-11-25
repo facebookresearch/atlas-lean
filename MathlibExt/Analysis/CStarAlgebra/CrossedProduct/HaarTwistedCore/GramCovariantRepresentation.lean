@@ -19,19 +19,17 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 
 /-!
-# Actual strongly continuous covariant operators of an admissible Gram model
+# Strongly continuous Gram covariant representation
 
-For an actual L1-bounded source seminorm, compact coefficient translation
-continuity controls every original-source Gram generator. Their span has
-continuous orbits at the group identity. Density and the proved group
-isometry then give continuity on every Hilbert vector. The actual group
-composition shifts this continuity to every group element.
-
-The computed coefficient and unitary homomorphisms therefore construct a
-strongly continuous covariant representation on the actual essential
-Hilbert space. No orbit continuity, unitary law, covariance or desired
-covariant model is supplied as an input. The original integrated identity
-and its maximal-norm consequence remain separate prerequisites.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The U_g are strongly
+continuous unitaries and U_g*P_a*star(U_g)=P_(α_g(a)). These coefficient and group maps form
+gramCovariantRepresentation μ α p H ρ hp on E.
 -/
 
 @[expose] public section
@@ -60,7 +58,17 @@ variable (p : CStarSeminorm (Carrier μ α)) (H : Type uH)
   [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 
-/-- The actual generator orbit difference is controlled by the original Haar L1 translate distance. -/
+/-- **L¹ bound for a Gram generator orbit difference.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For f∈Carrier μ α,
+ξ∈E and g∈G, dist(U_g(T(f)ξ),T(f)ξ)≤(∫ s, ‖α_g(f(g⁻¹*s))-f(s)‖ ∂μ)‖ξ‖.
+-/
 theorem dist_gramGroupOperator_generator_le
     (hp : p ∈ admissibleCStarSeminorms μ α) (g : G) (f : Carrier μ α) (ξ : ρ.essentialSpace) :
     dist (gramGroupOperator μ α p H ρ g
@@ -85,7 +93,17 @@ theorem dist_gramGroupOperator_generator_le
     _ ≤ l1Gauge μ α (groupLeft μ α g f - f) * ‖ξ‖ :=
       mul_le_mul_of_nonneg_right (hp _) (norm_nonneg ξ)
 
-/-- Every actual original-source generator has a continuous group orbit at the identity. -/
+/-- **Continuity at the identity of a Gram generator orbit.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For every core
+coefficient f and ξ∈E, g↦U_g(T(f)ξ) is norm-continuous at g=1.
+-/
 theorem gramGroupOperator_generator_continuousAt_one
     (hp : p ∈ admissibleCStarSeminorms μ α) (f : Carrier μ α) (ξ : ρ.essentialSpace) :
     ContinuousAt (fun g : G => gramGroupOperator μ α p H ρ g
@@ -101,7 +119,17 @@ theorem gramGroupOperator_generator_continuousAt_one
   filter_upwards [hL1.eventually (gt_mem_nhds hε)] with g hg
   exact (dist_gramGroupOperator_generator_le μ α p H ρ hp g f ξ).trans_lt hg
 
-/-- Every vector in the actual original-source Gram span has a continuous orbit at the identity. -/
+/-- **Continuity at the identity on the dense Gram span.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. If ξ belongs to
+D=span_ℂ{T(f)η:f∈Carrier μ α,η∈E}, then g↦U_g ξ is norm-continuous at g=1.
+-/
 theorem gramGroupOperator_span_continuousAt_one
     (hp : p ∈ admissibleCStarSeminorms μ α) (ξ : ρ.essentialSpace)
     (hξ : ξ ∈ p.rawHilbertGramDomain H ρ) :
@@ -133,7 +161,17 @@ theorem gramGroupOperator_span_continuousAt_one
     rw [hFun] at hSmul
     exact hSmul
 
-/-- Proved density and group isometry make every actual Hilbert-vector orbit continuous at one. -/
+/-- **Continuity at the identity of every Gram group orbit.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For every ξ∈E, g↦U_g
+ξ is norm-continuous at g=1.
+-/
 theorem gramGroupOperator_continuousAt_one
     (hp : p ∈ admissibleCStarSeminorms μ α) (ξ : ρ.essentialSpace) :
     ContinuousAt (fun g : G => gramGroupOperator μ α p H ρ g ξ) 1 := by
@@ -164,7 +202,17 @@ theorem gramGroupOperator_continuousAt_one
       add_lt_add hApprox (add_lt_add hg (by simpa only [dist_comm] using hApprox))
     _ = ε := by ring
 
-/-- Actual group composition shifts the proved orbit continuity from one to every group element. -/
+/-- **Continuity of every Gram group orbit.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For every ξ∈E,
+g↦gramGroupOperator μ α p H ρ g ξ=U_g ξ is norm-continuous on G.
+-/
 theorem gramGroupOperator_continuous
     (hp : p ∈ admissibleCStarSeminorms μ α) (ξ : ρ.essentialSpace) :
     Continuous (fun g : G => gramGroupOperator μ α p H ρ g ξ) := by
@@ -198,33 +246,88 @@ theorem gramGroupOperator_continuous
   rw [hFun] at hOrbit
   exact hOrbit
 
-/-- The computed original-source group operators as an actual strongly continuous unitary representation. -/
+/-- **Strongly continuous unitary Gram group representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The map
+gramStronglyContinuousUnitaryRepresentation μ α p H ρ hp:G→unitary(B(E)) sends g to U_g and is
+strongly continuous.
+-/
 def gramStronglyContinuousUnitaryRepresentation (hp : p ∈ admissibleCStarSeminorms μ α) :
     StronglyContinuousUnitaryRepresentation G ρ.essentialSpace where
   toMonoidHom := gramGroupUnitaryRepresentation μ α p H ρ
   continuous_orbit := gramGroupOperator_continuous μ α p H ρ hp
 
-/-- The actual strongly continuous group representation retains its original computed operator. -/
+/-- **Operator underlying the Gram unitary representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, the bounded
+operator underlying gramStronglyContinuousUnitaryRepresentation μ α p H ρ hp g is
+gramGroupOperator μ α p H ρ g=U_g.
+-/
 @[simp]
 theorem gramStronglyContinuousUnitaryRepresentation_apply_coe
     (hp : p ∈ admissibleCStarSeminorms μ α) (g : G) :
     (gramStronglyContinuousUnitaryRepresentation μ α p H ρ hp g :
         ρ.essentialSpace →L[ℂ] ρ.essentialSpace) = gramGroupOperator μ α p H ρ g := rfl
 
-/-- The actual strongly continuous covariant model on the computed essential Hilbert space. -/
+/-- **Covariant representation on the essential Gram Hilbert space.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The covariant pair
+gramCovariantRepresentation μ α p H ρ hp on E has coefficient star homomorphism a↦P_a and
+strongly continuous unitary group representation g↦U_g, with U_g*P_a*star(U_g)=P_(α_g(a)).
+-/
 def gramCovariantRepresentation (hp : p ∈ admissibleCStarSeminorms μ α) :
     CovariantRepresentation α ρ.essentialSpace where
   algebra := gramCoefficientRepresentation μ α p H ρ
   group := gramStronglyContinuousUnitaryRepresentation μ α p H ρ hp
   covariance := gramRepresentation_covariance μ α p H ρ
 
-/-- The constructed covariant coefficient map is the original computed coefficient representation. -/
+/-- **Coefficient map of the Gram covariant representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The coefficient
+homomorphism of gramCovariantRepresentation μ α p H ρ hp is gramCoefficientRepresentation μ α
+p H ρ, the map a↦P_a.
+-/
 @[simp]
 theorem gramCovariantRepresentation_algebra (hp : p ∈ admissibleCStarSeminorms μ α) :
     (gramCovariantRepresentation μ α p H ρ hp).algebra =
       gramCoefficientRepresentation μ α p H ρ := rfl
 
-/-- The constructed covariant group map is the actual strongly continuous original-source group. -/
+/-- **Group map of the Gram covariant representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The group
+representation of gramCovariantRepresentation μ α p H ρ hp is
+gramStronglyContinuousUnitaryRepresentation μ α p H ρ hp, the map g↦U_g.
+-/
 @[simp]
 theorem gramCovariantRepresentation_group (hp : p ∈ admissibleCStarSeminorms μ α) :
     (gramCovariantRepresentation μ α p H ρ hp).group =

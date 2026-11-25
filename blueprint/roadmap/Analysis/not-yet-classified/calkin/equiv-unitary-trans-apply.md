@@ -1,4 +1,4 @@
-# Equiv Unitary trans apply
+# Composition of Calkin unitary transport
 
-Composition of unitary module equivalences induces composition on module
-Calkin classes.
+For `U : E ≃ F` and `V : F ≃ G`, `equivUnitary
+(U.trans V) q = equivUnitary V (equivUnitary U q)`.

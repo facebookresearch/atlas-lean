@@ -23,19 +23,14 @@ public import Mathlib.Analysis.CStarAlgebra.Hom
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-!
-# The actual original full coefficient multiplier embedding
+# Isometric coefficient embedding in the full crossed product
 
-Compact scalar Haar tests recover the original coefficient products from a
-zero integrated left action. The computed coefficient approximate unit
-then recovers the original coefficient. Apply this to the internally
-constructed canonical regular pair and its verified faithful coefficient
-map: no faithful representation, norm or multiplier model is an input.
-
-The actual full coefficient homomorphism is therefore injective, and the
-existing C-star homomorphism theorem gives its original coefficient norm.
-This does not assert a group embedding in the zero-coefficient case or
-use regular integrated nondegeneracy, quotient surjectivity or a supplied
-convolution approximate identity.
+Let G be a locally compact topological group with regular left Haar measure μ, and α a
+point-norm action on a nonunital complex C-star algebra A. Complete the compactly supported
+twisted-convolution algebra for its maximal covariant C-star seminorm. The coefficient
+homomorphism j:A→𝓜(FullCovariantCompletion μ α) is injective and satisfies ‖j(a)‖=‖a‖. On the
+dense core, j(a) acts by left multiplication: j(a)ι(f)=ι(s↦a*f(s)). These statements include
+the zero coefficient algebra.
 -/
 
 @[expose] public section
@@ -57,13 +52,22 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual bounded operators on the original complete Hilbert space have their stock C-star data. -/
+/-- **C-star algebra of bounded Hilbert-space operators.**
+
+For a complete complex inner-product space H, the bounded complex linear operators H→L[ℂ]H
+form a unital C-star algebra under composition, the operator norm and the Hilbert adjoint.
+-/
 local instance : CStarAlgebra (H →L[ℂ] H) := inferInstance
 
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
-/-- Original compact Haar tests recover each coefficient product from its zero integrated left action. -/
+/-- **Vanishing integrated coefficient action annihilates products.**
+
+Let ρ be a covariant representation of α on a complex Hilbert space H, and a∈A. If Iρ(a⋅f)=0
+for every compactly supported twisted-convolution coefficient f, then ρ.algebra(a*b)=0 for
+every b∈A; here (a⋅f)(s)=a*f(s).
+-/
 theorem algebra_mul_eq_zero_of_integratedCoefficientLeft_eq_zero (a : A)
     (hZero : ∀ f : HaarTwistedCore.Carrier μ α,
       haarIntegratedHom μ ρ (HaarTwistedCore.coefficientLeft μ α a f) = 0) (b : A) :
@@ -92,7 +96,11 @@ theorem algebra_mul_eq_zero_of_integratedCoefficientLeft_eq_zero (a : A)
   have h := hF.eq_zero_of_compactScalar_integrals_eq_zero μ (1 : G) hTest
   simpa only [F, ρ.group.apply_one, zero_apply] using h
 
-/-- The actual coefficient approximate unit recovers a coefficient from all its zero integrated left actions. -/
+/-- **Vanishing integrated coefficient action annihilates the coefficient.**
+
+Let ρ be a covariant representation and a∈A. If Iρ(a⋅f)=0 for every compactly supported
+coefficient f, where (a⋅f)(s)=a*f(s), then ρ.algebra(a)=0.
+-/
 theorem algebra_eq_zero_of_integratedCoefficientLeft_eq_zero (a : A)
     (hZero : ∀ f : HaarTwistedCore.Carrier μ α,
       haarIntegratedHom μ ρ (HaarTwistedCore.coefficientLeft μ α a f) = 0) : ρ.algebra a = 0 := by
@@ -123,18 +131,31 @@ variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAc
 
 attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 
-/-- The named actual coefficient star-algebra homomorphism into the full multiplier algebra. -/
+/-- **Coefficient homomorphism into the full multiplier algebra.**
+
+For a point-norm action α of G on A and regular Haar measure μ, the coefficient homomorphism
+j:A→𝓜(FullCovariantCompletion μ α) acts on dense compactly supported coefficients by
+j(a)ι(f)=ι(s↦a*f(s)).
+-/
 def fullCoefficientMultiplierHom : A →⋆ₙₐ[ℂ] 𝓜(ℂ, FullCovariantCompletion μ α) :=
   coefficientMultiplierHom μ α (maximalCStarSeminorm μ α)
 
 omit [μ.Regular] in
-/-- The named full coefficient homomorphism is its exact computed same-seminorm specialization. -/
+/-- **Coefficient homomorphism for the maximal covariant seminorm.**
+
+For a∈A, `fullCoefficientMultiplierHom μ α a = coefficientMultiplierHom μ α
+(maximalCStarSeminorm μ α) a`. Thus the full coefficient multiplier is the coefficient action
+on the maximal-seminorm completion.
+-/
 @[simp]
 theorem fullCoefficientMultiplierHom_apply (a : A) :
     fullCoefficientMultiplierHom μ α a =
       coefficientMultiplierHom μ α (maximalCStarSeminorm μ α) a := rfl
 
-/-- A zero actual full coefficient multiplier has zero original coefficient. -/
+/-- **A zero full coefficient multiplier has zero coefficient.**
+
+For a∈A, if `coefficientMultiplierHom μ α (maximalCStarSeminorm μ α) a = 0`, then a=0.
+-/
 theorem fullCoefficientMultiplier_eq_zero_implies (a : A)
     (hZero : coefficientMultiplierHom μ α (maximalCStarSeminorm μ α) a = 0) : a = 0 := by
   let ρ := PointNormCStarAction.canonicalRegularCovariantRepresentation μ α
@@ -162,7 +183,12 @@ theorem fullCoefficientMultiplier_eq_zero_implies (a : A)
       (PointNormCStarAction.canonicalCoefficientRepresentation_injective A)
   exact hInjective (hCoefficient.trans (map_zero ρ.algebra).symm)
 
-/-- The computed original full coefficient homomorphism is injective, without a supplied faithful model. -/
+/-- **Injectivity of the full coefficient homomorphism.**
+
+The coefficient homomorphism `fullCoefficientMultiplierHom μ α : A → 𝓜(FullCovariantCompletion
+μ α)` is injective for every nonunital C-star algebra A and point-norm action α under the
+stated Haar hypotheses.
+-/
 theorem fullCoefficientMultiplierHom_injective :
     Function.Injective (fullCoefficientMultiplierHom μ α) := by
   change Function.Injective (coefficientMultiplierHom μ α (maximalCStarSeminorm μ α))
@@ -171,32 +197,56 @@ theorem fullCoefficientMultiplierHom_injective :
   apply fullCoefficientMultiplier_eq_zero_implies μ α (a - b)
   rw [map_sub, hab, sub_self]
 
-/-- The actual full coefficient multiplier norm is the original coefficient C-star norm. -/
+/-- **Norm of a full coefficient multiplier.**
+
+For a∈A, the full coefficient multiplier has exactly the C-star norm of a:
+`‖fullCoefficientMultiplierHom μ α a‖ = ‖a‖`.
+-/
 theorem norm_fullCoefficientMultiplierHom (a : A) :
     ‖fullCoefficientMultiplierHom μ α a‖ = ‖a‖ :=
   NonUnitalStarAlgHom.norm_map (fullCoefficientMultiplierHom μ α)
     (fullCoefficientMultiplierHom_injective μ α) a
 
-/-- The named original full coefficient homomorphism is isometric for the original C-star norm. -/
+/-- **Isometric coefficient homomorphism.**
+
+The coefficient homomorphism from A into the multiplier algebra of the full covariant
+completion is an isometry: `‖fullCoefficientMultiplierHom μ α a‖ = ‖a‖` for every a∈A.
+-/
 theorem fullCoefficientMultiplierHom_isometry : Isometry (fullCoefficientMultiplierHom μ α) :=
   NonUnitalStarAlgHom.isometry (fullCoefficientMultiplierHom μ α)
     (fullCoefficientMultiplierHom_injective μ α)
 
-/-- The secondary function embedding retains the actual named coefficient star-algebra homomorphism. -/
+/-- **Coefficient algebra embedded in full multipliers.**
+
+The injective coefficient star homomorphism gives the function embedding
+A↪𝓜(FullCovariantCompletion μ α), a↦fullCoefficientMultiplierHom μ α a.
+-/
 def fullCoefficientEmbedding : A ↪ 𝓜(ℂ, FullCovariantCompletion μ α) where
   toFun := fullCoefficientMultiplierHom μ α
   inj' := fullCoefficientMultiplierHom_injective μ α
 
-/-- The embedding retains exactly the original computed full coefficient multiplier. -/
+/-- **Value of the full coefficient embedding.**
+
+For a∈A, `fullCoefficientEmbedding μ α a = coefficientMultiplierHom μ α (maximalCStarSeminorm
+μ α) a`.
+-/
 @[simp]
 theorem fullCoefficientEmbedding_apply (a : A) :
     fullCoefficientEmbedding μ α a = coefficientMultiplierHom μ α (maximalCStarSeminorm μ α) a := rfl
 
-/-- The original full coefficient embedding retains the source coefficient norm. -/
+/-- **Norm preservation by the coefficient embedding.**
+
+For every a∈A, `‖fullCoefficientEmbedding μ α a‖ = ‖a‖` in the multiplier C-star norm.
+-/
 theorem norm_fullCoefficientEmbedding (a : A) : ‖fullCoefficientEmbedding μ α a‖ = ‖a‖ :=
   norm_fullCoefficientMultiplierHom μ α a
 
-/-- Every embedded coefficient still acts on each original full core image by the original left formula. -/
+/-- **Left coefficient action on the dense full crossed-product core.**
+
+For a∈A and a compactly supported coefficient f, `(fullCoefficientEmbedding μ α a).fst
+(toFullCovariantCompletion μ α f) = toFullCovariantCompletion μ α (coefficientLeft μ α a f)`,
+where (coefficientLeft a f)(s)=a*f(s).
+-/
 theorem fullCoefficientEmbedding_fst_apply (a : A) (f : Carrier μ α) :
     (fullCoefficientEmbedding μ α a).fst (toFullCovariantCompletion μ α f) =
       toFullCovariantCompletion μ α (coefficientLeft μ α a f) :=

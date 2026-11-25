@@ -1,4 +1,5 @@
-# Generation Unitary
+# Unitary invariance of countable generation
 
-Countable generation is preserved by a unitary equivalence of right
-C-star modules.
+If a right C-star module `E` is countably
+generated and `U : E ≃ F` is a module unitary, then `F` is countably generated; the image of a
+generating sequence under `U` generates `F`.

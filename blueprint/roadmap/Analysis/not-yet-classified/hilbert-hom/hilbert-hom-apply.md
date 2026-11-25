@@ -1,3 +1,4 @@
-# Hilbert Hom apply
+# Value of the Hilbert representation
 
-The bundled Hilbert factor retains its exact original completed operator.
+`hilbertHom H A T = hilbertOperator H A T` for a
+bounded operator `T` on `H`.

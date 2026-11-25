@@ -15,15 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.DirectSum.Algebraic
 public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable
 
 /-!
-# Algebraic diagonals of rectangular adjointable families
+# Diagonals on finite-support module sums
 
-The forward complex-linear map is the literal coordinate map on the existing
-finite-support direct sum. Applying the same constructor to the given adjoint
-family produces its algebraic adjoint. The pairing law uses the actual
-coefficient-valued finite inner product, before the direct-sum norm instance.
+For right pre-Hilbert `B`-modules `E_i,F_i` and adjointable maps `T_i : E_i → F_i`, define the
+complex-linear diagonal by `(D_T x)_i = T_i x_i` on finite-support vectors. Its support is
+contained in the support of `x`.
 
-No completeness, nonempty index, uniform bound or scalar squared-norm sum is
-assumed. Continuity and extension to the completed direct sum are separate.
+The diagonal of the adjoints satisfies the finite coefficient pairing `⟨D_T x,y⟩_B = ⟨x,D_(T*)
+y⟩_B`. This algebraic construction requires no uniform norm bound and permits incomplete fibers
+and arbitrary index types.
 -/
 
 public section
@@ -44,8 +44,9 @@ variable [∀ i, NormedAddCommGroup (E i)] [∀ i, NormedSpace ℂ (E i)]
 variable [∀ i, NormedAddCommGroup (F i)] [∀ i, NormedSpace ℂ (F i)]
   [∀ i, SMul Bᵐᵒᵖ (F i)] [∀ i, CStarModule Bᵐᵒᵖ (F i)]
 
-/-- The literal complex-linear diagonal on the actual algebraic direct sum.
-The same constructor on the given adjoint family is its algebraic adjoint. -/
+/-- **Algebraic diagonal of adjointable components.** For a family `T_i : E_i → F_i`, the
+complex-linear map on finite-support sums is determined by `(algebraicDiagonal T x)_i = T_i
+x_i`. -/
 @[expose]
 def algebraicDiagonal (T : ∀ i, AdjointableOperator B (E i) (F i)) :
     Algebraic B E →ₗ[ℂ] Algebraic B F :=
@@ -65,14 +66,16 @@ private theorem algebraicDiagonal_raw
   change e (e.symm z) = z
   exact e.apply_symm_apply z
 
-/-- Every coordinate is the action of the given component operator. -/
+/-- **Coordinate value of an algebraic diagonal.** `toDFinsupp (algebraicDiagonal T x) i = T i
+(toDFinsupp x i)`. -/
 theorem algebraicDiagonal_apply
     (T : ∀ i, AdjointableOperator B (E i) (F i)) (x : Algebraic B E) (i : I) :
     toDFinsupp (algebraicDiagonal T x) i = T i (toDFinsupp x i) := by
   rw [algebraicDiagonal_raw]
   rfl
 
-/-- A coordinate inclusion is sent to the inclusion of its component image. -/
+/-- **Diagonal on a one-coordinate vector.** `algebraicDiagonal T (singleLinear i x) =
+singleLinear i (T i x)` in the target algebraic sum. -/
 theorem algebraicDiagonal_singleLinear
     (T : ∀ i, AdjointableOperator B (E i) (F i)) (i : I) (x : E i) :
     algebraicDiagonal T (singleLinear (B := B) (E := E) i x) =
@@ -85,7 +88,8 @@ theorem algebraicDiagonal_singleLinear
       DFinsupp.single i (T i x)
   exact DFinsupp.mapRange_single
 
-/-- A diagonal creates no new support; kernels may make the support smaller. -/
+/-- **Support bound for an algebraic diagonal.** `support (algebraicDiagonal T x) ⊆ support x`; a
+component kernel can remove a coordinate. -/
 theorem support_algebraicDiagonal_subset
     (T : ∀ i, AdjointableOperator B (E i) (F i)) (x : Algebraic B E) :
     support (algebraicDiagonal T x) ⊆ support x := by
@@ -96,8 +100,8 @@ theorem support_algebraicDiagonal_subset
     (fun i ↦ (T i).toContinuousLinearMap.map_zero) (toDFinsupp x)).support ⊆ _
   exact DFinsupp.support_mapRange
 
-/-- The given adjoint family satisfies the genuine finite coefficient pairing.
-No equality of the two finite supports is required. -/
+/-- **Pairing with the adjoint diagonal.** The coefficient inner products satisfy `algebraicInner
+(D_T x) y = algebraicInner x (D_(T*) y)` for the finite-support sums. -/
 theorem algebraicDiagonal_adjoint_inner
     (T : ∀ i, AdjointableOperator B (E i) (F i))
     (x : Algebraic B E) (y : Algebraic B F) :

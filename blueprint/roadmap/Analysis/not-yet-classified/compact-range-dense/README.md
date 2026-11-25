@@ -1,5 +1,5 @@
-# Compact Range Dense
+# Dense algebraic tensor range in amplification compacts
 
-- [Pure dense span](pure-dense-span.md)
-- [Closure range algebraic Tensor Operator eq compact Submodule](closure-range-algebraic-tensor-operator.md)
-- [Dense Range algebraic Compact Tensor Hom](dense-range-algebraic-compact-tensor-hom.md)
+- [Density of pure amplification vectors](pure-dense-span.md)
+- [Closed tensor range equals module compacts](closure-range-algebraic-tensor-operator.md)
+- [Dense compact tensor representation](dense-range-algebraic-compact-tensor-hom.md)

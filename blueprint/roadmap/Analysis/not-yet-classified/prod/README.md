@@ -1,5 +1,5 @@
-# Prod
+# Products of asymptotic star morphisms
 
-- [Prod](prod.md)
-- [Prod apply](prod-apply.md)
+- [Product-valued asymptotic family](prod.md)
+- [Value of the product asymptotic morphism](prod-apply.md)
 - [Prod](prod-map.md)

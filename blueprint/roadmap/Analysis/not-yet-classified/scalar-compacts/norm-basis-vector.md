@@ -1,3 +1,3 @@
-# Norm basis Vector
+# Norm of a scalar coordinate vector
 
-Every standard coordinate vector has norm one in the genuine lp-two norm.
+`‖basisVector i‖ = 1` for every `i : ℕ`.

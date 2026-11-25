@@ -1,3 +1,4 @@
-# Character Modulation Equiv apply
+# Evaluation of the character automorphism
 
-The actual algebraic dual automorphism has its original character coefficient value.
+For a continuous unitary character χ of G and compactly supported coefficient f,
+`characterModulationEquiv μ α χ f s = (χ s : ℂ) • f s`.

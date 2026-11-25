@@ -1,3 +1,4 @@
-# Equiv Unitary refl apply
+# Identity unitary on Calkin classes
 
-The identity unitary induces the identity map on module Calkin classes.
+The equivalence induced by the identity unitary fixes
+every class: `equivUnitary (UnitaryEquiv.refl) q = q`.

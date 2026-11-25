@@ -18,15 +18,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.CommutingSquar
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# Bounded commuting second-factor maps on the original radical tensor
+# Norm bounds for commuting internal tensor factors
 
-The positive CFC square complement stays in the represented commutant. Its
-actual second-factor tensor map gives a positive remainder in the original
-coefficient-valued inner form. The resulting bound uses the actual quotient
-norm; no tensor norm, null witness or completed model is supplied.
+For complete right C-star modules `E₁,E₂` over nonunital `B₁,B₂` with star-compatible opposite
+orders, let a complex nonunital star representation `φ : B₁ → End_(B₂)(E₂)` commute with an
+adjointable `S`. The induced right-factor map on the radical quotient satisfies `‖(I⊗S)z‖ ≤ ‖S‖
+* ‖z‖` in its coefficient inner-product norm.
 
-This bound is the prerequisite for the original coefficient action on the
-Hilbert amplification in Blackadar, K-Theory for Operator Algebras, 10.1.2.
+The positive square complement of `S* S` remains in the commutant. Its tensor action supplies
+the nonnegative remainder in the Gram inequality. Thus the radical map is a continuous
+complex-linear map with operator norm at most `‖S‖`.
 -/
 
 @[expose] public section
@@ -90,7 +91,10 @@ private theorem rawRightFactorMap_squareSplit
     simp only [map_add, LinearMap.add_apply, smul_add]
     rw [add_add_add_comm, hz, hz']
 
-/-- The actual second-factor map is bounded in the original quotient norm. -/
+/-- **Norm bound on the radical tensor quotient.** Let `E₁,E₂` be complete right C-star modules
+over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital
+star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. for `q` in the
+radical tensor quotient, `‖radicalRightFactorMap φ S hComm q‖ ≤ ‖S‖ * ‖q‖`. -/
 theorem radicalRightFactorMap_norm_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -152,7 +156,11 @@ theorem radicalRightFactorMap_norm_le
   exact (sq_le_sq₀ (_root_.norm_nonneg (radicalRightFactorMap φ S hComm q))
     (mul_nonneg (_root_.norm_nonneg S) (_root_.norm_nonneg q))).mp hsq
 
-/-- The actual radical map with continuity from its proved source bound. -/
+/-- **Continuous right factor on the radical quotient.** Let `E₁,E₂` be complete right C-star
+modules over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex
+nonunital star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. the map
+`[x⊗y] ↦ [x⊗S y]` is bundled as a continuous complex-linear map for the radical inner-product
+norm. -/
 def radicalRightFactorCLM
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)
@@ -167,7 +175,11 @@ def radicalRightFactorCLM
   exact (radicalRightFactorMap φ S hComm).mkContinuous ‖S‖
     (fun q => radicalRightFactorMap_norm_le φ S hComm q)
 
-/-- Continuity retains every original algebraic quotient value. -/
+/-- **Value of the continuous radical factor map.** Let `E₁,E₂` be complete right C-star modules
+over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital
+star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`.
+`radicalRightFactorCLM φ S hComm q = radicalRightFactorMap φ S hComm q` for every radical
+tensor `q`. -/
 @[simp]
 theorem radicalRightFactorCLM_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -181,7 +193,10 @@ theorem radicalRightFactorCLM_apply
   let : NormedSpace ℂ (RadicalTensor (E₁ := E₁) φ) := radicalTensorNormedSpace φ
   rfl
 
-/-- The actual radical CLM retains its source operator-norm estimate. -/
+/-- **Operator norm of the radical factor map.** Let `E₁,E₂` be complete right C-star modules over
+nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital star
+representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`.
+`‖radicalRightFactorCLM φ S hComm‖ ≤ ‖S‖`. -/
 theorem radicalRightFactorCLM_norm_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (S : AdjointableOperator.End B₂ E₂)

@@ -1,3 +1,4 @@
-# Completed
+# Completion of the isometric algebraic limit
 
-The ordinary completion, with the input system's descended norm.
+For a nonempty directed isometric C-star
+system, `Completed S` is the uniform completion of `S.Raw` with its descended stage norm.

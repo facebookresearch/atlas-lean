@@ -1,4 +1,5 @@
-# Right Inner single coord
+# Pairing with a coefficient single
 
-A coefficient single pairs with any vector by the literal coordinate
-product, with the coefficient starred on the left.
+For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `⟨single i a,y⟩_B = star a * coord i y`, with the starred
+coefficient on the left.

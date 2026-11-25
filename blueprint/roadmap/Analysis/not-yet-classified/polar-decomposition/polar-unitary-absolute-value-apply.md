@@ -1,4 +1,4 @@
-# Polar Unitary absolute Value apply
+# Polar unitary on the absolute-value range
 
-The polar unitary is characterized on the dense range of the absolute
-value by `U (|T| x) = T x`.
+Assuming dense ranges of `|T|` and `T`,
+`T.polarUnitary hAbsoluteDense hDense (T.absoluteValue x) = T x` for every `x : E`.

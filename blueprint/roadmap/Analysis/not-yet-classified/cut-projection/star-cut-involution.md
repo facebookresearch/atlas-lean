@@ -1,3 +1,3 @@
-# Star cut Involution
+# Self-adjoint cut reflection
 
-The reflection `2P - 1` is self-adjoint.
+`star (cutInvolution s) = cutInvolution s`.

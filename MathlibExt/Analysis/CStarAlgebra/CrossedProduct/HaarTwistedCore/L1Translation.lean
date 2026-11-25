@@ -18,14 +18,12 @@ public import Mathlib.MeasureTheory.Group.Integral
 public import Mathlib.Topology.Compactness.LocallyCompact
 
 /-!
-# L1 continuity of the original compact-support group translates
+# L¹ continuity of twisted left translations
 
-The literal inverse left translate with the coefficient action preserves the
-Haar coefficient integral. On a compact neighborhood of each group element,
-all translated supports lie in one compact set. Joint point-norm continuity
-and the support-local integral continuity theorem give the L1 orbit limit.
-This supplies a strict continuity prerequisite for the actual covariant group
-representation; no normed or C-star structure is installed on the raw core.
+Let G be a locally compact Borel topological group, A a nonunital complex C-star algebra, α a
+point-norm action and μ a measure finite on compact sets. For f:G→A compactly supported and
+continuous, put L_g f(s)=α_g(f(g⁻¹*s)) and q(k)=∫ s, ‖k(s)‖ ∂μ. The function g↦q(L_g f-f) is
+continuous and tends to zero as g→1. If μ is left Haar, then q(L_g f)=q(f).
 -/
 
 @[expose] public section
@@ -52,7 +50,12 @@ section HaarIsometry
 variable [μ.IsHaarMeasure]
 
 omit [LocallyCompactSpace G] in
-/-- The original inverse left translate is isometric for the literal Haar L1 gauge. -/
+/-- **Left Haar translations preserve the L¹ gauge.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action. For g∈G and a compactly supported continuous coefficient f,
+put L_g f(s)=α_g(f(g⁻¹*s)). Then ∫ s, ‖L_g f(s)‖ ∂μ=∫ s, ‖f(s)‖ ∂μ.
+-/
 theorem l1Gauge_groupLeft (g : G) (f : Carrier μ α) :
     l1Gauge μ α (groupLeft μ α g f) = l1Gauge μ α f := by
   calc
@@ -67,7 +70,12 @@ end HaarIsometry
 
 variable [IsFiniteMeasureOnCompacts μ]
 
-/-- The original compact translates vary continuously in the coefficient-integral distance. -/
+/-- **Continuity of the L¹ translation distance.**
+
+Let G be a locally compact Borel topological group, μ a measure finite on compact sets, A a
+nonunital complex C-star algebra and α a point-norm action. For f:G→A compactly supported and
+continuous, the function g↦∫ s, ‖α_g(f(g⁻¹*s))-f(s)‖ ∂μ is continuous.
+-/
 theorem continuous_l1Gauge_groupLeft_sub (f : Carrier μ α) :
     Continuous fun g : G => l1Gauge μ α (groupLeft μ α g f - f) := by
   rw [continuous_iff_continuousAt]
@@ -106,7 +114,12 @@ theorem continuous_l1Gauge_groupLeft_sub (f : Carrier μ α) :
   rw [hfun] at hIntegral
   exact (hIntegral g₀ (mem_of_mem_nhds hVnhds)).continuousAt hVnhds
 
-/-- The literal coefficient-integral distance of a translate from its source tends to zero at one. -/
+/-- **Twisted translations approach the identity in L¹.**
+
+Let G be a locally compact Borel topological group, μ a measure finite on compact sets, A a
+nonunital complex C-star algebra and α a point-norm action. For every compactly supported
+continuous f:G→A, ∫ s, ‖α_g(f(g⁻¹*s))-f(s)‖ ∂μ tends to 0 as g tends to the group identity.
+-/
 theorem tendsto_l1Gauge_groupLeft_sub (f : Carrier μ α) :
     Tendsto (fun g : G => l1Gauge μ α (groupLeft μ α g f - f)) (𝓝 1) (𝓝 0) := by
   simpa only [groupLeft_one, LinearMap.id_apply, sub_self, l1Gauge_zero] using

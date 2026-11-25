@@ -18,15 +18,15 @@ import Mathlib.Topology.Algebra.Module.Basic
 import Mathlib.Data.Nat.Pairing
 
 /-!
-# Countable generation of an actual internal tensor
+# Countable generation of internal tensor products
 
-Both factors are arbitrary complete right Hilbert modules. The proof uses
-their original right coefficient spans and the model's actual creation maps,
-balancing, coefficient action and dense pure span. No countable generation
-of either coefficient algebra or nondegeneracy of the representation is used.
+Let `E₁` be a complete right module over nonunital `D` and `E₂` a complete right module over
+nonunital `B`. A complex nonunital star representation `φ : D → End_B(E₂)` defines a completed
+internal tensor presentation `X` with pure map `p(x,y)` and dense pure span.
 
-This is a general counterpart to the existing coefficient-base-change theorem;
-the latter only treats a second factor equal to the coefficient algebra.
+If both factors are countably generated in their right-coefficient norms, then `X` is countably
+generated over `B`. Pairs of component generators `p(x_m,y_n)` generate it. No
+countable-generation assumption on `D` or `B`, or nondegeneracy assumption on `φ`, is required.
 -/
 
 @[expose] public section
@@ -55,8 +55,11 @@ variable {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
 variable {φ : D →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B E2}
 variable {pure : E1 → E2 → X}
 
-/-- The original countable right spans of both factors give one countable
-right span in any actual internal-tensor model, including a zero model. -/
+/-- **Countable generation of an internal tensor.** Let `D,B` be nonunital C-star algebras, with a
+partial order on `Dᵐᵒᵖ` and star-compatible order on `Bᵐᵒᵖ`. Let `E₁,E₂` be complete right
+modules over `D,B`, and `φ : D → End_B(E₂)` a complex nonunital star homomorphism. For a
+complete right `B`-module `X` and pure map `p` satisfying `IsModel φ p`, countable generation
+of both factors implies countable generation of `X` over `B` by pairs of their generators. -/
 theorem countablyGenerated
     (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
     (h1 : CStarModule.IsCountablyGenerated (B := D) (E := E1))

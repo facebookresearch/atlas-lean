@@ -17,15 +17,13 @@ public import MathlibExt.Analysis.Normed.Operator.Compact.EssentialSpectrum
 public import Mathlib.Analysis.Normed.Operator.Compact.Basic
 
 /-!
-# Literal orthogonal Calkin units and essential-spectrum union
+# Units and spectra of orthogonal Calkin sums
 
-The existing block-diagonal Calkin map has unit detection by its two original
-coordinates. Actual bounded lifts of an inverse have compact left/right
-remainder; their two diagonal blocks are the actual inverses modulo compacts.
-No inverse, spectrum model or result certificate is a supplied constructor
-input. The resulting essential-spectrum union is needed to keep the original
-Ext(X) sum within its exact source spectrum. The arguments retain independent
-Hilbert universes and include zero/finite/infinite spaces.
+For complex Hilbert spaces `H,K`, the block-diagonal map `Q(H) × Q(K) → Q(H ⊕ K)` is injective.
+A diagonal class is invertible exactly when both component classes are invertible.
+
+Applying this to scalar shifts gives `σ_ess(T ⊕ S) = σ_ess(T) ∪ σ_ess(S)` for bounded operators
+`T,S` on the two spaces. The formula permits zero and finite-dimensional components.
 -/
 
 @[expose] public section
@@ -41,7 +39,8 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable {K : Type uK} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
 omit [CompleteSpace H] [CompleteSpace K] in
-/-- Compactness of the proof-local first coordinate follows from the existing composition API. -/
+/-- **Compact first block of an orthogonal operator.** For complex Hilbert spaces `H,K`, if `R : H
+⊕ K →L[ℂ] H ⊕ K` is compact, its compression `block11 R : H →L[ℂ] H` is compact. -/
 private theorem compact_block11 (R : OrthogonalSum H K →L[ℂ] OrthogonalSum H K)
     (hR : IsCompactOperator R) : IsCompactOperator (OrthogonalSum.block11 R) := by
   simpa only [OrthogonalSum.block11_eq, ContinuousLinearMap.coe_comp] using
@@ -49,14 +48,16 @@ private theorem compact_block11 (R : OrthogonalSum H K →L[ℂ] OrthogonalSum H
       (WithLp.fstL 2 ℂ H K)
 
 omit [CompleteSpace H] [CompleteSpace K] in
-/-- Compactness of the proof-local second coordinate follows from the existing composition API. -/
+/-- **Compact second block of an orthogonal operator.** For complex Hilbert spaces `H,K`, if `R :
+H ⊕ K →L[ℂ] H ⊕ K` is compact, its compression `block22 R : K →L[ℂ] K` is compact. -/
 private theorem compact_block22 (R : OrthogonalSum H K →L[ℂ] OrthogonalSum H K)
     (hR : IsCompactOperator R) : IsCompactOperator (OrthogonalSum.block22 R) := by
   simpa only [OrthogonalSum.block22_eq, ContinuousLinearMap.coe_comp] using
     (hR.comp_clm (OrthogonalSum.inr (𝕜 := ℂ) H K).toContinuousLinearMap).clm_comp
       (WithLp.sndL 2 ℂ H K)
 
-/-- The actual product Calkin block map is injective on all original complete Hilbert carriers. -/
+/-- **Injectivity of the diagonal Calkin map.** For complex Hilbert spaces `H,K`, the unital star
+map `Q(H) × Q(K) → Q(H ⊕ K)` sending `([T],[S])` to `[T ⊕ S]` is injective. -/
 theorem blockDiagonalStarAlgHom_injective :
     Function.Injective (CalkinAlgebra.blockDiagonalStarAlgHom (H := H) (K := K)) := by
   intro x y hxy
@@ -78,8 +79,8 @@ theorem blockDiagonalStarAlgHom_injective :
   rw [hS, sub_eq_zero] at hSz
   exact Prod.ext hTz hSz
 
-/-- The original block-diagonal Calkin class is a unit exactly when its two actual coordinates are
-  units. -/
+/-- **Invertibility of a diagonal Calkin class.** For complex Hilbert spaces `H,K`, for `x :
+Q(H)`, `y : Q(K)`, `IsUnit (blockDiagonalStarAlgHom (x,y)) ↔ IsUnit x ∧ IsUnit y`. -/
 theorem isUnit_blockDiagonal_iff (x : CalkinAlgebra ℂ H) (y : CalkinAlgebra ℂ K) :
     IsUnit (blockDiagonalStarAlgHom (x, y)) ↔ IsUnit x ∧ IsUnit y := by
   constructor
@@ -151,8 +152,8 @@ theorem isUnit_blockDiagonal_iff (x : CalkinAlgebra ℂ H) (y : CalkinAlgebra �
       rw [hax, hby]
       exact map_one _
 
-/-- The original scalar shift of a literal block diagonal is the literal diagonal of the two
-  scalar shifts. -/
+/-- **Scalar shift of an orthogonal block operator.** For complex Hilbert spaces `H,K`, `(T ⊕ S) -
+z I = (T-z I_H) ⊕ (S-z I_K)` for bounded `T,S` and `z : ℂ`. -/
 private theorem blockDiagonal_scalar_shift (T : H →L[ℂ] H) (S : K →L[ℂ] K) (z : ℂ) :
     OrthogonalSum.blockDiagonal T S - z • (1 : OrthogonalSum H K →L[ℂ] OrthogonalSum H K) =
       OrthogonalSum.blockDiagonal (T - z • (1 : H →L[ℂ] H)) (S - z • (1 : K →L[ℂ] K)) := by
@@ -161,8 +162,9 @@ private theorem blockDiagonal_scalar_shift (T : H →L[ℂ] H) (S : K →L[ℂ] 
     rw [map_sub, map_smul, map_one]
   exact h.symm
 
-/-- The actual essential spectrum of the original orthogonal sum is the union of its two original
-  spectra. -/
+/-- **Essential spectrum of an orthogonal sum.** For complex Hilbert spaces `H,K`,
+`(OrthogonalSum.blockDiagonal T S).essentialSpectrum = T.essentialSpectrum ∪
+S.essentialSpectrum`. -/
 theorem essentialSpectrum_blockDiagonal (T : H →L[ℂ] H) (S : K →L[ℂ] K) :
     (OrthogonalSum.blockDiagonal T S).essentialSpectrum = T.essentialSpectrum ∪
       S.essentialSpectrum := by

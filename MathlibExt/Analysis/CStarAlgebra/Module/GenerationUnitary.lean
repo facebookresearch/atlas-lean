@@ -17,11 +17,11 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Generation
 public import MathlibExt.Analysis.CStarAlgebra.Module.Unitary
 
 /-!
-# Countable generation transported by a module unitary
+# Countable generation under module unitaries
 
-A countable right-coefficient generating sequence remains generating after a
-unitary module equivalence. The proof transports the dense span through the
-actual continuous linear equivalence; no dense-range output is assumed.
+A right C-star module is countably generated when the right-coefficient span of a countable
+family is norm-dense. A unitary `U : E ≃ F` carries such a family `(x_n)` to `(U x_n)` with the
+same dense-span property. Thus countable generation is preserved by unitary equivalences.
 -/
 
 @[expose] public section
@@ -42,8 +42,9 @@ variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
   [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 
-/-- Countable generation is preserved by a unitary equivalence of right
-C-star modules. -/
+/-- **Unitary invariance of countable generation.** If a right C-star module `E` is countably
+generated and `U : E ≃ F` is a module unitary, then `F` is countably generated; the image of a
+generating sequence under `U` generates `F`. -/
 theorem unitaryEquiv
     (hE : CStarModule.IsCountablyGenerated (B := B) (E := E))
     (U : CStarModule.UnitaryEquiv B E F) :

@@ -1,4 +1,4 @@
-# Dense span completed Single
+# Density of completed coordinate ranges
 
-The complex linear span of the coordinate inclusions is dense in the
-completed direct sum.
+The complex linear span of all vectors
+`completedSingle i x` is dense in `Completed B E`.

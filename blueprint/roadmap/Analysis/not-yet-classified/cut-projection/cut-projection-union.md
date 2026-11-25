@@ -1,3 +1,4 @@
-# Cut Projection union
+# Union of coordinate projections
 
-A union of cuts satisfies the inclusion-exclusion formula.
+`cutProjection (s ∪ t) = cutProjection s + cutProjection
+t - cutProjection (s ∩ t)`.

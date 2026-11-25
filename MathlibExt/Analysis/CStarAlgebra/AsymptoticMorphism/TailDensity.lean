@@ -19,14 +19,13 @@ import Mathlib.Topology.Algebra.MulAction
 import Mathlib.Tactic.Linarith
 
 /-!
-# The directed tail closure is the actual C0 ideal
+# Tail ideals are dense in the vanishing-at-infinity ideal
 
-The explicit private scalar cutoff min1(max0(n-t)) is bounded by1,
-equal1 before n-1 and zero from n on. Multiplication of an actual BCF by
-this scalar yields a true member of J_n. The real atTop vanishing property
-gives sup-norm approximation, proving closure(unionJ_n)=C0.
-
-No approximation, closure equality, limit ideal or lifting output is assumed.
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. Put χ_n(t)=min(1,max(0,n-t)) and f_n(t)=(χ_n(t):ℂ)•f(t). The cutoff is 1 for t≤n-1
+and 0 for t≥n. If f∈C₀(T,B), the tail-supported functions f_n approximate f in the supremum
+norm. Consequently closure(⋃n J_n)=C₀(T,B), and the directed closed supremum of the J_n equals
+this vanishing ideal.
 -/
 
 @[expose] public section
@@ -75,7 +74,13 @@ private theorem norm_tailCutoff_smul_le (n : ℕ) (t : AsymptoticTime) (b : B) :
       mul_le_mul_of_nonneg_right (tailCutoff_bounds n t).2 (norm_nonneg b)
     _ = ‖b‖ := one_mul _
 
-/-- A computed bounded tail-supported approximation in the STOCK function norm. -/
+/-- **Bounded function truncated by a tail cutoff.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. Put χ_n(t)=min(1,max(0,n-t)) and f_n(t)=(χ_n(t):ℂ)•f(t). The cutoff is 1 for t≤n-1
+and 0 for t≥n. For f∈C_b(T,B), tailApprox n f is f_n, a bounded continuous function vanishing
+for t≥n.
+-/
 @[no_expose]
 def tailApprox (n : ℕ) (f : AsymptoticTime →ᵇ B) : AsymptoticTime →ᵇ B where
   toFun t := (tailCutoff n t : ℂ) • f t
@@ -88,14 +93,23 @@ def tailApprox (n : ℕ) (f : AsymptoticTime →ᵇ B) : AsymptoticTime →ᵇ B
       ((norm_tailCutoff_smul_le n s (f s)).trans (f.norm_coe_le_norm s))
       ((norm_tailCutoff_smul_le n t (f t)).trans (f.norm_coe_le_norm t))
 
-/-- The public pointwise formula does not expose any private cutoff/proof name. -/
+/-- **Pointwise formula for a tail approximation.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. For f∈C_b(T,B) and t∈T, tailApprox n f t=((min(1,max(0,n-t)):ℝ):ℂ)•f(t).
+-/
 @[simp]
 theorem tailApprox_apply (n : ℕ) (f : AsymptoticTime →ᵇ B) (t : AsymptoticTime) :
     tailApprox n f t =
       ((min 1 (max 0 ((n : ℝ) - (t : ℝ))) : ℝ) : ℂ) • f t := by
   rfl
 
-/-- The concrete approximation belongs to the exact source J_n. -/
+/-- **Tail approximations belong to the tail ideal.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. Put χ_n(t)=min(1,max(0,n-t)) and f_n(t)=(χ_n(t):ℂ)•f(t). The cutoff is 1 for t≤n-1
+and 0 for t≥n. For f∈C_b(T,B), tailApprox n f=f_n belongs to J_n.
+-/
 theorem tailApprox_mem (n : ℕ) (f : AsymptoticTime →ᵇ B) :
     tailApprox n f ∈ tailIdeal n B := by
   apply (mem_tailIdeal_iff n _).2
@@ -127,7 +141,12 @@ private theorem tailApprox_error_le (n : ℕ) (f : AsymptoticTime →ᵇ B)
       mul_le_mul_of_nonneg_right hc (norm_nonneg _)
     _ = ‖f t‖ := one_mul _
 
-/-- C0 vanishing produces actual members of J_n arbitrarily close in sup norm. -/
+/-- **Uniform approximation of a function vanishing at infinity.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. Put χ_n(t)=min(1,max(0,n-t)) and f_n(t)=(χ_n(t):ℂ)•f(t). The cutoff is 1 for t≤n-1
+and 0 for t≥n. If f∈C₀(T,B) and ε>0, there exists n∈ℕ with ‖tailApprox n f-f‖∞<ε.
+-/
 theorem exists_tailApprox_close (f : AsymptoticTime →ᵇ B)
     (hf : f ∈ BoundedContinuousFunction.vanishingIdeal AsymptoticTime B)
     (ε : ℝ) (hε : 0 < ε) :
@@ -151,7 +170,11 @@ theorem exists_tailApprox_close (f : AsymptoticTime →ᵇ B)
       exact (tailApprox_error_le n f t).trans (hr t htail).le
   exact ⟨n, hnorm.trans_lt (half_lt_self hε)⟩
 
-/-- Literal closed-union identity, preserving the original C0 carrier. -/
+/-- **Closure of the union of tail ideals.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. In C_b(T,B) with its supremum norm, closure(⋃n∈ℕ J_n)=C₀(T,B).
+-/
 theorem closure_iUnion_tailIdeal (B : Type uB) [NonUnitalCStarAlgebra B] :
     closure (⋃ n : ℕ, (tailIdeal n B : Set (AsymptoticTime →ᵇ B))) =
       (BoundedContinuousFunction.vanishingIdeal AsymptoticTime B :
@@ -170,7 +193,12 @@ theorem closure_iUnion_tailIdeal (B : Type uB) [NonUnitalCStarAlgebra B] :
       _ = ‖tailApprox n f - f‖ := dist_eq_norm _ _
       _ < ε := hn
 
-/-- The independently constructed directed closed supremum IS the concrete C0 ideal. -/
+/-- **Directed closed supremum of the tail ideals.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), and J_n={f∈C_b(T,B):f(t)=0 for all t≥n},
+for n∈ℕ. The directed supremum of J_n in the lattice of closed star ideals of C_b(T,B) equals
+C₀(T,B).
+-/
 theorem directedSup_tailIdeal (B : Type uB) [NonUnitalCStarAlgebra B] :
     ClosedStarIdeal.directedSup (fun n : ℕ => tailIdeal n B) (tailIdeal_directed B) =
       BoundedContinuousFunction.vanishingIdeal AsymptoticTime B := by

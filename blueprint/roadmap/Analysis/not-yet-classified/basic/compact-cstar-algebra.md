@@ -1,4 +1,5 @@
-# Compact CStar Algebra
+# C-star algebra of amplification compacts
 
-The explicit existing closed-ideal C-star dictionary on the actual compact
-endomorphism carrier. No global norm or algebra instance is registered.
+The compact endomorphism ideal of `Space H A`
+has its nonunital C-star algebra structure and the operator norm inherited from adjointable
+endomorphisms.

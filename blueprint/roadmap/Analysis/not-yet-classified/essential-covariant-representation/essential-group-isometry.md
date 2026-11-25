@@ -1,3 +1,4 @@
-# Essential Group Isometry
+# Unitary restriction to the essential space
 
-The original group unitary restricted to the actual coefficient essential space.
+The restriction of Ug to the closed Hilbert subspace Eπ is a surjective complex linear
+isometry.

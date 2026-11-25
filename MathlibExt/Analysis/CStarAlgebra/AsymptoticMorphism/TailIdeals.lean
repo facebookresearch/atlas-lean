@@ -16,12 +16,14 @@ public import Mathlib.Order.Directed
 public import Mathlib.Topology.Order.OrderClosed
 
 /-!
-# Actual tail ideals and restriction quotients
+# Tail restriction ideals and their quotient algebras
 
-The kernel J_n of restriction to the true closed tail gives the exact
-vanishing-on-[n,infty) ideal in Cb([1,infty),B). Clamp-extension is a computed
-right inverse, hence the restriction quotient is the actual tail algebra.
-No ideal comparison, inverse, lifting output or alternate C-star model is input.
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). Let
+J_n={f∈C_b(T,B):f(t)=0 for every t≥n}. This is the kernel of restriction
+r_n:C_b(T,B)→C_b(T_n,B), and C_n=C_b(T,B)/J_n has its quotient C-star norm. For h∈C_b(T_n,B),
+clamp extension h↦(t↦h(max(n,t))) is a right inverse of restriction, so C_n is star-isomorphic
+to C_b(T_n,B). The ideals J_n increase with n and lie in C₀(T,B), giving maps
+C_n→B∞=C_b(T,B)/C₀(T,B) and C_n→C_m for n≤m.
 -/
 
 @[expose] public section
@@ -42,10 +44,18 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B]
 
 attribute [local instance] cStarAlgebra
 
-/-- The true source-domain tail; n=0,1 do not remove any source points. -/
+/-- **Closed tail of the asymptotic time ray.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞).
+TailTime n is T_n; for n=0 or n=1 it is all of T.
+-/
 abbrev TailTime (n : ℕ) := {t : AsymptoticTime // (n : ℝ) ≤ (t : ℝ)}
 
-/-- Continuous inclusion of the actual tail in the original ray. -/
+/-- **Continuous inclusion of a closed time tail.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). The
+map tailInclusion n:T_n→T is the continuous inclusion t↦t.
+-/
 def tailInclusion (n : ℕ) : C(TailTime n, AsymptoticTime) :=
   ⟨Subtype.val, continuous_subtype_val⟩
 
@@ -54,7 +64,12 @@ theorem tailInclusion_apply (n : ℕ) (t : TailTime n) :
     tailInclusion n t = t.val := by
   rfl
 
-/-- Actual continuous clamping, constant below the effective tail endpoint. -/
+/-- **Continuous clamping to a closed time tail.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). The
+map tailClamp n:T→T_n is t↦max(n,t); since t≥1, this is at least max(1,n). It is constant
+below the tail endpoint and the identity on T_n.
+-/
 def tailClamp (n : ℕ) : C(AsymptoticTime, TailTime n) where
   toFun t :=
     ⟨⟨max (t : ℝ) (n : ℝ), t.property.trans (le_max_left _ _)⟩, le_max_right _ _⟩
@@ -71,14 +86,23 @@ theorem tailClamp_coe (n : ℕ) (t : AsymptoticTime) :
     ((tailClamp n t : AsymptoticTime) : ℝ) = max (t : ℝ) (n : ℝ) := by
   rfl
 
-/-- Inclusion followed by clamp is the actual identity on the tail. -/
+/-- **Clamping is the identity on the tail.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). For
+t∈T_n, tailClamp n (tailInclusion n t)=t.
+-/
 theorem tailClamp_inclusion (n : ℕ) (t : TailTime n) :
     tailClamp n (tailInclusion n t) = t := by
   apply Subtype.ext
   apply Subtype.ext
   exact max_eq_left t.property
 
-/-- Restriction of the stock BCF algebra as a real nonunital star hom. -/
+/-- **Restriction homomorphism to the time tail.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). The
+nonunital complex star homomorphism tailRestriction n B:C_b(T,B)→C_b(T_n,B) sends f to its
+restriction f|T_n.
+-/
 def tailRestriction (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
     (AsymptoticTime →ᵇ B) →⋆ₙₐ[ℂ] (TailTime n →ᵇ B) where
   toFun f := f.compContinuous (tailInclusion n)
@@ -107,7 +131,12 @@ theorem tailRestriction_apply (n : ℕ) (f : AsymptoticTime →ᵇ B) (t : TailT
     tailRestriction n B f t = f (tailInclusion n t) :=
   BoundedContinuousFunction.compContinuous_apply _ _ _
 
-/-- The actual constant-below-endpoint extension along the computed clamp. -/
+/-- **Clamp extension of a bounded tail function.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). The
+nonunital complex star homomorphism tailExtension n B:C_b(T_n,B)→C_b(T,B) sends f to
+t↦f(max(n,t)).
+-/
 def tailExtension (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
     (TailTime n →ᵇ B) →⋆ₙₐ[ℂ] (AsymptoticTime →ᵇ B) where
   toFun f := f.compContinuous (tailClamp n)
@@ -136,7 +165,11 @@ theorem tailExtension_apply (n : ℕ) (f : TailTime n →ᵇ B) (t : AsymptoticT
     tailExtension n B f t = f (tailClamp n t) :=
   BoundedContinuousFunction.compContinuous_apply _ _ _
 
-/-- The two computed maps give an actual right-inverse identity. -/
+/-- **Tail restriction after clamp extension.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). For
+f∈C_b(T_n,B), tailRestriction n B (tailExtension n B f)=f.
+-/
 theorem tailRestriction_extension (n : ℕ) (f : TailTime n →ᵇ B) :
     tailRestriction n B (tailExtension n B f) = f := by
   ext t
@@ -146,12 +179,22 @@ theorem tailRestriction_surjective (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebr
     Function.Surjective (tailRestriction n B) :=
   fun f => ⟨tailExtension n B f, tailRestriction_extension n f⟩
 
-/-- The source's exact tail ideal is a true closed kernel, not a model input. -/
+/-- **Ideal of functions vanishing on a time tail.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). Let
+J_n={f∈C_b(T,B):f(t)=0 for every t≥n}. This is the kernel of restriction
+r_n:C_b(T,B)→C_b(T_n,B), and C_n=C_b(T,B)/J_n has its quotient C-star norm. The closed star
+ideal tailIdeal n B is J_n.
+-/
 def tailIdeal (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
     ClosedStarIdeal (AsymptoticTime →ᵇ B) :=
   ClosedStarIdeal.ker (tailRestriction n B)
 
-/-- Exact printed membership: zero at every source time at least n. -/
+/-- **Membership in the tail-vanishing ideal.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). For
+f∈C_b(T,B), f∈tailIdeal n B if and only if f(t)=0 for every t∈T with n≤t.
+-/
 theorem mem_tailIdeal_iff (n : ℕ) (f : AsymptoticTime →ᵇ B) :
     f ∈ tailIdeal n B ↔
       ∀ t : AsymptoticTime, (n : ℝ) ≤ (t : ℝ) → f t = 0 := by
@@ -166,7 +209,12 @@ theorem mem_tailIdeal_iff (n : ℕ) (f : AsymptoticTime →ᵇ B) :
     simpa only [tailRestriction_apply, tailInclusion_apply,
       BoundedContinuousFunction.coe_zero, Pi.zero_apply] using h t.val t.property
 
-/-- Monotonicity uses the literal nested-tail relation. -/
+/-- **Monotonicity of tail-vanishing ideals.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). For
+J_n=tailIdeal n B, n≤m implies J_n⊆J_m, because vanishing on [max(1,n),∞) implies vanishing on
+[max(1,m),∞).
+-/
 theorem tailIdeal_monotone (B : Type uB) [NonUnitalCStarAlgebra B] :
     Monotone (fun n : ℕ => tailIdeal n B) := by
   intro n m hnm f hf
@@ -179,7 +227,12 @@ theorem tailIdeal_directed (B : Type uB) [NonUnitalCStarAlgebra B] :
     Directed (· ≤ ·) (fun n : ℕ => tailIdeal n B) :=
   (tailIdeal_monotone B).directed_le
 
-/-- Exact eventual zero implies membership in the real C0 ideal. -/
+/-- **Tail-vanishing functions vanish at infinity.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). For
+J_n=tailIdeal n B, J_n⊆C₀(T,B): every bounded continuous function vanishing for t≥n tends to
+zero at infinity.
+-/
 theorem tailIdeal_le_vanishingIdeal (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
     tailIdeal n B ≤ BoundedContinuousFunction.vanishingIdeal AsymptoticTime B := by
   intro f hf
@@ -192,7 +245,14 @@ theorem tailIdeal_le_vanishingIdeal (n : ℕ) (B : Type uB) [NonUnitalCStarAlgeb
     tendsto_const_nhds
   exact hconst.congr' (Filter.EventuallyEq.symm hzero)
 
-/-- The actual restriction quotient is the actual tail BCF algebra. -/
+/-- **Tail restriction quotient is the tail function algebra.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). Let
+J_n={f∈C_b(T,B):f(t)=0 for every t≥n}. This is the kernel of restriction
+r_n:C_b(T,B)→C_b(T_n,B), and C_n=C_b(T,B)/J_n has its quotient C-star norm. The complex
+star-algebra equivalence tailQuotientEquiv n B:C_n≃⋆ₐ[ℂ]C_b(T_n,B) sends the quotient class of
+f to f|T_n.
+-/
 def tailQuotientEquiv (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
     letI : NonUnitalCStarAlgebra (tailIdeal n B).Quotient :=
       (tailIdeal n B).quotientCStarAlgebra
@@ -202,7 +262,13 @@ def tailQuotientEquiv (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
   exact NonUnitalStarAlgHom.quotientKerEquivOfSurjective
     (tailRestriction n B) (tailRestriction_surjective n B)
 
-/-- Its characteristic formula is restriction of the original representative. -/
+/-- **Tail quotient equivalence on a function class.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). Let
+J_n={f∈C_b(T,B):f(t)=0 for every t≥n}. This is the kernel of restriction
+r_n:C_b(T,B)→C_b(T_n,B), and C_n=C_b(T,B)/J_n has its quotient C-star norm. For f∈C_b(T,B),
+tailQuotientEquiv n B ([f]_J_n)=tailRestriction n B f=f|T_n.
+-/
 theorem tailQuotientEquiv_quotientMap (n : ℕ) (f : AsymptoticTime →ᵇ B) :
     letI : NonUnitalCStarAlgebra (tailIdeal n B).Quotient :=
       (tailIdeal n B).quotientCStarAlgebra
@@ -212,7 +278,14 @@ theorem tailQuotientEquiv_quotientMap (n : ℕ) (f : AsymptoticTime →ᵇ B) :
   exact NonUnitalStarAlgHom.quotientKerEquivOfSurjective_quotientMap
     (tailRestriction n B) (tailRestriction_surjective n B) f
 
-/-- The genuine stage-to-asymptotic quotient map is induced by the proven inclusion. -/
+/-- **Map from a tail quotient to the asymptotic algebra.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). Let
+J_n={f∈C_b(T,B):f(t)=0 for every t≥n}. This is the kernel of restriction
+r_n:C_b(T,B)→C_b(T_n,B), and C_n=C_b(T,B)/J_n has its quotient C-star norm. The nonunital
+complex star homomorphism tailToAsymptotic n B:C_n→B∞=C_b(T,B)/C₀(T,B) sends [f]_J_n to
+[f]_C₀.
+-/
 def tailToAsymptotic (n : ℕ) (B : Type uB) [NonUnitalCStarAlgebra B] :
     letI : NonUnitalCStarAlgebra (tailIdeal n B).Quotient :=
       (tailIdeal n B).quotientCStarAlgebra
@@ -232,7 +305,14 @@ theorem tailToAsymptotic_quotientMap (n : ℕ) (f : AsymptoticTime →ᵇ B) :
   exact ClosedStarIdeal.quotientMapOfLE_quotientMap _ _
     (tailIdeal_le_vanishingIdeal n B) f
 
-/-- The canonical stage transition uses the actual monotonicity proof. -/
+/-- **Transition between tail quotient algebras.**
+
+Let B be a nonunital complex C-star algebra, T=[1,∞), n∈ℕ and T_n={t∈T:n≤t}=[max(1,n),∞). Let
+J_n={f∈C_b(T,B):f(t)=0 for every t≥n}. This is the kernel of restriction
+r_n:C_b(T,B)→C_b(T_n,B), and C_n=C_b(T,B)/J_n has its quotient C-star norm. For n≤m, the
+inclusion J_n⊆J_m gives tailTransition hnm B:C_n→C_m, the nonunital complex star homomorphism
+[f]_J_n↦[f]_J_m.
+-/
 def tailTransition {n m : ℕ} (hnm : n ≤ m)
     (B : Type uB) [NonUnitalCStarAlgebra B] :
     letI : NonUnitalCStarAlgebra (tailIdeal n B).Quotient :=

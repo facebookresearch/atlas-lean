@@ -1,6 +1,6 @@
-# Character Continuity
+# Point-norm continuity of completed character automorphisms
 
-- [Continuous l1 Character Distance](continuous-l1-character-distance.md)
-- [Dist completed Character Equiv core le](dist-completed-character-equiv-core-le.md)
-- [Continuous completed Character Equiv core](continuous-completed-character-equiv-cor.md)
-- [Continuous completed Character Equiv orbit](continuous-completed-character-equiv-orb.md)
+- [Continuity of the L¹ character distance](continuous-l1-character-distance.md)
+- [Full character distance is bounded by L¹ distance](dist-completed-character-equiv-core-le.md)
+- [Continuity of completed character orbits on the dense core](continuous-completed-character-equiv-cor.md)
+- [Point-norm continuity of the completed character action](continuous-completed-character-equiv-orb.md)

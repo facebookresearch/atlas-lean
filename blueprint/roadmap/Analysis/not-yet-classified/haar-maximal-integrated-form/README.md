@@ -1,6 +1,6 @@
-# Haar Maximal Integrated Form
+# Integrated representations on the maximal C-star completion
 
-- [Haar Maximal Integrated Hom](haar-maximal-integrated-hom.md)
-- [Haar Maximal Integrated Hom apply](haar-maximal-integrated-hom-apply.md)
-- [Haar Maximal Integrated Hom apply vector](haar-maximal-integrated-hom-apply-vector.md)
-- [Continuous haar Maximal Integrated Hom](continuous-haar-maximal-integrated-hom.md)
+- [Integrated homomorphism on the maximal completion](haar-maximal-integrated-hom.md)
+- [Maximal integrated homomorphism on dense coefficients](haar-maximal-integrated-hom-apply.md)
+- [Vector integral on dense maximal coefficients](haar-maximal-integrated-hom-apply-vector.md)
+- [Continuity of the maximal integrated representation](continuous-haar-maximal-integrated-hom.md)

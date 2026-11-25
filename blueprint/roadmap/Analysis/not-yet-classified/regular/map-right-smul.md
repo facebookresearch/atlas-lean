@@ -1,4 +1,4 @@
-# Map right smul
+# Right linearity of a regular operator
 
-A regular operator intertwines the source-order right coefficient
-action on its domain.
+Under the regular-operator and coefficient-order
+hypotheses, `T (x <• b) = T x <• b` for every `x ∈ dom T` and `b : B`.

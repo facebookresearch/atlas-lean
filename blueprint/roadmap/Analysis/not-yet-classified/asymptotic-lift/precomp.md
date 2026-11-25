@@ -1,3 +1,4 @@
-# Precomp
+# Precomposition of an exact asymptotic lift
 
-Pullback by a true coefficient homomorphism preserves every exact time identity.
+For an exact lift `ρ` of `τ` and a star
+homomorphism `f : C → A`, the family `ρ_t(f a)` lifts `τ.comp f` exactly at every time.

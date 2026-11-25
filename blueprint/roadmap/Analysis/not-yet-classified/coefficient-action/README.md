@@ -1,7 +1,7 @@
-# Coefficient Action
+# Left coefficient multiplication on Hilbert amplification
 
-- [Left Mul commutes scalar Self Hom](left-mul-commutes-scalar-self-hom.md)
-- [Coefficient Operator](coefficient-operator.md)
-- [Coefficient Operator pure](coefficient-operator-pure.md)
-- [Coefficient Operator adjoint pure](coefficient-operator-adjoint-pure.md)
-- [Coefficient Operator norm le](coefficient-operator-norm-le.md)
+- [Commutation of coefficient multiplication with scalars](left-mul-commutes-scalar-self-hom.md)
+- [Left coefficient operator on the amplification](coefficient-operator.md)
+- [Coefficient operator on pure vectors](coefficient-operator-pure.md)
+- [Adjoint coefficient operator on pure vectors](coefficient-operator-adjoint-pure.md)
+- [Norm bound for coefficient multiplication](coefficient-operator-norm-le.md)

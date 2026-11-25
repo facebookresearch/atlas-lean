@@ -1,3 +1,4 @@
-# Raw Right Factor Map tmul
+# Right-factor map on a pure tensor
 
-The actual raw map changes only the original second factor.
+For `x : E₁`, `y : E₂` and adjointable `S`,
+`rawRightFactorMap S (x⊗y) = x⊗S y`.

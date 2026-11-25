@@ -1,3 +1,4 @@
-# Space Opposite SMul
+# Right coefficient action on the amplification
 
-The original descended right coefficient action extended by stock completion.
+The continuous right action of `A` on
+`Space H A` is determined by `(ξ⊗a) <• b = ξ⊗(a*b)`.

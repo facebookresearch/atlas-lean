@@ -1,3 +1,5 @@
-# Compact Tensor Completion To Compacts apply
+# Extended representation on the algebraic core
 
-Every original completed canonical image has its unchanged original compact-action value.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `compactTensorCompletionToCompacts H A
+(toCompactTensorCompletion H A z) = algebraicCompactTensorHom H A z`.

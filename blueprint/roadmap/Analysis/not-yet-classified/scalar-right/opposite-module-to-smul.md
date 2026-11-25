@@ -1,3 +1,4 @@
-# Opposite Module to SMul
+# Agreement of the right scalar actions
 
-These two factories choose exactly the same opposite scalar data.
+The scalar action of `instOppositeModule H` equals
+`instOppositeSMul H`; both send `a, x` to `q.symm (a.unop • q x)`.

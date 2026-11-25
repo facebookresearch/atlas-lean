@@ -1,8 +1,8 @@
-# Matrix Coefficients
+# Coefficient-valued matrix entries of compact tensors
 
-- [Compact Operator Matrix Coefficient](compact-operator-matrix-coefficient.md)
-- [Compact Operator Matrix Coefficient apply](compact-operator-matrix-coefficient-appl.md)
-- [Tensor Matrix Coefficient](tensor-matrix-coefficient.md)
-- [Tensor Matrix Coefficient tmul](tensor-matrix-coefficient-tmul.md)
-- [Right Inner algebraic Tensor Operator pure](right-inner-algebraic-tensor-operator-pu.md)
-- [Tensor Matrix Coefficient eq zero of algebraic Tensor Operator eq zero](tensor-matrix-coefficient-eq-zero-of-alg.md)
+- [Hilbert matrix-entry functional](compact-operator-matrix-coefficient.md)
+- [Value of a compact operator matrix entry](compact-operator-matrix-coefficient-appl.md)
+- [Coefficient-valued tensor matrix entry](tensor-matrix-coefficient.md)
+- [Matrix coefficient of a pure tensor](tensor-matrix-coefficient-tmul.md)
+- [Pairing that recovers tensor coefficients](right-inner-algebraic-tensor-operator-pu.md)
+- [Matrix entries of a zero tensor action](tensor-matrix-coefficient-eq-zero-of-alg.md)

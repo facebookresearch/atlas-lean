@@ -1,17 +1,17 @@
-# NClass Stage Transition
+# Finite-offset transitions on homotopy classes
 
 ## Representative and quotient maps
 
-- [Stage Transition Representative From](stage-transition-representative-from.md)
-- [Stage Transition Representative From respects](stage-transition-representative-from-res.md)
-- [Stage Transition From](stage-transition-from.md)
+- [Representative included across a finite stage offset](stage-transition-representative-from.md)
+- [Finite-offset transitions preserve homotopy](stage-transition-representative-from-res.md)
+- [Transition across a finite offset on class spaces](stage-transition-from.md)
 
-## Zero and one offsets
+## Zero and unit stage offsets
 
-- [Stage Transition From zero](stage-transition-from-zero.md)
-- [Stage Transition From one](stage-transition-from-one.md)
+- [Zero-offset class transition](stage-transition-from-zero.md)
+- [One-offset class transition](stage-transition-from-one.md)
 
-## Explicitly reassociated offset composition
+## Composition of stage offsets
 
-- [Stage Transition From Reassoc](stage-transition-from-reassoc.md)
-- [Stage Transition From add](stage-transition-from-add.md)
+- [Reassociated target of an offset class map](stage-transition-from-reassoc.md)
+- [Addition of offsets gives composition of class transitions](stage-transition-from-add.md)

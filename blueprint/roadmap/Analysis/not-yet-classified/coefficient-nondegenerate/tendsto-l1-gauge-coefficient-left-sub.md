@@ -1,3 +1,6 @@
-# Tendsto l1 Gauge coefficient Left sub
+# Coefficient approximate units converge in L¹
 
-The computed original coefficient approximate unit converges in the literal Haar-core L1 gauge.
+Let G be a group with a Borel topology, μ a measure finite on compact sets, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For f∈Carrier μ α, ∫ s,
+‖a*f(s)-f(s)‖ ∂μ tends to 0 along the canonical approximate-unit filter
+CStarAlgebra.canonicalApproximateUnit A.

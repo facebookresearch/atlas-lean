@@ -1,4 +1,5 @@
-# Continuous Linear Map Linear Isometry Equiv
+# Complex-linear isometry of operator spaces
 
-On complete complex Hilbert spaces, bounded operators and scalar-right
-adjointable operators are complex-linearly isometrically equivalent.
+For complex Hilbert spaces, the
+bounded-to-adjointable operator correspondence is a complex-linear isometric equivalence, with
+`‖ofContinuousLinearMap H K T‖ = ‖T‖`.

@@ -1,3 +1,7 @@
-# Maximal CStar Seminorm
+# Supremum C-star seminorm on the Haar core
 
-The computed intrinsic supremum of the actual L1-bounded C-star seminorm family.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let S be the family of
+C-star seminorms p on the core Carrier μ α satisfying p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous coefficient k. The C-star seminorm maximalCStarSeminorm μ α is
+the pointwise supremum pmax(f)=sup{p(f):p∈S}.

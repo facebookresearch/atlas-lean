@@ -1,5 +1,6 @@
-# Of Hom Family
+# Point-norm homomorphism family as CP-contractive asymptotic morphism
 
-A point-norm continuous time family of star homomorphisms is a literal
-CP-contractive asymptotic family. No uniform-in-time hom-space continuity is
-required beyond the continuous orbit of each input.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). Suppose f_t:A→B are nonunital
+complex star homomorphisms and t↦f_t(a) is continuous for every a.
+CompletelyPositiveContraction.ofHomFamily f hf has values φ_t(a)=f_t(a), with completely
+positive contraction slices.

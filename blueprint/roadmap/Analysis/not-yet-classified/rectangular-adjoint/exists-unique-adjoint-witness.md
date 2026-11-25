@@ -1,3 +1,4 @@
-# Exists Unique adjoint Witness
+# Unique witness on the adjoint domain
 
-The full domain supplies a proved unique witness for every one of its vectors.
+Every `y : adjointDomain T` has exactly one `z : E`
+satisfying the adjoint pairing equation on `dom T`.

@@ -1,3 +1,4 @@
-# Norm pure
+# Norm of a pure amplification vector
 
-The computed pure norm is the product of the original two factor norms.
+For a complex Hilbert space and nonunital coefficient
+algebra, `‖pure H A ξ a‖ = ‖ξ‖ * ‖a‖`, including zero factors.

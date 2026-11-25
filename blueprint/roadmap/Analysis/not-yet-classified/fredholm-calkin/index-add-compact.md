@@ -1,3 +1,4 @@
-# Index add compact
+# Index under compact addition
 
-Compact perturbations preserve the Fredholm index.
+For a complex Hilbert space `H`, if `T` is Fredholm and `K`
+compact, `(T+K).index = T.index`.

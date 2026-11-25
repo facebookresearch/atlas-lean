@@ -1,4 +1,4 @@
-# Convolution Seminorm Integral
+# Convolution as an integral in a C-star seminorm completion
 
-- [Integrable to Non Unital Completion coefficient Left group Left](integrable-to-non-unital-completion-coef.md)
-- [Integral to Non Unital Completion coefficient Left group Left](integral-to-non-unital-completion-coeffi.md)
+- [Integrability of coefficient and group multiplier slices](integrable-to-non-unital-completion-coef.md)
+- [Integral formula for convolution in a seminorm completion](integral-to-non-unital-completion-coeffi.md)

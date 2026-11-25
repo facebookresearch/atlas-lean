@@ -1,9 +1,9 @@
-# C0 Translation
+# Left translation on functions vanishing at infinity
 
-- [C0 Left Translation Equiv](c0-left-translation-equiv.md)
-- [C0 Left Translation Equiv apply](c0-left-translation-equiv-apply.md)
-- [C0 Left Translation Equiv one](c0-left-translation-equiv-one.md)
-- [C0 Left Translation Equiv mul](c0-left-translation-equiv-mul.md)
-- [Continuous c0 Left Translation Equiv orbit](continuous-c0-left-translation-equiv-orb.md)
-- [C0 Left Translation Action](c0-left-translation-action.md)
-- [C0 Left Translation Action apply](c0-left-translation-action-apply.md)
+- [Left-translation automorphism of C₀(G)](c0-left-translation-equiv.md)
+- [Evaluation of a left translation](c0-left-translation-equiv-apply.md)
+- [Identity left translation](c0-left-translation-equiv-one.md)
+- [Composition of left translations](c0-left-translation-equiv-mul.md)
+- [Supremum-norm continuity of translation orbits](continuous-c0-left-translation-equiv-orb.md)
+- [Point-norm left-translation action](c0-left-translation-action.md)
+- [Evaluation of the translation action](c0-left-translation-action-apply.md)

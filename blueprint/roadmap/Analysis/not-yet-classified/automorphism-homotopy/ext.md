@@ -1,3 +1,3 @@
-# Ext
+# Equality of automorphism homotopies
 
-Automorphism homotopies are determined by their path of automorphisms.
+Two point-norm homotopies from α to β are equal when their paths of automorphisms are equal.

@@ -1,4 +1,5 @@
-# Finite Inclusion comp adjoint to Continuous Linear Map
+# Projection onto the finite coordinate image
 
-The reverse whole composite has the original standard truncation as its
-forward CLM, on the literal finite image of the injection.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the continuous linear map of `j_η j_η*` is
+`truncate (Finset.univ.map η)`.

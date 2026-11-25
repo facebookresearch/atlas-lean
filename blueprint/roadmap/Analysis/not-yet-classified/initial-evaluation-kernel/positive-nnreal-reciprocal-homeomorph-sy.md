@@ -1,3 +1,3 @@
-# Positive NNReal Reciprocal Homeomorph symm apply
+# Value of the inverse reciprocal coordinate
 
-The inverse coordinate is the actual positive number `1/s - 1`.
+For s∈(0,1), positiveNNRealReciprocalHomeomorph.symm s=1/s-1>0.

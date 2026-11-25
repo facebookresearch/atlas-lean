@@ -1,3 +1,4 @@
-# To Densely Defined injective
+# Faithfulness of the dense realization
 
-Keeping the original partial map loses no canonical regular-operator DATA.
+Two regular operators with the same densely defined
+right-linear realization are equal, since their partial maps and maximal adjoints are equal.

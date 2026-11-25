@@ -1,3 +1,4 @@
-# Is Asymptotically Split
+# Asymptotic splitting of a Busby map
 
-The source asymptotically split property, separate from an ordinary hom lift.
+A Busby homomorphism is asymptotically split when it
+admits an exact multiplier-valued asymptotic lift `ρ` with `q(ρ_t(a)) = τ(a)` at all times.

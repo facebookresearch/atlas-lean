@@ -1,3 +1,4 @@
-# Raw Lift CLM
+# Continuous linear universal limit map
 
-The canonical contractive raw limit map as a continuous linear map in its norm topology.
+The compatible C-star stage maps induce the
+continuous complex-linear map on `S.Raw` with values `[i,x] ↦ g_i(x)` and norm bound one.

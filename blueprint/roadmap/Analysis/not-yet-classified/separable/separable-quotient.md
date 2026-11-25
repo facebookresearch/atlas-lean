@@ -1,4 +1,4 @@
-# Separable quotient
+# Separability of a closed-ideal quotient
 
-The actual quotient of a separable C-star algebra by a closed star ideal
-is separable, with the existing scoped quotient dictionary.
+If the nonunital C-star algebra `A` is separable
+and `I` is a closed two-sided star ideal, the normed quotient `A/I` is separable.

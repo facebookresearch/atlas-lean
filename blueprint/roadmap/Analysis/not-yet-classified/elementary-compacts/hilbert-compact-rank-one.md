@@ -1,3 +1,4 @@
-# Hilbert Compact Rank One
+# Compact Hilbert-space rank-one operator
 
-The original full-H rank-one operator, bundled in the actual compact closed star ideal.
+For a complex Hilbert space `H` and `ξ,η : H`,
+this element of `K(H)` acts by `ζ ↦ inner ℂ η ζ • ξ`.

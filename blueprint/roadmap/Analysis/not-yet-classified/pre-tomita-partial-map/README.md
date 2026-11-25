@@ -1,9 +1,9 @@
-# Pre Tomita Partial Map
+# Complex and real partial maps for the pre-Tomita operator
 
-- [Pre Tomita PMap](pre-tomita-pmap.md)
-- [Pre Tomita PMap domain](pre-tomita-pmap-domain.md)
-- [Pre Tomita PMap apply](pre-tomita-pmap-apply.md)
-- [Pre Tomita Real PMap](pre-tomita-real-pmap.md)
-- [Pre Tomita Real PMap domain](pre-tomita-real-pmap-domain.md)
-- [Pre Tomita Real PMap apply](pre-tomita-real-pmap-apply.md)
-- [Pre Tomita Real PMap original Value](pre-tomita-real-pmap-original-value.md)
+- [Conjugate-linear partial pre-Tomita map](pre-tomita-pmap.md)
+- [Domain of the complex pre-Tomita partial map](pre-tomita-pmap-domain.md)
+- [Value of the complex partial pre-Tomita map](pre-tomita-pmap-apply.md)
+- [Real-linear partial pre-Tomita map](pre-tomita-real-pmap.md)
+- [Real domain of the pre-Tomita partial map](pre-tomita-real-pmap-domain.md)
+- [Real partial map agrees with the semilinear operator](pre-tomita-real-pmap-apply.md)
+- [Pre-Tomita formula after restricting scalars](pre-tomita-real-pmap-original-value.md)

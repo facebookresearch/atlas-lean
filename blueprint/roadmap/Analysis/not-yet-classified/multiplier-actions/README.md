@@ -1,60 +1,60 @@
-# Multiplier Actions
+# Coefficient and group actions on the twisted convolution core
 
-## Coefficient Cc
+## Coefficient actions on compactly supported functions
 
-- [Coefficient Left Cc](coefficient-left-cc.md)
-- [Coefficient Left Cc apply](coefficient-left-cc-apply.md)
+- [Left coefficient action on compactly supported functions](coefficient-left-cc.md)
+- [Pointwise value of left coefficient multiplication](coefficient-left-cc-apply.md)
 
-## Monoid
+## Right coefficient actions for monoids
 
-- [Coefficient Right Cc](coefficient-right-cc.md)
-- [Coefficient Right Cc apply](coefficient-right-cc-apply.md)
+- [Action-valued right coefficient multiplication](coefficient-right-cc.md)
+- [Pointwise value of right coefficient multiplication](coefficient-right-cc-apply.md)
 
-## Group Cc
+## Group translations of compactly supported coefficients
 
-- [Group Left Cc](group-left-cc.md)
-- [Group Left Cc apply](group-left-cc-apply.md)
-- [Group Right Cc](group-right-cc.md)
-- [Group Right Cc apply](group-right-cc-apply.md)
+- [Left group translation of compact coefficients](group-left-cc.md)
+- [Pointwise value of the left compact group translate](group-left-cc-apply.md)
+- [Modular right translation of compact coefficients](group-right-cc.md)
+- [Pointwise value of the modular compact right translate](group-right-cc-apply.md)
 
-## Core Coefficient
+## Coefficient actions on the convolution core
 
-- [Coefficient Left](coefficient-left.md)
-- [Coefficient Left apply](coefficient-left-apply.md)
-- [Coefficient Right](coefficient-right.md)
-- [Coefficient Right apply](coefficient-right-apply.md)
-- [Coefficient Left mul](coefficient-left-mul.md)
-- [Coefficient Right mul](coefficient-right-mul.md)
-- [Coefficient Left add](coefficient-left-add.md)
-- [Coefficient Right add](coefficient-right-add.md)
-- [Coefficient Left smul](coefficient-left-smul.md)
-- [Coefficient Right smul](coefficient-right-smul.md)
+- [Left coefficient action on the indexed core](coefficient-left.md)
+- [Left coefficient value on the indexed core](coefficient-left-apply.md)
+- [Right coefficient action on the indexed core](coefficient-right.md)
+- [Right coefficient value on the indexed core](coefficient-right-apply.md)
+- [Composition of left coefficient actions](coefficient-left-mul.md)
+- [Reversed composition of right coefficient actions](coefficient-right-mul.md)
+- [Additivity in the left coefficient parameter](coefficient-left-add.md)
+- [Additivity in the right coefficient parameter](coefficient-right-add.md)
+- [Complex scaling in the left coefficient parameter](coefficient-left-smul.md)
+- [Complex scaling in the right coefficient parameter](coefficient-right-smul.md)
 
-## Core Group
+## Group translations of the convolution core
 
-- [Group Left](group-left.md)
-- [Group Left apply](group-left-apply.md)
-- [Group Right](group-right.md)
-- [Group Right apply](group-right-apply.md)
-- [Group Left one](group-left-one.md)
-- [Group Right one](group-right-one.md)
-- [Group Left mul](group-left-mul.md)
-- [Group Right mul](group-right-mul.md)
-- [Group Left coefficient Left](group-left-coefficient-left.md)
-- [Coefficient Right group Right](coefficient-right-group-right.md)
+- [Left group action on the indexed core](group-left.md)
+- [Left group value on the indexed core](group-left-apply.md)
+- [Modular right group action on the indexed core](group-right.md)
+- [Modular right group value on the indexed core](group-right-apply.md)
+- [Identity in the left core group action](group-left-one.md)
+- [Identity in the right core group action](group-right-one.md)
+- [Composition of left core group translations](group-left-mul.md)
+- [Reversed composition of right core group translations](group-right-mul.md)
+- [Covariance of left core group and coefficient actions](group-left-coefficient-left.md)
+- [Covariance of right core group and coefficient actions](coefficient-right-group-right.md)
 
-## Core Star
+## Involution compatibility for core actions
 
-- [Crossed Star coefficient Left](crossed-star-coefficient-left.md)
-- [Crossed Star coefficient Right](crossed-star-coefficient-right.md)
-- [Crossed Star group Left](crossed-star-group-left.md)
-- [Crossed Star group Right](crossed-star-group-right.md)
+- [Modular star exchanges left and adjoint right coefficients](crossed-star-coefficient-left.md)
+- [Modular star exchanges right and adjoint left coefficients](crossed-star-coefficient-right.md)
+- [Modular star exchanges left and inverse right translations](crossed-star-group-left.md)
+- [Modular star exchanges right and inverse left translations](crossed-star-group-right.md)
 
-## Core Compatibility
+## Compatibility of coefficient and translation actions
 
-- [Coefficient Left convolution](coefficient-left-convolution.md)
-- [Coefficient Right convolution](coefficient-right-convolution.md)
-- [Convolution coefficient Left](convolution-coefficient-left.md)
-- [Group Left convolution](group-left-convolution.md)
-- [Group Right convolution](group-right-convolution.md)
-- [Convolution group Left](convolution-group-left.md)
+- [Left coefficient action is a convolution left centralizer](coefficient-left-convolution.md)
+- [Right coefficient action is a convolution right centralizer](coefficient-right-convolution.md)
+- [Coefficient actions form a compatible centralizer pair](convolution-coefficient-left.md)
+- [Left group action is a convolution left centralizer](group-left-convolution.md)
+- [Modular right group action is a convolution right centralizer](group-right-convolution.md)
+- [Group translations form a compatible centralizer pair](convolution-group-left.md)

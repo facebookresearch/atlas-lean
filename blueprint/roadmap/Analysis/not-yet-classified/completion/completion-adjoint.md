@@ -1,4 +1,4 @@
-# Completion adjoint
+# Adjoint map of the completed operator
 
-The stored completed adjoint is definitionally the stock completion of
-the given adjoint CLM.
+`(completion T).adjoint =
+ContinuousLinearMap.completion T.adjoint`.

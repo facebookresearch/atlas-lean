@@ -1,4 +1,4 @@
-# Busby quotient
+# Busby formula on quotient representatives
 
-The Busby invariant is characterized by the quotient of the canonical
-multiplier action.
+`X.busby (X.quotient e) = outerQuotientMap
+(X.multiplierMap e)`.

@@ -1,4 +1,5 @@
-# Essential Spectrum block Diagonal
+# Essential spectrum of an orthogonal sum
 
-The actual essential spectrum of the original orthogonal sum is the union of its two original
- spectra.
+For complex Hilbert spaces `H,K`,
+`(OrthogonalSum.blockDiagonal T S).essentialSpectrum = T.essentialSpectrum ∪
+S.essentialSpectrum`.

@@ -1,4 +1,4 @@
-# Class Star Alg Hom eq zero iff
+# Zero Calkin class and module compactness
 
-An adjointable endomorphism has zero Calkin class exactly when it is
-module-compact. This is module compactness, not Banach compactness.
+For `T : End_B(E)`, `classStarAlgHom T = 0` if
+and only if `T` lies in the module compact submodule `K_B(E)`.

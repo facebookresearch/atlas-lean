@@ -1,10 +1,10 @@
-# Scaling
+# Nonnegative scalar action on positive weights
 
-- [Scale](scale.md)
-- [Scale value](scale-value.md)
-- [Scale one](scale-one.md)
-- [Scale mul](scale-mul.md)
-- [Units smul value](units-smul-value.md)
+- [Scaled extended positive weight](scale.md)
+- [Positive value of a scaled weight](scale-value.md)
+- [Identity scalar fixes a positive weight](scale-one.md)
+- [Composition of weight scalings](scale-mul.md)
+- [Positive scalar unit action on weights](units-smul-value.md)
 - [Affine Homeomorph](affine-homeomorph.md)
 - [Affine Homeomorph apply](affine-homeomorph-apply.md)
 - [Affine Homeomorph symm apply](affine-homeomorph-symm-apply.md)

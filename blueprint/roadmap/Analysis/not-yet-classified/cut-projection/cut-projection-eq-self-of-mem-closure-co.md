@@ -1,3 +1,4 @@
-# Cut Projection eq self of mem closure coordinate Span
+# Identity on the closed selected-coordinate span
 
-The cut acts identically on the closure of its selected coordinate span.
+If `x` lies in the norm closure of
+`coordinateSpan s`, then `cutProjection s x = x`.

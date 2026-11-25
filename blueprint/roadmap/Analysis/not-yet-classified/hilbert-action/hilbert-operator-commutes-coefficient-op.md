@@ -1,3 +1,4 @@
-# Hilbert Operator commutes coefficient Operator
+# Commutation of the Hilbert and coefficient factors
 
-The two actual completed factor operators commute on the original amplification.
+For `T : H →L[ℂ] H` and `a : A`, the
+two amplification operators commute: `D_T L_a = L_a D_T`.

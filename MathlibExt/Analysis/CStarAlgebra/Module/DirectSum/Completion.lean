@@ -15,16 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Completion
 public import MathlibExt.Analysis.CStarAlgebra.Module.DirectSum.Algebraic
 
 /-!
-# Completed direct sums of right C-star modules
+# Completed direct sums of right modules
 
-The Hilbert-module direct sum of an arbitrary family is the stock completion
-of its literal finite-support pre-Hilbert direct sum.  Coordinate inclusions
-are isometries, distinct coordinates are orthogonal, and their complex linear
-span is dense.
+For right pre-Hilbert `B`-modules `E_i`, complete their finite-support sum for the norm `sqrt ‖∑
+i, ⟨x_i,x_i⟩_B‖`. The resulting `Completed B E` is a right Hilbert module. The maps `j_i : E_i →
+Completed B E` are isometric, preserve right coefficients and same-coordinate inner products,
+and have orthogonal ranges for distinct indices. Their complex linear span is dense.
 
-No component completeness is needed: this construction also completes a
-family of pre-Hilbert modules.  For finite complete families, later comparison
-lemmas may identify this carrier with the usual finite product model.
+The coordinate-presentation predicates record these action, inner-product, orthogonality and
+density laws; the completed version additionally requires the target to be complete. Component
+completeness is not needed.
 -/
 
 @[expose] public section
@@ -47,7 +47,11 @@ variable {I : Type uI} {E : I → Type uE}
 variable [∀ i, NormedAddCommGroup (E i)] [∀ i, NormedSpace ℂ (E i)]
 variable [∀ i, SMul Bᵐᵒᵖ (E i)] [∀ i, CStarModule Bᵐᵒᵖ (E i)]
 
-/-- The actual completed Hilbert-module direct sum. -/
+/-- **Completed Hilbert-module direct sum.** Let `B` be a nonunital complex C-star algebra with
+star-compatible order on `Bᵐᵒᵖ`, `I` an arbitrary index type, and `E_i` complex normed right
+pre-Hilbert `B`-modules. `Completed B E` is the completion of their finite-support sum for
+`‖x‖ = sqrt ‖∑ i ∈ support x, ⟨x_i,x_i⟩_B‖`. The fibers may be incomplete and `I` may be
+empty. -/
 abbrev Completed (B : Type uB) [NonUnitalCStarAlgebra B]
     [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
     {I : Type uI} (E : I → Type uE)
@@ -55,12 +59,13 @@ abbrev Completed (B : Type uB) [NonUnitalCStarAlgebra B]
     [∀ i, SMul Bᵐᵒᵖ (E i)] [∀ i, CStarModule Bᵐᵒᵖ (E i)] :=
   UniformSpace.Completion (Algebraic B E)
 
-/-- The completed direct sum inherits the extended coefficient-valued inner
-product and the stock completion norm. -/
+/-- **Inner product on the completed direct sum.** The finite-sum coefficient inner product
+extends continuously to the completion and gives its right Hilbert `B`-module structure. -/
 noncomputable instance completedCStarModule : CStarModule Bᵐᵒᵖ (Completed B E) :=
   CStarModule.completionCStarModule (A := Bᵐᵒᵖ) (E := Algebraic B E)
 
-/-- The canonical inclusion of the algebraic finite-support sum. -/
+/-- **Isometric inclusion of finite-support vectors.** The map from `Algebraic B E` into
+`Completed B E` is the complex-linear isometric completion inclusion. -/
 def algebraicInclusion : Algebraic B E →ₗᵢ[ℂ] Completed B E :=
   UniformSpace.Completion.toComplₗᵢ
 
@@ -70,7 +75,8 @@ theorem algebraicInclusion_apply (x : Algebraic B E) :
   exact congrFun (UniformSpace.Completion.coe_toComplₗᵢ
     (𝕜 := ℂ) (E := Algebraic B E)) x
 
-/-- A coordinate inclusion into the completed direct sum. -/
+/-- **Isometric inclusion of a component into the completion.** `completedSingle i : E i →ₗᵢ[ℂ]
+Completed B E` is the finite-support one-coordinate inclusion followed by completion. -/
 def completedSingle (i : I) : E i →ₗᵢ[ℂ] Completed B E :=
   algebraicInclusion.comp (single (B := B) (E := E) i)
 
@@ -107,8 +113,8 @@ theorem inner_completedSingle_ne {i j : I} (h : i ≠ j) (x : E i) (y : E j) :
     CStarModule.completionCStarModule_inner_coe_coe]
   exact inner_single_ne h x y
 
-/-- The complex linear span of the coordinate inclusions is dense in the
-completed direct sum. -/
+/-- **Density of completed coordinate ranges.** The complex linear span of all vectors
+`completedSingle i x` is dense in `Completed B E`. -/
 theorem dense_span_completedSingle :
     Dense (Submodule.span ℂ
       (Set.range fun p : Σ i, E i ↦
@@ -136,36 +142,42 @@ theorem dense_span_completedSingle :
           exact ih
   exact Dense.mono hcoe UniformSpace.Completion.denseRange_coe
 
-/-- Characteristic coordinate laws of a pre-Hilbert-module direct sum.
-This reusable contract also recognizes incomplete concrete presentations. -/
+/-- **Coordinate presentation of a pre-Hilbert direct sum.** A family of complex-linear continuous
+maps `j_i : E_i → X` has this property when it preserves right coefficients and
+same-coordinate inner products, different coordinate ranges are orthogonal, and the complex
+span of the ranges is dense in `X`. -/
 structure IsPreModel
     {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
     [SMul Bᵐᵒᵖ X] [CStarModule Bᵐᵒᵖ X]
     (singleX : ∀ i, E i →L[ℂ] X) : Prop where
-  /-- Coordinate inclusions preserve the right coefficient action. -/
+  /-- **Right linearity of coordinate maps.** Each inclusion satisfies `j_i (x <• b) = j_i x <•
+  b`. -/
   map_right_smul (i : I) (x : E i) (b : B) :
     singleX i (x <• b) = singleX i x <• b
-  /-- Same-coordinate inclusions preserve the coefficient inner product. -/
+  /-- **Inner product within one coordinate.** The coordinate map satisfies `⟨j_i x,j_i y⟩_B =
+  ⟨x,y⟩_B`. -/
   inner_same (i : I) (x y : E i) :
     rightInner (B := B) (singleX i x) (singleX i y) = rightInner (B := B) x y
-  /-- Distinct coordinates are orthogonal. -/
+  /-- **Orthogonality of different coordinates.** If `i ≠ j`, then `⟨j_i x,j_j y⟩_B = 0` for all
+  component vectors. -/
   inner_ne {i j : I} (h : i ≠ j) (x : E i) (y : E j) :
     rightInner (B := B) (singleX i x) (singleX j y) = 0
-  /-- Coordinate ranges have dense complex linear span. -/
+  /-- **Density of the coordinate span.** The complex linear span of the union of all
+  coordinate-map ranges is dense in the ambient module `X`. -/
   dense_span : Dense (Submodule.span ℂ
     (Set.range fun p : Σ i, E i ↦ singleX p.1 p.2) : Set X)
 
-/-- Characteristic coordinate laws of a completed Hilbert-module direct sum.
-Completeness is part of this contract rather than an accidental property of a
-particular presentation. -/
+/-- **Complete coordinate presentation of a direct sum.** A complete target module `X` with
+coordinate maps satisfying `IsPreModel` is a completed direct-sum presentation. -/
 structure IsModel
     {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
     [SMul Bᵐᵒᵖ X] [CStarModule Bᵐᵒᵖ X] [CompleteSpace X]
     (singleX : ∀ i, E i →L[ℂ] X) : Prop
     extends IsPreModel (B := B) (E := E) singleX where
 
-/-- The literal choice-free completed construction satisfies the complete direct-sum
-model contract. -/
+/-- **Coordinate presentation of the constructed completion.** The maps `completedSingle i`
+satisfy the action, inner-product, orthogonality and dense-span laws of `IsModel` on
+`Completed B E`. -/
 theorem completed_isModel :
     IsModel (B := B) (E := E)
       (fun i ↦ (completedSingle (B := B) (E := E) i).toContinuousLinearMap) := by

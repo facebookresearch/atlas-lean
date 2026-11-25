@@ -1,4 +1,5 @@
-# Reindex Linear Isometry Equiv
+# Isometric reindexing of completed standard modules
 
-The linear isometric equivalence of completed standard modules induced
-by a coordinate equivalence.
+A bijection `e : I ≃ J` gives a
+complex-linear isometric equivalence `Standard B I ≃ Standard B J` extending finite-support
+reindexing.
