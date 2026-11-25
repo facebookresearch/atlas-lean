@@ -20,7 +20,8 @@ times:
 codewords, without the normalisation `2^{-3/2}`, as functions on the basis `F₂⁹` of nine qubits.
 It also proves that the distance is at most three: the weight-three operator `Z₁Z₄Z₇` maps
 `|0̄⟩` to `|1̄⟩`, so it violates the distance condition. That the distance is exactly three,
-hence that the code corrects any error on one qubit, is recorded in `WantedExt`
+hence that the code corrects any error on one qubit, is proved in
+`CSLibExt.Coding.ShorCodeDistance`
 (`Cslib.CodingTheory.ShorCodeWanted.shorCodeword_distance_three`).
 
 ## Source

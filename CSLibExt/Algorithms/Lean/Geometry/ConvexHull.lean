@@ -66,28 +66,51 @@ variable {𝕜 : Type u} [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing �
 
 /-! ## The scan -/
 
-/-- Pop the top of the stack (top first) while it does not make a strict left turn towards `p`:
-the stack `a :: b :: rest` loses `a` when `cross (a - b) (p - b) ≤ 0`. One unit per test. -/
+/-- **Pop step of the monotone-chain scan.** Let $\Bbbk$ be a linearly ordered field, let
+$p \in \Bbbk^2$, and write $u \times v = u_1 v_2 - v_1 u_2$ for the cross product. Given a
+stack of points of $\Bbbk^2$ listed top first, while the stack has at least two points, with
+top $a$ and next point $b$, and $(a - b) \times (p - b) \le 0$ (so $b \to a \to p$ is not a
+strict left turn), remove $a$. The result is the first stack reached that has fewer than two
+points or whose top two points $a, b$ satisfy $(a - b) \times (p - b) > 0$; that stack is
+returned unchanged. Each test of the sign of $(a - b) \times (p - b)$ costs one unit, and
+nothing else is charged. -/
 def popNonLeft (p : 𝕜 × 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ (List (𝕜 × 𝕜))
   | a :: b :: rest => do
       ✓
       if cross (a - b) (p - b) ≤ 0 then popNonLeft p (b :: rest) else pure (a :: b :: rest)
   | st => pure st
 
-/-- Process the points in order, popping non-left turns and pushing each point. The stack holds
-the chain top first. -/
+/-- **Monotone chain scan.** Let $\Bbbk$ be a field with a linear order. Given a stack $S$ of
+points of $\Bbbk^2$, listed top first, and a list of points $p_1, \dots, p_n$ of $\Bbbk^2$, the
+scan processes $p_1, \dots, p_n$ in order: for each point $p = p_i$ it removes the top $a$ of the
+stack as long as the stack has a second element $b$ with
+$(a_x - b_x)(p_y - b_y) - (p_x - b_x)(a_y - b_y) \le 0$, and then pushes $p$. Starting from $S$,
+the result is the final stack, top first. Each evaluation of this inequality costs one unit;
+nothing else is counted. -/
 def chainScan : List (𝕜 × 𝕜) → List (𝕜 × 𝕜) → TimeM ℕ (List (𝕜 × 𝕜))
   | st, [] => pure st
   | st, p :: ps => do
       let st' ← popNonLeft p st
       chainScan (p :: st') ps
 
-/-- The lower chain of points sorted strictly by `(x, y)`, from left to right. -/
+/-- **Lower chain.** Let $\Bbbk$ be a field with a linear order. The lower chain of a list of
+points $p_1, \dots, p_n$ of $\Bbbk^2$ is computed by Andrew's monotone chain scan: start with an
+empty stack and process $p_1, \dots, p_n$ in order; for each point $p = p_i$, remove the top $a$
+of the stack as long as the stack has a second element $b$ with
+$(a_x - b_x)(p_y - b_y) - (p_x - b_x)(a_y - b_y) \le 0$, then push $p$. The lower chain is the
+final stack read from bottom to top. Each evaluation of the inequality costs one unit; nothing
+else is counted.
+
+The scan is meant for points sorted strictly in lexicographic $(x, y)$ order; the chain then runs
+from left to right. -/
 def lowerHull (ps : List (𝕜 × 𝕜)) : TimeM ℕ (List (𝕜 × 𝕜)) := do
   let st ← chainScan [] ps
   pure st.reverse
 
-/-- Sort by `(x, y)`, then build the lower chain. -/
+/-- **Lower chain of unsorted points.** Let $\Bbbk$ be a field with a linear order. For a list
+$P$ of points of $\Bbbk^2$, sort $P$ by merge sort into nondecreasing lexicographic $(x, y)$
+order and return the lower chain of the sorted list. Only the orientation tests of the lower
+chain are counted; sorting costs nothing. -/
 def lowerHullOfPoints (ps : List (𝕜 × 𝕜)) : TimeM ℕ (List (𝕜 × 𝕜)) :=
   lowerHull (ps.mergeSort fun a b => decide (toLex a ≤ toLex b))
 
@@ -509,22 +532,35 @@ private theorem convexStack_getElem : ∀ {st : List (𝕜 × 𝕜)}, ConvexStac
 
 /-! ## Correctness -/
 
-/-- The chain is a sublist of the input: its vertices are input points, in input order. -/
+/-- **The lower chain is a sublist of the input.** Let $\Bbbk$ be a linearly ordered field and
+let $p_1, \dots, p_n$ be points of $\Bbbk^2$ that are strictly increasing in lexicographic
+$(x, y)$ order. Then the lower chain of $p_1, \dots, p_n$ is a sublist of $p_1, \dots, p_n$: it
+is $p_{i_1}, \dots, p_{i_m}$ for some indices $i_1 < \dots < i_m$. -/
 theorem lowerHull_sublist (ps : List (𝕜 × 𝕜)) (hs : ps.Pairwise fun a b => toLex a < toLex b) :
     (lowerHull ps).ret <+ ps :=
   (scanInv_lowerHull ps hs).sublist
 
-/-- The chain starts at the first input point. -/
+/-- **The lower chain starts at the first point.** Let $\Bbbk$ be a linearly ordered field and
+let $p_1, \dots, p_n$ be points of $\Bbbk^2$ that are strictly increasing in lexicographic
+$(x, y)$ order. If $n \ge 1$, the lower chain of $p_1, \dots, p_n$ starts at $p_1$; if $n = 0$,
+the lower chain is empty. -/
 theorem lowerHull_head? (ps : List (𝕜 × 𝕜)) (hs : ps.Pairwise fun a b => toLex a < toLex b) :
     (lowerHull ps).ret.head? = ps.head? := by
   rw [lowerHull_ret, List.head?_reverse]; exact (scanInv_lowerHull ps hs).bottom
 
-/-- The chain ends at the last input point. -/
+/-- **The lower chain ends at the last point.** Let $\Bbbk$ be a linearly ordered field and let
+$p_1, \dots, p_n$ be points of $\Bbbk^2$ that are strictly increasing in lexicographic
+$(x, y)$ order. If $n \ge 1$, the lower chain of $p_1, \dots, p_n$ ends at $p_n$; if $n = 0$,
+the lower chain is empty. -/
 theorem lowerHull_getLast? (ps : List (𝕜 × 𝕜)) (hs : ps.Pairwise fun a b => toLex a < toLex b) :
     (lowerHull ps).ret.getLast? = ps.getLast? := by
   rw [lowerHull_ret, List.getLast?_reverse]; exact (scanInv_lowerHull ps hs).top
 
-/-- The chain turns strictly left at every inner vertex. -/
+/-- **The lower chain turns strictly left.** Let $\Bbbk$ be a linearly ordered field and let
+$p_1, \dots, p_n$ be points of $\Bbbk^2$ that are strictly increasing in lexicographic $(x, y)$
+order, with lower chain $c_0, \dots, c_{m-1}$. Writing
+$\operatorname{cross}(u, v) = u_x v_y - v_x u_y$, for every $i$ with $i + 2 < m$ we have
+$\operatorname{cross}(c_{i+1} - c_i, c_{i+2} - c_i) > 0$. -/
 theorem lowerHull_turn_left (ps : List (𝕜 × 𝕜)) (hs : ps.Pairwise fun a b => toLex a < toLex b)
     (i : ℕ) (h : i + 2 < (lowerHull ps).ret.length) :
     0 < cross ((lowerHull ps).ret[i + 1] - (lowerHull ps).ret[i])
@@ -543,8 +579,12 @@ theorem lowerHull_turn_left (ps : List (𝕜 × 𝕜)) (hs : ps.Pairwise fun a b
   rw [e0, e1, e2]
   exact key
 
-/-- Every input point is on or left of every directed edge of the chain: the chain is the lower
-boundary of the hull. -/
+/-- **Every input point lies on or left of each lower-chain edge.** Let $\Bbbk$ be a linearly
+ordered field and let $p_1, \dots, p_n$ be points of $\Bbbk^2$ that are strictly increasing in
+lexicographic $(x, y)$ order, and write $\operatorname{cross}(u, v) = u_x v_y - v_x u_y$. For
+every $s \in \{p_1, \dots, p_n\}$ and every pair of consecutive vertices $a, b$ of the lower chain
+of $p_1, \dots, p_n$ we have $\operatorname{cross}(b - a, s - a) \ge 0$: the point $s$ lies on or
+to the left of the directed edge from $a$ to $b$. -/
 theorem lowerHull_left_of_edges (ps : List (𝕜 × 𝕜)) (hs : ps.Pairwise fun a b => toLex a < toLex b)
     {s : 𝕜 × 𝕜} (hsps : s ∈ ps) :
     (lowerHull ps).ret.IsChain fun a b => 0 ≤ cross (b - a) (s - a) := by
@@ -580,7 +620,9 @@ private theorem chainScan_time : ∀ (st ps : List (𝕜 × 𝕜)),
       omega
 
 omit [IsStrictOrderedRing 𝕜] in
-/-- A scan of `n` points makes at most `2 n` orientation tests. -/
+/-- **The lower-chain scan makes linearly many tests.** Let $\Bbbk$ be a field with a linear
+order. For every list of $n$ points of $\Bbbk^2$, computing its lower chain makes at most $2n$
+orientation tests (cross-product evaluations). -/
 theorem lowerHull_time_le (ps : List (𝕜 × 𝕜)) : (lowerHull ps).time ≤ 2 * ps.length := by
   have := chainScan_time [] ps
   simp only [lowerHull, time_bind, time_pure, List.length_nil] at this ⊢
@@ -598,9 +640,15 @@ private theorem lexSorted_mergeSort {ps : List (𝕜 × 𝕜)} (hnd : ps.Nodup) 
   exact (hle.and hne).imp fun ⟨h1, h2⟩ =>
     lt_of_le_of_ne (by simpa using h1) (fun h => h2 (toLex.injective h))
 
-/-- For distinct points in any order: the chain's vertices are input points, it starts at the
-least and ends at the greatest point in `(x, y)` order, turns strictly left, and has every point
-on or left of each edge. -/
+/-- **Correctness of the lower chain for unsorted input.** Let $\Bbbk$ be a linearly ordered
+field, let $P$ be a list of pairwise distinct points of $\Bbbk^2$ in any order, write $\preceq$
+for the lexicographic $(x, y)$ order on $\Bbbk^2$, and let $C = c_0, \dots, c_{m-1}$ be the
+lower chain of the list obtained by sorting $P$ into $\preceq$-increasing order. Write
+$\operatorname{cross}(u, v) = u_x v_y - v_x u_y$. Then every $c_j$ is a point of $P$; if $P$ is
+nonempty then $m \ge 1$; if $m \ge 1$ then $c_0 \preceq s \preceq c_{m-1}$ for every $s \in P$;
+for every $i$ with $i + 2 < m$ we have $\operatorname{cross}(c_{i+1} - c_i, c_{i+2} - c_i) > 0$;
+and for every $s \in P$ and every pair of consecutive vertices $a, b$ of $C$ we have
+$\operatorname{cross}(b - a, s - a) \ge 0$. -/
 theorem lowerHullOfPoints_spec (ps : List (𝕜 × 𝕜)) (hnd : ps.Nodup) :
     let C := (lowerHullOfPoints ps).ret
     (∀ c ∈ C, c ∈ ps) ∧ (ps ≠ [] → C ≠ []) ∧

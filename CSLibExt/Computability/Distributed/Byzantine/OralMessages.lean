@@ -72,8 +72,9 @@ private theorem count_add_count_le {s : Multiset V} {x y : V} (hxy : x ≠ y) :
     · exact absurd (hx.trans hy.symm) hxy
     all_goals omega
 
-/-- The majority of a multiset of values: the value that fills more than half of it, and
-`default` (retreat) if there is none. -/
+/-- **Majority of a multiset.** The majority of a finite multiset $s$ of values is the value $x$
+such that more than half of the elements of $s$ are equal to $x$ (counted with multiplicity),
+if there is one (there is at most one), and a fixed default value (retreat) otherwise. -/
 def majority (s : Multiset V) : V :=
   haveI := Multiset.decidableExistsMultiset (m := s) (p := fun x ↦ Multiset.card s < 2 * s.count x)
   if h : ∃ x ∈ s, Multiset.card s < 2 * s.count x then
@@ -85,7 +86,9 @@ def majority (s : Multiset V) : V :=
       omega)
   else default
 
-/-- A value that fills more than half of a multiset is its majority. -/
+/-- **A value filling more than half of a multiset is its majority.** If more than half of the
+elements of a multiset $s$ of values are equal to $x$ (counted with multiplicity), then the
+majority of $s$ is $x$. -/
 theorem majority_eq_of_lt_count {s : Multiset V} {x : V} (h : Multiset.card s < 2 * s.count x) :
     majority s = x := by
   have hx : x ∈ s := Multiset.count_pos.mp (by omega)
@@ -97,8 +100,9 @@ theorem majority_eq_of_lt_count {s : Multiset V} {x : V} (h : Multiset.card s < 
   have := count_add_count_le (s := s) hne
   omega
 
-/-- Without a value filling more than half of the multiset, the majority is `default`
-(retreat). -/
+/-- **Majority falls back to the default value.** If, for every value $x$, at most half of the
+elements of a multiset $s$ of values are equal to $x$ (counted with multiplicity), then the
+majority of $s$ is the default value (retreat). -/
 theorem majority_eq_default {s : Multiset V} (h : ∀ x, 2 * s.count x ≤ Multiset.card s) :
     majority s = default := by
   unfold majority
@@ -110,16 +114,24 @@ theorem majority_eq_default {s : Multiset V} (h : ∀ x, 2 * s.count x ≤ Multi
 
 variable (loyal : G → Prop) [DecidablePred loyal] (adv : List G → G → V)
 
-/-- The value lieutenant `p` receives from commander `c`, who holds the value `v` and has the
-superiors `path`: a loyal commander sends `v`, a traitor sends `adv (path ++ [c]) p`. -/
+/-- **Value received from a commander.** Fix a predicate saying which generals are loyal and an
+adversary $\mathrm{adv}$ that assigns a value to each pair of a finite sequence of generals and a
+recipient. The value that lieutenant $p$ receives from commander $c$, who holds the value $v$ and
+whose superiors form the sequence $\sigma$, is $v$ if $c$ is loyal, and is
+$\mathrm{adv}(\sigma c, p)$ if $c$ is a traitor, where $\sigma c$ is $\sigma$ followed by $c$. -/
 def received (c : G) (v : V) (path : List G) (p : G) : V :=
   if loyal c then v else adv (path ++ [c]) p
 
-/-- The oral messages algorithm `OM(m)`: the value lieutenant `p` decides when commander `c`,
-with superiors `path`, holds the value `v` and sends it to the lieutenants `S`. In `OM(0)`, `p`
-takes the value it receives. In `OM(m + 1)`, every lieutenant `q` relays the value it received
-to the others by `OM(m)`, as the commander of the lieutenants `S.erase q`, and `p` takes the
-majority of the value it received itself and the values it decided for the other lieutenants. -/
+/-- **The oral messages algorithm.** Fix which generals are loyal and a strategy for the traitors,
+which assigns a value to each list of generals and each recipient. Let $c$ be a commander holding
+the value $v$, let $\sigma$ be the list of the commanders above $c$, and let $S$ be a finite set
+of lieutenants. For a general $q$, let $r_q$ be the value $q$ receives from $c$: $v$ if $c$ is
+loyal, and otherwise the value the strategy assigns to the list $\sigma c$ ($\sigma$ followed by
+$c$) and the recipient $q$. The value that a general $p$ decides under $\mathrm{OM}(m)$ is defined
+by recursion on $m$. Under $\mathrm{OM}(0)$, $p$ decides $r_p$. Under $\mathrm{OM}(m + 1)$, $p$
+decides the majority of the multiset of values $w_q$ for $q \in S$, where $w_p = r_p$ and, for
+$q \ne p$, $w_q$ is the value $p$ decides under $\mathrm{OM}(m)$ when $q$, holding $r_q$ with the
+superiors $\sigma c$, sends it to the lieutenants $S \setminus \{q\}$. -/
 def om : ℕ → G → Finset G → V → List G → G → V
   | 0, c, _, v, path, p => received loyal adv c v path p
   | m + 1, c, S, v, path, p => majority (S.val.map fun q ↦
@@ -129,22 +141,31 @@ def om : ℕ → G → Finset G → V → List G → G → V
 variable {loyal adv}
 
 omit [DecidableEq G] [DecidableEq V] [Inhabited V] in
-/-- A loyal commander sends its value. -/
+/-- **A loyal commander sends its value.** If the commander $c$ is loyal, then for every value $v$,
+every list of superiors of $c$ and every general $p$, the value $p$ receives from $c$ is $v$. -/
 @[simp]
 theorem received_of_loyal {c : G} (hc : loyal c) (v : V) (path : List G) (p : G) :
     received loyal adv c v path p = v := by
   simp [received, hc]
 
 omit [DecidableEq G] [DecidableEq V] [Inhabited V] in
-/-- A traitorous commander sends what the adversary chooses for its path and the recipient. -/
+/-- **A traitorous commander sends the adversary's value.** Fix which generals are loyal and an
+adversary $\mathrm{adv}$ that assigns a value to each pair of a list of generals and a recipient.
+If the commander $c$ is a traitor, then for every value $v$, every list $\sigma$ of superiors of
+$c$ and every general $p$, the value $p$ receives from $c$ is $\mathrm{adv}(\sigma c, p)$, where
+$\sigma c$ is $\sigma$ followed by $c$. -/
 @[simp]
 theorem received_of_not_loyal {c : G} (hc : ¬ loyal c) (v : V) (path : List G) (p : G) :
     received loyal adv c v path p = adv (path ++ [c]) p := by
   simp [received, hc]
 
-/-- **Lemma 1** (Lamport–Shostak–Pease). If the commander `c` is loyal, there are more than
-`2 k + m` generals (the lieutenants `S` and the commander) and at most `k` of them are traitors,
-every loyal lieutenant decides the commander's value `v` under `OM(m)`. -/
+/-- **A loyal commander is obeyed under oral messages.** Let $m$ and $k$ be natural numbers, and
+let a loyal commander $c$ run $\mathrm{OM}(m)$ with a value $v$ and any list of superiors, sending
+to a finite set $S$ of lieutenants. If $2k + m < |S| + 1$ (more than $2k + m$ generals when
+$c \notin S$) and at most $k$ of the generals in $S \cup \{c\}$ are traitors, then, whatever the
+traitors send, every loyal lieutenant $p \in S$ decides $v$.
+
+This is Lemma 1 of Lamport–Shostak–Pease. -/
 theorem om_eq_of_loyal {m k : ℕ} {c : G} {S : Finset G} (v : V) (path : List G)
     (hc : loyal c) (hS : 2 * k + m < S.card + 1)
     (hk : ((insert c S).filter (¬ loyal ·)).card ≤ k) {p : G} (hp : p ∈ S) (hpl : loyal p) :
@@ -172,17 +193,26 @@ theorem om_eq_of_loyal {m k : ℕ} {c : G} {S : Finset G} (v : V) (path : List G
     · rw [Finset.insert_erase hq.1]
       exact htr
 
-/-- **Validity** (IC2 of Theorem 1, Lamport–Shostak–Pease). With more than `3 m` generals and at
-most `m` traitors, if the commander is loyal, every loyal lieutenant decides its value under
-`OM(m)`. -/
+/-- **Validity under oral messages (IC2).** Let a loyal commander $c$ run $\mathrm{OM}(m)$ with a
+value $v$ and any list of superiors, sending to a finite set $S$ of lieutenants. If
+$3m < |S| + 1$ (more than $3m$ generals when $c \notin S$) and at most $m$ of the generals in
+$S \cup \{c\}$ are traitors, then, whatever the traitors send, every loyal lieutenant $p \in S$
+decides $v$.
+
+This is condition IC2 of Theorem 1 of Lamport–Shostak–Pease. -/
 theorem om_valid {m : ℕ} {c : G} {S : Finset G} (v : V) (path : List G)
     (hS : 3 * m < S.card + 1) (hm : ((insert c S).filter (¬ loyal ·)).card ≤ m)
     (hc : loyal c) {p : G} (hp : p ∈ S) (hpl : loyal p) :
     om loyal adv m c S v path p = v :=
   om_eq_of_loyal v path hc (by omega) hm hp hpl
 
-/-- **Agreement** (IC1 of Theorem 1, Lamport–Shostak–Pease). With more than `3 m` generals and
-at most `m` traitors, any two loyal lieutenants decide the same value under `OM(m)`. -/
+/-- **Agreement under oral messages (IC1).** Let a commander $c$ run $\mathrm{OM}(m)$ with a value
+$v$ and any list of superiors, sending to a finite set $S$ of lieutenants with $c \notin S$. If
+there are more than $3m$ generals, that is $3m < |S| + 1$, and at most $m$ of the generals in
+$S \cup \{c\}$ are traitors, then, whatever the traitors send, any two loyal lieutenants
+$p, p' \in S$ decide the same value.
+
+This is condition IC1 of Theorem 1 of Lamport–Shostak–Pease. -/
 theorem om_agree {m : ℕ} {c : G} {S : Finset G} (v : V) (path : List G) (hcS : c ∉ S)
     (hS : 3 * m < S.card + 1) (hm : ((insert c S).filter (¬ loyal ·)).card ≤ m)
     {p p' : G} (hp : p ∈ S) (hp' : p' ∈ S) (hpl : loyal p) (hpl' : loyal p') :
@@ -232,10 +262,14 @@ theorem om_agree {m : ℕ} {c : G} {S : Finset G} (v : V) (path : List G) (hcS :
       have := hcard q hq
       omega
 
-/-- **Theorem 1** (Lamport–Shostak–Pease). With more than `3 m` generals and at most `m`
-traitors, `OM(m)` satisfies the interactive consistency conditions: any two loyal lieutenants
-decide the same value (IC1), and if the commander is loyal, every loyal lieutenant decides the
-value it sent (IC2). -/
+/-- **Oral messages achieve interactive consistency.** Let a commander $c$ run $\mathrm{OM}(m)$
+with a value $v$ and any list of superiors, sending to a finite set $S$ of lieutenants with
+$c \notin S$. If there are more than $3m$ generals, that is $3m < |S| + 1$, and at most $m$ of
+the generals in $S \cup \{c\}$ are traitors, then, whatever the traitors send, any two loyal
+lieutenants in $S$ decide the same value (IC1), and if $c$ is loyal, every loyal lieutenant in
+$S$ decides $v$ (IC2).
+
+This is Theorem 1 of Lamport–Shostak–Pease. -/
 theorem om_interactive_consistency {m : ℕ} {c : G} {S : Finset G} (v : V) (path : List G)
     (hcS : c ∉ S) (hS : 3 * m < S.card + 1)
     (hm : ((insert c S).filter (¬ loyal ·)).card ≤ m) :
@@ -245,11 +279,13 @@ theorem om_interactive_consistency {m : ℕ} {c : G} {S : Finset G} (v : V) (pat
   ⟨fun _ hp _ hp' hpl hpl' ↦ om_agree v path hcS hS hm hp hp' hpl hpl',
     fun hc _ hp hpl ↦ om_valid v path hS hm hc hp hpl⟩
 
-/-- **The Byzantine generals problem is solved by `OM(m)`** (Theorem 1 of Lamport–Shostak–Pease
-for all generals). If there are more than `3 m` generals of a finite type, at most `m` of them
-traitors, and commander `c` runs `OM(m)` with all the other generals as lieutenants, then any two
-loyal lieutenants decide the same value, and if `c` is loyal, every loyal lieutenant decides
-`v`. -/
+/-- **The oral messages algorithm solves the Byzantine generals problem.** Let $G$ be a finite set
+of more than $3m$ generals, at most $m$ of whom are traitors, and let the commander $c \in G$ run
+$\mathrm{OM}(m)$ with the value $v$, with no superiors and with all the other generals as
+lieutenants. Then, whatever the traitors send, any two loyal lieutenants decide the same value,
+and if $c$ is loyal, every loyal lieutenant decides $v$.
+
+This is Theorem 1 of Lamport–Shostak–Pease, applied to all the generals. -/
 theorem byzantine_generals [Fintype G] {m : ℕ} (c : G) (v : V) (hG : 3 * m < Fintype.card G)
     (hm : (Finset.univ.filter (¬ loyal ·)).card ≤ m) :
     (∀ p p', p ≠ c → p' ≠ c → loyal p → loyal p' →

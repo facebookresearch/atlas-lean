@@ -39,11 +39,25 @@ universe u
 
 variable {Base : Type u}
 
-/-- A store maps each location `l < μ.length` to the term `μ[l]`. -/
+/-- **Store.** A store $\mu$ is a finite list of terms; each location $l$ less than the length of
+$\mu$ holds the term $\mu[l]$, the entry of $\mu$ at index $l$. -/
 abbrev Store (Base : Type u) := List (Term Base)
 
-/-- One step of call-by-value evaluation, `t | μ → t' | μ'`: TAPL
-Figure 13-1 with fresh locations allocated at `μ.length`. -/
+/-- **One-step evaluation with references.** One step of call-by-value evaluation
+$t \mid \mu \to t' \mid \mu'$, from a term $t$ with a store $\mu$ to a term $t'$ with a store
+$\mu'$, is the least relation closed under the following rules, in which $v$, $v_1$ and $v_2$ are
+values. If $t \mid \mu \to t' \mid \mu'$, then $t\,t_2 \mid \mu \to t'\,t_2 \mid \mu'$,
+$v_1\,t \mid \mu \to v_1\,t' \mid \mu'$,
+$\mathsf{ref}\,t \mid \mu \to \mathsf{ref}\,t' \mid \mu'$, $!t \mid \mu \to {!t'} \mid \mu'$,
+$t := t_2 \mid \mu \to t' := t_2 \mid \mu'$ and $v_1 := t \mid \mu \to v_1 := t' \mid \mu'$. The
+application $(\lambda{:}T.\,s)\,v_2$ with store $\mu$ steps, with $\mu$ unchanged, to the result of
+substituting $v_2$ for variable $0$ in $s$. The allocation $\mathsf{ref}\,v$ with store $\mu$ steps
+to the location $n$, where $n$ is the length of $\mu$, and the store becomes $\mu$ with $v$
+appended at the end. If $\mu$ has an entry $u$ at location $l$, then $!l \mid \mu \to u \mid \mu$.
+If $l$ is less than the length of $\mu$, then $l := v \mid \mu \to \mathsf{unit} \mid \mu'$, where
+$\mu'$ is $\mu$ with its entry at $l$ replaced by $v$.
+
+Source: TAPL Figure 13-1, with each fresh location allocated at the end of the store. -/
 inductive Step : Term Base → Store Base → Term Base → Store Base → Prop
   /-- E-App1. -/
   | appLeft {t₁ t₁' t₂ : Term Base} {μ μ' : Store Base}
@@ -78,8 +92,9 @@ inductive Step : Term Base → Store Base → Term Base → Store Base → Prop
   | assignLoc {l : Nat} {v : Term Base} {μ : Store Base}
       (hv : v.Value) (hl : l < μ.length) : Step (.assign (.loc l) v) μ .unit (μ.set l v)
 
-/-- Evaluation in any number of steps: the reflexive-transitive closure of
-`Step` on configurations `(t, μ)`. -/
+/-- **Multi-step evaluation with references.** The relation $t \mid \mu \to^* t' \mid \mu'$ holds
+when the configuration $(t, \mu)$ reaches $(t', \mu')$ in zero or more evaluation steps; that is,
+it is the reflexive-transitive closure of one-step evaluation on pairs of a term and a store. -/
 def Steps (t : Term Base) (μ : Store Base) (t' : Term Base) (μ' : Store Base) : Prop :=
   Relation.ReflTransGen (fun (c c' : Term Base × Store Base) => Step c.1 c.2 c'.1 c'.2)
     (t, μ) (t', μ')
@@ -107,15 +122,19 @@ end Steps
 
 namespace Step
 
-/-- Values are normal forms. -/
+/-- **Values do not step.** If $v$ is a value, then there are no stores $\mu$, $\mu'$ and term $t'$
+such that the configuration $(v, \mu)$ steps to $(t', \mu')$: values are normal forms. -/
 theorem not_of_value {v t' : Term Base} {μ μ' : Store Base} (hv : v.Value) :
     ¬ Step v μ t' μ' := by
   intro h
   cases hv <;> cases h
 
-/-- Evaluation is deterministic: the next term and the next store are both
-unique. This relies on allocation at `μ.length`; with TAPL's arbitrary choice
-of fresh location only the result up to renaming of locations is unique. -/
+/-- **Determinism of evaluation with references.** If a configuration $(t, \mu)$ steps to
+$(t_1, \mu_1)$ and also to $(t_2, \mu_2)$, then $t_1 = t_2$ and $\mu_1 = \mu_2$.
+
+This relies on allocating each fresh location at the end of the store, at the index equal to the
+length of $\mu$; with TAPL's arbitrary choice of fresh location only the result up to renaming of
+locations is unique. -/
 theorem deterministic {t t₁ t₂ : Term Base} {μ μ₁ μ₂ : Store Base}
     (h₁ : Step t μ t₁ μ₁) (h₂ : Step t μ t₂ μ₂) : t₁ = t₂ ∧ μ₁ = μ₂ := by
   induction h₁ generalizing t₂ μ₂ with

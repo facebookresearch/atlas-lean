@@ -6,4 +6,5 @@ Analytic behaviour of complex polynomials: location of zeros (Eneström–Kakeya
 - [Sendov's conjecture](sendov-s-conjecture/README.md)
 - [Complementary polynomial on the unit circle](exists-complementary-polynomial-on-unit.md)
 - [Eneström–Kakeya theorem](enestrom-kakeya-zero-localization.md)
+- [Eneström–Kakeya bound for nonnegative nondecreasing coefficients](norm-le-one-of-aeval-eq-zero-of-monotone.md)
 - [Jentzsch's theorem](jentzsch-zeros-of-power-series-sections.md)

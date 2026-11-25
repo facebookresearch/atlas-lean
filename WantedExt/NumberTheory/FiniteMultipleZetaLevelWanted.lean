@@ -41,8 +41,15 @@ namespace MetaMathlibExt
 open Filter
 
 open scoped Classical in
-/-- The colored finite multiple harmonic sum `ζ^α_{p,N}(k) ∈ ℤ/pℤ`: the sum of
-`∏ᵢ mᵢ^{-kᵢ}` over `0 < m₁ < ⋯ < m_r < p` with `mᵢ ≡ αᵢ (mod N)`.
+/-- **Colored finite multiple harmonic sums.** Let $p$ and $N$ be natural numbers, let
+$k = (k_1, \dots, k_r)$ be a finite sequence of natural numbers and let
+$\alpha = (\alpha_1, \dots, \alpha_r) \in (\mathbb{Z}/N\mathbb{Z})^r$. The colored finite multiple
+harmonic sum $\zeta^{\alpha}_{p,N}(k) \in \mathbb{Z}/p\mathbb{Z}$ is the sum of
+$m_1^{-k_1} \cdots m_r^{-k_r}$ over all integers $0 < m_1 < \dots < m_r < p$ with
+$m_i \equiv \alpha_i \pmod N$ for every $i$.
+
+Here $m^{-1}$ is the inverse of $m$ in $\mathbb{Z}/p\mathbb{Z}$; when $p$ is prime every
+$0 < m < p$ is invertible, and for other $p$ non-units get a conventional value.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Section 2.2 (definition of `ζ^α_{p,N}(k)`). -/
@@ -53,7 +60,9 @@ noncomputable def coloredFiniteMZV (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α
         ∀ i, 0 < (m i : ℕ) ∧ ((m i : ℕ) : ZMod N) = α i),
     ∏ i, (((m i : ℕ) : ZMod p)⁻¹) ^ k i
 
-/-- The empty index has value `1`.
+/-- **Colored finite multiple harmonic sum of the empty index.** For all natural numbers $p$
+and $N$, the colored finite multiple harmonic sum $\zeta^{\varnothing}_{p,N}(\varnothing)$ of the
+empty index, with the empty tuple of colors, equals $1$ in $\mathbb{Z}/p\mathbb{Z}$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Section 2.2 (`ζ^∅_{p,N}(∅) = 1`). -/
@@ -64,10 +73,18 @@ theorem coloredFiniteMZV_zero (p N : ℕ) (k : Fin 0 → ℕ) (α : Fin 0 → ZM
     ⟨fun a => Fin.elim0 a, fun i => Fin.elim0 i⟩]
   simp
 
-/-- **Lemma 1.** For an index `k` of weight `w`, `N ≥ 1` and `0 ≤ j < N`,
-`∑_{jp/N < m₁ < ⋯ < m_r < (j+1)p/N} 1/(m₁^{k₁} ⋯ m_r^{k_r}) ≡ N^w ζ^{[j]}_{𝒜,N}(k)` in `𝒜`.
+/-- **Sums over a subinterval of $(0, p)$ as colored finite multiple zeta values.** Let
+$N \ge 1$, $0 \le j < N$, and let $k = (k_1, \dots, k_r)$ be a tuple of natural numbers of weight
+$w = k_1 + \dots + k_r$. For a prime $p$ and $\alpha \in (\mathbb{Z}/N\mathbb{Z})^r$ let
+$\zeta^{\alpha}_{p,N}(k) \in \mathbb{Z}/p\mathbb{Z}$ be the colored finite multiple harmonic sum,
+the sum of $1/(m_1^{k_1} \cdots m_r^{k_r})$ over the integers $0 < m_1 < \dots < m_r < p$ with
+$m_i \equiv \alpha_i \pmod{N}$ for all $i$. Then for all but finitely many primes $p$, with
+$\alpha = (-jp, \dots, -jp) \in (\mathbb{Z}/N\mathbb{Z})^r$,
+$\sum 1/(m_1^{k_1} \cdots m_r^{k_r}) = N^w \zeta^{\alpha}_{p,N}(k)$ in $\mathbb{Z}/p\mathbb{Z}$,
+where the sum is over the integers $m_1, \dots, m_r$ with
+$jp/N < m_1 < \dots < m_r < (j+1)p/N$.
 
-The entries of `k` may be `0`; the paper's indices have positive entries.
+The entries of $k$ may be $0$; the paper's indices have positive entries.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Lemma 1 (`integers-2024-A22-lem-1`). -/
@@ -80,10 +97,13 @@ public theorem_wanted sum_Ioo_eq_pow_mul_coloredFiniteMZV {N j r : ℕ} (hN : 0 
         ∏ i, (((m i : ℕ) : ZMod p)⁻¹) ^ k i) =
         (N : ZMod p) ^ (∑ i, k i) * coloredFiniteMZV p N k fun _ => -(j : ZMod N) * p
 
-/-- **Proposition 3.** For odd `k ≥ 3`, in `𝒜`:
-`2 ζ^{[2]}_{𝒜,12}(k) = (2^{-k} - 3^{-k} - 4^{-k} + 12^{-k}) Z(k)` and
-`2 ζ^{[3]}_{𝒜,12}(k) = (3^{-k} - 4^{-k} - 6^{-k} + 12^{-k}) Z(k)`, where
-`Z(k) = (B_{p-k} / k mod p)_p`.
+/-- **Level-$12$ colored finite zeta values and Bernoulli numbers.** Let $k \ge 3$ be odd. For a
+prime $p > k$ write $Z_p(k) = B_{p-k}/k \in \mathbb{Z}/p\mathbb{Z}$, where $B_n$ is the $n$-th
+Bernoulli number, and for $\alpha \in \mathbb{Z}/12\mathbb{Z}$ let
+$\zeta^{\alpha}_{p,12}(k) \in \mathbb{Z}/p\mathbb{Z}$ be the sum of $m^{-k}$ over $0 < m < p$ with
+$m \equiv \alpha \pmod{12}$. Then for all but finitely many primes $p$, in $\mathbb{Z}/p\mathbb{Z}$,
+$2\zeta^{-2p}_{p,12}(k) = (2^{-k} - 3^{-k} - 4^{-k} + 12^{-k}) Z_p(k)$ and
+$2\zeta^{-3p}_{p,12}(k) = (3^{-k} - 4^{-k} - 6^{-k} + 12^{-k}) Z_p(k)$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Proposition 3 (`integers-2024-A22-prop-3`). -/
@@ -98,11 +118,10 @@ public theorem_wanted two_mul_coloredFiniteMZV_twelve {k : ℕ} (hk : Odd k) (hk
           (((3 : ZMod p) ^ k)⁻¹ - ((4 : ZMod p) ^ k)⁻¹ - ((6 : ZMod p) ^ k)⁻¹ +
             ((12 : ZMod p) ^ k)⁻¹) * Z
 
-/-- **Theorem 1** (Kummer). If `p` is a regular prime (odd, and `p` does not divide the
-class number of the `p`-th cyclotomic field), then Fermat's last theorem holds for the
-exponent `p`.
-
-The cyclotomic field is any `K` with `IsCyclotomicExtension {p} ℚ K`.
+/-- **Kummer's theorem for regular primes.** Let $p$ be an odd prime and let $K$ be a $p$-th
+cyclotomic field over $\mathbb{Q}$ (a number field generated over $\mathbb{Q}$ by a primitive
+$p$-th root of unity). If $p$ does not divide the class number of $K$, then Fermat's Last Theorem
+holds for the exponent $p$: there are no positive integers $a, b, c$ with $a^p + b^p = c^p$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Theorem 1 (`integers-2024-A22-thm-1`). -/
@@ -110,9 +129,9 @@ public theorem_wanted fermatLastTheoremFor_of_regular {p : ℕ} (hp : p.Prime) (
     (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
     (hreg : ¬ p ∣ NumberField.classNumber K) : FermatLastTheoremFor p
 
-/-- **Theorem 2** (Wieferich). If `p` is a non-Wieferich prime (`p² ∤ 2^{p-1} - 1`), then
-the first case of Fermat's last theorem holds for the exponent `p`: there are no integers
-`x, y, z` with `p ∤ x y z` and `x^p + y^p = z^p`.
+/-- **Wieferich's criterion for the first case of Fermat's Last Theorem.** Let $p$ be a prime
+that is not a Wieferich prime, that is, $p^2 \nmid 2^{p-1} - 1$. Then there are no integers
+$x, y, z$ with $p \nmid xyz$ and $x^p + y^p = z^p$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Theorem 2 (`integers-2024-A22-thm-2`). -/
@@ -120,12 +139,11 @@ public theorem_wanted fermat_first_case_of_not_isWieferichPrime {p : ℕ} (hp : 
     (hW : ¬ p.IsWieferichPrime) (x y z : ℤ) (hxyz : ¬ (p : ℤ) ∣ x * y * z) :
     x ^ p + y ^ p ≠ z ^ p
 
-/-- **Theorem 3** (Skula, Dobson, Ichimura). For an odd prime `p` and a positive integer
-`N` with `p ∤ N`, `(N + 1) q_p(2) ≡ -∑_{0 ≤ j < N/2} s_p(2j, 2N) (mod p)`, where
-`q_p(2) = (2^{p-1} - 1)/p` and `s_p(i, M) = ∑_{ip/M < m < (i+1)p/M} 1/m`.
-
-The record's trailing discussion (the logarithm `log_𝒜` and equation (3)) is not part of
-the statement.
+/-- **Skula–Dobson–Ichimura congruence for the Fermat quotient of $2$.** Let $p$ be an odd prime
+and $N$ a positive integer with $p \nmid N$. Write $q_p(2) = (2^{p-1} - 1)/p$ for the Fermat
+quotient of $2$, and for integers $i \ge 0$ and $M \ge 1$ let $s_p(i, M) \in \mathbb{Z}/p\mathbb{Z}$
+be the sum of $m^{-1}$ over the integers $m$ with $0 < m < p$ and $ip/M < m < (i+1)p/M$. Then
+$(N + 1)\, q_p(2) \equiv -\sum_{0 \le j < N/2} s_p(2j, 2N) \pmod{p}$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Theorem 3 (`integers-2024-A22-thm-3`). -/
@@ -137,12 +155,13 @@ public theorem_wanted fermatQuotient_two_mul_eq_neg_sum {p N : ℕ} (hp : p.Prim
             (fun m => 2 * j * p < 2 * N * m ∧ 2 * N * m < (2 * j + 1) * p),
           ((m : ZMod p)⁻¹)
 
-/-- **Proposition 5.** For every prime `p ≥ 11` there is an odd `k ≥ 3` with
-`p ∤ B_{p-k}` and `k ≤ (p - 3)/2` if `p ≡ 1 (mod 4)`, `k ≤ (p - 5)/2` if `p ≡ 3 (mod 4)`;
-equivalently `g_p` (the least such odd `k`, Definition 5.5 of the paper) is at most that
-bound. `p ∤ B_{p-k}` means `p` does not divide the numerator.
+/-- **A small odd $k$ with $p \nmid B_{p-k}$.** For every prime $p \ge 11$ there is an odd
+integer $k \ge 3$ such that $p$ does not divide the numerator of the Bernoulli number $B_{p-k}$
+and $k \le (p-3)/2$ if $p \equiv 1 \pmod 4$, while $k \le (p-5)/2$ if
+$p \equiv 3 \pmod 4$.
 
-The record's `ðp` is the paper's `g_p`.
+Equivalently, the least such odd $k$ is at most this bound. Since $p - k$ is even and at least
+$2$, the convention for $B_1$ does not matter.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Proposition 5 (`integers-2024-A22-prop-5`). -/
@@ -150,9 +169,16 @@ public theorem_wanted exists_odd_not_dvd_bernoulli_num_le {p : ℕ} (hp : p.Prim
     ∃ k, Odd k ∧ 3 ≤ k ∧ ¬ (p : ℤ) ∣ (bernoulli' (p - k)).num ∧
       k ≤ if p % 4 = 1 then (p - 3) / 2 else (p - 5) / 2
 
-/-- The `p`-component of `ζ^c_{𝒜,N}(k)` for a color map `c`: `ζ^{c(p)}_{p,N}(k)` when
-`c(p mod N)` is a color tuple and `0` when it is `∅` (`none`). Color maps are taken on all of
-`ℤ/Nℤ`; only their values at units matter for all but finitely many `p`.
+/-- **Finite multiple zeta value of level $N$ with a color map.** Let $p$ and $N$ be natural
+numbers, $k = (k_1, \dots, k_r)$ a tuple of natural numbers, and $c$ a color map, which sends
+each $a \in \mathbb{Z}/N\mathbb{Z}$ either to $\emptyset$ or to a tuple in
+$(\mathbb{Z}/N\mathbb{Z})^r$. The $p$-component
+$\zeta^c_{\mathcal{A},N}(k)_p \in \mathbb{Z}/p\mathbb{Z}$ is the colored finite multiple harmonic
+sum $\zeta^{\alpha}_{p,N}(k)$ when $c(p \bmod N) = \alpha$ is a tuple, and $0$ when
+$c(p \bmod N) = \emptyset$.
+
+Color maps are taken on all of $\mathbb{Z}/N\mathbb{Z}$; only their values at units matter for all
+but finitely many $p$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1 (finite multiple zeta values of
@@ -163,7 +189,10 @@ noncomputable def finiteMZVColored (p N : ℕ) {r : ℕ} (k : Fin r → ℕ)
   | none => 0
   | some α => coloredFiniteMZV p N k α
 
-/-- The color map that is constantly `∅` gives `0`.
+/-- **The empty color map gives zero.** For all natural numbers $p$ and $N$ and every tuple
+$k = (k_1, \dots, k_r)$ of natural numbers, if $c$ is the color map sending every
+$a \in \mathbb{Z}/N\mathbb{Z}$ to $\emptyset$, then the $p$-component $\zeta^c_{\mathcal{A},N}(k)_p$
+of the finite multiple zeta value of level $N$ with color map $c$ is $0$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1. -/
@@ -171,7 +200,12 @@ theorem finiteMZVColored_none (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) :
     finiteMZVColored p N k (fun _ => none) = 0 :=
   rfl
 
-/-- A constant color map gives the colored sum.
+/-- **A constant color map gives the colored harmonic sum.** For all natural numbers $p$ and $N$,
+every tuple $k = (k_1, \dots, k_r)$ of natural numbers and every
+$\alpha \in (\mathbb{Z}/N\mathbb{Z})^r$, if $c$ is the color map sending every
+$a \in \mathbb{Z}/N\mathbb{Z}$ to $\alpha$, then the $p$-component $\zeta^c_{\mathcal{A},N}(k)_p$
+of the finite multiple zeta value of level $N$ with color map $c$ equals the colored finite
+multiple harmonic sum $\zeta^{\alpha}_{p,N}(k)$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Definition 2.1. -/
@@ -179,9 +213,16 @@ theorem finiteMZVColored_some (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α : Fi
     finiteMZVColored p N k (fun _ => some α) = coloredFiniteMZV p N k α :=
   rfl
 
-/-- **Proposition 1 (i)** (reversal). For an index `k` of weight `w` and a color map `c`,
-`ζ^c_{𝒜,N}(k) = (-1)^w ζ^{c←}_{𝒜,N}(k←)`, where `k← = (k_r, …, k₁)` and
-`c←(α) = (α - α_r, …, α - α₁)` when `c(α) = (α₁, …, α_r)`, `c←(α) = ∅` when `c(α) = ∅`.
+/-- **Reversal for finite multiple zeta values of level $N$.** Let $N \ge 1$, let
+$k = (k_1, \dots, k_r)$ be a tuple of natural numbers of weight $w = k_1 + \dots + k_r$, and let
+$c$ be a color map, which sends each $a \in \mathbb{Z}/N\mathbb{Z}$ either to $\emptyset$ or to a
+tuple in $(\mathbb{Z}/N\mathbb{Z})^r$. Write $k^{\leftarrow} = (k_r, \dots, k_1)$, and let
+$c^{\leftarrow}$ be the color map with $c^{\leftarrow}(a) = (a - \alpha_r, \dots, a - \alpha_1)$
+when $c(a) = (\alpha_1, \dots, \alpha_r)$ and $c^{\leftarrow}(a) = \emptyset$ when
+$c(a) = \emptyset$. Then for all but finitely many primes $p$, the $p$-components of the finite
+multiple zeta values of level $N$ with these color maps satisfy
+$\zeta^{c}_{\mathcal{A},N}(k)_p = (-1)^w \zeta^{c^{\leftarrow}}_{\mathcal{A},N}(k^{\leftarrow})_p$
+in $\mathbb{Z}/p\mathbb{Z}$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Proposition 1 (`integers-2024-A22-prop-1`). -/
@@ -192,12 +233,19 @@ public theorem_wanted finiteMZVColored_eq_neg_one_pow_mul_reverse {N r : ℕ} (h
         finiteMZVColored p N (k ∘ Fin.rev) (fun a => (c a).map fun β i => a - β (Fin.rev i))
 
 open scoped Classical in
-/-- **Proposition 1 (ii)** (decomposition). For an index `k = (k₁, …, k_r)` of weight `w`,
-`ζ_𝒜(k) = N^w ∑_{0 ≤ i₁ ≤ ⋯ ≤ i_{N-1} ≤ r} ∏_{j=0}^{N-1} ζ^{[j]}_{𝒜,N}(k_{(i);j})` with
-`k_{(i);j} = (k_{i_j+1}, …, k_{i_{j+1}})`, `i₀ = 0`, `i_N = r`.
-
-The index is a list; `ζ_𝒜` is the level-`1` value. The tuple `(i₁, …, i_{N-1})` is a
-monotone map `Fin (N - 1) → Fin (r + 1)`, extended by `i₀ = 0` and `i_N = r`.
+/-- **Decomposition of finite multiple zeta values into level-$N$ pieces.** Let $N \ge 1$ and
+let $k = (k_1, \dots, k_r)$ be a finite sequence of natural numbers (entries equal to $0$ are
+allowed) of weight $w = k_1 + \dots + k_r$. For a prime $p$ put
+$\zeta_p(k) = \sum_{0 < m_1 < \dots < m_r < p} m_1^{-k_1} \cdots m_r^{-k_r}$ in
+$\mathbb{Z}/p\mathbb{Z}$, and for $0 \le j < N$ and a finite sequence $l$ let
+$\zeta^{[j]}_{p,N}(l)$ be the colored finite multiple harmonic sum of level $N$ of $l$ with every
+color equal to the class of $-jp$ modulo $N$. Then for all sufficiently large primes $p$
+$$
+\zeta_p(k) = N^w \sum_{0 \le i_1 \le \dots \le i_{N-1} \le r} \prod_{j=0}^{N-1}
+\zeta^{[j]}_{p,N}(k_{i_j + 1}, \dots, k_{i_{j+1}}),
+$$
+where $i_0 = 0$, $i_N = r$, and $(k_{i_j + 1}, \dots, k_{i_{j+1}})$ is empty when
+$i_j = i_{j+1}$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Proposition 1 (`integers-2024-A22-prop-1`). -/
@@ -214,12 +262,20 @@ public theorem_wanted coloredFiniteMZV_one_eq_pow_mul_sum_prod {N : ℕ} (hN : 0
               coloredFiniteMZV p N (fun t : Fin sub.length => sub.get t)
                 (fun _ => -((j : ℕ) : ZMod N) * p)
 
-/-- **Lemma 2.** For `N ∣ M` (both positive), `Z_{𝒜,w}(N) ⊆ Z_{𝒜,w}(M)`: every finite
-multiple zeta value of level `N` and weight `w` is a `ℚ`-linear combination, in `𝒜`, of
-finite multiple zeta values of level `M` and weight `w`.
-
-The inclusion of `ℚ`-spans is stated on generators; a rational `q` acts modulo `p` as
-`q.num · q.den⁻¹`.
+/-- **Raising the level of finite multiple zeta values.** Let $N$ and $M$ be positive integers
+with $N \mid M$, let $k = (k_1, \dots, k_r)$ be an index of positive integers of weight
+$w = k_1 + \dots + k_r$, and let $c$ be a color map from $\mathbb{Z}/N\mathbb{Z}$ to
+$(\mathbb{Z}/N\mathbb{Z})^r \cup \{\varnothing\}$. Write $\zeta^{c}_{p,N}(k)$ for the
+$p$-component of the finite multiple zeta value of level $N$ with color map $c$. Then there are
+rationals $q_1, \dots, q_n$, indices $k^{(1)}, \dots, k^{(n)}$ of positive integers, each of
+weight $w$, and color maps $c_1, \dots, c_n$ of level $M$ (each $c_i$ from
+$\mathbb{Z}/M\mathbb{Z}$ to $(\mathbb{Z}/M\mathbb{Z})^{r_i} \cup \{\varnothing\}$, where $r_i$
+is the depth of $k^{(i)}$) such that for all sufficiently large primes $p$
+$$
+\zeta^{c}_{p,N}(k) = \sum_{i=1}^{n} q_i \, \zeta^{c_i}_{p,M}(k^{(i)}) \quad \text{in }
+\mathbb{Z}/p\mathbb{Z},
+$$
+where a rational $q = a/b$ in lowest terms with $b > 0$ is read modulo $p$ as $a b^{-1}$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Lemma 2 (`integers-2024-A22-lem-2`). -/
@@ -233,12 +289,17 @@ public theorem_wanted exists_finiteMZVColored_eq_sum_of_dvd {N M : ℕ} (hN : 0 
           finiteMZVColored p N k c = ∑ i, ((q i).num : ZMod p) * ((q i).den : ZMod p)⁻¹ *
             finiteMZVColored p M (k' i) (c' i)
 
-/-- **Lemma 3** (Lemma 5.4). Problem 5.3 (a uniform bound `M` with `ℓ_p ≤ M` for every odd
-prime `p`, where `ℓ_p` is the least `N` with `p ∤ N` and `p ∤ q_p(N)`) holds iff for some
-`M ≥ 3` the set `⋂_{N=2}^M W(N)` is finite, `W(N) = {p prime : N^{p-1} ≡ 1 (mod p²)}`.
+/-- **Criterion for a uniform bound on the least non-Wieferich base.** The following are
+equivalent:
+(a) there is a natural number $M$ such that for every odd prime $p$ there is an integer $N$ with
+$1 \le N \le M$, $p \nmid N$ and $p^2 \nmid N^{p-1} - 1$;
+(b) there is a natural number $M \ge 3$ such that only finitely many primes $p$ satisfy
+$p^2 \mid N^{p-1} - 1$ for every integer $N$ with $2 \le N \le M$.
 
-`ℓ_p ≤ M` is written as the existence of such an `N ≤ M`; `p ∤ q_p(N)` as
-`p² ∤ N^{p-1} - 1`.
+For $p \nmid N$ the condition $p^2 \nmid N^{p-1} - 1$ says that $p$ does not divide the Fermat
+quotient $q_p(N) = (N^{p-1} - 1)/p$, so (a) bounds, uniformly in $p$, the least such base $N$;
+(b) says that $\bigcap_{N=2}^{M} W(N)$ is finite, where $W(N)$ is the set of primes $p$ with
+$N^{p-1} \equiv 1 \pmod{p^2}$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Lemma 3 (`integers-2024-A22-lem-3`). -/
@@ -248,12 +309,19 @@ public theorem_wanted exists_bound_fermatQuotient_iff_finite_iInter :
       ∃ M : ℕ, 3 ≤ M ∧
         {p : ℕ | p.Prime ∧ ∀ N ∈ Finset.Icc 2 M, p ^ 2 ∣ N ^ (p - 1) - 1}.Finite
 
-/-- **Lemma 4** (Lemma 5.9). Problem 5.8 (a uniform bound `M` with `g_p ≤ M` for every
-prime `p ≥ 5`) holds iff for some `M ≥ 5` the set `⋂_{3 ≤ k ≤ M, k odd} I(k)` is finite,
-`I(k) = {p prime : p ∣ B_{p-k}}`.
+/-- **Criterion for a uniform bound on the least non-vanishing Bernoulli index.** The following
+are equivalent:
+(a) there is a natural number $M$ such that for every prime $p \ge 5$ there is an odd integer
+$k$ with $3 \le k \le M$, $k < p$ and $p \nmid \operatorname{num}(B_{p-k})$;
+(b) there is a natural number $M \ge 5$ such that only finitely many primes $p$ satisfy $k < p$
+and $p \mid \operatorname{num}(B_{p-k})$ for every odd integer $k$ with $3 \le k \le M$.
 
-`g_p ≤ M` is written as the existence of an odd `3 ≤ k ≤ M`, `k < p`, with
-`p ∤ num(B_{p-k})`; `I(k)` is restricted to `p > k`, where `B_{p-k}` is defined.
+Here $B_n$ is the $n$-th Bernoulli number, with $B_1 = +1/2$ (only even indices $n \ge 2$ occur),
+and $\operatorname{num}(B_n)$ is its numerator in lowest terms.
+
+Condition (a) says that the least such $k$, the source's $g_p$, is bounded uniformly in $p$;
+condition (b) says that $\bigcap_{3 \le k \le M,\ k \text{ odd}} I(k)$ is finite, where $I(k)$ is
+the set of primes $p > k$ with $p \mid \operatorname{num}(B_{p-k})$.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Lemma 4 (`integers-2024-A22-lem-4`). -/
@@ -264,14 +332,21 @@ public theorem_wanted exists_bound_bernoulli_iff_finite_iInter :
         {p : ℕ | p.Prime ∧ ∀ k ∈ Finset.Icc 3 M, Odd k →
           k < p ∧ (p : ℤ) ∣ (bernoulli' (p - k)).num}.Finite
 
-/-- **Proposition 2.** (i) If there are infinitely many regular primes, then for every
-`w ∉ {1, 2, 4}` some finite multiple zeta value of weight `w` is non-zero in `𝒜`.
-(ii) If there are infinitely many non-Wieferich primes, then for every even `N > 0` and
-every `w` some finite multiple zeta value of level `N` and weight `w` is non-zero.
+/-- **Regular and non-Wieferich primes give non-vanishing finite multiple zeta values.**
+(i) Suppose that infinitely many odd primes $p$ are regular, in the sense that $p$ does not
+divide the class number of any $p$-th cyclotomic field over $\mathbb{Q}$. Then for every
+natural number $w \notin \{1, 2, 4\}$ there is an index $k = (k_1, \dots, k_r)$ of positive
+integers with $k_1 + \dots + k_r = w$ such that
+$\zeta_p(k) = \sum_{0 < m_1 < \dots < m_r < p} m_1^{-k_1} \cdots m_r^{-k_r}$ is non-zero in
+$\mathbb{Z}/p\mathbb{Z}$ for infinitely many primes $p$.
+(ii) Suppose that infinitely many primes are not Wieferich primes. Then for every even $N > 0$
+and every natural number $w$ there are an index $k = (k_1, \dots, k_r)$ of positive integers with
+$k_1 + \dots + k_r = w$ and a color map $c$ from $\mathbb{Z}/N\mathbb{Z}$ to
+$(\mathbb{Z}/N\mathbb{Z})^r \cup \{\varnothing\}$ such that the $p$-component
+$\zeta^{c}_{p,N}(k)$ of the finite multiple zeta value of level $N$ with color map $c$ is
+non-zero in $\mathbb{Z}/p\mathbb{Z}$ for infinitely many primes $p$.
 
-Non-zero in `𝒜` means non-zero modulo infinitely many primes. Regular primes use the class
-number of any `K` with `IsCyclotomicExtension {p} ℚ K`. The paper's positive weight is
-relaxed to `w ≥ 0` (the empty index has value `1`).
+The weight $w = 0$ is allowed (the empty index has value $1$); the paper takes $w$ positive.
 
 Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
 Level N*, INTEGERS 24 (2024), Article A22, Proposition 2 (`integers-2024-A22-prop-2`). -/

@@ -13,7 +13,7 @@ public import MathlibExt.RingTheory.PowerSeries.AlgebraicCoefficientBound
 @[expose] public section
 
 -- exactSource consumer: the original binders apply verbatim.
-theorem exactSource (φ : PowerSeries ℂ) (hφ : IsAlgebraic (Polynomial ℂ) φ) :
+private theorem exactSource (φ : PowerSeries ℂ) (hφ : IsAlgebraic (Polynomial ℂ) φ) :
     ∃ C R : ℝ, ∀ n : ℕ, ‖PowerSeries.coeff n φ‖ ≤ C * R ^ n :=
   PowerSeries.exists_norm_coeff_le_mul_pow_of_isAlgebraic_complex φ hφ
 

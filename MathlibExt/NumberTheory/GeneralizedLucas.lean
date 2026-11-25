@@ -33,15 +33,19 @@ open Finset
 
 namespace Nat
 
-/-- Public source-indexed sequence. Requires `2 ≤ k` and restricts to
-`2 - k ≤ n`; the value ignores the proofs computationally. -/
+/-- **$k$-generalized Lucas numbers.** For a natural number $k \ge 2$, the $k$-generalized Lucas
+numbers $L^{(k)}_n$ are the natural numbers indexed by the integers $n \ge 2 - k$ given by
+$L^{(k)}_n = 0$ for $2 - k \le n \le -1$, $L^{(k)}_0 = 2$, $L^{(k)}_1 = 1$, and
+$L^{(k)}_n = L^{(k)}_{n-1} + L^{(k)}_{n-2} + \dots + L^{(k)}_{n-k}$ for every integer $n \ge 2$. No
+value is assigned at indices below $2 - k$. -/
 public def kGeneralizedLucas (k : ℕ) (_hk : 2 ≤ k) (n : ℤ)
     (_h : 2 - (k : ℤ) ≤ n) : ℕ :=
   (⟨k, fun _ => 1⟩ : LinearRecurrence ℕ).mkSol
     (fun i : Fin k => if i.val + 2 = k then 2 else if i.val + 1 = k then 1 else 0)
     ((n - (2 - (k : ℤ))).toNat)
 
-/-- Source clause: value `2` at index `0`. -/
+/-- **$k$-generalized Lucas numbers at index zero.** For every natural number $k \ge 2$, the
+$k$-generalized Lucas number $L^{(k)}_0$ equals $2$. -/
 public theorem kGeneralizedLucas_zero (k : ℕ) (hk : 2 ≤ k)
     (h0 : 2 - (k : ℤ) ≤ 0) :
     kGeneralizedLucas k hk 0 h0 = 2 := by
@@ -64,7 +68,8 @@ public theorem kGeneralizedLucas_zero (k : ℕ) (hk : 2 ≤ k)
   change (if k - 2 + 2 = k then (2 : ℕ) else if k - 2 + 1 = k then (1 : ℕ) else (0 : ℕ)) = 2
   exact ite_eq_left h2
 
-/-- Source clause: value `1` at index `1`. -/
+/-- **$k$-generalized Lucas numbers at index one.** For every natural number $k \ge 2$, the
+$k$-generalized Lucas number $L^{(k)}_1$ equals $1$. -/
 public theorem kGeneralizedLucas_one (k : ℕ) (hk : 2 ≤ k)
     (h1 : 2 - (k : ℤ) ≤ 1) :
     kGeneralizedLucas k hk 1 h1 = 1 := by
@@ -88,7 +93,9 @@ public theorem kGeneralizedLucas_one (k : ℕ) (hk : 2 ≤ k)
   change (if k - 1 + 2 = k then (2 : ℕ) else if k - 1 + 1 = k then (1 : ℕ) else (0 : ℕ)) = 1
   rw [ite_eq_right hne1, ite_eq_left heq2]
 
-/-- Source clause: negative initial zeros for `k ≥ 3`. -/
+/-- **$k$-generalized Lucas numbers vanish at negative indices.** For every natural number
+$k \ge 3$ and every integer $n$ with $2 - k \le n \le -1$, the $k$-generalized Lucas number
+$L^{(k)}_n$ equals $0$. -/
 public theorem kGeneralizedLucas_neg_eq_zero (k : ℕ) (hk : 3 ≤ k) (n : ℤ)
     (h : 2 - (k : ℤ) ≤ n) (hn : n ≤ -1) :
     kGeneralizedLucas k (Nat.le_trans (by decide : 2 ≤ 3) hk) n h = 0 := by
@@ -114,7 +121,8 @@ public theorem kGeneralizedLucas_neg_eq_zero (k : ℕ) (hk : 3 ≤ k) (n : ℤ)
     else if (n - (2 - (k : ℤ))).toNat + 1 = k then (1 : ℕ) else (0 : ℕ)) = 0
   rw [ite_eq_right hne1, ite_eq_right hne2]
 
-/-- Lowest source index `2 - k` is zero when `k ≥ 3`. -/
+/-- **$k$-generalized Lucas numbers at the lowest index.** For every natural number $k \ge 3$,
+the $k$-generalized Lucas number $L^{(k)}_{2-k}$ equals $0$. -/
 public theorem kGeneralizedLucas_lower_zero (k : ℕ) (hk : 3 ≤ k)
     (h : 2 - (k : ℤ) ≤ 2 - (k : ℤ)) :
     kGeneralizedLucas k (Nat.le_trans (by decide : 2 ≤ 3) hk) (2 - (k : ℤ)) h =
@@ -122,9 +130,10 @@ public theorem kGeneralizedLucas_lower_zero (k : ℕ) (hk : 3 ≤ k)
   have hn : (2 - (k : ℤ)) ≤ -1 := by omega
   exact kGeneralizedLucas_neg_eq_zero k hk _ h hn
 
-/-- Source clause: sum of the preceding `k` values for `n ≥ 2`.
-The sum over the parameter's own `Fin k` of `L_{n-k+i}` enumerates
-`L_{n-k}, …, L_{n-1}`, i.e. `L_{n-1} + ⋯ + L_{n-k}`. -/
+/-- **Recurrence for the $k$-generalized Lucas numbers.** For every natural number $k \ge 2$ and
+every integer $n \ge 2$, the $k$-generalized Lucas numbers satisfy
+$L^{(k)}_n = \sum_{i=0}^{k-1} L^{(k)}_{n-k+i}$, that is, $L^{(k)}_n$ is the sum
+$L^{(k)}_{n-1} + \dots + L^{(k)}_{n-k}$ of the $k$ preceding values. -/
 public theorem kGeneralizedLucas_recurrence (k : ℕ) (hk : 2 ≤ k) (n : ℤ)
     (hn : 2 ≤ n) (h : 2 - (k : ℤ) ≤ n) :
     kGeneralizedLucas k hk n h =

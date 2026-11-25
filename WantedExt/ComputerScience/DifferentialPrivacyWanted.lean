@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Crypto.Privacy.Basic
+public import CSLibExt.Crypto.Privacy.Gaussian
 public import Mathlib.MeasureTheory.Constructions.Pi
-public import Mathlib.Probability.Distributions.Gaussian.Real
 
 /-!
 # Differential privacy: wanted results
@@ -24,8 +23,6 @@ Central results of differential privacy whose proofs are deferred. The definitio
   (Dwork and Roth, *The Algorithmic Foundations of Differential Privacy*, 2014, Theorem 3.20,
   stated here for `k` mechanisms run independently; the theorem allows them to be chosen
   adaptively).
-* `gaussianMechanism_differentiallyPrivate`: the Gaussian mechanism (Dwork and Roth, 2014,
-  Theorem A.1).
 * `differentiallyPrivate_transfer`: differential privacy implies generalization for adaptively
   chosen statistical queries (Dwork, Feldman, Hardt, Pitassi, Reingold and Roth,
   arXiv:1411.2664v3, identical in v2, Theorem 9; preliminary version in STOC 2015).
@@ -58,18 +55,6 @@ public theorem_wanted differentiallyPrivate_pi_advanced {k : ℕ} {Ω : Fin k �
     DifferentiallyPrivate Adj (fun x ↦ Measure.pi fun i ↦ M i x)
       (Real.sqrt (2 * k * Real.log (1 / δ')) * ε + k * ε * (Real.exp ε - 1))
       (k * δ + ENNReal.ofReal δ')
-
-/-- **The Gaussian mechanism.** Let `f : X → (Fin d → ℝ)` have `ℓ₂`-sensitivity at most `Δ₂ ≥ 0`,
-i.e. `√(∑ i, (f x i - f y i) ^ 2) ≤ Δ₂` whenever `Adj x y`. Let `ε ∈ (0, 1)`, `δ > 0`, `c > 0`
-with `c ^ 2 > 2 ln (1.25 / δ)`, and `σ ≥ c Δ₂ / ε`. Adding independent `N(0, σ ^ 2)` noise to each
-coordinate is `(ε, δ)`-differentially private (Dwork and Roth, *The Algorithmic Foundations of
-Differential Privacy*, 2014, Theorem A.1). -/
-public theorem_wanted gaussianMechanism_differentiallyPrivate {d : ℕ} {f : X → Fin d → ℝ}
-    {Δ₂ ε δ c σ : ℝ} (hΔ₂ : 0 ≤ Δ₂) (hε₀ : 0 < ε) (hε₁ : ε < 1) (hδ : 0 < δ) (hc₀ : 0 < c)
-    (hc : 2 * Real.log ((5 / 4) / δ) < c ^ 2) (hσ : c * Δ₂ / ε ≤ σ)
-    (hf : ∀ ⦃x y⦄, Adj x y → Real.sqrt (∑ i, (f x i - f y i) ^ 2) ≤ Δ₂) :
-    DifferentiallyPrivate Adj
-      (fun x ↦ Measure.pi fun i ↦ gaussianReal (f x i) (σ ^ 2).toNNReal) ε (ENNReal.ofReal δ)
 
 /-- **Transfer theorem for adaptive data analysis.** Let `P` be a probability distribution on
 `𝒳`, let the data set `S` consist of `n` independent samples from `P`, and let the analyst's
