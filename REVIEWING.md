@@ -98,11 +98,10 @@ A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`, or
 `scripts/mathgraph-map.jsonl`. Hold it against the
 [graph rules](docs/BLUEPRINT.md#graph-rules) and the
-[graph PR requirements](CONTRIBUTING.md#graph-prs). Once Blueprint Pages'
-`build the wiki` job has passed on the head commit, don't re-report what its
-`autoform check blueprint` fails on
-([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)); if it failed or
-hasn't run, report those too. Check what only a reader can:
+[graph PR requirements](CONTRIBUTING.md#graph-prs). Don't re-report what CI's
+required `check the graph` job fails on
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)). Check what only a
+reader can:
 
 | Aspect | Question | What to check |
 | --- | --- | --- |

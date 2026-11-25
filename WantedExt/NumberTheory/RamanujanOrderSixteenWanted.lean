@@ -12,8 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
-public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanPsiFChi
 
 namespace MetaMathlibExt
 
@@ -94,31 +93,6 @@ public theorem_wanted lambert_order_sixteen_legendre_three (q : ℂ) (hq : ‖q�
         (qPochhammerInfRaw (q ^ 16) (q ^ 16) *
           (qPochhammerInfRaw (q ^ 9) (q ^ 48) * qPochhammerInfRaw (q ^ 15) (q ^ 48) *
             qPochhammerInfRaw (q ^ 33) (q ^ 48) * qPochhammerInfRaw (q ^ 39) (q ^ 48)))
-
-/-- **Product forms of Ramanujan's theta functions $\psi$, $f$ and $\chi$.** Write
-$(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $f_k = (q^k; q^k)_\infty$, and let
-$f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's general theta
-function. For every complex number $q$ with $|q| < 1$,
-$f(q, q^3) = f_2^2 / f_1$, $f(q, -q^2) = f_2^3 / (f_1 f_4)$, $(-q; q^2)_\infty = f_2^2 / (f_1 f_4)$
-and $(q; q^2)_\infty = f_1 / f_2$.
-
-In Ramanujan's notation (Berndt, Part III, Chapter 16), with $\psi(q) = f(q, q^3)$,
-$f(q) = f(q, -q^2)$ and $\chi(q) = (-q; q^2)_\infty$, these read $\psi(q) = f_2^2 / f_1$,
-$f(q) = f_2^3 / (f_1 f_4)$, $\chi(q) = f_2^2 / (f_1 f_4)$ and $\chi(-q) = f_1 / f_2$.
-
-Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
-Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
-Article A16, Lemma 1 (`integers-2025-A16-lem-1`). -/
-public theorem_wanted ramanujan_psi_f_chi_eq_qPochhammer (q : ℂ) (hq : ‖q‖ < 1) :
-    ramanujanThetaRaw q (q ^ 3) =
-        qPochhammerInfRaw (q ^ 2) (q ^ 2) ^ 2 / qPochhammerInfRaw q q ∧
-      ramanujanThetaRaw q (-q ^ 2) =
-        qPochhammerInfRaw (q ^ 2) (q ^ 2) ^ 3 /
-          (qPochhammerInfRaw q q * qPochhammerInfRaw (q ^ 4) (q ^ 4)) ∧
-      qPochhammerInfRaw (-q) (q ^ 2) =
-        qPochhammerInfRaw (q ^ 2) (q ^ 2) ^ 2 /
-          (qPochhammerInfRaw q q * qPochhammerInfRaw (q ^ 4) (q ^ 4)) ∧
-      qPochhammerInfRaw q (q ^ 2) = qPochhammerInfRaw q q / qPochhammerInfRaw (q ^ 2) (q ^ 2)
 
 /-- **Ramanujan's Entry 30 (i)–(iii) for the general theta function.** Let
 $f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's general theta

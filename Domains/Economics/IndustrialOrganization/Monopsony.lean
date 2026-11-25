@@ -39,8 +39,8 @@ exceeds `L_m`, and such a level exists.
 
 namespace MathlibExt.Economics.Monopsony
 
-/-- A linear monopsony: inverse labor supply `α + β L`, marginal revenue product
-`γ - δ L`. -/
+/-- A linear monopsony: inverse labor supply `α + β L` (`β > 0`), marginal revenue product
+`γ - δ L` (`δ ≥ 0`), with `α < γ`. -/
 structure Model where
   /-- Labor-supply intercept. -/
   α : ℝ
@@ -60,7 +60,7 @@ noncomputable def revenue (m : Model) (L : ℝ) : ℝ := m.γ * L - m.δ / 2 * L
 /-- Inverse labor supply: the wage needed to attract `L` workers. -/
 def supplyWage (m : Model) (L : ℝ) : ℝ := m.α + m.β * L
 
-/-- Unregulated monopsony profit. -/
+/-- Unregulated monopsony profit `γ L - δ L² / 2 - (α + β L) L`. -/
 noncomputable def profit (m : Model) (L : ℝ) : ℝ := revenue m L - supplyWage m L * L
 
 /-- Monopsony employment `(γ - α) / (δ + 2 β)`. -/

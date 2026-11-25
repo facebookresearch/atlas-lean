@@ -1,0 +1,14 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/FieldTheory/EssentialDimensionSymmetric.lean", "disposition": "identical", "published_sha256": "9fe1750ad3c1e3c6f99a2742c8f2e2a72f56f73da817bd7b85f800d8a048c8d5", "upstream_sha256": "45eed8ba672f10304be875dfe57f6b84a2ad7551d84944032a0ee51d1bd17c74"},
+    {"path": "MathlibExtTest/FieldTheory/Finite/PermutationPolynomial.lean", "disposition": "identical", "published_sha256": "0357e99ef0e05bfc3b5ed5992270aa3a476161fb67a45ab1f23326ea2277bb9d", "upstream_sha256": "88a0765c1ed518c9f3168e8e1c43327a51c9cffdb939bdd3041c81146987d77a"},
+    {"path": "MathlibExtTest/FieldTheory/Finite/PrimitivePolynomial.lean", "disposition": "identical", "published_sha256": "9995057d1223a837244fac3a4e6bd495b52fa5c969a6013c1e87884580a7b106", "upstream_sha256": "cdd041a16d32ecf764a9c9aed0c53bc24a4d16030bf40b5ca15bf543209fd6f3"},
+    {"path": "MathlibExtTest/FieldTheory/Galois/Abelian.lean", "disposition": "identical", "published_sha256": "0e0e2f8fdfa617ea3e1e52b59e023e3426d9be4d54fa9f53be644ed004293857", "upstream_sha256": "a8084e6ab1294e847ced8522ef748acfab164cbec2d6ee9371f282566f42ee1c"},
+    {"path": "MathlibExtTest/FieldTheory/Galois/AdditiveHilbert90.lean", "disposition": "identical", "published_sha256": "47624df235f1bf4c62ec186f9fb6b5db62c9e80a58dbff4de1ce9cc447f76801", "upstream_sha256": "3cb2a0852053095b89edf9ed605178fb5857171390f7fafcbcf0ee57674fdf5e"},
+    {"path": "MathlibExtTest/FieldTheory/Galois/Infinite.lean", "disposition": "identical", "published_sha256": "dca2ab0561131781bc2eee51a025b4e3742361360bf1c03069b3f03ddc5885db", "upstream_sha256": "c89e0d05ed289a8f30f84ecbd7eff530912365613c7a6c0f51cc2d12b8bfaaef"},
+    {"path": "MathlibExtTest/FieldTheory/Minpoly/IntegrallyClosed.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f911ba5da709e83f625481bfbc0ee0b10f5434d8bc3773baf07a2e6df6f66cbd", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change 5c3ec248e (Reuse the existing minimal polynomial integrality criteria)", "upstream_sha256": "a567536d241ec2228508c9d91b4ba9ed001b1b4316189c5c4e91a319d429d27c"},
+    {"path": "MathlibExtTest/FieldTheory/PuiseuxTheorem.lean", "disposition": "identical", "published_sha256": "8cc247364f8c3039f32cd28c7a6778af157d2e771914210293437f3735bb6204", "upstream_sha256": "fa56dee32410d44a8083ec6f95f54f513833434ea98c62e33b9bcd17e5045daa"},
+    {"path": "MathlibExtTest/FieldTheory/PurelyInseparablePrimeDegree.lean", "disposition": "identical", "published_sha256": "1baa583d1c48318da05ff2af2209fade3c0d57fa55184429f01682307c852261", "upstream_sha256": "70823b0d6d184413f0a7fb1d2fed4268fe46cd07248fd6f9a65b3f8f3b5eafe9"},
+    {"path": "MathlibExtTest/FieldTheory/SeparableAdjoinRoot.lean", "disposition": "identical", "published_sha256": "a481c700360098807e7f1fcf6583f5409abcb8c94094e26d4af6b38edbcc2e6a", "upstream_sha256": "355c0a971992e2e4b5b5f57485e37f640e62a4379c26166f70a9fa845476b4dd"}
+  ]
+}

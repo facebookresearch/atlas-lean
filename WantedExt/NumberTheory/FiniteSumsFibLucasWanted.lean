@@ -28,8 +28,6 @@ documented at the declaration:
 
 * Corollary 2's factor `β⁻ⁿ` gives the sum `2ᵐ`, not `0`;
   the `x = -β` specialization of Theorem 1 has `(-β)^{m-n}`.
-* Corollary 4's falling factorial `(m-n+1)(s)` should be
-  `(m-n)(s)` (it comes from differentiating `s` times).
 * Corollary 6 needs `m ≥ 1` (at `m = 0` the sum is `2`).
 * Theorem 11's inner sum omits the contribution of the
   `2/D` term of `(e^{αD} + e^{βD})/D`; the corrected inner
@@ -57,6 +55,10 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.NumberTheory.BernoulliFibonacciExpansion
+public import MathlibExt.NumberTheory.BernoulliFibonacciMultinomial
+public import MathlibExt.NumberTheory.BernoulliFibonacciVanishing
+public import MathlibExt.NumberTheory.ForwardDiffPow
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -68,18 +70,6 @@ namespace MathlibExt.NumberTheory.FiniteSumsFibLucasWanted
 
 open MetaMathlibExt
 
-/-- **The square root of five.** This is the real number $\sqrt{5}$, the nonnegative real square
-root of $5$. -/
-noncomputable def sqrt5 : ℝ := Real.sqrt 5
-
-/-- **The golden ratio $\alpha$.** The golden ratio is the real number
-$\alpha = (1 + \sqrt{5})/2$. -/
-noncomputable def fibAlpha : ℝ := (1 + Real.sqrt 5) / 2
-
-/-- **The conjugate golden ratio $\beta$.** The real number $\beta = (1 - \sqrt{5})/2$, the
-conjugate of the golden ratio $(1 + \sqrt{5})/2$. -/
-noncomputable def fibBeta : ℝ := (1 - Real.sqrt 5) / 2
-
 /-- **Euler numbers.** For a natural number $n$, the Euler number $E_n \in \mathbb{Q}$ is $0$ when
 $n$ is odd, and when $n = 2k$ is even it is the even-index Euler number $E_{2k}$, where
 $E_0 = 1$ and $\sum_{i=0}^{k} \binom{2k}{2i} E_{2i} = 0$ for $k \ge 1$. The first values are
@@ -88,7 +78,8 @@ $E_0 = 1$, $E_2 = -1$, $E_4 = 5$.
 These are the Euler (secant) numbers, with exponential generating function $2/(e^t + e^{-t})$. -/
 noncomputable def eulerSecNumber (n : ℕ) : ℚ :=
   if n % 2 = 1 then 0
-  else ((MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry.chapter5EulerEven (n / 2) : ℤ) : ℚ)
+  else ((MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry.chapter5EulerEven
+    (n / 2) : ℤ) : ℚ)
 
 /-- **Genocchi–Lucas coefficients.** For a natural number $n$, the Genocchi–Lucas coefficient is
 the real number
@@ -127,25 +118,6 @@ theorem_wanted add_fibBeta_pow_eq_sum (m : ℕ) (x : ℝ) :
           ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) *
           x ^ (m - n)
 
-/-- **A vanishing double sum of Bernoulli and Fibonacci numbers.** Let $\beta = (1 - \sqrt{5})/2$,
-let $F_n$ be the Fibonacci numbers, and let $B_k$ be the Bernoulli numbers, with
-$B_1 = -\tfrac{1}{2}$. For every natural number $m \ge 1$,
-$$\sum_{n=0}^{m} \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k} \binom{m}{n} B_k
-\frac{F_{n-k+1}}{n-k+1} (-\beta)^{m-n} = 0.$$
-
-This is the case $x = -\beta$ of Theorem 1, the expansion of $(x + \beta)^m$. The paper prints
-the factor $\beta^{-n}$ in place of $(-\beta)^{m-n}$, which makes the sum equal to $2^m$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 2. -/
-theorem_wanted sum_bernoulli_fib_neg_fibBeta (m : ℕ) (hm : 1 ≤ m) :
-    ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
-        (Real.sqrt 5) ^ k * (Nat.choose n k : ℝ) *
-          (Nat.choose m n : ℝ) * (bernoulli k : ℝ) *
-          ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) *
-          (-fibBeta) ^ (m - n) = 0
-
 /-- **Bernoulli–Fibonacci double sum with weights $(-2)^n$.** Let $B_k$ be the Bernoulli
 numbers, with $B_1 = -1/2$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). For every
 natural number $m$,
@@ -161,32 +133,6 @@ theorem_wanted sum_neg_two_pow_bernoulli_fib (m : ℕ) :
           (Nat.choose m n : ℝ) * (bernoulli k : ℝ) *
           ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) =
       (Real.sqrt 5) ^ m
-
-/-- **Derivatives of the Bernoulli–Fibonacci expansion of $(x + \beta)^m$.** Let
-$\beta = (1 - \sqrt{5})/2$, let $B_k$ be the Bernoulli numbers with $B_1 = -1/2$, let $F_k$ be the
-Fibonacci numbers, and write $a^{\underline{s}} = a(a-1)\cdots(a-s+1)$ for the falling factorial.
-Then for all natural numbers $s \le m$ and every real number $x$,
-$$
-m^{\underline{s}} (x + \beta)^{m-s} = \sum_{n=0}^{m} \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k}
-\binom{m}{n} B_k \frac{F_{n-k+1}}{n-k+1} (m-n)^{\underline{s}} x^{m-n-s},
-$$
-where the terms with $m - n < s$ are $0$ because $(m-n)^{\underline{s}} = 0$ there.
-
-This is the paper's Corollary 4, obtained by differentiating Theorem 1 $s$ times; the printed
-falling factorial of $m - n + 1$ is off by one, and the identity is written here multiplied
-through by $m^{\underline{s}}$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 4. -/
-theorem_wanted descFactorial_mul_add_fibBeta_pow (m s : ℕ)
-    (hs : s ≤ m) (x : ℝ) :
-    (Nat.descFactorial m s : ℝ) * (x + fibBeta) ^ (m - s) =
-      ∑ n ∈ Finset.range (m + 1), ∑ k ∈ Finset.range (n + 1),
-        (Real.sqrt 5) ^ k * (Nat.choose n k : ℝ) *
-          (Nat.choose m n : ℝ) * (bernoulli k : ℝ) *
-          ((Nat.fib (n - k + 1) : ℝ) / (n - k + 1 : ℕ)) *
-          (Nat.descFactorial (m - n) s : ℝ) * x ^ (m - n - s)
 
 /-- **Euler–Lucas expansion of $(x + 1/2)^m$.** Let $E_k$ be the Euler (secant) numbers, which
 vanish at odd $k$ and begin $E_0 = 1$, $E_2 = -1$, $E_4 = 5$, and let $L_k$ be the Lucas numbers.
@@ -411,38 +357,6 @@ theorem_wanted add_mul_fibBeta_pow_eq_sum (q m : ℕ)
               ((jℓ.1 i).val + 1 : ℕ))) *
             x ^ (m - n)
 
-/-- **A multinomial sum of Bernoulli and Fibonacci numbers equal to one.** Let $F_n$ be the
-Fibonacci numbers and let $B_k$ be the Bernoulli numbers, with $B_1 = -\tfrac{1}{2}$. For every
-natural number $m$,
-$$\sum_{n=0}^{m} \sum_{j_1 + j_2 + \ell_1 + \ell_2 = n} \sqrt{5}^{\,\ell_1 + \ell_2 + m - n}
-\frac{n!}{j_1!\, j_2!\, \ell_1!\, \ell_2!} \binom{m}{n} B_{\ell_1} B_{\ell_2}
-\frac{F_{j_1+1}}{j_1+1} \cdot \frac{F_{j_2+1}}{j_2+1} = 1,$$
-where the inner sum runs over all quadruples $(j_1, j_2, \ell_1, \ell_2)$ of natural numbers with
-sum $n$.
-
-This is the case $q = 2$, $x = \sqrt{5}$ of Theorem 15, since $\sqrt{5} + 2\beta = 1$ for
-$\beta = (1 - \sqrt{5})/2$. The paper's displayed multinomial coefficient omits the factors
-$\ell_1!\, \ell_2!$; with that coefficient the sum at $m = 2$ is $8/3$, not $1$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Corollary 17. -/
-theorem_wanted sum_bernoulli_fib_two_eq_one (m : ℕ) :
-    ∑ n ∈ Finset.range (m + 1),
-        ∑ jℓ ∈ (Finset.univ :
-            Finset ((Fin 2 → Fin (n + 1)) ×
-              (Fin 2 → Fin (n + 1)))).filter
-            (fun jℓ => (∑ i, (jℓ.1 i).val) +
-              (∑ i, (jℓ.2 i).val) = n),
-          (Real.sqrt 5) ^ ((∑ i, (jℓ.2 i).val) + m - n) *
-            ((n.factorial : ℝ) /
-              ((∏ i, ((jℓ.1 i).val.factorial : ℝ)) *
-                ∏ i, ((jℓ.2 i).val.factorial : ℝ))) *
-            (Nat.choose m n : ℝ) *
-            (∏ i, (bernoulli (jℓ.2 i).val : ℝ)) *
-            (∏ i, ((Nat.fib ((jℓ.1 i).val + 1) : ℝ) /
-              ((jℓ.1 i).val + 1 : ℕ))) = 1
-
 /-- **Euler–Lucas multinomial expansion of $(x + q/2)^m$.** Let $E_k$ be the Euler (secant)
 numbers, with exponential generating function $2/(e^t + e^{-t})$, and let $L_k$ be the Lucas
 numbers ($L_0 = 2$, $L_1 = 1$, $L_{k+2} = L_{k+1} + L_k$). For all natural numbers $q \ge 1$ and
@@ -512,26 +426,6 @@ theorem_wanted two_sqrt5_pow_mul_add (q m : ℕ) (hq : 1 ≤ q)
           ((n.factorial : ℝ) /
               ∏ i, ((j i).val.factorial : ℝ)) *
             ∏ i, genLucasCoeff (j i).val
-
-/-- **Iterated forward differences of a power as an alternating binomial sum.** For a real
-number $r$, let $\Delta_r$ be the forward difference operator with step $r$, sending a function
-$f : \mathbb{R} \to \mathbb{R}$ to $y \mapsto f(y + r) - f(y)$, and let $\Delta_r^k$ be its
-$k$-fold iterate (the identity when $k = 0$). For all real numbers $r$ and $x$ and all natural
-numbers $k$ and $n$, applying $\Delta_r^k$ to the function $y \mapsto y^n$ and evaluating at $x$
-gives $\sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j} (x + rj)^n$.
-
-The paper states this for nonzero complex $r$ and positive $k$; here $r$ is real and $k = 0$ is
-allowed.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Lemma 21. -/
-theorem_wanted iterate_forwardDiff_pow_eq_sum (r x : ℝ)
-    (k n : ℕ) :
-    ((fun f : ℝ → ℝ => fun y => f (y + r) - f y)^[k]
-        (fun y => y ^ n)) x =
-      ∑ j ∈ Finset.range (k + 1), (-1 : ℝ) ^ (k - j) *
-        (Nat.choose k j : ℝ) * (x + r * j) ^ n
 
 /-- **Genocchi numbers via Stirling numbers of the second kind.** For every natural number
 $n \ge 1$, the Genocchi number $G_n$ satisfies, in $\mathbb{Q}$,

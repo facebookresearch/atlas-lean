@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.ZeckendorfOdometer
+public import MathlibExt.Probability.MixingCoefficients
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
@@ -120,48 +122,6 @@ public theorem_wanted zeckendorf_variation_density_tail (r : ℕ) (μ : ℤ → 
 
 
 /-! ### The Zeckendorf-adic odometer -/
-
-/-- **The Zeckendorf-adic integers.** The Zeckendorf-adic integers $\mathbb{X}$ are the digit
-sequences $x = (x_k)_{k \ge 0}$ with $x_k \in \{0, 1\}$ such that $x_0 = x_1 = 0$ and no two
-consecutive digits are both $1$, that is, $x_k x_{k+1} = 0$ for every $k$.
-
-Digit $k \ge 2$ carries the weight $F_k$ (with $F_1 = F_2 = 1$). The unused digits $x_0$ and
-$x_1$ keep the paper's indexing, in which
-$\mathbb{X} = \{x \in \{0,1\}^{\mathbb{N}_{\ge 2}} : x_k x_{k+1} = 0 \text{ for all } k \ge 2\}$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 2.2 (arXiv:2309.14285v2). -/
-public def zeckAdic : Set (ℕ → Bool) :=
-  {x | x 0 = false ∧ x 1 = false ∧ ∀ k, x k = false ∨ x (k + 1) = false}
-
-/-- **Zeckendorf digit sequence of a natural number.** Let $F_k$ be the Fibonacci numbers
-($F_0 = 0$, $F_1 = F_2 = 1$). Every $n \in \mathbb{N}$ has a unique Zeckendorf representation
-$n = F_{k_1} + \dots + F_{k_m}$ with $k_1 > \dots > k_m \ge 2$ and no two consecutive indices.
-The Zeckendorf digit sequence of $n$ is the binary sequence $(x_k)_{k \in \mathbb{N}}$ with
-$x_k = 1$ if $k$ is one of the indices $k_1, \dots, k_m$ and $x_k = 0$ otherwise.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 2.2 (the map `i`). -/
-public def zeckAdicOfNat (n : ℕ) : ℕ → Bool := fun k => decide (k ∈ Nat.zeckendorf n)
-
-/-- **The Zeckendorf odometer.** The odometer is the map $T$ on digit sequences
-$x = (x_k)_{k \in \mathbb{N}}$ with $x_k \in \{0, 1\}$ defined as follows. If $x_k = x_{k+1} = 0$
-for some $k \ge 2$, let $k$ be the least such index; then $T(x)_j = 0$ for $j < k$, $T(x)_k = 1$
-and $T(x)_j = x_j$ for $j > k$. If there is no such $k$, then $T(x)$ is the zero sequence.
-
-On a Zeckendorf-adic integer, where digit $k \ge 2$ carries the weight of the Fibonacci number
-$F_k$, the map $T$ is addition of $1$, and $x + r$ denotes $T^r(x)$ for $r \in \mathbb{N}$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Section 2.2 (definition of `T`). -/
-public noncomputable def zeckOdometer (x : ℕ → Bool) : ℕ → Bool :=
-  open Classical in
-  if h : ∃ k, 2 ≤ k ∧ x k = false ∧ x (k + 1) = false then
-    fun j => if j < Nat.find h then false else if j = Nat.find h then true else x j
-  else fun _ => false
 
 /-- **Zeckendorf digit sequence of zero.** The Zeckendorf digit sequence of $0$ is the zero
 sequence: all of its digits are $0$, because the Zeckendorf representation of $0$ is empty.
@@ -364,35 +324,6 @@ public theorem_wanted zeckOdometer_stopping_block_one {x : ℕ → Bool} (hx : x
       ∀ k, 2 ≤ k → k ≤ ℓ + 2 → zeckOdometer^[r] x k = zeckOdometer^[rt + Nat.fib (ℓ + 3)] x k ∧
         zeckOdometer^[rt + Nat.fib (ℓ + 3)] x k = zeckOdometer^[rt] x k
 
-/-- **Stopping condition for a block of size $m + 2$.** Write $F_j$ for the Fibonacci numbers
-($F_1 = F_2 = 1$). For $r \in \mathbb{N}$ let $Z(r)$ be the set of indices in the Zeckendorf
-representation $r = \sum_{j \in Z(r)} F_j$ (all indices $\ge 2$, no two consecutive), and let
-$r_j = 1$ if $j \in Z(r)$ and $r_j = 0$ otherwise. Let $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$
-be the set of Zeckendorf-adic integers (sequences with $x_0 = x_1 = 0$ and no two consecutive
-ones), and write $x + n = T^n(x)$ for the $n$-th iterate of the Zeckendorf odometer $T$. Let
-$x \in \mathbb{X}$, $\ell \ge 2$ and $m \in \mathbb{N}$ with $x_i = 0$ for
-$i \in \{\ell, \ell+1, \ell+2, \ell+3, \ell+2m+4, \ell+2m+5, \ell+2m+6, \ell+2m+7\}$, and let
-$r$ satisfy $r_{\ell+1} = r_{\ell+2m+7} = 0$ and $r_{\ell+2i+3} = 1$ for $i = 0, \dots, m+1$.
-Let $\tilde r = \sum_{j \in Z(r),\, j \le \ell} F_j$ be the part of $r$ of index at most $\ell$,
-and let $S = \sum_{i=0}^{m+1} F_{\ell+2i+3}$. Then
-$(x + \tilde r + S)_k = (x + \tilde r)_k = x_k$ for every $k \ge \ell + 2m + 7$, and
-$(x + r)_k = (x + \tilde r + S)_k$ for every $k$ with $2 \le k \le \ell + 2m + 2$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Corollary 14 (`jis-2024-24.3.2-cor-14`). -/
-public theorem_wanted zeckOdometer_stopping_block {x : ℕ → Bool} (hx : x ∈ zeckAdic)
-    {ℓ m r : ℕ} (hℓ : 2 ≤ ℓ)
-    (hx0 : ∀ i ∈ ({ℓ, ℓ + 1, ℓ + 2, ℓ + 3, ℓ + 2 * m + 4, ℓ + 2 * m + 5, ℓ + 2 * m + 6,
-      ℓ + 2 * m + 7} : Finset ℕ), x i = false)
-    (hr1 : ℓ + 1 ∉ Nat.zeckendorf r) (hr7 : ℓ + 2 * m + 7 ∉ Nat.zeckendorf r)
-    (hrb : ∀ i ≤ m + 1, ℓ + 2 * i + 3 ∈ Nat.zeckendorf r) :
-    let rt := (((Nat.zeckendorf r).filter (· ≤ ℓ)).map Nat.fib).sum
-    let S := ∑ i ∈ Finset.range (m + 2), Nat.fib (ℓ + 2 * i + 3)
-    (∀ k, ℓ + 2 * m + 7 ≤ k → zeckOdometer^[rt + S] x k = zeckOdometer^[rt] x k ∧
-        zeckOdometer^[rt] x k = x k) ∧
-      ∀ k, 2 ≤ k → k ≤ ℓ + 2 * m + 2 → zeckOdometer^[r] x k = zeckOdometer^[rt + S] x k
-
 open MeasureTheory
 
 /-- **Unique ergodicity of the Zeckendorf odometer.** Let $\mathbb{X}$ be the set of
@@ -457,31 +388,6 @@ public theorem_wanted zeckOdometer_invariant_measure_renewal (μ : Measure (ℕ 
       ProbabilityTheory.cond μ {x | x (k + 1) = true ∧ ∀ i, 2 ≤ i → i ≤ k → x i = y i}
           {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x (i + (k + 1)) = z i} =
         μ {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x i = z i})
-
-/-- **Bradley's inequality between the $\alpha$- and $\varphi$-mixing coefficients.** Let
-$(X_j)_{j \ge 1}$ be random variables on a probability space $(\Omega, \mathbb{P})$ with values in
-a measurable space, and let $k \ge 1$. Suppose a real number $c$ bounds every term defining the
-$\varphi$-mixing coefficient $\varphi(k)$: for every $p \ge 1$, every event
-$A \in \sigma(X_j : 1 \le j \le p)$ with $\mathbb{P}(A) > 0$ and every event
-$B \in \sigma(X_j : j \ge k + p)$, $|\mathbb{P}(B \mid A) - \mathbb{P}(B)| \le c$. Then $c/2$
-bounds every term defining the $\alpha$-mixing coefficient $\alpha(k)$: for every $p \ge 1$,
-every event $A \in \sigma(X_j : 1 \le j \le p)$ and every event $B \in \sigma(X_j : j \ge k + p)$,
-$|\mathbb{P}(A \cap B) - \mathbb{P}(A)\mathbb{P}(B)| \le c/2$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Proposition 18 (Bradley) (`jis-2024-24.3.2-prop-18`). -/
-public theorem_wanted alpha_mixing_le_half_phi_mixing {Ω β : Type*} [MeasurableSpace Ω]
-    [mβ : MeasurableSpace β] (μ : Measure Ω) [IsProbabilityMeasure μ] (X : ℕ → Ω → β)
-    (hX : ∀ j, Measurable (X j)) {k : ℕ} (hk : 1 ≤ k) (c : ℝ)
-    (hc : ∀ p, 1 ≤ p → ∀ A B : Set Ω,
-      MeasurableSet[⨆ j ∈ Finset.Icc 1 p, mβ.comap (X j)] A →
-      MeasurableSet[⨆ (j : ℕ) (_ : k + p ≤ j), mβ.comap (X j)] B → μ A ≠ 0 →
-      |(ProbabilityTheory.cond μ A B).toReal - (μ B).toReal| ≤ c)
-    {p : ℕ} (hp : 1 ≤ p) {A B : Set Ω}
-    (hA : MeasurableSet[⨆ j ∈ Finset.Icc 1 p, mβ.comap (X j)] A)
-    (hB : MeasurableSet[⨆ (j : ℕ) (_ : k + p ≤ j), mβ.comap (X j)] B) :
-    |(μ (A ∩ B)).toReal - (μ A).toReal * (μ B).toReal| ≤ c / 2
 
 /-- **Mixing of the Zeckendorf digits under the invariant measure.** Let
 $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of Zeckendorf-adic integers (sequences
