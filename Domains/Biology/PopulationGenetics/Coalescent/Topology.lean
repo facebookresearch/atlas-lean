@@ -236,15 +236,15 @@ theorem sum_pairSeparateProb_div_choose {n : ℕ} (hn : 2 ≤ n) :
       field_simp [hn1, hn2]
       ring
 
-theorem pairMin_getD_eq (x y : ℕ) : ({x, y} : Finset ℕ).min.getD 0 = min x y := by
+private theorem pairMin_getD_eq (x y : ℕ) : ({x, y} : Finset ℕ).min.getD 0 = min x y := by
   rw [Finset.min_insert, Finset.min_singleton, ← WithTop.coe_min]
   rfl
 
-theorem pairMax_getD_eq (x y : ℕ) : ({x, y} : Finset ℕ).max.getD 0 = max x y := by
+private theorem pairMax_getD_eq (x y : ℕ) : ({x, y} : Finset ℕ).max.getD 0 = max x y := by
   rw [Finset.max_insert, Finset.max_singleton, ← WithBot.coe_max]
   rfl
 
-theorem pairMin_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.min.getD 0 ∈ s := by
+private theorem pairMin_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.min.getD 0 ∈ s := by
   obtain ⟨x, y, _, rfl⟩ := Finset.card_eq_two.mp hs
   rw [pairMin_getD_eq]
   rcases le_total x y with h | h
@@ -253,7 +253,7 @@ theorem pairMin_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.min.getD 0 ∈ s
   · rw [min_eq_right h]
     exact Finset.mem_insert_of_mem (Finset.mem_singleton_self y)
 
-theorem pairMax_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.max.getD 0 ∈ s := by
+private theorem pairMax_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.max.getD 0 ∈ s := by
   obtain ⟨x, y, _, rfl⟩ := Finset.card_eq_two.mp hs
   rw [pairMax_getD_eq]
   rcases le_total x y with h | h
@@ -262,7 +262,7 @@ theorem pairMax_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.max.getD 0 ∈ s
   · rw [max_eq_left h]
     exact Finset.mem_insert_self x {y}
 
-theorem pairMin_lt_pairMax (s : Finset ℕ) (hs : s.card = 2) :
+private theorem pairMin_lt_pairMax (s : Finset ℕ) (hs : s.card = 2) :
     s.min.getD 0 < s.max.getD 0 := by
   obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp hs
   rw [pairMin_getD_eq, pairMax_getD_eq]
@@ -272,7 +272,7 @@ theorem pairMin_lt_pairMax (s : Finset ℕ) (hs : s.card = 2) :
   · rw [min_eq_right (le_of_lt h), max_eq_left (le_of_lt h)]
     exact h
 
-theorem pair_eq_min_max (s : Finset ℕ) (hs : s.card = 2) :
+private theorem pair_eq_min_max (s : Finset ℕ) (hs : s.card = 2) :
     s = {s.min.getD 0, s.max.getD 0} := by
   obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp hs
   rw [pairMin_getD_eq, pairMax_getD_eq]
@@ -281,11 +281,11 @@ theorem pair_eq_min_max (s : Finset ℕ) (hs : s.card = 2) :
   · rw [min_eq_right h, max_eq_left h]
     exact Finset.pair_comm x y
 
-theorem blocksAfter_zero {n : ℕ} (h : RankedHistory n) :
+private theorem blocksAfter_zero {n : ℕ} (h : RankedHistory n) :
     blocksAfter h 0 = (List.finRange n).map fun j => ({j} : Finset (Fin n)) := by
   simp [blocksAfter]
 
-theorem blocksAfter_step {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t < n - 1) :
+private theorem blocksAfter_step {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t < n - 1) :
     blocksAfter h (t + 1) =
       let s : Finset ℕ := (h ⟨t, ht⟩).1.map Fin.valEmbedding
       mergeBlocks (blocksAfter h t) (s.min.getD 0) (s.max.getD 0) := by
@@ -305,22 +305,22 @@ theorem blocksAfter_step {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t < n -
   rw [htake, List.foldl_append]
   simp
 
-theorem mapPair_card {k : ℕ} (p : LineagePair k) :
+private theorem mapPair_card {k : ℕ} (p : LineagePair k) :
     (p.1.map Fin.valEmbedding).card = 2 := by
   rw [Finset.card_map, p.2]
 
-theorem mapPair_mem_lt {k : ℕ} (p : LineagePair k) (a : ℕ)
+private theorem mapPair_mem_lt {k : ℕ} (p : LineagePair k) (a : ℕ)
     (ha : a ∈ p.1.map Fin.valEmbedding) : a < k := by
   obtain ⟨j, _, rfl⟩ := Finset.mem_map.mp ha
   exact j.isLt
 
-theorem length_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem length_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (hb : b < bs.length) : (mergeBlocks bs a b).length = bs.length - 1 := by
   unfold mergeBlocks
   rw [List.length_eraseIdx, List.length_set]
   simp [hb]
 
-theorem length_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1) :
+private theorem length_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1) :
     (blocksAfter h t).length = n - t := by
   induction t with
   | zero =>
@@ -339,17 +339,17 @@ theorem length_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤
     rw [length_mergeBlocks _ _ _ hb, ih ht']
     omega
 
-theorem listGetD_eq {α : Type} (l : List α) (c : ℕ) (d : α) (hc : c < l.length) :
+private theorem listGetD_eq {α : Type} (l : List α) (c : ℕ) (d : α) (hc : c < l.length) :
     l.getD c d = l[c] := by
   simp [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hc]
 
-theorem mergeBlocks_eq {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem mergeBlocks_eq {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) :
     mergeBlocks bs a b = (bs.set a (bs[a] ∪ bs[b])).eraseIdx b := by
   unfold mergeBlocks
   rw [listGetD_eq _ _ _ ha, listGetD_eq _ _ _ hb]
 
-theorem mem_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem mem_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (x : Finset (Fin n)) :
     x ∈ mergeBlocks bs a b ↔ x = bs[a] ∪ bs[b] ∨ (x ∈ bs ∧ x ≠ bs[a] ∧ x ≠ bs[b]) := by
@@ -399,7 +399,7 @@ theorem mem_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
       rw [List.getElem_set hj']
       simp [Ne.symm hja, hjx]
 
-theorem union_merge_not_mem {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem union_merge_not_mem {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (hnonempty : ∀ x ∈ bs, x.Nonempty)
     (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
@@ -424,7 +424,7 @@ theorem union_merge_not_mem {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
   have hwU : w ∈ bs[a] ∪ bs[b] := Finset.mem_union_left _ hw
   exact (Finset.disjoint_left.mp hdisjU hwU) hw
 
-theorem nodup_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem nodup_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (hnonempty : ∀ x ∈ bs, x.Nonempty)
     (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
@@ -434,7 +434,7 @@ theorem nodup_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
   have hset : (bs.set a (bs[a] ∪ bs[b])).Nodup := List.Nodup.set hnodup hBnew
   exact List.Nodup.eraseIdx b hset
 
-theorem nonempty_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem nonempty_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (hnonempty : ∀ x ∈ bs, x.Nonempty) :
     ∀ x ∈ mergeBlocks bs a b, x.Nonempty := by
@@ -445,7 +445,7 @@ theorem nonempty_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     exact ⟨w, Finset.mem_union_left _ hw⟩
   · exact hnonempty _ hmem
 
-theorem disjoint_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem disjoint_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
     ∀ x ∈ mergeBlocks bs a b, ∀ y ∈ mergeBlocks bs a b, x ≠ y → Disjoint x y := by
@@ -463,19 +463,19 @@ theorem disjoint_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
         hdisj _ hxmem _ (List.getElem_mem hb) hx2⟩
     · exact hdisj _ hxmem _ hymem hxy
 
-theorem nodup_initBlocks (n : ℕ) :
+private theorem nodup_initBlocks (n : ℕ) :
     ((List.finRange n).map fun j => ({j} : Finset (Fin n))).Nodup := by
   apply List.Nodup.map _ (List.nodup_finRange n)
   intro a b hab
   exact Finset.singleton_inj.mp hab
 
-theorem nonempty_initBlocks (n : ℕ) :
+private theorem nonempty_initBlocks (n : ℕ) :
     ∀ x ∈ (List.finRange n).map (fun j => ({j} : Finset (Fin n))), x.Nonempty := by
   intro x hx
   obtain ⟨j, _, rfl⟩ := List.mem_map.mp hx
   exact Finset.singleton_nonempty j
 
-theorem disjoint_initBlocks (n : ℕ) :
+private theorem disjoint_initBlocks (n : ℕ) :
     ∀ x ∈ (List.finRange n).map (fun j => ({j} : Finset (Fin n))),
     ∀ y ∈ (List.finRange n).map (fun j => ({j} : Finset (Fin n))),
     x ≠ y → Disjoint x y := by
@@ -487,7 +487,7 @@ theorem disjoint_initBlocks (n : ℕ) :
     exact hxy rfl
   exact Finset.disjoint_singleton.mpr hne
 
-theorem invar_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1) :
+private theorem invar_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1) :
     (blocksAfter h t).Nodup ∧
     (∀ x ∈ blocksAfter h t, x.Nonempty) ∧
     (∀ x ∈ blocksAfter h t, ∀ y ∈ blocksAfter h t, x ≠ y → Disjoint x y) := by
@@ -519,7 +519,7 @@ theorem invar_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ 
       nonempty_mergeBlocks _ _ _ ha hb hab ihNodup ihNonempty,
       disjoint_mergeBlocks _ _ _ ha hb hab ihNodup ihDisj⟩
 
-theorem partitionsOf_toFinset_eq {n : ℕ} (h1 h2 : RankedHistory n)
+private theorem partitionsOf_toFinset_eq {n : ℕ} (h1 h2 : RankedHistory n)
     (heq : partitionsOf h1 = partitionsOf h2) (t : ℕ) (ht : t < n) :
     (blocksAfter h1 t).toFinset = (blocksAfter h2 t).toFinset := by
   have hcongr : (partitionsOf h1)[t]? = (partitionsOf h2)[t]? := by rw [heq]
@@ -527,7 +527,7 @@ theorem partitionsOf_toFinset_eq {n : ℕ} (h1 h2 : RankedHistory n)
     Option.map_some] at hcongr
   exact Option.some_inj.mp hcongr
 
-theorem mem_lineagePair_iff {k : ℕ} (p : LineagePair k) (j : Fin k) :
+private theorem mem_lineagePair_iff {k : ℕ} (p : LineagePair k) (j : Fin k) :
     j ∈ p.1 ↔ (j.val : ℕ) ∈ p.1.map Fin.valEmbedding := by
   constructor
   · intro h
@@ -538,13 +538,13 @@ theorem mem_lineagePair_iff {k : ℕ} (p : LineagePair k) (j : Fin k) :
     have hjeq : j' = j := Fin.ext hval
     rwa [hjeq] at hj'
 
-theorem lineagePair_eq_of_map_eq {k : ℕ} (p1 p2 : LineagePair k)
+private theorem lineagePair_eq_of_map_eq {k : ℕ} (p1 p2 : LineagePair k)
     (hmap : p1.1.map Fin.valEmbedding = p2.1.map Fin.valEmbedding) : p1 = p2 := by
   apply Subtype.ext
   ext j
   rw [mem_lineagePair_iff, mem_lineagePair_iff, hmap]
 
-theorem sdiff_toFinset_merge {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+private theorem sdiff_toFinset_merge {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
     (hnonempty : ∀ x ∈ bs, x.Nonempty)
     (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
@@ -575,7 +575,7 @@ theorem sdiff_toFinset_merge {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
     · exact ⟨List.getElem_mem ha, fun h => h.elim (hBne1 ·.symm) (fun h2 => h2.2.1 rfl)⟩
     · exact ⟨List.getElem_mem hb, fun h => h.elim (hBne2 ·.symm) (fun h2 => h2.2.2 rfl)⟩
 
-theorem indexPair_eq_of_blockPair_eq {n : ℕ} (bs : List (Finset (Fin n)))
+private theorem indexPair_eq_of_blockPair_eq {n : ℕ} (bs : List (Finset (Fin n)))
     (a1 b1 a2 b2 : ℕ)
     (ha1 : a1 < bs.length) (hb1 : b1 < bs.length)
     (ha2 : a2 < bs.length) (hb2 : b2 < bs.length)
@@ -630,12 +630,12 @@ theorem indexPair_eq_of_blockPair_eq {n : ℕ} (bs : List (Finset (Fin n)))
       · exact Or.inl rfl
       · exact Or.inr rfl
 
-theorem getElem_of_eq {α : Type} (l1 l2 : List α) (c : ℕ) (h1 : c < l1.length)
+private theorem getElem_of_eq {α : Type} (l1 l2 : List α) (c : ℕ) (h1 : c < l1.length)
     (h2 : c < l2.length) (heq : l1 = l2) : l1[c]'h1 = l2[c]'h2 := by
   subst heq
   rfl
 
-theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt : t < n - 1)
+private theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt : t < n - 1)
     (hbs : blocksAfter h1 t = blocksAfter h2 t)
     (hpart : (blocksAfter h1 (t + 1)).toFinset = (blocksAfter h2 (t + 1)).toFinset) :
     h1 ⟨t, hlt⟩ = h2 ⟨t, hlt⟩ := by
@@ -729,7 +729,7 @@ theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt : t < n -
     rw [hs1, hs2, hidx]
   exact lineagePair_eq_of_map_eq _ _ hmap
 
-theorem blocksAfter_eq_of_partitions {n : ℕ} (h1 h2 : RankedHistory n)
+private theorem blocksAfter_eq_of_partitions {n : ℕ} (h1 h2 : RankedHistory n)
     (heq : partitionsOf h1 = partitionsOf h2) (t : ℕ) (ht : t ≤ n - 1) :
     blocksAfter h1 t = blocksAfter h2 t ∧
     ∀ (j : Fin (n - 1)), (j.val : ℕ) < t → h1 j = h2 j := by
