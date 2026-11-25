@@ -46,6 +46,7 @@
 - [Frobenius error of the truncated SVD](frobenius-sub-trunc-svd-sq.md)
 - [Eckart–Young (Frobenius norm)](sum-sq-singular-values-le-frobenius-sub.md)
 - [Eckart–Young, best-approximation form](is-least-frobenius-sub-sq.md)
+- [Best low-rank approximation in a Kronecker covariance norm](kronecker-weighted-low-rank-approximation.md)
 
 ## Related topics
 

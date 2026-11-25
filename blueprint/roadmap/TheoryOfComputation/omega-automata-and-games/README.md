@@ -12,3 +12,5 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Parity games](parity-games/README.md)
 - [Rabin and Streett automata](rabin-and-streett-automata/README.md)
 - [Small progress measures for parity games: a costed verifier](small-progress-measures-for-parity-games-a-coste/README.md)
+
+- [Polynomial-time solvability of mean-payoff games](polynomial-time-solvability-of-mean-payoff-games.md)

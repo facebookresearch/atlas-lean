@@ -36,3 +36,7 @@
 - [Reflecting a Wright–Fisher solution negates the selection coefficient](one-sub.md)
 - [Reflecting the frequency path leaves the absorption time unchanged](absorption-time-one-sub.md)
 - [Kimura's loss probability, process form](measure-real-loss.md)
+
+## Research directions
+
+- [Fixation probability in a population of changing size](fixation-probability-in-a-population-of-changing-size.md)

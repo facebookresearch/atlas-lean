@@ -8,3 +8,5 @@ Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, B
 - [Pipe-flow networks](pipe-flow-networks/README.md)
 - [Resultant of a linear pressure distribution](resultant-of-a-linear-pressure-distribution/README.md)
 - [Stokes settling velocity](stokes-settling-velocity/README.md)
+- [Filtration and sedimentation](filtration-and-sedimentation/README.md)
+- [Flow in porous media](flow-in-porous-media/README.md)
