@@ -4,7 +4,8 @@ Let $\nu$ be a probability law on $\mathbb N=\{0,1,2,\ldots\}$ and $k\ge1$. The 
 
 1. $X_1,X_2,\ldots$ are independent with common law $\nu$.
 2. With $S_0=k$ and $S_n=k+\sum_{i=1}^n(X_i-1)$, the total progeny is the first hitting time of zero,
-$$\tau=\inf\{n\ge1:\ S_n=0\},\qquad\inf\varnothing=\infty .$$
+
+    $$\tau=\inf\{n\ge1:\ S_n=0\},\qquad\inf\varnothing=\infty .$$
 
 For $n<\tau$, $S_n$ is the number of vertices discovered but not yet explored after $n$ explorations. Special cases: for $k=1$ and $\nu=\delta_0$ the total progeny is $1$; for $k=1$ and $\nu=\delta_1$ one has $S_n=1$ for all $n$ and the total progeny is infinite.
 

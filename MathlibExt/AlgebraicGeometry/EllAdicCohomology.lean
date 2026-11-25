@@ -112,7 +112,9 @@ def globalCoefficientMap (f : A →ₜ+ B) :
     globalCoefficientSheaf.{u} A ⟶ globalCoefficientSheaf.{u} B :=
   ObjectProperty.homMk (coefficientPresheafMap f)
 
-/-- The pushforward appearing in Mathlib's `Scheme.ellAdicSheaf`. -/
+/-- Restriction of abelian sheaves from the big pro-étale site to the pro-étale site of `X`: the
+sheaf pushforward along the forgetful functor from schemes weakly étale over `X` to schemes, which
+sends a sheaf `F` to `U ↦ F(U)`. -/
 abbrev coefficientPushforward (X : Scheme.{u}) :
     Sheaf proetaleTopology Ab.{u} ⥤ Sheaf (ProEt.topology X) Ab.{u} :=
   (ProEt.forget X ⋙ Over.forget _).sheafPushforwardContinuous _ _
@@ -136,7 +138,8 @@ def coefficientMap (X : Scheme.{u}) (f : A →ₜ+ B) :
     coefficientSheaf X A ⟶ coefficientSheaf X B :=
   (coefficientPushforward X).map (globalCoefficientMap f)
 
-/-- The universe lift used in Mathlib's `Scheme.EllAdicCohomology`. -/
+/-- The universe lift of abelian sheaves on the pro-étale site of `X`, from `Ab.{u}` to
+`Ab.{u + 1}`: composition with the lift functor `AddCommGrpCat.uliftFunctor` on abelian groups. -/
 abbrev coefficientLift (X : Scheme.{u}) :
     Sheaf (ProEt.topology X) Ab.{u} ⥤
       Sheaf (ProEt.topology X) Ab.{u + 1} :=
@@ -166,7 +169,8 @@ def globalScalar (a : ℤ_[ℓ]) :
     globalCoefficientSheaf.{u} ℤ_[ℓ] ⟶ globalCoefficientSheaf.{u} ℤ_[ℓ] :=
   globalCoefficientMap (scalarCoefficient ℓ a)
 
-/-- Multiplication by `a` on Mathlib's coefficient sheaf `Scheme.ellAdicSheaf`. -/
+/-- Multiplication by `a ∈ ℤ_ℓ` on the coefficient sheaf `X.ellAdicSheaf ℓ`, the sheaf
+`U ↦ C(U, ℤ_ℓ)` on the pro-étale site of `X`: it multiplies continuous maps pointwise by `a`. -/
 def sheafScalar (X : Scheme.{u}) (a : ℤ_[ℓ]) :
     X.ellAdicSheaf ℓ ⟶ X.ellAdicSheaf ℓ :=
   (coefficientPushforward X).map (globalScalar ℓ a)
@@ -178,8 +182,9 @@ def liftedScalar (X : Scheme.{u}) (a : ℤ_[ℓ]) :
       (coefficientLift X).obj (X.ellAdicSheaf ℓ) :=
   (coefficientLift X).map (sheafScalar ℓ X a)
 
-/-- The canonical scalar action induced by `Sheaf.H.map` on
-Mathlib's carrier. -/
+/-- The additive endomorphism of `H^n(X, ℤ_ℓ)` (`X.EllAdicCohomology ℓ n`) induced on
+degree-`n` sheaf cohomology by multiplication by `a` on the universe-lifted coefficient sheaf
+(`liftedScalar`). -/
 def cohomologyScalar (X : Scheme.{u}) (n : ℕ) (a : ℤ_[ℓ]) :
     X.EllAdicCohomology ℓ n →+ X.EllAdicCohomology ℓ n :=
   Sheaf.H.map (liftedScalar ℓ X a) n

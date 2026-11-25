@@ -7,3 +7,4 @@
 - [Completeness validation of LR(1) automata](completeness-validation-of-lr-1-automata.md)
 - [Correctness of a derivative-based lexer](correctness-of-a-derivative-based-lexer.md)
 - [An unambiguous expression grammar and its abstract syntax](an-unambiguous-expression-grammar-and-its-abstract.md)
+- [Parsers and recognizers](parsers-and-recognizers.md)
