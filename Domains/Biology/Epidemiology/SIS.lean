@@ -341,8 +341,8 @@ end IsSolution
 
 /-! ### Long-time behaviour -/
 
-/-- **Endemic limit of the explicit solution.** If `0 ≤ γ < β` (`R₀ > 1`), `N ≠ 0` and
-`I₀ > 0`, then `I(t) → I* = N (1 - γ / β)`. Via the logistic bridge and
+/-- **Endemic limit of the explicit solution.** If `0 ≤ γ < β` (`R₀ > 1` when `γ > 0`),
+`N ≠ 0` and `I₀ > 0`, then `I(t) → I* = N (1 - γ / β)`. Via the logistic bridge and
 `Dynamics.Logistic.tendsto_logistic_atTop`. -/
 theorem tendsto_sisInfected_endemic {β γ N I₀ : ℝ} (hγ : 0 ≤ γ) (hγβ : γ < β) (hN : N ≠ 0)
     (hI₀ : 0 < I₀) : Tendsto (sisInfected β γ N I₀) atTop (𝓝 (N * (1 - γ / β))) := by
@@ -387,8 +387,8 @@ namespace IsSolution
 
 variable {β γ N : ℝ} {S I : ℝ → ℝ}
 
-/-- **Endemic limit (all solutions).** If `0 ≤ γ < β` (`R₀ > 1`), `N > 0`, `S(0) + I(0) = N`
-and `I(0) > 0`, then `I(t) → I* = N (1 - γ / β)`. -/
+/-- **Endemic limit (all solutions).** If `0 ≤ γ < β` (`R₀ > 1` when `γ > 0`), `N > 0`,
+`S(0) + I(0) = N` and `I(0) > 0`, then `I(t) → I* = N (1 - γ / β)`. -/
 theorem tendsto_infected_endemic (h : IsSolution β γ N S I) (hγ : 0 ≤ γ) (hγβ : γ < β)
     (hN : 0 < N) (hS : S 0 + I 0 = N) (hI0 : 0 < I 0) :
     Tendsto I atTop (𝓝 (N * (1 - γ / β))) :=

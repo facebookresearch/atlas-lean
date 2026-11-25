@@ -32,6 +32,7 @@ constant.
 
 * `randomSubsetLaw_real_containsEvent`: `P(S ⊆ R) = ∏_{a ∈ S} p a`.
 * `randomSubsetLaw_real_avoidEvent`: `P(S ∩ R = ∅) = ∏_{a ∈ S} (1 - p a)`.
+* `randomSubsetLaw_real_singleton`: `P(R = b) = ∏_a (if b a then p a else 1 - p a)`.
 
 Reference: Y. Zhao, *The Probabilistic Method in Combinatorics*, MIT 18.218 lecture notes,
 Spring 2019, Setup 7.10 (https://yufeizhao.com/pm/sp19/pmnotes.pdf).
@@ -159,5 +160,28 @@ theorem randomSubsetLaw_real_avoidEvent [Fintype α] (p : α → I) (S : Finset 
     exact bernoulliMeasure_real_apply_of_notMem_of_mem (p a) (measurableSet_singleton false)
       (by simp) rfl
   rw [h1, h2, mul_one]
+
+/-- The mass of a single outcome string is the product of the coordinate masses. -/
+theorem randomSubsetLaw_real_singleton [Fintype α] (p : α → I) (b : α → Bool) :
+    (randomSubsetLaw p).real {b} =
+      ∏ i, if b i then (p i : ℝ) else 1 - (p i : ℝ) := by
+  unfold randomSubsetLaw
+  rw [measureReal_def, Measure.pi_singleton]
+  rw [ENNReal.toReal_prod]
+  apply Finset.prod_congr rfl
+  intro i _
+  cases hbi : b i
+  · have hs : MeasurableSet ({(false : Bool)} : Set Bool) :=
+      MeasurableSet.singleton _
+    have h := bernoulliMeasure_real_apply_of_notMem_of_mem (x := true)
+      (y := false) (p := p i) (s := {(false : Bool)})
+      hs (by simp) (by simp)
+    simp
+  · have hs : MeasurableSet ({(true : Bool)} : Set Bool) :=
+      MeasurableSet.singleton _
+    have h := bernoulliMeasure_real_apply_of_mem_of_notMem (x := true)
+      (y := false) (p := p i) (s := {(true : Bool)})
+      hs (by simp) (by simp)
+    simp
 
 end MathlibExt.Probability.Combinatorics.RandomSubset

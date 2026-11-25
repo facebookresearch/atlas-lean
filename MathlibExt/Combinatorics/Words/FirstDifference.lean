@@ -22,11 +22,16 @@ This file formalizes the first-difference operation from Ricardo Astudillo,
 
 namespace MetaMathlibExt
 
-/-- The first difference of an infinite binary word: `(Δw) i = w (i + 1) - w i`. -/
+/-- **First difference of an infinite binary word.** For an infinite word $w = w_0 w_1 w_2 \cdots$
+over $\mathbb{Z}/2\mathbb{Z}$, its first difference is the infinite word $\Delta w$ over
+$\mathbb{Z}/2\mathbb{Z}$ with $(\Delta w)_i = w_{i+1} - w_i$ for every natural number $i$. -/
 def firstDifference (w : ℕ → ZMod 2) : ℕ → ZMod 2 :=
   fun i ↦ w (i + 1) - w i
 
-/-- The adjacent first differences of a finite binary word. -/
+/-- **First difference of a finite binary word.** For a finite word $w = w_0 w_1 \cdots w_m$ over
+$\mathbb{Z}/2\mathbb{Z}$, its first difference is the word
+$(w_1 - w_0)(w_2 - w_1) \cdots (w_m - w_{m-1})$ of length $m$, computed in $\mathbb{Z}/2\mathbb{Z}$.
+The first difference of the empty word is the empty word. -/
 def firstDifferenceList (w : List (ZMod 2)) : List (ZMod 2) :=
   List.zipWith (· - ·) w.tail w
 

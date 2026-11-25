@@ -169,34 +169,6 @@ private theorem lucasNumber_dvd_fib_add_two_mul_mul_sub (k : ℕ) (hk : Even k) 
       rw [key]
       exact dvd_sub hmem ih
 
--- N6 helper: six-step closed form
-private theorem lucasNumber_add_six (i : ℕ) :
-    lucasNumber (i + 6) = 8 * lucasNumber (i + 1) + 5 * lucasNumber i := by
-  have h1 : lucasNumber (i + 6) = lucasNumber (i + 5) + lucasNumber (i + 4) := rfl
-  have h2 : lucasNumber (i + 5) = lucasNumber (i + 4) + lucasNumber (i + 3) := rfl
-  have h3 : lucasNumber (i + 4) = lucasNumber (i + 3) + lucasNumber (i + 2) := rfl
-  have h4 : lucasNumber (i + 3) = lucasNumber (i + 2) + lucasNumber (i + 1) := rfl
-  have h5 : lucasNumber (i + 2) = lucasNumber (i + 1) + lucasNumber i := rfl
-  omega
-
-private theorem lucasNumber_add_six_mod_four (i : ℕ) :
-    lucasNumber (i + 6) % 4 = lucasNumber i % 4 := by
-  have h := lucasNumber_add_six i
-  omega
-
-private theorem lucasNumber_period_aux (q r : ℕ) :
-    lucasNumber (6 * q + r) % 4 = lucasNumber r % 4 := by
-  induction q with
-  | zero => simp
-  | succ q ih =>
-      have h : 6 * (q + 1) + r = (6 * q + r) + 6 := by ring
-      rw [h]
-      have h2 : (6 * q + r) + 6 = (6 * q + r) + 6 := rfl
-      have hper := lucasNumber_add_six_mod_four (6 * q + r)
-      have hidx : (6 * q + r) + 6 = (6 * q + r) + 6 := rfl
-      rw [show (6 * q + r) + 6 = (6 * q + r) + 6 from rfl] at hper
-      rw [hper, ih]
-
 -- N6
 private theorem lucasNumber_mod_four_of_even_of_not_three_dvd (k : ℕ) (hk : Even k) (h3 : ¬ 3 ∣ k) :
     lucasNumber k % 4 = 3 := by
@@ -212,7 +184,7 @@ private theorem lucasNumber_mod_four_of_even_of_not_three_dvd (k : ℕ) (hk : Ev
     omega
   have hdecomp : 6 * (k / 6) + k % 6 = k := by omega
   conv_lhs => rw [← hdecomp]
-  rw [lucasNumber_period_aux]
+  rw [lucasNumber_six_mul_add_mod_four]
   rcases hmod6 with h | h <;> rw [h] <;> decide
 
 -- N7
@@ -499,8 +471,11 @@ private theorem fib_two_mul_eq_two_mul_sq (m x : ℕ) (hm : 0 < m)
     have hxb : x ≤ 8 := by omega
     interval_cases x <;> omega
 
-/-- Cohn's twice-square-Fibonacci classification (Keskin–Yosma Theorem 2.1,
-second claim): for `0 < n`, `Fₙ = 2x²` forces `n ∈ {3, 6}`.
+/-- **Cohn's theorem on Fibonacci numbers of the form $2x^2$.** Let $F_n$ denote the Fibonacci
+numbers, with $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$. If $n$ and $x$ are natural
+numbers with $n \ge 1$ and $F_n = 2x^2$, then $n \in \{3, 6\}$.
+
+This is the second claim of Theorem 2.1 of Keskin and Yosma.
 
 Proves `Wanted` entry `cohn_twice_square_fibonacci`.
 -/

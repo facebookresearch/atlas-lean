@@ -23,13 +23,17 @@ open scoped BigOperators Topology
 
 namespace MetaMathlibExt
 
-/-- Entry `(i, j)` of the infinite Pascal matrix. -/
+/-- **Entries of the infinite Pascal matrix.** For natural numbers $i$ and $j$, the entry of the
+infinite Pascal matrix in row $i$ and column $j$ is the binomial coefficient $\binom{i}{j}$. -/
 public def pascalEntry (i j : ℕ) : ℕ :=
   Nat.choose i j
 
-/-- The column generating function `alpha_j(x) = ∑ i, choose i j * x ^ i`.
+/-- **Column generating functions of the Pascal matrix.** For a natural number $j$ and a real
+number $x$, the column generating function of the infinite Pascal matrix is
+$\alpha_j(x) = \sum_{i \ge 0} \binom{i}{j} x^i$, where $\binom{i}{j}$ is the entry in row $i$ and
+column $j$; the sum is taken to be $0$ when the series is not summable.
 
-Concept `jis_sem_0dfae529bb25056055d54002`, statement
+Source: concept `jis_sem_0dfae529bb25056055d54002`, statement
 `jis_0e7580a02d8343e6906a8ac6`. -/
 public noncomputable def pascalAlpha (j : ℕ) (x : ℝ) : ℝ :=
   ∑' i, (pascalEntry i j : ℝ) * x ^ i
@@ -53,7 +57,9 @@ private theorem colHas (j : ℕ) (x : ℝ) (hx : ‖x‖ < 1) :
   simpa [hpre] using
     (hasSum_nat_add_iff (f := fun i => (pascalEntry i j : ℝ) * x ^ i) j).mp hshift
 
-/-- The closed form for a column generating function of the infinite Pascal matrix. -/
+/-- **Closed form of the Pascal column generating functions.** For every natural number $j$ and
+every real number $x$ with $|x| < 1$, the column generating function $\alpha_j$ of the infinite
+Pascal matrix satisfies $\alpha_j(x) = x^j / (1 - x)^{j+1}$. -/
 public theorem pascalAlpha_eq (j : ℕ) (x : ℝ) (hx : |x| < 1) :
     pascalAlpha j x = x ^ j / (1 - x) ^ (j + 1) := by
   unfold pascalAlpha
@@ -97,7 +103,11 @@ private theorem masterSumm (x : ℝ) (hx : |x| < 1 / 2) :
       exact mul_nonneg (pow_nonneg hc0 _) (pow_nonneg hc0 _)
   exact Summable.of_norm (Summable.of_nonneg_of_le (fun p => norm_nonneg _) hle hprod)
 
-/-- Summing the column generating functions agrees with both source expansions. -/
+/-- **Summing the Pascal column generating functions.** For every real number $x$ with
+$|x| < 1/2$, the sum $\sum_{j \ge 0} \alpha_j(x)$ of the column generating functions of the
+infinite Pascal matrix equals $\sum_{j \ge 0} \sum_{i \ge 0} \binom{i}{j} x^i$, where
+$\binom{i}{j}$ is the entry in row $i$ and column $j$, and it also equals
+$\sum_{j \ge 0} x^j / (1 - x)^{j+1}$. -/
 public theorem tsum_pascalAlpha_eq (x : ℝ) (hx : |x| < 1 / 2) :
     (∑' j, pascalAlpha j x) = (∑' j, ∑' i, (pascalEntry i j : ℝ) * x ^ i) ∧
       (∑' j, pascalAlpha j x) = ∑' j, x ^ j / (1 - x) ^ (j + 1) := by
@@ -131,7 +141,11 @@ private theorem abs_div_one_sub_lt_one (x : ℝ) (hx : |x| < 1 / 2) :
   have h1x : (0 : ℝ) < 1 - x := by linarith [hb.2]
   rw [abs_div, abs_of_pos h1x, div_lt_one h1x]; linarith [hx, hb.2]
 
-/-- The absolutely convergent Pascal-matrix sum can be reversed and factored. -/
+/-- **Reversing the order of summation in the Pascal matrix.** For every real number $x$ with
+$|x| < 1/2$, writing $\binom{i}{j}$ for the entry of the infinite Pascal matrix in row $i$ and
+column $j$, we have
+$\sum_{j \ge 0} \sum_{i \ge 0} \binom{i}{j} x^i = \sum_{i \ge 0} \sum_{j \ge 0} \binom{i}{j} x^i$,
+and this sum equals $\frac{1}{1 - x} \sum_{j \ge 0} \left(\frac{x}{1 - x}\right)^j$. -/
 public theorem tsum_pascalEntry_comm (x : ℝ) (hx : |x| < 1 / 2) :
     (∑' j, ∑' i, (pascalEntry i j : ℝ) * x ^ i) =
       (∑' i, ∑' j, (pascalEntry i j : ℝ) * x ^ i) ∧
@@ -148,7 +162,9 @@ public theorem tsum_pascalEntry_comm (x : ℝ) (hx : |x| < 1 / 2) :
     rw [mul_comm ((1 : ℝ) - x), sub_mul, one_mul, div_mul_cancel₀ _ h1x_ne]; ring
   rw [tsum_congr (fun i => rowTsum i x), hLHS, hRHS, one_div, ← mul_inv, hmul]
 
-/-- Summing each finite row first gives the geometric series in `2 * x`. -/
+/-- **Summing the Pascal matrix row by row.** For every real number $x$ with $|x| < 1/2$,
+writing $\binom{i}{j}$ for the entry of the infinite Pascal matrix in row $i$ and column $j$, we
+have $\sum_{i \ge 0} x^i \sum_{j=0}^{i} \binom{i}{j} = \frac{1}{1 - 2x}$. -/
 public theorem tsum_pascalEntry_row (x : ℝ) (hx : |x| < 1 / 2) :
     (∑' i, x ^ i * Finset.sum (Finset.range (i + 1))
       (fun j => (pascalEntry i j : ℝ))) = 1 / (1 - 2 * x) := by
@@ -158,7 +174,10 @@ public theorem tsum_pascalEntry_row (x : ℝ) (hx : |x| < 1 / 2) :
   rw [tsum_congr hrow,
     tsum_geometric_of_abs_lt_one (abs_two_mul_lt_one x hx), inv_eq_one_div]
 
-/-- The total generating function of the infinite Pascal matrix. -/
+/-- **Total generating function of the Pascal matrix.** For every real number $x$ with
+$|x| < 1/2$, the sum $\sum_{j \ge 0} \alpha_j(x)$ of the column generating functions of the
+infinite Pascal matrix equals $\sum_{i \ge 0} (2x)^i$, and
+$\sum_{i \ge 0} (2x)^i = \frac{1}{1 - 2x}$. -/
 public theorem tsum_pascalAlpha_eq_geometric (x : ℝ) (hx : |x| < 1 / 2) :
     (∑' j, pascalAlpha j x) = (∑' i, (2 * x) ^ i) ∧
       (∑' i, (2 * x) ^ i) = 1 / (1 - 2 * x) := by

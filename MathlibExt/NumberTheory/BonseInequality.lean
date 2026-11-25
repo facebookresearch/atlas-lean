@@ -22,7 +22,11 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- The set of primes is infinite, in `_root_.Prime` form. -/
+/-- **Infinitely many primes.** The set of prime natural numbers is infinite.
+
+Here a natural number $p$ is prime in the sense of prime elements of a commutative monoid with
+zero: $p$ is neither $0$ nor a unit, and $p \mid ab$ implies $p \mid a$ or $p \mid b$. For natural
+numbers this agrees with the usual notion of a prime number. -/
 theorem bonse_primes_infinite : (Set.ofPred fun p : ℕ => Prime p).Infinite := by
   have h := Nat.infinite_setOfPred_prime
   have heq : Set.ofPred (fun p : ℕ => Prime p) = Set.ofPred Nat.Prime := by
@@ -30,23 +34,25 @@ theorem bonse_primes_infinite : (Set.ofPred fun p : ℕ => Prime p).Infinite := 
     exact Nat.prime_iff.symm
   rwa [heq]
 
-/-- Strict monotonicity of prime indexing. -/
+/-- **The enumeration of the primes is strictly increasing.** For $k \ge 1$ let $p_k$ be the
+$k$-th smallest prime number. If $i < j$, then $p_i < p_j$. -/
 theorem bonse_nth_strictMono : StrictMono (Nat.nth Prime) :=
   Nat.nth_strictMono bonse_primes_infinite
 
-/-- Every indexed prime is prime and hence at least two. -/
+/-- **The enumeration of the primes takes prime values.** For every $k \ge 1$, the $k$-th
+smallest prime number exists and is prime. -/
 theorem bonse_nth_prime (k : ℕ) : Prime (Nat.nth Prime k) :=
   Nat.nth_mem_of_infinite bonse_primes_infinite k
 
-/-- The sixth prime is thirteen, via prime counting. -/
+/-- **The sixth prime is thirteen.** The sixth prime number, counting $2$ as the first, is $13$. -/
 theorem bonse_nth_five : Nat.nth Prime 5 = 13 := by
   have c13 : Nat.count Prime 13 = 5 := by decide
   have h13 : Prime 13 := by decide
   have h := Nat.nth_count h13
   rwa [c13] at h
 
-/-- Bertrand's postulate in `nth` form: successive primes grow by less
-than a factor of two. -/
+/-- **Bertrand's postulate for consecutive primes.** Let $p_1 < p_2 < p_3 < \cdots$ be the prime
+numbers in increasing order. For every $k \ge 1$, $p_{k+1} < 2 p_k$. -/
 theorem bonse_nth_succ_lt (k : ℕ) :
     Nat.nth Prime (k + 1) < 2 * Nat.nth Prime k := by
   have hne0 : Nat.nth Prime k ≠ 0 := by
@@ -72,12 +78,9 @@ theorem bonse_nth_succ_lt (k : ℕ) :
     · omega
   omega
 
-/-- Bonse's inequality: for `k > 4`, the square of the `(k+1)`-st prime is
-smaller than the product of the first `k` primes.
-
-`Nat.nth Prime` is zero-indexed, so `Nat.nth Prime k` is the source's
-one-indexed `p_{k+1}` and the product over `Finset.range k` is
-`p_1 * ... * p_k`.
+/-- **Bonse's inequality.** Let $p_1 = 2, p_2 = 3, p_3 = 5, \dots$ be the prime numbers in
+increasing order. For every natural number $k > 4$, the square of the $(k+1)$-st prime is
+smaller than the product of the first $k$ primes: $p_{k+1}^2 < p_1 p_2 \cdots p_k$.
 
 Source: Robert J. Betts, "Using Bonse's Inequality to Find Upper Bounds on
 Prime Gaps," Journal of Integer Sequences 10 (2007), Article 07.3.8,

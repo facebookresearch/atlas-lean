@@ -28,7 +28,7 @@ fails, which lets one host machine serve both SAT and 3SAT.
 
 namespace Cslib.Complexity.Karp.Filter3
 
-open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.PL Computability
+open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 open Cslib.Complexity.SatVerifier Cslib.Complexity.SatVerifier.Check
 
 /-- **Stacks of the 3SAT clause-length filter.** The filter has exactly two stacks: the token

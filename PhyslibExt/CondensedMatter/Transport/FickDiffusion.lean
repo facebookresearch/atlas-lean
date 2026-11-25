@@ -1454,7 +1454,7 @@ lemma energy_identity_deriv {a b T D : ℝ} (hab : a < b) {w wx wxx wt : ℝ →
   have hIoo : ∀ᵐ x ∂volume, x ∈ Ι a b → x ∈ Ioo a b := by
     filter_upwards [(Ioo_ae_eq_Ioc (μ := volume) (a := a) (b := b))] with x hx hxab
     rw [hIoc] at hxab
-    exact hx.symm ▸ hxab
+    exact hx.2 hxab
   -- differentiation under the integral sign
   have hleib := intervalIntegral.hasDerivAt_integral_of_dominated_loc_of_deriv_le
     (F := fun t x => w x t ^ 2) (F' := fun t x => 2 * w x t * wt x t) (bound := fun _ => C)
