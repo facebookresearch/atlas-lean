@@ -50,7 +50,7 @@ theorem cuspidalDivisor_def (cuspZero cuspInfty : C) :
 theorem cuspidalDivisor_self (P : C) : cuspidalDivisor P P = 0 := by
   simp [cuspidalDivisor_def]
 
-theorem coeff_cuspidalDivisor_self (cuspZero cuspInfty : C) (h : cuspZero ≠ cuspInfty) :
+theorem coeff_cuspidalDivisor_left (cuspZero cuspInfty : C) (h : cuspZero ≠ cuspInfty) :
     CurveDivisor.coeff (cuspidalDivisor cuspZero cuspInfty) cuspZero = 1 := by
   classical
   simp [cuspidalDivisor_def, CurveDivisor.coeff, h]
@@ -58,11 +58,12 @@ theorem coeff_cuspidalDivisor_self (cuspZero cuspInfty : C) (h : cuspZero ≠ cu
 theorem cuspidalDivisor_ne_zero (cuspZero cuspInfty : C) (h : cuspZero ≠ cuspInfty) :
     cuspidalDivisor cuspZero cuspInfty ≠ 0 := by
   intro h0
-  have := coeff_cuspidalDivisor_self cuspZero cuspInfty h
+  have := coeff_cuspidalDivisor_left cuspZero cuspInfty h
   rw [h0] at this
   simp [CurveDivisor.coeff] at this
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
+  [∀ v : Place K F, FiniteDimensional K v.ResidueField]
 
 /-- The degree of the cuspidal divisor of two places is the difference of their degrees. -/
 theorem degree_cuspidalDivisor (cuspZero cuspInfty : Place K F) :

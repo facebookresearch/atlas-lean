@@ -34,9 +34,11 @@ public import MathlibExt.AlgebraicGeometry.Curve.Place
 # Degree-zero divisor classes of a function field
 
 For a field extension `F/K`, this file defines the divisors of `F` over `K`, as finitely supported
-integer combinations of the places of `F` over `K`, their degree, the subgroup of principal
-divisors (the divisors of nonzero elements of `F`), and the group `Pic0 K F` of divisors of
-degree zero modulo the principal divisors of degree zero.
+integer combinations of the places of `F` over `K`, and the subgroup of principal divisors (the
+divisors of nonzero elements of `F`). When the residue field of every place is finite-dimensional
+over `K`, as for the function field of a curve over `K`, it defines the degree of a place and of a
+divisor, and the group `Pic0 K F` of divisors of degree zero modulo the principal divisors of
+degree zero.
 -/
 
 @[expose] public section
@@ -52,9 +54,14 @@ variable {K F} (v : Place K F)
 /-- The residue field of a place: the residue field of its valuation subring. -/
 abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
 
-/-- The degree of a place: the dimension of its residue field over `K`. As for `Module.finrank`,
-it is `0` when that dimension is infinite. -/
-noncomputable def deg : ℕ := Module.finrank K v.ResidueField
+/-- The degree of a place whose residue field is finite-dimensional over `K`: the dimension of
+the residue field over `K`. -/
+noncomputable def deg [FiniteDimensional K v.ResidueField] : ℕ :=
+  Module.finrank K v.ResidueField
+
+/-- The degree of a place is positive. -/
+theorem deg_pos [FiniteDimensional K v.ResidueField] : 0 < v.deg :=
+  Module.finrank_pos
 
 end Place
 
@@ -65,22 +72,6 @@ abbrev Divisor : Type _ := CurveDivisor (Place K F)
 namespace Divisor
 
 variable {K F}
-
-/-- The degree of a divisor: the sum of its coefficients, each weighted by the degree of its
-place. -/
-noncomputable def degree : Divisor K F →+ ℤ :=
-  Finsupp.liftAddHom fun v => AddMonoidHom.mulRight (v.deg : ℤ)
-
-@[simp]
-theorem degree_single (v : Place K F) (n : ℤ) :
-    degree (Finsupp.single v n) = n * v.deg := by
-  simp [degree]
-
-/-- The subgroup of divisors of degree zero. -/
-noncomputable def degZero : AddSubgroup (Divisor K F) := degree.ker
-
-theorem mem_degZero {D : Divisor K F} : D ∈ degZero (K := K) (F := F) ↔ degree D = 0 :=
-  Iff.rfl
 
 /-- A divisor is principal if it is the divisor of a nonzero element `f` of `F`: its
 coefficient at every place is the order of `f` there. -/
@@ -104,17 +95,35 @@ theorem mem_principal {D : Divisor K F} :
     D ∈ principal (K := K) (F := F) ↔ IsPrincipal D :=
   Iff.rfl
 
+variable [∀ v : Place K F, FiniteDimensional K v.ResidueField]
+
+/-- The degree of a divisor: the sum of its coefficients, each weighted by the degree of its
+place. -/
+noncomputable def degree : Divisor K F →+ ℤ :=
+  Finsupp.liftAddHom fun v => AddMonoidHom.mulRight (v.deg : ℤ)
+
+@[simp]
+theorem degree_single (v : Place K F) (n : ℤ) :
+    degree (Finsupp.single v n) = n * v.deg := by
+  simp [degree]
+
+/-- The subgroup of divisors of degree zero. -/
+noncomputable def degZero : AddSubgroup (Divisor K F) := degree.ker
+
+theorem mem_degZero {D : Divisor K F} : D ∈ degZero (K := K) (F := F) ↔ degree D = 0 :=
+  Iff.rfl
+
 end Divisor
 
 /-- The group of degree-zero divisor classes of `F` over `K`: the divisors of degree zero modulo
 the principal divisors of degree zero. -/
-abbrev Pic0 : Type _ :=
+abbrev Pic0 [∀ v : Place K F, FiniteDimensional K v.ResidueField] : Type _ :=
   Divisor.degZero (K := K) (F := F) ⧸
     (Divisor.principal (K := K) (F := F)).addSubgroupOf (Divisor.degZero (K := K) (F := F))
 
 namespace Pic0
 
-variable {K F}
+variable {K F} [∀ v : Place K F, FiniteDimensional K v.ResidueField]
 
 /-- The class of a divisor of degree zero. -/
 noncomputable def mk (D : Divisor.degZero (K := K) (F := F)) : Pic0 K F :=

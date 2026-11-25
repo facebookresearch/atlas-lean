@@ -18,9 +18,21 @@ open AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
--- The degree of a place is the dimension of its residue field over the constant field.
-example (v : Place K F) : v.deg = Module.finrank K v.ResidueField :=
-  rfl
+-- The degree of a place with a finite-dimensional residue field is that dimension, and it is
+-- positive.
+example (v : Place K F) [FiniteDimensional K v.ResidueField] :
+    v.deg = Module.finrank K v.ResidueField ∧ 0 < v.deg :=
+  ⟨rfl, v.deg_pos⟩
+
+-- The divisor of a nonzero element is principal, and so is its negative, the divisor of the
+-- inverse.
+example (D : Divisor K F) (f : F) (hf : f ≠ 0) (hD : ∀ v : Place K F, D v = v.ord f) :
+    D ∈ Divisor.principal (K := K) (F := F) ∧ -D ∈ Divisor.principal (K := K) (F := F) :=
+  ⟨⟨f, hf, hD⟩, Divisor.principal.neg_mem ⟨f, hf, hD⟩⟩
+
+section FiniteResidueFields
+
+variable [∀ v : Place K F, FiniteDimensional K v.ResidueField]
 
 -- The degree weights each coefficient by the degree of its place.
 example (v : Place K F) : Divisor.degree (Finsupp.single v 2) = 2 * v.deg :=
@@ -31,11 +43,11 @@ example (v w : Place K F) (n : ℤ) :
   rw [map_add, Divisor.degree_single, Divisor.degree_single]
   ring
 
--- The divisor of a nonzero element is principal, and so is its negative, the divisor of the
--- inverse.
-example (D : Divisor K F) (f : F) (hf : f ≠ 0) (hD : ∀ v : Place K F, D v = v.ord f) :
-    D ∈ Divisor.principal (K := K) (F := F) ∧ -D ∈ Divisor.principal (K := K) (F := F) :=
-  ⟨⟨f, hf, hD⟩, Divisor.principal.neg_mem ⟨f, hf, hD⟩⟩
+-- Boundary: a single place has positive degree, so a nonzero effective divisor supported at one
+-- place is not of degree zero.
+example (v : Place K F) : Finsupp.single v 1 ∉ Divisor.degZero (K := K) (F := F) := by
+  rw [Divisor.mem_degZero, Divisor.degree_single, one_mul]
+  exact_mod_cast v.deg_pos.ne'
 
 -- A divisor of degree zero has class zero exactly when it is the divisor of a nonzero element.
 example (D : Divisor.degZero (K := K) (F := F)) :
@@ -55,5 +67,7 @@ example (D E : Divisor.degZero (K := K) (F := F)) :
 -- Every degree-zero class is the class of a divisor of degree zero.
 example (x : Pic0 K F) : ∃ D : Divisor.degZero (K := K) (F := F), Pic0.mk D = x :=
   Pic0.mk_surjective x
+
+end FiniteResidueFields
 
 end AlgebraicCurve.DivisorClassGroupTest
