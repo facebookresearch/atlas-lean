@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -16,11 +13,11 @@ public import MathlibExt.Algebra.Homology.Embedding.DownNatToInt
 public import MathlibExt.Algebra.Homology.Embedding.ExtendExact
 
 /-!
-# Short exact sequences under extension from ℕ to ℤ
+# Short exact sequences under natural-to-integer zero extension
 
-Zero extension of chain complexes from natural to integer degrees preserves zero
-morphisms and short exact sequences. The connecting morphisms agree through the
-canonical extension homology isomorphisms.
+Zero extension from natural to integer chain degrees preserves short exact
+sequences. The canonical homology comparisons commute with the connecting
+morphisms of their long exact sequences.
 -/
 
 @[expose] public section
@@ -29,9 +26,9 @@ open CategoryTheory Category Limits
 
 universe v u
 
--- The wrapper functor is definitionally `ComplexShape.embeddingDownNatToInt.extendFunctor`,
--- but the `PreservesZeroMorphisms` instance does not follow by unfolding, so we
--- transport the instance from the underlying `extendFunctor`.
+-- Zero extension preserves zero morphisms.
+--
+--
 instance {C : Type u} [Category.{v} C] [HasZeroObject C] [HasZeroMorphisms C] :
     (ComplexShape.embeddingDownNatToIntExtendFunctor (C := C)).PreservesZeroMorphisms := by
   change (ComplexShape.embeddingDownNatToInt.extendFunctor C).PreservesZeroMorphisms
@@ -41,24 +38,15 @@ namespace ShortComplex.ShortExact
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-/-- Zero-extension from `ChainComplex C ℕ` to `ChainComplex C ℤ` preserves short exactness.
-
-This is the specialization of `map_extendFunctor` to the embedding
-`ComplexShape.embeddingDownNatToInt`.  The wrapper functor
-`ComplexShape.embeddingDownNatToIntExtendFunctor` is definitionally the same
-as `ComplexShape.embeddingDownNatToInt.extendFunctor`, so the result follows
-directly from the generic theorem. -/
+/-- Zero extension from natural to integer chain degrees preserves short exactness. -/
 theorem map_embeddingDownNatToIntExtend
     (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact) :
     (S.map (ComplexShape.embeddingDownNatToIntExtendFunctor C)).ShortExact := by
   simpa [ComplexShape.embeddingDownNatToIntExtendFunctor] using
     (map_extendFunctor (e := ComplexShape.embeddingDownNatToInt) (S := S) hS)
 
-/-- Nat-to-Int specialization needed by R322.
-
-The extended connecting morphism at `((n + 1 : ℕ) : ℤ)` and `(n : ℤ)` agrees
-with the original Nat connecting morphism conjugated by the canonical
-`extendHomologyIso`s. Both relation proofs are explicit. -/
+/-- The connecting morphism after natural-to-integer zero extension agrees
+with the original connecting morphism under the canonical homology isomorphisms. -/
 theorem delta_extendDownNatToInt
     (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact)
     (n : ℕ) (hijNat : (ComplexShape.down ℕ).Rel (n + 1) n)

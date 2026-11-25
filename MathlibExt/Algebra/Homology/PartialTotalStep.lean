@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -18,12 +15,9 @@ public import MathlibExt.Algebra.Homology.PartialTotalZero
 /-!
 # Uniform steps of the partial-total filtration
 
-This file packages the zero-stage and successor-stage short exact sequences
-of the partial-total filtration into one natural-degree family.  It also
-extends each step to an integer-graded cochain short complex.
-
-These are inputs for a later mapping-cone computation.  No spectral-page or
-convergence statement is made here.
+The zero and successor stages give a natural family of short exact
+filtration steps. Zero extension places each step in an integer-graded
+cochain short complex.
 -/
 
 @[expose] public section

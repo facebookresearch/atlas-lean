@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -19,13 +16,9 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.SpectralObject
 /-!
 # The spectral object of the partial-total filtration
 
-This file constructs the cochain filtration, its mapping-cone spectral
-object in the homotopy category, and the resulting spectral object in the
-abelian coefficient category.  It also identifies the value of its `H`
-functor on an interval with ordinary mapping-cone homology.
-
-No `HasSpectralSequence` instance, page, differential computation, or
-convergence statement is provided here.
+The cochain partial-total filtration gives a mapping-cone spectral
+object in the homotopy category and in the abelian coefficient category.
+Its H functor on an interval is identified with mapping-cone homology.
 -/
 
 @[expose] public section

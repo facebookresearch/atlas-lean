@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -19,9 +16,8 @@ public import Mathlib.CategoryTheory.Abelian.Exact
 /-!
 # Graded pieces of the partial-total homology filtration
 
-This file constructs the adjacent cokernel quotients of the increasing
-partial-total homology filtration and identifies their finite-stage image
-coordinates.  It makes no spectral-page or convergence claim.
+Adjacent cokernel quotients of the partial-total homology filtration
+are identified with their finite-stage image coordinates.
 -/
 
 @[expose] public section

@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -252,7 +249,7 @@ theorem partialTotalHom_ι_naturality
         HomologicalComplex₂.total.map φ (ComplexShape.down ℕ)
   have hφ : φp ≫ ιB' = ιB ≫ φ := by
     dsimp only [φp, ιB', ιB]
-    exact HomologicalComplex.ιStupidTrunc_naturality φ e
+    exact HomologicalComplex.stupidTruncMap_ιStupidTrunc_naturality e φ
   rw [← HomologicalComplex₂.total.map_comp,
     ← HomologicalComplex₂.total.map_comp, hφ]
 

@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -17,12 +14,9 @@ public import MathlibExt.Algebra.Homology.PartialTotalSuccessor
 /-!
 # The zero stage of the partial-total filtration
 
-The zeroth partial total consists only of the signed zeroth row.  This file
-packages that fact as a degreewise split short exact sequence
-`0 ⟶ partialTotal B 0 ⟶ totalRow B 0`.
-
-This is the base-filtration dependency for a later page-one computation.  No
-spectral-sequence or convergence statement is made here.
+The zeroth partial total is the signed zeroth row. Its component
+identification gives a degreewise split short exact sequence
+0 ⟶ partialTotal B 0 ⟶ totalRow B 0.
 -/
 
 @[expose] public section

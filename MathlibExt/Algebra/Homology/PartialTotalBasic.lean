@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -21,13 +18,9 @@ import Mathlib.CategoryTheory.Preadditive.Biproducts
 /-!
 # First-coordinate partial total complexes
 
-For a first-quadrant bicomplex, truncate the outer chain-complex coordinate at
-`p` using the noncyclic initial-segment embedding, then totalize.  The
-canonical stupid-truncation inclusion totalizes to a monomorphism from this
-partial total into the full total complex.
-
-This file constructs a single filtration stage and its inclusion.  Maps
-between different stages and their coherence are deferred.
+Truncating the first coordinate of a nonnegative bicomplex at p and
+totalizing gives its pth partial total. The stupid-truncation inclusion
+induces a monomorphism from this stage to the full total complex.
 -/
 
 @[expose] public section
@@ -42,6 +35,10 @@ open CategoryTheory CategoryTheory.Limits
 universe v u
 
 namespace HomologicalComplex₂
+
+/-- The initial-segment embedding preserves the retained natural degree. -/
+private theorem initialSegmentEmbedding_f (p : ℕ) (i : Fin (p + 1)) :
+    (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1 := rfl
 
 section PartialTotal
 
@@ -81,7 +78,9 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
       ((B.stupidTruncXIso
         (ComplexShape.embeddingDownNatInitialSegment p)
         (show (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1
-          from rfl)).hom.f j) ≫
+          from by
+            dsimp only [ComplexShape.embeddingDownNatInitialSegment,
+              ComplexShape.Embedding.mk'])).hom.f j) ≫
         B.ιTotal (ComplexShape.down ℕ) i.1 j n h := by
   change
     HomologicalComplex₂.ιTotal
@@ -90,11 +89,18 @@ theorem ιTotal_partialTotalι (p : ℕ) (i : Fin (p + 1))
         (total.map
           (B.ιStupidTrunc (ComplexShape.embeddingDownNatInitialSegment p))
           (ComplexShape.down ℕ)).f n = _
-  rw [ιTotal_map,
-    HomologicalComplex.ιStupidTrunc_f_eq B
-      (ComplexShape.embeddingDownNatInitialSegment p)
-      (show (ComplexShape.embeddingDownNatInitialSegment p).f i = i.1
-        from rfl)]
+  rw [ιTotal_map, HomologicalComplex.ιStupidTrunc_f B
+    (ComplexShape.embeddingDownNatInitialSegment p) i.1]
+  have hComponent :
+      B.ιStupidTruncf (ComplexShape.embeddingDownNatInitialSegment p) i.1 =
+        (B.stupidTruncXIso (ComplexShape.embeddingDownNatInitialSegment p)
+          (HomologicalComplex₂.initialSegmentEmbedding_f p i)).hom := by
+    simpa only [HomologicalComplex.stupidTruncXIso, HomologicalComplex.restrictionXIso,
+      Iso.trans_hom] using
+      (HomologicalComplex.ιStupidTruncf'_eq B
+        (ComplexShape.embeddingDownNatInitialSegment p)
+          (HomologicalComplex₂.initialSegmentEmbedding_f p i))
+  exact congrArg (fun φ => φ.f j ≫ B.ιTotal (ComplexShape.down ℕ) i.1 j n h) hComponent
 
 /-- Each degree of the partial-total inclusion is a monomorphism. -/
 instance partialTotalι_f_mono (p n : ℕ) : Mono ((B.partialTotalι p).f n) := by
@@ -114,7 +120,8 @@ instance partialTotalι_f_mono (p n : ℕ) : Mono ((B.partialTotalι p).f n) := 
       change Mono ((φ.f i).f j)
       by_cases hi : ∃ a, e.f a = i
       · obtain ⟨a, ha⟩ := hi
-        rw [HomologicalComplex.ιStupidTrunc_f_eq B e ha]
+        let : IsIso (φ.f i) := HomologicalComplex.isIso_ιStupidTrunc_f B e ha
+        change Mono ((HomologicalComplex.eval C (ComplexShape.down ℕ) j).map (φ.f i))
         infer_instance
       · have hzero := B.isZero_stupidTrunc_X e i (by simpa using hi)
         exact ((HomologicalComplex.eval C

@@ -6,20 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import MathlibExt.Algebra.Homology.Embedding.StupidTruncInvNaturality
 public import MathlibExt.Algebra.Homology.PartialTotalNested
 
 /-!
-# Canonical coordinates for partial totals
+# Coordinates of partial totals
 
-These coordinate inclusions expose retained bicomplex cells in a partial
-total without requiring clients to unfold the semireducible stupid-truncation
-and totalization definitions.
+The coordinate inclusions identify retained bicomplex cells with
+summands of a partial total and characterize maps on those summands.
 -/
 
 @[expose] public section

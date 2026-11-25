@@ -1,4 +1,13 @@
 /-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+
+/-
 Author: @toskua
 Copyright (c) 2026 @junekim623, Muse. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
@@ -14,16 +23,13 @@ public import MathlibExt.CategoryTheory.GradedObject.FiniteFibers
 public import MathlibExt.CategoryTheory.GradedObject.Evaluation
 
 /-!
-# Exactness of totalization with exact fiber coproducts
+# Exactness of totalization
 
-The native total is degreewise pushforward of the underlying graded object.
-Existence of the coproduct over each total-shape fiber supplies its objects;
-exactness of those coproducts makes totalization preserve finite limits.
-Finite colimits are preserved without any exactness assumption on the fiber
-coproducts. The former finite-fiber API remains a specialization.
-
-These are degreewise exactness results. No assertion about unbounded rowwise
-quasi-isomorphisms or convergence is made.
+Totalization is degreewise pushforward of the underlying graded object.
+The coproducts over each total-shape fiber provide its terms. Exactness
+of these coproducts makes totalization preserve finite limits; finite
+colimits are preserved without the exactness assumption. Finite
+biproducts supply the finite-fiber specialization.
 -/
 
 @[expose] public section
@@ -97,7 +103,7 @@ variable [DecidableEq I₁₂]
   [∀ n, HasColimitsOfShape (Discrete (TotalFiber c₁ c₂ c₁₂ n)) C]
 
 omit [DecidableEq I₁₂] in
-/-- The actual fiber coproducts make every bicomplex totalizable, including infinite fibers. -/
+/-- The fiber coproducts make every bicomplex totalizable, including infinite fibers. -/
 theorem hasTotal_of_colimit_fibers (K : HomologicalComplex₂ C c₁ c₂) : K.HasTotal c₁₂ := by
   intro n
   infer_instance
@@ -125,7 +131,7 @@ instance totalFunctor_preservesZeroMorphisms :
       HomologicalComplex.zero_f, HomologicalComplex.zero_f]
     exact zero_comp.trans comp_zero.symm
 
-/-- Exact coproducts over the actual total-shape fibers make totalization preserve finite limits. -/
+/-- Exact coproducts over the total-shape fibers make totalization preserve finite limits. -/
 theorem totalFunctor_preservesFiniteLimits_of_exact_fibers
     [∀ n, HasExactColimitsOfShape (Discrete (TotalFiber c₁ c₂ c₁₂ n)) C]
     [HasFiniteLimits C] : PreservesFiniteLimits (totalFunctor C c₁ c₂ c₁₂) where
@@ -133,12 +139,12 @@ theorem totalFunctor_preservesFiniteLimits_of_exact_fibers
     intro _ _
     apply HomologicalComplex.preservesLimitsOfShape_of_eval
     intro i₁₂
-    let : PreservesLimitsOfShape K (toGradedObjectFunctor C c₁ c₂) :=
+    letI : PreservesLimitsOfShape K (toGradedObjectFunctor C c₁ c₂) :=
       preservesLimitsOfShape_toGradedObjectFunctor K
-    let : PreservesLimitsOfShape K
+    letI : PreservesLimitsOfShape K
         (GradedObject.map C (ComplexShape.π c₁ c₂ c₁₂)) :=
       GradedObject.preservesLimitsOfShape_map_of_exact_fibers K _
-    let : PreservesLimitsOfShape K (GradedObject.eval (C := C) i₁₂) := inferInstance
+    letI : PreservesLimitsOfShape K (GradedObject.eval (C := C) i₁₂) := inferInstance
     let : PreservesLimitsOfShape K
         (toGradedObjectFunctor C c₁ c₂ ⋙
           GradedObject.map C (ComplexShape.π c₁ c₂ c₁₂) ⋙ GradedObject.eval i₁₂) :=
@@ -154,12 +160,12 @@ theorem totalFunctor_preservesFiniteColimits_of_colimit_fibers
     intro _ _
     apply HomologicalComplex.preservesColimitsOfShape_of_eval
     intro i₁₂
-    let : PreservesColimitsOfShape K (toGradedObjectFunctor C c₁ c₂) :=
+    letI : PreservesColimitsOfShape K (toGradedObjectFunctor C c₁ c₂) :=
       preservesColimitsOfShape_toGradedObjectFunctor K
-    let : PreservesColimitsOfShape K
+    letI : PreservesColimitsOfShape K
         (GradedObject.map C (ComplexShape.π c₁ c₂ c₁₂)) :=
       GradedObject.preservesColimitsOfShape_map K _
-    let : PreservesColimitsOfShape K (GradedObject.eval (C := C) i₁₂) := inferInstance
+    letI : PreservesColimitsOfShape K (GradedObject.eval (C := C) i₁₂) := inferInstance
     let : PreservesColimitsOfShape K
         (toGradedObjectFunctor C c₁ c₂ ⋙
           GradedObject.map C (ComplexShape.π c₁ c₂ c₁₂) ⋙ GradedObject.eval i₁₂) :=
@@ -174,9 +180,9 @@ theorem totalFunctor_map_shortExact_of_exact_fibers
     [HasFiniteLimits C] [HasFiniteColimits C]
     (S : ShortComplex (HomologicalComplex₂ C c₁ c₂)) (hS : S.ShortExact) :
     (S.map (totalFunctor C c₁ c₂ c₁₂)).ShortExact := by
-  let : PreservesFiniteLimits (totalFunctor C c₁ c₂ c₁₂) :=
+  letI : PreservesFiniteLimits (totalFunctor C c₁ c₂ c₁₂) :=
     totalFunctor_preservesFiniteLimits_of_exact_fibers
-  let : PreservesFiniteColimits (totalFunctor C c₁ c₂ c₁₂) :=
+  letI : PreservesFiniteColimits (totalFunctor C c₁ c₂ c₁₂) :=
     totalFunctor_preservesFiniteColimits_of_colimit_fibers
   exact hS.map_of_exact (totalFunctor C c₁ c₂ c₁₂)
 

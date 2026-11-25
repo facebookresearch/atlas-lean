@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -17,15 +14,11 @@ public import MathlibExt.Algebra.Homology.SpectralSequence.IncreasingHomological
 public import Mathlib.Algebra.Homology.HomotopyCategory.ShortExact
 
 /-!
-# Mapping-cone homology of a partial-total filtration step
+# Mapping-cone homology of partial-total steps
 
-For bidegree `(p,q)`, the increasing homological core selects the homology of
-the mapping cone of the `p`th filtration step in cochain degree `-p-q`.
-This file identifies that object with homology of the signed row
-`totalRow B p` in chain degree `p+q`.
-
-This is an input to a later first-page comparison.  It does not construct a
-spectral-sequence page or make any convergence claim.
+At bidegree (p, q), the increasing homological core uses the pth
+filtration-step mapping cone in cochain degree -p - q. Its homology
+is identified with homology of the signed row in chain degree p + q.
 -/
 
 @[expose] public section

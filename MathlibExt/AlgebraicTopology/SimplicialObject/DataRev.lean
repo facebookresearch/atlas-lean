@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -36,8 +33,10 @@ namespace Data
 
 variable {C : Type u} [Category.{v} C]
 
-/-- Covariant degreewise reversal of simplicial data: objects are unchanged, faces and
-degeneracies use reversed `Fin` indices. -/
+/--
+Covariant degreewise reversal of simplicial data: objects are unchanged, faces and
+degeneracies use reversed `Fin` indices.
+-/
 def rev (X : Data C) : Data C where
   obj n := X.obj n
   δ i := X.δ i.rev
@@ -185,10 +184,12 @@ theorem revFunctor_map_app {X Y : Data C} (f : X ⟶ Y) (n : ℕ) :
     ((revFunctor (C := C)).map f).app n = f.app n :=
   rfl
 
-/-- Double-reversal isomorphism `revFunctor ⋙ revFunctor ≅ 𝟭 (Data C)`.
+/--
+Double-reversal isomorphism `revFunctor ⋙ revFunctor ≅ 𝟭 (Data C)`.
 Both components are identities degreewise, so double reversal is the identity
 propositionally but not definitionally: `Fin.rev` is involutive only up to
-`Fin.rev_rev`. -/
+`Fin.rev_rev`.
+-/
 def revCompRevIso : revFunctor ⋙ revFunctor ≅ 𝟭 (Data C) :=
   NatIso.ofComponents
     (fun X =>

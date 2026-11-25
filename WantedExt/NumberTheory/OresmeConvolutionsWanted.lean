@@ -15,6 +15,7 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.JacobsthalLucasNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.OresmeConvolutions
+public import MathlibExt.NumberTheory.OresmePellCongruence
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 
@@ -33,16 +34,6 @@ Jacobsthal–Lucas numbers `j_0 = 2, j_1 = 1` are `jacobsthalLucasNumber`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Self-convolution of the Oresme numbers.** Let $O_m = m/2^m$ denote the Oresme numbers. For
-every natural number $n$, $\sum_{k=0}^{n} O_k O_{n-k} = \frac{(n+1) n (n-1)}{6 \cdot 2^n}$.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Proposition 2.1 (`fq-2024-cookbacon061124-prop-2.1`). -/
-public theorem_wanted oresme_convolution_self (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), ((k : ℚ) / 2 ^ k) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
-      ((n : ℚ) + 1) * n * ((n : ℚ) - 1) / (6 * 2 ^ n)
 
 /-- **Powers of two times Lucas numbers modulo 5.** Let $L_m$ denote the Lucas numbers. For every
 natural number $n$, $2^n L_{n+1} \equiv 1 \pmod{5}$.
@@ -64,15 +55,6 @@ public theorem_wanted pellNumber_oresme_convolution (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1), (pellNumber k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
       2 / 49 * (5 * (pellNumber (n + 1) : ℚ) - 4 * pellNumber n) -
         2 / 49 * ((7 * (n : ℚ) + 5) / 2 ^ n)
-
-/-- **Oresme–Pell congruence modulo 49.** For every natural number $n$, the Pell numbers $P_n$
-satisfy $2^n (5 P_{n+1} - 4 P_n) \equiv 7n + 5 \pmod{49}$ as integers.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Corollary 5.3 (`fq-2024-cookbacon061124-cor-5.3`). -/
-public theorem_wanted two_pow_mul_pellNumber_combination_modEq (n : ℕ) :
-    2 ^ n * (5 * (pellNumber (n + 1) : ℤ) - 4 * pellNumber n) ≡ 7 * n + 5 [ZMOD 49]
 
 /-- **Pell–Lucas–Oresme convolution.** Let $Q_m$ denote the Pell–Lucas numbers, with
 $Q_0 = Q_1 = 1$ and $Q_{m+2} = 2Q_{m+1} + Q_m$, and let $O_m = m/2^m$ denote the Oresme numbers.

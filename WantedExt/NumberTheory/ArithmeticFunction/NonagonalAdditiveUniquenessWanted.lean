@@ -31,21 +31,6 @@ namespace MetaMathlibExt
 
 open ArithmeticFunction
 
-/-- **Additive uniqueness of generalized nonagonal numbers.** Let $f$ be a multiplicative
-arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
-positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
-and $2b = k(7k - 5)$ for some integers $m$ and $k$. Then $f(n) = n$ for every natural number $n$.
-
-Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
-Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 1
-(`integers-2025-A99-thm-1`). -/
-public theorem_wanted multiplicative_nonagonal_additive_eq_id
-    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ a b : ℕ, 0 < a → 0 < b →
-      (∃ m : ℤ, 2 * (a : ℤ) = m * (7 * m - 5)) → (∃ m : ℤ, 2 * (b : ℤ) = m * (7 * m - 5)) →
-        f (a + b) = f a + f b) :
-    ∀ n : ℕ, f n = n
-
 /-- **Nonagonal additive uniqueness: the step at powers of 3.** Let $f$ be a multiplicative
 arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
 positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$

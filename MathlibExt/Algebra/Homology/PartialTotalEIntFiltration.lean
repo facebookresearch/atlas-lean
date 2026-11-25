@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -19,14 +16,10 @@ public import MathlibExt.CategoryTheory.Functor.NonnegativeEIntExtension
 /-!
 # The extended-integer partial-total filtration
 
-This file extends the natural first-coordinate partial-total filtration to
-the extended integers.  It is zero below filtration degree zero, agrees with
-the partial totals in nonnegative finite degrees, and has the full total
-complex at `⊤`.
-
-The final declarations identify the intervals selected by
-`coreE₁IncreasingHomologicalNat`.  No spectral object, page, or convergence
-claim is made here.
+The natural partial-total filtration extends to the extended integers.
+It is zero below filtration degree zero, agrees with partial totals
+in nonnegative finite degrees and equals the full total at ⊤.
+Its interval coordinates agree with `coreE₁IncreasingHomologicalNat`.
 -/
 
 @[expose] public section
@@ -80,8 +73,7 @@ noncomputable def partialTotalEIntFiltrationObjIso (p : ℕ) :
     B.partialTotalFunctor (p : ℤ) (by omega)
 
 set_option backward.isDefEq.respectTransparency false in
-/-- In finite nonnegative coordinates, a filtration map is the landed
-partial-total inclusion. -/
+/-- In nonnegative finite degrees, a filtration map is the partial-total inclusion. -/
 theorem partialTotalEIntFiltrationObjIso_inv_comp_map
     {p p' : ℕ} (h : p ≤ p') :
     (B.partialTotalEIntFiltrationObjIso p).inv ≫
@@ -142,8 +134,7 @@ theorem partialTotalEIntFiltrationObjIso_inv_comp_toTop (p : ℕ) :
       B.partialTotalFunctor (B.total (ComplexShape.down ℕ))
         B.partialTotalToTotal (p : ℤ) (by omega)]
     simp only [Iso.inv_hom_id_assoc, B.partialTotalToTotal_app]
-  convert hraw using 1
-  subsingleton
+  simpa only [Int.toNat_natCast] using hraw
 
 /-- The upper endpoint selected by the increasing page-one core is the
 `p`th partial total. -/

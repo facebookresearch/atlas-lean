@@ -52,6 +52,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
 public import MathlibExt.NumberTheory.BinomialHarmonicExpansion
 public import MathlibExt.NumberTheory.DelannoyBinomialSum
+public import MathlibExt.NumberTheory.DelannoyBinomialCongruence
 public import MathlibExt.NumberTheory.FermatQuotient
 
 set_option autoImplicit false
@@ -154,18 +155,6 @@ theorem_wanted sum_delannoy (p : ℕ) [Fact p.Prime]
         (MetaMathlibExt.ordinaryRiordanPascalLikeMatrix
             n k 1 : ZMod p)) =
       (legendreSym p 2 : ZMod p)
-
-/-- **Reflection congruence for binomial coefficients modulo a prime.** For a prime $p$ and
-natural numbers $j$ and $k$ with $j \le k \le p - 2$,
-$$\binom{p-j}{k+1} + (-1)^k \binom{k+j}{k+1} \equiv 0 \pmod{p}.$$
-
-Source: Chahinaze Djadi and Hacène Belbachir,
-"Congruence Properties for the Delannoy Triangle
-Coefficients", Lemma 11. -/
-theorem_wanted choose_add_choose_mod (p j k : ℕ)
-    (hp : p.Prime) (hjk : j ≤ k) (hk : k ≤ p - 2) :
-    (Nat.choose (p - j) (k + 1) : ZMod p) +
-        (-1) ^ k * (Nat.choose (k + j) (k + 1) : ZMod p) = 0
 
 /-- Bridge to the existing symmetric-case API: the constant
 term of `(a x⁻¹ + b + a x)ⁿ`

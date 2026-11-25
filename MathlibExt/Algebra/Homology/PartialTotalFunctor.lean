@@ -6,23 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
 public import MathlibExt.Algebra.Homology.PartialTotalCoordinates
 
 /-!
-# The natural partial-total filtration functor
+# The partial-total filtration functor
 
-The first-coordinate partial totals of a natural bicomplex form a functor
-from the ordered category `ℕ`.  Their canonical inclusions into the full
-total complex form a compatible cocone.
-
-This file only packages the landed filtration maps.  It does not extend the
-filtration to `EInt` or construct a spectral object.
+The first-coordinate partial totals form a functor from the ordered
+category ℕ. Their inclusions into the full total form a compatible cocone.
 -/
 
 @[expose] public section

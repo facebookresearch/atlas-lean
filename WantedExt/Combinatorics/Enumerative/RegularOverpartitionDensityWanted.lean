@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Topology.Instances.Real.Lemmas
+public import MathlibExt.Combinatorics.Enumerative.Partition.FiniteEulerProductCongruence
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
@@ -333,28 +334,6 @@ public theorem_wanted regularOverpartition_seven_ramanujan_congruences
       Nat.ModEq 7 (regularOverpartitionCount 7 (256 * n + j)) 0) ∧
     (∀ k : ℕ, k % 32 = 4 → k < 1024 →
       Nat.ModEq 7 (regularOverpartitionCount 7 (1024 * n + k)) 0)
-
-/--
-**Prime-power congruence for truncated Euler products.** Let $s$ and $t$ be positive integers,
-let $p$ be a prime and let $N$ be a natural number. Then every coefficient of the polynomial
-$$\Big(\prod_{m=1}^{N} (1 - X^{sm})\Big)^{p^t} - \Big(\prod_{m=1}^{N} (1 - X^{spm})\Big)^{p^{t-1}}$$
-in $\mathbb{Z}[X]$ is divisible by $p^t$.
-
-Since the truncated products agree with the infinite products in all degrees up to $N$, letting
-$N$ grow gives the congruence of formal power series
-$\prod_{m \ge 1} (1 - q^{sm})^{p^t} \equiv \prod_{m \ge 1} (1 - q^{spm})^{p^{t-1}} \pmod{p^t}$.
-
-Source: Murugan P and Fathima S. N, *Arithmetic Density of Certain ℓ-Regular Overpartitions*,
-INTEGERS 25 (2025), Article A3, Lemma 1.
--/
-public theorem_wanted finiteEulerProduct_primePower_congruence
-    (s t p N : ℕ) (hs : 0 < s) (ht : 0 < t) (hp : p.Prime) :
-    ∀ r : ℕ, (p : ℤ) ^ t ∣
-      ((∏ m ∈ Finset.Icc 1 N,
-          ((1 : Polynomial ℤ) - Polynomial.X ^ (s * m))) ^ (p ^ t) -
-        (∏ m ∈ Finset.Icc 1 N,
-          ((1 : Polynomial ℤ) - Polynomial.X ^ (s * p * m))) ^
-            (p ^ (t - 1))).coeff r
 
 /-- **Double coset representatives for $\Gamma_0(N)$.** Let $N$ be a natural number such that
 either $N$ is squarefree, or $N$ is even and $N/2$ is squarefree. Write $\Gamma_0(N)$ for the

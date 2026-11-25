@@ -6,22 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
 public import MathlibExt.Algebra.Homology.HomologyMapSquare
 
 /-!
-# Transport of homology along degree equalities
+# Homology comparisons between equal degrees
 
-For a homological complex in a category with zero morphisms, degree equalities
-induce isomorphisms on cycles, opcycles and homology when the relevant homology
-exists. These comparisons commute with complex maps, assemble into natural
-isomorphisms of the corresponding functors, and respect the short-complex
-homology charts.
+An equality of grading indices identifies the corresponding cycles,
+opcycles and homology objects. These comparisons commute with their
+structural maps and with maps induced by morphisms of complexes.
 -/
 
 @[expose] public section
@@ -172,7 +167,7 @@ section EqualityTransportCoherence
 variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
   {ι : Type w} {c : ComplexShape ι} (K : HomologicalComplex C c)
 
-/-- Reflexive degree transport is the identity on the actual homology object. -/
+/-- Reflexive degree transport is the identity on the homology object. -/
 @[simp]
 lemma homologyIsoOfEq_refl (p : ι) [K.HasHomology p] :
     homologyIsoOfEq K (rfl : p = p) = Iso.refl (K.homology p) := rfl
@@ -187,7 +182,7 @@ lemma homologyIsoOfEq_hom_trans {p q r : ι} (h₁ : p = q) (h₂ : q = r)
   subst h₂
   simp [homologyIsoOfEq]
 
-/-- Composition of the actual homology transport isomorphisms composes degree equalities. -/
+/-- Composition of the homology transport isomorphisms composes degree equalities. -/
 lemma homologyIsoOfEq_trans {p q r : ι} (h₁ : p = q) (h₂ : q = r)
     [K.HasHomology p] [K.HasHomology q] [K.HasHomology r] :
     (homologyIsoOfEq K h₁).trans (homologyIsoOfEq K h₂) =

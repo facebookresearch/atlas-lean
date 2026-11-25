@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -17,15 +14,11 @@ public import Mathlib.CategoryTheory.Filtration.Basic
 import Mathlib.Algebra.Homology.Refinements
 
 /-!
-# The homology filtration of a partial-total tower
+# The homology filtration of partial totals
 
-The degree-`n` homology of every partial total maps to the homology of the
-full total complex. Taking the categorical image of these maps gives a
-genuine increasing filtration on total homology. The filtration is zero at
-`⊥`, full at `⊤`, and already exhaustive in degree `n` at filtration stage
-`n`.
-
-This file makes no spectral-page or convergence claim.
+The images of the maps from partial-total homology to total homology
+form an increasing filtration. In degree n it is zero at ⊥, full at ⊤
+and exhaustive at stage n.
 -/
 
 @[expose] public section
@@ -167,8 +160,9 @@ theorem partialTotalι_f_isIso_of_le (p k : ℕ) (hkp : k ≤ p) :
     change i + j = k at hij
     let a : Fin (p + 1) := ⟨i, by omega⟩
     change Epi ((φ.f i).f j)
-    rw [HomologicalComplex.ιStupidTrunc_f_eq B e
-      (show e.f a = i from rfl)]
+    let : IsIso (φ.f i) := HomologicalComplex.isIso_ιStupidTrunc_f B e
+      (show e.f a = i from rfl)
+    change Epi ((HomologicalComplex.eval C (ComplexShape.down ℕ) j).map (φ.f i))
     infer_instance
   have hEpi' : Epi ((B.partialTotalι p).f k) := by
     change Epi (GradedObject.mapMap θ π k)

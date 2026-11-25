@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -17,11 +14,11 @@ public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.HomologySequence
 
 /-!
-# Short exact sequences under extension of complex shapes
+# Short exact sequences under zero extension
 
-The native extension preserves short exact sequences, and the native homology
-comparisons transport their connecting morphisms. These are the unchanged generic
-proofs extracted from `DownNatToIntExact`; downward-specific consumers reexport them.
+Zero extension along an embedding of complex shapes preserves short exact
+sequences. The extension homology comparisons commute with their
+connecting morphisms.
 -/
 
 @[expose] public section

@@ -12,3 +12,5 @@ Bayesian networks and their Markov properties, structure scores and Markov equiv
 - [Structural causal models and counterfactuals](structural-causal-models-and-counterfactuals/README.md)
 - [Variable elimination and belief propagation](variable-elimination-and-belief-propagation/README.md)
 - [Additive noise models and causal identifiability](additive-noise-models-and-causal-identifiability/README.md)
+
+- [Complete efficient criteria for generic identifiability of linear structural equation models](generic-identifiability-of-linear-structural-equation-models.md)

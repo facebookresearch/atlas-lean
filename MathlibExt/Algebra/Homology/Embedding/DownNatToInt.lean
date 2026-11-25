@@ -6,17 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import MathlibExt.Algebra.Homology.Embedding.ExtendHomologyFunctor
 
 /-!
-# Extending downward natural chain complexes to integers
+# Zero extension from natural to integer chain degrees
 
-Extends chain complexes indexed by natural numbers to integer degrees by
-placing zero objects in negative degrees. Identifies homology and homology
-maps in nonnegative degrees, proves vanishing in negative degrees, and
-characterizes quasi-isomorphisms through the extension.
+The embedding n ↦ (n : ℤ) extends nonnegative chain complexes by zero in
+negative degrees. Cycles, opcycles and homology in nonnegative degrees
+are naturally identified with those of the original complex.
 -/
 
 @[expose] public section

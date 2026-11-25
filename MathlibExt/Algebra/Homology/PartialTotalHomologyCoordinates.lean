@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -19,11 +16,10 @@ public import Mathlib.Algebra.Homology.Embedding.ExtendHomology
 public import Mathlib.Algebra.Homology.Refinements
 
 /-!
-# Homology coordinates for the partial-total spectral object
+# Homology coordinates of the partial-total spectral object
 
-This file identifies the bottom-to-stage and bottom-to-top `H` objects of the
-partial-total spectral object with ordinary partial-total and total homology.
-It makes no stable-page or convergence claim.
+The bottom-to-stage and bottom-to-top values of the spectral object’s H
+functor are canonically identified with partial-total and total homology.
 -/
 
 @[expose] public section

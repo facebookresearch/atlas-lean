@@ -6,9 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.CategoryTheory.GradedObject
@@ -16,12 +14,11 @@ public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import MathlibExt.CategoryTheory.Pi.Preadditive
 
 /-!
-# The canonical preadditive structure of graded objects
+# Preadditivity of graded objects
 
-The native graded-object type synonym inherits the existing pointwise Pi
-hom groups. Its native coproduct total is additive through the original
-coprojection equations. These instances use no finite-fiber or exactness
-premise. The grading, object and Hom universes remain independent.
+The hom groups of graded objects are defined pointwise, and the
+coproduct total functor is additive. The grading, object and morphism
+universes are independent.
 -/
 
 @[expose] public section
