@@ -10920,6 +10920,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/FiniteEulerProductCongruence": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "ℓ-regular overpartitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/ExtremalDiagonalSequences": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Diagonal sequences of integer partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterAlder": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterArmLegEquality": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterDistinctArmLeg": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterDistinctMonotone": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/FixedPerimeterPMResidueArmLeg": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Alder-type inequalities for fixed perimeter partitions"},
