@@ -120,9 +120,9 @@ theorem moebius_dual_central_equations (α β γ δ ξ : ℝ) (hα : 0 < α) (h�
   -- Cleared of their denominators, both endpoint equations say that a coefficient times `2 + ξ`
   -- equals `1 + γ`.
   have hβδ : (β + γ - δ + β * δ) * (2 + ξ) = 1 + γ := by
-    linear_combination (div_left_inj' hβden).mp hβeq
+    linear_combination (div_left_inj₀ hβden).mp hβeq
   have hαδ : α * (1 + δ) * (2 + ξ) = 1 + γ := by
-    linear_combination (div_left_inj' hαden).mp hαeq
+    linear_combination (div_left_inj₀ hαden).mp hαeq
   -- As `1 + γ ≠ 0`, the factor `2 + ξ` is nonzero, so the two coefficients agree.
   have hξ : 2 + ξ ≠ 0 := by
     intro h
@@ -175,9 +175,31 @@ theorem moebius_naturalDual_singular (α β γ δ : ℝ) (hα : 0 < α) (hβ : �
   -- Subtract the first central equation from the cleared α-branch equation and cancel 1 + δ.
   have hαξ : α * (1 + ξ) = 1 - β := by
     apply mul_right_cancel₀ (by linarith : (1 : ℝ) + δ ≠ 0)
-    linear_combination (div_left_inj' hαden).mp hαeq - hcentral
+    linear_combination (div_left_inj₀ hαden).mp hαeq - hcentral
   have hξ : ξ * (2 * α + 1 + α * η) = γ - 2 * α - α * η := div_mul_cancel₀ _ hηden
   have hη : η * (2 - β) = -2 + 2 * β + γ := div_mul_cancel₀ _ (by linarith : (2 : ℝ) - β ≠ 0)
   linear_combination hξ - (2 + η) * hαξ - hη
+
+/-- **Fixed points of a Moebius dual branch.** Let $\beta, \gamma, \eta$ be real numbers with
+$\beta \ne 2$ and $3 - 2\beta + (2 - \beta)\eta \ne 0$. Then
+$(-2 + 2\beta + \gamma + (-1 + \beta + \gamma)\eta)/(3 - 2\beta + (2 - \beta)\eta) = \eta$
+if and only if $\eta = -1$ or $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$.
+
+The paper's further side conditions on $\beta$ and $\gamma$ are not used.
+
+Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
+Article A17, Lemma 1 (`integers-2024-A17-lem-1`). -/
+theorem moebius_fixedPoint_eq_iff (β γ η : ℝ) (hβ : β ≠ 2)
+    (hden : 3 - 2 * β + (2 - β) * η ≠ 0) :
+    (-2 + 2 * β + γ + (-1 + β + γ) * η) / (3 - 2 * β + (2 - β) * η) = η ↔
+      η = -1 ∨ η = (-2 + 2 * β + γ) / (2 - β) := by
+  have hβ' : 2 - β ≠ 0 := sub_ne_zero.mpr hβ.symm
+  have hleft : η + 1 = 0 ↔ η = -1 := by
+    constructor <;> intro h <;> linarith only [h]
+  have hfactor :
+      (-2 + 2 * β + γ + (-1 + β + γ) * η) - η * (3 - 2 * β + (2 - β) * η) =
+        (η + 1) * ((-2 + 2 * β + γ) - η * (2 - β)) := by ring
+  rw [div_eq_iff hden, eq_div_iff hβ', ← sub_eq_zero, hfactor, mul_eq_zero, sub_eq_zero, hleft]
+  exact or_congr Iff.rfl eq_comm
 
 end MetaMathlibExt
