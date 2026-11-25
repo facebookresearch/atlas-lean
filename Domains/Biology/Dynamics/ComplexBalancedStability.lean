@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.Dynamics.ComplexBalanced
-public import Mathlib.Analysis.Calculus.ContDiff.Defs
+import MathlibExt.Dynamics.PolynomialNetworks.MassAction
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
 import Mathlib.Analysis.Calculus.ContDiff.Operations
@@ -46,31 +46,6 @@ open MathlibExt.Biology.Dynamics.ComplexBalanced
 open ReactionNetwork
 open Finset Set Filter
 open scoped Topology NNReal
-
-namespace MathlibExt.Biology.Dynamics.ComplexBalanced.ReactionNetwork
-
-/-- The mass-action vector field is smooth on the full real state space. -/
-theorem massActionField_contDiff {S ρ : Type*} [Fintype S] [Fintype ρ]
-    (N : ReactionNetwork S ρ) (k : ρ → ℝ) :
-    ContDiff ℝ ⊤ (N.massActionField k) := by
-  unfold ReactionNetwork.massActionField
-  apply contDiff_pi.mpr
-  intro s
-  fun_prop
-
-/-- The mass-action vector field takes values in the stoichiometric subspace. -/
-theorem massActionField_mem {S ρ : Type*} [Fintype S] [Fintype ρ]
-    (N : ReactionNetwork S ρ) (k : ρ → ℝ) (z : S → ℝ) :
-    N.massActionField k z ∈ N.stoichiometricSubspace := by
-  classical
-  have h := N.stoichiometricSubspace.sum_mem fun r (_ : r ∈ (Finset.univ : Finset ρ)) =>
-    N.stoichiometricSubspace.smul_mem
-      (k r * ∏ s, z s ^ N.src r s) (Submodule.subset_span ⟨r, rfl⟩)
-  convert h using 1
-  ext s
-  simp [ReactionNetwork.massActionField]
-
-end MathlibExt.Biology.Dynamics.ComplexBalanced.ReactionNetwork
 
 namespace Domains.Biology.Dynamics.ComplexBalancedStability
 
@@ -127,7 +102,7 @@ private theorem solution_sub_mem {S ρ : Type*} [Fintype S] [Fintype ρ]
     {t : ℝ} (ht : 0 ≤ t) : x t - x 0 ∈ N.stoichiometricSubspace := by
   let W := N.stoichiometricSubspace
   let : NormedAddCommGroup ((S → ℝ) ⧸ W) :=
-    Submodule.Quotient.normedAddCommGroup (S := W) (hS := W.closed_of_finiteDimensional)
+    Submodule.Quotient.normedAddCommGroup (S := W) (hS := W.isClosed_of_finiteDimensional)
   let q := W.mkQ.toContinuousLinearMap
   have hd (u : ℝ) (hu : 0 ≤ u) :
       HasDerivAt (fun v => q (x v)) (q (N.massActionField k (x u))) u :=
@@ -348,7 +323,7 @@ private theorem uniform_dissipation {S ρ : Type*} [Fintype S] [Fintype ρ]
     (fun z : S → ℝ => z - a) ⁻¹' (N.stoichiometricSubspace : Set (S → ℝ)) ∩
     (fun z : S → ℝ => ‖z - a‖) ⁻¹' Ici δ
   have hclosedW : IsClosed (N.stoichiometricSubspace : Set (S → ℝ)) :=
-    N.stoichiometricSubspace.closed_of_finiteDimensional
+    N.stoichiometricSubspace.isClosed_of_finiteDimensional
   have hK : IsCompact K :=
     ((isCompact_closedBall a R).inter_right
       (hclosedW.preimage (continuous_id.sub continuous_const))).inter_right

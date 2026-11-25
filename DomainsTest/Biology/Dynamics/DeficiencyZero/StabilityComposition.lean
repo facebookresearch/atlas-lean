@@ -8,46 +8,92 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Domains.Biology.Dynamics.DeficiencyZero.StabilityComposition
-public import Domains.Biology.Dynamics.ComplexBalancedStability
+import Domains.Biology.Dynamics.DeficiencyZero.StabilityComposition
 
 /-!
 # Deficiency-zero local asymptotic stability
 
-Compose the deficiency-zero result with the complex-balanced stability theorems.
+`localAsymptoticStability` on the reversible isomerization `A ⇌ B` with unit rate constants. The
+network is weakly reversible and has deficiency zero; `(3/2, 3/2)` is the only positive
+equilibrium in the compatibility class of `(1, 2)`, and solutions that start in that class near it
+stay near it and converge to it.
 -/
 
-@[expose] public section
+open MathlibExt.Biology.Dynamics.ComplexBalanced ReactionNetwork
+open Domains.Biology.Dynamics.DeficiencyZero
 
-open MathlibExt.Biology.Dynamics.ComplexBalanced
+namespace DomainsTest.Biology.Dynamics.DeficiencyZero.StabilityComposition
 
-namespace DomainsTest.Biology.Dynamics.DeficiencyZero
+-- The reactions are `A → B` and `B → A`, in that order (`0 = A`, `1 = B`).
+private def revAB : ReactionNetwork (Fin 2) (Fin 2) where
+  src := ![![1, 0], ![0, 1]]
+  prod := ![![0, 1], ![1, 0]]
 
-theorem localAsymptoticStability {S ρ : Type*} [Fintype S] [Fintype ρ]
-    (N : ReactionNetwork S ρ) (hδ : N.deficiency = 0)
-    (hwr : N.IsWeaklyReversible) {k : ρ → ℝ} (hk : ∀ r, 0 < k r)
-    {x₀ : S → ℝ} (hx₀ : ∀ s, 0 < x₀ s) :
-    (∃! x : S → ℝ, (∀ s, 0 < x s) ∧ x - x₀ ∈ N.stoichiometricSubspace ∧
-      N.massActionField k x = 0) ∧
-      ∀ xstar : S → ℝ, (∀ s, 0 < xstar s) →
-        xstar - x₀ ∈ N.stoichiometricSubspace → N.massActionField k xstar = 0 →
-          (∃ η > 0, ∀ z : S → ℝ,
-          z - xstar ∈ N.stoichiometricSubspace → ‖z - xstar‖ < η →
-            ∃ x : ℝ → S → ℝ, x 0 = z ∧
-              ∀ t, 0 ≤ t → HasDerivAt x (N.massActionField k (x t)) t) ∧
-          (∀ ε > 0, ∃ η > 0, ∀ x : ℝ → S → ℝ,
-          (∀ t, 0 ≤ t → HasDerivAt x (N.massActionField k (x t)) t) →
-            x 0 - xstar ∈ N.stoichiometricSubspace → ‖x 0 - xstar‖ < η →
-              ∀ t, 0 ≤ t → ‖x t - xstar‖ < ε) ∧
-          (∃ η > 0, ∀ x : ℝ → S → ℝ,
-          (∀ t, 0 ≤ t → HasDerivAt x (N.massActionField k (x t)) t) →
-            x 0 - xstar ∈ N.stoichiometricSubspace → ‖x 0 - xstar‖ < η →
-              Filter.Tendsto x Filter.atTop (nhds xstar)) := by
-  exact Domains.Biology.Dynamics.DeficiencyZero.localAsymptoticStability_of_stability
-    Domains.Biology.Dynamics.ComplexBalancedStability.exists_solution_of_near
-    Domains.Biology.Dynamics.ComplexBalancedStability.stable
-    Domains.Biology.Dynamics.ComplexBalancedStability.attractive N hδ hwr hk hx₀
+private theorem revAB_deficiency : revAB.deficiency = 0 := by
+  refine revAB.deficiency_eq_zero_iff.2 fun α hα η => ?_
+  have h0 := congrFun hα 0
+  simp [revAB, Fin.sum_univ_two] at h0
+  simp only [revAB, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  have : α 1 = α 0 := by linarith
+  rw [this]
+  ring
 
-end DomainsTest.Biology.Dynamics.DeficiencyZero
+private theorem revAB_isWeaklyReversible : revAB.IsWeaklyReversible :=
+  isWeaklyReversible_of_reversible fun r => by
+    fin_cases r
+    · exact ⟨1, rfl, rfl⟩
+    · exact ⟨0, rfl, rfl⟩
 
-#print axioms DomainsTest.Biology.Dynamics.DeficiencyZero.localAsymptoticStability
+private theorem pos_one_two : ∀ s, 0 < (![1, 2] : Fin 2 → ℝ) s := by
+  intro s
+  fin_cases s <;> norm_num
+
+private theorem pos_equilibrium : ∀ s, 0 < (![3 / 2, 3 / 2] : Fin 2 → ℝ) s := by
+  intro s
+  fin_cases s <;> norm_num
+
+-- With unit rate constants, `(3/2, 3/2)` is an equilibrium.
+private theorem revAB_equilibrium :
+    revAB.massActionField (fun _ => 1) ![3 / 2, 3 / 2] = 0 := by
+  ext s
+  fin_cases s <;>
+    simp [ReactionNetwork.massActionField, revAB, Fin.sum_univ_two, Fin.prod_univ_two]
+
+-- `(3/2, 3/2) - (1, 2)` is half the reaction vector of `B → A`.
+private theorem revAB_mem_class :
+    (![3 / 2, 3 / 2] : Fin 2 → ℝ) - ![1, 2] ∈ revAB.stoichiometricSubspace := by
+  have h : (![3 / 2, 3 / 2] : Fin 2 → ℝ) - ![1, 2] =
+      (1 / 2 : ℝ) • fun s => (revAB.prod 1 s : ℝ) - revAB.src 1 s := by
+    ext s
+    fin_cases s <;> norm_num [revAB]
+  rw [h]
+  exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨1, rfl⟩)
+
+/-- The only positive equilibrium in the class of `(1, 2)` is `(3/2, 3/2)`. -/
+example (x : Fin 2 → ℝ) (hx : (∀ s, 0 < x s) ∧ x - ![1, 2] ∈ revAB.stoichiometricSubspace ∧
+    revAB.massActionField (fun _ => 1) x = 0) : x = ![3 / 2, 3 / 2] :=
+  (localAsymptoticStability revAB revAB_deficiency revAB_isWeaklyReversible
+    (k := fun _ => 1) (fun _ => one_pos) pos_one_two).1.unique hx
+    ⟨pos_equilibrium, revAB_mem_class, revAB_equilibrium⟩
+
+/-- Solutions in the class that start near `(3/2, 3/2)` stay within `ε` of it. -/
+example (ε : ℝ) (hε : 0 < ε) : ∃ η > 0, ∀ x : ℝ → Fin 2 → ℝ,
+    (∀ t, 0 ≤ t → HasDerivAt x (revAB.massActionField (fun _ => 1) (x t)) t) →
+    x 0 - ![3 / 2, 3 / 2] ∈ revAB.stoichiometricSubspace → ‖x 0 - ![3 / 2, 3 / 2]‖ < η →
+    ∀ t, 0 ≤ t → ‖x t - ![3 / 2, 3 / 2]‖ < ε :=
+  ((localAsymptoticStability revAB revAB_deficiency revAB_isWeaklyReversible
+    (k := fun _ => 1) (fun _ => one_pos) pos_one_two).2 _ pos_equilibrium revAB_mem_class
+    revAB_equilibrium).2.1 ε hε
+
+/-- Solutions in the class that start close enough to `(3/2, 3/2)` converge to it. -/
+example : ∃ η > 0, ∀ x : ℝ → Fin 2 → ℝ,
+    (∀ t, 0 ≤ t → HasDerivAt x (revAB.massActionField (fun _ => 1) (x t)) t) →
+    x 0 - ![3 / 2, 3 / 2] ∈ revAB.stoichiometricSubspace → ‖x 0 - ![3 / 2, 3 / 2]‖ < η →
+    Filter.Tendsto x Filter.atTop (nhds ![3 / 2, 3 / 2]) :=
+  ((localAsymptoticStability revAB revAB_deficiency revAB_isWeaklyReversible
+    (k := fun _ => 1) (fun _ => one_pos) pos_one_two).2 _ pos_equilibrium revAB_mem_class
+    revAB_equilibrium).2.2
+
+#print axioms Domains.Biology.Dynamics.DeficiencyZero.localAsymptoticStability
+
+end DomainsTest.Biology.Dynamics.DeficiencyZero.StabilityComposition

@@ -143,8 +143,6 @@ theorem reversiblePair_attractivity_needs_class (η : ℝ) (hη : 0 < η) :
     simp [a] at hzero
     linarith
 
-#print axioms MathlibExt.Biology.Dynamics.ComplexBalanced.ReactionNetwork.massActionField_contDiff
-#print axioms MathlibExt.Biology.Dynamics.ComplexBalanced.ReactionNetwork.massActionField_mem
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.exists_solution_of_near
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.stable
 #print axioms Domains.Biology.Dynamics.ComplexBalancedStability.attractive
