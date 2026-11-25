@@ -94,10 +94,11 @@ theorem n1_typedBy : Net.TypedBy sortOf g1 n1 := by
   · refine ⟨.recv .alice .nat (.select .carol
         (.cons .ok (.send .carol .nat .end) (.cons .quit .end .nil))), by decide,
       _, ?_, LocalType.braceEq_refl _⟩
-    exact .recv (.select (by decide) (.send (.var rfl) .inact))
+    exact .recv (.select (by decide) (.send (.var rfl) .inact)
+      (.cons (by decide) (.send .end) (.cons (by decide) .end .nil)))
   · refine ⟨.branch .bob (.cons .ok (.recv .bob .nat .end) (.cons .quit .end .nil)),
       by decide, _, ?_, LocalType.braceEq_refl _⟩
-    exact .branch (.cons (.recv .inact) (.cons .inact .nil))
+    exact .branch (.cons (.recv .inact) (.cons .inact .nil (by decide)) (by decide))
   · exact ⟨.end, by decide, _, .inact, LocalType.braceEq_refl _⟩
 
 theorem n1_step : Net.Step sortOf n1 (.msg .alice .bob .nat) n1' := by
@@ -117,7 +118,8 @@ theorem n1'_bob_hasType : HasType sortOf [] (n1' .bob)
     (proc := (Proc.select Role.carol Lbl.ok (.send Role.carol (.var 0) .inact) :
       Proc Role Val Lbl))
     (.of_hasType0 (.select (t := LocalType.send Role.carol Srt.nat .end) (by decide)
-      (.send (.var rfl) .inact))) rfl
+      (.send (.var rfl) .inact)
+      (.cons (by decide) (.send .end) (.cons (by decide) .end .nil)))) rfl
 
 /-! ### 2. Reordered bystander branches: typing up to brace equality -/
 
@@ -156,7 +158,8 @@ theorem carol2_not_hasType0 :
 theorem carol2_hasType :
     HasType sortOf [] carol2 (.branch .alice (.cons .x .end (.cons .y .end .nil))) :=
   HasType.braceEq (t := .branch .alice (.cons .y .end (.cons .x .end .nil)))
-    (.of_hasType0 (.branch (.cons .inact (.cons .inact .nil)))) (by decide)
+    (.of_hasType0 (.branch (.cons .inact (.cons .inact .nil (by decide)) (by decide))))
+    (by decide)
 
 theorem n2_typedBy : Net.TypedBy sortOf g2 n2 := by
   refine ⟨g2_wellFormed, fun peer => ?_⟩
@@ -166,13 +169,17 @@ theorem n2_typedBy : Net.TypedBy sortOf g2 n2 := by
           (.cons .quit (.select .carol (.cons .y .end (.cons .x .end .nil))) .nil)),
       by decide, _, ?_, LocalType.braceEq_refl _⟩
     exact .select (t := .select .carol (.cons .x .end (.cons .y .end .nil))) (by decide)
-      (.select (t := .end) (by decide) .inact)
+      (.select (t := .end) (by decide) .inact
+        (.cons (by decide) .end (.cons (by decide) .end .nil)))
+      (.cons (by decide) (.select (.cons (by decide) .end (.cons (by decide) .end .nil)))
+        (.cons (by decide) (.select (.cons (by decide) .end (.cons (by decide) .end .nil)))
+          .nil))
   · refine ⟨.branch .alice (.cons .ok .end (.cons .quit .end .nil)), by decide,
       _, ?_, LocalType.braceEq_refl _⟩
-    exact .branch (.cons .inact (.cons .inact .nil))
+    exact .branch (.cons .inact (.cons .inact .nil (by decide)) (by decide))
   · exact ⟨.branch .alice (.cons .x .end (.cons .y .end .nil)), g2_project_carol,
       .branch .alice (.cons .y .end (.cons .x .end .nil)),
-      .branch (.cons .inact (.cons .inact .nil)), by decide⟩
+      .branch (.cons .inact (.cons .inact .nil (by decide)) (by decide)), by decide⟩
   · exact ⟨.end, by decide, _, .inact, LocalType.braceEq_refl _⟩
 
 theorem n2_can_choose :
@@ -228,6 +235,46 @@ theorem select_absent_label :
   obtain ⟨bs, u, heq, hl, -⟩ := h.select_inv
   cases heq
   simp [LocalType.Branches.lookup] at hl
+
+/-- 8. Repeated branch labels are not process syntax: a branch with a
+duplicated label is untypable against every local type. -/
+theorem dup_label_branch_untypable (t : LocalType Role Srt Lbl) :
+    ¬ HasType sortOf []
+      (.branch .alice (.cons .x .inact (.cons .x .inact .nil)) : Proc Role Val Lbl) t := by
+  rintro ⟨t₀, h, -⟩
+  cases h with
+  | branch hbs =>
+    cases hbs with
+    | cons _ _ hfresh => exact hfresh (by decide)
+
+/-- 9. A selection is untypable against a local selection type with a
+repeated label, whatever the process: ordered typing requires a well-formed
+branch list, and brace equality from a well-formed list never reaches one
+with a repeated label. -/
+theorem select_duplicate_type_label_untypable (proc : Proc Role Val Lbl) :
+    ¬ HasType sortOf [] proc
+      (.select .bob (.cons .ok .end (.cons .ok (.send .bob .nat .end) .nil))) := by
+  rintro ⟨t₀, h, hb⟩
+  cases h <;> simp only [LocalType.braceEq, Bool.false_eq_true] at hb
+  rename_i hwf _
+  simp only [Bool.and_eq_true] at hb
+  cases hwf with
+  | nil => simp [LocalType.Branches.braceEq] at hb
+  | cons hnotin _ _ =>
+    rename_i l _ tl _ _ _
+    by_cases hl : l = Lbl.ok
+    · subst hl
+      cases tl with
+      | nil =>
+        simp [LocalType.Branches.braceEq, LocalType.Branches.lookup,
+          LocalType.Branches.eraseLabel] at hb
+      | cons l' _ _ =>
+        by_cases hl' : l' = Lbl.ok
+        · subst hl'
+          simp [LocalType.Branches.labels, LocalType.Branches.entries] at hnotin
+        · simp [LocalType.Branches.braceEq, LocalType.Branches.lookup,
+            LocalType.Branches.eraseLabel, hl'] at hb
+    · simp [LocalType.Branches.braceEq, LocalType.Branches.lookup, hl] at hb
 
 /-! ### Binding -/
 

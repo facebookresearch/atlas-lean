@@ -287,7 +287,9 @@ mutual
 /-- Ordered typing, Fig. 7 [INACT], [SEND], [RCV], [SEL] and [BRANCH]
 specialized: one session, one thread, the participant's own local type.
 [BRANCH] types the branches against the same labels in the same order
-(the source's common index set `I`). -/
+(the source's common index set `I`, so the labels are distinct); [SEL] selects
+from a well-formed local branch list, whose labels are distinct for the same
+reason. -/
 inductive HasType0 {P S V L : Type} [DecidableEq L] (sortOf : V → S) :
     List S → Proc P V L → LocalType P S L → Prop where
   | inact {ctx : List S} : HasType0 sortOf ctx .inact .end
@@ -302,6 +304,7 @@ inductive HasType0 {P S V L : Type} [DecidableEq L] (sortOf : V → S) :
   | select {ctx : List S} {peer : P} {label : L} {next : Proc P V L}
     {branches : LocalType.Branches P S L} {t : LocalType P S L} :
     branches.lookup label = some t → HasType0 sortOf ctx next t →
+      branches.WellFormed →
       HasType0 sortOf ctx (.select peer label next) (.select peer branches)
   | branch {ctx : List S} {peer : P} {procs : Proc.Branches P V L}
     {types : LocalType.Branches P S L} :
@@ -309,13 +312,16 @@ inductive HasType0 {P S V L : Type} [DecidableEq L] (sortOf : V → S) :
       HasType0 sortOf ctx (.branch peer procs) (.branch peer types)
 
 /-- Ordered branch typing: same labels in the same order, each continuation
-typed against the corresponding local continuation. -/
+typed against the corresponding local continuation. Each label is fresh for
+the rest of the process branch list: the source's branch labels range over an
+index set, so repeated labels are not source syntax. -/
 inductive HasType0.Branches {P S V L : Type} [DecidableEq L] (sortOf : V → S) :
     List S → Proc.Branches P V L → LocalType.Branches P S L → Prop where
   | nil {ctx : List S} : HasType0.Branches sortOf ctx .nil .nil
   | cons {ctx : List S} {label : L} {proc : Proc P V L} {t : LocalType P S L}
     {procs : Proc.Branches P V L} {types : LocalType.Branches P S L} :
     HasType0 sortOf ctx proc t → HasType0.Branches sortOf ctx procs types →
+      label ∉ procs.labels →
       HasType0.Branches sortOf ctx (.cons label proc procs) (.cons label t types)
 end
 
@@ -366,6 +372,28 @@ inductive Net.Step {P S V L : Type} [DecidableEq P] [DecidableEq L]
 section Ordered
 
 variable {P S V L : Type} [DecidableEq L] {sortOf : V → S}
+
+omit [DecidableEq L] in
+/-- Lifting keeps the labels of a process branch list. -/
+private theorem Proc.Branches.labels_lift (cutoff : Nat) :
+    ∀ procs : Proc.Branches P V L, (procs.lift cutoff).labels = procs.labels
+  | .nil => by rw [Proc.Branches.lift]
+  | .cons label head tail => by
+    have ih := Proc.Branches.labels_lift cutoff tail
+    simp only [Proc.Branches.lift, Proc.Branches.labels, Proc.Branches.entries,
+      List.map_cons] at ih ⊢
+    rw [ih]
+
+omit [DecidableEq L] in
+/-- Substitution keeps the labels of a process branch list. -/
+private theorem Proc.Branches.labels_subst (value : V) (index : Nat) :
+    ∀ procs : Proc.Branches P V L, (procs.subst value index).labels = procs.labels
+  | .nil => by rw [Proc.Branches.subst]
+  | .cons label head tail => by
+    have ih := Proc.Branches.labels_subst value index tail
+    simp only [Proc.Branches.subst, Proc.Branches.labels, Proc.Branches.entries,
+      List.map_cons] at ih ⊢
+    rw [ih]
 
 /-- Weakening for expression sorting. -/
 private theorem Expr.HasSort.weaken {ctx : List S} {e : Expr V} {s₀ : S}
@@ -427,9 +455,9 @@ theorem HasType0.weaken {ctx : List S} {proc : Proc P V L}
   | .recv hnext => by
     rw [Proc.lift]
     exact .recv (hnext.weaken (cutoff + 1) s)
-  | .select hlook hnext => by
+  | .select hlook hnext hwf => by
     rw [Proc.lift]
-    exact .select hlook (hnext.weaken cutoff s)
+    exact .select hlook (hnext.weaken cutoff s) hwf
   | .branch hbs => by
     rw [Proc.lift]
     exact .branch (hbs.weaken cutoff s)
@@ -442,9 +470,10 @@ theorem HasType0.Branches.weaken {ctx : List S} {procs : Proc.Branches P V L}
   | .nil => by
     rw [Proc.Branches.lift]
     exact .nil
-  | .cons hhead htail => by
+  | .cons hhead htail hfresh => by
     rw [Proc.Branches.lift]
     exact .cons (hhead.weaken cutoff s) (htail.weaken cutoff s)
+      (by rw [Proc.Branches.labels_lift]; exact hfresh)
 end
 
 mutual
@@ -463,9 +492,9 @@ theorem HasType0.subst {ctx : List S} {proc : Proc P V L}
     rw [Proc.subst]
     exact .recv (HasType0.subst (ctx := s₁ :: ctx) (index := index + 1) hnext hs
       (Nat.succ_le_succ hle))
-  | .select hlook hnext, hs, hle => by
+  | .select hlook hnext hwf, hs, hle => by
     rw [Proc.subst]
-    exact .select hlook (hnext.subst hs hle)
+    exact .select hlook (hnext.subst hs hle) hwf
   | .branch hbs, hs, hle => by
     rw [Proc.subst]
     exact .branch (hbs.subst hs hle)
@@ -479,9 +508,10 @@ theorem HasType0.Branches.subst {ctx : List S} {procs : Proc.Branches P V L}
   | .nil, _, _ => by
     rw [Proc.Branches.subst]
     exact .nil
-  | .cons hhead htail, hs, hle => by
+  | .cons hhead htail hfresh, hs, hle => by
     rw [Proc.Branches.subst]
     exact .cons (hhead.subst hs hle) (htail.subst hs hle)
+      (by rw [Proc.Branches.labels_subst]; exact hfresh)
 end
 
 mutual
@@ -497,7 +527,7 @@ theorem HasType0.closedAt {ctx : List S} {proc : Proc P V L}
   | .recv hnext => by
     rw [Proc.ClosedAt]
     exact hnext.closedAt
-  | .select _ hnext => by
+  | .select _ hnext _ => by
     rw [Proc.ClosedAt]
     exact hnext.closedAt
   | .branch hbs => by
@@ -509,7 +539,7 @@ theorem HasType0.Branches.closedAt {ctx : List S} {procs : Proc.Branches P V L}
     {types : LocalType.Branches P S L} :
     HasType0.Branches sortOf ctx procs types → procs.ClosedAt ctx.length
   | .nil => trivial
-  | .cons hhead htail => by
+  | .cons hhead htail _ => by
     rw [Proc.Branches.ClosedAt]
     exact ⟨hhead.closedAt, htail.closedAt⟩
 end
@@ -519,11 +549,25 @@ private theorem HasType0.Branches.labels_eq {ctx : List S} :
     ∀ {procs : Proc.Branches P V L} {types : LocalType.Branches P S L},
       HasType0.Branches sortOf ctx procs types → procs.labels = types.labels
   | _, _, .nil => rfl
-  | _, _, .cons _ htail => by
+  | _, _, .cons _ htail _ => by
     have ih := htail.labels_eq
     simp only [Proc.Branches.labels, LocalType.Branches.labels,
       Proc.Branches.entries, LocalType.Branches.entries, List.map_cons] at ih ⊢
     rw [ih]
+
+/-- Ordered branch typing has distinct labels on both sides: freshness is
+stated on the process list and transfers to the type list. -/
+private theorem HasType0.Branches.labels_nodup {ctx : List S} :
+    ∀ {procs : Proc.Branches P V L} {types : LocalType.Branches P S L},
+      HasType0.Branches sortOf ctx procs types →
+        procs.labels.Nodup ∧ types.labels.Nodup
+  | _, _, .nil => ⟨List.nodup_nil, List.nodup_nil⟩
+  | _, _, .cons _ htail hfresh => by
+    have ih := htail.labels_nodup
+    have heq := htail.labels_eq
+    simp only [Proc.Branches.labels, LocalType.Branches.labels, Proc.Branches.entries,
+      LocalType.Branches.entries, List.map_cons, List.nodup_cons] at ih heq hfresh ⊢
+    exact ⟨⟨hfresh, ih.1⟩, ⟨by rw [← heq]; exact hfresh, ih.2⟩⟩
 
 /-- Ordered branch typing transports lookup. -/
 private theorem HasType0.Branches.lookup_some {ctx : List S} {label : L}
@@ -533,7 +577,7 @@ private theorem HasType0.Branches.lookup_some {ctx : List S} {label : L}
         ∃ u : LocalType P S L, types.lookup label = some u ∧
           HasType0 sortOf ctx proc u
   | _, _, .nil, h => by cases h
-  | _, _, .cons (label := entryLabel) hhead htail, h => by
+  | _, _, .cons (label := entryLabel) hhead htail _, h => by
     by_cases hl : label = entryLabel
     · rw [Proc.Branches.lookup, ite_eq_left hl, Option.some.injEq] at h
       subst h
@@ -541,6 +585,25 @@ private theorem HasType0.Branches.lookup_some {ctx : List S} {label : L}
     · rw [Proc.Branches.lookup, ite_eq_right hl] at h
       obtain ⟨u, hu, htu⟩ := htail.lookup_some h
       exact ⟨u, by rw [LocalType.Branches.lookup, ite_eq_right hl]; exact hu, htu⟩
+
+mutual
+/-- Ordered typing only assigns well-formed local types. -/
+private theorem HasType0.wellFormed {ctx : List S} {proc : Proc P V L}
+    {t : LocalType P S L} : HasType0 sortOf ctx proc t → t.WellFormed
+  | .inact => .end
+  | .send _ hnext => .send hnext.wellFormed
+  | .recv hnext => .recv hnext.wellFormed
+  | .select _ _ hwf => .select hwf
+  | .branch hbs => .branch hbs.wellFormed
+
+/-- Ordered branch typing only assigns well-formed local branch lists. -/
+private theorem HasType0.Branches.wellFormed {ctx : List S}
+    {procs : Proc.Branches P V L} {types : LocalType.Branches P S L} :
+    HasType0.Branches sortOf ctx procs types → types.WellFormed
+  | .nil => .nil
+  | .cons hhead htail hfresh =>
+    .cons (by rw [← htail.labels_eq]; exact hfresh) hhead.wellFormed htail.wellFormed
+end
 
 end Ordered
 
@@ -649,7 +712,7 @@ theorem HasType.select_inv {ctx : List S} {peer : P} {label : L}
         HasType sortOf ctx next u := by
   rintro ⟨t₀, h, hb⟩
   cases h with
-  | select hlook hnext =>
+  | select hlook hnext _ =>
     cases t <;> simp only [LocalType.braceEq, Bool.and_eq_true, beq_iff_eq,
       Bool.false_eq_true] at hb
     obtain ⟨rfl, hb⟩ := hb
