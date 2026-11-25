@@ -20,3 +20,5 @@ Combinatorial group theory: presentations, one-relator groups, HNN extensions an
 - [Higman–Neumann–Neumann embedding theorem](higman-neumann-neumann-embedding.md)
 - [Infinite finitely presented simple groups exist](higman-infinite-simple.md)
 - [SQ-universal group](is-squniversal.md)
+- [Universal theory of finite groups](universal-theory-of-finite-groups/README.md)
+- [Universal theory of soluble groups](universal-theory-of-soluble-groups/README.md)

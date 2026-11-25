@@ -1,0 +1,12 @@
+# Every context-sensitive grammar over a finite alphabet has an LBA recognizing it
+
+The following holds. Let $\Gamma$ be a finite terminal alphabet, $N$ a type of nonterminals, and $g$ a context-sensitive grammar over $\Gamma$ with nonterminals $N$. Then there are a finite tape alphabet $\Sigma$, an injective map $e : \Gamma \to \Sigma$, a finite set $Q$ of states and a nondeterministic linear bounded automaton $M$ with states $Q$ over $\Sigma$ such that
+
+$$L(g) = \{\, w \in \Gamma^* : M \text{ accepts } e(w_1) e(w_2) \cdots e(w_{|w|}) \,\}.$$
+
+The automaton works within the cells of its input, sees whether its head is at the left end, the right end or an interior cell, and may write symbols of $\Sigma$ (or blank) that are not images of input letters, which leaves room for nonterminals and markers. The context-sensitivity hypothesis matters: for unrestricted grammars the statement fails.
+
+## Sources
+
+- M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage, 2013, §5.1.
+- J. E. Hopcroft, R. Motwani, and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Pearson, 2007, §11.1.

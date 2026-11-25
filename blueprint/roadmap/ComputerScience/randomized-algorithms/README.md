@@ -10,3 +10,4 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Karger's algorithm](karger-s-algorithm/README.md)
 - [MinHash and Jaccard similarity](minhash-and-jaccard-similarity/README.md)
 - [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
+- [Hajek's theorem](hajek-iff.md)

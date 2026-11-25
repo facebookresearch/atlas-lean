@@ -2,3 +2,4 @@
 
 - [Irreducible characters of $p'$-degree](p-prime-characters.md)
 - [McKay conjecture (Cabanes–Späth theorem)](mckay-irr-equicardinal.md)
+- [The McKay conjecture](theorem-1-1.md)

@@ -1,0 +1,3 @@
+# Provability in Presburger arithmetic
+
+For a sentence $\sigma$ of the language of Presburger arithmetic ($0$, $S$, $+$, $<$, $=$), $\mathrm{Pr} \vdash \sigma$ means that $\sigma$ is derivable from the axioms of Presburger arithmetic (the seven basic axioms and all induction axioms) in the classical natural deduction calculus for first-order logic, where sentences are regarded as formulas whose free variables range over the infinite set $\mathbb{N}$ of variable names, so that eigenvariables for universal introduction are always available. This relation is sound and complete for semantic consequence from the Presburger axioms.

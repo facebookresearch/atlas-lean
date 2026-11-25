@@ -22,3 +22,4 @@ Definitions of time and space complexity on machine models (P, NP, PSPACE, EXP, 
 
 - [Search problems and TFNP](total-search-problems/README.md)
 - [Space and time complexity](space-and-time-complexity/README.md)
+- [Finding points on elliptic curves modulo a prime](finding-points-on-elliptic-curves-modulo-a-prime/README.md)

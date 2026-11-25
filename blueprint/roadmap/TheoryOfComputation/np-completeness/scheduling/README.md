@@ -17,3 +17,4 @@ Single-machine, parallel-machine, flow-shop, precedence-constrained and resource
 - [Vehicle and routing scheduling](vehicle-and-routing-scheduling/README.md)
 - [Weighted completion time with precedence constraints](weighted-completion-time-with-precedence-constra/README.md)
 - [Weighted number of tardy jobs](weighted-number-of-tardy-jobs/README.md)
+- [VEHICLE SCHEDULING ON TREE is NP-complete](vehicle-scheduling-on-tree-is-np-complete/README.md)

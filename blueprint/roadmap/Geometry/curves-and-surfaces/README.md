@@ -9,3 +9,4 @@ Curvature, tangents and global properties of curves and surfaces in Euclidean sp
 - [Inscribed rectangle problem](inscribed-rectangle-problem/README.md)
 - [Optimal paper Möbius band](optimal-paper-m-bius-band/README.md)
 - [Space curves with a tangent line at every point](space-curves-with-a-tangent-line-at-every-point/README.md)
+- [Wente's shadow problem](wente-s-shadow-problem/README.md)

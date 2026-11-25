@@ -15,3 +15,7 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Arithmetization of syntax and the diagonal lemma](arithmetization-of-syntax-and-the-diagonal-lemma.md)
 - [Logic of bunched implications](logic-of-bunched-implications.md)
 - [Reverse mathematics](reverse-mathematics.md)
+- [Cut elimination for first-order logic](cut-elimination-for-first-order-logic/README.md)
+- [Herbrand's theorem](herbrand-s-theorem/README.md)
+- [Gödel's first incompleteness theorem](g-del-s-first-incompleteness-theorem/README.md)
+- [Gödel's second incompleteness theorem](g-del-s-second-incompleteness-theorem/README.md)

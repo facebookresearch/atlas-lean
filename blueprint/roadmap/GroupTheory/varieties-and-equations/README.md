@@ -16,3 +16,6 @@ Groups defined by laws and quasi-identities: varieties, relatively free groups, 
 - [Test ranks of relatively free groups](test-ranks-of-relatively-free-groups/README.md)
 - [Torsion groups of unbounded exponent in proper varieties](torsion-groups-of-unbounded-exponent-in-proper-v/README.md)
 - [Locally finite variety](is-locally-finite-variety.md)
+- [Equations with constraints in free groups](equations-with-constraints-in-free-groups/README.md)
+- [Products and intersections of varieties of groups](products-and-intersections-of-varieties-of-group/README.md)
+- [Finite bases for metabelian laws](finite-bases-for-metabelian-laws/README.md)
