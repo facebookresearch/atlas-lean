@@ -82,25 +82,41 @@ private abbrev crossing : Shuffle 1 1 where
   isShuffle := by
     constructor <;> intro i j hij
     · have h : i = j := Subsingleton.elim _ _
-      simpa [h] using hij
+      simp [h] at hij
     · have h : i = j := Subsingleton.elim _ _
-      simpa [h] using hij
+      simp [h] at hij
 
 example : (2 : R) ≠ 0 ∧ (3 : R) ≠ 0 ∧ (2 : R) * 3 = 0 := by decide
 
 example : substitution Polynomial.X = (Polynomial.X + 1 : A) ∧
     substitution Polynomial.X ≠ (Polynomial.X : A) := by
-  rw [substitution_X]
-  simp
+  constructor
+  · exact substitution_X
+  · rw [substitution_X]
+    intro h
+    have hOne : (1 : A) = 0 :=
+      add_left_cancel (show (Polynomial.X : A) + 1 = Polynomial.X + 0 by
+        simpa only [add_zero] using h)
+    have hR : (1 : R) = 0 := by
+      simpa only [map_one, map_zero] using
+        congrArg (Polynomial.aeval (0 : R)) hOne
+    exact (by decide : (1 : R) ≠ 0) hR
 
 example :
     ((liftedMap substitution coefficientSubstitution substitution_left substitution_right).f 1).hom
       (ULift.up (Polynomial.X : A) ⊗ₜ[R] PiTensorProduct.tprod R (fun _ : Fin 1 => (1 : A))) =
         ULift.up (Polynomial.X + 1 : A) ⊗ₜ[R]
           PiTensorProduct.tprod R (fun _ : Fin 1 => (1 : A)) := by
-  simpa only [coefficientSubstitution, substitution_X, substitution_one] using
-    liftedMap_f_tprod substitution coefficientSubstitution substitution_left substitution_right
-      1 (Polynomial.X : A) (fun _ : Fin 1 => (1 : A))
+  have hHead : coefficientSubstitution (Polynomial.X : A) = Polynomial.X + 1 := by
+    change substitution Polynomial.X = Polynomial.X + 1
+    exact substitution_X
+  have hWord : (fun _ : Fin 1 => substitution (1 : A)) = fun _ : Fin 1 => (1 : A) := by
+    funext i
+    exact substitution_one
+  exact (liftedMap_f_tprod substitution coefficientSubstitution substitution_left
+    substitution_right 1 (Polynomial.X : A) (fun _ : Fin 1 => (1 : A))).trans
+      (congrArg₂ (fun (m : A) (word : Fin 1 → A) =>
+        ULift.up m ⊗ₜ[R] PiTensorProduct.tprod R word) hHead hWord)
 
 example :
     (boundary R A A 1).hom
@@ -156,7 +172,7 @@ example :
       (fun _ : Fin 1 => (Polynomial.X : A)) (fun _ : Fin 1 => (1 : A))
 
 example : shuffleSignZ crossing = -1 := by
-  simp [crossing, shuffleSignZ, shuffleSign]
+  simp [shuffleSignZ, shuffleSign]
 
 example :
     rawShuffleTerm R A A crossing

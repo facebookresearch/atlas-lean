@@ -152,8 +152,17 @@ private def tensorMatrixValue : E ⊗[ℤ] E →ₗ[ℤ] Mat :=
 
 private theorem tensorMatrixValue_tmul (a b : E) :
     tensorMatrixValue (a ⊗ₜ[ℤ] b) = degreeOneMatrix a * degreeOneMatrix b := by
-  simp only [tensorMatrixValue, LinearMap.comp_apply, TensorProduct.map_tmul,
-    TensorProduct.lift.tmul]
+  let m : Mat ⊗[ℤ] Mat →ₗ[ℤ] Mat :=
+    TensorProduct.lift ((Algebra.lmul ℤ Mat).toLinearMap)
+  let p : E ⊗[ℤ] E →ₗ[ℤ] Mat ⊗[ℤ] Mat :=
+    TensorProduct.map degreeOneMatrix degreeOneMatrix
+  have hp : p (a ⊗ₜ[ℤ] b) = degreeOneMatrix a ⊗ₜ[ℤ] degreeOneMatrix b :=
+    TensorProduct.map_tmul degreeOneMatrix degreeOneMatrix a b
+  have hm : m (degreeOneMatrix a ⊗ₜ[ℤ] degreeOneMatrix b) =
+      degreeOneMatrix a * degreeOneMatrix b :=
+    TensorProduct.lift.tmul (f' := (Algebra.lmul ℤ Mat).toLinearMap) _ _
+  change m (p (a ⊗ₜ[ℤ] b)) = _
+  exact (congrArg m hp).trans hm
 
 private theorem tensor_pair_ne_zero :
     (ExteriorAlgebra.ι ℤ e01 ⊗ₜ[ℤ] ExteriorAlgebra.ι ℤ diagonalBracket : E ⊗[ℤ] E) ≠ 0 := by
@@ -191,9 +200,12 @@ private theorem nativeDifferential_pair :
 /-- The actual native tensor differential is nonzero on this antidiagonal summand. -/
 example : ((ChevalleyEilenberg.nativeTensorComplex ℤ Mat).d 3 2).hom nativeInput ≠ 0 := by
   intro hz
-  have h := congrArg (ExteriorAlgebra.tensorDegreeRealize ℤ Mat 2).hom hz
-  rw [nativeDifferential_pair, map_zero] at h
-  exact tensor_pair_ne_zero h
+  let r : (ChevalleyEilenberg.nativeTensorComplex ℤ Mat).X 2 →ₗ[ℤ] E ⊗[ℤ] E :=
+    (ExteriorAlgebra.tensorDegreeRealize ℤ Mat 2).hom
+  have hValue : r (((ChevalleyEilenberg.nativeTensorComplex ℤ Mat).d 3 2).hom nativeInput) =
+      ExteriorAlgebra.ι ℤ e01 ⊗ₜ[ℤ] ExteriorAlgebra.ι ℤ diagonalBracket :=
+    nativeDifferential_pair
+  exact tensor_pair_ne_zero (hValue.symm.trans ((congrArg r hz).trans r.map_zero))
 
 /-- Matrix Lie coefficients supply the base projectivity needed by the enveloping term. -/
 example : Module.Projective U ((ChevalleyEilenberg.envelopingComplex ℤ Mat).X 2) := by
@@ -214,9 +226,18 @@ example :
           (UniversalEnvelopingAlgebra.ι ℤ e10 : ChevalleyEilenberg.regularCoefficients ℤ Mat)))) =
       !![0, 0; 0, 1] := by
   rw [oneVector, ChevalleyEilenberg.envelopingComplex_d_one,
-    ChevalleyEilenberg.envelopingZeroEquiv_tmul, exteriorPower.zeroEquiv_ιMulti, one_smul]
-  simpa only [map_mul, evaluate_ι] using
-    (show e10 * e01 = !![0, 0; 0, 1] by decide)
+    ChevalleyEilenberg.envelopingZeroEquiv_tmul, exteriorPower.zeroEquiv_ιMulti]
+  change evaluate ((1 : ℤ) •
+    (UniversalEnvelopingAlgebra.ι ℤ e10 * UniversalEnvelopingAlgebra.ι ℤ e01 : U)) = _
+  have hUnit : (1 : ℤ) •
+      (UniversalEnvelopingAlgebra.ι ℤ e10 * UniversalEnvelopingAlgebra.ι ℤ e01 : U) =
+      UniversalEnvelopingAlgebra.ι ℤ e10 * UniversalEnvelopingAlgebra.ι ℤ e01 :=
+    one_smul ℤ _
+  have hValue : evaluate (UniversalEnvelopingAlgebra.ι ℤ e10 *
+      UniversalEnvelopingAlgebra.ι ℤ e01) = !![0, 0; 0, 1] := by
+    simpa only [map_mul, evaluate_ι] using
+      (show e10 * e01 = !![0, 0; 0, 1] by decide)
+  exact (congrArg evaluate hUnit).trans hValue
 
 /-- The one-permutation integral tail has the original ordered matrix-unit representative. -/
 private theorem integral_tail_pair :
@@ -224,13 +245,14 @@ private theorem integral_tail_pair :
       ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative ℤ Mat 1
         (e01 ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ (fun _ : Fin 1 => e10)) := by
   classical
+  have hfirst : pairInputs 0 = e01 := rfl
   have htail : (fun j : Fin 1 => pairInputs j.succ) = (fun _ : Fin 1 => e10) := by
     funext j
     have hj : j = 0 := Subsingleton.elim _ _
     subst j
     rfl
   rw [ChevalleyEilenberg.cyclicTailSum, Finset.sum_eq_single (1 : Equiv.Perm (Fin 1))]
-  · simpa only [map_one, one_smul] using
+  · simpa only [map_one, one_smul, Equiv.Perm.one_apply, hfirst] using
       congrArg (fun f : Fin 1 → Mat =>
         ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative ℤ Mat 1
           (e01 ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ f)) htail

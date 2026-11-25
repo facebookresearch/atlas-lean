@@ -62,7 +62,7 @@ theorem normalize_mem_degreeSpan (b : Module.Basis I R L) (xs : List I) :
     normalize b xs ∈ normalFormDegreeSpan xs.length := by
   generalize hn : List.inversionWeight xs = n
   induction n using Nat.strong_induction_on generalizing xs with
-  | h n ih =>
+  | ind n ih =>
       cases hr : List.adjacentInversion xs with
       | none =>
           have hordered : normalize b xs =
@@ -105,7 +105,7 @@ theorem normalize_sub_canonical_mem_lowerSpan (b : Module.Basis I R L) (xs : Lis
       normalFormLowerSpan xs.length := by
   generalize hn : List.inversionWeight xs = n
   induction n using Nat.strong_induction_on generalizing xs with
-  | h n ih =>
+  | ind n ih =>
       cases hr : List.adjacentInversion xs with
       | none =>
           let ys : OrderedWord I := ⟨xs, List.pairwise_le_of_adjacentInversion_eq_none xs hr⟩
