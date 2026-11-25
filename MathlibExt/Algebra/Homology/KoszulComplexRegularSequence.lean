@@ -298,8 +298,8 @@ theorem familyComplex_exactAt_of_isWeaklyRegular
   rw [complex_d_succ]
   exact family_exact_cycles_of_isWeaklyRegular R a e ha k z hz
 
-/-- Positive homology of the original regular Koszul complex vanishes.
-This uses the constructed boundaries, rather than a resolution premise. -/
+/-- The Koszul complex of a finite weakly regular family has zero homology
+in every positive degree. -/
 theorem familyComplex_homology_isZero_of_isWeaklyRegular
     {I : Type v} [Fintype I] {n : ℕ} (a : I → R) (e : Fin n ≃ I)
     (ha : RingTheory.Sequence.IsWeaklyRegular R (List.ofFn fun i => a (e i))) (k : ℕ) :

@@ -98,6 +98,11 @@ private noncomputable def mapExtendObjIso
           (e.r j') ≫ (mapExtendAuxIso F K (e.r j')).hom
       exact mapExtendAuxDEq F K (e.r i') (e.r j'))
 
+/-- A functor `F` preserving zero morphisms between categories with zero objects
+and zero morphisms gives a natural isomorphism from applying `F` degreewise
+and then extending by zero along `e` to extending by zero along `e` and then
+applying `F` degreewise. Its components use the identity in degrees in the
+image of `e` and the zero-object comparison outside that image. -/
 noncomputable def mapHomologicalComplexExtendIso
     {ι : Type u} {ι' : Type u'} {c : ComplexShape ι}
     {c' : ComplexShape ι'} {C : Type v} [Category C]
@@ -132,6 +137,10 @@ private theorem mapExtendAuxIso_hom_comp
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
+/-- In a degree `j'` in the image of `j` under `e`, composing the forward
+comparison on `K` with the image under `F` of the zero-extension component
+identification for `K` gives the component identification for the complex
+obtained by applying `F` to `K` degreewise. -/
 theorem mapHomologicalComplexExtendIso_hom_app_f
     {ι : Type u} {ι' : Type u'} {c : ComplexShape ι} {c' : ComplexShape ι'}
     {C : Type v} [Category C] [HasZeroMorphisms C] [HasZeroObject C]

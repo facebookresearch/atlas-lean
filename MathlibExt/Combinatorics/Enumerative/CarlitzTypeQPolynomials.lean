@@ -282,8 +282,9 @@ Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, S
 public theorem qBracket_one {q : ℝ} (hq : q ≠ 1) : qBracket q 1 = 1 := by
   rw [qBracket, Real.rpow_one, div_self (sub_ne_zero.mpr hq)]
 
-/-- The powers `[x]^n` of the `q`-analogue `[x] = (q^x - 1)/(q - 1)` form a Carlitz-type sequence
-with constant associated sequence `1` by the binomial theorem for `(q^x - 1)^n`. -/
+/-- For real $q > 0$, the powers $[x]_q^n$ of the $q$-analogue $[x]_q = (q^x-1)/(q-1)$
+form a Carlitz-type sequence with constant associated sequence $1$, by the binomial theorem
+for $(q^x-1)^n$. At $q=1$ the quotient defining $[x]_q$ is taken to be zero. -/
 public theorem qBracket.isCarlitzTypeWith_pow {q : ℝ} (hq0 : 0 < q) :
     IsCarlitzTypeWith q (fun n x => qBracket q x ^ n) fun _ => 1 := by
   intro n x

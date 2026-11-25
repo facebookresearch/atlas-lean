@@ -54,3 +54,11 @@
 - [The unpolarized D-statistic numerator vanishes on a tree](integral-sample-expect-abba-eq-baba.md)
 - [qpAdm model equation in the drift model](f4-affine-combination-2.md)
 - [Frequencies mix like lineage weights in the drift model](freq-eq-sum-of-weight-eq-sum.md)
+
+- [Conditioning on an ascertainment event can correlate drift increments](ascertainment-as-conditioning-breaks-the-second.md)
+## Standard errors from blocks of loci
+
+- [Delete-one-block jackknife covariance of a mean](delete-one-block-jackknife-covariance-of-a-vecto.md)
+- [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
+- [Averages with summable autocovariances converge in mean square](consistency-of-mean-genetic-summaries-under-summ.md)
+- [Consistency, delta variance and weak-denominator behavior of the f4 ratio](statistical-behavior-of-the-f4-ratio-estimate.md)

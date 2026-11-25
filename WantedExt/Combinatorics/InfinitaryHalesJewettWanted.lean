@@ -121,50 +121,6 @@ public theorem_wanted exists_variableWords_prod_mem_of_isCentralSet {α : Type*}
         (List.ofFn fun j : Fin l => FreeSemigroup.map (Sum.elim id (a j.succ)) (w (m j.succ))).foldl
           (· * ·) (FreeSemigroup.map (Sum.elim id (a 0)) (w (m 0))) ∈ D
 
-/-- **Infinitary Hales–Jewett configurations in C-sets.** Let
-$A_0 \subseteq A_1 \subseteq \cdots$ be finite sets with union $A$, and let $S_0$ be the semigroup
-of nonempty finite words over $A$ under concatenation. For $n \in \mathbb{N}$, an $n$-variable
-word over $A$ is a nonempty finite word over $A \cup \{v_0, \dots, v_{n-1}\}$, for distinct
-variables $v_i \notin A$, in which every $v_i$ occurs; for $\vec a = (a_0, \dots, a_{n-1})$ in
-$A^n$, the word $w(\vec a) \in S_0$ is obtained from $w$ by replacing each $v_i$ by $a_i$. If
-$D \subseteq S_0$ is a $C$-set, then for every $n \in \mathbb{N}$ there is a sequence
-$w_0, w_1, \dots$ of $n$-variable words over $A$ such that
-$w_{m_0}(\vec a_0) w_{m_1}(\vec a_1) \cdots w_{m_l}(\vec a_l) \in D$ for all $l \in \mathbb{N}$,
-all $m_0 < m_1 < \cdots < m_l$ in $\mathbb{N}$ and all $\vec a_j \in A_{m_j}^n$,
-$j = 0, \dots, l$.
-
-Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
-Theorem*, INTEGERS 24 (2024), Article A74, Corollary 3.6. -/
-public theorem_wanted exists_variableWords_prod_mem_of_isCSet {α : Type*}
-    (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i) (n : ℕ)
-    {D : Set (FreeSemigroup α)} (hD : IsCSet D) :
-    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin n), (∀ k i, Sum.inr i ∈ (w k).head :: (w k).tail) ∧
-      ∀ (l : ℕ) (m : Fin (l + 1) → ℕ) (a : Fin (l + 1) → Fin n → α), StrictMono m →
-        (∀ j i, a j i ∈ A (m j)) →
-        (List.ofFn fun j : Fin l => FreeSemigroup.map (Sum.elim id (a j.succ)) (w (m j.succ))).foldl
-          (· * ·) (FreeSemigroup.map (Sum.elim id (a 0)) (w (m 0))) ∈ D
-
-/-- **Variable-count sums of variable words in J-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
-be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
-under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
-variable $v \notin A$, in which $v$ occurs; for $a \in A$, the word $w(a) \in S_0$ is obtained from
-$w$ by replacing each occurrence of $v$ by $a$, and $|w|_v$ is the number of occurrences of $v$ in
-$w$. If $D \subseteq S_0$ is a $J$-set and $x_0, x_1, \dots$ are positive integers, then there is
-a sequence $w_0, w_1, \dots$ of variable words over $A$ such that $w_k(a) \in D$ for all
-$k \in \mathbb{N}$ and $a \in A_k$, and such that for every nonempty finite $G \subseteq \mathbb{N}$
-there is a nonempty finite $H \subseteq \mathbb{N}$ with
-$\sum_{k \in G} |w_k|_v = \sum_{j \in H} x_j$.
-
-Source: Aninda Chakraborty and Sayan Goswami, *An Analogue to the Infinitary Hales–Jewett
-Theorem*, INTEGERS 24 (2024), Article A74, Theorem 3.7. -/
-public theorem_wanted exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet
-    {α : Type*} (A : ℕ → Finset α) (hA : Monotone A) (hcover : ∀ x, ∃ i, x ∈ A i)
-    {D : Set (FreeSemigroup α)} (hD : IsMulJSet D) (x : ℕ → ℕ) (hx : ∀ j, 0 < x j) :
-    ∃ w : ℕ → FreeSemigroup (α ⊕ Fin 1), (∀ k, Sum.inr 0 ∈ (w k).head :: (w k).tail) ∧
-      (∀ k a, a ∈ A k → FreeSemigroup.map (Sum.elim id fun _ => a) (w k) ∈ D) ∧
-      ∀ G : Finset ℕ, G.Nonempty → ∃ H : Finset ℕ, H.Nonempty ∧
-        ∑ k ∈ G, ((w k).head :: (w k).tail).countP Sum.isRight = ∑ j ∈ H, x j
-
 /-- **Variable-count sums of variable words in C-sets.** Let $A_0 \subseteq A_1 \subseteq \cdots$
 be finite sets with union $A$, and let $S_0$ be the semigroup of nonempty finite words over $A$
 under concatenation. A variable word over $A$ is a nonempty finite word over $A \cup \{v\}$, for a
