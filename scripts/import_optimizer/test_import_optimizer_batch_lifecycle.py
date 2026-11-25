@@ -711,6 +711,55 @@ class LakePreparationCustodyTests(unittest.TestCase):
                         self.assertRaisesRegex(ValueError, expected):
                     self.prepare(tools, move_behind_symlink, set())
 
+    def symlinked_artifact_tree(self, root: Path, artifact: str, target: str) -> tuple[optimizer.Tools, Path]:
+        """A root artifact that is a symlink to a file outside the build root, under `store/`."""
+        build = root / ".lake/build/lib/lean"
+        (build / "Lib").mkdir(parents=True)
+        for version in ("v1", "v2"):
+            (root / "store" / version).mkdir(parents=True)
+            (root / "store" / version / "Base.olean").write_bytes(f"external {version} bytes\n".encode())
+        (root / "store/current").symlink_to(root / "store/v1", target_is_directory=True)
+        link = build / artifact
+        link.symlink_to(root / target)
+        return self.tools(root), link
+
+    def test_changes_behind_a_symlinked_artifact_are_rejected(self) -> None:
+        def write_through_the_link(root: Path) -> None:
+            (root / "store/v1/Base.olean").write_bytes(b"rewritten through the symlink\n")
+
+        def retarget_a_directory_on_its_path(root: Path) -> None:
+            (root / "store/current").unlink()
+            (root / "store/current").symlink_to(root / "store/v2", target_is_directory=True)
+
+        cases = (("Lib/Base.olean", "store/v1/Base.olean", "Lib.Base", write_through_the_link),
+                 ("Top.olean", "store/v1/Base.olean", "Top", write_through_the_link),
+                 ("Lib/Base.olean", "store/current/Base.olean", "Lib.Base", retarget_a_directory_on_its_path))
+        for artifact, target, module, change in cases:
+            with self.subTest(artifact=artifact, change=change.__name__), \
+                    tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                tools, link = self.symlinked_artifact_tree(root, artifact, target)
+                node = optimizer.path_component_identity(link, strict=True)
+                before = link.read_bytes()
+                with self.assertRaises(ValueError) as raised:
+                    self.prepare(tools, lambda: change(root), {module})
+                # The link itself is untouched; only the bytes it resolves to changed.
+                self.assertEqual(optimizer.path_component_identity(link, strict=True), node)
+                self.assertNotEqual(link.read_bytes(), before)
+                self.assertEqual(str(raised.exception),
+                                 f"Lake preparation rewrote an artifact outside its requested modules: {link}")
+                self.assertEqual(optimizer.read_lake_growth(tools.output), {})
+                self.assertEqual(optimizer.read_lake_growth(tools.output, "rewritten"), {})
+
+    def test_an_untouched_symlinked_artifact_is_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            tools, link = self.symlinked_artifact_tree(root, "Lib/Base.olean", "store/current/Base.olean")
+            addition = link.parent / "New.olean"
+            self.prepare(tools, lambda: fresh(addition), {"Lib.Base", "Lib.New"})
+            self.assertEqual(list(optimizer.read_lake_growth(tools.output)), [str(addition)])
+            self.assertEqual(optimizer.read_lake_growth(tools.output, "rewritten"), {})
+
     @unittest.skipUnless(sys.platform == "linux", "inotify watches the Lake window")
     def test_transient_namespace_changes_in_the_window_are_rejected(self) -> None:
         def move_and_restore(build: Path, root: Path) -> None:
@@ -908,6 +957,24 @@ class SearchedProviderTests(unittest.TestCase):
                     self.prepare(tools, lake, {"Foo", "New"})
                 self.assertEqual(str(raised.exception), "Lake preparation changed a module artifact outside the "
                                  f"root package: {changed.format(root=root)}")
+
+    def test_a_provider_rewritten_through_its_symlink_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            tools, build, dependency = self.setup_tree(root, [str(root / ".lake/build/lib/lean"),
+                                                              str(root / "dep/lib")])
+            store = root / "store/Linked.olean"
+            fresh(store)
+            (dependency / "Linked.olean").symlink_to(store)
+
+            def lake() -> None:
+                store.write_bytes(b"rewritten through the provider's symlink\n")
+                fresh(build / "New.olean")
+
+            with self.assertRaises(ValueError) as raised:
+                self.prepare(tools, lake, {"Linked", "New"})
+            self.assertEqual(str(raised.exception), "Lake preparation changed a module artifact outside the "
+                             f"root package: {dependency / 'Linked.olean'}")
 
     @unittest.skipUnless(sys.platform == "linux", "inotify watches the Lake window")
     def test_transient_searched_providers_during_the_build_are_rejected(self) -> None:

@@ -102,7 +102,9 @@ an earlier batch pinned. Around each preparation (batched or per row):
   artifact under any searched root, and the addition may not be visible as
   another module under a nested or enclosing searched root. Every existing root
   artifact is stated before the build (no hashing); one whose identity changed,
-  even with the same bytes, was rewritten. Only artifacts of the requested
+  even with the same bytes, was rewritten. The state of a symlink, here and for
+  probed paths, includes the file it resolves to, so a write through the link
+  or a change of where it leads counts. Only artifacts of the requested
   targets and their frozen local dependencies may be rewritten, never a pinned
   one, and a rewritten artifact may not be visible as another module. A root
   namespace that resolves outside the root artifact root is checked like the

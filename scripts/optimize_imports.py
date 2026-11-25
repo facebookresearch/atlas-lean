@@ -1131,22 +1131,34 @@ def module_artifact_paths(root: Path, module: str) -> list[Path]:
     return [root / (str(relative) + suffix) for suffix in INVENTORY_SUFFIXES]
 
 
-def path_state(path: Path) -> SourceIdentity | None:
-    """The `lstat` identity of a path, or None when it does not exist."""
+def path_state(path: Path) -> PathState | None:
+    """The `lstat` identity of a path and of the file it resolves to, or None when it does not exist.
+
+    A write through a symlink, or a change of where its target path leads,
+    leaves the link's own identity unchanged, so a symlink's state also holds
+    the full identity of the file it resolves to (None when it resolves to
+    nothing). Retargeting or replacing the link changes its own identity.
+    """
     try:
-        return path_component_identity(path, strict=True)
+        own = path_component_identity(path, strict=True)
     except (FileNotFoundError, NotADirectoryError):
         return None
+    if not stat.S_ISLNK(own[5]):
+        return own, own
+    try:
+        return own, source_identity(path)
+    except (FileNotFoundError, NotADirectoryError):
+        return own, None
 
 
 def provider_probes(tools: Tools, modules: Iterable[str], roots: list[Path]
-                    ) -> dict[Path, SourceIdentity | None]:
+                    ) -> dict[Path, PathState | None]:
     """The state of each artifact path under every searched root for each of `modules`.
 
     The lookup is targeted: only names a preparation may add are probed,
     so no dependency or compiler inventory is enumerated.
     """
-    probes: dict[Path, SourceIdentity | None] = {}
+    probes: dict[Path, PathState | None] = {}
     for module in sorted(modules):
         for root in roots:
             for path in module_artifact_paths(root, module):
@@ -1189,7 +1201,7 @@ def artifact_module_names(path: str, roots: list[Path]) -> dict[str, Path]:
 
 
 def addition_conflict(tools: Tools, path: str, build_root: Path, roots: list[Path],
-                      probes: dict[Path, SourceIdentity | None] | None = None) -> str | None:
+                      probes: dict[Path, PathState | None] | None = None) -> str | None:
     """Why an added root artifact shadows or aliases another provider, or None.
 
     It must provide exactly one module name across every searched root (no
@@ -1358,8 +1370,9 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
     artifacts are checked again, nothing may be removed, and only artifacts
     of new modules among `modules` (the requested targets and their frozen
     local dependencies) may be added. Every existing root artifact is stated
-    before the build; one whose identity changed was rewritten, which only a
-    module among `modules` may be, and never a pinned one. Root inventories
+    before the build, a symlink with the file it resolves to; one whose state
+    changed was rewritten, which only a module among `modules` may be, and
+    never a pinned one. Root inventories
     are then taken again with new directory custody, and the additions and
     rewrites are taken into custody and recorded under the output directory
     for resume. Compiler and dependency inventories stay
@@ -1423,7 +1436,7 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         # those names.
         roots = searched_roots(tools)
         probes = provider_probes(tools, modules, roots)
-        external: dict[Path, SourceIdentity | None] = {}
+        external: dict[Path, PathState | None] = {}
         absent_names: dict[Path, set[str]] = {}
         located: dict[Path, tuple[Path, Path]] = {}
         for path, state in probes.items():
@@ -1439,7 +1452,8 @@ def run_lake_preparation(tools: Tools, argv: list[str], label: Path,
         for parent in absent_names:
             identities.setdefault(parent, path_component_identity(parent))
         # Every existing root artifact, stated (not hashed): an identity that
-        # changes through the build is a rewrite.
+        # changes through the build is a rewrite. A symlink's state includes the
+        # file it resolves to, which a write through the link changes.
         states = {path: path_state(Path(path)) for paths, _ in released.values() for path in paths}
         states.update((str(path), path_state(path)) for path in files_before)
         # From here until every record below is saved, an interruption leaves this marker.
@@ -5029,6 +5043,8 @@ def optimize_batch(tools: Tools, rows: list[dict[str, object]],
 
 SourceIdentity = tuple[int, int, int, int, int, int]
 SourceCache = dict[str, tuple[str, SourceIdentity]]
+# A path's own `lstat` identity and that of the file it resolves to (see `path_state`).
+PathState = tuple[SourceIdentity, SourceIdentity | None]
 
 
 def source_identity(path: Path) -> SourceIdentity:
