@@ -98,6 +98,14 @@ private abbrev P : ChainComplex (ModuleCat.{0} ℤ) ℤ :=
 private abbrev Q : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
   CochainComplex.of coefficientTerm coefficientStep coefficientStep_square
 
+private lemma reindexedP_d (i j : ℤ) :
+    ((cochainComplexEquivalence (ModuleCat.{0} ℤ)).functor.obj P).d i j =
+      P.d (-i) (-j) := rfl
+
+private lemma p_d_zero_neg_one : P.d 0 (-1) = twiceFirst := by
+  simpa only [Int.neg_add_cancel, chainStep, dif_pos rfl] using
+    (ChainComplex.of_d chainTerm chainStep (-1))
+
 private lemma projectiveTerms (p : ℤ) : Projective (P.X p) :=
   ModuleCat.projective_of_free (Pi.basisFun ℤ (Fin (chainRank p)))
 
@@ -132,8 +140,7 @@ example : Q.X 0 = V 1 := rfl
 
 example : Q.X 1 = V 0 := rfl
 
-example : P.d 0 (-1) = twiceFirst :=
-  ChainComplex.of_d chainTerm chainStep (-1)
+example : P.d 0 (-1) = twiceFirst := p_d_zero_neg_one
 
 example : Q.d (-1) 0 = (2 : ℤ) • 𝟙 (V 1) :=
   CochainComplex.of_d coefficientTerm coefficientStep (-1)
@@ -178,39 +185,49 @@ example :
     ((((homCochainComplex P Q).d (-2) (-1)).hom degreeMinusTwo).v
       1 0 (by omega)).hom (fun _ : Fin 1 => (4 : ℤ)) (0 : Fin 1) = -8 := by
   rw [homCochainComplex_d_v P Q (-2) (-1) (by omega) degreeMinusTwo 1 0 (by omega)]
+  rw [reindexedP_d]
   norm_num [degreeMinusTwo, homCochainPiEquiv_symm_v, degreeMinusTwoFamily,
     P, Q, chainTerm, coefficientTerm, chainRank, coefficientRank,
     ChainComplex.of.d, CochainComplex.of.d, chainStep, coefficientStep,
     cochainComplexEquivalence, ComplexShape.Embedding.restrictionFunctor,
     ComplexShape.embeddingUpIntDownInt, HomologicalComplex.restriction,
     HomologicalComplex.XIsoOfEq, ModuleCat.hom_comp, ModuleCat.hom_id,
-    ModuleCat.hom_zero, ModuleCat.hom_ofHom]
+    ModuleCat.hom_zero, ModuleCat.hom_ofHom, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
+    CategoryTheory.Limits.comp_zero, CategoryTheory.Limits.zero_comp,
+    Category.id_comp, Category.comp_id, LinearMap.comp_apply, LinearMap.smul_apply]
 
 example :
     ((((homCochainComplex P Q).d (-2) (-1)).hom degreeMinusTwo).v
       0 (-1) (by omega)).hom
         (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5) (0 : Fin 1) = 6 := by
   rw [homCochainComplex_d_v P Q (-2) (-1) (by omega) degreeMinusTwo 0 (-1) (by omega)]
+  rw [reindexedP_d, p_d_zero_neg_one]
   norm_num [degreeMinusTwo, homCochainPiEquiv_symm_v, degreeMinusTwoFamily,
     P, Q, chainTerm, coefficientTerm, chainRank, coefficientRank,
     ChainComplex.of.d, CochainComplex.of.d, chainStep, coefficientStep, twiceFirst,
     cochainComplexEquivalence, ComplexShape.Embedding.restrictionFunctor,
     ComplexShape.embeddingUpIntDownInt, HomologicalComplex.restriction,
     HomologicalComplex.XIsoOfEq, ModuleCat.hom_comp, ModuleCat.hom_id,
-    ModuleCat.hom_zero, ModuleCat.hom_ofHom]
+    ModuleCat.hom_zero, ModuleCat.hom_ofHom, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
+    CategoryTheory.Limits.comp_zero, CategoryTheory.Limits.zero_comp,
+    Category.id_comp, Category.comp_id, LinearMap.comp_apply, LinearMap.smul_apply]
 
 example :
     ((((homCochainComplex P Q).d (-1) 0).hom degreeMinusOne).v
       0 0 (by omega)).hom
         (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5) (0 : Fin 1) = 16 := by
   rw [homCochainComplex_d_v P Q (-1) 0 (by omega) degreeMinusOne 0 0 (by omega)]
+  rw [reindexedP_d, p_d_zero_neg_one]
   norm_num [degreeMinusOne, homCochainPiEquiv_symm_v, degreeMinusOneFamily,
     P, Q, chainTerm, coefficientTerm, chainRank, coefficientRank,
     ChainComplex.of.d, CochainComplex.of.d, chainStep, coefficientStep,
     twiceFirst, secondCoordinate, cochainComplexEquivalence,
     ComplexShape.Embedding.restrictionFunctor, ComplexShape.embeddingUpIntDownInt,
     HomologicalComplex.restriction, HomologicalComplex.XIsoOfEq,
-    ModuleCat.hom_comp, ModuleCat.hom_id, ModuleCat.hom_zero, ModuleCat.hom_ofHom]
+    ModuleCat.hom_comp, ModuleCat.hom_id, ModuleCat.hom_zero, ModuleCat.hom_ofHom,
+    ModuleCat.hom_zsmul, ModuleCat.hom_neg, CategoryTheory.Limits.comp_zero,
+    CategoryTheory.Limits.zero_comp, Category.id_comp, Category.comp_id,
+    LinearMap.comp_apply, LinearMap.smul_apply]
 
 example : UCT.ShortExact :=
   homUniversalCoefficientSequence_shortExact P Q 0 projectiveTerms projectiveImages
@@ -234,17 +251,26 @@ private abbrev sourceMap : P ⟶ P := (3 : ℤ) • 𝟙 P
 
 private abbrev coefficientMap : Q ⟶ Q := (-1 : ℤ) • 𝟙 Q
 
+private lemma reindexedSourceMap_f (i : ℤ) :
+    ((cochainComplexEquivalence (ModuleCat.{0} ℤ)).functor.map sourceMap).f i =
+      (3 : ℤ) • 𝟙 (P.X (-i)) := rfl
+
+private lemma coefficientMap_f (i : ℤ) :
+    coefficientMap.f i = (-1 : ℤ) • 𝟙 (Q.X i) := rfl
+
 example :
     ((((homCochainComplexMap sourceMap coefficientMap).f (-1)).hom degreeMinusOne).v
       0 (-1) (by omega)).hom
         (fun i : Fin 2 => if i = 0 then (3 : ℤ) else 5) (0 : Fin 1) = -15 := by
   rw [homCochainComplexMap_v sourceMap coefficientMap (-1) 0 (-1) (by omega)]
+  rw [reindexedSourceMap_f, coefficientMap_f]
   norm_num [sourceMap, coefficientMap, degreeMinusOne, homCochainPiEquiv_symm_v,
     degreeMinusOneFamily, secondCoordinate, cochainComplexEquivalence,
     ComplexShape.Embedding.restrictionFunctor, ComplexShape.embeddingUpIntDownInt,
     HomologicalComplex.restriction, HomologicalComplex.restrictionMap,
     HomologicalComplex.XIsoOfEq, ModuleCat.hom_comp, ModuleCat.hom_id,
-    ModuleCat.hom_zero, ModuleCat.hom_ofHom]
+    ModuleCat.hom_zero, ModuleCat.hom_ofHom, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
+    Category.id_comp, Category.comp_id, LinearMap.comp_apply, LinearMap.smul_apply]
 
 private abbrev uctMap : UCT ⟶ UCT :=
   homUniversalCoefficientSequenceMap sourceMap coefficientMap 0
@@ -261,7 +287,8 @@ example (e : UCT.X₁) :
       ((Ext.mk₀ (HomologicalComplex.homologyMap sourceMap (-1))).comp (e (-1))
         (zero_add 1)).comp (Ext.mk₀ (HomologicalComplex.homologyMap coefficientMap 0))
           (add_zero 1) := by
-  simpa only [uctMap] using homUniversalCoefficientSequenceMap_τ₁_apply sourceMap coefficientMap 0
+  simpa only [uctMap, zero_sub, sub_neg_eq_add, neg_add_cancel] using
+    homUniversalCoefficientSequenceMap_τ₁_apply sourceMap coefficientMap 0
     projectiveTerms projectiveImages projectiveTerms projectiveImages e (-1)
 
 example (k : UCT.X₃) :
