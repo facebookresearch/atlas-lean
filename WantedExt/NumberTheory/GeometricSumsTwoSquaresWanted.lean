@@ -46,6 +46,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import MathlibExt.NumberTheory.AlternatingGeometricSumDifferenceOfSquares
 public import MathlibExt.NumberTheory.GeometricSumsTwoSquares
+public import MathlibExt.NumberTheory.GeometricSumsTwoSquaresCyclotomic
 
 set_option autoImplicit false
 
@@ -54,36 +55,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.GeometricSumsTwoSquaresWanted
-
-/-- **The alternating polynomial $X_1$.** For a natural number $p$, $X_1$ is the polynomial with
-integer coefficients
-$$
-X_1(x) = \sum_{i=0}^{\lfloor (p+1)/2 \rfloor - 1} (-1)^i x^{p-1-2i}.
-$$
-For odd $p \ge 5$ this is the even polynomial
-$x^{p-1} - x^{p-3} + \dots - (-1)^{(p-1)/2} x^2 + (-1)^{(p-1)/2}$.
-
-Source: Lorenz Halbeisen, Norbert Hungerbühler, and
-Franz Lemmermeyer, "Geometric Sums as Sums of Two
-Squares", Proposition 2. -/
-noncomputable def phi4pX1 (p : ℕ) : ℤ[X] :=
-  ∑ i ∈ Finset.range ((p + 1) / 2),
-    (-1 : ℤ) ^ i • X ^ (p - 1 - 2 * i)
-
-/-- **The alternating polynomial $Y_1$.** For a natural number $p$, $Y_1$ is the polynomial with
-integer coefficients
-$$
-Y_1(x) = \sum_{i=0}^{\lfloor (p-1)/2 \rfloor - 1} (-1)^i x^{p-2-2i}.
-$$
-For odd $p \ge 5$ this is the odd polynomial
-$x^{p-2} - x^{p-4} + \dots + (-1)^{(p-1)/2} x^3 - (-1)^{(p-1)/2} x$.
-
-Source: Lorenz Halbeisen, Norbert Hungerbühler, and
-Franz Lemmermeyer, "Geometric Sums as Sums of Two
-Squares", Proposition 2. -/
-noncomputable def phi4pY1 (p : ℕ) : ℤ[X] :=
-  ∑ i ∈ Finset.range ((p - 1) / 2),
-    (-1 : ℤ) ^ i • X ^ (p - 2 - 2 * i)
 
 /-- **The cyclotomic polynomial $\Phi_{4p}$ as a sum of two explicit squares.** Let $p$ be an
 odd prime, let $X_1 = \sum_{i=0}^{(p-1)/2} (-1)^i x^{p-1-2i}$ and
@@ -97,21 +68,6 @@ theorem_wanted cyclotomicFourMul_eq_sq_add_sq (p : ℕ) (hp : p.Prime)
     (hp2 : p ≠ 2) :
     Polynomial.cyclotomic (4 * p) ℤ =
       phi4pX1 p ^ 2 + phi4pY1 p ^ 2
-
-/-- **The cyclotomic polynomial $\Phi_{4p^k}$ as a sum of two explicit squares.** Let $p$ be an
-odd prime, let $k \ge 1$, let $X_1 = \sum_{i=0}^{(p-1)/2} (-1)^i x^{p-1-2i}$ and
-$Y_1 = \sum_{i=0}^{(p-3)/2} (-1)^i x^{p-2-2i}$ in $\mathbb{Z}[x]$, and let $\Phi_{4p^k}$ be the
-$4p^k$-th cyclotomic polynomial over $\mathbb{Z}$. Then
-$\Phi_{4p^k}(x) = X_1\bigl(x^{p^{k-1}}\bigr)^2 + Y_1\bigl(x^{p^{k-1}}\bigr)^2$.
-
-Source: Lorenz Halbeisen, Norbert Hungerbühler, and
-Franz Lemmermeyer, "Geometric Sums as Sums of Two
-Squares", Corollary 3. -/
-theorem_wanted cyclotomicFourMulPow_eq_sq_add_sq (p k : ℕ)
-    (hp : p.Prime) (hp2 : p ≠ 2) (hk : 1 ≤ k) :
-    Polynomial.cyclotomic (4 * p ^ k) ℤ =
-      (phi4pX1 p).comp (X ^ (p ^ (k - 1))) ^ 2 +
-        (phi4pY1 p).comp (X ^ (p ^ (k - 1))) ^ 2
 
 /-- **Every cyclotomic polynomial $\Phi_{4q}$ is a sum of two squares.** For every integer
 $q \ge 1$ there are polynomials $A, B \in \mathbb{Z}[x]$ such that the $4q$-th cyclotomic

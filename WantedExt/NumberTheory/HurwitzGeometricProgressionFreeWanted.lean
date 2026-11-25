@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.Data.Nat.Totient
+public import MathlibExt.NumberTheory.HurwitzProgressionFreeDensity
 public import MathlibExt.NumberTheory.HurwitzQuaternionGreedy
 
 /-!
@@ -229,22 +230,6 @@ public theorem_wanted disjoint_progressions_hurwitz_card (R : Quaternion ℚ) (h
         Disjoint ({t.1, t.2.1, t.2.2} : Set (Quaternion ℚ)) {t'.1, t'.2.1, t'.2.2}) ∧
     ∃ C : ℝ, ∀ N : ℕ, 2 ≤ N →
       |((E N).ncard : ℝ) - Real.pi ^ 2 * (N : ℝ) ^ 2 / 21| ≤ C * N * Real.log N ^ 2
-
-/-- **Upper bound for geometric-progression-free Hurwitz sets.** Let $Q_{\mathrm{Hur}}$ be the
-set of Hurwitz quaternions, the rational quaternions whose four coordinates are all integers or
-all lie in $\mathbb{Z} + \tfrac12$, and let $\mathrm{Nm}(q)$ be the sum of the squares of the
-coordinates of $q$. For $N \in \mathbb{N}$ let $S(N)$ be the set of nonzero
-$q \in Q_{\mathrm{Hur}}$ with $\mathrm{Nm}(q) \le N$. Let $A \subseteq Q_{\mathrm{Hur}}$ be free
-of 3-term geometric progressions: there are no $a, r \in Q_{\mathrm{Hur}}$ with $a \ne 0$,
-$r \ne 0$ and $\mathrm{Nm}(r) \ne 1$ such that $a$, $ar$ and $ar^2$ all lie in $A$. Then the
-upper density $\limsup_{N \to \infty} |A \cap S(N)| / |S(N)|$ of $A$ is at most $20/21$.
-
-Source: Asada, Fang, Fourakis, Manski, McNew, Miller, Moreland, Yamin, and Zhang, *Avoiding
-3-Term Geometric Progressions in Hurwitz Quaternions*, J. Integer Seq. 27 (2024), Article
-24.7.7, Lemma 13. -/
-public theorem_wanted upperDensity_le_of_hurwitz_gpFree (A : Set (Quaternion ℚ))
-    (hA : GPFree A) :
-    Filter.limsup (fun N : ℕ => ρ A N) Filter.atTop ≤ 20 / 21
 
 /-- **Bounds on the supremum of upper densities of geometric-progression-free Hurwitz sets.** Let
 $Q_{\mathrm{Hur}}$ be the set of Hurwitz quaternions, the rational quaternions whose four

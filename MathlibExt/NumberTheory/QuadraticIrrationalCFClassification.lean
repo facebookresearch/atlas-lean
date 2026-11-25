@@ -20,12 +20,16 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.SymmetricContinuantParity
+import MathlibExt.NumberTheory.SymmetricConvergentDenParity
 
 /-!
 # Symmetric periods of quadratic irrational continued fractions
 
 The parities of three continuants determine when a prescribed symmetric block occurs in the
-period of the regular continued fraction of `(1 + √d) / 2` with `d ≡ 1` modulo four.
+period of the regular continued fraction of `(1 + √d) / 2` with `d ≡ 1` modulo four. As a
+consequence, every symmetric block of odd period length occurs, and a symmetric block of even
+period length `l` occurs exactly when its middle term `a_{l/2}` is odd.
 -/
 
 namespace MetaMathlibExt.half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
@@ -433,5 +437,213 @@ public theorem half_one_add_sqrt_hasPeriodicCF_exists_iff_parity (l : ℕ) (hl :
   exact (realizable_iff m a hpos hsymm).trans
     (odd_digit_iff _ _ _ (den_pos a (m + 2) fun i hi hi' => hpos i hi (by omega))
       (coprime_den a (m + 1)))
+
+end MetaMathlibExt
+
+namespace MetaMathlibExt.half_one_add_sqrt_hasPeriodicCF_exists_classification
+
+open half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
+
+-- With r_{j+1} the j-th denominator of [a₁; a₂, …], the determinant identity
+-- q_{n+2} r_{n+1} - q_{n+1} r_{n+2} = ±1 makes the corresponding sum odd.
+private theorem odd_cross (a : ℕ → ℕ) (n : ℕ) :
+    Odd (convergentDen a (n + 2) * convergentDen (fun k => a (k + 1)) n +
+      convergentDen a (n + 1) * convergentDen (fun k => a (k + 1)) (n + 1)) := by
+  induction n with
+  | zero => exact ⟨a 2 * a 1, by simp [convergentDen]; ring⟩
+  | succ n ih =>
+    have h : convergentDen a (n + 3) * convergentDen (fun k => a (k + 1)) (n + 1) +
+        convergentDen a (n + 2) * convergentDen (fun k => a (k + 1)) (n + 2) =
+        2 * (a (n + 3) * convergentDen a (n + 2) * convergentDen (fun k => a (k + 1)) (n + 1)) +
+          (convergentDen a (n + 2) * convergentDen (fun k => a (k + 1)) n +
+            convergentDen a (n + 1) * convergentDen (fun k => a (k + 1)) (n + 1)) := by
+      rw [convergentDen_add_two a (n + 1), convergentDen_add_two (fun k => a (k + 1)) n]
+      ring
+    rw [h]
+    exact (even_two_mul _).add_odd ih
+
+-- Hence q_{n+1} and r_{n+1} are never both even.
+private theorem not_even_and_even (a : ℕ → ℕ) (n : ℕ) :
+    ¬(Even (convergentDen a (n + 1)) ∧ Even (convergentDen (fun k => a (k + 1)) n)) := by
+  rintro ⟨hq, hr⟩
+  cases n with
+  | zero => simp [convergentDen] at hr
+  | succ n =>
+    exact Nat.not_even_iff_odd.mpr (odd_cross a n) ((hq.mul_right _).add (hr.mul_left _))
+
+-- Since q_{l-1} and q_{l-2} are coprime, the criterion only asks q_{l-1} or r_{l-2} to be odd.
+private theorem criterion_iff (a : ℕ → ℕ) (l : ℕ) (hl : 3 ≤ l) :
+    (Odd (convergentDen a (l - 1)) ∨
+      (Odd (convergentDen a (l - 2)) ∧ Odd (convergentDen (fun n => a (n + 1)) (l - 3)) ∧
+        Even (convergentDen a (l - 1)))) ↔
+      Odd (convergentDen a (l - 1)) ∨ Odd (convergentDen (fun n => a (n + 1)) (l - 3)) := by
+  have hcop := coprime_den a (l - 2)
+  rw [show l - 2 + 1 = l - 1 by omega] at hcop
+  constructor
+  · rintro (h | ⟨_, h, _⟩)
+    · exact Or.inl h
+    · exact Or.inr h
+  · rintro (h | h)
+    · exact Or.inl h
+    · by_cases hA : Odd (convergentDen a (l - 1))
+      · exact Or.inl hA
+      · have hA' := Nat.not_odd_iff_even.mp hA
+        exact Or.inr ⟨(hcop.of_dvd_left hA'.two_dvd).odd_of_left, h, hA'⟩
+
+-- For even l ≥ 4, q_{l-1} and r_{l-2} are congruent modulo two to a_{l/2} q_{l/2-1} and
+-- a_{l/2} r_{l/2-1}, and q_{l/2-1}, r_{l/2-1} are not both even.
+private theorem even_case (l : ℕ) (hl : Even l) (hl4 : 4 ≤ l) (a : ℕ → ℕ)
+    (hpos : ∀ i, 1 ≤ i → i < l → 0 < a i) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    (∃ d a₀ : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
+      HasPeriodicCF ((1 + √(d : ℝ)) / 2) a₀ a l (2 * a₀ - 1)) ↔ Odd (a (l / 2)) := by
+  rw [half_one_add_sqrt_hasPeriodicCF_exists_iff_parity l (by omega) a hpos hsymm,
+    criterion_iff a l (by omega)]
+  have hA := (ZMod.natCast_eq_natCast_iff _ _ 2).mpr
+    (convergentDen_parity_of_even l hl (by omega) a hsymm)
+  have hD := (ZMod.natCast_eq_natCast_iff _ _ 2).mpr
+    (shifted_convergentDen_parity_of_even l hl hl4 a hsymm)
+  have hqr := not_even_and_even a (l / 2 - 2)
+  rw [show l / 2 - 2 + 1 = l / 2 - 1 by omega] at hqr
+  simp only [← ZMod.natCast_eq_one_iff_odd, ← ZMod.natCast_eq_zero_iff_even] at hqr ⊢
+  push_cast at hA hD
+  rw [hA, hD]
+  clear hA hD
+  generalize (a (l / 2) : ZMod 2) = x
+  generalize (convergentDen a (l / 2 - 1) : ZMod 2) = q at *
+  generalize (convergentDen (fun n => a (n + 1)) (l / 2 - 2) : ZMod 2) = r at *
+  revert x q r
+  decide
+
+-- For odd l ≥ 3, q_{l-1} or r_{l-2} is odd: for l = 2m + 1 ≥ 5 they are congruent modulo two
+-- to q_m + q_{m-1} and r_m + r_{m-1}, and q_m r_{m-1} + q_{m-1} r_m is odd.
+private theorem odd_case (l : ℕ) (hl : Odd l) (hl3 : 3 ≤ l) (a : ℕ → ℕ)
+    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    Odd (convergentDen a (l - 1)) ∨ Odd (convergentDen (fun n => a (n + 1)) (l - 3)) := by
+  rcases (show l = 3 ∨ 5 ≤ l by obtain ⟨k, rfl⟩ := hl; omega) with rfl | hl5
+  · exact Or.inr (by simp [convergentDen])
+  have hA := (ZMod.natCast_eq_natCast_iff _ _ 2).mpr
+    (convergentDen_parity_of_odd l hl hl3 a hsymm)
+  have hD := (ZMod.natCast_eq_natCast_iff _ _ 2).mpr
+    (shifted_convergentDen_parity_of_odd l hl hl5 a hsymm)
+  obtain ⟨m, hm⟩ := hl
+  have hc := odd_cross a (m - 2)
+  rw [show m - 2 + 2 = m by omega, show m - 2 + 1 = m - 1 by omega] at hc
+  rw [show (l - 1) / 2 = m by omega, show (l - 3) / 2 = m - 1 by omega] at hA
+  rw [show (l - 1) / 2 - 1 = m - 1 by omega, show (l - 3) / 2 - 1 = m - 2 by omega] at hD
+  simp only [← ZMod.natCast_eq_one_iff_odd] at hc ⊢
+  push_cast at hA hD hc
+  rw [hA, hD]
+  clear hA hD
+  generalize (convergentDen a m : ZMod 2) = q at *
+  generalize (convergentDen a (m - 1) : ZMod 2) = q' at *
+  generalize (convergentDen (fun n => a (n + 1)) (m - 1) : ZMod 2) = r at *
+  generalize (convergentDen (fun n => a (n + 1)) (m - 2) : ZMod 2) = r' at *
+  revert q q' r r'
+  decide
+
+-- The expansion [k + 1; 2k + 1, 2k + 1, …] is that of (1 + √((2k + 1)² + 4)) / 2.
+private theorem exists_const (k : ℕ) :
+    ∃ d : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
+      HasPeriodicCF ((1 + √(d : ℝ)) / 2) (k + 1) (fun _ => 2 * k + 1) 3 (2 * k + 1) := by
+  obtain ⟨y, hy, _, hper, he⟩ := canonical 0 (fun _ => 2 * k + 1) (fun _ _ _ => by omega)
+    (fun _ _ _ => rfl) (k + 1) (2 * k + 1) (by omega)
+  simp only [zero_add, convergentDen_two, convergentDen_one, convergentDen_zero] at he
+  push_cast at he hper
+  have hyt : y * (2 * k + 1 + y) = 1 := by
+    have hc : (0 : ℝ) < (2 * k + 1) * (2 * k + 1) + 1 := by positivity
+    apply mul_left_cancel₀ hc.ne'
+    linear_combination he
+  have hr : √(((2 * k + 1) ^ 2 + 4 : ℕ) : ℝ) = 2 * k + 1 + 2 * y := by
+    rw [Real.sqrt_eq_iff_eq_sq (by positivity) (by positivity)]
+    push_cast
+    linear_combination -4 * hyt
+  have hx : (1 + √(((2 * k + 1) ^ 2 + 4 : ℕ) : ℝ)) / 2 = k + 1 + y := by
+    rw [hr]
+    ring
+  rw [← hx] at hper
+  refine ⟨(2 * k + 1) ^ 2 + 4, ?_, nonsquare_of_periodic hper, ?_⟩
+  · have h : (2 * k + 1) ^ 2 + 4 = 4 * (k ^ 2 + k + 1) + 1 := by ring
+    omega
+  · exact_mod_cast hper
+
+-- When every partial quotient equals c, the expansion has period l for every positive l.
+private theorem hasPeriodicCF_const {x : ℝ} {b c l : ℕ} {a : ℕ → ℕ} (hl : 0 < l)
+    (ha : ∀ i, 1 ≤ i → i < l → a i = c) (hx : HasPeriodicCF x b (fun _ => c) 3 c) :
+    HasPeriodicCF x b a l c := by
+  refine ⟨hx.1, fun n => ?_⟩
+  rw [hx.2 n, ite_self]
+  split_ifs with h
+  · rfl
+  · rw [ha _ (Nat.pos_of_ne_zero h) (Nat.mod_lt _ hl)]
+
+end MetaMathlibExt.half_one_add_sqrt_hasPeriodicCF_exists_classification
+
+namespace MetaMathlibExt
+
+open half_one_add_sqrt_hasPeriodicCF_exists_iff_parity
+open half_one_add_sqrt_hasPeriodicCF_exists_classification
+
+/-- **Existence of $(1 + \sqrt{d})/2$ with a given symmetric period.** Let $l$ be a natural number
+and $a_1, \dots, a_{l-1}$ positive integers with $a_i = a_{l-i}$ for $1 \le i < l$. If $l$ is odd,
+there are natural numbers $d$ and $a_0$ with $d \equiv 1 \pmod 4$, $d$ not a perfect square, and
+$(1 + \sqrt{d})/2 = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0 - 1}]$. If $l$ is even and positive,
+such $d$ and $a_0$ exist if and only if $a_{l/2}$ is odd.
+
+Source: Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
+(1 + √D)/2*, INTEGERS 24 (2024), Article A50, Theorem 3 (`integers-2024-A50-thm-3`). -/
+public theorem half_one_add_sqrt_hasPeriodicCF_exists_classification (l : ℕ)
+    (a : ℕ → ℕ) (hpos : ∀ i, 1 ≤ i → i < l → 0 < a i)
+    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    (Odd l →
+      ∃ d a₀ : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
+        HasPeriodicCF ((1 + √(d : ℝ)) / 2) a₀ a l (2 * a₀ - 1)) ∧
+    (Even l → 0 < l →
+      ((∃ d a₀ : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
+          HasPeriodicCF ((1 + √(d : ℝ)) / 2) a₀ a l (2 * a₀ - 1)) ↔
+        Odd (a (l / 2)))) := by
+  refine ⟨fun hl => ?_, fun hl hl0 => ?_⟩
+  · rcases (show l = 1 ∨ 3 ≤ l by obtain ⟨k, rfl⟩ := hl; omega) with rfl | hl3
+    · -- For l = 1 the golden ratio (1 + √5) / 2 = [1; 1, 1, …] works.
+      obtain ⟨d, hd, hns, hper⟩ := exists_const 0
+      exact ⟨d, 1, hd, hns, hasPeriodicCF_const one_pos (fun i _ _ => by omega) hper⟩
+    · exact (half_one_add_sqrt_hasPeriodicCF_exists_iff_parity l hl3 a hpos hsymm).mpr
+        ((criterion_iff a l hl3).mpr (odd_case l hl hl3 a hsymm))
+  · rcases (show l = 2 ∨ 4 ≤ l by obtain ⟨k, rfl⟩ := hl; omega) with rfl | hl4
+    · constructor
+      · -- Read the period [a₁, 2a₀ - 1] three times and apply the case l = 6.
+        rintro ⟨d, b, hd, hns, hper⟩
+        have hc : 1 ≤ 2 * b - 1 := by
+          have he := GenContFract.of_one_le_get?_partDen (hper.2 1)
+          norm_num at he
+          exact_mod_cast he
+        let a' (i : ℕ) := if i % 2 = 0 then 2 * b - 1 else a 1
+        have hper' : HasPeriodicCF ((1 + √(d : ℝ)) / 2) b a' 6 (2 * b - 1) := by
+          refine ⟨hper.1, fun n => ?_⟩
+          rw [hper.2 n]
+          have h2 : (n + 1) % 6 % 2 = (n + 1) % 2 := Nat.mod_mod_of_dvd _ (by norm_num)
+          rcases Nat.mod_two_eq_zero_or_one (n + 1) with h | h
+          · simp [a', h, h2]
+          · simp [a', h, h2, show (n + 1) % 6 ≠ 0 by omega]
+        have hpos' : ∀ i, 1 ≤ i → i < 6 → 0 < a' i := by
+          intro i _ _
+          dsimp only [a']
+          split_ifs
+          · omega
+          · exact hpos 1 le_rfl (by norm_num)
+        have hsymm' : ∀ i, 1 ≤ i → i < 6 → a' i = a' (6 - i) := by
+          intro i _ _
+          dsimp only [a']
+          rw [show (6 - i) % 2 = i % 2 by omega]
+        have h := (even_case 6 (by decide) (by norm_num) a' hpos' hsymm').mp ⟨d, b, hd, hns, hper'⟩
+        simpa [a'] using h
+      · -- For odd a₁ the expansion [k + 1; a₁, a₁, …] with a₁ = 2k + 1 works.
+        rintro ⟨k, hk⟩
+        obtain ⟨d, hd, hns, hper⟩ := exists_const k
+        refine ⟨d, k + 1, hd, hns, ?_⟩
+        rw [show 2 * (k + 1) - 1 = 2 * k + 1 by omega]
+        exact hasPeriodicCF_const (by norm_num) (fun i _ _ => by
+          rw [show i = 1 by omega]
+          exact hk) hper
+    · exact even_case l hl hl4 a hpos hsymm
 
 end MetaMathlibExt

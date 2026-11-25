@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.HigherANumbersBasePDigit
 public import MathlibExt.NumberTheory.HigherANumbersPeriodicSum
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Field.Basic
@@ -40,15 +41,6 @@ open Finset
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Base-$p$ digits of a rational number.** For a natural number $p$, a rational number $x$ and
-an integer $k$, the $k$-th base-$p$ digit of $x$ is $[p^k](x) = \lfloor x / p^k \rfloor \bmod p$;
-for $p \ge 1$ this is the residue of $\lfloor x / p^k \rfloor$ modulo $p$ in $\{0, \dots, p - 1\}$.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Section 2.2 (definition of `[p^k](x)`). -/
-def basePDigit (p : ℕ) (x : ℚ) (k : ℤ) : ℤ := ⌊x / (p : ℚ) ^ k⌋ % p
 
 /-- **Base-5 digits of 2/3.** Writing $[5^j](x)$ for the $j$-th base-$5$ digit of a rational
 number $x$, we have $[5^{-1}](2/3) = 3$, $[5^{-2}](2/3) = 1$ and $[5^0](2/3) = 0$.
@@ -382,20 +374,6 @@ Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Lemma 9 (`F_0 = 0`). -/
 theorem deltaZeroSumCorrection_zero (p d e : ℕ) : deltaZeroSumCorrection p d 0 e = 0 := by
   simp [deltaZeroSumCorrection]
-
-/-- **Digits of $m/d$ after the radix point are constant.** Let $p$ be a prime, $d$ a divisor of
-$p - 1$, and write $[p^j](x)$ for the $j$-th base-$p$ digit of a rational number $x$. For every
-positive integer $m$ and every integer $k \ge 1$, $[p^{-(k+1)}](m/d) = [p^{-k}](m/d)$; that is,
-the base-$p$ expansion of $m/d$ is periodic with period $1$ right after the radix point.
-
-The source assumes $p$ odd; for $p = 2$ only $d = 1$ occurs.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Corollary 2 (`integers-2026-A78-cor-2`). -/
-public theorem_wanted basePDigit_div_periodic_one (p d : ℕ) [Fact p.Prime] (hd : d ∣ p - 1)
-    (m : ℕ) (hm : 0 < m) (k : ℤ) (hk : 1 ≤ k) :
-    basePDigit p ((m : ℚ) / d) (-(k + 1)) = basePDigit p ((m : ℚ) / d) (-k)
 
 /-- **Minimal period and delay of base-$p$ digits.** Let $p$ be a prime and $x > 0$ a rational
 number, write $[p^j](x)$ for the $j$-th base-$p$ digit of $x$, and let $L_x$ be the period and
