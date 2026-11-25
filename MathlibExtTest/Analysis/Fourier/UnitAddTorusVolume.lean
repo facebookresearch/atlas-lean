@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Analysis.Fourier.UnitAddTorusLift
+public import MathlibExt.Analysis.Fourier.UnitAddTorusVolume
 
 @[expose] public section
 
