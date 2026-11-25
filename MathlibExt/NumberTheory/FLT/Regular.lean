@@ -42,45 +42,43 @@ name the upstream files; that project's per-file headers are not reproduced ther
 module
 
 public import Mathlib.NumberTheory.FLT.Basic
-public import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
-public import Mathlib.RingTheory.Prime
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Cyclotomic.Basic
-public import Mathlib.Algebra.GCDMonoid.Finset
-public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.Data.Nat.Prime.Basic
-public import Mathlib.FieldTheory.Finite.Basic
-public import Mathlib.FieldTheory.Galois.Basic
-public import Mathlib.FieldTheory.KummerExtension
-public import Mathlib.GroupTheory.FiniteAbelian.Basic
-public import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
-public import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
-public import Mathlib.NumberTheory.Cyclotomic.Basic
-public import Mathlib.NumberTheory.FLT.Three
-public import Mathlib.NumberTheory.NumberField.CMField
-public import Mathlib.NumberTheory.NumberField.ClassNumber
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
-public import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
-public import Mathlib.NumberTheory.NumberField.Units.Basic
-public import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
-public import Mathlib.NumberTheory.RamificationInertia.Galois
-public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
-public import Mathlib.RingTheory.AdjoinRoot
-public import Mathlib.RingTheory.ClassGroup
-public import Mathlib.RingTheory.ClassGroup.ExtendedHom
-public import Mathlib.RingTheory.DedekindDomain.Different
-public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
-public import Mathlib.RingTheory.FractionalIdeal.Operations
-public import Mathlib.RingTheory.Henselian
-public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
-public import Mathlib.RingTheory.NormTrace
-public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
-public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
-public import Mathlib.RingTheory.Unramified.Basic
-public import Mathlib.RingTheory.Unramified.Locus
-public import Mathlib.Tactic.NormNum.Prime
+import Mathlib.RingTheory.RootsOfUnity.CyclotomicUnits
+import Mathlib.RingTheory.Prime
+import Mathlib.Algebra.GCDMonoid.Finset
+import Mathlib.Data.Int.ModEq
+import Mathlib.Data.ZMod.Basic
+import Mathlib.Data.Nat.Prime.Basic
+import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.FieldTheory.Galois.Basic
+import Mathlib.FieldTheory.KummerExtension
+import Mathlib.GroupTheory.FiniteAbelian.Basic
+import Mathlib.LinearAlgebra.Dimension.Torsion.Basic
+import Mathlib.LinearAlgebra.Dimension.Torsion.Finite
+import Mathlib.NumberTheory.FLT.Three
+import Mathlib.NumberTheory.NumberField.CMField
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Ideal
+import Mathlib.NumberTheory.NumberField.Cyclotomic.PID
+import Mathlib.NumberTheory.NumberField.Units.Basic
+import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
+import Mathlib.NumberTheory.RamificationInertia.Galois
+import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
+import Mathlib.RingTheory.AdjoinRoot
+import Mathlib.RingTheory.ClassGroup.Basic
+import Mathlib.RingTheory.ClassGroup.ExtendedHom
+import Mathlib.RingTheory.DedekindDomain.Different
+import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
+import Mathlib.RingTheory.FractionalIdeal.Operations
+import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
+import Mathlib.RingTheory.NormTrace
+import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
+import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+import Mathlib.RingTheory.Unramified.Basic
+import Mathlib.RingTheory.Unramified.Locus
+import Mathlib.Tactic.NormNum.Prime
 import MathlibExt.NumberTheory.Cyclotomic.CoefficientDivisibility
 import MathlibExt.NumberTheory.Cyclotomic.TwoFactorIdealBound
 import MathlibExt.NumberTheory.PrimitiveFamily
@@ -101,8 +99,6 @@ the `p`-th cyclotomic field: the first case, where `p` divides none of
 handled separately, using Kummer's lemma on units and infinite descent.
 All auxiliary definitions and lemmas are private.
 -/
-
-@[expose] public section
 
 namespace FltRegularPort.Internal
 
