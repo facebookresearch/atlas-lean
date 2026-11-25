@@ -1,0 +1,16 @@
+# Coherent Curve Linear Series
+
+- [Structure Module](structure-module.md)
+- [Is Line Bundle](is-line-bundle.md)
+- [Is Line Bundle structure Module](is-line-bundle-structure-module.md)
+- [Global Scalar Map](global-scalar-map.md)
+- [Sections Functor](sections-functor.md)
+- [Cohomology](cohomology.md)
+- [Is Proper Curve](is-proper-curve.md)
+- [Has Constant Global Sections](has-constant-global-sections.md)
+- [Finrank cohomology zero structure Module](finrank-cohomology-zero-structure-module.md)
+- [Genus](genus.md)
+- [Degree](degree.md)
+- [Degree structure Module](degree-structure-module.md)
+- [Linear Series](linear-series.md)
+- [Brill Noether Number](brill-noether-number.md)

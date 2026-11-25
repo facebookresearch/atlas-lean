@@ -114,7 +114,15 @@ public def_wanted filtrationParameter (L : ScalarLift p C S T) : Parameter p C T
 
 variable (I : IntegerPresentation p C) (A : Family p C I)
 
-/-- Construct the marked source divisor together with its actual theta-normalized cover. -/
+/-- Divisor of an untilt on a relative Fargues–Fontaine curve: for a prime $p$, a
+mixed-characteristic local field $E$ with coefficient data $C$ and integer presentation $I$, a
+given realization $R$ of affinoid perfectoid spaces as analytic adic spaces
+(`AffineRealization`), a family $A$ of relative curves over perfectoid bases (`Family`), a
+perfectoid base $S$ of characteristic $p$ and an untilt $T$ of $S$: a closed Cartier map from the
+untilt to the relative curve of $A$ over $S$ (`UntiltingCartierModels.Divisor`), together with a
+cover of the untilt by period charts in each of which the completion along the divisor is
+identified with $B_{dR}^+$ compatibly with the coefficients, with θ and with the filtration
+(`SourceDivisor`). -/
 public def_wanted affineUntiltingDivisor
     (p : ℕ) [Fact p.Prime] {E : MixedField p} (C : CoefficientData p E)
     (R : AffineRealization p) (I : IntegerPresentation p C) (A : Family p C I)
@@ -147,7 +155,10 @@ namespace WantedExt.AlgebraicGeometry.AnalyticCartierPunctures
 open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.AnalyticGroupTorsorSites
 
-/-- Source open restriction constructs the actual complement, with every native stalk map. -/
+/-- Complement of a closed subspace: for a prime $p$, a field $E$ and a morphism $d : D → X$ of
+analytic adic spaces over $E$ whose underlying map is a closed embedding: a puncture of $d$
+(`Puncture`), that is, a space over $E$ with a map to $X$ that is an open embedding inducing
+isomorphisms on stalks, whose image is the complement of the image of $d$. -/
 public def_wanted puncture (p : ℕ) [Fact p.Prime]
     (E : Type) [Field E] {X D : ESpace p E} (d : D ⟶ X)
     (h : Topology.IsClosedEmbedding d.left.hom.val.base) :
