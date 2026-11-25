@@ -27,9 +27,14 @@ namespace WantedExt.AlgebraicGeometry.ToricMinkowskiWeightsWanted
 open MathlibExt.AlgebraicGeometry.FiniteToricCoordinates
 open MathlibExt.AlgebraicGeometry.ToricMinkowskiWeights
 
-/-- Every codimension-one face pair of a rational fan has a positive primitive
-normal in the quotient lattice (Fulton–Sturmfels, Intersection theory on toric
-varieties, §2). -/
+/-- **Primitive normal vectors of the codimension-one faces of a fan.** For a finite fan $F$ in
+$\mathbb{R}^n$ (finitely many rational salient cones, closed under taking faces, the intersection of
+any two being a face of each): a choice, for every cone $\sigma$ of $F$ and every face $\tau$ of
+$\sigma$ with $\dim \tau + 1 = \dim \sigma$, of a vector
+$v \in N_\sigma = \mathbb{Z}^n \cap \operatorname{span} \sigma$ whose class in
+$\mathbb{Z}^n / N_\tau$ is nonzero and generates the image of $N_\sigma$, and with
+$v \in \sigma + \operatorname{span} \tau$ (Fulton–Sturmfels, *Intersection theory on toric
+varieties*, §2). -/
 def_wanted normalData (n : ℕ) (F : FiniteFan n) : NormalData F
 
 theorem_wanted product_balanced (n : ℕ) (F : FiniteFan n) (N : NormalData F)
