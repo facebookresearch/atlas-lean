@@ -13,6 +13,7 @@ module
 
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.BialgebraNaturality
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.HopfAlgebra
+public import MathlibExt.RingTheory.HopfAlgebra.Hom
 
 /-!
 # The primitive universal property of an enveloping bialgebra
@@ -233,29 +234,12 @@ section Hopf
 variable {L : Type v} [LieRing L] [LieAlgebra R L]
   {A : Type w} [Ring A] [HopfAlgebra R A]
 
-private theorem liftPrimitive_antipodeAlgHomOp
-    (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A) :
-    (HopfAlgebra.antipodeAlgHomOp R A).comp (liftPrimitive R f).toAlgHom =
-      (liftPrimitive R f).toAlgHom.op.comp
-        (HopfAlgebra.antipodeAlgHomOp R (UniversalEnvelopingAlgebra R L)) := by
-  apply hom_ext
-  apply LieHom.ext
-  intro x
-  change MulOpposite.op (HopfAlgebra.antipode R (liftPrimitive R f (ι R x))) =
-    MulOpposite.op (liftPrimitive R f (HopfAlgebra.antipode R (ι R x)))
-  rw [liftPrimitive_ι, antipode_ι, map_neg, liftPrimitive_ι]
-  rw [((Bialgebra.mem_primitiveLieSubalgebra R A).mp (f x).property).antipode_eq_neg]
-
 /-- A primitive-valued Lie morphism extends to a morphism commuting with the native antipodes. -/
 theorem liftPrimitive_antipode (f : L →ₗ⁅R⁆ Bialgebra.primitiveLieSubalgebra R A)
     (a : UniversalEnvelopingAlgebra R L) :
     liftPrimitive R f (HopfAlgebra.antipode R a) =
       HopfAlgebra.antipode R (liftPrimitive R f a) := by
-  apply MulOpposite.op_injective
-  change (liftPrimitive R f).toAlgHom.op
-      (HopfAlgebra.antipodeAlgHomOp R (UniversalEnvelopingAlgebra R L) a) =
-    HopfAlgebra.antipodeAlgHomOp R A (liftPrimitive R f a)
-  exact (AlgHom.congr_fun (liftPrimitive_antipodeAlgHomOp R f) a).symm
+  exact (liftPrimitive R f).map_antipode a
 
 end Hopf
 

@@ -19767,7 +19767,9 @@
   "MathlibExt/Topology/Category/TopCat/PreimageSubspacePullback": {"to": "Topology/categorical-topology", "title": "Canonical preimage-subspace pullback in TopCat"},
   "MathlibExt/Topology/Category/TopCat/ProdPushoutSymm": {"to": "Topology/categorical-topology", "title": "Fixed-right product-pushout symmetry adapter"},
   "MathlibExt/Topology/Category/TopCat/PushoutOpenComplement": {"to": "Topology/categorical-topology", "title": "PushoutOpenComplement"},
-  "MathlibExt/Topology/Category/TopCat/Subspace": {"to": "Topology/categorical-topology", "title": "Subspace inclusions and maps in TopCat"}
+  "MathlibExt/Topology/Category/TopCat/Subspace": {"to": "Topology/categorical-topology", "title": "Subspace inclusions and maps in TopCat"},
+  "MathlibExt/RingTheory/HopfAlgebra/Hom": {"to": "Algebra/associative-algebras", "title": "Naturality of Hopf antipodes"}
+
 
   },
  "mathlib_exclusions": {

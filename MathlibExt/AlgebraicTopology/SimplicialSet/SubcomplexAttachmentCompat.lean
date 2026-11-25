@@ -15,52 +15,21 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Monotone.Basic
 
 /-!
-# Subcomplex attachment compatibility for the cellular description
+# Boundary attachments of simplicial subcomplexes
 
-This is a narrow compatibility module that reconstructs the standard
-cellular attachment of a nondegenerate simplex of minimal missing dimension.
-It also provides the relativized bounded one-step version: for subcomplexes
-`A < J`, attach a minimal-dimensional nondegenerate simplex of `J` missing
-from `A`, returning `A < B` with `B ≤ J` and the same explicit pushout square.
-It also iterates the bounded step over a finite target to give an explicit
-`Fin`-indexed attachment chain.
+For subcomplexes `A < J` of a simplicial set `X`, choose a nondegenerate simplex
+`x` of `J` outside `A` with minimal dimension `n`. Every proper face lies in `A`.
+The join `B = A ⊔ Subcomplex.ofSimplex x` satisfies `A < B ≤ J`, and attaching
+`Δ[n]` along its boundary gives a pushout square with maps
+`∂Δ[n] → A`, `Δ[n] → B` and the subcomplex inclusion `A → B`.
 
-## Provenance
+The witness form records the simplex, its minimality, its membership in `J`
+and the join description of `B`. Taking `J = ⊤` gives an attachment to any
+proper subcomplex. If `A ≤ J` and `J` is a finite simplicial set, iteration
+produces a monotone `Fin (k + 1)` chain from `A` to `J`; each successive step
+is a strict inclusion carrying its boundary pushout data.
 
-* Source: Mathlib PR #38848 at commit `d0f61d5f18cad651cf8a41bef7a02b81a2969284`,
-  file `Mathlib/AlgebraicTopology/SimplicialSet/Boundary.lean`,
-  blob `024552e7319479fc33fe1046dbe8efac327c8f9d`.
-* Target declaration: `SSet.boundary.exists_isPushout_of_ne_top`
-* Removal rule: Delete this compatibility module once the pinned Mathlib
-  provides the declaration `SSet.boundary.exists_isPushout_of_ne_top`;
-  switch the import to `Mathlib.AlgebraicTopology.SimplicialSet.Boundary`.
-
-## Mathematical sketch
-
-If `A ≠ ⊤` is a proper subcomplex of `X`, choose a nondegenerate simplex
-`x` not in `A` of minimal dimension `n`. Then every proper face
-`X.map f.op x` with `f` non-surjective lies in `A` by minimality and the
-epi-mono factorisation in `SimplexCategory` together with the
-Eilenberg–Zilber decomposition. Conversely, if `f` is surjective (epi) and
-`X.map f.op x ∈ A` then `x ∈ A` via a section of the epi, contradiction.
-Hence `A.preimage (yonedaEquiv.symm x) = boundary n`.  Put
-`B = A ⊔ ofSimplex x`.  Then `B = A ⊔ range f`, `A ⊓ range f = image boundary`,
-so `A`, `range f`, `B` give a bicartesian square in `Subcomplex X`.  The
-epimorphisms `∂Δ[n] ↠ image boundary` and `Δ[n] ↠ range f` have the same kernel
-as the inclusions modulo the preimage equality, and are injective on the
-complement (surjective maps) by `unique_nonDegenerate_map` for a nondegenerate
-simplex.  Evaluation at each `[m]` is then a pullback with jointly surjective
-legs and injective complement, hence a pushout in `Type` via
-`Types.isPushout_of_isPullback_of_mono'`.  Joint reflection of colimits
-gives the pushout in `SSet`.
-
-The relativized step chooses the minimal missing dimension among the
-nondegenerate simplices of `J`, tracks `J`-membership of the nondegenerate
-core through the face argument, and bounds the join by `J`; the absolute
-statement is the `J = ⊤` specialization.
-
-No fibration, anodyne, selection, Zorn, weak equivalence, TopCat or
-model-category result is claimed.
+All statements hold for simplicial sets in every universe.
 -/
 
 @[expose] public section

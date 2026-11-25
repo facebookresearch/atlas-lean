@@ -76,7 +76,7 @@ The simplex category, simplicial and cosimplicial objects, simplicial sets with 
 - [Agreement of the two augmented data conversions](to-simplicial-functor-obj-eq.md)
 - [Degree-one coproduct coordinates in a splitting](one-family.md)
 - [The distinguished zero summand of a simplicial splitting](zero-iso.md)
-- [Standard simplex compatibility backport for Lean 4.33](of-simplex-representable-by.md)
+- [Standard simplices and their generated subcomplexes](of-simplex-representable-by.md)
 - [Fixed-bottom lifting for anodyne extensions](has-lifting-property-fixed-bot-of-simpli.md)
 - [Realized simplex-boundary zero-coordinate lift (reverse direction)](mem-realized-boundary-of-zero-coord.md)
 - [NondegenerateEmbedding](non-degenerate-embedding-of-mono.md)

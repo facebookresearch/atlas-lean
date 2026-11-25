@@ -9,6 +9,7 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 - [Köthe's conjecture](k-the-s-conjecture/README.md)
 - [Lifting original vectors into a possibly nonunital algebra](lifting-original-vectors-into-a-possibly-nonunit/README.md)
 - [Linear coordinates of a k-split nonunital ideal extension](linear-coordinates-of-a-k-split-nonunital-ideal/README.md)
+- [Naturality of Hopf antipodes](naturality-of-hopf-antipodes/README.md)
 - [Splitting of quaternion algebras](splitting-of-quaternion-algebras/README.md)
 - [The actual augmentation kernel of the tensor algebra](the-actual-augmentation-kernel-of-the-tensor-alg/README.md)
 - [Amitsur–Levitzki theorem](amitsur-levitzki.md)
