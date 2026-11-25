@@ -2,6 +2,10 @@
 
 - [Overlap Match](overlap-match.md)
 - [Overlap Aux](overlap-aux.md)
+- [Largest overlap of two lists](overlap.md)
+- [Overlap of two lists is the greatest matching length](overlap-spec.md)
+- [Merge along the overlap](merge.md)
+- [Greedy overlap merge of a list of strings](merge-all.md)
 - [Mem merge All contains](mem-merge-all-contains.md)
 - [Merge All append](merge-all-append.md)
 - [Length foldl merge cons](length-foldl-merge-cons.md)

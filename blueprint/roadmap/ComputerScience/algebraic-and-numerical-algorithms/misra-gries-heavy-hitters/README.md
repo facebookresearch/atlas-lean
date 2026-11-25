@@ -10,3 +10,4 @@
 - [Counter le freq](counter-le-freq.md)
 - [Freq le counter add rounds](freq-le-counter-add-rounds.md)
 - [Rounds mul add mass](rounds-mul-add-mass.md)
+- [Error bound](error-bound.md)

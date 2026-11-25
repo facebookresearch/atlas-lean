@@ -1,9 +1,14 @@
 # Alpha-beta on a perfectly ordered uniform tree (Knuth and Moore)
 
+- [Uniform](uniform.md)
 - [Cut Leaves](cut-leaves.md)
 - [All Leaves](all-leaves.md)
 - [Pv Leaves](pv-leaves.md)
 - [Pv Leaves succ succ](pv-leaves-succ-succ.md)
+
+## Minimax facts
+
+- [Perfectly ordered game tree](perfectly-ordered.md)
 
 ## Scans over children that all fail the window
 
@@ -19,3 +24,4 @@
 ## Principal nodes
 
 - [Principal node](alpha-beta-time-pv.md)
+- [Knuth and Moore's best case](alpha-beta-leaf-count-perfect.md)

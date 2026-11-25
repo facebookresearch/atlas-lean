@@ -4,3 +4,4 @@
 - [CDCLState](cdclstate.md)
 - [CDCLStep](cdclstep.md)
 - [CDCLReach](cdclreach.md)
+- [A potential that decreases along CDCL steps](cdcl-step-potential-decreases.md)

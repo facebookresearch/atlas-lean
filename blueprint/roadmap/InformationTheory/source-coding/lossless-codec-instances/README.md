@@ -9,4 +9,5 @@
 
 ## Run Length
 
+- [Encoding](encoding-2.md)
 - [Encoding encode le](encoding-encode-le.md)

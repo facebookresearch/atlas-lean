@@ -15,6 +15,8 @@
 - [Block Frame](block-frame.md)
 - [Overlap Add](overlap-add.md)
 - [Block Frame eq inv DFT mul](block-frame-eq-inv-dft-mul.md)
+- [Overlap-add block frames are linear convolutions](block-frame-eq-linear-convolution.md)
+- [Overlap-add decomposition of linear convolution](linear-convolution-eq-sum-shifted-blocks.md)
 - [Overlap Add eq linear Convolution](overlap-add-eq-linear-convolution.md)
 
 ## Boundary cases

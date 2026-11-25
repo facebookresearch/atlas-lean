@@ -15,6 +15,7 @@
 - [Resolve On](resolve-on.md)
 - [Mem resolve On](mem-resolve-on.md)
 - [Resolution Derivable resolve On](resolution-derivable-resolve-on.md)
+- [CDCL transition](step.md)
 - [Reasons Valid](reasons-valid.md)
 - [Invariant](invariant.md)
 - [Of append](of-append.md)

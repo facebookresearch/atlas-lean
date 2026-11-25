@@ -6,7 +6,6 @@ Topics added since this subject's fields were last revised.
 
 - [AEP](part-01/aep/README.md)
 - [AWGNConverse](part-01/awgnconverse/README.md)
-- [Codec Instances](part-01/codec-instances/README.md)
 - [Gaussian Entropy](part-01/gaussian-entropy/README.md)
 - [Leftover Hash](part-01/leftover-hash/README.md)
 

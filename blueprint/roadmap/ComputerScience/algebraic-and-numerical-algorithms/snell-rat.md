@@ -1,6 +1,3 @@
 # Exact rational finite-tree evaluator
 
-Exact rational backward evaluator on a finite binomial tree: with no
-period left the value is the exercise payoff; otherwise it is the larger of
-exercising now and the discounted rational continuation, where the gross
-return R divides the one-step expected value.
+Exact rational backward evaluator on a finite binomial tree, for an up weight $q$, a gross return $R$ and an exercise payoff $g$ on paths: with no period left the value at a path $s$ is $g(s)$; with $k + 1$ periods left it is the larger of $g(s)$ and $(q\, u + (1 - q)\, d) / R$, where $u$ and $d$ are the values with $k$ periods left at the extended paths `true :: s` (an up move) and `false :: s` (a down move). The parameters $q$ and $R$ are arbitrary rationals; the numerator $q\, u + (1 - q)\, d$ is the one-step expected value only when $0 \le q \le 1$, with $q$ the up probability.

@@ -1,5 +1,3 @@
 # Conv Weights
 
-Exact rational convolution of finite mass functions: the mass at a
-total loss is the finite sum of products of masses at summand losses,
-grouped by Finsupp.single at a + b.
+The convolution of two finitely supported rational functions $w_1, w_2 : \mathbb N \to \mathbb Q$: its value at $n$ is $\sum_{a + b = n} w_1(a)\, w_2(b)$, the products $w_1(a)\, w_2(b)$ over the two supports collected at $a + b$ with `Finsupp.single`. The inputs are arbitrary finitely supported rational functions, signed ones included; on the masses of two normalized rational loss laws it gives the masses of their convolution law.
