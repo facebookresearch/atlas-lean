@@ -18,3 +18,5 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Stochastic SEIR epidemic with vital dynamics](stochastic-seir-epidemic-with-vital-dynamics/README.md)
 - [Stochastic SIR epidemic and its law of large numbers](stochastic-sir-epidemic-and-its-law-of-large-num/README.md)
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
+
+- [Epidemics on networks](epidemics-on-networks/README.md)

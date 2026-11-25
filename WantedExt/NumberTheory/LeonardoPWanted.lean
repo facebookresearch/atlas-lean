@@ -39,6 +39,7 @@ printed typo for `i`.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.LeonardoP
 public import MathlibExt.NumberTheory.LeonardoPFibonacciSum
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Matrix.Basic
@@ -294,17 +295,6 @@ theorem_wanted h_add_eq (p : ℕ) (hp : 2 ≤ p) (H : ℤ → ℤ)
           seqBZ p ((n : ℤ) - p + i + 1) -
         ∑ i ∈ Finset.range (p + 1), H ((m : ℤ) - p - i) *
           seqAZ p ((n : ℤ) - p + i)
-
-/-- **Generalized Leonardo $p$-numbers at integer arguments.** For natural numbers $p$ and $k$
-and an integer $z$, the value is the generalized Leonardo $p$-number $\mathcal{L}_{p,k}(z)$ if
-$z \ge 0$, and $-k$ if $z < 0$.
-
-For $-p \le z \le -1$ these are the values $\mathcal{L}_{p,k}(z) = -k$ obtained by running the
-recurrence $\mathcal{L}_{p,k}(n) = \mathcal{L}_{p,k}(n-1) + \mathcal{L}_{p,k}(n-p-1) + k$
-backwards; below $-p$ they need not be, but Theorem 13 of the source only uses arguments
-$z \ge -p$. -/
-def leonardoPKZ (p k : ℕ) (z : ℤ) : ℤ :=
-  if 0 ≤ z then leonardoPK p k z.toNat else -(k : ℤ)
 
 /-- **Honsberger-type identity for generalized Leonardo $p$-numbers.** Let $p$, $k$, $m$ and $n$
 be natural numbers with $p, k, m, n \ge 1$. Write $\mathcal{L}$ for the generalized Leonardo

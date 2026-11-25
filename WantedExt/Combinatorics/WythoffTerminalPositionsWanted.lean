@@ -13,6 +13,8 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Data.Set.Card
+public import MathlibExt.Combinatorics.BlockingWythoff
+public import MathlibExt.Combinatorics.WythoffMexGoldenRatio
 public import MathlibExt.Combinatorics.WythoffTerminalPositions
 public import WantedExt.NumberTheory.GeneralizedHofstadterOrderWanted
 
@@ -108,22 +110,6 @@ public theorem_wanted wythoffMex_properties (ℓ : ℕ) (hℓ : 1 ≤ ℓ) :
       wythoffMexB ℓ (n + 1) - wythoffMexB ℓ n ∈ ({2, 3} : Set ℕ) ∧
       wythoffMexB ℓ (n + 1) - wythoffMexB ℓ n =
         wythoffMexA ℓ (n + 1) - wythoffMexA ℓ n + 1)
-
-/-- **Golden-ratio formula for the mex sequences.** Let $\ell \ge 1$, let $\varphi$ be the golden
-ratio, let $K^\ell$ be Wythoff's game in which the positions $(x, y)$ with $x + y \le \ell$ are
-terminal, and let $(a_n)$ be the mex sequence of $K^\ell$ and $(b_n)$ its companion sequence.
-Then there are integers $\lambda_n$ for $n \ge 0$ and an integer $C$ with $|\lambda_n| \le C$
-for all $n$ such that, for every natural number $n$,
-$a_n = \lfloor (n + \ell)\varphi \rfloor + \lambda_n$ and
-$b_n = \lfloor (n + \ell)\varphi^2 \rfloor + \lambda_n + 1$.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Corollary 19 (`jis-2026-26.1.6-cor-19`). -/
-public theorem_wanted wythoffMex_floor_goldenRatio (ℓ : ℕ) (hℓ : 1 ≤ ℓ) :
-    ∃ lam : ℕ → ℤ, (∃ C : ℤ, ∀ n, |lam n| ≤ C) ∧ ∀ n,
-      (wythoffMexA ℓ n : ℤ) = ⌊((n + ℓ : ℕ) : ℝ) * Real.goldenRatio⌋ + lam n ∧
-      (wythoffMexB ℓ n : ℤ) = ⌊((n + ℓ : ℕ) : ℝ) * Real.goldenRatio ^ 2⌋ + lam n + 1
 
 /-- **Growth of the mex sequences of $K^\ell$.** Let $\ell \ge 1$. Let $a_n$ be the least natural
 number $m > \ell$ with $m \ne a_i$ and $m \ne b_i$ for all $i < n$, where
@@ -318,24 +304,6 @@ public theorem_wanted wythoffTerminal_three_morphic (n : ℕ) :
     (∃ w : ℕ → Fin 22, IsOmegaLimit f₃ 0 w) ∧
       ∀ w : ℕ → Fin 22, IsOmegaLimit f₃ 0 w →
         g₃ (w (wythoffMexA 3 n - 4)) = true ∧ g₃ (w (wythoffMexB 3 n - 4)) = false
-
-/-- **Larsson's P-positions of Blocking Wythoff Nim with one blocked option.** Let $\varphi$ be
-the golden ratio, and let $R_2$ consist of $(0, 0)$ and, for every $n \ge 0$, the positions
-$(n, 2n + 1)$, $(2n + 1, n)$, $(2\lfloor n\varphi \rfloor + 2, 2\lfloor n\varphi^2 \rfloor + 2)$
-and $(2\lfloor n\varphi^2 \rfloor + 2, 2\lfloor n\varphi \rfloor + 2)$. A Wythoff move from a
-position of two piles removes a positive number of tokens from one pile, or the same positive
-number from both. Then every position in $R_2$ has at most one Wythoff move to a position in
-$R_2$, and every position outside $R_2$ has at least two Wythoff moves to positions in $R_2$.
-
-Hence $R_2$ is the set of P-positions of $W^2$, Wythoff's game in which the previous player may
-forbid one option.
-
-Source: Antoine Renard and Michel Rigo, *Variants of Wythoff Game With Terminal Positions
-or Blocking Maneuvers*, Journal of Integer Sequences 29 (2026), Article 26.1.6,
-Theorem 26 (`jis-2026-26.1.6-thm-26`). -/
-public theorem_wanted blockingWythoff_two_pPositions :
-    (∀ x ∈ larssonSetTwo, {y | wythoffTerminalMove 0 x y ∧ y ∈ larssonSetTwo}.ncard ≤ 1) ∧
-      ∀ x ∉ larssonSetTwo, 2 ≤ {y | wythoffTerminalMove 0 x y ∧ y ∈ larssonSetTwo}.ncard
 
 /-- **Larsson's P-positions of Blocking Wythoff Nim with two blocked options.** Let $R_3$
 consist of $(0, 0)$ and, for every $n \ge 0$, the positions $(n, 2n + 1)$, $(2n + 1, n)$,

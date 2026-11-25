@@ -262,6 +262,54 @@ public theorem isRAccessible_iff (r : ℕ) (D : Set ℕ) :
           IsMonochromatic c x ∧ IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ)) :=
   Iff.rfl
 
+/-- **A coloring criterion for accessibility of a shifted set.** Let $r \ge 2$ and $c$ be natural
+numbers, let $D$ be a set of positive integers, and write $D + c = \{d + c : d \in D\}$. Suppose
+that for every coloring of $D$ with $r - 1$ colors and every $k \ge 1$ there are
+$x_0, \dots, x_{k-1} \in D$, all of the same color, that form a $(D + c)$-diffsequence, that is,
+$x_{i+1} - x_i \in D + c$ for every $i < k - 1$. Then $D + c$ is $r$-accessible.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Theorem 10. -/
+public theorem accessible_of_colored_subset_diffsequences (c r : ℕ)
+    (hr : 2 ≤ r) (D : Set ℕ) (hD : D ⊆ Set.Ioi 0)
+    (hcolor : ∀ χ : ({n : ℕ+ // (n : ℕ) ∈ D} → Fin (r - 1)),
+      ∀ k : ℕ, 1 ≤ k →
+        ∃ x : Fin k → {n : ℕ+ // (n : ℕ) ∈ D},
+          (∀ i j, χ (x i) = χ (x j)) ∧
+          IsDDiffSequence {e : ℕ | ∃ d ∈ D, e = d + c}
+            (fun i => (((x i : {n : ℕ+ // (n : ℕ) ∈ D}) : ℕ+) : ℕ))) :
+    IsRAccessible r {e : ℕ | ∃ d ∈ D, e = d + c} := by
+  classical
+  obtain ⟨s, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : r ≠ 0)
+  refine ⟨?_, by omega, ?_⟩
+  · rintro _ ⟨d, hd, rfl⟩
+    exact Nat.add_pos_left (hD hd) _
+  intro χ k hk
+  let translate (a : ℕ+) (d : {n : ℕ+ // (n : ℕ) ∈ D}) : ℕ+ :=
+    ⟨(d.val : ℕ) + c + a, Nat.add_pos_right _ a.pos⟩
+  by_cases h : ∀ a : ℕ+, ∃ d, χ (translate a d) = χ a
+  · -- From every point we can keep walking in its color with gaps in D + c.
+    choose step hstep using h
+    let walk : ℕ → ℕ+ := Nat.rec 1 (fun _ a => translate a (step a))
+    have hwalk (n : ℕ) : χ (walk n) = χ 1 := by
+      induction n with
+      | zero => rfl
+      | succ n ih => exact (hstep (walk n)).trans ih
+    refine ⟨fun i => walk i, fun i j => (hwalk i).trans (hwalk j).symm, ?_⟩
+    intro i hi
+    exact ⟨_, ⟨_, (step (walk i)).property, rfl⟩, by simp [walk, translate]⟩
+  · -- This translate of D omits the base point's color, leaving s colors.
+    push Not at h
+    obtain ⟨a, ha⟩ := h
+    let color d := (finSuccAboveEquiv (χ a)).symm ⟨χ (translate a d), ha d⟩
+    obtain ⟨x, hx, hdiff⟩ := hcolor color k hk
+    refine ⟨fun i => translate a (x i), ?_, ?_⟩
+    · intro i j
+      exact congrArg Subtype.val ((finSuccAboveEquiv (χ a)).symm.injective (hx i j))
+    · intro i hi
+      obtain ⟨e, he, hgap⟩ := hdiff i hi
+      exact ⟨e, he, by simpa [translate] using hgap⟩
+
 /-- **Sets containing their own long diffsequences are 2-accessible.** Let $D$ be a set of
 positive integers. If for every $k \ge 1$ there are positive integers $x_1, \dots, x_k$, all in
 $D$, that form a $D$-diffsequence, then $D$ is $2$-accessible.
@@ -274,33 +322,13 @@ public theorem two_accessible_of_internal_diffsequences (D : Set ℕ)
       (∀ i, (x i : ℕ) ∈ D) ∧
         IsDDiffSequence D (fun i => ((x i : ℕ) : ℤ))) :
     IsRAccessible 2 D := by
-  classical
-  refine ⟨hD, by decide, ?_⟩
-  intro c k hk
+  have hshift : {e : ℕ | ∃ d ∈ D, e = d + 0} = D := by ext; simp
+  rw [← hshift]
+  apply accessible_of_colored_subset_diffsequences 0 2 (by decide) D hD
+  intro χ k hk
   obtain ⟨x, hx, hdiff⟩ := hseq k hk
-  by_cases h : ∀ a : ℕ+, ∃ i, c (a + x i) = c a
-  · -- Follow same-colored steps whose sizes are terms of the internal sequence.
-    choose step hstep using h
-    let walk : ℕ → ℕ+ := Nat.rec 1 (fun _ a => a + x (step a))
-    have hcolor (n : ℕ) : c (walk n) = c 1 := by
-      induction n with
-      | zero => rfl
-      | succ n ih => exact (hstep (walk n)).trans ih
-    refine ⟨fun i => walk i, fun i j => (hcolor i).trans (hcolor j).symm, ?_⟩
-    intro i hi
-    exact ⟨_, hx (step (walk i)), by simp [walk, PNat.add_coe]⟩
-  · -- All terms of this translate have the unique color different from that of its base.
-    push Not at h
-    obtain ⟨a, ha⟩ := h
-    refine ⟨fun i => a + x i, ?_, ?_⟩
-    · intro i j
-      change c (a + x i) = c (a + x j)
-      have hi := ha i
-      have hj := ha j
-      omega
-    · intro i hi
-      obtain ⟨d, hd, heq⟩ := hdiff i hi
-      exact ⟨d, hd, by simpa [PNat.add_coe] using heq⟩
+  refine ⟨fun i => ⟨x i, hx i⟩, fun _ _ => Subsingleton.elim (α := Fin 1) .., ?_⟩
+  simpa only [hshift] using hdiff
 
 /-- **Accessibility with more colors implies accessibility with fewer.** Let $D$ be a set of
 natural numbers and let $r, s$ be natural numbers with $1 \le r \le s$. If $D$ is

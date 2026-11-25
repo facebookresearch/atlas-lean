@@ -1,0 +1,3 @@
+# Consistency of the panel within estimator
+
+Let clusters $i = 0, 1, \dots$ observe $y_i = X_i\beta + c_i\mathbf 1 + u_i$ over a finite nonempty set of periods, with regressor matrices $X_i$, individual effects $c_i$ and errors $u_i$. Let $Q = I - \frac{1}{T}\mathbf 1\mathbf 1^\top$ be the time-demeaning matrix. Assume the pairs $(X_i, u_i)$ are measurable, pairwise independent and identically distributed, that the entries of $(QX_0)^\top QX_0$ and of $(QX_0)^\top Q u_0$ are integrable, that $E[(QX_0)^\top QX_0]$ is invertible, and that $E[(QX_0)^\top Q u_0] = 0$. Then the within estimator from the first $N$ clusters converges to $\beta$ almost surely as $N \to \infty$.

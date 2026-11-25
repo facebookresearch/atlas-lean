@@ -15,6 +15,8 @@ public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
 public import MathlibExt.Combinatorics.Enumerative.ZagierNumber
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 public import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusGeometricGrowth
+public import MathlibExt.NumberTheory.DoldPrimePowerCongruences
+public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
@@ -105,18 +107,6 @@ public theorem_wanted choose_three_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m <
       [MOD 3 ^ (2 + max (padicValNat 3 m) (padicValNat 3 (n - m)) +
         padicValNat 3 (n.choose m))]
 
-/-- **Helou–Terjanian congruence for $p = 2$.** Let $m$ and $n$ be integers with $0 < m < n$.
-Then $\binom{2n}{2m} \equiv \binom{n}{m} \pmod{2^e}$, where
-$e = 1 + \max(\nu_2(m), \nu_2(n - m)) + \nu_2\big(\binom{n}{m}\big)$ and $\nu_2$ is the $2$-adic
-valuation.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 26 (3) (`jis-2024-24.3.3-lem-26`). -/
-public theorem_wanted choose_two_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m < n) :
-    (2 * n).choose (2 * m) ≡ n.choose m
-      [MOD 2 ^ (1 + max (padicValNat 2 m) (padicValNat 2 (n - m)) +
-        padicValNat 2 (n.choose m))]
-
 /-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
 $n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with
 $\lambda p \ne n$,
@@ -133,19 +123,6 @@ public theorem_wanted choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Pr
     (hn : 0 < n) (hl : l * p ≠ n) :
     (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
       [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))]
-
-/-- **Dold congruences via prime-power congruences.** Let $(V(n))_{n \ge 1}$ be a sequence of
-integers and let $\mu$ denote the Möbius function. Then
-$V(n p^m) \equiv V(n p^{m-1}) \pmod{p^m}$ holds for all integers $n, m \ge 1$ and all primes $p$
-if and only if $n$ divides $\sum_{d \mid n} \mu(n/d) V(d)$ for every integer $n \ge 1$.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 30 (`jis-2024-24.3.3-lem-30`). -/
-public theorem_wanted prime_power_congruence_iff_dold (V : ℕ → ℤ) :
-    (∀ n m p : ℕ, 1 ≤ n → 1 ≤ m → p.Prime →
-        V (n * p ^ m) ≡ V (n * p ^ (m - 1)) [ZMOD (p : ℤ) ^ m]) ↔
-      ∀ n : ℕ, 1 ≤ n →
-        (n : ℤ) ∣ ∑ d ∈ n.divisors, (ArithmeticFunction.moebius (n / d) : ℤ) * V d
 
 /-- **Even-binomial-type sums are Dold realizable.** Let $r \ge 1$, $s$, $t$ and $u$ be natural
 numbers with $t + u \ge 1$, and let

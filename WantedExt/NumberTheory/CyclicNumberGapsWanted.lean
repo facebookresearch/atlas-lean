@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.CyclicNumberGaps
 public import MathlibExt.NumberTheory.OppermannCyclicNumbers
 
 /-!
@@ -137,19 +138,6 @@ public theorem_wanted cyclicNumbers_moment_isEquivalent_mean_pow (k : ℕ) :
     let mean : ℕ → ℝ := fun n => (∑ i ∈ Finset.Icc 1 n, c i) / n
     IsEquivalent atTop (fun n : ℕ => (∑ i ∈ Finset.Icc 1 n, c i ^ k) / n)
       (fun n => (2 : ℝ) ^ k / (1 + k) * mean n ^ k)
-
-/-- **Gaps between cyclic numbers under the Riemann hypothesis.** Assume the Riemann hypothesis.
-Let $c_1 < c_2 < \cdots$ be the cyclic numbers in increasing order and $p_1 < p_2 < \cdots$ the
-primes in increasing order. Then the gaps $d_n = c_{n+1} - c_n$ between consecutive cyclic
-numbers satisfy $d_n = o(\sqrt{p_n} \log p_n)$ as $n \to \infty$.
-
-Source: John M. Campbell and Joel E. Cohen, *Cyclic Numbers and Gaps*, INTEGERS 25 (2025),
-Article A23, Theorem 2 (`integers-2025-A23-thm-2`). -/
-public theorem_wanted cyclicNumber_gap_isLittleO_of_riemannHypothesis
-    (hRH : RiemannHypothesis) :
-    let c : ℕ → ℝ := fun n => (Nat.nth IsCyclicNumber (n - 1) : ℝ)
-    let p : ℕ → ℝ := fun n => (Nat.nth Nat.Prime (n - 1) : ℝ)
-    (fun n => c (n + 1) - c n) =o[atTop] (fun n => Real.sqrt (p n) * Real.log (p n))
 
 end
 

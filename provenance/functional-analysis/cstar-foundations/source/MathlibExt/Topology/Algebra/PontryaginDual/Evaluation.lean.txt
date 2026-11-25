@@ -1,0 +1,64 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Topology.Algebra.PontryaginDual
+
+/-!
+# Canonical evaluation into the actual compact-open Pontryagin bidual
+
+Evaluation is the literal continuous character g ↦ (χ ↦ χ(g)). Its continuity
+uses the original compact-open evaluation topology. This construction does not
+assert bidual injectivity, surjectivity or the terminal Pontryagin theorem.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace PontryaginDual
+
+noncomputable section
+
+universe uG
+
+variable (G : Type uG) [Monoid G] [TopologicalSpace G] [LocallyCompactSpace G]
+
+/-- The canonical continuous homomorphism is evaluation on the actual character group. -/
+def evaluation : G →ₜ* PontryaginDual (PontryaginDual G) where
+  toFun g :=
+    { toFun := fun χ : PontryaginDual G => χ g
+      map_one' := rfl
+      map_mul' := fun _ _ => rfl
+      continuous_toFun := by
+        change Continuous (fun χ : G →ₜ* Circle => χ g)
+        exact (continuous_eval_const g : Continuous (fun f : C(G, Circle) => f g)).comp
+          (ContinuousMonoidHom.isInducing_toContinuousMap G Circle).continuous }
+  map_one' := by
+    apply PontryaginDual.ext
+    intro χ
+    exact _root_.map_one χ
+  map_mul' g h := by
+    apply PontryaginDual.ext
+    intro χ
+    exact _root_.map_mul χ g h
+  continuous_toFun := by
+    apply ContinuousMonoidHom.continuous_of_continuous_uncurry
+    change Continuous (fun p : G × PontryaginDual G => p.2 p.1)
+    have hforget : Continuous
+        (fun p : G × PontryaginDual G => (p.2 : G →ₜ* Circle).toContinuousMap) :=
+      (ContinuousMonoidHom.isInducing_toContinuousMap G Circle).continuous.comp continuous_snd
+    exact (continuous_eval : Continuous (fun p : C(G, Circle) × G => p.1 p.2)).comp
+      (hforget.prodMk continuous_fst)
+
+/-- The canonical bidual homomorphism retains the literal character pairing. -/
+@[simp]
+theorem evaluation_apply (g : G) (χ : PontryaginDual G) :
+    evaluation G g χ = χ g :=
+  rfl
+
+end
+
+end PontryaginDual

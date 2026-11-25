@@ -25,13 +25,12 @@ open MeasureTheory intervalIntegral
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.TwoCompartmentBudget
 
-/-- **Two-compartment mass budget.** If `(A1, A2)` solves the
-two-compartment system in derivative form on (no sign assumptions on the rates are needed) on
-`[0, T]` (`A1' = u - (k10 + k12) A1 + k21 A2` and
-`A2' = k12 A1 - k21 A2`), then the total amount satisfies
-`(A1 + A2)(T) - (A1 + A2)(0) =
-∫ s in 0..T, u s - k10 * ∫ s in 0..T, A1 s`: only the input and the
-central elimination cross the system boundary. -/
+/-- **Two-compartment mass budget.** Let `T ≥ 0` and let the input `u` be integrable on `[0, T]`. If
+`(A1, A2)` solves the two-compartment system in derivative form at every point of `[0, T]`
+(`A1' = u - (k10 + k12) A1 + k21 A2` and `A2' = k12 A1 - k21 A2`; no sign assumptions on the rates
+are needed), then the total amount satisfies
+`(A1 + A2)(T) - (A1 + A2)(0) = ∫ s in 0..T, (u s - k10 * A1 s)`: only the input and the central
+elimination cross the system boundary. -/
 lemma two_compartment_budget {k10 k12 k21 T : ℝ} (hT : 0 ≤ T)
     {A1 A2 u : ℝ → ℝ}
     (hA1 : ∀ s ∈ Set.Icc 0 T,
