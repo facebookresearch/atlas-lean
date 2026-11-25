@@ -84,8 +84,10 @@ reactions from `y'` back to `y`. -/
 def IsWeaklyReversible : Prop :=
   ∀ r, Relation.ReflTransGen N.Reacts (N.prod r) (N.src r)
 
-/-- The mass-action vector field with rate constants `k`, using real powers:
-`x ↦ ∑_r k r (∏_s x_s ^ (src r s)) (prod r - src r)`. It is meant for positive states `x`. -/
+/-- For a network with finite species set `S` (`[Fintype S]`) and finite reaction set `ρ`
+(`[Fintype ρ]`), the mass-action vector field with rate constants `k`, using real powers:
+`x ↦ ∑_{r : ρ} k r (∏_{s : S} x_s ^ (src r s)) (prod r - src r)`. It is meant for positive states
+`x`. -/
 noncomputable def massActionField [Fintype S] [Fintype ρ] (k : ρ → ℝ) (x : S → ℝ) : S → ℝ :=
   ∑ r, (k r * ∏ s, x s ^ N.src r s) • N.reactionVector r
 

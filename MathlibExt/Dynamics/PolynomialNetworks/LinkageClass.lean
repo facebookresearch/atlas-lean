@@ -29,9 +29,9 @@ Feinberg's deficiency-one theorem.
 * `linkageClassField θ k x`: the part of the mass-action field contributed by the reactions
   of `θ`.
 
-Their linear algebra (`𝒮 = ∑_θ 𝒮_θ`, `∑_θ δ_θ ≤ δ` with equality exactly when the `𝒮_θ` are
-independent, and the decoupling of the equilibrium equations) is developed in
-`Domains.Biology.Dynamics.DeficiencyOne`.
+Their linear algebra (`𝒮 = ∑_θ 𝒮_θ`, and for networks with finitely many species, reactions, and
+linkage classes, `∑_θ δ_θ ≤ δ` with equality iff the `𝒮_θ` are independent, together with the
+decoupling of the equilibrium equations) is developed in `Domains.Biology.Dynamics.DeficiencyOne`.
 
 ## References
 
@@ -74,8 +74,9 @@ def linkageClassStoichiometricSubspace (θ : N.linkageGraph.ConnectedComponent) 
     Submodule ℝ (S → ℝ) :=
   (N.linkageClassNetwork θ).stoichiometricSubspace
 
-/-- The deficiency `δ_θ = n_θ - 1 - s_θ` of the linkage class `θ`, where `n_θ` is the number
-of complexes in `θ` and `s_θ = dim 𝒮_θ`.
+/-- For a network with finitely many complexes (`[Finite N.complexes]`), the deficiency
+`δ_θ = n_θ - 1 - s_θ` of the linkage class `θ`, where `n_θ` is the number of complexes in `θ` and
+`s_θ = dim 𝒮_θ`.
 
 Source: Feinberg (1987); Feinberg (1995). -/
 noncomputable def linkageClassDeficiency [Finite N.complexes]
