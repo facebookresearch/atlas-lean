@@ -296,24 +296,24 @@ end Place
 
 namespace Place
 
-variable (v : Place K F) [HasPrincipalDivisors K F']
+variable (v : Place K F)
 
 local instance : DecidableEq (Place K F') := Classical.decEq _
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 def fiberIdeal (w : Place K F') : Ideal (integralClosureAt F' v) :=
   if hw : w.restrict F = v then fiberCenterPow hw else ⊤
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 theorem fiberIdeal_of_mem {w : Place K F'} (hw : w.restrict F = v) :
     fiberIdeal v w = fiberCenterPow hw := dif_pos hw
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 theorem fiberIdeal_of_notMem {w : Place K F'} (hw : ¬w.restrict F = v) :
     fiberIdeal v w = ⊤ := dif_neg hw
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 theorem conductorIdeal_le_fiberIdeal (w : Place K F') :
     conductorIdeal (F' := F') v ≤ fiberIdeal v w := by
@@ -323,7 +323,7 @@ theorem conductorIdeal_le_fiberIdeal (w : Place K F') :
   · rw [fiberIdeal_of_notMem v hw]
     exact le_top
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 theorem isCoprime_fiberIdeal {w w' : Place K F'} (hne : w ≠ w') :
     IsCoprime (fiberIdeal v w) (fiberIdeal v w') := by
@@ -342,7 +342,7 @@ theorem isCoprime_fiberIdeal {w w' : Place K F'} (hne : w ≠ w') :
   · rw [fiberIdeal_of_notMem v hw, ← Ideal.one_eq_top]
     exact isCoprime_one_left
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 theorem count_normalizedFactors_conductorIdeal {w : Place K F'} (hw : w.restrict F = v) :
     (normalizedFactors (conductorIdeal (F' := F') v)).count (fiberCenter F' v hw).asIdeal
@@ -401,7 +401,7 @@ theorem conductorIdeal_eq_prod_fiber :
             fiberIdeal_of_mem v (mem_fiber.mp w'.2)]
     _ = ∏ w ∈ v.fiber F', fiberIdeal v w := Finset.prod_attach (v.fiber F') (fiberIdeal v)
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 theorem prod_fiberIdeal_le_of_subset {s t : Finset (Place K F')} (hst : s ⊆ t) :
     ∏ w ∈ t, fiberIdeal v w ≤ ∏ w ∈ s, fiberIdeal v w := by
@@ -427,7 +427,7 @@ end Place
 
 namespace Place
 
-variable (v : Place K F) [HasPrincipalDivisors K F']
+variable (v : Place K F)
 
 noncomputable scoped instance fiberIdealQuotientAlgebra (w : Place K F') :
     Algebra (IsLocalRing.ResidueField v.toValuationSubring)
@@ -441,7 +441,7 @@ noncomputable scoped instance prodFiberIdealQuotientAlgebra (s : Finset (Place K
   Ideal.Quotient.algebraQuotientOfLEComap
     (Ideal.map_le_iff_le_comap.mp (conductorIdeal_le_prod_fiberIdeal v s))
 
-omit [Algebra K F'] [IsScalarTower K F F'] [CharZero F] [HasPrincipalDivisors K F'] in
+omit [Algebra K F'] [IsScalarTower K F F'] [CharZero F] in
 
 theorem finite_quotient_of_conductorLE (Q : Ideal (integralClosureAt F' v))
     [Algebra (IsLocalRing.ResidueField v.toValuationSubring) (integralClosureAt F' v ⧸ Q)]
@@ -559,9 +559,9 @@ end Place
 
 namespace Place
 
-variable {v : Place K F} [HasPrincipalDivisors K F']
+variable {v : Place K F}
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 theorem sub_algebraMap_evalAt_mem_fiberCenter {w : Place K F'} (hw : w.restrict F = v)
     (hwrat : w.IsRational) {c : integralClosureAt F' v}
@@ -618,7 +618,7 @@ end Place
 
 namespace Place
 
-variable {v : Place K F} [HasPrincipalDivisors K F']
+variable {v : Place K F}
 
 omit [CharZero F] in
 
@@ -638,7 +638,7 @@ theorem residue_algebraMap (lam : K) :
       = algebraMap K v.ResidueField lam := by
   rw [← IsLocalRing.ResidueField.algebraMap_eq, ← IsScalarTower.algebraMap_apply]
 
-omit [CharZero F] [HasPrincipalDivisors K F'] in
+omit [CharZero F] in
 
 theorem norm_mk_fiberIdeal_eq_norm_mk_fiberCenterPow {w : Place K F'}
     (hw : w.restrict F = v) (c : integralClosureAt F' v) :
@@ -691,7 +691,7 @@ open IsDedekindDomain IsLocalRing UniqueFactorizationMonoid _root_.AlgebraicCurv
   _root_.AlgebraicCurve.Place AlgebraicCurve.Place in
 theorem AlgebraicCurve.Place.evalAt_norm_eq_prod_fiber {K F F' : Type*} [Field K] [Field F]
     [Field F'] [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [HasPrincipalDivisors K F'] (v : Place K F)
+    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] (v : Place K F)
     (f : F') (hf : f ≠ 0) (hv : v.IsRational) (hrat : ∀ w ∈ v.fiber F', Place.IsRational w)
     (hord : ∀ w ∈ v.fiber F', w.ord f = 0) : v.evalAt (Algebra.norm F f) = ∏ w ∈ v.fiber F',
     w.evalAt f ^ (w.ramificationIndex F) :=
@@ -722,18 +722,12 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsPrimeCenter
-attribute [-instance] AlgebraicCurve.Place.instIsFractionRingIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsTorsionFreeIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsDedekindDomainIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instFiniteIntegralClosureAt
 attribute [-simp] AlgebraicCurve.Place.placeOfPrime_toValuationSubring
-attribute [-simp] AlgebraicCurve.Place.mem_fiberOver
 open AlgebraicCurve AlgebraicCurve.Divisor
 
 theorem AlgebraicCurve.Divisor.evalFun_pullback {K F F' : Type*} [Field K] [Field F] [Field F']
     [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F']
-    [Algebra.IsSeparable F F'] [HasPrincipalDivisors K F'] {f : F'} (hf : f ≠ 0) (E : Divisor K F)
+    [Algebra.IsSeparable F F'] {f : F'} (hf : f ≠ 0) (E : Divisor K F)
     (hrat : ∀ v ∈ E.support, Place.IsRational v)
     (hratw : ∀ v ∈ E.support, ∀ w ∈ v.fiber F', Place.IsRational w)
     (hord : ∀ v ∈ E.support, ∀ w ∈ v.fiber F', w.ord f = 0) : Divisor.evalFun f
@@ -763,8 +757,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -899,7 +891,7 @@ theorem relNorm_fiberCenter (hw : w.restrict F = v) :
     (IsLocalRing.maximalIdeal v.toValuationSubring), inertiaDeg_eq_inertiaDeg_fiberCenter _ hw,
     Ideal.inertiaDeg'_eq_inertiaDeg]
 
-theorem relNorm_span_singleton [HasPrincipalDivisors K F'] {c : integralClosureAt F' v}
+theorem relNorm_span_singleton {c : integralClosureAt F' v}
     (hc : c ≠ 0) :
     Ideal.relNorm v.toValuationSubring (Ideal.span {c})
       = IsLocalRing.maximalIdeal v.toValuationSubring
@@ -986,7 +978,7 @@ section ElementNorm
 
 variable (v : Place K F)
 
-theorem ord_norm_algebraMap_integralClosureAt [HasPrincipalDivisors K F']
+theorem ord_norm_algebraMap_integralClosureAt
     {c : integralClosureAt F' v} (hc : c ≠ 0) :
     v.ord (Algebra.norm F (algebraMap (integralClosureAt F' v) F' c))
       = ∑ w ∈ v.fiber F', (w.inertiaDeg F : ℤ)
@@ -1005,7 +997,7 @@ theorem ord_norm_algebraMap_integralClosureAt [HasPrincipalDivisors K F']
   rw [Int.toNat_of_nonneg
     (w.ord_nonneg_of_mem (forall_mem_of_restrict_eq (mem_fiber.mp hw) c))]
 
-theorem ord_norm_eq_sum_fiber [HasPrincipalDivisors K F'] {f : F'} (hf : f ≠ 0) :
+theorem ord_norm_eq_sum_fiber {f : F'} (hf : f ≠ 0) :
     v.ord (Algebra.norm F f) = ∑ w ∈ v.fiber F', (w.inertiaDeg F : ℤ) * w.ord f := by
 
   obtain ⟨⟨c, s⟩, hcs⟩ := IsLocalization.surj
@@ -1043,7 +1035,7 @@ end Place
 namespace Divisor
 open AlgebraicCurve.Divisor
 
-theorem pushforwardNormFormula [HasPrincipalDivisors K F'] :
+theorem pushforwardNormFormula :
     Divisor.PushforwardNormFormula K F F' := by
   intro f hf D hD v
   classical
@@ -1077,7 +1069,7 @@ open AlgebraicCurve AlgebraicCurve.Divisor
 
 theorem AlgebraicCurve.Divisor.pushforward_div {K F F' : Type*} [Field K] [Field F] [Field F']
     [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F']
-    [Algebra.IsSeparable F F'] [CharZero F] [HasPrincipalDivisors K F'] {f : F'} (hf : f ≠ 0)
+    [Algebra.IsSeparable F F'] [CharZero F] {f : F'} (hf : f ≠ 0)
     {D : Divisor K F'} (hD : ∀ w, D w = w.ord f) {E : Divisor K F}
     (hE : ∀ v, E v = v.ord (Algebra.norm F f)) : Divisor.pushforward F D = E :=
   pushforward_eq_of_normFormula AlgebraicCurve.Divisor.pushforwardNormFormula hf hD hE
@@ -1112,196 +1104,14 @@ end
 
 section
 
-open IsDedekindDomain WithZero IsLocalRing UniqueFactorizationMonoid
-
-namespace AlgebraicCurve
-
-namespace Place
-
-section DVR
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-end DVR
-
-end Place
-
-variable {K F F' : Type*} [Field K] [Field F] [Field F']
-  [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-  [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [CharZero F]
-
-namespace Place
-open AlgebraicCurve.Place
-
-section IdealNorm
-
-variable {v : Place K F} {w : Place K F'}
-
-private theorem relNorm_span_singleton_loc {c : integralClosureAt F' v}
-    (hc : c ≠ 0) :
-    Ideal.relNorm v.toValuationSubring (Ideal.span {c})
-      = IsLocalRing.maximalIdeal v.toValuationSubring
-          ^ (∑ w ∈ v.fiberOver F',
-              w.inertiaDeg F * (w.ord (algebraMap (integralClosureAt F' v) F' c)).toNat) := by
-  have hspan : (Ideal.span {c} : Ideal (integralClosureAt F' v)) ≠ ⊥ := by simpa using hc
-  set S : Multiset (Ideal (integralClosureAt F' v)) := normalizedFactors (Ideal.span {c})
-    with hS
-
-  have hfactor : ∀ Q ∈ S.toFinset, ∃ w' : Place K F', ∃ hw' : w'.restrict F = v,
-      (fiberCenter F' v hw').asIdeal = Q := by
-    intro Q hQ
-    rw [Multiset.mem_toFinset] at hQ
-    have hQprime : Prime Q := prime_of_normalized_factor Q hQ
-    have hQbot : Q ≠ ⊥ := hQprime.ne_zero
-    haveI : Q.IsPrime := Ideal.isPrime_of_prime hQprime
-    exact ⟨placeOfPrime ⟨Q, inferInstance, hQbot⟩, restrict_placeOfPrime _,
-      congrArg HeightOneSpectrum.asIdeal (fiberCenter_placeOfPrime
-        (⟨Q, inferInstance, hQbot⟩ : HeightOneSpectrum (integralClosureAt F' v)))⟩
-
-  set T : Finset (Ideal (integralClosureAt F' v)) := (v.fiberOver F').attach.image
-    (fun w' => (fiberCenter F' v ((mem_fiberOver v).mp w'.2)).asIdeal) with hT
-  have hsub : S.toFinset ⊆ T := by
-    intro Q hQ
-    obtain ⟨w', hw', rfl⟩ := hfactor Q hQ
-    exact Finset.mem_image.mpr ⟨⟨w', (mem_fiberOver v).mpr hw'⟩, Finset.mem_attach _ _, rfl⟩
-  have hinj : Set.InjOn (fun w' : {x // x ∈ v.fiberOver F'} =>
-      (fiberCenter F' v ((mem_fiberOver v).mp w'.2)).asIdeal) (v.fiberOver F').attach := by
-    intro w₁ _ w₂ _ h
-    exact Subtype.ext (eq_of_fiberCenter_eq ((mem_fiberOver v).mp w₁.2) ((mem_fiberOver v).mp w₂.2)
-      (HeightOneSpectrum.ext h))
-
-  calc
-    Ideal.relNorm v.toValuationSubring (Ideal.span {c})
-        = Ideal.relNorm v.toValuationSubring (∏ Q ∈ S.toFinset, Q ^ S.count Q) := by
-          rw [← Finset.prod_multiset_count, hS, Ideal.prod_normalizedFactors_eq_self hspan]
-    _ = ∏ Q ∈ S.toFinset, Ideal.relNorm v.toValuationSubring Q ^ S.count Q := by
-          rw [map_prod]
-          exact Finset.prod_congr rfl fun Q _ => map_pow _ Q _
-    _ = ∏ Q ∈ S.toFinset, IsLocalRing.maximalIdeal v.toValuationSubring
-          ^ ((IsLocalRing.maximalIdeal v.toValuationSubring).inertiaDeg' Q * S.count Q) := by
-          refine Finset.prod_congr rfl fun Q hQ => ?_
-          obtain ⟨w', hw', rfl⟩ := hfactor Q hQ
-          rw [relNorm_fiberCenter hw', ← pow_mul, inertiaDeg_eq_inertiaDeg_fiberCenter _
-            hw']
-    _ = IsLocalRing.maximalIdeal v.toValuationSubring
-          ^ (∑ Q ∈ S.toFinset,
-              (IsLocalRing.maximalIdeal v.toValuationSubring).inertiaDeg' Q * S.count Q) :=
-          Finset.prod_pow_eq_pow_sum S.toFinset
-            (fun Q => (IsLocalRing.maximalIdeal v.toValuationSubring).inertiaDeg' Q * S.count Q)
-            (IsLocalRing.maximalIdeal v.toValuationSubring)
-    _ = IsLocalRing.maximalIdeal v.toValuationSubring
-          ^ (∑ w ∈ v.fiberOver F',
-              w.inertiaDeg F * (w.ord (algebraMap (integralClosureAt F' v) F' c)).toNat) := by
-          congr 1
-
-          calc
-            ∑ Q ∈ S.toFinset,
-                (IsLocalRing.maximalIdeal v.toValuationSubring).inertiaDeg' Q * S.count Q
-                = ∑ Q ∈ T,
-                    (IsLocalRing.maximalIdeal v.toValuationSubring).inertiaDeg' Q
-                      * S.count Q := by
-                  refine Finset.sum_subset hsub fun Q _ hQ => ?_
-                  rw [Multiset.count_eq_zero_of_notMem
-                    (fun h => hQ (Multiset.mem_toFinset.mpr h)), mul_zero]
-            _ = ∑ w' ∈ (v.fiberOver F').attach,
-                  (IsLocalRing.maximalIdeal v.toValuationSubring).inertiaDeg'
-                      (fiberCenter F' v ((mem_fiberOver v).mp w'.2)).asIdeal
-                    * S.count (fiberCenter F' v ((mem_fiberOver v).mp w'.2)).asIdeal := by
-                  rw [hT, Finset.sum_image hinj]
-            _ = ∑ w' ∈ (v.fiberOver F').attach, (w'.1.inertiaDeg F
-                  * (w'.1.ord (algebraMap (integralClosureAt F' v) F' c)).toNat) := by
-                  refine Finset.sum_congr rfl fun w' _ => ?_
-                  rw [← inertiaDeg_eq_inertiaDeg_fiberCenter _ ((mem_fiberOver v).mp w'.2),
-                    count_normalizedFactors_span_singleton ((mem_fiberOver v).mp w'.2) hc]
-            _ = ∑ w ∈ v.fiberOver F',
-                  w.inertiaDeg F
-                    * (w.ord (algebraMap (integralClosureAt F' v) F' c)).toNat :=
-                  Finset.sum_attach (v.fiberOver F') fun w =>
-                    w.inertiaDeg F * (w.ord (algebraMap (integralClosureAt F' v) F' c)).toNat
-
-end IdealNorm
-
-section ElementNorm
-
-variable (v : Place K F)
-
-private theorem ord_norm_algebraMap_integralClosureAt_loc
-    {c : integralClosureAt F' v} (hc : c ≠ 0) :
-    v.ord (Algebra.norm F (algebraMap (integralClosureAt F' v) F' c))
-      = ∑ w ∈ v.fiberOver F', (w.inertiaDeg F : ℤ)
-          * w.ord (algebraMap (integralClosureAt F' v) F' c) := by
-
-  rw [← Algebra.algebraMap_intNorm (A := v.toValuationSubring) (K := F) (L := F')
-    (B := integralClosureAt F' v)]
-
-  have hrel := relNorm_span_singleton_loc (v := v) hc
-  rw [Ideal.relNorm_singleton] at hrel
-
-  rw [ValuationSubring.algebraMap_apply, ord_coe_eq_of_span_singleton_eq_pow_maximalIdeal v
-    hrel]
-
-  push_cast
-  refine Finset.sum_congr rfl fun w hw => ?_
-  rw [Int.toNat_of_nonneg
-    (w.ord_nonneg_of_mem (forall_mem_of_restrict_eq ((mem_fiberOver v).mp hw) c))]
-
-private theorem ord_norm_eq_sum_fiberOver_aux {f : F'} (hf : f ≠ 0) :
-    v.ord (Algebra.norm F f) = ∑ w ∈ v.fiberOver F', (w.inertiaDeg F : ℤ) * w.ord f := by
-
-  obtain ⟨⟨c, s⟩, hcs⟩ := IsLocalization.surj
-    (nonZeroDivisors (integralClosureAt F' v)) f
-  have hs0 : (s : integralClosureAt F' v) ≠ 0 := nonZeroDivisors.coe_ne_zero s
-  have hsF : algebraMap (integralClosureAt F' v) F' (s : integralClosureAt F' v) ≠ 0 :=
-    (map_ne_zero_iff _ (IsFractionRing.injective (integralClosureAt F' v) F')).mpr hs0
-  have hcF : algebraMap (integralClosureAt F' v) F' c ≠ 0 := by
-    rw [← hcs]
-    exact mul_ne_zero hf hsF
-  have hc0 : c ≠ 0 := fun h => hcF (by rw [h, map_zero])
-
-  have hintc := ord_norm_algebraMap_integralClosureAt_loc v hc0
-  have hints := ord_norm_algebraMap_integralClosureAt_loc v hs0
-
-  rw [← hcs, map_mul, v.ord_mul (Algebra.norm_ne_zero_iff.mpr hf)
-    (Algebra.norm_ne_zero_iff.mpr hsF), hints] at hintc
-  have hsplit : ∑ w ∈ v.fiberOver F', (w.inertiaDeg F : ℤ)
-      * w.ord (f * algebraMap (integralClosureAt F' v) F' (s : integralClosureAt F' v))
-        = (∑ w ∈ v.fiberOver F', (w.inertiaDeg F : ℤ) * w.ord f)
-          + ∑ w ∈ v.fiberOver F', (w.inertiaDeg F : ℤ)
-              * w.ord (algebraMap (integralClosureAt F' v) F' (s : integralClosureAt F' v)) := by
-    rw [← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl fun w _ => ?_
-    rw [w.ord_mul hf hsF]
-    ring
-  rw [hsplit] at hintc
-  omega
-
-end ElementNorm
-
-end Place
-
-end AlgebraicCurve
-
-open AlgebraicCurve
-
-theorem AlgebraicCurve.Place.ord_norm_eq_sum_fiberOver {K F F' : Type*} [Field K] [Field F]
-    [Field F'] [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [CharZero F] (v : Place K F) {f : F'}
-    (hf : f ≠ 0) : v.ord (Algebra.norm F f) = ∑ w ∈ v.fiberOver F', (w.inertiaDeg F : ℤ) * w.ord f
-    :=
-  Place.ord_norm_eq_sum_fiberOver_aux v hf
-
-end
-
-section
-
 open AlgebraicCurve
 
 theorem AlgebraicCurve.Place.ord_norm_eq_zero_of_forall_fiber {K F F' : Type*} [Field K] [Field F]
     [Field F'] [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [CharZero F] [HasPrincipalDivisors K F']
+    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [CharZero F]
     {f : F'} (hf : f ≠ 0) (v : Place K F) (h : ∀ w ∈ v.fiber F', w.ord f = 0) : v.ord
     (Algebra.norm F f) = 0 := by
-  rw [AlgebraicCurve.Place.ord_norm_eq_sum_fiberOver v hf, ← Place.fiber_eq_fiberOver]
+  rw [AlgebraicCurve.Place.ord_norm_eq_sum_fiber v hf]
   exact Finset.sum_eq_zero fun w hw => by rw [h w hw, mul_zero]
 
 end

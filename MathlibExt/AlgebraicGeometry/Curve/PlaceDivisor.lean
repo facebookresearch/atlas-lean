@@ -287,10 +287,10 @@ theorem mem_iff_adicValuation_le_one {f : F} :
   rw [← v.adicValuation_valuationSubring]
   exact Valuation.mem_valuationSubring_iff _ _
 
-instance instIsRankOneDiscreteAdicValuation : v.adicValuation.IsRankOneDiscrete :=
+theorem adicValuation_isRankOneDiscrete : v.adicValuation.IsRankOneDiscrete :=
   IsDiscreteValuationRing.isRankOneDiscrete v.toValuationSubring F
 
-instance instIsTrivialOnAdicValuation : v.adicValuation.IsTrivialOn K :=
+theorem adicValuation_isTrivialOn : v.adicValuation.IsTrivialOn K :=
   Valuation.IsTrivialOn.of_le_one v.adicValuation fun a =>
     v.mem_iff_adicValuation_le_one.mp (v.algebraMap_mem' a)
 
@@ -828,28 +828,6 @@ end
 
 section
 
-open IsDedekindDomain WithZero IsLocalRing
-
-open AlgebraicCurve in
-theorem AlgebraicCurve.Place.adicValuation_isRankOneDiscrete {K F : Type*} [Field K] [Field F]
-    [Algebra K F] (v : Place K F) : v.adicValuation.IsRankOneDiscrete :=
-  v.instIsRankOneDiscreteAdicValuation
-
-end
-
-section
-
-open IsDedekindDomain WithZero IsLocalRing
-
-open AlgebraicCurve in
-theorem AlgebraicCurve.Place.adicValuation_isTrivialOn {K F : Type*} [Field K] [Field F]
-    [Algebra K F] (v : Place K F) : v.adicValuation.IsTrivialOn K :=
-  v.instIsTrivialOnAdicValuation
-
-end
-
-section
-
 open IsLocalRing AlgebraicCurve
 
 theorem AlgebraicCurve.Place.evalAt_algebraMap {K F : Type*} [Field K] [Field F] [Algebra K F]
@@ -865,8 +843,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open IsDedekindDomain WithZero IsLocalRing AlgebraicCurve
@@ -943,8 +919,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve

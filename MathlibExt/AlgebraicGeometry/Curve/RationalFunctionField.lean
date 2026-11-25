@@ -275,6 +275,8 @@ variable {K}
 theorem eq_ofHeightOneSpectrum_or_eq_placeInfty [DecidableEq (RatFunc K)]
     (v : Place K (RatFunc K)) :
     (∃ w : HeightOneSpectrum K[X], v = Place.ofHeightOneSpectrum w) ∨ v = placeInfty K := by
+  have := v.adicValuation_isRankOneDiscrete
+  have := v.adicValuation_isTrivialOn
   rcases (RatFunc.valuation_isEquiv_infty_or_adic (v := v.adicValuation)).or with h | h
   · exact Or.inr (Place.ext (v.adicValuation_valuationSubring.symm.trans
       ((Valuation.isEquiv_iff_valuationSubring _ _).mp h)))
@@ -357,8 +359,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -380,8 +380,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -404,8 +402,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -429,8 +425,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -454,8 +448,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -566,8 +558,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -690,8 +680,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -736,8 +724,6 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve

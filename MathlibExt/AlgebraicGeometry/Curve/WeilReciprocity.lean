@@ -166,15 +166,7 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsPrimeCenter
-attribute [-instance] AlgebraicCurve.Place.instIsFractionRingIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsTorsionFreeIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsDedekindDomainIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instFiniteIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsRankOneDiscreteAdicValuation
-attribute [-instance] AlgebraicCurve.Place.instIsTrivialOnAdicValuation
 attribute [-simp] AlgebraicCurve.Place.placeOfPrime_toValuationSubring
-attribute [-simp] AlgebraicCurve.Place.mem_fiberOver
 attribute [-simp] AlgebraicCurve.RationalFunctionField.heightOneSpectrumOfIrreducible_asIdeal
 attribute [-simp] AlgebraicCurve.RationalFunctionField.deg_placeOfPoint
 open AlgebraicCurve
@@ -184,7 +176,7 @@ open AlgebraicCurve
 rational. -/
 theorem AlgebraicCurve.weilReciprocity_algebraMap {K F F' : Type*} [Field K] [Field F] [Field F']
     [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F']
-    [Algebra.IsSeparable F F'] [CharZero F] [HasPrincipalDivisors K F] [HasPrincipalDivisors K F']
+    [Algebra.IsSeparable F F'] [CharZero F] [HasPrincipalDivisors K F]
     (hbase : WeilReciprocity K F) {f : F'} {g : F} (hf : f ≠ 0) (hg : g ≠ 0) (Df Dg : Divisor K F')
     (hDf : ∀ w : Place K F', Df w = w.ord f)
     (hDg : ∀ w : Place K F', Dg w = w.ord (algebraMap F F' g))
@@ -240,13 +232,7 @@ end
 
 section
 
-attribute [-instance] AlgebraicCurve.Place.instIsPrimeCenter
-attribute [-instance] AlgebraicCurve.Place.instIsFractionRingIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsTorsionFreeIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instIsDedekindDomainIntegralClosureAt
-attribute [-instance] AlgebraicCurve.Place.instFiniteIntegralClosureAt
 attribute [-simp] AlgebraicCurve.Place.placeOfPrime_toValuationSubring
-attribute [-simp] AlgebraicCurve.Place.mem_fiberOver
 open AlgebraicCurve
 
 namespace AlgebraicCurve
@@ -326,7 +312,7 @@ theorem AlgebraicCurve.weilReciprocity (K F : Type*) [Field K] [IsAlgClosed K] [
       @AlgebraicCurve.Place.isRational_of_isAlgClosed K F _ _ _ _ algφ stφ finφ w
     have key := @AlgebraicCurve.weilReciprocity_algebraMap K (RatFunc K) F _ _ _ _ _ algφ stφ finφ
       sepφ
-      _ _ _ (AlgebraicCurve.RationalFunctionField.weilReciprocity K) f RatFunc.X hf
+      _ _ (AlgebraicCurve.RationalFunctionField.weilReciprocity K) f RatFunc.X hf
         RatFunc.X_ne_zero
       Df Dg hDf (fun w => by rw [hDg w, ← hXg]) (fun w => by rw [← hXg] at hdisj; exact hdisj w)
         hratf hratF

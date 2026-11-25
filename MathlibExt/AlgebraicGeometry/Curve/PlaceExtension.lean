@@ -356,16 +356,6 @@ theorem ord_algebraMap_ne_zero_of_restrict_eq {v : Place K F} {f : F}
   have hepos : 0 < ramificationIndex (F := F) w := w.ramificationIndex_pos (F := F)
   exact mul_ne_zero (by omega) hford
 
-theorem restrict_fiber_finite [HasPrincipalDivisors K F'] (v : Place K F) :
-    {w : Place K F' | w.restrict F = v}.Finite := by
-  obtain ⟨f, hf0, hford⟩ := v.exists_ord_pos
-  obtain ⟨D, hD, -⟩ := HasPrincipalDivisors.exists_divisor (K := K)
-    (algebraMap F F' f) (algebraMap_ne_zero hf0)
-  apply Set.Finite.subset D.support.finite_toSet
-  intro w hw
-  simp only [Finset.mem_coe, Finsupp.mem_support_iff, hD w]
-  exact w.ord_algebraMap_ne_zero_of_restrict_eq (by omega) hw
-
 end RestrictDef
 
 end Restrict
@@ -491,117 +481,6 @@ end Divisor
 end AlgebraicCurve
 
 section
-
-namespace AlgebraicCurve
-
-variable {K F F' : Type*} [Field K] [Field F] [Field F']
-  [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-  [Algebra.IsIntegral F F'] [HasPrincipalDivisors K F']
-
-namespace Place
-
-variable (F') in
-
-/-- The places of `F'` lying over a place of `F`. -/
-def fiber (v : Place K F) : Finset (Place K F') :=
-  (restrict_fiber_finite v).toFinset
-
-@[simp]
-theorem mem_fiber {v : Place K F} {w : Place K F'} :
-    w ∈ v.fiber F' ↔ w.restrict F = v := by
-  simp only [fiber, Set.Finite.mem_toFinset, Set.mem_setOf_eq]
-
-theorem restrict_mem_fiber (w : Place K F') : w ∈ (w.restrict F).fiber F' :=
-  mem_fiber.mpr rfl
-
-end Place
-
-namespace Divisor
-
-variable (F') in
-
-def pullbackSingleHom (v : Place K F) : ℤ →+ Divisor K F' where
-  toFun n := ∑ w ∈ v.fiber F', Finsupp.single w (n * w.ramificationIndex F)
-  map_zero' := by simp
-  map_add' m n := by
-    rw [← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl fun w _ => by rw [add_mul, Finsupp.single_add]
-
-variable (F') in
-
-/-- The pullback of divisors, weighting each place by its ramification index. -/
-def pullback : Divisor K F →+ Divisor K F' :=
-  Finsupp.liftAddHom (pullbackSingleHom F')
-
-theorem pullback_single (v : Place K F) (n : ℤ) :
-    pullback F' (Finsupp.single v n)
-      = ∑ w ∈ v.fiber F', Finsupp.single w (n * w.ramificationIndex F) :=
-  Finsupp.liftAddHom_apply_single _ _ _
-
-theorem pullback_single_apply_of_restrict_eq {v : Place K F} {w : Place K F'}
-    (hw : w.restrict F = v) (n : ℤ) :
-    pullback F' (Finsupp.single v n) w = n * w.ramificationIndex F := by
-  rw [pullback_single, Finset.sum_apply']
-  trans (Finsupp.single w (n * (w.ramificationIndex F : ℤ))) w
-  · refine Finset.sum_eq_single_of_mem w (Place.mem_fiber.mpr hw) ?_
-    intro b _ hb
-    exact Finsupp.single_eq_of_ne' hb
-  · exact Finsupp.single_eq_same
-
-theorem pullback_single_apply_of_restrict_ne {v : Place K F} {w : Place K F'}
-    (hw : w.restrict F ≠ v) (n : ℤ) :
-    pullback F' (Finsupp.single v n) w = 0 := by
-  rw [pullback_single, Finset.sum_apply']
-  exact Finset.sum_eq_zero fun b hb =>
-    Finsupp.single_eq_of_ne fun h => hw (h ▸ Place.mem_fiber.mp hb)
-
-theorem pullback_apply (D : Divisor K F) (w : Place K F') :
-    pullback F' D w = w.ramificationIndex F * D (w.restrict F) := by
-  induction D using Finsupp.induction with
-  | zero => simp
-  | single_add v n D _ _ ih =>
-    rw [map_add, Finsupp.add_apply, ih, Finsupp.add_apply, mul_add]
-    congr 1
-    by_cases hw : w.restrict F = v
-    · subst hw
-      rw [pullback_single_apply_of_restrict_eq rfl, Finsupp.single_eq_same, mul_comm]
-    · rw [pullback_single_apply_of_restrict_ne hw,
-        Finsupp.single_eq_of_ne hw, mul_zero]
-
-theorem restrict_mem_support_of_mem_support_pullback {D : Divisor K F} {w : Place K F'}
-    (hw : w ∈ (pullback F' D).support) : w.restrict F ∈ D.support := by
-  rw [Finsupp.mem_support_iff] at hw ⊢
-  intro h
-  exact hw (by rw [pullback_apply, h, mul_zero])
-
-theorem pullback_apply_eq_ord {f : F} {D : Divisor K F}
-    (hD : ∀ v : Place K F, D v = v.ord f) (w : Place K F') :
-    pullback F' D w = w.ord (algebraMap F F' f) := by
-  rw [pullback_apply, hD, ← Place.ord_restrict]
-
-end Divisor
-
-namespace Divisor
-
-end Divisor
-
-end AlgebraicCurve
-
-section
-
-namespace AlgebraicCurve
-
-variable {K F F' : Type*} [Field K] [Field F] [Field F']
-  [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-  [Algebra.IsIntegral F F'] [HasPrincipalDivisors K F']
-
-namespace Pic0
-
-end Pic0
-
-end AlgebraicCurve
-
-end
 
 section
 
@@ -971,15 +850,17 @@ theorem finite_setOf_restrict_eq : {w : Place K F' | w.restrict F = v}.Finite :=
 
 variable (F') in
 
-def fiberOver : Finset (Place K F') :=
+/-- The places of `F'` lying over a place of `F`. -/
+def fiber : Finset (Place K F') :=
   (finite_setOf_restrict_eq (F' := F') v).toFinset
 
+variable {v} in
 @[simp]
-theorem mem_fiberOver {w : Place K F'} : w ∈ v.fiberOver F' ↔ w.restrict F = v := by
-  rw [fiberOver, Set.Finite.mem_toFinset, Set.mem_setOf_eq]
+theorem mem_fiber {w : Place K F'} : w ∈ v.fiber F' ↔ w.restrict F = v := by
+  rw [fiber, Set.Finite.mem_toFinset, Set.mem_setOf_eq]
 
-theorem fiber_eq_fiberOver [HasPrincipalDivisors K F'] : v.fiber F' = v.fiberOver F' :=
-  Finset.ext fun w => by rw [mem_fiber, mem_fiberOver]
+theorem restrict_mem_fiber (w : Place K F') : w ∈ (w.restrict F).fiber F' :=
+  mem_fiber.mpr rfl
 
 end Fiber
 
@@ -990,6 +871,83 @@ end AlgebraicCurve
 end
 
 end
+
+namespace AlgebraicCurve
+
+variable {K F F' : Type*} [Field K] [Field F] [Field F']
+  [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
+  [FiniteDimensional F F'] [Algebra.IsSeparable F F']
+
+namespace Divisor
+
+variable (F') in
+
+def pullbackSingleHom (v : Place K F) : ℤ →+ Divisor K F' where
+  toFun n := ∑ w ∈ v.fiber F', Finsupp.single w (n * w.ramificationIndex F)
+  map_zero' := by simp
+  map_add' m n := by
+    rw [← Finset.sum_add_distrib]
+    exact Finset.sum_congr rfl fun w _ => by rw [add_mul, Finsupp.single_add]
+
+variable (F') in
+
+/-- The pullback of divisors, weighting each place by its ramification index. -/
+def pullback : Divisor K F →+ Divisor K F' :=
+  Finsupp.liftAddHom (pullbackSingleHom F')
+
+theorem pullback_single (v : Place K F) (n : ℤ) :
+    pullback F' (Finsupp.single v n)
+      = ∑ w ∈ v.fiber F', Finsupp.single w (n * w.ramificationIndex F) :=
+  Finsupp.liftAddHom_apply_single _ _ _
+
+theorem pullback_single_apply_of_restrict_eq {v : Place K F} {w : Place K F'}
+    (hw : w.restrict F = v) (n : ℤ) :
+    pullback F' (Finsupp.single v n) w = n * w.ramificationIndex F := by
+  rw [pullback_single, Finset.sum_apply']
+  trans (Finsupp.single w (n * (w.ramificationIndex F : ℤ))) w
+  · refine Finset.sum_eq_single_of_mem w (Place.mem_fiber.mpr hw) ?_
+    intro b _ hb
+    exact Finsupp.single_eq_of_ne' hb
+  · exact Finsupp.single_eq_same
+
+theorem pullback_single_apply_of_restrict_ne {v : Place K F} {w : Place K F'}
+    (hw : w.restrict F ≠ v) (n : ℤ) :
+    pullback F' (Finsupp.single v n) w = 0 := by
+  rw [pullback_single, Finset.sum_apply']
+  exact Finset.sum_eq_zero fun b hb =>
+    Finsupp.single_eq_of_ne fun h => hw (h ▸ Place.mem_fiber.mp hb)
+
+theorem pullback_apply (D : Divisor K F) (w : Place K F') :
+    pullback F' D w = w.ramificationIndex F * D (w.restrict F) := by
+  induction D using Finsupp.induction with
+  | zero => simp
+  | single_add v n D _ _ ih =>
+    rw [map_add, Finsupp.add_apply, ih, Finsupp.add_apply, mul_add]
+    congr 1
+    by_cases hw : w.restrict F = v
+    · subst hw
+      rw [pullback_single_apply_of_restrict_eq rfl, Finsupp.single_eq_same, mul_comm]
+    · rw [pullback_single_apply_of_restrict_ne hw,
+        Finsupp.single_eq_of_ne hw, mul_zero]
+
+theorem restrict_mem_support_of_mem_support_pullback {D : Divisor K F} {w : Place K F'}
+    (hw : w ∈ (pullback F' D).support) : w.restrict F ∈ D.support := by
+  rw [Finsupp.mem_support_iff] at hw ⊢
+  intro h
+  exact hw (by rw [pullback_apply, h, mul_zero])
+
+theorem pullback_apply_eq_ord {f : F} {D : Divisor K F}
+    (hD : ∀ v : Place K F, D v = v.ord f) (w : Place K F') :
+    pullback F' D w = w.ord (algebraMap F F' f) := by
+  rw [pullback_apply, hD, ← Place.ord_restrict]
+
+end Divisor
+
+namespace Divisor
+
+end Divisor
+
+end AlgebraicCurve
 
 section
 
@@ -1478,7 +1436,7 @@ open IsDedekindDomain WithZero IsLocalRing UniqueFactorizationMonoid AlgebraicCu
 
 theorem AlgebraicCurve.Place.exists_integralClosureAt_of_ord_fiber_nonneg {K F F' : Type*} [Field K]
     [Field F] [Field F'] [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] {v : Place K F} [HasPrincipalDivisors K F']
+    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] {v : Place K F}
     {f : F'} (hf : f ≠ 0) (hord : ∀ w ∈ v.fiber F', 0 ≤ w.ord f) : ∃ c : integralClosureAt F' v,
     algebraMap (integralClosureAt F' v) F' c = f := by
   classical
@@ -1542,8 +1500,8 @@ section
 open AlgebraicCurve
 
 theorem AlgebraicCurve.Place.pairwiseDisjoint_fiber {K F F' : Type*} [Field K] [Field F] [Field F']
-    [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F'] [Algebra.IsIntegral F F']
-    [HasPrincipalDivisors K F'] (s : Finset (Place K F)) : Set.PairwiseDisjoint
+    [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F'] [FiniteDimensional F F']
+    [Algebra.IsSeparable F F'] (s : Finset (Place K F)) : Set.PairwiseDisjoint
     (s : Set (Place K F)) (fun v : Place K F => v.fiber F') := by
   intro v₁ _ v₂ _ hne
   refine Finset.disjoint_left.mpr fun w hw₁ hw₂ => ?_
@@ -1557,7 +1515,7 @@ open AlgebraicCurve AlgebraicCurve.Divisor
 
 theorem AlgebraicCurve.Divisor.support_pullback_subset {K F F' : Type*} [Field K] [Field F]
     [Field F'] [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
-    [Algebra.IsIntegral F F'] [HasPrincipalDivisors K F'] [DecidableEq (Place K F')]
+    [FiniteDimensional F F'] [Algebra.IsSeparable F F'] [DecidableEq (Place K F')]
     (E : Divisor K F) : (Divisor.pullback F' E).support ⊆ E.support.biUnion (fun v => v.fiber F') :=
     by
   classical
