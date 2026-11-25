@@ -15,6 +15,7 @@ Groups with topology or approximated by finite quotients: profinite and pro-p gr
 - [Separability of isolated subgroups](separability-of-isolated-subgroups/README.md)
 - [Strong completeness of profinite groups](strong-completeness-of-profinite-groups/README.md)
 - [Subgroup separability of Baumslag–Solitar groups](subgroup-separability-of-baumslag-solitar-groups/README.md)
+- [Topological classifying bars](topological-classifying-bars/README.md)
 - [Totally disconnected locally compact groups](totally-disconnected-locally-compact-groups/README.md)
 - [Upper composition factors of finitely generated groups](upper-composition-factors-of-finitely-generated/README.md)
 - [Two elements generate a dense subgroup of a connected semisimple Lie group](semisimple-lie-group-two-generators-dens.md)

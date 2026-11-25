@@ -546,3 +546,4 @@ Chain and cochain complexes indexed by complex shapes, short complexes, homology
 - [The original finite-support cochain category](the-original-finite-support-cochain-category/README.md)
 - [The original Hom–tensor Iso for a bounded finite-projective tensor factor](the-original-hom-tensor-iso-for-a-bounded-finite/README.md)
 - [The regular coefficient in the actual chain tensor functor](the-regular-coefficient-in-the-actual-chain-tens/README.md)
+- [Simplicial chains and diagonal maps](simplicial-chains-and-diagonal-maps/README.md)
