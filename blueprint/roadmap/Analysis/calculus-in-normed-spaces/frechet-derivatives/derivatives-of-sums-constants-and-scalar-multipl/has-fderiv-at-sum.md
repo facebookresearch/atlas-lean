@@ -9,4 +9,4 @@ $S$ is empty.
 
 ## Sources
 
-- Mathlib, [`HasFDerivAt.sum`](https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Analysis/Calculus/FDeriv/Add.lean#L396-L418).
+- Mathlib, [`HasFDerivAt.sum`](https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Analysis/Calculus/FDeriv/Add.lean#L416 "HasFDerivAt.sum").

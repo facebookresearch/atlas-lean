@@ -10,4 +10,4 @@ There is no invertibility assumption on $c$.
 
 ## Sources
 
-- Mathlib, [`HasFDerivAt.const_smul`](https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Analysis/Calculus/FDeriv/Add.lean#L42-L67).
+- Mathlib, [`HasFDerivAt.const_smul`](https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Analysis/Calculus/FDeriv/Add.lean#L65 "HasFDerivAt.const_smul").
