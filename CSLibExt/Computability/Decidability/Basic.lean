@@ -55,23 +55,38 @@ open Computability Turing Encodable MetaMathlibExt.TM2Recursive
 
 variable {α : Type*} [Primcodable α]
 
-/-- `p` is **decidable** by a multi-stack machine: some `FinTM2` computes a total function
-`f : ℕ → ℕ` under `encodeNat` with `f (encode a) = 1` exactly when `p a`. -/
+/-- **Decidability by multi-stack machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is decidable by a multi-stack machine when there is a function
+$f : \mathbb{N} \to \mathbb{N}$ computed by a multi-stack Turing machine, with input and output
+numbers written in binary, such that for every $a \in \alpha$, $f(\mathrm{encode}(a)) = 1$ if and
+only if $p(a)$. -/
 def TM2Decidable (p : α → Prop) : Prop :=
   ∃ f : ℕ → ℕ, Nonempty (TM2Computable encodeNat encodeNat f) ∧ ∀ a, f (encode a) = 1 ↔ p a
 
-/-- `p` is **recognizable** by a multi-stack machine: some `FinTM2` halts on the input word
-`encodeNat (encode a)` exactly when `p a`. -/
+/-- **Recognizability by multi-stack machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is recognizable by a multi-stack machine when there are a multi-stack
+Turing machine $M$ and an identification of its input alphabet with the Booleans such that for
+every $a \in \alpha$, $p(a)$ holds if and only if $M$ halts when started on the binary word of
+$\mathrm{encode}(a)$. -/
 def TM2Recognizable (p : α → Prop) : Prop :=
   ∃ (tm : FinTM2) (e : tm.Γ tm.k₀ ≃ Bool),
     ∀ a, p a ↔ TM2HaltsOn tm ((encodeNat (encode a)).map e.symm)
 
-/-- `p` is **co-recognizable**: its complement is recognizable. -/
+/-- **Co-recognizability by multi-stack machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is co-recognizable by a multi-stack machine when its complement
+$\neg p$ is recognizable by a multi-stack machine. -/
 def TM2CoRecognizable (p : α → Prop) : Prop := TM2Recognizable fun a ↦ ¬p a
 
 /-! ### Bridges to Mathlib -/
 
-/-- Decidability by a multi-stack machine is Mathlib's `ComputablePred`. -/
+/-- **Multi-stack decidable predicates are exactly the computable predicates.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). A predicate $p$ on $\alpha$ is decidable by a multi-stack machine if and
+only if it is computable, that is, $p$ is decidable and its Boolean characteristic function
+$\alpha \to \mathrm{Bool}$ is computable. -/
 theorem tm2Decidable_iff_computablePred {p : α → Prop} :
     TM2Decidable p ↔ ComputablePred p := by
   constructor
@@ -92,7 +107,11 @@ theorem tm2Decidable_iff_computablePred {p : α → Prop} :
     refine ⟨F, ⟨hT⟩, fun a ↦ ?_⟩
     cases h : g a <;> simp [F, encodek, h]
 
-/-- Recognizability by a multi-stack machine is Mathlib's `REPred`. -/
+/-- **Multi-stack recognizable predicates are exactly the r.e. predicates.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). A predicate $p$ on $\alpha$ is recognizable by a multi-stack machine if and
+only if it is recursively enumerable, that is, the partial function on $\alpha$ that is defined,
+with a trivial value, exactly where $p$ holds is partial recursive. -/
 theorem tm2Recognizable_iff_rePred {p : α → Prop} : TM2Recognizable p ↔ REPred p := by
   constructor
   · rintro ⟨tm, e, hp⟩
@@ -123,28 +142,45 @@ theorem tm2Recognizable_iff_rePred {p : α → Prop} : TM2Recognizable p ↔ REP
     rw [← h]
     simp [q, encodek]
 
-/-- Co-recognizability by a multi-stack machine is `REPred` of the complement. -/
+/-- **Multi-stack co-recognizable predicates are exactly the co-r.e. predicates.** Let $\alpha$ be
+a primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). A predicate $p$ on $\alpha$ is co-recognizable by a multi-stack machine if
+and only if its complement $\neg p$ is recursively enumerable, that is, the partial function on
+$\alpha$ that is defined, with a trivial value, exactly where $\neg p$ holds is partial
+recursive. -/
 theorem tm2CoRecognizable_iff_rePred_not {p : α → Prop} :
     TM2CoRecognizable p ↔ REPred fun a ↦ ¬p a :=
   tm2Recognizable_iff_rePred
 
 /-! ### Decidable predicates -/
 
-/-- A decidable predicate is recognizable. -/
+/-- **Decidable predicates are recognizable by multi-stack machines.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). If a predicate $p$ on $\alpha$ is decidable by a multi-stack machine, then
+$p$ is recognizable by a multi-stack machine. -/
 theorem TM2Decidable.tm2Recognizable {p : α → Prop} (h : TM2Decidable p) : TM2Recognizable p :=
   tm2Recognizable_iff_rePred.mpr (tm2Decidable_iff_computablePred.mp h).to_re
 
-/-- The complement of a decidable predicate is decidable. -/
+/-- **Decidability by multi-stack machines is closed under complement.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). If a predicate $p$ on $\alpha$ is decidable by a multi-stack machine, then
+so is its complement $\neg p$. -/
 theorem TM2Decidable.not {p : α → Prop} (h : TM2Decidable p) : TM2Decidable fun a ↦ ¬p a :=
   tm2Decidable_iff_computablePred.mpr (tm2Decidable_iff_computablePred.mp h).not
 
-/-- A decidable predicate is co-recognizable. -/
+/-- **Decidable predicates are co-recognizable by multi-stack machines.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). If a predicate $p$ on $\alpha$ is decidable by a multi-stack machine, then
+$p$ is co-recognizable by a multi-stack machine, that is, its complement $\neg p$ is recognizable
+by a multi-stack machine. -/
 theorem TM2Decidable.tm2CoRecognizable {p : α → Prop} (h : TM2Decidable p) :
     TM2CoRecognizable p :=
   h.not.tm2Recognizable
 
-/-- **Post's theorem** for multi-stack machines: a predicate is decidable iff it is recognizable
-and co-recognizable. -/
+/-- **Post's theorem for multi-stack machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is decidable by a multi-stack machine if and only if it is both
+recognizable and co-recognizable by a multi-stack machine. -/
 theorem tm2Decidable_iff_tm2Recognizable_and_tm2CoRecognizable {p : α → Prop} :
     TM2Decidable p ↔ TM2Recognizable p ∧ TM2CoRecognizable p := by
   rw [tm2Decidable_iff_computablePred, tm2CoRecognizable_iff_rePred_not,

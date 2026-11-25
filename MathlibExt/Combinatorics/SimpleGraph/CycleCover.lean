@@ -20,26 +20,38 @@ namespace SimpleGraph
 
 variable {V : Type*}
 
-/-- A cycle in a graph, presented as a closed walk with a cycle proof. -/
+/-- **Cycles in a graph.** A cycle in a simple graph $G$ consists of a base vertex $v$ of $G$
+together with a closed walk $v = v_0, v_1, \dots, v_n = v$ in $G$ such that $n \ge 1$, the $n$
+edges $v_{k-1} v_k$ of the walk are pairwise distinct, and the vertices $v_1, \dots, v_n$ are
+pairwise distinct. In a simple graph this forces $n \ge 3$.
+
+The base vertex and the direction of traversal are part of the data, so a single cycle subgraph
+of $G$ arises from several such cycles. -/
 structure Cycle (G : SimpleGraph V) where
   base : V
   walk : G.Walk base base
   isCycle : walk.IsCycle
 
-/-- The edges traversed by a cycle. -/
+/-- **Edges of a cycle.** The edges of a cycle $c$ in a simple graph form the list of the edges of
+its closed walk, in the order in which $c$ traverses them starting from its base vertex; each edge
+is the unordered pair of its two endpoints. -/
 def Cycle.edges {G : SimpleGraph V} (c : Cycle G) : List (Sym2 V) :=
   c.walk.edges
 
-/-- The length of a cycle. -/
+/-- **Length of a cycle.** The length of a cycle in a simple graph is the number of edges of its
+closed walk. -/
 def Cycle.length {G : SimpleGraph V} (c : Cycle G) : ℕ :=
   c.walk.length
 
-/-- `C` covers `G`: every edge of `G` lies on at least one cycle of `C`. -/
+/-- **Cycle covers.** Let $G$ be a finite simple graph. A finite multiset $C$ of cycles in $G$ is a
+cycle cover of $G$ when every edge of $G$ is an edge of at least one cycle in $C$. -/
 def IsCycleCover (G : SimpleGraph V) [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
     (C : Multiset (Cycle G)) : Prop :=
   ∀ e ∈ G.edgeFinset, ∃ c ∈ C, e ∈ c.edges
 
-/-- The total length of a multiset of cycles. -/
+/-- **Total length of a multiset of cycles.** The total length of a finite multiset $C$ of cycles in
+a simple graph is the sum of the lengths of the cycles in $C$, each counted with its multiplicity.
+-/
 def totalLength {G : SimpleGraph V} (C : Multiset (Cycle G)) : ℕ :=
   (C.map Cycle.length).sum
 

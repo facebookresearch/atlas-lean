@@ -46,8 +46,9 @@ namespace CharacterTheory
 
 universe u
 
-/-- The class inner product of two class functions, normalised by `|G|`:
-`⟨f₁, f₂⟩ = |G|⁻¹ ∑ g, f₁ g * f₂ g⁻¹`. -/
+/-- **Class inner product.** Let $G$ be a finite group and $k$ a field in which $|G|$ is
+invertible. For functions $f_1, f_2 \colon G \to k$, their class inner product is
+$\langle f_1, f_2 \rangle = |G|^{-1} \sum_{g \in G} f_1(g) f_2(g^{-1})$. -/
 noncomputable def classInnerProduct {G : Type u} [Group G] [Fintype G] {k : Type u}
     [Field k] [Invertible (Nat.card G : k)] (f₁ f₂ : G → k) : k :=
   (Nat.card G : k)⁻¹ * ∑ g : G, f₁ g * f₂ g⁻¹

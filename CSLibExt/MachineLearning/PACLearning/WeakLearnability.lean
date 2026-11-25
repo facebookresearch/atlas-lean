@@ -28,8 +28,9 @@ Main results:
 * `IsPACLearnable.toIsWeakPACLearnable`: PAC learnability implies weak PAC learnability, the
   trivial direction of Schapire's Theorem 1.
 
-The converse, the statistical form of Schapire's theorem for the realizable case, is recorded as
-wanted in `WantedExt/ComputerScience/WeakLearnabilityWanted.lean`.
+The converse, the statistical form of Schapire's theorem for the realizable case, is
+`IsWeakPACLearnable.isPACLearnable_realizableFamily` in
+`CSLibExt/MachineLearning/PACLearning/Boosting.lean`.
 -/
 
 @[expose] public section
