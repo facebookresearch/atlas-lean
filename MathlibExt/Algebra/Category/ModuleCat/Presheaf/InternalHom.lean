@@ -34,6 +34,7 @@ public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Monoidal
 public import Mathlib.CategoryTheory.Monoidal.Closed.Basic
 public import Mathlib.CategoryTheory.Sites.SheafHom
 public import Mathlib.CategoryTheory.Sites.Subsheaf
+import MathlibExt.Algebra.Category.ModuleCat.PresheafTensorFormulae
 
 /-!
 # Internal hom of presheaves of modules
@@ -64,11 +65,6 @@ variable {C : Type u'} [Category.{v'} C] {R : Cᵒᵖ ⥤ CommRingCat.{u}}
   (F N : PresheafOfModules.{u} (R ⋙ forget₂ _ _))
 
 namespace InternalHom
-
-lemma map_id_apply (M : PresheafOfModules.{u} (R ⋙ forget₂ _ _)) (X : Cᵒᵖ) (x : M.obj X) :
-    M.map (𝟙 X) x = x := by
-  change (M.presheaf.map (𝟙 X)) x = x
-  rw [M.presheaf.map_id]; rfl
 
 /-- Families of linear maps `F(Y) → N(Y)` indexed by the arrows `X ⟶ Y`. -/
 abbrev PiFamily (X : Cᵒᵖ) : Type (max u u' v') :=
@@ -102,7 +98,7 @@ variable {F N}
 lemma naturality {X : Cᵒᵖ} (φ : naturalFamilies F N X) ⦃Y Z : Cᵒᵖ⦄ (f : X ⟶ Y) (g : Y ⟶ Z)
     (x : F.obj Y) : N.map g (φ.1 f x) = φ.1 (f ≫ g) (F.map g x) := φ.2 f g x
 
-lemma congr_app {X : Cᵒᵖ} (φ : naturalFamilies F N X) {Y : Cᵒᵖ} {f g : X ⟶ Y} (h : f = g)
+private lemma congr_app {X : Cᵒᵖ} (φ : naturalFamilies F N X) {Y : Cᵒᵖ} {f g : X ⟶ Y} (h : f = g)
     (x : F.obj Y) : φ.1 f x = φ.1 g x := by subst h; rfl
 
 instance (X : Cᵒᵖ) : SMul (R.obj X) (naturalFamilies F N X) where
@@ -318,13 +314,13 @@ noncomputable def uncurryApp (κ : G ⟶ ihomObj F N) (X : Cᵒᵖ) : (F ⊗ G).
       rw [R.map_id]
       rfl)
 
-lemma tensorObj_map_tmul' {X Y : Cᵒᵖ} (g : X ⟶ Y) (x : F.obj X) (y : G.obj X) :
+private lemma tensorObj_map_tmul' {X Y : Cᵒᵖ} (g : X ⟶ Y) (x : F.obj X) (y : G.obj X) :
     DFunLike.coe (α := (F.obj X ⊗ G.obj X :))
       (β := fun _ => (ModuleCat.restrictScalars (R.map g).hom).obj (F.obj Y ⊗ G.obj Y))
       (ModuleCat.Hom.hom (R := ↑(R.obj X)) ((F ⊗ G).map g)) (x ⊗ₜ[R.obj X] y) =
     F.map g x ⊗ₜ[R.obj Y] G.map g y := rfl
 
-lemma uncurryApp_tmul (κ : G ⟶ ihomObj F N) (X : Cᵒᵖ) (x : F.obj X) (y : G.obj X) :
+private lemma uncurryApp_tmul (κ : G ⟶ ihomObj F N) (X : Cᵒᵖ) (x : F.obj X) (y : G.obj X) :
     DFunLike.coe (α := (F.obj X ⊗ G.obj X :)) (β := fun _ => N.obj X)
       (uncurryApp F κ X).hom (x ⊗ₜ[R.obj X] y) = (κ.app X y).1 (𝟙 X) x := by
   erw [ModuleCat.MonoidalCategory.tensorLift_tmul]
@@ -352,7 +348,7 @@ lemma uncurry'_curry' (θ : F ⊗ G ⟶ N) : uncurry' F (curry' F θ) = θ := by
   intro x y
   erw [uncurry'_app_tmul]
   change θ.app X (x ⊗ₜ[R.obj X] G.map (𝟙 X) y) = θ.app X (x ⊗ₜ[R.obj X] y)
-  erw [InternalHom.map_id_apply]
+  erw [PresheafOfModules.map_id_apply]
 
 lemma curry'_uncurry' (κ : G ⟶ ihomObj F N) : curry' F (uncurry' F κ) = κ := by
   ext X y

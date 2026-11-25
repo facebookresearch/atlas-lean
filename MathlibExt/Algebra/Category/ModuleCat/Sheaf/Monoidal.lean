@@ -34,7 +34,8 @@ public import MathlibExt.Algebra.Category.ModuleCat.Presheaf.InternalHom
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Localization
 public import Mathlib.CategoryTheory.Localization.Monoidal.Braided
 public import Mathlib.CategoryTheory.Monoidal.Braided.Reflection
-public import Mathlib.AlgebraicGeometry.Modules.Sheaf
+import Mathlib.Algebra.Category.ModuleCat.Presheaf.Abelian
+import Mathlib.CategoryTheory.Functor.ReflectsIso.Balanced
 
 /-!
 # The monoidal structure on sheaves of modules
@@ -44,7 +45,7 @@ become isomorphisms after sheafification is stable under tensoring
 (`PresheafOfModules.isMonoidal_inverseImage_W_toPresheaf`). Hence the monoidal structure on
 presheaves of modules descends along sheafification, and sheaves of modules over `𝒪` form a
 symmetric monoidal closed category whose tensor product is the sheafified tensor product
-(`SheafOfModules.tensorIsoSheafify`). In particular `X.Modules` is monoidal for a scheme `X`.
+(`SheafOfModules.tensorIsoSheafify`).
 -/
 
 @[expose] public section
@@ -63,15 +64,14 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
   [Presheaf.IsLocallyInjective J α] [Presheaf.IsLocallySurjective J α]
   [J.WEqualsLocallyBijective AddCommGrpCat.{u}] [HasWeakSheafify J AddCommGrpCat.{u}]
 
-private abbrev PMod := PresheafOfModules.{u} (𝒪 ⋙ forget₂ CommRingCat RingCat)
-
-private abbrev W : MorphismProperty (PMod 𝒪) :=
+private abbrev W : MorphismProperty (PresheafOfModulesOfCommRing.{u} 𝒪) :=
   (J.W (A := AddCommGrpCat.{u})).inverseImage
     (PresheafOfModules.toPresheaf (𝒪 ⋙ forget₂ CommRingCat RingCat))
 
-private abbrev shf : PMod 𝒪 ⥤ SheafOfModules.{u} R := PresheafOfModules.sheafification α
+private abbrev shf : PresheafOfModulesOfCommRing.{u} 𝒪 ⥤ SheafOfModules.{u} R :=
+  PresheafOfModules.sheafification α
 
-private abbrev inc : SheafOfModules.{u} R ⥤ PMod 𝒪 :=
+private abbrev inc : SheafOfModules.{u} R ⥤ PresheafOfModulesOfCommRing.{u} 𝒪 :=
   SheafOfModules.forget R ⋙ PresheafOfModules.restrictScalars α
 
 private abbrev adj : shf 𝒪 R α ⊣ inc 𝒪 R α := PresheafOfModules.sheafificationAdjunction α
@@ -82,14 +82,15 @@ private local instance : (inc 𝒪 R α).Full := (adj 𝒪 R α).fullyFaithfulRO
 private lemma W_eq : W (J := J) 𝒪 = (MorphismProperty.isomorphisms _).inverseImage (shf 𝒪 R α) :=
   PresheafOfModules.inverseImage_W_toPresheaf_eq_inverseImage_isomorphisms α
 
-private lemma isIso_unit_app_of_isSheaf (N : PMod 𝒪) (hN : Presheaf.IsSheaf J N.presheaf) :
+private lemma isIso_unit_app_of_isSheaf (N : PresheafOfModulesOfCommRing.{u} 𝒪)
+    (hN : Presheaf.IsSheaf J N.presheaf) :
     IsIso ((adj 𝒪 R α).unit.app N) := by
   have : IsIso ((PresheafOfModules.toPresheaf _).map ((adj 𝒪 R α).unit.app N)) := by
     rw [PresheafOfModules.toPresheaf_map_sheafificationAdjunction_unit_app]
     exact isIso_toSheafify J hN
   exact isIso_of_reflects_iso _ (PresheafOfModules.toPresheaf _)
 
-private lemma isIso_shf_map_unit_whiskerRight (d d' : PMod 𝒪) :
+private lemma isIso_shf_map_unit_whiskerRight (d d' : PresheafOfModulesOfCommRing.{u} 𝒪) :
     IsIso ((shf 𝒪 R α).map (((adj 𝒪 R α).unit.app d) ▷ d')) := by
   have h := (Monoidal.Reflective.isIso_tfae (adj 𝒪 R α)).out 1 3
   refine (h.mp ?_) d d'
@@ -98,11 +99,13 @@ private lemma isIso_shf_map_unit_whiskerRight (d d' : PMod 𝒪) :
   exact PresheafOfModules.isSheaf_ihomObj _ _ c.isSheaf
 
 include R α in
-private lemma W_whiskerRight {d₁ d₂ : PMod 𝒪} (g : d₁ ⟶ d₂) (hg : W (J := J) 𝒪 g) (d' : PMod 𝒪) :
+private lemma W_whiskerRight {d₁ d₂ : PresheafOfModulesOfCommRing.{u} 𝒪} (g : d₁ ⟶ d₂)
+    (hg : W (J := J) 𝒪 g) (d' : PresheafOfModulesOfCommRing.{u} 𝒪) :
     W (J := J) 𝒪 (g ▷ d') := by
   have two3 : (W (J := J) 𝒪).HasTwoOutOfThreeProperty := by
     rw [W_eq 𝒪 R α]; infer_instance
-  have hη : ∀ d : PMod 𝒪, W (J := J) 𝒪 ((adj 𝒪 R α).unit.app d ▷ d') := fun d => by
+  have hη : ∀ d : PresheafOfModulesOfCommRing.{u} 𝒪,
+      W (J := J) 𝒪 ((adj 𝒪 R α).unit.app d ▷ d') := fun d => by
     rw [W_eq 𝒪 R α]
     exact isIso_shf_map_unit_whiskerRight 𝒪 R α d d'
   have hiso : W (J := J) 𝒪 ((inc 𝒪 R α).map ((shf 𝒪 R α).map g) ▷ d') := by
@@ -145,21 +148,18 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
 /-- The sheaf of rings underlying a sheaf of commutative rings. -/
 abbrev ringSheaf : Sheaf J RingCat.{u} := ⟨𝒪 ⋙ forget₂ CommRingCat RingCat, h𝒪⟩
 
-/-- Presheaves of modules over `𝒪`. -/
-abbrev PMod := PresheafOfModules.{u} (𝒪 ⋙ forget₂ CommRingCat RingCat)
-
 /-- Morphisms of presheaves of modules that become isomorphisms after sheafification. -/
 abbrev presheafW (J : GrothendieckTopology C) (𝒪 : Cᵒᵖ ⥤ CommRingCat.{u}) :
-    MorphismProperty (PMod 𝒪) :=
+    MorphismProperty (PresheafOfModulesOfCommRing.{u} 𝒪) :=
   (J.W (A := AddCommGrpCat.{u})).inverseImage
     (PresheafOfModules.toPresheaf (𝒪 ⋙ forget₂ CommRingCat RingCat))
 
 /-- Sheafification of presheaves of modules over `𝒪`. -/
-abbrev sheafifyFunctor : PMod 𝒪 ⥤ SheafOfModules.{u} (ringSheaf 𝒪 h𝒪) :=
+abbrev sheafifyFunctor : PresheafOfModulesOfCommRing.{u} 𝒪 ⥤ SheafOfModules.{u} (ringSheaf 𝒪 h𝒪) :=
   PresheafOfModules.sheafification (R := ringSheaf 𝒪 h𝒪) (𝟙 (𝒪 ⋙ forget₂ CommRingCat RingCat))
 
 /-- The underlying presheaf of modules of a sheaf of modules. -/
-abbrev toPMod : SheafOfModules.{u} (ringSheaf 𝒪 h𝒪) ⥤ PMod 𝒪 :=
+abbrev toPMod : SheafOfModules.{u} (ringSheaf 𝒪 h𝒪) ⥤ PresheafOfModulesOfCommRing.{u} 𝒪 :=
   SheafOfModules.forget (ringSheaf 𝒪 h𝒪) ⋙
     PresheafOfModules.restrictScalars (𝟙 (𝒪 ⋙ forget₂ CommRingCat RingCat))
 
@@ -186,7 +186,7 @@ variable [J.HasSheafCompose (forget₂ RingCat.{u} AddCommGrpCat.{u})]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The sheafification of the unit presheaf of modules is the unit sheaf. -/
-def sheafifyUnitIso : (sheafifyFunctor 𝒪 h𝒪).obj (𝟙_ (PMod 𝒪)) ≅
+def sheafifyUnitIso : (sheafifyFunctor 𝒪 h𝒪).obj (𝟙_ (PresheafOfModulesOfCommRing.{u} 𝒪)) ≅
     (unit (ringSheaf 𝒪 h𝒪) : SheafOfModules.{u} (ringSheaf 𝒪 h𝒪)) :=
   sheafifyCounitIso 𝒪 h𝒪 (unit (ringSheaf 𝒪 h𝒪))
 
@@ -222,50 +222,5 @@ def tensorIsoSheafify (L M : SheafOfModules.{u} (ringSheaf 𝒪 h𝒪)) :
     (sheafifyCounitIso 𝒪 h𝒪 L ⊗ᵢ sheafifyCounitIso 𝒪 h𝒪 M)
 
 end SheafOfModules
-
-namespace AlgebraicGeometry
-
-variable (X : Scheme.{u})
-
-instance Scheme.PresheafOfModules.monoidalCategory : MonoidalCategory X.PresheafOfModules :=
-  inferInstanceAs (MonoidalCategory (_root_.PresheafOfModules.{u} (X.sheaf.obj ⋙ forget₂
-    CommRingCat RingCat)))
-instance Scheme.PresheafOfModules.symmetricCategory : SymmetricCategory X.PresheafOfModules :=
-  inferInstanceAs (SymmetricCategory (_root_.PresheafOfModules.{u} (X.sheaf.obj ⋙ forget₂
-    CommRingCat RingCat)))
-instance Scheme.PresheafOfModules.monoidalClosed : MonoidalClosed X.PresheafOfModules :=
-  inferInstanceAs (MonoidalClosed (_root_.PresheafOfModules.{u} (X.sheaf.obj ⋙ forget₂ CommRingCat
-    RingCat)))
-
-/-- Sheaves of modules on a scheme form a monoidal category. -/
-instance Scheme.Modules.monoidalCategory : MonoidalCategory X.Modules :=
-  inferInstanceAs (MonoidalCategory
-    (SheafOfModules.{u} (SheafOfModules.ringSheaf X.sheaf.obj X.ringCatSheaf.property)))
-instance Scheme.Modules.symmetricCategory : SymmetricCategory X.Modules :=
-  inferInstanceAs (SymmetricCategory
-    (SheafOfModules.{u} (SheafOfModules.ringSheaf X.sheaf.obj X.ringCatSheaf.property)))
-instance Scheme.Modules.monoidalClosed : MonoidalClosed X.Modules :=
-  inferInstanceAs (MonoidalClosed
-    (SheafOfModules.{u} (SheafOfModules.ringSheaf X.sheaf.obj X.ringCatSheaf.property)))
-
-variable {X}
-
-@[simp] theorem Scheme.Modules.tensorUnit_eq :
-    𝟙_ X.Modules = SheafOfModules.unit X.ringCatSheaf := rfl
-
-variable (X) in
-/-- Sheafification of presheaves of modules on a scheme. -/
-abbrev Scheme.Modules.sheafify : X.PresheafOfModules ⥤ X.Modules :=
-  SheafOfModules.sheafifyFunctor X.sheaf.obj X.ringCatSheaf.property
-
-instance : (Scheme.Modules.sheafify X).Monoidal :=
-  inferInstanceAs (SheafOfModules.sheafifyFunctor X.sheaf.obj X.ringCatSheaf.property).Monoidal
-
-/-- On a scheme, `L ⊗ M` is the sheafified presheaf tensor product. -/
-def Scheme.Modules.tensorIsoSheafify (L M : X.Modules) :
-    (Scheme.Modules.sheafify X).obj (L.val ⊗ M.val) ≅ L ⊗ M :=
-  SheafOfModules.tensorIsoSheafify X.sheaf.obj X.ringCatSheaf.property L M
-
-end AlgebraicGeometry
 
 end
