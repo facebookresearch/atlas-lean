@@ -63,8 +63,6 @@ equation, finite-order growth and decay bounds through differentiation.
 
 @[expose] public section
 
-set_option Elab.async false
-
 set_option autoImplicit false
 
 section SpanGamma
