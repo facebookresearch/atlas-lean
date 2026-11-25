@@ -72,10 +72,6 @@ theorem ord_eq_zero_iff_adicValuation_eq_one {f : F} (hf : f ≠ 0) :
   · intro h
     rw [h, log_one]
 
-/-- A place has finite residue field dimension over `K`. -/
-class FiniteResidue : Prop where
-  finite : Module.Finite K v.ResidueField
-
 end Place
 
 class HasPrincipalDivisors : Prop where

@@ -33,6 +33,24 @@ module
 public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 
+/-!
+# The glued degree-zero Picard group
+
+Gluing data for a finite set `S` of nodes, each a pair of places of `F`, consists of two divisors
+and a unit of `K` at each node. `GluedPic0 K F S` is the quotient of the admissible data by the
+glued principal data: the divisors of two nonzero functions together with the ratios of their
+values at the two places of each node.
+
+* Nodes join `K`-rational places (`AlgebraicCurve.RationalPlace`), where `K` maps onto the residue
+  field. There a function of order zero has a value in `Kˣ`, so the node units in `Kˣ` record every
+  gluing relation: the classes whose two Picard classes vanish are exactly the classes of node
+  units (`AlgebraicCurve.GluedPic0.ker_toPic0Pair`).
+* Admissible divisors are supported on places whose residue field is finite over `K`
+  (`AlgebraicCurve.GluingData.finiteDegZero`). `AlgebraicCurve.Place.deg` is a `Module.finrank`,
+  which is `0` for a residue field of infinite dimension over `K`, so only on such places does the
+  degree of a divisor count its places with their residue degrees.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -150,23 +168,59 @@ theorem exists_hasValue_of_surjective (hv : Function.Surjective (algebraMap K v.
 
 end Place
 
+section Rational
+
+variable (K F : Type*) [Field K] [Field F] [Algebra K F]
+
+/-- The `K`-rational places of `F`: the places whose residue field is the image of `K`. -/
+abbrev RationalPlace : Type _ :=
+  {v : Place K F // Function.Surjective (algebraMap K v.ResidueField)}
+
+variable {K F}
+
+theorem RationalPlace.exists_hasValue_of_ord_eq_zero (v : RationalPlace K F) {g : F}
+    (hg : g ≠ 0) (h : (v : Place K F).ord g = 0) : ∃ a : Kˣ, (v : Place K F).HasValue g a := by
+  obtain ⟨hm, hu⟩ := (v : Place K F).exists_isUnit_of_ord_eq_zero hg h
+  obtain ⟨a, ha, ha0⟩ := (v : Place K F).exists_hasValue_of_surjective v.2 hm
+  exact ⟨Units.mk0 a (ha0 hu), ha⟩
+
+end Rational
+
 section Glued
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-/-- Gluing data for two divisor classes together with node units. -/
-abbrev GluingData (S : Finset (Place K F × Place K F)) : Type _ :=
+/-- Gluing data for two divisor classes together with node units, for a finite set of nodes,
+each a pair of `K`-rational places. -/
+abbrev GluingData (S : Finset (RationalPlace K F × RationalPlace K F)) : Type _ :=
   Divisor K F × Divisor K F × (↥S → Additive Kˣ)
 
 namespace GluingData
 
-variable {K F}
-variable (S : Finset (Place K F × Place K F))
+/-- The degree-zero divisors supported on places whose residue field is finite over `K`, the
+places where `Place.deg` is the residue degree: at a place whose residue field has infinite
+dimension over `K`, the `Module.finrank` defining `Place.deg` is `0`. -/
+def finiteDegZero : AddSubgroup (Divisor K F) :=
+  Divisor.degZero (K := K) (F := F) ⊓
+    (Finsupp.supported ℤ ℤ {v : Place K F | Module.Finite K v.ResidueField}).toAddSubgroup
 
-/-- The admissible subgroup of gluing data. -/
+variable {K F}
+
+theorem mem_finiteDegZero {D : Divisor K F} :
+    D ∈ finiteDegZero K F ↔
+      Divisor.degree D = 0 ∧ ∀ v ∈ D.support, Module.Finite K v.ResidueField :=
+  Iff.rfl
+
+theorem finiteDegZero_le_degZero : finiteDegZero K F ≤ Divisor.degZero (K := K) (F := F) :=
+  inf_le_left
+
+variable (S : Finset (RationalPlace K F × RationalPlace K F))
+
+/-- The admissible subgroup of gluing data: both divisors lie in `finiteDegZero` and vanish at
+the places of the nodes. -/
 def admissible : AddSubgroup (GluingData K F S) where
-  carrier := {x | x.1 ∈ Divisor.degZero (K := K) (F := F) ∧
-    x.2.1 ∈ Divisor.degZero (K := K) (F := F) ∧ ∀ s ∈ S, x.1 s.1 = 0 ∧ x.2.1 s.2 = 0}
+  carrier := {x | x.1 ∈ finiteDegZero K F ∧ x.2.1 ∈ finiteDegZero K F ∧
+    ∀ s ∈ S, x.1 s.1 = 0 ∧ x.2.1 s.2 = 0}
   zero_mem' := ⟨zero_mem _, zero_mem _, fun _ _ => ⟨rfl, rfl⟩⟩
   add_mem' := by
     rintro x y ⟨hx₁, hx₂, hx⟩ ⟨hy₁, hy₂, hy⟩
@@ -180,8 +234,8 @@ def admissible : AddSubgroup (GluingData K F S) where
     · rw [Prod.snd_neg, Prod.fst_neg, Finsupp.neg_apply, (hx s hs).2, neg_zero]
 
 theorem mem_admissible {x : GluingData K F S} :
-    x ∈ admissible S ↔ x.1 ∈ Divisor.degZero (K := K) (F := F) ∧
-      x.2.1 ∈ Divisor.degZero (K := K) (F := F) ∧ ∀ s ∈ S, x.1 s.1 = 0 ∧ x.2.1 s.2 = 0 :=
+    x ∈ admissible S ↔ x.1 ∈ finiteDegZero K F ∧ x.2.1 ∈ finiteDegZero K F ∧
+      ∀ s ∈ S, x.1 s.1 = 0 ∧ x.2.1 s.2 = 0 :=
   Iff.rfl
 
 theorem zero_zero_mem_admissible (w : ↥S → Additive Kˣ) :
@@ -193,8 +247,8 @@ whose values at glued places differ by the recorded node units. -/
 def IsGluedPrincipal (x : GluingData K F S) : Prop :=
   ∃ (g₁ g₂ : F) (a b : ↥S → Kˣ), g₁ ≠ 0 ∧ g₂ ≠ 0 ∧
     (∀ v : Place K F, x.1 v = v.ord g₁) ∧ (∀ v : Place K F, x.2.1 v = v.ord g₂) ∧
-    (∀ s : ↥S, (s : Place K F × Place K F).1.HasValue g₁ (a s) ∧
-      (s : Place K F × Place K F).2.HasValue g₂ (b s)) ∧
+    (∀ s : ↥S, ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).HasValue g₁ (a s) ∧
+      ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).HasValue g₂ (b s)) ∧
     x.2.2 = fun s => Additive.ofMul (a s / b s)
 
 /-- The subgroup of glued principal gluing data. -/
@@ -203,8 +257,8 @@ def gluedPrincipal : AddSubgroup (GluingData K F S) where
   zero_mem' := by
     refine ⟨1, 1, 1, 1, one_ne_zero, one_ne_zero, fun v => by simp, fun v => by simp,
       fun s => ⟨?_, ?_⟩, ?_⟩
-    · simpa using (s : Place K F × Place K F).1.hasValue_one
-    · simpa using (s : Place K F × Place K F).2.hasValue_one
+    · simpa using ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).hasValue_one
+    · simpa using ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).hasValue_one
     · funext s
       simp
   add_mem' := by
@@ -237,14 +291,15 @@ theorem mem_gluedPrincipal {x : GluingData K F S} :
 
 end GluingData
 
-/-- The glued degree-zero Picard group for a finite set of glued place pairs. -/
-abbrev GluedPic0 (S : Finset (Place K F × Place K F)) : Type _ :=
+/-- The glued degree-zero Picard group for a finite set of nodes, each a pair of `K`-rational
+places. -/
+abbrev GluedPic0 (S : Finset (RationalPlace K F × RationalPlace K F)) : Type _ :=
   ↥(GluingData.admissible S) ⧸ (GluingData.gluedPrincipal S).addSubgroupOf (GluingData.admissible S)
 
 namespace GluedPic0
 
 variable {K F}
-variable (S : Finset (Place K F × Place K F))
+variable (S : Finset (RationalPlace K F × RationalPlace K F))
 
 /-- The class of admissible gluing data in the glued Picard group. -/
 def mk : ↥(GluingData.admissible S) →+ GluedPic0 K F S :=
@@ -263,8 +318,8 @@ theorem mk_eq_mk_iff (x y : ↥(GluingData.admissible S)) :
 
 /-- The auxiliary map from admissible data to the pair of Picard classes. -/
 def toPic0PairAux : ↥(GluingData.admissible S) →+ Pic0 K F × Pic0 K F where
-  toFun x := (Pic0.mk ⟨(x : GluingData K F S).1, x.2.1⟩,
-    Pic0.mk ⟨(x : GluingData K F S).2.1, x.2.2.1⟩)
+  toFun x := (Pic0.mk ⟨(x : GluingData K F S).1, GluingData.finiteDegZero_le_degZero x.2.1⟩,
+    Pic0.mk ⟨(x : GluingData K F S).2.1, GluingData.finiteDegZero_le_degZero x.2.2.1⟩)
   map_zero' := rfl
   map_add' _ _ := rfl
 
@@ -278,8 +333,9 @@ def toPic0Pair : GluedPic0 K F S →+ Pic0 K F × Pic0 K F :=
 
 @[simp]
 theorem toPic0Pair_mk (x : ↥(GluingData.admissible S)) :
-    toPic0Pair S (mk S x) = (Pic0.mk ⟨(x : GluingData K F S).1, x.2.1⟩,
-      Pic0.mk ⟨(x : GluingData K F S).2.1, x.2.2.1⟩) :=
+    toPic0Pair S (mk S x) =
+      (Pic0.mk ⟨(x : GluingData K F S).1, GluingData.finiteDegZero_le_degZero x.2.1⟩,
+        Pic0.mk ⟨(x : GluingData K F S).2.1, GluingData.finiteDegZero_le_degZero x.2.2.1⟩) :=
   rfl
 
 /-- The auxiliary map recording node units as admissible data. -/
@@ -307,10 +363,34 @@ theorem nodeUnit_const (c : Kˣ) : nodeUnit S (fun _ => Additive.ofMul c) = 0 :=
   rw [nodeUnit_apply, mk_eq_zero_iff]
   refine ⟨algebraMap K F c, 1, fun _ => c, 1, (map_ne_zero _).mpr c.ne_zero, one_ne_zero,
     fun v => by simp, fun v => by simp, fun s => ⟨?_, ?_⟩, ?_⟩
-  · exact (s : Place K F × Place K F).1.hasValue_algebraMap (c : K)
-  · simpa using (s : Place K F × Place K F).2.hasValue_one
+  · exact ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).hasValue_algebraMap (c : K)
+  · simpa using ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).hasValue_one
   · funext s
     simp
+
+/-- At nodes joining `K`-rational places, the classes whose two Picard classes vanish are exactly
+the classes of node units. -/
+theorem ker_toPic0Pair : (toPic0Pair S).ker = (nodeUnit S).range := by
+  refine le_antisymm (fun z hz => ?_) ?_
+  · obtain ⟨⟨⟨D₁, D₂, w⟩, hx⟩, rfl⟩ := mk_surjective S z
+    have hS := hx.2.2
+    rw [AddMonoidHom.mem_ker, toPic0Pair_mk, Prod.mk_eq_zero] at hz
+    obtain ⟨g₁, hg₁, h₁⟩ := (QuotientAddGroup.eq_zero_iff _).mp hz.1
+    obtain ⟨g₂, hg₂, h₂⟩ := (QuotientAddGroup.eq_zero_iff _).mp hz.2
+    have h₁' : ∀ v : Place K F, D₁ v = v.ord g₁ := h₁
+    have h₂' : ∀ v : Place K F, D₂ v = v.ord g₂ := h₂
+    choose a ha using fun s : ↥S => (s : RationalPlace K F × RationalPlace K F).1
+      |>.exists_hasValue_of_ord_eq_zero hg₁ ((h₁' _).symm.trans (hS s s.2).1)
+    choose b hb using fun s : ↥S => (s : RationalPlace K F × RationalPlace K F).2
+      |>.exists_hasValue_of_ord_eq_zero hg₂ ((h₂' _).symm.trans (hS s s.2).2)
+    refine AddMonoidHom.mem_range.mpr ⟨w - fun s => Additive.ofMul (a s / b s), ?_⟩
+    rw [nodeUnit_apply, mk_eq_mk_iff]
+    refine ⟨g₁, g₂, a, b, hg₁, hg₂, fun v => ?_, fun v => ?_, fun s => ⟨ha s, hb s⟩, ?_⟩
+    · simp [h₁' v]
+    · simp [h₂' v]
+    · simp
+  · rintro _ ⟨w, rfl⟩
+    exact toPic0Pair_nodeUnit S w
 
 end GluedPic0
 
