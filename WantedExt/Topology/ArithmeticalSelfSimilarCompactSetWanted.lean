@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSet
+public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSetDerived
 
 namespace MetaMathlibExt
 
@@ -46,22 +46,6 @@ Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 public theorem_wanted isSelfSimilarCompactSet_eq_union_layers {K : Set ℝ} {μ : ℕ} {ρ : ℝ}
     (hK : IsSelfSimilarCompactSet K μ ρ) :
     K = {0} ∪ ⋃ n : ℕ, ⋃ u ∈ Finset.range μ, (ρ ^ n)⁻¹ • selfSimilarLayer K u
-
-/-- **Enumerating the derived sets of a self-similar compact set.** Let $K$ be a self-similar
-compact set of module $\mu$ and ratio $\rho$, let $n \ge 1$, and write $K^{(n)}$ for the $n$-th
-derived set of $K$. Let $\alpha \mapsto K[\alpha]$ and $\alpha \mapsto K^{(n)}[\alpha]$ be
-strictly decreasing maps from the ordinals $\alpha \le \omega^\omega$ onto $K$ and onto
-$K^{(n)}$, respectively. Then $K^{(n)}[\alpha] = K[\omega^n (1 + \alpha)]$ (ordinal
-arithmetic) for every ordinal $\alpha \le \omega^\omega$.
-
-Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
-(2024), Article A21, Proposition 3. -/
-public theorem_wanted isSelfSimilarCompactSet_derivedSet_enum {K : Set ℝ} {μ : ℕ} {ρ : ℝ}
-    (hK : IsSelfSimilarCompactSet K μ ρ) {n : ℕ} (hn : 1 ≤ n) {f g : Ordinal.{0} → ℝ}
-    (hf : StrictAntiOn f (Set.Iic (ω ^ ω))) (hfK : f '' Set.Iic (ω ^ ω) = K)
-    (hg : StrictAntiOn g (Set.Iic (ω ^ ω))) (hgK : g '' Set.Iic (ω ^ ω) = derivedSet^[n] K)
-    {α : Ordinal.{0}} (hα : α ≤ ω ^ ω) :
-    g α = f (ω ^ (n : Ordinal) * (1 + α))
 
 /-- **Enumerating the isolated points of a self-similar compact set.** Let $K$ be a self-similar
 compact set of module $\mu$ and ratio $\rho$, and let $T_0 = K \setminus K'$ be the set of

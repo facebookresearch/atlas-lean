@@ -51,6 +51,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
 public import MathlibExt.NumberTheory.PowAddPowEqSqEvenExponent
 public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
+public import MathlibExt.NumberTheory.PowAddPowEqSqModSixty
 public import MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 public import MathlibExt.NumberTheory.TwoPowAddFifteenPow
@@ -98,20 +99,5 @@ theorem_wanted two_pow_solutions (p x y z : ℕ) (hp : p.Prime)
       (x = 3 ∧ y = 0 ∧ z = 3) ∨
         (p = 3 ∧ x = 6 ∧ y = 2 ∧ z = 17) ∨
         (x = 0 ∧ y = 1 ∧ z ^ 2 = 5 * p + 1)
-
-/-- **Solutions of $n^x + (5p)^y = z^2$ for $n \equiv 3, 27 \pmod{60}$ and $p \equiv 7 \pmod{12}$.**
-Let $p$ be a prime with $p \equiv 7 \pmod{12}$, and let $n$ be a natural number with
-$n \equiv 3 \pmod{60}$ or $n \equiv 27 \pmod{60}$ such that $\gcd(n, p) = 1$ and
-$\gcd(n, 5p - 1) = 1$. For natural numbers $x$, $y$, $z$, $n^x + (5p)^y = z^2$ holds if and
-only if either $x = 0$, $y = 1$ and $z^2 = 5p + 1$, or $x = 1$, $y = 0$ and $z^2 = n + 1$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Theorem 4. -/
-theorem_wanted solutions_mod_sixty (n p x y z : ℕ) (hp : p.Prime)
-    (hn : n % 60 = 3 ∨ n % 60 = 27) (hp12 : p % 12 = 7)
-    (h1 : Nat.Coprime n p) (h2 : Nat.Coprime n (5 * p - 1)) :
-    n ^ x + (5 * p) ^ y = z ^ 2 ↔
-      (x = 0 ∧ y = 1 ∧ z ^ 2 = 5 * p + 1) ∨
-        (x = 1 ∧ y = 0 ∧ z ^ 2 = n + 1)
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted

@@ -29,6 +29,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.CatalanSeriesSpecialValues
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.HalfIntegerShifts
@@ -101,20 +102,6 @@ Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 3, identity (7) (`integers-2
 public theorem_wanted tsum_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 0 < z.re) :
     ∑' n : ℕ, (catalan n : ℂ) / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) =
       -2 * z * (Complex.digamma z - Complex.digamma (z + 1 / 2))
-
-/-- **Catalan series summing to $4(1 - \log 2)$ and $\frac{10}{3} - 4 \log 2$.** With $C_n$ the
-$n$th Catalan number,
-$$\sum_{n=0}^{\infty} \frac{C_n}{4^n (n + 1)} = 4 (1 - \log 2)$$
-and
-$$\sum_{n=0}^{\infty} \frac{C_n}{4^n (n + 1)(n + 2)} = \frac{10}{3} - 4 \log 2.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 3, first two identities
-(`integers-2025-A18-thm-3`). -/
-public theorem_wanted tsum_catalan_div_four_pow_special :
-    ∑' n : ℕ, (catalan n : ℝ) / (4 ^ n * ((n : ℝ) + 1)) = 4 * (1 - Real.log 2) ∧
-      ∑' n : ℕ, (catalan n : ℝ) / (4 ^ n * ((n : ℝ) + 1) * ((n : ℝ) + 2)) =
-        10 / 3 - 4 * Real.log 2
 
 /-- **An odd harmonic series for $\pi^2/6$ and a Catalan–harmonic series for $8 - 2\pi^2/3$.**
 Let $O_k = \sum_{j=1}^{k} 1/(2j-1)$ be the $k$-th odd harmonic number, $C_n$ the $n$-th Catalan

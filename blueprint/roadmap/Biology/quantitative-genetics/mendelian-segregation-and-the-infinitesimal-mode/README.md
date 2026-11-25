@@ -10,3 +10,10 @@
 - [Per-locus segregation variance](variance-mendel-law.md)
 - [Berry–Esseen bound for Mendelian draws](abs-mendelian-segregation-cdf-sub-le.md)
 - [Berry–Esseen bound for Mendelian draws, explicit variance form](abs-mendelian-segregation-cdf-sub-le-of.md)
+
+- [The infinitesimal model as a limit of many loci](infinitesimal-model-as-a-limit-of-many-loci.md)
+
+- [The infinitesimal model of inheritance](infinitesimal-model-definition.md)
+- [The Bulmer effect: selection reduces additive variance](bulmer-effect.md)
+
+- [Neutral drift of the mean of an additive trait under the infinitesimal model](neutral-drift-of-a-quantitative-trait-mean.md)

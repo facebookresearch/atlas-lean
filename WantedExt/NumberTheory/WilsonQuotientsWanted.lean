@@ -28,6 +28,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.WilsonQuotientPrimality
 public import MathlibExt.NumberTheory.WilsonQuotients
 
 set_option autoImplicit false
@@ -35,15 +36,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.WilsonQuotientsWanted
-
-/-- **Morozov's Wilson quotients.** For natural numbers $k$ and $n$, $M_k(n)$ is the rational
-number
-
-$$M_k(n) = \frac{1 + (-1)^k \, k! \, (n - k - 1)!}{n},$$
-
-where $n - k - 1$ is truncated subtraction of natural numbers and division by $0$ gives $0$. -/
-def wilsonQuotientM (k n : ℕ) : ℚ :=
-  (1 + (-1 : ℚ) ^ k * (Nat.factorial k * Nat.factorial (n - k - 1) : ℚ)) / n
 
 /-- **Morozov's sign-adjusted Wilson quotients.** For natural numbers $k$ and $n$, $M_k^+(n)$ is
 the rational number
@@ -53,11 +45,6 @@ $$M_k^+(n) = \frac{(-1)^k + k! \, (n - k - 1)!}{n},$$
 where $n - k - 1$ is truncated subtraction of natural numbers and division by $0$ gives $0$. -/
 def wilsonQuotientMPlus (k n : ℕ) : ℚ :=
   ((-1 : ℚ) ^ k + (Nat.factorial k * Nat.factorial (n - k - 1) : ℚ)) / n
-
-/-- **Morozov's Wilson quotient sum.** For a natural number $n$, $Z(n)$ is the rational number
-$Z(n) = \sum_{k=0}^{n-1} M_k(n)$, where $M_k(n)$ are Morozov's Wilson quotients. -/
-def wilsonQuotientZ (n : ℕ) : ℚ :=
-  ∑ k ∈ Finset.range n, wilsonQuotientM k n
 
 /-- **Morozov's sign-adjusted Wilson quotient sum.** For a natural number $n$, $Z^+(n)$ is the
 rational number $\sum_{k=0}^{n-1} M_k^+(n)$, where $M_k^+(n) = ((-1)^k + k!\,(n-k-1)!)/n$ is
@@ -96,17 +83,6 @@ theorem_wanted exists_int_eq_wilsonQuotientZ_and_modEq
     ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ n ∧
       ((¬(n = 1 ∨ n.Prime) → z ≡ 1 [ZMOD (n : ℤ)]) ∧
         ((n = 1 ∨ n.Prime) → z ≡ -1 [ZMOD (n : ℤ)]))
-
-/-- **A primality criterion from the Wilson quotient sum Z(2n − 1).** For every natural number
-$n \ge 1$, Morozov's Wilson quotient sum $Z(2n - 1)$ is an integer, and it is divisible by $n$
-if and only if $n = 1$ or $n$ is prime.
-
-Source: Ivan V. Morozov, "On Quotients of a More General
-Theorem of Wilson", Theorem 4. -/
-theorem_wanted exists_int_eq_wilsonQuotientZ_two_mul_sub_one_modEq_zero_iff
-    (n : ℕ) (hn : 1 ≤ n) :
-    ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ (2 * n - 1) ∧
-      ((z ≡ 0 [ZMOD (n : ℤ)]) ↔ n = 1 ∨ n.Prime)
 
 /-- **The sign-adjusted Wilson quotient sum Z⁺(2n) modulo 2n.** Let $n \ge 1$ be a natural
 number. Morozov's sign-adjusted Wilson quotient sum $Z^+(2n)$ is an integer; it satisfies

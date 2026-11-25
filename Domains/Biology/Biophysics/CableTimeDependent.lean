@@ -77,15 +77,16 @@ solution at the times of `T`.
   (`isCableSolution_cableSeries_of_bounded`), has sealed ends
   (`sealedEnds_cableSeries_of_bounded`), coefficients `a n e^{-k_n t}`
   (`integral_cableSeries_mul_cosMode_of_bounded`) and decays (`tendsto_cableSeries_of_bounded`).
-* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): for `0 < L` and `x₀ ∈ [0, L]`,
-  the response to a unit charge injected at `x₀` at time `0`, an instantaneous spatially localized
-  synaptic input, with coefficients `greenCoeff L x₀ n` (`1 / L`, then
-  `(2 / L) cos (n π x₀ / L)`). The series is defined, and the results below hold, for every real
-  `x₀` and every `L ≠ 0`; outside the physical range it is the even, `2L`-periodic extension in
-  `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a source outside `[0, L]`
-  is its image inside, and `L < 0` negates the kernel (`sealedGreen_neg_length`). For `t > 0` it
-  solves
-  the equation with sealed ends (`isCableSolution_sealedGreen`, `sealedEnds_sealedGreen`), its
+* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): for `τ > 0`, `ℓ ≠ 0`, `0 < L`
+  and `x₀ ∈ [0, L]`, the response at times `t > 0` to a unit charge injected at `x₀` at time `0`,
+  an instantaneous spatially localized synaptic input, with coefficients `greenCoeff L x₀ n`
+  (`1 / L`, then `(2 / L) cos (n π x₀ / L)`). The series is defined for all real inputs (it is `0`
+  when `L = 0`). The results below assume `τ > 0` and `ℓ, L ≠ 0` and accept every real `x₀`,
+  except the symmetries, which hold for all real inputs; outside the physical range it is the
+  even, `2L`-periodic extension in `x₀` (`sealedGreen_neg_source`,
+  `sealedGreen_add_two_mul_source`), so a source outside `[0, L]` is its image inside, and `L < 0`
+  negates the kernel (`sealedGreen_neg_length`). For `t > 0` it solves the equation with sealed
+  ends (`isCableSolution_sealedGreen`, `sealedEnds_sealedGreen`), its
   `n`-th cosine coefficient is `e^{-k_n t} cos (n π x₀ / L)`, the pairing of `δ_{x₀}` with the
   mode decayed at rate `k_n` (`integral_sealedGreen_mul_cosMode`), its total potential is
   `e^{-t/τ}` (`integral_sealedGreen`), it is reciprocal, `G(t, x; x₀) = G(t, x₀; x)`
@@ -145,11 +146,13 @@ namespace MathlibExt.Biology.Biophysics.CableTimeDependent
 
 /-! ### Sealed-end (Neumann) cosine modes -/
 
-/-- The `n`-th sealed-end mode `x ↦ cos (n π x / L)` of a cable of length `L`. -/
+/-- The `n`-th sealed-end mode `x ↦ cos (n π x / L)` of a cable of length `L`. With `u / 0 = 0`
+every mode is the constant `1` when `L = 0`. -/
 noncomputable def cosMode (L : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
   cos (n * π / L * x)
 
-/-- Slope of the `n`-th mode: `(cos (n π x / L))' = -(n π / L) sin (n π x / L)`. -/
+/-- Slope of the `n`-th mode: `(cos (n π x / L))' = -(n π / L) sin (n π x / L)` (both `0` when
+`L = 0`, by `u / 0 = 0`). -/
 theorem hasDerivAt_cosMode (L : ℝ) (n : ℕ) (x : ℝ) :
     HasDerivAt (cosMode L n) (-(n * π / L) * sin (n * π / L * x)) x := by
   have h := ((hasDerivAt_id x).const_mul (n * π / L)).cos
@@ -158,7 +161,7 @@ theorem hasDerivAt_cosMode (L : ℝ) (n : ℕ) (x : ℝ) :
   convert h using 1
   ring
 
-/-- The derivative of the `n`-th mode, as a function. -/
+/-- The derivative of the `n`-th mode, as a function: `x ↦ -(n π / L) sin (n π x / L)`. -/
 theorem deriv_cosMode (L : ℝ) (n : ℕ) :
     deriv (cosMode L n) = fun x => -(n * π / L) * sin (n * π / L * x) :=
   funext fun x => (hasDerivAt_cosMode L n x).deriv
@@ -173,7 +176,8 @@ theorem hasDerivAt_deriv_cosMode (L : ℝ) (n : ℕ) (x : ℝ) :
   simp only [cosMode]
   ring
 
-/-- Eigenvalue equation: `(cos (n π x / L))'' = -(n π / L)² cos (n π x / L)`. -/
+/-- Eigenvalue equation: `(cos (n π x / L))'' = -(n π / L)² cos (n π x / L)`, a classical second
+derivative (the eigenvalue is `0` when `L = 0`, by `u / 0 = 0`). -/
 theorem deriv_deriv_cosMode (L : ℝ) (n : ℕ) (x : ℝ) :
     deriv (deriv (cosMode L n)) x = -(n * π / L) ^ 2 * cosMode L n x :=
   (hasDerivAt_deriv_cosMode L n x).deriv
@@ -182,7 +186,7 @@ theorem deriv_deriv_cosMode (L : ℝ) (n : ℕ) (x : ℝ) :
 theorem deriv_cosMode_zero (L : ℝ) (n : ℕ) : deriv (cosMode L n) 0 = 0 := by
   simp [deriv_cosMode]
 
-/-- Sealed right end: the mode has zero slope (zero axial current) at `x = L`. -/
+/-- Sealed right end: for `L ≠ 0`, the mode has zero slope (zero axial current) at `x = L`. -/
 theorem deriv_cosMode_length {L : ℝ} (hL : L ≠ 0) (n : ℕ) : deriv (cosMode L n) L = 0 := by
   rw [deriv_cosMode]
   simp only
@@ -207,9 +211,9 @@ private theorem integral_cos_int {L : ℝ} (hL : L ≠ 0) (k : ℤ) :
     rw [integral_comp_mul_left (fun x => cos x) hc, integral_cos]
     rw [mul_zero, div_mul_cancel₀ _ hL, sin_int_mul_pi, sin_zero, sub_zero, smul_zero]
 
-/-- Orthogonality of the sealed-end modes on `[0, L]`:
+/-- Orthogonality of the sealed-end modes on `[0, L]`, for `L ≠ 0`:
 `∫₀ᴸ cos (m π x / L) cos (n π x / L) dx` is `0` for `m ≠ n`, `L / 2` for `m = n ≥ 1`, and `L`
-for `m = n = 0`. -/
+for `m = n = 0`. The integral is oriented: for `L < 0` the values `L` and `L / 2` are negative. -/
 theorem integral_cosMode_mul_cosMode {L : ℝ} (hL : L ≠ 0) (m n : ℕ) :
     ∫ x in (0 : ℝ)..L, cosMode L m x * cosMode L n x =
       if m = n then (if n = 0 then L else L / 2) else 0 := by
@@ -237,16 +241,17 @@ theorem integral_cosMode_mul_cosMode {L : ℝ} (hL : L ≠ 0) (m n : ℕ) :
 /-! ### Decay rates -/
 
 /-- Rate of the `n`-th sealed-end mode of the cable equation `τ V_t = ℓ² V_xx - V` on
-`[0, L]`: the mode evolves as `e^{-k_n t}` with `k_n = (1 + ℓ² (n π / L)²) / τ`, the reciprocal of
-Rall's `n`-th equalizing time constant. It is a decay rate (`0 < k_n`, `decayRate_pos`) when
-`τ > 0`. -/
+`[0, L]`: for `τ ≠ 0` the mode evolves as `e^{-k_n t}` with `k_n = (1 + ℓ² (n π / L)²) / τ`, the
+reciprocal of Rall's `n`-th equalizing time constant. It is a decay rate (`0 < k_n`,
+`decayRate_pos`) when `τ > 0`. With `u / 0 = 0`, `k_n = 0` when `τ = 0` and `k_n = 1 / τ` when
+`L = 0`. -/
 noncomputable def decayRate (τ ℓ L : ℝ) (n : ℕ) : ℝ :=
   (1 + ℓ ^ 2 * (n * π / L) ^ 2) / τ
 
-/-- The uniform mode's rate is the membrane rate `1 / τ`. -/
+/-- The uniform mode's rate is the membrane rate `1 / τ` (both `0` when `τ = 0`). -/
 theorem decayRate_zero (τ ℓ L : ℝ) : decayRate τ ℓ L 0 = 1 / τ := by simp [decayRate]
 
-/-- No mode decays more slowly than the membrane rate: `1 / τ ≤ k_n`. -/
+/-- For `τ > 0`, no mode decays more slowly than the membrane rate: `1 / τ ≤ k_n`. -/
 theorem one_div_le_decayRate {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (n : ℕ) :
     1 / τ ≤ decayRate τ ℓ L n := by
   unfold decayRate
@@ -257,7 +262,8 @@ theorem one_div_le_decayRate {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (n : ℕ) :
 theorem decayRate_pos {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (n : ℕ) : 0 < decayRate τ ℓ L n :=
   (one_div_pos.mpr hτ).trans_le (one_div_le_decayRate hτ ℓ L n)
 
-/-- Higher modes decay strictly faster. -/
+/-- For `τ > 0`, `ℓ ≠ 0` and `L ≠ 0`, higher modes decay strictly faster: `k_m < k_n` for
+`m < n`. -/
 theorem decayRate_strictMono {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) :
     StrictMono (decayRate τ ℓ L) := by
   intro m n hmn
@@ -271,14 +277,16 @@ theorem decayRate_strictMono {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) 
   rw [key, key]
   gcongr
 
-/-- Rall's ratio: `k_n / k_0 = τ₀ / τ_n = 1 + (n π ℓ / L)²`. -/
+/-- Rall's ratio, for `τ ≠ 0`: `k_n / k_0 = τ₀ / τ_n = 1 + (n π ℓ / L)²` (the right side is `1`
+when `L = 0`, by `u / 0 = 0`). -/
 theorem decayRate_div_decayRate_zero {τ : ℝ} (hτ : τ ≠ 0) (ℓ L : ℝ) (n : ℕ) :
     decayRate τ ℓ L n / decayRate τ ℓ L 0 = 1 + (n * π * ℓ / L) ^ 2 := by
   rw [decayRate_zero]
   unfold decayRate
   field_simp
 
-/-- Rall's electrotonic-length formula: the cable length in units of the length constant is
+/-- Rall's electrotonic-length formula, for `τ ≠ 0`, `ℓ > 0` and `L > 0`: the cable length in
+units of the length constant is
 recovered from the rates `k₀` and `k₁` (the two slowest decay rates when `τ > 0`),
 `L / ℓ = π / √(k₁ / k₀ - 1)`. -/
 theorem div_eq_pi_div_sqrt_decayRate {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hℓ : 0 < ℓ) (hL : 0 < L) :
@@ -291,7 +299,8 @@ theorem div_eq_pi_div_sqrt_decayRate {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hℓ : 0
 
 /-- `V t x` is a classical solution of the passive cable equation `τ ∂ₜV = ℓ² ∂ₓ²V - V` on the
 cable `[0, L]` at the times in `T`: `V (·) x` is differentiable at `t`, `V t` is twice
-differentiable at `x`, and the equation holds pointwise. -/
+differentiable at `x`, and the equation holds pointwise. No initial or boundary condition is
+included; when `L < 0` the interval is empty and every `V` qualifies. -/
 structure IsCableSolution (τ ℓ L : ℝ) (T : Set ℝ) (V : ℝ → ℝ → ℝ) : Prop where
   /-- `V (·) x` is differentiable in time. -/
   differentiableAt_time : ∀ t ∈ T, ∀ x ∈ Icc 0 L, DifferentiableAt ℝ (fun s => V s x) t
@@ -305,12 +314,15 @@ structure IsCableSolution (τ ℓ L : ℝ) (T : Set ℝ) (V : ℝ → ℝ → �
 
 /-- Sealed ends at `0` and `L` at the times in `T`: zero axial current, i.e. `∂ₓV = 0`.
 `deriv` is `0` at points of non-differentiability, so this is meant together with
-`IsCableSolution`, which makes `V t` differentiable at both ends. -/
+`IsCableSolution` on `[0, L]` with `L ≥ 0`, which then makes `V t` differentiable at both
+ends. -/
 def SealedEnds (L : ℝ) (T : Set ℝ) (V : ℝ → ℝ → ℝ) : Prop :=
   ∀ t ∈ T, deriv (V t) 0 = 0 ∧ deriv (V t) L = 0
 
 /-- The finite sealed-end eigenfunction expansion
-`V t x = ∑_{n ∈ s} a n e^{-k_n t} cos (n π x / L)`. -/
+`V t x = ∑_{n ∈ s} a n e^{-k_n t} cos (n π x / L)`, defined for all real inputs with the
+conventions of `decayRate` and `cosMode` (every `k_n = 0` when `τ = 0`, every mode `1` when
+`L = 0`). -/
 noncomputable def cableSum (τ ℓ L : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) (t x : ℝ) : ℝ :=
   ∑ n ∈ s, a n * (exp (-decayRate τ ℓ L n * t) * cosMode L n x)
 
@@ -349,7 +361,7 @@ theorem hasDerivAt_deriv_cableSum_space (τ ℓ L : ℝ) (s : Finset ℕ) (a : �
   exact HasDerivAt.fun_sum fun n _ =>
     ((hasDerivAt_deriv_cosMode L n x).const_mul _).const_mul _
 
-/-- The finite expansion solves the cable equation at every time and position. -/
+/-- For `τ ≠ 0`, the finite expansion solves the cable equation at every time and position. -/
 theorem isCableSolution_cableSum {τ : ℝ} (hτ : τ ≠ 0) (ℓ L : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) :
     IsCableSolution τ ℓ L univ (cableSum τ ℓ L s a) where
   differentiableAt_time t _ x _ := (hasDerivAt_cableSum_time τ ℓ L s a t x).differentiableAt
@@ -366,7 +378,7 @@ theorem isCableSolution_cableSum {τ : ℝ} (hτ : τ ≠ 0) (ℓ L : ℝ) (s : 
     field_simp
     ring
 
-/-- The finite expansion has sealed ends at every time. -/
+/-- For `L ≠ 0`, the finite expansion has sealed ends at every time. -/
 theorem sealedEnds_cableSum {L : ℝ} (hL : L ≠ 0) (τ ℓ : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) :
     SealedEnds L univ (cableSum τ ℓ L s a) := fun t _ => by
   rw [deriv_cableSum_space]
@@ -377,7 +389,8 @@ theorem cableSum_time_zero (τ ℓ L : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) (
     cableSum τ ℓ L s a 0 x = ∑ n ∈ s, a n * cosMode L n x := by
   simp [cableSum]
 
-/-- Decay rates are monotone in the mode number (no nondegeneracy needed). -/
+/-- For `τ > 0`, decay rates are monotone in the mode number (no nondegeneracy needed: when
+`ℓ = 0` or `L = 0` every rate is `1 / τ`). -/
 theorem decayRate_mono {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) : Monotone (decayRate τ ℓ L) := by
   intro m n hmn
   unfold decayRate
@@ -389,7 +402,7 @@ theorem decayRate_mono {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) : Monotone (decay
   rw [key, key]
   gcongr
 
-/-- Uniform decay of the finite expansion at the membrane rate: for `t ≥ 0`,
+/-- Uniform decay of the finite expansion at the membrane rate: for `τ > 0` and `t ≥ 0`,
 `|V t x| ≤ e^{-t/τ} ∑ |a n|`. -/
 theorem abs_cableSum_le {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) {t : ℝ}
     (ht : 0 ≤ t) (x : ℝ) :
@@ -408,8 +421,8 @@ theorem abs_cableSum_le {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (s : Finset ℕ)
       ≤ |a n| * (exp (-t / τ) * 1) := by gcongr
     _ = exp (-t / τ) * |a n| := by ring
 
-/-- Without the uniform mode, the finite expansion decays at least at the first nonuniform rate
-`k₁`: for `t ≥ 0`, `|V t x| ≤ e^{-k₁ t} ∑ |a n|`. -/
+/-- For `τ > 0`, without the uniform mode (`0 ∉ s`), the finite expansion decays at least at the
+first nonuniform rate `k₁`: for `t ≥ 0`, `|V t x| ≤ e^{-k₁ t} ∑ |a n|`. -/
 theorem abs_cableSum_le_of_zero_notMem {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {s : Finset ℕ}
     (hs : 0 ∉ s) (a : ℕ → ℝ) {t : ℝ} (ht : 0 ≤ t) (x : ℝ) :
     |cableSum τ ℓ L s a t x| ≤ exp (-decayRate τ ℓ L 1 * t) * ∑ n ∈ s, |a n| := by
@@ -426,7 +439,8 @@ theorem abs_cableSum_le_of_zero_notMem {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {
       ≤ |a n| * (exp (-decayRate τ ℓ L 1 * t) * 1) := by gcongr
     _ = exp (-decayRate τ ℓ L 1 * t) * |a n| := by ring
 
-/-- Splitting off the uniform mode: `V = a₀ e^{-t/τ} + (nonuniform part)`. -/
+/-- Splitting off the uniform mode: for `0 ∉ s`, the expansion over `insert 0 s` is
+`a₀ e^{-t/τ}` plus the expansion over `s`, for every real `τ` (at `τ = 0`, `e^{-t/τ} = 1`). -/
 theorem cableSum_insert_zero (τ ℓ L : ℝ) {s : Finset ℕ} (hs : 0 ∉ s) (a : ℕ → ℝ) (t x : ℝ) :
     cableSum τ ℓ L (insert 0 s) a t x = a 0 * exp (-t / τ) + cableSum τ ℓ L s a t x := by
   unfold cableSum
@@ -434,8 +448,8 @@ theorem cableSum_insert_zero (τ ℓ L : ℝ) {s : Finset ℕ} (hs : 0 ∉ s) (a
   have e : -(1 / τ) * t = -t / τ := by ring
   rw [e]
 
-/-- The finite expansion decays to rest at every position (the bound `abs_cableSum_le` is
-uniform in `x`). -/
+/-- For `τ > 0`, the finite expansion decays to rest at every position (the bound
+`abs_cableSum_le` is uniform in `x`). -/
 theorem tendsto_cableSum {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) (x : ℝ) :
     Tendsto (fun t => cableSum τ ℓ L s a t x) atTop (𝓝 0) := by
   have hexp : Tendsto (fun t => exp (-t / τ) * ∑ n ∈ s, |a n|) atTop (𝓝 0) := by
@@ -447,9 +461,10 @@ theorem tendsto_cableSum {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (s : Finset ℕ
   filter_upwards [eventually_ge_atTop 0] with t ht
   exact abs_cableSum_le hτ ℓ L s a ht x
 
-/-- Equalization (Rall): after rescaling by the membrane decay `e^{t/τ}`, the potential tends
-to the uniform-mode coefficient `a₀` at every position, because every nonuniform mode decays
-strictly faster than `1 / τ`. -/
+/-- Equalization (Rall): for `τ > 0`, `ℓ ≠ 0`, `L ≠ 0` and the expansion over `insert 0 s` with
+`0 ∉ s`, after rescaling by the membrane decay `e^{t/τ}` the potential tends to the uniform-mode
+coefficient `a₀` at every position, because every nonuniform mode decays strictly faster than
+`1 / τ`. -/
 theorem tendsto_exp_mul_cableSum {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {s : Finset ℕ} (hs : 0 ∉ s) (a : ℕ → ℝ) (x : ℝ) :
     Tendsto (fun t => exp (t / τ) * cableSum τ ℓ L (insert 0 s) a t x) atTop (𝓝 (a 0)) := by
@@ -478,9 +493,9 @@ theorem tendsto_exp_mul_cableSum {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠
   rw [hsplit]
   simpa using hrest.const_add (a 0)
 
-/-- Mode-by-mode coefficients of the finite expansion: the `n`-th cosine coefficient at time
-`t` is `a n e^{-k_n t}` times the mode's self-inner-product `∫₀ᴸ cos (n π x / L)² dx` (`L` for
-`n = 0`, `L / 2` otherwise). -/
+/-- Mode-by-mode coefficients of the finite expansion, for `L ≠ 0`: the `n`-th cosine coefficient
+at time `t` is `a n e^{-k_n t}` times the mode's self-inner-product `∫₀ᴸ cos (n π x / L)² dx` (`L`
+for `n = 0`, `L / 2` otherwise) if `n ∈ s`, and `0` otherwise; the integral is oriented. -/
 theorem integral_cableSum_mul_cosMode {L : ℝ} (hL : L ≠ 0) (τ ℓ : ℝ) (s : Finset ℕ)
     (a : ℕ → ℝ) (t : ℝ) (n : ℕ) :
     ∫ x in (0 : ℝ)..L, cableSum τ ℓ L s a t x * cosMode L n x =
@@ -507,12 +522,14 @@ theorem integral_cableSum_mul_cosMode {L : ℝ} (hL : L ≠ 0) (τ ℓ : ℝ) (s
 
 /-! ### Mode coefficients of an arbitrary sealed solution -/
 
-/-- The `n`-th cosine coefficient `∫₀ᴸ V t x cos (n π x / L) dx` of the profile `V t`. -/
+/-- The `n`-th cosine coefficient `∫₀ᴸ V t x cos (n π x / L) dx` of the profile `V t`. The
+integral is oriented, and it is `0` when the integrand is not integrable on the interval. -/
 noncomputable def modeCoeff (L : ℝ) (V : ℝ → ℝ → ℝ) (n : ℕ) (t : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..L, V t x * cosMode L n x
 
-/-- Two integrations by parts against a sealed-end mode: if `f` is twice differentiable on
-`[0, L]` with continuous `f''` and `f'(0) = f'(L) = 0`, then
+/-- Two integrations by parts against a sealed-end mode: for `L > 0`, if `f` and `f'` are
+differentiable at every point of `[0, L]` (two-sided), `f''` is continuous on `[0, L]` and
+`f'(0) = f'(L) = 0`, then
 `∫₀ᴸ f'' cos (n π x / L) = -(n π / L)² ∫₀ᴸ f cos (n π x / L)`. -/
 theorem integral_deriv_deriv_mul_cosMode {L : ℝ} (hL : 0 < L) {f : ℝ → ℝ}
     (hf : ∀ x ∈ Icc 0 L, DifferentiableAt ℝ f x)
@@ -551,8 +568,9 @@ theorem integral_deriv_deriv_mul_cosMode {L : ℝ} (hL : 0 < L) {f : ℝ → ℝ
   simp_rw [mul_comm (cosMode L n _) (f _)]
   ring
 
-/-- Differentiation of a mode coefficient under the integral sign, for a profile whose time
-derivative is jointly continuous on `T × [0, L]` (`T` open). -/
+/-- Differentiation of a mode coefficient under the integral sign, for `L > 0`, `T` open and a
+profile that is differentiable in time at the times of `T`, continuous in `x` on `[0, L]`, and
+whose time derivative is jointly continuous on `T × [0, L]`. -/
 theorem hasDerivAt_modeCoeff {L : ℝ} (hL : 0 < L) {T : Set ℝ} (hT : IsOpen T)
     {V : ℝ → ℝ → ℝ} (hdiff : ∀ t ∈ T, ∀ x ∈ Icc 0 L, DifferentiableAt ℝ (fun s => V s x) t)
     (hcont : ∀ t ∈ T, ContinuousOn (V t) (Icc 0 L))
@@ -599,9 +617,9 @@ theorem hasDerivAt_modeCoeff {L : ℝ} (hL : 0 < L) {T : Set ℝ} (hT : IsOpen T
       (hIoc hx)).hasDerivAt.mul_const _
 
 /-- **Mode-by-mode exponential evolution of an arbitrary sealed solution.** Let `V` be a
-classical solution of `τ ∂ₜV = ℓ² ∂ₓ²V - V` (`τ ≠ 0`) on `[0, L]` with sealed ends, at the times
-of an open interval-like (open, preconnected) set `T`, with `∂ₜV` jointly continuous on
-`T × [0, L]` and `∂ₓ²V` continuous in `x`. Then every cosine coefficient evolves exactly as
+classical solution of `τ ∂ₜV = ℓ² ∂ₓ²V - V` (`τ ≠ 0`) on `[0, L]`, `L > 0`, with sealed ends,
+at the times of an open interval-like (open, preconnected) set `T`, with `∂ₜV` jointly continuous
+on `T × [0, L]` and `∂ₓ²V` continuous in `x`. Then every cosine coefficient evolves exactly as
 `c_n(t) = c_n(t₀) e^{-k_n (t - t₀)}` for `t, t₀ ∈ T`. This is decay at rate `k_n > 0` when
 `τ > 0` (`tendsto_modeCoeff`); for `τ < 0`, `k_0 = 1 / τ < 0` and a nonzero uniform coefficient
 grows. -/
@@ -660,7 +678,8 @@ theorem modeCoeff_eq_mul_exp {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hL : 0 < L) {T :
 /-! ### The infinite eigenfunction expansion -/
 
 /-- The sealed-end eigenfunction expansion
-`V t x = ∑_{n ≥ 0} a n e^{-k_n t} cos (n π x / L)`. -/
+`V t x = ∑_{n ≥ 0} a n e^{-k_n t} cos (n π x / L)`, with the convention that a non-summable series
+has sum `0`. -/
 noncomputable def cableSeries (τ ℓ L : ℝ) (a : ℕ → ℝ) (t x : ℝ) : ℝ :=
   ∑' n, a n * (exp (-decayRate τ ℓ L n * t) * cosMode L n x)
 
@@ -739,19 +758,21 @@ private theorem abs_term_le {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) (n : ℕ) {t
         gcongr; exact abs_cosMode_le L n x
     _ = exp (-t / τ) := mul_one _
 
-/-- For `t ≥ 0` and absolutely summable coefficients the expansion converges absolutely. -/
+/-- For `τ > 0`, `t ≥ 0` and absolutely summable coefficients the expansion converges
+absolutely. -/
 theorem summable_cableSeries {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a : ℕ → ℝ}
     (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 ≤ t) (x : ℝ) :
     Summable fun n => a n * (exp (-decayRate τ ℓ L n * t) * cosMode L n x) :=
   summable_mul_of_abs_le ha fun n => abs_term_le hτ ℓ L n ht x
 
-/-- Initial profile of the expansion: the cosine series `∑ a n cos (n π x / L)`. -/
+/-- Initial profile of the expansion: the cosine series `∑ a n cos (n π x / L)`. No summability
+is needed: the two series have the same terms. -/
 theorem cableSeries_time_zero (τ ℓ L : ℝ) (a : ℕ → ℝ) (x : ℝ) :
     cableSeries τ ℓ L a 0 x = ∑' n, a n * cosMode L n x := by
   simp [cableSeries]
 
-/-- Uniform decay of the expansion at the membrane rate: for `t ≥ 0`,
-`|V t x| ≤ e^{-t/τ} ∑ |a n|`. -/
+/-- Uniform decay of the expansion at the membrane rate: for `τ > 0`, absolutely summable
+coefficients and `t ≥ 0`, `|V t x| ≤ e^{-t/τ} ∑ |a n|`. -/
 theorem abs_cableSeries_le {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a : ℕ → ℝ}
     (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 ≤ t) (x : ℝ) :
     |cableSeries τ ℓ L a t x| ≤ exp (-t / τ) * ∑' n, |a n| := by
@@ -760,8 +781,8 @@ theorem abs_cableSeries_le {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a : ℕ → 
   rw [Real.norm_eq_abs, abs_mul, mul_comm]
   exact mul_le_mul_of_nonneg_right (abs_term_le hτ ℓ L n ht x) (abs_nonneg _)
 
-/-- The expansion decays to rest at every position (the bound `abs_cableSeries_le` is uniform
-in `x`). -/
+/-- For `τ > 0` and absolutely summable coefficients, the expansion decays to rest at every
+position (the bound `abs_cableSeries_le` is uniform in `x`). -/
 theorem tendsto_cableSeries {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a : ℕ → ℝ}
     (ha : Summable fun n => |a n|) (x : ℝ) :
     Tendsto (fun t => cableSeries τ ℓ L a t x) atTop (𝓝 0) := by
@@ -774,7 +795,8 @@ theorem tendsto_cableSeries {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a : ℕ →
   filter_upwards [eventually_ge_atTop 0] with t ht
   exact abs_cableSeries_le hτ ℓ L ha ht x
 
-/-- Termwise spatial differentiation of the expansion at a positive time (`ℓ ≠ 0`). -/
+/-- Termwise spatial differentiation of the expansion at a positive time (`τ > 0`, `ℓ ≠ 0`,
+absolutely summable coefficients). -/
 theorem hasDerivAt_cableSeries_space {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L : ℝ)
     {a : ℕ → ℝ} (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) (x : ℝ) :
     HasDerivAt (cableSeries τ ℓ L a t)
@@ -789,14 +811,16 @@ theorem hasDerivAt_cableSeries_space {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ �
   · rw [Real.norm_eq_abs, abs_mul]
     exact mul_le_mul_of_nonneg_left (abs_deriv_term_le hτ hℓ L n ht y) (abs_nonneg _)
 
-/-- The spatial derivative of the expansion at a positive time, as a function. -/
+/-- The spatial derivative of the expansion at a positive time, as a function (`τ > 0`,
+`ℓ ≠ 0`, absolutely summable coefficients). -/
 theorem deriv_cableSeries_space {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L : ℝ) {a : ℕ → ℝ}
     (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) :
     deriv (cableSeries τ ℓ L a t) = fun x =>
       ∑' n, a n * (exp (-decayRate τ ℓ L n * t) * deriv (cosMode L n) x) :=
   funext fun x => (hasDerivAt_cableSeries_space hτ hℓ L ha ht x).deriv
 
-/-- Termwise second spatial differentiation of the expansion at a positive time. -/
+/-- Termwise second spatial differentiation of the expansion at a positive time (`τ > 0`,
+`ℓ ≠ 0`, absolutely summable coefficients). -/
 theorem hasDerivAt_deriv_cableSeries_space {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L : ℝ)
     {a : ℕ → ℝ} (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) (x : ℝ) :
     HasDerivAt (deriv (cableSeries τ ℓ L a t))
@@ -813,7 +837,8 @@ theorem hasDerivAt_deriv_cableSeries_space {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ :
   · rw [Real.norm_eq_abs, abs_mul]
     exact mul_le_mul_of_nonneg_left (abs_deriv2_term_le hτ hℓ L n ht y) (abs_nonneg _)
 
-/-- Termwise time differentiation of the expansion at a positive time. -/
+/-- Termwise time differentiation of the expansion at a positive time (`τ > 0`, absolutely
+summable coefficients). -/
 theorem hasDerivAt_cableSeries_time {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a : ℕ → ℝ}
     (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) (x : ℝ) :
     HasDerivAt (fun r => cableSeries τ ℓ L a r x)
@@ -841,8 +866,8 @@ theorem hasDerivAt_cableSeries_time {τ : ℝ} (hτ : 0 < τ) (ℓ L : ℝ) {a :
       _ ≤ 1 / r := by rw [mul_one]; exact mul_exp_neg_mul_le hr0
       _ ≤ 1 / (t / 2) := one_div_le_one_div_of_le ht2 hr.le
 
-/-- The infinite expansion with absolutely summable coefficients solves the cable equation at
-every positive time. -/
+/-- For `τ > 0` and `ℓ ≠ 0`, the infinite expansion with absolutely summable coefficients solves
+the cable equation at every positive time. -/
 theorem isCableSolution_cableSeries {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L : ℝ) {a : ℕ → ℝ}
     (ha : Summable fun n => |a n|) :
     IsCableSolution τ ℓ L (Ioi 0) (cableSeries τ ℓ L a) where
@@ -864,14 +889,16 @@ theorem isCableSolution_cableSeries {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ �
     field_simp
     ring
 
-/-- The infinite expansion has sealed ends at every positive time. -/
+/-- For `τ > 0`, `ℓ ≠ 0`, `L ≠ 0` and absolutely summable coefficients, the infinite expansion
+has sealed ends at every positive time. -/
 theorem sealedEnds_cableSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {a : ℕ → ℝ} (ha : Summable fun n => |a n|) :
     SealedEnds L (Ioi 0) (cableSeries τ ℓ L a) := fun t ht => by
   rw [deriv_cableSeries_space hτ hℓ L ha ht]
   simp [deriv_cosMode_zero, deriv_cosMode_length hL]
 
-/-- Coefficients of the infinite expansion: for `t ≥ 0`, its `n`-th cosine coefficient is
+/-- Coefficients of the infinite expansion: for `τ > 0`, `L ≠ 0`, absolutely summable
+coefficients and `t ≥ 0`, its `n`-th cosine coefficient (an oriented integral) is
 `a n e^{-k_n t}` times the mode's self-inner-product `∫₀ᴸ cos (n π x / L)² dx` (`L` for `n = 0`,
 `L / 2` otherwise). -/
 theorem integral_cableSeries_mul_cosMode {τ L : ℝ} (hτ : 0 < τ) (hL : L ≠ 0) (ℓ : ℝ)
@@ -917,7 +944,8 @@ theorem integral_cableSeries_mul_cosMode {τ L : ℝ} (hτ : 0 < τ) (hL : L ≠
 
 /-! ### Consequences of the exponential evolution law -/
 
-/-- For `τ > 0`, every cosine coefficient of a sealed solution on `t > 0` decays to `0`. -/
+/-- For `τ > 0` and `L > 0`, every cosine coefficient of a sealed solution on `t > 0`, with
+`∂ₜV` jointly continuous and `∂ₓ²V` continuous in `x`, decays to `0`. -/
 theorem tendsto_modeCoeff {τ ℓ L : ℝ} (hτ : 0 < τ) (hL : 0 < L) {V : ℝ → ℝ → ℝ}
     (hV : IsCableSolution τ ℓ L (Ioi 0) V) (hsealed : SealedEnds L (Ioi 0) V)
     (hVt : ContinuousOn (fun p : ℝ × ℝ => deriv (fun s => V s p.2) p.1) (Ioi 0 ×ˢ Icc 0 L))
@@ -934,9 +962,10 @@ theorem tendsto_modeCoeff {τ ℓ L : ℝ} (hτ : 0 < τ) (hL : 0 < L) {V : ℝ 
     (tendsto_atTop_add_const_right _ (-1) tendsto_id).const_mul_atTop_of_neg (by linarith)
   simpa using (tendsto_exp_atBot.comp this).const_mul (modeCoeff L V n 1)
 
-/-- Exponential evolution of the total (integrated) potential of a sealed solution:
-`∫₀ᴸ V t = (∫₀ᴸ V t₀) e^{-(t - t₀)/τ}` for `τ ≠ 0`. For `τ > 0` this is decay at exactly the
-membrane rate `1 / τ`; for `τ < 0` it is growth. -/
+/-- Exponential evolution of the total (integrated) potential of a sealed solution on `[0, L]`,
+`L > 0`, at the times of an open preconnected set `T`, with `∂ₜV` jointly continuous and `∂ₓ²V`
+continuous in `x`: `∫₀ᴸ V t = (∫₀ᴸ V t₀) e^{-(t - t₀)/τ}` for `τ ≠ 0` and `t, t₀ ∈ T`. For `τ > 0`
+this is decay at exactly the membrane rate `1 / τ`; for `τ < 0` it is growth. -/
 theorem integral_eq_mul_exp {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hL : 0 < L) {T : Set ℝ}
     (hT : IsOpen T) (hT' : IsPreconnected T) {V : ℝ → ℝ → ℝ}
     (hV : IsCableSolution τ ℓ L T V) (hsealed : SealedEnds L T V)
@@ -952,11 +981,12 @@ theorem integral_eq_mul_exp {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hL : 0 < L) {T : 
 
 /-! ### Steady state with a sealed far end, and the charging transient -/
 
-/-- Steady profile `x ↦ cosh ((L - x) / ℓ)` of a cable sealed at `x = L`. -/
+/-- Steady profile `x ↦ cosh ((L - x) / ℓ)` of a cable sealed at `x = L`. With `u / 0 = 0` it is
+the constant `1` when `ℓ = 0`. -/
 noncomputable def sealedSteady (ℓ L : ℝ) (x : ℝ) : ℝ :=
   cosh ((L - x) / ℓ)
 
-/-- Slope of the steady profile: `W'(x) = -sinh ((L - x)/ℓ) / ℓ`. -/
+/-- Slope of the steady profile: `W'(x) = -sinh ((L - x)/ℓ) / ℓ` (both `0` when `ℓ = 0`). -/
 theorem hasDerivAt_sealedSteady (ℓ L x : ℝ) :
     HasDerivAt (sealedSteady ℓ L) (-sinh ((L - x) / ℓ) / ℓ) x := by
   have h1 : HasDerivAt (fun y => (L - y) / ℓ) (-1 / ℓ) x := by
@@ -965,12 +995,12 @@ theorem hasDerivAt_sealedSteady (ℓ L x : ℝ) :
   convert h1.cosh using 1
   ring
 
-/-- The slope of the steady profile, as a function. -/
+/-- The slope of the steady profile, as a function: `x ↦ -sinh ((L - x)/ℓ) / ℓ`. -/
 theorem deriv_sealedSteady (ℓ L : ℝ) :
     deriv (sealedSteady ℓ L) = fun x => -sinh ((L - x) / ℓ) / ℓ :=
   funext fun x => (hasDerivAt_sealedSteady ℓ L x).deriv
 
-/-- Curvature of the steady profile: `W''(x) = cosh ((L - x)/ℓ) / ℓ²`. -/
+/-- Curvature of the steady profile: `W''(x) = cosh ((L - x)/ℓ) / ℓ²` (both `0` when `ℓ = 0`). -/
 theorem hasDerivAt_deriv_sealedSteady (ℓ L x : ℝ) :
     HasDerivAt (deriv (sealedSteady ℓ L)) (cosh ((L - x) / ℓ) / ℓ ^ 2) x := by
   rw [deriv_sealedSteady]
@@ -980,7 +1010,7 @@ theorem hasDerivAt_deriv_sealedSteady (ℓ L x : ℝ) :
   · funext y; ring
   · ring
 
-/-- The steady profile solves the steady cable equation `ℓ² W'' = W`. -/
+/-- For `ℓ ≠ 0`, the steady profile solves the steady cable equation `ℓ² W'' = W`. -/
 theorem sealedSteady_steady {ℓ : ℝ} (hℓ : ℓ ≠ 0) (L x : ℝ) :
     ℓ ^ 2 * deriv (deriv (sealedSteady ℓ L)) x = sealedSteady ℓ L x := by
   rw [(hasDerivAt_deriv_sealedSteady ℓ L x).deriv, sealedSteady]
@@ -990,7 +1020,7 @@ theorem sealedSteady_steady {ℓ : ℝ} (hℓ : ℓ ≠ 0) (L x : ℝ) :
 theorem deriv_sealedSteady_length (ℓ L : ℝ) : deriv (sealedSteady ℓ L) L = 0 := by
   simp [deriv_sealedSteady]
 
-/-- Slope at the injection end: `W'(0) = -sinh (L / ℓ) / ℓ`. -/
+/-- Slope at the injection end: `W'(0) = -sinh (L / ℓ) / ℓ` (both `0` when `ℓ = 0`). -/
 theorem deriv_sealedSteady_zero (ℓ L : ℝ) :
     deriv (sealedSteady ℓ L) 0 = -sinh (L / ℓ) / ℓ := by
   simp [deriv_sealedSteady]
@@ -1001,7 +1031,8 @@ decays when `τ > 0` (`tendsto_chargingSum`). -/
 noncomputable def chargingSum (τ ℓ L c : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) (t x : ℝ) : ℝ :=
   c * sealedSteady ℓ L x + cableSum τ ℓ L s a t x
 
-/-- The charging transient solves the cable equation at every time and position. -/
+/-- For `τ ≠ 0` and `ℓ ≠ 0`, the charging transient solves the cable equation at every time and
+position. -/
 theorem isCableSolution_chargingSum {τ ℓ : ℝ} (hτ : τ ≠ 0) (hℓ : ℓ ≠ 0) (L c : ℝ)
     (s : Finset ℕ) (a : ℕ → ℝ) :
     IsCableSolution τ ℓ L univ (chargingSum τ ℓ L c s a) := by
@@ -1037,8 +1068,9 @@ theorem isCableSolution_chargingSum {τ ℓ : ℝ} (hτ : τ ≠ 0) (hℓ : ℓ 
   unfold chargingSum
   linear_combination hcable - c * hW
 
-/-- The charging transient keeps the far end sealed, `∂ₓV(t, L) = 0`, and carries a constant
-axial gradient `∂ₓV(t, 0) = -c sinh (L / ℓ) / ℓ` (constant injected current) at `x = 0`. -/
+/-- For `L ≠ 0`, the charging transient keeps the far end sealed, `∂ₓV(t, L) = 0`, and carries a
+constant axial gradient `∂ₓV(t, 0) = -c sinh (L / ℓ) / ℓ` (constant injected current) at `x = 0`
+(`0` when `ℓ = 0`). -/
 theorem deriv_chargingSum_ends {L : ℝ} (hL : L ≠ 0) (τ ℓ c : ℝ) (s : Finset ℕ) (a : ℕ → ℝ)
     (t : ℝ) :
     deriv (chargingSum τ ℓ L c s a t) L = 0 ∧
@@ -1059,7 +1091,7 @@ theorem deriv_chargingSum_ends {L : ℝ} (hL : L ≠ 0) (τ ℓ c : ℝ) (s : Fi
     rw [deriv_sealedSteady_zero, hs.1, add_zero]
     ring
 
-/-- The charging transient converges to the steady profile `c cosh ((L - x)/ℓ)`. -/
+/-- For `τ > 0`, the charging transient converges to the steady profile `c cosh ((L - x)/ℓ)`. -/
 theorem tendsto_chargingSum {τ : ℝ} (hτ : 0 < τ) (ℓ L c : ℝ) (s : Finset ℕ) (a : ℕ → ℝ)
     (x : ℝ) :
     Tendsto (fun t => chargingSum τ ℓ L c s a t x) atTop (𝓝 (c * sealedSteady ℓ L x)) := by
@@ -1107,7 +1139,7 @@ private theorem summable_abs_mul_exp {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ
   exact mul_le_mul_of_nonneg_right (hB n) (exp_pos _).le
 
 /-- With merely bounded coefficients (`|a n| ≤ B`, e.g. those of a point charge), the expansion
-solves the cable equation at every positive time (`ℓ, L ≠ 0`). -/
+solves the cable equation at every positive time (`τ > 0`, `ℓ, L ≠ 0`). -/
 theorem isCableSolution_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0)
     (hL : L ≠ 0) {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) :
     IsCableSolution τ ℓ L (Ioi 0) (cableSeries τ ℓ L a) := by
@@ -1137,7 +1169,8 @@ theorem isCableSolution_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (
     rw [hd, cableSeries_eq_shift τ ℓ L a (t / 2) t]
     exact hc
 
-/-- With bounded coefficients the expansion has sealed ends at every positive time. -/
+/-- With bounded coefficients the expansion has sealed ends at every positive time (`τ > 0`,
+`ℓ, L ≠ 0`). -/
 theorem sealedEnds_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) :
     SealedEnds L (Ioi 0) (cableSeries τ ℓ L a) := fun t ht => by
@@ -1145,7 +1178,8 @@ theorem sealedEnds_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ 
   exact sealedEnds_cableSeries hτ hℓ hL (summable_abs_mul_exp hτ hℓ hL hB (half_pos ht)) _
     (by simp only [mem_Ioi] at ht ⊢; linarith)
 
-/-- With bounded coefficients the profile at a positive time is continuous in `x`. -/
+/-- With bounded coefficients the profile at a positive time is continuous in `x` (`τ > 0`,
+`ℓ, L ≠ 0`). -/
 theorem continuous_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) {t : ℝ} (ht : 0 < t) :
     Continuous (cableSeries τ ℓ L a t) := by
@@ -1153,8 +1187,9 @@ theorem continuous_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ 
   exact continuous_iff_continuousAt.2 fun x => (hasDerivAt_cableSeries_space hτ hℓ L
     (summable_abs_mul_exp hτ hℓ hL hB (half_pos ht)) (by linarith) x).continuousAt
 
-/-- With bounded coefficients, the `n`-th cosine coefficient at a positive time is
-`a n e^{-k_n t}` times the mode's self-inner-product (`L` for `n = 0`, `L / 2` otherwise). -/
+/-- With bounded coefficients (`τ > 0`, `ℓ, L ≠ 0`), the `n`-th cosine coefficient at a positive
+time is `a n e^{-k_n t}` times the mode's self-inner-product (`L` for `n = 0`, `L / 2` otherwise);
+the integral is oriented. -/
 theorem integral_cableSeries_mul_cosMode_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0)
     (hL : L ≠ 0) {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) {t : ℝ} (ht : 0 < t) (m : ℕ) :
     ∫ x in (0 : ℝ)..L, cableSeries τ ℓ L a t x * cosMode L m x =
@@ -1163,7 +1198,8 @@ theorem integral_cableSeries_mul_cosMode_of_bounded {τ ℓ L : ℝ} (hτ : 0 < 
     integral_cableSeries_mul_cosMode hτ hL ℓ (summable_abs_mul_exp hτ hℓ hL hB ht) le_rfl m]
   simp
 
-/-- With bounded coefficients the expansion decays to rest at every position. -/
+/-- With bounded coefficients the expansion decays to rest at every position (`τ > 0`,
+`ℓ, L ≠ 0`). -/
 theorem tendsto_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) (x : ℝ) :
     Tendsto (fun t => cableSeries τ ℓ L a t x) atTop (𝓝 0) := by
@@ -1214,7 +1250,7 @@ coefficient `0`). -/
 noncomputable def greenCoeff (L x₀ : ℝ) (n : ℕ) : ℝ :=
   (if n = 0 then 1 / L else 2 / L) * cosMode L n x₀
 
-/-- The point-charge coefficients are bounded by `2 / |L|`. -/
+/-- The point-charge coefficients are bounded by `2 / |L|` (both sides `0` when `L = 0`). -/
 theorem abs_greenCoeff_le (L x₀ : ℝ) (n : ℕ) : |greenCoeff L x₀ n| ≤ 2 / |L| := by
   unfold greenCoeff
   rw [abs_mul]
@@ -1226,33 +1262,41 @@ theorem abs_greenCoeff_le (L x₀ : ℝ) (n : ℕ) : |greenCoeff L x₀ n| ≤ 2
     _ = 2 / |L| := mul_one _
 
 /-- **Green's function of the sealed cable.** The cosine series
-`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`.
-For `0 < L` and `x₀ ∈ [0, L]` it is the potential at position `x` and time `t` after a unit
-charge is injected at `x₀` at time `0` (an instantaneous, spatially localized synaptic input).
-The definition and the theorems about it accept every real `x₀` and (where needed) every
-`L ≠ 0`; for other values it is an algebraic extension, not a point charge at `x₀`: it is even
-and `2L`-periodic in `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a
-source outside `[0, L]` is its reflected image inside, and replacing `L` by `-L` negates it
-(`sealedGreen_neg_length`). -/
+`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`,
+the whole series over `n ≥ 0` (whose `n = 0` term is `e^{-t/τ} / L`) being taken with the
+convention that a non-summable series has sum `0`, not the `n ≥ 1` sum alone. With `u / 0 = 0` every
+coefficient is `0` when `L = 0`, so `G ≡ 0` there. For `τ > 0` and `ℓ, L ≠ 0` the series
+converges absolutely at every `t > 0`. The solution, sealed-end, continuity, coefficient,
+total-charge, superposition, semigroup and decay theorems assume these three conditions and
+accept every real `x₀`; the symmetries (`sealedGreen_comm`, `sealedGreen_neg_source`,
+`sealedGreen_add_two_mul_source`, `sealedGreen_neg_length`) hold for all real inputs.
+For `τ > 0`, `ℓ ≠ 0`, `0 < L` and `x₀ ∈ [0, L]` it is the potential at position `x ∈ [0, L]` and
+time `t > 0` after a unit charge is injected at `x₀` at time `0` (an instantaneous, spatially
+localized synaptic input). Outside that range it is an algebraic extension, not the response to a
+point charge at `x₀`: it is even and `2L`-periodic in `x₀`, so a source outside `[0, L]` gives the
+kernel of its reflected image inside, and replacing `L` by `-L` negates it. -/
 noncomputable def sealedGreen (τ ℓ L x₀ : ℝ) : ℝ → ℝ → ℝ :=
   cableSeries τ ℓ L (greenCoeff L x₀)
 
-/-- The Green's function solves the cable equation at every positive time. -/
+/-- For `τ > 0` and `ℓ, L ≠ 0`, the Green's function solves the cable equation at every positive
+time. -/
 theorem isCableSolution_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     (x₀ : ℝ) : IsCableSolution τ ℓ L (Ioi 0) (sealedGreen τ ℓ L x₀) :=
   isCableSolution_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀)
 
-/-- The Green's function has sealed ends at every positive time. -/
+/-- For `τ > 0` and `ℓ, L ≠ 0`, the Green's function has sealed ends at every positive time. -/
 theorem sealedEnds_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ) :
     SealedEnds L (Ioi 0) (sealedGreen τ ℓ L x₀) :=
   sealedEnds_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀)
 
-/-- At a positive time the Green's function is continuous in position. -/
+/-- For `τ > 0` and `ℓ, L ≠ 0`, at a positive time the Green's function is continuous in
+position. -/
 theorem continuous_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ)
     {t : ℝ} (ht : 0 < t) : Continuous (sealedGreen τ ℓ L x₀ t) :=
   continuous_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀) ht
 
-/-- **Mode coefficients of the Green's function.** At every positive time its `n`-th cosine
+/-- **Mode coefficients of the Green's function.** For `τ > 0` and `ℓ, L ≠ 0` (oriented integral),
+at every positive time its `n`-th cosine
 coefficient is `e^{-k_n t} cos (n π x₀ / L)`: the pairing of `δ_{x₀}` with the `n`-th mode,
 decayed at the mode's rate. -/
 theorem integral_sealedGreen_mul_cosMode {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
@@ -1264,8 +1308,9 @@ theorem integral_sealedGreen_mul_cosMode {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ :
   unfold greenCoeff
   split_ifs <;> field_simp
 
-/-- **Charge conservation up to membrane leak.** The total potential after a unit charge decays at
-exactly the membrane rate: `∫₀ᴸ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`, wherever the input is.
+/-- **Charge conservation up to membrane leak.** For `τ > 0` and `ℓ, L ≠ 0`, the total potential
+after a unit charge decays at exactly the membrane rate: `∫₀ᴸ G(t, x; x₀) dx = e^{-t/τ}` for
+`t > 0`, wherever the input is.
 For `L < 0` the integral is oriented, which compensates for the sign of the kernel
 (`sealedGreen_neg_length`); the physical statement is the case `0 < L`, `x₀ ∈ [0, L]`. -/
 theorem integral_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ)
@@ -1277,7 +1322,7 @@ theorem integral_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) 
   ring
 
 /-- **Reciprocity.** The response at `x` to an input at `x₀` equals the response at `x₀` to an
-input at `x`. -/
+input at `x`, for all real arguments (the two series have the same terms). -/
 theorem sealedGreen_comm (τ ℓ L x₀ t x : ℝ) :
     sealedGreen τ ℓ L x₀ t x = sealedGreen τ ℓ L x t x₀ := by
   unfold sealedGreen cableSeries greenCoeff
@@ -1288,7 +1333,7 @@ theorem greenCoeff_neg_source (L x₀ : ℝ) : greenCoeff L (-x₀) = greenCoeff
   funext n
   simp [greenCoeff, cosMode]
 
-/-- The coefficients are `2L`-periodic in the source position. -/
+/-- The coefficients are `2L`-periodic in the source position (both `0` when `L = 0`). -/
 theorem greenCoeff_add_two_mul_source (L x₀ : ℝ) :
     greenCoeff L (x₀ + 2 * L) = greenCoeff L x₀ := by
   funext n
@@ -1318,15 +1363,17 @@ theorem sealedGreen_neg_length (τ ℓ L x₀ t x : ℝ) :
   simp only [greenCoeff, cosMode, decayRate, div_neg, neg_mul, cos_neg, neg_sq]
   split_ifs <;> ring
 
-/-- The response to a localized input decays to rest at every position. -/
+/-- For `τ > 0` and `ℓ, L ≠ 0`, the response to a localized input decays to rest at every
+position. -/
 theorem tendsto_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ x : ℝ) :
     Tendsto (fun t => sealedGreen τ ℓ L x₀ t x) atTop (𝓝 0) :=
   tendsto_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀) x
 
-/-- **Superposition of localized inputs.** For an initial profile given by an absolutely
-convergent cosine series `f y = ∑ a n cos (n π y / L)`, superposing the responses to the charges
-`f y dy` placed at every `y ∈ [0, L]` gives the expansion at time `t > 0`:
-`∫₀ᴸ G(t, x; y) f y dy = ∑ a n e^{-k_n t} cos (n π x / L)`. -/
+/-- **Superposition of localized inputs.** Let `τ > 0` and `ℓ, L ≠ 0`. For an initial profile
+given by an absolutely convergent cosine series `f y = ∑ a n cos (n π y / L)` and a time `t > 0`,
+`∫₀ᴸ G(t, x; y) f y dy = ∑ a n e^{-k_n t} cos (n π x / L)`, the expansion at time `t`. For
+`L > 0` this superposes the responses to the charges `f y dy` placed at every `y ∈ [0, L]`; for
+`L < 0` the integral is oriented. -/
 theorem integral_sealedGreen_mul_cosSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {a : ℕ → ℝ} (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) (x : ℝ) :
     ∫ y in (0 : ℝ)..L, sealedGreen τ ℓ L y t x * ∑' n, a n * cosMode L n y =
@@ -1345,9 +1392,10 @@ theorem integral_sealedGreen_mul_cosSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ
   rw [hf, ← h.tsum_eq]
   rfl
 
-/-- **Semigroup (Chapman–Kolmogorov) law.** Propagating the response to a unit charge at `z` for
-time `t` and then for time `s` gives the response at time `t + s`:
-`∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)`. -/
+/-- **Semigroup (Chapman–Kolmogorov) law.** For `τ > 0`, `ℓ, L ≠ 0` and `s, t > 0`,
+`∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)`. For `L > 0` and `z ∈ [0, L]`, propagating the
+response to a unit charge at `z` for time `t` and then for time `s` gives the response at time
+`t + s`; for `L < 0` the integral is oriented. -/
 theorem integral_sealedGreen_mul_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
     {s t : ℝ} (hs : 0 < s) (ht : 0 < t) (x z : ℝ) :
     ∫ y in (0 : ℝ)..L, sealedGreen τ ℓ L y s x * sealedGreen τ ℓ L z t y =
@@ -1371,7 +1419,8 @@ theorem integral_sealedGreen_mul_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (h�
 /-- **Green's function of the infinite cable** `ℝ`: the potential at position `x` and time `t > 0`
 after a unit charge is injected at `x₀` at time `0`,
 `G(t, x; x₀) = e^{-t/τ} / √(4 π D t) · exp (-(x - x₀)² / (4 D t))` with `D = ℓ² / τ`: a heat kernel
-damped by the membrane leak. -/
+damped by the membrane leak (for `τ > 0` and `ℓ ≠ 0`). With `u / 0 = 0` and `√u = 0` for `u < 0`,
+`G = 0` whenever `4 π D t ≤ 0`. -/
 noncomputable def infiniteGreen (τ ℓ x₀ t x : ℝ) : ℝ :=
   exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ) * t) * exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t))
 
@@ -1449,7 +1498,8 @@ private theorem hasDerivAt_infiniteGreen_time {τ ℓ : ℝ} (hτ : 0 < τ) (h�
   unfold infiniteGreen
   ring
 
-/-- **The cable equation on all of `ℝ`.** At every positive time `t` and every position `x : ℝ`
+/-- **The cable equation on all of `ℝ`.** For `τ > 0` and `ℓ ≠ 0`, at every positive time `t`
+and every position `x : ℝ`
 (including `x < 0`), the infinite-cable Green's function is differentiable in time, twice
 differentiable in space, and satisfies `τ ∂ₜG = ℓ² ∂ₓ²G - G`. -/
 theorem infiniteGreen_cable {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ} (ht : 0 < t)
@@ -1470,7 +1520,8 @@ theorem infiniteGreen_cable {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x�
   field_simp
   ring
 
-/-- The restriction of `infiniteGreen_cable` to a finite segment `[0, L]`, in the form of
+/-- For `τ > 0` and `ℓ ≠ 0`, the restriction of `infiniteGreen_cable` to a finite segment
+`[0, L]`, in the form of
 `IsCableSolution` (any `L`; the segment is empty for `L < 0`). For positions outside `[0, L]`,
 including `x < 0`, use `infiniteGreen_cable`. -/
 theorem isCableSolution_infiniteGreen {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L x₀ : ℝ) :
@@ -1480,13 +1531,15 @@ theorem isCableSolution_infiniteGreen {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ 
   differentiableAt_deriv_space _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.2.1
   cable _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.2.2
 
-/-- The infinite-cable Green's function is positive at positive times. -/
+/-- For `τ > 0` and `ℓ ≠ 0`, the infinite-cable Green's function is positive at positive
+times. -/
 theorem infiniteGreen_pos {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ} (ht : 0 < t)
     (x : ℝ) : 0 < infiniteGreen τ ℓ x₀ t x := by
   unfold infiniteGreen
   positivity
 
-/-- **Total charge.** `∫_ℝ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`: the injected unit charge
+/-- **Total charge.** For `τ > 0` and `ℓ ≠ 0`, `∫_ℝ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`: the
+injected unit charge
 leaks through the membrane at exactly the rate `1 / τ`. -/
 theorem integral_infiniteGreen {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ}
     (ht : 0 < t) : ∫ x, infiniteGreen τ ℓ x₀ t x = exp (-t / τ) := by
@@ -1510,8 +1563,8 @@ theorem infiniteGreen_comm (τ ℓ x₀ t x : ℝ) :
   unfold infiniteGreen
   rw [show (x₀ - x) ^ 2 = (x - x₀) ^ 2 by ring]
 
-/-- **Peak at the input site.** At every positive time the infinite-cable response is largest at
-the input site `x₀`. -/
+/-- **Peak at the input site.** For `τ > 0`, at every positive time the infinite-cable response
+is largest at the input site `x₀` (for `ℓ = 0` both sides are `0`). -/
 theorem infiniteGreen_le {τ ℓ : ℝ} (hτ : 0 < τ) (x₀ : ℝ) {t : ℝ} (ht : 0 < t) (x : ℝ) :
     infiniteGreen τ ℓ x₀ t x ≤ infiniteGreen τ ℓ x₀ t x₀ := by
   unfold infiniteGreen
@@ -1520,9 +1573,11 @@ theorem infiniteGreen_le {τ ℓ : ℝ} (hτ : 0 < τ) (x₀ : ℝ) {t : ℝ} (h
   rw [exp_le_exp, sub_self, zero_pow two_ne_zero, neg_zero, zero_div, neg_div]
   exact neg_nonpos.mpr this
 
-/-- **Localization.** Away from the input site the infinite-cable response vanishes as `t → 0⁺`:
-together with `integral_infiniteGreen` (total charge `e^{-t/τ} → 1`) this says that the input is
-the unit charge concentrated at `x₀`. -/
+/-- **Localization.** For `τ > 0` and `ℓ ≠ 0`, away from the input site the infinite-cable
+response vanishes as `t → 0⁺`, pointwise in `x ≠ x₀`. Together with `integral_infiniteGreen`
+(total charge `e^{-t/τ} → 1`) this is the pointwise form of the localization of the input at
+`x₀`; it does not by itself give convergence to a unit point charge at `x₀` against test
+functions. -/
 theorem tendsto_infiniteGreen_of_ne {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) {x₀ x : ℝ}
     (hx : x ≠ x₀) : Tendsto (fun t => infiniteGreen τ ℓ x₀ t x) (𝓝[>] 0) (𝓝 0) := by
   have hb : 0 < (x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ)) := by
