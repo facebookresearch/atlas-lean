@@ -56,15 +56,10 @@ import Mathlib.Topology.UniformSpace.HeineCantor
 
 `lax_approximation` (Peter Lax 1971): every volume-preserving homeomorphism of
 the `d`-torus (`d ≥ 1`) can be approximated arbitrarily well, in the
-`L∞`-metric `δ`, by cyclic cube exchange transformations. The trusted helpers
-(`Torus`, `VolumePreservingEquiv`, `deltaDist`, `ToralDynamicalSystem`, `cube`,
-`cubeShift`, `IsCyclicCubeExchange`, …) are non-holes. Mathlib has the torus,
-measure-preserving maps, and Hall's marriage theorem (the combinatorial
-ingredient) but not Lax's theorem, cube exchanges, or the metric `δ`.
+`L∞`-metric `δ`, by cyclic cube exchange transformations.
 
-Category-(b) candidate from §110 of the Knill survey. "Cyclic" is encoded as a
-single full `nᵈ`-cycle (`σ.IsCycle ∧ σ.support = univ`), and `0 < d` is required
-(for `d = 0` no non-identity cycle exists).
+"Cyclic" means a single full `nᵈ`-cycle (`σ.IsCycle ∧ σ.support = univ`). The assumption
+`0 < d` excludes the zero-dimensional grid, on which every permutation is the identity.
 
 ## Proof
 

@@ -10,7 +10,7 @@ module
 
 import MathlibExt.GroupTheory.MetabelianizationDecisionProblemsKourovka12Problem98
 
-/-! Tests for the word-problem equivalence, including the full relation subgroup. -/
+/-! Tests for the word-problem equivalence, the rank-zero case and the conjugacy predicate. -/
 
 open MathlibExt.GroupTheory.MetabelianizationDecisionProblemsKourovka12Problem98Wanted
 
@@ -27,7 +27,21 @@ example (n : ℕ) :
   have hre := ComputablePred.to_re ht
   exact (wordProblemIffMetabelianization_holds n ⊤ inferInstance hre).mp ht
 
--- A solver for the derived subgroup also decides the original word problem.
-example {n : ℕ} (R : Subgroup (FreeGroup (Fin n))) [R.Normal] (hre : IsRecursivelyEnumerable R)
-    (hd : WordProblemSolvable ⁅R, R⁆) : WordProblemSolvable R :=
-  (wordProblemIffMetabelianization_holds n R inferInstance hre).mpr hd
+-- In rank zero the only word is empty and hence belongs to the derived subgroup.
+example : WordProblemSolvable (⊥ : Subgroup (FreeGroup (Fin 0))) := by
+  have hre : IsRecursivelyEnumerable (⊥ : Subgroup (FreeGroup (Fin 0))) := by
+    rw [Subsingleton.elim (⊥ : Subgroup (FreeGroup (Fin 0))) ⊤]
+    exact ComputablePred.to_re (wordProblemTop 0)
+  apply (wordProblemIffMetabelianization_holds 0 ⊥ inferInstance hre).mpr
+  apply ComputablePred.computable_iff.mpr
+  refine ⟨fun _ => true, Computable.const true, ?_⟩
+  funext w
+  rw [Subsingleton.elim w []]
+  simp [← FreeGroup.one_eq_mk]
+
+-- In the trivial quotient every pair is conjugate, with the identity as a witness.
+example (n : ℕ) : ConjugacyProblemSolvable (⊤ : Subgroup (FreeGroup (Fin n))) := by
+  apply ComputablePred.computable_iff.mpr
+  refine ⟨fun _ => true, Computable.const true, ?_⟩
+  funext wv
+  simp

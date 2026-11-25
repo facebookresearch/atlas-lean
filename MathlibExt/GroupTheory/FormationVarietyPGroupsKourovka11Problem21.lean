@@ -400,7 +400,7 @@ private theorem exponent_exists (v : ℤ_[3]) (n : ℕ) :
   simp only [Nat.card_zpowers, (level_orders v n).1, (level_orders v n).2, dvd_refl]
 
 -- Each finite group must satisfy the whole tail starting at some index.
--- weight₁ subdirect product of two members can use the larger of their two indices.
+-- A subdirect product of two members can use the larger of their two indices.
 private def eventualLaws (w : ℕ → FreeGroup ℕ) : GroupClass := fun G _ =>
   Finite G ∧ IsPGroup 3 G ∧ ∃ k, ∀ n ≥ k, ∀ f : FreeGroup ℕ →* G, f (w n) = 1
 
@@ -465,7 +465,7 @@ private theorem separate (v : ℤ_[3]) (hv : Transcendental ℤ (4 + 9 * v)) {x 
     exact Subsingleton.elim ..
   · exact h n
 
--- weight₁ word identity that holds at every finite level holds in the generic group:
+-- A word identity that holds at every finite level holds in the generic group:
 -- the coefficient map is injective and the reductions separate 3-adic integers.
 private theorem eq_one_of_reductions (v : ℤ_[3]) (hv : Transcendental ℤ (4 + 9 * v))
     {g : Triangular alpha beta}

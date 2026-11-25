@@ -16,8 +16,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 import Mathlib.InformationTheory.KullbackLeibler.DataProcessing
 import Mathlib.Probability.Distributions.Gaussian.Fernique
 import MathlibExt.InformationTheory.DonskerVaradhan
-import MathlibExt.MeasureTheory.Integral.PrekopaLeindler
-import MathlibExt.Probability.Distributions.GaussianDensity
+import MathlibExt.Probability.GaussianLogSobolev
 
 /-!
 # Talagrand's transport inequality for the Gaussian measure
@@ -55,13 +54,6 @@ to `0` at the end, which gives the sharp constant `2`.
 4. *Approximation.* `W₂(μ, μ_R)² ≤ ∫ ‖x - P_R x‖² dμ` tends to `0` as `R → ∞` by dominated
    convergence, since `μ` has finite second moment, and so does `W₂(γ_R, γ)`, since `γ` has finite
    moments (Fernique's theorem). The triangle inequality for `W₂` concludes.
-
-## Implementation notes
-
-The theorem keeps the full name it had in the former wanted module, so its namespace still reads
-`TalagrandTransportWanted`. The Prékopa–Leindler inequality for `γ` and its auxiliary lemmas are
-private lemmas of `MathlibExt.Probability.GaussianLogSobolev`, which other modules cannot use, so
-they are copied here as private lemmas.
 -/
 
 @[expose] public section
@@ -69,6 +61,7 @@ they are copied here as private lemmas.
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal
 
+open MathlibExt.Probability.GaussianLogSobolevWanted (lintegral_rpow_mul_le_stdGaussian)
 open MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted (IsCoupling)
 open MathlibExt.MeasureTheory.OptimalTransport.Wasserstein (wasserstein transportCost
   wasserstein_le_of_isCoupling wasserstein_triangle)
@@ -164,113 +157,6 @@ private lemma dist_toBall_le {R : ℝ} (hR : 0 < R) (x y : E) :
   exact norm_radialProj_sub_le hR x y
 
 end RadialProjection
-
-section GaussianPrekopaLeindler
-
-/-! ### Prékopa–Leindler for the standard Gaussian measure
-
-The four lemmas of this section are copies of private lemmas of
-`MathlibExt.Probability.GaussianLogSobolev`, which cannot be imported. -/
-
-variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-
-/-- `(1 - t) ‖x‖² + t ‖y‖² = ‖(1 - t) x + t y‖² + t (1 - t) ‖x - y‖²`. -/
-private lemma convex_comb_norm_sq {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
-    (t : ℝ) (x y : F) :
-    (1 - t) * ‖x‖ ^ 2 + t * ‖y‖ ^ 2 =
-      ‖(1 - t) • x + t • y‖ ^ 2 + t * (1 - t) * ‖x - y‖ ^ 2 := by
-  rw [norm_add_sq_real, norm_sub_sq_real, norm_smul, norm_smul, real_inner_smul_left,
-    real_inner_smul_right, Real.norm_eq_abs, Real.norm_eq_abs, mul_pow, mul_pow, sq_abs, sq_abs]
-  ring
-
-/-- The density `(2π)^(-n/2) exp (-‖v‖² / 2)` of the standard Gaussian satisfies
-`p(x)^(1-t) p(y)^t = p((1-t) x + t y) exp (-t (1-t) ‖x - y‖² / 2)`. -/
-private lemma stdGaussianPDFReal_rpow_mul_rpow {n : ℕ} (t : ℝ) (x y : EuclideanSpace ℝ (Fin n)) :
-    MetaMathlibExt.stdGaussianPDFReal x ^ (1 - t) * MetaMathlibExt.stdGaussianPDFReal y ^ t =
-      MetaMathlibExt.stdGaussianPDFReal ((1 - t) • x + t • y) *
-        Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2)) := by
-  simp only [MetaMathlibExt.stdGaussianPDFReal]
-  set c : ℝ := ((√(2 * Real.pi)) ^ Fintype.card (Fin n))⁻¹
-  have hc : 0 < c := by positivity
-  rw [Real.mul_rpow hc.le (Real.exp_pos _).le, Real.mul_rpow hc.le (Real.exp_pos _).le,
-    ← Real.exp_mul, ← Real.exp_mul]
-  have hcc : c ^ (1 - t) * c ^ t = c := by
-    rw [← Real.rpow_add hc, sub_add_cancel, Real.rpow_one]
-  have key := convex_comb_norm_sq t x y
-  calc c ^ (1 - t) * Real.exp (-‖x‖ ^ 2 / 2 * (1 - t)) * (c ^ t * Real.exp (-‖y‖ ^ 2 / 2 * t))
-      = (c ^ (1 - t) * c ^ t) * Real.exp (-‖x‖ ^ 2 / 2 * (1 - t) + -‖y‖ ^ 2 / 2 * t) := by
-        rw [Real.exp_add]; ring
-    _ = c * Real.exp (-‖(1 - t) • x + t • y‖ ^ 2 / 2 + -(t * (1 - t) * ‖x - y‖ ^ 2 / 2)) := by
-        rw [hcc]; congr 2; linear_combination (-1 / 2 : ℝ) * key
-    _ = _ := by rw [Real.exp_add]; ring
-
-/-- Prékopa–Leindler for the standard Gaussian on `ℝⁿ`, from the Lebesgue version. -/
-private lemma lintegral_rpow_mul_le_stdGaussian_euclidean {n : ℕ} {t : ℝ} (ht0 : 0 < t)
-    (ht1 : t < 1) {u v w : EuclideanSpace ℝ (Fin n) → ℝ≥0∞} (hu : Measurable u)
-    (hv : Measurable v) (hw : Measurable w)
-    (huvw : ∀ x y, u x ^ (1 - t) * v y ^ t *
-      ENNReal.ofReal (Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2))) ≤ w ((1 - t) • x + t • y)) :
-    (∫⁻ x, u x ∂stdGaussian _) ^ (1 - t) * (∫⁻ x, v x ∂stdGaussian _) ^ t ≤
-      ∫⁻ x, w x ∂stdGaussian _ := by
-  set p : EuclideanSpace ℝ (Fin n) → ℝ≥0∞ :=
-    fun x => ENNReal.ofReal (MetaMathlibExt.stdGaussianPDFReal x) with hp_def
-  have hp : Measurable p := ENNReal.measurable_ofReal.comp
-    MetaMathlibExt.measurable_stdGaussianPDFReal
-  rw [MetaMathlibExt.stdGaussian_eq_withDensity, lintegral_withDensity_eq_lintegral_mul _ hp hu,
-    lintegral_withDensity_eq_lintegral_mul _ hp hv, lintegral_withDensity_eq_lintegral_mul _ hp hw]
-  refine MathlibExt.MeasureTheory.Integral.PrekopaLeindlerWanted.prekopa_leindler ht0 ht1
-    (hp.mul hu) (hp.mul hv) (hp.mul hw) fun x y => ?_
-  have h1t : 0 ≤ 1 - t := by linarith
-  have hpp : p x ^ (1 - t) * p y ^ t = p ((1 - t) • x + t • y) *
-      ENNReal.ofReal (Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2))) := by
-    simp only [hp_def]
-    rw [ENNReal.ofReal_rpow_of_nonneg (MetaMathlibExt.stdGaussianPDFReal_nonneg _) h1t,
-      ENNReal.ofReal_rpow_of_nonneg (MetaMathlibExt.stdGaussianPDFReal_nonneg _) ht0.le,
-      ← ENNReal.ofReal_mul (Real.rpow_nonneg (MetaMathlibExt.stdGaussianPDFReal_nonneg _) _),
-      ← ENNReal.ofReal_mul (MetaMathlibExt.stdGaussianPDFReal_nonneg _),
-      stdGaussianPDFReal_rpow_mul_rpow]
-  change (p x * u x) ^ (1 - t) * (p y * v y) ^ t ≤ p ((1 - t) • x + t • y) * w ((1 - t) • x + t • y)
-  rw [ENNReal.mul_rpow_of_nonneg _ _ h1t, ENNReal.mul_rpow_of_nonneg _ _ ht0.le]
-  calc p x ^ (1 - t) * u x ^ (1 - t) * (p y ^ t * v y ^ t)
-      = (p x ^ (1 - t) * p y ^ t) * (u x ^ (1 - t) * v y ^ t) := by ring
-    _ = p ((1 - t) • x + t • y) * (u x ^ (1 - t) * v y ^ t *
-          ENNReal.ofReal (Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2)))) := by
-        rw [hpp]; ring
-    _ ≤ _ := by gcongr; exact huvw x y
-
-variable [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
-
-/-- **Prékopa–Leindler inequality for the standard Gaussian measure.** If
-`u(x)^(1-t) v(y)^t exp (-t (1-t) ‖x - y‖² / 2) ≤ w((1-t) x + t y)` for all `x, y`, then
-`(∫ u dγ)^(1-t) (∫ v dγ)^t ≤ ∫ w dγ`. -/
-private lemma lintegral_rpow_mul_le_stdGaussian {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1)
-    {u v w : E → ℝ≥0∞} (hu : Measurable u) (hv : Measurable v) (hw : Measurable w)
-    (huvw : ∀ x y, u x ^ (1 - t) * v y ^ t *
-      ENNReal.ofReal (Real.exp (-(t * (1 - t) * ‖x - y‖ ^ 2 / 2))) ≤ w ((1 - t) • x + t • y)) :
-    (∫⁻ x, u x ∂stdGaussian E) ^ (1 - t) * (∫⁻ x, v x ∂stdGaussian E) ^ t ≤
-      ∫⁻ x, w x ∂stdGaussian E := by
-  let T := (stdOrthonormalBasis ℝ E).repr
-  have hT : MeasurePreserving T (stdGaussian E)
-      (stdGaussian (EuclideanSpace ℝ (Fin (Module.finrank ℝ E)))) :=
-    ⟨T.continuous.measurable, stdGaussian_map T⟩
-  have hTs : Measurable T.symm := T.symm.continuous.measurable
-  have key : ∀ g : E → ℝ≥0∞, Measurable g →
-      ∫⁻ x, g x ∂stdGaussian E = ∫⁻ y, g (T.symm y) ∂stdGaussian _ := by
-    intro g hg
-    rw [← hT.lintegral_comp (f := fun y => g (T.symm y)) (hg.comp hTs)]
-    simp only [LinearIsometryEquiv.symm_apply_apply]
-  rw [key u hu, key v hv, key w hw]
-  refine lintegral_rpow_mul_le_stdGaussian_euclidean ht0 ht1 (hu.comp hTs) (hv.comp hTs)
-    (hw.comp hTs) fun x y => ?_
-  have e1 : T.symm ((1 - t) • x + t • y) = (1 - t) • T.symm x + t • T.symm y := by
-    rw [map_add, map_smul, map_smul]
-  have e2 : ‖T.symm x - T.symm y‖ = ‖x - y‖ := by
-    rw [← map_sub, LinearIsometryEquiv.norm_map]
-  have h := huvw (T.symm x) (T.symm y)
-  rw [e2, ← e1] at h
-  simpa only [Function.comp_apply] using h
-
-end GaussianPrekopaLeindler
 
 section Duality
 
@@ -409,6 +295,7 @@ section TransportCost
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
 
+open MathlibExt.Probability.GaussianLogSobolevWanted (lintegral_rpow_mul_le_stdGaussian)
 open MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted (primalValues
   kantorovich_duality_compact)
 

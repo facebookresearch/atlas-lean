@@ -34,8 +34,25 @@ Words over `F = F(x₀, …, x_{n-1})` are coded as `List (Fin n × Bool)`, as i
 `WordProblemSolvableShared`. A recursively defined normal subgroup is a recursively enumerable one
 (so `F ⧸ R` is recursively presented). The word problem for `F ⧸ N` is decidability of membership in
 `N`; the conjugacy problem is decidability of `∃ u, u w u⁻¹ v⁻¹ ∈ N`, which is conjugacy in `F ⧸ N`
-for normal `N`.
+for normal `N`. The decision-problem definitions and the proof of part (a) are in
+`MathlibExt.GroupTheory.MetabelianizationDecisionProblemsKourovka12Problem98`.
 -/
+
+/-- **Kourovka Problem 12.98(b) (V. E. Shpil'rain).** The statement that for every natural
+number $n$ and every recursively enumerable normal subgroup $R$ of the free group $F$ on $n$
+generators, with commutator subgroup $[R, R]$, the conjugacy problem for $F / R$ is solvable if and
+only if the conjugacy problem for $F / [R, R]$ is solvable. -/
+def conjugacyProblemIffMetabelianization : Prop :=
+  ∀ (n : ℕ) (R : Subgroup (FreeGroup (Fin n))), R.Normal → IsRecursivelyEnumerable R →
+    (ConjugacyProblemSolvable R ↔ ConjugacyProblemSolvable ⁅R, R⁆)
+
+/-- **Kourovka Problem 12.98(c) (V. E. Shpil'rain).** The statement that for every natural
+number $n$ and every recursively enumerable normal subgroup $R$ of the free group $F$ on $n$
+generators, with commutator subgroup $[R, R]$, if the word problem for $F / [R, R]$ is solvable
+then the conjugacy problem for $F / [R, R]$ is solvable. -/
+def metabelianizationWordProblemSolvesConjugacy : Prop :=
+  ∀ (n : ℕ) (R : Subgroup (FreeGroup (Fin n))), R.Normal → IsRecursivelyEnumerable R →
+    WordProblemSolvable ⁅R, R⁆ → ConjugacyProblemSolvable ⁅R, R⁆
 
 /--
 **Kourovka 12.98(b) has a negative answer.** It is not the case that for every natural number $n$

@@ -6,11 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+module
+
 import MathlibExt.Probability.KimVuConcentration
 
 open MeasureTheory unitInterval MathlibExt.Probability.Combinatorics.RandomSubset
+open MathlibExt.Probability.KimVuConcentrationWanted
 
-namespace MathlibExt.Probability.KimVuConcentrationWanted.Tests
+namespace MathlibExtTest.Probability.KimVuConcentration
 
 private noncomputable def half : I := ⟨1 / 2, by norm_num, by norm_num⟩
 
@@ -47,4 +50,4 @@ example :
   simpa [show (2 : ℝ) - 1 = 1 by norm_num] using
     htail 2 (fun _ => half) fullEdge (fun _ => 1) (by simp) hdeg lam hlam
 
-end MathlibExt.Probability.KimVuConcentrationWanted.Tests
+end MathlibExtTest.Probability.KimVuConcentration
