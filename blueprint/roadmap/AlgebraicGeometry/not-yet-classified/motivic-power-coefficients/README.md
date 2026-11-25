@@ -1,0 +1,18 @@
+# Motivic Power Coefficients
+
+- [Completed Coefficients](completed-coefficients.md)
+- [Stage Restriction](stage-restriction.md)
+- [Stage Topology](stage-topology.md)
+- [Regular Term](regular-term.md)
+- [Odd Term](odd-term.md)
+- [Series Term](series-term.md)
+- [Completed BSDecomposition](completed-bsdecomposition.md)
+- [Ell eq weight add one](ell-eq-weight-add-one.md)
+- [DCoefficient](dcoefficient.md)
+- [CCoefficient](ccoefficient.md)
+- [P Shift](p-shift.md)
+- [Q Shift](q-shift.md)
+- [PDiagonal](pdiagonal.md)
+- [BDiagonal](bdiagonal.md)
+- [D negative index](d-negative-index.md)
+- [C nonpositive index](c-nonpositive-index.md)

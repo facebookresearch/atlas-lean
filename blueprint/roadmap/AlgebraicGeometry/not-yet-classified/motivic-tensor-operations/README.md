@@ -1,0 +1,17 @@
+# Motivic Tensor Operations
+
+- [Tensor Shift Iso](tensor-shift-iso.md)
+- [Is Summand Normalized](is-summand-normalized.md)
+- [Negative Tensor Comparison](negative-tensor-comparison.md)
+- [Torus Chains](torus-chains.md)
+- [Natural Multiplication](natural-multiplication.md)
+- [Tate Multiplication](tate-multiplication.md)
+- [Coefficient Element](coefficient-element.md)
+- [Is Pure Tensor Normalized](is-pure-tensor-normalized.md)
+- [Coefficient Multiplication System](coefficient-multiplication-system.md)
+- [Is KFlat](is-kflat.md)
+- [KFlat Resolution System](kflat-resolution-system.md)
+- [Is Realization Natural](is-realization-natural.md)
+- [Derived Tensor Source](derived-tensor-source.md)
+- [Tensor Comparison](tensor-comparison.md)
+- [Derived Coefficient Multiplication](derived-coefficient-multiplication.md)
