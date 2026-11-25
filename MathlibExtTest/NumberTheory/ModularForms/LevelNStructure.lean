@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The exact-source consumer reproduces the theorem type from
+`Theorems/Thm_WLight_levelN_structure_package.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 public import MathlibExt.NumberTheory.ModularForms.LevelNStructure
@@ -63,19 +72,62 @@ private theorem exactSource
   obtain ⟨h1, h2, h3, h4, h5, h6⟩ := levelN_structure_package N
   exact ⟨h1, hAN ▸ h2, h3, h4, hAN ▸ h5, hAN ▸ h6⟩
 
-/-- The `±` in the stabilizer matters: `-1` fixes every Fricke function. -/
+/-- `-1` fixes every Fricke function at a nonzero label, at every level. -/
 example (N : ℕ) [NeZero N] (v : Fin 2 → ZMod N) (hv : v ≠ 0) :
     frickeFunction N (labelVecMul N v (-1)) = frickeFunction N v :=
   (frickeFunction_labelVecMul_eq_iff N (-1)).2 (Or.inr (by simp)) v hv
 
-/-- The nonzero-label hypothesis matters for the monic relations: the zero label's Fricke
-function is identically `0`, which satisfies the relation `f ^ 1 = 0`, while each nonzero
-label gives some relation over `ℂ[j]`. -/
+/-- The zero label is a degenerate case, not a counterexample: Mathlib's `℘` is `0` at the
+lattice point `0`, so the Fricke function at the zero label vanishes identically and the
+conclusion of `exists_monic_relation_frickeFunction` also holds there, with `d = 1` and
+`c = 0`. -/
 example (N : ℕ) [NeZero N] :
-    ∀ τ : ℍ, frickeFunction N 0 τ ^ 1 = 0 := by
-  intro τ
-  simp [frickeFunction, weierstrassTorsion, PeriodPair.weierstrassP_zero]
+    ∃ d : ℕ, ∃ c : ℕ → Polynomial ℂ, ∀ τ : ℍ,
+      frickeFunction N 0 τ ^ d +
+        ∑ k ∈ Finset.range d, (c k).eval (jFunction τ) * frickeFunction N 0 τ ^ k = 0 :=
+  ⟨1, 0, fun τ ↦ by simp [frickeFunction, weierstrassTorsion, PeriodPair.weierstrassP_zero]⟩
 
 /-- The level-`N` algebra contains `j`, so `j` is holomorphic. -/
 example (N : ℕ) [NeZero N] : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jFunction :=
   mdifferentiable_of_mem_levelNAlgebra (jFunction_mem_levelNAlgebra N)
+
+/-! ### Level `3` -/
+
+/-- Labels are row vectors: `T = !![1, 1; 0, 1]` sends `(1, 0)` to `(1, 1)` and fixes `(0, 1)`,
+where the column action `v ↦ T v` would fix `(1, 0)` and move `(0, 1)`. -/
+example : labelVecMul 3 ![1, 0] ModularGroup.T = ![1, 1] ∧
+    labelVecMul 3 ![0, 1] ModularGroup.T = ![0, 1] := by
+  constructor <;> funext i <;> fin_cases i <;>
+    simp [labelVecMul, Matrix.vecMul, dotProduct, Fin.sum_univ_two, ModularGroup.coe_T]
+
+/-- The `±` matters at level `3`: `-1 ∉ Γ(3)` and `-1` moves every nonzero label, yet it fixes
+every Fricke function at a nonzero label. -/
+example : -1 ∉ CongruenceSubgroup.Gamma 3 ∧
+    (∀ v : Fin 2 → ZMod 3, v ≠ 0 → labelVecMul 3 v (-1) ≠ v) ∧
+    ∀ v : Fin 2 → ZMod 3, v ≠ 0 →
+      frickeFunction 3 (labelVecMul 3 v (-1)) = frickeFunction 3 v := by
+  refine ⟨?_, fun v hv h ↦ hv ?_,
+    (frickeFunction_labelVecMul_eq_iff 3 (-1)).2 (Or.inr (by simp))⟩
+  · rw [CongruenceSubgroup.Gamma_mem]
+    decide
+  · have h0 := congrFun h 0
+    have h1 := congrFun h 1
+    simp [labelVecMul, Matrix.vecMul, dotProduct, Fin.sum_univ_two] at h0 h1
+    have key : ∀ x : ZMod 3, -x = x → x = 0 := by decide
+    funext i
+    fin_cases i
+    · exact key _ h0
+    · exact key _ h1
+
+/-- The hard direction of `frickeFunction_labelVecMul_eq_iff` at level `3`: neither `T` nor
+`-T` lies in `Γ(3)`, so `T` moves the Fricke function at some nonzero label. -/
+example : ∃ v : Fin 2 → ZMod 3, v ≠ 0 ∧
+    frickeFunction 3 (labelVecMul 3 v ModularGroup.T) ≠ frickeFunction 3 v := by
+  have hT : ¬ (ModularGroup.T ∈ CongruenceSubgroup.Gamma 3 ∨
+      -ModularGroup.T ∈ CongruenceSubgroup.Gamma 3) := by
+    simp only [CongruenceSubgroup.Gamma_mem, Matrix.SpecialLinearGroup.coe_neg,
+      ModularGroup.coe_T]
+    decide
+  have h := mt (frickeFunction_labelVecMul_eq_iff 3 ModularGroup.T).1 hT
+  simp only [not_forall, exists_prop] at h
+  exact h
