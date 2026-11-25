@@ -16263,7 +16263,6 @@
   "WantedExt/LinearAlgebra/MatrixCompletionWanted": {"to": "Analysis/approximation-theory", "title": "Low-rank matrix recovery"},
   "WantedExt/LinearAlgebra/MaxMinGeneralizedEigenvalueWanted": {"to": "LinearAlgebra/eigenvalues-and-canonical-forms", "title": "Generalized eigenvalues of max and min matrices"},
   "WantedExt/LinearAlgebra/PowerSumMatrixWanted": {"to": "LinearAlgebra/eigenvalues-and-canonical-forms", "title": "Newton's identities for traces of matrix powers"},
-  "WantedExt/LinearAlgebra/SymplecticDetWanted": {"to": "LinearAlgebra/determinants-and-matrix-identities", "title": "Determinant of a symplectic matrix"},
   "WantedExt/LinearAlgebra/TotallyPositiveInitialMinorsWanted": {"to": "LinearAlgebra/special-matrices", "title": "Total positivity"},
   "WantedExt/Logic/ProvabilityLogicWanted": {"to": "Logic/modal-logic", "title": "Provability logic GL"},
   "WantedExt/Logic/ReflectionCalculusWanted": {"to": "Logic/modal-logic", "title": "Reflection calculus and worms"},
