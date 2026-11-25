@@ -60,6 +60,12 @@ example (i j : Fin progression.card) (h : IsSymmetricOfType progression i j) :
     decide +kernel
   exact isSymmetricOfType_unique progression (by decide) i j _ _ h hs
 
+-- Check the exact case disjunction, cardinality bound and named arguments.
+example (S : Finset ℚ) (hS : 4 ≤ S.card) (i j : Fin S.card) (h : IsSymmetricOfType S i j) :
+    (i.val = 0 ∧ j.val = S.card - 1) ∨ (i.val = 1 ∧ j.val = S.card - 1) ∨
+      (i.val = 0 ∧ j.val = S.card - 2) :=
+  isSymmetricOfType_cases (S := S) (hS := hS) (i := i) (j := j) (h := h)
+
 private def three : Finset ℚ := ([0, 1, 2] : List ℚ).toFinset
 
 private theorem three_sort : three.sort = [0, 1, 2] :=
