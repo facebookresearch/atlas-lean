@@ -35,7 +35,9 @@ Mediation*, Psychological Methods 2014, R-389, cited as P14):
   identifiable");
 * `nde_eq_mediationFormulaNDE`: P01 Theorem 2 with (ii)-(iii) realized by adjustment, PDF p. 6;
   P14 Corollary 1, eq. (14a), p. 17; `nie_eq_mediationFormulaNIE`: P01 Theorem 4, eqs.
-  (25)-(26), PDF p. 8; P14 eq. (14b), p. 17;
+  (25)-(26), PDF p. 8; P14 eq. (14b), p. 17. Both are proved under the counterfactual H1-H4
+  hypotheses below, which dispense with the A-1 nondescendant premise of the published
+  statements; the `_of_notAffected` corollaries give the published hypothesis sets;
 * `nde_eq_mediationFormula_unadjusted`, `nie_eq_mediationFormula_unadjusted` (`W = ∅`): P01
   eqs. (17) and (27), PDF pp. 7-8; P14 eqs. (16)-(17), p. 19 ("the mediation formula");
 * `MediationKite`: P14 §5, Fig. 10, pp. 27-28; C. Avin, I. Shpitser and J. Pearl,
@@ -57,11 +59,17 @@ H1-H4 and `hposW` whose natural direct effect is `1` while the formula is `0`. T
 therefore add explicit support positivity (`hposW`, `hposZ`): `P(W = w) > 0` implies
 `P(X = x*, W = w) > 0`, and `P(X = x*, Z = z, W = w) > 0` implies `P(X = x, Z = z, W = w) > 0`.
 
-**"W is not affected by X"** (P14 A-1; P01 "nondescendants of X or Z") is a hypothesis only of
-`nde_eq_doFormula`, where it lets each factor be read as an interventional law (P14 fn. 18,
-p. 17, and p. 18). With factual covariates, H1-H4 and positivity give the observational formula
-without it. It is stated as `W ⊆ S` for a parent-closed node set `S` avoiding `t` and `m`, which
-is equivalent to "no member of `W` is a descendant of `t` or of `m`".
+**"W is not affected by X"** (P14 A-1; P01 "nondescendants of X or Z") is part of the published
+hypothesis sets for the observational formulas: P14 Corollary 1 states eqs. (14a)-(14b) under
+A-1 and A-2, and P01 likewise takes the adjustment covariates to be nondescendants. The
+counterfactual H1-H4 form proved here does not need it: with factual covariates, H1-H4 and
+positivity give the observational formula without any nondescendant premise.
+`nde_eq_mediationFormulaNDE_of_notAffected` and `nie_eq_mediationFormulaNIE_of_notAffected`
+restate the two formulas under the published hypothesis sets (A-1 included) and follow
+immediately. A-1 is a working hypothesis of `nde_eq_doFormula`, where it lets each factor be
+read as an interventional law (P14 fn. 18, p. 17, and p. 18). Throughout, it is stated as
+`W ⊆ S` for a parent-closed node set `S` avoiding `t` and `m`, which is equivalent to
+"no member of `W` is a descendant of `t` or of `m`".
 
 ## Natural indirect effect convention
 
@@ -2596,6 +2604,63 @@ theorem nie_eq_mediationFormula_unadjusted (M : FiniteSCM α n U)
     rw [hLM, hLPx, hLPxstar, hLP2x, hLP2xstar, hLP3_one default, mul_one]
   rw [hGen]
   exact hEq
+
+/-- The mediation formula for the natural direct effect under the published hypothesis set,
+including **A-1** (`W` not affected by `X`, here `W ⊆ S` for a parent-closed `S` avoiding
+`t` and `m`, i.e. no member of `W` is a descendant of `t` or of `m`): P01 Theorem 2, PDF
+p. 6; P14 Corollary 1, eq. (14a), p. 17. Immediate from `nde_eq_mediationFormulaNDE`,
+whose counterfactual hypotheses do not need A-1. -/
+theorem nde_eq_mediationFormulaNDE_of_notAffected (M : FiniteSCM α n U)
+    (μ : (k : Fin n) → StdSimplex ℝ (U k)) {t m : Fin n} (htm : t ≠ m) (y : Fin n)
+    (W : Finset (Fin n)) (g : α → ℝ) (x xstar : α)
+    {S : Set (Fin n)} (_hS : ∀ j ∈ S, ∀ i ∈ M.pa j, Fin.castLE j.2.le i ∈ S)
+    (_htS : t ∉ S) (_hmS : m ∉ S) (_hWS : ∀ i ∈ W, i ∈ S)
+    (hXY : ∀ x' ∈ ({x, xstar} : Finset α), ∀ z : α,
+      NoiseCondIndep μ (fun u => M.counterfactual₂ t x' m z u y) (fun u => M.solve u t)
+        (fun u (i : W) => M.solve u i))
+    (hZY : ∀ x' ∈ ({x, xstar} : Finset α), ∀ z : α,
+      NoiseCondIndep μ (fun u => M.counterfactual₂ t x' m z u y) (fun u => M.solve u m)
+        (fun u => (M.solve u t, fun i : W => M.solve u i)))
+    (hXZ : NoiseCondIndep μ (fun u => M.counterfactual t xstar u m) (fun u => M.solve u t)
+      (fun u (i : W) => M.solve u i))
+    (hcross : ∀ x' ∈ ({x, xstar} : Finset α), ∀ z : α,
+      NoiseCondIndep μ (fun u => M.counterfactual₂ t x' m z u y)
+        (fun u => M.counterfactual t xstar u m) (fun u (i : W) => M.solve u i))
+    (hposW : ∀ w : W → α, lawProb (M.inducedLaw μ) (fun v => (fun i : W => v i) = w) ≠ 0 →
+      lawProb (M.inducedLaw μ) (fun v => v t = xstar ∧ (fun i : W => v i) = w) ≠ 0)
+    (hposZ : ∀ (w : W → α) (z : α),
+      lawProb (M.inducedLaw μ) (fun v => v t = xstar ∧ v m = z ∧ (fun i : W => v i) = w) ≠ 0 →
+      lawProb (M.inducedLaw μ) (fun v => v t = x ∧ v m = z ∧ (fun i : W => v i) = w) ≠ 0) :
+    M.nde μ t m y g x xstar = mediationFormulaNDE (M.inducedLaw μ) t m y W g x xstar := by
+  exact nde_eq_mediationFormulaNDE M μ htm y W g x xstar hXY hZY hXZ hcross hposW hposZ
+
+/-- The mediation formula for the natural indirect effect under the published hypothesis
+set, including **A-1** as in `nde_eq_mediationFormulaNDE_of_notAffected`: P01 Theorem 4,
+eqs. (25)-(26), PDF p. 8; P14 eq. (14b), p. 17. Immediate from
+`nie_eq_mediationFormulaNIE`. -/
+theorem nie_eq_mediationFormulaNIE_of_notAffected (M : FiniteSCM α n U)
+    (μ : (k : Fin n) → StdSimplex ℝ (U k)) {t m : Fin n} (htm : t ≠ m) (y : Fin n)
+    (W : Finset (Fin n)) (g : α → ℝ) (x xstar : α)
+    {S : Set (Fin n)} (_hS : ∀ j ∈ S, ∀ i ∈ M.pa j, Fin.castLE j.2.le i ∈ S)
+    (_htS : t ∉ S) (_hmS : m ∉ S) (_hWS : ∀ i ∈ W, i ∈ S)
+    (hXY : ∀ z : α, NoiseCondIndep μ (fun u => M.counterfactual₂ t xstar m z u y)
+      (fun u => M.solve u t) (fun u (i : W) => M.solve u i))
+    (hZY : ∀ z : α, NoiseCondIndep μ (fun u => M.counterfactual₂ t xstar m z u y)
+      (fun u => M.solve u m) (fun u => (M.solve u t, fun i : W => M.solve u i)))
+    (hXZ : ∀ x' ∈ ({x, xstar} : Finset α), NoiseCondIndep μ
+      (fun u => M.counterfactual t x' u m) (fun u => M.solve u t)
+      (fun u (i : W) => M.solve u i))
+    (hcross : ∀ x' ∈ ({x, xstar} : Finset α), ∀ z : α,
+      NoiseCondIndep μ (fun u => M.counterfactual₂ t xstar m z u y)
+        (fun u => M.counterfactual t x' u m) (fun u (i : W) => M.solve u i))
+    (hposW : ∀ w : W → α, lawProb (M.inducedLaw μ) (fun v => (fun i : W => v i) = w) ≠ 0 →
+      ∀ x' ∈ ({x, xstar} : Finset α),
+        lawProb (M.inducedLaw μ) (fun v => v t = x' ∧ (fun i : W => v i) = w) ≠ 0)
+    (hposZ : ∀ (w : W → α) (z : α),
+      lawProb (M.inducedLaw μ) (fun v => v t = x ∧ v m = z ∧ (fun i : W => v i) = w) ≠ 0 →
+      lawProb (M.inducedLaw μ) (fun v => v t = xstar ∧ v m = z ∧ (fun i : W => v i) = w) ≠ 0) :
+    M.nie μ t m y g x xstar = mediationFormulaNIE (M.inducedLaw μ) t m y W g x xstar := by
+  exact nie_eq_mediationFormulaNIE M μ htm y W g x xstar hXY hZY hXZ hcross hposW hposZ
 
 end Identification
 
