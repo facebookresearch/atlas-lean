@@ -55,3 +55,8 @@ example : ∃ p : (Fin 2 → ℤ) →ₗ[ℤ] (Fin 2 → ℤ) →ₗ[ℤ] ℤ,
     exact ⟨v, by simp⟩
   · intro n v _ _
     exact ⟨v, by simp⟩
+
+/-- Importing the module keeps the canonical `ℤ`-module structure of an additive group: the
+`attribute [-instance] AddCommGroup.toIntModule` used by its proofs does not reach importers. -/
+example {A : Type*} [AddCommGroup A] :
+    (inferInstance : Module ℤ A) = AddCommGroup.toIntModule A := rfl
