@@ -114,4 +114,41 @@ public theorem sum_choose_even_centralBinom_div_four_pow (n : ℕ) :
   change (Rat.castHom ℂ) _ = (Rat.castHom ℂ) _
   simpa only [map_sum, map_mul, map_div₀, map_pow, map_natCast, map_ofNat] using h.symm
 
+/-- **Even-index expansion of a weighted central binomial sum.** For every natural number $n$,
+$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} =
+\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{n-4k} \binom{2k}{k}.$$
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
+public theorem sum_choose_centralBinom_div_two_pow (n : ℕ) :
+    ∑ k ∈ range (n + 1), (n.choose k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) =
+      ∑ k ∈ range (n / 2 + 1),
+        (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℚ) := by
+  apply (Rat.cast_injective (α := ℂ))
+  change (Rat.castHom ℂ) _ = (Rat.castHom ℂ) _
+  simp only [map_sum, map_mul, map_div₀, map_pow, map_natCast, map_ofNat]
+  have hhalf : 1 - (1 / 2 : ℂ) = 1 / 2 := by ring
+  have h := sum_choose_centralBinom_one_sub_pow_mul_pow n (1 / 2)
+  rw [hhalf] at h
+  calc
+    _ = (∑ k ∈ range (n + 1),
+          (n.choose k : ℂ) / 2 ^ k * ((2 * k).choose k : ℂ) * (1 / 2) ^ k * (1 / 2) ^ (n - k)) *
+          2 ^ n := by
+      rw [sum_mul]
+      apply sum_congr rfl
+      intro k hk
+      have hkn := Nat.le_of_lt_succ (mem_range.mp hk)
+      rw [mul_assoc (_ / _ * _), ← pow_add, Nat.add_sub_of_le hkn, mul_assoc, ← mul_pow,
+        div_mul_cancel₀ _ (two_ne_zero : (2 : ℂ) ≠ 0), one_pow, mul_one]
+    _ = (∑ k ∈ range (n / 2 + 1),
+          (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) * (1 / 2) ^ (2 * k)) *
+          2 ^ n := by rw [h]
+    _ = _ := by
+      rw [sum_mul]
+      apply sum_congr rfl
+      intro k _
+      rw [show 4 * k = 2 * k + 2 * k by omega, pow_add, div_pow, one_pow]
+      simp only [div_eq_mul_inv, mul_inv_rev]
+      ring
+
 end MetaMathlibExt
