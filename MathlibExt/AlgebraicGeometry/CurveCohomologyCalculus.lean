@@ -263,10 +263,11 @@ theorem finrankEuler01_coproduct {k : Type u} [Field k] {X : Scheme.{u}}
   rw [finrankEuler01, finrank_cohomology_coproduct f L 0 h₀, finrank_cohomology_coproduct f L 1 h₁]
   simp only [Nat.cast_sum, ← Finset.sum_sub_distrib, finrankEuler01]
 
-/-- Source-covered generic curve inputs, on the existing actual tensor
-and coherent-cohomology carriers: tensor products of line bundles are line
-bundles, and line bundles have finite-dimensional `H⁰` and `H¹`. No degree or
-Euler-characteristic conclusion is among the fields. -/
+/-- Conditions on a proper curve $X$ over a field $k$, that is, a proper morphism
+$f : X \to \operatorname{Spec} k$ with $X$ of Krull dimension one: the tensor product
+`moduleTensor X L M` of two line bundles $L$ and $M$ on $X$ is a line bundle, and every line bundle
+$L$ on $X$ has finite-dimensional cohomology $H^0(X, L)$ and $H^1(X, L)$ over $k$ (`cohomology`, the
+right derived functors of global sections). -/
 structure CurveTensorEulerInputs {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] : Prop where
   tensor_line : ∀ (L M : X.Modules), IsLineBundle L → IsLineBundle M →
@@ -274,9 +275,9 @@ structure CurveTensorEulerInputs {k : Type u} [Field k] {X : Scheme.{u}}
   finite : ∀ (L : X.Modules), IsLineBundle L → ∀ j : ℕ, j ≤ 1 →
     FiniteDimensional k (cohomology f L j)
 
-/-- Additivity of the degree under tensor products of line bundles on a proper curve
-(Stacks, Tag 0AYX). It is requested in `CurveCohomologyCalculusWanted`; results below
-that use it take it as an explicit hypothesis. -/
+/-- The condition that the degree is additive under tensor products of line bundles on a proper
+curve $X$ over a field $k$: for all line bundles $L$ and $M$ on $X$,
+$\deg(L ⊗ M) = \deg L + \deg M$, where the curve inputs `T` make $L ⊗ M$ a line bundle. -/
 def IsDegreeAdditive {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] (T : CurveTensorEulerInputs f) : Prop :=
   ∀ (L M : X.Modules) (hL : IsLineBundle L) (hM : IsLineBundle M),

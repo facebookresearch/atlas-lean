@@ -139,7 +139,10 @@ instance unitsRepContinuousSMul :
 /-- Tau's native cohomological Brauer carrier, on the same actual units. -/
 abbrev Br := continuousCohomology 2 (unitsRep K)
 
-/-- Actual homogeneous two-cocycles; this is the kernel in Mathlib's complex. -/
+/-- Continuous homogeneous two-cocycles of the absolute Galois group of `K` with coefficients in
+`unitsRep K`, the units of the separable closure with the discrete topology and the Galois action:
+the kernel of the differential leaving degree two in the complex of continuous homogeneous
+cochains. -/
 abbrev TwoCocycles := ContinuousCohomology.cocycles (unitsRep K) 2
 
 /-- The canonical quotient map from actual cocycles to actual Brauer classes. -/
@@ -158,9 +161,9 @@ def inhomogeneousValue (c : TwoCocycles K) (g h : Field.absoluteGaloisGroup K) :
     SepUnits K :=
   inhomogeneousTwoCocycleValue (unitsRep K) c g h
 
-/-- Actual two-cocycle values are locally constant in both group variables.
-The locally compact hypothesis supplies uncurrying; compactness of absolute
-Galois groups is a separate proved-source provider in the bridge requests. -/
+/-- The inhomogeneous values `(g, h) ↦ c(1, g, g h)` of a two-cocycle `c`, as a locally constant
+function on `G_K × G_K` with values in the units of the separable closure, where the absolute
+Galois group `G_K` of `K` is assumed locally compact. -/
 def locallyConstantValues [LocallyCompactSpace (Field.absoluteGaloisGroup K)]
     (c : TwoCocycles K) :
     LocallyConstant (Field.absoluteGaloisGroup K × Field.absoluteGaloisGroup K) (SepUnits K) :=
