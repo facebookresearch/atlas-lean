@@ -7,9 +7,11 @@ A body flies in the *free-molecular* regime when the molecular mean free path is
 Let the *speed ratio* $s$ be the stream speed divided by the most probable thermal speed of the molecules. Coefficients are referred to the dynamic pressure $\tfrac12\rho U^2$ and the area $A$.
 
 **Theorem.** For specular reflection, as $s \to \infty$, the free-molecular flat-plate coefficients tend to the values
+
 $$
 C_D = 4\sin^3\alpha, \qquad C_L = 4\sin^2\alpha\cos\alpha,
 $$
+
 and, for $0 < \alpha \le \pi/2$, the lift-to-drag ratio is $L/D = \cot\alpha$. At $\alpha = 0$ both coefficients vanish and the ratio is undefined.
 If the molecules instead lose their normal momentum and keep their tangential velocity, which is Newtonian impact theory for hypersonic continuum flow, the coefficients are half of these.
 

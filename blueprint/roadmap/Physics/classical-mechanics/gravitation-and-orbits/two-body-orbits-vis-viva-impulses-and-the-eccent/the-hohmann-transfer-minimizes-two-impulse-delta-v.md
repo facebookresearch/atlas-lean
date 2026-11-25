@@ -4,9 +4,11 @@ Let $\mu > 0$ be the gravitational parameter, and let $0 < r_1 < r_2$ be the rad
 
 **Theorem.**
 1. The Hohmann transfer has total velocity change
-$$
-\Delta v_H = \sqrt{\frac{\mu}{r_1}}\left(\sqrt{\frac{2r_2}{r_1 + r_2}} - 1\right) + \sqrt{\frac{\mu}{r_2}}\left(1 - \sqrt{\frac{2r_1}{r_1 + r_2}}\right).
-$$
+
+    $$
+    \Delta v_H = \sqrt{\frac{\mu}{r_1}}\left(\sqrt{\frac{2r_2}{r_1 + r_2}} - 1\right) + \sqrt{\frac{\mu}{r_2}}\left(1 - \sqrt{\frac{2r_1}{r_1 + r_2}}\right).
+    $$
+
 2. **Global optimality among two-impulse transfers (Lawden).** Every transfer between the two orbits that uses exactly two impulses has total $\Delta v \ge \Delta v_H$. More generally, between two coaxial coplanar ellipses the optimal two-impulse transfer applies its impulses at the apses.
 
 With three or more impulses the Hohmann transfer need not be optimal. For large enough $r_2/r_1$, a bi-elliptic transfer through an intermediate apoapsis beyond $r_2$ costs less.

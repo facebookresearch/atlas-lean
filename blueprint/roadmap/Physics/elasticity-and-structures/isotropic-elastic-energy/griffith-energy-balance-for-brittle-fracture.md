@@ -4,14 +4,18 @@ Consider a linear elastic plate of unit thickness with Young's modulus $E > 0$ a
 
 **Theorem (Griffith).**
 1. For fixed $\sigma \ne 0$, the total energy $\Pi(a) = S(a) + U(a)$ is a concave quadratic in $a$. It is maximized at the critical length
-$$
-a_c = \frac{2E\gamma}{\pi\sigma^2}.
-$$
-For $a < a_c$, a small extension raises $\Pi$, and for $a \ge a_c$ every extension lowers $\Pi$.
+
+    $$
+    a_c = \frac{2E\gamma}{\pi\sigma^2}.
+    $$
+
+    For $a < a_c$, a small extension raises $\Pi$, and for $a \ge a_c$ every extension lowers $\Pi$.
 2. Equivalently, for a fixed crack length $a$ and a tensile stress $\sigma > 0$, crack growth lowers the energy exactly when $\sigma$ is at least the *fracture stress*
-$$
-\sigma_f = \sqrt{\frac{2E\gamma}{\pi a}}.
-$$
+
+    $$
+    \sigma_f = \sqrt{\frac{2E\gamma}{\pi a}}.
+    $$
+
 3. In terms of the *strain energy release rate* $G = -dU/da = \pi\sigma^2 a/E$, the criterion reads $G \ge 2\gamma$. Irwin and Orowan replaced $2\gamma$ by a measured critical value $G_c$ that also includes plastic dissipation.
 
 **Proof.** $\Pi'(a) = 2\gamma - \pi\sigma^2 a/E$ is decreasing in $a$ and vanishes exactly at $a = a_c$; since $\Pi$ is strictly concave, every extension from $a \ge a_c$ lowers it. Solving $\Pi'(a) = 0$ for $\sigma$ gives $\sigma_f$, and $-U'(a) = \pi\sigma^2 a/E$.

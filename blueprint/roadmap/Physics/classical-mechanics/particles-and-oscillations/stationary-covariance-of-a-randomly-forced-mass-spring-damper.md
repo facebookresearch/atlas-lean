@@ -1,18 +1,23 @@
 # Stationary covariance of a randomly forced mass–spring–damper
 
 Let $m, c, k > 0$ and $\sigma \ne 0$. Consider the mass–spring–damper driven by white noise,
+
 $$
 m\,\ddot x + c\,\dot x + k\,x = \sigma\,\xi(t),
 $$
+
 written as the linear stochastic differential equation $dX = A X\,dt + B\,dW$ for the state $X = (x, \dot x)$, with a standard Brownian motion $W$ and
+
 $$
 A = \begin{pmatrix} 0 & 1 \\ -k/m & -c/m \end{pmatrix}, \qquad B = \begin{pmatrix} 0 \\ \sigma/m \end{pmatrix}.
 $$
 
 **Theorem.** The matrix $A$ is Hurwitz. The stationary law of $X$ has mean zero and covariance
+
 $$
 \Sigma = \begin{pmatrix} \dfrac{\sigma^2}{2ck} & 0 \\[1ex] 0 & \dfrac{\sigma^2}{2cm} \end{pmatrix}.
 $$
+
 So in the stationary regime, displacement and velocity are uncorrelated, with variances $\sigma^2/(2ck)$ and $\sigma^2/(2cm)$.
 
 **Proof.** The characteristic polynomial of $A$ is $\lambda^2 + (c/m)\lambda + k/m$, and both of its coefficients are positive, so both roots have negative real part. For a linear stochastic differential equation with Hurwitz drift matrix, the stationary covariance is the unique solution of the Lyapunov equation $A\Sigma + \Sigma A^\top + BB^\top = 0$. Write $\Sigma = \begin{pmatrix} p & q \\ q & r \end{pmatrix}$. The three independent entries of the Lyapunov equation give:

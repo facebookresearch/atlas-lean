@@ -8,9 +8,11 @@ Consider the acceleration zone $\Omega$ of a Hall thruster, with a steady electr
 Write $J_{\mathrm{Hall}} = -e n_e v_e$ for the current density of the electrons, which drift azimuthally with velocity $v_e = E \times B/|B|^2$.
 
 **Theorem.** Under these assumptions, the axial force on the ions in $\Omega$ equals the Lorentz force on the Hall current,
+
 $$
 F_i = \int_\Omega q n_i E\,dV = \int_\Omega J_{\mathrm{Hall}} \times B\,dV,
 $$
+
 in the axial component. The reaction to this force acts on the thruster's magnetic circuit, so the force transmitted to the thruster body is $-F_i = -\int_\Omega J_{\mathrm{Hall}} \times B\,dV$, directed against the ion acceleration, and the thrust is its magnitude $T = |F_i|$.
 
 **Proof.** The electrons experience the force density $-e n_e E - e n_e v_e \times B$, and its axial component vanishes by assumption. Quasi-neutrality turns $-e n_e E$ into $-q n_i E$, and the definition of the Hall current turns $-e n_e v_e \times B$ into $J_{\mathrm{Hall}} \times B$. So, axially, $q n_i E = J_{\mathrm{Hall}} \times B$ pointwise. Integrate over $\Omega$. By Newton's third law, the magnetic force of the Hall current on the field sources is equal and opposite to the force of the field on the Hall current.

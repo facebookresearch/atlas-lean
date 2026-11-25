@@ -1,22 +1,28 @@
 # Optimality system for linear-quadratic elliptic optimal control
 
 Let $\Omega \subset \mathbb{R}^n$ be a bounded Lipschitz domain. Fix a desired state $y_\Omega \in L^2(\Omega)$, a coefficient $\beta \in L^\infty(\Omega)$, a regularization parameter $\lambda > 0$, and bounds $u_a \le u_b$ in $L^2(\Omega)$. For a control $u \in L^2(\Omega)$, let $y = Su \in H^1_0(\Omega)$ be the weak solution of
+
 $$
 -\Delta y = \beta u \ \text{ in } \Omega, \qquad y = 0 \ \text{ on } \partial\Omega.
 $$
+
 Consider the problem of minimizing
+
 $$
 J(u) = \tfrac12\lVert Su - y_\Omega\rVert_{L^2}^2 + \tfrac{\lambda}{2}\lVert u\rVert_{L^2}^2
 $$
+
 over the admissible set $U_{\mathrm{ad}} = \{u \in L^2(\Omega) : u_a \le u \le u_b \text{ a.e.}\}$.
 
 **Theorem.**
 1. The problem has a unique optimal control $u^*$.
 2. Let $y^* = Su^*$, and let $p \in H^1_0(\Omega)$ be the *adjoint state*, the weak solution of $-\Delta p = y_\Omega - y^*$ in $\Omega$ with $p = 0$ on $\partial\Omega$. A control $u^* \in U_{\mathrm{ad}}$ is optimal if and only if
-$$
-u^*(x) = P_{[u_a(x),\,u_b(x)]}\Bigl(\tfrac{1}{\lambda}\beta(x)p(x)\Bigr) \quad \text{for almost every } x,
-$$
-where $P_{[a,b]}(s) = \min(b, \max(a, s))$.
+
+    $$
+    u^*(x) = P_{[u_a(x),\,u_b(x)]}\Bigl(\tfrac{1}{\lambda}\beta(x)p(x)\Bigr) \quad \text{for almost every } x,
+    $$
+
+    where $P_{[a,b]}(s) = \min(b, \max(a, s))$.
 3. Without control constraints, $u^* = \beta p/\lambda$, and $(y^*, p)$ solve the coupled elliptic system $-\Delta y^* = \beta^2 p/\lambda$, $-\Delta p = y_\Omega - y^*$, with homogeneous Dirichlet conditions.
 
 **Proof.**

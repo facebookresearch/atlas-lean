@@ -6,15 +6,19 @@ Consider a homogeneous slab reactor occupying $-a/2 \le x \le a/2$, infinite in 
 - infinite-medium multiplication factor $k_\infty > 0$.
 
 Write $L^2 = D/\Sigma_a$ for the diffusion area. The neutron flux $\phi$ satisfies
+
 $$
 D\,\phi''(x) - \Sigma_a\,\phi(x) + k_\infty \Sigma_a\,\phi(x) = 0, \qquad \phi(\pm a/2) = 0,
 $$
+
 where the zero-flux boundary condition is imposed at the faces and the extrapolation distance is neglected.
 
 **Theorem.** A nonnegative flux that is not identically zero exists if and only if
+
 $$
 k_\infty = 1 + L^2 B^2, \qquad B = \frac{\pi}{a}.
 $$
+
 That is, the material buckling $(k_\infty - 1)/L^2$ equals the geometric buckling $(\pi/a)^2$. In that case the flux is $\phi(x) = A\cos(\pi x/a)$ for some $A > 0$, and its amplitude, hence the power level, is not determined by the equation.
 
 **Proof.** The equation reads $\phi'' + \bigl((k_\infty - 1)/L^2\bigr)\phi = 0$.
