@@ -104,4 +104,3 @@ example {N : ℕ} [NeZero N]
     ∃ h : CuspForm (CongruenceSubgroup.Gamma0 N) 2, h.IsNormalizedEigenform ∧
       ∀ (ℓ : ℕ), ℓ.Prime → ¬ ℓ ∣ N → ℓ ∉ S → ModularFormClass.qCoeff h ℓ = a ℓ :=
   CuspForm.exists_isNormalizedEigenform_of_forall_heckeTLin_eq_smul hg a S hT
-
