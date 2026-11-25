@@ -56,23 +56,11 @@ section Field
 
 variable {K : Type u} [Field K] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of K)}
 
-/-- The one-fold sum of the identity point is the identity point. -/
-theorem nsmul_one_idPoint (G : RelativeGroupLaw K f) :
-    G.nsmul f 1 idPoint = idPoint :=
-  G.nsmul_one f idPoint
-
 /-- On a commutative relative group law over a field, multiplication by one
 has degree `1`. -/
 theorem endDegree_nsmulEnd_one (G : RelativeGroupLaw K f) (hc : G.IsCommutative) :
     G.endDegree (G.nsmulEnd hc 1) = 1 := by
   rw [G.nsmulEnd_one hc, G.endDegree_idEnd]
-
-/-- Exemplar of the end-degree formula at multiplication by one: the
-degree is `1 ^ (2 * g)` for every `g`. -/
-theorem endDegree_nsmulEnd_one_eq_pow (G : RelativeGroupLaw K f)
-    (hc : G.IsCommutative) (g : ℕ) :
-    G.endDegree (G.nsmulEnd hc 1) = 1 ^ (2 * g) := by
-  rw [G.endDegree_nsmulEnd_one hc, one_pow]
 
 end Field
 
