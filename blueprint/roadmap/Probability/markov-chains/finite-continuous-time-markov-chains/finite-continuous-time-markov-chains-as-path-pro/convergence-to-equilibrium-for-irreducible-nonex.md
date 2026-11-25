@@ -5,7 +5,8 @@ Let $Q$ be a stable conservative irreducible $Q$-matrix on a countable set $I$ w
 1. every state is positive recurrent;
 2. $\pi$ is the unique stationary law: $\pi P(t)=\pi$ for all $t\ge0$, and every probability vector $\mu$ with $\mu P(t)=\mu$ for all $t$ equals $\pi$;
 3. for every initial state $i$,
-$$\bigl\|\mathbb P_i(X_t\in\cdot)-\pi\bigr\|_{\mathrm{TV}}=\sup_{A\subseteq I}\bigl|p_{iA}(t)-\pi(A)\bigr|\longrightarrow0\qquad(t\to\infty).$$
+
+    $$\bigl\|\mathbb P_i(X_t\in\cdot)-\pi\bigr\|_{\mathrm{TV}}=\sup_{A\subseteq I}\bigl|p_{iA}(t)-\pi(A)\bigr|\longrightarrow0\qquad(t\to\infty).$$
 
 No aperiodicity hypothesis is needed in continuous time. When $I$ is finite the non-explosion hypothesis holds automatically and the statement is the ergodic theorem for finite irreducible chains. If positive numbers $\theta_i$ satisfy detailed balance $\theta_iq_{ij}=\theta_jq_{ji}$ and $\sum_i\theta_i<\infty$, then $\pi=\theta/\sum_i\theta_i$ satisfies $\pi Q=0$ and the statement applies.
 
