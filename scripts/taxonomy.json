@@ -12560,6 +12560,7 @@
   "MathlibExt/NumberTheory/DistinctMultiplesInterval": {"to": "NumberTheory/additive-number-theory", "title": "Distinct multiples in an interval"},
   "MathlibExt/NumberTheory/DistinctMultiplesIntervalMul": {"to": "NumberTheory/additive-number-theory", "title": "Distinct multiples in an interval"},
   "MathlibExt/NumberTheory/DivisibilityRuns": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Divisibility runs between recurrence sequences"},
+  "MathlibExt/NumberTheory/DivisibilityRunsGibonacciNumberEqFib": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Divisibility runs between recurrence sequences"},
   "MathlibExt/NumberTheory/DivisorApproximantPrimeCounting": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime-counting formulas from divisor functions"},
   "MathlibExt/NumberTheory/DivisorCountBound": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Residues of rounded quotients n/k"},
   "MathlibExt/NumberTheory/DivisorCountParity": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Parity of divisor counts"},
