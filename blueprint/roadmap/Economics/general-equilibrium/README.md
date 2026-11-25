@@ -8,3 +8,4 @@ Economies with many interacting markets: exchange economies, Walras' law, existe
 - [Second welfare theorem](second-welfare-theorem/README.md)
 - [Scale invariance of equilibrium prices](is-walrasian-equilibrium-smul-iff.md)
 - [Walras' law: exhausted budgets give excess demand of value zero](dot-product-excess-demand-eq-zero.md)
+- [Fisher markets](fisher-markets/README.md)
