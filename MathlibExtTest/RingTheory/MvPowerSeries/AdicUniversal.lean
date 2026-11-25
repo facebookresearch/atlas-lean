@@ -30,4 +30,4 @@ example {𝒪 : Type} {A : Type} [CommRing 𝒪] [CommRing A] [Algebra 𝒪 A] (
 -- value to be zero, and the resulting map sends every variable to zero.
 example {𝒪 : Type} [CommRing 𝒪] :
     ∃ φ : MvPowerSeries (Fin 2) 𝒪 →ₐ[𝒪] 𝒪, ∀ i, φ (MvPowerSeries.X i) = 0 :=
-  MvPowerSeries.exists_algHom_apply_X_eq ⊥ (fun _ => 0) (fun i => Ideal.zero_mem _)
+  MvPowerSeries.exists_algHom_apply_X_eq ⊥ (fun _ => 0) (fun _ => Ideal.zero_mem _)
