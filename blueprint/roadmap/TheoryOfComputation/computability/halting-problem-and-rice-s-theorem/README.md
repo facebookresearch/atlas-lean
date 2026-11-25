@@ -24,3 +24,5 @@
 - [A single code for the regularity reduction function](exists-code-regular-red-fun.md)
 - [Halting reduces to regularity of halting sets](many-one-reducible-halts-regular-domain.md)
 - [Regularity of halting sets is undecidable](not-tm2-decidable-regular-domain.md)
+- [Post's theorem: simple sets exist](post-s-theorem-simple-sets-exist.md)
+- [Myhill's characterization of creative sets](myhill-s-characterization-of-creative-sets.md)
