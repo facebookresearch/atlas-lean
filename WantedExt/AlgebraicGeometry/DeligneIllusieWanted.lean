@@ -42,9 +42,12 @@ open MathlibExt.AlgebraicGeometry.PrimeFieldDeRham
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- **Deligne–Illusie** over `F_p`: if `X` is smooth of pure relative dimension `d < p` over `F_p`
-and lifts to a smooth scheme over `W₂(F_p)`, then `F_* Ω^•_{X/F_p} ≅ ⊕_{i ≤ d} Ω^i_{X/F_p}[-i]` in
-the derived category of `𝒪_X`-modules. -/
+/-- **Deligne–Illusie** over $\mathbb{F}_p$: let $p$ be a prime and $X$ an $\mathbb{F}_p$-scheme
+that is smooth of relative dimension $d < p$, with a smooth $W_2(\mathbb{F}_p)$-scheme $Y$ and a
+morphism $j : X \to Y$ exhibiting $X$ as the special fibre
+$Y \times_{W_2(\mathbb{F}_p)} \mathbb{F}_p$. Then there is an isomorphism
+$F_* \Omega^\bullet_{X/\mathbb{F}_p} \cong \bigoplus_{i=0}^{d} \Omega^i_{X/\mathbb{F}_p}[-i]$ in the
+derived category of $\mathcal{O}_X$-modules. -/
 public theorem_wanted deligneIllusie
     (p : ℕ) [Fact p.Prime] (X : PrimeFieldScheme p) (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] (hd : d < p)

@@ -112,8 +112,8 @@ def projection : space K X ⟶ X.left.toRingedSpace.carrier :=
 
 variable {K X} {Y : AlgebraicScheme K}
 
-/-- Pull back an absolute value by a field homomorphism (which is injective): Mathlib's
-`AbsoluteValue.comp`. -/
+/-- The pullback of a real absolute value `v` on a field `B` along a field homomorphism
+`f : A →+* B`: the function `a ↦ v (f a)` on `A`, an absolute value since `f` is injective. -/
 abbrev pullAbsoluteValue {A B : Type} [Field A] [Field B]
     (v : AbsoluteValue B ℝ) (f : A →+* B) : AbsoluteValue A ℝ :=
   v.comp f.injective
