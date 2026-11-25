@@ -11,6 +11,7 @@ module
 public import MathlibExt.Combinatorics.Additive.RestrictedSignedSumset
 import Mathlib.Data.Finset.Sort
 import Mathlib.Data.List.Chain
+import Mathlib.Tactic.FinCases
 
 /-!
 # A lower bound for restricted signed four-fold sumsets
@@ -203,6 +204,120 @@ private theorem count_prefix {A : Finset ℤ} (n : ℕ) (f : Fin (n + 5) → ℤ
     exact (show 8 * (n + 1) + 21 = 8 * n + 21 + 8 by omega) ▸
       (Nat.add_le_add_right hold 8).trans hmore
 
+/-- Positive sums of distinct rows can be counted together with their negatives. -/
+private theorem count_pos_rows {A : Finset ℤ} (rows : List (List ℤ))
+    (hrows : ∀ l ∈ rows, l.length = 4 ∧ (l.map abs).Nodup ∧ ∀ x ∈ l, |x| ∈ A)
+    (hchain : (0 :: rows.map List.sum).IsChain (· < ·)) :
+    2 * rows.length ≤ (restrictedSignedSumset 4 A).card := by
+  have sum_neg (l : List ℤ) : (l.map (fun x => -x)).sum = -l.sum := by
+    induction l with
+    | nil => simp
+    | cons x l ih => simp [ih, add_comm]
+  let P := (rows.map List.sum).toFinset
+  let N := P.image (fun x => -x)
+  obtain ⟨hpos, hlt⟩ := List.pairwise_cons.mp (List.isChain_iff_pairwise.mp hchain)
+  have hp (x : ℤ) (hx : x ∈ P) : 0 < x := hpos x (List.mem_toFinset.mp hx)
+  have hP : P.card = rows.length := by
+    rw [List.toFinset_card_of_nodup (hlt.imp Int.ne_of_lt), List.length_map]
+  have hN : N.card = P.card := Finset.card_image_of_injective _ neg_injective
+  have hdis : Disjoint P N := by
+    refine Finset.disjoint_left.mpr fun x hx hn => ?_
+    obtain ⟨y, hy, rfl⟩ := Finset.mem_image.mp hn
+    have := hp y hy
+    have := hp (-y) hx
+    omega
+  have hsub : P ∪ N ⊆ restrictedSignedSumset 4 A := by
+    intro x hx
+    rcases Finset.mem_union.mp hx with hx | hx
+    · obtain ⟨l, hl, rfl⟩ := List.mem_map.mp (List.mem_toFinset.mp hx)
+      obtain ⟨hlen, hd, hm⟩ := hrows l hl
+      exact row_mem hlen hd hm
+    · obtain ⟨y, hy, rfl⟩ := Finset.mem_image.mp hx
+      obtain ⟨l, hl, rfl⟩ := List.mem_map.mp (List.mem_toFinset.mp hy)
+      obtain ⟨hlen, hd, hm⟩ := hrows l hl
+      suffices (l.map (fun n => -n)).sum ∈ restrictedSignedSumset 4 A by
+        simpa only [sum_neg] using this
+      apply row_mem
+      · simpa using hlen
+      · simpa [List.map_map, Function.comp_def] using hd
+      · intro x hx
+        obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+        simpa only [abs_neg] using hm y hy
+  simpa [Finset.card_union_of_disjoint hdis, hN, hP, two_mul] using Finset.card_le_card hsub
+
+/-- In each of the four possible locations, split on whether the exceptional gap is
+less than or greater than twice the minimum. The rows in each branch exhibit thirteen
+strictly increasing positive sums; keeping their order avoids any collision checks. -/
+private theorem count_one_exceptional_gap {A : Finset ℤ} {a b c d e : ℤ}
+    (ha : 0 < a) (hab : a < b) (hbc : b < c) (hcd : c < d) (hde : d < e)
+    (hma : a ∈ A) (hmb : b ∈ A) (hmc : c ∈ A) (hmd : d ∈ A) (hme : e ∈ A)
+    (hgaps : (b - a ≠ 2 * a ∧ c - b = 2 * a ∧ d - c = 2 * a ∧ e - d = 2 * a) ∨
+      (b - a = 2 * a ∧ c - b ≠ 2 * a ∧ d - c = 2 * a ∧ e - d = 2 * a) ∨
+      (b - a = 2 * a ∧ c - b = 2 * a ∧ d - c ≠ 2 * a ∧ e - d = 2 * a) ∨
+      (b - a = 2 * a ∧ c - b = 2 * a ∧ d - c = 2 * a ∧ e - d ≠ 2 * a)) :
+    26 ≤ (restrictedSignedSumset 4 A).card := by
+  have count (rows : List (List ℤ)) (hlen : 2 * rows.length = 26)
+      (hr : ∀ l ∈ rows, l.length = 4 ∧ (l.map abs).Nodup ∧ ∀ x ∈ l, |x| ∈ A)
+      (hc : (0 :: rows.map List.sum).IsChain (· < ·)) : 26 ≤ (restrictedSignedSumset 4 A).card :=
+    hlen ▸ count_pos_rows rows hr hc
+  have hb := ha.trans hab
+  have hc := hb.trans hbc
+  have hd := hc.trans hcd
+  have he := hd.trans hde
+  rcases hgaps with ⟨h₁, h₂, h₃, h₄⟩ | ⟨h₁, h₂, h₃, h₄⟩ | ⟨h₁, h₂, h₃, h₄⟩ | ⟨h₁, h₂, h₃, h₄⟩
+  case' inl =>
+    by_cases h : b - a < 2 * a
+    case' pos =>
+      apply count
+        [[a, b, c, -d], [-a, b, -c, d], [b, c, d, -e], [a, b, -c, d], [-a, -b, c, d],
+         [b, c, -d, e], [a, -b, c, d], [-a, b, c, d], [b, -c, d, e], [a, b, c, d],
+         [a, b, c, e], [-b, c, d, e], [a, b, d, e]] rfl
+    case' neg =>
+      apply count
+        [[-a, b, c, -d], [a, b, c, -d], [-a, b, -c, d], [a, b, -c, d], [-a, -b, c, d],
+         [a, -b, c, d], [a, -b, c, e], [a, -b, d, e], [b, -c, d, e], [-a, b, c, d],
+         [a, b, c, d], [a, b, c, e], [a, b, d, e]] rfl
+  case' inr.inl =>
+    by_cases h : c - b < 2 * a
+    case' pos =>
+      apply count
+        [[-a, c, d, -e], [a, b, c, -d], [a, c, d, -e], [-a, b, -c, d], [-a, c, -d, e],
+         [a, b, -c, d], [a, c, -d, e], [a, -b, c, d], [-a, -c, d, e], [a, -b, c, e],
+         [a, -c, d, e], [-a, b, c, d], [b, -c, d, e]] rfl
+    case' neg =>
+      apply count
+        [[-b, c, d, -e], [-a, c, d, -e], [a, c, d, -e], [-a, c, -d, e], [a, c, -d, e],
+         [-a, -b, c, d], [a, -b, c, d], [a, -b, c, e], [-a, b, c, d], [a, b, c, d],
+         [a, b, c, e], [-b, c, d, e], [-a, c, d, e]] rfl
+  case' inr.inr.inl =>
+    by_cases h : d - c < 2 * a
+    case' pos =>
+      apply count
+        [[-a, b, c, -d], [a, b, d, -e], [a, b, c, -d], [-a, b, -d, e], [a, b, -c, d],
+         [a, b, -d, e], [-a, -b, c, d], [a, c, -d, e], [a, -b, c, d], [-a, -b, d, e],
+         [a, -b, c, e], [a, -b, d, e], [-a, b, c, d]] rfl
+    case' neg =>
+      apply count
+        [[a, -b, -c, d], [a, -b, -c, e], [-a, b, -c, d], [a, b, -c, d], [-a, -b, c, d],
+         [a, -b, c, d], [a, -b, c, e], [-a, b, c, d], [a, b, c, d], [a, b, c, e],
+         [-a, b, d, e], [a, b, d, e], [a, c, d, e]] rfl
+  case' inr.inr.inr =>
+    by_cases h : e - d < 2 * a
+    case' pos =>
+      apply count
+        [[a, b, c, -e], [a, b, c, -d], [a, b, d, -e], [-a, b, -c, d], [-a, b, -c, e],
+         [a, b, -c, d], [a, b, -c, e], [-a, -b, c, d], [-a, -b, c, e], [a, -b, c, d],
+         [a, -b, c, e], [a, -b, d, e], [-a, b, c, d]] rfl
+    case' neg =>
+      apply count
+        [[-a, -b, -c, e], [a, -b, -c, e], [-a, b, -d, e], [-a, b, -c, e], [a, b, -c, e],
+         [-a, -b, c, e], [a, -b, c, e], [a, -b, d, e], [-a, b, c, e], [a, b, c, e],
+         [a, b, d, e], [a, c, d, e], [b, c, d, e]] rfl
+  all_goals
+    simp [List.isChain_cons_cons, List.nodup_cons, abs_of_pos ha, abs_of_pos hb,
+      abs_of_pos hc, abs_of_pos hd, abs_of_pos he, hma, hmb, hmc, hmd, hme]
+    omega
+
 end card_restrictedSignedSumset_four_nonnegative_ge
 
 open card_restrictedSignedSumset_four_nonnegative_ge
@@ -230,5 +345,46 @@ public theorem card_restrictedSignedSumset_four_nonnegative_ge
   have h := count_prefix n f f.strictMono hz (A.orderEmbOfFin_mem hcard)
   have hle := h.trans (Finset.card_filter_le (restrictedSignedSumset 4 A) _)
   omega
+
+/-- **Restricted signed 4-fold sumsets when exactly one gap differs from twice the minimum.**
+Let $a_1 < a_2 < a_3 < a_4 < a_5$ be integers with $a_1 > 0$, let $A = \{a_1, \dots, a_5\}$,
+and write $4^{\wedge}_{\pm} A$ for the restricted signed 4-fold sumset of $A$. If exactly one
+of the four gaps $a_{i+1} - a_i$ with $i \in \{1, 2, 3, 4\}$ differs from $2a_1$, then
+$|4^{\wedge}_{\pm} A| \ge 26$.
+
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Lemma 3. -/
+public theorem card_restrictedSignedSumset_four_ge_of_one_exceptional_gap
+    (a : Fin 5 → ℤ) (ha : StrictMono a) (hpos : 0 < a 0)
+    (hgaps : (Finset.univ.filter fun i : Fin 4 =>
+      a i.succ - a i.castSucc ≠ 2 * a 0).card = 1) :
+    ((restrictedSignedSumset 4 (orderedFinset a)).card : ℤ) ≥ 26 := by
+  let gap (i : Fin 4) := a i.succ - a i.castSucc
+  let badGaps := Finset.univ.filter fun i : Fin 4 => gap i ≠ 2 * a 0
+  change badGaps.card = 1 at hgaps
+  obtain ⟨k, hk⟩ := Finset.card_eq_one.mp hgaps
+  have hbad : gap k ≠ 2 * a 0 := by
+    have hm : k ∈ badGaps := hk.symm ▸ Finset.mem_singleton_self k
+    exact (Finset.mem_filter.mp hm).2
+  have hregular (i : Fin 4) (hi : i ≠ k) : gap i = 2 * a 0 := by
+    by_contra hn
+    have hm : i ∈ badGaps := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hn⟩
+    rw [hk, Finset.mem_singleton] at hm
+    exact hi hm
+  have hm (i : Fin 5) : a i ∈ orderedFinset a :=
+    Finset.mem_image.mpr ⟨i, Finset.mem_univ _, rfl⟩
+  have hcount := count_one_exceptional_gap hpos (ha (show (0 : Fin 5) < 1 by decide))
+    (ha (show (1 : Fin 5) < 2 by decide)) (ha (show (2 : Fin 5) < 3 by decide))
+    (ha (show (3 : Fin 5) < 4 by decide)) (hm 0) (hm 1) (hm 2) (hm 3) (hm 4)
+  apply Int.ofNat_le.mpr
+  apply hcount
+  fin_cases k
+  · exact Or.inl ⟨hbad, hregular 1 (by decide), hregular 2 (by decide), hregular 3 (by decide)⟩
+  · exact Or.inr (Or.inl
+      ⟨hregular 0 (by decide), hbad, hregular 2 (by decide), hregular 3 (by decide)⟩)
+  · exact Or.inr (Or.inr (Or.inl
+      ⟨hregular 0 (by decide), hregular 1 (by decide), hbad, hregular 3 (by decide)⟩))
+  · exact Or.inr (Or.inr (Or.inr
+      ⟨hregular 0 (by decide), hregular 1 (by decide), hregular 2 (by decide), hbad⟩))
 
 end MetaMathlibExt
