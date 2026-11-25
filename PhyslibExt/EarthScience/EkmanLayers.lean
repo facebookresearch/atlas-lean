@@ -73,7 +73,8 @@ open Matrix
 
 /-- The vertically integrated Ekman transport
 `M = (τ₁ / (ρ₀ f), -τ₀ / (ρ₀ f), 0)` driven by the wind stress `τ`, for
-density `ρ₀` and Coriolis parameter `f`. -/
+density `ρ₀` and Coriolis parameter `f`. With the convention `x / 0 = 0`, it is `0`
+when `ρ₀ * f = 0`. -/
 noncomputable def ekmanTransport (ρ₀ f : ℝ) (τ : Fin 3 → ℝ) : Fin 3 → ℝ :=
   ![τ 1 / (ρ₀ * f), -(τ 0 / (ρ₀ * f)), 0]
 

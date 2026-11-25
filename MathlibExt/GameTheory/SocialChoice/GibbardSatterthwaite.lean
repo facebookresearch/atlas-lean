@@ -27,16 +27,20 @@ Records onto and strategy-proof resolute SCFs over strict total orders.
 Reuses the shared strict-order bundle.
 -/
 
-/-- Strict total order for strict preference, reused from the shared order module. -/
+/-- **Strict preference orders for the Gibbard–Satterthwaite theorem.** A strict total order on a
+type $\alpha$ is a binary relation $<$ on $\alpha$ that is irreflexive ($a < a$ holds for no $a$),
+transitive ($a < b$ and $b < c$ imply $a < c$) and total on distinct elements ($a \ne b$ implies
+$a < b$ or $b < a$). In the Gibbard–Satterthwaite development it models a voter's strict
+preference over alternatives. -/
 abbrev StrictTotalOrder (α : Type*) :=
   MathlibExt.Order.StrictTotalOrder α
 
 namespace StrictTotalOrder
 
-/-- Compatibility alias for the former `GibbardSatterthwaiteWanted.StrictTotalOrder.mk`
-constructor.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.mk` directly. -/
+/-- **Building a strict preference order in the Gibbard–Satterthwaite setting.** A binary
+relation $<$ on a type $\alpha$ that is irreflexive ($a < a$ holds for no $a$), transitive
+($a < b$ and $b < c$ imply $a < c$) and total on distinct elements ($a \ne b$ implies $a < b$ or
+$b < a$) defines a strict total order on $\alpha$ whose relation is $<$. -/
 abbrev mk {α : Type*} (lt : α → α → Prop)
     (irrefl : ∀ a, ¬lt a a)
     (trans : ∀ {a b c}, lt a b → lt b c → lt a c)
@@ -44,67 +48,78 @@ abbrev mk {α : Type*} (lt : α → α → Prop)
     StrictTotalOrder α :=
   MathlibExt.Order.StrictTotalOrder.mk lt irrefl trans total
 
-/-- Compatibility alias for the former `GibbardSatterthwaiteWanted.StrictTotalOrder.lt`
-projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.lt` directly. -/
+/-- **Relation of a strict preference order.** The relation of a strict total order $T$ on a type
+$\alpha$ is its underlying binary relation $<_T$ on $\alpha$, which is irreflexive, transitive,
+and relates any two distinct elements in one direction or the other. -/
 abbrev lt {α : Type*} (self : StrictTotalOrder α) : α → α → Prop :=
   MathlibExt.Order.StrictTotalOrder.lt self
 
-/-- Compatibility alias for the former `GibbardSatterthwaiteWanted.StrictTotalOrder.irrefl`
-projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.irrefl` directly. -/
+/-- **Irreflexivity of strict preference.** Let $T$ be a strict total order on a type $\alpha$,
+with relation $<_T$. Then $a <_T a$ fails for every $a \in \alpha$. -/
 abbrev irrefl {α : Type*} (self : StrictTotalOrder α) (a : α) : ¬self.lt a a :=
   MathlibExt.Order.StrictTotalOrder.irrefl self a
 
-/-- Compatibility alias for the former `GibbardSatterthwaiteWanted.StrictTotalOrder.trans`
-projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.trans` directly. -/
+/-- **Transitivity of strict preferences in the Gibbard–Satterthwaite setting.** Let $<$ be the
+relation of a strict total order on a type $\alpha$. If $a, b, c \in \alpha$ satisfy $a < b$ and
+$b < c$, then $a < c$. -/
 abbrev trans {α : Type*} (self : StrictTotalOrder α) {a b c : α}
     (h1 : self.lt a b) (h2 : self.lt b c) : self.lt a c :=
   MathlibExt.Order.StrictTotalOrder.trans self h1 h2
 
-/-- Compatibility alias for the former `GibbardSatterthwaiteWanted.StrictTotalOrder.total`
-projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.total` directly. -/
+/-- **Strict preferences in the Gibbard–Satterthwaite setting are total.** Let $<$ be the relation
+of a strict total order on a type $\alpha$. If $a, b \in \alpha$ and $a \ne b$, then $a < b$ or
+$b < a$. -/
 abbrev total {α : Type*} (self : StrictTotalOrder α) {a b : α} (h : a ≠ b) :
     self.lt a b ∨ self.lt b a :=
   MathlibExt.Order.StrictTotalOrder.total self h
 
 end StrictTotalOrder
 
-/-- Profile of strict total orders. -/
+/-- **Preference profiles for the Gibbard–Satterthwaite theorem.** For a type $A$ of alternatives
+and a type $V$ of voters, a profile is a function assigning to each voter $i \in V$ a strict total
+order $<_i$ on $A$, the strict preference of voter $i$. -/
 abbrev Profile (Alt Voter : Type*) := Voter → StrictTotalOrder Alt
 
-/-- Resolute social choice function: profile ↦ chosen alternative. -/
+/-- **Social choice functions.** For a type $A$ of alternatives and a type $V$ of voters, a
+resolute social choice function is a function $F$ sending each profile $p$ (an assignment of a
+strict total order on $A$ to each voter in $V$) to a single chosen alternative $F(p) \in A$. -/
 abbrev SocialChoiceFunction (Alt Voter : Type*) := Profile Alt Voter → Alt
 
-/-- `top` is top-ranked by `o` if it beats every other distinct alternative. -/
+/-- **Top-ranked alternative.** For a strict total order $o$ on the alternatives, write
+$x \succ_o y$ when $x$ is related to $y$ by $o$ ($o$ ranks $x$ above $y$). An alternative $t$ is
+top-ranked by $o$ when $t \succ_o b$ for every alternative $b \ne t$. -/
 def IsTopRanked {Alt : Type*} (o : StrictTotalOrder Alt) (top : Alt) : Prop :=
   ∀ b, b ≠ top → o.lt top b
 
-/-- Onto / surjective: every alternative is chosen for some profile. -/
+/-- **Onto social choice function.** A resolute social choice function $F$ is onto when every
+alternative $a$ is chosen at some profile, that is, $F(p) = a$ for some profile $p$. -/
 def IsOnto {Alt Voter : Type*} (F : SocialChoiceFunction Alt Voter) : Prop :=
   ∀ a, ∃ p : Profile Alt Voter, F p = a
 
-/-- `p₂` differs from `p₁` at most at voter `i`. -/
+/-- **Profiles differing only at one voter.** Let $p_1$ and $p_2$ be profiles, each assigning a
+strict total order on the alternatives to every voter, and let $i$ be a voter. Then $p_2$ differs
+from $p_1$ at most at voter $i$ when $p_1(j) = p_2(j)$ for every voter $j \ne i$. -/
 def DiffAtMostAt {Alt Voter : Type*} (p₁ p₂ : Profile Alt Voter) (i : Voter) : Prop :=
   ∀ j, j ≠ i → p₁ j = p₂ j
 
-/-- Strategy-proof: no voter can get a strictly preferred outcome
-(according to true ranking) by unilateral misreport. -/
+/-- **Strategy-proof social choice function.** For a strict total order $P$, write $x \succ_P y$
+when $x$ is related to $y$ by $P$ ($P$ ranks $x$ above $y$). A resolute social choice function $F$
+is strategy-proof when, for all profiles $p_1$, $p_2$ and every voter $i$ such that $p_1(j) =
+p_2(j)$ for all voters $j \ne i$, it is not the case that $F(p_2) \succ_{p_1(i)} F(p_1)$: no voter
+gains by misreporting alone, judged by the true order $p_1(i)$. -/
 def IsStrategyProof {Alt Voter : Type*} (F : SocialChoiceFunction Alt Voter) : Prop :=
   ∀ (p₁ : Profile Alt Voter) (i : Voter) (p₂ : Profile Alt Voter),
     DiffAtMostAt p₁ p₂ i → ¬ (p₁ i).lt (F p₂) (F p₁)
 
-/-- `d` is a dictator: chosen outcome is always top-ranked by `d`. -/
+/-- **Dictator of a social choice function.** For a resolute social choice function $F$, a voter
+$d$ is a dictator when, for every profile $p$, the chosen alternative $F(p)$ is top-ranked in the
+preference order $p(d)$ of voter $d$. -/
 def IsDictator {Alt Voter : Type*} (F : SocialChoiceFunction Alt Voter) (d : Voter) : Prop :=
   ∀ p : Profile Alt Voter, IsTopRanked (p d) (F p)
 
-/-- Dictatorial SCF: some fixed voter always gets top choice. -/
+/-- **Dictatorial social choice function.** A resolute social choice function $F$ is dictatorial
+when some voter is a dictator for $F$: there is a voter $d$ such that, for every profile $p$, the
+chosen alternative $F(p)$ is top-ranked in the preference order $p(d)$ of voter $d$. -/
 def IsDictatorial {Alt Voter : Type*} (F : SocialChoiceFunction Alt Voter) : Prop :=
   ∃ d : Voter, IsDictator F d
 
@@ -666,8 +681,11 @@ private theorem socIIA_arrow {Alt Voter : Type*} [Fintype Alt] [DecidableEq Alt]
       (fun i => ⟨hag i, pair_agree_two_of_one (R i) (S i) hne (hag i)⟩)
 
 /--
-Resolute SCF on ≥3 alternatives, onto and strategy-proof, is dictatorial.
-General form assuming only `Finite`; `gibbard_satterthwaite` is the source-shaped form.
+**Gibbard–Satterthwaite theorem, finiteness form.** Let the set of alternatives be finite and the
+set of voters be finite and nonempty, and suppose there are at least three distinct alternatives.
+Then every resolute social choice function on profiles of strict preference orders that is onto
+and strategy-proof is dictatorial.
+
 Source: A. Gibbard, Econometrica 41 (1973), 587-601, DOI 10.2307/1914083; M. A. Satterthwaite, J.
 Econom. Theory 10 (1975), 187-217, DOI 10.1016/0022-0531(75)90050-2.
 -/
@@ -711,11 +729,15 @@ theorem gibbard_satterthwaite_general
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /--
-Resolute SCF on ≥3 alternatives, onto and strategy-proof, is dictatorial.
-Source: A. Gibbard, Econometrica 41 (1973), 587-601, DOI 10.2307/1914083; M. A. Satterthwaite, J.
-Econom. Theory 10 (1975), 187-217, DOI 10.1016/0022-0531(75)90050-2.
+**Gibbard–Satterthwaite theorem.** Let the set of alternatives be finite and the set of voters be
+finite and nonempty, and suppose there are at least three distinct alternatives. Then every
+resolute social choice function on profiles of strict preference orders that is onto and
+strategy-proof is dictatorial.
 
 Proves `Wanted` entry `gibbard_satterthwaite`.
+
+Source: A. Gibbard, Econometrica 41 (1973), 587-601, DOI 10.2307/1914083; M. A. Satterthwaite, J.
+Econom. Theory 10 (1975), 187-217, DOI 10.1016/0022-0531(75)90050-2.
 -/
 theorem gibbard_satterthwaite
     {Alt Voter : Type*} [Fintype Alt] [DecidableEq Alt]

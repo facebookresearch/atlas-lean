@@ -48,13 +48,16 @@ Derivative (Weierstrass nowhere differentiable function)", and
 
 namespace Real
 
-/-- The **Weierstrass function** `W(x) = ∑ₖ cos(160ᵏ x) / 4ᵏ`, defined as
-a `tsum` over the natural numbers. -/
+/-- **The Weierstrass function.** The Weierstrass function is the function
+$W : \mathbb{R} \to \mathbb{R}$ given by $W(x) = \sum_{k \ge 0} \cos(160^k x) / 4^k$, the sum
+running over all natural numbers $k$. -/
 noncomputable def weierstrassFun (x : ℝ) : ℝ :=
   ∑' k : ℕ, cos (160 ^ k * x) / 4 ^ k
 
-/-- Each term of the Weierstrass series is bounded in norm by the
-corresponding term `(1 / 4)ᵏ` of a convergent geometric series. -/
+/-- **Termwise bound for the Weierstrass series.** For every natural number $k$ and every real
+number $x$, $|\cos(160^k x) / 4^k| \le (1/4)^k$.
+
+The right-hand side is the $k$-th term of a convergent geometric series. -/
 theorem norm_weierstrassFun_term_le (k : ℕ) (x : ℝ) :
     ‖cos (160 ^ k * x) / 4 ^ k‖ ≤ (1 / 4 : ℝ) ^ k := by
   have h4pos : (0 : ℝ) < 4 ^ k := by positivity
@@ -68,8 +71,9 @@ theorem norm_weierstrassFun_term_le (k : ℕ) (x : ℝ) :
       ≤ 1 / 4 ^ k := div_le_div_of_nonneg_right h_cos_le (le_of_lt h4pos)
     _ = (1 / 4) ^ k := by rw [one_div, one_div, ← inv_pow]
 
-/-- The defining series of the Weierstrass function is summable at every
-point, by comparison with the geometric series `∑ (1 / 4)ᵏ`. -/
+/-- **Summability of the Weierstrass series.** For every real number $x$, the series
+$\sum_{k \ge 0} \cos(160^k x) / 4^k$ defining the Weierstrass function is summable, by
+comparison with the geometric series $\sum_{k \ge 0} (1/4)^k$. -/
 theorem summable_weierstrassFun_terms (x : ℝ) :
     Summable (fun k : ℕ => cos (160 ^ k * x) / (4 : ℝ) ^ k) := by
   apply Summable.of_norm_bounded (g := fun k => (1 / 4 : ℝ) ^ k)
@@ -77,8 +81,9 @@ theorem summable_weierstrassFun_terms (x : ℝ) :
   · intro k
     exact norm_weierstrassFun_term_le k x
 
-/-- **Theorem III (1).** The defining series of the Weierstrass function is
-absolutely convergent at every point. -/
+/-- **Absolute convergence of the Weierstrass series.** For every real number $x$, the series
+$\sum_{k \ge 0} \cos(160^k x) / 4^k$ defining the Weierstrass function converges absolutely,
+that is, $\sum_{k \ge 0} |\cos(160^k x) / 4^k|$ is summable. -/
 theorem summable_abs_weierstrassFun_terms (x : ℝ) :
     Summable (fun k : ℕ => |cos (160 ^ k * x) / 4 ^ k|) := by
   apply Summable.of_nonneg_of_le (fun k => abs_nonneg _)
@@ -87,8 +92,10 @@ theorem summable_abs_weierstrassFun_terms (x : ℝ) :
       rwa [Real.norm_eq_abs] at h)
     (summable_geometric_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 4) (by norm_num))
 
-/-- **Theorem III (2).** The Weierstrass function is continuous on `ℝ`
-(it is a uniform limit of continuous partial sums). -/
+/-- **Continuity of the Weierstrass function.** The Weierstrass function
+$W(x) = \sum_{k \ge 0} \cos(160^k x) / 4^k$ is continuous on $\mathbb{R}$.
+
+It is a uniform limit of continuous partial sums. -/
 theorem continuous_weierstrassFun : Continuous weierstrassFun := by
   unfold weierstrassFun
   exact continuous_tsum (u := fun k => (1 / 4 : ℝ) ^ k)
@@ -96,8 +103,8 @@ theorem continuous_weierstrassFun : Continuous weierstrassFun := by
     (summable_geometric_of_lt_one (by norm_num) (by norm_num))
     (fun k x => norm_weierstrassFun_term_le k x)
 
-/-- **Theorem III (3).** The Weierstrass function is bounded: `|W(x)| ≤ 4 / 3`
-for all `x`. -/
+/-- **Bound on the Weierstrass function.** The Weierstrass function
+$W(x) = \sum_{k \ge 0} \cos(160^k x) / 4^k$ satisfies $|W(x)| \le 4/3$ for every real number $x$. -/
 theorem weierstrassFun_abs_le (x : ℝ) : |weierstrassFun x| ≤ 4 / 3 := by
   unfold weierstrassFun
   rw [show |∑' k, cos (160 ^ k * x) / 4 ^ k| = ‖∑' k, cos (160 ^ k * x) / 4 ^ k‖ from

@@ -19,7 +19,7 @@ Theoretical Computer Science 410 (2009), 4834-4843, doi:10.1016/j.tcs.2009.06.02
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color

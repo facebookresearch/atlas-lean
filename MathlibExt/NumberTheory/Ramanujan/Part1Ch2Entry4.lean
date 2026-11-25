@@ -142,9 +142,13 @@ private lemma key_id (n : ℕ) :
   field_simp
   ring
 
-/-- Ramanujan's Entry 4 for every `n`: `∑ k ∈ [1, n], 1 / (n + k)` plus
-`∑ k ∈ [0, n], 1 / (2n + 2k + 1)` equals `1 + 2 ∑ k ∈ [1, n], 1 / ((4k)³ - 4k)`. At `n = 0` both
-sides are `1`. `ramanujan_part1_ch2_entry4` is the source-shaped form. -/
+/-- **Ramanujan's sum identity for $1/((4k)^3 - 4k)$, including $n = 0$.** For every natural
+number $n$,
+$$
+\sum_{k=1}^{n} \frac{1}{n+k} + \sum_{k=0}^{n} \frac{1}{2n+2k+1} =
+1 + 2 \sum_{k=1}^{n} \frac{1}{(4k)^3 - 4k}.
+$$
+At $n = 0$ both sides equal $1$. -/
 theorem ramanujan_part1_ch2_entry4_general (n : ℕ) :
     (∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((n : ℝ) + (k : ℝ))) + (∑ k ∈ Finset.Icc 0 n, (1 : ℝ) /
         (2 * (n : ℝ) + 2 * (k : ℝ) + 1)) =
@@ -173,7 +177,13 @@ theorem ramanujan_part1_ch2_entry4_general (n : ℕ) :
     linear_combination ih + hL1s - hL1n + hL2s - hL2n + st1 + st2 + kk - 2 * hrhs
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Ramanujan's sum identity for $1/((4k)^3 - 4k)$.** For every positive integer $n$,
+$$
+\sum_{k=1}^{n} \frac{1}{n+k} + \sum_{k=0}^{n} \frac{1}{2n+2k+1} =
+1 + 2 \sum_{k=1}^{n} \frac{1}{(4k)^3 - 4k}.
+$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     4, formula (4.1), printed p. 28 / PDF p. 38.
 It follows from `ramanujan_part1_ch2_entry4_general`, which extends it to `n = 0`; the
 hypothesis `hn` is unused and keeps the source's shape.

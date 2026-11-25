@@ -69,10 +69,12 @@ namespace MathlibExt.Analysis.Integration
 
 variable {a b : ℝ}
 
-/-- Telescoping identity: given a strictly monotone embedding `φ` of a coarse
-index set into a fine index set, the lengths of the fine subintervals whose
-indices are assigned to a coarse index `k` sum to the length of the `k`-th
-coarse subinterval. -/
+/-- **Telescoping over the fibers of an assignment.** Let $y_0, \dots, y_N$ be real numbers,
+let $\varphi : \{0, \dots, m\} \to \{0, \dots, N\}$ be strictly increasing, and let
+$\sigma : \{0, \dots, N-1\} \to \{0, \dots, m-1\}$ satisfy
+$\varphi(\sigma(j)) \le j < \varphi(\sigma(j) + 1)$ for every $j < N$. Then for every $k < m$,
+
+$$\sum_{j < N,\ \sigma(j) = k} (y_{j+1} - y_j) = y_{\varphi(k+1)} - y_{\varphi(k)}.$$ -/
 lemma telescope_sum_of_embedding {n'' m : ℕ} (pts : Fin (n'' + 1) → ℝ)
     (φ : Fin (m + 1) → Fin (n'' + 1)) (hφ_strict : StrictMono φ)
     (assign : Fin n'' → Fin m)
@@ -120,11 +122,16 @@ lemma telescope_sum_of_embedding {n'' m : ℕ} (pts : Fin (n'' + 1) → ℝ)
     show j.val + 1 < n'' + 1 from by omega, dite_eq_left]
   congr 1
 
-/-- `T'` is a tagged refinement of `T` when every subinterval of `T'` is
-contained in some subinterval of `T` (witnessed by `assign`), and the
-subintervals of `T'` assigned to each `T`-subinterval telescope to its
-length. These data are constructed from the point-set refinement condition
-by `TaggedPartition.nonempty_isTaggedRefinement_of_isRefinement`. -/
+/-- **Tagged-refinement data.** Let $T$ and $T'$ be tagged partitions of $[a, b]$ with points
+$a = x_0 < \dots < x_n = b$ and $a = x'_0 < \dots < x'_{n'} = b$ respectively. Tagged-refinement
+data from $T$ to $T'$ consist of a map $\sigma$ assigning to each index $j < n'$ an index
+$\sigma(j) < n$ such that $x_{\sigma(j)} \le x'_j$ and $x'_{j+1} \le x_{\sigma(j)+1}$ for every
+$j < n'$ (so the $j$-th subinterval of $T'$ lies in the $\sigma(j)$-th subinterval of $T$), and
+such that for every $k < n$ the lengths assigned to $k$ add up to its length:
+$\sum_{j < n',\ \sigma(j) = k} (x'_{j+1} - x'_j) = x_{k+1} - x_k$. The tags of $T$ and $T'$
+play no role.
+
+Such data exist whenever every point of $T$ is a point of $T'$. -/
 structure TaggedPartition.IsTaggedRefinement (T T' : TaggedPartition a b) where
   assign : Fin T'.n → Fin T.n
   contained_left : ∀ j : Fin T'.n, T.points (assign j).castSucc ≤ T'.points j.castSucc
@@ -184,9 +191,11 @@ private lemma exists_parent_interval {n m : ℕ}
     simp only [good, Finset.mem_filter, Finset.mem_univ, true_and, not_le] at hsucc_not
     exact hsucc_not
 
-/-- Point-set inclusion supplies tagged-refinement data: each fine subinterval
-is assigned to the coarse subinterval containing it, and the lengths in each
-fiber telescope to that coarse subinterval's length. -/
+/-- **Refinements carry tagged-refinement data.** Let $T$ and $T'$ be tagged partitions of
+$[a, b]$ such that every point of $T$ is a point of $T'$. Then tagged-refinement data from $T$
+to $T'$ exist: an assignment of each subinterval of $T'$ to a subinterval of $T$ that contains
+it, such that for each subinterval of $T$ the lengths of the subintervals of $T'$ assigned to it
+add up to its length. -/
 theorem TaggedPartition.nonempty_isTaggedRefinement_of_isRefinement
     (T T' : TaggedPartition a b) (href : T'.toPartition.IsRefinement T.toPartition) :
     Nonempty (T.IsTaggedRefinement T') := by
@@ -213,9 +222,13 @@ theorem TaggedPartition.nonempty_isTaggedRefinement_of_isRefinement
     exact telescope_sum_of_embedding T'.points φ hφ_strict assign
       (fun j => ⟨hleft j, hright j⟩) k
 
-/-- The Riemann sum `S_f(T)` can be rewritten by summing over the refinement
-`T'`: each summand uses the tag of `T` at the parent subinterval and the
-length of the finer `T'`-subinterval. -/
+/-- **Riemann sum regrouped over a refinement.** Let $f : \mathbb{R} \to \mathbb{R}$, let $T$ be
+a tagged partition of $[a, b]$ with points $x_0 < \dots < x_n$ and tags
+$\xi_0, \dots, \xi_{n-1}$, and let $T'$ be a tagged partition of $[a, b]$ with points
+$x'_0 < \dots < x'_{n'}$, together with tagged-refinement data from $T$ to $T'$ assigning to
+each $j < n'$ an index $\sigma(j) < n$. Then the Riemann sum $S_f(T)$ of $f$ over $T$ satisfies
+
+$$S_f(T) = \sum_{j=0}^{n'-1} f(\xi_{\sigma(j)}) \, (x'_{j+1} - x'_j).$$ -/
 lemma riemannSum_eq_fiber (f : ℝ → ℝ) (T T' : TaggedPartition a b)
     (href : T.IsTaggedRefinement T') :
     riemannSum f T = ∑ j : Fin T'.n,
@@ -227,9 +240,11 @@ lemma riemannSum_eq_fiber (f : ℝ → ℝ) (T T' : TaggedPartition a b)
   apply Finset.sum_congr rfl
   intro j hj; simp only [Finset.mem_filter] at hj; rw [← hj.2]
 
-/-- **Theorem II (oscillation form, given refinement data).** If `T'` is a tagged refinement of
-`T` and the oscillation of `f` on `[a, b]` at the mesh scale of `T` is at
-most `ω`, then `|S_f(T) - S_f(T')| ≤ ω * (b - a)`. -/
+/-- **Riemann sums under refinement, given refinement data.** Let $f : \mathbb{R} \to \mathbb{R}$,
+let $T$ and $T'$ be tagged partitions of $[a, b]$ together with tagged-refinement data from $T$
+to $T'$, and let $\omega \in \mathbb{R}$ satisfy $|f(x) - f(y)| \le \omega$ for all
+$x, y \in [a, b]$ with $|x - y| \le \|T\|$, where $\|T\|$ is the mesh of $T$. Writing $S_f(T)$
+for the Riemann sum of $f$ over $T$, we have $|S_f(T) - S_f(T')| \le \omega (b - a)$. -/
 theorem riemannSum_sub_le_of_isTaggedRefinement
     (f : ℝ → ℝ) (T T' : TaggedPartition a b) {ω : ℝ}
     (hω : ∀ x ∈ Set.Icc a b, ∀ y ∈ Set.Icc a b,
@@ -276,10 +291,14 @@ theorem riemannSum_sub_le_of_isTaggedRefinement
     _ = ω * (b - a) := by
             rw [← Finset.mul_sum, T'.toPartition.sum_sub_eq]
 
-/-- **Theorem II (oscillation form).** If the point set of `T` is included
-in the point set of `T'` and the oscillation at the mesh scale of `T` is at
-most `ω`, then `|S_f(T) - S_f(T')| ≤ ω * (b - a)`. The refinement data are
-constructed from the point-set inclusion. -/
+/-- **Riemann sums under refinement.** Let $f : \mathbb{R} \to \mathbb{R}$, let $T$ and $T'$ be
+tagged partitions of $[a, b]$ such that every point of $T$ is a point of $T'$, and let
+$\omega \in \mathbb{R}$ satisfy $|f(x) - f(y)| \le \omega$ for all $x, y \in [a, b]$ with
+$|x - y| \le \|T\|$, where $\|T\|$ is the mesh of $T$. Writing $S_f(T)$ for the Riemann sum of
+$f$ over $T$, we have $|S_f(T) - S_f(T')| \le \omega (b - a)$.
+
+This is Theorem II of the Riemann integral section in oscillation form: an explicit bound
+$\omega$ replaces the modulus of continuity, so $f$ need not be continuous. -/
 theorem riemannSum_sub_le_of_isRefinement
     (f : ℝ → ℝ) (T T' : TaggedPartition a b) {ω : ℝ}
     (hω : ∀ x ∈ Set.Icc a b, ∀ y ∈ Set.Icc a b,
@@ -289,10 +308,16 @@ theorem riemannSum_sub_le_of_isRefinement
   obtain ⟨hdata⟩ := T.nonempty_isTaggedRefinement_of_isRefinement T' href
   exact riemannSum_sub_le_of_isTaggedRefinement f T T' hω hdata
 
-/-- **Theorem III (oscillation form, given a common refinement).** For
-tagged partitions `T₁, T₂` that share a common tagged refinement `T''`,
-and oscillation bounds `ω₁, ω₂` at their respective mesh scales,
-`|S_f(T₁) - S_f(T₂)| ≤ (ω₁ + ω₂) * (b - a)`. -/
+/-- **Riemann sums of two partitions with a common refinement.** Let $f : \mathbb{R} \to \mathbb{R}$
+and let $T_1$, $T_2$ be tagged partitions of $[a, b]$ with meshes $\|T_1\|$ and $\|T_2\|$.
+Suppose $\omega_1, \omega_2 \in \mathbb{R}$ satisfy, for $i = 1, 2$, $|f(x) - f(y)| \le \omega_i$
+for all $x, y \in [a, b]$ with $|x - y| \le \|T_i\|$. Let $T''$ be a tagged partition of
+$[a, b]$ together with tagged-refinement data from $T_1$ to $T''$ and from $T_2$ to $T''$.
+Writing $S_f(T)$ for the Riemann sum of $f$ over $T$, we have
+$|S_f(T_1) - S_f(T_2)| \le (\omega_1 + \omega_2)(b - a)$.
+
+This is Theorem III of the Riemann integral section in oscillation form: explicit bounds
+$\omega_i$ replace the modulus of continuity, so $f$ need not be continuous. -/
 theorem riemannSum_sub_le_of_commonRefinement
     (f : ℝ → ℝ) (T₁ T₂ : TaggedPartition a b) {ω₁ ω₂ : ℝ}
     (hω₁ : ∀ x ∈ Set.Icc a b, ∀ y ∈ Set.Icc a b,
