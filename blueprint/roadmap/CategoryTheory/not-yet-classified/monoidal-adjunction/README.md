@@ -1,0 +1,18 @@
+# Monoidal Adjunction
+
+- [Unit Monoid Hom](unit-monoid-hom.md)
+- [Unit Monoid Hom hom](unit-monoid-hom-hom.md)
+- [Unit Hom](unit-hom.md)
+- [Unit Hom original](unit-hom-original.md)
+- [Right](right.md)
+- [Right obj](right-obj.md)
+- [Right map](right-map.md)
+- [Right action](right-action.md)
+- [Left action](left-action.md)
+- [Tensor Hom Equiv](tensor-hom-equiv.md)
+- [To Right](to-right.md)
+- [From Right](from-right.md)
+- [Hom Equiv](hom-equiv.md)
+- [Hom Equiv naturality left symm](hom-equiv-naturality-left-symm.md)
+- [Hom Equiv naturality right](hom-equiv-naturality-right.md)
+- [Adjunction](adjunction.md)

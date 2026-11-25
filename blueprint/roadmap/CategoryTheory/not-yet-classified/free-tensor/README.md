@@ -1,0 +1,16 @@
+# Free Tensor
+
+- [Free Pair Reassoc Iso](free-pair-reassoc-iso.md)
+- [Free Pair Underlying Iso](free-pair-underlying-iso.md)
+- [Free Pair Underlying Iso projection](free-pair-underlying-iso-projection.md)
+- [Tensor Free Underlying Iso left Action](tensor-free-underlying-iso-left-action.md)
+- [Free Pair Underlying Iso left Action](free-pair-underlying-iso-left-action.md)
+- [Tensor Free Underlying Iso right Action](tensor-free-underlying-iso-right-action.md)
+- [Free Pair Underlying Iso right Action](free-pair-underlying-iso-right-action.md)
+- [Free Pair Tensor Iso](free-pair-tensor-iso.md)
+- [Free Pair Tensor Iso hom](free-pair-tensor-iso-hom.md)
+- [Tensor Free Underlying Iso coefficient naturality](tensor-free-underlying-iso-coefficient-n.md)
+- [Tensor Free Underlying Iso generator naturality](tensor-free-underlying-iso-generator-nat.md)
+- [Tensor Free Underlying Iso naturality](tensor-free-underlying-iso-naturality.md)
+- [Free Pair Reassoc Iso naturality](free-pair-reassoc-iso-naturality.md)
+- [Free Pair Tensor Iso naturality](free-pair-tensor-iso-naturality.md)

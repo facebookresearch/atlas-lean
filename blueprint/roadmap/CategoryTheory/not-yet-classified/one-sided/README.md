@@ -1,0 +1,15 @@
+# One Sided
+
+- [To Left Module](to-left-module.md)
+- [To Right Module](to-right-module.md)
+- [Left Module Functor](left-module-functor.md)
+- [Right Module Functor](right-module-functor.md)
+- [Left Module Functor forget](left-module-functor-forget.md)
+- [Right Module Functor forget](right-module-functor-forget.md)
+- [To Right Module free Object](to-right-module-free-object.md)
+- [Right Module Functor free Map](right-module-functor-free-map.md)
+- [Free right Module Functor](free-right-module-functor.md)
+- [Free Left Module Iso](free-left-module-iso.md)
+- [Free Left Module Iso hom](free-left-module-iso-hom.md)
+- [Free Left Module Nat Iso](free-left-module-nat-iso.md)
+- [To Left Module regular](to-left-module-regular.md)

@@ -1,0 +1,17 @@
+# Generic Level Model
+
+- [Level Property](level-property.md)
+- [Generators](generators.md)
+- [Generator mem](generator-mem.md)
+- [Evaluation Property eq](evaluation-property-eq.md)
+- [Source Condition](source-condition.md)
+- [Base I cofibration](base-i-cofibration.md)
+- [Base J trivial Cofibration](base-j-trivial-cofibration.md)
+- [Generators J tensor trivial Cofibration](generators-j-tensor-trivial-cofibration.md)
+- [Canonical Model Category](canonical-model-category.md)
+- [Weak Equivalences eq](weak-equivalences-eq.md)
+- [Cofibrations eq](cofibrations-eq.md)
+- [Fibrations eq](fibrations-eq.md)
+- [Trivial Fibrations eq](trivial-fibrations-eq.md)
+- [Trivial Cofibrations eq](trivial-cofibrations-eq.md)
+- [Free At Evaluation is Quillen Adjunction](free-at-evaluation-is-quillen-adjunction.md)

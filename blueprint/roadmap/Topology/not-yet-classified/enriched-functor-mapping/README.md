@@ -1,0 +1,18 @@
+# Enriched Functor Mapping
+
+- [Mapping Object](mapping-object.md)
+- [Π](untitled.md)
+- [To Grade](to-grade.md)
+- [To Grade app](to-grade-app.md)
+- [Of Grade](of-grade.md)
+- [Of Grade π](of-grade-2.md)
+- [Grade Equiv](grade-equiv.md)
+- [Grade Equiv apply](grade-equiv-apply.md)
+- [Grade Equiv symm apply](grade-equiv-symm-apply.md)
+- [To Grade precomp](to-grade-precomp.md)
+- [Of Grade precomp](of-grade-precomp.md)
+- [Represented Presheaf Iso](represented-presheaf-iso.md)
+- [Represented Presheaf Iso hom app](represented-presheaf-iso-hom-app.md)
+- [Represented Presheaf Iso inv app](represented-presheaf-iso-inv-app.md)
+- [To Grade eq end To Positive](to-grade-eq-end-to-positive.md)
+- [Of Grade eq end From Positive](of-grade-eq-end-from-positive.md)
