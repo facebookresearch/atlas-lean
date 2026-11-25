@@ -1,6 +1,6 @@
 # Crooks fluctuation theorem
 
-**Crooks fluctuation theorem** (Crooks 1999, Eq. (FT)). Assume the setting
+**Crooks fluctuation theorem** (Crooks 1999, Eq. (2)). Assume the setting
 `MicroReversible` (`bar` an involution; positive initial probability vectors `ρ_F`, `ρ_R`;
 stochastic matrices `M`, `MR`; forward and reverse heats with `QR[x̄(-t)] = -QF[x]`;
 microscopic reversibility with `QF`). Then for every real `ω`, the probability
@@ -12,4 +12,4 @@ and reverse processes.
 
 ## Sources
 
-- Crooks (1999), Eq. (FT).
+- G. E. Crooks, "Entropy production fluctuation theorem and the nonequilibrium work relation for free energy differences", Phys. Rev. E 60 (1999) 2721–2726, Eq. (2) (arXiv:cond-mat/9901352).
