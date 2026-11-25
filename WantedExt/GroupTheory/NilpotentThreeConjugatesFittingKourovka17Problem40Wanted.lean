@@ -19,6 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.Order.CompletePartialOrder
+public import MathlibExt.GroupTheory.FittingSubgroup
 
 @[expose] public section
 
@@ -33,11 +34,6 @@ Vdovin). UnsolvedMath record UM-00701342 (`KOU-17.40`), dataset ulamai/UnsolvedM
 normal subgroup); `N^x` is the image of `N` under conjugation by `x` (the direction is immaterial as
 `x` ranges over `G`).
 -/
-
-/-- The Fitting subgroup `F(G)`: the join of the nilpotent normal subgroups of `G` (for finite `G`
-the largest nilpotent normal subgroup). -/
-def fittingSubgroup (G : Type*) [Group G] : Subgroup G :=
-  ⨆ (N : Subgroup G) (_ : N.Normal) (_ : Group.IsNilpotent N), N
 
 /-- **Kourovka Problem 17.40.** The assertion that for every finite group $G$ and every nilpotent
 subgroup $N$ of $G$ there are $x, y \in G$ with $N \cap x N x^{-1} \cap y N y^{-1} \le F(G)$, where

@@ -31,6 +31,21 @@ example {k : ℕ} (hk : 0 < k) : weightedSchreierCount k 0 = 1 :=
 example : weightedSchreierCount 5 4 = 5 := weightedSchreierCount_of_lt (by decide)
 example : weightedSchreierCount 4 4 = 6 := by decide
 
+-- Above the diagonal both terms of the recurrence contribute: a_{3,5} = a_{3,4} + a_{2,3} = 6 + 4.
+example : weightedSchreierCount 3 5 = 10 := by
+  rw [weightedSchreierCount_recurrence (k := 3) (n := 5) (by decide) (by decide) (by decide)]
+  decide
+
+-- At weight one the second term is the unweighted count a_{0,n-2}.
+example {n : ℕ} (hn : 2 < n) :
+    weightedSchreierCount 1 n =
+      weightedSchreierCount 1 (n - 1) + weightedSchreierCount 0 (n - 2) :=
+  weightedSchreierCount_recurrence le_rfl (by omega) hn
+
+-- On the diagonal the recurrence fails: a_{3,3} = 4, while a_{3,2} + a_{2,1} = 2 + 1.
+example : weightedSchreierCount 3 3 ≠ weightedSchreierCount 3 2 + weightedSchreierCount 2 1 := by
+  decide
+
 -- A second iteration uses both seed entries. The zero seed gives ordinary iterated sums.
 example : seededPartialSums (fun j => j + 3) (fun _ => 2) 2 3 = 19 := by decide
 example : iteratedPartialSum 2 (fun _ => (2 : ℕ)) 3 = 6 := by decide

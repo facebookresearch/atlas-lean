@@ -21,8 +21,14 @@ For weight zero at `1`, the admissible sets consist of the nonmaximal Schreier s
 and the singleton `{1}`. Grouping the nonmaximal sets by cardinality gives the
 binomial sum for a Fibonacci number.
 
+Splitting the admissible subsets of `{1, …, n}` by whether they contain `n` gives the
+recurrence `a_{k,n} = a_{k,n-1} + a_{k-1,n-2}` for `1 ≤ k < n` and `2 < n`.
+
 This file also defines the seeded and iterated partial sums used by Hùng Việt Chu and
 Zachary Louis Vasseur in *Weighted Schreier-type Sets and the Fibonacci Sequence*.
+Results of its Section 3 are cited by their journal labels; in the arXiv version
+(arXiv:2405.19352v1), journal Proposition 3.1 is Proposition 3.2, journal Lemmas 3.2-3.4 are
+Lemmas 3.3-3.5, and journal Proposition 3.5 is Proposition 3.1.
 -/
 
 namespace MetaMathlibExt
@@ -156,6 +162,121 @@ Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Theorem 1.2, case
 public theorem weightedSchreierCount_of_pos_of_lt {k m : ℕ} (hk : 2 ≤ k) (hm : 0 < m)
     (hmk : m < k) : weightedSchreierCount k m = Nat.fib (m + 1) :=
   weightedSchreierCount_of_lt hmk
+
+open Finset in
+/-- **Recurrence for weighted Schreier counts.** For natural numbers $k$ and $n$ with $k \ge 1$,
+$n > k$ and $n > 2$, the weighted Schreier counts satisfy $a_{k,n} = a_{k,n-1} + a_{k-1,n-2}$.
+At $k = 1$ the term $a_{0,n-2}$ is the same count with $\omega_0(E)$, the number of elements of
+$E$ different from $0$, equal to the number $|E|$ of all elements of $E$, since no element of a
+set $E \subseteq \{1, \dots, n-2\}$ equals $0$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Proposition 3.1
+(`fq-2024-chu08302024rev-prop-3.1`). -/
+public theorem weightedSchreierCount_recurrence {k n : ℕ} (hk : 1 ≤ k) (hkn : k < n)
+    (h2n : 2 < n) :
+    weightedSchreierCount k n =
+      weightedSchreierCount k (n - 1) + weightedSchreierCount (k - 1) (n - 2) := by
+  -- The admissible sets without `n` are counted by `a_{k,n-1}`. As in the source, those
+  -- containing `n` are the sets `(F + 1) ∪ {n}`, for the sets `F ⊆ {1, …, n - 2}` that are
+  -- admissible for the weight at `k - 1`.
+  let shift : ℕ ↪ ℕ := addRightEmbedding 1
+  have hn_notMem : ∀ F ⊆ Icc 1 (n - 2), n ∉ F.map shift := by
+    intro F hF h
+    obtain ⟨x, hx, hxn⟩ := mem_map.mp h
+    have := mem_Icc.mp (hF hx)
+    simp [shift] at hxn
+    omega
+  -- Passing from `F` to `(F + 1) ∪ {n}` adds `n ≠ k` and moves the weight from `k - 1` to `k`.
+  have hadm_iff : ∀ F ⊆ Icc 1 (n - 2),
+      (∀ m ∈ insert n (F.map shift), #((insert n (F.map shift)).filter (· ≠ k)) < m) ↔
+        ∀ m ∈ F, #(F.filter (· ≠ k - 1)) < m := by
+    intro F hF
+    have hcard : #((insert n (F.map shift)).filter (· ≠ k)) = #(F.filter (· ≠ k - 1)) + 1 := by
+      rw [filter_insert, ite_eq_left (by omega),
+        card_insert_of_notMem (fun h => hn_notMem F hF (mem_filter.mp h).1), filter_map,
+        card_map]
+      congr 2
+      ext x
+      simp [shift]
+      omega
+    have hle : #(F.filter (· ≠ k - 1)) ≤ n - 2 :=
+      (card_filter_le _ _).trans ((card_le_card hF).trans (by simp))
+    rw [forall_mem_insert, forall_mem_map, hcard]
+    constructor
+    · rintro ⟨-, h⟩ m hm
+      have := h m hm
+      simp [shift] at this
+      omega
+    · intro h
+      refine ⟨by omega, fun m hm => ?_⟩
+      have := h m hm
+      simp [shift]
+      omega
+  -- An admissible set `E` containing `n` avoids `1`, so `E = (F + 1) ∪ {n}` for
+  -- `F = (E \ {n}) - 1`.
+  have hdecomp : ∀ E ⊆ Icc 1 n, n ∈ E → (∀ m ∈ E, #(E.filter (· ≠ k)) < m) →
+      (E.erase n).image (· - 1) ⊆ Icc 1 (n - 2) ∧
+        insert n (((E.erase n).image (· - 1)).map shift) = E := by
+    intro E hE hn hadm
+    have h1 : 1 ∉ E := by
+      intro h1
+      have := hadm 1 h1
+      have : 0 < #(E.filter (· ≠ k)) := card_pos.mpr ⟨n, mem_filter.mpr ⟨hn, by omega⟩⟩
+      omega
+    constructor
+    · intro y hy
+      obtain ⟨x, hx, rfl⟩ := mem_image.mp hy
+      have := mem_Icc.mp (hE (mem_of_mem_erase hx))
+      have : x ≠ 1 := fun h => h1 (h ▸ mem_of_mem_erase hx)
+      have := ne_of_mem_erase hx
+      exact mem_Icc.mpr (by omega)
+    · have hshift : ((E.erase n).image (· - 1)).map shift = E.erase n := by
+        ext x
+        simp only [mem_map, mem_image, mem_erase]
+        constructor
+        · rintro ⟨y, ⟨z, ⟨hzn, hzE⟩, rfl⟩, rfl⟩
+          simp only [shift, addRightEmbedding_apply,
+            Nat.sub_add_cancel (mem_Icc.mp (hE hzE)).1]
+          exact ⟨hzn, hzE⟩
+        · rintro ⟨hxn, hxE⟩
+          have := mem_Icc.mp (hE hxE)
+          exact ⟨x - 1, ⟨x, ⟨hxn, hxE⟩, rfl⟩, by simp [shift]; omega⟩
+      rw [hshift, insert_erase hn]
+  unfold weightedSchreierCount
+  rw [← card_filter_add_card_filter_not (s := (Icc 1 n).powerset.filter fun E =>
+    ∀ m ∈ E, #(E.filter (· ≠ k)) < m) (fun E => n ∈ E), add_comm]
+  congr 1
+  · congr 1
+    ext E
+    simp only [mem_filter, mem_powerset, subset_iff, mem_Icc]
+    grind
+  · symm
+    refine card_nbij' (fun F => insert n (F.map shift)) (fun E => (E.erase n).image (· - 1))
+      ?_ ?_ ?_ ?_
+    · intro F hF
+      simp only [coe_filter, mem_filter, mem_powerset, Set.mem_ofPred_eq] at hF ⊢
+      refine ⟨⟨fun x hx => ?_, (hadm_iff F hF.1).mpr hF.2⟩, mem_insert_self _ _⟩
+      rcases mem_insert.mp hx with rfl | hx
+      · exact mem_Icc.mpr ⟨by omega, le_rfl⟩
+      · obtain ⟨y, hy, rfl⟩ := mem_map.mp hx
+        have := mem_Icc.mp (hF.1 hy)
+        simp only [shift, addRightEmbedding_apply, mem_Icc]
+        omega
+    · intro E hE
+      simp only [coe_filter, mem_filter, mem_powerset, Set.mem_ofPred_eq] at hE ⊢
+      obtain ⟨hF, heq⟩ := hdecomp E hE.1.1 hE.2 hE.1.2
+      refine ⟨hF, (hadm_iff _ hF).mp ?_⟩
+      rw [heq]
+      exact hE.1.2
+    · intro F hF
+      simp only [coe_filter, mem_powerset, Set.mem_ofPred_eq] at hF
+      simp only [erase_insert (hn_notMem F hF.1)]
+      ext x
+      simp [shift]
+    · intro E hE
+      simp only [coe_filter, mem_filter, mem_powerset, Set.mem_ofPred_eq] at hE
+      exact (hdecomp E hE.1.1 hE.2 hE.1.2).2
 
 /-- **Seeded partial sums.** Let $M$ be an additive commutative monoid, and let
 $s = (s_n)_{n \ge 0}$ (the seed sequence) and $a = (a_n)_{n \ge 0}$ be sequences in $M$. The
