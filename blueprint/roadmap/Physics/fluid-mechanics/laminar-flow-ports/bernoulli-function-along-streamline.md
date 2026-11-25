@@ -1,0 +1,3 @@
+# Bernoulli's theorem along a streamline
+
+Let a steady flow in three-dimensional space have constant density $\rho > 0$, a velocity field $u$ differentiable at every time, a pressure $p$, and a body force with potential $\Phi$, and let it satisfy the Euler equations. Suppose that at time $t_0$ the specific enthalpy is $p/\rho + e_0$ for a constant $e_0$. Let $\gamma$ be an integral curve of $u(t_0, \cdot)$ on an open preconnected set of times $s$, along which $p(t_0, \cdot)$ and $\Phi$ are differentiable. Then the Bernoulli function $h + |u|^2/2 + \Phi$ takes the same value at $\gamma(a)$ and $\gamma(b)$ for all $a, b \in s$.

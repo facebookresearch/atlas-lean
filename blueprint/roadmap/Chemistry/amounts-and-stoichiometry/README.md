@@ -7,3 +7,4 @@ Amounts of substance, molar masses and composition, flows of process streams, an
 - [Reaction extent, limiting reagents and yield](reaction-extent-limiting-reagents-and-yield/README.md)
 - [Process material balances](process-material-balances/README.md)
 - [Mineral-processing balances](mineral-processing-balances/README.md)
+- [Process streams: amount-flow rates and composition](process-streams-amount-flow-rates-and-compositio/README.md)
