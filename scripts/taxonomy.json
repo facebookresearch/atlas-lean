@@ -12013,6 +12013,7 @@
   "MathlibExt/GroupTheory/InvolutionFreeQuotientKourovka18Problem94": {"to": "GroupTheory/presentations-and-decision-problems", "title": "Involutions in quotient groups"},
   "MathlibExt/GroupTheory/IrreducibleCharacterBasis": {"to": "GroupTheory/characters-of-finite-groups", "title": "Irreducible characters and class functions"},
   "MathlibExt/GroupTheory/JordanLinearGroups": {"to": "GroupTheory/linear-groups", "title": "Jordan's theorem on finite linear groups"},
+  "MathlibExt/GroupTheory/LargeNormalSubsetSquareKourovka20Problem74": {"to": "GroupTheory/combinatorics-in-groups", "title": "Products of large normal subsets"},
   "MathlibExt/GroupTheory/LinearGroupFiniteness": {"to": "GroupTheory/linear-groups", "title": "Malcev's theorem on residual finiteness"},
   "MathlibExt/GroupTheory/MaschkeDecomposition": {"to": "RepresentationTheory/finite-group-representations", "title": "Maschke's theorem"},
   "MathlibExt/GroupTheory/NilpotentExtensionSplitAtPrimesKourovka12Problem93": {"to": "GroupTheory/commutators-and-engel-conditions", "title": "Localization of nilpotent groups"},
