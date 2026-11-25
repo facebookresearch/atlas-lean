@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliDuality
 public import MathlibExt.NumberTheory.Bernoulli.SumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
+public import MathlibExt.NumberTheory.HeightOneMultipleZetaMulNat
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
@@ -30,24 +31,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/--
-**Poly-Bernoulli polynomials.** For a natural number $n$, an integer $k$ and a rational number
-$x$, the poly-Bernoulli polynomial of degree $n$ and order $k$ at $x$ is the rational number
-$$B_n^{(k)}(x) = \sum_{i=0}^{n} \binom{n}{i} B_i^{(k)} x^{n-i},$$
-where $B_i^{(k)}$ are the poly-Bernoulli numbers.
-
-These are the coefficients of the generating function
-$\frac{\mathrm{Li}_k(1-e^{-t})}{1-e^{-t}} e^{xt} = \sum_{n \ge 0} B_n^{(k)}(x) \frac{t^n}{n!}$,
-which is how the source defines them.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, definition of
-poly-Bernoulli polynomials before Corollary 3.
--/
-public def polyBernoulliPoly (n : ℕ) (p : ℤ) (x : ℚ) : ℚ :=
-  ∑ i ∈ Finset.range (n + 1),
-    (n.choose i : ℚ) * polyBernoulli i p * x ^ (n - i)
 
 /--
 **Poly-Bernoulli polynomials at zero.** For every natural number $n$ and every integer $k$, the
