@@ -1,0 +1,3 @@
+# Weak
+
+Proof irrelevant weakening.

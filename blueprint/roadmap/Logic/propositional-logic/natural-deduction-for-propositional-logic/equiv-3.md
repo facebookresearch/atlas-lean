@@ -1,0 +1,3 @@
+# Equiv
+
+Minimally equivalent propositions.

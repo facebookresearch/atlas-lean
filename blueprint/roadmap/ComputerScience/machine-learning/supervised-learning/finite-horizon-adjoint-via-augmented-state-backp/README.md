@@ -1,0 +1,16 @@
+# Finite-horizon adjoint via augmented-state backpropagation
+
+- [Aug State](aug-state.md)
+- [Aug Lift](aug-lift.md)
+- [Aug Layer](aug-layer.md)
+- [Aug Forward](aug-forward.md)
+- [Aug Traj](aug-traj.md)
+- [Aug Final Loss](aug-final-loss.md)
+- [Aug Back Step](aug-back-step.md)
+- [Aug Back](aug-back.md)
+- [Aug Backward](aug-backward.md)
+- [Aug Forward fst](aug-forward-fst.md)
+- [Aug Forward snd](aug-forward-snd.md)
+- [Aug total Cost eq](aug-total-cost-eq.md)
+- [Grad add](grad-add.md)
+- [Aug gradient eq backward](aug-gradient-eq-backward.md)

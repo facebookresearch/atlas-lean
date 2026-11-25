@@ -1,0 +1,3 @@
+# Finite-model weights are the kernel posterior
+
+Let $\Theta$ be a finite set of models with nonnegative prior weights $\pi(\theta)$ and nonnegative likelihood functions $f(\theta, \cdot)$ on a measurable space $\mathcal{X}$ with measurable singletons, and let $X_1, X_2, \dots$ be observations. Let $\mu$ be the measure on $\Theta$ with $\mu(\{\theta\}) = \pi(\theta)$ and $K$ a kernel from $\Theta$ to $n$-tuples with $K(\theta)(\{s\}) = \prod_i f(\theta, s_i)$. Then the explicit posterior weight of $\theta$ after the first $n$ observations, used in the finite-model consistency theorem, equals the real value of the posterior probability of $\{\theta\}$ for the kernel $K$, prior $\mu$ and observed tuple $(X_1, \dots, X_n)$.

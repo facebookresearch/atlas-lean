@@ -18,3 +18,5 @@
 
 - [Existence of a posterior argmax classifier](exists-is-posterior-argmax.md)
 - [The Bayes risk for the 0-1 loss](bayes-risk-zero-one-loss.md)
+- [Is Posterior Argmax iff forall is MAP](is-posterior-argmax-iff-forall-is-map.md)
+- [Is Posterior Argmax iff forall is MLE of uniform](is-posterior-argmax-iff-forall-is-mle-of.md)

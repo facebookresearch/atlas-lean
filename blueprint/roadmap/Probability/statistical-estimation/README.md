@@ -15,6 +15,7 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Existence and uniqueness of the Gamma–Poisson MLE](existence-and-uniqueness-of-the-gamma-poisson-ml/README.md)
 - [Existence of maximum likelihood estimates in log-linear models](existence-of-maximum-likelihood-estimates-in-log/README.md)
 - [Likelihood equations and efficiency of the Gamma–Poisson MLE](likelihood-equations-and-efficiency-of-the-gamma/README.md)
+- [Logistic and softmax regression](logistic-and-softmax-regression/README.md)
 - [Minimax lower bounds](minimax-lower-bounds/README.md)
 - [Stein's lemma and James–Stein estimation](stein-s-lemma-and-james-stein-estimation/README.md)
 - [Sufficient statistics and the factorization theorem](sufficient-statistics-and-the-factorization-theo/README.md)
