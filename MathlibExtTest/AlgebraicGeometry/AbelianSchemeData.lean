@@ -17,6 +17,8 @@ noncomputable section
 universe u
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory AlgebraicGeometry
+open scoped CategoryTheory.MonObj
+open MathlibExt.AlgebraicGeometry.AbelianSchemes
 open MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.PointedPicardFamilies
@@ -39,11 +41,10 @@ example {k : Type} [Field k] (A : Type*) [AddCommGroup A] {C : Scheme.{0}}
     (pts_add : ∀ x y : A,
       pts (x + y) = L.mul (𝟙 (Spec (CommRingCat.of k))) (pts x) (pts y))
     (hdim : SmoothOfRelativeDimension g f) (hproper : IsProper f)
-    (hconn : ∀ s : Spec (CommRingCat.of k), _root_.IsConnected (f.base ⁻¹' {s}))
     (M : PicardZeroModel (Over.mk c) p) (e : Over.mk f ≅ M.J)
     (he : letI := L.grpObjOverMk; letI := M.group; IsMonHom e.hom) :
     MilneJVScheme.JacobianSchemeData A c p g (𝟙 (Spec (CommRingCat.of k))) :=
-  MilneJVScheme.JacobianSchemeData.ofCore A c p g f L pts pts_add hdim hproper hconn M e he
+  MilneJVScheme.JacobianSchemeData.ofCore A c p g f L pts pts_add hdim hproper M e he
 
 /-- The identity point of the group law agrees with the bridge image of
 zero. -/
@@ -55,14 +56,38 @@ example {k : Type} [Field k] (A : Type*) [AddCommGroup A]
     L.one σ = B.pts 0 :=
   B.law_one_eq_pts_zero
 
-/-- Boundary: the abelian-scheme bundle requires a group law; its
-`hasGroupLaw` field is the data that a bare smooth proper morphism does
-not supply. -/
-example {R : Type} [CommRing R] {A : Scheme.{0}}
-    {f : A ⟶ Spec (CommRingCat.of R)}
-    (h : GoodReductionJacobian.AbelianSchemePropertyBundle R f) :
-    Nonempty (RelativeGroupLaw R f) :=
-  h.hasGroupLaw
+/-- Jacobian scheme data gives an abelian scheme over `Spec k` in the shared
+`AbelianScheme` API, whose model is the data's scheme, so its operations apply:
+here, the fibre at a point. -/
+example {k : Type} [Field k] (A : Type*) [AddCommGroup A] {C : Scheme.{0}}
+    (c : C ⟶ Spec (CommRingCat.of k)) [IsProper c]
+    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ Over.mk c) (g : ℕ) {T : Scheme.{0}}
+    (σ : T ⟶ Spec (CommRingCat.of k))
+    (D : MilneJVScheme.JacobianSchemeData A c p g σ) (s : Spec (CommRingCat.of k)) :
+    AbelianScheme (Spec ((Spec (CommRingCat.of k)).residueField s)) :=
+  D.abelianScheme.fibre s
+
+/-- The abelian scheme's model is the data's scheme, and multiplication of its
+points is the data's group law. -/
+example {k : Type} [Field k] (A : Type*) [AddCommGroup A] {C : Scheme.{0}}
+    (c : C ⟶ Spec (CommRingCat.of k)) [IsProper c]
+    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ Over.mk c) (g : ℕ) {T : Scheme.{0}}
+    (σ : T ⟶ Spec (CommRingCat.of k))
+    (D : MilneJVScheme.JacobianSchemeData A c p g σ) {T' : Scheme.{0}}
+    (t : T' ⟶ Spec (CommRingCat.of k)) (x y : Over.mk t ⟶ D.abelianScheme.model) :
+    D.abelianScheme.model = Over.mk D.D.toBase ∧ x * y = D.L.mul t x y :=
+  ⟨rfl, D.L.mul_overMk t x y⟩
+
+/-- The fibres of the data's scheme are connected, as the abelian scheme is
+geometrically connected. -/
+example {k : Type} [Field k] (A : Type*) [AddCommGroup A] {C : Scheme.{0}}
+    (c : C ⟶ Spec (CommRingCat.of k)) [IsProper c]
+    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ Over.mk c) (g : ℕ) {T : Scheme.{0}}
+    (σ : T ⟶ Spec (CommRingCat.of k))
+    (D : MilneJVScheme.JacobianSchemeData A c p g σ) (s : Spec (CommRingCat.of k)) :
+    _root_.IsConnected (D.D.toBase.base ⁻¹' {s}) :=
+  have : GeometricallyConnected D.D.toBase := D.abelianScheme.connected
+  D.D.toBase.isConnected_preimage_singleton s
 
 /-- The scheme of Jacobian scheme data classifies the line bundles on the
 curve that are normalized along the rational point and algebraically trivial
