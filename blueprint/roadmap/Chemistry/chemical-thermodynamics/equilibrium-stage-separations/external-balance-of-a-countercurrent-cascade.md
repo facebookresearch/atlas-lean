@@ -11,4 +11,4 @@ stage $k+1$, so its values at the two ends agree.
 
 ## Sources
 
-- L. Lamm and L. Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, [Section 1.4, Equation 9.1](https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.04%3A_Absorption_and_Stripping), gives the absorber operating line for constant solute-free carrier rates. Subtracting that line at adjacent cuts gives the constant-carrier special case of the stage balance assumed above.
+- Monica Lamm and Laura Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, [Section 1.4, Equation 9.1](https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.04%3A_Absorption_and_Stripping), gives the absorber operating line for constant solute-free carrier rates. Subtracting that line at adjacent cuts gives the constant-carrier special case of the stage balance assumed above.
