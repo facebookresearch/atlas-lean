@@ -48,9 +48,7 @@ public theorem AnalyticOnNhd.log_norm_le_circleAverage_log_norm
     {F : ℂ → ℂ} {c : ℂ} {R : ℝ}
     (hF : AnalyticOnNhd ℂ F (Metric.closedBall c |R|)) (hc : F c ≠ 0) :
     Real.log ‖F c‖ ≤ Real.circleAverage (fun z ↦ Real.log ‖F z‖) c R := by
-  rcases eq_or_ne R 0 with rfl | hR
-  · simp [Real.circleAverage_zero]
-  rw [AnalyticOnNhd.circleAverage_log_norm hR hF hc]
+  rw [AnalyticOnNhd.circleAverage_log_norm hF hc]
   refine le_add_of_nonneg_left (finsum_nonneg fun u ↦ ?_)
   by_cases hu : u ∈ Metric.closedBall c |R|
   · refine mul_nonneg ?_ ?_
