@@ -43,8 +43,9 @@ variable {R : Type u} [CommRing R]
 variable {F : Type v} [Field F] [Algebra R F]
 variable {G : Type w} [CommRing G] [Algebra R G]
 
-/-- The schematic closure of a subalgebra `B` of `F ⊗[R] G` in `G`: the
-`R`-subalgebra of elements of `G` whose image `1 ⊗ g` lies in `B`. -/
+/-- The flat closure of a subalgebra `B` of `F ⊗[R] G` (the saturation of `B`
+in `G`): the `R`-subalgebra of elements of `G` whose image `1 ⊗ g` lies in
+`B`. -/
 def flatClosure (B : Subalgebra F (F ⊗[R] G)) : Subalgebra R G where
   carrier := {g : G | (1 : F) ⊗ₜ[R] g ∈ B}
   mul_mem' {a b} ha hb := by
@@ -85,31 +86,29 @@ lemma le_flatClosure_iff {B : Subalgebra F (F ⊗[R] G)} {S : Subalgebra R G} :
     S ≤ flatClosure B ↔ ∀ g ∈ S, (1 : F) ⊗ₜ[R] g ∈ B :=
   Iff.rfl
 
-/-- The schematic closure is finitely generated as an `R`-module when `G`
-is, over a Noetherian ring. -/
+/-- The flat closure is finitely generated as an `R`-module when `G` is,
+over a Noetherian ring. -/
 theorem flatClosure_finite [IsNoetherianRing R] [Module.Finite R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Finite R (flatClosure B) := by
   have : IsNoetherian R G := isNoetherian_of_isNoetherianRing_of_finite R G
   exact Module.Finite.iff_fg.mpr
     (IsNoetherian.noetherian (Subalgebra.toSubmodule (flatClosure B)))
 
-/-- The schematic closure is torsion-free when `G` is. -/
+/-- The flat closure is torsion-free when `G` is. -/
 theorem flatClosure_isTorsionFree [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.IsTorsionFree R (flatClosure B) :=
   Function.Injective.moduleIsTorsionFree _ Subtype.coe_injective (fun _ _ => rfl)
 
-/-- Over a PID, the schematic closure of a finite torsion-free algebra is
-free. -/
-theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R] [IsNoetherianRing R]
+/-- Over a PID, the flat closure of a finite torsion-free algebra is free. -/
+theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Free R (flatClosure B) := by
   have := flatClosure_finite (R := R) (F := F) (G := G) B
   have := flatClosure_isTorsionFree (R := R) (F := F) (G := G) B
   exact Module.free_of_finite_type_torsion_free'
 
-/-- Over a PID, the schematic closure of a finite torsion-free algebra is
-flat. -/
-theorem flatClosure_flat [IsDomain R] [IsPrincipalIdealRing R] [IsNoetherianRing R]
+/-- Over a PID, the flat closure of a finite torsion-free algebra is flat. -/
+theorem flatClosure_flat [IsDomain R] [IsPrincipalIdealRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Flat R (flatClosure B) := by
   have := flatClosure_free (R := R) (F := F) (G := G) B

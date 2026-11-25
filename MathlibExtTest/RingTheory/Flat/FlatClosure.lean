@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.RingTheory.Flat.SchematicClosure
+public import MathlibExt.RingTheory.Flat.FlatClosure
 import Mathlib.Data.ZMod.Basic
 
 @[expose] public section
