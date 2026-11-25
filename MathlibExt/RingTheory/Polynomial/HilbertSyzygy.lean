@@ -18,6 +18,7 @@ import Mathlib.Algebra.Polynomial.Module.TensorProduct
 import Mathlib.Algebra.MvPolynomial.Equiv
 import Mathlib.RingTheory.MvPolynomial.Basic
 import Mathlib.Algebra.Module.Projective
+import Mathlib.LinearAlgebra.TensorProduct.Projective
 import Mathlib.LinearAlgebra.Finsupp.Pi
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.RingTheory.TensorProduct.Basic
@@ -515,12 +516,15 @@ Hilbert's syzygy theorem: finitely generated modules over
 namespace MathlibExt.RingTheory.Polynomial.HilbertSyzygyWanted
 
 /--
-If `k` is a field and `M` is a finitely generated module over `MvPolynomial (Fin n) k`, then `M`
-has projective dimension at most `n` in `ModuleCat`. Source: D. Hilbert, Math. Ann. 36 (1890)
-473–534 finite free resolution length ≤n; Lang, Algebra; Lean states field case `k[X₁, …, Xₙ]`
-with `HasProjectiveDimensionLE n` and n=0 field case.
+**Hilbert's syzygy theorem.** Let $k$ be a field, let $n$ be a natural number, and let $M$ be a
+finitely generated module over the polynomial ring $k[X_1, \dots, X_n]$ in $n$ variables. Then
+$M$ has projective dimension at most $n$ in the category of $k[X_1, \dots, X_n]$-modules.
 
 Proves `Wanted` entry `hilbert_syzygy`.
+
+Source: D. Hilbert, Math. Ann. 36 (1890)
+473–534 finite free resolution length ≤n; Lang, Algebra; Lean states field case
+`k[X₁, …, Xₙ]` with `HasProjectiveDimensionLE n` and n=0 field case.
 -/
 theorem hilbert_syzygy
     {k : Type*} [Field k]

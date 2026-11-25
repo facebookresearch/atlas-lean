@@ -42,7 +42,7 @@ quantifier elimination' (2012).
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Real.Sqrt
+public import MathlibExt.ModelTheory.RealClosedFieldQE
 
 @[expose] public section
 
@@ -112,91 +112,17 @@ the difference.
 namespace ProgramVerification
 namespace RealClosedFieldQE
 
-/-! ## Syntax -/
-
-/-- Terms in the language of ordered rings, with de Bruijn variables. -/
-inductive Term where
-  | var : Nat → Term
-  | const : Int → Term
-  | add : Term → Term → Term
-  | mul : Term → Term → Term
-  | neg : Term → Term
-  deriving DecidableEq, Repr, Inhabited
-
-/--
-Formulas in the language of ordered rings. The connectives are the minimal set
-`⊥`, `→`, `∀`; the usual derived connectives are provided as abbreviations below.
--/
-inductive Formula where
-  | lt : Term → Term → Formula
-  | eq : Term → Term → Formula
-  /-- Falsity. -/
-  | fals : Formula
-  | imp : Formula → Formula → Formula
-  /-- Universal quantification; binds de Bruijn index `0` in the body. -/
-  | all : Formula → Formula
-  deriving DecidableEq, Repr, Inhabited
-
-namespace Formula
-
-/-- Negation. -/
-def not (φ : Formula) : Formula := .imp φ .fals
-
-/-- Truth. -/
-def tru : Formula := .not .fals
-
-/-- Disjunction. -/
-def or (φ ψ : Formula) : Formula := .imp φ.not ψ
-
-/-- Conjunction. -/
-def and (φ ψ : Formula) : Formula := (φ.imp ψ.not).not
-
-/-- Existential quantification; binds de Bruijn index `0` in the body. -/
-def ex (φ : Formula) : Formula := φ.not.all.not
-
-/-!
-Under the classical logic available in this problem, these derived connectives have their
-usual semantics under `Formula.Holds`.
--/
-
-end Formula
-
-/-! ## Semantics -/
-
-/-- Extend an environment, binding de Bruijn index `0` to `x`. -/
-def cons (x : ℝ) (env : Nat → ℝ) : Nat → ℝ
-  | 0 => x
-  | i + 1 => env i
-
-/-- Interpretation of a term in `ℝ`. -/
-def Term.eval (env : Nat → ℝ) : Term → ℝ
-  | .var i => env i
-  | .const k => (k : ℝ)
-  | .add a b => a.eval env + b.eval env
-  | .mul a b => a.eval env * b.eval env
-  | .neg a => -a.eval env
-
-/-- Satisfaction of a formula in `ℝ` under an environment. -/
-def Formula.Holds (env : Nat → ℝ) : Formula → Prop
-  | .lt a b => a.eval env < b.eval env
-  | .eq a b => a.eval env = b.eval env
-  | .fals => False
-  | .imp φ ψ => φ.Holds env → ψ.Holds env
-  | .all φ => ∀ x : ℝ, φ.Holds (cons x env)
-
-/-- A formula is quantifier free if it contains no `Formula.all`. -/
-def Formula.IsQF : Formula → Prop
-  | .lt _ _ => True
-  | .eq _ _ => True
-  | .fals => True
-  | .imp φ ψ => φ.IsQF ∧ ψ.IsQF
-  | .all _ => False
-
 /-! ## The problem -/
 
 /--
-Quantifier elimination: `qe φ` is a quantifier-free formula equivalent to `φ` over `ℝ` in
-every environment. Its syntax may mention additional variables vacuously.
+**Quantifier elimination over the reals.** Quantifier elimination is a map sending each formula
+$\varphi$ of the language of ordered rings to a formula $\operatorname{qe}(\varphi)$, subject to
+two requirements: $\operatorname{qe}(\varphi)$ is quantifier free, and for every environment
+$e : \mathbb{N} \to \mathbb{R}$ assigning a real number to each variable,
+$\operatorname{qe}(\varphi)$ holds in $\mathbb{R}$ under $e$ if and only if $\varphi$ does.
+
+The formula $\operatorname{qe}(\varphi)$ may mention additional variables, but only vacuously.
+
 Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier
 elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi,
 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal
@@ -206,34 +132,37 @@ leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 public def_wanted qe (φ : Formula) : Formula
 
 /- The output of `qe` is quantifier free. -/
-/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins,
+/--
+**Quantifier elimination yields quantifier-free formulas.** Let $\mathrm{qe}$ be the quantifier
+elimination map on formulas. For every formula $\varphi$, the formula $\mathrm{qe}(\varphi)$ is
+quantifier free.
+
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins,
 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975);
 Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi,
 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012).
-Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
+Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+-/
 public theorem_wanted isQF_qe (φ : Formula) : (❰qe❱ φ).IsQF
 
 /- The output of `qe` is equivalent to its input, under every environment. -/
-/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins,
+/--
+**Quantifier elimination preserves truth.** Let $\mathrm{qe}$ be the quantifier elimination map
+on formulas. For every formula $\varphi$ and every environment $e : \mathbb{N} \to \mathbb{R}$,
+the formula $\mathrm{qe}(\varphi)$ holds in $\mathbb{R}$ under $e$ if and only if $\varphi$ holds
+in $\mathbb{R}$ under $e$.
+
+Together with the statement that $\mathrm{qe}(\varphi)$ is always quantifier free, this is
+Tarski's quantifier elimination theorem, stated for $\mathbb{R}$.
+
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins,
 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975);
 Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi,
 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012).
-Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
+Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+-/
 public theorem_wanted holds_qe (φ : Formula) (env : Nat → ℝ) :
     (❰qe❱ φ).Holds env ↔ φ.Holds env
-
-/--
-Anti-vacuity guard for the semantics and de Bruijn convention: a real number is a square
-exactly when it is nonnegative.
-Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier
-elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi,
-'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal
-proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via
-leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
--/
-public theorem_wanted holds_ex_sq (env : Nat → ℝ) :
-    (Formula.ex (.eq (.mul (.var 0) (.var 0)) (.var 1))).Holds env ↔
-      (Formula.not (.lt (.var 0) (.const 0))).Holds env
 
 end RealClosedFieldQE
 end ProgramVerification

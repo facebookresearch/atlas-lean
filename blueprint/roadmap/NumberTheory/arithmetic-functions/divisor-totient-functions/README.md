@@ -2,6 +2,8 @@
 
 σ, τ, φ, Jordan and Dedekind ψ, unitary and biunitary divisors, gcd-sums, Ramanujan sums, totient multiplicities and values.
 
+- [Euler's totient function](euler-totient.md)
+
 ## [Part 1 of 2](part-01/README.md)
 
 - [Alder's totient function](part-01/alder-s-totient-function/README.md)

@@ -200,12 +200,14 @@ private theorem isNoetherian_of_prime_smul_top_fg {R M : Type*} [CommRing R] [Ad
   exact hNmem hNfg
 
 /--
-If `A → B` is injective, `B` is module-finite over `A` and `B` is Noetherian, then `A` is
-Noetherian.
-Source: P. M. Eakin Jr., 'The converse to a well known theorem on Noetherian rings', Mathematische
-Annalen 177 (1968), 278-282, DOI 10.1007/BF01350720.
+**Eakin–Nagata theorem.** Let $A$ and $B$ be commutative rings and let $B$ be an $A$-algebra
+that is finitely generated as an $A$-module. If the structure map $A \to B$ is injective and $B$
+is Noetherian, then $A$ is Noetherian.
 
 Proves `Wanted` entry `eakin_nagata`.
+
+Source: P. M. Eakin Jr., 'The converse to a well known theorem on Noetherian rings', Mathematische
+Annalen 177 (1968), 278-282, DOI 10.1007/BF01350720.
 -/
 theorem eakin_nagata
     {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]

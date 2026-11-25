@@ -35,8 +35,12 @@ v1.8.0.
 
 open scoped Pointwise
 
-/-- Kourovka 10.66 (A. N. Fomin, V. P. Shunkov): a group `G` containing nontrivial subgroups `A`
-and `B` with `AB ≠ G` and `A B^g = B^g A` for every `g ∈ G` is not simple. -/
+/-- **Permuting conjugates and simplicity (Kourovka 10.66).** The conjecture that a group $G$
+containing nontrivial subgroups $A$ and $B$ such that the product set $AB$ is not all of $G$ and
+$A \cdot gBg^{-1} = gBg^{-1} \cdot A$ for every $g \in G$ is not simple. Products of subgroups are
+products of subsets of $G$.
+
+This is Kourovka Problem 10.66 (A. N. Fomin, V. P. Shunkov). -/
 def permutingConjugatesNotSimple : Prop :=
   ∀ (G : Type) [Group G] (A B : Subgroup G), A ≠ ⊥ → B ≠ ⊥ → (A : Set G) * (B : Set G) ≠ Set.univ →
     (∀ g : G, (A : Set G) * (B.map (MulAut.conj g).toMonoidHom : Set G) =
@@ -44,16 +48,22 @@ def permutingConjugatesNotSimple : Prop :=
     ¬ IsSimpleGroup G
 
 /--
-Resolved false: the Kourovka Archive answers 10.66 "No" (Bludov): take a simple linearly ordered
-group `G` and nontrivial proper convex subgroups `A`, `B`. Conjugates of convex subgroups are convex
-and the convex subgroups form a chain, so `AB^g = B^gA` is the larger of `A` and `B^g`, and `AB ≠
-G`. Such subgroups exist: a nontrivial simple ordered group is not archimedean (archimedean ordered
-groups are abelian, by Hölder), so it has nontrivial proper convex subgroups. Source: E. I. Khukhro
-and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 10.66 (A. N. Fomin, V. P. Shunkov);
-resolution: V. V. Bludov, letter of 12 February 1997, recorded in the Kourovka Archive, Problem
-10.66, Archive answer: "No; for example, for G being any simple linearly ordered group and A and B
-arbitrary proper convex subgroups of G".
+**A simple group with permuting conjugate subgroups (Kourovka 10.66 refuted).** There exist a
+simple group $G$ and nontrivial subgroups $A$ and $B$ of $G$ such that the product set $AB$ is not
+all of $G$ and $A \cdot gBg^{-1} = gBg^{-1} \cdot A$ for every $g \in G$, where products of
+subgroups are products of subsets of $G$. So the conjecture of Kourovka Problem 10.66 is false.
+
+Bludov's example takes a simple linearly ordered group $G$ and nontrivial proper convex subgroups
+$A$ and $B$. Conjugates of convex subgroups are convex and the convex subgroups form a chain, so
+$A \cdot gBg^{-1}$ and $gBg^{-1} \cdot A$ both equal the larger of $A$ and $gBg^{-1}$, and
+$AB \ne G$. Such subgroups exist: a nontrivial simple ordered group is not archimedean
+(archimedean ordered groups are abelian, by Hölder), so it has nontrivial proper convex subgroups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 10.66 (A. N.
+Fomin, V. P. Shunkov); resolution: V. V. Bludov, letter of 12 February 1997, recorded in the
+Kourovka Archive, Problem 10.66, Archive answer: "No; for example, for G being any simple linearly
+ordered group and A and B arbitrary proper convex subgroups of G".
 -/
 public theorem_wanted permutingConjugatesNotSimple_refuted : ¬ permutingConjugatesNotSimple
 

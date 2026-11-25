@@ -8,3 +8,4 @@
 - [Regular local rings of dimension at most one are normal domains](is-domain-and-is-integrally-closed-of-ri.md)
 - [Adjoining a root of an Eisenstein-like polynomial preserves regularity](adjoin-root-of-monic-of-coeff-mem-maxima.md)
 - [Regular local rings of dimension at most two are UFDs](unique-factorization-monoid-of-ring-krul.md)
+- [Every regular local ring is Cohen-Macaulay](regular-local-cohen-macaulay.md)

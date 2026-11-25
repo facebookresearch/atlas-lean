@@ -166,12 +166,18 @@ end Engineering.Resource.DeclineCurve
 namespace Engineering.Resource.Decline
 
 /-- Hyperbolic-decline production rate `qi * (1 + b * Di * t) ^ (-1 / b)`,
-as a real power. -/
+as a real power. With the conventions `x / 0 = 0`, `x ^ 0 = 1` and `0 ^ y = 0`
+for `y ≠ 0`, it is `qi` when `b = 0`, and `0` where `1 + b * Di * t = 0` with
+`b ≠ 0`; a negative base `x` gives `|x| ^ y * cos (π y)`. -/
 noncomputable def hyperbolicRate (qi Di b t : ℝ) : ℝ :=
   qi * (1 + b * Di * t) ^ (-(1 : ℝ) / b)
 
 /-- Hyperbolic cumulative production
-`qi * (1 - (1 + b * Di * t) ^ ((b - 1) / b)) / ((1 - b) * Di)`. -/
+`qi * (1 - (1 + b * Di * t) ^ ((b - 1) / b)) / ((1 - b) * Di)`. With the
+conventions `x / 0 = 0` and `x ^ 0 = 1`, it is `0` when `b = 1`, `Di = 0`
+or `b = 0`; otherwise `0 ^ y = 0` for `y ≠ 0`, and a negative base `x`
+gives `|x| ^ y * cos (π y)`. The intended domain is `qi > 0`, `Di > 0`,
+`0 < b < 1` and `t ≥ 0`. -/
 noncomputable def hyperbolic_cumulative (qi Di b t : ℝ) : ℝ :=
   qi * (1 - (1 + b * Di * t) ^ ((b - 1) / b : ℝ)) / ((1 - b) * Di)
 
@@ -180,13 +186,15 @@ private lemma aux_base_pos {Di b t : ℝ} (hDi : 0 < Di) (hb0 : 0 < b) (ht : 0 �
   have h : (0 : ℝ) ≤ b * Di * t := mul_nonneg (mul_nonneg hb0.le hDi.le) ht
   linarith
 
-/-- No production at time zero. -/
+/-- No production at time zero (for `b = 1` or `Di = 0`, where the
+denominator vanishes, by the convention `x / 0 = 0`). -/
 lemma hyperbolic_cumulative_zero (qi Di b : ℝ) :
     hyperbolic_cumulative qi Di b 0 = 0 := by
   simp [hyperbolic_cumulative, Real.one_rpow]
 
 /-- **Cumulative production theorem.** The derivative of the cumulative
-is the hyperbolic rate, on the positive real-power domain. -/
+is the hyperbolic rate, on the positive real-power domain `qi > 0`,
+`Di > 0`, `0 < b < 1`, `t ≥ 0`. -/
 lemma hyperbolic_cumulative_hasDerivAt {qi Di b t : ℝ} (hqi : 0 < qi)
     (hDi : 0 < Di) (hb0 : 0 < b) (hb1 : b < 1) (ht : 0 ≤ t) :
     HasDerivAt (hyperbolic_cumulative qi Di b) (hyperbolicRate qi Di b t) t := by
@@ -231,7 +239,8 @@ lemma hyperbolic_cumulative_hasDerivAt {qi Di b t : ℝ} (hqi : 0 < qi)
   exact hdiv
 
 set_option linter.unusedVariables false in
-/-- The equivalent rate form of the cumulative:
+/-- The equivalent rate form of the cumulative, for `qi > 0`, `Di > 0`,
+`0 < b < 1` and `t ≥ 0`:
 `qi ^ b * (qi ^ (1 - b) - q(t) ^ (1 - b)) / ((1 - b) * Di)`. -/
 lemma hyperbolic_cumulative_eq_alt {qi Di b t : ℝ} (hqi : 0 < qi)
     (hDi : 0 < Di) (hb0 : 0 < b) (hb1 : b < 1) (ht : 0 ≤ t) :
@@ -265,13 +274,15 @@ lemma hyperbolic_cumulative_eq_alt {qi Di b t : ℝ} (hqi : 0 < qi)
         _ = qi * (1 - (1 + b * Di * t) ^ ((b - 1) / b : ℝ)) := by rw [hA]
   rw [hcalc]
 
-/-- The rate stays positive in the physical regime. -/
+/-- The rate stays positive in the physical regime `qi > 0`, `Di > 0`,
+`b > 0`, `t ≥ 0`. -/
 lemma hyperbolicRate_pos {qi Di b t : ℝ} (hqi : 0 < qi) (hDi : 0 < Di)
     (hb0 : 0 < b) (ht : 0 ≤ t) : 0 < hyperbolicRate qi Di b t := by
   unfold hyperbolicRate
   exact mul_pos hqi (Real.rpow_pos_of_pos (aux_base_pos hDi hb0 ht) _)
 
-/-- Cumulative production is nonnegative and bounded by the finite
+/-- For `qi > 0`, `Di > 0`, `0 < b < 1` and `t ≥ 0`, cumulative production
+is nonnegative and bounded by the finite
 mathematical asymptote `qi / ((1 - b) * Di)`, which is not a reserve
 estimate. -/
 lemma hyperbolic_cumulative_nonneg_le {qi Di b t : ℝ} (hqi : 0 < qi)

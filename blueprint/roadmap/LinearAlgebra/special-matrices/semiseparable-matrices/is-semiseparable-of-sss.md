@@ -20,9 +20,13 @@ Dao and Gu call this the $N$-sequentially semiseparable (SSS) representation. Th
 every $N$-semiseparable matrix has such a representation, is their Proposition 3.4 and is not
 covered here.
 
+## Depends on
+
+- [Semiseparable matrix](is-semiseparable.md)
+
 ## Informally uses
 
-- [Rank of a product of matrices](../../linear-maps-and-duality/rank-of-a-product.md):
+- [Rank of a product of matrices](../../linear-maps-and-duality/rank-of-a-matrix-product/rank-of-a-product.md):
   mathematical prerequisite, the rank bound for each block.
 
 ## Sources

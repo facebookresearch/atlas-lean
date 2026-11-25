@@ -60,6 +60,5 @@ private theorem omitted_premise_fails :
       ({0} : Finset ℕ).card.choose k) := by
   rw [full_vcDim_zero, full_traceFamily]
   simp
-  decide
 
 end CSLibExtTest.MachineLearning.PACLearning

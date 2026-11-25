@@ -1,0 +1,11 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/MeasureTheory/Function/ConditionalExpectation/BestPredictorTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "008cc2e46be1ba7752f4b45f8b4242de2dbe986d2f114934a49b7a3afa5b4c83", "rationale": "Add the almost-everywhere equality case and uniqueness of the conditional-mean MMSE minimizer; not yet in formal-math.", "upstream_sha256": "b3e75f607fdbe1c09a0a0861e338b800cfe08967f83bb236da64ce4347b7e29f"},
+    {"path": "MathlibExtTest/MeasureTheory/Integral/CarlemanStieltjesCriterion.lean", "disposition": "identical", "published_sha256": "3a55b69d008a8091364018664b323be7039ebbfd6323d986b81c2806dbc70f91", "upstream_sha256": "7ab8311cd277314a6861ae93c6093eb4043029043278bfe3d92bc55802740f4c"},
+    {"path": "MathlibExtTest/MeasureTheory/Integral/LyapunovConvexity.lean", "disposition": "identical", "published_sha256": "d9d6a14b02bfcbcee2c2b7e1e52a6e509f1a5aef1996102285d4beb9bc28ac0a", "upstream_sha256": "e77526f0423f0f495b0b8b6b958c73bd3205533f4ad306e95ec2320bb046c06b"},
+    {"path": "MathlibExtTest/MeasureTheory/Measure/Lebesgue/Finite.lean", "disposition": "identical", "published_sha256": "b1d64143d908434900cc15deb99f1d58237db7962b4601ab6cb44255528c15a0", "upstream_sha256": "833a061d2f3b39af2a9e46e9c9d7ce49ea374b734b195a83e74a87fabd249673"},
+    {"path": "MathlibExtTest/MeasureTheory/Measure/Lebesgue/TriangleArea.lean", "disposition": "identical", "published_sha256": "c687c85b963e94d0082ddb946a45c2b4a2e212df4a67d9eae4c5a48d726dd6c7", "upstream_sha256": "3c37f84ed9f64a19374a0cdffe847f896566eddc98431c2801ef13d04b49f63a"},
+    {"path": "MathlibExtTest/MeasureTheory/Measure/PiWithDensityTests.lean", "disposition": "identical", "published_sha256": "7596836d7420d71a05a8bf299649bf91244f4181155257e45d4a037cf647d0df", "upstream_sha256": "bf60569305b04df67acc3a38d94e646d699a8b9ead4e96bbc56e533288eb3f8d"},
+    {"path": "MathlibExtTest/MeasureTheory/Measure/VitaliNonmeasurable.lean", "disposition": "identical", "published_sha256": "c61ca580f8b1bf0e2d8bf8e042f1ce7f20855a0cbffd337d97f57ac74cc6c651", "upstream_sha256": "764812467e2b10d4f61a45a5c79a6d1378d3433664c645720da237b84fe7eb72"}
+  ]
+}
