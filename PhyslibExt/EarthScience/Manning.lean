@@ -53,7 +53,9 @@ namespace EarthScience
 `Q = (1 / n) * A * R ^ (2 / 3) * sqrt S`, with roughness `n`, flow area
 `A`, hydraulic radius `R`, and slope `S`, in one consistent unit system
 (the factor-1 SI form; `[n] = T * L^(-1/3)`, so this is not the
-US-customary 1.49 form). -/
+US-customary 1.49 form). With the conventions `1 / 0 = 0`, `sqrt x = 0`
+for `x < 0`, `0 ^ y = 0` for `y ≠ 0` and `x ^ y = |x| ^ y * cos (π y)` for
+`x < 0`, it is `0` when `n = 0`, `R = 0` or `S < 0`. -/
 noncomputable def manningDischarge (n A R S : ℝ) : ℝ :=
   (1 / n) * A * R ^ ((2 : ℝ) / 3) * Real.sqrt S
 

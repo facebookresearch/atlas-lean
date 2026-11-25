@@ -9,7 +9,11 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
+public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import Mathlib.LinearAlgebra.Matrix.Symmetric
+public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Probability.Moments.Covariance
 public import MathlibExt.Probability.Diffusion.FokkerPlanckGradient
@@ -57,6 +61,27 @@ every realization is divergence free at a point, so is the mean there. Without t
 hypothesis the interchange of derivative and ensemble mean fails: section C gives an ensemble on
 `(0, 1]` whose realizations all have derivative `0` at a point where the mean has derivative `1`.
 
+Section D models the Reynolds stress by Boussinesq's turbulent-viscosity hypothesis in three
+dimensions, `Rm = (2 k / 3) I - 2 νt S`, from the turbulent kinetic energy `k`, an eddy viscosity
+`νt` and the mean rate of strain `S` (`modeledReynoldsStress`). The model domain is `k ≥ 0`, a
+real `νt` and a symmetric `S`, trace free when the mean flow is divergence free; the closure is a
+chosen model, not a measured property of turbulence. The Reynolds stress acts on the mean flow as
+the stress `-ρ 𝔼[u'ⱼ u'ᵢ]` (tension positive), so the model adds the viscous-like stress
+`2 ρ νt S` and the isotropic pressure `(2 / 3) ρ k`.
+
+The production of turbulent kinetic energy, the rate per unit mass at which the Reynolds stress
+takes kinetic energy from the mean flow, is written with the mean rate of strain `S` as
+`P = -∑ᵢ ∑ⱼ Rᵢⱼ Sᵢⱼ` (`meanFlowExtraction`); energy leaves the mean flow when `P > 0`. For the
+model and a trace-free `S` the isotropic part does no work and `P = 2 νt ‖S‖²` with the Frobenius
+norm, `‖S‖² = ∑ᵢ ∑ⱼ Sᵢⱼ²`. So `νt ≥ 0` gives `P ≥ 0`; for `S ≠ 0` the converse holds, and at
+`S = 0` it fails, since there `P = 0` whatever `νt`. Dissipation does not give realizability: for
+`k = 1`, `νt = 1` and the plane strain `S = diag(1, -1, 0)` of the mean flow `U = (x, -y, 0)`,
+the model is `Rm = diag(-4/3, 8/3, 2/3)` and extracts `P = 4 > 0`, yet its entry `Rm₀₀ = -4/3` is
+negative: its quadratic form is negative along `e₀`, so it is not positive semidefinite
+(`Matrix.PosSemidef`), while `reynoldsStress_posSemidef` makes that form nonnegative for every
+Reynolds stress of `L²` velocities. Section D has no transport equations for `k` or `νt`, no
+realizability criterion or limiter, and no empirical adequacy or system safety claim.
+
 ## ii. Key results
 
 - `FluidDynamics.EnsembleMomentum.ensembleMean`, `ensembleMeanStress` and `reynoldsStress`: the
@@ -71,12 +96,29 @@ hypothesis the interchange of derivative and ensemble mean fails: section C give
   have a divergence-free mean.
 - `FluidDynamics.EnsembleMomentum.escapingProfile_interchange_fails`: without domination the
   interchange of derivative and ensemble mean fails.
+- `FluidDynamics.EnsembleMomentum.modeledReynoldsStress`: the closure
+  `Rm = (2 k / 3) I - 2 νt S`.
+- `FluidDynamics.EnsembleMomentum.meanFlowExtraction`: the production `P = -∑ᵢ ∑ⱼ Rᵢⱼ Sᵢⱼ`.
+- `FluidDynamics.EnsembleMomentum.meanFlowExtraction_modeledReynoldsStress`: `P = 2 νt ‖S‖²`
+  for a trace-free `S`.
+- `FluidDynamics.EnsembleMomentum.meanFlowExtraction_modeledReynoldsStress_nonneg`: for a
+  trace-free `S`, `νt ≥ 0` gives `P ≥ 0`.
+- `FluidDynamics.EnsembleMomentum.meanFlowExtraction_modeledReynoldsStress_nonneg_iff`: for a
+  nonzero trace-free `S`, `P ≥ 0` exactly when `νt ≥ 0`.
+- `FluidDynamics.EnsembleMomentum.meanFlowExtraction_nonneg_converse_fails`: at `S = 0`, with
+  `k ≥ 0`, nonnegative extraction does not force `νt ≥ 0`.
+- `FluidDynamics.EnsembleMomentum.modeledReynoldsStress_planeStrain`: at `k = νt = 1` and
+  `S = diag(1, -1, 0)`, `Rm = diag(-4/3, 8/3, 2/3)` and `P = 4`.
+- `FluidDynamics.EnsembleMomentum.modeledReynoldsStress_realizability_fails`: for `k ≥ 0`,
+  `νt > 0` and a symmetric trace-free `S`, the model need not be positive semidefinite
+  (`Matrix.PosSemidef`).
 
 ## iii. Table of contents
 
 - A. Ensemble means and the Reynolds stress
 - B. The mean momentum equation
 - C. The interchange without domination
+- D. Closure dissipation versus realizability
 
 ## iv. References
 
@@ -84,13 +126,17 @@ hypothesis the interchange of derivative and ensemble mean fails: section C give
   the criterion*, Phil. Trans. R. Soc. Lond. A 186 (1895), 123-164 (the averaged equations and
   the stresses due to the fluctuations).
 - S. B. Pope, *Turbulent Flows*, Cambridge University Press, 2000, Chapter 4 (the Reynolds
-  equations; the Reynolds stresses `⟨uᵢ uⱼ⟩` form a symmetric positive semidefinite tensor).
+  equations; the Reynolds stresses `⟨uᵢ uⱼ⟩` form a symmetric positive semidefinite tensor; the
+  turbulent-viscosity hypothesis) and Chapter 5 (the production of turbulent kinetic energy).
+- U. Schumann, *Realizability of Reynolds-stress turbulence models*, Phys. Fluids 20 (1977),
+  721-725 (a modeled Reynolds stress must be positive semidefinite).
 - `ControlVolumes.momentumFlux` (`PhyslibExt.ContinuumMechanics.ControlVolumes`) and
   `MathlibExt.Probability.FokkerPlanck.divergence`
   (`MathlibExt.Probability.Diffusion.FokkerPlanckGradient`).
 - Mathlib's `hasDerivAt_integral_of_dominated_loc_of_deriv_le`,
-  `hasFDerivAt_integral_of_dominated_of_fderiv_le`, `ProbabilityTheory.covariance_eq_sub` and
-  `ProbabilityTheory.isPosSemidef_covarianceBilin`.
+  `hasFDerivAt_integral_of_dominated_of_fderiv_le`, `ProbabilityTheory.covariance_eq_sub`,
+  `ProbabilityTheory.isPosSemidef_covarianceBilin` and the Frobenius norm on matrices (scope
+  `Matrix.Norms.Frobenius`, `Matrix.frobenius_norm_def`).
 -/
 
 @[expose] public section
@@ -618,5 +664,104 @@ lemma escapingProfile_interchange_fails :
   rw [h0] at h
   have := hG.unique h
   norm_num at this
+
+/-! ## D. Closure dissipation versus realizability -/
+
+section Closure
+
+open scoped Matrix.Norms.Frobenius
+
+/-- Boussinesq closure of the Reynolds stress per unit density in three dimensions,
+`Rm = (2 k / 3) I - 2 νt S`, from the turbulent kinetic energy `k`, the eddy viscosity `νt` and
+the mean rate of strain `S`. It models `𝔼[u'ᵢ u'ⱼ]` (`reynoldsStress`); the stress it exerts on
+the mean flow is `-ρ Rm = 2 ρ νt S - (2 / 3) ρ k I`, tension positive. The definition is total;
+the model domain is `k ≥ 0` and a symmetric trace-free `S`, and each result below assumes the
+part of it that it uses. -/
+noncomputable def modeledReynoldsStress (k νt : ℝ) (S : Matrix (Fin 3) (Fin 3) ℝ) :
+    Matrix (Fin 3) (Fin 3) ℝ :=
+  (2 * k / 3) • (1 : Matrix (Fin 3) (Fin 3) ℝ) - (2 * νt) • S
+
+/-- Mean-flow extraction: the production of turbulent kinetic energy per unit mass written with
+the mean rate of strain, `P = -∑ᵢ ∑ⱼ Rᵢⱼ Sᵢⱼ`, for a Reynolds stress per unit density `R` and a
+mean flow with rate of strain `S`. Energy leaves the mean flow when `P > 0`. -/
+def meanFlowExtraction (R S : Matrix (Fin 3) (Fin 3) ℝ) : ℝ :=
+  -∑ i, ∑ j, R i j * S i j
+
+/-- The squared Frobenius norm of a `3 × 3` real matrix is the sum of its squared entries. -/
+private lemma frobenius_norm_sq_fin_three (S : Matrix (Fin 3) (Fin 3) ℝ) :
+    ‖S‖ ^ 2 = ∑ i, ∑ j, S i j ^ 2 := by
+  rw [Matrix.frobenius_norm_def, ← Real.sqrt_eq_rpow, Real.sq_sqrt (by positivity)]
+  simp only [Real.rpow_two, Real.norm_eq_abs, sq_abs]
+
+/-- **Mean-flow extraction of the closure.** For a trace-free mean rate of strain `S` the
+isotropic part `(2 k / 3) I` does no work, and the closure extracts `P = 2 νt ‖S‖²`, where `‖S‖`
+is the Frobenius norm, `‖S‖² = ∑ᵢ ∑ⱼ Sᵢⱼ²`; an identity for all real `k` and `νt`. -/
+lemma meanFlowExtraction_modeledReynoldsStress (k νt : ℝ) {S : Matrix (Fin 3) (Fin 3) ℝ}
+    (hS : S.trace = 0) :
+    meanFlowExtraction (modeledReynoldsStress k νt S) S = 2 * νt * ‖S‖ ^ 2 := by
+  rw [frobenius_norm_sq_fin_three, Matrix.trace_fin_three] at *
+  simp [meanFlowExtraction, modeledReynoldsStress, Fin.sum_univ_three, Matrix.one_apply]
+  linear_combination (-(2 * k / 3)) * hS
+
+/-- **A nonnegative eddy viscosity extracts energy from the mean flow.** If `νt ≥ 0`, the
+closure's extraction `2 νt ‖S‖²` is nonnegative, for every trace-free `S` and every real `k`. -/
+lemma meanFlowExtraction_modeledReynoldsStress_nonneg (k : ℝ) {νt : ℝ}
+    {S : Matrix (Fin 3) (Fin 3) ℝ} (hS : S.trace = 0) (hνt : 0 ≤ νt) :
+    0 ≤ meanFlowExtraction (modeledReynoldsStress k νt S) S := by
+  rw [meanFlowExtraction_modeledReynoldsStress k νt hS]
+  exact mul_nonneg (mul_nonneg zero_le_two hνt) (sq_nonneg _)
+
+/-- **The converse needs a nonzero strain.** For a nonzero trace-free `S` and every real `k`, the
+closure's extraction is nonnegative exactly when `νt ≥ 0`. -/
+lemma meanFlowExtraction_modeledReynoldsStress_nonneg_iff (k : ℝ) {νt : ℝ}
+    {S : Matrix (Fin 3) (Fin 3) ℝ} (hS : S.trace = 0) (hS₀ : S ≠ 0) :
+    0 ≤ meanFlowExtraction (modeledReynoldsStress k νt S) S ↔ 0 ≤ νt := by
+  rw [meanFlowExtraction_modeledReynoldsStress k νt hS,
+    mul_nonneg_iff_of_pos_right (pow_pos (norm_pos_iff.mpr hS₀) 2)]
+  constructor <;> intro h <;> linarith
+
+/-- **Without `S ≠ 0` the converse fails.** At the zero strain, which is symmetric and trace free,
+the closure extracts nothing whatever the eddy viscosity, so nonnegative extraction does not
+force `νt ≥ 0`: `k = 1` with `νt = -1` is a counterexample. -/
+lemma meanFlowExtraction_nonneg_converse_fails :
+    ¬ ∀ k νt : ℝ, 0 ≤ k →
+      0 ≤ meanFlowExtraction (modeledReynoldsStress k νt 0) 0 → 0 ≤ νt := by
+  intro h
+  have h1 := h 1 (-1) zero_le_one (by simp [meanFlowExtraction])
+  norm_num at h1
+
+/-- **Plane-strain fixture.** For `k = 1`, `νt = 1` and the plane strain `S = diag(1, -1, 0)` (the
+mean flow `U = (x, -y, 0)`), the closure is `Rm = diag(-4/3, 8/3, 2/3)`, with the negative entry
+`Rm₀₀ = -4/3`, and it extracts `P = 4` from the mean flow. -/
+lemma modeledReynoldsStress_planeStrain :
+    modeledReynoldsStress 1 1 (Matrix.diagonal ![1, -1, 0]) =
+        Matrix.diagonal ![-4 / 3, 8 / 3, 2 / 3] ∧
+      meanFlowExtraction (modeledReynoldsStress 1 1 (Matrix.diagonal ![1, -1, 0]))
+        (Matrix.diagonal ![1, -1, 0]) = 4 := by
+  refine ⟨?_, ?_⟩
+  · ext i j
+    fin_cases i <;> fin_cases j <;>
+      norm_num [modeledReynoldsStress, Matrix.one_apply, Matrix.diagonal_apply]
+  · norm_num [meanFlowExtraction, modeledReynoldsStress, Fin.sum_univ_three, Matrix.one_apply,
+      Matrix.diagonal_apply]
+
+/-- **A positive eddy viscosity does not give realizability.** For `k ≥ 0`, `νt > 0` and a
+symmetric trace-free `S` the closure need not be positive semidefinite (`Matrix.PosSemidef`),
+although the quadratic form of every Reynolds stress of `L²` velocities is nonnegative
+(`reynoldsStress_posSemidef`): for the plane-strain fixture the quadratic form of the closure
+along `e₀` is `Rm₀₀ = -4/3 < 0`. -/
+lemma modeledReynoldsStress_realizability_fails :
+    ¬ ∀ (k νt : ℝ) (S : Matrix (Fin 3) (Fin 3) ℝ), 0 ≤ k → 0 < νt → S.IsSymm → S.trace = 0 →
+      (modeledReynoldsStress k νt S).PosSemidef := by
+  intro h
+  have htr : (Matrix.diagonal ![(1 : ℝ), -1, 0]).trace = 0 := by
+    rw [Matrix.trace_fin_three]
+    norm_num [Matrix.diagonal_apply]
+  have hq := (h 1 1 (Matrix.diagonal ![1, -1, 0]) zero_le_one one_pos
+    (Matrix.isSymm_diagonal _) htr).dotProduct_mulVec_nonneg ![1, 0, 0]
+  rw [modeledReynoldsStress_planeStrain.1] at hq
+  norm_num [Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.diagonal_apply] at hq
+
+end Closure
 
 end FluidDynamics.EnsembleMomentum

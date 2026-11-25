@@ -26,7 +26,10 @@ edge-distinguishing representation.
 
 namespace SimpleGraph
 
-/-- A loopless multigraph whose parallel edges are distinguished by an edge type. -/
+/-- **Edge-indexed multigraph.** An edge-indexed multigraph with vertex type $V$ and edge type
+$E$ assigns to each edge $e \in E$ an unordered pair of endpoints in $V$, such that no edge has
+two equal endpoints. Distinct edges may have the same endpoints, so parallel edges are
+distinguished by their elements of $E$. -/
 public structure EdgeIndexedMultigraph (V : Type*) (E : Type*) where
   /-- The unordered endpoints of an edge. -/
   ends : E → Sym2 V
@@ -37,7 +40,11 @@ namespace EdgeIndexedMultigraph
 
 variable {V E : Type*} (M : EdgeIndexedMultigraph V E)
 
-/-- A walk that records the identity of every traversed multiedge. -/
+/-- **Indexed walk.** In an edge-indexed multigraph, an indexed walk is a walk that records which
+edge it traverses at each step. Indexed walks are defined inductively: for every vertex $v$ there
+is the empty indexed walk from $v$ to $v$, and if $e$ is an edge with endpoints $u$ and $v$ and
+$p$ is an indexed walk from $v$ to $w$, then traversing $e$ from $u$ to $v$ and then following
+$p$ is an indexed walk from $u$ to $w$. -/
 public inductive IndexedWalk : V → V → Type _
   | nil (v : V) : IndexedWalk v v
   | cons {u v w : V} (e : E) (he : M.ends e = s(u, v))
@@ -45,17 +52,25 @@ public inductive IndexedWalk : V → V → Type _
 
 namespace IndexedWalk
 
-/-- The vertices of an indexed walk, including both endpoints. -/
+/-- **Vertex list of an indexed walk.** The support of an indexed walk $p$ from $u$ to $v$ in
+an edge-indexed multigraph is the list of the vertices that $p$ visits, in order and with
+repetitions, including both endpoints: the empty walk at $w$ has support $[w]$, and a walk that
+starts at $u$ with an edge and continues with an indexed walk $q$ has support $u$ followed by
+the support of $q$. -/
 public def support {u v : V} : M.IndexedWalk u v → List V
   | .nil w => [w]
   | .cons _ _ p => u :: p.support
 
-/-- The edge identities traversed by an indexed walk. -/
+/-- **Edge list of an indexed walk.** The edge list of an indexed walk is the list of the edge
+identities it traverses, in order and with repetitions: the empty walk has the empty edge list,
+and the walk that traverses an edge $e$ and then follows an indexed walk $p$ has edge list $e$
+followed by the edge list of $p$. -/
 public def edges {u v : V} : M.IndexedWalk u v → List E
   | .nil _ => []
   | .cons e _ p => e :: p.edges
 
-/-- An indexed walk is a trail when it uses no edge identity twice. -/
+/-- **Indexed trail.** An indexed walk $p$ in an edge-indexed multigraph is a trail when its edge
+list has no repeated entries, that is, $p$ traverses each edge of the multigraph at most once. -/
 public def IsTrail {u v : V} (p : M.IndexedWalk u v) : Prop :=
   p.edges.Nodup
 
@@ -64,32 +79,41 @@ public theorem isTrail_iff {u v : V} (p : M.IndexedWalk u v) :
     p.IsTrail ↔ p.edges.Nodup :=
   Iff.rfl
 
-/-- An indexed trail is Eulerian when it uses every edge identity. -/
+/-- **Eulerian indexed walk.** An indexed walk is Eulerian when it is a trail, that is, it uses
+no edge identity twice, and every edge identity of the multigraph occurs in its edge list. -/
 public def IsEulerian {u v : V} (p : M.IndexedWalk u v) : Prop :=
   p.IsTrail ∧ ∀ e, e ∈ p.edges
 
-/-- An indexed walk is Eulerian exactly when it is a trail containing every edge identity. -/
+/-- **Characterization of Eulerian indexed walks.** An indexed walk is Eulerian exactly when it
+is a trail whose edge list contains every edge identity of the multigraph. -/
 public theorem isEulerian_iff {u v : V} (p : M.IndexedWalk u v) :
     p.IsEulerian ↔ p.IsTrail ∧ ∀ e, e ∈ p.edges :=
   Iff.rfl
 
-/-- The support of the empty indexed walk is its sole vertex. -/
+/-- **Support of the empty indexed walk.** The support of the empty indexed walk at a vertex $v$
+is the one-element list $[v]$. -/
 @[simp]
 public theorem support_nil (v : V) : (IndexedWalk.nil v : M.IndexedWalk v v).support = [v] :=
   rfl
 
-/-- Prepending an indexed edge prepends its initial vertex to the support. -/
+/-- **Support of a walk extended at the front.** If $e$ is an edge with endpoints $u$ and $v$ and
+$p$ is an indexed walk starting at $v$, then the support of the walk that traverses $e$ from $u$
+to $v$ and then follows $p$ is $u$ followed by the support of $p$. -/
 @[simp]
 public theorem support_cons {u v w : V} (e : E) (he : M.ends e = s(u, v))
     (p : M.IndexedWalk v w) : (IndexedWalk.cons e he p).support = u :: p.support :=
   rfl
 
-/-- The empty indexed walk has no edges. -/
+/-- **The empty indexed walk has no edges.** For every vertex $v$ of an edge-indexed multigraph,
+the edge list of the empty indexed walk at $v$ is the empty list. -/
 @[simp]
 public theorem edges_nil (v : V) : (IndexedWalk.nil v : M.IndexedWalk v v).edges = [] :=
   rfl
 
-/-- Prepending an indexed edge prepends its identity to the edge list. -/
+/-- **Edge list of an extended indexed walk.** Let $p$ be an indexed walk from $v$ to $w$ in an
+edge-indexed multigraph $M$, and let $e$ be an edge of $M$ with endpoints $u$ and $v$. The edge
+list of the walk from $u$ to $w$ that traverses $e$ and then follows $p$ is $e$ followed by the
+edge list of $p$. -/
 @[simp]
 public theorem edges_cons {u v w : V} (e : E) (he : M.ends e = s(u, v))
     (p : M.IndexedWalk v w) : (IndexedWalk.cons e he p).edges = e :: p.edges :=
@@ -97,21 +121,28 @@ public theorem edges_cons {u v w : V} (e : E) (he : M.ends e = s(u, v))
 
 end IndexedWalk
 
-/-- A vertex is incident with an edge when it belongs to the edge's endpoint pair. -/
+/-- **Incidence.** In an edge-indexed multigraph, a vertex $v$ is incident with an edge $e$ when
+$v$ belongs to the unordered pair of endpoints of $e$. -/
 public def Inc (v : V) (e : E) : Prop :=
   v ∈ M.ends e
 
-/-- Incidence means membership in the unordered pair of edge endpoints. -/
+/-- **Incidence is membership in the endpoint pair.** In an edge-indexed multigraph, a vertex $v$
+is incident with an edge $e$ if and only if $v$ belongs to the unordered pair of endpoints of
+$e$. -/
 @[simp]
 public theorem inc_iff (v : V) (e : E) : M.Inc v e ↔ v ∈ M.ends e :=
   Iff.rfl
 
-/-- The simple graph obtained by forgetting edge multiplicities. -/
+/-- **Underlying simple graph of an edge-indexed multigraph.** The underlying simple graph of an
+edge-indexed multigraph $M$ with vertex set $V$ is the simple graph on $V$ whose edges are the
+unordered pairs $\{u, v\}$ that are the endpoint pair of some edge of $M$; such pairs have
+$u \ne v$ because $M$ is loopless. It forgets edge multiplicities. -/
 public def underlying : SimpleGraph V :=
   fromEdgeSet (Set.range M.ends)
 
-/-- Adjacency in the underlying simple graph means that some indexed edge has the given
-endpoints. -/
+/-- **Adjacency in the underlying graph.** Let $M$ be an edge-indexed multigraph. Two vertices $u$
+and $v$ are adjacent in the underlying simple graph of $M$ if and only if some edge $e$ of $M$ has
+endpoint pair $\{u, v\}$. -/
 @[simp]
 public theorem underlying_adj {u v : V} :
     M.underlying.Adj u v ↔ ∃ e, M.ends e = s(u, v) := by
@@ -127,12 +158,21 @@ public theorem underlying_adj {u v : V} :
 
 namespace IndexedWalk
 
-/-- Forget edge identities in an indexed walk. -/
+/-- **From an indexed walk to a walk in the underlying graph.** Let $M$ be an edge-indexed
+multigraph. An indexed walk $p$ in $M$ from $u$ to $v$ yields a walk from $u$ to $v$ in the
+underlying simple graph of $M$ by forgetting edge identities: the empty indexed walk at $w$ goes
+to the empty walk at $w$, and an indexed walk that first traverses an edge $e$ with endpoints
+$\{u, x\}$ and then continues with an indexed walk $q$ goes to the walk that first steps from $u$
+to $x$, an edge of the underlying graph because $e$ has these endpoints, and then follows the
+image of $q$. -/
 public def toWalk {u v : V} : M.IndexedWalk u v → M.underlying.Walk u v
   | .nil w => .nil
   | .cons e he p => .cons (M.underlying_adj.mpr ⟨e, he⟩) p.toWalk
 
-/-- Forgetting edge identities preserves the vertex support. -/
+/-- **Forgetting edge identities preserves the vertex sequence.** Let $M$ be an edge-indexed
+multigraph and $p$ an indexed walk in $M$ from $u$ to $v$. The walk from $u$ to $v$ in the
+underlying simple graph of $M$ obtained from $p$ by forgetting edge identities visits the same
+vertices as $p$, in the same order: the two supports are equal as lists. -/
 @[simp]
 public theorem support_toWalk {u v : V} (p : M.IndexedWalk u v) :
     p.toWalk.support = p.support := by
@@ -140,7 +180,10 @@ public theorem support_toWalk {u v : V} (p : M.IndexedWalk u v) :
   | nil => rfl
   | cons e he p ih => exact congrArg (fun l ↦ _ :: l) ih
 
-/-- Forgetting edge identities maps each edge to its unordered endpoint pair. -/
+/-- **Edges of the forgetful walk.** For every indexed walk $p$ from $u$ to $v$ in an
+edge-indexed multigraph, the edge list of the walk in the underlying simple graph obtained from
+$p$ by forgetting edge identities is the list of the endpoint pairs of the edges of $p$, taken in
+the same order. -/
 @[simp]
 public theorem edges_toWalk {u v : V} (p : M.IndexedWalk u v) :
     p.toWalk.edges = p.edges.map M.ends := by
@@ -150,7 +193,9 @@ public theorem edges_toWalk {u v : V} (p : M.IndexedWalk u v) :
       change s(u, v) :: p.toWalk.edges = M.ends e :: List.map M.ends p.edges
       rw [he, ih]
 
-/-- Forgetting edge identities preserves the number of traversed edges. -/
+/-- **Forgetting edge identities preserves length.** For an indexed walk $p$, the walk in the
+underlying simple graph obtained by forgetting edge identities has the same length as $p$, namely
+the number of entries in the edge list of $p$. -/
 @[simp]
 public theorem length_toWalk {u v : V} (p : M.IndexedWalk u v) :
     p.toWalk.length = p.edges.length := by
@@ -160,16 +205,24 @@ public theorem length_toWalk {u v : V} (p : M.IndexedWalk u v) :
 
 end IndexedWalk
 
-/-- The number of indexed edges incident with a vertex. -/
+/-- **Degree in an edge-indexed multigraph.** The degree of a vertex $v$ in an edge-indexed
+multigraph $M$ is the number of edges of $M$ incident with $v$, that is, the cardinality of the
+set of edges whose endpoint pair contains $v$; it is defined to be $0$ when this set is
+infinite. -/
 public noncomputable def degree (v : V) : ℕ :=
   {e | M.Inc v e}.ncard
 
-/-- The multigraph degree is the cardinality of the set of incident edge identities. -/
+/-- **Degree as the number of incident edges.** For every vertex $v$ of an edge-indexed
+multigraph $M$, the degree of $v$ equals the cardinality of the set of edges of $M$ whose
+endpoint pair contains $v$, where this cardinality is taken to be $0$ when the set is infinite. -/
 public theorem degree_eq_ncard_inc (v : V) :
     M.degree v = {e | M.Inc v e}.ncard :=
   rfl
 
-/-- Disjoint union of two indexed edge sets on the same vertex type. -/
+/-- **Disjoint sum of edge-indexed multigraphs.** Given edge-indexed multigraphs $M$ and $N$ on
+the same vertex type $V$, with edge types $E$ and $F$, their disjoint sum is the edge-indexed
+multigraph on $V$ whose edge type is the disjoint union $E \sqcup F$, where an edge coming from
+$E$ has its endpoints in $M$ and an edge coming from $F$ has its endpoints in $N$. -/
 public def disjointSum {F : Type*} (N : EdgeIndexedMultigraph V F) :
     EdgeIndexedMultigraph V (E ⊕ F) where
   ends
@@ -181,13 +234,17 @@ public def disjointSum {F : Type*} (N : EdgeIndexedMultigraph V F) :
     | inl e => exact M.loopless e v
     | inr f => exact N.loopless f v
 
-/-- A left edge keeps its endpoints in a disjoint sum. -/
+/-- **Endpoints of edges from the first summand.** Let $M$ and $N$ be edge-indexed multigraphs on
+the same vertex type. Every edge $e$ of $M$, viewed as an edge of the disjoint sum of $M$ and
+$N$, has the same endpoints as in $M$. -/
 @[simp]
 public theorem disjointSum_ends_inl {F : Type*} (N : EdgeIndexedMultigraph V F) (e : E) :
     (M.disjointSum N).ends (Sum.inl e) = M.ends e :=
   rfl
 
-/-- A right edge keeps its endpoints in a disjoint sum. -/
+/-- **Endpoints of edges from the second summand.** Let $M$ and $N$ be edge-indexed multigraphs
+on the same vertex type. Every edge $f$ of $N$, viewed as an edge of the disjoint sum of $M$ and
+$N$, has the same endpoints as in $N$. -/
 @[simp]
 public theorem disjointSum_ends_inr {F : Type*} (N : EdgeIndexedMultigraph V F) (f : F) :
     (M.disjointSum N).ends (Sum.inr f) = N.ends f :=
@@ -213,7 +270,9 @@ private def disjointSumIncidenceEquiv {F : Type*} (N : EdgeIndexedMultigraph V F
     intro e
     cases e <;> rfl
 
-/-- Degrees add under disjoint union of indexed edge sets. -/
+/-- **Degrees add under disjoint sums.** Let $M$ and $N$ be edge-indexed multigraphs on the same
+vertex type, each with finitely many edges. Then for every vertex $v$, the degree of $v$ in the
+disjoint sum of $M$ and $N$ equals the degree of $v$ in $M$ plus the degree of $v$ in $N$. -/
 public theorem disjointSum_degree {F : Type*} [Finite E] [Finite F]
     (N : EdgeIndexedMultigraph V F) (v : V) :
     (M.disjointSum N).degree v = M.degree v + N.degree v := by
@@ -233,7 +292,9 @@ public theorem disjointSum_degree {F : Type*} [Finite E] [Finite F]
         (Nat.card_coe_set_eq {e : E | M.Inc v e})
         (Nat.card_coe_set_eq {f : F | N.Inc v f})
 
-/-- Adding a disjoint family of indexed edges preserves connectedness. -/
+/-- **Adding edges preserves connectedness.** Let $M$ and $N$ be edge-indexed multigraphs on the
+same vertex type. If the underlying simple graph of $M$ is connected, then the underlying simple
+graph of the disjoint sum of $M$ and $N$ is connected. -/
 public theorem disjointSum_connected_left {F : Type*}
     (N : EdgeIndexedMultigraph V F) (hM : M.underlying.Connected) :
     (M.disjointSum N).underlying.Connected := by
@@ -418,7 +479,8 @@ private theorem incidenceGraph_degree_inr [Fintype V] [Fintype E] [DecidableEq V
   rw [← ncard_neighborSet, hset, Set.ncard_image_of_injective _ Sum.inl_injective,
     hends, Set.ncard_pair huv]
 
-/-- The degree sum of a finite edge-indexed multigraph is even. -/
+/-- **Handshake lemma for edge-indexed multigraphs.** In an edge-indexed multigraph with finitely
+many vertices and finitely many edges, the sum of the degrees of all vertices is even. -/
 public theorem even_sum_degree [Fintype V] [Finite E] :
     Even (∑ v, M.degree v) := by
   classical
@@ -576,8 +638,11 @@ private theorem exists_eulerian [Finite V] [Finite E] [DecidableEq V] [Decidable
       rw [M.incidenceGraph_degree_inr]
       exact even_two
 
-/-- A connected finite edge-indexed multigraph of even degrees has an edge-distinguishing
-Euler circuit. -/
+/-- **Euler circuits in edge-indexed multigraphs.** Let $M$ be an edge-indexed multigraph with
+finitely many vertices and finitely many edges. If the underlying simple graph of $M$ is
+connected and every vertex of $M$ has even degree, then there are a vertex $u$ and a closed
+indexed walk from $u$ to $u$ that is Eulerian, that is, it traverses every edge of $M$ exactly
+once. -/
 public theorem exists_indexedEulerian [Finite V] [Finite E]
     (hconn : M.underlying.Connected) (heven : ∀ v, Even (M.degree v)) :
     ∃ (u : V) (p : M.IndexedWalk u u), p.IsEulerian := by
@@ -649,8 +714,14 @@ private theorem exists_eulerian_connectedSupport [Finite V] [Finite E]
       rw [M.incidenceGraph_degree_inr]
       exact even_two
 
-/-- A finite edge-indexed multigraph with connected non-isolated support and even degrees has
-an edge-distinguishing Euler circuit. -/
+/-- **Euler circuits in edge-indexed multigraphs whose non-isolated vertices are connected.** Let
+$M$ be an edge-indexed multigraph with finitely many vertices and finitely many edges. Suppose
+that the subgraph of the underlying simple graph of $M$ induced on its non-isolated vertices is
+connected, and that every vertex of $M$ has even degree. Then there are a vertex $u$ and a closed
+indexed walk from $u$ to $u$ that is Eulerian, that is, it traverses every edge of $M$ exactly
+once.
+
+A connected graph has at least one vertex, so the hypothesis requires $M$ to have an edge. -/
 public theorem exists_indexedEulerian_connectedSupport [Finite V] [Finite E]
     (hconn : (M.underlying.induce M.underlying.support).Connected)
     (heven : ∀ v, Even (M.degree v)) :
@@ -706,8 +777,9 @@ public theorem exists_indexedEulerian_connectedSupport [Finite V] [Finite E]
     obtain ⟨e, he⟩ := M.underlying_adj.mp huv
     exact isEmptyElim e
 
-/-- The line graph of an edge-indexed multigraph: vertices are edge identities,
-adjacent when distinct and sharing an endpoint. Parallel edges are adjacent. -/
+/-- **Line graph of an edge-indexed multigraph.** The line graph of an edge-indexed multigraph is
+the simple graph whose vertices are the edge identities, two of them being adjacent when they are
+distinct and share an endpoint. In particular, parallel edges are adjacent. -/
 public def lineGraph : SimpleGraph E where
   Adj e₁ e₂ := e₁ ≠ e₂ ∧ ∃ v, M.Inc v e₁ ∧ M.Inc v e₂
   symm := ⟨by
@@ -718,25 +790,33 @@ public def lineGraph : SimpleGraph E where
     intro e h
     exact h.1 rfl⟩
 
-/-- Adjacency in the multigraph line graph: distinct edges sharing a vertex. -/
+/-- **Adjacency in the line graph of a multigraph.** Two edge identities $e_1$ and $e_2$ are
+adjacent in the line graph of an edge-indexed multigraph exactly when $e_1 \ne e_2$ and some
+vertex is incident with both of them. -/
 @[simp]
 public theorem lineGraph_adj {e₁ e₂ : E} :
     M.lineGraph.Adj e₁ e₂ ↔ e₁ ≠ e₂ ∧ ∃ v, M.Inc v e₁ ∧ M.Inc v e₂ :=
   Iff.rfl
 
-/-- The maximum degree of a finite edge-indexed multigraph. Requires finite edge
-identities: `M.degree` counts via `Set.ncard`, which collapses infinite
-incident sets, so without `[Finite E]` this could report `0` for a genuinely
-infinite-degree multigraph. -/
+/-- **Maximum degree of a multigraph.** For an edge-indexed multigraph with finitely many vertices
+and finitely many edge identities, the maximum degree is the largest degree of a vertex, and $0$
+when there are no vertices.
+
+Finiteness of the edge identities matters: the degree of a vertex is the cardinality of its set
+of incident edges, which is taken to be $0$ for an infinite set, so without it a vertex of
+infinite degree could be reported as having degree $0$. -/
 public noncomputable def maxDegree [Fintype V] [Finite E] : ℕ :=
   Finset.univ.sup M.degree
 
-/-- Every vertex degree is bounded by the maximum degree. -/
+/-- **Degrees are bounded by the maximum degree.** Let $M$ be an edge-indexed multigraph with
+finitely many vertices and finitely many edges. Then every vertex of $M$ has degree at most the
+maximum degree of $M$. -/
 public theorem degree_le_maxDegree [Fintype V] [Finite E] (v : V) :
     M.degree v ≤ M.maxDegree :=
   Finset.le_sup (Finset.mem_univ v)
 
-/-- The multigraph degree counts incident edge identities. -/
+/-- **Degree counts incident edges.** In an edge-indexed multigraph with finitely many edges, the
+degree of every vertex $v$ equals the number of edges incident with $v$. -/
 public theorem filter_inc_card [Fintype E] (v : V)
     [DecidablePred fun e => M.Inc v e] :
     (Finset.univ.filter (fun e => M.Inc v e)).card = M.degree v := by

@@ -14,7 +14,7 @@ Its Python modules are compiled from that commit's Git objects, never imported f
 
 ## Scope and interpretation
 
-The primary Atlas population is **MathlibExt, CSLibExt and PhyslibExt**. WantedExt, all three test libraries, legacy Atlas, archived v1 and certificate directories are excluded.
+The primary Atlas population is **MathlibExt, CSLibExt, PhyslibExt and Domains**. WantedExt, all test libraries, legacy Atlas, archived v1 and certificate directories are excluded.
 Public, nondeprecated source `theorem` and `lemma` declarations are sampled uniformly without replacement, respecting the Lean module system's public-section visibility. Import-only bootstrap files have no eligible theorem or mathematical-file content and therefore contribute zero population entries; later physics modules are included normally.
 Generated declarations are not in the source population. Private helpers are excluded from the primary theorem rates, as in the article.
 Whole-file reviews see every definition, statement and proof, including private helpers.
@@ -22,7 +22,7 @@ Whole-file reviews see every definition, statement and proof, including private 
 The control is the **exact Mathlib version Atlas pins**, excluding Tactic, Util, Lean, Testing and Deprecated directories from its population.
 Both arms receive all three indicators, including the inclusive Mathlib duplication control.
 Results are reported **per root**, never as one composite Atlas quality score.
-CSLibExt and PhyslibExt duplication rates mean duplicates of Mathlib/Batteries/core only: **CSLib and Physlib redundancy are not measured**. This preserves the official indicator's reference set; pinned Physlib sources (including PhyslibAlpha and QuantumInfo) are available as context but are not eligible duplicate citations. Neither CSLibExt nor PhyslibExt has a domain-matched control.
+CSLibExt, PhyslibExt and Domains have no domain-matched control. Their duplication rates count matches in Mathlib, Batteries or Lean core only, not in CSLib, Physlib or other domain libraries. Pinned Physlib sources (including PhyslibAlpha and QuantumInfo) are available as context but are not eligible duplicate citations.
 
 `--private-theorems N` optionally adds a separate duplicate-only sample of N private MathlibExt helpers and N private Mathlib helpers.
 Do not mix this supplementary stratum into the public theorem numerator.
@@ -46,7 +46,9 @@ Preparation, tests and reporting make no model calls. Repository CI never launch
 ```bash
 git clone https://github.com/RemyDegenne/lean-quality-indicators ../lean-quality-indicators
 git -C ../lean-quality-indicators checkout 0f3f1778e65c3118ffb9bf4644e55b2b406abede
-git clone --depth 1 --branch v4.35.0 https://github.com/leanprover/lean4 ../lean-core
+# The Lean core checkout must be the release named in `lean-toolchain`.
+git clone --depth 1 --branch "$(cut -d: -f2 lean-toolchain)" \
+  https://github.com/leanprover/lean4 ../lean-core
 
 # --compile-declaration-index needs Mathlib built at the manifest pins
 # (for example `lake exe cache get`); it does not judge theorems.

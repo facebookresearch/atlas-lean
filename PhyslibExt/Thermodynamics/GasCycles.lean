@@ -9,6 +9,8 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import PhyslibExt.Chemistry.Thermodynamics.FirstLaw
+public import PhyslibExt.Thermodynamics.ProcessPorts
 
 import Mathlib.Analysis.Calculus.Deriv.Slope
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
@@ -19,7 +21,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
-import PhyslibExt.Chemistry.Thermodynamics.FirstLaw
+import PhyslibExt.EarthScience.PoissonAdiabat
 
 /-!
 # Gas cycles: refrigeration and power cycles
@@ -67,6 +69,22 @@ inequality `rc ^ γ > 1 + γ * (rc - 1)` puts it strictly below the Otto efficie
 compression ratio. The cutoff ratio `rc = 1` (no heat addition) is a limit of the formula, which
 is the undefined `0 / 0` there, and a cutoff above `r` overshoots `V₁` and is not this cycle.
 
+Ideal Brayton cycle (section D). Per unit mass of an ideal gas with specific gas constant `R > 0`
+and constant specific heat `cp > R` (so `γ = cp / (cp - R)`), from the compressor inlet
+`(p₁, T₁)`, `T₁ > 0`, at pressure ratio `rp > 1` with `a = rp ^ (R / cp) > 1`: isentropic
+compression to `rp p₁` at `T₂ = a T₁`, isobaric heat addition to a chosen turbine inlet temperature
+`T₃ > T₂`, isentropic expansion back to `p₁` at `T₄ = T₃ / a`, and isobaric rejection. The
+constructed isentropic legs lie on the `p v ^ γ` adiabat of the first-law module
+(`adiabatic_invariant_pV` at unit mass, with the ideal-gas specific volumes `p v = R T`), and the
+Poisson relation `EarthScience.poisson_temperature_ratio` forces `T₂` and `T₄` among all states on
+those adiabats. Each leg is a steady-flow device with specific enthalpy `cp T`; its balance
+`q - workOut w = cp T_out - cp T_in` (a model input) uses the engineering work output
+`ProcessPorts.workOut`. Then `Qin = cp (T₃ - T₂) > 0`, `Qout = Qin / a`,
+`Wnet = Qin - Qout = cp (1 - 1 / a) (T₃ - T₂) > 0` and `η = Wnet / Qin = 1 - 1 / a`, below the
+Carnot efficiency `1 - T₁ / T₃` between the coldest state `T₁` and the hottest `T₃`.
+A pressure ratio `rp > 1` alone does not give positive work: the work is positive exactly when
+`T₃ > T₂`, and it vanishes at `T₃ = T₂` and at `rp = 1`.
+
 ## ii. Key results
 
 - `GasCycles.work_pos_of_clausius`: pumping heat `Qc > 0` uphill needs `W > 0`.
@@ -88,12 +106,31 @@ is the undefined `0 / 0` there, and a cutoff above `r` overshoots `V₁` and is 
 - `GasCycles.diesel_cycle`: the Diesel closed-state loop under the cycle's hypotheses.
 - `GasCycles.dieselEfficiency_tendsto_ottoEfficiency`: the Otto efficiency is the limit
   `rc → 1`.
+- `GasCycles.braytonCompression_adiabat`, `GasCycles.braytonExpansion_adiabat`: both Brayton
+  isentropic legs lie on the existing adiabat.
+- `GasCycles.braytonCompressedTemp_eq_of_adiabat`, `GasCycles.braytonExpandedTemp_eq_of_adiabat`:
+  the Poisson relation forces `T₂` and `T₄`.
+- `GasCycles.brayton_leg_energy`: the four steady-flow leg balances give `Qin`, `Qout` and `Wnet`.
+- `GasCycles.brayton_closed_loop`: `Qout = Qin / a` and
+  `Wnet = Qin - Qout = cp (1 - 1 / a) (T₃ - T₂)`.
+- `GasCycles.braytonNetWork_div_heatIn`, `GasCycles.braytonEfficiency_lt_carnot`:
+  `η = 1 - 1 / a`, below the Carnot efficiency `1 - T₁ / T₃` between the coldest state `T₁` and
+  the hottest `T₃` (for `0 < R < cp` and `rp > 1`).
+- `GasCycles.brayton_cycle`: the nondegenerate loop under the cycle's hypotheses.
+- `GasCycles.braytonNetWork_pos_iff`, `GasCycles.brayton_zero_work`: positive work exactly when
+  `T₃ > T₂`; zero work at `T₃ = T₂` and at `rp = 1`.
 
 ## iii. Table of contents
 
 - A. Coefficients of performance and their second-law bounds
 - B. Ideal Otto cycle
 - C. Ideal Diesel cycle
+- D. Ideal Brayton cycle
+  - D.1. States
+  - D.2. The isentropic legs
+  - D.3. Steady-flow legs and closure
+  - D.4. Efficiency
+  - D.5. Degenerate boundary
 
 ## iv. References
 
@@ -109,6 +146,12 @@ is the undefined `0 / 0` there, and a cutoff above `r` overshoots `V₁` and is 
 - MIT OpenCourseWare, 5.60 *Thermodynamics & Kinetics* (Spring 2008): the Clausius inequality.
 - P. Atkins and J. de Paula, *Atkins' Physical Chemistry*, Chapter 2: reversible adiabatic change
   of a perfect gas, `T V ^ (γ - 1)` constant.
+- Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 9:
+  the ideal Brayton cycle under cold-air-standard assumptions,
+  `T₂ / T₁ = (P₂ / P₁) ^ ((k - 1) / k)`, `q_in = cp (T₃ - T₂)`,
+  `η = 1 - 1 / r_p ^ ((k - 1) / k)`, and the steady-flow energy balance of each device.
+- John M. Wallace and Peter V. Hobbs, *Atmospheric Science: An Introductory Survey*, 2nd ed.,
+  Academic Press, 2006, §3.4.3: Poisson's equation for adiabatic change.
 -/
 
 @[expose] public section
@@ -899,5 +942,410 @@ lemma diesel_cutoff_above_ratio {T₁ V₁ r γ Cv rc : ℝ} (hr : 0 < r) (hrcr 
     apply mul_neg_of_pos_of_neg hCv
     linarith
   exact ⟨hV, hT, hW⟩
+
+/-! ## D. Ideal Brayton cycle -/
+
+/-! ### D.1. States -/
+
+/-- Isentropic temperature ratio `a = rp ^ (R / cp)` of the Brayton compressor and turbine at
+pressure ratio `rp`, specific gas constant `R` and constant specific heat `cp`. Physical domain
+`rp > 1`, `cp > R > 0`, where `a > 1`. -/
+noncomputable def braytonTempRatio (rp R cp : ℝ) : ℝ := rp ^ (R / cp)
+
+/-- Compressor exit temperature `T₂ = a T₁` of the isentropic compression from `(p₁, T₁)` to
+`rp p₁`. -/
+noncomputable def braytonCompressedTemp (T₁ rp R cp : ℝ) : ℝ := braytonTempRatio rp R cp * T₁
+
+/-- Turbine exit temperature `T₄ = T₃ / a` of the isentropic expansion from `(rp p₁, T₃)` back to
+`p₁`. -/
+noncomputable def braytonExpandedTemp (T₃ rp R cp : ℝ) : ℝ := T₃ / braytonTempRatio rp R cp
+
+/-- Heat added per unit mass on the isobaric leg `2 → 3`: `Qin = cp (T₃ - T₂)`. -/
+noncomputable def braytonHeatIn (T₁ T₃ rp R cp : ℝ) : ℝ :=
+  cp * (T₃ - braytonCompressedTemp T₁ rp R cp)
+
+/-- Heat rejected per unit mass on the closing isobaric leg `4 → 1`: `Qout = cp (T₄ - T₁)`. -/
+noncomputable def braytonHeatOut (T₁ T₃ rp R cp : ℝ) : ℝ :=
+  cp * (braytonExpandedTemp T₃ rp R cp - T₁)
+
+/-- Net work output per unit mass (engineering sign): the turbine output `cp (T₃ - T₄)` minus the
+compressor input `cp (T₂ - T₁)`. -/
+noncomputable def braytonNetWork (T₁ T₃ rp R cp : ℝ) : ℝ :=
+  cp * (T₃ - braytonExpandedTemp T₃ rp R cp) - cp * (braytonCompressedTemp T₁ rp R cp - T₁)
+
+/-- Ideal Brayton efficiency `1 - 1 / a` with `a = rp ^ (R / cp)`. -/
+noncomputable def braytonEfficiency (rp R cp : ℝ) : ℝ := 1 - 1 / braytonTempRatio rp R cp
+
+/-! ### D.2. The isentropic legs -/
+
+/-- Compression leg on the existing adiabat: for `0 < R < cp`, `rp > 0`, `T₁ > 0`, `p₁ > 0` and
+the ideal-gas specific volumes `p₁ v₁ = R T₁` and `(rp p₁) v₂ = R T₂` at `T₂ = a T₁`, the two
+states satisfy the integrated adiabatic relation `(cp - R) log (T₂ / T₁) + R log (v₂ / v₁) = 0`
+(`cv = cp - R`), hence the invariant `p v ^ γ`, `γ = cp / (cp - R)`, of `adiabatic_invariant_pV`
+at unit mass. -/
+lemma braytonCompression_adiabat {cp R rp T₁ p₁ v₁ v₂ : ℝ} (hR : 0 < R) (hRcp : R < cp)
+    (hrp : 0 < rp) (hT₁ : 0 < T₁) (hp₁ : 0 < p₁) (hv₁ : p₁ * v₁ = R * T₁)
+    (hv₂ : rp * p₁ * v₂ = R * braytonCompressedTemp T₁ rp R cp) :
+    (cp - R) * Real.log (braytonCompressedTemp T₁ rp R cp / T₁) + R * Real.log (v₂ / v₁) = 0 ∧
+      idealGasP 1 R (braytonCompressedTemp T₁ rp R cp) v₂ * v₂ ^ (cp / (cp - R)) =
+        idealGasP 1 R T₁ v₁ * v₁ ^ (cp / (cp - R)) := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have hcp0 : cp ≠ 0 := ne_of_gt hcp
+  have hcv : 0 < cp - R := sub_pos.mpr hRcp
+  have hcv0 : cp - R ≠ 0 := ne_of_gt hcv
+  have ha : 0 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.rpow_pos_of_pos hrp _
+  have ha0 : braytonTempRatio rp R cp ≠ 0 := ne_of_gt ha
+  have hrp0 : rp ≠ 0 := ne_of_gt hrp
+  have hp₁0 : p₁ ≠ 0 := ne_of_gt hp₁
+  have hT₁0 : T₁ ≠ 0 := ne_of_gt hT₁
+  have hT₂ : 0 < braytonCompressedTemp T₁ rp R cp := by
+    simp only [braytonCompressedTemp]
+    exact mul_pos ha hT₁
+  have hv₁pos : 0 < v₁ := by
+    have h : 0 < p₁ * v₁ := by rw [hv₁]; exact mul_pos hR hT₁
+    exact (mul_pos_iff_of_pos_left hp₁).mp h
+  have hv₂pos : 0 < v₂ := by
+    have h : 0 < rp * p₁ * v₂ := by rw [hv₂]; exact mul_pos hR hT₂
+    have hrp₁ : 0 < rp * p₁ := mul_pos hrp hp₁
+    exact (mul_pos_iff_of_pos_left hrp₁).mp h
+  have hv₁0 : v₁ ≠ 0 := ne_of_gt hv₁pos
+  have hTratio : braytonCompressedTemp T₁ rp R cp / T₁ = braytonTempRatio rp R cp := by
+    simp only [braytonCompressedTemp]
+    field_simp
+  have hvratio : v₂ / v₁ = braytonTempRatio rp R cp / rp := by
+    have e1 : rp * p₁ * v₂ = braytonTempRatio rp R cp * (p₁ * v₁) := by
+      rw [hv₁, hv₂]
+      simp only [braytonCompressedTemp]
+      ring
+    have e2 : rp * v₂ = braytonTempRatio rp R cp * v₁ := by
+      have hcancel : p₁ * (rp * v₂) = p₁ * (braytonTempRatio rp R cp * v₁) := by
+        linear_combination e1
+      exact mul_left_cancel₀ hp₁0 hcancel
+    rw [div_eq_div_iff hv₁0 hrp0]
+    linear_combination e2
+  have hlog_a : Real.log (braytonTempRatio rp R cp) = (R / cp) * Real.log rp := by
+    simp only [braytonTempRatio]
+    exact Real.log_rpow hrp _
+  have hlog_T : Real.log (braytonCompressedTemp T₁ rp R cp / T₁) = (R / cp) * Real.log rp := by
+    rw [hTratio, hlog_a]
+  have hlog_v : Real.log (v₂ / v₁) = Real.log (braytonTempRatio rp R cp) - Real.log rp := by
+    rw [hvratio, Real.log_div ha0 hrp0]
+  have had : (cp - R) * Real.log (braytonCompressedTemp T₁ rp R cp / T₁) +
+      R * Real.log (v₂ / v₁) = 0 := by
+    rw [hlog_T, hlog_v, hlog_a]
+    field_simp
+    ring
+  refine ⟨had, ?_⟩
+  have hγ : cp / (cp - R) - 1 = 1 * R / (cp - R) := by
+    field_simp
+    ring
+  have had' : (cp - R) * Real.log (braytonCompressedTemp T₁ rp R cp / T₁) +
+      1 * R * Real.log (v₂ / v₁) = 0 := by
+    linear_combination had
+  exact adiabatic_invariant_pV 1 R T₁ (braytonCompressedTemp T₁ rp R cp) v₁ v₂ (cp - R)
+    (cp / (cp - R)) (by norm_num) hR hT₁ hT₂ hv₁pos hv₂pos hcv0 hγ had'
+
+/-- Expansion leg on the existing adiabat: for `0 < R < cp`, `rp > 0`, `T₃ > 0`, `p₁ > 0` and
+the ideal-gas specific volumes `(rp p₁) v₃ = R T₃` and `p₁ v₄ = R T₄` at `T₄ = T₃ / a`, the two
+states satisfy the integrated adiabatic relation, hence the invariant `p v ^ γ`. -/
+lemma braytonExpansion_adiabat {cp R rp T₃ p₁ v₃ v₄ : ℝ} (hR : 0 < R) (hRcp : R < cp)
+    (hrp : 0 < rp) (hT₃ : 0 < T₃) (hp₁ : 0 < p₁) (hv₃ : rp * p₁ * v₃ = R * T₃)
+    (hv₄ : p₁ * v₄ = R * braytonExpandedTemp T₃ rp R cp) :
+    (cp - R) * Real.log (braytonExpandedTemp T₃ rp R cp / T₃) + R * Real.log (v₄ / v₃) = 0 ∧
+      idealGasP 1 R (braytonExpandedTemp T₃ rp R cp) v₄ * v₄ ^ (cp / (cp - R)) =
+        idealGasP 1 R T₃ v₃ * v₃ ^ (cp / (cp - R)) := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have hcp0 : cp ≠ 0 := ne_of_gt hcp
+  have hcv : 0 < cp - R := sub_pos.mpr hRcp
+  have hcv0 : cp - R ≠ 0 := ne_of_gt hcv
+  have ha : 0 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.rpow_pos_of_pos hrp _
+  have ha0 : braytonTempRatio rp R cp ≠ 0 := ne_of_gt ha
+  have hrp0 : rp ≠ 0 := ne_of_gt hrp
+  have hp₁0 : p₁ ≠ 0 := ne_of_gt hp₁
+  have hT₃0 : T₃ ≠ 0 := ne_of_gt hT₃
+  have hT₄ : 0 < braytonExpandedTemp T₃ rp R cp := by
+    simp only [braytonExpandedTemp]
+    exact div_pos hT₃ ha
+  have hv₃pos : 0 < v₃ := by
+    have h : 0 < rp * p₁ * v₃ := by rw [hv₃]; exact mul_pos hR hT₃
+    have hrp₁ : 0 < rp * p₁ := mul_pos hrp hp₁
+    exact (mul_pos_iff_of_pos_left hrp₁).mp h
+  have hv₄pos : 0 < v₄ := by
+    have h : 0 < p₁ * v₄ := by rw [hv₄]; exact mul_pos hR hT₄
+    exact (mul_pos_iff_of_pos_left hp₁).mp h
+  have hv₃0 : v₃ ≠ 0 := ne_of_gt hv₃pos
+  have hTratio : braytonExpandedTemp T₃ rp R cp / T₃ = 1 / braytonTempRatio rp R cp := by
+    simp only [braytonExpandedTemp]
+    field_simp
+  have hvratio : v₄ / v₃ = rp / braytonTempRatio rp R cp := by
+    have e1 : braytonTempRatio rp R cp * (p₁ * v₄) = rp * p₁ * v₃ := by
+      rw [hv₃, hv₄]
+      simp only [braytonExpandedTemp]
+      field_simp
+    have e2 : braytonTempRatio rp R cp * v₄ = rp * v₃ := by
+      have hcancel : p₁ * (braytonTempRatio rp R cp * v₄) = p₁ * (rp * v₃) := by
+        linear_combination e1
+      exact mul_left_cancel₀ hp₁0 hcancel
+    rw [div_eq_div_iff hv₃0 ha0]
+    linear_combination e2
+  have hlog_a : Real.log (braytonTempRatio rp R cp) = (R / cp) * Real.log rp := by
+    simp only [braytonTempRatio]
+    exact Real.log_rpow hrp _
+  have hlog_T : Real.log (braytonExpandedTemp T₃ rp R cp / T₃) =
+      -((R / cp) * Real.log rp) := by
+    rw [hTratio, Real.log_div one_ne_zero ha0, Real.log_one, zero_sub, hlog_a]
+  have hlog_v : Real.log (v₄ / v₃) = Real.log rp - Real.log (braytonTempRatio rp R cp) := by
+    rw [hvratio, Real.log_div hrp0 ha0]
+  have had : (cp - R) * Real.log (braytonExpandedTemp T₃ rp R cp / T₃) +
+      R * Real.log (v₄ / v₃) = 0 := by
+    rw [hlog_T, hlog_v, hlog_a]
+    field_simp
+    ring
+  refine ⟨had, ?_⟩
+  have hγ : cp / (cp - R) - 1 = 1 * R / (cp - R) := by
+    field_simp
+    ring
+  have had' : (cp - R) * Real.log (braytonExpandedTemp T₃ rp R cp / T₃) +
+      1 * R * Real.log (v₄ / v₃) = 0 := by
+    linear_combination had
+  exact adiabatic_invariant_pV 1 R T₃ (braytonExpandedTemp T₃ rp R cp) v₃ v₄ (cp - R)
+    (cp / (cp - R)) (by norm_num) hR hT₃ hT₄ hv₃pos hv₄pos hcv0 hγ had'
+
+/-- The compressor exit temperature is forced by the existing isentrope: if a state at pressure
+`rp p₁` with specific volume `v > 0` and temperature `T` obeys the ideal-gas law and lies on the
+adiabat `p₁ v₁ ^ γ = (rp p₁) v ^ γ`, `γ = cp / (cp - R)`, through the inlet state `p₁ v₁ = R T₁`,
+then `T = T₂ = a T₁` (`poisson_temperature_ratio`). -/
+lemma braytonCompressedTemp_eq_of_adiabat {cp R rp T₁ p₁ v₁ T v : ℝ} (hR : 0 < R)
+    (hRcp : R < cp) (hrp : 0 < rp) (hT₁ : 0 < T₁) (hp₁ : 0 < p₁) (hv : 0 < v)
+    (hgas₁ : p₁ * v₁ = R * T₁) (hgas : rp * p₁ * v = R * T)
+    (had : p₁ * v₁ ^ (cp / (cp - R)) = rp * p₁ * v ^ (cp / (cp - R))) :
+    T = braytonCompressedTemp T₁ rp R cp := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have hv₁pos : 0 < v₁ := by
+    have h : 0 < p₁ * v₁ := by rw [hgas₁]; exact mul_pos hR hT₁
+    exact (mul_pos_iff_of_pos_left hp₁).mp h
+  have hp₂ : 0 < rp * p₁ := mul_pos hrp hp₁
+  have hP := EarthScience.poisson_temperature_ratio hp₁ hp₂ hv₁pos hv hT₁ hR hRcp hcp
+    rfl hgas₁ hgas had
+  have hp₁0 : p₁ ≠ 0 := ne_of_gt hp₁
+  have hpr : rp * p₁ / p₁ = rp := by
+    rw [div_eq_iff hp₁0]
+  rw [hpr] at hP
+  simp only [braytonCompressedTemp, braytonTempRatio]
+  linear_combination hP
+
+/-- The turbine exit temperature is forced by the existing isentrope: if a state at pressure
+`p₁` with specific volume `v > 0` and temperature `T` obeys the ideal-gas law and lies on the
+adiabat `(rp p₁) v₃ ^ γ = p₁ v ^ γ` through the turbine inlet state `(rp p₁) v₃ = R T₃`, then
+`T = T₄ = T₃ / a` (`poisson_temperature_ratio`). -/
+lemma braytonExpandedTemp_eq_of_adiabat {cp R rp T₃ p₁ v₃ T v : ℝ} (hR : 0 < R)
+    (hRcp : R < cp) (hrp : 0 < rp) (hT₃ : 0 < T₃) (hp₁ : 0 < p₁) (hv : 0 < v)
+    (hgas₃ : rp * p₁ * v₃ = R * T₃) (hgas : p₁ * v = R * T)
+    (had : rp * p₁ * v₃ ^ (cp / (cp - R)) = p₁ * v ^ (cp / (cp - R))) :
+    T = braytonExpandedTemp T₃ rp R cp := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have hv₃pos : 0 < v₃ := by
+    have h : 0 < rp * p₁ * v₃ := by rw [hgas₃]; exact mul_pos hR hT₃
+    have hrp₁ : 0 < rp * p₁ := mul_pos hrp hp₁
+    exact (mul_pos_iff_of_pos_left hrp₁).mp h
+  have hp₃ : 0 < rp * p₁ := mul_pos hrp hp₁
+  have hP := EarthScience.poisson_temperature_ratio hp₃ hp₁ hv₃pos hv hT₃ hR hRcp hcp
+    rfl hgas₃ hgas had
+  have hp₁0 : p₁ ≠ 0 := ne_of_gt hp₁
+  have hrp0 : rp ≠ 0 := ne_of_gt hrp
+  have hpr : p₁ / (rp * p₁) = 1 / rp := by
+    field_simp
+  have hrw : (1 / rp) ^ (R / cp) = 1 / braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    rw [Real.div_rpow zero_le_one (le_of_lt hrp), Real.one_rpow]
+  rw [hpr, hrw] at hP
+  simp only [braytonExpandedTemp]
+  rw [mul_one_div] at hP
+  exact hP
+
+/-! ### D.3. Steady-flow legs and closure -/
+
+/-- The four matched legs as steady-flow devices: with specific enthalpy `cp T` and the per-mass
+steady-flow balance `q - workOut w = cp T_out - cp T_in` on each leg (heat `q` in, work `w` done
+on the gas, engineering output `workOut w`), the adiabatic compressor and turbine (`q = 0`) and
+the work-free heater and cooler (`w = 0`) give the heat added `q₂₃ = Qin`, the heat rejected
+`-q₄₁ = Qout` and the net shaft output `workOut w₁₂ + workOut w₃₄ = Wnet`, which equals the net
+heat `q₂₃ + q₄₁` because the enthalpy changes cancel around the closed loop. -/
+lemma brayton_leg_energy {cp R rp T₁ T₃ q₁₂ q₂₃ q₃₄ q₄₁ w₁₂ w₂₃ w₃₄ w₄₁ : ℝ}
+    (h₁₂ : q₁₂ - ProcessPorts.workOut w₁₂ = cp * braytonCompressedTemp T₁ rp R cp - cp * T₁)
+    (h₂₃ : q₂₃ - ProcessPorts.workOut w₂₃ = cp * T₃ - cp * braytonCompressedTemp T₁ rp R cp)
+    (h₃₄ : q₃₄ - ProcessPorts.workOut w₃₄ = cp * braytonExpandedTemp T₃ rp R cp - cp * T₃)
+    (h₄₁ : q₄₁ - ProcessPorts.workOut w₄₁ = cp * T₁ - cp * braytonExpandedTemp T₃ rp R cp)
+    (hq₁₂ : q₁₂ = 0) (hq₃₄ : q₃₄ = 0) (hw₂₃ : w₂₃ = 0) (hw₄₁ : w₄₁ = 0) :
+    q₂₃ = braytonHeatIn T₁ T₃ rp R cp ∧ -q₄₁ = braytonHeatOut T₁ T₃ rp R cp ∧
+      ProcessPorts.workOut w₁₂ + ProcessPorts.workOut w₃₄ = braytonNetWork T₁ T₃ rp R cp ∧
+      ProcessPorts.workOut w₁₂ + ProcessPorts.workOut w₃₄ = q₂₃ + q₄₁ := by
+  simp only [ProcessPorts.workOut, braytonHeatIn, braytonHeatOut, braytonNetWork]
+    at h₁₂ h₂₃ h₃₄ h₄₁ ⊢
+  rw [hq₁₂] at h₁₂
+  rw [hw₂₃] at h₂₃
+  rw [hq₃₄] at h₃₄
+  rw [hw₄₁] at h₄₁
+  simp only [neg_zero, sub_zero, zero_sub, neg_neg] at h₁₂ h₂₃ h₃₄ h₄₁
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · linear_combination h₂₃
+  · linear_combination -h₄₁
+  · linear_combination -h₁₂ - h₃₄
+  · linear_combination -h₁₂ - h₂₃ - h₃₄ - h₄₁
+
+/-- The loop closes: for `rp > 0` the turbine expands by the compressor's pressure ratio, so the
+rejected heat is `Qout = Qin / a`; the net work is the net heat, `Wnet = Qin - Qout`; and
+`Wnet = cp (1 - 1 / a) (T₃ - T₂)`. -/
+lemma brayton_closed_loop {cp R rp T₁ T₃ : ℝ} (hrp : 0 < rp) :
+    braytonHeatOut T₁ T₃ rp R cp = braytonHeatIn T₁ T₃ rp R cp / braytonTempRatio rp R cp ∧
+      braytonNetWork T₁ T₃ rp R cp =
+        braytonHeatIn T₁ T₃ rp R cp - braytonHeatOut T₁ T₃ rp R cp ∧
+      braytonNetWork T₁ T₃ rp R cp =
+        cp * (1 - 1 / braytonTempRatio rp R cp) * (T₃ - braytonCompressedTemp T₁ rp R cp) := by
+  have ha : 0 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.rpow_pos_of_pos hrp _
+  have ha0 : braytonTempRatio rp R cp ≠ 0 := ne_of_gt ha
+  simp only [braytonHeatIn, braytonHeatOut, braytonNetWork, braytonCompressedTemp,
+    braytonExpandedTemp]
+  refine ⟨?_, ?_, ?_⟩
+  · field_simp
+  · ring
+  · field_simp
+
+/-- Nondegenerate loop: for `0 < R < cp`, `rp > 1` and `T₃ > T₂`, the heat added, the heat
+rejected and the net work are all positive. -/
+lemma brayton_heat_work_pos {cp R rp T₁ T₃ : ℝ} (hR : 0 < R) (hRcp : R < cp) (hrp : 1 < rp)
+    (hT₃ : braytonCompressedTemp T₁ rp R cp < T₃) :
+    0 < braytonHeatIn T₁ T₃ rp R cp ∧ 0 < braytonHeatOut T₁ T₃ rp R cp ∧
+      0 < braytonNetWork T₁ T₃ rp R cp := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have he : 0 < R / cp := div_pos hR hcp
+  have ha1 : 1 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.one_lt_rpow hrp he
+  have ha : 0 < braytonTempRatio rp R cp := lt_trans zero_lt_one ha1
+  have hrp0 : 0 < rp := lt_trans zero_lt_one hrp
+  have hsub : 0 < T₃ - braytonCompressedTemp T₁ rp R cp := sub_pos.mpr hT₃
+  have hQin : 0 < braytonHeatIn T₁ T₃ rp R cp := by
+    simp only [braytonHeatIn]
+    exact mul_pos hcp hsub
+  have hloop := brayton_closed_loop (cp := cp) (R := R) (T₁ := T₁) (T₃ := T₃) hrp0
+  have hQout : 0 < braytonHeatOut T₁ T₃ rp R cp := by
+    rw [hloop.1]
+    exact div_pos hQin ha
+  have hW : 0 < braytonNetWork T₁ T₃ rp R cp := by
+    rw [hloop.2.2]
+    have h1 : (1 : ℝ) / braytonTempRatio rp R cp < 1 := (div_lt_one ha).mpr ha1
+    exact mul_pos (mul_pos hcp (sub_pos.mpr h1)) hsub
+  exact ⟨hQin, hQout, hW⟩
+
+/-! ### D.4. Efficiency -/
+
+/-- Brayton efficiency: for `rp > 0` and nonzero heat input, `Wnet / Qin = 1 - 1 / a`, and so is
+`1 - Qout / Qin`. -/
+lemma braytonNetWork_div_heatIn {cp R rp T₁ T₃ : ℝ} (hrp : 0 < rp)
+    (hQ : braytonHeatIn T₁ T₃ rp R cp ≠ 0) :
+    braytonNetWork T₁ T₃ rp R cp / braytonHeatIn T₁ T₃ rp R cp = braytonEfficiency rp R cp ∧
+      1 - braytonHeatOut T₁ T₃ rp R cp / braytonHeatIn T₁ T₃ rp R cp =
+        braytonEfficiency rp R cp := by
+  have ha : 0 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.rpow_pos_of_pos hrp _
+  have ha0 : braytonTempRatio rp R cp ≠ 0 := ne_of_gt ha
+  have hloop := brayton_closed_loop (cp := cp) (R := R) (T₁ := T₁) (T₃ := T₃) hrp
+  simp only [braytonEfficiency]
+  rw [hloop.2.1, hloop.1]
+  constructor
+  · field_simp
+  · field_simp
+
+/-- The Brayton efficiency is below the Carnot efficiency between the loop's extreme
+temperatures: for `0 < R < cp` and `rp > 1` (so `a > 1`), `T₁ > 0` and a turbine inlet temperature
+`T₃ > T₂ = a T₁`, the compressor inlet `T₁` is the coldest and the turbine inlet `T₃` the hottest
+of the four states (`T₁ < T₂ < T₃` and `T₁ < T₄ < T₃`), and `1 - 1 / a < 1 - T₁ / T₃`. -/
+lemma braytonEfficiency_lt_carnot {cp R rp T₁ T₃ : ℝ} (hR : 0 < R) (hRcp : R < cp)
+    (hrp : 1 < rp) (hT₁ : 0 < T₁) (hT₃ : braytonCompressedTemp T₁ rp R cp < T₃) :
+    T₁ < braytonCompressedTemp T₁ rp R cp ∧ T₁ < braytonExpandedTemp T₃ rp R cp ∧
+      braytonExpandedTemp T₃ rp R cp < T₃ ∧ braytonEfficiency rp R cp < 1 - T₁ / T₃ := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have ha1 : 1 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.one_lt_rpow hrp (div_pos hR hcp)
+  have ha : 0 < braytonTempRatio rp R cp := lt_trans zero_lt_one ha1
+  have hT₂ : T₁ < braytonCompressedTemp T₁ rp R cp := by
+    simp only [braytonCompressedTemp]
+    nlinarith
+  have hT₃pos : 0 < T₃ := by linarith
+  have hT₄ : T₁ < braytonExpandedTemp T₃ rp R cp := by
+    simp only [braytonExpandedTemp, braytonCompressedTemp] at hT₃ ⊢
+    rw [lt_div_iff₀ ha]
+    linear_combination hT₃
+  have hT₄' : braytonExpandedTemp T₃ rp R cp < T₃ := by
+    simp only [braytonExpandedTemp]
+    exact div_lt_self hT₃pos ha1
+  refine ⟨hT₂, hT₄, hT₄', ?_⟩
+  simp only [braytonEfficiency, braytonCompressedTemp] at hT₃ ⊢
+  have h : T₁ / T₃ < 1 / braytonTempRatio rp R cp := by
+    rw [div_lt_div_iff₀ hT₃pos ha, one_mul]
+    linear_combination hT₃
+  linarith
+
+/-- **The nondegenerate Brayton loop.** For `cp > R > 0`, `rp > 1`, `T₁ > 0`,
+`a = rp ^ (R / cp)`, `T₂ = a T₁` and a turbine inlet temperature `T₃ > T₂` (with `T₄ = T₃ / a`):
+the heat added `Qin = cp (T₃ - T₂)` is positive, `Wnet = cp (1 - 1 / a) (T₃ - T₂) > 0`, and the
+efficiency `Wnet / Qin = 1 - 1 / a` is below `1 - T₁ / T₃`. -/
+lemma brayton_cycle {cp R rp T₁ T₃ : ℝ} (hR : 0 < R) (hRcp : R < cp) (hrp : 1 < rp)
+    (hT₁ : 0 < T₁) (hT₃ : braytonCompressedTemp T₁ rp R cp < T₃) :
+    0 < braytonHeatIn T₁ T₃ rp R cp ∧
+      braytonNetWork T₁ T₃ rp R cp =
+        cp * (1 - 1 / braytonTempRatio rp R cp) * (T₃ - braytonCompressedTemp T₁ rp R cp) ∧
+      0 < braytonNetWork T₁ T₃ rp R cp ∧
+      braytonNetWork T₁ T₃ rp R cp / braytonHeatIn T₁ T₃ rp R cp =
+        1 - 1 / braytonTempRatio rp R cp ∧
+      1 - 1 / braytonTempRatio rp R cp < 1 - T₁ / T₃ := by
+  have hrp0 : 0 < rp := lt_trans zero_lt_one hrp
+  have hpos := brayton_heat_work_pos hR hRcp hrp hT₃
+  have hloop := brayton_closed_loop (cp := cp) (R := R) (T₁ := T₁) (T₃ := T₃) hrp0
+  have hdiv := (braytonNetWork_div_heatIn hrp0 (ne_of_gt hpos.1)).1
+  have hcarnot := (braytonEfficiency_lt_carnot hR hRcp hrp hT₁ hT₃).2.2.2
+  simp only [braytonEfficiency] at hdiv hcarnot
+  exact ⟨hpos.1, hloop.2.2, hpos.2.2, hdiv, hcarnot⟩
+
+/-! ### D.5. Degenerate boundary -/
+
+/-- A pressure ratio `rp > 1` alone does not give positive work: for `0 < R < cp` and `rp > 1`
+the net work is positive exactly when `T₃ > T₂`. -/
+lemma braytonNetWork_pos_iff {cp R rp T₁ T₃ : ℝ} (hR : 0 < R) (hRcp : R < cp) (hrp : 1 < rp) :
+    0 < braytonNetWork T₁ T₃ rp R cp ↔ braytonCompressedTemp T₁ rp R cp < T₃ := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  have he : 0 < R / cp := div_pos hR hcp
+  have ha1 : 1 < braytonTempRatio rp R cp := by
+    simp only [braytonTempRatio]
+    exact Real.one_lt_rpow hrp he
+  have ha : 0 < braytonTempRatio rp R cp := lt_trans zero_lt_one ha1
+  have hrp0 : 0 < rp := lt_trans zero_lt_one hrp
+  have hloop := (brayton_closed_loop (cp := cp) (R := R) (T₁ := T₁) (T₃ := T₃) hrp0).2.2
+  have hC : 0 < cp * (1 - 1 / braytonTempRatio rp R cp) := by
+    have h1 : (1 : ℝ) / braytonTempRatio rp R cp < 1 := (div_lt_one ha).mpr ha1
+    exact mul_pos hcp (sub_pos.mpr h1)
+  rw [hloop, mul_pos_iff_of_pos_left hC]
+  exact sub_pos
+
+/-- Degenerate zero-work boundary: for `rp > 0` the net work vanishes at `T₃ = T₂` (no heat
+added), and at `rp = 1` (no compression, `a = 1`) it vanishes for every `T₃`. -/
+lemma brayton_zero_work {cp R rp T₁ T₃ : ℝ} (hrp : 0 < rp) :
+    (T₃ = braytonCompressedTemp T₁ rp R cp → braytonNetWork T₁ T₃ rp R cp = 0) ∧
+      braytonNetWork T₁ T₃ 1 R cp = 0 := by
+  constructor
+  · intro hT
+    have hloop := (brayton_closed_loop (cp := cp) (R := R) (T₁ := T₁) (T₃ := T₃) hrp).2.2
+    rw [hloop, hT, sub_self, mul_zero]
+  · simp only [braytonNetWork, braytonCompressedTemp, braytonExpandedTemp, braytonTempRatio,
+      Real.one_rpow, one_mul, div_one, sub_self, mul_zero]
 
 end GasCycles

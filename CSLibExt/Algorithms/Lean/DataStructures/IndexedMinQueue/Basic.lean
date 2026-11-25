@@ -38,7 +38,14 @@ set_option autoImplicit false
 universe u
 
 set_option linter.dupNamespace false in
-/-- A binary min-heap paired with the exact inverse location of every identity. -/
+/-- **Indexed minimum queue.** Let $W$ be a linearly ordered type, let $W \cup \{\top\}$ be $W$
+with a new greatest element $\top$ adjoined, and let $n$ be a natural number. An indexed
+minimum queue over the identities $0, \dots, n-1$ consists of a binary min-heap whose entries are
+pairs $(k, v)$ of a key $k \in W \cup \{\top\}$ and an identity $v < n$, ordered lexicographically
+(first by key, then by identity), together with a position vector assigning to each identity
+$v < n$ either nothing or an index $i < n$. It is required that the heap has at most $n$ entries
+and that, for all identities $v < n$ and indices $i < n$, the position of $v$ is $i$ exactly
+when $i$ is a slot of the heap whose entry has identity $v$. -/
 structure IndexedMinQueue (W : Type u) [LinearOrder W] (n : Nat) where
   heap : Cslib.Algorithms.Lean.MinHeap (WithTop W ×ₗ Fin n)
   position : Vector (Option (Fin n)) n
@@ -48,11 +55,6 @@ structure IndexedMinQueue (W : Type u) [LinearOrder W] (n : Nat) where
 
 private def event (i : Fin 5) : Fin 5 → Nat :=
   fun j => if j = i then 1 else 0
-
-private lemma parent_lt (i : Nat) (hi : 0 < i) : heapParent i < i := by
-  unfold heapParent
-  have hdiv : (i - 1) / 2 ≤ i - 1 := Nat.div_le_self _ _
-  omega
 
 private def Inverse {W : Type u} [LinearOrder W] {n : Nat}
     (a : Array (WithTop W ×ₗ Fin n))
@@ -311,7 +313,7 @@ private def siftUpTracked {W : Type u} [LinearOrder W] {n : Nat}
     ⟨a, position, 0⟩
 termination_by i
 decreasing_by
-  exact parent_lt i hpos
+  exact heapParent_lt i hpos
 
 private def childSelectionTime {W : Type u} [LinearOrder W] {n : Nat}
     (a : Array (WithTop W ×ₗ Fin n)) (i : Nat) : Fin 5 → Nat :=
@@ -346,14 +348,14 @@ private lemma siftUpTracked_data {W : Type u} [LinearOrder W] {n : Nat}
     (position : Vector (Option (Fin n)) n) (hcap : a.size ≤ n) (i : Nat) :
     (siftUpTracked a position hcap i).data = siftUp a i := by
   induction i using Nat.strong_induction_on generalizing a position with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUpTracked, siftUp]
     by_cases hi : i < a.size
     · simp only [dite_eq_left hi]
       by_cases hpos : 0 < i
       · simp only [dite_eq_left hpos]
         split
-        · exact ih (heapParent i) (parent_lt i hpos) _ _ _
+        · exact ih (heapParent i) (heapParent_lt i hpos) _ _ _
         · rfl
       · simp only [dite_eq_right hpos]
     · simp only [dite_eq_right hi]
@@ -363,7 +365,7 @@ private lemma siftDownTracked_data {W : Type u} [LinearOrder W] {n : Nat}
     (position : Vector (Option (Fin n)) n) (hcap : a.size ≤ n) (i : Nat) :
     (siftDownTracked a position hcap i).data = siftDown a i := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a position i with
-  | h m ih =>
+  | ind m ih =>
     rw [siftDownTracked]
     split
     · rename_i hnone
@@ -397,7 +399,7 @@ private lemma siftUpTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
     Inverse (siftUpTracked a position hcap i).data
       (siftUpTracked a position hcap i).position := by
   induction i using Nat.strong_induction_on generalizing a position with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUpTracked]
     split
     · rename_i hi
@@ -406,9 +408,9 @@ private lemma siftUpTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
         dsimp only
         by_cases hlt : a[i] < a[heapParent i]'(heapParent_lt_size a i hi hpos)
         · simp only [ite_eq_left hlt]
-          apply ih (heapParent i) (parent_lt i hpos)
+          apply ih (heapParent i) (heapParent_lt i hpos)
           exact inverse_swap a position hcap hinv i (heapParent i) hi
-            (heapParent_lt_size a i hi hpos) (Nat.ne_of_gt (parent_lt i hpos))
+            (heapParent_lt_size a i hi hpos) (Nat.ne_of_gt (heapParent_lt i hpos))
         · simpa only [ite_eq_right hlt] using hinv
       · exact hinv
     · exact hinv
@@ -420,7 +422,7 @@ private lemma siftDownTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
     Inverse (siftDownTracked a position hcap i).data
       (siftDownTracked a position hcap i).position := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a position i with
-  | h m ih =>
+  | ind m ih =>
     rw [siftDownTracked]
     split
     · exact hinv
@@ -437,19 +439,39 @@ private lemma siftDownTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
         · simp only [Array.size_swap]
       · exact hinv
 
-/-- The empty indexed queue has the canonical empty heap and no present identity. -/
+/-- **Empty indexed minimum queue.** For every linearly ordered type $W$ and every natural number
+$n$, the empty indexed minimum queue over the identities $0, \dots, n-1$, with keys in $W$ with a
+new greatest element adjoined, has the empty min-heap and a position vector that assigns nothing
+to each of the $n$ identities, so no identity is present. -/
 def empty {W : Type u} [LinearOrder W] (n : Nat) : IndexedMinQueue W n where
   heap := MinHeap.empty
   position := Vector.replicate n none
   capacity := by simp [MinHeap.empty]
   inverse := by simp [MinHeap.empty]
 
-/-- Test membership by one inverse-vector read. -/
+/-- **Membership test in an indexed minimum queue.** Costs are counted as five event counts:
+comparisons, swaps, reads of the position vector, writes to the position vector, and entry
+appends, pops or replacements. For an indexed minimum queue $q$ over the identities
+$0, \dots, n-1$ and an identity $v < n$, the membership test returns true exactly when the
+position vector of $q$ assigns an index to $v$, and its cost is one position read and no other
+event. -/
 @[no_expose] def member {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) : TimeM (Fin 5 → Nat) Bool :=
   ⟨q.position[v].isSome, event 2⟩
 
-/-- Insert one absent identity, rejecting an identity already in the queue. -/
+/-- **Insertion into an indexed minimum queue.** Let $W$ be a linearly ordered type and let
+$W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Costs are counted as five
+event counts: comparisons, swaps, reads of the position vector, writes to the position vector,
+and entry appends, pops or replacements. Given an indexed minimum queue $q$ over the identities
+$0, \dots, n-1$ with keys in $W \cup \{\top\}$, whose heap entries (pairs of a key and an
+identity) are ordered lexicographically, first by key and then by identity, an identity $v < n$
+and a key $k \in W \cup \{\top\}$, insertion fails (returns nothing) when the position vector of
+$q$ assigns an index to $v$, at the cost of one position read. Otherwise it appends the entry
+$(k, v)$ at the end of the heap, sets the position of $v$ to that slot, and sifts the entry up:
+while it is not at the root and is smaller than its parent, it is swapped with its parent and
+the positions of both swapped identities are updated. It returns the resulting queue, at the
+cost of one position read, one position write and one entry append, plus one comparison for
+each comparison with a parent and one swap and two position writes for each swap. -/
 @[no_expose] def insert {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : WithTop W) :
     TimeM (Fin 5 → Nat) (Option (IndexedMinQueue W n)) :=
@@ -508,18 +530,31 @@ private lemma set_decrease_ready {W : Type u} [LinearOrder W] {n : Nat}
     have hparentold : heapParent i.val < q.heap.data.size :=
       heapParent_lt_size _ _ hi hipos
     have hold := q.heap.ordered j hjold hjpos
-    have hparent_ne : heapParent i.val ≠ i.val := (parent_lt i.val hipos).ne
+    have hparent_ne : heapParent i.val ≠ i.val := (heapParent_lt i.val hipos).ne
     have hji : j ≠ i.val := by
       intro h
       subst h
-      exact (parent_lt i.val hipos).ne hp
+      exact (heapParent_lt i.val hipos).ne hp
     have hparent := q.heap.ordered i.val hi hipos
     have hchild : q.heap.data[i.val]'hi ≤ q.heap.data[j]'hjold := by
       simpa only [hp] using hold
     simpa only [Array.getElem_set, ite_eq_right hparent_ne.symm,
       ite_eq_right hji.symm] using hparent.trans hchild
 
-/-- Strictly lower the finite key of one present identity and sift it upward. -/
+/-- **Decrease-key in an indexed minimum queue.** Let $W$ be a linearly ordered type and let
+$W \cup \{\top\}$ be $W$ with a new greatest element $\top$ adjoined. Costs are counted as five
+event counts: comparisons, swaps, reads of the position vector, writes to the position vector,
+and entry appends, pops or replacements. Given an indexed minimum queue $q$ over the identities
+$0, \dots, n-1$ with keys in $W \cup \{\top\}$, whose heap entries (pairs of a key and an
+identity) are ordered lexicographically, first by key and then by identity, an identity $v < n$
+and a finite key $k \in W$, decrease-key fails (returns nothing) when the position vector of $q$
+assigns no index to $v$, at the cost of one position read, and when $k$ is not strictly smaller
+than the current key of $v$, at the cost of one position read and one comparison. Otherwise it
+replaces the entry of $v$ by $(k, v)$ in the same slot and sifts it up: while it is not at the
+root and is smaller than its parent, it is swapped with its parent and the positions of both
+swapped identities are updated. It returns the resulting queue, at the cost of one position
+read, one comparison and one entry replacement, plus one comparison for each comparison with a
+parent and one swap and two position writes for each swap. -/
 @[no_expose] def decreaseKey {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) (v : Fin n) (key : W) :
     TimeM (Fin 5 → Nat) (Option (IndexedMinQueue W n)) :=
@@ -548,7 +583,20 @@ private lemma set_decrease_ready {W : Type u} [LinearOrder W] {n : Nat}
     else
       ⟨none, event 2 + event 0⟩
 
-/-- Remove and return the canonical minimum, rejecting only the empty queue. -/
+/-- **Extract-min in an indexed minimum queue.** Costs are counted as five event counts:
+comparisons, swaps, reads of the position vector, writes to the position vector, and entry
+appends, pops or replacements. Given an indexed minimum queue $q$, extract-min fails (returns
+nothing) exactly when the heap of $q$ is empty, at zero cost. Otherwise let $(k, v)$ be the root
+entry of the heap. If the heap has one entry, extract-min returns $(k, v)$ together with the
+queue whose heap is empty and in which $v$ has no position, at the cost of one position write
+and one entry pop. If the heap has at least two entries, the root is swapped with the last entry
+and the positions of both are updated, the last slot is removed, the position of $v$ is cleared,
+and the new root is sifted down: while it has a child, let $c$ be its smaller child (the left
+one on ties); if $c$ is smaller than it, the two are swapped and the positions of both are
+updated, otherwise the sift stops. It returns $(k, v)$ together with the resulting queue, at the
+cost of one swap, three position writes and one entry pop, plus, at each sift-down step, one
+comparison between the two children when both exist, one comparison with $c$, and one swap and
+two position writes when a swap is made. -/
 @[no_expose] def extractMin {W : Type u} [LinearOrder W] {n : Nat}
     (q : IndexedMinQueue W n) :
     TimeM (Fin 5 → Nat)

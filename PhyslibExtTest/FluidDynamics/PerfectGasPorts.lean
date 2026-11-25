@@ -44,6 +44,15 @@ Checks for `PhyslibExt.FluidDynamics.PerfectGasPorts`, mostly for air with `γ =
   `p2 / p1 = 9/2` and `T2 / T1 = 27/16`, and an explicit downstream state solves the jump
   conditions; at `M1 = 1/4`, below the threshold `1/7`, the distinct pressure ratio is `-3/32`
   and every positive solution is the upstream state itself.
+* the specific entropy change of an isothermal doubling of the specific volume (`R log 2`) and of
+  heating at constant specific volume (`cv log 2`);
+* entropy selection for air (`γ = 7/5`, `R = 1`): the entropy jump vanishes at `m = 1`, is
+  positive at `M1 = 2`, negative at `M1 = 1/2` and has the derivative `35/216` at `m = 4`; the
+  compression shock at `M1 = 2` raises the entropy, in the `(T, p)` form and as `R` times the
+  branch jump, while the expansion root at `M1 = 1/2` (`ρ2 = 2/5`, `u2 = 7/4`, `p2 = 1/8`,
+  `T2 = 5/16`) solves the jump conditions but lowers it; with isentropic stagnation states on both
+  sides the stagnation pressure falls across the compression shock and rises across the expansion
+  root.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -437,5 +446,153 @@ example :
       obtain ⟨_, _, _, hthresh⟩ := hdistinct
       revert hthresh
       norm_num
+
+/-! ## Entropy selection of the normal-shock branch -/
+
+/-- The specific entropy change of an isothermal doubling of the specific volume, here with
+`cv = 5 / 2`, `R = 1` and `T = 300`, is `R log 2`; heating at constant specific volume from `300` to
+`600` gives `cv log 2`. -/
+example : specificEntropyChange (5 / 2) 1 300 1 300 2 = Real.log 2 ∧
+    specificEntropyChange (5 / 2) 1 300 1 600 1 = 5 / 2 * Real.log 2 := by
+  unfold specificEntropyChange
+  norm_num
+
+/-- **Compression shock.** `γ = 7 / 5`, `R = 1`, upstream `ρ1 = 7 / 5`, `u1 = 2`, `p1 = 1`,
+`T1 = 5 / 7` (`a1 = 1`, `M1 = 2`), downstream `ρ2 = 56 / 15`, `u2 = 3 / 4`, `p2 = 9 / 2`,
+`T2 = 135 / 112`: the jump conditions hold and the entropy rises. -/
+lemma normalShock_fixture_compression :
+    IsNormalShockJump (7 / 5) 1 (7 / 5) 2 1 (5 / 7) (56 / 15) (3 / 4) (9 / 2) (135 / 112) ∧
+      0 < specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
+        (1 / (56 / 15)) := by
+  have hjump :
+      IsNormalShockJump (7 / 5) 1 (7 / 5) 2 1 (5 / 7) (56 / 15) (3 / 4) (9 / 2) (135 / 112) := by
+    unfold IsNormalShockJump
+    norm_num
+  refine ⟨hjump, ?_⟩
+  have h := normalShock_entropy_pos_iff (a1 := 1) (M1 := 2) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) hjump (by norm_num)
+  exact h.1.mpr (by norm_num)
+
+/-- **Expansion root.** The same upstream gas at `u1 = 1 / 2` (`M1 = 1 / 2`, above the threshold
+`1 / 7` of `M1 ^ 2`) and the downstream `ρ2 = 2 / 5`, `u2 = 7 / 4`, `p2 = 1 / 8`, `T2 = 5 / 16`:
+a positive state that solves the jump conditions, but the entropy falls, so the root is not
+entropy-admissible. -/
+lemma normalShock_fixture_expansion :
+    IsNormalShockJump (7 / 5) 1 (7 / 5) (1 / 2) 1 (5 / 7) (2 / 5) (7 / 4) (1 / 8) (5 / 16) ∧
+      specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (5 / 16)
+        (1 / (2 / 5)) < 0 := by
+  have hjump :
+      IsNormalShockJump (7 / 5) 1 (7 / 5) (1 / 2) 1 (5 / 7) (2 / 5) (7 / 4) (1 / 8) (5 / 16) := by
+    unfold IsNormalShockJump
+    norm_num
+  refine ⟨hjump, ?_⟩
+  have h := normalShock_entropy_pos_iff (a1 := 1) (M1 := 1 / 2) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) hjump (by norm_num)
+  exact h.2.mpr (by norm_num)
+
+/-- The entropy jump at `γ = 7/5`: zero at `m = 1`, positive at `M1 = 2` and negative at
+`M1 = 1/2`, above the threshold `1/7`; at `m = 4` its derivative is `35/216`. -/
+example : shockEntropyJump (7 / 5) 1 = 0 ∧ 0 < shockEntropyJump (7 / 5) (2 ^ 2) ∧
+    shockEntropyJump (7 / 5) ((1 / 2) ^ 2) < 0 ∧
+    HasDerivAt (shockEntropyJump (7 / 5)) (35 / 216) 4 := by
+  refine ⟨shockEntropyJump_one (by norm_num),
+    (shockEntropyJump_pos_iff (γ := 7 / 5) (m := 2 ^ 2) (by norm_num) (by norm_num)).1.mpr
+      (by norm_num),
+    (shockEntropyJump_pos_iff (γ := 7 / 5) (m := (1 / 2) ^ 2) (by norm_num) (by norm_num)).2.mpr
+      (by norm_num), ?_⟩
+  convert hasDerivAt_shockEntropyJump (γ := 7 / 5) (m := 4) (by norm_num) (by norm_num) using 1
+  norm_num
+
+/-- At the compression fixture the entropy change has the `(T, p)` form
+`cp log (T2 / T1) - R log (p2 / p1)` and is `R` times the branch jump at `M1 ^ 2 = 4`. -/
+example :
+    specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
+        (1 / (56 / 15)) =
+        7 / 5 * 1 / (7 / 5 - 1) * Real.log ((135 / 112) / (5 / 7)) - 1 * Real.log ((9 / 2) / 1) ∧
+      specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (135 / 112)
+        (1 / (56 / 15)) = 1 * shockEntropyJump (7 / 5) (2 ^ 2) := by
+  refine ⟨specificEntropyChange_perfectGas (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num), ?_⟩
+  exact (normalShock_entropyChange (a1 := 1) (M1 := 2) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    normalShock_fixture_compression.1 (by norm_num)).2.2
+
+/-- Every positive ideal-gas state has an isentropic stagnation state: `T0` from the energy
+balance, `ρ0 = ρ (T0 / T) ^ (1 / (γ - 1))` and `p0 = ρ0 R T0`. -/
+private lemma exists_isentropic_stagnation {γ R ρ u p T : ℝ} (hγ : 1 < γ) (hR : 0 < R)
+    (hρ : 0 < ρ) (hT : 0 < T) (hp : p = ρ * R * T) :
+    ∃ ρ0 p0 T0 : ℝ, γ * R / (γ - 1) * T + u ^ 2 / 2 = γ * R / (γ - 1) * T0 ∧ 0 < ρ0 ∧
+      p0 = ρ0 * R * T0 ∧ p / ρ ^ γ = p0 / ρ0 ^ γ := by
+  have hγ1 : 0 < γ - 1 := sub_pos.mpr hγ
+  have hcp : 0 < γ * R / (γ - 1) := div_pos (mul_pos (by linarith) hR) hγ1
+  obtain ⟨T0, hT0⟩ : ∃ T0 : ℝ, T0 = T + u ^ 2 / (2 * (γ * R / (γ - 1))) := ⟨_, rfl⟩
+  have hT0pos : 0 < T0 := by rw [hT0]; positivity
+  obtain ⟨c, hc⟩ : ∃ c : ℝ, c = T0 / T := ⟨_, rfl⟩
+  have hcpos : 0 < c := by rw [hc]; exact div_pos hT0pos hT
+  have hT0c : T0 = c * T := by rw [hc]; field_simp
+  have hca : 0 < c ^ (1 / (γ - 1)) := Real.rpow_pos_of_pos hcpos _
+  have hkey : c ^ (1 / (γ - 1) * γ) = c ^ (1 / (γ - 1)) * c := by
+    rw [← Real.rpow_add_one hcpos.ne']
+    congr 1
+    field_simp
+    ring
+  refine ⟨ρ * c ^ (1 / (γ - 1)), ρ * c ^ (1 / (γ - 1)) * R * T0, T0, ?_, mul_pos hρ hca, rfl, ?_⟩
+  · rw [hT0]
+    field_simp
+  · rw [hp, hT0c, Real.mul_rpow hρ.le hca.le, ← Real.rpow_mul hcpos.le, hkey]
+    field_simp
+
+/-- Across the compression shock at `M1 = 2`, with isentropic stagnation states on both sides, the
+stagnation temperatures agree and the stagnation pressure falls. -/
+example : ∃ ρ01 p01 T01 ρ02 p02 T02 : ℝ,
+    (7 / 5 * 1 / (7 / 5 - 1) * (5 / 7) + 2 ^ 2 / 2 = 7 / 5 * 1 / (7 / 5 - 1) * T01 ∧
+      0 < ρ01 ∧ p01 = ρ01 * 1 * T01 ∧ 1 / (7 / 5 : ℝ) ^ (7 / 5 : ℝ) = p01 / ρ01 ^ (7 / 5 : ℝ)) ∧
+    (7 / 5 * 1 / (7 / 5 - 1) * (135 / 112) + (3 / 4) ^ 2 / 2 = 7 / 5 * 1 / (7 / 5 - 1) * T02 ∧
+      0 < ρ02 ∧ p02 = ρ02 * 1 * T02 ∧
+      9 / 2 / (56 / 15 : ℝ) ^ (7 / 5 : ℝ) = p02 / ρ02 ^ (7 / 5 : ℝ)) ∧
+    T02 = T01 ∧ p02 < p01 := by
+  obtain ⟨ρ01, p01, T01, hen1, hρ01, hp01, hs1⟩ := exists_isentropic_stagnation (γ := 7 / 5)
+    (R := 1) (ρ := 7 / 5) (u := 2) (p := 1) (T := 5 / 7) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+  obtain ⟨ρ02, p02, T02, hen2, hρ02, hp02, hs2⟩ := exists_isentropic_stagnation (γ := 7 / 5)
+    (R := 1) (ρ := 56 / 15) (u := 3 / 4) (p := 9 / 2) (T := 135 / 112) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  have hjump := normalShock_fixture_compression.1
+  obtain ⟨hT0, -⟩ := normalShock_stagnationPressure_ratio (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) hjump hen1 hen2 hρ01 hρ02 hp01 hp02
+    hs1 hs2
+  have hsel := normalShock_totalPressure_selection (a1 := 1) (M1 := 2) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) hjump (by norm_num) hen1 hen2 hρ01 hρ02 hp01 hp02 hs1 hs2
+  exact ⟨ρ01, p01, T01, ρ02, p02, T02, ⟨hen1, hρ01, hp01, hs1⟩, ⟨hen2, hρ02, hp02, hs2⟩, hT0,
+    hsel.1 (by norm_num)⟩
+
+/-- Across the expansion root at `M1 = 1/2`, with isentropic stagnation states on both sides, the
+stagnation pressure rises while the entropy falls: the root solves the jump conditions but is not
+entropy-admissible. -/
+example : ∃ ρ01 p01 T01 ρ02 p02 T02 : ℝ,
+    (7 / 5 * 1 / (7 / 5 - 1) * (5 / 7) + (1 / 2) ^ 2 / 2 = 7 / 5 * 1 / (7 / 5 - 1) * T01 ∧
+      0 < ρ01 ∧ p01 = ρ01 * 1 * T01 ∧ 1 / (7 / 5 : ℝ) ^ (7 / 5 : ℝ) = p01 / ρ01 ^ (7 / 5 : ℝ)) ∧
+    (7 / 5 * 1 / (7 / 5 - 1) * (5 / 16) + (7 / 4) ^ 2 / 2 = 7 / 5 * 1 / (7 / 5 - 1) * T02 ∧
+      0 < ρ02 ∧ p02 = ρ02 * 1 * T02 ∧
+      1 / 8 / (2 / 5 : ℝ) ^ (7 / 5 : ℝ) = p02 / ρ02 ^ (7 / 5 : ℝ)) ∧
+    p01 < p02 ∧
+      specificEntropyChange (1 / (7 / 5 - 1)) 1 (5 / 7) (1 / (7 / 5)) (5 / 16)
+        (1 / (2 / 5)) < 0 := by
+  obtain ⟨ρ01, p01, T01, hen1, hρ01, hp01, hs1⟩ := exists_isentropic_stagnation (γ := 7 / 5)
+    (R := 1) (ρ := 7 / 5) (u := 1 / 2) (p := 1) (T := 5 / 7) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+  obtain ⟨ρ02, p02, T02, hen2, hρ02, hp02, hs2⟩ := exists_isentropic_stagnation (γ := 7 / 5)
+    (R := 1) (ρ := 2 / 5) (u := 7 / 4) (p := 1 / 8) (T := 5 / 16) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
+  have hsel := normalShock_totalPressure_selection (a1 := 1) (M1 := 1 / 2) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) normalShock_fixture_expansion.1 (by norm_num) hen1 hen2 hρ01 hρ02
+    hp01 hp02 hs1 hs2
+  obtain ⟨-, -, hrise, hΔ⟩ := hsel.2 (by norm_num)
+  exact ⟨ρ01, p01, T01, ρ02, p02, T02, ⟨hen1, hρ01, hp01, hs1⟩, ⟨hen2, hρ02, hp02, hs2⟩, hrise,
+    hΔ⟩
 
 end PhyslibExtTest.FluidDynamics.PerfectGasPorts

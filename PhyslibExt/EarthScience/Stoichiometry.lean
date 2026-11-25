@@ -46,10 +46,10 @@ reaction extents and involves no derivatives.
 
 namespace EarthScience
 
-/-- Stoichiometric conservation: for `c' = S * v(c)` (species `i`,
+/-- Stoichiometric conservation: for `c' = S * v(c)` at time `t` (species `i`,
 reactions `j`, `S i j` the stoichiometric coefficient), every left-null
-vector `l` of `S` gives a conserved linear combination `∑ i, l i * c t i`,
-whose derivative is `0`. -/
+vector `l` of `S` gives a linear combination `∑ i, l i * c t i`
+whose derivative at `t` is `0`. -/
 theorem stoichiometric_leftNull_conserved {n m : ℕ}
     (S : Fin n → Fin m → ℝ) (l : Fin n → ℝ)
     (c : ℝ → Fin n → ℝ) (rate : (Fin n → ℝ) → Fin m → ℝ) (t : ℝ)

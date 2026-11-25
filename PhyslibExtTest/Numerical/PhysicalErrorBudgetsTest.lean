@@ -28,7 +28,12 @@ import Mathlib.Tactic.NormNum
 * the same body under the classical Runge–Kutta method: the one-stage method is the Euler step,
   the RK4 step from `350` does not depend on the start time and multiplies the excess `50` by
   `72387 / 80000`, ten steps of size `10` give `T_10 = 300 + 50 (72387 / 80000) ^ 10` with
-  `0 < |T_10 - T(100)| < 50 / 10 ^ 6`, and the step `3 τ` multiplies the excess by `11 / 8`.
+  `0 < |T_10 - T(100)| < 50 / 10 ^ 6`, and the step `3 τ` multiplies the excess by `11 / 8`;
+* defects through the actual recurrence: a constant offset of `1 / 2` in the computed temperatures
+  has the residual `1 / 20` at every step and the budget `1 / 2 + 5`, the budget in degrees
+  Fahrenheit, with the heat capacity and the conductance converted per degree Fahrenheit, is
+  `9 / 5` times the budget in degrees Celsius, and dropping an observed residual undercuts the
+  actual error.
 -/
 
 @[expose] public section
@@ -268,6 +273,77 @@ example {X : ℕ → ℝ} (h0 : X 0 = 350)
     norm_num
   · rw [(hX 10).2]
     norm_num
+
+/-! ## G. Defects through the actual Euler recurrence -/
+
+open Finset
+
+/-- **Observed residuals cannot be replaced by zero.** For `C = G = 1`, `T_amb = 0`, `Δ = 1`, a
+computed sequence equal to the exact Euler iterates except for a last step off by `1` has the
+residual `1` at step `9` and `0` before; dropping that residual from the budget leaves
+`(9 / 10) ^ 10 |Y 0 - 1| + 1 / 10`, which is below the actual error. -/
+lemma bathEuler_residual_not_zero {Y : ℕ → ℝ} (hY : ∀ j ≤ 9, Y j = (9 / 10) ^ j)
+    (hY10 : Y 10 = (9 / 10) ^ 10 + 1) :
+    (∀ j < 9, bathEulerResidual 1 1 0 Y j = 0) ∧ bathEulerResidual 1 1 0 Y 9 = 1 ∧
+      (9 / 10) ^ 10 * |Y 0 - (0 + 1)| + |(1 : ℝ)| / 10 <
+        |Y 10 - bathTrajectory 1 1 0 1 (thermalTimeConstant 1 1)| := by
+  have hτ : thermalTimeConstant 1 1 = 1 := by norm_num [thermalTimeConstant]
+  refine ⟨fun j hj => ?_, ?_, ?_⟩
+  · unfold bathEulerResidual bathEulerStep bathPower
+    rw [hτ, hY (j + 1) (by omega), hY j (by omega), pow_succ]
+    ring
+  · unfold bathEulerResidual bathEulerStep bathPower
+    rw [hτ, hY10, hY 9 (by norm_num)]
+    ring
+  · rw [hY 0 (by norm_num), hY10]
+    unfold bathTrajectory
+    rw [hτ]
+    have he : Real.exp (-1 / 1) < 1 := by
+      rw [Real.exp_lt_one_iff]
+      norm_num
+    have hp : (0 : ℝ) < (9 / 10) ^ 10 := by positivity
+    have hpos : 0 < (9 / 10 : ℝ) ^ 10 + 1 - (0 + 1 * Real.exp (-1 / 1)) := by linarith
+    rw [abs_of_pos hpos]
+    norm_num
+    linarith
+
+-- One step of size `10` of the body in the bath maps the temperatures `350` and `340` to points
+-- `9` apart.
+example :
+    bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) 350 -
+      bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) 340 = 9 := by
+  rw [bathEulerStep_sub_tenth (by norm_num) (by norm_num)]
+  norm_num
+
+-- A constant offset of `1 / 2` in the computed temperatures of the body in the bath: the residual
+-- is `1 / 20` at every step, the budget is `1 / 2 + 5`, and the computed temperature after ten
+-- steps is within it.
+example {X : ℕ → ℝ} (h0 : X 0 = 300 + 50)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) (X j)) :
+    (∀ j, bathEulerResidual 500 5 300 (fun i => X i + 1 / 2) j = 1 / 20) ∧
+      tenStepErrorBudget 500 5 300 50 (fun i => X i + 1 / 2) = 11 / 2 ∧
+      |X 10 + 1 / 2 - bathTrajectory 500 5 300 50 (thermalTimeConstant 500 5)| ≤ 11 / 2 := by
+  have hres : ∀ j, bathEulerResidual 500 5 300 (fun i => X i + 1 / 2) j = 1 / 20 := by
+    intro j
+    have h := defect_recurrence (by norm_num) (by norm_num) hstep (fun i => X i + 1 / 2) j
+    linarith
+  have hb : tenStepErrorBudget 500 5 300 50 (fun i => X i + 1 / 2) = 11 / 2 := by
+    simp only [tenStepErrorBudget, hres, h0]
+    norm_num [sum_range_succ]
+  refine ⟨hres, hb, ?_⟩
+  have h := bathEuler_total_error (by norm_num) (by norm_num) h0 hstep (fun i => X i + 1 / 2)
+  rwa [hb] at h
+
+-- The budget in degrees Fahrenheit (`k = 9 / 5`, `c = 32`), with the heat capacity `500` and the
+-- conductance `5` per degree Celsius converted to `500 / (9 / 5) = 2500 / 9` and
+-- `5 / (9 / 5) = 25 / 9` per degree Fahrenheit, is `9 / 5` times the budget in degrees Celsius.
+example (Y : ℕ → ℝ) :
+    tenStepErrorBudget (2500 / 9) (25 / 9) (9 / 5 * 27 + 32) (9 / 5 * 50)
+        (fun i => 9 / 5 * Y i + 32) =
+      9 / 5 * tenStepErrorBudget 500 5 27 50 Y := by
+  have h := (tenStepErrorBudget_tempUnit (k := 9 / 5) (by norm_num) 32 500 5 27 50 Y).2
+  rwa [show (500 : ℝ) / (9 / 5) = 2500 / 9 by norm_num,
+    show (5 : ℝ) / (9 / 5) = 25 / 9 by norm_num] at h
 
 end PhyslibExtTest.Numerical.PhysicalErrorBudgets
 

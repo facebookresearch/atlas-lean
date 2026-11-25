@@ -91,8 +91,9 @@ noncomputable def chainParent (l1 P0 t : ℝ) : ℝ := P0 * Real.exp (-l1 * t)
 
 /-- Daughter inventory for distinct rates `l1 ≠ l2`:
 `D0 * exp (-l2 * t) + P0 * l1 / (l2 - l1) * (exp (-l1 * t) - exp (-l2 * t))`.
-At `l1 = l2` Lean's division by zero drops the feeding term, and the result solves the daughter
-ODE only when `l1 * P0 = 0`; use `chainDaughterRepeated` for equal rates. -/
+With the convention `x / 0 = 0`, at `l1 = l2` the feeding term vanishes, the value is
+`D0 * exp (-l2 * t)`, and it solves the daughter ODE only when `l1 * P0 = 0`; use
+`chainDaughterRepeated` for equal rates. -/
 noncomputable def chainDaughterDistinct (l1 l2 P0 D0 t : ℝ) : ℝ :=
   D0 * Real.exp (-l2 * t)
     + P0 * l1 / (l2 - l1) * (Real.exp (-l1 * t) - Real.exp (-l2 * t))
@@ -109,7 +110,8 @@ private theorem chain_hasDerivAt_exp_neg_mul (l t : ℝ) :
     (hasDerivAt_id t).const_mul (-l)
   exact hlin.exp
 
-/-- Parent starts at `P0` and the distinct-rate daughter at `D0`. -/
+/-- Parent starts at `P0` and the distinct-rate daughter at `D0`, for all real rates, also at
+`l1 = l2`, where the daughter formula is read with the convention `x / 0 = 0`. -/
 theorem chain_initial (l1 l2 P0 D0 : ℝ) :
     chainParent l1 P0 0 = P0 ∧ chainDaughterDistinct l1 l2 P0 D0 0 = D0 := by
   constructor

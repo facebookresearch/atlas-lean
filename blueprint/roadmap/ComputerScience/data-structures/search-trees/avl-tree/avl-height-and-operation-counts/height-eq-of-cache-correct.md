@@ -1,0 +1,3 @@
+# Correct height caches give the true height
+
+Let $t$ be a binary tree with cached heights (each node stores a natural number, its cached height, besides its left subtree, key and right subtree). Write $h(t)$ for the height cached at the root of $t$, with $h$ of the empty tree equal to $0$. If its cached heights are correct (every node stores $\max(h(\ell), h(r)) + 1$ for its subtrees $\ell$ and $r$, recursively), then $h(t)$ equals the height of the binary tree obtained from $t$ by erasing its cached heights, where the empty binary tree has height $0$ and a node has height one more than the larger of the heights of its two subtrees.

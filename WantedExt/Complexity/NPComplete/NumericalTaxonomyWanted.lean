@@ -18,10 +18,10 @@ Department of Computer Science Research Report CS-RR-330, 1997).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import MathlibExt.Biology.Phylogenetics.Buneman
+public import MathlibExt.Combinatorics.SimpleGraph.TreeMetric
 
 @[expose] public section
 
@@ -38,7 +38,7 @@ INSTANCE: a distance matrix `D : S² → ℝ≥0` on a set `S = {1, …, n}` of 
 This is the decision version of the numerical taxonomy problem under the `L∞` norm (Agarwala et
 al., Section 5, Theorem 5.1). A tree metric is defined by a weighted tree spanning the points:
 the distance between two points is the sum of the weights of the edges of the path between them
-(Section 1); this is `IsTreeMetric` of `MathlibExt.Biology.Phylogenetics.Buneman` (positive edge
+(Section 1); this is `IsTreeMetric` of `MathlibExt.Combinatorics.SimpleGraph.TreeMetric` (positive edge
 lengths, Steiner vertices allowed). A tree metric is a metric (Definition 2.1, Theorem 2.3), so
 distinct points are at positive distance, which `IsTreeMetric` alone does not require (it lets
 taxa share a vertex); `NumericalTaxonomyFeasible` adds it. The norm is

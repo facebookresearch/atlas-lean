@@ -22,7 +22,7 @@ D. Angluin, "On the complexity of minimum inference of regular sets", Informatio
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Languages.GeneralizedRegularExpression
 public import CSLibExt.Computability.Languages.KleeneConverse
 public import MathlibExt.Computability.BinaryNatEncoding
