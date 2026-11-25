@@ -15,11 +15,11 @@ public import CSLibExt.Algorithms.SAT.UnitPropagation.Basic
 /-!
 # Tests for unit-propagation conflicts
 
-Conflict derivations over the canonical `Cslib.Logic.PL.CNF` representation, and the
+Conflict derivations over the canonical `Cslib.Logic.LegacyPL.CNF` representation, and the
 soundness theorems applied to them.
 -/
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 open Cslib.Algorithms.SAT.UnitPropagation
 
 /-- Boundary check: a unit clause and its negation derive a unit-propagation conflict. -/

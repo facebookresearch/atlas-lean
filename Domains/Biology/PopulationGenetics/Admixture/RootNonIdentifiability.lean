@@ -55,10 +55,11 @@ namespace MathlibExt.Biology.PopulationGenetics.FStatistics
 variable {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- Root-stem non-identifiability, existence form: if an edge `e0` has the
-same weight for every population (on a rooted tree, an edge of the root stem
-above the most recent common ancestor of all sampled populations), then for
-every nonnegative `t ≠ len e0` there is a realized drift model with the same
-weights, with length `t` at `e0`, hence with a different length vector, but
+same weight for every population (for example, on a rooted tree, an edge of
+the root stem above the most recent common ancestor of all sampled
+populations), then for every nonnegative `t ≠ len e0` there is a drift model
+on a probability space with the same weights, with length `t` at `e0`, hence
+with a different length vector, but
 with every `f4` (hence every `f2` and `f3`) unchanged. So root-stem lengths
 are not identifiable from f-statistics. This is the existential form of
 `DriftModel.f4_eq_of_len_eq_of_weight_const`, realized by
@@ -102,11 +103,12 @@ variable {Ω Ω' P E : Type*} {m : MeasurableSpace Ω} {m' : MeasurableSpace Ω'
 
 /-- Admixture-adjacent lengths enter `f2` only through the mixed drift: if
 two drift models have the same weights, `Mx` admixed from the endpoints of
-edges `a`, `b` followed by drift on `c` as in `f2_admixedBranch`, their
-lengths agree off `{a, b, c}`, and their mixed drifts
-`α² ℓa + (1-α)² ℓb + ℓc` agree, then `f2 Mx X` agrees for every reference
-`X` off those edges. Hence the three lengths are not separately identifiable
-from such `f2` statistics, only the combination `mixedDrift` is. -/
+distinct edges `a`, `b` followed by drift on `c` as in `f2_admixedBranch`
+(with `A` and `B` of weight `0` on `a`, `b`, `c`), their lengths agree off
+`{a, b, c}`, and their mixed drifts `α² ℓa + (1-α)² ℓb + ℓc` agree, then
+`f2 Mx X` agrees for every reference `X` off those edges. Hence these `f2`
+statistics do not separate the three lengths: they see them only through
+the combination `mixedDrift`. -/
 theorem f2_eq_of_mixedDrift_eq [DecidableEq E] (M' : DriftModel μ' E P) {Mx A B X : P}
     {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c)
     (hwM : M.weight Mx = α • (M.weight A + Pi.single a 1) +
@@ -151,9 +153,9 @@ variable {Ω Ω' P E : Type*} {m : MeasurableSpace Ω} {m' : MeasurableSpace Ω'
   {μ' : Measure Ω'} [Fintype E]
 
 /-- Equal mixed drift gives the same `f2` matrix: if two drift models have the same weights,
-`Mx` is admixed as in `f2_admixedBranch`, every population other than `Mx` (in particular `A`
-and `B`) has weight `0` on `a`, `b`, `c`, the lengths agree off `{a, b, c}` and the mixed drifts
-agree, then `f2` agrees at every pair of populations. -/
+`Mx` is admixed as in `f2_admixedBranch`, `A`, `B` and every population other than `Mx` have
+weight `0` on `a`, `b`, `c`, the lengths agree off `{a, b, c}` and the mixed drifts agree, then
+`f2` agrees at every pair of populations. -/
 theorem f2_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E P)
     (M' : DriftModel μ' E P) {Mx A B : P} {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c)
     (hbc : b ≠ c)
@@ -180,8 +182,12 @@ theorem f2_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E
       simp
     · rw [hlen e he]
 
-/-- Under the hypotheses of `f2_eq_of_mixedDrift_eq_of_forall_ne`, every `f4` (hence every
-`f2` and `f3`) agrees. -/
+/-- Equal mixed drift gives the same `f4` at every quadruple. Let two drift models have the same
+weights `w`, let `a`, `b`, `c` be three distinct edges and `α` a real number with
+`w Mx = α (w A + 1_a) + (1 - α) (w B + 1_b) + 1_c`, where `1_e` is the indicator of edge `e`,
+and let `A`, `B` and every population other than `Mx` have weight `0` on `a`, `b`, `c`. If the
+lengths agree off `{a, b, c}` and the two models have the same mixed drift
+`α² ℓ_a + (1 - α)² ℓ_b + ℓ_c`, then every `f4` (hence every `f2` and `f3`) agrees. -/
 theorem f4_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E P)
     (M' : DriftModel μ' E P) {Mx A B : P} {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c)
     (hbc : b ≠ c)
@@ -199,7 +205,8 @@ theorem f4_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E
   simp only [f2_eq_of_mixedDrift_eq_of_forall_ne M M' hab hac hbc hwM hw hlen hmix hA hB hrest]
 
 /-- Realization of the constant-mixed-drift family: for every drift model in which `Mx` is
-the only population using the admixture-adjacent edges `a`, `b`, `c`, and every member
+admixed as in `f2_admixedBranch` and is the only population using the admixture-adjacent
+(distinct) edges `a`, `b`, `c`, and every member
 `(ℓa + s, ℓb + t, ℓc - α² s - (1 - α)² t)` of the (algebraically two-dimensional)
 constant-mixed-drift family with nonnegative entries, there is a drift model on a
 probability space with the same weights, those three lengths, the same lengths elsewhere,

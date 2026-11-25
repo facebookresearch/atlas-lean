@@ -11,3 +11,4 @@ A nonnegative matrix whose directed graph is strongly connected has a dominant e
 - [Perron–Frobenius theorem for irreducible nonnegative matrices](perron-frobenius.md)
 - [Perron–Frobenius theorem for nonzero irreducible nonnegative matrices](perron-frobenius-2.md): a variant for nonzero irreducible matrices
 - [Complexification of a real matrix](to-complex-matrix.md): the complexification of a real matrix, used to speak of its complex eigenvalues
+- [Perron–Frobenius theorem for primitive nonnegative matrices](perron-frobenius-for-primitive-nonnegative-matri.md): simplicity, strict dominance and convergence of normalized powers

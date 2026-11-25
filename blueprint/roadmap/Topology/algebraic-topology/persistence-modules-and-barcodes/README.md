@@ -35,6 +35,21 @@ decomposition, uniqueness and stability theorems.
 - [The cluster functor (zero-dimensional persistence)](cluster-functor.md)
 - [Stability of zero-dimensional persistence](cluster-functor-interleaving.md)
 
+## Finite graded barcodes
+
+- [Persistence barcode](barcode.md)
+- [Rank function of a barcode](barcode-rank.md)
+- [Distance between extended death values](with-top-dist.md)
+- [Distance of a persistence bar to the diagonal](dist-to-diagonal.md)
+- [Distance between two persistence bars](dist.md)
+- [Partial matching of barcodes](matching.md)
+- [The empty matching](empty.md)
+- [Bottleneck cost of a matching](cost.md)
+- [Bottleneck distance between barcodes](bottleneck-dist.md)
+- [Wasserstein distance between barcodes](wasserstein-dist.md)
+- [Erosion distance between barcodes](erosion-dist.md)
+- [Persistence landscape](persistence-landscape.md)
+
 ## Related topics
 
 - [Simplicial complexes from point clouds](../simplicial-complexes-from-point-clouds/README.md):

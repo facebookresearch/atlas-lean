@@ -1,0 +1,3 @@
+# 3-COLORABILITY OF GRAPHS OF GIRTH AT LEAST 9 as a decision problem
+
+The decision problem 3-COLORABILITY OF GRAPHS OF GIRTH AT LEAST 9 accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance $(n, E, K)$ that is well-formed for 3-COLORABILITY OF GRAPHS OF GIRTH AT LEAST 9 and whose graph is $K$-colorable: its vertices can be colored with $0, \dots, K-1$ so that adjacent vertices receive different colors. It rejects every bitstring that does not decode to such a triple.

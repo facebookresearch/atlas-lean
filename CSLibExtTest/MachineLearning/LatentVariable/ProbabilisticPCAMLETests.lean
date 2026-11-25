@@ -16,7 +16,7 @@ open Cslib.MachineLearning.LatentVariable.ProbabilisticPCA MetaMathlibExt Matrix
 example : ppcaCov (!![1; 0] : Matrix (Fin 2) (Fin 1) ℝ) (1 / 2) = !![3 / 2, 0; 0, 1 / 2] := by
   unfold ppcaCov
   ext i j
-  fin_cases i <;> fin_cases j <;> norm_num [vecMul, dotProduct]
+  fin_cases i <;> fin_cases j <;> norm_num [vecMul, dotProduct, -Matrix.transpose_of]
 
 -- The sample mean of `0` and `2` on the line is `1`.
 example : sampleMean (![toLp 2 ![0], toLp 2 ![2]] : Fin 2 → EuclideanSpace ℝ (Fin 1)) 0 = 1 := by

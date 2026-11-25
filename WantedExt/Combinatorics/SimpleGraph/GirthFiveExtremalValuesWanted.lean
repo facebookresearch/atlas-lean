@@ -31,27 +31,17 @@ License, Version 2.0. SqueezeBench ships no `NOTICE` file. Changes made:
 renamed `f` to `girthFiveExtremalNumber`, dropped the `nMin = 1` pin (at
 `n = 0` the supremum is already `0`) and the helper lemmas, and turned the
 README values, which SqueezeBench marks as reporting only, into Batteries
-`theorem_wanted` declarations.
+`theorem_wanted` declarations. The definition and the fifty-vertex result now live in
+`MathlibExt/Combinatorics/SimpleGraph/GirthFiveExtremalNumber.lean`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Girth
+public import MathlibExt.Combinatorics.SimpleGraph.GirthFiveExtremalNumber
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.SimpleGraph.GirthFiveExtremalValuesWanted
-
-open Finset _root_.SimpleGraph
-
-open Classical in
-/-- **Girth-five extremal number.** For a natural number $n$, $\mathrm{ex}(n; \{C_3, C_4\})$
-is the largest number of edges of a simple graph on $n$ vertices whose girth is at least $5$,
-that is, which contains no triangle and no four-cycle (OEIS A006856). An acyclic graph has
-infinite girth, so the empty graph always qualifies. -/
-noncomputable def girthFiveExtremalNumber (n : ℕ) : ℕ :=
-  (univ.filter fun G : SimpleGraph (Fin n) => 5 ≤ G.egirth).sup (fun G => #G.edgeFinset)
 
 /-- **Girth-five extremal numbers up to twenty vertices.** For $n = 1, 2, \dots, 20$ the
 girth-five extremal numbers $\mathrm{ex}(n; \{C_3, C_4\})$, the largest numbers of edges of a
@@ -65,17 +55,5 @@ OEIS A006856; listed in leansolving/SqueezeBench
 public theorem_wanted girthFiveExtremalNumber_one_to_twenty :
     (List.range 20).map (fun i => girthFiveExtremalNumber (i + 1)) =
       [0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 26, 28, 31, 34, 38, 41]
-
-/-- **Girth-five extremal number on fifty vertices.** The girth-five extremal number
-$\mathrm{ex}(50; \{C_3, C_4\})$, the largest number of edges of a simple graph on $50$
-vertices that contains no triangle and no four-cycle, equals $175$.
-
-For graphs on $n$ vertices of girth at least $5$, the Hoffman–Singleton graph attains the
-Moore-type bound $\frac{n}{2} \sqrt{n - 1}$ on the number of edges, with $n = 50$.
-
-Source: A. J. Hoffman and R. R. Singleton, *On Moore graphs with diameters 2
-and 3*, IBM J. Res. Develop. 4 (1960), 497–504; OEIS A006856; listed in
-SqueezeBench `SqueezeBench/Problems/ExGirthFive/README.md`. -/
-public theorem_wanted girthFiveExtremalNumber_fifty : girthFiveExtremalNumber 50 = 175
 
 end MathlibExt.Combinatorics.SimpleGraph.GirthFiveExtremalValuesWanted

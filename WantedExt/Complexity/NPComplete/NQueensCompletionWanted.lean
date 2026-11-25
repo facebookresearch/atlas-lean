@@ -17,7 +17,7 @@ Journal of Artificial Intelligence Research 59 (2017), 815-848, doi:10.1613/jair
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Finset.Card
