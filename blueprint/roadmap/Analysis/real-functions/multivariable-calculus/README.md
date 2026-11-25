@@ -6,6 +6,7 @@ Functions on R^n: partial derivatives, gradients, Jacobians, Hessians, implicit 
 - [Existence of mixed partial derivatives](existence-of-mixed-partial-derivatives/README.md)
 - [Gradient](gradient/README.md)
 - [Hessian matrix](hessian-matrix/README.md)
+- [Iterated derivatives in a scalar coordinate](iterated-derivatives-in-a-scalar-coordinate/README.md)
 - [Jacobian matrix](jacobian-matrix/README.md)
 - [Length of a curve](length-of-a-curve/README.md)
 - [Partial derivatives and symmetry of mixed partials](partial-derivatives-and-symmetry-of-mixed-partia/README.md)
