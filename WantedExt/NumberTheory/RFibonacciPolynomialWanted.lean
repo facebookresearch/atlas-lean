@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RLucasPolynomial
+public import MathlibExt.NumberTheory.RLucasPolynomialAlternatingSum
 
 namespace MetaMathlibExt
 
@@ -527,29 +528,6 @@ public theorem_wanted sum_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : 
           - m ^ (r + 1) * y * ∑ j ∈ Finset.Icc 1 r,
               m ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
         / (1 - m * x - m ^ (r + 1) * y) - 1
-
-/-- **Alternating sum of $r$-Lucas polynomials.** Let $K$ be a field, let $r \ge 1$ and $s$ be
-natural numbers, let $x, y \in K$ with $1 + x + (-1)^r y \ne 0$, and write $V_j$ for the
-$r$-Lucas polynomial of type $s$, $V_j = V^{(r,s)}_j(x, y)$. Then for every natural number
-$n \ge r - 1$,
-$$
-\sum_{j=1}^{n} (-1)^j V_j =
-\frac{1 - (-1)^r s y + (-1)^n V_{n+1} + (-1)^r y \sum_{j=1}^{r} (-1)^{n-r+j} V_{n-r+j}}
-{1 + x + (-1)^r y} - 1.
-$$
-
-For $n < r - 1$ the right side involves $V$ at negative indices.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Corollary 5 (`integers-2025-A38-cor-5`). -/
-public theorem_wanted sum_neg_one_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : ℕ}
-    (hr : 1 ≤ r) (hn : r ≤ n + 1) (s : ℕ) (x y : K) (hP : 1 + x + (-1) ^ r * y ≠ 0) :
-    ∑ j ∈ Finset.Icc 1 n, (-1) ^ j * rLucasPolynomial r s x y j
-      = (1 - (-1) ^ r * s * y + (-1) ^ n * rLucasPolynomial r s x y (n + 1)
-          + (-1) ^ r * y * ∑ j ∈ Finset.Icc 1 r,
-              (-1) ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
-        / (1 + x + (-1) ^ r * y) - 1
 
 /-- **Companion sequence of the $(-r)$-Fibonacci polynomials.** Let $A$ be a commutative ring,
 $r$ a natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence
