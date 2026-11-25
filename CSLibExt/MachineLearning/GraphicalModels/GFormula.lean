@@ -1284,22 +1284,171 @@ theorem gFormula_one [Fintype Ω] [Fintype 𝓛] [DecidableEq 𝓛] [DecidableEq
   rw [eT, eH1, eP1, eH0, eP0]
   ring
 
-/-! ### The observed joint law -/
+/-! ### The observed joint law and its cell moments -/
 
 namespace ObsModel
 
 open Classical in
-/-- The **observed joint law** in cell form: for each covariate history `l` and treatment
-history `a`, the probability of the cell `{L̄ = l, Ā = a}` and its `Y`-weighted mass
-`∑_{ω ∈ cell} p ω * Y ω`. Two studies with the same `observedLaw` have the same joint law of
-`(L̄, Ā)` and the same outcome integral on every cell. -/
+/-- The **observed joint law**: the pushforward of the study weights to covariate
+histories, treatment histories and outcomes. `observedLaw l a y` is the probability of
+the cell `{L̄ = l, Ā = a, Y = y}`. -/
 noncomputable def observedLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] (O : ObsModel Ω 𝓛 𝓐 K)
+    (l : Fin (K + 1) → 𝓛) (a : Fin (K + 1) → 𝓐) (y : ℝ) : ℝ :=
+  prob O.p (univ.filter (fun ω => (∀ j : Fin (K + 1), O.L j ω = l j) ∧
+    (∀ j : Fin (K + 1), O.A j ω = a j) ∧ O.Y ω = y))
+
+open Classical in
+/-- The **cell moments** of the observed law: for each covariate history `l` and treatment
+history `a`, the probability of the cell `{L̄ = l, Ā = a}` and its `Y`-weighted mass
+`∑_{ω ∈ cell} p ω * Y ω`. This is a summary of `observedLaw`, not the law itself:
+different outcome distributions on one cell can share the same two components. The
+g-formula consumes only these moments (`gFormula_eq_gFormulaOfMoments`), and the law
+determines them (`cellMoments_eq_of_observedLaw_eq`). -/
+noncomputable def cellMoments {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] (O : ObsModel Ω 𝓛 𝓐 K)
     (l : Fin (K + 1) → 𝓛) (a : Fin (K + 1) → 𝓐) : ℝ × ℝ :=
   (prob O.p (univ.filter (O.HistT K l a)),
     ∑ ω ∈ univ.filter (O.HistT K l a), O.p ω * O.Y ω)
 
 open Classical in
-private theorem gf_aux_prob_cell_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
+private theorem gf_aux_observedLaw_eq_zero_of_not_mem {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω]
+    (O : ObsModel Ω 𝓛 𝓐 K) (l : Fin (K + 1) → 𝓛) (a : Fin (K + 1) → 𝓐) (y : ℝ)
+    (hy : y ∉ univ.image O.Y) : O.observedLaw l a y = 0 := by
+  unfold observedLaw prob
+  apply Finset.sum_eq_zero
+  intro ω hω
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hω
+  exact absurd (Finset.mem_image.mpr ⟨ω, Finset.mem_univ ω, hω.2.2⟩) hy
+
+open Classical in
+private theorem gf_aux_prob_histT_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω]
+    (O : ObsModel Ω 𝓛 𝓐 K) (l : Fin (K + 1) → 𝓛) (a : Fin (K + 1) → 𝓐) :
+    prob O.p (univ.filter (O.HistT K l a)) = ∑ y ∈ univ.image O.Y, O.observedLaw l a y := by
+  have hK : ∀ j : Fin (K + 1), j.val ≤ K := by
+    intro j
+    have hj := j.2
+    omega
+  have hfiber : ∀ y : ℝ, (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y) =
+      univ.filter (fun ω => (∀ j : Fin (K + 1), O.L j ω = l j) ∧
+        (∀ j : Fin (K + 1), O.A j ω = a j) ∧ O.Y ω = y) := by
+    intro y
+    ext ω
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, O.histT_iff]
+    constructor
+    · rintro ⟨⟨hL, hA⟩, hY⟩
+      exact ⟨fun j => hL j (hK j), fun j => hA j (hK j), hY⟩
+    · rintro ⟨hL, hA, hY⟩
+      exact ⟨⟨fun j _ => hL j, fun j _ => hA j⟩, hY⟩
+  have hmaps : ∀ ω ∈ univ.filter (O.HistT K l a), O.Y ω ∈ univ.image O.Y := by
+    intro ω _
+    exact Finset.mem_image.mpr ⟨ω, Finset.mem_univ ω, rfl⟩
+  have hfib := Finset.sum_fiberwise_of_maps_to (s := univ.filter (O.HistT K l a))
+    (g := O.Y) (t := univ.image O.Y) hmaps (fun ω => O.p ω)
+  have hprob : prob O.p (univ.filter (O.HistT K l a)) =
+      ∑ ω ∈ univ.filter (O.HistT K l a), O.p ω := rfl
+  rw [hprob, ← hfib]
+  refine Finset.sum_congr rfl fun y _ => ?_
+  rw [hfiber y]
+  rfl
+
+open Classical in
+private theorem gf_aux_weighted_histT_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω]
+    (O : ObsModel Ω 𝓛 𝓐 K) (l : Fin (K + 1) → 𝓛) (a : Fin (K + 1) → 𝓐) :
+    (∑ ω ∈ univ.filter (O.HistT K l a), O.p ω * O.Y ω) =
+      ∑ y ∈ univ.image O.Y, y * O.observedLaw l a y := by
+  have hK : ∀ j : Fin (K + 1), j.val ≤ K := by
+    intro j
+    have hj := j.2
+    omega
+  have hfiber : ∀ y : ℝ, (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y) =
+      univ.filter (fun ω => (∀ j : Fin (K + 1), O.L j ω = l j) ∧
+        (∀ j : Fin (K + 1), O.A j ω = a j) ∧ O.Y ω = y) := by
+    intro y
+    ext ω
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, O.histT_iff]
+    constructor
+    · rintro ⟨⟨hL, hA⟩, hY⟩
+      exact ⟨fun j => hL j (hK j), fun j => hA j (hK j), hY⟩
+    · rintro ⟨hL, hA, hY⟩
+      exact ⟨⟨fun j _ => hL j, fun j _ => hA j⟩, hY⟩
+  have hmaps : ∀ ω ∈ univ.filter (O.HistT K l a), O.Y ω ∈ univ.image O.Y := by
+    intro ω _
+    exact Finset.mem_image.mpr ⟨ω, Finset.mem_univ ω, rfl⟩
+  have hfib := Finset.sum_fiberwise_of_maps_to (s := univ.filter (O.HistT K l a))
+    (g := O.Y) (t := univ.image O.Y) hmaps (fun ω => O.p ω * O.Y ω)
+  rw [← hfib]
+  refine Finset.sum_congr rfl fun y _ => ?_
+  have h1 : (∑ ω ∈ (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y), O.p ω * O.Y ω) =
+      ∑ ω ∈ (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y), O.p ω * y :=
+    Finset.sum_congr rfl fun ω hω => by
+      simp only [Finset.mem_filter] at hω
+      rw [hω.2]
+  have h2 : (∑ ω ∈ (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y), O.p ω * y) =
+      y * (∑ ω ∈ (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y), O.p ω) := by
+    rw [Finset.mul_sum]
+    refine Finset.sum_congr rfl fun ω _ => by rw [mul_comm]
+  have h3 : (∑ ω ∈ (univ.filter (O.HistT K l a)).filter (fun ω => O.Y ω = y), O.p ω) =
+      O.observedLaw l a y := by
+    rw [hfiber y]
+    rfl
+  rw [h1, h2, h3]
+
+/-- **The observed law determines the cell moments**: two studies on the same sample space
+with the same `observedLaw` have the same `cellMoments`. Each cell mass is the sum of
+the law over the outcome values in the cell, and each weighted mass is the
+corresponding first-moment sum. -/
+theorem cellMoments_eq_of_observedLaw_eq {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω]
+    {O₁ O₂ : ObsModel Ω 𝓛 𝓐 K} (h : O₁.observedLaw = O₂.observedLaw) :
+    O₁.cellMoments = O₂.cellMoments := by
+  classical
+  funext l a
+  apply Prod.ext
+  · show prob O₁.p (univ.filter (O₁.HistT K l a)) =
+      prob O₂.p (univ.filter (O₂.HistT K l a))
+    rw [gf_aux_prob_histT_eq_sum_observedLaw O₁ l a,
+      gf_aux_prob_histT_eq_sum_observedLaw O₂ l a]
+    have hsub1 : univ.image O₁.Y ⊆ univ.image O₁.Y ∪ univ.image O₂.Y :=
+      Finset.subset_union_left
+    have hsub2 : univ.image O₂.Y ⊆ univ.image O₁.Y ∪ univ.image O₂.Y :=
+      Finset.subset_union_right
+    have hvan1 : ∀ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y,
+        y ∉ univ.image O₁.Y → O₁.observedLaw l a y = 0 :=
+      fun y _ hy => gf_aux_observedLaw_eq_zero_of_not_mem O₁ l a y hy
+    have hvan2 : ∀ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y,
+        y ∉ univ.image O₂.Y → O₂.observedLaw l a y = 0 :=
+      fun y _ hy => gf_aux_observedLaw_eq_zero_of_not_mem O₂ l a y hy
+    have heq1 : (∑ y ∈ univ.image O₁.Y, O₁.observedLaw l a y) =
+        ∑ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y, O₁.observedLaw l a y :=
+      Finset.sum_subset hsub1 hvan1
+    have heq2 : (∑ y ∈ univ.image O₂.Y, O₂.observedLaw l a y) =
+        ∑ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y, O₂.observedLaw l a y :=
+      Finset.sum_subset hsub2 hvan2
+    rw [heq1, heq2, h]
+  · show (∑ ω ∈ univ.filter (O₁.HistT K l a), O₁.p ω * O₁.Y ω) =
+      (∑ ω ∈ univ.filter (O₂.HistT K l a), O₂.p ω * O₂.Y ω)
+    rw [gf_aux_weighted_histT_eq_sum_observedLaw O₁ l a,
+      gf_aux_weighted_histT_eq_sum_observedLaw O₂ l a]
+    have hsub1 : univ.image O₁.Y ⊆ univ.image O₁.Y ∪ univ.image O₂.Y :=
+      Finset.subset_union_left
+    have hsub2 : univ.image O₂.Y ⊆ univ.image O₁.Y ∪ univ.image O₂.Y :=
+      Finset.subset_union_right
+    have hvan1 : ∀ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y,
+        y ∉ univ.image O₁.Y → y * O₁.observedLaw l a y = 0 := by
+      intro y _ hy
+      rw [gf_aux_observedLaw_eq_zero_of_not_mem O₁ l a y hy, mul_zero]
+    have hvan2 : ∀ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y,
+        y ∉ univ.image O₂.Y → y * O₂.observedLaw l a y = 0 := by
+      intro y _ hy
+      rw [gf_aux_observedLaw_eq_zero_of_not_mem O₂ l a y hy, mul_zero]
+    have heq1 : (∑ y ∈ univ.image O₁.Y, y * O₁.observedLaw l a y) =
+        ∑ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y, y * O₁.observedLaw l a y :=
+      Finset.sum_subset hsub1 hvan1
+    have heq2 : (∑ y ∈ univ.image O₂.Y, y * O₂.observedLaw l a y) =
+        ∑ y ∈ univ.image O₁.Y ∪ univ.image O₂.Y, y * O₂.observedLaw l a y :=
+      Finset.sum_subset hsub2 hvan2
+    rw [heq1, heq2, h]
+
+open Classical in
+private theorem gf_aux_prob_cell_eq_sum_cellMoments {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
     [Fintype 𝓐] (O : ObsModel Ω 𝓛 𝓐 K) (k : ℕ) (l : Fin (K + 1) → 𝓛)
     (a : Fin (K + 1) → 𝓐) (BL : ℕ → Prop) [DecidablePred BL] (cell : Ω → Prop)
     (hcell : ∀ ω, cell ω ↔ (∀ j : Fin (K + 1), BL j.val → O.L j ω = l j) ∧
@@ -1307,7 +1456,7 @@ private theorem gf_aux_prob_cell_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : 
     prob O.p (univ.filter cell) =
       ∑ l' ∈ univ.filter (fun l' : Fin (K + 1) → 𝓛 => ∀ j : Fin (K + 1), BL j.val → l' j = l j),
         ∑ a' ∈ univ.filter (fun a' : Fin (K + 1) → 𝓐 => ∀ j : Fin (K + 1), j.val < k → a' j = a j),
-          (O.observedLaw l' a').1 := by
+          (O.cellMoments l' a').1 := by
   set F : Ω → ((Fin (K + 1) → 𝓛) × (Fin (K + 1) → 𝓐)) :=
     fun ω => ((fun j => O.L j ω), (fun j => O.A j ω)) with hF
   have hK : ∀ j : Fin (K + 1), j.val ≤ K := by
@@ -1352,7 +1501,7 @@ private theorem gf_aux_prob_cell_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : 
   show (∑ ω ∈ univ.filter cell, O.p ω) =
       ∑ l' ∈ univ.filter (fun l' : Fin (K + 1) → 𝓛 => ∀ j : Fin (K + 1), BL j.val → l' j = l j),
         ∑ a' ∈ univ.filter (fun a' : Fin (K + 1) → 𝓐 => ∀ j : Fin (K + 1), j.val < k → a' j = a j),
-          (O.observedLaw l' a').1
+          (O.cellMoments l' a').1
   rw [← Finset.sum_fiberwise_of_maps_to (s := univ.filter cell) (g := F)
     (t := (univ.filter (fun l' : Fin (K + 1) → 𝓛 => ∀ j : Fin (K + 1), BL j.val → l' j = l j)) ×ˢ
       (univ.filter (fun a' : Fin (K + 1) → 𝓐 => ∀ j : Fin (K + 1), j.val < k → a' j = a j)))
@@ -1360,44 +1509,44 @@ private theorem gf_aux_prob_cell_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : 
   rw [Finset.sum_product]
   refine Finset.sum_congr rfl fun lq hlq => Finset.sum_congr rfl fun aq haq => ?_
   show (∑ ω ∈ (univ.filter cell).filter (fun ω => F ω = (lq, aq)), O.p ω) =
-    (O.observedLaw lq aq).1
+    (O.cellMoments lq aq).1
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlq haq
-  have hfin : (O.observedLaw lq aq).1 = ∑ ω ∈ univ.filter (O.HistT K lq aq), O.p ω := rfl
+  have hfin : (O.cellMoments lq aq).1 = ∑ ω ∈ univ.filter (O.HistT K lq aq), O.p ω := rfl
   rw [hfiber lq aq hlq haq, hfin]
 
 open Classical in
 /-- The probability of the history event `{L̄_k = l̄_k, Ā_{k-1} = ā_{k-1}}` is the sum of the
-observed-law cell masses over the full histories extending it. -/
-theorem prob_hist_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
+cell masses of `cellMoments` over the full histories extending it. -/
+theorem prob_hist_eq_sum_cellMoments {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
     [Fintype 𝓐] (O : ObsModel Ω 𝓛 𝓐 K) (k : ℕ) (l : Fin (K + 1) → 𝓛)
     (a : Fin (K + 1) → 𝓐) :
     prob O.p (univ.filter (O.Hist k l a)) =
       ∑ l' ∈ univ.filter (fun l' : Fin (K + 1) → 𝓛 => ∀ j : Fin (K + 1), j.val ≤ k → l' j = l j),
         ∑ a' ∈ univ.filter (fun a' : Fin (K + 1) → 𝓐 => ∀ j : Fin (K + 1), j.val < k → a' j = a j),
-          (O.observedLaw l' a').1 := by
-  exact gf_aux_prob_cell_eq_sum_observedLaw O k l a (fun n => n ≤ k) (O.Hist k l a)
+          (O.cellMoments l' a').1 := by
+  exact gf_aux_prob_cell_eq_sum_cellMoments O k l a (fun n => n ≤ k) (O.Hist k l a)
     (fun ω => O.hist_iff k l a ω)
 
 open Classical in
 /-- The probability of the history event `{L̄_{k-1} = l̄_{k-1}, Ā_{k-1} = ā_{k-1}}` is the sum
-of the observed-law cell masses over the full histories extending it. -/
-theorem prob_pre_eq_sum_observedLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
+of the cell masses of `cellMoments` over the full histories extending it. -/
+theorem prob_pre_eq_sum_cellMoments {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
     [Fintype 𝓐] (O : ObsModel Ω 𝓛 𝓐 K) (k : ℕ) (l : Fin (K + 1) → 𝓛)
     (a : Fin (K + 1) → 𝓐) :
     prob O.p (univ.filter (O.Pre k l a)) =
       ∑ l' ∈ univ.filter (fun l' : Fin (K + 1) → 𝓛 => ∀ j : Fin (K + 1), j.val < k → l' j = l j),
         ∑ a' ∈ univ.filter (fun a' : Fin (K + 1) → 𝓐 => ∀ j : Fin (K + 1), j.val < k → a' j = a j),
-          (O.observedLaw l' a').1 := by
-  exact gf_aux_prob_cell_eq_sum_observedLaw O k l a (fun n => n < k) (O.Pre k l a)
+          (O.cellMoments l' a').1 := by
+  exact gf_aux_prob_cell_eq_sum_cellMoments O k l a (fun n => n < k) (O.Pre k l a)
     (fun ω => O.pre_iff k l a ω)
 
 end ObsModel
 
 open Classical in
-/-- The g-formula as a function of the observed law alone: the display of `ObsModel.gFormula`
-with every cell probability and conditional mean read from the law `q` instead of from a
-study. -/
-noncomputable def gFormulaOfLaw {𝓛 𝓐 : Type*} {K : ℕ} [Fintype 𝓛] [Fintype 𝓐]
+/-- The g-formula as a function of the cell moments alone: the display of `ObsModel.gFormula`
+with every cell probability and conditional mean read from the moments `q` instead of
+from a study. -/
+noncomputable def gFormulaOfMoments {𝓛 𝓐 : Type*} {K : ℕ} [Fintype 𝓛] [Fintype 𝓐]
     (q : (Fin (K + 1) → 𝓛) → (Fin (K + 1) → 𝓐) → ℝ × ℝ) (a : Fin (K + 1) → 𝓐) : ℝ :=
   ∑ l : Fin (K + 1) → 𝓛, ((q l a).2 / (q l a).1) * ∏ k : Fin (K + 1),
     (∑ l' ∈ univ.filter (fun l' : Fin (K + 1) → 𝓛 => ∀ j : Fin (K + 1), j.val ≤ k.val → l' j = l j),
@@ -1409,32 +1558,40 @@ noncomputable def gFormulaOfLaw {𝓛 𝓐 : Type*} {K : ℕ} [Fintype 𝓛] [Fi
           ∀ j : Fin (K + 1), j.val < k.val → a' j = a j),
           (q l' a').1)
 
-/-- **The g-formula factors through the observed law**: `O.gFormula a` depends on the study
-only through `O.observedLaw`. -/
-theorem ObsModel.gFormula_eq_gFormulaOfLaw {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
+/-- **The g-formula factors through the cell moments**: `O.gFormula a` depends on the study
+only through `O.cellMoments`, and hence, by `ObsModel.cellMoments_eq_of_observedLaw_eq`,
+only through the observed joint law. -/
+theorem ObsModel.gFormula_eq_gFormulaOfMoments {Ω 𝓛 𝓐 : Type*} {K : ℕ} [Fintype Ω] [Fintype 𝓛]
     [Fintype 𝓐] (O : ObsModel Ω 𝓛 𝓐 K) (a : Fin (K + 1) → 𝓐) :
-    O.gFormula a = gFormulaOfLaw O.observedLaw a := by
-  unfold ObsModel.gFormula gFormulaOfLaw
+    O.gFormula a = gFormulaOfMoments O.cellMoments a := by
+  unfold ObsModel.gFormula gFormulaOfMoments
   refine Finset.sum_congr rfl fun l _ => ?_
   congr 1
   exact Finset.prod_congr rfl fun k _ => by
     have hk : (↑k : ℕ) = k.val := rfl
     unfold ObsModel.condL
-    rw [hk, ObsModel.prob_hist_eq_sum_observedLaw, ObsModel.prob_pre_eq_sum_observedLaw]
+    rw [hk, ObsModel.prob_hist_eq_sum_cellMoments, ObsModel.prob_pre_eq_sum_cellMoments]
 
 /-- **Identification of `E[Y^ā]`**: on the class of models with nonnegative weights summing to
 `1` that satisfy consistency, positivity and static sequential exchangeability for the plan
 `ā`, the counterfactual mean is a function of the observed joint law (`ObsModel.observedLaw`)
-(`IdentifiedOn`, Pearl 2009, Definition 3.2.3), namely the g-formula (`gFormulaOfLaw`). -/
+(`IdentifiedOn`, Pearl 2009, Definition 3.2.3), namely the g-formula, which factors through
+the cell moments of that law (`gFormulaOfMoments`). -/
 theorem identifiedOn_expectation_Ycf [Fintype Ω] [Finite 𝓛] [Finite 𝓐] (a : Fin (K + 1) → 𝓐) :
     IdentifiedOn {M : POModel Ω 𝓛 𝓐 K | (∀ ω, 0 ≤ M.p ω) ∧ ∑ ω, M.p ω = 1 ∧ M.Consistent a ∧
         M.Positive a ∧ M.SeqExch a}
       (fun M => M.toObsModel.observedLaw) (fun M => expectation M.p (M.Ycf a)) := by
+  intro M hM M1 hM1 h
   have := Fintype.ofFinite 𝓛
   have := Fintype.ofFinite 𝓐
-  exact IdentifiedOn.of_eq_comp (fun q => gFormulaOfLaw q a) fun M hM =>
-    (expectation_Ycf_eq_gFormula M a hM.1 hM.2.1 hM.2.2.1 hM.2.2.2.1 hM.2.2.2.2).trans
-      (ObsModel.gFormula_eq_gFormulaOfLaw M.toObsModel a)
+  have hcell : M.toObsModel.cellMoments = M1.toObsModel.cellMoments :=
+    ObsModel.cellMoments_eq_of_observedLaw_eq h
+  have e1 := expectation_Ycf_eq_gFormula M a hM.1 hM.2.1 hM.2.2.1 hM.2.2.2.1 hM.2.2.2.2
+  have e2 := expectation_Ycf_eq_gFormula M1 a hM1.1 hM1.2.1 hM1.2.2.1 hM1.2.2.2.1 hM1.2.2.2.2
+  have g1 := ObsModel.gFormula_eq_gFormulaOfMoments M.toObsModel a
+  have g2 := ObsModel.gFormula_eq_gFormulaOfMoments M1.toObsModel a
+  show expectation M.p (M.Ycf a) = expectation M1.p (M1.Ycf a)
+  rw [e1, e2, g1, g2, hcell]
 
 /-! ### Positivity cannot be dropped -/
 
