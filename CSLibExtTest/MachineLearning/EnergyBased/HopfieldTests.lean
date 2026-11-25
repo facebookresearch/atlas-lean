@@ -54,8 +54,8 @@ private theorem unfair_stutters : step pairWeights 0 0 unfairStart = unfairStart
   simp [step, localField, Finset.sum_erase_eq_sub (mem_univ _), Fin.sum_univ_succ, pairWeights,
     unfairStart]
 
-example : OffDiagSymmetric pairWeights := by
-  intro i j hij
+example : Matrix.IsSymm pairWeights := by
+  refine Matrix.IsSymm.ext fun i j => ?_
   fin_cases i <;> fin_cases j <;> rfl
 
 example : ¬ Fair (fun _ => (0 : Fin 2)) := by
@@ -82,8 +82,8 @@ private def roundRobin (k : ℕ) : Fin 3 := ⟨k % 3, Nat.mod_lt k (by decide)�
 private noncomputable def trace : ℕ → Fin 3 → Bool :=
   trajectory traceWeights 0 roundRobin ![true, false, true]
 
-example : OffDiagSymmetric traceWeights := by
-  intro i j hij
+example : Matrix.IsSymm traceWeights := by
+  refine Matrix.IsSymm.ext fun i j => ?_
   fin_cases i <;> fin_cases j <;> rfl
 
 example : Fair roundRobin := by

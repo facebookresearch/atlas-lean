@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Probability.IdentDistrib
+public import Mathlib.LinearAlgebra.Matrix.Symmetric
 import Mathlib.Probability.BorelCantelli
 import Mathlib.Data.Set.Card
 import Lean.Elab.Tactic.Omega
@@ -25,8 +26,9 @@ Eq. [1], with ties retaining the current bit. The zero-threshold energy is Eq. [
 The energy with a threshold term extends that formula. The random model uses discrete
 independent attempts with a common law assigning positive mass to every neuron.
 
-Every energy, descent and convergence theorem below assumes that the weights are symmetric off
-the diagonal (`OffDiagSymmetric T`), as Hopfield's convergence argument requires.
+Every energy, descent and convergence theorem below assumes that the weight matrix is symmetric
+(`Matrix.IsSymm T`, i.e. `T j i = T i j` for all neurons `i`, `j`), as Hopfield's convergence
+argument requires. Diagonal entries never enter the dynamics or the energy.
 
 Prior formalization: P. Cipollina, M. Karatarakis and F. Wiedijk, "Formalized Hopfield Networks
 and Boltzmann Machines", arXiv:2512.07766 (LPAR-26), prove convergence under fair schedules for
@@ -40,10 +42,6 @@ open scoped BigOperators ENat
 namespace Cslib.MachineLearning.Hopfield
 
 open MathlibExt.GameTheory.PotentialGame
-
-/-- The weights agree across each pair of distinct neurons. -/
-def OffDiagSymmetric {N : ℕ} (T : Fin N → Fin N → ℝ) : Prop :=
-  ∀ i j, i ≠ j → T i j = T j i
 
 /-- The input to neuron `i` from the other neurons. A Boolean contributes its 0/1 value. -/
 noncomputable def localField {N : ℕ} (T : Fin N → Fin N → ℝ)
@@ -124,12 +122,12 @@ private theorem cost_update {N : ℕ} (T : Fin N → Fin N → ℝ) (U : Fin N �
       -(a.toNat : ℝ) * (localField T v i - U i) := by
   simp [cost, localField_update]
 
-/-- **Hopfield's Eq. [8]** for a unilateral change. Let `T` be a weight matrix that is symmetric off
-the diagonal (`OffDiagSymmetric T`). Then for every state `v`, neuron `i` and bit `a`, setting
-neuron `i` to `a` changes the zero-threshold energy by
+/-- **Hopfield's Eq. [8]** for a unilateral change. Let `T` be a symmetric weight matrix
+(`Matrix.IsSymm T`). Then for every state `v`, neuron `i` and bit `a`, setting neuron `i` to `a`
+changes the zero-threshold energy by
 `energy T (update v i a) - energy T v = -(a - vᵢ) · localField T v i`, with bits read as 0/1. -/
 theorem energy_update {N : ℕ} {T : Fin N → Fin N → ℝ}
-    (hT : OffDiagSymmetric T) (v : Fin N → Bool) (i : Fin N) (a : Bool) :
+    (hT : Matrix.IsSymm T) (v : Fin N → Bool) (i : Fin N) (a : Bool) :
     energy T (Function.update v i a) - energy T v =
       -((a.toNat : ℝ) - (v i).toNat) * localField T v i := by
   classical
@@ -149,7 +147,7 @@ theorem energy_update {N : ℕ} {T : Fin N → Fin N → ℝ}
     simp only [f, ← sum_sub_distrib, Function.update_of_ne hji]
     rw [sum_eq_single i]
     · simp only [Function.update_self]
-      rw [hT j i hji]
+      rw [hT.apply i j]
       dsimp [d]
       ring
     · intro k hk hki
@@ -170,13 +168,12 @@ theorem energy_update {N : ℕ} {T : Fin N → Fin N → ℝ}
     -(1 / 2 : ℝ) * (∑ j, f v j) = -d * localField T v i
   linarith
 
-/-- **The one-coordinate energy identity with thresholds.** Let `T` be a weight matrix that is
-symmetric off the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then for every state `v`,
-neuron `i` and bit `a`, the difference
-`energyWithThreshold T U (update v i a) - energyWithThreshold T U v` equals
+/-- **The one-coordinate energy identity with thresholds.** Let `T` be a symmetric weight matrix
+(`Matrix.IsSymm T`) and `U` any thresholds. Then for every state `v`, neuron `i` and bit `a`, the
+difference `energyWithThreshold T U (update v i a) - energyWithThreshold T U v` equals
 `-(a - vᵢ) · (localField T v i - Uᵢ)`, with bits read as 0/1. -/
 theorem energyWithThreshold_update {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T)
+    (hT : Matrix.IsSymm T)
     (v : Fin N → Bool) (i : Fin N) (a : Bool) :
     energyWithThreshold T U (Function.update v i a) - energyWithThreshold T U v =
       -((a.toNat : ℝ) - (v i).toNat) * (localField T v i - U i) := by
@@ -193,12 +190,12 @@ theorem energyWithThreshold_update {N : ℕ} {T : Fin N → Fin N → ℝ} {U : 
   unfold energyWithThreshold
   linarith
 
-/-- **The threshold energy is an exact potential.** Let `T` be a weight matrix that is symmetric off
-the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then `energyWithThreshold T U` is an
-exact potential for the neuron costs `cost T U`: every unilateral deviation changes the deviating
-neuron's cost and the energy by the same amount. -/
+/-- **The threshold energy is an exact potential.** Let `T` be a symmetric weight matrix
+(`Matrix.IsSymm T`) and `U` any thresholds. Then `energyWithThreshold T U` is an exact potential for
+the neuron costs `cost T U`: every unilateral deviation changes the deviating neuron's cost and the
+energy by the same amount. -/
 theorem isExactPotential_energyWithThreshold {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T) :
+    (hT : Matrix.IsSymm T) :
     IsExactPotential (S := fun _ : Fin N => Bool) (cost T U) (energyWithThreshold T U) := by
   intro v i a
   rw [energyWithThreshold_update hT, cost_update]
@@ -261,28 +258,28 @@ theorem stable_iff_isPureNash {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N
     rw [← hj] at this
     exact (not_lt_of_ge this) hlt
 
-/-- **Energy descent with thresholds.** Let `T` be a weight matrix that is symmetric off the
-diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then for every neuron `i` and state `v`, if
-the update of neuron `i` changes the state (`step T U i v ≠ v`), it strictly decreases the threshold
-energy: `energyWithThreshold T U (step T U i v) < energyWithThreshold T U v`. -/
+/-- **Energy descent with thresholds.** Let `T` be a symmetric weight matrix (`Matrix.IsSymm T`) and
+`U` any thresholds. Then for every neuron `i` and state `v`, if the update of neuron `i` changes the
+state (`step T U i v ≠ v`), it strictly decreases the threshold energy:
+`energyWithThreshold T U (step T U i v) < energyWithThreshold T U v`. -/
 theorem energyWithThreshold_step_lt {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T) {i : Fin N}
+    (hT : Matrix.IsSymm T) {i : Fin N}
     {v : Fin N → Bool} (h : step T U i v ≠ v) :
     energyWithThreshold T U (step T U i v) < energyWithThreshold T U v := by
   exact (isExactPotential_energyWithThreshold hT).lt_of_improvingMove
     (improvingMove_of_step_ne h)
 
-/-- **Energy descent at zero threshold** (Hopfield 1982, Eq. [7]–[8]). Let `T` be a weight matrix
-that is symmetric off the diagonal (`OffDiagSymmetric T`). Then for every neuron `i` and state `v`,
-if the zero-threshold update of neuron `i` changes the state (`step T 0 i v ≠ v`), it strictly
-decreases the energy: `energy T (step T 0 i v) < energy T v`. -/
+/-- **Energy descent at zero threshold** (Hopfield 1982, Eq. [7]–[8]). Let `T` be a symmetric weight
+matrix (`Matrix.IsSymm T`). Then for every neuron `i` and state `v`, if the zero-threshold update of
+neuron `i` changes the state (`step T 0 i v ≠ v`), it strictly decreases the energy:
+`energy T (step T 0 i v) < energy T v`. -/
 theorem energy_step_lt {N : ℕ} {T : Fin N → Fin N → ℝ}
-    (hT : OffDiagSymmetric T) {i : Fin N} {v : Fin N → Bool}
+    (hT : Matrix.IsSymm T) {i : Fin N} {v : Fin N → Bool}
     (h : step T 0 i v ≠ v) : energy T (step T 0 i v) < energy T v := by
   simpa using energyWithThreshold_step_lt hT h
 
 private theorem trajectory_energy_antitone {N : ℕ} {T : Fin N → Fin N → ℝ}
-    {U : Fin N → ℝ} (hT : OffDiagSymmetric T) (σ : ℕ → Fin N)
+    {U : Fin N → ℝ} (hT : Matrix.IsSymm T) (σ : ℕ → Fin N)
     (v₀ : Fin N → Bool) :
     Antitone (fun k => energyWithThreshold T U (trajectory T U σ v₀ k)) := by
   apply antitone_nat_of_succ_le
@@ -293,7 +290,7 @@ private theorem trajectory_energy_antitone {N : ℕ} {T : Fin N → Fin N → �
   · exact (energyWithThreshold_step_lt hT h).le
 
 private theorem trajectory_energy_lt_of_change {N : ℕ} {T : Fin N → Fin N → ℝ}
-    {U : Fin N → ℝ} (hT : OffDiagSymmetric T) (σ : ℕ → Fin N)
+    {U : Fin N → ℝ} (hT : Matrix.IsSymm T) (σ : ℕ → Fin N)
     (v₀ : Fin N → Bool) {k n : ℕ} (hk : k ∈ changeTimes T U σ v₀) (hn : n ≤ k) :
     energyWithThreshold T U (trajectory T U σ v₀ (k + 1)) <
       energyWithThreshold T U (trajectory T U σ v₀ n) := by
@@ -302,12 +299,12 @@ private theorem trajectory_energy_lt_of_change {N : ℕ} {T : Fin N → Fin N �
     energyWithThreshold_step_lt hT hk
   exact hlt.trans_le (trajectory_energy_antitone hT σ v₀ hn)
 
-/-- **At most `2 ^ N - 1` changes.** Let `T` be a weight matrix that is symmetric off the diagonal
-(`OffDiagSymmetric T`) and `U` any thresholds. Then for every schedule `σ` and initial state `v₀`,
-the set of attempt indices at which the state changes has at most `2 ^ N - 1` elements:
+/-- **At most `2 ^ N - 1` changes.** Let `T` be a symmetric weight matrix (`Matrix.IsSymm T`) and
+`U` any thresholds. Then for every schedule `σ` and initial state `v₀`, the set of attempt indices
+at which the state changes has at most `2 ^ N - 1` elements:
 `(changeTimes T U σ v₀).encard ≤ 2 ^ N - 1`. -/
 theorem encard_changeTimes_le {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T) (σ : ℕ → Fin N) (v₀ : Fin N → Bool) :
+    (hT : Matrix.IsSymm T) (σ : ℕ → Fin N) (v₀ : Fin N → Bool) :
     (changeTimes T U σ v₀).encard ≤ ((2 ^ N - 1 : ℕ) : ℕ∞) := by
   classical
   let f : ℕ → (Fin N → Bool) := fun k => trajectory T U σ v₀ (k + 1)
@@ -340,12 +337,11 @@ theorem encard_changeTimes_le {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N
       rw [Set.encard_coe_eq_coe_finsetCard, card_erase_of_mem (mem_univ v₀), card_univ]
       simp
 
-/-- **Eventually constant trajectories.** Let `T` be a weight matrix that is symmetric off the
-diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then for every schedule `σ` and initial
-state `v₀` there is `K` such that `trajectory T U σ v₀ k = trajectory T U σ v₀ K` for every `k ≥ K`.
--/
+/-- **Eventually constant trajectories.** Let `T` be a symmetric weight matrix (`Matrix.IsSymm T`)
+and `U` any thresholds. Then for every schedule `σ` and initial state `v₀` there is `K` such that
+`trajectory T U σ v₀ k = trajectory T U σ v₀ K` for every `k ≥ K`. -/
 theorem exists_constant_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T) (σ : ℕ → Fin N) (v₀ : Fin N → Bool) :
+    (hT : Matrix.IsSymm T) (σ : ℕ → Fin N) (v₀ : Fin N → Bool) :
     ∃ K, ∀ k ≥ K, trajectory T U σ v₀ k = trajectory T U σ v₀ K := by
   have hf := Set.finite_of_encard_le_coe (encard_changeTimes_le (U := U) hT σ v₀)
   obtain ⟨B, hB⟩ := hf.bddAbove
@@ -362,13 +358,12 @@ theorem exists_constant_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N 
       not_not.mp hnot
     exact he.trans ih
 
-/-- **Convergence under a fair schedule.** Let `T` be a weight matrix that is symmetric off the
-diagonal (`OffDiagSymmetric T`) and `U` any thresholds, and let `σ` be a fair schedule (every neuron
-is attempted arbitrarily late, `Fair σ`). Then for every initial state `v₀` there is `K` such that
-`trajectory T U σ v₀ K` is stable and `trajectory T U σ v₀ k = trajectory T U σ v₀ K` for every
-`k ≥ K`. -/
+/-- **Convergence under a fair schedule.** Let `T` be a symmetric weight matrix (`Matrix.IsSymm T`)
+and `U` any thresholds, and let `σ` be a fair schedule (every neuron is attempted arbitrarily late,
+`Fair σ`). Then for every initial state `v₀` there is `K` such that `trajectory T U σ v₀ K` is
+stable and `trajectory T U σ v₀ k = trajectory T U σ v₀ K` for every `k ≥ K`. -/
 theorem exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T) {σ : ℕ → Fin N}
+    (hT : Matrix.IsSymm T) {σ : ℕ → Fin N}
     (hσ : Fair σ) (v₀ : Fin N → Bool) :
     ∃ K, Stable T U (trajectory T U σ v₀ K) ∧
       ∀ k ≥ K, trajectory T U σ v₀ k = trajectory T U σ v₀ K := by
@@ -380,24 +375,23 @@ theorem exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N �
   rw [hK k hk, hK (k + 1) (by omega), hi] at hs
   exact hs.symm
 
-/-- **Convergence under a fair schedule at zero threshold** (Hopfield 1982). Let `T` be a weight
-matrix that is symmetric off the diagonal (`OffDiagSymmetric T`), and let `σ` be a fair schedule
-(`Fair σ`). Then for every initial state `v₀` there is `K` such that `trajectory T 0 σ v₀ K` is
-stable for the zero-threshold dynamics and `trajectory T 0 σ v₀ k = trajectory T 0 σ v₀ K` for every
-`k ≥ K`. -/
+/-- **Convergence under a fair schedule at zero threshold** (Hopfield 1982). Let `T` be a symmetric
+weight matrix (`Matrix.IsSymm T`), and let `σ` be a fair schedule (`Fair σ`). Then for every initial
+state `v₀` there is `K` such that `trajectory T 0 σ v₀ K` is stable for the zero-threshold dynamics
+and `trajectory T 0 σ v₀ k = trajectory T 0 σ v₀ K` for every `k ≥ K`. -/
 theorem exists_stable_tail_zero {N : ℕ} {T : Fin N → Fin N → ℝ}
-    (hT : OffDiagSymmetric T) {σ : ℕ → Fin N}
+    (hT : Matrix.IsSymm T) {σ : ℕ → Fin N}
     (hσ : Fair σ) (v₀ : Fin N → Bool) :
     ∃ K, Stable T 0 (trajectory T 0 σ v₀ K) ∧
       ∀ k ≥ K, trajectory T 0 σ v₀ k = trajectory T 0 σ v₀ K := by
   exact exists_stable_tail hT hσ v₀
 
-/-- **Stable states are single-flip local minima.** Let `T` be a weight matrix that is symmetric off
-the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then a state `v` is stable if and only
-if, for every neuron `i`, flipping bit `i` does not decrease the threshold energy:
+/-- **Stable states are single-flip local minima.** Let `T` be a symmetric weight matrix
+(`Matrix.IsSymm T`) and `U` any thresholds. Then a state `v` is stable if and only if, for every
+neuron `i`, flipping bit `i` does not decrease the threshold energy:
 `energyWithThreshold T U v ≤ energyWithThreshold T U (update v i (!vᵢ))`. -/
 theorem stable_iff_energyWithThreshold_le_flip {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
-    (hT : OffDiagSymmetric T) (v : Fin N → Bool) :
+    (hT : Matrix.IsSymm T) (v : Fin N → Bool) :
     Stable T U v ↔
       ∀ i, energyWithThreshold T U v ≤ energyWithThreshold T U (Function.update v i (!v i)) := by
   classical
@@ -418,12 +412,12 @@ theorem stable_iff_energyWithThreshold_le_flip {N : ℕ} {T : Fin N → Fin N �
       rw [ha'] at hc
       linarith
 
-/-- **Stable states are single-flip local minima at zero threshold** (Eq. [7]). Let `T` be a weight
-matrix that is symmetric off the diagonal (`OffDiagSymmetric T`). Then a state `v` is stable for the
-zero-threshold dynamics if and only if, for every neuron `i`, flipping bit `i` does not decrease the
-energy: `energy T v ≤ energy T (update v i (!vᵢ))`. -/
+/-- **Stable states are single-flip local minima at zero threshold** (Eq. [7]). Let `T` be a
+symmetric weight matrix (`Matrix.IsSymm T`). Then a state `v` is stable for the zero-threshold
+dynamics if and only if, for every neuron `i`, flipping bit `i` does not decrease the energy:
+`energy T v ≤ energy T (update v i (!vᵢ))`. -/
 theorem stable_iff_energy_le_flip {N : ℕ} {T : Fin N → Fin N → ℝ}
-    (hT : OffDiagSymmetric T) (v : Fin N → Bool) :
+    (hT : Matrix.IsSymm T) (v : Fin N → Bool) :
     Stable T 0 v ↔ ∀ i, energy T v ≤ energy T (Function.update v i (!v i)) := by
   simpa using stable_iff_energyWithThreshold_le_flip (U := 0) hT v
 
@@ -475,15 +469,15 @@ theorem ae_fair {N : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
       s, Set.mem_ofPred_eq] using hω
   exact ae_all_iff.2 hi
 
-/-- **Almost-sure convergence under random schedules.** Let `T` be a weight matrix that is symmetric
-off the diagonal (`OffDiagSymmetric T`) and `U` any thresholds, let `μ` be a probability measure,
-and let the attempts `σ k` be measurable, independent and identically distributed with a common
-full-support law (`IIDFullSupport μ σ`). Then for every initial state `v₀`, for `μ`-almost every `ω`
-there is `K` such that the trajectory under the schedule `k ↦ σ k ω` is stable at `K` and constant
-from `K` on. -/
+/-- **Almost-sure convergence under random schedules.** Let `T` be a symmetric weight matrix
+(`Matrix.IsSymm T`) and `U` any thresholds, let `μ` be a probability measure, and let the attempts
+`σ k` be measurable, independent and identically distributed with a common full-support law
+(`IIDFullSupport μ σ`). Then for every initial state `v₀`, for `μ`-almost every `ω` there is `K`
+such that the trajectory under the schedule `k ↦ σ k ω` is stable at `K` and constant from `K` on.
+-/
 theorem ae_exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {σ : ℕ → Ω → Fin N}
-    [IsProbabilityMeasure μ] (hT : OffDiagSymmetric T)
+    [IsProbabilityMeasure μ] (hT : Matrix.IsSymm T)
     (hσ : IIDFullSupport μ σ) (v₀ : Fin N → Bool) :
     ∀ᵐ ω ∂μ, ∃ K, Stable T U (trajectory T U (fun k => σ k ω) v₀ K) ∧
       ∀ k ≥ K, trajectory T U (fun n => σ n ω) v₀ k =
@@ -491,15 +485,15 @@ theorem ae_exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N
   filter_upwards [ae_fair hσ] with ω hω
   exact exists_stable_tail hT hω v₀
 
-/-- **Almost-sure convergence under random schedules at zero threshold.** Let `T` be a weight matrix
-that is symmetric off the diagonal (`OffDiagSymmetric T`), let `μ` be a probability measure, and let
-the attempts `σ k` be measurable, independent and identically distributed with a common full-support
-law (`IIDFullSupport μ σ`). Then for every initial state `v₀`, for `μ`-almost every `ω` there is `K`
+/-- **Almost-sure convergence under random schedules at zero threshold.** Let `T` be a symmetric
+weight matrix (`Matrix.IsSymm T`), let `μ` be a probability measure, and let the attempts `σ k` be
+measurable, independent and identically distributed with a common full-support law
+(`IIDFullSupport μ σ`). Then for every initial state `v₀`, for `μ`-almost every `ω` there is `K`
 such that the zero-threshold trajectory under the schedule `k ↦ σ k ω` is stable at `K` and constant
 from `K` on. -/
 theorem ae_exists_stable_tail_zero {N : ℕ} {T : Fin N → Fin N → ℝ}
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {σ : ℕ → Ω → Fin N}
-    [IsProbabilityMeasure μ] (hT : OffDiagSymmetric T)
+    [IsProbabilityMeasure μ] (hT : Matrix.IsSymm T)
     (hσ : IIDFullSupport μ σ) (v₀ : Fin N → Bool) :
     ∀ᵐ ω ∂μ, ∃ K, Stable T 0 (trajectory T 0 (fun k => σ k ω) v₀ K) ∧
       ∀ k ≥ K, trajectory T 0 (fun n => σ n ω) v₀ k =

@@ -1,6 +1,5 @@
 # Hopfield
 
-- [Off Diag Symmetric](off-diag-symmetric.md)
 - [Local Field](local-field.md)
 - [Step](step.md)
 - [Energy](energy.md)

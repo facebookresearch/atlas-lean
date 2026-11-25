@@ -29,8 +29,8 @@ def thresholdStart : Fin 2 → Bool := ![false, true]
 def thresholdAfter : Fin 2 → Bool := ![true, true]
 def thresholdStable : Fin 2 → Bool := ![true, false]
 
-theorem threshold_symmetric : OffDiagSymmetric thresholdWeights := by
-  intro i j hij
+theorem threshold_symmetric : Matrix.IsSymm thresholdWeights := by
+  refine Matrix.IsSymm.ext fun i j => ?_
   fin_cases i <;> fin_cases j <;> rfl
 
 theorem threshold_field : localField thresholdWeights thresholdStart 0 = -1 := by
@@ -122,8 +122,8 @@ def roundRobinThree (k : ℕ) : Fin 3 := ⟨k % 3, Nat.mod_lt k (by decide)⟩
 noncomputable def trace : ℕ → Fin 3 → Bool :=
   trajectory traceWeights 0 roundRobinThree traceStart
 
-theorem trace_symmetric : OffDiagSymmetric traceWeights := by
-  intro i j hij
+theorem trace_symmetric : Matrix.IsSymm traceWeights := by
+  refine Matrix.IsSymm.ext fun i j => ?_
   fin_cases i <;> fin_cases j <;> rfl
 
 theorem roundRobinThree_fair : Fair roundRobinThree := by
@@ -265,9 +265,9 @@ def cycleStates : Fin 17 → Fin 3 → Bool :=
     ![false, false, true], ![true, false, true], ![true, false, true],
     ![true, false, false], ![true, false, false]]
 
-theorem asymmetric_not_symmetric : ¬ OffDiagSymmetric asymmetricWeights := by
+theorem asymmetric_not_symmetric : ¬ Matrix.IsSymm asymmetricWeights := by
   intro h
-  have he := h 0 1 (by decide)
+  have he := h.apply 1 0
   norm_num [asymmetricWeights] at he
 
 theorem cycle_steps (k : Fin 16) :
@@ -324,8 +324,8 @@ noncomputable def pairWeights : Fin 2 → Fin 2 → ℝ := !![0, 1; 1, 0]
 def unfairStart : Fin 2 → Bool := ![true, false]
 def unfairSchedule : ℕ → Fin 2 := fun _ => 0
 
-theorem pair_symmetric : OffDiagSymmetric pairWeights := by
-  intro i j hij
+theorem pair_symmetric : Matrix.IsSymm pairWeights := by
+  refine Matrix.IsSymm.ext fun i j => ?_
   fin_cases i <;> fin_cases j <;> rfl
 
 theorem unfair_not_fair : ¬ Fair unfairSchedule := by
