@@ -97,4 +97,57 @@ junk value `0`, which is why the bound assumes `q < 1`. -/
 example : meanFitness (1 / 10) 1 1 = 0 ∧ selected (1 / 10) 1 1 = 0 := by
   constructor <;> norm_num [meanFitness, selected]
 
+/-! ### Completely recessive selection -/
+
+-- Selection and mutation give a genuinely non-fixed step in the wild-type coordinate.
+example : 1 - diploidStep 0 (3 / 4) (1 / 8) (1 - 3 / 4) = (42 / 61 : ℝ) := by
+  have h := (recessive_mutation_selection_balance (s := 3 / 4) (u := 1 / 8)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)).1 (3 / 4) (by norm_num)
+  have hw := h.2.1.mpr (Or.inl (by norm_num))
+  rw [h.2.2.1 hw]
+  norm_num
+
+-- With `s = 3/4` and `u = 1/12`, `p = 2/3` is the unique interior fixed point.
+example :
+    let IsFixed (p : ℝ) := 0 < meanFitness 0 (3 / 4) (1 - p) ∧
+      diploidStep 0 (3 / 4) (1 / 12) (1 - p) = 1 - p
+    IsFixed (2 / 3) ∧ (∀ p ∈ Set.Ioo (0 : ℝ) 1, IsFixed p → p = 2 / 3) ∧
+      1 - meanFitness 0 (3 / 4) (1 - 2 / 3) = 1 / 12 := by
+  have h := (recessive_mutation_selection_balance (s := 3 / 4) (u := 1 / 12)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)).2.1 (by norm_num)
+  dsimp only at h ⊢
+  rw [show (1 / 12 : ℝ) / (3 / 4) = (1 / 3) ^ 2 by norm_num, Real.sqrt_sq (by norm_num),
+    show (1 - 1 / 3 : ℝ) = 2 / 3 by norm_num] at h
+  exact ⟨h.2.1, h.2.2.1, h.2.2.2.2⟩
+
+-- Below the threshold, the viable all-mutant state is also fixed.
+example : diploidStep 0 (3 / 4) (1 / 12) 1 = 1 := by
+  have h := (recessive_mutation_selection_balance (s := 3 / 4) (u := 1 / 12)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)).1 0 (by norm_num)
+  simpa only [sub_zero] using (h.2.2.2.mpr (Or.inl ⟨rfl, by norm_num⟩)).2
+
+-- The lethal all-mutant state has zero mean fitness; other lethal-model states can survive.
+example : ¬ 0 < meanFitness 0 1 (1 - 0) ∧ 0 < meanFitness 0 1 (1 - 1 / 2) := by
+  have h := (recessive_mutation_selection_balance (s := 1) (u := 1 / 4)
+    (by norm_num) le_rfl (by norm_num) (by norm_num)).1
+  refine ⟨fun hw => ?_, (h (1 / 2) (by norm_num)).2.1.mpr (Or.inr (by norm_num))⟩
+  have hz := (h 0 (by norm_num)).2.1.mp hw
+  norm_num at hz
+
+-- At `u = s`, the quadratic root coincides with the viable all-mutant fixed point.
+example (p : ℝ) (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+    (0 < meanFitness 0 (1 / 2) (1 - p) ∧ diploidStep 0 (1 / 2) (1 / 2) (1 - p) = 1 - p) ↔
+      p = 0 :=
+  (recessive_mutation_selection_balance (s := 1 / 2) (u := 1 / 2)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)).2.2 le_rfl p hp
+
+-- Above the threshold even a viable interior state cannot be fixed.
+example : diploidStep 0 (1 / 4) (1 / 2) (1 - 1 / 2) ≠ 1 - 1 / 2 := by
+  obtain ⟨hstep, _, honly⟩ := recessive_mutation_selection_balance (s := 1 / 4) (u := 1 / 2)
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  intro hfix
+  have hw := (hstep (1 / 2) (by norm_num)).2.1.mpr (Or.inl (by norm_num))
+  have hz := (honly (by norm_num) (1 / 2) (by norm_num)).mp ⟨hw, hfix⟩
+  norm_num at hz
+
 end MathlibExtTest.Biology.PopulationGenetics.MutationSelectionBalance
