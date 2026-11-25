@@ -394,8 +394,8 @@ public theorem maximumNim_not_dvd_mul_sub_of_ne (k n t h i : ℕ)
   -- Over the integers the offset from the multiple `k * (n - 1)` is `h - i`.
   have hmul : (n : ℤ) * ((k : ℤ) - t) - i = (k : ℤ) * ((n : ℤ) - 1) + ((h : ℤ) - i) := by
     have hnt : (n : ℤ) * t = k - h := by omega
-    rw [mul_sub, hnt]
-    ring
+    rw [mul_sub, hnt, mul_sub, mul_one, mul_comm (n : ℤ) (k : ℤ)]
+    omega
   intro hdvd
   have hdvdZ := Int.natCast_dvd_natCast.mpr hdvd
   rw [Nat.cast_sub hik, Nat.cast_mul, Nat.cast_sub htk.le, hmul] at hdvdZ
