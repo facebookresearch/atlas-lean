@@ -78,7 +78,7 @@ private lemma chainStep_square (p : ℤ) : chainStep (p + 1) ≫ chainStep p = 0
   · subst p
     change (0 : V 0 ⟶ V 2) ≫ twiceFirst = 0
     exact CategoryTheory.Limits.zero_comp
-  · have hs : chainStep p = 0 := dif_neg h
+  · have hs : chainStep p = 0 := dite_eq_right h
     rw [hs]
     exact CategoryTheory.Limits.comp_zero
 
@@ -88,7 +88,7 @@ private lemma coefficientStep_square (q : ℤ) :
   · subst q
     change ((2 : ℤ) • 𝟙 (V 1)) ≫ (0 : V 1 ⟶ V 0) = 0
     exact CategoryTheory.Limits.comp_zero
-  · have hs : coefficientStep q = 0 := dif_neg h
+  · have hs : coefficientStep q = 0 := dite_eq_right h
     rw [hs]
     exact CategoryTheory.Limits.zero_comp
 
@@ -442,6 +442,7 @@ example :
         twiceFirst, secondCoordinate, LinearMap.comp_apply, LinearMap.add_apply,
         LinearMap.smul_apply, LinearMap.id_apply, LinearMap.zero_apply,
         Pi.add_apply, Pi.smul_apply, Pi.mul_apply, Pi.neg_apply, smul_eq_mul]
+      rfl
 
 example :
     ((((homCochainComplex P Q).d (-2) (-1)).hom degreeMinusTwo).v
@@ -644,6 +645,7 @@ example :
         ModuleCat.hom_id, ModuleCat.hom_ofHom, secondCoordinate,
         LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
         Pi.smul_apply, Pi.mul_apply, Pi.neg_apply, smul_eq_mul]
+      rfl
 
 private abbrev uctMap : UCT ⟶ UCT :=
   homUniversalCoefficientSequenceMap sourceMap coefficientMap 0
