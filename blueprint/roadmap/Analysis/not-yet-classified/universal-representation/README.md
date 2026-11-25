@@ -1,0 +1,15 @@
+# Universal Representation
+
+- [Normalized State Index](normalized-state-index.md)
+- [State GNSpace](state-gnspace.md)
+- [Universal State GNSpace](universal-state-gnspace.md)
+- [Universal State GNSOperator](universal-state-gnsoperator.md)
+- [Universal State GNSOperator apply](universal-state-gnsoperator-apply.md)
+- [Norm universal State GNSOperator le](norm-universal-state-gnsoperator-le.md)
+- [Universal State GNSRepresentation](universal-state-gnsrepresentation.md)
+- [Universal State GNSRepresentation apply](universal-state-gnsrepresentation-apply.md)
+- [Norm universal State GNSRepresentation le](norm-universal-state-gnsrepresentation-l.md)
+- [Universal State Cyclic Vector](universal-state-cyclic-vector.md)
+- [Norm universal State Cyclic Vector](norm-universal-state-cyclic-vector.md)
+- [Dense universal State Cyclic Vector span](dense-universal-state-cyclic-vector-span.md)
+- [Universal State GNSOperator single](universal-state-gnsoperator-single.md)
