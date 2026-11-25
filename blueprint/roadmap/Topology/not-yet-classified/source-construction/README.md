@@ -1,0 +1,40 @@
+# Source Construction
+
+## From Data
+
+- [Model Category](model-category.md)
+- [Model Category eq original](model-category-eq-original.md)
+- [Generation Data](generation-data.md)
+- [Five classes](five-classes.md)
+- [Is Combinatorial](is-combinatorial.md)
+- [Generation Data families](generation-data-families.md)
+- [Generation Data right classes](generation-data-right-classes.md)
+- [Generation Data left classes](generation-data-left-classes.md)
+- [Generation Data original free families](generation-data-original-free-families.md)
+- [Cofibrant Factorization Data](cofibrant-factorization-data.md)
+- [Fibrant Factorization Data](fibrant-factorization-data.md)
+- [Cofibrant Factorization Data native fields](cofibrant-factorization-data-native-fiel.md)
+- [Fibrant Factorization Data native fields](fibrant-factorization-data-native-fields.md)
+- [Cofibrant Factorization Data small middle](cofibrant-factorization-data-small-middl.md)
+- [Fibrant Factorization Data small middle](fibrant-factorization-data-small-middle.md)
+- [Cofibrant Factorization Data small legs](cofibrant-factorization-data-small-legs.md)
+- [Fibrant Factorization Data small legs](fibrant-factorization-data-small-legs.md)
+- [Cofibrant Factorization Data right weak](cofibrant-factorization-data-right-weak.md)
+- [Fibrant Factorization Data left weak](fibrant-factorization-data-left-weak.md)
+
+## Source Construction
+
+- [Cardinal](cardinal.md)
+- [Cardinal regular](cardinal-regular.md)
+- [Order Bot](order-bot.md)
+- [Coefficient Presentable](coefficient-presentable.md)
+- [Base Data](base-data.md)
+- [Essential Index](essential-index.md)
+- [Model Category](model-category-2.md)
+- [Model Category eq original](model-category-eq-original-2.md)
+- [Generation Data](generation-data-2.md)
+- [Is Combinatorial](is-combinatorial-2.md)
+- [Five classes](five-classes-2.md)
+- [Cofibrant Factorization Data](cofibrant-factorization-data-2.md)
+- [Fibrant Factorization Data](fibrant-factorization-data-2.md)
+- [Exists Model Category](exists-model-category.md)
