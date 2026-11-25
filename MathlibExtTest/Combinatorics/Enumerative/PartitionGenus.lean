@@ -42,4 +42,29 @@ example : setPartitionGenus mixed = 1 := by
   have hsize : #{x | mixed.SameCycle 1 x} = 3 := by decide
   omega
 
+-- Two pairs on four points: only the crossing pairing `{0, 2}, {1, 3}` has genus one, and the
+-- formula is halved because both blocks have size two.
+example : partitionGenusCount 4 {2, 2} 1 = 1 := by
+  have h := partitionGenusCount_twoBlocks 4 2 1 le_rfl (by norm_num)
+  norm_num at h
+  exact_mod_cast h
+
+-- Blocks of sizes two and three on five points: five partitions have genus one ...
+example : partitionGenusCount 5 {2, 3} 1 = 5 := by
+  have h := partitionGenusCount_twoBlocks 5 2 1 le_rfl (by norm_num)
+  norm_num at h
+  exact_mod_cast h
+
+-- ... and none has genus two, since a block of size two has at most two runs.
+example : partitionGenusCount 5 {2, 3} 2 = 0 := by
+  have h := partitionGenusCount_twoBlocks 5 2 2 le_rfl (by norm_num)
+  norm_num at h
+  exact_mod_cast h
+
+-- A block of size three and a singleton on four points: the four such partitions have genus zero.
+example : partitionGenusCount 4 {3, 1} 0 = 4 := by
+  have h := partitionGenusCount_twoBlocks 4 3 0 (by norm_num) (by norm_num)
+  norm_num at h
+  exact_mod_cast h
+
 end MathlibExtTest.Combinatorics.Enumerative.PartitionGenus

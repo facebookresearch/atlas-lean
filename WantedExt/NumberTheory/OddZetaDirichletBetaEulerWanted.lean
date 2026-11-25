@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.Analysis.Ramanujan.Part1Ch7DirichletBeta
+public import MathlibExt.NumberTheory.OddZetaDirichletBetaEuler
 
 namespace MetaMathlibExt
 
@@ -21,20 +22,6 @@ namespace MetaMathlibExt
 
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.DirichletBeta
-
-/-- **Zeta series over odd denominators.** Let $\zeta$ be the Riemann zeta function. For every
-natural number $k \ge 2$, the series $\sum_{n \ge 0} 1/(2n+1)^k$ converges in $\mathbb{C}$ and
-$$\sum_{n=0}^{\infty} \frac{1}{(2n+1)^k} = \Bigl(1 - \frac{1}{2^k}\Bigr) \zeta(k).$$
-
-The source writes this as $\sum_{n \ge 1} 1/(2n-1)^k = (1 - 2^{-k}) \zeta(k)$ for integers
-$k > 1$.
-
-Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known Identity
-and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler
-Numbers*, INTEGERS 25 (2025), Article A50, Proposition 2, Equation (11)
-(`integers-2025-A50-prop-2`), citing its reference [20]. -/
-public theorem_wanted hasSum_one_div_odd_pow (k : ℕ) (hk : 2 ≤ k) :
-    HasSum (fun n : ℕ => 1 / (2 * (n : ℂ) + 1) ^ k) ((1 - 1 / 2 ^ k) * riemannZeta k)
 
 /-- **Dirichlet beta at odd positive integers.** Let $\beta$ be the Dirichlet $L$-function of the
 nontrivial character modulo $4$, which for $\operatorname{Re} s > 1$ is the series

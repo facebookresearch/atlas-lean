@@ -10,13 +10,24 @@ module
 
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import Mathlib.Logic.Equiv.Fin.Rotate
+import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
+import Mathlib.Combinatorics.Enumerative.DoubleCounting
 import MathlibExt.Combinatorics.Enumerative.Stirling
 
 /-!
 # Genus of set partitions
 
 Increasing-cycle permutations encode set partitions. For partitions into two blocks,
-`twoBlock_oneFace_and_genus` counts the nontrivial face cycles and determines the genus.
+`twoBlock_oneFace_and_genus` counts the nontrivial face cycles and determines the genus, and
+`partitionGenusCount_twoBlocks` counts the partitions into two blocks of given sizes and genus.
+
+## Implementation notes
+
+For `partitionGenusCount_twoBlocks`: a nonempty proper subset of `Fin n` and its complement
+are the cycles of exactly one increasing-cycle permutation, and by `twoBlock_oneFace_and_genus`
+its genus is one less than the number of runs of the subset, a run being a maximal set of
+cyclically consecutive elements. The subsets with `p` elements and `r` runs are counted by
+marking the first element of a run, rotating it to `0` and counting compositions.
 -/
 
 namespace MetaMathlibExt
@@ -369,6 +380,677 @@ theorem twoBlock_oneFace_and_genus {n : ℕ} (τ : Perm (Fin n))
     1 + #{x | B x ∧ φ x = x} = #(univ.filter B)
   rw [h2, Perm.parts_partition, Multiset.card_add, Multiset.card_replicate, Fintype.card_fin, hone]
   omega
+
+namespace partitionGenusCount_twoBlocks
+
+/-! ### Subsets of a cycle counted by their runs -/
+
+/-- The number of compositions of `m` into `k` positive parts. -/
+private def compCount : ℕ → ℕ → ℕ
+  | 0, 0 => 1
+  | 0, _ + 1 => 0
+  | _ + 1, 0 => 0
+  | m + 1, k + 1 => m.choose k
+
+private theorem compCount_succ_succ (m k : ℕ) :
+    compCount (m + 1) (k + 1) = compCount m (k + 1) + compCount m k := by
+  rcases m with _ | m <;> rcases k with _ | k <;>
+    simp [compCount, Nat.choose_succ_succ', add_comm]
+
+/-- The number of maximal runs of consecutive numbers in a finite set of natural numbers. -/
+private def linRuns (C : Finset ℕ) : ℕ := #{x ∈ C | x = 0 ∨ x - 1 ∉ C}
+
+private theorem linRuns_insert {n : ℕ} {C : Finset ℕ} (hC : C ⊆ range (n + 1)) :
+    linRuns (insert (n + 1) C) = linRuns C + if n ∈ C then 0 else 1 := by
+  have hn : n + 1 ∉ C := fun h => by simpa using hC h
+  have hfilter : {x ∈ C | x = 0 ∨ x - 1 ∉ insert (n + 1) C} = {x ∈ C | x = 0 ∨ x - 1 ∉ C} := by
+    refine filter_congr fun x hx => ?_
+    have hx' := mem_range.mp (hC hx)
+    have : x - 1 ≠ n + 1 := by omega
+    simp [this]
+  unfold linRuns
+  rw [filter_insert, hfilter]
+  by_cases h : n ∈ C
+  · simp [h]
+  · simp [h, card_insert_of_notMem (show n + 1 ∉ {x ∈ C | x = 0 ∨ x - 1 ∉ C} by simp [hn])]
+
+/-- The number of subsets of `{0, …, n}` that contain `0`, have `p` elements and `r` runs, and
+contain `n` exactly when `b` holds. -/
+private def linCount (n p r : ℕ) (b : Bool) : ℕ :=
+  #{C ∈ (range (n + 1)).powerset | 0 ∈ C ∧ (n ∈ C ↔ b = true) ∧ #C = p ∧ linRuns C = r}
+
+private theorem linCount_succ_false (n p r : ℕ) :
+    linCount (n + 1) p r false = linCount n p r true + linCount n p r false := by
+  simp only [linCount, card_filter]
+  rw [range_add_one (n := n + 1), sum_powerset_insert (by simp), ← sum_add_distrib,
+    ← sum_add_distrib]
+  refine sum_congr rfl fun t ht => ?_
+  have hn : n + 1 ∉ t := fun h => by simpa using mem_powerset.1 ht h
+  by_cases h : n ∈ t <;> simp [h, hn]
+
+private theorem linCount_succ_true (n p r : ℕ) :
+    linCount (n + 1) (p + 1) (r + 1) true = linCount n p (r + 1) true + linCount n p r false := by
+  simp only [linCount, card_filter]
+  rw [range_add_one (n := n + 1), sum_powerset_insert (by simp), ← sum_add_distrib,
+    ← sum_add_distrib]
+  refine sum_congr rfl fun t ht => ?_
+  have ht' := mem_powerset.1 ht
+  have hn : n + 1 ∉ t := fun h => by simpa using ht' h
+  by_cases h : n ∈ t <;> simp [linRuns_insert ht', card_insert_of_notMem hn, h, hn]
+
+private theorem linCount_zero_runs (n p : ℕ) (b : Bool) : linCount n p 0 b = 0 := by
+  refine card_eq_zero.mpr (filter_eq_empty_iff.mpr fun C _ h => ?_)
+  have h0 : 0 ∈ {x ∈ C | x = 0 ∨ x - 1 ∉ C} := mem_filter.mpr ⟨h.1, Or.inl rfl⟩
+  exact (card_pos.mpr ⟨0, h0⟩).ne' h.2.2.2
+
+private theorem linCount_zero_left (n r : ℕ) (b : Bool) : linCount n 0 r b = 0 := by
+  refine card_eq_zero.mpr (filter_eq_empty_iff.mpr fun C _ h => ?_)
+  exact (card_pos.mpr ⟨0, h.1⟩).ne' h.2.2.1
+
+private theorem linCount_eq_zero_of_lt {n p : ℕ} (h : n + 1 < p) (r : ℕ) (b : Bool) :
+    linCount n p r b = 0 := by
+  refine card_eq_zero.mpr (filter_eq_empty_iff.mpr fun C hC hP => ?_)
+  have hle := card_le_card (mem_powerset.1 hC)
+  rw [card_range] at hle
+  have := hP.2.2.1
+  omega
+
+private theorem linCount_eq (n : ℕ) : ∀ a ≤ n, ∀ k : ℕ,
+    linCount n (a + 1) (k + 1) false = a.choose k * compCount (n - a) (k + 1) ∧
+      linCount n (a + 1) (k + 1) true = a.choose k * compCount (n - a) k := by
+  induction n with
+  | zero =>
+    intro a ha k
+    obtain rfl : a = 0 := by omega
+    refine ⟨?_, ?_⟩
+    · refine (card_eq_zero.mpr (filter_eq_empty_iff.mpr fun C _ h => ?_)).trans
+        (by simp [compCount])
+      exact Bool.false_ne_true (h.2.1.mp h.1)
+    · rcases k with _ | k
+      · decide
+      · refine (card_eq_zero.mpr (filter_eq_empty_iff.mpr fun C hC h => ?_)).trans (by simp)
+        have h1 : linRuns C ≤ 1 :=
+          (card_filter_le _ _).trans (h.2.2.1.le)
+        have := h.2.2.2
+        omega
+  | succ n ih =>
+    intro a ha k
+    refine ⟨?_, ?_⟩
+    · rw [linCount_succ_false]
+      rcases Nat.lt_or_ge n a with h | h
+      · obtain rfl : a = n + 1 := by omega
+        rw [linCount_eq_zero_of_lt (by omega), linCount_eq_zero_of_lt (by omega)]
+        simp [compCount]
+      · rw [(ih a h k).1, (ih a h k).2, ← mul_add, show n + 1 - a = n - a + 1 by omega,
+          compCount_succ_succ, add_comm (compCount (n - a) k)]
+    · rcases a with _ | a
+      · rw [linCount_succ_true, linCount_zero_left, linCount_zero_left]
+        rcases k with _ | k <;> simp [compCount]
+      · rw [linCount_succ_true, show n + 1 - (a + 1) = n - a by omega]
+        rcases k with _ | k
+        · rw [linCount_zero_runs, add_zero, (ih a (by omega) 0).2]
+          simp
+        · rw [(ih a (by omega) (k + 1)).2, (ih a (by omega) k).1, Nat.choose_succ_succ' a k]
+          ring
+
+/-- Translating a subset of `Fin (m + 1)` preserves its number of cyclic runs. -/
+private theorem card_runs_map {m : ℕ} (e : Fin (m + 1) ≃ Fin (m + 1))
+    (he : ∀ x, e (x - 1) = e x - 1) (A : Finset (Fin (m + 1))) :
+    #{x ∈ A.map e.toEmbedding | x - 1 ∉ A.map e.toEmbedding} = #{x ∈ A | x - 1 ∉ A} := by
+  rw [filter_map, card_map]
+  congr 1
+  refine filter_congr fun x _ => ?_
+  simp [← he]
+
+private theorem card_runs_start {m : ℕ} (p r : ℕ) (j : Fin (m + 1)) :
+    #{A : Finset (Fin (m + 1)) | (#A = p ∧ #{x ∈ A | x - 1 ∉ A} = r) ∧ j ∈ A ∧ j - 1 ∉ A} =
+      #{A : Finset (Fin (m + 1)) | (#A = p ∧ #{x ∈ A | x - 1 ∉ A} = r) ∧ 0 ∈ A ∧ -1 ∉ A} := by
+  let e : Fin (m + 1) ≃ Fin (m + 1) := Equiv.addRight j
+  symm
+  rw [← card_map e.finsetCongr.toEmbedding]
+  congr 1
+  ext B
+  have he (x : Fin (m + 1)) : e.symm (x - 1) = e.symm x - 1 := by
+    simp only [e, Equiv.addRight_symm, Equiv.coe_addRight]
+    exact (add_sub_right_comm _ _ _).symm
+  rw [mem_map_equiv, mem_filter, mem_filter, Equiv.finsetCongr_symm, Equiv.finsetCongr_apply,
+    card_map, card_runs_map e.symm he]
+  simp [e, neg_add_eq_sub]
+
+private theorem card_runs_linear (m p r : ℕ) :
+    #{A : Finset (Fin (m + 1)) | (#A = p ∧ #{x ∈ A | x - 1 ∉ A} = r) ∧ 0 ∈ A ∧ -1 ∉ A} =
+      linCount m p r false := by
+  have hmem (A : Finset (Fin (m + 1))) (y : Fin (m + 1)) :
+      (y : ℕ) ∈ A.map Fin.valEmbedding ↔ y ∈ A := mem_map' Fin.valEmbedding
+  have key (A : Finset (Fin (m + 1))) :
+      ((#A = p ∧ #{x ∈ A | x - 1 ∉ A} = r) ∧ 0 ∈ A ∧ -1 ∉ A) ↔
+        (0 ∈ A.map Fin.valEmbedding ∧ (m ∈ A.map Fin.valEmbedding ↔ false = true) ∧
+          #(A.map Fin.valEmbedding) = p ∧ linRuns (A.map Fin.valEmbedding) = r) := by
+    have h0 : 0 ∈ A.map Fin.valEmbedding ↔ (0 : Fin (m + 1)) ∈ A := hmem A 0
+    have hm : m ∈ A.map Fin.valEmbedding ↔ (-1 : Fin (m + 1)) ∈ A := by
+      rw [← hmem A (-1), Fin.coe_neg_one]
+    have hruns (h0A : (0 : Fin (m + 1)) ∈ A) (h1A : (-1 : Fin (m + 1)) ∉ A) :
+        linRuns (A.map Fin.valEmbedding) = #{x ∈ A | x - 1 ∉ A} := by
+      unfold linRuns
+      rw [filter_map, card_map]
+      congr 1
+      refine filter_congr fun x _ => ?_
+      simp only [Function.comp_apply, Fin.valEmbedding_apply]
+      by_cases hx0 : x = 0
+      · subst hx0
+        simp [h1A]
+      · rw [← Fin.val_sub_one_of_ne_zero hx0, hmem]
+        simp [Fin.val_eq_zero_iff, hx0]
+    rw [h0, hm, card_map]
+    constructor
+    · rintro ⟨⟨hp, hr⟩, h0A, h1A⟩
+      exact ⟨h0A, by simpa using h1A, hp, (hruns h0A h1A).trans hr⟩
+    · rintro ⟨h0A, h1A, hp, hr⟩
+      have h1A' : (-1 : Fin (m + 1)) ∉ A := by simpa using h1A
+      exact ⟨⟨hp, (hruns h0A h1A').symm.trans hr⟩, h0A, h1A'⟩
+  unfold linCount
+  refine card_bij (fun A _ => A.map Fin.valEmbedding) (fun A hA => ?_)
+    (fun A _ B _ h => map_injective _ h) (fun C hC => ?_)
+  · rw [mem_filter] at hA ⊢
+    refine ⟨mem_powerset.2 fun y hy => ?_, (key A).1 hA.2⟩
+    obtain ⟨x, _, rfl⟩ := mem_map.1 hy
+    exact mem_range.2 x.isLt
+  · rw [mem_filter, mem_powerset] at hC
+    have hAC : (univ.filter fun x : Fin (m + 1) => (x : ℕ) ∈ C).map Fin.valEmbedding = C := by
+      ext y
+      simp only [mem_map, mem_filter, mem_univ, true_and, Fin.valEmbedding_apply]
+      constructor
+      · rintro ⟨x, hx, rfl⟩
+        exact hx
+      · intro hy
+        exact ⟨⟨y, mem_range.1 (hC.1 hy)⟩, hy, rfl⟩
+    refine ⟨univ.filter fun x : Fin (m + 1) => (x : ℕ) ∈ C,
+      mem_filter.2 ⟨mem_univ _, (key _).2 ?_⟩, hAC⟩
+    rw [hAC]
+    exact hC.2
+
+private theorem card_cyclicRuns (m p r : ℕ) (hp : 0 < p) (hpm : p ≤ m) (hr : 0 < r) :
+    r * #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = r} =
+      (m + 1) * ((p - 1).choose (r - 1) * (m - p).choose (r - 1)) := by
+  obtain ⟨a, rfl⟩ : ∃ a, p = a + 1 := ⟨p - 1, by omega⟩
+  obtain ⟨k, rfl⟩ : ∃ k, r = k + 1 := ⟨r - 1, by omega⟩
+  set S : Finset (Finset (Fin (m + 1))) := {A | #A = a + 1 ∧ #{x ∈ A | x - 1 ∉ A} = k + 1}
+    with hS
+  have h1 (A : Finset (Fin (m + 1))) : #{x ∈ A | x - 1 ∉ A} = #{x | x ∈ A ∧ x - 1 ∉ A} := by
+    congr 1
+    ext x
+    simp
+  have hdouble : ∑ A ∈ S, #{x | x ∈ A ∧ x - 1 ∉ A} =
+      ∑ x : Fin (m + 1), #{A ∈ S | x ∈ A ∧ x - 1 ∉ A} := by
+    simp only [card_filter]
+    exact sum_comm
+  have hsum1 : ∑ A ∈ S, #{x | x ∈ A ∧ x - 1 ∉ A} = #S * (k + 1) :=
+    sum_const_nat fun A hA => by
+      rw [← h1]
+      exact (mem_filter.1 hA).2.2
+  have hsum2 : ∑ x : Fin (m + 1), #{A ∈ S | x ∈ A ∧ x - 1 ∉ A} =
+      (m + 1) * linCount m (a + 1) (k + 1) false := by
+    rw [sum_congr rfl fun x _ => by rw [hS, filter_filter, card_runs_start, card_runs_linear],
+      sum_const, card_univ, Fintype.card_fin, smul_eq_mul]
+  rw [mul_comm, ← hsum1, hdouble, hsum2, (linCount_eq m a (by omega) k).1,
+    show m - a = m - (a + 1) + 1 by omega]
+  simp [compCount]
+
+/-! ### Two-block partitions as subsets -/
+
+variable {n : ℕ}
+
+private theorem nextPoint_mem (s : Finset (Fin n)) (hs : s.Nonempty) (k : ℕ) :
+    nextPoint s hs k ∈ s := by
+  unfold nextPoint
+  split
+  · exact (mem_filter.mp (min'_mem _ _)).1
+  · exact min'_mem _ _
+
+private theorem nextPoint_of_nonempty {s : Finset (Fin n)} (hs : s.Nonempty) {k : ℕ}
+    (h : (s.filter (k ≤ ·.val)).Nonempty) :
+    nextPoint s hs k = (s.filter (k ≤ ·.val)).min' h := by
+  unfold nextPoint
+  rw [dite_eq_left h]
+
+private theorem nextPoint_of_not_nonempty {s : Finset (Fin n)} (hs : s.Nonempty) {k : ℕ}
+    (h : ¬(s.filter (k ≤ ·.val)).Nonempty) : nextPoint s hs k = s.min' hs := by
+  unfold nextPoint
+  rw [dite_eq_right h]
+
+private theorem nextPoint_congr {s t : Finset (Fin n)} (h : s = t) (hs : s.Nonempty)
+    (ht : t.Nonempty) (k : ℕ) : nextPoint s hs k = nextPoint t ht k := by
+  subst h
+  rfl
+
+-- Two increasing-cycle permutations with the same cycles are equal.
+private theorem eq_of_sameCycle_iff {τ τ' : Perm (Fin n)} (hτ : IsIncreasingCyclePerm τ)
+    (hτ' : IsIncreasingCyclePerm τ') (h : ∀ x y, τ.SameCycle x y ↔ τ'.SameCycle x y) :
+    τ = τ' := by
+  ext x : 1
+  let s : Finset (Fin n) := {y | τ.SameCycle x y}
+  have hx : x ∈ s := mem_filter.mpr ⟨mem_univ _, Perm.SameCycle.refl τ x⟩
+  have hcycle (z : Fin n) (hz : z ∈ s) (y : Fin n) : y ∈ s ↔ τ.SameCycle z y := by
+    simp only [s, mem_filter, mem_univ, true_and] at hz ⊢
+    exact ⟨hz.symm.trans, hz.trans⟩
+  rw [← nextPoint_succ hτ ⟨x, hx⟩ hcycle x hx,
+    ← nextPoint_succ hτ' ⟨x, hx⟩ (fun z hz y => (hcycle z hz y).trans (h z y)) x hx]
+
+/-- The block of `x` in the partition of `Fin n` into `A` and its complement. -/
+private def block (A : Finset (Fin n)) (x : Fin n) : Finset (Fin n) := {y | y ∈ A ↔ x ∈ A}
+
+private theorem mem_block {A : Finset (Fin n)} {x y : Fin n} :
+    y ∈ block A x ↔ (y ∈ A ↔ x ∈ A) := by
+  simp [block]
+
+private theorem mem_block_self (A : Finset (Fin n)) (x : Fin n) : x ∈ block A x :=
+  mem_block.mpr Iff.rfl
+
+private theorem block_nonempty (A : Finset (Fin n)) (x : Fin n) : (block A x).Nonempty :=
+  ⟨x, mem_block_self A x⟩
+
+private theorem block_eq {A : Finset (Fin n)} {x y : Fin n} (h : y ∈ block A x) :
+    block A y = block A x := by
+  ext z
+  rw [mem_block, mem_block, mem_block.mp h]
+
+/-- The successor of `x` in its block: the next point of the block, cyclically. -/
+private def succFun (A : Finset (Fin n)) (x : Fin n) : Fin n :=
+  nextPoint (block A x) (block_nonempty A x) (x.val + 1)
+
+private theorem succFun_mem (A : Finset (Fin n)) (x : Fin n) : succFun A x ∈ block A x :=
+  nextPoint_mem _ _ _
+
+private theorem succFun_eq (A : Finset (Fin n)) (x : Fin n) {s : Finset (Fin n)}
+    (hs : s.Nonempty) (h : block A x = s) : succFun A x = nextPoint s hs (x.val + 1) := by
+  unfold succFun
+  subst h
+  rfl
+
+private theorem nextPoint_succ_ne {s : Finset (Fin n)} (hs : s.Nonempty) {x y : Fin n}
+    (hx : x ∈ s) (hy : y ∈ s) (hxy : x < y) :
+    nextPoint s hs (x.val + 1) ≠ nextPoint s hs (y.val + 1) := by
+  have hyf : y ∈ s.filter (x.val + 1 ≤ ·.val) := mem_filter.mpr ⟨hy, hxy⟩
+  rw [nextPoint_of_nonempty hs ⟨y, hyf⟩]
+  have hle := Fin.le_def.mp (min'_le _ _ hyf)
+  have hge := (mem_filter.mp (min'_mem _ ⟨y, hyf⟩)).2
+  intro he
+  by_cases hn : (s.filter (y.val + 1 ≤ ·.val)).Nonempty
+  · have h1 := (mem_filter.mp (min'_mem _ hn)).2
+    rw [nextPoint_of_nonempty hs hn] at he
+    rw [← he] at h1
+    omega
+  · rw [nextPoint_of_not_nonempty hs hn] at he
+    have h1 := Fin.le_def.mp (min'_le s x hx)
+    rw [← he] at h1
+    omega
+
+private theorem succFun_injective (A : Finset (Fin n)) : Function.Injective (succFun A) := by
+  have key (x y : Fin n) (hxy : x < y) (he : succFun A x = succFun A y) : False := by
+    have h1 := succFun_mem A x
+    rw [he] at h1
+    have hb : block A y = block A x := (block_eq (succFun_mem A y)).symm.trans (block_eq h1)
+    have hy : y ∈ block A x := hb ▸ mem_block_self A y
+    refine nextPoint_succ_ne (block_nonempty A x) (mem_block_self A x) hy hxy ?_
+    exact he.trans (succFun_eq A y _ hb)
+  intro x y he
+  rcases lt_trichotomy x y with h | h | h
+  · exact (key x y h he).elim
+  · exact h
+  · exact (key y x h he.symm).elim
+
+/-- The increasing-cycle permutation whose cycles are `A` and its complement. -/
+private noncomputable def twoBlockPerm (A : Finset (Fin n)) : Perm (Fin n) :=
+  Equiv.ofBijective (succFun A) (Finite.injective_iff_bijective.mp (succFun_injective A))
+
+private theorem twoBlockPerm_apply (A : Finset (Fin n)) (x : Fin n) :
+    twoBlockPerm A x = succFun A x := rfl
+
+private theorem twoBlockPerm_mem_iff (A : Finset (Fin n)) (x : Fin n) :
+    twoBlockPerm A x ∈ A ↔ x ∈ A :=
+  mem_block.mp (succFun_mem A x)
+
+private theorem pow_apply_mem_iff (A : Finset (Fin n)) (x : Fin n) (i : ℕ) :
+    (twoBlockPerm A ^ i) x ∈ A ↔ x ∈ A := by
+  induction i with
+  | zero => simp
+  | succ i ih => rw [pow_succ', Perm.mul_apply, twoBlockPerm_mem_iff, ih]
+
+private theorem mem_iff_of_sameCycle {A : Finset (Fin n)} {x y : Fin n}
+    (h : (twoBlockPerm A).SameCycle x y) : x ∈ A ↔ y ∈ A := by
+  obtain ⟨i, rfl⟩ := h.exists_nat_pow_eq
+  exact (pow_apply_mem_iff A x i).symm
+
+private theorem sameCycle_min' (A : Finset (Fin n)) (x y : Fin n) (hy : y ∈ block A x) :
+    (twoBlockPerm A).SameCycle ((block A x).min' (block_nonempty A x)) y := by
+  induction y using WellFoundedLT.induction with
+  | ind y ih =>
+    obtain hmin | hlt := (min'_le (block A x) y hy).eq_or_lt
+    · rw [hmin]
+    · let t := (block A x).filter (· < y)
+      have ht : t.Nonempty :=
+        ⟨_, mem_filter.mpr ⟨min'_mem (block A x) (block_nonempty A x), hlt⟩⟩
+      have hw := mem_filter.mp (max'_mem t ht)
+      have hstep : twoBlockPerm A (t.max' ht) = y := by
+        rw [twoBlockPerm_apply, succFun_eq A _ (block_nonempty A x) (block_eq hw.1)]
+        have hyf : y ∈ (block A x).filter ((t.max' ht).val + 1 ≤ ·.val) :=
+          mem_filter.mpr ⟨hy, hw.2⟩
+        rw [nextPoint_of_nonempty _ ⟨y, hyf⟩]
+        refine le_antisymm (min'_le _ _ hyf) (le_min' _ _ _ fun z hz => ?_)
+        obtain ⟨hzs, hzw⟩ := mem_filter.mp hz
+        by_contra! hzy
+        have h1 := Fin.le_def.mp (le_max' t z (mem_filter.mpr ⟨hzs, hzy⟩))
+        omega
+      rw [← hstep]
+      exact (ih _ hw.2 hw.1).apply_right
+
+private theorem twoBlockPerm_sameCycle_iff (A : Finset (Fin n)) (x y : Fin n) :
+    (twoBlockPerm A).SameCycle x y ↔ (x ∈ A ↔ y ∈ A) := by
+  refine ⟨mem_iff_of_sameCycle, fun h => ?_⟩
+  exact (sameCycle_min' A x x (mem_block_self A x)).symm.trans
+    (sameCycle_min' A x y (mem_block.mpr h.symm))
+
+private theorem isIncreasingCyclePerm_twoBlockPerm (A : Finset (Fin n)) :
+    IsIncreasingCyclePerm (twoBlockPerm A) := by
+  intro x y hle hxy
+  have hy : y ∈ block A x := mem_block.mpr (mem_iff_of_sameCycle hxy).symm
+  rw [twoBlockPerm_apply, succFun_eq A x (block_nonempty A x) rfl] at hle ⊢
+  by_cases hn : ((block A x).filter (x.val + 1 ≤ ·.val)).Nonempty
+  · rw [nextPoint_of_nonempty _ hn] at hle
+    have h1 := (mem_filter.mp (min'_mem _ hn)).2
+    have h2 := Fin.le_def.mp hle
+    omega
+  · rw [nextPoint_of_not_nonempty _ hn]
+    exact min'_le _ _ hy
+
+private theorem card_parts_eq_cycleQuotientCount (τ : Perm (Fin n)) :
+    τ.partition.parts.card = cycleQuotientCount τ := by
+  simp only [cycleQuotientCount_eq, Perm.card_fixedPoints, Perm.sum_cycleType,
+    Perm.parts_partition, Multiset.card_add, Multiset.card_replicate]
+
+private theorem card_parts_eq_two_of_blocks {τ : Perm (Fin n)} {A : Finset (Fin n)}
+    (hR : ∀ x y, τ.SameCycle x y ↔ (x ∈ A ↔ y ∈ A)) {a b : Fin n} (ha : a ∈ A) (hb : b ∉ A) :
+    τ.partition.parts.card = 2 := by
+  rw [card_parts_eq_cycleQuotientCount, cycleQuotientCount]
+  let f : Quotient (Perm.SameCycle.setoid τ) → Bool :=
+    Quotient.lift (fun x => decide (x ∈ A)) fun x y h => by
+      simpa using (hR x y).mp h
+  have hf : Function.Bijective f := by
+    constructor
+    · intro u v huv
+      induction u using Quotient.inductionOn
+      induction v using Quotient.inductionOn
+      exact Quotient.sound ((hR _ _).mpr (by simpa [f] using huv))
+    · intro c
+      cases c
+      · exact ⟨Quotient.mk _ b, by simp [f, hb]⟩
+      · exact ⟨Quotient.mk _ a, by simp [f, ha]⟩
+  rw [Nat.card_congr (Equiv.ofBijective f hf), Nat.card_eq_fintype_card, Fintype.card_bool]
+
+private theorem card_sameCycle_mem_parts (τ : Perm (Fin n)) (x : Fin n) :
+    #{y | τ.SameCycle x y} ∈ τ.partition.parts := by
+  rw [Perm.parts_partition, Multiset.mem_add]
+  by_cases hx : τ x = x
+  · right
+    have he : ({y | τ.SameCycle x y} : Finset (Fin n)) = {x} := by
+      ext y
+      simp only [mem_filter, mem_univ, true_and, mem_singleton]
+      exact ⟨fun h => (h.eq_of_left hx).symm, fun h => h ▸ Perm.SameCycle.refl τ x⟩
+    have hlt : #τ.support < Fintype.card (Fin n) :=
+      card_lt_univ_of_notMem (Perm.notMem_support.mpr hx)
+    rw [he, card_singleton, Multiset.mem_replicate]
+    exact ⟨by omega, rfl⟩
+  · left
+    have hs : x ∈ τ.support := Perm.mem_support.mpr hx
+    have he : ({y | τ.SameCycle x y} : Finset (Fin n)) = (τ.cycleOf x).support := by
+      ext y
+      rw [Perm.mem_support_cycleOf_iff]
+      simp [hs]
+    rw [he, Perm.cycleType_def]
+    exact Multiset.mem_map_of_mem (card ∘ Perm.support)
+      (Perm.cycleOf_mem_cycleFactorsFinset_iff.mpr hs)
+
+private theorem parts_eq_of_blocks {τ : Perm (Fin n)} {A : Finset (Fin n)}
+    (hR : ∀ x y, τ.SameCycle x y ↔ (x ∈ A ↔ y ∈ A)) {a b : Fin n} (ha : a ∈ A) (hb : b ∉ A) :
+    τ.partition.parts = {#A, n - #A} := by
+  have hmem : #A ∈ τ.partition.parts := by
+    have he : ({y | τ.SameCycle a y} : Finset (Fin n)) = A := by
+      ext y
+      simp [hR, ha]
+    exact he ▸ card_sameCycle_mem_parts τ a
+  have hsum : τ.partition.parts.sum = n := τ.partition.parts_sum.trans (Fintype.card_fin n)
+  obtain ⟨u, v, huv⟩ := Multiset.card_eq_two.mp (card_parts_eq_two_of_blocks hR ha hb)
+  rw [huv] at hmem hsum ⊢
+  simp only [Multiset.insert_eq_cons, Multiset.sum_cons, Multiset.sum_singleton,
+    Multiset.mem_cons, Multiset.mem_singleton] at hmem hsum
+  rcases hmem with h | h
+  · rw [h, show n - u = v by omega]
+  · rw [h, show n - v = u by omega, Multiset.pair_comm]
+
+-- The genus of a two-block partition is one less than the number of runs of either block.
+private theorem genus_add_one_eq_runs {τ : Perm (Fin n)} (hτ : IsIncreasingCyclePerm τ)
+    (h2 : τ.partition.parts.card = 2) {A : Finset (Fin n)}
+    (hR : ∀ x y, τ.SameCycle x y ↔ (x ∈ A ↔ y ∈ A)) {x₀ : Fin n} (hx₀ : x₀ ∈ A) :
+    setPartitionGenus τ + 1 = #{x ∈ A | (finRotate n).symm x ∉ A} := by
+  have key := (twoBlock_oneFace_and_genus τ hτ h2 x₀).2
+  have hcycle (z : Fin n) (hz : z ∈ A) (y : Fin n) : y ∈ A ↔ τ.SameCycle z y := by
+    rw [hR]
+    exact ⟨fun hy => iff_of_true hz hy, fun h => h.mp hz⟩
+  have hA : ({x | τ.SameCycle x₀ x} : Finset (Fin n)) = A := by
+    ext x
+    simp only [mem_filter, mem_univ, true_and]
+    exact (hcycle x₀ hx₀ x).symm
+  have hfix : ({x | τ.SameCycle x₀ x ∧ (finRotate n * τ⁻¹) x = x} : Finset (Fin n)) =
+      {x ∈ A | (finRotate n).symm x ∈ A} := by
+    ext x
+    simp only [mem_filter, mem_univ, true_and, ← hcycle x₀ hx₀ x]
+    refine and_congr_right fun hx => ?_
+    rw [Perm.mul_apply, ← Equiv.eq_symm_apply, Perm.inv_def, Equiv.symm_apply_eq]
+    constructor
+    · intro h
+      have h1 := (hR _ _).mp (Perm.SameCycle.refl τ ((finRotate n).symm x)).apply_right
+      rw [← h] at h1
+      exact h1.mpr hx
+    · intro hy
+      calc x = nextPoint A ⟨x, hx⟩ x.val := (nextPoint_self hx).symm
+        _ = nextPoint A ⟨x₀, hx₀⟩ (finRotate n ((finRotate n).symm x)).val := by
+          rw [Equiv.apply_symm_apply]
+        _ = nextPoint A ⟨x₀, hx₀⟩ (((finRotate n).symm x).val + 1) := nextPoint_rotate _ _ _
+        _ = τ ((finRotate n).symm x) := nextPoint_succ hτ _ hcycle _ hy
+  rw [hA, hfix] at key
+  have := card_filter_add_card_filter_not (s := A) (fun x => (finRotate n).symm x ∈ A)
+  omega
+
+private theorem eq_or_eq_compl_of_blocks {τ : Perm (Fin n)} {A B : Finset (Fin n)}
+    (hA : ∀ x y, τ.SameCycle x y ↔ (x ∈ A ↔ y ∈ A))
+    (hB : ∀ x y, τ.SameCycle x y ↔ (x ∈ B ↔ y ∈ B)) {a : Fin n} (ha : a ∈ A) :
+    B = A ∨ B = Aᶜ := by
+  by_cases haB : a ∈ B
+  · left
+    ext x
+    have h1 := hB a x
+    have h2 := hA a x
+    rw [iff_true_left haB] at h1
+    rw [iff_true_left ha] at h2
+    exact h1.symm.trans h2
+  · right
+    ext x
+    have h1 := hB a x
+    have h2 := hA a x
+    rw [iff_false_left haB] at h1
+    rw [iff_true_left ha] at h2
+    rw [mem_compl]
+    tauto
+
+end partitionGenusCount_twoBlocks
+
+open partitionGenusCount_twoBlocks
+
+/-- **Genus count of two-block partitions.** Let $n$, $p$ and $g$ be natural numbers with
+$2 \le p < n$. The number $C_{n,[p,\,n-p]}^{(g)}$ of genus-$g$ set partitions of
+$\{0, \dots, n-1\}$ into two blocks of sizes $p$ and $n - p$ equals
+$$\frac{n}{g+1} \binom{p-1}{g} \binom{n-p-1}{g}$$
+when $n \ne 2p$, and half of this number when $n = 2p$.
+
+Source: Coquereaux and Zuber, *Counting Partitions by Genus: a Compendium of Results*,
+Journal of Integer Sequences 27 (2024), Article 24.2.6, Proposition 14
+(`jis-2024-24.2.6-prop-14`). -/
+theorem partitionGenusCount_twoBlocks (n p g : ℕ) (hp : 2 ≤ p) (hpn : p < n) :
+    (partitionGenusCount n {p, n - p} g : ℚ) =
+      (if n = 2 * p then 1 / 2 else 1) *
+        ((n : ℚ) / (g + 1) * ((p - 1).choose g : ℚ) * ((n - p - 1).choose g : ℚ)) := by
+  classical
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+  -- Both blocks of a partition counted on the left have size `p` or `m + 1 - p` and `g + 1`
+  -- runs.
+  have hblock {τ : Perm (Fin (m + 1))}
+      (hτ : IsIncreasingCyclePerm τ ∧ τ.partition.parts = {p, m + 1 - p} ∧
+        setPartitionGenus τ = g)
+      {B : Finset (Fin (m + 1))} (hR : ∀ x y, τ.SameCycle x y ↔ (x ∈ B ↔ y ∈ B))
+      {a b : Fin (m + 1)} (ha : a ∈ B) (hb : b ∉ B) :
+      (#B = p ∨ #B = m + 1 - p) ∧ #{x ∈ B | x - 1 ∉ B} = g + 1 := by
+    obtain ⟨hinc, hparts, hgenus⟩ := hτ
+    constructor
+    · have h := parts_eq_of_blocks hR ha hb
+      rw [hparts] at h
+      have hmem : #B ∈ ({p, m + 1 - p} : Multiset ℕ) := by
+        rw [h]
+        simp
+      simpa using hmem
+    · have h := genus_add_one_eq_runs hinc (card_parts_eq_two_of_blocks hR ha hb) hR ha
+      simp only [finRotate_symm_apply] at h
+      omega
+  -- Double count the pairs `(τ, B)` where `B` is a block of `τ`.
+  have hdouble : partitionGenusCount (m + 1) {p, m + 1 - p} g * 2 =
+      #{A : Finset (Fin (m + 1)) |
+        (#A = p ∨ #A = m + 1 - p) ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} * 1 := by
+    unfold partitionGenusCount
+    refine card_mul_eq_card_mul (fun τ A => ∀ x y, τ.SameCycle x y ↔ (x ∈ A ↔ y ∈ A)) ?_ ?_
+    · intro τ hτ
+      replace hτ := (mem_filter.mp hτ).2
+      have h2 : τ.partition.parts.card = 2 := by
+        rw [hτ.2.1]
+        simp
+      obtain ⟨c, hc, hclass⟩ := exists_coloring h2
+      let A₀ : Finset (Fin (m + 1)) := {x | c x = true}
+      have hR₀ (x y : Fin (m + 1)) : τ.SameCycle x y ↔ (x ∈ A₀ ↔ y ∈ A₀) := by
+        rw [hclass]
+        simp only [A₀, mem_filter, mem_univ, true_and]
+        cases c x <;> cases c y <;> simp
+      have hR₁ (x y : Fin (m + 1)) : τ.SameCycle x y ↔ (x ∈ A₀ᶜ ↔ y ∈ A₀ᶜ) := by
+        rw [hR₀, mem_compl, mem_compl, not_iff_not]
+      obtain ⟨a, ha⟩ := hc true
+      obtain ⟨b, hb⟩ := hc false
+      have ha' : a ∈ A₀ := by simp [A₀, ha]
+      have hb' : b ∉ A₀ := by simp [A₀, hb]
+      rw [card_eq_two]
+      refine ⟨A₀, A₀ᶜ, fun h => (mem_compl.mp (h ▸ ha')) ha', ?_⟩
+      ext B
+      simp only [bipartiteAbove, mem_filter, mem_univ, true_and, mem_insert, mem_singleton]
+      constructor
+      · rintro ⟨-, hRB⟩
+        exact eq_or_eq_compl_of_blocks hR₀ hRB ha'
+      · rintro (rfl | rfl)
+        · exact ⟨hblock hτ hR₀ ha' hb', hR₀⟩
+        · exact ⟨hblock hτ hR₁ (mem_compl.mpr hb') (not_not.mpr ha' ∘ mem_compl.mp), hR₁⟩
+    · intro A hA
+      obtain ⟨hsize, hruns⟩ := (mem_filter.mp hA).2
+      have hpos : 0 < #A := by omega
+      have hlt : #A < m + 1 := by omega
+      obtain ⟨a, ha⟩ := card_pos.mp hpos
+      obtain ⟨b, hb⟩ : ∃ b, b ∉ A := by
+        by_contra! h
+        rw [eq_univ_of_forall h, card_univ, Fintype.card_fin] at hlt
+        omega
+      have hR := twoBlockPerm_sameCycle_iff A
+      have hinc := isIncreasingCyclePerm_twoBlockPerm A
+      rw [card_eq_one]
+      refine ⟨twoBlockPerm A, ?_⟩
+      ext τ
+      simp only [bipartiteBelow, mem_filter, mem_univ, true_and, mem_singleton]
+      constructor
+      · rintro ⟨⟨hτ, -, -⟩, hRτ⟩
+        exact eq_of_sameCycle_iff hτ hinc fun x y => (hRτ x y).trans (hR x y).symm
+      · rintro rfl
+        refine ⟨⟨hinc, ?_, ?_⟩, hR⟩
+        · rw [parts_eq_of_blocks hR ha hb]
+          rcases hsize with h | h
+          · rw [h]
+          · rw [h, show m + 1 - (m + 1 - p) = p by omega, Multiset.pair_comm]
+        · have h := genus_add_one_eq_runs hinc (card_parts_eq_two_of_blocks hR ha hb) hR ha
+          simp only [finRotate_symm_apply] at h
+          omega
+  have h1 := card_cyclicRuns m p (g + 1) (by omega) (by omega) (by omega)
+  have h2 := card_cyclicRuns m (m + 1 - p) (g + 1) (by omega) (by omega) (by omega)
+  rw [show m + 1 - p - 1 = m - p by omega, show m - (m + 1 - p) = p - 1 by omega,
+    Nat.add_sub_cancel] at h2
+  rw [Nat.add_sub_cancel] at h1
+  rw [show m + 1 - p - 1 = m - p by omega]
+  by_cases hn : m + 1 = 2 * p
+  · rw [ite_eq_left hn]
+    have hq : m + 1 - p = p := by omega
+    have hS : #{A : Finset (Fin (m + 1)) |
+          (#A = p ∨ #A = m + 1 - p) ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} =
+        #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} := by
+      rw [hq]
+      simp only [or_self]
+    rw [hS] at hdouble
+    have e1 : (partitionGenusCount (m + 1) {p, m + 1 - p} g : ℚ) * 2 =
+        #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} := by
+      exact_mod_cast hdouble.trans (mul_one _)
+    have e2 : ((g : ℚ) + 1) *
+        #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} =
+        ((m : ℚ) + 1) * ((p - 1).choose g * (m - p).choose g) := by
+      exact_mod_cast h1
+    have hg : (g : ℚ) + 1 ≠ 0 := by positivity
+    have hS : (#{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} : ℚ) =
+        ((m : ℚ) + 1) * ((p - 1).choose g * (m - p).choose g) / ((g : ℚ) + 1) := by
+      rw [eq_div_iff hg, mul_comm]
+      exact e2
+    push_cast
+    calc (partitionGenusCount (m + 1) {p, m + 1 - p} g : ℚ)
+        = (partitionGenusCount (m + 1) {p, m + 1 - p} g : ℚ) * 2 / 2 := by ring
+      _ = _ := by rw [e1, hS]; ring
+  · rw [ite_eq_right hn]
+    have hS : #{A : Finset (Fin (m + 1)) |
+          (#A = p ∨ #A = m + 1 - p) ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} =
+        #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} +
+          #{A : Finset (Fin (m + 1)) | #A = m + 1 - p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} := by
+      rw [← card_union_of_disjoint]
+      · congr 1
+        ext A
+        simp only [mem_filter, mem_univ, true_and, mem_union]
+        tauto
+      · rw [disjoint_filter]
+        intro A _ h h'
+        omega
+    rw [hS] at hdouble
+    have e1 : (partitionGenusCount (m + 1) {p, m + 1 - p} g : ℚ) * 2 =
+        #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} +
+          #{A : Finset (Fin (m + 1)) | #A = m + 1 - p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} := by
+      exact_mod_cast hdouble.trans (mul_one _)
+    have e2 : ((g : ℚ) + 1) *
+        #{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} =
+        ((m : ℚ) + 1) * ((p - 1).choose g * (m - p).choose g) := by
+      exact_mod_cast h1
+    have e3 : ((g : ℚ) + 1) *
+        #{A : Finset (Fin (m + 1)) | #A = m + 1 - p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} =
+        ((m : ℚ) + 1) * ((m - p).choose g * (p - 1).choose g) := by
+      exact_mod_cast h2
+    have hg : (g : ℚ) + 1 ≠ 0 := by positivity
+    have hS : (#{A : Finset (Fin (m + 1)) | #A = p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} : ℚ) =
+        ((m : ℚ) + 1) * ((p - 1).choose g * (m - p).choose g) / ((g : ℚ) + 1) := by
+      rw [eq_div_iff hg, mul_comm]
+      exact e2
+    have hS' :
+        (#{A : Finset (Fin (m + 1)) | #A = m + 1 - p ∧ #{x ∈ A | x - 1 ∉ A} = g + 1} : ℚ) =
+          ((m : ℚ) + 1) * ((m - p).choose g * (p - 1).choose g) / ((g : ℚ) + 1) := by
+      rw [eq_div_iff hg, mul_comm]
+      exact e3
+    push_cast
+    calc (partitionGenusCount (m + 1) {p, m + 1 - p} g : ℚ)
+        = (partitionGenusCount (m + 1) {p, m + 1 - p} g : ℚ) * 2 / 2 := by ring
+      _ = _ := by rw [e1, hS, hS']; ring
 
 end
 

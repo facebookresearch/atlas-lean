@@ -89,27 +89,6 @@ public theorem_wanted doublePerfect_lee_forms (N : ℕ) (hN : 4 ≤ N) (l : Mult
       l = Multiset.replicate q₁ 1 + {2} +
         (perfectPartitionOfFactorization (qs.map (· + 1))).map ((q₁ + 1) * ·))
 
-/-- **Characterization of Type-A double-perfect partitions.** Let $r \ge 1$ and $N \ge 2(r+1)$
-be integers. A multiset $\lambda$ of natural numbers is a Type-A double-perfect partition of $N$
-of order $r$ if and only if there is a perfect partition $\beta$ of $N - r - 1$ such that either
-$1$ occurs exactly $r$ times in $\beta$ and $\lambda$ is $\beta$ with $r + 1$ parts equal to $1$
-added, or $1$ does not occur exactly $r$ times in $\beta$, $r + 1$ is not a part of $\beta$, and
-$\lambda$ is $\beta$ with one part equal to $r + 1$ added.
-
-The condition that $r + 1$ is not a part of $\beta$ in the second case is needed, and the printed
-statement of Theorem 2 omits it: for $r = 3$ and $N = 11$, $\beta = (1, 2, 4)$ is a perfect
-partition of $7$ with one part $1$, but $(1, 2, 4^2)$ is not double-perfect of order $3$, since
-it contains only one partition of $4$. The paper uses this condition in the proof of Theorem 3,
-part (ia), and it matches the set $W(2)$ of Proposition 2.
-
-Source: Augustine O. Munagi, *Double Perfect Partitions of Higher Order*, INTEGERS 25 (2025),
-Article A109, Theorem 2, display (13) (`integers-2025-A109-thm-2`). -/
-public theorem_wanted isTypeADoublePerfect_iff (r N : ℕ) (hr : 1 ≤ r) (hN : 2 * (r + 1) ≤ N)
-    (l : Multiset ℕ) :
-    IsTypeADoublePerfect r N l ↔ ∃ β, IsPerfectPartition (N - r - 1) β ∧
-      ((β.count 1 = r ∧ l = β + Multiset.replicate (r + 1) 1) ∨
-        (β.count 1 ≠ r ∧ r + 1 ∉ β ∧ l = β + {r + 1}))
-
 /-- **Shapes of Type-A double-perfect partitions.** Let $r \ge 1$ and $N \ge 2(r+1)$. For a
 finite sequence $(a_1, \dots, a_k)$ write
 $P(a_1, \dots, a_k) = (1^{a_1-1}, a_1^{a_2-1}, \dots, (a_1\cdots a_{k-1})^{a_k-1})$ for the

@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Geometry.Convex.IlluminationFiniteMinimum
 public import MathlibExt.Geometry.Convex.IlluminationInteriorCovering
+public import MathlibExt.Geometry.Convex.UniformSymmetricExternalIllumination
 import Batteries.Util.ProofWanted
 
 /-!
@@ -121,20 +122,5 @@ finite-count equivalence, whose Lean proof is also requested here. -/
 theorem_wanted uniformDirectionalIlluminationInterpretation (n : ℕ) (hn : 0 < n) (q : ℕ) :
     UniformInteriorTranslateBound n q ↔
       ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K → IlluminatedByDirections K q
-
-/-- **Uniform covering of symmetric bodies and uniform illumination by external points.** For
-integers $n \ge 1$ and $q \ge 0$, every centrally symmetric convex body in $\mathbb{R}^n$ (a
-compact convex set with nonempty interior that is symmetric about some point) can be covered by
-$q$ translates of its interior if and only if every centrally symmetric convex body $K$ in
-$\mathbb{R}^n$ is illuminated by $q$ external points: there are points $p_1, \dots, p_q$ outside
-$K$ such that each boundary point $x$ of $K$ has some $i$ and some $t > 1$ with
-$p_i + t(x - p_i)$ in the interior of $K$.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction, and Bezdek and Khan,
-arXiv:1602.06040v2, introduction; follows from the two finite-count equivalences. -/
-theorem_wanted uniformSymmetricExternalIlluminationInterpretation (n : ℕ) (hn : 0 < n) (q : ℕ) :
-    UniformSymmetricInteriorTranslateBound n q ↔
-      ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K → IsCentrallySymmetric K →
-        IlluminatedByExternalPoints K q
 
 end ConvexCovering

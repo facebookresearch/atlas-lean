@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.BivariateLorentzian
+public import MathlibExt.Combinatorics.Matroid.BasisLorentzian
 public import MathlibExt.Combinatorics.Matroid.IndependenceLorentzian
 public import MathlibExt.Combinatorics.Matroid.MConvex
 public import WantedExt.Combinatorics.LorentzianPolynomialsWanted
@@ -76,17 +77,5 @@ Math. 192 (2020), proof of Corollary 2.32). If `f` lies in `L n d` and `g` lies 
 then `f g` lies in `L n (d + e)`. -/
 theorem_wanted mem_L_mul {n d e : ℕ} (f : H n d) (hf : f ∈ L n d) (g : H n e) (hg : g ∈ L n e)
     (h : H n (d + e)) (hh : h.1 = f.1 * g.1) : h ∈ L n (d + e)
-
-open scoped Classical in
-/-- **Basis generating polynomials of matroids are Lorentzian** (Brändén and Huh, *Lorentzian
-polynomials*, Ann. of Math. 192 (2020), Theorem 3.10, (8) ⇒ (4)). If `M` is a matroid on
-`[n]` of rank `d`, then its basis generating polynomial `∑_{B base} ∏_{i ∈ B} w_i` lies in
-`L n d`. (For a zero-one set the generating function `f_J = ∑_{α ∈ J} w^α / α!` of the paper is
-this polynomial, since `α! = 1`.) -/
-theorem_wanted basisGeneratingPolynomial_mem_L {n d : ℕ} (M : _root_.Matroid (Fin n))
-    (hd : M.eRank = d) (g : H n d)
-    (hg : g.1 = ∑ B ∈ Finset.univ.filter (fun B : Finset (Fin n) => M.IsBase (B : Set (Fin n))),
-      monomial (indicatorVec B) (1 : ℝ)) :
-    g ∈ L n d
 
 end MathlibExt.Combinatorics.LorentzianToolboxWanted

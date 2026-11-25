@@ -35,6 +35,8 @@
 - [Wetzel's sector](wetzel-sector.md)
 - [Covers give upper bounds on the nonconvex worm cover constant](nonconvex-upper-bound-of-cover.md)
 - [Proposition: the convex worm cover constant is at most π/4](upper-bound-pi-over-four.md)
+- [The disk of diameter one is a convex universal cover](half-disk-is-convex-universal-cover.md)
+- [The area of the disk of diameter one is π/4](half-disk-volume.md)
 - [Proposition: the convex worm cover constant is at most π/8](upper-bound-pi-over-eight.md)
 - [Proposition: the convex worm cover constant is at most 0.34501](upper-bound-wetzel1973.md)
 - [Statement of Gerriets' upper bound $0.3214$ for convex worm covers](upper-bound-gerriets1972.md)

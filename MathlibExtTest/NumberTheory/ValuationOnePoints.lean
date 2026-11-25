@@ -72,4 +72,26 @@ example :
     (r := 0) (s := 0) (by decide) (by decide) (by simp [f]) (by simp [f]) (by simp [f])
   simpa [f] using h
 
+-- For `x + y` modulo three, the residues with `3 ∣ r + s` are `(0, 0)`, `(1, 2)` and
+-- `(2, 1)`, and each contributes `3 * 2` pairs of valuation one modulo nine.
+example :
+    ((Finset.range 9 ×ˢ Finset.range 9).filter fun xy : ℕ × ℕ =>
+      let z : ℤ := (xy.1 : ℤ) + xy.2
+      3 ∣ z ∧ ¬ 9 ∣ z).card = 18 := by
+  let f : MvPolynomial (Fin 2) ℤ := X 0 + X 1
+  have hns : ∀ (r s : ℕ), r < 3 → s < 3 → ((3 : ℕ) : ℤ) ∣
+      MvPolynomial.eval ![(r : ℤ), s] f →
+      ¬ (((3 : ℕ) : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] (MvPolynomial.pderiv 0 f) ∧
+        ((3 : ℕ) : ℤ) ∣ MvPolynomial.eval ![(r : ℤ), s] (MvPolynomial.pderiv 1 f)) := by
+    intro r _ s _ _
+    simp only [f, map_add, pderiv_X]
+    norm_num
+  have h := card_padicVal_eq_one_mod_sq_eq Nat.prime_three f (fun r hr s hs => hns r s hr hs)
+  have hm : ((Finset.range 3 ×ˢ Finset.range 3).filter fun rs : ℕ × ℕ =>
+      ((3 : ℕ) : ℤ) ∣ MvPolynomial.eval ![(rs.1 : ℤ), rs.2] f).card = 3 := by
+    simp only [f, map_add, eval_X]
+    decide
+  rw [hm] at h
+  simpa [f] using h
+
 end MetaMathlibExt

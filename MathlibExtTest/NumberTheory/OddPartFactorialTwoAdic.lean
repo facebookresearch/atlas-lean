@@ -62,3 +62,16 @@ example : ({i ∈ oddBelowTwoPow 3 | i ^ 2 % 8 = 1}).card = 4 :=
 
 -- The other admissible residue modulo sixteen has two roots in each odd class modulo four.
 example : {i ∈ oddBelowTwoPow 4 | i ^ 2 % 16 = 9} = {3, 5, 11, 13} := by decide
+
+-- At the first admissible exponent the four copies are all ones.
+example : reverseESymm 1 (fourCopiesOneModEightBelowTwoPow 3) = 4 := by decide
+
+-- The value at the first admissible exponent is not divisible by eight.
+example : ¬ (8 : ℤ) ∣ reverseESymm 1 (fourCopiesOneModEightBelowTwoPow 3) := by decide
+
+-- At the next exponent the value is 29160, with residue 8 modulo 16.
+example : reverseESymm 1 (fourCopiesOneModEightBelowTwoPow 4) = 29160 := by decide
+
+-- The four-copies congruence at the next exponent but one.
+example : (32 : ℤ) ∣ reverseESymm 1 (fourCopiesOneModEightBelowTwoPow 5) - 16 :=
+  reverseESymm_fourCopies_oneModEight_congr 5 (by decide)

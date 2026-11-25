@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Geometry.AmbidextrousSofaHammersleyUpper
 public import MathlibExt.Geometry.MovingSofa
 
 /-!
@@ -38,13 +39,6 @@ open scoped ENNReal
 @[expose] public section
 
 namespace AmbidextrousSofaWanted
-
-/-- **Hammersley upper bound for the ambidextrous sofa.** The supremum of the areas of
-ambidextrous sofas, taken in $[0, \infty]$, is at most $2\sqrt{2}$.
-
-Source: catalogue upper row, Hammersley (1968), adapted from C41a. -/
-public theorem_wanted hammersley_upper :
-    MovingSofa.ambidextrousOptimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
 
 /-- **Baek upper bound for the ambidextrous sofa.** The supremum of the areas of
 ambidextrous sofas, taken in $[0, \infty]$, is at most $22196/10000 = 2.2196$.

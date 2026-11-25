@@ -28,6 +28,7 @@
 - [Number of $k$-box paths of size $n$](card-k-box-paths.md)
 - [Counting tailed $k$-box paths](card-tailed-k-box-paths.md)
 - [Functional equation for the returns generating function](k-box-return-gf-eq.md)
+- [Functional equation for the augmented Dyck generating function](augmented-kdyck-gf-eq.md)
 - [Number of $k$-box paths with $j$ returns](card-k-box-paths-returns.md)
 - [Mean and variance of the number of returns of $k$-box paths](k-box-paths-returns-mean-variance.md)
 - [Long-ascent functional equations for $k$-box paths](k-box-long-ascent-gf-functional-equation.md)
