@@ -33,8 +33,9 @@ ambient tilted log normalizers converge to a convex `g`, the derivatives converg
 differentiable (`fpd_deriv_interchange_of_differentiable`). If the average densities collapse to the
 free infinite-volume density (`fpd_AvgDensityCollapse`), the free density equals `g'(t)` at such
 points. The predicate `fpd_IVDensityIsOneSidedDeriv` (wired and free densities are the right and
-left derivatives of `g`) is equivalent to `fuc_HomogeneousFreeEnergyData` and gives uniqueness off
-a countable set.
+left derivatives of `g` on the edges of `Λ_N`) gives the convex free-energy hypothesis
+`fsc_FreeEnergyData` for each edge, and uniqueness off a countable set (`fpd_fk_uniqueness`, in
+`FKUniqPerEdge`, where non-edges are handled separately).
 
 ## ii. Key results
 
@@ -42,7 +43,8 @@ a countable set.
 - `fpd_ambientLogZDeriv_eq_avgDensity_limit` : the limiting derivative is the limit of average
   densities at differentiability points.
 - `fpd_freeDensity_at_diff_of_collapse` : under density collapse, the free density is `g'(t)`.
-- `fpd_fk_uniqueness` : countable-exception uniqueness from `fpd_IVDensityIsOneSidedDeriv`.
+- `fpd_densityDeriv_imp_fsc` : `fpd_IVDensityIsOneSidedDeriv` gives `fsc_FreeEnergyData` for each
+  edge of `Λ_N`.
 
 ## iii. Table of contents
 
@@ -196,7 +198,7 @@ density of every edge of `Λ_N`, at every `t`.
 -/
 def fpd_AvgDensityCollapse (d N : ℕ)
     (Gn : ℕ → SimpleGraph (boxVerts d N)) [∀ n, DecidableRel (Gn n).Adj] : Prop :=
-  ∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
+  ∀ e' ∈ (boxGraph d N).edgeFinset, ∀ t : ℝ,
     Tendsto (fun n => fpd_avgDensity (Gn n) t) atTop
       (𝓝 (freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t)))
 
@@ -206,47 +208,27 @@ lemma fpd_freeDensity_at_diff_of_collapse (d N : ℕ)
     (g : ℝ → ℝ) (hg : ConvexOn ℝ univ g)
     (hlim : ∀ t, Tendsto (fun n => ivp2_ambientTiltLogZ (Gn n) 2 t) atTop (𝓝 (g t)))
     (hcol : fpd_AvgDensityCollapse d N Gn)
-    (e' : Sym2 (boxVerts d N)) (t : ℝ)
+    (e' : Sym2 (boxVerts d N)) (he' : e' ∈ (boxGraph d N).edgeFinset) (t : ℝ)
     (hdiff : pressureLeftDeriv g t = pressureRightDeriv g t) :
     freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t := by
   have hderiv := fpd_ambientLogZDeriv_eq_avgDensity_limit Gn hE g hg hlim t hdiff
   rw [hdiff]
-  exact tendsto_nhds_unique (hcol e' t) hderiv
+  exact tendsto_nhds_unique (hcol e' he' t) hderiv
 
-/-- The wired and free `q = 2` infinite-volume densities of every edge of `Λ_N` at `p =
-logistic(t)`
-are the right and left derivatives of `g` at `t`.
+/-- The wired and free `q = 2` infinite-volume densities of every edge of `Λ_N` (every edge of
+`boxGraph d N`) at `p = logistic(t)` are the right and left derivatives of `g` at `t`.
 -/
 def fpd_IVDensityIsOneSidedDeriv (d N : ℕ) (g : ℝ → ℝ) : Prop :=
-  (∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
+  (∀ e' ∈ (boxGraph d N).edgeFinset, ∀ t : ℝ,
       wiredEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureRightDeriv g t)
-    ∧ (∀ (e' : Sym2 (boxVerts d N)) (t : ℝ),
+    ∧ (∀ e' ∈ (boxGraph d N).edgeFinset, ∀ t : ℝ,
         freeEdgeDensity d 2 (edgeIncl d N e') (fsc_logistic t) = pressureLeftDeriv g t)
 
-lemma fpd_homogeneousFreeEnergyData_of_densityDeriv (d N : ℕ) {g : ℝ → ℝ}
-    (hg : ConvexOn ℝ univ g) (hres : fpd_IVDensityIsOneSidedDeriv d N g) :
-    fuc_HomogeneousFreeEnergyData d N :=
-  ⟨g, hg, hres.1, hres.2⟩
-
-lemma fpd_fk_uniqueness (d N : ℕ) (eb : Sym2 (boxVerts d N)) {g : ℝ → ℝ}
-    (hg : ConvexOn ℝ univ g) (hres : fpd_IVDensityIsOneSidedDeriv d N g) :
-    {t : ℝ | ∃ A : Set (ConfigSpace (Sym2 (boxVerts d N))), IsIncreasing A ∧
-        eventMassProb (fuc_freeMass d N t) A
-          ≠ eventMassProb (fuc_wiredMass d N t) A}.Countable :=
-  fuc_fk_uniqueness d N eb (fpd_homogeneousFreeEnergyData_of_densityDeriv d N hg hres)
-
 lemma fpd_densityDeriv_imp_fsc (d N : ℕ) {g : ℝ → ℝ} (hg : ConvexOn ℝ univ g)
-    (hres : fpd_IVDensityIsOneSidedDeriv d N g) (e' : Sym2 (boxVerts d N)) :
+    (hres : fpd_IVDensityIsOneSidedDeriv d N g) (e' : Sym2 (boxVerts d N))
+    (he' : e' ∈ (boxGraph d N).edgeFinset) :
     fsc_FreeEnergyData d N e' :=
-  ⟨g, hg, fun t => hres.1 e' t, fun t => hres.2 e' t⟩
-
-lemma fpd_homogeneousFreeEnergyData_iff (d N : ℕ) :
-    fuc_HomogeneousFreeEnergyData d N
-      ↔ ∃ g : ℝ → ℝ, ConvexOn ℝ univ g ∧ fpd_IVDensityIsOneSidedDeriv d N g := by
-  constructor
-  · rintro ⟨g, hg, hw, hf⟩; exact ⟨g, hg, hw, hf⟩
-  · rintro ⟨g, hg, hres⟩
-    exact fpd_homogeneousFreeEnergyData_of_densityDeriv d N hg hres
+  ⟨g, hg, fun t => hres.1 e' he' t, fun t => hres.2 e' he' t⟩
 
 end FK
 
