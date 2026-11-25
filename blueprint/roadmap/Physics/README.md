@@ -9,5 +9,6 @@ Mathematical physics describes mechanical, electromagnetic and quantum systems t
 - [Waves and acoustics](waves-and-acoustics/README.md)
 - [Quantum mechanics](quantum-mechanics/README.md)
 - [Engineering thermodynamics and heat transfer](thermodynamics-and-heat-transfer/README.md)
+- [Nuclear reactor physics](nuclear-reactor-physics/README.md)
 - [Not yet classified](not-yet-classified/README.md)
 - [Tomographic imaging](tomographic-imaging/README.md)
