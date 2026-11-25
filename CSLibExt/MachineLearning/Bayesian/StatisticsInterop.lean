@@ -75,7 +75,7 @@ theorem posterior_gaussianMarginalLaw_one (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZer
     gaussianReal_absolutelyContinuous m₀ (by positivity)
   have hae := hac (posterior_gaussianLikelihood_gaussianReal m₀ (v₀ := v₀) (v := v))
   filter_upwards [hae] with x hx
-  rw [hx, normalPosteriorKernel_apply m₀ h₀ h x]
+  rw [hx, normalPosteriorKernel_apply m₀ x]
 
 /-- **Categorical sequence kernel as product law.** On probability vectors, the categorical
 `N`-sample kernel equals the iid product of the one-draw categorical kernel. -/

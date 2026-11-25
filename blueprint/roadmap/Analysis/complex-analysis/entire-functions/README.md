@@ -18,3 +18,4 @@ Growth and value distribution of entire and meromorphic functions: Wiman–Valir
 - [Entire solutions of the Fermat cubic are constant](entire-cube-add-cube-eq-one-const.md)
 - [Injective entire functions are affine](exists-affine-of-differentiable-injectiv.md)
 - [Weierstrass theorem on prescribed simple zeros](weierstrass-factorization.md)
+- [Jensen's formula](jensen-formula.md)

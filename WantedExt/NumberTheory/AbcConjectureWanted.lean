@@ -22,10 +22,11 @@ namespace MetaMathlibExt
 -/
 
 /--
-The abc conjecture: for any ε > 0, there exists C_ε > 0 such that for any integers
-a, b, c with a + b = c and gcd(a, b) = 1,
-max{|a|, |b|, |c|} ≤ C_ε · κ(abc)^(1+ε), where κ is the radical
-(product of distinct prime factors).
+**The abc conjecture.** For every real $\varepsilon > 0$ there is a real $C_\varepsilon > 0$
+such that for all integers $a$, $b$, $c$ with $a + b = c$ and $\gcd(a, b) = 1$,
+$$\max(|a|, |b|, |c|) \le C_\varepsilon \operatorname{rad}(abc)^{1 + \varepsilon},$$
+where $\operatorname{rad}(m)$ is the product of the distinct primes dividing $|m|$, with
+$\operatorname{rad}(0) = 1$.
 
 Source: Tsz Ho Chan, "Arithmetic Progressions Among Powerful Numbers",
 Journal of Integer Sequences 26 (2023), Article 23.1.1, Conjecture `abc` at

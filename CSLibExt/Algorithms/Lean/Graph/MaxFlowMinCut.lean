@@ -68,16 +68,25 @@ local notation "MFC.cutCapacity" =>
 
 variable {n : ℕ}
 
-/-- The capacities as reals. -/
+/-- **Real capacities.** For a capacity function $c$ on the vertices $0, \dots, n-1$ with
+natural-number values, the real capacities are the same values viewed as real numbers,
+$(u, v) \mapsto c(u, v) \in \mathbb{R}$. -/
 def realCap (capacity : Fin n → Fin n → ℕ) : Fin n → Fin n → ℝ := fun u v => (capacity u v : ℝ)
 
-/-- A skew-symmetric flow as a nonnegative arc flow: its positive part, as naturals. -/
+/-- **Arc flow of an integer flow.** For an integer flow matrix $f$ on the vertices
+$0, \dots, n-1$, its arc flow is the natural-number matrix whose entry at $(u, v)$ is the positive
+part $\max(f(u, v), 0)$ of $f(u, v)$. -/
 def arcFlow (flow : Flow n) : Fin n → Fin n → ℕ := fun u v => (flow u v).toNat
 
-/-- The arc flow as reals. -/
+/-- **Real arc flow.** For an integer flow matrix $f$ on the vertices $0, \dots, n-1$, its real
+arc flow is the function $(u, v) \mapsto \max(f(u, v), 0)$, the arc flow of $f$, viewed as real
+numbers. -/
 def realFlow (flow : Flow n) : Fin n → Fin n → ℝ := fun u v => (arcFlow flow u v : ℝ)
 
-/-- A skew-symmetric flow is the difference of its arc flow in the two directions. -/
+/-- **A skew flow is the difference of its arc flows.** Let $f$ be an integer flow matrix on the
+vertices $0, \dots, n-1$ that is skew-symmetric, $f(u, v) = -f(v, u)$ for all $u, v$, and let
+$a(u, v) = \max(f(u, v), 0)$ be its arc flow. Then $f(u, v) = a(u, v) - a(v, u)$ for all
+vertices $u$ and $v$. -/
 theorem flow_eq_arcFlow_sub {flow : Flow n} (skew : ∀ u v, flow u v = -flow v u) (u v : Fin n) :
     flow u v = (arcFlow flow u v : ℤ) - (arcFlow flow v u : ℤ) := by
   simp only [arcFlow, skew v u]
@@ -88,14 +97,20 @@ theorem realFlow_sub {flow : Flow n} (skew : ∀ u v, flow u v = -flow v u) (u v
   rw [flow_eq_arcFlow_sub skew u v]
   simp only [realFlow, Int.cast_sub, Int.cast_natCast]
 
-/-- The net outflow of `v` in the skew representation is its outflow minus its inflow in the arc
-representation. -/
+/-- **Net outflow in the arc representation.** Let $f$ be a skew-symmetric integer flow matrix on
+the vertices $0, \dots, n-1$, so $f(u, v) = -f(v, u)$ for all $u, v$, and let
+$a(u, v) = \max(f(u, v), 0)$ be its arc flow, viewed as real numbers. Then for every vertex $v$,
+$\sum_w a(v, w) - \sum_u a(u, v) = \sum_w f(v, w)$, the net flow leaving $v$. -/
 theorem sum_realFlow_sub {flow : Flow n} (skew : ∀ u v, flow u v = -flow v u) (v : Fin n) :
     (∑ w, realFlow flow v w) - ∑ u, realFlow flow u v = (EdmondsKarp.flowValue v flow : ℝ) := by
   rw [← Finset.sum_sub_distrib, EdmondsKarp.flowValue, Int.cast_sum]
   exact Finset.sum_congr rfl fun w _ => realFlow_sub skew v w
 
-/-- **A feasible skew flow gives a feasible flow** in MathlibExt's sense, with the same value. -/
+/-- **A feasible skew flow gives a feasible flow.** Let $c$ be a capacity function on the vertices
+$0, \dots, n-1$ with natural-number values and let $s, t$ be vertices. If an integer flow matrix
+$f$ is a feasible skew-symmetric $s$-$t$ flow for $c$, then its arc flow
+$(u, v) \mapsto \max(f(u, v), 0)$, viewed as a real function, is a feasible $s$-$t$ flow for $c$
+viewed as real capacities. -/
 theorem isFeasibleFlow_realFlow {capacity : Fin n → Fin n → ℕ} {source sink : Fin n}
     {flow : Flow n} (h : IsFeasible capacity source sink flow) :
     MFC.IsFeasibleFlow (realCap capacity) source sink (realFlow flow) := by
@@ -118,7 +133,10 @@ theorem cutCapacity_realCap (capacity : Fin n → Fin n → ℕ) (S : Finset (Fi
   simp only [MathlibExt.Combinatorics.Graph.MaxFlowMinCutWanted.cutCapacity,
     EdmondsKarp.cutCapacity, realCap, Int.cast_sum, Int.cast_natCast]
 
-/-- The certificate cut of the Edmonds-Karp flow separates the source from the sink. -/
+/-- **The Edmonds-Karp residual cut separates source and sink.** Let $c$ be a capacity function
+on the vertices $0, \dots, n-1$ with natural-number values and let $s \ne t$ be vertices. The set
+of vertices reachable from $s$ in the residual graph of the flow computed by the Edmonds-Karp
+algorithm on $c$, $s$, $t$ is an $s$-$t$ cut: it contains $s$ and not $t$. -/
 theorem isSTCut_residualCut (capacity : Fin n → Fin n → ℕ) {source sink : Fin n}
     (hst : source ≠ sink) :
     MFC.IsSTCut source sink (residualCut capacity (edmondsKarp capacity source sink) source) := by
@@ -130,11 +148,14 @@ theorem isSTCut_residualCut (capacity : Fin n → Fin n → ℕ) {source sink : 
     rw [order_mem_iff_reachable]
     exact edmondsKarp_no_augmenting_path capacity hst
 
-/-- **Edmonds-Karp computes a maximum flow and a minimum cut**, in the statement shape of
-MathlibExt's `max_flow_min_cut`: for integral capacities on `Fin n` and `source ≠ sink`, the arc
-flow of `edmondsKarp` (`realFlow`) is feasible, no feasible real flow has a larger value, its value
-is at most every cut's capacity, and it equals the capacity of the certificate cut
-`residualCut`. -/
+/-- **Edmonds-Karp computes a maximum flow and a minimum cut.** Let $c$ be a capacity function on
+the vertices $0, \dots, n-1$ with natural-number values, viewed as real capacities, and let
+$s \ne t$ be vertices. Let $f$ be the real arc flow of the flow computed by the Edmonds-Karp
+algorithm on $c$, $s$, $t$ (its positive part, viewed as real numbers), and let $S_0$ be the set
+of vertices reachable from $s$ in the residual graph of that flow. Then $f$ is a feasible $s$-$t$
+flow for $c$; every feasible real-valued $s$-$t$ flow for $c$ has value at most the value of $f$;
+the value of $f$ is at most the capacity of every $s$-$t$ cut; $S_0$ is an $s$-$t$ cut; and the
+value of $f$ equals the capacity of $S_0$. -/
 theorem edmondsKarp_max_flow_min_cut (capacity : Fin n → Fin n → ℕ) {source sink : Fin n}
     (hst : source ≠ sink) :
     MFC.IsFeasibleFlow (realCap capacity) source sink
@@ -163,7 +184,11 @@ theorem edmondsKarp_max_flow_min_cut (capacity : Fin n → Fin n → ℕ) {sourc
   · exact MathlibExt.Combinatorics.Graph.MaxFlowMinCutWanted.flowValue_le_cutCapacity _ _ _ _ hF
       S hS
 
-/-- The certificate cut is a minimum cut: no `s`-`t` cut has smaller capacity. -/
+/-- **No $s$-$t$ cut is smaller than the Edmonds–Karp residual cut.** Let $c$ be a capacity
+function on the vertices $0, \dots, n-1$ with natural-number values, viewed as real capacities,
+and let $s \ne t$ be vertices. Let $S_0$ be the set of vertices reachable from $s$ in the residual
+graph of the flow computed by the Edmonds–Karp algorithm on $c$, $s$, $t$. Then for every $s$-$t$
+cut $S$, the capacity of $S_0$ is at most the capacity of $S$. -/
 theorem cutCapacity_residualCut_le (capacity : Fin n → Fin n → ℕ) {source sink : Fin n}
     (hst : source ≠ sink) {S : Finset (Fin n)} (hS : MFC.IsSTCut source sink S) :
     MFC.cutCapacity (realCap capacity)
@@ -173,8 +198,13 @@ theorem cutCapacity_residualCut_le (capacity : Fin n → Fin n → ℕ) {source 
   rw [← heq]
   exact hle S hS
 
-/-- **Integrality**: integral capacities have an integral maximum flow, computed by
-`edmondsKarp` (`arcFlow`, natural-valued on every arc), as a real flow in MathlibExt's sense. -/
+/-- **Integral flow theorem.** Let $c$ be a capacity function on the vertices $0, \dots, n-1$
+with natural-number values, viewed as real capacities, and let $s \ne t$ be vertices. Then there
+is a natural-number valued function $f$ on pairs of vertices which, viewed as a real function, is
+a feasible $s$-$t$ flow for $c$ whose value is at least the value of every feasible real-valued
+$s$-$t$ flow for $c$.
+
+The proof takes $f$ to be the arc flow of the flow computed by the Edmonds-Karp algorithm. -/
 theorem exists_nat_max_flow (capacity : Fin n → Fin n → ℕ) {source sink : Fin n}
     (hst : source ≠ sink) :
     ∃ f : Fin n → Fin n → ℕ,

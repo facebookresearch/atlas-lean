@@ -1,0 +1,18 @@
+# Nim on a cube
+
+- [Rotation move on the cube](cube-rotation-move.md)
+- [Rotation moves at the empty cube](cube-rotation-move-examples.md)
+- [Vertex move on the cube](cube-vertex-move.md)
+- [Edge move on the cube](cube-edge-move.md)
+- [Face move on the cube](cube-face-move.md)
+- [Examples of vertex, edge and face moves](cube-vertex-edge-face-move-examples.md)
+- [P-positions of rotation Nim on a cube](cube-rotation-nim-p-positions.md)
+- [P-positions of vertex Nim on a cube](cube-vertex-nim-p-positions.md)
+- [P-positions of edge Nim on a cube](cube-edge-nim-p-positions.md)
+- [Misère P-positions of vertex Nim on a cube](cube-vertex-nim-misere-p-positions.md)
+- [Misère P-positions of rotation Nim on a cube](cube-rotation-nim-misere-p-positions.md)
+- [Misère P-positions of face Nim on a cube](cube-face-nim-misere-p-positions.md)
+- [P-positions of slow vertex Nim on a cube](slow-cube-vertex-nim-p-positions.md)
+- [P-positions of slow edge Nim on a cube](slow-cube-edge-nim-p-positions.md)
+- [P-positions of slow face Nim on a cube](slow-cube-face-nim-p-positions.md)
+- [P-positions of slow rotation Nim on a cube](slow-cube-rotation-nim-p-positions.md)

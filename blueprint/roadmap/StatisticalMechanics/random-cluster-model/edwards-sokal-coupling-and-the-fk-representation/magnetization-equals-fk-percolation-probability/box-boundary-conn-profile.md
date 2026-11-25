@@ -1,0 +1,7 @@
+# Wired probability that the origin reaches the box boundary
+
+For $d \in \mathbb{N}$, $0 < p < 1$ and $n \in \mathbb{N}$, the boundary-connection profile is
+
+$$\phi^w_{\Lambda_n,\partial\Lambda_n,p}(0 \leftrightarrow \partial\Lambda_n),$$
+
+the total mass of the configurations in which the origin is joined to some vertex of the [vertex boundary](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-boundary.md) $\partial\Lambda_n$ (the sites of $\Lambda_n$ not in $\Lambda_{n-1}$, with $n - 1$ truncated at $0$) by a path of open edges of the nearest-neighbour graph on the box $\Lambda_n = \{-n, \dots, n\}^d \subseteq \mathbb{Z}^d$, under the wired random-cluster probability at $q = 2$, $\phi^w_{G,\partial,p}(\omega) = p^{o(\omega)}(1 - p)^{c(\omega)} 2^{k^w(\omega)} / Z$, where $o(\omega)$ and $c(\omega)$ count the open and closed edges of $G$, $k^w(\omega)$ is the number of connected components of the graph formed by the open edges of $G$ and all pairs of distinct vertices of $\partial$, and $Z$ is the sum of the numerators over all assignments $\omega$ of open/closed states to the unordered pairs of vertices (loops and non-edges included) (the [random-cluster probability with boundary wiring](../../fkg-inequality-and-monotonicity-of-random-cluste/bc-prob.md) given by the clique on $\partial$), here for the nearest-neighbour graph on $\Lambda_n$ with $\partial = \partial\Lambda_n$.

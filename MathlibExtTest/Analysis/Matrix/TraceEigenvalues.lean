@@ -31,4 +31,17 @@ example {A B : Matrix (Fin 3) (Fin 3) ℝ} (hA : A.IsHermitian) (hB : B.IsHermit
   ⟨exists_perm_sum_mul_eigenvalues_le_trace_mul hA hB,
     exists_perm_trace_mul_le_sum_mul_eigenvalues hA hB⟩
 
+-- von Neumann's trace inequality, sorted forms: `∑ α↓ β↑ ≤ tr (A B) ≤ ∑ α↓ β↓`.
+example {A B : Matrix (Fin 3) (Fin 3) ℝ} (hA : A.IsHermitian) (hB : B.IsHermitian) :
+    ∑ k, hA.eigenvalues₀ k * hB.eigenvalues₀ (Fin.rev k) ≤ (A * B).trace ∧
+      (A * B).trace ≤ ∑ k, hA.eigenvalues₀ k * hB.eigenvalues₀ k :=
+  ⟨sum_eigenvalues₀_mul_rev_le_trace_mul hA hB, trace_mul_le_sum_eigenvalues₀_mul hA hB⟩
+
+-- With `B = A` the upper form reads `tr (A²) ≤ ∑ λₖ²` (an equality, so the bound is sharp).
+example {A : Matrix (Fin 2) (Fin 2) ℝ} (hA : A.IsHermitian) :
+    (A * A).trace ≤ ∑ k, hA.eigenvalues₀ k ^ 2 := by
+  simpa [sq] using trace_mul_le_sum_eigenvalues₀_mul hA hA
+
 #print axioms exists_perm_sum_mul_eigenvalues_le_trace_mul
+#print axioms trace_mul_le_sum_eigenvalues₀_mul
+#print axioms sum_eigenvalues₀_mul_rev_le_trace_mul

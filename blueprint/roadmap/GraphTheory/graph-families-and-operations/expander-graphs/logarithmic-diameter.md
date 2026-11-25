@@ -4,7 +4,7 @@ Let $G$ be a finite simple graph on $N$ vertices with adjacency matrix $A$, and 
 
 ## Background
 
-- Undirected ST-connectivity is in L (Reingold):
+- [Undirected ST-connectivity is in L (Reingold)](../../../TheoryOfComputation/polynomial-time-problems/undirected-s-t-connectivity/ustcon-in-l.md):
   logarithmic diameter is why connectivity is easy in log space on graphs whose components are
   expanders: it suffices to try all walks of length $O(\log N)$.
 - [Elementary lower bound on the spectral parameter](elementary-spectral-lower-bound.md): $\lambda$ cannot

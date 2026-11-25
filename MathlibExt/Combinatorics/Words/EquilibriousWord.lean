@@ -14,10 +14,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Finite binary word over the fixed alphabet `Sigma = {a, b}`, represented
-canonically as `List (Fin 2)` with `0` and `1` the two letters. A word `u` is
-equilibrious iff it contains equal numbers of `0`s and `1`s, counted with
-`List.count`. Provenance: concept `jis_sem_061cc96760fa3a6b576dda00`,
+/-- **Equilibrious binary words.** A finite word $u$ over the binary alphabet $\{0, 1\}$ is
+equilibrious when the letters $0$ and $1$ occur the same number of times in $u$.
+
+The letters $a$ and $b$ of the source alphabet $\Sigma = \{a, b\}$ are represented by $0$ and $1$.
+
+Source: concept `jis_sem_061cc96760fa3a6b576dda00`,
 source <https://cs.uwaterloo.ca/journals/JIS/VOL28/Coons/coons6.tex>, lines 543–575,
 SHA-256 `409c8b4db7ce10e7f1cb6790bde41029c3667b383f6ccb05f6d374743bec2ff0`. -/
 public def IsEquilibriousWord (u : List (Fin 2)) : Prop :=
@@ -32,9 +34,10 @@ public instance decidableIsEquilibriousWord (u : List (Fin 2)) :
   unfold IsEquilibriousWord
   infer_instance
 
-/-- Reversal invariance: a finite binary word is equilibrious iff its reversal
-is. Elementary reusable consequence of the `List.count` definition.
-Provenance: concept `jis_sem_061cc96760fa3a6b576dda00`, source location
+/-- **Reversal preserves equilibrious words.** A finite word $u$ over the binary alphabet
+$\{0, 1\}$ is equilibrious if and only if its reversal is equilibrious.
+
+Source: concept `jis_sem_061cc96760fa3a6b576dda00`, source location
 `coons6.tex:543-575`. -/
 public theorem isEquilibriousWord_reverse {u : List (Fin 2)} :
     IsEquilibriousWord u.reverse ↔ IsEquilibriousWord u := by

@@ -16,7 +16,7 @@ The statement above, for cliques of size $\lfloor n/3 \rfloor$, follows by paddi
 
 ## Background
 
-- Erdős–Rado sunflower lemma: bounds the errors of the approximators in the approximation method.
+- [Erdős–Rado sunflower lemma](../../../Combinatorics/extremal-set-theory/intersecting-families/sunflower-lemma/exists-is-delta-system.md): bounds the errors of the approximators in the approximation method.
 - [Shannon's circuit-size lower bound](../shannon-s-circuit-size-lower-bound/README.md): almost all Boolean functions need large circuits, while no superpolynomial bound is known for an explicit function in unrestricted circuits; monotone circuits are the restricted model where Razborov's method succeeds.
 
 ## Sources

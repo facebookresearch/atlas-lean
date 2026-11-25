@@ -11,6 +11,8 @@ statistics (Wainwright, *High-Dimensional Statistics*, 2019, Chapter 2).
 
 - [Sub-exponential random variable](has-subexponential-mgf.md)
 - [Sub-Gaussian variables are sub-exponential](has-subexponential-mgf-2.md)
+- [Negation of a sub-exponential variable](neg.md)
+- [Sub-exponential variables under an image measure](of-map.md)
 - [Chernoff bound for a sub-exponential variable](measure-real-ge-le-exp.md)
 - [Sub-exponential tail bound, Gaussian regime](measure-real-ge-le-of-le.md)
 - [Sub-exponential tail bound, exponential regime](measure-real-ge-le-of-ge.md)
@@ -36,4 +38,4 @@ statistics (Wainwright, *High-Dimensional Statistics*, 2019, Chapter 2).
 - [Hoeffding's inequality](../hoeffding-s-inequality/README.md)
 - [McDiarmid's inequality](../mcdiarmid-s-inequality/README.md)
 - [Lasso error bounds under restricted eigenvalues](../../linear-models-multivariate/lasso-error-bounds-under-restricted-eigenvalues/README.md)
-- Generalization bounds and concentration
+- [Generalization bounds and concentration](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/README.md)

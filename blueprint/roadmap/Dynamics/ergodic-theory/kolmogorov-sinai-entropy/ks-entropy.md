@@ -22,7 +22,7 @@ use a real-valued entropy, which takes the value $0$ when the supremum is infini
 
 ## Background
 
-- Shannon entropy:
+- [Shannon entropy](../../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md):
   the entropy of a partition is the Shannon entropy of the law of the atom containing a random point
   (in nats with the natural logarithm, in bits with $\log_2$).
 

@@ -13,6 +13,6 @@
 
 ## Related topics
 
-- Bayesian networks:
+- [Bayesian networks](../../../ComputerScience/machine-learning/probabilistic-graphical-models/bayesian-networks/README.md):
   the global Markov property of Bayesian networks is stated with this notion of conditional
   independence.

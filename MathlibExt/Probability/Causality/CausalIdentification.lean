@@ -133,8 +133,9 @@ private lemma choose_ne_zero {n₁ : ℕ} (h : n₁ ≤ Fintype.card ι) :
     ((Fintype.card ι).choose n₁ : ℝ) ≠ 0 := by
   exact_mod_cast (Nat.choose_pos h).ne'
 
-/-- Number of treated sets containing a given unit. -/
-private lemma sum_powersetCard_ite_mem [DecidableEq ι] (n₁ : ℕ) (i : ι) :
+/-- The number of `n₁`-element subsets of `ι` containing `i`, times `Fintype.card ι`, is
+`(Fintype.card ι).choose n₁ * n₁`. -/
+lemma sum_powersetCard_ite_mem [DecidableEq ι] (n₁ : ℕ) (i : ι) :
     (∑ S ∈ univ.powersetCard n₁, (if i ∈ S then (1 : ℝ) else 0)) * (Fintype.card ι) =
       (Fintype.card ι).choose n₁ * n₁ := by
   rw [sum_boole]

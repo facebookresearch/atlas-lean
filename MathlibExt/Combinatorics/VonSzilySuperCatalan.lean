@@ -880,11 +880,17 @@ private lemma wz_key (m n : ℕ) :
           ((Nat.factorial (m + n) : ℕ) : ℚ))) * hrec +
         (((m + 1 : ℕ) : ℚ) * (2 * (2 * ((m + 1 : ℕ) : ℚ) - 1))) * ih
 
-/-- Von Szily identity for the super Catalan numbers `S(m, n)`: the source
-normalization `(2 * m)! * (2 * n)! / (m! * n! * (m + n)!)` equals the
-all-integer alternating sum with plus-plus indices `choose (2 * m) (m + k)`
-and `choose (2 * n) (n + k)`, summed over exactly its simultaneous finite
-binomial support.
+/-- **Von Szily's identity for super Catalan numbers.** For all natural numbers $m$ and $n$,
+$$
+\left\lfloor \frac{(2m)!\,(2n)!}{m!\,n!\,(m+n)!} \right\rfloor
+= \sum_{k=\max(-m,-n)}^{\min(m,n)} (-1)^k \binom{2m}{m+k} \binom{2n}{n+k},
+$$
+where the sum runs over the integers $k$ with $\max(-m, -n) \le k \le \min(m, n)$.
+
+The quotient inside the floor is the super Catalan number $S(m, n)$. The source sums over all
+$k \in \mathbb{Z}$; only the terms in this range are nonzero.
+
+Proves `Wanted` entry `von_szily_super_catalan_identity`.
 
 Source: Kendra Killpatrick, *Super FiboCatalan Numbers and Their Lucas
 Analogues*, Journal of Integer Sequences 28 (2025), Article 25.5.8, von
@@ -892,11 +898,6 @@ Szily identity quoted in the Open problems section, lines 671–674,
 <https://cs.uwaterloo.ca/journals/JIS/VOL28/Killpatrick/killp6.tex>,
 citing I. Gessel, *Super ballot numbers*, J. Symbolic Comput. 14 (1992),
 p. 11.
-
-Math notes: the source sums over `k ∈ ℤ`; only finitely many terms are
-nonzero, represented here by the `Finset.Icc` of the common support.
-
-Proves `Wanted` entry `von_szily_super_catalan_identity`.
 -/
 theorem von_szily_super_catalan_identity (m n : ℕ) :
     (((2 * m).factorial * (2 * n).factorial /

@@ -51,8 +51,11 @@ namespace MetaMathlibExt
 
 universe u
 
-/-- Raw multigraded Poincaré-series coefficient family: at `(i, α)`, the
-value is exactly `multigradedBettiNumber data α i`.
+/-- **Multigraded Poincaré coefficients.** Let $K$ be a field, let $R = K[x_1, \dots, x_n]$, let
+$M$ be a multigraded $R$-module, and let $D$ be base-change data for a multigraded free
+resolution of $M$. The multigraded Poincaré coefficient family of $D$ is the function
+$\mathbb{N} \times \mathbb{Z}^n \to \mathbb{N}$ sending $(i, \alpha)$ to the multigraded Betti
+number $\beta_{i,\alpha}(D)$ of $D$ in homological degree $i$ and multidegree $\alpha$.
 
 A plain function records every coefficient without asserting finite
 support, convergence, polynomiality, or rationality. -/
@@ -69,8 +72,12 @@ public noncomputable def multigradedPoincareCoefficients
     ℕ × (Fin n →₀ Int) → ℕ :=
   fun p => multigradedBettiNumber data p.2 p.1
 
-/-- Application equation: evaluating the coefficient family at `(i, α)`
-returns the corresponding Betti number. -/
+/-- **Multigraded Poincaré coefficients are Betti numbers.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, let $M$ be a multigraded $R$-module, and let $D$ be base-change data
+for a multigraded free resolution of $M$. For every $i \in \mathbb{N}$ and
+$\alpha \in \mathbb{Z}^n$, the multigraded Poincaré coefficient family of $D$ takes the value
+$\beta_{i,\alpha}(D)$ at $(i, \alpha)$, where $\beta_{i,\alpha}(D)$ is the multigraded Betti
+number of $D$ in homological degree $i$ and multidegree $\alpha$. -/
 public theorem multigradedPoincareCoefficients_apply
     {K : Type u} [Field K] {n : ℕ}
     {M : Type u} [AddCommGroup M]
@@ -86,9 +93,12 @@ public theorem multigradedPoincareCoefficients_apply
       multigradedBettiNumber data α i :=
   rfl
 
-/-- Conditional coherence of the coefficient family: an edge-5
-`MultigradedResolutionComparison` forces the two raw coefficient
-functions to be equal.
+/-- **Resolution comparisons preserve multigraded Poincaré coefficients.** Let $K$ be a field,
+let $R = K[x_1, \dots, x_n]$, let $M$ be a multigraded $R$-module, and let $D$ and $D'$ be
+base-change data for two multigraded free resolutions of $M$. Given a multigraded resolution
+comparison between $D$ and $D'$, that is, for every $\alpha \in \mathbb{Z}^n$ a chain-homotopy
+equivalence between the degree-$\alpha$ component complexes of $D$ and $D'$, the multigraded
+Poincaré coefficient families of $D$ and $D'$ are equal.
 
 Source: Benjamin Braun and Brian Davis, “Antichain Simplices,”
 Journal of Integer Sequences 23 (2020),

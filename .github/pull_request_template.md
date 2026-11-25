@@ -2,6 +2,15 @@
 
 <!-- Describe the mathematical or infrastructure change and its scope. -->
 
+<!--
+One `Graph:` line, as CONTRIBUTING.md asks: the article ids (`af_…`) of the
+pages this pull request proves, fixes or extends, plus `new` when it adds
+declarations that get pages (their pages are in this pull request), or `none`
+when it changes nothing the graph shows. Name each ready task it takes on a
+`Tasks: af_…` line.
+-->
+Graph:
+
 ## Validation
 
 - [ ] I ran `scripts/check.sh` from the repository root.
@@ -20,7 +29,7 @@
 - [ ] New reusable computer-science developments are in `CSLibExt`, with tests
       or diagnostics in `CSLibExtTest`.
 - [ ] Changed `CSLibExt` code contains no proof holes, custom axioms,
-      `native_decide`, or imports from `PhyslibExt`, `WantedExt`, or any test
+      `native_decide`, or imports from `PhyslibExt`, `Domains`, `WantedExt`, or any test
       library.
 - [ ] This pull request does not change `CSLibExt`, or the items above are
       complete.
@@ -30,10 +39,15 @@
 - [ ] New reusable physics developments extend upstream Physlib, with tests
       or diagnostics in `PhyslibExtTest`.
 - [ ] Changed `PhyslibExt` code follows Physlib's conventions and contains no
-      proof holes, custom axioms, `native_decide`, or imports from `WantedExt`
+      proof holes, custom axioms, `native_decide`, or imports from `Domains`, `WantedExt`
       or any test library.
 - [ ] This pull request does not change `PhyslibExt`, or the items above are
       complete.
+
+## Domains and DomainsTest
+
+- [ ] Domain-specific models live in `Domains` and their tests in `DomainsTest`.
+      The foundation libraries do not import these libraries.
 
 ## WantedExt
 

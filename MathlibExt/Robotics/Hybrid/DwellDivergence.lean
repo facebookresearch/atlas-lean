@@ -12,16 +12,21 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.Filter.AtTopBot.Archimedean
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.AtTopBot.Field
+
+import Mathlib.Algebra.Order.Floor.Semiring
 
 /-!
 # Positive dwell time implies divergence
 
 If every step duration is at least a fixed positive dwell
 `δ`, the elapsed time after `n` steps is at least `n * δ`
-and therefore tends to infinity.
+and therefore tends to infinity. Consequently only finitely
+many steps end before any finite horizon `H`, each such
+step count `n` satisfying `n * δ ≤ H`.
 -/
 
 @[expose] public section
@@ -53,5 +58,22 @@ theorem dwellElapsed_tendsto_atTop {d : ℕ → ℝ} {δ : ℝ}
   have hbound : Filter.Tendsto (fun n : ℕ => (n : ℝ) * δ) Filter.atTop Filter.atTop :=
     Filter.Tendsto.atTop_mul_const hδ tendsto_natCast_atTop_atTop
   exact Filter.tendsto_atTop_mono (fun n => dwellElapsed_ge hd n) hbound
+
+/-- **Finite-event criterion.** If every step duration `d k` is at least `δ > 0`, only finitely
+many events occur up to any horizon `H`: every step count `n` with elapsed time
+`dwellElapsed d n ≤ H` satisfies `n δ ≤ H`. -/
+lemma events_finite_of_dwell {d : ℕ → ℝ} {δ : ℝ} (hδ : 0 < δ) (hd : ∀ k, δ ≤ d k) (H : ℝ) :
+    {n : ℕ | dwellElapsed d n ≤ H}.Finite ∧ ∀ n, dwellElapsed d n ≤ H → (n : ℝ) * δ ≤ H := by
+  have hbound : ∀ n, dwellElapsed d n ≤ H → (n : ℝ) ≤ H / δ := by
+    intro n hn
+    rw [le_div_iff₀ hδ]
+    exact le_trans (dwellElapsed_ge hd n) hn
+  refine ⟨?_, fun n hn => le_trans (dwellElapsed_ge hd n) hn⟩
+  refine Set.Finite.subset (Set.finite_lt_nat (⌊H / δ⌋₊ + 1)) ?_
+  intro n hn
+  simp only [Set.mem_ofPred_eq] at hn ⊢
+  have h2 : (n : ℝ) ≤ H / δ := hbound n hn
+  have h3 : n ≤ ⌊H / δ⌋₊ := Nat.le_floor h2
+  omega
 
 end Robotics.Hybrid
