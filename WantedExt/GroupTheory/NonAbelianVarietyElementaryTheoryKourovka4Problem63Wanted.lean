@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Computability.RE
-public import WantedExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted
+public import MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21
 public import WantedExt.GroupTheory.PrenexSentenceShared
 
 @[expose] public section

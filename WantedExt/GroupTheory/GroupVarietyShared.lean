@@ -21,7 +21,7 @@ has laws `N ⊔ N'`.
 module
 
 public import Mathlib.GroupTheory.Finiteness
-public import WantedExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted
+public import MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21
 
 @[expose] public section
 

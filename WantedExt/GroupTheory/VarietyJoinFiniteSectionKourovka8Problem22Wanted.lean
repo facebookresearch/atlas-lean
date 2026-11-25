@@ -17,7 +17,7 @@ there exist finite groups `A ∈ 𝔄`, `B ∈ 𝔅` such that `G` is a section 
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted
+public import MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21
 public import WantedExt.GroupTheory.NilpotentClassFourVarietyLatticeKourovka3Problem53Wanted
 
 @[expose] public section
@@ -31,7 +31,7 @@ Kovács). UnsolvedMath record UM-00700474 (`KOU-8.22`), dataset ulamai/UnsolvedM
 
 A variety is given by its set of laws, a fully invariant subgroup of `FreeGroup ℕ`
 (`IsFullyInvariant` of Kourovka 3.53); membership is `SatisfiesLaws`
-from `WantedExt/GroupTheory/FormationVarietyPGroupsKourovka11Problem21Wanted.lean`. The laws of the
+from `MathlibExt/GroupTheory/FormationVarietyPGroupsKourovka11Problem21.lean`. The laws of the
 join are the laws common to both varieties, `VA ⊓ VB`. A section of `X` is a quotient of a subgroup
 of `X`. The parenthetical "non-abelian" is kept as a hypothesis on `G`.
 -/

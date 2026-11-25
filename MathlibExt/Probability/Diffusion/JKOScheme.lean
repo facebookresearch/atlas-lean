@@ -31,10 +31,10 @@ Wasserstein distance, through the implicit scheme (their (13)): `ρ⁽ᵏ⁾` mi
 This file defines the ingredients on a finite-dimensional real inner product space `E` (for instance
 `EuclideanSpace ℝ (Fin n)`, so that `W₂` is taken for the Euclidean distance) with its
 Lebesgue measure, and proves the comparison inequality that starts the a priori
-estimates. Existence and uniqueness of the step (JKO Proposition 4.1) and convergence of the
-scheme to the Fokker–Planck equation (JKO Theorem 5.1) are wanted results in
-`WantedExt/MeasureTheory/JKOSchemeWanted.lean`; the metric-space part of the estimates is proved
-in `MathlibExt/Analysis/Variational/MinimizingMovement.lean`.
+estimates. Existence and uniqueness of the step (JKO Proposition 4.1) are proved in
+`MathlibExt/Probability/Diffusion/JKOStep.lean`. Convergence to the Fokker–Planck equation
+(JKO Theorem 5.1) is stated in `WantedExt/MeasureTheory/JKOSchemeWanted.lean`. The metric-space
+part of the estimates is proved in `MathlibExt/Analysis/Variational/MinimizingMovement.lean`.
 
 Probability densities are represented by probability measures absolutely continuous with respect
 to Lebesgue measure; the density is the Radon–Nikodym derivative. Energies take values in

@@ -13,9 +13,10 @@ public import Mathlib.GroupTheory.Index
 public import Mathlib.Order.CompletePartialOrder
 
 /-!
-# σ-subnormal subgroups
+# σ-subnormal subgroups and σ-soluble groups
 
-A partition of the primes defines σ-primary integers and σ-subnormal subgroup chains.
+A partition of the primes defines σ-primary integers, σ-subnormal subgroup chains and σ-soluble
+groups, the groups all of whose chief factors have σ-primary index.
 -/
 
 @[expose] public section
@@ -47,5 +48,17 @@ def IsSigmaSubnormal {I : Type} (σ : I → Set ℕ) {G : Type*} [Group G] (A : 
   ∃ (n : ℕ) (K : ℕ → Subgroup G), K 0 = A ∧ K n = ⊤ ∧ ∀ i < n, K i ≤ K (i + 1) ∧
     (((K i).subgroupOf (K (i + 1))).Normal ∨
       IsSigmaPrimary σ ((K i).subgroupOf (K (i + 1))).normalCore.index)
+
+/-- **Chief factors.** For subgroups $A$ and $B$ of a group $G$, $A / B$ is a chief factor of $G$
+if $A$ and $B$ are normal in $G$, $B < A$, and every normal subgroup $N$ of $G$ with
+$B \le N \le A$ equals $B$ or $A$. -/
+def IsChiefFactor {G : Type*} [Group G] (A B : Subgroup G) : Prop :=
+  A.Normal ∧ B.Normal ∧ B < A ∧ ∀ N : Subgroup G, N.Normal → B ≤ N → N ≤ A → N = B ∨ N = A
+
+/-- **$\sigma$-soluble groups.** For a family $\sigma = (\sigma_i)_{i \in I}$ of sets of natural
+numbers, a group $G$ is $\sigma$-soluble if for every chief factor $A / B$ of $G$ the index
+$|A : B|$ is $\sigma$-primary (an infinite index counts as $0$). -/
+def IsSigmaSoluble {I : Type} (σ : I → Set ℕ) (G : Type*) [Group G] : Prop :=
+  ∀ A B : Subgroup G, IsChiefFactor A B → IsSigmaPrimary σ (B.relIndex A)
 
 end MathlibExt.GroupTheory.KourovkaNotebookShared
