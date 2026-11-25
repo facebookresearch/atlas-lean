@@ -1,5 +1,8 @@
 # Golden ratio base
 
+For generalized Beatty sequences and their Wythoff composition identities, see
+[Beatty sequences](../../../diophantine-approximation/uniform-distribution-metric/beatty-sequences/README.md).
+
 - [Value of a base phi expansion](base-phi-value.md)
 - [Bergman expansions](is-bergman-expansion.md)
 - [Golden mean flips](is-golden-mean-flip.md)
@@ -40,16 +43,12 @@
 - [Peeling off the leading letter of a digit block](has-digit-block-cons.md)
 - [Occurrence set of a digit block](base-phi-occurrences.md)
 - [A base phi expansion of 1 ends in the digit 1](one-mem-base-phi-occurrences-one.md)
-- [Generalized Beatty sequence](generalized-beatty.md)
-- [Generalized Beatty sequence at zero](generalized-beatty-zero.md)
-- [Generalized Beatty sequence at one](generalized-beatty-one.md)
 - [Terms of a generalized Beatty sequence](beatty-set.md)
 - [Terms of a generalized Beatty sequence from index zero](beatty-set-2.md)
 - [The value at one is a term of a generalized Beatty sequence](add-add-mem-beatty-set.md)
 - [The initial term of a generalized Beatty set](mem-beatty-set-self.md)
 - [The blocks $10^{2m} \cdot 1$ and $10^{2m+1} \cdot 0$ never occur](base-phi-no-block-one-zeros-dot.md)
 - [Propagation principle for base phi expansions](base-phi-propagation-principle.md)
-- [Generalized Beatty sequences composed with the Wythoff sequences](generalized-beatty-comp-wythoff.md)
 - [Complement of the lower Wythoff part of a generalized Beatty sequence](beatty-set-complement-of-lower-wythoff.md)
 - [First differences of a generalized Beatty sequence](generalized-beatty-diff-eq-fib-inf.md)
 - [For $m \ge 2$, no base phi expansion has end block $1\,0^{2m}\,1$](base-phi-no-end-block-one-zeros-one.md)

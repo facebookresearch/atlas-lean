@@ -20,3 +20,7 @@
 - [Increments of the $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$](beatty-card-compl-between-succ-sub.md)
 - [Increments of the $\alpha$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$](beatty-card-self-between-succ-sub.md)
 - [Multiplicities of Polanco's skipping sequence](beatty-skipping-card-eq-add-indicator.md)
+- [Generalized Beatty sequence](generalized-beatty.md)
+- [Generalized Beatty sequence at zero](generalized-beatty-zero.md)
+- [Generalized Beatty sequence at one](generalized-beatty-one.md)
+- [Generalized Beatty sequences composed with the Wythoff sequences](generalized-beatty-comp-wythoff.md)

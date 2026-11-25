@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.List.Destutter
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
+public import MathlibExt.NumberTheory.Beatty.GeneralizedWythoff
 public import WantedExt.NumberTheory.Digits.BasePhiRepresentationsWanted
 
 /-!
@@ -128,37 +129,6 @@ Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
 theorem one_mem_basePhiOccurrences_one : 1 ∈ basePhiOccurrences 0 [1] :=
   ⟨{0}, isBasePhiExpansion_one, by simp [HasDigitBlock]⟩
 
-/-- **Generalized Beatty sequence.** Let $\varphi$ be the golden ratio. For integers $p, q, r$, the
-generalized Beatty sequence $V(p, q, r)$ is the integer sequence defined for every natural number
-$n$, including $n = 0$, by $V(p, q, r)(n) = p\lfloor n\varphi \rfloor + qn + r$.
-
-Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
-(2024), Article A24, Section 5. -/
-noncomputable def generalizedBeatty (p q r : ℤ) (n : ℕ) : ℤ :=
-  p * ⌊(n : ℝ) * φ⌋ + q * n + r
-
-/-- **Generalized Beatty sequence at zero.** Let $\varphi$ be the golden ratio. For all integers
-$p, q, r$, the generalized Beatty sequence $V(p, q, r)(n) = p\lfloor n\varphi \rfloor + qn + r$
-takes the value $V(p, q, r)(0) = r$ at $n = 0$.
-
-Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
-(2024), Article A24, Section 6 (`V₀`). -/
-theorem generalizedBeatty_zero (p q r : ℤ) : generalizedBeatty p q r 0 = r := by
-  simp [generalizedBeatty]
-
-/-- **Generalized Beatty sequence at one.** Let $\varphi$ be the golden ratio. For all integers
-$p, q, r$, the generalized Beatty sequence $V(p, q, r)(n) = p\lfloor n\varphi \rfloor + qn + r$
-takes the value $V(p, q, r)(1) = p + q + r$ at $n = 1$, since $\lfloor \varphi \rfloor = 1$.
-
-Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
-(2024), Article A24, Section 5. -/
-theorem generalizedBeatty_one (p q r : ℤ) : generalizedBeatty p q r 1 = p + q + r := by
-  have h : ⌊φ⌋ = 1 := by
-    rw [Int.floor_eq_iff]
-    exact ⟨by simpa using Real.one_lt_goldenRatio.le, by
-      simpa [one_add_one_eq_two] using Real.goldenRatio_lt_two⟩
-  simp [generalizedBeatty, h]
-
 /-- **Terms of a generalized Beatty sequence.** For integers $p$, $q$ and $r$, this is the set of
 integers $p \lfloor n\varphi \rfloor + qn + r$ for natural numbers $n \ge 1$, where $\varphi$ is
 the golden ratio: the set of terms $V(p, q, r)(n)$, $n \ge 1$, of the generalized Beatty
@@ -225,20 +195,6 @@ Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
 public theorem_wanted basePhi_propagation_principle (w : List ℕ) (hw : w.length = 8)
     (h : ∀ N ≤ 17, ∀ S, IsBasePhiExpansion N S → ¬ HasDigitBlock S 3 w) (N : ℕ)
     (S : Finset ℤ) (hS : IsBasePhiExpansion N S) : ¬ HasDigitBlock S 3 w
-
-/-- **Generalized Beatty sequences composed with the Wythoff sequences.** Let $\varphi$ be the
-golden ratio and, for integers $a$, $b$, $c$ and natural numbers $n$, let
-$V(a, b, c)(n) = a \lfloor n\varphi \rfloor + bn + c$. Let $A(n) = \lfloor n\varphi \rfloor$ and
-$B(n) = \lfloor n\varphi \rfloor + n$ be the lower and upper Wythoff sequences. For all integers
-$p$, $q$, $r$ and every natural number $n \ge 1$,
-$V(p, q, r)(A(n)) = V(p + q, p, r - p)(n)$ and $V(p, q, r)(B(n)) = V(2p + q, p + q, r)(n)$.
-
-Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
-(2024), Article A24, Lemma 3 (`integers-2024-A24-lem-3`). -/
-public theorem_wanted generalizedBeatty_comp_wythoff (p q r : ℤ) (n : ℕ) (hn : 1 ≤ n) :
-    generalizedBeatty p q r ⌊(n : ℝ) * φ⌋₊ = generalizedBeatty (p + q) p (r - p) n ∧
-      generalizedBeatty p q r (⌊(n : ℝ) * φ⌋₊ + n) =
-        generalizedBeatty (2 * p + q) (p + q) r n
 
 /-- **Complement of the lower Wythoff part of a generalized Beatty sequence.** Let $\varphi$ be the
 golden ratio and, for integers $a$, $b$, $c$, let $V(a, b, c)$ be the set of integers
