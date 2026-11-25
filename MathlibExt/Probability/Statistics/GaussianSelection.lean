@@ -170,41 +170,7 @@ theorem conditionalMeanShift_standardizedUpperEvent_gaussian {Ω : Type*} [Measu
     dsimp [β]
     field_simp
     ring
-  have hind : IndepFun I R μ := by
-    rw [indepFun_iff_map_prod_eq_prod_map_map hIR.fst.aemeasurable hIR.snd.aemeasurable]
-    apply Measure.ext_of_charFunDual
-    funext L
-    rw [charFunDual_prod]
-    have hlinear : ∀ (l : ℝ →L[ℝ] ℝ) (x : ℝ), l x = l 1 * x := by
-      intro l x
-      have h := l.map_smul x (1 : ℝ)
-      simpa only [smul_eq_mul, mul_one, mul_comm] using h
-    have hz : ∀ (l₁ l₂ : ℝ →L[ℝ] ℝ),
-        cov[l₁ ∘ I, l₂ ∘ R; μ] = 0 := by
-      intro l₁ l₂
-      have h₁ : l₁ ∘ I = fun ω => l₁ 1 * I ω := by
-        funext ω
-        exact hlinear l₁ (I ω)
-      have h₂ : l₂ ∘ R = fun ω => l₂ 1 * R ω := by
-        funext ω
-        exact hlinear l₂ (R ω)
-      rw [h₁, h₂, covariance_const_mul_left, covariance_const_mul_right,
-        hcov, mul_zero, mul_zero]
-    have heq : L ∘ (fun ω => (I ω, R ω)) =
-        (L.comp (.inl ℝ ℝ ℝ)) ∘ I + (L.comp (.inr ℝ ℝ ℝ)) ∘ R := by
-      ext ω
-      change L (I ω, R ω) = L (I ω, 0) + L (0, R ω)
-      rw [← map_add]
-      simp
-    rw [hIR.charFunDual_map_eq, hIR.fst.charFunDual_map_eq,
-      hIR.snd.charFunDual_map_eq, ← Complex.exp_add, sub_add_sub_comm,
-      ← add_mul, ← Complex.ofReal_add, ← integral_add, ← add_div,
-      ← Complex.ofReal_add, heq, variance_add, hz, mul_zero, add_zero]
-    · simp
-    · exact (hIR.fst.map _).memLp_two
-    · exact (hIR.snd.map _).memLp_two
-    · exact (hIR.fst.map _).integrable
-    · exact (hIR.snd.map _).integrable
+  have hind : IndepFun I R μ := hIR.indepFun_of_covariance_eq_zero hcov
   have hs : MeasurableSet s := measurableSet_le measurable_const _hI
   have hpos : 0 < μ.real s := by
     rw [measureReal_standardizedUpperEvent _hHI.snd _hvar]
