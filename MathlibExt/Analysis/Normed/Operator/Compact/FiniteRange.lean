@@ -1,0 +1,56 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Algebra.Module.LinearMap.FiniteRange
+import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Analysis.Normed.Operator.Compact.Basic
+
+/-!
+# Compactness of finite-range continuous linear maps
+
+A continuous linear map over a locally compact nontrivially normed field is
+compact when its range is finitely generated. The proof factors the map
+through its finite-dimensional range. Properness of that range supplies the
+local compactness needed for the compact factor; no completeness hypothesis is
+placed on the scalar field or either ambient space.
+
+Only this implication is asserted. Compact operators on infinite-dimensional
+spaces need not have finite range.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+universe u𝕜 uE uF
+
+/-- Let `𝕜` be a nontrivially normed, locally compact field, let `E` be a seminormed `𝕜`-vector
+space, and let `F` be a normed `𝕜`-vector space. Assume the continuous linear map `T : E →L[𝕜]
+F` has finite-dimensional range.
+
+A continuous linear map with finitely generated range is compact over a locally compact
+nontrivially normed field. -/
+theorem LinearMap.HasFiniteRange.isCompactOperator
+    {𝕜 : Type u𝕜} [NontriviallyNormedField 𝕜] [LocallyCompactSpace 𝕜]
+    {E : Type uE} [SeminormedAddCommGroup E] [NormedSpace 𝕜 E]
+    {F : Type uF} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
+    {T : E →L[𝕜] F} (hT : T.toLinearMap.HasFiniteRange) :
+    IsCompactOperator T := by
+  let _ : FiniteDimensional 𝕜 T.range :=
+    (Submodule.fg_iff_finiteDimensional T.range).mp hT.fg_range
+  let _ : ProperSpace T.range := FiniteDimensional.proper 𝕜 T.range
+  have hRange : IsCompactOperator T.rangeRestrict :=
+    isCompactOperator_of_locallyCompactSpace_dom T.rangeRestrict
+  have hComp := hRange.clm_comp T.range.subtypeL
+  rw [← ContinuousLinearMap.coe_comp] at hComp
+  simpa using hComp

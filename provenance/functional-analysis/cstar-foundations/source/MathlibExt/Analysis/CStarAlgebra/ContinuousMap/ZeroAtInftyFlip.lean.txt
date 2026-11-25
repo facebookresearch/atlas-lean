@@ -1,0 +1,169 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInfty
+
+/-!
+# Flipping continuous and vanishing-at-infinity function variables
+
+For a compact space `Y`, continuous `Y`-families of `C₀(X,B)` functions are
+canonically equivalent to `C₀(X,-)` functions valued in `C(Y,B)`.  The proof
+uses the existing `C₀` exponential law and swaps the two domain coordinates.
+-/
+
+@[expose] public section
+
+open scoped CStarAlgebra ZeroAtInfty
+
+namespace ZeroAtInftyContinuousMap
+
+noncomputable section
+
+universe uX uY uA uB uC
+
+/-- On a compact domain, ordinary continuous maps and continuous maps
+vanishing at infinity are canonically star-algebra equivalent. -/
+noncomputable def compactContinuousMapStarAlgEquiv
+    (Y : Type uY) [TopologicalSpace Y] [CompactSpace Y]
+    (B : Type uB) [NonUnitalCStarAlgebra B] :
+    C(Y, B) ≃⋆ₐ[ℂ] C₀(Y, B) :=
+  StarAlgEquiv.ofNonUnitalStarAlgHom
+    { toFun := fun f => ContinuousMap.liftZeroAtInfty f
+      map_zero' := by ext; rfl
+      map_add' _ _ := by ext; rfl
+      map_mul' _ _ := by ext; rfl
+      map_smul' _ _ := by ext; rfl
+      map_star' _ := by ext; rfl }
+    { toFun := fun f => f.toContinuousMap
+      map_zero' := by ext; rfl
+      map_add' _ _ := by ext; rfl
+      map_mul' _ _ := by ext; rfl
+      map_smul' _ _ := by ext; rfl
+      map_star' _ := by ext; rfl }
+    (by ext f y; rfl)
+    (by ext f y; rfl)
+
+@[simp]
+theorem compactContinuousMapStarAlgEquiv_apply
+    (Y : Type uY) [TopologicalSpace Y] [CompactSpace Y]
+    (B : Type uB) [NonUnitalCStarAlgebra B]
+    (f : C(Y, B)) (y : Y) :
+    compactContinuousMapStarAlgEquiv Y B f y = f y :=
+  rfl
+
+@[simp]
+theorem compactContinuousMapStarAlgEquiv_symm_apply
+    (Y : Type uY) [TopologicalSpace Y] [CompactSpace Y]
+    (B : Type uB) [NonUnitalCStarAlgebra B]
+    (f : C₀(Y, B)) (y : Y) :
+    (compactContinuousMapStarAlgEquiv Y B).symm f y = f y :=
+  rfl
+
+/-- Pointwise postcomposition by a star-algebra equivalence gives a
+star-algebra equivalence of `C₀` function algebras. -/
+noncomputable def postcompStarAlgEquiv
+    (X : Type uX) [TopologicalSpace X]
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) : C₀(X, A) ≃⋆ₐ[ℂ] C₀(X, B) :=
+  StarAlgEquiv.ofNonUnitalStarAlgHom
+    (nonUnitalStarAlgHom_postcomp e.toNonUnitalStarAlgHom)
+    (nonUnitalStarAlgHom_postcomp e.symm.toNonUnitalStarAlgHom)
+    (by
+      apply NonUnitalStarAlgHom.ext
+      intro f
+      ext x
+      exact e.symm_apply_apply (f x))
+    (by
+      apply NonUnitalStarAlgHom.ext
+      intro f
+      ext x
+      exact e.apply_symm_apply (f x))
+
+@[simp]
+theorem postcompStarAlgEquiv_apply
+    (X : Type uX) [TopologicalSpace X]
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (f : C₀(X, A)) (x : X) :
+    postcompStarAlgEquiv X e f x = e (f x) :=
+  rfl
+
+/-- Exact inverse action of coefficientwise postcomposition. -/
+@[simp]
+theorem postcompStarAlgEquiv_symm_apply
+    (X : Type uX) [TopologicalSpace X]
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (f : C₀(X, B)) (x : X) :
+    (postcompStarAlgEquiv X e).symm f x = e.symm (f x) :=
+  rfl
+
+@[simp]
+theorem postcompStarAlgEquiv_refl
+    (X : Type uX) [TopologicalSpace X]
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    postcompStarAlgEquiv X (StarAlgEquiv.refl ℂ A) =
+      StarAlgEquiv.refl ℂ C₀(X, A) := by
+  apply StarAlgEquiv.ext
+  intro f
+  ext x
+  rfl
+
+@[simp]
+theorem postcompStarAlgEquiv_symm
+    (X : Type uX) [TopologicalSpace X]
+    {A : Type uA} {B : Type uB}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) :
+    postcompStarAlgEquiv X e.symm =
+      (postcompStarAlgEquiv X e).symm := by
+  apply StarAlgEquiv.ext
+  intro f
+  ext x
+  rfl
+
+@[simp]
+theorem postcompStarAlgEquiv_trans
+    (X : Type uX) [TopologicalSpace X]
+    {A : Type uA} {B : Type uB} {C : Type uC}
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    [NonUnitalCStarAlgebra C]
+    (e : A ≃⋆ₐ[ℂ] B) (f : B ≃⋆ₐ[ℂ] C) :
+    postcompStarAlgEquiv X (e.trans f) =
+      (postcompStarAlgEquiv X e).trans (postcompStarAlgEquiv X f) := by
+  apply StarAlgEquiv.ext
+  intro g
+  ext x
+  rfl
+
+/-- Flip a vanishing-at-infinity variable and a compact continuous variable.
+The forward map sends `G` to `fun y x => G x y`. -/
+noncomputable def continuousMapFlipStarAlgEquiv
+    {X : Type uX} {Y : Type uY} {B : Type uB}
+    [TopologicalSpace X] [T1Space X] [LocallyCompactSpace X]
+    [TopologicalSpace Y] [T1Space Y] [CompactSpace Y]
+    [NonUnitalCStarAlgebra B] :
+    C₀(X, C(Y, B)) ≃⋆ₐ[ℂ] C(Y, C₀(X, B)) :=
+  (((postcompStarAlgEquiv X (compactContinuousMapStarAlgEquiv Y B)).trans
+      (uncurryStarAlgEquiv (X := X) (Y := Y) (A := B))).trans
+      (starAlgEquivPrecomp (A := B) (Homeomorph.prodComm Y X))).trans
+      (uncurryStarAlgEquiv (X := Y) (Y := X) (A := B)).symm |>.trans
+      (compactContinuousMapStarAlgEquiv Y C₀(X, B)).symm
+
+/-- Exact pointwise action of the function-space flip. -/
+@[simp]
+theorem continuousMapFlipStarAlgEquiv_apply
+    {X : Type uX} {Y : Type uY} {B : Type uB}
+    [TopologicalSpace X] [T1Space X] [LocallyCompactSpace X]
+    [TopologicalSpace Y] [T1Space Y] [CompactSpace Y]
+    [NonUnitalCStarAlgebra B]
+    (G : C₀(X, C(Y, B))) (y : Y) (x : X) :
+    continuousMapFlipStarAlgEquiv G y x = G x y := by
+  rfl
+
+end
+
+end ZeroAtInftyContinuousMap
