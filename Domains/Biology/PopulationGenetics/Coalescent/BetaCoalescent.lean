@@ -34,11 +34,14 @@ namespace MathlibExt.Biology.PopulationGenetics.Coalescent.BetaCoalescent
 
 open MeasureTheory ProbabilityTheory unitInterval LambdaCoalescent
 
-/-- The `Beta(2 - α, α)` law as a measure on `[0, 1]`. -/
+/-- The `Beta(2 - α, α)` law as a measure on `[0, 1]`. It is a probability measure for
+`0 < α < 2`; for other `α` the density is evaluated as written (`Γ` is `0` at its poles,
+`1 / 0 = 0`, negative values read as `0`) and need not give a probability measure (`α = 2` gives
+the zero measure). -/
 noncomputable def betaLambda (α : ℝ) : Measure I :=
   (betaMeasure (2 - α) α).map (Set.projIcc (0 : ℝ) 1 zero_le_one : ℝ → I)
 
-/-- For `0 < α < 2`, `Beta(2 - α, α)` is a probability measure on `[0, 1]`. -/
+/-- For `0 < α < 2`, `Beta(2 - α, α)` is a probability measure on `[0, 1]` (it has mass one). -/
 theorem isProbabilityMeasure_betaLambda {α : ℝ} (h0 : 0 < α) (h2 : α < 2) :
     IsProbabilityMeasure (betaLambda α) := by
   have := isProbabilityMeasureBeta (by linarith : (0 : ℝ) < 2 - α) h0
@@ -47,7 +50,8 @@ theorem isProbabilityMeasure_betaLambda {α : ℝ} (h0 : 0 < α) (h2 : α < 2) :
     inferInstance
 
 /-- **Closed form of the Beta-coalescent rates**: for `0 < α < 2` and `2 ≤ k ≤ b`,
-`λ_{b,k} = B(k - α, b - k + α) / B(2 - α, α)`. -/
+`λ_{b,k} = B(k - α, b - k + α) / B(2 - α, α)`. The finiteness instance always holds, as
+`betaLambda α` is a probability measure for `0 < α < 2`. -/
 theorem mergerRate_betaLambda {α : ℝ} (h0 : 0 < α) (h2 : α < 2) [IsFiniteMeasure (betaLambda α)]
     {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
     mergerRate (betaLambda α) b k = beta ((k : ℝ) - α) ((b : ℝ) - k + α) / beta (2 - α) α := by
@@ -69,7 +73,8 @@ theorem mergerRate_betaLambda {α : ℝ} (h0 : 0 < α) (h2 : α < 2) [IsFiniteMe
   rw [key, integral_pow_mul_one_sub_pow_betaMeasure ha h0, Nat.cast_sub hk, Nat.cast_sub hkb]
   congr 2 <;> push_cast <;> ring
 
-/-- At `α = 1` the rates are those of the uniform `Λ` (Atlas `mergerRate_volume`). -/
+/-- At `α = 1` the rates are those of the uniform `Λ` (Atlas `mergerRate_volume`). The finiteness
+instance always holds, as `betaLambda 1` is a probability measure. -/
 theorem mergerRate_betaLambda_one [IsFiniteMeasure (betaLambda 1)] {b k : ℕ} (hk : 2 ≤ k)
     (hkb : k ≤ b) : mergerRate (betaLambda 1) b k = mergerRate volume b k := by
   rw [mergerRate_betaLambda one_pos one_lt_two hk hkb, mergerRate_volume hk hkb]
@@ -89,8 +94,8 @@ theorem betaLambda_one : betaLambda 1 = volume := by
   have := isProbabilityMeasure_betaLambda (α := 1) one_pos one_lt_two
   exact eq_of_mergerRate_eq _ _ fun k hk => mergerRate_betaLambda_one hk le_rfl
 
-/-- **Consistency inherited from `mergerRate_consistent`**: the closed form satisfies Pitman's
-consistency relation `λ_{b,k} = λ_{b+1,k} + λ_{b+1,k+1}`. -/
+/-- **Consistency inherited from `mergerRate_consistent`**: for `0 < α < 2` and `2 ≤ k ≤ b`,
+the closed form satisfies Pitman's consistency relation `λ_{b,k} = λ_{b+1,k} + λ_{b+1,k+1}`. -/
 theorem beta_consistent {α : ℝ} (h0 : 0 < α) (h2 : α < 2) {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
     beta ((k : ℝ) - α) ((b : ℝ) - k + α) =
       beta ((k : ℝ) - α) (((b + 1 : ℕ) : ℝ) - k + α) +

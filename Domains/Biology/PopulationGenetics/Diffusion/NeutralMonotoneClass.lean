@@ -93,8 +93,8 @@ noncomputable section
 
 /-! ### The path-measure kernel -/
 
-/-- A measurable cylinder of sample paths, read through the increasing enumeration of its finite
-set of times. -/
+/-- A cylinder of sample paths over a finite set `J` of times, with an arbitrary base set
+`S ⊆ [0, 1]^J` (not necessarily measurable), read through the increasing enumeration of `J`. -/
 theorem cylinder_eq_preimage (J : Finset ℝ≥0) (S : Set (J → I)) :
     cylinder J S = (fun ω : SamplePath => fun i => ω (J.orderEmbOfFin rfl i)) ⁻¹'
       ((orderMeasurableEquiv J : (Fin J.card → I) ≃ᵐ (J → I)) ⁻¹' S) := by
@@ -164,9 +164,12 @@ private theorem integral_comp_map {Ω : Type*} {mΩ : MeasurableSpace Ω} {β : 
 
 /-! ### Conditional expectations from conditional laws -/
 
-/-- **Conditional expectation from a conditional law, on an event.** If, restricted to every
-`A ∈ 𝒢`, the law of `V` under `μ` restricted to `S` is the law of the `𝒢`-measurable `W` pushed
-through `κ`, then `μ[1_S F (V) | 𝒢] = 1_S ∫ F dκ(W)` for every bounded measurable `F`. -/
+/-- **Conditional expectation from a conditional law, on an event.** Let `μ` be a finite measure,
+`𝒢 ≤ mΩ` a sub-σ-algebra, `κ` a Markov kernel, `V` measurable, `W` `𝒢`-measurable and `S ∈ 𝒢`. If,
+for every `A ∈ 𝒢`, the image of `μ` restricted to `S ∩ A` under `V` (a measure of total mass
+`μ (S ∩ A)`, not normalized) is its image under `W` pushed through `κ`, then
+`μ[1_S F (V) | 𝒢] = 1_S ∫ F dκ(W)` `μ`-almost everywhere for every bounded measurable `F`; the
+conditional expectation is under `μ`. -/
 theorem condExp_indicator_ae_eq_of_map_restrict {Ω : Type*} {𝒢 mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsFiniteMeasure μ] {β : Type*} [MeasurableSpace β] (h𝒢 : 𝒢 ≤ mΩ)
     {κ : Kernel I β} [IsMarkovKernel κ] {V : Ω → β} {W : Ω → I} (hV : Measurable V)
@@ -202,8 +205,10 @@ theorem condExp_indicator_ae_eq_of_map_restrict {Ω : Type*} {𝒢 mΩ : Measura
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- `Y` is a **Markov family for the neutral Wright–Fisher semigroup** with respect to the
-filtration `𝒢` under `μ`: each `Y u` is `𝒢 u`-measurable, and for `u ≤ v`, every `A ∈ 𝒢 u` and
-every continuous `g` on `[0, 1]`, `∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ`. -/
+filtration `𝒢` under `μ`: each `Y u` is `𝒢 u`-measurable, and for `u ≤ v`, every `A ∈ 𝒢 u` and every
+continuous `g` on `[0, 1]`, `∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ`. These are real
+integrals, `0` for a non-integrable integrand, which can happen for an infinite `μ` even for bounded
+`g`; for a finite `μ` both integrals are genuine. -/
 structure IsNeutralMarkovFamily (μ : Measure Ω) (𝒢 : Filtration ℝ≥0 mΩ)
     (Y : ℝ≥0 → Ω → I) : Prop where
   measurable : ∀ u, Measurable[𝒢 u] (Y u)
@@ -217,8 +222,12 @@ variable {𝒢 : Filtration ℝ≥0 mΩ} {Y : ℝ≥0 → Ω → I}
 theorem measurable' (hY : IsNeutralMarkovFamily μ 𝒢 Y) (u : ℝ≥0) : Measurable (Y u) :=
   (hY.measurable u).mono (𝒢.le u) le_rfl
 
-/-- **Kernel form of the Markov property.** For `u ≤ v` and `A ∈ 𝒢 u`, the law of `Y v` on `A`
-is the law of `Y u` on `A` pushed through `neutralKernel (v - u)`. -/
+/-- **Kernel form of the Markov property.** Let `μ` be a finite measure and `Y` a Markov family for
+`wfSemigroup` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`.
+For `u ≤ v` and `A ∈ 𝒢 u`, the image of `μ` restricted to `A` under `Y v` is its image under `Y u`
+pushed through `neutralKernel (v - u)`. Images of `μ` restricted to `A` have total mass `μ A` and
+are not normalized. -/
 theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {u v : ℝ≥0} (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) :
     (μ.restrict A).map (Y v) = neutralKernel (v - u) ∘ₘ (μ.restrict A).map (Y u) := by
@@ -234,16 +243,24 @@ theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ
   simp only [hK]
   exact h
 
-/-- The kernel form of the Markov property for nonnegative measurable test functions. -/
+/-- The kernel form of the Markov property for nonnegative measurable test functions. Let `μ` be a
+finite measure and `Y` a Markov family for `wfSemigroup` with respect to `𝒢`: each `Y u` is
+`𝒢 u`-measurable and `∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u`
+and continuous `g`. Then for `u ≤ v`, every `A ∈ 𝒢 u` and every measurable `f : I → [0, ∞]`,
+possibly unbounded, the lower integrals agree: `∫⁻_A f (Y v) dμ = ∫⁻_A ∫⁻ f dK_{v - u}(Y u) dμ`,
+where `K = neutralKernel`. -/
 theorem lintegral_step [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y) {u v : ℝ≥0}
     (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) {f : I → ℝ≥0∞} (hf : Measurable f) :
     ∫⁻ ω in A, f (Y v ω) ∂μ = ∫⁻ ω in A, ∫⁻ y, f y ∂neutralKernel (v - u) (Y u ω) ∂μ := by
   rw [← lintegral_map hf (hY.measurable' v), hY.map_restrict_eq_comp huv hA,
     lintegral_comp_map _ (hY.measurable' u) hf]
 
-/-- **Joint law with the past.** For `u ≤ v`, a `𝒢 u`-measurable `Z` with `Y u = φ ∘ Z` and
-`A ∈ 𝒢 u`, the joint law of `(Z, Y v)` on `A` is the law of `Z` on `A` composed with one kernel
-step from `φ`. -/
+/-- **Joint law with the past.** Let `μ` be a finite measure and `Y` a Markov family for
+`wfSemigroup` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`.
+For `u ≤ v`, a `𝒢 u`-measurable `Z`, a measurable `φ` with `Y u = φ ∘ Z` and `A ∈ 𝒢 u`, the image of
+`μ` restricted to `A` under `(Z, Y v)` is the image under `Z` composed with one kernel step from
+`φ`. Images of `μ` restricted to `A` have total mass `μ A` and are not normalized. -/
 theorem map_restrict_prod_eq_compProd [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {β : Type*} [MeasurableSpace β] {u v : ℝ≥0} (huv : u ≤ v) {Z : Ω → β}
     (hZ : Measurable[𝒢 u] Z) {φ : β → I} (hφ : Measurable φ) (hZφ : ∀ ω, φ (Z ω) = Y u ω)
@@ -366,9 +383,13 @@ private theorem lintegral_finite_succ [IsFiniteMeasure μ] (hY : IsNeutralMarkov
     exact (lintegral_map hH hZ').trans
       (lintegral_finite_succ hY n τ hτm s (fun i => hs _) A hA H hH)
 
-/-- **Multi-time law of a Markov family.** For times `t₁ ≤ … ≤ tₙ` after `s` and `A ∈ 𝒢 s`, the
-joint law of `(Y t₁, …, Y tₙ)` on `A` is the law of `Y s` on `A` pushed through the ordered
-finite-dimensional kernel `finiteChainKernel neutralKernel s t`. -/
+/-- **Multi-time law of a Markov family.** Let `μ` be a finite measure and `Y` a Markov family for
+`wfSemigroup` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`.
+For times `t₁ ≤ … ≤ tₙ` after `s` and `A ∈ 𝒢 s`, the image of `μ` restricted to `A` under
+`(Y t₁, …, Y tₙ)` is its image under `Y s` pushed through the ordered finite-dimensional kernel
+`finiteChainKernel neutralKernel s t`. Images of `μ` restricted to `A` have total mass `μ A` and are
+not normalized. -/
 theorem map_restrict_finite_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {n : ℕ} {t : Fin n → ℝ≥0} (ht : Monotone t) {s : ℝ≥0} (hs : ∀ i, s ≤ t i) {A : Set Ω}
     (hA : MeasurableSet[𝒢 s] A) :
@@ -385,8 +406,12 @@ theorem map_restrict_finite_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFa
     exact congrArg F (Subsingleton.elim _ _)
   | succ n => exact lintegral_finite_succ hY n t ht s hs A hA F hF
 
-/-- **Path law of a Markov family.** For `A ∈ 𝒢 0`, the law of the path `(Y u)_{u ≥ 0}` on `A`
-is the law of `Y 0` on `A` pushed through the path-measure kernel `wfPathKernel`. -/
+/-- **Path law of a Markov family.** Let `μ` be a finite measure and `Y` a Markov family for
+`wfSemigroup` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`.
+For `A ∈ 𝒢 0`, the image of `μ` restricted to `A` under the path `(Y u)_{u ≥ 0}` is its image under
+`Y 0` pushed through the path-measure kernel `wfPathKernel`. Images of `μ` restricted to `A` have
+total mass `μ A` and are not normalized. -/
 theorem map_restrict_path_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y)
     {A : Set Ω} (hA : MeasurableSet[𝒢 0] A) :
     (μ.restrict A).map (fun ω u => Y u ω) = wfPathKernel ∘ₘ (μ.restrict A).map (Y 0) := by
@@ -462,9 +487,14 @@ theorem measurableSpace_le_postFiltration_zero (hτ : IsStoppingTime ℱ τ) :
     hτ.measurableSpace ≤ postFiltration hτ 0 :=
   hτ.measurableSpace_mono (isStoppingTime_add_const hτ 0) fun _ => le_self_add
 
-/-- **The process after a stopping time is a Markov family.** On `{τ < ∞}`, the states
-`X (τ + u)` form a Markov family for the neutral Wright–Fisher semigroup with respect to the
-filtration `ℱ_{τ + u}`. -/
+/-- **The process after a stopping time is a Markov family.** Let `μ` be a finite measure and `X` a
+real process with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]` through the
+clamp `π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. For an `ℱ`-stopping time `τ`, the clamped stopped values
+`u ↦ π (stoppedValue X (τ + u))`, equal to `π (X (τ + u))` on `{τ < ∞}` and, on `{τ = ∞}`, to `π X`
+at the default finite time of the stopped-value convention, form a Markov family for `wfSemigroup`
+with respect to the filtration `ℱ_{τ + u}` under `μ` restricted to `{τ < ∞}`. -/
 theorem isNeutralMarkovFamily_stoppedValue_add [IsFiniteMeasure μ]
     (hcont : ∀ ω, Continuous fun t => X t ω) (hadapt : StronglyAdapted ℱ X)
     (hmarkov : ∀ s t : ℝ≥0, s ≤ t → ∀ g : C(I, ℝ),
@@ -503,11 +533,13 @@ private theorem stoppedValue_add_zero :
       fun ω => toI (stoppedValue X τ ω) := by
   simp
 
-/-- **Strong Markov property for bounded measurable `g`.** Under the hypotheses of
-`NeutralStrongMarkov.condExp_stoppedValue_add_ae_eq`, for every `ℱ`-stopping time `τ`, every
-`t ≥ 0` and every bounded measurable `g` on `[0, 1]`,
-`μ[1_{τ < ∞} g (X (τ + t)) | ℱ_τ] = 1_{τ < ∞} ∫ g dK_t(X τ)` almost surely, where
-`K_t = neutralKernel t` is the transition kernel of `wfSemigroup t`.
+/-- **Strong Markov property for bounded measurable `g`.** Let `μ` be a finite measure and `X` a
+real process with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]` through the
+clamp `π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. Then for every `ℱ`-stopping time `τ`, every `t ≥ 0` and every bounded measurable `g`
+on `[0, 1]`, `μ[1_{τ < ∞} g (π (X (τ + t))) | ℱ_τ] = 1_{τ < ∞} ∫ g dK_t(π (X τ))` almost surely,
+where `K_t = neutralKernel t` is the transition kernel of `wfSemigroup t`.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/
@@ -535,12 +567,15 @@ theorem condExp_indicator_comp_stoppedValue_add [IsFiniteMeasure μ]
   have h := hY.map_restrict_eq_comp (u := 0) (v := t) zero_le (hle _ hA)
   rwa [tsub_zero, stoppedValue_add_zero] at h
 
-/-- **Strong Markov property for multi-time functionals.** Under the hypotheses of
-`NeutralStrongMarkov.condExp_stoppedValue_add_ae_eq`, for every `ℱ`-stopping time `τ`, times
-`t₁ ≤ … ≤ tₙ` and every bounded measurable `F` on `[0, 1]ⁿ`,
-`μ[1_{τ < ∞} F (X (τ + t₁), …, X (τ + tₙ)) | ℱ_τ] = 1_{τ < ∞} ∫ F dP_t(X τ)` almost surely,
-where `P_t = finiteChainKernel neutralKernel 0 t` is the ordered finite-dimensional law of the
-neutral Wright–Fisher diffusion at times `t`.
+/-- **Strong Markov property for multi-time functionals.** Let `μ` be a finite measure and `X` a
+real process with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]` through the
+clamp `π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. Then for every `ℱ`-stopping time `τ`, times `t₁ ≤ … ≤ tₙ` and every bounded
+measurable `F` on `[0, 1]ⁿ`,
+`μ[1_{τ < ∞} F (π (X (τ + t₁)), …, π (X (τ + tₙ))) | ℱ_τ] = 1_{τ < ∞} ∫ F dP_t(π (X τ))` almost
+surely, where `P_t = finiteChainKernel neutralKernel 0 t` is the ordered finite-dimensional law of
+the neutral Wright–Fisher diffusion at times `t`.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/
@@ -569,11 +604,16 @@ theorem condExp_indicator_finite_stoppedValue_add [IsFiniteMeasure μ]
   have h := hY.map_restrict_finite_eq_comp ht (fun _ => zero_le) (hle _ hA)
   rwa [stoppedValue_add_zero] at h
 
-/-- **Strong Markov property for whole-path functionals.** Under the hypotheses of
-`NeutralStrongMarkov.condExp_stoppedValue_add_ae_eq`, for every `ℱ`-stopping time `τ` and every
-bounded measurable `F` on sample paths `ℝ≥0 → [0, 1]` (product σ-algebra),
-`μ[1_{τ < ∞} F ((X (τ + u))_{u ≥ 0}) | ℱ_τ] = 1_{τ < ∞} ∫ F d(rawMeasure (X τ))` almost surely:
-given `ℱ_τ`, the post-`τ` process is the neutral Wright–Fisher diffusion started at `X τ`.
+/-- **Strong Markov property for whole-path functionals.** Let `μ` be a finite measure and `X` a
+real process with continuous paths, adapted to `ℱ`, whose states are read in `[0, 1]` through the
+clamp `π = projIcc 0 1`, Markov for the neutral semigroup:
+`μ[g (π (X t)) | ℱ s] = (wfSemigroup (t - s) g) (π (X s))` almost surely for `s ≤ t` and every
+continuous `g`. Then for every `ℱ`-stopping time `τ` and every bounded measurable `F` on sample
+paths `ℝ≥0 → [0, 1]` (product σ-algebra),
+`μ[1_{τ < ∞} F ((π (X (τ + u)))_{u ≥ 0}) | ℱ_τ] = 1_{τ < ∞} ∫ F d(rawMeasure (π (X τ)))` almost
+surely: on `{τ < ∞}`, the conditional law given `ℱ_τ` of the clamped future path
+`(π (X (τ + u)))_{u ≥ 0}` is the neutral Wright–Fisher path measure started at `π (X τ)`; nothing is
+asserted about the unclamped path.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/

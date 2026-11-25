@@ -57,7 +57,9 @@ superkey).
 
 namespace Cslib.Databases
 
-/-- A functional dependency `lhs → rhs` between sets of attributes. -/
+/-- **Functional dependency.** A functional dependency $X \to Y$ over a type $A$ of attributes
+consists of two finite sets of attributes $X, Y \subseteq A$: the determining attributes $X$
+(its left side) and the determined attributes $Y$ (its right side). -/
 structure FD (A : Type*) where
   /-- The determining attributes. -/
   lhs : Finset A
@@ -69,22 +71,35 @@ variable {A : Type*}
 
 namespace FD
 
-/-- `f` holds in the relation `r`: tuples of `r` that agree on `f.lhs` agree on `f.rhs`. -/
+/-- **A functional dependency holds in a relation.** Let $A$ be a type of attributes and $V$ a
+type of values. A functional dependency $X \to Y$ on $A$ holds in a relation $r$, a set of tuples
+$A \to V$, when any two tuples $t, u \in r$ that agree on every attribute of $X$ also agree on
+every attribute of $Y$. -/
 def HoldsIn {V : Type*} (f : FD A) (r : Set (A → V)) : Prop :=
   ∀ t ∈ r, ∀ u ∈ r, (∀ a ∈ f.lhs, t a = u a) → ∀ a ∈ f.rhs, t a = u a
 
 end FD
 
-/-- Every dependency of `F` holds in `r`. -/
+/-- **A relation satisfies a set of dependencies.** Let $F$ be a finite set of functional
+dependencies over attributes $A$, and let $r$ be a relation, given as a set of tuples $A \to V$
+with values in a type $V$. Then $r$ satisfies $F$ when every dependency of $F$ holds in $r$. -/
 def Satisfies {V : Type*} (r : Set (A → V)) (F : Finset (FD A)) : Prop := ∀ f ∈ F, f.HoldsIn r
 
-/-- `F` entails `f`: `f` holds in every relation (with values in any type) satisfying `F`. -/
+/-- **Entailment of functional dependencies.** Let $A$ be a type of attributes. A finite set $F$
+of functional dependencies on $A$ entails a functional dependency $f$ on $A$ when, for every
+type $V$ and every relation $r$ with values in $V$ (a set of tuples $A \to V$) that satisfies
+$F$, the dependency $f$ holds in $r$. -/
 def Entails (F : Finset (FD A)) (f : FD A) : Prop :=
   ∀ (V : Type) (r : Set (A → V)), Satisfies r F → f.HoldsIn r
 
 variable [DecidableEq A]
 
-/-- Derivability from `F` with Armstrong's axioms. -/
+/-- **Derivability with Armstrong's axioms.** Let $F$ be a finite set of functional
+dependencies over a set $A$ of attributes. Derivability from $F$ is the least property of
+functional dependencies over $A$ such that, for all finite sets $X$, $Y$, $Z$ of attributes:
+every dependency of $F$ is derivable; $X \to Y$ is derivable whenever $Y \subseteq X$
+(reflexivity); if $X \to Y$ is derivable, then so is $X \cup Z \to Y \cup Z$ (augmentation);
+and if $X \to Y$ and $Y \to Z$ are derivable, then so is $X \to Z$ (transitivity). -/
 inductive Derives (F : Finset (FD A)) : FD A → Prop
   /-- The dependencies of `F` are derivable. -/
   | mem {f : FD A} : f ∈ F → Derives F f
@@ -112,11 +127,15 @@ theorem sound {V : Type*} {r : Set (A → V)} (hr : Satisfies r F) :
   | _, trans h₁ h₂ => fun t ht u hu hagree =>
     sound hr h₂ t ht u hu (sound hr h₁ t ht u hu hagree)
 
-/-- The decomposition rule: from `X → Y` derive `X → Z` for `Z ⊆ Y`. -/
+/-- **Decomposition rule.** Let $F$ be a finite set of functional dependencies and $X$, $Y$, $Z$
+finite sets of attributes with $Z \subseteq Y$. If $X \to Y$ is derivable from $F$ with
+Armstrong's axioms, then so is $X \to Z$. -/
 theorem decompose {X Y Z : Finset A} (h : Derives F ⟨X, Y⟩) (hZ : Z ⊆ Y) : Derives F ⟨X, Z⟩ :=
   trans h (refl hZ)
 
-/-- The union rule: from `X → Y` and `X → Z` derive `X → Y ∪ Z`. -/
+/-- **Union rule.** Let $F$ be a finite set of functional dependencies and $X, Y, Z$ finite sets
+of attributes. If $X \to Y$ and $X \to Z$ are derivable from $F$ with Armstrong's axioms, then so
+is $X \to Y \cup Z$. -/
 theorem union {X Y Z : Finset A} (hY : Derives F ⟨X, Y⟩) (hZ : Derives F ⟨X, Z⟩) :
     Derives F ⟨X, Y ∪ Z⟩ := by
   have h₁ := augment X hZ
@@ -124,12 +143,16 @@ theorem union {X Y Z : Finset A} (hY : Derives F ⟨X, Y⟩) (hZ : Derives F ⟨
   have h₂ := augment Z hY
   exact trans h₁ h₂
 
-/-- The pseudotransitivity rule: from `X → Y` and `Y ∪ W → Z` derive `X ∪ W → Z`. -/
+/-- **Pseudotransitivity rule.** Let $F$ be a finite set of functional dependencies and
+$X, Y, W, Z$ finite sets of attributes. If $X \to Y$ and $Y \cup W \to Z$ are derivable from $F$
+with Armstrong's axioms, then so is $X \cup W \to Z$. -/
 theorem pseudotrans {X Y W Z : Finset A} (h₁ : Derives F ⟨X, Y⟩) (h₂ : Derives F ⟨Y ∪ W, Z⟩) :
     Derives F ⟨X ∪ W, Z⟩ :=
   trans (augment W h₁) h₂
 
-/-- A dependency `X → Y` gives `X → X ∪ Y`. -/
+/-- **Adding the left side to the right side.** Let $F$ be a finite set of functional dependencies
+and $X, Y$ finite sets of attributes. If $X \to Y$ is derivable from $F$ with Armstrong's axioms,
+then so is $X \to X \cup Y$. -/
 theorem union_left {X Y : Finset A} (h : Derives F ⟨X, Y⟩) : Derives F ⟨X, X ∪ Y⟩ :=
   union (refl subset_rfl) h
 
@@ -147,20 +170,29 @@ end Derives
 
 /-! ### The attribute-closure algorithm -/
 
-/-- One round of the closure algorithm: add the right side of every dependency whose left side
-is contained in `Y`. -/
+/-- **One round of the attribute-closure algorithm.** For a finite set $F$ of functional
+dependencies and a finite set $Y$ of attributes, one closure round returns $Y$ together with the
+right side of every dependency of $F$ whose left side is contained in $Y$, that is, the set
+$Y \cup \bigcup \{R : (L \to R) \in F,\ L \subseteq Y\}$. -/
 def closureStep (F : Finset (FD A)) (Y : Finset A) : Finset A :=
   Y ∪ (F.filter fun f => f.lhs ⊆ Y).biUnion FD.rhs
 
-/-- Repeat `closureStep` until nothing changes, for at most `n` rounds. -/
+/-- **Iterated closure rounds.** Let $F$ be a finite set of functional dependencies, $n$ a
+natural number and $Y$ a finite set of attributes. The loop returns $Y$ if $n = 0$ or if one
+closure round for $F$ leaves $Y$ unchanged; otherwise it returns the loop with $n - 1$ rounds
+started from the result of one closure round applied to $Y$. Thus it repeats closure rounds from
+$Y$ until nothing changes, for at most $n$ rounds. -/
 def closureLoop (F : Finset (FD A)) : ℕ → Finset A → Finset A
   | 0, Y => Y
   | n + 1, Y => if closureStep F Y = Y then Y else closureLoop F n (closureStep F Y)
 
 variable [Fintype A]
 
-/-- The **attribute closure** `X⁺` of `X` under `F`, computed by the closure algorithm; the
-number of rounds is bounded by the number of attributes. -/
+/-- **Attribute closure.** Let $A$ be a finite set of attributes, $F$ a finite set of functional
+dependencies over $A$ and $X \subseteq A$. The attribute closure $X^+$ of $X$ under $F$ is
+computed by the closure algorithm: starting from $X$, repeat closure rounds (each adds the right
+side of every dependency of $F$ whose left side is already included) until nothing changes, for
+at most $|A|$ rounds. -/
 def attrClosure (F : Finset (FD A)) (X : Finset A) : Finset A :=
   closureLoop F (Fintype.card A) X
 
@@ -213,7 +245,9 @@ private theorem closureStep_closureLoop (F : Finset (FD A)) :
           fun h => hfix h.symm⟩)
       exact closureStep_closureLoop F n _ (by omega)
 
-/-- The closure is a fixed point of a closure round. -/
+/-- **The attribute closure is a fixed point of a closure round.** Let $A$ be a finite set of
+attributes, $F$ a finite set of functional dependencies over $A$ and $X \subseteq A$. Applying
+one closure round for $F$ to the attribute closure $X^+$ of $X$ under $F$ returns $X^+$. -/
 theorem closureStep_attrClosure (F : Finset (FD A)) (X : Finset A) :
     closureStep F (attrClosure F X) = attrClosure F X :=
   closureStep_closureLoop F _ X (Nat.le_add_right _ _)
@@ -221,7 +255,10 @@ theorem closureStep_attrClosure (F : Finset (FD A)) (X : Finset A) :
 theorem subset_attrClosure (F : Finset (FD A)) (X : Finset A) : X ⊆ attrClosure F X :=
   subset_closureLoop F _ X
 
-/-- The closure is closed under the dependencies of `F`. -/
+/-- **The attribute closure is closed under the dependencies.** Let $F$ be a finite set of
+functional dependencies over a finite set of attributes, $X$ a set of attributes and $X^+$ its
+attribute closure under $F$. For every dependency $Y \to Z$ in $F$ with $Y \subseteq X^+$, also
+$Z \subseteq X^+$. -/
 theorem rhs_subset_attrClosure {F : Finset (FD A)} {X : Finset A} {g : FD A} (hg : g ∈ F)
     (hlhs : g.lhs ⊆ attrClosure F X) : g.rhs ⊆ attrClosure F X := by
   rw [← closureStep_attrClosure F X]
@@ -233,12 +270,18 @@ theorem derives_attrClosure (F : Finset (FD A)) (X : Finset A) :
     Derives F ⟨X, attrClosure F X⟩ :=
   derives_closureLoop _ (Derives.refl subset_rfl)
 
-/-- The closure witness for `X`: at most two tuples, which agree exactly on `attrClosure F X`
-(they coincide when the closure is everything). -/
+/-- **Closure witness relation.** Let $A$ be a finite set of attributes, $F$ a finite set of
+functional dependencies over $A$ and $X \subseteq A$. The closure witness relation for $X$ is the
+relation with values in $\{\mathrm{true}, \mathrm{false}\}$ whose tuples are the tuple that is
+$\mathrm{true}$ on every attribute and the tuple that is $\mathrm{true}$ exactly on the attribute
+closure $X^+$ of $X$ under $F$. These two tuples agree exactly on $X^+$, and they coincide when
+$X^+ = A$. -/
 def closureWitnessRelation (F : Finset (FD A)) (X : Finset A) : Finset (A → Bool) :=
   {fun _ => true, fun a => decide (a ∈ attrClosure F X)}
 
-/-- The closure witness satisfies `F`. -/
+/-- **The closure witness satisfies the dependencies.** Let $F$ be a finite set of functional
+dependencies on a finite set of attributes $A$. For every set $X \subseteq A$ of attributes, the
+closure witness relation for $X$ under $F$ satisfies $F$. -/
 theorem holdsIn_closureWitnessRelation (F : Finset (FD A)) (X : Finset A) :
     Satisfies (↑(closureWitnessRelation F X) : Set (A → Bool)) F := by
   have key : ∀ g ∈ F, (∀ a ∈ g.lhs, true = decide (a ∈ attrClosure F X)) →
@@ -254,8 +297,10 @@ theorem holdsIn_closureWitnessRelation (F : Finset (FD A)) (X : Finset A) :
   · exact fun a ha => (key g hg (fun b hb => (hagree b hb).symm) a ha).symm
   · exact fun _ _ => rfl
 
-/-- **The closure algorithm decides derivability**: `F` derives `X → Y` exactly when
-`Y ⊆ attrClosure F X`. -/
+/-- **The closure algorithm decides derivability.** Let $A$ be a finite set of attributes, $F$ a
+finite set of functional dependencies over $A$ and $X, Y \subseteq A$. Then $X \to Y$ is
+derivable from $F$ with Armstrong's axioms if and only if $Y \subseteq X^+$, where $X^+$ is the
+attribute closure of $X$ under $F$ computed by the closure algorithm. -/
 theorem derives_iff_subset_attrClosure {F : Finset (FD A)} {X Y : Finset A} :
     Derives F ⟨X, Y⟩ ↔ Y ⊆ attrClosure F X := by
   constructor
@@ -267,8 +312,11 @@ theorem derives_iff_subset_attrClosure {F : Finset (FD A)} {X Y : Finset A} :
     simpa using this
   · exact (derives_attrClosure F X).decompose
 
-/-- **The closure algorithm computes `X⁺`**: its result is the set of attributes `a` with
-`X → a` derivable. -/
+/-- **The closure algorithm computes the attribute closure.** Let $F$ be a finite set of
+functional dependencies over a finite set of attributes and $X$ a set of attributes. An
+attribute $a$ lies in the attribute closure $X^+$ of $X$ under $F$, as computed by the closure
+algorithm, if and only if the dependency $X \to \{a\}$ is derivable from $F$ with Armstrong's
+axioms. -/
 theorem mem_attrClosure {F : Finset (FD A)} {X : Finset A} {a : A} :
     a ∈ attrClosure F X ↔ Derives F ⟨X, {a}⟩ := by
   rw [derives_iff_subset_attrClosure, Finset.singleton_subset_iff]
@@ -277,8 +325,11 @@ instance (F : Finset (FD A)) (f : FD A) : Decidable (Derives F f) :=
   decidable_of_iff (f.rhs ⊆ attrClosure F f.lhs) derives_iff_subset_attrClosure.symm
 
 omit [Fintype A] in
-/-- **Completeness**, in its sharp form: a dependency that holds in every two-tuple `Bool`-valued
-relation satisfying `F` is derivable. -/
+/-- **Completeness of Armstrong's axioms, two-tuple form.** Let $A$ be a finite set of
+attributes, $F$ a finite set of functional dependencies over $A$ and $f$ a functional
+dependency over $A$. If $f$ holds in every relation with values in
+$\{\mathrm{true}, \mathrm{false}\}$ that has at most two tuples and satisfies every dependency
+of $F$, then $f$ is derivable from $F$ with Armstrong's axioms. -/
 theorem derives_of_forall_two_tuple [Finite A] {F : Finset (FD A)} {f : FD A}
     (h : ∀ r : Finset (A → Bool), r.card ≤ 2 → Satisfies (↑r : Set (A → Bool)) F →
       f.HoldsIn (↑r : Set (A → Bool))) : Derives F f := by
@@ -292,18 +343,25 @@ theorem derives_of_forall_two_tuple [Finite A] {F : Finset (FD A)} {f : FD A}
   simpa using this
 
 omit [Fintype A] in
-/-- **Armstrong's theorem**: Armstrong's axioms are sound and complete for functional
-dependencies. -/
+/-- **Armstrong's theorem.** Let $A$ be a finite set of attributes, $F$ a finite set of
+functional dependencies over $A$ and $f$ a functional dependency over $A$. Then $f$ is
+derivable from $F$ with Armstrong's axioms if and only if $F$ entails $f$, that is, $f$ holds
+in every relation (with values in any type) that satisfies every dependency of $F$. In other
+words, Armstrong's axioms are sound and complete for functional dependencies. -/
 theorem derives_iff_entails [Finite A] {F : Finset (FD A)} {f : FD A} :
     Derives F f ↔ Entails F f :=
   ⟨fun h _ _ hr => h.sound hr, fun h => derives_of_forall_two_tuple fun r _ hr => h Bool r hr⟩
 
 /-! ### Keys -/
 
-/-- `K` is a superkey: it determines every attribute. -/
+/-- **Superkey.** Let $F$ be a finite set of functional dependencies over a finite set of
+attributes $A$. A set of attributes $K$ is a superkey for $F$ when the dependency $K \to A$ is
+derivable from $F$ with Armstrong's axioms, that is, $K$ determines every attribute. -/
 def IsSuperkey (F : Finset (FD A)) (K : Finset A) : Prop := Derives F ⟨K, Finset.univ⟩
 
-/-- `K` is a candidate key: a superkey none of whose proper subsets is a superkey. -/
+/-- **Candidate key.** Let $F$ be a finite set of functional dependencies on a finite set of
+attributes $A$. A set $K \subseteq A$ of attributes is a candidate key for $F$ when $K$ is a
+superkey for $F$ and no proper subset of $K$ is a superkey for $F$. -/
 def IsCandidateKey (F : Finset (FD A)) (K : Finset A) : Prop :=
   IsSuperkey F K ∧ ∀ K' ⊂ K, ¬ IsSuperkey F K'
 
@@ -314,18 +372,26 @@ theorem isSuperkey_iff_attrClosure {F : Finset (FD A)} {K : Finset A} :
 instance (F : Finset (FD A)) (K : Finset A) : Decidable (IsSuperkey F K) :=
   decidable_of_iff _ isSuperkey_iff_attrClosure.symm
 
-/-- Supersets of superkeys are superkeys. -/
+/-- **Supersets of superkeys are superkeys.** Let $F$ be a finite set of functional dependencies
+over a finite set of attributes. If $K$ is a superkey for $F$ and $K \subseteq K'$, then $K'$ is a
+superkey for $F$. -/
 theorem IsSuperkey.mono {F : Finset (FD A)} {K K' : Finset A} (h : IsSuperkey F K)
     (hKK' : K ⊆ K') : IsSuperkey F K' :=
   Derives.trans (Derives.refl hKK') h
 
-/-- In a relation satisfying `F`, two tuples that agree on a superkey are equal. -/
+/-- **Tuples that agree on a superkey are equal.** Let $F$ be a finite set of functional
+dependencies on a finite set of attributes $A$, and let $K$ be a superkey for $F$. Let $V$ be a
+type of values. If a relation $r$, a set of tuples $A \to V$, satisfies $F$, then any two tuples
+$t, u \in r$ that agree on every attribute of $K$ are equal. -/
 theorem IsSuperkey.eq_of_agree {V : Type*} {F : Finset (FD A)} {K : Finset A}
     (h : IsSuperkey F K) {r : Set (A → V)} (hr : Satisfies r F) {t u : A → V} (ht : t ∈ r)
     (hu : u ∈ r) (hagree : ∀ a ∈ K, t a = u a) : t = u :=
   funext fun a => h.sound hr t ht u hu hagree a (Finset.mem_univ a)
 
-/-- A candidate key is a superkey from which no single attribute can be removed. -/
+/-- **Candidate keys are the superkeys minimal under single removals.** Let $F$ be a finite set
+of functional dependencies on a finite set of attributes $A$. A set $K \subseteq A$ of attributes
+is a candidate key for $F$ if and only if $K$ is a superkey for $F$ and, for every $a \in K$, the
+set $K \setminus \{a\}$ is not a superkey for $F$. -/
 theorem isCandidateKey_iff {F : Finset (FD A)} {K : Finset A} :
     IsCandidateKey F K ↔ IsSuperkey F K ∧ ∀ a ∈ K, ¬ IsSuperkey F (K.erase a) := by
   constructor
@@ -340,14 +406,21 @@ theorem isCandidateKey_iff {F : Finset (FD A)} {K : Finset A} :
 instance (F : Finset (FD A)) (K : Finset A) : Decidable (IsCandidateKey F K) :=
   decidable_of_iff _ isCandidateKey_iff.symm
 
-/-- Remove the attributes of `l` from `K` one at a time, dropping each one whose removal
-leaves a superkey. -/
+/-- **Shrinking a key along a list.** Let $F$ be a finite set of functional dependencies over a
+finite set of attributes. Given a list $l$ of attributes and a set of attributes $K$, go through
+$l$ in order and, for each attribute $a$, remove $a$ from the current set whenever the attribute
+closure under $F$ of the current set without $a$ is the set of all attributes (that is, the set
+without $a$ is still a superkey); the result is the set reached at the end of the list. -/
 def shrinkKey (F : Finset (FD A)) : List A → Finset A → Finset A
   | [], K => K
   | a :: l, K =>
     shrinkKey F l (if attrClosure F (K.erase a) = Finset.univ then K.erase a else K)
 
-/-- `findKey F l`: shrink the full attribute set along the list `l`. -/
+/-- **Key-finding algorithm.** Let $F$ be a finite set of functional dependencies on a finite set
+of attributes $A$, and let $l$ be a list of attributes. The key-finding algorithm starts from the
+set $K = A$ of all attributes and goes through $l$ in order: for each listed attribute $a$, it
+replaces $K$ by $K \setminus \{a\}$ when the attribute closure of $K \setminus \{a\}$ under $F$ is
+all of $A$, and keeps $K$ otherwise. It returns the final set $K$. -/
 def findKey (F : Finset (FD A)) (l : List A) : Finset A := shrinkKey F l Finset.univ
 
 private theorem shrinkKey_spec (F : Finset (FD A)) :
@@ -380,13 +453,19 @@ private theorem shrinkKey_spec (F : Finset (FD A)) :
           (hRsub.trans hK₁sub))))
     · exact hRmin b hb hbR
 
-/-- When `l` lists every attribute, `findKey F l` is a candidate key. -/
+/-- **The key-finding algorithm returns a candidate key.** Let $F$ be a finite set of functional
+dependencies on a finite set of attributes $A$, and let $l$ be a list in which every attribute
+of $A$ occurs. Then the output of the key-finding algorithm on $F$ and $l$, which starts from the
+set of all attributes and goes through $l$ in order, removing each listed attribute whenever
+what remains is still a superkey, is a candidate key for $F$. -/
 theorem findKey_isCandidateKey (F : Finset (FD A)) {l : List A} (hl : ∀ a, a ∈ l) :
     IsCandidateKey F (findKey F l) := by
   obtain ⟨hR, -, hRmin⟩ := shrinkKey_spec F l Finset.univ (Derives.refl subset_rfl)
   exact isCandidateKey_iff.mpr ⟨hR, fun a ha => hRmin a (hl a) ha⟩
 
-/-- Every superkey contains a candidate key. -/
+/-- **Every superkey contains a candidate key.** Let $F$ be a finite set of functional
+dependencies on a finite set of attributes $A$. Every superkey $K$ for $F$ has a subset
+$K' \subseteq K$ that is a candidate key for $F$. -/
 theorem exists_isCandidateKey_subset {F : Finset (FD A)} {K : Finset A} (hK : IsSuperkey F K) :
     ∃ K' ⊆ K, IsCandidateKey F K' := by
   obtain ⟨hR, hRsub, hRmin⟩ := shrinkKey_spec F Finset.univ.toList K hK

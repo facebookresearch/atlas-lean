@@ -384,7 +384,12 @@ this is Lean's junk value `0`; for piecewise-constant histories it is integrable
 def firstCoalMean (η : ℝ → ℝ) (m : ℕ) : ℝ :=
   meanWaitingTime (fun t => (η t)⁻¹) (m.choose 2)
 
-/-- The survival integral for the sample's pair count and cumulative coalescence intensity. -/
+/-- The survival integral for the sample's pair count and cumulative coalescence intensity:
+`c_m = ∫_{s > 0} exp(-C(m,2) R(s)) ds` with `R = cumRate η`, where `(η r)⁻¹ = 0` if `η r = 0`
+and the integral of a non-integrable function is `0` (so `c_0 = c_1 = 0`). The identity is
+unconditional. For example, when `m ≥ 2`, `η` is positive and `1/η` is locally integrable, the
+integrand is the model survival function: if it is integrable, `c_m` is the expected waiting
+time; if the mean is infinite, the formula gives `0` (as for `η = exp`, `m = 2`). -/
 theorem firstCoalMean_eq_integral (η : ℝ → ℝ) (m : ℕ) :
     firstCoalMean η m = ∫ s in Set.Ioi 0, Real.exp (-((m.choose 2 : ℕ) : ℝ) * cumRate η s) := rfl
 

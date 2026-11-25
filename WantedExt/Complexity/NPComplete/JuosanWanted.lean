@@ -17,7 +17,7 @@ doi:10.1587/transinf.2019FCP0004 (Section 1: the rules and the decision problem;
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HeyawakeWanted

@@ -228,7 +228,8 @@ structure FundamentalRelation (k : ℕ) where
   `U` follows (`FundamentalRelation.strictMonoOn_energy`). -/
   h_pos : ∀ x ∈ thermoDomain k, 0 < dSdU S x
 
-/-- `S` is Fréchet differentiable at every state of the open domain. -/
+/-- For a fundamental relation, `S` is Fréchet differentiable at every state of the open domain
+`U > 0`, `V > 0`, `Nᵢ > 0`. -/
 lemma FundamentalRelation.differentiableAt {k : ℕ} (F : FundamentalRelation k)
     {x : ThermoState k} (hx : x ∈ thermoDomain k) : DifferentiableAt ℝ F.S x :=
   F.h_diff.differentiableAt ((isOpen_thermoDomain k).mem_nhds hx)
@@ -307,13 +308,14 @@ lemma hasDerivAt_comp_curve {k : ℕ} {S : ThermoState k → ℝ} {γU γV : ℝ
   rw [← hval]
   exact hS.hasFDerivAt.comp_hasDerivAt t0 hγ
 
-/-- Temperature is positive on the domain. -/
+/-- For a fundamental relation, the temperature `T = 1 / (∂S/∂U)` is positive at every state of
+the domain `U > 0`, `V > 0`, `Nᵢ > 0`. -/
 lemma temp_pos {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (hx : x ∈ thermoDomain k) : 0 < temp F.S x :=
   one_div_pos.mpr (F.h_pos x hx)
 
-/-- Entropy is strictly increasing in `U` at fixed positive `V` and `N`: a
-consequence of `∂S/∂U > 0` and differentiability. -/
+/-- For a fundamental relation `S`, `S` is strictly increasing in `U` on `U > 0` at fixed `V > 0`
+and `Nᵢ > 0`: a consequence of `∂S/∂U > 0` and differentiability. -/
 lemma FundamentalRelation.strictMonoOn_energy {k : ℕ} (F : FundamentalRelation k)
     {V : ℝ} {N : Fin k → ℝ} (hV : 0 < V) (hN : ∀ i, 0 < N i) :
     StrictMonoOn (fun u => F.S (u, V, N)) (Set.Ioi 0) := by
@@ -334,7 +336,7 @@ lemma FundamentalRelation.strictMonoOn_energy {k : ℕ} (F : FundamentalRelation
 
 -/
 
-/-- Pure-algebra core of the first-law identity: with `T = 1/SU`, `p = T*SV` and
+/-- Pure-algebra core of the first-law identity: for `SU ≠ 0`, with `T = 1/SU`, `p = T*SV` and
 `μᵢ = -T*SNᵢ`, the rate `U'` equals `T` times the total differential minus the
 `p dV` term plus the chemical terms. -/
 lemma firstLaw_algebra {k : ℕ} (SU SV U' V' T p : ℝ) (SN N' mu : Fin k → ℝ)
@@ -354,7 +356,7 @@ lemma firstLaw_algebra {k : ℕ} (SU SV U' V' T p : ℝ) (SN N' mu : Fin k → �
     exact mul_inv_cancel₀ hSU
   linear_combination -U' * h1
 
-/-- Pure-algebra core of the Euler relation: with `T = 1/SU`, `p = T*SV` and
+/-- Pure-algebra core of the Euler relation: for `SU ≠ 0`, with `T = 1/SU`, `p = T*SV` and
 `μᵢ = -T*SNᵢ`, the homogeneous-function identity `SU*U + SV*V + ∑ SNᵢNᵢ = S`
 rearranges to `U = TS - pV + ∑ μᵢNᵢ`. -/
 lemma euler_algebra {k : ℕ} (SU SV Sx U V T p : ℝ) (SN N mu : Fin k → ℝ)
@@ -374,9 +376,9 @@ lemma euler_algebra {k : ℕ} (SU SV Sx U V T p : ℝ) (SN N mu : Fin k → ℝ)
     exact mul_inv_cancel₀ hSU
   linear_combination c * he - U * h1
 
-/-- First-law identity in total-differential-value form: `U'` equals `T` times
-the total differential of `S` (the derivative along a curve given by
-`hasDerivAt_comp_curve`) minus `p V'` plus the chemical terms. -/
+/-- First-law identity in total-differential-value form, at a state of the domain and for all
+increments `U'`, `V'`, `N'`: `U'` equals `T` times the total differential of `S` minus `p V'` plus
+the chemical terms. -/
 lemma firstLaw_value {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (U' V' : ℝ) (N' : Fin k → ℝ) (hx : x ∈ thermoDomain k) :
     U' = temp F.S x *
@@ -386,8 +388,8 @@ lemma firstLaw_value {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (dSdN F.S x) N' (chemPot F.S x) (ne_of_gt (F.h_pos x hx)) rfl rfl
     (fun _ => rfl)
 
-/-- First law along a differentiable curve of states: `dU/dt = T dS/dt - p dV/dt +
-∑ μᵢ dNᵢ/dt`, where `dS/dt` is the `deriv` of `S` along the curve, identified with
+/-- First law along a differentiable curve of states, in the domain at `t0`: `dU/dt = T dS/dt -
+p dV/dt + ∑ μᵢ dNᵢ/dt`, where `dS/dt` is the `deriv` of `S` along the curve, identified with
 the total differential by the chain rule `hasDerivAt_comp_curve`. -/
 lemma firstLaw {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
     (γN : ℝ → Fin k → ℝ) (U' V' : ℝ) (N' : Fin k → ℝ) (t0 : ℝ)
@@ -401,8 +403,8 @@ lemma firstLaw {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
   rw [(hasDerivAt_comp_curve hU hV hN (F.differentiableAt hx)).deriv]
   exact firstLaw_value F (γU t0, γV t0, γN t0) U' V' N' hx
 
-/-- Euler homogeneous-function identity (differential form): differentiating
-`S(tU, tV, tN) = t * S(U, V, N)` at `t = 1` gives
+/-- Euler homogeneous-function identity (differential form) at a state of the domain:
+differentiating `S(tU, tV, tN) = t * S(U, V, N)` at `t = 1` gives
 `SU*U + SV*V + ∑ SNᵢNᵢ = S`. Uses homogeneity `h_homog` and the chain rule
 `hasDerivAt_comp_curve` along the ray. -/
 lemma euler_homogeneous_function {k : ℕ} (F : FundamentalRelation k)
@@ -439,7 +441,7 @@ lemma euler_homogeneous_function {k : ℕ} (F : FundamentalRelation k)
   rw [hpt] at hchain
   exact hchain.unique hLHS
 
-/-- Euler relation: `U = T*S - p*V + ∑ μᵢ*Nᵢ`, from homogeneity via
+/-- Euler relation at a state of the domain: `U = T*S - p*V + ∑ μᵢ*Nᵢ`, from homogeneity via
 `euler_homogeneous_function`. -/
 lemma euler_relation {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (hx : x ∈ thermoDomain k) :
@@ -552,9 +554,9 @@ subsystem, exchanging energy at fixed total `U₁ + U₂ = Utot`.
 
 -/
 
-/-- Total-entropy derivative along the energy-exchange curve: `dStot/dU₁` is the
-difference of the two `∂S/∂U` values, by the chain rule `hasDerivAt_comp_curve` on
-each leg. -/
+/-- Total-entropy derivative along the energy-exchange curve, for both subsystem states in the
+domain: `dStot/dU₁` is the difference of the two `∂S/∂U` values, by the chain rule
+`hasDerivAt_comp_curve` on each leg. -/
 lemma stot_hasDerivAt {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
     (N1 N2 : Fin k → ℝ)
     (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
@@ -593,7 +595,8 @@ lemma entropyMax_temperature_eq {k : ℕ} (F : FundamentalRelation k) (V1 V2 Uto
   change 1 / dSdU F.S (Ustar, V1, N1) = 1 / dSdU F.S (Utot - Ustar, V2, N2)
   rw [hSU]
 
-/-- The `deriv` form of the total-entropy rate: `dStot/dU₁ = SU₁ - SU₂`. -/
+/-- The `deriv` form of the total-entropy rate, for both subsystem states in the domain:
+`dStot/dU₁ = SU₁ - SU₂`. -/
 lemma stot_deriv_eq {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
     (N1 N2 : Fin k → ℝ)
     (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
@@ -603,9 +606,9 @@ lemma stot_deriv_eq {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : �
   have hder := (stot_hasDerivAt F V1 V2 Utot Ustar N1 N2 hx1 hx2).deriv
   rwa [sub_eq_add_neg]
 
-/-- Hot-to-cold sign in derivative form: if subsystem 1 is hotter than subsystem
-2 (`T₁ > T₂`), then `dStot/dU₁ < 0` at the point, so transferring energy from 1
-to 2 (decreasing `U₁`) increases total entropy to first order. -/
+/-- Hot-to-cold sign in derivative form, for both subsystem states in the domain: if subsystem 1
+is hotter than subsystem 2 (`T₁ > T₂`), then `dStot/dU₁ < 0` at the point, so transferring
+energy from 1 to 2 (decreasing `U₁`) increases total entropy to first order. -/
 lemma entropyFlow_sign {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
     (N1 N2 : Fin k → ℝ)
     (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
@@ -795,7 +798,7 @@ lemma sideal_dSdN (kB s0 : ℝ) (x : ThermoState 1) (i : Fin 1)
   rw [hslice]
   exact (sideal_dSdN_hasDerivAt kB s0 x.1 x.2.1 (x.2.2 0) hU hV hN).deriv
 
-/-- Ideal-gas temperature: `T = 2U / (3NkB)`. -/
+/-- Ideal-gas temperature for `0 < U`, `0 < N` and `0 < kB`: `T = 2U / (3NkB)`. -/
 lemma sideal_temp (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
     temp (SidealGen kB s0) x = 2 * x.1 / (3 * x.2.2 0 * kB) := by
@@ -806,7 +809,7 @@ lemma sideal_temp (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
   rw [sideal_dSdU kB s0 x hU hN]
   field_simp [hN0, hU0, hkB0]
 
-/-- Ideal-gas pressure: `p = 2U / (3V)`. -/
+/-- Ideal-gas pressure for `0 < U`, `0 < V`, `0 < N` and `0 < kB`: `p = 2U / (3V)`. -/
 lemma sideal_press (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hV : 0 < x.2.1) (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
     press (SidealGen kB s0) x = 2 * x.1 / (3 * x.2.1) := by
@@ -832,7 +835,7 @@ lemma sideal_mu (kB s0 : ℝ) (x : ThermoState 1) (i : Fin 1)
   rw [sideal_temp kB s0 x hU hN hkB, sideal_dSdN kB s0 x i hU hV hN]
   field_simp [hN0, hU0, hkB0]
 
-/-- Ideal-gas equation of state: `p * V = N * kB * T`. -/
+/-- Ideal-gas equation of state for `0 < U`, `0 < V`, `0 < N` and `0 < kB`: `p * V = N * kB * T`. -/
 lemma sideal_pV (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hV : 0 < x.2.1) (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
     press (SidealGen kB s0) x * x.2.1 =
@@ -844,7 +847,8 @@ lemma sideal_pV (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
   rw [sideal_press kB s0 x hU hV hN hkB, sideal_temp kB s0 x hU hN hkB]
   field_simp [hN0, hU0, hV0, hkB0]
 
-/-- Ideal-gas caloric equation of state: `U = (3/2) * N * kB * T`. -/
+/-- Ideal-gas caloric equation of state for `0 < U`, `0 < N` and `0 < kB`:
+`U = (3/2) * N * kB * T`. -/
 lemma sideal_U (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
     x.1 = 3 / 2 * x.2.2 0 * kB * temp (SidealGen kB s0) x := by
@@ -868,23 +872,23 @@ lemma sideal_homog (kB s0 : ℝ) (x : ThermoState 1) (t : ℝ) (ht : 0 < t) :
   rw [mul_div_mul_left _ _ ht0, mul_div_mul_left _ _ ht0]
   ring
 
-/-- The ideal-gas `∂S/∂U` is positive on the domain. -/
+/-- For `0 < kB` the ideal-gas `∂S/∂U` is positive on the domain. -/
 lemma sideal_dSdU_pos (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hN : 0 < x.2.2 0) (hkB : 0 < kB) : 0 < dSdU (SidealGen kB s0) x := by
   rw [sideal_dSdU kB s0 x hU hN]
   exact div_pos (mul_pos (mul_pos (by norm_num) hN) hkB) (by linarith)
 
-/-- The ideal-gas `U`-slice is differentiable. -/
+/-- The ideal-gas `U`-slice is differentiable at `0 < U` for `0 < N`. -/
 lemma sideal_sliceU_diff (kB s0 U V N : ℝ) (hU : 0 < U) (hN : 0 < N) :
     DifferentiableAt ℝ (fun u => Sideal kB s0 u V N) U :=
   (sideal_dSdU_hasDerivAt kB s0 U V N hU hN).differentiableAt
 
-/-- The ideal-gas `V`-slice is differentiable. -/
+/-- The ideal-gas `V`-slice is differentiable at `0 < V` for `0 < N`. -/
 lemma sideal_sliceV_diff (kB s0 U V N : ℝ) (hV : 0 < V) (hN : 0 < N) :
     DifferentiableAt ℝ (fun v => Sideal kB s0 U v N) V :=
   (sideal_dSdV_hasDerivAt kB s0 U V N hV hN).differentiableAt
 
-/-- The ideal-gas `N`-slice is differentiable. -/
+/-- The ideal-gas `N`-slice is differentiable at `0 < N` for `0 < U` and `0 < V`. -/
 lemma sideal_sliceN_diff (kB s0 U V N : ℝ) (hU : 0 < U) (hV : 0 < V)
     (hN : 0 < N) : DifferentiableAt ℝ (fun n => Sideal kB s0 U V n) N :=
   (sideal_dSdN_hasDerivAt kB s0 U V N hU hV hN).differentiableAt
@@ -902,7 +906,7 @@ lemma sideal_differentiableOn (kB s0 : ℝ) :
   fun_prop (disch := first | assumption | exact div_ne_zero hV hN |
     exact div_ne_zero hU hN)
 
-/-- The ideal gas satisfies Gibbs-Duhem in derivative form along a curve,
+/-- For `0 < kB` the ideal gas satisfies Gibbs-Duhem in derivative form along a curve,
 proved directly from the explicit `T`, `p`, `μ` functions. The curve is
 assumed positive near `t0` (the form in which domain membership is used). -/
 lemma sideal_gibbsDuhem (kB s0 : ℝ) (γU γV : ℝ → ℝ) (γN : ℝ → Fin 1 → ℝ)
@@ -1032,7 +1036,7 @@ lemma sideal_gibbsDuhem (kB s0 : ℝ) (γU γV : ℝ → ℝ) (γN : ℝ → Fin
   ring
 
 /-- Total-entropy rate for two ideal-gas subsystems exchanging energy at fixed
-total: the difference of the two `∂S/∂U` values. -/
+total, at positive energies and particle numbers: the difference of the two `∂S/∂U` values. -/
 lemma sideal_stot_hasDerivAt (kB s0 V1 V2 N1 N2 Utot Ustar : ℝ)
     (hU1 : 0 < Ustar) (hU2 : 0 < Utot - Ustar) (hN1 : 0 < N1)
     (hN2 : 0 < N2) :
@@ -1232,7 +1236,7 @@ private def sidealEmbed : ThermoState 1 →ₗ[ℝ] (ℝ × ℝ × ℝ) :=
         (LinearMap.snd ℝ ℝ (Fin 1 → ℝ))).comp
         (LinearMap.snd ℝ ℝ (ℝ × (Fin 1 → ℝ))))))
 
-/-- The ideal-gas entropy satisfies the concavity postulate on single-species
+/-- For `0 ≤ kB` the ideal-gas entropy satisfies the concavity postulate on single-species
 states. -/
 lemma sideal_concave_gen (kB s0 : ℝ) (hkB : 0 ≤ kB) :
     ConcaveOn ℝ (thermoDomain 1) (SidealGen kB s0) := by
@@ -1254,8 +1258,8 @@ noncomputable def idealGas (kB s0 : ℝ) (hkB : 0 < kB) : FundamentalRelation 1 
   h_homog := fun x _ t ht => sideal_homog kB s0 x t ht
   h_pos := fun x hx => sideal_dSdU_pos kB s0 x hx.1 (hx.2.2 0) hkB
 
-/-- The ideal gas satisfies the Euler relation `U = TS - pV + μN`: `euler_relation` for
-`idealGas`, stated with componentwise positivity. -/
+/-- For `0 < kB` the ideal gas satisfies the Euler relation `U = TS - pV + μN`: `euler_relation`
+for `idealGas`, stated with componentwise positivity. -/
 lemma sideal_euler (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hV : 0 < x.2.1) (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
     x.1 = temp (SidealGen kB s0) x * SidealGen kB s0 x -

@@ -24,11 +24,16 @@ namespace Modulus
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Ray class group of a modulus: coprime ideals modulo the ray group. -/
+/-- **Ray class group.** The ray class group of a modulus $\mathfrak m$ of a number field $K$ is
+the quotient of the group of nonzero fractional ideals of $K$ coprime to the finite part of
+$\mathfrak m$ by the ray group of $\mathfrak m$. -/
 abbrev RayClassGroup (m : Modulus K) :=
   ↥(coprimeFractionalIdeals m) ⧸ rayGroup m
 
-/-- Canonical projection onto the ray class group. -/
+/-- **Ray class map.** For a modulus $\mathfrak m$ of a number field $K$, the ray class map is the
+canonical quotient homomorphism from the group of nonzero fractional ideals of $K$ coprime to the
+finite part of $\mathfrak m$ onto the ray class group of $\mathfrak m$, sending each such ideal to
+its class modulo the ray group of $\mathfrak m$. -/
 def rayClassMap (m : Modulus K) :
     coprimeFractionalIdeals m →* RayClassGroup m :=
   QuotientGroup.mk' (rayGroup m)

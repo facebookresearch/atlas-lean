@@ -90,7 +90,8 @@ variable {N M : ℕ}
 
 /-- The genetic relationship matrix (GRM) of Yang et al. (2010) built from a (standardized)
 genotype matrix `X : Matrix (Fin N) (Fin M) ℝ` (individuals × markers):
-`A_ij = (1 / M) ∑_k X_ik X_jk`, i.e. `A = X Xᵀ / M`. -/
+`A_ij = (1 / M) ∑_k X_ik X_jk`, i.e. `A = X Xᵀ / M`. With no markers (`M = 0`) the sum is
+empty and, with the convention `x / 0 = 0`, `A = 0`. -/
 noncomputable def grm (X : Matrix (Fin N) (Fin M) ℝ) (i j : Fin N) : ℝ :=
   (∑ k, X i k * X j k) / M
 
@@ -98,8 +99,8 @@ noncomputable def grm (X : Matrix (Fin N) (Fin M) ℝ) (i j : Fin N) : ℝ :=
 theorem grm_comm (X : Matrix (Fin N) (Fin M) ℝ) (i j : Fin N) : grm X i j = grm X j i := by
   simp only [grm, mul_comm]
 
-/-- The GRM is the LD-correlation matrix of the transposed genotype matrix: the same
-normalized inner product, taken over markers instead of individuals. -/
+/-- The GRM is the normalized cross product `ldCorr` of the transposed genotype matrix: the
+same normalized inner product, taken over markers instead of individuals. -/
 theorem grm_eq_ldCorr_transpose (X : Matrix (Fin N) (Fin M) ℝ) (i j : Fin N) :
     grm X i j = ldCorr Xᵀ i j :=
   rfl
@@ -112,11 +113,12 @@ def pairs (N : ℕ) : Finset (Fin N × Fin N) := Finset.univ.filter fun p => p.1
 theorem ne_of_mem_pairs {p : Fin N × Fin N} (hp : p ∈ pairs N) : p.1 ≠ p.2 :=
   (Finset.mem_filter.1 hp).2.ne
 
-/-- The Haseman–Elston (cross-product) estimator: the least-squares slope, through the origin,
-of the phenotype cross-products `y_i y_j` on the relationship entries `A_ij` over the pairs
-`i < j`,
-`ĥ² = ∑_{i<j} A_ij y_i y_j / ∑_{i<j} A_ij²`.
-When `∑_{i<j} A_ij² = 0` the value is `0` by the convention `x / 0 = 0`. -/
+/-- The Haseman–Elston (cross-product) estimator, for any real matrix `A` (in the application
+the GRM): a least-squares slope, through the origin, of the phenotype cross-products `y_i y_j`
+on the entries `A_ij` over the pairs `i < j`,
+`ĥ² = ∑_{i<j} A_ij y_i y_j / ∑_{i<j} A_ij²`, the unique one when `∑_{i<j} A_ij² ≠ 0`.
+When `∑_{i<j} A_ij² = 0` (for example when `N ≤ 1`) the value is `0` by the convention
+`x / 0 = 0`. -/
 noncomputable def heEstimate (A : Matrix (Fin N) (Fin N) ℝ) (y : Fin N → ℝ) : ℝ :=
   (∑ p ∈ pairs N, A p.1 p.2 * (y p.1 * y p.2)) / ∑ p ∈ pairs N, A p.1 p.2 ^ 2
 
@@ -143,7 +145,9 @@ theorem heRSS_eq (A : Matrix (Fin N) (Fin N) ℝ) (y : Fin N → ℝ)
   field_simp
   ring
 
-/-- The Haseman–Elston estimator minimizes the residual sum of squares. -/
+/-- The Haseman–Elston estimator minimizes the residual sum of squares, for every matrix `A`:
+when `∑_{i<j} A_ij² = 0` the residual sum of squares does not depend on the slope, and
+`ĥ² = 0` by the convention `x / 0 = 0`. -/
 theorem heRSS_heEstimate_le (A : Matrix (Fin N) (Fin N) ℝ) (y : Fin N → ℝ) (b : ℝ) :
     heRSS A y (heEstimate A y) ≤ heRSS A y b := by
   by_cases hS : ∑ p ∈ pairs N, A p.1 p.2 ^ 2 = 0
@@ -202,7 +206,8 @@ theorem memLp_pheno (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (i : Fin
 /-- **The Haseman–Elston identity** (raw second moments of the phenotype). In the random-effects
 model `y = X β + ε` with `𝔼[β βᵀ] = (h² / M) I`, `𝔼[ε εᵀ] = (1 - h²) I` and `𝔼[β εᵀ] = 0`
 (`LDScore.Model`), for every genotype matrix `X`,
-`𝔼[y_i y_j] = h² A_ij + (1 - h²) [i = j]` with the GRM `A = X Xᵀ / M`. -/
+`𝔼[y_i y_j] = h² A_ij + (1 - h²) [i = j]` with the GRM `A = X Xᵀ / M`. Here `𝔼` is the
+integral against the model's measure `μ`, which need not be a probability measure. -/
 theorem integral_pheno_mul_pheno (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
     (i j : Fin N) :
     ∫ ω, D.pheno X i ω * D.pheno X j ω ∂μ =
@@ -239,9 +244,10 @@ theorem integral_pheno_mul_pheno (D : Model μ N M) (X : Matrix (Fin N) (Fin M) 
     rw [Finset.sum_ite_eq']
     by_cases hij : i = j <;> simp [hij]
 
-/-- **Haseman–Elston regression identity**: for distinct individuals the expected phenotype
-cross-product is linear in the GRM entry with slope the SNP heritability,
-`𝔼[y_i y_j] = h² A_ij` (`i ≠ j`). -/
+/-- **Haseman–Elston regression identity**: in the LD-score model (`LDScore.Model`), for
+distinct individuals the phenotype cross-product moment is linear in the GRM entry with slope
+the SNP heritability, `𝔼[y_i y_j] = h² A_ij` (`i ≠ j`). Here `𝔼` is the integral against the
+model's measure `μ`; it is the expected cross-product when `μ` is a probability measure. -/
 theorem integral_pheno_mul_pheno_of_ne (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
     {i j : Fin N} (hij : i ≠ j) :
     ∫ ω, D.pheno X i ω * D.pheno X j ω ∂μ = D.h2 * grm X i j := by
@@ -252,9 +258,10 @@ private theorem integrable_pheno_mul (D : Model μ N M) (X : Matrix (Fin N) (Fin
     (i j : Fin N) : Integrable (fun ω => D.pheno X i ω * D.pheno X j ω) μ :=
   (memLp_pheno D X i).integrable_mul (memLp_pheno D X j)
 
-/-- **Unbiasedness of Haseman–Elston regression.** In the model of `integral_pheno_mul_pheno`,
-whenever the GRM has a nonzero off-diagonal entry (`∑_{i<j} A_ij² ≠ 0`), the HE estimator
-computed from the phenotypes is unbiased for the SNP heritability: `𝔼[ĥ²] = h²`. -/
+/-- **Unbiasedness of Haseman–Elston regression.** In the LD-score model (`LDScore.Model`), on
+any measure `μ`, whenever the GRM has a nonzero off-diagonal entry (`∑_{i<j} A_ij² ≠ 0`), the
+HE estimator computed from the phenotypes satisfies `∫ ĥ² ∂μ = h²`; for a probability measure
+it is unbiased for the SNP heritability. -/
 theorem integral_heEstimate (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
     (hS : ∑ p ∈ pairs N, grm X p.1 p.2 ^ 2 ≠ 0) :
     ∫ ω, heEstimate (grm X) (fun i => D.pheno X i ω) ∂μ = D.h2 := by
@@ -268,8 +275,9 @@ theorem integral_heEstimate (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ)
 
 /-! ### Consistency -/
 
-/-- The estimation error of the Haseman–Elston estimator is the regression-weighted average of
-the deviations of the cross-products from `h A_ij`. -/
+/-- When `∑_{i<j} A_ij² ≠ 0`, the estimation error `ĥ² - h` of the Haseman–Elston estimator,
+for any real `h`, is the sum of the deviations `y_i y_j - h A_ij` of the cross-products from
+`h A_ij`, weighted by `A_ij / ∑_{i<j} A_ij²`. -/
 theorem heEstimate_sub (A : Matrix (Fin N) (Fin N) ℝ) (y : Fin N → ℝ)
     (hS : ∑ p ∈ pairs N, A p.1 p.2 ^ 2 ≠ 0) (h : ℝ) :
     heEstimate A y - h =
@@ -280,9 +288,10 @@ theorem heEstimate_sub (A : Matrix (Fin N) (Fin N) ℝ) (y : Fin N → ℝ)
   exact Finset.sum_congr rfl fun p _ => by ring
 
 /-- The deviation `y_i y_j - h² A_ij` of the phenotype cross-product of the pair `p = (i, j)`
-from its expectation `h² A_ij` (`integral_pheno_mul_pheno_of_ne`, for `i ≠ j`). The integrals
-`∫ heDev p * heDev q` are therefore the covariances of the cross-products when `μ` is a
-probability measure. -/
+from `h² A_ij`, defined for every pair. For `i ≠ j`, `h² A_ij = ∫ y_i y_j ∂μ`
+(`integral_pheno_mul_pheno_of_ne`), the expectation when `μ` is a probability measure. When
+`μ` is a probability measure, `p = (i, j)` and `q = (k, l)` have `i ≠ j` and `k ≠ l`, and both
+cross-products are square integrable, `∫ heDev p * heDev q` is their covariance. -/
 noncomputable def heDev (D : Model μ N M) (X : Matrix (Fin N) (Fin M) ℝ) (p : Fin N × Fin N)
     (ω : Ω) : ℝ :=
   D.pheno X p.1 ω * D.pheno X p.2 ω - D.h2 * grm X p.1 p.2
@@ -328,10 +337,13 @@ private theorem integral_sq_sum_le {ι : Type*} (s : Finset ι) (d : ι → Ω �
     _ = C * ∑ p ∈ s, w p ^ 2 := by
         rw [← Finset.sum_mul]; ring
 
-/-- **Mean-squared error of Haseman–Elston regression.** If the cross-products are square
-integrable and every absolute row sum of their second-moment matrix about `h² A_ij` is at most
-`C` (`∑_{q} |∫ heDev p * heDev q| ≤ C` for every pair `p`), then
-`𝔼[(ĥ² - h²)²] ≤ C / ∑_{i<j} A_ij²`. -/
+/-- **Mean-squared error of Haseman–Elston regression.** In the LD-score model on a finite
+measure `μ`, suppose the GRM has a nonzero off-diagonal entry (`∑_{i<j} A_ij² ≠ 0`), the
+cross-products `y_i y_j` (`i < j`) are square integrable, and every absolute row sum of their
+second-moment matrix about `h² A_ij` is at most `C` (`∑_{q} |∫ heDev p * heDev q| ≤ C` for
+every pair `p`). Then `∫ (ĥ² - h²)² ∂μ ≤ C / ∑_{i<j} A_ij²`. For a probability measure the
+left side is the mean-squared error `𝔼[(ĥ² - h²)²]` and the matrix is the covariance matrix
+of the cross-products. -/
 theorem integral_heEstimate_sub_sq_le [IsFiniteMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ)
     (hS : ∑ p ∈ pairs N, grm X p.1 p.2 ^ 2 ≠ 0)
@@ -355,8 +367,11 @@ theorem integral_heEstimate_sub_sq_le [IsFiniteMeasure μ] (D : Model μ N M)
         exact integral_sq_sum_le _ _ _ hdev hC
     _ = C * S ^ 2 := by ring
 
-/-- **Chebyshev bound for Haseman–Elston regression.** Under the hypotheses of
-`integral_heEstimate_sub_sq_le`, on a finite measure space,
+/-- **Chebyshev bound for Haseman–Elston regression.** In the LD-score model on a finite measure
+`μ`, if the GRM has a nonzero off-diagonal entry (`∑_{i<j} A_ij² ≠ 0`), the cross-products
+`y_i y_j` (`i < j`) are square integrable and every absolute row sum
+`∑_{q} |∫ heDev p * heDev q|` is at most `C` (the hypotheses of
+`integral_heEstimate_sub_sq_le`), then for every `ε > 0`,
 `μ {|ĥ² - h²| ≥ ε} ≤ C / (ε² ∑_{i<j} A_ij²)`. -/
 theorem measure_abs_heEstimate_sub_ge_le [IsFiniteMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hS : ∑ p ∈ pairs N, grm X p.1 p.2 ^ 2 ≠ 0)
@@ -386,12 +401,13 @@ theorem measure_abs_heEstimate_sub_ge_le [IsFiniteMeasure μ] (D : Model μ N M)
 (`y = X β + ε` with the GRM `A = X Xᵀ / M`) on finite measure spaces (in the application,
 probability spaces), with `N n` individuals,
 `M n` markers and common SNP heritability `h²`. Suppose the phenotype cross-products are square
-integrable and their covariance matrix has absolute row sums bounded by a constant `C`
-uniformly in `n` (a weak-dependence condition on the pairs; see the module docstring for
-family GRMs, where it holds, and unrelated samples, where it probably does not), and the
-off-diagonal GRM energy
-`∑_{i<j} A_ij²` tends to infinity. Then the HE estimator converges in probability to `h²`:
-`μₙ {|ĥ²ₙ - h²| ≥ ε} → 0` for every `ε > 0`. -/
+integrable and the matrices `∫ heDev p * heDev q ∂μₙ` of their second moments about `h² A_ij`
+(their covariance matrices for probability measures) have absolute row sums bounded by a
+constant `C` uniformly in `n` (a weak-dependence condition on the pairs; see the module
+docstring for family GRMs, where it holds, and unrelated samples, where it probably does not),
+and the off-diagonal GRM energy
+`∑_{i<j} A_ij²` tends to infinity. Then `μₙ {|ĥ²ₙ - h²| ≥ ε} → 0` for every `ε > 0`; for
+probability measures the HE estimator converges in probability to `h²`. -/
 theorem tendsto_measure_abs_heEstimate_sub_ge {Ω : ℕ → Type*} {mΩ : ∀ n, MeasurableSpace (Ω n)}
     {μ : ∀ n, Measure (Ω n)} [∀ n, IsFiniteMeasure (μ n)] {N M : ℕ → ℕ}
     (D : ∀ n, Model (μ n) (N n) (M n)) (X : ∀ n, Matrix (Fin (N n)) (Fin (M n)) ℝ)

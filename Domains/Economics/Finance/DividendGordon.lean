@@ -54,8 +54,9 @@ from `0` at date 1. -/
 noncomputable def dividendStream (D₁ g : ℝ) : ℕ → ℝ :=
   fun t => if t = 0 then 0 else D₁ * (1 + g) ^ (t - 1)
 
-/-- Discounted dividend stream at rate `r`: `discountFactor r t * dividendStream D₁ g t`
-(source clause: "discounted dividend at date `t`"). -/
+/-- Discounted dividend stream at rate `r`: `discountFactor r t * dividendStream D₁ g t` (source
+clause: "discounted dividend at date `t`"). The discount factor `((1 + r)^t)⁻¹` is read as `0` for
+`t ≥ 1` when `r = -1` (convention `0⁻¹ = 0`). -/
 noncomputable def discountedDividendStream (D₁ r g : ℝ) : ℕ → ℝ :=
   fun t => discountFactor r t * dividendStream D₁ g t
 
@@ -72,8 +73,8 @@ theorem discountedDividendStream_succ (D₁ r g : ℝ) (t : ℕ) :
 `HasSum` as the growing-perpetuity stream: shift by one date
 (`hasSum_nat_add_iff'` at `k = 1`, using that the date-`0` term is `0`), then apply the
 shift lemma `discountedDividendStream_succ`. This is a shift/transport lemma: it turns
-any `HasSum` for the growing-perpetuity stream into a `HasSum` for the discounted
-dividend stream. The caller `dividendGordon` supplies `hasSum_growingPerpetuity`
+a `HasSum` with value `D₁ / (r - g)` for the growing-perpetuity stream into one for the
+discounted dividend stream. The caller `dividendGordon` supplies `hasSum_growingPerpetuity`
 (FI01.T03); the geometric series is not reproved here. -/
 theorem dividendGordon_of_hasSumGrowing {D₁ r g : ℝ}
     (h : HasSum (growingPerpetuityTerm D₁ r g) (D₁ / (r - g))) :
@@ -100,7 +101,8 @@ theorem dividendGordon {D₁ r g : ℝ} (hr : 0 < 1 + r)
     HasSum (discountedDividendStream D₁ r g) (D₁ / (r - g)) := by
   exact dividendGordon_of_hasSumGrowing (hasSum_growingPerpetuity D₁ r g hr hx₀ hx₁)
 
-/-- The `tsum` form of the Gordon formula for constant-growth dividends. -/
+/-- The `tsum` form of the Gordon formula for constant-growth dividends: with `1 + r > 0` and
+`(1 + g) / (1 + r)` in `[0, 1)`, the sum of the discounted dividends is `D₁ / (r - g)`. -/
 theorem dividendGordon_tsum {D₁ r g : ℝ} (hr : 0 < 1 + r)
     (hx₀ : 0 ≤ (1 + g) / (1 + r)) (hx₁ : (1 + g) / (1 + r) < 1) :
     ∑' t, discountedDividendStream D₁ r g t = D₁ / (r - g) := by

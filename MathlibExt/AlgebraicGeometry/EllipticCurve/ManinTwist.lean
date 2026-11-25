@@ -194,7 +194,7 @@ private lemma intDegree_add_le_of_le {x y : RatFunc F} {m : ℤ}
   · simp [hxy, hm]
   by_cases hy0 : y = 0
   · simpa [hy0] using hx
-  exact (RatFunc.intDegree_add_le hy0 hxy).trans (max_le hx hy)
+  exact (RatFunc.intDegree_add_le hxy).trans (max_le hx hy)
 
 private lemma intDegree_add_sub_le_of_le {x y z : RatFunc F} {m : ℤ}
     (hm : 0 ≤ m) (hx : x.intDegree ≤ m) (hy : y.intDegree ≤ m)
@@ -1320,7 +1320,7 @@ private lemma frobeniusPolynomial_splits [Finite F] :
   rw [Polynomial.splits_iff_card_roots]
   unfold frobeniusPolynomial
   rw [Nat.card_eq_fintype_card, FiniteField.roots_X_pow_card_sub_X,
-    FiniteField.X_pow_card_sub_X_natDegree_eq F Fintype.one_lt_card]
+    Polynomial.natDegree_X_pow_sub_X Fintype.one_lt_card]
   simp
 
 private lemma minusOneGCD_natDegree [Fintype F]
@@ -2272,8 +2272,15 @@ private lemma degreeDataAtThree_of_pointCount_bounds (N : ℕ) (hpos : 1 ≤ N) 
     norm_num at hn
     nlinarith [sq_nonneg (2 * n + a)]
 
-/-- Over the three-element field, the elementary two-points-per-fiber bound supplies Manin degree
-data for every Weierstrass equation. -/
+/-- **Manin degree data over the field with three elements.** Let $F$ be a field with exactly
+three elements, let $W$ be any Weierstrass curve over $F$, and let $N$ be the number of
+nonsingular points of $W$ over $F$, including the point at infinity. Then there is Manin degree
+data for $(3, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = 3$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$.
+
+The proof needs only the elementary bounds $1 \le N \le 2 \cdot 3 + 1$; the point at infinity
+gives the lower bound. -/
 public theorem manin_degree_data_of_card_eq_three [Finite F] (hF : Nat.card F = 3)
     (W : WeierstrassCurve F) :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -2282,8 +2289,13 @@ public theorem manin_degree_data_of_card_eq_three [Finite F] (hF : Nat.card F = 
   simpa only [hF] using degreeDataAtThree_of_pointCount_bounds
     (Nat.card W.toAffine.Point) Nat.card_pos (by omega)
 
-/-- Manin's numerator-degree sequence in odd characteristic has the initial values, recurrence,
-and zero separation needed for the Hasse bound. -/
+/-- **Manin degree data for the odd-characteristic normal form.** Let $F$ be a finite field with
+$q$ elements, let $W$ be a Weierstrass curve $y^2 = x^3 + a_2 x^2 + a_4 x + a_6$ over $F$ (that
+is, $a_1 = a_3 = 0$) with nonzero discriminant, and let $N$ be the number of points of $W$ over
+$F$, including the point at infinity. Then there is Manin degree data for $(q, N)$: a function
+$d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = q$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$. -/
 public theorem manin_degree_data_of_isCharNeTwoNF [Finite F]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharNeTwoNF] :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -2297,7 +2309,10 @@ public theorem manin_degree_data_of_isCharNeTwoNF [Finite F]
       recurrence := d_recurrence (ringChar_ne_two W) W
       noAdjacentZeros := noAdjacentZeros (ringChar_ne_two W) W }⟩
 
-/-- Hasse's bound for an elliptic Weierstrass equation in odd-characteristic normal form. -/
+/-- **Hasse bound for the odd-characteristic normal form.** Let $F$ be a finite field with $q$
+elements and let $W$ be a Weierstrass curve $y^2 = x^3 + a_2 x^2 + a_4 x + a_6$ over $F$ (that
+is, $a_1 = a_3 = 0$) with nonzero discriminant. If $N$ is the number of points of $W$ over $F$,
+including the point at infinity, then $(q + 1 - N)^2 \le 4q$. -/
 public theorem hasse_bound_of_isCharNeTwoNF [Finite F]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharNeTwoNF] :
     (((Nat.card F : ℤ) + 1 - (Nat.card W.toAffine.Point : ℤ)) ^ 2 ≤

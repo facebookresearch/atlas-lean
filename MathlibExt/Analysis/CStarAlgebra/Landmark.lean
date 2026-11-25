@@ -232,12 +232,15 @@ private theorem repHom_injective (A : Type u) [CStarAlgebra A] [PartialOrder A]
 
 set_option linter.unusedVariables false in
 /--
-Every C*-algebra `A` admits an isometric injective `∗`-homomorphism `π : A →⋆ₐ[ℂ] B(H)` into
-bounded operators on some complex Hilbert space `H`. Source: Gelfand–Naimark theorem, I. M.
-Gelfand–M. A. Naimark, Mat. Sb. 12 (1943); see Murphy, C*-Algebras and Operator Theory, A Course
-in Operator Theory; Lean is isometric injective star-homomorphism into B(H) form.
+**Gelfand–Naimark theorem.** For every unital C*-algebra $A$ there are a complex Hilbert space $H$
+and a unital $*$-homomorphism $\pi : A \to B(H)$ into the algebra of bounded operators on $H$ such
+that $\pi$ is injective and isometric: $\|\pi(a)\| = \|a\|$ for every $a \in A$.
 
 Proves `Wanted` entry `cStarAlgebra_gelfandNaimark`.
+
+Source: Gelfand–Naimark theorem, I. M.
+Gelfand–M. A. Naimark, Mat. Sb. 12 (1943); see Murphy, C*-Algebras and Operator Theory, A Course
+in Operator Theory; Lean is isometric injective star-homomorphism into B(H) form.
 -/
 theorem cStarAlgebra_gelfandNaimark
     (A : Type u) [CStarAlgebra A] :

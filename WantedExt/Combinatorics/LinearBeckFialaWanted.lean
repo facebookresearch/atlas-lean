@@ -28,11 +28,19 @@ namespace MathlibExt.Combinatorics.LinearBeckFialaWanted
 
 open scoped BigOperators
 
-/-- Linear Beck–Fiala systems
-(AIM-COMBINATORICS-0044__20000919; AIM Hereditary discrepancy, item 1.7):
-for a `t`-sparse matrix in which every pair of rows intersect in at most
-one element, the discrepancy bound improves from `O(√(t log t))` to
-`O(√t)`: one absolute constant `C` bounds every row sum by `C * √t`. -/
+/-- **Linear Beck–Fiala conjecture.** This is the statement that there is a real constant
+$C > 0$ such that the following holds for all natural numbers $n$, $m$ and $t \ge 1$. Let
+$S_1, \dots, S_n$ be subsets of $\{1, \dots, m\}$ such that each $S_i$ has at most $t$ elements,
+each element of $\{1, \dots, m\}$ lies in at most $t$ of the sets $S_i$, and $S_i$ and $S_{i'}$
+have at most one common element whenever $i \ne i'$. Then there are signs
+$\varepsilon_1, \dots, \varepsilon_m \in \{1, -1\}$ such that
+$\left|\sum_{j \in S_i} \varepsilon_j\right| \le C\sqrt{t}$ for every $i$.
+
+In matrix terms: a $t$-sparse $0/1$ matrix (in rows and columns) in which every two rows share
+at most one nonzero entry has discrepancy $O(\sqrt{t})$, improving the general bound
+$O(\sqrt{t \log t})$.
+
+Source: AIM-COMBINATORICS-0044__20000919; AIM Hereditary discrepancy, item 1.7. -/
 def conjecture : Prop :=
   ∃ C : ℝ, 0 < C ∧
   ∀ (n m t : ℕ), 0 < t →
@@ -44,13 +52,21 @@ def conjecture : Prop :=
         ∀ i, |∑ j ∈ incidence i, ε j| ≤ C * Real.sqrt t
 
 /--
-Resolved true: Resolved. Guo, Fang and Lu prove that every 0/1 matrix with at most t nonzero
-entries in each column has discrepancy less than 3 sqrt(2 pi t) (Vector balancing via
-directional total variation, arXiv:2609.11189, Corollary 1.2 of their Komlós bound, Theorem 1.1;
-Karingula and Lovett give an elementary proof of the Komlós bound with constant 36,
-arXiv:2609.20979). Linear systems with t-sparse rows and columns are a special case, so the
-source's O(sqrt t) holds. The statement was restated from the constant 4 to one absolute
-constant, as the source asks for O(sqrt t). Source: Shengtao Guo, Ethan X. Fang and Junwei Lu,
+**Linear Beck–Fiala systems have discrepancy $O(\sqrt{t})$.** There is a real constant $C > 0$
+such that the following holds for all natural numbers $n$, $m$ and $t \ge 1$. Let
+$S_1, \dots, S_n$ be subsets of $\{1, \dots, m\}$ such that each $S_i$ has at most $t$ elements,
+each element of $\{1, \dots, m\}$ lies in at most $t$ of the sets $S_i$, and $S_i$ and $S_{i'}$
+have at most one common element whenever $i \ne i'$. Then there are signs
+$\varepsilon_1, \dots, \varepsilon_m \in \{1, -1\}$ such that
+$\left|\sum_{j \in S_i} \varepsilon_j\right| \le C\sqrt{t}$ for every $i$.
+
+Guo, Fang and Lu prove that every $0/1$ matrix with at most $t$ nonzero entries in each column
+has discrepancy less than $3\sqrt{2\pi t}$ (arXiv:2609.11189, Corollary 1.2 of their Komlós
+bound, Theorem 1.1; Karingula and Lovett give an elementary proof of the Komlós bound with
+constant 36, arXiv:2609.20979). Linear systems with $t$-sparse rows and columns are a special
+case.
+
+Source: Shengtao Guo, Ethan X. Fang and Junwei Lu,
 Vector balancing via directional total variation, arXiv:2609.11189 (2026),
 https://arxiv.org/abs/2609.11189. Moved from `OpenConjectures/Combinatorics/LinearBeckFiala`.
 -/

@@ -32,18 +32,26 @@ namespace Entry14LagrangeSeries
 
 open scoped Interval Topology
 
-/-- The polynomial coefficient occurring in Ramanujan's Lagrange series. -/
+/-- **Lagrange series coefficients.** For real numbers $p$, $q$, $n$ and a natural number $k$,
+the Lagrange series coefficient $C_{p,q}(n, k)$ is $1$ if $k = 0$, and for $k \ge 1$ it is
+$$C_{p,q}(n, k) = n \prod_{j=1}^{k-1} (n + k p - j q)$$
+(an empty product when $k = 1$).
+-/
 def lagrangeSeriesCoefficient (p q n : ℝ) (k : ℕ) : ℝ :=
   if k = 0 then 1 else
     n * ∏ j ∈ Finset.range (k - 1), (n + (k : ℝ) * p - ((j + 1 : ℕ) : ℝ) * q)
 
-/-- The zeroth Lagrange-series coefficient is one. -/
+/-- **Lagrange series coefficient of degree zero.** For all real numbers $p$, $q$, $n$, the
+Lagrange series coefficient $C_{p,q}(n, 0)$ of degree $0$ equals $1$. -/
 @[simp]
 theorem lagrangeSeriesCoefficient_zero (p q n : ℝ) :
     lagrangeSeriesCoefficient p q n 0 = 1 := by
   simp [lagrangeSeriesCoefficient]
 
-/-- The positive-degree Lagrange-series coefficient in product form. -/
+/-- **Lagrange series coefficients of positive degree.** For all real numbers $p$, $q$, $n$ and
+every natural number $k \ne 0$, the Lagrange series coefficient of degree $k$ is
+$$C_{p,q}(n, k) = n \prod_{j=1}^{k-1} (n + k p - j q).$$
+-/
 theorem lagrangeSeriesCoefficient_of_ne_zero (p q n : ℝ) {k : ℕ} (hk : k ≠ 0) :
     lagrangeSeriesCoefficient p q n k =
       n * ∏ j ∈ Finset.range (k - 1),
@@ -229,7 +237,10 @@ private theorem lagrangeSeriesCoefficient_add_zero (p r s : ℝ) (m : ℕ) :
   push_cast
   exact h
 
-/-- Hagen–Rothe convolution for the coefficients in Ramanujan's Lagrange series. -/
+/-- **Hagen–Rothe convolution for Lagrange series coefficients.** For all real numbers $p$, $q$,
+$r$, $s$ and every natural number $m$, the Lagrange series coefficients $C_{p,q}$ satisfy
+$$C_{p,q}(r + s, m) = \sum_{k=0}^{m} \binom{m}{k} C_{p,q}(r, k) \, C_{p,q}(s, m - k).$$
+-/
 theorem lagrangeSeriesCoefficient_add (p q r s : ℝ) (m : ℕ) :
     lagrangeSeriesCoefficient p q (r + s) m =
       ∑ k ∈ Finset.range (m + 1), (Nat.choose m k : ℝ) *
@@ -1913,14 +1924,20 @@ private theorem ch3E14Term_eq_frozen_summand (p q n : ℝ) (a : ℂ) (k : ℕ) :
     push_cast
     ring
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 14, formulas
-    (14.1)--(14.5), printed pp. 70--71 / PDF pp. 80--81; attribution on printed p. 72 / PDF p.
-    82.
+/-- **Ramanujan's Lagrange series.** Let $p > 0$ and $q > 0$ be real numbers with $p \ne q$, and
+let $a$ be a complex number with $|a| \le p^{-p/q} |p - q|^{(p - q)/q}$. Then there is a complex
+number $L$ with $a q e^{p L} - e^{q L} + 1 = 0$ such that, for every real number $n$, the series
+$$1 + \sum_{k=1}^{\infty} \frac{n a^k}{k!} \prod_{j=1}^{k-1} (n + k p - j q)$$
+converges unconditionally to $e^{n L}$.
 
 Proves `Wanted` entry `ramanujan_part1_ch3_entry14_lagrange_series`.
 
 Proof: The argument uses the Hagen--Rothe convolution, a Stirling-type coefficient bound uniform
 through the boundary circle, and a continuous exponential lift.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 14, formulas
+    (14.1)--(14.5), printed pp. 70--71 / PDF pp. 80--81; attribution on printed p. 72 / PDF p.
+    82.
 -/
 theorem ramanujan_part1_ch3_entry14_lagrange_series (p q : ℝ)
     (hp : 0 < p)
