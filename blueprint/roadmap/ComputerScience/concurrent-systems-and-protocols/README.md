@@ -31,5 +31,4 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Local distributed algorithms](local-distributed-algorithms/README.md)
 - [Distributed execution models](distributed-execution-models/README.md)
 
-- [Consensus and agreement](consensus-and-agreement/README.md)
 - [Shared-memory objects](shared-memory-objects/README.md)
