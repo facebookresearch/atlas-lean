@@ -1,0 +1,17 @@
+# Initial Cover Colimit Glue
+
+- [Piece Cocone](piece-cocone.md)
+- [Index](index-2.md)
+- [Mem index](mem-index.md)
+- [Leg overlap](leg-overlap.md)
+- [Whole Leg](whole-leg.md)
+- [Whole Leg eq](whole-leg-eq.md)
+- [Whole Cocone](whole-cocone.md)
+- [Stage Desc](stage-desc.md)
+- [Stage Desc fac](stage-desc-fac.md)
+- [Stage Desc naturality](stage-desc-naturality.md)
+- [Stage Cocone](stage-cocone.md)
+- [Whole Desc](whole-desc.md)
+- [Whole Desc fac](whole-desc-fac.md)
+- [Whole Desc unique](whole-desc-unique.md)
+- [Whole Is Colimit](whole-is-colimit.md)

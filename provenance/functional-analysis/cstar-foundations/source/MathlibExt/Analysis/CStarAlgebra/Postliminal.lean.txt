@@ -1,0 +1,159 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+public import Mathlib.Analysis.Normed.Operator.Compact
+public import Mathlib.Basic.Nontrivial.Defs
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Idempotent
+
+/-!
+# The shared nonunital postliminal/Type-I representation criterion
+
+A nonzero irreducible representation contains every actual compact operator
+in the original complete complex Hilbert-space norm. The operator-set
+irreducibility clause is the literal closed-invariant-submodule criterion.
+No representation, compact ideal or source-theorem output is selected.
+The representation universe remains an independent explicit parameter;
+source callers choose their original adequate Hilbert test universe.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+namespace CStarAlgebra
+universe uA uH
+
+/-- The actual nonunital postliminal criterion, with original closed invariants and compacts. -/
+def IsPostliminal (A : Type uA) [NonUnitalCStarAlgebra A] : Prop :=
+  ∀ {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (pi : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)),
+    pi ≠ 0 →
+      (∀ K : Submodule ℂ H, IsClosed (K : Set H) →
+        (∀ T ∈ Set.range pi, ∀ x ∈ K, T x ∈ K) → K = ⊥ ∨ K = ⊤) →
+      ({T : H →L[ℂ] H | IsCompactOperator T} : Set (H →L[ℂ] H)) ⊆ Set.range pi
+
+/-- Nonzero actual representations already imply the original Hilbert carrier is nontrivial. -/
+theorem nontrivial_of_nonzero_representation
+    {A : Type uA} [NonUnitalCStarAlgebra A]
+    {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (pi : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (hpi : pi ≠ 0) : Nontrivial H := by
+  rcases subsingleton_or_nontrivial H with hH | hH
+  · haveI : Subsingleton H := hH
+    apply False.elim
+    apply hpi
+    apply NonUnitalStarAlgHom.ext
+    intro a
+    apply ContinuousLinearMap.ext
+    intro x
+    exact Subsingleton.elim _ _
+  · exact hH
+
+/-- The same criterion with the source's explicit nontrivial-Hilbert irreducibility condition. -/
+theorem isPostliminal_iff_nonzero_irreducible_criterion
+    (A : Type uA) [NonUnitalCStarAlgebra A] :
+    IsPostliminal.{uA, uH} A ↔
+      ∀ (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+        (pi : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)),
+        pi ≠ 0 →
+          (Nontrivial H ∧ ∀ K : Submodule ℂ H, IsClosed (K : Set H) →
+            (∀ (a : A) ⦃x : H⦄, x ∈ K → pi a x ∈ K) → K = ⊥ ∨ K = ⊤) →
+          ∀ T : H →L[ℂ] H, IsCompactOperator T → ∃ a : A, pi a = T := by
+  constructor
+  · intro h H _ _ _ pi hpi hirr T hT
+    apply h pi hpi ?_ hT
+    intro K hK hInv
+    apply hirr.2 K hK
+    intro a x hx
+    exact hInv (pi a) ⟨a, rfl⟩ x hx
+  · intro h H _ _ _ pi hpi hirr T hT
+    refine h H pi hpi ⟨nontrivial_of_nonzero_representation pi hpi, ?_⟩ T hT
+    intro K hK hInv
+    apply hirr K hK
+    rintro U ⟨a, rfl⟩ x hx
+    exact hInv a hx
+
+/-- A nonzero irreducible representation of a unital algebra preserves its unit. -/
+theorem map_one_eq_one_of_nonzero_irreducible_representation
+    {A : Type uA} [CStarAlgebra A]
+    {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (pi : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (hpi : pi ≠ 0)
+    (hirr : ∀ K : Submodule ℂ H, IsClosed (K : Set H) →
+      (∀ (a : A) ⦃x : H⦄, x ∈ K → pi a x ∈ K) → K = ⊥ ∨ K = ⊤) :
+    pi 1 = 1 := by
+  let p : H →L[ℂ] H := pi 1
+  have hp : IsIdempotentElem p := by
+    change pi 1 * pi 1 = pi 1
+    rw [← map_mul, one_mul]
+  have hleft (a : A) : p * pi a = pi a := by
+    change pi 1 * pi a = pi a
+    rw [← map_mul, one_mul]
+  have hmem (a : A) (x : H) : pi a x ∈ p.range := by
+    refine ⟨pi a x, ?_⟩
+    exact congrArg (fun T : H →L[ℂ] H => T x) (hleft a)
+  have hclosed : IsClosed (p.range : Set H) :=
+    ContinuousLinearMap.IsIdempotentElem.isClosed_range hp
+  rcases hirr p.range hclosed (fun a x _ => hmem a x) with hzero | hfull
+  · exact False.elim (hpi (by
+      apply NonUnitalStarAlgHom.ext
+      intro a
+      apply ContinuousLinearMap.ext
+      intro x
+      have hx := hmem a x
+      rw [hzero] at hx
+      exact (Submodule.mem_bot ℂ).mp hx))
+  · apply ContinuousLinearMap.ext
+    intro x
+    change p x = x
+    have hx : x ∈ p.range := by rw [hfull]; trivial
+    rcases hx with ⟨y, hy⟩
+    change p y = x at hy
+    have hfix : p (p y) = p y :=
+      congrArg (fun T : H →L[ℂ] H => T y) (show p * p = p from hp)
+    simpa only [hy] using hfix
+
+/-- A unital representation on a nonzero Hilbert space is nonzero as a nonunital map. -/
+theorem nonzero_toNonUnitalStarAlgHom
+    {A : Type uA} [CStarAlgebra A]
+    {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    [Nontrivial H] (pi : A →⋆ₐ[ℂ] (H →L[ℂ] H)) : pi.toNonUnitalStarAlgHom ≠ 0 := by
+  intro hzero
+  obtain ⟨x, hx⟩ := exists_ne (0 : H)
+  have h := congrArg (fun rho : A →⋆ₙₐ[ℂ] (H →L[ℂ] H) => rho 1 x) hzero
+  change pi 1 x = 0 at h
+  rw [map_one, one_apply_eq_self] at h
+  exact hx h
+
+/-- For unital algebras, the shared criterion equals the original unital irreducible criterion. -/
+theorem isPostliminal_iff_unital_irreducible_criterion
+    (A : Type uA) [CStarAlgebra A] :
+    IsPostliminal.{uA, uH} A ↔
+      ∀ (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+        (pi : A →⋆ₐ[ℂ] (H →L[ℂ] H)),
+        (Nontrivial H ∧ ∀ K : Submodule ℂ H, IsClosed (K : Set H) →
+          (∀ (a : A) ⦃x : H⦄, x ∈ K → pi a x ∈ K) → K = ⊥ ∨ K = ⊤) →
+        ∀ T : H →L[ℂ] H, IsCompactOperator T → ∃ a : A, pi a = T := by
+  constructor
+  · intro h H _ _ _ pi hirr
+    haveI : Nontrivial H := hirr.1
+    exact (isPostliminal_iff_nonzero_irreducible_criterion.{uA, uH} A).mp h H
+      pi.toNonUnitalStarAlgHom (nonzero_toNonUnitalStarAlgHom pi) hirr
+  · intro h
+    apply (isPostliminal_iff_nonzero_irreducible_criterion.{uA, uH} A).mpr
+    intro H _ _ _ pi hpi hirr T hT
+    have hunit := map_one_eq_one_of_nonzero_irreducible_representation pi hpi hirr.2
+    let rho : A →⋆ₐ[ℂ] (H →L[ℂ] H) :=
+      { toFun := pi
+        map_zero' := map_zero pi
+        map_one' := hunit
+        map_add' := map_add pi
+        map_mul' := map_mul pi
+        commutes' := by
+          intro c
+          rw [Algebra.algebraMap_eq_smul_one, map_smul, hunit,
+            Algebra.algebraMap_eq_smul_one]
+        map_star' := map_star pi }
+    exact h H rho hirr T hT
+
+end CStarAlgebra

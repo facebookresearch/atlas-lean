@@ -11,6 +11,7 @@ module
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 import MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330
 
 namespace MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
@@ -71,5 +72,57 @@ example : (arrayR 4 2 : ℚ) = 252 := by
       (∑ r : Fin 4, (r.val + 1) * (b r).val) = 4 ∧ (∑ r : Fin 4, (b r).val) = 2) =
       {![1, 0, 1, 0], ![0, 2, 0, 0]} by decide +kernel]
   norm_num [Fin.prod_univ_four, Nat.factorial]
+
+-- The first positive row vanishes just above the diagonal.
+example : arrayU 1 2 = 0 := by
+  norm_num [arrayU, Finset.sum_range_succ, Nat.choose, Nat.factorial]
+
+-- Recover the third term, where the middle coefficient of the inverse is five.
+example (a b : ℕ → ℝ) (h : ∀ k : ℕ, 1 ≤ k → a k =
+    ∑ m ∈ Finset.Icc 1 k, (MetaMathlibExt.jacobiStirlingFirst k m (0 : ℤ) : ℝ) * b m) :
+    b 3 = a 1 + 5 * a 2 + a 3 := by
+  have h₃ := (inversion_uU a b).mp h 3 (by decide)
+  rw [show Finset.Icc 1 (3 : ℕ) = {1, 2, 3} by decide] at h₃
+  norm_num [arrayU, Finset.sum_range_succ, Nat.choose, Nat.factorial] at h₃
+  simpa [add_assoc] using h₃
+
+-- The inverse allows an arbitrary zeroth term, as both sums start at one.
+example (a : ℕ → ℝ) (b₀ : ℝ) (k : ℕ) (hk : 1 ≤ k) :
+    a k = ∑ m ∈ Finset.Icc 1 k, (MetaMathlibExt.jacobiStirlingFirst k m (0 : ℤ) : ℝ) *
+      (if m = 0 then b₀ else ∑ i ∈ Finset.Icc 1 m, (arrayU m i : ℝ) * a i) := by
+  let b (m : ℕ) := if m = 0 then b₀ else ∑ i ∈ Finset.Icc 1 m, (arrayU m i : ℝ) * a i
+  apply (inversion_uU a b).mpr _ k hk
+  intro m hm
+  simp [b, show m ≠ 0 by omega]
+
+-- At the empty endpoint the first binomial coefficient is one, but its coefficient vanishes.
+example (k : ℕ) (hk : 1 ≤ k) :
+    (∑ m ∈ Finset.Icc 1 k, thmQ k m 0 * (m.choose (2 * m - 1) : ℚ)) = 0 := by
+  simpa [powerSum] using (pow_mul_powerSum_odd_eq_sum k hk 0).symm
+
+-- The middle column of the fifth-power formula receives contributions from two entries of R.
+example (n : ℕ) : 32 * powerSum 5 n =
+    (n : ℚ) ^ 5 * (n + 1) + (20 * (n : ℚ) ^ 3 + 10 * n) * (n + 2).choose 3 +
+      120 * (n : ℚ) * (n + 3).choose 5 := by
+  have h := pow_mul_powerSum_odd_eq_sum 3 (by decide) n
+  rw [show Finset.Icc 1 (3 : ℕ) = {1, 2, 3} by decide] at h
+  norm_num [thmQ, show Finset.Icc 2 (3 : ℕ) = {2, 3} by decide,
+    show arrayR 1 1 = 1 by decide, show arrayR 2 1 = 1 by decide,
+    show arrayR 2 2 = 12 by decide, show Nat.choose 5 2 = 10 by decide] at h
+  rw [h]
+  ring
+
+-- At the empty endpoint, every positive column has a vanishing binomial coefficient.
+example (k : ℕ) (hk : 1 ≤ k) :
+    (∑ m ∈ Finset.Icc 1 k, (arrayR k m : ℚ) * (m + 1).choose (2 * m + 1)) = 0 := by
+  simpa [powerSum] using (pow_mul_powerSum_even_eq_sum k hk 0).symm
+
+-- The fourth-power formula has coefficients 1 and 12 for every upper endpoint.
+example (n : ℕ) : 16 * powerSum 4 n =
+    ((2 * n + 2).choose 3 : ℚ) + 12 * (2 * n + 3).choose 5 := by
+  have h := pow_mul_powerSum_even_eq_sum 2 (by decide) n
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide] at h
+  norm_num [show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide, Nat.add_assoc] at h
+  exact h
 
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted

@@ -13,6 +13,7 @@ public import Mathlib.Data.Finset.Max
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.GameTheory.SlowANim
 public import MathlibExt.GameTheory.SlowANimGeneralReduction
+public import MathlibExt.GameTheory.SlowANimParity
 
 /-!
 # P-positions of Slow`A`-Nim
@@ -44,16 +45,6 @@ public theorem_wanted slowANim_partialStructure (n : ℕ) (A : Finset ℕ)
     ((∀ i, Even (p i)) → SpragueGrundy.IsP (slowANimGame n A) p) ∧
       ((Finset.univ.filter fun i => Odd (p i)).card ∈ A →
         ¬ SpragueGrundy.IsP (slowANimGame n A) p)
-
-/-- **P-positions of Slow A-Nim with A = {1, k}, k odd.** Let $k$ be odd with $1 \le k \le n$
-and let $A = \{1, k\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a
-P-position if and only if its total number of tokens $p_1 + \dots + p_n$ is even.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 2. -/
-public theorem_wanted slowANim_one_odd_isP_iff (n k : ℕ) (hA : ({1, k} : Finset ℕ) ⊆ Finset.Icc 1 n)
-    (hk : Odd k) (p : Fin n → ℕ) :
-    SpragueGrundy.IsP (slowANimGame n {1, k}) p ↔ Even (∑ i, p i)
 
 /-- **P-positions of Slow A-Nim with A = {1, n}, n even.** Let $n \ge 1$ be even and let
 $A = \{1, n\}$. A position $p = (p_1, \dots, p_n)$ of Slow$A$-Nim on $n$ stacks is a P-position
