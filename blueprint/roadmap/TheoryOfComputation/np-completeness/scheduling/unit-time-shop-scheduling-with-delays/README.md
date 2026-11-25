@@ -6,7 +6,6 @@
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH DELAYS, WEIGHTED COMPLETION TIME as a decision problem](unit-flow-shop-delays-weighted-dec.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH DELAYS, WEIGHTED COMPLETION TIME is NP-complete](unit-flow-shop-delays-weighted-np-comple.md)
 - [Instances of unit-time shops with delays and release dates](unit-flow-shop-transportation-delays-rel.md)
-- [Well-formed unit-time shops with delays and release dates](well-formed-2.md)
 - [Feasible instances of TWO-MACHINE UNIT-TIME FLOW SHOP WITH DELAYS AND RELEASE DATES, TOTAL COMPLETION TIME](unit-flow-shop-transportation-delays-rel-2.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH DELAYS AND RELEASE DATES, TOTAL COMPLETION TIME as a decision problem](unit-flow-shop-transportation-delays-rel-3.md)
 - [TWO-MACHINE UNIT-TIME FLOW SHOP WITH DELAYS AND RELEASE DATES, TOTAL COMPLETION TIME is NP-complete](unit-flow-shop-transportation-delays-rel-4.md)

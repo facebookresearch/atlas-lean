@@ -22,7 +22,6 @@
 - [TWO-MACHINE MULTIPROCESSOR TASK FLOW SHOP WITH UNIT TIMES AND CHAINS, MINIMIZING TOTAL TARDINESS is NP-complete](mpt-flow-shop-two-machines-unit-chains-t-2.md)
 - [Multiprocessor task flow-shop schedules](is-mptflow-shop-schedule.md)
 - [Unit-time multiprocessor task flow-shop schedules with precedence](is-mptprecedence-schedule.md)
-- [Instances of multiprocessor task shops with precedence](multiprocessor-task-flow-shop-precedence.md)
 - [Well-formed instances of multiprocessor task shops with precedence](well-formed-3.md)
 - [Feasible instances of MULTIPROCESSOR TASK FLOW SHOP WITH PRECEDENCE, MAKESPAN](multiprocessor-task-flow-shop-precedence-2.md)
 - [MULTIPROCESSOR TASK FLOW SHOP WITH PRECEDENCE, MAKESPAN as a decision problem](multiprocessor-task-flow-shop-precedence-3.md)

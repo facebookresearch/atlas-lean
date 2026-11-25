@@ -21,7 +21,6 @@
 - [Feasible instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP, MAXIMUM LATENESS](multiprocessor-task-open-shop-two-machin.md)
 - [TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP, MAXIMUM LATENESS as a decision problem](multiprocessor-task-open-shop-two-machin-2.md)
 - [TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP, MAXIMUM LATENESS is NP-complete](multiprocessor-task-open-shop-two-machin-3.md)
-- [Instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH RELEASE DATES, MAKESPAN](multiprocessor-task-open-shop-two-machin-4.md)
 - [Well-formed instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH RELEASE DATES, MAKESPAN](well-formed-7.md)
 - [Feasible instances of TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH RELEASE DATES, MAKESPAN](multiprocessor-task-open-shop-two-machin-5.md)
 - [TWO-MACHINE MULTIPROCESSOR TASK OPEN SHOP WITH RELEASE DATES, MAKESPAN as a decision problem](multiprocessor-task-open-shop-two-machin-6.md)

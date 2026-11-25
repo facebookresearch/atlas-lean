@@ -1,3 +1,3 @@
-# Well-formed instances of TWO MACHINES WITH A SINGLE SERVER AND EQUAL PROCESSING TIMES, TOTAL COMPLETION TIME
+# Well-formed single-server instances
 
-An instance $(p, s, K)$ is well-formed when the common processing time $p$ is positive.
+An instance is well-formed when its first component is positive: the common processing time $p$ of an instance $(p, s, K)$ with equal processing times, or the number $m$ of machines of an instance $(m, p, K)$ with unit setup times.

@@ -26,7 +26,6 @@
 - [Feasible instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME](multipurpose-parallel-two-machines-relea-2.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME as a decision problem](multipurpose-parallel-two-machines-relea-3.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH RELEASE DATES, TOTAL COMPLETION TIME is NP-complete](multipurpose-parallel-two-machines-relea-4.md)
-- [Instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, LATE JOBS](multipurpose-parallel-two-machines-unit.md)
 - [Feasible instances of TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, LATE JOBS](multipurpose-parallel-two-machines-unit-2.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, LATE JOBS as a decision problem](multipurpose-parallel-two-machines-unit-3.md)
 - [TWO MULTI-PURPOSE PARALLEL MACHINES WITH CHAINS AND UNIT TIMES, LATE JOBS is NP-complete](multipurpose-parallel-two-machines-unit-4.md)

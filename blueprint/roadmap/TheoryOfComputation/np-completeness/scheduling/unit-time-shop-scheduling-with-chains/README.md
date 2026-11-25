@@ -1,6 +1,5 @@
 # Unit-time shop scheduling with chains
 
-- [Instances of unit-time shop problems with chains](f3-unit-chains-late-jobs-instance.md)
 - [Chain precedence on jobs](chains-well-formed.md)
 - [Unit-time three-machine flow-shop schedules with chains](is-schedule.md)
 - [Well-formed instances of unit-time shop problems with chains](well-formed.md)
