@@ -8,3 +8,4 @@ Collisions and the birthday bound, and the Merkle–Damgård transform with leng
 - [Merkle–Damgård padding](merkle-damg-rd-padding/README.md)
 
 - [Bounded universal hash functions](bounded-universal-hash-functions.md)
+- [Collision resistance and target collision resistance](collision-resistance-and-target-collision-resistance.md)
