@@ -1,10 +1,13 @@
 # Ss Count Formula
 
-The supersingular count formula of level `N` in prime characteristic `p`: the Eichler mass plus
-the `ν₂`, `ν₃` corrections, with `nuTwo` and `nuThree` evaluated at the level `N` and in the prime
-field `ZMod p`. For a level `N ≥ 1` not divisible by `p` it is Eichler's class number formula for
-an Eichler order of level `N` in the quaternion algebra over `ℚ` ramified at `p` and `∞`, hence,
-by the Deuring correspondence, the number of supersingular points of `X₀(N)` over an algebraic
-closure of `ZMod p` (J. Voight, *Quaternion Algebras*, Theorem 30.1.5 and Remark 42.3.10); this
-file does not prove it. Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with
-`q = p ^ n`, `n > 1`, are out of scope.
+The supersingular count formula of level `N` in prime characteristic `p`, defined as
+`eichlerMass N p + (2 - ν₂(p)) * ν₂(N) / 4 + (2 - ν₃(p)) * ν₃(N) / 3`, where `ν₂ = nuTwo` and
+`ν₃ = nuThree` count the roots of `x ^ 2 + 1` and of `x ^ 2 + x + 1` in `ZMod N` and in the field
+`ZMod p`. The hypothesis `[Fact p.Prime]` makes `ZMod p` the field with `p` elements
+(`ZMod (p ^ n)` is not a field for `n > 1`).
+
+For a level `N ≥ 1` not divisible by `p`, Eichler's class number formula (J. Voight, *Quaternion
+Algebras*, Theorem 30.1.5) gives this value as the class number of an Eichler order of level `N`
+in the quaternion algebra over `ℚ` ramified at `p` and `∞`, which by the Deuring correspondence
+(Remark 42.3.10 there) is the number of supersingular points `(E, C)` of `X₀(N)` over an algebraic
+closure of `ZMod p`, counted without weights.

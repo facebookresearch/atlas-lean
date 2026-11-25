@@ -5,5 +5,6 @@ field `ZMod p` attached to `j : ZMod p`. For `p > 3` it is an elliptic curve wit
 (`ssModel_j`). It is not a model in characteristic `2` or `3`, where its discriminant vanishes
 for every `j`: in characteristic `2` the discriminant of every short Weierstrass equation does,
 and in characteristic `3` the coefficient `ssModelA 3 j` is `0`. In every characteristic,
-`WeierstrassCurve.ofJ j` is an elliptic curve with `j`-invariant `j`. Defined for prime fields
-`ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope.
+`WeierstrassCurve.ofJ j` is an elliptic curve with `j`-invariant `j`. The hypothesis
+`[Fact p.Prime]` makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for
+`n > 1`).
