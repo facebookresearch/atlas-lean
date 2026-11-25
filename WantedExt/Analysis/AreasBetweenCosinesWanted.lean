@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientDerivatives
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
 
 namespace MetaMathlibExt
 
@@ -173,24 +174,6 @@ public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : 
         ∫ x in ((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) - 1)),
           (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
       (𝓝 (8 / ((q : ℝ) ^ 2 * π)))
-
-/-- **Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and even $k$.** Let $q$ be an
-even natural number, for each natural number $m$ put $k = 2m$, and let
-$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \left(\int_{(\ell-1)\pi/(k-1)}^{\ell\pi/(k+1)} f(x)\,dx -
-\int_{\ell\pi/(k+1)}^{\ell\pi/(k-1)} f(x)\,dx\right)$$
-tends to $0$ if $q \equiv 0 \pmod 4$ and to $16/(q^2\pi)$ if $q \equiv 2 \pmod 4$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 12
-(`jis-2025-25.2.3-lem-12`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_even {q : ℕ} (hq : Even q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ((∫ x in (((l : ℝ) - 1) * π / ((2 * m : ℝ) - 1))..((l : ℝ) * π / ((2 * m : ℝ) + 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
-        ∫ x in ((l : ℝ) * π / ((2 * m : ℝ) + 1))..((l : ℝ) * π / ((2 * m : ℝ) - 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
-      (𝓝 (if q % 4 = 0 then 0 else 16 / ((q : ℝ) ^ 2 * π)))
 
 end
 
