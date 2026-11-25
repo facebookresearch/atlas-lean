@@ -150,4 +150,20 @@ example {k : Type u} [Field k] {X : Scheme.{u}}
   obtain rfl : U = ⊤ := eq_top_iff.mpr fun y _ ↦ Subsingleton.elim default y ▸ hU
   exact e
 
+/-- `RosatiCompatible` asks nothing of `star`: for the family of identity
+maps both Rosati lifts are the identity of `A ×_S A`, so the condition holds
+with the constant map on `Bool`, which is not an involution. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
+    (L : A.Modules) :
+    RosatiCompatible G L (fun _ : Bool ↦ 𝟙 A) (fun _ ↦ Category.id_comp f)
+      (fun _ ↦ true) := by
+  intro b
+  have h : rosatiLiftLeft (fun _ : Bool ↦ 𝟙 A) (fun _ ↦ Category.id_comp f) b =
+      rosatiLiftRight (fun _ : Bool ↦ 𝟙 A) (fun _ ↦ Category.id_comp f)
+        (fun _ ↦ true) b := by
+    ext <;> simp [rosatiLiftLeft, rosatiLiftRight]
+  rw [h]
+  exact locIsoOnBase_refl _ _
+
 end CanonicalPolarizationDataTest

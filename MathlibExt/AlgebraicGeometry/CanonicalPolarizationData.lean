@@ -53,16 +53,20 @@ Two sheaves of modules on a scheme over a base are locally isomorphic over
 the base when every point of the base has a Zariski neighbourhood over whose
 inverse image they are isomorphic.  For a relative group law, the negation
 and addition morphisms, the Mumford bundle `m^* L ⊗ p₁^* L^∨ ⊗ p₂^* L^∨`
-built from a sheaf `L` and its dual `L^∨ = 𝓗om(L, 𝒪)`, its kernel
-conditions, and Rosati compatibility with an action are defined directly
-from the group law on points.  Canonical polarization data packages an
-invertible sheaf that is symmetric, whose Mumford kernel is exactly the
-`2`-torsion, that after a faithfully flat extension of the base ring is,
-locally over the new base, a tensor product of a kernel-trivial sheaf with
-its negation pullback for every group law on the base change compatible
-with the given one (the base change of the law is one, so the form holds
-for it), whose global sections on every geometric fibre are
-finite-dimensional and nonzero, and that is Rosati compatible.
+built from a sheaf `L` and its dual `L^∨ = 𝓗om(L, 𝒪)`, and its kernel
+conditions are defined directly from the group law on points.  Rosati
+compatibility takes a family `act : I → (A ⟶ A)` of endomorphisms of `A`
+over the base and a map `star : I → I` (`act` need not be an action, nor
+`star` an involution), and compares the pullbacks of the Mumford bundle along
+`(x, y) ↦ (x, act b y)` and `(x, y) ↦ (act (star b) x, y)`.  Canonical
+polarization data packages an invertible sheaf that is symmetric, whose
+Mumford kernel is exactly the `2`-torsion, that after a faithfully flat
+extension of the base ring is, locally over the new base, a tensor product
+of a kernel-trivial sheaf with its negation pullback for every group law on
+the base change compatible with the given one (the base change of the law
+is one, so the form holds for it), whose global sections on every geometric
+fibre are finite-dimensional and nonzero, and that is Rosati compatible
+with the given `act` and `star`.
 
 Line bundles, the structure sheaf and the tensor product are those of
 `CoherentCurveLinearSeries` and `SchemeModulesTensor`; the dual is the sheaf
@@ -127,7 +131,9 @@ def mumfordBundle (L : A.Modules) : (pullback f f).Modules :=
       ((Scheme.Modules.pullback (pullback.snd f f)).obj
         (BundleTrace.homSheaf A L (structureModule A))))
 
-/-- Slicing a point of the group law into the Mumford bundle. -/
+/-- The slice at a `T`-point `x` of `A` over `t : T ⟶ Spec S`: the map
+`A ×_S T ⟶ A ×_S A`, `(a, s) ↦ (a, x s)`, along which the kernel conditions
+pull back the Mumford bundle. -/
 def sliceAt {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of S)}
     (x : Over.mk t ⟶ Over.mk f) : pullback f t ⟶ pullback f f :=
   pullback.lift (pullback.fst f t) (pullback.snd f t ≫ x.left)
@@ -169,7 +175,9 @@ def KernelIsTwoTorsion (L : A.Modules) : Prop :=
         (structureModule _) ↔
       G.mul t x x = G.one t
 
-/-- The first Rosati lift of a point of the action. -/
+/-- The first Rosati lift: for a family `act : I → (A ⟶ A)` of endomorphisms
+of `A` over the base and an index `b : I`, the map `A ×_S A ⟶ A ×_S A`,
+`(x, y) ↦ (x, act b y)`. -/
 def rosatiLiftLeft {I : Type v} (act : I → (A ⟶ A))
     (act_over : ∀ b, act b ≫ f = f) (b : I) :
     pullback f f ⟶ pullback f f :=
@@ -181,7 +189,9 @@ def rosatiLiftLeft {I : Type v} (act : I → (A ⟶ A))
         _ = pullback.snd f f ≫ act b ≫ f := by
             rw [h])
 
-/-- The second Rosati lift of a point of the action. -/
+/-- The second Rosati lift: for a family `act : I → (A ⟶ A)` of
+endomorphisms of `A` over the base, a map `star : I → I` and an index
+`b : I`, the map `A ×_S A ⟶ A ×_S A`, `(x, y) ↦ (act (star b) x, y)`. -/
 def rosatiLiftRight {I : Type v} (act : I → (A ⟶ A))
     (act_over : ∀ b, act b ≫ f = f) (star : I → I) (b : I) :
     pullback f f ⟶ pullback f f :=
@@ -192,9 +202,16 @@ def rosatiLiftRight {I : Type v} (act : I → (A ⟶ A))
             rw [act_over]
         _ = pullback.snd f f ≫ f := pullback.condition)
 
-/-- Rosati compatibility of the Mumford bundle with an action and its
-involution: the two Rosati lifts pull the Mumford bundle back to sheaves
-that are locally isomorphic over the base. -/
+/-- Rosati compatibility of `L` with a family `act : I → (A ⟶ A)` of
+endomorphisms of `A` over the base (`act_over`) and a map `star : I → I`:
+for every `b : I`, the pullback of the Mumford bundle along
+`rosatiLiftLeft`, `(x, y) ↦ (x, act b y)`, and its pullback along
+`rosatiLiftRight`, `(x, y) ↦ (act (star b) x, y)`, are locally isomorphic
+over the base `Spec S`.  Nothing else is asked of the inputs: `I` carries no
+structure, the maps `act b` need not form an action or respect the group
+law, and `star` need not be an involution (a constant map on a two-element
+type is allowed).  The name refers to the use with `act` an action of a ring
+on `A` and `star` an involution of that ring. -/
 def RosatiCompatible (L : A.Modules) {I : Type v}
     (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
     (star : I → I) : Prop :=
@@ -251,7 +268,8 @@ base change that is compatible with `G` (the base change of `G` is one)
 makes `L` locally isomorphic over `Spec S'` to `L₀ ⊗ (-1)^* L₀` for an
 invertible kernel-trivial `L₀`, its global sections on every geometric
 fibre are finite-dimensional and nonzero, and it is Rosati compatible with
-the action. -/
+the family `act` of endomorphisms over the base and the map `star : I → I`
+(`act` need not be an action, nor `star` an involution). -/
 structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
     (act_over : ∀ b, act b ≫ f = f) (star : I → I)
     (L : A.Modules) : Prop where
@@ -307,7 +325,9 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
   is positive, which rules out both zero and infinite-dimensional sections. -/
   positiveRank : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
     0 < geomFibreH0Finrank f L k sk
-  /-- The sheaf is Rosati compatible with the action. -/
+  /-- The sheaf is Rosati compatible (`RosatiCompatible`) with the family
+  `act` and the map `star`; `act` need not be an action, nor `star` an
+  involution. -/
   rosatiCompatible : RosatiCompatible G L act act_over star
 
 variable {G} in
