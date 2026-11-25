@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.Graphon
-public import MathlibExt.Combinatorics.FinitelyForcibleGraphons
+public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.GraphonCounting
+public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.GraphonSampling
 
 /-!
 # Graph limits: the limit theorem, compactness and uniqueness (wanted)
@@ -37,14 +37,6 @@ open MathlibExt.Combinatorics.SimpleGraph.GraphLimits
 open MathlibExt.Combinatorics.FinitelyForcibleOptimumOWR4212Problem011Wanted (IsGraphon)
 open Filter Topology
 
-/-- **Counting lemma for graphons.** For graphons `U, W` with values in `[0, 1]` and every simple
-graph `F`, `|t(F, U) - t(F, W)| ≤ |E(F)| · ‖U - W‖_□` (Lovász–Szegedy, *Limits of dense graph
-sequences* (2006), Lemma 4.1; the finite-graph case is `abs_homDensity_sub_homDensity_le`). -/
-public theorem_wanted abs_graphonHomDensity_sub_le {k : ℕ} (F : SimpleGraph (Fin k))
-    [DecidableRel F.Adj] {U W : ℝ → ℝ → ℝ} (hU : IsGraphon U) (hW : IsGraphon W) :
-    |graphonHomDensity F U - graphonHomDensity F W| ≤
-      F.edgeFinset.card * graphonCutNorm (fun x y => U x y - W x y)
-
 /-- **Lovász–Szegedy limit theorem.** Every convergent sequence of (nonempty) simple graphs has a
 graphon limit: there is a graphon `W` with `t(F, Gₙ) → t(F, W)` for every simple graph `F`
 (Lovász–Szegedy, *Limits of dense graph sequences* (2006), Theorem 2.2, (a) ⇒ (b);
@@ -54,16 +46,6 @@ public theorem_wanted exists_graphon_limit {N : ℕ → ℕ} (G : ∀ n, SimpleG
     [∀ n, DecidableRel (G n).Adj] (hN : ∀ n, 0 < N n) (hG : IsConvergentGraphSequence G) :
     ∃ W : ℝ → ℝ → ℝ, IsGraphon W ∧ ∀ (k : ℕ) (F : SimpleGraph (Fin k)) [DecidableRel F.Adj],
       Tendsto (fun n => homDensity F (adjWeight (G n))) atTop (𝓝 (graphonHomDensity F W))
-
-/-- **Every graphon is a graph limit.** For every graphon `W` there is a sequence of nonempty simple
-graphs `Gₙ` with `t(F, Gₙ) → t(F, W)` for every simple graph `F` (Lovász–Szegedy, *Limits of dense
-graph sequences* (2006), Theorem 2.2, (b) ⇒ (a), via Corollary 2.6 on `W`-random graphs;
-Borgs–Chayes–Lovász–Sós–Vesztergombi, *Convergent sequences of dense graphs I* (2008),
-Theorem 3.1). -/
-public theorem_wanted exists_graph_sequence_tendsto {W : ℝ → ℝ → ℝ} (hW : IsGraphon W) :
-    ∃ (N : ℕ → ℕ) (G : ∀ n, SimpleGraph (Fin (N n))) (_ : ∀ n, DecidableRel (G n).Adj),
-      (∀ n, 0 < N n) ∧ ∀ (k : ℕ) (F : SimpleGraph (Fin k)) [DecidableRel F.Adj],
-        Tendsto (fun n => homDensity F (adjWeight (G n))) atTop (𝓝 (graphonHomDensity F W))
 
 /-- **Compactness of the graphon space.** Every sequence of graphons has a subsequence converging
 in the cut distance to a graphon: after identifying graphons at cut distance `0`, the space of

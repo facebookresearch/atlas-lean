@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Finset.Sort
 public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.ZMod.Defs
 
@@ -681,6 +683,47 @@ public theorem isUlamWord_zeros_four_ones_zeros_iff (a b : ℕ) (hab : 1 ≤ a +
       simp only [show List.range 3 = [0, 1, 2] by rfl, List.countP_cons, List.countP_nil,
         Nat.add_zero, h₁, h₂, h₃]
       split_ifs <;> omega
+termination_by a + b
+
+open isUlamWord_zeros_two_ones_zeros_iff isUlamWord_three_ones_zeros_iff
+  isUlamWord_zeros_four_ones_zeros_iff in
+/-- **Parity criterion for Ulam words with a single one.** For natural numbers $a$ and $b$, the
+binary word $0^a 1 0^b$ ($a$ zeros, then a one, then $b$ zeros) is an Ulam word if and only if
+the binomial coefficient $\binom{a + b}{a}$ is odd.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 8;
+Bade, Cui, Labelle, and Li, *Ulam Sets in New Settings*, arXiv:2008.02762v2, Theorem 3.3. -/
+public theorem isUlamWord_zeros_one_zeros_iff (a b : ℕ) :
+    IsUlamWord (List.replicate a false ++ [true] ++ List.replicate b false) ↔
+      Odd ((a + b).choose a) := by
+  change IsUlamWord (padded a 1 b) ↔ _
+  cases a with
+  | zero => simpa [padded, block] using iff_true_intro (one_leading b)
+  | succ a =>
+    cases b with
+    | zero =>
+      simpa [padded, block] using
+        (ulam_reverse (block 1 (a + 1))).trans (iff_true_intro (one_leading (a + 1)))
+    | succ b =>
+      -- There are no cuts inside the one-letter block. The endpoint cuts contribute
+      -- exactly when the corresponding smaller Ulam words occur.
+      rw [padded_iff a 0 b]
+      simp only [List.range_zero, List.countP_nil, Nat.add_zero]
+      change ((if IsUlamWord (List.replicate a false ++ [true] ++
+          List.replicate (b + 1) false) then 1 else 0) +
+        (if IsUlamWord (List.replicate (a + 1) false ++ [true] ++
+          List.replicate b false) then 1 else 0) = 1) ↔ _
+      have hl := isUlamWord_zeros_one_zeros_iff a (b + 1)
+      have hr := isUlamWord_zeros_one_zeros_iff (a + 1) b
+      simp only [hl, hr]
+      have hPascal : (a + 1 + (b + 1)).choose (a + 1) =
+          (a + (b + 1)).choose a + (a + 1 + b).choose (a + 1) := by
+        rw [show a + 1 + (b + 1) = (a + (b + 1)) + 1 by omega, Nat.choose_succ_succ',
+          show a + 1 + b = a + (b + 1) by omega]
+      rw [hPascal, Nat.odd_add, ← Nat.not_odd_iff_even]
+      by_cases hl : Odd ((a + (b + 1)).choose a) <;>
+        by_cases hr : Odd ((a + 1 + b).choose (a + 1)) <;> simp [hl, hr]
 termination_by a + b
 
 end

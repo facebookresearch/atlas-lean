@@ -44,22 +44,21 @@ namespace MathlibExt.AlgebraicGeometry.RelativeLefschetz
 
 open CategoryTheory CategoryTheory.Limits TopologicalSpace
 open _root_.AlgebraicGeometry ComplexAnalytification PerverseSheaves
-open DeCataldoMiglioriniDecompositionWanted (projectiveSpace)
 
 attribute [local instance] HasDerivedCategory.standard
 
 /-- The actual relative projective space `Y ×_ℂ ℙⁿ_ℂ`. -/
 def relativeProjectiveSpace (Y : ComplexScheme) (n : ℕ) : ComplexScheme :=
-  Over.mk (pullback.fst Y.hom (projectiveSpace n).hom ≫ Y.hom)
+  Over.mk (pullback.fst Y.hom (ProjectiveSpace.projectiveSpace ℂ n).hom ≫ Y.hom)
 
 /-- The projection of the relative projective space to the base. -/
 def toBase (Y : ComplexScheme) (n : ℕ) : relativeProjectiveSpace Y n ⟶ Y :=
-  Over.homMk (pullback.fst Y.hom (projectiveSpace n).hom) rfl
+  Over.homMk (pullback.fst Y.hom (ProjectiveSpace.projectiveSpace ℂ n).hom) rfl
 
 /-- The projection of the relative projective space to `ℙⁿ_ℂ`. -/
 def toProjectiveSpace (Y : ComplexScheme) (n : ℕ) :
-    relativeProjectiveSpace Y n ⟶ projectiveSpace n :=
-  Over.homMk (pullback.snd Y.hom (projectiveSpace n).hom) pullback.condition.symm
+    relativeProjectiveSpace Y n ⟶ ProjectiveSpace.projectiveSpace ℂ n :=
+  Over.homMk (pullback.snd Y.hom (ProjectiveSpace.projectiveSpace ℂ n).hom) pullback.condition.symm
 
 /-- A closed relative embedding specifies the relatively very-ample line
 direction by its map to actual projective space. -/
@@ -73,7 +72,7 @@ structure RelativeProjectiveEmbedding {X Y : ComplexScheme} (f : X ⟶ Y) (n : �
 
 /-- The map to `ℙⁿ_ℂ` given by a relative projective embedding. -/
 def RelativeProjectiveEmbedding.classifyingMap {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
-    (E : RelativeProjectiveEmbedding f n) : X ⟶ projectiveSpace n :=
+    (E : RelativeProjectiveEmbedding f n) : X ⟶ ProjectiveSpace.projectiveSpace ℂ n :=
   E.embedding ≫ toProjectiveSpace Y n
 
 /-- The actual bounded-below constant sheaf placed in degree `-d`. -/
@@ -94,24 +93,27 @@ def degreeTwoPower {C : Type*} [Category* C] [HasShift C ℤ]
       (shiftFunctorAdd' C (2 : ℤ) (2 * (k : ℤ)) (2 * ((k + 1 : ℕ) : ℤ))
         (by omega)).inv.app K
 
-/-- Comparison inputs for the fixed hyperplane pullback/direct-image
-pipeline. Every field is an isomorphism of actual objects; no arbitrary
-functor, zero model, or relative Lefschetz assertion is supplied. -/
+/-- For a relative projective embedding $E$ of $f : X ⟶ Y$ into $Y ×_ℂ ℙ^n$ and $d, k ∈ ℕ$:
+comparison isomorphisms between rational complexes on the spaces of complex points, namely
+between the two presentations of $ℚ[d]$ and of $ℚ[d + 2k]$ on $ℙ^n$ (the constant sheaf placed in
+degree $-d$, resp. $-(d + 2k)$, and the shift of the constant sheaf in degree zero), between the
+inverse images of these along the map $X ⟶ ℙ^n$ of $E$ and the corresponding complexes on $X$,
+and between $Rf_* ℚ[d + 2k]$ and $(Rf_* ℚ[d])[2k]$. -/
 structure HyperplaneComparisons {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
     (E : RelativeProjectiveEmbedding f n) (d k : ℕ) where
   /-- `ℚ[d]` on `ℙⁿ` in its two presentations. -/
-  projectiveSource : DerivedCategory.Plus.ι.obj (constantInput (projectiveSpace n) d) ≅
-    (unitComplex (projectiveSpace n))⟦(d : ℤ)⟧
+  projectiveSource : DerivedCategory.Plus.ι.obj (constantInput (ProjectiveSpace.projectiveSpace ℂ n) d) ≅
+    (unitComplex (ProjectiveSpace.projectiveSpace ℂ n))⟦(d : ℤ)⟧
   /-- `ℚ[d + 2k]` on `ℙⁿ` in its two presentations. -/
-  projectiveTarget : DerivedCategory.Plus.ι.obj (constantInput (projectiveSpace n) (d + 2 * k)) ≅
-    (unitComplex (projectiveSpace n))⟦((d + 2 * k : ℕ) : ℤ)⟧
+  projectiveTarget : DerivedCategory.Plus.ι.obj (constantInput (ProjectiveSpace.projectiveSpace ℂ n) (d + 2 * k)) ≅
+    (unitComplex (ProjectiveSpace.projectiveSpace ℂ n))⟦((d + 2 * k : ℕ) : ℤ)⟧
   /-- The inverse image of `ℚ[d]` on `ℙⁿ` is `ℚ[d]` on `X`. -/
   pullbackSource : (ConstructibleComplexes.derivedPullback ℚ (spaceMap E.classifyingMap)).obj
-      (DerivedCategory.Plus.ι.obj (constantInput (projectiveSpace n) d)) ≅
+      (DerivedCategory.Plus.ι.obj (constantInput (ProjectiveSpace.projectiveSpace ℂ n) d)) ≅
     DerivedCategory.Plus.ι.obj (constantInput X d)
   /-- The inverse image of `ℚ[d + 2k]` on `ℙⁿ` is `ℚ[d + 2k]` on `X`. -/
   pullbackTarget : (ConstructibleComplexes.derivedPullback ℚ (spaceMap E.classifyingMap)).obj
-      (DerivedCategory.Plus.ι.obj (constantInput (projectiveSpace n) (d + 2 * k))) ≅
+      (DerivedCategory.Plus.ι.obj (constantInput (ProjectiveSpace.projectiveSpace ℂ n) (d + 2 * k))) ≅
     DerivedCategory.Plus.ι.obj (constantInput X (d + 2 * k))
   /-- `Rf_* ℚ[d + 2k]` is `Rf_* ℚ[d]` shifted by `2k`. -/
   directImageTarget : ConstructibleComplexes.normalizedDirectImage ℚ X Y f (d + 2 * k) ≅
@@ -120,22 +122,22 @@ structure HyperplaneComparisons {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
 /-- Pull back the shifted power of the projective hyperplane direction. -/
 def hyperplanePullbackMap {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
     (E : RelativeProjectiveEmbedding f n) (d k : ℕ)
-    (η : unitComplex (projectiveSpace n) ⟶ (unitComplex (projectiveSpace n))⟦(2 : ℤ)⟧)
+    (η : unitComplex (ProjectiveSpace.projectiveSpace ℂ n) ⟶ (unitComplex (ProjectiveSpace.projectiveSpace ℂ n))⟦(2 : ℤ)⟧)
     (C : HyperplaneComparisons E d k) :
     DerivedCategory.Plus.ι.obj (constantInput X d) ⟶
       DerivedCategory.Plus.ι.obj (constantInput X (d + 2 * k)) :=
   C.pullbackSource.inv ≫
     (ConstructibleComplexes.derivedPullback ℚ (spaceMap E.classifyingMap)).map
       (C.projectiveSource.hom ≫
-        (degreeTwoPower (unitComplex (projectiveSpace n)) η k)⟦(d : ℤ)⟧' ≫
-        (shiftFunctorAdd' (RationalDerived (space (projectiveSpace n)))
+        (degreeTwoPower (unitComplex (ProjectiveSpace.projectiveSpace ℂ n)) η k)⟦(d : ℤ)⟧' ≫
+        (shiftFunctorAdd' (RationalDerived (space (ProjectiveSpace.projectiveSpace ℂ n)))
           (2 * (k : ℤ)) (d : ℤ) ((d + 2 * k : ℕ) : ℤ) (by omega)).inv.app _ ≫
         C.projectiveTarget.inv) ≫ C.pullbackTarget.hom
 
 /-- Apply the actual derived direct-image functor to the hyperplane power. -/
 def hyperplaneImageMap {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
     (E : RelativeProjectiveEmbedding f n) (d k : ℕ)
-    (η : unitComplex (projectiveSpace n) ⟶ (unitComplex (projectiveSpace n))⟦(2 : ℤ)⟧)
+    (η : unitComplex (ProjectiveSpace.projectiveSpace ℂ n) ⟶ (unitComplex (ProjectiveSpace.projectiveSpace ℂ n))⟦(2 : ℤ)⟧)
     (C : HyperplaneComparisons E d k) :
     ConstructibleComplexes.normalizedDirectImage ℚ X Y f d ⟶
       (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d)⟦2 * (k : ℤ)⟧ :=

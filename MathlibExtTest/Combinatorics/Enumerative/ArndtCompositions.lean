@@ -23,6 +23,21 @@ example : arndtCompositionCount (fun _ => True) 2 2 = 0 ∧
     arndtCompositionCount (fun _ => True) 3 2 = 1 := by
   decide
 
+-- Weight zero counts the empty composition, unlike the zeroth Fibonacci number.
+example : ∑ m ∈ Finset.range 1, arndtCompositionCount (fun _ => True) 0 m = 1 := by
+  decide
+
+example : PowerSeries.coeff 0
+    ((PowerSeries.mk fun n =>
+        ((∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m : ℕ) : ℤ)) *
+      (1 - PowerSeries.X - PowerSeries.X ^ 2)) = 1 := by
+  rw [arndtComposition_total_eq_fib.1]
+  simp
+
+-- The paper lists eight compositions of weight six, across four different lengths.
+example : ∑ m ∈ Finset.range 7, arndtCompositionCount (fun _ => True) 6 m = 8 := by
+  exact (arndtComposition_total_eq_fib.2 6 (by decide)).trans (by decide)
+
 -- With odd parts only, (3, 1) is the only Arndt composition of 4 with two parts.
 example : arndtCompositionCount (fun i => i % 2 = 1) 4 2 = 1 := by
   decide

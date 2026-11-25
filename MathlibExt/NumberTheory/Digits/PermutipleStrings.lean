@@ -12,6 +12,7 @@ public import Mathlib.Data.Multiset.Bind
 public import Mathlib.Logic.Relation
 public import MathlibExt.NumberTheory.Digits.Permutiple
 import Mathlib.GroupTheory.Perm.Finite
+import Mathlib.Tactic.Ring
 
 /-!
 # A multigraph characterization of permutiple strings (Holt)
@@ -250,6 +251,51 @@ INTEGERS 25 (2025), Article A111, Definition 6 and the proof of Theorem 6. -/
 public def hoeySloaneTransition (n b : ℕ) (e : ℕ × ℕ) : ℕ × ℕ :=
   let c₁ : ℤ := ((e.1 : ℤ) + ((b : ℤ) - n) * e.2) % b
   (c₁.toNat, (((n : ℤ) * e.2 - e.1 + c₁) / b).toNat)
+
+/-- **Hoey-Sloane transitions are transitions of the machine.** Let $1 < n < b$, let
+$e = (d_1, d_2)$ be an edge of the $(n, b)$-mother graph, and let $(c_1, c_2)$ be the Hoey-Sloane
+transition of $e$, that is, $c_1 = \lambda(d_1 + (b - n) d_2)$ and $c_2 = (n d_2 - d_1 + c_1) / b$,
+where $\lambda$ is the least non-negative residue modulo $b$. Then the input $e$ moves state $c_1$
+to state $c_2$ in one transition of the $(n, b)$-Hoey-Sloane machine.
+
+By the uniqueness of Hoey-Sloane transitions (Theorem 5), it is the only transition labelled
+by $e$.
+
+Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
+INTEGERS 25 (2025), Article A111, Definition 6, from Theorems 5 and 6
+(`integers-2025-A111-thm-6`). -/
+public theorem isHoeySloaneStep_hoeySloaneTransition (n b : ℕ) (hn : 1 < n) (hnb : n < b)
+    (e : ℕ × ℕ) (he : IsMotherGraphEdge n b e.1 e.2) :
+    IsHoeySloaneStep n b (hoeySloaneTransition n b e).1 (hoeySloaneTransition n b e).2 e := by
+  let c₁ := ((e.1 : ℤ) + ((b : ℤ) - n) * e.2) % b
+  let c₂ := ((n : ℤ) * e.2 - e.1 + c₁) / b
+  have hb : 0 < (b : ℤ) := by omega
+  have hc₁ : 0 ≤ c₁ := Int.emod_nonneg _ hb.ne'
+  have hc₁_lt : c₁ ≤ (n : ℤ) - 1 := he.2.2
+  -- The incoming carry makes the numerator of the outgoing carry divisible by the base.
+  have hdvd : (b : ℤ) ∣ (n : ℤ) * e.2 - e.1 + c₁ := by
+    use (e.2 : ℤ) - (((e.1 : ℤ) + ((b : ℤ) - n) * e.2) / b)
+    dsimp only [c₁]
+    rw [Int.emod_def]
+    ring
+  have hcarry : (b : ℤ) * c₂ = n * e.2 - e.1 + c₁ := Int.mul_ediv_cancel' hdvd
+  have lower : -1 < c₂ := by
+    apply (mul_lt_mul_iff_right₀ hb).mp
+    rw [hcarry, mul_neg_one]
+    have hd₁ : (e.1 : ℤ) < b := by exact_mod_cast he.1
+    have hprod := Int.mul_nonneg (Int.natCast_nonneg n) (Int.natCast_nonneg e.2)
+    omega
+  have upper : c₂ < n := by
+    apply (mul_lt_mul_iff_right₀ hb).mp
+    rw [hcarry, mul_comm (b : ℤ) n]
+    have hd₂ : (e.2 : ℤ) + 1 ≤ b := by exact_mod_cast he.2.1
+    have hprod := mul_le_mul_of_nonneg_left hd₂ (Int.natCast_nonneg n)
+    rw [mul_add, mul_one] at hprod
+    omega
+  change IsHoeySloaneStep n b c₁.toNat c₂.toNat e
+  refine ⟨by omega, by omega, he, ?_⟩
+  rw [Int.toNat_of_nonneg hc₁, Int.toNat_of_nonneg (by omega : 0 ≤ c₂), hcarry]
+  omega
 
 /-- **Two multi-edges of the $(4, 10)$-Hoey–Sloane multigraph.** In the
 $(4, 10)$-Hoey–Sloane multigraph the label $(2, 8)$ sits on the multi-edge from state $0$

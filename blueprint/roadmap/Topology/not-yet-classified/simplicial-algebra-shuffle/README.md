@@ -1,0 +1,15 @@
+# Simplicial Algebra Shuffle
+
+- [Shuffle](shuffle.md)
+- [Inversions](inversions.md)
+- [Count Projection](count-projection.md)
+- [Left Projection](left-projection.md)
+- [Right Projection](right-projection.md)
+- [Raw Shuffle](raw-shuffle.md)
+- [Normalize Functor](normalize-functor.md)
+- [Normalized Map](normalized-map.md)
+- [Normalized Degree Iso](normalized-degree-iso.md)
+- [Coefficient](coefficient.md)
+- [Unit Scalar](unit-scalar.md)
+- [Shuffle Algebra Model](shuffle-algebra-model.md)
+- [Shuffle Algebra Functor](shuffle-algebra-functor.md)

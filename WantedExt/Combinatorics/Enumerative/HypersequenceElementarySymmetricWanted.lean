@@ -33,32 +33,6 @@ The signed entries `b_{j,k}(n) = (-1)^k e_{j,j-k}(n)` of `B(n)` are `hyperseqB`;
 `R^k_j(a, b)` (Section 4) are `mitrinovicR`.
 -/
 
-/-- **Recurrence, closed form and row sums of $e_{j,k}(n)$.** Let $n \in \mathbb{N}$ and let
-$e_{j,k}(n)$ be the elementary symmetric polynomial of degree $k$ in $n + 1, \dots, n + j$.
-Write $[j, \ell]$ for the unsigned Stirling numbers of the first kind and
-$x^{\overline{j}} = x (x + 1) \cdots (x + j - 1)$ for the rising factorial. Then
-$e_{0,k}(n) = \delta_{0,k}$ for all $k$;
-$e_{j+1,k+1}(n) = e_{j,k+1}(n) + (n + j + 1) \, e_{j,k}(n)$ for all $j, k \in \mathbb{N}$;
-$e_{j,k}(n) = \sum_{\ell=0}^{k} \binom{j-k+\ell}{\ell} [j, j-k+\ell] \, (n + 1)^\ell$ for all
-$k \le j$; and for all $j$, $\sum_{k=0}^{j} e_{j,k}(n) = (n + 2)^{\overline{j}}$ and
-$\sum_{k=0}^{j} (-1)^k e_{j,k}(n) = (-1)^j n^{\overline{j}}$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36, Proposition 1 (`integers-2026-A36-prop-1`). -/
-public theorem_wanted hyperseq_esymm_recurrence_closed_form_row_sums (n : ℕ) :
-    (∀ k : ℕ, ((Finset.Icc 1 0).val.map (n + ·)).esymm k = if k = 0 then 1 else 0) ∧
-    (∀ j k : ℕ, ((Finset.Icc 1 (j + 1)).val.map (n + ·)).esymm (k + 1) =
-      ((Finset.Icc 1 j).val.map (n + ·)).esymm (k + 1) +
-        (n + (j + 1)) * ((Finset.Icc 1 j).val.map (n + ·)).esymm k) ∧
-    (∀ j k : ℕ, k ≤ j → ((Finset.Icc 1 j).val.map (n + ·)).esymm k =
-      ∑ ℓ ∈ Finset.range (k + 1),
-        (j - k + ℓ).choose ℓ * Nat.stirlingFirst j (j - k + ℓ) * (n + 1) ^ ℓ) ∧
-    (∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), ((Finset.Icc 1 j).val.map (n + ·)).esymm k =
-      (n + 2).ascFactorial j) ∧
-    ∀ j : ℕ, ∑ k ∈ Finset.range (j + 1),
-        (-1 : ℤ) ^ k * (((Finset.Icc 1 j).val.map (n + ·)).esymm k : ℕ) =
-      (-1 : ℤ) ^ j * (n.ascFactorial j : ℕ)
-
 /-- **Elementary symmetric functions of the first integers via Stirling numbers.** For
 $j, k \in \mathbb{N}$ let $e_{j,k}$ be the elementary symmetric polynomial of degree $k$ evaluated
 at $1, 2, \dots, j$ (the source's $e_{j,k}(0)$), and let $c(j, i)$ be the unsigned Stirling number
