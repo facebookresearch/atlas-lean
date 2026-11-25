@@ -6,7 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
+/-
+Author: @toskua
+-/
 module
 
 public import MathlibExt.Algebra.NonUnitalSubalgebra.TwoSided
@@ -37,12 +39,16 @@ section Carrier
 
 variable {𝕜 A : Type*} [CommRing 𝕜] [NonUnitalRing A] [Module 𝕜 A]
 
-/-- The canonical submodule underlying a nonunital subalgebra. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. Its underlying `𝕜`-submodule is used for the additive quotient.
+-/
 abbrev quotientSubmodule (S : NonUnitalSubalgebra 𝕜 A) : Submodule 𝕜 A :=
   S.toSubmodule
 
-/-- The quotient carrier, retaining the existing `Submodule.Quotient`
-additive, module, norm, and completeness structures. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. The quotient carrier is the ordinary additive `𝕜`-module quotient
+`A / S`.
+-/
 abbrev Quotient (S : NonUnitalSubalgebra 𝕜 A) :=
   A ⧸ quotientSubmodule S
 
@@ -55,18 +61,26 @@ section Algebra
 variable {𝕜 A : Type*} [CommRing 𝕜] [NonUnitalRing A] [Module 𝕜 A]
 variable (S : NonUnitalSubalgebra 𝕜 A)
 
-/-- The canonical quotient projection as a linear map. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. The quotient projection `A → A / S` is `𝕜`-linear.
+-/
 def mkL : A →ₗ[𝕜] S.Quotient :=
   (quotientSubmodule S).mkQ
 
 @[simp]
 theorem mkL_apply (a : A) : mkL S a = Submodule.Quotient.mk a := rfl
 
-/-- The canonical quotient projection is surjective. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. Every additive quotient class has a representative in `A`, so the
+linear quotient projection is surjective.
+-/
 theorem mkL_surjective : Function.Surjective (mkL S) :=
   (quotientSubmodule S).mkQ_surjective
 
-/-- Quotient multiplication before it is activated as a scoped instance. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. If `S` absorbs multiplication by arbitrary elements of `A` on both
+sides, multiplication descends to `A / S`.
+-/
 @[instance_reducible]
 def quotientMul [S.IsTwoSided] : Mul S.Quotient where
   mul := _root_.Quotient.map₂
@@ -122,7 +136,10 @@ scoped instance instSMulCommClass [SMulCommClass 𝕜 A A] [S.IsTwoSided] :
     exact congrArg (fun t : A ↦ (Submodule.Quotient.mk t : S.Quotient))
       (mul_smul_comm (α := 𝕜) c x y).symm
 
-/-- The quotient projection as a nonunital algebra homomorphism. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. If `S` is two-sided, the quotient projection preserves
+multiplication as well as addition and the `𝕜`-action.
+-/
 def mk [S.IsTwoSided] : A →ₙₐ[𝕜] S.Quotient where
   toFun := Submodule.Quotient.mk
   map_zero' := rfl
@@ -133,7 +150,10 @@ def mk [S.IsTwoSided] : A →ₙₐ[𝕜] S.Quotient where
 @[simp]
 theorem mk_apply [S.IsTwoSided] (x : A) : mk S x = Submodule.Quotient.mk x := rfl
 
-/-- The quotient projection as a nonunital algebra homomorphism is surjective. -/
+/-- Let `𝕜` be a commutative ring, `A` a possibly nonunital ring with a `𝕜`-module structure, and `S` a
+nonunital `𝕜`-subalgebra of `A`. If `S` is two-sided, the multiplicative `𝕜`-linear quotient
+projection is surjective.
+-/
 theorem mk_surjective [S.IsTwoSided] : Function.Surjective (mk S) :=
   mkL_surjective S
 

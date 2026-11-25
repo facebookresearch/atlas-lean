@@ -6,7 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
+/-
+Author: @toskua
+-/
 module
 
 public import Mathlib.Algebra.Algebra.NonUnitalSubalgebra
@@ -28,9 +30,10 @@ namespace NonUnitalSubalgebra
 
 variable {𝕜 A : Type*} [CommSemiring 𝕜] [NonUnitalNonAssocSemiring A] [Module 𝕜 A]
 
-/-- A nonunital subalgebra is two-sided when it absorbs multiplication by
-arbitrary ambient elements on both sides. Scalar stability is already part of
-the `NonUnitalSubalgebra` structure. -/
+/-- Let `𝕜` be a commutative semiring and let `A` be a possibly nonunital, nonassociative semiring with
+a `𝕜`-module structure. A nonunital subalgebra `S` is two-sided if `a*x` and `x*a` belong to `S`
+whenever `x ∈ S` and `a ∈ A`.
+-/
 class IsTwoSided (S : NonUnitalSubalgebra 𝕜 A) : Prop where
   mul_mem_left (a : A) {x : A} : x ∈ S → a * x ∈ S
   mul_mem_right {x : A} : x ∈ S → (a : A) → x * a ∈ S
