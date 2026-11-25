@@ -20,8 +20,8 @@ import MathlibExt.NumberTheory.SquareModEight
 # Congruences for overcubic partition triples
 
 The Euler product for the overcubic partition triple count gives a divisor-count formula
-modulo four. It implies the congruences at multiples of sixteen of Nayaka, Dharmendra,
-and Mahesh Kumar.
+modulo four. This proves the congruences of Nayaka, Dharmendra, and Mahesh Kumar at multiples
+of sixteen and, using Euler's pentagonal number theorem, at indices `24 * n + 1`.
 -/
 
 open PowerSeries
@@ -278,6 +278,76 @@ theorem overcubicTripleCount_congruences_sixteen_mul_args (n α : ℕ) :
   · convert (count_odd_part 4 _ h₁).trans (count_odd_part 3 _ h₁).symm using 2 <;> ring
   · convert count_zero 5 _ (h₃ (2 ^ α * n)) (by omega) using 2
     ring
+
+namespace overcubicTripleCount_twentyFour_mul_add_one
+
+open overcubicTripleCount_congruences_sixteen_mul_args in
+private lemma count_odd (m : ℕ) (hm : Odd m) :
+    overcubicTripleCount m ≡ 2 * (m.divisors.card : ℤ) [ZMOD 4] := by
+  have h := congrArg (coeff m) series_mod_four
+  apply (ZMod.intCast_eq_intCast_iff _ _ 4).mp
+  have h₀ : m ≠ 0 := fun h => hm.not_two_dvd_nat (h ▸ dvd_zero 2)
+  simpa [overcubicTripleCount, divisorSeries, coeff_one, h₀, coeff_expand, hm.not_two_dvd_nat]
+    using h
+
+/-- Completing the square identifies the support of Euler's series on this progression. -/
+private lemma square_iff_pentagonal (n : ℕ) :
+    IsSquare (24 * n + 1) ↔ n ∈ Set.range pentagonal := by
+  have hpoly (k : ℤ) : 24 * (pentagonal k : ℤ) + 1 = (6 * k - 1) ^ 2 := by
+    linarith [two_mul_natCast_pentagonal k]
+  rw [← Int.isSquare_natCast_iff]
+  push_cast
+  constructor
+  · rintro ⟨r, hr⟩
+    have hmod : (r % 6 * (r % 6)) % 6 = 1 := by
+      rw [← Int.mul_emod, ← hr]
+      omega
+    have hres : r % 6 = 1 ∨ r % 6 = 5 := by
+      have hlo := Int.emod_nonneg r (by decide : (6 : ℤ) ≠ 0)
+      have hhi := Int.emod_lt_of_pos r (by decide : (0 : ℤ) < 6)
+      interval_cases r % 6 <;> norm_num at *
+    obtain ⟨k, hk | hk⟩ : ∃ k : ℤ, 6 * k - 1 = r ∨ 6 * k - 1 = -r := by
+      rcases hres with h | h
+      · exact ⟨-(r / 6), Or.inr (by omega)⟩
+      · exact ⟨r / 6 + 1, Or.inl (by omega)⟩
+    all_goals
+      refine ⟨k, ?_⟩
+      have h := hpoly k
+      rw [hk] at h
+      nlinarith
+  · rintro ⟨k, rfl⟩
+    exact ⟨6 * k - 1, by simpa only [sq] using hpoly k⟩
+
+end overcubicTripleCount_twentyFour_mul_add_one
+
+open overcubicTripleCount_twentyFour_mul_add_one in
+/-- **Overcubic partition triples of $24n+1$ modulo $4$.** For $k \ge 1$ let
+$f_k = \prod_{j \ge 1} (1 - q^{kj})$, and let $\mathrm{bt}(m)$ be the number of overcubic
+partition triples of $m$, the coefficient of $q^m$ in $f_4^3 / (f_1^6 f_2^3)$. For every natural
+number $n$, $\mathrm{bt}(24n+1) \equiv 2 c_n \pmod 4$, where $c_n$ is the coefficient of $q^n$
+in $f_1$; equivalently, $\sum_{n \ge 0} \mathrm{bt}(24n+1) q^n \equiv 2 f_1 \pmod 4$
+coefficientwise.
+
+This is the case $\alpha = 0$ of the paper's statement.
+
+Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
+Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Theorem 2,
+eq. (7), case `α = 0` (`integers-2024-A80-thm-2`). -/
+theorem overcubicTripleCount_twentyFour_mul_add_one (n : ℕ) :
+    overcubicTripleCount (24 * n + 1) ≡ 2 * coeff n (𝔣 1) [ZMOD 4] := by
+  apply (count_odd (24 * n + 1) ⟨12 * n, by omega⟩).trans
+  rw [qEulerProduct_one]
+  by_cases hn : n ∈ Set.range pentagonal
+  · obtain ⟨a, ha⟩ := (Nat.odd_card_divisors_iff_isSquare (by omega)).2
+      ((square_iff_pentagonal n).2 hn)
+    obtain ⟨k, rfl⟩ := hn
+    rw [ha, coeff_pentagonalSeries_pentagonal, Int.ModEq]
+    rcases Int.units_eq_one_or k.negOnePow with h | h <;> rw [h] <;> push_cast <;> omega
+  · obtain ⟨a, ha⟩ := Nat.even_card_divisors_of_not_isSquare
+      (fun h => hn ((square_iff_pentagonal n).1 h))
+    rw [ha, coeff_pentagonalSeries_eq_zero _ hn, Int.ModEq]
+    push_cast
+    omega
 
 end
 

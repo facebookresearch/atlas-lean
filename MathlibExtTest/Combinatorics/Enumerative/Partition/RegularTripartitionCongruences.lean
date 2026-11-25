@@ -40,3 +40,13 @@ example : regularTripartitionCount 1 1 = 0 := by
     ext p
     simp [Nat.Partition.restricted, Subsingleton.elim p default]
   simp [regularTripartitionCount, Finset.Nat.antidiagonal_succ, h]
+
+-- The exceptional prime 3 gives an index congruent to 2 modulo 3.
+example : 3 ∣ regularTripartitionCount 3 11 :=
+  regularTripartitionCount_three_prime_three_mod_four 3 0 0 1
+    (by decide) (by decide) (by decide) (by decide)
+
+-- The upper endpoint i = p - 1 with a positive power parameter.
+example : 3 ∣ regularTripartitionCount 3 13977 :=
+  regularTripartitionCount_three_prime_three_mod_four 7 1 1 6
+    (by decide) (by decide) (by decide) (by decide)
