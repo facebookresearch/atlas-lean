@@ -16508,7 +16508,6 @@
   "WantedExt/NumberTheory/LucasPolytopicNumberWanted": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "WantedExt/NumberTheory/LurothConsecutiveDigitsWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "WantedExt/NumberTheory/LurothDiophantineApproximationWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
-  "WantedExt/NumberTheory/MahlerPopkenComplexityWanted": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "WantedExt/NumberTheory/MallowsRepresentationWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Mallows representation of irrational numbers"},
   "WantedExt/NumberTheory/MartinetTotallyRealTowersWanted": {"to": "NumberTheory/algebraic-number-theory/discriminants-ramification", "title": "Martinet's totally real towers"},
   "WantedExt/NumberTheory/MaynardSmallGapsWanted": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Bounded gaps between primes"},

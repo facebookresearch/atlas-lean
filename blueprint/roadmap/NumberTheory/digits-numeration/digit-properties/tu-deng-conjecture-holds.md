@@ -7,4 +7,5 @@ representative of $a$ in $\{0, 1, \dots, 2^k - 2\}$.
 
 ## Sources
 
+- Z. Tu and Y. Deng, *A conjecture about binary strings and its applications on constructing Boolean functions with optimal algebraic immunity*, Designs, Codes and Cryptography 60 (2011), 1–14.
 - Thomas W. Cusick, *Proof of the Tu-Deng Conjecture*, arXiv:2608.14821 (2026), https://arxiv.org/abs/2608.14821.

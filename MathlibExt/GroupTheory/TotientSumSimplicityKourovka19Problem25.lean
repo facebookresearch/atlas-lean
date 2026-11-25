@@ -27,10 +27,10 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 19.25 (B. Curtin, G. R. Pourgholi).
 UnsolvedMath record UM-00701573 (`KOU-19.25`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Groups are finite types (`Fintype`) and `|g|` is `orderOf g`; simplicity is Mathlib's
-`IsSimpleGroup` (nontrivial, only trivial normal subgroups). The refutation is one explicit pair of
-groups of order 6048, whose verification needs the simplicity of `PSU(3, 3)` and is not a decision
-procedure on a small object.
+Groups are finite types (`Fintype`), element order is `orderOf`, and simplicity is
+`IsSimpleGroup` (nontrivial with only trivial normal subgroups).
+The counterexample consists of two groups of order 6048 with equal totient sums.
+One group, `PSU(3, 3)`, is simple.
 
 We prove the negative answer using the degree-28 permutation representation on isotropic lines.
 The point stabilizer and its cosets give unique coordinates for the group elements. Two generators

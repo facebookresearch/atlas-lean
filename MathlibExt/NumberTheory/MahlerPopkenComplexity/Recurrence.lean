@@ -11,7 +11,7 @@ module
 public import MathlibExt.NumberTheory.MahlerPopkenComplexity
 
 /-!
-# Eventual recurrence for Mahler–Popken complexity
+# Recurrence for Mahler–Popken complexity
 
 The $m$-ary complexity satisfies Campbell's recurrence for $m \ge 1$ and $n > m$.
 An optimal expression for such an $n$ has a sum or product at its root,
@@ -24,19 +24,15 @@ public section
 
 namespace MathlibExt.NumberTheory.MahlerPopkenComplexityWanted
 
-/-- **The $m$-ary complexity eventually satisfies its recursion.** For every natural number
-$m \ge 1$ there is $N$ such that for every $n \ge N$, the $m$-ary Mahler–Popken complexity
-$\|n\|_m$ equals the right-hand side of the recursion (9), that is, the least of the values
-$\|d\|_m + \|n/d\|_m$ over divisors $d$ of $n$ with $d \ne 1$ and $d \ne n$, and the values
-$\|\eta\|_m + \|n - \eta\|_m$ over $0 < \eta < n$.
+/-- **Mahler–Popken recurrence above the largest leaf value.** If $1 \le m < n$, the $m$-ary
+complexity of $n$ is the minimum of the costs of splitting $n$ as a sum of two positive integers
+or a product of two integers greater than one. The cost of a split is the sum of the $m$-ary
+complexities of its two parts. Splitting an optimal expression at its root gives the threshold.
 
-Source: John M. Campbell, "A Binary Version of the Mahler-Popken
-Complexity Function", Proposition 1. -/
-theorem mahlerPopkenComplexity_eq_recursionValue_eventually
-    (m : ℕ) (hm : 1 ≤ m) :
-    ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
-      mahlerPopkenComplexity m n = mahlerPopkenRecursionValue m n := by
-  refine ⟨m + 1, fun n hn ↦ ?_⟩
+Source: John M. Campbell, "A Binary Version of the Mahler-Popken Complexity Function",
+Proposition 1 (eventual recurrence). -/
+theorem mahlerPopkenComplexity_eq_recursionValue_of_lt {m n : ℕ} (hm : 1 ≤ m) (hn : m < n) :
+    mahlerPopkenComplexity m n = mahlerPopkenRecursionValue m n := by
   have hn_one : 1 < n := by omega
   unfold mahlerPopkenRecursionValue
   apply le_antisymm
@@ -96,5 +92,32 @@ theorem mahlerPopkenComplexity_eq_recursionValue_eventually
           apply Nat.sInf_le
           exact Or.inl ⟨a.eval, ⟨b.eval, he.symm⟩, ha, ha_lt.ne, by rw [hdiv]⟩
         _ ≤ _ := hc ▸ Nat.add_le_add ha_cost hb_cost
+
+/-- **The $m$-ary complexity eventually satisfies its recursion.** For every natural number
+$m \ge 1$ there is $N$ such that for every $n \ge N$, the $m$-ary Mahler–Popken complexity
+$\|n\|_m$ equals the right-hand side of the recursion (9), that is, the least of the values
+$\|d\|_m + \|n/d\|_m$ over divisors $d$ of $n$ with $d \ne 1$ and $d \ne n$, and the values
+$\|\eta\|_m + \|n - \eta\|_m$ over $0 < \eta < n$.
+
+Source: John M. Campbell, "A Binary Version of the Mahler-Popken
+Complexity Function", Proposition 1. -/
+theorem mahlerPopkenComplexity_eq_recursionValue_eventually
+    (m : ℕ) (hm : 1 ≤ m) :
+    ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
+      mahlerPopkenComplexity m n = mahlerPopkenRecursionValue m n :=
+  ⟨m + 1, fun _ hn ↦ mahlerPopkenComplexity_eq_recursionValue_of_lt hm hn⟩
+
+/-- **Recursion for the binary Mahler–Popken complexity.** For every natural number $n \ge 3$,
+the binary ($2$-ary) Mahler–Popken complexity $\lVert n \rVert_2$ equals the minimum of the sums
+$\lVert d \rVert_2 + \lVert n/d \rVert_2$ over the divisors $d$ of $n$ with $d \ne 1$ and
+$d \ne n$, and of the sums $\lVert \eta \rVert_2 + \lVert n - \eta \rVert_2$ over $0 < \eta < n$.
+This is the recursion (9) for $m = 2$.
+
+Source: John M. Campbell, "A Binary Version of the Mahler-Popken
+Complexity Function", Proposition 1. -/
+theorem mahlerPopkenComplexity_two_eq_recursionValue
+    (n : ℕ) (hn : 3 ≤ n) :
+    mahlerPopkenComplexity 2 n = mahlerPopkenRecursionValue 2 n :=
+  mahlerPopkenComplexity_eq_recursionValue_of_lt (by decide) hn
 
 end MathlibExt.NumberTheory.MahlerPopkenComplexityWanted

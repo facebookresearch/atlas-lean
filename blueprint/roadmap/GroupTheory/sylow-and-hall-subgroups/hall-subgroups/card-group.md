@@ -1,8 +1,9 @@
 # Order of Zenkov's group
 
-`L₂(27) ⋊ ⟨φ⟩` has order `29484 = 2 ^ 2 * 3 ^ 4 * 7 * 13`:
-its action on `ℙ¹(𝔽₂₇)` is transitive on the `28` points, and the stabilizer of `∞`, of order
-`1053 = 27 * 13 * 3`, is the extension of a Borel subgroup of `L₂(27)` by `φ`.
+Zenkov's permutation group has order $29484$.
+
+The orbit–stabilizer argument counts $28$ points in the orbit of $\infty$ and $1053$ elements
+in its stabilizer, giving $28 \cdot 1053 = 29484$.
 
 ## Sources
 
