@@ -37,3 +37,4 @@ for the Ising model.
 - [Random currents and sharpness](random-currents-and-sharpness/README.md)
 - [Random-cluster model](random-cluster-model/README.md)
 - [Mean-field spin glasses](spin-glasses/README.md)
+- [Not yet classified](not-yet-classified/README.md)
