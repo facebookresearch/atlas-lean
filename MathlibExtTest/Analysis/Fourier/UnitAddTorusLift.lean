@@ -12,56 +12,36 @@ public import MathlibExt.Analysis.Fourier.UnitAddTorusLift
 
 @[expose] public section
 
-open MeasureTheory Function UnitAddTorus
+open MeasureTheory UnitAddTorus
 
--- `exactSource` consumer with the original binders: a surjective additive
--- map to a unit torus and a complex-valued kernel-periodic function.
-example {A : Type*} [AddCommGroup A] {ι : Type*} (Θ : A →+ UnitAddTorus ι)
-    (hΘ : Surjective Θ) {H : A → ℂ} (hH : IsKerPeriodic Θ H) (x : A) :
-    torusLift Θ hΘ H (Θ x) = H x :=
-  torusLift_apply Θ hΘ hH x
-
-example {A : Type*} [AddCommGroup A] {ι : Type*} (Θ : A →+ UnitAddTorus ι)
-    (hΘ : Surjective Θ) {H : A → ℂ} (hH : IsKerPeriodic Θ H) :
-    torusLift Θ hΘ H ∘ Θ = H :=
-  torusLift_comp Θ hΘ hH
-
-example {A : Type*} [AddCommGroup A] [TopologicalSpace A] {ι : Type*}
-    (Θ : A →+ UnitAddTorus ι) (hΘ : IsOpenQuotientMap Θ) {H : A → ℂ}
-    (hH : IsKerPeriodic Θ H) (hc : Continuous H) :
-    Continuous (torusLift Θ hΘ.surjective H) :=
-  continuous_torusLift Θ hΘ hH hc
-
--- Higher-universe consumer: the codomain may live in a higher universe.
-example {A : Type*} [AddCommGroup A] {ι : Type*} (Θ : A →+ UnitAddTorus ι)
-    (hΘ : Surjective Θ) {H : A → ULift ℂ} (hH : IsKerPeriodic Θ H) (x : A) :
-    torusLift Θ hΘ H (Θ x) = H x :=
-  torusLift_apply Θ hΘ hH x
-
--- The product Haar measure is a probability Haar measure.
-example (ι : Type*) [Fintype ι] : IsProbabilityMeasure (torusMeasure ι) :=
+-- The volume on a unit torus is a probability measure; instance search also finds that it is
+-- an additive Haar measure.
+example (ι : Type*) [Fintype ι] : IsProbabilityMeasure (volume : Measure (UnitAddTorus ι)) :=
   inferInstance
 
-example (ι : Type*) [Fintype ι] : (torusMeasure ι).IsAddHaarMeasure :=
+example : (volume : Measure (UnitAddTorus (Fin 3))) Set.univ = 1 :=
+  measure_univ
+
+example (ι : Type*) [Fintype ι] : (volume : Measure (UnitAddTorus ι)).IsAddHaarMeasure :=
   inferInstance
 
 example {ι : Type*} [Fintype ι] (P : Measure (UnitAddTorus ι))
-    [IsProbabilityMeasure P] [P.IsAddLeftInvariant] : P = torusMeasure ι :=
-  eq_torusMeasure P
+    [IsProbabilityMeasure P] [P.IsAddLeftInvariant] : P = volume :=
+  eq_volume_of_isAddLeftInvariant P
 
+-- The pushforward characterization needs no topology on the source group.
 example {A : Type*} [AddCommGroup A] [MeasurableSpace A]
     {ι : Type*} [Fintype ι] {Θ : A →+ UnitAddTorus ι} {P : Measure A}
     [IsProbabilityMeasure P] (hΘm : AEMeasurable Θ P)
     (hinv : (Measure.map Θ P).IsAddLeftInvariant) :
-    Measure.map Θ P = torusMeasure ι :=
-  map_eq_torusMeasure hΘm hinv
+    Measure.map Θ P = volume :=
+  map_eq_volume_of_isAddLeftInvariant hΘm hinv
 
--- Boundary example: kernel-periodicity is not automatic. For the zero map
--- from `ℝ` to the torus indexed by the empty type, every vector lies in
--- the kernel, but the identity function is not invariant under the shift
--- by `1`, so it does not descend to a function recovering its values.
-example : ¬ IsKerPeriodic (0 : ℝ →+ UnitAddTorus (Fin 0)) (fun x : ℝ => (x : ℂ)) := by
+-- Boundary example: factoring through a map to a unit torus is not automatic. For the zero map
+-- from `ℝ` to the torus indexed by the empty type, every vector lies in the kernel, but the
+-- identity function is not invariant under the shift by `1`, so it does not factor through the
+-- map and does not descend to the torus.
+example : ¬ Function.FactorsThrough (fun x : ℝ => (x : ℂ)) (0 : ℝ →+ UnitAddTorus (Fin 0)) := by
   intro h
-  have h1 := h 1 (by simp) 0
-  simp only [zero_add] at h1
+  have h1 := @h 1 0 (by simp)
   norm_num at h1
