@@ -4,8 +4,9 @@ that scripts/test_scripts.sh skips on its word.
 
     python3 -m unittest discover -s scripts -p test_ci_scope.py -v
 
-The paths below are examples: these tests read only ci.yml and ci_scope.py, which
-scripts/queue/preflight.py relies on (NAMES_ONLY).
+The paths below are examples. These tests read only ci.yml, ci_scope.py and test_scripts.sh,
+which preflight already follows as code of the required checks: scripts/queue/preflight.py relies
+on that (NAMES_ONLY).
 """
 
 from __future__ import annotations
