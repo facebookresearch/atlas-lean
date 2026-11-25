@@ -18,7 +18,9 @@ public import CSLibExt.InformationRetrieval.PageRank
 @[expose] public section
 
 open scoped BigOperators
-open Finset Matrix PageRank
+open Finset Matrix Cslib.InformationRetrieval.PageRank
+
+namespace CSLibExtTest.InformationRetrieval.PageRank
 
 /-- One node: the only stochastic matrix is `1`, the Google matrix is `1`,
 and the unique stationary vector is `1`. -/
@@ -64,3 +66,5 @@ theorem zeroSum_example :
   simp only [Pi.sub_apply]
   rw [Fin.sum_univ_two]
   norm_num
+
+end CSLibExtTest.InformationRetrieval.PageRank

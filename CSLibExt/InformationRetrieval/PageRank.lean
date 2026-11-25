@@ -28,26 +28,48 @@ public import Mathlib.LinearAlgebra.Matrix.Stochastic
 public import Mathlib.Analysis.Normed.Group.InfiniteSum
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import MathlibExt.Analysis.Convex.StdSimplexWeights
 
 @[expose] public section
 
 open scoped BigOperators
 open Finset Matrix
 
-namespace PageRank
+namespace Cslib.InformationRetrieval.PageRank
 
 /-- The `ℓ¹` norm `∑ i, |x i|` of a finite real vector. -/
 noncomputable def l1Norm {S : Type*} [Fintype S] (x : S → ℝ) : ℝ :=
   ∑ i, |x i|
 
-/-- A probability vector: entrywise nonnegative with total mass `1`. -/
+/-- A probability vector: entrywise nonnegative with total mass `1`.
+See `IsProbVec.toStdSimplex` and `isProbVec_weights` for the bridge to
+`Convexity.StdSimplex`. -/
 def IsProbVec {S : Type*} [Fintype S] (x : S → ℝ) : Prop :=
   (∀ i, 0 ≤ x i) ∧ ∑ i, x i = 1
 
-/-- Replace every dangling (zero-sum) column of `M` by the vector `v`. -/
+/-- The point of `Convexity.StdSimplex ℝ S` with coordinates `x`. -/
+noncomputable def IsProbVec.toStdSimplex {S : Type*} [Fintype S] {x : S → ℝ}
+    (h : IsProbVec x) : Convexity.StdSimplex ℝ S :=
+  Convexity.StdSimplex.ofWeights x h.1 h.2
+
+/-- The weights of `IsProbVec.toStdSimplex` are the original coordinates. -/
+@[simp]
+theorem IsProbVec.toStdSimplex_weights {S : Type*} [Fintype S] {x : S → ℝ}
+    (h : IsProbVec x) (a : S) : h.toStdSimplex.weights a = x a :=
+  Convexity.StdSimplex.ofWeights_weights x h.1 h.2 a
+
+/-- The weights of a simplex point form a probability vector. -/
+theorem isProbVec_weights {S : Type*} [Fintype S]
+    (p : Convexity.StdSimplex ℝ S) : IsProbVec p.weights := by
+  constructor
+  · intro i
+    exact p.weights_nonneg i
+  · exact p.total_of_fintype
+
+/-- Replace every dangling column of `M` (a zero column) by the vector `v`. -/
 noncomputable def danglingReplace {S : Type*} [Fintype S] [DecidableEq S]
     (M : Matrix S S ℝ) (v : S → ℝ) : Matrix S S ℝ :=
-  Matrix.of fun i j => if ∑ k, M k j = 0 then v i else M i j
+  Matrix.of fun i j => if (∀ k, M k j = 0) then v i else M i j
 
 /-- The Google matrix `G = α P + (1 - α) v 1ᵀ`: entrywise
 `G i j = α * P i j + (1 - α) * v i`. -/
@@ -62,20 +84,24 @@ theorem danglingReplace_mem_colStochastic {S : Type*} [Fintype S] [DecidableEq S
     (hcol : ∀ j, (∑ k, M k j) = 0 ∨ (∑ k, M k j) = 1) (hv : IsProbVec v) :
     danglingReplace M v ∈ colStochastic ℝ S := by
   rw [mem_colStochastic_iff_sum]
+  have hiff : ∀ j, (∑ k, M k j) = 0 ↔ (∀ k, M k j = 0) := fun j =>
+    ⟨fun h0 k => (Finset.sum_eq_zero_iff_of_nonneg
+        (fun k _ => hM k j)).mp h0 k (Finset.mem_univ k),
+      fun hall => Finset.sum_eq_zero fun k _ => hall k⟩
   constructor
   · intro i j
     unfold danglingReplace
     simp only [Matrix.of_apply]
-    by_cases h : (∑ k, M k j) = 0
+    by_cases h : (∀ k, M k j = 0)
     · simp [h, hv.1 i]
     · simp [h, hM i j]
   · intro j
     unfold danglingReplace
     simp only [Matrix.of_apply]
-    by_cases h : (∑ k, M k j) = 0
+    by_cases h : (∀ k, M k j = 0)
     · simp [h, hv.2]
-    · have h1 := (hcol j).resolve_left h
-      simp [h1]
+    · have h1 := (hcol j).resolve_left (fun h0 => h ((hiff j).mp h0))
+      simp [h, h1]
 
 /-- The Google matrix of a column-stochastic matrix with a probability
 teleport vector and damping factor `0 < α < 1` is column-stochastic. -/
@@ -436,4 +462,4 @@ theorem googleMatrix_pow_rate {S : Type*} [Fintype S] [DecidableEq S]
           mul_le_mul_of_nonneg_left ih (le_of_lt hα0)
       _ = α ^ (k + 1) * l1Norm (x₀ - π) := by ring
 
-end PageRank
+end Cslib.InformationRetrieval.PageRank
