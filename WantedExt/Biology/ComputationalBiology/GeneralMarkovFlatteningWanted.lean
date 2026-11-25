@@ -60,16 +60,6 @@ section Model
 variable {V K X R : Type} [Fintype V] [Fintype K] [CommSemiring R]
   (G : SimpleGraph V) [DecidableRel G.Adj] (ℓ : X → V)
 
-open Classical in
-
-open Classical in
-
-/-- Stochastic parameters for the root `r`: a probability vector `π` and, on every edge directed
-away from `r`, a Markov matrix (nonnegative entries, rows summing to one). -/
-def IsStochastic (r : V) (π : K → ℝ) (M : V → V → Matrix K K ℝ) : Prop :=
-  (∀ i, 0 ≤ π i) ∧ ∑ i, π i = 1 ∧ ∀ a b, IsAwayFrom G r a b →
-    (∀ i j, 0 ≤ M a b i j) ∧ ∀ i, ∑ j, M a b i j = 1
-
 end Model
 
 section Flattening
@@ -79,17 +69,6 @@ variable {X K R : Type} [DecidableEq X]
 end Flattening
 
 variable {X K : Type} [Fintype X] [DecidableEq X] [Fintype K] [DecidableEq K]
-
-/-- **Edge flattenings have rank at most `κ`** (Allman and Rhodes 2008, Section 2): for the
-general Markov model with `κ` states on an unrooted binary phylogenetic tree `T`, rooted at any
-vertex, with stochastic parameters, the flattening of the leaf distribution along every edge
-split of `T` has rank at most `κ`.
-
-Source: Allman and Rhodes (2008), Section 2. -/
-public theorem_wanted rank_flatten_leafDist_le (T : UnrootedBinaryTree X) (r : T.V)
-    (π : K → ℝ) (M : T.V → T.V → Matrix K K ℝ) (hp : IsStochastic T.G r π M)
-    {A : Finset X} (hA : A ∈ edgeSplits T) :
-    (flatten A (leafDist T.G (leafOf T) r π M)).rank ≤ Fintype.card K
 
 /-- The **phylogenetic ideal** `𝔞_T` of the two-state general Markov model on `T`: the
 polynomials in the indeterminates `p_u`, `u : X → Fin 2`, that vanish at every scalar multiple of
