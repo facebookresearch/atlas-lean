@@ -8,4 +8,4 @@ In unauthenticated Diffie–Hellman key exchange over a cyclic group generated b
 
 ## Sources
 
-- D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, <https://toc.cryptobook.us/>
+- D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017, <https://toc.cryptobook.us/>: Section 10.7, "Attacks on the anonymous Diffie–Hellman protocol", and Fig. 10.4.

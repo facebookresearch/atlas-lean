@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.PowerSeries.BinomialConvolutionCubicDenominator
+public import MathlibExt.Algebra.PowerSeries.BinomialConvolutionLucas
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.LinearAlgebra.OrthogonalDescent
@@ -86,25 +87,6 @@ public theorem_wanted binomialProduct_rational_general {K : Type*} [Field K] [Ch
       binomialProduct A B * ((∏ i, (1 - C (α i) * X)) ^ (S.natDegree + 1 - n) *
         (∏ j, (1 - C (β j) * X)) ^ (R.natDegree + 1 - m) *
         ∏ i, ∏ j, (1 - C (α i + β j) * X)) = (T : PowerSeries K)
-
-/-- **Binomial square of the Lucas generating function.** Let $K$ be a field of characteristic
-$0$, let $a, b \in K$, and let $g(x) = \sum_{n \ge 0} G_n x^n$ be a power series over $K$ with
-$g(x)(1 - ax - bx^2) = 2 - ax$. Then
-
-$$g \odot g = \frac{2}{1 - ax} + g(2x),$$
-
-where $\odot$ is the binomial product, and
-$\sum_{k=0}^{n} \binom{n}{k} G_k G_{n-k} = 2a^n + 2^n G_n$ for every $n \ge 0$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 11 (`jis-2024-24.1.3-thm-11`). -/
-public theorem_wanted binomialProduct_lucasV_generatingFunction {K : Type*} [Field K]
-    [CharZero K] (a b : K) (g : PowerSeries K)
-    (hg : g * (1 - C a * X - C b * X ^ 2) = 2 - C a * X) :
-    binomialProduct g g = 2 * (1 - C a * X)⁻¹ + PowerSeries.rescale 2 g ∧
-      ∀ n : ℕ, ∑ k ∈ Finset.range (n + 1),
-          (n.choose k : K) * PowerSeries.coeff k g * PowerSeries.coeff (n - k) g =
-        2 * a ^ n + 2 ^ n * PowerSeries.coeff n g
 
 /-- **Resultant identity for pairwise products.** Let $K$ be a field of characteristic $0$, let
 $m, n \ge 0$ be integers, and let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be
