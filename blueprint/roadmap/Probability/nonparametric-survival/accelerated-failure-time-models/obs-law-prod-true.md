@@ -1,3 +1,3 @@
 # Law of observed failures
 
-Let the log failure time have law $\mu_T$ and the independent log censoring time law $\mu_C$, and observe $(Y, \delta) = (\min(\log T, \log C), \mathbf 1\{T \le C\})$. For measurable $A$, $P(Y \in A, \delta = 1) = \int_A\mu_C[t, \infty)\,d\mu_T(t)$.
+For measures $\mu_T$ and $\mu_C$ on $\mathbb{R}$, let $Q$ be the observed-data measure, the image of $\mu_T \otimes \mu_C$ under $(a, c) \mapsto (\min(a, c), \mathbf 1\{a \le c\})$. If $\mu_C$ is s-finite, then $Q(A \times \{1\}) = \int_A\mu_C[t, \infty)\,d\mu_T(t)$ in $[0, \infty]$ for every measurable $A$. For independent $\log T \sim \mu_T$ and $\log C \sim \mu_C$ and $(Y, \delta) = (\min(\log T, \log C), \mathbf 1\{T \le C\})$, this reads $P(Y \in A, \delta = 1) = \int_A\mu_C[t, \infty)\,d\mu_T(t)$.

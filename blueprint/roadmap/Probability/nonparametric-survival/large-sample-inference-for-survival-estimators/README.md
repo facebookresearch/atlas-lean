@@ -2,10 +2,10 @@
 
 - [Observed cell of a censored subject](cell.md)
 - [Observed censoring mass](obs-cens-mass.md)
-- [Cell probabilities of a censoring law](cell-probs.md)
+- [Cell probability vector](cell-probs.md)
 - [Empirical cell proportions](cell-proportions.md)
 - [At-risk functional on cell space](cell-at-risk.md)
-- [Mean of the cell indicator](integral-cell-vec.md)
+- [Integral of the cell indicator](integral-cell-vec.md)
 - [Joint central limit theorem for cell proportions](tendsto-in-distribution-cell-proportions.md)
 - [Joint central limit theorem for cell proportions with a constructed limit](exists-tendsto-in-distribution-cell-prop.md)
 - [Kaplan–Meier map on cell space](km-map.md)

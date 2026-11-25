@@ -22,7 +22,7 @@
 - [Regression score equations](score-eq-zero-of-is-local-max.md)
 - [Scale score equation](scale-score-eq-zero-of-is-local-max.md)
 - [Joint score equations of the log-linear model](score-eq-zero-and-scale-score-eq-zero.md)
-- [The censored factor is a survival probability](lik-contrib-false-eq.md)
+- [The censored factor is a survival mass](lik-contrib-false-eq.md)
 - [Censored part of the observed law in the log-linear model](obs-law-log-linear-law-prod-false.md)
 - [Density of the log-linear law](log-linear-law-with-density.md)
 - [Event part of the observed law in the log-linear model](obs-law-log-linear-law-prod-true.md)

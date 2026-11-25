@@ -82,7 +82,7 @@
 - [Observed failures under independent censoring](obs-fail-measure-censored-obs-law.md)
 - [Peterson representation of the hazard](hazard-measure-restrict-iic-eq-peterson.md)
 - [The hazard is identified under an unknown censoring law](hazard-measure-restrict-iic-eq-of-censor-2.md)
-- [A law is recovered from its hazard](set-lintegral-measure-ici-hazard-measure.md)
+- [A finite measure is recovered from its hazard](set-lintegral-measure-ici-hazard-measure.md)
 - [Finiteness of the cumulative hazard](hazard-measure-iic-lt-top.md)
 - [Gronwall-type uniqueness for a Volterra inequality](eq-zero-of-le-set-lintegral-iio.md)
 - [The hazard determines the law](restrict-iic-eq-of-hazard-measure-restri.md)

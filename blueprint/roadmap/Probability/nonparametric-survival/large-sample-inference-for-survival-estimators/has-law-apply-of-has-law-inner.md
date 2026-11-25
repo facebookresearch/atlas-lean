@@ -1,3 +1,3 @@
 # Linear functionals of the cell-proportion limit are normal
 
-If every projection of $Y$ is centered normal with the variance of the corresponding projection of the cell indicator, then every linear functional $\varphi(Y)$ is centered normal with variance $\mathrm{Var}[\varphi(e_{\mathrm{cell}(Z)})]$.
+Let $\mu$ be a measure on the grid pairs $z = (T, C)$, and write $\mathrm{Var}_\mu$ for Mathlib's variance with respect to $\mu$ (the variance under the law of $Z$ when $\mu$ is that law). If every projection $\langle Y, t\rangle$ is centered normal with variance $\mathrm{Var}_\mu\langle e_{\mathrm{cell}(z)}, t\rangle$, then every linear functional $\varphi(Y)$ is centered normal with variance $\mathrm{Var}_\mu[\varphi(e_{\mathrm{cell}(z)})]$.

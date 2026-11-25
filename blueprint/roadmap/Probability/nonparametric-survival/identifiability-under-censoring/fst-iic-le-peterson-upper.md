@@ -1,3 +1,3 @@
 # The Peterson upper bound
 
-Let $(T, C)$ have an arbitrary joint law $\mu$ on $\mathbb{R}^2$ and observe $(X, \delta) = (T \wedge C, \mathbf 1\{T \le C\})$ with law $P$. Then $P(T \le t) \le P(X \le t, \delta = 1) + P(X < t, \delta = 0)$.
+Let $\mu$ be an arbitrary measure on $\mathbb{R}^2$ and $P$ its observed-data measure, the image of $\mu$ under $(t, c) \mapsto (t \wedge c, \mathbf 1\{t \le c\})$. Then $\mu((-\infty, t] \times \mathbb{R}) \le P((-\infty, t] \times \{1\}) + P((-\infty, t) \times \{0\})$ in $[0, \infty]$; for a joint law $\mu$ of $(T, C)$ this is $P(T \le t) \le P(X \le t, \delta = 1) + P(X < t, \delta = 0)$.

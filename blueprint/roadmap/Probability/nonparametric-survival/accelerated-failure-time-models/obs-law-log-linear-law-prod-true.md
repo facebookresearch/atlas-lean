@@ -1,3 +1,3 @@
 # Event part of the observed law in the log-linear model
 
-If the error law has measurable density $f_0$, $\sigma > 0$ and the log censoring time is independent with law $\mu_C$, then $P(Y \in A, \delta = 1) = \int_A\frac{f_0((t - \eta)/\sigma)}{\sigma}\mu_C[t, \infty)\,dt$ for measurable $A$.
+Let the error measure have density $f_0^+ = \max(f_0, 0)$ with respect to Lebesgue measure for a measurable $f_0$, let $\sigma > 0$ and let $\mu_C$ be an s-finite measure on $\mathbb{R}$; let $Q$ be the observed-data measure of the log-linear measure (the image of the error measure under $e \mapsto \eta + \sigma e$) and $\mu_C$. Then $Q(A \times \{1\}) = \int_A\sigma^{-1}f_0^+((t - \eta)/\sigma)\,\mu_C[t, \infty)\,dt$ in $[0, \infty]$ for every measurable $A$; for an error law with density $f_0$ and an independent log censoring time $\log C \sim \mu_C$, this is $P(Y \in A, \delta = 1)$.
