@@ -18,6 +18,7 @@
 - [Local existence for the SIR compartments](exists-sir-has-deriv-within-at-icc.md)
 - [Uniqueness of SIR integral curves](eq-on-of-is-integral-curve-on-icc.md)
 - [Uniqueness of SIR integral curves around zero](eq-on-of-is-integral-curve-on-icc-zero.md)
+- [A nonnegative derivative makes a function nondecreasing on a half-line](monotone-on-ici-of-has-deriv-at.md)
 - [Susceptibles decrease along an SIR solution](antitone-on-susceptible.md)
 - [Removed individuals accumulate along an SIR solution](monotone-on-removed.md)
 - [Limits and final size of the SIR epidemic](tendsto-final-size.md)

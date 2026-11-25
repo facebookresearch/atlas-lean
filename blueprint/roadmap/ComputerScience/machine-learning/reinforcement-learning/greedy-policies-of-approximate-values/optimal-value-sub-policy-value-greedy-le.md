@@ -1,6 +1,6 @@
 # Loss of a greedy policy for an approximate value
 
-Let $M$ be a Markov decision process with a finite set of states $S$, a finite nonempty set of actions $A$, real rewards $r(s,a)$ and stochastic transition probabilities $P(s,a,s')$, let $0 \le \gamma < 1$, and let $V^*$ be the optimal value. If $|V(s) - V^*(s)| \le d$ for every state $s$ and $\pi$ is greedy with respect to $V$, then for every state $s$
+Let $M$ be a Markov decision process with a finite set of states $S$, a finite nonempty set of actions $A$, real rewards $r(s,a)$ and stochastic transition probabilities $P(s,a,s')$, let $0 \le \gamma < 1$, and let $V^*$ be the optimal value. If $|V(s) - V^*(s)| \le d$ for every state $s$ and $\pi = \operatorname{greedy}(V)$ is the policy returned by the [fixed greedy selector](../../../heuristic-search-and-planning/value-iteration/greedy.md) for $V$, then for every state $s$
 
 $$0 \le V^*(s) - V^\pi(s) \le \frac{2\gamma d}{1-\gamma}.$$
 

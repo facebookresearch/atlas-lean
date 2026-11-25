@@ -143,9 +143,9 @@ theorem eq_of_gtrRate_eq {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ} (hp : I
   rw [← mul_sum, ← mul_sum, hπ', hp.sum_eq_one] at this
   linarith
 
-/-- **GTR identifiability from the rate matrix.** Under the hypotheses of
-`eq_of_gtrRate_eq`, equal rate matrices force equal base frequencies and equal off-diagonal
-exchangeabilities. -/
+/-- **GTR identifiability from the rate matrix.** If `(π, s)` lies in the GTR domain, `π'` sums to
+`1` and `s'` is symmetric (no positivity of `(π', s')` is needed), equal rate matrices force equal
+base frequencies and equal off-diagonal exchangeabilities. -/
 theorem eq_and_offDiag_eq_of_gtrRate_eq {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ}
     (hp : IsGTRParam π s) (hπ' : ∑ i, π' i = 1) (hs' : ∀ i j, s' i j = s' j i)
     (hQ : gtrRate π s = gtrRate π' s') : π = π' ∧ ∀ i j, i ≠ j → s i j = s' i j := by
@@ -196,10 +196,11 @@ theorem IsGTRParam.comp_perm {π : ι → ℝ} {s : Matrix ι ι ℝ} (hp : IsGT
   symm i j := hp.symm (σ i) (σ j)
   offDiag_pos i j h := hp.offDiag_pos (σ i) (σ j) (σ.injective.ne h)
 
-/-- **Identifiability up to relabeling.** If the rate matrix of `(π, s)` is observed only up to
+/-- **Identifiability up to relabeling.** Let `(π, s)` and `(π', s')` both lie in the GTR
+domain. If the rate matrix of `(π, s)` is observed only up to
 an unknown relabeling `σ` of the states, the parameters are determined up to the same
 relabeling: `π' = π ∘ σ` and `s' = s.submatrix σ σ` off the diagonal. When the state labels
-are observed (`σ = 1`) this is `gtrRate_eq_iff`. -/
+are observed (`σ = 1`) this is the forward direction of `gtrRate_eq_iff`. -/
 theorem eq_comp_perm_of_gtrRate_submatrix_eq {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ}
     (hp : IsGTRParam π s) (hp' : IsGTRParam π' s') (σ : Equiv.Perm ι)
     (hQ : (gtrRate π s).submatrix σ σ = gtrRate π' s') :
@@ -271,30 +272,36 @@ theorem eq_and_offDiag_eq_of_ctmcTransition_eq {π π' : ι → ℝ} {s s' : Mat
 
 /-! ## The pair-site law of one branch -/
 
-/-- The **pair-site law** of a GTR branch of length `t`: `π i * P t i j`. For a branch length
-`t ≥ 0` it is the joint probability that a site is in state `i` at one end of the branch (drawn
-from the stationary base frequencies) and in state `j` at the other end, that is, the law of an
-aligned site pattern for two taxa joined by a branch of length `t` (`gtrPairLaw_nonneg`,
-`sum_sum_gtrPairLaw`). The formula is defined for every real `t`, but for `t < 0` its entries
-can be negative, so it is not a probability law there. -/
+/-- The **pair-site law** of a GTR branch of length `t`: `π i * P t i j`, defined for all real
+parameters. When `(π, s)` lies in the GTR domain (so `π` is a probability vector and the GTR matrix
+a rate matrix) and `t ≥ 0`, it is the joint probability that a site is in state `i` at one end of
+the branch (drawn from the stationary base frequencies) and in state `j` at the other end, that is,
+the law of an aligned site pattern for two taxa joined by a branch of length `t`
+(`gtrPairLaw_nonneg`, `sum_sum_gtrPairLaw`). For `t < 0` it need not be a probability law: its
+entries can be negative. -/
 noncomputable def gtrPairLaw (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) (i j : ι) : ℝ :=
   π i * ctmcTransition (gtrRate π s) t i j
 
-/-- The row marginal of the pair-site law is the base-frequency vector. -/
+/-- On the GTR domain (`π` positive and summing to `1`, `s` symmetric and positive off the
+diagonal), the row marginal of the pair-site law is the base-frequency vector, for every real `t`.
+-/
 theorem sum_gtrPairLaw_right {π : ι → ℝ} {s : Matrix ι ι ℝ} (hp : IsGTRParam π s) (t : ℝ)
     (i : ι) : ∑ j, gtrPairLaw π s t i j = π i := by
   simp only [gtrPairLaw, ← mul_sum,
     (isRateMatrix_gtrRate (fun k => (hp.pos k).le) fun a b h => (hp.offDiag_pos a b h).le)
       |>.sum_ctmcTransition, mul_one]
 
-/-- **Total mass.** The pair-site law sums to `1` over pairs of states, for every real `t`. This
+/-- **Total mass.** On the GTR domain (`π` positive and summing to `1`, `s` symmetric and
+positive off the diagonal), the pair-site law sums to `1` over pairs of states, for every real
+`t`. This
 is only a total-mass identity: together with `gtrPairLaw_nonneg`, which needs `t ≥ 0`, it makes
 the pair-site law a probability distribution on pairs of states. -/
 theorem sum_sum_gtrPairLaw {π : ι → ℝ} {s : Matrix ι ι ℝ} (hp : IsGTRParam π s) (t : ℝ) :
     ∑ i, ∑ j, gtrPairLaw π s t i j = 1 := by
   simp only [sum_gtrPairLaw_right hp, hp.sum_eq_one]
 
-/-- The pair-site law is nonnegative for branch lengths `t ≥ 0`. -/
+/-- On the GTR domain (`π` positive and summing to `1`, `s` symmetric and positive off the
+diagonal), the pair-site law is nonnegative for branch lengths `t ≥ 0`. -/
 theorem gtrPairLaw_nonneg {π : ι → ℝ} {s : Matrix ι ι ℝ} (hp : IsGTRParam π s) {t : ℝ}
     (ht : 0 ≤ t) (i j : ι) : 0 ≤ gtrPairLaw π s t i j :=
   mul_nonneg (hp.pos i).le <| (isRateMatrix_gtrRate (fun k => (hp.pos k).le)
@@ -338,7 +345,8 @@ private lemma isSymm_conj_sqrt {π : ι → ℝ} (hπ : ∀ i, 0 < π i) {Q : Ma
 
 /-- **Reversible generators are determined by one transition matrix.** Two generators in
 detailed balance with the same strictly positive vector `π` and with equal exponentials are
-equal. (For non-reversible generators this fails: the matrix logarithm need not be unique.) -/
+equal. (Without detailed balance this can fail: the real matrices `0` and
+`(2 * Real.pi) • !![0, 1; -1, 0]` have the same exponential.) -/
 theorem eq_of_exp_eq_of_isDetailedBalance {π : ι → ℝ} (hπ : ∀ i, 0 < π i)
     {Q Q' : Matrix ι ι ℝ} (hQ : IsDetailedBalance π Q) (hQ' : IsDetailedBalance π Q')
     (h : NormedSpace.exp Q = NormedSpace.exp Q') : Q = Q' := by
@@ -398,9 +406,9 @@ theorem gtrPairLaw_eq_iff {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ} {t t' 
     funext i j
     rw [gtrPairLaw_eq_exp, gtrPairLaw_eq_exp, hQ]
 
-/-- **GTR identifiability from a single branch of known length.** If the branch length
-`t > 0` is fixed (for example by normalizing the expected substitution rate), the pair-site law
-determines `π` and the off-diagonal exchangeabilities exactly. -/
+/-- **GTR identification from one branch of known positive length.** For `(π, s)` and `(π', s')` in
+the GTR domain and one known branch length `t > 0`, the same on both sides, equal pair-site laws
+force `π = π'` and equal off-diagonal exchangeabilities. -/
 theorem eq_and_offDiag_eq_of_gtrPairLaw_eq {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ} {t : ℝ}
     (hp : IsGTRParam π s) (hp' : IsGTRParam π' s') (ht : 0 < t)
     (h : gtrPairLaw π s t = gtrPairLaw π' s' t) :
@@ -435,8 +443,9 @@ theorem gtrPairLaw_comp_perm (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) 
   rfl
 
 /-- **Single-branch identifiability up to relabeling and rate/time scaling.** If the pair-site
-law of `(π, s, t)` is observed only up to an unknown relabeling `σ` of the states, then any
-`(π', s', t')` in the GTR domain with that law satisfies `π' = π ∘ σ` and
+law of `(π, s, t)`, with `(π, s)` in the GTR domain and `t > 0`, is observed only up to an
+unknown relabeling `σ` of the states, then any `(π', s', t')` with `(π', s')` in the GTR domain,
+`t' > 0` and that law satisfies `π' = π ∘ σ` and
 `t' * s' i j = t * s (σ i) (σ j)` off the diagonal. -/
 theorem eq_comp_perm_of_gtrPairLaw_eq {π π' : ι → ℝ} {s s' : Matrix ι ι ℝ} {t t' : ℝ}
     (hp : IsGTRParam π s) (hp' : IsGTRParam π' s') (ht : 0 < t) (ht' : 0 < t')
@@ -450,8 +459,8 @@ theorem eq_comp_perm_of_gtrPairLaw_eq {π π' : ι → ℝ} {s s' : Matrix ι ι
 
 /-! ## A submodel: K80 -/
 
-/-- **K80 identifiability.** The K80 rate matrix (merged `SubstitutionModels.k80Rate`, with
-transversion exchangeability fixed at `1`) determines the transition/transversion ratio `κ`. -/
+/-- **K80 identifiability.** The K80 rate matrix `SubstitutionModels.k80Rate κ`, with transversion
+exchangeability fixed at `1`, determines the transition/transversion ratio `κ`, for real `κ`. -/
 theorem k80Rate_injective : Function.Injective k80Rate := by
   intro κ κ' h
   have := congrFun (congrFun h 0) 2

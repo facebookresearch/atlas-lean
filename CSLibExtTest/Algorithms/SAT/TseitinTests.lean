@@ -26,7 +26,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Algorithms.SAT.Tseitin
 
-open Cslib.Logic Cslib.Logic.PL Proposition Cslib.Algorithms.SAT.DPLL
+open Cslib.Logic Cslib.Logic.LegacyPL Proposition Cslib.Algorithms.SAT.DPLL
 
 /-- Two ordinary atoms plus a separate falsum atom `⊥`. -/
 inductive At where

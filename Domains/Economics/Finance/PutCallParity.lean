@@ -33,14 +33,14 @@ the FI11.T01 payoffs; future unification with
 
 namespace MathlibExt.Probability.Finance.PutCallParity
 
-/-- European call payoff at expiry: `max (S - K) 0`. Local copy of the
-FI11.T01 payoff (same lane); future unification with FI11.T01's
-`MathlibExt.Probability.Finance.OptionPayoffs.europeanCallPayoff` is noted in
-the PR body. -/
+/-- European call payoff at expiry: `max (S - K) 0`. The same definition as
+`MathlibExt.Probability.Finance.OptionPayoffs.europeanCallPayoff`, with which it is to be
+unified. -/
 noncomputable def callPayoff (S K : ℝ) : ℝ := max (S - K) 0
 
-/-- European put payoff at expiry: `max (K - S) 0`. Local copy of the FI11.T01
-payoff; see `callPayoff` for the unification note. -/
+/-- European put payoff at expiry: `max (K - S) 0`. The same definition as
+`MathlibExt.Probability.Finance.OptionPayoffs.europeanPutPayoff`, with which it is to be
+unified. -/
 noncomputable def putPayoff (S K : ℝ) : ℝ := max (K - S) 0
 
 /-- Payoff identity (FI11.T01, proved here as a local helper so this file is

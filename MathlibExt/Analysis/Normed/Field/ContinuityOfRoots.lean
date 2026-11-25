@@ -436,7 +436,7 @@ theorem exists_monic_and_natDegree_eq_and_l1Norm_sub_lt_and_map_irreducible_and_
         · intro i _
           change ‖q.coeff i‖ < η
           dsimp [q]
-          rw [coeff_sub, norm_sub_rev]
+          rw [norm_sub_rev]
           exact hcoeff i
       _ = min ε δ := by
         rw [Finset.sum_const, Finset.card_range]

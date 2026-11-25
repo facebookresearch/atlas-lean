@@ -17,6 +17,7 @@ public import Mathlib.Data.Nat.NthRoot.Defs
 public import Mathlib.Tactic.IntervalCases
 public import MathlibExt.NumberTheory.AscFactorialBounds
 public import MathlibExt.NumberTheory.ComplementarySequences
+public import MathlibExt.NumberTheory.NonSecondPentagonal
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
@@ -51,20 +52,6 @@ public theorem_wanted nthNonValue_eq_two_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1
     (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (n : ℕ) (hn : 1 ≤ n) :
     let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
     nthNonValue f n = n + C (n + C n)
-
-/-- **Complementary sequences from one evaluation of the counting function.** Let
-$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all
-$m \ge 1$, let $C(x)$ be the number of $m$ with $1 \le m \le x$ and $f(m) \le x$, and for
-$n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with $m \ge 1$.
-Then for every $n \ge 1$, $f_P(n) = n + C(n) + 1$ if $f(C(n) + 1) \le n + C(n)$, and
-$f_P(n) = n + C(n)$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 2. -/
-public theorem_wanted nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
-    (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (n : ℕ) (hn : 1 ≤ n) :
-    let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
-    nthNonValue f n = if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n
 
 /-- **Interleaving formula when $f(m) - \alpha(m) < m$.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
@@ -170,18 +157,6 @@ public theorem_wanted nthNonValue_polygonal_eq_round_shift (k : ℕ) (hk : 3 ≤
     (hn : 1 ≤ n) :
     nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
       n + ⌊Real.sqrt ((2 * n - 2 + ((k + 1) / 4 : ℕ)) / ((k : ℝ) - 2)) + 1 / 2⌋₊
-
-/-- **Formula for the non-second-pentagonal numbers.** For every integer $n \ge 1$, put
-$s = \lfloor \sqrt{2n/3} \rfloor$. Then the $n$-th positive integer that is not a second
-pentagonal number $(3j^2 + j)/2$ with $j \ge 1$ equals $n + s + 1$ if $s (3s + 5) + 4 \le 2n$, and
-$n + s$ otherwise.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 6. -/
-public theorem_wanted nthNonValue_secondPentagonal (n : ℕ) (hn : 1 ≤ n) :
-    let s := Nat.sqrt (2 * n / 3)
-    nthNonValue (fun j => (3 * j ^ 2 + j) / 2) n =
-      if s * (3 * s + 5) + 4 ≤ 2 * n then n + s + 1 else n + s
 
 /-- **Formula for the non-second-polygonal numbers.** Let $k > 5$, and for $j \ge 1$ let
 $S(k, j) = ((k - 2) j^2 + (k - 4) j)/2$ be the second $k$-gonal numbers. For every integer

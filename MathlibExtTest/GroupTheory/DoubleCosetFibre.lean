@@ -21,7 +21,7 @@ public import MathlibExt.GroupTheory.DoubleCosetFibre
 
 @[expose] public section
 
-public theorem exactSource
+private theorem exactSource
     {G : Type*} [Group G] {Γ U : Subgroup G} (V : Subgroup G) (hΓU : Γ ≤ U) (β : G) :
     Nat.card {q : DoubleCoset.Quotient (Γ : Set G) (V : Set G) //
         ∃ g : G, DoubleCoset.mk Γ V g = q ∧ DoubleCoset.mk U V g = DoubleCoset.mk U V β}

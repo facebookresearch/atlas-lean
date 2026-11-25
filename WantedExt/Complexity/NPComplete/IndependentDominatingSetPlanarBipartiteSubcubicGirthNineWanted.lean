@@ -22,7 +22,7 @@ NP-complete if V' is required to be both a dominating set and an independent set
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DominatingSetPlanarBipartiteSubcubicGirthNineWanted

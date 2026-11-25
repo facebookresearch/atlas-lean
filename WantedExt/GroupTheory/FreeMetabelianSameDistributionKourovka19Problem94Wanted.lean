@@ -42,7 +42,7 @@ image in `Mₙ`. "Conjugate by an automorphism" means mapped one to the other by
 be the free group on $n$ generators. The free metabelian group of rank $n$ is the quotient
 $M_n = F_n / F_n''$ of $F_n$ by its second derived subgroup $F_n'' = [[F_n, F_n], [F_n, F_n]]$. -/
 abbrev FreeMetabelian (n : ℕ) :=
-  FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
+  FreeGroup (Fin n) ⧸ Subgroup.derivedSeries (FreeGroup (Fin n)) 2
 
 /-- **Words with the same distribution.** Let $n$ be a natural number and $F_n$ the free group on
 generators $x_1, \dots, x_n$. Words $w_1, w_2 \in F_n$ have the same distribution when, for every
@@ -54,7 +54,7 @@ $F_n \to G$ sending $x_i$ to $a_i$.
 Since $G$ is metabelian, this depends only on the images of $w_1, w_2$ in the free metabelian group
 $F_n / F_n''$. -/
 def SameDistribution {n : ℕ} (w₁ w₂ : FreeGroup (Fin n)) : Prop :=
-  ∀ (G : Type) [Group G] [Finite G], derivedSeries G 2 = ⊥ → ∀ g : G,
+  ∀ (G : Type) [Group G] [Finite G], Subgroup.derivedSeries G 2 = ⊥ → ∀ g : G,
     Nat.card {a : Fin n → G // FreeGroup.lift a w₁ = g} =
       Nat.card {a : Fin n → G // FreeGroup.lift a w₂ = g}
 

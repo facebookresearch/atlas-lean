@@ -140,7 +140,7 @@ theorem ofGenerator_le_ofParityCheck_iff {G : Matrix κ ι F} {H : Matrix ρ ι 
     have := mem_ofParityCheck.mp (h (encode_mem_ofGenerator G (Pi.single i 1)))
     have hj := congrFun this j
     simp only [syndrome, encode, single_one_vecMul, Pi.zero_apply] at hj
-    simpa [mul_apply, mulVec, dotProduct, mul_comm] using hj
+    simpa [Matrix.mul_apply, mulVec, dotProduct, mul_comm] using hj
   · intro h c hc
     obtain ⟨m, rfl⟩ := mem_ofGenerator.mp hc
     rw [mem_ofParityCheck, syndrome, encode, ← vecMul_transpose, vecMul_vecMul, h, vecMul_zero]
@@ -190,7 +190,7 @@ message $m \in F^\kappa$ agrees with $m$ on the coordinates in $\kappa$: $(mG)_i
 $i \in \kappa$. -/
 theorem encode_fromCols_one_inl (A : Matrix κ ρ F) (m : κ → F) (i : κ) :
     encode (fromCols 1 A) m (Sum.inl i) = m i := by
-  simp [encode, vecMul, dotProduct, fromCols, one_apply]
+  simp [encode, vecMul, dotProduct, fromCols, Matrix.one_apply]
 
 omit [Fintype ι] in
 theorem _root_.Cslib.CodingTheory.rank_fromCols_one [Fintype ρ] (A : Matrix κ ρ F) :

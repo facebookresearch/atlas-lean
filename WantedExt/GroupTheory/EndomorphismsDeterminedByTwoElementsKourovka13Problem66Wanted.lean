@@ -40,7 +40,7 @@ rank $n$ is the quotient $F_n / F_n''$ of the free group $F_n$ on $n$ generators
 derived subgroup $F_n'' = [F_n', F_n']$, where $F_n' = [F_n, F_n]$ is the derived subgroup of
 $F_n$. -/
 abbrev FreeMetabelianGroup (n : ℕ) : Type :=
-  FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
+  FreeGroup (Fin n) ⧸ Subgroup.derivedSeries (FreeGroup (Fin n)) 2
 
 /-- **Groups whose endomorphisms with non-cyclic images are determined by two elements.** A group
 $F$ has this property when there exist elements $g, h \in F$ such that any two endomorphisms

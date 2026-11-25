@@ -9,3 +9,5 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Hiring problem](hiring-problem/README.md)
 - [Karger's algorithm](karger-s-algorithm/README.md)
 - [MinHash and Jaccard similarity](minhash-and-jaccard-similarity/README.md)
+- [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
+- [Monte Carlo estimation and variance reduction](monte-carlo-estimation/README.md)
