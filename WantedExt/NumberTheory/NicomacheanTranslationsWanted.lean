@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.NumberTheory.NicomacheanAdjoinedProgression
 public import MathlibExt.NumberTheory.NicomacheanTranslations
 
 /-!
@@ -144,21 +145,6 @@ public theorem_wanted exists_goldenRatio_nicomachean_sequence (N : ℕ) :
     ∃ σ : List ℝ, (∀ x ∈ σ, 0 < x ∧ ∃ p q : ℤ, x = p + q * Real.goldenRatio) ∧
       (∃ τ : List ℝ, τ.Sublist σ ∧ σ.length < 2 * τ.length ∧ ∀ x ∈ τ, Irrational x) ∧
       nicomacheanNu σ = 0 ∧ ∀ n ∈ Finset.Icc 1 N, Real.goldenRatio⁻¹ ^ n ∈ σ
-
-/-- **Adjoined Nicomachean sequences are eventually arithmetic progressions.** Write
-$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
-of a finite sequence. Let $(a_1, \dots, a_n)$ be a finite, possibly empty, sequence of real numbers
-and let $x_1, x_2, x_3, \dots$ be nonzero real numbers with $x_{j+1} \ne -x_j$ for every $j \ge 1$.
-If $\nu(a_1, \dots, a_n, x_1, \dots, x_l) = 0$ for every $l \ge 1$, then $x_{j+1} = x_j + 1$ for
-every $j \ge 2$; that is, $x_2, x_3, \dots$ is an arithmetic progression with difference $1$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 8
-(`jis-2024-24.6.3-prop-8`). -/
-public theorem_wanted nicomachean_adjoined_arithmeticProgression (a : List ℝ) (x : ℕ → ℝ)
-    (hx : ∀ j, x j ≠ 0) (hneg : ∀ j, x (j + 1) ≠ -x j)
-    (hν : ∀ l, nicomacheanNu (a ++ (List.range (l + 1)).map x) = 0) :
-    ∀ j, 1 ≤ j → x (j + 1) = x j + 1
 
 /-- **Positive integer roots of the Nicomachean factor for $s = 1, 2$.** Let
 $\alpha(n, s, a) = 2n^2 + na - a^2 + n(n-1)(s - s^2)/2 - (n-1)as$ and let $F_0 = 0$, $F_1 = 1$,

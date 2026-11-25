@@ -59,6 +59,29 @@ example : ((growthFunctionVec (networkClass 1 (fun _ => 1) 0) 2 : ℕ) : ℝ) �
   rw [hpc] at h
   exact h
 
+-- With `d = 1`, `w = fun _ => 1`, `L = 1`: fan-ins `1` and `1`, widths
+-- `1` and `1`, so `(1 + 1) * 1 + (1 + 1) * 1 = 2 + 2 = 4`.
+example : paramCount 1 (fun _ => 1) 1 = 4 := by decide
+
+-- With `d = 1`, `w = fun _ => 1`, `L = 1`, `m = 2`: fan-ins `1` and `1`,
+-- widths `1` and `1`, so `paramCount = 4` and the bound is `(e * 2) ^ 4`.
+example : ((growthFunctionVec (networkClass 1 (fun _ => 1) 1) 2 : ℕ) : ℝ) ≤
+    (Real.exp 1 * (2 : ℝ)) ^ 4 := by
+  have hm : ∀ i, i ≤ 1 → fanIn 1 (fun _ => 1) i + 1 ≤ 2 := by
+    intro i hi
+    cases i with
+    | zero => decide
+    | succ n =>
+      cases n with
+      | zero => decide
+      | succ m =>
+        have hfalse : False := by omega
+        exact False.elim hfalse
+  have h := growthFunctionVec_networkClass_le_exp_pow 1 (fun _ => 1) 1 2 hm
+  have hpc : paramCount 1 (fun _ => 1) 1 = 4 := by decide
+  rw [hpc] at h
+  exact h
+
 #print axioms growthFunctionVec_halfspaceClass_le_real
 #print axioms growthFunctionVec_neuronAt_le_real
 #print axioms growthFunctionVec_trunk_le

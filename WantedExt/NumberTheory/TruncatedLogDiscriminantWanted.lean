@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-public import MathlibExt.NumberTheory.TruncatedLogDiscriminant
+public import MathlibExt.NumberTheory.TruncatedLogResultantPos
 
 /-!
 # Discriminants of truncated logarithmic polynomials
@@ -76,15 +76,6 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 4. -/
 public def truncatedLogExceptionalPrimes (m : ℕ) : Set ℕ :=
   {ℓ | ℓ.Prime ∧ (0 < padicValRat ℓ (truncatedLogAuxProduct m) ∨
     0 < padicValRat ℓ (_root_.harmonic m)) ∧ m * ℓ % 4 = 1}
-
-/-- **Positivity of the resultant product.** For every natural number $n \ge 1$, the resultant
-product $\mathcal{P}_n$ is a positive integer.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Lemma 1
-(`integers-2025-A39-lem-1`). -/
-public theorem_wanted truncatedLogResultantProduct_pos {n : ℕ} (hn : 1 ≤ n) :
-    0 < truncatedLogResultantProduct n
 
 /-- **Nonsquare discriminants of $F_n$ for positive $n \equiv 0, 2, 3 \pmod 4$.** Let
 $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial and let

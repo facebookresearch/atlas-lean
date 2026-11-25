@@ -17,7 +17,17 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Rungeâ€“Kutta methods](runge-kutta-methods/README.md)
 - [Strang's lemma](strang-s-lemma/README.md)
 - [Trust-region methods](trust-region-methods/README.md)
+- [Decidability and complexity of bounded delta-SMT](decidability-and-complexity-of-bounded-delta-smt.md)
+- [delta-weakening and delta-complete decision procedures](delta-weakening-and-delta-complete-decision-procedures.md)
+- [Floating-point interval arithmetic with directed rounding is sound](floating-point-interval-arithmetic-with-directed-rounding-is.md)
+- [Fundamental theorem of interval arithmetic and the dependency effect](fundamental-theorem-of-interval-arithmetic-and-the-dependenc.md)
+- [CFL condition: numerical domain of dependence must contain the true one](cfl-condition-numerical-domain-of-dependence-must-contain-th.md)
+- [Monotone explicit schemes as convex combinations (discrete maximum principle)](remaining-clauses-of-monotone-explicit-schemes-as-convex-com.md)
+- [delta-weakening is monotone](delta-weakening-is-monotone.md)
+- [Nonconvergence of schemes violating the CFL condition](nonconvergence-of-schemes-violating-the-cfl-condition.md)
 - [Upwind scheme](upwind-scheme/README.md)
+- [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
+- [Operator splitting](operator-splitting/README.md)
 
 ## Related topics
 
