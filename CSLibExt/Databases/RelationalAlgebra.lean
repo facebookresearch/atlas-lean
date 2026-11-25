@@ -678,7 +678,7 @@ on every database conforming to $\mathrm{sch}$. -/
 theorem select_select {sch : N → Finset A} {e : Expr N A D} {S : Finset A}
     (he : e.schema sch = some S) {c c' : Cond A D} (hc : c.attrs ⊆ S) (hc' : c'.attrs ⊆ S) :
     Equiv sch (select c (select c' e)) (select (.and c' c) e) :=
-  ⟨S, by simp [schema, he, hc, hc'], by simp [schema, he, Cond.attrs, Finset.union_subset hc' hc],
+  ⟨S, by simp [schema, he, hc, hc'], by simp [schema, he, Cond.attrs, hc', hc],
     fun _ _ => Databases.select_select _ _ _⟩
 
 /-- **Cascade of projections as a query rewrite.** Fix a database schema $\mathrm{sch}$

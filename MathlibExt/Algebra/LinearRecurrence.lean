@@ -12,13 +12,15 @@ public import Mathlib.Algebra.LinearRecurrence
 import Mathlib.LinearAlgebra.Vandermonde
 
 /-!
-# Closed forms for linear recurrences with distinct characteristic roots
+# Linear recurrences: closed forms and annihilators
 
 Over any field, a linear recurrence of order `d` with `d` distinct characteristic roots has
 exactly one expression for each solution as a linear combination of their geometric sequences.
 The order may be zero, and one of the roots may be zero. No characteristic assumption is needed.
+The closed form makes no completeness claim for repeated roots.
 
-This is a distinct-root theorem only; it makes no completeness claim for repeated roots.
+For any linear recurrence over a field, its characteristic polynomial annihilates its solutions
+when applied as a polynomial in the shift operator.
 -/
 
 @[expose] public section
@@ -67,3 +69,54 @@ theorem exists_unique_eq_sum_pow_of_injective {K : Type*} [Field K] (E : LinearR
   exact (hd n).symm.trans (congrFun heq n)
 
 end LinearRecurrence
+
+/-! ## Annihilators of recurrence solutions -/
+
+namespace MetaMathlibExt
+
+open Polynomial
+
+/-- **Annihilator of a sequence.** Let $K$ be a semiring, $p = \sum_i a_i X^i \in K[X]$ and
+$G \colon \mathbb{N} \to K$ a sequence, and let $E$ be the translation operator
+$E(G_s) = G_{s+1}$. The operator $p(E)$ annihilates $G$ when $\sum_i a_i G_{s+i} = 0$ for every
+$s \ge 0$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 3 (definitions of the translation operator and of an annihilator). -/
+def AnnihilatesSeq {K : Type*} [Semiring K] (p : K[X]) (G : ℕ → K) : Prop :=
+  ∀ s : ℕ, p.sum (fun i a => a * G (s + i)) = 0
+
+/-- **Every operator annihilates the zero sequence.** For every semiring $K$ and every polynomial
+$p \in K[X]$, the operator $p(E)$ annihilates the zero sequence, where $E$ is the translation
+operator $E(G_s) = G_{s+1}$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 3 (definition of an annihilator). -/
+theorem annihilatesSeq_zero {K : Type*} [Semiring K] (p : K[X]) : AnnihilatesSeq p (0 : ℕ → K) := by
+  intro s
+  simp [Polynomial.sum]
+
+/-- **The characteristic polynomial annihilates the solutions of its recurrence.** Let $K$ be a
+field, $d \ge 0$ and $a_0, \dots, a_{d-1} \in K$. If a sequence $G \colon \mathbb{N} \to K$
+satisfies $G_{n+d} = \sum_{i=0}^{d-1} a_i G_{n+i}$ for every $n \ge 0$, then the characteristic
+polynomial $X^d - \sum_{i=0}^{d-1} a_i X^i$ of this recurrence annihilates $G$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Lemma 3.4 (`fq-2024-hendel08232024rev2-lem-3.4`). -/
+theorem annihilatesSeq_charPoly_of_isSolution {K : Type*} [Field K]
+    (E : LinearRecurrence K) (G : ℕ → K) (hG : E.IsSolution G) :
+    AnnihilatesSeq E.charPoly G := by
+  intro s
+  let evalShift : K[X] →ₗ[K] K :=
+    (Finsupp.linearCombination K (fun i : ℕ => G (s + i))).comp
+      (AddMonoidAlgebra.coeffLinearEquiv K).toLinearMap
+  change evalShift E.charPoly = 0
+  have hmonomial (i : ℕ) (a : K) : evalShift (monomial i a) = a * G (s + i) :=
+    Finsupp.linearCombination_single K a i
+  rw [LinearRecurrence.charPoly, map_sub, map_sum]
+  simpa only [hmonomial, one_mul, sub_eq_zero] using hG s
+
+end MetaMathlibExt

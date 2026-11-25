@@ -5,3 +5,4 @@
 - [Krull dimension does not decrease along injective integral maps](ring-krull-dim-ge-of-integral-of-injecti.md)
 - [Injective integral maps preserve Krull dimension](ring-krull-dim-eq-of-integral-of-injecti.md)
 - [Short prime chains when the completion has dimension at most two](eq-bot-of-lt-of-ne-maximal-ideal-of-ring.md)
+- [Krull dimension of a commutative semiring](krull-dimension.md)

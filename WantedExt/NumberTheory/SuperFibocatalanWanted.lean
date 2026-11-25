@@ -16,7 +16,7 @@ and Their Lucas Analogues", *Journal of Integer Sequences* 28
 
 The Fibonacci factorial `F_n!` is MathlibExt's
 `MetaMathlibExt.fibonacciFactorial` (in `ℚ`), and the
-FiboCatalan number and fibonomial below are the displayed
+FiboCatalan number and fibonomial are the displayed
 quotients built from it. The Lucas polynomials `{n}` of the
 paper (`{0} = 0`, `{1} = 1`, `{n} = s{n-1} + t{n-2}`) are
 `lucasPoly n` in `MvPolynomial (Fin 2) ℤ`, with `X 0 = s` and
@@ -28,8 +28,9 @@ coefficients" are stated as the existence of such a polynomial
 of denominators, as in the paper's proofs.
 
 Of the paper's thirteen numbered statements, ten are
-formalized below (including the super FiboCatalan half of
-Corollary 5). The Fibonacci and Lucas polynomial product identities are imported from
+available here (including the super FiboCatalan half of
+Corollary 5). The product identities, FiboCatalan numbers and their identity,
+Lucas factorial and Lucas Catalan identity are imported from
 `MathlibExt.NumberTheory.SuperFibocatalan`. One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
@@ -64,13 +65,6 @@ namespace MathlibExt.NumberTheory.SuperFibocatalanWanted
 
 open MetaMathlibExt
 
-/-- **FiboCatalan numbers.** For a natural number $n$, the FiboCatalan number is the rational
-number $C_{n,F} = F_{2n}!/(F_n! \, F_{n+1}!)$, where $F_j$ is the $j$-th Fibonacci number and
-$F_k! = F_1 F_2 \cdots F_k$ is the Fibonacci factorial. -/
-noncomputable def fiboCatalan (n : ℕ) : ℚ :=
-  fibonacciFactorial (2 * n) /
-    (fibonacciFactorial n * fibonacciFactorial (n + 1))
-
 /-- **Fibonomial coefficients.** For natural numbers $n$ and $k$, the fibonomial coefficient
 $\binom{n}{k}_F$ is the rational number $F_n!/(F_k! \, F_{n-k}!)$ when $k \le n$, where $F_i$ is
 the $i$-th Fibonacci number and $F_j! = F_1 F_2 \cdots F_j$ is the Fibonacci factorial, and $0$
@@ -97,24 +91,6 @@ theorem_wanted superFibonacciCatalan_isPosInt (m n : ℕ) :
         (fibonacciFactorial m * fibonacciFactorial n *
           fibonacciFactorial (m + n))
 
-/-- **An identity between consecutive FiboCatalan numbers.** Let $F_k$ be the Fibonacci
-numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and
-$C_{k,F} = F_{2k}!/(F_k! \, F_{k+1}!)$ the FiboCatalan number. For every natural number $n$,
-in $\mathbb{Q}$,
-$$F_{2n+1} F_{2n} C_{n,F} - F_{n+1} F_n C_{n+1,F}
-= (-1)^n F_n F_{2n+1} \frac{F_{2n}!}{F_{n+2}! \, F_n!}.$$
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Theorem 7. -/
-theorem_wanted fiboCatalan_identity (n : ℕ) :
-    (Nat.fib (2 * n + 1) : ℚ) * (Nat.fib (2 * n) : ℚ) *
-          fiboCatalan n -
-        (Nat.fib (n + 1) : ℚ) * (Nat.fib n : ℚ) *
-          fiboCatalan (n + 1) =
-      (-1) ^ n * (Nat.fib n : ℚ) * (Nat.fib (2 * n + 1) : ℚ) *
-        (fibonacciFactorial (2 * n) /
-          (fibonacciFactorial (n + 2) * fibonacciFactorial n))
-
 /-- **Integrality of $F_{2n+1} F_{2n}!/(F_{n+2}! \, F_n!)$.** Let $F_k$ be the Fibonacci
 numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and, for $k \le m$,
 $\binom{m}{k}_F = F_m!/(F_k! \, F_{m-k}!)$ the fibonomial coefficient. For every natural
@@ -134,13 +110,6 @@ theorem_wanted fib_mul_factorialQuotient_eq_and_isInt
         (Nat.fib (2 * n + 1) : ℚ) *
           (fibonacciFactorial (2 * n) /
             (fibonacciFactorial (n + 2) * fibonacciFactorial n))
-
-/-- **Lucas factorial.** For a natural number $n$, the Lucas factorial $\{n\}!$ is the product
-$\{n\}! = \{1\}\{2\} \cdots \{n\}$ of the Lucas polynomials $\{i\}$ in $s$ and $t$ for
-$1 \le i \le n$, a polynomial with integer coefficients; in particular $\{0\}! = 1$, the empty
-product. -/
-noncomputable def lucasFactorial (n : ℕ) : MvPolynomial (Fin 2) ℤ :=
-  ∏ i ∈ Finset.Icc 1 n, lucasPoly i
 
 /-- **$k$-divisible Lucas factorial.** For natural numbers $k$ and $n$, the $k$-divisible Lucas
 factorial $\{n : k\}!$ is the product $\{n : k\}! = \{k\}\{2k\} \cdots \{nk\}$ of the Lucas
@@ -185,28 +154,6 @@ theorem_wanted exists_nonneg_poly_generalizedLucasCatalan
       p * (lucasFactorial r * lucasFactorial n *
           lucasFactorial (n + r + 1)) =
         lucasFactorial (2 * r + 1) * lucasFactorial (2 * n)
-
-/-- **Lucas analogue of the FiboCatalan identity, cleared of denominators.** Let $\{k\}$ be
-the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$, $\{k+2\} = s\{k+1\} + t\{k\}$)
-and let $\{k\}! = \{1\}\{2\} \cdots \{k\}$ be the Lucas factorial. For every natural number
-$n$, in $\mathbb{Z}[s, t]$,
-$$(\{2n+1\} \{2n\} \{n+2\} - \{2n+2\} \{2n+1\} \{n\}) \, \{2n\}!
-= (-1)^n t^n \{2\} \{n\} \{2n+1\} \, \{2n\}!.$$
-
-With the Lucas Catalan numbers $C_{\{k\}} = \{2k\}!/(\{k\}! \, \{k+1\}!)$, this is the identity
-$$\{2n+1\} \{2n\} C_{\{n\}} - \{n+1\} \{n\} C_{\{n+1\}}
-= (-1)^n t^n \{2\} \{n\} \{2n+1\} \frac{\{2n\}!}{\{n+2\}! \, \{n\}!}$$
-multiplied through by $\{n+2\}! \, \{n\}!$.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Theorem 11. -/
-theorem_wanted lucasCatalan_identity_mul_factorial (n : ℕ) :
-    (lucasPoly (2 * n + 1) * lucasPoly (2 * n) * lucasPoly (n + 2) -
-        lucasPoly (2 * n + 2) * lucasPoly (2 * n + 1) *
-          lucasPoly n) * lucasFactorial (2 * n) =
-      (-1) ^ n * MvPolynomial.X 1 ^ n * lucasPoly 2 *
-        lucasPoly n * lucasPoly (2 * n + 1) *
-        lucasFactorial (2 * n)
 
 /-- **The Lucas quotient $\{2n+1\} \{2\} \{2n\}!/(\{n+2\}! \, \{n\}!)$ has non-negative
 coefficients.** Let $\{k\}$ be the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$,

@@ -37,15 +37,18 @@ between two consecutive `k_n²`, so instability is not monotone in `L`. The fini
 predicates are total in `L ∈ ℝ` but describe a Neumann domain only for `0 < L`; the theorems that
 relate them to domain length assume `0 < L`.
 
-**Onset of a Neumann mode.** Since `h` is affine in the inhibitor diffusion `d = d_v`, an
-admissible mode (`0 < f_u k² - d_u k⁴`) is unstable iff `d` exceeds its *neutral diffusion*
-`d_n(k²)` (`neutralDiffusion`); on `[0, L]` the homogeneous state is unstable iff some admissible
-Neumann mode has `d_n(k_n²) < d`. The onset diffusion is thus the infimum of the discrete values
+**Onset of a Neumann mode.** Since `h` is affine in the inhibitor diffusion `d = d_v`, for
+`tr J < 0` and `d_u, d ≥ 0` an admissible mode (`0 < f_u k² - d_u k⁴`) is unstable iff `d` exceeds
+its *neutral diffusion* `d_n(k²)` (`neutralDiffusion`); on `[0, L]`, if also `0 < det J` and
+`g_v ≤ 0`, the homogeneous state is unstable iff some admissible Neumann mode has
+`d_n(k_n²) < d`. The onset diffusion is thus the infimum of the discrete values
 `d_n(k_n²)`, which need not be attained (for `d_u = 0` it can be `0`).
-At `d_n(k²)` the mode matrix has exactly the eigenvalues `0` and `tr (J - k² D)` (so `0` is a
-simple root of its characteristic polynomial whenever this trace is nonzero, e.g. negative), under
-non-resonance mode `n` is the only Neumann mode with eigenvalue `0`, and the leading real
-eigenvalue crosses zero with positive speed `(d_u k⁴ - f_u k²) / tr (J - k² D)` (transversality).
+At `d_n(k²)`, for `f_u k² ≠ d_u k⁴` (for example an admissible mode), the mode matrix has exactly
+the eigenvalues `0` and `tr (J - k² D)` (so `0` is a simple root of its characteristic polynomial
+whenever this trace is nonzero, e.g. negative), under non-resonance mode `n` is the only Neumann
+mode with eigenvalue `0`, and, for an admissible mode with negative trace at `d_n(k²)`, the leading
+real eigenvalue crosses zero with positive speed `(d_u k⁴ - f_u k²) / tr (J - k² D)`
+(transversality).
 
 **Local pattern branch.** The steady-state bifurcation from the homogeneous state at a simple
 critical mode is formalized for the *reduced bifurcation equation* `Φ(a, d) = a G(a, d)` in the
@@ -129,7 +132,7 @@ theorem exists_eigenvector_iff_of_det_eq_zero {M : Matrix (Fin 2) (Fin 2) ℝ} (
 
 /-- `μ` is an eigenvalue of the linearization `w ↦ D w_xx + J w` on `[0, L]` with homogeneous
 Neumann boundary conditions: it is an eigenvalue of the mode matrix `J - k_n² D` of some
-admissible Neumann wavenumber `k_n = n π / L`. Only the discrete wavenumbers `k_n` contribute;
+Neumann wavenumber `k_n = n π / L`, `n ∈ ℕ`. Only the discrete wavenumbers `k_n` contribute;
 the continuum of wavenumbers `k ∈ ℝ` of the problem on the whole line does not. (That these are
 all eigenvalues of the PDE operator, i.e. completeness of the cosine basis, is not proved here;
 the definition records the spectrum it induces.)
@@ -157,8 +160,8 @@ theorem isNeumannUnstable_iff {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ} :
   · rintro ⟨n, μ, hμ, v, hv, h⟩
     exact ⟨μ, hμ, n, v, hv, h⟩
 
-/-- Every Neumann eigenvalue is realized by a classical solution of the linearized system that
-has zero flux at both ends of `[0, L]`: the Fourier mode `e^{μ t} cos(k_n x) v`. -/
+/-- For `L ≠ 0`, every Neumann eigenvalue is realized by a classical solution of the linearized
+system that has zero flux at both ends of `[0, L]`: the Fourier mode `e^{μ t} cos(k_n x) v`. -/
 theorem IsNeumannEigenvalue.exists_solution {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
     (hL : L ≠ 0) {μ : ℂ} (h : IsNeumannEigenvalue J du dv L μ) :
     ∃ (n : ℕ) (v : Fin 2 → ℂ), v ≠ 0 ∧
@@ -175,8 +178,8 @@ theorem IsNeumannUnstable.exists_isUnstableMode {J : Matrix (Fin 2) (Fin 2) ℝ}
   obtain ⟨n, hn⟩ := isNeumannUnstable_iff.1 h
   exact ⟨_, hn⟩
 
-/-- For `d_u, d_v > 0` and a positive discriminant, the continuum of unstable squared
-wavenumbers is the whole open band `(q₋, q₊)`. -/
+/-- For `d_u, d_v > 0` and a positive discriminant, the set of real `q` with `h(q) < 0` is the
+open band `(q₋, q₊)`. -/
 theorem setOf_dispersionDet_neg_eq_Ioo {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
     (hdu : 0 < du) (hdv : 0 < dv) (hΔ : 0 < bandDiscriminant J du dv) :
     {q : ℝ | dispersionDet J du dv q < 0} = Set.Ioo (bandLower J du dv) (bandUpper J du dv) := by
@@ -229,7 +232,8 @@ theorem setOf_isUnstableMode_infinite {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : 
     dispersionDet_neg_iff hdu hdv]
   exact ⟨hΔ, lt_of_le_of_lt (le_max_left _ _) hlo, hhi⟩
 
-/-- **Small domains are stable.** For `d_u, d_v > 0` and a kinetically stable state, there is
+/-- **No unstable Neumann mode on small domains.** For `d_u, d_v > 0` and a kinetically stable
+state, there is
 `L₁ > 0` such that no Neumann mode is unstable on any `[0, L]` with `0 < L ≤ L₁`. -/
 theorem exists_forall_not_isNeumannUnstable {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
     (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0) (hdet : 0 < J.det) :
@@ -257,7 +261,8 @@ private theorem neumann_sq_le {L : ℝ} (hL : 0 < L) {m n : ℕ} (hmn : m ≤ n)
     gcongr
   exact pow_le_pow_left₀ hm h 2
 
-/-- **Band gaps.** If the unstable band `(q₋, q₊)` falls between two consecutive squared Neumann
+/-- **Band gaps.** For `d_u, d_v > 0`, `tr J < 0` and `L > 0`: if the unstable band `(q₋, q₊)`
+falls between two consecutive squared Neumann
 wavenumbers, `(n π / L)² ≤ q₋` and `q₊ ≤ ((n + 1) π / L)²`, then no Neumann mode is unstable on
 `[0, L]`, even though the continuum of wavenumbers is unstable whenever the band is nonempty. -/
 theorem not_isNeumannUnstable_of_gap {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
@@ -299,19 +304,20 @@ theorem continuum_vs_neumann {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
 `det (J - k² D) = h(k²)` is affine in `d_v`, the mode of squared wavenumber `q` is neutral
 (`h(q) = 0`) exactly at `d_v = d_n(q)` (when `f_u q - d_u q² ≠ 0`). For a Neumann mode
 `q = k_n²` this is the diffusion at which the finite-domain eigenvalue of mode `n` crosses
-zero. -/
+zero. With `x / 0 = 0` it is `0` when `f_u q - d_u q² = 0`. -/
 noncomputable def neutralDiffusion (J : Matrix (Fin 2) (Fin 2) ℝ) (du q : ℝ) : ℝ :=
   (J.det - du * J 1 1 * q) / (J 0 0 * q - du * q ^ 2)
 
-/-- `h(q) = (f_u q - d_u q²) (d_n(q) - d_v)`. -/
+/-- For `f_u q - d_u q² ≠ 0`, `h(q) = (f_u q - d_u q²) (d_n(q) - d_v)`. -/
 theorem dispersionDet_eq_mul_neutralDiffusion_sub {J : Matrix (Fin 2) (Fin 2) ℝ} {du d q : ℝ}
     (hq : J 0 0 * q - du * q ^ 2 ≠ 0) :
     dispersionDet J du d q = (J 0 0 * q - du * q ^ 2) * (neutralDiffusion J du q - d) := by
   rw [mul_sub, neutralDiffusion, mul_div_cancel₀ _ hq, dispersionDet]
   ring
 
-/-- For an *admissible* wavenumber, `0 < f_u k² - d_u k⁴`, the mode `k` is unstable iff the
-inhibitor diffusion exceeds the neutral diffusion: `d_n(k²) < d`. -/
+/-- If `tr J < 0` and `d_u, d ≥ 0`, then for an *admissible* wavenumber, `0 < f_u k² - d_u k⁴`,
+the mode `k` is unstable iff the inhibitor diffusion exceeds the neutral diffusion:
+`d_n(k²) < d`. -/
 theorem isUnstableMode_iff_neutralDiffusion_lt {J : Matrix (Fin 2) (Fin 2) ℝ} {du d k : ℝ}
     (htr : J.trace < 0) (hdu : 0 ≤ du) (hd : 0 ≤ d)
     (hk : 0 < J 0 0 * k ^ 2 - du * (k ^ 2) ^ 2) :
@@ -326,8 +332,8 @@ theorem isUnstableMode_iff_neutralDiffusion_lt {J : Matrix (Fin 2) (Fin 2) ℝ} 
   · intro h
     exact mul_neg_of_pos_of_neg hk (sub_neg.2 h)
 
-/-- Inadmissible wavenumbers, `f_u k² - d_u k⁴ ≤ 0`, are never unstable when `0 < det J` and
-`g_v ≤ 0`, whatever the diffusion `d ≥ 0`. -/
+/-- Inadmissible wavenumbers, `f_u k² - d_u k⁴ ≤ 0`, are never unstable when `tr J < 0`,
+`0 < det J` and `g_v ≤ 0`, whatever the diffusions `d_u, d ≥ 0`. -/
 theorem not_isUnstableMode_of_inadmissible {J : Matrix (Fin 2) (Fin 2) ℝ} {du d k : ℝ}
     (htr : J.trace < 0) (hdu : 0 ≤ du) (hd : 0 ≤ d) (hdet : 0 < J.det) (hgv : J 1 1 ≤ 0)
     (hk : J 0 0 * k ^ 2 - du * (k ^ 2) ^ 2 ≤ 0) : ¬ IsUnstableMode J du d k := by
@@ -335,11 +341,11 @@ theorem not_isUnstableMode_of_inadmissible {J : Matrix (Fin 2) (Fin 2) ℝ} {du 
   nlinarith [mul_nonneg hd (neg_nonneg.2 hk),
     mul_nonneg hdu (mul_nonneg (neg_nonneg.2 hgv) (sq_nonneg k))]
 
-/-- **Finite-domain onset.** On `[0, L]` (with `0 < det J`, `g_v ≤ 0`, `tr J < 0`), the
-homogeneous state is unstable iff some *admissible Neumann* mode has neutral diffusion below
+/-- **Finite-domain onset.** On `[0, L]` (with `0 < det J`, `g_v ≤ 0`, `tr J < 0`, `d_u, d ≥ 0`),
+the homogeneous state is unstable iff some *admissible Neumann* mode has neutral diffusion below
 `d`. The criterion ranges over the discrete Neumann wavenumbers, not over the continuum of
-wavenumbers; the onset diffusion is the infimum of the admissible values `d_n(k_n²)`, which need
-not be a minimum (for `d_u = 0` infinitely many modes can be admissible with `d_n(k_n²) → 0`). -/
+wavenumbers; the onset diffusion is the infimum of the admissible values `d_n(k_n²)`, which need not
+be a minimum (for `d_u = 0` infinitely many modes can be admissible with `d_n(k_n²) → 0`). -/
 theorem isNeumannUnstable_iff_exists_neutralDiffusion_lt {J : Matrix (Fin 2) (Fin 2) ℝ}
     {du d L : ℝ} (htr : J.trace < 0) (hdu : 0 ≤ du) (hd : 0 ≤ d) (hdet : 0 < J.det)
     (hgv : J 1 1 ≤ 0) :
@@ -355,7 +361,7 @@ theorem isNeumannUnstable_iff_exists_neutralDiffusion_lt {J : Matrix (Fin 2) (Fi
   · rintro ⟨n, hk, hn⟩
     exact ⟨n, (isUnstableMode_iff_neutralDiffusion_lt htr hdu hd hk).2 hn⟩
 
-/-- At its neutral diffusion an admissible mode has exactly the eigenvalues `0` and
+/-- At its neutral diffusion a mode with `f_u k² - d_u k⁴ ≠ 0` has exactly the eigenvalues `0` and
 `tr (J - k² D) = tr J - k² (d_u + d)`. -/
 theorem exists_eigenvector_modeMatrix_iff_of_neutral {J : Matrix (Fin 2) (Fin 2) ℝ} {du d k : ℝ}
     (hk : J 0 0 * k ^ 2 - du * (k ^ 2) ^ 2 ≠ 0) (hd : d = neutralDiffusion J du (k ^ 2))
@@ -394,8 +400,10 @@ theorem setOf_neumann_zero_eigen_eq_singleton {J : Matrix (Fin 2) (Fin 2) ℝ} {
 
 /-- The *leading real eigenvalue* `(tr M + √(tr² M - 4 det M)) / 2` of a real `2 × 2` matrix;
 it is an eigenvalue when the discriminant `tr² M - 4 det M` is nonnegative
-(`exists_eigenvector_leadingEigenvalue`). Near a neutral Turing mode it is the critical
-eigenvalue that crosses zero. -/
+(`exists_eigenvector_leadingEigenvalue`). For a negative discriminant `Real.sqrt` gives `0` and the
+value is the common real part `tr M / 2` of the two complex eigenvalues, which is not an
+eigenvalue. Near a neutral Turing mode with negative trace it is the critical eigenvalue that
+crosses zero. -/
 noncomputable def leadingEigenvalue (M : Matrix (Fin 2) (Fin 2) ℝ) : ℝ :=
   (M.trace + Real.sqrt (M.trace ^ 2 - 4 * M.det)) / 2
 
@@ -416,9 +424,9 @@ theorem leadingEigenvalue_eq_zero {M : Matrix (Fin 2) (Fin 2) ℝ} (htr : M.trac
   rw [leadingEigenvalue, hdet, mul_zero, sub_zero, Real.sqrt_sq_eq_abs, abs_of_neg htr]
   ring
 
-/-- **Transversal crossing.** At a neutral mode (`h(k²) = 0`) with negative trace, the leading
-real eigenvalue of `J - k² D`, as a function of the inhibitor diffusion `d = d_v`, has derivative
-`(d_u k⁴ - f_u k²) / tr (J - k² D)` at the neutral diffusion. -/
+/-- **Derivative of the leading eigenvalue at a neutral mode.** At a neutral mode (`h(k²) = 0`) with
+negative trace, the leading real eigenvalue of `J - k² D`, as a function of the inhibitor diffusion
+`d = d_v`, has derivative `(d_u k⁴ - f_u k²) / tr (J - k² D)` at the neutral diffusion. -/
 theorem hasDerivAt_leadingEigenvalue_modeMatrix {J : Matrix (Fin 2) (Fin 2) ℝ} {du d₀ k : ℝ}
     (htr : J.trace - k ^ 2 * (du + d₀) < 0) (hdet : dispersionDet J du d₀ (k ^ 2) = 0) :
     HasDerivAt (fun d => leadingEigenvalue (modeMatrix J du d k))
@@ -454,9 +462,9 @@ theorem hasDerivAt_leadingEigenvalue_modeMatrix {J : Matrix (Fin 2) (Fin 2) ℝ}
     field_simp
     ring
 
-/-- At the neutral diffusion of an admissible wavenumber, the critical eigenvalue crosses zero
-with positive speed: the leading real eigenvalue vanishes there and has positive derivative in
-`d`. -/
+/-- At the neutral diffusion `d₀` of an admissible wavenumber, where `tr J - k² (d_u + d₀) < 0`,
+the critical eigenvalue crosses zero with positive speed: the leading real eigenvalue vanishes
+there and has positive derivative in `d`. -/
 theorem leadingEigenvalue_crossing {J : Matrix (Fin 2) (Fin 2) ℝ} {du d₀ k : ℝ}
     (htr : J.trace - k ^ 2 * (du + d₀) < 0) (hk : 0 < J 0 0 * k ^ 2 - du * (k ^ 2) ^ 2)
     (hd₀ : d₀ = neutralDiffusion J du (k ^ 2)) :
@@ -546,14 +554,15 @@ private theorem hasDerivAt_trivialBranch {G : ℝ × ℝ → ℝ} {G' : ℝ × �
     (hasDerivAt_const d₀ (0 : ℝ)).prodMk (hasDerivAt_id d₀)
   exact hG.hasFDerivAt.comp_hasDerivAt d₀ hin
 
-/-- **Turing pattern branch and sign change of the selected critical eigenvalue.** Let mode `k`
-be admissible (`0 < f_u k² - d_u k⁴`) with neutral diffusion `d₀ = d_n(k²)` and negative trace
-there, and let `G` be a reduced bifurcation map for this mode: strictly differentiable at
-`(0, d₀)` and equal on the trivial branch to the critical eigenvalue,
-`G (0, d) = leadingEigenvalue (J - k² D(d))` for `d` near `d₀` (the output of a Lyapunov–Schmidt
-reduction, assumed). Then the crossing is transversal (`0 < ∂_d G (0, d₀)`), a unique local
-pattern branch `d = φ(a)` bifurcates from `(0, d₀)`, and the critical eigenvalue of mode `k`
-changes sign there: `G (0, d)` is negative for `d < d₀` and positive for `d > d₀` near `d₀`.
+/-- **Turing pattern branch and sign change of the selected critical eigenvalue.** Let mode `k` be
+admissible (`0 < f_u k² - d_u k⁴`) with neutral diffusion `d₀ = d_n(k²)` and negative trace there,
+and let `G` be a reduced bifurcation map for this mode: strictly differentiable at `(0, d₀)` and
+equal on the trivial branch to the critical eigenvalue, `G (0, d) = leadingEigenvalue (J - k² D(d))`
+for `d` near `d₀` (assumed: it holds for a center-manifold reduction or a reduction along the
+`d`-dependent critical eigenvector, not for a reduction along a fixed kernel vector). Then the
+crossing is transversal (`0 < ∂_d G (0, d₀)`), a unique local pattern branch `d = φ(a)` bifurcates
+from `(0, d₀)`, and the critical eigenvalue of mode `k` changes sign there: `G (0, d)` is negative
+for `d < d₀` and positive for `d > d₀` near `d₀`.
 
 Only mode `k` is controlled. The hypotheses say nothing about the other Neumann modes, so this is
 not an exchange of stability of the homogeneous state on `[0, L]`: another mode may already be
@@ -666,7 +675,8 @@ theorem patternBranch_direction_stability {G H Ha : ℝ × ℝ → ℝ} {φ : �
 
 /-- **Supercritical Turing pattern branches are stable.** Combine `turing_patternBranch` with
 `patternBranch_direction_stability`: for an admissible mode `k` (e.g. a Neumann mode `k_n`) at
-its neutral diffusion `d₀`, a reduced map `G` (strictly differentiable, equal to the critical
+its neutral diffusion `d₀`, with `tr J - k² (d_u + d₀) < 0`, a reduced map `G` (strictly
+differentiable, equal to the critical
 eigenvalue on the trivial branch, reflection-symmetric to second order with coefficient
 `c = H(0, d₀) ≠ 0`) has a local pattern branch `d = φ(a)` through `(0, d₀)` which, for small
 amplitudes `a ≠ 0`, lies on the side `c (φ(a) - d₀) < 0` and has reduced linearization `λ` with

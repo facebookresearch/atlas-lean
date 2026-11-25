@@ -1,0 +1,77 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Topology.Algebra.PontryaginDual.Evaluation
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Algebra.Star.Unitary
+
+/-!
+# Actual compact-open Pontryagin pairing and the canonical evaluation hom
+
+The dual is the stock group of continuous circle-valued homomorphisms with
+its compact-open topology. Scalar characters and unitaries retain the same
+original complex value. The bidual map is actual evaluation, whose group
+and continuity laws are proved from the compact-open evaluation APIs.
+
+No finite-dimensional dual, supplied bidual equivalence, Fourier model or
+Pontryagin duality theorem is used to choose DATA. General bidual bijectivity
+and Fourier/Plancherel conclusions remain separate source statements.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace PontryaginDual
+
+universe uG
+
+/-- The same complex circle value is an actual scalar unitary. -/
+def circleUnitaryHom : Circle →* unitary ℂ where
+  toFun z := ⟨Circle.coeHom z, by
+    apply Unitary.mem_iff_star_mul_self.mpr
+    change star (Circle.coeHom z) * Circle.coeHom z = 1
+    have hstar : star (Circle.coeHom z) = (Circle.coeHom z)⁻¹ := by
+      change star (z : ℂ) = (z : ℂ)⁻¹
+      exact (Circle.coe_inv_eq_conj z).symm.trans (Circle.coe_inv z)
+    rw [hstar]
+    exact inv_mul_cancel₀ (Circle.coe_ne_zero z)⟩
+  map_one' := by
+    apply Subtype.ext
+    exact Circle.coe_one
+  map_mul' z w := by
+    apply Subtype.ext
+    exact Circle.coe_mul z w
+
+/-- The unitary character has exactly its original scalar circle value. -/
+@[simp]
+theorem circleUnitaryHom_coe (z : Circle) : (circleUnitaryHom z : ℂ) = (z : ℂ) := rfl
+
+/-- The original circle-to-unitary value map is continuous in the original subspace topologies. -/
+theorem continuous_circleUnitaryHom : Continuous circleUnitaryHom := by
+  change Continuous (fun z : Circle => (⟨(z : ℂ), (circleUnitaryHom z).property⟩ : unitary ℂ))
+  exact continuous_subtype_val.subtype_mk _
+
+variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
+
+/-- An actual Pontryagin character as a scalar unitary group homomorphism. -/
+def unitaryCharacter (chi : PontryaginDual G) : G →* unitary ℂ :=
+  circleUnitaryHom.comp (MonoidHom.ofClass chi)
+
+omit [IsTopologicalGroup G] in
+/-- The scalar value of the unitary character is the original compact-open pairing. -/
+@[simp]
+theorem unitaryCharacter_coe (chi : PontryaginDual G) (g : G) :
+    (unitaryCharacter chi g : ℂ) = (chi g : ℂ) := rfl
+
+omit [IsTopologicalGroup G] in
+/-- The actual scalar unitary character is continuous, without an extra continuity certificate. -/
+theorem continuous_unitaryCharacter (chi : PontryaginDual G) : Continuous (unitaryCharacter chi) :=
+  continuous_circleUnitaryHom.comp (map_continuous chi)
+
+end PontryaginDual

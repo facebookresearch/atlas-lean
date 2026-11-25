@@ -42,8 +42,8 @@ def IsVPRamanujanNumber (P : Set ℕ) (v : ℝ) (m R : ℕ) : Prop :=
   P.Infinite ∧
     P ⊆ {p : ℕ | p.Prime} ∧
     1 < v ∧
-    Minimal {R' : ℕ |
+    Minimal (· ∈ {R' : ℕ |
       ∀ x : ℝ, (R' : ℝ) ≤ x →
-        (m : ℤ) ≤ (primeCountingWithin P x : ℤ) - (primeCountingWithin P (x / v) : ℤ)} R
+        (m : ℤ) ≤ (primeCountingWithin P x : ℤ) - (primeCountingWithin P (x / v) : ℤ)}) R
 
 end MetaMathlibExt

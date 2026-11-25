@@ -39,7 +39,8 @@ printed typo for `i`.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
+public import MathlibExt.NumberTheory.LeonardoP
+public import MathlibExt.NumberTheory.LeonardoPFibonacciSum
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Matrix.Basic
 public import Mathlib.Order.Interval.Finset.Nat
@@ -49,23 +50,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.LeonardoPWanted
-
-/-- **Initial values of the generalized Leonardo $p$-numbers.** For natural numbers $p$, $k$
-and $n$, this is the list of integers $(\mathcal{L}_{p,k}(0), \mathcal{L}_{p,k}(1), \dots,
-\mathcal{L}_{p,k}(n))$ of length $n + 1$, where $\mathcal{L}_{p,k}(i) = 1$ for $0 \le i \le p$
-and $\mathcal{L}_{p,k}(i) = \mathcal{L}_{p,k}(i-1) + \mathcal{L}_{p,k}(i-p-1) + k$ for $i > p$. -/
-def leonardoPKSeq (p k : ℕ) : ℕ → List ℤ
-  | 0 => [1]
-  | n + 1 =>
-      let prev := leonardoPKSeq p k n
-      prev ++ [if n + 1 ≤ p then 1
-        else prev.getD n 0 + prev.getD (n - p) 0 + (k : ℤ)]
-
-/-- **Generalized Leonardo $p$-numbers.** For natural numbers $p$ and $k$, the generalized
-Leonardo $p$-numbers are the integers $\mathcal{L}_{p,k}(n)$, $n \in \mathbb{N}$, given by
-$\mathcal{L}_{p,k}(n) = 1$ for $0 \le n \le p$ and
-$\mathcal{L}_{p,k}(n) = \mathcal{L}_{p,k}(n-1) + \mathcal{L}_{p,k}(n-p-1) + k$ for $n > p$. -/
-def leonardoPK (p k n : ℕ) : ℤ := (leonardoPKSeq p k n).getD n 0
 
 /-- **Forward evaluation of the $H(p)$ recurrence.** For a natural number $p$, a function
 $s : \mathbb{Z} \to \mathbb{Z}$ and $n \in \mathbb{N}$, this is the list of the $2p + n + 1$
@@ -171,20 +155,6 @@ of Integer Sequences 27 (2024), Article 24.4.6, Theorem 2. -/
 theorem_wanted leonardoPK_eq (p k n : ℕ) (hp : 1 ≤ p)
     (hk : 1 ≤ k) :
     leonardoPK p k n = ((k : ℤ) + 1) * (MetaMathlibExt.fibonacciP p (n + 1) : ℤ) - (k : ℤ)
-
-/-- **Partial sums of the generalized Leonardo $p$-numbers.** Let $p \ge 1$ and $k \ge 1$ be
-natural numbers, and let $\mathcal{L}_{p,k}$ denote the generalized Leonardo $p$-numbers
-($\mathcal{L}_{p,k}(j) = 1$ for $0 \le j \le p$ and
-$\mathcal{L}_{p,k}(j) = \mathcal{L}_{p,k}(j-1) + \mathcal{L}_{p,k}(j-p-1) + k$ for $j > p$).
-Then for every natural number $n$,
-$\sum_{i=0}^{n} \mathcal{L}_{p,k}(i) = \mathcal{L}_{p,k}(n+p+1) - k(n+1) - 1$.
-
-Source: "On Generalized Leonardo `p`-Numbers", Journal
-of Integer Sequences 27 (2024), Article 24.4.6, Theorem 3. -/
-theorem_wanted sum_leonardoPK (p k n : ℕ) (hp : 1 ≤ p)
-    (hk : 1 ≤ k) :
-    ∑ i ∈ Finset.range (n + 1), leonardoPK p k i =
-      leonardoPK p k (n + p + 1) - (k : ℤ) * (n + 1) - 1
 
 /-- **Stride sums of the generalized Leonardo $p$-numbers.** Let $p \ge 1$ and $k \ge 1$ be
 natural numbers, and let $\mathcal{L}_{p,k}$ denote the generalized Leonardo $p$-numbers
@@ -325,32 +295,6 @@ theorem_wanted h_add_eq (p : ℕ) (hp : 2 ≤ p) (H : ℤ → ℤ)
           seqBZ p ((n : ℤ) - p + i + 1) -
         ∑ i ∈ Finset.range (p + 1), H ((m : ℤ) - p - i) *
           seqAZ p ((n : ℤ) - p + i)
-
-/-- **Sums of $p+1$ consecutive Fibonacci $p$-numbers.** Let $p \ge 1$ and $n \ge 1$ be natural
-numbers and let $k$ be a natural number. Let $F_p$ denote the Fibonacci $p$-numbers
-($F_p(0) = 0$, $F_p(m) = 1$ for $1 \le m \le p$, and $F_p(m) = F_p(m-1) + F_p(m-p-1)$ for
-$m > p$), and let $\mathcal{L}_{p,k}$ denote the generalized Leonardo $p$-numbers
-($\mathcal{L}_{p,k}(m) = 1$ for $0 \le m \le p$ and
-$\mathcal{L}_{p,k}(m) = \mathcal{L}_{p,k}(m-1) + \mathcal{L}_{p,k}(m-p-1) + k$ for $m > p$).
-Then $(k+1) \sum_{i=0}^{p} F_p(n+i) = \mathcal{L}_{p,k}(n+2p-1) + k$.
-
-Source: "On Generalized Leonardo `p`-Numbers", Journal
-of Integer Sequences 27 (2024), Article 24.4.6, Lemma 12. -/
-theorem_wanted succ_mul_sum_fibonacciP (p k n : ℕ) (hp : 1 ≤ p)
-    (hn : 1 ≤ n) :
-    ((k : ℤ) + 1) * ∑ i ∈ Finset.range (p + 1), (MetaMathlibExt.fibonacciP p (n + i) : ℤ) =
-      leonardoPK p k (n + 2 * p - 1) + (k : ℤ)
-
-/-- **Generalized Leonardo $p$-numbers at integer arguments.** For natural numbers $p$ and $k$
-and an integer $z$, the value is the generalized Leonardo $p$-number $\mathcal{L}_{p,k}(z)$ if
-$z \ge 0$, and $-k$ if $z < 0$.
-
-For $-p \le z \le -1$ these are the values $\mathcal{L}_{p,k}(z) = -k$ obtained by running the
-recurrence $\mathcal{L}_{p,k}(n) = \mathcal{L}_{p,k}(n-1) + \mathcal{L}_{p,k}(n-p-1) + k$
-backwards; below $-p$ they need not be, but Theorem 13 of the source only uses arguments
-$z \ge -p$. -/
-def leonardoPKZ (p k : ℕ) (z : ℤ) : ℤ :=
-  if 0 ≤ z then leonardoPK p k z.toNat else -(k : ℤ)
 
 /-- **Honsberger-type identity for generalized Leonardo $p$-numbers.** Let $p$, $k$, $m$ and $n$
 be natural numbers with $p, k, m, n \ge 1$. Write $\mathcal{L}$ for the generalized Leonardo

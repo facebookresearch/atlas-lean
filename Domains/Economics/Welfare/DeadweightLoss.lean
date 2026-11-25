@@ -250,9 +250,9 @@ private theorem hasDerivAt_quad_antideriv (s qstar x : ℝ) :
     simpa [Function.comp_def] using (hasDerivAt_pow 2 (x - qstar)).comp x h1
   exact (h2.const_mul (s / 2)).neg
 
-/-- Small taxes have equilibria near the no-tax equilibrium: for `C²` inverse
-demand and supply crossing at `qstar` with supply steeper than demand, there is
-an equilibrium quantity path `τ ↦ q τ`, continuous at `0` with `q 0 = qstar`. -/
+/-- Small taxes have nearby equilibria when supply is steeper than demand: for `C²` inverse demand
+and supply crossing at `qstar` with supply steeper than demand, there is an equilibrium quantity
+path `τ ↦ q τ`, continuous at `0` with `q 0 = qstar`. -/
 theorem exists_taxEquilibrium_path {Pd Ps : ℝ → ℝ} {qstar : ℝ}
     (hd : ContDiffAt ℝ 2 Pd qstar) (hs : ContDiffAt ℝ 2 Ps qstar)
     (heq : Pd qstar = Ps qstar) (hslope : 0 < deriv Ps qstar - deriv Pd qstar) :
@@ -270,7 +270,7 @@ theorem exists_taxEquilibrium_path {Pd Ps : ℝ → ℝ} {qstar : ℝ}
   have hw0 : Pd qstar - Ps qstar = 0 := sub_eq_zero.mpr heq
   have hstrict0 : HasStrictDerivAt (fun x => Pd x - Ps x)
       (-(deriv Ps qstar - deriv Pd qstar)) qstar := by
-    have h := hw2.hasStrictDerivAt (by decide)
+    have h := hw2.hasStrictDerivAt_deriv (by decide)
     rw [hdw] at h
     exact h
   have hsne : -(deriv Ps qstar - deriv Pd qstar) ≠ 0 :=
@@ -298,10 +298,10 @@ theorem exists_taxEquilibrium_path {Pd Ps : ℝ → ℝ} {qstar : ℝ}
     filter_upwards [hright'] with τ hτ
     exact hτ
 
-/-- Harberger small-tax approximation with a controlled remainder: along any
-equilibrium path continuous at `τ = 0` (the branch through `qstar`), the
-deadweight loss equals `τ² / (2 (Ps'(qstar) - Pd'(qstar)))` up to `O(τ³)`. For
-nonlinear schedules the triangle formula is not exact; only the remainder is
+/-- Harberger small-tax approximation with a controlled remainder: for inverse demand and supply
+`C²` at `qstar` with `Ps'(qstar) > Pd'(qstar)`, along any equilibrium path continuous at `τ = 0`
+(the branch through `qstar`), the deadweight loss equals `τ² / (2 (Ps'(qstar) - Pd'(qstar)))` up
+to `O(τ³)`. For nonlinear schedules the triangle formula is not exact; only the remainder is
 controlled. -/
 theorem deadweightLoss_sub_harberger_isBigO {Pd Ps : ℝ → ℝ} {qstar : ℝ} {q : ℝ → ℝ}
     (hd : ContDiffAt ℝ 2 Pd qstar) (hs : ContDiffAt ℝ 2 Ps qstar)
