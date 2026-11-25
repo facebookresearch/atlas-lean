@@ -33,7 +33,8 @@ closed orientable surface of genus `g` has first Betti number `2g` (Hatcher, *Al
 This is the genus in Kevin Buzzard's *Jacobian challenge*, via `jacobian_challenge_diffgeo`
 in `leanprover/lean-eval`. -/
 noncomputable def genus (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) ω X] : ℕ :=
+    [ConnectedSpace X] [Nonempty X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) ω X] : ℕ :=
   let coeff := ModuleCat.of ℚ (ULift.{u} ℚ)
   let h₁ := ((AlgebraicTopology.singularHomologyFunctor (ModuleCat.{u} ℚ) 1).obj coeff).obj
     (TopCat.of X)
