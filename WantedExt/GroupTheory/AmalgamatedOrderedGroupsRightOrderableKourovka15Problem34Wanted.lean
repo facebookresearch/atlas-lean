@@ -35,13 +35,19 @@ factors are allowed, and the amalgam is Mathlib's `Monoid.PushoutI φ`. Right-or
 linear order invariant under right multiplication.
 -/
 
-/-- `G` is right-orderable: it admits a linear order invariant under right multiplication. -/
+/-- **Right-orderable group.** A group $G$ is right-orderable if it admits a linear order $\le$
+that is invariant under right multiplication: $a \le b$ implies $ac \le bc$ for all
+$a, b, c \in G$. -/
 def IsRightOrderable (G : Type*) [Group G] : Prop :=
   ∃ r : LinearOrder G, letI := r; ∀ a b c : G, a ≤ b → a * c ≤ b * c
 
-/-- Kourovka 15.34 (V. V. Bludov): the free product of any family of linearly (two-sided) ordered
-groups `G i` with an amalgamated subgroup `H`, embedded in each `G i` by an order-preserving
-homomorphism `φ i`, is right-orderable. -/
+/-- **Kourovka Problem 15.34 (statement).** The statement that for every family $(G_i)_{i \in I}$
+of groups, each with a linear order invariant under multiplication on both sides, every group $H$
+with such a linear order, and all strictly increasing group homomorphisms
+$\varphi_i \colon H \to G_i$, the free product of the $G_i$ with $H$ amalgamated along the maps
+$\varphi_i$ is right-orderable.
+
+The problem was posed by V. V. Bludov. -/
 def amalgamOfOrderedGroupsRightOrderable : Prop :=
   ∀ (ι : Type) (G : ι → Type) [∀ i, Group (G i)] [∀ i, LinearOrder (G i)]
     [∀ i, MulLeftMono (G i)] [∀ i, MulRightMono (G i)] (H : Type) [Group H] [LinearOrder H]
@@ -49,9 +55,14 @@ def amalgamOfOrderedGroupsRightOrderable : Prop :=
     (∀ i, StrictMono (φ i)) → IsRightOrderable (Monoid.PushoutI φ)
 
 /--
-Resolved true: Bludov and Glass proved that the free product of (two-sided) ordered groups with
-subgroups amalgamated along an order-preserving isomorphism is right-orderable, also for arbitrary
-families of factors; the Kourovka Archive answers 15.34 "Yes, it is". Source: E. I. Khukhro and V.
+**Bludov–Glass theorem (Kourovka Problem 15.34).** Let $(G_i)_{i \in I}$ be a family of groups,
+each with a linear order invariant under multiplication on both sides ($a \le b$ implies
+$ca \le cb$ and $ac \le bc$), let $H$ be a group with such a linear order, and for each $i$ let
+$\varphi_i \colon H \to G_i$ be a strictly increasing group homomorphism. Then the free product of
+the $G_i$ with $H$ amalgamated along the maps $\varphi_i$ is right-orderable: it admits a linear
+order such that $a \le b$ implies $ac \le bc$ for all $a, b, c$.
+
+Source: E. I. Khukhro and V.
 D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.34 (V. V. Bludov); resolution: V.
 V. Bludov and A. M. W. Glass, On free products of right ordered groups with amalgamated subgroups,

@@ -123,8 +123,9 @@ noncomputable section
 /-- States are read in `[0, 1]` through `Set.projIcc`. -/
 local notation "toI" => projIcc (0 : ℝ) 1 zero_le_one
 
-/-- A family of kernels on `[0, 1]` is **Feller** if it maps continuous functions to continuous
-functions: `x ↦ ∫ g dκ_t(x)` is continuous for every `t` and every continuous `g`. -/
+/-- A family of kernels on `[0, 1]`, not assumed finite or Markov, is **Feller** if it maps
+continuous functions to continuous functions: `x ↦ ∫ g dκ_t(x)` is continuous for every `t` and
+every continuous `g`, the real integral being `0` when `g` is not `κ_t(x)`-integrable. -/
 def IsFellerFamily (κ : ℝ≥0 → Kernel I I) : Prop :=
   ∀ (t : ℝ≥0) (g : C(I, ℝ)), Continuous fun x => ∫ y, g y ∂κ t x
 
@@ -136,8 +137,10 @@ section PathKernel
 
 variable (hκ : ∀ s t, κ (s + t) = κ t ∘ₖ κ s)
 
-/-- The canonical path measure of a measurable cylinder is given by the ordered
-finite-dimensional law. -/
+/-- For Markov kernels `κ` satisfying the Chapman–Kolmogorov equations, the canonical path measure
+of a measurable cylinder is given by the ordered finite-dimensional law. Here `x` is the input of
+the construction: the time-`0` marginal of `pathMeasure κ hκ x` is `κ 0 x`, which is the point mass
+at the input for every input exactly when `κ 0` is the identity kernel; that is not assumed. -/
 theorem pathMeasure_cylinder (x : I) (J : Finset ℝ≥0) {S : Set (J → I)}
     (hS : MeasurableSet S) :
     pathMeasure κ hκ x (cylinder J S) =
@@ -148,7 +151,10 @@ theorem pathMeasure_cylinder (x : I) (J : Finset ℝ≥0) {S : Set (J → I)}
   rw [cylinder_eq_preimage, ← Measure.map_apply hproj ((orderMeasurableEquiv J).measurable hS)]
   exact congrArg (fun ν : Measure (Fin J.card → I) => ν _) (map_ordered_pathMeasure κ hκ x J)
 
-/-- **The path measure is measurable in the initial state.** -/
+/-- **The path measure is measurable in the initial state.** For Markov kernels `κ` satisfying the
+Chapman–Kolmogorov equations `hκ`, `x ↦ pathMeasure κ hκ x` is measurable. Here `x` is the input of
+the construction: the time-`0` marginal of `pathMeasure κ hκ x` is `κ 0 x`, which is the point mass
+at the input for every input exactly when `κ 0` is the identity kernel; that is not assumed. -/
 theorem measurable_pathMeasure : Measurable fun x => pathMeasure κ hκ x := by
   refine Measurable.measure_of_isPiSystem generateFrom_measurableCylinders.symm
     isPiSystem_measurableCylinders ?_ (by simp)
@@ -157,8 +163,10 @@ theorem measurable_pathMeasure : Measurable fun x => pathMeasure κ hκ x := by
   simp_rw [pathMeasure_cylinder hκ _ J hS]
   exact Kernel.measurable_coe _ ((orderMeasurableEquiv J).measurable hS)
 
-/-- The canonical path measures of a Chapman–Kolmogorov family, as a Markov kernel from the
-initial state to sample paths. -/
+/-- The canonical path measures of a Chapman–Kolmogorov family of Markov kernels, as a Markov kernel
+from the input state to sample paths. Here `x` is the input of the construction: the time-`0`
+marginal of `pathMeasure κ hκ x` is `κ 0 x`, which is the point mass at the input for every input
+exactly when `κ 0` is the identity kernel; that is not assumed. -/
 def pathKernel : Kernel I SamplePath :=
   ⟨fun x => pathMeasure κ hκ x, measurable_pathMeasure hκ⟩
 
@@ -197,9 +205,12 @@ private theorem integral_comp_map {Ω : Type*} {mΩ : MeasurableSpace Ω} {β : 
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- `Y` is a **Markov family for the kernel family `κ`** with respect to the filtration `𝒢`
-under `μ`: each `Y u` is `𝒢 u`-measurable, and for `u ≤ v`, every `A ∈ 𝒢 u` and every
-continuous `g` on `[0, 1]`, `∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ`. -/
+/-- `Y` is a **Markov family for the kernel family `κ`** with respect to the filtration `𝒢` under
+`μ`: each `Y u` is `𝒢 u`-measurable, and for `u ≤ v`, every `A ∈ 𝒢 u` and every continuous `g` on
+`[0, 1]`, `∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ`. These are real integrals, `0` for a
+non-integrable integrand; if the kernels are Markov and `μ` is finite they are genuine finite
+integrals. Neither is assumed here, and the families after a deterministic or a stopping time do not
+assume Markov kernels. -/
 structure IsKernelMarkovFamily (κ : ℝ≥0 → Kernel I I) (μ : Measure Ω) (𝒢 : Filtration ℝ≥0 mΩ)
     (Y : ℝ≥0 → Ω → I) : Prop where
   measurable : ∀ u, Measurable[𝒢 u] (Y u)
@@ -214,8 +225,12 @@ omit [∀ t, IsMarkovKernel (κ t)] in
 theorem measurable' (hY : IsKernelMarkovFamily κ μ 𝒢 Y) (u : ℝ≥0) : Measurable (Y u) :=
   (hY.measurable u).mono (𝒢.le u) le_rfl
 
-/-- **Kernel form of the Markov property.** For `u ≤ v` and `A ∈ 𝒢 u`, the law of `Y v` on `A`
-is the law of `Y u` on `A` pushed through `κ (v - u)`. -/
+/-- **Kernel form of the Markov property.** Let the `κ t` be Markov kernels, `μ` a finite measure
+and `Y` a Markov family for `κ` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`. For `u ≤ v`
+and `A ∈ 𝒢 u`, the image of `μ` restricted to `A` under `Y v` is its image under `Y u` pushed
+through `κ (v - u)`. Images of `μ` restricted to `A` have total mass `μ A` and are not
+normalized. -/
 theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ μ 𝒢 Y)
     {u v : ℝ≥0} (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) :
     (μ.restrict A).map (Y v) = κ (v - u) ∘ₘ (μ.restrict A).map (Y u) := by
@@ -225,16 +240,23 @@ theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ 
       (f.norm_coe_le_norm ·)]
   exact hY.setIntegral_eq u v huv A hA f.toContinuousMap
 
-/-- The kernel form of the Markov property for nonnegative measurable test functions. -/
+/-- The kernel form of the Markov property for nonnegative measurable test functions. Let the `κ t`
+be Markov kernels, `μ` a finite measure and `Y` a Markov family for `κ` with respect to `𝒢`: each
+`Y u` is `𝒢 u`-measurable and `∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u`
+and continuous `g`. Then for `u ≤ v`, every `A ∈ 𝒢 u` and every measurable `f : I → [0, ∞]`,
+possibly unbounded, the lower integrals agree: `∫⁻_A f (Y v) dμ = ∫⁻_A ∫⁻ f dκ_{v - u}(Y u) dμ`. -/
 theorem lintegral_step [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ μ 𝒢 Y) {u v : ℝ≥0}
     (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) {f : I → ℝ≥0∞} (hf : Measurable f) :
     ∫⁻ ω in A, f (Y v ω) ∂μ = ∫⁻ ω in A, ∫⁻ y, f y ∂κ (v - u) (Y u ω) ∂μ := by
   rw [← lintegral_map hf (hY.measurable' v), hY.map_restrict_eq_comp huv hA,
     lintegral_comp_map _ (hY.measurable' u) hf]
 
-/-- **Joint law with the past.** For `u ≤ v`, a `𝒢 u`-measurable `Z` with `Y u = φ ∘ Z` and
-`A ∈ 𝒢 u`, the joint law of `(Z, Y v)` on `A` is the law of `Z` on `A` composed with one kernel
-step from `φ`. -/
+/-- **Joint law with the past.** Let the `κ t` be Markov kernels, `μ` a finite measure and `Y` a
+Markov family for `κ` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`. For
+`u ≤ v`, a `𝒢 u`-measurable `Z`, a measurable `φ` with `Y u = φ ∘ Z` and `A ∈ 𝒢 u`, the image of `μ`
+restricted to `A` under `(Z, Y v)` is the image under `Z` composed with one kernel step from `φ`.
+Images of `μ` restricted to `A` have total mass `μ A` and are not normalized. -/
 theorem map_restrict_prod_eq_compProd [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ μ 𝒢 Y)
     {β : Type*} [MeasurableSpace β] {u v : ℝ≥0} (huv : u ≤ v) {Z : Ω → β}
     (hZ : Measurable[𝒢 u] Z) {φ : β → I} (hφ : Measurable φ) (hZφ : ∀ ω, φ (Z ω) = Y u ω)
@@ -356,9 +378,13 @@ private theorem lintegral_finite_succ [IsFiniteMeasure μ] (hY : IsKernelMarkovF
     exact (lintegral_map hH hZ').trans
       (lintegral_finite_succ hY n τ hτm s (fun i => hs _) A hA H hH)
 
-/-- **Multi-time law of a Markov family.** For times `t₁ ≤ … ≤ tₙ` after `s` and `A ∈ 𝒢 s`, the
-joint law of `(Y t₁, …, Y tₙ)` on `A` is the law of `Y s` on `A` pushed through the ordered
-finite-dimensional kernel `finiteChainKernel κ s t`. -/
+/-- **Multi-time law of a Markov family.** Let the `κ t` be Markov kernels, `μ` a finite measure and
+`Y` a Markov family for `κ` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`. For times
+`t₁ ≤ … ≤ tₙ` after `s` and `A ∈ 𝒢 s`, the image of `μ` restricted to `A` under `(Y t₁, …, Y tₙ)` is
+its image under `Y s` pushed through the ordered finite-dimensional kernel
+`finiteChainKernel κ s t`. Images of `μ` restricted to `A` have total mass `μ A` and are not
+normalized. -/
 theorem map_restrict_finite_eq_comp [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ μ 𝒢 Y)
     {n : ℕ} {t : Fin n → ℝ≥0} (ht : Monotone t) {s : ℝ≥0} (hs : ∀ i, s ≤ t i) {A : Set Ω}
     (hA : MeasurableSet[𝒢 s] A) :
@@ -375,8 +401,13 @@ theorem map_restrict_finite_eq_comp [IsFiniteMeasure μ] (hY : IsKernelMarkovFam
     exact congrArg F (Subsingleton.elim _ _)
   | succ n => exact lintegral_finite_succ hY n t ht s hs A hA F hF
 
-/-- **Path law of a Markov family.** For `A ∈ 𝒢 0`, the law of the path `(Y u)_{u ≥ 0}` on `A`
-is the law of `Y 0` on `A` pushed through the path-measure kernel `pathKernel hκ`. -/
+/-- **Path law of a Markov family.** Let the `κ t` be Markov kernels, `μ` a finite measure and `Y` a
+Markov family for `κ` with respect to `𝒢`: each `Y u` is `𝒢 u`-measurable and
+`∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u` and continuous `g`. If moreover
+`κ` satisfies the Chapman–Kolmogorov equations `hκ`, then for `A ∈ 𝒢 0` the image of `μ` restricted
+to `A` under the path `(Y u)_{u ≥ 0}` is its image under `Y 0` pushed through the path-measure
+kernel `pathKernel hκ`. Images of `μ` restricted to `A` have total mass `μ A` and are not
+normalized. The time-`0` marginal of `pathKernel hκ x` is `κ 0 x`. -/
 theorem map_restrict_path_eq_comp [IsFiniteMeasure μ] (hκ : ∀ s t, κ (s + t) = κ t ∘ₖ κ s)
     (hY : IsKernelMarkovFamily κ μ 𝒢 Y) {A : Set Ω} (hA : MeasurableSet[𝒢 0] A) :
     (μ.restrict A).map (fun ω u => Y u ω) = pathKernel hκ ∘ₘ (μ.restrict A).map (Y 0) := by
@@ -615,11 +646,12 @@ private def kernelOp (hfeller : IsFellerFamily κ) (t : ℝ≥0) (g : C(I, ℝ))
 /-! ### The strong Markov property for continuous test functions -/
 
 omit [∀ t, IsMarkovKernel (κ t)] in
-/-- **Strong Markov property for a Feller kernel family, integrated form.** Let `X` be a
-continuous process adapted to `ℱ` under a finite measure `μ` that is Markov for the Feller
-kernel family `κ`: `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` for `s ≤ t` and continuous `g`.
+/-- **Strong Markov property for a Feller kernel family, integrated form.** Let `κ` be a Feller
+family of kernels, `μ` a finite measure and `X` a real process with continuous paths, adapted to
+`ℱ`, whose states are read in `[0, 1]` through the clamp `π = projIcc 0 1`, Markov for `κ`:
+`μ[g (π (X t)) | ℱ s] = ∫ g dκ_{t - s}(π (X s))` almost surely for `s ≤ t` and every continuous `g`.
 Then for every `ℱ`-stopping time `τ`, every `A ∈ ℱ_τ`, every `t ≥ 0` and every continuous `g`,
-`∫_{A ∩ {τ < ∞}} g (X (τ + t)) dμ = ∫_{A ∩ {τ < ∞}} ∫ g dκ_t(X τ) dμ`.
+`∫_{A ∩ {τ < ∞}} g (π (X (τ + t))) dμ = ∫_{A ∩ {τ < ∞}} ∫ g dκ_t(π (X τ)) dμ`.
 
 Source: Ethier & Kurtz (1986), ch. 4, Thm. 2.7; Revuz & Yor (1999), ch. III, §3. -/
 theorem setIntegral_stoppedValue_add_eq_integral [IsFiniteMeasure μ]
@@ -639,9 +671,14 @@ theorem setIntegral_stoppedValue_add_eq_integral [IsFiniteMeasure μ]
 /-! ### The process after a stopping time -/
 
 omit [∀ t, IsMarkovKernel (κ t)] in
-/-- **The process after a stopping time is a Markov family.** On `{τ < ∞}`, the states
-`X (τ + u)` of a process that is Markov for a Feller kernel family `κ` form a Markov family for
-`κ` with respect to the filtration `ℱ_{τ + u}`. -/
+/-- **The process after a stopping time is a Markov family.** Let `κ` be a Feller family of kernels,
+`μ` a finite measure and `X` a real process with continuous paths, adapted to `ℱ`, whose states are
+read in `[0, 1]` through the clamp `π = projIcc 0 1`, Markov for `κ`:
+`μ[g (π (X t)) | ℱ s] = ∫ g dκ_{t - s}(π (X s))` almost surely for `s ≤ t` and every continuous `g`.
+For an `ℱ`-stopping time `τ`, the clamped stopped values `u ↦ π (stoppedValue X (τ + u))`, equal to
+`π (X (τ + u))` on `{τ < ∞}` and, on `{τ = ∞}`, to `π X` at the default finite time of the
+stopped-value convention, form a Markov family for `κ` with respect to the filtration `ℱ_{τ + u}`
+under `μ` restricted to `{τ < ∞}`. -/
 theorem isKernelMarkovFamily_stoppedValue_add [IsFiniteMeasure μ]
     (hfeller : IsFellerFamily κ)
     (hcont : ∀ ω, Continuous fun t => X t ω) (hadapt : StronglyAdapted ℱ X)
@@ -684,9 +721,12 @@ def shiftFiltration (ℱ : Filtration ℝ≥0 mΩ) (s : ℝ≥0) : Filtration �
   le' u := ℱ.le (s + u)
 
 omit [∀ t, IsMarkovKernel (κ t)] in
-/-- **The process after a deterministic time is a Markov family**, with no Feller hypothesis:
-the states `X (s + u)` of a process adapted to `ℱ` and Markov for `κ` form a Markov family for
-`κ` with respect to the filtration `ℱ_{s + u}`. -/
+/-- **The process after a deterministic time is a Markov family**, with no Feller hypothesis and no
+path continuity: let `μ` be a finite measure and `X` a real process adapted to `ℱ`, whose states are
+read in `[0, 1]` through the clamp `π = projIcc 0 1`, Markov for `κ`:
+`μ[g (π (X t)) | ℱ s] = ∫ g dκ_{t - s}(π (X s))` almost surely for `s ≤ t` and every continuous `g`.
+Then for every `s`, the states `π (X (s + u))` form a Markov family for `κ` with respect to the
+filtration `ℱ_{s + u}`. -/
 theorem isKernelMarkovFamily_shift (hadapt : StronglyAdapted ℱ X)
     (hmarkov : ∀ s t : ℝ≥0, s ≤ t → ∀ g : C(I, ℝ),
       μ[fun ω => g (projIcc (0 : ℝ) 1 zero_le_one (X t ω)) | ℱ s] =ᵐ[μ]
@@ -707,10 +747,12 @@ theorem isKernelMarkovFamily_shift (hadapt : StronglyAdapted ℱ X)
 
 /-! ### The Wright–Fisher diffusion with selection -/
 
-/-- `X` is a **Wright–Fisher diffusion with scaled selection coefficient `sel` (`σ = 2Ns`),
-Markov for the kernel family `κ`**: it solves the martingale problem
-`IsWrightFisherSolution sel` for the generator `L_σ f = x (1 - x) / 2 · f'' + σ x (1 - x) · f'`,
-and for `s ≤ t` and every continuous `g`, `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely. -/
+/-- `X` is a **Wright–Fisher diffusion with scaled selection coefficient `sel` (`σ = 2Ns`), Markov
+for the kernel family `κ`**: it solves the martingale problem `IsWrightFisherSolution sel` for the
+generator `L_σ f = x (1 - x) / 2 * f'' + σ x (1 - x) * f'`, and for `s ≤ t` and every continuous
+`g`, `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely. Neither `μ` finite nor the kernels
+Markov is required: the conditional expectation is `0` for a non-integrable input or a measure that
+is not σ-finite on `ℱ s`, and the kernel integral is `0` for a non-integrable `g`. -/
 structure IsSelectionMarkov (sel : ℝ) (κ : ℝ≥0 → Kernel I I) (ℱ : Filtration ℝ≥0 mΩ)
     (μ : Measure Ω) (X : ℝ≥0 → Ω → ℝ) : Prop where
   solution : KimuraFixationProcess.IsWrightFisherSolution sel ℱ μ X
@@ -743,10 +785,13 @@ private theorem stoppedValue_add_zero :
       fun ω => toI (stoppedValue X τ ω) := by
   simp
 
-/-- **Strong Markov property of the selection diffusion for bounded measurable `g`.** For a
-Wright–Fisher diffusion with selection that is Markov for a Feller kernel family `κ`, every
-`ℱ`-stopping time `τ`, every `t ≥ 0` and every bounded measurable `g` on `[0, 1]`,
-`μ[1_{τ < ∞} g (X (τ + t)) | ℱ_τ] = 1_{τ < ∞} ∫ g dκ_t(X τ)` almost surely.
+/-- **Strong Markov property of the selection diffusion for bounded measurable `g`.** Let the `κ t`
+be Markov kernels forming a Feller family, `μ` a finite measure and `X` a Wright–Fisher diffusion
+with selection `sel`, Markov for `κ`: a continuous adapted solution with values in `[0, 1]` of the
+selection martingale problem with `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely for `s ≤ t`
+and every continuous `g`. Then for every `ℱ`-stopping time `τ`, every `t ≥ 0` and every bounded
+measurable `g` on `[0, 1]`, `μ[1_{τ < ∞} g (X (τ + t)) | ℱ_τ] = 1_{τ < ∞} ∫ g dκ_t(X τ)` almost
+surely.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/
@@ -769,11 +814,14 @@ theorem condExp_indicator_comp_stoppedValue_add [IsFiniteMeasure μ]
   have h := hY.map_restrict_eq_comp (u := 0) (v := t) zero_le (hle _ hA)
   rwa [tsub_zero, stoppedValue_add_zero] at h
 
-/-- **Strong Markov property of the selection diffusion for multi-time functionals.** For a
-Wright–Fisher diffusion with selection that is Markov for a Feller kernel family `κ`, every
-`ℱ`-stopping time `τ`, times `t₁ ≤ … ≤ tₙ` and every bounded measurable `F` on `[0, 1]ⁿ`,
-`μ[1_{τ < ∞} F (X (τ + t₁), …, X (τ + tₙ)) | ℱ_τ] = 1_{τ < ∞} ∫ F dP_t(X τ)` almost surely,
-where `P_t = finiteChainKernel κ 0 t` is the ordered finite-dimensional law.
+/-- **Strong Markov property of the selection diffusion for multi-time functionals.** Let the `κ t`
+be Markov kernels forming a Feller family, `μ` a finite measure and `X` a Wright–Fisher diffusion
+with selection `sel`, Markov for `κ`: a continuous adapted solution with values in `[0, 1]` of the
+selection martingale problem with `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely for `s ≤ t`
+and every continuous `g`. Then for every `ℱ`-stopping time `τ`, times `t₁ ≤ … ≤ tₙ` and every
+bounded measurable `F` on `[0, 1]ⁿ`,
+`μ[1_{τ < ∞} F (X (τ + t₁), …, X (τ + tₙ)) | ℱ_τ] = 1_{τ < ∞} ∫ F dP_t(X τ)` almost surely, where
+`P_t = finiteChainKernel κ 0 t` is the ordered finite-dimensional law.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/
@@ -797,12 +845,15 @@ theorem condExp_indicator_finite_stoppedValue_add [IsFiniteMeasure μ]
   have h := hY.map_restrict_finite_eq_comp ht (fun _ => zero_le) (hle _ hA)
   rwa [stoppedValue_add_zero] at h
 
-/-- **Strong Markov property of the selection diffusion for whole-path functionals.** For a
-Wright–Fisher diffusion with selection that is Markov for a Feller Chapman–Kolmogorov kernel
-family `κ`, every `ℱ`-stopping time `τ` and every bounded measurable `F` on sample paths
-`ℝ≥0 → [0, 1]` (product σ-algebra),
-`μ[1_{τ < ∞} F ((X (τ + u))_{u ≥ 0}) | ℱ_τ] = 1_{τ < ∞} ∫ F d(pathMeasure κ (X τ))` almost
-surely: given `ℱ_τ`, the post-`τ` process has the canonical law of `κ` started at `X τ`.
+/-- **Strong Markov property of the selection diffusion for whole-path functionals.** Let the `κ t`
+be Markov kernels forming a Feller family, `μ` a finite measure and `X` a Wright–Fisher diffusion
+with selection `sel`, Markov for `κ`: a continuous adapted solution with values in `[0, 1]` of the
+selection martingale problem with `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely for `s ≤ t`
+and every continuous `g`. If moreover `κ` satisfies the Chapman–Kolmogorov equations `hκ`, then for
+every `ℱ`-stopping time `τ` and every bounded measurable `F` on sample paths `ℝ≥0 → [0, 1]` (product
+σ-algebra), `μ[1_{τ < ∞} F ((X (τ + u))_{u ≥ 0}) | ℱ_τ] = 1_{τ < ∞} ∫ F d(pathMeasure κ hκ (X τ))`
+almost surely. The path measure with input `y` has time-`0` marginal `κ 0 y`; this is the point
+mass at the input for every input exactly when `κ 0` is the identity kernel, which is not assumed.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/
@@ -827,9 +878,12 @@ theorem condExp_indicator_path_stoppedValue_add [IsFiniteMeasure μ]
   rwa [stoppedValue_add_zero] at h
 
 /-- **Markov property of the selection diffusion for whole-path functionals at a deterministic
-time**, with no Feller hypothesis. For a Wright–Fisher diffusion with selection that is Markov
-for a Chapman–Kolmogorov kernel family `κ`, every `s ≥ 0` and every bounded measurable `F` on
-sample paths, `μ[F ((X (s + u))_{u ≥ 0}) | ℱ_s] = ∫ F d(pathMeasure κ (X s))` almost surely.
+time**, with no Feller hypothesis. Let the `κ t` be Markov kernels satisfying the Chapman–Kolmogorov
+equations `hκ`, `μ` a finite measure and `X` a continuous adapted `[0, 1]`-valued solution of the
+selection martingale problem with `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)` almost surely for `s ≤ t`
+and continuous `g`. Then for every `s ≥ 0` and every bounded measurable `F` on sample paths,
+`μ[F ((X (s + u))_{u ≥ 0}) | ℱ_s] = ∫ F d(pathMeasure κ hκ (X s))` almost surely; the path measure
+with input `y` has time-`0` marginal `κ 0 y`.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1; Revuz & Yor (1999), ch. III, §1. -/
 theorem condExp_path_add [IsFiniteMeasure μ] (hX : IsSelectionMarkov sel κ ℱ μ X)

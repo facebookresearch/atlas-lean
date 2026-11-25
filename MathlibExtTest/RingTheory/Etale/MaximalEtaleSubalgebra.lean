@@ -14,7 +14,7 @@ public import MathlibExt.RingTheory.Etale.MaximalEtaleSubalgebra
 
 universe u v
 
-theorem exactSource
+private theorem exactSource
     (k : Type u) [Field k] (A : Type v) [CommRing A] [Algebra k A] [Module.Finite k A] :
     ∃ P : Subalgebra k A,
       Algebra.Etale k P ∧

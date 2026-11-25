@@ -94,7 +94,7 @@ public theorem height_map_quotientMk_span_singleton_add_one
     let q : Ideal R := Q.comap (algebraMap R Rp)
     have hqp : q ≤ p := by
       have hle : Q ≤ maximalIdeal Rp := IsLocalRing.le_maximalIdeal (Ideal.IsPrime.ne_top hQp)
-      simpa [q, IsLocalization.AtPrime.comap_maximalIdeal Rp p] using
+      simpa [q, IsLocalization.AtPrime.under_maximalIdeal Rp p] using
         Ideal.comap_mono (f := algebraMap R Rp) hle
     have hqmin : q ∈ minimalPrimes R := by
       rw [minimalPrimes_eq_minimals]
@@ -108,7 +108,7 @@ public theorem height_map_quotientMk_span_singleton_add_one
         IsLocalization.isPrime_of_isPrime_disjoint p.primeCompl Rp q' hq' hdisj
       have hle : q'.map (algebraMap R Rp) ≤ Q := by
         calc q'.map (algebraMap R Rp) ≤ q.map (algebraMap R Rp) := Ideal.map_mono hq'q
-          _ = Q := IsLocalization.map_comap p.primeCompl Rp Q
+          _ = Q := IsLocalization.map_under p.primeCompl Rp Q
       have hge : Q ≤ q'.map (algebraMap R Rp) := hQ.2 ⟨hQ'p, bot_le⟩ hle
       intro r hr
       have hr' : algebraMap R Rp r ∈ q'.map (algebraMap R Rp) := hge hr

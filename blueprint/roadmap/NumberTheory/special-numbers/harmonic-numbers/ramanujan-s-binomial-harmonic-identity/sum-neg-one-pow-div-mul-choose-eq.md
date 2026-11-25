@@ -11,4 +11,5 @@ where $\binom{x}{N} = x(x-1)\cdots(x-N+1)/N!$ is the generalized binomial coeffi
 
 ## Sources
 
-- Horst Alzer and Man Kam Kwong, *Ramanujan and a Combinatorial Identity Involving Harmonic Numbers*, Journal of Integer Sequences 29 (2026), Article 26.4.8, Lemma 7.
+- H. W. Gould, *Combinatorial Identities: A Standardized Set of Tables Listing 500 Binomial Coefficient Summations* (1972), p. 6, as cited by Alzer and Kwong.
+- Horst Alzer and Man Kam Kwong, [*Ramanujan and a Combinatorial Identity Involving Harmonic Numbers*](https://cs.uwaterloo.ca/journals/JIS/VOL29/Alzer/alzer22.pdf), Journal of Integer Sequences 29 (2026), Article 26.4.8, Lemma 7, equation (2.4).

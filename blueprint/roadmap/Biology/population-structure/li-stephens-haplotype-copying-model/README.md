@@ -18,3 +18,6 @@
 - [Tabulated recursion computes the Li–Stephens forward variables](fast-forward-tab-get.md)
 - [The tabulated Li–Stephens likelihood](likelihood-tab.md)
 - [Tabulated recursion computes the haplotype likelihood](likelihood-tab-eq.md)
+- [The PAC likelihood is normalized but need not be exchangeable](product-of-approximate-conditionals-pac-likeliho.md)
+
+- [Diploid Li–Stephens model: collapsed forward step and imputed dosage as a posterior mean](diploid-li-stephens-phasing-and-genotype-imputat.md)

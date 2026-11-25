@@ -37,7 +37,15 @@ namespace Cslib.Algorithms.Lean.ModularExponentiation
 
 open Cslib.Algorithms.Lean
 
-/-- CLRS4 §31.6, printed page 934, `MODULAR-EXPONENTIATION`, with one tick per multiplication. -/
+/-- **Modular exponentiation.** For natural numbers $a$, $b$ and $n$, modular exponentiation with
+base $a$, exponent $b$ and modulus $n$ is the recursive procedure that returns $1$ if $b = 0$. If
+$b > 0$ is even, it computes the result $d$ for exponent $b/2$ (same base and modulus) and returns
+$d \cdot d \bmod n$. If $b$ is odd, it computes the result $d$ for exponent $b - 1$ and returns
+$a \cdot d \bmod n$. Each even or odd step performs one multiplication, and the cost of the
+procedure is the total number of multiplications performed.
+
+Source: CLRS4 §31.6, printed page 934, `MODULAR-EXPONENTIATION`, with one tick per
+multiplication. -/
 def modularExponentiation (a b n : Nat) : TimeM Nat Nat :=
   if _hzero : b = 0 then
     pure 1
@@ -56,14 +64,19 @@ decreasing_by
   · exact Nat.div_lt_self (Nat.zero_lt_of_ne_zero _hzero) (by decide)
   · exact Nat.sub_lt (Nat.zero_lt_of_ne_zero _hzero) (by decide)
 
-/-- The source base clause returns literal `1` and performs no multiplication. -/
+/-- **Base case of modular exponentiation.** For all natural numbers $a$ and $n$, modular
+exponentiation with base $a$, exponent $0$ and modulus $n$ returns $1$ and performs no
+multiplications. -/
 @[simp]
 theorem modularExponentiation_zero (a n : Nat) :
     modularExponentiation a 0 n = ⟨1, 0⟩ := by
   rw [modularExponentiation]
   rfl
 
-/-- The positive even branch squares the result of the source `b / 2` recursion. -/
+/-- **Even step of modular exponentiation.** Let $a$, $b$, $n$ be natural numbers with $b > 0$
+and $b$ even. If modular exponentiation on base $a$, exponent $b/2$ and modulus $n$ returns the
+value $d$ using $t$ multiplications, then on base $a$, exponent $b$ and modulus $n$ it returns
+the value $(d \cdot d) \bmod n$ using $t + 1$ multiplications. -/
 theorem modularExponentiation_even (a b n : Nat) (hb : 0 < b) (heven : b % 2 = 0) :
     modularExponentiation a b n =
       let d := modularExponentiation a (b / 2) n
@@ -72,7 +85,10 @@ theorem modularExponentiation_even (a b n : Nat) (hb : 0 < b) (heven : b % 2 = 0
   simp only [dite_eq_right (Nat.ne_of_gt hb), dite_eq_left heven]
   rfl
 
-/-- The odd branch first recurses at `b - 1`, then multiplies by the original base. -/
+/-- **Odd step of modular exponentiation.** Let $a$, $b$, $n$ be natural numbers with $b$ odd.
+If modular exponentiation on base $a$, exponent $b - 1$ and modulus $n$ returns the value $d$
+using $t$ multiplications, then on base $a$, exponent $b$ and modulus $n$ it returns the value
+$(a \cdot d) \bmod n$ using $t + 1$ multiplications. -/
 theorem modularExponentiation_odd (a b n : Nat) (hodd : b % 2 ≠ 0) :
     modularExponentiation a b n =
       let d := modularExponentiation a (b - 1) n
@@ -85,19 +101,26 @@ theorem modularExponentiation_odd (a b n : Nat) (hodd : b % 2 ≠ 0) :
   simp only [dite_eq_right hzero, dite_eq_right hodd]
   rfl
 
-/-- The raw zero-exponent result is literal `1`, even when the modulus is one. -/
+/-- **Modular exponentiation returns 1 at exponent zero.** For all natural numbers $a$ and $n$,
+modular exponentiation with base $a$, exponent $0$ and modulus $n$ returns $1$.
+
+In particular the returned value is $1$ even when $n = 1$, so it is not reduced modulo $n$. -/
 @[simp]
 theorem modularExponentiation_ret_zero (a n : Nat) :
     (modularExponentiation a 0 n).ret = 1 := by
   rw [modularExponentiation_zero]
 
-/-- Exponent zero performs no multiplication. -/
+/-- **No multiplications at exponent zero.** For all natural numbers $a$ and $n$, modular
+exponentiation with base $a$, exponent $0$ and modulus $n$ performs no multiplications. -/
 @[simp]
 theorem modularExponentiation_time_zero (a n : Nat) :
     (modularExponentiation a 0 n).time = 0 := by
   rw [modularExponentiation_zero]
 
-/-- Raw-result projection of the source positive even branch. -/
+/-- **Value of the even step of modular exponentiation.** Let $a$, $b$, $n$ be natural numbers
+with $b > 0$ and $b$ even, and let $d$ be the value returned by modular exponentiation on base
+$a$, exponent $b/2$ and modulus $n$. Then the value returned on base $a$, exponent $b$ and
+modulus $n$ is $(d \cdot d) \bmod n$. -/
 theorem modularExponentiation_ret_even (a b n : Nat) (hb : 0 < b)
     (heven : b % 2 = 0) :
     (modularExponentiation a b n).ret =
@@ -105,26 +128,35 @@ theorem modularExponentiation_ret_even (a b n : Nat) (hb : 0 < b)
       (d * d) % n := by
   rw [modularExponentiation_even a b n hb heven]
 
-/-- The even source branch adds exactly one multiplication to its child cost. -/
+/-- **Multiplication count in the even case.** Let $a$, $b$ and $n$ be natural numbers with $b$
+positive and even. Modular exponentiation with base $a$, exponent $b$ and modulus $n$ performs
+exactly one more multiplication than it does with base $a$, exponent $b/2$ and modulus $n$. -/
 theorem modularExponentiation_time_even (a b n : Nat) (hb : 0 < b)
     (heven : b % 2 = 0) :
     (modularExponentiation a b n).time =
       (modularExponentiation a (b / 2) n).time + 1 := by
   rw [modularExponentiation_even a b n hb heven]
 
-/-- Raw-result projection of the source odd branch, with the original base first. -/
+/-- **Value of the odd step of modular exponentiation.** Let $a$, $b$, $n$ be natural numbers
+with $b$ odd, and let $d$ be the value returned by modular exponentiation on base $a$, exponent
+$b - 1$ and modulus $n$. Then the value returned on base $a$, exponent $b$ and modulus $n$ is
+$(a \cdot d) \bmod n$. -/
 theorem modularExponentiation_ret_odd (a b n : Nat) (hodd : b % 2 ≠ 0) :
     (modularExponentiation a b n).ret =
       (a * (modularExponentiation a (b - 1) n).ret) % n := by
   rw [modularExponentiation_odd a b n hodd]
 
-/-- The odd source branch adds exactly one multiplication after its `b - 1` child. -/
+/-- **Multiplication count in the odd case.** Let $a$, $b$ and $n$ be natural numbers with $b$ odd.
+Modular exponentiation with base $a$, exponent $b$ and modulus $n$ performs exactly one more
+multiplication than it does with base $a$, exponent $b - 1$ and modulus $n$. -/
 theorem modularExponentiation_time_odd (a b n : Nat) (hodd : b % 2 ≠ 0) :
     (modularExponentiation a b n).time =
       (modularExponentiation a (b - 1) n).time + 1 := by
   rw [modularExponentiation_odd a b n hodd]
 
-/-- Reducing the raw result gives the canonical modular power, including at exponent zero. -/
+/-- **Modular exponentiation is correct up to reduction.** For natural numbers $a$, $b$, $n$
+with $n > 0$, including $b = 0$, the value $r$ returned by modular exponentiation on base $a$,
+exponent $b$ and modulus $n$ satisfies $r \bmod n = a^b \bmod n$. -/
 theorem modularExponentiation_ret_mod (a b n : Nat) (_hn : 0 < n) :
     (modularExponentiation a b n).ret % n = a ^ b % n := by
   induction b using Nat.strongRecOn with
@@ -158,7 +190,9 @@ theorem modularExponentiation_ret_mod (a b n : Nat) (_hn : 0 < n) :
           rw [Nat.mod_mod, Nat.mul_mod, ih (b - 1) hsub]
           rw [← Nat.mul_mod, hpow]
 
-/-- The same invariant with the base reduced before exponentiation. -/
+/-- **Modular exponentiation with a reduced base.** For natural numbers $a$, $b$, $n$ with
+$n > 0$, the value $r$ returned by modular exponentiation on base $a$, exponent $b$ and
+modulus $n$ satisfies $r \bmod n = (a \bmod n)^b \bmod n$. -/
 theorem modularExponentiation_ret_mod_base (a b n : Nat) (hn : 0 < n) :
     (modularExponentiation a b n).ret % n = (a % n) ^ b % n := by
   calc
@@ -166,7 +200,9 @@ theorem modularExponentiation_ret_mod_base (a b n : Nat) (hn : 0 < n) :
       modularExponentiation_ret_mod a b n hn
     _ = (a % n) ^ b % n := Nat.pow_mod a b n
 
-/-- Every positive-exponent result has already been reduced modulo `n`. -/
+/-- **Modular exponentiation returns a reduced value.** For natural numbers $a$, $b$, $n$ with
+$b > 0$, the value $r$ returned by modular exponentiation on base $a$, exponent $b$ and
+modulus $n$ satisfies $r \bmod n = r$ (with the convention $r \bmod 0 = r$). -/
 theorem modularExponentiation_ret_is_reduced (a b n : Nat) (hb : 0 < b) :
     (modularExponentiation a b n).ret % n =
       (modularExponentiation a b n).ret := by
@@ -176,7 +212,9 @@ theorem modularExponentiation_ret_is_reduced (a b n : Nat) (hb : 0 < b) :
   · rw [modularExponentiation_ret_odd a b n heven]
     exact Nat.mod_mod _ _
 
-/-- For a positive exponent, the raw result is the least residue of `a ^ b`. -/
+/-- **Correctness of modular exponentiation.** For natural numbers $a$, $b$, $n$ with $b > 0$
+and $n > 0$, the value returned by modular exponentiation on base $a$, exponent $b$ and
+modulus $n$ equals $a^b \bmod n$. -/
 theorem modularExponentiation_correct (a b n : Nat) (hb : 0 < b) (hn : 0 < n) :
     (modularExponentiation a b n).ret = a ^ b % n := by
   calc
@@ -185,20 +223,26 @@ theorem modularExponentiation_correct (a b n : Nat) (hb : 0 < b) (hn : 0 < n) :
       (modularExponentiation_ret_is_reduced a b n hb).symm
     _ = a ^ b % n := modularExponentiation_ret_mod a b n hn
 
-/-- Positive-exponent results lie strictly below a positive modulus. -/
+/-- **Modular exponentiation returns a value below the modulus.** For natural numbers $a$, $b$,
+$n$ with $b > 0$ and $n > 0$, the value returned by modular exponentiation on base $a$,
+exponent $b$ and modulus $n$ is less than $n$. -/
 theorem modularExponentiation_lt (a b n : Nat) (hb : 0 < b) (hn : 0 < n) :
     (modularExponentiation a b n).ret < n := by
   rw [modularExponentiation_correct a b n hb hn]
   exact Nat.mod_lt _ hn
 
-/-- The modular-power equality and least-residue range for positive exponents. -/
+/-- **Modular exponentiation returns the least residue.** For natural numbers $a$, $b$, $n$ with
+$b > 0$ and $n > 0$, the value $r$ returned by modular exponentiation on base $a$, exponent $b$
+and modulus $n$ satisfies $r = a^b \bmod n$ and $r < n$. -/
 theorem modularExponentiation_is_leastResidue (a b n : Nat) (hb : 0 < b) (hn : 0 < n) :
     (modularExponentiation a b n).ret = a ^ b % n ∧
       (modularExponentiation a b n).ret < n :=
   ⟨modularExponentiation_correct a b n hb hn,
     modularExponentiation_lt a b n hb hn⟩
 
-/-- With `n > 1`, the literal zero-exponent result is also the least residue. -/
+/-- **Least residue at exponent zero.** For all natural numbers $a$ and $n$ with $n > 1$, the value
+returned by modular exponentiation with base $a$, exponent $0$ and modulus $n$ equals $a^0 \bmod n$
+and is less than $n$. -/
 theorem modularExponentiation_zero_is_leastResidue (a n : Nat) (hn : 1 < n) :
     (modularExponentiation a 0 n).ret = a ^ 0 % n ∧
       (modularExponentiation a 0 n).ret < n := by
@@ -207,7 +251,11 @@ theorem modularExponentiation_zero_is_leastResidue (a n : Nat) (hn : 1 < n) :
   rw [Nat.mod_eq_of_lt hn]
   exact ⟨rfl, hn⟩
 
-/-- The CLRS base clause is deliberately visible at the modulus-one boundary. -/
+/-- **Unreduced result at modulus one.** For every natural number $a$, modular exponentiation with
+base $a$, exponent $0$ and modulus $1$ returns $1$, whereas $a^0 \bmod 1 = 0$.
+
+The base case of the CLRS procedure returns $1$ without reducing it modulo the modulus; this
+boundary case keeps that visible. -/
 theorem modularExponentiation_zero_modulus_one (a : Nat) :
     (modularExponentiation a 0 1).ret = 1 ∧ a ^ 0 % 1 = 0 := by
   simp
@@ -261,7 +309,9 @@ private theorem modularExponentiation_time_eq_recursiveChildCalls (a b n : Nat) 
           rw [modularExponentiation_time_odd a b n heven]
           rw [recursiveChildCalls_odd b heven, ih (b - 1) hsub]
 
-/-- Multiplication count depends on the exponent, not the base or modulus. -/
+/-- **The multiplication count depends only on the exponent.** For all natural numbers $a$, $a'$,
+$b$, $n$ and $n'$, modular exponentiation performs the same number of multiplications with base
+$a$, exponent $b$ and modulus $n$ as with base $a'$, exponent $b$ and modulus $n'$. -/
 theorem modularExponentiation_time_independent (a a' b n n' : Nat) :
     (modularExponentiation a b n).time =
       (modularExponentiation a' b n').time := by
@@ -287,7 +337,10 @@ private theorem modularExponentiation_time_odd_pair (a b n : Nat) (hb : 1 < b)
   rw [modularExponentiation_time_even a (b - 1) n hprevPos hprevEven]
   rw [hprevHalf]
 
-/-- For positive `b`, multiplication count lies between one and two per exponent bit. -/
+/-- **Multiplication count of modular exponentiation.** Let $a$, $b$ and $n$ be natural numbers
+with $b > 0$, and let $\beta = \lfloor \log_2 b \rfloor + 1$ be the number of binary digits of $b$.
+The number of multiplications performed by modular exponentiation with base $a$, exponent $b$ and
+modulus $n$ is at least $\beta$ and at most $2\beta - 1$. -/
 theorem modularExponentiation_time_bounds (a b n : Nat) (hb : 0 < b) :
     let β := Nat.log2 b + 1
     β ≤ (modularExponentiation a b n).time ∧

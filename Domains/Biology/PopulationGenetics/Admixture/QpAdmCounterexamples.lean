@@ -99,8 +99,10 @@ theorem qpAdm_eq_of_proxy (M : DriftModel μ E P) {k r : ℕ} (T : P) (S S' : Fi
     simp only [ADMIXTOOLS.qpAdmTargetVector]
     exact f4_right_eq_of_contrast M R j.succ (fun e => by simp) (fun e => h 0 e j.succ)
 
-/-- **Proxy substitution, qpWave form.** Under the same edge condition on the left populations,
-the qpWave `f4` matrix is unchanged. -/
+/-- **Proxy substitution, qpWave form.** If each left population `L' i` has the same lineage
+weights as `L i` on every edge seen by the right set (for every edge `e` and right population
+`R j`, `(w (L' i) e - w (L i) e) * (w (R j) e - w (R 0) e) = 0`), then replacing `L` by `L'`
+leaves the qpWave `f4` matrix unchanged. -/
 theorem f4Matrix_eq_of_proxy (M : DriftModel μ E P) {n r : ℕ} (L L' : Fin (n + 1) → P)
     (R : Fin (r + 1) → P)
     (h : ∀ i e j, (M.weight (L' i) e - M.weight (L i) e) *
@@ -111,8 +113,9 @@ theorem f4Matrix_eq_of_proxy (M : DriftModel μ E P) {n r : ℕ} (L L' : Fin (n 
   exact f4_right_eq_of_contrast M R j.succ (fun e => h i.succ e j.succ) (fun e => h 0 e j.succ)
 
 /-- **Ghost absorption.** If, on every edge seen by the right set, the target `T` has the
-weights of the mixture `α G + (1 - α) S 0` of a source `G` that is not among the sampled
-sources, and the right contrasts of `G` lie in the span of those of the sampled sources,
+weights of the mixture `α G + (1 - α) S 0` of a population `G` (in the intended example, a
+source that is not sampled), and the right contrasts of `G` lie in the span of those of the
+sampled sources,
 `f4 (G, S 0; R j, R 0) = ∑ l, c l * f4 (S (l + 1), S 0; R j, R 0)`, then the qpAdm system of the
 sampled sources is solved by the weights `α • c` (any sign, any size). -/
 theorem qpAdm_mulVec_eq_of_ghost (M : DriftModel μ E P) {k r : ℕ} {T G : P}
@@ -134,11 +137,12 @@ theorem qpAdm_mulVec_eq_of_ghost (M : DriftModel μ E P) {k r : ℕ} {T G : P}
   rw [h1, hG j, Finset.mul_sum]
   exact Finset.sum_congr rfl fun l _ => by ring
 
-/-- **Reversed direction.** If the source `S₁` descends from the target, with the weights of the
-mixture `β T + (1 - β) S₀` on every edge seen by the right set (private drift of `S₁` elsewhere
-is allowed) and `β ≠ 0`, then the target is fitted by the sources `(S₀, S₁)`, with weight
-`1 / β` on `S₁`, and the qpWave matrix of the left populations `(S₀, T, S₁)` has rank at most
-one. -/
+/-- **Reversed direction.** If, on every edge seen by the right set, the source `S₁` has the
+weights of `β T + (1 - β) S₀` with `β ≠ 0` of either sign (a relation between weight contrasts,
+vacuous if every right population has the weights of `R 0`; for `0 < β ≤ 1` on a graph it holds,
+for example, when `S₁` descends from such a mixture with private drift elsewhere), then the
+target is fitted by the sources `(S₀, S₁)`, with weight `1 / β` on `S₁`, and the qpWave matrix of
+the left populations `(S₀, T, S₁)` has rank at most one. -/
 theorem qpAdm_fit_of_reversed (M : DriftModel μ E P) {r : ℕ} {T S₀ S₁ : P}
     (R : Fin (r + 1) → P) {β : ℝ} (hβ : β ≠ 0)
     (hS : ∀ e j, (M.weight S₁ e - (β * M.weight T e + (1 - β) * M.weight S₀ e)) *
@@ -174,7 +178,8 @@ Populations `0 = S₀`, `1 = S₁` (the true source), `2 = S₁'`
 (a proxy splitting from the lineage of `S₁`), `3 = T`, `4 = R₀`, `5 = R₁`, `6 = R₂`. Edges:
 `0` the stem shared by `S₀` and `R₂`, `1` the stem shared by `S₁`, `S₁'` and `R₁`, `2` private
 to `S₁`, `3` private to `S₁'`, `4`, `5`, `6` private to `R₀`, `R₁`, `R₂`, `7` private to `S₀`.
-The target is the mixture `T = α S₁ + (1 - α) S₀`. -/
+The target is the mixture `T = α S₁ + (1 - α) S₀`. The table is defined for every real `α`; it
+lists the lineage weights of this graph for `0 ≤ α ≤ 1`. -/
 noncomputable def proxyWeight (α : ℝ) : Fin 7 → Fin 8 → ℝ :=
   ![![1, 0, 0, 0, 0, 0, 0, 1], ![0, 1, 1, 0, 0, 0, 0, 0], ![0, 1, 0, 1, 0, 0, 0, 0],
     ![1 - α, α, α, 0, 0, 0, 0, 1 - α], ![0, 0, 0, 0, 1, 0, 0, 0], ![0, 1, 0, 0, 0, 1, 0, 0],
@@ -185,7 +190,8 @@ Populations `0 = S₀`, `1 = S₁`, `2 = G` (the true source, not sampled
 as a qpAdm source), `3 = T`, `4 = R₀`, `5 = R₁`, `6 = R₂`. Edges: `0` private to `S₀`, `1` the
 stem shared by `S₁`, `G`, `R₁`, `R₂`, `2` the continuation shared by `G`, `R₁`, `R₂`, `3`
 private to `S₁`, `4` private to `G`, `5`, `6`, `7` private to `R₀`, `R₁`, `R₂`. The target is
-the mixture `T = α G + (1 - α) S₀`. -/
+the mixture `T = α G + (1 - α) S₀`. The table is defined for every real `α`; it lists the
+lineage weights of this graph for `0 ≤ α ≤ 1`. -/
 noncomputable def ghostWeight (α : ℝ) : Fin 7 → Fin 8 → ℝ :=
   ![![1, 0, 0, 0, 0, 0, 0, 0], ![0, 1, 0, 1, 0, 0, 0, 0], ![0, 1, 1, 0, 1, 0, 0, 0],
     ![1 - α, α, α, 0, α, 0, 0, 0], ![0, 0, 0, 0, 0, 1, 0, 0], ![0, 1, 1, 0, 0, 0, 1, 0],
@@ -196,7 +202,8 @@ Populations `0 = S₀`, `1 = T` (unadmixed), `2 = S₁` (admixed
 from `T` and `S₀`, then private drift), `3 = R₀`, `4 = R₁`, `5 = R₂`. Edges: `0` the stem shared
 by `S₀` and `R₂`, `1` the stem shared by `T` and `R₁`, `2` private to `T`, `3` private to `S₁`,
 `4`, `5`, `6` private to `R₀`, `R₁`, `R₂`, `7` private to `S₀`. The source is the mixture
-`S₁ = β T + (1 - β) S₀` followed by drift on edge `3`. -/
+`S₁ = β T + (1 - β) S₀` followed by drift on edge `3`. The table is defined for every real `β`;
+it lists the lineage weights of this graph for `0 ≤ β ≤ 1`. -/
 noncomputable def reversedWeight (β : ℝ) : Fin 6 → Fin 8 → ℝ :=
   ![![1, 0, 0, 0, 0, 0, 0, 1], ![0, 1, 1, 0, 0, 0, 0, 0], ![1 - β, β, β, 1, 0, 0, 0, 1 - β],
     ![0, 0, 0, 0, 1, 0, 0, 0], ![0, 1, 0, 0, 0, 1, 0, 0], ![1, 0, 0, 0, 0, 0, 1, 0]]
@@ -258,10 +265,10 @@ theorem proxy_counterexample {α : ℝ} (hα : α ≠ 0) (M : DriftModel μ (Fin
     simp [proxyWeight] at h2 h3
     exact hα h2
 
-/-- **Counterexample (ii), ghost absorption.** In the ghost weight table at unit edge lengths, the
-right contrasts of the ghost `G` are twice those of `S₁`, the target `T = α G + (1 - α) S₀` is
-fitted by the sampled sources `(S₀, S₁)` with weight exactly `2 α` on `S₁` (so `1 - 2 α` on
-`S₀`), and for `α ≠ 0` the target is no mixture of `S₁` and `S₀`. -/
+/-- **Counterexample (ii), ghost absorption.** In the ghost weight table at unit edge lengths and
+`α ≠ 0`, the right contrasts of the ghost `G` are twice those of `S₁`, the target
+`T = α G + (1 - α) S₀` is fitted by the sampled sources `(S₀, S₁)` with weight exactly `2 α` on
+`S₁` (so `1 - 2 α` on `S₀`), and the target is no mixture of `S₁` and `S₀`. -/
 theorem ghost_counterexample {α : ℝ} (hα : α ≠ 0) (M : DriftModel μ (Fin 8) (Fin 7))
     (hw : M.weight = ghostWeight α) (hl : M.len = fun _ => 1) :
     (∀ j : Fin 2, f4 μ M.freq 2 0 (![4, 5, 6] j.succ) 4 =
@@ -301,8 +308,9 @@ theorem ghost_counterexample {α : ℝ} (hα : α ≠ 0) (M : DriftModel μ (Fin
     exact hα h2
 
 /-- **Counterexample (iii), reversed direction.** In the reversed weight table at unit edge lengths
-and `β ≠ 0`, the source `S₁` descends from the unadmixed target (`S₁ = β T + (1 - β) S₀` plus
-private drift, `T` with `0`/`1` weights), yet the target is fitted by the sources `(S₀, S₁)`
+and `β ≠ 0`, the source `S₁` has the weights of `β T + (1 - β) S₀` plus a private edge (for
+`0 < β ≤ 1`, descent from a mixture of the target and `S₀`) and the target has `0`/`1` weights,
+yet the target is fitted by the sources `(S₀, S₁)`
 with weight exactly `1 / β` on `S₁`, the qpWave matrix of `(S₀, T, S₁)` has rank exactly one,
 and the target is no mixture of `S₁` and `S₀`. -/
 theorem reversed_counterexample {β : ℝ} (hβ : β ≠ 0) (M : DriftModel μ (Fin 8) (Fin 6))
