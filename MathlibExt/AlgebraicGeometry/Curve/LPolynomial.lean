@@ -1033,7 +1033,7 @@ public theorem exists_LPolynomial_of_finite_of_riemannRoch
             (Nat.card {D : Divisor k F //
                 0 ≤ D ∧ Divisor.degree D = (n : ℤ)} : ℤ)) =
         (L : PowerSeries ℤ) := by
-  letI : Fintype (Pic0 k F) := Fintype.ofFinite _
+  let : Fintype (Pic0 k F) := @Fintype.ofFinite _ hPic
   obtain ⟨D₁, hD₁⟩ := hD₁
   have hq1 : (Nat.card k : ℤ) - 1 ≠ 0 := by
     have hcard : 1 < Nat.card k := Finite.one_lt_card
