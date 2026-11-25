@@ -114,8 +114,9 @@ private lemma x_ne_zero : x ≠ 0 := by
 private lemma dilation_two_ne_zero : (dilation 2).primitiveLieMap x ≠ 0 := by
   intro hx
   have hxA : dilation 2 (x : A) = 0 := by
-    simpa only [BialgHom.primitiveLieMap_apply, LieSubalgebra.coe_zero] using
-      congrArg (fun y : P => (y : A)) hx
+    have hcast := congrArg (fun y : P => (y : A)) hx
+    change dilation 2 (x : A) = 0 at hcast
+    exact hcast
   have h := congrArg evaluateAtOne hxA
   rw [evaluateAtOne_dilation, map_zero] at h
   exact (by decide : (2 : R) ≠ 0) h
