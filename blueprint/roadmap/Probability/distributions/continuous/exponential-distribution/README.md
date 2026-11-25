@@ -21,3 +21,5 @@ The exponential law is the law of a waiting time without memory, and the gamma l
 - [Exponentially distributed random variables are integrable](integrable-of-exp-measure.md): random-variable form
 - [Mean of an exponentially distributed random variable](integral-eq-inv-of-exp-measure.md): random-variable form of the mean
 - [Variance of an exponentially distributed random variable](variance-eq-of-exp-measure.md): random-variable form of the variance
+- [Competing exponential clocks](competing-exponential-clocks.md)
+- [The memoryless property characterizes the exponential law](memoryless-property-characterizes-the-exponential-law.md)
