@@ -10547,6 +10547,7 @@
   "MathlibExt/Combinatorics/Additive/SymmetricBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Rohrbach's symmetric basis theorem"},
   "MathlibExt/Combinatorics/Additive/Szemeredi": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Szemerédi's theorem"},
   "MathlibExt/Combinatorics/Additive/ThreeAPFreeComplementProgression": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Progression-free sets meeting every infinite progression"},
+  "MathlibExt/Combinatorics/Additive/UnionTwoAPNotMSTD": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Unions of two progressions are not sum-dominant"},
   "MathlibExt/Combinatorics/Additive/UpperDensitySumsetPartition": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Splitting sets with dense sumsets"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenAP": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Van der Waerden's theorem"},
   "MathlibExt/Combinatorics/Additive/VanDerWaerdenSumProductClassification": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Zero-sum van der Waerden theorems for symmetric functions"},
