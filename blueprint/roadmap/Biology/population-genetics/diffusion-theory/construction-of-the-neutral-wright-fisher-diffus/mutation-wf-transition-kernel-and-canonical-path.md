@@ -3,8 +3,10 @@
 Let $\theta_1, \theta_2 \ge 0$, $\theta = \theta_1 + \theta_2$, and let $(P^\theta_t)_{t \ge 0}$ be the [Feller semigroup of the two-allele Wright–Fisher diffusion with mutation](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md) on $C([0, 1])$, without selection. Then:
 
 1. **Kernels.** For each $t \ge 0$ and $x \in [0, 1]$ there is a unique Borel probability measure $K^\theta_t(x, \cdot)$ on $[0, 1]$ with $P^\theta_t f(x) = \int f(y)\, K^\theta_t(x, dy)$ for all $f \in C([0, 1])$, by the Riesz representation of the positive, unit-preserving functional $f \mapsto P^\theta_t f(x)$. These kernels are measurable in $x$, satisfy $K^\theta_0(x, \cdot) = \delta_x$ and the Chapman–Kolmogorov equations $K^\theta_{s+t} = K^\theta_s K^\theta_t$, and have mean
-$$\int y\, K^\theta_t(x, dy) = \frac{\theta_1}{\theta} + \Bigl(x - \frac{\theta_1}{\theta}\Bigr) e^{-\theta t/2} \qquad (\theta > 0),$$
-and $\int y\, K^\theta_t(x, dy) = x$ when $\theta = 0$.
+
+    $$\int y\, K^\theta_t(x, dy) = \frac{\theta_1}{\theta} + \Bigl(x - \frac{\theta_1}{\theta}\Bigr) e^{-\theta t/2} \qquad (\theta > 0),$$
+
+    and $\int y\, K^\theta_t(x, dy) = x$ when $\theta = 0$.
 2. **Path measures.** For each $x$ there is a unique probability measure $P^\theta_x$ on $[0, 1]^{[0, \infty)}$ with the product $\sigma$-field whose finite-dimensional laws are those of the Markov chain with transitions $(K^\theta_t)$ started at $x$, by Kolmogorov's extension theorem.
 
 ## Depends on
