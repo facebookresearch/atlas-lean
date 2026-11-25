@@ -1,0 +1,15 @@
+# The Milnor K₂ monomial central extension
+
+- [M](m.md)
+- [HM](hm.md)
+- [Ambient Lift Hom](ambient-lift-hom.md)
+- [Proj Hom](proj-hom.md)
+- [Inl Hom](inl-hom.md)
+- [To SL](to-sl.md)
+- [Monomial Extension](monomial-extension.md)
+- [MMap](mmap.md)
+- [Ambient Monomial Lift Map](ambient-monomial-lift-map.md)
+- [Ambient Monomial Extension Hom](ambient-monomial-extension-hom.md)
+- [Ambient Monomial Extension Hom base square](ambient-monomial-extension-hom-base-squa.md)
+- [Monomial Extension Hom](monomial-extension-hom.md)
+- [HMMap](hmmap.md)

@@ -14,6 +14,7 @@ Topics added since this subject's fields were last revised.
 - [Central Extension](central-extension/README.md)
 - [Generators](generators/README.md)
 - [Normalized Cocycle Extension](normalized-cocycle-extension/README.md)
+- [Perfect Kernel](perfect-kernel/README.md)
 - [Subgroup Closure Commutation](subgroup-closure-commutation/README.md)
 - [Permutation Bilinear Cocycle](permutation-bilinear-cocycle/README.md)
 - [Permutation Bilinear Schur Tits Cocycle](permutation-bilinear-schur-tits-cocycle/README.md)

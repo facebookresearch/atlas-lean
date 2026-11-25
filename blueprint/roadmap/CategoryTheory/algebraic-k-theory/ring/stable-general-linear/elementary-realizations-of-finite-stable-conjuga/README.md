@@ -1,0 +1,15 @@
+# Elementary realizations of finite stable conjugation
+
+- [Doubled Finite Permutation](doubled-finite-permutation.md)
+- [Doubled Finite Permutation apply](doubled-finite-permutation-apply.md)
+- [Doubled Finite Permutation sign](doubled-finite-permutation-sign.md)
+- [Finite Permutation Stabilization](finite-permutation-stabilization.md)
+- [Finite Permutation Stabilization sign](finite-permutation-stabilization-sign.md)
+- [Finite Permutation Stabilization cast Add](finite-permutation-stabilization-cast-ad.md)
+- [Finite Permutation Stabilization nat Add](finite-permutation-stabilization-nat-add.md)
+- [Finite Permutation Stabilization matrix](finite-permutation-stabilization-matrix.md)
+- [Elementary Conjugator](elementary-conjugator.md)
+- [Elementary Conjugator mem](elementary-conjugator-mem.md)
+- [Elementary Conjugator permutation](elementary-conjugator-permutation.md)
+- [Elementary Conjugator conjugates](elementary-conjugator-conjugates.md)
+- [Exists elementary conjugator of finite conjugacy](exists-elementary-conjugator-of-finite-c.md)

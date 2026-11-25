@@ -1,0 +1,18 @@
+# Finite-to-stable bridge for the Matsumoto (0,1) Weyl word
+
+- [U02](u02.md)
+- [L21](l21.md)
+- [U12](u12.md)
+- [L20](l20.md)
+- [G01](g01.md)
+- [G10](g10.md)
+- [G01 eq left Upper Root Lift](g01-eq-left-upper-root-lift.md)
+- [G10 eq left Lower Adjacent Root Lift](g10-eq-left-lower-adjacent-root-lift.md)
+- [Left Extension Stage Proj U02](left-extension-stage-proj-u02.md)
+- [Left Extension Stage Proj L21](left-extension-stage-proj-l21.md)
+- [Left Extension Stage Proj U12](left-extension-stage-proj-u12.md)
+- [Left Extension Stage Proj L20](left-extension-stage-proj-l20.md)
+- [Matsumoto Stable Lift x01](matsumoto-stable-lift-x01.md)
+- [Matsumoto Stable Lift x10](matsumoto-stable-lift-x10.md)
+- [Matsumoto Stable Lift x01 eq left Upper Root Lift](matsumoto-stable-lift-x01-eq-left-upper.md)
+- [Matsumoto Stable Lift x10 eq left Lower Adjacent Root Lift](matsumoto-stable-lift-x10-eq-left-lower.md)
