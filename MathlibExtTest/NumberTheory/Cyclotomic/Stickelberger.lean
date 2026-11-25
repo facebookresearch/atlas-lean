@@ -20,15 +20,15 @@ theorem exactSource_clGalAction_clProj_mk0 (p : ℕ) [NeZero p]
     (K : Type*) [Field K] [NumberField K]
     [IsCyclotomicExtension {p} ℚ K] (d : (ZMod p)ˣ)
     (P : (Ideal (𝓞 K))⁰) :
-    JacobiSumStickelberger.clGalAction p K d
-        (JacobiSumStickelberger.clProj p (𝓞 K)
+    Stickelberger.clGalAction p K d
+        (Stickelberger.clProj p (𝓞 K)
           (Additive.ofMul (ClassGroup.mk0 P))) =
-      JacobiSumStickelberger.clProj p (𝓞 K) (Additive.ofMul
+      Stickelberger.clProj p (𝓞 K) (Additive.ofMul
         (ClassGroup.mk0 (Ideal.mapNonZero
-          (JacobiSumStickelberger.clRingAction p K d) P))) :=
-  JacobiSumStickelberger.clGalAction_clProj_mk0 p K d P
+          (Stickelberger.clRingAction p K d) P))) :=
+  Stickelberger.clGalAction_clProj_mk0 p K d P
 
-open Stickelberger JacobiSumStickelberger ExtCitation.Cyclotomic
+open Stickelberger
 
 instance : Fact (Nat.Prime 5) := ⟨by decide⟩
 
@@ -105,6 +105,14 @@ example : stickelbergerEnd (scalarAction 5 (ModP 5 ℤ)) (ModP.proj 5 ℤ 1) =
     ModP.proj_apply, ModP.proj_apply, QuotientAddGroup.eq, mem_nsmulRange]
   exact ⟨1, by norm_num⟩
 
+/-- At `p = 3` the scalar action is an `ω ^ (p - 2)` eigenvector condition, so the
+Stickelberger endomorphism acts as `eigenvalueScalar 3`. -/
+example {A : Type*} [AddCommGroup A] [Module (ZMod 3) A] (a : A) :
+    stickelbergerEnd (scalarAction 3 A) a = (eigenvalueScalar 3 : ZMod 3) • a :=
+  stickelbergerEnd_apply_of_isOmegaEigenvector_sub_two fun d => by
+    rw [scalarAction_apply]
+    norm_num
+
 /-! ### The induced endomorphism of `M / pM` -/
 
 /-- The class of `1` in `ℤ / 5ℤ` is nonzero, so the next example is not vacuous. -/
@@ -153,48 +161,10 @@ section OmegaIdempotent
 variable {p : ℕ} [Fact p.Prime] {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
   (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M)
 
-private lemma omegaIdempotent_apply' (i : ℕ) (a : M) :
-    omegaIdempotent p ρ i a =
-      (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ •
-        ∑ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d a := by
-  simp only [omegaIdempotent, LinearMap.smul_apply, LinearMap.coe_sum, Finset.sum_apply]
-
-private lemma isUnit_natCard_units_zmod' : IsUnit ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) := by
-  have hp := (Fact.out : p.Prime)
-  rw [Nat.card_eq_fintype_card, ZMod.card_units_eq_totient, Nat.totient_prime hp,
-    Nat.cast_sub hp.one_le, Nat.cast_one, CharP.cast_eq_zero (ZMod p) p, zero_sub]
-  exact (IsUnit.neg_iff 1).mpr isUnit_one
-
-/-- The projector fixes every `ω ^ i` eigenvector. -/
-private theorem omegaIdempotent_of_isOmegaEigenvector' {i : ℕ} {a : M}
-    (ha : IsOmegaEigenvector ρ i a) : omegaIdempotent p ρ i a = a := by
-  rw [omegaIdempotent_apply']
-  have hρ : ∀ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d a = a := by
-    intro d
-    rw [ha d, smul_smul, inv_mul_cancel₀ (pow_ne_zero i (Units.ne_zero d)), one_smul]
-  simp only [hρ, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card,
-    ← Nat.cast_smul_eq_nsmul (ZMod p), smul_smul]
-  rw [isUnit_natCard_units_zmod'.inv_mul_cancel, one_smul]
-
-/-- The projector lands in the `ω ^ i` eigenspace. -/
-private theorem isOmegaEigenvector_omegaIdempotent' (i : ℕ) (a : M) :
-    IsOmegaEigenvector ρ i (omegaIdempotent p ρ i a) := by
-  intro d'
-  simp only [omegaIdempotent_apply']
-  rw [map_smul, smul_comm]
-  congr 1
-  rw [map_sum, Finset.smul_sum]
-  refine Fintype.sum_bijective (d' * ·) (Group.mulLeft_bijective d') _ _ fun d => ?_
-  simp only [map_mul, mul_apply_eq_comp, map_smul, smul_smul]
-  congr 1
-  push_cast
-  rw [mul_pow, mul_inv, ← mul_assoc,
-    mul_inv_cancel₀ (pow_ne_zero i (Units.ne_zero d')), one_mul]
-
-/-- The projector is idempotent. -/
+/-- The projector is idempotent, pointwise. -/
 example (i : ℕ) (a : M) :
     omegaIdempotent p ρ i (omegaIdempotent p ρ i a) = omegaIdempotent p ρ i a :=
-  omegaIdempotent_of_isOmegaEigenvector' ρ (isOmegaEigenvector_omegaIdempotent' ρ i a)
+  LinearMap.congr_fun (omegaIdempotent_comp_self p ρ i) a
 
 end OmegaIdempotent
 
@@ -202,7 +172,7 @@ end OmegaIdempotent
 `ω ^ 2` eigenspace. -/
 example (a : ModP 5 (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ)) :
     omegaIdempotent 5 (unitsGalAction 5) 2 a ∈ unitsOmegaEigenspace 5 2 :=
-  isOmegaEigenvector_omegaIdempotent' (unitsGalAction 5) 2 a
+  omegaIdempotent_mem_unitsOmegaEigenspace 5 2 a
 
 example : (0 : ModP 5 (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ)) ∈
     unitsOmegaEigenspace 5 2 :=
@@ -212,5 +182,5 @@ example : (0 : ModP 5 (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ)) ∈
 projector is the identity there. -/
 example {A : Type*} [AddCommGroup A] [Module (ZMod 5) A] (a : A) :
     omegaIdempotent 5 (scalarAction 5 A) 1 a = a :=
-  omegaIdempotent_of_isOmegaEigenvector' (scalarAction 5 A) fun d => by
+  omegaIdempotent_apply_of_isOmegaEigenvector 5 (scalarAction 5 A) fun d => by
     rw [scalarAction_apply, pow_one]
