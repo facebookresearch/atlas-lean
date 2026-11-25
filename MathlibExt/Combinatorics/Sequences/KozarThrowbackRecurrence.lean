@@ -273,12 +273,19 @@ private theorem key (p : ℕ) :
       have hklead : Yseq k 0 < mstar := hlead k hkK'
       omega
 
-/-- Kozar's conjecture for OEIS A357081: every value `n ≥ 3` recurs as the
-leader `T k` for arbitrarily large iteration counts `k` (unbounded/infinite
-recurrence). Here `throwbackStep` exactly moves the leader to index `Y 0`,
-and `T k` is the leader after `k` iterations starting from `X i = i + 3`.
-This is no longer open: Dribus et al. prove the stronger general theorem for
-every sequence of distinct positive integers. Source: Jesiah Darnell and
+/-- **Kozar's conjecture on the throwback sequence.** For a sequence
+$Y = (Y_0, Y_1, Y_2, \dots)$ of natural numbers, the throwback step produces the sequence $Y'$
+with $Y'_i = Y_{i+1}$ for $i < Y_0$, $Y'_{Y_0} = Y_0$, and $Y'_i = Y_i$ for $i > Y_0$: the
+leading term $Y_0$ moves to index $Y_0$, the terms $Y_1, \dots, Y_{Y_0}$ shift one place to the
+left, and all later terms stay in place. Let $X$ be the sequence with $X_i = i + 3$ (that is,
+$3, 4, 5, \dots$), and let $T_k$ be the leading term of the sequence obtained from $X$ by $k$
+throwback steps. Then for every natural number $n \ge 3$ and every natural number $N$ there is
+$k \ge N$ with $T_k = n$; that is, every $n \ge 3$ equals $T_k$ for infinitely many $k$.
+
+This is Kozar's conjecture for OEIS A357081. Darnell and Dribus prove a more general recurrence
+theorem for every sequence of distinct positive integers.
+
+Source: Jesiah Darnell and
 Benjamin F. Dribus, “Throwback Sequences of Positive Integers”,
 `https://cs.uwaterloo.ca/journals/JIS/VOL28/Dribus/dribus4.tex`
 (full SHA-256 `91dac9c7d7f6c550c7644258f70d07a03c43f6c7ffc28235addd4dc7598ac86b`);

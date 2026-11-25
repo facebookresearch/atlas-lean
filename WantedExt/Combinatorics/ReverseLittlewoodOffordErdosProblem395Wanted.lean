@@ -32,21 +32,34 @@ is absolute and `n ≥ 1`. Compared with the formal-conjectures statement `Erdos
 (equivalent; no code imported).
 -/
 
-/-- The number of sign vectors `ε ∈ {-1, 1}ⁿ` (encoded as `Fin n → Bool`) with
-`|ε₁ z₁ + ⋯ + εₙ zₙ| ≤ √2`. -/
+/-- **Number of short signed sums.** For complex numbers $z_1, \dots, z_n$, this is the number of
+sign vectors $(\varepsilon_1, \dots, \varepsilon_n) \in \{-1, 1\}^n$ with
+$|\varepsilon_1 z_1 + \dots + \varepsilon_n z_n| \le \sqrt{2}$. -/
 noncomputable def smallSignedSumCount {n : ℕ} (z : Fin n → ℂ) : ℕ :=
   {ε : Fin n → Bool | ‖∑ i, (if ε i then (1 : ℂ) else -1) * z i‖ ≤ Real.sqrt 2}.ncard
 
-/-- Erdős Problem 395: for unit complex numbers `z₁, …, zₙ`, uniformly random signs give
-`|ε₁ z₁ + ⋯ + εₙ zₙ| ≤ √2` with probability `≫ 1 / n`. -/
+/-- **Reverse Littlewood–Offord statement of Erdős Problem 395.** The statement that there is a
+real constant $c > 0$ such that for every natural number $n \ge 1$ and all complex numbers
+$z_1, \dots, z_n$ with $|z_i| = 1$ for every $i$, the number $N$ of sign vectors
+$(\varepsilon_1, \dots, \varepsilon_n) \in \{-1, 1\}^n$ with
+$|\varepsilon_1 z_1 + \dots + \varepsilon_n z_n| \le \sqrt{2}$ satisfies $c/n \le N/2^n$. That is,
+for independent uniformly random signs this inequality holds with probability at least $c/n$. -/
 def reverseLittlewoodOffordSqrtTwo : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ, 0 < n → ∀ z : Fin n → ℂ, (∀ i, ‖z i‖ = 1) →
     c / n ≤ (smallSignedSumCount z : ℝ) / 2 ^ n
 
 /--
-Resolved true: He, Juškevičius, Narayanan and Spiro proved that for unit complex numbers `z₁, …, zₙ`
-the probability that `|ε₁z₁ + ⋯ + εₙzₙ| ≤ √2` is `≫ 1/n`, which is sharp (half of the `zᵢ` equal to
-`1`, the rest to `i`); erdosproblems.com/395 lists the problem as proved. Source: T. F. Bloom, Erdős
+**Erdős Problem 395 holds: the reverse Littlewood–Offord bound.** There is a real constant
+$c > 0$ such that for every natural number $n \ge 1$ and all complex numbers $z_1, \dots, z_n$
+with $|z_i| = 1$ for every $i$, at least a $c/n$ fraction of the $2^n$ sign vectors
+$(\varepsilon_1, \dots, \varepsilon_n) \in \{-1, 1\}^n$ satisfy
+$|\varepsilon_1 z_1 + \dots + \varepsilon_n z_n| \le \sqrt{2}$. That is, for independent uniformly
+random signs this inequality holds with probability at least $c/n$.
+
+This was proved by He, Juškevičius, Narayanan and Spiro. The order $1/n$ is sharp: take half of the
+$z_i$ equal to $1$ and the rest equal to the imaginary unit $\mathrm{i}$.
+
+Source: T. F. Bloom, Erdős
 Problems, Problem #395, https://www.erdosproblems.com/395 (status PROVED (LEAN)); resolution: X. He,
 T. Juškevičius, B. Narayanan and S. Spiro, The reverse Littlewood-Offord problem of Erdős,
 arXiv:2408.11034 (2024), probability ≫ 1/n, sharp (erdosproblems.com/395),

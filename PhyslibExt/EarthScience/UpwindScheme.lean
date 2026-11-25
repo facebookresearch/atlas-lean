@@ -53,7 +53,7 @@ namespace EarthScience
 
 /-- Periodic first-order upwind update preserves nonnegativity under the
 CFL condition `0 ≤ ν ≤ 1`: with `c⁺ i = (1 - ν) * c i + ν * c (i - 1)` on
-`ZMod n` (periodic cells, `i - 1` the upstream neighbour), every updated
+`ZMod n`, `n ≥ 1` (periodic cells, `i - 1` the upstream neighbour), every updated
 cell is nonnegative when every `c i` is. -/
 theorem upwind_nonneg {n : ℕ} [NeZero n] (ν : ℝ) (hν0 : 0 ≤ ν) (hν1 : ν ≤ 1)
     (c : ZMod n → ℝ) (hc : ∀ i, 0 ≤ c i) :
@@ -61,7 +61,7 @@ theorem upwind_nonneg {n : ℕ} [NeZero n] (ν : ℝ) (hν0 : 0 ≤ ν) (hν1 : 
   intro i
   exact add_nonneg (mul_nonneg (sub_nonneg.mpr hν1) (hc i)) (mul_nonneg hν0 (hc (i - 1)))
 
-/-- Periodic first-order upwind update preserves the total sum for every
+/-- Periodic first-order upwind update on `ZMod n`, `n ≥ 1`, preserves the total sum for every
 `ν`: the sum of the updated cells equals the sum of the old cells, because
 the periodic shift `i ↦ i - 1` permutes the cells. -/
 theorem upwind_sum_eq {n : ℕ} [NeZero n] (ν : ℝ) (c : ZMod n → ℝ) :

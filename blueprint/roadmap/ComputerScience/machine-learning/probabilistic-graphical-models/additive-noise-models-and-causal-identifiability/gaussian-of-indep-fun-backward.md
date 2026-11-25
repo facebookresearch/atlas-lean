@@ -13,4 +13,4 @@ The statement assumes $X$ and $N$ not almost surely constant; Proposition 13 tac
 
 ## Background
 
-- [Cramér's decomposition theorem](../../../../Probability/characteristic-functions/cramer-decomposition.md): a related characterization of the Gaussian law by independence; the proof here uses instead the Darmois–Skitovich theorem.
+- [Cramér's decomposition theorem](../../../../Probability/characteristic-functions/cramer-decomposition-theorem/cramer-decomposition.md): a related characterization of the Gaussian law by independence; the proof here uses instead the Darmois–Skitovich theorem.

@@ -25,8 +25,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Burnside's orbit count when every nonidentity group element has the same
-finite number of fixed points. -/
+/-- **Burnside's lemma with a uniform fixed-point count.** Let a finite group $G$ act on a finite
+set $X$, and let $c$ be a natural number such that every element $g \ne 1$ of $G$ fixes exactly
+$c$ points of $X$. Writing $N$ for the number of orbits of $G$ on $X$, we have
+$|X| + c\,(|G| - 1) = N \cdot |G|$. -/
 theorem _root_.MulAction.card_add_mul_card_sub_one_eq_card_orbits_mul_card
     (G X : Type*) [Group G] [MulAction G X] [Finite G] [Finite X]
     (c : ℕ) (hfixed : ∀ g : G, g ≠ 1 → Nat.card (MulAction.fixedBy X g) = c) :

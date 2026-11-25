@@ -8,7 +8,7 @@ on:
   # broker, and its workflow file would be the fork's, not the trusted
   # base version. pull_request_target runs the base workflow with base
   # secrets, and the fork head is only ever read as data (see Resolve
-  # target / Checkout). This is the same pattern bump-guard.yml uses.
+  # target / Checkout).
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
   issue_comment:
@@ -694,6 +694,25 @@ jobs:
             exit 1
           fi
 
+      - name: Remove agent instructions from the review checkout
+        if: steps.check_auth.outputs.authorized == 'true'
+        run: |
+          set -euo pipefail
+          # Reviews follow only the base branch's REVIEWING.md. Codex can also
+          # load agent instructions from its working directory, which is this
+          # checkout of the pull request: project settings and skills under
+          # .codex/, skills under .agents/, AGENTS.md. Delete such files and
+          # folders anywhere outside .git. The diff Codex reviews comes from
+          # the commits, so it still shows any change to them.
+          names=(-name AGENTS.md -o -name AGENTS.override.md -o -name CLAUDE.md
+            -o -name .agents -o -name .claude -o -name .codex)
+          find . -path ./.git -prune -o \( "${names[@]}" \) -prune -exec rm -rf -- {} +
+          leftover="$(find . -path ./.git -prune -o \( "${names[@]}" \) -print -quit)"
+          if [[ -n "$leftover" ]]; then
+            echo "::error title=Agent instructions::Agent instruction files remain in the review checkout." >&2
+            exit 1
+          fi
+
       - name: Prepare isolated Codex runtime
         if: steps.check_auth.outputs.authorized == 'true'
         run: |
@@ -715,6 +734,11 @@ jobs:
           # REVIEWING.md is injected from the base branch; never load
           # instructions from the untrusted pull-request checkout.
           project_doc_max_bytes = 0
+          # Keep the skills list out of the prompt. Codex 0.155.1 cannot turn
+          # off repository skill discovery, so the step that removes agent
+          # instructions from the review checkout deletes those skills.
+          [skills]
+          include_instructions = false
           # Shell snapshots copy Codex's environment, broker token included,
           # into a file under CODEX_HOME that agent commands can read.
           [features]

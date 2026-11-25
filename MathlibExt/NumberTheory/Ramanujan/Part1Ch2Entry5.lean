@@ -209,8 +209,13 @@ private lemma step_identity (n : ℕ) :
   field_simp
   ring
 
-/-- `ramanujan_part1_ch2_entry5` without the hypothesis `0 < n`; the statement also holds at `n =
-  0`. -/
+/-- **Ramanujan's sum identity for $1/((6k)^3 - 6k)$, including $n = 0$.** For every natural
+number $n$,
+$$
+1 + 2 \sum_{k=1}^{n} \frac{1}{(6k)^3 - 6k} =
+\frac{2}{3} \sum_{k=1}^{n} \frac{1}{n+k} + \sum_{k=0}^{2n} \frac{1}{2n+2k+1}.
+$$
+-/
 theorem ramanujan_part1_ch2_entry5_general (n : ℕ) :
     (1 : ℝ) + 2 * ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((6 * (k : ℝ)) ^ 3 - 6 * (k : ℝ)) =
       (2 : ℝ) / 3 * ∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((n : ℝ) + (k : ℝ)) +
@@ -239,7 +244,13 @@ theorem ramanujan_part1_ch2_entry5_general (n : ℕ) :
 
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Ramanujan's sum identity for $1/((6k)^3 - 6k)$.** For every positive integer $n$,
+$$
+1 + 2 \sum_{k=1}^{n} \frac{1}{(6k)^3 - 6k} =
+\frac{2}{3} \sum_{k=1}^{n} \frac{1}{n+k} + \sum_{k=0}^{2n} \frac{1}{2n+2k+1}.
+$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     5, formula (5.1), printed p. 29 / PDF p. 39.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry5`.
 -/
