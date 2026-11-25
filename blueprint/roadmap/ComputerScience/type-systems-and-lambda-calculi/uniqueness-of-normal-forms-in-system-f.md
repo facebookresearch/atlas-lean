@@ -1,6 +1,6 @@
 # Uniqueness of normal forms in System F
 
-Every well-typed term of System F has exactly one normal form under [one-step full reduction](system-f/scoped-pure-system-f/full-step.md): by [strong normalization](strong-normalization-of-system-f.md) every reduction sequence from it reaches a normal form, and by confluence any two of these coincide.
+Every well-typed term of System F has exactly one normal form under [one-step full reduction](system-f/scoped-pure-system-f/full-step.md): by [strong normalization](strong-normalization-of-system-f.md) every maximal reduction sequence from it is finite and so ends in a normal form, hence a normal form exists, and by confluence any two normal forms of the term coincide.
 
 ## Depends on
 
