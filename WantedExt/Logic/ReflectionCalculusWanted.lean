@@ -9,18 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Logics.Modal.ReflectionCalculus
+public import CSLibExt.Logics.Modal.ReflectionCalculusCompleteness
 public import Mathlib.SetTheory.Ordinal.Veblen
 
 /-!
-# Reflection Calculus: wanted results
+# Ordinal assignment for worms in the Reflection Calculus
 
-Established results about Beklemishev's Reflection Calculus RC (modalities in `ℕ`), over the
-sequent calculus `Cslib.Modal.RC.Derives` of `CSLibExt.Logics.Modal.ReflectionCalculus`, recorded
-without proof.
-
-* `derives_iff_forall_frame`: Kripke completeness of RC.
-* `exists_wormOrdinal`: worms ordered by `<₀` have order type `ε₀`.
+The wanted ordinal assignment uses the sequent calculus and worms from
+`CSLibExt.Logics.Modal.ReflectionCalculus`.
 -/
 
 @[expose] public section
@@ -28,20 +24,6 @@ without proof.
 namespace Cslib
 namespace Modal
 namespace RC
-
-universe u
-
-/-- **Kripke completeness of RC.** A sequent `A ⊢ B` of strictly positive formulas is derivable in
-RC iff every world satisfying `A` satisfies `B` in every Kripke model on an RC-frame. The source
-proves this for the language with modalities in `ω + 1` (Beklemishev, "Positive provability logic
-for uniform reflection principles", arXiv:1304.4396v3, Theorem 1(ii)); the restriction to
-modalities in `ℕ` stated here follows from it with the conservativity of RC over its fragments
-(Theorem 2 there), since an RC-model restricts to a model on an RC-frame for `ℕ`. The direction
-from left to right is the proved `Derives.sound`. -/
-theorem_wanted derives_iff_forall_frame {Atom : Type u} (A B : Formula Atom) :
-    Derives A B ↔
-      ∀ (W : Type u) (R : ℕ → W → W → Prop) (V : W → Atom → Prop), IsFrame R →
-        ∀ x, Satisfies R V x A → Satisfies R V x B
 
 /-- **Worms have order type `ε₀`.** There is a map `o` from worms to ordinals such that two worms
 are RC-equivalent iff they have the same value, `α <₀ β` iff `o α < o β`, and the values are

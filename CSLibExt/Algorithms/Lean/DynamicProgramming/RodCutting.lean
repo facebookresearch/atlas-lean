@@ -602,7 +602,7 @@ private lemma reconstructCuts_time {n : Nat} (cuts : Vector Nat n)
       (reconstructCuts cuts hbounded remaining hremaining).ret.length := by
   revert hremaining
   induction remaining using Nat.strong_induction_on with
-  | h remaining ih =>
+  | ind remaining ih =>
       intro hremaining
       cases remaining with
       | zero => simp [reconstructCuts, Composition.length, Composition.ones]
@@ -633,7 +633,7 @@ private lemma reconstructCuts_blocks {n : Nat} (cuts : Vector Nat n)
       some ((reconstructCuts cuts hbounded remaining hremaining).ret.blocks[i]'hi) := by
   revert hremaining i
   induction remaining using Nat.strong_induction_on with
-  | h remaining ih =>
+  | ind remaining ih =>
       intro hremaining i hi
       cases remaining with
       | zero => simp [reconstructCuts, Composition.length, Composition.ones] at hi
@@ -694,7 +694,7 @@ private lemma reconstructCuts_revenue {α : Type u} [AddCommMonoid α] [LinearOr
       hremaining = table[remaining] := by
   revert hremaining
   induction remaining using Nat.strong_induction_on with
-  | h remaining ih =>
+  | ind remaining ih =>
       intro hremaining
       cases remaining with
       | zero => simp [reconstructCuts, compositionRevenue_zero, hzero]

@@ -720,7 +720,7 @@ private lemma r3leg_descend_to_one {p m : ℕ} [Fact (Nat.Prime p)]
     (halign : r3legAligned p q w) :
     ∃ π : Quaternion ℤ, Quaternion.normSq π = p ∧ r3legAligned p π w := by
   induction m using Nat.strong_induction_on generalizing q with
-  | h m ih =>
+  | ind m ih =>
       by_cases hm1 : m = 1
       · subst m
         refine ⟨q, ?_, halign⟩

@@ -80,7 +80,7 @@ namespace EarthScience
 /-- Buoyancy acceleration of a dry parcel displaced by `zeta` in a locally
 linear potential-temperature profile `theta(z) = theta0 + a * z`: the
 parcel keeps `theta0`, the ambient value at `zeta` is `theta0 + a * zeta`,
-so the acceleration is `-(g * a / theta0) * zeta` (Holton and Hakim,
+so for `theta0 ≠ 0` the acceleration is `-(g * a / theta0) * zeta` (Holton and Hakim,
 §2.7.3, under the approximations listed in the module docstring). -/
 theorem potential_temp_buoyancy_accel {g a theta0 zeta : ℝ} (hth : theta0 ≠ 0) :
     g * (theta0 - (theta0 + a * zeta)) / theta0 = -(g * a / theta0) * zeta := by
@@ -124,7 +124,7 @@ theorem brunt_vaisala_sq_sign {g a theta0 : ℝ} (hg : 0 < g) (hth : 0 < theta0)
       exact Or.inr ⟨by rw [mul_neg_iff]; exact Or.inl ⟨hg, ha⟩, hth⟩
   exact ⟨hpos, hzero, hneg⟩
 
-/-- Algebraic rewrite of the buoyancy law: if `v` has derivative
+/-- Algebraic rewrite of the buoyancy law: for `theta0 ≠ 0`, if `v` has derivative
 `g * (theta0 - (theta0 + a * zeta t)) / theta0` at `t`, it has derivative
 `-(g * a / theta0) * zeta t`. This only rewrites the derivative value. It
 does not relate `v` to the derivative of `zeta`, so it is not an
@@ -138,8 +138,8 @@ lemma buoyancy_deriv_rewrite {zeta v : ℝ → ℝ} {t : ℝ} {g a theta0 : ℝ}
     potential_temp_buoyancy_accel hth
   exact hbuoy.congr_deriv hEq
 
-/-- **Static-stability oscillator.** If the parcel velocity is the time
-derivative of its displacement, `zeta' = v`, and `v` obeys the buoyancy
+/-- **Static-stability oscillator.** For `theta0 ≠ 0`: if the parcel velocity is the
+time derivative of its displacement at every time, `zeta' = v`, and `v` obeys the buoyancy
 law at `t`, then `zeta'' (t) = -N^2 * zeta t` with `N^2 = g * a / theta0`
 (Holton and Hakim, §2.7.3). If the buoyancy law holds at every time, this
 is the oscillator equation `zeta'' + N^2 * zeta = 0`. -/

@@ -10,12 +10,13 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
-public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.List.OfFn
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import MathlibExt.Combinatorics.Words.KeywordSubstitutionClasses
+public import MathlibExt.Combinatorics.Words.KeywordGraphDistance
+public import MathlibExt.Combinatorics.Words.KeywordGraphSymmetries
+public import MathlibExt.Combinatorics.Words.KeywordSimpleMapComm
 public import MathlibExt.NumberTheory.Recurrences.MStepFibonacciPartialSums
 
 /-!
@@ -113,68 +114,6 @@ public theorem_wanted card_singleton_classes_eq_iff {m : ℕ} (a b : Fin (m + 1)
             (List.ofFn a).take i = ((List.ofFn a).drop (m + 1 - i)).map not) ↔
           ((List.ofFn b).take i = (List.ofFn b).drop (m + 1 - i) ∨
             (List.ofFn b).take i = ((List.ofFn b).drop (m + 1 - i)).map not))
-
-/-- **When two simple maps commute.** Let $a$ be a keyword of length $m + 1$ and let $n$ be a
-natural number. Let $i < j$ be natural numbers with $j + m < n$, and put $\Delta = j - i$. The
-simple maps $\varphi_i$ and $\varphi_j$ of $a$ on binary words of length $n$ satisfy
-$\varphi_i \circ \varphi_j = \varphi_j \circ \varphi_i$ if and only if $\Delta \ge m + 1$, or the
-prefix of $a$ of length $m + 1 - \Delta$ differs both from the suffix of $a$ of length
-$m + 1 - \Delta$ and from the letterwise negation of that suffix.
-
-In the paper's numbering, which counts letters from $1$, the hypothesis reads $i < j \le n - m$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Proposition 12
-(`jis-2025-25.6.6-prop-12`). -/
-public theorem_wanted keywordSimpleMap_comm_iff {m n : ℕ} (a : Fin (m + 1) → Bool)
-    (i j : ℕ) (hij : i < j) (hj : j + m < n) :
-    (keywordSimpleMap (n := n) a i ∘ keywordSimpleMap a j =
-        keywordSimpleMap a j ∘ keywordSimpleMap a i) ↔
-      (((List.ofFn a).take (m + 1 - (j - i)) ≠ (List.ofFn a).drop (j - i) ∧
-          (List.ofFn a).take (m + 1 - (j - i)) ≠ ((List.ofFn a).drop (j - i)).map not) ∨
-        m + 1 ≤ j - i)
-
-/-- **Keyword symmetries of the substitution graph.** Let $a = a_0 a_1 \cdots a_m$ be a keyword of
-length $m + 1$ and let $n \ge 0$. Write $\neg a$ for the letterwise negation of $a$,
-$\rho(a) = a_m a_{m-1} \cdots a_0$ for its reversal, and $\bar a$ for its seminegation, which keeps
-$a_t$ for even $t$ and negates $a_t$ for odd $t$. Then the substitution graphs satisfy
-$\mathcal{G}_n^{(a)} = \mathcal{G}_n^{(\neg a)}$, and $\mathcal{G}_n^{(a)}$ is isomorphic both to
-$\mathcal{G}_n^{(\rho(a))}$ and to $\mathcal{G}_n^{(\bar a)}$.
-
-In the paper's numbering, which counts letters from $1$, the seminegation negates the letters in
-even positions. The paper states this for $n \ge 1$; it also holds at $n = 0$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Proposition 15
-(`jis-2025-25.6.6-prop-15`). -/
-public theorem_wanted keywordGraph_neg_rev_seminegation {m : ℕ} (a : Fin (m + 1) → Bool)
-    (n : ℕ) :
-    keywordGraph a n = keywordGraph (fun t => !a t) n ∧
-      Nonempty (keywordGraph a n ≃g keywordGraph (fun t => a t.rev) n) ∧
-      Nonempty (keywordGraph a n ≃g
-        keywordGraph (fun t => if t.val % 2 = 0 then a t else !a t) n)
-
-/-- **Intertwining bijections preserve distances in the substitution graph.** Let $a$ and $b$ be
-keywords of length $m + 1$, and write $\varphi_i^{(a)}$ and $\varphi_i^{(b)}$ for the simple maps
-of $a$ and $b$ at letter $i$ on binary words of length $n$. Let $f$ be a bijection of the set of
-binary words of length $n$ and $\sigma$ a permutation of the positions $\{0, \dots, n - 1\}$, and
-suppose that $f(\varphi_i^{(a)}(u)) = \varphi_{\sigma(i)}^{(b)}(f(u))$ for every word $u$ and
-every position $i$. Then for all words $u$ and $v$ of length $n$, the extended graph distance
-(possibly $\infty$) between $u$ and $v$ in the substitution graph $\mathcal{G}_n^{(a)}$ equals the
-extended graph distance between $f(u)$ and $f(v)$ in $\mathcal{G}_n^{(b)}$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Lemma 16
-(`jis-2025-25.6.6-lem-16`). -/
-public theorem_wanted keywordGraph_edist_eq_of_intertwining {m n : ℕ}
-    (a b : Fin (m + 1) → Bool) (f : (Fin n → Bool) ≃ (Fin n → Bool)) (σ : Equiv.Perm (Fin n))
-    (hf : ∀ (u : Fin n → Bool) (i : Fin n),
-      f (keywordSimpleMap a i u) = keywordSimpleMap b (σ i) (f u))
-    (u v : Fin n → Bool) :
-    (keywordGraph a n).edist u v = (keywordGraph b n).edist (f u) (f v)
 
 end
 

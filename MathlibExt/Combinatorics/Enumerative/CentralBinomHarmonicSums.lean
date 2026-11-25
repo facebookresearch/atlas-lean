@@ -12,6 +12,7 @@ public import Mathlib.Data.Nat.Choose.Central
 public import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
+public import MathlibExt.NumberTheory.Harmonic.OddHarmonic
 
 /-!
 # Central binomial sums with harmonic numbers
@@ -66,6 +67,19 @@ public theorem centralBinomPowSum_succ (a : ℕ → ℚ) (r n : ℕ) :
   rw [centralBinomPowSum, sum_range_succ]
   rfl
 
+private theorem CentralBinomHarmonicSums.normalizedCentralBinom_succ (n : ℕ) :
+    ((n + 1).centralBinom : ℚ) / 4 ^ (n + 1) =
+      (n.centralBinom / 4 ^ n : ℚ) * (2 * n + 1) / (2 * (n + 1)) := by
+  have hn : (n : ℚ) + 1 ≠ 0 := by positivity
+  have hbin : ((n : ℚ) + 1) * (n + 1).centralBinom =
+      2 * (2 * (n : ℚ) + 1) * n.centralBinom := by
+    exact_mod_cast Nat.succ_mul_centralBinom_succ n
+  rw [pow_succ]
+  field_simp
+  linear_combination 2 * hbin
+
+open CentralBinomHarmonicSums
+
 /-- **Central binomial sums with harmonic numbers for powers one to three.** For every natural
 number $n$, let $H_m = \sum_{i=1}^{m} 1/i$ be the harmonic numbers, $c_n = \binom{2n}{n}/4^n$,
 and $S_r^H(n) = \sum_{k=0}^{n} \binom{2k}{k} 4^{-k} k^r H_k$. Then
@@ -93,17 +107,42 @@ public theorem centralBinomPowSum_harmonic_one_two_three (n : ℕ) :
   | zero => norm_num [centralBinomPowSum_zero]
   | succ n ih =>
     have hn : (n : ℚ) + 1 ≠ 0 := by positivity
-    have hbin : ((n : ℚ) + 1) * (n + 1).centralBinom =
-        2 * (2 * (n : ℚ) + 1) * n.centralBinom := by
-      exact_mod_cast Nat.succ_mul_centralBinom_succ n
-    have hstep : ((n + 1).centralBinom : ℚ) / 4 ^ (n + 1) =
-        (n.centralBinom / 4 ^ n : ℚ) * (2 * n + 1) / (2 * (n + 1)) := by
-      rw [pow_succ]
-      field_simp
-      linear_combination 2 * hbin
     obtain ⟨ih₁, ih₂, ih₃⟩ := ih
-    simp only [centralBinomPowSum_succ, ih₁, ih₂, ih₃, hstep, harmonic_succ, Nat.cast_succ]
+    simp only [centralBinomPowSum_succ, ih₁, ih₂, ih₃, normalizedCentralBinom_succ,
+      harmonic_succ, Nat.cast_succ]
     generalize (n.centralBinom / 4 ^ n : ℚ) = c
+    refine ⟨?_, ?_, ?_⟩ <;> field_simp <;> ring
+
+/-- **Odd harmonic central binomial sums for powers one to three.** For every natural number $n$,
+let $O_m = \sum_{i=1}^{m} 1/(2i-1)$ be the odd harmonic numbers, $c_n = \binom{2n}{n}/4^n$, and
+$S_r^O(n) = \sum_{k=0}^{n} \binom{2k}{k} 4^{-k} k^r O_k$. Then
+$$S_1^O(n) = (2n+1)\, c_n \frac{n}{3} \Big(O_{n+1} - \frac{1}{3}\Big),$$
+$$S_2^O(n) = (2n+1)\, c_n \frac{n}{15} \Big((3n+2) O_{n+1} - \frac{9n+16}{15}\Big),$$
+$$S_3^O(n) = (2n+1)\, c_n \frac{n}{105} \Big((15n^2 + 18n + 2) O_{n+1} -
+\frac{225n^2 + 648n + 352}{105}\Big).$$
+
+Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
+Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
+Corollary 1 (`integers-2026-A109-cor-1`). -/
+public theorem centralBinomPowSum_oddHarmonic_one_two_three (n : ℕ) :
+    centralBinomPowSum oddHarmonic 1 n =
+        (2 * n + 1) * ((n.centralBinom : ℚ) / 4 ^ n) * (n / 3) * (oddHarmonic (n + 1) - 1 / 3) ∧
+      centralBinomPowSum oddHarmonic 2 n =
+        (2 * n + 1) * ((n.centralBinom : ℚ) / 4 ^ n) * (n / 15) *
+          ((3 * n + 2) * oddHarmonic (n + 1) - (9 * n + 16) / 15) ∧
+      centralBinomPowSum oddHarmonic 3 n =
+        (2 * n + 1) * ((n.centralBinom : ℚ) / 4 ^ n) * (n / 105) *
+          ((15 * n ^ 2 + 18 * n + 2) * oddHarmonic (n + 1) -
+            (225 * n ^ 2 + 648 * n + 352) / 105) := by
+  induction n with
+  | zero => norm_num [centralBinomPowSum_zero]
+  | succ n ih =>
+    obtain ⟨ih₁, ih₂, ih₃⟩ := ih
+    simp only [centralBinomPowSum_succ, ih₁, ih₂, ih₃, normalizedCentralBinom_succ,
+      oddHarmonic_succ (n + 1), Nat.cast_succ]
+    generalize (n.centralBinom / 4 ^ n : ℚ) = c
+    have hn : (n : ℚ) + 1 ≠ 0 := by positivity
+    have hodd : 2 * ((n : ℚ) + 1) + 1 ≠ 0 := by positivity
     refine ⟨?_, ?_, ?_⟩ <;> field_simp <;> ring
 
 end

@@ -213,7 +213,7 @@ private lemma bary_pascal_all (b : ℕ) (hb : 2 ≤ b) :
         bAryBinomialCoefficient b (N - 1) (K - 1) hb + bAryBinomialCoefficient b (N - 1) K hb := by
   intro N
   induction N using Nat.strong_induction_on with
-  | h N ih =>
+  | ind N ih =>
     intro K hKN hK hN hne
     have hb0 : 0 < b := by omega
     have hdig : ∀ j, (K / b ^ j) % b ≤ (N / b ^ j) % b :=

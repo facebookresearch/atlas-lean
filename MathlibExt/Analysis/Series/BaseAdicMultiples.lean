@@ -75,7 +75,8 @@ private def indexEquiv (hB : 2 ≤ B) : ((ℕ × ℕ) × Fin (B - 1)) ≃ ℕ wh
       (Nat.not_dvd_divMaxPow hB (Nat.succ_ne_zero m))
     have hr : B - (B - 1 - t % B + 1) = t % B := by omega
     change B ^ padicValNat B (m + 1) * (B * (t / B) + (B - (B - 1 - t % B + 1))) - 1 = m
-    rw [hr, Nat.div_add_mod, Nat.pow_padicValNat_mul_divMaxPow, Nat.add_sub_cancel]
+    rw [hr, Nat.div_add_mod, Nat.padicValNat_def, Nat.pow_multiplicity_mul_divMaxPow,
+      Nat.add_sub_cancel]
 
 private theorem indexEquiv_summand (hB : 2 ≤ B) (x : (ℕ × ℕ) × Fin (B - 1)) :
     B * (indexEquiv hB x + 1) = (B * (x.1.2 + 1) - (x.2 + 1)) * B ^ (x.1.1 + 1) := by

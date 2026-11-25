@@ -10,6 +10,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
+public import Mathlib.FieldTheory.IsSepClosed
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 
 import Mathlib.Tactic.FieldSimp

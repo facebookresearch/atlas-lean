@@ -1,0 +1,3 @@
+# k-COLORABLE INDUCED SUBGRAPH as a decision problem
+
+Fix a natural number $k$. The decision problem $k$-COLORABLE INDUCED SUBGRAPH accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance in which the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$, $0 < K \le n$, and some set of at least $K$ vertices induces a $k$-colorable subgraph of the graph on $\{0, \dots, n-1\}$ with edge list $E$. It rejects every bitstring that does not decode to such an instance.
