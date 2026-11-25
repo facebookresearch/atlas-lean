@@ -1,0 +1,3 @@
+# Artin conductor of a Galois character
+
+For an extension $M/K$ of number fields and a character $\psi : \operatorname{Gal}(M/K) \to \mathbb{C}^\times$, the ideal $\mathfrak{f}(\psi) = \prod_v v^{f_v(\psi)}$ of $\mathcal{O}_K$ over the finite places $v$, where $f_v(\psi) = [\psi \text{ ramified at } v] + \lceil \operatorname{sw}_v(\psi)\rceil$, $\operatorname{sw}_v(\psi) = \sum_{i \ge 1} \frac{|G_i(v)|}{|G_0(v)|}[\psi|_{G_i(v)} \ne 1]$, $G_i(v)$ is the subgroup of $\operatorname{Gal}(M/K)$ acting trivially on $\mathcal{O}_M/\mathfrak{P}_v^{i+1}$ and $\mathfrak{P}_v$ is a chosen maximal ideal of $\mathcal{O}_M$ lying over the finite place $v$ of $K$.

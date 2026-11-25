@@ -1,0 +1,3 @@
+# Archimedean character condition at one place
+
+For a number field $F$, an infinite place $w$, a character $\chi_w$ of the group of determinant-one row isometries in $\mathrm{GL}_2(F_w)$ and a function $\varphi : \mathrm{GL}_2(\mathbb{A}_F) \to \mathbb{C}$, $\varphi$ has archimedean character $\chi_w$ at an infinite place $w$ when $\varphi(g\,\iota_w(k)) = \chi_w(k)\varphi(g)$ for every $g \in \mathrm{GL}_2(\mathbb{A}_F)$ and every row isometry $k \in \mathrm{GL}_2(F_w)$ of determinant $1$, where $\iota_w$ places $k$ at $w$ and the identity elsewhere; a row isometry $k$ has $|\det k| = 1$ and preserves $|x|^2 + |y|^2$ under $(x, y) \mapsto (x, y)k$.

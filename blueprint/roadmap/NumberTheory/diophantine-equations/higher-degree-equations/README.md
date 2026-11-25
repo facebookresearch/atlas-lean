@@ -11,6 +11,7 @@ Thue equations, generalized Fermat equations, sums of cubes, x^y = y^x, abc conj
 - [Split families of Thue equations](split-families-of-thue-equations/README.md)
 - [Sums of cubes of polynomials](sums-of-cubes-of-polynomials/README.md)
 - [Existence of seeds for generalized taxicab numbers](generalized-taxicab-seed-exists.md)
+- [Fermat's Last Theorem for exponent five](fermat-last-theorem-five.md)
 - [Rational solutions of $x^y = y^x$](rational-parametrization-pow-swap.md)
 - [Sophie Germain's theorem](sophie-germain.md)
 - [The abc conjecture](abc-conjecture.md)

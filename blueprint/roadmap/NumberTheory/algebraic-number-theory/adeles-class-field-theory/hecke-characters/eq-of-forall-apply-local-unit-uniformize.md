@@ -1,0 +1,3 @@
+# Hecke characters are determined by their values at almost all uniformizers
+
+Let $K$ be a number field and $\chi_1, \chi_2$ continuous idele class characters $\mathbb{A}_K^\times \to \mathbb{C}^\times$ admitting moduli $\mathfrak{f}_1$ and $\mathfrak{f}_2$. If for all finite places $v$ outside a finite set $S$, $\chi_1$ and $\chi_2$ agree on the idele equal to a uniformizer $\pi_v$ at $v$ and $1$ elsewhere, then $\chi_1 = \chi_2$. Here a character $\chi : \mathbb{A}_K^\times \to \mathbb{C}^\times$ admits the modulus $\mathfrak{f}$ when $\mathfrak{f} \ne 0$ and $\chi(u) = 1$ for every idele $u$ with infinite part $1$ such that, at every finite place $v$, $|u_v|_v = 1$ and $\operatorname{ord}_v(u_v - 1) \ge \operatorname{ord}_v(\mathfrak{f})$.

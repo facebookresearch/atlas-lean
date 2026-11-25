@@ -9,4 +9,6 @@ Absolute heights of algebraic numbers, Mahler measure, Lehmer's problem, Dobrowo
 - [Multivariable Mahler measure](multivariable-mahler-measure/README.md)
 - [Pisot numbers](pisot-numbers/README.md)
 - [Schur–Siegel–Smyth trace problem](schur-siegel-smyth-trace-problem/README.md)
+- [Zhang–Zagier height](zhang-zagier-height/README.md)
 - [Dimitrov's lower bound for the house of an algebraic integer](dimitrov.md)
+- [Logarithmic height under extension of number fields](log-height-algebra-map.md)

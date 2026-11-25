@@ -10,6 +10,8 @@
 - [Zeroth (a, b)-Lucas number](lucas-ab-zero.md)
 - [First (a, b)-Lucas number](lucas-ab-one.md)
 - [Recurrence for the (a, b)-Lucas numbers](lucas-ab-add-two.md)
+- [Horadam sequences](horadam-ab.md)
+- [Recurrence of Horadam sequences](horadam-ab-add-two.md)
 - [Discriminant times an (a, b)-Fibonacci number](disc-mul-fib-ab.md)
 - [Sum of even-indexed (a, b)-Fibonacci numbers weighted by powers of -b](sum-neg-b-pow-fib-ab-even-prod.md)
 - [Sums of (a, b)-Lucas numbers weighted by powers of -b](sum-neg-b-pow-lucas-ab.md)

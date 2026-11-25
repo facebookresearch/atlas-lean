@@ -9,6 +9,7 @@ Continuation and zeros of ζ, zero-free regions, moments and subconvexity, RH cr
 - [Riemann xi function](riemann-xi-function/README.md)
 - [Robin's inequality](robin-s-inequality/README.md)
 - [Stieltjes constants](stieltjes-constants/README.md)
+- [Stirling–Ramanujan constants](stirling-ramanujan-constants/README.md)
 - [Stride series for zeta and eta values](stride-series-for-zeta-and-eta-values/README.md)
 - [Zero-free regions for the Riemann zeta function](zero-free-regions-for-the-riemann-zeta-function/README.md)
 - [Zeros of the Riemann zeta function](zeros-of-the-riemann-zeta-function/README.md)

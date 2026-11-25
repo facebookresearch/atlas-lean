@@ -3,6 +3,7 @@
 - [Multiplicative order modulo $n$](mul-ord-mod.md)
 - [Reduction of units modulo $p^2$ to units modulo $p$](unit-reduce-sq.md)
 - [Fibers of reduction modulo $p$ on units modulo $p^2$](lift-fiber.md)
+- [Lifting primitive roots to prime powers](is-primitive-root-prime-pow.md)
 - [The order of $a + kp$ modulo $p^2$](order-add-mul-prime-eq-or-mul.md)
 - [Unique order-preserving lift modulo $p^2$](exists-unique-order-add-mul-prime-eq.md)
 - [Unique order-preserving element of a fiber modulo $p^2$](exists-unique-mem-lift-fiber-order-eq.md)

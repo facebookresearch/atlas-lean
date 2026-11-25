@@ -4,6 +4,7 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 
 - [2-adic odd part of factorials of powers of two](2-adic-odd-part-of-factorials-of-powers-of-two/README.md)
 - [Absolute values on fields](absolute-values-on-fields/README.md)
+- [Congruence subgroups of GL₂ over the p-adic numbers](congruence-subgroups-of-gl-over-the-p-adic-numbe/README.md)
 - [Hilbert symbol](hilbert-symbol/README.md)
 - [Krasner's lemma](krasner-s-lemma/README.md)
 - [Morita's p-adic gamma function](morita-s-p-adic-gamma-function/README.md)
@@ -14,6 +15,7 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [Spectral norm on algebraic extensions](spectral-norm-on-algebraic-extensions/README.md)
 - [Cassels' embedding theorem](exists-injective-ring-hom-closure-padic.md)
 - [p-adic integrality is equivalent to norm at most one](is-integral-padic-int-iff-norm-le-one.md)
+- [p-th powers of the form p^i (1 + p)^j](dvd-of-prime-zpow-mul-one-add-prime-zpow.md)
 - [Strassmann's theorem](strassmann.md)
 - [The p-adic exponential on a neighbourhood of zero](p-adic-exponential.md)
 - [Index of the n-th powers in a local field of characteristic zero](index-of-n-th-powers.md)

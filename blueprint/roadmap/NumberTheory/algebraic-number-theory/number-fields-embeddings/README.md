@@ -6,3 +6,4 @@ Number fields, their rings of integers, embeddings and signatures, CM fields, Mi
 - [Integral closure of ℤ in a field and the ring of integers of a number field](ring-of-integers.md)
 - [The class group of a number field is finite](class-group-finite.md)
 - [The ring of integers of a number field is a Dedekind domain](ring-of-integers-dedekind.md)
+- [Dual of an ideal lattice under the trace form](coe-dual-submodule-flip-trace-form-ideal.md)

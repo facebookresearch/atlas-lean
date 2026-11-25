@@ -16,3 +16,4 @@
 - [The localization map to the compositum at a prime](normalized-tensor-localization-to-compos.md)
 - [The localization map restricts to the normalized tensor map](normalized-tensor-localization-to-compos-2.md)
 - [Value of the localization map on fractions](normalized-tensor-localization-to-compos-3.md)
+- [Primes in Galois extensions of prime degree split, are inert, or ramify totally](ncard-primes-over-ramification-idx-inert.md)

@@ -11,3 +11,4 @@ PNT and its proofs, Chebyshev theta and psi, explicit bounds for π(x) and the n
 - [Prime number theorem](prime-number-theorem/README.md)
 - [Prime-counting formulas from divisor functions](prime-counting-formulas-from-divisor-functions/README.md)
 - [Prime-indexed primes](prime-indexed-primes/README.md)
+- [Primes with a given number of binary digits](primes-with-a-given-number-of-binary-digits/README.md)

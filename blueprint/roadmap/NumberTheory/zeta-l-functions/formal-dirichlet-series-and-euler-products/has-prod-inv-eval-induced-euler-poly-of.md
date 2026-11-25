@@ -1,0 +1,3 @@
+# Regrouping Euler products along an extension of number fields
+
+Let $K/F$ be an extension of number fields with $\mathcal{O}_K$ integral over $\mathcal{O}_F$, let $c$ be a function from the nonzero primes of $\mathcal{O}_K$ to $\mathbb{C}$, and let $s, Z \in \mathbb{C}$. If the product over the nonzero primes $\mathfrak{P}$ of $\mathcal{O}_K$ of $(1 - c(\mathfrak{P}) N\mathfrak{P}^{-s})^{-1}$ converges (unconditionally) to $Z$, then so does the product over the nonzero primes $\mathfrak{p}$ of $\mathcal{O}_F$ of $P_{\mathfrak{p}}(N\mathfrak{p}^{-s})^{-1}$, where $P_{\mathfrak{p}}(X) = \prod_{\mathfrak{P} \mid \mathfrak{p}} (1 - c(\mathfrak{P}) X^{f(\mathfrak{P})})$ is the induced Euler polynomial and $N$ the absolute norm.
