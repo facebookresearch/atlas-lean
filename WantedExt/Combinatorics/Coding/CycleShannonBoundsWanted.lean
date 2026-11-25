@@ -33,14 +33,6 @@ namespace MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
 
-/-- **Polak–Schrijver code of size 367 for the 7-cycle.** There is a finite set $A$ of words of
-length $5$ over $\mathbb{Z}/7\mathbb{Z}$ that is an independent code for the $7$-cycle and has
-exactly $367$ elements.
-
-Source: Polak--Schrijver, arXiv:1808.07438, the fifth-power 367-word construction. -/
-theorem_wanted polakSchrijverLowerBound :
-  ∃ A : Finset (Fin 5 → ZMod 7), IsCycleCode 7 A ∧ A.card = 367
-
 /-- **Shannon's upper bound for the capacity of the 7-cycle.** The Shannon capacity of the
 $7$-cycle is at most $7/2$.
 

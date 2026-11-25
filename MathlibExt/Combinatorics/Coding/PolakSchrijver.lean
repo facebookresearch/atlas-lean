@@ -104,13 +104,13 @@ private theorem words_separated : words.Pairwise Separated := by
   apply List.pairwise_iff_forall_sublist.mpr
   exact fun hsub h ↦ checkBoxes_sound _ _ checked_boxes hsub fun i _ ↦ h i
 
-/-- **Polak–Schrijver lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $367^{1/5}$, as an inequality in $[0, \infty]$.
+/-- **Polak–Schrijver code of size 367 for the 7-cycle.** There is a finite set $A$ of words of
+length $5$ over $\mathbb{Z}/7\mathbb{Z}$ that is an independent code for the $7$-cycle and has
+exactly $367$ elements.
 
-Source: Polak--Schrijver, arXiv:1808.07438, exact fifth-root rate. -/
-public theorem polakSchrijverRateLowerBound :
-    ENNReal.rpow 367 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7 := by
-  apply cycleConstruction_implies_lowerBound 7 5 367 (by decide)
+Source: Polak--Schrijver, arXiv:1808.07438, the fifth-power 367-word construction. -/
+public theorem polakSchrijverLowerBound :
+    ∃ A : Finset (Fin 5 → ZMod 7), IsCycleCode 7 A ∧ A.card = 367 := by
   have nodup : words.Nodup := words_separated.imp fun h he ↦ h (by simp [he, Near])
   have hcard : words.toFinset.card = 367 := by
     rw [List.toFinset_card_of_nodup nodup, words, List.length_map]
@@ -120,5 +120,13 @@ public theorem polakSchrijverRateLowerBound :
   by_cases he : x = y
   · simp [he]
   exact (words_separated.forall (List.mem_toFinset.mp hx) (List.mem_toFinset.mp hy) he h).elim
+
+/-- **Polak–Schrijver lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
+$7$-cycle is at least $367^{1/5}$, as an inequality in $[0, \infty]$.
+
+Source: Polak--Schrijver, arXiv:1808.07438, exact fifth-root rate. -/
+public theorem polakSchrijverRateLowerBound :
+    ENNReal.rpow 367 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7 :=
+  cycleConstruction_implies_lowerBound 7 5 367 (by decide) polakSchrijverLowerBound
 
 end MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted

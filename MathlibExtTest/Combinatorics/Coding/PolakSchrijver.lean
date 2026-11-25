@@ -14,6 +14,11 @@ import Mathlib.Tactic.NormNum
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
 open MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 
+/-- Package the construction as a length-five cycle code with its exact cardinality. -/
+example : ∃ C : CycleCode 7 5, C.1.card = 367 := by
+  obtain ⟨A, hA, hcard⟩ := polakSchrijverLowerBound
+  exact ⟨⟨A, hA⟩, hcard⟩
+
 /-- The strict decimal estimate printed alongside the exact fifth-root bound. -/
 example : ENNReal.ofReal 3.2578 < shannonCapacityCycle 7 := by
   apply lt_of_lt_of_le _ polakSchrijverRateLowerBound

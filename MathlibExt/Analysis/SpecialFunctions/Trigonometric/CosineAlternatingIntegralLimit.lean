@@ -16,7 +16,7 @@ import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 
 /-!
-# Alternating cosine integrals at even frequencies
+# Alternating cosine integrals for odd and even multipliers
 
 For Lemma 12 of Dombrowski and Dresden, we telescope the endpoint values of the
 antiderivative, then use the sine sums for the odd moduli `2 * m ± 1`. The two

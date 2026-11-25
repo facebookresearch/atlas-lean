@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Analysis.Fourier.DirichletPointwise
+public import MathlibExt.Analysis.Fourier.Fejer
 
 /-!
 # Carleson's theorem (statement)
