@@ -40,7 +40,10 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.RingTheory.PowerSeries.Trunc
 public import Mathlib.RingTheory.Bezout
+public import Mathlib.RingTheory.Kaehler.Basic
 public import MathlibExt.AlgebraicGeometry.Curve.Place
+
+import Mathlib.LinearAlgebra.Projectivization.Cardinality
 
 @[expose] public section
 
@@ -260,13 +263,10 @@ abbrev H1 (K F : Type*) [Field K] [Field F] [Algebra K F] (D : Divisor K F) : Ty
 noncomputable def genusFF (K F : Type*) [Field K] [Field F] [Algebra K F] : ℕ :=
   Module.finrank K (H1 K F (0 : Divisor K F))
 
-/-- A curve over `K` with function field `F`, packaged with the standard
-inputs used for finite-field curves: finite residue fields, principal
-divisors of degree zero coming from functions, finite-dimensional
-Riemann-Roch spaces, a Riemann-Roch canonical divisor, and, over a finite
-base with constants equal to the base, finiteness of the degree-zero Picard
-group, a divisor of degree one, and the count of effective divisors in a
-complete linear system. -/
+/-- A curve over `K` with function field `F`, as in the cited source: every
+residue field is finite over the base, every nonzero function has a principal
+divisor of degree zero, and the Kähler differentials of `F` over `K` form a
+free `F`-module of rank one. -/
 class IsCurveOver (K F : Type*) [Field K] [Field F] [Algebra K F] : Prop where
   /-- Every residue field is finite over the base. -/
   finiteResidue : ∀ v : Place K F,
@@ -274,22 +274,8 @@ class IsCurveOver (K F : Type*) [Field K] [Field F] [Algebra K F] : Prop where
   /-- Every nonzero function has a principal divisor of degree zero. -/
   exists_divisor : ∀ f : F, f ≠ 0 → ∃ D : Divisor K F,
     (∀ v : Place K F, D v = v.ord f) ∧ Divisor.degree D = 0
-  /-- Riemann-Roch spaces are finite-dimensional. -/
-  finiteDimensional_lSpace : ∀ D : Divisor K F, Module.Finite K (LSpace D)
-  /-- A canonical divisor satisfies the Riemann-Roch formula. -/
-  riemannRoch : ∃ W : Divisor K F, ∀ D : Divisor K F,
-    (ell D : ℤ) - (ell (W - D) : ℤ) = Divisor.degree D + 1 - (genusFF K F : ℤ)
-  /-- Over a finite base, the degree-zero Picard group is finite. -/
-  pic0Finite_of_finite : ∀ [Finite K], ConstantsAreBase K F → Finite (Pic0 K F)
-  /-- Over a finite base, there is a divisor of degree one. -/
-  exists_degree_one_of_finite : ∀ [Finite K], ConstantsAreBase K F →
-    ∃ D : Divisor K F, Divisor.degree D = 1
-  /-- Over a finite base, the effective divisors in a complete linear system
-  are counted by the dimension of its Riemann-Roch space. -/
-  card_effective_of_finite : ∀ [Finite K], ∀ (hC : ConstantsAreBase K F)
-    (C : Divisor K F), (Nat.card K - 1) *
-      Nat.card {D : Divisor K F // 0 ≤ D ∧ Divisor.IsPrincipal (D - C)} + 1 =
-        Nat.card K ^ ell C
+  /-- The Kähler differentials of `F` over `K` are free of rank one. -/
+  kaehler_free_rank_one : Module.Free F Ω[F⁄K] ∧ Module.finrank F Ω[F⁄K] = 1
 
 namespace IsCurveOver
 
@@ -307,6 +293,7 @@ end IsCurveOver
 section Counts
 
 open Polynomial
+open scoped LinearAlgebra.Projectivization
 
 private def geom (r : ℤ) : PowerSeries ℤ := PowerSeries.mk fun n => r ^ n
 
@@ -501,6 +488,28 @@ private theorem lpoly_of_counts (q h : ℤ) (hq1 : q - 1 ≠ 0) (g : ℕ) (A T :
       linear_combination h1
     · exact hLW.symm
 
+/-- A constant has order zero at every place. -/
+private theorem ord_algebraMap (c : K) (v : Place K F) :
+    v.ord (algebraMap K F c) = 0 := by
+  have h1 := v.ord_nonneg_of_mem (v.algebraMap_mem' c)
+  have h2 := v.ord_nonneg_of_mem (v.algebraMap_mem' c⁻¹)
+  rw [map_inv₀, v.ord_inv] at h2
+  omega
+
+/-- A nonzero element of the maximal ideal of a place has positive order. -/
+private theorem one_le_ord_of_mem_maximalIdeal (v : Place K F) {x : v.toValuationSubring}
+    (hx : x ∈ IsLocalRing.maximalIdeal v.toValuationSubring) (hx0 : x ≠ 0) :
+    1 ≤ v.ord (x : F) := by
+  have hxF : (x : F) ≠ 0 := fun h => hx0 (Subtype.ext h)
+  have hne : v.ord (x : F) ≠ 0 := fun h => (IsLocalRing.mem_maximalIdeal x).mp hx
+    ((v.adicValuation_coe_eq_one_iff x).mp (by
+      rw [v.adicValuation_eq_exp_neg_ord hxF, h, neg_zero, exp_zero]))
+  have := v.ord_nonneg_of_mem x.2
+  omega
+
+private theorem lSpace_mono {D E : Divisor K F} (h : D ≤ E) : LSpace D ≤ LSpace E :=
+  fun _ hf v => (hf v).trans (exp_le_exp.mpr (Finsupp.le_def.mp h v))
+
 variable [IsCurveOver K F]
 
 private theorem self_mem_lSpace_neg {z : F} {P : Divisor K F} (hP : ∀ v, P v = v.ord z) :
@@ -597,6 +606,104 @@ private theorem degree_pos_of_nonneg_of_ne_zero {E : Divisor K F} (hE : 0 ≤ E)
   rw [hsplit, map_add, Divisor.degree_single]
   nlinarith
 
+/-- Raising a divisor `A` by one at a place `P` keeps its Riemann-Roch space
+finite-dimensional: `L(P + A) / L(A)` embeds in the residue field at `P`
+through `f ↦ π ^ n * f` for a uniformizer `π` and `n = A P + 1`. -/
+private theorem finite_lSpace_single_add (P : Place K F) {A : Divisor K F}
+    [Module.Finite K (LSpace A)] : Module.Finite K (LSpace (Finsupp.single P 1 + A)) := by
+  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible P.toValuationSubring
+  have hπ0 : (π : F) ≠ 0 := by simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
+  have hB : (Finsupp.single P 1 + A : Divisor K F) P = A P + 1 := by simp [add_comm]
+  have hmem : ∀ f : LSpace (Finsupp.single P 1 + A),
+      (π : F) ^ (A P + 1) * (f : F) ∈ P.toValuationSubring := by
+    intro f
+    rcases eq_or_ne (f : F) 0 with h0 | h0
+    · rw [h0, mul_zero]
+      exact zero_mem _
+    · have hfP := (mem_lSpace_iff_ord.mp f.2).resolve_left h0 P
+      rw [hB] at hfP
+      refine P.mem_of_ord_nonneg (mul_ne_zero (zpow_ne_zero _ hπ0) h0) ?_
+      rw [P.ord_mul (zpow_ne_zero _ hπ0) h0, P.ord_zpow, P.ord_coe_irreducible hπ, mul_one]
+      linarith
+  let φ : LSpace (Finsupp.single P 1 + A) →ₗ[K] P.toValuationSubring :=
+    { toFun := fun f => ⟨(π : F) ^ (A P + 1) * (f : F), hmem f⟩
+      map_add' := fun f g => Subtype.ext (by simp [mul_add])
+      map_smul' := fun c f => Subtype.ext (by simp [Algebra.smul_def, mul_left_comm]) }
+  let ψ := (IsScalarTower.toAlgHom K P.toValuationSubring
+    (IsLocalRing.ResidueField P.toValuationSubring)).toLinearMap ∘ₗ φ
+  have hker : ∀ f, ψ f = 0 → (f : F) ∈ LSpace A := by
+    intro f hf
+    rw [mem_lSpace_iff_ord]
+    rcases eq_or_ne (f : F) 0 with h0 | h0
+    · exact Or.inl h0
+    refine Or.inr fun v => ?_
+    have hfv := (mem_lSpace_iff_ord.mp f.2).resolve_left h0 v
+    by_cases hv : v = P
+    · subst hv
+      have hres : IsLocalRing.residue _ (φ f) = 0 := by
+        simpa [ψ, IsLocalRing.ResidueField.algebraMap_eq] using hf
+      have hne : φ f ≠ 0 := fun h =>
+        mul_ne_zero (zpow_ne_zero _ hπ0) h0 (congrArg Subtype.val h)
+      have h1 := one_le_ord_of_mem_maximalIdeal v ((IsLocalRing.residue_eq_zero_iff _).mp hres) hne
+      change 1 ≤ v.ord ((π : F) ^ (A v + 1) * (f : F)) at h1
+      rw [v.ord_mul (zpow_ne_zero _ hπ0) h0, v.ord_zpow, v.ord_coe_irreducible hπ,
+        mul_one] at h1
+      linarith
+    · have hAv : (Finsupp.single P 1 + A : Divisor K F) v = A v := by
+        simp [Ne.symm hv]
+      rwa [hAv] at hfv
+  have : Module.Finite K (IsLocalRing.ResidueField P.toValuationSubring) :=
+    IsCurveOver.finiteResidue P
+  have hkerFin : Module.Finite K (LinearMap.ker ψ) := by
+    let ι : LinearMap.ker ψ →ₗ[K] LSpace A :=
+      { toFun := fun f => ⟨((f : LSpace (Finsupp.single P 1 + A)) : F), hker f f.2⟩
+        map_add' := fun _ _ => rfl
+        map_smul' := fun _ _ => rfl }
+    refine Module.Finite.of_injective ι fun f g h => ?_
+    have h' : ((f : LSpace (Finsupp.single P 1 + A)) : F) =
+        ((g : LSpace (Finsupp.single P 1 + A)) : F) :=
+      congrArg (fun x : LSpace A => (x : F)) h
+    exact Subtype.ext (Subtype.ext h')
+  refine ⟨Submodule.fg_of_fg_map_of_fg_inf_ker ψ (IsNoetherian.noetherian _) ?_⟩
+  rw [top_inf_eq]
+  exact Module.Finite.iff_fg.mp hkerFin
+
+private theorem finite_lSpace_single_natCast_add (P : Place K F) (m : ℕ) {A : Divisor K F}
+    [Module.Finite K (LSpace A)] :
+    Module.Finite K (LSpace (Finsupp.single P (m : ℤ) + A)) := by
+  induction m with
+  | zero =>
+    rw [Nat.cast_zero, Finsupp.single_zero, zero_add]
+    infer_instance
+  | succ m ih =>
+    rw [Nat.cast_succ, Finsupp.single_add, add_comm (Finsupp.single P (m : ℤ)), add_assoc]
+    exact finite_lSpace_single_add P
+
+/-- Riemann-Roch spaces are finite-dimensional when the constants are the base
+field: `L(0)` is the base field, raising a divisor at one place keeps its
+Riemann-Roch space finite-dimensional, and lowering it shrinks the space. -/
+private theorem finite_lSpace (hC : ConstantsAreBase K F) (D : Divisor K F) :
+    Module.Finite K (LSpace D) := by
+  induction D using Finsupp.induction with
+  | zero =>
+    refine Module.finite_of_finrank_pos ?_
+    change 0 < ell (0 : Divisor K F)
+    rw [ell_zero_eq_one_of_constantsAreBase hC]
+    exact Nat.one_pos
+  | single_add P b A _ _ ih =>
+    rcases le_or_gt 0 b with hb | hb
+    · obtain ⟨m, rfl⟩ := Int.eq_ofNat_of_zero_le hb
+      exact finite_lSpace_single_natCast_add P m
+    · have hle : Finsupp.single P b + A ≤ A := Finsupp.le_def.mpr fun v => by
+        rw [Finsupp.add_apply]
+        by_cases hv : P = v
+        · subst hv
+          rw [Finsupp.single_eq_same]
+          omega
+        · simp [hv]
+      exact Module.Finite.of_injective (Submodule.inclusion (lSpace_mono hle))
+        (Submodule.inclusion_injective _)
+
 /-- Effective divisors of a given degree. -/
 private abbrev Eff (n : ℕ) : Type _ :=
   {D : Divisor K F // 0 ≤ D ∧ Divisor.degree D = (n : ℤ)}
@@ -620,36 +727,127 @@ private theorem card_eff_zero : Nat.card (Eff (K := K) (F := F) 0) = 1 := by
     simp at hpos
   rw [hD, hE]
 
-private theorem finite_linSys [Finite K] (hC : ConstantsAreBase K F) (C : Divisor K F) :
-    Finite (LinSys (K := K) (F := F) C) := by
-  by_contra hinf
-  rw [not_finite_iff_infinite] at hinf
-  have hcard := IsCurveOver.card_effective_of_finite (K := K) (F := F) hC C
-  rw [@Nat.card_eq_zero_of_infinite _ hinf, mul_zero, zero_add] at hcard
-  have hq : 1 < Nat.card K := Finite.one_lt_card
-  have hell : ell C = 0 := by
-    rcases Nat.pow_eq_one.mp hcard.symm with h1 | h1
-    · omega
-    · exact h1
-  obtain ⟨⟨D, hD0, f, hf, hfD⟩⟩ := (inferInstance : Nonempty (LinSys (K := K) (F := F) C))
-  have hmem : f ∈ LSpace C := by
+/-- The divisor of a nonzero function. -/
+private noncomputable def divOf {f : F} (hf : f ≠ 0) : Divisor K F :=
+  (IsCurveOver.exists_divisor (K := K) f hf).choose
+
+private theorem divOf_apply {f : F} (hf : f ≠ 0) (v : Place K F) :
+    divOf (K := K) hf v = v.ord f :=
+  (IsCurveOver.exists_divisor (K := K) f hf).choose_spec.1 v
+
+/-- The effective divisor `div f + C` of a nonzero `f ∈ L(C)`. -/
+private noncomputable def toLinSys (C : Divisor K F) (f : {f : LSpace C // f ≠ 0}) :
+    LinSys (K := K) (F := F) C :=
+  have hf : ((f : LSpace C) : F) ≠ 0 := fun h => f.2 (Subtype.ext h)
+  ⟨divOf (K := K) hf + C, Finsupp.le_def.mpr fun v => by
+      have hv := (mem_lSpace_iff_ord.mp (f : LSpace C).2).resolve_left hf v
+      simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.coe_add, Pi.add_apply, divOf_apply]
+      linarith,
+    ⟨_, hf, fun v => by rw [add_sub_cancel_right, divOf_apply]⟩⟩
+
+private theorem toLinSys_smul (C : Divisor K F) (a b : {f : LSpace C // f ≠ 0}) (t : K)
+    (h : (a : LSpace C) = t • (b : LSpace C)) : toLinSys C a = toLinSys C b := by
+  have ht : t ≠ 0 := by
+    rintro rfl
+    exact a.2 (by rw [h, zero_smul])
+  have hb : ((b : LSpace C) : F) ≠ 0 := fun h0 => b.2 (Subtype.ext h0)
+  have hab : ((a : LSpace C) : F) = algebraMap K F t * ((b : LSpace C) : F) := by
+    rw [h, Submodule.coe_smul, Algebra.smul_def]
+  refine Subtype.ext (congrArg (· + C) (Finsupp.ext fun v => ?_))
+  rw [divOf_apply, divOf_apply, hab, v.ord_mul ((_root_.map_ne_zero _).mpr ht) hb,
+    ord_algebraMap t, zero_add]
+
+private theorem toLinSys_injective (hC : ConstantsAreBase K F) (C : Divisor K F) :
+    Function.Injective (Projectivization.lift (toLinSys C) (toLinSys_smul C)) := by
+  intro x y hxy
+  induction x using Projectivization.ind with | h f hf => ?_
+  induction y using Projectivization.ind with | h g hg => ?_
+  rw [Projectivization.lift_mk, Projectivization.lift_mk] at hxy
+  have hf' : (f : F) ≠ 0 := fun h => hf (Subtype.ext h)
+  have hg' : (g : F) ≠ 0 := fun h => hg (Subtype.ext h)
+  have hdiv : ∀ v : Place K F, v.ord (f : F) = v.ord (g : F) := fun v => by
+    have h1 := DFunLike.congr_fun (add_right_cancel (congrArg Subtype.val hxy)) v
+    rwa [divOf_apply, divOf_apply] at h1
+  have hmem : (f : F) / g ∈ LSpace (0 : Divisor K F) := by
+    rw [mem_lSpace_iff_ord]
+    refine Or.inr fun v => ?_
+    rw [div_eq_mul_inv, v.ord_mul hf' (inv_ne_zero hg'), v.ord_inv, hdiv v]
+    simp
+  rw [hC] at hmem
+  obtain ⟨c, hc⟩ := LinearMap.mem_range.mp hmem
+  rw [Algebra.linearMap_apply] at hc
+  have hc0 : c ≠ 0 := by
+    rintro rfl
+    rw [map_zero] at hc
+    exact div_ne_zero hf' hg' hc.symm
+  rw [Projectivization.mk_eq_mk_iff]
+  refine ⟨Units.mk0 c hc0, Subtype.ext ?_⟩
+  rw [Units.smul_def, Units.val_mk0, Submodule.coe_smul, Algebra.smul_def, hc,
+    div_mul_cancel₀ _ hg']
+
+private theorem toLinSys_surjective (C : Divisor K F) :
+    Function.Surjective (Projectivization.lift (toLinSys C) (toLinSys_smul C)) := by
+  rintro ⟨D, hD0, g, hg, hgD⟩
+  have hgC : g ∈ LSpace C := by
     rw [mem_lSpace_iff_ord]
     refine Or.inr fun v => ?_
     have h1 := (Finsupp.le_def.mp hD0) v
-    have h2 := hfD v
+    have h2 := hgD v
     simp only [Finsupp.coe_zero, Pi.zero_apply, Finsupp.coe_sub, Pi.sub_apply] at h1 h2
     linarith
-  haveI : Module.Finite K (LSpace C) := IsCurveOver.finiteDimensional_lSpace C
-  have hpos : 0 < ell C :=
-    Module.finrank_pos_iff_exists_ne_zero.mpr
-      ⟨⟨f, hmem⟩, fun h0 => hf (congrArg Subtype.val h0)⟩
-  omega
+  refine ⟨Projectivization.mk K (⟨g, hgC⟩ : LSpace C) fun h => hg (congrArg Subtype.val h), ?_⟩
+  rw [Projectivization.lift_mk]
+  refine Subtype.ext (Finsupp.ext fun v => ?_)
+  have h2 := hgD v
+  simp only [Finsupp.coe_sub, Pi.sub_apply] at h2
+  change divOf (K := K) _ v + C v = D v
+  rw [divOf_apply]
+  linarith
 
-private theorem exists_W (hC : ConstantsAreBase K F) :
+/-- The effective divisors linearly equivalent to `C` correspond to the points
+of the projective space of `L(C)`. -/
+private noncomputable def linSysEquiv (hC : ConstantsAreBase K F) (C : Divisor K F) :
+    ℙ K (LSpace C) ≃ LinSys (K := K) (F := F) C :=
+  Equiv.ofBijective _ ⟨toLinSys_injective hC C, toLinSys_surjective C⟩
+
+/-- Counting the effective divisors in a complete linear system over a finite
+base: they correspond to the nonzero vectors of `L(C)` up to scaling. -/
+private theorem card_linSys [Finite K] (hC : ConstantsAreBase K F) (C : Divisor K F) :
+    (Nat.card K - 1) * Nat.card (LinSys (K := K) (F := F) C) + 1 = Nat.card K ^ ell C := by
+  have hq : 1 < Nat.card K := Finite.one_lt_card
+  have hP := Projectivization.card K (LSpace C)
+  rw [← Nat.card_congr (linSysEquiv hC C)]
+  by_cases hfin : Module.Finite K (LSpace C)
+  · have hV : Nat.card (LSpace C) = Nat.card K ^ ell C := Module.natCard_eq_pow_finrank
+    have hpos : 0 < Nat.card K ^ ell C := pow_pos (by omega) _
+    rw [hV] at hP
+    rw [mul_comm, ← hP]
+    omega
+  · have hinf : Infinite (LSpace C) := by
+      rw [← not_finite_iff_infinite, ← Module.finite_iff_finite (R := K)]
+      exact hfin
+    rw [Nat.card_eq_zero_of_infinite, zero_tsub] at hP
+    have h0 : Nat.card (ℙ K (LSpace C)) = 0 := by
+      rcases Nat.mul_eq_zero.mp hP.symm with h | h
+      · exact h
+      · omega
+    rw [h0, ell, Module.finrank_of_not_finite hfin]
+    simp
+
+private theorem finite_linSys [Finite K] (hC : ConstantsAreBase K F) (C : Divisor K F) :
+    Finite (LinSys (K := K) (F := F) C) := by
+  have : Module.Finite K (LSpace C) := finite_lSpace hC C
+  have : Finite (LSpace C) := Module.finite_of_finite K
+  exact Finite.of_equiv _ (linSysEquiv hC C)
+
+omit [IsCurveOver K F] in
+private theorem exists_W (hC : ConstantsAreBase K F)
+    (hRR : ∃ W : Divisor K F, ∀ D : Divisor K F,
+      (ell D : ℤ) - (ell (W - D) : ℤ) = Divisor.degree D + 1 - (genusFF K F : ℤ)) :
     ∃ W : Divisor K F, Divisor.degree W = 2 * (genusFF K F : ℤ) - 2 ∧
       ∀ D : Divisor K F, (ell D : ℤ) - (ell (W - D) : ℤ) =
         Divisor.degree D + 1 - (genusFF K F : ℤ) := by
-  obtain ⟨W, hW⟩ := IsCurveOver.riemannRoch (K := K) (F := F)
+  obtain ⟨W, hW⟩ := hRR
   refine ⟨W, ?_, hW⟩
   have h0 := hW 0
   have hW' := hW W
@@ -725,7 +923,7 @@ private theorem count_H1 [Finite K] [Fintype (Pic0 K F)] (hC : ConstantsAreBase 
       ((Nat.card K : ℤ) - 1) *
           Nat.card (LinSys (K := K) (F := F) (rep D₁ c (n : ℤ))) + 1 =
         (Nat.card K : ℤ) ^ ell (rep D₁ c n) := fun c => by
-    have hcard := IsCurveOver.card_effective_of_finite (K := K) (F := F) hC (rep D₁ c n)
+    have hcard := card_linSys hC (rep D₁ c n)
     have h2 : ((Nat.card K - 1 : ℕ) : ℤ) = (Nat.card K : ℤ) - 1 := by
       push_cast [hq]
       ring
@@ -736,10 +934,12 @@ private theorem count_H1 [Finite K] [Fintype (Pic0 K F)] (hC : ConstantsAreBase 
     Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
 
 private theorem count_H2 [Finite K] [Fintype (Pic0 K F)] (hC : ConstantsAreBase K F)
+    (hRR : ∃ W : Divisor K F, ∀ D : Divisor K F,
+      (ell D : ℤ) - (ell (W - D) : ℤ) = Divisor.degree D + 1 - (genusFF K F : ℤ))
     (n : ℕ) (hn : 2 * genusFF K F ≤ n + 1) :
     ∑ c : Pic0 K F, (Nat.card K : ℤ) ^ ell (rep D₁ c n) =
       Nat.card (Pic0 K F) * (Nat.card K : ℤ) ^ (n + 1 - genusFF K F) := by
-  obtain ⟨W, hdegW, hRR⟩ := exists_W hC
+  obtain ⟨W, hdegW, hRR⟩ := exists_W hC hRR
   have hc : ∀ c : Pic0 K F, ell (rep D₁ c n) = n + 1 - genusFF K F := fun c => by
     have h1 := hRR (rep D₁ c n)
     have h2 : ell (W - rep D₁ c n) = 0 := by
@@ -754,13 +954,15 @@ private theorem count_H2 [Finite K] [Fintype (Pic0 K F)] (hC : ConstantsAreBase 
     Nat.card_eq_fintype_card (α := Pic0 K F)]
 
 private theorem count_H3 [Finite K] [Fintype (Pic0 K F)] (hC : ConstantsAreBase K F)
+    (hRR : ∃ W : Divisor K F, ∀ D : Divisor K F,
+      (ell D : ℤ) - (ell (W - D) : ℤ) = Divisor.degree D + 1 - (genusFF K F : ℤ))
     (n : ℕ) (hn : n + 2 ≤ 2 * genusFF K F) :
     (Nat.card K : ℤ) ^ (genusFF K F - 1) *
         ∑ c : Pic0 K F, (Nat.card K : ℤ) ^ ell (rep D₁ c n) =
       (Nat.card K : ℤ) ^ n *
         ∑ c : Pic0 K F,
           (Nat.card K : ℤ) ^ ell (rep D₁ c ((2 * genusFF K F - 2 - n : ℕ) : ℤ)) := by
-  obtain ⟨W, hdegW, hRR⟩ := exists_W hC
+  obtain ⟨W, hdegW, hRR⟩ := exists_W hC hRR
   set g := genusFF K F with hg
   set m : ℕ := 2 * g - 2 - n with hm
   have hmn : (m : ℤ) + n = 2 * (g : ℤ) - 2 := by rw [hm]; omega
@@ -804,15 +1006,22 @@ private theorem count_H3 [Finite K] [Fintype (Pic0 K F)] (hC : ConstantsAreBase 
 
 end Counts
 
-/-- Existence of the `L`-polynomial of a curve over a finite field: the
+/-- Existence of the `L`-polynomial of a curve over a finite field, conditional
+on three standard inputs that are hypotheses here, not results proved in this
+file: the Riemann-Roch formula for some divisor `W` with the genus
+`genusFF k F` (`hRR`), finiteness of the degree-zero Picard group (`hPic`), and
+the existence of a divisor of degree one (`hD₁`). Under these hypotheses the
 divisor-counting zeta series of the function field is, up to the two standard
 denominator factors, a polynomial of degree at most twice the genus, with
 constant coefficient `1` and the functional-equation symmetry of its
 coefficients. -/
-public theorem exists_LPolynomial_of_finite
+public theorem exists_LPolynomial_of_finite_of_riemannRoch
     (k F : Type*) [Field k] [Finite k] [Field F] [Algebra k F]
     [IsCurveOver k F] [Algebra.EssFiniteType k F]
-    (hC : ConstantsAreBase k F) :
+    (hC : ConstantsAreBase k F)
+    (hRR : ∃ W : Divisor k F, ∀ D : Divisor k F,
+      (ell D : ℤ) - (ell (W - D) : ℤ) = Divisor.degree D + 1 - (genusFF k F : ℤ))
+    (hPic : Finite (Pic0 k F)) (hD₁ : ∃ D : Divisor k F, Divisor.degree D = 1) :
     ∃ L : Polynomial ℤ,
       L.natDegree ≤ 2 * genusFF k F ∧
       L.coeff 0 = 1 ∧
@@ -824,17 +1033,16 @@ public theorem exists_LPolynomial_of_finite
             (Nat.card {D : Divisor k F //
                 0 ≤ D ∧ Divisor.degree D = (n : ℤ)} : ℤ)) =
         (L : PowerSeries ℤ) := by
-  haveI : Finite (Pic0 k F) := IsCurveOver.pic0Finite_of_finite (K := k) (F := F) hC
   letI : Fintype (Pic0 k F) := Fintype.ofFinite _
-  obtain ⟨D₁, hD₁⟩ := IsCurveOver.exists_degree_one_of_finite (K := k) (F := F) hC
+  obtain ⟨D₁, hD₁⟩ := hD₁
   have hq1 : (Nat.card k : ℤ) - 1 ≠ 0 := by
     have hcard : 1 < Nat.card k := Finite.one_lt_card
     omega
   exact lpoly_of_counts (Nat.card k : ℤ) (Nat.card (Pic0 k F)) hq1 (genusFF k F)
     (fun n => (Nat.card (Eff (K := k) (F := F) n) : ℤ))
     (fun n => ∑ c : Pic0 k F, (Nat.card k : ℤ) ^ ell (rep ⟨D₁, hD₁⟩ c n))
-    (fun n => count_H1 ⟨D₁, hD₁⟩ hC n) (fun n hn => count_H2 ⟨D₁, hD₁⟩ hC n hn)
-    (fun n hn => count_H3 ⟨D₁, hD₁⟩ hC n hn)
+    (fun n => count_H1 ⟨D₁, hD₁⟩ hC n) (fun n hn => count_H2 ⟨D₁, hD₁⟩ hC hRR n hn)
+    (fun n hn => count_H3 ⟨D₁, hD₁⟩ hC hRR n hn)
     (show (Nat.card (Eff (K := k) (F := F) 0) : ℤ) = 1 by exact_mod_cast card_eff_zero)
 
 end AlgebraicCurve
