@@ -48,6 +48,18 @@ theorem exactSource_univ1 {S : Type 1} [CommRing S] {A : Scheme.{1}}
   ⟨h.isLineBundle, h.isSymmetric, h.kernelIsTwoTorsion,
     h.rosatiCompatible⟩
 
+/-- The geometric global-section rank depends only on the structure
+morphism `f`, not on the group law, and the positive-rank field states it
+for `f`. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
+    {I : Type v} (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
+    (star : I → I) (L : A.Modules)
+    (h : CanonicalPolarizationData G act act_over star L)
+    (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k) :
+    0 < geomFibreH0Finrank f L k sk :=
+  h.positiveRank k sk
+
 /-- Boundary point: the identity point satisfies the `2`-torsion
 equation in the kernel condition, and negation is over the base. -/
 example {S : Type u} [CommRing S] {A : Scheme.{u}}

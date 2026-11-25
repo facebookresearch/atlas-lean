@@ -225,9 +225,9 @@ def baseChangePoint {S' : Type u} [CommRing S'] (ψ : S →+* S')
         _ = t' ≫ Spec.map (CommRingCat.ofHom ψ) := by
             rw [← Category.assoc, hP])
 
-/-- The rank of global sections of `L` in the geometric fibre over an
+/-- The rank of global sections of `L` in the geometric fibre of `f` over an
 algebraically closed field. -/
-def geomFibreH0Finrank (G : RelativeGroupLaw S f) (L : A.Modules) (k : Type u) [Field k]
+def geomFibreH0Finrank (f : A ⟶ Spec (CommRingCat.of S)) (L : A.Modules) (k : Type u) [Field k]
     (sk : S →+* k) : ℕ :=
   letI : Algebra k Γ(Limits.pullback f
       (Spec.map (CommRingCat.ofHom sk)), ⊤) :=
@@ -293,7 +293,7 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
               ((Scheme.Modules.pullback (negMor G')).obj L₀))
   /-- The geometric global-section rank is positive. -/
   positiveRank : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
-    0 < geomFibreH0Finrank G L k sk
+    0 < geomFibreH0Finrank f L k sk
   /-- The sheaf is Rosati compatible with the action. -/
   rosatiCompatible : RosatiCompatible G L act act_over star
 
