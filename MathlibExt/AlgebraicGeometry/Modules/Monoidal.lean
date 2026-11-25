@@ -89,7 +89,8 @@ abbrev Scheme.Modules.sheafify : X.PresheafOfModules ⥤ X.Modules :=
 instance : (Scheme.Modules.sheafify X).Monoidal :=
   inferInstanceAs (SheafOfModules.sheafifyFunctor X.sheaf.obj X.ringCatSheaf.property).Monoidal
 
-/-- On a scheme, `L ⊗ M` is the sheafified presheaf tensor product. -/
+/-- On a scheme, `L ⊗ M` is the sheafified presheaf tensor product. By definition the source is
+`MathlibExt.AlgebraicGeometry.SchemeModulesTensor.moduleTensor X L M`. -/
 def Scheme.Modules.tensorIsoSheafify (L M : X.Modules) :
     (Scheme.Modules.sheafify X).obj (L.val ⊗ M.val) ≅ L ⊗ M :=
   SheafOfModules.tensorIsoSheafify X.sheaf.obj X.ringCatSheaf.property L M

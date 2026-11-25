@@ -96,7 +96,7 @@ private lemma isIso_shf_map_unit_whiskerRight (d d' : PresheafOfModulesOfCommRin
   refine (h.mp ?_) d d'
   intro c d
   apply isIso_unit_app_of_isSheaf
-  exact PresheafOfModules.isSheaf_ihomObj _ _ c.isSheaf
+  exact PresheafOfModules.isSheaf_ihom _ _ c.isSheaf
 
 include R α in
 private lemma W_whiskerRight {d₁ d₂ : PresheafOfModulesOfCommRing.{u} 𝒪} (g : d₁ ⟶ d₂)
@@ -125,7 +125,10 @@ end PresheafOfModules.IsMonoidalW
 
 open PresheafOfModules.IsMonoidalW in
 /-- Morphisms of presheaves of modules that become isomorphisms after sheafification are
-stable under tensoring. -/
+stable under tensoring. This generalizes the instance
+`PresheafOfModules.isMonoidal_W_inverseImage_toPresheaf`, the case of a sheaf `𝒪` with `α = 𝟙`
+stated in more general universes; for `C : Type u` with `Category.{u} C`, that instance follows
+from this theorem. -/
 theorem PresheafOfModules.isMonoidal_inverseImage_W_toPresheaf {C : Type u} [Category.{u} C] {J :
   GrothendieckTopology C}
     (𝒪 : Cᵒᵖ ⥤ CommRingCat.{u}) (R : Sheaf J RingCat.{u})

@@ -85,7 +85,9 @@ section Sections
 
 variable {L M : X.Modules} {U : X.Opens}
 
-/-- The section of `L ⊗ M` over `U` given by sections `s` of `L` and `t` of `M`. -/
+/-- The section of `L ⊗ M` over `U` given by sections `s` of `L` and `t` of `M`. Through
+`tensorIsoSheafify` it is `MathlibExt.AlgebraicGeometry.SheafTensorSections.tensorSection`, which
+is stated for `Scheme.{0}` and lands in `SchemeModulesTensor.moduleTensor`. -/
 def tensorSections (s : Γ(L, U)) (t : Γ(M, U)) : Γ(L ⊗ M, U) :=
   DFunLike.coe (α := ((L.val ⊗ M.val).obj (op U) :)) (β := fun _ => Γ(L ⊗ M, U))
     ((tensorSectionsHom L M).app (op U)).hom
@@ -561,7 +563,7 @@ private noncomputable def restrictFunctor'IsoPullback :
 
 variable {U} (L : X.Modules)
 
-/-- The generator of `L` over `U.ι ᵁ W` coming from a trivialization. -/
+/-- The generator of `L` over `U.ι ''ᵁ W` coming from a trivialization. -/
 private noncomputable def gen₀
     (e : (restrictFunctor' U).obj L ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf)
     (W : (U : Scheme.{u}).Opens) : L.val.obj (op (U.ι ''ᵁ W)) :=

@@ -42,13 +42,13 @@ example : 𝟙_ (SheafOfModules.{u} (SheafOfModules.ringSheaf 𝒪 h𝒪)) =
     SheafOfModules.unit (SheafOfModules.ringSheaf 𝒪 h𝒪) := rfl
 
 /-- The internal hom of the presheaves underlying two sheaves of modules is a sheaf
-(`PresheafOfModules.isSheaf_ihomObj`), so sheafification leaves it unchanged. -/
+(`PresheafOfModules.isSheaf_ihom`), so sheafification leaves it unchanged. -/
 example (L M : SheafOfModules.{u} (SheafOfModules.ringSheaf 𝒪 h𝒪)) :
-    IsIso ((SheafOfModules.sheafifyAdj 𝒪 h𝒪).unit.app (PresheafOfModules.ihomObj L.val M.val)) := by
+    IsIso ((SheafOfModules.sheafifyAdj 𝒪 h𝒪).unit.app ((ihom L.val).obj M.val)) := by
   have : IsIso ((PresheafOfModules.toPresheaf _).map
-      ((SheafOfModules.sheafifyAdj 𝒪 h𝒪).unit.app (PresheafOfModules.ihomObj L.val M.val))) := by
+      ((SheafOfModules.sheafifyAdj 𝒪 h𝒪).unit.app ((ihom L.val).obj M.val))) := by
     rw [PresheafOfModules.toPresheaf_map_sheafificationAdjunction_unit_app]
-    exact isIso_toSheafify J (PresheafOfModules.isSheaf_ihomObj L.val M.val M.isSheaf)
+    exact isIso_toSheafify J (PresheafOfModules.isSheaf_ihom L.val M.val M.isSheaf)
   exact isIso_of_reflects_iso _ (PresheafOfModules.toPresheaf _)
 
 /-- Currying for sheaves of modules. -/
