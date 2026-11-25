@@ -29,7 +29,7 @@ $\beta_t \in [0, 2]$.
 
 ## Informally uses
 
-- Spectrum, determinant and norm of a generalized Householder matrix:
+- [Spectrum, determinant and norm of a generalized Householder matrix](../../../LinearAlgebra/special-matrices/generalized-householder-matrices/spectrum-one-sub-smul-vec-mul-vec.md):
   mathematical prerequisite, the spectrum and norm of the transition $I - \beta_t k_t k_t^{\mathsf{T}}$.
 
 ## Sources

@@ -6,6 +6,10 @@ $$V^{\pi'}(s_0) - V^\pi(s_0) = \frac{1}{1-\gamma}\, \mathbb{E}_{s \sim d^{\pi'}_
 
 The value gap between two policies is the advantage of one over the other, averaged along the state distribution of the first. It underlies policy iteration, conservative policy iteration and the analysis of policy gradient methods. The [policy improvement theorem](../../../heuristic-search-and-planning/policy-iteration/policy-value-le-policy-value-improve.md) for deterministic policies is a special case of its consequence [policy improvement for stochastic policies](stoch-value-le-of-sum-prob-mul-advantage.md).
 
+## Related topics
+
+- [Performance difference lemma for row-stochastic policies](../stochastic-policies-and-discounted-occupancy/performance-difference.md): policies given as row-stochastic matrices and an initial weighting in place of an initial state.
+
 ## Sources
 
 - S. Kakade, J. Langford, *Approximately Optimal Approximate Reinforcement Learning*, ICML 2002

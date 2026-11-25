@@ -8,7 +8,7 @@ topic to the measure-theoretic form used by the general theorem.
 
 ## Background
 
-- Empirical measure of a sample:
+- [Empirical measure of a sample](../../../Probability/large-deviations/sanov-s-theorem/sample-empirical-measure.md):
   the definition being matched.
 
 ## Sources

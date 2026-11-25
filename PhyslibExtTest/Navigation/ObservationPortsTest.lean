@@ -12,6 +12,8 @@ import Mathlib.Analysis.Calculus.Deriv.Abs
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
@@ -22,7 +24,11 @@ observation operator on nonzero position and clock directions, the
 stacked pseudorange derivative along the first axis, the unique state
 correction of one residual vector, and the two boundaries: a receiver
 at a satellite has no derivative row, and a repeated satellite gives
-a singular operator with a nonzero invisible direction.
+a singular operator with a nonzero invisible direction. For the frozen
+surrogate: a product model meeting every measure premise, the posterior
+there with a nondegenerate prior and positive measurement noise, the
+positive semidefinite branch where `step_valid` does not apply, and
+shared noise violating the independence premise.
 
 ## i. Overview
 
@@ -31,11 +37,14 @@ These are elaboration and non-vacuity checks, not new results.
 ## ii. Key results
 
 No new results are introduced here. Section A defines the operator
-with a repeated satellite that its last example checks.
+with a repeated satellite that its last example checks. Section B
+defines the product model of the three Gaussian laws and proves that it
+meets the measure premises.
 
 ## iii. Table of contents
 
 - A. Directions, corrections and boundaries
+- B. The frozen linear surrogate
 
 ## iv. References
 
@@ -155,5 +164,99 @@ example :
 /-- The receiver differs from each satellite, and the determinant is `2`. -/
 example : (∀ j, (0 : EuclideanSpace ℝ (Fin 3)) ≠ satellite j) ∧ observationMatrix.det = 2 :=
   ⟨satellite_ne_receiver, observationMatrix_det⟩
+
+/-! ## B. The frozen linear surrogate -/
+
+open MeasureTheory ProbabilityTheory Matrix WithLp
+open Cslib.MachineLearning.Sequence.KalmanFilter (Belief predict step)
+
+/-- The product model: prior state, process noise and measurement noise drawn independently from
+`N(m, P)`, `N(0, Q)` and `N(0, R)` on `(ℝ⁴ × ℝ⁴) × ℝ⁴`. -/
+noncomputable def productModel (b : Belief (Fin 4)) (Q R : Matrix (Fin 4) (Fin 4) ℝ) :
+    Measure ((EuclideanSpace ℝ (Fin 4) × EuclideanSpace ℝ (Fin 4)) × EuclideanSpace ℝ (Fin 4)) :=
+  ((multivariateGaussian b.mean b.cov).prod (multivariateGaussian 0 Q)).prod
+    (multivariateGaussian 0 R)
+
+/-- The product model is a probability measure. -/
+instance (b : Belief (Fin 4)) (Q R : Matrix (Fin 4) (Fin 4) ℝ) :
+    IsProbabilityMeasure (productModel b Q R) := by
+  unfold productModel
+  infer_instance
+
+/-- The product model meets every measure premise of the posterior: its coordinates
+`X0 = ω.1.1`, `w = ω.1.2`, `v = ω.2` satisfy both independence premises, and their laws are
+`N(m, P)`, `N(0, Q)` and `N(0, R)`. -/
+lemma productModel_premises (b : Belief (Fin 4)) (Q R : Matrix (Fin 4) (Fin 4) ℝ) :
+    IndepFun (fun ω => ω.1.1) (fun ω => ω.1.2) (productModel b Q R) ∧
+      IndepFun (fun ω => (ω.1.1, ω.1.2)) (fun ω => ω.2) (productModel b Q R) ∧
+      (productModel b Q R).map (fun ω => ω.1.1) = b.law ∧
+      (productModel b Q R).map (fun ω => ω.1.2) = multivariateGaussian 0 Q ∧
+      (productModel b Q R).map (fun ω => ω.2) = multivariateGaussian 0 R := by
+  set A := multivariateGaussian b.mean b.cov with hA
+  set B := multivariateGaussian (0 : EuclideanSpace ℝ (Fin 4)) Q with hB
+  set C := multivariateGaussian (0 : EuclideanSpace ℝ (Fin 4)) R with hC
+  have hμ : productModel b Q R = (A.prod B).prod C := rfl
+  rw [hμ]
+  have hfst : ((A.prod B).prod C).map Prod.fst = A.prod B := by
+    rw [Measure.map_fst_prod, measure_univ, one_smul]
+  have h11 : ((A.prod B).prod C).map (fun ω => ω.1.1) = A := by
+    rw [show (fun ω : (EuclideanSpace ℝ (Fin 4) × EuclideanSpace ℝ (Fin 4)) ×
+        EuclideanSpace ℝ (Fin 4) => ω.1.1) = Prod.fst ∘ Prod.fst from rfl,
+      ← Measure.map_map measurable_fst measurable_fst, hfst, Measure.map_fst_prod, measure_univ,
+      one_smul]
+  have h12 : ((A.prod B).prod C).map (fun ω => ω.1.2) = B := by
+    rw [show (fun ω : (EuclideanSpace ℝ (Fin 4) × EuclideanSpace ℝ (Fin 4)) ×
+        EuclideanSpace ℝ (Fin 4) => ω.1.2) = Prod.snd ∘ Prod.fst from rfl,
+      ← Measure.map_map measurable_snd measurable_fst, hfst, Measure.map_snd_prod, measure_univ,
+      one_smul]
+  have h2 : ((A.prod B).prod C).map (fun ω => ω.2) = C := by
+    rw [Measure.map_snd_prod, measure_univ, one_smul]
+  refine ⟨?_, ?_, h11, h12, h2⟩
+  · refine (indepFun_iff_map_prod_eq_prod_map_map (by fun_prop) (by fun_prop)).mpr ?_
+    rw [h11, h12]
+    exact hfst
+  · exact indepFun_prod (μ := A.prod B) (ν := C) measurable_id measurable_id
+
+/-- Nonzero positive measurement noise and a nondegenerate prior: in the product model with prior
+`N(0, I)`, `F = I`, `Q = I` and `R = I`, the conditional law of `X1` given `Y` is the Kalman step
+for almost every observation. -/
+example :
+    ∀ᵐ y ∂(productModel ⟨0, 1⟩ 1 1).map
+        (surrogateObservation 1 (fun ω => ω.1.1) (fun ω => ω.1.2) (fun ω => ω.2)),
+      condDistrib (predictedState 1 (fun ω => ω.1.1) (fun ω => ω.1.2))
+          (surrogateObservation 1 (fun ω => ω.1.1) (fun ω => ω.1.2) (fun ω => ω.2))
+          (productModel ⟨0, 1⟩ 1 1) y =
+        (step 1 1 observationMatrix 1 y ⟨0, 1⟩).law := by
+  obtain ⟨h1, h2, h3, h4, h5⟩ := productModel_premises ⟨0, 1⟩ 1 1
+  have hC : (predict 1 1 (⟨0, 1⟩ : Belief (Fin 4))).cov.PosSemidef :=
+    Cslib.MachineLearning.Sequence.KalmanFilter.predict_valid 1 1 PosSemidef.one PosSemidef.one
+  exact condDistrib_predictedState_surrogateObservation measurable_fst.fst measurable_fst.snd
+    measurable_snd h1 h2 PosSemidef.one PosSemidef.one PosSemidef.one h3 h4 h5 1
+    (innovation_isUnit_of_posDef hC PosDef.one)
+
+/-- The positive semidefinite branch without `step_valid`: for prior covariance `I`, `F = I` and
+`Q = R = 0`, `R` is positive semidefinite and the innovation `H Hᵀ` is invertible
+(determinant `4`), so the posterior applies, but `R` is not positive definite, so `step_valid`
+cannot be applied from these premises. -/
+example {b : Belief (Fin 4)} (hb : b.cov = 1) :
+    (0 : Matrix (Fin 4) (Fin 4) ℝ).PosSemidef ∧
+      IsUnit (observationMatrix * (predict 1 0 b).cov * observationMatrixᵀ + 0).det ∧
+      ¬ (0 : Matrix (Fin 4) (Fin 4) ℝ).PosDef := by
+  refine ⟨PosSemidef.zero, ?_, ?_⟩
+  · have hcov : (predict 1 0 b).cov = 1 := by
+      simp [predict, hb]
+    rw [hcov, Matrix.mul_one, add_zero, det_mul, det_transpose, observationMatrix_det]
+    exact isUnit_iff_ne_zero.mpr (by norm_num)
+  · intro h
+    have hx : (Finsupp.single (0 : Fin 4) (1 : ℝ)) ≠ 0 := by simp
+    have h0 := h.2 hx
+    simp at h0
+
+/-- Shared noise in the product model: taking the sensor noise equal to the process noise
+`w ~ N(0, I)` violates the second independence premise. -/
+example :
+    ¬ IndepFun (fun ω => (ω.1.1, ω.1.2)) (fun ω => ω.1.2) (productModel ⟨0, 1⟩ 1 1) :=
+  not_indepFun_of_shared_noise measurable_fst.snd PosSemidef.one
+    (productModel_premises ⟨0, 1⟩ 1 1).2.2.2.1 (i := 0) (by simp)
 
 end PhyslibExtTest.Navigation.ObservationPorts

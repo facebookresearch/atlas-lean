@@ -1,0 +1,3 @@
+# Outside-only vertex
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ a map, and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices, and let $\psi$ be a configuration on $V_{\mathrm{out}}$. A vertex $u \in V_{\mathrm{out}}$ is outside-only when no vertex of $\iota(V_{\mathrm{in}})$ is joined to $u$ by a path in the [outside graph](ocd-outside-graph.md) $O_\psi$ on $V_{\mathrm{out}}$ (the edges of $G_{\mathrm{out}}$ open in $\psi$ that are not inner pairs, together with all pairs of distinct vertices of $\partial_{\mathrm{out}}$) (taking the empty path, $u$ itself is not in $\iota(V_{\mathrm{in}})$).

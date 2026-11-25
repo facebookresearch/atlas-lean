@@ -29,6 +29,9 @@ setting of a stationary start for a linear stochastic differential equation.
 * `ProbabilityTheory.exists_isBrownianReal`: a Brownian motion exists (Wiener 1923).
 * `ProbabilityTheory.exists_isBrownianReal_indepFun_gaussianReal`: for every `v ≥ 0` there is a
   Brownian motion `B` and a variable `X₀ ~ N(0, v)` independent of `B`.
+* `ProbabilityTheory.IsPreBrownianReal.exists_isBrownianReal_modification`: every pre-Brownian
+  motion with measurable coordinates on a probability space has a modification with measurable
+  coordinates and continuous paths, and that modification is a Brownian motion.
 
 ## Implementation notes
 
@@ -126,5 +129,26 @@ theorem exists_isBrownianReal_indepFun_gaussianReal (v : ℝ≥0) :
     have h1 : (1 : ℝ≥0) ∈ Set.Iic 1 := Set.mem_Iic.mpr le_rfl
     exact hind.comp (φ := fun f : Set.Iic (1 : ℝ≥0) → ℝ ↦ √(v : ℝ) * f ⟨1, h1⟩)
       (ψ := id) ((measurable_pi_apply _).const_mul _) measurable_id
+
+/-- **Brownian motion as a continuous modification of pre-Brownian motion.** Every pre-Brownian
+motion `B` with measurable coordinates on a probability space has a modification `W` with
+measurable coordinates and continuous paths (on every sample), and `W` is a Brownian motion.
+The continuity comes from Kolmogorov's lemma (Le Gall, *Mouvement brownien, processus de
+branchement et superprocessus*, DEA lecture notes, 1994, Lemme 2.3), applied to the fourth
+moments of the increments (`IsPreBrownianReal.isKolmogorovProcess`). Le Gall's ENS notes
+*Intégration, Probabilités et Processus Aléatoires* obtain continuity differently, in the proof
+of Théorème 14.2.1, from the uniform convergence of the Haar–Schauder (Lévy–Ciesielski)
+series. -/
+theorem IsPreBrownianReal.exists_isBrownianReal_modification {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ} [IsProbabilityMeasure P] (hB : IsPreBrownianReal B P)
+    (hmeas : ∀ t, Measurable (B t)) :
+    ∃ W : ℝ≥0 → Ω → ℝ, (∀ t, Measurable (W t)) ∧ (∀ ω, Continuous fun t ↦ W t ω) ∧
+      (∀ t, W t =ᵐ[P] B t) ∧ IsBrownianReal W P := by
+  obtain ⟨W, hWm, hWc, hWB, -, -⟩ :=
+    MathlibExt.Probability.KolmogorovContinuousModification.exists_continuous_modification
+      (hB.isKolmogorovProcess hmeas) (by norm_num : (1 : ℝ) < 2)
+  exact ⟨W, hWm, hWc, hWB,
+    { toIsPreBrownianReal := hB.congr fun t ↦ (hWB t).symm
+      cont := ae_of_all _ hWc }⟩
 
 end ProbabilityTheory

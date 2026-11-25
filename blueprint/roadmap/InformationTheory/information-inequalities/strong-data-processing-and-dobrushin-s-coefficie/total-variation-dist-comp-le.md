@@ -20,7 +20,7 @@ $\kappa(x)(B) - \kappa(x')(B) \le \eta_{\mathrm{TV}}(\kappa)$ over $x \sim \mu_1
 
 ## Background
 
-- Doeblin's argument:
+- [Doeblin's argument](../../../Probability/markov-chains/convergence-theorem-for-finite-markov-chains/tv-dist-pow-le-of-minorization.md):
   geometric convergence of a Markov chain under a minorization condition; a minorization by $\delta \pi$ gives $\eta_{\mathrm{TV}} \le 1 - \delta$, and iterating Dobrushin's contraction gives the same rate.
 
 ## Sources

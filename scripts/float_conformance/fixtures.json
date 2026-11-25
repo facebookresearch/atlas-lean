@@ -1,0 +1,132 @@
+[
+  {
+    "label": "F1_add_plus_zero_min_normal",
+    "a": "0000000000000000",
+    "b": "0010000000000000"
+  },
+  {
+    "label": "F1_add_minus_zero_min_normal",
+    "a": "8000000000000000",
+    "b": "0010000000000000"
+  },
+  {
+    "label": "F1_add_minus_zero_negative_min_normal",
+    "a": "8000000000000000",
+    "b": "8010000000000000"
+  },
+  {
+    "label": "F1_add_two_subnormal_inputs",
+    "a": "000fffffffffffff",
+    "b": "0000000000000001"
+  },
+  {
+    "label": "F1_add_negative_subnormal_inputs",
+    "a": "800fffffffffffff",
+    "b": "8000000000000001"
+  },
+  {
+    "label": "F1_add_normal_subnormal_cancellation",
+    "a": "0010000000000001",
+    "b": "8000000000000001"
+  },
+  {
+    "label": "F1_add_severe_normal_cancellation",
+    "a": "4330000000000000",
+    "b": "c32fffffffffffff"
+  },
+  {
+    "label": "F1_add_max_finite_zero",
+    "a": "7fefffffffffffff",
+    "b": "0000000000000000"
+  },
+  {
+    "label": "F1_add_reaches_max_finite",
+    "a": "7feffffffffffffe",
+    "b": "7ca0000000000000"
+  },
+  {
+    "label": "F1_add_tie_even_below",
+    "a": "3ff0000000000000",
+    "b": "3ca0000000000000"
+  },
+  {
+    "label": "F1_add_tie_even_above",
+    "a": "3ff0000000000001",
+    "b": "3ca0000000000000"
+  },
+  {
+    "label": "F1_add_tie_carry",
+    "a": "3fffffffffffffff",
+    "b": "3ca0000000000000"
+  },
+  {
+    "label": "F1_add_negative_tie",
+    "a": "bff0000000000001",
+    "b": "bca0000000000000"
+  },
+  {
+    "label": "F1_mul_subnormal_input_normal_result",
+    "a": "0000000000000001",
+    "b": "4330000000000000"
+  },
+  {
+    "label": "F1_mul_negative_subnormal_input",
+    "a": "8000000000000001",
+    "b": "4330000000000000"
+  },
+  {
+    "label": "F1_mul_min_normal_one",
+    "a": "0010000000000000",
+    "b": "3ff0000000000000"
+  },
+  {
+    "label": "F1_mul_max_finite_one",
+    "a": "7fefffffffffffff",
+    "b": "3ff0000000000000"
+  },
+  {
+    "label": "F1_mul_tie",
+    "a": "3ff8000000000000",
+    "b": "3ff0000000000001"
+  },
+  {
+    "label": "F1_mul_tie_carry",
+    "a": "3ff8000000000000",
+    "b": "3ff5555555555555"
+  },
+  {
+    "label": "F1_mul_negative_times_negative_max",
+    "a": "ffefffffffffffff",
+    "b": "bff0000000000000"
+  },
+  {
+    "label": "F1_excluded_exact_subnormal_result",
+    "a": "0010000000000000",
+    "b": "3fe0000000000000"
+  },
+  {
+    "label": "F1_excluded_underflow_half_min_subnormal",
+    "a": "0000000000000001",
+    "b": "3fe0000000000000"
+  },
+  {
+    "label": "F1_excluded_overflow_tie",
+    "a": "7fefffffffffffff",
+    "b": "7c90000000000000"
+  },
+  {
+    "label": "F1_excluded_overflow_product",
+    "a": "7fefffffffffffff",
+    "b": "4000000000000000"
+  },
+  {
+    "label": "F1_excluded_zero_product",
+    "a": "8000000000000000",
+    "b": "3ff0000000000000"
+  },
+  {
+    "label": "F1_excluded_exact_cancellation",
+    "a": "3ff0000000000000",
+    "b": "bff0000000000000"
+  }
+]

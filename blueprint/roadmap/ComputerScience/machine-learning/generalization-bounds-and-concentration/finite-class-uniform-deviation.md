@@ -48,11 +48,11 @@ and the consequence for empirical risk minimization is
 
 ## Informally uses
 
-- Two-sided Hoeffding inequality for averages of bounded variables:
+- [Two-sided Hoeffding inequality for averages of bounded variables](../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md):
   mathematical prerequisite, the per-predictor bound $2 \exp(-2 n t^2 / \ell_\infty^2)$ for the
   variables $\ell(y_i, f(x_i)) \in [0, \ell_\infty]$, here for the non-strict event, which contains
   the strict one.
-- Two-sided Hoeffding inequality for Bernoulli sums:
+- [Two-sided Hoeffding inequality for Bernoulli sums](../../../Probability/concentration-inequalities/hoeffding-s-inequality/hoeffding-bernoulli-sum-abs-tail.md):
   mathematical prerequisite in a restricted case, the per-predictor bound when the loss takes only
   the values $0$ and $1$ ($\ell_\infty = 1$): with $X_i = \ell(y_i, f(x_i))$ and
   $p = R(f)$ it is exactly the bound $2 \exp(-2 n t^2)$ on the event

@@ -44,7 +44,7 @@ For examples in a general measurable space, the step is the classical McDiarmid 
 
 ## Informally uses
 
-- McDiarmid's bounded-differences inequality, finite i.i.d. case:
+- [McDiarmid's bounded-differences inequality, finite i.i.d. case](../../../Probability/concentration-inequalities/mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md):
   mathematical prerequisite in a restricted case, the one-sided bound
   $\exp(-2 n t^2 / \ell_\infty^2)$ when the examples take finitely many values, with every
   sensitivity equal to $\ell_\infty / n$.

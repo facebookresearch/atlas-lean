@@ -6,7 +6,7 @@ $$
 \lVert X\rVert_* = \sum_{i} \sigma_i(X),
 $$
 
-where $X$ acts as a linear map between the Euclidean spaces $\mathbb{R}^n$ and $\mathbb{R}^m$. It is the dual norm of the operator norm (duality of the spectral and nuclear norms) and the convex envelope of the rank on the unit ball of the operator norm (Fazel; Theorem 2.2 of the source), which makes it the convex surrogate of the rank in rank minimization.
+where $X$ acts as a linear map between the Euclidean spaces $\mathbb{R}^n$ and $\mathbb{R}^m$. It is the dual norm of the operator norm ([duality of the spectral and nuclear norms](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/duality-of-the-spectral-and-nuclear-norms/spectral-norm-dual-nuclear-norm.md)) and the convex envelope of the rank on the unit ball of the operator norm (Fazel; Theorem 2.2 of the source), which makes it the convex surrogate of the rank in rank minimization.
 
 ## Sources
 

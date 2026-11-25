@@ -90,10 +90,13 @@ private theorem kbAvg_diff
     hshift_sum, ← mul_sub, htele]
 
 /--
-Every continuous self-map of a nonempty compact metric space has an invariant Borel probability.
-Source: N. M. Krylov and N. N. Bogolyubov, Ann. Math. 38 (1937), 65-113, DOI 10.2307/1968511.
+**Krylov–Bogolyubov theorem.** Every continuous map $T : X \to X$ of a nonempty compact metric
+space $X$ to itself has an invariant Borel probability measure: there is a probability measure
+$\mu$ on the Borel $\sigma$-algebra of $X$ whose pushforward under $T$ equals $\mu$.
 
 Proves `Wanted` entry `krylov_bogolyubov`.
+
+Source: N. M. Krylov and N. N. Bogolyubov, Ann. Math. 38 (1937), 65-113, DOI 10.2307/1968511.
 -/
 theorem krylov_bogolyubov
     {X : Type*} [MetricSpace X] [CompactSpace X] [Nonempty X]

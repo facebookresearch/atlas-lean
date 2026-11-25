@@ -1,0 +1,3 @@
+# Per-box $q = 2$ uniqueness off a countable set of tilts
+
+Let $d \ge 1$, $N \in \mathbb{N}$, and suppose $\Lambda_N = \{-N, \dots, N\}^d$ has at least one edge. Then the set of $t \in \mathbb{R}$ for which some increasing set $A$ of configurations of $\Lambda_N$ satisfies $\mu^0_t(A) \ne \mu^1_t(A)$ is countable, where $\mu^0_t$ and $\mu^1_t$ are the [free](fuc-free-mass.md) and [wired mass functions](fuc-wired-mass.md) on configurations of $\Lambda_N$ at $q = 2$ (the probability, under the free, resp. wired, infinite-volume random-cluster measure on $\mathbb{Z}^d$ at $p = \sigma(t)$, that the restriction to the pairs of vertices of $\Lambda_N$ equals the given configuration).

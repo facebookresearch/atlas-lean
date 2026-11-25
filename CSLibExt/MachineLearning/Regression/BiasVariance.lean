@@ -41,8 +41,11 @@ open MeasureTheory ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
 
-/-- **Expected squared error of independent random variables**:
-`E[(Y - Ŷ)²] = Var Y + Var Ŷ + (E Y - E Ŷ)²`. -/
+/-- **Expected squared error of independent random variables.** Let $(\Omega, \mu)$ be a
+probability space, with expectation $\mathbb{E}$ and variance $\operatorname{Var}$ taken with
+respect to $\mu$. If $Y$ and $\hat Y$ are independent square-integrable real random variables on
+$\Omega$, then $\mathbb{E}[(Y - \hat Y)^2] = \operatorname{Var}(Y) + \operatorname{Var}(\hat Y) +
+(\mathbb{E}[Y] - \mathbb{E}[\hat Y])^2$. -/
 theorem integral_sq_sub_of_indepFun {Y Yhat : Ω → ℝ} (hY : MemLp Y 2 μ) (hYhat : MemLp Yhat 2 μ)
     (h : IndepFun Y Yhat μ) :
     μ[(Y - Yhat) ^ 2] = variance Y μ + variance Yhat μ + (μ[Y] - μ[Yhat]) ^ 2 := by
@@ -56,9 +59,14 @@ theorem integral_sq_sub_of_indepFun {Y Yhat : Ω → ℝ} (hY : MemLp Y 2 μ) (h
   rw [hmean] at hvar
   linarith
 
-/-- **The bias-variance decomposition**: for a response `ε + f` with noise `ε` of mean zero and a
-predictor `Ŷ` independent of the noise, the expected squared error is the noise variance plus the
-squared bias `(f - E Ŷ)²` plus the variance of the predictor. -/
+/-- **The bias-variance decomposition.** Let $(\Omega, \mu)$ be a probability space, with
+expectation $\mathbb{E}$ and variance $\operatorname{Var}$ taken with respect to $\mu$. Let $f$ be
+a real number, and let $\varepsilon$ (the noise) and $\hat Y$ (the predictor) be square-integrable
+real random variables on $\Omega$ such that $\mathbb{E}[\varepsilon] = 0$ and $\varepsilon$ is
+independent of $\hat Y$. Then the expected squared error of $\hat Y$ for the response
+$\varepsilon + f$ is the noise variance plus the squared bias plus the variance of the predictor:
+$\mathbb{E}[(\varepsilon + f - \hat Y)^2] = \operatorname{Var}(\varepsilon) +
+(f - \mathbb{E}[\hat Y])^2 + \operatorname{Var}(\hat Y)$. -/
 theorem integral_sq_noise_sub {ε Yhat : Ω → ℝ} (f : ℝ) (hε : MemLp ε 2 μ) (hε0 : μ[ε] = 0)
     (hYhat : MemLp Yhat 2 μ) (h : IndepFun ε Yhat μ) :
     μ[fun ω => (ε ω + f - Yhat ω) ^ 2] = variance ε μ + (f - μ[Yhat]) ^ 2 + variance Yhat μ := by

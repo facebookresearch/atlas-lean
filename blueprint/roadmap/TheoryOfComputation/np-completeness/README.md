@@ -11,5 +11,6 @@ Karp's 21 complete problems ("Reducibility among combinatorial problems", 1972, 
 - [Paths, cycles, trees and subgraph problems](paths-cycles-and-subgraphs/README.md)
 - [Number partitioning, knapsack and packing](number-and-packing-problems/README.md)
 - [Set systems, assignment and location](set-systems-and-location/README.md)
+- [Databases, concurrency control and protection](databases-and-concurrency/README.md)
 - [Scheduling problems](scheduling/README.md)
 - [Strings, puzzles and Latin squares](strings-and-puzzles/README.md)

@@ -5,7 +5,7 @@ One step of full β-reduction, contracting a redex anywhere in a term, including
 ## Informally uses
 
 - [Scott's continuity theorem for the graph model](scott-continuous-denote.md): Scott's proof cites Theorem 2.1.
-- Scott's graph theorem, part (i): and the graph theorem.
+- [Scott's graph theorem, part (i)](../../../Order/fixed-points-domain-theory/scott-s-graph-model/app-graph.md): and the graph theorem.
 
 ## Background
 

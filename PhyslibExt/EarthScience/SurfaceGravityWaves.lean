@@ -89,7 +89,8 @@ theorem dispersion_from_surface_conditions (ω g k H a b : ℝ) (ha : a ≠ 0)
   exact mul_right_cancel₀ ha h4
 
 /-- The dispersion relation forces a positive `ω²` for `g, k, H > 0`,
-and hence `ω ≠ 0`: with the same surface conditions, `0 < ω ^ 2`. -/
+and hence `ω ≠ 0`: with the same surface conditions and a nonzero surface
+amplitude `a`, `0 < ω ^ 2`. -/
 theorem dispersion_positive (ω g k H a b : ℝ) (hg : 0 < g) (hk : 0 < k)
     (hH : 0 < H) (ha : a ≠ 0)
     (hkin : ω * a = k * Real.tanh (k * H) * b)

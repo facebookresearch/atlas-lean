@@ -18,7 +18,7 @@ p. 19 of the arXiv version).
 
 ## Background
 
-- Continued fractions and expansions of reals: context on convergents of real numbers.
+- [Continued fractions and expansions of reals](../../../NumberTheory/continued-fractions-expansions/README.md): context on convergents of real numbers.
 
 ## Sources
 

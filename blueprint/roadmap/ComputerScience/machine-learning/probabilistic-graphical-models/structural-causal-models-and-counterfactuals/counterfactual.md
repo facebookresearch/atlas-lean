@@ -6,3 +6,7 @@ values in $\alpha$, $W$ a finite set of nodes and $w \in \alpha^n$. For a distur
 $X_{W \leftarrow w}(u)$, the values the endogenous variables would have taken in the unit with
 disturbances $u$ had $X_W$ been $w$, is the solution of the [submodel](do-set.md)
 $\mathrm{do}(X_W = w)$ at $u$.
+
+## Related topics
+
+- [The single-node counterfactual in a structural causal model with node-wise noise](counterfactual-2.md): the counterfactual for an intervention on a single node, in the model with node-wise noise sets.

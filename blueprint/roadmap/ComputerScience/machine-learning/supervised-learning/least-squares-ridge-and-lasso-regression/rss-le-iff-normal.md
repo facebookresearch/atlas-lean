@@ -7,6 +7,6 @@ every $\theta \in \mathbb{R}^\iota$ if and only if $X^\top X \theta_0 = X^\top y
 
 ## Background
 
-- Stationary points of convex functions are global minimizers:
+- [Stationary points of convex functions are global minimizers](../../../../Analysis/convex-analysis-and-variations/first-order-conditions-for-convexity/is-min-on-of-has-fderiv-at-eq-zero.md):
   background, the general principle behind the normal equations: $S$ is convex and
   $X^\top X \theta_0 = X^\top y$ says its gradient vanishes at $\theta_0$.

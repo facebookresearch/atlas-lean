@@ -20,4 +20,4 @@ class.
 
 ## Background
 
-- Concentration of the uniform deviation: the same bounded-differences step for losses, in machine learning.
+- [Concentration of the uniform deviation](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/bounded-differences-uniform-deviation.md): the same bounded-differences step for losses, in machine learning.

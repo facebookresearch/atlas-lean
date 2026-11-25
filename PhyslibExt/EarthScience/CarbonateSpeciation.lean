@@ -86,8 +86,8 @@ namespace EarthScience
 
 /-! ## A. Speciation mass closure -/
 
-/-- Carbonate speciation: with `Z = h^2 + K1 * h + K1 * K2`, the three
-species concentrations `C0 * h^2 / Z`, `C0 * K1 * h / Z`,
+/-- Carbonate speciation: for `K1 > 0`, `K2 > 0` and `h > 0`, with `Z = h^2 + K1 * h + K1 * K2`,
+the three species concentrations `C0 * h^2 / Z`, `C0 * K1 * h / Z`,
 `C0 * K1 * K2 / Z` sum to the total dissolved inorganic carbon `C0`. -/
 theorem carbonate_species_sum (C0 K1 K2 h : ℝ) (hK1 : 0 < K1) (hK2 : 0 < K2)
     (hh : 0 < h) :
@@ -101,7 +101,8 @@ theorem carbonate_species_sum (C0 K1 K2 h : ℝ) (hK1 : 0 < K1) (hK2 : 0 < K2)
 
 /-! ## B. Alkalinity monotonicity -/
 
-/-- Alkalinity `A(h) = C0 * (K1 * h + 2 * K1 * K2) / Z + Kw / h - h` is
+/-- Alkalinity `A(h) = C0 * (K1 * h + 2 * K1 * K2) / Z + Kw / h - h`, with
+`Z = h^2 + K1 * h + K1 * K2`, `C0 ≥ 0` and `K1, K2, Kw > 0`, is
 strictly decreasing on `h > 0` in the ideal closed-carbonate-plus-water
 model. -/
 theorem alkalinity_strictAntiOn (C0 K1 K2 Kw : ℝ) (hC0 : 0 ≤ C0) (hK1 : 0 < K1)
@@ -152,7 +153,8 @@ theorem alkalinity_strictAntiOn (C0 K1 K2 Kw : ℝ) (hC0 : 0 ≤ C0) (hK1 : 0 < 
 
 /-! ## C. Existence and uniqueness of the root -/
 
-/-- For every real `A0` there is exactly one `h > 0` with `A(h) = A0`. -/
+/-- For `C0 ≥ 0`, `K1, K2, Kw > 0` and every real `A0` there is exactly one `h > 0` with
+`A(h) = A0`, where `A(h) = C0 * (K1 * h + 2 * K1 * K2) / (h^2 + K1 * h + K1 * K2) + Kw / h - h`. -/
 theorem alkalinity_unique_root (C0 K1 K2 Kw A0 : ℝ) (hC0 : 0 ≤ C0) (hK1 : 0 < K1)
     (hK2 : 0 < K2) (hKw : 0 < Kw) :
     ∃! h, 0 < h ∧

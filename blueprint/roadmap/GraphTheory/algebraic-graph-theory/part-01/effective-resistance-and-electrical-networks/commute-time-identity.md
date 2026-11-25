@@ -10,4 +10,4 @@ The source's commute time is $\mathbb{E}_a[\tau_z] + \mathbb{E}_z[\tau_a]$ for t
 
 ## Background
 
-- Hitting times of finite continuous-time Markov chains: the first-step characterisation of expected hitting times in continuous time.
+- [Hitting times of finite continuous-time Markov chains](../../../../Probability/markov-chains/finite-continuous-time-markov-chains/hitting-times-of-finite-continuous-time-markov-c/README.md): the first-step characterisation of expected hitting times in continuous time.

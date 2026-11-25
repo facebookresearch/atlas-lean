@@ -10,7 +10,7 @@ The source states the lemma for nonnegative $X$; nonnegativity is not needed.
 
 ## Background
 
-- The Paley–Zygmund inequality: another second-moment lower bound on $\Pr[X > 0]$; its case $\theta = 0$ is the [Cauchy–Schwarz form](sq-integral-le-integral-sq-mul-measure-r.md).
+- [The Paley–Zygmund inequality](../../../Probability/concentration-inequalities/paley-zygmund.md): another second-moment lower bound on $\Pr[X > 0]$; its case $\theta = 0$ is the [Cauchy–Schwarz form](sq-integral-le-integral-sq-mul-measure-r.md).
 
 ## Sources
 

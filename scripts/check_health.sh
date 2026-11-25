@@ -5,7 +5,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-LIBRARIES=(CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt)
+LIBRARIES=(CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt)
 
 check_build_surface() {
   PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_lake_surface.py
@@ -31,7 +31,7 @@ check_declared_libraries() {
 
 check_no_symlinks() {
   local hits
-  hits="$(find CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt \
+  hits="$(find CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt \
     -type l -print | LC_ALL=C sort)"
   if [[ -n "$hits" ]]; then
     echo "FAIL [symlinks]: audited libraries must not contain symlinked paths." >&2
@@ -41,7 +41,27 @@ check_no_symlinks() {
   echo "ok [symlinks]: audited libraries contain no symlinked paths."
 }
 
+# A PR based on the old layout can reintroduce a migrated directory without an
+# invalid import: a standalone new module would otherwise still build there.
+check_migrated_subjects() {
+  local root dest subject old first
+  for root in MathlibExt MathlibExtTest; do
+    dest=Domains
+    [[ "$root" != MathlibExtTest ]] || dest=DomainsTest
+    for subject in Biology Economics OperationsResearch Transport Urban; do
+      old="$root/$subject"
+      [[ -d "$old" ]] || continue
+      first="$(find "$old" -type f -name '*.lean' -print -quit)" || return 1
+      if [[ -n "$first" ]]; then
+        echo "FAIL [placement]: move $first to $dest/${first#"$root/"}" >&2
+        return 1
+      fi
+    done
+  done
+}
+
 status=0
+check_migrated_subjects || status=1
 check_build_surface || status=1
 check_declared_libraries || status=1
 check_no_symlinks || status=1

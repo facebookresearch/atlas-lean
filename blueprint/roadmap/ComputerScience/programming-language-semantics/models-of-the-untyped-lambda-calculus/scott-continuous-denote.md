@@ -4,8 +4,8 @@ For every term $M$ and valuation $\rho$ of its free variables, the denotation $b
 
 ## Background
 
-- Application in `P(ω)` is jointly Scott-continuous: the application case.
-- The graph of a pointwise union: the abstraction case, the counterpart of the lemma in Scott's proof that λ-abstraction preserves continuity.
+- [Application in `P(ω)` is jointly Scott-continuous](../../../Order/fixed-points-domain-theory/scott-s-graph-model/scott-continuous-app.md): the application case.
+- [The graph of a pointwise union](../../../Order/fixed-points-domain-theory/scott-s-graph-model/graph-s-sup.md): the abstraction case, the counterpart of the lemma in Scott's proof that λ-abstraction preserves continuity.
 - [Denotations are Scott-continuous in the free variables](scott-continuous-denote-fvar.md): the same theorem for the free variables.
 
 ## Sources

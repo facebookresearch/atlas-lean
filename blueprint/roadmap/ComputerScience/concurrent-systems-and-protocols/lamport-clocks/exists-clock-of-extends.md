@@ -9,7 +9,7 @@ The hypotheses are satisfiable: the order of positions in the list, and Lamport'
 ## Background
 
 - [The clock condition](clock-condition.md): the property the constructed clock satisfies.
-- Linear extensions of posets: the orders $r$ in question are the linear extensions of happened-before.
+- [Linear extensions of posets](../../../Combinatorics/partially-ordered-sets/linear-extensions-of-posets/README.md): the orders $r$ in question are the linear extensions of happened-before.
 
 ## Sources
 

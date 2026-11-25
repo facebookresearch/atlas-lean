@@ -4,6 +4,7 @@ Actions of finite groups on finite sets: Burnside-type counting, stabilizers, mu
 
 - [2-closures of permutation groups](2-closures-of-permutation-groups/README.md)
 - [Bases of permutation groups](bases-of-permutation-groups/README.md)
+- [Guralnick–Thompson conjecture](guralnick-thompson-conjecture/README.md)
 - [Largest orbits of linear group actions](largest-orbits-of-linear-group-actions/README.md)
 - [Normal coverings of symmetric groups](normal-coverings-of-symmetric-groups/README.md)
 - [Orders of products in symmetric groups](orders-of-products-in-symmetric-groups/README.md)

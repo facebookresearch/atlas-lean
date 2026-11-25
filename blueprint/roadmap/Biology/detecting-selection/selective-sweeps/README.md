@@ -9,6 +9,7 @@
 - [Sweep trajectory reaches its target at the sweep duration](sweep-traj-sweep-duration.md)
 - [Positivity of the sweep duration](sweep-duration-pos.md)
 - [Duration of a complete deterministic sweep](sweep-duration-full.md)
+- [Probability that a neutral lineage stays linked during a deterministic sweep](hitchhiking-deterministic-escape-probability.md)
 
 ## Extended haplotype homozygosity under a star-shaped sweep genealogy
 

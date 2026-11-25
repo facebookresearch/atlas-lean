@@ -567,9 +567,11 @@ private theorem norm_add_inverse_le {D K B : E →L[ℝ] E} {A T : E} {r η κ :
 
 
 omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] [MeasurableSpace 𝓧] in
-/-- The summed first-order Taylor bound at a root `θ` in the ball:
-`‖∑ ψ θ₀ (xᵢ) + (∑ Dψ θ₀ (xᵢ)) (θ - θ₀)‖ ≤ (∑ M (xᵢ)) ‖θ - θ₀‖²`. -/
-private theorem norm_sum_add_sum_apply_le {ψ : E → 𝓧 → E} {θ₀ : E} {δ : ℝ}
+/-- If each `ψ · x` is differentiable on `ball θ₀ δ` with `‖Dψ θ x - Dψ θ₀ x‖ ≤ M x * ‖θ - θ₀‖`
+there, and `θ ∈ ball θ₀ δ` is a root of `∑ i ∈ range n, ψ · (xs i)`, then
+`‖∑ i ∈ range n, ψ θ₀ (xs i) + (∑ i ∈ range n, Dψ θ₀ (xs i)) (θ - θ₀)‖` is at most
+`(∑ i ∈ range n, M (xs i)) * ‖θ - θ₀‖ ^ 2`. -/
+theorem norm_sum_add_sum_apply_le {ψ : E → 𝓧 → E} {θ₀ : E} {δ : ℝ}
     (hψ_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => ψ t x) θ)
     {M : 𝓧 → ℝ}
     (hM : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ,

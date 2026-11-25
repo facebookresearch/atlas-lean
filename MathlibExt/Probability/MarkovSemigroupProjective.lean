@@ -248,7 +248,7 @@ theorem finiteChainKernel_map_strictMono
     (finiteChainKernel K s t).map (fun z i => z (e i)) =
       finiteChainKernel K s (fun i => t (e i)) := by
   induction n using Nat.strong_induction_on generalizing m s with
-  | h n ih =>
+  | ind n ih =>
       cases m with
       | zero =>
           have hmap :

@@ -5,3 +5,4 @@
 - [The principal part is meromorphic](principal-part-meromorphic-at.md)
 - [Mittag-Leffler theorem, discrete-subspace form](mittag-leffler-of-is-discrete.md)
 - [Mittag-Leffler theorem](mittag-leffler.md)
+- [Mittag-Leffler theorem for a sequence of poles with polynomial principal parts](mittag-leffler-2.md)

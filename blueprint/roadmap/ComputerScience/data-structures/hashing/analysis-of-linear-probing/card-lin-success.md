@@ -2,7 +2,7 @@
 
 Let $0 < k \le n$. The number of hash sequences $f : \{0, \dots, k-1\} \to \{0, \dots, n-1\}$ for
 which linear probing without wrap-around places all $k$ items in a table of $n$ cells
-(without overflow) is
+([without overflow](../../../../Combinatorics/parking-functions/lin-success.md)) is
 
 $$(n + 1 - k)(n + 1)^{k - 1}.$$
 
@@ -14,7 +14,7 @@ Knuth's proof is the circle argument: run the cyclic algorithm on $n + 1$ cells;
 symmetry each cell is left empty by exactly a fraction $(n + 1 - k)/(n + 1)$ of the $(n+1)^k$
 sequences, and the sequences leaving the last cell empty are exactly the non-overflow sequences on
 $n$ cells. Equivalently, non-overflow sequences are exactly the partial parking functions, and
-Pollak's count of partial parking functions, proved by the same circle argument, gives the
+[Pollak's count of partial parking functions](../../../../Combinatorics/parking-functions/pollak-partial-parking-functions-card.md), proved by the same circle argument, gives the
 formula. In the cyclic model of this topic the circle argument is
 [rotational symmetry of linear probing](mul-card-not-mem-occupancy.md) and the
 [number of sequences that leave a given cell empty](card-not-mem-occupancy.md).
@@ -26,9 +26,9 @@ formula. In the cyclic model of this topic the circle argument is
 
 ## Background
 
-- Linear probing succeeds exactly on partial parking functions:
+- [Linear probing succeeds exactly on partial parking functions](../../../../Combinatorics/parking-functions/lin-success-iff-is-partial-parking-funct.md):
   the identification behind the equivalent count.
-- Number of partial parking functions:
+- [Number of partial parking functions](../../../../Combinatorics/parking-functions/pollak-partial-parking-functions-card.md):
   the count that this identification transfers.
 
 ## Sources

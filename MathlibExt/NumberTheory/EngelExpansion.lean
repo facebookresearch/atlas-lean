@@ -26,8 +26,9 @@ until reaching `0`; its length is the length of the Engel expansion of `a / n`.
 
 namespace EngelExpansion
 
-/-- Negated remainder `(-n) % k` computed in `ℕ`. Equals `0` when `k ∣ n` and
-`k - (n % k)` otherwise. -/
+/-- **Negated remainder.** For natural numbers $n$ and $k$ with $k \ge 1$, the negated remainder
+of $n$ modulo $k$ is the unique $u$ with $0 \le u < k$ and $u \equiv -n \pmod{k}$: it equals $0$
+when $k$ divides $n$ and $k - (n \bmod k)$ otherwise. For $k = 0$ it is defined to be $0$. -/
 def negRem (n k : ℕ) : ℕ :=
   (k - n % k) % k
 
@@ -35,8 +36,11 @@ theorem negRem_lt {n k : ℕ} (hk : k ≠ 0) : negRem n k < k := by
   simp only [negRem]
   exact Nat.mod_lt _ (Nat.pos_of_ne_zero hk)
 
-/-- Characterization of the negated remainder: `negRem n k = u` iff `u < k` and
-`k ∣ n + u`. This is the `ℕ` form of `u ≡ -n (mod k)`. -/
+/-- **Characterization of the negated remainder.** For natural numbers $n$, $k$ and $u$ with
+$k \ne 0$, the negated remainder of $n$ modulo $k$ equals $u$ if and only if $u < k$ and $k$
+divides $n + u$.
+
+This is the natural-number form of $u \equiv -n \pmod{k}$. -/
 theorem negRem_eq_iff {n k u : ℕ} (hk : k ≠ 0) :
     negRem n k = u ↔ u < k ∧ k ∣ n + u := by
   have hkpos : 0 < k := Nat.pos_of_ne_zero hk
@@ -81,27 +85,39 @@ theorem negRem_eq_iff {n k u : ℕ} (hk : k ≠ 0) :
     · have hrr : r = k - u := by omega
       rw [hrr, Nat.sub_sub_self (le_of_lt huk), Nat.mod_eq_of_lt huk]
 
-/-- Engel remainder trajectory: `traj 0 = a`, `traj (j+1) = negRem n (traj j)`,
-absorbing at `0`. -/
+/-- **Engel remainder trajectory.** For natural numbers $n$ and $a$, the Engel remainder
+trajectory of $a$ with respect to $n$ is the sequence $t_0, t_1, t_2, \dots$ of natural
+numbers with $t_0 = a$ and, for every $j \ge 0$, $t_{j+1} = 0$ if $t_j = 0$, while if
+$t_j \ne 0$ then $t_{j+1}$ is the negated remainder of $n$ modulo $t_j$: the unique natural
+number $u < t_j$ with $u \equiv -n \pmod{t_j}$. Once the trajectory reaches $0$ it stays there. -/
 def traj (n a : ℕ) : ℕ → ℕ
   | 0 => a
   | j + 1 => if traj n a j = 0 then 0 else negRem n (traj n a j)
 
-/-- Unfolding at step zero. -/
+/-- **Initial term of the Engel trajectory.** For all natural numbers $n$ and $a$, the Engel
+remainder trajectory of $a$ with respect to $n$ has value $a$ at step $0$. -/
 theorem traj_zero (n a : ℕ) : traj n a 0 = a :=
   rfl
 
-/-- Unfolding after a vanishing step. -/
+/-- **Zero is absorbing for the Engel trajectory.** Let $n$, $a$ and $j$ be natural numbers
+and let $t_0, t_1, \dots$ be the Engel remainder trajectory of $a$ with respect to $n$. If
+$t_j = 0$, then $t_{j+1} = 0$. -/
 theorem traj_succ_of_eq_zero {n a j : ℕ} (h : traj n a j = 0) :
     traj n a (j + 1) = 0 := by
   simp only [traj, ite_eq_left h]
 
-/-- Unfolding after a nonvanishing step. -/
+/-- **Step of the Engel trajectory at a nonzero term.** Let $n$, $a$ and $j$ be natural
+numbers and let $t_0, t_1, \dots$ be the Engel remainder trajectory of $a$ with respect to
+$n$. If $t_j \ne 0$, then $t_{j+1}$ is the negated remainder of $n$ modulo $t_j$: the unique
+natural number $u < t_j$ with $u \equiv -n \pmod{t_j}$. -/
 theorem traj_succ_of_ne_zero {n a j : ℕ} (h : traj n a j ≠ 0) :
     traj n a (j + 1) = negRem n (traj n a j) := by
   simp only [traj, ite_eq_right h]
 
-/-- First-step computation. -/
+/-- **First step of the Engel trajectory.** Let $n$ and $t$ be natural numbers with
+$t \ne 0$. Then the Engel remainder trajectory of $t$ with respect to $n$ is, at step $1$,
+the negated remainder of $n$ modulo $t$: the unique natural number $u < t$ with
+$u \equiv -n \pmod{t}$. -/
 theorem traj_one {n t : ℕ} (ht : t ≠ 0) : traj n t 1 = negRem n t := by
   have h01 : (1 : ℕ) = 0 + 1 := rfl
   have h0 : traj n t 0 ≠ 0 := by
@@ -109,7 +125,9 @@ theorem traj_one {n t : ℕ} (ht : t ≠ 0) : traj n t 1 = negRem n t := by
     exact ht
   rw [h01, traj_succ_of_ne_zero h0, traj_zero]
 
-/-- Every Engel trajectory reaches `0` within `a + 1` steps. -/
+/-- **An Engel trajectory started at $a$ vanishes within $a + 1$ steps.** Let $n$ and $a$ be
+natural numbers and let $t_0 = a, t_1, t_2, \dots$ be the Engel trajectory of $a$ with respect to
+$n$. Then $t_i = 0$ for some $i \le a + 1$. -/
 theorem exists_traj_eq_zero (n a : ℕ) : ∃ i ≤ a + 1, traj n a i = 0 := by
   have key : ∀ j, traj n a j ≤ a - j ∨ ∃ i ≤ j, traj n a i = 0 := by
     intro j
@@ -138,47 +156,67 @@ theorem exists_traj_eq_zero (n a : ℕ) : ∃ i ≤ a + 1, traj n a i = 0 := by
     exact ⟨a + 1, le_refl _, h0⟩
   · exact hex
 
-/-- Every Engel trajectory hits `0` at some positive step. -/
+/-- **Engel trajectories vanish at a positive step.** Let $n$ and $a$ be natural numbers and let
+$t_0 = a, t_1, t_2, \dots$ be the Engel trajectory of $a$ with respect to $n$. Then $t_j = 0$ for
+some $j \ge 1$. -/
 theorem exists_traj_eq_zero_pos (n a : ℕ) : ∃ j ≥ 1, traj n a j = 0 := by
   rcases exists_traj_eq_zero n a with ⟨i, _, hi0⟩
   refine ⟨i + 1, Nat.succ_le_succ (Nat.zero_le i), ?_⟩
   simp [traj, hi0]
 
-/-- Engel length: least `j ≥ 1` with `traj j = 0`. This is the length of the Engel
-expansion of `a / n`. -/
+/-- **Engel length.** For natural numbers $n$ and $a$, let $t_0 = a, t_1, t_2, \dots$ be the Engel
+trajectory of $a$ with respect to $n$. The Engel length $L(n, a)$ is the least $j \ge 1$ with
+$t_j = 0$.
+
+For $1 \le a \le n$ this is the number of terms of the Engel expansion of $a / n$. -/
 noncomputable def length (n a : ℕ) : ℕ :=
   Nat.find (exists_traj_eq_zero_pos n a)
 
-/-- The Engel length is positive. -/
+/-- **The Engel length is positive.** For all natural numbers $n$ and $a$, the Engel length
+$L(n, a)$ of $a$ with respect to $n$ satisfies $L(n, a) \ge 1$. -/
 theorem length_pos (n a : ℕ) : 1 ≤ length n a :=
   (Nat.find_spec (exists_traj_eq_zero_pos n a)).1
 
-/-- The Engel trajectory vanishes at the Engel length. -/
+/-- **Engel trajectory vanishes at the Engel length.** For all natural numbers $n$ and $a$,
+let $L$ be the Engel length of $a$ with respect to $n$. Then the Engel remainder trajectory
+of $a$ with respect to $n$ is $0$ at step $L$. -/
 theorem traj_length_eq_zero (n a : ℕ) : traj n a (length n a) = 0 :=
   (Nat.find_spec (exists_traj_eq_zero_pos n a)).2
 
-/-- The Engel length is bounded by any positive vanishing step. -/
+/-- **The Engel length is at most any positive vanishing step.** Let $n$, $a$ and $j$ be natural
+numbers with $j \ge 1$, and let $t_0 = a, t_1, t_2, \dots$ be the Engel trajectory of $a$ with
+respect to $n$. If $t_j = 0$, then the Engel length $L(n, a)$ satisfies $L(n, a) \le j$. -/
 theorem length_le_of_traj_eq_zero {n a j : ℕ} (hj : 1 ≤ j)
     (h : traj n a j = 0) : length n a ≤ j :=
   Nat.find_min' _ ⟨hj, h⟩
 
-/-- The Engel trajectory is nonzero at positive steps below the length. -/
+/-- **Engel trajectory is nonzero at positive steps before the Engel length.** Let $n$, $a$
+and $j$ be natural numbers and let $L$ be the Engel length of $a$ with respect to $n$. If
+$1 \le j < L$, then the Engel remainder trajectory of $a$ with respect to $n$ is nonzero at
+step $j$. -/
 theorem traj_ne_zero_of_lt_length {n a j : ℕ} (hj : 1 ≤ j)
     (hlt : j < length n a) : traj n a j ≠ 0 := by
   have hneg := Nat.find_min _ hlt
   intro h0
   exact hneg ⟨hj, h0⟩
 
-/-- Engel length function: `max_{1 ≤ a ≤ n} length n a`. -/
+/-- **Maximal Engel length.** For a natural number $n$, the maximal Engel length is
+$M(n) = \max_{1 \le a \le n} L(n, a)$, where $L(n, a)$ is the Engel length of $a$ with respect
+to $n$; for $n = 0$ the maximum is over the empty set and $M(0) = 0$. -/
 noncomputable def maxLength (n : ℕ) : ℕ :=
   (Finset.Icc 1 n).sup (length n)
 
-/-- Each Engel length is bounded by the length function. -/
+/-- **Each Engel length is at most the maximal Engel length.** Let $n$ and $a$ be natural numbers
+with $1 \le a \le n$. Then the Engel length $L(n, a)$ of $a$ with respect to $n$ is at most the
+maximal Engel length $M(n) = \max_{1 \le b \le n} L(n, b)$. -/
 theorem length_le_maxLength {n a : ℕ} (ha : a ∈ Finset.Icc 1 n) :
     length n a ≤ maxLength n :=
   Finset.le_sup ha
 
-/-- The length function is bounded by a uniform bound on all lengths. -/
+/-- **A uniform bound on Engel lengths bounds the maximal Engel length.** Let $n$ and $B$ be
+natural numbers. If the Engel length $L(n, a)$ of $a$ with respect to $n$ satisfies
+$L(n, a) \le B$ for every $a$ with $1 \le a \le n$, then the maximal Engel length
+$M(n) = \max_{1 \le a \le n} L(n, a)$ (with $M(0) = 0$) satisfies $M(n) \le B$. -/
 theorem maxLength_le_of_forall {n L : ℕ}
     (h : ∀ a ∈ Finset.Icc 1 n, length n a ≤ L) : maxLength n ≤ L :=
   Finset.sup_le h

@@ -1,9 +1,9 @@
 # Existence of Brownian motion
 
-There are a probability measure $\mu$ on the path space $\mathbb{R}^{[0, \infty)}$ and a process $W$ on it with
-measurable coordinates and continuous paths (on every sample) that is a Brownian motion: its
-finite-dimensional laws are the Brownian ones ($W_0 = 0$ almost surely, independent centered Gaussian
-increments with variance the length of the time interval).
+There are a probability measure $\mu$ on the path space $\mathbb{R}^{[0, \infty)}$ and a process $W$ on it
+that is a Brownian motion: its finite-dimensional laws are the Brownian ones ($W_0 = 0$ almost surely,
+independent centered Gaussian increments with variance the length of the time interval), and almost every
+path is continuous.
 
 Le Gall's ENS notes build $B_t$ as the Gaussian white-noise series $\sum_h \langle \mathbf 1_{[0,t]}, h \rangle N_h$
 over the Haar basis and get continuity from the uniform convergence of that series. Another route

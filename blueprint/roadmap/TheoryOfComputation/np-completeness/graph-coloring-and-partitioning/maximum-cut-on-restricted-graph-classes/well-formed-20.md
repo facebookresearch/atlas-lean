@@ -1,0 +1,3 @@
+# Well-formed instances of MAXIMUM CUT ON 2-SUBDIVISIONS
+
+An instance $(n, E, K)$ is well-formed for MAXIMUM CUT ON 2-SUBDIVISIONS when it is a well-formed MAXIMUM CUT instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$ is a 2-subdivision (isomorphic to the graph obtained from some simple graph, given on vertices $0, \dots, m-1$ by a simple edge list, by replacing every edge with a path of three edges through two new vertices), and $K > 0$.

@@ -25,7 +25,7 @@ qubits ($P = I$, $k = 2$, $d = 1$).
 - [Bounds on code size](../../../InformationTheory/error-correcting-codes/bounds-on-code-size/README.md): the classical Singleton bound that this statement parallels.
 - [No-cloning theorem (linear form)](../../quantum-operations/no-cloning-linear.md): Preskill first derives the weaker bound $n > 2(d - 1)$ (equation (7.102), Section 7.8.2) from the impossibility of cloning, by splitting a block with $d - 1$ located errors into two offspring.
 - [Subadditivity of entropy](../../../InformationTheory/entropy-and-mutual-information/conditional-entropy-and-mutual-information/shannon-entropy-le-add.md): the classical (Shannon) form of the subadditivity that the proof uses for the von Neumann entropy.
-- Lieb's concavity theorem: it implies strong subadditivity of the von Neumann entropy.
+- [Lieb's concavity theorem](../../../LinearAlgebra/positive-definite-matrices/lieb-s-concavity-theorem/README.md): it implies strong subadditivity of the von Neumann entropy.
 
 ## Sources
 

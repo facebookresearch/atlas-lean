@@ -11,4 +11,4 @@ The proof well-orders the pairs (player, strategy) in order type at most `2^â„µâ
 
 ## Background
 
-- Existence of a Bernstein set: the same diagonalisation, run against the uncountable closed subsets of the reals.
+- [Existence of a Bernstein set](../../../Topology/descriptive-set-theory/bernstein-set-exists.md): the same diagonalisation, run against the uncountable closed subsets of the reals.

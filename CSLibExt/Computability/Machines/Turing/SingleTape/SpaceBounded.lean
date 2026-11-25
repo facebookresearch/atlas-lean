@@ -85,27 +85,37 @@ variable {Symbol : Type} [Inhabited Symbol] [Fintype Symbol] (tm : SingleTapeTM 
 
 /-! ### Space bounds -/
 
-/-- `tm` **runs in space** `s`: every configuration of its run on an input `l` uses at most
-`s l.length` cells (`Cfg.spaceUsed`), whether or not the run halts. -/
+/-- **Space-bounded single-tape machines.** Let $s : \mathbb{N} \to \mathbb{N}$. A single-tape
+Turing machine $M$ runs in space $s$ when, for every input word $l$ of length $|l|$, every
+configuration reachable from the initial configuration of $M$ on $l$ uses at most $s(|l|)$
+cells, whether or not the run halts. The cells used by a configuration are the head cell
+together with the cells on each side of it up to the outermost non-blank cell. -/
 def SpaceBoundedBy (s : ℕ → ℕ) : Prop :=
   ∀ (l : List Symbol) (c : tm.Cfg), ReflTransGen tm.TransitionRelation (tm.initCfg l) c →
     c.spaceUsed ≤ s l.length
 
-/-- `tm` is a **linear bounded automaton**: it runs in space `n + 1` on inputs of length `n`. The
-input itself uses `max 1 n` cells (`Cfg.spaceUsed_initCfg`), and the extra cell lets the head
-step onto a blank cell next to the input, the analogue of Sipser's endmarkers. With the bound `n`
-instead, no machine would qualify, since the empty input already uses one cell. -/
+/-- **Linear bounded automaton.** A single-tape machine is a linear bounded automaton when it runs
+in space $n + 1$ on inputs of length $n$: every configuration of its run on an input of length $n$
+uses at most $n + 1$ cells, whether or not the run halts.
+
+The input itself uses $\max(1, n)$ cells, and the extra cell lets the head step onto a blank cell
+next to the input, the analogue of Sipser's endmarkers. With the bound $n$ instead, no machine
+would qualify, since the empty input already uses one cell. -/
 def IsLBA : Prop :=
   tm.SpaceBoundedBy (· + 1)
 
 variable {tm}
 
-/-- A space bound can be weakened. -/
+/-- **Space bounds can be weakened.** If a single-tape machine runs in space
+$s : \mathbb{N} \to \mathbb{N}$ and $s' : \mathbb{N} \to \mathbb{N}$ satisfies $s(n) \le s'(n)$ for
+every $n \in \mathbb{N}$, then it runs in space $s'$. -/
 theorem SpaceBoundedBy.mono {s s' : ℕ → ℕ} (h : tm.SpaceBoundedBy s) (hs : ∀ n, s n ≤ s' n) :
     tm.SpaceBoundedBy s' :=
   fun l c hc ↦ (h l c hc).trans (hs _)
 
-/-- A space bound is at least the space of the input, `max 1 n` on inputs of length `n`. -/
+/-- **A space bound is at least the space of the input.** If a single-tape machine runs in space
+$s : \mathbb{N} \to \mathbb{N}$, then $\max(1, n) \le s(n)$ for the length $n$ of every input word,
+since the initial configuration on an input of length $n$ uses $\max(1, n)$ cells. -/
 theorem SpaceBoundedBy.max_one_le {s : ℕ → ℕ} (h : tm.SpaceBoundedBy s) (l : List Symbol) :
     max 1 l.length ≤ s l.length :=
   Cfg.spaceUsed_initCfg tm l ▸ h l _ .refl
@@ -190,14 +200,21 @@ variable (tm)
 
 /-! ### Finitely many configurations of bounded space -/
 
-/-- A bound on the number of configurations that use at most `k` cells: a state or the halting
-state, the symbol under the head, and the first `k` cells to either side of the head, each a
-symbol, a blank, or past the last non-blank cell. -/
+/-- **Configuration bound.** For a single-tape machine with state set $Q$ over a finite alphabet
+$\Sigma$ and $k \in \mathbb{N}$, the configuration bound at $k$ is the number
+$(|Q| + 1)(|\Sigma| + 1)(|\Sigma| + 2)^{2k}$.
+
+A configuration that uses at most $k$ cells is determined by a state or the halting state, the
+symbol or blank under the head, and the first $k$ cells to either side of the head, each a symbol,
+a blank, or past the last non-blank cell; so this number bounds how many such configurations
+there are. -/
 def cfgBound (k : ℕ) : ℕ :=
   (Fintype.card tm.State + 1) * (Fintype.card Symbol + 1) * (Fintype.card Symbol + 2) ^ (2 * k)
 
-/-- **Configurations of bounded space are finitely many**: at most `cfgBound k` configurations
-use at most `k` cells. -/
+/-- **Configurations of bounded space are finitely many.** Let $M$ be a single-tape machine with
+state set $Q$ over a finite alphabet $\Sigma$, where a configuration uses the cell under the head
+and the cells on either side of it up to the last non-blank one. For every $k \in \mathbb{N}$, at
+most $(|Q| + 1)(|\Sigma| + 1)(|\Sigma| + 2)^{2k}$ configurations of $M$ use at most $k$ cells. -/
 theorem encard_le_cfgBound (k : ℕ) : {c : tm.Cfg | c.spaceUsed ≤ k}.encard ≤ tm.cfgBound k := by
   -- A configuration of space at most `k` is determined by its state, its head symbol, and the
   -- first `k` cells to either side of the head, read with `getElem?`.
@@ -226,9 +243,14 @@ variable {tm}
 
 /-! ### Pigeonhole -/
 
-/-- **A machine running in space `s` that halts on `l` halts within `cfgBound (s l.length)`
-steps**: its run visits only configurations of space at most `s l.length`, and does not repeat
-one before halting. -/
+/-- **Space-bounded machines halt within the configuration bound.** Let $M$ be a single-tape
+machine with state set $Q$ over a finite alphabet $\Sigma$ that runs in space
+$s : \mathbb{N} \to \mathbb{N}$. If $M$ halts on an input word $w$ of length $n$, then from the
+initial configuration on $w$ it reaches a configuration in the halting state in at most
+$(|Q| + 1)(|\Sigma| + 1)(|\Sigma| + 2)^{2 s(n)}$ steps.
+
+Its run visits only configurations of space at most $s(n)$, and does not repeat one before
+halting. -/
 theorem SpaceBoundedBy.exists_halted_relatesWithinSteps {s : ℕ → ℕ} (h : tm.SpaceBoundedBy s)
     {l : List Symbol} (hl : tm.HaltsOn l) :
     ∃ c : tm.Cfg, RelatesWithinSteps tm.TransitionRelation (tm.initCfg l) c
@@ -299,8 +321,13 @@ private theorem SpaceBoundedBy.haltsOn_iff_iterate {s : ℕ → ℕ} (h : tm.Spa
     Function.iterate_fixed (stepOrSelf_of_state_eq_none hstate)]
   exact hstate
 
-/-- **Halting of a machine running in computable space is computable**: run the coded step
-`cfgBound (s n)` times on an input of length `n` and check for the halting state. -/
+/-- **Halting of a machine running in computable space is computable.** Let $M$ be a single-tape
+machine with state set $Q$ over a finite alphabet $\Sigma$, fix any primitive recursive coding of
+$\Sigma$, and let $s : \mathbb{N} \to \mathbb{N}$ be computable. If $M$ runs in space $s$, then the
+set of input words over $\Sigma$ on which $M$ halts is computable.
+
+The decision procedure runs $M$ for $(|Q| + 1)(|\Sigma| + 1)(|\Sigma| + 2)^{2 s(n)}$ steps on an
+input of length $n$ and checks whether it has halted. -/
 theorem SpaceBoundedBy.computablePred_haltsOn [Primcodable Symbol] {s : ℕ → ℕ}
     (hs : Computable s) (h : tm.SpaceBoundedBy s) : ComputablePred tm.HaltsOn := by
   classical
@@ -320,16 +347,24 @@ theorem SpaceBoundedBy.computablePred_haltsOn [Primcodable Symbol] {s : ℕ → 
   rw [← toCodedCfg_iterate_stepOrSelf]
   exact decide_eq_decide.mpr (h.haltsOn_iff_iterate l).symm
 
-/-- **The halting problem of a linear bounded automaton is decidable**: a fixed-machine halting
-analogue of Sipser's Theorem 5.9, which decides acceptance uniformly over machine descriptions (that
-version needs a code type for CSLib machines, which CSLib does not have). -/
+/-- **Halting of a linear bounded automaton is decidable.** Let $M$ be a single-tape machine over
+a finite alphabet $\Sigma$, and fix any primitive recursive coding of $\Sigma$. If $M$ is a linear
+bounded automaton, then the set of input words over $\Sigma$ on which $M$ halts is computable.
+
+Source: Sipser, *Introduction to the Theory of Computation*, Theorem 5.9, of which this is a
+fixed-machine halting analogue: Sipser decides acceptance uniformly over machine descriptions,
+which needs a code type for CSLib machines. -/
 theorem IsLBA.computablePred_haltsOn [Primcodable Symbol] (h : tm.IsLBA) :
     ComputablePred tm.HaltsOn :=
   SpaceBoundedBy.computablePred_haltsOn Primrec.succ.to_comp h
 
-/-- **The halting problem of a linear bounded automaton is decidable** on the binary codes
-`encodeNat (encode a)` of elements of a `Primcodable` type, written through any
-`ι : Bool → Symbol`, the input convention of `SingleTapeDecidable`. -/
+/-- **Halting of a linear bounded automaton on binary codes is decidable.** Let $M$ be a
+single-tape machine over a finite alphabet $\Sigma$ that is a linear bounded automaton, let
+$\alpha$ be a primitive recursively coded type, and let $\iota : \{0, 1\} \to \Sigma$ be any map.
+For $a \in \alpha$, let $w_a$ be the word over $\Sigma$ obtained by applying $\iota$ to each bit of
+the binary expansion, least significant bit first and without leading zeros, of the
+natural-number code of $a$; so $w_a$ is empty when that code is $0$. Then the set of
+$a \in \alpha$ such that $M$ halts on $w_a$ is computable. -/
 theorem IsLBA.computablePred_haltsOn_encodeNat {α : Type*} [Primcodable α] (h : tm.IsLBA)
     (ι : Bool → Symbol) : ComputablePred fun a : α ↦ tm.HaltsOn ((encodeNat (encode a)).map ι) := by
   let _ : Primcodable Symbol := Primcodable.ofEquiv _ (Fintype.equivFin _)
@@ -337,9 +372,13 @@ theorem IsLBA.computablePred_haltsOn_encodeNat {α : Type*} [Primcodable α] (h 
   exact ⟨fun _ ↦ inferInstance, hc.comp (Primrec.list_map (primrec_encodeNat.comp Primrec.encode)
     ((Primrec.dom_finite ι).comp Primrec.snd).to₂).to_comp⟩
 
-/-- **A single-tape machine decides the halting problem of a linear bounded automaton**, on the
-binary codes `encodeNat (encode a)` written through any `ι : Bool → Symbol`
-(through `singleTapeDecidable_iff_computablePred`). -/
+/-- **A single-tape machine decides the halting problem of a linear bounded automaton.** Let $M$
+be a linear bounded automaton over a finite tape alphabet $\Sigma$, let $\iota$ be any map from
+the Booleans to $\Sigma$, and let $\alpha$ be a primitively encodable type. For $a \in \alpha$, let
+$w_a$ be the word obtained by writing, letter by letter through $\iota$, the binary expansion
+(least significant bit first) of the natural-number code of $a$. Then the predicate on $\alpha$
+that holds at $a$ exactly when $M$ halts on the input $w_a$ is decidable by a single-tape
+machine. -/
 theorem IsLBA.singleTapeDecidable_haltsOn_encodeNat {α : Type*} [Primcodable α] (h : tm.IsLBA)
     (ι : Bool → Symbol) :
     Decidability.SingleTapeDecidable fun a : α ↦ tm.HaltsOn ((encodeNat (encode a)).map ι) :=

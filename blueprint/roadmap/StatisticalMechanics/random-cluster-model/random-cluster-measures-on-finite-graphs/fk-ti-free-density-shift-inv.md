@@ -1,0 +1,3 @@
+# Box symmetries preserve the free $q = 2$ density of box edges
+
+Let $d, N \in \mathbb{N}$, a [box symmetry](box-sym.md) $\tau$ of $\mathbb{Z}^d$, $e$ an unordered pair of vertices of $\Lambda_N = \{-N, \dots, N\}^d$, and $0 < p < 1$. Then $\theta^0_e(p) = \theta^0_{\tau(e)}(p)$, where $\theta^0_e(p)$ and $\theta^1_e(p)$ are the [free](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md) and [wired edge densities](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md) of $e$ at $q = 2$ (the probabilities that $e$ is open under the free, resp. wired, infinite-volume random-cluster measure on $\mathbb{Z}^d$).

@@ -15,7 +15,7 @@ is such a mechanism.
 
 ## Background
 
-- Deferred acceptance is a man-optimal stable mechanism: an instance of the hypothesis for $n$ men and $n$ women.
+- [Deferred acceptance is a man-optimal stable mechanism](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/gale-shapley-algorithm/exists-is-man-optimal-stable-mechanism.md): an instance of the hypothesis for $n$ men and $n$ women.
 - [Roth's impossibility theorem](not-exists-stable-strategy-proof.md): no stable mechanism is strategy-proof for both sides, so the one-sided statement is the best possible of this kind.
 
 ## Sources

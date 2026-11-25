@@ -39,7 +39,7 @@ trivial, and Theorem 3.1 provides a classical solution with bounded $u$ and $Du$
 
 ## Background
 
-- Wasserstein distances:
+- [Wasserstein distances](../../../MeasureTheory/optimal-transport/wasserstein-distances/README.md):
   the distance $W_1$ in the Lipschitz hypothesis.
 
 ## Sources

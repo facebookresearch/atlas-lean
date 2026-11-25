@@ -114,4 +114,17 @@ example (f d : ℝ) :
         variance (fun _ : Unit => d) (Measure.dirac ()) = (f - d) ^ 2 := by
   simp
 
+/-- Leave-one-out least squares on a design with four rows and two features: the deleted Gram
+matrix is invertible and the residual at the deleted row scales by `1 - h`. -/
+example (X : Matrix (Fin 4) (Fin 2) ℝ) (y : Fin 4 → ℝ) (hG : IsUnit (Xᵀ * X).det)
+    (hh : X 0 ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X 0) ≠ 1) :
+    IsUnit (Xᵀ * X - vecMulVec (X 0) (X 0)).det ∧
+      y 0 - X 0 ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ (Xᵀ *ᵥ y)) =
+        (1 - X 0 ⬝ᵥ ((Xᵀ * X)⁻¹ *ᵥ X 0)) *
+          (y 0 - X 0 ⬝ᵥ ((Xᵀ * X - vecMulVec (X 0) (X 0))⁻¹ *ᵥ (Xᵀ *ᵥ y - y 0 • X 0))) :=
+  have h := leaveOneOut_leverage_residual y 0 hG hh
+  ⟨h.1, h.2.2.2.2⟩
+
+#print axioms leaveOneOut_leverage_residual
+
 end Cslib.MachineLearning.LeastSquaresTests
