@@ -39,7 +39,7 @@ open scoped TensorProduct
 
 namespace ChevalleyEilenberg
 
-attribute [local implicit_reducible] coefficientComplex HomologicalComplex.homologyFunctor
+attribute [local implicit_reducible] coefficientComplex
 attribute [local instance] LieRing.ofAssociativeRing rightRegularLieRingModule rightRegularLieModule
 
 variable (R : Type u) [CommRing R]
