@@ -13,13 +13,6 @@ $f \in \mathbb{R}^n_{\ge 0}$ be the fresh feeds and $K_{ij} = \sum_{e = (j \to i
 Part 3 follows by summing $x - Kx = f$, since the column sums of $K$ are the fractions returned by each unit. The condition on the
 spectral radius is sufficient, not necessary, for a particular feed to admit a nonnegative solution.
 
-## Depends on
-
-## Proof depends on
-
-- [Invertibility of 1 − K when the spectral radius is below one](../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/is-unit-one-sub-of-spectral-radius-lt-on.md)
-- [Neumann series](../../../LinearAlgebra/special-matrices/m-matrices-and-hurwitz-stability/nonsingular-m-matrices/inv-one-sub-nonneg.md), for nonnegativity
-
 ## Sources
 
 - *Introduction to Chemical Engineering Processes*, Wikibooks, chapter "How to Analyze a Recycle System" (splitter balances with equal composition of the outlets), <https://en.wikibooks.org/wiki/Introduction_to_Chemical_Engineering_Processes/How_to_Analyze_a_Recycle_System>.
