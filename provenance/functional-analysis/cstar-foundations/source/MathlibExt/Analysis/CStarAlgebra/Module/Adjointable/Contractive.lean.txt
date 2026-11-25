@@ -1,0 +1,124 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable
+
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.CStarAlgebra.Unitization
+
+/-!
+# Contractive star representations on possibly incomplete C-star modules
+
+A raw nonunital complex star homomorphism into the actual adjointable
+endomorphisms of a normed right C-star module is contractive even when the
+module is not complete. The positive square root is constructed only in
+the source C-star unitization; target positivity is the caller's actual
+coefficient-valued Gram positivity.
+
+No C-star algebra or order is installed on the incomplete End target.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CStarModule.AdjointableOperator
+
+universe uA uB uE
+
+/-- Contractivity of a raw star representation into actual adjointable End,
+without completeness of the module or a target C-star-algebra dictionary. -/
+theorem norm_nonUnitalStarAlgHom_apply_le
+    {A : Type uA} [NonUnitalCStarAlgebra A]
+    {B : Type uB} [NonUnitalCStarAlgebra B]
+    [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+    {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
+    (φ : A →⋆ₙₐ[ℂ] End B E) (a : A) :
+    ‖φ a‖ ≤ ‖a‖ := by
+  let U := Unitization ℂ A
+  let : PartialOrder U := CStarAlgebra.spectralOrder U
+  let : StarOrderedRing U := CStarAlgebra.spectralOrderedRing U
+  let Ψ : U →⋆ₐ[ℂ] End B E := Unitization.starLift φ
+  let u : U := a
+  let r : ℝ := ‖a‖ ^ 2
+  let d : U := algebraMap ℝ U r - star u * u
+  have hu : Ψ u = φ a := by
+    change Ψ (a : U) = φ a
+    calc
+      Ψ (a : U) = Unitization.starLift.symm Ψ a :=
+        (Unitization.starLift_symm_apply_apply Ψ a).symm
+      _ = φ a :=
+        congrArg (fun f : A →⋆ₙₐ[ℂ] End B E => f a)
+          (Unitization.starLift.symm_apply_apply φ)
+  have hd : 0 ≤ d := by
+    apply sub_nonneg.mpr
+    have hnorm : ‖u‖ = ‖a‖ := by
+      change ‖(a : Unitization ℂ A)‖ = ‖a‖
+      exact Unitization.norm_inr a
+    have hle := CStarAlgebra.star_mul_le_algebraMap_norm_sq u
+    rw [hnorm] at hle
+    exact hle
+  let s : U := CFC.sqrt d
+  have hs : star s * s = d := by
+    dsimp only [s]
+    rw [(CFC.sqrt_nonneg d).star_eq]
+    exact CFC.sqrt_mul_sqrt_self d hd
+  have hr : Ψ (algebraMap ℝ U r) =
+      algebraMap ℂ (End B E) (r : ℂ) := by
+    rw [IsScalarTower.algebraMap_apply ℝ ℂ U r]
+    exact Ψ.commutes (r : ℂ)
+  have hSquare :
+      algebraMap ℂ (End B E) (r : ℂ) - star (φ a) * φ a =
+        star (Ψ s) * Ψ s := by
+    simpa only [d, map_sub, map_mul, map_star, hr, hu] using
+      congrArg Ψ hs.symm
+  have hrnorm : ‖(r : ℂ)‖ = r := by
+    rw [Complex.norm_real, Real.norm_of_nonneg (sq_nonneg ‖a‖)]
+  rw [AdjointableOperator.norm_eq]
+  apply ContinuousLinearMap.opNorm_le_bound _ (_root_.norm_nonneg a)
+  intro x
+  change ‖φ a x‖ ≤ ‖a‖ * ‖x‖
+  have hAdj (T : End B E) :
+      inner Bᵐᵒᵖ x (T.adjoint (T x)) =
+        inner Bᵐᵒᵖ (T x) (T x) := by
+    have h := congrArg MulOpposite.op (T.adjoint_inner x (T x))
+    simpa only [CStarModule.rightInner, MulOpposite.op_unop] using h.symm
+  have hVector :
+      (r : ℂ) • x - (φ a).adjoint (φ a x) =
+        (Ψ s).adjoint (Ψ s x) := by
+    simpa only [sub_eq_add_neg, AdjointableOperator.add_apply,
+      AdjointableOperator.neg_apply, AdjointableOperator.algebraMap_apply,
+      AdjointableOperator.mul_apply, AdjointableOperator.star_apply] using
+        congrArg (fun T : End B E => T x) hSquare
+  have hInner :
+      (r : ℂ) • inner Bᵐᵒᵖ x x - inner Bᵐᵒᵖ (φ a x) (φ a x) =
+        inner Bᵐᵒᵖ (Ψ s x) (Ψ s x) := by
+    simpa only [CStarModule.inner_sub_right,
+      CStarModule.inner_smul_right_complex, hAdj] using
+        congrArg (fun y : E => inner Bᵐᵒᵖ x y) hVector
+  have hle : inner Bᵐᵒᵖ (φ a x) (φ a x) ≤
+      (r : ℂ) • inner Bᵐᵒᵖ x x := by
+    apply sub_nonneg.mp
+    rw [hInner]
+    exact CStarModule.inner_self_nonneg (A := Bᵐᵒᵖ) (E := E) (x := Ψ s x)
+  have hsq : ‖φ a x‖ ^ 2 ≤ (‖a‖ * ‖x‖) ^ 2 := by
+    calc
+      ‖φ a x‖ ^ 2 = ‖inner Bᵐᵒᵖ (φ a x) (φ a x)‖ :=
+        CStarModule.norm_sq_eq (A := Bᵐᵒᵖ)
+      _ ≤ ‖(r : ℂ) • inner Bᵐᵒᵖ x x‖ :=
+        CStarAlgebra.norm_le_norm_of_le_of_nonneg hle
+          (CStarModule.inner_self_nonneg (A := Bᵐᵒᵖ) (E := E) (x := φ a x))
+      _ = (‖a‖ * ‖x‖) ^ 2 := by
+        rw [_root_.norm_smul, hrnorm,
+          ← CStarModule.norm_sq_eq (A := Bᵐᵒᵖ) (x := x)]
+        simp only [r, mul_pow]
+  exact (sq_le_sq₀ (_root_.norm_nonneg (φ a x))
+    (mul_nonneg (_root_.norm_nonneg a) (_root_.norm_nonneg x))).mp hsq
+
+end CStarModule.AdjointableOperator
