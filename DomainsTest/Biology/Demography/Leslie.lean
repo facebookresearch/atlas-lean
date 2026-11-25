@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Ecology.Leslie
+public import Domains.Biology.Ecology.Leslie
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation

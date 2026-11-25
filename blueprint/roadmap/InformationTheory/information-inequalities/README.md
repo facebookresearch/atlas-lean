@@ -18,3 +18,7 @@ Inequalities relating entropies, divergences and mutual information, such as the
 ## Related topics
 
 - [Mirror descent](../../Analysis/convex-analysis-and-variations/mirror-descent/README.md): Pinsker's inequality makes the entropy $1$-strongly convex with respect to $\|\cdot\|_1$ on the simplex, the key property of the entropy setup of mirror descent.
+
+## Research directions
+
+- [Entropy region of four random variables](entropy-region-of-four-random-variables.md)

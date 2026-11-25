@@ -143,7 +143,8 @@ namespace Chemistry.QuantitativeNMR
 Model assumption (spin-1/2 Zeeman model): the two levels are `m = ±1/2`. -/
 def zeemanEnergy (γ hbar B0 m : ℝ) : ℝ := -γ * hbar * B0 * m
 
-/-- Energy splitting between `m = -1/2` and `m = +1/2`: `ΔE = γ * hbar * B0`.
+/-- Energy splitting between `m = -1/2` and `m = +1/2`, for `γ`, `hbar`, `B0 > 0`:
+`ΔE = γ * hbar * B0`.
 `γ > 0` fixes the sign convention (for nuclei with negative `γ` the level
 ordering flips; the formula with signed `γ` gives a signed frequency, and the
 observed frequency is its absolute value — the positive formula is not claimed
@@ -155,9 +156,9 @@ lemma zeeman_energy_split (γ hbar B0 : ℝ) (hγ : 0 < γ) (hhbar : 0 < hbar)
   simp only [zeemanEnergy]
   ring
 
-/-- Transition frequency from the splitting: with `h = 2 * Real.pi * hbar` and
-`ν = ΔE / h`, one has `ν = γ * B0 / (2 * Real.pi)`. `ΔE` and `ν` are stated as
-explicit equations; `ν` is in Hz. -/
+/-- Transition frequency from the splitting: for `γ`, `hbar`, `B0 > 0`, with
+`ΔE = γ * hbar * B0`, `h = 2 * Real.pi * hbar` and `ν = ΔE / h`, one has
+`ν = γ * B0 / (2 * Real.pi)`. `ΔE` and `ν` are stated as explicit equations; `ν` is in Hz. -/
 lemma zeeman_transition_freq (γ hbar B0 ΔE h ν : ℝ) (hγ : 0 < γ)
     (hhbar : 0 < hbar) (hB0 : 0 < B0) (hΔE : ΔE = γ * hbar * B0)
     (hh : h = 2 * Real.pi * hbar) (hν : ν = ΔE / h) :
@@ -184,8 +185,8 @@ noncomputable def chemicalShift (ν νref : ℝ) : ℝ :=
 
 /-- Field independence to first order inside the shielding model: if
 `ν = γ * B0 * (1 - σ) / (2 * Real.pi)` and
-`νref = γ * B0 * (1 - σref) / (2 * Real.pi)`, then the shift equals
-`1e6 * (σref - σ) / (1 - σref)`, which contains no `γ` and no `B0`.
+`νref = γ * B0 * (1 - σref) / (2 * Real.pi)` with `γ * B0 ≠ 0` and `1 - σref ≠ 0`, then the
+shift equals `1e6 * (σref - σ) / (1 - σref)`, which contains no `γ` and no `B0`.
 Field-independence holds to first order inside this shielding model; it is not
 a claim about higher-order (e.g. susceptibility) field dependence. -/
 lemma chemicalShift_field_indep (γ B0 σ σref ν νref : ℝ)
@@ -317,7 +318,8 @@ noncomputable def combinedLines {ι : Type*} [Fintype ι] (lines : ι → Finset
   Finset.univ.image (combinedSum lines)
 
 open Classical in
-/-- The number of per-group line choices equals the maximum multiplicity. -/
+/-- If group `i` has exactly `n i * s i + 1` lines, the number of per-group line choices equals
+the maximum multiplicity. -/
 lemma card_univ_choices_eq_maxMult {ι : Type*} [Fintype ι]
     (lines : ι → Finset ℝ) (n s : ι → ℕ)
     (hcard : ∀ i, (lines i).card = n i * s i + 1) :
@@ -329,9 +331,9 @@ lemma card_univ_choices_eq_maxMult {ι : Type*} [Fintype ι]
   rw [Fintype.card_coe, hcard i]
 
 open Classical in
-/-- Resolved-line bound: the number of distinct combined positions is at most
-the maximum multiplicity. Coincident shifts/degeneracies reduce the resolved
-count; the product is the _maximum_ resolved multiplicity. -/
+/-- Resolved-line bound: if group `i` has exactly `n i * s i + 1` lines, the number of distinct
+combined positions is at most the maximum multiplicity. This is an upper bound only: coincident
+positions reduce the resolved count, and `card_combined_eq_iff` says when it is attained. -/
 lemma card_combined_le {ι : Type*} [Fintype ι] (lines : ι → Finset ℝ)
     (n s : ι → ℕ) (hcard : ∀ i, (lines i).card = n i * s i + 1) :
     (combinedLines lines).card ≤ maxMultiplicity n s := by
@@ -342,7 +344,8 @@ lemma card_combined_le {ι : Type*} [Fintype ι] (lines : ι → Finset ℝ)
     _ = maxMultiplicity n s := hmax
 
 open Classical in
-/-- Equality holds iff the sum map is injective on the per-group choices
+/-- If group `i` has exactly `n i * s i + 1` lines, the number of distinct combined positions
+equals the maximum multiplicity iff the sum map is injective on the per-group choices
 (`Set.InjOn` over the full choice set). -/
 lemma card_combined_eq_iff {ι : Type*} [Fintype ι] (lines : ι → Finset ℝ)
     (n s : ι → ℕ) (hcard : ∀ i, (lines i).card = n i * s i + 1) :

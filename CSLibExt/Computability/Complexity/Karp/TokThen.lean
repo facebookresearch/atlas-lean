@@ -31,7 +31,7 @@ the reduction host (`Cslib.Complexity.Host`).
 namespace Cslib.Complexity.Karp
 
 open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
-open Cslib.CookLevin Cslib.Logic.PL Cslib.Complexity.SatVerifier
+open Cslib.CookLevin Cslib.Logic.LegacyPL Cslib.Complexity.SatVerifier
 
 /-- **Emitter.** An emitter is a multi-stack machine, given by a type of stacks and a type of
 labels (both with decidable equality), an alphabet for each stack and a program with boolean

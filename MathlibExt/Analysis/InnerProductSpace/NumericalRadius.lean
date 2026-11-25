@@ -67,21 +67,31 @@ open scoped _root_.InnerProductSpace
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The numerical radius of a bounded operator on a complex Hilbert space:
-the supremum of `‖⟪T x, x⟫‖` over unit vectors `x`. -/
+/-- **Numerical radius.** The numerical radius of a bounded linear operator $T$ on a complex
+Hilbert space $H$ is the real number
+$w(T) = \sup \{ |\langle T x, x \rangle| : x \in H,\ \|x\| = 1 \}$, the supremum of the moduli of
+the values $\langle T x, x \rangle$ over the unit vectors of $H$ (taken to be $0$ when $H = 0$). -/
 noncomputable def numericalRadius (T : H →L[ℂ] H) : ℝ :=
   ⨆ x : { x : H // ‖x‖ = 1 }, ‖⟪T (x : H), (x : H)⟫_ℂ‖
 
-/-- The operator-valued alias of Mathlib's `realPart T`: `(T + T*) / 2`. -/
+/-- **Real Cartesian part of an operator.** For a bounded linear operator $T$ on a complex Hilbert
+space with adjoint $T^*$, the real Cartesian part of $T$ is the bounded linear operator
+$(T + T^*)/2$. -/
 noncomputable def cartesianRealPart (T : H →L[ℂ] H) : H →L[ℂ] H :=
   ↑(realPart T)
 
-/-- The operator-valued alias of Mathlib's `imaginaryPart T`: `(T - T*) / (2 * i)`. -/
+/-- **Imaginary Cartesian part of an operator.** For a bounded linear operator $T$ on a complex
+Hilbert space with adjoint $T^*$, the imaginary Cartesian part of $T$ is the bounded linear
+operator $(T - T^*)/(2i)$. -/
 noncomputable def cartesianImagPart (T : H →L[ℂ] H) : H →L[ℂ] H :=
   ↑(imaginaryPart T)
 
 omit [CompleteSpace H] in
-/-- The family defining the numerical radius is bounded above by `‖T‖`. -/
+/-- **The numerical-radius family is bounded above.** Let $T$ be a bounded linear operator on a
+complex inner product space $H$. The set $\{|\langle Tx, x\rangle| : x \in H,\ \|x\| = 1\}$ is
+bounded above.
+
+The proof shows that $\|T\|$ is an upper bound, by the Cauchy–Schwarz inequality. -/
 theorem bddAbove_numericalRadius (T : H →L[ℂ] H) :
     BddAbove (Set.range fun x : { x : H // ‖x‖ = 1 } => ‖⟪T (x : H), (x : H)⟫_ℂ‖) := by
   refine ⟨‖T‖, ?_⟩
@@ -92,13 +102,16 @@ theorem bddAbove_numericalRadius (T : H →L[ℂ] H) :
     _ = ‖T‖ := by rw [x.property, mul_one]
 
 omit [CompleteSpace H] in
-/-- The numerical radius is nonnegative. -/
+/-- **Nonnegativity of the numerical radius.** For every bounded operator $T$ on a complex inner
+product space, the numerical radius $w(T)$ of $T$ satisfies $w(T) \ge 0$. -/
 theorem numericalRadius_nonneg (T : H →L[ℂ] H) : 0 ≤ numericalRadius T := by
   show 0 ≤ ⨆ x : { x : H // ‖x‖ = 1 }, ‖⟪T (x : H), (x : H)⟫_ℂ‖
   exact Real.iSup_nonneg fun _ => norm_nonneg _
 
 omit [CompleteSpace H] in
-/-- The numerical radius dominates the quadratic form at any unit vector. -/
+/-- **The numerical radius bounds the quadratic form on unit vectors.** Let $T$ be a bounded
+linear operator on a complex inner product space $H$, with numerical radius $w(T)$. For every
+$x \in H$ with $\|x\| = 1$, $|\langle Tx, x\rangle| \le w(T)$. -/
 theorem le_numericalRadius {T : H →L[ℂ] H} {x : H} (hx : ‖x‖ = 1) :
     ‖⟪T x, x⟫_ℂ‖ ≤ numericalRadius T := by
   show ‖⟪T x, x⟫_ℂ‖
@@ -106,15 +119,21 @@ theorem le_numericalRadius {T : H →L[ℂ] H} {x : H} (hx : ‖x‖ = 1) :
   exact le_ciSup (bddAbove_numericalRadius T) ⟨x, hx⟩
 
 omit [CompleteSpace H] in
-/-- A uniform bound on the quadratic form over unit vectors bounds the
-numerical radius. -/
+/-- **Bounding the numerical radius from above.** Let $T$ be a bounded operator on a complex
+inner product space $H$ and let $c \ge 0$ be a real number. If $|\langle T x, x\rangle| \le c$
+for every unit vector $x \in H$, then the numerical radius of $T$ satisfies $w(T) \le c$.
+
+The hypothesis $c \ge 0$ matters only when $H = 0$: there are no unit vectors, and $w(T) = 0$. -/
 theorem numericalRadius_le {T : H →L[ℂ] H} {c : ℝ} (hc : 0 ≤ c)
     (h : ∀ x : H, ‖x‖ = 1 → ‖⟪T x, x⟫_ℂ‖ ≤ c) : numericalRadius T ≤ c := by
   show (⨆ y : { y : H // ‖y‖ = 1 }, ‖⟪T (y : H), (y : H)⟫_ℂ‖) ≤ c
   exact Real.iSup_le (fun ⟨x, hx⟩ => h x hx) hc
 
 omit [CompleteSpace H] in
-/-- The numerical radius is at most the operator norm (Cauchy–Schwarz). -/
+/-- **Numerical radius at most the operator norm.** For every bounded operator $T$ on a complex
+inner product space, the numerical radius $w(T)$ is at most the operator norm: $w(T) \le \|T\|$.
+
+The proof is the Cauchy–Schwarz inequality. -/
 theorem numericalRadius_le_norm (T : H →L[ℂ] H) : numericalRadius T ≤ ‖T‖ := by
   refine numericalRadius_le (norm_nonneg T) fun x hx => ?_
   calc ‖⟪T x, x⟫_ℂ‖ ≤ ‖T x‖ * ‖x‖ := norm_inner_le_norm _ _
@@ -123,8 +142,10 @@ theorem numericalRadius_le_norm (T : H →L[ℂ] H) : numericalRadius T ≤ ‖T
     _ = ‖T‖ := by rw [hx, mul_one]
 
 omit [CompleteSpace H] in
-/-- The quadratic form scales quadratically: evaluating at `‖x‖⁻¹ • x`
-divides it by `‖x‖²`. -/
+/-- **Quadratic form at the normalized vector.** Let $T$ be a bounded operator on a complex inner
+product space $H$. For every $x \in H$,
+$\langle T(\|x\|^{-1} x), \|x\|^{-1} x \rangle = \|x\|^{-2} \langle T x, x \rangle$,
+where $0^{-1}$ is read as $0$, so that for $x = 0$ both sides vanish. -/
 theorem quadForm_scale (T : H →L[ℂ] H) {x : H} :
     ⟪T ((RCLike.ofReal (‖x‖⁻¹) : ℂ) • x), ((RCLike.ofReal (‖x‖⁻¹) : ℂ) • x)⟫_ℂ
       = (RCLike.ofReal ((‖x‖ ^ 2)⁻¹) : ℂ) * ⟪T x, x⟫_ℂ := by
@@ -134,15 +155,18 @@ theorem quadForm_scale (T : H →L[ℂ] H) {x : H} :
   rw [← inv_pow, pow_two]
 
 omit [CompleteSpace H] in
-/-- The unit vector obtained by normalizing `x`. -/
+/-- **Normalizing a nonzero vector gives a unit vector.** Let $x$ be a nonzero vector in a
+complex inner product space. Then the vector $\|x\|^{-1} x$ has norm $1$. -/
 theorem norm_normalize {x : H} (hx : x ≠ 0) :
     ‖((RCLike.ofReal (‖x‖⁻¹) : ℂ) • x)‖ = 1 := by
   rw [norm_smul, RCLike.norm_ofReal, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg x)),
     inv_mul_cancel₀ (norm_ne_zero_iff.mpr hx)]
 
 omit [CompleteSpace H] in
-/-- The real part of the quadratic form, divided by `‖x‖²`, is at most the
-numerical radius. -/
+/-- **Numerical radius bounds the normalized real part of the quadratic form.** Let $T$ be a
+bounded linear operator on a complex inner product space $H$, with numerical radius $w(T)$. For
+every $x \in H$, $|\operatorname{Re} \langle Tx, x\rangle| / \|x\|^2 \le w(T)$, where division by
+zero is taken to be $0$, so the case $x = 0$ is trivial. -/
 theorem abs_re_quadForm_div_le_numericalRadius (T : H →L[ℂ] H) (x : H) :
     |RCLike.re ⟪T x, x⟫_ℂ| / ‖x‖ ^ 2 ≤ numericalRadius T := by
   by_cases hx : x = 0
@@ -160,8 +184,10 @@ theorem abs_re_quadForm_div_le_numericalRadius (T : H →L[ℂ] H) (x : H) :
       _ ≤ numericalRadius T := le_numericalRadius (norm_normalize hx)
 
 omit [CompleteSpace H] in
-/-- The imaginary part of the quadratic form, divided by `‖x‖²`, is at most
-the numerical radius. -/
+/-- **Numerical radius bounds the normalized imaginary part of the quadratic form.** Let $T$ be
+a bounded linear operator on a complex inner product space $H$, with numerical radius $w(T)$. For
+every $x \in H$, $|\operatorname{Im} \langle Tx, x\rangle| / \|x\|^2 \le w(T)$, where division by
+zero is taken to be $0$, so the case $x = 0$ is trivial. -/
 theorem abs_im_quadForm_div_le_numericalRadius (T : H →L[ℂ] H) (x : H) :
     |RCLike.im ⟪T x, x⟫_ℂ| / ‖x‖ ^ 2 ≤ numericalRadius T := by
   by_cases hx : x = 0
@@ -179,37 +205,46 @@ theorem abs_im_quadForm_div_le_numericalRadius (T : H →L[ℂ] H) (x : H) :
       _ ≤ numericalRadius T := le_numericalRadius (norm_normalize hx)
 
 omit [CompleteSpace H] in
-/-- The absolute Rayleigh quotient at any vector is at most the numerical
-radius. -/
+/-- **Numerical radius bounds the Rayleigh quotient.** Let $T$ be a bounded linear operator on a
+complex inner product space $H$, with numerical radius $w(T)$. For every $x \in H$, the Rayleigh
+quotient $R_T(x) = \operatorname{Re} \langle Tx, x\rangle / \|x\|^2$, taken to be $0$ at $x = 0$,
+satisfies $|R_T(x)| \le w(T)$. -/
 theorem abs_rayleighQuotient_le_numericalRadius (T : H →L[ℂ] H) (x : H) :
     |T.rayleighQuotient x| ≤ numericalRadius T := by
   rw [ContinuousLinearMap.rayleighQuotient, ContinuousLinearMap.reApplyInnerSelf_apply,
     abs_div, abs_of_nonneg (sq_nonneg (‖x‖))]
   exact abs_re_quadForm_div_le_numericalRadius T x
 
-/-- Conjugation of the scalar `1 / 2`. -/
+/-- **Complex conjugate of one half.** The complex conjugate of $1/2 \in \mathbb{C}$ is $1/2$, that
+is, $\overline{1/2} = 1/2$. -/
 theorem starRingEnd_half : starRingEnd ℂ (1 / 2 : ℂ) = 1 / 2 := by
   rw [map_div₀, map_one, map_ofNat]
 
-/-- Conjugation of the scalar `-i / 2` is `i / 2`. -/
+/-- **Complex conjugate of minus half the imaginary unit.** The complex conjugate of
+$-i/2 \in \mathbb{C}$ is $i/2$, that is, $\overline{-i/2} = i/2$. -/
 theorem starRingEnd_neg_I_div_two :
     starRingEnd ℂ (-(Complex.I / 2) : ℂ) = Complex.I / 2 := by
   rw [show (Complex.I : ℂ) = RCLike.I from rfl, map_neg, map_div₀, RCLike.conj_I,
     map_ofNat]
   ring
 
-/-- The real Cartesian part is symmetric. -/
+/-- **The real Cartesian part is symmetric.** For every bounded linear operator $T$ on a complex
+Hilbert space $H$ with adjoint $T^*$, the real Cartesian part $A = (T + T^*)/2$ is symmetric:
+$\langle Ax, y\rangle = \langle x, Ay\rangle$ for all $x, y \in H$. -/
 theorem isSymmetric_cartesianRealPart (T : H →L[ℂ] H) :
     LinearMap.IsSymmetric (cartesianRealPart T : H →ₗ[ℂ] H) := by
   exact (show IsSelfAdjoint (cartesianRealPart T) from (realPart T).property).isSymmetric
 
-/-- The imaginary Cartesian part is symmetric. -/
+/-- **The imaginary Cartesian part is symmetric.** For every bounded linear operator $T$ on a
+complex Hilbert space $H$ with adjoint $T^*$, the imaginary Cartesian part $B = (T - T^*)/(2i)$ is
+symmetric: $\langle Bx, y\rangle = \langle x, By\rangle$ for all $x, y \in H$. -/
 theorem isSymmetric_cartesianImagPart (T : H →L[ℂ] H) :
     LinearMap.IsSymmetric (cartesianImagPart T : H →ₗ[ℂ] H) := by
   exact (show IsSelfAdjoint (cartesianImagPart T) from (imaginaryPart T).property).isSymmetric
 
-/-- The quadratic form of the real Cartesian part is the real part of the
-quadratic form. -/
+/-- **Quadratic form of the real Cartesian part.** Let $T$ be a bounded operator on a complex
+Hilbert space $H$ and let $A = (T + T^*)/2$ be the real Cartesian part of $T$. Then for every
+$x \in H$ one has $\langle A x, x \rangle = \operatorname{Re} \langle T x, x \rangle$. -/
 theorem quadForm_cartesianRealPart (T : H →L[ℂ] H) (x : H) :
     ⟪cartesianRealPart T x, x⟫_ℂ = (RCLike.ofReal (RCLike.re ⟪T x, x⟫_ℂ) : ℂ) := by
   simp only [cartesianRealPart]
@@ -222,11 +257,14 @@ theorem quadForm_cartesianRealPart (T : H →L[ℂ] H) (x : H) :
     starRingEnd_half, RCLike.add_conj, ← mul_assoc]
   norm_num
 
-/-- The quadratic form of the imaginary Cartesian part is the negative
-imaginary part of the quadratic form. The sign is the shadow of Mathlib's
-convention that the inner product is conjugate-linear in its first
-argument: for the Cartesian decomposition `T = A + i * B`, one has
-`⟪T x, x⟫ = ⟪A x, x⟫ - i * ⟪B x, x⟫`, so `⟪B x, x⟫ = -Im ⟪T x, x⟫`. -/
+/-- **Quadratic form of the imaginary Cartesian part.** Let $T$ be a bounded operator on a complex
+Hilbert space $H$, whose inner product $\langle \cdot, \cdot \rangle$ is conjugate-linear in its
+first argument, and let $B = (T - T^*)/(2i)$ be the imaginary Cartesian part of $T$. Then for
+every $x \in H$ one has $\langle B x, x \rangle = -\operatorname{Im} \langle T x, x \rangle$.
+
+The sign comes from the convention on the inner product: writing $T = A + iB$ with
+$A = (T + T^*)/2$, one has
+$\langle T x, x \rangle = \langle A x, x \rangle - i \langle B x, x \rangle$. -/
 theorem quadForm_cartesianImagPart (T : H →L[ℂ] H) (x : H) :
     ⟪cartesianImagPart T x, x⟫_ℂ = (RCLike.ofReal (-(RCLike.im ⟪T x, x⟫_ℂ)) : ℂ) := by
   simp only [cartesianImagPart]
@@ -249,12 +287,17 @@ theorem quadForm_cartesianImagPart (T : H →L[ℂ] H) (x : H) :
           RCLike.ofReal_neg]
         ring
 
-/-- The Cartesian decomposition `T = A + i * B`. -/
+/-- **Cartesian decomposition.** Every bounded linear operator $T$ on a complex Hilbert space
+satisfies $T = A + iB$, where $A = (T + T^*)/2$ and $B = (T - T^*)/(2i)$ are the real and
+imaginary Cartesian parts of $T$ and $T^*$ is the adjoint of $T$. -/
 theorem cartesian_decomposition (T : H →L[ℂ] H) :
     T = cartesianRealPart T + Complex.I • cartesianImagPart T := by
   exact (realPart_add_I_smul_imaginaryPart T).symm
 
-/-- The norm of the real Cartesian part is at most the numerical radius. -/
+/-- **Norm of the real part is at most the numerical radius.** Let $T$ be a bounded
+operator on a complex Hilbert space, with adjoint $T^*$, and let $A = (T + T^*)/2$ be its real
+Cartesian part. Then $\|A\| \le w(T)$, where $\|A\|$ is the operator norm of $A$ and $w(T)$ is
+the numerical radius of $T$. -/
 theorem norm_cartesianRealPart_le_numericalRadius (T : H →L[ℂ] H) :
     ‖cartesianRealPart T‖ ≤ numericalRadius T := by
   rw [ContinuousLinearMap.norm_eq_iSup_rayleighQuotient (cartesianRealPart T)
@@ -266,7 +309,10 @@ theorem norm_cartesianRealPart_le_numericalRadius (T : H →L[ℂ] H) :
     abs_of_nonneg (sq_nonneg (‖x‖))]
   exact abs_re_quadForm_div_le_numericalRadius T x
 
-/-- The norm of the imaginary Cartesian part is at most the numerical radius. -/
+/-- **Norm of the imaginary part is at most the numerical radius.** Let $T$ be a
+bounded operator on a complex Hilbert space, with adjoint $T^*$, and let $B = (T - T^*)/(2i)$ be
+its imaginary Cartesian part. Then $\|B\| \le w(T)$, where $\|B\|$ is the operator norm of $B$
+and $w(T)$ is the numerical radius of $T$. -/
 theorem norm_cartesianImagPart_le_numericalRadius (T : H →L[ℂ] H) :
     ‖cartesianImagPart T‖ ≤ numericalRadius T := by
   rw [ContinuousLinearMap.norm_eq_iSup_rayleighQuotient (cartesianImagPart T)
@@ -281,7 +327,9 @@ theorem norm_cartesianImagPart_le_numericalRadius (T : H →L[ℂ] H) :
   rw [h, abs_div, abs_neg, abs_of_nonneg (sq_nonneg (‖x‖))]
   exact abs_im_quadForm_div_le_numericalRadius T x
 
-/-- The operator norm is at most twice the numerical radius. -/
+/-- **Operator norm at most twice the numerical radius.** For every bounded operator $T$ on a
+complex Hilbert space, $\|T\| \le 2\,w(T)$, where $\|T\|$ is the operator norm and $w(T)$ is the
+numerical radius of $T$. -/
 theorem norm_le_two_mul_numericalRadius (T : H →L[ℂ] H) :
     ‖T‖ ≤ 2 * numericalRadius T := by
   conv_lhs => rw [cartesian_decomposition T]
@@ -294,8 +342,9 @@ theorem norm_le_two_mul_numericalRadius (T : H →L[ℂ] H) :
           (norm_cartesianImagPart_le_numericalRadius T)
     _ = 2 * numericalRadius T := by ring
 
-/-- For a self-adjoint operator, the numerical radius equals the operator
-norm. -/
+/-- **Numerical radius of a self-adjoint operator.** If $T$ is a self-adjoint bounded operator
+on a complex Hilbert space, then its numerical radius equals its operator norm:
+$w(T) = \|T\|$. -/
 theorem numericalRadius_eq_norm_of_isSelfAdjoint {T : H →L[ℂ] H} (hT : IsSelfAdjoint T) :
     numericalRadius T = ‖T‖ := by
   apply le_antisymm (numericalRadius_le_norm T)
@@ -303,15 +352,19 @@ theorem numericalRadius_eq_norm_of_isSelfAdjoint {T : H →L[ℂ] H} (hT : IsSel
   exact Real.iSup_le (fun x => abs_rayleighQuotient_le_numericalRadius T x)
     (numericalRadius_nonneg T)
 
-/-- The norm of the quadratic form is unchanged by taking the adjoint,
-since `⟪T* x, x⟫` is the conjugate of `⟪T x, x⟫`. -/
+/-- **The quadratic form of the adjoint has the same modulus.** Let $T$ be a bounded operator
+on a complex Hilbert space $H$, with adjoint $T^*$. For every $x \in H$,
+$|\langle T^* x, x\rangle| = |\langle T x, x\rangle|$, since $\langle T^* x, x\rangle$ is the
+complex conjugate of $\langle T x, x\rangle$. -/
 theorem norm_quadForm_adjoint (T : H →L[ℂ] H) (x : H) :
     ‖⟪ContinuousLinearMap.adjoint T x, x⟫_ℂ‖ = ‖⟪T x, x⟫_ℂ‖ := by
   rw [ContinuousLinearMap.adjoint_inner_left,
     show ⟪x, T x⟫_ℂ = starRingEnd ℂ ⟪T x, x⟫_ℂ from (inner_conj_symm x (T x)).symm,
     starRingEnd_apply, norm_star]
 
-/-- The numerical radius is invariant under taking adjoints. -/
+/-- **Numerical radius of the adjoint.** For every bounded operator $T$ on a complex Hilbert
+space, the numerical radius of its adjoint $T^*$ equals the numerical radius of $T$:
+$w(T^*) = w(T)$. -/
 theorem numericalRadius_adjoint (T : H →L[ℂ] H) :
     numericalRadius (ContinuousLinearMap.adjoint T) = numericalRadius T := by
   apply le_antisymm

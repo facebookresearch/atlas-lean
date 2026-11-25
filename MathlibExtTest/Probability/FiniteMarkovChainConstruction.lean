@@ -8,14 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.PopulationGenetics.WrightFisherChainConstruction
+public import MathlibExt.Probability.FiniteMarkovChainConstruction
 
 /-!
 # Tests of the finite-chain bridge for the canonical Markov law
 
 Fixtures use the existing canonical measure rather than a second path-law definition.
-The Wright–Fisher interior fixture is random; the two-state flip is deterministic
-but nonconstant. The probability instance comes from the existing construction.
+The two-state flip is deterministic but nonconstant.
 -/
 
 @[expose] public section
@@ -23,7 +22,6 @@ but nonconstant. The probability instance comes from the existing construction.
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.FiniteMarkovChain
 open MathlibExt.Probability.MarkovChainConstruction
-open MathlibExt.Biology.PopulationGenetics.WrightFisherChain
 
 namespace MathlibExtTest.Probability.FiniteMarkovChainConstruction
 
@@ -63,55 +61,6 @@ private theorem firstStepReal {M : ℕ} (P : StochasticMatrix M)
         rw [map_eval_one]
         simpa using finiteChainKernel_apply P i ({j} : Finset (Fin (M + 1)))
   rw [measureReal_def, hmass, ENNReal.toReal_ofReal (P.nonneg i j)]
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
-      {ω | ω 1 = 0} = (1 / 4 : ℝ) := by
-  rw [firstStepReal]
-  norm_num [wrightFisher_prob, coe_z]
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
-      {ω | ω 1 = 1} = (1 / 2 : ℝ) := by
-  rw [firstStepReal]
-  norm_num [wrightFisher_prob, coe_z]
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
-      {ω | ω 1 = 2} = (1 / 4 : ℝ) := by
-  rw [firstStepReal]
-  norm_num [wrightFisher_prob, coe_z]
-
-example :
-    IsFiniteMarkovChain (fun n (ω : ℕ → Fin 3) ↦ ω n) (wrightFisher 2) Filtration.piLE
-      (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac 1)) :=
-  isFiniteMarkovChain_markovChainMeasure (wrightFisher 2) 1
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3)))
-      {ω | ∃ t, ω t = 0 ∨ ω t = Fin.last 2} = 1 :=
-  measure_markovChainMeasure_exists_absorbed 2 1
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
-      {ω | ∃ t, ω t = Fin.last 2} = (1 / 2 : ℝ) := by
-  simpa using measureReal_markovChainMeasure_exists_eq_last
-    (M := 2) (by norm_num) (1 : Fin 3)
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 2)) (Measure.dirac (1 : Fin 3))).real
-      {ω | ∃ t, ω t = 0} = (1 / 2 : ℝ) := by
-  have h := measureReal_markovChainMeasure_exists_eq_zero (M := 2) (by norm_num) (1 : Fin 3)
-  norm_num at h
-  exact h
-
-example :
-    (markovChainMeasure (finiteChainKernel (wrightFisher 0)) (Measure.dirac 0)).real
-      {ω | ∀ n, ω n = 0} = 1 := by
-  have h : {ω : ℕ → Fin 1 | ∀ n, ω n = 0} = Set.univ :=
-    Set.eq_univ_of_forall fun ω n ↦ Subsingleton.elim (ω n) 0
-  rw [h]
-  simp
 
 /-- The two-state deterministic flip, not an absorbing or constant chain. -/
 private def flipMatrix : StochasticMatrix 1 where

@@ -64,8 +64,10 @@ open Polynomial Finset Real Complex Filter ArithmeticFunction
 
 open scoped ComplexConjugate
 
-/-- We define an extension of an arithmetic function `f` to the integers by setting
-`f z = f 0 = 0` for all `z ≤ 0`. -/
+/-- **Extension of an arithmetic function to the integers.** Let $R$ be a type with a zero
+element $0$ and let $f$ be an arithmetic function with values in $R$. The extension of $f$ to the
+integers is the function on $\mathbb{Z}$ that sends an integer $z$ to $f(z)$ if $z > 0$ and to
+$0$ if $z \le 0$. -/
 noncomputable def _root_.ArithmeticFunction.intExtension {R : Type*} [Zero R]
     (f : ArithmeticFunction R) (z : ℤ) : R := if z ≤ 0 then 0 else f ⌊z⌋₊
 
@@ -78,7 +80,8 @@ noncomputable
 def weakGowersUniformityNorm (k : ℕ) (x H : ℝ) (f : ℤ → ℂ) : ℝ :=
   ⨆ P ∈ degreeLE ℝ k, 1 / H * ‖∑ n ∈ Icc ⌈x⌉ ⌊x + H⌋, f n * cexp (2 * π * I * - P.eval (n : ℝ))‖
 
-/-- We say that a function `f : ℕ → ℂ` is 1-bounded if for all `n : ℕ`, `‖f n‖ ≤ 1`. -/
+/-- **1-bounded function.** A function $f \colon \mathbb{N} \to \mathbb{C}$ is 1-bounded if
+$|f(n)| \le 1$ for every natural number $n$. -/
 abbrev IsOneBounded (f : ℕ → ℂ) : Prop := ∀ n, ‖f n‖ ≤ 1
 
 /-- Given `X : ℝ`, we define a distance `𝔻` on functions `ℕ → ℂ` by the formula:
@@ -99,19 +102,33 @@ def M (f : ℕ → ℂ) (X : ℝ) (Q : ℕ+) : ℝ :=
     𝔻 f (fun n ↦ χ n * n ^ (I * t)) X
 
 /--
-Statement of Theorem 1.3 (Non-pretentious multiplicative functions do not correlate
-with polynomial phases on short intervals on average):
+**Non-pretentious multiplicative functions do not correlate with polynomial phases on short
+intervals on average.** For a function $g$ on the integers, a natural number $k$, a real $x$ and a
+real $H > 0$ write
+$$
+\|g\|_{u^{k+1}[x, x+H]} = \sup_{\deg P \le k} \frac{1}{H}
+\Bigl| \sum_{\lceil x \rceil \le n \le \lfloor x + H \rfloor} g(n) e^{-2\pi i P(n)} \Bigr|,
+$$
+the supremum taken over real polynomials $P$ of degree at most $k$. For functions
+$f, g \colon \mathbb{N} \to \mathbb{C}$ and a real $X$ let
+$$
+\mathbb{D}(f, g; X) =
+\Bigl( \sum_{p \le X} \frac{1 - \operatorname{Re}\bigl(f(p) \overline{g(p)}\bigr)}{p} \Bigr)^{1/2},
+$$
+the sum taken over primes $p \le X$, and for a positive integer $Q$ let $M(f; X, Q)$ be the
+infimum of $\mathbb{D}(f, n \mapsto \chi(n) n^{it}; X)$ over real $t$ with $|t| \le X$, positive
+integers $q \le Q$ and Dirichlet characters $\chi$ modulo $q$.
 
-Let `k : ℕ`, `θ : ℝ` such that `0 < θ < 1/2` and `η : ℝ` such that `η > 0`. Then there exist
-constants `Q : ℕ` such that `Q > 0`, `C : ℝ` such that `C > 0`, and `B : ℝ`, such that for any
-multiplicative 1-bounded arithmetic function `f : ℕ → ℂ`, any `X : ℝ` such that `X ≥ 1` and any
-`H : ℝ` such that `Xᶿ ≤ H ≤ X¹⁻ᶿ`, if
+Let $k$ be a natural number, $\theta$ a real number with $0 < \theta < 1/2$ and $\eta > 0$ a real
+number. Then there are a positive integer $Q$ and real numbers $C > 0$ and $B$ such that the
+following holds for every multiplicative arithmetic function $f \colon \mathbb{N} \to \mathbb{C}$
+with $|f(n)| \le 1$ for all $n$, extended to the integers by $f(n) = 0$ for $n \le 0$, every real
+$X \ge 1$ and every real $H$ with $X^\theta \le H \le X^{1-\theta}$: if
+$$
+\int_X^{2X} \|f\|_{u^{k+1}[x, x+H]} \, dx \ge \eta X,
+$$
+then $M(f; C X^{k+1} / H^{k+1}, Q) \le B$.
 
-`∫ x ∈ [X, 2X], ‖f‖_{uᵏ⁺¹[x, x + H]}dx ≥ ηX`
-
-then
-
-`M(f;CXᵏ⁺¹/Hᵏ⁺¹,Q) ≤ B`.
 Source: K. Matomäki, M. Radziwiłł, T. Tao, J. Teräväinen, and T. Ziegler, `Higher uniformity of bounded multiplicative functions in short intervals on average`, Annals of Math, 197 (2) 2023. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2023-197-2-BoundedMultiplicativeFunctions.lean Via leanprover/lean-eval@38361be, problem `annals_bounded_multiplicative_functions`.
 -/
 public theorem_wanted theorem_1_3 (k : ℕ) (θ : ℝ) (hθ₀ : 0 < θ) (hθ₁ : θ < 1 / 2) (η : ℝ) (hη : η > 0) :
@@ -122,14 +139,20 @@ public theorem_wanted theorem_1_3 (k : ℕ) (θ : ℝ) (hθ₀ : 0 < θ) (hθ₁
             M f (C * X ^ (k + 1) / H ^ (k + 1)) Q ≤ B
 
 /--
-Statement of Corollary 1.1 (Liouville does not correlate with polynomial phases on
-short intervals on average):
+**Liouville's function does not correlate with polynomial phases on short intervals on average.**
+Let $\lambda$ be the Liouville function, extended to the integers by $\lambda(n) = 0$ for
+$n \le 0$, let $k$ be a natural number and let $\theta$ be a real number with $0 < \theta < 1$.
+For real $x$ and $H > 0$ write
+$$
+\|\lambda\|_{u^{k+1}[x, x+H]} = \sup_{\deg P \le k} \frac{1}{H}
+\Bigl| \sum_{\lceil x \rceil \le n \le \lfloor x + H \rfloor} \lambda(n) e^{-2\pi i P(n)} \Bigr|,
+$$
+the supremum taken over real polynomials $P$ of degree at most $k$. Then
+$$
+\int_X^{2X} \|\lambda\|_{u^{k+1}[x, x + X^\theta]} \, dx = o(X)
+$$
+as the real number $X$ tends to infinity.
 
-Let `λ` denote the liouville function. Fix `k : ℕ` and `θ : ℝ` such that `0 < θ < 1`. Then
-
-`∫ x ∈ [X, 2X], ‖λ‖_{uᵏ⁺¹[x, x + Xᶿ]}dx = o(X)`
-
-as `X → ∞`.
 Source: K. Matomäki, M. Radziwiłł, T. Tao, J. Teräväinen, and T. Ziegler, `Higher uniformity of bounded multiplicative functions in short intervals on average`, Annals of Math, 197 (2) 2023. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2023-197-2-BoundedMultiplicativeFunctions.lean Via leanprover/lean-eval@38361be, problem `annals_bounded_multiplicative_functions`.
 -/
 public theorem_wanted corollary_1_1 (k : ℕ) (θ : ℝ) (hθ₀ : 0 < θ) (hθ₁ : θ < 1) :

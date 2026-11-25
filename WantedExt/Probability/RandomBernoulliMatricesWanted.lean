@@ -56,25 +56,31 @@ open Matrix MeasureTheory ProbabilityTheory Measure Filter unitInterval
 
 open scoped ENNReal
 
-/-- We define the smallest singular value `σ_min` of a `n × m` matrix `M` by the formula
-
-`σ_min(M) := inf_{‖x‖₂ = 1} ‖M x‖₂`. -/
+/-- **Smallest singular value of a matrix.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, and
+let $M$ be a matrix over $\mathbb{K}$ whose rows and columns are indexed by finite sets $n$ and $m$.
+Its smallest singular value is the real number
+$\sigma_{\min}(M) = \inf_{x \in \mathbb{K}^m,\ \lVert x \rVert_2 = 1} \lVert Mx \rVert_2$, where
+$\lVert \cdot \rVert_2$ is the Euclidean norm. When $m$ is empty there are no unit vectors, and
+$\sigma_{\min}(M) = 0$. -/
 noncomputable def σ_min {𝕜 n m : Type*} [Fintype n] [Fintype m] [DecidableEq m]
     [RCLike 𝕜] (M : Matrix n m 𝕜) :=
   ⨅ x : {x : EuclideanSpace 𝕜 m // ‖x‖ = 1}, ‖M.toEuclideanLin x‖
 
-/-- We define the Rademacher measure as the probability measure on `ℝ`, which assigns
-`1/2` mass to `1` and `1/2` mass to `-1`. -/
+/-- **Rademacher measure on the real line.** The Rademacher measure is the probability measure on
+$\mathbb{R}$ that assigns mass $1/2$ to $1$ and mass $1/2$ to $-1$. -/
 noncomputable def rademacherMeasure : Measure ℝ :=
   bernoulliMeasure 1 (-1) ⟨1 / 2, by norm_num⟩
 
 /--
-Statement of Theorem A:
+**Tikhomirov's Theorem A: smallest singular value of shifted Bernoulli matrices.** Let
+$0 < p \le 1/2$ and $\varepsilon > 0$, and write $\sigma_{\min}(A)$ for the smallest singular value
+of a real square matrix $A$. There exist a natural number $N > 0$ and a real number $C > 0$ such
+that for every $n \ge N$ the following holds. Let $B$ be a random $n \times n$ real matrix on a
+probability space $(\Omega, P)$ whose $n^2$ entries are mutually independent and each equal to $1$
+with probability $p$ and to $0$ with probability $1 - p$, and let $J$ be the $n \times n$ matrix
+all of whose entries are $1$. Then for every $s \in [-1, 0]$ and every real $t > 0$,
+$$P\bigl(\sigma_{\min}(B + sJ) \le t / \sqrt{n}\bigr) \le (1 - p + \varepsilon)^n + C t.$$
 
-For every `p ∈ (0, 1/2]` and `ε > 0` there exists `N, C > 0` such that for any `n ≥ N` and any
-`n × n` random matrix `B` with mutually independent `Bernoulli(p)` entries,
-
-`P(σ_min (B + sIIᵀ) ≤ t/√n) ≤ (1 - p + ε)ⁿ + Ct` for all `s ∈ [-1,0]` and `t > 0`.
 Source: K. Tikhomirov, `Singularity of random Bernoulli matrices`, Annals of Math, 191 (2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-191-2-RandomBernoulliMatrices.lean Via leanprover/lean-eval@38361be, problem `annals_random_bernoulli_matrices`.
 -/
 public theorem_wanted theorem_A {p : I} {ε : ℝ} (hp₀ : 0 < p) (hp₁ : (p : ℝ) ≤ 1 / 2) (hε : 0 < ε) :
@@ -86,12 +92,12 @@ public theorem_wanted theorem_A {p : I} {ε : ℝ} (hp₀ : 0 < p) (hp₁ : (p :
           P.real {ω : Ω | σ_min (B ω + of (fun _ _ ↦ s)) ≤ t / √n} ≤ (1 - p + ε) ^ n + C * t
 
 /--
-This (unnamed) corollary appears directly below Theorem A in the paper:
+**Singularity probability of Bernoulli matrices.** Let $0 < p \le 1/2$. For each $n$, let $B_n$ be
+a random $n \times n$ real matrix on a probability space $(\Omega_n, P_n)$ whose $n^2$ entries are
+mutually independent and each equal to $1$ with probability $p$ and to $0$ with probability $1 - p$.
+Then there is a function $o : \mathbb{N} \to \mathbb{R}$ with $o(n) \to 0$ as $n \to \infty$ such
+that $P_n(\det B_n = 0) = (1 - p + o(n))^n$ for every $n \ge 1$.
 
-For every `p ∈ (0, 1/2]` and any sequence `Bₙ` of `n × n` random matrices with mutually
-independent `Bernoulli(p)` entries we have that
-
-`P(Bₙ is singular) = (1 - p + oₙ(1))ⁿ`.
 Source: K. Tikhomirov, `Singularity of random Bernoulli matrices`, Annals of Math, 191 (2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-191-2-RandomBernoulliMatrices.lean Via leanprover/lean-eval@38361be, problem `annals_random_bernoulli_matrices`.
 -/
 public theorem_wanted corollary_1 {p : I} (hp₀ : 0 < p) (hp₁ : (p : ℝ) ≤ 1 / 2)
@@ -103,12 +109,12 @@ public theorem_wanted corollary_1 {p : I} (hp₀ : 0 < p) (hp₁ : (p : ℝ) ≤
       ∀ n > 0, (P n).real {ω | (B n ω).det = 0} = (1 - p + o n) ^ n
 
 /--
-This is the result stated in the paper's abstract:
+**Singularity probability of Rademacher matrices.** For each $n$, let $M_n$ be a random
+$n \times n$ real matrix on a probability space $(\Omega_n, P_n)$ whose $n^2$ entries are mutually
+independent and each have the Rademacher law, with mass $1/2$ at each of $1$ and $-1$. Then there
+is a function $o : \mathbb{N} \to \mathbb{R}$ with $o(n) \to 0$ as $n \to \infty$ such that
+$P_n(\det M_n = 0) = (1/2 + o(n))^n$ for every $n \ge 1$.
 
-For any sequence `Mₙ` of `n × n` random matrices with mutually independent `Rademacher` entries
-we have that
-
-`P(Mₙ is singular) = (1/2 + oₙ(1))ⁿ`.
 Source: K. Tikhomirov, `Singularity of random Bernoulli matrices`, Annals of Math, 191 (2) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-191-2-RandomBernoulliMatrices.lean Via leanprover/lean-eval@38361be, problem `annals_random_bernoulli_matrices`.
 -/
 public theorem_wanted corollary_2 {Ω : ℕ → Type*} (mΩ : ∀ n, MeasurableSpace (Ω n)) {P : (n : ℕ) → Measure (Ω n)}
