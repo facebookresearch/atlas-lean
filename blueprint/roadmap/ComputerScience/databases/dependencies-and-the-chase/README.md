@@ -4,3 +4,4 @@
 - [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Weakly acyclic dependencies have polynomially bounded chase](weakly-acyclic-dependencies-have-polynomially-bounded-chase.md)
+- [Finite and unrestricted implication of functional and inclusion dependencies](finite-and-unrestricted-implication-of-functional-and-inclusion.md)

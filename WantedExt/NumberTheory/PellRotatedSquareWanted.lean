@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PellInverseClosedForm
+public import MathlibExt.NumberTheory.PellShiftedIntercepts
 public import MathlibExt.NumberTheory.PellShiftedQuadrants
 
 /-!
@@ -113,20 +114,6 @@ public theorem_wanted pell_solutions_in_rotated_square_explicit {D : ℤ} {a : P
       Q = {p | ∃ n : ℕ, (n : ℤ) ≤ m ∧ ∃ i j : ℤ, (i = 1 ∨ i = -1) ∧ (j = 1 ∨ j = -1) ∧
         p = (i * (a ^ n).x, j * (a ^ n).y)} ∧
       (Q.ncard : ℤ) = 2 + 4 * m)
-
-/-- **Largest intercept norm of a shifted Pell curve.** Let $D > 0$, $a \ne 0$ and $b$ be
-integers. The intercepts of the shifted Pell curve $(x - a)^2 - D (y - b)^2 = 1$ with the axes
-are $(a \pm \sqrt{1 + D b^2}, 0)$ and $(0, b \pm \sqrt{(a^2 - 1) / D})$, with $L^1$ norms
-$|a \pm \sqrt{1 + D b^2}|$ and $|b \pm \sqrt{(a^2 - 1) / D}|$. The largest of these four norms
-is $|a| + \sqrt{1 + D b^2}$.
-
-Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
-Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 3.2
-(`integers-2025-A112-prop-3-2`). -/
-public theorem_wanted pell_shifted_intercepts_max {D a : ℤ} (hD : 0 < D) (ha : a ≠ 0) (b : ℤ) :
-    |(a : ℝ)| + Real.sqrt (1 + D * b ^ 2) =
-      max (max |a + Real.sqrt (1 + D * b ^ 2)| |a - Real.sqrt (1 + D * b ^ 2)|)
-        (max |b + Real.sqrt ((a ^ 2 - 1) / D)| |b - Real.sqrt ((a ^ 2 - 1) / D)|)
 
 /-- **The shifted Pell norm function at zero is at most the bound.** Let $D$, $\alpha$, $\beta$,
 $a$ and $b$ be integers and let $i, j \in \{1, -1\}$. Put $\varepsilon = \alpha + \beta \sqrt{D}$

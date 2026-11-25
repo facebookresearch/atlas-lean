@@ -18,6 +18,7 @@ public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNu
 public import MathlibExt.Combinatorics.Enumerative.PolynomiallyWeightedFibonacciSums
 public import MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums
 public import MathlibExt.Combinatorics.Enumerative.RisingFactorialAntiderivatives
+public import MathlibExt.Combinatorics.Enumerative.ScherkRisingFactorials
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
 
@@ -44,30 +45,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Scherk's identity with $s$-rising factorials.** Let $s$ be a real number and let $S(n, k)$
-be the generalized Stirling numbers of Hsu and Shiue with parameters $(-s, 1, 0)$: a real array
-with $S(0, 0) = 1$, $S(n, 0) = 0$ for $n \ge 1$, $S(n, k) = 0$ for $n < k$, and
-$S(n+1, k+1) = S(n, k) + (k + 1 + ns) \, S(n, k+1)$ for all $n, k \ge 0$. Let $N$ and $r$ be
-natural numbers, let $a_0, \dots, a_N$ be real numbers, and let $f(y) = \sum_{k=0}^{N} a_k y^k$,
-with $i$-th derivative $f^{(i)}$. Then for every real number $x > 0$,
-$$\sum_{k=0}^{N} k (k + s) \cdots (k + (r-1)s) \, a_k x^{k + rs} =
-\sum_{i=0}^{r} S(r, i) \, x^{rs + i} f^{(i)}(x),$$
-where the product $k (k + s) \cdots (k + (r-1)s)$ has the $r$ factors $k + js$, $0 \le j < r$,
-and is $1$ when $r = 0$.
-
-The powers of $x$ have real exponents, which is why $x > 0$ is assumed.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.1, equation (2.2). -/
-public theorem_wanted sum_risingStep_mul_coeff_eq_sum_hsuShiue_derivative (s : ℝ)
-    (S : ℕ → ℕ → ℝ) (hS : IsHsuShiueFamily S (-s) 1 0) (a : ℕ → ℝ) (N r : ℕ) (x : ℝ)
-    (hx : 0 < x) :
-    ∑ k ∈ Finset.range (N + 1),
-        (∏ j ∈ Finset.range r, ((k : ℝ) + j * s)) * a k * x ^ ((k : ℝ) + r * s) =
-      ∑ i ∈ Finset.range (r + 1), S r i * x ^ ((r : ℝ) * s + i) *
-        (derivative^[i] (∑ k ∈ Finset.range (N + 1), C (a k) * X ^ k)).eval x
 
 /-- **Stirling numbers of the second kind with three blocks.** For every integer $r \ge 1$, the
 Stirling number of the second kind $S(r, 3)$ satisfies
