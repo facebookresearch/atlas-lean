@@ -7,11 +7,15 @@ $j(\tau)$. Then
 
 $$[\mathbb{Q}(j(\tau)) : \mathbb{Q}] = h(\Delta),$$
 
-the class number of the imaginary quadratic order of discriminant $\Delta$. In particular $j(\tau)$
-is algebraic.
+the class number of discriminant $\Delta$. In particular $j(\tau)$ is algebraic.
 
 Since $\tau$ is not real, the equation is genuinely quadratic, $\Delta < 0$ and
-$\Delta \equiv 0, 1 \pmod 4$.
+$\Delta \equiv 0, 1 \pmod 4$. Fowler defines $h(\Delta)$ as the class number of the imaginary
+quadratic order of discriminant $\Delta$. It is stated here as `MetaMathlibExt.gaussClassNumber`,
+the number of reduced primitive positive definite binary quadratic forms of discriminant
+$\Delta$: every class of primitive positive definite forms contains exactly one reduced form, and
+these form classes correspond to the proper ideal classes of the order of discriminant $\Delta$
+(D. A. Cox, *Primes of the Form $x^2 + ny^2$*, Wiley, §§2 and 7).
 
 ## Sources
 
