@@ -40,12 +40,15 @@ def inventory() -> list[dict]:
             path = page.relative_to(sync.wiki.ROOT).as_posix()
             if path in items:
                 raise ValueError(f"more than one marked annotation for {path}")
+            article_id = row.get("id")
+            if not isinstance(article_id, str) or not sync.ARTICLE_ID.fullmatch(article_id):
+                raise ValueError(f"{path}: expected an article ID of the form af_ followed by 24 lowercase hex digits")
             pending = own.get("pending", [])
             if not isinstance(pending, list):
                 raise ValueError(f"{path}: pending prerequisites must be a list")
             items[path] = {
                 "path": path,
-                "article_id": effective.get("id"),
+                "article_id": article_id,
                 "kind": "review-pending-prerequisites" if pending else "expand",
                 "pending": pending,
             }

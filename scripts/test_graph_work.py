@@ -53,6 +53,15 @@ class GraphWorkTests(unittest.TestCase):
         self.save(self.row("complete.md", flag=False))
         self.assertEqual(graph_work.inventory(), [])
 
+    def test_missing_or_malformed_article_id_fails_with_the_path(self):
+        for id_fields in ({}, {"id": None}, {"id": 123}, {"id": "af_short"}, {"id": "af_" + "A" * 24}):
+            with self.subTest(id_fields=id_fields):
+                row = self.row("topic.md")
+                row.pop("id")
+                self.save({**row, **id_fields})
+                with self.assertRaisesRegex(ValueError, r"blueprint/roadmap/topic\.md: expected an article ID"):
+                    graph_work.inventory()
+
     def test_missing_marked_page_fails(self):
         self.save(self.row("gone.md"))
         (self.roadmap / "gone.md").unlink()
