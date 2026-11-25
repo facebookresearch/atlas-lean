@@ -56,81 +56,6 @@ infinite places it fixes, and the trace of the projector `Stickelberger.omegaIde
 
 set_option autoImplicit false
 
-namespace Stickelberger
-open Stickelberger
-
-open Finset
-
-variable {p : ℕ} [Fact p.Prime]
-variable {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
-variable (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M)
-
-private noncomputable def omegaIdemp (i : ℕ) : Module.End (ZMod p) M :=
-  (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ • ∑ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d
-
-private lemma omegaIdemp_apply (i : ℕ) (a : M) :
-    omegaIdemp ρ i a =
-      (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ •
-        ∑ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d a := by
-  simp only [omegaIdemp, LinearMap.smul_apply, LinearMap.coe_sum, Finset.sum_apply]
-
-private lemma natCast_natCard_units_zmod : ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) = -1 := by
-  have hp := (Fact.out : p.Prime)
-  rw [Nat.card_eq_fintype_card, ZMod.card_units_eq_totient, Nat.totient_prime hp,
-    Nat.cast_sub hp.one_le, Nat.cast_one, CharP.cast_eq_zero (ZMod p) p, zero_sub]
-
-private lemma isUnit_natCard_units_zmod : IsUnit ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) := by
-  rw [natCast_natCard_units_zmod]; exact (IsUnit.neg_iff 1).mpr isUnit_one
-
-private theorem omegaIdemp_of_isOmegaEigenvector {i : ℕ} {a : M}
-    (ha : IsOmegaEigenvector ρ i a) : omegaIdemp ρ i a = a := by
-  rw [omegaIdemp_apply]
-  have hρ : ∀ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d a = a := by
-    intro d
-    rw [ha d, smul_smul, inv_mul_cancel₀ (pow_ne_zero i (Units.ne_zero d)), one_smul]
-  simp only [hρ, sum_const, card_univ, ← Nat.card_eq_fintype_card,
-    ← Nat.cast_smul_eq_nsmul (ZMod p), smul_smul]
-  rw [isUnit_natCard_units_zmod.inv_mul_cancel, one_smul]
-
-private theorem isOmegaEigenvector_omegaIdemp (i : ℕ) (a : M) :
-    IsOmegaEigenvector ρ i (omegaIdemp ρ i a) := by
-  intro d'
-  simp only [omegaIdemp_apply]
-  rw [map_smul, smul_comm]
-  congr 1
-  rw [map_sum, smul_sum]
-  refine Fintype.sum_bijective (d' * ·) (Group.mulLeft_bijective d') _ _ fun d => ?_
-  simp only [map_mul, mul_apply_eq_comp, map_smul, smul_smul]
-  congr 1
-  push_cast
-  rw [mul_pow, mul_inv, ← mul_assoc,
-    mul_inv_cancel₀ (pow_ne_zero i (Units.ne_zero d')), one_mul]
-
-private theorem omegaIdemp_omegaIdemp (i : ℕ) (a : M) :
-    omegaIdemp ρ i (omegaIdemp ρ i a) = omegaIdemp ρ i a :=
-  omegaIdemp_of_isOmegaEigenvector ρ (isOmegaEigenvector_omegaIdemp ρ i a)
-
-private theorem comp_omegaIdemp_of_equivariant {i : ℕ} {N : Type*} [AddCommGroup N]
-    [Module (ZMod p) N] (f : M →ₗ[ZMod p] N)
-    (hf : ∀ d : (ZMod p)ˣ, ∀ x, f (ρ d x) = ((d : ZMod p) ^ i) • f x)
-    (a : M) : f (omegaIdemp ρ i a) = f a := by
-  rw [omegaIdemp_apply, map_smul, map_sum]
-  have : ∀ d : (ZMod p)ˣ, f ((((d : ZMod p) ^ i)⁻¹) • ρ d a) = f a := by
-    intro d
-    rw [map_smul, hf d a, smul_smul,
-      inv_mul_cancel₀ (pow_ne_zero i (Units.ne_zero d)), one_smul]
-  simp only [this, sum_const, card_univ, ← Nat.card_eq_fintype_card,
-    ← Nat.cast_smul_eq_nsmul (ZMod p), smul_smul]
-  rw [isUnit_natCard_units_zmod.inv_mul_cancel, one_smul]
-
-private theorem omegaIdemp_ne_zero_of_equivariant {i : ℕ} {N : Type*} [AddCommGroup N]
-    [Module (ZMod p) N] (f : M →ₗ[ZMod p] N)
-    (hf : ∀ d : (ZMod p)ˣ, ∀ x, f (ρ d x) = ((d : ZMod p) ^ i) • f x)
-    {a : M} (hfa : f a ≠ 0) : omegaIdemp ρ i a ≠ 0 :=
-  fun h0 => hfa (by rw [← comp_omegaIdemp_of_equivariant ρ f hf a, h0, map_zero])
-
-end Stickelberger
-
 section Aux2Dirwit
 open NumberField IsCyclotomicExtension Stickelberger
 
@@ -932,9 +857,9 @@ open NumberField Stickelberger Finset
 
 variable (p : ℕ) [hp : Fact p.Prime]
 
-private lemma omegaIdempotent_eq {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
-    (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M) (i : ℕ) :
-    omegaIdempotent p ρ i = omegaIdemp ρ i := rfl
+private lemma natCast_natCard_units_zmod : ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) = -1 := by
+  rw [Nat.card_eq_fintype_card, ZMod.card_units_eq_totient, Nat.totient_prime hp.out,
+    Nat.cast_sub hp.out.one_le, Nat.cast_one, CharP.cast_eq_zero (ZMod p) p, zero_sub]
 
 private lemma sum_units_pow_eq_zero (i : ℕ) (hi : ¬ (p - 1) ∣ i) :
     ∑ d : (ZMod p)ˣ, (d : ZMod p) ^ i = 0 := by
@@ -991,21 +916,20 @@ private lemma trace_omegaIdempotent_two (hp5 : 5 ≤ p) :
   simp only [omegaIdempotent, map_smul, map_sum, Aux1Herbrand.trace_unitsGalAction' p hp5,
       smul_eq_mul,
     mul_add, Finset.sum_add_distrib, sum_inv_sq_mul_sub_one p hp5,
-    sum_inv_sq_mul_indicator p hp5, zero_add, hm, natCast_natCard_units_zmod]
+    sum_inv_sq_mul_indicator p hp5, zero_add, hm, natCast_natCard_units_zmod p]
   rw [inv_neg, inv_one]; ring
 
 private lemma range_omegaIdempotent_two :
     LinearMap.range (omegaIdempotent p (unitsGalAction p) 2) = unitsOmegaEigenspace p 2 := by
   apply le_antisymm
   · rintro _ ⟨x, rfl⟩
-    exact isOmegaEigenvector_omegaIdemp (unitsGalAction p) 2 x
+    exact isOmegaEigenvector_omegaIdempotent p (unitsGalAction p) 2 x
   · intro x hx
-    exact ⟨x, omegaIdemp_of_isOmegaEigenvector (unitsGalAction p) hx⟩
+    exact ⟨x, omegaIdempotent_apply_of_isOmegaEigenvector p (unitsGalAction p) hx⟩
 
 private lemma isIdempotentElem_omegaIdempotent_two :
     IsIdempotentElem (omegaIdempotent p (unitsGalAction p) 2) := by
-  refine LinearMap.ext fun x => ?_
-  exact omegaIdemp_omegaIdemp (unitsGalAction p) 2 x
+  exact omegaIdempotent_comp_self p (unitsGalAction p) 2
 
 private theorem finrank_unitsOmegaEigenspace_two' (hp5 : 5 ≤ p) :
     Module.finrank (ZMod p) (unitsOmegaEigenspace p 2) = 1 := by

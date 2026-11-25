@@ -816,25 +816,6 @@ namespace ThaineReduce
 
 variable (p : ℕ) [hp : Fact p.Prime]
 
-private theorem isOmegaEigenvector_omegaIdempotent {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
-    (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M) (i : ℕ) (a : M) :
-    IsOmegaEigenvector ρ i (omegaIdempotent p ρ i a) := by
-  intro d
-  have hreindex : ∑ d' : (ZMod p)ˣ, (((d' : ZMod p) ^ i)⁻¹) • ρ (d * d') a
-      = ∑ e : (ZMod p)ˣ, (((d : ZMod p) ^ i) * (((e : ZMod p)) ^ i)⁻¹) • ρ e a := by
-    refine Fintype.sum_equiv (Equiv.mulLeft d) _ _ (fun d' => ?_)
-    simp only [Equiv.coe_mulLeft]
-    congr 1
-    rw [Units.val_mul, mul_pow, mul_inv, ← mul_assoc,
-      mul_inv_cancel₀ (pow_ne_zero _ (Units.ne_zero d)), one_mul]
-  simp only [omegaIdempotent, LinearMap.smul_apply, LinearMap.coe_sum, Finset.sum_apply,
-    map_smul, map_sum]
-  simp_rw [← mul_apply_eq_comp, ← map_mul]
-  rw [hreindex, smul_comm ((d : ZMod p) ^ i)]
-  congr 1
-  rw [Finset.smul_sum]
-  simp_rw [smul_smul]
-
 private lemma p_nsmul_eq_zero {M : Type*} [AddCommGroup M] [Module (ZMod p) M] (x : M) :
     p • x = 0 := by
   rw [← Nat.cast_smul_eq_nsmul (ZMod p), ZMod.natCast_self, zero_smul]
@@ -914,7 +895,7 @@ private theorem reduceK (hDIM : Module.finrank (ZMod p) (unitsOmegaEigenspace p 
   have hxmem : x ∈ unitsOmegaEigenspace p 2 :=
     proj_map_mem_unitsOmegaEigenspace p Kplus Δact hΔact δ hδeig
   have hymem : y ∈ unitsOmegaEigenspace p 2 :=
-    isOmegaEigenvector_omegaIdempotent p (unitsGalAction p) 2 _
+    Stickelberger.isOmegaEigenvector_omegaIdempotent p (unitsGalAction p) 2 _
   have hy0 : (⟨y, hymem⟩ : unitsOmegaEigenspace p 2) ≠ 0 := fun h =>
     hB2 (congrArg Subtype.val h)
   obtain ⟨mz, hmz⟩ := (finrank_eq_one_iff_of_ne_zero' _ hy0).mp hDIM ⟨x, hxmem⟩

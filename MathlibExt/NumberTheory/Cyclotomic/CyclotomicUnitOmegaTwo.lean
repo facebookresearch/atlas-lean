@@ -343,80 +343,41 @@ private lemma four_inv_ne_zero (hp5 : 5 ≤ p) : (4 : ZMod p)⁻¹ ≠ 0 := by
 
 end Aux1B2
 
-namespace Stickelberger
-open Stickelberger
-
-open Finset
+namespace Aux2Glue
 
 variable {p : ℕ} [Fact p.Prime]
 variable {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
 variable (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M)
 
-private noncomputable def omegaIdemp (i : ℕ) : Module.End (ZMod p) M :=
-  (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ • ∑ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d
-
-private lemma omegaIdemp_apply (i : ℕ) (a : M) :
-    omegaIdemp ρ i a =
-      (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ •
-        ∑ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d a := by
-  simp only [omegaIdemp, LinearMap.smul_apply, LinearMap.coe_sum, Finset.sum_apply]
-
-private lemma natCast_natCard_units_zmod : ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) = -1 := by
+private lemma isUnit_natCast_card_units_zmod :
+    IsUnit ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) := by
   have hp := (Fact.out : p.Prime)
   rw [Nat.card_eq_fintype_card, ZMod.card_units_eq_totient, Nat.totient_prime hp,
     Nat.cast_sub hp.one_le, Nat.cast_one, CharP.cast_eq_zero (ZMod p) p, zero_sub]
+  exact (IsUnit.neg_iff 1).mpr isUnit_one
 
-private lemma isUnit_natCard_units_zmod : IsUnit ((Nat.card (ZMod p)ˣ : ℕ) : ZMod p) := by
-  rw [natCast_natCard_units_zmod]; exact (IsUnit.neg_iff 1).mpr isUnit_one
-
-private theorem omegaIdemp_of_isOmegaEigenvector {i : ℕ} {a : M}
-    (ha : IsOmegaEigenvector ρ i a) : omegaIdemp ρ i a = a := by
-  rw [omegaIdemp_apply]
-  have hρ : ∀ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d a = a := by
-    intro d
-    rw [ha d, smul_smul, inv_mul_cancel₀ (pow_ne_zero i (Units.ne_zero d)), one_smul]
-  simp only [hρ, sum_const, card_univ, ← Nat.card_eq_fintype_card,
-    ← Nat.cast_smul_eq_nsmul (ZMod p), smul_smul]
-  rw [isUnit_natCard_units_zmod.inv_mul_cancel, one_smul]
-
-private theorem isOmegaEigenvector_omegaIdemp (i : ℕ) (a : M) :
-    IsOmegaEigenvector ρ i (omegaIdemp ρ i a) := by
-  intro d'
-  simp only [omegaIdemp_apply]
-  rw [map_smul, smul_comm]
-  congr 1
-  rw [map_sum, smul_sum]
-  refine Fintype.sum_bijective (d' * ·) (Group.mulLeft_bijective d') _ _ fun d => ?_
-  simp only [map_mul, mul_apply_eq_comp, map_smul, smul_smul]
-  congr 1
-  push_cast
-  rw [mul_pow, mul_inv, ← mul_assoc,
-    mul_inv_cancel₀ (pow_ne_zero i (Units.ne_zero d')), one_mul]
-
-private theorem omegaIdemp_omegaIdemp (i : ℕ) (a : M) :
-    omegaIdemp ρ i (omegaIdemp ρ i a) = omegaIdemp ρ i a :=
-  omegaIdemp_of_isOmegaEigenvector ρ (isOmegaEigenvector_omegaIdemp ρ i a)
-
-private theorem comp_omegaIdemp_of_equivariant {i : ℕ} {N : Type*} [AddCommGroup N]
+/-- A linear map that scales the action of `d` by `d ^ i` is unchanged by the projector
+`Stickelberger.omegaIdempotent`. -/
+private theorem comp_omegaIdempotent_of_equivariant {i : ℕ} {N : Type*} [AddCommGroup N]
     [Module (ZMod p) N] (f : M →ₗ[ZMod p] N)
     (hf : ∀ d : (ZMod p)ˣ, ∀ x, f (ρ d x) = ((d : ZMod p) ^ i) • f x)
-    (a : M) : f (omegaIdemp ρ i a) = f a := by
-  rw [omegaIdemp_apply, map_smul, map_sum]
+    (a : M) : f (Stickelberger.omegaIdempotent p ρ i a) = f a := by
+  rw [Stickelberger.omegaIdempotent_apply, map_smul, map_sum]
   have : ∀ d : (ZMod p)ˣ, f ((((d : ZMod p) ^ i)⁻¹) • ρ d a) = f a := by
     intro d
     rw [map_smul, hf d a, smul_smul,
       inv_mul_cancel₀ (pow_ne_zero i (Units.ne_zero d)), one_smul]
-  simp only [this, sum_const, card_univ, ← Nat.card_eq_fintype_card,
+  simp only [this, Finset.sum_const, Finset.card_univ, ← Nat.card_eq_fintype_card,
     ← Nat.cast_smul_eq_nsmul (ZMod p), smul_smul]
-  rw [isUnit_natCard_units_zmod.inv_mul_cancel, one_smul]
+  rw [isUnit_natCast_card_units_zmod.inv_mul_cancel, one_smul]
 
-private theorem omegaIdemp_ne_zero_of_equivariant {i : ℕ} {N : Type*} [AddCommGroup N]
+private theorem omegaIdempotent_ne_zero_of_equivariant {i : ℕ} {N : Type*} [AddCommGroup N]
     [Module (ZMod p) N] (f : M →ₗ[ZMod p] N)
     (hf : ∀ d : (ZMod p)ˣ, ∀ x, f (ρ d x) = ((d : ZMod p) ^ i) • f x)
-    {a : M} (hfa : f a ≠ 0) : omegaIdemp ρ i a ≠ 0 :=
-  fun h0 => hfa (by rw [← comp_omegaIdemp_of_equivariant ρ f hf a, h0, map_zero])
+    {a : M} (hfa : f a ≠ 0) : Stickelberger.omegaIdempotent p ρ i a ≠ 0 :=
+  fun h0 => hfa (by rw [← comp_omegaIdempotent_of_equivariant ρ f hf a, h0, map_zero])
 
-end Stickelberger
+end Aux2Glue
 
 open NumberField IsCyclotomicExtension Stickelberger
 
@@ -510,10 +471,6 @@ private theorem funcF_equivariant (d : (ZMod p)ˣ)
 
 end Functional
 
-private lemma omegaIdempotent_eq {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
-    (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M) (i : ℕ) :
-    Stickelberger.omegaIdempotent p ρ i = Stickelberger.omegaIdemp ρ i := rfl
-
 end Aux2Glue
 
 namespace Stickelberger
@@ -521,16 +478,16 @@ namespace Stickelberger
 variable (p : ℕ) [Fact p.Prime]
 
 open Aux2Glue in
-/-- For a prime `p ≥ 5`, the `ω²`-component of the class of the cyclotomic unit `1 + ζ` in
-the units of `𝓞 (ℚ(ζ_p))` modulo `p`-th powers is nonzero. -/
+/-- For a prime `p ≥ 5` and a primitive `p`-th root of unity `ζ` in `𝓞 (ℚ(ζ_p))`, the
+`ω²`-component of the class of the cyclotomic unit `c₂` represented by `1 + ζ` in the units of
+`𝓞 (ℚ(ζ_p))` modulo `p`-th powers is nonzero. -/
 public theorem omegaIdempotent_two_cycloUnitTwo_ne_zero (hp5 : 5 ≤ p)
     (ζ : 𝓞 (CyclotomicField p ℚ)) (hζ : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p)
     (c₂ : (𝓞 (CyclotomicField p ℚ))ˣ) (hc : (c₂ : 𝓞 (CyclotomicField p ℚ)) = 1 + ζ) :
     omegaIdempotent p (unitsGalAction p) 2
         (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p
           (Additive.ofMul c₂)) ≠ 0 := by
-  rw [omegaIdempotent_eq]
-  refine Stickelberger.omegaIdemp_ne_zero_of_equivariant (unitsGalAction p)
+  refine Aux2Glue.omegaIdempotent_ne_zero_of_equivariant (unitsGalAction p)
     (funcF p hp5 hζ) (funcF_equivariant p hp5 hζ) ?_
   rw [funcF_proj p hp5 hζ c₂,
     Aux1B2.Ψ_one_add_zeta p hζ hp5 c₂ (by rw [hc]; congr 1)]
