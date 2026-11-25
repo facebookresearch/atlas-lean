@@ -15,3 +15,5 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Markov processes from transition semigroups](markov-processes-from-transition-semigroups/README.md)
 - [Mixing times of Markov chains](mixing-times-of-markov-chains/README.md)
 - [Convergence theorem for finite Markov chains](convergence-theorem-for-finite-markov-chains/README.md)
+
+- [Birth–death balance weights](birth-death-processes/README.md)
