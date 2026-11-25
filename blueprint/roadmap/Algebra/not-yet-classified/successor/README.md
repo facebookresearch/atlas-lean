@@ -1,0 +1,15 @@
+# Successor
+
+- [Successor Functor](successor-functor.md)
+- [Successor Diagram Functor](successor-diagram-functor.md)
+- [Successor Index Nat Trans](successor-index-nat-trans.md)
+- [Successor Transition Nat Trans](successor-transition-nat-trans.md)
+- [Successor Transition Nat Trans app app](successor-transition-nat-trans-app-app.md)
+- [Successor Functor final](successor-functor-final.md)
+- [Successor Cocone](successor-cocone.md)
+- [Successor Cocone Is Colimit](successor-cocone-is-colimit.md)
+- [Successor Comparison Iso](successor-comparison-iso.md)
+- [Successor Comparison Iso hom ι](successor-comparison-iso-hom.md)
+- [Successor Transition colimit comp hom](successor-transition-colimit-comp-hom.md)
+- [Successor Transition colimit eq inv](successor-transition-colimit-eq-inv.md)
+- [Successor Transition colimit is Iso](successor-transition-colimit-is-iso.md)

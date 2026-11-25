@@ -38,7 +38,7 @@ free groups holds (Magnus).
 
 /-- The free soluble group `F_r / F_r^{(l)}` of rank `r` and derived length at most `l`. -/
 abbrev FreeSolubleGroup (r l : ℕ) : Type :=
-  FreeGroup (Fin r) ⧸ derivedSeries (FreeGroup (Fin r)) l
+  FreeGroup (Fin r) ⧸ Subgroup.derivedSeries (FreeGroup (Fin r)) l
 
 /-- Kourovka 1.89 (A. L. Shmel'kin): in every free soluble group, two elements `a` and `b` with the
 same normal closure satisfy `b ^ (± 1) = x⁻¹ a x` for some `x`. -/

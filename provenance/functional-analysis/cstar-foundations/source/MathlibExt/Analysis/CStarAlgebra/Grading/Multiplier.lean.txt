@@ -1,0 +1,168 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading
+public import MathlibExt.Analysis.CStarAlgebra.Multiplier.Outer
+import Mathlib.Tactic.FinCases
+
+/-!
+# Computed multiplier and corona gradings
+
+The degree-one automorphisms are the actual transports along the coefficient
+grading. The finite discrete grading is constructed by ofInvolution.
+No general norm-continuous action on all multipliers is inferred from a
+point-norm continuous action of an arbitrary topological group.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+noncomputable section
+
+open scoped CStarAlgebra MultiplierAlgebra
+
+namespace CStarGrading
+
+universe uB
+variable {B : Type uB} [NonUnitalCStarAlgebra B]
+attribute [local instance] outerMultiplierCStarAlgebra
+
+private theorem grading_degree_cases (n : ZMod 2) : n = 0 ∨ n = 1 := by
+  fin_cases n
+  · exact Or.inl rfl
+  · exact Or.inr rfl
+
+private theorem grading_generator_trans (γ : CStarGrading B) :
+    γ.generatorAut.trans γ.generatorAut = StarAlgEquiv.refl ℂ B := by
+  ext b
+  exact γ.generator_apply_generator b
+
+/-- The actual transported multiplier automorphism is involutive. -/
+private theorem multiplier_generator_involutive (γ : CStarGrading B) :
+    Function.Involutive (DoubleCentralizer.congr γ.generatorAut) := by
+  intro T
+  have h := DoubleCentralizer.congr_trans γ.generatorAut γ.generatorAut
+  rw [grading_generator_trans, DoubleCentralizer.congr_refl] at h
+  exact (congrArg (fun e => e T) h).symm
+
+/-- The induced grading on the actual multiplier C-star algebra. -/
+@[no_expose] def multiplier (γ : CStarGrading B) : CStarGrading 𝓜(ℂ, B) :=
+  ofInvolution (DoubleCentralizer.congr γ.generatorAut)
+    (multiplier_generator_involutive γ)
+
+@[simp]
+theorem multiplier_generatorAut (γ : CStarGrading B) :
+    (multiplier γ).generatorAut = DoubleCentralizer.congr γ.generatorAut := by
+  rw [multiplier]
+  exact ofInvolution_generatorAut _ _
+
+/-- Every degree is the actual coefficient transport, including degree zero. -/
+theorem multiplier_aut_eq_congr (γ : CStarGrading B) (n : ZMod 2) :
+    PointNormCStarAddAction.aut (multiplier γ) n =
+      DoubleCentralizer.congr (PointNormCStarAddAction.aut γ n) := by
+  apply StarAlgEquiv.ext
+  intro T
+  rcases grading_degree_cases n with h0 | h1
+  · subst n
+    have hzero : PointNormCStarAddAction.aut γ 0 = StarAlgEquiv.refl ℂ B := by
+      ext b
+      exact PointNormCStarAddAction.apply_zero γ b
+    rw [hzero, DoubleCentralizer.congr_refl]
+    exact PointNormCStarAddAction.apply_zero (multiplier γ) T
+  · subst n
+    change (multiplier γ).generatorAut T = DoubleCentralizer.congr γ.generatorAut T
+    rw [multiplier_generatorAut]
+
+@[simp]
+theorem multiplier_coeHom (γ : CStarGrading B) (n : ZMod 2) (b : B) :
+    PointNormCStarAddAction.aut (multiplier γ) n
+        (DoubleCentralizer.coeHom (𝕜 := ℂ) b) =
+      DoubleCentralizer.coeHom (𝕜 := ℂ) (PointNormCStarAddAction.aut γ n b) := by
+  rw [multiplier_aut_eq_congr, DoubleCentralizer.congr_coeHom]
+
+@[simp]
+theorem multiplier_apply_fst (γ : CStarGrading B) (n : ZMod 2)
+    (T : 𝓜(ℂ, B)) (b : B) :
+    (PointNormCStarAddAction.aut (multiplier γ) n T).fst b =
+      PointNormCStarAddAction.aut γ n
+        (T.fst ((PointNormCStarAddAction.aut γ n).symm b)) := by
+  rw [multiplier_aut_eq_congr, DoubleCentralizer.congr_apply_fst]
+
+@[simp]
+theorem multiplier_apply_snd (γ : CStarGrading B) (n : ZMod 2)
+    (T : 𝓜(ℂ, B)) (b : B) :
+    (PointNormCStarAddAction.aut (multiplier γ) n T).snd b =
+      PointNormCStarAddAction.aut γ n
+        (T.snd ((PointNormCStarAddAction.aut γ n).symm b)) := by
+  rw [multiplier_aut_eq_congr, DoubleCentralizer.congr_apply_snd]
+
+/-- The grading transports are continuous for the actual strict topology. -/
+theorem multiplier_strictContinuous (γ : CStarGrading B) (n : ZMod 2) :
+    @Continuous 𝓜(ℂ, B) 𝓜(ℂ, B)
+      (DoubleCentralizer.strictTopology B) (DoubleCentralizer.strictTopology B)
+      (PointNormCStarAddAction.aut (multiplier γ) n) := by
+  rw [multiplier_aut_eq_congr]
+  exact DoubleCentralizer.strictContinuous_congr _
+
+private theorem outer_generator_involutive (γ : CStarGrading B) :
+    Function.Involutive (DoubleCentralizer.outerCongr γ.generatorAut) := by
+  intro q
+  have h := DoubleCentralizer.outerCongr_trans γ.generatorAut γ.generatorAut
+  rw [grading_generator_trans, DoubleCentralizer.outerCongr_refl] at h
+  exact (congrArg (fun e => e q) h).symm
+
+/-- The induced grading on the actual outer multiplier quotient. -/
+@[no_expose] def outerMultiplier (γ : CStarGrading B) : CStarGrading (OuterMultiplier B) :=
+  ofInvolution (DoubleCentralizer.outerCongr γ.generatorAut)
+    (outer_generator_involutive γ)
+
+@[simp]
+theorem outerMultiplier_generatorAut (γ : CStarGrading B) :
+    (outerMultiplier γ).generatorAut = DoubleCentralizer.outerCongr γ.generatorAut := by
+  rw [outerMultiplier]
+  exact ofInvolution_generatorAut _ _
+
+theorem outerMultiplier_aut_eq_outerCongr (γ : CStarGrading B) (n : ZMod 2) :
+    PointNormCStarAddAction.aut (outerMultiplier γ) n =
+      DoubleCentralizer.outerCongr (PointNormCStarAddAction.aut γ n) := by
+  apply StarAlgEquiv.ext
+  intro q
+  rcases grading_degree_cases n with h0 | h1
+  · subst n
+    have hzero : PointNormCStarAddAction.aut γ 0 = StarAlgEquiv.refl ℂ B := by
+      ext b
+      exact PointNormCStarAddAction.apply_zero γ b
+    rw [hzero, DoubleCentralizer.outerCongr_refl]
+    exact PointNormCStarAddAction.apply_zero (outerMultiplier γ) q
+  · subst n
+    change (outerMultiplier γ).generatorAut q =
+      DoubleCentralizer.outerCongr γ.generatorAut q
+    rw [outerMultiplier_generatorAut]
+
+/-- The actual multiplier quotient is equivariant for all grading degrees. -/
+@[simp]
+theorem outerMultiplier_outerQuotientMap (γ : CStarGrading B) (n : ZMod 2)
+    (T : 𝓜(ℂ, B)) :
+    PointNormCStarAddAction.aut (outerMultiplier γ) n (outerQuotientMap T) =
+      outerQuotientMap (PointNormCStarAddAction.aut (multiplier γ) n T) := by
+  rw [outerMultiplier_aut_eq_outerCongr, multiplier_aut_eq_congr]
+  exact DoubleCentralizer.outerCongr_outerQuotientMap _ T
+
+/-- The canonical quotient as an actual graded nonunital star homomorphism. -/
+def outerQuotientHom (γ : CStarGrading B) :
+    Hom (multiplier γ) (outerMultiplier γ) where
+  toNonUnitalStarAlgHom := (outerQuotientMap (A := B)).toNonUnitalStarAlgHom
+  equivariant' := by
+    intro n T
+    change outerQuotientMap (PointNormCStarAddAction.aut (multiplier γ) n.toAdd T) =
+      PointNormCStarAddAction.aut (outerMultiplier γ) n.toAdd (outerQuotientMap T)
+    exact (outerMultiplier_outerQuotientMap γ n.toAdd T).symm
+
+@[simp]
+theorem outerQuotientHom_apply (γ : CStarGrading B) (T : 𝓜(ℂ, B)) :
+    outerQuotientHom γ T = outerQuotientMap T := rfl
+
+end CStarGrading

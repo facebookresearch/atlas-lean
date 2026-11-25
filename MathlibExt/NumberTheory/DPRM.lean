@@ -1529,7 +1529,7 @@ private theorem dp_bq_dioph {α : Type} (S : Set (Option (Option α) → ℕ))
     intro v
     simp only [hp]
     exact dp_bq_iff m p F G hF hG hpFG v
-  refine Dioph.ext ?_ (fun v => (hrw v).symm)
+  refine Dioph.ext (S := {v | _}) ?_ (fun v => (hrw v).symm)
   have hxW : Dioph.DiophFn
       (fun w : (Option α) ⊕ (Fin 3 ⊕ Fin m) → ℕ => w (Sum.inl none)) :=
     Dioph.proj_dioph _
@@ -1623,7 +1623,7 @@ private theorem dp_bq_dioph {α : Type} (S : Set (Option (Option α) → ℕ))
       (1 + w (Sum.inr (Sum.inl 1)) *
         (dpBQ_Q m F G (fun o => w (Sum.inl o)) (w (Sum.inr (Sum.inl 0))))!)
       ∣ ((w (Sum.inr (Sum.inr i))).descFactorial (w (Sum.inr (Sum.inl 0)) + 1))} := by
-    apply dp_dioph_fin_forall
+    apply dp_dioph_fin_forall (S := fun i => {w | _})
     intro i
     exact Dioph.dvd_dioph h1ct (Dioph.diophFn_comp dp_descFactorial_diophFn
       [fun w : (Option α) ⊕ (Fin 3 ⊕ Fin m) → ℕ => w (Sum.inr (Sum.inr i)),
@@ -2178,13 +2178,17 @@ This file proves the DPRM theorem.
 -/
 
 /--
-A set `S : Set ℕ` is recursively enumerable `REPred (fun n => n ∈ S)` iff it is Diophantine `Dioph
-{v : Unit → ℕ | v () ∈ S}`. Source: M. Davis, H. Putnam, J. Robinson, The decision problem for
+**Davis–Putnam–Robinson–Matiyasevich theorem.** A set $S$ of natural numbers is recursively
+enumerable if and only if it is Diophantine, that is, there is a polynomial $p$ with integer
+coefficients such that $n \in S$ exactly when $p(n, t_1, \dots, t_k) = 0$ for some natural numbers
+$t_1, \dots, t_k$.
+
+Proves `Wanted` entry `dprm_theorem`.
+
+Source: M. Davis, H. Putnam, J. Robinson, The decision problem for
 exponential Diophantine equations, Ann. of Math. 74 (1961); Y. Matiyasevich, Enumerable sets are
 Diophantine, Dokl. Akad. Nauk SSSR 191 (1970) 279–282; textbook in Matiyasevich, Hilbert's Tenth
 Problem
-
-Proves `Wanted` entry `dprm_theorem`.
 -/
 public theorem dprm_theorem
     (S : Set ℕ) : REPred (fun n => n ∈ S) ↔ Dioph {v : Unit → ℕ | v () ∈ S} :=

@@ -55,9 +55,15 @@ open MeasureTheory Filter Topology
 
 variable {T : ℝ} [hT : Fact (0 < T)]
 
-/-- **A Fourier coefficient is bounded by the `L¹` norm.** The `n`-th
-Fourier coefficient of `f` is at most the integral of `‖f‖` over the
-circle, since each monomial `fourier (-n)` has pointwise norm `1`. -/
+/-- **A Fourier coefficient is bounded by the L¹ norm.** Let $T > 0$, let $\mu$ be the Haar
+probability measure on the circle $\mathbb{R}/T\mathbb{Z}$, and let $E$ be a normed space over
+$\mathbb{C}$. For every function $f : \mathbb{R}/T\mathbb{Z} \to E$ and every $n \in \mathbb{Z}$,
+the $n$-th Fourier coefficient $\hat f(n) = \int e^{-2\pi i n t / T} f(t)\,d\mu(t)$ satisfies
+$\|\hat f(n)\| \le \int \|f(t)\|\,d\mu(t)$.
+
+The bound holds because $|e^{-2\pi i n t / T}| = 1$. No integrability is assumed: as usual for
+the Bochner integral, an integral whose integrand is not integrable is $0$, and so is any
+$E$-valued integral when $E$ is not complete. -/
 theorem norm_fourierCoeff_le_integral_norm {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] {f : AddCircle T → E} (n : ℤ) :
     ‖fourierCoeff f n‖ ≤
@@ -73,10 +79,14 @@ theorem norm_fourierCoeff_le_integral_norm {E : Type*} [NormedAddCommGroup E]
         filter_upwards with t
         rw [norm_smul, fourier_apply, Circle.norm_coe, one_mul]
 
-/-- **Riemann–Lebesgue for continuous functions.** The Fourier
-coefficients of a continuous function on the circle tend to `0` along
-the cofinite filter: this is Parseval in `L²` plus the fact that a
-square-summable sequence of norms tends to `0`. -/
+/-- **Riemann–Lebesgue for continuous functions.** Let $T > 0$ and let $\mu$ be the Haar
+probability measure on the circle $\mathbb{R}/T\mathbb{Z}$. For every continuous function
+$g : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$, the Fourier coefficients
+$\hat g(n) = \int e^{-2\pi i n t / T} g(t)\,d\mu(t)$ tend to $0$ as $|n| \to \infty$, that is,
+along the cofinite filter on $\mathbb{Z}$.
+
+The proof uses Parseval's identity in $L^2(\mu)$: the sequence $|\hat g(n)|^2$ is summable, so
+it tends to $0$. -/
 theorem tendsto_fourierCoeff_cofinite_of_continuous {g : C(AddCircle T, ℂ)} :
     Tendsto (fun n : ℤ => fourierCoeff g n) cofinite (𝓝 0) := by
   have hsum : Summable (fun n : ℤ => ‖fourierCoeff g n‖ ^ 2) := by
@@ -96,9 +106,11 @@ theorem tendsto_fourierCoeff_cofinite_of_continuous {g : C(AddCircle T, ℂ)} :
     rwa [heq] at hsqrt
   exact tendsto_zero_iff_norm_tendsto_zero.mpr hnorm
 
-/-- **Riemann–Lebesgue lemma on the circle.** The Fourier coefficients of
-an integrable function `f : AddCircle T → ℂ` tend to `0` along the
-cofinite filter on `ℤ`. -/
+/-- **Riemann–Lebesgue lemma on the circle.** Let $T > 0$ and let $\mu$ be the Haar probability
+measure on the circle $\mathbb{R}/T\mathbb{Z}$. For every $\mu$-integrable function
+$f : \mathbb{R}/T\mathbb{Z} \to \mathbb{C}$, the Fourier coefficients
+$\hat f(n) = \int e^{-2\pi i n t / T} f(t)\,d\mu(t)$ tend to $0$ as $|n| \to \infty$, that is,
+along the cofinite filter on $\mathbb{Z}$. -/
 theorem tendsto_fourierCoeff_cofinite {f : AddCircle T → ℂ}
     (hf : Integrable f (AddCircle.haarAddCircle (T := T))) :
     Tendsto (fun n : ℤ => fourierCoeff f n) cofinite (𝓝 0) := by
@@ -147,9 +159,13 @@ theorem tendsto_fourierCoeff_cofinite {f : AddCircle T → ℂ}
     _ < ε / 2 + ε / 2 := add_lt_add_of_le_of_lt hdiff hn
     _ = ε := by ring
 
-/-- **Riemann–Lebesgue lemma on an interval.** The Fourier coefficients
-`fourierCoeffOn` of an interval-integrable function `f : ℝ → ℂ` on
-`[a, b]` tend to `0` along the cofinite filter on `ℤ`. -/
+/-- **Riemann–Lebesgue lemma on an interval.** Let $a < b$ be real numbers and let
+$f : \mathbb{R} \to \mathbb{C}$ be integrable on $[a, b]$. Then the Fourier coefficients of $f$
+on $[a, b]$,
+
+$$\hat f(n) = \frac{1}{b - a} \int_a^b e^{-2\pi i n x / (b - a)} f(x)\,dx,$$
+
+tend to $0$ as $|n| \to \infty$, that is, along the cofinite filter on $\mathbb{Z}$. -/
 theorem tendsto_fourierCoeffOn_cofinite {a b : ℝ} (hab : a < b)
     {f : ℝ → ℂ} (hf : IntervalIntegrable f volume a b) :
     Tendsto (fun n : ℤ => fourierCoeffOn hab f n) cofinite (𝓝 0) := by
