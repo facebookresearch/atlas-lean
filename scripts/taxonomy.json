@@ -1083,6 +1083,7 @@
   "CSLibExt/Algorithms/Lean/Geometry/ConvexHull": {"to": "ComputerScience/computational-geometry", "title": "Monotone chain convex hull algorithm"},
   "CSLibExt/Algorithms/Lean/Geometry/ConvexHullPolygon": {"to": "ComputerScience/computational-geometry", "title": "Monotone chain convex hull algorithm"},
   "CSLibExt/Algorithms/Lean/Geometry/SegmentIntersection": {"to": "ComputerScience/computational-geometry", "title": "Orientation and segment intersection tests"},
+  "CSLibExt/Algorithms/Lean/Geometry/SimplePolygon": {"to": "ComputerScience/computational-geometry", "title": "Polygons and triangulations"},
   "CSLibExt/Algorithms/Lean/Graph/BipartiteMatching": {"to": "ComputerScience/graph-algorithms/spanning-trees-flows-matchings", "title": "Maximum bipartite matching"},
   "CSLibExt/Algorithms/Lean/Graph/BreadthFirstSearch": {"to": "ComputerScience/graph-algorithms/traversal-and-connectivity", "title": "Breadth-first search"},
   "CSLibExt/Algorithms/Lean/Graph/BreadthFirstSearch/Parents": {"to": "ComputerScience/graph-algorithms/traversal-and-connectivity", "title": "Breadth-first search"},
