@@ -11197,6 +11197,7 @@
   "MathlibExt/Combinatorics/IsogenyVolcano": {"to": "AlgebraicGeometry/elliptic-curves", "title": "Isogeny volcanoes"},
   "MathlibExt/Combinatorics/IsolationLemma": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Isolation lemma"},
   "MathlibExt/Combinatorics/JaccardLattice": {"to": "Order/lattices-boolean-algebras", "title": "Lattice valuations and the Jaccard distance"},
+  "MathlibExt/Combinatorics/JaegerModularOrientation": {"to": "GraphTheory/directed-graphs", "title": "Modular orientations"},
   "MathlibExt/Combinatorics/KatzSmallDoublingProgressions": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Progressions in sets of small doubling"},
   "MathlibExt/Combinatorics/KCyclicPartition": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Graphical Stirling and Lah numbers"},
   "MathlibExt/Combinatorics/KSumMultisetDeterminesSetErdosProblem494": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sets determined by their k-sums"},
