@@ -12,7 +12,11 @@ controllability condition `A⁻¹ ℓ 0 ≠ 0` holds, and the set-point `μ/θ` 
 accessible: some `c > 0` and `v` with positive entries have `(vᵀ (A + c I))_j < 0` for every `j`
 and `vᵀ S w₀ / (c v_ℓ) < μ/θ`. Then for all `η, k > 0` the closed loop is ergodic on `𝒮 × ℕ × ℕ`,
 and every jump–hold realization of it started in `𝒮 × ℕ × ℕ` satisfies `E[X_ℓ(t)] → μ/θ`,
-`E[X_i(t)] → μ (A⁻¹ e_1)_i / (θ A⁻¹ ℓ 0)` for every `i`, and `E[Z_1(t)] → -μ/(θ A⁻¹ ℓ 0)`.
+`E[X(t)] → limX A (S w₀) k z` coordinatewise and `E[Z_1(t)] → z` with
+`z = limZ1 A (S w₀) μ θ k ℓ = -(μ/θ + (A⁻¹ S w₀)_ℓ)/(k A⁻¹ ℓ 0)` and
+`limX A (S w₀) k z = -A⁻¹ (S w₀ + k z e_1)`, the solution of the stationary first-moment equations
+`0 = A m + S w₀ + k z e_1`, `m_ℓ = μ/θ`. (The source's displayed limits omit `S w₀` and `k`; they
+agree with these when `S w₀ = 0` and `k = 1`.)
 
 ## Sources
 

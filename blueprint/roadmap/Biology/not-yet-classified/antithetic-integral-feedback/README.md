@@ -16,4 +16,6 @@
 - [Step](step.md)
 - [Stoich Matrix](stoich-matrix.md)
 - [Is Hurwitz](is-hurwitz.md)
+- [Lim Z1](lim-z1.md)
+- [Lim X](lim-x.md)
 - [Antithetic control of unimolecular networks](is-ergodic-and-tendsto-of-unimolecular.md)

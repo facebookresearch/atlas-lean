@@ -28,8 +28,17 @@ irreducible. Let `S` be the `d × K` matrix with columns `ζ_k` and `W = (w_{ki}
 Hurwitz stable, the output controllability condition `[(SW)^{-1}]_{ℓ1} ≠ 0` holds, and the
 set-point is accessible: there are `c > 0` and `v` with positive entries such that every entry of
 `vᵀ(SW + c I)` is negative and `μ/θ > vᵀ S w_0/(c v_ℓ)`. Then for every `k, η > 0` the closed loop
-is ergodic, `E[X_ℓ(t)] → μ/θ`, `E[X(t)] → μ (SW)^{-1} e_1/(θ [(SW)^{-1}]_{ℓ1})` and
-`E[Z_1(t)] → -μ/(θ [(SW)^{-1}]_{ℓ1})`.
+is ergodic and `E[X_ℓ(t)] → μ/θ`; the source also displays the limits
+`E[X(t)] → μ (SW)^{-1} e_1/(θ [(SW)^{-1}]_{ℓ1})` and `E[Z_1(t)] → -μ/(θ [(SW)^{-1}]_{ℓ1})`.
+
+The displayed limits drop the terms `S w_0` and `k` of the stationary first-moment equations
+`0 = SW m + S w_0 + k z e_1`, `m_ℓ = μ/θ` (for `m = lim E[X(t)]`, `z = lim E[Z_1(t)]`), so they
+are correct only when `S w_0 = 0` and `k = 1`. For the birth-death network `∅ → X_1` at rate `1`,
+`X_1 → ∅` at rate `X_1` (`SW = -1`, `S w_0 = 1`), with `μ = 3`, `θ = 1`, `k = 1`, the equations
+give `m = 3` and `z = 2`, while the displayed formula gives `z = 3`. The theorem below states the
+limits that solve those equations:
+`z = -(μ/θ + ((SW)^{-1} S w_0)_ℓ)/(k [(SW)^{-1}]_{ℓ1})` and
+`m = -(SW)^{-1} (S w_0 + k z e_1)`.
 
 Encoding. The closed-loop Markov chain on `ℕ^d × ℕ × ℕ` is realized by its jump chain and
 exponential holding times, as in the source's Markov process; the state at time `t` is the state
@@ -199,6 +208,18 @@ def OpenLoop.stoichMatrix (net : OpenLoop d K) : Matrix (Fin (d + 1)) (Fin K) �
 def IsHurwitz {m : Type*} [Fintype m] [DecidableEq m] (A : Matrix m m ℝ) : Prop :=
   ∀ (z : ℂ) (v : m → ℂ), v ≠ 0 → (A.map (↑)) *ᵥ v = z • v → z.re < 0
 
+/-- The stationary mean of `Z_1`: `-(μ/θ + (A⁻¹ b)_ℓ)/(k A⁻¹ ℓ 0)`, the value of `z` for which
+the solution `m` of `0 = A m + b + k z e_1` has `m_ℓ = μ/θ` (with `b = S w₀`). -/
+noncomputable def limZ1 (A : Matrix (Fin (d + 1)) (Fin (d + 1)) ℝ) (b : Fin (d + 1) → ℝ)
+    (μ θ k : ℝ) (ℓ : Fin (d + 1)) : ℝ :=
+  -(μ / θ + (A⁻¹ *ᵥ b) ℓ) / (k * A⁻¹ ℓ 0)
+
+/-- The stationary mean of `X`: `-A⁻¹ (b + k z e_1)`, the solution `m` of
+`0 = A m + b + k z e_1` (with `b = S w₀` and `e_1` the actuated species, index `0`). -/
+noncomputable def limX (A : Matrix (Fin (d + 1)) (Fin (d + 1)) ℝ) (b : Fin (d + 1) → ℝ)
+    (k z : ℝ) : Fin (d + 1) → ℝ :=
+  -(A⁻¹ *ᵥ (b + (k * z) • Pi.single 0 1))
+
 /-- **Antithetic control of unimolecular networks** (Briat–Gupta–Khammash 2016, Theorem 2). Let
 `net` be an open-loop network (propensities nonnegative, and positive only where the jump stays
 in `ℕ^{d+1}`) with state space `𝒮 ⊆ ℕ^{d+1}`: nonempty, closed under open-loop
@@ -211,7 +232,11 @@ controllability condition `A⁻¹ ℓ 0 ≠ 0` holds, and the set-point `μ/θ` 
 accessible: some `c > 0` and `v` with positive entries have `(vᵀ (A + c I))_j < 0` for every `j`
 and `vᵀ S w₀ / (c v_ℓ) < μ/θ`. Then for all `η, k > 0` the closed loop is ergodic on `𝒮 × ℕ × ℕ`,
 and every jump–hold realization of it started in `𝒮 × ℕ × ℕ` satisfies `E[X_ℓ(t)] → μ/θ`,
-`E[X_i(t)] → μ (A⁻¹ e_1)_i / (θ A⁻¹ ℓ 0)` for every `i`, and `E[Z_1(t)] → -μ/(θ A⁻¹ ℓ 0)`.
+`E[X(t)] → limX A (S w₀) k z` coordinatewise and `E[Z_1(t)] → z` with
+`z = limZ1 A (S w₀) μ θ k ℓ = -(μ/θ + (A⁻¹ S w₀)_ℓ)/(k A⁻¹ ℓ 0)` and
+`limX A (S w₀) k z = -A⁻¹ (S w₀ + k z e_1)`, the solution of the stationary first-moment equations
+`0 = A m + S w₀ + k z e_1`, `m_ℓ = μ/θ`. (The source's displayed limits omit `S w₀` and `k`; they
+agree with these when `S w₀ = 0` and `k = 1`.)
 
 Source: C. Briat, A. Gupta, M. Khammash, Cell Systems 2 (2016) 15–26, Theorem 2. -/
 theorem_wanted isErgodic_and_tendsto_of_unimolecular (net : OpenLoop d K)
@@ -235,9 +260,9 @@ theorem_wanted isErgodic_and_tendsto_of_unimolecular (net : OpenLoop d K)
             atTop (𝓝 (μ / θ)) ∧
           (∀ i, Tendsto
             (fun t => ∫ ω, ((stateAt (closedLoopRate net μ θ η k ℓ) Y E ω t).1 i : ℝ) ∂P)
-            atTop (𝓝 (μ * (net.stoichMatrix * W)⁻¹ i 0 /
-              (θ * (net.stoichMatrix * W)⁻¹ ℓ 0)))) ∧
+            atTop (𝓝 (limX (net.stoichMatrix * W) (net.stoichMatrix *ᵥ w₀) k
+              (limZ1 (net.stoichMatrix * W) (net.stoichMatrix *ᵥ w₀) μ θ k ℓ) i))) ∧
           Tendsto (fun t => ∫ ω, ((stateAt (closedLoopRate net μ θ η k ℓ) Y E ω t).2.1 : ℝ) ∂P)
-            atTop (𝓝 (-μ / (θ * (net.stoichMatrix * W)⁻¹ ℓ 0)))
+            atTop (𝓝 (limZ1 (net.stoichMatrix * W) (net.stoichMatrix *ᵥ w₀) μ θ k ℓ))
 
 end WantedExt.Biology.Biophysics.AntitheticIntegralFeedbackWanted
