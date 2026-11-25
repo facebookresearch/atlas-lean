@@ -40,7 +40,8 @@ example (a : Coefficients) (t : AsymptoticTime) :
 
 example (a : Coefficients) (t : AsymptoticTime) :
     ‖ofHom (NonUnitalStarAlgHom.id ℂ Coefficients) t a‖ = ‖a‖ := by
-  rw [ofHom_apply, NonUnitalStarAlgHom.id_apply]
+  rw [ofHom_apply]
+  rfl
 
 -- The minimum allowed source time is exercised rather than introducing time zero.
 example (a : Coefficients) :

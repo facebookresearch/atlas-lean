@@ -52,7 +52,8 @@ example (a : Coefficients) :
 
 example (x : AsymptoticAlgebra Coefficients) :
     AsymptoticAlgebra.map (NonUnitalStarAlgHom.id ℂ Coefficients) x = x := by
-  rw [AsymptoticAlgebra.map_id, NonUnitalStarAlgHom.id_apply]
+  rw [AsymptoticAlgebra.map_id]
+  rfl
 
 example (x : AsymptoticAlgebra Coefficients) :
     AsymptoticAlgebra.map (0 : Coefficients →⋆ₙₐ[ℂ] Coefficients) x = 0 := by
