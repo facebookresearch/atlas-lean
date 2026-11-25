@@ -1184,3 +1184,6 @@ Topics added since this subject's fields were last revised.
 - [Witt Loop Groups](witt-loop-groups/README.md)
 - [Witt Loop Ind Geometry](witt-loop-ind-geometry/README.md)
 - [Witt Quotient Action Models](witt-quotient-action-models/README.md)
+- [Hasse Invariant](hasse-invariant/README.md)
+- [Legendre Modulus](legendre-modulus/README.md)
+- [Level Three Modulus](level-three-modulus/README.md)
