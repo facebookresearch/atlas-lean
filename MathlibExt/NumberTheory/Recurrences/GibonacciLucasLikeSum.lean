@@ -43,4 +43,29 @@ public theorem gibonacci_lucas_like_mul_add_eq_fib_mul
     gibonacci_mul_add_neg_one_pow_eq_fib_mul G H hG hH r (r + k + 1) (s - r) +
     gibonacci_mul_add_neg_one_pow_eq_fib_mul G H hG hH r (r + k - 1) (s - r)
 
+/-- **Seed form of a Lucas-type product identity for two gibonacci sequences.** Let
+$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
+$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
+integers $k$ and $r$,
+$$
+G_0 (H_{r+k} + H_{r+k-2}) + G_1 (H_{r+k+1} + H_{r+k-1}) =
+G_r (H_k + H_{k-2}) + G_{r+1} (H_{k+1} + H_{k-1}).
+$$
+
+Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
+Integer Sequences 27 (2024), Article 24.6.2, Proposition 29
+(`jis-2024-24.6.2-prop-29`). -/
+public theorem gibonacci_seed_lucas_like_identity
+    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
+    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k r : ℤ) :
+    G 0 * (H (r + k) + H (r + k - 2)) + G 1 * (H (r + k + 1) + H (r + k - 1)) =
+      G r * (H k + H (k - 2)) + G (r + 1) * (H (k + 1) + H (k - 1)) := by
+  have hk := gibonacci_mul_gibonacci_add_eq_seed_combination G H hG hH k r
+  have hk' := gibonacci_mul_gibonacci_add_eq_seed_combination G H hG hH (k - 2) r
+  rw [add_comm k r] at hk
+  rw [show k - 2 + 1 = k - 1 by ring,
+    show k - 2 + r + 1 = r + k - 1 by ring,
+    show k - 2 + r = r + k - 2 by ring] at hk'
+  linear_combination -hk - hk'
+
 end MetaMathlibExt

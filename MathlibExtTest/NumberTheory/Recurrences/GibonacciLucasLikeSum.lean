@@ -27,3 +27,17 @@ example (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) :
   linear_combination h
 
 end MetaMathlibExt.gibonacci_lucas_like_mul_add_eq_fib_mul.Tests
+
+namespace MetaMathlibExt.gibonacci_seed_lucas_like_identity.Tests
+
+-- Take H to be the signed Fibonacci sequence, with k = -3 and r = -2.
+-- The four nonzero coefficients test both seeds of G and both terms on the right.
+example (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) :
+    18 * G 0 - 11 * G 1 = 7 * G (-2) - 4 * G (-1) := by
+  have hF (j : ℤ) : (Int.fib (j + 2) : ℝ) = Int.fib (j + 1) + Int.fib j := by
+    rw [Int.fib_add_two, Int.cast_add, add_comm]
+  have h := gibonacci_seed_lucas_like_identity G (fun j => (Int.fib j : ℝ)) hG hF (-3) (-2)
+  norm_num [Int.fib, Int.even_iff] at h
+  linear_combination h
+
+end MetaMathlibExt.gibonacci_seed_lucas_like_identity.Tests
