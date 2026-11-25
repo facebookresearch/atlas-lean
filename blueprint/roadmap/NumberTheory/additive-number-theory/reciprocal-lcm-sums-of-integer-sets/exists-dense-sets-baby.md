@@ -7,8 +7,9 @@ $S_B(x) = \sum_{n \in B,\ 1 \le n \le x} 1/n$ and $\mathcal{E}_B(x)$ for the gcd
 to $x$. There is an absolute constant $C > 0$ such that for every real $C_0 > 0$ there are sets
 $A_0, A_1, A_2, \dots$ of natural numbers with the following property: for every $\varepsilon > 0$
 there are a real $\delta > 0$ and a natural number $k_0$ such that for every natural number
-$k \ge k_0$ and every real $x$ with $|C_0 (\operatorname{Log}_2 x)^{1/2} - k| \le \delta k$, there
-is a real $\eta$ with $|\eta| \le \varepsilon$ and
+$k \ge k_0$ and every positive real $x$ with
+$|C_0 (\operatorname{Log}_2 x)^{1/2} - k| \le \delta k$, there is a real $\eta$ with
+$|\eta| \le \varepsilon$ and
 $S_{A_k}(x) = \exp((C_0/2 + \eta)(\operatorname{Log}_2 x)^{1/2} \operatorname{Log}_3 x)$, and
 moreover $\mathcal{E}_{A_k}(x) \le C(\exp(e^2 C_0^2) - 1 + \varepsilon)$.
 
