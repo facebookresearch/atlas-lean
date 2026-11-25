@@ -39,17 +39,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Sum of squares of unitary divisors.** For every positive integer $n$, the sum of the
-squares of the unitary divisors of $n$ equals $\prod_{p} \left(1 + p^{2k_p}\right)$, where $p$
-ranges over the distinct prime factors of $n$ and $k_p$ is the exponent of $p$ in $n$.
-
-Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
-Numbers*, INTEGERS 24 (2024), Article A95, Lemma 3(i) (quoting Subbarao and
-Warren). -/
-public theorem_wanted sum_sq_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
-    ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 =
-      ∏ p ∈ n.primeFactors, (1 + p ^ (2 * n.factorization p))
-
 /-- **Properties of even s-Zumkeller numbers.** Let $n$ be an even s-Zumkeller number and let
 $\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $\sigma_2(n)$ is
 even, some odd prime $p$ divides $n$ with an odd exponent in the prime factorization of $n$, and
