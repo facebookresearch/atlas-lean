@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.Group.Nat
 public import Mathlib.Data.Int.Basic
 public import Mathlib.Data.Nat.ModEq
+public import MathlibExt.Combinatorics.Enumerative.AntiJacobsthalKimberlingBounds
 public import MathlibExt.Combinatorics.Enumerative.AntiRecurrenceGaps
 public import MathlibExt.Combinatorics.Words.Automatic
 public import WantedExt.Combinatorics.Enumerative.WalnutOeisProblemsWanted
@@ -130,22 +131,6 @@ public theorem_wanted antiPell_kimberling_bounds {n : ℕ} (hn : 1 ≤ n) :
         3 * (antiRecurrenceComplement [1, 2] (2 * n - 1) : ℤ) - 7 * n + 6 ≤ 3) ∧
       (0 ≤ 3 * (antiRecurrenceComplement [1, 2] (2 * n) : ℤ) - 7 * n + 2 ∧
         3 * (antiRecurrenceComplement [1, 2] (2 * n) : ℤ) - 7 * n + 2 ≤ 3)
-
-/-- **Kimberling's bounds for the anti-Jacobsthal numbers.** Let $A_n$ be the anti-recurrence
-numbers of the linear form $a = (2, 1)$ (the anti-Jacobsthal numbers), let $B_m$ be its
-non-anti-recurrence numbers, and put $B^1_n = B_{2n-1}$ and $B^2_n = B_{2n}$. Then for every
-$n \ge 1$ we have $0 \le A_n - 7n + 4 \le 3$, $0 \le 3B^1_n - 7n + 6 \le 4$ and
-$0 \le 3B^2_n - 7n + 2 \le 3$.
-
-Source: Robbert Fokkink and Gandhar Joshi, *Anti-Recurrence Sequences*, INTEGERS 26 (2026),
-Article A24, Theorem 2 (`integers-2026-A24-thm-2`). -/
-public theorem_wanted antiJacobsthal_kimberling_bounds {n : ℕ} (hn : 1 ≤ n) :
-    (0 ≤ (antiRecurrence [2, 1] n : ℤ) - 7 * n + 4 ∧
-        (antiRecurrence [2, 1] n : ℤ) - 7 * n + 4 ≤ 3) ∧
-      (0 ≤ 3 * (antiRecurrenceComplement [2, 1] (2 * n - 1) : ℤ) - 7 * n + 6 ∧
-        3 * (antiRecurrenceComplement [2, 1] (2 * n - 1) : ℤ) - 7 * n + 6 ≤ 4) ∧
-      (0 ≤ 3 * (antiRecurrenceComplement [2, 1] (2 * n) : ℤ) - 7 * n + 2 ∧
-        3 * (antiRecurrenceComplement [2, 1] (2 * n) : ℤ) - 7 * n + 2 ≤ 3)
 
 /-- **Bounded anti-recurrence sequences are automatic up to a linear term.** Let
 $a = (a_1, \dots, a_k)$ be a linear form with positive integer coefficients and $k > 1$, of trace

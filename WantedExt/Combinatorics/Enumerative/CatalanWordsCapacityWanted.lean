@@ -16,6 +16,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.CatalanGrowthAreaDist
 public import MathlibExt.Combinatorics.Enumerative.CatalanWordsCapacity
+public import MathlibExt.Combinatorics.Enumerative.RestrictedSmoothWordsCapacity
 public import MathlibExt.NumberTheory.TrinomialCoefficient
 
 namespace MetaMathlibExt
@@ -33,60 +34,6 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, Figure 1. -/
 public theorem wordCapacity_figure_one :
     wordCapacity ![1, 2, 2, 3, 4, 1, 1, 2, 3, 2, 1, 2, 3, 2, 3] = 10 := by
   decide
-
-/-- **Smooth words.** For $n \ge 0$, the set $\mathcal{R}_n$ of smooth words of length $n$ consists
-of the words $w = w_1 \cdots w_n$ of positive integers with $w_1 = 1$ (when $n \ge 1$) and
-$|w_{i+1} - w_i| \le 1$ for $1 \le i < n$.
-
-The letters of a smooth word of length $n$ are at most $n$, so $\mathcal{R}_n$ is finite.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
-public def smoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
-  (Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun w =>
-    (∀ i : Fin n, i.val = 0 → w i = 1) ∧
-      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1
-
-/-- **Characterization of smooth words.** For a natural number $n$, let $\mathcal{R}_n$ be the
-set of smooth words of length $n$, defined as the words $w = w_1 \cdots w_n$ with letters in
-$\{1, \dots, n\}$ such that $w_1 = 1$ when $n \ge 1$, and $w_{k+1} \le w_k + 1$ and
-$w_k \le w_{k+1} + 1$ for $1 \le k < n$. A word $w = w_1 \cdots w_n$ of natural numbers belongs
-to $\mathcal{R}_n$ if and only if $w_k \ge 1$ for every $k$, $w_1 = 1$ when $n \ge 1$, and
-$w_{k+1} \le w_k + 1$ and $w_k \le w_{k+1} + 1$ for $1 \le k < n$. In particular, the bound
-$w_k \le n$ on the letters is automatic.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of smooth words. -/
-public theorem mem_smoothWords_iff {n : ℕ} (w : Fin n → ℕ) :
-    w ∈ smoothWords n ↔ (∀ i, 1 ≤ w i) ∧ (∀ i : Fin n, i.val = 0 → w i = 1) ∧
-      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1 := by
-  simp only [smoothWords, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_Icc]
-  constructor
-  · rintro ⟨hb, h0, hg⟩
-    exact ⟨fun i => (hb i).1, h0, hg⟩
-  · rintro ⟨h1, h0, hg⟩
-    have key : ∀ k (hk : k < n), w ⟨k, hk⟩ ≤ k + 1 := by
-      intro k
-      induction k with
-      | zero => intro hk; rw [h0 ⟨0, hk⟩ rfl]
-      | succ k ih =>
-        intro hk
-        have h₁ := (hg ⟨k, by omega⟩ ⟨k + 1, hk⟩ rfl).1
-        have h₂ := ih (by omega)
-        omega
-    refine ⟨fun i => ⟨h1 i, ?_⟩, h0, hg⟩
-    have := key i.val i.isLt
-    rw [Fin.eta] at this
-    omega
-
-/-- **Restricted smooth words.** For $n \ge 0$, the set $\mathcal{R}^{\ast}_n$ of restricted smooth
-words of length $n$ consists of the smooth words of length $n$ in which no two adjacent letters
-are both equal to $1$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 4, definition of restricted smooth words. -/
-public def restrictedSmoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
-  (smoothWords n).filter fun w => ∀ i j : Fin n, j.val = i.val + 1 → ¬(w i = 1 ∧ w j = 1)
 
 /-- **Words with all letters at most a bound.** Given a finite set $S$ of words of length $n$
 with letters in $\mathbb{N}$ and a natural number $k$, this is the set of words in $S$ all of
@@ -670,20 +617,6 @@ public theorem_wanted smoothWords_zero_capacity_count (n : ℕ) (hn : 2 ≤ n) :
     (smoothCapacityDist n 1).eval 0 = 2 ^ (n - 2) ∧ (smoothCapacityDist 1 1).eval 0 = 1 ∧
       (3 ≤ n → (capacityDist (smoothWords n)).eval 0 = (n + 2) * 2 ^ (n - 3)) ∧
         (capacityDist (smoothWords 2)).eval 0 = 2 ∧ (capacityDist (smoothWords 1)).eval 0 = 1
-
-/-- **Maximum capacity of restricted smooth words.** Let $m \ge 0$ and $0 \le p \le 7$ with
-$n = 8m + p \ge 1$. The degree of the capacity distribution of the restricted smooth words of
-length $n$, that is, the largest capacity of a restricted smooth word of length $n$, equals
-$8m^2 + (2p - 3)m + e_p$, where $e_p = 0$ for $p \le 3$, $e_4 = 1$ and $e_p = 2^{p-5}$ for
-$5 \le p \le 7$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 9 (`integers-2025-A5-thm-9`). -/
-public theorem_wanted restrictedSmoothWords_capacity_natDegree (m p : ℕ) (hp : p ≤ 7)
-    (hn : 1 ≤ 8 * m + p) :
-    ((capacityDist (restrictedSmoothWords (8 * m + p))).natDegree : ℤ) =
-      8 * (m : ℤ) ^ 2 + (2 * (p : ℤ) - 3) * m +
-        if p ≤ 3 then 0 else if p = 4 then 1 else 2 ^ (p - 5)
 
 /-- **Number of restricted smooth words of maximum capacity.** Let $n = 8m + p \ge 1$ with
 natural numbers $m$ and $p \le 7$, and let $c_n$ be the leading coefficient of the capacity

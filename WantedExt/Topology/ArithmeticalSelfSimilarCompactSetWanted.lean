@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSetDerived
+public import MathlibExt.Topology.ArithmeticalSelfSimilarCompactSetLayerEnumTendsto
 
 namespace MetaMathlibExt
 
@@ -87,23 +88,6 @@ public theorem_wanted isSelfSimilarCompactSet_layer_enum {K : Set ℝ} {μ : ℕ
     (ht : StrictAntiOn t (Set.Iio (ω ^ ω))) (htK : t '' Set.Iio (ω ^ ω) = selfSimilarLayer K u)
     {α : Ordinal.{0}} (hα : α < ω ^ ω) :
     t α = f (ω ^ (u : Ordinal) * (α + 1))
-
-/-- **Limits between consecutive layers of a self-similar compact set.** Let $K$ be a
-self-similar compact set of module $\mu$ and ratio $\rho$, with layers
-$T_u = K^{(u)} \setminus K^{(u+1)}$ for $u \ge 0$, where $K^{(u)}$ is the $u$-th derived set of
-$K$. Suppose that for every $u$, $\alpha \mapsto T_u[\alpha]$ is a strictly decreasing map from
-the ordinals $\alpha < \omega^\omega$ onto $T_u$. Then for every $u \ge 0$ and every ordinal
-$\alpha < \omega^\omega$, $T_u[\omega \alpha + n] \to T_{u+1}[\alpha]$ as $n \to \infty$ through
-the natural numbers (ordinal arithmetic in the index).
-
-Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
-(2024), Article A21, Proposition 4. -/
-public theorem_wanted isSelfSimilarCompactSet_layer_enum_tendsto {K : Set ℝ} {μ : ℕ} {ρ : ℝ}
-    (hK : IsSelfSimilarCompactSet K μ ρ) {t : ℕ → Ordinal.{0} → ℝ}
-    (ht : ∀ u, StrictAntiOn (t u) (Set.Iio (ω ^ ω)))
-    (htK : ∀ u, t u '' Set.Iio (ω ^ ω) = selfSimilarLayer K u)
-    (u : ℕ) {α : Ordinal.{0}} (hα : α < ω ^ ω) :
-    Tendsto (fun n : ℕ => t u (ω * α + n)) atTop (𝓝 (t (u + 1) α))
 
 /-- **Limits across the last layer of a self-similar compact set.** Let $K$ be a self-similar
 compact set of module $\mu$ and ratio $\rho$, with layers $T_u = K^{(u)} \setminus K^{(u+1)}$

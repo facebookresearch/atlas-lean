@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanEntry30
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanPsiFChi
 
 namespace MetaMathlibExt
@@ -93,25 +94,6 @@ public theorem_wanted lambert_order_sixteen_legendre_three (q : ℂ) (hq : ‖q�
         (qPochhammerInfRaw (q ^ 16) (q ^ 16) *
           (qPochhammerInfRaw (q ^ 9) (q ^ 48) * qPochhammerInfRaw (q ^ 15) (q ^ 48) *
             qPochhammerInfRaw (q ^ 33) (q ^ 48) * qPochhammerInfRaw (q ^ 39) (q ^ 48)))
-
-/-- **Ramanujan's Entry 30 (i)–(iii) for the general theta function.** Let
-$f(a, b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's general theta
-function and $\psi(q) = f(q, q^3)$. For all complex numbers $a$ and $b$ with $|ab| < 1$,
-$f(a, ab^2) f(b, a^2 b) = f(a, b) \psi(ab)$ and $f(a, b) + f(-a, -b) = 2 f(a^3 b, a b^3)$, and if
-moreover $a \ne 0$, then $f(a, b) - f(-a, -b) = 2a f(b/a, a^5 b^3)$.
-
-Source: A. Vanitha, Nasser Abdo Saeed Bulkhali, and M. P. Chaudhary, *On a Ramanujan’s
-Continued Fraction of Order Sixteen and New Eisenstein Series Identities*, INTEGERS 25 (2025),
-Article A16, Lemma 1 record, quoting Berndt, Part III, Entry 30 (i)-(iii)
-(`integers-2025-A16-lem-1`). -/
-public theorem_wanted ramanujanTheta_entry30 (a b : ℂ) (hab : ‖a * b‖ < 1) :
-    ramanujanThetaRaw a (a * b ^ 2) * ramanujanThetaRaw b (a ^ 2 * b) =
-        ramanujanThetaRaw a b * ramanujanThetaRaw (a * b) ((a * b) ^ 3) ∧
-      ramanujanThetaRaw a b + ramanujanThetaRaw (-a) (-b) =
-        2 * ramanujanThetaRaw (a ^ 3 * b) (a * b ^ 3) ∧
-      (a ≠ 0 → ramanujanThetaRaw a b - ramanujanThetaRaw (-a) (-b) =
-        2 * a * ramanujanThetaRaw (b / a) (a ^ 5 * b ^ 3))
-
 
 /-- **Odd Lambert series for Ramanujan's continued fractions of order sixteen.** Write
 $(a; q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $(a, b; q)_\infty = (a; q)_\infty (b; q)_\infty$.

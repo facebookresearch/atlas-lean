@@ -40,3 +40,14 @@ example : (Nat.choose 18 9 : ZMod 3) = -1 :=
 
 -- Three different indices contribute to the same cyclic coefficient.
 example : ducciCoeff 2 4 1 = 1 + 6 + 1 := by decide
+
+-- The alternating sum 4 - 0 + 2 - 0 vanishes modulo six.
+example : ∃ y : Fin 4 → ZMod 6, ducciMap 6 4 y = ![4, 0, 2, 0] := by
+  obtain ⟨y, hy⟩ := (ducci_pred_iff 6 4 (by decide) ![4, 0, 2, 0]).2 (by decide)
+  exact ⟨y, funext hy⟩
+
+-- At modulus zero the alternating sum is an integer, even at the smallest admissible length.
+example : ¬ ∃ y : Fin 2 → ZMod 0, ducciMap 0 2 y = ![1, -1] := by
+  rintro ⟨y, hy⟩
+  have h := (ducci_pred_iff 0 2 (by decide) ![1, -1]).1 ⟨y, congrFun hy⟩
+  exact (by decide : ¬ ∑ i : Fin 2, (-1 : ZMod 0) ^ i.val * ![1, -1] i = 0) h
