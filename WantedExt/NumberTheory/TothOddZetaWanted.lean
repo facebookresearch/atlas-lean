@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.NumberTheory.LSeries.RiemannZeta
-public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
 public import MathlibExt.Combinatorics.ReducedComplexities
+public import MathlibExt.NumberTheory.TothOddZeta
 
 namespace MetaMathlibExt
 
@@ -19,29 +18,6 @@ namespace MetaMathlibExt
 
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry
 open MathlibExt.Combinatorics.ReducedComplexitiesWanted (paperfoldingSeq)
-
-/-- **Hurwitz zeta at $3/4$ and odd arguments.** For every integer $k \ge 1$,
-$$
-\zeta(2k+1, \tfrac34) = -\frac{2^{2k-1} \pi^{2k+1} |E_{2k}|}{(2k)!} +
-2^{2k} (2^{2k+1} - 1) \zeta(2k+1),
-$$
-where $\zeta(s, a)$ is the Hurwitz zeta function (for $\operatorname{Re} s > 1$,
-$\zeta(s, a) = \sum_{n \ge 0} (n + a)^{-s}$), $\zeta(s)$ is the Riemann zeta function and $E_{2k}$
-is the even-index Euler number.
-
-The even-index Euler numbers are defined by a binomial recurrence equivalent to the generating
-function $1 / \cosh t = \sum_n E_n t^n / n!$. The source writes $k \in \mathbb{N}$; $k = 0$ is
-excluded since $s = 1$ is the pole of both zeta functions.
-
-Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 3
-(`jis-2025-25.4.4-lem-3`). -/
-public theorem_wanted hurwitzZeta_three_quarters_two_mul_add_one (k : ℕ) (hk : 1 ≤ k) :
-    HurwitzZeta.hurwitzZeta ((3 / 4 : ℝ) : UnitAddCircle) (2 * k + 1) =
-      -((2 : ℂ) ^ (2 * k - 1) / (2 * k).factorial) * (Real.pi : ℂ) ^ (2 * k + 1) *
-          ((|chapter5EulerEven k| : ℤ) : ℂ) +
-        2 ^ (2 * k) * (2 ^ (2 * k + 1) - 1) * riemannZeta (2 * k + 1)
-
 
 /-- **Tóth's paperfolding and Thue–Morse series for $\zeta(2k+1)$.** Let $(f_n)_{n \ge 0}$ be the
 regular paperfolding sequence and $(t_n)_{n \ge 0}$ the Thue–Morse sequence, both indexed from

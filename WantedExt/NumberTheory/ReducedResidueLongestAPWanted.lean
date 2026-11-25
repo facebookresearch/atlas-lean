@@ -24,8 +24,8 @@ with common difference `d`, and `g(n) = f_{-⌈n/2⌉}(n)` for the system of abs
 reduced residues. Throughout, `gpf(n)` is written `n.primeFactors.sup id` (the largest prime
 factor of `n` for `n > 1`) and `rad(n)` is `UniqueFactorizationMonoid.radical n`.
 
-The definitions, the squarefree fixed-difference bound, the formula for twice an odd prime and
-the minimum for primes congruent to three modulo four are in
+The definitions, the squarefree fixed-difference bound, the formula for twice an odd prime, and
+the absolute least residue formula and minimum for primes congruent to three modulo four are in
 `MathlibExt.NumberTheory.ReducedResidueLongestAP`.
 
 Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
@@ -47,16 +47,6 @@ Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026)
 Theorem 1 (`integers-2026-A6-thm-1`). -/
 public theorem_wanted absLeastAPLength_prime_of_mod_four_eq_one {p : ℕ} (hp : p.Prime)
     (h4 : p % 4 = 1) : absLeastAPLength p = (p - 1) / 2
-
-/-- **Longest progressions of absolute least residues: primes congruent to 3 mod 4.** For a
-prime $p \equiv 3 \pmod 4$, the length $g(p)$ of the longest arithmetic progression in the
-absolute least reduced residue system modulo $p$ is $(p + 1)/2$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 1 (`integers-2026-A6-thm-1`). -/
-public theorem_wanted absLeastAPLength_prime_of_mod_four_eq_three {p : ℕ} (hp : p.Prime)
-    (h4 : p % 4 = 3) : absLeastAPLength p = (p + 1) / 2
 
 /-- **Longest progressions of absolute least residues: prime powers.** Let $p$ be a prime and
 $r \ge 1$, with $r \ge 2$ when $p$ is odd. Then the length $g(p^r)$ of the longest arithmetic

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.QAnalogCollatz
+public import MathlibExt.NumberTheory.QCollatzConjugacy
 public import MathlibExt.NumberTheory.QCollatzParityFlip
 
 namespace MetaMathlibExt
@@ -31,18 +32,6 @@ public theorem_wanted qCollatz_conjugate_twoAdicCollatz (A B : PowerSeries (ZMod
     (hA : constantCoeff A ≠ 0) (hB : constantCoeff B ≠ 0) :
     ∃ h : ℤ_[2] ≃ PowerSeries (ZMod 2),
       ∀ x, h.symm (qCollatz A B (h x)) = twoAdicCollatz x
-
-/-- **The map $T_{1+q,1}$ is conjugate to the $2$-adic $3x+1$ map.** Let $T_q = T_{1+q,1}$
-be the $q$-analog of the $3x+1$ map with $A = 1 + q$ and $B = 1$, so that $T_q(x) = x/q$ if $q$
-divides $x$ and $T_q(x) = ((1+q)x + 1)/q$ otherwise, and let $T$ be the $3x+1$ map on the
-$2$-adic integers $\mathbb{Z}_2$. Then there is a bijection $h : \mathbb{Z}_2 \to \mathbb{F}_2[[q]]$
-with $h^{-1}(T_q(h(x))) = T(x)$ for every $x \in \mathbb{Z}_2$.
-
-Source: Kenneth G. Monks, *On q-Analogs of the 3x+1 Dynamical System*, Journal of Integer
-Sequences 28 (2025), Article 25.6.8, Corollary 3 (`jis-2025-25.6.8-cor-3`). -/
-public theorem_wanted qCollatz_one_add_X_conjugate_twoAdicCollatz :
-    ∃ h : ℤ_[2] ≃ PowerSeries (ZMod 2),
-      ∀ x, h.symm (qCollatz (1 + X) 1 (h x)) = twoAdicCollatz x
 
 /-- **Polynomial orbits of $T_{1,1+q^2}$.** Let $T = T_{1,1+q^2}$ be the $q$-analog of the $3x+1$
 map with $A = 1$ and $B = 1 + q^2$. For every polynomial $p$ over $\mathbb{F}_2$, some iterate

@@ -48,6 +48,9 @@ example : 1 < absLeastAPLength 4 := by
   interval_cases i <;> decide
 
 -- At the smallest prime in this congruence class the centered window consists of -1 and 1.
+example : absLeastAPLength 3 = 2 :=
+  absLeastAPLength_prime_of_mod_four_eq_three (p := 3) (hp := by decide) (h4 := rfl)
+
 example : longestAPLength (-2) 3 = 2 := by
   apply le_antisymm
   · apply csSup_le'
@@ -64,6 +67,10 @@ example : longestAPLength (-2) 3 = 2 := by
     omega
   · exact (isLeast_longestAPLength_prime_of_mod_four_eq_three (p := 3)
       (by decide) rfl).2 ⟨-2, rfl⟩
+
+-- Modulo seven the centered window contains the length-four progression -3, -1, 1, 3.
+example : absLeastAPLength 7 = 4 :=
+  absLeastAPLength_prime_of_mod_four_eq_three (p := 7) (hp := by decide) (h4 := rfl)
 
 -- Modulo seven the minimum is attained, and the window starting at one exceeds it.
 example : (∃ m, longestAPLength m 7 = 4) ∧ 4 < longestAPLength 0 7 := by

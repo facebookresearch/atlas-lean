@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GobelSequence
+public import MathlibExt.NumberTheory.GobelSequenceError
 public import MathlibExt.NumberTheory.GobelSequenceRoots
 public import MathlibExt.NumberTheory.GobelSequenceSomosBound
 public import MathlibExt.NumberTheory.SomosLikeRoots
@@ -154,25 +155,6 @@ Article 24.8.1, Proposition 10 (`jis-2024-24.8.1-prop-10`). -/
 public theorem_wanted gobelSequence_root_tendsto_gt_one (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) :
     ∃ C : ℝ, 1 < C ∧
       Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n)) atTop (𝓝 C)
-
-/-- **The Göbel error term decays faster than every power of $n$.** Let $k, l \ge 2$ be natural
-numbers, let $g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C$ be a real number such that the
-real numbers $C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$. Then for every real
-number $R > 0$, as $n \to \infty$,
-
-$$\exp\Bigl(\sum_{m=1}^{\infty} \frac{\log(m + n)}{k^m}\Bigr) -
-\Bigl(\frac{C_{k,l}(n)}{C}\Bigr)^{k^n} = O(n^{-R}).$$
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Theorem 11 (`jis-2024-24.8.1-thm-11`). -/
-public theorem_wanted gobelSequence_error_isBigO (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (C : ℝ)
-    (hC : Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
-      atTop (𝓝 C))
-    (R : ℝ) (hR : 0 < R) :
-    (fun n : ℕ => Real.exp (∑' m : ℕ, Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1))
-        - ((gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n) / C) ^ (k ^ n))
-      =O[atTop] (fun n : ℕ => (n : ℝ) ^ (-R))
 
 /-- **Series formula and bound for the Göbel error.** Let $k, l \ge 2$ be natural numbers, let
 $g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C$ be a real number such that the real numbers
