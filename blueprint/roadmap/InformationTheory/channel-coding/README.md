@@ -20,3 +20,5 @@ rate below the mutual information.
 - [Time-sharing convexity of the MAC achievable region](time-sharing-convexity-of-the-mac-achievable-region.md)
 - [One-shot achievability (Shannon/Feinstein/DT bounds)](one-shot-achievability.md)
 - [Polar transform: channel combining/splitting conservation](polar-transform-channel-combining-splitting-conservation.md)
+
+- [Scalar Gaussian channel](scalar-gaussian-channel/README.md)
