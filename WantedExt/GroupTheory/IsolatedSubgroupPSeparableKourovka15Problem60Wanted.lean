@@ -39,27 +39,41 @@ is `p'`-isolated for every `p` and is not separable in the class of nilpotent gr
 the finite `p`-groups).
 -/
 
-/-- `H` is `p'`-isolated: `xⁿ ∈ H` with `n > 0` not divisible by `p` implies `x ∈ H`. -/
+/-- **$p'$-isolated subgroup.** Let $p$ be a natural number and let $H$ be a subgroup of a group
+$F$. Then $H$ is $p'$-isolated if, for every $x \in F$ and every natural number $n > 0$ that is not
+divisible by $p$, $x^n \in H$ implies $x \in H$. -/
 def IsPPrimeIsolated (p : ℕ) {F : Type*} [Group F] (H : Subgroup F) : Prop :=
   ∀ (x : F) (n : ℕ), 0 < n → ¬ p ∣ n → x ^ n ∈ H → x ∈ H
 
-/-- `H` is separable in the class of finite `p`-groups: every element outside `H` stays outside
-the image of `H` under some homomorphism to a finite `p`-group. -/
+/-- **Separability in the class of finite $p$-groups.** Let $p$ be a natural number and let $H$ be
+a subgroup of a group $F$. Then $H$ is separable in the class of finite $p$-groups if for every
+$x \in F$ with $x \notin H$ there are a finite $p$-group $Q$ (a finite group in which every element
+$g$ satisfies $g^{p^k} = 1$ for some natural number $k$) and a group homomorphism
+$f \colon F \to Q$ with $f(x) \notin f(H)$. -/
 def IsPSeparable (p : ℕ) {F : Type*} [Group F] (H : Subgroup F) : Prop :=
   ∀ x : F, x ∉ H → ∃ (Q : Type) (_ : Group Q) (_ : Finite Q), IsPGroup p Q ∧
     ∃ f : F →* Q, f x ∉ H.map f
 
-/-- Kourovka 15.60 (D. I. Moldavanskiĭ), for some prime `p`: every finitely generated `p'`-isolated
-subgroup of a free group is separable in the class of finite `p`-groups. -/
+/-- **Moldavanskiĭ's question on $p$-separability of isolated subgroups (Kourovka 15.60).** The
+statement that there is a prime $p$ such that, for every set $\alpha$, every finitely generated
+$p'$-isolated subgroup of the free group on $\alpha$ is separable in the class of finite
+$p$-groups. -/
 def isolatedFGSubgroupsPSeparable : Prop :=
   ∃ p : ℕ, p.Prime ∧ ∀ (α : Type) (H : Subgroup (FreeGroup α)), H.FG → IsPPrimeIsolated p H →
     IsPSeparable p H
 
 /--
-Resolved false: Bardakov proved that every nonabelian free group has a finitely generated isolated
-subgroup (`xⁿ ∈ H` with `n ≠ 0` implies `x ∈ H`) that is not separable in the class of nilpotent
-groups; it is `p'`-isolated for every prime `p`, and finite `p`-groups are nilpotent. The Kourovka
-Archive answers 15.60 "No, it is not". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**Isolated subgroups of free groups need not be $p$-separable.** For every prime $p$ there are a
+set $\alpha$ and a finitely generated $p'$-isolated subgroup of the free group on $\alpha$ that is
+not separable in the class of finite $p$-groups. That is, the statement of Kourovka Problem 15.60
+fails for every prime $p$.
+
+Bardakov proved that every nonabelian free group has a finitely generated isolated subgroup $H$
+($x^n \in H$ with $n \ne 0$ implies $x \in H$) that is not separable in the class of nilpotent
+groups; it is $p'$-isolated for every prime $p$, and finite $p$-groups are nilpotent. The Kourovka
+Archive answers 15.60 "No, it is not".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 15.60 (D. I. Moldavanskiĭ); resolution: V. G. Bardakov, On D. I.
 Moldavanskii's question about p-separable subgroups of a free group, Siberian Math. J. 45 (2004),

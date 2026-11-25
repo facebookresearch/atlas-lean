@@ -90,18 +90,19 @@ private theorem stirling_key : ∀ (n : ℕ),
     simp [Finset.mem_range] at h
   rw [Finset.sum_eq_single n hz hn, ite_eq_left rfl, mul_one]
 
-/-- The alternating recurrence `F(n) = n! - ∑_{j=1}^n s(n,n-j) F(n-j)` for the Fubini numbers
-`fubiniNumber`, with `s` the signed first-kind Stirling numbers `signedStirlingFirst`.
+/-- **Alternating recurrence for the Fubini numbers.** For every natural number $n$, the Fubini
+number $F(n)$ satisfies
+
+$$F(n) = n! - \sum_{j=1}^{n} s(n, n-j)\, F(n-j),$$
+
+where $s(n, k)$ is the signed Stirling number of the first kind.
+
+Proves `Wanted` entry `fubini_eq_factorial_sub_sum_signed_stirling`.
 
 Source: Benjamin Schreyer, "Rigged Horse Numbers and their Modular
 Periodicity," Journal of Integer Sequences 28 (2025), Article 25.4.1,
 Corollary (label cor:auseful), lines 253–257,
-https://cs.uwaterloo.ca/journals/JIS/VOL28/Schreyer/schreyer7.tex
-
-This recurrence is distinct from the same paper's r-horse-number theorem
-(label thm:fubinir).
-
-Proves `Wanted` entry `fubini_eq_factorial_sub_sum_signed_stirling`. -/
+https://cs.uwaterloo.ca/journals/JIS/VOL28/Schreyer/schreyer7.tex -/
 theorem fubiniNumber_eq_factorial_sub_sum_signed_stirling (n : ℕ) : (fubiniNumber n : ℤ) =
     (Nat.factorial n : ℤ) -
       ∑ j ∈ Finset.Icc 1 n, signedStirlingFirst n (n - j) * (fubiniNumber (n - j) : ℤ) := by

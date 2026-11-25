@@ -48,8 +48,12 @@ universe u
     pure xs
 termination_by n - i
 
-/-- Execute the increasing-position Fisher–Yates swaps using legal supplied
-suffix draws. The two counters record actual draw and swap calls. -/
+/-- **Fisher–Yates shuffle with supplied draws.** Given a vector $x = (x_0, \dots, x_{n-1})$ and a
+draw history $d$, which assigns to each position $i < n$ a number $d_i$ with $0 \le d_i < n - i$,
+the Fisher–Yates computation processes the positions $i = 0, 1, \dots, n - 1$ in increasing order
+and at position $i$ swaps the entries at positions $i$ and $i + d_i$ of the current vector. It
+returns the final vector together with a cost pair in $\mathbb{N} \times \mathbb{N}$: each retrieved
+draw adds $(1, 0)$ and each swap adds $(0, 1)$. -/
 public def randomlyPermute {α : Type u} {n : Nat} (xs : Vector α n)
     (draws : (i : Fin n) → Fin (n - i.val)) :
     Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector α n) :=
@@ -71,8 +75,13 @@ private theorem scan_time {α : Type u} {n : Nat}
 termination_by n - i
 decreasing_by omega
 
-/-- Fisher–Yates executes exactly one draw and one swap at every position,
-including the final singleton draw and self-swap. -/
+/-- **Cost of the Fisher–Yates shuffle.** For every vector $x$ of length $n$ and every draw
+history $d$, which assigns to each position $i < n$ a number $d_i$ with $0 \le d_i < n - i$, the
+Fisher–Yates computation on $x$ and $d$ has cost pair $(n, n)$: it retrieves exactly $n$ draws
+and performs exactly $n$ swaps.
+
+When $n \ge 1$, this count includes the final draw $d_{n-1} = 0$ and the self-swap at position
+$n - 1$. -/
 public theorem randomlyPermute_time {α : Type u} {n : Nat} (xs : Vector α n)
     (draws : (i : Fin n) → Fin (n - i.val)) :
     (randomlyPermute xs draws).time = (n, n) := by

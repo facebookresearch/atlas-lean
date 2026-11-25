@@ -21,15 +21,17 @@ namespace MetaMathlibExt
 /-! # Real power parametrization
 -/
 
-/-- Classical parametrization of distinct solutions to x ^ y = y ^ x with 0 < y < x.
+/-- **Parametrization of the solutions of $x^y = y^x$ with $0 < y < x$.** Let $x$ and $y$ be real
+numbers with $0 < y < x$ and $x^y = y^x$. Then there is a real number $t > 0$ such that
+$y = (1 + 1/t)^t$ and $x = (1 + 1/t)^{t+1}$.
+
+Proves `Wanted` entry `exists_parametrization_of_rpow_eq_rpow`.
 
 Source: Hirotaka Kobayashi, Kota Saito, and Wataru Takeda, "Transcendence of
 Values of the Iterated Exponential Function at Algebraic Points," Journal of
 Integer Sequences 26 (2023), Article 23.3.3, Lemma (label add:lem1),
 lines 604–612,
 <https://cs.uwaterloo.ca/journals/JIS/VOL26/Takeda/tak6.tex>.
-
-Proves `Wanted` entry `exists_parametrization_of_rpow_eq_rpow`.
 -/
 theorem exists_parametrization_of_rpow_eq_rpow (x y : ℝ) (hy : 0 < y) (hyx : y < x)
   (hxy : Real.rpow x y = Real.rpow y x) : ∃ (t : ℝ), 0 < t ∧

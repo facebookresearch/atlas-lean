@@ -45,22 +45,29 @@ section Prod
 variable {R M₁ M₂ : Type*} [CommSemiring R]
   [AddCommMonoid M₁] [AddCommMonoid M₂] [Module R M₁] [Module R M₂]
 
-/-- The orthogonal product of two bilinear forms, acting componentwise on
-a product of modules. -/
+/-- **Orthogonal product of bilinear forms.** Let $B_1$ and $B_2$ be bilinear forms on modules
+$M_1$ and $M_2$ over a commutative semiring $R$. Their orthogonal product $B_1 \oplus B_2$ is the
+bilinear form on $M_1 \times M_2$ given by
+$(B_1 \oplus B_2)((x_1, x_2), (y_1, y_2)) = B_1(x_1, y_1) + B_2(x_2, y_2)$. -/
 def prod (B₁ : BilinForm R M₁) (B₂ : BilinForm R M₂) :
     BilinForm R (M₁ × M₂) :=
   B₁.compl₁₂ (LinearMap.fst R M₁ M₂) (LinearMap.fst R M₁ M₂) +
     B₂.compl₁₂ (LinearMap.snd R M₁ M₂) (LinearMap.snd R M₁ M₂)
 
-/-- Evaluation formula for the orthogonal product of bilinear forms. -/
+/-- **Evaluation of an orthogonal product.** Let $B_1$ and $B_2$ be bilinear forms on modules
+$M_1$ and $M_2$ over a commutative semiring $R$, with orthogonal product $B_1 \oplus B_2$ on
+$M_1 \times M_2$. For all $x = (x_1, x_2)$ and $y = (y_1, y_2)$ in $M_1 \times M_2$,
+$(B_1 \oplus B_2)(x, y) = B_1(x_1, y_1) + B_2(x_2, y_2)$. -/
 @[simp]
 theorem prod_apply (B₁ : BilinForm R M₁) (B₂ : BilinForm R M₂)
     (x y : M₁ × M₂) :
     B₁.prod B₂ x y = B₁ x.1 y.1 + B₂ x.2 y.2 :=
   rfl
 
-/-- The orthogonal product of two bilinear forms is nondegenerate if and
-only if both factors are nondegenerate. -/
+/-- **Nondegeneracy of an orthogonal product.** Let $B_1$ and $B_2$ be bilinear forms on modules
+$M_1$ and $M_2$ over a commutative semiring $R$. Their orthogonal product $B_1 \oplus B_2$ on
+$M_1 \times M_2$ is nondegenerate (both left- and right-separating) if and only if $B_1$ and
+$B_2$ are both nondegenerate. -/
 @[simp]
 theorem nondegenerate_prod_iff {B₁ : BilinForm R M₁}
     {B₂ : BilinForm R M₂} :
@@ -138,7 +145,17 @@ variable {R S M₁ M₂ : Type*} [CommRing R] [Field S]
   [Module R M₁] [Module R M₂] [Module S M₁] [Module S M₂]
   [IsScalarTower R S M₁] [IsScalarTower R S M₂]
 
-/-- Dual submodules commute with orthogonal products of bilinear forms. -/
+/-- **Dual submodule of an orthogonal product.** Let $R$ be a commutative ring, let $S$ be a
+field that is an $R$-algebra, and let $M_1$, $M_2$ be vector spaces over $S$ that are also
+$R$-modules compatibly with $R \to S$. For a bilinear form $B$ over $S$ on such a space $M$ and an
+$R$-submodule $N$ of $M$, the dual of $N$ is
+$N^\vee = \{x \in M : B(x, y) \in R \text{ for all } y \in N\}$, where $R$ stands for its image
+in $S$. Let $B_1$, $B_2$ be bilinear forms over $S$ on $M_1$, $M_2$, and let $B_1 \oplus B_2$ be
+their orthogonal product on $M_1 \times M_2$, given by
+$(B_1 \oplus B_2)((x_1, x_2), (y_1, y_2)) = B_1(x_1, y_1) + B_2(x_2, y_2)$. Then for all
+$R$-submodules $N_1 \subseteq M_1$ and $N_2 \subseteq M_2$, the dual of $N_1 \times N_2$ with
+respect to $B_1 \oplus B_2$ is $N_1^\vee \times N_2^\vee$, where $N_1^\vee$ and $N_2^\vee$ are
+taken with respect to $B_1$ and $B_2$. -/
 @[simp]
 theorem dualSubmodule_prod (B₁ : BilinForm S M₁) (B₂ : BilinForm S M₂)
     (N₁ : Submodule R M₁) (N₂ : Submodule R M₂) :

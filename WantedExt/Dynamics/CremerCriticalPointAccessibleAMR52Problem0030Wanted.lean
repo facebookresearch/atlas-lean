@@ -55,7 +55,7 @@ def filledJuliaSet (α : ℝ) : Set ℂ :=
   {z | ∃ R : ℝ, ∀ k : ℕ, ‖(quadMap α)^[k] z‖ ≤ R}
 
 /-- The Julia set of `P_α`: the boundary of its filled Julia set. -/
-def juliaSet (α : ℝ) : Set ℂ :=
+noncomputable def juliaSet (α : ℝ) : Set ℂ :=
   frontier (filledJuliaSet α)
 
 /-- `0` is a Cremer point of `P_α`: `α` is irrational and `P_α` is not linearizable at `0`, that is,

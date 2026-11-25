@@ -51,7 +51,7 @@ noncomputable abbrev torusModel :=
   (𝓡 1).prod (𝓡 1)
 
 /-- The open unit ball of `ℝ²`, an open subset and hence a smooth manifold modelled on `𝓡 2`. -/
-def unitBall : TopologicalSpace.Opens (EuclideanSpace ℝ (Fin 2)) :=
+noncomputable def unitBall : TopologicalSpace.Opens (EuclideanSpace ℝ (Fin 2)) :=
   ⟨Metric.ball 0 1, Metric.isOpen_ball⟩
 
 /-- A diffeomorphism `h` of the torus is elementary (Burago-Ivanov-Polterovich, Definition 4;
