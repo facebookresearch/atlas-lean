@@ -97,26 +97,6 @@ public theorem_wanted gfp_fib_catalan (d g : ℤ[X]) (n : ℕ) :
       ∑ i ∈ range ((n - 1) / 2 + 1),
         (n.choose (2 * i + 1) : ℤ[X]) * d ^ (n - 2 * i - 1) * (4 * g + d ^ 2) ^ i
 
-/-- **Generating function of the floor-exponent binomial sums.** Let $R$ be a commutative ring,
-$t \in R$ and $\ell \ge 1$ an integer, and for $n \ge 0$ let
-$T_\ell(n; t) = \sum_{i=0}^{n} \binom{n}{i} t^{\lfloor i/\ell \rfloor}$. Then in the ring $R[[x]]$
-of formal power series,
-$$\Big(\sum_{n \ge 0} T_\ell(n; t)\, x^n\Big) \big((1-x)^\ell - t x^\ell\big)
-  = \sum_{k=0}^{\ell-1} \Big(\sum_{i=0}^{k} (-1)^i \binom{i+\ell-k-1}{i}\Big) x^k.$$
-
-So the generating function of the $T_\ell(n; t)$ is this polynomial divided by the series
-$(1-x)^\ell - t x^\ell$, which is invertible since its constant term is $1$.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Theorem 4.4 (`fq-2024-florez11012023-thm-4.4`). -/
-public theorem_wanted floorPowBinomialSum_generatingFunction {R : Type*} [CommRing R] (t : R)
-    {ℓ : ℕ} (hℓ : 1 ≤ ℓ) :
-    PowerSeries.mk (fun n => ∑ i ∈ range (n + 1), (n.choose i : R) * t ^ (i / ℓ)) *
-        ((1 - PowerSeries.X) ^ ℓ - PowerSeries.C t * PowerSeries.X ^ ℓ) =
-      ∑ k ∈ range ℓ, PowerSeries.C (∑ i ∈ range (k + 1),
-        (-1 : R) ^ i * ((i + ℓ - k - 1).choose i : R)) * PowerSeries.X ^ k
-
 /-- **Generating function of the binomial section sums.** Let $R$ be a commutative ring, $t \in R$,
 and let $\ell$ and $s$ be natural numbers with $s < \ell$. Put
 $T_{\ell,s}(n; t) = \sum_{i=0}^{n} \binom{n}{\ell i + s} t^i$. Then, as formal power series in $x$
