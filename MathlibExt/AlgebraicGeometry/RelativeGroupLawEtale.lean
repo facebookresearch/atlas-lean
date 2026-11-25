@@ -48,9 +48,9 @@ import Mathlib.AlgebraicGeometry.AffineScheme
 # Multiplication by a unit on a smooth commutative group law is étale
 
 Let `G` be a commutative relative group law on a scheme `A` over `Spec R`, with
-`R` a local ring. If the integer `n` is a unit in `R`, then multiplication by
-`n` is formally unramified as a scheme endomorphism of `A`; when moreover
-`A ⟶ Spec R` is smooth of relative dimension `d`, it is étale.
+`R` a local ring. If the natural number `n` is a unit in `R`, then
+multiplication by `n` is formally unramified as a scheme endomorphism of `A`;
+when moreover `A ⟶ Spec R` is smooth of relative dimension `d`, it is étale.
 
 The formally unramified step checks the infinitesimal lifting criterion: a
 point over a square-zero thickening that reduces to the identity and is killed
@@ -349,19 +349,14 @@ theorem formallyUnramified_schemeNsmul_of_forall_sqZero (G : RelativeGroupLaw R 
     rw [h₂, ← Category.assoc, ← hcomp, Category.assoc, ← h₁]
   let x₁ : Over.mk t ⟶ Over.mk f := Over.homMk g₁ rfl
   let x₂ : Over.mk t ⟶ Over.mk f := Over.homMk g₂ ht₂
-  let : CommGroup (Over.mk t ⟶ Over.mk f) := { G.pointGroup t with mul_comm := hc t }
-  have pow_eq : ∀ (m : ℕ) (x : Over.mk t ⟶ Over.mk f), x ^ m = G.nsmul t m x := by
-    intro m x
-    induction m with
-    | zero => rfl
-    | succ m ih => rw [pow_succ, ih, G.nsmul_succ]; rfl
+  let := G.pointCommGroup hc t
   have hnpow : x₁ ^ n = x₂ ^ n := by
-    rw [pow_eq, pow_eq]
+    rw [← G.nsmul_eq_pow, ← G.nsmul_eq_pow]
     exact Over.OverMorphism.ext
       (((G.nsmul_left n x₁).trans hcomp).trans (G.nsmul_left n x₂).symm)
   let k : Over.mk t ⟶ Over.mk f := x₁ * x₂⁻¹
   have hknpow : G.nsmul t n k = G.one t := by
-    rw [← pow_eq]
+    rw [G.nsmul_eq_pow]
     change (x₁ * x₂⁻¹) ^ n = 1
     rw [← div_eq_mul_inv, div_pow, hnpow, div_self']
   let t' : Spec S' ⟶ Spec (CommRingCat.of R) := Spec.map φ ≫ t
@@ -528,9 +523,8 @@ private theorem isKerElt_mul {x y : Over.mk t ⟶ Over.mk f}
 
 private theorem isKerElt_nsmul {k : Over.mk t ⟶ Over.mk f} (hk : IsKerElt G φ t k)
     (m : ℕ) : IsKerElt G φ t (G.nsmul t m k) := by
-  induction m with
-  | zero => exact isKerElt_one G φ t
-  | succ m ih => rw [G.nsmul_succ]; exact isKerElt_mul G φ t ih hk
+  unfold IsKerElt at hk ⊢
+  rw [G.homMk_comp_nsmul t _ (Spec.map φ) rfl m k, hk, G.nsmul_one_point]
 
 omit hsurj hker hιe in
 /-- The ring map out of the affine chart classifying a point near the identity. -/
@@ -932,8 +926,8 @@ theorem eq_one_of_sqZero_of_nsmul_eq_one_of_isUnit [IsLocalRing R]
   exact (kerAlg_apply G B₁ ι hιf hιe φ hsurj hker t htR' k hk b).symm.trans
     ((hkR0 b).trans (kerAlg_apply G B₁ ι hιf hιe φ hsurj hker t htR' _ _ b))
 
-/-- On a commutative relative group law over a local ring, multiplication by an integer that
-is a unit in the base is formally unramified. -/
+/-- On a commutative relative group law over a local ring, multiplication by a natural number
+`n` that is a unit in the base ring is formally unramified. -/
 theorem formallyUnramified_schemeNsmul_of_isUnit [IsLocalRing R] (G : RelativeGroupLaw R f)
     (hc : G.IsCommutative) (n : ℕ) (hn : IsUnit (n : R)) :
     FormallyUnramified (G.schemeNsmul n) :=
@@ -942,7 +936,8 @@ theorem formallyUnramified_schemeNsmul_of_isUnit [IsLocalRing R] (G : RelativeGr
       G.eq_one_of_sqZero_of_nsmul_eq_one_of_isUnit hn φ hφ hker t k hk hnk)
 
 /-- On a commutative relative group law over a local ring, smooth of relative dimension `d`
-over the base, multiplication by an integer that is a unit in the base is étale. -/
+over the base, multiplication by a natural number `n` that is a unit in the base ring is
+étale. -/
 theorem etale_schemeNsmul_of_isUnit [IsLocalRing R] (G : RelativeGroupLaw R f)
     (hc : G.IsCommutative) (d : ℕ) [SmoothOfRelativeDimension d f] (n : ℕ)
     (hn : IsUnit (n : R)) :

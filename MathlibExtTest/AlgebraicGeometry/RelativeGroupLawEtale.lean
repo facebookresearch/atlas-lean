@@ -65,4 +65,44 @@ example {R : Type u} [CommRing R] [IsLocalRing R] {A : Scheme.{u}}
     k = G.one t :=
   G.eq_one_of_sqZero_of_nsmul_eq_one_of_isUnit hn φ hφ hker t k hk hnk
 
+/-- The lifting criterion takes exactly the triviality of infinitesimal `n`-torsion points that
+`eq_one_of_sqZero_of_nsmul_eq_one_of_isUnit` provides. -/
+example {R : Type u} [CommRing R] [IsLocalRing R] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of R)} (G : RelativeGroupLaw R f) (hc : G.IsCommutative)
+    (n : ℕ) (hn : IsUnit (n : R)) :
+    FormallyUnramified (G.schemeNsmul n) :=
+  G.formallyUnramified_schemeNsmul_of_forall_sqZero hc n fun _ _ φ hφ hker t k hk hnk =>
+    G.eq_one_of_sqZero_of_nsmul_eq_one_of_isUnit hn φ hφ hker t k hk hnk
+
+/-- The identity point over a test scheme is its structure morphism followed by the identity
+section. -/
+example {R : Type u} [CommRing R] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
+    (G : RelativeGroupLaw R f) {T : Scheme.{u}} (t : T ⟶ Spec (CommRingCat.of R)) :
+    (G.one t).left = t ≫ G.unitSection := by
+  rw [← G.one_natural (𝟙 _) t t (Category.comp_id t)]
+  rfl
+
+/-- Any two points of `Spec R` over itself agree. -/
+private theorem point_eq {R : Type u} [CommRing R] {T : Scheme.{u}}
+    {t : T ⟶ Spec (CommRingCat.of R)}
+    (x y : Over.mk t ⟶ Over.mk (𝟙 (Spec (CommRingCat.of R)))) : x = y :=
+  Over.OverMorphism.ext (by simpa using (Over.w x).trans (Over.w y).symm)
+
+/-- The trivial group law on `Spec R` over itself. -/
+private noncomputable def trivialLaw (R : Type u) [CommRing R] :
+    RelativeGroupLaw R (𝟙 (Spec (CommRingCat.of R))) where
+  mul _ x _ := x
+  one t := Over.homMk t (Category.comp_id t)
+  inv _ x := x
+  mul_assoc _ _ _ _ := rfl
+  one_mul _ _ := point_eq _ _
+  mul_one _ _ := rfl
+  inv_mul_cancel _ _ := point_eq _ _
+  mul_natural _ _ _ _ _ _ := rfl
+
+/-- A concrete instance of all the hypotheses at once: `ℚ` is local, `2` is a unit in `ℚ`, and
+the trivial law on `Spec ℚ` over itself is commutative and smooth of relative dimension `0`. -/
+example : Etale ((trivialLaw ℚ).schemeNsmul 2) :=
+  (trivialLaw ℚ).etale_schemeNsmul_of_isUnit (fun _ _ _ => point_eq _ _) 0 2 (by simp)
+
 end RelativeGroupLawEtaleTest
