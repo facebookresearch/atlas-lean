@@ -3,6 +3,10 @@
 Classes of matrices defined by their structure or entries: Toeplitz, Hankel and circulant matrices, Hadamard and sign matrices, combinatorial matrices, nonnegative, doubly stochastic and totally positive matrices.
 
 - [Circulant matrices](circulant-matrices/README.md)
+- [Complex iwasawa](complex-iwasawa/README.md)
+- [Cross products under a real `3 × 3` matrix](cross-products-under-a-real-3-3-matrix/README.md)
+- [Entropy-minimizing table uniqueness](entropy-minimizing-table-uniqueness/README.md)
+- [Finite determination of linear observations](finite-determination-of-linear-observations/README.md)
 - [Hadamard matrices](hadamard-matrices/README.md)
 - [Hankel matrices](hankel-matrices/README.md)
 - [Hurwitz transform of sequences](hurwitz-transform-of-sequences/README.md)
@@ -11,6 +15,7 @@ Classes of matrices defined by their structure or entries: Toeplitz, Hankel and 
 - [Nu-lambda Pascal matrices](pascal-like-matrices/README.md)
 - [Perron–Frobenius theorem](perron-frobenius-theorem/README.md)
 - [Principal minors of the Fourier matrix](principal-minors-of-the-fourier-matrix/README.md)
+- [Sinkhorn-scaled table margins and gauge](sinkhorn-scaled-table-margins-and-gauge/README.md)
 - [Toeplitz matrices](toeplitz-matrices/README.md)
 - [Trudi's formula for Toeplitz–Hessenberg determinants](toeplitz-hessenberg-determinants/README.md)
 - [Total positivity](total-positivity/README.md)
@@ -20,3 +25,7 @@ Classes of matrices defined by their structure or entries: Toeplitz, Hankel and 
 - [Semiseparable matrices](semiseparable-matrices/README.md)
 - [Generalized Householder matrices](generalized-householder-matrices/README.md)
 - [Real planar rotation matrices](rotation-matrices/README.md)
+- [Det one or commutator](eq-one-or-eq-commutator-of-det-eq-one.md)
+- [Idempotent det](det-eq-zero-of-is-idempotent-elem-of-tra.md)
+- [Weak diagonal dominance and positive semidefiniteness](pos-semidef-of-diagonally-dominant.md)
+- [Adjugate invariant bilinear](exists-forall-apply-eq-mul-dot-product-m.md)

@@ -1,0 +1,5 @@
+# Identification with a shadow variable
+
+Let $\mathcal{Y}$ and $\mathcal{Z}$ be finite sets with measurable singletons, and let $P$ and $Q$ be finite measures on $\{\mathrm{true}, \mathrm{false}\} \times \mathcal{Y} \times \mathcal{Z}$ (coordinates $R$, $Y$, $Z$). The observed-data map sends $(r, y, z)$ to $(z, y)$ if $r = \mathrm{true}$ and to $(z, \ast)$ if $r = \mathrm{false}$, with values in $\mathcal{Z} \times (\mathcal{Y} \sqcup \{\ast\})$. Suppose both $P$ and $Q$ satisfy the shadow assumption: for every measurable $B \subseteq \mathcal{Z}$ and every $y$, $\mu(R = \mathrm{true}, Z \in B, Y = y)\, \mu(Y = y) = \mu(R = \mathrm{true}, Y = y)\, \mu(Z \in B, Y = y)$ for $\mu \in \{P, Q\}$. Suppose $P$ is complete: every $g : \mathcal{Y} \to \mathbb{R}$ with $\sum_{y} P(\{(\mathrm{true}, y, z)\})\, g(y) = 0$ for all $z$ is identically $0$. If $P$ and $Q$ have the same image measure under the observed-data map, then $P = Q$.
+
+This is identification with a shadow variable (Miao and Tchetgen Tchetgen).

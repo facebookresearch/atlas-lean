@@ -12,6 +12,7 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Newton's identities for traces of matrix powers](newton-s-identities-for-traces-of-matrix-powers/README.md)
 - [Smith normal form](smith-normal-form/README.md)
 - [Triangularization](triangularization/README.md)
+- [Charpoly pow trace](sum-roots-charpoly-map-pow-eq-trace-pow.md)
 - [Eigenvalues of the inverse matrix](eigenvalues-of-the-inverse/README.md)
 - [Spectral theorem for normal matrices](spectral-theorem-for-normal-matrices/README.md)
 - [Spectral radius under a row-sum bound](row-sum-bounds-on-eigenvalues/README.md)

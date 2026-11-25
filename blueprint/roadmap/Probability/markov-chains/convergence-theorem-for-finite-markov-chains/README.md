@@ -21,11 +21,13 @@
 - [Transition probabilities of the identity chain](prob-identity.md)
 - [Powers of the identity chain are the identity matrix](mat-pow-identity.md)
 - [The identity Markov chain is not ergodic](not-is-ergodic-identity.md)
+- [Sum mul pow apply eq self](sum-mul-pow-apply-eq-self.md)
 - [Doeblin's argument](tv-dist-pow-le-of-minorization.md)
 - [The convergence theorem](exists-tv-dist-pow-le.md)
 - [Convergence of matrix powers to the stationary distribution](tendsto-pow-apply.md)
 - [Uniqueness of the stationary distribution of a primitive chain](stationary-unique.md)
 - [Stationary distribution of a primitive chain has full support](stationary-pos.md)
+- [Perron-Frobenius for primitive stochastic matrices](perron-frobenius-primitive.md)
 
 - [Strong law for finite irreducible Markov chains, including periodic chains](strong-law-for-additive-functionals-of-finite-ir.md)
 

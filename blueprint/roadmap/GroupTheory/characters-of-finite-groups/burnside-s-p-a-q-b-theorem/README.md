@@ -17,6 +17,7 @@
 - [Bound on the number of irreducible representations](card-bound.md)
 - [Averaging operator of a function on a group](zimm-op.md)
 - [The averaging operator of a class function is $G$-equivariant](zimm-op-comm.md)
+- [Reg Mod](reg-mod.md)
 - [Class functions orthogonal to all irreducible characters vanish](classfun-eq-zero-of-orth.md)
 - [Expansion of class functions in irreducible characters](classfun-expand.md)
 - [Delta function at the identity](delta-one.md)

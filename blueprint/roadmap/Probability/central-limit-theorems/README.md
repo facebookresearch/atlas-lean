@@ -19,3 +19,4 @@ Convergence in law of normalized sums and their error terms: central limit theor
 
 - [Central limit theorem for additive functionals of finite Markov chains](central-limit-theorem-for-finite-markov-chains.md)
 - [Martingale central limit theorem for bounded increments](martingale-central-limit-theorem.md)
+- [Brownian adapter](exists-measurable-brownian-path-gaussian.md)
