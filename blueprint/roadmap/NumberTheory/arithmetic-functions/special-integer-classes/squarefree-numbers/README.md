@@ -32,4 +32,5 @@
 - [Ramanujan's squarefree Dirichlet series (Entry 30)](ramanujan-part1-ch5-entry30-secondordere.md)
 - [Even or odd non-squarefree numbers up to a bound](even-or-odd-non-squarefree.md)
 - [Erdős Problem 844](conjecture.md)
+- [Chvátal's theorem for shifted down-sets](card-le-card-filter-zero-mem.md)
 - [Erdős Problem 844 is true](conjecture-holds.md)
