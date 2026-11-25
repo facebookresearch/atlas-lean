@@ -17,7 +17,7 @@ For $n = 1$ the duality reads $\mathbb E \langle f, X_t \rangle = \langle e^{tB}
 ## Proof depends on
 
 - [Stone–Weierstrass theorem for star subalgebras](../../../../Topology/function-spaces/stone-weierstrass-star-subalgebra.md)
-- [Prokhorov's theorem on a Polish space](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
+- [Prokhorov's theorem: tight sets of probability measures are relatively compact](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
 
 ## Expansion
 

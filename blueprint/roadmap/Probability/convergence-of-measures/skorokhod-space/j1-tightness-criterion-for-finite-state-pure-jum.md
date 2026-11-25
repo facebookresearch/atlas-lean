@@ -17,7 +17,7 @@ The jump-separation condition cannot be dropped. The deterministic pulses $x_m=\
 
 ## Proof depends on
 
-- [Prokhorov's theorem on a Polish space](../prokhorov-theorem-on-a-polish-space.md)
+- [Prokhorov's theorem: tight sets of probability measures are relatively compact](../prokhorov-theorem-on-a-polish-space.md)
 
 ## Expansion
 

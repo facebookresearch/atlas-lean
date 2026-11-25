@@ -8,7 +8,7 @@ Construction: since $\sum_{m \ge 2} 1/\binom{m}{2} = 2 < \infty$, the Müntz–S
 
 ## Proof depends on
 
-- [Change of variables in the Lebesgue integral on an interval](../../../Analysis/real-functions/integration/change-of-variables-on-an-interval.md)
+- [Change of variables in the Lebesgue integral on the line](../../../Analysis/real-functions/integration/change-of-variables-on-an-interval.md)
 - [Müntz–Szász theorem in $L^1[0,1]$: non-density for a convergent reciprocal series](../../../Analysis/approximation-theory/muntz-szasz-non-density-in-l1.md)
 
 ## Expansion

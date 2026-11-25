@@ -21,7 +21,7 @@ Hence the step processes $t \mapsto X^M_{\lfloor tM \rfloor}$ are C-tight in $D(
 
 - [Tightness of interpolated rescaled WF chains in C([0,T])](../wright-fisher-semigroup-and-moment-duality/tightness-of-interpolated-rescaled-wf-chains-in.md)
 - [Neutral Wright–Fisher transition matrix](../../wright-fisher-markov-chain/wright-fisher.md)
-- [Prokhorov's theorem on a Polish space](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
+- [Prokhorov's theorem: tight sets of probability measures are relatively compact](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
 
 ## Expansion
 

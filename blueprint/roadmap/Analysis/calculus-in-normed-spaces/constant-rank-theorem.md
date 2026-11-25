@@ -1,38 +1,7 @@
 # Constant rank theorem
 
-Let $U\subseteq\mathbb R^d$ be open, let $k\ge1$, and let
-$f:U\to\mathbb R^m$ be a $C^k$ map whose derivative $Df(y)$ has the same rank
-$r$ for every $y$ in a neighbourhood of a point $x\in U$. Then there are open
-neighbourhoods $V\ni x$ and $W\ni f(x)$ with $f(V)\subseteq W$, and $C^k$
-diffeomorphisms $\varphi:V\to\varphi(V)\subseteq\mathbb R^d$ and
-$\psi:W\to\psi(W)\subseteq\mathbb R^m$, such that
+Let $d,m,r\in\mathbb N$, let $n\ge1$ be a smoothness order (finite, $\infty$ or analytic), let $U\subseteq\mathbb R^d$ be open with $x\in U$, and let $f:\mathbb R^d\to\mathbb R^m$ be $C^n$ on $U$ with $\operatorname{rank}Df(y)=r$ for all $y$ in a neighbourhood of $x$. Then there are $C^n$ charts $\varphi$ of $\mathbb R^d$ and $\psi$ of $\mathbb R^m$ (open partial homeomorphisms that are $C^n$ with $C^n$ inverses on their sources and targets) with $x\in\operatorname{source}\varphi\subseteq U$, $\varphi(x)=0$, $\psi(f(x))=0$ and $f(\operatorname{source}\varphi)\subseteq\operatorname{source}\psi$, such that
 
-$$\psi\circ f\circ\varphi^{-1}(u_1,\ldots,u_d)=(u_1,\ldots,u_r,0,\ldots,0)
-\qquad\text{on }\varphi(V).$$
+$$\psi\bigl(f(\varphi^{-1}(u))\bigr)=(u_1,\ldots,u_r,0,\ldots,0)\qquad\text{for every }u\in\operatorname{target}\varphi,$$
 
-In particular, near $x$ every fibre $f^{-1}(f(y))\cap V$ is a $C^k$
-submanifold of dimension $d-r$. Rank $r$ at the single point $x$ is not
-enough: the rank must be constant on a neighbourhood. The cases $r=0$ ($f$
-locally constant) and $r=d$ (an immersion) are included.
-
-## Proof depends on
-
-- [Inverse function theorem](inverse-function-theorem.md)
-
-## Expansion
-
-A proof page must establish:
-
-- Selection of a nonsingular $r\times r$ minor of $Df(x)$ and, after
-  permuting coordinates, the local inverse of
-  $(y_1,\ldots,y_d)\mapsto(f_1(y),\ldots,f_r(y),y_{r+1},\ldots,y_d)$ by the
-  inverse function theorem.
-- In the new coordinates, the vanishing of the derivatives of the remaining
-  components with respect to $u_{r+1},\ldots,u_d$, which uses constancy of the
-  rank on the neighbourhood.
-- The construction of $\psi$, the fibre-dimension corollary, and the boundary
-  cases $r=0$ and $r=\min(d,m)$.
-
-## Sources
-
-- John M. Lee, *Introduction to Smooth Manifolds*, 2nd edition, Springer (2013), Chapter 4, the rank theorem (smooth case; the same proof gives the $C^k$ case)
+and for every $y\in\operatorname{source}\varphi$ the chart $\varphi$ maps the local fibre $\operatorname{source}\varphi\cap f^{-1}(f(y))$ onto the slice $\{u\in\operatorname{target}\varphi: u_i=\varphi(y)_i\text{ for }i\le r\}$. The rank hypothesis forces $r\le\min(d,m)$. Rank $r$ at the single point $x$ is not enough: the rank must be constant on a neighbourhood.

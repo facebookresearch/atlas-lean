@@ -8,9 +8,9 @@ $$L^{\mathrm{fix}} f(x) = \tfrac12 x(1 - x) f''(x) + \Bigl(\alpha x(1 - x) + x(1
 
 in the neutral case $\alpha = 0$, $u_0(x) = x$ and the conditioned drift is $1 - x$. Consequently the mean absorption time conditioned on fixation is
 
-$$\mathbb E_p[\tau \mid \text{fixation}] = \int_0^1 G(p, x)\, \frac{u_\alpha(x)}{u_\alpha(p)}\, dx,$$
+$$\mathbb E_p[\tau \mid \text{fixation}] = \int_0^1 G_D(p, x)\, \frac{u_\alpha(x)}{u_\alpha(p)}\, dx,$$
 
-where $G$ is the Green function of the [occupation-time formula](../sojourn-times-of-the-wright-fisher-diffusion/occupation-time-formula-and-mean-absorption-time.md).
+where $G_D(p, x) = G(p, x)\, m(x)$ is the Lebesgue occupation density of the [occupation-time formula](../sojourn-times-of-the-wright-fisher-diffusion/occupation-time-formula-and-mean-absorption-time.md): the scale Green kernel $G$ times the speed density $m$.
 
 ## Depends on
 
@@ -28,7 +28,7 @@ where $G$ is the Green function of the [occupation-time formula](../sojourn-time
 A full proof page must still establish:
 
 - the conditioned martingale problem, by the [localized h-transform](localized-h-transform-for-nonnegative-harmonic-h.md) with $h = u_\alpha$;
-- the conditioned occupation density $G(p, x)\, u_\alpha(x)/u_\alpha(p)$ and the formula for the conditional mean absorption time;
+- the conditioned Lebesgue occupation density $G_D(p, x)\, u_\alpha(x)/u_\alpha(p)$, with $G_D = G\, m$ as in the occupation-time formula, and the formula for the conditional mean absorption time;
 - the neutral case.
 
 ## Sources

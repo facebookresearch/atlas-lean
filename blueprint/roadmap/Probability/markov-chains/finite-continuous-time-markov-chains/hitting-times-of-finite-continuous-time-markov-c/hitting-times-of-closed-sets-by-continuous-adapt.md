@@ -16,7 +16,8 @@ a countable infimum of $\mathcal F_t$-measurable random variables, where $x\maps
 
 ## Proof depends on
 
-- [The distance to a set is 1-Lipschitz and vanishes exactly on its closure](../../../../Topology/metric-spaces/distance-to-a-set.md)
+- [The distance to a set is 1-Lipschitz](../../../../Topology/metric-spaces/distance-to-a-set.md)
+- [The distance to a nonempty set vanishes exactly on its closure](../../../../Topology/metric-spaces/distance-to-a-set-vanishes-exactly-on-the-closure.md)
 
 ## Expansion
 
