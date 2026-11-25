@@ -75,4 +75,26 @@ example (ω : Ω) :
   norm_num [predictableQuadraticVariation, Finset.sum_range_succ,
     condExp_const (μ := μ) (ℱ.le 0), condExp_const (μ := μ) (ℱ.le 1)]
 
+/-- The almost-sure convergence of `∑ e k / (k + 1)` restated with its exact public signature. -/
+example {e : ℕ → Ω → ℝ} {K : ℝ} (he : ∀ k, StronglyMeasurable[ℱ (k + 1)] (e k))
+    (heK : ∀ k, ∀ᵐ ω ∂μ, |e k ω| ≤ K) (hce : ∀ k, μ[e k | ℱ k] =ᵐ[μ] 0) :
+    ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => ∑ k ∈ Finset.range n, e k ω / ((k : ℝ) + 1)) atTop (𝓝 c) :=
+  ae_exists_tendsto_sum_div_succ ℱ he heK hce
+
+/-- The increments `e k = f (k + 1) - f k` of a martingale with bounded increments give a
+convergent series `∑ e k / (k + 1)` almost surely. -/
+example (hmart : Martingale f ℱ μ) {K : ℝ} (hK : ∀ k, ∀ᵐ ω ∂μ, |f (k + 1) ω - f k ω| ≤ K) :
+    ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => ∑ k ∈ Finset.range n, (f (k + 1) ω - f k ω) / ((k : ℝ) + 1))
+      atTop (𝓝 c) := by
+  refine ae_exists_tendsto_sum_div_succ ℱ (fun k => ?_) hK fun k => ?_
+  · exact (hmart.stronglyAdapted (k + 1)).sub
+      ((hmart.stronglyAdapted k).mono (ℱ.mono k.le_succ))
+  · have h1 := condExp_sub (hmart.integrable (k + 1)) (hmart.integrable k) (ℱ k : MeasurableSpace Ω)
+    have h2 : μ[f k | ℱ k] = f k :=
+      condExp_of_stronglyMeasurable (ℱ.le k) (hmart.stronglyAdapted k) (hmart.integrable k)
+    filter_upwards [h1, hmart.condExp_ae_eq k.le_succ] with ω h1 h3
+    simp only [Pi.sub_apply] at h1
+    rw [show (fun ω => f (k + 1) ω - f k ω) = f (k + 1) - f k from rfl, h1, h3, h2,
+      Pi.zero_apply, sub_self]
+
 end MathlibExtTest.Probability.SqMartingaleConvergence
