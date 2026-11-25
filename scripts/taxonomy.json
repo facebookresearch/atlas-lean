@@ -14612,6 +14612,7 @@
   "PhyslibExt/EarthScience/UpwindScheme": {"to": "Analysis/numerical-analysis", "title": "Upwind scheme"},
   "PhyslibExt/EarthScience/WeakDiffusion": {"to": "Analysis/partial-differential-equations", "title": "Weak solutions of elliptic equations"},
   "PhyslibExt/Engineering/Process/CSTR": {"to": "Chemistry/chemical-kinetics", "title": "Continuous stirred-tank reactor"},
+  "PhyslibExt/Engineering/Process/CSTRSecondOrder": {"to": "Chemistry/chemical-kinetics", "title": "Continuous stirred-tank reactor"},
   "PhyslibExt/Engineering/Process/MassTransfer": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Interphase mass transfer"},
   "PhyslibExt/Engineering/Resource/DeclineCurve": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Exponential and hyperbolic production decline"},
   "PhyslibExt/FluidDynamics/Hydraulics/PipeNetworkHeads": {"to": "Physics/fluid-mechanics", "title": "Pipe-flow networks"},
