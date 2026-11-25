@@ -15,3 +15,4 @@ the uniqueness of a canonical realization up to similarity.
 - [The transfer matrix as a rational function, and its invariance under similarity](transfer-matrix-as-a-rational-function-and-its-similarity-invariance.md)
 - [Transfer poles of a minimal realization are its eigenvalues](transfer-poles-of-a-minimal-realization-are-its-eigenvalues.md)
 - [The z-transform of the state of a discrete-time linear system](z-transform-of-the-state-of-a-discrete-time-linear-system.md)
+- [Exponential polynomials that do not decay are not integrable](exponential-polynomials-that-do-not-decay-are-not-integrable.md)
