@@ -16,12 +16,12 @@ open CongruenceSubgroup
 open scoped MatrixGroups
 
 /-- Consumer with the original binders: the index formula. -/
-theorem exactSource (N : ℕ) [NeZero N] :
+private theorem exactSource (N : ℕ) [NeZero N] :
     (CongruenceSubgroup.Gamma0 N).index = ArithmeticFunction.dedekindPsi N :=
   ModularCurve.Gamma0_index N
 
 /-- Consumer with the original binders: the quotient cardinality formula. -/
-theorem exactSourceCard (N : ℕ) :
+private theorem exactSourceCard (N : ℕ) :
     Nat.card (𝒮ℒ ⧸ (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ)
       (CongruenceSubgroup.Gamma0 N)).subgroupOf 𝒮ℒ) =
       (CongruenceSubgroup.Gamma0 N).index :=
@@ -36,8 +36,8 @@ example : (CongruenceSubgroup.Gamma0 1).index = 1 := by
   have h := ModularCurve.Gamma0_index 1
   simpa using h
 
-example : Nat.card (ModularCurve.ProjectiveLine (ZMod 6)) = 12 := by
-  have h := ModularCurve.card_projectiveLine_zmod 6 (by decide)
+example : (CongruenceSubgroup.Gamma0 6).index = 12 := by
+  have h := ModularCurve.Gamma0_index 6
   have hpsi : ArithmeticFunction.dedekindPsi 6 = 12 := by
     rw [show (6 : ℕ) = 2 * 3 by norm_num,
       ArithmeticFunction.isMultiplicative_dedekindPsi.map_mul_of_coprime (by decide),
