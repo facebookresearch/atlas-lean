@@ -551,7 +551,7 @@ omit [(J.W (A := Ab.{u})).IsMonoidal] [J.HasSheafCompose (forget₂ CommRingCat.
 theorem whiskerToSheafify_memW (P : Cᵒᵖ ⥤ Ab.{u}) :
     (J.over X).W ((Over.forget X).op.whiskerLeft (CategoryTheory.toSheafify J P)) :=
   -- Whiskering preserves local bijectivity of the sheafification unit.
-  
+
   GrothendieckTopology.W_of_isLocallyBijective _ _
 
 omit [(J.W (A := Ab.{u})).IsMonoidal] [((J.over X).W (A := Ab.{u})).IsMonoidal]

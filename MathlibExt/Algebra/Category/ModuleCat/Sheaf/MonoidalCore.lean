@@ -11,17 +11,17 @@ module
 
 
 
-public import Mathlib.Algebra.Category.Grp.FilteredColimits 
-public import Mathlib.Algebra.Category.Grp.Limits 
+public import Mathlib.Algebra.Category.Grp.FilteredColimits
+public import Mathlib.Algebra.Category.Grp.Limits
 public import MathlibExt.Algebra.Category.ModuleCat.Presheaf.MonoidalCompat
 public import MathlibExt.Algebra.Category.ModuleCat.Presheaf.SheafificationCompat
 public import MathlibExt.CategoryTheory.Localization.BousfieldCompat
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Localization
-public import Mathlib.Algebra.Category.Ring.Limits 
+public import Mathlib.Algebra.Category.Ring.Limits
 public import Mathlib.CategoryTheory.Localization.Monoidal.Braided
-public import Mathlib.CategoryTheory.Sites.LeftExact 
-public import Mathlib.CategoryTheory.Sites.Monoidal 
-public import Mathlib.CategoryTheory.Sites.Whiskering 
+public import Mathlib.CategoryTheory.Sites.LeftExact
+public import Mathlib.CategoryTheory.Sites.Monoidal
+public import Mathlib.CategoryTheory.Sites.Whiskering
 
 /-!
 # The monoidal structure on sheaves of modules

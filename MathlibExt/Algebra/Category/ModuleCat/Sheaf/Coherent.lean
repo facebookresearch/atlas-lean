@@ -528,8 +528,8 @@ private theorem kernelPieceGenerators
   have hepiα : Epi ((_root_.SheafOfModules.overFunctor (S.over X) Y).map α) :=
     epi_of_locallySurjective _ hLSα
   -- The iterated-slice equivalence preserves colimits.
-  
-  
+
+
   have hEcol : PreservesColimitsOfSize.{u, u}
       (kernelIteratedSliceEquivGeneral (S := S) X Y).inverse := inferInstance
   have hpre : (kernelIteratedSliceEquivGeneral (S := S) X Y).functor.obj
@@ -800,10 +800,10 @@ theorem isCoherent_kernel {M N : SheafOfModules.{u} R}
       have hfin : ((τ i).generators j).IsFiniteType := (hτ i).isFiniteType j
       have := hαEpi i
       -- Transfer finite generating sections through the iterated-slice equivalence.
-      
-      
-      
-      
+
+
+
+
       exact kernelPieceGenerators (Limits.kernel _φ) (σ.X i) ((τ i).X j)
         (Limits.kernel ((π i) ≫ (_root_.SheafOfModules.overFunctor R (σ.X i)).map _φ)) (α i)
         ((τ i).generators j)
@@ -812,8 +812,8 @@ theorem isCoherent_kernel {M N : SheafOfModules.{u} R}
         (fun p : (i : σ.I) × (τ i).I => ((τ p.1).X p.2).left) :=
       σ.coversTop.over (fun i => (τ i).coversTop)
     -- Shrinking the generating family preserves finiteness.
-    
-    
+
+
     exact ⟨((⟨(i : σ.I) × (τ i).I,
       fun p : (i : σ.I) × (τ i).I => ((τ p.1).X p.2).left, hcover, gen⟩ :
       (Limits.kernel _φ).LocalGeneratorsData)).shrink,
@@ -1048,7 +1048,7 @@ theorem isCoherent_cokernel {M N : SheafOfModules.{u} R}
               = ((_root_.SheafOfModules.overFunctor R X).map (Limits.cokernel.π _φ)).val.app
                   (Opposite.op W'.unop.left)
                   (((N.over X).val.map (W'.unop.hom).op) (t j.down)) := by
-            
+
             rfl
           rw [eDouble]
           refine (PresheafOfModules.naturality_apply
@@ -2038,7 +2038,7 @@ theorem isFiniteType_extension' {S : ShortComplex (SheafOfModules.{u} R)}
             ((S.X₂.val).map (U'.unop.hom).op (t k)))
             = (S.g).val.app (Opposite.op U'.unop.left)
               ((S.X₂.val).map (U'.unop.hom).op (t k)) := by
-          
+
           rfl
         rw [eapp]
         have ht' : (S.g).val.app (Opposite.op V) (t k)
