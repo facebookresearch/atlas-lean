@@ -1,3 +1,4 @@
-# Algebra
+# Compact algebra on scalar sequence space
 
-The actual compact-operator closed star ideal on countable scalar Hilbert space.
+`Algebra` is `K(Hilbert)`, the closed star ideal
+of compact operators on `lp(ℕ,ℂ,2)`, with the operator norm.

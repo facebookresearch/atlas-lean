@@ -1,3 +1,4 @@
-# Algebraic Inclusion
+# Isometric inclusion of finite-support vectors
 
-The canonical inclusion of the algebraic finite-support sum.
+The map from `Algebraic B E` into
+`Completed B E` is the complex-linear isometric completion inclusion.

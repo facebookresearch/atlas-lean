@@ -1,4 +1,5 @@
-# Right Matrix Standard Compact Hom injective
+# Injectivity of the standard compact corner
 
-The actual standard compact corner is faithful, by compression back
-to the original faithful finite matrix hom.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the map `rightMatrixStandardCompactHom η` is
+injective by its finite block extraction.

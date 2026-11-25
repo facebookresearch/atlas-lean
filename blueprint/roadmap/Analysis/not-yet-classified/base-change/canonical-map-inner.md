@@ -1,3 +1,5 @@
-# Canonical Map inner
+# Inner product of canonical base-change images
 
-The exact original coefficient-inner formula of the canonical vector map.
+For nonunital C-star algebras `B,C` with
+star-compatible opposite orders, a complete right `B`-module `E`, and a complex nonunital star
+homomorphism `f : B → C`, for `j = canonicalMap f`, `⟨j(x),j(y)⟩_C = f(⟨x,y⟩_B)`.

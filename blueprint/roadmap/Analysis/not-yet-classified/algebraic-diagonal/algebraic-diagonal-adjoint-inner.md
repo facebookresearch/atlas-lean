@@ -1,4 +1,4 @@
-# Algebraic Diagonal adjoint inner
+# Pairing with the adjoint diagonal
 
-The given adjoint family satisfies the genuine finite coefficient pairing.
-No equality of the two finite supports is required.
+The coefficient inner products satisfy `algebraicInner
+(D_T x) y = algebraicInner x (D_(T*) y)` for the finite-support sums.

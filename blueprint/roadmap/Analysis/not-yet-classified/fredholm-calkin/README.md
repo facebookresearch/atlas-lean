@@ -1,25 +1,25 @@
-# Fredholm Calkin
+# Fredholm operators and Calkin units
 
-## Calkin Algebra
+## Calkin algebras
 
-- [Class Star Map eq iff](class-star-map-eq-iff.md)
-- [Is Unit class Star Map iff is Fredholm](is-unit-class-star-map-iff-is-fredholm.md)
+- [Equality of Calkin operator classes](class-star-map-eq-iff.md)
+- [Atkinson theorem in the Calkin algebra](is-unit-class-star-map-iff-is-fredholm.md)
 
-## Is Fredholm
+## Fredholm operators
 
-- [Of class Star Map eq](of-class-star-map-eq.md)
-- [Index eq of class Star Map eq](index-eq-of-class-star-map-eq.md)
-- [Add compact](add-compact.md)
-- [Index add compact](index-add-compact.md)
-- [Sub compact](sub-compact.md)
-- [Index sub compact](index-sub-compact.md)
+- [Fredholmness determined by the Calkin class](of-class-star-map-eq.md)
+- [Fredholm index determined by the Calkin class](index-eq-of-class-star-map-eq.md)
+- [Fredholmness under compact addition](add-compact.md)
+- [Index under compact addition](index-add-compact.md)
+- [Fredholmness under compact subtraction](sub-compact.md)
+- [Index under compact subtraction](index-sub-compact.md)
 
-## Unit
+## Units and indices in the Calkin algebra
 
-- [Index](index-2.md)
-- [Index eq lift](index-eq-lift.md)
-- [Index one](index-one.md)
-- [Index mul](index-mul.md)
-- [Index inv](index-inv.md)
-- [Index Hom](index-hom.md)
-- [Index Hom apply](index-hom-apply.md)
+- [Index of a Calkin unit](index-2.md)
+- [Index computed by any bounded lift](index-eq-lift.md)
+- [Index of the identity Calkin unit](index-one.md)
+- [Additivity of index on Calkin units](index-mul.md)
+- [Index of an inverse Calkin unit](index-inv.md)
+- [Group homomorphism of Calkin indices](index-hom.md)
+- [Value of the Calkin index homomorphism](index-hom-apply.md)

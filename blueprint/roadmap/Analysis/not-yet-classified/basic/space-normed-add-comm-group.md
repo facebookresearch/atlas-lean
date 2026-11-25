@@ -1,3 +1,4 @@
-# Space Normed Add Comm Group
+# Norm on the Hilbert amplification
 
-The existing radical norm followed by its stock completion norm.
+The additive-group norm on `Space H A` is the completed
+inner-product norm `‖x‖ = sqrt ‖⟨x,x⟩_A‖`; on pure vectors it is `‖ξ⊗a‖ = ‖ξ‖ * ‖a‖`.

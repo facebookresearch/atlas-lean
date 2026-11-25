@@ -1,4 +1,4 @@
-# Is Unit block Diagonal iff
+# Invertibility of a diagonal Calkin class
 
-The original block-diagonal Calkin class is a unit exactly when its two actual coordinates are
- units.
+For complex Hilbert spaces `H,K`, for `x :
+Q(H)`, `y : Q(K)`, `IsUnit (blockDiagonalStarAlgHom (x,y)) ↔ IsUnit x ∧ IsUnit y`.

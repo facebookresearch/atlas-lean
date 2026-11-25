@@ -1,3 +1,3 @@
-# C0 Left Translation Action apply
+# Evaluation of the translation action
 
-The point-norm action keeps every original coefficient value.
+For g, s ∈ G and f ∈ C₀(G,ℂ), `c0LeftTranslationAction g f s = f (g⁻¹ * s)`.

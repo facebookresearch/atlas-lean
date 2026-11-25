@@ -1,5 +1,5 @@
-# Uniform
+# Uniform and positive representative properties
 
-- [Is Uniform](is-uniform.md)
-- [Is Star Linear](is-star-linear.md)
-- [Is Completely Positive Contraction](is-completely-positive-contraction.md)
+- [Uniform asymptotic representative](is-uniform.md)
+- [Star-linear time slices](is-star-linear.md)
+- [Completely positive contraction slices](is-completely-positive-contraction.md)

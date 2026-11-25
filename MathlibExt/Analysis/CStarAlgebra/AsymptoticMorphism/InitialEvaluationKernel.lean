@@ -23,22 +23,19 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# The initial-evaluation kernel of the full-time pullback
+# Initial-evaluation kernel of a full-time pullback
 
-The kernel of evaluation at time one is a closed ideal of the actual full-time
-pullback. Its coefficient projection is onto: subtracting the translated cone
-endpoint lift corrects the existing set section at time one. This is only a
-set-theoretic section, with no finite-time linearity assumption.
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. The projection p0 is surjective, with set section s0(a)=(a,t↦φ_t(a)-exp(1-t)•φ_1(a)).
+Its kernel is J0, identified with C₀((0,1),B) by F(t)=f(1/t) for t>1 and F(1)=0. Thus
+0→C₀((0,1),B)→Eφ→A→0 is a C-star extension.
 
-The kernel of the restricted coefficient projection is the suspension algebra.
-The reciprocal coordinate sends time infinity to the puncture zero and time
-one to endpoint one. The norm and C-star dictionaries are inherited from the
-existing closed ideals; no global instance or parallel middle algebra is added.
-
-Reference: Blackadar, K-Theory for Operator Algebras (1998), §25.1.2(b),
-§25.1.4(b), and the full-time pullback in §25.6. The parent's full C0 kernel is
-unchanged. Mapping-cone comparison, Busby converses and E-theory inverses are
-not asserted here.
+Reference: Blackadar, K-Theory for Operator Algebras (1998), §25.1.2(b), §25.1.4(b), and the
+full-time pullback in §25.6.
 -/
 
 @[expose] public section
@@ -53,9 +50,17 @@ noncomputable section
 
 namespace AsymptoticMorphism.FullTimePullback
 
-/-! ## Actual time coordinates -/
+/-!
+## Coordinates on the closed time ray
 
-/-- Translate the closed time ray to the nonnegative reals by `t ↦ t - 1`. -/
+For T=[1,∞), translation t↦t-1 is a homeomorphism T→[0,∞). On interior points t>1, the
+reciprocal coordinate s=1/t gives a homeomorphism (1,∞)→(0,1).
+-/
+
+/-- **Translation of asymptotic time to the nonnegative half-line.**
+
+The homeomorphism timeHomeomorphNNReal:T=[1,∞)≃ₜℝ≥0 is t↦t-1, with inverse u↦u+1.
+-/
 def timeHomeomorphNNReal : AsymptoticTime ≃ₜ ℝ≥0 := by
   let e : ℝ ≃o ℝ := OrderIso.addRight (-1)
   have h₁ : e 1 = 0 := by
@@ -64,20 +69,29 @@ def timeHomeomorphNNReal : AsymptoticTime ≃ₜ ℝ≥0 := by
   exact ((e.Ici 1).trans
     (Set.orderIsoOfEq (Ici (e 1)) (Ici 0) (congrArg Ici h₁))).toHomeomorph
 
-/-- The translated time has its literal real coordinate. -/
+/-- **Real value of the translated time coordinate.**
+
+For t∈T=[1,∞), (timeHomeomorphNNReal t:ℝ)=t-1.
+-/
 theorem timeHomeomorphNNReal_apply (t : AsymptoticTime) :
     (timeHomeomorphNNReal t : ℝ) = (t : ℝ) - 1 := by
   change (t : ℝ) + (-1) = (t : ℝ) - 1
   exact (sub_eq_add_neg _ _).symm
 
-/-- The inverse translation has real coordinate `u + 1`. -/
+/-- **Real value of the inverse time translation.**
+
+For u∈ℝ≥0, the time timeHomeomorphNNReal.symm u∈[1,∞) has real coordinate u+1.
+-/
 theorem timeHomeomorphNNReal_symm_apply (u : ℝ≥0) :
     (timeHomeomorphNNReal.symm u : ℝ) = (u : ℝ) + 1 := by
   have h := timeHomeomorphNNReal_apply (timeHomeomorphNNReal.symm u)
   rw [timeHomeomorphNNReal.apply_symm_apply] at h
   linarith
 
-/-- Time one is sent to zero, using the proved endpoint transport. -/
+/-- **The initial time translates to zero.**
+
+Under timeHomeomorphNNReal:[1,∞)≃ₜℝ≥0, the time t=1 maps to u=0.
+-/
 @[simp]
 theorem timeHomeomorphNNReal_one :
     timeHomeomorphNNReal ⟨1, le_rfl⟩ = 0 := by
@@ -85,14 +99,20 @@ theorem timeHomeomorphNNReal_one :
   rw [timeHomeomorphNNReal_apply]
   exact sub_self 1
 
-/-- Zero is sent back to time one. -/
+/-- **Zero translates back to the initial time.**
+
+Under the inverse of timeHomeomorphNNReal:[1,∞)≃ₜℝ≥0, the coordinate u=0 maps to t=1.
+-/
 @[simp]
 theorem timeHomeomorphNNReal_symm_zero :
     timeHomeomorphNNReal.symm 0 = ⟨1, le_rfl⟩ := by
   apply timeHomeomorphNNReal.injective
   rw [timeHomeomorphNNReal.apply_symm_apply, timeHomeomorphNNReal_one]
 
-/-- Interior times have strictly positive translated coordinates. -/
+/-- **Positivity of the translated interior time.**
+
+If t∈[1,∞) and t>1, then timeHomeomorphNNReal t=t-1 is strictly positive.
+-/
 theorem timeHomeomorphNNReal_pos {t : AsymptoticTime} (ht : 1 < (t : ℝ)) :
     0 < timeHomeomorphNNReal t := by
   have h : 0 < (timeHomeomorphNNReal t : ℝ) := by
@@ -100,7 +120,11 @@ theorem timeHomeomorphNNReal_pos {t : AsymptoticTime} (ht : 1 < (t : ℝ)) :
     exact sub_pos.mpr ht
   exact_mod_cast h
 
-/-- The decreasing reciprocal coordinate from the positive half-line to `(0,1)`. -/
+/-- **Reciprocal homeomorphism of positive coordinates.**
+
+The homeomorphism positiveNNRealReciprocalHomeomorph:(0,∞)≃ₜ(0,1) is u↦1/(1+u), with inverse
+s↦1/s-1.
+-/
 def positiveNNRealReciprocalHomeomorph :
     Ioi (0 : ℝ≥0) ≃ₜ Ioo (0 : ℝ) 1 where
   toFun u := ⟨1 / (1 + ((u : ℝ≥0) : ℝ)), by
@@ -136,18 +160,27 @@ def positiveNNRealReciprocalHomeomorph :
         (fun s ↦ ne_of_gt s.property.1)).sub continuous_const
     exact (hs.subtype_mk _).subtype_mk _
 
-/-- The reciprocal coordinate has the stated scalar value. -/
+/-- **Value of the positive reciprocal coordinate.**
+
+For u>0, positiveNNRealReciprocalHomeomorph u=1/(1+u)∈(0,1).
+-/
 theorem positiveNNRealReciprocalHomeomorph_apply (u : Ioi (0 : ℝ≥0)) :
     (positiveNNRealReciprocalHomeomorph u : ℝ) =
       1 / (1 + ((u : ℝ≥0) : ℝ)) :=
   rfl
 
-/-- The inverse coordinate is the actual positive number `1/s - 1`. -/
+/-- **Value of the inverse reciprocal coordinate.**
+
+For s∈(0,1), positiveNNRealReciprocalHomeomorph.symm s=1/s-1>0.
+-/
 theorem positiveNNRealReciprocalHomeomorph_symm_apply (s : Ioo (0 : ℝ) 1) :
     ((positiveNNRealReciprocalHomeomorph.symm s : ℝ≥0) : ℝ) = 1 / (s : ℝ) - 1 :=
   rfl
 
-/-- Translation followed by the reciprocal coordinate has value `1/t`. -/
+/-- **Reciprocal coordinate of an interior asymptotic time.**
+
+For t>1, composing the translated coordinate u=t-1 with u↦1/(1+u) gives 1/t∈(0,1).
+-/
 theorem positiveNNRealReciprocalHomeomorph_time
     {t : AsymptoticTime} (ht : 1 < (t : ℝ)) :
     (positiveNNRealReciprocalHomeomorph
@@ -158,33 +191,59 @@ theorem positiveNNRealReciprocalHomeomorph_time
 
 universe uA uB
 
-/-! ## Cone and suspension transport -/
+/-!
+## Cone and suspension coordinate equivalences
+
+Let B be a nonunital complex C-star algebra and T=[1,∞). Translation identifies C₀([0,∞),B)
+with C₀(T,B), and reciprocal coordinates identify C₀((0,1),B) with {F∈C₀(T,B):F(1)=0},
+preserving the supremum norm.
+-/
 
 section ConeTransport
 
 variable (B : Type uB) [NonUnitalCStarAlgebra B]
 
-/-- Transport the existing cone to the closed time ray by translation. -/
+/-- **Cone transported to the asymptotic time ray.**
+
+Let B be a nonunital complex C-star algebra. The star-algebra equivalence coneTimeEquiv
+B:CStarKTheory.Cone B=C₀([0,∞),B)≃⋆ₐ[ℂ]C₀([1,∞),B) sends f to t↦f(t-1).
+-/
 def coneTimeEquiv : CStarKTheory.Cone B ≃⋆ₐ[ℂ] C₀(AsymptoticTime, B) :=
   ZeroAtInftyContinuousMap.starAlgEquivPrecomp timeHomeomorphNNReal
 
-/-- Cone transport has the literal translated value. -/
+/-- **Value of the translated cone function.**
+
+Let B be a nonunital complex C-star algebra, f∈CStarKTheory.Cone B=C₀([0,∞),B) and t≥1. Then
+coneTimeEquiv B f t=f(t-1).
+-/
 theorem coneTimeEquiv_apply (f : CStarKTheory.Cone B) (t : AsymptoticTime) :
     coneTimeEquiv B f t = f (timeHomeomorphNNReal t) :=
   rfl
 
-/-- The inverse uses the computed inverse time translation. -/
+/-- **Inverse cone transport value.**
+
+Let B be a nonunital complex C-star algebra, F∈C₀([1,∞),B) and u≥0. Then (coneTimeEquiv
+B).symm F u=F(u+1).
+-/
 theorem coneTimeEquiv_symm_apply (f : C₀(AsymptoticTime, B)) (u : ℝ≥0) :
     (coneTimeEquiv B).symm f u = f (timeHomeomorphNNReal.symm u) :=
   rfl
 
-/-- Transport preserves the endpoint value, with zero corresponding to time one. -/
+/-- **Endpoint preserved by cone translation.**
+
+Let B be a nonunital complex C-star algebra and f∈C₀([0,∞),B). Then coneTimeEquiv B f 1=f(0).
+-/
 @[simp]
 theorem coneTimeEquiv_one (f : CStarKTheory.Cone B) :
     coneTimeEquiv B f ⟨1, le_rfl⟩ = f 0 := by
   rw [coneTimeEquiv_apply, timeHomeomorphNNReal_one]
 
-/-- Restrict cone transport to the two actual point-evaluation kernels. -/
+/-- **Equivalence of the cone endpoint and initial-time kernels.**
+
+Let B be a nonunital complex C-star algebra. The star-algebra equivalence conePointKernelEquiv
+B identifies {g∈C₀([0,∞),B):g(0)=0} with {F∈C₀([1,∞),B):F(1)=0} by F(t)=g(t-1), preserving the
+inherited supremum norms.
+-/
 def conePointKernelEquiv :
     letI : NonUnitalCStarAlgebra
         (ZeroAtInftyContinuousMap.vanishingAt (A := B) (0 : ℝ≥0)).carrier :=
@@ -229,7 +288,11 @@ def conePointKernelEquiv :
       apply Subtype.ext
       exact (coneTimeEquiv B).apply_symm_apply f.val)
 
-/-- The restricted equivalence retains the original translated function. -/
+/-- **Value of a translated cone-kernel function.**
+
+Let B be a nonunital complex C-star algebra and g∈C₀([0,∞),B) satisfy g(0)=0. For t≥1,
+conePointKernelEquiv B g t=g(t-1).
+-/
 theorem conePointKernelEquiv_apply
     (g : (ZeroAtInftyContinuousMap.vanishingAt (A := B) (0 : ℝ≥0)).carrier)
     (t : AsymptoticTime) :
@@ -237,7 +300,11 @@ theorem conePointKernelEquiv_apply
       (g : C₀(ℝ≥0, B)) (timeHomeomorphNNReal t) :=
   rfl
 
-/-- Its inverse retains the original inverse-translation coordinate. -/
+/-- **Inverse value of a translated cone-kernel function.**
+
+Let B be a nonunital complex C-star algebra and F∈C₀([1,∞),B) satisfy F(1)=0. For u≥0,
+(conePointKernelEquiv B).symm F u=F(u+1).
+-/
 theorem conePointKernelEquiv_symm_apply
     (f : (ZeroAtInftyContinuousMap.vanishingAt (A := B)
       (⟨1, le_rfl⟩ : AsymptoticTime)).carrier) (u : ℝ≥0) :
@@ -245,7 +312,13 @@ theorem conePointKernelEquiv_symm_apply
       (f : C₀(AsymptoticTime, B)) (timeHomeomorphNNReal.symm u) :=
   rfl
 
-/-- The suspension is the actual time-one-zero subideal of full closed-ray C0. -/
+/-- **Open-interval suspension as the initial-time vanishing ideal.**
+
+Let B be a nonunital complex C-star algebra and T=[1,∞). Write J0={F∈C₀(T,B):F(1)=0}, with the
+inherited supremum norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for
+t>1; its inverse is R⁻¹(F)(s)=F(1/s). The map openIntervalKernelEquiv B:C₀((0,1),B)≃⋆ₐ[ℂ]J0 is
+this reciprocal-coordinate equivalence, preserving the supremum norm.
+-/
 def openIntervalKernelEquiv :
     letI : NonUnitalCStarAlgebra
         (ZeroAtInftyContinuousMap.vanishingAt (A := B)
@@ -266,13 +339,21 @@ def openIntervalKernelEquiv :
       ZeroAtInftyContinuousMap.positiveNNRealStarAlgEquivVanishingAtZero).trans
     (conePointKernelEquiv B)
 
-/-- The suspension transport is zero at time one. -/
+/-- **Reciprocal suspension function vanishes at the initial time.**
+
+Let B be a nonunital complex C-star algebra and f∈C₀((0,1),B). The function
+openIntervalKernelEquiv B f∈C₀([1,∞),B) has value zero at t=1.
+-/
 theorem openIntervalKernelEquiv_one (f : C₀(Ioo (0 : ℝ) 1, B)) :
     (openIntervalKernelEquiv B f : C₀(AsymptoticTime, B)) ⟨1, le_rfl⟩ = 0 :=
   (ZeroAtInftyContinuousMap.mem_vanishingAt _ _).1
     (openIntervalKernelEquiv B f).property
 
-/-- At an interior time the literal suspension coordinate is `1/t`. -/
+/-- **Interior value of the reciprocal suspension function.**
+
+Let B be a nonunital complex C-star algebra, f∈C₀((0,1),B) and t>1. Then
+openIntervalKernelEquiv B f t=f(1/t).
+-/
 theorem openIntervalKernelEquiv_apply_of_one_lt
     (f : C₀(Ioo (0 : ℝ) 1, B)) {t : AsymptoticTime} (ht : 1 < (t : ℝ)) :
     (openIntervalKernelEquiv B f : C₀(AsymptoticTime, B)) t =
@@ -289,7 +370,11 @@ theorem openIntervalKernelEquiv_apply_of_one_lt
   apply Subtype.ext
   exact positiveNNRealReciprocalHomeomorph_time ht
 
-/-- The computed inverse recovers the interior reciprocal time coordinate. -/
+/-- **Inverse value of the reciprocal suspension function.**
+
+Let B be a nonunital complex C-star algebra and F∈C₀([1,∞),B) satisfy F(1)=0. For s∈(0,1),
+(openIntervalKernelEquiv B).symm F s=F(1/s).
+-/
 theorem openIntervalKernelEquiv_symm_apply
     (f : (ZeroAtInftyContinuousMap.vanishingAt (A := B)
       (⟨1, le_rfl⟩ : AsymptoticTime)).carrier) (s : Ioo (0 : ℝ) 1) :
@@ -301,7 +386,16 @@ theorem openIntervalKernelEquiv_symm_apply
 
 end ConeTransport
 
-/-! ## The actual anchored closed ideal -/
+/-!
+## Closed ideal of zero initial evaluation
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Evaluation at time one is ev_1(a,F)=F(1); its kernel is
+the closed ideal Eφ.
+-/
 
 section AnchoredPullback
 
@@ -311,24 +405,56 @@ variable (φ : AsymptoticMorphism A B)
 
 attribute [local instance] _root_.AsymptoticAlgebra.cStarAlgebra
 
-/-- The actual kernel of ordinary evaluation at time one in the full pullback. -/
+/-- **Closed initial-evaluation ideal.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The ideal initialEvaluationIdeal φ is
+ker(ev_1)={d=(a,F)∈Dφ:F(1)=0}.
+-/
 def initialEvaluationIdeal :
     letI : NonUnitalCStarAlgebra (AsymptoticAlgebra B) :=
       _root_.AsymptoticAlgebra.cStarAlgebra B
     ClosedStarIdeal (FullTimePullback φ) :=
   ClosedStarIdeal.ker (evaluation φ ⟨1, le_rfl⟩)
 
-/-- Membership in the anchored ideal is exactly zero initial evaluation. -/
+/-- **Membership in the initial-evaluation ideal.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. For d=(a,F)∈Dφ, d∈initialEvaluationIdeal φ if and only if
+evaluation φ 1 d=F(1)=0.
+-/
 @[simp]
 theorem mem_initialEvaluationIdeal (d : FullTimePullback φ) :
     d ∈ initialEvaluationIdeal φ ↔ evaluation φ ⟨1, le_rfl⟩ d = 0 :=
   ClosedStarIdeal.mem_ker (evaluation φ ⟨1, le_rfl⟩) d
 
-/-- The anchored middle carrier, with the unchanged inherited subobject norm. -/
+/-- **Carrier of the initial-evaluation kernel.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. InitialEvaluationKernel φ is Eφ with the nonunital C-star
+structure of this closed ideal.
+-/
 abbrev InitialEvaluationKernel : Type (max uA uB) :=
   (initialEvaluationIdeal φ).carrier
 
-/-- Restrict the existing coefficient projection to its anchored closed ideal. -/
+/-- **Coefficient projection restricted to the initial kernel.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The nonunital complex star homomorphism initialProjection
+φ:Eφ→A is p0(a,F)=a.
+-/
 def initialProjection :
     letI : NonUnitalCStarAlgebra (AsymptoticAlgebra B) :=
       _root_.AsymptoticAlgebra.cStarAlgebra B
@@ -342,13 +468,29 @@ def initialProjection :
   exact (projection φ).comp
     (NonUnitalStarSubalgebraClass.subtype (initialEvaluationIdeal φ).carrier)
 
-/-- The restricted projection retains the actual first-coordinate value. -/
+/-- **Value of the restricted coefficient projection.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. For d=(a,F)∈Eφ, initialProjection φ d=projection φ
+d.val=a.
+-/
 theorem initialProjection_apply (d : InitialEvaluationKernel φ) :
     initialProjection φ d = projection φ d.val :=
   rfl
 
-/-- Correct the existing orbit section by its translated cone endpoint lift.
-This is a plain set section, not a star-algebra homomorphism. -/
+/-- **Initial-time-zero set section of the coefficient projection.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The set section s0(a)=(a,t↦φ_t(a)-exp(1-t)•φ_1(a)) belongs
+to Eφ and satisfies p0(s0(a))=a. This is initialSetSection φ; the exponential correction
+belongs to C₀(T,B), so it leaves the quotient class Φφ(a) unchanged.
+-/
 def initialSetSection (a : A) : InitialEvaluationKernel φ :=
   ⟨setSection φ a - kernelInclusion φ
       (coneTimeEquiv B (CStarKTheory.Cone.endpointLift (φ ⟨1, le_rfl⟩ a))), by
@@ -356,29 +498,70 @@ def initialSetSection (a : A) : InitialEvaluationKernel φ :=
     rw [map_sub, evaluation_setSection, evaluation_kernelInclusion,
       coneTimeEquiv_one, CStarKTheory.Cone.endpointLift_zero, sub_self]⟩
 
-/-- The corrected set section has the stated ambient subtraction value. -/
+/-- **Ambient value of the initial-time-zero section.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Let s(a)=(a,t↦φ_t(a))∈Dφ and k(F)=(0,F) for F∈C₀(T,B).
+Then (initialSetSection φ a).val=s(a)-k(t↦exp(1-t)•φ_1(a)); the correction is coneTimeEquiv B
+(Cone.endpointLift(φ_1(a))).
+-/
 theorem initialSetSection_val (a : A) :
     (initialSetSection φ a).val = setSection φ a - kernelInclusion φ
       (coneTimeEquiv B (CStarKTheory.Cone.endpointLift (φ ⟨1, le_rfl⟩ a))) :=
   rfl
 
-/-- Initial evaluation of the actual corrected section is zero. -/
+/-- **Initial evaluation of the corrected section.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The set section s0(a)=(a,t↦φ_t(a)-exp(1-t)•φ_1(a)) belongs
+to Eφ and satisfies p0(s0(a))=a. For a∈A, evaluation φ 1 (initialSetSection φ a).val=0.
+-/
 theorem evaluation_initialSetSection (a : A) :
     evaluation φ ⟨1, le_rfl⟩ (initialSetSection φ a).val = 0 :=
   (mem_initialEvaluationIdeal φ _).1 (initialSetSection φ a).property
 
-/-- Subtracting a full-kernel element leaves the coefficient unchanged. -/
+/-- **Coefficient of the corrected initial section.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The set section s0(a)=(a,t↦φ_t(a)-exp(1-t)•φ_1(a)) belongs
+to Eφ and satisfies p0(s0(a))=a. For a∈A, initialProjection φ (initialSetSection φ a)=a.
+-/
 @[simp]
 theorem initialProjection_initialSetSection (a : A) :
     initialProjection φ (initialSetSection φ a) = a := by
   rw [initialProjection_apply, initialSetSection_val, map_sub,
     projection_setSection, projection_kernelInclusion, sub_zero]
 
-/-- The explicit set section proves actual surjectivity for arbitrary raw orbits. -/
+/-- **Surjectivity of the initial-kernel coefficient projection.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The map initialProjection φ:Eφ→A is surjective, with
+section a↦(a,t↦φ_t(a)-exp(1-t)•φ_1(a)).
+-/
 theorem initialProjection_surjective : Function.Surjective (initialProjection φ) :=
   fun a ↦ ⟨initialSetSection φ a, initialProjection_initialSetSection φ a⟩
 
-/-- Restrict the old full C0 inclusion to functions vanishing at time one. -/
+/-- **Inclusion of initial-time-zero vanishing functions.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. The nonunital complex star homomorphism actualKernelInclusion φ:J0→Eφ is F↦(0,F).
+-/
 def actualKernelInclusion :
     letI : NonUnitalCStarAlgebra (AsymptoticAlgebra B) :=
       _root_.AsymptoticAlgebra.cStarAlgebra B
@@ -403,14 +586,30 @@ def actualKernelInclusion :
       rw [evaluation_kernelInclusion]
       exact (ZeroAtInftyContinuousMap.mem_vanishingAt _ _).1 f.property)
 
-/-- The intermediate inclusion uses the parent's unchanged full C0 inclusion. -/
+/-- **Ambient value of the initial-time-zero kernel inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For F∈J0, (actualKernelInclusion φ F).val=kernelInclusion φ F=(0,F) in Dφ.
+-/
 theorem actualKernelInclusion_val
     (f : (ZeroAtInftyContinuousMap.vanishingAt (A := B)
       (⟨1, le_rfl⟩ : AsymptoticTime)).carrier) :
     (actualKernelInclusion φ f).val = kernelInclusion φ f.val :=
   rfl
 
-/-- This inclusion has zero coefficient projection. -/
+/-- **Coefficient projection kills the initial-time-zero kernel.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For F∈J0, initialProjection φ (actualKernelInclusion φ F)=0.
+-/
 @[simp]
 theorem initialProjection_actualKernelInclusion
     (f : (ZeroAtInftyContinuousMap.vanishingAt (A := B)
@@ -418,14 +617,30 @@ theorem initialProjection_actualKernelInclusion
     initialProjection φ (actualKernelInclusion φ f) = 0 := by
   rw [initialProjection_apply, actualKernelInclusion_val, projection_kernelInclusion]
 
-/-- The restricted full-kernel inclusion is injective. -/
+/-- **Injectivity of the initial-time-zero kernel inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. The homomorphism actualKernelInclusion φ:J0→Eφ, F↦(0,F), is injective.
+-/
 theorem actualKernelInclusion_injective : Function.Injective (actualKernelInclusion φ) := by
   intro f g h
   apply Subtype.ext
   apply kernelInclusion_injective φ
   exact congrArg Subtype.val h
 
-/-- Exactness uses the parent's full C0 witness and proves its initial value zero. -/
+/-- **Exact initial-kernel sequence with the vanishing ideal.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For k0(F)=(0,F), range(k0)=ker(p0), so J0→Eφ→A is exact.
+-/
 theorem actualKernelInclusion_exact :
     Function.Exact (actualKernelInclusion φ) (initialProjection φ) := by
   intro d
@@ -445,7 +660,17 @@ theorem actualKernelInclusion_exact :
   · rintro ⟨f, rfl⟩
     exact initialProjection_actualKernelInclusion φ f
 
-/-- Include the literal reciprocal suspension kernel in the anchored middle. -/
+/-- **Suspension inclusion into the initial-evaluation kernel.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for t>1; its inverse
+is R⁻¹(F)(s)=F(1/s). The nonunital complex star homomorphism initialSuspensionInclusion
+φ:C₀((0,1),B)→Eφ sends f to (0,R(f)).
+-/
 def initialSuspensionInclusion :
     letI : NonUnitalCStarAlgebra (AsymptoticAlgebra B) :=
       _root_.AsymptoticAlgebra.cStarAlgebra B
@@ -460,18 +685,44 @@ def initialSuspensionInclusion :
     ClosedStarIdeal.carrierCStarAlgebra (initialEvaluationIdeal φ)
   exact (actualKernelInclusion φ).comp (openIntervalKernelEquiv B).toNonUnitalStarAlgHom
 
-/-- The ambient value is the original inclusion of the computed C0 suspension. -/
+/-- **Ambient value of the reciprocal suspension inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for t>1; its inverse
+is R⁻¹(F)(s)=F(1/s). For f∈C₀((0,1),B), (initialSuspensionInclusion φ f).val=kernelInclusion φ
+R(f)=(0,R(f)) in Dφ.
+-/
 theorem initialSuspensionInclusion_val (f : C₀(Ioo (0 : ℝ) 1, B)) :
     (initialSuspensionInclusion φ f).val =
       kernelInclusion φ (openIntervalKernelEquiv B f).val :=
   rfl
 
-/-- The suspension inclusion has zero initial-time evaluation. -/
+/-- **Initial evaluation of the suspension inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. For f∈C₀((0,1),B), the element initialSuspensionInclusion
+φ f∈Eφ has evaluation zero at t=1.
+-/
 theorem initialSuspensionInclusion_one (f : C₀(Ioo (0 : ℝ) 1, B)) :
     evaluation φ ⟨1, le_rfl⟩ (initialSuspensionInclusion φ f).val = 0 :=
   (mem_initialEvaluationIdeal φ _).1 (initialSuspensionInclusion φ f).property
 
-/-- At every interior time its bounded coordinate is the literal value `f(1/t)`. -/
+/-- **Interior evaluation of the suspension inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. For f∈C₀((0,1),B) and t>1, evaluation φ t
+(initialSuspensionInclusion φ f).val=f(1/t).
+-/
 theorem initialSuspensionInclusion_apply_of_one_lt
     (f : C₀(Ioo (0 : ℝ) 1, B)) {t : AsymptoticTime} (ht : 1 < (t : ℝ)) :
     evaluation φ t (initialSuspensionInclusion φ f).val =
@@ -481,18 +732,45 @@ theorem initialSuspensionInclusion_apply_of_one_lt
   rw [initialSuspensionInclusion_val, evaluation_kernelInclusion]
   exact openIntervalKernelEquiv_apply_of_one_lt B f ht
 
-/-- The suspension inclusion is injective for zero and nonfaithful coefficient maps too. -/
+/-- **Injectivity of the reciprocal suspension inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for t>1; its inverse
+is R⁻¹(F)(s)=F(1/s). The map initialSuspensionInclusion φ:f↦(0,R(f)) is injective for every
+asymptotic family φ, including zero or nonfaithful families.
+-/
 theorem initialSuspensionInclusion_injective :
     Function.Injective (initialSuspensionInclusion φ) :=
   (actualKernelInclusion_injective φ).comp (openIntervalKernelEquiv B).injective
 
-/-- The coefficient projection kills the suspension inclusion. -/
+/-- **Coefficient projection kills the suspension inclusion.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. For f∈C₀((0,1),B), initialProjection φ
+(initialSuspensionInclusion φ f)=0.
+-/
 @[simp]
 theorem initialProjection_initialSuspensionInclusion (f : C₀(Ioo (0 : ℝ) 1, B)) :
     initialProjection φ (initialSuspensionInclusion φ f) = 0 :=
   initialProjection_actualKernelInclusion φ (openIntervalKernelEquiv B f)
 
-/-- Exactness of the anchored sequence, using the actual suspension inverse. -/
+/-- **Exact sequence with the reciprocal suspension kernel.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for t>1; its inverse
+is R⁻¹(F)(s)=F(1/s). For i(f)=(0,R(f)), range(i)=ker(p0); thus C₀((0,1),B)→Eφ→A is exact.
+-/
 theorem initialSuspensionInclusion_exact :
     Function.Exact (initialSuspensionInclusion φ) (initialProjection φ) := by
   intro d
@@ -507,7 +785,17 @@ theorem initialSuspensionInclusion_exact :
   · rintro ⟨f, rfl⟩
     exact initialProjection_initialSuspensionInclusion φ f
 
-/-- Normalize the proved exact pair, retaining the actual anchored middle and norm. -/
+/-- **C-star extension defined by initial evaluation.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for t>1; its inverse
+is R⁻¹(F)(s)=F(1/s). The extension initialEvaluationExtension φ is 0→C₀((0,1),B)→Eφ→A→0, with
+inclusion f↦(0,R(f)) and quotient p0.
+-/
 def initialEvaluationExtension :
     letI : NonUnitalCStarAlgebra (AsymptoticAlgebra B) :=
       _root_.AsymptoticAlgebra.cStarAlgebra B
@@ -518,12 +806,30 @@ def initialEvaluationExtension :
     (initialSuspensionInclusion_injective φ) (initialProjection_surjective φ)
     (initialSuspensionInclusion_exact φ)
 
-/-- Exact-pair normalization does not replace the anchored middle carrier. -/
+/-- **Middle algebra of the initial-evaluation extension.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The middle algebra of initialEvaluationExtension φ is
+InitialEvaluationKernel φ=Eφ.
+-/
 theorem initialEvaluationExtension_middle :
     (initialEvaluationExtension φ).Middle = InitialEvaluationKernel φ :=
   rfl
 
-/-- The normalized inclusion is the actual reciprocal suspension inclusion. -/
+/-- **Inclusion map of the initial-evaluation extension.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. Write J0={F∈C₀(T,B):F(1)=0}, with the inherited supremum
+norm. For f∈C₀((0,1),B), define R(f)∈J0 by R(f)(1)=0 and R(f)(t)=f(1/t) for t>1; its inverse
+is R⁻¹(F)(s)=F(1/s). For f∈C₀((0,1),B), (initialEvaluationExtension φ).inclusion
+f=initialSuspensionInclusion φ f=(0,R(f)).
+-/
 theorem initialEvaluationExtension_inclusion_apply (f : C₀(Ioo (0 : ℝ) 1, B)) :
     (initialEvaluationExtension φ).inclusion f = initialSuspensionInclusion φ f := by
   let : NonUnitalCStarAlgebra (InitialEvaluationKernel φ) :=
@@ -532,7 +838,15 @@ theorem initialEvaluationExtension_inclusion_apply (f : C₀(Ioo (0 : ℝ) 1, B)
     (initialProjection φ) (initialSuspensionInclusion_injective φ)
     (initialProjection_surjective φ) (initialSuspensionInclusion_exact φ) f
 
-/-- The normalized quotient is the actual restricted coefficient projection. -/
+/-- **Quotient map of the initial-evaluation extension.**
+
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. For d=(a,F)∈Eφ, (initialEvaluationExtension φ).quotient
+d=initialProjection φ d=a.
+-/
 theorem initialEvaluationExtension_quotient_apply (d : InitialEvaluationKernel φ) :
     (initialEvaluationExtension φ).quotient d = initialProjection φ d := by
   let : NonUnitalCStarAlgebra (InitialEvaluationKernel φ) :=

@@ -1,3 +1,5 @@
-# Character Modulation
+# Modulation by a unitary character
 
-The original compact-support coefficient function multiplied by the actual scalar character.
+For a point-norm action α on A, Haar measure μ, a continuous unitary character χ of G and
+f∈Cc(G,A), character modulation is Mχf(s)=χ(s)•f(s). The resulting coefficient is continuous
+and compactly supported.

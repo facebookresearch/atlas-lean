@@ -1,3 +1,4 @@
-# Completed Diagonal adjoint apply completed Single
+# Adjoint diagonal on a component inclusion
 
-The stored adjoint acts on a coordinate by the GIVEN component adjoint.
+`D_T* (completedSingle i y) = completedSingle i
+(T_i* y)` in the source completed sum.

@@ -1,4 +1,4 @@
-# Reindex Unitary
+# Unitary reindexing of a standard module
 
-The unitary equivalence of standard modules induced by a coordinate
-equivalence.
+For nonunital `B` and a bijection `e : I ≃ J`,
+this unitary is the reindexing map with coordinate formula `(U x)_j = x_(e.symm j)`.

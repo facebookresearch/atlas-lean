@@ -1,5 +1,4 @@
-# Is Model
+# Complete coordinate presentation of a direct sum
 
-Characteristic coordinate laws of a completed Hilbert-module direct sum.
-Completeness is part of this contract rather than an accidental property of a
-particular presentation.
+A complete target module `X` with
+coordinate maps satisfying `IsPreModel` is a completed direct-sum presentation.

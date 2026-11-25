@@ -1,3 +1,4 @@
-# Sum interchange strong
+# Interchange of coherent Busby sums
 
-Assoc/comm coherence interchanges the two middle summands.
+If `S.IsCoherent`, the sums `(τ₁+τ₂)+(σ₁+σ₂)` and
+`(τ₁+σ₁)+(τ₂+σ₂)` are strongly equivalent, with every addition interpreted as `S.sum`.

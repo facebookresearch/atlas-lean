@@ -1,3 +1,4 @@
-# Algebra eq zero of integrated Coefficient Left eq zero
+# Vanishing integrated coefficient action annihilates the coefficient
 
-The actual coefficient approximate unit recovers a coefficient from all its zero integrated left actions.
+Let ρ be a covariant representation and a∈A. If Iρ(a⋅f)=0 for every compactly supported
+coefficient f, where (a⋅f)(s)=a*f(s), then ρ.algebra(a)=0.

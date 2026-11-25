@@ -1,3 +1,8 @@
-# Dense Range to Canonical Reduced Algebra
+# Density of the canonical reduced coefficient map
 
-The original core map is dense in its literal canonical reduced operator closure.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For the canonical
+regular pair (Π,λ) on K=L²(G,μ;CanonicalCoefficientSpace A), put Ireg(f)ξ=∫ s, Π(f(s))(λ_s ξ)
+∂μ. Let Rred be the operator-norm closure of {Ireg(f):f∈Carrier μ α} in B(K). The map
+toCanonicalReducedAlgebra μ α:f↦Ireg(f) has dense range in Rred for the inherited operator
+norm.

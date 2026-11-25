@@ -1,3 +1,7 @@
-# Compact Multiplier Hom fst
+# Left multiplier action on module compacts
 
-Every actual compact coefficient has the original left ambient-operator action.
+Let `B` be a nonunital complex C-star algebra
+whose opposite has a star-ordered partial order, and let `E` be a complete complex normed
+right C-star module over `B`. Write `End_B(E)` for its adjointable endomorphisms and `K_B(E)`
+for their norm-closed compact ideal. for `T ∈ End_B(E)` and `k ∈ K_B(E)`, the left component
+of `compactMultiplierHom T` has underlying adjointable operator `T*k`.

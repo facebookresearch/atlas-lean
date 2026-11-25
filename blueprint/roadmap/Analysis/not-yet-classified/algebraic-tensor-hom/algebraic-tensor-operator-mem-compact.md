@@ -1,3 +1,5 @@
-# Algebraic Tensor Operator mem compact
+# Compactness of the algebraic tensor action
 
-Every original algebraic tensor has actual compact module image.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, every `algebraicTensorOperator H A z` belongs to the module
+compact ideal on `Space H A`.

@@ -1,3 +1,5 @@
-# Index
+# Index of a Calkin unit
 
-The Fredholm index of a unit in the Calkin algebra.
+For a complex Hilbert space `H`, for `x : Q(H)ˣ`, define its
+integer index as the Fredholm index of any bounded lift of the unit `x`; compact perturbation
+invariance makes the value independent of the lift.

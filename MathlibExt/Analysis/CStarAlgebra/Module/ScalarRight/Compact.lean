@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight.AdjointableEqu
 public import MathlibExt.Analysis.CStarAlgebra.Module.Compact
 
 /-!
-# Scalar-right rank-one operators
+# Rank-one operators on right scalar modules
 
-The scalar-right module rank-one operator is exactly the ordinary Hilbert-space
-rank-one operator after conjugating through the fixed `ScalarRight.equivL`
-factories.  This is the algebraic leaf needed before comparing finite-rank
-spans and compact-operator closures; no closure or compactness equivalence is
-claimed here.
+For complex inner-product spaces `H,K`, the module rank-one operator `z ↦ x <• rightInner y z`
+becomes the Hilbert-space operator `z ↦ ⟪equivL H y, z⟫_ℂ • equivL K x` under scalar-module
+identification.
+
+On complete spaces the inverse correspondence sends a Hilbert-space rank-one operator to this
+module rank-one operator, and hence into the complex span of module rank-one operators.
 -/
 
 @[expose] public section
@@ -34,9 +35,9 @@ noncomputable section
 
 universe u v
 
-/-- Forgetting a scalar-right module rank-one operator gives the ordinary
-Hilbert-space rank-one operator.  Completeness is not needed in this
-direction. -/
+/-- **Hilbert-space form of a module rank-one operator.** For complex inner-product spaces,
+forgetting the module rank-one map defined by `x,y` gives `InnerProductSpace.rankOne ℂ (equivL
+K x) (equivL H y)`. Completeness is not required. -/
 theorem toContinuousLinearMap_rankOne
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -74,8 +75,9 @@ theorem toContinuousLinearMap_rankOne
     ScalarRight.right_smul_apply, ScalarRight.rightInner_apply,
     (equivL H).apply_symm_apply, InnerProductSpace.rankOne_apply]
 
-/-- The complete-Hilbert correspondence sends the ordinary rank-one operator
-to the literal scalar-right module rank-one operator. -/
+/-- **Module form of a Hilbert rank-one operator.** For complex Hilbert spaces and `x : K`, `y :
+H`, the image of `InnerProductSpace.rankOne ℂ x y` is the module rank-one operator defined by
+`(equivL K).symm x` and `(equivL H).symm y`. -/
 theorem ofContinuousLinearMap_rankOne
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -112,8 +114,9 @@ theorem ofContinuousLinearMap_rankOne
     ScalarRight.right_smul_apply, ScalarRight.rightInner_apply,
     (equivL K).apply_symm_apply, (equivL H).apply_symm_apply]
 
-/-- Ordinary Hilbert-space rank-one maps land in the module finite-rank span
-under the complete-Hilbert scalar-right correspondence. -/
+/-- **Rank-one images in the module finite-rank span.** For complex Hilbert spaces,
+`ofContinuousLinearMap H K (InnerProductSpace.rankOne ℂ x y)` lies in the module finite-rank
+submodule. -/
 theorem ofContinuousLinearMap_rankOne_mem_finiteRank
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

@@ -1,18 +1,18 @@
-# NClass Direct Limit
+# Direct limit of finite-stage homotopy classes
 
-## Explicit transport and proof-indexed stage maps
+## Maps between homotopy classes at ordered stages
 
-- [N Classes Cast](n-classes-cast.md)
-- [Stage Transition LE](stage-transition-le.md)
-- [Stage Transition LE of add](stage-transition-le-of-add.md)
+- [Identification of class spaces with equal stage indices](n-classes-cast.md)
+- [Transition map between ordered finite stages](stage-transition-le.md)
+- [Ordered-stage transition for a specified offset](stage-transition-le-of-add.md)
 
 ## Directed-system laws
 
-- [N Classes Directed System](n-classes-directed-system.md)
+- [Directed system of finite-stage homotopy classes](n-classes-directed-system.md)
 
-## Raw direct limit and its universal maps
+## Direct limits and their universal maps
 
-- [NClasses Direct Limit](nclasses-direct-limit.md)
-- [N Classes Direct Limit Of](n-classes-direct-limit-of.md)
-- [N Classes Direct Limit Of transition](n-classes-direct-limit-of-transition.md)
-- [N Classes Direct Limit Lift](n-classes-direct-limit-lift.md)
+- [Direct-limit set of finite-stage homotopy classes](nclasses-direct-limit.md)
+- [Canonical map from a class stage to the direct limit](n-classes-direct-limit-of.md)
+- [A direct-limit class equals each later-stage image](n-classes-direct-limit-of-transition.md)
+- [Universal function out of the direct limit](n-classes-direct-limit-lift.md)

@@ -1,3 +1,4 @@
-# Sub compact
+# Fredholmness under compact subtraction
 
-Subtracting a compact operator preserves Fredholmness.
+For a complex Hilbert space `H`, if `T` is
+Fredholm and `K` compact, `T-K` is Fredholm.

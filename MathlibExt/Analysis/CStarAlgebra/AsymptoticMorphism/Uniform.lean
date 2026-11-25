@@ -15,14 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Basic
 public import Mathlib.Analysis.CStarAlgebra.CompletelyPositiveMap
 
 /-!
-# Separate uniform, star-linear and CP-contraction representative properties
+# Uniform and positive representative properties
 
-None of these is added to the raw asymptotic-morphism structure. Uniformity
-means an actual continuous map into the bounded continuous function algebra
-with its supremum topology, not only joint continuity.
-
-CP maps use the canonical spectral orders locally inside the property; the
-raw morphism's norm/topology dictionaries are unchanged.
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+Uniformity is continuity of a↦(t↦φ_t(a)) as a map A→C_b(T,B) for the supremum norm.
+Star-linearity means each φ_t is complex-linear and star-preserving. Complete positivity and
+contractivity mean each φ_t is complex-linear, preserves the canonical positive cones at every
+matrix level, and satisfies ‖φ_t(a)‖≤‖a‖.
 -/
 
 @[expose] public section
@@ -39,19 +40,40 @@ universe uA uB
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The actual continuous A->BCF(Time,B) uniform representative property. -/
+/-- **Uniform asymptotic representative.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+IsUniform φ means that there is a continuous F:A→C_b(T,B) with F(a)(t)=φ_t(a) for all a,t. The
+bounded continuous function algebra C_b(T,B) carries the supremum norm.
+-/
 def IsUniform (φ : AsymptoticMorphism A B) : Prop :=
   ∃ F : C(A, AsymptoticTime →ᵇ B), ∀ (t : AsymptoticTime) (a : A), F a t = φ t a
 
-/-- Exact star-linear slices, with no boundedness or continuity-in-a premise. -/
+/-- **Star-linear time slices.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+IsStarLinear φ means that for every t∈T, φ_t(a+b)=φ_t(a)+φ_t(b), φ_t(z•a)=z•φ_t(a), and
+φ_t(star(a))=star(φ_t(a)) for all a,b∈A and z∈ℂ.
+-/
 def IsStarLinear (φ : AsymptoticMorphism A B) : Prop :=
   ∀ t : AsymptoticTime,
     (∀ a b : A, φ t (a + b) = φ t a + φ t b) ∧
     (∀ (z : ℂ) (a : A), φ t (z • a) = z • φ t a) ∧
     ∀ a : A, φ t (star a) = star (φ t a)
 
-/-- Actual completely positive linear contraction slices for the canonical
-C-star orders; no exact algebra homomorphism property is assumed. -/
+/-- **Completely positive contraction slices.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+IsCompletelyPositiveContraction φ means that for each t∈T, φ_t equals a completely positive
+complex-linear map s_t:A→B with ‖s_t(a)‖≤‖a‖ for every a∈A. Positivity uses the canonical
+C-star positive cones, including all matrix amplifications.
+-/
 def IsCompletelyPositiveContraction (φ : AsymptoticMorphism A B) : Prop :=
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
   letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A

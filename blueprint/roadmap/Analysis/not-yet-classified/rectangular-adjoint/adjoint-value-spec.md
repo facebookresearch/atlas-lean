@@ -1,3 +1,4 @@
-# Adjoint Value spec
+# Pairing characterization of the adjoint value
 
-The constructed value satisfies the full original pairing equation.
+`IsAdjointWitness T y (adjointValue T y)`
+holds for every `y : adjointDomain T`.

@@ -1,4 +1,5 @@
-# Double HUnitary
+# Two copies of the countable standard module
 
-The direct sum of two countable standard modules is unitarily equivalent
-to the countable standard module.
+For `H_B = Standard B ℕ`, this unitary
+identifies `H_B ⊕ H_B` with `H_B` by splitting and reindexing through
+`Equiv.natSumNatEquivNat`.

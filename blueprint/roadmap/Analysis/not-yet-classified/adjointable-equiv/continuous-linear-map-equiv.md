@@ -1,4 +1,6 @@
-# Continuous Linear Map Equiv
+# Hilbert-to-module operator correspondence
 
-On complete complex Hilbert spaces, ordinary bounded operators correspond
-exactly to adjointable operators on the factory-equipped ScalarRight models.
+For complex Hilbert spaces `H,K`, bounded
+complex-linear maps `H →L[ℂ] K` correspond bijectively to adjointable maps between
+`ScalarRight H` and `ScalarRight K`; the forward map is `ofContinuousLinearMap` and the
+inverse is `toContinuousLinearMap`.

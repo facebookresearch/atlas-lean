@@ -1,3 +1,4 @@
-# Block Diagonal Star Alg Hom injective
+# Injectivity of the diagonal Calkin map
 
-The actual product Calkin block map is injective on all original complete Hilbert carriers.
+For complex Hilbert spaces `H,K`, the unital star
+map `Q(H) × Q(K) → Q(H ⊕ K)` sending `([T],[S])` to `[T ⊕ S]` is injective.

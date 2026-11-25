@@ -1,3 +1,4 @@
-# Support
+# Support of an algebraic direct-sum vector
 
-The finite support of an algebraic direct-sum vector.
+`support x` is the finite set of indices where
+the coordinate `toDFinsupp x i` is nonzero.

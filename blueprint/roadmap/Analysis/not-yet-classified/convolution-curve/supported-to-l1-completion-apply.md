@@ -1,3 +1,4 @@
-# Supported To L1 Completion apply
+# Value of the fixed-support L¹ inclusion
 
-The bounded fixed-support map retains the original canonical L1 coefficient image.
+For b supported in a compact closed set K, JK(b) is the image under toL1Completion of the
+compactly supported coefficient obtained by viewing b in Cc(G,A).

@@ -1,3 +1,4 @@
-# Right Square star
+# Adjoint reverses a positive square
 
-Taking star exchanges the original right square and left square.
+In a nonunital complex C-star algebra, the positive
+element `(x*) (x*)*` is `x* x` for every `x`.

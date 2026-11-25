@@ -1,3 +1,5 @@
-# Quotient Multiplier fst quotient Map
+# Left component of a quotient multiplier
 
-The descended multiplier retains the original first operator on the canonical quotient map.
+For nonunital complex C-star `B`, a closed
+two-sided star ideal `I`, and `m : M(B)`, for `q = I.quotientMap`, `(quotientMultiplier I
+m).fst (q b) = q (m.fst b)`.

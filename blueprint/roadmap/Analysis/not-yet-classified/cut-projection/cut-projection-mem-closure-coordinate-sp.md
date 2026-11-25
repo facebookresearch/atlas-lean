@@ -1,3 +1,4 @@
-# Cut Projection mem closure coordinate Span
+# Cut values in the selected-coordinate closure
 
-Every cut value belongs to the closure of the selected coordinate span.
+Every `cutProjection s x` belongs to the
+closure of `coordinateSpan s`.

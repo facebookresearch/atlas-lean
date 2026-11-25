@@ -1,3 +1,4 @@
-# Operator ext pure
+# Determination by pure amplification vectors
 
-Actual adjointable amplification operators are determined by their original pure values.
+For adjointable maps `S,T` on `Space H A`,
+equality `S (pure ξ b) = T (pure ξ b)` for every `ξ : H` and `b : A` implies `S = T`.

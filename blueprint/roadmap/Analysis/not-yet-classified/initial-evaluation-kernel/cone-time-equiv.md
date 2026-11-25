@@ -1,3 +1,4 @@
-# Cone Time Equiv
+# Cone transported to the asymptotic time ray
 
-Transport the existing cone to the closed time ray by translation.
+Let B be a nonunital complex C-star algebra. The star-algebra equivalence coneTimeEquiv
+B:CStarKTheory.Cone B=C₀([0,∞),B)≃⋆ₐ[ℂ]C₀([1,∞),B) sends f to t↦f(t-1).

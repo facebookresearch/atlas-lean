@@ -1,3 +1,4 @@
-# Norm apply
+# Norm under scalar-module identification
 
-The chosen norm is exactly the original norm; no ambient synonym norm is consulted.
+For a normed additive group `H`, the norm of `x`
+in `instNormedAddCommGroup H` is `‖WithCStarModule.equiv ℂᵐᵒᵖ H x‖`.

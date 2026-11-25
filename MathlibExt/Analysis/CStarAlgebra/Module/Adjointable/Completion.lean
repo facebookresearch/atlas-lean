@@ -15,15 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Completion
 public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.OfPair
 
 /-!
-# Completion of rectangular adjointable module maps
+# Completing adjointable maps of right modules
 
-The forward map and its given adjoint use the stock
-`ContinuousLinearMap.completion` directly. The coefficient-valued adjoint
-identity extends from the dense canonical images. The output uses exactly the
-existing completion C-star-module factories and stock norms.
+For right pre-Hilbert `B`-modules `E,F` with star-compatible coefficient order, an adjointable
+`T : E → F` extends to the module completions. The forward continuous linear map is the
+completion of `T`, and its adjoint is the completion of `T*`.
 
-Neither component module is required to be complete. No nontriviality,
-countability, new carrier, transported norm or global dictionary is assumed.
+For the completion inclusions `j_E,j_F`, the formulas are `T̂ (j_E x) = j_F (T x)` and `T̂* (j_F
+y) = j_E (T* y)`. The completed operator satisfies `‖T̂ x‖ ≤ ‖T‖ * ‖x‖` and `‖T̂‖ ≤ ‖T‖`.
+Completeness of `E` and `F` is not required.
 -/
 
 public section
@@ -48,8 +48,11 @@ variable [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F]
 
 attribute [local instance] CStarModule.completionCStarModule
 
-/-- Extend the given rectangular operator and its given adjoint to the
-actual stock completions, with the existing coefficient-inner dictionaries. -/
+/-- **Completion of an adjointable module map.** Let `B` be a nonunital complex C-star algebra
+with star-compatible order on `Bᵐᵒᵖ`, and `E,F` complex normed right pre-Hilbert `B`-modules.
+For `T : AdjointableOperator B E F`, complete its forward map and adjoint to obtain `T̂ :
+Completion E → Completion F`, with `T̂(j_E x) = j_F(T x)` and `T̂*(j_F y) = j_E(T* y)`.
+Neither fiber is required to be complete. -/
 @[expose]
 def completion (T : AdjointableOperator B E F) :
     AdjointableOperator B (UniformSpace.Completion E) (UniformSpace.Completion F) := by
@@ -85,20 +88,21 @@ def completion (T : AdjointableOperator B E F) :
     exact T.adjoint_inner a b
   exact ofAdjointPair f g hPair
 
-/-- The completed forward map is definitionally the stock completion of the
-same CLM. -/
+/-- **Forward map of the completed operator.** `(completion T).toContinuousLinearMap =
+ContinuousLinearMap.completion T.toContinuousLinearMap`. -/
 theorem completion_toContinuousLinearMap (T : AdjointableOperator B E F) :
     (completion T).toContinuousLinearMap =
       ContinuousLinearMap.completion T.toContinuousLinearMap :=
   rfl
 
-/-- The stored completed adjoint is definitionally the stock completion of
-the given adjoint CLM. -/
+/-- **Adjoint map of the completed operator.** `(completion T).adjoint =
+ContinuousLinearMap.completion T.adjoint`. -/
 theorem completion_adjoint (T : AdjointableOperator B E F) :
     (completion T).adjoint = ContinuousLinearMap.completion T.adjoint :=
   rfl
 
-/-- The canonical completion image keeps the original forward value. -/
+/-- **Completed operator on the dense inclusion.** `completion T (x : Completion E) = (T x :
+Completion F)` for `x : E`. -/
 @[simp]
 theorem completion_apply_coe (T : AdjointableOperator B E F) (x : E) :
     completion T (x : UniformSpace.Completion E) =
@@ -107,7 +111,8 @@ theorem completion_apply_coe (T : AdjointableOperator B E F) (x : E) :
   rw [completion_toContinuousLinearMap]
   exact ContinuousLinearMap.completion_apply_coe T.toContinuousLinearMap x
 
-/-- The canonical completion image keeps the original adjoint value. -/
+/-- **Completed adjoint on the dense inclusion.** `(completion T).adjoint (y : Completion F) =
+(T.adjoint y : Completion E)` for `y : F`. -/
 @[simp]
 theorem completion_adjoint_apply_coe (T : AdjointableOperator B E F) (y : F) :
     (completion T).adjoint (y : UniformSpace.Completion F) =
@@ -115,7 +120,8 @@ theorem completion_adjoint_apply_coe (T : AdjointableOperator B E F) (y : F) :
   rw [completion_adjoint]
   exact ContinuousLinearMap.completion_apply_coe T.adjoint y
 
-/-- Completion retains the actual adjoint operator in both directions. -/
+/-- **Completion commutes with adjoint operators.** `(completion T).adjointOperator = completion
+T.adjointOperator`. -/
 @[simp]
 theorem completion_adjointOperator (T : AdjointableOperator B E F) :
     (completion T).adjointOperator = completion T.adjointOperator := by
@@ -126,7 +132,8 @@ theorem completion_adjointOperator (T : AdjointableOperator B E F) :
   rw [completion_adjoint, completion_toContinuousLinearMap]
   rfl
 
-/-- The completed map has the original operator-norm bound at every vector. -/
+/-- **Vector norm bound after completion.** For `x : Completion E`, `‖completion T x‖ ≤ ‖T‖ *
+‖x‖`. -/
 theorem completion_norm_apply_le (T : AdjointableOperator B E F)
     (x : UniformSpace.Completion E) :
     ‖completion T x‖ ≤ ‖T‖ * ‖x‖ := by
@@ -141,7 +148,8 @@ theorem completion_norm_apply_le (T : AdjointableOperator B E F)
     _ ≤ ‖T.toContinuousLinearMap‖ * ‖a‖ := T.toContinuousLinearMap.le_opNorm a
     _ = ‖T‖ * ‖a‖ := by rw [AdjointableOperator.norm_eq]
 
-/-- The completed operator needs no larger norm bound than the given operator. -/
+/-- **Operator norm bound after completion.**
+`‖completion T‖ ≤ ‖T‖` for the two completion norms. -/
 theorem completion_norm_le (T : AdjointableOperator B E F) :
     ‖completion T‖ ≤ ‖T‖ := by
   rw [AdjointableOperator.norm_eq]

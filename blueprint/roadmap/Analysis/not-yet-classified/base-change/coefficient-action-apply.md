@@ -1,3 +1,5 @@
-# Coefficient Action apply
+# Value of the base-change coefficient action
 
-The same original left coefficient value, without a unit in either algebra.
+For a complex nonunital star homomorphism `f
+: B → C` of C-star algebras and the right self-module of `C`, `coefficientAction f b c = f b *
+c`.

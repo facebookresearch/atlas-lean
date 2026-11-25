@@ -17,12 +17,14 @@ public import Mathlib.Analysis.CStarAlgebra.Unitization
 import Mathlib.Tactic.Abel
 
 /-!
-# Algebraic unitization of nonlinear asymptotic families
+# Unitization of asymptotic star morphisms
 
-The stock always-adjoined C-star carriers and norms are used. No boundedness
-or asymptotic-algebra construction is needed: the product defect is a finite
-sum of raw defects at fixed source coordinates. Exact unitality is asserted
-only after the already constructed zero-normalization.
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞. On
+the complex C-star unitizations Ã and B̃, the family φ̃_t(z,a)=(z,φ_t(a)) is an asymptotic
+star morphism. Applied to the zero-normalized family φ0_t(a)=φ_t(a)-φ_t(0), it preserves the
+unit exactly at every time.
 -/
 
 @[expose] public section
@@ -41,8 +43,13 @@ universe uA uB
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The actual raw unitization formula on the stock C-star unitizations.
-The original nonlinear family need not preserve zero or the unit exactly. -/
+/-- **Asymptotic family on complex unitizations.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+The family unitization φ:Unitization ℂ A→Unitization ℂ B has values φ̃_t(z,a)=(z,φ_t(a)).
+-/
 def unitization (φ : AsymptoticMorphism A B) :
     AsymptoticMorphism (Unitization ℂ A) (Unitization ℂ B) := by
   let F : AsymptoticTime → Unitization ℂ A → Unitization ℂ B :=
@@ -122,7 +129,14 @@ def unitization (φ : AsymptoticMorphism A B) :
     rw [heq]
     exact hinr (φ.star_defect_tendsto x.snd)
 
-/-- Characteristic values of the computed unitization, without a chosen model. -/
+/-- **Value of the unitized asymptotic family.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+For x=(z,a)∈Unitization ℂ A, unitization φ t x=Unitization.inl z+Unitization.inr(φ_t(a)) in
+Unitization ℂ B.
+-/
 @[simp]
 theorem unitization_apply (φ : AsymptoticMorphism A B)
     (t : AsymptoticTime) (x : Unitization ℂ A) :
@@ -130,7 +144,13 @@ theorem unitization_apply (φ : AsymptoticMorphism A B)
       Unitization.inl x.fst + Unitization.inr (φ t x.snd) := by
   rfl
 
-/-- Restricting the actual unitization recovers the original raw family. -/
+/-- **Restriction of unitization to the coefficient algebra.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+For a∈A and t∈T, unitization φ t (Unitization.inr a)=Unitization.inr(φ_t(a)).
+-/
 theorem unitization_inr_apply (φ : AsymptoticMorphism A B)
     (t : AsymptoticTime) (a : A) :
     unitization φ t (Unitization.inr a) =
@@ -138,7 +158,14 @@ theorem unitization_inr_apply (φ : AsymptoticMorphism A B)
   simp only [unitization_apply, Unitization.fst_inr, Unitization.snd_inr,
     Unitization.inl_zero, zero_add]
 
-/-- Exact unitality follows for the actual normalized family, not every raw one. -/
+/-- **Normalized unitization preserves the unit.**
+
+Let A,B be nonunital complex C-star algebras and T=AsymptoticTime=[1,∞), with its real
+topology and order. Let φ be an asymptotic star morphism A→B, a family φ_t:A→B with continuous
+time orbits and vanishing additive, complex-scalar, multiplicative and star defects as t→∞.
+With φ0=normalize φ and φ0_t(a)=φ_t(a)-φ_t(0), the unitized family satisfies unitization φ0 t
+1=1 in Unitization ℂ B for every t≥1.
+-/
 theorem unitization_normalize_one (φ : AsymptoticMorphism A B)
     (t : AsymptoticTime) :
     unitization (normalize φ) t 1 = (1 : Unitization ℂ B) := by

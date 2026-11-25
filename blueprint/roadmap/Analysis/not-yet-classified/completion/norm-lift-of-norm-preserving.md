@@ -1,3 +1,4 @@
-# Norm lift of norm preserving
+# Isometric universal limit map
 
-A map preserving every original stage norm preserves the completed norm.
+If compatible stage maps `g_i` preserve every stage norm,
+then `‖S.lift g hg x‖ = ‖x‖` for all completed limit elements `x`.

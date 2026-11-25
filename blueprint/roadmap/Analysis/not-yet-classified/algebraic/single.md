@@ -1,3 +1,4 @@
-# Single
+# Isometric coordinate inclusion
 
-Coordinate inclusion into the algebraic sum as a complex-linear isometry.
+`single i : E i →ₗᵢ[ℂ] Algebraic B E` is the
+one-coordinate inclusion and preserves the component norm.

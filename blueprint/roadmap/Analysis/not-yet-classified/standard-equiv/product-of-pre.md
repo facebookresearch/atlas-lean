@@ -1,3 +1,4 @@
-# Product Of Pre
+# Finite-support inclusion into a completed direct sum
 
-Include a pair of finite-support vectors into the completed direct sum.
+Map `(x,y)` to `(ofPre x, ofPre y)`
+from the two finite-support standard modules into the direct sum of their completions.

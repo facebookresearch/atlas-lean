@@ -1,4 +1,5 @@
-# Exact Asymptotic Lift
+# Exact asymptotic lift of a Busby map
 
-An actual nonlinear asymptotic family lifting the fixed Busby map exactly
-at every time, including the initial time one.
+For nonunital C-star algebras `A,B` and `τ : A →
+Q(B)`, this record contains an asymptotic morphism `ρ : A → M(B)` with `q(ρ_t(a)) = τ(a)` for
+every `t ∈ [1,∞)` and `a : A`.

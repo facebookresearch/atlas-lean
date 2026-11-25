@@ -16,15 +16,13 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Unitary
 import Mathlib.Analysis.Normed.Operator.Extend
 
 /-!
-# Unitary equivalences from a common dense model
+# Unitary equivalences from dense linear maps
 
-Two dense complex-linear maps out of one algebraic model determine a unitary
-equivalence when they have the same coefficient-valued Gram form.  Mathlib's
-dense isometric extension supplies the underlying linear isometry equivalence;
-continuity of the Hilbert-module inner product upgrades the equality from the
-dense model to the completed carriers.
-
-No fullness, countability, unitality, or complementability hypothesis is used.
+Let `E,F` be complete right C-star modules over a nonunital algebra `B` with star-compatible
+coefficient order. Suppose complex-linear maps `e : X → E` and `f : X → F` have dense ranges and
+satisfy `⟨f x, f y⟩_B = ⟨e x, e y⟩_B` for every `x,y` in the complex module `X`. There is a
+unique unitary `U : E ≃ F` with `U (e x) = f x`. Its adjoint sends `f x` back to `e x`. Only an
+additive group and a complex-module structure are imposed on `X`.
 -/
 
 @[expose] public section
@@ -49,8 +47,9 @@ variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
   [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 
-/-- Two dense linear realizations of one algebraic model with the same
-coefficient-valued Gram form extend canonically to a unitary equivalence. -/
+/-- **Unitary determined by dense linear realizations.** For complete right C-star modules, dense
+complex-linear maps `e : X → E`, `f : X → F` with `⟨f x,f y⟩_B = ⟨e x,e y⟩_B` determine a
+unitary `U` satisfying `U (e x) = f x`. -/
 @[no_expose]
 noncomputable def ofDenseLinearMaps
     (e : X →ₗ[ℂ] E) (f : X →ₗ[ℂ] F)
@@ -90,8 +89,8 @@ noncomputable def ofDenseLinearMaps
       simpa only [Prod.map_apply, ha, hb] using hinner a b
   exact congrFun hEq (x, y)
 
-/-- The unitary extension agrees with the second realization on the common
-dense model. -/
+/-- **Unitary extension on the dense image.** For dense linear maps with equal coefficient Gram
+forms, `ofDenseLinearMaps e f he hf hinner (e x) = f x`. -/
 @[simp]
 theorem ofDenseLinearMaps_apply
     (e : X →ₗ[ℂ] E) (f : X →ₗ[ℂ] F)
@@ -105,8 +104,8 @@ theorem ofDenseLinearMaps_apply
   simp only [ofLinearIsometryEquiv_apply]
   apply LinearEquiv.extendOfIsometry_eq
 
-/-- The adjoint unitary extension sends the second realization back to the
-first one. -/
+/-- **Adjoint on the second dense image.** For the unitary determined by dense maps `e,f` with
+equal Gram forms, `U* (f x) = e x`. -/
 @[simp]
 theorem ofDenseLinearMaps_adjoint_apply
     (e : X →ₗ[ℂ] E) (f : X →ₗ[ℂ] F)
@@ -120,8 +119,9 @@ theorem ofDenseLinearMaps_adjoint_apply
   rw [← ofDenseLinearMaps_apply e f he hf hinner x,
     adjoint_apply_apply]
 
-/-- A unitary equivalence with the prescribed action on the common dense
-model is the canonical dense extension. -/
+/-- **Uniqueness of a dense unitary extension.** For dense linear maps `e,f` with equal Gram
+forms, every unitary satisfying `U (e x) = f x` for all `x` equals `ofDenseLinearMaps e f he
+hf hinner`. -/
 theorem ofDenseLinearMaps_unique
     (e : X →ₗ[ℂ] E) (f : X →ₗ[ℂ] F)
     (he : DenseRange e) (hf : DenseRange f)

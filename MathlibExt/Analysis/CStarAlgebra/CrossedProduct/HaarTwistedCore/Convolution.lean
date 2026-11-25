@@ -21,12 +21,13 @@ public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Group.Integral
 
 /-!
-# The literal original Haar twisted convolution
+# Haar twisted convolution of compact coefficients
 
-The source functions retain their original compact supports and coefficient
-values. Parameter continuity uses scalar factor one and the existing compact
-bilinear integral statement. The source algebra is nonunital, including zero;
-no coefficient identity or global countability assumption enters the kernel.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h, write (f*h)(s)=∫ t:G, f(t)*α_t(h(t⁻¹*s)) ∂μ. The convolution is continuous and compactly
+supported, with tsupport(f*h)⊆tsupport(f)*tsupport(h). It is associative and complex-bilinear
+on the coefficient core, with zero coefficient as an absorbing element.
 -/
 
 @[expose] public section
@@ -47,12 +48,22 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
   [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- The original left-Haar twisted convolution integrand at parameter s and integration coordinate t. -/
+/-- **Kernel of twisted convolution.**
+
+Let G be a group with a topology, A a nonunital complex C-star algebra and α a point-norm
+action. For compactly supported continuous f,h:G→A, define K(s,t)=f(t)*α_t(h(t⁻¹*s)). The
+function kernel α f h s t is K(s,t).
+-/
 def kernel (α : PointNormCStarAction G A) (f g : C_c(G, A)) (s t : G) : A :=
   f t * α t (g (t⁻¹ * s))
 
 omit [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The original source integrand is jointly continuous in its parameter and Haar coordinate. -/
+/-- **Joint continuity of the convolution kernel.**
+
+Let G be a topological group, A a nonunital complex C-star algebra and α a point-norm action.
+For compactly supported continuous f,h:G→A, define K(s,t)=f(t)*α_t(h(t⁻¹*s)). The map
+(s,t)↦K(s,t) from G×G to A is continuous.
+-/
 theorem continuous_kernel (α : PointNormCStarAction G A) (f g : C_c(G, A)) :
     Continuous (Function.uncurry (kernel α f g)) := by
   exact ((map_continuous f).comp continuous_snd).mul
@@ -60,7 +71,12 @@ theorem continuous_kernel (α : PointNormCStarAction G A) (f g : C_c(G, A)) :
       ((map_continuous g).comp (continuous_snd.inv.mul continuous_fst)))
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G] in
-/-- The original integrand is zero outside the original first compact support. -/
+/-- **The kernel vanishes outside the first coefficient support.**
+
+Let G be a group with a topology, A a nonunital complex C-star algebra and α a point-norm
+action. For compactly supported continuous f,h:G→A, define K(s,t)=f(t)*α_t(h(t⁻¹*s)). If
+t∉tsupport(f), then K(s,t)=0 for every s∈G; tsupport denotes the closure of the nonzero set.
+-/
 theorem kernel_zero_of_notMem_tsupport_left (α : PointNormCStarAction G A)
     (f g : C_c(G, A)) (s t : G) (ht : t ∉ tsupport f) : kernel α f g s t = 0 := by
   rw [kernel, image_eq_zero_of_notMem_tsupport ht, zero_mul]
@@ -68,7 +84,12 @@ theorem kernel_zero_of_notMem_tsupport_left (α : PointNormCStarAction G A)
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The exact original kernel is integrable for every original source parameter. -/
+/-- **Integrability of each convolution kernel.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For compactly supported continuous f,h:G→A,
+define K(s,t)=f(t)*α_t(h(t⁻¹*s)). For every s∈G, t↦K(s,t) is μ-integrable.
+-/
 theorem integrable_kernel (α : PointNormCStarAction G A) (f g : C_c(G, A)) (s : G) :
     Integrable (kernel α f g s) μ := by
   have hc : Continuous (kernel α f g s) :=
@@ -78,14 +99,26 @@ theorem integrable_kernel (α : PointNormCStarAction G A) (f g : C_c(G, A)) (s :
       (kernel_zero_of_notMem_tsupport_left α f g s)
   exact hc.integrable_of_hasCompactSupport hcomp
 
-/-- The actual original convolution coefficient is its printed left-Haar integral. -/
+/-- **Coefficient value of twisted convolution.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For compactly supported
+continuous f,h:G→A, define K(s,t)=f(t)*α_t(h(t⁻¹*s)). The value convolutionValue μ α f h s is
+∫ t:G, K(s,t) ∂μ.
+-/
 def convolutionValue (α : PointNormCStarAction G A) (f g : C_c(G, A)) (s : G) : A :=
   letI : NormedSpace ℝ A := NormedSpace.restrictScalars ℝ ℂ A
   ∫ t : G, kernel α f g s t ∂μ
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [BorelSpace G]
   [μ.IsHaarMeasure] [μ.Regular] in
-/-- Outside the product of original supports, every source convolution coefficient vanishes. -/
+/-- **Convolution vanishes outside the product of supports.**
+
+Let G be a group with a topology and measurable structure, μ any measure on G, A a nonunital
+complex C-star algebra and α a point-norm action. For compactly supported continuous f,h:G→A,
+define K(s,t)=f(t)*α_t(h(t⁻¹*s)). If s∉tsupport(f)*tsupport(h), then convolutionValue μ α f h
+s=∫ t, K(s,t) ∂μ=0.
+-/
 theorem convolutionValue_zero_of_notMem_product (α : PointNormCStarAction G A)
     (f g : C_c(G, A)) (s : G) (hs : s ∉ tsupport f * tsupport g) :
     convolutionValue μ α f g s = 0 := by
@@ -102,7 +135,12 @@ theorem convolutionValue_zero_of_notMem_product (α : PointNormCStarAction G A)
     · exact kernel_zero_of_notMem_tsupport_left α f g s t ht
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Scalar-one compact parameter integration makes the original convolution continuous. -/
+/-- **Continuity of the convolution coefficient.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For compactly supported continuous f,h:G→A,
+define K(s,t)=f(t)*α_t(h(t⁻¹*s)). The coefficient function s↦∫ t:G, K(s,t) ∂μ is continuous.
+-/
 theorem continuous_convolutionValue (α : PointNormCStarAction G A) (f g : C_c(G, A)) :
     Continuous (convolutionValue μ α f g) := by
   let : NormedSpace ℝ A := NormedSpace.restrictScalars ℝ ℂ A
@@ -125,7 +163,13 @@ theorem continuous_convolutionValue (α : PointNormCStarAction G A) (f g : C_c(G
   exact continuousOn_univ.mp hc
 
 omit [LocallyCompactSpace G] [BorelSpace G] [μ.IsHaarMeasure] [μ.Regular] in
-/-- The convolution's actual topological support lies in the product of the original supports. -/
+/-- **Support bound for twisted convolution.**
+
+Let G be a topological group with a measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action. For compactly supported continuous f,h:G→A,
+define K(s,t)=f(t)*α_t(h(t⁻¹*s)). For v(s)=∫ t, K(s,t) ∂μ,
+tsupport(v)⊆tsupport(f)*tsupport(h).
+-/
 theorem tsupport_convolutionValue_subset (α : PointNormCStarAction G A) (f g : C_c(G, A)) :
     tsupport (convolutionValue μ α f g) ⊆ tsupport f * tsupport g := by
   apply closure_minimal
@@ -134,7 +178,13 @@ theorem tsupport_convolutionValue_subset (α : PointNormCStarAction G A) (f g : 
     exact hs (convolutionValue_zero_of_notMem_product μ α f g s hnot)
   · exact (isClosed_tsupport g).mul_left_of_isCompact f.hasCompactSupport
 
-/-- The literal original convolution as a compactly supported continuous coefficient function. -/
+/-- **Compactly supported continuous convolution.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For f,h∈C_c(G,A),
+ccConvolution μ α f h is the compactly supported continuous function s↦∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ.
+-/
 def ccConvolution (α : PointNormCStarAction G A) (f g : C_c(G, A)) : C_c(G, A) where
   toFun := convolutionValue μ α f g
   continuous_toFun := continuous_convolutionValue μ α f g
@@ -143,19 +193,35 @@ def ccConvolution (α : PointNormCStarAction G A) (f g : C_c(G, A)) : C_c(G, A) 
       (isClosed_tsupport _) (tsupport_convolutionValue_subset μ α f g)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The C_c convolution retains every original coefficient integral. -/
+/-- **Evaluation of compactly supported convolution.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For f,h∈C_c(G,A) and s∈G, ccConvolution μ α f h
+s=∫ t:G, f(t)*α_t(h(t⁻¹*s)) ∂μ.
+-/
 theorem ccConvolution_apply (α : PointNormCStarAction G A) (f g : C_c(G, A)) (s : G) :
     ccConvolution μ α f g s =
       letI : NormedSpace ℝ A := NormedSpace.restrictScalars ℝ ℂ A
       ∫ t : G, f t * α t (g (t⁻¹ * s)) ∂μ :=
   rfl
 
-/-- The original Haar convolution on the same measure/action-indexed source function carrier. -/
+/-- **Convolution on the measure-indexed coefficient core.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h, write (f*h)(s)=∫ t:G, f(t)*α_t(h(t⁻¹*s)) ∂μ. The map convolution μ α sends f,h∈Carrier μ
+α to the core element f*h with these compactly supported continuous coefficient values.
+-/
 def convolution (α : PointNormCStarAction G A) (f g : Carrier μ α) : Carrier μ α :=
   fromCc μ α (ccConvolution μ α (toCc μ α f) (toCc μ α g))
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Every indexed convolution value is the literal printed original Haar coefficient. -/
+/-- **Evaluation of a core convolution.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For f,h∈Carrier μ α and s∈G, convolution μ α f h
+s=∫ t:G, f(t)*α_t(h(t⁻¹*s)) ∂μ.
+-/
 theorem convolution_apply (α : PointNormCStarAction G A) (f g : Carrier μ α) (s : G) :
     convolution μ α f g s =
       letI : NormedSpace ℝ A := NormedSpace.restrictScalars ℝ ℂ A
@@ -163,7 +229,12 @@ theorem convolution_apply (α : PointNormCStarAction G A) (f g : Carrier μ α) 
   rfl
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Zero on the left acts by the actual zero convolution. -/
+/-- **Zero in the first convolution factor.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For every h∈Carrier μ α, convolution μ α 0 h=0.
+-/
 theorem convolution_zero_left (α : PointNormCStarAction G A) (g : Carrier μ α) :
     convolution μ α 0 g = 0 := by
   apply ext μ α
@@ -173,7 +244,12 @@ theorem convolution_zero_left (α : PointNormCStarAction G A) (g : Carrier μ α
   simp only [toCc_zero, CompactlySupportedContinuousMap.zero_apply, zero_mul, integral_zero]
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Zero on the right acts by the actual zero convolution. -/
+/-- **Zero in the second convolution factor.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For every f∈Carrier μ α, convolution μ α f 0=0.
+-/
 theorem convolution_zero_right (α : PointNormCStarAction G A) (f : Carrier μ α) :
     convolution μ α f 0 = 0 := by
   apply ext μ α
@@ -184,7 +260,12 @@ theorem convolution_zero_right (α : PointNormCStarAction G A) (f : Carrier μ �
     α.apply_zero, mul_zero, integral_zero]
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Original convolution is additive in its first coefficient function. -/
+/-- **Additivity in the first convolution factor.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For f,h,k∈Carrier μ α, (f+h)*k=f*k+h*k.
+-/
 theorem convolution_add_left (α : PointNormCStarAction G A) (f g h : Carrier μ α) :
     convolution μ α (f + g) h = convolution μ α f h + convolution μ α g h := by
   apply ext μ α
@@ -201,7 +282,12 @@ theorem convolution_add_left (α : PointNormCStarAction G A) (f g h : Carrier μ
     (integrable_kernel μ α (toCc μ α g) (toCc μ α h) s)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Original convolution is additive in its second coefficient function. -/
+/-- **Additivity in the second convolution factor.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For f,h,k∈Carrier μ α, f*(h+k)=f*h+f*k.
+-/
 theorem convolution_add_right (α : PointNormCStarAction G A) (f g h : Carrier μ α) :
     convolution μ α f (g + h) = convolution μ α f g + convolution μ α f h := by
   apply ext μ α
@@ -218,7 +304,12 @@ theorem convolution_add_right (α : PointNormCStarAction G A) (f g h : Carrier �
     (integrable_kernel μ α (toCc μ α f) (toCc μ α h) s)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Original convolution is complex linear in its first coefficient function. -/
+/-- **Complex scaling in the first convolution factor.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For c∈ℂ and f,h∈Carrier μ α, (c•f)*h=c•(f*h).
+-/
 theorem convolution_smul_left (α : PointNormCStarAction G A) (c : ℂ) (f g : Carrier μ α) :
     convolution μ α (c • f) g = c • convolution μ α f g := by
   apply ext μ α
@@ -238,7 +329,12 @@ theorem convolution_smul_left (α : PointNormCStarAction G A) (c : ℂ) (f g : C
     L.integral_comp_comm (integrable_kernel μ α (toCc μ α f) (toCc μ α g) s)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Original convolution is complex linear in its second coefficient function. -/
+/-- **Complex scaling in the second convolution factor.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For c∈ℂ and f,h∈Carrier μ α, f*(c•h)=c•(f*h).
+-/
 theorem convolution_smul_right (α : PointNormCStarAction G A) (c : ℂ) (f g : Carrier μ α) :
     convolution μ α f (c • g) = c • convolution μ α f g := by
   apply ext μ α
@@ -257,7 +353,13 @@ theorem convolution_smul_right (α : PointNormCStarAction G A) (c : ℂ) (f g : 
     L.integral_comp_comm (integrable_kernel μ α (toCc μ α f) (toCc μ α g) s)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Original Haar convolution coefficients associate by compact Fubini and literal left translation. -/
+/-- **Associativity at each convolution coefficient.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For f,h,k∈C_c(G,A) and s∈G, convolutionValue μ α (ccConvolution μ α f
+h) k s=convolutionValue μ α f (ccConvolution μ α h k) s.
+-/
 theorem convolutionValue_assoc (α : PointNormCStarAction G A) (f g h : C_c(G, A)) (s : G) :
     convolutionValue μ α (ccConvolution μ α f g) h s =
       convolutionValue μ α f (ccConvolution μ α g h) s := by
@@ -327,7 +429,12 @@ theorem convolutionValue_assoc (α : PointNormCStarAction G A) (f g h : C_c(G, A
   exact hLeft.trans (hSwap.trans hRight)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The same original measure/action-indexed Haar convolution is associative. -/
+/-- **Associativity of Haar twisted convolution.**
+
+Let G be a Borel topological group with left Haar measure μ, A a nonunital complex C-star
+algebra and α a point-norm action of G on A. For core coefficients f,h, write (f*h)(s)=∫ t:G,
+f(t)*α_t(h(t⁻¹*s)) ∂μ. For all f,h,k∈Carrier μ α, (f*h)*k=f*(h*k).
+-/
 theorem convolution_assoc (α : PointNormCStarAction G A) (f g h : Carrier μ α) :
     convolution μ α (convolution μ α f g) h = convolution μ α f (convolution μ α g h) := by
   apply ext μ α

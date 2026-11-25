@@ -1,3 +1,4 @@
-# Norm pre Reindex Linear Equiv
+# Norm under finite reindexing
 
-Reindexing preserves the standard-module norm.
+For the standard-module norm, `‖preReindexLinearEquiv e x‖ =
+‖x‖`.

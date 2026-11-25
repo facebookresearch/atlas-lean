@@ -1,4 +1,4 @@
-# Equiv Unitary class Star Alg Hom apply
+# Action of the unitary-induced Calkin equivalence
 
-The unitary-induced equivalence acts on represented classes by
-conjugating their representatives.
+`equivUnitary U (classStarAlgHom T) =
+classStarAlgHom (U.conjStarAlgHom T)` for each adjointable `T`.

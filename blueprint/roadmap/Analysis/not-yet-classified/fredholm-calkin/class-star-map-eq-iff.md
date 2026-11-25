@@ -1,4 +1,4 @@
-# Class Star Map eq iff
+# Equality of Calkin operator classes
 
-Two operators have the same Calkin class exactly when their difference is
-compact. The difference orientation is fixed as `T - U`.
+For a complex Hilbert space `H`, `classStarMap T =
+classStarMap U ↔ IsCompactOperator (T-U)` for bounded operators `T,U`.

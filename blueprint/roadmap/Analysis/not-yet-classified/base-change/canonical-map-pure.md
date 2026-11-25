@@ -1,3 +1,5 @@
-# Canonical Map pure
+# Pure tensors from canonical images
 
-Pure tensors are exactly the original canonical images acted on by target coefficients.
+For nonunital C-star algebras `B,C` with
+star-compatible opposite orders, a complete right `B`-module `E`, and a complex nonunital star
+homomorphism `f : B → C`, `canonicalMap f x <• c = pure f x c` for all `x : E`, `c : C`.

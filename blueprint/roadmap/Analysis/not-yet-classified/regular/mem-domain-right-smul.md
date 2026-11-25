@@ -1,4 +1,5 @@
-# Mem domain right smul
+# Right invariance of a regular domain
 
-The domain of a regular operator is stable under the source-order right
-coefficient action.
+For a regular operator on a complete right C-star
+module with star-compatible coefficient order, `x ∈ dom T` implies `x <• b ∈ dom T` for every
+`b : B`.

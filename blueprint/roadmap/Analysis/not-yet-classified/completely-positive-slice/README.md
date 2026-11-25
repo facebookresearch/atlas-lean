@@ -1,17 +1,17 @@
-# Completely Positive Slice
+# Completely positive slices as bounded linear maps
 
-## Completely Positive Family
+## Completely positive families
 
-- [Slice](slice.md)
-- [Slice apply](slice-apply.md)
-- [Slice Continuous Linear Map](slice-continuous-linear-map.md)
-- [Slice Continuous Linear Map apply](slice-continuous-linear-map-apply.md)
+- [Completely positive map of a time slice](slice.md)
+- [Value of a completely positive slice](slice-apply.md)
+- [Bounded complex linear map of a CP slice](slice-continuous-linear-map.md)
+- [Value of the bounded linear CP slice](slice-continuous-linear-map-apply.md)
 
-## Completely Positive Contraction
+## Completely positive contractions
 
-- [Slice](slice-2.md)
-- [Slice apply](slice-apply-2.md)
-- [Norm slice apply le](norm-slice-apply-le.md)
-- [Slice Continuous Linear Map](slice-continuous-linear-map-2.md)
-- [Slice Continuous Linear Map apply](slice-continuous-linear-map-apply-2.md)
-- [Norm slice Continuous Linear Map le one](norm-slice-continuous-linear-map-le-one.md)
+- [Completely positive map of a contractive slice](slice-2.md)
+- [Value of a completely positive contraction slice](slice-apply-2.md)
+- [Pointwise norm bound for a CP contraction slice](norm-slice-apply-le.md)
+- [Bounded linear map of a CP contraction slice](slice-continuous-linear-map-2.md)
+- [Value of the bounded linear contraction slice](slice-continuous-linear-map-apply-2.md)
+- [Operator norm of a CP contraction slice](norm-slice-continuous-linear-map-le-one.md)

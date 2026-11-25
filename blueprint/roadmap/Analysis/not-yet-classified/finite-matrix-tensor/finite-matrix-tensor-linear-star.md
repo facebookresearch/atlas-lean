@@ -1,3 +1,3 @@
-# Finite Matrix Tensor Linear star
+# Adjoints of finite matrix tensors
 
-The raw finite tensor sum preserves the original matrix adjoint.
+For an orthonormal frame, `Φ_v(star M) = star (Φ_v M)`.

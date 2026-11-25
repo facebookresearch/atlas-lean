@@ -14,11 +14,12 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight.AdjointableEquiv
 
 /-!
-# The scalar-right adjointable correspondence is a linear isometry
+# Norm preservation for scalar-module operators
 
-The complete-Hilbert carrier equivalence is upgraded to a complex-linear
-isometric equivalence. The proof uses the exact ScalarRight factories and
-operator norms; no compactness or Calkin assertion is made here.
+Conjugation by `equivL H` and `equivL K` preserves the operator norm of every bounded
+complex-linear map between complex normed spaces. For complex Hilbert spaces, the correspondence
+with right scalar-module adjointable operators is consequently a complex-linear isometric
+equivalence.
 -/
 
 @[expose] public section
@@ -52,8 +53,9 @@ theorem ofContinuousLinearMap_toContinuousLinearMap
     (ContinuousLinearMap.adjoint T)
     (fun x y => (ContinuousLinearMap.adjoint_inner_right T x y).symm)
 
-/-- Conjugation through the fixed ScalarRight equivalences preserves the
-operator norm. Completeness is not needed. -/
+/-- **Norm of a transported bounded operator.** For arbitrary complex normed spaces `H,K`,
+conjugation by `equivL H` and `equivL K` preserves the operator norm: the transported map has
+norm `‖T‖`. -/
 theorem norm_continuousLinearMap
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [NormedSpace ℂ H]
@@ -175,8 +177,9 @@ theorem norm_ofContinuousLinearMap
   rw [CStarModule.AdjointableOperator.norm_eq, hforward]
   exact norm_continuousLinearMap H K T
 
-/-- The complete-Hilbert scalar-right correspondence as a complex-linear
-equivalence. -/
+/-- **Complex-linear operator correspondence.** For complex Hilbert spaces,
+`ofContinuousLinearMap` and `toContinuousLinearMap` give a complex-linear equivalence between
+bounded operators and right scalar-module adjointable operators. -/
 noncomputable def continuousLinearMapLinearEquiv
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -226,8 +229,9 @@ noncomputable def continuousLinearMapLinearEquiv
         CStarModule.AdjointableOperator.smul_apply, map_smul]
       rfl }
 
-/-- On complete complex Hilbert spaces, bounded operators and scalar-right
-adjointable operators are complex-linearly isometrically equivalent. -/
+/-- **Complex-linear isometry of operator spaces.** For complex Hilbert spaces, the
+bounded-to-adjointable operator correspondence is a complex-linear isometric equivalence, with
+`‖ofContinuousLinearMap H K T‖ = ‖T‖`. -/
 noncomputable def continuousLinearMapLinearIsometryEquiv
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

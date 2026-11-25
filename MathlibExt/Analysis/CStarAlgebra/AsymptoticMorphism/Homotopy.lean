@@ -17,15 +17,15 @@ public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.IntervalGluing
 import Mathlib.Topology.Constructions
 
 /-!
-# Actual asymptotic homotopy equivalence and classes
+# Asymptotic homotopy equivalence and classes
 
-Postcomposition uses a genuine nonunital star hom. Compatible homotopies are
-paired in the actual closed endpoint pullback and glued by its star hom.
-Thus time continuity and all four defects use the inherited supremum norm,
-not pointwise-only interval convergence or a supplied orbit bound.
-
-The Setoid and Quotient below are constructed from real reflexive, reversed
-and concatenated homotopy data. No E-group, KK-group or additive law is assumed.
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. Constant paths, interval
+reversal and concatenation at the midpoint make this homotopy relation an equivalence
+relation. Its quotient is HomotopyClasses A B, denoted [[A,B]].
 -/
 
 @[expose] public section
@@ -48,7 +48,12 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- Apply an actual star hom to an arbitrary nonlinear asymptotic family. -/
+/-- **Fixed-homomorphism postcomposition of an asymptotic family.**
+
+Let A,B,C be nonunital complex C-star algebras, φ:A→B an asymptotic star morphism on T=[1,∞)
+and g:B→C a nonunital complex star homomorphism. The family postcomp φ g has values
+(g∘φ)_t(a)=g(φ_t(a)).
+-/
 def postcomp (φ : AsymptoticMorphism A B) (g : B →⋆ₙₐ[ℂ] C) :
     AsymptoticMorphism A C where
   toFun t a := g (φ t a)
@@ -87,8 +92,16 @@ open ContinuousMap.IntervalGluing
 
 namespace Homotopy
 
-/-- Pair two exact-compatible homotopies in the actual matching-endpoint
-subalgebra. The time topology and defect limits are inherited product norms. -/
+/-- **Pair of matching asymptotic homotopies.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. Given H from φ to ψ and K
+from ψ to χ, pairFamily H K has value a↦(H_t(a),K_t(a)) in MatchingPaths
+B={(F,G)∈C([0,1],B)²:F(1)=G(0)}, with the inherited maximum of the two supremum norms.
+-/
 def pairFamily (H : Homotopy φ ψ) (K : Homotopy ψ χ) :
     AsymptoticMorphism A (MatchingPaths B) where
   toFun t a := NonUnitalCStarPullback.mk (evalAt B 1) (evalAt B 0)
@@ -142,7 +155,13 @@ theorem pairFamily_val (H : Homotopy φ ψ) (K : Homotopy ψ χ)
       C(unitInterval, B) × C(unitInterval, B)) = (H.family t a, K.family t a) := by
   rfl
 
-/-- The literal constant-in-homotopy-parameter family. -/
+/-- **Constant asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. For φ:A→B, Homotopy.refl φ is the path
+family H_t(a)(s)=φ_t(a) for s∈[0,1], with both endpoints φ.
+-/
 def refl (φ : AsymptoticMorphism A B) : Homotopy φ φ where
   family := postcomp φ (constantHom B)
   start := by
@@ -152,7 +171,15 @@ def refl (φ : AsymptoticMorphism A B) : Homotopy φ φ where
     intro t a
     rw [postcomp_apply, constantHom_apply]
 
-/-- Reverse the interval parameter, retaining exact endpoint values. -/
+/-- **Reversal of an asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. The reversed homotopy
+Homotopy.symm H runs from ψ to φ and has value H_t(a)(1-s).
+-/
 def symm (H : Homotopy φ ψ) : Homotopy ψ φ where
   family := postcomp H.family (reverseHom B)
   start := by
@@ -164,7 +191,16 @@ def symm (H : Homotopy φ ψ) : Homotopy ψ φ where
     rw [postcomp_apply, reverseHom_one]
     exact H.start t a
 
-/-- Concatenate exact-compatible homotopies through real closed-pullback gluing. -/
+/-- **Concatenation of matching asymptotic homotopies.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. For H from φ to ψ and K
+from ψ to χ, Homotopy.trans H K runs from φ to χ. Its value at s≤1/2 is H_t(a)(2s), and at
+s>1/2 it is K_t(a)(2s-1); both agree with ψ_t(a) at the midpoint.
+-/
 def trans (H : Homotopy φ ψ) (K : Homotopy ψ χ) : Homotopy φ χ where
   family := postcomp (pairFamily H K) (glueHom (B := B))
   start := by
@@ -201,7 +237,15 @@ theorem homotopic_equivalence
     symm := homotopic_symm
     trans := homotopic_trans }
 
-/-- The Setoid is constructed from the actual homotopy data and its proofs. -/
+/-- **Setoid of asymptotic homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. The setoid homotopySetoid A
+B has relation Homotopic φ ψ, meaning that a homotopy H with these endpoints exists.
+-/
 def homotopySetoid
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -209,14 +253,29 @@ def homotopySetoid
   r := Homotopic
   iseqv := homotopic_equivalence A B
 
-/-- Actual asymptotic homotopy classes, the quotient denoted [[A,B]].
-No addition, group or E-theory structure is introduced here. -/
+/-- **Asymptotic homotopy classes.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. HomotopyClasses A B is the
+quotient of asymptotic star morphisms A→B by this homotopy relation, denoted [[A,B]].
+-/
 abbrev HomotopyClasses
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :=
   Quotient (homotopySetoid A B)
 
-/-- The class of an actual asymptotic family. -/
+/-- **Class of an asymptotic morphism.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). An asymptotic star morphism φ:A→B is
+a family φ_t with continuous fixed-coefficient time orbits and four additive, scalar,
+multiplicative and star defects tending to zero as t→∞. A homotopy H between asymptotic
+families φ,ψ is an asymptotic family A→C([0,1],B) with H_t(a)(0)=φ_t(a) and H_t(a)(1)=ψ_t(a),
+using the supremum norm for time continuity and all defect limits. The map mkClass sends φ to
+its class in [[A,B]]=HomotopyClasses A B.
+-/
 def mkClass (φ : AsymptoticMorphism A B) : HomotopyClasses A B :=
   Quotient.mk _ φ
 

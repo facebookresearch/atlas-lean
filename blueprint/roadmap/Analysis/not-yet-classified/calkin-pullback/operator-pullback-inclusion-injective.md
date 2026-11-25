@@ -1,3 +1,4 @@
-# Operator Pullback Inclusion injective
+# Injective compact inclusion
 
-The original compact inclusion inherits injectivity from the canonical Busby inclusion.
+For every complex nonunital star homomorphism `φ : A → Q(H)`,
+the map `k ↦ (k,0)` into `P_φ` is injective.

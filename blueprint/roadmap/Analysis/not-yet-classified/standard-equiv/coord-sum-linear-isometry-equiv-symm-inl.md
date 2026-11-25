@@ -1,3 +1,4 @@
-# Coord sum Linear Isometry Equiv symm inl
+# Left coordinates of inverse splitting
 
-The inverse sum equivalence reconstructs the left coordinates.
+For a pair `x`, `coord (Sum.inl i)
+((sumLinearIsometryEquiv).symm x) = coord i x.1`.

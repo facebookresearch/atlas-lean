@@ -15,12 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Se
 public import Mathlib.Analysis.Normed.Operator.Extend
 
 /-!
-# Actual coefficient actions on the same-seminorm completion
+# Coefficient actions on a C-star seminorm completion
 
-Each original coefficient map is extended along the actual dense separated
-completion map. The bounds are proved from the coefficient square identity,
-and the extension agrees with the literal original compact-support values.
-The zero seminorm and the zero coefficient algebra are included.
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. These actions satisfy ‖L_a‖≤‖a‖ and ‖R_a‖≤‖a‖.
+Their adjoint-exchange and centralizer laws are star(L_a x)=R_star(a)(star(x)) and (R_a
+x)*y=x*(L_a y). The construction includes the zero seminorm and zero coefficient algebra.
 -/
 
 @[expose] public section
@@ -43,19 +46,41 @@ attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 
 variable (p : CStarSeminorm (Carrier μ α))
 
-/-- The actual left coefficient map on the completion of the same original seminorm. -/
+/-- **Completed left coefficient action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. The bounded complex linear map
+coefficientLeftCompletion μ α p a is L_a, determined by L_a(ιp(f))=ιp(s↦a*f(s)).
+-/
 def coefficientLeftCompletion (a : A) :
     p.NonUnitalCompletion →L[ℂ] p.NonUnitalCompletion :=
   ((LinearMap.ofClass p.toNonUnitalCompletion).comp (coefficientLeft μ α a)).extendOfNorm
     (LinearMap.ofClass p.toNonUnitalCompletion)
 
-/-- The actual right coefficient map on the completion of the same original seminorm. -/
+/-- **Completed right coefficient action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. The bounded complex linear map
+coefficientRightCompletion μ α p a is R_a, determined by R_a(ιp(f))=ιp(s↦f(s)*α_s(a)).
+-/
 def coefficientRightCompletion (a : A) :
     p.NonUnitalCompletion →L[ℂ] p.NonUnitalCompletion :=
   ((LinearMap.ofClass p.toNonUnitalCompletion).comp (coefficientRight μ α a)).extendOfNorm
     (LinearMap.ofClass p.toNonUnitalCompletion)
 
-/-- Completed left multiplication has exactly the original coefficient values on the dense core. -/
+/-- **Left coefficient action on a dense completed class.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. For a∈A and f∈Carrier μ α, coefficientLeftCompletion μ α p a (ιp(f))=ιp(s↦a*f(s)).
+-/
 theorem coefficientLeftCompletion_apply (a : A) (f : Carrier μ α) :
     coefficientLeftCompletion μ α p a (p.toNonUnitalCompletion f) =
       p.toNonUnitalCompletion (coefficientLeft μ α a f) := by
@@ -65,7 +90,14 @@ theorem coefficientLeftCompletion_apply (a : A) (f : Carrier μ α) :
     ‖a‖ * ‖p.toNonUnitalCompletion h‖
   simpa only [CStarSeminorm.norm_toNonUnitalCompletion] using seminorm_coefficientLeft_le μ α p a h
 
-/-- Completed right multiplication has exactly the original coefficient values on the dense core. -/
+/-- **Right coefficient action on a dense completed class.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. For a∈A and f∈Carrier μ α, coefficientRightCompletion μ α p a
+(ιp(f))=ιp(s↦f(s)*α_s(a)).
+-/
 theorem coefficientRightCompletion_apply (a : A) (f : Carrier μ α) :
     coefficientRightCompletion μ α p a (p.toNonUnitalCompletion f) =
       p.toNonUnitalCompletion (coefficientRight μ α a f) := by
@@ -75,7 +107,14 @@ theorem coefficientRightCompletion_apply (a : A) (f : Carrier μ α) :
     ‖a‖ * ‖p.toNonUnitalCompletion h‖
   simpa only [CStarSeminorm.norm_toNonUnitalCompletion] using seminorm_coefficientRight_le μ α p a h
 
-/-- The completed left action retains the actual original coefficient norm bound. -/
+/-- **Pointwise bound for completed left coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A and x∈Xp, ‖L_a x‖≤‖a‖‖x‖.
+-/
 theorem norm_coefficientLeftCompletion_apply_le (a : A) (x : p.NonUnitalCompletion) :
     ‖coefficientLeftCompletion μ α p a x‖ ≤ ‖a‖ * ‖x‖ := by
   apply LinearMap.norm_extendOfNorm_apply_le (p.denseRange_toNonUnitalCompletion) ‖a‖
@@ -84,7 +123,14 @@ theorem norm_coefficientLeftCompletion_apply_le (a : A) (x : p.NonUnitalCompleti
     ‖a‖ * ‖p.toNonUnitalCompletion f‖
   simpa only [CStarSeminorm.norm_toNonUnitalCompletion] using seminorm_coefficientLeft_le μ α p a f
 
-/-- The completed right action retains the actual original coefficient norm bound. -/
+/-- **Pointwise bound for completed right coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A and x∈Xp, ‖R_a x‖≤‖a‖‖x‖.
+-/
 theorem norm_coefficientRightCompletion_apply_le (a : A) (x : p.NonUnitalCompletion) :
     ‖coefficientRightCompletion μ α p a x‖ ≤ ‖a‖ * ‖x‖ := by
   apply LinearMap.norm_extendOfNorm_apply_le (p.denseRange_toNonUnitalCompletion) ‖a‖
@@ -93,19 +139,43 @@ theorem norm_coefficientRightCompletion_apply_le (a : A) (x : p.NonUnitalComplet
     ‖a‖ * ‖p.toNonUnitalCompletion f‖
   simpa only [CStarSeminorm.norm_toNonUnitalCompletion] using seminorm_coefficientRight_le μ α p a f
 
-/-- The computed completed left operator has norm at most the original coefficient norm. -/
+/-- **Operator norm of the completed left coefficient action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A, ‖coefficientLeftCompletion μ α p
+a‖=‖L_a‖≤‖a‖.
+-/
 theorem norm_coefficientLeftCompletion_le (a : A) :
     ‖coefficientLeftCompletion μ α p a‖ ≤ ‖a‖ :=
   (coefficientLeftCompletion μ α p a).opNorm_le_bound (norm_nonneg a)
     (norm_coefficientLeftCompletion_apply_le μ α p a)
 
-/-- The computed completed right operator has norm at most the original coefficient norm. -/
+/-- **Operator norm of the completed right coefficient action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A, ‖coefficientRightCompletion μ α p
+a‖=‖R_a‖≤‖a‖.
+-/
 theorem norm_coefficientRightCompletion_le (a : A) :
     ‖coefficientRightCompletion μ α p a‖ ≤ ‖a‖ :=
   (coefficientRightCompletion μ α p a).opNorm_le_bound (norm_nonneg a)
     (norm_coefficientRightCompletion_apply_le μ α p a)
 
-/-- Zero acts by the zero completed left operator. -/
+/-- **Zero coefficient in the completed left action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. The zero coefficient acts by L_0=0, the zero
+bounded linear operator on Xp.
+-/
 @[simp]
 theorem coefficientLeftCompletion_zero : coefficientLeftCompletion μ α p (0 : A) = 0 := by
   apply ContinuousLinearMap.ext
@@ -121,7 +191,15 @@ theorem coefficientLeftCompletion_zero : coefficientLeftCompletion μ α p (0 : 
     rfl
   rw [h, map_zero]
 
-/-- Zero acts by the zero completed right operator. -/
+/-- **Zero coefficient in the completed right action.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. The zero coefficient acts by R_0=0, the zero
+bounded linear operator on Xp.
+-/
 @[simp]
 theorem coefficientRightCompletion_zero : coefficientRightCompletion μ α p (0 : A) = 0 := by
   apply ContinuousLinearMap.ext
@@ -137,7 +215,14 @@ theorem coefficientRightCompletion_zero : coefficientRightCompletion μ α p (0 
     rfl
   rw [h, map_zero]
 
-/-- Adding original coefficients adds their actual completed left operators. -/
+/-- **Additivity of completed left coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a,b∈A, L_(a+b)=L_a+L_b.
+-/
 theorem coefficientLeftCompletion_add (a b : A) :
     coefficientLeftCompletion μ α p (a + b) =
       coefficientLeftCompletion μ α p a + coefficientLeftCompletion μ α p b := by
@@ -151,7 +236,14 @@ theorem coefficientLeftCompletion_add (a b : A) :
   simp only [Function.comp_apply, Pi.add_apply,
     coefficientLeftCompletion_apply, coefficientLeft_add, LinearMap.add_apply, map_add]
 
-/-- Adding original coefficients adds their actual completed right operators. -/
+/-- **Additivity of completed right coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a,b∈A, R_(a+b)=R_a+R_b.
+-/
 theorem coefficientRightCompletion_add (a b : A) :
     coefficientRightCompletion μ α p (a + b) =
       coefficientRightCompletion μ α p a + coefficientRightCompletion μ α p b := by
@@ -165,7 +257,14 @@ theorem coefficientRightCompletion_add (a b : A) :
   simp only [Function.comp_apply, Pi.add_apply,
     coefficientRightCompletion_apply, coefficientRight_add, LinearMap.add_apply, map_add]
 
-/-- Scaling an original coefficient scales its actual completed left operator. -/
+/-- **Complex scaling of completed left coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For c∈ℂ and a∈A, L_(c•a)=c•L_a.
+-/
 theorem coefficientLeftCompletion_smul (c : ℂ) (a : A) :
     coefficientLeftCompletion μ α p (c • a) = c • coefficientLeftCompletion μ α p a := by
   apply ContinuousLinearMap.ext
@@ -177,7 +276,14 @@ theorem coefficientLeftCompletion_smul (c : ℂ) (a : A) :
   simp only [Function.comp_apply, Pi.smul_apply,
     coefficientLeftCompletion_apply, coefficientLeft_smul, LinearMap.smul_apply, map_smul]
 
-/-- Scaling an original coefficient scales its actual completed right operator. -/
+/-- **Complex scaling of completed right coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For c∈ℂ and a∈A, R_(c•a)=c•R_a.
+-/
 theorem coefficientRightCompletion_smul (c : ℂ) (a : A) :
     coefficientRightCompletion μ α p (c • a) = c • coefficientRightCompletion μ α p a := by
   apply ContinuousLinearMap.ext
@@ -189,7 +295,14 @@ theorem coefficientRightCompletion_smul (c : ℂ) (a : A) :
   simp only [Function.comp_apply, Pi.smul_apply,
     coefficientRightCompletion_apply, coefficientRight_smul, LinearMap.smul_apply, map_smul]
 
-/-- Completed left coefficients compose in the original algebra order. -/
+/-- **Composition of completed left coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a,b∈A, L_(a*b)=L_a∘L_b.
+-/
 theorem coefficientLeftCompletion_mul (a b : A) :
     coefficientLeftCompletion μ α p (a * b) =
       (coefficientLeftCompletion μ α p a).comp (coefficientLeftCompletion μ α p b) := by
@@ -203,7 +316,14 @@ theorem coefficientLeftCompletion_mul (a b : A) :
   simp only [Function.comp_apply,
     coefficientLeftCompletion_apply, coefficientLeft_mul, LinearMap.comp_apply]
 
-/-- Completed right coefficients compose in the original double-centralizer order. -/
+/-- **Reversed composition of completed right coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a,b∈A, R_(a*b)=R_b∘R_a.
+-/
 theorem coefficientRightCompletion_mul (a b : A) :
     coefficientRightCompletion μ α p (a * b) =
       (coefficientRightCompletion μ α p b).comp (coefficientRightCompletion μ α p a) := by
@@ -217,7 +337,15 @@ theorem coefficientRightCompletion_mul (a b : A) :
   simp only [Function.comp_apply,
     coefficientRightCompletion_apply, coefficientRight_mul, LinearMap.comp_apply]
 
-/-- The completed involution exchanges left coefficients with adjoint right coefficients. -/
+/-- **Star exchanges the completed left and right coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A and x∈Xp, star(L_a
+x)=R_star(a)(star(x)).
+-/
 theorem star_coefficientLeftCompletion (a : A) (x : p.NonUnitalCompletion) :
     star (coefficientLeftCompletion μ α p a x) =
       coefficientRightCompletion μ α p (star a) (star x) := by
@@ -229,7 +357,15 @@ theorem star_coefficientLeftCompletion (a : A) (x : p.NonUnitalCompletion) :
     coefficientLeftCompletion_apply, ← map_star, coefficientRightCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_coefficientLeft μ α a f)
 
-/-- The completed involution exchanges right coefficients with adjoint left coefficients. -/
+/-- **Star exchanges the completed right and left coefficients.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A and x∈Xp, star(R_a
+x)=L_star(a)(star(x)).
+-/
 theorem star_coefficientRightCompletion (a : A) (x : p.NonUnitalCompletion) :
     star (coefficientRightCompletion μ α p a x) =
       coefficientLeftCompletion μ α p (star a) (star x) := by
@@ -241,7 +377,14 @@ theorem star_coefficientRightCompletion (a : A) (x : p.NonUnitalCompletion) :
     coefficientRightCompletion_apply, ← map_star, coefficientLeftCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_coefficientRight μ α a f)
 
-/-- The two computed completed coefficient maps are an actual compatible centralizer pair. -/
+/-- **Centralizer compatibility of completed coefficient actions.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. For a C-star seminorm p on Carrier
+μ α, write Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for its dense
+core map. Let L_a,R_a:Xp→L[ℂ]Xp be the extensions of f(s)↦a*f(s) and f(s)↦f(s)*α_s(a),
+respectively, from dense coefficient classes. For a∈A and x,y∈Xp, (R_a x)*y=x*(L_a y).
+-/
 theorem coefficientCompletion_central (a : A) (x y : p.NonUnitalCompletion) :
     coefficientRightCompletion μ α p a x * y = x * coefficientLeftCompletion μ α p a y := by
   refine (p.denseRange_toNonUnitalCompletion).induction_on₂

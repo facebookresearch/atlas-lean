@@ -1,6 +1,5 @@
-# Is Maximal Adjoint
+# Maximal adjoint of a dense partial operator
 
-For a partial operator `T` with the supplied dense-domain proof, `S` is
-its maximal adjoint: its domain is exactly the vectors admitting an adjoint
-witness, and its action is that unique witness. Density uses the original
-norm topology on `E` and makes uniqueness of the witness meaningful.
+For a complex-linear partial map `T` with
+dense norm-domain, `S` is its maximal adjoint when `y ∈ dom S` is equivalent to existence of a
+unique `z : E` with `⟨T x, y⟩_B = ⟨x, z⟩_B` for every `x ∈ dom T`, and `S y` is that witness.

@@ -1,3 +1,5 @@
-# Algebraic CStar Module
+# Pre-Hilbert module structure on the finite-support sum
 
-The literal finite-support pre-Hilbert module.
+The componentwise action,
+finite-sum coefficient inner product and induced norm make the algebraic direct sum a right
+C-star module.

@@ -1,3 +1,4 @@
-# Convolution Support
+# Product support for twisted convolution
 
-The original compact product supports both the convolution and all its coefficient slices.
+For compactly supported coefficients f,h, define K=tsupport(f)*tsupport(h). This set contains
+the support of f*h and the x-support of every kernel Fs(x)=f(s)*αs(h(s⁻¹*x)).

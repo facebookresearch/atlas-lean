@@ -1,3 +1,4 @@
-# Adjoint Value
+# Value of the partial adjoint
 
-The actual adjoint value is the unique witness already proved to exist in its domain.
+For `y ∈ dom T*`, `adjointValue T y` is the unique `z : E`
+satisfying `⟨T x, y⟩_B = ⟨x, z⟩_B` for all `x ∈ dom T`.

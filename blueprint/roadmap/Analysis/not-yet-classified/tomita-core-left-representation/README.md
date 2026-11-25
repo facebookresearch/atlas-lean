@@ -1,7 +1,7 @@
-# Tomita Core Left Representation
+# Bounded left representation of the finite GNS core algebra
 
-- [Tomita Core Left Representation](tomita-core-left-representation.md)
-- [Tomita Core Left Representation apply](tomita-core-left-representation-apply.md)
-- [Tomita Core Left Representation original](tomita-core-left-representation-original.md)
-- [Tomita Core Left Representation gns Map](tomita-core-left-representation-gns-map.md)
-- [Tomita Core Left Representation core Action](tomita-core-left-representation-core-act.md)
+- [Bounded left star representation of the GNS core](tomita-core-left-representation.md)
+- [Bounded operator of a core vector](tomita-core-left-representation-apply.md)
+- [Left representation of a finite star element](tomita-core-left-representation-original.md)
+- [Core coefficient acting on a finite square vector](tomita-core-left-representation-gns-map.md)
+- [Left representation agrees with the core product](tomita-core-left-representation-core-act.md)

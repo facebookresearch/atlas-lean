@@ -1,3 +1,4 @@
-# Compact Operator Matrix Coefficient
+# Hilbert matrix-entry functional
 
-The original full-H compact operator matrix entry as an actual complex linear functional.
+For `ξ,η : H`, this complex-linear functional on `K(H)`
+sends `T` to `inner ℂ η (T ξ)`.

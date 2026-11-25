@@ -1,3 +1,4 @@
-# Stable Class
+# Stable Busby classes for coherent folds
 
-Busby-homomorphism classes for the supplied coherent sum, not source-canonical Ext.
+`StableClass S hS` is the quotient of Busby
+homomorphisms `A → Q(B)` by stable strong equivalence relative to `S`.

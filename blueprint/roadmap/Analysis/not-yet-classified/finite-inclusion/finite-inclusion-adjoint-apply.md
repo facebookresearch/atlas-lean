@@ -1,4 +1,5 @@
-# Finite Inclusion adjoint apply
+# Coordinates of the finite inclusion adjoint
 
-The actual stored adjoint reads exactly the coordinates selected by the
-injection.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `(finiteInclusion η).adjoint y i = coord (η i)
+y`.

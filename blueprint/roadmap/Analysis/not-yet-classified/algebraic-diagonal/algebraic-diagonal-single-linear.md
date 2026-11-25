@@ -1,3 +1,4 @@
-# Algebraic Diagonal single Linear
+# Diagonal on a one-coordinate vector
 
-A coordinate inclusion is sent to the inclusion of its component image.
+`algebraicDiagonal T (singleLinear i x) =
+singleLinear i (T i x)` in the target algebraic sum.

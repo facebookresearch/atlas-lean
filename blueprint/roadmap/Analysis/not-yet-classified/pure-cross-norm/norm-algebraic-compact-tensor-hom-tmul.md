@@ -1,3 +1,5 @@
-# Norm algebraic Compact Tensor Hom tmul
+# Norm of an elementary compact tensor
 
-The actual elementary tensor compact-action norm is the product of the two original norms.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, for `a : A` and `T ∈ K(H)`, `‖algebraicCompactTensorHom H A (a⊗T)‖ = ‖a‖ *
+‖T‖`.

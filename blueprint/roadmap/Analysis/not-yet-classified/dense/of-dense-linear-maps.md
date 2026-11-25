@@ -1,4 +1,5 @@
-# Of Dense Linear Maps
+# Unitary determined by dense linear realizations
 
-Two dense linear realizations of one algebraic model with the same
-coefficient-valued Gram form extend canonically to a unitary equivalence.
+For complete right C-star modules, dense
+complex-linear maps `e : X → E`, `f : X → F` with `⟨f x,f y⟩_B = ⟨e x,e y⟩_B` determine a
+unitary `U` satisfying `U (e x) = f x`.

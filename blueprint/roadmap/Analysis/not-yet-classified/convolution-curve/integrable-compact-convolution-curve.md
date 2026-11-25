@@ -1,3 +1,4 @@
-# Integrable compact Convolution Curve
+# Bochner integrability of the convolution curve
 
-The literal continuous compactly supported Banach curve is Haar integrable.
+The continuous compactly supported Banach-valued curve s↦Fs is integrable with respect to the
+Haar measure μ.

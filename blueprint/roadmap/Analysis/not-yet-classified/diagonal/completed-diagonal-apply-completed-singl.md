@@ -1,3 +1,4 @@
-# Completed Diagonal apply completed Single
+# Completed diagonal on a component inclusion
 
-The forward map acts on a coordinate inclusion by its given component.
+`D_T (completedSingle i x) = completedSingle
+i (T_i x)` in the target completed sum.

@@ -16,17 +16,17 @@ public import MathlibExt.Analysis.CStarAlgebra.NonUnitalCompletion
 public import Mathlib.Analysis.CStarAlgebra.Hom
 
 /-!
-# Completed limits of norm-preserving C-star systems
+# Completed isometric limits of C-star algebras
 
-The input contains actual complete coefficient algebras and coherent
-norm-preserving nonunital star homomorphisms. The carrier is the ordinary
-uniform completion of Mathlib's algebraic direct limit with the descended
-stage norm. Its inclusions, C-star dictionary, dense union and universal
-property are constructed from that carrier.
+For a nonempty directed preordered index type, let `S_i` be nonunital C-star algebras with
+coherent complex nonunital star connecting maps preserving every stage norm. The algebraic
+direct limit has `‖[i,x]‖ = ‖x‖`, and its uniform completion is a nonunital C-star algebra. The
+stage maps are isometric, injective, compatible with connecting maps and have dense union.
 
-No completed carrier or universal-property witness is selected from an
-existence theorem. The limit may be the zero algebra and its maps need not
-be unital.
+Compatible star homomorphisms `g_i : S_i → C` into a nonunital C-star algebra extend uniquely to
+the completed limit. The extension is contractive. If each `g_i` preserves norms, the extension
+does too and is injective; if the extension is injective and the union of the stage images is
+dense in `C`, it is surjective. Zero stage and limit algebras are permitted.
 -/
 
 @[expose] public section
@@ -42,20 +42,27 @@ namespace CStarAlgebra.DirectLimit
 
 universe uI uA uC
 
-/-- Raw input for an isometric directed C-star system. -/
+/-- **Isometric system of C-star algebras.** On a preordered type `I`, this record contains
+nonunital C-star stages `S_i` and complex nonunital star maps `S_i → S_j` for `i ≤ j`, with
+identity/composition coherence and `‖S_ij x‖ = ‖x‖`. -/
 structure IsometricSystem (I : Type uI) [Preorder I] where
-  /-- Actual stage carriers. -/
+  /-- **Stage algebras of the system.** The family `Stage : I → Type` gives one coefficient
+  carrier for every preordered index. -/
   Stage : I → Type uA
-  /-- The original complete C-star dictionaries. -/
+  /-- **C-star structure of each stage.** Every stage has a nonunital complex C-star algebra
+  structure, including its complete normed-space structure. -/
   [stageCStarAlgebra : ∀ i, NonUnitalCStarAlgebra (Stage i)]
-  /-- Actual nonunital star homomorphisms. -/
+  /-- **Connecting star homomorphisms.** For `i ≤ j`, the map `Stage i → Stage j` is a complex
+  nonunital star-algebra homomorphism. -/
   map : ∀ i j, i ≤ j → Stage i →⋆ₙₐ[ℂ] Stage j
-  /-- Reflexivity of the input maps. -/
+  /-- **Identity connecting map.** The map at `i ≤ i` equals `NonUnitalStarAlgHom.id ℂ (Stage i)`. -/
   map_refl : ∀ i, map i i le_rfl = NonUnitalStarAlgHom.id ℂ (Stage i)
-  /-- Coherence of the input maps. -/
+  /-- **Composition of connecting maps.** For `i ≤ j ≤ k`, the connecting map from `i` to `k` is
+  the composite of those from `i` to `j` and `j` to `k`. -/
   map_trans : ∀ {i j k} (hij : i ≤ j) (hjk : j ≤ k),
     (map j k hjk).comp (map i j hij) = map i k (hij.trans hjk)
-  /-- The norm used on the algebraic limit is the actual stage norm. -/
+  /-- **Isometric connecting maps.** Every connecting map satisfies `‖map i j hij x‖ = ‖x‖` on its
+  source stage. -/
   norm_map : ∀ i j (hij : i ≤ j) x, ‖map i j hij x‖ = ‖x‖
 
 attribute [instance] IsometricSystem.stageCStarAlgebra
@@ -69,7 +76,9 @@ instance directedSystem (S : IsometricSystem.{uI, uA} I) :
   map_self := fun {i} x => DFunLike.congr_fun (S.map_refl i) x
   map_map := fun {_k _j _i} hij hjk x => DFunLike.congr_fun (S.map_trans hij hjk) x
 
-/-- Mathlib's original algebraic direct-limit carrier. -/
+/-- **Algebraic limit of an isometric system.** For a nonempty directed preordered index and an
+isometric C-star system `S`, `Raw S` is the algebraic direct limit, with each representative
+`[i,x]` having norm `‖x‖`. -/
 abbrev Raw (S : IsometricSystem.{uI, uA} I) :=
   _root_.DirectLimit S.Stage S.map
 
@@ -85,7 +94,8 @@ noncomputable instance rawCStarRing (S : IsometricSystem.{uI, uA} I) :
     CStarRing S.Raw :=
   _root_.DirectLimit.cstar_ring_of_norm_preserving S.map S.norm_map
 
-/-- The ordinary completion, with the input system's descended norm. -/
+/-- **Completion of the isometric algebraic limit.** For a nonempty directed isometric C-star
+system, `Completed S` is the uniform completion of `S.Raw` with its descended stage norm. -/
 abbrev Completed (S : IsometricSystem.{uI, uA} I) :=
   UniformSpace.Completion S.Raw
 
@@ -93,12 +103,14 @@ noncomputable instance completedCStarAlgebra (S : IsometricSystem.{uI, uA} I) :
     NonUnitalCStarAlgebra S.Completed :=
   CStarAlgebra.completionNonUnitalCStarAlgebra S.Raw
 
-/-- The algebraic coefficient map with its original star operation. -/
+/-- **Algebraic stage inclusion.** For a nonempty directed isometric C-star system, `rawOf S i` is
+the complex nonunital star map sending `x : S.Stage i` to the direct-limit class `[i,x]`. -/
 def rawOf (S : IsometricSystem.{uI, uA} I) (i : I) : S.Stage i →⋆ₙₐ[ℂ] S.Raw where
   toNonUnitalAlgHom := _root_.DirectLimit.NonUnitalAlgebra.of S.Stage S.map i
   map_star' x := (_root_.DirectLimit.star_def (f := S.map) i x).symm
 
-/-- The actual stage inclusion into the completed direct limit. -/
+/-- **Completed stage inclusion.** For a nonempty directed isometric C-star system, `of S i` sends
+`x : S.Stage i` to the completion image of `[i,x]`. -/
 def of (S : IsometricSystem.{uI, uA} I) (i : I) : S.Stage i →⋆ₙₐ[ℂ] S.Completed where
   toFun x := (S.rawOf i x : S.Completed)
   map_zero' := by
@@ -112,7 +124,8 @@ def of (S : IsometricSystem.{uI, uA} I) (i : I) : S.Stage i →⋆ₙₐ[ℂ] S.
   map_star' x := by
     rw [map_star, CStarAlgebra.completionNonUnitalCStarAlgebra_star_coe S.Raw]
 
-/-- Each stage inclusion retains its original norm. -/
+/-- **Norm preservation of a stage inclusion.** For an isometric C-star system on a nonempty
+directed index, `‖S.of i x‖ = ‖x‖`. -/
 @[simp]
 theorem norm_of (S : IsometricSystem.{uI, uA} I) (i : I) (x : S.Stage i) :
     ‖S.of i x‖ = ‖x‖ := by
@@ -120,7 +133,8 @@ theorem norm_of (S : IsometricSystem.{uI, uA} I) (i : I) (x : S.Stage i) :
   rw [UniformSpace.Completion.norm_coe]
   exact _root_.DirectLimit.normedAddCommGroupOfNormPreserving_norm_mk S.map S.norm_map i x
 
-/-- No element of an original stage is lost by completion. -/
+/-- **Injective completed stage map.** Every stage inclusion `S.of i` of a nonempty directed
+isometric C-star system is injective. -/
 theorem of_injective (S : IsometricSystem.{uI, uA} I) (i : I) :
     Function.Injective (S.of i) := by
   intro x y hxy
@@ -128,7 +142,8 @@ theorem of_injective (S : IsometricSystem.{uI, uA} I) (i : I) :
   apply norm_eq_zero.mp
   rw [← S.norm_of i (x - y), map_sub, hxy, sub_self, norm_zero]
 
-/-- The canonical inclusions commute with the actual connecting maps. -/
+/-- **Compatibility of completed stage inclusions.** For `i ≤ j`, `S.of j (S.map i j hij x) = S.of
+i x`. -/
 @[simp]
 theorem of_map (S : IsometricSystem.{uI, uA} I) {i j : I}
     (hij : i ≤ j) (x : S.Stage i) : S.of j (S.map i j hij x) = S.of i x := by
@@ -138,7 +153,8 @@ theorem of_map (S : IsometricSystem.{uI, uA} I) {i j : I}
   exact congrArg (fun z : S.Raw => (z : S.Completed))
     (_root_.DirectLimit.NonUnitalAlgebra.of_f (G := S.Stage) (f := S.map) hij x)
 
-/-- The completed algebra is the closure of its actual coefficient images. -/
+/-- **Density of the stage images.** For a nonempty directed isometric C-star system, `⋃ i,
+Set.range (S.of i)` is dense in the completed limit. -/
 theorem dense_union_range (S : IsometricSystem.{uI, uA} I) :
     Dense (⋃ i, Set.range (S.of i)) := by
   have hset : (⋃ i, Set.range (S.of i)) =
@@ -165,7 +181,9 @@ variable (S : IsometricSystem.{uI, uA} I)
   (g : ∀ i, S.Stage i →⋆ₙₐ[ℂ] C)
   (hg : ∀ {i j : I} (hij : i ≤ j), (g j).comp (S.map i j hij) = g i)
 
-/-- The algebraic universal map, before taking the ordinary completion. -/
+/-- **Universal algebraic limit map.** Compatible complex nonunital star maps `g_i : S.Stage i →
+C` into a C-star algebra define the star homomorphism `S.Raw → C` determined by `[i,x] ↦
+g_i(x)`. -/
 def rawLift : S.Raw →⋆ₙₐ[ℂ] C where
   toNonUnitalAlgHom := _root_.DirectLimit.NonUnitalAlgebra.lift S.Stage S.map C
     (fun i => (g i).toNonUnitalAlgHom)
@@ -180,20 +198,23 @@ def rawLift : S.Raw →⋆ₙₐ[ℂ] C where
 theorem rawLift_rawOf (i : I) (x : S.Stage i) : S.rawLift g hg (S.rawOf i x) = g i x :=
   rfl
 
-/-- The algebraic universal map has the same contraction bound as the
-original C-star stage maps. -/
+/-- **Contractivity of the algebraic universal map.** For compatible C-star stage homomorphisms
+`g_i`, `‖S.rawLift g hg x‖ ≤ ‖x‖` on the descended algebraic limit norm. -/
 theorem norm_rawLift_le (x : S.Raw) : ‖S.rawLift g hg x‖ ≤ ‖x‖ := by
   refine _root_.DirectLimit.induction (f := S.map) (fun i a => ?_) x
   change ‖g i a‖ ≤ ‖(⟦⟨i, a⟩⟧ : S.Raw)‖
   rw [_root_.DirectLimit.normedAddCommGroupOfNormPreserving_norm_mk S.map S.norm_map]
   exact NonUnitalStarAlgHom.norm_apply_le (g i) a
 
-/-- The canonical contractive raw limit map as a continuous linear map in its norm topology. -/
+/-- **Continuous linear universal limit map.** The compatible C-star stage maps induce the
+continuous complex-linear map on `S.Raw` with values `[i,x] ↦ g_i(x)` and norm bound one. -/
 def rawLiftCLM : S.Raw →L[ℂ] C :=
   (LinearMap.ofClass (S.rawLift g hg)).mkContinuous 1 fun x => by
     simpa only [one_mul, LinearMap.coe_ofClass] using S.norm_rawLift_le g hg x
 
-/-- Extend the actual contractive universal map to the ordinary completion. -/
+/-- **Universal map on the completed limit.** For a nonempty directed isometric C-star system and
+compatible star maps `g_i : S.Stage i → C`, extend the contractive algebraic limit map to
+`S.Completed → C`. -/
 def lift : S.Completed →⋆ₙₐ[ℂ] C := by
   let L := rawLiftCLM S g hg
   let F : S.Completed → C := UniformSpace.Completion.extension L
@@ -237,13 +258,15 @@ def lift : S.Completed →⋆ₙₐ[ℂ] C := by
 theorem lift_coe (a : S.Raw) : S.lift g hg (a : S.Completed) = S.rawLift g hg a := by
   exact UniformSpace.Completion.extension_coe (rawLiftCLM S g hg).uniformContinuous a
 
-/-- The extension has exactly the prescribed stage values. -/
+/-- **Universal map on a stage image.** For compatible stage maps, `S.lift g hg (S.of i x) = g i
+x`. -/
 @[simp]
 theorem lift_of (i : I) (x : S.Stage i) : S.lift g hg (S.of i x) = g i x := by
   change S.lift g hg (S.rawOf i x : S.Completed) = g i x
   rw [S.lift_coe g hg, S.rawLift_rawOf g hg]
 
-/-- Compatible stage values determine the completed map uniquely. -/
+/-- **Uniqueness of the completed universal map.** A complex nonunital star homomorphism `H :
+S.Completed → C` agreeing with `g_i` on every stage inclusion equals `S.lift g hg`. -/
 theorem lift_unique (H : S.Completed →⋆ₙₐ[ℂ] C)
     (hH : ∀ i, H.comp (S.of i) = g i) : H = S.lift g hg := by
   apply NonUnitalStarAlgHom.ext
@@ -259,14 +282,17 @@ theorem lift_unique (H : S.Completed →⋆ₙₐ[ℂ] C)
     _ = S.lift g hg (S.of i z) := (S.lift_of g hg i z).symm
 
 include hg in
-/-- The actual completed carrier satisfies the C-star universal property. -/
+/-- **C-star universal property of the completed limit.** Compatible complex nonunital star maps
+`g_i : S.Stage i → C` into a nonunital C-star algebra determine exactly one star homomorphism
+`H : S.Completed → C` with `H.comp (S.of i) = g_i`. -/
 theorem universal : ∃! H : S.Completed →⋆ₙₐ[ℂ] C, ∀ i, H.comp (S.of i) = g i := by
   refine ⟨S.lift g hg, ?_, fun H hH => S.lift_unique g hg H hH⟩
   intro i
   ext x
   exact S.lift_of g hg i x
 
-/-- A map preserving every original stage norm preserves the completed norm. -/
+/-- **Isometric universal limit map.** If compatible stage maps `g_i` preserve every stage norm,
+then `‖S.lift g hg x‖ = ‖x‖` for all completed limit elements `x`. -/
 theorem norm_lift_of_norm_preserving
     (hgnorm : ∀ i (x : S.Stage i), ‖g i x‖ = ‖x‖) (x : S.Completed) :
     ‖S.lift g hg x‖ = ‖x‖ := by
@@ -278,7 +304,8 @@ theorem norm_lift_of_norm_preserving
   rw [S.lift_of g hg, S.norm_of]
   exact hgnorm i z
 
-/-- No original stage norm is lost by the extended universal map. -/
+/-- **Injectivity from stage norm preservation.** If the compatible maps `g_i` preserve norms on
+each stage, their completed universal map `S.lift g hg` is injective. -/
 theorem lift_injective_of_norm_preserving
     (hgnorm : ∀ i (x : S.Stage i), ‖g i x‖ = ‖x‖) :
     Function.Injective (S.lift g hg) := by
@@ -288,8 +315,9 @@ theorem lift_injective_of_norm_preserving
   rw [← S.norm_lift_of_norm_preserving g hg hgnorm (x - y),
     map_sub, hxy, sub_self, norm_zero]
 
-/-- An injective completed map whose original coefficient images are dense
-is onto the fixed original target algebra. -/
+/-- **Surjectivity of a faithful dense limit map.** If `S.lift g hg` is injective and the union `⋃
+i, Set.range (g i)` is dense in the target C-star algebra `C`, the completed universal map is
+surjective. -/
 theorem lift_surjective_of_dense_range
     (hinj : Function.Injective (S.lift g hg))
     (hdense : Dense (⋃ i, Set.range (g i))) : Function.Surjective (S.lift g hg) := by

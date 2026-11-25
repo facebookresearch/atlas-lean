@@ -17,14 +17,15 @@ public import MathlibExt.Analysis.InnerProductSpace.EssentialRestrictionNorm
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
-# The actual essential covariant pair preserves its Haar-integrated norm
+# Essential restriction preserves Haar integrated norms
 
-The original coefficient operators have range in their actual essential
-space. Integration through its linear isometric inclusion preserves every
-source-vector integral. The source star identity gives the same range
-property for the adjoint, so restriction preserves the original operator
-norm. This provides the nondegenerate covariant norm model used by the full
-source covariant norm, with no faithfulness or norm-equality assumption.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. Let E be the closed
+complex span of {π(a)ξ:a∈A,ξ∈H}, and let ρE be the coefficient and group representation
+restricted to this invariant Hilbert subspace. Every Iρ(f) maps H into E. The integrated
+operator of ρE is Iρ(f) restricted to E and has the same operator norm: ‖IρE(f)‖=‖Iρ(f)‖.
 -/
 
 @[expose] public section
@@ -47,7 +48,15 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
-/-- Every original integrated covariant vector lies in the actual coefficient essential space. -/
+/-- **Integrated vectors belong to the essential coefficient space.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. Let E be the closed
+complex span of {π(a)ξ:a∈A,ξ∈H}, and let ρE be the coefficient and group representation
+restricted to this invariant Hilbert subspace. For f∈Carrier μ α and ξ∈H, Iρ(f)ξ belongs to E.
+-/
 theorem haarIntegratedHom_mem_essentialSpace (f : HaarTwistedCore.Carrier μ α) (ξ : H) :
     haarIntegratedHom μ ρ f ξ ∈ ρ.algebra.essentialSpace := by
   let φ : G → ρ.algebra.essentialSpace := fun s =>
@@ -60,7 +69,16 @@ theorem haarIntegratedHom_mem_essentialSpace (f : HaarTwistedCore.Carrier μ α)
   change (∫ s : G, (φ s : H) ∂μ) ∈ ρ.algebra.essentialSpace
   exact hTransport.symm ▸ (∫ s : G, φ s ∂μ).property
 
-/-- The essential covariant pair retains exactly every original integrated source-vector value. -/
+/-- **Integrated vector action after essential restriction.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. Let E be the closed
+complex span of {π(a)ξ:a∈A,ξ∈H}, and let ρE be the coefficient and group representation
+restricted to this invariant Hilbert subspace. For ξ∈E, the inclusion into H of IρE(f)ξ equals
+Iρ(f)ξ.
+-/
 theorem essentialCovariantRepresentation_haarIntegratedHom_apply_coe
     (f : HaarTwistedCore.Carrier μ α) (ξ : ρ.algebra.essentialSpace) :
     (haarIntegratedHom μ ρ.essentialCovariantRepresentation f ξ : H) =
@@ -81,7 +99,16 @@ theorem essentialCovariantRepresentation_haarIntegratedHom_apply_coe
       apply integral_congr_ae
       exact Eventually.of_forall fun _ => rfl
 
-/-- The actual essential integrated homomorphism is literal restriction of the original operator. -/
+/-- **Integrated operator is the restriction to the essential space.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. Let E be the closed
+complex span of {π(a)ξ:a∈A,ξ∈H}, and let ρE be the coefficient and group representation
+restricted to this invariant Hilbert subspace. For every core coefficient f, the operator
+IρE(f):E→E is the restriction of Iρ(f):H→H, with both domain and range restricted to E.
+-/
 theorem essentialCovariantRepresentation_haarIntegratedHom_eq
     (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedHom μ ρ.essentialCovariantRepresentation f =
@@ -92,7 +119,17 @@ theorem essentialCovariantRepresentation_haarIntegratedHom_eq
   apply Subtype.ext
   exact essentialCovariantRepresentation_haarIntegratedHom_apply_coe μ ρ f ξ
 
-/-- Actual essential restriction preserves the full original Haar-integrated operator norm. -/
+/-- **Integrated operator norm is preserved by essential restriction.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. Let E be the closed
+complex span of {π(a)ξ:a∈A,ξ∈H}, and let ρE be the coefficient and group representation
+restricted to this invariant Hilbert subspace. For every core coefficient f,
+‖haarIntegratedHom μ ρ.essentialCovariantRepresentation f‖=‖haarIntegratedHom μ ρ f‖,
+equivalently ‖IρE(f)‖=‖Iρ(f)‖.
+-/
 theorem norm_essentialCovariantRepresentation_haarIntegratedHom
     (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ.essentialCovariantRepresentation f‖ = ‖haarIntegratedHom μ ρ f‖ := by

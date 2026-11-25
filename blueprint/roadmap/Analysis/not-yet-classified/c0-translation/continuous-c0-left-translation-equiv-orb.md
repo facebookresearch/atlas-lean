@@ -1,3 +1,3 @@
-# Continuous c0 Left Translation Equiv orbit
+# Supremum-norm continuity of translation orbits
 
-Every actual original C0 translation orbit is continuous in the original supremum norm.
+For every f ∈ C₀(G,ℂ), the map g ↦ λg f is continuous in the supremum norm.

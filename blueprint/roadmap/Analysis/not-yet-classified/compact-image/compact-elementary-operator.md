@@ -1,3 +1,5 @@
-# Compact Elementary Operator
+# Elementary compact on Hilbert amplification
 
-Compute the original arbitrary coefficient/compact product in the actual compact algebra.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `compactElementaryOperator H A a T` is the element of
+`CompactAlgebra H A` represented by `L_a D_T`, for `a : A` and `T ∈ K(H)`.

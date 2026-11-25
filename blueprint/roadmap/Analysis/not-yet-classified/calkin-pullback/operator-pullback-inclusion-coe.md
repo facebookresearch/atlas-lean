@@ -1,3 +1,4 @@
-# Operator Pullback Inclusion coe
+# Pair formula for compact inclusion
 
-The compact coefficient has its literal operator-first pair value.
+Under the product embedding,
+`operatorPullbackInclusion φ k = ((k : B(H)),0)`.

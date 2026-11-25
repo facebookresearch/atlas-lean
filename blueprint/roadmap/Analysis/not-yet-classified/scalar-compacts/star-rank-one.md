@@ -1,3 +1,3 @@
-# Star rank One
+# Adjoint of the scalar rank-one operator
 
-Adjoint exchanges the two actual rank-one vectors.
+`star (rankOne v w) = rankOne w v`.

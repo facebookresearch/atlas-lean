@@ -18,18 +18,14 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInftyOpen
 
 /-!
-# The actual scalar Haar transformation-group representation
+# Scalar Haar transformation-group representation
 
-Evaluation of C0(G) at the identity, followed by the canonical scalar operator
-map on Complex, feeds the existing regular Haar construction. Its actual
-L2 carrier is Lp Complex2mu. The coefficient action is literal multiplication
-by a(s); the group action is inverse left translation. The given coefficient
-evaluation is not required faithful, and no model is selected from a source
-equivalence or compactness theorem.
-
-The transformation compact-operator comparison remains a separate source
-output. These are its genuine operator and Haar-integral constructors on
-all original groups and zero coefficients, with the fixed Haar convention.
+Let G be a locally compact Borel topological group and μ a regular left Haar measure. On
+A=C₀(G,ℂ) take the point-norm action α_g(a)(s)=a(g⁻¹*s). The scalar transformation pair on
+L²(G,μ;ℂ) is (M_a ξ)(s)=a(s)ξ(s), (λ_g ξ)(s)=ξ(g⁻¹*s), with formulas holding μ-almost
+everywhere. This is the regular representation induced from coefficient evaluation a↦a(1) on
+ℂ. For a compactly supported continuous coefficient F:G→C₀(G,ℂ), its integrated operator is
+J(F)ξ=∫ t, M_(F(t))(λ_t ξ) ∂μ in L²(G,μ;ℂ).
 -/
 
 @[expose] public section
@@ -49,13 +45,21 @@ universe uG
 
 variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-/-- The original scalar coefficient representation evaluates exactly at the group identity. -/
+/-- **Scalar coefficient representation by evaluation at the identity.**
+
+Let G be a topological group. The nonunital complex star homomorphism
+c0ScalarCoefficientRepresentation:C₀(G,ℂ)→B(ℂ) sends a to multiplication by a(1): z↦a(1)z.
+-/
 def c0ScalarCoefficientRepresentation : C₀(G, ℂ) →⋆ₙₐ[ℂ] (ℂ →L[ℂ] ℂ) :=
   (StarAlgHom.ofId ℂ (ℂ →L[ℂ] ℂ)).toNonUnitalStarAlgHom.comp
     (ZeroAtInftyContinuousMap.evalAt (A := ℂ) 1)
 
 omit [IsTopologicalGroup G] in
-/-- Every scalar coefficient action has its exact original identity-evaluation value. -/
+/-- **Value of the identity-evaluation coefficient representation.**
+
+Let G be a topological group, a∈C₀(G,ℂ) and z∈ℂ. Then c0ScalarCoefficientRepresentation a
+z=a(1)*z.
+-/
 @[simp]
 theorem c0ScalarCoefficientRepresentation_apply (a : C₀(G, ℂ)) (z : ℂ) :
     c0ScalarCoefficientRepresentation a z = a 1 * z := by
@@ -66,13 +70,25 @@ theorem c0ScalarCoefficientRepresentation_apply (a : C₀(G, ℂ)) (z : ℂ) :
 variable [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
 variable (mu : Measure G) [mu.Regular] [mu.IsHaarMeasure]
 
-/-- The actual scalar Haar covariant pair for the original transformation action. -/
+/-- **Covariant scalar transformation pair.**
+
+Let G be a locally compact Borel topological group and μ a regular left Haar measure. On
+A=C₀(G,ℂ) take the point-norm action α_g(a)(s)=a(g⁻¹*s). The scalar transformation pair on
+L²(G,μ;ℂ) is (M_a ξ)(s)=a(s)ξ(s), (λ_g ξ)(s)=ξ(g⁻¹*s), with formulas holding μ-almost
+everywhere. The pair transformationCovariantRepresentation μ=(M,λ) is a covariant
+representation of α on L²(G,μ;ℂ).
+-/
 def transformationCovariantRepresentation :
     CovariantRepresentation (c0LeftTranslationAction (G := G)) (Lp ℂ 2 mu) :=
   regularCovariantRepresentation (c0LeftTranslationAction (G := G))
     c0ScalarCoefficientRepresentation mu
 
-/-- Its actual coefficient operator is multiplication by the original C0 value at every Haar vector. -/
+/-- **Transformation coefficient operator as multiplication.**
+
+Let G be a locally compact Borel topological group and μ a regular left Haar measure. On
+A=C₀(G,ℂ) take the point-norm action α_g(a)(s)=a(g⁻¹*s). For a∈C₀(G,ℂ) and ξ∈L²(G,μ;ℂ),
+(transformationCovariantRepresentation μ).algebra a ξ equals s↦a(s)ξ(s) μ-almost everywhere.
+-/
 theorem transformationCoefficient_ae_eq (a : C₀(G, ℂ)) (xi : Lp ℂ 2 mu) :
     (transformationCovariantRepresentation mu).algebra a xi =ᵐ[mu]
       fun s : G => a s * xi s := by
@@ -82,13 +98,27 @@ theorem transformationCoefficient_ae_eq (a : C₀(G, ℂ)) (xi : Lp ℂ 2 mu) :
     regularCoefficientOperator_ae_eq (c0LeftTranslationAction (G := G))
       c0ScalarCoefficientRepresentation mu a xi
 
-/-- Its actual group unitary is the original inverse left Haar translation. -/
+/-- **Transformation group operator as Haar translation.**
+
+Let G be a locally compact Borel topological group and μ a regular left Haar measure. On
+A=C₀(G,ℂ) take the point-norm action α_g(a)(s)=a(g⁻¹*s). For g∈G and ξ∈L²(G,μ;ℂ), the group
+operator of transformationCovariantRepresentation μ at g sends ξ to s↦ξ(g⁻¹*s) μ-almost
+everywhere.
+-/
 theorem transformationGroup_ae_eq (g : G) (xi : Lp ℂ 2 mu) :
     ((transformationCovariantRepresentation mu).group g : Lp ℂ 2 mu →L[ℂ] Lp ℂ 2 mu) xi =ᵐ[mu]
       fun s : G => xi (g⁻¹ * s) :=
   StronglyContinuousUnitaryRepresentation.haarLeftRegular_ae_eq G mu ℂ g xi
 
-/-- The literal integrated original scalar transformation representation on the actual Haar core. -/
+/-- **Integrated scalar transformation homomorphism.**
+
+Let G be a locally compact Borel topological group and μ a regular left Haar measure. On
+A=C₀(G,ℂ) take the point-norm action α_g(a)(s)=a(g⁻¹*s). The scalar transformation pair on
+L²(G,μ;ℂ) is (M_a ξ)(s)=a(s)ξ(s), (λ_g ξ)(s)=ξ(g⁻¹*s), with formulas holding μ-almost
+everywhere. The nonunital complex star homomorphism transformationIntegratedHom μ from Carrier
+μ α to B(L²(G,μ;ℂ)) sends a core coefficient F:G→C₀(G,ℂ) to J(F), where J(F)ξ=∫ t,
+M_(F(t))(λ_t ξ) ∂μ as a Bochner integral in L².
+-/
 def transformationIntegratedHom :
     HaarTwistedCore.Carrier mu (c0LeftTranslationAction (G := G)) →⋆ₙₐ[ℂ]
       (Lp ℂ 2 mu →L[ℂ] Lp ℂ 2 mu) :=

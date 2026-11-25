@@ -1,3 +1,5 @@
-# Norm compact Tensor Completion Equiv
+# Norm of the induced completion equivalence
 
-The actual equivalence preserves the norm computed from the same original compact-action seminorm.
+For every completed tensor `x`,
+`‖compactTensorCompletionEquiv H A x‖ = ‖x‖` with the norm induced by the compact-action
+seminorm.

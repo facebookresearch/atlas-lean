@@ -1,3 +1,4 @@
-# Is Closed range cut Projection
+# Closed range of a coordinate cut
 
-The range of a coordinate cut is closed.
+The range of `cutProjection s` is closed in the
+completed-module norm topology.

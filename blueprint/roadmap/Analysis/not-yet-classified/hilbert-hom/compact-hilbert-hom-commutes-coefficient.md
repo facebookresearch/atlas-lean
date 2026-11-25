@@ -1,3 +1,4 @@
-# Compact Hilbert Hom commutes coefficient Hom
+# Commutation of the two tensor representation factors
 
-The two actual homomorphism factors commute, as required for the algebraic tensor action.
+For `T ∈ K(H)` and `a : A`,
+`compactHilbertHom H A T` commutes with `coefficientHom H A a`.

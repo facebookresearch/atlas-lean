@@ -1,3 +1,4 @@
-# Algebraic Diagonal apply
+# Coordinate value of an algebraic diagonal
 
-Every coordinate is the action of the given component operator.
+`toDFinsupp (algebraicDiagonal T x) i = T i
+(toDFinsupp x i)`.

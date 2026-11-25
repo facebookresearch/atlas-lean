@@ -1,3 +1,3 @@
-# Nondegenerate essential Covariant Representation
+# Density of coefficient-generated vectors
 
-Compatibility with the original dense-span essential covariant statement.
+The complex linear span of πess(a)ξ, for a ∈ A and ξ ∈ Eπ, is dense in Eπ.

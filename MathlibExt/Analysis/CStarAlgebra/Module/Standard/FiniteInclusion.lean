@@ -15,18 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Standard.CoordinateAdjoint
 public import MathlibExt.Analysis.CStarAlgebra.Module.Standard.FiniteCoordinateAdjoints
 
 /-!
-# Finite coordinate inclusions in standard right C-star modules
+# Finite coordinate submodules of standard modules
 
-A genuine injection of a finite index type into an arbitrary index type gives
-an adjointable inclusion of the actual finite standard module. The inclusion
-is a finite sum of the existing adjointable coordinate maps, and its stored
-adjoint is the corresponding coordinate restriction.
+For nonunital C-star `B`, finite `I` and injection `η : I ↪ κ`, define `j_η : FiniteStandard B I
+→ Standard B κ` by `j_η x = ∑ i, single (η i) (x_i)`. Its adjoint reads the selected
+coordinates: `(j_η* y)_i = coord (η i) y`.
 
-The finite-source composite is the operator identity; the reverse composite
-is the existing standard truncation on the finite image. The coefficient inner
-product and original norms are preserved. Operator bounds are at most one,
-including empty indices and zero coefficients. No coefficient unit, new norm,
-module model or compactness of the inclusion is assumed.
+The maps satisfy `j_η* j_η = 1` on the finite module and `j_η j_η*` is truncation to the finite
+image of `η`. The inclusion preserves coefficient inner products and norms, and both operators
+have norm at most one. Empty finite indices, arbitrary target indices and zero coefficients are
+allowed.
 -/
 
 @[expose] public section
@@ -41,8 +39,9 @@ universe uB uI uK
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable {I : Type uI} [Fintype I] {κ : Type uK}
 
-/-- The finite-coordinate inclusion, formed from the actual standard and
-finite coordinate adjoints. -/
+/-- **Adjointable finite coordinate inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the map `j_η : FiniteStandard B I → Standard B κ`
+inserts the component `x_i` at `η i`, with adjoint the selected-coordinate restriction. -/
 noncomputable def finiteInclusion (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -55,8 +54,9 @@ noncomputable def finiteInclusion (η : I ↪ κ) :
   exact ∑ i : I, (singleAdjointable (B := B) (η i)).comp
     (finiteSingleAdjointable (B := B) (I := I) i).adjointOperator
 
-/-- The forward bounded map is the finite sum of the original single and
-finite evaluation composites. -/
+/-- **Forward map of finite coordinate inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the forward map is `∑ i, single (η i) ∘
+finiteCoord i`. -/
 theorem finiteInclusion_toContinuousLinearMap (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -91,8 +91,9 @@ theorem finiteInclusion_toContinuousLinearMap (η : I ↪ κ) :
         (finiteSingleAdjointable (B := B) (I := I) i).adjoint = _
       rw [hSingle, hCoord]
 
-/-- The stored adjoint is the finite sum of the original finite insertion
-and standard evaluation composites, in reverse composition order. -/
+/-- **Adjoint of finite coordinate inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the adjoint is `∑ i, finiteSingle i ∘ coord (η
+i)`. -/
 theorem finiteInclusion_adjoint (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -126,8 +127,9 @@ theorem finiteInclusion_adjoint (η : I ↪ κ) :
       rw [comp_adjoint, adjointOperator_adjoint,
         finiteSingleAdjointable_toContinuousLinearMap, singleAdjointable_adjoint]
 
-/-- The inclusion has the literal finite sum of standard coefficient singles
-as its value. -/
+/-- **Vector formula for finite coordinate inclusion.** For nonunital complex C-star `B`, finite
+`I`, arbitrary `κ`, and an injection `η : I ↪ κ`, `finiteInclusion η x = ∑ i, single (η i) (x
+i)`. -/
 theorem finiteInclusion_apply (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -151,8 +153,9 @@ theorem finiteInclusion_apply (η : I ↪ κ) :
       simpa only [_root_.sum_apply, ContinuousLinearMap.comp_apply,
         finiteCoord_apply] using h
 
-/-- The actual stored adjoint reads exactly the coordinates selected by the
-injection. -/
+/-- **Coordinates of the finite inclusion adjoint.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `(finiteInclusion η).adjoint y i = coord (η i)
+y`. -/
 @[simp]
 theorem finiteInclusion_adjoint_apply (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -183,7 +186,8 @@ theorem finiteInclusion_adjoint_apply (η : I ↪ κ) :
       _ = coord (η i) y := finiteCoord_single_self (B := B) i (coord (η i) y)
   simpa only [finiteCoord_apply] using hCoord
 
-/-- The image coordinate of an included vector is its original coefficient. -/
+/-- **Recovery of an included coefficient.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `coord (η i) (finiteInclusion η x) = x i`. -/
 @[simp]
 theorem coord_finiteInclusion (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -205,8 +209,9 @@ theorem coord_finiteInclusion (η : I ↪ κ) :
         exact coord_single_ne hη (x j)
     _ = x i := coord_single_self (η i) (x i)
 
-/-- Restriction after inclusion is the whole identity operator on the finite
-source, without a coefficient-unit hypothesis. -/
+/-- **Restriction after finite inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `(finiteInclusion η)* ∘ finiteInclusion η = 1` on
+`FiniteStandard B I`. -/
 @[simp]
 theorem finiteInclusion_adjoint_comp_self (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -225,8 +230,9 @@ theorem finiteInclusion_adjoint_comp_self (η : I ↪ κ) :
   change (finiteInclusion (B := B) η).adjoint (finiteInclusion (B := B) η x) i = x i
   rw [finiteInclusion_adjoint_apply, coord_finiteInclusion]
 
-/-- The reverse whole composite has the original standard truncation as its
-forward CLM, on the literal finite image of the injection. -/
+/-- **Projection onto the finite coordinate image.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the continuous linear map of `j_η j_η*` is
+`truncate (Finset.univ.map η)`. -/
 theorem finiteInclusion_comp_adjoint_toContinuousLinearMap (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -248,7 +254,9 @@ theorem finiteInclusion_comp_adjoint_toContinuousLinearMap (η : I ↪ κ) :
   exact congrArg (single (B := B) (η i))
     (finiteInclusion_adjoint_apply (B := B) η y i)
 
-/-- The inclusion preserves the coefficient-valued right inner product. -/
+/-- **Inner product under finite coordinate inclusion.** For nonunital complex C-star `B`, finite
+`I`, arbitrary `κ`, and an injection `η : I ↪ κ`, `⟨j_η x,j_η y⟩_B = ⟨x,y⟩_B`, where `j_η =
+finiteInclusion η`. -/
 theorem rightInner_finiteInclusion (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -277,7 +285,9 @@ theorem rightInner_finiteInclusion (η : I ↪ κ) :
     _ = CStarModule.rightInner (B := B) x y :=
       congrArg (CStarModule.rightInner (B := B) x) hRound
 
-/-- The original finite and standard module norms agree on the inclusion. -/
+/-- **Norm preservation of finite inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `‖finiteInclusion η x‖ = ‖x‖` for every finite
+standard vector `x`. -/
 @[simp]
 theorem norm_finiteInclusion_apply (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -293,7 +303,9 @@ theorem norm_finiteInclusion_apply (η : I ↪ κ) :
     (fun b : B => b) (fun z : FiniteStandard B I => finiteInclusion (B := B) η z)
     (fun _ => rfl) (rightInner_finiteInclusion (B := B) η) x
 
-/-- The finite inclusion is an isometry for the original metrics. -/
+/-- **Isometric finite coordinate inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `finiteInclusion η` is an isometry for the finite
+and completed standard-module metrics. -/
 theorem finiteInclusion_isometry (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -308,8 +320,9 @@ theorem finiteInclusion_isometry (η : I ↪ κ) :
     ← map_sub (finiteInclusion (B := B) η) x y]
   exact norm_finiteInclusion_apply (B := B) η (x - y)
 
-/-- The inclusion has norm at most one, also for an empty source or zero
-coefficient algebra. -/
+/-- **Operator norm bound for finite inclusion.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `‖finiteInclusion η‖ ≤ 1`, including empty source
+and zero coefficients. -/
 theorem norm_finiteInclusion_le (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -333,7 +346,8 @@ theorem norm_finiteInclusion_le (η : I ↪ κ) :
     _ = ‖x‖ := norm_finiteInclusion_apply (B := B) η x
     _ ≤ 1 * ‖x‖ := by simp only [one_mul, le_refl]
 
-/-- The actual adjoint operator has the same zero-safe bound. -/
+/-- **Operator norm bound for finite restriction.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `‖(finiteInclusion η).adjointOperator‖ ≤ 1`. -/
 theorem norm_finiteInclusion_adjointOperator_le (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;

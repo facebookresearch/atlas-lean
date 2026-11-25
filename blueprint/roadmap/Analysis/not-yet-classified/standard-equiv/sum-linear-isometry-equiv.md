@@ -1,4 +1,5 @@
-# Sum Linear Isometry Equiv
+# Isometric splitting of a completed standard module
 
-Splitting the coordinate type gives a linear isometric equivalence from
-the completed standard module to the genuine direct sum.
+`Standard B (I ⊕ J)` is
+complex-linearly isometrically equivalent to the Hilbert-module direct sum of `Standard B I`
+and `Standard B J`.

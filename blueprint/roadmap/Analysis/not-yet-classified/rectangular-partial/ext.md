@@ -1,3 +1,4 @@
-# Ext
+# Extensionality of dense right-linear operators
 
-Dense right-linear operators are determined by their genuine partial maps.
+Two such operators `T,S : E → F` are equal
+when their complex-linear partial maps are equal, including their domain submodules.

@@ -19,12 +19,11 @@ import Mathlib.Analysis.CStarAlgebra.Spectrum
 import Mathlib.Analysis.Normed.Operator.Banach
 
 /-!
-# Separability of actual C-star quotients and extensions
+# Separability of C-star quotients and extensions
 
-The quotient uses the existing canonical normed-module quotient. For an
-extension, the actual quotient is open by Banach open mapping and its
-kernel is the continuous image of the actual ideal coefficient. No
-splitting, nuclearity, or separable-middle result field is assumed.
+A quotient of a separable nonunital C-star algebra by a closed two-sided star ideal is separable
+for the quotient norm topology. For an extension `0 → B → E → A → 0`, separability of `A` and
+`B` implies separability of `E`: the quotient map is open and its kernel is identified with `B`.
 -/
 
 @[expose] public section
@@ -36,8 +35,8 @@ universe uA uB uM
 
 namespace ClosedStarIdeal
 
-/-- The actual quotient of a separable C-star algebra by a closed star ideal
-is separable, with the existing scoped quotient dictionary. -/
+/-- **Separability of a closed-ideal quotient.** If the nonunital C-star algebra `A` is separable
+and `I` is a closed two-sided star ideal, the normed quotient `A/I` is separable. -/
 theorem separable_quotient {A : Type uA} [NonUnitalCStarAlgebra A] [SeparableSpace A]
     (I : ClosedStarIdeal A) :
     letI : I.carrier.IsTwoSided := I.isTwoSided;
@@ -51,8 +50,8 @@ end ClosedStarIdeal
 
 namespace CStarExtension
 
-/-- In a genuine normalized extension, separable endpoints imply that its
-actual middle algebra is separable. There is no section hypothesis. -/
+/-- **Separability of an extension algebra.** For a C-star extension `0 → B → X.Middle → A → 0`,
+separability of the nonunital endpoint algebras `A,B` implies `SeparableSpace X.Middle`. -/
 theorem separable_middle {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     [SeparableSpace A] [SeparableSpace B]

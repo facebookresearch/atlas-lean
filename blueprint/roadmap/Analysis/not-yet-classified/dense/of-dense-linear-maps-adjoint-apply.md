@@ -1,4 +1,4 @@
-# Of Dense Linear Maps adjoint apply
+# Adjoint on the second dense image
 
-The adjoint unitary extension sends the second realization back to the
-first one.
+For the unitary determined by dense maps `e,f` with
+equal Gram forms, `U* (f x) = e x`.

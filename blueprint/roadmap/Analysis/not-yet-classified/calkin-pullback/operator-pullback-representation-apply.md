@@ -1,3 +1,4 @@
-# Operator Pullback Representation apply
+# Operator value of a compatible pair
 
-Every compatible pair retains its literal original operator value.
+For `p : P_φ`, `operatorPullbackRepresentation φ p =
+p.1.1`, its bounded-operator coordinate.

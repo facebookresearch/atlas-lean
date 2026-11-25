@@ -1,3 +1,4 @@
-# Asymptotic Lift apply
+# Value of the folded asymptotic lift
 
-The actual generic matrix family, before the fixed multiplier fold.
+`(S.asymptoticLift L₁ L₂).family t a =
+S.multiplierMatrixEquiv (diag(L₁.family t a,L₂.family t a))`.

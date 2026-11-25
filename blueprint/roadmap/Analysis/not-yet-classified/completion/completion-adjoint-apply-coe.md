@@ -1,3 +1,4 @@
-# Completion adjoint apply coe
+# Completed adjoint on the dense inclusion
 
-The canonical completion image keeps the original adjoint value.
+`(completion T).adjoint (y : Completion F) =
+(T.adjoint y : Completion E)` for `y : F`.

@@ -1,4 +1,4 @@
-# Algebraic Right SMul
+# Componentwise right coefficient map
 
-Pointwise right multiplication as a complex-linear endomorphism of the
-algebraic direct sum.
+For `b : B`, this complex-linear endomorphism sends
+the coordinate `x_i` to `x_i <• b`.

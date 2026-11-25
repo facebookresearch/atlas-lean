@@ -15,10 +15,13 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.CompletelyPosi
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Functoriality
 
 /-!
-# Fixed-star-hom functoriality for CPC asymptotic families
+# Star-homomorphism functoriality of CP-contractive families
 
-Only one side is an actual star homomorphism. No composition of two arbitrary
-asymptotic families is defined.
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. For a nonunital complex star homomorphism f:C→A, precomposition has values
+φ_t(f(c)); for g:B→C, postcomposition has values g(φ_t(a)). These actions preserve
+CP-contractive interval-valued homotopies and induce the corresponding maps on their homotopy
+classes.
 -/
 
 @[expose] public section
@@ -39,7 +42,13 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- Precompose a CPC asymptotic family by an actual nonunital star hom. -/
+/-- **Precomposition of a CP-contractive family.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. For a nonunital complex star homomorphism f:C→A,
+CompletelyPositiveContraction.precomp φ f:C→B has values (φ∘f)_t(c)=φ_t(f(c)) and completely
+positive contraction slices.
+-/
 noncomputable def precomp (phi : CompletelyPositiveContraction A B)
     (f : C →⋆ₙₐ[ℂ] A) : CompletelyPositiveContraction C B where
   toAsymptoticMorphism :=
@@ -68,7 +77,12 @@ noncomputable def precomp (phi : CompletelyPositiveContraction A B)
       change s (f c) = phi.toAsymptoticMorphism t (f c)
       exact hsValue (f c)
 
-/-- Forgetting CPC evidence gives exactly ordinary fixed-hom precomposition. -/
+/-- **Underlying family of CP-contractive precomposition.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. For a nonunital complex star homomorphism f:C→A, the underlying asymptotic family of
+φ.precomp f equals AsymptoticMorphism.precomp φ.toAsymptoticMorphism f.
+-/
 @[simp]
 theorem precomp_toAsymptoticMorphism
     (phi : CompletelyPositiveContraction A B) (f : C →⋆ₙₐ[ℂ] A) :
@@ -76,7 +90,12 @@ theorem precomp_toAsymptoticMorphism
       AsymptoticMorphism.precomp phi.toAsymptoticMorphism f :=
   rfl
 
-/-- CPC fixed-hom precomposition has the literal value. -/
+/-- **Value of CP-contractive precomposition.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. For a nonunital complex star homomorphism f:C→A, t≥1 and c∈C, (φ.precomp
+f)_t(c)=φ_t(f(c)).
+-/
 theorem precomp_apply
     (phi : CompletelyPositiveContraction A B) (f : C →⋆ₙₐ[ℂ] A)
     (t : AsymptoticTime) (c : C) :
@@ -88,7 +107,16 @@ namespace Homotopy
 
 variable {phi psi : CompletelyPositiveContraction A B}
 
-/-- Precompose a whole CPC homotopy by a fixed source star hom. -/
+/-- **Precomposition of a CP-contractive homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A CP-contractive asymptotic morphism
+φ:A→B has continuous coefficient time orbits, vanishing algebraic defects at infinity, and
+completely positive complex-linear slices with ‖φ_t(a)‖≤‖a‖. For such families φ,ψ, a homotopy
+H is a CP-contractive asymptotic morphism A→C([0,1],B) with H_t(a)(0)=φ_t(a) and
+H_t(a)(1)=ψ_t(a); its contraction bounds and defect limits use the supremum norm over the
+interval. If C is a nonunital complex C-star algebra and f:C→A a nonunital complex star
+homomorphism, Homotopy.precomp H f joins φ∘f to ψ∘f with family H_t(f(c))(s).
+-/
 noncomputable def precomp (H : Homotopy phi psi)
     (f : C →⋆ₙₐ[ℂ] A) : Homotopy (phi.precomp f) (psi.precomp f) where
   family := H.family.precomp f
@@ -103,7 +131,16 @@ noncomputable def precomp (H : Homotopy phi psi)
       CompletelyPositiveContraction.precomp_apply]
     exact H.finish t (f c)
 
-/-- Postcompose a whole CPC homotopy by a fixed target star hom. -/
+/-- **Postcomposition of a CP-contractive homotopy.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A CP-contractive asymptotic morphism
+φ:A→B has continuous coefficient time orbits, vanishing algebraic defects at infinity, and
+completely positive complex-linear slices with ‖φ_t(a)‖≤‖a‖. For such families φ,ψ, a homotopy
+H is a CP-contractive asymptotic morphism A→C([0,1],B) with H_t(a)(0)=φ_t(a) and
+H_t(a)(1)=ψ_t(a); its contraction bounds and defect limits use the supremum norm over the
+interval. If C is a nonunital complex C-star algebra and g:B→C a nonunital complex star
+homomorphism, Homotopy.postcomp H g joins g∘φ to g∘ψ with family g(H_t(a)(s)).
+-/
 noncomputable def postcomp (H : Homotopy phi psi)
     (g : B →⋆ₙₐ[ℂ] C) : Homotopy (phi.postcomp g) (psi.postcomp g) where
   family := H.family.postcomp
@@ -121,7 +158,17 @@ noncomputable def postcomp (H : Homotopy phi psi)
       CompletelyPositiveContraction.postcomp_apply]
     exact congrArg g (H.finish t a)
 
-/-- CPC homotopy precomposition forgets to ordinary homotopy precomposition. -/
+/-- **Underlying asymptotic homotopy of CP precomposition.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A CP-contractive asymptotic morphism
+φ:A→B has continuous coefficient time orbits, vanishing algebraic defects at infinity, and
+completely positive complex-linear slices with ‖φ_t(a)‖≤‖a‖. For such families φ,ψ, a homotopy
+H is a CP-contractive asymptotic morphism A→C([0,1],B) with H_t(a)(0)=φ_t(a) and
+H_t(a)(1)=ψ_t(a); its contraction bounds and defect limits use the supremum norm over the
+interval. For a nonunital complex star homomorphism f:C→A from a nonunital complex C-star
+algebra, the ordinary asymptotic homotopy underlying H.precomp f equals
+H.toAsymptoticHomotopy.precomp f.
+-/
 @[simp]
 theorem precomp_toAsymptoticHomotopy
     (H : Homotopy phi psi) (f : C →⋆ₙₐ[ℂ] A) :
@@ -131,8 +178,17 @@ theorem precomp_toAsymptoticHomotopy
   apply _root_.AsymptoticMorphism.Homotopy.ext
   rfl
 
-/-- CPC homotopy postcomposition forgets to ordinary homotopy
-postcomposition. -/
+/-- **Underlying asymptotic homotopy of CP postcomposition.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A CP-contractive asymptotic morphism
+φ:A→B has continuous coefficient time orbits, vanishing algebraic defects at infinity, and
+completely positive complex-linear slices with ‖φ_t(a)‖≤‖a‖. For such families φ,ψ, a homotopy
+H is a CP-contractive asymptotic morphism A→C([0,1],B) with H_t(a)(0)=φ_t(a) and
+H_t(a)(1)=ψ_t(a); its contraction bounds and defect limits use the supremum norm over the
+interval. For a nonunital complex star homomorphism g:B→C into a nonunital complex C-star
+algebra, the ordinary asymptotic homotopy underlying H.postcomp g equals
+H.toAsymptoticHomotopy.postcomp g.
+-/
 @[simp]
 theorem postcomp_toAsymptoticHomotopy
     (H : Homotopy phi psi) (g : B →⋆ₙₐ[ℂ] C) :
@@ -144,21 +200,48 @@ theorem postcomp_toAsymptoticHomotopy
 
 end Homotopy
 
-/-- Fixed source-star-hom precomposition preserves literal CPC homotopy. -/
+/-- **CP homotopy is preserved by source precomposition.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A CP-contractive asymptotic morphism
+φ:A→B has continuous coefficient time orbits, vanishing algebraic defects at infinity, and
+completely positive complex-linear slices with ‖φ_t(a)‖≤‖a‖. For such families φ,ψ, a homotopy
+H is a CP-contractive asymptotic morphism A→C([0,1],B) with H_t(a)(0)=φ_t(a) and
+H_t(a)(1)=ψ_t(a); its contraction bounds and defect limits use the supremum norm over the
+interval. If φ and ψ are CP-contractively homotopic and f:C→A is a nonunital complex star
+homomorphism from a nonunital complex C-star algebra, then φ∘f and ψ∘f are CP-contractively
+homotopic.
+-/
 theorem homotopic_precomp {phi psi : CompletelyPositiveContraction A B}
     (h : Homotopic phi psi) (f : C →⋆ₙₐ[ℂ] A) :
     Homotopic (phi.precomp f) (psi.precomp f) := by
   rcases h with ⟨H⟩
   exact ⟨H.precomp f⟩
 
-/-- Fixed target-star-hom postcomposition preserves literal CPC homotopy. -/
+/-- **CP homotopy is preserved by target postcomposition.**
+
+Let A,B be nonunital complex C-star algebras and T=[1,∞). A CP-contractive asymptotic morphism
+φ:A→B has continuous coefficient time orbits, vanishing algebraic defects at infinity, and
+completely positive complex-linear slices with ‖φ_t(a)‖≤‖a‖. For such families φ,ψ, a homotopy
+H is a CP-contractive asymptotic morphism A→C([0,1],B) with H_t(a)(0)=φ_t(a) and
+H_t(a)(1)=ψ_t(a); its contraction bounds and defect limits use the supremum norm over the
+interval. If φ and ψ are CP-contractively homotopic and g:B→C is a nonunital complex star
+homomorphism into a nonunital complex C-star algebra, then g∘φ and g∘ψ are CP-contractively
+homotopic.
+-/
 theorem homotopic_postcomp {phi psi : CompletelyPositiveContraction A B}
     (h : Homotopic phi psi) (g : B →⋆ₙₐ[ℂ] C) :
     Homotopic (phi.postcomp g) (psi.postcomp g) := by
   rcases h with ⟨H⟩
   exact ⟨H.postcomp g⟩
 
-/-- Contravariant fixed-star-hom action on CPC homotopy classes. -/
+/-- **Precomposition on CP-contractive homotopy classes.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. Let Qcp(A,B) be the quotient of CP-contractive asymptotic morphisms by homotopies
+through CP-contractive interval-valued families, and Qraw(A,B) the quotient of all asymptotic
+star morphisms by their interval-valued asymptotic homotopies. For a nonunital complex star
+homomorphism f:C→A, precompClass f:Qcp(A,B)→Qcp(C,B) sends [φ] to [φ∘f].
+-/
 def precompClass (f : C →⋆ₙₐ[ℂ] A) :
     HomotopyClasses A B → HomotopyClasses C B :=
   Quotient.map (sa := homotopySetoid A B) (sb := homotopySetoid C B)
@@ -166,7 +249,14 @@ def precompClass (f : C →⋆ₙₐ[ℂ] A) :
       intro phi psi h
       exact homotopic_precomp h f)
 
-/-- Covariant fixed-star-hom action on CPC homotopy classes. -/
+/-- **Postcomposition on CP-contractive homotopy classes.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. Let Qcp(A,B) be the quotient of CP-contractive asymptotic morphisms by homotopies
+through CP-contractive interval-valued families, and Qraw(A,B) the quotient of all asymptotic
+star morphisms by their interval-valued asymptotic homotopies. For a nonunital complex star
+homomorphism g:B→C, postcompClass g:Qcp(A,B)→Qcp(A,C) sends [φ] to [g∘φ].
+-/
 def postcompClass (g : B →⋆ₙₐ[ℂ] C) :
     HomotopyClasses A B → HomotopyClasses A C :=
   Quotient.map (sa := homotopySetoid A B) (sb := homotopySetoid A C)
@@ -174,14 +264,24 @@ def postcompClass (g : B →⋆ₙₐ[ℂ] C) :
       intro phi psi h
       exact homotopic_postcomp h g)
 
-/-- Fixed-hom precomposition computes on CPC class constructors. -/
+/-- **Precomposition of a representative CP class.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. For a nonunital complex star homomorphism f:C→A, precompClass f (mkClass
+φ)=mkClass(φ.precomp f), where mkClass denotes the CP-contractive homotopy class.
+-/
 @[simp]
 theorem precompClass_mk
     (f : C →⋆ₙₐ[ℂ] A) (phi : CompletelyPositiveContraction A B) :
     precompClass f (mkClass phi) = mkClass (phi.precomp f) :=
   rfl
 
-/-- Fixed-hom postcomposition computes on CPC class constructors. -/
+/-- **Postcomposition of a representative CP class.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), and φ:A→B a CP-contractive asymptotic
+morphism. For a nonunital complex star homomorphism g:B→C, postcompClass g (mkClass
+φ)=mkClass(φ.postcomp g), where mkClass denotes the CP-contractive homotopy class.
+-/
 @[simp]
 theorem postcompClass_mk
     (g : B →⋆ₙₐ[ℂ] C) (phi : CompletelyPositiveContraction A B) :

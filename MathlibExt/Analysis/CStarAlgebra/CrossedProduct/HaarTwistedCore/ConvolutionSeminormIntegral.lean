@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Co
 public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.L1ToSeminormCompletion
 
 /-!
-# The literal Haar convolution integral in an actual seminorm completion
+# Convolution as an integral in a C-star seminorm completion
 
-The fixed-support Banach curve is mapped through the original L1 completion
-and its constructed contractive map to the same admissible seminorm's
-completion. Its values are the original coefficient/group slices. The
-bounded complex linear map gives both their actual integrability and the
-canonical image of the original convolution as their Haar integral.
-
-These are prerequisites of the original covariant integrated identity;
-neither that identity nor the full covariant norm comparison is assumed.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on this core satisfying p(k)≤∫ x, ‖k(x)‖ ∂μ for every core coefficient k. Write
+Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for the dense coefficient
+map, so ‖ιp(k)‖=p(k). For a core coefficient h and s∈G define L_s h(x)=α_s(h(s⁻¹*x)); for a∈A
+define a⋅k(x)=a*k(x). For compactly supported continuous coefficients f,h, the curve
+s↦ιp(f(s)⋅L_s h) is μ-integrable in Xp, and ∫ s, ιp(f(s)⋅L_s h) ∂μ=ιp(f*h).
 -/
 
 @[expose] public section
@@ -47,7 +46,16 @@ variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAc
 variable (p : CStarSeminorm (Carrier μ α)) (hp : p ∈ admissibleCStarSeminorms μ α)
 
 include hp in
-/-- The literal coefficient/group curve is integrable in the same seminorm completion. -/
+/-- **Integrability of coefficient and group multiplier slices.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on this core satisfying p(k)≤∫ x, ‖k(x)‖ ∂μ for every core coefficient k. Write
+Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for the dense coefficient
+map, so ‖ιp(k)‖=p(k). For a core coefficient h and s∈G define L_s h(x)=α_s(h(s⁻¹*x)); for a∈A
+define a⋅k(x)=a*k(x). For compactly supported continuous f,h:G→A, the Xp-valued curve
+s↦ιp(f(s)⋅L_s h) is μ-integrable.
+-/
 theorem integrable_toNonUnitalCompletion_coefficientLeft_groupLeft (f h : Carrier μ α) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     let _ : NormedSpace ℝ p.NonUnitalCompletion := NormedSpace.restrictScalars ℝ ℂ _
@@ -79,7 +87,16 @@ theorem integrable_toNonUnitalCompletion_coefficientLeft_groupLeft (f h : Carrie
     (Eventually.of_forall hvalues)
 
 include hp in
-/-- The original convolution image is the Haar integral of its literal multiplier slices. -/
+/-- **Integral formula for convolution in a seminorm completion.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on this core satisfying p(k)≤∫ x, ‖k(x)‖ ∂μ for every core coefficient k. Write
+Xp=p.NonUnitalCompletion for its separated C-star completion and ιp for the dense coefficient
+map, so ‖ιp(k)‖=p(k). For a core coefficient h and s∈G define L_s h(x)=α_s(h(s⁻¹*x)); for a∈A
+define a⋅k(x)=a*k(x). For compactly supported continuous f,h:G→A, ∫ s:G, ιp(f(s)⋅L_s h)
+∂μ=ιp(f*h), where (f*h)(x)=∫ s, f(s)*α_s(h(s⁻¹*x)) ∂μ.
+-/
 theorem integral_toNonUnitalCompletion_coefficientLeft_groupLeft (f h : Carrier μ α) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     let _ : NormedSpace ℝ p.NonUnitalCompletion := NormedSpace.restrictScalars ℝ ℂ _

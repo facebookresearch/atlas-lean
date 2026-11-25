@@ -1,4 +1,5 @@
-# Generation
+# Countable generation of a countable direct sum
 
-A countable completed direct sum of countably generated components is
-countably generated.
+If the index type is countable and every
+complete component right module is countably generated, `Completed B E` is countably
+generated.

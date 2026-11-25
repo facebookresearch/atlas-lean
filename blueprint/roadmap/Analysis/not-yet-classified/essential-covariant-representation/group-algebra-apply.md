@@ -1,3 +1,4 @@
-# Group algebra apply
+# Vector covariance
 
-Covariance transports every original coefficient vector value under the actual group unitary.
+For a covariant representation (π,U), g ∈ G, a ∈ A and ξ ∈ H, `U_g (π(a) ξ) = π(α_g(a)) (U_g
+ξ)`.

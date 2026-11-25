@@ -1,4 +1,4 @@
-# Conj Star Alg Hom maps To compact Closed Star Ideal
+# Transport of the compact ideal
 
-Unitary conjugation maps the compact closed ideal into the target compact
-closed ideal.
+Unitary conjugation `T ↦ U T U*` maps the compact closed
+star ideal of `E` into that of `F`.

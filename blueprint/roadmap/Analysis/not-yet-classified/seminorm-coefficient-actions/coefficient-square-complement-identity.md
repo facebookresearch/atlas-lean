@@ -1,3 +1,4 @@
-# Coefficient Square Complement identity
+# Square complement identity in the coefficient unitization
 
-The real unitization retains the original coefficient norm in the computed square identity.
+Let A be a nonunital complex C-star algebra, a∈A included in Ã=Unitization ℂ A and
+b=coefficientSquareComplement a. Then star(a)*a+star(b)*b=‖a‖²1 in Ã.

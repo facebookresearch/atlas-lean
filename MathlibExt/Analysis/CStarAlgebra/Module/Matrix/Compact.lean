@@ -16,16 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Compact
 public import MathlibExt.Analysis.CStarAlgebra.Module.Standard.FiniteCoordinateAdjoints
 
 /-!
-# Finite matrix column actions as actual module-compacts
+# Compact matrix actions on finite standard modules
 
-The existing matrix star hom is restricted to the existing compact
-endomorphism subalgebra of the finite right standard module. Coefficient
-insertion and evaluation use their shared finite-coordinate adjoint operator;
-compactness comes from the coefficient left multiplication between them.
+For a nonunital C-star algebra `B` and finite index type `I`, a matrix `M ∈ M_I(B)` acts on the
+finite standard right module by `(M x)_i = ∑ j, M_ij * x_j`. This is an adjointable
+module-compact operator. The resulting nonunital star homomorphism has target `K_B(B^I)`.
 
-The original coefficient-inner norm, operator norm, matrix action and
-noncommutative product order are retained. No coefficient unit, nonzero
-algebra, compactness of coordinate maps or supplied output model is assumed.
+The finite standard-module norm is its coefficient inner-product norm, and the matrix entries
+act by left multiplication in the stated order. The construction permits empty indices and zero
+coefficients; it requires no unit-valued coordinate vector.
 -/
 
 @[expose] public section
@@ -41,8 +40,9 @@ universe uB uι
 
 variable {B : Type uB} [NonUnitalCStarAlgebra B] {ι : Type uι} [Fintype ι]
 
-/-- The actual finite matrix column hom with codomain restricted to the
-existing module-compact endomorphisms, including empty finite indices. -/
+/-- **Compact finite-matrix representation.** For a nonunital complex C-star algebra `B` and
+finite index type `I`, the nonunital star homomorphism `M_I(B) → K_B(FiniteStandard B I)` is
+the column action `(M x)_i = ∑ j, M_ij*x_j`. -/
 noncomputable def rightMatrixCompactHom :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -156,8 +156,9 @@ noncomputable def rightMatrixCompactHom :
   rw [hMatrix]
   exact hSum
 
-/-- Including the compact-valued hom gives literally the original square
-matrix operator, with no alternative action or norm. -/
+/-- **Endomorphism underlying the compact matrix action.** For a nonunital complex C-star algebra
+`B` and finite index type `I`, the compact-ideal inclusion of `rightMatrixCompactHom M` equals
+`rightMatrixHom M`, the finite standard-module column operator. -/
 @[simp]
 theorem rightMatrixCompactHom_coe (M : CStarMatrix ι ι B) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
@@ -170,7 +171,9 @@ theorem rightMatrixCompactHom_coe (M : CStarMatrix ι ι B) :
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The included compact operator retains the source-order column formula. -/
+/-- **Coordinate formula for a compact matrix action.** For nonunital complex C-star `B`, finite
+`I`, `M : CStarMatrix I I B`, `x : FiniteStandard B I` and `i : I`, `(rightMatrixCompactHom M)
+x i = ∑ j, M i j * x j`. -/
 theorem rightMatrixCompactHom_apply (M : CStarMatrix ι ι B)
     (x : FiniteStandard B ι) (i : ι) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;

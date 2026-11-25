@@ -1,3 +1,4 @@
-# Adjoint Value right smul
+# Right linearity of the adjoint value
 
-The selected adjoint witness preserves the original right coefficient multiplication.
+For `y ∈ dom T*` and `b : B`, the adjoint value of
+`y <• b` is `adjointValue T y <• b`.

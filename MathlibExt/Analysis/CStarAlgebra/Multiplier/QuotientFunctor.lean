@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Multiplier.Quotient
 public import MathlibExt.Analysis.CStarAlgebra.Multiplier.Outer
 
 /-!
-# Actual multiplier and outer-multiplier maps from a coefficient quotient
+# Multiplier functor for surjective coefficient maps
 
-The source quotient homomorphism B to D is given, with genuine surjectivity.
-Its actual closed kernel and the strict first-isomorphism equivalence identify
-D with the constructed quotient; multiplier transport uses that equivalence.
-The resulting map preserves the original coefficient embeddings, so the
-actual outer quotient map is defined as well. No multiplier-extension map,
-quotient model, surjectivity of the multiplier map or nonzero quotient premise
-is supplied. Stabilized minimum-tensor coefficient base change is a separate
-prerequisite of Blackadar15.12 residual essentiality.
+For a surjective complex nonunital star homomorphism `ρ : B → D`, the closed kernel identifies
+`D` with `B/ker ρ`. Multiplier descent and this identification give a unital star map `M(ρ) :
+M(B) → M(D)` satisfying `M(ρ)(m).fst (ρ b) = ρ(m.fst b)` and `M(ρ)(m).snd (ρ b) = ρ(m.snd b)`.
+
+It sends the embedded coefficient `b` to the embedded `ρ(b)`, so it descends to a unital map
+`Q(ρ) : Q(B) → Q(D)`. The multiplier and corona quotient square commutes. Surjectivity of `ρ`
+identifies `D` with its coefficient quotient and supplies these two induced star homomorphisms.
 -/
 
 @[expose] public section
@@ -37,7 +36,9 @@ universe uB uD
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable {D : Type uD} [NonUnitalCStarAlgebra D]
 
-/-- The original coefficient quotient induces the actual unital multiplier homomorphism. -/
+/-- **Multiplier map of a surjective coefficient homomorphism.** For a surjective complex
+nonunital star homomorphism `ρ : B → D` of C-star algebras, the unital star homomorphism `M(ρ)
+: M(B) → M(D)` is characterized by its left and right actions on the images `ρ(b)`. -/
 def mapOfSurjective (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjective rho) :
     𝓜(ℂ, B) →⋆ₐ[ℂ] 𝓜(ℂ, D) := by
   let I := ClosedStarIdeal.ker rho
@@ -46,7 +47,9 @@ def mapOfSurjective (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjective rh
   let e : I.Quotient ≃⋆ₐ[ℂ] D := NonUnitalStarAlgHom.quotientKerEquivOfSurjective rho hrho
   exact (DoubleCentralizer.congr e).toStarAlgHom.comp (quotientMultiplierHom I)
 
-/-- Every original first multiplier action has its actual quotient value. -/
+/-- **Left multiplier action under a coefficient quotient.** For a surjective complex nonunital
+star homomorphism `ρ : B → D` of C-star algebras, `(mapOfSurjective ρ hρ m).fst (ρ b) =
+ρ(m.fst b)`. -/
 theorem mapOfSurjective_fst (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjective rho)
     (m : 𝓜(ℂ, B)) (b : B) :
     (mapOfSurjective rho hrho m).fst (rho b) = rho (m.fst b) := by
@@ -63,7 +66,9 @@ theorem mapOfSurjective_fst (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surje
   change (DoubleCentralizer.congr e (quotientMultiplier I m)).fst (rho b) = _
   rw [congr_apply_fst, hb, quotientMultiplier_fst_quotientMap, he]
 
-/-- Every original second multiplier action has its actual quotient value. -/
+/-- **Right multiplier action under a coefficient quotient.** For a surjective complex nonunital
+star homomorphism `ρ : B → D` of C-star algebras, `(mapOfSurjective ρ hρ m).snd (ρ b) =
+ρ(m.snd b)`. -/
 theorem mapOfSurjective_snd (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjective rho)
     (m : 𝓜(ℂ, B)) (b : B) :
     (mapOfSurjective rho hrho m).snd (rho b) = rho (m.snd b) := by
@@ -80,7 +85,9 @@ theorem mapOfSurjective_snd (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surje
   change (DoubleCentralizer.congr e (quotientMultiplier I m)).snd (rho b) = _
   rw [congr_apply_snd, hb, quotientMultiplier_snd_quotientMap, he]
 
-/-- The multiplier map sends every actual embedded coefficient to its given coefficient quotient. -/
+/-- **Coefficient embedding under multiplier transport.** For a surjective complex nonunital star
+homomorphism `ρ : B → D` of C-star algebras, `mapOfSurjective ρ hρ (DoubleCentralizer.coeHom
+b) = DoubleCentralizer.coeHom (ρ b)`. -/
 theorem mapOfSurjective_coeHom (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjective rho) (b : B) :
     mapOfSurjective rho hrho (DoubleCentralizer.coeHom (𝕜 := ℂ) b) =
       DoubleCentralizer.coeHom (𝕜 := ℂ) (rho b) := by
@@ -95,7 +102,9 @@ theorem mapOfSurjective_coeHom (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Su
     change rho (a * b) = rho a * rho b
     exact map_mul rho a b
 
-/-- The actual multiplier quotient preserves the original coefficient ideal. -/
+/-- **Coefficient ideal under multiplier transport.** For a surjective complex nonunital star
+homomorphism `ρ : B → D` of C-star algebras, the multiplier map sends the embedded coefficient
+ideal of `M(B)` into that of `M(D)`. -/
 theorem mapOfSurjective_mem_coefficientIdeal (rho : B →⋆ₙₐ[ℂ] D)
     (hrho : Function.Surjective rho) {m : 𝓜(ℂ, B)} (hm : m ∈ coefficientIdeal B) :
     mapOfSurjective rho hrho m ∈ coefficientIdeal D := by
@@ -103,7 +112,9 @@ theorem mapOfSurjective_mem_coefficientIdeal (rho : B →⋆ₙₐ[ℂ] D)
   rw [mapOfSurjective_coeHom]
   exact coeHom_mem_coefficientIdeal _
 
-/-- The actual coefficient-quotient multiplier map descends to the actual unital outer quotient. -/
+/-- **Corona map of a coefficient quotient.** For a surjective complex nonunital star homomorphism
+`ρ : B → D` of C-star algebras, the multiplier map descends to the unital complex star
+homomorphism `Q(ρ) : Q(B) → Q(D)`. -/
 def outerMapOfSurjective (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjective rho) :
     letI : CStarAlgebra (OuterMultiplier B) := outerMultiplierCStarAlgebra B;
     letI : CStarAlgebra (OuterMultiplier D) := outerMultiplierCStarAlgebra D;
@@ -135,7 +146,9 @@ def outerMapOfSurjective (rho : B →⋆ₙₐ[ℂ] D) (hrho : Function.Surjecti
         simp only [Algebra.algebraMap_eq_smul_one, map_smul, hOne]
       map_star' := map_star f }
 
-/-- The actual outer-quotient square commutes on every original multiplier. -/
+/-- **Multiplier-corona quotient square.** For a surjective complex nonunital star homomorphism `ρ
+: B → D` of C-star algebras, `outerMapOfSurjective ρ hρ (q_B m) = q_D (mapOfSurjective ρ hρ
+m)` for every multiplier `m`. -/
 theorem outerMapOfSurjective_outerQuotientMap (rho : B →⋆ₙₐ[ℂ] D)
     (hrho : Function.Surjective rho) (m : 𝓜(ℂ, B)) :
     letI : CStarAlgebra (OuterMultiplier B) := outerMultiplierCStarAlgebra B;

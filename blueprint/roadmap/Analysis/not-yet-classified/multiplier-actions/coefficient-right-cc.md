@@ -1,3 +1,4 @@
-# Coefficient Right Cc
+# Action-valued right coefficient multiplication
 
-A coefficient multiplies on the right through the original point-norm action.
+Let G be a monoid with a topology, A a nonunital complex C-star algebra and α a point-norm
+action. For a∈A, coefficientRightCc α a:C_c(G,A)→ₗ[ℂ]C_c(G,A) sends f to s↦f(s)*α_s(a).

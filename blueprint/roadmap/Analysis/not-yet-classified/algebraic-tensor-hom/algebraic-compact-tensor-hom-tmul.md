@@ -1,3 +1,4 @@
-# Algebraic Compact Tensor Hom tmul
+# Pure tensor in the compact representation
 
-The actual tensor star homomorphism retains each original compact elementary value.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `algebraicCompactTensorHom H A (a⊗T) = compactElementaryOperator H A a T`.

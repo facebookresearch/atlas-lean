@@ -1,3 +1,4 @@
-# Is Asymptotically Split
+# Splitting implies asymptotic splitting
 
-Every ordinary split lift is an example of an asymptotic splitting.
+A Busby map that lifts to a star homomorphism into
+`M(B)` is asymptotically split, using the constant lift.

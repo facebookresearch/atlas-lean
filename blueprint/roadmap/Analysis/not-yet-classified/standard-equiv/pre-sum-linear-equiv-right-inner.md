@@ -1,4 +1,4 @@
-# Pre Sum Linear Equiv right Inner
+# Inner product of split finite-support vectors
 
-Splitting finite-support vectors preserves the coefficient-valued inner
-product.
+Splitting sum coordinates preserves the
+`B`-valued inner product, using the sum of the two component inner products on the target.

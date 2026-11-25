@@ -1,3 +1,4 @@
-# Index sub compact
+# Index under compact subtraction
 
-Subtracting a compact operator preserves the Fredholm index.
+For a complex Hilbert space `H`, if `T` is Fredholm and
+`K` compact, `(T-K).index = T.index`.

@@ -1,3 +1,5 @@
-# Coefficient Right
+# Right coefficient action on the indexed core
 
-The actual right coefficient map on the same original indexed carrier.
+Let G be a group with a topology and measurable structure, μ a measure on G, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. The complex linear map
+coefficientRight μ α a:Carrier μ α→Carrier μ α sends f to s↦f(s)*α_s(a).

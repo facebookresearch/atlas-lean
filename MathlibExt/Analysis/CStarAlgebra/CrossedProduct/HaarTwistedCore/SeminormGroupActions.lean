@@ -15,17 +15,13 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Mu
 public import MathlibExt.Analysis.CStarAlgebra.Seminorm
 
 /-!
-# Group isometries for every actual Haar-core C-star seminorm
+# Group invariance of Haar-core C-star seminorms
 
-The original left and modular right translations preserve the mixed products
-used by the C-star square identity. This follows from the exact source star
-exchange, centralizer equations and inverse group composition. Every actual
-C-star seminorm is consequently invariant under both translations, including
-the zero seminorm. No normed or C-star ring is imposed on the raw core.
-
-These are strict algebraic prerequisites for the actual unitary group action
-in a covariant norm-model construction. No Hilbert space, isometry or desired
-invariance is supplied as an output premise.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Put L_g
+f(s)=α_g(f(g⁻¹*s)) and R_g f(s)=δ(g)•f(s*g⁻¹), where δ(g)=Measure.modularCharacter g. Their
+mixed products satisfy star(L_g f)*L_g h=star(f)*h and R_g f*star(R_g h)=f*star(h). Every
+C-star seminorm p on the core therefore satisfies p(L_g f)=p(f)=p(R_g f), including p=0.
 -/
 
 @[expose] public section
@@ -46,7 +42,13 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
-/-- Original inverse left translations preserve the exact mixed star-convolution product. -/
+/-- **Mixed Gram product preserved by left translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h and g∈G, put L_g f(s)=α_g(f(g⁻¹*s)). Then star(L_g f)*L_g h=star(f)*h, where * is twisted
+convolution.
+-/
 theorem star_groupLeft_mul_groupLeft (g : G) (f h : Carrier μ α) :
     star (groupLeft μ α g f) * groupLeft μ α g h = star f * h := by
   change convolution μ α (crossedStar μ α (groupLeft μ α g f)) (groupLeft μ α g h) =
@@ -59,7 +61,13 @@ theorem star_groupLeft_mul_groupLeft (g : G) (f h : Carrier μ α) :
     simpa only [LinearMap.comp_apply, inv_mul_cancel, groupLeft_one, LinearMap.id_apply] using hm
   rw [hCancel]
 
-/-- Original modular right translations preserve the mixed product in the reversed C-star law. -/
+/-- **Mixed reversed Gram product preserved by right translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h and g∈G, put R_g f(s)=δ(g)•f(s*g⁻¹), where δ(g)=Measure.modularCharacter g. Then R_g
+f*star(R_g h)=f*star(h), with twisted convolution.
+-/
 theorem groupRight_mul_star_groupRight (g : G) (f h : Carrier μ α) :
     groupRight μ α g f * star (groupRight μ α g h) = f * star h := by
   change convolution μ α (groupRight μ α g f) (crossedStar μ α (groupRight μ α g h)) =
@@ -72,7 +80,13 @@ theorem groupRight_mul_star_groupRight (g : G) (f h : Carrier μ α) :
     simpa only [LinearMap.comp_apply, mul_inv_cancel, groupLeft_one, LinearMap.id_apply] using hm
   rw [hCancel]
 
-/-- Every actual C-star seminorm is invariant under the original inverse left translation. -/
+/-- **Left group invariance of a C-star seminorm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For every C-star
+seminorm p on Carrier μ α, g∈G and core coefficient f, p(groupLeft μ α g f)=p(f), where
+groupLeft g f(s)=α_g(f(g⁻¹*s)).
+-/
 theorem cstarSeminorm_groupLeft (p : CStarSeminorm (Carrier μ α)) (g : G) (f : Carrier μ α) :
     p (groupLeft μ α g f) = p f := by
   apply (sq_eq_sq₀ (apply_nonneg p (groupLeft μ α g f)) (apply_nonneg p f)).mp
@@ -82,7 +96,13 @@ theorem cstarSeminorm_groupLeft (p : CStarSeminorm (Carrier μ α)) (g : G) (f :
     _ = p (star f * f) := congrArg p (star_groupLeft_mul_groupLeft μ α g f f)
     _ = p f ^ 2 := p.map_star_mul_self f
 
-/-- Every actual C-star seminorm is invariant under the original modular right translation. -/
+/-- **Right group invariance of a C-star seminorm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For every C-star
+seminorm p on Carrier μ α, g∈G and core coefficient f, p(groupRight μ α g f)=p(f), where
+groupRight g f(s)=δ(g)•f(s*g⁻¹) and δ(g)=Measure.modularCharacter g.
+-/
 theorem cstarSeminorm_groupRight (p : CStarSeminorm (Carrier μ α)) (g : G) (f : Carrier μ α) :
     p (groupRight μ α g f) = p f := by
   have hReverse (x : Carrier μ α) : p (x * star x) = p x ^ 2 := by

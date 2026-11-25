@@ -1,5 +1,5 @@
-# Graded Iterated
+# Graded coefficient actions on an internal tensor
 
-- [Induced Completed Graded Left Action](induced-completed-graded-left-action.md)
-- [Induced Completed Graded Left Action to Non Unital Star Alg Hom](induced-completed-graded-left-action-to.md)
-- [Induced Completed Graded Left Action pure](induced-completed-graded-left-action-pur.md)
+- [Graded coefficient representation on the inner tensor](induced-completed-graded-left-action.md)
+- [Underlying star homomorphism of the graded action](induced-completed-graded-left-action-to.md)
+- [Graded coefficient action on pure tensors](induced-completed-graded-left-action-pur.md)

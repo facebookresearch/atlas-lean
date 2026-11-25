@@ -14,17 +14,14 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.HilbertAmplification.CoefficientAction
 
 /-!
-# The actual coefficient star homomorphism on Hilbert amplification
+# Coefficient representation on Hilbert amplification
 
-The computed coefficient operators preserve the original zero, addition,
-product, complex scalar and adjoint operations. Their original pure-vector
-values prove these constructor laws on the actual completed tensor because
-those vectors have dense complex span.
+For a complex Hilbert space `H` and nonunital C-star algebra `A`, the maps `L_a (ξ⊗b) = ξ⊗(a*b)`
+define a nonunital complex star-algebra homomorphism `A → End_A(Space H A)`. Thus `L_(a*b) = L_a
+L_b` and `L_(star a) = L_a*`.
 
-The resulting nonunital star-algebra homomorphism is the coefficient factor
-needed to construct the original elementary A tensor K(H) action in Blackadar,
-K-Theory for Operator Algebras, Theorem10.1.2. No tensor homomorphism, compact
-image, minimum tensor model or Takai theorem is assumed or constructed here.
+Pure vectors have dense complex span in the completed amplification. Consequently adjointable
+operators agreeing on all `ξ⊗b` are equal.
 -/
 
 @[expose] public section
@@ -45,7 +42,8 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- Actual adjointable amplification operators are determined by their original pure values. -/
+/-- **Determination by pure amplification vectors.** For adjointable maps `S,T` on `Space H A`,
+equality `S (pure ξ b) = T (pure ξ b)` for every `ξ : H` and `b : A` implies `S = T`. -/
 theorem operator_ext_pure :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -95,7 +93,9 @@ theorem operator_ext_pure :
   intro z
   exact congrArg (fun f : Space H A →L[ℂ] Space H A => f z) hMaps
 
-/-- The original coefficient operators bundled with their proved algebra and genuine adjoint laws. -/
+/-- **Coefficient star-algebra representation.** For a complex Hilbert space and nonunital `A`,
+`coefficientHom H A` sends `a` to the adjointable operator `L_a (ξ⊗b) = ξ⊗(a*b)`, preserving
+addition, multiplication, complex scalars and adjoints. -/
 def coefficientHom :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -160,7 +160,8 @@ def coefficientHom :
         intro ξ b
         rw [coefficientOperator_pure, AdjointableOperator.star_apply, coefficientOperator_adjoint_pure] }
 
-/-- The actual coefficient homomorphism keeps the original completed coefficient operator. -/
+/-- **Value of the coefficient representation.** For `a : A`, `coefficientHom H A a =
+coefficientOperator H A a`. -/
 @[simp]
 theorem coefficientHom_apply (a : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -194,7 +195,8 @@ theorem coefficientHom_apply (a : A) :
   let : CStarModule Aᵐᵒᵖ (Space H A) := spaceCStarModule H A
   rfl
 
-/-- The bundled homomorphism has the literal elementary coefficient value on original pure vectors. -/
+/-- **Coefficient representation on pure vectors.** `coefficientHom H A a (pure H A ξ b) = pure H
+A ξ (a*b)`. -/
 theorem coefficientHom_pure (a : A) (ξ : H) (b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;

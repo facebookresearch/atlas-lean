@@ -1,4 +1,6 @@
-# Asymptotic Algebra Functor
+# Asymptotic quotient endofunctor
 
-The actual asymptotic quotient as an endofunctor of the existing category.
-The direct `AsymptoticAlgebra.map` remains the universe-polymorphic primary API.
+Let 𝒞 be the category of nonunital complex C-star algebras whose carriers lie in Type u, with
+nonunital complex star homomorphisms as morphisms. For X∈𝒞 set X∞=C_b([1,∞),X)/C₀([1,∞),X).
+The functor asymptoticAlgebraFunctor has object map X↦X∞ and morphism map f↦([F]↦[f∘F]); it
+preserves identities and composition.

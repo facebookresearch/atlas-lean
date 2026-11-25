@@ -1,3 +1,4 @@
-# Completed Single
+# Isometric inclusion of a component into the completion
 
-A coordinate inclusion into the completed direct sum.
+`completedSingle i : E i →ₗᵢ[ℂ]
+Completed B E` is the finite-support one-coordinate inclusion followed by completion.

@@ -1,3 +1,4 @@
-# Full Coefficient Embedding apply
+# Value of the full coefficient embedding
 
-The embedding retains exactly the original computed full coefficient multiplier.
+For a∈A, `fullCoefficientEmbedding μ α a = coefficientMultiplierHom μ α (maximalCStarSeminorm
+μ α) a`.

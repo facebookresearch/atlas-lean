@@ -1,3 +1,4 @@
-# Finite Matrix Tensor Hom injective
+# Injective finite frame star homomorphism
 
-The actual finite-frame star homomorphism has the original matrix kernel.
+The homomorphism determined by an orthonormal
+finite family is injective, including an empty index type.

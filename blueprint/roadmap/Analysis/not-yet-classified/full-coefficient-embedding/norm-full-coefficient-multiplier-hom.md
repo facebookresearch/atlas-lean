@@ -1,3 +1,4 @@
-# Norm full Coefficient Multiplier Hom
+# Norm of a full coefficient multiplier
 
-The actual full coefficient multiplier norm is the original coefficient C-star norm.
+For a∈A, the full coefficient multiplier has exactly the C-star norm of a:
+`‖fullCoefficientMultiplierHom μ α a‖ = ‖a‖`.

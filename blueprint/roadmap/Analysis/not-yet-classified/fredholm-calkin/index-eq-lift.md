@@ -1,3 +1,4 @@
-# Index eq lift
+# Index computed by any bounded lift
 
-The Calkin-unit index is computed by every operator lift.
+For a complex Hilbert space `H`, if the Calkin unit
+`x` has bounded lift `T` with `[T]=x`, then `CalkinAlgebra.index x = T.index`.

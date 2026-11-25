@@ -1,3 +1,4 @@
-# Standard Coefficient Matrix
+# Coefficient as a one-by-one matrix
 
-The actual source coefficient as its literal 1×1 C-star matrix, with no coefficient unit.
+For nonunital C-star `B`, the star homomorphism `B →
+M₁(B)` sends `b` to the matrix with its unique entry equal to `b`.

@@ -1,6 +1,6 @@
-# Haar Covariant Seminorm
+# C-star seminorms from covariant integrated representations
 
-- [Haar Integrated CStar Seminorm](haar-integrated-cstar-seminorm.md)
-- [Haar Integrated CStar Seminorm apply](haar-integrated-cstar-seminorm-apply.md)
-- [Haar Integrated CStar Seminorm mem admissible](haar-integrated-cstar-seminorm-mem-admis.md)
-- [Norm haar Integrated Hom le maximal CStar Seminorm](norm-haar-integrated-hom-le-maximal-csta.md)
+- [Integrated covariant C-star seminorm](haar-integrated-cstar-seminorm.md)
+- [Value of the integrated covariant seminorm](haar-integrated-cstar-seminorm-apply.md)
+- [L¹ admissibility of the integrated seminorm](haar-integrated-cstar-seminorm-mem-admis.md)
+- [The maximal seminorm bounds each integrated representation](norm-haar-integrated-hom-le-maximal-csta.md)

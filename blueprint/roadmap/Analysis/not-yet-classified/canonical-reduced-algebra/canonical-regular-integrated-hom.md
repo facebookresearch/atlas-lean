@@ -1,3 +1,7 @@
-# Canonical Regular Integrated Hom
+# Canonical regular integrated homomorphism
 
-The original integrated homomorphism of the internally constructed canonical regular pair.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For the canonical
+regular pair (Π,λ) on K=L²(G,μ;CanonicalCoefficientSpace A), put Ireg(f)ξ=∫ s, Π(f(s))(λ_s ξ)
+∂μ. Let Rred be the operator-norm closure of {Ireg(f):f∈Carrier μ α} in B(K). The nonunital
+complex star homomorphism canonicalRegularIntegratedHom μ α:Carrier μ α→B(K) is f↦Ireg(f).

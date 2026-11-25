@@ -1,3 +1,5 @@
-# Map Of Surjective snd
+# Right multiplier action under a coefficient quotient
 
-Every original second multiplier action has its actual quotient value.
+For a surjective complex nonunital
+star homomorphism `ρ : B → D` of C-star algebras, `(mapOfSurjective ρ hρ m).snd (ρ b) =
+ρ(m.snd b)`.

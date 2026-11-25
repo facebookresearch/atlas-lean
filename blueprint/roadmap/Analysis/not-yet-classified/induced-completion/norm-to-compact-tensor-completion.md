@@ -1,3 +1,5 @@
-# Norm to Compact Tensor Completion
+# Norm of an algebraic completion image
 
-The canonical completed source norm is the original compact-action norm on every raw tensor.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `‖toCompactTensorCompletion H A z‖ = ‖algebraicCompactTensorHom H A z‖`
+for every raw tensor `z`.

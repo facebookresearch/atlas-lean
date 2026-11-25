@@ -1,3 +1,5 @@
-# Conjugate Star Alg Hom class Star Map
+# Unitary conjugation on represented classes
 
-The descended map keeps the literal original unitary action on every operator representative.
+For complex Hilbert spaces `H,K`,
+`conjugateStarAlgHom U (classStarMap T) = classStarMap (U.conjStarAlgEquiv T)` for every
+bounded `T` on `H`.

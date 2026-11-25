@@ -1,3 +1,4 @@
-# Pure right smul
+# Right action on a pure tensor
 
-Original coefficient multiplication is the actual completed right module action.
+For `ξ : H` and `u,v : A`, `pure H A ξ (u*v) = pure H A ξ u
+<• v`.

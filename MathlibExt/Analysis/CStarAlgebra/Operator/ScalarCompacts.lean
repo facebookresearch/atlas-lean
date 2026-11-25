@@ -17,13 +17,15 @@ public import Mathlib.Analysis.InnerProductSpace.Dual
 public import Mathlib.Algebra.Star.StarProjection
 
 /-!
-# Actual compact operators on countable scalar Hilbert space
+# Compact operators on the scalar sequence Hilbert space
 
-The algebra is the actual compact-operator closed star ideal on lp(ℕ,ℂ,2).
-A one-dimensional projection retains an actual compact operator, its star
-projection laws, and the dimension of its literal operator range. Rank-one
-operators and the standard coordinate projections are computed on this same
-infinite Hilbert carrier.
+Let `H = lp(ℕ,ℂ,2)`. Its compact algebra is the closed ideal `K(H)` in bounded operators with
+the inherited operator norm. Rank-one operators act by `θ_(v,w) x = ⟪w,x⟫_ℂ • v`, satisfy
+`θ_(v,w)* = θ_(w,v)` and have norm `‖v‖ * ‖w‖`.
+
+A unit vector `v` gives the self-adjoint rank-one projection `θ_(v,v)` with one-dimensional
+range. Coordinate vectors `e_i` are the lp singles with entry `1` at `i`, have norm one, and
+give coordinate projections onto their one-dimensional spans.
 -/
 
 @[expose] public section
@@ -35,54 +37,65 @@ noncomputable section
 
 namespace ScalarHilbertCompacts
 
-/-- The genuine countable scalar Hilbert space used for the compact algebra. -/
+/-- **Scalar sequence Hilbert space.** `Hilbert = lp (fun _ : ℕ => ℂ) 2`, the complex
+square-summable sequence space. -/
 abbrev Hilbert := lp (fun _ : ℕ => ℂ) 2
 
-/-- The actual compact-operator closed star ideal on countable scalar Hilbert space. -/
+/-- **Compact algebra on scalar sequence space.** `Algebra` is `K(Hilbert)`, the closed star ideal
+of compact operators on `lp(ℕ,ℂ,2)`, with the operator norm. -/
 abbrev Algebra := (compactEndomorphismClosedStarIdeal (H := Hilbert)).carrier
 
-/-- The C-star dictionary is the existing closed-ideal dictionary on that carrier. -/
+/-- **C-star structure of scalar compacts.** The closed compact ideal of `lp(ℕ,ℂ,2)` is a
+nonunital C-star algebra with its inherited bounded-operator norm. -/
 noncomputable instance instNonUnitalCStarAlgebra : NonUnitalCStarAlgebra Algebra :=
   (compactEndomorphismClosedStarIdeal (H := Hilbert)).carrierCStarAlgebra
 
-/-- A literal one-dimensional compact star projection on the original Hilbert space. -/
+/-- **One-dimensional compact star projection.** This record contains a compact operator `p` on
+`lp(ℕ,ℂ,2)` satisfying `p²=p`, `p*=p`, and `finrank ℂ (range p)=1`. -/
 structure OneDimensionalProjection where
-  /-- The actual compact operator, without a supplied representation or comparison. -/
+  /-- **Compact value of the projection.** The bounded operator `p` belongs to the compact ideal
+  `K(lp(ℕ,ℂ,2))`. -/
   value : Algebra
-  /-- The original operator is self-adjoint and idempotent. -/
+  /-- **Star projection equations.** The compact value satisfies `p*p=p` and `star p=p`. -/
   projection : IsStarProjection value
-  /-- Its literal operator range has complex dimension one. -/
+  /-- **One-dimensional operator range.** The complex dimension of the linear range of the compact
+  projection is one. -/
   finrank_range : Module.finrank ℂ
     (LinearMap.range (value : Hilbert →L[ℂ] Hilbert).toLinearMap) = 1
 
-/-- The existing full-H compact rank-one constructor, specialized to scalar Hilbert space. -/
+/-- **Scalar compact rank-one operator.** For `v,w : Hilbert = lp(ℕ,ℂ,2)`, `rankOne v w` is the
+compact map `x ↦ inner ℂ w x • v`. -/
 def rankOne (v w : Hilbert) : Algebra :=
   CStarModule.HilbertAmplification.hilbertCompactRankOne Hilbert v w
 
-/-- The computed compact rank-one operator has its original Hilbert-space action. -/
+/-- **Action of the scalar rank-one operator.** `(rankOne v w) x = inner ℂ w x • v` on
+`lp(ℕ,ℂ,2)`. -/
 @[simp]
 theorem rankOne_apply (v w x : Hilbert) :
     (rankOne v w : Hilbert →L[ℂ] Hilbert) x = inner ℂ w x • v :=
   CStarModule.HilbertAmplification.hilbertCompactRankOne_apply Hilbert v w x
 
-/-- Adjoint exchanges the two actual rank-one vectors. -/
+/-- **Adjoint of the scalar rank-one operator.** `star (rankOne v w) = rankOne w v`. -/
 @[simp]
 theorem star_rankOne (v w : Hilbert) : star (rankOne v w) = rankOne w v :=
   CStarModule.HilbertAmplification.hilbertCompactRankOne_star Hilbert v w
 
-/-- A unit-vector rank-one operator is an actual idempotent in the compact ideal. -/
+/-- **Projection from a unit vector.** If `v : lp(ℕ,ℂ,2)` has `‖v‖=1`, then `rankOne v v * rankOne
+v v = rankOne v v`. -/
 theorem rankOne_mul_self {v : Hilbert} (hv : ‖v‖ = 1) :
     rankOne v v * rankOne v v = rankOne v v := by
   apply Subtype.ext
   exact InnerProductSpace.isIdempotentElem_rankOne_self (𝕜 := ℂ) hv
 
-/-- The compact subtype retains the original rank-one operator norm. -/
+/-- **Norm of a scalar rank-one operator.** For `v,w : lp(ℕ,ℂ,2)`, the operator norm of `rankOne v
+w` is `‖v‖ * ‖w‖`. -/
 @[simp]
 theorem norm_rankOne (v w : Hilbert) :
     ‖(rankOne v w : Hilbert →L[ℂ] Hilbert)‖ = ‖v‖ * ‖w‖ :=
   InnerProductSpace.norm_rankOne v w
 
-/-- A unit vector gives a computed actual projection with genuine one-dimensional range. -/
+/-- **One-dimensional projection of a unit vector.** For `v : lp(ℕ,ℂ,2)` with `‖v‖=1`, the
+projection record has value `rankOne v v`, with range the complex span of `v`. -/
 def rankOneProjection (v : Hilbert) (hv : ‖v‖ = 1) : OneDimensionalProjection where
   value := rankOne v v
   projection := ⟨rankOne_mul_self hv, star_rankOne v v⟩
@@ -96,26 +109,30 @@ def rankOneProjection (v : Hilbert) (hv : ‖v‖ = 1) : OneDimensionalProjectio
     apply Module.rank_eq_one_iff_finrank_eq_one.mp
     exact InnerProductSpace.rank_rankOne (𝕜 := ℂ) hv0 hv0
 
-/-- The constructed projection is exactly the original rank-one compact operator. -/
+/-- **Value of the unit-vector projection.** `(rankOneProjection v hv).value = rankOne v v` when
+`hv : ‖v‖=1`. -/
 @[simp]
 theorem rankOneProjection_value (v : Hilbert) (hv : ‖v‖ = 1) :
     (rankOneProjection v hv).value = rankOne v v := rfl
 
-/-- A standard Hilbert vector has its actual single-coordinate lp value. -/
+/-- **Coordinate vector of scalar sequence space.** `basisVector i` is `lp.single 2 i (1 : ℂ)`,
+with entry `1` at coordinate `i` and zero elsewhere. -/
 def basisVector (i : ℕ) : Hilbert :=
   lp.single (E := fun _ : ℕ => ℂ) 2 i (1 : ℂ)
 
-/-- Every standard coordinate vector has norm one in the genuine lp-two norm. -/
+/-- **Norm of a scalar coordinate vector.** `‖basisVector i‖ = 1` for every `i : ℕ`. -/
 @[simp]
 theorem norm_basisVector (i : ℕ) : ‖basisVector i‖ = 1 := by
   simpa only [basisVector, norm_one] using
     lp.norm_single (E := fun _ : ℕ => ℂ) (p := (2 : ENNReal)) (by norm_num) i (1 : ℂ)
 
-/-- The original standard compact coordinate projection is a computed rank-one projection. -/
+/-- **Compact coordinate projection.** `coordinateProjection i` is the one-dimensional star
+projection `rankOne (basisVector i) (basisVector i)`. -/
 def coordinateProjection (i : ℕ) : OneDimensionalProjection :=
   rankOneProjection (basisVector i) (norm_basisVector i)
 
-/-- The standard compact projection acts by the actual rank-one formula on every Hilbert vector. -/
+/-- **Action of a scalar coordinate projection.** For `x : lp(ℕ,ℂ,2)`, the projection value is
+`inner ℂ (basisVector i) x • basisVector i`. -/
 theorem coordinateProjection_apply (i : ℕ) (x : Hilbert) :
     ((coordinateProjection i).value : Hilbert →L[ℂ] Hilbert) x =
       inner ℂ (basisVector i) x • basisVector i := rfl

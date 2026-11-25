@@ -1,23 +1,23 @@
-# Completely Positive Functoriality
+# Star-homomorphism functoriality of CP-contractive families
 
-## Completely Positive Contraction
+## Completely positive contractions
 
-- [Precomp](precomp.md)
-- [Precomp to Asymptotic Morphism](precomp-to-asymptotic-morphism.md)
-- [Precomp apply](precomp-apply.md)
+- [Precomposition of a CP-contractive family](precomp.md)
+- [Underlying family of CP-contractive precomposition](precomp-to-asymptotic-morphism.md)
+- [Value of CP-contractive precomposition](precomp-apply.md)
 
 ## Homotopy
 
-- [Precomp](precomp-2.md)
-- [Postcomp](postcomp.md)
-- [Precomp to Asymptotic Homotopy](precomp-to-asymptotic-homotopy.md)
-- [Postcomp to Asymptotic Homotopy](postcomp-to-asymptotic-homotopy.md)
+- [Precomposition of a CP-contractive homotopy](precomp-2.md)
+- [Postcomposition of a CP-contractive homotopy](postcomp.md)
+- [Underlying asymptotic homotopy of CP precomposition](precomp-to-asymptotic-homotopy.md)
+- [Underlying asymptotic homotopy of CP postcomposition](postcomp-to-asymptotic-homotopy.md)
 
-## Completely Positive Contraction
+## Completely positive contractions
 
-- [Homotopic precomp](homotopic-precomp.md)
-- [Homotopic postcomp](homotopic-postcomp.md)
-- [Precomp Class](precomp-class.md)
-- [Postcomp Class](postcomp-class.md)
-- [Precomp Class mk](precomp-class-mk.md)
-- [Postcomp Class mk](postcomp-class-mk.md)
+- [CP homotopy is preserved by source precomposition](homotopic-precomp.md)
+- [CP homotopy is preserved by target postcomposition](homotopic-postcomp.md)
+- [Precomposition on CP-contractive homotopy classes](precomp-class.md)
+- [Postcomposition on CP-contractive homotopy classes](postcomp-class.md)
+- [Precomposition of a representative CP class](precomp-class-mk.md)
+- [Postcomposition of a representative CP class](postcomp-class-mk.md)

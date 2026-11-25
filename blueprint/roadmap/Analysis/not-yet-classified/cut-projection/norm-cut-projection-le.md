@@ -1,3 +1,4 @@
-# Norm cut Projection le
+# Norm bound for coordinate cuts
 
-Every coordinate cut is contractive, also for an empty sum or zero modules.
+`‖cutProjection s‖ ≤ 1` for any index set, including an
+empty direct sum or zero component modules.

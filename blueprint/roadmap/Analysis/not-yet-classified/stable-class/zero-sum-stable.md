@@ -1,5 +1,4 @@
-# Zero sum stable
+# Left zero law after stable equivalence
 
-Left addition by zero is an identity only after passing to stable strong
-equivalence. It uses commutativity, congruence and associativity, not a strong
-unit law.
+For coherent `S`, `S.sum 0 τ` is stably strongly
+equivalent to `τ`.

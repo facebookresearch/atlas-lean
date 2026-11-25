@@ -1,3 +1,4 @@
-# Snd apply mul
+# Right centralizer identity
 
-The actual second operator is a right centralizer in the original multiplication.
+For nonunital C-star `B`, multiplier `m` and `a,b : B`, `m.snd
+(a*b) = a * m.snd b`.

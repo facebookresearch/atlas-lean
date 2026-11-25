@@ -1,3 +1,3 @@
-# Standard Coefficient Index zero
+# Value of the initial coordinate injection
 
-The literal initial standard coordinate is zero.
+`standardCoefficientIndex (0 : Fin 1) = 0`.

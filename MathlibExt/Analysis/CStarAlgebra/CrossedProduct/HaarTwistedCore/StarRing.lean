@@ -16,12 +16,14 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.In
 public import Mathlib.Algebra.Star.Module
 
 /-!
-# The original Haar twisted convolution star ring
+# Modular star operation for Haar twisted convolution
 
-The star law follows on the original coefficient functions by commuting the
-actual action-composed adjoint map with their Bochner integral and then making
-the literal left-Haar substitution `t ↦ s * t`. The character remains the
-right-pushforward modular character and the involution factor remains `δ(s)`.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. Writing
+δ(s)=Measure.modularCharacter s for the modular character, the involution is
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))). The involution reverses convolution: (f*h)⁎=h⁎*f⁎. With the
+additive involution laws this makes the nonunital Haar convolution algebra a star ring.
 -/
 
 @[expose] public section
@@ -44,7 +46,15 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
 omit [μ.Regular] in
-/-- The original modular involution reverses the literal left-Haar twisted convolution. -/
+/-- **The modular involution reverses convolution.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action. For core coefficients f,h:G→A, twisted
+convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. Writing δ(s)=Measure.modularCharacter s
+for the modular character, the involution is f⁎(s)=δ(s)•α_s(star(f(s⁻¹))). For compactly
+supported continuous core coefficients f,h, crossedStar μ α (f*h)=crossedStar μ α
+h*crossedStar μ α f.
+-/
 theorem crossedStar_convolution (f g : Carrier μ α) :
     crossedStar μ α (convolution μ α f g) =
       convolution μ α (crossedStar μ α g) (crossedStar μ α f) := by
@@ -111,7 +121,15 @@ theorem crossedStar_convolution (f g : Carrier μ α) :
     _ = convolution μ α (crossedStar μ α g) (crossedStar μ α f) s := by
       simp only [convolution_apply, kernel]
 
-/-- The original convolution ring has the original modularly twisted source star. -/
+/-- **Star ring of Haar twisted core coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h:G→A, twisted convolution is (f*h)(x)=∫ s:G, f(s)*α_s(h(s⁻¹*x)) ∂μ. Writing
+δ(s)=Measure.modularCharacter s for the modular character, the involution is
+f⁎(s)=δ(s)•α_s(star(f(s⁻¹))). These operations make Carrier μ α a star ring, with
+star(f*h)=star(h)*star(f).
+-/
 instance instStarRingCarrier : StarRing (Carrier μ α) where
   star_mul := crossedStar_convolution μ α
   star_add := crossedStar_add μ α

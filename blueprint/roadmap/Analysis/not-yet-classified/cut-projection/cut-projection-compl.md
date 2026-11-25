@@ -1,3 +1,3 @@
-# Cut Projection compl
+# Complementary coordinate projection
 
-A complementary cut is the complementary projection.
+`cutProjection sᶜ = 1 - cutProjection s`.

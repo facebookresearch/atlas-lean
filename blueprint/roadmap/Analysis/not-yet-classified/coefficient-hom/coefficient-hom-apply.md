@@ -1,3 +1,4 @@
-# Coefficient Hom apply
+# Value of the coefficient representation
 
-The actual coefficient homomorphism keeps the original completed coefficient operator.
+For `a : A`, `coefficientHom H A a =
+coefficientOperator H A a`.

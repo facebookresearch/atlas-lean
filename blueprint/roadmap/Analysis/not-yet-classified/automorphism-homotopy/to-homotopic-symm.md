@@ -1,4 +1,4 @@
-# To Homotopic symm
+# Underlying homotopy after path reversal
 
-Reversing an automorphism homotopy reverses its underlying homomorphism
-homotopy.
+Reversing an automorphism homotopy from α to β gives a homotopy of star homomorphisms from β
+to α.

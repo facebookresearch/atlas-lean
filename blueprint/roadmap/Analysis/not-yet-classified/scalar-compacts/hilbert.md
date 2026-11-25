@@ -1,3 +1,4 @@
-# Hilbert
+# Scalar sequence Hilbert space
 
-The genuine countable scalar Hilbert space used for the compact algebra.
+`Hilbert = lp (fun _ : ℕ => ℂ) 2`, the complex
+square-summable sequence space.

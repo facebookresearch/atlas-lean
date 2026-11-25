@@ -1,4 +1,5 @@
-# Calkin Alg Equiv
+# Algebra equivalence of Calkin quotients
 
-The ordinary Banach-space Calkin algebra and the scalar-right module
-Calkin quotient are canonically algebra equivalent.
+For a complex Hilbert space `H`, the endomorphism
+algebra correspondence descends to an algebra equivalence between its Hilbert-space and right
+scalar-module Calkin algebras.

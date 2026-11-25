@@ -16,11 +16,12 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Correspondence
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Homotopy
 
 /-!
-# Naturality of the strict asymptotic-algebra correspondence
+# Naturality of the strict asymptotic correspondence
 
-This upper module is the first nontrivial consumer of the coefficient map.
-It stays above both the strict correspondence and fixed-hom functoriality, so
-neither lower provider imports a later consumer.
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), Φ:A→B an asymptotic star morphism and
+g:B→C a nonunital complex star homomorphism. The bounded coefficient orbit of g∘Φ is
+g∘orbitBCF Φ, and toHom(g∘Φ)=(AsymptoticAlgebra.map g)∘toHom Φ. Constant asymptotic families
+correspond to constant quotient classes.
 -/
 
 @[expose] public section
@@ -42,8 +43,12 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- Postcomposition of a raw family gives literal coefficient
-postcomposition of every bounded time orbit. -/
+/-- **Bounded orbit under fixed-homomorphism postcomposition.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), Φ:A→B an asymptotic star morphism and
+g:B→C a nonunital complex star homomorphism. For a∈A, orbitBCF(postcomp Φ g)(a)=g∘orbitBCF Φ a
+as bounded continuous functions T→C.
+-/
 theorem orbitBCF_postcomp
     (Φ : AsymptoticMorphism A B) (g : B →⋆ₙₐ[ℂ] C) (a : A) :
     orbitBCF (postcomp Φ g) a =
@@ -53,8 +58,12 @@ theorem orbitBCF_postcomp
   rw [orbitBCF_apply, postcomp_apply,
     BoundedContinuousFunction.compNonUnitalStarAlgHom_apply, orbitBCF_apply]
 
-/-- The actual strict correspondence is covariantly natural under a fixed
-coefficient star homomorphism. -/
+/-- **Naturality of the quotient homomorphism under postcomposition.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), Φ:A→B an asymptotic star morphism and
+g:B→C a nonunital complex star homomorphism. For X∞=C_b(T,X)/C₀(T,X), toHom Φ(a)=[t↦Φ_t(a)],
+and toHom(postcomp Φ g)=(AsymptoticAlgebra.map g)∘toHom Φ.
+-/
 theorem toHom_postcomp
     (Φ : AsymptoticMorphism A B) (g : B →⋆ₙₐ[ℂ] C) :
     toHom (postcomp Φ g) =
@@ -64,8 +73,13 @@ theorem toHom_postcomp
   rw [toHom_apply, NonUnitalStarAlgHom.comp_apply, toHom_apply,
     _root_.AsymptoticAlgebra.map_quotientMap, orbitBCF_postcomp]
 
-/-- Ordinary fixed homomorphisms correspond exactly to the constant-class
-inclusion into the actual asymptotic quotient. -/
+/-- **Constant asymptotic families give constant quotient classes.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For a nonunital complex star homomorphism
+f:A→B, its constant family ofHom f has toHom(ofHom f)=constantHom B∘f, where constantHom B
+sends b to q_B(t↦b).
+-/
 theorem toHom_ofHom_constant (f : A →⋆ₙₐ[ℂ] B) :
     toHom (ofHom f) =
       (_root_.AsymptoticAlgebra.constantHom B).comp f := by

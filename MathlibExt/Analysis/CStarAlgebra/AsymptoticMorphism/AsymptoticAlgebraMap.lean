@@ -15,10 +15,12 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.AsymptoticAlge
 public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.BoundedHom
 
 /-!
-# Functoriality of the literal asymptotic algebra
+# Functoriality of asymptotic quotient algebras
 
-Coefficient homomorphisms descend through the actual closed vanishing ideal.
-Constant functions give a natural injective inclusion into the quotient.
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. A nonunital complex star homomorphism φ:A→B
+induces φ∞:A∞→B∞ with φ∞(q_A(F))=q_B(φ∘F). These maps respect composition. The constant
+classes c_A(a)=q_A(t↦a) form natural injective coefficient maps: φ∞∘c_A=c_B∘φ.
 -/
 
 @[expose] public section
@@ -42,7 +44,12 @@ variable [NonUnitalCStarAlgebra C]
 
 attribute [local instance] cStarAlgebra
 
-/-- The coefficient map on the literal asymptotic quotient. -/
+/-- **Map induced on asymptotic quotient algebras.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For a nonunital complex star homomorphism
+φ:A→B, map φ:A∞→B∞ sends q_A(F) to q_B(t↦φ(F(t))).
+-/
 @[no_expose]
 def map (φ : A →⋆ₙₐ[ℂ] B) :
     AsymptoticAlgebra A →⋆ₙₐ[ℂ] AsymptoticAlgebra B := by
@@ -56,8 +63,12 @@ def map (φ : A →⋆ₙₐ[ℂ] B) :
     (BoundedContinuousFunction.compNonUnitalStarAlgHom_mapsTo_vanishingIdeal
       (X := AsymptoticTime) φ)
 
-/-- The coefficient map is computed by postcomposing a bounded representative
-and applying the actual target quotient projection. -/
+/-- **Induced map on a bounded-function representative.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For a nonunital complex star homomorphism
+φ:A→B and F∈C_b(T,A), map φ (q_A(F))=q_B(φ∘F).
+-/
 @[simp]
 theorem map_quotientMap (φ : A →⋆ₙₐ[ℂ] B)
     (f : AsymptoticTime →ᵇ A) :
@@ -74,7 +85,12 @@ theorem map_quotientMap (φ : A →⋆ₙₐ[ℂ] B)
     (BoundedContinuousFunction.compNonUnitalStarAlgHom_mapsTo_vanishingIdeal
       (X := AsymptoticTime) φ) f
 
-/-- Quotient coefficient maps intertwine the actual quotient projections. -/
+/-- **Induced maps intertwine the quotient projections.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For a nonunital complex star homomorphism
+φ:A→B, (map φ)∘q_A=q_B∘(F↦φ∘F), as nonunital complex star homomorphisms on C_b(T,A).
+-/
 theorem map_comp_quotientMap (φ : A →⋆ₙₐ[ℂ] B) :
     (map φ).comp (quotientMap A) =
       (quotientMap B).comp
@@ -116,7 +132,12 @@ theorem map_zero (A : Type uA) (B : Type uB)
     BoundedContinuousFunction.compNonUnitalStarAlgHom_zero]
   rfl
 
-/-- The literal quotient coefficient map respects composition. -/
+/-- **Composition of asymptotic quotient maps.**
+
+Let A,B,C be nonunital complex C-star algebras and φ:A→B, ψ:B→C nonunital complex star
+homomorphisms. On X∞=C_b([1,∞),X)/C₀([1,∞),X), the induced maps satisfy map(ψ∘φ)=(map ψ)∘(map
+φ).
+-/
 theorem map_comp (φ : A →⋆ₙₐ[ℂ] B) (ψ : B →⋆ₙₐ[ℂ] C) :
     map (ψ.comp φ) = (map ψ).comp (map φ) := by
   let I := BoundedContinuousFunction.vanishingIdeal AsymptoticTime A
@@ -139,7 +160,11 @@ private def boundedConstantHom
   map_smul' _ _ := by ext t; rfl
   map_star' _ := by ext t; rfl
 
-/-- The actual constant-function class in the literal asymptotic quotient. -/
+/-- **Coefficient inclusion by constant asymptotic classes.**
+
+Let A be a nonunital complex C-star algebra, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and q_A its quotient
+map. The nonunital complex star homomorphism constantHom A sends a to q_A(t↦a).
+-/
 @[no_expose]
 def constantHom (A : Type uA) [NonUnitalCStarAlgebra A] :
     A →⋆ₙₐ[ℂ] AsymptoticAlgebra A :=
@@ -162,14 +187,23 @@ private theorem comp_constant
   rw [BoundedContinuousFunction.compNonUnitalStarAlgHom_apply]
   rfl
 
-/-- The constant-class inclusion is natural in the coefficient algebra. -/
+/-- **Naturality of constant coefficient classes.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For a nonunital complex star homomorphism
+φ:A→B and c_X(x)=q_X(t↦x), (map φ)∘c_A=c_B∘φ.
+-/
 theorem map_comp_constantHom (φ : A →⋆ₙₐ[ℂ] B) :
     (map φ).comp (constantHom A) = (constantHom B).comp φ := by
   ext a
   simp only [NonUnitalStarAlgHom.comp_apply, constantHom_apply,
     map_quotientMap, comp_constant]
 
-/-- A constant class is zero exactly when its coefficient is zero. -/
+/-- **A constant asymptotic class is zero exactly for the zero coefficient.**
+
+Let A be a nonunital complex C-star algebra, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and q_A its quotient
+map. For a∈A, constantHom A a=q_A(t↦a)=0 if and only if a=0.
+-/
 theorem constantHom_eq_zero_iff
     (A : Type uA) [NonUnitalCStarAlgebra A] (a : A) :
     constantHom A a = 0 ↔ a = 0 := by
@@ -186,8 +220,11 @@ theorem constantHom_eq_zero_iff
   · rintro rfl
     exact _root_.map_zero (constantHom A)
 
-/-- The coefficient algebra embeds in its asymptotic algebra by constant
-classes, without a nontriviality hypothesis. -/
+/-- **Injectivity of the constant-class coefficient map.**
+
+Let A be a nonunital complex C-star algebra. The map constantHom A:A→C_b([1,∞),A)/C₀([1,∞),A),
+a↦[t↦a], is injective, including when A is zero.
+-/
 theorem constantHom_injective
     (A : Type uA) [NonUnitalCStarAlgebra A] :
     Function.Injective (constantHom A) := by

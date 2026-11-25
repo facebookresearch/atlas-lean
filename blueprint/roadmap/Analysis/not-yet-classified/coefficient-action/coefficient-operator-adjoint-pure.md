@@ -1,3 +1,4 @@
-# Coefficient Operator adjoint pure
+# Adjoint coefficient operator on pure vectors
 
-The stored genuine adjoint multiplies the coefficient by the original coefficient adjoint.
+The adjoint satisfies `(coefficientOperator
+H A a).adjoint (pure ξ b) = pure ξ (star a*b)`.

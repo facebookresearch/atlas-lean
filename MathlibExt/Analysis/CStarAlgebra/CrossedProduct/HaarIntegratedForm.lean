@@ -16,12 +16,14 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.IntegratedOperator
 public import MathlibExt.MeasureTheory.Group.HaarWeightedInversion
 
 /-!
-# Haar-integrated covariant star-algebra homomorphisms
+# Haar-integrated covariant representations
 
-The original compact-support convolution core acts by its actual vector-integrated
-operators. Compact-support vector Fubini and left translation prove multiplication;
-the modularly weighted inversion formula and Hilbert adjoints prove star preservation.
-The homomorphism retains the original vector action and literal coefficient L1 bound.
+Let G be a locally compact topological group with its Borel measurable structure and a regular
+left Haar measure μ. Let α act point-norm continuously on a nonunital complex C-star algebra
+A, and let ρ=(π,U) be a covariant representation on a complex Hilbert space H. For compactly
+supported continuous f:G→A, the bounded operator Iρ(f) is defined by Iρ(f)ξ=∫ s, π(f(s))(Us ξ)
+∂μ. Twisted convolution and modular involution satisfy Iρ(f*g)=Iρ(f)Iρ(g) and Iρ(f*)=Iρ(f)*,
+and ‖Iρ(f)‖≤∫ s, ‖f(s)‖ ∂μ.
 -/
 
 @[expose] public section
@@ -46,7 +48,12 @@ variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The original Haar convolution acts by the product of its actual integrated operators. -/
+/-- **Multiplicativity of the integrated representation.**
+
+For a left Haar measure μ and a covariant Hilbert-space representation ρ=(π,U) of α, compactly
+supported twisted-convolution coefficients satisfy Iρ(f*g)=Iρ(f)Iρ(g), where Iρ(f)ξ=∫ s,
+π(f(s))(Us ξ) ∂μ.
+-/
 theorem haarIntegratedOperator_mul (f g : HaarTwistedCore.Carrier μ α) :
     StronglyContinuousUnitaryRepresentation.integratedOperator μ ρ.group ρ.algebra
         (HaarTwistedCore.toCc μ α (f * g)) =
@@ -165,7 +172,12 @@ theorem haarIntegratedOperator_mul (f g : HaarTwistedCore.Carrier μ α) :
           rfl
   exact hLeft.trans (hSwap.trans hRight)
 
-/-- The original modularly weighted Haar involution acts by the actual Hilbert adjoint. -/
+/-- **Involution becomes the Hilbert adjoint.**
+
+For the Haar-integrated covariant operator Iρ and a compactly supported coefficient f,
+Iρ(f*)=Iρ(f)*. The involution f* is the modularly weighted Haar involution of the
+twisted-convolution algebra.
+-/
 theorem haarIntegratedOperator_star (f : HaarTwistedCore.Carrier μ α) :
     StronglyContinuousUnitaryRepresentation.integratedOperator μ ρ.group ρ.algebra
         (HaarTwistedCore.toCc μ α (star f)) =
@@ -242,7 +254,13 @@ theorem haarIntegratedOperator_star (f : HaarTwistedCore.Carrier μ α) :
       integral_modularCharacter_smul_inv_of_hasCompactSupport μ hFcont hFcompact
     _ = _ := hRight
 
-/-- The actual Haar core homomorphism whose values are the original vector-integrated operators. -/
+/-- **Integrated star-algebra homomorphism.**
+
+For an action α on A and a covariant representation ρ=(π,U) on a complex Hilbert space H, the
+compactly supported Haar twisted-convolution algebra maps to bounded operators by f↦Iρ(f),
+with Iρ(f)ξ=∫ s, π(f(s))(Us ξ) ∂μ. This map preserves addition, complex scalar multiplication,
+multiplication and involution.
+-/
 def haarIntegratedHom : HaarTwistedCore.Carrier μ α →⋆ₙₐ[ℂ] (H →L[ℂ] H) where
   toFun f := StronglyContinuousUnitaryRepresentation.integratedOperator μ ρ.group ρ.algebra
     (HaarTwistedCore.toCc μ α f)
@@ -269,7 +287,11 @@ def haarIntegratedHom : HaarTwistedCore.Carrier μ α →⋆ₙₐ[ℂ] (H →L[
     exact StronglyContinuousUnitaryRepresentation.integratedOperator_smul μ ρ.group ρ.algebra _ _
   map_star' := haarIntegratedOperator_star μ ρ
 
-/-- The computed homomorphism value is the original integrated operator on the same coefficient. -/
+/-- **Operator value of the integrated homomorphism.**
+
+For a compactly supported coefficient f, `haarIntegratedHom μ ρ f` is the bounded operator
+whose vector action is ξ↦∫ s, ρ.algebra(f(s))(ρ.group(s)ξ) ∂μ.
+-/
 @[simp]
 theorem haarIntegratedHom_apply (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedHom μ ρ f =
@@ -277,13 +299,22 @@ theorem haarIntegratedHom_apply (f : HaarTwistedCore.Carrier μ α) :
         (HaarTwistedCore.toCc μ α f) :=
   rfl
 
-/-- Every Hilbert-vector action is the literal original integrated covariant formula. -/
+/-- **Vector action of the integrated representation.**
+
+Let ρ=(π,U) be a covariant representation of α on the complex Hilbert space H, μ the regular
+left Haar measure and f a compactly supported twisted-convolution coefficient. For ξ∈H,
+`haarIntegratedHom μ ρ f ξ = ∫ s : G, ρ.algebra (f s) ((ρ.group s : H →L[ℂ] H) ξ) ∂μ`.
+-/
 theorem haarIntegratedHom_apply_vector (f : HaarTwistedCore.Carrier μ α) (ξ : H) :
     haarIntegratedHom μ ρ f ξ =
       ∫ s : G, ρ.algebra (f s) ((ρ.group s : H →L[ℂ] H) ξ) ∂μ :=
   rfl
 
-/-- The actual integrated homomorphism has the original Haar L1 coefficient bound. -/
+/-- **L¹ bound for the integrated representation.**
+
+For a compactly supported coefficient f and a covariant Hilbert-space representation ρ, the
+operator norm satisfies `‖haarIntegratedHom μ ρ f‖ ≤ ∫ s : G, ‖f s‖ ∂μ`.
+-/
 theorem norm_haarIntegratedHom_le (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ f‖ ≤ ∫ s : G, ‖f s‖ ∂μ :=
   StronglyContinuousUnitaryRepresentation.norm_integratedOperator_le μ ρ.group ρ.algebra

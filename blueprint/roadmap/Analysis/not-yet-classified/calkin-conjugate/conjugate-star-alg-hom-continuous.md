@@ -1,3 +1,4 @@
-# Conjugate Star Alg Hom continuous
+# Continuity of unitary Calkin transport
 
-The actual Calkin transport is continuous by the canonical C-star contractivity bound.
+For complex Hilbert spaces `H,K`,
+`conjugateStarAlgHom U` is continuous for the quotient norms.

@@ -1,4 +1,4 @@
-# Unitization
+# Unitization of asymptotic star morphisms
 
 - [Matrix Inr](matrix-inr.md)
 - [Matrix Inr apply](matrix-inr-apply.md)
@@ -54,7 +54,7 @@
 - [Fst Star Alg Hom comp star Map](fst-star-alg-hom-comp-star-map.md)
 - [Star Map fst](star-map-fst.md)
 - [Star Map snd](star-map-snd.md)
-- [Unitization](unitization.md)
-- [Unitization apply](unitization-apply.md)
-- [Unitization inr apply](unitization-inr-apply.md)
-- [Unitization normalize one](unitization-normalize-one.md)
+- [Asymptotic family on complex unitizations](unitization.md)
+- [Value of the unitized asymptotic family](unitization-apply.md)
+- [Restriction of unitization to the coefficient algebra](unitization-inr-apply.md)
+- [Normalized unitization preserves the unit](unitization-normalize-one.md)

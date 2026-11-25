@@ -1,3 +1,4 @@
-# Operator Pullback Quotient surjective
+# Surjective coefficient projection
 
-The actual coefficient projection inherits surjectivity from the canonical Busby quotient.
+For every such `φ`, each `a : A` has a compatible
+bounded-operator representative of `φ(a)`, so `(T,a) ↦ a` maps `P_φ` onto `A`.

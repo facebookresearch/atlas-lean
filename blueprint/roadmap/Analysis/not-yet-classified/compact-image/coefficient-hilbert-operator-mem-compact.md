@@ -1,3 +1,5 @@
-# Coefficient hilbert Operator mem compact
+# Compact amplified Hilbert products
 
-Every original compact Hilbert operator has actual compact module image with every coefficient.
+For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, if `T : H →L[ℂ] H` is a compact operator, then `coefficientHom a *
+hilbertOperator T` is module-compact for every `a : A`.

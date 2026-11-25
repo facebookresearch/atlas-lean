@@ -1,3 +1,4 @@
-# Norm of
+# Norm preservation of a stage inclusion
 
-Each stage inclusion retains its original norm.
+For an isometric C-star system on a nonempty
+directed index, `‖S.of i x‖ = ‖x‖`.

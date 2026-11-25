@@ -1,4 +1,4 @@
-# Completed Generator single Linear
+# Completed grading on an algebraic coordinate image
 
-Canonical simp-normal form of the completed generator on an embedded
-algebraic single-coordinate vector.
+The generator sends the completed
+image of `singleLinear i x` to the completed image of `singleLinear i ((δ i).generator x)`.

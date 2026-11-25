@@ -16,16 +16,14 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.St
 public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.L1Gauge
 
 /-!
-# Actual character modulation on the original Haar twisted core
+# Unitary-character modulation of twisted convolution
 
-For an actual compact-open continuous character, multiply each original
-coefficient value f(s) by the same scalar pairing chi(s). Compact support
-and continuity are retained. The original twisted convolution and modular
-involution are preserved, and the original L1 gauge is unchanged.
-
-These strict algebraic maps are the prerequisite for the original dual
-action on the full locally compact crossed product in Blackadar10.1.
-No completed action, norm model or terminal duality conclusion is supplied.
+Let G be a locally compact topological group with regular left Haar measure μ, A a nonunital
+complex C-star algebra, and α a point-norm action. For a continuous unitary character
+χ∈PontryaginDual G, define Mχf(s)=χ(s)•f(s) on compactly supported coefficients. These maps
+are star-algebra automorphisms of the Haar twisted-convolution core, satisfy Mχη=Mχ∘Mη, and
+preserve the L¹ gauge ∫ s, ‖f(s)‖ ∂μ. This is the character formula for the dual action in
+Blackadar, Section10.1.
 -/
 
 @[expose] public section
@@ -47,7 +45,12 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (mu : Measure G) [mu.IsHaarMeasure] [mu.Regular] (alpha : PointNormCStarAction G A)
 
-/-- The original compact-support coefficient function multiplied by the actual scalar character. -/
+/-- **Modulation by a unitary character.**
+
+For a point-norm action α on A, Haar measure μ, a continuous unitary character χ of G and
+f∈Cc(G,A), character modulation is Mχf(s)=χ(s)•f(s). The resulting coefficient is continuous
+and compactly supported.
+-/
 def characterModulation (chi : PontryaginDual G) (f : Carrier mu alpha) : Carrier mu alpha where
   toCc :=
     { toFun := fun s => (chi s : ℂ) • f s
@@ -59,14 +62,22 @@ def characterModulation (chi : PontryaginDual G) (f : Carrier mu alpha) : Carrie
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [BorelSpace G]
   [mu.IsHaarMeasure] [mu.Regular] in
-/-- Every original modulated coefficient has its literal character value. -/
+/-- **Character-modulated coefficient value.**
+
+For χ∈PontryaginDual G and compactly supported f:G→A in the Haar core for (μ,α),
+`characterModulation μ α χ f s = (χ s : ℂ) • f s` for every s∈G.
+-/
 @[simp]
 theorem characterModulation_apply (chi : PontryaginDual G) (f : Carrier mu alpha) (s : G) :
     characterModulation mu alpha chi f s = (chi s : ℂ) • f s := rfl
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [BorelSpace G]
   [mu.IsHaarMeasure] [mu.Regular] in
-/-- Character composition has the original scalar order on every coefficient. -/
+/-- **Composition of character modulations.**
+
+For unitary characters χ,η of G and a Haar-core coefficient f, Mχηf=Mχ(Mηf), where
+Mχf(s)=χ(s)•f(s).
+-/
 theorem characterModulation_mul_character (chi eta : PontryaginDual G) (f : Carrier mu alpha) :
     characterModulation mu alpha (chi * eta) f =
       characterModulation mu alpha chi (characterModulation mu alpha eta f) := by
@@ -78,7 +89,10 @@ theorem characterModulation_mul_character (chi eta : PontryaginDual G) (f : Carr
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [BorelSpace G]
   [mu.IsHaarMeasure] [mu.Regular] in
-/-- Identity character modulation is the original coefficient function. -/
+/-- **Trivial character acts identically.**
+
+For every coefficient f in the Haar twisted-convolution core, M1f=f, where Mχf(s)=χ(s)•f(s).
+-/
 @[simp]
 theorem characterModulation_one (f : Carrier mu alpha) : characterModulation mu alpha 1 f = f := by
   apply ext mu alpha
@@ -87,7 +101,11 @@ theorem characterModulation_one (f : Carrier mu alpha) : characterModulation mu 
   exact one_smul ℂ (f s)
 
 omit [LocallyCompactSpace G] [mu.Regular] in
-/-- The actual original character map preserves the printed Haar twisted convolution. -/
+/-- **Character modulation preserves convolution.**
+
+For compactly supported A-valued coefficients f,h, a point-norm action α and a unitary
+character χ of G, Mχ(f*h)=Mχf*Mχh for Haar twisted convolution, where Mχf(s)=χ(s)•f(s).
+-/
 theorem characterModulation_convolution (chi : PontryaginDual G) (f h : Carrier mu alpha) :
     characterModulation mu alpha chi (convolution mu alpha f h) =
       convolution mu alpha (characterModulation mu alpha chi f) (characterModulation mu alpha chi h) := by
@@ -112,7 +130,11 @@ theorem characterModulation_convolution (chi : PontryaginDual G) (f h : Carrier 
     rw [alpha.apply_smul, smul_mul_assoc, mul_smul_comm, smul_smul, hscalar]
 
 omit [BorelSpace G] [mu.IsHaarMeasure] [mu.Regular] in
-/-- The actual original character map preserves the printed modular involution. -/
+/-- **Character modulation preserves involution.**
+
+For a Haar-core coefficient f and unitary character χ, Mχ(f*)=(Mχf)*, with Mχf(s)=χ(s)•f(s)
+and f* the modularly weighted twisted involution.
+-/
 theorem characterModulation_crossedStar (chi : PontryaginDual G) (f : Carrier mu alpha) :
     characterModulation mu alpha chi (crossedStar mu alpha f) =
       crossedStar mu alpha (characterModulation mu alpha chi f) := by
@@ -133,7 +155,12 @@ theorem characterModulation_crossedStar (chi : PontryaginDual G) (f : Carrier mu
 
 omit [IsTopologicalGroup G] [LocallyCompactSpace G] [BorelSpace G]
   [mu.IsHaarMeasure] [mu.Regular] in
-/-- The actual original coefficient-norm integral is unchanged by character modulation. -/
+/-- **L¹ gauge is invariant under unitary characters.**
+
+For a compactly supported coefficient f and unitary character χ, `l1Gauge μ α
+(characterModulation μ α χ f) = l1Gauge μ α f`, since the gauge is ∫ s, ‖f(s)‖ ∂μ and
+‖χ(s)‖=1.
+-/
 theorem l1Gauge_characterModulation (chi : PontryaginDual G) (f : Carrier mu alpha) :
     l1Gauge mu alpha (characterModulation mu alpha chi f) = l1Gauge mu alpha f := by
   unfold l1Gauge
@@ -142,7 +169,11 @@ theorem l1Gauge_characterModulation (chi : PontryaginDual G) (f : Carrier mu alp
     change ‖(chi s : ℂ) • f s‖ = ‖f s‖
     rw [norm_smul, Circle.norm_coe, one_mul]
 
-/-- The actual algebraic dual character automorphism of the same original twisted core. -/
+/-- **Character automorphism of the Haar convolution core.**
+
+For χ∈PontryaginDual G, the map Mχf(s)=χ(s)•f(s) is a complex star-algebra automorphism of the
+Haar twisted-convolution core for (μ,α). Its inverse is modulation by χ⁻¹.
+-/
 def characterModulationEquiv (chi : PontryaginDual G) : Carrier mu alpha ≃⋆ₐ[ℂ] Carrier mu alpha where
   toFun := characterModulation mu alpha chi
   invFun := characterModulation mu alpha chi⁻¹
@@ -164,7 +195,11 @@ def characterModulationEquiv (chi : PontryaginDual G) : Carrier mu alpha ≃⋆�
   map_star' := characterModulation_crossedStar mu alpha chi
 
 omit [mu.Regular] in
-/-- The actual algebraic dual automorphism has its original character coefficient value. -/
+/-- **Evaluation of the character automorphism.**
+
+For a continuous unitary character χ of G and compactly supported coefficient f,
+`characterModulationEquiv μ α χ f s = (χ s : ℂ) • f s`.
+-/
 @[simp]
 theorem characterModulationEquiv_apply (chi : PontryaginDual G) (f : Carrier mu alpha) (s : G) :
     characterModulationEquiv mu alpha chi f s = (chi s : ℂ) • f s := rfl

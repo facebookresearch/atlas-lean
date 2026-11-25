@@ -1,9 +1,9 @@
-# Haar L1 Integrated Form
+# Integrated representations on the L¹ crossed-product completion
 
-- [Continuous haar Integrated Hom for L1](continuous-haar-integrated-hom-for-l1.md)
-- [Haar L1 Integrated Hom](haar-l1-integrated-hom.md)
-- [Haar L1 Integrated Hom apply](haar-l1-integrated-hom-apply.md)
-- [Haar L1 Integrated Hom apply vector](haar-l1-integrated-hom-apply-vector.md)
-- [Continuous haar L1 Integrated Hom](continuous-haar-l1-integrated-hom.md)
-- [Norm haar L1 Integrated Hom le](norm-haar-l1-integrated-hom-le.md)
-- [Haar L1 Integrated Hom unique](haar-l1-integrated-hom-unique.md)
+- [L¹ continuity of the integrated representation](continuous-haar-integrated-hom-for-l1.md)
+- [Integrated homomorphism on the L¹ completion](haar-l1-integrated-hom.md)
+- [L¹ integrated homomorphism on dense coefficients](haar-l1-integrated-hom-apply.md)
+- [Vector integral on dense L¹ coefficients](haar-l1-integrated-hom-apply-vector.md)
+- [Continuity of the L¹ integrated homomorphism](continuous-haar-l1-integrated-hom.md)
+- [Contractive norm bound on the L¹ completion](norm-haar-l1-integrated-hom-le.md)
+- [Uniqueness of the continuous L¹ integrated extension](haar-l1-integrated-hom-unique.md)

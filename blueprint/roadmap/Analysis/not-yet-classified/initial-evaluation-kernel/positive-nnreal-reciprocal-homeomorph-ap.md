@@ -1,3 +1,3 @@
-# Positive NNReal Reciprocal Homeomorph apply
+# Value of the positive reciprocal coordinate
 
-The reciprocal coordinate has the stated scalar value.
+For u>0, positiveNNRealReciprocalHomeomorph u=1/(1+u)∈(0,1).

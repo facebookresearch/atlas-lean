@@ -1,3 +1,5 @@
-# Dense Range algebraic Compact Tensor Hom
+# Dense compact tensor representation
 
-The actual algebraic A tensor K(full H) hom has dense range in the original compact module algebra.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `algebraicCompactTensorHom H A : A ⊗_ℂ K(H) → CompactAlgebra H A` has
+dense range for the compact operator norm.

@@ -1,3 +1,4 @@
-# Op smul apply
+# Opposite scalar multiplication under identification
 
-The chosen opposite action has the original complex scalar formula.
+For `c : ℂ`, `q ((instOppositeSMul
+H).smul (MulOpposite.op c) x) = c • q x`, where `q = equivL H`.

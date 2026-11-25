@@ -1,3 +1,4 @@
-# Operator Pullback exact
+# Exact Calkin pullback sequence
 
-The original exact pair is transported from the existing canonical Busby exact pair.
+The image of `operatorPullbackInclusion φ` equals the
+kernel of `operatorPullbackQuotient φ`, giving `0 → K(H) → P_φ → A → 0`.

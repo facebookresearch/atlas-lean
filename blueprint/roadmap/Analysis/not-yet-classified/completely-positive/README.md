@@ -1,33 +1,33 @@
-# Completely Positive
+# Completely positive asymptotic morphisms
 
-## Asymptotic Morphism
+## Asymptotic morphisms
 
-- [Is Completely Positive](is-completely-positive.md)
-- [Completely Positive Family](completely-positive-family.md)
-- [Completely Positive Contraction](completely-positive-contraction.md)
+- [Completely positive time slices](is-completely-positive.md)
+- [Asymptotic family with completely positive slices](completely-positive-family.md)
+- [Completely positive contractive asymptotic family](completely-positive-contraction.md)
 
-## Completely Positive Family
+## Completely positive families
 
-- [Reparam](reparam.md)
+- [Reparametrization of a completely positive family](reparam.md)
 
-## Completely Positive Contraction
+## Completely positive contractions
 
-- [To Completely Positive Family](to-completely-positive-family.md)
-- [Of Hom](of-hom.md)
-- [Of Hom Family](of-hom-family.md)
-- [Of Hom Family to Asymptotic Morphism](of-hom-family-to-asymptotic-morphism.md)
-- [Of Hom Family apply](of-hom-family-apply.md)
-- [Reparam](reparam-2.md)
-- [Homotopy](homotopy.md)
+- [A CP-contractive family as a completely positive family](to-completely-positive-family.md)
+- [Constant CP-contractive family of a star homomorphism](of-hom.md)
+- [Point-norm homomorphism family as CP-contractive asymptotic morphism](of-hom-family.md)
+- [Underlying asymptotic morphism of a homomorphism family](of-hom-family-to-asymptotic-morphism.md)
+- [Value of the CP-contractive homomorphism-family construction](of-hom-family-apply.md)
+- [Reparametrization preserves completely positive contractions](reparam-2.md)
+- [Homotopy through completely positive contractions](homotopy.md)
 
 ## Homotopy
 
-- [To Asymptotic Homotopy](to-asymptotic-homotopy.md)
+- [Underlying asymptotic homotopy of a CP-contractive homotopy](to-asymptotic-homotopy.md)
 
-## Completely Positive Contraction
+## Completely positive contractions
 
-- [Homotopic](homotopic.md)
+- [Homotopy relation for CP-contractive asymptotic morphisms](homotopic.md)
 
-## Asymptotic Morphism
+## Asymptotic morphisms
 
-- [Of Hom](of-hom-2.md)
+- [Constant completely positive family of a star homomorphism](of-hom-2.md)

@@ -1,3 +1,4 @@
-# Ext
+# Extensionality of exact asymptotic lifts
 
-The family determines a lift; its remaining field is a proof.
+Two exact lifts of the same Busby map are equal
+when their multiplier-valued asymptotic families are equal.

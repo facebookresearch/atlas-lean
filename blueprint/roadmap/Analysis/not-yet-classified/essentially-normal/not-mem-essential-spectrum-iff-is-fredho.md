@@ -1,3 +1,4 @@
-# Not Mem essential Spectrum iff is Fredholm
+# Fredholm criterion for a scalar resolvent
 
-Atkinson's theorem for the exact essential-spectrum resolvent.
+For a complex Hilbert space `H`, for bounded
+`T` and `z : ℂ`, `z ∉ T.essentialSpectrum ↔ (T-z • 1).IsFredholm`.

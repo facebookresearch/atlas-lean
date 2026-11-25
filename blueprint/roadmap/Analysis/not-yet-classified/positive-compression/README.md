@@ -1,6 +1,6 @@
-# Positive Compression
+# Finite weight squares and positive compressions
 
-- [Positive mul self le norm smul](positive-mul-self-le-norm-smul.md)
-- [Finite Positive Elements subset finite Square Domain](finite-positive-elements-subset-finite-s.md)
-- [Finite Integration Domain le finite Square Submodule](finite-integration-domain-le-finite-squa.md)
-- [Value positive Conjugate lt top](value-positive-conjugate-lt-top.md)
+- [Norm bound on a positive square](positive-mul-self-le-norm-smul.md)
+- [Finite positive elements have finite squares](finite-positive-elements-subset-finite-s.md)
+- [Finite integration span in the square domain](finite-integration-domain-le-finite-squa.md)
+- [Finite weight of a positive compression](value-positive-conjugate-lt-top.md)

@@ -1,3 +1,4 @@
-# Index inv
+# Index of an inverse Calkin unit
 
-Inversion negates the Calkin-unit index.
+For a complex Hilbert space `H`, `index x⁻¹ = -index x`
+for every Calkin unit `x`.

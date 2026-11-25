@@ -1,5 +1,5 @@
-# Finite Coordinate Adjoints
+# Adjointable finite standard-module coordinates
 
-- [Finite Single Adjointable](finite-single-adjointable.md)
-- [Finite Single Adjointable to Continuous Linear Map](finite-single-adjointable-to-continuous.md)
-- [Finite Single Adjointable adjoint](finite-single-adjointable-adjoint.md)
+- [Adjointable finite coefficient insertion](finite-single-adjointable.md)
+- [Forward map of finite insertion](finite-single-adjointable-to-continuous.md)
+- [Adjoint of finite coefficient insertion](finite-single-adjointable-adjoint.md)

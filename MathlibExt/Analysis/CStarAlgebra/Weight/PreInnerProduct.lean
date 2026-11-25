@@ -21,18 +21,16 @@ public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.NormNum
 
 /-!
-# The actual weight polarization on its original finite-square domain
+# The polarized form of a positive weight
 
-Finite-positive signed relations prove the Hermitian, additive and scalar
-laws of the literal global-weight polarization. Its diagonal is exactly
-the original finite square value. These proofs construct the actual
-pre-inner-product core, with no supplied scalar extension or inner certificate.
+For an extended positive weight `φ` on a nonunital complex C-star algebra, put `n_φ={x : φ(x*
+x)<∞}`, `q(x)=(φ(x* x)).toReal` and `R(x,y)=(q(x+y)-q(x-y))/4`. The complex polarization
+`P(x,y)=R(x,y)+i R(i • x,y)` is Hermitian, additive in its first argument and satisfies `P(c •
+x,y)=conj(c) P(x,y)`.
 
-A type copy of the original finite-square module prevents its ambient
-operator norm from being confused with the weight-induced norm. The
-pre-inner-product Core below is constructed from the proved scalar kernel.
-The induced norm, faithfulness, normality, completion representation and Tomita data
-remain separate obligations; no original source theorem is selected as DATA.
+Its diagonal is `P(x,x)=q(x) ≥ 0`. A type copy `PreGNS φ` of `n_φ` carries the additive and
+complex-linear structures together with this positive semidefinite form. Faithfulness is not
+needed; in particular the form may have nonzero null vectors.
 -/
 
 @[expose] public section
@@ -50,14 +48,18 @@ variable {A : Type u} [NonUnitalCStarAlgebra A]
 
 attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
 
-/-- The original square difference is the symmetric sum of its two cross terms. -/
+/-- **Cross terms of an adjoint square difference.** For `x,y` in a nonunital complex C-star
+algebra, `(x+y)*(x+y)-(x-y)*(x-y)=2 • (x* y+y* x)` as an equality in the algebra. -/
 theorem leftSquare_difference (x y : A) :
     (leftSquare (x + y) : A) - (leftSquare (x - y) : A) =
       (star x * y + star y * x) + (star x * y + star y * x) := by
   simp only [leftSquare, star_add, star_sub, add_mul, mul_add, sub_mul, mul_sub]
   abel
 
-/-- The finite-square value at zero is the original weight value at zero. -/
+/-- **Weight square value at zero.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`.
+`q(0)=0`. -/
 theorem Weight.finiteSquareValue_zero (φ : Weight A) : φ.finiteSquareValue 0 = 0 := by
   have hzero : leftSquare (0 : A) = positiveZero A := by
     apply Subtype.ext
@@ -65,12 +67,18 @@ theorem Weight.finiteSquareValue_zero (φ : Weight A) : φ.finiteSquareValue 0 =
   change (φ.value (leftSquare (0 : A))).toReal = 0
   rw [hzero, φ.zero_value, ENNReal.toReal_zero]
 
-/-- Every finite-square value is a genuinely nonnegative real number. -/
+/-- **Nonnegativity of finite square values.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. `0 ≤ q(x)` for every `x ∈ n_φ`. -/
 theorem Weight.finiteSquareValue_nonneg (φ : Weight A) (x : φ.finiteSquareSubmodule) :
     0 ≤ φ.finiteSquareValue x :=
   ENNReal.toReal_nonneg
 
-/-- Taking the original negative does not change the original positive square value. -/
+/-- **Weight square unchanged by negation.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. `q(-x)=q(x)` for every `x ∈ n_φ`. -/
 theorem Weight.finiteSquareValue_neg (φ : Weight A) (x : φ.finiteSquareSubmodule) :
     φ.finiteSquareValue (-x) = φ.finiteSquareValue x := by
   have hneg : leftSquare (-(x : A)) = leftSquare (x : A) := by
@@ -79,7 +87,10 @@ theorem Weight.finiteSquareValue_neg (φ : Weight A) (x : φ.finiteSquareSubmodu
   change (φ.value (leftSquare (-(x : A)))).toReal = (φ.value (leftSquare (x : A))).toReal
   rw [hneg]
 
-/-- Original complex scaling changes the finite square by exactly its scalar norm square. -/
+/-- **Quadratic scaling of the weight square.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. `q(c • x)=‖c‖² q(x)` for every `c : ℂ` and `x ∈ n_φ`, including zero scalars. -/
 theorem Weight.finiteSquareValue_smul (φ : Weight A) (c : ℂ) (x : φ.finiteSquareSubmodule) :
     φ.finiteSquareValue (c • x) = ‖c‖ ^ 2 * φ.finiteSquareValue x := by
   have hsquare : leftSquare (c • (x : A)) =
@@ -90,13 +101,21 @@ theorem Weight.finiteSquareValue_smul (φ : Weight A) (c : ℂ) (x : φ.finiteSq
     ‖c‖ ^ 2 * (φ.value (leftSquare (x : A))).toReal
   exact hvalue.trans (φ.toReal_positiveSmul (NNReal.mk (‖c‖ ^ 2) (sq_nonneg ‖c‖)) (leftSquare (x : A)))
 
-/-- Real polarization of the original finite square is zero at the zero first argument. -/
+/-- **Real polarization at a zero first argument.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`R(0,y)=0` for every `y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_zero (φ : Weight A) (y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe 0 y = 0 := by
   simp only [Weight.finiteSquarePolarRe, zero_add, zero_sub, φ.finiteSquareValue_neg,
     sub_self, zero_div]
 
-/-- Original finite-positive difference addition proves additivity of the real pairing. -/
+/-- **Additivity of real weight polarization.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`R(x+y,z)=R(x,z)+R(y,z)` for `x,y,z ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_add (φ : Weight A) (x y z : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe (x + y) z = φ.finiteSquarePolarRe x z + φ.finiteSquarePolarRe y z := by
   have hraw :
@@ -124,14 +143,22 @@ theorem Weight.finiteSquarePolarRe_add (φ : Weight A) (x y z : φ.finiteSquareS
   dsimp only [Weight.finiteSquarePolarRe, Weight.finiteSquareValue]
   linarith [h]
 
-/-- Negating the original first argument negates the actual real pairing. -/
+/-- **Negation in real weight polarization.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`R(-x,y)=-R(x,y)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_neg (φ : Weight A) (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe (-x) y = -φ.finiteSquarePolarRe x y := by
   have h := φ.finiteSquarePolarRe_add x (-x) y
   rw [add_neg_cancel, φ.finiteSquarePolarRe_zero] at h
   linarith
 
-/-- The actual real pairing is symmetric by the original star-product difference identity. -/
+/-- **Symmetry of real weight polarization.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`R(x,y)=R(y,x)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_symm (φ : Weight A) (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe x y = φ.finiteSquarePolarRe y x := by
   have hraw :
@@ -152,7 +179,11 @@ theorem Weight.finiteSquarePolarRe_symm (φ : Weight A) (x y : φ.finiteSquareSu
   dsimp only [Weight.finiteSquarePolarRe, Weight.finiteSquareValue]
   linarith [h]
 
-/-- Original real scalar multiplication scales the actual real pairing. -/
+/-- **Real scaling in weight polarization.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. for
+any `r : ℝ`, viewed as a complex scalar, `R(r • x,y)=r R(x,y)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_smul_real (φ : Weight A) (r : ℝ)
     (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe ((RCLike.ofReal r : ℂ) • x) y = r * φ.finiteSquarePolarRe x y := by
@@ -179,7 +210,11 @@ theorem Weight.finiteSquarePolarRe_smul_real (φ : Weight A) (r : ℝ)
   dsimp only [Weight.finiteSquarePolarRe, Weight.finiteSquareValue]
   linarith [h]
 
-/-- The original imaginary cross difference changes sign when the arguments are exchanged. -/
+/-- **Skew symmetry of the imaginary polarization.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. `R(i
+• x,y)=-R(i • y,x)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_I_antisymm (φ : Weight A) (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe (Complex.I • x) y = -φ.finiteSquarePolarRe (Complex.I • y) x := by
   have hraw :
@@ -210,7 +245,11 @@ theorem Weight.finiteSquarePolarRe_I_antisymm (φ : Weight A) (x y : φ.finiteSq
   dsimp only [Weight.finiteSquarePolarRe, Weight.finiteSquareValue]
   linarith [h]
 
-/-- The actual complex polarization is Hermitian. -/
+/-- **Hermitian symmetry of the polarized weight.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`conj(P(y,x))=P(x,y)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarInner_conj_symm (φ : Weight A) (x y : φ.finiteSquareSubmodule) :
     (starRingEnd ℂ) (φ.finiteSquarePolarInner y x) = φ.finiteSquarePolarInner x y := by
   apply Complex.ext
@@ -222,7 +261,11 @@ theorem Weight.finiteSquarePolarInner_conj_symm (φ : Weight A) (x y : φ.finite
     have h := φ.finiteSquarePolarRe_I_antisymm y x
     linarith
 
-/-- The actual complex polarization is additive in the original first argument. -/
+/-- **Additivity of the complex weight form.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`P(x+y,z)=P(x,z)+P(y,z)` for `x,y,z ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarInner_add (φ : Weight A) (x y z : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarInner (x + y) z = φ.finiteSquarePolarInner x z + φ.finiteSquarePolarInner y z := by
   apply Complex.ext
@@ -235,7 +278,11 @@ theorem Weight.finiteSquarePolarInner_add (φ : Weight A) (x y z : φ.finiteSqua
     rw [smul_add]
     exact φ.finiteSquarePolarRe_add (Complex.I • x) (Complex.I • y) z
 
-/-- Real scalars act on the actual complex pairing by their original real embedding. -/
+/-- **Real scaling of the complex weight form.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. for
+any `r : ℝ` viewed as a complex scalar, `P(r • x,y)=r P(x,y)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarInner_smul_real (φ : Weight A) (r : ℝ)
     (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarInner ((RCLike.ofReal r : ℂ) • x) y =
@@ -258,7 +305,11 @@ theorem Weight.finiteSquarePolarInner_smul_real (φ : Weight A) (r : ℝ)
     rw [hcomm, zero_mul, add_zero]
     exact φ.finiteSquarePolarRe_smul_real r (Complex.I • x) y
 
-/-- Multiplication of the first argument by i gives the original conjugate-linear sign. -/
+/-- **Conjugate-linear imaginary scaling.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. For
+`x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. `P(i • x,y)=-i
+P(x,y)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarInner_smul_I (φ : Weight A) (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarInner (Complex.I • x) y = -Complex.I * φ.finiteSquarePolarInner x y := by
   have hII : Complex.I • (Complex.I • x) = -x := by
@@ -278,7 +329,11 @@ theorem Weight.finiteSquarePolarInner_smul_I (φ : Weight A) (x y : φ.finiteSqu
     simp only [Complex.neg_re, Complex.neg_im, Complex.I_re, Complex.I_im]
     ring
 
-/-- Every original complex scalar acts conjugate linearly in the first argument. -/
+/-- **Conjugate linearity of weight polarization.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. for
+every `c : ℂ`, `P(c • x,y)=conj(c) P(x,y)` for `x,y ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarInner_smul (φ : Weight A) (c : ℂ) (x y : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarInner (c • x) y = (starRingEnd ℂ) c * φ.finiteSquarePolarInner x y := by
   let r : ℝ := RCLike.re c
@@ -292,7 +347,11 @@ theorem Weight.finiteSquarePolarInner_smul (φ : Weight A) (c : ℂ) (x y : φ.f
   simp only [map_add, map_mul, RCLike.conj_ofReal, Complex.conj_I]
   ring
 
-/-- The real diagonal is exactly the original finite square weight value. -/
+/-- **Real diagonal of the weight polarization.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`.
+`R(x,x)=q(x)` for every `x ∈ n_φ`. -/
 theorem Weight.finiteSquarePolarRe_self (φ : Weight A) (x : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarRe x x = φ.finiteSquareValue x := by
   have htwo : x + x = (2 : ℂ) • x := (two_smul ℂ x).symm
@@ -300,7 +359,11 @@ theorem Weight.finiteSquarePolarRe_self (φ : Weight A) (x : φ.finiteSquareSubm
     φ.finiteSquareValue_smul]
   norm_num
 
-/-- The actual complex diagonal is the original positive scalar weight value. -/
+/-- **Positive diagonal of the complex weight form.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i •
+x,y)`. `P(x,x)=(q(x) : ℂ)` for every `x ∈ n_φ`, so the diagonal is real and nonnegative. -/
 theorem Weight.finiteSquarePolarInner_self (φ : Weight A) (x : φ.finiteSquareSubmodule) :
     φ.finiteSquarePolarInner x x = (RCLike.ofReal (φ.finiteSquareValue x) : ℂ) := by
   have him := φ.finiteSquarePolarRe_I_antisymm x x
@@ -316,18 +379,31 @@ theorem Weight.finiteSquarePolarInner_self (φ : Weight A) (x : φ.finiteSquareS
     rw [himzero]
     linarith
 
-/-- A type copy of the exact original linear domain for the induced weight norm. -/
+/-- **Type copy of the finite square module.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. `PreGNS φ` is a type copy of the
+complex submodule `n_φ`, on which the weight pairing and seminorm can be installed separately
+from the ambient norm of `A`. -/
 def Weight.PreGNS (φ : Weight A) : Type u := φ.finiteSquareSubmodule
 
-/-- The pre-GNS copy has exactly the original finite-square additive group. -/
+/-- **Addition on the pre-GNS domain.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the type copy `PreGNS φ` has zero, addition and
+negation inherited from the finite square complex module `n_φ`. -/
 instance Weight.preGNSAddCommGroup (φ : Weight A) : AddCommGroup φ.PreGNS :=
   inferInstanceAs (AddCommGroup φ.finiteSquareSubmodule)
 
-/-- The pre-GNS copy has exactly the original complex scalar action. -/
+/-- **Complex scalars on the pre-GNS domain.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the type copy `PreGNS φ` has the
+complex scalar action inherited from `n_φ`, sending `x` to `c • x` in `A`. -/
 instance Weight.preGNSModule (φ : Weight A) : Module ℂ φ.PreGNS :=
   inferInstanceAs (Module ℂ φ.finiteSquareSubmodule)
 
-/-- The pre-GNS copy forgets to exactly the original finite-square module. -/
+/-- **Linear identification of the pre-GNS type copy.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. `preGNSLinearEquiv φ : PreGNS φ
+≃ₗ[ℂ] n_φ` is the identity on algebra elements in both directions. -/
 def Weight.preGNSLinearEquiv (φ : Weight A) : φ.PreGNS ≃ₗ[ℂ] φ.finiteSquareSubmodule where
   toFun x := x
   invFun x := x
@@ -336,7 +412,12 @@ def Weight.preGNSLinearEquiv (φ : Weight A) : φ.PreGNS ≃ₗ[ℂ] φ.finiteSq
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
 
-/-- The actual pre-inner-product fields are proved from the original scalar weight values. -/
+/-- **Positive semidefinite pre-GNS core.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. For
+`x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. for
+`e=preGNSLinearEquiv φ`, the core on `PreGNS φ` has `inner x y=P(e(x),e(y))`, Hermitian
+symmetry, nonnegative real diagonal, additivity and conjugate linearity in the first argument. -/
 @[instance_reducible]
 def Weight.preGNSPreInnerProduct (φ : Weight A) : PreInnerProductSpace.Core ℂ φ.PreGNS where
   inner x y := φ.finiteSquarePolarInner (φ.preGNSLinearEquiv x) (φ.preGNSLinearEquiv y)

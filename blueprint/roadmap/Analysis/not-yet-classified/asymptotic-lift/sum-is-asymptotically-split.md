@@ -1,3 +1,5 @@
-# Sum is Asymptotically Split
+# Asymptotic splitting under compatible sums
 
-Asymptotic splitting is closed under the actual compatible stable sum.
+For nonunital C-star algebras `A,B` and
+compatible folds `S`, asymptotically split `τ₁,τ₂` have asymptotically split sum `S.sum τ₁
+τ₂`.

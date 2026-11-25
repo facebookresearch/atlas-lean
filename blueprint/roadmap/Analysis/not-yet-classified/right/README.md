@@ -1,4 +1,4 @@
-# Right
+# Commuting factors on internal tensor presentations
 
 - [Right Inner](right-inner.md)
 - [Right Inner right smul](right-inner-right-smul.md)
@@ -23,7 +23,7 @@
 
 - [Self Module](self-module.md)
 
-## Commuting right-factor operators on supplied internal-tensor models
+## Commuting right-factor operators on internal tensor products
 
-- [Map Right Operator](map-right-operator.md)
-- [Map Right Operator pure](map-right-operator-pure.md)
+- [Right factor on a complete tensor presentation](map-right-operator.md)
+- [Right factor on pure presentation vectors](map-right-operator-pure.md)

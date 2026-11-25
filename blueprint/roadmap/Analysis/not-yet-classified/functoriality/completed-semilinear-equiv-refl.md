@@ -1,4 +1,6 @@
-# Completed Semilinear Equiv refl
+# Identity coefficient-changing tensor equivalence
 
-Identity coefficient and vector equivalences induce the identity on the
-literal completed internal tensor.
+For complete right modules over
+nonunital C-star coefficients with star-compatible orders and a left star representation `φ`,
+taking identity coefficient and vector equivalences gives the identity complex-linear isometry
+of `CompletedTensor φ`.

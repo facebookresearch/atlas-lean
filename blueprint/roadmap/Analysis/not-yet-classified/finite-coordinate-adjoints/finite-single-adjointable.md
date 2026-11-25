@@ -1,4 +1,5 @@
-# Finite Single Adjointable
+# Adjointable finite coefficient insertion
 
-The existing finite coefficient insertion, with the existing coordinate
-evaluation as its actual stored adjoint.
+For a nonunital complex C-star algebra `B` and
+finite index type `I`, the map `B → FiniteStandard B I` inserts its argument in coordinate `i`
+and has adjoint `finiteCoord i`.

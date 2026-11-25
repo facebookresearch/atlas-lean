@@ -1,3 +1,4 @@
-# Index eq of class Star Map eq
+# Fredholm index determined by the Calkin class
 
-Equal Calkin classes of Fredholm operators have equal index.
+For a complex Hilbert space `H`, if `T` is
+Fredholm and `[T]=[U]`, then `T.index = U.index`.

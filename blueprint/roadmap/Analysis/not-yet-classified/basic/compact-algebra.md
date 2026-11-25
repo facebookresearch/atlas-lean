@@ -1,3 +1,4 @@
-# Compact Algebra
+# Compact endomorphisms of the amplification
 
-The actual norm-closed compact endomorphisms of the original amplification.
+`CompactAlgebra H A` is the norm-closed ideal
+of module-compact adjointable endomorphisms of `Space H A`.

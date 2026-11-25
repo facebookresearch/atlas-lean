@@ -19,19 +19,13 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Point-norm continuity of the original full Haar character action
+# Point-norm continuity of completed character automorphisms
 
-The compact-open character pairing is jointly continuous. Its difference
-against a fixed character, multiplied by the original compact-support
-coefficient, has one fixed compact support. The unrestricted compact-support
-parametric-integral theorem gives continuity of its original L1 distance,
-without first/second countability of the group or dual parameter space.
-
-The original full norm is bounded by L1 on the dense raw core. The computed
-completed character automorphisms are isometries, so the standard dense-core
-estimate proves every full-completion orbit continuous. These are only the
-facts needed to construct the original dual action; no Takai or compactness
-comparison theorem is used.
+For a point-norm action α on a nonunital C-star algebra A and regular Haar measure μ on a
+locally compact topological group G, let Dχ be the full-completion automorphism induced by
+Mχf(s)=χ(s)•f(s). With the compact-open topology on PontryaginDual G, χ↦Dχx is norm-continuous
+for every x in FullCovariantCompletion μ α. On a dense compactly supported coefficient f,
+character distances are controlled by ∫ s, ‖(χ(s)-η(s))•f(s)‖ ∂μ.
 -/
 
 @[expose] public section
@@ -56,7 +50,12 @@ variable (mu : Measure G) [mu.IsHaarMeasure] [mu.Regular] (alpha : PointNormCSta
 attribute [local instance] fullCovariantCompletionCStarAlgebra
 
 omit [IsTopologicalGroup G] [mu.Regular] in
-/-- The original L1 character-distance integral is continuous on the full compact-open dual. -/
+/-- **Continuity of the L¹ character distance.**
+
+For a compactly supported continuous coefficient f:G→A, Haar measure μ and fixed unitary
+character χ0, the function χ↦∫ s, ‖(χ(s)-χ0(s))•f(s)‖ ∂μ is continuous in the compact-open
+topology on PontryaginDual G. It equals l1Gauge μ α (Mχf-Mχ0f), where Mχf(s)=χ(s)•f(s).
+-/
 theorem continuous_l1CharacterDistance (chi0 : PontryaginDual G) (f : Carrier mu alpha) :
     Continuous (fun chi : PontryaginDual G =>
       l1Gauge mu alpha (characterModulation mu alpha chi f - characterModulation mu alpha chi0 f)) := by
@@ -88,7 +87,12 @@ theorem continuous_l1CharacterDistance (chi0 : PontryaginDual G) (f : Carrier mu
   exact (continuousOn_univ.mp hIntegral).congr (fun chi => (hEq chi).symm)
 
 omit [mu.Regular] in
-/-- The actual completed raw-vector character distance is bounded by the original L1 distance. -/
+/-- **Full character distance is bounded by L¹ distance.**
+
+For unitary characters χ,η and a compactly supported Haar-core coefficient f, `dist (Dχ ι(f))
+(Dη ι(f)) ≤ ∫ s, ‖(χ(s)-η(s))•f(s)‖ ∂μ`, where ι maps the core into FullCovariantCompletion μ
+α and Dχ extends character modulation.
+-/
 theorem dist_completedCharacterEquiv_core_le
     (chi eta : PontryaginDual G) (f : Carrier mu alpha) :
     dist (completedCharacterEquiv mu alpha chi (toFullCovariantCompletion mu alpha f))
@@ -101,7 +105,12 @@ theorem dist_completedCharacterEquiv_core_le
   exact maximalCStarSeminorm_le_l1Gauge mu alpha _
 
 omit [mu.Regular] in
-/-- Every original dense-core character orbit is continuous in the actual full norm. -/
+/-- **Continuity of completed character orbits on the dense core.**
+
+For a compactly supported Haar-core coefficient f, the map χ↦Dχι(f) into
+FullCovariantCompletion μ α is norm-continuous for the compact-open character topology. Here
+Dχι(f)=ι(s↦χ(s)•f(s)).
+-/
 theorem continuous_completedCharacterEquiv_core (f : Carrier mu alpha) :
     Continuous (fun chi : PontryaginDual G =>
       completedCharacterEquiv mu alpha chi (toFullCovariantCompletion mu alpha f)) := by
@@ -122,7 +131,11 @@ theorem continuous_completedCharacterEquiv_core (f : Carrier mu alpha) :
   exact (dist_completedCharacterEquiv_core_le mu alpha chi chi0 f).trans_lt hsmall
 
 omit [mu.Regular] in
-/-- Every original full-completion character orbit is point-norm continuous. -/
+/-- **Point-norm continuity of the completed character action.**
+
+For every x∈FullCovariantCompletion μ α, the map χ↦Dχx is norm-continuous, where χ ranges over
+the continuous unitary characters with compact-open topology and Dχ extends f(s)↦χ(s)•f(s).
+-/
 theorem continuous_completedCharacterEquiv_orbit (x : FullCovariantCompletion mu alpha) :
     Continuous (fun chi : PontryaginDual G => completedCharacterEquiv mu alpha chi x) := by
   rw [continuous_iff_continuousAt]

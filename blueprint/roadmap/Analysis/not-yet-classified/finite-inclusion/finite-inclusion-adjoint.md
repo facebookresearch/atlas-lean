@@ -1,4 +1,5 @@
-# Finite Inclusion adjoint
+# Adjoint of finite coordinate inclusion
 
-The stored adjoint is the finite sum of the original finite insertion
-and standard evaluation composites, in reverse composition order.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the adjoint is `∑ i, finiteSingle i ∘ coord (η
+i)`.

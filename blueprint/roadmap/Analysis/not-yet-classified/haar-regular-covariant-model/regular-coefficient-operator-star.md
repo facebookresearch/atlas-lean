@@ -1,3 +1,7 @@
-# Regular Coefficient Operator star
+# Adjoint of a regular coefficient operator
 
-The original coefficient involution gives the actual L2 operator adjoint.
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a∈A, Π(star(a))=star(Π(a)), with
+operator adjoint on K.

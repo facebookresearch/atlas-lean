@@ -1,3 +1,4 @@
-# Finite Matrix Tensor Linear injective
+# Injectivity of the finite frame tensor map
 
-The original matrix-entry sum is injective, including an empty finite frame.
+For an orthonormal finite family,
+`finiteMatrixTensorLinear v A` is injective; this also holds for the empty frame.

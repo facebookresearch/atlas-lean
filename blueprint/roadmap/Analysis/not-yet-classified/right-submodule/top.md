@@ -1,3 +1,5 @@
-# Top
+# Whole right module
 
-The full ambient module, viewed as a right submodule.
+Let `E` be a right C-star module over a nonunital C-star algebra `B`.
+`RightSubmodule.top` consists of all vectors of `E`, with its complex and right coefficient
+actions.

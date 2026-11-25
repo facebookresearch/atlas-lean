@@ -1,3 +1,4 @@
-# Right Inner apply
+# Right inner-product formula
 
-The existing right-inner product agrees under the fully pinned local factory dictionary.
+For the C-star module structure above,
+`CStarModule.rightInner (B := ℂ) x y = ⟪equivL H x, equivL H y⟫_ℂ`.

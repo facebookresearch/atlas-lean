@@ -1,4 +1,4 @@
-# Zero At Infty
+# Uniform asymptotic morphisms on functions vanishing at infinity
 
 - [Non Unital Star Alg Hom postcomp](non-unital-star-alg-hom-postcomp.md)
 - [Non Unital Star Alg Hom postcomp comp](non-unital-star-alg-hom-postcomp-comp.md)
@@ -55,9 +55,9 @@
 - [Zero At Infty Precomp comp](zero-at-infty-precomp-comp.md)
 - [Zero At Infty Eval precomp](zero-at-infty-eval-precomp.md)
 - [Zero At Infty Postcomp precomp](zero-at-infty-postcomp-precomp.md)
-- [Normalize](normalize.md)
-- [Uniform C0 Orbit](uniform-c0-orbit.md)
-- [Uniform C0 Orbit apply](uniform-c0-orbit-apply.md)
-- [Uniform C0 Morphism](uniform-c0-morphism.md)
-- [Uniform C0 Morphism apply](uniform-c0-morphism-apply.md)
-- [Is Uniform uniform C0 Morphism](is-uniform-uniform-c0-morphism.md)
+- [Zero normalization preserves uniformity](normalize.md)
+- [Continuous bounded-orbit map on C₀ functions](uniform-c0-orbit.md)
+- [Value of the uniform C₀ orbit map](uniform-c0-orbit-apply.md)
+- [Asymptotic morphism induced on C₀ functions](uniform-c0-morphism.md)
+- [Value of the induced C₀ asymptotic family](uniform-c0-morphism-apply.md)
+- [Uniformity of the induced C₀ asymptotic morphism](is-uniform-uniform-c0-morphism.md)

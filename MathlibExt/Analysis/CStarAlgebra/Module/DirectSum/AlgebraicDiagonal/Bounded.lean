@@ -17,15 +17,15 @@ import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable.GramBound
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# Finite coefficient bounds for algebraic diagonals
+# Uniform bounds for finite-support diagonals
 
-A uniformly bounded given rectangular family satisfies the genuine coefficient
-Gram bound and norm bound on the actual algebraic direct sum. Component
-completion is used only in proofs; the original fibers may be incomplete.
+Let `T_i : E_i → F_i` be adjointable maps of right pre-Hilbert modules over nonunital `B` with a
+star-compatible coefficient order. If `‖T_i‖ ≤ c` for all `i`, the finite-sum coefficient inner
+products satisfy `⟨D_T x,D_T x⟩ ≤ c² • ⟨x,x⟩` in `Bᵐᵒᵖ`.
 
-The fixed source support is used even when the diagonal kills coordinates.
-The numeric bound changes no operator value. No scalar sum of squared fiber
-norms, continuous/completed diagonal, compactness or action is asserted.
+When `c ≥ 0`, the induced Hilbert-module norms satisfy `‖D_T x‖ ≤ c * ‖x‖`. These bounds hold
+for finite-support vectors over arbitrary, including empty, index types; the fibers may be
+incomplete.
 -/
 
 public section
@@ -96,8 +96,11 @@ private theorem diagonal_inner_fixed_support
   rw [hz]
   exact CStarModule.inner_zero_left
 
-/-- The actual finite coefficient Gram bound over the unchanged source support.
-The original source and target component modules need not be complete. -/
+/-- **Coefficient Gram bound for an algebraic diagonal.** Let `I` be arbitrary and `E_i,F_i`
+complex normed right C-star modules over a nonunital complex C-star algebra `B` with
+star-compatible order on `Bᵐᵒᵖ`. For adjointable `T_i : E_i → F_i`, a real `c` with `‖T_i‖ ≤
+c` for every `i`, and finite-support `x`, `algebraicInner (D_T x) (D_T x) ≤ c² •
+algebraicInner x x`, where `D_T = algebraicDiagonal T`. The fibers may be incomplete. -/
 theorem algebraicDiagonal_inner_self_le
     (T : ∀ i, AdjointableOperator B (E i) (F i)) (c : ℝ)
     (hBound : ∀ i, ‖T i‖ ≤ c) (x : Algebraic B E) :
@@ -115,8 +118,10 @@ theorem algebraicDiagonal_inner_self_le
     _ = (c ^ 2 : ℝ) • algebraicInner x x := by
       rw [algebraicInner_eq_sum, Finset.smul_sum]
 
-/-- A given nonnegative uniform operator bound bounds the actual algebraic
-diagonal norm, with no original fiber completeness or nonempty-index premise. -/
+/-- **Norm bound for an algebraic diagonal.** Let `I` be arbitrary and `E_i,F_i` complex normed
+right C-star modules over nonunital `B` with star-compatible order on `Bᵐᵒᵖ`. For adjointable
+`T_i : E_i → F_i`, if `c ≥ 0` and `‖T_i‖ ≤ c` for every `i`, then `‖algebraicDiagonal T x‖ ≤ c
+* ‖x‖` for each finite-support `x`. The fibers may be incomplete. -/
 theorem algebraicDiagonal_norm_le
     (T : ∀ i, AdjointableOperator B (E i) (F i)) (c : ℝ) (hc : 0 ≤ c)
     (hBound : ∀ i, ‖T i‖ ≤ c) (x : Algebraic B E) :

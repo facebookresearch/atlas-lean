@@ -1,3 +1,4 @@
-# Standard Coefficient Matrix apply
+# Entry of the one-by-one coefficient matrix
 
-Every original 1×1 entry is exactly the supplied coefficient.
+`standardCoefficientMatrix B b i j = b` for
+`i,j : Fin 1`.

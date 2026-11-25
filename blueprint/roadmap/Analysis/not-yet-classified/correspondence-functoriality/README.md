@@ -1,5 +1,5 @@
-# Correspondence Functoriality
+# Naturality of the strict asymptotic correspondence
 
-- [Orbit BCF postcomp](orbit-bcf-postcomp.md)
-- [To Hom postcomp](to-hom-postcomp.md)
-- [To Hom of Hom constant](to-hom-of-hom-constant.md)
+- [Bounded orbit under fixed-homomorphism postcomposition](orbit-bcf-postcomp.md)
+- [Naturality of the quotient homomorphism under postcomposition](to-hom-postcomp.md)
+- [Constant asymptotic families give constant quotient classes](to-hom-of-hom-constant.md)

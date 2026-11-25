@@ -1,4 +1,4 @@
-# Mk eq mk iff
+# Equality of stable Busby classes
 
-Equality of representatives is exactly the original stable relation.
-It is not literal triviality, raw strong conjugacy, or an enlarged closure.
+`mk S hS τ₁ = mk S hS τ₂` if and only if
+`StablyStrongEquivalent S τ₁ τ₂`.

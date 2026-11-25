@@ -1,4 +1,4 @@
-# Comp Right to Homotopic
+# Underlying homotopy after right composition
 
-Right composition of an automorphism path has the correspondingly
-precomposed homomorphism-homotopy endpoints.
+For an automorphism δ of A, right composition of h gives a homotopy between the star
+homomorphisms underlying α ∘ δ and β ∘ δ.
