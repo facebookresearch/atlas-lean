@@ -38,7 +38,10 @@ integers in `[1, N]` covered by `A`.
 
 Proved in `MathlibExt.NumberTheory.ErdosGrahamCovering`,
 which this module imports: Lemma 2.2
-(`one_le_sum_inv_moduli`).
+(`one_le_sum_inv_moduli`). Theorem 3.2
+(`not_covering_of_nonintersecting`) is proved in
+`MathlibExt.NumberTheory.NotCoveringOfNonintersecting`,
+which this module also imports.
 -/
 module
 
@@ -52,36 +55,13 @@ public import MathlibExt.NumberTheory.CoveringSystem
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.Data.Nat.Factorization.Defs
 public import MathlibExt.NumberTheory.ErdosGrahamCovering
+public import MathlibExt.NumberTheory.NotCoveringOfNonintersecting
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.ErdosGrahamCoveringWanted
-
-/-- **Theorem 3.2**: there does not exist any `n` such
-that a congruence set of the form
-`{a_d (mod d) : d ∣ n, d > 1}`, where `a_d (mod d)` and
-`a_{d'} (mod d')` overlap only if `gcd d d' = 1`, is a
-covering set. In the paper's terminology: a
-non-intersecting integer (one admitting a congruence
-set of divisor form whose distinct classes overlap
-only at coprime moduli) admits no covering congruence
-set of divisor form at all; the two witnesses are
-quantified independently below.
-
-Source: Sarosh Adenwalla, "A Question of Erdős and
-Graham on Covering Systems", Theorem 3.2. -/
-theorem_wanted not_covering_of_nonintersecting (n : ℕ)
-    (hnonint : ∃ a : ℕ → ℤ,
-      ∀ d d' : ℕ, d ∣ n → d' ∣ n → 1 < d → 1 < d' →
-        d ≠ d' →
-          (∃ x : ℤ, x ≡ a d [ZMOD (d : ℤ)] ∧
-            x ≡ a d' [ZMOD (d' : ℤ)]) →
-          Nat.Coprime d d') :
-    ¬ ∃ b : ℕ → ℤ, Int.IsCoveringSystem
-        ((n.divisors.filter (fun d => 1 < d)).image
-          (fun d => (b d, d)))
 
 /-- `a` gives a CD congruence set of `n`: the classes
 `a d (mod d)` for the divisors `d > 1` of `n`, where
