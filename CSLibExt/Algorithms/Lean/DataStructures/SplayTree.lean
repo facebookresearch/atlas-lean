@@ -310,7 +310,7 @@ private theorem inorder_splay_aux {α : Type u} [LinearOrder α] {x : α}
                             rw [hs] at hh
                             simpa using hh.symm
                           rw [splay_zigzig_left_nil hxk hlt hxl hllt hs]
-                          simp [hIl, List.append_assoc]
+                          simp [hIl]
                       | node d lll llr =>
                           have hb : ll.numNodes ≤ n := by
                             simp only [BinaryTree.numNodes] at h
@@ -867,7 +867,7 @@ if and only if $x$ is a key of $t$. -/
 public theorem contains_eq_true_iff {α : Type u} [LinearOrder α]
     {x : α} {t : BinaryTree α} (hOrd : Ordered t) :
     contains x t = true ↔ x ∈ t := by
-  show decide (root? (splay x t) = some x) = true ↔ x ∈ t
+  change decide (root? (splay x t) = some x) = true ↔ x ∈ t
   rw [decide_eq_true_eq]
   constructor
   · intro h
@@ -976,8 +976,13 @@ public theorem splayMax_ne_nil {α : Type u} {t : BinaryTree α} (ht : t ≠ .ni
   intro hcon
   have h := numNodes_splayMax (t := t)
   rw [hcon] at h
-  simp at h
-  exact ht (by cases t with | nil => rfl | node k l r => simp at h)
+  simp only [BinaryTree.numNodes] at h
+  exact ht (by
+    cases t with
+    | nil => rfl
+    | node k l r =>
+      simp only [BinaryTree.numNodes] at h
+      exact absurd h (by omega))
 
 /-- Splaying the empty tree gives the empty tree, and vice versa. -/
 public theorem splay_eq_nil {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α} :
