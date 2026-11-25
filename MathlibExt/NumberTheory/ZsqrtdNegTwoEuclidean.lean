@@ -26,20 +26,27 @@ namespace Zsqrtd.NegTwo
 
 open Zsqrtd
 
-/-- Nonnegativity of the norm on `ℤ√(-2)`. -/
+/-- **The norm on $\mathbb{Z}[\sqrt{-2}]$ is nonnegative.** For every $x = a + b\sqrt{-2}$ in
+$\mathbb{Z}[\sqrt{-2}]$, the norm $N(x) = a^2 + 2b^2$ satisfies $N(x) \ge 0$. -/
 public theorem norm_nonneg' (x : Zsqrtd (-2 : ℤ)) : 0 ≤ x.norm :=
   Zsqrtd.norm_nonneg (by norm_num) x
 
-/-- The norm on `ℤ√(-2)` vanishes only at zero. -/
+/-- **The norm on $\mathbb{Z}[\sqrt{-2}]$ vanishes only at zero.** For $x = a + b\sqrt{-2}$ in
+$\mathbb{Z}[\sqrt{-2}]$ with norm $N(x) = a^2 + 2b^2$, we have $N(x) = 0$ if and only if
+$x = 0$. -/
 public theorem norm_eq_zero' {x : Zsqrtd (-2 : ℤ)} : x.norm = 0 ↔ x = 0 :=
   Zsqrtd.norm_eq_zero_iff (by norm_num) x
 
-/-- Positivity of the norm on `ℤ√(-2)` away from zero. -/
+/-- **Nonzero elements of $\mathbb{Z}[\sqrt{-2}]$ have positive norm.** For $x = a + b\sqrt{-2}$
+in $\mathbb{Z}[\sqrt{-2}]$ with norm $N(x) = a^2 + 2b^2$, we have $N(x) > 0$ if and only if
+$x \ne 0$. -/
 public theorem norm_pos' {x : Zsqrtd (-2 : ℤ)} : 0 < x.norm ↔ x ≠ 0 := by
   rw [lt_iff_le_and_ne, Ne, eq_comm, norm_eq_zero']
   simp [norm_nonneg']
 
-/-- The norm cast through `natAbs` is the norm. -/
+/-- **The norm on $\mathbb{Z}[\sqrt{-2}]$ equals its absolute value.** For every
+$x = a + b\sqrt{-2}$ in $\mathbb{Z}[\sqrt{-2}]$, the norm $N(x) = a^2 + 2b^2$ satisfies
+$|N(x)| = N(x)$, where $|N(x)|$ is taken as a natural number and read back as an integer. -/
 public theorem abs_natCast_norm' (x : Zsqrtd (-2 : ℤ)) :
     (x.norm.natAbs : ℤ) = x.norm :=
   Int.natAbs_of_nonneg (norm_nonneg' _)
@@ -51,7 +58,13 @@ public instance instDivNegTwo : Div (Zsqrtd (-2 : ℤ)) :=
     let c := star y
     ⟨round ((x * c).re * n : ℚ), round ((x * c).im * n : ℚ)⟩⟩
 
-/-- Explicit formula for division on `ℤ√(-2)`. -/
+/-- **Rounding division on $\mathbb{Z}[\sqrt{-2}]$.** Let $x, y \in \mathbb{Z}[\sqrt{-2}]$ with
+$y = c + d\sqrt{-2}$, let $\bar{y} = c - d\sqrt{-2}$ be its conjugate and $N(y) = c^2 + 2d^2$ its
+norm, and write $x\bar{y} = u + v\sqrt{-2}$ with $u, v \in \mathbb{Z}$. The quotient defined in
+this module is $x / y = \operatorname{round}(u / N(y)) +
+\operatorname{round}(v / N(y))\sqrt{-2}$, where $u / N(y)$ and $v / N(y)$ are computed in
+$\mathbb{Q}$ (division by $0$ gives $0$) and $\operatorname{round}$ sends a rational number to
+the nearest integer, rounding halves up. -/
 public theorem div_def' (x y : Zsqrtd (-2 : ℤ)) :
     x / y = ⟨round ((x * star y).re / y.norm : ℚ),
       round ((x * star y).im / y.norm : ℚ)⟩ := by
@@ -62,11 +75,15 @@ public theorem div_def' (x y : Zsqrtd (-2 : ℤ)) :
 public instance instModNegTwo : Mod (Zsqrtd (-2 : ℤ)) :=
   ⟨fun x y => x - y * (x / y)⟩
 
-/-- Explicit formula for the remainder on `ℤ√(-2)`. -/
+/-- **Remainder of the rounding division on $\mathbb{Z}[\sqrt{-2}]$.** For all $x, y$ in
+$\mathbb{Z}[\sqrt{-2}]$, the remainder defined in this module is $x \bmod y = x - y\,(x / y)$,
+where $x / y$ is the rounding division of $\mathbb{Z}[\sqrt{-2}]$. -/
 public theorem mod_def' (x y : Zsqrtd (-2 : ℤ)) : x % y = x - y * (x / y) :=
   rfl
 
-/-- Nearest-integer rounding clears denominators with error at most half of `N`. -/
+/-- **Error of rounded integer division.** Let $a$ and $N$ be integers with $N > 0$, and let
+$q$ be the integer nearest to the rational number $a/N$ (halves rounded up). Then
+$|2(a - qN)| \le N$, that is, $a$ differs from $qN$ by at most $N/2$. -/
 public theorem round_error (a N : ℤ) (hN : 0 < N) :
     |2 * (a - round (a / N : ℚ) * N)| ≤ N := by
   have hNq : (0 : ℚ) < N := by exact_mod_cast hN
@@ -89,7 +106,10 @@ public theorem round_error (a N : ℤ) (hN : 0 < N) :
   have h2 : 2 * (a - round ((a : ℚ) / N) * N) ≤ N := by exact_mod_cast hle.2
   exact abs_le.mpr ⟨h1, h2⟩
 
-/-- Key norm identity: `N(y) * N(x - y*q)` factors through the residuals. -/
+/-- **Norm identity for the remainder.** Let $x, y, q \in \mathbb{Z}[\sqrt{-2}]$, write
+$N(a + b\sqrt{-2}) = a^2 + 2b^2$ for the norm and $\bar{y}$ for the conjugate of $y$, and write
+$x\bar{y} = u + v\sqrt{-2}$ and $q = e + f\sqrt{-2}$ with $u, v, e, f \in \mathbb{Z}$. Then
+$N(y)\,N(x - yq) = (u - N(y)\,e)^2 + 2\,(v - N(y)\,f)^2$. -/
 public theorem norm_key (x y q : Zsqrtd (-2 : ℤ)) :
     y.norm * (x - y * q).norm
       = ((x * star y).re - y.norm * q.re) * ((x * star y).re - y.norm * q.re)
@@ -102,7 +122,10 @@ public theorem norm_key (x y q : Zsqrtd (-2 : ℤ)) :
     Zsqrtd.im_mul, Zsqrtd.re_star, Zsqrtd.im_star]
   ring
 
-/-- The remainder norm is smaller than the divisor norm. -/
+/-- **The remainder is smaller than the divisor in $\mathbb{Z}[\sqrt{-2}]$.** Let $x, y$ be
+elements of $\mathbb{Z}[\sqrt{-2}]$ with $y \ne 0$, and let $N(a + b\sqrt{-2}) = a^2 + 2b^2$ be
+the norm. The remainder $x \bmod y = x - y\,(x / y)$ of the rounding division of
+$\mathbb{Z}[\sqrt{-2}]$ satisfies $N(x \bmod y) < N(y)$. -/
 public theorem norm_mod_lt' (x : Zsqrtd (-2 : ℤ)) {y : Zsqrtd (-2 : ℤ)}
     (hy : y ≠ 0) : (x % y).norm < y.norm := by
   have hN : 0 < y.norm := norm_pos'.mpr hy
@@ -141,7 +164,10 @@ public theorem norm_mod_lt' (x : Zsqrtd (-2 : ℤ)) {y : Zsqrtd (-2 : ℤ)}
   have h6 : y.norm * (x % y).norm < y.norm * y.norm := by linarith only [h5]
   exact lt_of_mul_lt_mul_left h6 hN.le
 
-/-- The `natAbs` remainder norm is smaller than the divisor norm. -/
+/-- **The remainder is smaller than the divisor, in absolute norm.** Let $x, y$ be elements of
+$\mathbb{Z}[\sqrt{-2}]$ with $y \ne 0$, and let $N(a + b\sqrt{-2}) = a^2 + 2b^2$ be the norm.
+The remainder $x \bmod y = x - y\,(x / y)$ of the rounding division of $\mathbb{Z}[\sqrt{-2}]$
+satisfies $|N(x \bmod y)| < |N(y)|$ as natural numbers. -/
 public theorem natAbs_norm_mod_lt' (x : Zsqrtd (-2 : ℤ)) {y : Zsqrtd (-2 : ℤ)}
     (hy : y ≠ 0) : (x % y).norm.natAbs < y.norm.natAbs := by
   have h1 : ((x % y).norm.natAbs : ℤ) = (x % y).norm :=
@@ -151,7 +177,10 @@ public theorem natAbs_norm_mod_lt' (x : Zsqrtd (-2 : ℤ)) {y : Zsqrtd (-2 : ℤ
   rw [h1, h2]
   exact norm_mod_lt' x hy
 
-/-- The norm does not grow under left multiplication by a nonzero element. -/
+/-- **Multiplying by a nonzero element does not decrease the norm in $\mathbb{Z}[\sqrt{-2}]$.**
+Let $N(a + b\sqrt{-2}) = a^2 + 2b^2$ be the norm on $\mathbb{Z}[\sqrt{-2}]$. For
+$x, y \in \mathbb{Z}[\sqrt{-2}]$ with $y \ne 0$, we have $|N(x)| \le |N(xy)|$ as natural
+numbers. -/
 public theorem norm_le_norm_mul_left' (x : Zsqrtd (-2 : ℤ)) {y : Zsqrtd (-2 : ℤ)}
     (hy : y ≠ 0) : x.norm.natAbs ≤ (x * y).norm.natAbs := by
   rw [Zsqrtd.norm_mul, Int.natAbs_mul]

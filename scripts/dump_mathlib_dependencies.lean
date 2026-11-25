@@ -25,7 +25,7 @@ so its constructors' types stand in for one. One JSON object per line;
   a row.
 * `KEEP` is a comma-separated list of module roots: a used constant is recorded when the module
   declaring it starts with one of them (`Mathlib` for the Mathlib graph,
-  `Mathlib,MathlibExt,CSLibExt,PhyslibExt,WantedExt` for ATLAS's bridge edges).
+  `Mathlib,MathlibExt,CSLibExt,PhyslibExt,Domains,WantedExt` for ATLAS's bridge edges).
 -/
 
 open Lean Meta

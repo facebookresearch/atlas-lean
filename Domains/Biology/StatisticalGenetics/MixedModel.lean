@@ -1,0 +1,621 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.Statistics.MixedModelEquations
+public import MathlibExt.Probability.Distributions.GaussianConditioning
+public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
+public import Domains.Biology.StatisticalGenetics.LDScore
+import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Probability.Distributions.Gaussian.Fernique
+
+/-!
+# Mixed models: Henderson's equations, BLUP, and the LDpred-inf posterior
+
+**The linear mixed model** `y = X b + Z u + e` has fixed effects `b`, random effects `u` with
+covariance `G` (for example `G = σ²_g A` with a relationship matrix `A`, see
+`Domains.Biology.StatisticalGenetics.Relatedness` and
+`Domains.Biology.StatisticalGenetics.Kinship`), and residuals `e` with covariance `R`;
+the phenotypic covariance is `V = Z G Zᵀ + R` (`phenCov`). Henderson's mixed-model equations
+(MME) avoid inverting `V`:
+
+  `[Xᵀ R⁻¹ X, Xᵀ R⁻¹ Z; Zᵀ R⁻¹ X, Zᵀ R⁻¹ Z + G⁻¹] [b; u] = [Xᵀ R⁻¹ y; Zᵀ R⁻¹ y]`.
+
+For positive definite `G` and `R`, `(b, u)` solves them exactly when `b` solves the generalized
+least-squares (GLS) normal equations `Xᵀ V⁻¹ X b = Xᵀ V⁻¹ y` and `u = G Zᵀ V⁻¹ (y - X b)`
+(`isMMESolution_iff`); with `Xᵀ V⁻¹ X` invertible the solution is unique, `b̂` is the GLS
+estimate, the best linear unbiased estimator by Aitken's theorem
+(`MathlibExt.Probability.Statistics.GeneralizedLeastSquares.aitken`), and `û` is the BLUP
+(`isMMESolution_iff_gls`). In the Gaussian model, `G Zᵀ V⁻¹ (y - X b)` is the conditional
+expectation of `u` given `y` when `b` is known (`condDistrib_mixedModel`,
+`condExp_mixedModel`); the BLUP plugs in `b̂`. The best-linear-unbiased-prediction optimality of
+`û` among all linear unbiased predictors is not formalized here.
+
+**Response laws.** With `u ~ N(0, G)` and `e ~ N(0, R)` independent and `G`, `R` only positive
+semidefinite (singular residuals such as `R = 0` are allowed), the response is
+`y ~ N(X b, V)` (`map_mixedModel_response`), so `𝔼[y] = X b` and `Cov(y) = V`; given `u = g`
+it is `y ~ N(X b + Z g, R)` (`condDistrib_mixedModel_response`). A contrast `cᵀ y` with fixed
+coefficients has variance `cᵀ V c` (`variance_contrast_mixedModel_response`).
+
+**LDpred-inf.** For `M` markers with LD matrix `R` and `N` individuals, the marginal estimates
+`β̂_j = X_jᵀ y / N` of `y = X β + ε` have mean `R β` under mean-zero noise
+(`integral_marginalEffect`). Given raw noise second moments `𝔼[ε_i ε_i'] = σ² [i = i']`, their
+raw residual-product second moment is `σ² R / N` (`integral_marginalEffect_sub_mul`), with
+`R = Xᵀ X / N` (`LDScore.ldCorr`); it is a covariance when the noise is mean-zero. Under the
+infinitesimal prior `β ~ N(0, h² / M · I)` and the Gaussian likelihood
+`β̂ | β ~ N(R β, R / N)` of Zhu and Stephens (2017), the posterior mean is
+`(R + M / (N h²) · I)⁻¹ β̂` (`condDistrib_ldpredInf`), the LDpred-inf estimator of Vilhjálmsson
+et al. (2015).
+
+## Main results
+
+* `IsMMESolution`, `isMMESolution_iff`, `isMMESolution_iff_gls`: Henderson's equations give the
+  GLS estimate and `û = G Zᵀ V⁻¹ (y - X b̂)`.
+* `condDistrib_mixedModel`, `condExp_mixedModel`: in the Gaussian model, given `y`,
+  `u ~ N(G Zᵀ V⁻¹ (y - X b), G - G Zᵀ V⁻¹ Z G)` and `𝔼[u | y] = G Zᵀ V⁻¹ (y - X b)`.
+* `map_mixedModel_response`, `integral_mixedModel_response`, `covariance_mixedModel_response`:
+  for positive semidefinite `G` and `R`, `y ~ N(X b, V)`, so `𝔼[y] = X b` and `Cov(y) = V`;
+  `V` is then positive semidefinite (`posSemidef_phenCov_of_posSemidef`).
+* `condDistrib_mixedModel_response`, `integral_condDistrib_mixedModel_response`,
+  `covariance_condDistrib_mixedModel_response`: given `u = g`, `y ~ N(X b + Z g, R)`.
+* `variance_contrast_mixedModel_response`: `Var[cᵀ y] = cᵀ V c` for fixed `c`.
+* `marginalEffect`, `integral_marginalEffect`, `integral_marginalEffect_sub_mul`: the mean under
+  mean-zero noise and the raw residual-product second moment of the marginal estimates.
+* `condDistrib_ldpredInf`: the LDpred-inf posterior.
+
+## References
+
+* C. R. Henderson, *Best linear unbiased estimation and prediction under a selection model*,
+  Biometrics 31 (1975), 423–447.
+* G. K. Robinson, *That BLUP is a good thing: the estimation of random effects*, Stat. Sci. 6
+  (1991), 15–32.
+* T. H. E. Meuwissen, B. J. Hayes, M. E. Goddard, *Prediction of total genetic value using
+  genome-wide dense marker maps*, Genetics 157 (2001), 1819–1829.
+* B. J. Vilhjálmsson, J. Yang, H. K. Finucane, et al., *Modeling linkage disequilibrium
+  increases accuracy of polygenic risk scores*, Am. J. Hum. Genet. 97 (2015), 576–592.
+* X. Zhu, M. Stephens, *Bayesian large-scale multiple regression with summary statistics from
+  genome-wide association studies*, Ann. Appl. Stat. 11 (2017), 1561–1592.
+-/
+
+@[expose] public section
+
+open Matrix MeasureTheory ProbabilityTheory MetaMathlibExt WithLp
+open MathlibExt.Probability.Statistics.GeneralizedLeastSquares
+open MathlibExt.Biology.StatisticalGenetics.LDScore
+open scoped MatrixOrder
+
+namespace MathlibExt.Biology.StatisticalGenetics.MixedModel
+
+section Gaussian
+
+variable {n p q : Type*} [Fintype n] [DecidableEq n] [Fintype p] [DecidableEq p]
+  [Fintype q] [DecidableEq q]
+  {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+
+/-- **BLUP as a conditional law** (Henderson 1975; Robinson 1991): in the Gaussian mixed model
+`y = X b + Z u + e` with fixed effects `b`, random effects `u ~ N(0, G)` and residuals
+`e ~ N(0, R)` independent, `G` and `R` positive definite, the conditional law of `u` given `y`
+is `N(G Zᵀ V⁻¹ (y - X b), G - G Zᵀ V⁻¹ Z G)` with `V = Z G Zᵀ + R` (for almost every `y`). -/
+theorem condDistrib_mixedModel {u : Ω → EuclideanSpace ℝ q} {e : Ω → EuclideanSpace ℝ n}
+    (hu : Measurable u) (he : Measurable e) (hind : IndepFun u e P) {G : Matrix q q ℝ}
+    {R : Matrix n n ℝ} (hG : G.PosDef) (hR : R.PosDef)
+    (hul : P.map u = multivariateGaussian 0 G) (hel : P.map e = multivariateGaussian 0 R)
+    (X : Matrix n p ℝ) (Z : Matrix n q ℝ) (b : EuclideanSpace ℝ p) :
+    ∀ᵐ y ∂P.map (fun ω => toEuclideanLin X b + toEuclideanLin Z (u ω) + e ω),
+      condDistrib u (fun ω => toEuclideanLin X b + toEuclideanLin Z (u ω) + e ω) P y =
+        multivariateGaussian
+          (toEuclideanLin (G * Zᵀ * (phenCov Z G R)⁻¹) (y - toEuclideanLin X b))
+          (G - G * Zᵀ * (phenCov Z G R)⁻¹ * (Z * G)) := by
+  set E := (EuclideanSpace.sumEquivProd (𝕜 := ℝ) (ι := q) (κ := n)).symm with hE
+  set Mx : Matrix (q ⊕ n) (q ⊕ n) ℝ := fromBlocks 1 0 Z 1 with hM
+  set c : EuclideanSpace ℝ (q ⊕ n) := E (0, toEuclideanLin X b) with hc
+  set V : Ω → EuclideanSpace ℝ (q ⊕ n) := fun ω => c + toEuclideanLin Mx (E (u ω, e ω))
+    with hVdef
+  have hcm : Measurable fun ω => E (u ω, e ω) := E.continuous.measurable.comp (hu.prodMk he)
+  have hVm : Measurable V :=
+    (measurable_const.add ((continuous_toEuclideanLin Mx).measurable.comp hcm))
+  have hMe : ∀ a d, toEuclideanLin Mx (E (a, d)) = E (a, toEuclideanLin Z a + d) := fun a d => by
+    rw [hM, hE, toEuclideanLin_fromBlocks_sumEquivProd_symm, toEuclideanLin_one_apply,
+      toEuclideanLin_one_apply, map_zero, LinearMap.zero_apply, add_zero]
+  have hdiag := posSemidef_fromBlocks_zero hG.posSemidef hR.posSemidef
+  have hcov : Mx * fromBlocks G 0 0 R * Mxᵀ = fromBlocks G (G * Zᵀ) (Z * G) (Z * G * Zᵀ + R) :=
+    fromBlocks_one_zero_mul_mul_transpose G R Z
+  have hjoint := posSemidef_fromBlocks_linear hG.posSemidef hR.posSemidef Z
+  have hlawV : P.map V = multivariateGaussian (c + E (0, toEuclideanLin Z 0))
+      (fromBlocks G (G * Zᵀ) (Z * G) (Z * G * Zᵀ + R)) := by
+    rw [show V = (c + ·) ∘ toEuclideanLin Mx ∘ fun ω => E (u ω, e ω) from rfl,
+      ← Measure.map_map (by fun_prop) ((continuous_toEuclideanLin _).measurable.comp hcm),
+      ← Measure.map_map (continuous_toEuclideanLin _).measurable hcm,
+      map_sumEquivProd_symm_of_indepFun hu he hind hG.posSemidef hR.posSemidef hul hel,
+      map_toEuclideanLin_multivariateGaussian _ _ hdiag, hcov, hMe, add_zero,
+      map_add_multivariateGaussian]
+  have hinv : IsUnit (fromBlocks G (G * Zᵀ) (Z * G) (Z * G * Zᵀ + R)).toBlocks₂₂.det := by
+    simpa [phenCov] using (Matrix.isUnit_iff_isUnit_det _).mp (posDef_phenCov (Z := Z) hG hR).isUnit
+  have h := condDistrib_multivariateGaussian hVm hjoint hlawV hinv
+  have hblk1 : ∀ a d, toEuclideanLin (blockRow (1 : Matrix q q ℝ) 0) (E (a, d)) = a :=
+    fun a d => by
+      rw [hE, toEuclideanLin_blockRow_sumEquivProd_symm, toEuclideanLin_one_apply, map_zero,
+        LinearMap.zero_apply, add_zero]
+  have hblk2 : ∀ a d, toEuclideanLin (blockRow (0 : Matrix n q ℝ) 1) (E (a, d)) = d :=
+    fun a d => by
+      rw [hE, toEuclideanLin_blockRow_sumEquivProd_symm, toEuclideanLin_one_apply, map_zero,
+        LinearMap.zero_apply, zero_add]
+  have hX : (fun ω => toEuclideanLin (blockRow (1 : Matrix q q ℝ) 0) (V ω)) = u := by
+    funext ω
+    simp only [hVdef, map_add, hMe, hc, hblk1, zero_add]
+  have hY : (fun ω => toEuclideanLin (blockRow (0 : Matrix n q ℝ) 1) (V ω)) =
+      fun ω => toEuclideanLin X b + toEuclideanLin Z (u ω) + e ω := by
+    funext ω
+    simp only [hVdef, map_add, hMe, hc, hblk2, add_assoc]
+  rw [hX, hY] at h
+  simpa [hblk1, hblk2, hc, phenCov, Matrix.mul_assoc] using h
+
+/-- **BLUP is the conditional expectation** in the Gaussian mixed model:
+`𝔼[u | y] = G Zᵀ V⁻¹ (y - X b)` almost surely. -/
+theorem condExp_mixedModel {u : Ω → EuclideanSpace ℝ q} {e : Ω → EuclideanSpace ℝ n}
+    (hu : Measurable u) (he : Measurable e) (hind : IndepFun u e P) {G : Matrix q q ℝ}
+    {R : Matrix n n ℝ} (hG : G.PosDef) (hR : R.PosDef)
+    (hul : P.map u = multivariateGaussian 0 G) (hel : P.map e = multivariateGaussian 0 R)
+    (X : Matrix n p ℝ) (Z : Matrix n q ℝ) (b : EuclideanSpace ℝ p) :
+    P[u | MeasurableSpace.comap (fun ω => toEuclideanLin X b + toEuclideanLin Z (u ω) + e ω)
+        inferInstance] =ᵐ[P]
+      fun ω => toEuclideanLin (G * Zᵀ * (phenCov Z G R)⁻¹)
+        (toEuclideanLin Z (u ω) + e ω) := by
+  have hum : Integrable u P := by
+    have : Integrable id (P.map u) := by rw [hul]; exact IsGaussian.integrable_id
+    exact (integrable_map_measure aestronglyMeasurable_id hu.aemeasurable).mp this
+  have hym : Measurable fun ω => toEuclideanLin X b + toEuclideanLin Z (u ω) + e ω :=
+    (measurable_const.add ((continuous_toEuclideanLin Z).measurable.comp hu)).add he
+  have h1 := condExp_ae_eq_integral_condDistrib' hym hum
+  have h3 := ae_of_ae_map hym.aemeasurable (condDistrib_mixedModel hu he hind hG hR hul hel X Z b)
+  filter_upwards [h1, h3] with ω h1 h3
+  rw [h1, h3, integral_id_multivariateGaussian]
+  congr 1
+  abel
+
+end Gaussian
+
+section GaussianResponse
+
+/-! ### Response laws
+
+With random effects `γ ~ N(0, G)` and residuals `ε ~ N(0, R)` independent, the response
+`Y = X β + Z γ + ε` is `N(X β, Z G Zᵀ + R)`, and given `γ = g` it is `N(X β + Z g, R)`. Only
+positive semidefiniteness of `G` and `R` is assumed. The reverse conditional law, of the random
+effects given the response, is `condDistrib_mixedModel`. -/
+
+/-- Marginal law of the mixed-model response: with `γ ~ N(0, G)` and `ε ~ N(0, R)` measurable and
+independent under the probability measure `P`, `G` and `R` positive semidefinite,
+`Y = X β + Z γ + ε` is `N(X β, Z G Zᵀ + R)`. -/
+theorem map_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
+    [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (G : Matrix q q ℝ) (R : Matrix n n ℝ)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) =
+      multivariateGaussian (toEuclideanLin X β) (phenCov Z G R) := by
+  have hsum : P.map (fun ω => toEuclideanLin Z (γ ω) + ε ω) =
+      multivariateGaussian 0 (Z * G * Zᵀ + R) := by
+    simpa using map_linear_add_of_indepFun hγ hε hind hG hR hγl hεl Z
+  have hshift : P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) +
+      ε ω) = P.map (fun ω => toEuclideanLin X β +
+      (toEuclideanLin Z (γ ω) + ε ω)) := by
+    congr 1
+    funext ω
+    abel
+  have hfg : Measurable (fun ω => toEuclideanLin Z (γ ω) + ε ω) :=
+    ((continuous_toEuclideanLin Z).measurable.comp hγ).add hε
+  have hf : Measurable (fun v : EuclideanSpace ℝ n => toEuclideanLin X β + v) :=
+    measurable_const_add _
+  have hconst : P.map (fun ω : Ω => toEuclideanLin X β +
+      (toEuclideanLin Z (γ ω) + ε ω)) =
+      (P.map (fun ω => toEuclideanLin Z (γ ω) + ε ω)).map
+        (fun v => toEuclideanLin X β + v) :=
+    (Measure.map_map hf hfg).symm
+  rw [hshift, hconst, hsum]
+  have hphen : (Z * G * Zᵀ + R) = phenCov Z G R := by
+    simp [phenCov]
+  rw [hphen, map_add_multivariateGaussian, add_zero]
+
+/-- The marginal covariance `Z G Zᵀ + R` of the mixed model is positive semidefinite when `G` and
+`R` are. -/
+theorem posSemidef_phenCov_of_posSemidef {n q : Type*} [Finite n]
+    [Fintype q] (Z : Matrix n q ℝ) (G : Matrix q q ℝ)
+    (R : Matrix n n ℝ) (hG : G.PosSemidef) (hR : R.PosSemidef) :
+    (phenCov Z G R).PosSemidef := by
+  have hZG : (Z * G * Zᵀ).PosSemidef := by
+    have hEq : Z * G * Zᵀ = Z * G * Zᴴ := by
+      simp [Matrix.conjTranspose_eq_transpose_of_trivial]
+    rw [hEq]
+    exact hG.mul_mul_conjTranspose_same Z
+  have hphen : phenCov Z G R = Z * G * Zᵀ + R := by
+    simp [phenCov]
+  rw [hphen]
+  exact hZG.add hR
+
+/-- Marginal mean of the mixed-model response: with `γ ~ N(0, G)` and `ε ~ N(0, R)` measurable and
+independent under the probability measure `P`, `G` and `R` positive semidefinite, `E[Y] = X β`. -/
+theorem integral_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
+    [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (G : Matrix q q ℝ) (R : Matrix n n ℝ)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    ∫ ω, (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) ∂P =
+      toEuclideanLin X β := by
+  have hYmeas : AEStronglyMeasurable
+      (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) P := by
+    fun_prop
+  have hmap := map_mixedModel_response γ ε hγ hε hind X β Z G R hG
+    hR hγl hεl
+  have hpsd : (phenCov Z G R).PosSemidef :=
+    posSemidef_phenCov_of_posSemidef Z G R hG hR
+  calc ∫ ω, (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) ∂P
+      = ∫ y, y ∂(P.map
+        (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω)) :=
+        (integral_map hYmeas.aemeasurable aestronglyMeasurable_id).symm
+    _ = ∫ y, y ∂(multivariateGaussian (toEuclideanLin X β)
+        (phenCov Z G R)) := by
+        rw [hmap]
+    _ = toEuclideanLin X β := integral_id_multivariateGaussian
+
+/-- Marginal covariance of the mixed-model response: with `γ ~ N(0, G)` and `ε ~ N(0, R)` measurable
+and independent under the probability measure `P`, `G` and `R` positive semidefinite,
+`Cov(Y) = Z G Zᵀ + R` entrywise. -/
+theorem covariance_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
+    [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (G : Matrix q q ℝ) (R : Matrix n n ℝ)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) (i j : n) :
+    cov[fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp i,
+      fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp j;
+      P] = phenCov Z G R i j := by
+  have hmap := map_mixedModel_response γ ε hγ hε hind X β Z G R hG
+    hR hγl hεl
+  have hpsd : (phenCov Z G R).PosSemidef :=
+    posSemidef_phenCov_of_posSemidef Z G R hG hR
+  have hYmeas : AEStronglyMeasurable
+      (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) P := by
+    fun_prop
+  have hci : Measurable (fun y : EuclideanSpace ℝ n => y.ofLp i) := by
+    rw [← EuclideanSpace.coe_proj]
+    exact (EuclideanSpace.proj i).continuous.measurable
+  have hcj : Measurable (fun y : EuclideanSpace ℝ n => y.ofLp j) := by
+    rw [← EuclideanSpace.coe_proj]
+    exact (EuclideanSpace.proj j).continuous.measurable
+  have hXi : AEStronglyMeasurable (fun y : EuclideanSpace ℝ n => y.ofLp i)
+      (P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω)) :=
+    hci.aestronglyMeasurable
+  have hXj : AEStronglyMeasurable (fun y : EuclideanSpace ℝ n => y.ofLp j)
+      (P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω)) :=
+    hcj.aestronglyMeasurable
+  have hcov : cov[fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) +
+      ε ω).ofLp i,
+      fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp j;
+      P] = cov[fun y : EuclideanSpace ℝ n => y.ofLp i,
+      fun y : EuclideanSpace ℝ n => y.ofLp j;
+      P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω)] :=
+    (covariance_map hXi hXj hYmeas.aemeasurable).symm
+  rw [hcov, hmap]
+  exact covariance_eval_multivariateGaussian hpsd i j
+
+/-- Conditional law of the mixed-model response given the random effects: with `γ` and `ε`
+measurable and independent under the probability measure `P` and `ε ~ N(0, R)` (no assumption on the
+law of `γ`), `Y | γ = g ~ N(X β + Z g, R)` for almost every `g` under the law of `γ`. For a matrix
+`S` that is not positive semidefinite, `multivariateGaussian m S` is the point mass at `m`. -/
+theorem condDistrib_mixedModel_response {n p q : Type*} [Fintype n]
+    [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (R : Matrix n n ℝ)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    ∀ᵐ g ∂P.map γ, condDistrib
+        (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) γ P g =
+        multivariateGaussian (toEuclideanLin X β + toEuclideanLin Z g) R := by
+  have hfm : Measurable
+      (fun g : EuclideanSpace ℝ q => toEuclideanLin X β + toEuclideanLin Z g) :=
+    ((continuous_toEuclideanLin Z).measurable).const_add _
+  have h : condDistrib
+      (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) γ P
+      =ᵐ[P.map γ] noiseKernel
+        (fun g => toEuclideanLin X β + toEuclideanLin Z g) hfm (P.map ε) :=
+    condDistrib_add_of_indepFun hγ hε hind hfm
+  rw [hεl] at h
+  filter_upwards [h] with g hg
+  rw [hg]
+  have h2 : noiseKernel (fun g => toEuclideanLin X β + toEuclideanLin Z g) hfm
+      (multivariateGaussian (0 : EuclideanSpace ℝ n) R) g =
+      (multivariateGaussian (0 : EuclideanSpace ℝ n) R).map
+        ((toEuclideanLin X β + toEuclideanLin Z g) + ·) :=
+    noiseKernel_apply _ _ _ _
+  rw [h2, map_add_multivariateGaussian, add_zero]
+
+/-- Conditional mean of the mixed-model response: with `γ` and `ε` measurable and independent under
+the probability measure `P` and `ε ~ N(0, R)` (no assumption on the law of `γ`),
+`E[Y | γ = g] = X β + Z g` for almost every `g` under the law of `γ`. For a matrix `S` that is not
+positive semidefinite, `multivariateGaussian m S` is the point mass at `m`. -/
+theorem integral_condDistrib_mixedModel_response {n p q : Type*}
+    [Fintype n] [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q]
+    [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (R : Matrix n n ℝ)
+    (hεl : P.map ε = multivariateGaussian 0 R) :
+    ∀ᵐ g ∂P.map γ, ∫ y, y ∂(condDistrib
+        (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) γ P g) =
+        toEuclideanLin X β + toEuclideanLin Z g := by
+  have hcond := condDistrib_mixedModel_response γ ε hγ hε hind X β Z R hεl
+  filter_upwards [hcond] with g hg
+  rw [hg]
+  exact integral_id_multivariateGaussian
+
+/-- Conditional covariance of the mixed-model response: with `γ` and `ε` measurable and independent
+under the probability measure `P`, `R` positive semidefinite and `ε ~ N(0, R)` (no assumption on the
+law of `γ`), `Cov(Y | γ = g) = R` entrywise for almost every `g` under the law of `γ`. -/
+theorem covariance_condDistrib_mixedModel_response {n p q : Type*}
+    [Fintype n] [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q]
+    [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (R : Matrix n n ℝ) (hR : R.PosSemidef)
+    (hεl : P.map ε = multivariateGaussian 0 R) (i j : n) :
+    ∀ᵐ g ∂P.map γ, cov[fun y : EuclideanSpace ℝ n => y.ofLp i,
+      fun y : EuclideanSpace ℝ n => y.ofLp j;
+      condDistrib (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω)
+        γ P g] = R i j := by
+  have hcond := condDistrib_mixedModel_response γ ε hγ hε hind X β Z R hεl
+  filter_upwards [hcond] with g hg
+  rw [hg]
+  exact covariance_eval_multivariateGaussian hR i j
+
+/-- Variance of a linear combination in the Gaussian mixed model: with `γ ~ N(0, G)` and
+`ε ~ N(0, R)` measurable and independent under the probability measure `P`, `G` and `R` positive
+semidefinite, for fixed coefficients `c` (not necessarily summing to zero) the variance of
+`∑ k, c k * Y k` is the `phenCov` quadratic form `cᵀ (Z G Zᵀ + R) c`. -/
+theorem variance_contrast_mixedModel_response {n p q : Type*} [Fintype n]
+    [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
+    {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
+    (G : Matrix q q ℝ) (R : Matrix n n ℝ) (hG : G.PosSemidef)
+    (hR : R.PosSemidef) (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 R) (c : n → ℝ) :
+    Var[fun ω => ∑ k, c k * (toEuclideanLin X β + toEuclideanLin Z (γ ω) +
+      ε ω).ofLp k; P] =
+      c ⬝ᵥ (phenCov Z G R *ᵥ c) := by
+  have hmap := map_mixedModel_response γ ε hγ hε hind X β Z G R hG hR
+    hγl hεl
+  have hpsd : (phenCov Z G R).PosSemidef :=
+    posSemidef_phenCov_of_posSemidef Z G R hG hR
+  have hYmeas : AEStronglyMeasurable
+      (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) P := by
+    fun_prop
+  have hXmeas : AEMeasurable
+      (fun y : EuclideanSpace ℝ n => ∑ k, c k * y.ofLp k)
+      (P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) +
+        ε ω)) := by
+    apply Measurable.aemeasurable
+    apply Finset.measurable_sum
+    intro k _
+    have hck : Measurable (fun y : EuclideanSpace ℝ n => y.ofLp k) := by
+      rw [← EuclideanSpace.coe_proj]
+      exact (EuclideanSpace.proj k).continuous.measurable
+    exact hck.const_mul (c k)
+  have hvar : Var[fun ω => ∑ k, c k * (toEuclideanLin X β +
+      toEuclideanLin Z (γ ω) + ε ω).ofLp k; P] =
+      Var[fun y : EuclideanSpace ℝ n => ∑ k, c k * y.ofLp k;
+        P.map (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) +
+          ε ω)] :=
+    (variance_map hXmeas hYmeas.aemeasurable).symm
+  have hmemid : MemLp (id : EuclideanSpace ℝ n → EuclideanSpace ℝ n) 2
+      (multivariateGaussian (toEuclideanLin X β) (phenCov Z G R)) :=
+    IsGaussian.memLp_two_id
+  have hbase : ∀ k : n, MemLp (fun y : EuclideanSpace ℝ n => y.ofLp k) 2
+      (multivariateGaussian (toEuclideanLin X β) (phenCov Z G R)) := by
+    intro k
+    have h := hmemid.continuousLinearMap_comp
+      (EuclideanSpace.proj k : EuclideanSpace ℝ n →L[ℝ] ℝ)
+    simpa [EuclideanSpace.coe_proj] using h
+  have hmem : ∀ k : n, MemLp
+      (fun y : EuclideanSpace ℝ n => c k * y.ofLp k) 2
+      (multivariateGaussian (toEuclideanLin X β) (phenCov Z G R)) :=
+    fun k => (hbase k).const_mul _
+  rw [hvar, hmap, variance_fun_sum hmem]
+  simp_rw [covariance_const_mul_left, covariance_const_mul_right,
+    covariance_eval_multivariateGaussian hpsd]
+  simp only [dotProduct, Matrix.mulVec]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  ring
+
+end GaussianResponse
+
+section LDpred
+
+variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
+
+private theorem commute_inv {M : ℕ} {A R : Matrix (Fin M) (Fin M) ℝ} (hA : IsUnit A.det)
+    (h : A * R = R * A) : A⁻¹ * R = R * A⁻¹ := by
+  calc A⁻¹ * R = A⁻¹ * R * (A * A⁻¹) := by rw [Matrix.mul_nonsing_inv _ hA, Matrix.mul_one]
+    _ = A⁻¹ * (A * R) * A⁻¹ := by rw [h]; simp only [Matrix.mul_assoc]
+    _ = R * A⁻¹ := by rw [← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hA, Matrix.one_mul]
+
+/-- The LDpred-inf gain and posterior covariance (matrix algebra). -/
+private theorem ldpred_algebra {M N : ℕ} (hM : 0 < M) (hN : 0 < N) {h2 : ℝ} (hh2 : 0 < h2)
+    {R : Matrix (Fin M) (Fin M) ℝ} (hR : R.PosDef) :
+    (h2 / M) • (1 : Matrix (Fin M) (Fin M) ℝ) * Rᵀ *
+        (R * ((h2 / M) • 1) * Rᵀ + (1 / N : ℝ) • R)⁻¹ = (R + (M / (N * h2) : ℝ) • 1)⁻¹ ∧
+      (h2 / M) • (1 : Matrix (Fin M) (Fin M) ℝ) - (h2 / M) • (1 : Matrix (Fin M) (Fin M) ℝ) *
+        Rᵀ * (R * ((h2 / M) • 1) * Rᵀ + (1 / N : ℝ) • R)⁻¹ * (R * ((h2 / M) • 1)) =
+        (1 / N : ℝ) • (R + (M / (N * h2) : ℝ) • 1)⁻¹ := by
+  set a : ℝ := h2 / M with ha
+  set c : ℝ := M / (N * h2) with hc
+  set A := R + c • (1 : Matrix (Fin M) (Fin M) ℝ) with hAdef
+  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
+  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+  have ha0 : 0 < a := div_pos hh2 hMr
+  have hc0 : 0 < c := div_pos hMr (mul_pos hNr hh2)
+  have hac : a * c = 1 / N := by rw [ha, hc]; field_simp
+  have hRt : Rᵀ = R := by
+    simpa [conjTranspose_eq_transpose_of_trivial] using hR.isHermitian.eq
+  have hApd : A.PosDef := hR.add (Matrix.PosDef.one.smul hc0)
+  have hAd : IsUnit A.det := (Matrix.isUnit_iff_isUnit_det _).mp hApd.isUnit
+  have hRd : IsUnit R.det := (Matrix.isUnit_iff_isUnit_det _).mp hR.isUnit
+  have hD : R * (a • 1) * Rᵀ + (1 / N : ℝ) • R = a • (R * A) := by
+    rw [hRt, hAdef, Matrix.mul_add, smul_add, ← hac, mul_smul]
+    simp
+  have hAR : A * R = R * A := by
+    rw [hAdef, Matrix.add_mul, Matrix.mul_add]; simp
+  have hcomm := commute_inv hAd hAR
+  have hDinv : (a • (R * A))⁻¹ = a⁻¹ • (A⁻¹ * R⁻¹) := by
+    refine Matrix.inv_eq_left_inv ?_
+    rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul, inv_mul_cancel₀ ha0.ne', one_smul,
+      Matrix.mul_assoc, ← Matrix.mul_assoc R⁻¹, Matrix.nonsing_inv_mul _ hRd, Matrix.one_mul,
+      Matrix.nonsing_inv_mul _ hAd]
+  have hgain : a • (1 : Matrix (Fin M) (Fin M) ℝ) * Rᵀ * (R * (a • 1) * Rᵀ + (1 / N : ℝ) • R)⁻¹ =
+      A⁻¹ := by
+    rw [hD, hDinv, hRt, Matrix.smul_mul, Matrix.one_mul, Matrix.smul_mul, Matrix.mul_smul,
+      smul_smul, mul_inv_cancel₀ ha0.ne', one_smul, ← Matrix.mul_assoc, ← hcomm,
+      Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hRd, Matrix.mul_one]
+  refine ⟨hgain, ?_⟩
+  rw [hgain]
+  have hAR' : A⁻¹ * R = 1 - c • A⁻¹ := by
+    have : A⁻¹ * A = 1 := Matrix.nonsing_inv_mul _ hAd
+    rw [hAdef, Matrix.mul_add, Matrix.mul_smul, Matrix.mul_one] at this
+    rw [← this]; abel
+  rw [Matrix.mul_smul, Matrix.mul_smul, Matrix.mul_one, hAR', smul_sub, smul_smul, hac,
+    sub_sub_cancel]
+
+/-- **The LDpred-inf posterior** (Vilhjálmsson et al. 2015; the likelihood
+`β̂ | β ~ N(R β, R / N)` of Zhu and Stephens 2017): with `M` markers, `N` individuals,
+heritability `h² > 0`, effects `β ~ N(0, h² / M · I)`, an LD matrix `R` that is positive definite,
+and marginal estimates `β̂ = R β + ε` with `ε ~ N(0, R / N)` independent of `β`, the posterior law
+of `β` given `β̂` is `N((R + M / (N h²) · I)⁻¹ β̂, (1 / N) (R + M / (N h²) · I)⁻¹)`. In particular
+`𝔼[β | β̂] = (R + M / (N h²) · I)⁻¹ β̂`. -/
+theorem condDistrib_ldpredInf {M N : ℕ} (hM : 0 < M) (hN : 0 < N) {h2 : ℝ} (hh2 : 0 < h2)
+    {R : Matrix (Fin M) (Fin M) ℝ} (hR : R.PosDef) {β ε : Ω → EuclideanSpace ℝ (Fin M)}
+    (hβ : Measurable β) (hε : Measurable ε) (hind : IndepFun β ε P)
+    (hβl : P.map β = multivariateGaussian 0 ((h2 / M) • (1 : Matrix (Fin M) (Fin M) ℝ)))
+    (hεl : P.map ε = multivariateGaussian 0 ((1 / N : ℝ) • R)) :
+    ∀ᵐ b ∂P.map (fun ω => toEuclideanLin R (β ω) + ε ω),
+      condDistrib β (fun ω => toEuclideanLin R (β ω) + ε ω) P b =
+        multivariateGaussian (toEuclideanLin (R + (M / (N * h2) : ℝ) • 1)⁻¹ b)
+          ((1 / N : ℝ) • (R + (M / (N * h2) : ℝ) • 1)⁻¹) := by
+  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
+  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+  have hS : ((h2 / M) • (1 : Matrix (Fin M) (Fin M) ℝ)).PosDef :=
+    Matrix.PosDef.one.smul (div_pos hh2 hMr)
+  have hRN : ((1 / N : ℝ) • R).PosDef := hR.smul (by positivity)
+  have hinv : IsUnit (R * ((h2 / M) • 1) * Rᵀ + (1 / N : ℝ) • R).det := by
+    have h := hS.posSemidef.mul_mul_conjTranspose_same R
+    rw [conjTranspose_eq_transpose_of_trivial] at h
+    exact (Matrix.isUnit_iff_isUnit_det _).mp (Matrix.PosDef.posSemidef_add h hRN).isUnit
+  have h := condDistrib_linear_add_of_indepFun hβ hε hind hS.posSemidef hRN.posSemidef hβl hεl R
+    hinv
+  obtain ⟨hgain, hcov⟩ := ldpred_algebra hM hN hh2 hR
+  filter_upwards [h] with b hb
+  rw [hb, hcov, hgain]
+  simp
+
+end LDpred
+
+section MarginalEffects
+
+variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} {N M : ℕ}
+
+/-- The `N`-normalized marginal association estimate `β̂_j = X_jᵀ y / N` of marker `j` for the
+phenotype `y = X β + ε` (fixed effects `β`, noise `ε`). -/
+noncomputable def marginalEffect (X : Matrix (Fin N) (Fin M) ℝ) (β : Fin M → ℝ)
+    (ε : Fin N → Ω → ℝ) (j : Fin M) (ω : Ω) : ℝ :=
+  (∑ i, X i j * (∑ k, X i k * β k + ε i ω)) / N
+
+private theorem marginalEffect_eq (X : Matrix (Fin N) (Fin M) ℝ) (β : Fin M → ℝ)
+    (ε : Fin N → Ω → ℝ) (j : Fin M) (ω : Ω) :
+    marginalEffect X β ε j ω = ∑ k, ldCorr X j k * β k + (∑ i, X i j * ε i ω) / N := by
+  simp only [marginalEffect, ldCorr, mul_add, Finset.sum_add_distrib, add_div, Finset.mul_sum]
+  congr 1
+  simp only [Finset.sum_div, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun i _ => ?_
+  ring
+
+variable [IsProbabilityMeasure P]
+
+/-- **The mean of the marginal estimates** (Zhu and Stephens 2017): for fixed effects `β` and
+noise with mean zero, `𝔼[X_jᵀ y / N] = (R β)_j` with `R = Xᵀ X / N` (`ldCorr`). -/
+theorem integral_marginalEffect (X : Matrix (Fin N) (Fin M) ℝ) (β : Fin M → ℝ)
+    {ε : Fin N → Ω → ℝ} (hε : ∀ i, Integrable (ε i) P) (hmean : ∀ i, ∫ ω, ε i ω ∂P = 0)
+    (j : Fin M) :
+    ∫ ω, marginalEffect X β ε j ω ∂P = ∑ k, ldCorr X j k * β k := by
+  simp only [marginalEffect_eq]
+  have hi : Integrable (fun ω => ∑ i, X i j * ε i ω) P :=
+    integrable_finsetSum _ fun i _ => (hε i).const_mul _
+  rw [integral_add (integrable_const _) (hi.div_const _), integral_const, integral_div,
+    integral_finsetSum _ fun i _ => (hε i).const_mul _]
+  simp [integral_const_mul, hmean]
+
+omit [IsProbabilityMeasure P] in
+/-- **The raw residual-product second moment of the marginal estimates** (Zhu and Stephens
+2017): if `𝔼[ε_i ε_i'] = σ² [i = i']`, then
+`𝔼[(β̂_j - (R β)_j)(β̂_k - (R β)_k)] = σ² / N · R_jk`.
+
+This theorem deliberately assumes neither that `P` is a probability measure nor that the noise
+has mean zero, so its conclusion is not by itself a covariance or a Gaussian likelihood. With a
+probability measure and mean-zero noise, `integral_marginalEffect` identifies `R β` as the mean,
+and this raw second moment is the corresponding covariance. -/
+theorem integral_marginalEffect_sub_mul (X : Matrix (Fin N) (Fin M) ℝ) (β : Fin M → ℝ)
+    {ε : Fin N → Ω → ℝ} {σ2 : ℝ} (hε : ∀ i i', Integrable (fun ω => ε i ω * ε i' ω) P)
+    (hsecondMoment : ∀ i i', ∫ ω, ε i ω * ε i' ω ∂P = if i = i' then σ2 else 0)
+    (j k : Fin M) :
+    ∫ ω, (marginalEffect X β ε j ω - ∑ l, ldCorr X j l * β l) *
+        (marginalEffect X β ε k ω - ∑ l, ldCorr X k l * β l) ∂P = σ2 / N * ldCorr X j k := by
+  simp only [marginalEffect_eq, add_sub_cancel_left]
+  have h : (fun ω => (∑ i, X i j * ε i ω) / N * ((∑ i, X i k * ε i ω) / N)) =
+      fun ω => (∑ i, ∑ i', X i j * X i' k * (ε i ω * ε i' ω)) / N ^ 2 := by
+    funext ω
+    rw [div_mul_div_comm, Finset.sum_mul_sum, sq]
+    congr 1
+    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun i' _ => ?_
+    ring
+  rw [h, integral_div, integral_finsetSum _ fun i _ =>
+    integrable_finsetSum _ fun i' _ => (hε i i').const_mul _]
+  simp_rw [integral_finsetSum _ fun i' _ => (hε _ i').const_mul _, integral_const_mul,
+    hsecondMoment]
+  simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, ldCorr]
+  rcases Nat.eq_zero_or_pos N with hN | hN
+  · subst hN; simp
+  · have : (N : ℝ) ≠ 0 := by exact_mod_cast hN.ne'
+    rw [← Finset.sum_mul]
+    field_simp
+
+end MarginalEffects
+
+end MathlibExt.Biology.StatisticalGenetics.MixedModel

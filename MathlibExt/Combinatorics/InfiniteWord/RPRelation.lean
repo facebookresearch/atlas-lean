@@ -16,16 +16,20 @@ namespace MetaMathlibExt
 
 namespace ReversePermute
 
-/-- K-string: an ordered list of numbers from `[k]`, modelled as `List (Fin k)`.
-Cites source statement `jis_cd98d66d9dff78260169a2e4` for concept
+/-- **$k$-strings.** For a natural number $k$, a $k$-string is a finite sequence (possibly empty)
+of elements of $\{0, 1, \ldots, k-1\}$.
+
+Source: statement `jis_cd98d66d9dff78260169a2e4` for concept
 `jis_sem_f50f75500661653b133949f3` (`rp relation`, alias `RP relation`). -/
 public abbrev KString (k : ℕ) := List (Fin k)
 
-/-- Reverse-permute (RP) relation on `k`-strings: `s` and `t` are related when
-`t` can be obtained from `s` by permuting the entries (applying a permutation
-of `Fin k` pointwise) and possibly reversing the string.
-Cites concept `jis_sem_f50f75500661653b133949f3` (`rp relation`, alias
-`RP relation`) and source statement `jis_cd98d66d9dff78260169a2e4`. -/
+/-- **The reverse-permute relation.** For a natural number $k$, a $k$-string $s$ is related to a
+$k$-string $t$ by the reverse-permute (RP) relation when there is a permutation $\sigma$ of
+$\{0, 1, \ldots, k-1\}$ such that $t$ is obtained, either from $s$ or from the reversal of $s$,
+by replacing each entry $x$ with $\sigma(x)$.
+
+Source: concept `jis_sem_f50f75500661653b133949f3` (`rp relation`, alias `RP relation`) and
+source statement `jis_cd98d66d9dff78260169a2e4`. -/
 public def rpRelation (k : ℕ) (s t : KString k) : Prop :=
   ∃ σ : Equiv.Perm (Fin k), t = s.map (⇑σ) ∨ t = s.reverse.map (⇑σ)
 

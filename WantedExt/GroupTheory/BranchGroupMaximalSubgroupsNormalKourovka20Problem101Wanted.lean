@@ -39,16 +39,23 @@ module `WantedExt.GroupTheory.BranchGroupShared`, which repeats those of the Ope
 
 open MathlibExt.GroupTheory.BranchGroupShared
 
-/-- Kourovka 20.101 (A. Thillaisundaram): in a finitely generated branch group every maximal
-subgroup of finite index is normal. -/
+/-- **Kourovka 20.101: finite-index maximal subgroups of finitely generated branch groups are
+normal.** The statement (A. Thillaisundaram) that in every finitely generated branch group every
+maximal subgroup of finite index is normal. -/
 def branchGroupFiniteIndexMaximalSubgroupsNormal : Prop :=
   ∀ (G : Type) [Group G], Group.FG G → IsBranchGroup G →
     ∀ M : Subgroup G, IsCoatom M → M.FiniteIndex → M.Normal
 
 /--
-Resolved false: the Kourovka Notebook (21st issue) answers 20.101 "No, not necessarily" (P. Neumann,
-1986), and Garciarena and Petschick (2024, Theorem 4.1) construct a finitely generated branch group
-all of whose maximal subgroups have finite index, one of which is not normal. Source: E. I. Khukhro
+**A finitely generated branch group with a non-normal maximal subgroup of finite index.** The
+Kourovka 20.101 statement that every maximal subgroup of finite index of a finitely generated
+branch group is normal is false: some finitely generated branch group has a maximal subgroup of
+finite index that is not normal.
+
+Garciarena and Petschick (2024, Theorem 4.1) construct a finitely generated branch group all of
+whose maximal subgroups have finite index, one of which is not normal.
+
+Source: E. I. Khukhro
 and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Problem 20.101 (A. Thillaisundaram); resolution: M. E. Garciarena and J.
 M. Petschick, Maximal subgroups in torsion branch groups, preprint, arXiv:2410.06783 (2024); P. M.

@@ -25,7 +25,12 @@ variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
   [SMulCommClass G A B] [Algebra.IsInvariant A B G]
   {p : Ideal A} {P : Ideal B} [P.IsPrime] [P.LiesOver p]
 
-/-- A prime splits completely iff its decomposition group is trivial. -/
+/-- **Trivial decomposition group and the number of primes above.** Let $B$ be a commutative
+algebra over a commutative ring $A$, and let a finite group $G$ act on $B$ by $A$-algebra
+automorphisms such that every element of $B$ fixed by $G$ is the image of an element of $A$. Let
+$p$ be an ideal of $A$ and $P$ a prime of $B$ lying over $p$. Then the stabilizer of $P$ in $G$
+(the decomposition group of $P$) is trivial if and only if the number of primes of $B$ lying
+over $p$ equals the order of $G$. -/
 theorem stabilizer_eq_bot_iff_ncard_primesOver_eq_card :
     MulAction.stabilizer G P = ⊥ ↔ (primesOver p B).ncard = Nat.card G := by
   have hfund : (primesOver p B).ncard * Nat.card (MulAction.stabilizer G P)
@@ -56,8 +61,15 @@ variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
   [SMulCommClass G A B] [Algebra.IsInvariant A B G]
   {p : Ideal A} {P : Ideal B} [P.IsPrime] [P.LiesOver p]
 
-/-- The Frobenius is trivial iff the prime splits completely: conditional form,
-assuming the Frobenius generates the decomposition group. -/
+/-- **Trivial Frobenius and the number of primes above, assuming the Frobenius generates.**
+Let $B$ be a commutative algebra over a commutative ring $A$, and let a finite group $G$ act on
+$B$ by $A$-algebra automorphisms such that every element of $B$ fixed by $G$ is the image of an
+element of $A$. Let $p$ be an ideal of $A$ and $P$ a prime of $B$ lying over $p$ with $B/P$
+finite, and let $\mathrm{Frob}_P \in G$ be the chosen arithmetic Frobenius element at $P$, an
+element $\sigma \in G$ with $\sigma(x) \equiv x^q \pmod P$ for all $x \in B$, where $q$ is the
+number of elements of $A/p$. Suppose every element of the stabilizer of $P$ in $G$ equals
+$\mathrm{Frob}_P^n$ for some natural number $n$. Then $\mathrm{Frob}_P = 1$ if and only if the
+number of primes of $B$ lying over $p$ equals the order of $G$. -/
 theorem arithFrobAt_eq_one_iff_ncard_primesOver_eq_card_of_generates
     [Finite (B ⧸ P)]
     (hgen : ∀ g ∈ MulAction.stabilizer G P,
@@ -90,7 +102,16 @@ variable {A B : Type*} [CommRing A] [CommRing B] [IsDomain A] [IsDomain B]
   {p : Ideal A} [p.IsPrime] {P : Ideal B} [P.IsPrime] [P.LiesOver p]
   [PerfectField p.ResidueField]
 
-/-- The Frobenius generates the decomposition group at an unramified prime. -/
+/-- **The Frobenius element generates the decomposition group at an unramified prime.** Let $A$
+and $B$ be integral domains with $B$ a finite flat $A$-algebra, and let $G$ be a finite group
+acting faithfully on $B$ by $A$-algebra automorphisms such that every element of $B$ fixed by
+$G$ is the image of an element of $A$. Let $p$ be a prime of $A$ and $P$ a prime of $B$ lying
+over $p$, with $B/P$ finite and $B$ unramified over $A$ at $P$ (the localization $B_P$ is
+formally unramified over $A$). Let $\mathrm{Frob}_P \in G$ be the chosen arithmetic Frobenius
+element at $P$, an element $\sigma \in G$ with $\sigma(x) \equiv x^q \pmod P$ for all
+$x \in B$, where $q$ is the number of elements of $A/p$. Then every element of the stabilizer of
+$P$ in $G$ (the decomposition group of $P$) equals $\mathrm{Frob}_P^n$ for some natural
+number $n$. -/
 theorem arithFrobAt_generates_stabilizer_of_isUnramifiedAt
     (p : Ideal A) [p.IsPrime] [P.LiesOver p]
     [Finite (B ⧸ P)] [Algebra.IsUnramifiedAt A P] :
@@ -149,8 +170,15 @@ theorem arithFrobAt_generates_stabilizer_of_isUnramifiedAt
   exact ⟨n, hval⟩
 
 omit [PerfectField p.ResidueField] in
-/-- The Frobenius is trivial iff the prime splits completely, at an unramified
-prime with finite residue field. -/
+/-- **The Frobenius element is trivial iff the prime splits completely.** Let $A$ and $B$ be
+integral domains with $B$ a finite flat $A$-algebra, and let $G$ be a finite group acting
+faithfully on $B$ by $A$-algebra automorphisms such that every element of $B$ fixed by $G$ is
+the image of an element of $A$. Let $p$ be a prime of $A$ and $P$ a prime of $B$ lying over $p$,
+with $B/P$ finite and $B$ unramified over $A$ at $P$ (the localization $B_P$ is formally
+unramified over $A$). Let $\mathrm{Frob}_P \in G$ be the chosen arithmetic Frobenius element at
+$P$, an element $\sigma \in G$ with $\sigma(x) \equiv x^q \pmod P$ for all $x \in B$, where $q$
+is the number of elements of $A/p$. Then $\mathrm{Frob}_P = 1$ if and only if the number of
+primes of $B$ lying over $p$ equals the order of $G$. -/
 theorem arithFrobAt_eq_one_iff_ncard_primesOver_eq_card
     [Finite (B ⧸ P)] [Algebra.IsUnramifiedAt A P] :
     arithFrobAt A G P = 1 ↔ (Ideal.primesOver p B).ncard = Nat.card G :=

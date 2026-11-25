@@ -22,10 +22,14 @@ namespace MetaMathlibExt
 -/
 
 /--
-Ekeland variational principle without the `[Nonempty X]` assumption, which the point `x₀`
-already provides: an `ε`-approximate minimizer `x₀` of a bounded-below lower semicontinuous `f`
-on a complete metric space yields `xε` with `f xε ≤ f x₀`, `dist xε x₀ ≤ 1`, and
-`f xε < f y + ε * dist xε y` for every `y ≠ xε`.
+**Ekeland variational principle without a nonemptiness assumption.** Let $(X, d)$ be a complete
+metric space, let $f : X \to \mathbb{R}$ be lower semicontinuous and bounded below, and let
+$\varepsilon > 0$. If $x_0 \in X$ satisfies $f(x_0) \le f(x) + \varepsilon$ for every $x \in X$,
+then there is $x_\varepsilon \in X$ with $f(x_\varepsilon) \le f(x_0)$,
+$d(x_\varepsilon, x_0) \le 1$, and $f(x_\varepsilon) < f(y) + \varepsilon\, d(x_\varepsilon, y)$
+for every $y \ne x_\varepsilon$.
+
+The space $X$ is not separately assumed nonempty, since the point $x_0$ already lies in it.
 -/
 theorem ekeland_variational_principle_general
     {X : Type*} [MetricSpace X] [CompleteSpace X]
@@ -192,7 +196,12 @@ theorem ekeland_variational_principle_general
   exact hlt
 
 /--
-Existence of `ε`-approximate minimizer with perturbed minimality.
+**Ekeland variational principle.** Let $(X, d)$ be a nonempty complete metric space, let
+$f : X \to \mathbb{R}$ be lower semicontinuous and bounded below, and let $\varepsilon > 0$. If
+$x_0 \in X$ satisfies $f(x_0) \le f(x) + \varepsilon$ for every $x \in X$, then there is
+$x_\varepsilon \in X$ with $f(x_\varepsilon) \le f(x_0)$, $d(x_\varepsilon, x_0) \le 1$, and
+$f(x_\varepsilon) < f(y) + \varepsilon\, d(x_\varepsilon, y)$ for every $y \ne x_\varepsilon$.
+
 Source: I. Ekeland, J. Math. Anal. Appl. 47 (1974), 324-353, DOI 10.1016/0022-247X(74)90025-0.
 It follows from `ekeland_variational_principle_general`; the instance `[Nonempty X]` is unused and
 keeps the source's shape.
@@ -209,8 +218,11 @@ theorem ekeland_variational_principle
   ekeland_variational_principle_general hf_lsc hf_bdd hε hx₀
 
 /--
-Caristi fixed-point theorem: map whose displacement is dominated by a potential decrease has a fixed
-point.
+**Caristi fixed-point theorem.** Let $(X, d)$ be a nonempty complete metric space and let
+$\varphi : X \to \mathbb{R}$ be lower semicontinuous and bounded below. If a map $T : X \to X$
+satisfies $d(x, T x) \le \varphi(x) - \varphi(T x)$ for every $x \in X$, then $T$ has a fixed
+point: there is $x \in X$ with $T x = x$.
+
 Source: J. Caristi, Trans. Amer. Math. Soc. 215 (1976), 241-251, DOI
 10.1090/S0002-9947-1976-0394329-4.
 Proves `Wanted` entry `caristi_fixedPoint`.

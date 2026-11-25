@@ -38,25 +38,33 @@ The induced character `1_H^G` is the permutation character of `G` on the left co
 `ConjAct G` on `Subgroup G`), choosing a representative of each.
 -/
 
-/-- The permutation character `1_H^G` of `G` on the left cosets of `H`: its value at `g` is the
-number of cosets `x H` with `g x H = x H`. -/
+/-- **Rational permutation character on the cosets of a subgroup.** For a subgroup $H$ of a group
+$G$, the permutation character $1_H^G : G \to \mathbb{Q}$ sends $g \in G$ to the number of left
+cosets $xH$ of $H$ with $gxH = xH$, and to $0$ when $g$ fixes infinitely many cosets. -/
 noncomputable def permChar {G : Type*} [Group G] (H : Subgroup G) (g : G) : ℚ :=
   Nat.card {c : G ⧸ H // g • c = c}
 
 open scoped Pointwise in
-/-- Kourovka 11.9 (I. I. Pyatetskiĭ-Shapiro; Ya. G. Berkovich): some finite non-soluble group `G`
-has linearly independent permutation characters `1_H^G`, with `H` running through representatives
-of the conjugacy classes of subgroups of `G`. -/
+/-- **Finite insoluble groups with independent permutation characters (Kourovka 11.9).**
+The assertion that there is a finite non-soluble group $G$ such that, choosing a representative
+$H$ of each conjugacy class of subgroups of $G$, the rational-valued permutation characters
+$1_H^G$ of $G$ on the left cosets of these subgroups $H$ are linearly independent over
+$\mathbb{Q}$. -/
 def insolubleIndependentPermutationCharacters : Prop :=
   ∃ (G : Type) (_ : Group G) (_ : Finite G), ¬ Group.IsSolvable G ∧
     LinearIndependent ℚ fun c : MulAction.orbitRel.Quotient (ConjAct G) (Subgroup G) =>
       permChar (Quotient.out c)
 
-/--
-Resolved false: Brescia, Ingrosso and Trombetti prove that the permutation characters `1_H^G`, `H`
-over representatives of the conjugacy classes of subgroups, are linearly independent iff `G` is
-cyclic, so no finite non-soluble group has the property. The Kourovka Notebook (21st issue) marks
-11.9 solved, "No, there are no such groups". Source: E. I. Khukhro and V. D. Mazurov (eds.),
+/-- **No insoluble group has independent permutation characters (Kourovka 11.9).** There is no
+finite non-soluble group $G$ such that, choosing a representative $H$ of each conjugacy class of
+subgroups of $G$, the rational-valued permutation characters $1_H^G$ of $G$ on the left cosets of
+these subgroups $H$ are linearly independent over $\mathbb{Q}$.
+
+Brescia, Ingrosso and Trombetti prove that these permutation characters are linearly independent
+if and only if $G$ is cyclic; the Kourovka Notebook (21st issue) marks 11.9 solved, "No, there
+are no such groups".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Problem 11.9 (Ya. G. Berkovich); resolution: M. Brescia, E. Ingrosso and M. Trombetti, On the
 independence of permutation characters, arXiv:2608.16957 (2026), main theorem: the characters `π_H`,
