@@ -14611,6 +14611,7 @@
   "PhyslibExt/EarthScience/UnsaturatedRetention": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Van Genuchten water retention curve"},
   "PhyslibExt/EarthScience/UpwindScheme": {"to": "Analysis/numerical-analysis", "title": "Upwind scheme"},
   "PhyslibExt/EarthScience/WeakDiffusion": {"to": "Analysis/partial-differential-equations", "title": "Weak solutions of elliptic equations"},
+  "PhyslibExt/EarthScience/WeakParabolic": {"to": "Analysis/partial-differential-equations", "title": "Weak solutions of parabolic equations"},
   "PhyslibExt/Engineering/Process/CSTR": {"to": "Chemistry/chemical-kinetics", "title": "Continuous stirred-tank reactor"},
   "PhyslibExt/Engineering/Process/MassTransfer": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Interphase mass transfer"},
   "PhyslibExt/Engineering/Resource/DeclineCurve": {"to": "EarthScience/hydrology-and-surface-processes", "title": "Exponential and hyperbolic production decline"},
