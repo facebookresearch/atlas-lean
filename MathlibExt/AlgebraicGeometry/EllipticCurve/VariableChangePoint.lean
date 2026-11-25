@@ -38,7 +38,14 @@ import Mathlib.Tactic.Ring
 /-!
 # Variable changes on affine Weierstrass points
 
-This file transports affine solutions and rational points along an admissible variable change.
+This file transports affine solutions, nonsingular affine points and rational points along an
+admissible variable change `C`. The coordinate map of `C` preserves the Weierstrass equation
+(`equation_mapAffineCoordinates_iff`) and nonsingularity (`nonsingular_mapAffineCoordinates_iff`),
+so it gives the additive equivalence of points
+`Affine.Point.variableChangeAddEquiv : (C • W).toAffine.Point ≃+ W.toAffine.Point`, whose inverse
+applies the coordinate map of `C⁻¹`. The equivalence needs no ellipticity hypothesis; for elliptic
+`W`, its underlying equivalence is the bijection `pointEquiv`
+(`Affine.Point.variableChangeAddEquiv_toEquiv`).
 -/
 
 @[expose] public section
@@ -155,35 +162,31 @@ theorem natCard_point_eq [Finite F] (C : VariableChange F) (W : WeierstrassCurve
     Nat.card ((C • W).toAffine.Point) = Nat.card W.toAffine.Point :=
   Nat.card_congr (pointEquiv C W)
 
-end WeierstrassCurve.VariableChange
+variable (C : VariableChange F) (W : WeierstrassCurve F)
 
-namespace WeierstrassCurve.VariableChange
-
-variable {K : Type*} [Field K] (C : VariableChange K) (W : WeierstrassCurve K)
-
-private lemma partialX_mapAffineCoordinates (x y : K) :
+private lemma partialX_mapAffineCoordinates (x y : F) :
     W.a₁ * (mapAffineCoordinates C (x, y)).2 -
         (3 * (mapAffineCoordinates C (x, y)).1 ^ 2 +
           2 * W.a₂ * (mapAffineCoordinates C (x, y)).1 + W.a₄) +
       C.s * (2 * (mapAffineCoordinates C (x, y)).2 +
         W.a₁ * (mapAffineCoordinates C (x, y)).1 + W.a₃) =
-    (C.u : K) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄)) := by
-  have hu : (C.u : K) ≠ 0 := C.u.ne_zero
+    (C.u : F) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄)) := by
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   simp only [mapAffineCoordinates, variableChange_a₁, variableChange_a₂, variableChange_a₄,
     Units.val_inv_eq_inv_val]
   field_simp
   ring
 
-private lemma partialY_mapAffineCoordinates (x y : K) :
+private lemma partialY_mapAffineCoordinates (x y : F) :
     2 * (mapAffineCoordinates C (x, y)).2 + W.a₁ * (mapAffineCoordinates C (x, y)).1 + W.a₃ =
-      (C.u : K) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
-  have hu : (C.u : K) ≠ 0 := C.u.ne_zero
+      (C.u : F) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   simp only [mapAffineCoordinates, variableChange_a₁, variableChange_a₃,
     Units.val_inv_eq_inv_val]
   field_simp
   ring
 
-private lemma partials_zero_iff (x y : K) :
+private lemma partials_zero_iff (x y : F) :
     ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄) = 0 ∧
         2 * y + (C • W).a₁ * x + (C • W).a₃ = 0) ↔
       (W.a₁ * (mapAffineCoordinates C (x, y)).2 -
@@ -208,7 +211,7 @@ private lemma partials_zero_iff (x y : K) :
 $F$, let $C = (u, r, s, t)$ be a variable change and let $C \cdot W$ be the transformed curve. A
 pair $(x, y) \in F^2$ is a nonsingular point of $C \cdot W$ if and only if
 $(u^2 x + r,\ u^3 y + u^2 s x + t)$ is a nonsingular point of $W$. -/
-theorem nonsingular_mapAffineCoordinates_iff (xy : K × K) :
+theorem nonsingular_mapAffineCoordinates_iff (xy : F × F) :
     (C • W).toAffine.Nonsingular xy.1 xy.2 ↔
       W.toAffine.Nonsingular (mapAffineCoordinates C xy).1 (mapAffineCoordinates C xy).2 := by
   rw [Affine.nonsingular_iff', Affine.nonsingular_iff', equation_mapAffineCoordinates_iff]
@@ -216,28 +219,28 @@ theorem nonsingular_mapAffineCoordinates_iff (xy : K × K) :
   push Not
   exact partials_zero_iff C W xy.1 xy.2
 
-private lemma fst_mapAffineCoordinates_injective {x₁ x₂ : K} (y₁ y₂ : K)
+private lemma fst_mapAffineCoordinates_injective {x₁ x₂ : F} (y₁ y₂ : F)
     (h : (mapAffineCoordinates C (x₁, y₁)).1 = (mapAffineCoordinates C (x₂, y₂)).1) :
     x₁ = x₂ := by
   simp only [mapAffineCoordinates] at h
   exact mul_left_cancel₀ (pow_ne_zero 2 C.u.ne_zero) (by linear_combination h)
 
-private lemma snd_mapAffineCoordinates_injective (x : K) {y₁ y₂ : K}
+private lemma snd_mapAffineCoordinates_injective (x : F) {y₁ y₂ : F}
     (h : (mapAffineCoordinates C (x, y₁)).2 = (mapAffineCoordinates C (x, y₂)).2) :
     y₁ = y₂ := by
   simp only [mapAffineCoordinates] at h
   exact mul_left_cancel₀ (pow_ne_zero 3 C.u.ne_zero) (by linear_combination h)
 
-private lemma negY_mapAffineCoordinates (x y : K) :
+private lemma negY_mapAffineCoordinates (x y : F) :
     W.toAffine.negY (mapAffineCoordinates C (x, y)).1 (mapAffineCoordinates C (x, y)).2 =
       (mapAffineCoordinates C (x, (C • W).toAffine.negY x y)).2 := by
-  have hu : (C.u : K) ≠ 0 := C.u.ne_zero
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   simp only [Affine.negY, mapAffineCoordinates, variableChange_a₁, variableChange_a₃,
     Units.val_inv_eq_inv_val]
   field_simp
   ring
 
-private lemma yeq_mapAffineCoordinates_iff (x₁ x₂ y₁ y₂ : K) :
+private lemma yeq_mapAffineCoordinates_iff (x₁ x₂ y₁ y₂ : F) :
     ((mapAffineCoordinates C (x₁, y₁)).1 = (mapAffineCoordinates C (x₂, y₂)).1 ∧
         (mapAffineCoordinates C (x₁, y₁)).2 =
           W.toAffine.negY (mapAffineCoordinates C (x₂, y₂)).1
@@ -251,13 +254,13 @@ private lemma yeq_mapAffineCoordinates_iff (x₁ x₂ y₁ y₂ : K) :
   · rintro ⟨rfl, hy⟩
     exact ⟨rfl, by rw [negY_mapAffineCoordinates, hy]⟩
 
-private lemma slope_mapAffineCoordinates [DecidableEq K] (x₁ x₂ y₁ y₂ : K)
+private lemma slope_mapAffineCoordinates [DecidableEq F] (x₁ x₂ y₁ y₂ : F)
     (h₁ : (C • W).toAffine.Equation x₁ y₁) (h₂ : (C • W).toAffine.Equation x₂ y₂)
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
     W.toAffine.slope (mapAffineCoordinates C (x₁, y₁)).1 (mapAffineCoordinates C (x₂, y₂)).1
         (mapAffineCoordinates C (x₁, y₁)).2 (mapAffineCoordinates C (x₂, y₂)).2 =
-      (C.u : K) * (C • W).toAffine.slope x₁ x₂ y₁ y₂ + C.s := by
-  have hu : (C.u : K) ≠ 0 := C.u.ne_zero
+      (C.u : F) * (C • W).toAffine.slope x₁ x₂ y₁ y₂ + C.s := by
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   by_cases hx : x₁ = x₂
   · have hy : y₁ ≠ (C • W).toAffine.negY x₂ y₂ := fun h => hxy ⟨hx, h⟩
     obtain rfl := hx
@@ -270,7 +273,7 @@ private lemma slope_mapAffineCoordinates [DecidableEq K] (x₁ x₂ y₁ y₂ : 
     have hd : (mapAffineCoordinates C (x₁, y₁)).2 -
           W.toAffine.negY (mapAffineCoordinates C (x₁, y₁)).1
             (mapAffineCoordinates C (x₁, y₁)).2 =
-        (C.u : K) ^ 3 * (y₁ - (C • W).toAffine.negY x₁ y₁) := by
+        (C.u : F) ^ 3 * (y₁ - (C • W).toAffine.negY x₁ y₁) := by
       rw [negY_mapAffineCoordinates]
       simp only [mapAffineCoordinates]
       ring
@@ -281,12 +284,12 @@ private lemma slope_mapAffineCoordinates [DecidableEq K] (x₁ x₂ y₁ y₂ : 
     have hn : 3 * (mapAffineCoordinates C (x₁, y₁)).1 ^ 2 +
           2 * W.a₂ * (mapAffineCoordinates C (x₁, y₁)).1 + W.a₄ -
           W.a₁ * (mapAffineCoordinates C (x₁, y₁)).2 =
-        (C.u : K) ^ 4 * (3 * x₁ ^ 2 + 2 * (C • W).a₂ * x₁ + (C • W).a₄ - (C • W).a₁ * y₁) +
-          C.s * ((C.u : K) ^ 3 * (y₁ - (C • W).toAffine.negY x₁ y₁)) := by
+        (C.u : F) ^ 4 * (3 * x₁ ^ 2 + 2 * (C • W).a₂ * x₁ + (C • W).a₄ - (C • W).a₁ * y₁) +
+          C.s * ((C.u : F) ^ 3 * (y₁ - (C • W).toAffine.negY x₁ y₁)) := by
       have hX := partialX_mapAffineCoordinates C W x₁ y₁
       have hY := partialY_mapAffineCoordinates C W x₁ y₁
       rw [hPYden]
-      linear_combination (-1 : K) * hX + C.s * hY
+      linear_combination (-1 : F) * hX + C.s * hY
     have hden : y₁ - (C • W).toAffine.negY x₁ y₁ ≠ 0 := sub_ne_zero_of_ne hy
     rw [hd, hn]
     field_simp
@@ -294,34 +297,34 @@ private lemma slope_mapAffineCoordinates [DecidableEq K] (x₁ x₂ y₁ y₂ : 
       fun h => hx (fst_mapAffineCoordinates_injective C y₁ y₂ h)
     rw [Affine.slope_of_X_ne hxW, Affine.slope_of_X_ne hx]
     have hd : (mapAffineCoordinates C (x₁, y₁)).1 - (mapAffineCoordinates C (x₂, y₂)).1 =
-        (C.u : K) ^ 2 * (x₁ - x₂) := by
+        (C.u : F) ^ 2 * (x₁ - x₂) := by
       simp only [mapAffineCoordinates]
       ring
     have hn : (mapAffineCoordinates C (x₁, y₁)).2 - (mapAffineCoordinates C (x₂, y₂)).2 =
-        (C.u : K) ^ 3 * (y₁ - y₂) + (C.u : K) ^ 2 * C.s * (x₁ - x₂) := by
+        (C.u : F) ^ 3 * (y₁ - y₂) + (C.u : F) ^ 2 * C.s * (x₁ - x₂) := by
       simp only [mapAffineCoordinates]
       ring
     have hxne : x₁ - x₂ ≠ 0 := sub_ne_zero_of_ne hx
     rw [hd, hn]
     field_simp
 
-private lemma addX_mapAffineCoordinates (x₁ x₂ y₁ y₂ L : K) :
+private lemma addX_mapAffineCoordinates (x₁ x₂ y₁ y₂ L : F) :
     W.toAffine.addX (mapAffineCoordinates C (x₁, y₁)).1 (mapAffineCoordinates C (x₂, y₂)).1
-        ((C.u : K) * L + C.s) =
+        ((C.u : F) * L + C.s) =
       (mapAffineCoordinates C
         ((C • W).toAffine.addX x₁ x₂ L, (C • W).toAffine.addY x₁ x₂ y₁ L)).1 := by
-  have hu : (C.u : K) ≠ 0 := C.u.ne_zero
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   simp only [Affine.addX, mapAffineCoordinates, variableChange_a₁, variableChange_a₂,
     Units.val_inv_eq_inv_val]
   field_simp
   ring
 
-private lemma addY_mapAffineCoordinates (x₁ x₂ y₁ y₂ L : K) :
+private lemma addY_mapAffineCoordinates (x₁ x₂ y₁ y₂ L : F) :
     W.toAffine.addY (mapAffineCoordinates C (x₁, y₁)).1 (mapAffineCoordinates C (x₂, y₂)).1
-        (mapAffineCoordinates C (x₁, y₁)).2 ((C.u : K) * L + C.s) =
+        (mapAffineCoordinates C (x₁, y₁)).2 ((C.u : F) * L + C.s) =
       (mapAffineCoordinates C
         ((C • W).toAffine.addX x₁ x₂ L, (C • W).toAffine.addY x₁ x₂ y₁ L)).2 := by
-  have hu : (C.u : K) ≠ 0 := C.u.ne_zero
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   simp only [Affine.addY, Affine.negAddY, Affine.addX, Affine.negY, mapAffineCoordinates,
     variableChange_a₁, variableChange_a₂, variableChange_a₃, Units.val_inv_eq_inv_val]
   field_simp
@@ -331,32 +334,32 @@ end WeierstrassCurve.VariableChange
 
 namespace WeierstrassCurve.Affine.Point
 
-variable {K : Type*} [Field K] (C : VariableChange K) (W : WeierstrassCurve K)
+variable {F : Type*} [Field F] (C : VariableChange F) (W : WeierstrassCurve F)
 
 open VariableChange
 
 /-- The equivalence of points underlying `variableChangeAddEquiv`. -/
 private def variableChangeEquivAux : (C • W).toAffine.Point ≃ W.toAffine.Point :=
   (C • W).toAffine.nonsingularPointEquiv.trans <|
-    (Equiv.subtypeEquiv (q := fun xy : K × K => W.toAffine.Nonsingular xy.1 xy.2)
+    (Equiv.subtypeEquiv (q := fun xy : F × F => W.toAffine.Nonsingular xy.1 xy.2)
         (affineCoordinatesEquiv C) (nonsingular_mapAffineCoordinates_iff C W)).optionCongr.trans
       W.toAffine.nonsingularPointEquiv.symm
 
 variable {C W}
 
-private lemma variableChangeEquivAux_some {x y : K} (h : (C • W).toAffine.Nonsingular x y) :
+private lemma variableChangeEquivAux_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     variableChangeEquivAux C W (.some x y h) =
       .some (mapAffineCoordinates C (x, y)).1 (mapAffineCoordinates C (x, y)).2
         ((nonsingular_mapAffineCoordinates_iff C W (x, y)).mp h) :=
   rfl
 
-private lemma some_congr {W' : Affine K} {x₁ y₁ x₂ y₂ : K} (hx : x₁ = x₂) (hy : y₁ = y₂)
+private lemma some_congr {W' : Affine F} {x₁ y₁ x₂ y₂ : F} (hx : x₁ = x₂) (hy : y₁ = y₂)
     {h₁ : W'.Nonsingular x₁ y₁} {h₂ : W'.Nonsingular x₂ y₂} :
     Point.some x₁ y₁ h₁ = Point.some x₂ y₂ h₂ := by
   subst hx hy
   rfl
 
-variable [DecidableEq K]
+variable [DecidableEq F]
 
 private theorem variableChangeEquivAux_add (P Q : (C • W).toAffine.Point) :
     variableChangeEquivAux C W (P + Q) =
@@ -388,18 +391,23 @@ the points of $W$; its inverse applies the coordinate map of $C^{-1}$. -/
   map_add' := variableChangeEquivAux_add
 
 @[simp]
-lemma variableChangeAddEquiv_some {x y : K} (h : (C • W).toAffine.Nonsingular x y) :
+lemma variableChangeAddEquiv_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     variableChangeAddEquiv C W (.some x y h) =
       .some (mapAffineCoordinates C (x, y)).1 (mapAffineCoordinates C (x, y)).2
         ((nonsingular_mapAffineCoordinates_iff C W (x, y)).mp h) := by
   rfl
 
 @[simp]
-lemma variableChangeAddEquiv_symm_some {x y : K} (h : W.toAffine.Nonsingular x y) :
+lemma variableChangeAddEquiv_symm_some {x y : F} (h : W.toAffine.Nonsingular x y) :
     (variableChangeAddEquiv C W).symm (.some x y h) =
       .some (mapAffineCoordinates C⁻¹ (x, y)).1 (mapAffineCoordinates C⁻¹ (x, y)).2
         ((nonsingular_mapAffineCoordinates_iff C W _).mpr
           (by rw [mapAffineCoordinates_apply_inv]; exact h)) := by
   rfl
+
+theorem variableChangeAddEquiv_toEquiv [W.IsElliptic] :
+    (variableChangeAddEquiv C W).toEquiv = VariableChange.pointEquiv C W := by
+  ext P
+  rcases P with _ | ⟨x, y, h⟩ <;> rfl
 
 end WeierstrassCurve.Affine.Point

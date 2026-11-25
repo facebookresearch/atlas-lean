@@ -152,4 +152,12 @@ example : Affine.Point.variableChangeAddEquiv change₂ curve (q₁₃ + q₄₁
   simp only [q₃₀, p₃₀, Affine.Point.variableChangeAddEquiv_some, Affine.Point.some.injEq]
   decide
 
+/-- On the elliptic `curve`, the point bijection `VariableChange.pointEquiv` is the underlying
+equivalence of the additive equivalence, so it also sends `(1, 3)` to `(0, 0)`. -/
+example : VariableChange.pointEquiv change₂ curve q₁₃ = p₀₀ := by
+  rw [← Affine.Point.variableChangeAddEquiv_toEquiv]
+  simp only [AddEquiv.toEquiv_eq_coe, AddEquiv.coe_toEquiv, q₁₃, p₀₀,
+    Affine.Point.variableChangeAddEquiv_some, Affine.Point.some.injEq]
+  decide
+
 end MathlibExtTest.AlgebraicGeometry.EllipticCurve.VariableChangePoint
