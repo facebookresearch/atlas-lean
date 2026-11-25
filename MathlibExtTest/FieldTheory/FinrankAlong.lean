@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.FieldTheory.FinrankAlong
 public import Mathlib.Algebra.Polynomial.Expand
-public import Mathlib.FieldTheory.RatFunc.Basic
+public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 
 @[expose] public section
 
@@ -36,6 +36,19 @@ example {K F M T : Type*} [Field K] [Field F] [Field M] [Field T]
 example {K F : Type*} [Field K] [Field F] [Algebra K F] :
     finrankAlong (AlgHom.id K F) = Module.finrank F F :=
   rfl
+
+/-- The identity is finite, so its degree is nonzero. -/
+example {K F : Type*} [Field K] [Field F] [Algebra K F] :
+    finrankAlong (AlgHom.id K F) ≠ 0 :=
+  (finrankAlong_ne_zero_iff _).mpr (AlgHom.Finite.id K F)
+
+/-- Infinite case: `t` is transcendental over `K`, so `K(t)` is
+infinite-dimensional over `K` and the structure map `K → K(t)` has degree `0`. -/
+example {K : Type*} [Field K] : finrankAlong (Algebra.ofId K K⟮X⟯) = 0 := by
+  by_contra h
+  have : Module.Finite K K⟮X⟯ :=
+    RingHom.finite_algebraMap.mp ((finrankAlong_ne_zero_iff _).mp h)
+  exact RatFunc.transcendental_X (IsAlgebraic.of_finite K _)
 
 /-- A homomorphism of degree one is surjective. -/
 private theorem surjective_of_finrankAlong_eq_one {K F F' : Type*} [Field K] [Field F]

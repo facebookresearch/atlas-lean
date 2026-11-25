@@ -34,6 +34,7 @@ module
 public import Mathlib.Algebra.Algebra.Hom
 public import Mathlib.LinearAlgebra.Dimension.Free
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+import Mathlib.LinearAlgebra.Dimension.Finite
 
 @[expose] public section
 
@@ -44,10 +45,25 @@ variable {K F F' F'' : Type*} [Field K] [Field F] [Field F'] [Field F'']
 
 /-- The degree of a field homomorphism, viewed along the homomorphism:
 the dimension of the target field over the source field, where the
-source acts through the homomorphism. -/
+source acts through the homomorphism. As with `Module.finrank`, it is `0`
+when the target is infinite-dimensional over the source; `finrankAlong_pos_iff`
+and `finrankAlong_ne_zero_iff` characterize the finite case. -/
 noncomputable def finrankAlong (φ : F →ₐ[K] F') : ℕ :=
   letI := φ.toRingHom.toAlgebra
   Module.finrank F F'
+
+/-- The degree along a homomorphism is positive exactly when the target is
+finite over the source acting through the homomorphism. -/
+theorem finrankAlong_pos_iff (φ : F →ₐ[K] F') : 0 < finrankAlong φ ↔ φ.Finite := by
+  let := φ.toRingHom.toAlgebra
+  rw [finrankAlong, AlgHom.Finite, RingHom.Finite]
+  exact ⟨fun h ↦ Module.finite_of_finrank_pos h, fun _ ↦ Module.finrank_pos⟩
+
+/-- The degree along a homomorphism is nonzero exactly when the target is
+finite over the source acting through the homomorphism; an infinite
+extension has degree `0`. -/
+theorem finrankAlong_ne_zero_iff (φ : F →ₐ[K] F') : finrankAlong φ ≠ 0 ↔ φ.Finite := by
+  rw [← finrankAlong_pos_iff, Nat.pos_iff_ne_zero]
 
 /-- The degree along a composite is the product of the degrees. -/
 theorem finrankAlong_comp (φ : F →ₐ[K] F') (χ : F' →ₐ[K] F'') :
