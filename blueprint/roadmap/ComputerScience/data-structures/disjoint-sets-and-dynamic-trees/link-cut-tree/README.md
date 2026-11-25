@@ -88,3 +88,4 @@
 - [Edge cutting preserves validity](cut-edge-2.md)
 - [Cutting an edge separates its endpoints](not-connected-cut-edge.md)
 - [An edge cut keeps every other edge](adjacent-cut-edge.md)
+- [Link-cut trees take logarithmic amortized time](link-cut-trees-take-logarithmic-amortized-time.md)
