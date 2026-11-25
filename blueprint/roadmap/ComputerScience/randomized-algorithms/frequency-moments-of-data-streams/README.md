@@ -52,6 +52,7 @@ the public coin of a communication protocol (see [the model](streaming-algorithm
 - [Frequency moment of a stream](freq-moment.md)
 - [Linear space for approximating the largest multiplicity](space-lower-bound-max-freq.md)
 - [Polynomial space for approximating $F_k$, $k \ge 6$](space-lower-bound-freq-moment.md)
+- [Join-size estimation from shared-sign AMS sketches](join-size-estimation-from-shared-sign-ams-sketches.md)
 
 ## Related topics
 

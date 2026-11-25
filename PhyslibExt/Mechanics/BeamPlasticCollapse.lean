@@ -122,9 +122,10 @@ open Matrix
 
 /-! ## A. Finite model data -/
 
-/-- Compatibility matrix of the three-hinge mechanism of a fixed-ended beam of span `L`: the
-sagging hinge rotations at the left end, mid-span and right end per unit central deflection,
-`-2 / L`, `4 / L` and `-2 / L` (rows: critical sections; column: central deflection). -/
+/-- Compatibility matrix of the three-hinge mechanism of a fixed-ended beam of span `L`: the sagging
+hinge rotations at the left end, mid-span and right end per unit central deflection, `-2 / L`,
+`4 / L` and `-2 / L` (rows: critical sections; column: central deflection). With the convention
+`x / 0 = 0` it is the zero matrix at `L = 0`. -/
 noncomputable def hingeRotation (L : ℝ) : Matrix (Fin 3) (Fin 1) ℝ :=
   !![-2 / L; 4 / L; -2 / L]
 
@@ -134,18 +135,20 @@ half the central deflection. -/
 noncomputable def uniformLoadWork (L : ℝ) : Fin 1 → ℝ :=
   ![L / 2]
 
-/-- Deflection at `x` of the three-hinge mechanism of a fixed-ended beam of span `L` with
-central deflection `δ` (positive in the load direction): two rigid segments, linear from the
-supports to mid-span, `2 * δ / L * min x (L - x)` on `0 ≤ x ≤ L`. -/
+/-- Deflection at `x` of the three-hinge mechanism of a fixed-ended beam of span `L` with central
+deflection `δ` (positive in the load direction): two rigid segments, linear from the supports to
+mid-span, `2 * δ / L * min x (L - x)` on `0 ≤ x ≤ L`. With the convention `x / 0 = 0` it is
+identically `0` when `L = 0`. -/
 noncomputable def mechanismDeflection (L δ x : ℝ) : ℝ :=
   2 * δ / L * min x (L - x)
 
 /-! ## B. Collapse certificates -/
 
-/-- Static certificate at Kazinczy's collapse load (Neal, Fig. 2.5(d)): the moments `-Mp` at
-the ends and `Mp` at mid-span are in equilibrium with the uniform load of intensity
-`16 * Mp / L ^ 2` and do not exceed the plastic moment. Equilibrium holds for every real `L`
-(totalized division at `L = 0`); the physical reading is `0 < L`. -/
+/-- Static certificate at Kazinczy's collapse load (Neal, Fig. 2.5(d)): the moments `-Mp` at the
+ends and `Mp` at mid-span are in equilibrium with the uniform load of intensity `16 * Mp / L ^ 2`
+and do not exceed the plastic moment. Equilibrium holds for every real `L`: at `L = 0` the
+convention `x / 0 = 0` makes the matrix, the load intensity and both sides `0`; the physical reading
+is `0 < L`. -/
 theorem collapseMoments_staticCertificate (L : ℝ) {Mp : ℝ} (hMp : 0 ≤ Mp) :
     (hingeRotation L)ᵀ *ᵥ ![-Mp, Mp, -Mp] = (16 * Mp / L ^ 2) • uniformLoadWork L ∧
       ∀ e : Fin 3, |![-Mp, Mp, -Mp] e| ≤ Mp := by
@@ -180,10 +183,12 @@ theorem collapseMechanism_kinematicCertificate {L : ℝ} (Mp : ℝ) (hL : 0 < L)
     field_simp
     ring
 
-/-- The static and kinematic certificates match: at each critical section the moment `-Mp`,
-`Mp`, `-Mp` has the sign of the hinge rotation of the normalized mechanism, so
+/-- The static and kinematic certificates match: at each critical section, for the moments
+`σ = ![-Mp, Mp, -Mp]` and the hinge rotations `θ` of the normalized mechanism,
 `Mp * |θ e| = σ e * θ e` (no slack). This is the complementarity hypothesis of
-`PlasticWork.loadFactor_eq_of_complementary`; it holds for all real `L` and `Mp`. -/
+`PlasticWork.loadFactor_eq_of_complementary`; it holds for all real `L` and `Mp` (at `L = 0` the
+rotations are `0` by the convention `x / 0 = 0` and both sides vanish). For `L ≠ 0`,
+`σ e = Mp * sign (θ e)`, so for `Mp > 0` each moment has the sign of its hinge rotation. -/
 lemma collapseCertificates_complementary (L Mp : ℝ) (e : Fin 3) :
     Mp * |(hingeRotation L *ᵥ ![2 / L]) e| =
       ![-Mp, Mp, -Mp] e * (hingeRotation L *ᵥ ![2 / L]) e := by
@@ -267,10 +272,11 @@ theorem unitMechanism_work {L : ℝ} (Mp w : ℝ) (hL : 0 < L) :
     field_simp
     ring
 
-/-- An inadmissible moment field is rejected: the elastic moments at the collapse load
-(Neal, p. 23: `-W l / 12` at the ends and `W l / 24` at mid-span, with `W l = 16 * Mp`) are
-in equilibrium with the load intensity `16 * Mp / L ^ 2` but exceed the plastic moment at the
-ends, so they are not a static certificate. Equilibrium holds for every real `L`. -/
+/-- An inadmissible moment field is rejected: the elastic moments at the collapse load (Neal, p. 23:
+`-W l / 12` at the ends and `W l / 24` at mid-span, with `W l = 16 * Mp`) are in equilibrium with
+the load intensity `16 * Mp / L ^ 2` but exceed the plastic moment at the ends, so they are not a
+static certificate. Equilibrium holds for every real `L` (at `L = 0` both sides are `0` by the
+convention `x / 0 = 0`). -/
 lemma elasticMoments_not_admissible (L : ℝ) {Mp : ℝ} (hMp : 0 < Mp) :
     (hingeRotation L)ᵀ *ᵥ ![-(4 * Mp / 3), 2 * Mp / 3, -(4 * Mp / 3)] =
         (16 * Mp / L ^ 2) • uniformLoadWork L ∧
@@ -305,12 +311,12 @@ theorem hingeRotation_transpose_mulVec_eq_iff {L : ℝ} (σ : Fin 3 → ℝ) (w 
   simp [hingeRotation, uniformLoadWork, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
   constructor <;> intro h <;> field_simp at h ⊢ <;> linarith
 
-/-- Admissibility between the hinges (Neal, Fig. 2.5(d)): the bending-moment diagram at
-collapse, the free moment `(w / 2) * (L * x - x ^ 2)` of the load intensity
-`w = 16 * Mp / L ^ 2` plus the end moments `-Mp`, stays within `± Mp` on the whole span
-`[0, L]`. For `0 < L` it takes the static certificate's values `-Mp`, `Mp`, `-Mp` at `x = 0`,
-`L / 2` and `L`. The statement holds for every real `L` (for `L < 0` the interval is empty);
-the physical reading is `0 < L`. -/
+/-- Admissibility between the hinges (Neal, Fig. 2.5(d)): the bending-moment diagram at collapse,
+the free moment `(w / 2) * (L * x - x ^ 2)` of the load intensity `w = 16 * Mp / L ^ 2` plus the end
+moments `-Mp`, stays within `± Mp` on the whole span `[0, L]`. For `0 < L` it takes the static
+certificate's values `-Mp`, `Mp`, `-Mp` at `x = 0`, `L / 2` and `L`. The statement holds for every
+real `L` (for `L < 0` the interval is empty; at `L = 0` it is `{0}`, where the value is `-Mp`, with
+`w = 0` by the convention `x / 0 = 0`); the physical reading is `0 < L`. -/
 lemma collapseMomentDiagram_abs_le (L : ℝ) {Mp : ℝ} (hMp : 0 ≤ Mp) :
     ∀ x ∈ Set.Icc 0 L, |(16 * Mp / L ^ 2 / 2) * (L * x - x ^ 2) - Mp| ≤ Mp := by
   intro x hx
@@ -349,11 +355,11 @@ lemma collapseMomentDiagram_abs_le (L : ℝ) {Mp : ℝ} (hMp : 0 ≤ Mp) :
     simp
     rw [abs_of_nonneg hMp]
 
-/-- Compatibility bridge: the hinge rotations `hingeRotation L *ᵥ ![δ]` are the slope jumps of
-the mechanism deflection. Its segments have slopes `s₁` on `(0, L / 2)` and `s₂` on
-`(L / 2, L)`; with zero slope at the clamped supports, each sagging hinge rotation is the slope
-on its left minus the slope on its right. For `0 < L` the slopes are `2 * δ / L` and
-`-(2 * δ / L)`; for `L ≤ 0` the segments are empty and the statement has no content. -/
+/-- Compatibility bridge: the hinge rotations `hingeRotation L *ᵥ ![δ]` are the slope jumps of the
+mechanism deflection. Its segments have slopes `s₁` on `(0, L / 2)` and `s₂` on `(L / 2, L)`; with
+zero slope at the clamped supports, each sagging hinge rotation is the slope on its left minus the
+slope on its right. For `0 < L` the slopes are `2 * δ / L` and `-(2 * δ / L)`; for `L ≤ 0` the two
+intervals are empty and the derivative conditions are vacuous. -/
 lemma hingeRotation_mulVec_eq_slopeJumps (L δ : ℝ) :
     ∃ s₁ s₂ : ℝ, (∀ x ∈ Set.Ioo 0 (L / 2), HasDerivAt (mechanismDeflection L δ) s₁ x) ∧
       (∀ x ∈ Set.Ioo (L / 2) L, HasDerivAt (mechanismDeflection L δ) s₂ x) ∧

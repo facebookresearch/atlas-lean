@@ -51,9 +51,9 @@ and the jump `x ↦ x`, which does not change the path.
 ## Main results
 
 * `JumpHold.lintegral_discountedStop_le`: under the one-step drift condition
-  `q(x) · E[V(ξ x)] ≤ (q(x) + c) V(x)` (that is, `L V ≤ c V`), the stopped discounted process is a
-  supermartingale: `E[e^{-c T_{n ∧ σ}} V(Y_{n ∧ σ})] ≤ V(x₀)` for the first entrance `σ` into any
-  set `A`. With `A = ∅` this is the discounted moment bound
+  `q(x) · E[V(ξ x)] ≤ (q(x) + c) V(x)` (that is, `L V ≤ c V`), the stopped discounted process has
+  mean at most its initial value: `E[e^{-c T_{n ∧ σ}} V(Y_{n ∧ σ})] ≤ V(x₀)` for every `n` and the
+  first entrance `σ` into any set `A`. With `A = ∅` this is the discounted moment bound
   `JumpHold.lintegral_exp_jumpTime_mul_le`.
 * `JumpHold.measure_reach_le`: the probability of reaching `{V ≥ m}` by time `t` is at most
   `e^{c t} V(x₀) / m`.
@@ -69,7 +69,7 @@ and the jump `x ↦ x`, which does not change the path.
 ## Proof outline
 
 The recursion on the first step and the independence of the first step from the rest
-(`JumpHold.inputMeasure_map_first`) reduce the supermartingale bound to one step, where the
+(`JumpHold.inputMeasure_map_first`) reduce the mean bound to one step, where the
 Laplace transform `E[e^{-c E / q}] = q / (q + c)` of the clock cancels the drift factor
 `(q + c) / q`. On the event that the jump times stay below `t`, either the chain enters
 `{V ≥ m}` (probability at most `e^{c t} V(x₀) / m` by Markov's inequality applied to the stopped
@@ -127,11 +127,13 @@ instance (P : S → PMF S) : IsProbabilityMeasure (inputMeasure P) := by
 
 end Measure
 
-/-- The `n`-th holding time `E n / q (Y n)` of the chain started at `x`. -/
+/-- The `n`-th holding time `E n / q (Y n)` of the chain started at `x`, meant for positive rates
+`q` and nonnegative clocks. With the convention `a / 0 = 0` it is `0` when `q (Y n) = 0`. -/
 noncomputable def holdingTime (q : S → ℝ) (x : S) (ω : ℕ → (S → S) × ℝ) (n : ℕ) : ℝ :=
   (ω n).2 / q (ctmcJumpChain x ω n)
 
-/-- The `n`-th jump time `T n = S 0 + ⋯ + S (n - 1)` of the chain started at `x`. -/
+/-- The `n`-th jump time `T n = H 0 + ⋯ + H (n - 1)` of the chain started at `x`, the sum of the
+first `n` holding times `H k` (so `T 0 = 0`; with `a / 0 = 0`, a state with `q = 0` adds `0`). -/
 noncomputable def jumpTime (q : S → ℝ) (x : S) (ω : ℕ → (S → S) × ℝ) (n : ℕ) : ℝ :=
   ∑ k ∈ range n, holdingTime q x ω k
 
@@ -140,7 +142,9 @@ theorem ctmcJumpChain_succ_eq (x : S) (ω : ℕ → (S → S) × ℝ) (j : ℕ) 
     ctmcJumpChain x ω (j + 1) = ctmcJumpChain ((ω 0).1 x) (ctmcShift 1 ω) j := by
   rw [show ((ω 0).1 x) = ctmcJumpChain x ω 1 from rfl, ctmcJumpChain_shift, Nat.add_comm]
 
-/-- First-step decomposition of the jump times. -/
+/-- First-step decomposition of the jump times: `T (j + 1) = E 0 / q x + T' j`, where `T'` are
+the jump times of the shifted steps started at `ξ 0 x`. With the convention `a / 0 = 0`,
+`E 0 / q x = 0` when `q x = 0`. -/
 theorem jumpTime_succ_eq (q : S → ℝ) (x : S) (ω : ℕ → (S → S) × ℝ) (j : ℕ) :
     jumpTime q x ω (j + 1) = (ω 0).2 / q x + jumpTime q ((ω 0).1 x) (ctmcShift 1 ω) j := by
   simp only [jumpTime, sum_range_succ', holdingTime, ctmcJumpChain_succ_eq]
@@ -148,7 +152,9 @@ theorem jumpTime_succ_eq (q : S → ℝ) (x : S) (ω : ℕ → (S → S) × ℝ)
 
 open scoped Classical in
 /-- The **stopped discounted Lyapunov process** `e^{-c T_{n ∧ σ}} V(Y_{n ∧ σ})`, where `σ` is
-the first entrance of the jump chain into `A`, defined by recursion on the first step. -/
+the first entrance of the jump chain into `A`, defined by recursion on the first step. With the
+convention `a / 0 = 0`, the discount factor `e^{-c E 0 / q x}` of a step from `x` is `1` when
+`q x = 0`. -/
 noncomputable def discountedStop (q : S → ℝ) (V : S → ℝ≥0∞) (c : ℝ) (A : Set S) :
     ℕ → S → (ℕ → (S → S) × ℝ) → ℝ≥0∞
   | 0, x, _ => V x
@@ -281,7 +287,8 @@ private lemma measurable_eval_first (x : S) :
     Measurable fun ω : ℕ → (S → S) × ℝ => (ω 0).1 x :=
   (measurable_pi_apply x).comp (measurable_pi_apply 0).fst
 
-/-- The stopped discounted process is measurable in the steps. -/
+/-- For a countable `S` with measurable singletons, the stopped discounted process is measurable
+in the steps. -/
 theorem measurable_discountedStop (n : ℕ) :
     ∀ x : S, Measurable fun ω => discountedStop q V c A n x ω := by
   induction n with
@@ -300,11 +307,12 @@ theorem measurable_discountedStop (n : ℕ) :
       exact ENNReal.measurable_ofReal.comp (Real.measurable_exp.comp
         ((((measurable_pi_apply 0).snd.div_const _).const_mul c).neg))
 
-/-- **Supermartingale bound for the stopped discounted Lyapunov process.** If off `A` the
-one-step drift condition `q(x) · E[V(ξ x)] ≤ (q(x) + c) V(x)` holds (for the generator
-`L V(x) = q(x) (∑_y P x y V(y) - V(x))` this is `L V ≤ c V`), then
+/-- **Mean bound for the stopped discounted Lyapunov process.** Let `S` be countable
+with measurable singletons, `q > 0` and `c ≥ 0`. If off `A` the one-step drift condition
+`q(x) · E[V(ξ x)] ≤ (q(x) + c) V(x)` holds (where `V(x)` and `E[V(ξ x)]` are finite, this is
+`L V(x) ≤ c V(x)` for the generator `L V(x) = q(x) (∑_y P x y V(y) - V(x))`), then
 `E[e^{-c T_{n ∧ σ}} V(Y_{n ∧ σ})] ≤ V(x)` for every `n`, where `σ` is the first entrance into
-`A`. -/
+`A` and `E` is the lower integral under the input law. -/
 theorem lintegral_discountedStop_le (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
     (hdrift : ∀ x ∉ A, ENNReal.ofReal (q x) * ∫⁻ y, V y ∂(P x).toMeasure ≤
       ENNReal.ofReal (q x + c) * V x)
@@ -366,8 +374,9 @@ theorem lintegral_discountedStop_le (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
             mul_comm (∫⁻ y, V y ∂(P x).toMeasure), mul_comm (V x)]
           exact hdrift x hx
 
-/-- **Discounted moment bound** (`A = ∅`): under `L V ≤ c V`,
-`E[e^{-c T_n} V(Y_n)] ≤ V(x)` for every `n`. -/
+/-- **Discounted moment bound** (`A = ∅`): for countable `S` with measurable singletons, `q > 0`
+and `c ≥ 0`, under `L V ≤ c V` (one-step form, at every state),
+`E[e^{-c T_n} V(Y_n)] ≤ V(x)` for every `n` (a lower integral under the input law). -/
 theorem lintegral_exp_jumpTime_mul_le (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
     (hdrift : ∀ x, ENNReal.ofReal (q x) * ∫⁻ y, V y ∂(P x).toMeasure ≤
       ENNReal.ofReal (q x + c) * V x)
@@ -378,9 +387,10 @@ theorem lintegral_exp_jumpTime_mul_le (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
   refine le_of_eq_of_le (lintegral_congr fun ω => ?_) h
   exact (discountedStop_eq_of_forall_notMem n x ω fun j _ => Set.notMem_empty _).symm
 
-/-- **Exit bound.** Under `L V ≤ c V` (one-step form), the probability that the chain started at
-`x₀` reaches `{V ≥ m}` by time `t` is at most `e^{c t} V(x₀) / m`. The event is phrased with the
-first entrance `k` into `{V ≥ m}`. -/
+/-- **Exit bound.** Let `S` be countable with measurable singletons, `q > 0`, `c ≥ 0`, `V` finite
+and `m > 0`. Under `L V ≤ c V` (one-step form, at every state), the probability that the chain
+started at `x₀` reaches `{V ≥ m}` by time `t` is at most `e^{c t} V(x₀) / m`. The event is phrased
+with the first entrance `k` into `{V ≥ m}`. -/
 theorem measure_reach_le {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
     (hdrift : ∀ x, ENNReal.ofReal (q x) * ∫⁻ y, (V y : ℝ≥0∞) ∂(P x).toMeasure ≤
       ENNReal.ofReal (q x + c) * V x)
@@ -427,10 +437,11 @@ theorem measure_reach_le {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc : 0 ≤ c
         rw [ENNReal.mul_inv (Or.inr ENNReal.coe_ne_top) (Or.inl ENNReal.ofReal_ne_top), hinv]
         ring
 
-/-- **Non-explosion** (Foster–Lyapunov criterion; Meyn–Tweedie 1993, Theorem 2.1). Let `q > 0`
-and let `V ≥ 0` satisfy the one-step drift condition `q(x) · E[V(ξ x)] ≤ (q(x) + c) V(x)`
-(that is, `L V ≤ c V`) with `c ≥ 0`, and let the rates be bounded on each sublevel set
-`{V < m}`. Then almost surely the jump times of the chain started at any `x₀` tend to `∞`. -/
+/-- **Non-explosion** (Foster–Lyapunov criterion; Meyn–Tweedie 1993, Theorem 2.1). Let `S` be
+countable with measurable singletons and `q > 0`, let a finite `V ≥ 0` satisfy the one-step drift
+condition `q(x) · E[V(ξ x)] ≤ (q(x) + c) V(x)` at every state (that is, `L V ≤ c V`) with
+`c ≥ 0`, and let the rates be bounded on each sublevel set `{V < m}`. Then for every `x₀`, almost
+surely the jump times of the chain started at `x₀` tend to `∞`. -/
 theorem ae_tendsto_jumpTime_atTop {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
     (hdrift : ∀ x, ENNReal.ofReal (q x) * ∫⁻ y, (V y : ℝ≥0∞) ∂(P x).toMeasure ≤
       ENNReal.ofReal (q x + c) * V x)
@@ -491,7 +502,9 @@ theorem ae_tendsto_jumpTime_atTop {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc 
 /-! #### The path and a fixed-time moment bound -/
 
 /-- The state at time `s` of the chain started at `x` and stopped after `n` jumps, by recursion
-on the first step. -/
+on the first step. With the convention `a / 0 = 0`, a state with `q x = 0` is left at once at
+every time `s ≥ 0`; for positive rates and nonnegative clocks, the state at a time `s < 0` is
+`x`. -/
 noncomputable def stateAt (q : S → ℝ) : ℕ → S → ℝ → (ℕ → (S → S) × ℝ) → S
   | 0, x, _, _ => x
   | n + 1, x, s, ω =>
@@ -499,7 +512,8 @@ noncomputable def stateAt (q : S → ℝ) : ℕ → S → ℝ → (ℕ → (S �
     else stateAt q n ((ω 0).1 x) (s - (ω 0).2 / q x) (ctmcShift 1 ω)
 
 omit [Countable S] [MeasurableSpace S] [MeasurableSingletonClass S] in
-/-- Once `s < T m`, running more jumps does not change the state at time `s`. -/
+/-- For `0 ≤ s < T m` and `m ≤ n`, running `n` instead of `m` jumps does not change the state at
+time `s`. -/
 theorem stateAt_eq_of_lt (m : ℕ) :
     ∀ (n : ℕ) (x : S) (s : ℝ) (ω : ℕ → (S → S) × ℝ), 0 ≤ s → s < jumpTime q x ω m → m ≤ n →
       stateAt q n x s ω = stateAt q m x s ω := by
@@ -515,14 +529,14 @@ theorem stateAt_eq_of_lt (m : ℕ) :
       exact ih n _ _ _ (by linarith [not_lt.mp h]) (by linarith) (by omega)
 
 omit [Countable S] [MeasurableSpace S] [MeasurableSingletonClass S] in
-/-- With nonnegative clocks the jump times are nonnegative. -/
+/-- With positive rates and nonnegative clocks the jump times are nonnegative. -/
 theorem jumpTime_nonneg (hq : ∀ x, 0 < q x) {ω : ℕ → (S → S) × ℝ} (hE : ∀ k, 0 ≤ (ω k).2)
     (x : S) (n : ℕ) : 0 ≤ jumpTime q x ω n :=
   sum_nonneg fun k _ => div_nonneg (hE k) (hq _).le
 
 omit [Countable S] [MeasurableSpace S] [MeasurableSingletonClass S] in
-/-- With nonnegative clocks, if `T k ≤ s < T (k + 1)` and `k < n`, then the state at time `s`
-is `Y k`. -/
+/-- With positive rates and nonnegative clocks, if `T k ≤ s < T (k + 1)` and `k < n`, then the
+state at time `s` is `Y k`. -/
 theorem stateAt_eq_ctmcJumpChain (hq : ∀ x, 0 < q x) (n : ℕ) :
     ∀ (x : S) (s : ℝ) (ω : ℕ → (S → S) × ℝ) (k : ℕ), (∀ j, 0 ≤ (ω j).2) → k < n →
       jumpTime q x ω k ≤ s → s < jumpTime q x ω (k + 1) →
@@ -548,7 +562,8 @@ theorem stateAt_eq_ctmcJumpChain (hq : ∀ x, 0 < q x) (n : ℕ) :
 open scoped Classical in
 /-- The **path** `X s` of the chain started at `x`: the state at time `s` after enough jumps.
 If `s` is at or after the explosion time (a null event under the hypotheses of
-`ae_tendsto_jumpTime_atTop`), the value is the junk state `x`. -/
+`ae_tendsto_jumpTime_atTop`), the value is the junk state `x`. For `s < 0` it is `x` too, since
+`T 0 = 0`. -/
 noncomputable def path (q : S → ℝ) (x : S) (ω : ℕ → (S → S) × ℝ) (s : ℝ) : S :=
   if h : ∃ n, s < jumpTime q x ω n then stateAt q (Nat.find h) x s ω else x
 
@@ -562,14 +577,15 @@ theorem stateAt_eq_path {n : ℕ} {x : S} {ω : ℕ → (S → S) × ℝ} {s : �
   exact stateAt_eq_of_lt _ n x s ω hs (Nat.find_spec h) (Nat.find_min' h hn)
 
 omit [Countable S] [MeasurableSpace S] [MeasurableSingletonClass S] in
-/-- With nonnegative clocks, `X s = Y k` for `T k ≤ s < T (k + 1)`. -/
+/-- With positive rates and nonnegative clocks, `X s = Y k` for `T k ≤ s < T (k + 1)`. -/
 theorem path_eq_ctmcJumpChain (hq : ∀ x, 0 < q x) {x : S} {ω : ℕ → (S → S) × ℝ}
     (hE : ∀ j, 0 ≤ (ω j).2) {s : ℝ} {k : ℕ} (h₁ : jumpTime q x ω k ≤ s)
     (h₂ : s < jumpTime q x ω (k + 1)) : path q x ω s = ctmcJumpChain x ω k := by
   rw [← stateAt_eq_path ((jumpTime_nonneg hq hE x k).trans h₁) h₂]
   exact stateAt_eq_ctmcJumpChain hq (k + 1) x s ω k hE (Nat.lt_succ_self k) h₁ h₂
 
-/-- The state at time `s` after `n` jumps is jointly measurable in `s` and the steps. -/
+/-- For a countable `S` with measurable singletons, the state at time `s` after `n` jumps is
+jointly measurable in `s` and the steps. -/
 theorem measurable_stateAt (n : ℕ) :
     ∀ x : S, Measurable fun p : ℝ × (ℕ → (S → S) × ℝ) => stateAt q n x p.1 p.2 := by
   induction n with
@@ -653,7 +669,8 @@ private lemma lintegral_expMeasure_ite {q c s A B : ℝ} (hq : 0 < q) (hc : 0 �
   rw [← he]
   field_simp
 
-/-- **Fixed-time moment bound, stopped after `n` jumps.** Under `L V ≤ c V` (one-step form),
+/-- **Fixed-time moment bound, stopped after `n` jumps.** Let `S` be countable with measurable
+singletons, `q > 0`, `c ≥ 0` and `V` finite. Under `L V ≤ c V` (one-step form, at every state),
 `E[V(X_s^{(n)})] ≤ e^{c s} V(x)` for every `s ≥ 0` and `n`, where `X^{(n)}` is the chain stopped
 after `n` jumps. -/
 theorem lintegral_stateAt_le {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc : 0 ≤ c)
@@ -774,9 +791,11 @@ end JumpHold
 
 /-- A **stochastic chemical reaction network** on the species `S` with reactions `ρ`: a reaction
 network (source and product complexes) together with propensities `λ_r : ℕ^S → ℝ`, `λ_r ≥ 0`,
-that vanish when the state lacks the reactants of `r` (as mass-action propensities
-`κ_r ∏_s x_s! / (x_s - src_r s)!` do). Reaction `r` fires at rate `λ_r(x)` and moves the state
-to `x - src r + prod r` (Anderson–Kurtz 2015, ch. 2). -/
+that vanish when the state lacks the reactants of `r`, that is, when `x s < src r s` for some
+species `s` (with finitely many species, the mass-action propensities
+`κ_r ∏_s x_s (x_s - 1) ⋯ (x_s - src r s + 1)` with `κ_r ≥ 0` do). Reaction `r` fires at rate
+`λ_r(x)` and moves the state to `x - src r + prod r`, a subtraction that is exact whenever
+`λ_r(x) > 0` (Anderson–Kurtz 2015, ch. 2). -/
 structure StochasticCRN (S ρ : Type*) where
   /-- The underlying reaction network. -/
   network : ComplexBalanced.ReactionNetwork S ρ
@@ -789,7 +808,9 @@ namespace StochasticCRN
 
 variable {S ρ : Type*} (N : StochasticCRN S ρ)
 
-/-- The state after reaction `r` fires at `x`: `x - src r + prod r`. -/
+/-- The state after reaction `r` fires at `x`: `x - src r + prod r`, computed coordinatewise in
+`ℕ`, where truncated subtraction gives `x s - src r s = 0` when `x s < src r s`. It is the usual
+vector when `src r ≤ x`, the only case in which the propensity `λ_r(x)` can be nonzero. -/
 def jump (r : ρ) (x : S → ℕ) : S → ℕ := x - N.network.src r + N.network.prod r
 
 variable [Fintype ρ]
@@ -801,7 +822,9 @@ noncomputable def totalRate (x : S → ℕ) : ℝ := ∑ r, N.propensity r x
 an absorbing state (total propensity `0`), where the chain then jumps `x ↦ x`. -/
 noncomputable def holdRate (x : S → ℕ) : ℝ := if N.totalRate x = 0 then 1 else N.totalRate x
 
-/-- The **generator** of the CRN: `L V(x) = ∑_r λ_r(x) (V(x - src r + prod r) - V(x))`. -/
+/-- The **generator** of the CRN: `L V(x) = ∑_r λ_r(x) (V(x - src r + prod r) - V(x))`, with
+truncated subtraction in `x - src r + prod r`. A reaction whose reactants are missing at `x` has
+`λ_r(x) = 0` and contributes nothing: only reactions with `src r ≤ x` enter the sum. -/
 noncomputable def generator (V : (S → ℕ) → ℝ) (x : S → ℕ) : ℝ :=
   ∑ r, N.propensity r x * (V (N.jump r x) - V x)
 
@@ -823,8 +846,10 @@ noncomputable def reactionPMF (x : S → ℕ) (h : N.totalRate x ≠ 0) : PMF ρ
     change ENNReal.ofReal (N.totalRate x / N.totalRate x) = 1
     rw [div_self h, ENNReal.ofReal_one])
 
-/-- The jump kernel of the CRN: the law of the next state, `x - src r + prod r` with
-probability `λ_r(x) / λ(x)`; an absorbing state jumps to itself. -/
+/-- The jump kernel of the CRN: the law of the next state. If `λ(x) > 0`, the next state is
+`x - src r + prod r` for a reaction `r` drawn with probability `λ_r(x) / λ(x)`, so reactions that
+lead to the same state add up their probabilities; an absorbing state (`λ(x) = 0`) jumps to
+itself. -/
 noncomputable def jumpPMF (x : S → ℕ) : PMF (S → ℕ) :=
   if h : N.totalRate x = 0 then PMF.pure x else (N.reactionPMF x h).map (N.jump · x)
 
@@ -852,8 +877,10 @@ theorem sum_propensity_mul_jump (V : (S → ℕ) → ℝ) (x : S → ℕ) :
 
 variable [Finite S]
 
-/-- **Bridge from the generator to the one-step drift condition**: `L V ≤ c V` at `x` gives
-`q(x) · E[V(next)] ≤ (q(x) + c) V(x)` for the jump–hold chain of the CRN. -/
+/-- **Bridge from the generator to the one-step drift condition**: for `V ≥ 0` and `c ≥ 0`,
+`L V(x) ≤ c V(x)` at one state `x` gives `q(x) · E[V(next)] ≤ (q(x) + c) V(x)` for the jump–hold
+chain of the CRN, where `q` is the holding rate and `E[V(next)]` is the lower integral of `V`
+against the jump kernel at `x` (a finite sum). -/
 theorem drift_of_generator_le (V : (S → ℕ) → ℝ≥0) {c : ℝ} (hc : 0 ≤ c) (x : S → ℕ)
     (h : N.generator (fun y => (V y : ℝ)) x ≤ c * V x) :
     ENNReal.ofReal (N.holdRate x) * ∫⁻ y, (V y : ℝ≥0∞) ∂(N.jumpPMF x).toMeasure ≤
@@ -898,8 +925,9 @@ theorem holdRate_bdd (V : (S → ℕ) → ℝ≥0)
   · exact le_max_right _ _
   · exact (hK x (by exact_mod_cast hx)).trans (le_max_left _ _)
 
-/-- **Discounted moment bound for a stochastic CRN**: if `L V ≤ c V` with `c ≥ 0`, then
-`E[e^{-c T_n} V(Y_n)] ≤ V(x₀)` for every number `n` of reactions. -/
+/-- **Discounted moment bound for a stochastic CRN**: if `V ≥ 0` satisfies `L V ≤ c V` at every
+state, with `c ≥ 0`, then `E[e^{-c T_n} V(Y_n)] ≤ V(x₀)` for every number `n` of jumps (fictitious
+jumps at absorbing states included), where `E` is the lower integral under the input law. -/
 theorem lintegral_exp_jumpTime_mul_le (V : (S → ℕ) → ℝ≥0) {c : ℝ} (hc : 0 ≤ c)
     (hdrift : ∀ x, N.generator (fun y => (V y : ℝ)) x ≤ c * V x) (n : ℕ) (x₀ : S → ℕ) :
     ∫⁻ ω, ENNReal.ofReal (Real.exp (-(c * N.jumpTime x₀ ω n))) * V (ctmcJumpChain x₀ ω n)
@@ -907,8 +935,8 @@ theorem lintegral_exp_jumpTime_mul_le (V : (S → ℕ) → ℝ≥0) {c : ℝ} (h
   JumpHold.lintegral_exp_jumpTime_mul_le (V := fun y => (V y : ℝ≥0∞)) N.holdRate_pos hc
     (fun x => N.drift_of_generator_le V hc x (hdrift x)) n x₀
 
-/-- **Non-explosion of a stochastic CRN** (Foster–Lyapunov criterion; Meyn–Tweedie 1993,
-Theorem 2.1; Gupta–Briat–Khammash 2014). If `V ≥ 0` satisfies the drift bound
+/-- **Drift criterion for non-explosion of a stochastic CRN** (Foster–Lyapunov criterion;
+Meyn–Tweedie 1993, Theorem 2.1; Gupta–Briat–Khammash 2014). If `V ≥ 0` satisfies the drift bound
 `L V ≤ a V + b` with `a, b ≥ 0`, and the total propensity is bounded on each sublevel set
 `{V < m}`, then from every initial state the jump times tend to `∞` almost surely: finite-time
 blow-up has probability `0`. -/
@@ -956,8 +984,9 @@ theorem ae_tendsto_jumpTime_atTop_of_coercive [Fintype S] (V : (S → ℕ) → �
     ∀ᵐ ω ∂N.inputMeasure, Tendsto (N.jumpTime x₀ ω) atTop atTop :=
   N.ae_tendsto_jumpTime_atTop V ha hb hdrift (N.bddRate_of_coercive (fun y => V y) hcoer) x₀
 
-/-- The process stays finite at every finite time: almost surely, for every `t`, some jump time
-exceeds `t`, so the path `X t` is defined by finitely many reactions. -/
+/-- Under the drift bound `L V ≤ a V + b` with `V ≥ 0` and `a, b ≥ 0`, with the total propensity
+bounded on each sublevel set `{V < m}`: from every initial state, almost surely, for every `t`
+some jump time exceeds `t`, so the path at every time `t` is reached after finitely many jumps. -/
 theorem ae_forall_exists_lt_jumpTime (V : (S → ℕ) → ℝ≥0) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
     (hdrift : ∀ x, N.generator (fun y => (V y : ℝ)) x ≤ a * V x + b)
     (hbdd : ∀ m : ℝ, ∃ K, ∀ x, (V x : ℝ) < m → N.totalRate x ≤ K) (x₀ : S → ℕ) :
@@ -965,12 +994,15 @@ theorem ae_forall_exists_lt_jumpTime (V : (S → ℕ) → ℝ≥0) {a b : ℝ} (
   filter_upwards [N.ae_tendsto_jumpTime_atTop V ha hb hdrift hbdd x₀] with ω hω t
   exact (hω.eventually_gt_atTop t).exists
 
-/-- The path `X t` of the CRN chain started at `x₀` (`JumpHold.path`). -/
+/-- The path `X t` of the CRN chain started at `x₀` (`JumpHold.path`): with nonnegative clocks,
+`X t = Y k` for `T k ≤ t < T (k + 1)`. It is `x₀` for `t < 0` and, as a junk value, when every
+jump time is at most `t` (explosion by time `t`). -/
 noncomputable def path (x₀ : S → ℕ) (ω : ℕ → ((S → ℕ) → (S → ℕ)) × ℝ) (t : ℝ) : S → ℕ :=
   JumpHold.path N.holdRate x₀ ω t
 
-/-- **Fixed-time moment bound for a stochastic CRN**: if `L V ≤ c V` with `c ≥ 0` and the total
-propensity is bounded on sublevel sets of `V`, then `E[V(X_t)] ≤ e^{c t} V(x₀)` for `t ≥ 0`. -/
+/-- **Fixed-time moment bound for a stochastic CRN**: if `V ≥ 0` satisfies `L V ≤ c V` with
+`c ≥ 0` and the total propensity is bounded on each sublevel set of `V`, then
+`E[V(X_t)] ≤ e^{c t} V(x₀)` for `t ≥ 0`, where `E` is the lower integral under the input law. -/
 theorem lintegral_path_le (V : (S → ℕ) → ℝ≥0) {c : ℝ} (hc : 0 ≤ c)
     (hdrift : ∀ x, N.generator (fun y => (V y : ℝ)) x ≤ c * V x)
     (hbdd : ∀ m : ℝ, ∃ K, ∀ x, (V x : ℝ) < m → N.totalRate x ≤ K) (x₀ : S → ℕ) {t : ℝ}

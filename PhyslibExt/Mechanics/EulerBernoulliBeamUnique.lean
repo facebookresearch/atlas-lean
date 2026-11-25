@@ -20,9 +20,10 @@ In the prescribed quartic class `a * x^4 + b * x^3 + c * x^2 +
 d * x + e`, the simply supported uniform-load conditions in
 coefficient form (constant fourth derivative through
 `24 * a * EI = w`, zero values at the supports, zero formal
-second-derivative values at the supports, nonzero span) determine
-the quartic uniquely: it is the uniform-load deflection profile,
-identified with the canonical `uniformLoadDeflection`.
+second-derivative values at the supports, nonzero stiffness and
+span) determine the quartic uniquely: it is the uniform-load
+deflection profile, identified with the canonical
+`uniformLoadDeflection`.
 
 ## ii. Key results
 
@@ -56,8 +57,8 @@ noncomputable def quarticFun (a b c d e x : ℝ) : ℝ :=
 constant fourth derivative encoded by `24 * a * EI = w`, value
 zero at both supports, and formal second-derivative values
 `2*c` at `0` and `12*a*L^2 + 6*b*L + 2*c` at `L` equal to zero,
-for nonzero span `L`, then it is exactly the uniform-load
-simply supported deflection profile. -/
+for nonzero stiffness `EI` and nonzero span `L`, then it is
+exactly the uniform-load simply supported deflection profile. -/
 theorem quartic_unique {a b c d e w EI L : ℝ} (hEI : EI ≠ 0)
     (hL : L ≠ 0) (hload : 24 * a * EI = w)
     (hp0 : quarticFun a b c d e 0 = 0)

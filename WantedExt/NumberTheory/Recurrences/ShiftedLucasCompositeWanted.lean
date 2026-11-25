@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.LucasQOneShiftComposite
+public import MathlibExt.NumberTheory.Recurrences.LucasSquareQFinitePrimes
 public import MathlibExt.NumberTheory.Recurrences.ShiftedLucasComposite
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Basic.Real.Basic
@@ -39,19 +40,6 @@ public theorem_wanted exists_shift_lucasU_q_neg_one_composite {P : ℤ} (hP : 1 
     ∃ K : ℤ, 0 < K ∧ ∀ n : ℕ, ∀ d ∈ ({-1, 0, 1} : Set ℤ),
       1 < lucasU ⟨P, -1, by decide⟩ n + K + d ∧
         ¬ (lucasU ⟨P, -1, by decide⟩ n + K + d).natAbs.Prime
-
-/-- **Lucas sequences with square $Q$ have finitely many prime terms.** Let $P$ and $Q$ be
-integers with $P \ge 1$ and $P^2 - 4Q > 0$, where $Q \ne 0$ is a perfect square, and let
-$U_n = U_n(P, Q)$ be the Lucas sequence with $U_0 = 0$, $U_1 = 1$ and
-$U_{n+2} = PU_{n+1} - QU_n$. Then $|U_n|$ is prime for only finitely many natural
-numbers $n$.
-
-Source: Dan Ismailescu, Daniel Hyunwoo Jeon, Aaron Kim, Joonbeom Kwon and Austin Lee,
-*Shifting Lucas Sequences Away from Primes*, INTEGERS 25 (2025), Article A42, Theorem 4(a)
-(quoted from their reference [2]) (`integers-2025-A42-thm-4`). -/
-public theorem_wanted lucasU_square_q_finite_primes {P Q : ℤ} (hQ : Q ≠ 0) (hP : 1 ≤ P)
-    (hD : 0 < P ^ 2 - 4 * Q) (hsq : IsSquare Q) :
-    {n : ℕ | (lucasU ⟨P, Q, hQ⟩ n).natAbs.Prime}.Finite
 
 /-- **Lucas sequences with power parameters have finitely many prime terms.** Let $x \ne y$
 be real numbers such that $x + y$ and $xy$ are integers, and let $r > 1$ be a natural

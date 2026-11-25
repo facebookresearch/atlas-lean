@@ -389,16 +389,6 @@ public theorem_wanted squareGrid_r3f {T : Type*} [Fintype T] [DecidableEq T]
 -- with odd `a.val`, `reflection_shift_solutions_even_odd`, are proved in
 -- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`, which this module imports.
 
-/-- **No solutions of $x = -1-x-a$ modulo $n$ when $n$ and $a$ are even.** Let $n$ be a
-positive even integer and $a \in \mathbb{Z}/n$ whose representative in $\{0, \dots, n-1\}$ is
-even. Then no $x \in \mathbb{Z}/n$ satisfies $x = -1-x-a$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Lemma 25. -/
-public theorem_wanted reflection_shift_solutions_even_even (n : ℕ) [NeZero n]
-    (a : ZMod n) (hn : Even n) (ha : Even a.val) :
-    {x : ZMod n | x = -1 - x - a} = ∅
-
 /-- **Cylinder fixed-tiling count for the half-turn when $m$ is even.** Let $T$ be a finite set of
 tile designs, let $n, m \ge 1$ with $m$ even, and let $\sigma$ be a permutation of $T$ with
 $\sigma^2 = 1$. Let $r^2$ be the cell map $(x, y) \mapsto (-1 - x, -1 - y)$ of

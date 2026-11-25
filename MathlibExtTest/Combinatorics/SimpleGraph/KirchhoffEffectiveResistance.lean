@@ -58,4 +58,50 @@ example :
       (by rwa [EndpointMapMultigraph.laplacian_dart_eq_lapMatrix])).1]
   norm_num [f]
 
+/-- The triangle has three spanning trees. -/
+example :
+    (∑ᶠ T : {T : (⊤ : SimpleGraph (Fin 3)).Subgraph // IsSpanningTree T},
+      ∏ᶠ e ∈ T.1.edgeSet, (fun _ => (1:ℝ)) e) = 3 := by
+  have hwt := weighted_matrix_tree (⊤ : SimpleGraph (Fin 3)) (fun _ => (1:ℝ)) 0
+  rw [hwt, EndpointMapMultigraph.laplacian_dart_eq_lapMatrix]
+  have hmap : ((⊤ : SimpleGraph (Fin 3)).lapMatrix ℤ).map (Int.castRingHom ℝ)
+      = (⊤ : SimpleGraph (Fin 3)).lapMatrix ℝ := by
+    ext x y
+    simp only [Matrix.map_apply, SimpleGraph.lapMatrix, Matrix.sub_apply, map_sub,
+      SimpleGraph.degMatrix, Matrix.diagonal_apply, SimpleGraph.adjMatrix_apply]
+    split_ifs <;> simp
+  have h3 : (reducedLaplacian (⊤ : SimpleGraph (Fin 3)) 0).det = 3 := by decide
+  rw [reducedLaplacian_eq_lapMatrix_submatrix] at h3
+  have hdet := congrArg (Int.castRingHom ℝ) h3
+  rw [RingHom.map_det_submatrix, hmap] at hdet
+  simpa using hdet
+
+/-- A disconnected graph has weighted spanning-tree sum zero. -/
+example :
+    (∑ᶠ T : {T : (⊥ : SimpleGraph (Fin 2)).Subgraph // IsSpanningTree T},
+      ∏ᶠ e ∈ T.1.edgeSet, (fun _ => (1:ℝ)) e) = 0 := by
+  have hwt := weighted_matrix_tree (⊥ : SimpleGraph (Fin 2)) (fun _ => (1:ℝ)) 0
+  rw [hwt, EndpointMapMultigraph.laplacian_dart_eq_lapMatrix]
+  have hmap : ((⊥ : SimpleGraph (Fin 2)).lapMatrix ℤ).map (Int.castRingHom ℝ)
+      = (⊥ : SimpleGraph (Fin 2)).lapMatrix ℝ := by
+    ext x y
+    simp only [Matrix.map_apply, SimpleGraph.lapMatrix, Matrix.sub_apply, map_sub,
+      SimpleGraph.degMatrix, Matrix.diagonal_apply, SimpleGraph.adjMatrix_apply]
+    split_ifs <;> simp
+  have h0 : (reducedLaplacian (⊥ : SimpleGraph (Fin 2)) 0).det = 0 := by decide
+  rw [reducedLaplacian_eq_lapMatrix_submatrix] at h0
+  have hdet := congrArg (Int.castRingHom ℝ) h0
+  rw [RingHom.map_det_submatrix, hmap] at hdet
+  simp
+
+/-- The weighted theorem applies to arbitrary conductances on the triangle. -/
+example (c : Sym2 (Fin 3) → ℝ) :
+    (∑ᶠ T : {T : (⊤ : SimpleGraph (Fin 3)).Subgraph // IsSpanningTree T},
+      ∏ᶠ e ∈ T.1.edgeSet, c e)
+      = ((EndpointMapMultigraph.laplacian (fun d : (⊤ : SimpleGraph (Fin 3)).Dart => d.fst)
+          (fun d => d.snd) (fun d => c d.edge / 2)).submatrix
+          (Subtype.val : {y : Fin 3 // y ≠ 0} → Fin 3)
+          (Subtype.val : {y : Fin 3 // y ≠ 0} → Fin 3)).det :=
+  weighted_matrix_tree (⊤ : SimpleGraph (Fin 3)) c 0
+
 end MathlibExt.GraphTheory.KirchhoffEffectiveResistanceWanted
