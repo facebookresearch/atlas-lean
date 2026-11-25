@@ -19,10 +19,10 @@ Fig. 1 restricted to one sequential thread per participant; the
 program-phrase typing rules [INACT], [SEND], [RCV], [SEL] and [BRANCH] of
 Fig. 7 (§4.4), where each participant's process carries a singleton typing
 `s̃ : T@p` (Notation 4.5) given by one local type; typing of a network by
-the projections of a well-formed global type (Definition 5.8 and [CRES],
-specialized; Proposition 5.5 makes the queue-free typing the right one);
-the free-variable property (Lemma 5.15, value variables); and value
-substitution (Lemma 5.18 (1)). HYC does not state value-context
+the projections of a well-formed global type (Definition 5.8, specialized
+to a total participant map; Proposition 5.5 makes the queue-free typing the
+right one); the free-variable property (Lemma 5.15, value variables); and
+value substitution (Lemma 5.18 (1)). HYC does not state value-context
 weakening; it is a standard structural lemma, included here as such.
 [Yoshida and Vasconcelos 2007] is cited only as HYC's reference for the
 proof of Lemma 5.18. This is a project specialization, not a verbatim
@@ -31,18 +31,20 @@ source statement.
 Dropped, each a nonclaim: session initiation ([MCAST], [MACC]), name
 restriction and shared-name sorts ([NRES]), delegation ([DELEG], [SREC]),
 recursion ([VAR], [DEF]), conditionals and Boolean expressions ([IF]),
-queues and every runtime typing rule, subtyping, parallel threads inside
-one participant, and decidability of typing (Proposition 4.6).
-
-Absorbed by representation, not proved: weakening by end-typed channels
-(Lemma 5.18 (2)), because every non-participant projects to `end` and runs
-`inact` (`Net.TypedBy.inact_of_not_mem`); and structural congruence
-(Theorem 5.19 (1)), because a network is a total function on participants.
+queues and every runtime typing rule (including [CRES] and subsumption
+[SUBS]), parallel threads inside one participant ([CONC]; processes of
+different participants are composed only by the fixed participant map
+`Net`), decidability of typing (Proposition 4.6), weakening by end-typed
+channels (Lemma 5.18 (2); there is no channel environment to weaken in
+the singleton typing used here), and structural congruence (Fig. 2) with
+subject congruence (Theorem 5.19 (1)); no congruence relation is defined.
 
 Project-specific, not from the source: value variables are de Bruijn
 indices (mirroring the π-calculus convention in `PiCalculus.Basic`); every
 value has one sort (`sortOf`), so synchronous step labels are determined;
-and typing is closed under `LocalType.braceEq` (`HasType` is ordered typing
+a network is total on participants and a non-participant projects to `end`,
+so typing forces it to run `inact` (`Net.TypedBy.inact_of_not_mem`); and
+typing is closed under `LocalType.braceEq` (`HasType` is ordered typing
 `HasType0` up to brace equality), because the finite LTS preserves
 bystander projections only up to brace equality. Projection uses plain
 merging (see `Multiparty.Projection`).
@@ -337,9 +339,11 @@ def HasType {P S V L : Type} [DecidableEq P] [DecidableEq S] [DecidableEq L]
 /-- One session: a sequential process for every participant. -/
 abbrev Net (P V L : Type) := P → Proc P V L
 
-/-- Typing by projections (Definition 5.8 and [CRES], specialized): the
-global type is well formed and every peer's process has that peer's
-projection, in the empty value context. Non-participants project to `end`. -/
+/-- Typing by projections (Definition 5.8, specialized to a total
+participant map): the global type is well formed and every peer's process
+has that peer's projection, in the empty value context. Non-participants
+project to `end` (project-specific: the source's full projection ranges
+over participants only). -/
 def Net.TypedBy {P S V L : Type} [DecidableEq P] [DecidableEq S] [DecidableEq L]
     (sortOf : V → S) (G : GlobalType P S L) (net : Net P V L) : Prop :=
   G.WellFormed ∧ ∀ peer : P, ∃ t : LocalType P S L,
@@ -744,8 +748,10 @@ theorem HasType.branch_inv {ctx : List S} {peer : P}
       obtain ⟨u, hu, hbu⟩ := LocalType.Branches.braceEq_lookup hb hu₀
       exact ⟨u, hu, u₀, hproc, hbu⟩
 
-/-- (T7) Typing by projections forces non-participants to be inert
-(Lemma 5.18 (2) absorbed by the network representation). -/
+/-- (T7) Typing by projections forces non-participants to be inert:
+non-participants project to `end`, and only `.inact` has type `end`. A
+project-specific consequence of total networks; the source's full
+projection (Definition 5.8) ranges over participants only. -/
 theorem Net.TypedBy.inact_of_not_mem {G : GlobalType P S L} {net : Net P V L}
     {peer : P} :
     Net.TypedBy sortOf G net → peer ∉ G.participants → net peer = .inact := by
