@@ -24,6 +24,25 @@ We prove the positive answer to Shevrin's Problem 11.116 in the Kourovka Noteboo
 Chernikov group contains no quasicyclic square, subgroup inclusion is the intersection of
 finitely many linear orders. The proof separates the quasicyclic factors by prime and
 records the intersection of a subgroup with each coset of a finite-index abelian subgroup.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted.lean`:
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.116 (L. N. Shevrin). UnsolvedMath record
+UM-00700808 (`KOU-11.116`), dataset ulamai/UnsolvedMath v1.8.0.
+
+A quasicyclic group is an infinite abelian group all of whose proper subgroups are finite (this
+characterizes the Prüfer groups `C_{p^∞}`). A Chernikov group is `IsChernikov` of
+`GroupClassesShared`: it has an abelian subgroup of finite index with the minimal condition on
+subgroups. Since an abelian group with the minimal condition is a direct product of finitely many
+quasicyclic groups and a finite group, this is the same as having a normal subgroup of finite index
+isomorphic to a finite direct product of quasicyclic groups; finite groups are the case of zero
+factors. "Contains a direct product of two quasicyclic groups over the same prime" is read as an
+embedding of `Q × Q` for a quasicyclic `Q`, since quasicyclic groups over one prime are isomorphic.
+Finite dimension means the subgroup order is the intersection of finitely many linear orders on
+`Subgroup G` (Dushnik-Miller dimension).
 -/
 
 namespace MathlibExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted
