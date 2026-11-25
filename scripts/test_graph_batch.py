@@ -43,13 +43,21 @@ class PlaceLines(unittest.TestCase):
         self.assertEqual(batch.place_lines(body), ["MathlibExt/A/B -> Algebra/groups",
                                                    "MathlibExt/A/C   ->   Algebra/groups | Group basics"])
 
+    def test_lines_the_description_does_not_show_are_left_out(self) -> None:
+        body = ("Place: MathlibExt/A/B -> Algebra/groups\n```\nPlace: MathlibExt/A/C -> Algebra/groups\n```\n"
+                "~~~text\nPlace: MathlibExt/A/D -> Algebra/groups\n~~~\n<!-- one line: Place: MathlibExt/A/E -> "
+                "Algebra/groups -->\n<!--\nPlace: MathlibExt/A/F -> Algebra/groups\n-->\nPlace: MathlibExt/A/G -> "
+                "Algebra/rings\n")
+        self.assertEqual(batch.place_lines(body), ["MathlibExt/A/B -> Algebra/groups",
+                                                   "MathlibExt/A/G -> Algebra/rings"])
+
     def test_a_module_a_field_and_maybe_a_topic(self) -> None:
         self.assertEqual(batch.parse_place("MathlibExt/Algebra/Rings -> Algebra/groups"),
                          ("MathlibExt/Algebra/Rings", "Algebra/groups", None))
-        self.assertEqual(batch.parse_place("MathlibExt/Algebra/Rings -> Algebra/groups/finite | Rings: a | b"),
-                         ("MathlibExt/Algebra/Rings", "Algebra/groups/finite", "Rings: a | b"))
+        self.assertEqual(batch.parse_place("MathlibExt/Algebra/Rings -> Algebra/groups/finite | Rings: a, b (c) – d's"),
+                         ("MathlibExt/Algebra/Rings", "Algebra/groups/finite", "Rings: a, b (c) – d's"))
 
-    def test_anything_else_is_refused(self) -> None:
+    def test_anything_else_is_refused_without_repeating_it(self) -> None:
         for value in ("MathlibExt/Algebra/Rings Algebra/groups",
                       "MathlibExt/Algebra/Rings ->",
                       "MathlibExt/Algebra/Rings -> Algebra/groups |",
@@ -58,10 +66,21 @@ class PlaceLines(unittest.TestCase):
                       "MathlibExt/Algebra/Rings.lean -> Algebra/groups",
                       "MathlibExt -> Algebra/groups",
                       "MathlibExt\\Algebra\\Rings -> Algebra/groups",
+                      "@octocat -> Algebra/groups",
+                      "MathlibExt/Algebra/R@x -> Algebra/groups",
                       "MathlibExt/Algebra/Rings -> Algebra/groups | " + "T" * 161,
-                      "MathlibExt/Algebra/Rings -> Algebra/groups | T\x07"):
-            with self.subTest(value=value), self.assertRaises(ValueError):
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | T\x07",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | Fixes #1",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | cc @octocat",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | Units <b>x</b>",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | Rings: a | b",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | [Rings](x)",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | `Rings`"):
+            with self.subTest(value=value), self.assertRaises(ValueError) as caught:
                 batch.parse_place(value)
+            for part in value.split():
+                if len(part) >= 5:
+                    self.assertNotIn(part, str(caught.exception))
 
 
 TAXONOMY_TEXT = ('{\n "schema": "atlas-wiki-taxonomy/v1",\n "subjects": {"Algebra": {"fields": []}},\n'
@@ -110,6 +129,15 @@ class EditPlacements(unittest.TestCase):
     def test_the_committed_taxonomy_is_one_entry_per_line(self) -> None:
         text = (ROOT / "scripts" / "taxonomy.json").read_text(encoding="utf-8")
         self.assertEqual(batch.edit_placements(text, {}, []), text)
+
+
+class ReportSections(unittest.TestCase):
+    def test_the_items_of_each_section_the_sync_prints(self) -> None:
+        titles = dict(sync.REPORT)
+        output = (f"{titles['added']}: 2\n  a.md\n  b.md\n{titles['replaced']}: 1\n  Algebra/x: - [Old](old.md)\n"
+                  f"{titles['appended']}: 0\nerror: something\n  not an item\n")
+        self.assertEqual(batch.report_sections(output), {"added": ["a.md", "b.md"],
+                                                         "replaced": ["Algebra/x: - [Old](old.md)"], "appended": []})
 
 
 class Fields(unittest.TestCase):
@@ -171,6 +199,9 @@ class Batches(unittest.TestCase):
             "Ext.lagrange": sync.digest("The order of a subgroup divides the order of the group."),
             "Ext.sylow": sync.digest("Sylow subgroups exist.")}}, indent=0) + "\n")
         self.git("init", "-q", "-b", "main")
+        # The batch commit takes the identity of whoever runs make, as any commit does.
+        self.git("config", "user.name", "Batch maker")
+        self.git("config", "user.email", "batch@example.invalid")
         self.base = self.commit("base")
         self.bodies: dict[str, str] = {}
 
@@ -207,13 +238,41 @@ class Batches(unittest.TestCase):
         self.bodies[str(number)] = body
         return self.git("rev-parse", "HEAD")
 
-    def tool(self, *args: str) -> subprocess.CompletedProcess:
+    def tool(self, *args: str, env: dict | None = None) -> subprocess.CompletedProcess:
         bodies = self.root.parent / f"{self.root.name}-bodies.json"
         bodies.write_text(json.dumps(self.bodies))
         self.addCleanup(bodies.unlink, True)
         extra = ["--bodies", str(bodies)] if args[0] in ("make", "verify") else []
         return subprocess.run([sys.executable, str(self.root / "scripts" / "graph_batch.py"), *args, *extra],
-                              cwd=self.root, capture_output=True, text=True)
+                              cwd=self.root, capture_output=True, text=True, env=env)
+
+    def land(self, number: int, branch: str) -> None:
+        """Land the batch at HEAD as pull request *number*, as the merge queue does, and go back to main."""
+        self.git("switch", "-q", "-c", branch)
+        self.git("switch", "-q", "main")
+        self.git("reset", "-q", "--hard", "HEAD^")
+        self.git("merge", "-q", "--no-ff", "-m", f"Merge pull request #{number} from someone/{branch}", branch)
+        self.bodies[str(number)] = "Graph: batch\n"
+
+    def module(self, path: str, names: list[str], heading: str = "") -> None:
+        """A module of documented theorems *names*, with a `# heading` in its module docstring when given."""
+        self.write(path, (f"/-!\n# {heading}\n-/\n\n" if heading else "") + "namespace Ext\n\n" + "".join(
+            f"/-- {name} holds. -/\ntheorem {name} : True := trivial\n\n" for name in names) + "end Ext\n")
+
+    def cosets(self) -> None:
+        self.write("MathlibExt/Algebra/Groups.lean", LEAN["MathlibExt/Algebra/Groups.lean"].replace(
+            "end Ext", "/-- Cosets partition the group. -/\ntheorem cosets : True := trivial\n\nend Ext"))
+
+    def description(self, *args: str) -> str:
+        """The description make writes, which must succeed, given *args*."""
+        body = self.root.parent / f"{self.root.name}-body.md"
+        self.addCleanup(body.unlink, True)
+        result = self.tool("make", *args, "--body", str(body))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        return body.read_text()
+
+    def placements(self) -> dict:
+        return json.loads((self.root / "scripts/taxonomy.json").read_text())["placements"]
 
     def lean_only_merges(self) -> None:
         # A new documented module that nothing places; a proof that moves a wanted statement, with its name, into a new
@@ -275,8 +334,13 @@ class Batches(unittest.TestCase):
         self.assertIn("| `MathlibExt/Algebra/SylowConj` | `Algebra/groups` | Sylow theorems | "
                       "WantedExt/Algebra/SylowWanted |", text)
         self.assertIn("| `MathlibExt/Algebra/Units` | `Algebra/rings` | Units of a ring | #4 |", text)
-        self.assertIn("#4: MathlibExt/Algebra/Fields is left unplaced: the pull request's merge does not change it", text)
+        self.assertIn("#4: `MathlibExt/Algebra/Fields` is left unplaced: the pull request's merge does not change it",
+                      text)
         self.assertIn("- `WantedExt/Algebra/SylowWanted`", text)
+        self.assertIn("### New modules left unplaced", text)
+        self.assertIn("- `MathlibExt/Algebra/Fields`: in `Algebra/not-yet-classified/`", text)
+        # make shows the sync's own report.
+        self.assertIn(dict(sync.REPORT)["added"], result.stdout)
         # verify agrees, and base names the batch.
         result = self.tool("verify", commit)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
@@ -294,8 +358,7 @@ class Batches(unittest.TestCase):
         self.git("reset", "-q", "--hard", "HEAD^")
         self.git("merge", "-q", "--no-ff", "-m", "Merge pull request #5 from someone/batch-1", "batch-1")
         self.bodies["5"] = "Graph: batch\n"
-        self.merge(6, lambda: self.write("MathlibExt/Algebra/Groups.lean", LEAN["MathlibExt/Algebra/Groups.lean"].replace(
-            "end Ext", "/-- Cosets partition the group. -/\ntheorem cosets : True := trivial\n\nend Ext")))
+        self.merge(6, self.cosets)
         result = self.tool("make")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         message = self.git("log", "-1", "--format=%B")
@@ -389,6 +452,19 @@ class Batches(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout)
         self.assertIn("no longer merges cleanly", result.stderr)
 
+        # A graph pull request that placed a module the batch places too, on another line: the files merge cleanly,
+        # but the taxonomy would place the module twice.
+        def place_units() -> None:
+            taxonomy = self.root / "scripts/taxonomy.json"
+            taxonomy.write_text(taxonomy.read_text().replace(
+                ' "placements": {\n',
+                ' "placements": {\n  "MathlibExt/Algebra/Units": {"to": "Algebra/rings", "title": "Units"},\n'))
+
+        main_merges(12, place_units)
+        result = self.tool("verify", commit)
+        self.assertEqual(result.returncode, 1, result.stdout)
+        self.assertIn("leaves scripts/taxonomy.json unreadable", result.stderr)
+
     def test_make_needs_a_clean_checkout_and_an_older_base(self) -> None:
         self.lean_only_merges()
         self.write("MathlibExt/Algebra/Fields.lean", "-- edited\n")
@@ -402,6 +478,191 @@ class Batches(unittest.TestCase):
         result = self.tool("make", "--base", "HEAD")
         self.assertEqual(result.returncode, 1)
         self.assertIn("is not an older commit", result.stderr)
+
+    def test_make_without_gh_says_so(self) -> None:
+        self.lean_only_merges()
+        tools = self.root.parent / f"{self.root.name}-bin"
+        tools.mkdir()
+        self.addCleanup(shutil.rmtree, tools, True)
+        (tools / "git").symlink_to(shutil.which("git"))
+        result = subprocess.run([sys.executable, str(self.root / "scripts" / "graph_batch.py"), "make", "--base",
+                                 self.base], cwd=self.root, capture_output=True, text=True,
+                                env={**os.environ, "PATH": str(tools)})
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("needs `gh`", result.stderr)
+        self.assertEqual(self.git("status", "--porcelain"), "")
+
+    def test_verify_needs_no_configured_identity(self) -> None:
+        self.lean_only_merges()
+        self.assertEqual(self.tool("make", "--base", self.base).returncode, 0)
+        self.git("config", "--unset", "user.name")
+        self.git("config", "--unset", "user.email")
+        home = self.root.parent / f"{self.root.name}-home"
+        home.mkdir()
+        self.addCleanup(shutil.rmtree, home, True)
+        environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        environment.update(HOME=str(home), XDG_CONFIG_HOME=str(home), GIT_CONFIG_NOSYSTEM="1")
+        result = self.tool("verify", env=environment)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_verify_runs_only_what_main_had(self) -> None:
+        # A pull request whose first commit changes the sync and whose second puts it back: main merges it, but never
+        # had the first commit's tree, which no one checked.
+        marker = self.root.parent / f"{self.root.name}-ran"
+        self.addCleanup(marker.unlink, True)
+        sync_path = self.root / "scripts/sync_wiki.py"
+        original = sync_path.read_text()
+        self.git("switch", "-q", "-c", "topic-1")
+        sync_path.write_text(original.replace('if __name__ == "__main__":',
+                                              f"open({str(marker)!r}, 'w').write('ran')\n\nif __name__ == \"__main__\":"))
+        self.git("commit", "-q", "-am", "Work in progress")
+        unmerged = self.git("rev-parse", "HEAD")
+        sync_path.write_text(original)
+        self.write("README.md", "Docs.\n")
+        self.commit("Finish")
+        self.git("switch", "-q", "main")
+        self.git("merge", "-q", "--no-ff", "-m", "Merge pull request #1 from someone/topic-1", "topic-1")
+        self.bodies["1"] = "Graph: none\n"
+        # A commit shaped as a batch on that branch commit is none, and its sync never runs.
+        self.git("switch", "-q", "--detach", unmerged)
+        self.write("scripts/wiki-sync.json", (self.root / "scripts/wiki-sync.json").read_text() + "\n")
+        self.git("commit", "-q", "-am", f"{batch.SUBJECT}{unmerged[:12]}\n\nGraph-sync-base: {self.base}\n"
+                                        f"Graph-sync-through: {unmerged}\n")
+        crafted = self.git("rev-parse", "HEAD")
+        self.git("switch", "-q", "main")
+        result = self.tool("verify", crafted)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("is not a batch", result.stderr)
+        self.assertFalse(marker.exists())
+        # Nor is a commit that changes nothing.
+        main = self.git("rev-parse", "HEAD")
+        self.git("commit", "-q", "--allow-empty", "-m", f"{batch.SUBJECT}{main[:12]}\n\nGraph-sync-base: {self.base}\n"
+                                                        f"Graph-sync-through: {main}\n")
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("is not a batch", result.stderr)
+
+    def test_batches_skip_no_lean(self) -> None:
+        self.lean_only_merges()
+        self.assertEqual(self.tool("make", "--base", self.base).returncode, 0)
+        through = self.git("rev-parse", "HEAD^")
+        self.land(5, "batch-1")
+        self.merge(6, self.cosets)
+        after = self.git("rev-parse", "HEAD")
+        self.merge(7, lambda: self.write("README.md", "Docs.\n"))
+        # make refuses to start after where the last batch ended.
+        result = self.tool("make", "--base", after)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("would skip the Lean merged in between", result.stderr)
+        # A graph pull request whose commit copies the trailers is no batch: the next batch still starts where the
+        # last one ended.
+        self.git("switch", "-q", "-c", "topic-8")
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        page.write_text(page.read_text() + "\nA remark.\n")
+        self.git("commit", "-q", "-am", f"Edit a page\n\nGraph-sync-base: {self.base}\n"
+                                        f"Graph-sync-through: {self.git('rev-parse', 'main')}\n")
+        self.git("switch", "-q", "main")
+        self.git("merge", "-q", "--no-ff", "-m", "Merge pull request #8 from someone/topic-8", "topic-8")
+        self.bodies["8"] = "Graph: none\n"
+        self.assertIn(f"The next batch starts from {through}.", self.tool("base").stdout)
+        # verify refuses a batch whose base is after it.
+        self.assertEqual(self.tool("make").returncode, 0)
+        message = self.git("log", "-1", "--format=%B")
+        self.git("commit", "-q", "--amend", "-m", message.replace(f"Graph-sync-base: {through}",
+                                                                  f"Graph-sync-base: {after}"))
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("skips the Lean merged in between", result.stderr)
+        # An earlier base does no harm: what the last batch wrote is not written again.
+        self.git("reset", "-q", "--hard", "HEAD^")
+        self.assertEqual(self.tool("make", "--base", self.base).returncode, 0)
+        self.assertEqual(sorted(self.git("diff", "--name-only", "HEAD^", "HEAD").splitlines()),
+                         ["blueprint/links/Algebra.jsonl", "blueprint/roadmap/Algebra/groups/group-basics/README.md",
+                          "blueprint/roadmap/Algebra/groups/group-basics/cosets.md", "scripts/wiki-sync.json"])
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_a_placement_keeps_a_modules_pages_together(self) -> None:
+        self.lean_only_merges()
+        self.assertEqual(self.tool("make", "--base", self.base).returncode, 0)
+        self.land(5, "batch-1")
+        # A later pull request adds to Fields, whose pages the first batch wrote in not-yet-classified/, and places it.
+        fields = self.root / "MathlibExt/Algebra/Fields.lean"
+        self.merge(6, lambda: fields.write_text(fields.read_text().replace(
+            "end Ext", "/-- Fields are commutative. -/\ntheorem fields_comm : True := trivial\n\nend Ext")),
+                   "Graph: new\nPlace: MathlibExt/Algebra/Fields -> Algebra/rings\n")
+        text = self.description()
+        self.assertNotIn("MathlibExt/Algebra/Fields", self.placements())
+        self.assertTrue((self.root / "blueprint/roadmap/Algebra/not-yet-classified/fields/fields-comm.md").is_file())
+        self.assertIn("`MathlibExt/Algebra/Fields` is left unplaced: it already has pages outside `Algebra/rings`", text)
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_the_placement_rules(self) -> None:
+        # To start from: a placed folder, a placed module, an unplaced one, and an entry for Mathlib.
+        taxonomy = json.loads((self.root / "scripts/taxonomy.json").read_text())
+        taxonomy["placements"]["MathlibExt/Algebra/Folder"] = {"to": "Algebra/rings", "title": "Folder topic"}
+        taxonomy["placements"]["MathlibExt/Algebra/Old"] = {"to": "Algebra/rings", "title": "Old topic"}
+        taxonomy["placements"]["Mathlib/Algebra/Gone"] = {"to": "Algebra/rings", "title": "Mathlib gone"}
+        (self.root / "scripts/taxonomy.json").write_text(self.taxonomy_text(taxonomy))
+        self.module("MathlibExt/Algebra/Folder/Inner.lean", ["inner_one", "inner_two"])
+        self.module("MathlibExt/Algebra/Old.lean", ["old_one"])
+        self.module("MathlibExt/Algebra/Loose.lean", ["loose_one"])
+        self.base = self.commit("more to start from")
+        # Two pull requests change one module and ask for different topics.
+        self.merge(1, lambda: self.module("MathlibExt/Algebra/Rule1.lean", ["r1"]),
+                   "Place: MathlibExt/Algebra/Rule1 -> Algebra/rings\n")
+        self.merge(2, lambda: self.module("MathlibExt/Algebra/Rule1.lean", ["r1", "r1b"]),
+                   "Place: MathlibExt/Algebra/Rule1 -> Algebra/rings | Rule one, again\n")
+        # A field the taxonomy lacks, and a topic the line may not carry.
+        self.merge(3, lambda: (self.module("MathlibExt/Algebra/Rule3.lean", ["r3"]),
+                               self.module("MathlibExt/Algebra/Rule3b.lean", ["r3b"])),
+                   "Place: MathlibExt/Algebra/Rule3 -> Algebra/fields\n"
+                   "Place: MathlibExt/Algebra/Rule3b -> Algebra/rings | Fixes #1, cc @octocat\n")
+        # Declarations from a placed module and from an unplaced one.
+        self.merge(4, lambda: (self.module("MathlibExt/Algebra/Rule4.lean", ["lagrange", "loose_one"]),
+                               self.write("MathlibExt/Algebra/Groups.lean", "-- emptied\n"),
+                               (self.root / "MathlibExt/Algebra/Loose.lean").unlink()))
+        # The same line twice, for a module whose name says nothing of its topic.
+        self.merge(5, lambda: self.module("MathlibExt/Algebra/Rule5/Basic.lean", ["r5"]),
+                   "Place: MathlibExt/Algebra/Rule5/Basic -> Algebra/rings\n" * 2)
+        # A module moved out of a placed folder, which is left with no file.
+        self.merge(6, lambda: (self.module("MathlibExt/Algebra/Moved.lean", ["inner_one", "inner_two"]),
+                               (self.root / "MathlibExt/Algebra/Folder/Inner.lean").unlink()))
+
+        # A module moved, its old placement removed by the same pull request: the base's placement counts.
+        def move_old() -> None:
+            self.module("MathlibExt/Algebra/New.lean", ["old_one"])
+            (self.root / "MathlibExt/Algebra/Old.lean").unlink()
+            path = self.root / "scripts/taxonomy.json"
+            path.write_text(path.read_text().replace(
+                '  "MathlibExt/Algebra/Old": {"to": "Algebra/rings", "title": "Old topic"},\n', ""))
+
+        self.merge(7, move_old)
+        # A module in a folder with no subject.
+        self.merge(8, lambda: self.module("MathlibExt/Nowhere/Thing.lean", ["thing"]))
+        text = self.description("--base", self.base)
+        placements = self.placements()
+        self.assertEqual({key: value for key, value in placements.items() if key not in TAXONOMY["placements"]}, {
+            "MathlibExt/Algebra/Rule5/Basic": {"to": "Algebra/rings", "title": "Rule5"},
+            "MathlibExt/Algebra/Moved": {"to": "Algebra/rings", "title": "Folder topic"},
+            "MathlibExt/Algebra/New": {"to": "Algebra/rings", "title": "Old topic"},
+            "Mathlib/Algebra/Gone": {"to": "Algebra/rings", "title": "Mathlib gone"}})
+        self.assertIn("`MathlibExt/Algebra/Rule1` is left unplaced: #1, #2 ask for different places", text)
+        self.assertIn("#3: `MathlibExt/Algebra/Rule3` is left unplaced: its line names no field or subfield", text)
+        self.assertIn("#3: a `Place:` line is left out: its topic is not one line", text)
+        self.assertNotIn("octocat", text)
+        self.assertNotIn("Fixes", text)
+        self.assertIn("MathlibExt/Algebra/Rule4 is left unplaced: its declarations came from modules placed differently "
+                      "or not at all (MathlibExt/Algebra/Groups, MathlibExt/Algebra/Loose)", text)
+        self.assertIn("| `MathlibExt/Algebra/Rule5/Basic` | `Algebra/rings` | Rule5 | #5 |", text)
+        self.assertIn("| `MathlibExt/Algebra/Moved` | `Algebra/rings` | Folder topic | MathlibExt/Algebra/Folder/Inner |",
+                      text)
+        self.assertIn("- `MathlibExt/Algebra/Folder`", text)
+        self.assertIn("- `MathlibExt/Nowhere/Thing`: **no pages**, as its folder has no subject", text)
+        self.assertIn("- `MathlibExt/Algebra/Rule1`: in `Algebra/not-yet-classified/`", text)
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":

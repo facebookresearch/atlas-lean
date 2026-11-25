@@ -614,26 +614,35 @@ lists the page on its folder page; it writes the docstring digests the scoped
 sync writes; it places new modules in `scripts/taxonomy.json` and drops the
 places of modules that are gone. One batch is open at a time, made on a fresh
 `main` every one or two hours by whoever runs the batches. The site builds
-`main` once a day, so readers never see the gap.
+`main` once a day, so it is at most about one batch behind the Lean.
 
 ```sh
 git fetch https://github.com/facebookresearch/atlas-lean.git main
 git switch --detach FETCH_HEAD
-python3 scripts/graph_batch.py make --body batch.md
+python3 scripts/graph_batch.py make --body ../batch.md
 ```
 
-`make` runs on a clean checkout, with Autoform installed as for the sync. It
-starts from the commit the last batch brought the graph up to, which that
-batch's commit names in a `Graph-sync-through:` trailer
-(`python3 scripts/graph_batch.py base` prints it); the first batch gives its
-base with `--base`. Then it:
+`make` runs on a clean checkout, with Autoform installed as for the sync, and
+reads the merged pull requests' descriptions with `gh`, logged in (`--bodies
+FILE` gives them as JSON instead). Write the description outside the
+checkout, as above: a file left in it stops the next `make`. It starts from
+the commit the last batch brought the graph up to, which that batch's commit
+names in a `Graph-sync-through:` trailer (`python3 scripts/graph_batch.py
+base` prints it). The first batch gives its base with `--base`; a later one
+may give an earlier commit, never a later one, which would skip Lean. Then it:
 
 1. places each module that neither its own placement nor its folder's covers:
    as a merged pull request's `Place:` line asks, for a module that pull
    request's merge changed; else, for a module new since the base, where the
    module whose declarations it took, by name, is placed, as a proof takes the
-   place of the wanted statement it moves. A module it cannot place goes to
-   `not-yet-classified/`, where the sync puts any unplaced module;
+   place of the wanted statement it moves. It never places a module that
+   already has a page outside the field it would get, since the sync moves no
+   page: placing that one is a graph pull request that moves its pages too. A
+   module it cannot place goes to its subject's `not-yet-classified/` folder,
+   as the sync puts any unplaced module; one in a folder that is no subject
+   gets no pages, and placing it later is a graph pull request that also runs
+   the sync over the whole project ([Maintaining articles](#maintaining-articles))
+   to write them;
 2. drops the placement of each module that no longer exists, as a file or as a
    folder;
 3. runs the scoped sync over every Lean change since the base, on `main`'s wiki
@@ -641,41 +650,63 @@ base with `--base`. Then it:
 4. commits all of it as one commit on top of `main`, with `Graph-sync-base:`
    and `Graph-sync-through:` trailers, and checks that commit as `verify` does.
 
+When the sync stops, nothing is committed. If it stops on something `main`
+already carries, such as a `held` marker that names a declaration a Lean pull
+request renamed, fix that on `main` first, in a graph pull request: every batch
+from here would stop the same way. If the check after the commit fails,
+`git reset --hard HEAD^` takes the commit away.
+
 A `Place:` line, one per module in a pull request's description, reads
 `Place: <module> -> <field>` or `Place: <module> -> <field> | <topic>`: the
 module as `scripts/taxonomy.json` keys it, a path without `.lean`, and a field
-or subfield of the taxonomy, such as `Algebra/groups`. Without a topic, the
-module takes its docstring's `# ` heading, or else its name, as its topic's
-title, unless it takes declarations from a module placed in the same field,
-whose topic it then joins. A line counts only for a module that its pull
-request's merge changed and that nothing places yet. `make` reads the lines
-after the merge, as untrusted text, and the batch's description lists each
-placement with where it comes from.
+or subfield of the taxonomy, such as `Algebra/rings-and-fields`. A topic is one
+line of at most 160 characters with none of ``<>[]{}|`@#\``. Without one, the
+module takes its docstring's `# ` heading, or else its name (its folder's, for
+a name such as `Basic`), as its topic's title, unless it takes declarations
+from a module placed in the same field, whose topic it then joins. A line
+counts only for a module that its pull request's merge changed and that
+nothing places yet. `make` reads the lines after the merge, as untrusted text,
+and leaves out those in code blocks and HTML comments.
 
-`--body FILE` writes the pull request's description: the placements, what
-`make` left for an editor (lines it could not follow, modules it could not
-place), and the pages whose declaration's docstring changed while no pull
-request recorded its digest, to check. Push the commit to a branch of its own
-and open the pull request with that description.
+`--body FILE` writes the pull request's description: the placements, each with
+where it comes from; the placements dropped; the new modules left unplaced;
+what `make` left for an editor (lines it could not follow, modules it could not
+place); the sync's own items for an editor, such as part-list lines its refresh
+replaced; and the pages whose declaration's docstring changed while no pull
+request recorded its digest. Push the commit to a branch of its own and open
+the pull request with that description.
 
-`python3 scripts/graph_batch.py verify <commit>`, run from a checkout of
-`main` that has the batch's `Graph-sync-through:` commit, checks that the
-commit is a batch and exactly what `make` writes: one commit on that commit,
-changing only the taxonomy, pages and folder pages, links files and the
-baseline; its taxonomy `main`'s with the placements `make` computes applied,
-byte for byte; and its wiki in step, with changes that are exactly what the
-scoped sync writes, fresh article ids aside (the `--check` above). From a
-newer `main`, it also checks that the batch still merges cleanly into it, and
-that the scoped check finds nothing the merge breaks, such as a second page
-for one declaration. The batch's reviewer runs it on the exact head, then reads
-the placements and the notes; the pages are the sync's, made from docstrings
-that the Lean pull requests' reviews covered.
+`python3 scripts/graph_batch.py verify <commit>`, run from an up-to-date
+checkout of `main`, checks that the commit is a batch and exactly what `make`
+writes:
+
+- one commit, with `make`'s message, on its `Graph-sync-through:` commit, that
+  changes only the taxonomy, pages and folder pages, links files and the
+  baseline. Both of its commits are among the states `main` has had, on its
+  first-parent history, as `verify` runs the sync of the first;
+- a base no later than where the last batch before it ended;
+- its taxonomy `main`'s with the placements `make` computes applied, byte for
+  byte;
+- its wiki in step, with changes that are exactly what the scoped sync writes,
+  fresh article ids aside (the `--check` above).
+
+From a newer `main`, it also checks that the batch still merges cleanly into
+it, placing each module once, and that the scoped check finds nothing the
+merge breaks, such as a second page for one declaration.
+
+The batch's reviewer runs `verify` on the exact head, then reads the
+placements and the notes. The pages are the sync's, made from docstrings that
+the Lean pull requests' reviews covered. For each page under "Pages to check",
+the reviewer compares the page with its declaration's new docstring, and opens
+a page-problem issue for one that no longer matches: once the batch writes the
+new digest, no sync reports that page again.
 
 A batch is never updated. When `verify`, run from an up-to-date `main`, fails,
 or when the merge queue removes the batch, close it and make the next one from
 a fresh `main`: the next batch starts where the last merged one ended, so a
 closed batch loses nothing. Never merge `main` into a batch: `verify` refuses
-anything but one commit on the commit it names.
+anything but one commit on the commit it names. If a merged batch is reverted,
+make the next one with `--base` set to the reverted batch's base.
 
 ### Mathlib-credited pages
 

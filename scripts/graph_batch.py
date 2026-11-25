@@ -9,23 +9,26 @@
 make runs on a clean checkout of `main` and commits the batch on top of it: one commit that changes only
 scripts/taxonomy.json, scripts/wiki-sync.json, pages and folder pages under blueprint/roadmap/ and links files under
 blueprint/links/. It starts from the commit the last batch brought the graph up to, which the batch commit names in its
-`Graph-sync-through:` trailer, or from --base for the first batch. It first places the modules the Lean added since
-then (see placement_plan): as a merged pull request's `Place:` line asks, else where the module whose declarations it
-took was placed, as a proof takes its wanted statement; and it drops the place of each module that no longer exists.
-It then runs `sync_wiki.py declarations` scoped to every Lean change since that commit, on main's wiki (see
-synthetic_base), and checks the commit it made as verify does. --body writes a description for the pull request.
+`Graph-sync-through:` trailer, or from --base, which may start earlier, never later. It first places the modules the
+Lean added since then that nothing places (see placement_plan): as a merged pull request's `Place:` line asks, else
+where the module whose declarations it took was placed, as a proof takes its wanted statement; and it drops the place
+of each module that no longer exists. It then runs `sync_wiki.py declarations` scoped to every Lean change since that
+commit, on main's wiki (see synthetic_base), and checks the commit it made as verify does. --body writes a description
+for the pull request.
 
-verify checks that a commit is such a batch, and exactly what make writes: its taxonomy is main's with the placement
-plan applied, byte for byte, and the scoped check (`sync_wiki.py declarations --check`) finds its wiki in step, with
-changes that are exactly what the sync writes, fresh article ids aside. Run it from a checkout of `main` that has the
-commit the batch brought the graph up to: it runs that commit's copy of the sync.
+verify checks that a commit is such a batch, made on main's first-parent history, starting no later than where the
+last batch before it ended, and exactly what make writes: its taxonomy is main's with the placement plan applied, byte
+for byte, and the scoped check (`sync_wiki.py declarations --check`) finds its wiki in step, with changes that are
+exactly what the sync writes, fresh article ids aside. Run it from an up-to-date checkout of `main`: it runs the sync of
+the commit the batch was made on, which must be one of main's own states; from a newer main, it also checks that the
+batch still merges into it cleanly and that the scoped check finds nothing the merge breaks.
 
 base prints the last batch on REV (`HEAD` by default) and the commit the next batch starts from.
 
 make and verify read the descriptions of the pull requests merged since the base with `gh`, unless --bodies gives
 them as JSON ({"<number>": "<description>"}). A description is untrusted text: only its `Place:` lines are read
-(see parse_place), and each counts only for a module that the pull request's own merge changed and that the taxonomy
-does not place yet, under a field or subfield the taxonomy has.
+(see parse_place), and each counts only for a module that the pull request's own merge changed, that no placement
+covers and that has no page outside that field yet, under a field or subfield the taxonomy has.
 
 Run it with a Python that has Autoform installed, as sync_wiki.py.
 """
@@ -33,6 +36,7 @@ Run it with a Python that has Autoform installed, as sync_wiki.py.
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import os
 import re
@@ -54,14 +58,30 @@ TAXONOMY_PATH = "scripts/taxonomy.json"
 BASE_TRAILER = "Graph-sync-base"
 THROUGH_TRAILER = "Graph-sync-through"
 TRAILER = re.compile(rf"({BASE_TRAILER}|{THROUGH_TRAILER}): ([0-9a-f]{{40}})")
+# The first line of a batch commit's message, followed by the first 12 digits of the commit it was made on.
+SUBJECT = "Sync the graph with the Lean merged up to "
 REPOSITORY = "facebookresearch/atlas-lean"
 MERGE = re.compile(r"Merge pull request #(\d+) from \S+")
 PLACE = re.compile(r"Place:[ \t]*(.*?)[ \t]*")
 PLACE_VALUE = re.compile(r"(?P<module>\S+)[ \t]+->[ \t]+(?P<to>\S+)(?:[ \t]+\|[ \t]+(?P<title>\S.*))?")
 # A placement line of scripts/taxonomy.json: two spaces, the module as a JSON string, then its entry.
 PLACEMENT_LINE = re.compile(r'  ("(?:[^"\\]|\\.)*"): (\{.*\})(,?)')
-MODULE = re.compile(r"[^/\s\\]+(?:/[^/\s\\]+)+")
+# A module of the five libraries, as scripts/taxonomy.json keys it: a path of Lean identifiers, without `.lean`.
+MODULE = re.compile(r"[A-Za-z0-9_]+(?:/[A-Za-z0-9_]+)+")
 TITLE_LIMIT = 160
+# What a topic title from a description may not hold: Markdown and HTML that the site, a folder page or the batch's
+# description would read as more than text, and GitHub's mentions and references.
+UNSAFE = set("<>[]{}|`\\@#")
+# Module names that say nothing of a module's topic: a topic titled after the folder holding them instead.
+GENERIC = {"Basic", "Defs", "Lemmas", "Main", "Core", "Instances", "Results", "Theorems", "Statement", "Statements",
+           "Definitions", "Properties", "Wanted"}
+# The sync's report sections (sync_wiki.REPORT) that ask an editor for something, by kind.
+EDITOR_ITEMS = ("parts", "replaced", "appended", "unlisted", "unassigned", "unindexed", "stale_duplicates")
+# The identity and date of the commits made only to compare with (synthetic_base, verify_commit's merge), never pushed:
+# fixed, so that they need no configured identity and the same inputs give the same commits.
+LOCAL_IDENTITY = {"GIT_AUTHOR_NAME": "graph_batch.py", "GIT_AUTHOR_EMAIL": "graph-batch@example.invalid",
+                  "GIT_AUTHOR_DATE": "2000-01-01T00:00:00Z", "GIT_COMMITTER_NAME": "graph_batch.py",
+                  "GIT_COMMITTER_EMAIL": "graph-batch@example.invalid", "GIT_COMMITTER_DATE": "2000-01-01T00:00:00Z"}
 
 
 class BatchError(RuntimeError):
@@ -82,6 +102,13 @@ def is_ancestor(older: str, newer: str) -> bool:
                           capture_output=True).returncode == 0
 
 
+@functools.cache
+def mainline(head: str) -> frozenset[str]:
+    """The commits of *head*'s first-parent history: the states `main` has had, each one checked as a whole by the
+    merge queue, unlike the commits of a merged pull request's branch."""
+    return frozenset(git("rev-list", "--first-parent", head).decode().split())
+
+
 def blob(commit: str, path: str) -> bytes | None:
     """The bytes of the file *path* at *commit*, or None if it has none there."""
     if not git("ls-tree", "--name-only", "--full-tree", commit, "--", path).strip():
@@ -89,10 +116,10 @@ def blob(commit: str, path: str) -> bytes | None:
     return git("cat-file", "blob", f"{commit}:{path}")
 
 
-def tree_files(commit: str) -> set[str]:
-    """Every file of *commit*, by its path from the repository's root."""
-    return {os.fsdecode(path) for path in git("ls-tree", "-r", "-z", "--name-only", "--full-tree", commit).split(b"\0")
-            if path}
+def tree_files(commit: str, *paths: str) -> set[str]:
+    """Every file of *commit*, or those under *paths*, by its path from the repository's root."""
+    listing = git("ls-tree", "-r", "-z", "--name-only", "--full-tree", commit, "--", *paths)
+    return {os.fsdecode(path) for path in listing.split(b"\0") if path}
 
 
 def changed_between(older: str, newer: str) -> list[str]:
@@ -124,18 +151,25 @@ def trailers(message: str) -> dict[str, str]:
     return {key: values[0] for key, values in found.items()}
 
 
-def batch_of(commit: str) -> tuple[str, str] | None:
-    """(base, through) when *commit* is a batch: one parent, the commit its `Graph-sync-through:` trailer names; a
-    `Graph-sync-base:` trailer naming an ancestor of that parent; and changes to a batch's files only."""
+def batch_of(commit: str, head: str) -> tuple[str, str] | None:
+    """(base, through) when *commit* is a batch for the `main` whose tip is *head*: one commit, whose message make
+    wrote (SUBJECT, then the two trailers), on the commit its `Graph-sync-through:` trailer names, with a
+    `Graph-sync-base:` trailer naming an older commit, both of them on *head*'s first-parent history (mainline), that
+    changes a batch's files and nothing else."""
     parents = git("rev-list", "--parents", "-n", "1", commit).decode().split()[1:]
-    found = trailers(git("log", "-1", "--format=%B", commit).decode("utf-8", "replace"))
+    message = git("log", "-1", "--format=%B", commit).decode("utf-8", "replace")
+    found = trailers(message)
     if len(parents) != 1 or not found or parents[0] != found[THROUGH_TRAILER]:
         return None
-    if not is_ancestor(found[BASE_TRAILER], found[THROUGH_TRAILER]):
+    base, through = found[BASE_TRAILER], found[THROUGH_TRAILER]
+    if message.splitlines()[0] != f"{SUBJECT}{through[:12]}":
         return None
-    if not all(batch_path(path) for path in changed_between(parents[0], commit)):
+    if base not in mainline(head) or through not in mainline(head) or not is_ancestor(base, through):
         return None
-    return found[BASE_TRAILER], found[THROUGH_TRAILER]
+    changed = changed_between(through, commit)
+    if not changed or not all(batch_path(path) for path in changed):
+        return None
+    return base, through
 
 
 def last_batch(head: str) -> tuple[str, str, str] | None:
@@ -143,7 +177,7 @@ def last_batch(head: str) -> tuple[str, str, str] | None:
     is made on a main that holds the one before, so the first in topological order is the newest."""
     listing = git("log", "--topo-order", "--format=%H", "--fixed-strings", f"--grep={THROUGH_TRAILER}: ", head)
     for commit in listing.decode().split():
-        if found := batch_of(commit):
+        if found := batch_of(commit, head):
             return (commit, *found)
     return None
 
@@ -169,7 +203,11 @@ def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, str]:
         fields = " ".join(f"p{number}: pullRequest(number: {number}) {{ number body mergeCommit {{ oid }} }}"
                           for number, _ in chunk)
         query = f'query {{ repository(owner: "{owner}", name: "{name}") {{ {fields} }} }}'
-        result = subprocess.run(["gh", "api", "graphql", "-f", f"query={query}"], capture_output=True, text=True)
+        try:
+            result = subprocess.run(["gh", "api", "graphql", "-f", f"query={query}"], capture_output=True, text=True)
+        except FileNotFoundError:
+            raise BatchError("reading the pull requests' descriptions needs `gh`, logged in; or give them with "
+                             "--bodies") from None
         if result.returncode:
             raise BatchError(f"gh api graphql failed: {result.stderr.strip()}")
         found = json.loads(result.stdout)["data"]["repository"]
@@ -188,31 +226,54 @@ def read_bodies(path: Path) -> dict[int, str]:
 
 
 def place_lines(body: str) -> list[str]:
-    """The values of a description's `Place:` lines, as written."""
-    return [match.group(1) for line in body.splitlines() if (match := PLACE.fullmatch(line.strip()))]
+    """The values of a description's `Place:` lines, as written: lines of its own, outside code fences and HTML
+    comments, which the rendered description does not show as text."""
+    found, fence, comment = [], None, False
+    for line in body.splitlines():
+        text = line.strip()
+        if comment:
+            comment = "-->" not in text
+            continue
+        if fence:
+            if text.startswith(fence):
+                fence = None
+            continue
+        if text.startswith(("```", "~~~")):
+            fence = text[:3]
+            continue
+        if text.startswith("<!--"):
+            comment = "-->" not in text
+            continue
+        if match := PLACE.fullmatch(text):
+            found.append(match.group(1))
+    return found
 
 
 def parse_place(value: str) -> tuple[str, str, str | None]:
     """The module, field and topic title a `Place:` line gives: `<module> -> <field>`, and ` | <topic title>` after
     them when it names the topic; ValueError if it is anything else. The module is written as scripts/taxonomy.json
-    keys it, a path without `.lean`, and the field as `<subject>/<field>` or `<subject>/<field>/<subfield>`."""
+    keys it, a path of Lean identifiers without `.lean`, and the field as `<subject>/<field>` or
+    `<subject>/<field>/<subfield>`. A title is one line of at most TITLE_LIMIT printable characters, none of UNSAFE.
+    The error never repeats the line's text, which is untrusted."""
     match = PLACE_VALUE.fullmatch(value)
     if not match:
-        raise ValueError("not `<module> -> <field>` or `<module> -> <field> | <topic title>`")
+        raise ValueError("it is not `<module> -> <field>` or `<module> -> <field> | <topic>`")
     module, to, title = match.group("module", "to", "title")
-    if (not MODULE.fullmatch(module) or module.split("/", 1)[0] not in wiki.LIBRARIES
-            or module.endswith(".lean")):
-        raise ValueError(f"{module!r} is not a module of the five libraries, written as a path without `.lean`")
-    if title is not None and (len(title) > TITLE_LIMIT or not title.isprintable()):
-        raise ValueError(f"the topic title must be one line of at most {TITLE_LIMIT} printable characters")
+    if not MODULE.fullmatch(module) or module.split("/", 1)[0] not in wiki.LIBRARIES:
+        raise ValueError("it names no module of the five libraries, as a path without `.lean`")
+    if title is not None and (len(title) > TITLE_LIMIT or not title.isprintable() or UNSAFE & set(title)):
+        raise ValueError(f"its topic is not one line of at most {TITLE_LIMIT} printable characters free of "
+                         f"{''.join(sorted(UNSAFE))}")
     return module, to, title
 
 
 def default_title(head: str, module: str) -> str:
     """The topic title of a module a `Place:` line names without one: its docstring's `# ` heading, as a page title,
-    else its name, as generate_wiki titles a module's page."""
+    else its name, as generate_wiki titles a module's page, or, for a name that says nothing (GENERIC), its folder's."""
     text = (blob(head, f"{module}.lean") or b"").decode("utf-8", "replace")
-    return wiki.page_title(wiki.module_heading(text)) or wiki.topic_title(module.rsplit("/", 1)[1])
+    *folder, name = module.split("/")
+    return (wiki.page_title(wiki.module_heading(text))
+            or wiki.topic_title(folder[-1] if name in GENERIC and len(folder) > 1 else name))
 
 
 def fields_of(taxonomy: dict) -> set[str]:
@@ -231,6 +292,14 @@ def placement_of(module: str, placements: dict) -> dict | None:
     return found[1] if found else None
 
 
+def subject_of(module: str, taxonomy: dict) -> str | None:
+    """The subject an unplaced module's pages go under, in its `not-yet-classified/` folder, as generate_wiki takes it
+    from its library's folder; None when the taxonomy has no such subject, and the module gets no pages."""
+    library, folder = module.split("/")[:2]
+    subject = wiki.LIBRARIES[library].get(folder, folder)
+    return subject if subject in taxonomy["subjects"] else None
+
+
 def lean_index(commit: str):
     """Autoform's index of the Lean sources of *commit*, read from git, as the scoped sync reads a base."""
     from autoform_cli.lean import index_project
@@ -239,6 +308,33 @@ def lean_index(commit: str):
         root = Path(folder).resolve()
         sync.extract_tree(commit, root, sync.lean_source)
         return index_project(root, exclude_roots=sync.EXCLUDED)
+
+
+def module_pages(head: str, index) -> dict[str, set[str]]:
+    """The pages that already stand for a declaration of each module at *head*, by path from the roadmap: those whose
+    row links the declaration, holds it back or lists it as a duplicate, read as the sync reads rows."""
+    pages: dict[str, set[str]] = {}
+    for path in sorted(tree_files(head, "blueprint/links")):
+        if not sync.LINKS_FILE.fullmatch(path):
+            continue
+        try:
+            rows = sync.read_rows(blob(head, path).decode("utf-8"))
+        except ValueError:
+            continue  # The sync stops on such a file itself.
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            try:
+                names = {name for name in (sync.lean_name(row), sync.held_name(row)) if name}
+                names.update(sync.duplicate_names(row))
+                page = sync.page_name(row) if names else None
+            except (ValueError, TypeError, AttributeError, KeyError):
+                continue
+            for name in names:
+                declaration = index.declarations.get(name)
+                if declaration is not None and (module := library_module(declaration.path.as_posix())):
+                    pages.setdefault(module, set()).add(page)
+    return pages
 
 
 @dataclass
@@ -254,8 +350,11 @@ class Placement:
 class PlacementPlan:
     added: list[Placement] = field(default_factory=list)
     dropped: list[str] = field(default_factory=list)
+    # The modules new since the base that stay unplaced, each with where its pages go: its subject's
+    # `not-yet-classified/` folder, or nowhere for a folder with no subject.
+    unplaced: list[tuple[str, str | None]] = field(default_factory=list)
     # What an editor may want to know: `Place:` lines left out, and why; modules whose declarations came from places
-    # that disagree.
+    # that disagree; modules that already have pages.
     notes: list[str] = field(default_factory=list)
 
     def entries(self) -> dict[str, dict[str, str]]:
@@ -274,9 +373,12 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
        each of them was in at *base*, placed as the taxonomy at *head*, or else at *base*, places it, when all of them
        agree on one place and none came from an unplaced module. A proof that moves a wanted statement, with its name,
        into a new module so takes that statement's place.
-    A module that no longer exists at *head*, neither as a file nor as a folder, loses its own placement. Mathlib's
-    entries (`Mathlib/...`) are not the project's modules and stay. *indexes* gives the Lean indexes of *base* and
-    *head* (see lean_index), read otherwise."""
+    A placement never contradicts where a module's pages already are (see module_pages): the sync moves no page, so a
+    module with a page outside the field it would get is noted and left as it is, for a graph pull request that moves
+    its pages too; a proof's module, whose moved statement's page is already in that field, is placed. A module that no
+    longer exists at *head*, neither as a file nor as a folder, loses its own placement. Mathlib's entries
+    (`Mathlib/...`) are not the project's modules and stay. *indexes* gives the Lean indexes of *base* and *head* (see
+    lean_index), read otherwise."""
     taxonomy = json.loads(blob(head, TAXONOMY_PATH))
     old = json.loads(blob(base, TAXONOMY_PATH) or b'{"placements": {}}')
     placements, old_placements, places = taxonomy["placements"], old.get("placements", {}), fields_of(taxonomy)
@@ -286,12 +388,20 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     folders = {"/".join(path.split("/")[:end]) for path in files for end in range(1, path.count("/") + 1)}
     plan = PlacementPlan()
 
+    @functools.cache
+    def read_indexes():
+        return indexes or (lean_index(base), lean_index(head))
+
+    @functools.cache
+    def pages() -> dict[str, set[str]]:
+        return module_pages(head, read_indexes()[1])
+
     # 2 first, as 1 may take its topic.
     inherited: dict[str, tuple[str, str, str]] = {}
     unsure: dict[str, str] = {}
     new = sorted(module for module in modules - old_modules if placement_of(module, placements) is None)
     if new:
-        old_index, index = indexes or (lean_index(base), lean_index(head))
+        old_index, index = read_indexes()
         names: dict[str, list[str]] = {}
         for name, declaration in index.declarations.items():
             if (module := library_module(declaration.path.as_posix())) in new:
@@ -332,34 +442,45 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
                 plan.notes.append(f"#{number}: a `Place:` line is left out: {error}")
                 continue
             if module not in modules:
-                plan.notes.append(f"#{number}: {module} is left unplaced: main has no such module")
+                plan.notes.append(f"#{number}: `{module}` is left unplaced: main has no such module")
             elif module not in own:
-                plan.notes.append(f"#{number}: {module} is left unplaced: the pull request's merge does not change it")
+                plan.notes.append(f"#{number}: `{module}` is left unplaced: the pull request's merge does not change it")
             elif to not in places:
-                plan.notes.append(f"#{number}: {module} is left unplaced: {to} is no field or subfield of the taxonomy")
+                plan.notes.append(f"#{number}: `{module}` is left unplaced: its line names no field or subfield of the "
+                                  "taxonomy")
             elif placement_of(module, placements) is not None:
-                plan.notes.append(f"#{number}: {module} keeps its place: the taxonomy already places it")
+                plan.notes.append(f"#{number}: `{module}` keeps its place: the taxonomy already places it")
             else:
                 if title is None:
                     title = (inherited[module][1] if module in inherited and inherited[module][0] == to
                              else default_title(head, module))
-                asked.setdefault(module, {}).setdefault((to, title), []).append(number)
+                numbers = asked.setdefault(module, {}).setdefault((to, title), [])
+                if number not in numbers:
+                    numbers.append(number)
+    chosen: dict[str, Placement] = {}
     for module, spots in sorted(asked.items()):
         if len(spots) == 1:
             (to, title), numbers = next(iter(spots.items()))
-            plan.added.append(Placement(module, to, title, ", ".join(f"#{number}" for number in numbers)))
+            chosen[module] = Placement(module, to, title, ", ".join(f"#{number}" for number in numbers))
         else:
             asking = ", ".join(f"#{number}" for numbers in spots.values() for number in numbers)
-            plan.notes.append(f"{module} is left unplaced: {asking} ask for different places")
+            plan.notes.append(f"`{module}` is left unplaced: {asking} ask for different places")
     for module in new:
-        if module in asked:
-            continue
-        if module in inherited:
+        if module not in asked and module in inherited:
             to, title, sources = inherited[module]
-            plan.added.append(Placement(module, to, title, sources))
-        elif module in unsure:
+            chosen[module] = Placement(module, to, title, sources)
+        elif module not in asked and module in unsure:
             plan.notes.append(unsure[module])
-    plan.added.sort(key=lambda item: item.module)
+    for module, item in sorted(chosen.items()):
+        elsewhere = sorted(page for page in pages().get(module, ()) if not page.startswith(f"{item.to}/"))
+        if elsewhere:
+            plan.notes.append(f"`{module}` is left unplaced: it already has pages outside `{item.to}`, such as "
+                              f"`{elsewhere[0]}`, which a placement would not move; placing it is a graph pull request "
+                              "that moves them")
+        else:
+            plan.added.append(item)
+    placed = {item.module for item in plan.added}
+    plan.unplaced = [(module, subject_of(module, taxonomy)) for module in new if module not in placed]
     plan.dropped = sorted(key for key in placements if key.split("/", 1)[0] in wiki.LIBRARIES
                           and key not in modules and key not in folders)
     return plan
@@ -367,9 +488,9 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
 
 def edit_placements(text: str, added: dict[str, dict[str, str]], dropped: list[str]) -> str:
     """scripts/taxonomy.json's *text* with the placements *added* and without those *dropped*. Each added entry is one
-    line, as the file writes it, right after the entry whose module comes last before its own in sorted order, or
-    first if none does, as insert_rows adds a links file's rows: its place depends on the entries, not on when it is
-    added. Every other line stays as it is. ValueError if the placements are not one entry per line."""
+    line, as the file writes it, right after the entry whose module comes last before its own in plain string order,
+    or first if none does: its place depends on the entries, not on when it is added, as insert_rows places a links
+    file's rows. Every other line stays as it is. ValueError if the placements are not one entry per line."""
     lines = text.split("\n")
     try:
         start = lines.index(' "placements": {')
@@ -401,6 +522,14 @@ def edit_placements(text: str, added: dict[str, dict[str, str]], dropped: list[s
     return edited
 
 
+def local_commit(tree: str, parents: list[str], message: str) -> str:
+    """A commit of *tree* on *parents*, made only to compare with (LOCAL_IDENTITY)."""
+    command = ["git", "-C", str(wiki.ROOT), "commit-tree", tree, *(part for parent in parents for part in ("-p", parent)),
+               "-m", message]
+    return subprocess.run(command, env={**os.environ, **LOCAL_IDENTITY}, capture_output=True, check=True,
+                          text=True).stdout.strip()
+
+
 def synthetic_base(base: str, head: str, taxonomy: str) -> str:
     """A commit that has *head*'s tree, but the Lean sources of *base* and the taxonomy blob *taxonomy*: the scoped
     sync run from it takes every Lean change from *base* to *head* as its own, on *head*'s wiki and baseline, read with
@@ -425,7 +554,7 @@ def synthetic_base(base: str, head: str, taxonomy: str) -> str:
             run("update-index", "-z", "--index-info", data="".join(f"{entry}\0" for entry in entries).encode())
         run("update-index", "--cacheinfo", f"100644,{taxonomy},{TAXONOMY_PATH}")
         tree = run("write-tree").decode().strip()
-    return git("commit-tree", tree, "-p", head, "-m", f"The tree of {head} with the Lean of {base}").decode().strip()
+    return local_commit(tree, [head], f"The tree of {head} with the Lean of {base}")
 
 
 def run_sync(root: Path, base: str, report: Path, check: bool) -> tuple[int, str]:
@@ -434,6 +563,22 @@ def run_sync(root: Path, base: str, report: Path, check: bool) -> tuple[int, str
                "--report", str(report)] + (["--check"] if check else [])
     result = subprocess.run(command, cwd=root, capture_output=True, text=True)
     return result.returncode, result.stdout + result.stderr
+
+
+def report_sections(output: str) -> dict[str, list[str]]:
+    """The items the sync's printed report lists under each of its sections (sync_wiki.REPORT), by kind."""
+    titles = {f"{title}: ": kind for kind, title in sync.REPORT}
+    found: dict[str, list[str]] = {}
+    current = None
+    for line in output.splitlines():
+        if line.startswith("  ") and current is not None:
+            found[current].append(line[2:])
+            continue
+        current = next((kind for title, kind in titles.items() if line.startswith(title)
+                        and line[len(title):].strip().isdigit()), None)
+        if current is not None:
+            found.setdefault(current, [])
+    return found
 
 
 def status_paths() -> list[str]:
@@ -460,22 +605,27 @@ def message_for(base: str, head: str, plan: PlacementPlan, report: dict) -> str:
                f"after {base[:12]}, up to {head[:12]}, left without one; {len(plan.added)} modules placed and "
                f"{len(plan.dropped)} placements of modules that no longer exist dropped. Made by "
                "scripts/graph_batch.py make.")
-    return "\n".join([f"Sync the graph with the Lean merged up to {head[:12]}", "", textwrap.fill(summary, 72), "",
-                      f"{BASE_TRAILER}: {base}", f"{THROUGH_TRAILER}: {head}", ""])
+    return "\n".join([f"{SUBJECT}{head[:12]}", "", textwrap.fill(summary, 72), "", f"{BASE_TRAILER}: {base}",
+                      f"{THROUGH_TRAILER}: {head}", ""])
 
 
 def make(options) -> int:
     head = commit_of("HEAD")
     if left := status_paths():
-        raise BatchError(f"make needs a clean checkout of main; it has changes: {', '.join(left[:5])}")
+        raise BatchError(f"make needs a clean checkout of main; it has changes: {', '.join(left[:5])}. Commit or "
+                         "remove them, or make the batch in a fresh checkout")
+    last = last_batch(head)
     if options.base:
         base = commit_of(options.base)
-    elif found := last_batch(head):
-        base = found[2]
+        if last is not None and not is_ancestor(base, last[2]):
+            raise BatchError(f"{base} is after {last[2]}, where the last batch ended: a batch from it would skip the "
+                             "Lean merged in between")
+    elif last is not None:
+        base = last[2]
     else:
         raise BatchError("no batch on this branch yet: give the first batch's base with --base")
-    if base == head or not is_ancestor(base, head):
-        raise BatchError(f"{base} is not an older commit of this branch")
+    if base == head or base not in mainline(head):
+        raise BatchError(f"{base} is not an older commit of this branch's first-parent history")
     print(f"Batch from {base} up to {head}.", flush=True)
     bodies = bodies_for(base, head, options.bodies)
     indexes = (lean_index(base), lean_index(head))
@@ -489,12 +639,15 @@ def make(options) -> int:
         report_path = Path(folder) / "report.json"
         status, output = run_sync(wiki.ROOT, synthetic, report_path, check=False)
         report = json.loads(report_path.read_text()) if report_path.is_file() else {}
+    print(output, end="" if output.endswith("\n") else "\n", flush=True)
+    restore = "`git reset --hard` and `git clean -fd blueprint` restore the checkout"
     if status:
-        raise BatchError("the sync stopped, and nothing is committed; `git reset --hard` and `git clean -fd blueprint` "
-                         "restore the checkout. Its output:\n" + output)
+        raise BatchError(f"the sync stopped, and nothing is committed; {restore}. When it stops on what main already "
+                         "carries, fix that on main first: every batch from here would stop the same way")
     changed = status_paths()
     if stray := [path for path in changed if not batch_path(path)]:
-        raise BatchError(f"the run changed files a batch never changes: {', '.join(stray)}")
+        raise BatchError(f"the run changed files a batch never changes: {', '.join(stray)}; nothing is committed, and "
+                         f"{restore}")
     if not changed:
         print("Nothing to sync: the graph is in step with the Lean merged up to here.")
         return 0
@@ -502,9 +655,12 @@ def make(options) -> int:
     git("commit", "-q", "--no-verify", "-F", "-", data=message_for(base, head, plan, report).encode())
     commit = commit_of("HEAD")
     print(f"Committed the batch as {commit}.", flush=True)
-    verify_commit(commit, bodies, plan=plan)
+    try:
+        verify_commit(commit, bodies, plan=plan)
+    except BatchError as error:
+        raise BatchError(f"{error}\nThe batch does not check: `git reset --hard HEAD^` takes the commit away") from None
     if options.body:
-        options.body.write_text(describe(commit, base, head, plan, report), encoding="utf-8")
+        options.body.write_text(describe(commit, base, head, plan, report, report_sections(output)), encoding="utf-8")
     return 0
 
 
@@ -517,16 +673,22 @@ class Verdict:
 
 def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | None = None,
                   onto: str | None = None) -> Verdict:
-    """Check that *commit* is a batch, and exactly what make writes (see the module docstring), and, given a newer main
-    *onto*, that it still merges cleanly into it and that the scoped check finds nothing the merge breaks there, such as
-    a second page for a declaration or a link to one main no longer has; BatchError otherwise."""
-    found = batch_of(commit)
+    """Check that *commit* is a batch on the first-parent history of the checkout's HEAD (batch_of), that it starts no
+    later than where the last batch before it ended, and that it is exactly what make writes (see the module
+    docstring); and, given a newer main *onto*, that it still merges cleanly into it, with one entry a module in the
+    taxonomy, and that the scoped check finds nothing the merge breaks there, such as a second page for a declaration
+    or a link to one main no longer has; BatchError otherwise."""
+    head = commit_of("HEAD")
+    found = batch_of(commit, head)
     if found is None:
-        raise BatchError(f"{commit} is not a batch: one commit on the commit its {THROUGH_TRAILER} trailer names, "
-                         f"with a {BASE_TRAILER} trailer naming an older commit, that changes only a batch's files")
+        raise BatchError(f"{commit} is not a batch of this checkout's main: one commit, with make's message and its "
+                         f"{BASE_TRAILER} and {THROUGH_TRAILER} trailers, on the commit the second names, both commits "
+                         "on main's first-parent history, that changes only a batch's files. Run verify from an "
+                         "up-to-date checkout of main")
     base, through = found
-    if not is_ancestor(through, commit_of("HEAD")):
-        raise BatchError(f"run verify from a checkout of main that has {through}: it runs that commit's sync")
+    if (last := last_batch(through)) is not None and not is_ancestor(base, last[2]):
+        raise BatchError(f"the batch starts at {base}, after {last[2]}, where the last batch before it ended: it skips "
+                         "the Lean merged in between")
     plan = plan or placement_plan(base, through, bodies)
     expected = edit_placements(blob(through, TAXONOMY_PATH).decode("utf-8"), plan.entries(), plan.dropped)
     actual = (blob(commit, TAXONOMY_PATH) or b"").decode("utf-8")
@@ -540,8 +702,13 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
                                  commit], capture_output=True, text=True)
         if result.returncode:
             raise BatchError(f"the batch no longer merges cleanly into {onto}: make a new batch from a fresh main")
-        merged = git("commit-tree", result.stdout.split()[0], "-p", onto, "-p", commit, "-m",
-                     f"The batch {commit} merged into {onto}").decode().strip()
+        tree = result.stdout.split()[0]
+        try:
+            sync.STRICT_JSON.decode(git("cat-file", "blob", f"{tree}:{TAXONOMY_PATH}").decode("utf-8"))
+        except ValueError as error:
+            raise BatchError(f"merged into {onto}, the batch leaves scripts/taxonomy.json unreadable ({error}): make a "
+                             "new batch from a fresh main") from None
+        merged = local_commit(tree, [onto, commit], f"The batch {commit} merged into {onto}")
     with tempfile.TemporaryDirectory(prefix="atlas-batch-verify-") as folder:
         tree, report_path = Path(folder) / "tree", Path(folder) / "report.json"
         git("worktree", "add", "-q", "--detach", str(tree), commit)
@@ -567,21 +734,25 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
     return Verdict(base, through, report)
 
 
-def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dict) -> str:
-    """A description for the batch's pull request, in Markdown."""
+def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dict,
+             sections: dict[str, list[str]]) -> str:
+    """A description for the batch's pull request, in Markdown. Every value in it is the repository's, or a
+    description's line that parse_place checked."""
     missing = report.get("missing", [])
     modules: dict[str, int] = {}
     for key in missing:
         modules[report["new"][key]] = modules.get(report["new"][key], 0) + 1
     written = report.get("written", [])
     folders = sum(1 for path in written if path.startswith("blueprint/roadmap/") and path.endswith("README.md"))
-    unrecorded = [page for page in report.get("changed", []) if page.split(" (", 1)[0] in report.get("digests", {})]
+    digests = report.get("digests", {})
+    recorded = sum(1 for value in digests.values() if value is not None)
+    unrecorded = [page for page in report.get("changed", []) if page.split(" (", 1)[0] in digests]
     lines = ["Graph: batch", "",
              f"Pages for the documented declarations that the Lean merged into `main` after `{base}`, up to `{head}`, "
              "left without one, made by `scripts/graph_batch.py make` "
              "([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)).", "",
              f"- {len(missing)} new pages, for declarations of {len(modules)} modules; {folders} folder pages written "
-             f"or extended; {len(report.get('digests', {}))} docstring digests written.",
+             f"or extended; {recorded} docstring digests written and {len(digests) - recorded} dropped.",
              f"- {len(plan.added)} modules placed in `scripts/taxonomy.json`, {len(plan.dropped)} placements of modules "
              "that no longer exist dropped.", ""]
     if plan.added:
@@ -590,15 +761,26 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
         lines.append("")
     if plan.dropped:
         lines += ["### Placements dropped", ""] + [f"- `{key}`" for key in plan.dropped] + [""]
+    if plan.unplaced:
+        lines += ["### New modules left unplaced", "", "No `Place:` line placed them, and they took no placed module's "
+                  "declarations. Placing one is a graph pull request that moves its pages; for one with no pages, in a "
+                  "folder with no subject, it also runs the whole-project sync, which writes them "
+                  "([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)):", ""]
+        lines += [f"- `{module}`: " + (f"in `{subject}/not-yet-classified/`" if subject else
+                                       "**no pages**, as its folder has no subject")
+                  for module, subject in plan.unplaced]
+        lines.append("")
     if plan.notes:
         lines += ["### Left for an editor", ""] + [f"- {note}" for note in plan.notes] + [""]
+    for kind, title in sync.REPORT:
+        if kind in EDITOR_ITEMS and sections.get(kind):
+            lines += [f"### {title}", "", "```text"] + sections[kind] + ["```", ""]
     if unrecorded:
         lines += ["### Pages to check", "", "Their declaration's docstring changed, and no pull request recorded the "
-                  "new digest:", ""] + [f"- {page}" for page in unrecorded] + [""]
-    for title, key in (("Held back, so with no page", "held"), ("Listed as duplicates, so with no page", "duplicates"),
-                       ("Documented declarations the Lean index lacks", "unindexed")):
+                  "new digest:", "", "```text"] + unrecorded + ["```", ""]
+    for title, key in (("Held back, so with no page", "held"), ("Listed as duplicates, so with no page", "duplicates")):
         if report.get(key):
-            lines += [f"### {title}", ""] + [f"- {row}" for row in report[key]] + [""]
+            lines += [f"### {title}", "", "```text"] + report[key] + ["```", ""]
     lines += ["### New pages by module", ""] + [f"- `{module}`: {count}" for module, count in sorted(modules.items())]
     lines += ["", "## Validation", "",
               f"- `python3 scripts/graph_batch.py verify {commit}`, from a checkout of `main` that has `{head}`: the "
@@ -609,11 +791,13 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
 
 def run_verify(options) -> int:
     commit = commit_of(options.commit)
-    found = batch_of(commit)
-    if found is None:
-        raise BatchError(f"{commit} is not a batch: one commit on the commit its {THROUGH_TRAILER} trailer names, "
-                         f"with a {BASE_TRAILER} trailer naming an older commit, that changes only a batch's files")
     head = commit_of("HEAD")
+    found = batch_of(commit, head)
+    if found is None:
+        raise BatchError(f"{commit} is not a batch of this checkout's main: one commit, with make's message and its "
+                         f"{BASE_TRAILER} and {THROUGH_TRAILER} trailers, on the commit the second names, both commits "
+                         "on main's first-parent history, that changes only a batch's files. Run verify from an "
+                         "up-to-date checkout of main")
     # From a newer main, the batch must still merge into it as it is.
     onto = head if head not in (commit, found[1]) and not is_ancestor(head, commit) else None
     verify_commit(commit, bodies_for(*found, options.bodies), onto=onto)
@@ -635,9 +819,11 @@ def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="graph_batch.py", description=__doc__.split("\n\n")[0])
     commands = parser.add_subparsers(dest="command", required=True)
     making = commands.add_parser("make", help="commit the next batch on a clean checkout of main")
-    making.add_argument("--base", metavar="REV", help="the first batch's base; later ones take the last batch's")
+    making.add_argument("--base", metavar="REV", help="where the batch starts: the first batch's base, or an earlier "
+                                                      "commit than where the last batch ended")
     making.add_argument("--bodies", type=Path, metavar="FILE", help="the pull requests' descriptions, as JSON")
-    making.add_argument("--body", type=Path, metavar="FILE", help="write a description for the pull request")
+    making.add_argument("--body", type=Path, metavar="FILE",
+                        help="write a description for the pull request, outside the checkout")
     verifying = commands.add_parser("verify", help="check that a commit is exactly the batch make writes")
     verifying.add_argument("commit", nargs="?", default="HEAD", metavar="REV")
     verifying.add_argument("--bodies", type=Path, metavar="FILE", help="the pull requests' descriptions, as JSON")
@@ -650,8 +836,8 @@ def main(argv: list[str]) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 1
     except subprocess.CalledProcessError as error:
-        print(f"error: {' '.join(error.cmd)} failed: {(error.stderr or b'').decode('utf-8', 'replace').strip()}",
-              file=sys.stderr)
+        stderr = error.stderr.decode("utf-8", "replace") if isinstance(error.stderr, bytes) else error.stderr or ""
+        print(f"error: {' '.join(map(str, error.cmd))} failed: {stderr.strip()}", file=sys.stderr)
         return 1
 
 
