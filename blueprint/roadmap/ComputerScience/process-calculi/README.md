@@ -8,6 +8,7 @@ Algebraic models of concurrent processes: labelled transition systems and their 
 - [Input/output automata](input-output-automata/README.md)
 - [Labelled transition systems](labelled-transition-systems/README.md)
 - [Observational congruence](observational-congruence/README.md)
+- [Top-level cut elimination](top-level-cut-elimination/README.md)
 - [Finite-state CCS agents](finite-state-ccs-agents/README.md)
 - [π-calculus](calculus/README.md)
 - [Process algebra laws](process-algebra-laws/README.md)

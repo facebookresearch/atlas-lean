@@ -39,8 +39,9 @@ absorption-aware side conditions on the tensor commuting conversions and on
 cut associativity, and corrects two misprints in §2.7. No process is typed
 in the empty environment (`not_hasType_empty`), so a closed-process
 formulation would be vacuous; the theorem is stated for an arbitrary
-environment, as in the source. Full cut elimination under prefixes is not
-formalized.
+environment, as in the source. The reduction relation does not reduce
+under prefixes, so the resulting process may still contain cuts guarded
+by a prefix.
 -/
 
 @[expose] public section
