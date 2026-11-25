@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.MahlerPopkenComplexity.BinaryUpperBound
+public import MathlibExt.NumberTheory.MahlerPopkenComplexity.Recurrence
 
 /-!
 # Recursions for Mahler–Popken complexity
@@ -30,19 +31,6 @@ set_option autoImplicit false
 public section
 
 namespace MathlibExt.NumberTheory.MahlerPopkenComplexityWanted
-
-/-- **The $m$-ary complexity eventually satisfies its recursion.** For every natural number
-$m \ge 1$ there is $N$ such that for every $n \ge N$, the $m$-ary Mahler–Popken complexity
-$\|n\|_m$ equals the right-hand side of the recursion (9), that is, the least of the values
-$\|d\|_m + \|n/d\|_m$ over divisors $d$ of $n$ with $d \ne 1$ and $d \ne n$, and the values
-$\|\eta\|_m + \|n - \eta\|_m$ over $0 < \eta < n$.
-
-Source: John M. Campbell, "A Binary Version of the Mahler-Popken
-Complexity Function", Proposition 1. -/
-theorem_wanted mahlerPopkenComplexity_eq_recursionValue_eventually
-    (m : ℕ) (hm : 1 ≤ m) :
-    ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
-      mahlerPopkenComplexity m n = mahlerPopkenRecursionValue m n
 
 /-- **Recursion for the binary Mahler–Popken complexity.** For every natural number $n \ge 3$,
 the binary ($2$-ary) Mahler–Popken complexity $\lVert n \rVert_2$ equals the minimum of the sums

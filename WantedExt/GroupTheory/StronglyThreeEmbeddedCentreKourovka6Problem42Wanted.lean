@@ -17,7 +17,7 @@ Does Z(G/O_3'(G)) necessarily contain an element of order 3?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.DPiHallIntersectionKourovka18Problem31Wanted
+public import MathlibExt.GroupTheory.DPiHallIntersectionKourovka18Problem31
 
 @[expose] public section
 

@@ -17,7 +17,7 @@ an extension of a `D_π`-group by a `D_π`-group always a `D_π`-group?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.DPiHallIntersectionKourovka18Problem31Wanted
+public import MathlibExt.GroupTheory.DPiHallIntersectionKourovka18Problem31
 
 @[expose] public section
 

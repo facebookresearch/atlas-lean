@@ -20,7 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
-public import WantedExt.GroupTheory.DPiHallIntersectionKourovka18Problem31Wanted
+public import MathlibExt.GroupTheory.DPiHallIntersectionKourovka18Problem31
 
 @[expose] public section
 

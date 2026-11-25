@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Projective.Point
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import MathlibExt.NumberTheory.EllipticCurveTwoPQRank
 public import MathlibExt.NumberTheory.Padics.MultivariableHensel
 
 /-! # Rank of the elliptic curve `y² = x³ - 2pqx`
@@ -31,26 +32,6 @@ of `E₂ₚq` is `-1`, so the parity conjecture says exactly that the rank is od
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Odd-rank curves y² = x³ − 2pqx: rank one cases.** Let $p \ne q$ be primes and let $E$ be
-the elliptic curve $y^2 = x^3 - 2pqx$ over $\mathbb{Q}$. Suppose that
-$(p \bmod 8, q \bmod 8)$ is one of $(3, 3)$, $(3, 5)$, $(3, 7)$, $(5, 5)$, $(5, 7)$, or that
-$p \equiv 1 \pmod 8$, $q \equiv 3, 5$ or $7 \pmod 8$ and the Legendre symbol
-$\left(\frac{p}{q}\right)$ equals $-1$. If the rank of the group $E(\mathbb{Q})$ of rational
-points is odd, then it equals $1$.
-
-The odd-rank hypothesis stands for the parity conjecture for $E$. The case with $p$ and $q$
-interchanged is the same curve.
-
-Source: Renz Jimwel Mina and Jerico Bacani, *Rank of the Elliptic Curve y^2=x^3-2pqx*,
-INTEGERS 26 (2026), Article A51, Theorem 1 (i) (`integers-2026-A51-thm-1`). -/
-public theorem_wanted finrank_point_two_mul_mul_eq_one {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
-    (hpq : p ≠ q) (E : WeierstrassCurve ℚ)
-    (hE : E = ⟨0, 0, 0, -(2 * p * q : ℚ), 0⟩)
-    (hcase : (p % 8, q % 8) ∈ [(3, 3), (3, 5), (3, 7), (5, 5), (5, 7)] ∨
-      (p % 8 = 1 ∧ q % 8 ∈ [3, 5, 7] ∧ jacobiSym p q = -1))
-    (hparity : Odd (Module.finrank ℤ E.toProjective.Point)) :
-    Module.finrank ℤ E.toProjective.Point = 1
 
 /-- **Odd-rank curves y² = x³ − 2pqx: rank one or three cases.** Let $p \ne q$ be primes and let
 $E$ be the elliptic curve $y^2 = x^3 - 2pqx$ over $\mathbb{Q}$, and write
