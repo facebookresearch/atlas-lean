@@ -96,6 +96,66 @@ public theorem isRLarge_iff (r : ℕ) (D : Set ℕ) :
         ∃ x : Fin k → ℕ+, IsMonochromatic c x ∧ IsDAP D k x :=
   Iff.rfl
 
+/-- **2-large sets contain multiples of every positive integer.** Every $2$-large set $D$ of
+positive integers contains a multiple of each positive integer $m$.
+
+Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
+        Theorem 2. -/
+public theorem two_large_contains_multiples (D : Set ℕ) (h : IsRLarge 2 D) :
+    ∀ m : ℕ, 0 < m → ∃ d ∈ D, m ∣ d := by
+  intro m hm
+  let residue (n : ℕ+) : ℕ := (n : ℕ) % (2 * m)
+  let color (n : ℕ+) : Fin 2 := if residue n < m then 0 else 1
+  obtain ⟨x, hx, a, d, hd, hprog⟩ := h.2.2 color (2 * m + 1) (by omega)
+  refine ⟨d, hd, ?_⟩
+  let δ := d % (2 * m)
+  suffices hδ : δ = 0 by
+    exact (show m ∣ 2 * m from ⟨2, Nat.mul_comm ..⟩).trans (Nat.dvd_of_mod_eq_zero hδ)
+  by_contra hδ
+  have hδlt : δ < 2 * m := Nat.mod_lt _ (by omega)
+  have hres (i : Fin (2 * m + 1)) : residue (x i) < 2 * m := Nat.mod_lt _ (by omega)
+  -- Small steps must increase the residue, while large steps must wrap and decrease it.
+  -- Reflect the latter residues so that the resulting sequence always increases.
+  let height (i : Fin (2 * m + 1)) :=
+    if δ < m then residue (x i) else 2 * m - 1 - residue (x i)
+  have step (i : Fin (2 * m)) : height i.castSucc < height i.succ := by
+    let u := residue (x i.castSucc)
+    let v := residue (x i.succ)
+    have hu : u < 2 * m := hres _
+    have hv : v < 2 * m := hres _
+    have hc : (if u < m then (0 : Fin 2) else 1) = (if v < m then 0 else 1) :=
+      hx i.castSucc i.succ
+    -- Two residues in the same half are less than m apart.
+    have hnear : u < v + m ∧ v < u + m := by
+      by_cases hu' : u < m <;> by_cases hv' : v < m <;> simp [hu', hv'] at hc <;> omega
+    have hgap : (x i.succ : ℕ) = (x i.castSucc : ℕ) + d := by
+      rw [hprog i.succ, hprog i.castSucc, Fin.val_succ, Fin.val_castSucc,
+        Nat.add_mul, Nat.one_mul, Nat.add_assoc]
+    have hmod : v = (u + δ) % (2 * m) := by
+      dsimp only [u, v, residue, δ]
+      rw [hgap]
+      exact Nat.add_mod ..
+    change (if δ < m then u else 2 * m - 1 - u) < (if δ < m then v else 2 * m - 1 - v)
+    by_cases hwrap : 2 * m ≤ u + δ
+    · rw [Nat.mod_eq_sub_mod hwrap, Nat.mod_eq_of_lt (by omega)] at hmod
+      simp only [ite_eq_right (show ¬ δ < m by omega)]
+      omega
+    · rw [Nat.mod_eq_of_lt (by omega)] at hmod
+      simp only [ite_eq_left (show δ < m by omega)]
+      omega
+  have count (i : Fin (2 * m + 1)) : (i : ℕ) ≤ height i := by
+    induction i using Fin.induction with
+    | zero => exact Nat.zero_le _
+    | succ i ih =>
+      have hi := step i
+      simp only [Fin.val_castSucc] at ih
+      simp only [Fin.val_succ]
+      omega
+  have hlast := count (Fin.last (2 * m))
+  have hlt := hres (Fin.last (2 * m))
+  simp only [Fin.val_last, height] at hlast
+  split at hlast <;> omega
+
 /-- **Large set.** A set $D$ of natural numbers is large when it is $r$-large for every natural
 number $r \ge 1$.
 

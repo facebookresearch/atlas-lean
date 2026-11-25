@@ -51,14 +51,6 @@ public theorem_wanted accessibility_degree_growth_bound (r : ℕ) (D : Set ℕ)
         (2 + (((r - 1 : ℕ) : ℝ)⁻¹) + δ) * (d n : ℝ)) :
     ¬ IsRAccessible r D
 
-/-- **2-large sets contain multiples of every positive integer.** Every $2$-large set $D$ of
-positive integers contains a multiple of each positive integer $m$.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 2. -/
-public theorem_wanted two_large_contains_multiples (D : Set ℕ) (h : IsRLarge 2 D) :
-    ∀ m : ℕ, 0 < m → ∃ d ∈ D, m ∣ d
-
 /-- **Finite removal preserves $r$-largeness.** Let $r$ be a natural number. If a set
 $D \subseteq \mathbb{N}$ is $r$-large and $F \subseteq \mathbb{N}$ is finite, then $D \setminus F$
 is $r$-large.

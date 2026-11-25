@@ -11,6 +11,7 @@ module
 import Mathlib.Data.Fintype.Pigeonhole
 import Mathlib.Order.OrderIsoNat
 import MathlibExt.Combinatorics.AccessibleSets
+import MathlibExt.Combinatorics.Additive.VanDerWaerdenAP
 
 /-! # Tests for accessible sets and diffsequences -/
 
@@ -135,3 +136,26 @@ example : ∃ c : ℕ+ → Fin 2, ¬ ∃ x : Fin 2 → ℕ+,
   exact h
 
 end MetaMathlibExt.coloring_avoids_diffsequence_of_fractional_bounds
+
+namespace MetaMathlibExt.two_large_contains_multiples
+
+-- Scale the progressions from van der Waerden's theorem to make the gaps positive multiples of 3.
+example : ∃ d ∈ {d : ℕ | 0 < d ∧ 3 ∣ d}, 5 ∣ d := by
+  refine two_large_contains_multiples (D := {d : ℕ | 0 < d ∧ 3 ∣ d}) (h := ?_) 5 (by decide)
+  refine ⟨fun _ hd => hd.1, by decide, ?_⟩
+  intro c k hk
+  obtain ⟨N, hN⟩ := vanDerWaerden 2 k (by decide) hk
+  obtain ⟨a, d, ha, hd, hbound, hc⟩ := hN (fun n => c ⟨3 * n.val, by have := n.prop.1; omega⟩)
+  let x (i : Fin k) : ℕ+ := ⟨3 * (a + (i : ℕ) * d), by omega⟩
+  refine ⟨x, ?_, ⟨3 * a, by omega⟩, 3 * d, ⟨by omega, ⟨d, rfl⟩⟩, ?_⟩
+  · have hcolor (i : Fin k) : c (x i) = c ⟨3 * a, by omega⟩ := by
+      have hi : (i : ℕ) ≤ k - 1 := by omega
+      exact hc i i.isLt (by omega)
+        ((Nat.add_le_add_left (Nat.mul_le_mul_right d hi) a).trans hbound)
+        ⟨ha, (Nat.le_add_right _ _).trans hbound⟩
+    exact fun i j => (hcolor i).trans (hcolor j).symm
+  · intro i
+    change 3 * (a + (i : ℕ) * d) = 3 * a + (i : ℕ) * (3 * d)
+    ring
+
+end MetaMathlibExt.two_large_contains_multiples
