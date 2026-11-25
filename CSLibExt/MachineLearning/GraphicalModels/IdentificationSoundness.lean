@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.GraphicalModels.CComponentCriterion
 public import CSLibExt.MachineLearning.GraphicalModels.IdentificationAlgorithm
+public import MathlibExt.Probability.FiniteWeight
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 
 /-!
@@ -28,14 +29,17 @@ assignment.
 
 ## Main definitions
 
-* `BayesNet.doMarginal L X Y v`: the effect `P_x(y)` at the observed assignment `v`.
+* `BayesNet.doMarginal L X Y v` (defined with `observedLaw` and `qFactor` in
+  `CComponentFactorization`): the effect `P_x(y)` at the observed assignment `v`.
 
 ## Main results
 
 * `BayesNet.ID_sound`: soundness of `ADMG.ID` for every finite network with latent set `L`.
-* `BayesNet.ID_sound_of_mem_tianClass`: the same on `BayesNet.tianClass L G`, the networks of
-  the source's semi-Markovian convention whose latent projection is `G` and whose observed law is
-  strictly positive.
+* `BayesNet.ID_sound_of_mem_tianClass`: the same on `BayesNet.tianClass L G`, the networks
+  whose latent projection is `G`, whose observed law is strictly positive, and in which no
+  latent node is a descendant of an observed node. That class is broader than the
+  semi-Markovian normal form of Shpitser and Pearl (each latent a root with exactly two
+  observed children); `BayesNet.ID_sound` needs no such hypothesis at all.
 * `BayesNet.identifiedOn_doMarginal_of_ID_eq_ok`: a successful run of `ADMG.ID` identifies
   `P_x(y)` from the observed law on that class (`IdentifiedOn`).
 * `BayesNet.idRec_sound`: the invariant behind these results: a call of `ADMG.idRec` on a vertex
@@ -61,8 +65,10 @@ assignment.
   finite domain for each variable.
 * `BayesNet.ID_sound` holds for every finite network with latent set `L` whose latent projection
   is the input graph, with no semi-Markovian hypothesis. `BayesNet.ID_sound_of_mem_tianClass`
-  specializes it to the source's convention that no latent node is a descendant of an observed
-  node.
+  specializes it to `tianClass`, whose extra condition (no latent node a descendant of an
+  observed node) is Tian and Pearl's 2002 hypothesis; it is weaker than the semi-Markovian
+  normal form of the AAAI 2006 source, so the specialization is to a broader class than the
+  source's, not to the source's class itself.
 * Failure outputs carry no claim. When `ADMG.ID` returns `.error (F, F')` (line 5), nothing is
   stated: neither that `(F, F')` is a hedge nor that `P_x(y)` is not identified. Completeness
   (Theorem 6 and Corollary 2 of the source) is not formalized; the test file shows a run that
@@ -96,93 +102,7 @@ of the do-calculus; here line 3 is the ancestral marginalization
   567–573, with its companion technical report R-290-L, for the Q-factor identities.
 -/
 
-/-
-Implementation stages of this statement pin. Each stage reuses the earlier ones. Every theorem
-below is a stated target without a proof; `BayesNet.doMarginal` is the only definition.
-
-* S1, adapters: `MetaMathlibExt.FiniteWeight.marginal_univ` and
-  `MetaMathlibExt.FiniteWeight.marginal_marginal_of_union_eq_univ` (finite weights);
-  `IdExpr.eval_prodList`, `ADMG.condChain_eval` and `ADMG.exists_of_bind_pure_eq_ok`
-  (evaluation); `ADMG.ancIn_subset`, `ADMG.ancIn_closed`, `ADMG.ancCut_closed`,
-  `ADMG.not_adj_of_mem_cComponentsIn` and `ADMG.mem_filter_pred_of_dir` (graph facts).
-* S2, line identities: `BayesNet.marginal_qFactor_restrict`,
-  `BayesNet.qFactor_eq_prod_cComponentsIn`, `BayesNet.condChain_eval_qFactor`.
-* S3, the recursion invariant `BayesNet.idRec_sound`, by the functional induction principle
-  `ADMG.idRec.induct` with `ADMG.idRec_invariants`.
-* S4, the headline: `BayesNet.doMarginal_eq_marginal_qFactor` (independent of S3),
-  `BayesNet.ID_sound`, `BayesNet.ID_sound_of_mem_tianClass`,
-  `BayesNet.identifiedOn_doMarginal_of_ID_eq_ok`.
-* T, the tests in `IdentificationSoundnessTests`.
--/
-
 @[expose] public section
-
-namespace MetaMathlibExt.FiniteWeight
-
-open Finset
-
-variable {V α : Type*} [Fintype V] [DecidableEq V] [Fintype α]
-
-/-- The marginal of a weight on all variables is the weight itself: no variable is summed out. -/
-theorem marginal_univ (p : (V → α) → ℝ) (x : V → α) : marginal p Set.univ x = p x := by
-  unfold marginal
-  simp only [Finset.sum_filter]
-  refine (Finset.sum_eq_single x ?h0 ?h1).trans (ite_eq_left (fun v _ => rfl))
-  · intro b _ hb
-    refine ite_eq_right ?_
-    intro hcon
-    exact hb (funext fun v => hcon v (Set.mem_univ v))
-  · intro hcon
-    exact absurd (Finset.mem_univ x) hcon
-
-/-- **Marginalizing in two steps, no variable summed twice.** If every variable is fixed by `U`
-or by `W`, the `U`-marginal of the `W`-marginal of `p` is the `U ∩ W`-marginal of `p`. Compare
-`marginal_marginal`, which covers `U ⊆ W` and picks up a counting factor. -/
-theorem marginal_marginal_of_union_eq_univ (p : (V → α) → ℝ) {U W : Set V}
-    (h : U ∪ W = Set.univ) (x : V → α) :
-    marginal (marginal p W) U x = marginal p (U ∩ W) x := by
-  classical
-  unfold marginal
-  refine (Finset.sum_comm'
-    (t' := Finset.univ.filter (fun z : V → α => ∀ v ∈ U ∩ W, z v = x v))
-    (s' := fun (z : V → α) => {fun v => if v ∈ U then x v else z v}) ?h).trans ?_
-  · intro y z
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
-    constructor
-    · rintro ⟨hy, hz⟩
-      refine ⟨?_, ?_⟩
-      · funext v
-        by_cases hvU : v ∈ U
-        · simp only [ite_eq_left hvU]
-          exact hy v hvU
-        · simp only [ite_eq_right hvU]
-          have huv : v ∈ U ∨ v ∈ W := by
-            have hh : v ∈ U ∪ W := by rw [h]; exact Set.mem_univ v
-            rwa [Set.mem_union] at hh
-          rcases huv with hU | hW
-          · exact absurd hU hvU
-          · exact (hz v hW).symm
-      · intro v hv
-        have hvU : v ∈ U := Set.mem_of_mem_inter_left hv
-        have hvW : v ∈ W := Set.mem_of_mem_inter_right hv
-        exact (hz v hvW).trans (hy v hvU)
-    · rintro ⟨heq, hzC⟩
-      refine ⟨?_, ?_⟩
-      · intro v hvU
-        simp only [heq, ite_eq_left hvU]
-      · intro v hvW
-        simp only [heq]
-        by_cases hvU : v ∈ U
-        · simp only [ite_eq_left hvU]
-          exact hzC v (Set.mem_inter hvU hvW)
-        · simp only [ite_eq_right hvU]
-  · refine Finset.sum_congr ?hCC ?_
-    · ext z
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    · intro z _
-      simp only [Finset.sum_singleton]
-
-end MetaMathlibExt.FiniteWeight
 
 namespace Cslib.MachineLearning.GraphicalModels
 
@@ -713,14 +633,6 @@ theorem idRec_sound
 
 /-! ### Soundness of ID -/
 
-/-- The effect `P_x(y)` read at a full observed assignment `v` (`x = v` on `X`, `y = v` on `Y`):
-the probability that the observed nodes in `Y` take their values in `v` after `do(X = v)` on the
-observed nodes in `X`, the latent nodes summed out. The intervention is the surgery
-`BayesNet.mutilateSet`, the submodel `M_x` of Shpitser and Pearl (AAAI 2006, Definition 2). -/
-noncomputable def doMarginal (X Y : Finset {i : Fin n // i ∉ L})
-    (v : {i : Fin n // i ∉ L} → α) : ℝ :=
-  marginal (b.mutilateSet (X.map (Function.Embedding.subtype _)) (extendObs L v)).joint
-    ↑(Y.map (Function.Embedding.subtype _)) (extendObs L v)
 
 private theorem ids_aux_extendObs_apply (w : {i : Fin n // i ∉ L} → α)
     (u : {i : Fin n // i ∉ L}) : extendObs L w (u : Fin n) = w u := by
@@ -988,11 +900,14 @@ theorem ID_sound
   have h2 := doMarginal_eq_marginal_qFactor b L X Y v
   exact h1.trans h2.symm
 
-/-- **Soundness of ID on the class of the source** (Shpitser and Pearl, AAAI 2006, Theorem 5):
-for a graph `G` on the observed nodes and a topological order `σ` of `G`, an expression that `ID`
-returns for disjoint `X`, `Y` evaluates to `P_x(y)` in every network of `tianClass L G`: no
-latent node is a descendant of an observed node (the source's semi-Markovian convention), the
-latent projection is `G`, and the observed law is strictly positive. -/
+/-- **Soundness of ID on `tianClass`** (a specialization of `ID_sound`): for a graph `G` on the
+observed nodes and a topological order `σ` of `G`, an expression that `ID` returns for
+disjoint `X`, `Y` evaluates to `P_x(y)` in every network of `tianClass L G`, in which no latent
+node is a descendant of an observed node, the latent projection is `G`, and the observed law
+is strictly positive. The descendant condition is Tian and Pearl's 2002 hypothesis; the
+semi-Markovian normal form of Shpitser and Pearl (AAAI 2006), each latent a root with exactly
+two observed children, is stronger, so `tianClass` is broader than the source's model class
+and `ID_sound` above is the more general statement. -/
 theorem ID_sound_of_mem_tianClass {G : ADMG {i : Fin n // i ∉ L}}
     {σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L})}
     (hσ : ∀ ⦃u w⦄, G.dir u w → σ u < σ w)

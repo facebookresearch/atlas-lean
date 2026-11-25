@@ -69,6 +69,16 @@ noncomputable def BayesNet.qFactor (b : BayesNet α n) (L : Finset (Fin n))
     (b.mutilateSet ((Sᶜ).map (Function.Embedding.subtype _)) (extendObs L v)).joint
     ↑(S.map (Function.Embedding.subtype _)) (extendObs L v)
 
+/-- The effect `P_x(y)` read at a full observed assignment `v` (`x = v` on `X`, `y = v` on `Y`):
+the probability that the observed nodes in `Y` take their values in `v` after `do(X = v)` on the
+observed nodes in `X`, the latent nodes summed out. The intervention is the surgery
+`BayesNet.mutilateSet`, the submodel `M_x` of Shpitser and Pearl (AAAI 2006, Definition 2). -/
+noncomputable def BayesNet.doMarginal (b : BayesNet α n) (L : Finset (Fin n))
+    (X Y : Finset {i : Fin n // i ∉ L}) (v : {i : Fin n // i ∉ L} → α) : ℝ :=
+  MetaMathlibExt.FiniteWeight.marginal
+    (b.mutilateSet (X.map (Function.Embedding.subtype _)) (extendObs L v)).joint
+    ↑(Y.map (Function.Embedding.subtype _)) (extendObs L v)
+
 end Cslib.MachineLearning.GraphicalModels
 
 namespace Cslib.MachineLearning.GraphicalModels.BayesNet
