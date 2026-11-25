@@ -5,3 +5,5 @@ Algorithms computing properties of explicit graphs (traversal, connectivity, sho
 - [Graph traversal and connectivity](traversal-and-connectivity/README.md)
 - [Shortest paths](shortest-paths/README.md)
 - [Spanning trees, flows and matchings](spanning-trees-flows-matchings/README.md)
+- [Graph algorithm bounds](graph-algorithm-bounds/README.md)
+- [Linear programming and flows](linear-programming-and-flows/README.md)

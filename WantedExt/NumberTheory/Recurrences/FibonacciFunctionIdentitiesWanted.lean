@@ -24,6 +24,7 @@ public import MathlibExt.NumberTheory.Recurrences.GibonacciIndexDoubling
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasLikeSum
 public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
 public import MathlibExt.NumberTheory.Recurrences.GibonacciProductSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciShiftedProduct
 public import MathlibExt.NumberTheory.Recurrences.GibonacciTripleProduct
 public import MathlibExt.NumberTheory.Recurrences.LucasFibonacciTelescoping
 
@@ -304,22 +305,6 @@ public theorem_wanted five_gibonacci_mul_sub_two_gibonacci
       (-1 : ℝ) ^ (k - r + 1) * 2 * (G (r + 1) + G (r - 1)) * (H (s + 1) + H (s - 1)) +
         (-1 : ℝ) ^ (k - r) * 2 *
           (G 0 * (H (r + s) + H (r + s - 2)) + G 1 * (H (r + s + 1) + H (r + s - 1)))
-
-/-- **Shifted product identity for two gibonacci sequences.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
-integers $s$ and $k$,
-$$
-G_{k+1} H_{s+1} + G_{k-2} H_{s-2} = 2 G_k H_s + 2 G_{k-1} H_{s-1}.
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 24
-(`jis-2024-24.6.2-prop-24`). -/
-public theorem_wanted gibonacci_product_shift_identity
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (s k : ℤ) :
-    G (k + 1) * H (s + 1) + G (k - 2) * H (s - 2) = 2 * G k * H s + 2 * G (k - 1) * H (s - 1)
 
 /-- **Seed expansion of a triple gibonacci product.** Let $G, H, I \colon \mathbb{Z} \to \mathbb{R}$
 satisfy $G_{j+2} = G_{j+1} + G_j$, $H_{j+2} = H_{j+1} + H_j$ and $I_{j+2} = I_{j+1} + I_j$ for
