@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Algebra.Polynomial.Roots
+public import MathlibExt.LinearAlgebra.GeneralizedEigenvalueInterlacing
 
 /-!
 # Generalized eigenvalues of MAX matrices to MIN matrices
@@ -33,10 +34,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 1: for `n > 2` positive reals `s_1 < ⋯ < s_n`, with MAX matrix
-`M_S = (max (s_i, s_j))` and MIN matrix `N_S = (min (s_i, s_j))`, the g-eigenvalues of `M_S` to
-`N_S` are `√(s_n / s_1)`, `-1` with multiplicity `n - 2`, and `-√(s_n / s_1)`. Stated as the
-factorization of `det (M_S - X N_S)`, whose leading coefficient is `det (-N_S)`.
+/-- **Generalized eigenvalues of a MAX matrix to a MIN matrix.** Let $n > 2$ and let
+$0 < s_1 < s_2 < \dots < s_n$ be real numbers. Let $M$ be the $n \times n$ matrix with entries
+$M_{ij} = \max(s_i, s_j)$, let $N$ be the $n \times n$ matrix with entries
+$N_{ij} = \min(s_i, s_j)$, and put $\rho = \sqrt{s_n / s_1}$. Then, as polynomials in $X$ with
+real coefficients,
+$$\det(M - XN) = (-1)^n \det(N) \, (X - \rho)(X + 1)^{n-2}(X + \rho).$$
+
+The roots of $\det(M - XN)$ are the generalized eigenvalues of $M$ to $N$.
 
 Source: Jorma K. Merikoski, Pentti Haukkanen, Antonio Sasaki, and Timo Tossavainen, *On
 Generalized Eigenvalues of MAX Matrices to MIN Matrices and LCM Matrices to GCD Matrices*,
@@ -49,27 +54,6 @@ public theorem_wanted det_maxMatrix_sub_X_smul_minMatrix (n : ℕ) (hn : 2 < n)
         ((X - C (Real.sqrt (s ⟨n - 1, by omega⟩ / s ⟨0, by omega⟩))) *
           (X + 1) ^ (n - 2) *
           (X + C (Real.sqrt (s ⟨n - 1, by omega⟩ / s ⟨0, by omega⟩))))
-
-/-- Theorem 6 (Cauchy interlacing for g-eigenvalues): let `A` be a complex Hermitian and `B` a
-positive definite `(n+1) × (n+1)` matrix (`n ≥ 1`), and `A'`, `B'` their leading principal
-`n × n` submatrices. If `λ_1 ≥ ⋯ ≥ λ_{n+1}` enumerates the g-eigenvalues of `A` to `B` and
-`λ'_1 ≥ ⋯ ≥ λ'_n` those of `A'` to `B'` (real numbers listing the roots of `det (A - X B)`,
-respectively `det (A' - X B')`, with multiplicity), then
-`λ_1 ≥ λ'_1 ≥ λ_2 ≥ ⋯ ≥ λ_n ≥ λ'_n ≥ λ_{n+1}`.
-
-Source: Jorma K. Merikoski, Pentti Haukkanen, Antonio Sasaki, and Timo Tossavainen, *On
-Generalized Eigenvalues of MAX Matrices to MIN Matrices and LCM Matrices to GCD Matrices*,
-Journal of Integer Sequences 28 (2025), Article 25.7.1, Theorem 6 (`jis-2025-25.7.1-thm-6`). -/
-public theorem_wanted generalizedEigenvalue_interlacing (n : ℕ) (hn : 1 ≤ n)
-    (A B : Matrix (Fin (n + 1)) (Fin (n + 1)) ℂ) (hA : A.IsHermitian) (hB : B.PosDef)
-    (lam : Fin (n + 1) → ℝ) (hlam : Antitone lam)
-    (hroots : (A.map C - (X : ℂ[X]) • B.map C).det.roots =
-      Finset.univ.val.map fun i => (lam i : ℂ))
-    (lam' : Fin n → ℝ) (hlam' : Antitone lam')
-    (hroots' : ((A.submatrix Fin.castSucc Fin.castSucc).map C -
-        (X : ℂ[X]) • (B.submatrix Fin.castSucc Fin.castSucc).map C).det.roots =
-      Finset.univ.val.map fun i => (lam' i : ℂ)) :
-    ∀ k : Fin n, lam k.succ ≤ lam' k ∧ lam' k ≤ lam k.castSucc
 
 end
 

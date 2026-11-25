@@ -28,14 +28,22 @@ namespace Cslib.Algorithms.Lean.TimeM
 
 variable {R : Type u} [CommRing R]
 
-/-- Check the actual array length, then run the actual materialized radix-two FFT. -/
+/-- **Radix-two FFT on arrays.** Let $R$ be a commutative ring, $\omega \in R$ and $x$ an array
+over $R$ of length $n$, and let $d = \lfloor \log_2 n \rfloor$ (with $d = 0$ when $n = 0$). If
+$n = 2^d$, the array FFT runs the radix-two FFT with root $\omega$ on $x$, viewed as a vector of
+length $2^d$, and returns its output as an array, with the cost of that run. Otherwise it returns
+no result, at cost $0$; the length check itself is free. -/
 def fftArray (omega : R) (xs : Array R) : TimeM Nat (Option (Array R)) :=
   if h : xs.size = 2 ^ xs.size.log2 then
     TimeM.bind (fft xs.size.log2 omega ⟨xs, h⟩) fun out => pure (some out.toArray)
   else
     pure none
 
-/-- Admission fails exactly for lengths outside the positive powers of two. -/
+/-- **The array FFT rejects exactly the non-powers of two.** Let $R$ be a commutative ring,
+$\omega \in R$ and $x$ an array over $R$. The array FFT of $x$ with root $\omega$ returns no
+result if and only if the length of $x$ is different from $2^d$ for every natural number $d$.
+
+In particular the empty array is rejected and an array of length $1 = 2^0$ is accepted. -/
 theorem fftArray_eq_none_iff (omega : R) (xs : Array R) :
     (fftArray omega xs).ret = none ↔ ∀ d : Nat, xs.size ≠ 2 ^ d := by
   by_cases h : xs.size = 2 ^ xs.size.log2

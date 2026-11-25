@@ -76,7 +76,8 @@ noncomputable def layerTop (t : ℕ → ℝ) (k : ℕ) : ℝ :=
   ∑ i ∈ Finset.range k, t i
 
 /-- Thickness of layer `i` traversed at depth `z`, clamped to
-the layer interval. -/
+the layer interval. For a negative thickness `t i < 0` it is `0`
+at every depth. -/
 noncomputable def traversedThickness (t : ℕ → ℝ) (i : ℕ) (z : ℝ) : ℝ :=
   max (layerTop t i) (min z (layerTop t (i + 1))) - layerTop t i
 
@@ -142,9 +143,9 @@ private lemma traversed_of_mem {t : ℕ → ℝ} (_ht : ∀ i, 0 ≤ t i) (i : �
 
 /-! ## B. On-layer profiles and continuity -/
 
-/-- On layer `k` the total stress is the affine form:
-surcharge plus completed layers plus `γ k` times depth into
-the layer. -/
+/-- On layer `k` the total stress is the affine form: surcharge plus completed layers plus `γ k`
+times depth into the layer. Here the layer thicknesses are nonnegative (`0 ≤ t i` for every `i`),
+`k < n` and `layerTop t k ≤ z ≤ layerTop t (k + 1)`. -/
 theorem layeredTotalStress_on_layer {n k : ℕ} (hk : k < n) (q : ℝ)
     {t : ℕ → ℝ} (γ : ℕ → ℝ) (ht : ∀ i, 0 ≤ t i) {z : ℝ}
     (h1 : layerTop t k ≤ z) (h2 : z ≤ layerTop t (k + 1)) :
@@ -195,8 +196,9 @@ theorem layeredTotalStress_on_layer {n k : ℕ} (hk : k < n) (q : ℝ)
   rw [hcomb]
   ring
 
-/-- Above the water table (at interface `m`), effective
-stress on layer `k < m` has no pore-pressure term. -/
+/-- Above the water table (at interface `m`), effective stress on layer `k < m` has no pore-pressure
+term. Here the layer thicknesses are nonnegative (`0 ≤ t i` for every `i`), `k < n` and
+`layerTop t k ≤ z ≤ layerTop t (k + 1)`. -/
 theorem layeredEffectiveStress_on_layer_above {n k m : ℕ} (hk : k < n)
     (hkm : k < m) (q γw : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ)
     (ht : ∀ i, 0 ≤ t i) {z : ℝ}
@@ -213,8 +215,9 @@ theorem layeredEffectiveStress_on_layer_above {n k m : ℕ} (hk : k < n)
   have hmax : max (z - layerTop t m) 0 = 0 := max_eq_right hle
   rw [hmax, mul_zero, sub_zero]
 
-/-- Below the water table (at interface `m`), effective
-stress on layer `k ≥ m` subtracts `γw * (z - layerTop t m)`. -/
+/-- Below the water table (at interface `m`), effective stress on layer `k ≥ m` subtracts
+`γw * (z - layerTop t m)`. Here the layer thicknesses are nonnegative (`0 ≤ t i` for every `i`),
+`k < n` and `layerTop t k ≤ z ≤ layerTop t (k + 1)`. -/
 theorem layeredEffectiveStress_on_layer_below {n k m : ℕ} (hk : k < n)
     (hmk : m ≤ k) (q γw : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ)
     (ht : ∀ i, 0 ≤ t i) {z : ℝ}
@@ -239,8 +242,9 @@ lemma continuous_layeredEffectiveStress (n : ℕ) (q γw zw : ℝ)
     traversedThickness
   fun_prop
 
-/-- On a submerged layer the effective-stress slope is
-`γ k - γw`. -/
+/-- On a submerged layer the effective-stress slope is `γ k - γw`. Here the layer thicknesses are
+nonnegative (`0 ≤ t i` for every `i`), `k < n`, `m ≤ k` and
+`layerTop t k ≤ z₁ ≤ z₂ ≤ layerTop t (k + 1)`. -/
 lemma layeredEffectiveStress_sub_submerged {n k m : ℕ} (hk : k < n)
     (hmk : m ≤ k) (q γw : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ)
     (ht : ∀ i, 0 ≤ t i) {z₁ z₂ : ℝ}
@@ -256,9 +260,9 @@ lemma layeredEffectiveStress_sub_submerged {n k m : ℕ} (hk : k < n)
   rw [ha, hb]
   ring
 
-/-- The total-stress increment across one layer is the
-integral of the constant `γ k` over that layer (not an
-overburden-integral statement for a varying profile). -/
+/-- The total-stress increment across one layer is the integral of the constant `γ k` over that
+layer (not an overburden-integral statement for a varying profile). Here the layer thicknesses are
+nonnegative (`0 ≤ t i` for every `i`) and `k < n`. -/
 lemma layeredTotalStress_layer_increment {n k : ℕ} (hk : k < n)
     (q : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ) (ht : ∀ i, 0 ≤ t i) :
     layeredTotalStress n q t γ (layerTop t (k + 1))
@@ -271,9 +275,9 @@ lemma layeredTotalStress_layer_increment {n k : ℕ} (hk : k < n)
   rw [htop, hbot, intervalIntegral.integral_const, smul_eq_mul]
   ring
 
-/-- On layer `k`, for a water table at any depth `zw`, the
-effective stress is the affine total stress minus
-`γw * max (z - zw) 0` (affine on each side of the table). -/
+/-- On layer `k`, for a water table at any depth `zw`, the effective stress is the affine total
+stress minus `γw * max (z - zw) 0` (affine on each side of the table). Here the layer thicknesses
+are nonnegative (`0 ≤ t i` for every `i`), `k < n` and `layerTop t k ≤ z ≤ layerTop t (k + 1)`. -/
 theorem layeredEffectiveStress_on_layer {n k : ℕ} (hk : k < n)
     (q γw zw : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ)
     (ht : ∀ i, 0 ≤ t i) {z : ℝ}
@@ -285,9 +289,9 @@ theorem layeredEffectiveStress_on_layer {n k : ℕ} (hk : k < n)
   have htot := layeredTotalStress_on_layer hk q γ ht h1 h2
   rw [htot]
 
-/-- Packaged profile statement: the effective stress is
-continuous and has the on-layer affine-minus-hydrostatic
-form on every layer, for a water table at any depth. -/
+/-- Packaged profile statement: the effective stress is continuous and has the on-layer
+affine-minus-hydrostatic form on every layer, for a water table at any depth. Here the layer
+thicknesses are nonnegative (`0 ≤ t i` for every `i`). -/
 theorem layeredEffectiveStress_continuous_and_on_layer (n : ℕ)
     (q γw zw : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ) (ht : ∀ i, 0 ≤ t i) :
     Continuous (layeredEffectiveStress n q γw zw t γ)
@@ -301,9 +305,9 @@ theorem layeredEffectiveStress_continuous_and_on_layer (n : ℕ)
   · intro k hk z h1 h2
     exact layeredEffectiveStress_on_layer hk q γw zw γ ht h1 h2
 
-/-- With the water table at an interface, the effective
-stress is continuous and affine (`a + b * z`) on every
-layer. -/
+/-- With the water table at an interface, the effective stress is continuous and affine
+(`a + b * z`) on every layer. Here the layer thicknesses are nonnegative (`0 ≤ t i` for every `i`).
+-/
 theorem layeredEffectiveStress_continuous_and_affine_on_each_layer
     {n m : ℕ} (q γw : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ) (ht : ∀ i, 0 ≤ t i) :
     Continuous (layeredEffectiveStress n q γw (layerTop t m) t γ)
@@ -337,9 +341,9 @@ lemma staticPorePressure_eq_hydrostatic_of_ge {ρ g zw z : ℝ}
   rw [max_eq_left (by linarith)]
   ring
 
-/-- For a saturated submerged layer with unit weight
-`bulkUnitWeight Gs 1 e γw`, the effective-stress slope is
-`submergedUnitWeight Gs e γw`. -/
+/-- For a saturated submerged layer with unit weight `bulkUnitWeight Gs 1 e γw` and `1 + e ≠ 0`, the
+effective-stress slope is `submergedUnitWeight Gs e γw`. Here the layer thicknesses are nonnegative
+(`0 ≤ t i` for every `i`), `k < n`, `m ≤ k` and `layerTop t k ≤ z₁ ≤ z₂ ≤ layerTop t (k + 1)`. -/
 lemma layeredEffectiveStress_sub_submergedUnitWeight {n k m : ℕ}
     (hk : k < n) (hmk : m ≤ k) (q γw Gs e : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ)
     (ht : ∀ i, 0 ≤ t i) (hγk : γ k = bulkUnitWeight Gs 1 e γw)

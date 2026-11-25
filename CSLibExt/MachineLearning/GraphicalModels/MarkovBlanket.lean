@@ -55,10 +55,6 @@ namespace BayesNet
 
 variable {n : ℕ} (b : BayesNet α n)
 
-instance decidableRelEdge : DecidableRel b.Edge := fun i j => by
-  unfold Edge
-  infer_instance
-
 theorem Edge.lt {i j : Fin n} (h : b.Edge i j) : i < j :=
   h.1
 

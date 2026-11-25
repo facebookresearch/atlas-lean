@@ -19,7 +19,7 @@ Transactions on Information Theory 43 (1997), 1757-1766, doi:10.1109/18.641542.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.InformationTheory.Hamming

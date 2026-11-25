@@ -86,7 +86,9 @@ private theorem reachable_split (x : V) {y : V} (h : H.Reachable x y) :
         · exact Or.inr (Or.inl ⟨h1, h2.trans hstep⟩)
         · exact Or.inr (Or.inr ⟨h1, h2.trans hstep⟩)
 
-/-- Deleting an edge `a – b` whose endpoints become disconnected adds exactly one component. -/
+/-- **Deleting a bridge adds one component.** Let $H$ be a simple graph on a finite vertex set
+and let $ab$ be an edge of $H$. If $a$ and $b$ are not connected in the graph obtained from $H$
+by deleting the edge $ab$, then that graph has exactly one more connected component than $H$. -/
 theorem card_connectedComponent_deleteEdges_of_not_reachable [Finite V] (hab : H.Adj a b)
     (hbr : ¬ (H.deleteEdges {s(a, b)}).Reachable a b) :
     Nat.card (H.deleteEdges {s(a, b)}).ConnectedComponent =
@@ -139,7 +141,10 @@ end Bridge
 
 /-! ## Forests: edges plus components equal vertices -/
 
-/-- A forest on `V` with `e` edges has `|V| - e` connected components. -/
+/-- **Edges plus components of a forest.** Let $V$ be a finite vertex set. For every natural
+number $n$ and every forest (acyclic simple graph) $F$ on $V$ with exactly $n$ edges, the number
+of edges of $F$ plus the number of connected components of $F$ equals $|V|$. So a forest on $V$
+with $e$ edges has $|V| - e$ connected components. -/
 theorem ncard_edgeSet_add_card_connectedComponent [Finite V] :
     ∀ (n : ℕ) (F : SimpleGraph V), F.IsAcyclic → F.edgeSet.ncard = n →
       F.edgeSet.ncard + Nat.card F.ConnectedComponent = Nat.card V
@@ -178,8 +183,9 @@ private theorem edgeSet_fromEdgeSet_of_subset {G : SimpleGraph V} {I : Set (Sym2
   intro he hdiag
   exact G.not_isDiag_of_mem_edgeSet (hI he) (Sym2.mem_diagSet.1 hdiag)
 
-/-- The augmentation property of forests: if `|I| < |J|`, some edge of `J` extends `I` to a
-forest. -/
+/-- **Augmentation property of forests.** Let $G$ be a simple graph on a finite vertex set, and
+let $I$ and $J$ be sets of edges of $G$ that each form an acyclic graph. If $|I| < |J|$, then there
+is an edge $e \in J$ with $e \notin I$ such that $I \cup \{e\}$ still forms an acyclic graph. -/
 theorem exists_insert_isAcyclic [Finite V] {G : SimpleGraph V} {I J : Set (Sym2 V)}
     (hIG : I ⊆ G.edgeSet) (hJG : J ⊆ G.edgeSet) (hI : (fromEdgeSet I).IsAcyclic)
     (hJ : (fromEdgeSet J).IsAcyclic) (hlt : I.ncard < J.ncard) :
@@ -248,12 +254,17 @@ theorem exists_insert_isAcyclic [Finite V] {G : SimpleGraph V} {I J : Set (Sym2 
 
 /-! ## The graphic matroid -/
 
-/-- `I` is a forest of `G`: a set of edges of `G` without cycles. -/
+/-- **Forests of a graph.** A set $I$ of unordered pairs of vertices is a forest of a simple graph
+$G$ when every element of $I$ is an edge of $G$ and the graph with edge set $I$ has no cycles. -/
 def IsForestSet (G : SimpleGraph V) (I : Set (Sym2 V)) : Prop :=
   I ⊆ G.edgeSet ∧ (fromEdgeSet I).IsAcyclic
 
-/-- The graphic matroid of `G` (CLRS Theorem 16.5): ground set `G.edgeSet`, independent sets the
-forests of `G`. -/
+/-- **Graphic matroid.** For a simple graph $G$ on a finite vertex set, the graphic matroid of $G$
+is the matroid on unordered pairs of vertices whose ground set is the edge set of $G$ and whose
+independent sets are the forests of $G$, that is, the sets of edges of $G$ that form an acyclic
+graph.
+
+That these sets form a matroid is CLRS Theorem 16.5. -/
 noncomputable def graphicMatroid [Finite V] (G : SimpleGraph V) : Matroid (Sym2 V) :=
   (IndepMatroid.ofFinite (Set.toFinite G.edgeSet) (IsForestSet G)
     ⟨Set.empty_subset _, by simp⟩
@@ -284,26 +295,38 @@ omit [Fintype V] [DecidableEq V] in
 instance (T : Finset (Sym2 V)) : DecidableRel (chosen T).Adj := fun u v =>
   decidable_of_iff (s(u, v) ∈ T ∧ u ≠ v) (by simp [chosen])
 
-/-- `e` is a bridge of the edge set `S`: deleting it disconnects its endpoints. -/
+/-- **Bridge test for an edge set.** On a finite vertex set, for a finite set $S$ of unordered
+pairs of vertices and a pair $e = \{u, v\}$, the bridge test returns true exactly when $u$ and $v$
+are not connected by a path in the graph whose edges are the non-loop pairs of $S \setminus \{e\}$.
+When $e \in S$ is not a loop, this says that $e$ is a bridge of $S$: deleting it disconnects its
+endpoints. -/
 def bridgeIn (S : Finset (Sym2 V)) (e : Sym2 V) : Bool :=
   Sym2.lift ⟨fun u v => !decide ((chosen (S.erase e)).Reachable u v), fun u v => by
     simp only [SimpleGraph.reachable_comm]⟩ e
 
-/-- What `bridgeIn` tests. -/
+/-- **Characterization of the bridge test.** On a finite vertex set, let $S$ be a finite set of
+unordered pairs of vertices and let $u$, $v$ be vertices. The bridge test of $S$ on the pair
+$\{u, v\}$ returns true if and only if $u$ and $v$ are not connected by a path in the graph whose
+edges are the non-loop pairs of $S \setminus \{\{u, v\}\}$. -/
 theorem bridgeIn_iff (S : Finset (Sym2 V)) (u v : V) :
     bridgeIn S s(u, v) = true ↔ ¬ (fromEdgeSet ↑(S.erase s(u, v))).Reachable u v := by
   simp [bridgeIn, chosen]
 
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
-/-- The independence oracle of the graphic matroid: every chosen element is an edge of `G` and a
-bridge of the chosen set (a graph is a forest iff every edge is a bridge). -/
+/-- **Forest oracle.** For a simple graph $G$ on a finite vertex set, the forest oracle accepts a
+finite set $S$ of unordered pairs of vertices exactly when every $e \in S$ is an edge of $G$ and
+passes the bridge test in $S$: its endpoints are not connected in the graph formed by the other
+pairs of $S$. It serves as the independence oracle of the graphic matroid of $G$, since a graph
+is a forest if and only if every edge is a bridge. -/
 def forestOracle (S : Finset (Sym2 V)) : Bool :=
   decide (∀ e ∈ S, e ∈ G.edgeFinset ∧ bridgeIn S e = true)
 
 variable {G}
 
-/-- The oracle decides independence in the graphic matroid. -/
+/-- **The forest oracle decides graphic-matroid independence.** For a simple graph $G$ on a
+finite vertex set and a finite set $S$ of unordered pairs of vertices, the forest oracle of $G$
+accepts $S$ if and only if $S$ is independent in the graphic matroid of $G$. -/
 theorem forestOracle_iff (S : Finset (Sym2 V)) :
     forestOracle G S = true ↔ (graphicMatroid G).Indep ↑S := by
   rw [graphicMatroid_indep, IsForestSet]
@@ -331,14 +354,24 @@ theorem forestOracle_iff (S : Finset (Sym2 V)) :
 
 open Cslib.Algorithms.Lean.TimeM
 
-/-- Kruskal's algorithm in the form of CLRS Section 16.4: the matroid greedy algorithm on the
-graphic matroid returns a forest of `G`. -/
+/-- **Kruskal's algorithm returns a forest.** Let $G$ be a simple graph on a finite vertex type
+$V$. For every list $L$ of unordered pairs of vertices, the matroid greedy algorithm run on $L$
+with the forest oracle of $G$ returns a forest of $G$: a set of edges of $G$ without cycles.
+
+This is Kruskal's algorithm in the form of CLRS Section 16.4, the greedy algorithm on the graphic
+matroid. -/
 theorem kruskal_isForest (es : List (Sym2 V)) :
     IsForestSet G ↑(matroidGreedy (forestOracle G) es).ret :=
   graphicMatroid_indep.1 (matroidGreedy_indep (M := graphicMatroid G) forestOracle_iff es).1
 
-/-- With the edges in nonincreasing weight order, no forest of `G` drawn from them weighs more
-than the result (CLRS Theorem 16.11 on the graphic matroid). -/
+/-- **Optimality of Kruskal's algorithm.** Let $G$ be a simple graph on a finite vertex type
+$V$, let $w$ assign a natural number to each unordered pair of vertices, and let $L$ be a list
+of unordered pairs of vertices in nonincreasing order of $w$ (each entry weighs at least as much
+as every later one). Let $T$ be the set returned by the matroid greedy algorithm run on $L$ with
+the forest oracle of $G$. Then every forest $I$ of $G$ all of whose edges occur in $L$ satisfies
+$\sum_{x \in I} w(x) \le \sum_{x \in T} w(x)$.
+
+This is CLRS Theorem 16.11 on the graphic matroid. -/
 theorem kruskal_optimal (w : Sym2 V → ℕ) {es : List (Sym2 V)}
     (hsorted : es.Pairwise fun a b => w b ≤ w a) {I : Finset (Sym2 V)}
     (hI : IsForestSet G ↑I) (hIes : ∀ x ∈ I, x ∈ es) :
@@ -346,8 +379,10 @@ theorem kruskal_optimal (w : Sym2 V → ℕ) {es : List (Sym2 V)}
   matroidGreedy_optimal (M := graphicMatroid G) forestOracle_iff w hsorted
     (graphicMatroid_indep.2 hI) hIes
 
-/-- If the order lists exactly the edges of `G`, the result is a maximal forest of `G` (a base of
-the graphic matroid). -/
+/-- **Kruskal's algorithm returns a maximal forest.** Let $G$ be a simple graph on a finite vertex
+set and let $L$ be a list of unordered pairs of vertices such that a pair is an edge of $G$ if and
+only if it occurs in $L$. Then the matroid greedy algorithm run with the forest oracle of $G$ on
+$L$ returns a base of the graphic matroid of $G$, that is, a maximal forest of $G$. -/
 theorem kruskal_isBase {es : List (Sym2 V)} (hground : ∀ x, x ∈ G.edgeSet ↔ x ∈ es) :
     (graphicMatroid G).IsBase ↑(matroidGreedy (forestOracle G) es).ret :=
   matroidGreedy_isBase (M := graphicMatroid G) forestOracle_iff es

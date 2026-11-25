@@ -1,0 +1,3 @@
+# PREEMPTIVE WEIGHTED COMPLETION TIME ON m PARALLEL MACHINES as a decision problem
+
+Fix a natural number $m_0$. The decision problem PREEMPTIVE WEIGHTED COMPLETION TIME ON $m$ PARALLEL MACHINES accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(m, T, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for weighted completion time on $m_0$ parallel machines ($m > 0$, every length and weight is positive, and $K > 0$, $m = m_0$) and feasible for preemptive scheduling to minimize weighted completion time. It rejects every bitstring that does not decode to such an instance.

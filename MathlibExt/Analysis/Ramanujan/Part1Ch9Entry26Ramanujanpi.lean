@@ -79,7 +79,10 @@ def chapter9DilogSinTerm (rho angle : ℝ) (j : ℕ) : ℝ :=
   let k := j + 1
   rho ^ k * Real.sin ((k : ℝ) * angle) / ((k : ℝ) ^ 2)
 
-/-- The protected Entry 26 boundary-log definition agrees with Mathlib's total real logarithm. -/
+/-- **The Entry 26 boundary logarithm is the real logarithm.** Let $\log$ be the real logarithm,
+extended to all of $\mathbb{R}$ by $\log 0 = 0$ and $\log x = \log|x|$ for $x < 0$. For every
+real $x$, the boundary logarithm of $x$, defined as $0$ if $x = 0$ and as $\log x$ otherwise,
+equals $\log x$. -/
 theorem chapter9BoundaryLog_eq_log (x : ℝ) : chapter9BoundaryLog x = Real.log x := by
   by_cases hx : x = 0
   · subst x
@@ -87,12 +90,18 @@ theorem chapter9BoundaryLog_eq_log (x : ℝ) : chapter9BoundaryLog x = Real.log 
     exact Real.log_zero.symm
   · simp only [chapter9BoundaryLog, hx, ite_false]
 
-/-- The protected Entry 26 cosine term agrees with the existing Entry 24 term. -/
+/-- **The Entry 26 and Entry 24 dilogarithm cosine terms agree.** For all real $\rho$ and
+$\alpha$ and every natural number $j$, the $j$-th term $\rho^{j+1} \cos((j+1)\alpha) / (j+1)^2$ of
+the dilogarithm cosine series defined for Entry 26 equals the $j$-th term of the cosine series
+defined for Entry 24, which is given by the same formula. -/
 theorem chapter9DilogCosTerm_eq_entry24 (rho angle : ℝ) (j : ℕ) :
     chapter9DilogCosTerm rho angle j =
       Entry24Dougall.chapter9DilogCosTerm rho angle j := rfl
 
-/-- The protected Entry 26 sine term agrees with the existing Entry 24 term. -/
+/-- **The Entry 26 and Entry 24 dilogarithm sine terms agree.** For all real $\rho$ and
+$\alpha$ and every natural number $j$, the $j$-th term $\rho^{j+1} \sin((j+1)\alpha) / (j+1)^2$ of
+the dilogarithm sine series defined for Entry 26 equals the $j$-th term of the sine series
+defined for Entry 24, which is given by the same formula. -/
 theorem chapter9DilogSinTerm_eq_entry24 (rho angle : ℝ) (j : ℕ) :
     chapter9DilogSinTerm rho angle j =
       Entry24Dougall.chapter9DilogSinTerm rho angle j := rfl
@@ -1813,7 +1822,17 @@ private lemma e26_sin_main (x y theta phi : ℝ)
   norm_num [Complex.mul_im, Complex.add_im, pow_two] at him
   linear_combination him
 
-/-- Entry 26 stated with the existing Entry 24 series terms and `Real.log`. -/
+/-- **Ramanujan's Landen-type identity in terms of the Entry 24 series.** For real $\rho$ and
+$\alpha$ and $k \ge 1$ let $c_k(\rho, \alpha) = \rho^k \cos(k\alpha) / k^2$ and
+$s_k(\rho, \alpha) = \rho^k \sin(k\alpha) / k^2$ be the terms of the dilogarithm series of
+Entry 24, and write $C(\rho, \alpha) = \sum_{j \ge 0} c_{2j+1}(\rho, \alpha)$ and
+$S(\rho, \alpha) = \sum_{j \ge 0} s_{2j+1}(\rho, \alpha)$. Let $x, y \in [0, 1]$ and
+$\theta, \varphi \in (-\pi, \pi]$ satisfy
+$x e^{i\theta} + y e^{i\varphi} + xy\, e^{i(\theta + \varphi)} = 1$. Then the four series
+defining $C(x, \theta)$, $C(y, \varphi)$, $S(x, \theta)$ and $S(y, \varphi)$ converge absolutely,
+and, where $\log$ is the real logarithm with $\log 0 = 0$,
+$C(x, \theta) + C(y, \varphi) = \pi^2/8 - \tfrac12 \log x \log y + \tfrac12 \theta\varphi$ and
+$S(x, \theta) + S(y, \varphi) = -\tfrac12 \varphi \log x - \tfrac12 \theta \log y$. -/
 theorem ramanujan_part1_ch9_entry26_ramanujanpi_entry24_terms
     (x y theta phi : ℝ)
     (hx0 : 0 ≤ x) (hx1 : x ≤ 1) (hy0 : 0 ≤ y) (hy1 : y ≤ 1)
@@ -1863,15 +1882,23 @@ theorem ramanujan_part1_ch9_entry26_ramanujanpi_entry24_terms
           e26_sin_main x y theta phi hx0 hx1 hy0 hy1 htheta0 htheta1 hphi0 hphi1
             hrelation hx hy
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9,
-Entry 26, p. 273.
-
-Proves `Wanted` entry `ramanujan_part1_ch9_entry26_ramanujanpi`.
+/-- **Ramanujan's Landen-type dilogarithm identity (Entry 26).** For real $\rho$ and $\alpha$
+write $C(\rho, \alpha) = \sum_{j \ge 0} \rho^{2j+1} \cos((2j+1)\alpha) / (2j+1)^2$ and
+$S(\rho, \alpha) = \sum_{j \ge 0} \rho^{2j+1} \sin((2j+1)\alpha) / (2j+1)^2$. Let
+$x, y \in [0, 1]$ and $\theta, \varphi \in (-\pi, \pi]$ satisfy
+$x e^{i\theta} + y e^{i\varphi} + xy\, e^{i(\theta + \varphi)} = 1$. Then the four series
+defining $C(x, \theta)$, $C(y, \varphi)$, $S(x, \theta)$ and $S(y, \varphi)$ converge absolutely,
+and, with the convention $\log 0 = 0$,
+$C(x, \theta) + C(y, \varphi) = \pi^2/8 - \tfrac12 \log x \log y + \tfrac12 \theta\varphi$ and
+$S(x, \theta) + S(y, \varphi) = -\tfrac12 \varphi \log x - \tfrac12 \theta \log y$.
 
 Proof: Identify the odd series with Legendre's chi function, prove Landen's identity by
 differentiation, and extend it to the closed right half-disk by continuity. This follows the route
 in Berndt, Part I, Chapter 9, Entry 26, and Lewin, *Polylogarithms and Associated Functions*,
 Chapter 1.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9,
+Entry 26, p. 273.
 -/
 theorem ramanujan_part1_ch9_entry26_ramanujanpi
     (x y theta phi : ℝ)

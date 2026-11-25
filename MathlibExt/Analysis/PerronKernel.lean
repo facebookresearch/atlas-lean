@@ -57,12 +57,20 @@ namespace PerronKernel
 open Complex Filter MeasureTheory Set intervalIntegral
 open scoped Topology
 
-/-- Truncated Perron kernel as a real integral over the segment. -/
+/-- **Truncated Perron kernel.** For real numbers $y$, $c$ and $T$, the truncated Perron kernel is
+the complex number
+$$K(y, c, T) = \frac{1}{2\pi}\int_{-T}^{T} \frac{y^{c+it}}{c+it}\,dt,$$
+where $y^s$ is the principal complex power of $y$ viewed as a complex number.
+
+Writing $s = c + it$, this is $\frac{1}{2\pi i}\int_{c-iT}^{c+iT} \frac{y^s}{s}\,ds$ along the
+vertical segment. -/
 noncomputable def perronKernel (y c T : ℝ) : ℂ :=
   (1 / (2 * Real.pi)) * ∫ t : ℝ in (-T)..T,
     (y : ℂ) ^ ((c : ℂ) + t * Complex.I) / ((c : ℂ) + t * Complex.I)
 
-/-- The kernel integrand is continuous when `0 < y` and `c ≠ 0`. -/
+/-- **Continuity of the Perron kernel integrand.** Let $y > 0$ and $c \ne 0$ be real numbers.
+Then the function from $\mathbb{R}$ to $\mathbb{C}$ sending $t$ to $y^{c+it}/(c+it)$, where
+$y^{c+it}$ is the complex power, is continuous. -/
 theorem continuous_perronKernel_integrand {y c : ℝ} (hy : 0 < y) (hc : c ≠ 0) :
     Continuous (fun t : ℝ => (y : ℂ) ^ ((c : ℂ) + t * Complex.I) / ((c : ℂ) + t * Complex.I)) := by
   have hbase : (y : ℂ) ≠ 0 := ofReal_ne_zero.mpr (ne_of_gt hy)
@@ -120,7 +128,9 @@ theorem boundary_rect_one_div_outside {a b T : ℝ} (ha : 0 < a) (hab : a ≤ b)
         - (∫ y : ℝ in (-T)..T, (1 : ℂ) / (a + y * Complex.I))) = 0 :=
   Complex.boundary_rect_one_div_outside ha hab hT
 
-/-- `exp w - 1 = w * ∫_0^1 exp (t * w)`, by FTC. -/
+/-- **Integral formula for $e^w - 1$.** For every complex number $w$,
+$$e^w - 1 = w \int_0^1 e^{tw}\,dt,$$
+where $t$ ranges over the real interval $[0, 1]$. -/
 theorem exp_sub_one_eq (w : ℂ) :
     Complex.exp w - 1 = w * ∫ t : ℝ in (0:ℝ)..1, Complex.exp (t * w) := by
   have hF : ∀ t : ℝ, HasDerivAt (fun t : ℝ => Complex.exp (t * w))
@@ -147,22 +157,27 @@ theorem exp_sub_one_eq (w : ℂ) :
   rw [intervalIntegral.integral_const_mul] at hftc
   simpa using hftc.symm
 
-/-- Averaging operator: `E1 u = ∫_0^1 exp (t * u)`. -/
+/-- **The averaging operator $E_1$.** For a complex number $u$, define
+$E_1(u) = \int_0^1 e^{tu}\,dt$, the integral being over real $t$ from $0$ to $1$. -/
 noncomputable def E1 (u : ℂ) : ℂ := ∫ t : ℝ in (0:ℝ)..1, Complex.exp (t * u)
 
-/-- `E1 0 = 1`. -/
+/-- **Value of the averaging operator at zero.** Let $E_1(u) = \int_0^1 e^{tu}\,dt$ for
+$u \in \mathbb{C}$. Then $E_1(0) = 1$. -/
 theorem E1_zero : E1 0 = 1 := by
   simp only [E1]
   simp
 
-/-- `E1` agrees with the difference quotient off `0`. -/
+/-- **The averaging operator as a difference quotient.** Let $E_1(u) = \int_0^1 e^{tu}\,dt$ for
+$u \in \mathbb{C}$. Then $E_1(u) = (e^u - 1)/u$ for every nonzero complex number $u$. -/
 theorem E1_eq_div (u : ℂ) (hu : u ≠ 0) : E1 u = (Complex.exp u - 1) / u := by
   have h := exp_sub_one_eq u
   simp only [E1]
   rw [eq_div_iff hu, mul_comm]
   exact h.symm
 
-/-- `‖E1 v - 1‖ ≤ ‖v‖` for `‖v‖ ≤ 1`. -/
+/-- **Linear bound for the averaging operator near zero.** Let $E_1(u) = \int_0^1 e^{tu}\,dt$ for
+$u \in \mathbb{C}$. For every complex number $v$ with $|v| \le 1$, we have
+$|E_1(v) - 1| \le |v|$. -/
 theorem E1_sub_one_le (v : ℂ) (hv : ‖v‖ ≤ 1) : ‖E1 v - 1‖ ≤ ‖v‖ := by
   by_cases h0 : v = 0
   · simp [h0, E1_zero]
@@ -173,7 +188,8 @@ theorem E1_sub_one_le (v : ℂ) (hv : ‖v‖ ≤ 1) : ‖E1 v - 1‖ ≤ ‖v�
     calc ‖Complex.exp v - 1 - v‖ ≤ ‖v‖ ^ 2 := Complex.norm_exp_sub_one_sub_id_le hv
       _ = ‖v‖ * ‖v‖ := by ring
 
-/-- `E1` is continuous at `0`. -/
+/-- **Continuity of the averaging operator at zero.** The function
+$E_1 : \mathbb{C} \to \mathbb{C}$ given by $E_1(u) = \int_0^1 e^{tu}\,dt$ is continuous at $0$. -/
 theorem E1_continuousAt_zero : ContinuousAt E1 0 := by
   rw [ContinuousAt, E1_zero]
   have hbound : ∀ᶠ v : ℂ in 𝓝 0, ‖E1 v - 1‖ ≤ ‖v‖ := by
@@ -188,7 +204,8 @@ theorem E1_continuousAt_zero : ContinuousAt E1 0 := by
   have h := squeeze_zero_norm' hbound hnorm
   simpa using h.add_const (1 : ℂ)
 
-/-- `E1` is continuous everywhere. -/
+/-- **Continuity of the averaging operator.** The function $E_1 : \mathbb{C} \to \mathbb{C}$ given
+by $E_1(u) = \int_0^1 e^{tu}\,dt$ is continuous. -/
 theorem E1_continuous : Continuous E1 := by
   rw [continuous_iff_continuousAt]
   intro u
@@ -201,7 +218,9 @@ theorem E1_continuous : Continuous E1 := by
       ((Complex.continuous_exp.sub continuous_const).continuousAt.div continuousAt_id hu)
       heq.symm
 
-/-- Derivative of `E1` under the integral sign. -/
+/-- **Derivative of the averaging operator.** Let $E_1(u) = \int_0^1 e^{tu}\,dt$ for
+$u \in \mathbb{C}$. For every $x_0 \in \mathbb{C}$, the function $E_1$ has complex derivative
+$\int_0^1 t\,e^{t x_0}\,dt$ at $x_0$. -/
 theorem E1_hasDerivAt (x₀ : ℂ) :
     HasDerivAt E1 (∫ t in (0:ℝ)..1, (t : ℂ) * Complex.exp ((t : ℂ) * x₀)) x₀ := by
   have key := intervalIntegral.hasDerivAt_integral_of_dominated_loc_of_deriv_le
@@ -259,15 +278,24 @@ theorem E1_hasDerivAt (x₀ : ℂ) :
   rw [hE1]
   exact key.2
 
-/-- `E1` is differentiable everywhere. -/
+/-- **The averaging operator is entire.** The function $E_1 : \mathbb{C} \to \mathbb{C}$ given by
+$E_1(u) = \int_0^1 e^{tu}\,dt$ is complex differentiable at every point of $\mathbb{C}$. -/
 theorem E1_differentiable : Differentiable ℂ E1 :=
   fun x₀ => (E1_hasDerivAt x₀).differentiableAt
 
-/-- Entire extension of `(y^s - 1)/s` via the averaging operator. -/
+/-- **Perron remainder.** For a real number $y$ and a complex number $s$, the Perron remainder is
+$R_y(s) = \log y \cdot E_1(s \log y)$, where $E_1(u) = \int_0^1 e^{tu}\,dt$ is the averaging
+operator and $\log$ is the real logarithm (extended by $\log 0 = 0$ and $\log y = \log |y|$ for
+$y < 0$).
+
+The function $R_y$ is entire, and for $y > 0$ it agrees with $(y^s - 1)/s$ for $s \neq 0$. -/
 noncomputable def perronRemainder (y : ℝ) (s : ℂ) : ℂ :=
   Real.log y * E1 (s * Real.log y)
 
-/-- The remainder is entire in `s`: constant times `E1` of a linear map. -/
+/-- **The Perron remainder is entire.** For a real number $y$, the Perron remainder is the
+function $R_y(s) = \log y \int_0^1 e^{ts\log y}\,dt$ of $s \in \mathbb{C}$, where
+$\log y = \log|y|$ for $y \ne 0$ and $\log 0 = 0$. For every real $y$, the function $R_y$ is
+complex differentiable at every point of $\mathbb{C}$. -/
 theorem perronRemainder_differentiable (y : ℝ) :
     Differentiable ℂ (perronRemainder y) := by
   have hEq : perronRemainder y
@@ -278,7 +306,9 @@ theorem perronRemainder_differentiable (y : ℝ) :
     differentiableAt_id.mul_const _
   exact (differentiableAt_const _).mul ((E1_differentiable _).comp s hlin)
 
-/-- Agreement with the quotient off `0`. -/
+/-- **The Perron remainder as a difference quotient.** For every real $y > 0$ and every complex
+$s \neq 0$, the Perron remainder $R_y$ satisfies $R_y(s) = (y^s - 1)/s$, where
+$y^s = e^{s \log y}$. -/
 theorem perronRemainder_eq_div {y : ℝ} (hy : 0 < y) {s : ℂ} (hs : s ≠ 0) :
     perronRemainder y s = ((y : ℂ) ^ s - 1) / s := by
   have hy' : (y : ℂ) ≠ 0 := ofReal_ne_zero.mpr (ne_of_gt hy)
@@ -300,7 +330,11 @@ theorem perronRemainder_eq_div {y : ℝ} (hy : 0 < y) {s : ℂ} (hs : s ≠ 0) :
     rw [hcpow]
     field_simp
 
-/-- Slope of the remainder at `0`, in integral form. -/
+/-- **Slope of the Perron remainder at the origin.** For every real $y$ and every complex
+$h \neq 0$, the Perron remainder $R_y$ satisfies
+$$\frac{R_y(h) - R_y(0)}{h} = (\log y)^2 \int_0^1 t \, E_1(t h \log y)\,dt,$$
+where $E_1(u) = \int_0^1 e^{\tau u}\,d\tau$ is the averaging operator and $\log$ is the real
+logarithm (extended by $\log 0 = 0$ and $\log y = \log |y|$ for $y < 0$). -/
 theorem perronRemainder_slope {y : ℝ} {h : ℂ} (hh : h ≠ 0) :
     (perronRemainder y h - perronRemainder y 0) / h
       = (Real.log y : ℂ) ^ 2 * ∫ t : ℝ in (0:ℝ)..1, t * E1 (t * h * Real.log y) := by
@@ -333,7 +367,9 @@ theorem perronRemainder_slope {y : ℝ} {h : ℂ} (hh : h ≠ 0) :
   field_simp
 
 
-/-- Norm of a positive real base to a complex power. -/
+/-- **Modulus of a complex power of a positive real.** For every real $y > 0$ and every complex
+number $s$, $|y^s| = \exp(\operatorname{Re}(s) \log y)$, where $y^s$ is the principal complex
+power. -/
 theorem norm_cpow_ofReal {y : ℝ} (hy : 0 < y) (s : ℂ) :
     ‖(y : ℂ) ^ s‖ = Real.exp (s.re * Real.log y) := by
   have hy' : (y : ℂ) ≠ 0 := ofReal_ne_zero.mpr (ne_of_gt hy)
@@ -341,12 +377,16 @@ theorem norm_cpow_ofReal {y : ℝ} (hy : 0 < y) (s : ℂ) :
     Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im]
   ring_nf
 
-/-- The kernel quotient as remainder plus pole part. -/
+/-- **Splitting off the pole of the Perron kernel quotient.** Let $y > 0$ be real and let
+$s \ne 0$ be complex. Then $y^s/s = R_y(s) + 1/s$, where $R_y(s) = \log y \cdot E_1(s \log y)$
+is the Perron remainder and $E_1(u) = \int_0^1 e^{tu}\,dt$. -/
 theorem cpow_div_eq_remainder_add {y : ℝ} (hy : 0 < y) {s : ℂ} (hs : s ≠ 0) :
     (y : ℂ) ^ s / s = perronRemainder y s + 1 / s := by
   rw [perronRemainder_eq_div hy hs, ← add_div, sub_add_cancel]
 
-/-- Integral of `exp (L * x)` over `[a, b]`. -/
+/-- **Integral of $\exp(Lx)$.** For real numbers $L \ne 0$, $a$ and $b$,
+$$\int_a^b \exp(Lx)\,dx = \frac{\exp(Lb) - \exp(La)}{L},$$
+where the integral is oriented: $\int_a^b = -\int_b^a$ when $a > b$. -/
 theorem integral_exp_mul {L a b : ℝ} (hL : L ≠ 0) :
     ∫ x : ℝ in a..b, Real.exp (L * x)
       = (Real.exp (L * b) - Real.exp (L * a)) / L := by
@@ -372,7 +412,10 @@ theorem integral_exp_mul {L a b : ℝ} (hL : L ≠ 0) :
   rw [h]
   exact (sub_div _ _ _).symm
 
-/-- Horizontal side bound for `y > 1`, uniform in the left endpoint. -/
+/-- **Horizontal side bound for the Perron integrand when $y > 1$.** Let $y > 1$, let $U > 0$,
+$c > 0$ and $T > 0$ be real numbers, and let $\tau = T$ or $\tau = -T$. Then
+$$\left|\int_{-U}^{c} \frac{y^{x+i\tau}}{x+i\tau}\,dx\right| \le \frac{\exp(c\log y)}{T\log y},$$
+where $y^s = \exp(s \log y)$ is the principal complex power. The bound does not depend on $U$. -/
 theorem horiz_side_bound_gt_one {y U c T e : ℝ} (hy : 0 < y) (hy1 : 1 < y)
     (hU : 0 < U) (hc : 0 < c) (hT : 0 < T) (he : e = T ∨ e = -T) :
     ‖∫ x : ℝ in (-U)..c, (y : ℂ) ^ ((x : ℂ) + (e : ℂ) * Complex.I)
@@ -431,7 +474,11 @@ theorem horiz_side_bound_gt_one {y U c T e : ℝ} (hy : 0 < y) (hy1 : 1 < y)
   apply div_le_div_of_nonneg_right _ hL.le
   exact sub_le_self _ (Real.exp_nonneg _)
 
-/-- Vertical side bound at real part `d ≠ 0`. -/
+/-- **Bound for the integral of $y^s/s$ along a vertical segment.** Let $y, d, T$ be real numbers
+with $y > 0$, $d \neq 0$ and $T > 0$, and write $y^s = e^{s \log y}$. Then
+$$\left| \int_{-T}^{T} \frac{y^{d + it}}{d + it}\,dt \right| \le
+2T \cdot \frac{e^{d \log y}}{|d|},$$
+that is, at most $2T y^d/|d|$. -/
 theorem vert_side_bound {y d T : ℝ} (hy : 0 < y) (hd : d ≠ 0) (hT : 0 < T) :
     ‖∫ t : ℝ in (-T)..T, (y : ℂ) ^ ((d : ℂ) + (t : ℂ) * Complex.I)
       / ((d : ℂ) + (t : ℂ) * Complex.I)‖
@@ -471,7 +518,11 @@ theorem vert_side_bound {y d T : ℝ} (hy : 0 < y) (hd : d ≠ 0) (hT : 0 < T) :
   rw [hval] at hInt
   exact hInt
 
-/-- Left-side corollary: `d = -U`. -/
+/-- **Bound for the integral of $y^s/s$ along the left vertical side.** Let $y, U, T$ be real
+numbers with $y > 0$, $U > 0$ and $T > 0$, and write $y^s = e^{s \log y}$. Then
+$$\left| \int_{-T}^{T} \frac{y^{-U + it}}{-U + it}\,dt \right| \le
+2T \cdot \frac{e^{-U \log y}}{U},$$
+that is, at most $2T y^{-U}/U$. This is the vertical segment bound at real part $-U$. -/
 theorem vert_side_bound_left {y U T : ℝ} (hy : 0 < y) (hU : 0 < U) (hT : 0 < T) :
     ‖∫ t : ℝ in (-T)..T, (y : ℂ) ^ (((-U : ℝ) : ℂ) + (t : ℂ) * Complex.I)
       / (((-U : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖
@@ -479,7 +530,11 @@ theorem vert_side_bound_left {y U T : ℝ} (hy : 0 < y) (hU : 0 < U) (hT : 0 < T
   have h := vert_side_bound (d := -U) hy (ne_of_lt (neg_lt_zero.mpr hU)) hT
   rwa [abs_neg, abs_of_pos hU] at h
 
-/-- Right-side corollary: `d = U`. -/
+/-- **Bound for the integral of $y^s/s$ along the right vertical side.** Let $y, U, T$ be real
+numbers with $y > 0$, $U > 0$ and $T > 0$, and write $y^s = e^{s \log y}$. Then
+$$\left| \int_{-T}^{T} \frac{y^{U + it}}{U + it}\,dt \right| \le
+2T \cdot \frac{e^{U \log y}}{U},$$
+that is, at most $2T y^{U}/U$. This is the vertical segment bound at real part $U$. -/
 theorem vert_side_bound_right {y U T : ℝ} (hy : 0 < y) (hU : 0 < U) (hT : 0 < T) :
     ‖∫ t : ℝ in (-T)..T, (y : ℂ) ^ (((U : ℝ) : ℂ) + (t : ℂ) * Complex.I)
       / (((U : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖
@@ -487,7 +542,16 @@ theorem vert_side_bound_right {y U T : ℝ} (hy : 0 < y) (hU : 0 < U) (hT : 0 < 
   have h := vert_side_bound (d := U) hy (ne_of_gt hU) hT
   rwa [abs_of_pos hU] at h
 
-/-- Rectangle identity for `y^s/s` with the pole inside (`y > 1` case). -/
+/-- **Rectangle integral of $y^s/s$ around the origin.** Let $y, U, c, T$ be real numbers with
+$y > 0$, $U > 0$, $c > 0$ and $T > 0$, and write $y^s = e^{s \log y}$. Then
+$$\int_{-U}^{c} \frac{y^{x - iT}}{x - iT}\,dx - \int_{-U}^{c} \frac{y^{x + iT}}{x + iT}\,dx +
+i \left( \int_{-T}^{T} \frac{y^{c + it}}{c + it}\,dt -
+\int_{-T}^{T} \frac{y^{-U + it}}{-U + it}\,dt \right) = 2\pi i,$$
+that is, the integral of $y^s/s$ over the positively oriented boundary of the rectangle with
+corners $-U - iT$ and $c + iT$ equals $2\pi i$.
+
+The identity holds for every $y > 0$; it is used to close the Perron contour to the left when
+$y > 1$. -/
 theorem rect_identity_gt_one {y U c T : ℝ} (hy : 0 < y) (hU : 0 < U) (hc : 0 < c)
     (hT : 0 < T) :
     (∫ x : ℝ in (-U)..c, (y : ℂ) ^ ((x : ℂ) + ((-T : ℝ) : ℂ) * Complex.I)
@@ -602,7 +666,14 @@ theorem rect_identity_gt_one {y U c T : ℝ} (hy : 0 < y) (hU : 0 < U) (hc : 0 <
   simp only [smul_eq_mul] at hR'
   linear_combination hR' + h1
 
-/-- Horizontal side bound over `[c, U]`, exact value (no sign hypothesis on `L`). -/
+/-- **Horizontal side bound for the Perron integrand on $[c, U]$.** Let $y > 0$ with
+$\log y \ne 0$, let $c \le U$ and $T > 0$ be real numbers, and let $\tau = T$ or $\tau = -T$.
+Then
+$$\left|\int_c^U \frac{y^{x+i\tau}}{x+i\tau}\,dx\right|
+\le \frac{\exp(U\log y)-\exp(c\log y)}{T\log y},$$
+where $y^s = \exp(s \log y)$ is the principal complex power.
+
+No sign condition on $\log y$ is assumed. -/
 theorem horiz_side_bound_exact {y U c T e : ℝ} (hy : 0 < y)
     (hcU : c ≤ U) (hT : 0 < T) (he : e = T ∨ e = -T) (hL : Real.log y ≠ 0) :
     ‖∫ x : ℝ in c..U, (y : ℂ) ^ ((x : ℂ) + (e : ℂ) * Complex.I)
@@ -656,7 +727,16 @@ theorem horiz_side_bound_exact {y U c T e : ℝ} (hy : 0 < y)
   rw [hval] at hInt
   exact hInt
 
-/-- Rectangle identity for `y^s/s` with the pole outside (`y < 1` case). -/
+/-- **Rectangle integral of $y^s/s$ with the pole outside.** Let $y, U, c, T$ be real numbers with
+$y > 0$, $0 < c < U$ and $T > 0$, and write $y^s = e^{s \log y}$. Then
+$$\int_{c}^{U} \frac{y^{x - iT}}{x - iT}\,dx - \int_{c}^{U} \frac{y^{x + iT}}{x + iT}\,dx +
+i \left( \int_{-T}^{T} \frac{y^{U + it}}{U + it}\,dt -
+\int_{-T}^{T} \frac{y^{c + it}}{c + it}\,dt \right) = 0,$$
+that is, the integral of $y^s/s$ over the positively oriented boundary of the rectangle with
+corners $c - iT$ and $U + iT$ vanishes.
+
+The identity holds for every $y > 0$; it is used to close the Perron contour to the right when
+$y < 1$. -/
 theorem rect_identity_lt_one {y U c T : ℝ} (hy : 0 < y) (hcU : c < U) (hc : 0 < c)
     (hT : 0 < T) :
     (∫ x : ℝ in c..U, (y : ℂ) ^ ((x : ℂ) + ((-T : ℝ) : ℂ) * Complex.I)
@@ -771,7 +851,11 @@ theorem rect_identity_lt_one {y U c T : ℝ} (hy : 0 < y) (hcU : c < U) (hc : 0 
   simp only [smul_eq_mul] at hR'
   linear_combination hR' + h1
 
-/-- Truncated Perron bound for `y > 1`. -/
+/-- **Truncated Perron bound for $y > 1$.** Let $y > 1$, $c > 0$ and $T > 0$ be real numbers, and
+let $K(y, c, T) = \frac{1}{2\pi}\int_{-T}^{T} \frac{y^{c+it}}{c+it}\,dt$ be the truncated Perron
+kernel. Then
+$$|K(y, c, T) - 1| \le \frac{\exp(c \log y)}{\pi T \log y}.$$
+Here $y^s$ is the principal complex power. -/
 theorem perron_bound_gt_one {y c T : ℝ} (hy : 0 < y) (hy1 : 1 < y)
     (hc : 0 < c) (hT : 0 < T) :
     ‖perronKernel y c T - 1‖ ≤ Real.exp (Real.log y * c) / Real.log y / T / Real.pi := by
@@ -926,7 +1010,11 @@ theorem perron_bound_gt_one {y c T : ℝ} (hy : 0 < y) (hy1 : 1 < y)
     exact hperU U hU1
   exact le_of_tendsto_of_tendsto hCf hCg hle
 
-/-- Truncated Perron bound for `y < 1`. -/
+/-- **Truncated Perron bound for $0 < y < 1$.** Let $0 < y < 1$, $c > 0$ and $T > 0$ be real
+numbers, and let $K(y, c, T) = \frac{1}{2\pi}\int_{-T}^{T} \frac{y^{c+it}}{c+it}\,dt$ be the
+truncated Perron kernel. Then
+$$|K(y, c, T)| \le \frac{\exp(c \log y)}{\pi T |\log y|}.$$
+Here $y^s$ is the principal complex power. -/
 theorem perron_bound_lt_one {y c T : ℝ} (hy : 0 < y) (hylt : y < 1)
     (hc : 0 < c) (hT : 0 < T) :
     ‖perronKernel y c T‖ ≤ Real.exp (Real.log y * c) / |Real.log y| / T / Real.pi := by
@@ -1081,7 +1169,11 @@ theorem perron_bound_lt_one {y c T : ℝ} (hy : 0 < y) (hylt : y < 1)
     exact hperU U hmax
   exact le_of_tendsto_of_tendsto hCf hg hle
 
-/-- Truncated Perron formula with explicit Schoenfeld-shape error bound. -/
+/-- **Truncated Perron formula.** Let $y > 0$ with $y \ne 1$, and let $c > 0$ and $T > 0$ be real
+numbers. Let $K(y, c, T) = \frac{1}{2\pi}\int_{-T}^{T} \frac{y^{c+it}}{c+it}\,dt$ be the truncated
+Perron kernel, and let $\delta(y) = 1$ if $y > 1$ and $\delta(y) = 0$ if $y < 1$. Then
+$$|K(y, c, T) - \delta(y)| \le \frac{\exp(c \log y)}{\pi T |\log y|}.$$
+Here $y^s$ is the principal complex power. -/
 theorem perron_bound {y c T : ℝ} (hy : 0 < y) (hy1 : y ≠ 1)
     (hc : 0 < c) (hT : 0 < T) :
     ‖perronKernel y c T - (if 1 < y then (1:ℂ) else 0)‖

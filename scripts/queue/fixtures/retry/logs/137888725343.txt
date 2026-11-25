@@ -1,0 +1,248 @@
+2026-11-23T17:42:59.7911231Z Updating files:  92% (81011/88055)
+2026-11-23T17:42:59.8228165Z Updating files:  93% (81892/88055)
+2026-11-23T17:42:59.9349806Z Updating files:  94% (82772/88055)
+2026-11-23T17:43:00.0200367Z Updating files:  95% (83653/88055)
+2026-11-23T17:43:00.1136055Z Updating files:  96% (84533/88055)
+2026-11-23T17:43:00.1804299Z Updating files:  97% (85414/88055)
+2026-11-23T17:43:00.2529750Z Updating files:  98% (86294/88055)
+2026-11-23T17:43:00.3277733Z Updating files:  99% (87175/88055)
+2026-11-23T17:43:00.3278734Z Updating files: 100% (88055/88055)
+2026-11-23T17:43:00.3279400Z Updating files: 100% (88055/88055), done.
+2026-11-23T17:43:00.4269276Z Note: switching to '71e3543604ee5b688eade7de381c4c44412216a5'.
+2026-11-23T17:43:00.4269609Z
+2026-11-23T17:43:00.4269847Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-23T17:43:00.4270394Z changes and commit them, and you can discard any commits you make in this
+2026-11-23T17:43:00.4270924Z state without impacting any branches by switching back to a branch.
+2026-11-23T17:43:00.4271399Z
+2026-11-23T17:43:00.4271604Z If you want to create a new branch to retain commits you create, you may
+2026-11-23T17:43:00.4272114Z do so (now or later) by using -c with the switch command. Example:
+2026-11-23T17:43:00.4272406Z
+2026-11-23T17:43:00.4272524Z   git switch -c <new-branch-name>
+2026-11-23T17:43:00.4272716Z
+2026-11-23T17:43:00.4272827Z Or undo this operation with:
+2026-11-23T17:43:00.4273001Z
+2026-11-23T17:43:00.4273096Z   git switch -
+2026-11-23T17:43:00.4273222Z
+2026-11-23T17:43:00.4273456Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-23T17:43:00.4273801Z
+2026-11-23T17:43:00.4274086Z HEAD is now at 71e354360 Merge pull request #2863 from junekim623/wanted/ag-g5-infrastructure
+2026-11-23T17:43:00.4356070Z ##[endgroup]
+2026-11-23T17:43:00.4413262Z [command]/usr/bin/git log -1 --format=%H
+2026-11-23T17:43:00.4442265Z 71e3543604ee5b688eade7de381c4c44412216a5
+2026-11-23T17:43:00.4452133Z ##[group]Removing auth
+2026-11-23T17:43:00.4452439Z Removing SSH command configuration
+2026-11-23T17:43:00.4456034Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-23T17:43:00.4489374Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-23T17:43:00.4927440Z Removing HTTP extra header
+2026-11-23T17:43:00.4934791Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-23T17:43:00.4973528Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-23T17:43:00.5404737Z Removing includeIf entries pointing to credentials config files
+2026-11-23T17:43:00.5409821Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-23T17:43:00.5438639Z includeif.gitdir:/home/runner/work/atlas-lean/atlas-lean/.git.path
+2026-11-23T17:43:00.5439573Z includeif.gitdir:/home/runner/work/atlas-lean/atlas-lean/.git/worktrees/*.path
+2026-11-23T17:43:00.5440157Z includeif.gitdir:/github/workspace/.git.path
+2026-11-23T17:43:00.5440604Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-23T17:43:00.5449277Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/atlas-lean/atlas-lean/.git.path
+2026-11-23T17:43:00.5474082Z /home/runner/work/_temp/git-credentials-d9556aef-1e33-410b-8a04-a3e6f8a0d8a9.config
+2026-11-23T17:43:00.5488738Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/atlas-lean/atlas-lean/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-d9556aef\-1e33\-410b\-8a04\-a3e6f8a0d8a9\.config
+2026-11-23T17:43:00.5524473Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/atlas-lean/atlas-lean/.git/worktrees/*.path
+2026-11-23T17:43:00.5548128Z /home/runner/work/_temp/git-credentials-d9556aef-1e33-410b-8a04-a3e6f8a0d8a9.config
+2026-11-23T17:43:00.5556100Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/atlas-lean/atlas-lean/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-d9556aef\-1e33\-410b\-8a04\-a3e6f8a0d8a9\.config
+2026-11-23T17:43:00.5623401Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-23T17:43:00.5624398Z /github/runner_temp/git-credentials-d9556aef-1e33-410b-8a04-a3e6f8a0d8a9.config
+2026-11-23T17:43:00.5632446Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-d9556aef\-1e33\-410b\-8a04\-a3e6f8a0d8a9\.config
+2026-11-23T17:43:00.5667428Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-23T17:43:00.5691946Z /github/runner_temp/git-credentials-d9556aef-1e33-410b-8a04-a3e6f8a0d8a9.config
+2026-11-23T17:43:00.5700280Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-d9556aef\-1e33\-410b\-8a04\-a3e6f8a0d8a9\.config
+2026-11-23T17:43:00.5734596Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-23T17:43:00.6155075Z Removing credentials config '/home/runner/work/_temp/git-credentials-d9556aef-1e33-410b-8a04-a3e6f8a0d8a9.config'
+2026-11-23T17:43:00.6164949Z ##[endgroup]
+2026-11-23T17:43:00.6423394Z ##[group]Run set -euo pipefail
+2026-11-23T17:43:00.6424202Z [36;1mset -euo pipefail[0m
+2026-11-23T17:43:00.6424572Z [36;1mmkdir -p /tmp/guard/base /tmp/guard/merge-base /tmp/guard/pr[0m
+2026-11-23T17:43:00.6425077Z [36;1m# The guard reads pinned_deps.json from every tree: a same-pin[0m
+2026-11-23T17:43:00.6425541Z [36;1m# PR may extend the config monotonically (add a dependency at[0m
+2026-11-23T17:43:00.6425991Z [36;1m# the current pin), and the guard validates that extension[0m
+2026-11-23T17:43:00.6426418Z [36;1m# against the base config. The config is PR data here, never[0m
+2026-11-23T17:43:00.6427061Z [36;1m# executed; only the base checkout's guard code runs.[0m
+2026-11-23T17:43:00.6427741Z [36;1m# The guard reads the configured pin-policy file from both trees,[0m
+2026-11-23T17:43:00.6428240Z [36;1m# so download it too (from the base checkout's config).[0m
+2026-11-23T17:43:00.6428683Z [36;1m# Config-derived download paths come from the UNION of the base[0m
+2026-11-23T17:43:00.6429190Z [36;1m# checkout's config and the downloaded PR config: a same-pin PR[0m
+2026-11-23T17:43:00.6429644Z [36;1m# may add a doc replacement for a new file or add a pin-policy[0m
+2026-11-23T17:43:00.6430090Z [36;1m# file, and the guard validates added rules against the PR tree,[0m
+2026-11-23T17:43:00.6430530Z [36;1m# so those files must be downloaded for every tree. Ledgers stay[0m
+2026-11-23T17:43:00.6430940Z [36;1m# base-only (the guard requires them unchanged).[0m
+2026-11-23T17:43:00.6431347Z [36;1m# These reads must never crash on a malformed config: a malformed[0m
+2026-11-23T17:43:00.6431795Z [36;1m# entry once made `e["path"]` raise here, before the guard ran,[0m
+2026-11-23T17:43:00.6432220Z [36;1m# blocking every PR including a repair PR. Each read skips[0m
+2026-11-23T17:43:00.6432664Z [36;1m# malformed entries defensively; the guard itself validates the[0m
+2026-11-23T17:43:00.6433120Z [36;1m# config schema and fails loudly if it is malformed. (Repairing a[0m
+2026-11-23T17:43:00.6433569Z [36;1m# malformed base config needs a branch-protection bypass: every[0m
+2026-11-23T17:43:00.6433966Z [36;1m# guard run fails until the base is fixed.)[0m
+2026-11-23T17:43:00.6434383Z [36;1m# Config-derived download paths come from the UNION of the base[0m
+2026-11-23T17:43:00.6434884Z [36;1m# checkout's config and the downloaded PR config: a same-pin PR[0m
+2026-11-23T17:43:00.6435321Z [36;1m# may add a doc replacement for a new file or add a pin-policy[0m
+2026-11-23T17:43:00.6435761Z [36;1m# file, and the guard validates added rules against the PR tree,[0m
+2026-11-23T17:43:00.6436214Z [36;1m# so those files must be downloaded for every tree. Ledgers stay[0m
+2026-11-23T17:43:00.6436651Z [36;1m# base-only (the guard requires them unchanged). The subcommand[0m
+2026-11-23T17:43:00.6437082Z [36;1m# reads defensively (malformed entries skipped); the guard[0m
+2026-11-23T17:43:00.6437640Z [36;1m# itself validates the schema and fails loudly if it is malformed.[0m
+2026-11-23T17:43:00.6438024Z [36;1mconfig_paths() {[0m
+2026-11-23T17:43:00.6438368Z [36;1m  python3 scripts/bump/pinned_bump.py config-paths --kind "$1" \[0m
+2026-11-23T17:43:00.6438841Z [36;1m    --pr-config /tmp/guard/pr/scripts/bump/pinned_deps.json[0m
+2026-11-23T17:43:00.6439189Z [36;1m}[0m
+2026-11-23T17:43:00.6439420Z [36;1mif [ "$EVENT_NAME" = "merge_group" ]; then[0m
+2026-11-23T17:43:00.6439730Z [36;1m  BASE_REF="$MERGE_GROUP_BASE_SHA"[0m
+2026-11-23T17:43:00.6440020Z [36;1m  HEAD_SHA="$MERGE_GROUP_HEAD_SHA"[0m
+2026-11-23T17:43:00.6440283Z [36;1melse[0m
+2026-11-23T17:43:00.6440498Z [36;1m  BASE_REF="$PR_BASE_REF"[0m
+2026-11-23T17:43:00.6440752Z [36;1m  HEAD_SHA="$PR_HEAD_SHA"[0m
+2026-11-23T17:43:00.6440993Z [36;1mfi[0m
+2026-11-23T17:43:00.6441464Z [36;1mMERGE_BASE_SHA="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${BASE_REF}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"[0m
+2026-11-23T17:43:00.6442104Z [36;1m# Download one file into one guard tree. Required files fail[0m
+2026-11-23T17:43:00.6442732Z [36;1m# closed on any API error; ledger files tolerate a 404[0m
+2026-11-23T17:43:00.6443155Z [36;1m# (the tree predates the ledgers) and fail on any other error.[0m
+2026-11-23T17:43:00.6443510Z [36;1mdownload_one() {[0m
+2026-11-23T17:43:00.6443781Z [36;1m  _dir="$1"; _ref="$2"; _file="$3"; _required="$4"[0m
+2026-11-23T17:43:00.6522167Z [36;1m  # Containment: the resolved destination must stay beneath[0m
+2026-11-23T17:43:00.6522825Z [36;1m  # its guard-tree root. A PR-controlled path with .. segments[0m
+2026-11-23T17:43:00.6523375Z [36;1m  # must never redirect a download outside the tree -- in[0m
+2026-11-23T17:43:00.6524082Z [36;1m  # particular over the base checkout's guard script, which[0m
+2026-11-23T17:43:00.6524496Z [36;1m  # this workflow executes below.[0m
+2026-11-23T17:43:00.6524878Z [36;1m  # Checked BEFORE mkdir, so traversal cannot create dirs either.[0m
+2026-11-23T17:43:00.6525323Z [36;1m  _dest="$(realpath -m "/tmp/guard/${_dir}/${_file}")"[0m
+2026-11-23T17:43:00.6525679Z [36;1m  case "$_dest" in[0m
+2026-11-23T17:43:00.6525931Z [36;1m    "/tmp/guard/${_dir}"/*) ;;[0m
+2026-11-23T17:43:00.6526205Z [36;1m    *)[0m
+2026-11-23T17:43:00.6526635Z [36;1m      echo "::error::refusing to download ${_file}: destination ${_dest} escapes /tmp/guard/${_dir}" >&2[0m
+2026-11-23T17:43:00.6527123Z [36;1m      return 1[0m
+2026-11-23T17:43:00.6527339Z [36;1m      ;;[0m
+2026-11-23T17:43:00.6527687Z [36;1m  esac[0m
+2026-11-23T17:43:00.6527904Z [36;1m  mkdir -p "$(dirname "$_dest")"[0m
+2026-11-23T17:43:00.6528193Z [36;1m  _err="$(mktemp)"[0m
+2026-11-23T17:43:00.6528717Z [36;1m  if gh api "repos/${GITHUB_REPOSITORY}/contents/${_file}?ref=${_ref}" --jq '.content' 2>"$_err" | base64 -d > "$_dest"; then[0m
+2026-11-23T17:43:00.6529257Z [36;1m    rm -f "$_err"[0m
+2026-11-23T17:43:00.6529497Z [36;1m    return 0[0m
+2026-11-23T17:43:00.6529709Z [36;1m  fi[0m
+2026-11-23T17:43:00.6530019Z [36;1m  if [ "$_required" = "false" ] && grep -qi "404\|not found" "$_err"; then[0m
+2026-11-23T17:43:00.6530402Z [36;1m    rm -f "$_err" "$_dest"[0m
+2026-11-23T17:43:00.6530654Z [36;1m    return 0[0m
+2026-11-23T17:43:00.6530855Z [36;1m  fi[0m
+2026-11-23T17:43:00.6531106Z [36;1m  cat "$_err" >&2[0m
+2026-11-23T17:43:00.6531503Z [36;1m  rm -f "$_err"[0m
+2026-11-23T17:43:00.6531876Z [36;1m  return 1[0m
+2026-11-23T17:43:00.6532216Z [36;1m}[0m
+2026-11-23T17:43:00.6532658Z [36;1m# Pass 1: pin files + configs for every tree.[0m
+2026-11-23T17:43:00.6533231Z [36;1mfor dir in base merge-base pr; do[0m
+2026-11-23T17:43:00.6533713Z [36;1m  case "$dir" in[0m
+2026-11-23T17:43:00.6533986Z [36;1m    base) REF="$BASE_REF" ;;[0m
+2026-11-23T17:43:00.6534281Z [36;1m    merge-base) REF="$MERGE_BASE_SHA" ;;[0m
+2026-11-23T17:43:00.6534582Z [36;1m    pr) REF="$HEAD_SHA" ;;[0m
+2026-11-23T17:43:00.6534826Z [36;1m  esac[0m
+2026-11-23T17:43:00.6535160Z [36;1m  for file in lean-toolchain lakefile.toml lake-manifest.json; do[0m
+2026-11-23T17:43:00.6535586Z [36;1m    download_one "$dir" "$REF" "$file" true[0m
+2026-11-23T17:43:00.6535884Z [36;1m  done[0m
+2026-11-23T17:43:00.6536165Z [36;1m  # pinned_deps.json: required from base, 404-tolerated from[0m
+2026-11-23T17:43:00.6536600Z [36;1m  # merge-base/PR. A head or merge base created before the file[0m
+2026-11-23T17:43:00.6537043Z [36;1m  # was introduced must not fail the download: cmd_guard treats[0m
+2026-11-23T17:43:00.6537675Z [36;1m  # a missing unchanged config as the base config, and rejects[0m
+2026-11-23T17:43:00.6538140Z [36;1m  # an actual deletion (config in the changed list, file absent).[0m
+2026-11-23T17:43:00.6538512Z [36;1m  if [ "$dir" = "base" ]; then[0m
+2026-11-23T17:43:00.6538870Z [36;1m    download_one "$dir" "$REF" "scripts/bump/pinned_deps.json" true[0m
+2026-11-23T17:43:00.6539230Z [36;1m  else[0m
+2026-11-23T17:43:00.6539524Z [36;1m    download_one "$dir" "$REF" "scripts/bump/pinned_deps.json" false[0m
+2026-11-23T17:43:00.6539875Z [36;1m  fi[0m
+2026-11-23T17:43:00.6540060Z [36;1mdone[0m
+2026-11-23T17:43:00.6540540Z [36;1m# Pass 2: config-derived files (union of base + PR configs, so[0m
+2026-11-23T17:43:00.6540985Z [36;1m# newly configured paths are downloaded too), optional for[0m
+2026-11-23T17:43:00.6541407Z [36;1m# every tree: the guard fails closed when a needed file is[0m
+2026-11-23T17:43:00.6541844Z [36;1m# missing from the PR tree or present there but absent from base.[0m
+2026-11-23T17:43:00.6542254Z [36;1mPIN_POLICY_PATHS="$(config_paths policy)"[0m
+2026-11-23T17:43:00.6542566Z [36;1mDOC_PATHS="$(config_paths doc)"[0m
+2026-11-23T17:43:00.6542858Z [36;1mLEDGER_PATHS="$(config_paths ledger)"[0m
+2026-11-23T17:43:00.6543280Z [36;1mfor dir in base merge-base pr; do[0m
+2026-11-23T17:43:00.6543548Z [36;1m  case "$dir" in[0m
+2026-11-23T17:43:00.6543781Z [36;1m    base) REF="$BASE_REF" ;;[0m
+2026-11-23T17:43:00.6544077Z [36;1m    merge-base) REF="$MERGE_BASE_SHA" ;;[0m
+2026-11-23T17:43:00.6544373Z [36;1m    pr) REF="$HEAD_SHA" ;;[0m
+2026-11-23T17:43:00.6544653Z [36;1m  esac[0m
+2026-11-23T17:43:00.6544874Z [36;1m  for file in $PIN_POLICY_PATHS; do[0m
+2026-11-23T17:43:00.6545194Z [36;1m    download_one "$dir" "$REF" "$file" false[0m
+2026-11-23T17:43:00.6545478Z [36;1m  done[0m
+2026-11-23T17:43:00.6545687Z [36;1m  for file in $LEDGER_PATHS; do[0m
+2026-11-23T17:43:00.6545982Z [36;1m    download_one "$dir" "$REF" "$file" false[0m
+2026-11-23T17:43:00.6546256Z [36;1m  done[0m
+2026-11-23T17:43:00.6546454Z [36;1m  for file in $DOC_PATHS; do[0m
+2026-11-23T17:43:00.6546739Z [36;1m    download_one "$dir" "$REF" "$file" false[0m
+2026-11-23T17:43:00.6547018Z [36;1m  done[0m
+2026-11-23T17:43:00.6547202Z [36;1mdone[0m
+2026-11-23T17:43:00.6547727Z [36;1m# The changed files, from git. The pull request files API lists at[0m
+2026-11-23T17:43:00.6548211Z [36;1m# most 3,000 files and the compare API 300, so a larger change used[0m
+2026-11-23T17:43:00.6548663Z [36;1m# to fail closed here. git diff has no cap. Only the two commits'[0m
+2026-11-23T17:43:00.6549129Z [36;1m# trees are fetched, as data (no blobs, no checkout), so no PR code[0m
+2026-11-23T17:43:00.6549588Z [36;1m# runs. The diff is from the merge base, as the pull request files[0m
+2026-11-23T17:43:00.6550047Z [36;1m# list is, and for a merge group it covers every grouped PR, whose[0m
+2026-11-23T17:43:00.6550515Z [36;1m# merge base with the queue's base is that base. --no-renames lists[0m
+2026-11-23T17:43:00.6550986Z [36;1m# a renamed file under both names, so renaming a protected file[0m
+2026-11-23T17:43:00.6551358Z [36;1m# cannot hide its original name.[0m
+2026-11-23T17:43:00.6551827Z [36;1mgit fetch --quiet --no-tags --depth=1 --filter=blob:none origin "$MERGE_BASE_SHA" "$HEAD_SHA"[0m
+2026-11-23T17:43:00.6552549Z [36;1mgit -c core.quotePath=false diff --no-renames --name-only "$MERGE_BASE_SHA" "$HEAD_SHA" > /tmp/guard/filenames.txt[0m
+2026-11-23T17:43:00.6553183Z [36;1mecho "$(wc -l < /tmp/guard/filenames.txt | tr -d ' ') changed files"[0m
+2026-11-23T17:43:00.6553612Z [36;1mcp /tmp/guard/filenames.txt /tmp/guard/changed.txt[0m
+2026-11-23T17:43:00.6553987Z [36;1mpython3 scripts/bump/pinned_bump.py guard \[0m
+2026-11-23T17:43:00.6554303Z [36;1m  --base /tmp/guard/base \[0m
+2026-11-23T17:43:00.6554592Z [36;1m  --merge-base /tmp/guard/merge-base \[0m
+2026-11-23T17:43:00.6554890Z [36;1m  --pr /tmp/guard/pr \[0m
+2026-11-23T17:43:00.6555167Z [36;1m  --changed-files /tmp/guard/changed.txt[0m
+2026-11-23T17:43:00.6592177Z shell: /usr/bin/bash -e {0}
+2026-11-23T17:43:00.6592448Z env:
+2026-11-23T17:43:00.6595096Z   GH_TOKEN: ***
+2026-11-23T17:43:00.6595327Z   EVENT_NAME: merge_group
+2026-11-23T17:43:00.6595645Z   MERGE_GROUP_BASE_SHA: 71e3543604ee5b688eade7de381c4c44412216a5
+2026-11-23T17:43:00.6596047Z   MERGE_GROUP_HEAD_SHA: 1c3e7623ed3295e5ede7ed95f098637e162417a1
+2026-11-23T17:43:00.6596380Z   PR_BASE_REF:
+2026-11-23T17:43:00.6596587Z   PR_HEAD_SHA:
+2026-11-23T17:43:00.6596776Z ##[endgroup]
+2026-11-23T17:43:08.4285671Z 5 changed files
+2026-11-23T17:43:09.2594567Z Traceback (most recent call last):
+2026-11-23T17:43:09.2602692Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 3574, in <module>
+2026-11-23T17:43:09.2604398Z     raise SystemExit(main())
+2026-11-23T17:43:09.2605133Z                      ~~~~^^
+2026-11-23T17:43:09.2606123Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 3570, in main
+2026-11-23T17:43:09.2607165Z     return args.func(args)
+2026-11-23T17:43:09.2607892Z            ~~~~~~~~~^^^^^^
+2026-11-23T17:43:09.2608834Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 3261, in cmd_guard
+2026-11-23T17:43:09.2611000Z     validate_replacement_rules(base_config, pr_config, pr, base_tag_only, client)
+2026-11-23T17:43:09.2611821Z     ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-23T17:43:09.2612888Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 1945, in validate_replacement_rules
+2026-11-23T17:43:09.2613994Z     shas, problems = _resolve_shas(client, pr_config["deps"], tag)
+2026-11-23T17:43:09.2614656Z                      ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-23T17:43:09.2615576Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 1748, in _resolve_shas
+2026-11-23T17:43:09.2616498Z     sha = client.tag_sha(dep["repo"], tag)
+2026-11-23T17:43:09.2617419Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 2174, in tag_sha
+2026-11-23T17:43:09.2618395Z     for entry in self.tags(slug):
+2026-11-23T17:43:09.2618815Z                  ~~~~~~~~~^^^^^^
+2026-11-23T17:43:09.2619573Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 2171, in tags
+2026-11-23T17:43:09.2620524Z     return self.api(f"repos/{slug}/tags?per_page=100")
+2026-11-23T17:43:09.2621085Z            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-23T17:43:09.2621887Z   File "/home/runner/work/atlas-lean/atlas-lean/scripts/bump/pinned_bump.py", line 2167, in api
+2026-11-23T17:43:09.2622869Z     raise RuntimeError(f"gh api {path} failed: {result.stderr.strip()}")
+2026-11-23T17:43:09.2623884Z RuntimeError: gh api repos/leanprover-community/mathlib4/tags?per_page=100 failed: gh: HTTP 503
+2026-11-23T17:43:09.2778293Z ##[error]Process completed with exit code 1.
+2026-11-23T17:43:09.2918829Z Post job cleanup.
+2026-11-23T17:43:09.3799345Z [command]/usr/bin/git version
+2026-11-23T17:43:09.3839636Z git version 2.56.1
+2026-11-23T17:43:09.3875716Z Temporarily overriding HOME='/home/runner/work/_temp/41fb71e5-edb3-44a1-bf48-8d16c37e1ced' before making global git config changes
+2026-11-23T17:43:09.3877338Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-23T17:43:09.3881789Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/atlas-lean/atlas-lean
+2026-11-23T17:43:09.3916857Z Removing SSH command configuration
+2026-11-23T17:43:09.3923131Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-23T17:43:09.3982359Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-23T17:43:09.4406303Z Removing HTTP extra header
+2026-11-23T17:43:09.4412299Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-23T17:43:09.4452432Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-23T17:43:09.4871895Z Removing includeIf entries pointing to credentials config files
+2026-11-23T17:43:09.4881642Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-23T17:43:09.4925961Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-23T17:43:09.5506209Z Cleaning up orphan processes

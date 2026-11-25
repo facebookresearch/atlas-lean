@@ -15,19 +15,30 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 
 namespace MetaMathlibExt
 
-/-- Integrand for the polynomial `T_{l-1}` (canonical name `polynomial T_{l-1}`,
-concept_id `jis_sem_267c1cca81c8b3a0062a0742`, statement `jis_d5c7f2eca643e293a3405354`,
-source `jis_source_34b829866c2fa232064ad7c0`): `(8 * x ^ l - S_l(x)) / (sqrt x * (4 - x))`. -/
+/-- **Integrand of the antiderivative condition.** Let $S$ be a sequence of real polynomials
+indexed by the natural numbers, with terms $S(l)$. For a natural number $l$ and a real number
+$x$, the integrand is
+$$\frac{8x^l - S(l)(x)}{\sqrt{x}\,(4 - x)},$$
+where $\sqrt{x} = 0$ for $x < 0$ and a quotient with denominator $0$ is $0$.
+
+Source: canonical name `polynomial T_{l-1}`, concept_id `jis_sem_267c1cca81c8b3a0062a0742`,
+statement `jis_d5c7f2eca643e293a3405354`, source `jis_source_34b829866c2fa232064ad7c0`. -/
 noncomputable def TIntegrand (S : ℕ → Polynomial ℝ) (l : ℕ) (x : ℝ) : ℝ :=
   (8 * x ^ l - Polynomial.aeval x (S l)) / (Real.sqrt x * (4 - x))
 
-/-- Predicate characterizing the polynomial family `T_{l-1}` of degree `l - 1`
-(canonical name `polynomial T_{l-1}`, concept_id `jis_sem_267c1cca81c8b3a0062a0742`,
-statement `jis_d5c7f2eca643e293a3405354`, source `jis_source_34b829866c2fa232064ad7c0`):
-`T 0 = 0` (i.e. `T_{-1}(x) := 0`), degree clause for `l ≥ 1` with `T l ≠ 0`,
-and the antiderivative clause `2 * sqrt x * T_l(x)` has derivative
-`(8 * x ^ l - S_l(x)) / (sqrt x * (4 - x))` on `0 < x < 4`,
-i.e. `T_{l-1}(x) = (x ^ (-1/2) / 2) ∫ integrand dx`. -/
+/-- **Polynomial family defined by an antiderivative.** Let $S$ and $T$ be sequences of real
+polynomials indexed by the natural numbers, with terms $S(l)$ and $T(l)$. The pair $(S, T)$
+satisfies this predicate when $T(0) = 0$; for every $l \ge 1$ the polynomial $T(l)$ is nonzero
+and has degree $l - 1$; and for every $l \ge 1$ and every real $x$ with $0 < x < 4$, the function
+$y \mapsto 2\sqrt{y}\,T(l)(y)$ is differentiable at $x$ with derivative
+$$\frac{8x^l - S(l)(x)}{\sqrt{x}\,(4 - x)}.$$
+
+The term $T(l)$ stands for the polynomial $T_{l-1}$ of the source, so $T(0) = 0$ encodes the
+convention $T_{-1} = 0$, and the derivative condition expresses $T_{l-1}(x)$ as
+$\frac{1}{2\sqrt{x}}$ times an antiderivative of the displayed integrand.
+
+Source: canonical name `polynomial T_{l-1}`, concept_id `jis_sem_267c1cca81c8b3a0062a0742`,
+statement `jis_d5c7f2eca643e293a3405354`, source `jis_source_34b829866c2fa232064ad7c0`. -/
 def IsPolyTFamily (S T : ℕ → Polynomial ℝ) : Prop :=
   T 0 = 0 ∧
     (∀ l : ℕ, 1 ≤ l → (T l).natDegree = l - 1 ∧ T l ≠ 0) ∧

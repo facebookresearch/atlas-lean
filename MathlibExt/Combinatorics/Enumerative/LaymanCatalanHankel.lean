@@ -574,14 +574,6 @@ private theorem H_eq (n : ℕ) :
   push_cast
   ring
 
-private theorem succ_zero_eq_one (n : ℕ) : Fin.succ (0 : Fin (n+1)) = (1 : Fin (n+2)) := by
-  ext
-  simp
-
-private theorem succAbove_one_zero (n : ℕ) : Fin.succAbove (1 : Fin (n+2)) (0 : Fin (n+1)) = 0 := by
-  unfold Fin.succAbove
-  simp
-
 private theorem Tmat_row_zero_zero (n : ℕ) : Tmat (n+2) (0 : Fin (n+2)) 0 = 3 := by
   simp [Tmat]
 
@@ -610,12 +602,12 @@ private theorem minor00_eq (n : ℕ) :
 
 private theorem N_zero_zero_aux (n : ℕ) :
     (Tmat (n+2)).submatrix Fin.succ (Fin.succAbove (1 : Fin (n+2))) (0 : Fin (n+1)) 0 = 1 := by
-  simp only [Matrix.submatrix_apply, succAbove_one_zero]
+  simp only [Matrix.submatrix_apply, Fin.one_succAbove_zero]
   simp [Tmat]
 
 private theorem N_succ_zero_aux (n : ℕ) (i : Fin n) :
     (Tmat (n+2)).submatrix Fin.succ (Fin.succAbove (1 : Fin (n+2))) i.succ 0 = 0 := by
-  simp only [Matrix.submatrix_apply, succAbove_one_zero]
+  simp only [Matrix.submatrix_apply, Fin.one_succAbove_zero]
   have hval : (i.succ.succ : Fin (n+2)).val = i.val + 2 := by simp [Fin.val_succ]
   have h1 : ¬ ((i.succ.succ : Fin (n+2)).val = (0 : Fin (n+2)).val) := by simp
   have h2 : ¬ ((i.succ.succ : Fin (n+2)).val + 1 = (0 : Fin (n+2)).val) := by simp
@@ -674,7 +666,7 @@ private theorem det_Tmat_succ_succ (n : ℕ) : (Tmat (n+2)).det = 3 * (Tmat (n+1
         (Fin.succ (Fin.succ j)) := by
       rw [Fin.sum_univ_succ]
     rw [h1]
-    have h01 : Fin.succ (0 : Fin (n+1)) = (1 : Fin (n+2)) := succ_zero_eq_one n
+    have h01 : Fin.succ (0 : Fin (n+1)) = (1 : Fin (n+2)) := Fin.succ_zero_eq_one
     rw [h01]
   rw [hpeel]
   have e0 : (-1 : ℤ) ^ (0 : Fin (n+2)).val * Tmat (n+2) 0 0 *
@@ -737,9 +729,11 @@ private theorem det_Tmat_fib (n : ℕ) : (Tmat n).det = ((Nat.fib (2 * n + 2) : 
   | more n ih1 ih2 =>
     rw [det_Tmat_succ_succ, ih2, ih1, fib_step_aux]
 
-/-- Layman's Catalan-sum Hankel determinant identity, without any hypothesis on `n`:
-`det [C_{i+j+1} + C_{i+j+2}] = F_{2n+2}` holds for every `n`, including `n = 0`
-where both sides are `1`.
+/-- **Layman's Catalan-sum Hankel determinant, including the empty matrix.** Let $C_m$ denote the
+$m$-th Catalan number and $F_m$ the $m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For
+every natural number $n$, the determinant of the $n \times n$ integer matrix whose $(i, j)$ entry
+is $C_{i+j+1} + C_{i+j+2}$ for $0 \le i, j \le n-1$ equals $F_{2n+2}$. For $n = 0$ the matrix is
+empty and both sides equal $1$.
 -/
 theorem layman_catalan_sum_hankel_det_unrestricted (n : ℕ) :
     Matrix.det (fun i j : Fin n =>
@@ -753,15 +747,17 @@ theorem layman_catalan_sum_hankel_det_unrestricted (n : ℕ) :
       det_Tmat_fib]
 
 set_option linter.unusedVariables false in
-/-- Layman's Catalan-sum Hankel determinant identity:
-`det [C_{i+j+1} + C_{i+j+2}] = F_{2n+2}`.
-
-Concept `jis_dep_63ab37918a459a2ac2623d75`. Source:
-<https://cs.uwaterloo.ca/journals/JIS/VOL16/Bouras/bouras4.tex>, lines 109–117.
-Source hash `12b867e2c1325f629838bfe224904d3bc59e21050fc9bdabc79d70f6a70f71ee`.
-Corrected occurrence count: 3 mentions / 2 papers / 0 proof uses.
+/-- **Layman's Catalan-sum Hankel determinant.** Let $C_m$ denote the $m$-th Catalan number and
+$F_m$ the $m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every integer $n \ge 1$, the
+determinant of the $n \times n$ integer matrix whose $(i, j)$ entry is $C_{i+j+1} + C_{i+j+2}$ for
+$0 \le i, j \le n-1$ equals $F_{2n+2}$.
 
 Proves `Wanted` entry `layman_catalan_sum_hankel_det`.
+
+Source: <https://cs.uwaterloo.ca/journals/JIS/VOL16/Bouras/bouras4.tex>, lines 109–117.
+Source hash `12b867e2c1325f629838bfe224904d3bc59e21050fc9bdabc79d70f6a70f71ee`.
+Concept `jis_dep_63ab37918a459a2ac2623d75`.
+Corrected occurrence count: 3 mentions / 2 papers / 0 proof uses.
 -/
 @[nolint unusedArguments]
 theorem layman_catalan_sum_hankel_det (n : ℕ) (hn : 1 ≤ n) :

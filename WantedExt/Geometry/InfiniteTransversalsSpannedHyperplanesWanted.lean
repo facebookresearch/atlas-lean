@@ -34,20 +34,30 @@ namespace ITSP
 - Question: `∃ f : P → H` injective with `p ∈ f p` for all `p`.
 -/
 
-/-- Affine hyperplane in `Fin d → ℝ` [OWR-1183-011]: an affine subspace
-that is the level set of a nonzero linear functional. -/
+/-- **Affine hyperplanes in $\mathbb{R}^d$.** An affine subspace $A$ of $\mathbb{R}^d$ is an affine
+hyperplane when there are a nonzero linear functional $\ell \colon \mathbb{R}^d \to \mathbb{R}$ and
+a real number $c$ such that $A = \{x \in \mathbb{R}^d : \ell(x) = c\}$.
+
+Source: `OWR-1183-011`. -/
 def IsAffineHyperplane (d : ℕ) (Hp : AffineSubspace ℝ (Fin d → ℝ)) : Prop :=
   ∃ (l : (Fin d → ℝ) →ₗ[ℝ] ℝ) (c : ℝ), l ≠ 0 ∧ ∀ x, x ∈ Hp ↔ l x = c
 
-/-- The set `H` of hyperplanes spanned by `P` [OWR-1183-011]: hyperplanes
-whose affine span is attained by some subset of `P`. -/
+/-- **Hyperplanes spanned by a point set.** For a set $P \subseteq \mathbb{R}^d$, the hyperplanes
+spanned by $P$ are the affine hyperplanes of $\mathbb{R}^d$ that equal the affine span of some
+subset of $P$.
+
+Source: `OWR-1183-011`. -/
 def SpannedHyperplaneSet (d : ℕ) (P : Set (Fin d → ℝ)) :
     Set (AffineSubspace ℝ (Fin d → ℝ)) :=
   {Hp | IsAffineHyperplane d Hp ∧ ∃ Q : Set (Fin d → ℝ), Q ⊆ P ∧ affineSpan ℝ Q = Hp}
 
-/-- The question of [OWR-1183-011]: for every `d ≥ 1` and every `P`
-spanning the ambient space, with `H` the hyperplanes spanned by `P`,
-is there an injective `f : P → H` with `p ∈ f p` for every `p`? -/
+/-- **Injective point-to-hyperplane matching question.** The statement that for every $d \ge 1$
+and every set $P \subseteq \mathbb{R}^d$ whose affine span is all of $\mathbb{R}^d$, writing
+$\mathcal{H}$ for the set of affine hyperplanes of $\mathbb{R}^d$ that equal the affine span of
+some subset of $P$, there is an injective map $f \colon P \to \mathcal{H}$ with $p \in f(p)$ for
+every $p \in P$.
+
+Source: the question of `OWR-1183-011`. -/
 def OWR1183Question : Prop :=
   ∀ (d : ℕ) (_hd : 1 ≤ d) (P : Set (Fin d → ℝ)), affineSpan ℝ P = ⊤ →
     ∃ f : P → ↥(SpannedHyperplaneSet d P),
@@ -56,10 +66,18 @@ def OWR1183Question : Prop :=
 end ITSP
 
 /--
-Resolved true: Farley (Australas. J. Combin. 82 (2022), arXiv:2004.11972), Theorem 11: every
-geometric lattice of finite rank > 1, of any cardinality, has an injective
-atom-to-containing-coatom matching. Applied to the affine-matroid lattice of a spanning P in
-R^d, this gives the required injection. Source: J. D. Farley, A question of Björner from 1981:
+**Spanning point sets have injective point-to-hyperplane matchings.** For every $d \ge 1$ and
+every set $P \subseteq \mathbb{R}^d$ whose affine span is all of $\mathbb{R}^d$, let $\mathcal{H}$
+be the set of affine hyperplanes of $\mathbb{R}^d$ that equal the affine span of some subset of
+$P$. Then there is an injective map $f \colon P \to \mathcal{H}$ with $p \in f(p)$ for every
+$p \in P$.
+
+This answers the question of `OWR-1183-011` affirmatively. It follows from Farley's Theorem 11:
+every geometric lattice of finite rank greater than $1$, of any cardinality, has an injective
+map sending each atom to a coatom containing it; apply it to the lattice of affine flats
+spanned by subsets of $P$.
+
+Source: J. D. Farley, A question of Björner from 1981:
 infinite geometric lattices of finite rank have matchings, Australasian Journal of Combinatorics
 82 (2022) 228-235, arXiv:2004.11972, https://arxiv.org/abs/2004.11972. Moved from
 `OpenConjectures/Geometry/InfiniteTransversalsSpannedHyperplanes`.

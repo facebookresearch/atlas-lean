@@ -30,19 +30,25 @@ namespace BinaryQuadraticForm
 
 @[expose] public noncomputable section
 
-/-- The genuine real quadratic form determined by the integer coefficient triple. -/
+/-- **Real quadratic form of an integer coefficient triple.** For integers $a, b, c$, this is the
+quadratic form on the real vector space $\mathbb{R}^2$ given by
+$(x, y) \mapsto a x^2 + b x y + c y^2$. -/
 def ofCoefficients (q : ℤ × ℤ × ℤ) : QuadraticForm ℝ (ℝ × ℝ) :=
   (q.1 : ℝ) • QuadraticMap.linMulLin (LinearMap.fst ℝ ℝ ℝ) (LinearMap.fst ℝ ℝ ℝ) +
   (q.2.1 : ℝ) • QuadraticMap.linMulLin (LinearMap.fst ℝ ℝ ℝ) (LinearMap.snd ℝ ℝ ℝ) +
   (q.2.2 : ℝ) • QuadraticMap.linMulLin (LinearMap.snd ℝ ℝ ℝ) (LinearMap.snd ℝ ℝ ℝ)
 
-/-- The represented form is exactly `a*x² + b*x*y + c*y²`. -/
+/-- **Evaluation of the real quadratic form of a coefficient triple.** For integers $a, b, c$
+and real numbers $x, y$, the real quadratic form of the triple $(a, b, c)$ takes the value
+$a x^2 + b x y + c y^2$ at the point $(x, y)$. -/
 theorem ofCoefficients_apply (q : ℤ × ℤ × ℤ) (x y : ℝ) :
     ofCoefficients q (x, y) = (q.1 : ℝ) * x ^ 2 + (q.2.1 : ℝ) * x * y +
       (q.2.2 : ℝ) * y ^ 2 := by
   simp [ofCoefficients, pow_two, mul_assoc]
 
-/-- A positive leading coefficient and negative discriminant give a positive definite form. -/
+/-- **Positive definiteness for negative discriminant.** Let $D$ be a positive integer and let
+$a, b, c$ be integers with $a > 0$ and $b^2 - 4ac = -D$. Then the real quadratic form
+$(x, y) \mapsto a x^2 + b x y + c y^2$ on $\mathbb{R}^2$ is positive definite. -/
 theorem ofCoefficients_posDef (D : ℕ) (hD : 0 < D) (q : ℤ × ℤ × ℤ)
     (ha : 0 < q.1) (hd : discrim q.1 q.2.1 q.2.2 = -(D : ℤ)) :
     (ofCoefficients q).PosDef := by
@@ -71,23 +77,28 @@ theorem ofCoefficients_posDef (D : ℕ) (hD : 0 < D) (q : ℤ × ℤ × ℤ)
         (mul_pos hDR (sq_pos_of_ne_zero hy))
     exact (mul_pos_iff_of_pos_left (mul_pos (by norm_num) haR)).mp hprod
 
-/-- The square root of `-D` with nonnegative imaginary part. -/
+/-- **The imaginary square root of $-D$.** For a natural number $D$, the imaginary root of $D$ is
+the complex number $i\sqrt{D}$, where $\sqrt{D}$ is the nonnegative real square root; it is the
+square root of $-D$ with nonnegative imaginary part. -/
 def imaginaryRoot (D : ℕ) : ℂ :=
   Complex.I * (Real.sqrt (D : ℝ) : ℂ)
 
-/-- The concrete chosen root squares to the requested negative radicand. -/
+/-- **The imaginary root squares to $-D$.** For every natural number $D$, the complex number
+$i\sqrt{D}$ satisfies $(i\sqrt{D})^2 = -D$. -/
 theorem imaginaryRoot_sq (D : ℕ) : imaginaryRoot D ^ 2 = -(D : ℂ) := by
   rw [imaginaryRoot, mul_pow, Complex.I_sq, ← Complex.ofReal_pow,
     Real.sq_sqrt (Nat.cast_nonneg D)]
   simp
 
-/-- The chosen root is integral over the rational numbers. -/
+/-- **The imaginary root is integral over $\mathbb{Q}$.** For every natural number $D$, the
+complex number $i\sqrt{D}$ is integral over $\mathbb{Q}$. -/
 theorem imaginaryRoot_isIntegral (D : ℕ) : IsIntegral ℚ (imaginaryRoot D) := by
   refine ⟨Polynomial.X ^ 2 + Polynomial.C (D : ℚ),
     Polynomial.monic_X_pow_add_C (D : ℚ) (by decide), ?_⟩
   simp [imaginaryRoot_sq]
 
-/-- A positive radicand gives a nonreal root, hence a root outside the rational subfield. -/
+/-- **The imaginary root is not rational.** For every positive integer $D$, the complex number
+$i\sqrt{D}$ does not lie in the subfield $\mathbb{Q}$ of $\mathbb{C}$. -/
 theorem imaginaryRoot_not_mem_bot (D : ℕ) (hD : 0 < D) :
     imaginaryRoot D ∉ (⊥ : IntermediateField ℚ ℂ) := by
   intro h
@@ -96,7 +107,11 @@ theorem imaginaryRoot_not_mem_bot (D : ℕ) (hD : 0 < D) :
   have hzero : Real.sqrt (D : ℝ) = 0 := by simpa [imaginaryRoot] using hi.symm
   exact (ne_of_gt (Real.sqrt_pos.mpr (Nat.cast_pos.mpr hD))) hzero
 
-/-- The canonical subfield `ℚ(√(-D))` of the complex numbers. -/
+/-- **The imaginary quadratic field $\mathbb{Q}(\sqrt{-D})$.** For a natural number $D$, this is
+the subfield $\mathbb{Q}(i\sqrt{D})$ of $\mathbb{C}$ generated over $\mathbb{Q}$ by the imaginary
+root $i\sqrt{D}$.
+
+When $D = 0$ this field is $\mathbb{Q}$ itself. -/
 abbrev imaginaryQuadraticField (D : ℕ) := ℚ⟮imaginaryRoot D⟯
 
 instance (D : ℕ) : FiniteDimensional ℚ (imaginaryQuadraticField D) :=
@@ -104,7 +119,8 @@ instance (D : ℕ) : FiniteDimensional ℚ (imaginaryQuadraticField D) :=
 
 instance (D : ℕ) : NumberField (imaginaryQuadraticField D) := NumberField.mk
 
-/-- A positive radicand gives a degree-two extension of `ℚ`. -/
+/-- **$\mathbb{Q}(\sqrt{-D})$ is a quadratic extension.** For every positive integer $D$, the
+subfield $\mathbb{Q}(i\sqrt{D})$ of $\mathbb{C}$ has degree $2$ over $\mathbb{Q}$. -/
 theorem imaginaryQuadraticField_finrank (D : ℕ) (hD : 0 < D) :
     Module.finrank ℚ (imaginaryQuadraticField D) = 2 := by
   have hroot : Polynomial.aeval (imaginaryRoot D)
@@ -121,7 +137,9 @@ theorem imaginaryQuadraticField_finrank (D : ℕ) (hD : 0 < D) :
   have hpos : 0 < Module.finrank ℚ (imaginaryQuadraticField D) := Module.finrank_pos
   omega
 
-/-- The second ideal generator is integral when the triple has discriminant `-D`. -/
+/-- **The form generator is an algebraic integer.** Let $D$ be a natural number and let $a, b, c$
+be integers with $b^2 - 4ac = -D$. Then the element $(b + i\sqrt{D})/2$ of the field
+$\mathbb{Q}(i\sqrt{D}) \subseteq \mathbb{C}$ is integral over $\mathbb{Z}$. -/
 theorem formGenerator_isIntegral (D : ℕ) (q : ℤ × ℤ × ℤ)
     (hd : discrim q.1 q.2.1 q.2.2 = -(D : ℤ)) :
     IsIntegral ℤ (((q.2.1 : imaginaryQuadraticField D) +
@@ -146,8 +164,12 @@ theorem formGenerator_isIntegral (D : ℕ) (q : ℤ × ℤ × ℤ)
     Polynomial.eval₂_X, Polynomial.eval₂_C]
   simpa [g, add_assoc] using hzero
 
-/-- The fractional ideal generated by `a` and `(b + √(-D)) / 2` for `q = (a,b,c)`.
-For a form of discriminant `-D`, the second generator is an algebraic integer. -/
+/-- **Ideal of a binary quadratic form.** Let $D$ be a natural number, let
+$K = \mathbb{Q}(i\sqrt{D}) \subseteq \mathbb{C}$ and let $\mathcal{O}_K$ be its ring of
+integers. For integers $a, b, c$, the ideal of the triple $(a, b, c)$ is the fractional ideal
+of $\mathcal{O}_K$ in $K$ generated by $a$ and $(b + i\sqrt{D})/2$.
+
+When $b^2 - 4ac = -D$, the second generator is an algebraic integer. -/
 def formIdeal (D : ℕ) (q : ℤ × ℤ × ℤ) :
     FractionalIdeal (𝓞 (imaginaryQuadraticField D))⁰ (imaginaryQuadraticField D) :=
   FractionalIdeal.spanFinset (𝓞 (imaginaryQuadraticField D)) Finset.univ
@@ -155,13 +177,19 @@ def formIdeal (D : ℕ) (q : ℤ × ℤ × ℤ) :
       else ((q.2.1 : imaginaryQuadraticField D) +
         IntermediateField.AdjoinSimple.gen ℚ (imaginaryRoot D)) / 2)
 
-/-- A nonzero leading coefficient makes the represented ideal nonzero. -/
+/-- **The ideal of a form is nonzero.** Let $D$ be a natural number and let $a, b, c$ be integers
+with $a \ne 0$. Then the fractional ideal of the ring of integers of
+$\mathbb{Q}(i\sqrt{D}) \subseteq \mathbb{C}$ generated by $a$ and $(b + i\sqrt{D})/2$ is nonzero. -/
 theorem formIdeal_ne_zero (D : ℕ) (q : ℤ × ℤ × ℤ) (ha : q.1 ≠ 0) :
     formIdeal D q ≠ 0 := by
   apply FractionalIdeal.spanFinset_ne_zero.mpr
   exact ⟨0, Finset.mem_univ _, by simpa using ha⟩
 
-/-- The actual ideal class represented by the form with nonzero leading coefficient. -/
+/-- **Ideal class of a binary quadratic form.** Let $D$ be a natural number, let
+$K = \mathbb{Q}(i\sqrt{D}) \subseteq \mathbb{C}$ and let $\mathcal{O}_K$ be its ring of
+integers. For integers $a, b, c$ with $a \ne 0$, the ideal class of the triple $(a, b, c)$ is
+the class, in the class group of $\mathcal{O}_K$, of the nonzero fractional ideal of
+$\mathcal{O}_K$ in $K$ generated by $a$ and $(b + i\sqrt{D})/2$. -/
 def classOfForm (D : ℕ) (q : ℤ × ℤ × ℤ) (ha : q.1 ≠ 0) :
     ClassGroup (𝓞 (imaginaryQuadraticField D)) :=
   ClassGroup.mk (imaginaryQuadraticField D) (Units.mk0 (formIdeal D q)

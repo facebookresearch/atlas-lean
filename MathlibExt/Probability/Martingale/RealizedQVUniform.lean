@@ -394,8 +394,8 @@ theorem exists_eventually_measure_lt_sum_condExp_le {m : MeasurableSpace Ω} {μ
     _ ≤ ENNReal.ofReal (η / 3) + ENNReal.ofReal (η / 3) + ENNReal.ofReal (η / 3) := by
         rw [hCM]
         gcongr
-        exact (measure_mono fun ω (hω : C < _) => (show C₀ < _ from
-          lt_of_le_of_lt (le_max_left _ _) hω)).trans hn
+        exact hn.trans' (measure_mono fun ω (hω : C < _) => (show C₀ < _ from
+          lt_of_le_of_lt (le_max_left _ _) hω))
     _ = ENNReal.ofReal η := by
         rw [← ENNReal.ofReal_add (by positivity) (by positivity),
           ← ENNReal.ofReal_add (by positivity) (by positivity)]

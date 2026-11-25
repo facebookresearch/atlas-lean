@@ -151,16 +151,6 @@ example :
     ∑ i ∈ Icc 1 6, (6 : ℕ).choose i * Nat.fib i = 144 := by
   decide
 
-/-- The shifted binomial identity `∑ binom(n, i) F_{i+m} = F_{2n+m}` at
-`n = 4`, `m = 3`. -/
-example : ∑ i ∈ range 5, (4 : ℕ).choose i * Nat.fib (i + 3) = 89 := by
-  rw [Nat.sum_range_choose_mul_fib_add]
-  decide
-
-example : ∑ i ∈ range 5, (4 : ℕ).choose i * Nat.fib (i + 3) =
-    Nat.fib (2 * 4 + 3) := by
-  decide
-
 /-- Theorem 3(i) with `α = 4` at `n = 3`: `1 + 1 + 16 ≤ (2 * 3) ^ 2`. -/
 example : (1 : ℝ) + 1 + 16 ≤ (2 * 3) ^ 2 := by
   have h := sum_fib_rpow_le_of_two_le (n := 3) (by norm_num) (α := 4)
@@ -260,7 +250,6 @@ example : (1 : ℝ) + 8 ≤ 27 := by
 #print axioms Nat.sum_Icc_fib_two_mul_add_one
 #print axioms Nat.sum_Icc_mul_fib_add_fib
 #print axioms Nat.sum_Icc_fib_mul_fib_three_mul
-#print axioms Nat.sum_range_choose_mul_fib_add
 #print axioms Nat.sum_Icc_choose_mul_fib
 #print axioms Nat.sum_Icc_fib_rpow_two
 #print axioms power_sum_rpow_one_div_le
