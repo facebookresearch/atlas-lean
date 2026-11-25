@@ -14,6 +14,7 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.Combinatorics.InfiniteWord.WordFactorComplexity
 public import MathlibExt.NumberTheory.ContinuedFractions.LagrangePeriodic
+public import MathlibExt.NumberTheory.MallowsRepresentation
 
 /-!
 # The Mallows representation of the irrational numbers (wanted statements)
@@ -32,55 +33,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **The Mallows alphabet.** The letters of Mallows representations are the three distinct
-letters $L$, $M$ and $R$, standing for "left", "middle" and "right".
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 4. -/
-inductive MallowsLetter
-  | L
-  | M
-  | R
-  deriving DecidableEq
-
 /-- The alphabet `{L, M, R}` is finite.
 
 Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
 (2025), Article A78, Definition 4. -/
-instance : Fintype MallowsLetter :=
+instance instFintypeMallowsLetter : Fintype MallowsLetter :=
   Fintype.ofList [.L, .M, .R] fun x => by cases x <;> simp
-
-/-- **Stern–Brocot letters.** The alphabet of Stern–Brocot representations: the two letters
-$L$ ("left") and $R$ ("right").
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 2. -/
-inductive SternBrocotLetter
-  | L
-  | R
-  deriving DecidableEq
-
-/-- **The parity alphabet.** The parity alphabet consists of the four letters $O_L$, $E_R$, $O_R$
-and $E_L$. The intermediate set $I$ linking the Stern–Brocot and Mallows representations is a set
-of infinite sequences over this alphabet.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 3. -/
-inductive MallowsParityLetter
-  | OL
-  | ER
-  | OR
-  | EL
-  deriving DecidableEq
-
-/-- **Real value of a fraction encoded as a pair.** The pair $(n, m)$ of natural numbers encodes
-the fraction with numerator $n$ and denominator $m$, whose real value is $n / m$ (taken to be $0$
-when $m = 0$).
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 2 (fractions `n / m` labelling the trees). -/
-noncomputable def natPairToReal (p : ℕ × ℕ) : ℝ :=
-  (p.1 : ℝ) / p.2
 
 /-- **The pair $(1, 2)$ encodes $1/2$.** The real value of the fraction encoded by the pair
 $(1, 2)$ is $1/2$.
@@ -89,15 +47,6 @@ Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, I
 (2025), Article A78, Section 2. -/
 theorem natPairToReal_one_two : natPairToReal (1, 2) = 1 / 2 := by
   norm_num [natPairToReal]
-
-/-- **Mediant of a gap.** For a gap bounded by two fractions $n_1/m_1$ and $n_2/m_2$, each encoded
-as the pair (numerator, denominator) of natural numbers, the mediant is the fraction
-$(n_1 + n_2)/(m_1 + m_2)$, encoded as the pair $(n_1 + n_2, m_1 + m_2)$.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 1 (mediant construction). -/
-def gapMediant (I : (ℕ × ℕ) × (ℕ × ℕ)) : ℕ × ℕ :=
-  (I.1.1 + I.2.1, I.1.2 + I.2.2)
 
 /-- **The mediant of $0/1$ and $1/1$.** With fractions encoded as pairs (numerator, denominator)
 of natural numbers, the mediant of the gap bounded by $0/1$ and $1/1$ is $1/2$, that is, the
@@ -287,19 +236,6 @@ theorem mallowsRep_zero_of_lt {α : ℝ} (h : α < 1 / 2) : mallowsRep α 0 = .L
   simp only [mallowsRep, mallowsInterval, mallowsChoose]
   exact ite_eq_left_of_eq_true _ _ (eq_true h')
 
-/-- **Children in the Stern–Brocot tree.** Fractions are pairs $(n, m)$ of natural numbers
-(numerator, denominator), and the mediant of $a = n_1/m_1$ and $b = n_2/m_2$ is
-$a \oplus b = (n_1 + n_2)/(m_1 + m_2)$. The child of a gap $(a, b)$ in direction $L$ is the
-gap $(a, a \oplus b)$, and its child in direction $R$ is the gap $(a \oplus b, b)$. For the gap
-of a Stern–Brocot vertex, whose label is $a \oplus b$, these are the gaps of its left and right
-children.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 1. -/
-def sternBrocotChild (I : (ℕ × ℕ) × (ℕ × ℕ)) : SternBrocotLetter → (ℕ × ℕ) × (ℕ × ℕ)
-  | .L => (I.1, gapMediant I)
-  | .R => (gapMediant I, I.2)
-
 /-- **Labels of the Stern–Brocot tree.** Fractions are pairs (numerator, denominator) of
 natural numbers, and the mediant of $n_1/m_1$ and $n_2/m_2$ is $(n_1 + n_2)/(m_1 + m_2)$. For a
 word $w$ over $\{L, R\}$, start from the gap $(0/1, 1/1)$ and read $w$ from left to right,
@@ -322,32 +258,6 @@ theorem sternBrocotLabel_small :
     sternBrocotLabel [] = (1, 2) ∧ sternBrocotLabel [.L, .R] = (2, 5) := by
   decide
 
-/-- **The Stern–Brocot choice at a vertex.** Let $\alpha$ be a real number and let $(a, b)$ be
-a gap with fractions $a = n_1/m_1$ and $b = n_2/m_2$ (pairs of natural numbers). The letter
-chosen at $(a, b)$ is $L$ if $\alpha$ is less than the real number $(n_1 + n_2)/(m_1 + m_2)$,
-the value of the mediant of $a$ and $b$ (the label of the Stern–Brocot vertex with this gap),
-and $R$ otherwise.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 2. -/
-noncomputable def sternBrocotChoose (α : ℝ) (I : (ℕ × ℕ) × (ℕ × ℕ)) : SternBrocotLetter :=
-  if α < natPairToReal (gapMediant I) then .L else .R
-
-/-- **Gaps along the Stern–Brocot path.** Fractions are pairs (numerator, denominator) of
-natural numbers, and the mediant $a \oplus b$ of $a = n_1/m_1$ and $b = n_2/m_2$ is
-$(n_1 + n_2)/(m_1 + m_2)$. For a real number $\alpha$, the gaps $I_0(\alpha), I_1(\alpha), \dots$
-are defined by $I_0(\alpha) = (0/1, 1/1)$ and, if $I_j(\alpha) = (a, b)$, by
-$I_{j+1}(\alpha) = (a, a \oplus b)$ when $\alpha < a \oplus b$ (as real numbers) and
-$I_{j+1}(\alpha) = (a \oplus b, b)$ otherwise. The gap $I_j(\alpha)$ is that of the Stern–Brocot
-vertex visited at step $j + 1$, whose label is the fraction $f_{j+1}(\alpha)$.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 2. -/
-noncomputable def sternBrocotInterval (α : ℝ) : ℕ → (ℕ × ℕ) × (ℕ × ℕ)
-  | 0 => ((0, 1), (1, 1))
-  | j + 1 => sternBrocotChild (sternBrocotInterval α j)
-      (sternBrocotChoose α (sternBrocotInterval α j))
-
 /-- **Fractions on the Stern–Brocot path.** Fractions are pairs (numerator, denominator) of
 natural numbers, and the mediant $a \oplus b$ of $a = n_1/m_1$ and $b = n_2/m_2$ is
 $(n_1 + n_2)/(m_1 + m_2)$. For a real number $\alpha$, start with the gap $(0/1, 1/1)$; at each
@@ -367,19 +277,6 @@ $1$ and denominator $2$.
 Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
 (2025), Article A78, Definition 2. -/
 theorem sternBrocotFrac_zero (α : ℝ) : sternBrocotFrac α 0 = (1, 2) := rfl
-
-/-- **Stern–Brocot representation.** For a real number $\alpha$, the Stern–Brocot representation
-$SB(\alpha) = SB_1(\alpha) SB_2(\alpha) \cdots$ is the infinite sequence over $\{L, R\}$ obtained
-by walking down the Stern–Brocot tree from its vertex $1/2$, the vertex with gap $(0/1, 1/1)$.
-The vertex with gap $(a, b)$ has label the mediant $a \oplus b$ and children with gaps
-$(a, a \oplus b)$ (left) and $(a \oplus b, b)$ (right). If $f_j(\alpha)$ is the label of the
-$j$-th vertex of the walk, then $SB_j(\alpha) = L$ and the walk moves to the left child when
-$\alpha < f_j(\alpha)$; otherwise $SB_j(\alpha) = R$ and the walk moves to the right child.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Definition 2. -/
-noncomputable def sternBrocotRep (α : ℝ) (j : ℕ) : SternBrocotLetter :=
-  sternBrocotChoose α (sternBrocotInterval α j)
 
 /-- **First Stern–Brocot letter below one half.** For every real number $\alpha < 1/2$, the
 first letter $SB_1(\alpha)$ of the Stern–Brocot representation of $\alpha$ is $L$.
@@ -436,37 +333,6 @@ theorem sternBrocotPhi_psi_root :
         [((0, 1), (1, 2)), ((1, 2), (2, 3)), ((2, 3), (1, 1))] := by
   decide
 
-/-- **Transition rule of the parity sequence.** The map $\mathrm{step}$ sends a letter of the
-parity alphabet $\{O_L, E_R, O_R, E_L\}$ and a letter of $\{L, R\}$ to a letter of the parity
-alphabet, by $\mathrm{step}(O_L, L) = O_L$, $\mathrm{step}(O_L, R) = E_R$,
-$\mathrm{step}(E_R, L) = O_R$, $\mathrm{step}(E_R, R) = O_L$, $\mathrm{step}(O_R, L) = E_L$,
-$\mathrm{step}(O_R, R) = O_R$, $\mathrm{step}(E_L, L) = O_R$ and $\mathrm{step}(E_L, R) = O_L$.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 3 (definition of `Q`, Figure 5). -/
-def mallowsQStep : MallowsParityLetter → SternBrocotLetter → MallowsParityLetter
-  | .OL, .L => .OL
-  | .OL, .R => .ER
-  | .ER, .L => .OR
-  | .ER, .R => .OL
-  | .OR, .L => .EL
-  | .OR, .R => .OR
-  | .EL, .L => .OR
-  | .EL, .R => .OL
-
-/-- **The parity sequence of a Stern–Brocot word.** Let $x = x_0 x_1 x_2 \cdots$ be an infinite
-word over $\{L, R\}$. Its parity sequence $Q(x) = Q_0 Q_1 Q_2 \cdots$ over the parity alphabet
-$\{O_L, E_R, O_R, E_L\}$ is defined by $Q_0 = O_L$ and $Q_{j+1} = \mathrm{step}(Q_j, x_j)$ for
-every $j \ge 0$, where $\mathrm{step}$ is the transition rule of the parity sequence.
-
-Indices start at $0$ here; the source numbers from $1$, so $Q_0$ is the source's $Q_1(x)$.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 3. -/
-def mallowsQ (x : ℕ → SternBrocotLetter) : ℕ → MallowsParityLetter
-  | 0 => .OL
-  | j + 1 => mallowsQStep (mallowsQ x j) (x j)
-
 /-- **First values of the parity sequence.** Let $x = x_0 x_1 x_2 \cdots$ be an infinite word over
 $\{L, R\}$ with $x_0 = R$ and $x_1 = L$. Then the parity sequence $Q(x) = Q_0 Q_1 Q_2 \cdots$ of
 $x$ satisfies $Q_0 = O_L$, $Q_1 = E_R$ and $Q_2 = O_R$.
@@ -506,19 +372,6 @@ theorem const_OL_not_mem_mallowsAdmissible :
     (fun _ => MallowsParityLetter.OL) ∉ mallowsAdmissible :=
   fun h => h.2.2.1 ⟨0, fun _ _ => rfl⟩
 
-/-- **Odd positions of a parity sequence.** Let $x = x_0 x_1 x_2 \cdots$ be an infinite sequence
-over the parity alphabet $\{O_L, E_R, O_R, E_L\}$, and call a position $j \ge 0$ odd when
-$x_j \in \{O_L, O_R\}$. For $i \ge 0$, the $i$-th odd position of $x$ is the $(i+1)$-st smallest
-odd position of $x$, and it is $0$ by convention when $x$ has at most $i$ odd positions.
-
-In the source, positions are numbered from $1$ and the odd positions are enumerated as
-$o(1) < o(2) < \cdots$; the $i$-th odd position here is $o(i+1) - 1$.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 3. -/
-noncomputable def mallowsOddIndex (x : ℕ → MallowsParityLetter) : ℕ → ℕ :=
-  Nat.nth fun j => x j = .OL ∨ x j = .OR
-
 /-- **The first odd position of a sequence starting with $O_L$.** Let $x = x_0 x_1 x_2 \cdots$
 be an infinite sequence over the parity alphabet $\{O_L, E_R, O_R, E_L\}$ with $x_0 = O_L$, and
 call a position $j \ge 0$ odd when $x_j \in \{O_L, O_R\}$. Then the $0$-th odd position of $x$,
@@ -529,38 +382,6 @@ Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, I
 theorem mallowsOddIndex_zero {x : ℕ → MallowsParityLetter} (h : x 0 = .OL) :
     mallowsOddIndex x 0 = 0 :=
   Nat.nth_zero_of_zero (Or.inl h)
-
-/-- **The letter rule of $T$.** For a truth value $b$ and letters $a, a'$ of
-$\{O_L, E_R, O_R, E_L\}$, the letter $\tau(b, a, a') \in \{L, M, R\}$ is defined as follows. If
-$b$ is true, it is $L$ when $a = O_L$ and $R$ otherwise. If $b$ is false, it is $M$ when
-$a \ne a'$, $L$ when $a = a' = O_R$, and $R$ when $a = a' \ne O_R$.
-
-If $o(1) < o(2) < \cdots$ are the positions of the letters $O_L$ and $O_R$ in a sequence $x$,
-then $T_i(x) = \tau(b, x_{o(i)}, x_{o(i+1)})$, where $b$ is true exactly when
-$o(i + 1) = o(i) + 1$.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 3 (definition of `T_i`). -/
-def mallowsTLetter (adj : Bool) (a b : MallowsParityLetter) : MallowsLetter :=
-  if adj then (if a = .OL then .L else .R)
-  else if a = b then (if a = .OR then .L else .R) else .M
-
-/-- **The map $T$.** Let $x = \langle x_1, x_2, \dots \rangle$ be a sequence over
-$\{O_L, E_R, O_R, E_L\}$ and let $o(1) < o(2) < \cdots$ be the positions $j$ with
-$x_j \in \{O_L, O_R\}$. The sequence $T(x) = \langle T_1(x), T_2(x), \dots \rangle$ over
-$\{L, M, R\}$ is defined as follows. If $o(i + 1) = o(i) + 1$, then $T_i(x)$ is $L$ when
-$x_{o(i)} = O_L$ and $R$ otherwise. If $o(i + 1) \ne o(i) + 1$, then $T_i(x)$ is $M$ when
-$x_{o(i)} \ne x_{o(i + 1)}$, $L$ when $x_{o(i)} = x_{o(i + 1)} = O_R$, and $R$ when
-$x_{o(i)} = x_{o(i + 1)} \ne O_R$.
-
-If there are only finitely many such positions, $o(i)$ is taken to be $1$ for every $i$ larger
-than their number.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Section 3. -/
-noncomputable def mallowsT (x : ℕ → MallowsParityLetter) (i : ℕ) : MallowsLetter :=
-  mallowsTLetter (decide (mallowsOddIndex x (i + 1) = mallowsOddIndex x i + 1))
-    (x (mallowsOddIndex x i)) (x (mallowsOddIndex x (i + 1)))
 
 /-- **The finite version $\dot T$ of $T$.** Let $y = \langle y_1, \dots, y_n \rangle$ be a finite
 word over $\{O_L, E_R, O_R, E_L\}$ and let $p_1 < p_2 < \cdots < p_k$ be the positions $j$ with
@@ -896,31 +717,6 @@ public theorem_wanted mallowsT_startsWith_iff (X : MallowsParityLetter) (u : Lis
     List.ofFn (fun t : Fin (u.length + 1) =>
         mallowsQ (sternBrocotRep α) (mallowsOddIndex (mallowsQ (sternBrocotRep α)) i₀ + t)) =
       u.scanl mallowsQStep X
-
-/-- **The letter $M$ in $T(Q(\mathrm{SB}(\alpha)))$ marks the ends of runs.** Let
-$\alpha \in (0, 1)$ be irrational, let $x = Q(\mathrm{SB}(\alpha))$ be the sequence over
-$\{O_L, E_R, O_R, E_L\}$ obtained from the Stern–Brocot representation $\mathrm{SB}(\alpha)$, and
-let $o(1) < o(2) < \cdots$ be the positions $j$ with $x_j \in \{O_L, O_R\}$. Let
-$e_1, e_2, \ldots$ be positive integers such that
-$(x_{o(1)}, x_{o(2)}, \ldots) = O_L^{e_1} O_R^{e_2} O_L^{e_3} \cdots$, that is, for every
-$k \ge 0$ and every $i$ with $e_1 + \cdots + e_k < i \le e_1 + \cdots + e_{k+1}$ (the empty sum
-being $0$), $x_{o(i)}$ is $O_L$ if $k$ is even and $O_R$ if $k$ is odd. Then for every $i \ge 1$,
-the $i$-th letter $T_i(x)$ of $T(x)$ is $M$ if and only if $i = e_1 + \cdots + e_k$ for some
-$k \ge 1$.
-
-The source assumes that $O_L$ and $O_R$ both occur infinitely often among the $x_{o(i)}$; this
-is exactly what makes such $e_k$ exist, so the run decomposition is taken as a hypothesis.
-
-Source: Takanori Hida, *The Mallows Representation of the Irrational Numbers*, INTEGERS 25
-(2025), Article A78, Lemma 4 (`integers-2025-A78-lem-4`). -/
-public theorem_wanted mallowsT_eq_M_iff_runEnd (α : ℝ) (hα : α ∈ Set.Ioo 0 1) (hirr : Irrational α)
-    (e : ℕ → ℕ) (he : ∀ k, 0 < e k)
-    (hrun : ∀ k i, ∑ t ∈ Finset.range k, e t ≤ i → i < ∑ t ∈ Finset.range (k + 1), e t →
-      mallowsQ (sternBrocotRep α) (mallowsOddIndex (mallowsQ (sternBrocotRep α)) i) =
-        if Even k then .OL else .OR)
-    (i : ℕ) :
-    mallowsT (mallowsQ (sternBrocotRep α)) i = .M ↔
-      ∃ k, 1 ≤ k ∧ i + 1 = ∑ t ∈ Finset.range k, e t
 
 /-- **Mallows and Stern–Brocot representations are eventually periodic together.** For every
 irrational $\alpha \in (0, 1)$, the Mallows representation $M(\alpha)$ is eventually periodic if
