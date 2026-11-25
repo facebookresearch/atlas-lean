@@ -50,7 +50,7 @@ def characteristicMap {L M : LogStructure J O} (f : L ⟶ M) :
 
 /-- A natural map of actual point fibre functors induces the literal
 colimit map on a presheaf fibre. -/
-def pointGenerization {D : Type*} [Category D] [HasColimitsOfSize.{w,w} D]
+def pointGenerization {D : Type*} [Category D] [HasColimitsOfSize.{w, w} D]
     (p q : J.Point.{w}) (a : p.fiber ⟶ q.fiber) (P : Cᵒᵖ ⥤ D) :
     p.presheafFiber.obj P ⟶ q.presheafFiber.obj P :=
   p.presheafFiberDesc (fun U x => q.toPresheafFiber U (a.app U x) P)

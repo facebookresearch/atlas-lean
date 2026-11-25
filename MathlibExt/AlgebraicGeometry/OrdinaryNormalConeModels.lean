@@ -62,7 +62,7 @@ def embeddingPresentation {i : X.scheme ⟶ M.scheme} (a : ClosedAffineChart i) 
 
 /-- The literal normal algebra's homogeneous monomial of any degree. -/
 def normalMonomial {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
-    (P : _root_.Algebra.Extension.{0} A B) (n : ℕ) (x : ↥(P.ker^n)) : normalAlgebra P :=
+    (P : _root_.Algebra.Extension.{0} A B) (n : ℕ) (x : ↥(P.ker ^ n)) : normalAlgebra P :=
   Algebra.TensorProduct.includeRight
     (⟨Polynomial.monomial n x.val,reesAlgebra.monomial_mem.mpr x.property⟩ : reesAlgebra P.ker)
 
@@ -95,7 +95,7 @@ def chartBaseMap {i : X.scheme ⟶ M.scheme} (a : ClosedAffineChart i) :
 
 /-- The two actual section-ring restriction maps. -/
 structure NormalRefinement {i : X.scheme ⟶ M.scheme} (a b : ClosedAffineChart i)
-    (hU : b.chart.source≤a.chart.source) (hV : b.chart.target≤a.chart.target) where
+    (hU : b.chart.source ≤ a.chart.source) (hV : b.chart.target ≤ a.chart.target) where
   square :
     (algebraMap (embeddingPresentation b).Ring b.chart.ring).comp
       (M.scheme.left.presheaf.map (homOfLE hV).op).hom =

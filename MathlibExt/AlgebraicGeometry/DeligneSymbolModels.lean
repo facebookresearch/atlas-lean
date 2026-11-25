@@ -531,7 +531,7 @@ def FullKoszulAffineSource.presentation {Z Y : Scheme.{0}} {f : Z ⟶ Y} {m : �
       (DerivedCategory.Q.obj K.cochain)) S a := ⟨C.complex, C.comparison⟩
 
 variable {Y : Scheme.{0}} (I : DeterminantSources) (f : X ⟶ Y) (n : ℕ)
-  (Ls : Fin (n+1) → X.Modules)
+  (Ls : Fin (n + 1) → X.Modules)
   (P : ∀ (S : CommRingCat.{0}) (a : Spec S ⟶ Y), Presentations f Ls S a)
   (D : DeligneLine I f n Ls P)
 

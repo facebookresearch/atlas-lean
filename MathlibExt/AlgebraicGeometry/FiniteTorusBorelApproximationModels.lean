@@ -40,7 +40,7 @@ abbrev ApproximationRing (r m : ℕ) := MvPolynomial (Fin r × Fin (m+1)) ℂ
 def affineSpace (r m : ℕ) : Over base :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap ℂ (ApproximationRing r m))))
 
-def affineCoordinate (r m : ℕ) (i : Fin r) (j : Fin (m+1)) : Γ((affineSpace r m).left, ⊤) :=
+def affineCoordinate (r m : ℕ) (i : Fin r) (j : Fin (m + 1)) : Γ((affineSpace r m).left, ⊤) :=
   (Scheme.ΓSpecIso (.of (ApproximationRing r m))).inv.hom (MvPolynomial.X (i,j))
 
 /-- The actual open product of punctured coordinate blocks. -/
@@ -50,7 +50,7 @@ def approximationOpen (r m : ℕ) : (affineSpace r m).left.Opens :=
 def freeApproximation (r m : ℕ) : Over base :=
   Over.mk ((approximationOpen r m).ι ≫ (affineSpace r m).hom)
 
-def freeCoordinate (r m : ℕ) (i : Fin r) (j : Fin (m+1)) : Γ((freeApproximation r m).left, ⊤) :=
+def freeCoordinate (r m : ℕ) (i : Fin r) (j : Fin (m + 1)) : Γ((freeApproximation r m).left, ⊤) :=
   (approximationOpen r m).ι.appTop (affineCoordinate r m i j)
 
 /-- This quotient is characterized by the same actual torsor total space and action. -/
@@ -120,7 +120,7 @@ variable [ModObj T (MixedTotal M X m)] (A : AnalyticTorusAction M (MixedTotal M 
   (P : MixedStage M X AX m A)
 
 /-- Comparison is the inverse native torsor augmentation after native Borel projection. -/
-def MixedStage.comparison (n : ℤ) (hn : n < 2*m+1) :
+def MixedStage.comparison (n : ℤ) (hn : n < 2 * m + 1) :
     letI := AX.action
     letI := AX.continuous
     BorelCohomologyModels.H (Fin M.rank → ℂˣ) (space X.scheme) n ≃ₗ[ℂ]

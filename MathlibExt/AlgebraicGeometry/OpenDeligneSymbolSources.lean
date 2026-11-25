@@ -190,7 +190,7 @@ open is the image of the SAME original subset/cochain Koszul torsion.
 The base is the actual normal integral source of Theorem4.1.3; no basis or
 invertibility of the global section is required. -/
 structure CanonicalRegularSection {X Y : Scheme.{0}} (I : DeterminantSources)
-    (f : X ⟶ Y) (n : ℕ) (L : Fin (n+1) → X.Modules)
+    (f : X ⟶ Y) (n : ℕ) (L : Fin (n + 1) → X.Modules)
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f L R a)
     (D : DeligneLine I f n L P) (s : StrongRegularTuple f n L) where
   scope : FiniteTorRelativeScope f n

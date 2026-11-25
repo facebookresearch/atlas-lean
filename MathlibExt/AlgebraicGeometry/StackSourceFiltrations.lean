@@ -79,7 +79,7 @@ def evaluate (Y X : RelativeStack S) (T : Over S)
   map_comp _ _ := rfl
 
 /-- Precomposition is native bicategorical whiskering, on objects and all arrows. -/
-def restrict {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u+1}}
+def restrict {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1}}
     (f : A ⟶ B) : (B ⟶ C) ⥤ (A ⟶ C) where
   obj q := Pseudofunctor.StrongTrans.vcomp f q
   map a := Pseudofunctor.StrongTrans.whiskerLeft f a
@@ -88,14 +88,14 @@ def restrict {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u+1
 
 /-- Every restriction component is the literal composed source functor. -/
 theorem restrict_component
-    {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u+1}}
+    {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1}}
     (f : A ⟶ B) (q : B ⟶ C)
     (V : Over S) :
     (((restrict f).obj q).app (.mk (op V))).toFunctor =
       (f.app (.mk (op V))).toFunctor ⋙ (q.app (.mk (op V))).toFunctor := rfl
 
 /-- Postcomposition uses the same target map on every source component. -/
-def postcompose {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u+1}}
+def postcompose {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1}}
     (f : B ⟶ C) : (A ⟶ B) ⥤ (A ⟶ C) where
   obj q := Pseudofunctor.StrongTrans.vcomp q f
   map a := Pseudofunctor.StrongTrans.whiskerRight a f
@@ -105,7 +105,7 @@ def postcompose {A B C : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, 
 /-- The actual comparison to a commutative lifting diagram keeps both
 legs and the native associator 2-cell. -/
 def liftingComparison
-    {A B X Z : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u+1}}
+    {A B X Z : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1}}
     (i : A ⟶ B) (f : X ⟶ Z) :
     (B ⟶ X) ⥤ IsoFibre (postcompose (A := A) f) (restrict (C := Z) i) :=
   (CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
@@ -117,7 +117,7 @@ def liftingComparison
 /-- Unique lifting for all actual diagrams is an equivalence of these
 groupoids, retaining the compatible 2-isomorphisms. -/
 def HasUniqueDiagramLifts
-    {A B X Z : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u+1}}
+    {A B X Z : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u, u + 1}}
     (i : A ⟶ B) (f : X ⟶ Z) : Prop := (liftingComparison i f).IsEquivalence
 
 /-- An actual parameter restriction retains the entire original strong map.

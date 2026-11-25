@@ -36,7 +36,7 @@ k-colorable if for every partition 𝒫 into sets of size at most k, there exist
 of V which is injective on each set within 𝒫.
 -/
 
-def _root_.SimpleGraph.IsStronglyColorable {V : Type*}  [Fintype V] (G : SimpleGraph V) (k : ℕ) : Prop :=
+def _root_.SimpleGraph.IsStronglyColorable {V : Type*} [Fintype V] (G : SimpleGraph V) (k : ℕ) : Prop :=
   ∀ (P : Finpartition (Finset.univ : Finset V)),
     (∀ p ∈ P.parts, p.card ≤ k) →
     ∃ (c : G.Coloring (Fin k)),
@@ -47,7 +47,7 @@ def _root_.SimpleGraph.IsStronglyColorable {V : Type*}  [Fintype V] (G : SimpleG
 positive integer k such that G is strongly k-colorable
 -/
 
-noncomputable def _root_.SimpleGraph.sChi {V:Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
+noncomputable def _root_.SimpleGraph.sChi {V : Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
   sInf {k | G.IsStronglyColorable k}
 
 end MetaMathlibExt

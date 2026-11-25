@@ -159,7 +159,7 @@ structure DivisorialPoint (V : ValuationResidue K hK)
 variable [AffineDerivedCoefficientModules.HasDerivedScalarExtensions.{0}]
   [∀ R : CommRingCat.{0}, BoundedProjectiveDeterminants.ProjectiveSources R]
 
-variable (N : ModelTuple K X hK (d+1)
+variable (N : ModelTuple K X hK (d + 1)
   (Fin.cons (structureModule X.left) L))
 
 /-- The generic first line has its ACTUAL unit section; all other sections

@@ -161,7 +161,7 @@ def pairingTransition {Y : Scheme.{0}} (f : X ⟶ Y) {m : ℕ}
     (Finset.univ : Finset (Finset (Fin m))).toList
 
 /-- The actual global Deligne algebraic line retains the entire subset determinant expression. -/
-structure DeligneLine {Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ) (L : Fin (n+1) → X.Modules)
+structure DeligneLine {Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ) (L : Fin (n + 1) → X.Modules)
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f L R a) where
   line : Y.Modules
   isLine : CoherentCurveLinearSeries.IsLineBundle line

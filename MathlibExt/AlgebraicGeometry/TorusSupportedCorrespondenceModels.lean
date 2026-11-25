@@ -83,8 +83,8 @@ variable (D : FiniteSupportedTrace M X Z C AX AZ AC i m MX MZ MC PX PZ PC)
 def traceShift : ℤ := (2*D.targetDimension : ℤ)-D.homologyDegree
 
 /-- The operator is precisely native cap, proper push and inverse finite Borel comparison. -/
-def trace (n : ℤ) (sourceRange : n < 2*m+1)
-    (targetRange : n+traceShift M X Z C AX AZ AC i m MX MZ MC PX PZ PC D < 2*m+1) :
+def trace (n : ℤ) (sourceRange : n < 2 * m + 1)
+    (targetRange : n + traceShift M X Z C AX AZ AC i m MX MZ MC PX PZ PC D < 2 * m + 1) :
     letI := AX.action
     letI := AX.continuous
     letI := AZ.action

@@ -200,7 +200,7 @@ def serreCoefficient {f : Y ⟶ X} (P : ProperReference f) (ω : Cochains Y)
     (T : PullbackTensor f) (J : DerivedProjectionFormula f T) (U : LeftUnitCochainMap L)
     (hJ : IsIso (J.map (DerivedCategory.Q.obj ω) (DerivedCategory.Q.obj L)))
     (hSource : quasicoherent Y ((derivedTensorUncurried Y).obj
-      (DerivedCategory.Q.obj ω,(derivedPullback f).obj (DerivedCategory.Q.obj L))))
+      (DerivedCategory.Q.obj ω, (derivedPullback f).obj (DerivedCategory.Q.obj L))))
     (hTarget : quasicoherent X (DerivedCategory.Q.obj L)) : letI := P.adjoint
     (derivedTensorUncurried Y).obj
         (DerivedCategory.Q.obj ω,(derivedPullback f).obj (DerivedCategory.Q.obj L)) ⟶

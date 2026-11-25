@@ -171,7 +171,7 @@ def cap (Z : TopCat.{0}) (D : DualizingComplex k Z) (n m : ℤ)
 
 /-- The fundamental class is determined by the actual smooth purity. -/
 def fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
-    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) : BorelMoore k Z D (2*d) :=
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧) : BorelMoore k Z D (2*d) :=
   (shiftFunctorZero (CoefficientDerived k Z) ℤ).inv.app (coefficientUnit k Z) ≫
     (shiftFunctorAdd' (CoefficientDerived k Z) (2*d : ℤ) (-(2*d : ℤ)) 0
       (add_neg_cancel _)).hom.app (coefficientUnit k Z) ≫
@@ -179,7 +179,7 @@ def fundamentalClass (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
 
 /-- Poincare identification is a native linear equivalence of derived Hom groups. -/
 def purityCohomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
-    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) (n : ℤ) :
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧) (n : ℤ) :
     BorelMoore k Z D ((2*d : ℤ)-n) ≃ₗ[k] CoefficientBettiModels.Cohomology k Z n := by
   let a : D.obj⟦-((2*d : ℤ)-n)⟧ ≅ (coefficientUnit k Z)⟦n⟧ :=
     (shiftFunctor (CoefficientDerived k Z) (-((2*d : ℤ)-n))).mapIso e ≪≫
@@ -195,7 +195,7 @@ def purityCohomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
 
 /-- The homology-indexed identification keeps the exact trace degree without implicit casts. -/
 def purityHomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
-    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) (m : ℤ) :
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧) (m : ℤ) :
     BorelMoore k Z D m ≃ₗ[k] CoefficientBettiModels.Cohomology k Z ((2*d : ℤ)-m) := by
   let a : D.obj⟦-m⟧ ≅ (coefficientUnit k Z)⟦(2*d : ℤ)-m⟧ :=
     (shiftFunctor (CoefficientDerived k Z) (-m)).mapIso e ≪≫
@@ -212,7 +212,7 @@ def purityHomologyEquiv (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
 /-- Proper trace on a supported class uses its actual projection and the target purity. -/
 def supportedTrace {R X Z : TopCat.{0}} (p : R ⟶ X) (q : R ⟶ Z)
     (P : ProperPullback k p) (DR : DualizingComplex k R) (DX : DualizingComplex k X)
-    (dX : ℕ) (eX : DX.obj ≅ (coefficientUnit k X)⟦(2*dX : ℤ)⟧)
+    (dX : ℕ) (eX : DX.obj ≅ (coefficientUnit k X)⟦(2 * dX : ℤ)⟧)
     (m n : ℤ) (c : BorelMoore k R DR m) :
     CoefficientBettiModels.Cohomology k Z n →ₗ[k]
       CoefficientBettiModels.Cohomology k X ((2*dX : ℤ)-(m-n)) :=

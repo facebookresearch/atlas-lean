@@ -137,7 +137,7 @@ def traceMate (hd : DualSquaredZero A) (he : EndSquaredZero A)
     (hTensor : IsIso (tensorCounit Y (dualComplex A hd) A.cochain))
     (α : DerivedCategory.Q.obj A.cochain ⟶
       (derivedTensorUncurried Y).obj
-        (DerivedCategory.Q.obj A.cochain,DerivedCategory.Q.obj L)) :
+        (DerivedCategory.Q.obj A.cochain, DerivedCategory.Q.obj L)) :
     DerivedCategory.Q.obj (endComplex A he) ⟶ DerivedCategory.Q.obj L := by
   letI := hTensor
   exact inv (DerivedCategory.Q.map C.map) ≫

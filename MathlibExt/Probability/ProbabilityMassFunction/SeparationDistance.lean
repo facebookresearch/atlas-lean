@@ -33,14 +33,14 @@ namespace MetaMathlibExt
 
 /-- Real-valued mass of a probability mass function at a point. -/
 
-abbrev pmfReal  {α : Type*} (p : PMF α) (a : α) : ℝ := (p a).toReal
+abbrev pmfReal {α : Type*} (p : PMF α) (a : α) : ℝ := (p a).toReal
 
 /- We need some auxilary lemmas to give the definition of separation distance. -/
 
-theorem pmfReal_nonneg  {α : Type*} (p : PMF α) (a : α) : 0 ≤ pmfReal p a :=
+theorem pmfReal_nonneg {α : Type*} (p : PMF α) (a : α) : 0 ≤ pmfReal p a :=
   ENNReal.toReal_nonneg
 
-theorem pmfReal_sum  {α : Type*} [Fintype α] (p : PMF α) : ∑ a, pmfReal p a = 1 := by
+theorem pmfReal_sum {α : Type*} [Fintype α] (p : PMF α) : ∑ a, pmfReal p a = 1 := by
   have h1 : ∑ a, p a = (1 : ENNReal) := by
     have h := p.tsum_coe
     rwa [tsum_fintype] at h
@@ -67,7 +67,7 @@ theorem pmfReal_support_nonempty {α : Type*} [Fintype α] (q : PMF α) :
 /-- Separation distance between two PMFs (arXiv:0905.4698, §1, eq. 4): the maximum over
 configurations of one minus the likelihood ratio. -/
 
-noncomputable def separationDistance  {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
+noncomputable def separationDistance {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
       Finset.max'
         ((Finset.univ.filter fun a => pmfReal q a ≠ 0).image
           fun a => 1 - pmfReal p a / pmfReal q a)

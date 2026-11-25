@@ -71,7 +71,7 @@ lemma ons_KWmat_eq_blockCirc (L : ℕ) (x ωt : ℂ) :
 /-! ## B. The determinant -/
 
 lemma ons_KWblockSymbol_eq (L : ℕ) [NeZero L] [Fact (1 < L)] (x ωt ωL : ℂ)
-    (hωt : ωt^2 = Complex.I) (hωL : IsPrimitiveRoot ωL L) (j : ZMod L × ZMod L) :
+    (hωt : ωt ^ 2 = Complex.I) (hωL : IsPrimitiveRoot ωL L) (j : ZMod L × ZMod L) :
     ons_blockSymbol2D L 4 ωL
       (fun g => (if g = 0 then (1:Matrix (Fin 4) (Fin 4) ℂ) else 0) - ons_KWblock L x ωt g) j
       = ons_KWsymbolMat x ωt (ωL ^ j.1.val) (ωL ^ j.2.val) := by
@@ -141,7 +141,7 @@ lemma ons_KWblockSymbol_eq (L : ℕ) [NeZero L] [Fact (1 < L)] (x ωt ωL : ℂ)
     simp_all [ZMod.val_one, one_mul, mul_one] <;> ring
 
 lemma ons_KWmat_det_eq_prod (L : ℕ) [NeZero L] [Fact (1 < L)] (x ωt ωL : ℂ)
-    (hωt : ωt^2 = Complex.I) (hωL : IsPrimitiveRoot ωL L) :
+    (hωt : ωt ^ 2 = Complex.I) (hωL : IsPrimitiveRoot ωL L) :
     (1 - ons_KWmat L x ωt).det
       = ∏ j : ZMod L × ZMod L,
           ((1 + x^2)^2 - x*(1 - x^2)*((ωL^j.1.val) + (ωL^j.1.val)⁻¹

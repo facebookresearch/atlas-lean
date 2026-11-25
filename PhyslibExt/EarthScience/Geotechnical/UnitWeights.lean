@@ -61,7 +61,7 @@ noncomputable def submergedUnitWeight (Gs e γw : ℝ) : ℝ :=
 
 /-- The submerged unit weight is the saturated bulk unit weight
 minus the water unit weight, whenever `1 + e ≠ 0`. -/
-theorem submerged_eq_sat_sub_water {Gs e γw : ℝ} (he : (1:ℝ) + e ≠ 0) :
+theorem submerged_eq_sat_sub_water {Gs e γw : ℝ} (he : (1 : ℝ) + e ≠ 0) :
     submergedUnitWeight Gs e γw
       = bulkUnitWeight Gs 1 e γw - γw := by
   unfold submergedUnitWeight bulkUnitWeight

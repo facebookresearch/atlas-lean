@@ -106,7 +106,7 @@ def milnorFibre {U : SchemeData} (E : CoordinateEmbedding U) (f : Γ(U.scheme.le
     regularValue f q=regularValue f p+eta}
 
 def openInclusion {M : SchemeData} (V : M.scheme.left.Opens) (U : SchemeData)
-    (h : U.scheme=Over.mk (V.ι ≫ M.scheme.hom)) : U.scheme ⟶ M.scheme := by
+    (h : U.scheme = Over.mk (V.ι ≫ M.scheme.hom)) : U.scheme ⟶ M.scheme := by
   rw [h]
   exact Over.homMk V.ι rfl
 

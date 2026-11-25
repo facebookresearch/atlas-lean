@@ -147,7 +147,7 @@ private theorem key_ode_eventually
 private theorem expand_test
     {R C : ℝ} {x : ℝ → ℝ}
     (hx_an : AnalyticAt ℝ x 0)
-    (hevH : ∀ᶠ h in nhds (0:ℝ), (deriv x h) ^ 2 + (x h + C + h) * deriv (deriv x) h = 0)
+    (hevH : ∀ᶠ h in nhds (0 : ℝ), (deriv x h) ^ 2 + (x h + C + h) * deriv (deriv x) h = 0)
     {n : ℕ} :
     ∑ i ∈ Finset.range (n + 1), ((n.choose i : ℝ) * iteratedDeriv (i + 1) x 0 *
       iteratedDeriv (n - i + 1) x 0)

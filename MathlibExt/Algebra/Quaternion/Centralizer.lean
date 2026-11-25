@@ -46,8 +46,8 @@ in the rational span of `1` and `α`.
 Thus the centralizer of a non-scalar quaternion is the two-dimensional
 space spanned by `1` and the quaternion itself. -/
 public theorem commute_iff_exists_eq_smul_one_add_smul
-    {a b : ℚ} (ha : a ≠ 0) (hb : b ≠ 0) (α : ℍ[ℚ, a, b])
-    (hnc : ¬ (α.imI = 0 ∧ α.imJ = 0 ∧ α.imK = 0)) (x : ℍ[ℚ, a, b]) :
+    {a b : ℚ} (ha : a ≠ 0) (hb : b ≠ 0) (α : ℍ[ℚ,a,b])
+    (hnc : ¬ (α.imI = 0 ∧ α.imJ = 0 ∧ α.imK = 0)) (x : ℍ[ℚ,a,b]) :
     x * α = α * x ↔ ∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α := by
   constructor
   · intro h

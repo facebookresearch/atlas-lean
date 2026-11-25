@@ -308,7 +308,7 @@ private lemma finite_right (N : ℕ) (t : ℝ) :
   have hmem := Nat.mem_divisorsAntidiagonal.mp hx
   rw [hmem.1]
 
-private lemma hgx (t : ℝ) (N : ℕ+) (x : ↥((N:ℕ).divisorsAntidiagonal)) :
+private lemma hgx (t : ℝ) (N : ℕ+) (x : ↥((N : ℕ).divisorsAntidiagonal)) :
     dblR t (sigmaAntidiagonalEquivProd ⟨N, x⟩) = wR x.1 * t^(x.1.1*x.1.2) := by
   simp only [sigmaAntidiagonalEquivProd, divisorsAntidiagonalFactors, dblR, wR, signW,
     Equiv.coe_fn_mk, PNat.mk_coe]

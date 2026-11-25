@@ -104,14 +104,14 @@ private lemma rpow_two_one_six_sq : ((2:ℝ) ^ (1/6 : ℝ)) ^ 2 = (2:ℝ) ^ (1/3
 
 -- `r₀ ^ 6 = 2 * σ ^ 6`.
 
-private lemma lj_r0_pow_six (σ r₀ : ℝ) (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) :
+private lemma lj_r0_pow_six (σ r₀ : ℝ) (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
     r₀ ^ 6 = 2 * σ ^ 6 := by
   have hr₀' : r₀ = (2:ℝ) ^ (1/6 : ℝ) * σ := hr₀
   rw [hr₀', mul_pow, rpow_two_one_six_pow_six]
 
 -- `r₀ ^ 2 = 2 ^ (1/3) * σ ^ 2`.
 
-private lemma lj_r0_pow_two (σ r₀ : ℝ) (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) :
+private lemma lj_r0_pow_two (σ r₀ : ℝ) (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
     r₀ ^ 2 = Real.rpow 2 (1/3) * σ ^ 2 := by
   have hr₀' : r₀ = (2:ℝ) ^ (1/6 : ℝ) * σ := hr₀
   have hB : Real.rpow 2 (1/3) = (2:ℝ) ^ (1/3 : ℝ) := rfl
@@ -120,14 +120,14 @@ private lemma lj_r0_pow_two (σ r₀ : ℝ) (hr₀ : r₀ = Real.rpow 2 (1/6) * 
 -- `r₀ > 0`.
 
 private lemma lj_r0_pos (σ r₀ : ℝ) (hσ : 0 < σ)
-    (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) : 0 < r₀ := by
+    (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) : 0 < r₀ := by
   rw [hr₀]
   exact mul_pos (Real.rpow_pos_of_pos (by norm_num) _) hσ
 
 -- `(σ / r₀) ^ 6 = 1 / 2`.
 
 private lemma lj_upow_six (σ r₀ : ℝ) (hσ : 0 < σ)
-    (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) : (σ / r₀) ^ 6 = 1 / 2 := by
+    (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) : (σ / r₀) ^ 6 = 1 / 2 := by
   rw [div_pow, lj_r0_pow_six σ r₀ hr₀]
   rw [div_eq_iff (mul_ne_zero (by norm_num) (pow_ne_zero 6 (ne_of_gt hσ)))]
   ring
@@ -135,7 +135,7 @@ private lemma lj_upow_six (σ r₀ : ℝ) (hσ : 0 < σ)
 -- `(σ / r₀) ^ 12 = 1 / 4`.
 
 private lemma lj_upow_twelve (σ r₀ : ℝ) (hσ : 0 < σ)
-    (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) : (σ / r₀) ^ 12 = 1 / 4 := by
+    (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) : (σ / r₀) ^ 12 = 1 / 4 := by
   have h12 : (σ / r₀) ^ 12 = ((σ / r₀) ^ 6) ^ 2 := by ring
   rw [h12, lj_upow_six σ r₀ hσ hr₀]
   norm_num
@@ -143,7 +143,7 @@ private lemma lj_upow_twelve (σ r₀ : ℝ) (hσ : 0 < σ)
 /-- Lennard-Jones energy at its minimum: `φ(r₀) = -ε`. -/
 
 lemma lennardJones_eq_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
-    (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) :
+    (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
     4 * ε * ((σ / r₀) ^ 12 - (σ / r₀) ^ 6) = -ε := by
   rw [lj_upow_twelve σ r₀ hσ hr₀, lj_upow_six σ r₀ hσ hr₀]
   ring
@@ -160,7 +160,7 @@ private lemma lj_hasDerivAt (ε σ r : ℝ) (hr : r ≠ 0) :
 /-- Lennard-Jones equilibrium condition: `φ'(r₀) = 0`. -/
 
 lemma lennardJones_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
-    (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) :
+    (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
     HasDerivAt (fun r => 4 * ε * ((σ / r) ^ 12 - (σ / r) ^ 6)) 0 r₀ := by
   have hr0 : r₀ ≠ 0 := ne_of_gt (lj_r0_pos σ r₀ hσ hr₀)
   have h := lj_hasDerivAt ε σ r₀ hr0
@@ -177,7 +177,7 @@ lemma lennardJones_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
 /-- Lennard-Jones stiffness: `S₀ = φ''(r₀)`. -/
 
 lemma lennardJones_second_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ)
-    (hr₀ : r₀ = Real.rpow 2 (1/6) * σ) :
+    (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
     HasDerivAt (deriv (fun r => 4 * ε * ((σ / r) ^ 12 - (σ / r) ^ 6)))
       (72 * ε / (Real.rpow 2 (1 / 3) * σ ^ 2)) r₀ := by
   have hr0pos := lj_r0_pos σ r₀ hσ hr₀

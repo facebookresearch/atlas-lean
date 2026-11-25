@@ -148,7 +148,7 @@ no worse than the conditional mean's is almost everywhere equal to the
 conditional mean. -/
 theorem ae_eq_condExp_of_integral_sq_sub_le (hm : m ≤ mΩ) {Y g : Ω → ℝ}
     (hY : MemLp Y 2 μ) (hg : MemLp g 2 μ) (hgm : StronglyMeasurable[m] g)
-    (hle : (∫ ω, (Y ω - g ω) ^ 2 ∂μ) ≤ ∫ ω, (Y ω - μ[Y|m] ω) ^ 2 ∂μ) :
+    (hle : (∫ ω, (Y ω - g ω) ^ 2 ∂μ) ≤ ∫ ω, (Y ω - μ[Y | m] ω) ^ 2 ∂μ) :
     g =ᵐ[μ] μ[Y|m] := by
   have heq : (∫ ω, (Y ω - g ω) ^ 2 ∂μ) = ∫ ω, (Y ω - μ[Y|m] ω) ^ 2 ∂μ :=
     le_antisymm hle (integral_sq_sub_condExp_le hm hY hg hgm)

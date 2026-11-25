@@ -98,7 +98,7 @@ structure DualizingComplex (Z : TopCat.{0}) where
 
 /-- The compact-support trace uses the same selected native purity and representation. -/
 def topTrace (Z : TopCat.{0}) (D : DualizingComplex k Z) (d : ℕ)
-    (e : D.obj ≅ (coefficientUnit k Z)⟦(2*d : ℤ)⟧) :
+    (e : D.obj ≅ (coefficientUnit k Z)⟦(2 * d : ℤ)⟧) :
     (derivedSections k Z).obj ((unitPlus k Z)⟦(2*d : ℤ)⟧) ⟶ vectorUnit k :=
   (D.representation.hom.app (op ((unitPlus k Z)⟦(2*d : ℤ)⟧))).hom
     ((DerivedCategory.Plus.ι.commShiftIso (2*d : ℤ)).hom.app (unitPlus k Z) ≫ e.inv)
