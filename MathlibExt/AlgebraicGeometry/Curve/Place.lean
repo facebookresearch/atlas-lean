@@ -93,11 +93,6 @@ theorem coe_algebraMap (a : K) :
 instance : IsScalarTower K v.toValuationSubring F :=
   IsScalarTower.of_algebraMap_eq fun a => (v.coe_algebraMap a).symm
 
-/-- A place has finite residue field dimension over `K`. -/
-class FiniteResidue : Prop where
-  /-- The residue field is finite-dimensional over `K`. -/
-  finite : Module.Finite K (IsLocalRing.ResidueField v.toValuationSubring)
-
 /-- The height-one prime of the valuation subring of a place. -/
 noncomputable def heightOneSpectrum : HeightOneSpectrum v.toValuationSubring :=
   IsDiscreteValuationRing.maximalIdeal _

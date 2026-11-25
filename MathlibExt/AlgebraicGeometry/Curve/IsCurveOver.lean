@@ -82,13 +82,6 @@ instance (priority := 100) toHasPrincipalDivisors [IsCurveOver K F] :
 theorem hasPrincipalDivisors [IsCurveOver K F] : HasPrincipalDivisors K F :=
   inferInstance
 
-theorem finite_residueField [IsCurveOver K F] (v : Place K F) :
-    Module.Finite K v.ResidueField :=
-  IsCurveOver.finiteResidue v
-
-instance instFiniteResidue [IsCurveOver K F] (v : Place K F) : v.FiniteResidue :=
-  ⟨IsCurveOver.finiteResidue v⟩
-
 instance instFiniteResidueField [IsCurveOver K F] (v : Place K F) :
     Module.Finite K v.ResidueField :=
   IsCurveOver.finiteResidue v

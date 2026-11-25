@@ -77,5 +77,4 @@ example {K F : Type*} [Field K] [Field F] [Algebra K F]
 example {K F : Type*} [Field K] [Field F] [Algebra K F]
     [AlgebraicCurve.IsCurveOver K F] (v : AlgebraicCurve.Place K F) :
     Module.Finite K v.ResidueField ∧ Module.finrank F Ω[F⁄K] = 1 :=
-  ⟨AlgebraicCurve.IsCurveOver.finite_residueField v,
-    AlgebraicCurve.IsCurveOver.finrank_kaehler⟩
+  ⟨inferInstance, AlgebraicCurve.IsCurveOver.finrank_kaehler⟩
