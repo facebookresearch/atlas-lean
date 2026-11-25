@@ -64,8 +64,15 @@ def connectionValue (A : OneFormValue B) (i : Fin B.count) (U : Opens M)
       (coordinateSection B i U s) ((U : Set M) ∩ B.core.baseSet i) x.val u) +
     (A i x.val u) *ᵥ coordinateSection B i U s x.val
 
-/-- Ordinary local calculus for the displayed section/connection formulas.
-Its producer is source integration, independently of any flatness or metric. -/
+/-- For a smooth complex vector bundle $B$ on a complex manifold $M$ of dimension $n$, given by
+trivializations, and, for each trivialization $i$, a matrix $A_i(x, u)$ depending on a point $x$ and
+a tangent vector $u$ (`OneFormValue`, not required to be linear in $u$): the condition that, over
+every open set, the zero section is smooth and smooth sections are closed under sums, complex
+multiples and restriction to smaller open sets, and that, in every trivialization $i$, the
+connection formula `connectionValue` (the derivative of the section's coordinates in trivialization
+$i$ in the direction $u$, plus $A_i(x, u)$ applied to those coordinates) vanishes on the zero
+section and, on smooth sections, is additive, $\mathbb{C}$-homogeneous and compatible with
+restriction. -/
 class SectionCalculus (A : OneFormValue B) : Prop where
   smooth_zero : ∀ U : Opens M, IsSmoothSection B U 0
   smooth_add : ∀ (U : Opens M) s t, IsSmoothSection B U s → IsSmoothSection B U t →

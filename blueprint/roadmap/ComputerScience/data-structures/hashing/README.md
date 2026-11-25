@@ -9,3 +9,4 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Open addressing](open-addressing/README.md)
 - [Perfect hashing](perfect-hashing/README.md)
 - [Universal hashing](universal-hashing/README.md)
+- [Hashing analysis](hashing-analysis/README.md)

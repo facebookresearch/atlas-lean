@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Solvable
-public import WantedExt.GroupTheory.WordProblemSolvableShared
+public import MathlibExt.GroupTheory.WordProblemSolvableShared
 
 @[expose] public section
 
@@ -35,7 +35,7 @@ groups: for a finite generating family `gens : Fin k → G` it is the set of wor
 set is recursively enumerable (`REPred`; for a finitely generated group this is the same as having a
 presentation with a recursively enumerable set of relators), and the word problem is insoluble when
 the set is not computable: the shared predicate `WordProblemSolvable (FreeGroup.lift gens)` of
-`WantedExt.GroupTheory.WordProblemSolvableShared` (`ComputablePred` on Mathlib's `Primcodable`
+`MathlibExt.GroupTheory.WordProblemSolvableShared` (`ComputablePred` on Mathlib's `Primcodable`
 coding of lists) fails. Neither property depends on the finite generating set. Soluble is
 `Group.IsSolvable`; right orders are linear orders (as relations) invariant under right
 multiplication.
