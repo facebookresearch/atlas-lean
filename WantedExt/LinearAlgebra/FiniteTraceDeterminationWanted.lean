@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.LinearAlgebra.Charpoly.ToMatrix
 public import Mathlib.LinearAlgebra.Semisimple
 public import Mathlib.LinearAlgebra.Trace
+public import MathlibExt.LinearAlgebra.FiniteTraceDetermination
 
 /-!
 # Determining an invertible endomorphism from finitely many power traces
@@ -51,20 +52,6 @@ universe u v w
 variable {K : Type u} [Field K] [CharZero K]
   {V : Type v} [AddCommGroup V] [Module K V] [FiniteDimensional K V]
   {W : Type w} [AddCommGroup W] [Module K W] [FiniteDimensional K W]
-
-/-- The characteristic polynomial of an invertible endomorphism on a space of
-dimension at most `r` is determined by traces on `2 * r` consecutive positive
-powers. The starting offset `start` is arbitrary, and the two dimensions need
-not be supplied as equal. This is the power-sum determination underlying
-Deligne's Lemma 2.9, as used in Rojas León's proof of Theorem 4. -/
-public theorem_wanted charpoly_eq_of_trace_powers
-    (A : Module.End K V) (B : Module.End K W) (r start : ℕ)
-    (hV : Module.finrank K V ≤ r) (hW : Module.finrank K W ≤ r)
-    (hA : IsUnit A) (hB : IsUnit B)
-    (htrace : ∀ k : ℕ, 1 ≤ k → k ≤ 2 * r →
-      LinearMap.trace K V (A ^ (start + k)) =
-        LinearMap.trace K W (B ^ (start + k))) :
-    A.charpoly = B.charpoly
 
 /-- **Deligne, Lemma 2.9**, in terms of linear conjugacy: two invertible
 semisimple endomorphisms on spaces of dimensions at most `r` are linearly
