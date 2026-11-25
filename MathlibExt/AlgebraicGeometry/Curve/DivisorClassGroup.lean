@@ -10,8 +10,10 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_AlgebraicCurve_DivisorClassGroup.lean`
+and
+`Definitions/Def_ModularCurve_CuspidalClass.lean`
 (https://github.com/anthropics/fermats-last-theorem):
-Compared with the source file at commit
+Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
 Copyright (c) 2026 Anthropic, PBC. All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
