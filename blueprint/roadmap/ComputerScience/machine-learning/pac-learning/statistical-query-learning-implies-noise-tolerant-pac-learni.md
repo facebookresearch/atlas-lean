@@ -11,7 +11,11 @@ noise of every rate $\eta < 1/2$, with running time polynomial in $1/(1-2\eta)$ 
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Efficient PAC learning of representation classes.
+- Statement prerequisite: PAC learning under random classification noise of rate eta < 1/2.
+
+## Depends on
+
+- [Efficient PAC learning of representation classes](computational-complexity-of-learning/efficient-pac-learning-of-representation-classes.md)
 
 ## Sources
 

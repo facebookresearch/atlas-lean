@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.EndpointMapMultigraph.WeightedLaplacian
+public import MathlibExt.LinearAlgebra.Matrix.SpectralSparsification
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -18,7 +19,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 Linear-size spectral sparsifiers (Batson, Spielman and Srivastava, *Twice-Ramanujan
 sparsifiers*, SIAM J. Comput. 41 (2012), arXiv:0808.0163, Theorems 3.1 and 1.1), stated in the
 Loewner order, the first for rank-one decompositions of the identity and the second for the
-weighted Laplacian `EndpointMapMultigraph.laplacian`.
+weighted Laplacian `EndpointMapMultigraph.laplacian`. The first, the vector form, is proved in
+`MathlibExt.LinearAlgebra.Matrix.SpectralSparsification`; the second remains wanted here.
 -/
 
 @[expose] public section
@@ -28,17 +30,6 @@ namespace MathlibExt.GraphTheory.SpectralSparsificationWanted
 open EndpointMapMultigraph Matrix
 
 variable {V E : Type*} [DecidableEq V] [DecidableEq E] [Fintype V] [Fintype E]
-
-/-- **Batson–Spielman–Srivastava, vector form.** Let `d > 1` and let `v₁, …, v_m ∈ ℝⁿ` satisfy
-`∑ vᵢ vᵢᵀ = I`. Then there are scalars `sᵢ ≥ 0`, at most `d n` of them nonzero, with
-`I ≼ ∑ sᵢ vᵢ vᵢᵀ ≼ κ I` for `κ = (d + 1 + 2√d) / (d + 1 - 2√d)` (Batson, Spielman and
-Srivastava, *Twice-Ramanujan sparsifiers*, arXiv:0808.0163, Theorem 3.1). -/
-theorem_wanted exists_sparse_reweighting {m n : ℕ} {d : ℝ} (hd : 1 < d) (v : Fin m → Fin n → ℝ)
-    (hv : ∑ i, vecMulVec (v i) (v i) = 1) :
-    ∃ s : Fin m → ℝ, 0 ≤ s ∧ ((Finset.univ.filter fun i => s i ≠ 0).card : ℝ) ≤ d * n ∧
-      (∑ i, s i • vecMulVec (v i) (v i) - 1).PosSemidef ∧
-      (((d + 1 + 2 * Real.sqrt d) / (d + 1 - 2 * Real.sqrt d)) • (1 : Matrix (Fin n) (Fin n) ℝ) -
-        ∑ i, s i • vecMulVec (v i) (v i)).PosSemidef
 
 /-- **Twice-Ramanujan sparsifiers.** For every `d > 1`, every weighted graph `G` on `n ≥ 1`
 vertices has a reweighted subgraph `H` (its weights `w'` are supported on edges of `G`) with at

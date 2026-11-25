@@ -10,13 +10,10 @@ $$\mathbb{E}_S[L_\mathcal{D}(A(S))] \le L_\mathcal{D}(w^*) + \lambda\|w^*\|^2 + 
 In particular, if $\rho > 0$, $B > 0$, $\|w^*\| \le B$ and $\lambda = \frac{\rho}{B}\sqrt{2/m}$, then
 $\mathbb{E}_S[L_\mathcal{D}(A(S))] \le L_\mathcal{D}(w^*) + \rho B\sqrt{8/m}$.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: On-average replace-one stability.
-- Statement prerequisite: Convex-Lipschitz-bounded and convex-smooth-bounded learning problems.
+- [Convex-Lipschitz-bounded and convex-smooth-bounded learning problems](../pac-learning/learnability-of-convex-problems/convex-lipschitz-bounded-and-convex-smooth-bounded-learning.md)
+- [On-average replace-one stability](algorithmic-stability/on-average-replace-one-stability.md)
 
 ## Sources
 

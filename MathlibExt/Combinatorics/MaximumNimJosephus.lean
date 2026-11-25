@@ -368,6 +368,48 @@ public theorem maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
   rw [Nat.mul_sub, Nat.sub_sub, Nat.dvd_sub_iff_right hle (Nat.dvd_mul_left k n)]
   exact Nat.not_dvd_of_pos_of_lt (by omega) hoffset
 
+/-- **A Maximum Nim non-divisibility lemma for $i \ne h$.** Let $k, n, t, h, i$ be natural numbers
+with $t \ge 1$, $h \ge 1$, $k = nt + h$ and $h \le n$. If $1 \le i \le n$ and $i \ne h$, then $k$
+does not divide $n(k - t) - i$.
+
+The hypotheses force $n \ge 1$, $t \le k$ and $i \le n(k - t)$, so both subtractions are ordinary
+differences of natural numbers.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 4(ii) (`integers-2024-G5-lem-4`). -/
+public theorem maximumNim_not_dvd_mul_sub_of_ne (k n t h i : ℕ)
+    (ht : 1 ≤ t) (hh : 1 ≤ h)
+    (hdecomp : k = n * t + h) (hhn : h ≤ n)
+    (hi : 1 ≤ i) (hin : i ≤ n) (hih : i ≠ h) :
+    ¬k ∣ n * (k - t) - i := by
+  have htk : t < k := by
+    have htn : t ≤ n * t := Nat.le_mul_of_pos_left t (hh.trans hhn)
+    omega
+  have hik : i ≤ n * (k - t) :=
+    hin.trans (Nat.le_mul_of_pos_right n (Nat.sub_pos_of_lt htk))
+  have hnk : n < k := by
+    have hnt : n ≤ n * t := Nat.le_mul_of_pos_right n ht
+    omega
+  have hdecompZ : (k : ℤ) = (n : ℤ) * t + h := by exact_mod_cast hdecomp
+  -- Over the integers the offset from the multiple `k * (n - 1)` is `h - i`.
+  have hmul : (n : ℤ) * ((k : ℤ) - t) - i = (k : ℤ) * ((n : ℤ) - 1) + ((h : ℤ) - i) := by
+    have hnt : (n : ℤ) * t = k - h := by omega
+    rw [mul_sub, hnt, mul_sub, mul_one, mul_comm (n : ℤ) (k : ℤ)]
+    omega
+  intro hdvd
+  have hdvdZ := Int.natCast_dvd_natCast.mpr hdvd
+  rw [Nat.cast_sub hik, Nat.cast_mul, Nat.cast_sub htk.le, hmul] at hdvdZ
+  have hoffset : (k : ℤ) ∣ (h : ℤ) - i := by
+    simpa only [add_sub_cancel_left] using
+      Int.dvd_sub hdvdZ (dvd_mul_right (k : ℤ) ((n : ℤ) - 1))
+  have hsmall : ((h : ℤ) - i).natAbs < (k : ℤ).natAbs := by
+    rcases le_or_gt i h with hle | hlt
+    · exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+    · rw [← Int.natAbs_neg ((h : ℤ) - i)]
+      exact Int.natAbs_lt_natAbs_of_nonneg_of_lt (by omega) (by omega)
+  have hzero := Int.eq_zero_of_dvd_of_natAbs_lt_natAbs hoffset hsmall
+  exact hih (by omega)
+
 /-- **The Maximum Nim map $h_k$.** For natural numbers $k$ and $x$, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$. The paper takes $k \ge 2$; for $k \le 1$ the definition
 gives $h_k(x) = x + 1$, because $k - 1$ is truncated to $0$ and $\lfloor x/0 \rfloor$ is taken to

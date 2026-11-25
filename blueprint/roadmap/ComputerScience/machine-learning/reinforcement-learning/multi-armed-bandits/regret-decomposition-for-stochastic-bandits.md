@@ -8,12 +8,9 @@ $$R_n(\pi, \nu) = \sum_{i=1}^k \Delta_i\, \mathbb{E}[T_i(n)],$$
 
 where $T_i(n)$ is the number of rounds among the first $n$ in which arm $i$ is chosen.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Stochastic k-armed bandits: canonical history law and regret.
+- [Stochastic k-armed bandits: canonical history law and regret](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 
 ## Sources
 

@@ -13,13 +13,14 @@ misreporting, whatever the others report; this does not depend on the representi
 
 ## Expansion
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Shapley-Scarf housing markets.
+This node states several results. A good expansion gives each its own page: termination of the top trading cycles
+algorithm within $n$ rounds; its output is the unique strict-core allocation (Roth and Postlewaite); strategyproofness
+of the Core mechanism (Roth); and the characterization of the Core mechanism by Pareto optimality, individual
+rationality and strategyproofness (Ma).
 
 ## Depends on
 
+- [Shapley-Scarf housing markets](shapley-scarf-housing-markets.md)
 - [Dominant-strategy incentive compatibility](../../mechanism-design/revelation-principle/is-dominant-strategy-incentive-compatibl.md)
 
 ## Sources

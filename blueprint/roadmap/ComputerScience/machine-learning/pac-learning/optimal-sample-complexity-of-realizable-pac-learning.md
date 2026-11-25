@@ -9,15 +9,9 @@ $$O\Big(\frac{d + \log(1/\delta)}{\varepsilon}\Big).$$
 For $d \ge 2$ and $\varepsilon, \delta$ below absolute constants this matches, up to a constant factor, the lower bound
 $\Omega\big((d + \log(1/\delta))/\varepsilon\big)$ for realizable PAC learning.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Proof prerequisite: VC classes have uniform convergence (upper half of the quantitative fundamental theorem).
-
 ## Proof depends on
 
+- [VC classes have uniform convergence (upper half of the quantitative fundamental theorem)](../generalization-bounds-and-concentration/vc-and-natarajan-classes/vc-classes-have-uniform-convergence.md)
 - [Shattering lower bound for PAC learning](../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 
 ## Sources

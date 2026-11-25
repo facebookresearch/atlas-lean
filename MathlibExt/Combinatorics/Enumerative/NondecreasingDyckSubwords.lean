@@ -22,7 +22,7 @@ import Mathlib.Tactic.LinearCombination
 # Subwords in non-decreasing Dyck paths
 
 The main theorems give both generating functions and the Fibonacci–Lucas closed forms
-for three consecutive up steps and for valleys.
+for three consecutive up steps, valleys, peaks, and the subword UDU.
 
 The definitions follow Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in
 Non-Decreasing Dyck Paths*, Journal of Integer Sequences 28 (2025), Article
@@ -898,6 +898,181 @@ public theorem nondecreasingDyck_subword_UD :
         (5 * (n : ℤ) - 7) * (Nat.fib (2 * n) : ℤ) - ((n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ) :=
   ⟨nondecreasingDyck_subword_UD.bivariate, nondecreasingDyck_subword_UD.totalGF, fun n hn => by
     have h := nondecreasingDyck_subword_UD.closed n hn
+    unfold nondecreasingDyck_subword_UUU.closedForm at h
+    linear_combination h⟩
+
+namespace nondecreasingDyck_subword_UDU
+
+open nondecreasingDyck_subword_UUU (valleys good_node flat_node enumerator enum_node enum_empty
+  enum_zero enum_right enum_good_zero emptyWeight rightWeight value slope slope_sub slope_add
+  slope_X slope_Y slope_one slope_F total closedForm total_rec closedForm_rec)
+open nondecreasingDyck_subword_DU (pyramidWeight pyramid_series)
+open PowerSeries
+
+private abbrev occurrences := dyckSubwordCount [U, D, U]
+
+private lemma occurrences_pair (a b : DyckStep) (l : List DyckStep) :
+    occurrences (a :: b :: l) = occurrences (b :: l) +
+      (if a = U ∧ b = D ∧ l.head? = some U then 1 else 0) := by
+  unfold occurrences dyckSubwordCount
+  rw [List.tails_cons, List.countP_cons]
+  congr 1
+  cases a <;> cases b <;> cases l with
+  | nil => rfl
+  | cons c l => cases c <;> rfl
+
+private lemma occurrences_down (l : List DyckStep) : occurrences (D :: l) = occurrences l := by
+  unfold occurrences dyckSubwordCount
+  rw [List.tails_cons, List.countP_cons]
+  rfl
+
+-- The separating down step can only be the middle letter of a new occurrence.
+private lemma occurrences_join (l q : List DyckStep) :
+    occurrences (l ++ D :: q) = occurrences l + occurrences q +
+      (if l.getLast? = some U ∧ q.head? = some U then 1 else 0) := by
+  induction l with
+  | nil => simp [occurrences_down, show occurrences [] = 0 from rfl]
+  | cons a l ih =>
+    cases l with
+    | nil =>
+      simp [occurrences_pair, occurrences_down, show occurrences [a] = 0 by cases a <;> rfl]
+    | cons b l =>
+      have hh : (l ++ D :: q).head? = some U ↔ l.head? = some U := by cases l <;> simp
+      simp only [List.cons_append, occurrences_pair, hh, List.getLast?_cons_cons]
+      simp only [List.cons_append] at ih
+      omega
+
+private lemma count_node (p q : DyckWord) :
+    occurrences (p.nest + q).toList = occurrences p.toList + occurrences q.toList +
+      (if p = 0 ∧ q ≠ 0 then 1 else 0) := by
+  change occurrences ((U :: p.toList ++ [D]) ++ q.toList) = _
+  rw [List.append_assoc, List.singleton_append, occurrences_join]
+  have hq : q.toList.head? = some U ↔ q ≠ 0 := by
+    by_cases h : q = 0
+    · subst q; decide
+    · have hn := DyckWord.toList_ne_nil.mpr h
+      simp [h, List.head?_eq_some_head hn, q.head_eq_U hn]
+  simp only [hq]
+  by_cases h : p = 0
+  · subst p
+    simp [show (0 : DyckWord).toList = [] from rfl,
+      show occurrences [U] = occurrences [] from rfl]
+  · have hn := DyckWord.toList_ne_nil.mpr h
+    have hl : (U :: p.toList).getLast? = some D := by
+      rw [List.getLast?_cons_of_ne_nil hn, List.getLast?_eq_some_getLast hn, p.getLast_eq_D hn]
+    have hc : occurrences (U :: p.toList) = occurrences p.toList := by
+      have hh : U :: p.toList.tail = p.toList := by
+        simpa [p.head_eq_U hn] using List.cons_head_tail hn
+      rw [← hh, occurrences_pair]
+      simp
+    simp [hl, hc, h]
+
+private lemma occurrences_flat (p : DyckWord) (hp : valleys 0 p.toList = []) :
+    occurrences p.toList = 0 := by
+  rw [← DyckWord.ofTree_toTree p] at hp ⊢
+  generalize p.toTree = t at hp ⊢
+  induction t with
+  | nil => rfl
+  | node _ l r ih _ =>
+    obtain ⟨hl, hr⟩ := (flat_node _ _).mp hp
+    rw [DyckWord.ofTree, count_node, hr, ih hl]
+    simp [show occurrences (0 : DyckWord).toList = 0 from rfl]
+
+private noncomputable def weight (p : DyckWord) : Polynomial ℤ :=
+  if IsNondecreasingDyckPath p then Polynomial.X ^ occurrences p.toList else 0
+
+-- When the right part is nonempty, the nested part must be a pyramid.
+-- Only the empty interior gives the extra UDU at their join.
+private noncomputable def joinWeight (p : DyckWord) : Polynomial ℤ :=
+  if p = 0 then Polynomial.X else pyramidWeight p
+
+private lemma weight_node (p q : DyckWord) :
+    weight (p.nest + q) =
+      weight p * emptyWeight q + joinWeight p * rightWeight [U, D, U] q := by
+  simp only [weight, count_node, good_node, joinWeight, pyramidWeight, emptyWeight, rightWeight]
+  by_cases hq : q = 0
+  · subst q
+    simp [show occurrences (0 : DyckWord).toList = 0 from rfl]
+  · by_cases hp : p = 0
+    · subst p
+      simp [hq, show valleys 0 (0 : DyckWord).toList = [] from rfl,
+        show occurrences (0 : DyckWord).toList = 0 from rfl, pow_succ', mul_ite, occurrences]
+    · by_cases hf : valleys 0 p.toList = []
+      · simp [hp, hq, hf, occurrences_flat p hf, occurrences]
+      · simp [hp, hq, hf]
+
+private lemma join_series : enumerator joinWeight = 𝒚 + 𝒙 * enumerator pyramidWeight := by
+  have h (p q : DyckWord) : joinWeight (p.nest + q) = pyramidWeight p * emptyWeight q +
+      (0 : DyckWord → Polynomial ℤ) p * (0 : DyckWord → Polynomial ℤ) q := by
+    simp only [joinWeight, add_eq_zero, DyckWord.nest_ne_zero, false_and, ite_false,
+      pyramidWeight, flat_node]
+    by_cases hq : q = 0 <;> simp [emptyWeight, hq]
+  simpa [enum_empty, enum_zero, show joinWeight 0 = Polynomial.X from rfl]
+    using enum_node _ _ _ _ _ h
+
+local notation "F" => nondecreasingDyckSubwordBivariateGF [U, D, U]
+local notation "T" => nondecreasingDyckSubwordTotalGF [U, D, U]
+
+private lemma bivariate : (1 - 𝒙 * (2 + 𝒚) + 𝒙 ^ 2 * 𝒚) * F = (1 - 𝒙) * 𝒙 := by
+  have h := enum_node _ _ _ _ _ weight_node
+  rw [show enumerator weight = 1 + F from enum_good_zero [U, D, U] rfl, enum_empty, enum_right,
+    join_series, show weight 0 = 1 from rfl, map_one, mul_one] at h
+  linear_combination (1 - 𝒙) * h + 𝒙 ^ 2 * F * pyramid_series
+
+private lemma totalGF : (1 - 3 * 𝒛 + 𝒛 ^ 2) ^ 2 * T = 𝒛 ^ 2 * (1 - 𝒛) ^ 2 := by
+  have h : F = 𝒙 * 1 - 𝒙 * (𝒙 * 1) +
+      𝒙 * (F + F + 𝒚 * F) - 𝒙 * (𝒙 * (𝒚 * F)) := by
+    linear_combination bivariate
+  have e := congrArg value h
+  simp [value, PowerSeries.map_X, PowerSeries.map_C] at e
+  have d := congrArg slope h
+  simp only [slope_sub, slope_add, slope_X, slope_Y, slope_one,
+    slope_F [U, D, U] (by decide +kernel)] at d
+  linear_combination (1 - 3 * 𝒛 + 𝒛 ^ 2) * d + (𝒛 - 𝒛 ^ 2) * e
+
+private lemma closed (n : ℕ) (hn : 1 ≤ n) :
+    10 * total [U, D, U] n = closedForm (-5) 11 3 (-5) n := by
+  induction n using Nat.strong_induction_on with
+  | ind n ih =>
+    match n with
+    | 0 => omega
+    | 1 | 2 | 3 | 4 => decide +kernel
+    | k + 5 =>
+      have hpoly : 𝒛 ^ 2 * (1 - 𝒛) ^ 2 = 𝒛 ^ 2 - 2 * 𝒛 ^ 3 + 𝒛 ^ 4 := by ring
+      have hz : coeff ((k + 1) + 4) (𝒛 ^ 2 * (1 - 𝒛) ^ 2) = 0 := by
+        simp only [hpoly, map_sub, map_add, coeff_X_pow, coeff_ofNat_mul]
+        split_ifs <;> omega
+      rw [total_rec _ _ totalGF (k + 1) hz, closedForm_rec (-5) 11 3 (-5) (k + 1)]
+      linear_combination 6 * ih (k + 1 + 3) (by omega) (by omega) -
+        11 * ih (k + 1 + 2) (by omega) (by omega) +
+        6 * ih (k + 1 + 1) (by omega) (by omega) - ih (k + 1) (by omega) (by omega)
+
+end nondecreasingDyck_subword_UDU
+
+/-- **Generating functions and closed form for the subword $UDU$ in non-decreasing Dyck paths.**
+For $n \ge 0$ let $\mathcal{D}_n$ be the set of non-decreasing Dyck paths of semilength $n$, let
+$\#_{UDU}(P)$ be the number of occurrences of the subword $UDU$ in a path $P$, and let
+$d_{UDU}(n) = \sum_{P \in \mathcal{D}_n} \#_{UDU}(P)$. Let
+$F_{UDU}(x, y) = \sum_{n \ge 1} \sum_{P \in \mathcal{D}_n} y^{\#_{UDU}(P)} x^n$, a power series
+in $x$ with coefficients in $\mathbb{Z}[y]$, and $D_{UDU}(x) = \sum_{n \ge 0} d_{UDU}(n) x^n$ in
+$\mathbb{Z}[[x]]$. Then $(1 - x(2 + y) + x^2 y) F_{UDU}(x, y) = (1 - x) x$ and
+$(1 - 3x + x^2)^2 D_{UDU}(x) = x^2 (1 - x)^2$, and for every $n \ge 1$,
+$$10\, d_{UDU}(n) = (11 - 5n) F_{2n} + (3n - 5) L_{2n},$$
+where $F_k$ and $L_k$ are the Fibonacci and Lucas numbers ($F_0 = 0$, $F_1 = 1$, $L_0 = 2$,
+$L_1 = 1$).
+
+Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
+Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 5
+(`jis-2025-25.1.6-thm-5`). -/
+public theorem nondecreasingDyck_subword_UDU :
+    (1 - 𝒙 * (2 + 𝒚) + 𝒙 ^ 2 * 𝒚) * nondecreasingDyckSubwordBivariateGF [U, D, U] = (1 - 𝒙) * 𝒙 ∧
+    ((1 - 3 * 𝒛 + 𝒛 ^ 2) ^ 2) * nondecreasingDyckSubwordTotalGF [U, D, U] = 𝒛 ^ 2 * (1 - 𝒛) ^ 2 ∧
+    ∀ n : ℕ, 1 ≤ n →
+      10 * (nondecreasingDyckSubwordTotal [U, D, U] n : ℤ) =
+        (-5 * (n : ℤ) + 11) * (Nat.fib (2 * n) : ℤ) +
+          (3 * (n : ℤ) - 5) * (lucasNumber (2 * n) : ℤ) :=
+  ⟨nondecreasingDyck_subword_UDU.bivariate, nondecreasingDyck_subword_UDU.totalGF, fun n hn => by
+    have h := nondecreasingDyck_subword_UDU.closed n hn
     unfold nondecreasingDyck_subword_UUU.closedForm at h
     linear_combination h⟩
 

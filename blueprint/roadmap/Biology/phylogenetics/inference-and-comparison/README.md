@@ -6,6 +6,7 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Admissibility of maximum-likelihood tree estimation](admissibility-of-maximum-likelihood-tree-estimation.md)
 - [Sample complexity of maximum parsimony](sample-complexity-of-maximum-parsimony.md)
+- [NP-hardness of maximum parsimony and maximum likelihood tree reconstruction](np-hardness-of-maximum-parsimony-and-maximum-likelihood-tree.md)
 
 ## Networks and recorded lineages
 
@@ -15,3 +16,5 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 ## Tree comparison
 
 - [Maximum agreement subtree of two random binary trees](maximum-agreement-subtree-of-random-trees.md)
+
+- [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)

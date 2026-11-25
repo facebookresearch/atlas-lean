@@ -9,6 +9,7 @@ Quantum operations and channels covers the physically allowed transformations of
 - [Converse bounds for the capacities of a quantum channel](converse-bounds-for-the-capacities-of-a-quantum-channel.md)
 - [Monotonicity of fidelity under channels](monotonicity-of-fidelity-under-channels.md)
 - [Holevo–Helstrom theorem](holevohelstrom-theorem.md)
+- [Capacity comparison: $Q(\Phi) \le C(\Phi) \le \log_2 \dim X$](remaining-clauses-of-operational-capacities-and-converse-bou.md)
 
 ## Related topics
 

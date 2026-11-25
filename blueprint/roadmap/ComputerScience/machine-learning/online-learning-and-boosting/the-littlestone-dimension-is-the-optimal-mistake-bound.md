@@ -22,8 +22,11 @@ thresholds on $[0,1]$ have VC dimension $1$ and infinite Littlestone dimension.
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Online classification protocol, mistakes and regret.
 - Statement prerequisite: Shattering and VC dimension.
+
+## Depends on
+
+- [Online classification protocol, mistakes and regret](online-classification-protocol-mistakes-and-regret.md)
 
 ## Sources
 
