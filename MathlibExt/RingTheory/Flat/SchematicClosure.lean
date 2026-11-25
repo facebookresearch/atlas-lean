@@ -55,7 +55,7 @@ def flatClosure (B : Subalgebra F (F ⊗[R] G)) : Subalgebra R G where
     rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul] at h
     exact h
   one_mem' := by
-    show (1 : F) ⊗ₜ[R] (1 : G) ∈ B
+    change (1 : F) ⊗ₜ[R] (1 : G) ∈ B
     rw [← Algebra.TensorProduct.one_def]
     exact one_mem B
   add_mem' {a b} ha hb := by
@@ -63,11 +63,11 @@ def flatClosure (B : Subalgebra F (F ⊗[R] G)) : Subalgebra R G where
     rw [← TensorProduct.tmul_add] at h
     exact h
   zero_mem' := by
-    show (1 : F) ⊗ₜ[R] (0 : G) ∈ B
+    change (1 : F) ⊗ₜ[R] (0 : G) ∈ B
     rw [TensorProduct.tmul_zero]
     exact zero_mem B
   algebraMap_mem' r := by
-    show (1 : F) ⊗ₜ[R] (algebraMap R G r) ∈ B
+    change (1 : F) ⊗ₜ[R] (algebraMap R G r) ∈ B
     have h1 : (1 : F) ⊗ₜ[R] (algebraMap R G r)
         = (algebraMap R F r) ⊗ₜ[R] (1 : G) := by
       rw [Algebra.algebraMap_eq_smul_one r, TensorProduct.tmul_smul,
@@ -92,7 +92,7 @@ lemma le_flatClosure_iff {B : Subalgebra F (F ⊗[R] G)} {S : Subalgebra R G} :
 is, over a Noetherian ring. -/
 theorem flatClosure_finite [IsNoetherianRing R] [Module.Finite R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Finite R (flatClosure B) := by
-  haveI : IsNoetherian R G := isNoetherian_of_isNoetherianRing_of_finite R G
+  have : IsNoetherian R G := isNoetherian_of_isNoetherianRing_of_finite R G
   exact Module.Finite.iff_fg.mpr
     (IsNoetherian.noetherian (Subalgebra.toSubmodule (flatClosure B)))
 
@@ -106,8 +106,8 @@ free. -/
 theorem flatClosure_free [IsDomain R] [IsPrincipalIdealRing R] [IsNoetherianRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Free R (flatClosure B) := by
-  haveI := flatClosure_finite (R := R) (F := F) (G := G) B
-  haveI := flatClosure_isTorsionFree (R := R) (F := F) (G := G) B
+  have := flatClosure_finite (R := R) (F := F) (G := G) B
+  have := flatClosure_isTorsionFree (R := R) (F := F) (G := G) B
   exact Module.free_of_finite_type_torsion_free'
 
 /-- Over a PID, the schematic closure of a finite torsion-free algebra is
@@ -115,5 +115,5 @@ flat. -/
 theorem flatClosure_flat [IsDomain R] [IsPrincipalIdealRing R] [IsNoetherianRing R]
     [Module.Finite R G] [Module.IsTorsionFree R G]
     (B : Subalgebra F (F ⊗[R] G)) : Module.Flat R (flatClosure B) := by
-  haveI := flatClosure_free (R := R) (F := F) (G := G) B
+  have := flatClosure_free (R := R) (F := F) (G := G) B
   exact Module.Flat.of_free
