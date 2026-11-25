@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -23,6 +24,9 @@ unit resistances that is reduced one row at a time by delta-wye and wye-delta tr
 (Section 2). This file defines that reduction, the circuit array of a choice of boundary values,
 the numerical circuit array and the one-variable circuit array, and proves the closed form of
 their row zero (Corollary 4.4).
+
+The file also defines annihilation of a sequence by a polynomial in the shift operator and proves
+that the characteristic polynomial of a linear recurrence annihilates its solutions (Lemma 3.4).
 
 ## Main definitions
 
@@ -486,6 +490,57 @@ theorem circuitArrayX_row_zero (s : ℕ) (hs : 1 ≤ s) :
       circuitGrid_front _ (1 / 3) (by norm_num) hc k (2 * k + 1) le_rfl]
     field_simp
     ring
+
+/-! ### Section 3: annihilators -/
+
+section Annihilators
+
+open Polynomial
+
+/-- **Annihilator of a sequence.** Let $K$ be a semiring, $p = \sum_i a_i X^i \in K[X]$ and
+$G \colon \mathbb{N} \to K$ a sequence, and let $E$ be the translation operator
+$E(G_s) = G_{s+1}$. The operator $p(E)$ annihilates $G$ when $\sum_i a_i G_{s+i} = 0$ for every
+$s \ge 0$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 3 (definitions of the translation operator and of an annihilator). -/
+def AnnihilatesSeq {K : Type*} [Semiring K] (p : K[X]) (G : ℕ → K) : Prop :=
+  ∀ s : ℕ, p.sum (fun i a => a * G (s + i)) = 0
+
+/-- **Every operator annihilates the zero sequence.** For every semiring $K$ and every polynomial
+$p \in K[X]$, the operator $p(E)$ annihilates the zero sequence, where $E$ is the translation
+operator $E(G_s) = G_{s+1}$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Section 3 (definition of an annihilator). -/
+theorem annihilatesSeq_zero {K : Type*} [Semiring K] (p : K[X]) : AnnihilatesSeq p (0 : ℕ → K) := by
+  intro s
+  simp [Polynomial.sum]
+
+/-- **The characteristic polynomial annihilates the solutions of its recurrence.** Let $K$ be a
+field, $d \ge 0$ and $a_0, \dots, a_{d-1} \in K$. If a sequence $G \colon \mathbb{N} \to K$
+satisfies $G_{n+d} = \sum_{i=0}^{d-1} a_i G_{n+i}$ for every $n \ge 0$, then the characteristic
+polynomial $X^d - \sum_{i=0}^{d-1} a_i X^i$ of this recurrence annihilates $G$.
+
+Source: Emily J. Evans and Russell Jay Hendel, *Recursions and Characteristic Polynomials of the
+Rows of the Circuit Array*, Fibonacci Quarterly 62 (2024), Article 62-4/hendel08232024rev2,
+Lemma 3.4 (`fq-2024-hendel08232024rev2-lem-3.4`). -/
+theorem annihilatesSeq_charPoly_of_isSolution {K : Type*} [Field K]
+    (E : LinearRecurrence K) (G : ℕ → K) (hG : E.IsSolution G) :
+    AnnihilatesSeq E.charPoly G := by
+  intro s
+  let evalShift : K[X] →ₗ[K] K :=
+    (Finsupp.linearCombination K (fun i : ℕ => G (s + i))).comp
+      (AddMonoidAlgebra.coeffLinearEquiv K).toLinearMap
+  change evalShift E.charPoly = 0
+  have hmonomial (i : ℕ) (a : K) : evalShift (monomial i a) = a * G (s + i) :=
+    Finsupp.linearCombination_single K a i
+  rw [LinearRecurrence.charPoly, map_sub, map_sum]
+  simpa only [hmonomial, one_mul, sub_eq_zero] using hG s
+
+end Annihilators
 
 end
 
