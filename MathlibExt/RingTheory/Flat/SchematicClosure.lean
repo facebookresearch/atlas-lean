@@ -43,9 +43,6 @@ variable {R : Type u} [CommRing R]
 variable {F : Type v} [Field F] [Algebra R F]
 variable {G : Type w} [CommRing G] [Algebra R G]
 
-instance : IsScalarTower R F (F ⊗[R] G) :=
-  IsScalarTower.of_algebraMap_eq fun _ => rfl
-
 /-- The schematic closure of a subalgebra `B` of `F ⊗[R] G` in `G`: the
 `R`-subalgebra of elements of `G` whose image `1 ⊗ g` lies in `B`. -/
 def flatClosure (B : Subalgebra F (F ⊗[R] G)) : Subalgebra R G where
