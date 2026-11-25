@@ -30,6 +30,7 @@ module
 
 public import Mathlib.Algebra.DualNumber
 public import Mathlib.Algebra.Quaternion
+public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Mathlib.AlgebraicGeometry.Morphisms.Finite
 public import Mathlib.AlgebraicGeometry.Morphisms.FinitePresentation
@@ -55,7 +56,10 @@ morphisms in the over category.
 
 Unlike the source, `Λ` is a subring, so the order acts unitally and
 multiplicatively without membership side conditions, and Hecke
-neighbours are taken at a prime `ℓ`.
+neighbours are taken at a prime `ℓ`. The fibres are required to be
+geometrically connected; the source's property bundle asks for connected
+fibres, which is equivalent here because the identity section gives
+every fibre a rational point.
 -/
 
 @[expose] public noncomputable section
@@ -207,6 +211,8 @@ structure FakeEllipticCurve (Λ : Subring ℍ[ℚ, a, b]) (N : ℕ)
   smooth : Smooth f
   /-- The structure morphism is proper. -/
   proper : IsProper f
+  /-- The fibres are geometrically connected. -/
+  connected : GeometricallyConnected f
   /-- Every fibre has Krull dimension two. -/
   dim_fibre : ∀ s : ↥(Spec (CommRingCat.of S)),
     topologicalKrullDim ↥(f.base ⁻¹' {s}) = 2

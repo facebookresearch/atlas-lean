@@ -40,9 +40,11 @@ public import MathlibExt.RingTheory.MvFormalGroup
 # Formal `O_D`-modules and formal completion of QM moduli
 
 A formal `O_D`-module here is a two-dimensional commutative formal group
-with an action of the ring of integers of the quaternion division
-algebra over `ℚ_p`, together with a distinguished endomorphism `ϖ`
-squaring to the action of `p` and twisted by Frobenius. As in the
+with an action of the Witt vectors `W(𝔽_{p²})`, the ring of integers of
+the unramified quadratic extension of `ℚ_p`, and a distinguished
+endomorphism `ϖ` squaring to the action of `p` and twisted by Frobenius;
+together they give an action of the ring of integers `O_D` of the
+quaternion division algebra over `ℚ_p`. As in the
 source, this is only the carrier of the `O_D`-action: the specialness
 condition on the Lie algebra and the height condition of a special
 formal `O_D`-module are not imposed. The formal group of a fake elliptic
@@ -139,8 +141,10 @@ end AlgebraicGeometry.RelativeGroupLaw
 
 namespace CerednikDrinfeld
 
-/-- The ring of integers of the quaternion division algebra over `ℚ_p`,
-realised as Witt vectors over the field with `p ^ 2` elements. -/
+/-- The Witt vectors over the field with `p ^ 2` elements: the ring of
+integers of the unramified quadratic extension of `ℚ_p`. The ring of
+integers of the quaternion division algebra over `ℚ_p` is generated over
+it by an element `varpi` as in `FormalODModule`. -/
 abbrev Zp2 (p : ℕ) [Fact p.Prime] : Type := WittVector p (GaloisField p 2)
 
 namespace SpecialFormal
@@ -229,7 +233,7 @@ structure FormalODModule (p : ℕ) [Fact p.Prime] (B : Type u) [CommRing B] wher
   F : MvFormalGroup 2 B
   /-- The formal group is commutative. -/
   isComm : F.IsComm
-  /-- The action of the quaternion integers. -/
+  /-- The action of `Zp2 p`. -/
   act : Zp2 p → Series B
   /-- The distinguished endomorphism. -/
   varpi : Series B
