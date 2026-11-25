@@ -1,21 +1,45 @@
 # Approximation algorithms and approximation ratios
 
-Consider an optimization problem in which each instance $I$ has a nonempty set of feasible solutions, each solution $s$ has a nonnegative value $f(s)$, and $\mathrm{OPT}(I)$ is the minimum value, for a *minimization* problem, or the maximum value, for a *maximization* problem.
+The two ratio conventions for maximization are equivalent. For a real threshold $\alpha>0$,
+write $\beta=1/\alpha$. For any real values $O$ and $V$,
 
-An *$\alpha$-approximation algorithm* is a polynomial-time algorithm that, on every instance $I$, returns a feasible solution $A(I)$ whose value is within a factor $\alpha$ of optimal. The number $\alpha$ is its *performance guarantee*, also called its *approximation ratio* or *approximation factor*. Under the convention used here:
-- for minimization, $\alpha \ge 1$ and $f(A(I)) \le \alpha \cdot \mathrm{OPT}(I)$;
-- for maximization, $0 < \alpha \le 1$ and $f(A(I)) \ge \alpha \cdot \mathrm{OPT}(I)$.
+$$
+\alpha\le1\;\text{ and }\;\alpha O\le V
+\quad\Longleftrightarrow\quad
+1\le\beta\;\text{ and }\;O/\beta\le V.
+$$
 
-Some authors instead use $\alpha \ge 1$ for maximization and require $f(A(I)) \ge \mathrm{OPT}(I)/\alpha$. Under that convention, a $1/2$-approximation here is a $2$-approximation there.
-
-A *randomized* $\alpha$-approximation algorithm runs in polynomial time and satisfies the bound in expectation: $\mathbb{E}[f(A(I))] \le \alpha \cdot \mathrm{OPT}(I)$ for minimization, or $\ge$ for maximization. For example, setting each variable of a MAX SAT instance to true independently with probability $1/2$ is a randomized $1/2$-approximation.
-
-A family of algorithms with ratio $1 + \varepsilon$, or $1 - \varepsilon$ for maximization, for every $\varepsilon > 0$ is a [polynomial-time approximation scheme](../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-ptas.md).
+In an approximation guarantee, $O$ is the optimum and $V$ is the value attained by the solver
+or its expected value. The equivalence also holds at $O=0$: only the approximation parameter
+is inverted. For example, a $1/2$-approximation in the threshold convention is a $2$-approximation
+in the factor convention.
 
 ## Background
 
-- [Polynomial-time approximation schemes](../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-ptas.md)
-- [Integrality gaps of linear programming relaxations](lp-based-approximation/integrality-gaps-of-linear-programming.md)
+Consider bitstring instances $x$ and bitstring candidate solutions $s$, with a nonnegative
+rational objective $v(x,s)$. Each instance has at least one feasible solution. A polynomial
+bound on feasible solution lengths makes this set finite, so the optimum is attained. The
+objective and ratios are part of the specification; the solver need not compute them.
+
+A deterministic solver runs in polynomial time and returns a feasible solution on every
+instance. A [minimization guarantee](is-min-approximation.md) bounds its cost above by
+$\alpha\,\mathrm{OPT}(x)$ with $\alpha\ge1$. A [maximization guarantee](is-max-approximation.md)
+bounds its value below by $\alpha\,\mathrm{OPT}(x)$ with $0<\alpha\le1$. Equivalently, use the
+same inequality against every feasible value.
+
+For [randomized minimization](is-randomized-min-approximation.md) or
+[randomized maximization](is-randomized-max-approximation.md), the solver is polynomial time on
+the encoded pair of the instance and a fair tape whose length is given by a fixed polynomial.
+Every tape must return a feasible solution. The [expected value](expected-value.md) is the
+uniform average over the tapes, counting tapes separately when their outputs coincide. For
+example, independent fair assignments satisfy each nonempty MAX SAT clause with probability
+at least $1/2$, so the expected number satisfied is at least half the optimum.
+
+A [polynomial-time approximation scheme](../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-ptas.md)
+provides guarantees arbitrarily close to exact optimization rather than one fixed ratio. At a
+fixed precision, [the maximization guarantee](approx-at-iff-is-max-approximation.md) is equivalent
+to the scheme's guarantee at that precision, with the same positive rational threshold and a
+polynomial-time specialized solver.
 
 ## Sources
 

@@ -14,7 +14,13 @@ Polynomial-time algorithms with proved approximation ratios for NP-hard optimiza
 - [Weighted vertex cover by the pricing method](weighted-vertex-cover-by-the-pricing-method/README.md)
 - [Resource-constrained scheduling](resource-constrained-scheduling/README.md)
 - [Lp based approximation](lp-based-approximation/README.md)
+- [Is Min Approximation](is-min-approximation.md)
+- [Is Max Approximation](is-max-approximation.md)
+- [Expected Value](expected-value.md)
+- [Is Randomized Min Approximation](is-randomized-min-approximation.md)
+- [Is Randomized Max Approximation](is-randomized-max-approximation.md)
 - [Approximation algorithms and approximation ratios](approximation-algorithms-and-approximation-ratios.md)
+- [Approx At iff is Max Approximation](approx-at-iff-is-max-approximation.md)
 
 - [Approximation ratio of the greedy superstring algorithm](approximation-ratio-of-the-greedy-superstring-algorithm.md)
 - [A fully polynomial-time approximation scheme for knapsack](fptas-for-the-knapsack-problem.md)

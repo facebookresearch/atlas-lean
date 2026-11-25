@@ -7,7 +7,9 @@ A good expansion gives one page per result.
 ## Depends on
 
 - [Polynomial-time approximation schemes](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/is-ptas.md)
-- [Approximation algorithms and approximation ratios](../approximation-algorithms-and-approximation-ratios.md)
+- [Deterministic minimization guarantees](../is-min-approximation.md)
+- [Deterministic maximization guarantees](../is-max-approximation.md)
+- [Randomized maximization guarantees](../is-randomized-max-approximation.md)
 
 ## Expansion
 
