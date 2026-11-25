@@ -36,14 +36,20 @@ gives an equivalent statement, since unipotence is invariant under conjugation a
 inverses of elementary transvections are elementary transvections.
 -/
 
-/-- `τ` is an elementary transvection `1 + r eᵢⱼ` with `i ≠ j` and `r ≠ 0`. -/
+/-- **Elementary transvection.** For a ring $R$ and $n \in \mathbb{N}$, a matrix
+$\tau \in \mathrm{GL}_n(R)$ is an elementary transvection when $\tau = 1 + r e_{ij}$ for some
+indices $i \ne j$ and some nonzero $r \in R$, where $e_{ij}$ is the matrix unit with $1$ in
+position $(i, j)$ and $0$ elsewhere. -/
 def IsElementaryTransvection {R : Type*} [Ring R] {n : ℕ} (τ : GL (Fin n) R) : Prop :=
   ∃ (i j : Fin n) (r : R), i ≠ j ∧ r ≠ 0 ∧ (τ : Matrix (Fin n) (Fin n) R) = 1 + Matrix.single i j r
 
-/-- Kourovka 10.46 (V. M. Petechuk): for every nontrivial associative ring `R` with identity, every
-`n ≥ 3` and every `σ ∈ GLₙ(R)` there are transvections `τ₁, τ₂` such that `[[σ, τ₁], τ₂]` is
-unipotent (`[[σ, τ₁], τ₂] - 1` is nilpotent), with `[x, y] = x y x⁻¹ y⁻¹`. Transvections are read as
-elementary transvections. -/
+/-- **Petechuk's double commutator question (Kourovka 10.46).** The statement that for every
+nontrivial associative ring $R$ with identity, every $n \ge 3$ and every
+$\sigma \in \mathrm{GL}_n(R)$ there are elementary transvections
+$\tau_1, \tau_2 \in \mathrm{GL}_n(R)$ such that $[[\sigma, \tau_1], \tau_2]$ is unipotent, that
+is, $[[\sigma, \tau_1], \tau_2] - 1$ is a nilpotent matrix, where $[x, y] = x y x^{-1} y^{-1}$.
+
+In the problem, transvections are read as elementary transvections. -/
 def doubleCommutatorWithTransvectionsUnipotent : Prop :=
   ∀ (R : Type) [Ring R] [Nontrivial R] (n : ℕ), 3 ≤ n → ∀ σ : GL (Fin n) R,
     ∃ τ₁ τ₂ : GL (Fin n) R, IsElementaryTransvection τ₁ ∧ IsElementaryTransvection τ₂ ∧
@@ -51,11 +57,21 @@ def doubleCommutatorWithTransvectionsUnipotent : Prop :=
         1 : Matrix (Fin n) (Fin n) R)
 
 /--
-Resolved false: Muliarchyk (2026 preprint, Theorem 1.1) shows that for every field `k` and `n ≥ 2`,
-over the nonzero algebra `R = k⟨xᵢⱼ, yᵢⱼ⟩ / (XY = YX = I)` the matrix `X = (xᵢⱼ) ∈ GLₙ(R)` has every
-nonempty iterated commutator with nonidentity unipotent matrices nonunipotent, which excludes
-elementary transvections and their conjugates. The Kourovka Notebook (21st issue) marks 10.46
-solved, "This is not always true". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
+**Petechuk's double commutator question has a negative answer (Kourovka 10.46).** There are a
+nontrivial associative ring $R$ with identity, an integer $n \ge 3$ and a matrix
+$\sigma \in \mathrm{GL}_n(R)$ such that for all elementary transvections
+$\tau_1, \tau_2 \in \mathrm{GL}_n(R)$ the matrix $[[\sigma, \tau_1], \tau_2] - 1$ is not nilpotent,
+that is, $[[\sigma, \tau_1], \tau_2]$ is not unipotent. Here $[x, y] = x y x^{-1} y^{-1}$, and an
+elementary transvection is a matrix $1 + r e_{ij}$ with $i \ne j$ and $r \in R$ nonzero, where
+$e_{ij}$ is the matrix unit with $1$ in position $(i, j)$ and $0$ elsewhere.
+
+Muliarchyk (Theorem 1.1) shows the following for every field $k$ and $n \ge 2$. Let $R$ be the
+free associative $k$-algebra on generators $x_{ij}, y_{ij}$ ($1 \le i, j \le n$) modulo the
+relations $XY = YX = I$, where $X = (x_{ij})$, $Y = (y_{ij})$ and $I$ is the $n \times n$ identity
+matrix; $R$ is nonzero. Then every nonempty iterated commutator of $X \in \mathrm{GL}_n(R)$ with
+nonidentity unipotent matrices is nonunipotent.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
 in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 10.46 (V. M.
 Petechuk); resolution: K. Muliarchyk, A counterexample to Kourovka Notebook Problem 10.46: unipotent
 commutators over noncommutative algebras, preprint (2026), Theorem 1.1 (over R = k⟨x_ij, y_ij⟩ / (XY

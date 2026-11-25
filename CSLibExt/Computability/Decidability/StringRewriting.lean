@@ -66,22 +66,29 @@ open Post
 
 variable {α : Type*}
 
-/-- A rewriting rule `(l, r)`: replace an occurrence of `l` by `r`. -/
+/-- **Rewriting rules.** A rewriting rule over an alphabet $\alpha$ is a pair $(l, r)$ of words
+over $\alpha$; applying it replaces an occurrence of $l$ by $r$. -/
 abbrev Rule (α : Type*) := List α × List α
 
-/-- One rewriting step of the system `R`: replace one occurrence of a left side by its right
-side. -/
+/-- **One-step rewriting.** Let $R$ be a string rewriting system, given as a list of rules. A word
+$w$ rewrites to a word $w'$ in one step of $R$ when there are a rule $(l, r)$ of $R$ and words
+$u$ and $v$ with $w = u l v$ and $w' = u r v$. -/
 inductive Step (R : List (Rule α)) : List α → List α → Prop
   | mk {l r : List α} (u v : List α) : (l, r) ∈ R → Step R (u ++ l ++ v) (u ++ r ++ v)
 
-/-- `Derives R x y`: `x` rewrites to `y` in zero or more steps. -/
+/-- **Derivations in a string rewriting system.** For a list of rules $R$, a word $x$ derives a
+word $y$ when $x$ rewrites to $y$ in zero or more steps of $R$, that is, when $(x, y)$ lies in
+the reflexive-transitive closure of the one-step rewriting relation of $R$. -/
 def Derives (R : List (Rule α)) : List α → List α → Prop := Relation.ReflTransGen (Step R)
 
-/-- The **reachability problem** for string rewriting: on the instance `(R, x, y)`, does `x`
-rewrite to `y`? -/
+/-- **The reachability problem for string rewriting.** An instance $(R, x, y)$ consists of a string
+rewriting system $R$, given as a list of rules, and two words $x$ and $y$; it is a yes-instance of
+the reachability problem when $x$ rewrites to $y$ in zero or more steps of $R$. -/
 def SR (I : List (Rule α) × List α × List α) : Prop := Derives I.1 I.2.1 I.2.2
 
-/-- Every rule has a nonempty left side and a nonempty right side. -/
+/-- **Rewriting systems with nonempty sides.** A string rewriting system $R$, given as a list of
+rules $(l, r)$, has nonempty sides when every rule of $R$ has a nonempty left side $l$ and a
+nonempty right side $r$. -/
 def NonemptyRules (R : List (Rule α)) : Prop := ∀ r ∈ R, r.1 ≠ [] ∧ r.2 ≠ []
 
 /-! ### Derivations -/
@@ -128,29 +135,51 @@ end Derives
 
 /-! ### The dominoes -/
 
-/-- A word over `α` as a word of letters of `Sym α`. -/
+/-- **Lifting a word to the extended alphabet.** A word $a_1 \cdots a_n$ over $\alpha$ is sent to
+the word $a_1 \cdots a_n$ over the extended alphabet of $\alpha$ in which each $a_i$ is read as a
+letter. -/
 abbrev lift (u : List α) : List (Sym α) := u.map letter
 
-/-- The first domino `($, $x#)`. -/
+/-- **The start domino of the reduction from reachability to MPCP.** Let $x$ be a word over an
+alphabet $\alpha$, and extend $\alpha$ by a star $\star$ and an end marker $\diamond$. The start
+domino of $x$ has top the one-letter word $\diamond$ and bottom the word $\diamond x \star$, with
+the letters of $x$ read as letters of the extended alphabet. -/
 def startCard (x : List α) : Domino (Sym α) := ([endMark], endMark :: lift x ++ [star])
 
-/-- The final domino `(y#$, $)`. -/
+/-- **Final domino.** For a word $y$ over $\alpha$, the final domino of $y$ is the domino over the
+extended alphabet with top $y \star \diamond$ and bottom $\diamond$, where $y$ is read as a word
+of letters, $\star$ is the row separator and $\diamond$ is the end marker. -/
 def finalCard (y : List α) : Domino (Sym α) := (lift y ++ [star, endMark], [endMark])
 
-/-- The row separator `(#, #)`. -/
+/-- **The separator domino.** Over the extended alphabet, that is, an alphabet $\alpha$ together
+with a star $\star$ and an end marker $\diamond$, the separator domino has top and bottom both
+equal to the one-letter word $\star$; the star separates the rows of a derivation. -/
 def sepCard : Domino (Sym α) := ([star], [star])
 
-/-- The domino `(l, r)` of a rule. -/
+/-- **The domino of a rewriting rule.** For a rule $(l, r)$ over an alphabet $\alpha$, the domino
+of the rule has top $l$ and bottom $r$, read as words over the extended alphabet, that is, $\alpha$
+together with a star and an end marker. -/
 def ruleCard (r : Rule α) : Domino (Sym α) := (lift r.1, lift r.2)
 
-/-- The copy domino `(a, a)` of a letter. -/
+/-- **Copy domino.** For a letter $a$ of $\alpha$, the copy domino of $a$ is the domino over the
+extended alphabet whose top and bottom are both the one-letter word $a$. -/
 def copyCard (a : α) : Domino (Sym α) := ([letter a], [letter a])
 
-/-- The letters of an instance: those of the rules and of both words. -/
+/-- **Letters of a rewriting instance.** For an instance $(R, x, y)$ of the reachability problem,
+where $R = [(l_1, r_1), \dots, (l_k, r_k)]$ is a list of rewriting rules and $x$, $y$ are words,
+the letters of the instance form the word $l_1 r_1 l_2 r_2 \cdots l_k r_k \, x \, y$, a list in
+which a letter may occur several times. -/
 def symbols (I : List (Rule α) × List α × List α) : List α :=
   I.1.flatMap (fun r ↦ r.1 ++ r.2) ++ I.2.1 ++ I.2.2
 
-/-- The MPCP instance of a reachability problem. Its first domino is `startCard x`. -/
+/-- **The MPCP instance of a reachability instance.** Let $(R, x, y)$ be an instance of the
+reachability problem over an alphabet $\alpha$, where $R = [(l_1, r_1), \dots, (l_k, r_k)]$, and
+write $\#$ for the separator and $\diamond$ for the end marker of the extended alphabet
+$\mathrm{Sym}(\alpha)$, in which letters of $\alpha$ are read as letters. Let $a_1 \cdots a_m$ be
+the word $l_1 r_1 l_2 r_2 \cdots l_k r_k \, x \, y$, the letters of the instance. The MPCP
+instance of $(R, x, y)$ is the list of dominoes (top word, bottom word)
+$(\diamond, \diamond x \#), (y \# \diamond, \diamond), (\#, \#), (l_1, r_1), \dots, (l_k, r_k),
+(a_1, a_1), \dots, (a_m, a_m)$, in this order. Its first domino is $(\diamond, \diamond x \#)$. -/
 def toMPCP (I : List (Rule α) × List α × List α) : List (Domino (Sym α)) :=
   startCard I.2.1 :: finalCard I.2.2 :: sepCard :: (I.1.map ruleCard ++ (symbols I).map copyCard)
 
@@ -184,11 +213,16 @@ theorem bottom_map_copyCard (u : List α) : bottom (u.map copyCard) = lift u := 
 
 /-! ### Comparing words of letters with separators -/
 
+/-- **Letters differ from the star.** For every letter $a$ of the alphabet $\alpha$, the symbol
+$a$ of the extended alphabet of the MPCP-to-PCP reduction is different from the star $\star$. -/
 theorem letter_ne_star (a : α) : letter a ≠ star := by simp
 
 theorem letter_ne_endMark (a : α) : letter a ≠ endMark := by simp
 
-/-- If `uX` equals `v#Y` and `u`, `v` are words of letters, then `u` is a prefix of `v`. -/
+/-- **Comparing words of letters before a separator.** Let $u, v$ be words over $\alpha$, read as
+words of letters, and let $X, Y$ be words over the extended alphabet of $\alpha$. If
+$u X = v \star Y$, where $\star$ is the row separator, then there is a word $w$ over $\alpha$
+with $v = u w$ and $X = w \star Y$. -/
 theorem exists_of_lift_append_eq {u v : List α} {X Y : List (Sym α)}
     (h : lift u ++ X = lift v ++ star :: Y) : ∃ w, v = u ++ w ∧ X = lift w ++ star :: Y := by
   induction u generalizing v with
@@ -231,9 +265,14 @@ theorem eq_nil_of_endMark_cons_eq {t : List α} {X Y : List (Sym α)}
 
 variable {I : List (Rule α) × List α × List α}
 
-/-- **The backward direction.** Reading dominoes left to right, `s` is the part of the current
-row already matched, with bottoms `t` (so `s ⇒* t`), and `v` is the rest of the row still to be
-matched on top. Then `s v ⇒* y`. -/
+/-- **The backward direction of the MPCP reduction.** Let $(R, x, y)$ be a reachability instance
+and read words over $\alpha$ as words of letters. Let $A$ be a sequence of dominoes of the MPCP
+instance of $(R, x, y)$. For all words $v, s, t$ over $\alpha$, if $s$ rewrites to $t$ under $R$
+in zero or more steps and the top of $A$ equals $v \star t$ followed by the bottom of $A$, where
+$\star$ is the row separator, then $s v$ rewrites to $y$ under $R$ in zero or more steps.
+
+Reading the dominoes left to right, $s$ is the part of the current row already matched, with
+bottoms $t$, and $v$ is the rest of the row still to be matched on top. -/
 theorem derives_of_top_eq : ∀ (A : List (Domino (Sym α))), (∀ c ∈ A, c ∈ toMPCP I) →
     ∀ (v s t : List α), Derives I.1 s t → top A = lift v ++ star :: (lift t ++ bottom A) →
       Derives I.1 (s ++ v) I.2.2
@@ -269,6 +308,10 @@ theorem derives_of_top_eq : ∀ (A : List (Domino (Sym α))), (∀ c ∈ A, c �
 
 /-! ### From derivations to solutions -/
 
+/-- **Rewriting steps keep the letters of the instance.** Let $(R, x, y)$ be an instance of the
+reachability problem over an alphabet $\alpha$. If a word $w$ rewrites to a word $w'$ in one
+step of $R$ and every letter of $w$ is among the letters of the instance, then every letter of
+$w'$ is among the letters of the instance. -/
 theorem mem_symbols_of_step {w w' : List α} (h : Step I.1 w w')
     (hw : ∀ a ∈ w, a ∈ symbols I) : ∀ a ∈ w', a ∈ symbols I := by
   obtain ⟨u, v, hr⟩ := h
@@ -280,8 +323,11 @@ theorem mem_symbols_of_step {w w' : List α} (h : Step I.1 w w')
     exact Or.inl (Or.inl ⟨_, hr, Or.inr ha⟩)
   · exact hw a (Or.inr ha)
 
-/-- **The forward direction.** A derivation from `w` to `y` gives dominoes whose top is `w#`
-followed by their bottom. -/
+/-- **The forward direction of the MPCP reduction.** Let $(R, x, y)$ be a reachability instance
+and read words over $\alpha$ as words of letters. If a word $w$ over $\alpha$ rewrites to $y$
+under $R$ in zero or more steps and every letter of $w$ occurs in a rule of $R$, in $x$ or in
+$y$, then there is a sequence $A$ of dominoes of the MPCP instance of $(R, x, y)$ whose top is
+$w \star$ followed by the bottom of $A$, where $\star$ is the row separator. -/
 theorem exists_cards_of_derives {w : List α} (h : Derives I.1 w I.2.2) :
     (∀ a ∈ w, a ∈ symbols I) → ∃ A : List (Domino (Sym α)), (∀ c ∈ A, c ∈ toMPCP I) ∧
       top A = lift w ++ star :: bottom A := by
@@ -311,8 +357,9 @@ theorem exists_cards_of_derives {w : List α} (h : Derives I.1 w I.2.2) :
         bottom_map_copyCard, htop, ruleCard, sepCard, lift, List.map_append]
       simp
 
-/-- **Reachability reduces to MPCP**: `x ⇒* y` iff the dominoes of `toMPCP (R, x, y)` have a
-solution starting with the first domino. -/
+/-- **Reachability reduces to MPCP.** For an instance $(R, x, y)$ of the reachability problem,
+$x$ rewrites to $y$ in zero or more steps of $R$ if and only if the MPCP instance of $(R, x, y)$
+has an MPCP solution, that is, a solution that starts with its first domino. -/
 theorem sr_iff_mpcp_toMPCP : SR I ↔ MPCP (toMPCP I) := by
   constructor
   · intro h
@@ -344,8 +391,10 @@ theorem nonemptyWords_toMPCP (h : NonemptyRules I.1) : NonemptyWords (toMPCP I) 
 
 /-! ### The many-one reduction -/
 
-/-- The total reduction: `toMPCP` when the rules have nonempty sides, and the unsolvable empty
-instance otherwise. -/
+/-- **The total reduction of reachability with nonempty sides to MPCP.** On an instance
+$(R, x, y)$ of the reachability problem, the reduction returns the MPCP instance of $(R, x, y)$
+when every rule of $R$ has a nonempty left side and a nonempty right side, and otherwise the empty
+list of dominoes, which has no solution. -/
 def reduce (I : List (Rule α) × List α × List α) : List (Domino (Sym α)) :=
   cond (nonemptyWordsB I.1) (toMPCP I) []
 
@@ -397,14 +446,28 @@ theorem primrec_toMPCP : Primrec (toMPCP (α := α)) := by
 theorem primrec_reduce : Primrec (reduce (α := α)) :=
   Primrec.cond (primrec_nonemptyWordsB.comp Primrec.fst) primrec_toMPCP (Primrec.const [])
 
-/-- **Reachability many-one reduces to MPCP**, on rules with nonempty sides; the MPCP
-instances have nonempty words. -/
+/-- **Reachability with nonempty sides many-one reduces to MPCP with nonempty words.** Let
+$\alpha$ be an alphabet with a primitive recursive coding, and let $\alpha'$ be $\alpha$ extended
+with two new symbols, the star and the end marker. There is a computable function $f$ from
+instances $(R, x, y)$ of the reachability problem over $\alpha$, where $R$ is a list of rewriting
+rules over $\alpha$ and $x$ and $y$ are words over $\alpha$, to finite lists of dominoes over
+$\alpha'$ such that, for every such instance, the following are equivalent: every rule of $R$ has
+a nonempty left side and a nonempty right side and $x$ rewrites to $y$ in zero or more steps of
+$R$; and every domino of $f(R, x, y)$ has a nonempty top word and a nonempty bottom word and
+$f(R, x, y)$ has an MPCP solution. -/
 theorem manyOneReducible_sr_mpcp :
     ManyOneReducible (fun I : List (Rule α) × List α × List α ↦ NonemptyRules I.1 ∧ SR I)
       (fun P : List (Domino (Sym α)) ↦ NonemptyWords P ∧ MPCP P) :=
   ⟨reduce, primrec_reduce.to_comp, nonemptyRules_and_sr_iff⟩
 
-/-- **Reachability many-one reduces to PCP**, on rules with nonempty sides. -/
+/-- **Reachability for rules with nonempty sides many-one reduces to PCP.** Let $\alpha$ be an
+alphabet with a primitive recursive coding, let $\alpha'$ be $\alpha$ extended with two new
+symbols, the star and the end marker, and let $\alpha''$ be $\alpha'$ extended in the same way by
+two further new symbols. There is a computable function $f$ from instances $(R, x, y)$ of the
+reachability problem over $\alpha$, where $R$ is a list of rewriting rules over $\alpha$ and $x$
+and $y$ are words over $\alpha$, to finite lists of dominoes over $\alpha''$ such that, for every
+such instance, $f(R, x, y)$ has a PCP solution if and only if every rule of $R$ has a nonempty
+left side and a nonempty right side and $x$ rewrites to $y$ in zero or more steps of $R$. -/
 theorem manyOneReducible_sr_pcp :
     ManyOneReducible (fun I : List (Rule α) × List α × List α ↦ NonemptyRules I.1 ∧ SR I)
       (PCP (α := Sym (Sym α))) :=
@@ -418,8 +481,10 @@ section Thue
 
 open Relation
 
-/-- The **word problem** of the Thue system of `R`: on the instance `(R, x, y)`, are `x` and `y`
-equivalent under the symmetric, reflexive and transitive closure of the rewriting steps? -/
+/-- **The word problem of a Thue system.** On an instance $(R, x, y)$, where $R$ is a list of
+rewriting rules and $x$, $y$ are words, the word problem asks whether $x$ and $y$ are related by
+the equivalence relation generated by the one-step rewriting relation of $R$, that is, by its
+reflexive, symmetric and transitive closure. -/
 def ThueWP (I : List (Rule α) × List α × List α) : Prop := EqvGen (Step I.1) I.2.1 I.2.2
 
 theorem eqvGen_of_derives {R : List (Rule α)} {x y : List α} (h : Derives R x y) :

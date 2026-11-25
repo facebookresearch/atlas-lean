@@ -1,0 +1,3 @@
+# Symbolic assignment on a path
+
+A symbolic path is a record of a guard (a Boolean expression), a symbolic store $\sigma : \mathbb{N} \to \mathrm{AExp}$ (expressions over the initial state) and a cost $n \in \mathbb{N}$. For a variable index $x$, an arithmetic expression $a$ and a path $p$ with store $\sigma$, symbolic assignment of $a$ to $x$ gives the path with the same guard and cost as $p$ and store $\sigma[x \mapsto \operatorname{afold}_\emptyset(a[\sigma])]$: $a$ with $\sigma$ substituted for its variables, then constant folded with the empty table (operations on two constants are evaluated, with truncated subtraction, and $0 \mathbin{\dot-} e$ becomes $0$).

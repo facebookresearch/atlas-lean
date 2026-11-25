@@ -42,24 +42,34 @@ section FiniteIteration
 
 variable {α : Type*} [Fintype α]
 
-/-- The least fixed point of a `Finset` functional on a finite type,
-computed by iterating from `∅` for `Fintype.card α` steps.  For a
-monotone functional the iteration has stabilized by then
-(`lfpFin_fixed`). -/
+/-- **Least fixed point of a finset map by finite iteration.** Let $\alpha$ be a finite type with
+$|\alpha|$ elements, let $f$ map subsets of $\alpha$ to subsets of $\alpha$, and write $f^n$ for the
+$n$-fold iterate of $f$. Then $\mathrm{lfp}_{\mathrm{fin}}(f)$ is the set $f^{|\alpha|}(\emptyset)$,
+obtained by applying $f$ to the empty set $|\alpha|$ times.
+
+For monotone $f$ the iteration has stabilized after $|\alpha|$ steps, and the result is the least
+fixed point of $f$. -/
 def lfpFin (f : Finset α → Finset α) : Finset α :=
   f^[Fintype.card α] ∅
 
-/-- The greatest fixed point of a `Finset` functional on a finite type,
-computed by iterating from `Finset.univ` for `Fintype.card α` steps.
-For a monotone functional the iteration has stabilized by then
-(`gfpFin_fixed`). -/
+/-- **Greatest fixed point of a finset map by finite iteration.** Let $\alpha$ be a finite type
+with $|\alpha|$ elements, let $f$ map subsets of $\alpha$ to subsets of $\alpha$, and write $f^n$
+for the $n$-fold iterate of $f$. Then $\mathrm{gfp}_{\mathrm{fin}}(f)$ is the set
+$f^{|\alpha|}(\alpha)$, obtained by applying $f$ to the whole of $\alpha$ $|\alpha|$ times.
+
+For monotone $f$ the iteration has stabilized after $|\alpha|$ steps, and the result is the
+greatest fixed point of $f$. -/
 def gfpFin (f : Finset α → Finset α) : Finset α :=
   f^[Fintype.card α] Finset.univ
 
-/-- The iterates of a monotone `Finset` functional from `∅` stabilize
-within `Fintype.card α` steps: the chain is increasing, and until it
-stabilizes each step strictly increases the cardinality, which is
-bounded by `Fintype.card α`. -/
+/-- **Finite iteration from the empty set reaches a fixed point.** Let $\alpha$ be a finite type
+with $|\alpha|$ elements, let $f$ be a map from subsets of $\alpha$ to subsets of $\alpha$ that is
+monotone for inclusion, and let $\mathrm{lfp}_{\mathrm{fin}}(f) = f^{|\alpha|}(\emptyset)$ be the
+result of applying $f$ to $\emptyset$ $|\alpha|$ times. Then $\mathrm{lfp}_{\mathrm{fin}}(f)$ is a
+fixed point of $f$, that is, $f(\mathrm{lfp}_{\mathrm{fin}}(f)) = \mathrm{lfp}_{\mathrm{fin}}(f)$.
+
+The iterates of $f$ from $\emptyset$ form an increasing chain, and until it stabilizes each step
+strictly increases the cardinality, which is bounded by $|\alpha|$. -/
 theorem lfpFin_fixed {f : Finset α → Finset α} (hf : Monotone f) :
     f (lfpFin f) = lfpFin f := by
   classical
@@ -105,9 +115,14 @@ theorem lfpFin_fixed {f : Finset α → Finset α} (hf : Monotone f) :
   show f (f^[Fintype.card α] (∅ : Finset α)) = f^[Fintype.card α] ∅
   rw [← hsucc, hstable _ (by omega), hstable _ hn]
 
-/-- The iterates of a monotone `Finset` functional from `Finset.univ`
-stabilize within `Fintype.card α` steps: the chain is decreasing, and
-until it stabilizes each step strictly decreases the cardinality. -/
+/-- **Finite iteration from the whole type reaches a fixed point.** Let $\alpha$ be a finite type
+with $|\alpha|$ elements, let $f$ be a map from subsets of $\alpha$ to subsets of $\alpha$ that is
+monotone for inclusion, and let $\mathrm{gfp}_{\mathrm{fin}}(f) = f^{|\alpha|}(\alpha)$ be the
+result of applying $f$ to $\alpha$ $|\alpha|$ times. Then $\mathrm{gfp}_{\mathrm{fin}}(f)$ is a
+fixed point of $f$, that is, $f(\mathrm{gfp}_{\mathrm{fin}}(f)) = \mathrm{gfp}_{\mathrm{fin}}(f)$.
+
+The iterates of $f$ from $\alpha$ form a decreasing chain, and until it stabilizes each step
+strictly decreases the cardinality. -/
 theorem gfpFin_fixed {f : Finset α → Finset α} (hf : Monotone f) :
     f (gfpFin f) = gfpFin f := by
   classical
@@ -155,8 +170,13 @@ theorem gfpFin_fixed {f : Finset α → Finset α} (hf : Monotone f) :
     f^[Fintype.card α] Finset.univ
   rw [← hsucc, hstable _ (by omega), hstable _ hn]
 
-/-- `lfpFin f` is contained in every pre-fixed point of `f`: every
-iterate from `∅` is, by induction. -/
+/-- **The finite least fixed point lies in every pre-fixed point.** Let $\alpha$ be a finite type
+with $|\alpha|$ elements, let $f$ be a map from subsets of $\alpha$ to subsets of $\alpha$ that is
+monotone for inclusion, and let $\mathrm{lfp}_{\mathrm{fin}}(f) = f^{|\alpha|}(\emptyset)$ be the
+result of applying $f$ to $\emptyset$ $|\alpha|$ times. If $Z \subseteq \alpha$ satisfies
+$f(Z) \subseteq Z$, then $\mathrm{lfp}_{\mathrm{fin}}(f) \subseteq Z$.
+
+Every iterate of $f$ from $\emptyset$ is contained in $Z$, by induction. -/
 theorem lfpFin_le {f : Finset α → Finset α} (hf : Monotone f)
     {Z : Finset α} (hZ : f Z ⊆ Z) : lfpFin f ⊆ Z := by
   have key : ∀ n, f^[n] (∅ : Finset α) ⊆ Z := by
@@ -168,8 +188,13 @@ theorem lfpFin_le {f : Finset α → Finset α} (hf : Monotone f)
         exact (hf ih).trans hZ
   exact key _
 
-/-- Every post-fixed point of `f` is contained in `gfpFin f`: it is
-contained in every iterate from `Finset.univ`, by induction. -/
+/-- **Every post-fixed point lies in the finite greatest fixed point.** Let $\alpha$ be a finite
+type with $|\alpha|$ elements, let $f$ be a map from subsets of $\alpha$ to subsets of $\alpha$
+that is monotone for inclusion, and let $\mathrm{gfp}_{\mathrm{fin}}(f) = f^{|\alpha|}(\alpha)$ be
+the result of applying $f$ to $\alpha$ $|\alpha|$ times. If $Z \subseteq \alpha$ satisfies
+$Z \subseteq f(Z)$, then $Z \subseteq \mathrm{gfp}_{\mathrm{fin}}(f)$.
+
+$Z$ is contained in every iterate of $f$ from $\alpha$, by induction. -/
 theorem le_gfpFin {f : Finset α → Finset α} (hf : Monotone f)
     {Z : Finset α} (hZ : Z ⊆ f Z) : Z ⊆ gfpFin f := by
   have key : ∀ n, Z ⊆ f^[n] (Finset.univ : Finset α) := by
@@ -187,9 +212,14 @@ section Bridge
 
 variable {α : Type*}
 
-/-- Bridge between finite iterates from `∅`: if a `Finset` functional
-`f` and a predicate functional `F` agree on membership predicates, then
-their iterates from `∅` and `⊥` agree at every step. -/
+/-- **Finset and predicate iterations from the bottom agree.** Let $\alpha$ be a type, let $f$ map
+finite subsets of $\alpha$ to finite subsets of $\alpha$, and let $F$ map predicates on $\alpha$
+to predicates on $\alpha$. For a finite set $Z \subseteq \alpha$ write $P_Z$ for the predicate
+$t \mapsto t \in Z$, and suppose that for every finite $Z \subseteq \alpha$ and every
+$s \in \alpha$, $s \in f(Z)$ if and only if $F(P_Z)(s)$ holds. Write $f^n$ and $F^n$ for the
+$n$-fold iterates and $\bot$ for the predicate that is false everywhere. Then for every
+$n \in \mathbb{N}$ and every $s \in \alpha$, $s \in f^n(\emptyset)$ if and only if $F^n(\bot)(s)$
+holds. -/
 theorem mem_finset_iterate_iff {F : (α → Prop) → α → Prop}
     {f : Finset α → Finset α}
     (hbridge : ∀ Z s, s ∈ f Z ↔ F (fun t => t ∈ Z) s) :
@@ -210,10 +240,13 @@ theorem mem_finset_iterate_iff {F : (α → Prop) → α → Prop}
 
 variable [Fintype α]
 
-/-- Bridge between finite iterates from `Finset.univ`: if a `Finset`
-functional `f` and a predicate functional `F` agree on membership
-predicates, then their iterates from `Finset.univ` and `⊤` agree at
-every step. -/
+/-- **Finset and predicate iterations from the top agree.** Let $\alpha$ be a finite type, let $f$
+map subsets of $\alpha$ to subsets of $\alpha$, and let $F$ map predicates on $\alpha$ to
+predicates on $\alpha$. For $Z \subseteq \alpha$ write $P_Z$ for the predicate
+$t \mapsto t \in Z$, and suppose that for every $Z \subseteq \alpha$ and every $s \in \alpha$,
+$s \in f(Z)$ if and only if $F(P_Z)(s)$ holds. Write $f^n$ and $F^n$ for the $n$-fold iterates
+and $\top$ for the predicate that is true everywhere. Then for every $n \in \mathbb{N}$ and every
+$s \in \alpha$, $s \in f^n(\alpha)$ if and only if $F^n(\top)(s)$ holds. -/
 theorem mem_finset_iterate_univ_iff {F : (α → Prop) → α → Prop}
     {f : Finset α → Finset α}
     (hbridge : ∀ Z s, s ∈ f Z ↔ F (fun t => t ∈ Z) s) :
@@ -232,12 +265,20 @@ theorem mem_finset_iterate_univ_iff {F : (α → Prop) → α → Prop}
       simp only [Function.iterate_succ_apply']
       rw [hbridge, hfun]
 
-/-- Convergence for least fixed points: under the bridge hypothesis,
-`lfpFin f` computes the least fixed point of `F`.  One inclusion is
-iteration into the fixed point; the other is Park induction, where the
-`Fintype.card α`-th `F`-iterate is pre-fixed because the
-corresponding `f`-iterate has stabilized (`lfpFin_fixed`), transported
-across the bridge. -/
+/-- **Finite iteration computes the least fixed point.** Let $\alpha$ be a finite type with
+$|\alpha|$ elements, let $f$ be a map from subsets of $\alpha$ to subsets of $\alpha$ that is
+monotone for inclusion, and let $\mathrm{lfp}_{\mathrm{fin}}(f) = f^{|\alpha|}(\emptyset)$ be the
+result of applying $f$ to $\emptyset$ $|\alpha|$ times. Let $F$ be a map from predicates on $\alpha$
+to predicates on $\alpha$ that is monotone for the pointwise order. For $Z \subseteq \alpha$
+write $P_Z$ for the predicate $t \mapsto t \in Z$, and suppose that for every $Z \subseteq \alpha$
+and every $s \in \alpha$, $s \in f(Z)$ if and only if $F(P_Z)(s)$ holds. Then for every
+$s \in \alpha$, $s \in \mathrm{lfp}_{\mathrm{fin}}(f)$ if and only if $s$ satisfies the least
+fixed point of $F$ in the complete lattice of predicates on $\alpha$.
+
+One inclusion is iteration into the fixed point; the other is Park induction: the
+$|\alpha|$-th iterate of $F$ from the everywhere-false predicate is pre-fixed because the
+corresponding iterate of $f$ has stabilized, transported through the hypothesis relating $f$
+and $F$. -/
 theorem mem_lfpFin_iff_lfp {F : (α → Prop) → α → Prop}
     {f : Finset α → Finset α}
     (hfm : Monotone f) (hFm : Monotone F)
@@ -284,9 +325,17 @@ theorem mem_lfpFin_iff_lfp {F : (α → Prop) → α → Prop}
   · intro hs
     exact (mem_finset_iterate_iff hbridge _ s).mpr (hle1 s hs)
 
-/-- Convergence for greatest fixed points: under the bridge hypothesis,
-`gfpFin f` computes the greatest fixed point of `F`, dually to
-`mem_lfpFin_iff_lfp`. -/
+/-- **Finite iteration computes the greatest fixed point.** Let $\alpha$ be a finite type with
+$|\alpha|$ elements, let $f$ be a map from subsets of $\alpha$ to subsets of $\alpha$ that is
+monotone for inclusion, and let $\mathrm{gfp}_{\mathrm{fin}}(f) = f^{|\alpha|}(\alpha)$ be the
+result of applying $f$ to $\alpha$ $|\alpha|$ times. Let $F$ be a map from predicates on $\alpha$
+to predicates on $\alpha$ that is monotone for the pointwise order. For $Z \subseteq \alpha$
+write $P_Z$ for the predicate $t \mapsto t \in Z$, and suppose that for every $Z \subseteq \alpha$
+and every $s \in \alpha$, $s \in f(Z)$ if and only if $F(P_Z)(s)$ holds. Then for every
+$s \in \alpha$, $s \in \mathrm{gfp}_{\mathrm{fin}}(f)$ if and only if $s$ satisfies the greatest
+fixed point of $F$ in the complete lattice of predicates on $\alpha$.
+
+This is dual to the corresponding statement for least fixed points. -/
 theorem mem_gfpFin_iff_gfp {F : (α → Prop) → α → Prop}
     {f : Finset α → Finset α}
     (hfm : Monotone f) (hFm : Monotone F)

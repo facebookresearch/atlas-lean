@@ -51,9 +51,7 @@ private theorem domino_h_step (n : ℕ) (hn : 1 ≤ n) :
   rw [i1, i2, i3]
   exact domino_fib_odd_step k
 
-/-- Concrete values of `h n = Nat.fib (2 * n - 1)` at `n = 1, 2, 3, 4`. -/
-private theorem domino_h1 : Nat.fib (2 * 1 - 1) = 1 := rfl
-
+/-- Concrete values of `h n = Nat.fib (2 * n - 1)` at `n = 2, 3, 4`. -/
 private theorem domino_h2 : Nat.fib (2 * 2 - 1) = 2 := rfl
 
 private theorem domino_h3 : Nat.fib (2 * 3 - 1) = 5 := rfl
@@ -174,23 +172,20 @@ private theorem domino_unique (d e : ℕ → ℕ)
   exact (step k).1
 
 /--
-The domino tiling counting sequence `d` (A003775, tilings of
-`P_5 × P_{2n-2}`) factors as the product of a second-order auxiliary
-sequence `g` (A004253) and odd-indexed Fibonacci numbers.
+**Factorization of the domino tiling sequence.** Let $d$ and $g$ be sequences of natural
+numbers with $d_1 = 1$, $d_2 = 8$, $d_3 = 95$, $d_4 = 1183$ and
+$d_{n+4} + 32 d_{n+2} + d_n = 15 d_{n+3} + 15 d_{n+1}$ for all $n \ge 1$, and with $g_1 = 1$,
+$g_2 = 4$ and $g_{n+2} + g_n = 5 g_{n+1}$ for all $n \ge 1$. Then $d_n = g_n F_{2n-1}$ for every
+$n \ge 1$, where $F_m$ is the $m$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
+
+These recurrences determine $d_n$ and $g_n$ for $n \ge 1$: $d_n$ is the number of domino tilings
+of $P_5 \times P_{2n-2}$ (OEIS A003775) and $g_n$ is OEIS A004253.
 
 Source: James A. Sellers, "Domino Tilings and Products of Fibonacci
 and Pell Numbers," Journal of Integer Sequences 5 (2002),
 Article 02.1.2, second Theorem (`d_n = g_n h_n`), lines 153–154,
 with `d` defined at lines 146–150 and `g` at line 164,
 https://cs.uwaterloo.ca/journals/JIS/VOL5/Sellers/sellers4.tex
-
-`d` satisfies the fourth-order recurrence (label brecur) with
-`d_1 = 1, d_2 = 8, d_3 = 95, d_4 = 1183`; `g` satisfies
-`g_{n+2} = 5 g_{n+1} - g_n` (label k3stuff); `h_n = f_{2n-1}`
-is `Nat.fib (2 * n - 1)`. Distinct from the same paper's main
-theorem on `W_4 × P_{n-1}` tilings equaling `f_n p_n`.
-
-Proves `Wanted` entry `domino_tiling_sequence_factorization`.
 -/
 public theorem domino_tiling_sequence_factorization :
     ∀ (d g : Nat → Nat), d 1 = 1 → d 2 = 8 → d 3 = 95 → d 4 = 1183 →
@@ -215,7 +210,7 @@ public theorem domino_tiling_sequence_factorization :
   · intro m hm
     exact domino_product_rec g hgrec m hm
   · show d 1 = g 1 * Nat.fib (2 * 1 - 1)
-    rw [hd1, hg1, domino_h1]
+    rw [hd1, hg1, Nat.fib_one]
   · show d 2 = g 2 * Nat.fib (2 * 2 - 1)
     rw [hd2, hg2, domino_h2]
   · show d 3 = g 3 * Nat.fib (2 * 3 - 1)

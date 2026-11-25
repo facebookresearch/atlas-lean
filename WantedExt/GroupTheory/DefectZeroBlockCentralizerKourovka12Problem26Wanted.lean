@@ -39,8 +39,10 @@ prime to `p`. `p`-soluble means a subnormal series whose factors are `p`-groups 
 to `p`.
 -/
 
-/-- `G` is `p`-soluble: it has a subnormal series `1 = H₀ ≤ H₁ ≤ ⋯ ≤ Hₙ = G` whose factors are
-`p`-groups or have order prime to `p`. -/
+/-- **$p$-soluble groups.** Let $p$ be a natural number. A group $G$ is $p$-soluble when it has a
+subnormal series $1 = H_0 \le H_1 \le \dots \le H_n = G$, each $H_i$ normal in $H_{i+1}$, whose
+factors $H_{i+1}/H_i$ are $p$-groups or have order prime to $p$. Here an infinite factor is taken
+to have order $0$. -/
 def IsPSoluble (p : ℕ) (G : Type*) [Group G] : Prop :=
   ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
     ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
@@ -48,17 +50,27 @@ def IsPSoluble (p : ℕ) (G : Type*) [Group G] : Prop :=
         IsPGroup p (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ)) ∨
           (Nat.card (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))).Coprime p
 
-/-- `G` has a `p`-block of defect zero: some irreducible complex representation of `G` has degree
-divisible by the full power of `p` dividing `|G|` (by Brauer's theory the `p`-blocks of defect zero
-are exactly the singletons `{χ}` with `χ` irreducible and `|G|_p ∣ χ(1)`). -/
+/-- **Groups with a $p$-block of defect zero.** Let $p$ be a natural number. A group $G$ has a
+$p$-block of defect zero when some irreducible finite-dimensional complex representation of $G$ has
+degree divisible by $p^{v_p(|G|)}$, where $v_p(|G|)$ is the exponent of $p$ in the prime
+factorization of the order $|G|$ of $G$ (this exponent is $0$ when $p$ is not prime or $G$ is
+infinite). For a prime $p$ and a finite group $G$, the number $p^{v_p(|G|)}$ is $|G|_p$, the largest
+power of $p$ dividing $|G|$.
+
+By Brauer's theory the $p$-blocks of defect zero are exactly the singletons $\{\chi\}$ with $\chi$
+irreducible and $|G|_p \mid \chi(1)$. -/
 def HasDefectZeroBlock (p : ℕ) (G : Type) [Group G] : Prop :=
   ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V) (_ : FiniteDimensional ℂ V)
     (ρ : Representation ℂ G V), ρ.IsIrreducible ∧
       p ^ (Nat.card G).factorization p ∣ Module.finrank ℂ V
 
-/-- Kourovka 12.26 (Shi Shengming): for every prime `p`, a finite `p`-soluble group `G` has a
-`p`-block of defect zero if and only if some `x ∈ O_{p'}(G)` has a centralizer of order prime to
-`p`. Elements of `O_{p'}(G)` are the elements of normal subgroups of order prime to `p`. -/
+/-- **Kourovka Problem 12.26.** This is the proposition (Shi Shengming) that for every prime $p$ and
+every finite $p$-soluble group $G$, the group $G$ has a $p$-block of defect zero if and only if some
+normal subgroup $N$ of $G$ of order prime to $p$ contains an element $x$ whose centralizer $C_G(x)$
+in $G$ has order prime to $p$.
+
+Equivalently, some $x \in O_{p'}(G)$ has a centralizer of order prime to $p$, since $O_{p'}(G)$ is
+the largest normal subgroup of $G$ of order prime to $p$. -/
 def defectZeroBlockIffPRegularCentralizer : Prop :=
   ∀ p : ℕ, p.Prime → ∀ (G : Type) [Group G] [Finite G], IsPSoluble p G →
     (HasDefectZeroBlock p G ↔
@@ -66,9 +78,16 @@ def defectZeroBlockIffPRegularCentralizer : Prop :=
         ∃ x ∈ N, (Nat.card (Subgroup.centralizer {x})).Coprime p)
 
 /--
-Resolved false: the Kourovka Archive answers 12.26 "No, it is not" (V. I. Zenkov): `G = 3².GL₂(3)`
-(order 432) is soluble and has a 2-block of defect zero (an irreducible character of degree 16), but
-the centralizer of every element of `O_{2'}(G) = 3²` has even order. Source: E. I. Khukhro and V. D.
+**Refutation of Kourovka Problem 12.26.** The proposition of Kourovka Problem 12.26 is false:
+it is not the case that for every prime $p$ and every finite $p$-soluble group $G$, the group $G$
+has a $p$-block of defect zero if and only if some normal subgroup $N$ of $G$ of order prime to $p$
+contains an element $x$ whose centralizer $C_G(x)$ in $G$ has order prime to $p$.
+
+V. I. Zenkov's counterexample: the group $G = 3^2.\mathrm{GL}_2(3)$ of order $432$ is soluble and
+has a $2$-block of defect zero (an irreducible character of degree $16$), but the centralizer of
+every element of $O_{2'}(G) = 3^2$, the largest normal subgroup of $G$ of odd order, has even order.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.26 (Shi Shengming; Jiping Zhang);
 resolution: V. I. Zenkov, Trudy Inst. Mat. i Mekh. UrO RAN 3 (1995), 36-40 (Russian), Kourovka
