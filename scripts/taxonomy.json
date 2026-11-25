@@ -11257,6 +11257,7 @@
   "MathlibExt/Combinatorics/PartialHadamard": {"to": "Combinatorics/designs-latin-squares", "title": "Partial Hadamard matrices"},
   "MathlibExt/Combinatorics/PartitionRegularUltrafilter": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Pairwise sum theorem"},
   "MathlibExt/Combinatorics/PiecewiseSyndetic": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Piecewise syndetic sets"},
+  "MathlibExt/Combinatorics/PlanarGraphPrismHamiltonicity": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Hamiltonian cycles"},
   "MathlibExt/Combinatorics/Polynomial/ZeilbergerGamma": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Gamma vectors of Pascal-like triangles"},
   "MathlibExt/Combinatorics/PolynomialFreimanRuzsaBinary": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Polynomial Freiman–Ruzsa theorem"},
   "MathlibExt/Combinatorics/PolysizeColoringList": {"to": "Combinatorics/discrepancy-theory", "title": "Colouring lists for hereditary discrepancy"},
