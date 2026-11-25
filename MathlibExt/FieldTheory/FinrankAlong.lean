@@ -52,12 +52,12 @@ noncomputable def finrankAlong (φ : F →ₐ[K] F') : ℕ :=
 /-- The degree along a composite is the product of the degrees. -/
 theorem finrankAlong_comp (φ : F →ₐ[K] F') (χ : F' →ₐ[K] F'') :
     finrankAlong (χ.comp φ) = finrankAlong φ * finrankAlong χ := by
-  letI := φ.toRingHom.toAlgebra
-  letI := χ.toRingHom.toAlgebra
-  letI := (χ.comp φ).toRingHom.toAlgebra
+  let := φ.toRingHom.toAlgebra
+  let := χ.toRingHom.toAlgebra
+  let := (χ.comp φ).toRingHom.toAlgebra
   have h : IsScalarTower F F' F'' :=
     IsScalarTower.of_algebraMap_eq fun x => by
-      show χ (φ x) = χ (φ x)
+      change χ (φ x) = χ (φ x)
       rfl
   exact (Module.finrank_mul_finrank F F' F'').symm
 
@@ -71,27 +71,3 @@ theorem finrankAlong_eq_of_comp_eq_of_finrankAlong_eq
   rw [finrankAlong_comp, finrankAlong_comp, h]
 
 end AlgebraicCurve
-
-namespace ModularCurve
-
-open AlgebraicCurve
-
-variable {K F M T : Type*} [Field K] [Field F] [Field M] [Field T]
-  [Algebra K F] [Algebra K M] [Algebra K T]
-
-/-- The two prime-level degeneracy embeddings of a level-`Γ₁` function
-field into the level raised by a prime not dividing the level have
-equal field degree.  Both embeddings factor through the common
-intermediate degeneracy map, and the two first factors have equal
-degree along them (in the modular-curve application, both degrees
-are `p + 1` for a prime `p` not dividing the level). -/
-theorem finrankAlong_x1LevelInclBar_eq_finrankAlong_x1LevelSubstBar
-    (incl subst : F →ₐ[K] T) (common : M →ₐ[K] T)
-    (alpha beta : F →ₐ[K] M)
-    (hincl : incl = common.comp alpha) (hsubst : subst = common.comp beta)
-    (hab : finrankAlong alpha = finrankAlong beta) :
-    finrankAlong incl = finrankAlong subst := by
-  rw [hincl, hsubst]
-  exact finrankAlong_eq_of_comp_eq_of_finrankAlong_eq common alpha beta hab
-
-end ModularCurve
