@@ -13,6 +13,7 @@
 - [Gradient descent with zero step sizes stays put](gradient-descent-trajectory-zero-schedul.md)
 - [Descent lemma](gradient-descent-descent-lemma.md)
 - [Sufficient decrease of a gradient step](gradient-descent-sufficient-decrease.md)
+- [Gradient norm bound for smooth lower-bounded functions](gradient-descent-norm-gradient-sq-le.md)
 - [Convergence of the subgradient method](subgradient-method-rate.md)
 - [Convergence of stochastic gradient descent](integral-sgd-average-sub-le.md)
 
