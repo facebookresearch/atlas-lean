@@ -1,6 +1,5 @@
 # Center Star
 
-- [List Sum](list-sum.md)
 - [Pair Alignment](pair-alignment.md)
 - [Align Value](align-value.md)
 - [Erases To](erases-to.md)

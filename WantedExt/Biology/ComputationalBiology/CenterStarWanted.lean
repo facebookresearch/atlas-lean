@@ -48,11 +48,6 @@ namespace WantedExt.Biology.ComputationalBiology.CenterStarWanted
 
 variable {α : Type*} [DecidableEq α]
 
-/-- Sum of a real list (avoids big-operator imports for lists). -/
-def listSum : List ℝ → ℝ
-  | [] => 0
-  | v :: vs => v + listSum vs
-
 /-- A pairwise alignment: two equal-length rows over `Option α`. -/
 structure PairAlignment (α : Type*) where
   left : List (Option α)
@@ -61,7 +56,7 @@ structure PairAlignment (α : Type*) where
 
 /-- Value of a pairwise alignment: sum of column scores. -/
 def alignValue (s : Option α → Option α → ℝ) (A : PairAlignment α) : ℝ :=
-  listSum ((A.left.zip A.right).map fun p => s p.1 p.2)
+  List.sum ((A.left.zip A.right).map fun p => s p.1 p.2)
 
 /-- Row erasure: deleting gaps recovers the string. -/
 def erasesTo (l : List (Option α)) (X : List α) : Prop := l.filterMap id = X
@@ -88,7 +83,7 @@ def msErasesTo {k : ℕ} (A : MSAlignment α k) (X : Fin k → List α) : Prop :
 /-- Induced pairwise value of rows `i`, `j`: column scores of the projection. -/
 def inducedValue (s : Option α → Option α → ℝ) {k : ℕ}
     (A : MSAlignment α k) (i j : Fin k) : ℝ :=
-  listSum (((A.cols.map fun c => c i).zip
+  List.sum (((A.cols.map fun c => c i).zip
     (A.cols.map fun c => c j)).map fun p => s p.1 p.2)
 
 /-- Sum-of-pairs value over unordered row pairs. -/

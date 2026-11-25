@@ -135,20 +135,21 @@ def IsDup (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) (u : G) : 
       (TS.pathEdges (f u) (f c₁) ∩ TS.pathEdges (f u) (f c₂)).Nonempty)
 
 open Classical in
-/-- The duplication indicator `δ_f(u) ∈ {0, 1}`. -/
-noncomputable def δ (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) (u : G) : ℤ :=
+/-- The duplication indicator `δ_f(u) ∈ {0, 1}`: `1` if `f` has a duplication at `u`, else `0`. -/
+noncomputable def dupIndicator (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S)
+    (u : G) : ℤ :=
   if IsDup TG TS f u then 1 else 0
 
 /-- The **gene-duplication cost** `gd(f) = ∑_u δ_f(u)`. -/
 noncomputable def gd (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) : ℤ :=
-  ∑ u, δ TG TS f u
+  ∑ u, dupIndicator TG TS f u
 
 open Classical in
 /-- The **loss count** at `u`: `∑_{c child of u} d(f(u), f(c)) + 2 (δ_f(u) - 1)` for internal `u`
 and `0` for leaves. -/
 noncomputable def lossAt (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) (u : G) : ℤ :=
   if TG.IsLeaf u then 0
-  else (∑ c ∈ TG.children u, (TS.dist (f u) (f c) : ℤ)) + 2 * (δ TG TS f u - 1)
+  else (∑ c ∈ TG.children u, (TS.dist (f u) (f c) : ℤ)) + 2 * (dupIndicator TG TS f u - 1)
 
 /-- The **gene-loss cost** `gl(f) = ∑_u l_f(u)`. -/
 noncomputable def gl (TG : RootedBinTree G) (TS : RootedBinTree S) (f : G → S) : ℤ :=

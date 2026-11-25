@@ -15,24 +15,29 @@ are exactly two; by the triangle inequality it is `c · δ_A` for a proper nonem
 `c > 0`, where `δ_A(x, y)` is `1` across the split `A | X \ A` and `0` within its sides. A sum
 `d = d₁ + ⋯ + d_k` of metrics is coherent when every function `f : X → ℝ` dominating `d`
 (`f(x) + f(y) ≥ d(x, y)` for all `x, y`) is a sum `f = f₁ + ⋯ + f_k` of functions dominating the
-summands; equivalently, the injective hull of `d` is the Minkowski sum of those of the summands. A
-metric is split-prime when it is not a coherent sum of a split metric and another metric.
+summands; that is, `P(d) = P(d₁) + ⋯ + P(d_k)` for the polyhedra `P(d)` of functions dominating
+`d`, equivalently `T(d) ⊆ T(d₁) + ⋯ + T(d_k)`: every point of the injective hull `T(d)` is a sum of
+points of the injective hulls of the summands. A metric is split-prime when it is not a coherent
+sum of a split metric and another metric.
 
 Bandelt and Dress (1992): every metric `d` on a finite set `X` has a unique coherent decomposition
 `d = d₁ + ⋯ + d_k + d₀` into linearly independent split metrics `d₁, …, d_k` and a split-prime
 metric `d₀` (possibly zero); unique means that the residue is determined and the split summands
 are determined up to order; with `|X| = n` there are at most `C(n, 2)` split summands; and if `d`
-is tree-like the residue `d₀` vanishes. Tree-like is expressed by Buneman's four-point condition,
-which characterizes the metrics realized by edge-weighted trees.
+is tree-like the residue `d₀` vanishes. Tree-like is expressed by Buneman's four-point condition
+`MathlibExt.Biology.Phylogenetics.Buneman.FourPointCondition`, equivalent to being a tree metric
+(`isTreeMetric_iff_fourPointCondition`).
 
 Here the coherence condition includes the requirement `f = f₁ + ⋯ + f_k`, which the survey's
-paraphrase omits but which its injective-hull formulation (and the original definition) requires.
+paraphrase omits but which the original definition (`P(d) = ∑ P(dᵢ)`) requires.
 Not recorded here: the characterization of the split summands as the split metrics `d'` with
 `d - d'` a metric coherent with `d'`, and the isolation-index formula for their weights.
 
 Overlap (partial): `CSLibExt/Bioinformatics/Phylogenetics/NeighborJoining.lean`
-(`dist_eq_sum_darts`) decomposes a tree metric along its edges; the general case with a
-split-prime residue is not present.
+(`dist_eq_sum_darts`) decomposes a tree metric along its edges, and
+`MathlibExt/Combinatorics/SimpleGraph/TreeMetric.lean` defines the four-point condition used here
+and proves it equivalent to being a tree metric; the general case with a split-prime residue is not
+present.
 
 Sources: H.-J. Bandelt and A. W. M. Dress, "A canonical decomposition theory for metrics on a finite
 set", Advances in Mathematics 92 (1992) 47–105, doi:10.1016/0001-8708(92)90061-O; statement read in
@@ -46,11 +51,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.MinMax
+public import MathlibExt.Combinatorics.SimpleGraph.TreeMetric
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.SplitDecompositionWanted
+
+open MathlibExt.Biology.Phylogenetics.Buneman
 
 variable {X : Type*} [Fintype X] [DecidableEq X]
 
@@ -100,11 +107,6 @@ def IsCanonicalDecomp (d : X → X → ℝ) (k : ℕ) (ds : Fin k → X → X �
     (∀ x y, d x y = ∑ i, ds i x y + r x y) ∧ IsCoherent ds r ∧
     ∀ c : Fin k → ℝ, (∀ x y, ∑ i, c i * ds i x y = 0) → ∀ i, c i = 0
 
-/-- `d` is **tree-like**: Buneman's four-point condition
-`d(x, y) + d(z, w) ≤ max(d(x, z) + d(y, w), d(x, w) + d(y, z))` holds for all `x, y, z, w`. -/
-def IsTreeLike (d : X → X → ℝ) : Prop :=
-  ∀ x y z w, d x y + d z w ≤ max (d x z + d y w) (d x w + d y z)
-
 /-- **Bandelt–Dress canonical split decomposition** (Bandelt and Dress 1992, via Dress, Huber and
 Moulton 2001): for every metric `d` (zero diagonal, symmetric, triangle inequality) on a finite set
 `X`, there is a canonical split decomposition `(ds, r)` of `d` with `k ≤ C(|X|, 2)` split summands,
@@ -125,7 +127,7 @@ set `X` satisfying the four-point condition, and every canonical split decomposi
 
 Source: Bandelt and Dress (1992), via Dress, Huber and Moulton (2001), p. 134. -/
 public theorem_wanted canonicalDecomp_residue_eq_zero_of_treeLike (d : X → X → ℝ)
-    (hd : IsMetric d) (htree : IsTreeLike d) (k : ℕ) (ds : Fin k → X → X → ℝ)
+    (hd : IsMetric d) (htree : FourPointCondition d) (k : ℕ) (ds : Fin k → X → X → ℝ)
     (r : X → X → ℝ) (hcanon : IsCanonicalDecomp d k ds r) :
     ∀ x y, r x y = 0
 

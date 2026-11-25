@@ -18,7 +18,7 @@
 - [Is Reconciliation](is-reconciliation.md)
 - [Is LCAReconciliation](is-lcareconciliation.md)
 - [Is Dup](is-dup.md)
-- [Δ](untitled.md)
+- [Dup Indicator](dup-indicator.md)
 - [Gd](gd.md)
 - [Loss At](loss-at.md)
 - [Gl](gl.md)

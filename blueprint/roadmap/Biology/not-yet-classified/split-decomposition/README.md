@@ -8,6 +8,5 @@
 - [Is Coherent Pair](is-coherent-pair.md)
 - [Is Split Prime](is-split-prime.md)
 - [Is Canonical Decomp](is-canonical-decomp.md)
-- [Is Tree Like](is-tree-like.md)
 - [Bandelt–Dress canonical split decomposition](exists-unique-canonical-decomp.md)
 - [Tree-like metrics are totally split-decomposable](canonical-decomp-residue-eq-zero-of-tree.md)
