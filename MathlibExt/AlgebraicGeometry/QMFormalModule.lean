@@ -63,17 +63,17 @@ universe u v
 
 namespace MvFormalGroup
 
-variable {B : Type} [CommRing B]
+variable {B : Type u} [CommRing B]
 
 /-- Evaluation of a power series at a nilpotent point, truncated at
 order `n`. -/
-def nilEval {σ : Type} [Fintype σ] [DecidableEq σ] {B' : Type} [CommRing B']
+def nilEval {σ : Type*} [Fintype σ] [DecidableEq σ] {B' : Type*} [CommRing B']
     [Algebra B B'] (n : ℕ) (φ : MvPowerSeries σ B) (a : σ → B') : B' :=
   MvPolynomial.aeval a
     (MvPowerSeries.trunc' B (Finsupp.equivFunOnFinite.symm fun _ => n) φ)
 
 /-- Multiplication of nilpotent points for a formal group. -/
-def nilMul {g : ℕ} (F : MvFormalGroup g B) {B' : Type} [CommRing B']
+def nilMul {g : ℕ} (F : MvFormalGroup g B) {B' : Type*} [CommRing B']
     [Algebra B B'] (n : ℕ) (s t : Fin g → B') : Fin g → B' :=
   fun i => nilEval n (F.toPowerSeries i) (Sum.elim s t)
 
@@ -81,17 +81,19 @@ end MvFormalGroup
 
 namespace AlgebraicGeometry.RelativeGroupLaw
 
-variable {B : Type} [CommRing B] {A : Scheme.{0}} {f : A ⟶ Spec (CommRingCat.of B)}
+variable {B : Type u} [CommRing B] {A : Scheme.{u}}
+  {f : A ⟶ Spec (CommRingCat.of B)}
 
 /-- Coordinates for the formal group of a relative group law along its
 identity section. -/
-abbrev FormalCoordinates (f : A ⟶ Spec (CommRingCat.of B)) (g : ℕ) : Type 1 :=
-  ∀ (B' : Type) [CommRing B'] [Algebra B B'], (Fin g → B') →
+abbrev FormalCoordinates (f : A ⟶ Spec (CommRingCat.of B)) (g : ℕ) :
+    Type (u + 1) :=
+  ∀ (B' : Type u) [CommRing B'] [Algebra B B'], (Fin g → B') →
     SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap B B'))) f
 
 /-- A point with values in `B'` is infinitesimal along an ideal `J` of
 `B'` if its reduction modulo `J` is the identity point. -/
-def IsInfinitesimal (L : RelativeGroupLaw B f) {B' : Type} [CommRing B']
+def IsInfinitesimal (L : RelativeGroupLaw B f) {B' : Type u} [CommRing B']
     [Algebra B B'] (J : Ideal B')
     (P : SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap B B'))) f) :
     Prop :=
@@ -109,7 +111,7 @@ bijectively onto the points infinitesimal along `J` and carry the
 truncated formal group law to the group law. -/
 def IsFormalCoordinates (L : RelativeGroupLaw B f) {g : ℕ}
     (F : MvFormalGroup g B) (θ : FormalCoordinates f g) : Prop :=
-  (∀ (B' : Type) [CommRing B'] [Algebra B B'] (B'' : Type) [CommRing B'']
+  (∀ (B' : Type u) [CommRing B'] [Algebra B B'] (B'' : Type u) [CommRing B'']
       [Algebra B B''] (φ : B' →ₐ[B] B'') (s : Fin g → B'),
       (∀ i, IsNilpotent (s i)) →
       θ B'' (φ ∘ s) = CerednikDrinfeld.QM.compPt
@@ -119,7 +121,7 @@ def IsFormalCoordinates (L : RelativeGroupLaw B f) {g : ℕ}
           congr 1
           ext x
           exact φ.commutes x) (θ B' s)) ∧
-  (∀ (B' : Type) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
+  (∀ (B' : Type u) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
       J ^ (n + 1) = ⊥ →
       (∀ s : Fin g → B', (∀ i, s i ∈ J) → L.IsInfinitesimal J (θ B' s)) ∧
       (∀ s t : Fin g → B', (∀ i, s i ∈ J) → (∀ i, t i ∈ J) →
@@ -327,14 +329,14 @@ structure IsOrderCoord {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b]) (q : ℕ)
 coordinates on the second moduli problem, evaluated through series
 `φ`, agree with the map of points induced by the morphism of moduli
 problems. -/
-def IsFormalCompletionAlong {B : Type} [CommRing B] {A A' : Scheme.{0}}
+def IsFormalCompletionAlong {B : Type u} [CommRing B] {A A' : Scheme.{u}}
     {f : A ⟶ Spec (CommRingCat.of B)} {f' : A' ⟶ Spec (CommRingCat.of B)}
     {g g' : ℕ}
     (θ : AlgebraicGeometry.RelativeGroupLaw.FormalCoordinates f g)
     (θ' : AlgebraicGeometry.RelativeGroupLaw.FormalCoordinates f' g')
     (h : A ⟶ A') (hh : h ≫ f' = f) (φ : Fin g' → MvPowerSeries (Fin g) B) :
     Prop :=
-  ∀ (B' : Type) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
+  ∀ (B' : Type u) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
     J ^ (n + 1) = ⊥ → ∀ s : Fin g → B', (∀ i, s i ∈ J) →
       θ' B' (fun i => MvFormalGroup.nilEval n (φ i) s) =
         mapPt h hh (θ B' s)
@@ -342,7 +344,7 @@ def IsFormalCompletionAlong {B : Type} [CommRing B] {A A' : Scheme.{0}}
 namespace FakeEllipticCurve
 
 variable {a b : ℚ} {Λ : Subring ℍ[ℚ, a, b]} {N : ℕ} {q : ℕ} [Fact q.Prime]
-  {B : Type} [CommRing B]
+  {B : Type u} [CommRing B]
 
 /-- A fake elliptic curve is a formal module over `X` via coordinates
 `θ` if `θ` is a formal coordinate system for `X` and the order action
@@ -352,7 +354,7 @@ def IsFormalModuleVia (E : FakeEllipticCurve Λ N B)
     (θ : AlgebraicGeometry.RelativeGroupLaw.FormalCoordinates E.f 2) :
     Prop :=
   E.L.IsFormalCoordinates X.F θ ∧
-  (∀ (B' : Type) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
+  (∀ (B' : Type u) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
     J ^ (n + 1) = ⊥ → ∀ (m : ↥Λ) (s : Fin 2 → B'), (∀ i, s i ∈ J) →
       θ B' (fun i => MvFormalGroup.nilEval n
           (CerednikDrinfeld.SpecialFormal.Series.addVia X.F (X.act (coord m).1)
