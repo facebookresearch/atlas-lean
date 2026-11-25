@@ -1,0 +1,7 @@
+# Grid embeddings and layouts
+
+- [Well-formed instances of EMBEDDING DIMENSION](well-formed.md)
+- [Host graph on ternary tuples](host.md)
+- [Feasible instances of EMBEDDING DIMENSION](embedding-dimension-feasible.md)
+- [EMBEDDING DIMENSION as a decision problem](embedding-dimension-dec.md)
+- [EMBEDDING DIMENSION is NP-complete](embedding-dimension-np-complete.md)

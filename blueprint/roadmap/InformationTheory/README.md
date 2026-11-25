@@ -20,3 +20,5 @@ independent of the input $X$, that determines the output $Y$ together with $X$.
 - [Channel simulation](channel-simulation/README.md)
 - [Error-correcting codes](error-correcting-codes/README.md)
 - [Channel coding](channel-coding/README.md)
+- [Signal processing and detection](signal-processing/README.md)
+- [Not yet classified](not-yet-classified/README.md)

@@ -479,7 +479,8 @@ private theorem finite_homogeneousSubmodule (R : Type*) [CommRing R] (d : ℕ) :
     Module.Finite R ↥(homogeneousSubmodule (Fin (n + 1)) R d) := by
   rw [MvPolynomial.homogeneousSubmodule_eq_finsupp_supported]
   haveI : Finite {x : Fin (n + 1) →₀ ℕ | x.degree = d} :=
-    ((Finsupp.finite_of_degree_le d).subset fun x (hx : x.degree = d) => le_of_eq hx).to_subtype
+    ((Finsupp.finite_of_degree_le d).subset (t := {x | x.degree = d})
+      fun x (hx : x.degree = d) => le_of_eq hx).to_subtype
   exact Module.Finite.of_basis (MvPolynomial.basisRestrictSupport R {x : Fin (n + 1) →₀ ℕ |
     x.degree = d})
 
@@ -550,7 +551,7 @@ private theorem J'_le : J' h P e ≤ P.I := Ideal.span_le.mpr fun _ hp => hp.1
 
 private theorem J'_generated : ∃ s : Set (MvPolynomial (Fin (n + 1)) A), (∀ p ∈ s, p.IsHomogeneous
   e) ∧ J' h P e = Ideal.span s :=
-  ⟨_, fun _ hp => hp.2, rfl⟩
+  ⟨{p | p ∈ P.I ∧ p.IsHomogeneous e}, fun _ hp => hp.2, rfl⟩
 
 private theorem J'_homogeneous : ∀ p ∈ J' h P e, ∀ d : ℕ, homogeneousComponent d p ∈ J' h P e :=
   span_homogeneous A _ e fun _ hp => hp.2
@@ -731,7 +732,7 @@ public theorem Point.I_eq_span_of_forall_finrank_piece_succ_le
   rcases subsingleton_or_nontrivial A with hA | hA
   · haveI : Subsingleton (MvPolynomial (Fin (n + 1)) A) := inferInstance
     exact Subsingleton.elim _ _
-  apply le_antisymm _ (Ideal.span_le.mpr fun _ hp => hp.1)
+  refine le_antisymm ?_ (Ideal.span_le.mpr fun _ hp => hp.1)
   have hgood : ∀ d, ∀ q ∈ P.I, q.IsHomogeneous d →
       q ∈ Ideal.span {p | p ∈ P.I ∧ p.IsHomogeneous m} := by
     intro d
@@ -745,7 +746,8 @@ public theorem Point.I_eq_span_of_forall_finrank_piece_succ_le
       | succ e hme ih =>
         intro q hqI hq
         have hqJ := HilbGenH2c.mem_J'_of_mem h P e (h₂ e hme) q hqI hq
-        exact (Ideal.span_le.mpr fun p hp => ih (by omega) p hp.1 hp.2) hqJ
+        refine Ideal.span_le.mpr ?_ hqJ
+        exact fun p hp => ih (by omega) p hp.1 hp.2
   intro p hp
   rw [← sum_homogeneousComponent p]
   exact Ideal.sum_mem _ fun d _ => hgood d _ (P.homogeneous p hp d)

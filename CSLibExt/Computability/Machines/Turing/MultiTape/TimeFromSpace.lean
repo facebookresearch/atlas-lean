@@ -6,6 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` (CSLib v4.35.0, commit
+`5b56df99362532c46e1175381fbbdd755bd56030`):
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Reitwiessner, Samuel Schlesinger, Aviv Bar Natan
+
+`Cslib/Computability/Machines/Turing/MultiTape/ConfigBound.lean` (CSLib v4.35.0, commit
+`5b56df99362532c46e1175381fbbdd755bd56030`):
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Reitwiessner
+-/
+
 module
 
 public import Cslib.Computability.Machines.Turing.MultiTape.ConfigBound
@@ -23,11 +39,67 @@ The write-only output tape is excluded from the core, as in CSLib's
 `exists_exponential_time_bound` chooses its constants before every input and
 space budget. Halting remains a hypothesis: bounded space alone permits loops.
 These results use the existing multi-tape machine and resource predicates.
+
+CSLib v4.36.0 (leanprover/cslib#1117) dropped the space of a deterministic run,
+`MultiTapeTM.spaceUsed` with `MultiTapeTM.visitedByTapeHead` and `MultiTapeTM.spaceUsedByTape`,
+in favour of the space of computation paths, and dropped `core_step_eq_of_core_eq`. Those of them
+that ATLAS uses are restated below, unchanged and in their original namespace, from
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` and `ConfigBound.lean` of
+CSLib v4.35.0 (commit `5b56df99362532c46e1175381fbbdd755bd56030`), whose copyright and authors
+are given at the top of this file; the others, such as `spaceUsedByTape_le_spaceUsed`, are not.
 -/
 
 @[expose] public section
 
 set_option autoImplicit false
+
+namespace Turing
+
+section
+
+variable {k : ℕ} {State Symbol : Type*} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
+
+/-- `step` never reads the output tape, so the core of the next configuration is determined by the
+core of the current one. -/
+lemma core_step_eq_of_core_eq {c₁ c₂ : Cfg k Symbol State input} (h : c₁.core = c₂.core) :
+    (tm.step c₁).core = (tm.step c₂).core := by
+  rcases c₁ with ⟨q₁, i₁, w₁, p₁, out₁⟩
+  rcases c₂ with ⟨q₂, i₂, w₂, p₂, out₂⟩
+  simp only [Cfg.core, Cfg.storage, Prod.mk.injEq, Storage.mk.injEq] at h
+  obtain ⟨rfl, rfl, rfl, rfl⟩ := h
+  cases q₁ with
+  | none => rw [MultiTapeTM.step_of_halt rfl, MultiTapeTM.step_of_halt rfl]; rfl
+  | some q => rw [MultiTapeTM.step_of_state rfl, MultiTapeTM.step_of_state rfl]; rfl
+
+end
+
+namespace MultiTapeTM
+
+variable {k : ℕ} {State Symbol : Type*} {tm : MultiTapeTM k Symbol State} {input : List Symbol}
+
+/-- The set of positions visited by the head of work tape `i` in the computation starting from
+configuration `cfg` up to step `t`. -/
+noncomputable def visitedByTapeHead (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
+    Finset ℤ :=
+  Finset.univ.image fun n : Fin (t + 1) => (tm.runFrom cfg n).workTapePos i
+
+/--
+The number of work tape cells visited by the head of tape `i` in the computation starting from
+configuration `cfg` up to step `t`.
+-/
+noncomputable def spaceUsedByTape (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) : ℕ :=
+  (tm.visitedByTapeHead cfg t i).card
+
+/--
+The number of work tape cells visited by a computation starting from configuration
+`cfg` up to step `t`.
+-/
+noncomputable def spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) : ℕ :=
+  ∑ i, tm.spaceUsedByTape cfg t i
+
+end MultiTapeTM
+
+end Turing
 
 namespace Cslib.Turing.MultiTapeTM
 
@@ -80,7 +152,14 @@ theorem haltTime_lt_coreBound [Fintype Symbol] [Fintype State] {s T : ℕ}
       _ ≤ (Set.range fun t => (tm.runFrom (tm.initCfg input) t).core).encard :=
         Set.encard_le_encard_of_injOn
           (fun i _ => ⟨i, rfl⟩) (fun i _ j _ h => hi h)
-  have hb := hcard.trans (tm.encard_cores_le hs)
+  have hspace : tm.RunsInSpace input s := fun p => by
+    rw [p.eq_ofDeterministic]
+    exact hs _
+  have hsub : (Set.range fun t => (tm.runFrom (tm.initCfg input) t).core) ⊆
+      Set.range fun p : tm.ComputationPath input => p.last.core := by
+    rintro _ ⟨t, rfl⟩
+    exact ⟨.ofDeterministic tm input t, rfl⟩
+  have hb := hcard.trans ((Set.encard_le_encard hsub).trans (tm.encard_cores_le hspace))
   have hn : T + 1 ≤ (input.length + 2) * storageBound Symbol State k s := by
     exact_mod_cast hb
   omega

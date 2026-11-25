@@ -269,7 +269,7 @@ theorem mul_stirlingVMatrix_apply {n : ℕ} (M : Matrix (Fin n) (Fin n) ℚ)
     · subst hcb
       simp [stirlingVMatrix]
     · simp [stirlingVMatrix, hcb]
-  simp only [mul_apply, hV, mul_add, sum_add_distrib, mul_ite, mul_zero,
+  simp only [Matrix.mul_apply, hV, mul_add, sum_add_distrib, mul_ite, mul_zero,
     mul_one, sum_ite_eq, mem_univ, ite_true]
   congr 1
   split_ifs with h
@@ -293,7 +293,7 @@ theorem stirlingVMatrix_mul_apply {n : ℕ} (M : Matrix (Fin n) (Fin n) ℚ)
     · subst hab
       simp [stirlingVMatrix]
     · simp [stirlingVMatrix, Ne.symm hab, hab]
-  simp only [mul_apply, hV, add_mul, sum_add_distrib, ite_mul, zero_mul,
+  simp only [Matrix.mul_apply, hV, add_mul, sum_add_distrib, ite_mul, zero_mul,
     one_mul, sum_ite_eq, mem_univ, ite_true]
   congr 1
   split_ifs with h
@@ -307,7 +307,7 @@ theorem stirlingVMatrix_mul_apply {n : ℕ} (M : Matrix (Fin n) (Fin n) ℚ)
 theorem stirlingVMatrix_mul_stirlingVTildeMatrix (n : ℕ) :
     stirlingVMatrix n * stirlingVTildeMatrix n = 1 := by
   ext a c
-  rw [stirlingVMatrix_mul_apply, one_apply]
+  rw [stirlingVMatrix_mul_apply, Matrix.one_apply]
   simp only [stirlingVTildeMatrix, of_apply, Fin.le_def]
   rcases lt_trichotomy a.val c.val with h | h | h
   · obtain ⟨d, hd⟩ : ∃ d, c.val = a.val + 1 + d :=
@@ -361,7 +361,7 @@ theorem stirlingVMatrix_pow_apply_of_le {n : ℕ} (m : ℕ) {a b : Fin n}
     (h : b ≤ a) :
     (stirlingVMatrix n ^ m) a b = if a = b then (a.val + 1 : ℚ) ^ m else 0 := by
   induction m generalizing b with
-  | zero => simp [one_apply]
+  | zero => simp [Matrix.one_apply]
   | succ m ih =>
     have hz : (if hb : b.val = 0 then (0 : ℚ) else
         (stirlingVMatrix n ^ m) a ⟨b.val - 1, by omega⟩) = 0 := by
@@ -398,7 +398,7 @@ theorem stirlingFirstMatrix_mul_stirlingMatrix2 (n : ℕ) :
   rw [sum_range_succ', signedStirlingFirst_succ_zero, zero_mul, add_zero]
     at h
   push_cast at h
-  rw [mul_apply, one_apply]
+  rw [Matrix.mul_apply, Matrix.one_apply]
   simp only [stirlingFirstMatrix, stirlingMatrix2, of_apply]
   rw [Fin.sum_univ_eq_sum_range (fun k => (signedStirlingFirst (a.val + 1)
       (k + 1) : ℚ) * (Nat.stirlingSecond (k + 1) (b.val + 1) : ℚ)) n,
@@ -695,7 +695,7 @@ theorem stirlingMatrix2_mul_sub_one (n : ℕ) :
     stirlingMatrix2 n * (stirlingVMatrix n - 1) =
       shiftedVandermondeMatrix n * stirlingQMatrix 1 n := by
   ext a c
-  rw [mul_stirlingVMatrix_sub_one_apply, mul_apply]
+  rw [mul_stirlingVMatrix_sub_one_apply, Matrix.mul_apply]
   trans (Nat.stirlingSecond (a.val + 1 + 1) (c.val + 1) : ℚ) -
     Nat.stirlingSecond (a.val + 1) (c.val + 1)
   · simp only [stirlingMatrix2, of_apply]
@@ -758,7 +758,7 @@ theorem sum_signedStirlingFirst_mul_stirlingSecond_add {i j : ℕ} (hj : 1 ≤ j
     (stirlingFirstMatrix_mul_stirlingSecondShiftMatrix m (i + 1))
     ⟨i, by omega⟩) ⟨j, by omega⟩
   rw [stirlingVMatrix_pow_apply_of_le m (Fin.le_def.2 (show j ≤ i by omega)),
-    mul_apply] at h
+    Matrix.mul_apply] at h
   simp only [stirlingFirstMatrix, stirlingSecondShiftMatrix, of_apply,
     Fin.mk.injEq] at h
   rw [sum_fin_eq_sum_Icc (fun k => (signedStirlingFirst (i + 1) k : ℚ) *
@@ -794,12 +794,12 @@ theorem sum_sum_stirlingSecond_signedStirlingFirst_eq_ite {i j n : ℕ}
   have h := congrFun (congrFun
     (stirlingSecondShiftMatrix_mul_stirlingVTildeMatrix_pow_mul 1 n)
     ⟨i, by omega⟩) ⟨j, by omega⟩
-  rw [one_apply, pow_one] at h
+  rw [Matrix.one_apply, pow_one] at h
   simp only [Fin.mk.injEq] at h
   simp only [Nat.add_right_cancel_iff]
-  rw [← h, mul_apply, ← sum_fin_eq_sum_Icc]
+  rw [← h, Matrix.mul_apply, ← sum_fin_eq_sum_Icc]
   refine sum_congr rfl fun c _ => ?_
-  rw [sum_Icc_eq_sum_Icc_one_ite (by omega), ← sum_fin_eq_sum_Icc, mul_apply,
+  rw [sum_Icc_eq_sum_Icc_one_ite (by omega), ← sum_fin_eq_sum_Icc, Matrix.mul_apply,
     mul_sum]
   refine sum_congr rfl fun d _ => ?_
   simp only [stirlingSecondShiftMatrix, stirlingVTildeMatrix,
@@ -837,7 +837,7 @@ theorem sum_stirlingSecond_succ_eq_ite {i j : ℕ} (hi : 1 ≤ i) :
   have h := congrFun (congrFun
     (stirlingSecondShiftMatrix_one_mul_stirlingVTildeMatrix n)
     ⟨i, by omega⟩) ⟨j, by omega⟩
-  simp only [mul_apply, stirlingMatrix2, of_apply] at h
+  simp only [Matrix.mul_apply, stirlingMatrix2, of_apply] at h
   let g : ℕ → ℚ := fun k =>
     (if k ≤ j + 1 then (-1 : ℚ) ^ (j + 1 - k) * ((k - 1).factorial : ℚ) /
       ((j + 1).factorial : ℚ) else 0) * (Nat.stirlingSecond (i + 1 + 1) k : ℚ)
@@ -893,7 +893,7 @@ theorem sum_sum_stirlingSecond_signedStirlingFirst_stirlingSecond {i j n : ℕ}
       Nat.cast_zero, mul_zero]
   have h := congrFun (congrFun (stirlingSecondShiftMatrix_add m₁ m₂ n)
     ⟨i, by omega⟩) ⟨j, by omega⟩
-  rw [mul_assoc, mul_apply] at h
+  rw [mul_assoc, Matrix.mul_apply] at h
   simp only [stirlingSecondShiftMatrix, of_apply] at h
   have key : ∑ k₁ ∈ Icc 1 n, ∑ k₂ ∈ Icc 1 k₁,
       (Nat.stirlingSecond (i + 1 + m₁) k₁ : ℚ) *
@@ -903,7 +903,7 @@ theorem sum_sum_stirlingSecond_signedStirlingFirst_stirlingSecond {i j n : ℕ}
     rw [add_assoc (i + 1) m₁ m₂, h, ← sum_fin_eq_sum_Icc]
     refine sum_congr rfl fun c _ => ?_
     rw [sum_subset (Icc_subset_Icc_right (show c.val + 1 ≤ n by omega)),
-      ← sum_fin_eq_sum_Icc, mul_apply, mul_sum]
+      ← sum_fin_eq_sum_Icc, Matrix.mul_apply, mul_sum]
     · refine sum_congr rfl fun d _ => ?_
       simp only [stirlingFirstMatrix, of_apply]
       ring

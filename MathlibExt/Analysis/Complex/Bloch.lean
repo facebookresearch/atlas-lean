@@ -293,7 +293,7 @@ theorem bloch
   have hinj : Set.InjOn f S := happrox.injOn hside
   let R : (↑L : ℂ →L[ℂ] ℂ).NonlinearRightInverse :=
     { toFun := fun y => y * (↑u⁻¹ : ℂ),
-      nnnorm := NNReal.mk (M⁻¹) (inv_nonneg.mpr hMnn),
+      nnNorm := NNReal.mk (M⁻¹) (inv_nonneg.mpr hMnn),
       bound' := by
         intro y
         simp only [NNReal.coe_mk]
@@ -306,7 +306,7 @@ theorem bloch
         calc (y * (↑u⁻¹ : ℂ)) * deriv f a = y * ((↑u⁻¹ : ℂ) * ↑u) := by
                 rw [mul_assoc, ← huval]
           _ = y := by rw [mul_comm (↑u⁻¹ : ℂ) (↑u : ℂ), hurel, mul_one] }
-  have hRnn : ((R.nnnorm : NNReal) : ℝ) = M⁻¹ := rfl
+  have hRnn : ((R.nnNorm : NNReal) : ℝ) = M⁻¹ := rfl
   set ε : ℝ := ρ / 2 with hεdef
   have hεnn : (0 : ℝ) ≤ ε := by
     rw [hεdef]; linarith
@@ -316,14 +316,14 @@ theorem bloch
     rw [hSdef]
     exact Metric.closedBall_subset_ball hερ
   have hsurj := happrox.surjOn_closedBall_of_nonlinearRightInverse R hεnn hball_sub
-  have hrad : (1 / 128 : ℝ) ≤ ((↑R.nnnorm)⁻¹ - ↑c) * ε := by
+  have hrad : (1 / 128 : ℝ) ≤ ((↑R.nnNorm)⁻¹ - ↑c) * ε := by
     have heq : ((M⁻¹)⁻¹ - M / 2) * ((t / 8) / 2) = (t * M) / 32 := by
       rw [inv_inv]; ring
     rw [hRnn, hcR, hεdef, hρdef, heq]
     linarith
   have himg : Metric.closedBall (f a) (1 / 128) ⊆ f '' S := by
     have hsub : Metric.closedBall (f a) (1 / 128) ⊆
-        Metric.closedBall (f a) (((↑R.nnnorm)⁻¹ - ↑c) * ε) :=
+        Metric.closedBall (f a) (((↑R.nnNorm)⁻¹ - ↑c) * ε) :=
       Metric.closedBall_subset_closedBall hrad
     intro y hy
     obtain ⟨x, hx, hfx⟩ := hsurj (hsub hy)
