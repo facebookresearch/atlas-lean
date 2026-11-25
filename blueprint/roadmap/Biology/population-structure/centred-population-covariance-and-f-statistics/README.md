@@ -28,3 +28,6 @@
 
 - [f2, independent-lineage distance and average network distance differ on admixture graphs](f2-drift-metric-versus-network-average-distance.md)
 - [Which drift models have the f-statistics of a star tree](f-equivalence-classes-of-drift-models.md)
+
+- [Subgraph swaps that preserve f-statistics](subgraph-swap-non-identifiability-transferred-to.md)
+- [Admixture of a population is not a robust feature of exact three-population fits](topological-features-shared-by-all-near-optimal.md)
