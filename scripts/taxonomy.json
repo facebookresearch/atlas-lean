@@ -18437,7 +18437,899 @@
   "MathlibExt/RingTheory/Etale/GraphLocalRing": {"to": "RingTheory/local-rings", "title": "The actual local graph of an étale algebra"},
   "MathlibExt/RingTheory/Localization/AtPrimeFlatQuotient": {"to": "RingTheory/modules", "title": "Actual local isomorphisms of flat quotient maps"},
   "MathlibExt/RingTheory/Morita/Finite": {"to": "RingTheory/modules", "title": "Finite"},
-  "MathlibExt/RingTheory/Smooth/GraphFlatProjection": {"to": "RingTheory/algebras-and-differentials", "title": "The genuine flat projection of an original graph"}
+  "MathlibExt/RingTheory/Smooth/GraphFlatProjection": {"to": "RingTheory/algebras-and-differentials", "title": "The genuine flat projection of an original graph"},
+    "MathlibExt/Algebra/Category/CommAlgCat/FiniteEtale/SeparableClosure": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Finite étale neighborhoods of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldFiniteEtaleBasis": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Finite étale neighborhoods of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldFiniteGaloisNeighborhoods": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Finite étale neighborhoods of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldFiniteGaloisStalkColimit": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Finite étale neighborhoods of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGeometricClosureComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Geometric field stalks and Galois actions"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGeometricStalkConservativity": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Geometric field stalks and Galois actions"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGeometricStalkGaloisAction": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Geometric field stalks and Galois actions"
+    },
+    "MathlibExt/RepresentationTheory/Continuous/ContinuousActionBridge": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Geometric field stalks and Galois actions"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldEquivariantStalkAdjunction": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Equivariant stalk adjunctions"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldEquivariantStalkCounitIsomorphism": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Equivariant stalk adjunctions"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGaloisSkyscraperComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Skyscraper sheaves and Galois invariants"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldInvariantSkyscraperInverseSheaf": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Skyscraper sheaves and Galois invariants"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldSheafGaloisEquivalence": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Skyscraper sheaves and Galois invariants"
+    },
+    "MathlibExt/CategoryTheory/Sites/Point/SkyscraperGerms": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Skyscraper sheaves and Galois invariants"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGlobalSectionsPullback": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldInverseImageStalks": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleCoefficientLiftExactness": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleDerivedGammaPullback": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleInverseImageExactness": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleInverseImageGerms": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleLocalShortExact": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Inverse images and local exactness over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/EtaleGaloisCohomologyComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Field cohomology and invariant sections"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldDerivedSectionsInvariants": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Field cohomology and invariant sections"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGammaCohomologyComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Field cohomology and invariant sections"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGlobalSectionsInvariants": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Field cohomology and invariant sections"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldModuleCohomologyCategory": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Field cohomology and invariant sections"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldContinuousCohomologyDerivedInvariants": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Derived continuous cohomology of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldInjectiveContinuousCochainAcyclicity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Derived continuous cohomology of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleDerivedConnectingComparison": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Derived continuous cohomology of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleDerivedSectionCycles": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Derived continuous cohomology of fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldCohomologyUniverseComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Functoriality of field cohomology"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldSiteModuleCohomologyNaturality": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Functoriality of field cohomology"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldPointTensorCoefficients": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cohomology coefficients for fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldTensorCoefficientRestriction": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cohomology coefficients for fields"
+    },
+    "MathlibExt/FieldTheory/Galois/RestrictedCoefficientMaps": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cohomology coefficients for fields"
+    },
+    "MathlibExt/FieldTheory/Galois/UnitsContinuousModule": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cohomology coefficients for fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldCanonicalCoindResolution": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldCanonicalCoindResolutionNaturality": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldCoinductionCochainNaturality": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementCofacePairingCoherence": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementCoindCoaugmentation": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementCoindCochainComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementProductCollapse": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldPointCoindMonadComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Coinduction and Godement resolutions over fields"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/AlternatingCofaceCoefficientComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/CanonicalPointClosureJoin": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/CanonicalPointTensorJoin": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/CanonicalPrescribedMonadPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/CanonicalPrescribedPointTensorPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/CanonicalPrescribedSkyscraperPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementCanonicalTensorPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementPrescribedPointMonad": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementPrescribedTensorPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementProjectionCharacteristics": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementProjectionData": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementProjectionTensorNaturality": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementTensorProjection": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldGodementTensorProjectionComparison": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/FieldPointSkyscraperTensorPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleGodementCupProduct": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/AlgebraicGeometry/Sites/SmallEtaleGodementTensorPairing": {
+      "to": "CategoryTheory/sites-and-sheaves",
+      "title": "Godement tensor pairings and geometric points"
+    },
+    "MathlibExt/Algebra/Category/ModuleCat/Topology/Homology": {
+      "to": "Topology/topological-modules",
+      "title": "Homology of topological modules"
+    },
+    "MathlibExt/Algebra/Category/ModuleCat/Topology/Zero": {
+      "to": "Topology/topological-modules",
+      "title": "Homology of topological modules"
+    },
+    "MathlibExt/RepresentationTheory/Continuous/ContinuousHomology": {
+      "to": "Topology/topological-modules",
+      "title": "Homology of topological modules"
+    },
+    "MathlibExt/Topology/ContinuousMap/CompactDiscrete": {
+      "to": "Topology/topological-modules",
+      "title": "Homology of topological modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteAbelian": {
+      "to": "RepresentationTheory/lie-and-topological-representations",
+      "title": "Discrete actions and invariant modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteAbelianShortExact": {
+      "to": "RepresentationTheory/lie-and-topological-representations",
+      "title": "Discrete actions and invariant modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteTopRep": {
+      "to": "RepresentationTheory/lie-and-topological-representations",
+      "title": "Discrete actions and invariant modules"
+    },
+    "MathlibExt/CategoryTheory/Action/Invariants": {
+      "to": "RepresentationTheory/lie-and-topological-representations",
+      "title": "Discrete actions and invariant modules"
+    },
+    "MathlibExt/CategoryTheory/Action/Trivial": {
+      "to": "RepresentationTheory/lie-and-topological-representations",
+      "title": "Discrete actions and invariant modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionAdjunction": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionCoefficientNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionCoresolution": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionInvariantPowers": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionMonad": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionNativeAcyclicity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/CategoryTheory/Action/DiscreteCoinductionShortExact": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/CoefficientFunctor": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/CoinducedAcyclicity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/CoinducedDiscreteAction": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/CoinducedRetractAcyclicity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/CoinductionInvariantEvaluation": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/CoinductionInvariantExactness": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/DiscreteCoinductionExactness": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Coinduced coefficient modules"
+    },
+    "MathlibExt/RepresentationTheory/Continuous/ContinuousCocycleClass": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Continuous/ContinuousCocycleRepresentative": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Continuous/FiniteQuotientFactorization": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/ContinuousInhomogeneousCochains": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/FiniteTupleEquiv": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/FiniteTupleEvaluation": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/InvariantHomogeneousComplex": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/NativeZeroCochainClasses": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/UniverseComparison": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/ZeroIsoNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Continuous cochains and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientLongExact": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Long exact sequences of continuous cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientCupAssociativity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cup products in continuous group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientCupGroupNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cup products in continuous group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientCupProduct": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cup products in continuous group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/ContCohomology/DiscreteCoefficientTensor": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cup products in continuous group cohomology"
+    },
+    "MathlibExt/CategoryTheory/Monad/TopologicalClassifyingBar": {
+      "to": "GroupTheory/profinite-and-topological-groups",
+      "title": "Topological classifying bars"
+    },
+    "MathlibExt/CategoryTheory/Adjunction/ComparisonMonadIso": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/Monad/CartesianClassifyingBar": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/Monad/CartesianClassifyingBarNaturality": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/Monad/ClassifyingBundle": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/Monad/ClassifyingNerveData": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/Monad/CrossPowerTransport": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/Monad/TensorMonadNaturality": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/NatIso/ComparisonCoherence": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Classifying bars and monad comparisons"
+    },
+    "MathlibExt/CategoryTheory/NerveHomotopy": {
+      "to": "CategoryTheory/higher-categories",
+      "title": "Nerve homotopies"
+    },
+    "MathlibExt/AlgebraicTopology/SimplicialObject/AlexanderWhitney/Coassociativity": {
+      "to": "CategoryTheory/homological-algebra/complexes-and-homology",
+      "title": "Simplicial chains and diagonal maps"
+    },
+    "MathlibExt/AlgebraicTopology/SimplicialObject/AlexanderWhitney/Counit": {
+      "to": "CategoryTheory/homological-algebra/complexes-and-homology",
+      "title": "Simplicial chains and diagonal maps"
+    },
+    "MathlibExt/AlgebraicTopology/SimplicialObject/DataEvaluation": {
+      "to": "CategoryTheory/homological-algebra/complexes-and-homology",
+      "title": "Simplicial chains and diagonal maps"
+    },
+    "MathlibExt/AlgebraicTopology/SimplicialSet/ChainComplexFreeModule": {
+      "to": "CategoryTheory/homological-algebra/complexes-and-homology",
+      "title": "Simplicial chains and diagonal maps"
+    },
+    "MathlibExt/Algebra/Homology/CochainGradedPairingConnector": {
+      "to": "CategoryTheory/monoidal-categories",
+      "title": "Tensor powers and graded pairings"
+    },
+    "MathlibExt/Algebra/Homology/CochainGradedPairingDifferential": {
+      "to": "CategoryTheory/monoidal-categories",
+      "title": "Tensor powers and graded pairings"
+    },
+    "MathlibExt/CategoryTheory/Monoidal/TensorPowerFunctor": {
+      "to": "CategoryTheory/monoidal-categories",
+      "title": "Tensor powers and graded pairings"
+    },
+    "MathlibExt/CategoryTheory/Monoidal/TensorPowers": {
+      "to": "CategoryTheory/monoidal-categories",
+      "title": "Tensor powers and graded pairings"
+    },
+    "MathlibExt/RepresentationTheory/Rep/ResTensor": {
+      "to": "CategoryTheory/monoidal-categories",
+      "title": "Tensor powers and graded pairings"
+    },
+    "MathlibExt/RepresentationTheory/Rep/ZModRestrictTensor": {
+      "to": "CategoryTheory/monoidal-categories",
+      "title": "Tensor powers and graded pairings"
+    },
+    "MathlibExt/GroupTheory/SchreierTransversal": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transversals and bar homotopies"
+    },
+    "MathlibExt/GroupTheory/SchreierTransversalComposition": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transversals and bar homotopies"
+    },
+    "MathlibExt/GroupTheory/SchreierTransversalEquiv": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transversals and bar homotopies"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierPrismHomotopy": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transversals and bar homotopies"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferInducedBar": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transversals and bar homotopies"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/Homology": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group homology and Shapiro comparisons"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierShapiroComparison": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group homology and Shapiro comparisons"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ShapiroCorestriction": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group homology and Shapiro comparisons"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupHomology/DerivedCoinvariants": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group homology and Shapiro comparisons"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupHomology/InfiniteCyclic": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group homology and Shapiro comparisons"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupHomology/NerveComparison": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group homology and Shapiro comparisons"
+    },
+    "MathlibExt/RepresentationTheory/Homological/NormalizedBar/Basic": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Normalized bar resolutions"
+    },
+    "MathlibExt/RepresentationTheory/Homological/NormalizedBar/Linear": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Normalized bar resolutions"
+    },
+    "MathlibExt/RepresentationTheory/Homological/NormalizedBar/NativeBar": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Normalized bar resolutions"
+    },
+    "MathlibExt/RepresentationTheory/Homological/NormalizedBar/Normalization": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Normalized bar resolutions"
+    },
+    "MathlibExt/RepresentationTheory/Homological/NormalizedBar/Quotient": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Normalized bar resolutions"
+    },
+    "MathlibExt/RepresentationTheory/Homological/NormalizedBar/ShuffleTuples": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Normalized bar resolutions"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionComparison": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionIso": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionQuadraticCup": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionQuotientFormula": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicOddResolutionIso": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicPermutationConnector": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteCyclicH3Invariant": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteCyclicOddVanishing": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Rep/CyclicPermutation": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Rep/CyclicPermutationCoinduced": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Cyclic resolutions and permutation coefficients"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteGroupAveragingArbitrary": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Averaging and Sylow restriction in cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteGroupAveragingH23": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Averaging and Sylow restriction in cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionSylow": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Averaging and Sylow restriction in cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionSylowArbitrary": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Averaging and Sylow restriction in cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionSylowH3": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Averaging and Sylow restriction in cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupCocycleOneOne": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupCocycleOneTwo": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneAny": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneAnyAssociativity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOne": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneFunctoriality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneMap": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneMapOfHom": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneTwo": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneTwoConnector": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneTwoFunctoriality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneTwoNestedFunctoriality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProduct": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProductAssociativity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProductCochainLowDegree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProductConnector": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProductDegreeTransport": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProductLowDegree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupProductNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Group cohomology cup products and representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/IteratedCup": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Iterated cup products"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/IteratedCupCons": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Iterated cup products"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/IteratedCupRestriction": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Iterated cup products"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionCupOneTwo": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionEquiv": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH1": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH2": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3Equiv": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3Naturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3Transitivity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3ZModRestrict": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionInjective": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionIteratedCup": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionTransitivity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionZModRestrict": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Corestriction in group cohomology"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestriction": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Restriction, corestriction, and pullback"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestrictionArbitrary": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Restriction, corestriction, and pullback"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestrictionH3": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Restriction, corestriction, and pullback"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestrictionH3Canonical": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Restriction, corestriction, and pullback"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierSurjectivePullback": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Restriction, corestriction, and pullback"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupOneAnyProjection": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Transfer and cup projection formulas"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupOneTwoProjection": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Transfer and cup projection formulas"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupProjection": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Transfer and cup projection formulas"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeThree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree transfer representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeThreeIndependence": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree transfer representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeThreeNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree transfer representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeTwo": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree transfer representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeTwoIndependence": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree transfer representatives"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransfer": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitrary": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitraryDifferential": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitraryEquiv": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitraryIndependence": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitraryLowDegree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitraryNaturality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferArbitraryTransitivity": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferIndependence": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferNorm": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Schreier transfer, choices, and norms"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeMapRepresentative": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeThree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeThreeFunctoriality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeThreeHomologyIso": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictCupOneOne": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictCupOneTwo": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictDegreeThree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictDegreeThreeFunctoriality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictFunctoriality": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictLowDegree": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Rep/ZModRestrict": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    },
+    "MathlibExt/RepresentationTheory/Rep/ZModRestrictRes": {
+      "to": "RepresentationTheory/group-cohomology",
+      "title": "Low-degree cohomology and scalar restriction"
+    }
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",

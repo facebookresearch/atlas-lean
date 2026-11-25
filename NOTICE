@@ -952,3 +952,122 @@ New semilinear finite-factor client:
   MathlibExtTest/LinearAlgebra/TensorProduct/HomFiniteFactorSemilinearTests.lean
 
 Author: @toskua
+
+General field, site and group cohomology API sources
+--------------------------------------------------
+
+The following original headers/authorship are preserved in the added source files.
+
+Files:
+
+  MathlibExt/AlgebraicGeometry/Sites/FieldGlobalSectionsInvariants.lean
+  MathlibExt/AlgebraicGeometry/Sites/FieldModuleCohomologyCategory.lean
+  MathlibExt/CategoryTheory/Action/DiscreteTopRep.lean
+  MathlibExt/CategoryTheory/Action/Invariants.lean
+
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @toskua, Avocado
+-/
+
+Files:
+
+  MathlibExt/AlgebraicTopology/SimplicialObject/DataEvaluation.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ChainComplexFreeModule.lean
+  MathlibExt/CategoryTheory/Monad/ClassifyingBundle.lean
+  MathlibExt/CategoryTheory/Monad/ClassifyingNerveData.lean
+  MathlibExt/CategoryTheory/Monad/TopologicalClassifyingBar.lean
+  MathlibExt/CategoryTheory/Monoidal/TensorPowers.lean
+  MathlibExt/CategoryTheory/NerveHomotopy.lean
+
+/-
+Author: @toskua, Avocado
+-/
+
+Files:
+
+  MathlibExt/RepresentationTheory/Continuous/ContinuousCocycleClass.lean
+  MathlibExt/RepresentationTheory/Continuous/ContinuousCocycleRepresentative.lean
+  MathlibExt/RepresentationTheory/Continuous/ContinuousHomology.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionComparison.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionIso.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionQuadraticCup.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicEvenResolutionQuotientFormula.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CyclicOddResolutionIso.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteCyclicH3Invariant.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteCyclicOddVanishing.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/FiniteGroupAveragingH23.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeThreeHomologyIso.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionCupOneTwo.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionEquiv.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH1.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH2.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3Equiv.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3Naturality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionH3Transitivity.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierCorestrictionNaturality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestriction.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestrictionH3.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionCorestrictionH3Canonical.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionSylow.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierRestrictionSylowH3.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferCupOneTwoProjection.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeThree.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeThreeIndependence.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeThreeNaturality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeTwo.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferDegreeTwoIndependence.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferIndependence.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/SchreierTransferNorm.lean
+
+/-
+  Author: @toskua, Avocado
+-/
+
+Files:
+
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneFunctoriality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneMapOfHom.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneOneNaturality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneTwoFunctoriality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/CupOneTwoNestedFunctoriality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeMapRepresentative.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/LowDegreeThree.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictCupOneOne.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictCupOneTwo.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictDegreeThree.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictDegreeThreeFunctoriality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictFunctoriality.lean
+  MathlibExt/RepresentationTheory/Homological/GroupCohomology/ZModRestrictLowDegree.lean
+  MathlibExt/RepresentationTheory/Homological/GroupHomology/InfiniteCyclic.lean
+  MathlibExt/RepresentationTheory/Rep/ZModRestrict.lean
+
+/-
+  Author: @toskua
+-/
+
+Files:
+
+  MathlibExt/RepresentationTheory/Homological/GroupHomology/DerivedCoinvariants.lean
+  MathlibExt/RepresentationTheory/Homological/NormalizedBar/Basic.lean
+  MathlibExt/RepresentationTheory/Homological/NormalizedBar/Linear.lean
+  MathlibExt/RepresentationTheory/Homological/NormalizedBar/Normalization.lean
+  MathlibExt/RepresentationTheory/Homological/NormalizedBar/Quotient.lean
+  MathlibExt/RepresentationTheory/Homological/NormalizedBar/ShuffleTuples.lean
+  MathlibExtTest/RepresentationTheory/Homological/NormalizedBar/Linear.lean
+
+/-
+Author: @toskua
+-/
+
+Files:
+
+  MathlibExt/RepresentationTheory/Homological/NormalizedBar/NativeBar.lean
+
+/-
+Copyright (c) 2022 Amelia Livingston. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Author: @toskua
+-/
