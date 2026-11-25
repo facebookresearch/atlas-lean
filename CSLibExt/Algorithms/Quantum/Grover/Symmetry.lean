@@ -25,7 +25,10 @@ open scoped BigOperators
 
 namespace Cslib.Grover
 
-/-- An amplitude vector constant on the marked and unmarked outcomes. -/
+/-- **Symmetric amplitude vector.** Let $M$ be a set of marked elements of a search space
+$\alpha$, and let $a, b \in \mathbb{R}$. The symmetric amplitude vector with marked amplitude $a$
+and unmarked amplitude $b$ is the real amplitude vector on $\alpha$ whose value is $a$ at every
+element of $M$ and $b$ at every element outside $M$. -/
 def symmetricAmplitude {α : Type*} [DecidableEq α] (marked : Finset α)
     (markedAmplitude unmarkedAmplitude : ℝ) : Amplitude α :=
   fun x => if x ∈ marked then markedAmplitude else unmarkedAmplitude
@@ -85,7 +88,12 @@ theorem meanAmplitude_symmetricAmplitude {α : Type*} [Fintype α]
         Fintype.card α := by
   rw [meanAmplitude, sum_symmetricAmplitude]
 
-/-- Mean after phase inversion of a symmetric state. -/
+/-- **Mean amplitude after the phase oracle.** Let $M$ be a set of marked elements of a finite
+search space of size $N$, let $M^c$ be the set of unmarked elements, and let $a, b \in \mathbb{R}$.
+The oracle mean is $(|M^c|\, b - |M|\, a) / N$.
+
+It is the mean of the amplitude vector obtained by applying the phase oracle to the vector equal
+to $a$ on $M$ and to $b$ off $M$. -/
 noncomputable def oracleMean {α : Type*} [Fintype α] [DecidableEq α]
     (marked : Finset α) (a b : ℝ) : ℝ :=
   ((markedᶜ.card : ℝ) * b - (marked.card : ℝ) * a) /
@@ -99,12 +107,22 @@ theorem meanAmplitude_phaseOracle_symmetricAmplitude {α : Type*} [Fintype α]
   unfold oracleMean
   ring
 
-/-- Common marked amplitude after one Grover step. -/
+/-- **Marked amplitude after a Grover step.** Let $M$ be a set of marked elements of a finite
+search space of size $N$, let $M^c$ be the set of unmarked elements, and let $a, b \in \mathbb{R}$.
+With $\mu = (|M^c|\, b - |M|\, a) / N$, the next marked amplitude is $2\mu + a$.
+
+It is the common value at the marked elements after one Grover step applied to the amplitude
+vector equal to $a$ on $M$ and to $b$ off $M$. -/
 noncomputable def markedAmplitudeNext {α : Type*} [Fintype α] [DecidableEq α]
     (marked : Finset α) (a b : ℝ) : ℝ :=
   2 * oracleMean marked a b + a
 
-/-- Common unmarked amplitude after one Grover step. -/
+/-- **Unmarked amplitude after a Grover step.** Let $M$ be a set of marked elements of a finite
+search space of size $N$, let $M^c$ be the set of unmarked elements, and let $a, b \in \mathbb{R}$.
+With $\mu = (|M^c|\, b - |M|\, a) / N$, the next unmarked amplitude is $2\mu - b$.
+
+It is the common value at the unmarked elements after one Grover step applied to the amplitude
+vector equal to $a$ on $M$ and to $b$ off $M$. -/
 noncomputable def unmarkedAmplitudeNext {α : Type*} [Fintype α]
     [DecidableEq α] (marked : Finset α) (a b : ℝ) : ℝ :=
   2 * oracleMean marked a b - b

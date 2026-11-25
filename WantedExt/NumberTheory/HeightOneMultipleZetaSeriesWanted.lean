@@ -33,9 +33,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The height one multiple zeta function
-`ζ(s, {1}^j) = ∑_{n₁ > ⋯ > n_{j+1} ≥ 1} n₁^{-s} (n₂ ⋯ n_{j+1})^{-1}`, convergent for
-`Re s > 1`.
+/-- **Height one multiple zeta function.** For a complex number $s$ and an integer $j \ge 0$, the
+height one multiple zeta function is
+$$\zeta(s, \{1\}^j) = \sum_{n \ge 0} (n + 1)^{-s} \sum_{T} \prod_{m \in T} \frac{1}{m},$$
+where $T$ runs over the $j$-element subsets of $\{1, \dots, n\}$. Writing $n_1 = n + 1$ and
+$T = \{n_2, \dots, n_{j+1}\}$, this is
+$\zeta(s, \{1\}^j) = \sum_{n_1 > \cdots > n_{j+1} \ge 1} n_1^{-s} (n_2 \cdots n_{j+1})^{-1}$, which
+converges for $\operatorname{Re} s > 1$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Section 1. -/
@@ -43,7 +47,9 @@ public noncomputable def heightOneMultipleZeta (s : ℂ) (j : ℕ) : ℂ :=
   ∑' n : ℕ, ((n : ℂ) + 1) ^ (-s) *
     ∑ T ∈ (Finset.Icc 1 n).powersetCard j, ∏ m ∈ T, (1 / (m : ℂ))
 
-/-- Depth one: `ζ(s, {1}^0) = ∑_{n ≥ 0} (n + 1)^{-s}`, the Riemann zeta series.
+/-- **Height one multiple zeta function of depth one.** For every complex number $s$, the height
+one multiple zeta function $\zeta(s, \{1\}^j)$ at $j = 0$ is the Dirichlet series of the Riemann
+zeta function: $\zeta(s, \{1\}^0) = \sum_{n \ge 0} (n + 1)^{-s}$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Section 1. -/
@@ -51,15 +57,19 @@ public theorem heightOneMultipleZeta_zero (s : ℂ) :
     heightOneMultipleZeta s 0 = ∑' n : ℕ, ((n : ℂ) + 1) ^ (-s) := by
   simp [heightOneMultipleZeta]
 
-/-- The multiple Hurwitz zeta function of order `r` at `a = 1`, by the Dirichlet series (2.2):
-`ζ_r(s) = ∑_{m ≥ 0} binom(m + r - 1, m) (m + 1)^{-s}`, convergent for `Re r < Re s`.
+/-- **Multiple Hurwitz zeta function.** For complex numbers $r$ and $s$, the multiple Hurwitz zeta
+function of order $r$, with Hurwitz parameter $a = 1$, is the Dirichlet series
+$$\zeta_r(s) = \sum_{m \ge 0} \binom{m + r - 1}{m} (m + 1)^{-s},$$
+where $\binom{m + r - 1}{m} = r (r + 1) \cdots (r + m - 1) / m!$. The series converges for
+$\operatorname{Re} r < \operatorname{Re} s$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Section 2, Equation (2.2). -/
 public noncomputable def multipleHurwitzZeta (r s : ℂ) : ℂ :=
   ∑' m : ℕ, (ascPochhammer ℂ m).eval r / (m.factorial : ℂ) * ((m : ℂ) + 1) ^ (-s)
 
-/-- Order zero: `ζ_0(s) = 1`.
+/-- **Multiple Hurwitz zeta function of order zero.** For every complex number $s$, the multiple
+Hurwitz zeta function of order $0$ is identically one: $\zeta_0(s) = 1$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Section 2, Equation (2.2). -/
@@ -69,8 +79,11 @@ public theorem multipleHurwitzZeta_zero (s : ℂ) : multipleHurwitzZeta 0 s = 1 
   · intro m hm
     simp [hm]
 
-/-- For `Re s > 1`, `|r - 1| < |s - 1|` and `Re r < Re s` (where (2.2) converges),
-`ζ_r(s) = ∑_{j ≥ 0} ζ(s, {1}^j) (r - 1)^j`.
+/-- **Expansion of the multiple Hurwitz zeta function in height one multiple zeta values.** Let
+$r$ and $s$ be complex numbers with $\operatorname{Re} s > 1$, $|r - 1| < |s - 1|$ and
+$\operatorname{Re} r < \operatorname{Re} s$. Write $\zeta(s, \{1\}^j)$ for the height one multiple
+zeta function and $\zeta_r(s)$ for the multiple Hurwitz zeta function of order $r$. Then the series
+$\sum_{j \ge 0} \zeta(s, \{1\}^j) \, (r - 1)^j$ is summable with sum $\zeta_r(s)$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Theorem 1 (`integers-2024-A43-thm-1`). -/
@@ -78,11 +91,18 @@ public theorem_wanted hasSum_heightOneMultipleZeta_mul_pow {s r : ℂ} (hs : 1 <
     (hr : ‖r - 1‖ < ‖s - 1‖) (hrs : r.re < s.re) :
     HasSum (fun j : ℕ => heightOneMultipleZeta s j * (r - 1) ^ j) (multipleHurwitzZeta r s)
 
-/-- For a nonnegative integer `n` and `Re s > n + 1`,
-`∑_j ζ(s, {1}^j) n^j = (1/n!) ∑_{m=0}^n [n, m] ζ(s - m)` with unsigned Stirling numbers of
-the first kind; and for `Re s > 1`, `ζ(s) = ∑_j C_j^{(-n)} ζ(s + n, {1}^j)`, where
-`C_j^{(k)} = B_j^{(k)}(1)` and the paper's poly-Bernoulli polynomial (2.6) carries `e^{-xt}`,
-so `C_j^{(k)} = polyBernoulliPoly j k (-1)`.
+/-- **Height one multiple zeta series weighted by powers of a natural number.** Let $n \ge 0$ be
+an integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
+Riemann zeta function, $c(n, m)$ for the unsigned Stirling numbers of the first kind and
+$B_j^{(k)}(x)$ for the poly-Bernoulli polynomials. For every complex $s$ with
+$\operatorname{Re} s > n + 1$, the series $\sum_{j \ge 0} \zeta(s, \{1\}^j) \, n^j$ (with $0^0 = 1$)
+is summable with sum $\frac{1}{n!} \sum_{m=0}^{n} c(n, m) \, \zeta(s - m)$. For every complex $s$
+with $\operatorname{Re} s > 1$, the series $\sum_{j \ge 0} B_j^{(-n)}(-1) \, \zeta(s + n, \{1\}^j)$
+is summable with sum $\zeta(s)$.
+
+The source states the second identity with $C_j^{(-n)} = B_j^{(-n)}(1)$, where its poly-Bernoulli
+polynomials have the generating function with $e^{-xt}$; with the factor $e^{xt}$ used here this
+coefficient is $B_j^{(-n)}(-1)$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Corollary 1 (`integers-2024-A43-cor-1`). -/
@@ -95,11 +115,18 @@ public theorem_wanted hasSum_heightOneMultipleZeta_mul_nat_pow (n : ℕ) :
       HasSum (fun j : ℕ => (polyBernoulliPoly j (-(n : ℤ)) (-1) : ℂ) *
         heightOneMultipleZeta (s + n) j) (riemannZeta s)
 
-/-- For a positive integer `r` and `Re s > r + 1`,
-`∑_{j ≥ 0} ζ(s, {1}^j) (-r)^j = ∑_{m=0}^{r-1} C(r-1, m) (-1)^m (m+1)^{-s}`; in particular, for an
-integer `k > r + 1` the sum `∑_{j ≥ 0} ζ(k, {1}^j) (-r)^j` is the rational number `H_{r,k-1} / r`,
-with the Roman harmonic number `H_{r,k-1} = ∑_{i=1}^r (-1)^{i-1} C(r, i) i^{-(k-1)}`
-(Equation (2.18)).
+/-- **Height one multiple zeta series weighted by powers of a negative integer.** Let $r \ge 1$
+be an integer and let $\zeta(s, \{1\}^j)$ denote the height one multiple zeta function. For
+every complex number $s$ with $\operatorname{Re} s > r + 1$,
+
+$$\sum_{j \ge 0} \zeta(s, \{1\}^j) (-r)^j = \sum_{m=0}^{r-1} \binom{r-1}{m} (-1)^m (m+1)^{-s}.$$
+
+For every integer $k > r + 1$,
+
+$$\sum_{j \ge 0} \zeta(k, \{1\}^j) (-r)^j = \frac{H_{r,k-1}}{r},$$
+
+where $H_{r,k-1} = \sum_{i=1}^{r} (-1)^{i-1} \binom{r}{i} i^{-(k-1)}$ is the rational Roman
+harmonic number (Equation (2.18)).
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Corollary 2 (`integers-2024-A43-cor-2`). -/
@@ -113,10 +140,15 @@ public theorem_wanted tsum_heightOneMultipleZeta_mul_neg_nat_pow
         (((∑ i ∈ Finset.Icc 1 r, (-1 : ℚ) ^ (i - 1) * (r.choose i : ℚ) / (i : ℚ) ^ (k - 1)) /
           r : ℚ) : ℂ)
 
-/-- Generalized Goldbach series: for a positive integer `k`,
-`∑_j (k^j ζ(k + 1, {1}^j) - 1/(k! k)) = (1/k!) (∑_{m=0}^{k-1} [k, m] ζ(k + 1 - m) + H_k)`, and
-`∑_j (-1)^j (k^j ζ(k + 1, {1}^j) - 1/(k! k)) = H_{k,k}/k - 1/(2 k! k)`, with the Roman harmonic
-number `H_{k,k} = ∑_{i=1}^k (-1)^{i-1} C(k, i) i^{-k}` (Equation (2.18)).
+/-- **Generalized Goldbach series for height one multiple zeta values.** Let $k \ge 1$ be an
+integer. Write $\zeta(s, \{1\}^j)$ for the height one multiple zeta function, $\zeta$ for the
+Riemann zeta function, $c(k, m)$ for the unsigned Stirling numbers of the first kind,
+$H_k = \sum_{i=1}^{k} 1/i$ for the $k$-th harmonic number and
+$H_{k,k} = \sum_{i=1}^{k} (-1)^{i-1} \binom{k}{i} i^{-k}$ for the Roman harmonic number. Then the
+series $\sum_{j \ge 0} \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
+sum $\frac{1}{k!} \bigl(\sum_{m=0}^{k-1} c(k, m) \, \zeta(k + 1 - m) + H_k\bigr)$, and the series
+$\sum_{j \ge 0} (-1)^j \bigl(k^j \zeta(k + 1, \{1\}^j) - \frac{1}{k! \, k}\bigr)$ is summable with
+sum $\frac{H_{k,k}}{k} - \frac{1}{2 \, k! \, k}$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Theorem 2 (`integers-2024-A43-thm-2`). -/
@@ -131,10 +163,13 @@ public theorem_wanted hasSum_heightOneMultipleZeta_goldbach (k : ℕ) (hk : 1 �
       (((∑ i ∈ Finset.Icc 1 k, (-1 : ℚ) ^ (i - 1) * (k.choose i : ℚ) / (i : ℚ) ^ k) / k -
         1 / (2 * (k.factorial : ℚ) * k) : ℚ) : ℂ)
 
-/-- The hyperharmonic zeta function `σ(r, s) = ∑_{m ≥ 1} H_m^{[r]} m^{-s}` has the expansion
-`σ(r, s) = ∑_{j ≥ 0} (j + 1) ζ(s + 1, {1}^j) r^j` for `Re s > 0`, `|r| < |s|` and `Re r < Re s`
-(where the series for `σ` converges). `H_m^{[r]} = D_r binom(m + r - 1, m)` (3.2) is
-`generalizedHyperharmonic m 1 r`.
+/-- **Expansion of the hyperharmonic zeta function in height one multiple zeta values.** Let $r$
+and $s$ be complex numbers with $\operatorname{Re} s > 0$, $|r| < |s|$ and
+$\operatorname{Re} r < \operatorname{Re} s$. Write $\zeta(s, \{1\}^j)$ for the height one multiple
+zeta function, $H_m^{[r]}(k)$ for the generalized hyperharmonic numbers and
+$H_m^{[r]} = H_m^{[r]}(1)$; equivalently, $H_m^{[r]}$ is the derivative of $\binom{m + r - 1}{m}$
+with respect to $r$. Then the series $\sum_{j \ge 0} (j + 1) \, \zeta(s + 1, \{1\}^j) \, r^j$ is
+summable with sum the hyperharmonic zeta function $\sigma(r, s) = \sum_{m \ge 1} H_m^{[r]} m^{-s}$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Theorem 3, second equality (`integers-2024-A43-thm-3`). -/
@@ -143,9 +178,11 @@ public theorem_wanted hasSum_succ_mul_heightOneMultipleZeta_mul_pow {r s : ℂ} 
     HasSum (fun j : ℕ => ((j : ℂ) + 1) * heightOneMultipleZeta (s + 1) j * r ^ j)
       (∑' m : ℕ, generalizedHyperharmonic (m + 1) 1 r * ((m : ℂ) + 1) ^ (-s))
 
-/-- For integers `k ≥ -1` and `p ≥ 0`, the shifted alternating series
-`ν_{k,p} = ∑_{n ≥ 2} (-1)^n ζ(n, {1}^p) / (n + k)` (as the limit of its partial sums) equals
-`∫_0^1 (1 - r)^{k+1} ζ_r(p + 2) dr`.
+/-- **Shifted alternating series of height one multiple zeta values.** Let $k \ge -1$ and
+$p \ge 0$ be integers, write $\zeta(s, \{1\}^p)$ for the height one multiple zeta function and
+$\zeta_r(s)$ for the multiple Hurwitz zeta function of order $r$. Then the partial sums of the
+series $\nu_{k,p} = \sum_{n \ge 2} \frac{(-1)^n \, \zeta(n, \{1\}^p)}{n + k}$ converge to
+$\int_0^1 (1 - r)^{k+1} \, \zeta_r(p + 2) \, dr$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Theorem 4 (`integers-2024-A43-thm-4`). -/
@@ -158,14 +195,20 @@ public theorem_wanted tendsto_alternating_heightOneMultipleZeta_integral (k : �
       (nhds (∫ r in (0 : ℝ)..1,
         (1 - (r : ℂ)) ^ (k + 1).toNat * multipleHurwitzZeta r ((p : ℂ) + 2)))
 
-/-- For a positive integer `j`, the linear coefficient `γ_1^{[j]}` of the Laurent expansion of
-`ζ(s, {1}^{j-1})` at `s = 1` is
-`∫_0^1 ((1 - r) ζ_r(j + 2) - ζ_r(j + 1)) dr - [s^{j+1}] (Γ(s + 1)^{-1})`. The Laurent expansion is
-encoded on the half-plane `Re s > 1` as a principal part of order `j` plus a function `F`
-analytic at `1`; the Taylor coefficient is an iterated derivative. `γ_1^{[j]}` is normalized like
-the usual first Stieltjes constant `γ₁` (the paper's (4.4) is this formula for `γ₁`), so the linear
-coefficient is `F'(1) = -γ_1^{[j]}`: the paper's parenthetical "the linear coefficient" drops this
-sign (`ζ(s) = 1/(s - 1) + γ - γ₁ (s - 1) + ⋯` with `γ₁ ≈ -0.0728`).
+/-- **Linear Laurent coefficient of the height one multiple zeta function.** Let $j \ge 1$ be an
+integer, write $\zeta(s, \{1\}^{j-1})$ for the height one multiple zeta function and $\zeta_r(s)$
+for the multiple Hurwitz zeta function of order $r$. There are complex numbers
+$c_0, \dots, c_{j-1}$ and a function $F$ analytic at $s = 1$ such that
+$\zeta(s, \{1\}^{j-1}) = \sum_{i=0}^{j-1} c_i (s - 1)^{-(i+1)} + F(s)$ for all $s$ near $1$
+with $\operatorname{Re} s > 1$, and
+$$-F'(1) = \int_0^1 \bigl((1 - r) \, \zeta_r(j + 2) - \zeta_r(j + 1)\bigr) \, dr - a_{j+1},$$
+where $a_{j+1}$ is the coefficient of $s^{j+1}$ in the Taylor expansion of $1/\Gamma(s + 1)$
+at $s = 0$.
+
+The number $-F'(1)$ generalizes the first Stieltjes constant $\gamma_1$: for $j = 1$ and
+$\operatorname{Re} s > 1$, $\zeta(s, \{1\}^0)$ equals the Riemann zeta function $\zeta(s)$, whose
+Laurent expansion at $s = 1$ is $\zeta(s) = \frac{1}{s - 1} + \gamma - \gamma_1 (s - 1) + \cdots$
+with Euler's constant $\gamma$, so $-F'(1) = \gamma_1$.
 
 Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
 (2024), Article A43, Corollary 3 (`integers-2024-A43-cor-3`). -/

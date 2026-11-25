@@ -54,7 +54,8 @@ conditions are claimed. Wavenumber zero is a separate case (then
 namespace EarthScience
 
 set_option linter.unusedVariables false in
-/-- Flexure: first derivative of `w(x) = q₀ * cos (k * x) / (D * k ^ 4 + a)`. -/
+/-- Flexure: first derivative of `w(x) = q₀ * cos (k * x) / (D * k ^ 4 + a)`, for `D ≥ 0` and
+`a > 0`. -/
 theorem flexure_first_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
     HasDerivAt (fun x => q₀ * Real.cos (k * x) / (D * k ^ 4 + a))
       (-q₀ * k * Real.sin (k * x) / (D * k ^ 4 + a)) x := by
@@ -69,7 +70,8 @@ theorem flexure_first_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
   ring
 
 set_option linter.unusedVariables false in
-/-- Flexure: second derivative. -/
+/-- Flexure: second derivative of `w(x) = q₀ * cos (k * x) / (D * k ^ 4 + a)`, for `D ≥ 0`
+and `a > 0`. -/
 theorem flexure_second_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
     HasDerivAt (fun x => -q₀ * k * Real.sin (k * x) / (D * k ^ 4 + a))
       (-q₀ * k ^ 2 * Real.cos (k * x) / (D * k ^ 4 + a)) x := by
@@ -84,7 +86,8 @@ theorem flexure_second_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
   ring
 
 set_option linter.unusedVariables false in
-/-- Flexure: third derivative. -/
+/-- Flexure: third derivative of `w(x) = q₀ * cos (k * x) / (D * k ^ 4 + a)`, for `D ≥ 0`
+and `a > 0`. -/
 theorem flexure_third_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
     HasDerivAt (fun x => -q₀ * k ^ 2 * Real.cos (k * x) / (D * k ^ 4 + a))
       (q₀ * k ^ 3 * Real.sin (k * x) / (D * k ^ 4 + a)) x := by
@@ -99,7 +102,8 @@ theorem flexure_third_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
   ring
 
 set_option linter.unusedVariables false in
-/-- Flexure: fourth derivative. -/
+/-- Flexure: fourth derivative of `w(x) = q₀ * cos (k * x) / (D * k ^ 4 + a)`, for `D ≥ 0`
+and `a > 0`. -/
 theorem flexure_fourth_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
     HasDerivAt (fun x => q₀ * k ^ 3 * Real.sin (k * x) / (D * k ^ 4 + a))
       (q₀ * k ^ 4 * Real.cos (k * x) / (D * k ^ 4 + a)) x := by
@@ -115,7 +119,8 @@ theorem flexure_fourth_deriv {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
 
 /-! ## B. Flexure equation -/
 
-/-- Flexure equation: `D * w'''' + a * w = q₀ * cos (k * x)`. -/
+/-- Flexure equation: for `D ≥ 0` and `a > 0`, the profile
+`w(x) = q₀ * cos (k * x) / (D * k ^ 4 + a)` satisfies `D * w'''' + a * w = q₀ * cos (k * x)`. -/
 theorem flexure_equation {D a k q₀ x : ℝ} (hD : 0 ≤ D) (ha : 0 < a) :
     D * (q₀ * k ^ 4 * Real.cos (k * x) / (D * k ^ 4 + a)) +
         a * (q₀ * Real.cos (k * x) / (D * k ^ 4 + a)) = q₀ * Real.cos (k * x) := by

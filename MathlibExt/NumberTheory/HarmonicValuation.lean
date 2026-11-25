@@ -156,16 +156,17 @@ when `(m, n]` contains a multiple of `p ^ j`. -/
 theorem le_sup_Ioc_padicValNat_iff {p m n j : ℕ} (hp : p.Prime) (h : m < n) :
     j ≤ (Finset.Ioc m n).sup (padicValNat p) ↔ m / p ^ j < n / p ^ j := by
   have := Fact.mk hp
-  rw [← exists_mem_Ioc_dvd_iff (pow_pos hp.pos j)]
+  rw [← exists_mem_Ioc_dvd_iff (pow_pos hp.pos j),
+    show padicValNat p = multiplicity p from funext fun _ => Nat.padicValNat_def]
   constructor
   · intro hj
     obtain ⟨k, hk, hsup⟩ :=
-      Finset.exists_mem_eq_sup _ (Finset.nonempty_Ioc.2 h) (padicValNat p)
+      Finset.exists_mem_eq_sup _ (Finset.nonempty_Ioc.2 h) (multiplicity p)
     have hk0 : k ≠ 0 := by have := (Finset.mem_Ioc.1 hk).1; omega
-    exact ⟨k, hk, (padicValNat_dvd_iff_le hk0).2 (hsup ▸ hj)⟩
+    exact ⟨k, hk, (multiplicity_dvd_iff_le hk0).2 (hsup ▸ hj)⟩
   · rintro ⟨k, hk, hdvd⟩
     have hk0 : k ≠ 0 := by have := (Finset.mem_Ioc.1 hk).1; omega
-    exact ((padicValNat_dvd_iff_le hk0).1 hdvd).trans (Finset.le_sup hk)
+    exact ((multiplicity_dvd_iff_le hk0).1 hdvd).trans (Finset.le_sup hk)
 
 /-- For a prime `p` and `m < n`, the largest `p`-adic valuation of an element
 of `(m, n]` is `a` exactly when `p ^ (a + 1) * ⌊n / p ^ (a + 1)⌋ ≤ m` and
@@ -186,16 +187,17 @@ theorem sup_Ioc_padicValNat_eq {p m n r c : ℕ} (hp : p.Prime)
     (hhi : n < p ^ r * c + p ^ r) :
     (Finset.Ioc m n).sup (padicValNat p) = r + padicValNat p c := by
   have := Fact.mk hp
+  rw [show padicValNat p = multiplicity p from funext fun _ => Nat.padicValNat_def]
   have hpr : 0 < p ^ r := pow_pos hp.pos r
   have hc : c ≠ 0 := by rintro rfl; simp at hm
-  have hval : padicValNat p (p ^ r * c) = r + padicValNat p c := by
-    rw [padicValNat.mul hpr.ne' hc, padicValNat.prime_pow]
+  have hval : multiplicity p (p ^ r * c) = r + multiplicity p c := by
+    rw [Nat.multiplicity_mul hpr.ne' hc, Nat.multiplicity_prime_pow]
   refine le_antisymm (Finset.sup_le fun k hk => ?_)
     (hval ▸ Finset.le_sup (Finset.mem_Ioc.2 ⟨hm, hn⟩))
   rw [Finset.mem_Ioc] at hk
-  by_cases hkr : padicValNat p k < r
+  by_cases hkr : multiplicity p k < r
   · omega
-  · obtain ⟨c', rfl⟩ := (padicValNat_dvd_iff_le (by omega)).2 (not_lt.1 hkr)
+  · obtain ⟨c', rfl⟩ := (multiplicity_dvd_iff_le (by omega)).2 (not_lt.1 hkr)
     have h1 : c < c' + 1 := by
       rw [← Nat.mul_lt_mul_left hpr, mul_add, mul_one]; omega
     have h2 : c' < c + 1 := by
@@ -207,15 +209,16 @@ not `ν₂(n + 1)`: otherwise `(m, n + 1]` would contain two odd multiples of
 `2 ^ ν₂(n + 1)` and hence a multiple of `2 ^ (ν₂(n + 1) + 1)` in `(m, n]`. -/
 theorem sup_Ioc_padicValNat_two_ne {m n : ℕ} (h : m < n) :
     (Finset.Ioc m n).sup (padicValNat 2) ≠ padicValNat 2 (n + 1) := by
+  rw [Nat.padicValNat_def]
   intro heq
-  set j := padicValNat 2 (n + 1)
+  set j := multiplicity 2 (n + 1)
   have h1 := (le_sup_Ioc_padicValNat_iff Nat.prime_two h (j := j)).1 heq.ge
   have h2 := mt (le_sup_Ioc_padicValNat_iff Nat.prime_two h (j := j + 1)).2
     (by omega)
   rw [pow_succ, ← Nat.div_div_eq_div_mul, ← Nat.div_div_eq_div_mul] at h2
-  have hd : 2 ^ j ∣ n + 1 := pow_padicValNat_dvd
+  have hd : 2 ^ j ∣ n + 1 := pow_multiplicity_dvd 2 (n + 1)
   have hnd : ¬ 2 ^ (j + 1) ∣ n + 1 :=
-    pow_succ_padicValNat_not_dvd n.succ_ne_zero
+    pow_succ_multiplicity_not_dvd n.succ_ne_zero
   have hq := Nat.succ_div_of_dvd hd
   obtain ⟨t, ht⟩ := hd
   have ht' : (n + 1) / 2 ^ j = t := by
@@ -266,8 +269,9 @@ theorem sum_range_sup_Ioc_padicValNat_two (n : ℕ) :
       simp [h, mul_comm]
   · intro m _
     rw [Finset.mem_range, Nat.lt_succ_iff]
-    exact Finset.sup_le fun k hk => (padicValNat_le_nat_log k).trans
-      (Nat.log_mono_right (Finset.mem_Ioc.1 hk).2)
+    exact Finset.sup_le fun k hk =>
+      (Nat.padicValNat_def.trans_le (multiplicity_le_nat_log k)).trans
+        (Nat.log_mono_right (Finset.mem_Ioc.1 hk).2)
 
 /-! ### The `2`-adic valuation of `H_n - H_m` -/
 
@@ -290,16 +294,17 @@ theorem padicValRat_two_harmonic_sub (m n : ℕ) (h : m ≤ n) :
     rcases hmn.eq_or_lt with rfl | hlt
     · rw [sub_self, zero_add, padicValRat.inv, padicValRat.of_nat,
         Finset.Ioc_self, Finset.sup_empty]
-      simp
+      simp [Nat.padicValNat_def]
     have hx : 0 < harmonic n - harmonic m :=
       sub_pos.2 (harmonic_strictMono hlt)
     have hy : (0 : ℚ) < ((n + 1 : ℕ) : ℚ)⁻¹ := by positivity
     have hne : padicValRat 2 (harmonic n - harmonic m) ≠
         padicValRat 2 ((n + 1 : ℕ) : ℚ)⁻¹ := by
-      rw [ih, padicValRat.inv, padicValRat.of_nat, Ne, neg_inj, Nat.cast_inj]
+      rw [ih, padicValRat.inv, padicValRat.of_nat, ← Nat.padicValNat_def, Ne, neg_inj,
+        Nat.cast_inj]
       exact sup_Ioc_padicValNat_two_ne hlt
     rw [padicValRat.add_eq_min (by positivity) hx.ne' hy.ne' hne, ih,
-      padicValRat.inv, padicValRat.of_nat, min_neg_neg, ← Nat.cast_max,
+      padicValRat.inv, padicValRat.of_nat, ← Nat.padicValNat_def, min_neg_neg, ← Nat.cast_max,
       max_comm]
 
 /-! ### Lengyel's results -/
@@ -365,7 +370,8 @@ theorem padicValRat_two_harmonic_two_mul_sub (n : ℕ)
   rw [Nat.succ_eq_add_one, pow_succ] at h2
   rw [padicValRat_two_harmonic_sub n (2 * n) (by omega),
     sup_Ioc_padicValNat_eq (r := Nat.log 2 (2 * n)) (c := 1) Nat.prime_two
-      (by omega) (by omega) (by omega) (by omega), padicValNat_one_right,
+      (by omega) (by omega) (by omega) (by omega), Nat.padicValNat_def,
+      multiplicity_one_right,
     add_zero]
 
 /-- Valuation at powers of two.
@@ -381,7 +387,8 @@ theorem padicValRat_two_harmonic_pow_sub (a m : ℕ)
     padicValRat 2 (harmonic (2 ^ a) - harmonic (2 ^ a - m)) = -(a : ℤ) := by
   rw [padicValRat_two_harmonic_sub _ _ (Nat.sub_le _ _),
     sup_Ioc_padicValNat_eq (r := a) (c := 1) Nat.prime_two
-      (by omega) (by omega) (by omega) (by omega), padicValNat_one_right,
+      (by omega) (by omega) (by omega) (by omega), Nat.padicValNat_def,
+      multiplicity_one_right,
     add_zero]
 
 /-- Sum of valuations over all `m < n`.
@@ -459,7 +466,7 @@ theorem padicValRat_two_harmonic_sub_pow (r n : ℕ)
   rw [padicValRat_two_harmonic_sub _ _ (Nat.sub_le _ _),
     sup_Ioc_padicValNat_eq (r := r) (c := n / 2 ^ r) Nat.prime_two
       (by omega) (by omega) h1 (by omega),
-    Nat.factorization_def _ Nat.prime_two]
+    Nat.factorization_def _ Nat.prime_two, ← Nat.padicValNat_def]
   push_cast
   ring
 
@@ -496,7 +503,7 @@ theorem padicValRat_two_harmonic_sub_piecewise (m n : ℕ)
     := by
   have hM1 := Nat.le_pow_clog one_lt_two (m + 1)
   have hM0 := Nat.clog_pos one_lt_two (show 1 < m + 1 by omega)
-  have hM2 := Nat.pow_pred_clog_lt_self one_lt_two (show 1 < m + 1 by omega)
+  have hM2 := Nat.pow_pred_clog_lt_self 2 (show 1 < m + 1 by omega)
   generalize Nat.clog 2 (m + 1) = M at hM1 hM0 hM2 ⊢
   have hj := Nat.mul_div_le (n - m) (2 ^ M)
   generalize (n - m) / 2 ^ M = j at hj ⊢
@@ -515,7 +522,7 @@ theorem padicValRat_two_harmonic_sub_piecewise (m n : ℕ)
     rw [e2] at h2
     rw [sup_Ioc_padicValNat_eq (r := M') (c := 2 * j + 1) Nat.prime_two
       (by omega) (by omega) (by omega) (by omega),
-      padicValNat.eq_zero_of_not_dvd (by omega)]
+      Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd (by omega)]
     push_cast
     ring
   · -- The only multiple of `2 ^ (M' + 1)` in the window is
@@ -524,7 +531,7 @@ theorem padicValRat_two_harmonic_sub_piecewise (m n : ℕ)
     rw [e2] at h1 h2
     rw [sup_Ioc_padicValNat_eq (r := M' + 1) (c := j + 1) Nat.prime_two
       (by omega) (by omega) (by omega) (by omega),
-      Nat.factorization_def _ Nat.prime_two]
+      Nat.factorization_def _ Nat.prime_two, ← Nat.padicValNat_def]
     push_cast
     ring
 
