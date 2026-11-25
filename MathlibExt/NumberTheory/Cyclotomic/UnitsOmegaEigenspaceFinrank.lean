@@ -27,7 +27,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitEigenspace
+public import MathlibExt.NumberTheory.Cyclotomic.UnitsModPowersEigenspace
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 
@@ -154,7 +154,7 @@ private theorem cycloGalEquiv_symm_apply_of_pow_eq (d : (ZMod p)ˣ) {x : K} (hx 
   rwa [cycloGalEquiv_eq_galEquivZMod, MulEquiv.apply_symm_apply] at this
 
 private theorem clRingAction_eq :
-    clRingAction p K = (galRestrictionDatum ℤ ℚ K (𝓞 K)).comp
+    clRingAction p K = (Stickelberger.galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
       (cycloGalEquiv p K).symm.toMonoidHom := rfl
 
 set_option backward.isDefEq.respectTransparency false in
@@ -702,35 +702,35 @@ variable (p : ℕ) [hp : Fact p.Prime]
 variable (K : Type*) [Field K] [NumberField K]
 
 private noncomputable def vMap (σ : K ≃ₐ[ℚ] K) :
-    ModP p (Additive (𝓞 K)ˣ) →ₗ[ZMod p] ModP p (Additive (𝓞 K)ˣ) :=
-  ModP.mapEnd p (MonoidHom.toAdditive (unitsMap K σ))
+    ModN (Additive (𝓞 K)ˣ) p →ₗ[ZMod p] ModN (Additive (𝓞 K)ˣ) p :=
+  Stickelberger.modNEnd p (MonoidHom.toAdditive (unitsMap K σ))
 
 private lemma vMap_proj (σ : K ≃ₐ[ℚ] K) (u : (𝓞 K)ˣ) :
-    vMap p K σ (ModP.proj p _ (Additive.ofMul u)) =
-      ModP.proj p _ (Additive.ofMul (unitsMap K σ u)) := rfl
+    vMap p K σ (ModN.mkQ p (Additive.ofMul u)) =
+      ModN.mkQ p (Additive.ofMul (unitsMap K σ u)) := rfl
 
 private theorem exists_basis (hdiv : p ∣ torsionOrder K) (t : torsion K)
     (ht : ∀ x : torsion K, x ∈ Subgroup.zpowers t) :
-    ∃ b : Module.Basis (Option (Fin (rank K))) (ZMod p) (ModP p (Additive (𝓞 K)ˣ)),
-      b none = ModP.proj p _ (Additive.ofMul (t : (𝓞 K)ˣ)) ∧
-      ∀ i, b (some i) = ModP.proj p _ (Additive.ofMul (fundSystem K i)) := by
+    ∃ b : Module.Basis (Option (Fin (rank K))) (ZMod p) (ModN (Additive (𝓞 K)ˣ) p),
+      b none = ModN.mkQ p (Additive.ofMul (t : (𝓞 K)ˣ)) ∧
+      ∀ i, b (some i) = ModN.mkQ p (Additive.ofMul (fundSystem K i)) := by
   classical
   have hord : orderOf t = torsionOrder K := by
     rw [torsionOrder]
     exact orderOf_eq_card_of_forall_mem_zpowers ht
   let a : Option (Fin (rank K)) → Additive (𝓞 K)ˣ := fun o =>
     o.elim (Additive.ofMul ((t : (𝓞 K)ˣ))) (fun i => Additive.ofMul (fundSystem K i))
-  let v : Option (Fin (rank K)) → ModP p (Additive (𝓞 K)ˣ) := fun o => ModP.proj p _ (a o)
+  let v : Option (Fin (rank K)) → ModN (Additive (𝓞 K)ˣ) p := fun o => ModN.mkQ p (a o)
   have ha_none : Additive.toMul (a none) = (t : (𝓞 K)ˣ) := rfl
   have ha_some : ∀ i, Additive.toMul (a (some i)) = fundSystem K i := fun i => rfl
   have hli : LinearIndependent (ZMod p) v := by
     rw [Fintype.linearIndependent_iff]
     intro g hg
-    have key : ∑ o, g o • v o = ModP.proj p _ (∑ o, (g o).val • a o) := by
+    have key : ∑ o, g o • v o = ModN.mkQ p (∑ o, (g o).val • a o) := by
       rw [map_sum]
       refine Finset.sum_congr rfl fun o _ => ?_
       rw [map_nsmul, ← Nat.cast_smul_eq_nsmul (ZMod p), ZMod.natCast_zmod_val]
-    rw [key, ModP.proj_eq_zero_iff] at hg
+    rw [key, ModN.mkQ_eq_zero_iff] at hg
     obtain ⟨b, hb⟩ := hg
     set u : (𝓞 K)ˣ := Additive.toMul b with hu_def
     have hb' : u ^ p = (t : (𝓞 K)ˣ) ^ (g none).val *
@@ -776,7 +776,7 @@ private theorem exists_basis (hdiv : p ∣ torsionOrder K) (t : torsion K)
       rw [ZMod.natCast_self, mul_zero]
   have hsp : ⊤ ≤ Submodule.span (ZMod p) (Set.range v) := by
     rintro x -
-    obtain ⟨y, rfl⟩ := ModP.proj_surjective p _ x
+    obtain ⟨y, rfl⟩ := ModN.mkQ_surjective p x
     obtain ⟨⟨ζu, eu⟩, hu, -⟩ := exist_unique_eq_mul_prod K (Additive.toMul y)
     obtain ⟨m, hm⟩ := Subgroup.mem_zpowers_iff.mp (ht ζu)
     have hy : y = m • a none + ∑ i, eu i • a (some i) := by
@@ -795,7 +795,7 @@ private theorem exists_basis (hdiv : p ∣ torsionOrder K) (t : torsion K)
   · rw [Module.Basis.mk_apply]; rfl
 
 private theorem finrank_modP_units (hdiv : p ∣ torsionOrder K) :
-    Module.finrank (ZMod p) (ModP p (Additive (𝓞 K)ˣ)) = rank K + 1 := by
+    Module.finrank (ZMod p) (ModN (Additive (𝓞 K)ˣ) p) = rank K + 1 := by
   obtain ⟨t, ht⟩ := IsCyclic.exists_generator (α := torsion K)
   obtain ⟨b, -, -⟩ := exists_basis p K hdiv t ht
   rw [Module.finrank_eq_card_basis b, Fintype.card_option, Fintype.card_fin]
@@ -881,8 +881,8 @@ variable (p : ℕ) [hp : Fact p.Prime]
 
 set_option backward.isDefEq.respectTransparency false in
 
-private theorem finrank_unitsModP' (hp5 : 5 ≤ p) :
-    Module.finrank (ZMod p) (ModP p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)) = (p - 1) / 2 := by
+private theorem finrank_unitsModN' (hp5 : 5 ≤ p) :
+    Module.finrank (ZMod p) (ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p) = (p - 1) / 2 := by
   have hdiv : p ∣ torsionOrder (CyclotomicField p ℚ) :=
     dvd_torsionOrder_of_isPrimitiveRoot (IsCyclotomicExtension.zeta_spec p ℚ _)
   rw [Aux1Bridge.finrank_modP_units p _ hdiv, rank,
@@ -898,9 +898,9 @@ private theorem unitsGalAction_eq_vMap (d : (ZMod p)ˣ) :
       ((IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm d) := by
   apply LinearMap.ext
   intro x
-  obtain ⟨a, rfl⟩ := ModP.proj_surjective p _ x
-  change unitsEnd p _ (clRingAction p _ d) (ModP.proj p _ (Additive.ofMul (Additive.toMul a))) =
-    Aux1Bridge.vMap p (CyclotomicField p ℚ) _ (ModP.proj p _ (Additive.ofMul (Additive.toMul a)))
+  obtain ⟨a, rfl⟩ := ModN.mkQ_surjective p x
+  change unitsEnd p _ (clRingAction p _ d) (ModN.mkQ p (Additive.ofMul (Additive.toMul a))) =
+    Aux1Bridge.vMap p (CyclotomicField p ℚ) _ (ModN.mkQ p (Additive.ofMul (Additive.toMul a)))
   rw [unitsEnd_proj, Aux1Bridge.vMap_proj]
   have hu : Units.mapEquiv (clRingAction p (CyclotomicField p ℚ) d).toMulEquiv (Additive.toMul a) =
       unitsMap (CyclotomicField p ℚ)
@@ -911,7 +911,7 @@ private theorem unitsGalAction_eq_vMap (d : (ZMod p)ˣ) :
 set_option backward.isDefEq.respectTransparency false in
 
 private theorem trace_unitsGalAction' (hp5 : 5 ≤ p) (d : (ZMod p)ˣ) :
-    LinearMap.trace (ZMod p) (ModP p (Additive (𝓞 (CyclotomicField p ℚ))ˣ))
+    LinearMap.trace (ZMod p) (ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p)
       (unitsGalAction p d) =
       ((d : ZMod p) - 1) + (if d = 1 ∨ d = -1 then (((p - 1) / 2 : ℕ) : ZMod p) else 0) := by
   have hdiv : p ∣ torsionOrder (CyclotomicField p ℚ) :=
@@ -1012,15 +1012,15 @@ private lemma isIdempotentElem_omegaIdempotent_two :
 
 private theorem finrank_unitsOmegaEigenspace_two' (hp5 : 5 ≤ p) :
     Module.finrank (ZMod p) (unitsOmegaEigenspace p 2) = 1 := by
-  have : Module.Finite (ZMod p) (ModP p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)) :=
-    Module.finite_of_finrank_pos (by rw [Aux1Herbrand.finrank_unitsModP' p hp5]; omega)
+  have : Module.Finite (ZMod p) (ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p) :=
+    Module.finite_of_finrank_pos (by rw [Aux1Herbrand.finrank_unitsModN' p hp5]; omega)
   rw [← range_omegaIdempotent_two p]
   have hproj := LinearMap.IsIdempotentElem.isProj_range _ (isIdempotentElem_omegaIdempotent_two p)
   have htr := LinearMap.IsProj.trace hproj
   rw [trace_omegaIdempotent_two p hp5] at htr
   have hle : Module.finrank (ZMod p)
       (LinearMap.range (omegaIdempotent p (unitsGalAction p) 2)) ≤ (p - 1) / 2 := by
-    rw [← Aux1Herbrand.finrank_unitsModP' p hp5]; exact Submodule.finrank_le _
+    rw [← Aux1Herbrand.finrank_unitsModN' p hp5]; exact Submodule.finrank_le _
   have hlt : Module.finrank (ZMod p)
       (LinearMap.range (omegaIdempotent p (unitsGalAction p) 2)) < p := by omega
   have hval := congrArg ZMod.val htr

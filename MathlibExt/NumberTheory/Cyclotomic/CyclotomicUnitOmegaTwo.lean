@@ -27,7 +27,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitEigenspace
+public import MathlibExt.NumberTheory.Cyclotomic.UnitsModPowersEigenspace
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 
 /-!
@@ -440,7 +440,7 @@ private theorem cycloGalEquiv_symm_apply_of_pow_eq (d : (ZMod p)ˣ) {x : K} (hx 
   rwa [cycloGalEquiv_eq_galEquivZMod, MulEquiv.apply_symm_apply] at this
 
 private theorem clRingAction_eq :
-    clRingAction p K = (galRestrictionDatum ℤ ℚ K (𝓞 K)).comp
+    clRingAction p K = (Stickelberger.galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
       (cycloGalEquiv p K).symm.toMonoidHom := rfl
 
 set_option backward.isDefEq.respectTransparency false in
@@ -480,19 +480,17 @@ private noncomputable def φAdd : Additive (𝓞 (CyclotomicField p ℚ))ˣ →+
 private lemma φAdd_ofMul (u : (𝓞 (CyclotomicField p ℚ))ˣ) :
     φAdd p hp5 hζ (Additive.ofMul u) = Aux1B2.Ψ p hζ hp5 u := rfl
 
-include hp5 hζ in
-private lemma φAdd_ker : ∀ x ∈ nsmulRange p (Additive (𝓞 (CyclotomicField p ℚ))ˣ),
-    φAdd p hp5 hζ x = 0 := by
-  rintro x ⟨y, rfl⟩
-  rw [map_nsmul, nsmul_eq_mul, ZMod.natCast_self, zero_mul]
-
 private noncomputable def funcF :
-    ModP p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) →ₗ[ZMod p] ZMod p :=
-  have : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
-  (QuotientAddGroup.lift _ (φAdd p hp5 hζ) (φAdd_ker p hp5 hζ)).toZModLinearMap p
+    ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p →ₗ[ZMod p] ZMod p :=
+  ((LinearMap.range (LinearMap.lsmul ℤ (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p)).liftQ
+    (φAdd p hp5 hζ).toIntLinearMap (by
+      intro x hx
+      obtain ⟨y, rfl⟩ := LinearMap.mem_range.mp hx
+      rw [LinearMap.mem_ker]
+      simp)).toAddMonoidHom.toZModLinearMap p
 
 private lemma funcF_proj (u : (𝓞 (CyclotomicField p ℚ))ˣ) :
-    funcF p hp5 hζ (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul u)) =
+    funcF p hp5 hζ (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul u)) =
       Aux1B2.Ψ p hζ hp5 u := rfl
 
 include hζ in
@@ -501,10 +499,10 @@ private lemma hζ_toInteger_pow_p : hζ.toInteger ^ p = 1 := by
   exact hζ.toInteger_isPrimitiveRoot.pow_eq_one
 
 private theorem funcF_equivariant (d : (ZMod p)ˣ)
-    (a : ModP p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)) :
+    (a : ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p) :
     funcF p hp5 hζ (unitsGalAction p d a) = ((d : ZMod p) ^ 2) • funcF p hp5 hζ a := by
   have : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
-  obtain ⟨a, rfl⟩ := ModP.proj_surjective p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) a
+  obtain ⟨a, rfl⟩ := ModN.mkQ_surjective (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p a
   rw [show a = Additive.ofMul a.toMul from rfl]
   rw [show unitsGalAction p d =
         unitsEnd p (𝓞 (CyclotomicField p ℚ)) (clRingAction p (CyclotomicField p ℚ) d) from rfl,
@@ -532,7 +530,7 @@ public theorem omegaIdempotent_two_cycloUnitTwo_ne_zero (hp5 : 5 ≤ p)
     (ζ : 𝓞 (CyclotomicField p ℚ)) (hζ : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p)
     (c₂ : (𝓞 (CyclotomicField p ℚ))ˣ) (hc : (c₂ : 𝓞 (CyclotomicField p ℚ)) = 1 + ζ) :
     omegaIdempotent p (unitsGalAction p) 2
-        (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)
+        (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p
           (Additive.ofMul c₂)) ≠ 0 := by
   rw [omegaIdempotent_eq]
   refine Stickelberger.omegaIdemp_ne_zero_of_equivariant (unitsGalAction p)

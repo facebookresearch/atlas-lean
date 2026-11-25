@@ -36,7 +36,7 @@ theorem exactSource_omegaIdempotent_two_cycloUnitTwo_ne_zero (hp5 : 5 ≤ p)
     (ζ : 𝓞 (CyclotomicField p ℚ)) (hζ : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p)
     (c₂ : (𝓞 (CyclotomicField p ℚ))ˣ) (hc : (c₂ : 𝓞 (CyclotomicField p ℚ)) = 1 + ζ) :
     omegaIdempotent p (unitsGalAction p) 2
-        (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)
+        (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p
           (Additive.ofMul c₂)) ≠ 0 :=
   omegaIdempotent_two_cycloUnitTwo_ne_zero p hp5 ζ hζ c₂ hc
 

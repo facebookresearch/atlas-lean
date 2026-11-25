@@ -30,7 +30,7 @@ module
 public import Mathlib.NumberTheory.NumberField.InfinitePlace.TotallyRealComplex
 public import Mathlib.RingTheory.FractionalIdeal.Operations
 public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
-public import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitEigenspace
+public import MathlibExt.NumberTheory.Cyclotomic.UnitsModPowersEigenspace
 import Mathlib.NumberTheory.RamificationInertia.Basic
 import Mathlib.RepresentationTheory.Homological.GroupCohomology.Hilbert90
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
@@ -68,6 +68,10 @@ argument, not to a theorem number.
 * The source's action of `Gal(K⁺ / ℚ)` is `Δact : (ZMod p)ˣ →* (𝓞 Kplus ≃+* 𝓞 Kplus)`, which
   `hΔact` makes compatible with `Stickelberger.clRingAction`, the transport of
   `Gal(ℚ(ζ_p) / ℚ) ≃ (ZMod p)ˣ` to ring automorphisms of `𝓞 (ℚ(ζ_p))`.
+  With the pinned Mathlib, `IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ)` is not
+  synthesized under default options, so stating `hΔact` needs
+  `attribute [local instance] Stickelberger.instIsCycExt` or
+  `set_option backward.isDefEq.respectTransparency false`, as the test file does.
 * The Teichmüller character `ω` enters through its reduction `d ↦ (d : ZMod p)`: `hδeig` says
   `σ_d δ = δ ^ (d²) · v ^ p`, the `ω²` eigen-condition on `E⁺ / (E⁺) ^ p`.
 * A degree-one prime is a maximal ideal `𝔏` with `Ideal.absNorm 𝔏 = ℓ`. The hypothesis that `δ`
@@ -226,7 +230,7 @@ private theorem ram_package (hℓ𝔔 : (ℓ : 𝓞 F) ∈ 𝔔) (hℓ𝔔2 : (�
   have hsum := Ideal.sum_ramification_inertia (R := 𝓞 F) (𝓞 L) F L (p := 𝔔) h𝔔bot
   have h𝔓mem : 𝔓 ∈ IsDedekindDomain.primesOverFinset 𝔔 (𝓞 L) :=
     (IsDedekindDomain.mem_primesOverFinset_iff h𝔔bot _).mpr ⟨‹_›, ‹_›⟩
-  have hf : 0 < Ideal.inertiaDeg' 𝔔 𝔓 := Ideal.inertiaDeg_pos' 𝔔 𝔓
+  have hf : 0 < Ideal.inertiaDeg' 𝔔 𝔓 := Ideal.inertiaDeg'_pos' 𝔔 𝔓
   have hfin := finrank_le F L ℓ
   rw [← Finset.add_sum_erase _ _ h𝔓mem] at hsum
   set T := ∑ P ∈ (IsDedekindDomain.primesOverFinset 𝔔 (𝓞 L)).erase 𝔓,
@@ -255,8 +259,8 @@ private theorem ram_package (hℓ𝔔 : (ℓ : 𝓞 F) ∈ 𝔔) (hℓ𝔔2 : (�
     have := hP1
     have := hP2
     have h1 : Ideal.ramificationIdx' 𝔔 P ≠ 0 :=
-      Ideal.IsDedekindDomain.ramificationIdx_ne_zero_of_liesOver P h𝔔bot
-    have h2 : 0 < Ideal.inertiaDeg' 𝔔 P := Ideal.inertiaDeg_pos' 𝔔 P
+      Ideal.IsDedekindDomain.ramificationIdx'_ne_zero_of_liesOver P h𝔔bot
+    have h2 : 0 < Ideal.inertiaDeg' 𝔔 P := Ideal.inertiaDeg'_pos' 𝔔 P
     have h3 : Ideal.ramificationIdx' 𝔔 P * Ideal.inertiaDeg' 𝔔 P = 0 :=
       (Finset.sum_eq_zero_iff.mp hT0) P hP
     rcases Nat.mul_eq_zero.mp h3 with h | h <;> omega
@@ -352,7 +356,7 @@ private theorem algEquiv_sub_self_mem (hℓ𝔔 : (ℓ : 𝓞 F) ∈ 𝔔) (hℓ
   let : Field (𝓞 F ⧸ 𝔔) := Ideal.Quotient.field 𝔔
   have : Nontrivial (𝓞 L ⧸ 𝔓) := Ideal.Quotient.nontrivial_of_liesOver_of_isPrime 𝔓 𝔔
   have hbot : (⊥ : Subalgebra (𝓞 F ⧸ 𝔔) (𝓞 L ⧸ 𝔓)) = ⊤ :=
-    Subalgebra.bot_eq_top_of_finrank_eq_one (by rw [← Ideal.inertiaDeg_algebraMap]; exact hf1)
+    Subalgebra.bot_eq_top_of_finrank_eq_one (by rw [← Ideal.inertiaDeg'_algebraMap]; exact hf1)
   have hx : Ideal.Quotient.mk 𝔓 x ∈ (⊥ : Subalgebra (𝓞 F ⧸ 𝔔) (𝓞 L ⧸ 𝔓)) := by
     rw [hbot]; exact Algebra.mem_top
   rw [Algebra.mem_bot] at hx
@@ -656,7 +660,7 @@ private theorem span_natCast_eq_prod_primesOver (ℓ : ℕ) [hℓ : Fact ℓ.Pri
       (Ideal.span_singleton_le_iff_mem _).mp (Ideal.le_of_dvd hdvd)
     have h2 := hunram P hℓP
     have he : Ideal.ramificationIdx' (Ideal.span {(ℓ : ℤ)}) P = 1 := by
-      apply Ideal.ramificationIdx_spec
+      apply Ideal.ramificationIdx'_spec
       · rw [pow_one, hmap]; exact Ideal.le_of_dvd hdvd
       · rw [hmap]
         intro hle
@@ -860,7 +864,7 @@ private lemma mapEquiv_clRingAction_map (d : (ZMod p)ˣ) (u : (𝓞 Kplus)ˣ) :
 omit [NumberField Kplus] in
 include hΔact hδeig in
 private theorem proj_map_mem_unitsOmegaEigenspace :
-    ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)
+    ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p
         (Additive.ofMul
           (Units.map (algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ))).toMonoidHom δ))
       ∈ unitsOmegaEigenspace p 2 := by
@@ -875,8 +879,8 @@ private theorem proj_map_mem_unitsOmegaEigenspace :
 
 private theorem omegaIdempotent_proj_eq (c : (𝓞 (CyclotomicField p ℚ))ˣ) :
     omegaIdempotent p (unitsGalAction p) 2
-        (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul c)) =
-      ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul
+        (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul c)) =
+      ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul
         (∏ d : (ZMod p)ˣ, (Units.mapEquiv (clRingAction p (CyclotomicField p ℚ) d).toMulEquiv c) ^
           ((((Nat.card (ZMod p)ˣ : ℕ) : ZMod p)⁻¹ * (((d : ZMod p)) ^ 2)⁻¹).val))) := by
   rw [ofMul_prod, map_sum]
@@ -893,7 +897,7 @@ include hΔact hδeig in
 private theorem reduceK (hDIM : Module.finrank (ZMod p) (unitsOmegaEigenspace p 2) = 1)
     (c₂ : (𝓞 (CyclotomicField p ℚ))ˣ)
     (hB2 : omegaIdempotent p (unitsGalAction p) 2
-        (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul c₂)) ≠ 0) :
+        (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul c₂)) ≠ 0) :
     ∃ (m : ℕ) (w : (𝓞 (CyclotomicField p ℚ))ˣ),
       Units.map (algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ))).toMonoidHom δ =
         (∏ d : (ZMod p)ˣ,
@@ -904,28 +908,28 @@ private theorem reduceK (hDIM : Module.finrank (ZMod p) (unitsOmegaEigenspace p 
   set u₂ := ∏ d : (ZMod p)ˣ,
       (Units.mapEquiv (clRingAction p (CyclotomicField p ℚ) d).toMulEquiv c₂) ^
         ((((Nat.card (ZMod p)ˣ : ℕ) : ZMod p)⁻¹ * (((d : ZMod p)) ^ 2)⁻¹).val) with hu₂
-  set x := ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul δK) with hx
+  set x := ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul δK) with hx
   set y := omegaIdempotent p (unitsGalAction p) 2
-      (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul c₂)) with hy
+      (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul c₂)) with hy
   have hxmem : x ∈ unitsOmegaEigenspace p 2 :=
     proj_map_mem_unitsOmegaEigenspace p Kplus Δact hΔact δ hδeig
   have hymem : y ∈ unitsOmegaEigenspace p 2 :=
     isOmegaEigenvector_omegaIdempotent p (unitsGalAction p) 2 _
   have hy0 : (⟨y, hymem⟩ : unitsOmegaEigenspace p 2) ≠ 0 := fun h =>
     hB2 (congrArg Subtype.val h)
-  obtain ⟨mz, hmz⟩ := (finrank_eq_one_iff_of_nonzero' _ hy0).mp hDIM ⟨x, hxmem⟩
+  obtain ⟨mz, hmz⟩ := (finrank_eq_one_iff_of_ne_zero' _ hy0).mp hDIM ⟨x, hxmem⟩
   have hxy : x = mz • y := by
     have := congrArg Subtype.val hmz
     simpa using this.symm
-  have hyu : y = ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul u₂) :=
+  have hyu : y = ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul u₂) :=
     omegaIdempotent_proj_eq p c₂
-  have hx' : x = ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)
+  have hx' : x = ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p
       (Additive.ofMul (u₂ ^ mz.val)) := by
     rw [hxy, hyu, ofMul_pow, map_nsmul, ← Nat.cast_smul_eq_nsmul (ZMod p), ZMod.natCast_zmod_val]
-  have hker : ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)
+  have hker : ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p
       (Additive.ofMul δK - Additive.ofMul (u₂ ^ mz.val)) = 0 := by
     rw [map_sub, ← hx, hx', sub_self]
-  rw [ModP.proj_eq_zero_iff] at hker
+  rw [ModN.mkQ_eq_zero_iff] at hker
   obtain ⟨z, hz⟩ := hker
   refine ⟨mz.val, Additive.toMul z, ?_⟩
   apply Additive.ofMul.injective
@@ -1111,7 +1115,7 @@ private theorem reduce_out (hp2 : p ≠ 2)
     (hB2 : ∀ (ζ : 𝓞 (CyclotomicField p ℚ)) (_ : IsPrimitiveRoot (ζ : CyclotomicField p ℚ) p)
       (c₂ : (𝓞 (CyclotomicField p ℚ))ˣ) (_ : (c₂ : 𝓞 (CyclotomicField p ℚ)) = 1 + ζ),
       omegaIdempotent p (unitsGalAction p) 2
-        (ModP.proj p (Additive (𝓞 (CyclotomicField p ℚ))ˣ) (Additive.ofMul c₂)) ≠ 0) :
+        (ModN.mkQ (G := Additive (𝓞 (CyclotomicField p ℚ))ˣ) p (Additive.ofMul c₂)) ≠ 0) :
     ∃ (m : ℕ) (w : (𝓞 Kplus)ˣ) (δ₀ : (𝓞 Kplus)ˣ) (n : (ZMod p)ˣ → ℕ) (a : (ZMod p)ˣ → 𝓞 Kplus),
       δ ^ 2 = δ₀ ^ m * w ^ p ∧
       (δ₀ : 𝓞 Kplus) = ∏ d, (2 + a d) ^ n d ∧
@@ -1775,6 +1779,7 @@ private theorem count_factors_map_eq (β : B) (hβ : β ≠ 0) (σ : L ≃ₐ[K]
     rw [span_le_map_pow_iff A K L B β σ hinv]
     rw [← char _ hQ hQ0]
 
+omit [IsDomain B] in
 private theorem count_factors_eq_of_liesOver (g : L ≃ₐ[K] L)
     (hg : ∀ x : L ≃ₐ[K] L, x ∈ Subgroup.zpowers g)
     (η : Bˣ) (β : B) (hβ : β ≠ 0) (hrel : (η : B) * galRestrict A K L B g β = β)
@@ -1806,7 +1811,7 @@ namespace ThaineDesk
 open UniqueFactorizationMonoid
 
 variable {A B : Type*} [CommRing A] [CommRing B] [IsDedekindDomain A] [IsDedekindDomain B]
-  [Algebra A B] [Algebra.IsIntegral A B] [Module.IsTorsionFree A B] [Nontrivial B]
+  [Algebra A B] [Algebra.IsIntegral A B] [Module.IsTorsionFree A B]
 
 private theorem count_normalizedFactors_finsetProd_pow (T : Finset (Ideal B))
     (hT : ∀ P ∈ T, Prime P) (m : Ideal B → ℕ) (𝔓 : Ideal B) :
@@ -1941,14 +1946,12 @@ private theorem exists_mul_eq_pow_mul (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime] (
     Ideal.count_normalizedFactors_eq (n := 1)
       (by simpa [pow_one, Ideal.span_le, Set.singleton_subset_iff] using hπ1)
       (by simpa [Ideal.span_le, Set.singleton_subset_iff] using hπ2)
-
   obtain ⟨D, hD⟩ : 𝔓 ∣ Ideal.span {π} :=
     Ideal.dvd_iff_le.mpr (Ideal.span_le.mpr (Set.singleton_subset_iff.mpr hπ1))
   have hD0 : D ≠ 0 := by
     rintro rfl
     rw [mul_zero] at hD
     exact hspanπ0 hD
-
   have hDcount : Multiset.count 𝔓 (normalizedFactors D) = 0 := by
     have h1 : Multiset.count 𝔓 (normalizedFactors (Ideal.span {π}))
         = Multiset.count 𝔓 (normalizedFactors (𝔓 : Ideal B))
@@ -1963,11 +1966,9 @@ private theorem exists_mul_eq_pow_mul (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime] (
     have := (le_count_iff_le_pow hD0 h𝔓p h𝔓0 1).mpr (by simpa [pow_one] using hle)
     omega
   obtain ⟨d₁, hd₁D, hd₁𝔓⟩ := IsConcreteLE.not_le_iff_exists.mp hDnle
-
   obtain ⟨C, hC⟩ : 𝔓 ^ a ∣ Ideal.span {β} := Ideal.dvd_iff_le.mpr ha
   have hd₁0 : d₁ ≠ 0 := fun h => hd₁𝔓 (h ▸ Ideal.zero_mem _)
   have hd₁a𝔓 : d₁ ^ a ∉ 𝔓 := fun h => hd₁𝔓 (h𝔓p.mem_of_pow_mem a h)
-
   have hmem : β * d₁ ^ a ∈ Ideal.span {π ^ a} * C := by
     have h1 : β * d₁ ^ a ∈ Ideal.span {β} * D ^ a :=
       Ideal.mul_mem_mul (Ideal.mem_span_singleton_self β) (Ideal.pow_mem_pow hd₁D a)
@@ -1981,7 +1982,6 @@ private theorem exists_mul_eq_pow_mul (𝔓 : Ideal B) [h𝔓p : 𝔓.IsPrime] (
     rintro rfl
     rw [mul_zero] at hee
     exact hβd0 hee.symm
-
   have hβc : Multiset.count 𝔓 (normalizedFactors (Ideal.span {β})) = a :=
     Ideal.count_normalizedFactors_eq ha ha'
   have hπac : Multiset.count 𝔓 (normalizedFactors (Ideal.span {π ^ a})) = a := by
@@ -2288,7 +2288,7 @@ open scoped ThaineReduce
 section Transport
 
 variable {A B : Type*} [CommRing A] [CommRing B] [IsDedekindDomain A] [IsDedekindDomain B]
-  [Algebra A B] [Algebra.IsIntegral A B] [Module.IsTorsionFree A B] [Nontrivial B]
+  [Algebra A B] [Algebra.IsIntegral A B] [Module.IsTorsionFree A B]
 
 private theorem count_nF_finsetProd_pow' (T : Finset (Ideal B))
     (hT : ∀ P ∈ T, Prime P) (m : Ideal B → ℕ) (𝔓 : Ideal B) :
