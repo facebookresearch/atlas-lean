@@ -3679,8 +3679,8 @@ end SpanDatumR
 
 open LanglandsTunnell LanglandsTunnell.Converse in
 /-- The right derivative along `X` of the Whittaker function of a real archimedean
-Whittaker datum, `g ↦ D W(g) (g X)` on invertible matrices, is the Whittaker function of
-another real archimedean Whittaker datum. -/
+Whittaker datum, `g ↦ D W(g) (g X)` on invertible matrices, is the Whittaker function of a
+real archimedean Whittaker datum for the same parameter. -/
 theorem LanglandsTunnell.Converse.ArchDatumR.exists_W_eq_fderivWithin_mul
     (P : RealArchParam) (d : ArchDatumR P) (X : Matrix (Fin 2) (Fin 2) ℝ) :
     ∃ d' : ArchDatumR P, ∀ g : Matrix (Fin 2) (Fin 2) ℝ, g.det ≠ 0 →

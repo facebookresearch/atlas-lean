@@ -221,7 +221,8 @@ private theorem lincomb_W (c₁ c₂ : ℂ) (D₁ D₂ : ArchDatumR P) (g : Matr
     (lincomb c₁ c₂ D₁ D₂).W g = c₁ * D₁.W g + c₂ * D₂.W g := rfl
 
 /-- A complex linear combination of the Whittaker functions of two real archimedean
-Whittaker data is the Whittaker function of a real archimedean Whittaker datum. -/
+Whittaker data for the same parameter is the Whittaker function of a real archimedean
+Whittaker datum for that parameter. -/
 public theorem exists_lincomb (D₁ D₂ : ArchDatumR P) (c₁ c₂ : ℂ) :
     ∃ D : ArchDatumR P, D.W = fun g => c₁ * D₁.W g + c₂ * D₂.W g :=
   ⟨lincomb c₁ c₂ D₁ D₂, funext fun g => lincomb_W c₁ c₂ D₁ D₂ g⟩
