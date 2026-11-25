@@ -131,7 +131,8 @@ def homotopicalQuillenDerivedEquivalence [IsIso adj.unit] [IsIso adj.counit]
   exact (data).adjunction.toEquivalence
 
 variable [IsIso adj.unit] [IsIso adj.counit]
-  (hL : WC ≤ (WD).inverseImage L) (hR : WD ≤ (WC).inverseImage R)
+  (hL : weakEquivalences C ≤ (weakEquivalences D).inverseImage L)
+  (hR : weakEquivalences D ≤ (weakEquivalences C).inverseImage R)
 
 /-- The entire forward functor is the original given canonical total left derived functor. -/
 theorem homotopicalQuillenDerivedEquivalence_functor :
