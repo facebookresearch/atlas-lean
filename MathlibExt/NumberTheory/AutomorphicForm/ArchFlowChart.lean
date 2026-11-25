@@ -35,6 +35,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.NumberTheory.NumberField.Completion.InfinitePlace
+public import MathlibExt.NumberTheory.AutomorphicForm.ConstantTerm
 public import MathlibExt.NumberTheory.AutomorphicForm.FnTwist
 
 import Mathlib.Tactic.Group
@@ -67,17 +68,6 @@ inductive ArchDirComplex where
   | iE : ArchDirComplex
   | iFm : ArchDirComplex
 
-/-- The upper unipotent matrix `!![1, x; 0, 1]` in `GL (Fin 2) R`. -/
-def unipotentGL2 {R : Type*} [CommRing R] (x : R) : GL (Fin 2) R where
-  val := !![1, x; 0, 1]
-  inv := !![1, -x; 0, 1]
-  val_inv := by
-    ext i j; fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-  inv_val := by
-    ext i j; fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_two]
-
 /-- The lower unipotent matrix `!![1, 0; x, 1]` in `GL (Fin 2) R`. -/
 def lowerUnipotentGL2 {R : Type*} [CommRing R] (x : R) : GL (Fin 2) R where
   val := !![1, 0; x, 1]
@@ -88,16 +78,6 @@ def lowerUnipotentGL2 {R : Type*} [CommRing R] (x : R) : GL (Fin 2) R where
   inv_val := by
     ext i j; fin_cases i <;> fin_cases j <;>
       simp [Matrix.mul_apply, Fin.sum_univ_two]
-
-@[simp]
-theorem unipotentGL2_zero {R : Type*} [CommRing R] :
-    unipotentGL2 (0 : R) = 1 := by
-  ext i j; fin_cases i <;> fin_cases j <;> simp [unipotentGL2]
-
-theorem unipotentGL2_add {R : Type*} [CommRing R] (x y : R) :
-    unipotentGL2 (x + y) = unipotentGL2 x * unipotentGL2 y := by
-  ext i j; fin_cases i <;> fin_cases j <;>
-    simp [unipotentGL2, Matrix.mul_apply, Fin.sum_univ_two, add_comm]
 
 @[simp]
 theorem lowerUnipotentGL2_zero {R : Type*} [CommRing R] :
