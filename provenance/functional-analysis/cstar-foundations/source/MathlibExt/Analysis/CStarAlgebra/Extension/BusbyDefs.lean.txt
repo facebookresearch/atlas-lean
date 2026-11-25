@@ -1,0 +1,48 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Multiplier.Outer
+
+/-!
+# Busby homomorphism types
+
+`BusbyHom A B` is the existing complex nonunital star-algebra homomorphism
+type into the actual outer multiplier algebra of `B`. Its source needs only
+the algebraic operations required by that type and its stock zero map.
+
+`BusbyMap` retains the C-star source specialization used by concrete
+extensions. The weak-source alias alone does not classify extensions, choose
+a stable sum, or identify the coefficient with a stabilization.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+namespace CStarExtension
+
+universe uA uB
+
+/-- A complex nonunital star-algebra homomorphism to the outer multiplier
+algebra, with an algebraic source and a genuine C-star coefficient. -/
+abbrev BusbyHom (A : Type uA) (B : Type uB)
+    [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [StarAddMonoid A]
+    [NonUnitalCStarAlgebra B] :=
+  let _ : CStarAlgebra (OuterMultiplier B) := outerMultiplierCStarAlgebra B
+  A →⋆ₙₐ[ℂ] OuterMultiplier B
+
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+/-- The C-star dictionary on the outer multiplier algebra, for local use. -/
+noncomputable local instance outerCStarAlgebra :
+    CStarAlgebra (OuterMultiplier B) :=
+  outerMultiplierCStarAlgebra B
+
+/-- A Busby map from `A` to the outer multiplier algebra of `B`. -/
+abbrev BusbyMap :=
+  BusbyHom A B
+
+end CStarExtension

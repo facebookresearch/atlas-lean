@@ -280,7 +280,7 @@ instance oplaxMonoidalN : (N : SimplicialObject C ⥤ _).OplaxMonoidal :=
   Functor.OplaxMonoidal.ofRetract retractN
     (fun X Y ↦ by
       -- `PInfty ⊗ PInfty` is absorbed by the projection `PInftyToN ⊗ PInftyToN`
-      simpa [tensorHom_comp_tensorHom] using
+      simpa [MonoidalCategory.tensorHom_comp_tensorHom] using
         SimplicialObject.PInfty_comp_alexanderWhitney_comp_tensorHom_PInfty_assoc X Y
           (PInftyToN.app X ⊗ₘ PInftyToN.app Y))
     (by rw [retractN_i, retractN_r, PInftyToN_app_comp_inclusionN_app_assoc,
@@ -309,7 +309,7 @@ the projection onto normalized chains. -/
 lemma N_δ_comp_tensorHom_inclusionN_app (X Y : SimplicialObject C) :
     Functor.OplaxMonoidal.δ N X Y ≫ (inclusionN.app X ⊗ₘ inclusionN.app Y) =
       inclusionN.app (X ⊗ Y) ≫ SimplicialObject.alexanderWhitney X Y ≫ (PInfty ⊗ₘ PInfty) := by
-  rw [N_δ, Category.assoc, Category.assoc, tensorHom_comp_tensorHom,
+  rw [N_δ, Category.assoc, Category.assoc, MonoidalCategory.tensorHom_comp_tensorHom,
     PInftyToN_app_comp_inclusionN_app, PInftyToN_app_comp_inclusionN_app]
 
 /-- **The lax monoidal structure of the Dold–Kan functor** `Γ` from chain complexes to

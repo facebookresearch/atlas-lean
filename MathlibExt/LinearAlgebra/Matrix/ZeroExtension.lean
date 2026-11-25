@@ -6,7 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-
+/-
+Author: @toskua
+-/
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
@@ -36,7 +38,10 @@ section Entries
 
 variable {A : Type v} [Zero A]
 
-/-- Top-left extension by zero, including size zero. -/
+/-- Let `A` be a type with zero and let `n ≤ m` be natural numbers. Zero extension sends an `n × n`
+matrix into the leading corner of an `m × m` matrix and makes every other entry zero. The size `n`
+may be zero.
+-/
 def zeroExtend {n m : ℕ} (_h : n ≤ m) (B : Matrix (Fin n) (Fin n) A) :
     Matrix (Fin m) (Fin m) A :=
   Matrix.of fun i j => if hi : i.val < n then
@@ -92,7 +97,9 @@ section GroundLinear
 
 variable {k : Type u} [Semiring k] {A : Type v} [AddCommMonoid A] [Module k A]
 
-/-- The actual zero extension as a native linear map. -/
+/-- Let `k` be a semiring and `A` an additive commutative monoid with a `k`-module structure. For
+natural numbers `n ≤ m`, zero extension from `n × n` to `m × m` matrices is `k`-linear.
+-/
 def zeroExtendLinear {n m : ℕ} (h : n ≤ m) :
     Matrix (Fin n) (Fin n) A →ₗ[k] Matrix (Fin m) (Fin m) A where
   toFun := zeroExtend h
@@ -133,7 +140,9 @@ private theorem sum_truncate {n m : ℕ} (h : n ≤ m) (f : Fin n → A) :
   intro i _
   simp only [Fin.val_castAdd, dite_eq_left i.is_lt]
 
-/-- Multiplication is preserved even though units are not. -/
+/-- Let `A` be a possibly nonunital ring. For natural numbers `n ≤ m` and `n × n` matrices `B`, `C`,
+zero extension preserves multiplication: extending `B*C` equals the product of their extensions.
+-/
 theorem zeroExtend_mul {n m : ℕ} (h : n ≤ m)
     (B C : Matrix (Fin n) (Fin n) A) :
     zeroExtend h (B * C) = zeroExtend h B * zeroExtend h C := by
@@ -167,7 +176,10 @@ section Algebra
 
 variable {k : Type u} [CommRing k] {A : Type v} [NonUnitalRing A] [Module k A]
 
-/-- The actual finite-corner transition as a native nonunital algebra map. -/
+/-- Let `k` be a commutative ring and `A` a possibly nonunital ring with a `k`-module structure. For
+natural numbers `n ≤ m`, zero extension defines a multiplicative `k`-linear map between the two
+matrix sizes.
+-/
 def zeroExtendAlgHom {n m : ℕ} (h : n ≤ m) :
     Matrix (Fin n) (Fin n) A →ₙₐ[k] Matrix (Fin m) (Fin m) A where
   toFun := zeroExtend h

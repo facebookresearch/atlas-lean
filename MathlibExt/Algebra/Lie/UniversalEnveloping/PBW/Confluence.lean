@@ -305,7 +305,7 @@ private theorem normalize_reduction_of_word (b : Module.Basis I R L) (xs : List 
       normalize b xs = reductionValue b p i j s := by
   generalize hn : List.inversionWeight xs = n
   induction n using Nat.strong_induction_on generalizing xs with
-  | h n ih =>
+  | ind n ih =>
       intro p i j s hword hji
       cases hsearch : List.adjacentInversion xs with
       | none =>
