@@ -27,28 +27,15 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.AlgebraicGeometry.Curve.Divisor
-public import Mathlib.Algebra.Group.Subgroup.Defs
-public import Mathlib.GroupTheory.QuotientGroup.Basic
+public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 
 @[expose] public section
+
+open AlgebraicCurve
 
 namespace ModularCurve
 
 variable {C : Type*}
-
-/-- The degree of a curve divisor: the sum of its coefficients. -/
-def divisorDegree (D : CurveDivisor C) : ℤ :=
-  D.sum fun _ n => n
-
-theorem divisorDegree_single (P : C) (n : ℤ) :
-    divisorDegree (Finsupp.single P n) = n := by
-  simp [divisorDegree]
-
-theorem divisorDegree_sub (D E : CurveDivisor C) :
-    divisorDegree (D - E) = divisorDegree D - divisorDegree E := by
-  classical
-  simp [divisorDegree, Finsupp.sum_sub_index]
 
 /-- The cuspidal divisor attached to two cusps: the difference of the
 two single-point divisors. -/
@@ -60,18 +47,13 @@ theorem cuspidalDivisor_def (cuspZero cuspInfty : C) :
       Finsupp.single cuspZero 1 - Finsupp.single cuspInfty 1 :=
   rfl
 
-theorem divisorDegree_cuspidalDivisor (cuspZero cuspInfty : C) :
-    divisorDegree (cuspidalDivisor cuspZero cuspInfty) = 0 := by
-  rw [cuspidalDivisor_def, divisorDegree_sub, divisorDegree_single,
-    divisorDegree_single, sub_self]
-
 theorem cuspidalDivisor_self (P : C) : cuspidalDivisor P P = 0 := by
   simp [cuspidalDivisor_def]
 
 theorem coeff_cuspidalDivisor_self (cuspZero cuspInfty : C) (h : cuspZero ≠ cuspInfty) :
     CurveDivisor.coeff (cuspidalDivisor cuspZero cuspInfty) cuspZero = 1 := by
   classical
-  simp [cuspidalDivisor_def, CurveDivisor.coeff, Finsupp.single_apply, h]
+  simp [cuspidalDivisor_def, CurveDivisor.coeff, h]
 
 theorem cuspidalDivisor_ne_zero (cuspZero cuspInfty : C) (h : cuspZero ≠ cuspInfty) :
     cuspidalDivisor cuspZero cuspInfty ≠ 0 := by
@@ -80,37 +62,50 @@ theorem cuspidalDivisor_ne_zero (cuspZero cuspInfty : C) (h : cuspZero ≠ cuspI
   rw [h0] at this
   simp [CurveDivisor.coeff] at this
 
-/-- The cuspidal divisor as a degree-zero divisor. -/
-noncomputable def cuspidalDivisorDegZero (cuspZero cuspInfty : C) :
-    {D : CurveDivisor C // divisorDegree D = 0} :=
-  ⟨cuspidalDivisor cuspZero cuspInfty, divisorDegree_cuspidalDivisor cuspZero cuspInfty⟩
+variable {K F : Type*} [Field K] [Field F] [Algebra K F]
+
+/-- The degree of the cuspidal divisor of two places is the difference of their degrees. -/
+theorem degree_cuspidalDivisor (cuspZero cuspInfty : Place K F) :
+    Divisor.degree (cuspidalDivisor cuspZero cuspInfty) =
+      (cuspZero.deg : ℤ) - cuspInfty.deg := by
+  rw [cuspidalDivisor_def, map_sub, Divisor.degree_single, Divisor.degree_single, one_mul,
+    one_mul]
+
+/-- The cuspidal divisor of two places has degree zero exactly when the two places have the
+same degree. -/
+theorem cuspidalDivisor_mem_degZero_iff (cuspZero cuspInfty : Place K F) :
+    cuspidalDivisor cuspZero cuspInfty ∈ Divisor.degZero (K := K) (F := F) ↔
+      cuspZero.deg = cuspInfty.deg := by
+  rw [Divisor.mem_degZero, degree_cuspidalDivisor, sub_eq_zero, Nat.cast_inj]
+
+/-- The cuspidal divisor of two places of the same degree, as a divisor of degree zero. -/
+noncomputable def cuspidalDivisorDegZero (cuspZero cuspInfty : Place K F)
+    (h : cuspZero.deg = cuspInfty.deg) : Divisor.degZero (K := K) (F := F) :=
+  ⟨cuspidalDivisor cuspZero cuspInfty, (cuspidalDivisor_mem_degZero_iff cuspZero cuspInfty).mpr h⟩
 
 @[simp]
-theorem coe_cuspidalDivisorDegZero (cuspZero cuspInfty : C) :
-    (cuspidalDivisorDegZero cuspZero cuspInfty : CurveDivisor C) =
+theorem coe_cuspidalDivisorDegZero (cuspZero cuspInfty : Place K F)
+    (h : cuspZero.deg = cuspInfty.deg) :
+    (cuspidalDivisorDegZero cuspZero cuspInfty h : Divisor K F) =
       cuspidalDivisor cuspZero cuspInfty :=
   rfl
 
-/-- The divisor class group of a curve with point type `C`, modulo a
-chosen subgroup of principal divisors. -/
-abbrev DivisorClassGroup (principal : AddSubgroup (CurveDivisor C)) : Type _ :=
-  CurveDivisor C ⧸ principal
+/-- The cuspidal class: the class in `Pic0 K F` of the cuspidal divisor of two places of the
+same degree. -/
+noncomputable def cuspidalClass (cuspZero cuspInfty : Place K F)
+    (h : cuspZero.deg = cuspInfty.deg) : Pic0 K F :=
+  Pic0.mk (cuspidalDivisorDegZero cuspZero cuspInfty h)
 
-/-- The cuspidal class: the image of the cuspidal divisor in the divisor
-class group modulo principal divisors. -/
-noncomputable def cuspidalClass (principal : AddSubgroup (CurveDivisor C))
-    (cuspZero cuspInfty : C) : DivisorClassGroup principal :=
-  QuotientAddGroup.mk (cuspidalDivisor cuspZero cuspInfty)
+/-- The cuspidal class vanishes exactly when the cuspidal divisor is principal, that is, the
+divisor of a nonzero element of `F`. -/
+theorem cuspidalClass_eq_zero_iff (cuspZero cuspInfty : Place K F)
+    (h : cuspZero.deg = cuspInfty.deg) :
+    cuspidalClass cuspZero cuspInfty h = 0 ↔
+      Divisor.IsPrincipal (cuspidalDivisor cuspZero cuspInfty) :=
+  Pic0.mk_eq_zero_iff _
 
-theorem cuspidalClass_eq_zero_iff (principal : AddSubgroup (CurveDivisor C))
-    (cuspZero cuspInfty : C) :
-    cuspidalClass principal cuspZero cuspInfty = 0 ↔
-      cuspidalDivisor cuspZero cuspInfty ∈ principal := by
-  rw [cuspidalClass, QuotientAddGroup.eq_zero_iff]
-
-theorem cuspidalClass_self (principal : AddSubgroup (CurveDivisor C)) (P : C) :
-    cuspidalClass principal P P = 0 := by
+theorem cuspidalClass_self (P : Place K F) : cuspidalClass P P rfl = 0 := by
   rw [cuspidalClass_eq_zero_iff, cuspidalDivisor_self]
-  exact principal.zero_mem
+  exact ⟨1, one_ne_zero, fun v => by simp⟩
 
 end ModularCurve
