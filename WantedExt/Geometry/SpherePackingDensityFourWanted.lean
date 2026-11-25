@@ -45,45 +45,102 @@ entry, not an OpenConjectures entry.
 
 noncomputable section
 
-/-- Source: CE2003 introduction and Appendix A, periodic packings come arbitrarily
+/-- **Statement that periodic packings approach the optimal density in dimension four.** For a
+packing $Q$ of congruent balls in $\mathbb{R}^4$, let its upper density $\overline{\delta}(Q)$ be
+the limit superior, as $R \to \infty$, of the supremum over all points $p$ of the fraction of the
+volume of the open ball $B(p, R)$ covered by the closed balls of $Q$, and let the sphere packing
+density $\Delta_4$ of $\mathbb{R}^4$ be the supremum of $\overline{\delta}(Q)$ over all such
+packings $Q$. This is the proposition that for every real $\varepsilon > 0$ there is a periodic
+packing $P$ of congruent balls in $\mathbb{R}^4$, meaning that its set of centers is a finite
+union of translates of the lattice $\mathbb{Z}b_1 + \mathbb{Z}b_2 + \mathbb{Z}b_3 + \mathbb{Z}b_4$
+for some basis $b_1, \dots, b_4$ of $\mathbb{R}^4$, such that
+$\Delta_4 \le \overline{\delta}(P) + \varepsilon$.
+
+Source: CE2003 introduction and Appendix A, periodic packings come arbitrarily
 close to the greatest density. Positive error does not assert attainment. -/
 def periodicApproximation : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ P : Packing,
     P.IsPeriodic ∧ spherePackingDensity4 ≤ upperDensity P + ENNReal.ofReal ε
 
-/-- Source: CE2003 Table 3, Rogers center-density upper bound `0.13127`,
+/-- **Statement of the Rogers upper bound in dimension four.** The proposition that the sphere
+packing density $\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of all packings
+of congruent balls in $\mathbb{R}^4$, satisfies
+$\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{13127}{100000}$.
+
+Source: CE2003 Table 3, Rogers center-density upper bound `0.13127`,
 converted exactly; displayed `0.647791…` is only an approximation. -/
 def upperBound_CE2003_Rogers : Prop :=
   spherePackingDensity4 ≤ ENNReal.ofReal ((Real.pi ^ 2 / 2) * ((13127 : ℝ) / 100000))
 
-/-- Source: CE2003 Table 3, new center-density upper bound `0.13126`,
+/-- **Statement of the Cohn–Elkies upper bound in dimension four.** The proposition that the
+sphere packing density $\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of all
+packings of congruent balls in $\mathbb{R}^4$, satisfies
+$\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{13126}{100000}$.
+
+Source: CE2003 Table 3, new center-density upper bound `0.13126`,
 converted exactly; displayed `0.647742…` is only an approximation. -/
 def upperBound_CE2003_new : Prop :=
   spherePackingDensity4 ≤ ENNReal.ofReal ((Real.pi ^ 2 / 2) * ((13126 : ℝ) / 100000))
 
-/-- Source: dLOV2014 Table 1, center-density upper bound `0.130587`,
+/-- **Statement of the de Laat–Oliveira–Vallentin upper bound in dimension four.** The
+proposition that the sphere packing density $\Delta_4$ of $\mathbb{R}^4$, the supremum of the
+upper densities of all packings of congruent balls in $\mathbb{R}^4$, satisfies
+$\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{130587}{1000000}$.
+
+Source: dLOV2014 Table 1, center-density upper bound `0.130587`,
 converted exactly; displayed `0.644421…` is only an approximation. -/
 def upperBound_dLOV2014 : Prop :=
   spherePackingDensity4 ≤ ENNReal.ofReal ((Real.pi ^ 2 / 2) * ((130587 : ℝ) / 1000000))
 
-/-- Source: dLOV2014 Table 1, center-density lower bound `0.12500 = 1/8`,
+/-- **Statement of the lower bound for sphere packing in dimension four.** The proposition that
+the sphere packing density $\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of
+all packings of congruent balls in $\mathbb{R}^4$, satisfies $\frac{\pi^2}{16} \le \Delta_4$.
+
+Source: dLOV2014 Table 1, center-density lower bound `0.12500 = 1/8`,
 converted exactly to `π²/16`; `0.616850` is only an approximation. -/
 def lowerBound_dLOV2014 : Prop :=
   ENNReal.ofReal (Real.pi ^ 2 / 16) ≤ spherePackingDensity4
 
-/-- Source: CE2003 Table 3. Known literature bound; no Lean proof supplied. -/
+/-- **Rogers upper bound for sphere packing in dimension four.** The sphere packing density
+$\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of all packings of congruent
+balls in $\mathbb{R}^4$, satisfies $\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{13127}{100000}$.
+
+Source: CE2003 Table 3. Known literature bound; no Lean proof supplied. -/
 theorem_wanted upperBound_CE2003_Rogers_wanted : upperBound_CE2003_Rogers
 
-/-- Source: CE2003 Table 3. Known literature bound; no Lean proof supplied. -/
+/-- **Cohn–Elkies upper bound for sphere packing in dimension four.** The sphere packing density
+$\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of all packings of congruent
+balls in $\mathbb{R}^4$, satisfies $\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{13126}{100000}$.
+
+Source: CE2003 Table 3. Known literature bound; no Lean proof supplied. -/
 theorem_wanted upperBound_CE2003_new_wanted : upperBound_CE2003_new
 
-/-- Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
+/-- **de Laat–Oliveira–Vallentin upper bound for sphere packing in dimension four.** The sphere
+packing density $\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of all packings
+of congruent balls in $\mathbb{R}^4$, satisfies
+$\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{130587}{1000000}$.
+
+Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
 theorem_wanted upperBound_dLOV2014_wanted : upperBound_dLOV2014
 
-/-- Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
+/-- **Lower bound for sphere packing in dimension four.** The sphere packing density $\Delta_4$
+of $\mathbb{R}^4$, the supremum of the upper densities of all packings of congruent balls in
+$\mathbb{R}^4$, satisfies $\frac{\pi^2}{16} \le \Delta_4$.
+
+Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
 theorem_wanted lowerBound_dLOV2014_wanted : lowerBound_dLOV2014
 
-/-- Source: CE2003 introduction and Appendix A. Known periodic approximation;
+/-- **Periodic packings approach the optimal density in dimension four.** For a packing $Q$ of
+congruent balls in $\mathbb{R}^4$, let its upper density $\overline{\delta}(Q)$ be the limit
+superior, as $R \to \infty$, of the supremum over all points $p$ of the fraction of the volume of
+the open ball $B(p, R)$ covered by the closed balls of $Q$, and let the sphere packing density
+$\Delta_4$ of $\mathbb{R}^4$ be the supremum of $\overline{\delta}(Q)$ over all such packings $Q$.
+Then for every real $\varepsilon > 0$ there is a periodic packing $P$ of congruent balls in
+$\mathbb{R}^4$, meaning that its set of centers is a finite union of translates of the lattice
+$\mathbb{Z}b_1 + \mathbb{Z}b_2 + \mathbb{Z}b_3 + \mathbb{Z}b_4$ for some basis $b_1, \dots, b_4$ of
+$\mathbb{R}^4$, such that $\Delta_4 \le \overline{\delta}(P) + \varepsilon$.
+
+Source: CE2003 introduction and Appendix A. Known periodic approximation;
 no Lean proof supplied and no exact optimum-attainment claim. -/
 theorem_wanted periodicApproximation_wanted : periodicApproximation
 

@@ -41,15 +41,25 @@ metric) and torsion-free means no nontrivial element of finite order. Decidabili
 
 open MathlibExt.GroupTheory.PrenexSentenceShared
 
-/-- Kourovka 16.71 (A. G. Myasnikov, O. G. Kharlampovich): the elementary theory of every
-torsion-free hyperbolic group is decidable. -/
+/-- **Decidability of the elementary theory of torsion-free hyperbolic groups.** The proposition
+stating Kourovka Problem 16.71 (A. G. Myasnikov, O. G. Kharlampovich): for every torsion-free
+word-hyperbolic group $G$ (every element $g \ne 1$ of $G$ has infinite order), the set of prenex
+sentences of the language of groups that hold in $G$ is computable, that is, some algorithm
+decides for each prenex sentence whether it holds in $G$. -/
 def torsionFreeHyperbolicTheoryDecidable : Prop :=
   ∀ (G : Type) [Group G], Group.IsHyperbolic G → (∀ g : G, g ≠ 1 → ¬ IsOfFinOrder g) →
     ComputablePred fun s : PrenexSentence => s.HoldsIn G
 
 /--
-Resolved true: Kharlampovich and Myasnikov (Theorem 3) prove that the elementary theory of a
-torsion-free hyperbolic group is decidable; the Kourovka Archive answers 16.71 "Yes, it is". Source:
+**Torsion-free hyperbolic groups have decidable elementary theory.** For every torsion-free
+word-hyperbolic group $G$ (every element $g \ne 1$ of $G$ has infinite order), the set of prenex
+sentences of the language of groups that hold in $G$ is computable, that is, some algorithm decides
+for each prenex sentence whether it holds in $G$.
+
+This answers Kourovka Problem 16.71 affirmatively (the Kourovka Archive answers "Yes, it is"); it
+is Theorem 3 of Kharlampovich and Myasnikov.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.71 (A. G. Myasnikov,
 O. G. Kharlampovich); resolution: O. Kharlampovich and A. Myasnikov, Decidability of the elementary

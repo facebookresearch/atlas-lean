@@ -39,11 +39,14 @@ decides this; the search question itself is not formalized.
 open MetaMathlibExt.ComplexityTheory
 
 open Classical in
-/-- The decision version of hypergraph `k`-cut. An input decodes to `(n, (E, B))`: vertices
-`0, …, n - 1`, hyperedges `E` given as (vertex list, natural cost) pairs, and a budget `B`. It is
-accepted iff every hyperedge lists vertices below `n` and some partition of the vertices into `k`
-non-empty parts (a surjection `f` onto `0, …, k - 1`) has total cost of the hyperedges meeting two
-parts at most `B`. -/
+/-- **Decision version of hypergraph $k$-cut.** For a natural number $k$, this is the decision
+problem on bitstrings that decodes an input as a triple $(n, E, B)$: a number $n$ of vertices
+$0, \dots, n-1$, a list $E$ of hyperedges, each a list of vertices with a natural-number cost, and
+a natural-number budget $B$. It accepts the input iff every hyperedge lists only vertices below
+$n$ and there is a partition of the vertices into $k$ non-empty parts, given by a map $f$ from
+$\{0, \dots, n-1\}$ onto $\{0, \dots, k-1\}$, such that the total cost of the hyperedges in $E$
+(counted with multiplicity) that meet two different parts is at most $B$. Inputs that do not
+decode are rejected. -/
 noncomputable def hypergraphKCutDec (k : ℕ) : DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ × (List (List ℕ × ℕ) × ℕ)) x with
   | some (n, (E, B)) => decide (
@@ -52,15 +55,27 @@ noncomputable def hypergraphKCutDec (k : ℕ) : DecisionProblem := fun x =>
         ((E.filter fun e => ∃ u ∈ e.1, ∃ v ∈ e.1, f u ≠ f v).map Prod.snd).sum ≤ B)
   | none => false
 
-/-- For every fixed `k`, hypergraph `k`-cut with non-negative integer costs is decidable in
-polynomial time. -/
+/-- **The EGRES question on hypergraph $k$-cut for fixed $k$.** The statement that for every natural
+number $k$, the decision version of hypergraph $k$-cut is in the complexity class P. That problem
+accepts a hypergraph on the vertices $0, \dots, n-1$, given by hyperedges with natural-number
+costs, and a budget $B$ iff every hyperedge lists only vertices below $n$ and some partition of the
+vertices into $k$ non-empty parts has total cost of the hyperedges meeting two parts at most $B$;
+inputs that do not decode are rejected. -/
 def hypergraphKCutInP : Prop :=
   ∀ k : ℕ, hypergraphKCutDec k ∈ P
 
 /--
-Resolved true: Chandrasekaran and Chekuri give, for every fixed `k`, a deterministic polynomial-time
-algorithm for hypergraph `k`-cut with non-negative hyperedge costs, so the decision version (is
-there a `k`-cut of cost at most `B`) is in `P`. Source: EGRES Open (Egerváry Research Group), list
+**Hypergraph $k$-cut for fixed $k$ is in P.** For every natural number $k$, the decision version
+of hypergraph $k$-cut is in the complexity class P. That problem accepts a hypergraph on the
+vertices $0, \dots, n-1$, given by hyperedges with natural-number costs, and a budget $B$ iff every
+hyperedge lists only vertices below $n$ and some partition of the vertices into $k$ non-empty parts
+has total cost of the hyperedges meeting two parts at most $B$; inputs that do not decode are
+rejected.
+
+Chandrasekaran and Chekuri give, for every fixed $k$, a deterministic polynomial-time algorithm for
+hypergraph $k$-cut with non-negative hyperedge costs, which decides this problem.
+
+Source: EGRES Open (Egerváry Research Group), list
 of open problems, Minimum k-way cut in a hypergraph,
 https://oldlemon.cs.elte.hu/egres/open/Minimum_k-way_cut_in_a_hypergraph; resolution: K.
 Chandrasekaran and C. Chekuri, Hypergraph k-cut for fixed k in deterministic polynomial time, FOCS

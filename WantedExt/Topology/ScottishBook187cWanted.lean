@@ -20,18 +20,20 @@ public import Mathlib.Topology.Instances.Real.Lemmas
 
 namespace MathlibExt.Topology.ScottishBook187cWanted
 
-/-- The `p`-dimensional cube, as the subtype of `Fin p → ℝ` with
-coordinates in `[0,1]`. -/
+/-- **The p-dimensional cube.** For $p \in \mathbb{N}$, the cube $I^p = [0,1]^p$ is the set of
+points of $\mathbb{R}^p$ all of whose coordinates lie in $[0,1]$, with the subspace topology. -/
 abbrev Cube (p : ℕ) : Type :=
   ↥(Set.pi Set.univ (fun _ : Fin p => Set.Icc (0 : ℝ) 1))
 
 /--
-Scottish Book Problem 187, part (3), is false as stated: Keldysh
-constructed an open continuous surjection `I^m → I^n` for `m < n`,
-refuting the impossibility claim for an open (interior) continuous
-transformation of a `p`-dimensional cube into a `q`-dimensional cube
-for `p < q`. Status: solved-negative for part (3) (whole Problem 187
-is partially_solved, part (1) remaining separate).
+**Open maps can raise the dimension of a cube.** There are natural numbers $p < q$ and a
+continuous, open, surjective map $f \colon I^p \to I^q$, where $I^p = [0,1]^p$ and
+$I^q = [0,1]^q$ are the $p$- and $q$-dimensional cubes.
+
+Keldysh constructed such maps, refuting the claim of Scottish Book Problem 187, part (3), that no
+open (interior) continuous map of a $p$-dimensional cube onto a $q$-dimensional cube exists for
+$p < q$.
+
 Source: P. Alexandroff, Problem 187 part (3) of the Scottish Book,
 typescript pp. 82–83; see the commentary in R. D. Mauldin (ed.),
 The Scottish Book, 2nd ed. (Birkhäuser, 2015).

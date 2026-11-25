@@ -42,8 +42,13 @@ namespace Cslib.Modal
 
 variable {Atom : Type u} {W : Type v} {V : Type w}
 
-/-- A bisimulation between two Kripke models: a relation on worlds matching atoms and
-accessible worlds in both directions. -/
+/-- **Bisimulation.** Let $M$ and $N$ be Kripke models over the same atoms, with sets of
+worlds $W$ and $V$ and accessibility relations $R_M$ and $R_N$. A relation
+$Z \subseteq W \times V$ is a bisimulation between $M$ and $N$ when, for all $w \in W$ and
+$v \in V$ with $w \mathrel{Z} v$: each atom $a$ is true at $w$ in $M$ if and only if $a$ is
+true at $v$ in $N$; for every $w'$ with $w \mathrel{R_M} w'$ there is $v'$ with
+$v \mathrel{R_N} v'$ and $w' \mathrel{Z} v'$ (forth); and for every $v'$ with
+$v \mathrel{R_N} v'$ there is $w'$ with $w \mathrel{R_M} w'$ and $w' \mathrel{Z} v'$ (back). -/
 structure Bisimulation (M : KripkeModel W Atom) (N : KripkeModel V Atom)
     (R : W → V → Prop) : Prop where
   /-- Related worlds agree on every atom. -/
@@ -59,7 +64,10 @@ namespace Bisimulation
 
 variable {M : KripkeModel W Atom} {N : KripkeModel V Atom} {R : W → V → Prop}
 
-/-- Bisimilar worlds satisfy exactly the same modal formulas. -/
+/-- **Bisimulations preserve modal formulas.** Let $Z$ be a bisimulation between Kripke models
+$M$ and $N$ over the same atoms. If $Z$ relates a world $w$ of $M$ to a world $v$ of $N$, then
+every modal formula $\varphi$ is satisfied at $w$ in $M$ if and only if $\varphi$ is satisfied
+at $v$ in $N$. -/
 theorem satisfies_iff (h : Bisimulation M N R) (φ : Formula Atom) (w : W) (v : V)
     (hr : R w v) : M.Satisfies w φ ↔ N.Satisfies v φ := by
   induction φ generalizing w v with
@@ -81,11 +89,15 @@ theorem satisfies_iff (h : Bisimulation M N R) (φ : Formula Atom) (w : W) (v : 
       obtain ⟨v', hv', hr'⟩ := h.forth hr hrel
       exact (ih w' v' hr').mpr (hbox v' hv')
 
-/-- Two worlds are bisimilar if some bisimulation relates them. -/
+/-- **Bisimilar worlds.** Let $M$ and $N$ be Kripke models over the same atoms. A world $w$ of
+$M$ and a world $v$ of $N$ are bisimilar if some bisimulation between $M$ and $N$ relates $w$
+to $v$. -/
 def Bisimilar (M : KripkeModel W Atom) (N : KripkeModel V Atom) (w : W) (v : V) : Prop :=
   ∃ R : W → V → Prop, Bisimulation M N R ∧ R w v
 
-/-- Bisimilar worlds satisfy exactly the same modal formulas. -/
+/-- **Bisimilar worlds are modally equivalent.** If a world $w$ of a Kripke model $M$ and a world
+$v$ of a Kripke model $N$ over the same atoms are bisimilar, then every modal formula $\varphi$
+is satisfied at $w$ in $M$ if and only if $\varphi$ is satisfied at $v$ in $N$. -/
 theorem Bisimilar.satisfies_iff {M : KripkeModel W Atom} {N : KripkeModel V Atom}
     {w : W} {v : V} (h : Bisimilar M N w v) (φ : Formula Atom) :
     M.Satisfies w φ ↔ N.Satisfies v φ := by

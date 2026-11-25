@@ -128,8 +128,9 @@ theorem boundedStep_uniformIntegrable : UniformIntegrable (boundedStep : ℕ →
     funext n ω
     simp [g, boundedStep]
   rw [← heq]
-  obtain ⟨hunif, C, hC⟩ := hfinite
-  exact ⟨hunif.comp (fun n : ℕ => decide (n = 0)), C, fun n => hC _⟩
+  obtain ⟨hunif, hbdd⟩ := hfinite
+  exact ⟨hunif.comp (fun n : ℕ => decide (n = 0)),
+    (iSup_le fun n => le_iSup (fun b => eLpNorm (g b) 1 μ) _).trans_lt hbdd⟩
 
 omit [MeasurableSpace Ω] in
 /-- The bounded strict process converges to one in the infinite branch. -/

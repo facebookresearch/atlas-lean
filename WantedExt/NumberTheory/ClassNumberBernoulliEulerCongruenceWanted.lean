@@ -22,6 +22,7 @@ public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import Mathlib.NumberTheory.JacobiSum.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.QuadraticChar.Basic
 public import Mathlib.RingTheory.Trace.Defs
+public import MathlibExt.NumberTheory.SlHurwitzNumbers
 
 namespace MetaMathlibExt
 
@@ -189,25 +190,6 @@ public theorem_wanted arcSl_subst_sl (S C : PowerSeries ℚ)
         (-1 : ℚ) ^ (k / 3) * Ring.choose (-2 / 3 : ℚ) (k / 3) / k else 0).subst S =
       PowerSeries.X
 
-/-- **The Hurwitz-normalized coefficients of Sl are integers.** Let $\mathrm{Sl}, \mathrm{Cl}$ be
-formal power series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$,
-$\mathrm{Cl}' = -\mathrm{Sl}^2$, $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$, and let $C_n$ be
-the coefficient of $u^n$ in $\mathrm{Sl}$. Then $(3m + 1)!\,C_{3m+1}$ is an integer for every
-$m \ge 0$.
-
-The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
-at $0$ of the Eisenstein elliptic functions of the source.
-
-Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
-Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
-(2026), Article A112, Lemma 7
-(`integers-2026-A112-lem-7`). -/
-public theorem_wanted factorial_mul_coeff_sl_isInt (S C : PowerSeries ℚ)
-    (hS : PowerSeries.derivative (R := ℚ) S = C ^ 2)
-    (hC : PowerSeries.derivative (R := ℚ) C = -(S ^ 2))
-    (hS0 : PowerSeries.constantCoeff S = 0) (hC0 : PowerSeries.constantCoeff C = 1) (m : ℕ) :
-    ∃ z : ℤ, ((3 * m + 1).factorial : ℚ) * PowerSeries.coeff (3 * m + 1) S = z
-
 /-- **The Hurwitz-normalized coefficients of 1/Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal power
 series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$, $\mathrm{Cl}' = -\mathrm{Sl}^2$,
 $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$. Write $\mathrm{Sl}(u) = u\,S_0(u)$ with
@@ -230,31 +212,6 @@ public theorem_wanted two_mul_factorial_coeff_inv_sl_mem_int_inv_three (S C : Po
     ∃ (a : ℤ) (k : ℕ), 2 * ((6 * m + 2).factorial : ℚ) *
       PowerSeries.coeff (6 * m + 3) (PowerSeries.mk fun n => PowerSeries.coeff (n + 1) S)⁻¹ =
         a / 3 ^ k
-
-/-- **Denominators of the Hurwitz-type numbers of Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal
-power series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$,
-$\mathrm{Cl}' = -\mathrm{Sl}^2$, $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$. Let $C_n$ be the
-coefficient of $u^n$ in $\mathrm{Sl}$; write $\mathrm{Sl}(u) = u\,S_0(u)$ with
-$S_0 \in \mathbb{Q}[[u]]$ and let $D_n$ be the coefficient of $u^{n+1}$ in $S_0^{-1}$, so that
-$1/\mathrm{Sl}(u) = 1/u + \sum_{n \ge 0} D_n u^n$. Let $\ell$ be a prime and put
-$k = 2(\ell - 1)/3$. If $\ell \equiv 7 \pmod 9$, then $\ell$ does not divide the denominator of
-$C_k$ in lowest terms; if $\ell \equiv 4 \pmod 9$, then $\ell$ does not divide the denominator of
-$D_k$ in lowest terms.
-
-The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
-at $0$ of the Eisenstein elliptic functions of the source.
-
-Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
-Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
-(2026), Article A112, Theorem 3 (`integers-2026-A112-thm-3`), first sentence. -/
-public theorem_wanted sl_hurwitz_numbers_den_coprime (S C : PowerSeries ℚ)
-    (hS : PowerSeries.derivative (R := ℚ) S = C ^ 2)
-    (hC : PowerSeries.derivative (R := ℚ) C = -(S ^ 2))
-    (hS0 : PowerSeries.constantCoeff S = 0) (hC0 : PowerSeries.constantCoeff C = 1)
-    (ℓ : ℕ) (hℓ : ℓ.Prime) :
-    (ℓ % 9 = 7 → ¬ ℓ ∣ (PowerSeries.coeff (2 * (ℓ - 1) / 3) S).den) ∧
-    (ℓ % 9 = 4 → ¬ ℓ ∣ (PowerSeries.coeff (2 * (ℓ - 1) / 3 + 1)
-      (PowerSeries.mk fun n => PowerSeries.coeff (n + 1) S)⁻¹).den)
 
 /-- **Identities for the Eisenstein elliptic functions $\varphi$ and $\psi$.** Let
 $\rho = e^{2\pi i/3}$, let $\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, and let $\wp$ be the

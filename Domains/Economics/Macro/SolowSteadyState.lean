@@ -60,15 +60,22 @@ identity).
 
 namespace MathlibExt.Economics.Macro.SolowSteadyState
 
-/-- The reduced-form discrete Solow map for Cobb-Douglas technology. -/
+/-- The reduced-form discrete Solow map for Cobb-Douglas technology. It is
+`φ(k) = a * k ^ α + b * k`, defined for all real `a`, `b`, `α` and `k`, with the conventions
+`0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t * cos (π t)` for `s < 0`; the intended
+domain is `k ≥ 0`, with `a > 0`, `0 ≤ b < 1` and `0 < α < 1`. -/
 noncomputable def solowMap (a b α : ℝ) (k : ℝ) : ℝ :=
   a * k ^ α + b * k
 
-/-- The closed-form positive steady state of the Cobb-Douglas Solow map. -/
+/-- The closed-form steady state `(a / (1 - b)) ^ (1 / (1 - α))` of the Cobb-Douglas Solow map,
+positive (and the unique positive fixed point) for `a > 0`, `0 ≤ b < 1` and `0 < α < 1`. It is
+defined for all real `a`, `b`, `α`, with the conventions `x / 0 = 0`, `0 ^ y = 0` for `y ≠ 0`
+and `x ^ y = |x| ^ y * cos (π y)` for `x < 0`: it is `1` for `α = 1` and `0` for `b = 1`,
+`α ≠ 1`. -/
 noncomputable def solowSteadyState (a b α : ℝ) : ℝ :=
   (a / (1 - b)) ^ ((1 : ℝ) / (1 - α))
 
-/-- The Solow map preserves positivity. -/
+/-- For `a > 0` and `b ≥ 0`, the Solow map preserves positivity. -/
 theorem solow_phi_pos {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) {k : ℝ}
     (hk : 0 < k) : 0 < solowMap a b α k := by
   unfold solowMap
@@ -76,7 +83,7 @@ theorem solow_phi_pos {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) {k : ℝ}
   have h2 : 0 ≤ b * k := mul_nonneg hb₀ (le_of_lt hk)
   linarith
 
-/-- Every iterate of a positive starting point is positive. -/
+/-- For `a > 0` and `b ≥ 0`, every iterate of a positive starting point is positive. -/
 theorem solow_path_pos {a b α k₀ : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
     {k : ℕ → ℝ} (hk₀ : 0 < k₀) (h0 : k 0 = k₀)
     (hrec : ∀ t, k (t + 1) = solowMap a b α (k t)) : ∀ t, 0 < k t := by
@@ -85,7 +92,7 @@ theorem solow_path_pos {a b α k₀ : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
   | zero => rw [h0]; exact hk₀
   | succ t ih => rw [hrec t]; exact solow_phi_pos ha hb₀ ih
 
-/-- The Solow map is strictly monotone on `[0, infinity)`. -/
+/-- For `a > 0`, `b ≥ 0` and `α > 0`, the Solow map is strictly monotone on `[0, infinity)`. -/
 theorem solow_strictMonoOn {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
     (hα₀ : 0 < α) : StrictMonoOn (solowMap a b α) (Set.Ici 0) := by
   intro x hx y hy hxy
@@ -96,7 +103,7 @@ theorem solow_strictMonoOn {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
   have h2 : b * x ≤ b * y := mul_le_mul_of_nonneg_left (le_of_lt hxy) hb₀
   exact add_lt_add_of_lt_of_le h1 h2
 
-/-- A positive fixed point satisfies `k ^ (alpha - 1) = (1 - b) / a`. -/
+/-- For `a > 0` and `b < 1`, a positive fixed point satisfies `k ^ (alpha - 1) = (1 - b) / a`. -/
 theorem solow_rpow_sub_one_eq {a b α : ℝ} (ha : 0 < a) (_hb₁ : b < 1)
     {k : ℝ} (hk : 0 < k) (hfix : solowMap a b α k = k) :
     k ^ (α - 1) = (1 - b) / a := by
@@ -119,7 +126,8 @@ theorem solow_rpow_sub_one_eq {a b α : ℝ} (ha : 0 < a) (_hb₁ : b < 1)
   rw [eq_div_iff (ne_of_gt ha)]
   linear_combination h2
 
-/-- The reduced-form map agrees with the per-effective-worker law
+/-- For `D ≠ 0`, the reduced-form map with `a = s * A / D` and `b = (1 - δ) / D` agrees
+with the per-effective-worker law
 `k' = (s * f(k) + (1 - δ) * k) / D`, written out for Cobb-Douglas production
 `f(k) = A * k ^ α`. This is an algebraic identity in the explicit formula. -/
 theorem solowMap_eq_law {s δ D A α k : ℝ} (hD : D ≠ 0) :
@@ -128,7 +136,8 @@ theorem solowMap_eq_law {s δ D A α k : ℝ} (hD : D ≠ 0) :
   unfold solowMap
   field_simp
 
-/-- **Existence:** the closed-form point is positive and fixed by the map. -/
+/-- **Existence:** for `a > 0`, `0 ≤ b < 1` and `0 < α < 1`, the closed-form point is
+positive and fixed by the map. -/
 theorem solow_fixedPoint {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : b < 1)
     (hα₀ : 0 < α) (hα₁ : α < 1) :
     0 < solowSteadyState a b α ∧
@@ -173,7 +182,8 @@ theorem solow_fixedPoint {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : 
         rw [key]
     _ = solowSteadyState a b α := by ring
 
-/-- Comparison of `a * k ^ (alpha - 1)` with `1 - b` detects `k` above the steady state. -/
+/-- For `a > 0`, `0 ≤ b < 1`, `0 < α < 1` and `k > 0`, `a * k ^ (alpha - 1) < 1 - b` exactly
+when `k` is above the steady state. -/
 theorem solow_key_lt {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : b < 1)
     (hα₀ : 0 < α) (hα₁ : α < 1) {k : ℝ} (hk : 0 < k) :
     a * k ^ (α - 1) < 1 - b ↔ solowSteadyState a b α < k := by
@@ -195,7 +205,8 @@ theorem solow_key_lt {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : b < 
   rw [hdiv, ← hstar_eq]
   exact hiff
 
-/-- Comparison of `a * k ^ (alpha - 1)` with `1 - b` detects `k` below the steady state. -/
+/-- For `a > 0`, `0 ≤ b < 1`, `0 < α < 1` and `k > 0`, `1 - b < a * k ^ (alpha - 1)` exactly
+when `k` is below the steady state. -/
 theorem solow_key_gt {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : b < 1)
     (hα₀ : 0 < α) (hα₁ : α < 1) {k : ℝ} (hk : 0 < k) :
     1 - b < a * k ^ (α - 1) ↔ k < solowSteadyState a b α := by
@@ -217,7 +228,8 @@ theorem solow_key_gt {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : b < 
   rw [hdiv, ← hstar_eq]
   exact hiff
 
-/-- The displacement `phi(k) - k` factors through `a * k ^ (alpha - 1) - (1 - b)`. -/
+/-- For `k > 0`, the displacement `phi(k) - k` factors as
+`k * (a * k ^ (alpha - 1) - (1 - b))`. -/
 theorem solow_diff_eq {a b α : ℝ} {k : ℝ} (hk : 0 < k) :
     solowMap a b α k - k = k * (a * k ^ (α - 1) - (1 - b)) := by
   have hsplit : k ^ α = k * k ^ (α - 1) := by
@@ -229,7 +241,8 @@ theorem solow_diff_eq {a b α : ℝ} {k : ℝ} (hk : 0 < k) :
   rw [hsplit]
   ring
 
-/-- The map decreases `k` exactly when `k` is above the steady state. -/
+/-- For `a > 0`, `0 ≤ b < 1`, `0 < α < 1` and `k > 0`, the map decreases `k` exactly when `k`
+is above the steady state. -/
 theorem solow_map_lt_self_iff {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
     (hb₁ : b < 1) (hα₀ : 0 < α) (hα₁ : α < 1) {k : ℝ} (hk : 0 < k) :
     solowMap a b α k < k ↔ solowSteadyState a b α < k := by
@@ -254,7 +267,8 @@ theorem solow_map_lt_self_iff {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
       _ ↔ solowSteadyState a b α < k :=
         solow_key_lt ha hb₀ hb₁ hα₀ hα₁ hk
 
-/-- The map increases `k` exactly when `k` is below the steady state. -/
+/-- For `a > 0`, `0 ≤ b < 1`, `0 < α < 1` and `k > 0`, the map increases `k` exactly when `k`
+is below the steady state. -/
 theorem solow_self_lt_map_iff {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
     (hb₁ : b < 1) (hα₀ : 0 < α) (hα₁ : α < 1) {k : ℝ} (hk : 0 < k) :
     k < solowMap a b α k ↔ k < solowSteadyState a b α := by
@@ -271,7 +285,8 @@ theorem solow_self_lt_map_iff {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b)
       _ ↔ k < solowSteadyState a b α :=
         solow_key_gt ha hb₀ hb₁ hα₀ hα₁ hk
 
-/-- **Uniqueness:** no other positive point is fixed by the map. -/
+/-- **Uniqueness:** for `a > 0`, `0 ≤ b < 1` and `0 < α < 1`, no other positive point is fixed
+by the map. -/
 theorem solow_unique {a b α : ℝ} (ha : 0 < a) (hb₀ : 0 ≤ b) (hb₁ : b < 1)
     (hα₀ : 0 < α) (hα₁ : α < 1) {k : ℝ} (hk : 0 < k)
     (hfix : solowMap a b α k = k) :
@@ -323,7 +338,8 @@ theorem solow_limit_fixed {a b α : ℝ} {k : ℕ → ℝ} {L : ℝ} (hL : L ≠
   rw [hsame] at hshift
   exact (tendsto_nhds_unique hshift hmap).symm
 
-/-- **Convergence:** from any positive starting capital, the invariant-domain
+/-- **Convergence:** for `a > 0`, `0 ≤ b < 1` and `0 < α < 1`, from any positive starting
+capital, the invariant-domain
 path `k(t+1) = φ(k(t))` converges to the unique positive steady state. The
 path stays in the closed interval between its starting point and the steady
 state, is monotone there, and is bounded; its limit is a fixed point, hence
