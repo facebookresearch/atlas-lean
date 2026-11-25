@@ -1,19 +1,24 @@
 # Multiparty security against semi-honest adversaries
 
-Let $f : X_1 \times \cdots \times X_n \to Y_1 \times \cdots \times Y_n$ be a deterministic $n$-party functionality and $\pi$ a protocol. For a set $I$ of parties, $\mathrm{view}^\pi_I(x)$ is the joint view (inputs, randomness and received messages) of $I$ in an execution on input $x$ and $\mathrm{output}^\pi(x)$ the parties' outputs. The protocol $t$-privately computes $f$ if $\mathrm{output}^\pi(x) = f(x)$ and for every $I$ with $|I| \le t$ there is a simulator $S_I$ such that for every input vector $x$,
+Let $\pi$ be an $n$-party protocol and $F$ an $n$-party functionality, with security parameter $\kappa$; inputs $x_1, \dots, x_n$ range over strings of length polynomial in $\kappa$, and the distributions below are ensembles indexed by $\kappa$ and the inputs. The *view* of a party consists of its private input,
+its random tape and the list of all messages it received during the protocol. For a set $C$ of corrupted parties and inputs $x_1, \dots, x_n$, and a simulator
+$\mathrm{Sim}$, define:
 
-$$\bigl(S_I(x_I, f_I(x)),\ f(x)\bigr) \quad\text{and}\quad \bigl(\mathrm{view}^\pi_I(x),\ \mathrm{output}^\pi(x)\bigr)$$
+- $\mathrm{Real}_\pi(\kappa, C; x_1, \dots, x_n)$: run $\pi$ with every party $P_i$ following the protocol on input $x_i$; with $V_i$ the final view and $y_i$ the
+  final output of $P_i$, output $(\{V_i : i \in C\}, (y_1, \dots, y_n))$;
+- $\mathrm{Ideal}_{F,\mathrm{Sim}}(\kappa, C; x_1, \dots, x_n)$: compute $(y_1, \dots, y_n) \leftarrow F(x_1, \dots, x_n)$ and output $(\mathrm{Sim}(C, \{(x_i, y_i) : i \in C\}), (y_1, \dots, y_n))$.
 
-are identically distributed (perfect privacy), statistically close, or computationally indistinguishable with an efficient $S_I$, where $x_I$ and $f_I(x)$ are the inputs and outputs of the parties in $I$.
+The protocol $\pi$ *securely realizes $F$ in the presence of semi-honest adversaries* if there is a probabilistic polynomial-time simulator $\mathrm{Sim}$ such that for every set $C$ of corrupted
+parties and all inputs, the two distributions are computationally indistinguishable in $\kappa$. It does so *against $t$ corrupted parties* if this holds for every
+$C$ with $|C| \le t$. Including all parties' outputs builds correctness into the definition, also for randomized $F$.
 
-In the computational variant, the functionality, the protocol and the inputs are indexed by a security parameter $\lambda$, each $S_I$ runs in time polynomial in $\lambda$, and indistinguishability is as $\lambda \to \infty$ uniformly over input vectors of polynomial length.
+For $n = 2$ this is the setting of two-party semi-honest security; the precise correspondence between the two definitions (views, transcripts and
+security-parameter conventions) is a separate statement.
 
 ## Depends on
 
 - [Efficient adversaries](../../security-games/asymptotic-security/efficient-adversaries.md)
-- [Winning probability of a game](../../security-games/games-and-advantages/win-prob.md)
 
 ## Sources
 
-- G. Asharov and Y. Lindell, "A full proof of the BGW protocol for perfectly secure multiparty computation", *Journal of Cryptology* 30(1):58–151, 2017; ePrint 2011/136, <https://eprint.iacr.org/2011/136>
-- Y. Lindell, "How to simulate it: a tutorial on the simulation proof technique", in *Tutorials on the Foundations of Cryptography*, Springer, 2017; ePrint 2016/046, <https://eprint.iacr.org/2016/046>
+- D. Evans, V. Kolesnikov and M. Rosulek, *A Pragmatic Introduction to Secure Multi-Party Computation*, Foundations and Trends in Privacy and Security 2(2–3), 2018, <https://securecomputation.org/docs/pragmaticmpc.pdf>: Section 2.3.2 (views, the Real and Ideal distributions, Definition 2.2 and the remark on including outputs) and Section 3.3 (security against $t$ corrupted parties).

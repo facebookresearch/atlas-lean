@@ -21,7 +21,9 @@ The maximum size of a Sidon subset of `{1, …, N}` is at most
 The proof uses the two-window method of Carter, Hunter and O'Bryant
 (https://arxiv.org/abs/2310.20032).
 
-## Record carried over from the retired `WantedExt/Combinatorics/SidonUpperBoundImprovementGreenProblem31Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/SidonUpperBoundImprovementGreenProblem31Wanted.lean`:
 
 Source: B. Green, 100 open problems, Problem 31 (manuscript, update of December 2025),
 https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf. UnsolvedMath record UM-00000162
