@@ -112,7 +112,8 @@ private theorem sum_truncate {N : Type*} [AddCommGroup N]
   intro i _
   simp only [Fin.val_castAdd, dite_eq_left i.is_lt]
 
-private theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
+/-- Top-left zero extension intertwines the native left matrix coefficient action. -/
+theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
     (B : Matrix (Fin r) (Fin r) A) (X : Matrix (Fin r) (Fin r) M) :
     Matrix.zeroExtend h B • Matrix.zeroExtend h X = Matrix.zeroExtend h (B • X) := by
   ext i l
@@ -138,11 +139,13 @@ private theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
     intro p _
     rw [Matrix.zeroExtend_of_row h B i p (Nat.le_of_not_gt hi), zero_smul]
 
-private theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
+/-- Top-left zero extension intertwines the native right matrix coefficient action. -/
+theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
     (B : Matrix (Fin r) (Fin r) A) (X : Matrix (Fin r) (Fin r) M) :
     op (Matrix.zeroExtend h B) • Matrix.zeroExtend h X = Matrix.zeroExtend h (op B • X) := by
   ext i l
   rw [Coefficients.right_smul_apply]
+  simp only [MulOpposite.unop_op]
   by_cases hi : i.val < r
   · by_cases hl : l.val < r
     · rw [Matrix.zeroExtend_apply, dite_eq_left hi, dite_eq_left hl,
@@ -153,12 +156,14 @@ private theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
           apply Finset.sum_congr rfl
           intro p _
           by_cases hp : p.val < r <;>
-            simp only [Matrix.zeroExtend_apply, hi, hl, hp, ↓reduceDIte, op_zero, smul_zero]
+            simp only [Matrix.zeroExtend_apply, hi, hl, hp, ↓reduceDIte,
+              MulOpposite.op_zero, smul_zero]
         _ = _ := sum_truncate h (fun p : Fin r => op (B p ⟨l.val, hl⟩) • X ⟨i.val, hi⟩ p)
     · rw [Matrix.zeroExtend_of_col h _ i l (Nat.le_of_not_gt hl)]
       apply Finset.sum_eq_zero
       intro p _
-      rw [Matrix.zeroExtend_of_col h B p l (Nat.le_of_not_gt hl), op_zero, zero_smul]
+      rw [Matrix.zeroExtend_of_col h B p l (Nat.le_of_not_gt hl),
+        MulOpposite.op_zero, zero_smul]
   · rw [Matrix.zeroExtend_of_row h _ i l (Nat.le_of_not_gt hi)]
     apply Finset.sum_eq_zero
     intro p _
@@ -192,7 +197,8 @@ theorem finiteTransitionAt_f_tprod {r s : ℕ} (h : r ≤ s) (n : ℕ)
       (fun B X => (zeroExtend_right (A := A) (M := M) (Nat.succ_le_succ h) B X).symm)
       n (ULift.up X) a)
 
-private theorem finiteTransitionAt_self (r : ℕ) :
+/-- A finite zero-extension transition at equal sizes is the identity. -/
+theorem finiteTransitionAt_self (r : ℕ) :
     finiteTransitionAt.{t} k A M (le_rfl : r ≤ r) =
       𝟙 (chainComplex k (Matrix (Fin (r + 1)) (Fin (r + 1)) A)
         (ULift.{max u v w t} (Matrix (Fin (r + 1)) (Fin (r + 1)) M))) := by
@@ -202,10 +208,14 @@ private theorem finiteTransitionAt_self (r : ℕ) :
   apply tensorPower_ext
   intro X a
   rcases X with ⟨X⟩
-  simp only [finiteTransitionAt_f_tprod, Matrix.zeroExtend_self,
-    HomologicalComplex.id_f, ModuleCat.hom_id, LinearMap.id_apply]
+  change ((finiteTransitionAt.{t} k A M (le_rfl : r ≤ r)).f n).hom
+    (ULift.up X ⊗ₜ[k] PiTensorProduct.tprod k a) =
+      ULift.up X ⊗ₜ[k] PiTensorProduct.tprod k a
+  simpa only [Matrix.zeroExtend_self] using
+    finiteTransitionAt_f_tprod.{t} k A M (le_rfl : r ≤ r) n X a
 
-private theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
+/-- Finite zero-extension transitions compose along the order on sizes. -/
+theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
     finiteTransitionAt.{t} k A M h ≫ finiteTransitionAt.{t} k A M h' =
       finiteTransitionAt.{t} k A M (h.trans h') := by
   apply HomologicalComplex.Hom.ext
@@ -214,8 +224,16 @@ private theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ 
   apply tensorPower_ext
   intro X a
   rcases X with ⟨X⟩
-  simp only [HomologicalComplex.comp_f, ModuleCat.hom_comp, LinearMap.comp_apply]
-  rw [finiteTransitionAt_f_tprod, finiteTransitionAt_f_tprod, finiteTransitionAt_f_tprod]
+  change ((finiteTransitionAt.{t} k A M h').f n).hom
+      (((finiteTransitionAt.{t} k A M h).f n).hom
+        (ULift.up X ⊗ₜ[k] PiTensorProduct.tprod k a)) =
+    ((finiteTransitionAt.{t} k A M (h.trans h')).f n).hom
+      (ULift.up X ⊗ₜ[k] PiTensorProduct.tprod k a)
+  rw [finiteTransitionAt_f_tprod.{t} k A M h n X a,
+    finiteTransitionAt_f_tprod.{t} k A M h' n
+      (Matrix.zeroExtend (Nat.succ_le_succ h) X)
+      (fun i => Matrix.zeroExtend (Nat.succ_le_succ h) (a i)),
+    finiteTransitionAt_f_tprod.{t} k A M (h.trans h') n X a]
   simp only [Matrix.zeroExtend_comp]
 
 /-- Positive-size finite matrix Hochschild complexes with their actual zero extensions. -/
@@ -282,9 +300,16 @@ theorem corner_comp_finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
   apply tensorPower_ext
   intro m a
   rcases m with ⟨m⟩
-  simp only [HomologicalComplex.comp_f, ModuleCat.hom_comp, LinearMap.comp_apply]
-  rw [Morita.cornerChainMapAt_f_tprod, finiteTransitionAt_f_tprod,
-    Morita.cornerChainMapAt_f_tprod]
+  change ((finiteTransitionAt.{t} k A M h).f n).hom
+      (((Morita.cornerChainMapAt.{t} k A M (Fin (r + 1)) 0).f n).hom
+        (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a)) =
+    ((Morita.cornerChainMapAt.{t} k A M (Fin (s + 1)) 0).f n).hom
+      (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a)
+  rw [Morita.cornerChainMapAt_f_tprod.{t} k A M (Fin (r + 1)) 0 n m a,
+    finiteTransitionAt_f_tprod.{t} k A M h n
+      (cornerLinear k (Fin (r + 1)) 0 m)
+      (fun i => cornerLinear k (Fin (r + 1)) 0 (a i)),
+    Morita.cornerChainMapAt_f_tprod.{t} k A M (Fin (s + 1)) 0 n m a]
   simp only [zeroExtend_corner]
 
 /-- Finite trace is a natural transformation to the original coefficient complex. -/
@@ -320,15 +345,29 @@ def traceHomologyNatIsoAt (G : J ⥤ ℕ) (n : ℕ) :
         HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
           (ComplexShape.down ℕ) n ≅
       (Functor.const J).obj ((chainComplex k A (ULift.{max u v w t} M)).homology n) :=
-  HomologicalComplex.homologyNatIsoOfQuasiIsoAt
-    (Functor.whiskerLeft G (traceNatAt.{t} k A M)) n (fun r => by
-      apply (quasiIsoAt_iff_isIso_homologyMap _ n).2
-      exact (Morita.finiteHomologyIsoAt.{t} k A M (Fin (G.obj r + 1)) 0 n).isIso_hom)
+  (show (G ⋙ finiteDiagramAt.{t} k A M) ⋙
+        HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
+          (ComplexShape.down ℕ) n ≅
+      (Functor.const J).obj (chainComplex k A (ULift.{max u v w t} M)) ⋙
+        HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
+          (ComplexShape.down ℕ) n from
+    HomologicalComplex.homologyNatIsoOfQuasiIsoAt
+      (Functor.whiskerLeft G (traceNatAt.{t} k A M)) n (fun r => by
+        apply (quasiIsoAt_iff_isIso_homologyMap _ n).2
+        exact (Morita.finiteHomologyIsoAt.{t} k A M (Fin (G.obj r + 1)) 0 n).isIso_hom)) ≪≫
+    Functor.constComp J
+      (chainComplex k A (ULift.{max u v w t} M) :
+        ChainComplex (ModuleCat.{max u v w t} k) ℕ)
+      (HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
+        (ComplexShape.down ℕ) n)
 
 @[simp]
 theorem traceHomologyNatIsoAt_hom_app (G : J ⥤ ℕ) (n : ℕ) (r : J) :
     (traceHomologyNatIsoAt.{t} k A M G n).hom.app r =
-      HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := rfl
+      HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := by
+  change HomologicalComplex.homologyMap
+      (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n ≫ 𝟙 _ = _
+  exact Category.comp_id _
 
 variable [HasColimitsOfShape J (ModuleCat.{max u v w t} k)]
 
@@ -343,13 +382,15 @@ private def traceCoconeAt (G : J ⥤ ℕ) : Cocone (G ⋙ finiteDiagramAt.{t} k 
 /-- The colimit trace is induced by the actual finite trace maps. -/
 def stableTraceAt (G : J ⥤ ℕ) :
     stableComplexAt.{t} k A M G ⟶ chainComplex k A (ULift.{max u v w t} M) :=
-  colimit.desc _ (traceCoconeAt.{t} k A M G)
+  colimit.desc _
+    { pt := chainComplex k A (ULift.{max u v w t} M)
+      ι := Functor.whiskerLeft G (traceNatAt.{t} k A M) }
 
 @[reassoc]
 theorem ι_stableTraceAt (G : J ⥤ ℕ) (r : J) :
     colimit.ι (G ⋙ finiteDiagramAt.{t} k A M) r ≫ stableTraceAt.{t} k A M G =
-      traceChainMapAt.{t} k A M (Fin (G.obj r + 1)) :=
-  colimit.ι_desc _ _ r
+      traceChainMapAt.{t} k A M (Fin (G.obj r + 1)) := by
+  exact colimit.ι_desc (traceCoconeAt.{t} k A M G) r
 
 /-- A transformation of indexing functors induces the actual colimit transition map. -/
 def stableMapAt {G G' : J ⥤ ℕ} (τ : G ⟶ G') :
@@ -371,26 +412,48 @@ theorem stableMapAt_comp_trace {G G' : J ⥤ ℕ} (τ : G ⟶ G') :
 variable [IsConnected J]
 
 private def constantColimitIsoAt :
-    colimit ((Functor.const J).obj (chainComplex k A (ULift.{max u v w t} M))) ≅
-      chainComplex k A (ULift.{max u v w t} M) :=
-  colimit.isoColimitCocone ⟨constCocone J _, isColimitConstCocone J _⟩
+    colimit ((Functor.const J).obj
+      (chainComplex k A (ULift.{max u v w t} M) :
+        ChainComplex (ModuleCat.{max u v w t} k) ℕ)) ≅
+      (chainComplex k A (ULift.{max u v w t} M) :
+        ChainComplex (ModuleCat.{max u v w t} k) ℕ) :=
+  let X : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    chainComplex k A (ULift.{max u v w t} M)
+  let c : ColimitCocone ((Functor.const J).obj X) :=
+    ⟨constCocone J X, isColimitConstCocone J X⟩
+  colimit.isoColimitCocone c
 
 private theorem constantColimitIsoAt_leg (r : J) :
-    colimit.ι ((Functor.const J).obj (chainComplex k A (ULift.{max u v w t} M))) r ≫
+    colimit.ι ((Functor.const J).obj
+      (chainComplex k A (ULift.{max u v w t} M) :
+        ChainComplex (ModuleCat.{max u v w t} k) ℕ)) r ≫
         (constantColimitIsoAt.{t} (J := J) k A M).hom =
       𝟙 (chainComplex k A (ULift.{max u v w t} M)) :=
-  colimit.isoColimitCocone_ι_hom _ r
+  colimit.isoColimitCocone_ι_hom
+    (show ColimitCocone ((Functor.const J).obj
+      (chainComplex k A (ULift.{max u v w t} M) :
+        ChainComplex (ModuleCat.{max u v w t} k) ℕ)) from
+      ⟨constCocone J (chainComplex k A (ULift.{max u v w t} M) :
+          ChainComplex (ModuleCat.{max u v w t} k) ℕ),
+        isColimitConstCocone J (chainComplex k A (ULift.{max u v w t} M) :
+          ChainComplex (ModuleCat.{max u v w t} k) ℕ)⟩) r
 
 private theorem constantColimitIsoAt_inv_eq_ι (r : J) :
     (constantColimitIsoAt.{t} (J := J) k A M).inv =
-      colimit.ι ((Functor.const J).obj (chainComplex k A (ULift.{max u v w t} M))) r := by
+      colimit.ι ((Functor.const J).obj
+        (chainComplex k A (ULift.{max u v w t} M) :
+          ChainComplex (ModuleCat.{max u v w t} k) ℕ)) r := by
   apply (cancel_mono (constantColimitIsoAt.{t} (J := J) k A M).hom).mp
   rw [Iso.inv_hom_id, constantColimitIsoAt_leg]
 
 /-- The stable corner is induced by the coherent zeroth finite corners. -/
 def stableCornerAt (G : J ⥤ ℕ) :
     chainComplex k A (ULift.{max u v w t} M) ⟶ stableComplexAt.{t} k A M G :=
-  (constantColimitIsoAt.{t} (J := J) k A M).inv ≫
+  let X : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    chainComplex k A (ULift.{max u v w t} M)
+  let c : ColimitCocone ((Functor.const J).obj X) :=
+    ⟨constCocone J X, isColimitConstCocone J X⟩
+  (colimit.isoColimitCocone c).inv ≫
     colimMap (Functor.whiskerLeft G (cornerNatAt.{t} k A M))
 
 /-- The stable corner is the same actual corner through every finite stage. -/
@@ -409,8 +472,11 @@ theorem stableCornerAt_comp_trace (G : J ⥤ ℕ) :
     stableCornerAt.{t} k A M G ≫ stableTraceAt.{t} k A M G =
       𝟙 (chainComplex k A (ULift.{max u v w t} M)) := by
   let r : J := Classical.arbitrary J
-  rw [stableCornerAt_eq_stage k A M G r, Category.assoc, ι_stableTraceAt,
-    Morita.cornerChainMapAt_comp_trace]
+  rw [stableCornerAt_eq_stage k A M G r]
+  exact (Category.assoc _ _ _).trans
+    ((congrArg (fun f => Morita.cornerChainMapAt.{t} k A M (Fin (G.obj r + 1)) 0 ≫ f)
+      (ι_stableTraceAt.{t} k A M G r)).trans
+        (Morita.cornerChainMapAt_comp_trace.{t} k A M (Fin (G.obj r + 1)) 0))
 
 variable [HasExactColimitsOfShape J (ModuleCat.{max u v w t} k)]
 
@@ -418,35 +484,48 @@ variable [HasExactColimitsOfShape J (ModuleCat.{max u v w t} k)]
 def stableHomologyIsoAt (G : J ⥤ ℕ) (n : ℕ) :
     (stableComplexAt.{t} k A M G).homology n ≅
       (chainComplex k A (ULift.{max u v w t} M)).homology n :=
-  HomologicalComplex.homologyColimitIso (G ⋙ finiteDiagramAt.{t} k A M) n ≪≫
+  let X : ModuleCat.{max u v w t} k :=
+    (chainComplex k A (ULift.{max u v w t} M)).homology n
+  let c : ColimitCocone ((Functor.const J).obj X) :=
+    ⟨constCocone J X, isColimitConstCocone J X⟩
+  HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k)
+      (G ⋙ finiteDiagramAt.{t} k A M) n ≪≫
     (colim (J := J) (C := ModuleCat.{max u v w t} k)).mapIso
       (traceHomologyNatIsoAt.{t} k A M G n) ≪≫
-    colimit.isoColimitCocone ⟨constCocone J _, isColimitConstCocone J _⟩
+    colimit.isoColimitCocone c
 
 /-- The chosen homology comparison is the homology map of the actual colimit trace. -/
 theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
     (stableHomologyIsoAt.{t} k A M G n).hom =
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n := by
-  rw [← cancel_epi (HomologicalComplex.homologyColimitIso
-    (G ⋙ finiteDiagramAt.{t} k A M) n).inv]
-  simp only [stableHomologyIsoAt, Iso.trans_hom, Iso.inv_hom_id_assoc]
+  let K : J ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    G ⋙ finiteDiagramAt.{t} k A M
+  let X : ModuleCat.{max u v w t} k :=
+    (chainComplex k A (ULift.{max u v w t} M)).homology n
+  let c : ColimitCocone ((Functor.const J).obj X) :=
+    ⟨constCocone J X, isColimitConstCocone J X⟩
+  change (HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k) K n ≪≫
+      (colim (J := J) (C := ModuleCat.{max u v w t} k)).mapIso
+        (traceHomologyNatIsoAt.{t} k A M G n) ≪≫ colimit.isoColimitCocone c).hom = _
+  apply (cancel_epi (HomologicalComplex.homologyColimitIso
+    (C := ModuleCat.{max u v w t} k) K n).inv).1
+  simp only [Iso.trans_hom, Iso.inv_hom_id_assoc]
   apply colimit.hom_ext
   intro r
-  have hl : colimit.ι ((G ⋙ finiteDiagramAt.{t} k A M) ⋙
+  have hl : colimit.ι (K ⋙
         HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
           (ComplexShape.down ℕ) n) r ≫
       ((colim (J := J) (C := ModuleCat.{max u v w t} k)).mapIso
         (traceHomologyNatIsoAt.{t} k A M G n)).hom ≫
-      (colimit.isoColimitCocone
-        ⟨constCocone J _, isColimitConstCocone J _⟩).hom =
+      (colimit.isoColimitCocone c).hom =
       HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := by
     rw [Functor.mapIso_hom, ← colimMap_eq, ι_colimMap_assoc,
       colimit.isoColimitCocone_ι_hom, constCocone_ι, NatTrans.id_app, Category.comp_id,
       traceHomologyNatIsoAt_hom_app]
-  have hr : colimit.ι ((G ⋙ finiteDiagramAt.{t} k A M) ⋙
+  have hr : colimit.ι (K ⋙
         HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
           (ComplexShape.down ℕ) n) r ≫
-      (HomologicalComplex.homologyColimitIso (G ⋙ finiteDiagramAt.{t} k A M) n).inv ≫
+      (HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k) K n).inv ≫
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n =
       HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := by
     rw [← Category.assoc, HomologicalComplex.ι_comp_homologyColimitIso_inv,
@@ -457,7 +536,8 @@ theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
 theorem stableHomologyIsoAt_inv (G : J ⥤ ℕ) (n : ℕ) :
     (stableHomologyIsoAt.{t} k A M G n).inv =
       HomologicalComplex.homologyMap (stableCornerAt.{t} k A M G) n := by
-  rw [← cancel_mono (stableHomologyIsoAt.{t} k A M G n).hom, Iso.inv_hom_id,
+  apply (cancel_mono (stableHomologyIsoAt.{t} k A M G n).hom).1
+  rw [Iso.inv_hom_id,
     stableHomologyIsoAt_hom, ← HomologicalComplex.homologyMap_comp,
     stableCornerAt_comp_trace, HomologicalComplex.homologyMap_id]
 

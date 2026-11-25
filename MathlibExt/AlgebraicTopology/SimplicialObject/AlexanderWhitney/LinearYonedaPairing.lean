@@ -89,7 +89,7 @@ theorem backFace_add_sub_comp_XIsoOfEq (p q : ℕ) :
   apply Quiver.Hom.unop_inj
   simp only [unop_comp, Quiver.Hom.unop_op]
   ext i
-  · simp [backInclusion, SimplexCategory.subinterval]
+  · simp [backInclusion, SimplexCategory.δ₀Iter]
   all_goals
     apply congrArg Opposite.op
     apply SimplexCategory.ext

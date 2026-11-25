@@ -77,6 +77,15 @@ theorem rawNativeTorEulerSum_symm (M N : ModuleCat.{max u v} R) (n : ℕ) :
   intro q _
   rw [nativeTor_length_symm R M N q]
 
+private theorem exactShortComplex_length_toNat
+    (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.Exact)
+    (h₂ : Module.length R S.X₂ ≠ ⊤) :
+    (Module.length R S.X₂).toNat =
+      (Module.length R S.f.hom.range).toNat + (Module.length R S.g.hom.range).toNat := by
+  have h : Function.Exact S.f.hom S.g.hom :=
+    (ShortComplex.ShortExact.moduleCat_exact_iff_function_exact S).mp hS
+  exact Module.exactPair_length_toNat R S.f.hom S.g.hom h h₂
+
 /-- Positive native degrees satisfy the actual adjacent-boundary range relation. -/
 theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (j : ℕ)
@@ -88,22 +97,29 @@ theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
       (Module.length R (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).obj S.X₃)).toNat =
       (Module.length R (nativeTorConnecting R M S hS (j + 1)).hom.range).toNat +
         (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat := by
-  let F := (tensoringLeft (ModuleCat.{max u v} R)).obj M
-  obtain ⟨_, hA⟩ := LeftDerivedDelta.LDexact_A F (j + 1) S hS
-  obtain ⟨_, hB⟩ := LeftDerivedDelta.LDexact_B F (j + 1) S hS
-  obtain ⟨_, hC⟩ := LeftDerivedDelta.LDexact_C F j S hS
-  have hL := Module.exactPair_length_toNat R
-    (nativeTorConnecting R M S hS (j + 1)).hom
-    (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).map S.f).hom
-    ((ShortComplex.ShortExact.moduleCat_exact_iff_function_exact _).mp hA) h₁
-  have hM := Module.exactPair_length_toNat R
-    (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).map S.f).hom
-    (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).map S.g).hom
-    ((ShortComplex.ShortExact.moduleCat_exact_iff_function_exact _).mp hB) h₂
-  have hR := Module.exactPair_length_toNat R
-    (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).map S.g).hom
-    (nativeTorConnecting R M S hS j).hom
-    ((ShortComplex.ShortExact.moduleCat_exact_iff_function_exact _).mp hC) h₃
+  let C := ModuleCat.{max u v} R
+  let W₀ : ComposableArrows C 5 := nativeTorLongExactWindow R M S hS j
+  let W₁ : ComposableArrows C 5 := nativeTorLongExactWindow R M S hS (j + 1)
+  let e₀ : W₀.Exact := nativeTorLongExactWindow_exact R M S hS j
+  let e₁ : W₁.Exact := nativeTorLongExactWindow_exact R M S hS (j + 1)
+  let A : ShortComplex C := e₁.sc 2
+  let B : ShortComplex C := e₀.sc 0
+  let D : ShortComplex C := e₀.sc 1
+  have hL :
+      (Module.length R (((Tor C (j + 1)).obj M).obj S.X₁)).toNat =
+        (Module.length R (nativeTorConnecting R M S hS (j + 1)).hom.range).toNat +
+          (Module.length R (((Tor C (j + 1)).obj M).map S.f).hom.range).toNat :=
+    exactShortComplex_length_toNat R A (e₁.exact 2) h₁
+  have hM :
+      (Module.length R (((Tor C (j + 1)).obj M).obj S.X₂)).toNat =
+        (Module.length R (((Tor C (j + 1)).obj M).map S.f).hom.range).toNat +
+          (Module.length R (((Tor C (j + 1)).obj M).map S.g).hom.range).toNat :=
+    exactShortComplex_length_toNat R B (e₀.exact 0) h₂
+  have hR :
+      (Module.length R (((Tor C (j + 1)).obj M).obj S.X₃)).toNat =
+        (Module.length R (((Tor C (j + 1)).obj M).map S.g).hom.range).toNat +
+          (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat :=
+    exactShortComplex_length_toNat R D (e₀.exact 1) h₃
   omega
 
 /-- The actual degree-zero quotient endpoint leaves only the first boundary range. -/

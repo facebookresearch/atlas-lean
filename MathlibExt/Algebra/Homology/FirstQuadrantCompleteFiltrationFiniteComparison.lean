@@ -55,14 +55,25 @@ theorem horizontalCompleteFilteredTotalComplexFiniteIso_hom_toTotal
     (horizontalCompleteFilteredTotalComplexFiniteIso K a ha).hom ≫
         horizontalFilteredTotalComplexToTotal K a.toNat =
       horizontalCompleteFilteredTotalToTotal K (a : EInt) := by
+  have hmono : horizontalCompleteFilteredTotalMonoOver K (a : EInt) =
+      (horizontalTotalFiltration K).toMonoOver.obj a.toNat := by
+    simp only [horizontalCompleteFilteredTotalMonoOver, WithBotTop.rec_coe,
+      ite_eq_left ha]
+  have harrow (S T : MonoOver (K.total (ComplexShape.down ℕ))) (h : S = T) :
+      HEq S.arrow T.arrow := by
+    cases h
+    rfl
+  have hstage : HEq (horizontalCompleteFilteredTotalToTotal K (a : EInt))
+      ((horizontalTotalFiltration K).ι.app a.toNat) := by
+    simpa only [horizontalCompleteFilteredTotalToTotal, Filtration.ι_app,
+      MonoOver.arrow] using harrow _ _ hmono
+  have hincl : HEq (horizontalCompleteFilteredTotalToTotal K (a : EInt))
+      (horizontalFilteredTotalComplexToTotal K a.toNat) :=
+    hstage.trans (heq_of_eq (horizontalTotalFiltration_ι_app K a.toNat))
   apply eq_of_heq
   rw [horizontalCompleteFilteredTotalComplexFiniteIso, eqToIso.hom,
     eqToHom_comp_heq_iff]
-  dsimp only [horizontalCompleteFilteredTotalToTotal,
-    horizontalCompleteFilteredTotalMonoOver, WithBotTop.rec_coe]
-  rw [ite_eq_left ha]
-  simpa only [Filtration.ι_app, MonoOver.arrow] using
-    (heq_of_eq (horizontalTotalFiltration_ι_app K a.toNat)).symm
+  exact hincl.symm
 
 /-- The complete-to-finite stage isomorphisms are natural in the
 bicomplex. -/

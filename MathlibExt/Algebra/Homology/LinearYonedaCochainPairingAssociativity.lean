@@ -264,7 +264,7 @@ theorem linearYonedaCochainPair_associativity_of_diagrams
   dsimp only [linearHomCochainComplexFunctor_obj_X] at phi psi chi
   have hDeltaN := congrArg
     (fun F : Kᵣ ⟶ tensorObj K₁ (tensorObj K₂ K₃) => F.f (p + (q + r))) hDelta
-  simp only [HomologicalComplex.comp_f, Category.assoc] at hDeltaN
+  simp only [HomologicalComplex.comp_f] at hDeltaN
   have hpair :
       (Kᵣ.XIsoOfEq (Nat.add_assoc p q r).symm).hom ≫
           c.f ((p + q) + r) ≫ Deltaₗ.f ((p + q) + r) ≫
@@ -314,9 +314,10 @@ theorem linearYonedaCochainPair_associativity_of_diagrams
       _ = _ := by
         rw [linearYonedaPairingDescOfEq_naturality]
         simp only [HomologicalComplex.id_f, Category.id_comp, linearYonedaPairingDesc]
-  simpa only [linearHomCochainComplexFunctor_obj_X, ModuleCat.comp_apply,
+  simpa only [linearHomCochainComplexFunctor_obj_X, ModuleCat.hom_comp,
+    LinearMap.comp_apply,
     ModuleCat.MonoidalCategory.tensorHom_tmul,
-    ModuleCat.id_apply, ModuleCat.MonoidalCategory.associator_hom_apply,
+    ModuleCat.hom_id, LinearMap.id_apply, ModuleCat.MonoidalCategory.associator_hom_apply,
     linearYonedaCochainGradedPairing_pair, linearYonedaCochainPair_tmul,
     linearYonedaCochainComparison_f_apply,
     linearYonedaCochainComplex_XIsoOfEq_hom_apply, Category.assoc] using hpair

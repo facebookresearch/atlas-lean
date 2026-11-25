@@ -13,6 +13,7 @@ public import MathlibExt.Algebra.Category.ModuleCat.NativeTorLongExactUniverse
 public import MathlibExt.Algebra.Homology.ChainComplex.HomologyZero
 public import MathlibExt.Algebra.Homology.TensorHomFunctoriality
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.AcyclicResolutionZeroNormalization
+public import Mathlib.LinearAlgebra.TensorProduct.Projective
 
 /-!
 # Literal tensor augmentations of actual projective resolutions
@@ -315,7 +316,8 @@ theorem tensorResolutionTotal_projective
     have : Projective Y := Q.projective q
     have : Module.Projective R X := inferInstance
     have : Module.Projective R Y := inferInstance
-    have : Module.Projective R (TensorProduct R X Y) := inferInstance
+    let _ : Module.Projective R (TensorProduct R X Y) :=
+      Module.Projective.tensorProduct (R := R) (R₀ := R) (M := X) (N := Y)
     change Projective (ModuleCat.of R (TensorProduct R X Y))
     infer_instance
   have : ∀ i, Projective (A i) := fun i => hterm i.val.1 i.val.2
