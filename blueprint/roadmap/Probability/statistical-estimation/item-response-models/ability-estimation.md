@@ -1,6 +1,6 @@
 # Existence of the maximum-likelihood ability estimate in the two-parameter logistic model
 
-In the [two-parameter logistic model](continuous-latent-trait-models.md), let $J$ be a finite nonempty set of items with discriminations $a_j > 0$ and difficulties $b_j$, let $P_j(\theta) = \bigl(1 + e^{-a_j(\theta - b_j)}\bigr)^{-1}$, and let $x \in \{0, 1\}^J$ be a response pattern. The log-likelihood of the ability,
+In the [two-parameter logistic model](two-parameter-logistic-model.md), let $J$ be a finite nonempty set of items with discriminations $a_j > 0$ and difficulties $b_j$, let $P_j(\theta) = \bigl(1 + e^{-a_j(\theta - b_j)}\bigr)^{-1}$, and let $x \in \{0, 1\}^J$ be a response pattern. The log-likelihood of the ability,
 
 $$\ell(\theta) = \sum_{j \in J} \bigl(x_j \log P_j(\theta) + (1 - x_j) \log(1 - P_j(\theta))\bigr),$$
 
@@ -8,7 +8,7 @@ is strictly concave on $\mathbb R$, with $\ell''(\theta) = -\sum_j a_j^2 P_j(\th
 
 ## Depends on
 
-- [Item response models with a continuous latent trait](continuous-latent-trait-models.md)
+- [Two-parameter logistic model](two-parameter-logistic-model.md)
 
 ## Sources
 

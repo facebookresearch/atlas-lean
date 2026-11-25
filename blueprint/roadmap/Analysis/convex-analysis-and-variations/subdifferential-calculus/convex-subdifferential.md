@@ -4,7 +4,7 @@ Let $X$ be a real normed space with dual $X^*$ and $f : X \to (-\infty, \infty]$
 
 $$\partial f(x) = \{x^* \in X^* : f(y) \ge f(x) + \langle x^*, y - x \rangle \text{ for all } y \in X\},$$
 
-a convex, weak-* closed set whose elements are the *subgradients* of $f$ at $x$.
+Its elements are the *subgradients* of $f$ at $x$.
 
 ## Sources
 

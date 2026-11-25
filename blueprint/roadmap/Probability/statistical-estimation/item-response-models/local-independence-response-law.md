@@ -2,7 +2,7 @@
 
 For a finite set $I$ of items and success probabilities $q_i \in [0, 1]$, $i \in I$, the law of locally independent binary responses is the probability mass function on response patterns $x : I \to \{0, 1\}$ given by
 
-$$p(x) = \prod_{i \in I} q_i^{x_i} (1 - q_i)^{1 - x_i}.$$
+$$p(x) = \prod_{i \in I} \begin{cases} q_i & \text{if } x_i = 1, \\ 1 - q_i & \text{if } x_i = 0. \end{cases}$$
 
 ## Sources
 

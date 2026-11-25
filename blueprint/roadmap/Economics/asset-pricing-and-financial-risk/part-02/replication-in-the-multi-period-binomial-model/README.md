@@ -9,4 +9,5 @@
 - [Delta-hedging wealth tracks the claim value at every node](wealth-hedge-ratio-eq-claim-value.md)
 - [Delta hedging replicates every path-dependent claim](wealth-hedge-ratio-replicates.md)
 
-- [Cox–Ross–Rubinstein call price and convergence to Black–Scholes](cox-ross-rubinstein-call-price.md)
+- [Cox–Ross–Rubinstein call price](cox-ross-rubinstein-call-price.md)
+- [Cox–Ross–Rubinstein prices converge to the Black–Scholes price](cox-ross-rubinstein-prices-converge-to-black-scholes.md)
