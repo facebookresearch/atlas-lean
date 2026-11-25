@@ -40,6 +40,7 @@ public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import MathlibExt.NumberTheory.ModularForms.GammaH
 public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 public import MathlibExt.NumberTheory.ModularForms.OldForms
+public import MathlibExt.NumberTheory.ModularForms.CoeffHecke
 import Mathlib.NumberTheory.ModularForms.BoundedAtCusp
 import Mathlib.NumberTheory.ModularForms.QExpansion
 import Mathlib.NumberTheory.ModularForms.SlashActions
@@ -58,92 +59,37 @@ open scoped MatrixGroups
 
 variable (M : ℕ) (H : Subgroup (ZMod M)ˣ) (ℓ : ℕ)
 
-def Gamma0Upper (ℓ : ℕ) : Subgroup SL(2, ℤ) where
-  carrier := { g | (g 0 1 : ZMod ℓ) = 0 }
-  one_mem' := by simp
-  mul_mem' := by
-    intro a b ha hb
-    simp only [Set.mem_ofPred_eq] at *
-    have h := (Matrix.two_mul_expl a.1 b.1).2.1
-    simp only [coe_mul] at *
-    rw [h]
-    simp [ha, hb]
-  inv_mem' := by
-    intro a ha
-    simp only [Set.mem_ofPred_eq] at *
-    rw [SL2_inv_expl a]
-    simpa using ha
+theorem mem_heckeUpperSL_iff_intCast_eq_zero {ℓ : ℕ} {A : SL(2, ℤ)} :
+    A ∈ HeckeEis.heckeUpperSL ℓ ↔ (A 0 1 : ZMod ℓ) = 0 :=
+  (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).symm
 
-@[simp]
-theorem mem_Gamma0Upper {ℓ : ℕ} {A : SL(2, ℤ)} : A ∈ Gamma0Upper ℓ ↔ (A 0 1 : ZMod ℓ) = 0 :=
-  Iff.rfl
+abbrev GammaHUpper : Subgroup ↥(GammaH M H) := (HeckeEis.heckeUpperSL ℓ).subgroupOf (GammaH M H)
 
+theorem dvd_of_mem_GammaHUpper (γ : ↥(GammaHUpper M H ℓ)) : (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 0 1 :=
+  HeckeEis.mem_heckeUpperSL.mp (Subgroup.mem_subgroupOf.mp γ.2)
 
-def conjUpperMat (A : SL(2, ℤ)) (h : (ℓ : ℤ) ∣ A 0 1) : SL(2, ℤ) :=
-  ⟨!![A 0 0, A 0 1 / ℓ; A 1 0 * ℓ, A 1 1], by
-    rw [Matrix.det_fin_two_of]
-    have hdet := Matrix.SpecialLinearGroup.det_coe A
-    rw [Matrix.det_fin_two] at hdet
-    have hbc : A 0 1 / ℓ * (A 1 0 * ℓ) = A 0 1 * A 1 0 := by
-      rw [mul_comm (A 1 0) _, ← mul_assoc, Int.ediv_mul_cancel h]
-    rw [hbc]
-    exact hdet⟩
-
-theorem conjUpperMat_mul (A B : SL(2, ℤ)) (hA : (ℓ : ℤ) ∣ A 0 1) (hB : (ℓ : ℤ) ∣ B 0 1)
-    (hAB : (ℓ : ℤ) ∣ (A * B) 0 1) :
-    conjUpperMat ℓ (A * B) hAB = conjUpperMat ℓ A hA * conjUpperMat ℓ B hB := by
-  have h1 : A 0 1 / ℓ * (B 1 0 * ℓ) = A 0 1 * B 1 0 := by
-    rw [mul_comm (B 1 0) _, ← mul_assoc, Int.ediv_mul_cancel hA]
-  have h2 : (A 0 0 * B 0 1 + A 0 1 * B 1 1) / ℓ = A 0 0 * (B 0 1 / ℓ) + A 0 1 / ℓ * B 1 1 := by
-    rw [Int.add_ediv_of_dvd_right (Dvd.dvd.mul_right hA _), Int.mul_ediv_assoc _ hB,
-      mul_comm (A 0 1) (B 1 1), Int.mul_ediv_assoc _ hA, mul_comm (B 1 1)]
-  have h3 : A 1 0 * ℓ * (B 0 1 / ℓ) = A 1 0 * B 0 1 := by
-    rw [mul_assoc, Int.mul_ediv_cancel' hB]
-  have hmul : ∀ i j, (A * B) i j = A i 0 * B 0 j + A i 1 * B 1 j := fun i j => by
-    simp [Matrix.mul_apply, Fin.sum_univ_two]
-  apply Matrix.SpecialLinearGroup.ext
-  intro i j
-  fin_cases i <;> fin_cases j <;>
-    rw [Matrix.SpecialLinearGroup.coe_mul] <;>
-    simp [conjUpperMat, Matrix.mul_apply, Fin.sum_univ_two, hmul, h2, h1, h3]
-  ring
-
-@[simp] theorem conjUpperMat_apply_11 (A : SL(2, ℤ)) (h : (ℓ : ℤ) ∣ A 0 1) :
-    (conjUpperMat ℓ A h) 1 1 = A 1 1 := by
-  simp [conjUpperMat]
-
-@[simp] theorem conjUpperMat_apply_10 (A : SL(2, ℤ)) (h : (ℓ : ℤ) ∣ A 0 1) :
-    (conjUpperMat ℓ A h) 1 0 = A 1 0 * ℓ := by
-  simp [conjUpperMat]
-
-abbrev GammaHUpper : Subgroup ↥(GammaH M H) := (Gamma0Upper ℓ).subgroupOf (GammaH M H)
-
-theorem dvd_of_mem_GammaHUpper (γ : ↥(GammaHUpper M H ℓ)) : (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 0 1 := by
-  have h : ((γ : ↥(GammaH M H)) : SL(2, ℤ)) ∈ Gamma0Upper ℓ := Subgroup.mem_subgroupOf.mp γ.2
-  rw [mem_Gamma0Upper] at h
-  exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h
-
-theorem conjUpperMat_mem (γ : ↥(GammaHUpper M H ℓ)) :
-    conjUpperMat ℓ (γ : SL(2, ℤ)) (dvd_of_mem_GammaHUpper M H ℓ γ) ∈ GammaH M H := by
-  obtain ⟨hγ0, hγH⟩ := (mem_GammaH_iff M).mp (γ : ↥(GammaH M H)).2
-  rw [mem_GammaH_iff M]
-  refine ⟨?_, ?_⟩
-  · rw [Gamma0_mem, conjUpperMat_apply_10, Int.cast_mul, Gamma0_mem.mp hγ0, zero_mul]
-  · convert hγH using 1
+def conjL [NeZero ℓ] : ↥(GammaHUpper M H ℓ) →* ↥(GammaH M H) where
+  toFun γ := ⟨HeckeEis.heckeConjSL M ℓ
+      ⟨⟨(γ : SL(2, ℤ)), GammaH_le_Gamma0 M H (γ : ↥(GammaH M H)).2⟩, γ.2⟩, by
+    obtain ⟨hγ0, hγH⟩ := (mem_GammaH_iff M).mp (γ : ↥(GammaH M H)).2
+    rw [mem_GammaH_iff M]
+    refine ⟨HeckeEis.heckeConjSL_mem_Gamma0 M ℓ _, ?_⟩
+    convert hγH using 1
     ext
-    simp only [val_gamma0Units, Gamma0Map, MonoidHom.coe_mk, OneHom.coe_mk, conjUpperMat_apply_11]
-
-def conjL : ↥(GammaHUpper M H ℓ) →* ↥(GammaH M H) where
-  toFun γ := ⟨conjUpperMat ℓ (γ : SL(2, ℤ)) (dvd_of_mem_GammaHUpper M H ℓ γ),
-    conjUpperMat_mem M H ℓ γ⟩
+    simp only [val_gamma0Units, Gamma0Map, MonoidHom.coe_mk, OneHom.coe_mk]
+    rfl⟩
   map_one' := by
-    apply Subtype.ext
-    apply Matrix.SpecialLinearGroup.ext
-    intro i j
-    fin_cases i <;> fin_cases j <;> simp [conjUpperMat]
-  map_mul' γ δ :=
-    Subtype.ext (conjUpperMat_mul ℓ (γ : SL(2, ℤ)) (δ : SL(2, ℤ)) (dvd_of_mem_GammaHUpper M H ℓ γ)
-      (dvd_of_mem_GammaHUpper M H ℓ δ) (dvd_of_mem_GammaHUpper M H ℓ (γ * δ)))
+    refine Subtype.ext (Subtype.ext ?_)
+    change HeckeEis.heckeConjMat ℓ (1 : Matrix (Fin 2) (Fin 2) ℤ) = 1
+    exact HeckeEis.heckeConjMat_one ℓ
+  map_mul' γ δ := by
+    refine Subtype.ext (Subtype.ext ?_)
+    change HeckeEis.heckeConjMat ℓ (((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) *
+        ((δ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)) =
+      HeckeEis.heckeConjMat ℓ ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) *
+        HeckeEis.heckeConjMat ℓ ((δ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)
+    exact HeckeEis.heckeConjMat_mul (Int.natCast_ne_zero.mpr (NeZero.ne ℓ))
+      (dvd_of_mem_GammaHUpper M H ℓ γ) (dvd_of_mem_GammaHUpper M H ℓ δ)
 
 
 
@@ -153,12 +99,10 @@ public instance gammaHUpper_finiteIndex [NeZero M] [NeZero ℓ] :
   refine Subgroup.finiteIndex_of_le (H := (Gamma (M * ℓ)).subgroupOf (GammaH M H)) ?_
   intro γ hγ
   have hγ2 := Subgroup.mem_subgroupOf.mp hγ
-  refine Subgroup.mem_subgroupOf.mpr ?_
-  rw [mem_Gamma0Upper]
+  refine Subgroup.mem_subgroupOf.mpr (HeckeEis.mem_heckeUpperSL.mpr ?_)
   have h01 : (((γ : SL(2, ℤ)) 0 1 : ℤ) : ZMod (M * ℓ)) = 0 := (Gamma_mem.mp hγ2).2.1
-  exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ ℓ).mpr
-    (dvd_trans (show (ℓ : ℤ) ∣ ((M * ℓ : ℕ) : ℤ) by exact_mod_cast dvd_mul_left ℓ M)
-      ((ZMod.intCast_zmod_eq_zero_iff_dvd _ (M * ℓ)).mp h01))
+  exact dvd_trans (show (ℓ : ℤ) ∣ ((M * ℓ : ℕ) : ℤ) by exact_mod_cast dvd_mul_left ℓ M)
+    ((ZMod.intCast_zmod_eq_zero_iff_dvd _ (M * ℓ)).mp h01)
 
 variable (M : ℕ) in
 theorem gamma0Units_surjective [NeZero M] : Function.Surjective (gamma0Units M) := by
@@ -882,8 +826,8 @@ theorem mapGL_conjL_mul_heckeMatrix (t : ↥(CongruenceSubgroup.GammaHUpper M H 
   have e1 : ((Matrix.SpecialLinearGroup.mapGL ℝ ((CongruenceSubgroup.conjL M H q t :
     ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ)) :
       GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
-      ((CongruenceSubgroup.conjUpperMat q ((t : ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ)) hdvd :
-        SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).map
+      (HeckeEis.heckeConjMat q
+        (((t : ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)).map
         (algebraMap ℤ ℝ) := rfl
   have e2 : ((Matrix.SpecialLinearGroup.mapGL ℝ ((t : ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ))
     : GL (Fin 2) ℝ) :
@@ -898,7 +842,7 @@ theorem mapGL_conjL_mul_heckeMatrix (t : ↥(CongruenceSubgroup.GammaHUpper M H 
   rw [e1, e2]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [CongruenceSubgroup.conjUpperMat, Matrix.mul_apply, Fin.sum_univ_two, hcast, mul_comm]
+    simp [Matrix.mul_apply, Fin.sum_univ_two, hcast, mul_comm]
 
 theorem sum_slash_beta_slash_eq (k : ℤ) {f : ℍ → ℂ}
     (hf : ∀ γ ∈ (CongruenceSubgroup.GammaH M H).map (Matrix.SpecialLinearGroup.mapGL ℝ), f ∣[k] γ =
@@ -1025,7 +969,7 @@ theorem bijective_transl (hqM : q ∣ M) :
     rw [QuotientGroup.eq] at hij
     rw [Subgroup.mem_subgroupOf, Subgroup.coe_mul, Subgroup.coe_inv, coe_transl, coe_transl, ←
       zpow_neg, ← zpow_add,
-      mem_Gamma0Upper, ModularGroup.coe_T_zpow] at hij
+      mem_heckeUpperSL_iff_intCast_eq_zero, ModularGroup.coe_T_zpow] at hij
     simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_fin_one,
       Matrix.cons_val_zero] at hij
     apply Fin.ext
@@ -1056,7 +1000,7 @@ theorem bijective_transl (hqM : q ∣ M) :
     refine ⟨⟨jz.val, ZMod.val_lt jz⟩, ?_⟩
     symm
     rw [QuotientGroup.eq, Subgroup.mem_subgroupOf, Subgroup.coe_mul, Subgroup.coe_inv, coe_transl,
-      mem_Gamma0Upper]
+      mem_heckeUpperSL_iff_intCast_eq_zero]
     have hentry : ((γ : SL(2, ℤ))⁻¹ * ModularGroup.T ^ (((jz.val : ℕ) : ℤ)) : SL(2, ℤ)) 0 1 =
         ((γ : SL(2, ℤ)) 1 1 : ℤ) * ((jz.val : ℕ) : ℤ) - ((γ : SL(2, ℤ)) 0 1 : ℤ) := by
       rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,

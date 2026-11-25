@@ -56,3 +56,18 @@ example {F : Type*} [FunLike F UpperHalfPlane ℂ] {Γ : Subgroup (GL (Fin 2) �
     ModularForm.coeffHeckeTPrime_of_dvd k (dvd_mul_right 2 m),
     Nat.mul_div_cancel_left m two_pos]
   norm_num
+
+/-- Membership in `GammaHUpper`, defined through `HeckeEis.heckeUpperSL`, is still the upper-right
+entry vanishing modulo `ℓ`. -/
+example (M : ℕ) (H : Subgroup (ZMod M)ˣ) (ℓ : ℕ) (γ : CongruenceSubgroup.GammaH M H) :
+    γ ∈ CongruenceSubgroup.GammaHUpper M H ℓ ↔ (((γ : SL(2, ℤ)) 0 1 : ℤ) : ZMod ℓ) = 0 :=
+  Subgroup.mem_subgroupOf.trans CongruenceSubgroup.mem_heckeUpperSL_iff_intCast_eq_zero
+
+/-- `conjL` acts on the underlying matrix by `HeckeEis.heckeConjMat`. -/
+example (M : ℕ) (H : Subgroup (ZMod M)ˣ) (ℓ : ℕ) [NeZero ℓ]
+    (γ : CongruenceSubgroup.GammaHUpper M H ℓ) :
+    (((CongruenceSubgroup.conjL M H ℓ γ : CongruenceSubgroup.GammaH M H) : SL(2, ℤ)) :
+      Matrix (Fin 2) (Fin 2) ℤ) =
+      HeckeEis.heckeConjMat ℓ
+        (((γ : CongruenceSubgroup.GammaH M H) : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) :=
+  rfl
