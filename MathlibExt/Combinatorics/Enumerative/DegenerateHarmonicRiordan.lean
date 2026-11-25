@@ -13,6 +13,7 @@ public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
 import Mathlib.Data.Nat.Choose.Sum
+import Mathlib.RingTheory.PowerSeries.Derivative
 
 /-!
 # Generalized degenerate harmonic numbers and Riordan arrays
@@ -20,7 +21,8 @@ import Mathlib.Data.Nat.Choose.Sum
 This file defines the sequences used by Duran, Ömür and Koparal in their study of generalized
 degenerate harmonic numbers. At `α = 1`, Pascal's identity expresses the partial harmonic sum
 in terms of a single binomial coefficient. The Chu–Vandermonde identity then evaluates its
-alternating binomial transform.
+alternating binomial transform. A differential equation for the generating series of the harmonic
+terms gives the shifted alternating exponential sum for every positive scale parameter.
 -/
 
 namespace MetaMathlibExt
@@ -405,6 +407,125 @@ theorem degenerateHarmonicRank_succ_partial_sum {lam α : ℝ}
       rw [← product, PowerSeries.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
       simp only [← degenerateHarmonicRank_zero_right lam α, rank, Nat.zero_add, pow_one]
       exact Finset.sum_congr rfl fun k _ => mul_comm _ _
+
+open PowerSeries
+
+namespace degenerateHarmonicRank_shifted_exp_weighted_sum
+
+private noncomputable abbrev logSeries (lam α : ℝ) := PowerSeries.mk (degenerateHarmonicTerm lam α)
+
+-- The binomial coefficient recurrence gives the differential equation for the harmonic terms.
+private lemma logSeries_derivative {lam α : ℝ} (hlam : 0 < lam) (hα : 0 < α) :
+    (C α - X) * derivative (logSeries lam α) = 1 - C lam * logSeries lam α := by
+  ext n
+  rw [sub_mul, map_sub, map_sub, coeff_C_mul, coeff_C_mul, coeff_derivative]
+  cases n with
+  | zero =>
+    simp [logSeries, coeff_zero_X_mul, degenerateHarmonicTerm_zero,
+      degenerateHarmonicTerm_one hlam.ne', hα.ne']
+  | succ n =>
+    have h := Ring.choose_smul_choose lam (n := n + 1 + 1) (k := n + 1) (Nat.le_succ _)
+    simp only [Nat.choose_succ_self_right, Nat.add_sub_cancel_left, Ring.choose_one_right,
+      nsmul_eq_mul, Nat.cast_succ] at h
+    rw [coeff_succ_X_mul, coeff_derivative]
+    simp only [logSeries, coeff_mk, degenerateHarmonicTerm, Nat.add_one_ne_zero, ite_false,
+      Nat.add_sub_cancel, coeff_one, Nat.cast_succ, zero_sub]
+    rw [pow_succ (-1 : ℝ), pow_succ α (n + 1)]
+    field_simp
+    linear_combination -h
+
+private noncomputable abbrev weight (lam : ℝ) (k : ℕ) : ℝ :=
+  (-1 : ℝ) ^ k * generalizedFallingFactorial 1 lam (k + 1) / (k + 1).factorial
+
+private lemma weight_succ (lam : ℝ) (k : ℕ) :
+    (↑(k + 1 + 1) : ℝ) * weight lam (k + 1) =
+      ((k + 1 : ℝ) * lam - 1) * weight lam k := by
+  unfold weight
+  rw [generalizedFallingFactorial]
+  simp only [Nat.factorial_succ (k + 1), pow_succ (-1 : ℝ) k, Nat.cast_mul, Nat.cast_succ]
+  field_simp
+  ring
+
+private lemma weighted_derivative {lam α : ℝ} (hlam : 0 < lam) (hα : 0 < α) (k : ℕ) :
+    (C α - X) * derivative (C (weight lam k) * logSeries lam α ^ (k + 1)) +
+        C (weight lam k) * logSeries lam α ^ (k + 1) =
+      C ((k + 1 : ℝ) * weight lam k) * logSeries lam α ^ k -
+        C ((↑(k + 1 + 1) : ℝ) * weight lam (k + 1)) * logSeries lam α ^ (k + 1) := by
+  rw [weight_succ, Derivation.leibniz, derivative_C, smul_zero, add_zero, smul_eq_mul,
+    derivative_pow, Nat.add_sub_cancel, pow_succ (logSeries lam α) k]
+  simp only [map_sub, map_mul, map_one, map_add, map_natCast, Nat.cast_succ]
+  linear_combination
+    C (weight lam k) * ((k : PowerSeries ℝ) + 1) * logSeries lam α ^ k *
+      logSeries_derivative hlam hα
+
+private lemma coeff_X_derivative (f : PowerSeries ℝ) (m : ℕ) :
+    coeff m (X * derivative f) = m * coeff m f := by
+  cases m with
+  | zero => simp [coeff_zero_X_mul]
+  | succ m => rw [coeff_succ_X_mul, coeff_derivative, Nat.cast_succ, mul_comm]
+
+end degenerateHarmonicRank_shifted_exp_weighted_sum
+
+open degenerateHarmonicRank_shifted_exp_weighted_sum in
+/-- **Shifted alternating degenerate exponential sum of degenerate harmonic numbers of rank.**
+Let $\lambda > 0$ and $\alpha > 0$ be real and let $n$ be a natural number. Write
+$(1)_{k,\lambda} = 1 \cdot (1 - \lambda) \cdots (1 - (k-1)\lambda)$ for the generalized falling
+factorial and $H_\lambda(m, r, \alpha)$ for the generalized degenerate harmonic numbers of rank $r$.
+Then
+$$\sum_{k=0}^{n} (-1)^k \frac{(1)_{k+1,\lambda}}{(k+1)!} H_\lambda(n+1, k, \alpha) =
+\frac{1}{\alpha}.$$
+
+Source: Ömer Duran, Neşe Ömür and Sibel Koparal, *Generalized Degenerate Harmonic Numbers and
+Their Applications with Riordan Arrays*, INTEGERS 24 (2024), Article A41, Theorem 5
+(`integers-2024-A41-thm-5`). -/
+theorem degenerateHarmonicRank_shifted_exp_weighted_sum {lam α : ℝ} (hlam : 0 < lam)
+    (hα : 0 < α) (n : ℕ) :
+    ∑ k ∈ Finset.range (n + 1),
+        (-1 : ℝ) ^ k * generalizedFallingFactorial 1 lam (k + 1) / (k + 1).factorial *
+          degenerateHarmonicRank lam α (n + 1) k =
+      1 / α := by
+  let P : PowerSeries ℝ :=
+    ∑ k ∈ Finset.range (n + 1), C (weight lam k) * logSeries lam α ^ (k + 1)
+  let boundary (k : ℕ) := C (↑(k + 1) * weight lam k) * logSeries lam α ^ k
+  have telescope : (C α - X) * derivative P + P = 1 - boundary (n + 1) := by
+    calc
+      _ = ∑ k ∈ Finset.range (n + 1), (boundary k - boundary (k + 1)) := by
+        simp only [P, map_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+        refine Finset.sum_congr rfl fun k _ => ?_
+        simpa only [boundary, Nat.cast_succ] using weighted_derivative hlam hα k
+      _ = _ := by
+        rw [Finset.sum_range_sub']
+        simp [boundary, weight, generalizedFallingFactorial]
+  -- Subtract the linear solution. The remaining differential equation has zero
+  -- right-hand coefficients through degree n because logSeries has zero constant term.
+  let R := P - C α⁻¹ * X
+  have equation : (C α - X) * derivative R + R = -boundary (n + 1) := by
+    dsimp only [R]
+    rw [map_sub, derivative_C_mul_X, mul_sub, sub_mul (C α) X (C α⁻¹), ← map_mul,
+      mul_inv_cancel₀ hα.ne', map_one]
+    linear_combination telescope
+  have vanish (m : ℕ) (hm : m ≤ n + 1) : coeff m R = 0 := by
+    induction m with
+    | zero =>
+      simp [R, P, coeff_zero_eq_constantCoeff, logSeries, degenerateHarmonicTerm_zero]
+    | succ m ih =>
+      have hL : constantCoeff (logSeries lam α) = 0 := by
+        simp [logSeries, degenerateHarmonicTerm_zero]
+      have hpow := nat_le_order_iff.mp (le_order_pow_of_constantCoeff_eq_zero (n + 1) hL) m
+        (by omega)
+      have hb : coeff m (boundary (n + 1)) = 0 := by
+        simp only [boundary, coeff_C_mul, hpow, mul_zero]
+      have h := congrArg (coeff m) equation
+      simpa [hb, sub_mul, coeff_C_mul, coeff_derivative, coeff_X_derivative,
+        ih (by omega), hα.ne', show (m : ℝ) + 1 ≠ 0 by positivity] using h
+  calc
+    _ = ∑ m ∈ Finset.range (n + 1 + 1), coeff m P := by
+      simp only [P, map_sum, coeff_C_mul, degenerateHarmonicRank, weight, Finset.mul_sum, logSeries]
+      rw [Finset.sum_comm]
+    _ = ∑ m ∈ Finset.range (n + 1 + 1), coeff m (C α⁻¹ * X) := by
+      refine Finset.sum_congr rfl fun m hm => sub_eq_zero.mp ?_
+      simpa only [R, map_sub] using vanish m (Finset.mem_range_succ_iff.mp hm)
+    _ = _ := by simp [coeff_C_mul, coeff_X]
 
 end
 

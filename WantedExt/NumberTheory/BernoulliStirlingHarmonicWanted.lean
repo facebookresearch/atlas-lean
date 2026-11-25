@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliDuality
 public import MathlibExt.NumberTheory.Bernoulli.SumModPrime
+public import MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
@@ -18,9 +19,10 @@ public import Mathlib.NumberTheory.Harmonic.Defs
 
 /-
 Statements of the same source proved in modules this file imports:
-`MathlibExt.NumberTheory.Bernoulli.WeightedSum` (Corollary 2, equation (14)) and
+`MathlibExt.NumberTheory.Bernoulli.WeightedSum` (Corollary 2, equation (14)),
 `MathlibExt.NumberTheory.Bernoulli.SumModPrime` (Corollary 4, equation (23),
-`sum_prime_mul_bernoulli_mod_prime`).
+`sum_prime_mul_bernoulli_mod_prime`), and
+`MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime` (Corollary 4, equation (24)).
 -/
 
 namespace MetaMathlibExt
@@ -138,22 +140,6 @@ Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 3.
 public theorem_wanted sum_bernoulli_eq_polyBernoulli (n : ℕ) (hn : 2 ≤ n) :
     (∑ j ∈ Finset.range (n + 1), bernoulli j) =
       polyBernoulliPoly n 2 1 + bernoulli n - polyBernoulli n 2 - 1
-
-/--
-**The congruence $\sum_{j=0}^{p-3} B_j \equiv -1 \pmod p$.** Let $B_j$ denote the Bernoulli
-numbers with $B_1 = -\tfrac12$. For every prime $p \ge 5$, the rational number
-$S = B_0 + B_1 + \dots + B_{p-3}$ has denominator not divisible by $p$, and its residue modulo
-$p$ (its numerator times the inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
-equation (24).
--/
-public theorem_wanted sum_bernoulli_to_prime_sub_three_mod_prime (p : ℕ)
-    (hp : p.Prime) (hp5 : 5 ≤ p) :
-    ¬p ∣ (∑ j ∈ Finset.range (p - 2), bernoulli j).den ∧
-      ratResidue p (∑ j ∈ Finset.range (p - 2), bernoulli j) =
-        ratResidue p (-1)
 
 /--
 **The congruence $\sum_{j=0}^{p} E_j(0) \equiv 3/2 \pmod p$.** Let $E_j(x)$ denote the Euler

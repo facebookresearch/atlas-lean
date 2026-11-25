@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Probability.Statistics.EmpiricalMallows
 public import MathlibExt.Probability.Statistics.MallowsMetric
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
@@ -45,22 +46,6 @@ open scoped ENNReal NNReal BoundedContinuousFunction
 open MathlibExt.MeasureTheory.OptimalTransport.Wasserstein
 
 namespace MathlibExt.Probability.Statistics.BootstrapWanted
-
-/-- **Almost sure convergence of the empirical law in the Mallows metric** (P. J. Bickel and
-D. A. Freedman, *Ann. Statist.* 9 (1981), Lemma 8.4, and (2.1) for `p = 2` on the line). Let
-`E` be a separable Banach space, `1 ≤ p < ∞`, and `X₀, X₁, …` i.i.d. `E`-valued with law
-`μ ∈ Γ_p` (finite `p`-th moment). If `F n ω` is the empirical law `(n+1)⁻¹ ∑_{i ≤ n} δ_{X_i(ω)}`,
-then `d_p(F n ω, μ) → 0` for almost every `ω`. -/
-theorem_wanted tendsto_wasserstein_empirical {Ω E : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] [NormedAddCommGroup E] [CompleteSpace E] [SecondCountableTopology E]
-    [MeasurableSpace E] [BorelSpace E] {p : ℝ} (hp : 1 ≤ p) {X : ℕ → Ω → E}
-    (hmeas : ∀ i, Measurable (X i)) (hindep : iIndepFun X P)
-    (hident : ∀ i, IdentDistrib (X i) (X 0) P P) (μ : ProbabilityMeasure E)
-    (hlaw : P.map (X 0) = (μ : Measure E)) (hmom : ∫⁻ x, ‖x‖ₑ ^ p ∂(μ : Measure E) < ∞)
-    (F : ℕ → Ω → ProbabilityMeasure E)
-    (hF : ∀ n ω, (F n ω : Measure E) =
-      ((n + 1 : ℕ) : ℝ≥0∞)⁻¹ • ∑ i ∈ Finset.range (n + 1), Measure.dirac (X i ω)) :
-    ∀ᵐ ω ∂P, Tendsto (fun n => wasserstein p (F n ω) μ) atTop (𝓝 0)
 
 /-- **Bickel–Freedman bootstrap central limit theorem for the mean** (P. J. Bickel and
 D. A. Freedman, *Ann. Statist.* 9 (1981), Theorem 2.1(a)). Let `X₀, X₁, …` be i.i.d. real

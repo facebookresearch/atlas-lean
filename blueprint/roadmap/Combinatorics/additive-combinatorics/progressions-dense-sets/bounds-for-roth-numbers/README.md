@@ -2,3 +2,4 @@
 
 - [Roth numbers below every power of the logarithm (Erdős Problem 140)](roth-number-log-power-decay.md)
 - [Kelley–Meka: Roth numbers are below every power of the logarithm](roth-number-log-power-decay-holds.md)
+- [Behrend's lemma: some sphere contains many lattice points of a cube](behrend-large-sphere.md)

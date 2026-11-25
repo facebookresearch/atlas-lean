@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.CurvePositivity
+public import MathlibExt.AlgebraicGeometry.LineBundleTensor
 
 @[expose] public section
 
@@ -27,11 +28,18 @@ variable {k : Type u} [Field k] {X : Scheme.{u}}
 example : @CurvePositivity.moduleTensor = @SchemeModulesTensor.moduleTensor := rfl
 example : @CurvePositivity.power = @SchemeModulesTensor.power := rfl
 
--- Semiampleness and torsion are witnessed by a positive power.
-example (L : X.Modules) (h : GloballyGenerated (power L 1)) : IsSemiample L := ⟨1, one_pos, h⟩
+-- Semiampleness and torsion are predicates on line bundles, witnessed by a positive power.
+example (L : X.Modules) (hL : IsLineBundle L) (h : GloballyGenerated (power L 1)) :
+    IsSemiample L hL :=
+  ⟨1, one_pos, h⟩
 
-example (L : X.Modules) (e : power L 2 ≅ structureModule X) : IsTorsion L :=
+example (L : X.Modules) (hL : IsLineBundle L) (e : power L 2 ≅ structureModule X) :
+    IsTorsion L hL :=
   ⟨2, two_pos, ⟨e⟩⟩
+
+-- The structure sheaf is a torsion line bundle.
+example : IsTorsion (structureModule X) (isLineBundle_structureModule X) :=
+  ⟨1, one_pos, ⟨LineBundleTensor.unitTensorUnitIso X⟩⟩
 
 -- The zeroth power is the structure sheaf, so the zeroth power never witnesses torsion or
 -- semiampleness: both definitions require a positive exponent.

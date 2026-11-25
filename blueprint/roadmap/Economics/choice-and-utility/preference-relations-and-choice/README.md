@@ -19,6 +19,8 @@
 - [Maximal menu elements under a rational preference](maximal-2.md)
 - [Maximal and greatest elements coincide for rational preferences](maximal-eq-choice-2.md)
 - [Rational choice from a finite nonempty menu is nonempty](choice-nonempty.md)
+- [Choice by preference maximization satisfies contraction consistency](maximizing-choice-satisfies-contraction-consistency.md)
+- [A menu-dependent choice rule that is not rationalizable](menu-dependent-choice-is-not-rationalizable.md)
 
 ## Sources
 
