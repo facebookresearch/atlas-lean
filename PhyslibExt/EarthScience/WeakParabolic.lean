@@ -4599,7 +4599,7 @@ theorem slab_avg_sq_integral_le
           Set.Icc (t0 + k * ((t1 - t0) / N)) (t0 + (k + 1 : ℝ) * ((t1 - t0) / N)) :=
         Ioo_ae_eq_Icc
       have h2 : Set.Icc (0 : ℝ) 1 =ᵐ[(volume : Measure ℝ)] Set.Icc (0 : ℝ) 1 :=
-        Filter.EventuallyEq.refl _ _
+        Filter.Eventually.of_forall fun _ => Iff.rfl
       exact Measure.set_prod_ae_eq h1 h2
     have hrestrict_eq : volume.restrict (Set.Ioo (t0 + k * ((t1 - t0) / N))
             (t0 + (k + 1 : ℝ) * ((t1 - t0) / N)) ×ˢ Set.Icc (0 : ℝ) 1)
@@ -12446,19 +12446,19 @@ lemma helper_eLpNorm_sq (f : ℝ → ℝ) (μ : Measure ℝ)
   have h2zero : (2 : ENNReal) ≠ 0 := by simp
   have h2top : (2 : ENNReal) ≠ ⊤ := by simp
   have hfin : eLpNorm f 2 μ < ⊤ := hf.eLpNorm_lt_top
-  have hLtop : (∫⁻ x, enorm (f x) ^ (2 : ℝ) ∂μ) < ⊤ := by
+  have hLtop : (∫⁻ x, eNorm (f x) ^ (2 : ℝ) ∂μ) < ⊤ := by
     have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top h2zero h2top hfin
     simp only [ENNReal.toReal_ofNat] at h
     exact h
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal h2zero h2top hf.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat]
   have hexp : (1 / 2 : ℝ) * ((2 : ℕ) : ℝ) = 1 := by norm_num
-  have hstep : ((∫⁻ x, enorm (f x) ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ)).toReal ^ 2
-      = (∫⁻ x, enorm (f x) ^ (2 : ℝ) ∂μ).toReal := by
+  have hstep : ((∫⁻ x, eNorm (f x) ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ)).toReal ^ 2
+      = (∫⁻ x, eNorm (f x) ^ (2 : ℝ) ∂μ).toReal := by
     rw [← ENNReal.toReal_pow, ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul, hexp,
       ENNReal.rpow_one]
   rw [hstep]
-  have hpt : ∀ x : ℝ, enorm (f x) ^ (2 : ℝ) = ENNReal.ofReal ((f x)^2) := by
+  have hpt : ∀ x : ℝ, eNorm (f x) ^ (2 : ℝ) = ENNReal.ofReal ((f x)^2) := by
     intro x
     rw [← ofReal_norm, ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) zero_le_two,
       Real.rpow_two, Real.norm_eq_abs, sq_abs]
@@ -15666,7 +15666,7 @@ theorem ioc_ae_eq_icc_zero_one : Set.Ioc (0 : ℝ) 1 =ᵐ[volume] Set.Icc (0 : �
       (t ∈ Set.Ioc (0 : ℝ) 1 ↔ t ∈ Set.Icc (0 : ℝ) 1) := by
     filter_upwards [hne] with t ht
     exact ⟨fun h => ⟨le_of_lt h.1, h.2⟩, fun h => ⟨lt_of_le_of_ne' h.1 ht, h.2⟩⟩
-  exact hiff.mono (fun t ht => propext ht)
+  exact hiff
 
 
 /-- Bump average as a space-time integral. -/
@@ -16049,7 +16049,7 @@ lemma memLp_bumpIndicator (ψ : ℝ → ℝ) (hψ : MemLp ψ 2 (volume.restrict 
       = (volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
     rw [Measure.volume_eq_prod, Measure.prod_restrict]
   have hc : 0 < (2 : ENNReal).toReal := ENNReal.toReal_pos (by simp) (by simp)
-  have hC : (∫⁻ x, enorm (ψ x) ^ (2 : ENNReal).toReal
+  have hC : (∫⁻ x, eNorm (ψ x) ^ (2 : ENNReal).toReal
       ∂(volume.restrict (Set.Icc (0 : ℝ) 1))) < ⊤ := by
     have hψ' : eLpNorm ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) < ⊤ := hψ
     exact (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (p := 2) (by simp) (by simp)
@@ -16096,20 +16096,20 @@ lemma memLp_bumpIndicator (ψ : ℝ → ℝ) (hψ : MemLp ψ 2 (volume.restrict 
       ((volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1))) < ⊤ := by
     rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (p := 2) (by simp) (by simp) h_ae]
     have h_aemeas : AEMeasurable
-        (fun z : ℝ × ℝ => enorm (if z.1 ∈ Set.Ioo (τ - δ) (τ + δ) then ψ z.2 else 0)
+        (fun z : ℝ × ℝ => eNorm (if z.1 ∈ Set.Ioo (τ - δ) (τ + δ) then ψ z.2 else 0)
           ^ (2 : ENNReal).toReal)
         ((volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1))) := by
       have hfrpow : AEStronglyMeasurable
-          (fun z : ℝ × ℝ => enorm (if z.1 ∈ Set.Ioo (τ - δ) (τ + δ) then ψ z.2 else 0)
+          (fun z : ℝ × ℝ => eNorm (if z.1 ∈ Set.Ioo (τ - δ) (τ + δ) then ψ z.2 else 0)
             ^ (2 : ENNReal).toReal)
           ((volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1))) := by
         fun_prop
       exact hfrpow.aemeasurable
     rw [lintegral_prod _ h_aemeas]
-    have hinner : ∀ t : ℝ, (∫⁻ x, enorm (if t ∈ Set.Ioo (τ - δ) (τ + δ) then ψ x else 0)
+    have hinner : ∀ t : ℝ, (∫⁻ x, eNorm (if t ∈ Set.Ioo (τ - δ) (τ + δ) then ψ x else 0)
         ^ (2 : ENNReal).toReal ∂(volume.restrict (Set.Icc (0 : ℝ) 1)))
         = (Set.Ioo (τ - δ) (τ + δ)).indicator
-          (fun _ => ∫⁻ x, enorm (ψ x) ^ (2 : ENNReal).toReal
+          (fun _ => ∫⁻ x, eNorm (ψ x) ^ (2 : ENNReal).toReal
             ∂(volume.restrict (Set.Icc (0 : ℝ) 1))) t := by
       intro t
       by_cases ht : t ∈ Set.Ioo (τ - δ) (τ + δ)
@@ -16118,7 +16118,7 @@ lemma memLp_bumpIndicator (ψ : ℝ → ℝ) (hψ : MemLp ψ 2 (volume.restrict 
         intro x
         rw [ite_eq_left ht]
       · rw [Set.indicator_of_notMem ht]
-        have hzero : (fun x : ℝ => enorm (if t ∈ Set.Ioo (τ - δ) (τ + δ) then ψ x else 0)
+        have hzero : (fun x : ℝ => eNorm (if t ∈ Set.Ioo (τ - δ) (τ + δ) then ψ x else 0)
             ^ (2 : ENNReal).toReal) = fun _ => 0 := by
           funext x
           rw [ite_eq_right ht, enorm_zero, ENNReal.zero_rpow_of_pos hc]
@@ -16126,10 +16126,10 @@ lemma memLp_bumpIndicator (ψ : ℝ → ℝ) (hψ : MemLp ψ 2 (volume.restrict 
     simp only [hinner]
     rw [lintegral_indicator measurableSet_Ioo]
     have hconst : (∫⁻ t in Set.Ioo (τ - δ) (τ + δ),
-          (fun _ => ∫⁻ x, enorm (ψ x) ^ (2 : ENNReal).toReal
+          (fun _ => ∫⁻ x, eNorm (ψ x) ^ (2 : ENNReal).toReal
             ∂(volume.restrict (Set.Icc (0 : ℝ) 1))) t
           ∂(volume.restrict (Set.Icc t0 t1)))
-        = (∫⁻ x, enorm (ψ x) ^ (2 : ENNReal).toReal ∂(volume.restrict (Set.Icc (0 : ℝ) 1)))
+        = (∫⁻ x, eNorm (ψ x) ^ (2 : ENNReal).toReal ∂(volume.restrict (Set.Icc (0 : ℝ) 1)))
           * ((volume.restrict (Set.Icc t0 t1)).restrict (Set.Ioo (τ - δ) (τ + δ))) Set.univ :=
       lintegral_const _
     rw [hconst, Measure.restrict_apply_univ]
@@ -17430,9 +17430,9 @@ theorem ioc_ae_eq_icc (a b : ℝ) : Set.Ioc a b =ᵐ[volume] Set.Icc a b := by
   have hmem : ({a} : Set ℝ)ᶜ ∈ MeasureTheory.ae volume := by
     rw [mem_ae_iff, compl_compl]
     exact Real.volume_singleton
-  refine Filter.eventuallyEq_of_mem hmem (fun x hx => ?_)
+  filter_upwards [hmem] with x hx
   have hxa : x ≠ a := by simpa using hx
-  refine propext ⟨fun h => Set.Ioc_subset_Icc_self h, fun h => ?_⟩
+  refine ⟨fun h => Set.Ioc_subset_Icc_self h, fun h => ?_⟩
   rw [Set.mem_Icc] at h
   rw [Set.mem_Ioc]
   exact ⟨lt_of_le_of_ne' h.1 hxa, h.2⟩
