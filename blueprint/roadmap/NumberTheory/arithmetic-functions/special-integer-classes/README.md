@@ -16,6 +16,7 @@ Squarefree, k-free, k-full and powerful, smooth and rough numbers, highly compos
 - [Rough numbers](rough-numbers/README.md)
 - [Squarefree numbers](squarefree-numbers/README.md)
 - [Weakly prime-additive numbers](weakly-prime-additive-numbers/README.md)
+- [Abs card hfree sub le](abs-card-hfree-sub-le.md)
 - [Average number of prime factors of h-free integers](average-card-factors-over-h-free.md)
 - [Consecutive polynomial family](is-consecutive-polynomial-family.md)
 - [Natural numbers with the same prime divisors](same-prime-support.md)

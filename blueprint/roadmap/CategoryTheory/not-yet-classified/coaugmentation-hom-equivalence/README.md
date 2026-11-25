@@ -1,0 +1,15 @@
+# Coaugmentation Hom Equivalence
+
+- [Lift Hom](lift-hom.md)
+- [Lift Hom formula](lift-hom-formula.md)
+- [Comp lift Hom](comp-lift-hom.md)
+- [Lift Hom comp](lift-hom-comp.md)
+- [Hom Equiv](hom-equiv.md)
+- [Hom Equiv apply](hom-equiv-apply.md)
+- [Hom Equiv symm apply](hom-equiv-symm-apply.md)
+- [Lift Hom source](lift-hom-source.md)
+- [Hom Equiv source](hom-equiv-source.md)
+- [Hom Equiv symm source](hom-equiv-symm-source.md)
+- [Lift Hom target](lift-hom-target.md)
+- [Hom Equiv target](hom-equiv-target.md)
+- [Hom Equiv symm target](hom-equiv-symm-target.md)
