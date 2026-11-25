@@ -303,13 +303,15 @@ private theorem regions_eq_of_inter {X : Type*} [TopologicalSpace X] {U C D : Se
 -- An interval that contains the tip has a path around the tip and costs zero.
 private theorem axis_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)}
     (hU : IsOpen U) (T : ι → Set ℝ) (hT : ∀ i, (T i).OrdConnected)
-    (hTeq : (axis ⁻¹' U)ᶜ = ⋃ i, T i) :
-    (regions (U \ axisCut univ)).encard ≤ (regions U).encard + Fintype.card ι := by
+    (S : Set ℝ) (hstay : ∀ J ∈ regions (axis ⁻¹' U), (J ∩ S).Nonempty → J ⊆ S)
+    (hblocked : (⋃ i, T i) ⊆ (axis ⁻¹' U)ᶜ)
+    (hcover : ∀ J ∈ regions (axis ⁻¹' U), J ⊆ S → sInf J ∉ axis ⁻¹' U → sInf J ∈ ⋃ i, T i) :
+    (regions (U \ axisCut S)).encard ≤ (regions U).encard + Fintype.card ι := by
   classical
   let A := axis ⁻¹' U
   have haxis : Continuous axis := continuous_id.prodMk continuous_const
   have hA : IsOpen A := hU.preimage haxis
-  let Q : Set (Set ℝ) := {J | J ∈ regions A ∧ (J ∩ Ici 0).Nonempty}
+  let Q : Set (Set ℝ) := {J | J ∈ regions A ∧ (J ∩ (S ∩ Ici 0)).Nonempty}
   let P : Set (Set ℝ) := {J ∈ Q | ¬ (J ∩ Iio 0).Nonempty}
   have hsets {J : Set ℝ} (hJ : J ∈ Q) :
       IsOpen J ∧ IsPreconnected J ∧ J.Nonempty ∧ J ⊆ A ∧ closure J ∩ A ⊆ J := by
@@ -335,7 +337,11 @@ private theorem axis_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)
   have hJinf (J : P) : sInf (J : Set ℝ) ∈ Aᶜ :=
     fun hx => (hstrict J ((hsets J.2.1).2.2.2.2
       ⟨csInf_mem_closure (hsets J.2.1).2.2.1 (hbb J), hx⟩)).false
-  have hex (J : P) : ∃ i, sInf (J : Set ℝ) ∈ T i := mem_iUnion.1 (hTeq ▸ hJinf J)
+  have hJS {J : Set ℝ} (hJ : J ∈ Q) : J ⊆ S := by
+    obtain ⟨x, hx, hxS, _⟩ := hJ.2
+    exact hstay J hJ.1 ⟨x, hx, hxS⟩
+  have hex (J : P) : ∃ i, sInf (J : Set ℝ) ∈ T i :=
+    mem_iUnion.1 (hcover _ J.2.1.1 (hJS J.2.1) (hJinf J))
   choose pick hpick using hex
   have hcontr (C D : P) (h : pick C = pick D)
       (hlt : sInf (C : Set ℝ) < sInf (D : Set ℝ)) : False := by
@@ -343,7 +349,7 @@ private theorem axis_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)
     have hxT := (hT (pick C)).out (hpick C) (h ▸ hpick D)
       (show x ∈ Icc (sInf (C : Set ℝ)) (sInf (D : Set ℝ)) from
         ⟨csInf_le (hbb C) hxC, hxd.le⟩)
-    exact ((hTeq ▸ mem_iUnion_of_mem (pick C) hxT : x ∈ Aᶜ)) ((hsets C.2.1).2.2.2.1 hxC)
+    exact (hblocked (mem_iUnion_of_mem (pick C) hxT)) ((hsets C.2.1).2.2.2.1 hxC)
   have hinf (C D : P) (h : sInf (C : Set ℝ) = sInf (D : Set ℝ)) : C = D := by
     have hone (C D : P) (h : sInf (C : Set ℝ) = sInf (D : Set ℝ))
         {x y : ℝ} (hx : x ∈ (C : Set ℝ)) (hy : y ∈ (D : Set ℝ)) (hxy : x ≤ y) : C = D := by
@@ -371,7 +377,7 @@ private theorem axis_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)
     intro J hJ
     by_cases hneg : (J ∩ Iio 0).Nonempty
     · obtain ⟨x, hxJ, hx⟩ := hneg
-      obtain ⟨y, hyJ, hy⟩ := hJ.2
+      obtain ⟨y, hyJ, _, hy⟩ := hJ.2
       have h0 : 0 ∈ J := (hsets hJ).2.1.ordConnected.out hxJ hyJ
         (show 0 ∈ Icc x y from ⟨hx.le, hy⟩)
       obtain ⟨t, ht, rfl⟩ := hJ.1
@@ -382,7 +388,7 @@ private theorem axis_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)
   have hcut_op (s : Finset (Set ℝ)) : IsOpen (cut s) :=
     hU.sdiff (isClosed_biUnion_finset (fun _ _ => closed_axisCut isClosed_closure))
   have hfQ {J : Set ℝ} : J ∈ f ↔ J ∈ Q := hQfin.mem_toFinset
-  have hfull : cut f = U \ axisCut univ := by
+  have hfull : cut f = U \ axisCut S := by
     ext p
     constructor
     · rintro ⟨hpU, hp⟩
@@ -392,13 +398,15 @@ private theorem axis_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)
       have hx : p.1 ∈ A := haxisP ▸ hpU
       let J := connectedComponentIn A p.1
       have hpJ : p.1 ∈ J := mem_connectedComponentIn hx
-      have hJ : J ∈ f := hfQ.2 ⟨region_at hx, ⟨p.1, hpJ, h.1.2⟩⟩
+      have hJ : J ∈ f := hfQ.2 ⟨region_at hx, ⟨p.1, hpJ, h.1⟩⟩
       exact mem_iUnion₂_of_mem hJ ⟨⟨subset_closure hpJ, h.1.2⟩, hy⟩
     · rintro ⟨hpU, hp⟩
       refine ⟨hpU, ?_⟩
       intro h
       obtain ⟨J, hJ, hmem⟩ := mem_iUnion₂.1 h
-      exact hp ⟨⟨mem_univ _, hmem.1.2⟩, hmem.2⟩
+      have he : axis p.1 = p := Prod.ext rfl hmem.2.symm
+      have hxJ := (hsets (hfQ.1 hJ)).2.2.2.2 ⟨hmem.1.1, he ▸ hpU⟩
+      exact hp ⟨⟨hJS (hfQ.1 hJ) hxJ, hmem.1.2⟩, hmem.2⟩
   have hcount (s : Finset (Set ℝ)) (hs : ∀ J ∈ s, J ∈ Q) :
       (regions (cut s)).encard ≤ (regions U).encard + ((s.filter (· ∈ P)).card : ℕ∞) := by
     induction s using Finset.induction_on with
@@ -525,7 +533,8 @@ private theorem ray_union_bound {ι : Type*} [Fintype ι] {U : Set (ℝ × ℝ)}
   have hTeq : (axis ⁻¹' W)ᶜ = ⋃ i, T i := by
     rw [show axis ⁻¹' W = (fun t : ℝ => c + t • u) ⁻¹' U from by
       ext t; simp [W, he], ← preimage_compl, hBeq, preimage_iUnion]
-  have h := axis_union_bound hW T hB hTeq
+  have h := axis_union_bound hW T hB univ (fun _ _ _ => subset_univ _)
+    hTeq.ge (fun _ _ _ hx => hTeq ▸ hx)
   have hWimage : e '' W = U := e.surjective.image_preimage _
   have hcut : e '' (W \ axisCut univ) = U \ ray c u := by
     rw [image_sdiff e.injective, hWimage, ray_image_axisCut c u e he]
