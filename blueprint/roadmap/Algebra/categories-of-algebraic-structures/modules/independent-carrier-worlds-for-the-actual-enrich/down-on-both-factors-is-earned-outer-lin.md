@@ -1,0 +1,3 @@
+# Down on both factors is earned outer-linear by the original...
+
+Down on both factors is earned outer-linear by the original balanced map.

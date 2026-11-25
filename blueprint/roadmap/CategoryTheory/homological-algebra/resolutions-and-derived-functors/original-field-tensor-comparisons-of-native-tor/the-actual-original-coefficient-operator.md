@@ -1,0 +1,3 @@
+# The actual original coefficient operator is literal ring...
+
+The actual original coefficient operator is literal ring multiplication.

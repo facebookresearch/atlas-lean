@@ -1,0 +1,17 @@
+# The original finite-C cochain natural isomorphism
+
+- [Hom Tensor Co Chain Triples](hom-tensor-co-chain-triples.md)
+- [Hom Tensor Co Chain Left Functor](hom-tensor-co-chain-left-functor.md)
+- [Hom Tensor Co Chain Right Functor](hom-tensor-co-chain-right-functor.md)
+- [Hom Tensor Co Chain Left Functor obj](hom-tensor-co-chain-left-functor-obj.md)
+- [Hom Tensor Co Chain Right Functor obj](hom-tensor-co-chain-right-functor-obj.md)
+- [Hom Tensor Co Chain Left Functor map](hom-tensor-co-chain-left-functor-map.md)
+- [Hom Tensor Co Chain Right Functor map](hom-tensor-co-chain-right-functor-map.md)
+- [Hom Tensor Co Chain Nat Trans](hom-tensor-co-chain-nat-trans.md)
+- [Finite Factor Hom Tensor Co Chain Property](finite-factor-hom-tensor-co-chain-proper.md)
+- [Finite Factor Hom Tensor Co Chain Triples](finite-factor-hom-tensor-co-chain-triple.md)
+- [Finite Factor Hom Tensor Co Chain Inclusion](finite-factor-hom-tensor-co-chain-inclus.md)
+- [Hom Tensor Co Chain Nat Trans app is Iso](hom-tensor-co-chain-nat-trans-app-is-iso.md)
+- [Finite Factor Hom Tensor Co Chain Nat Iso](finite-factor-hom-tensor-co-chain-nat-is.md)
+- [Finite Factor Hom Tensor Co Chain Nat Iso hom](finite-factor-hom-tensor-co-chain-nat-is-2.md)
+- [Finite Factor Hom Tensor Co Chain Nat Iso hom app](finite-factor-hom-tensor-co-chain-nat-is-3.md)

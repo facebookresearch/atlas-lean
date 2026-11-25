@@ -1,0 +1,3 @@
+# The tensor facade uses the same input flattening after the...
+
+The tensor facade uses the same input flattening after the inverse tensor square.

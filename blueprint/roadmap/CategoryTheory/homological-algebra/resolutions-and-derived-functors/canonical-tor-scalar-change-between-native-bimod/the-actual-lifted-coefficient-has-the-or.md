@@ -1,0 +1,3 @@
+# The actual lifted coefficient has the original up-f-down...
+
+The actual lifted coefficient has the original up-f-down value.

@@ -1,0 +1,3 @@
+# The public coefficient-window constructor sends the...
+
+The public coefficient-window constructor sends the original identity map to identity.

@@ -1,0 +1,18 @@
+# Actual native Tor boundaries in either original coefficient
+
+- [Native Tensor Left preserves Finite Colimits](native-tensor-left-preserves-finite-coli.md)
+- [Native Tor Zero Iso](native-tor-zero-iso.md)
+- [Native Tor Zero Iso hom naturality resolved](native-tor-zero-iso-hom-naturality-resol.md)
+- [Native Tor Connecting](native-tor-connecting.md)
+- [Native Tor Long Exact Window](native-tor-long-exact-window.md)
+- [Native Tor Long Exact Window exact](native-tor-long-exact-window-exact.md)
+- [Native Tor epi zero](native-tor-epi-zero.md)
+- [Native Tor Connecting naturality sequence](native-tor-connecting-naturality-sequenc.md)
+- [Native Tor Connecting naturality coefficient](native-tor-connecting-naturality-coeffic.md)
+- [Native Tor Connecting is Iso](native-tor-connecting-is-iso.md)
+- [Native Tor Connecting First](native-tor-connecting-first.md)
+- [Native Tor Long Exact Window First](native-tor-long-exact-window-first.md)
+- [Native Tor Long Exact Window First exact](native-tor-long-exact-window-first-exact.md)
+- [Native Tor epi zero first](native-tor-epi-zero-first.md)
+- [Native Tor Connecting First naturality sequence](native-tor-connecting-first-naturality-s.md)
+- [Native Tor Connecting First naturality coefficient](native-tor-connecting-first-naturality-c.md)

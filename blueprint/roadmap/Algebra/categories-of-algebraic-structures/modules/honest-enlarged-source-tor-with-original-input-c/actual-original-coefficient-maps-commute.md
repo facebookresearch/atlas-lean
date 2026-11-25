@@ -1,0 +1,3 @@
+# Actual original coefficient maps commute with the...
+
+Actual original coefficient maps commute with the whole-input Tor height comparison.

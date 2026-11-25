@@ -1,0 +1,3 @@
+# The actual lifted coefficient map keeps the given right...
+
+The actual lifted coefficient map keeps the given right S-action.

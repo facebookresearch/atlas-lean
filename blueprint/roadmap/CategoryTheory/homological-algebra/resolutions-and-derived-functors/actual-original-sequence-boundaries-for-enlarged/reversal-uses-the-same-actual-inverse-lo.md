@@ -1,0 +1,3 @@
+# Reversal uses the same actual inverse long-exact-window...
+
+Reversal uses the same actual inverse long-exact-window comparison.

@@ -1,0 +1,3 @@
+# The working tensor transformation is zero on the zero...
+
+The working tensor transformation is zero on the zero original coefficient morphism.

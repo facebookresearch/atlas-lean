@@ -1,0 +1,3 @@
+# The actual tensor coefficient comparison eliminates a...
+
+The actual tensor coefficient comparison eliminates a double coefficient lift.

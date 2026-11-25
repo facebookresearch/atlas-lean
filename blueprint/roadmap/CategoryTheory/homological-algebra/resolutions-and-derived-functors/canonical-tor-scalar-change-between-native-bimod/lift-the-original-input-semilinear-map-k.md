@@ -1,0 +1,3 @@
+# Lift the original input semilinear map, keeping the two raw...
+
+Lift the original input semilinear map, keeping the two raw input categories distinct.

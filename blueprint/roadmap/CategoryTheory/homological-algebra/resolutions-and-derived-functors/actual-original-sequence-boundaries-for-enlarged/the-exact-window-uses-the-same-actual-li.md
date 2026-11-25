@@ -1,0 +1,3 @@
+# The exact window uses the same actual lifted sequence and...
+
+The exact window uses the same actual lifted sequence and native horseshoe.

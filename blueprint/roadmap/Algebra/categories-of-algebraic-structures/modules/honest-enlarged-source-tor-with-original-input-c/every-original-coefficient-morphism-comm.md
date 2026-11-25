@@ -1,0 +1,3 @@
+# Every original coefficient morphism commutes with all three...
+
+Every original coefficient morphism commutes with all three derived height legs.

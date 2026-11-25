@@ -1,0 +1,15 @@
+# Semilinear Hom–tensor comparison with a finite projective tensor factor
+
+- [R Tensor Hom To Hom RTensor naturality](r-tensor-hom-to-hom-rtensor-naturality.md)
+- [R Tensor Hom To Hom RTensor precomp](r-tensor-hom-to-hom-rtensor-precomp.md)
+- [R Tensor Hom To Hom RTensor postcomp](r-tensor-hom-to-hom-rtensor-postcomp.md)
+- [R Tensor Hom To Hom RTensor map precomp](r-tensor-hom-to-hom-rtensor-map-precomp.md)
+- [R Tensor Hom To Hom RTensor bijective of finite projective](r-tensor-hom-to-hom-rtensor-bijective-of.md)
+- [R Tensor Hom To Hom RTensor symm map precomp](r-tensor-hom-to-hom-rtensor-symm-map-pre.md)
+- [L Tensor Hom To Hom LTensor eq comm r Tensor Hom](l-tensor-hom-to-hom-ltensor-eq-comm-r-te.md)
+- [L Tensor Hom To Hom LTensor bijective of finite projective](l-tensor-hom-to-hom-ltensor-bijective-of.md)
+- [L Tensor Hom To Hom LTensor Equiv](l-tensor-hom-to-hom-ltensor-equiv.md)
+- [Hom Tensor Coefficient naturality](hom-tensor-coefficient-naturality.md)
+- [Hom Tensor Finite Free bijective](hom-tensor-finite-free-bijective.md)
+- [Hom Tensor Finite Factor bijective](hom-tensor-finite-factor-bijective.md)
+- [Hom Tensor Finite Factor Equiv](hom-tensor-finite-factor-equiv.md)

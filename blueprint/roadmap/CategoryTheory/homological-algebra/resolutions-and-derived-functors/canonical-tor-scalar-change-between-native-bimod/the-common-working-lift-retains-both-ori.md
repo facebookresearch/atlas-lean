@@ -1,0 +1,3 @@
+# The common working lift retains both original factor values...
+
+The common working lift retains both original factor values on pure tensor classes.

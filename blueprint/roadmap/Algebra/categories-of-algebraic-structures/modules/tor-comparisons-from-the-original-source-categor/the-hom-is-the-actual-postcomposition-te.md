@@ -1,0 +1,3 @@
+# The hom is the actual postcomposition, tensor and...
+
+The hom is the actual postcomposition, tensor and source-precomposition factorization.

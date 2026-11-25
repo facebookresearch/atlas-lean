@@ -1,0 +1,16 @@
+# The canonical small étale Godement coresolution
+
+- [Small Etale Godement Augmented Coresolution](small-etale-godement-augmented-coresolut.md)
+- [Small Etale Godement Coresolution](small-etale-godement-coresolution.md)
+- [Small Etale Godement Coresolution Term Iso](small-etale-godement-coresolution-term-i.md)
+- [Small Etale Godement Augmented Coresolution unit](small-etale-godement-augmented-coresolut-2.md)
+- [Small Etale Godement Coresolution Term derived Sections succ is Zero](small-etale-godement-coresolution-term-d.md)
+- [Small Etale Godement Cochain Complex](small-etale-godement-cochain-complex.md)
+- [Small Etale Godement Unit d zero](small-etale-godement-unit-d-zero.md)
+- [Small Etale Godement Cochain Coaugmentation](small-etale-godement-cochain-coaugmentat.md)
+- [Small Etale Godement Cochain Coaugmentation f zero](small-etale-godement-cochain-coaugmentat-2.md)
+- [Small Etale Godement Stalk Degree Iso](small-etale-godement-stalk-degree-iso.md)
+- [Small Etale Godement Stalk Degree Iso d](small-etale-godement-stalk-degree-iso-d.md)
+- [Small Etale Godement Cochain Complex exact At succ](small-etale-godement-cochain-complex-exa.md)
+- [Small Etale Godement Cochain Coaugmentation exact](small-etale-godement-cochain-coaugmentat-3.md)
+- [Small Etale Godement Cochain Coaugmentation quasi Iso](small-etale-godement-cochain-coaugmentat-4.md)

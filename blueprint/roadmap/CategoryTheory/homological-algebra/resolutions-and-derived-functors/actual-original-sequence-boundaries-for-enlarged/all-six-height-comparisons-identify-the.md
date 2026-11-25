@@ -1,0 +1,3 @@
+# All six height comparisons identify the original five-arrow...
+
+All six height comparisons identify the original five-arrow Tor windows.

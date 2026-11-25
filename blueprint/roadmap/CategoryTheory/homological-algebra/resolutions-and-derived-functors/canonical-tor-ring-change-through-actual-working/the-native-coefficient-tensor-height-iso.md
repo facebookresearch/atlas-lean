@@ -1,0 +1,3 @@
+# The native coefficient tensor height iso is exactly the...
+
+The native coefficient tensor height iso is exactly the existing ordered tensor bank iso.

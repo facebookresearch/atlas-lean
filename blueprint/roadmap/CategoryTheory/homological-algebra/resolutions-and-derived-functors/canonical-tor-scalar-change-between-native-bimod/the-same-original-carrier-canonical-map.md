@@ -1,0 +1,3 @@
+# The same original-carrier canonical map has the actual...
+
+The same original-carrier canonical map has the actual outer-ring semilinearity.

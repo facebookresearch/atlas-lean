@@ -1,0 +1,3 @@
+# Original coefficient composition is retained by native Tor...
+
+Original coefficient composition is retained by native Tor in every degree.

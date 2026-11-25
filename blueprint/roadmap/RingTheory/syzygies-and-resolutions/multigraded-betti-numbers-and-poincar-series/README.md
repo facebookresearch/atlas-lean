@@ -1,6 +1,7 @@
 # Multigraded Betti numbers and Poincaré series
 
 - [Multigraded polynomial modules](multigraded-polynomial-modules/README.md)
+- [Projections in internally graded algebras](projections-in-internally-graded-algebras/README.md)
 - [Multigraded free modules and graded free resolutions](multigraded-free-modules-and-graded-free-resolut/README.md)
 - [Multigraded Betti numbers after residue-field base change](multigraded-betti-numbers-after-residue-field-ba/README.md)
 - [Degree components of the base-changed multigraded resolution](degree-components-of-the-base-changed-multigrade/README.md)

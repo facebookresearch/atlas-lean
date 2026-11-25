@@ -1,0 +1,3 @@
+# The native exact Tor window is functorial in the actual...
+
+The native exact Tor window is functorial in the actual original sequence.

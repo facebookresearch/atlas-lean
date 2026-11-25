@@ -1,0 +1,3 @@
+# The comparison preserves the canonical augmentation and the...
+
+The comparison preserves the canonical augmentation and the actual original tensor.

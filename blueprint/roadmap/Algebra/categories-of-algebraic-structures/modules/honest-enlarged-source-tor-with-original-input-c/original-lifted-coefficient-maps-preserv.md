@@ -1,0 +1,3 @@
+# Original lifted coefficient maps preserve zero without...
+
+Original lifted coefficient maps preserve zero without requiring commutative scalars.

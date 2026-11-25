@@ -1,0 +1,3 @@
+# Canonical source and target comparison legs transport the...
+
+Canonical source and target comparison legs transport the actual sufficient-world boundary.

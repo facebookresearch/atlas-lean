@@ -1,0 +1,3 @@
+# The actual native Tor functor is derived in the sufficient...
+
+The actual native Tor functor is derived in the sufficient carrier universe.

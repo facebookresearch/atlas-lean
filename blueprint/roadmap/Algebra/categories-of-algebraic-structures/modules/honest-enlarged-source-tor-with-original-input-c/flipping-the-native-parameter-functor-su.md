@@ -1,0 +1,3 @@
+# Flipping the native parameter functor supplies...
+
+Flipping the native parameter functor supplies both-variable tensor naturality.

@@ -1,0 +1,17 @@
+# The actual primary component as the colimit of its power annihilators
+
+- [Power Annihilator](power-annihilator.md)
+- [Power Annihilator monotone](power-annihilator-monotone.md)
+- [Annihilator Diagram](annihilator-diagram.md)
+- [Annihilator Cocone](annihilator-cocone.md)
+- [Annihilator Cocone point](annihilator-cocone-point.md)
+- [Annihilator Inclusion](annihilator-inclusion.md)
+- [Annihilator Inclusion val](annihilator-inclusion-val.md)
+- [Annihilator Is Colimit](annihilator-is-colimit.md)
+- [Annihilator index naturality](annihilator-index-naturality.md)
+- [Map mem power Annihilator](map-mem-power-annihilator.md)
+- [Annihilator Diagram Map](annihilator-diagram-map.md)
+- [Annihilator Diagram Map val](annihilator-diagram-map-val.md)
+- [Annihilator Diagram Functor](annihilator-diagram-functor.md)
+- [Annihilator coefficient naturality](annihilator-coefficient-naturality.md)
+- [Primary Component Map eq annihilator Desc](primary-component-map-eq-annihilator-des.md)

@@ -1,0 +1,3 @@
+# Any actual resolution of the lifted original input computes...
+
+Any actual resolution of the lifted original input computes this same native Tor.

@@ -22,6 +22,7 @@ Algebras over commutative rings: étale algebras and the trace form, norm and tr
 - [The algebraic de Rham differential on exterior powers](the-algebraic-de-rham-differential-on-exterior-p/README.md)
 - [The conormal generator of a regular principal equation](the-conormal-generator-of-a-regular-principal-eq/README.md)
 - [The differential of Kähler one-forms](the-differential-of-k-hler-one-forms/README.md)
+- [The genuine flat projection of an original graph](the-genuine-flat-projection-of-an-original-graph/README.md)
 - [The Hochschild degree-two presentation of Kähler differentials](the-hochschild-degree-two-presentation-of-k-hler/README.md)
 - [Weight-zero cotangent modules](weight-zero-cotangent-modules/README.md)
 - [Étale algebras and the trace form](tale-algebras-and-the-trace-form/README.md)

@@ -1,0 +1,3 @@
+# Source capabilities suffice for the comparison of the...
+
+Source capabilities suffice for the comparison of the actual connecting morphisms.

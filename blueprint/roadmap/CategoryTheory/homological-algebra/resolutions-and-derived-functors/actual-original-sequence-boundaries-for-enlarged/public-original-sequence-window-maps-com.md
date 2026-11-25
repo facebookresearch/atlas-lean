@@ -1,0 +1,3 @@
+# Public original sequence-window maps compose by the native...
+
+Public original sequence-window maps compose by the native functor composition law.

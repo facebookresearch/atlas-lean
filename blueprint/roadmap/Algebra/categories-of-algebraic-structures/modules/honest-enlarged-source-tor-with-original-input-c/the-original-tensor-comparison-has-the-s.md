@@ -1,0 +1,3 @@
+# The original tensor comparison has the same equal-height...
+
+The original tensor comparison has the same equal-height identity.

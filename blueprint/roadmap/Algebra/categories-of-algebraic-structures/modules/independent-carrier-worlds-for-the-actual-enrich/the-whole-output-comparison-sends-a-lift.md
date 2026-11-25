@@ -1,0 +1,3 @@
+# The whole-output comparison sends a lifted pure tensor to...
+
+The whole-output comparison sends a lifted pure tensor to the lifted original class.

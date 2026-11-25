@@ -1,0 +1,3 @@
+# An actual linear equivalence compares the differently sized...
+
+An actual linear equivalence compares the differently sized quotient carriers.

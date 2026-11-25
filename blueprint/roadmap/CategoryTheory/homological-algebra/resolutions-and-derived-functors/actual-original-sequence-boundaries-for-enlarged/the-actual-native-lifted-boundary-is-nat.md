@@ -1,0 +1,3 @@
+# The actual native lifted boundary is natural in every...
+
+The actual native lifted boundary is natural in every original sequence morphism.

@@ -1,0 +1,3 @@
+# The actual coefficient transformation before restricting...
+
+The actual coefficient transformation before restricting the original input category.

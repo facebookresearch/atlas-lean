@@ -17,5 +17,6 @@ The basic language of category theory: categories, functors, natural transformat
 - [Naturality through endpoint isomorphisms](naturality-through-endpoint-isomorphisms/README.md)
 - [Opposites of composable arrows](opposites-of-composable-arrows/README.md)
 - [Pushforward of graded objects along finite-fiber maps](pushforward-of-graded-objects-along-finite-fiber/README.md)
+- [Transport of actual functor comparisons through source refinements](transport-of-actual-functor-comparisons-through/README.md)
 - [Edges in functorial strings of composable arrows](edge-nat-trans.md)
 - [Opposite functors and natural isomorphisms](right-op.md)

@@ -1,0 +1,16 @@
+# The actual right-module balanced tensor–Hom adjunction
+
+- [Tensor Obj](tensor-obj.md)
+- [Tensor Map](tensor-map.md)
+- [Tensor Functor](tensor-functor.md)
+- [Hom Obj](hom-obj.md)
+- [Hom Map](hom-map.md)
+- [Hom Functor](hom-functor.md)
+- [Tensor Hom Equiv](tensor-hom-equiv.md)
+- [Tensor Hom Equiv naturality left symm](tensor-hom-equiv-naturality-left-symm.md)
+- [Tensor Hom Equiv naturality right](tensor-hom-equiv-naturality-right.md)
+- [Tensor Adjunction](tensor-adjunction.md)
+- [Tensor Transformation Component](tensor-transformation-component.md)
+- [Tensor Transformation](tensor-transformation.md)
+- [Hom Transformation](hom-transformation.md)
+- [Hom Additive Transformation](hom-additive-transformation.md)

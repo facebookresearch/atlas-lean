@@ -1,0 +1,3 @@
+# The actual underived height square is natural in the...
+
+The actual underived height square is natural in the original coefficient map.

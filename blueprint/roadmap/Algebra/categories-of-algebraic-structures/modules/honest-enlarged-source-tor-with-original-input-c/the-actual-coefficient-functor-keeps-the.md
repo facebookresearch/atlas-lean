@@ -1,0 +1,3 @@
+# The actual coefficient functor keeps the raw coefficient...
+
+The actual coefficient functor keeps the raw coefficient world and the enlarged output.

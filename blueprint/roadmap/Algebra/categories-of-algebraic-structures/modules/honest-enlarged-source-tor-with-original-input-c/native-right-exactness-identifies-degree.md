@@ -1,0 +1,3 @@
+# Native right exactness identifies degree zero with the...
+
+Native right exactness identifies degree zero with the actual lifted balanced tensor.

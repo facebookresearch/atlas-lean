@@ -4,7 +4,10 @@ Projective, free and finitely generated modules over commutative rings and modul
 
 - [Direct summand theorem](direct-summand-theorem/README.md)
 - [Euler identities for finite exact module chains](euler-identities-for-finite-exact-module-chains/README.md)
+- [Finite](finite/README.md)
 - [Finite length from an annihilating quotient](finite-length-from-an-annihilating-quotient/README.md)
+- [Submodules of projective modules over a PID](submodules-of-projective-modules-over-a-pid/README.md)
+- [Actual local isomorphisms of flat quotient maps](local-ring-hom-bijective-of-flat-of-surj.md)
 - [Eakin–Nagata theorem](eakin-nagata.md)
 - [Faithfully flat algebras inside a localization equal the base ring](bijective-algebra-map-of-faithfully-flat.md)
 - [Finite projective modules of fiberwise rank one are invertible](of-projective-of-forall-finrank-eq-one.md)

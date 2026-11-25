@@ -1,0 +1,3 @@
+# Maps of original short exact sequences commute with the...
+
+Maps of original short exact sequences commute with the whole window comparison.

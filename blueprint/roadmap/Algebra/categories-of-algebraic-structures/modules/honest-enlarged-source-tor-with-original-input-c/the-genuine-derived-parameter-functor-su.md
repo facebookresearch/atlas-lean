@@ -1,0 +1,3 @@
+# The genuine derived parameter functor supplies...
+
+The genuine derived parameter functor supplies both-variable Tor naturality.

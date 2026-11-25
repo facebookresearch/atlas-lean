@@ -1,0 +1,3 @@
+# The inverse whole-output comparison is the actual pair of...
+
+The inverse whole-output comparison is the actual pair of native input lifts.

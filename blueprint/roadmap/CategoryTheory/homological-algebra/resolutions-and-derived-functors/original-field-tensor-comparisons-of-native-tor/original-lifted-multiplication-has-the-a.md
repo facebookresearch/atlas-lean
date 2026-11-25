@@ -1,0 +1,3 @@
+# Original lifted multiplication has the actual ring...
+
+Original lifted multiplication has the actual ring multiplication value.

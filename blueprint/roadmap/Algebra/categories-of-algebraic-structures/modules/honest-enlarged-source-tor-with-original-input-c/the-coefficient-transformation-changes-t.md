@@ -1,0 +1,3 @@
+# The coefficient transformation changes the original...
+
+The coefficient transformation changes the original coefficient on each pure tensor.

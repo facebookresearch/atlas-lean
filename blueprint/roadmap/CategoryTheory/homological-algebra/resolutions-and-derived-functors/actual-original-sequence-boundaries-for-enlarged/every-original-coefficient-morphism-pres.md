@@ -1,0 +1,3 @@
+# Every original coefficient morphism preserves the actual...
+
+Every original coefficient morphism preserves the actual boundary followed by tensor augmentation.
