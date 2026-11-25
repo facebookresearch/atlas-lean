@@ -10,11 +10,13 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Set.Card
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Order.Interval.Set.Nat
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import MathlibExt.Combinatorics.Enumerative.Partition.ExponentialUpperBound
 
 /-!
 # Counts and bounds for diversity statistics
@@ -97,6 +99,51 @@ $N$. -/
 noncomputable def shannonCount (N : ℕ) : ℕ :=
   Set.ncard {v : ℝ | ∃ l : List ℕ, l.sum = N ∧
     v = -(l.map (fun a => ((a : ℝ) / N) * Real.log ((a : ℝ) / N))).sum}
+
+/-- **Upper bound on the number of Shannon values.** Let $\sigma(N)$ be the number of distinct real
+numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences $(a_1, \dots, a_k)$ of
+natural numbers with $a_1 + \dots + a_k = N$, where a term with $a_i = 0$ counts as $0$ (for $N \ge
+1$, the number of possible values of the Shannon index across samples of size $N$). Then for every
+natural number $N \ge 1$,
+$$\sigma(N) \le \exp\left(\pi \sqrt{2/3} \sqrt{N}\right).$$
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics",
+Proposition 8. -/
+theorem shannonCount_le (N : ℕ) (hN : 1 ≤ N) :
+    (shannonCount N : ℝ) ≤
+      Real.exp (Real.pi * Real.sqrt (2 / 3) * Real.sqrt N) := by
+  -- The partition bound also covers zero; retain the source's positive-size hypothesis.
+  have _ := hN
+  let term (a : ℕ) : ℝ := ((a : ℝ) / N) * Real.log ((a : ℝ) / N)
+  let value (p : Nat.Partition N) : ℝ := -(p.parts.map term).sum
+  have hcount : shannonCount N ≤ Fintype.card (Nat.Partition N) := by
+    calc
+      shannonCount N ≤ (Set.range value).ncard := by
+        refine Set.ncard_le_ncard ?_ (Set.finite_range value)
+        rintro _ ⟨l, hl, rfl⟩
+        -- `ofSums` forgets the order and discards zeros, which contribute nothing.
+        refine ⟨Nat.Partition.ofSums N l (by simpa only [Multiset.sum_coe] using hl), ?_⟩
+        change -(((l : Multiset ℕ).filter (· ≠ 0)).map term).sum =
+          -((l.flatMap (fun a : ℕ => [(a : ℝ)])).map (fun a => (a / N) * Real.log (a / N))).sum
+        rw [← List.map_eq_flatMap, List.map_map]
+        simp only [Multiset.filter_coe, Multiset.map_coe, Multiset.sum_coe, neg_inj]
+        change ((l.filter (· ≠ 0)).map term).sum = (l.map term).sum
+        simp only [ne_eq, decide_not]
+        clear hl
+        have hterm0 : term 0 = 0 := by simp [term]
+        induction l with
+        | nil => rfl
+        | cons a l ih =>
+          by_cases ha : a = 0
+          · subst a
+            simp [ih, hterm0]
+          · simp [ha, ih]
+      _ ≤ (Set.univ : Set (Nat.Partition N)).ncard := by
+        rw [← Set.image_univ]
+        exact Set.ncard_image_le
+      _ = _ := by rw [Set.ncard_univ, Nat.card_eq_fintype_card]
+  exact (Nat.cast_le.mpr hcount).trans (Nat.Partition.card_le_exp N)
 
 /-- `M_min(J) = (1 + √((⌈J⁻¹⌉ J - 1) / (⌈J⁻¹⌉ - 1))) / ⌈J⁻¹⌉`,
 the lower bound for the maximal cell probability given

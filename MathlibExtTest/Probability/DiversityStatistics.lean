@@ -47,3 +47,24 @@ example : giniSimpsonCount 2 = 2 := by
       refine Set.insert_subset (show 2 ∈ values from ⟨[1, 1], rfl, rfl⟩) ?_
       exact Set.singleton_subset_iff.mpr ⟨[2], rfl, rfl⟩
     simpa [Set.ncard_pair (by decide : (2 : ℕ) ≠ 4)] using Set.ncard_le_ncard hsub hfin
+
+-- A sample of size one has exactly one Shannon value, even with zero-count types.
+example : shannonCount 1 = 1 := by
+  apply Set.ncard_eq_one.mpr
+  refine ⟨0, Set.Subset.antisymm ?_ ?_⟩
+  · rintro _ ⟨l, hl, rfl⟩
+    have hsum : (l.map (fun a : ℕ => ((a : ℝ) / 1) * Real.log ((a : ℝ) / 1))).sum = 0 := by
+      apply List.sum_eq_zero
+      intro t ht
+      obtain ⟨a, ha, rfl⟩ := List.mem_map.mp ht
+      have hle : a ≤ 1 := hl ▸ List.le_sum_of_mem ha
+      have ha' : a = 0 ∨ a = 1 := by omega
+      rcases ha' with rfl | rfl <;> simp
+    change -((l.flatMap (fun a : ℕ => [(a : ℝ)])).map
+      (fun a => a / ((1 : ℕ) : ℝ) * Real.log (a / ((1 : ℕ) : ℝ)))).sum ∈ ({0} : Set ℝ)
+    simp only [← List.map_eq_flatMap, List.map_map, Function.comp_def, Nat.cast_one,
+      hsum, neg_zero, Set.mem_singleton_iff]
+  · exact Set.singleton_subset_iff.mpr ⟨[0, 1, 0], rfl, by simp⟩
+
+example : (shannonCount 1 : ℝ) ≤ Real.exp (Real.pi * Real.sqrt (2 / 3)) := by
+  simpa only [Nat.cast_one, Real.sqrt_one, mul_one] using shannonCount_le 1 le_rfl
