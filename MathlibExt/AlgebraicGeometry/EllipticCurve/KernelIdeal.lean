@@ -34,6 +34,11 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.RationalEnd
 
 /-!
 # Kernel ideal data for rationally represented point maps
+
+For an additive map `χ` from the `k`-points of a Weierstrass curve `W₀` to those of `W`, this file
+defines `kernelIdealSet k W₀ W χ`: the elements of the subring `rationalEndSubring k W₀` of
+additive endomorphisms that factor through `χ` as `ρ.comp χ` with `ρ` zero or rationally
+represented. It is a subset, not an ideal.
 -/
 
 namespace WeierstrassCurve
@@ -43,6 +48,10 @@ universe u v
 variable {F : Type u} [Field F] (k : Type v) [Field k] [Algebra F k] [DecidableEq k]
   [IsAlgClosed k]
 
+/-- The set of elements of `rationalEndSubring k W₀` that factor as `ρ.comp χ` with
+`ρ ∈ rationalHomSet k W W₀`. It is a subset of `rationalEndSubring k W₀`, not an ideal: closure
+under addition and under multiplication by `rationalEndSubring k W₀` is not part of the
+definition. -/
 def kernelIdealSet (W₀ W : WeierstrassCurve F)
     (χ : (W₀.baseChange k).toAffine.Point →+ (W.baseChange k).toAffine.Point) :
     Set (rationalEndSubring k W₀) :=

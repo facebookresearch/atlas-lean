@@ -34,6 +34,12 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.GenusOnePic0
 
 /-!
 # Centred genus-one place gate
+
+A genus-one place gate `GenusOnePlaceGate W` carries an arbitrary bijection from the points of an
+affine Weierstrass curve `W` to the places of its function field. This file adds the condition
+`GenusOnePlaceGate.IsCentred` that ties the bijection to the geometry of `W`: each affine point
+`(x, y)` goes to a place at which `X - x` and `Y - y` have positive order, that is, to the place
+centred at `(x, y)`.
 -/
 
 set_option autoImplicit false
@@ -45,13 +51,13 @@ universe u
 variable {F : Type u} [Field F]
 
 variable (W : Affine F) in
-
+/-- **Centred place gate.** The bijection of `GenusOnePlaceGate W` sends each affine point `(x, y)`
+to a place centred at it: the images of `X - x` and `Y - y` in the function field are non-units of
+the valuation subring of the place, so both functions have positive order there. -/
 class GenusOnePlaceGate.IsCentred [GenusOnePlaceGate W] : Prop where
-
   XClass_mem_nonunits : ∀ (x y : F) (h : W.Nonsingular x y),
     algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.XClass W x)
       ∈ (placeOfPoint (Point.some x y h)).toValuationSubring.nonunits
-
   YClass_mem_nonunits : ∀ (x y : F) (h : W.Nonsingular x y),
     algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.YClass W (Polynomial.C y))
       ∈ (placeOfPoint (Point.some x y h)).toValuationSubring.nonunits

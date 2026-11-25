@@ -6,12 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+module
 
 import MathlibExt.AlgebraicGeometry.EllipticCurve.RationalEnd
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Analysis.Real.Sqrt
 
 open WeierstrassCurve
+
+section EvalEvalBC
+
+open Polynomial
+open scoped Polynomial.Bivariate
+
+variable {F : Type*} [Field F] (k : Type*) [Field k] [Algebra F k] (x y : k)
+
+/-- `evalEvalBC` evaluates the inner variable at `x`, the outer one at `y`, and maps constants
+along `algebraMap F k`. -/
+example : evalEvalBC k (C X : F[X][Y]) x y = x := by
+  simp [evalEvalBC, evalEval_C]
+
+example : evalEvalBC k (X : F[X][Y]) x y = y := by
+  simp [evalEvalBC, evalEval_X]
+
+example (a : F) : evalEvalBC k (C (C a) : F[X][Y]) x y = algebraMap F k a := by
+  simp [evalEvalBC, evalEval_C]
+
+end EvalEvalBC
 
 example {F : Type*} [Field F] (k : Type*) [Field k] [Algebra F k] [DecidableEq k]
     [IsAlgClosed k] (W : WeierstrassCurve F) :

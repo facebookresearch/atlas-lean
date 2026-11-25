@@ -54,6 +54,8 @@ universe u v
 
 variable {F : Type u} [Field F] (k : Type v) [Field k] [Algebra F k]
 
+/-- The value at `(x, y) ∈ k × k` of a bivariate polynomial `p ∈ F[X][Y]` after its coefficients
+are mapped to `k`: the inner variable `X` is evaluated at `x` and the outer variable `Y` at `y`. -/
 def evalEvalBC (p : F[X][Y]) (x y : k) : k :=
   (p.map (mapRingHom (algebraMap F k))).evalEval x y
 

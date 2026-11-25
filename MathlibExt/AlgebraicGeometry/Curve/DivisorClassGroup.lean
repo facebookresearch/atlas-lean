@@ -45,8 +45,9 @@ The degree of a place, divisors, their degree map, principal divisors and the cl
 `AlgebraicCurve.Place.ResidueField` in `MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy`. This
 file adds the order criterion `Place.ord_eq_zero_iff_adicValuation_eq_one`, the condition that
 every nonzero function has a principal divisor of degree zero (`HasPrincipalDivisors`), the full
-class group `Pic`, the `n`-torsion of `Pic0`, the action of `F ≃ₐ[K] F` on places, divisors and
-`Pic0`, and the places attached to height-one primes of a Dedekind domain with fraction field `F`.
+class group `Pic`, the condition `AbelJacobiCard` counting the `p ^ n`-torsion of `Pic0` (stated
+with Mathlib's `AddSubgroup.torsionBy`), the action of `F ≃ₐ[K] F` on places, divisors and `Pic0`,
+and the places attached to height-one primes of a Dedekind domain with fraction field `F`.
 -/
 
 @[expose] public section
@@ -89,18 +90,18 @@ variable {K F}
 @[simp]
 theorem mk_zero : mk (0 : Divisor.degZero (K := K) (F := F)) = 0 := rfl
 
-variable (K F) in
-
-def torsion (n : ℕ) : AddSubgroup (Pic0 K F) :=
-  (Submodule.torsionBy ℤ (Pic0 K F) (n : ℤ)).toAddSubgroup
-
-theorem mem_torsion {n : ℕ} {x : Pic0 K F} : x ∈ torsion K F n ↔ (n : ℤ) • x = 0 :=
-  Submodule.mem_torsionBy_iff _ _
-
 end Pic0
 
+/-- **Torsion count of `Pic0`.** `AbelJacobiCard K F p g` says that `p` is prime and that, for every
+`n`, the `p ^ n`-torsion subgroup `AddSubgroup.torsionBy (Pic0 K F) (p ^ n)` has `p ^ (2 * g * n)`
+elements. This is the count expected when `F` is the function field of a curve of genus `g` over an
+algebraically closed field `K` and `p` is different from the characteristic of `K`. Since
+`p ^ (2 * g * n)` is positive for a prime `p`, the condition forces every `p ^ n`-torsion subgroup
+to be finite (`Nat.card` is `0` on an infinite type). Primality is part of the condition because
+the count is degenerate otherwise: for `p = 1` it holds for every `g`, and for `p = 0` and `g ≥ 1`
+it only says that `Pic0 K F` is infinite. -/
 def AbelJacobiCard (p : ℕ) (g : ℕ) : Prop :=
-  ∀ n : ℕ, Nat.card (Pic0.torsion K F (p ^ n)) = p ^ (2 * g * n)
+  p.Prime ∧ ∀ n : ℕ, Nat.card (AddSubgroup.torsionBy (Pic0 K F) (p ^ n : ℕ)) = p ^ (2 * g * n)
 
 namespace Place
 
@@ -109,6 +110,8 @@ open scoped Pointwise
 variable {K F}
 variable (σ : F ≃ₐ[K] F)
 
+/-- The ring isomorphism from a valuation subring `A` of `F` onto its image `σ • A`, given by
+`σ`. -/
 def smulRingEquiv (A : ValuationSubring F) : A ≃+* (σ • A : ValuationSubring F) where
   toFun x := ⟨σ x, by
     simpa [AlgEquiv.smul_def] using
@@ -126,12 +129,14 @@ def smulRingEquiv (A : ValuationSubring F) : A ≃+* (σ • A : ValuationSubrin
 theorem coe_smulRingEquiv_apply (A : ValuationSubring F) (x : A) :
     ((smulRingEquiv σ A x : (σ • A : ValuationSubring F)) : F) = σ x := rfl
 
-theorem _root_.ValuationSubring.pointwise_smul_top :
+private theorem _root_.ValuationSubring.pointwise_smul_top :
     σ • (⊤ : ValuationSubring F) = ⊤ := by
   ext x
   simp only [ValuationSubring.mem_pointwise_smul_iff_inv_smul_mem]
   exact ⟨fun _ => ValuationSubring.mem_top x, fun _ => ValuationSubring.mem_top _⟩
 
+/-- An automorphism `σ` of `F` over `K` sends a place `v` to the place whose valuation subring is
+the image `σ • v.toValuationSubring`. -/
 instance : SMul (F ≃ₐ[K] F) (Place K F) where
   smul σ v :=
     { toValuationSubring := σ • v.toValuationSubring
@@ -152,6 +157,7 @@ variable (v : Place K F)
 @[simp]
 theorem smul_toValuationSubring : (σ • v).toValuationSubring = σ • v.toValuationSubring := rfl
 
+/-- The action of the automorphisms of `F` over `K` on places. -/
 instance : MulAction (F ≃ₐ[K] F) (Place K F) where
   one_smul v := by
     ext1
@@ -166,9 +172,7 @@ theorem ord_smul (f : F) : (σ • v).ord (σ f) = v.ord f := by
   · simp
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
   obtain ⟨u, hu⟩ := v.exists_unit_mul_zpow hf hπ
-
   set n := v.ord f with hn
-
   set e := smulRingEquiv σ v.toValuationSubring with he
   have hπ' : Irreducible (e π) := (MulEquiv.irreducible_iff e).mpr hπ
   have hu' : IsUnit (e (u : v.toValuationSubring)) := u.isUnit.map e
@@ -182,6 +186,8 @@ theorem ord_smul (f : F) : (σ • v).ord (σ f) = v.ord f := by
     rw [hcoeu, hcoeπ, hu, map_mul, map_zpow₀]
   rw [key, (σ • v).ord_unit_smul_zpow hu'.unit hπ' n]
 
+/-- The `K`-algebra isomorphism from the residue field of `v` onto that of `σ • v` induced by
+`σ`. -/
 def smulResidueAlgEquiv : v.ResidueField ≃ₐ[K] (σ • v).ResidueField :=
   AlgEquiv.ofRingEquiv (f := IsLocalRing.ResidueField.mapEquiv
       (smulRingEquiv σ v.toValuationSubring)) <| fun a => by
@@ -190,7 +196,8 @@ def smulResidueAlgEquiv : v.ResidueField ≃ₐ[K] (σ • v).ResidueField :=
       ext
       rw [coe_smulRingEquiv_apply, coe_algebraMap, σ.commutes]
       rfl
-    show IsLocalRing.ResidueField.mapEquiv _ (IsLocalRing.residue _ _) = IsLocalRing.residue _ _
+    change IsLocalRing.ResidueField.mapEquiv _ (IsLocalRing.residue _ _) =
+      IsLocalRing.residue _ _
     rw [IsLocalRing.ResidueField.mapEquiv_apply, IsLocalRing.ResidueField.map_residue]
     exact congrArg _ h3
 
@@ -206,6 +213,8 @@ open scoped Pointwise
 
 variable {K F}
 
+/-- An automorphism `σ` of `F` over `K` moves a divisor along its action on places:
+`(σ • D) (σ • v) = D v`. -/
 instance : DistribMulAction (F ≃ₐ[K] F) (Divisor K F) := Finsupp.comapDistribMulAction
 
 theorem smul_def (σ : F ≃ₐ[K] F) (D : Divisor K F) :
@@ -255,6 +264,9 @@ open scoped Pointwise
 
 variable {K F}
 
+/-- The action of `σ` on divisors of degree zero, as an additive endomorphism of
+`Divisor.degZero`. It preserves principal divisors, so it descends to the action of `σ` on
+`Pic0 K F`. -/
 def degZeroSMulHom (σ : F ≃ₐ[K] F) :
     Divisor.degZero (K := K) (F := F) →+ Divisor.degZero (K := K) (F := F) :=
   ((DistribSMul.toAddMonoidHom (Divisor K F) σ).domRestrict
@@ -265,6 +277,7 @@ def degZeroSMulHom (σ : F ≃ₐ[K] F) :
 theorem coe_degZeroSMulHom (σ : F ≃ₐ[K] F) (D : Divisor.degZero (K := K) (F := F)) :
     (degZeroSMulHom σ D : Divisor K F) = σ • (D : Divisor K F) := rfl
 
+/-- An automorphism `σ` of `F` over `K` acts on `Pic0 K F` through `degZeroSMulHom σ`. -/
 instance : SMul (F ≃ₐ[K] F) (Pic0 K F) where
   smul σ := QuotientAddGroup.map _ _ (degZeroSMulHom σ) (by
     rintro ⟨D, hD0⟩ hD
@@ -274,6 +287,7 @@ instance : SMul (F ≃ₐ[K] F) (Pic0 K F) where
 theorem smul_mk (σ : F ≃ₐ[K] F) (D : Divisor.degZero (K := K) (F := F)) :
     σ • (mk D) = mk (degZeroSMulHom σ D) := rfl
 
+/-- The action of the automorphisms of `F` over `K` on `Pic0 K F`. -/
 instance : DistribMulAction (F ≃ₐ[K] F) (Pic0 K F) where
   one_smul x := by
     obtain ⟨D, rfl⟩ := mk_surjective x
@@ -284,13 +298,13 @@ instance : DistribMulAction (F ≃ₐ[K] F) (Pic0 K F) where
     rw [smul_mk, smul_mk, smul_mk]
     exact congrArg mk (Subtype.ext (by simp only [coe_degZeroSMulHom]; rw [mul_smul]))
   smul_zero σ := by
-    show σ • mk 0 = mk 0
+    change σ • mk 0 = mk 0
     rw [smul_mk]
     exact congrArg mk (map_zero _)
   smul_add σ x y := by
     obtain ⟨D, rfl⟩ := mk_surjective x
     obtain ⟨E, rfl⟩ := mk_surjective y
-    show σ • mk (D + E) = mk (degZeroSMulHom σ D) + mk (degZeroSMulHom σ E)
+    change σ • mk (D + E) = mk (degZeroSMulHom σ D) + mk (degZeroSMulHom σ E)
     rw [smul_mk]
     exact congrArg mk (map_add _ _ _)
 
