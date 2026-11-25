@@ -46,24 +46,6 @@ public theorem_wanted pellU_pellV_natCast {D : ℤ} {a : Pell.Solution₁ D}
     (ha : Pell.IsFundamental a) (n : ℕ) :
     pellU D a.x a.y n = (a ^ n).x ∧ pellV D a.x a.y n = (a ^ n).y
 
-/-- **Floor of the inverse of the sum of the Pell interpolating functions.** Let $D$ be an
-integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation $X^2 - D Y^2 = 1$,
-put $\varepsilon = \alpha + \beta \sqrt{D}$ and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
-$u(s) = (\varepsilon^s + \bar\varepsilon^s) / 2$ and
-$v(s) = (\varepsilon^s - \bar\varepsilon^s) / (2 \sqrt{D})$ for real $s$. If $x \ge 1$ and $t \ge 0$
-are real numbers with $u(t) + v(t) = x$, then
-$\lfloor t \rfloor = \lfloor (\log \lfloor x \rfloor + C) / \log \varepsilon \rfloor$, where
-$C = \log(2 \sqrt{D} / (1 + \sqrt{D}))$.
-
-Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
-Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 2.3, Equation (2.5)
-(`integers-2025-A112-thm-2-3`). -/
-public theorem_wanted pell_inverse_floor {D : ℤ} {a : Pell.Solution₁ D}
-    (ha : Pell.IsFundamental a) {x t : ℝ} (hx : 1 ≤ x) (ht : 0 ≤ t)
-    (htx : pellU D a.x a.y t + pellV D a.x a.y t = x) :
-    ⌊t⌋ = ⌊(Real.log (⌊x⌋ : ℝ) + Real.log (2 * Real.sqrt D / (1 + Real.sqrt D))) /
-      Real.log (a.x + a.y * Real.sqrt D)⌋
-
 /-- **Pell solutions in a closed rotated square.** Let $D$ be an integer and let $(\alpha, \beta)$
 be a fundamental solution of $x^2 - Dy^2 = 1$, that is, an integer solution with $\alpha > 1$
 and $\beta > 0$ such that $\alpha \le x$ for every integer solution $(x, y)$ with $x > 1$ (one

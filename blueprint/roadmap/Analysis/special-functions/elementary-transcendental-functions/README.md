@@ -15,3 +15,4 @@ Exponential, logarithmic and trigonometric-type functions and their relatives: e
 - [The logistic function of the log odds](sigmoid-log-sub-log.md)
 - [The complex exponential is holomorphic and equal to its own derivative](complex-exponential-derivative.md)
 - [The principal logarithm is holomorphic on the slit plane with derivative 1/z](principal-logarithm-holomorphic.md)
+- [Power series of the exponential function](real-exponential-power-series.md)
