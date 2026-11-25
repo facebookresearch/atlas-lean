@@ -2,5 +2,4 @@
 
 - [Pipe Friction Ports](pipe-friction-ports/README.md)
 - [Pipe Network](pipe-network/README.md)
-- [Reactive Balance](reactive-balance/README.md)
-- [Reservoir Balance](reservoir-balance/README.md)
+- [Reservoir Balance](reservoir-balance/README.md): the pages of this module are now under Flow in porous media.

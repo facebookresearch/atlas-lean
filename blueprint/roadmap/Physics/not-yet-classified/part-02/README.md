@@ -3,6 +3,6 @@
 - [Characteristic Speed](characteristic-speed/README.md)
 - [Conduction Ports](conduction-ports/README.md)
 - [Contact And Lubrication](contact-and-lubrication/README.md)
-- [Control Bridge](control-bridge/README.md)
+- [Control Bridge](control-bridge/README.md): the pages of this module are now under Continuous stirred-tank reactor.
 - [Cumulative Inventory](cumulative-inventory/README.md)
 - [DCFlow Network Bridge](dcflow-network-bridge/README.md)

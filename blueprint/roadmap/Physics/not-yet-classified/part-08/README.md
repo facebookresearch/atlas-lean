@@ -6,5 +6,4 @@
 - [Shock Ordering](shock-ordering/README.md)
 - [Signal Queue](signal-queue/README.md)
 - [Signal Queue Delay](signal-queue-delay/README.md)
-- [Streams](streams/README.md)
 - [Thermal Interfaces](thermal-interfaces/README.md)

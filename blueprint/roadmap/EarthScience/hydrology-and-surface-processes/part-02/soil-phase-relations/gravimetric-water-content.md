@@ -9,3 +9,5 @@ content `X = Mw / Ms`, the water mass per unit mass of dry solid, as opposed to 
 [wet-basis content](../../../../Chemistry/amounts-and-stoichiometry/moisture-content-on-wet-and-dry-bases/wet-basis.md)
 `Mw / (Mw + Ms)`. With both masses in the same unit it is a pure number, nonnegative and unbounded
 above on the intended domain.
+
+The other form has its own page: [Dry-basis moisture ratio](../../../../Chemistry/amounts-and-stoichiometry/moisture-content-on-wet-and-dry-bases/dry-basis.md).

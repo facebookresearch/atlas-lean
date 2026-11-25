@@ -2,7 +2,7 @@
 
 - [Exit Time](exit-time/README.md)
 - [Finite State](finite-state/README.md)
-- [Flowsheets](flowsheets/README.md)
+- [Flowsheets](flowsheets/README.md): the pages of this module are now under Process material balances.
 - [Fundamental Diagram](fundamental-diagram/README.md)
 - [Gaussian Matched Decision](gaussian-matched-decision/README.md)
 - [Heat Exchangers](heat-exchangers/README.md)

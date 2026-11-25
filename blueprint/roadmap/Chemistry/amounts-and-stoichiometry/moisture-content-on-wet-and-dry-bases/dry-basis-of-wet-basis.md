@@ -9,3 +9,5 @@ Under these hypotheses $0 \le w < 1$ and $X \ge 0$, so both denominators are pos
 hypothesis $m_w \ge 0$ matters only at $m_w = -m_s$, where $w = 0$ by the convention $x / 0 = 0$
 while $X = -1$. Without dry solids, $m_s = 0 < m_w$, the second form fails: $w = 1$, while the
 convention $x / 0 = 0$ gives $X = 0$ and $X / (1 + X) = 0$.
+
+The other form has its own page: [Wet basis from dry basis](wet-basis-dry-basis-inv.md).

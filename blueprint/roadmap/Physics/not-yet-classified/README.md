@@ -22,7 +22,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 3 of 10](part-03/README.md)
 
 - [Declared Friis Link](part-03/declared-friis-link/README.md)
-- [Drying](part-03/drying/README.md)
 - [Ensemble Momentum](part-03/ensemble-momentum/README.md)
 
 ## [Part 4 of 10](part-04/README.md)
@@ -55,7 +54,6 @@ Topics added since this subject's fields were last revised.
 
 - [Pipe Friction Ports](part-07/pipe-friction-ports/README.md)
 - [Pipe Network](part-07/pipe-network/README.md)
-- [Reactive Balance](part-07/reactive-balance/README.md)
 - [Reservoir Balance](part-07/reservoir-balance/README.md)
 
 ## [Part 8 of 10](part-08/README.md)
@@ -66,13 +64,11 @@ Topics added since this subject's fields were last revised.
 - [Shock Ordering](part-08/shock-ordering/README.md)
 - [Signal Queue](part-08/signal-queue/README.md)
 - [Signal Queue Delay](part-08/signal-queue-delay/README.md)
-- [Streams](part-08/streams/README.md)
 - [Thermal Interfaces](part-08/thermal-interfaces/README.md)
 
 ## [Part 9 of 10](part-09/README.md)
 
 - [Traveling Wave](part-09/traveling-wave/README.md)
-- [Uncertainty Propagation](part-09/uncertainty-propagation/README.md)
 - [Vapor Series](part-09/vapor-series/README.md)
 - [Vehicle Accounting](part-09/vehicle-accounting/README.md)
 - [Ventilation Balance](part-09/ventilation-balance/README.md)

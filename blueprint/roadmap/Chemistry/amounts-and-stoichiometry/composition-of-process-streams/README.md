@@ -36,6 +36,7 @@ stream.
 - [Mass fractions of a stream are its mass flows over their total](mass-fraction-eq-mole-fraction-mass-flow.md)
 - [Mass composition, defined for positive molar masses and total flow](mass-composition.md)
 - [A nonpositive molar mass leaves a stream without mass composition](mass-composition-eq-none-of-nonpos-at.md)
+- [Positive total mass flow](sum-mass-flow-pos.md)
 - [Without positive total mass flow, a stream has no mass composition](mass-composition-eq-none-of-sum-nonpos.md)
 - [Mass composition is mass fractions for positive masses and total flow](mass-composition-eq-mass-fraction.md)
 - [The mass composition of a stream sums to one](sum-mass-composition.md)
