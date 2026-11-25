@@ -1,3 +1,5 @@
-# Tracial Weight
+# Tracial positive weight
 
-A global tracial weight, retaining its original extended positive values.
+Let `A` be a nonunital complex C*-algebra with its canonical spectral
+order. This is an extended positive weight `φ` on `A` satisfying `φ(x* x) = φ(x x*)` for every `x ∈
+A`.

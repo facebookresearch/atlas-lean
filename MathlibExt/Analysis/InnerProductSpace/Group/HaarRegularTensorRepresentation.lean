@@ -75,7 +75,7 @@ def haarLeftRegularTensor :
           UniformSpace.Completion (H ⊗[ℂ] (Lp ℂ 2 μ))))
       have hpres : MeasurePreserving (fun s : G => g⁻¹ * s) μ μ := measurePreserving_smul g⁻¹ μ
       have hquasi : QuasiMeasurePreserving (fun s : G => g⁻¹ * s) μ μ :=
-        ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+        hpres.quasiMeasurePreserving
       have hcomposed := hquasi.ae_eq_comp hinput
       filter_upwards [houtput, hscalar, hvector, hcomposed] with s hout hscalar hvector hin
       simp only [Function.comp_apply] at hin

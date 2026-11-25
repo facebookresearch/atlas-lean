@@ -54,14 +54,26 @@ variable [PartialOrder Bᵐᵒᵖ]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- The actual pure map for extension along constant coefficient functions. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures. Let X be a
+topological space.
+
+For e ∈ E and b ∈ C(X, B), the pure vector is the continuous function t ↦ e b(t).
+-/
 def continuousMapPure (X : Type uX) [TopologicalSpace X]
     (e : E) (b : C(X, B)) : C(X, E) where
   toFun t := e <• b t
   continuous_toFun :=
     (CStarModule.continuous_const_right_smul (B := B) e).comp b.continuous
 
-/-- Pure vectors are pointwise right coefficient actions. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures. Let X be a
+topological space.
+
+For e ∈ E, b ∈ C(X, B) and t ∈ X, the pure vector evaluates to e b(t).
+-/
 @[simp]
 theorem continuousMapPure_apply (X : Type uX) [TopologicalSpace X]
     (e : E) (b : C(X, B)) (t : X) :
@@ -72,8 +84,13 @@ end Pure
 
 section Coefficients
 
-/-- The constant coefficient map followed by the existing left regular
-representation on the coefficient self-module. No coefficient unit is used. -/
+/--
+Let B be a possibly nonunital complex C*-algebra. Let X be a compact topological space and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+Constant B-valued functions acting by left multiplication define a nonunital complex star
+representation of B on the right coefficient self-module C(X, B).
+-/
 def continuousMapCoefficientRepresentation (X : Type uX)
     [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ] :
@@ -91,8 +108,12 @@ def continuousMapCoefficientRepresentation (X : Type uX)
       map_star' := fun _ => _root_.ContinuousMap.ext fun _ => rfl }
   exact (CStarModule.AdjointableOperator.leftRegular (B := C(X, B))).comp κ
 
-/-- The coefficient representation is literal left multiplication at every
-point. This public law avoids unfolding an imported operator record. -/
+/--
+Let B be a possibly nonunital complex C*-algebra. Let X be a compact topological space and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+For b ∈ B, f ∈ C(X, B) and t ∈ X, the constant coefficient representation evaluates to b f(t).
+-/
 @[simp]
 theorem continuousMapCoefficientRepresentation_apply (X : Type uX)
     [TopologicalSpace X] [CompactSpace X]
@@ -206,8 +227,16 @@ private theorem continuousMapPure_dense (X : Type uX)
   rw [dist_eq_norm]
   exact hnorm.trans_lt (half_lt_self hε)
 
-/-- The actual function module is a full internal-tensor model for
-extension by constant coefficients, including genuine dense pure span. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+The right C(X, B)-module C(X, E), with pure vectors t ↦ e b(t), satisfies the defining
+inner-product, balancing, linearity and dense-span properties of the internal tensor product for
+extension by constant coefficients.
+-/
 theorem continuousMap_isModel (X : Type uX)
     [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ] :

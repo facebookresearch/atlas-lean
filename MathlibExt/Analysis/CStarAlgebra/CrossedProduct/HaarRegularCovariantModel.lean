@@ -192,7 +192,7 @@ theorem regularCoefficientOperator_covariance (g : G) (a : A) :
   have hinner := StronglyContinuousUnitaryRepresentation.haarLeftRegular_ae_eq G μ H g⁻¹ ξ
   have hpres : MeasurePreserving (fun s : G => g⁻¹ * s) μ μ := measurePreserving_smul g⁻¹ μ
   have hquasi : QuasiMeasurePreserving (fun s : G => g⁻¹ * s) μ μ :=
-    ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+    ⟨hpres.measurable.aemeasurable, by rw [hpres.map_eq]⟩
   have hcoefficient' := hquasi.ae_eq_comp hcoefficient
   have hinner' := hquasi.ae_eq_comp hinner
   filter_upwards [houter, hcoefficient', hinner', regularCoefficientOperator_ae_eq α ρ μ (α g a) ξ]

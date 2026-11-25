@@ -37,9 +37,10 @@ namespace CompletelyPositiveMap
 variable {m n : Type*} [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
 variable {r s : Type*} [Fintype r] [Fintype s] [DecidableEq r] [DecidableEq s]
 
-/-- Mixing Kraus operators by a coefficient matrix `U : Matrix s r ℂ`.
-
-`(mixKraus U K) j = ∑ i, U j i • K i`. No conjugation on `U j i`. -/
+/-- **Mixing a Kraus family.** For a finite family index type `r`, arbitrary index types `n,m,s`, a
+family `K : r → Matrix m n ℂ`, and a coefficient matrix `U : Matrix s r ℂ`, the mixed family is `Lⱼ
+= ∑ i, U(j,i) Kᵢ`. Coefficients are not conjugated; its matrices have output index `m` and input
+index `n`. -/
 noncomputable def mixKraus (U : Matrix s r ℂ) (K : r → Matrix m n ℂ) :
     s → Matrix m n ℂ :=
   fun j => ∑ i : r, U j i • K i
@@ -52,7 +53,9 @@ theorem mixKraus_apply (U : Matrix s r ℂ) (K : r → Matrix m n ℂ) (j : s) :
   rfl
 
 omit [DecidableEq s] in
-/-- Kraus map preserved by an isometry coefficient matrix. -/
+/-- **Isometric Kraus mixing preserves the CP map.** Let `n,m,r,s` be finite index types with decidable
+equality, let `K : r → Matrix m n ℂ`, and let `U : Matrix s r ℂ`. If `Uᴴ U = 1`, then `kraus
+(mixKraus U K) = kraus K`. Empty matrix and family index types are allowed. -/
 theorem kraus_mixKraus_of_isometry (U : Matrix s r ℂ) (K : r → Matrix m n ℂ)
     (hU : Matrix.IsIsometry U) :
     kraus (mixKraus U K) = kraus K := by
@@ -481,8 +484,10 @@ private theorem exists_isometry_of_outer_eq {h r s : Type*} [Finite h] [Fintype 
 -- Minimal-to-arbitrary Kraus equivalence
 
 omit [DecidableEq s] in
-/-- If the vectorized Kraus family `K` is linearly independent and `kraus K = kraus L`,
-then `L` is obtained by mixing `K` with a coefficient isometry. -/
+/-- **Isometric comparison with an independent Kraus family.** For finite decidable index types
+`n,m,r,s`, let `K : r → Matrix m n ℂ` and `L : s → Matrix m n ℂ`. If the matrices `vec(Kᵢ)` are
+complex-linearly independent and `kraus K = kraus L`, there is a complex matrix `U : Matrix s r ℂ`
+with `Uᴴ U = 1` and `Lⱼ = ∑ i, U(j,i) Kᵢ`. No nonempty index assumption is required. -/
 theorem exists_isometry_of_kraus_eq {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
     (hK : LinearIndependent ℂ (fun i => Matrix.vec (K i)))
     (hEq : kraus K = kraus L) :
@@ -532,14 +537,10 @@ theorem exists_isometry_of_kraus_eq {K : r → Matrix m n ℂ} {L : s → Matrix
   exact (Matrix.vec_inj.mp hVecFinal)
 
 omit [DecidableEq s] in
-/-- For a linearly independent Kraus family `K`, the mixed family `mixKraus U K`
-defines the same CP map as `K` exactly when `U` is an isometry.
-
-Rows of `U : Matrix s r ℂ` index the target family `mixKraus U K` and columns
-index the source family `K`: `(mixKraus U K) j = ∑ i, U j i • K i` with no
-conjugation on `U j i`. The isometry condition is `Uᴴ * U = 1`. Empty
-`r = Fin 0` is supported: the empty-column matrix is isometric and forces the
-target to be zero. -/
+/-- **Characterization of isometric Kraus mixing.** Let `n,m,r,s` be finite index types with decidable
+equality, let `K : r → Matrix m n ℂ`, and let `U : Matrix s r ℂ`. If `vec(Kᵢ)` are complex-linearly
+independent, `kraus (mixKraus U K) = kraus K` exactly when `Uᴴ U = 1`. The convention is `Lⱼ = ∑ i,
+U(j,i) Kᵢ`, without conjugation on coefficients, and empty family indices are included. -/
 theorem kraus_mixKraus_eq_iff_isometry {K : r → Matrix m n ℂ}
     (hK : LinearIndependent ℂ (fun i => Matrix.vec (K i)))
     (U : Matrix s r ℂ) :
@@ -580,21 +581,14 @@ theorem kraus_mixKraus_eq_iff_isometry {K : r → Matrix m n ℂ}
   · intro hU
     exact kraus_mixKraus_of_isometry U K hU
 
-/-- If the vectorized Kraus families `K` and `L` are each linearly independent
-and `kraus K = kraus L`, then they are related by a coefficient matrix which is
-unitary between the index types.
+/-- **Unitary equivalence of independent Kraus families.** For finite decidable index types `n,m,r,s`,
+suppose `K : r → Matrix m n ℂ` and `L : s → Matrix m n ℂ` have complex-linearly independent
+vectorizations and define the same CP map. Then there is `U : Matrix s r ℂ` with `Uᴴ U = 1` and `U
+Uᴴ = 1` such that `Lⱼ = ∑ i, U(j,i) Kᵢ`. The two family sizes are consequently equal; zero rank and
+empty index types are allowed.
 
-This is the minimal-to-minimal Kraus equivalence, the finite-dimensional form of
-Watrous Corollary 2.23. The coefficient convention follows Watrous (2.99)
-`Bₐ = ∑_b U(a,b) A_b` with no star on the coefficient (cf. Theorem 2.12 via
-`A * Aᴴ = B * Bᴴ`). Here rows of `U : Matrix s r ℂ` index the target family `L`
-and columns index the source family `K`, and `L = mixKraus U K`.
-
-The cardinality equality `Fintype.card r = Fintype.card s` is derived from
-`linearIndependent_vec_iff_choiRank_kraus_eq_card` and `hEq`; the isometry `U`
-and mixing equality come from `exists_isometry_of_kraus_eq`; the upgrade to
-`IsUnitaryBetween` uses `Matrix.mul_eq_one_comm_of_card_eq` for `card r = card s`.
-Empty types and `Fin 0` zero-rank cases are supported. -/
+Source: John Watrous, *The Theory of Quantum Information*, Corollary 2.23, with coefficient
+convention (2.99) and Theorem 2.12. -/
 theorem exists_unitaryBetween_of_kraus_eq {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
     (hK : LinearIndependent ℂ (fun i => Matrix.vec (K i)))
     (hL : LinearIndependent ℂ (fun i => Matrix.vec (L i)))
@@ -651,19 +645,13 @@ private lemma mixKraus_comp {r₁ r₂ r₃ : Type*} [Fintype r₁] [Fintype r�
 
 
 
-/-- Same-index arbitrary Kraus equivalence: if two families indexed by the same
-type `r` define the same CP map, they are related by a unitary coefficient
-matrix `U ∈ unitaryGroup r` with `L = mixKraus U K`.
+/-- **Unitary equivalence of same-size Kraus families.** For finite decidable matrix index types `n,m`
+and family index type `r`, two families `K,L : r → Matrix m n ℂ` defining the same completely
+positive map are related by a unitary complex matrix `U` indexed by `r`: `Lⱼ = ∑ i, U(j,i) Kᵢ`. The
+families need not be linearly independent; the empty family and zero map are included.
 
-This is Watrous Corollary 2.23 (same-index form). Rows of `U` index the target
-family `L` and columns index the source family `K`, with no star on the
-coefficient. The proof factors through a minimal rank-sized linearly independent
-family `M` obtained from `exists_kraus_choiRank_linearIndependent`, uses
-`exists_isometry_of_kraus_eq` to obtain isometries `VK, VL` with
-`K = mixKraus VK M`, `L = mixKraus VL M`, extends the isometries to a unitary
-`U` with `U * VK = VL` via `exists_unitary_mul_eq_of_isometry`, and concludes
-by `mixKraus_comp`. Zero rank (`Fin 0`) and empty `r` cases are handled
-explicitly with identity. -/
+Source: John Watrous, *The Theory of Quantum Information*, Corollary 2.23, with the coefficient
+convention of (2.99). -/
 theorem exists_unitaryGroup_of_kraus_eq {K L : r → Matrix m n ℂ}
     (hEq : kraus K = kraus L) :
     ∃ U : Matrix r r ℂ, U ∈ Matrix.unitaryGroup r ℂ ∧ L = mixKraus U K := by
@@ -734,31 +722,14 @@ private lemma kraus_sumElim_inr_zero (L : s → Matrix m n ℂ) :
   intro X
   simp [kraus_apply, Fintype.sum_sum_type]
 
-/-- Arbitrary unequal-family Kraus unitary equivalence after zero-padding to `r ⊕ s`.
+/-- **Unitary equivalence after zero-padding Kraus families.** For finite decidable index types
+`n,m,r,s`, suppose `K : r → Matrix m n ℂ` and `L : s → Matrix m n ℂ` define the same completely
+positive map. Place `K` on the `r` summand of `r ⊕ s` and zero on `s`, and place `L` on `s` and zero
+on `r`. A unitary complex matrix on `r ⊕ s` transforms the first padded family into the second by
+`L'ⱼ = ∑ i, U(j,i) K'ᵢ`, without conjugation on coefficients. Empty family and matrix index types
+are allowed.
 
-Given `K : r → Matrix m n ℂ` and `L : s → Matrix m n ℂ` with `kraus K = kraus L`,
-zero-pad both to the common index type `r ⊕ s`:
-
-* source padded family places `K` on `Sum.inl` and zero on `Sum.inr`:
-  `Sum.elim K (fun _ : s => 0)`;
-* target padded family places zero on `Sum.inl` and `L` on `Sum.inr`:
-  `Sum.elim (fun _ : r => 0) L`.
-
-Then there exists a unitary `U : Matrix (r ⊕ s) (r ⊕ s) ℂ` in
-`Matrix.unitaryGroup (r ⊕ s) ℂ` such that
-
-`targetPad = mixKraus U sourcePad`,
-
-i.e. for `j : r ⊕ s`, `targetPad j = ∑ i, U j i • sourcePad i` with no star
-(`conj`) on the coefficient `U j i`. Conjugation appears only via `ᴴ` on
-Kraus operators inside the CP sum, as in Watrous Theorem 2.12 / Corollary 2.23
-without star.
-
-No unpadded unitary on `r` or `s` is claimed for unequal cardinalities:
-e.g. `[A]` and `[A/√2, A/√2]` have the same CP map but are not related by a
-square unitary; they become unitarily related only after zero-padding to a
-common type, here `r ⊕ s`. Empty `r`, `s`, and zero maps are supported
-without `Nonempty` using `Fin 0` and empty sums. -/
+Source: John Watrous, *The Theory of Quantum Information*, Theorem 2.12 and Corollary 2.23. -/
 theorem exists_unitaryGroup_of_kraus_eq_padded {r s : Type*} [Fintype r] [Fintype s]
     [DecidableEq r] [DecidableEq s] {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
     (hEq : kraus K = kraus L) :

@@ -33,7 +33,10 @@ set_option relaxedAutoImplicit false
 namespace CStarAlgebra
 universe uA uH
 
-/-- The actual nonunital postliminal criterion, with original closed invariants and compacts. -/
+/-- **Postliminal nonunital C*-algebra.** A nonunital complex C*-algebra `A` is postliminal when every
+nonzero irreducible nonunital star representation `π : A → B(H)` on a complete complex Hilbert space
+has range containing all compact operators on `H`. Irreducibility means that the only closed
+complex-linear subspaces invariant under all `π(a)` are zero and the whole space. -/
 def IsPostliminal (A : Type uA) [NonUnitalCStarAlgebra A] : Prop :=
   ∀ {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     (pi : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)),
@@ -42,7 +45,9 @@ def IsPostliminal (A : Type uA) [NonUnitalCStarAlgebra A] : Prop :=
         (∀ T ∈ Set.range pi, ∀ x ∈ K, T x ∈ K) → K = ⊥ ∨ K = ⊤) →
       ({T : H →L[ℂ] H | IsCompactOperator T} : Set (H →L[ℂ] H)) ⊆ Set.range pi
 
-/-- Nonzero actual representations already imply the original Hilbert carrier is nontrivial. -/
+/-- **Nonzero representations have nonzero Hilbert space.** For a nonunital complex C*-algebra `A`, a
+complete complex Hilbert space `H`, and a nonzero nonunital complex star representation `π : A →
+B(H)`, the space `H` is nontrivial. -/
 theorem nontrivial_of_nonzero_representation
     {A : Type uA} [NonUnitalCStarAlgebra A]
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -58,7 +63,10 @@ theorem nontrivial_of_nonzero_representation
     exact Subsingleton.elim _ _
   · exact hH
 
-/-- The same criterion with the source's explicit nontrivial-Hilbert irreducibility condition. -/
+/-- **Irreducible-representation characterization of postliminality.** A nonunital complex C*-algebra
+`A` is postliminal exactly when every nonzero nonunital star representation `π : A → B(H)` on a
+nontrivial complete complex Hilbert space, whose only closed invariant complex-linear subspaces are
+zero and `H`, has every compact operator in its range. -/
 theorem isPostliminal_iff_nonzero_irreducible_criterion
     (A : Type uA) [NonUnitalCStarAlgebra A] :
     IsPostliminal.{uA, uH} A ↔
@@ -82,7 +90,10 @@ theorem isPostliminal_iff_nonzero_irreducible_criterion
     rintro U ⟨a, rfl⟩ x hx
     exact hInv a hx
 
-/-- A nonzero irreducible representation of a unital algebra preserves its unit. -/
+/-- **Irreducible nonzero representations preserve the unit.** Let `A` be a unital complex C*-algebra
+and `H` a complete complex Hilbert space. If a nonzero nonunital complex star homomorphism `π : A →
+B(H)` has no proper nonzero closed invariant complex-linear subspace, then `π(1)` is the identity
+operator on `H`. -/
 theorem map_one_eq_one_of_nonzero_irreducible_representation
     {A : Type uA} [CStarAlgebra A]
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -121,7 +132,9 @@ theorem map_one_eq_one_of_nonzero_irreducible_representation
       congrArg (fun T : H →L[ℂ] H => T y) (show p * p = p from hp)
     simpa only [hy] using hfix
 
-/-- A unital representation on a nonzero Hilbert space is nonzero as a nonunital map. -/
+/-- **Unital representations on a nonzero space are nonzero.** For a unital complex C*-algebra `A` and a
+nontrivial complete complex Hilbert space `H`, a unital complex star representation `π : A → B(H)`
+is nonzero when regarded as a nonunital star homomorphism. -/
 theorem nonzero_toNonUnitalStarAlgHom
     {A : Type uA} [CStarAlgebra A]
     {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
@@ -133,7 +146,10 @@ theorem nonzero_toNonUnitalStarAlgHom
   rw [map_one, one_apply_eq_self] at h
   exact hx h
 
-/-- For unital algebras, the shared criterion equals the original unital irreducible criterion. -/
+/-- **Unital representation criterion for postliminality.** A unital complex C*-algebra `A` is
+postliminal exactly when every irreducible unital star representation on a nontrivial complete
+complex Hilbert space has all compact operators in its range. Irreducibility here is stated for
+closed invariant complex-linear subspaces. -/
 theorem isPostliminal_iff_unital_irreducible_criterion
     (A : Type uA) [CStarAlgebra A] :
     IsPostliminal.{uA, uH} A ↔

@@ -1,5 +1,6 @@
-# Quotient Ker Equiv Range
+# First isomorphism theorem for nonunital C*-algebras
 
-Canonical first isomorphism theorem for nonunital complex C-star algebra
-homomorphisms: the quotient by the bundled closed kernel is star-algebra
-equivalent to the bundled range.
+**First isomorphism theorem for nonunital C*-algebras.** Let `A,B` be nonunital complex C*-algebras
+and `ρ : A → B` a nonunital complex star-algebra homomorphism. There is a complex star-algebra
+equivalence `A/ker(ρ) ≃ range(ρ)`, with the quotient norm on the left and inherited norm on the
+right.

@@ -31,8 +31,11 @@ noncomputable section
 
 universe uX uY uA uB uC
 
-/-- On a compact domain, ordinary continuous maps and continuous maps
-vanishing at infinity are canonically star-algebra equivalent. -/
+/-- Let `Y` be topological spaces with compact `Y`. Let `B` be a possibly nonunital complex
+C*-algebra.
+
+On a compact domain, ordinary continuous maps and continuous maps vanishing at infinity are
+canonically star-algebra equivalent. -/
 noncomputable def compactContinuousMapStarAlgEquiv
     (Y : Type uY) [TopologicalSpace Y] [CompactSpace Y]
     (B : Type uB) [NonUnitalCStarAlgebra B] :
@@ -69,8 +72,10 @@ theorem compactContinuousMapStarAlgEquiv_symm_apply
     (compactContinuousMapStarAlgEquiv Y B).symm f y = f y :=
   rfl
 
-/-- Pointwise postcomposition by a star-algebra equivalence gives a
-star-algebra equivalence of `C₀` function algebras. -/
+/-- Let `X` be a topological space. Let `A`, `B` be possibly nonunital complex C*-algebras.
+
+Pointwise postcomposition by a star-algebra equivalence gives a star-algebra equivalence of `C₀`
+function algebras. -/
 noncomputable def postcompStarAlgEquiv
     (X : Type uX) [TopologicalSpace X]
     {A : Type uA} {B : Type uB}
@@ -99,7 +104,9 @@ theorem postcompStarAlgEquiv_apply
     postcompStarAlgEquiv X e f x = e (f x) :=
   rfl
 
-/-- Exact inverse action of coefficientwise postcomposition. -/
+/-- Let `X` be a topological space. Let `A`, `B` be possibly nonunital complex C*-algebras.
+
+Exact inverse action of coefficientwise postcomposition. -/
 @[simp]
 theorem postcompStarAlgEquiv_symm_apply
     (X : Type uX) [TopologicalSpace X]
@@ -147,8 +154,11 @@ theorem postcompStarAlgEquiv_trans
   ext x
   rfl
 
-/-- Flip a vanishing-at-infinity variable and a compact continuous variable.
-The forward map sends `G` to `fun y x => G x y`. -/
+/-- Let `X` be a locally compact T₁ space, let `Y` be a compact T₁ space, and let `B` be a possibly
+nonunital complex C*-algebra. Both iterated function spaces use their supremum norms.
+
+Flip a vanishing-at-infinity variable and a compact continuous variable. The forward map sends
+`G` to `fun y x => G x y`. -/
 noncomputable def continuousMapFlipStarAlgEquiv
     {X : Type uX} {Y : Type uY} {B : Type uB}
     [TopologicalSpace X] [T1Space X] [LocallyCompactSpace X]
@@ -161,7 +171,10 @@ noncomputable def continuousMapFlipStarAlgEquiv
       (uncurryStarAlgEquiv (X := Y) (Y := X) (A := B)).symm |>.trans
       (compactContinuousMapStarAlgEquiv Y C₀(X, B)).symm
 
-/-- Exact pointwise action of the function-space flip. -/
+/-- Let `X` be a locally compact T₁ space, let `Y` be a compact T₁ space, and let `B` be a possibly
+nonunital complex C*-algebra. Both iterated function spaces use their supremum norms.
+
+Exact pointwise action of the function-space flip. -/
 @[simp]
 theorem continuousMapFlipStarAlgEquiv_apply
     {X : Type uX} {Y : Type uY} {B : Type uB}

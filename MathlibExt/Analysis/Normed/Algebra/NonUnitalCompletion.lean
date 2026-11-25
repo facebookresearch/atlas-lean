@@ -77,9 +77,9 @@ private theorem nonUnitalCompletion_continuous_mul_aux :
     isDenseInducing_coe
   exact (hdense.extend_Z_bilin hdense hmul :)
 
-/-- The canonical nonunital normed-ring structure on the ordinary uniform
-completion. Activate it locally with `let _ := ...`; it is deliberately not a
-global instance. -/
+/-- **Normed ring structure on a nonunital completion.** For a nonunital seminormed ring `A`, its
+uniform completion carries a nonunital normed ring structure extending its multiplication and
+additive operations. The source may be incomplete or nonseparated. -/
 @[instance_reducible]
 noncomputable def nonUnitalCompletionNormedRing :
     NonUnitalNormedRing (UniformSpace.Completion A) := by
@@ -148,8 +148,9 @@ noncomputable def nonUnitalCompletionNormedRing :
             simpa only [← nonUnitalCompletion_coe_mul_aux, norm_coe] using
               norm_mul_le a b }
 
-/-- The completed multiplication agrees exactly with source multiplication on
-the dense canonical image. -/
+/-- **Multiplication on dense completion images.** For a nonunital seminormed ring `A` and its canonical
+map `ι` into the uniform completion, `ι(a b) = ι(a) ι(b)` for every `a,b ∈ A`, using the induced
+completed multiplication. -/
 theorem nonUnitalCompletion_coe_mul
     (a b : A) :
     let _ : NonUnitalNormedRing (UniformSpace.Completion A) :=
@@ -161,8 +162,9 @@ theorem nonUnitalCompletion_coe_mul
     nonUnitalCompletionNormedRing A
   exact nonUnitalCompletion_coe_mul_aux A a b
 
-/-- The source scalar-tower law extends to the completed multiplication.  This
-is an explicit local factory, not a second scalar action. -/
+/-- **Scalar associativity in a nonunital completion.** Let a type `𝕜` act on a nonunital seminormed
+ring `A`, with every fixed-scalar map uniformly continuous. If `(c • a) b = c • (a b)` in `A`, the
+induced scalar action and multiplication on its uniform completion satisfy the same identity. -/
 theorem nonUnitalCompletionIsScalarTower
     [SMul 𝕜 A] [UniformContinuousConstSMul 𝕜 A]
     [IsScalarTower 𝕜 A A] :
@@ -186,7 +188,9 @@ theorem nonUnitalCompletionIsScalarTower
     congrArg ((↑) : A → UniformSpace.Completion A)
       (smul_mul_assoc c a b)
 
-/-- Scalar multiplication commutes with the completed left multiplication. -/
+/-- **Scalar commutation in a nonunital completion.** Let a type `𝕜` act on a nonunital seminormed ring
+`A`, with every fixed-scalar map uniformly continuous. If `a (c • b) = c • (a b)` in `A`, the
+induced action and multiplication on its uniform completion satisfy the same identity. -/
 theorem nonUnitalCompletionSMulCommClass
     [SMul 𝕜 A] [UniformContinuousConstSMul 𝕜 A]
     [SMulCommClass 𝕜 A A] :
@@ -210,9 +214,10 @@ theorem nonUnitalCompletionSMulCommClass
     congrArg ((↑) : A → UniformSpace.Completion A)
       (mul_smul_comm c a b).symm
 
-/-- The canonical equivariant map from a nonunital seminormed ring carrying a
-distributive monoid action with uniformly continuous fixed-scalar maps into
-its ordinary uniform completion. -/
+/-- **Equivariant homomorphism into a completion.** Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. The canonical map from `A` to its uniform completion preserves addition, multiplication,
+and the `𝕜`-action. -/
 noncomputable def coeNonUnitalAlgHom
     [Monoid 𝕜] [DistribMulAction 𝕜 A]
     [UniformContinuousConstSMul 𝕜 A] :
@@ -228,7 +233,9 @@ noncomputable def coeNonUnitalAlgHom
       map_smul' := coe_smul
       map_mul' := nonUnitalCompletion_coe_mul A }
 
-/-- The nonunital completion map is the canonical completion coercion. -/
+/-- **Value of the completion homomorphism.** Let `A` be a nonunital seminormed ring and let a monoid
+`𝕜` act distributively on its additive group, with each fixed-scalar map uniformly continuous. The
+canonical equivariant nonunital homomorphism sends `a ∈ A` to its uniform-completion image. -/
 theorem coeNonUnitalAlgHom_apply
     [Monoid 𝕜] [DistribMulAction 𝕜 A]
     [UniformContinuousConstSMul 𝕜 A] (a : A) :
@@ -238,7 +245,9 @@ theorem coeNonUnitalAlgHom_apply
       (a : UniformSpace.Completion A) :=
   rfl
 
-/-- Exact multiplication characteristic of the nonunital completion map. -/
+/-- **Completion homomorphism preserves products.** Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. For every `a,b ∈ A`, the completion homomorphism satisfies `ι(a b) = ι(a) ι(b)`. -/
 theorem coeNonUnitalAlgHom_mul
     [Monoid 𝕜] [DistribMulAction 𝕜 A]
     [UniformContinuousConstSMul 𝕜 A] (a b : A) :
@@ -251,7 +260,10 @@ theorem coeNonUnitalAlgHom_mul
     nonUnitalCompletionNormedRing A
   exact map_mul (coeNonUnitalAlgHom (𝕜 := 𝕜) A) a b
 
-/-- Exact scalar characteristic of the nonunital completion map. -/
+/-- **Completion homomorphism preserves scalars.** Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. For every `c ∈ 𝕜` and `a ∈ A`, the completion homomorphism satisfies `ι(c • a) = c •
+ι(a)`. -/
 theorem coeNonUnitalAlgHom_smul
     [Monoid 𝕜] [DistribMulAction 𝕜 A]
     [UniformContinuousConstSMul 𝕜 A] (c : 𝕜) (a : A) :
@@ -263,7 +275,10 @@ theorem coeNonUnitalAlgHom_smul
     nonUnitalCompletionNormedRing A
   exact map_smul (coeNonUnitalAlgHom (𝕜 := 𝕜) A) c a
 
-/-- The canonical nonunital completion map is continuous. -/
+/-- **Continuity of the completion homomorphism.** Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. The canonical equivariant nonunital homomorphism into the uniform completion is
+continuous. -/
 theorem continuous_coeNonUnitalAlgHom
     [Monoid 𝕜] [DistribMulAction 𝕜 A]
     [UniformContinuousConstSMul 𝕜 A] :
@@ -275,7 +290,10 @@ theorem continuous_coeNonUnitalAlgHom
   exact (continuous_coe A).congr fun a =>
     (coeNonUnitalAlgHom_apply (𝕜 := 𝕜) A a).symm
 
-/-- The canonical nonunital completion map has dense range. -/
+/-- **Dense range of the completion homomorphism.** Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. The canonical equivariant nonunital homomorphism has dense range in the uniform
+completion. -/
 theorem denseRange_coeNonUnitalAlgHom
     [Monoid 𝕜] [DistribMulAction 𝕜 A]
     [UniformContinuousConstSMul 𝕜 A] :

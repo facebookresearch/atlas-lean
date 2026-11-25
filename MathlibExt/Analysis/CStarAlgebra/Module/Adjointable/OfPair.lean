@@ -35,8 +35,13 @@ variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
   [CStarModule Bᵐᵒᵖ F]
 
-/-- Bundle two bounded complex-linear maps as an adjointable operator from
-their source-oriented right-inner-product equation. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+If bounded complex-linear maps T : E → F and S : F → E satisfy ⟨Tx, y⟩ = ⟨x, Sy⟩ for every x ∈ E
+and y ∈ F, they define an adjointable operator with forward map T and adjoint S.
+-/
 def ofAdjointPair
     (T : E →L[ℂ] F) (S : F →L[ℂ] E)
     (h : ∀ x y,

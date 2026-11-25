@@ -1,3 +1,5 @@
 # Right Inner eq tsum coord
 
-The right inner product is the sum of the coordinate cross terms.
+Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The right inner
+product is the sum of the coordinate cross terms.

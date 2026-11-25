@@ -1,7 +1,7 @@
 # Non Unital Representation
 
-- [Exists isometric hilbert Representation](exists-isometric-hilbert-representation.md)
-- [Faithful Hilbert Representation Data](faithful-hilbert-representation-data.md)
-- [Faithful Hilbert Representation Data nonempty](faithful-hilbert-representation-data-non.md)
-- [Faithful Hilbert Representation Data](faithful-hilbert-representation-data-2.md)
-- [Norm representation](norm-representation.md)
+- [Isometric Hilbert representation of a nonunital C*-algebra](exists-isometric-hilbert-representation.md)
+- [Faithful Hilbert representation](faithful-hilbert-representation-data.md)
+- [Existence of faithful Hilbert representations](faithful-hilbert-representation-data-non.md)
+- [Chosen faithful Hilbert representation](faithful-hilbert-representation-data-2.md)
+- [Norm of a faithful Hilbert representation](norm-representation.md)

@@ -41,8 +41,9 @@ noncomputable section
 
 universe u v
 
-/-- Entrywise inclusion of a matrix algebra into matrices over the
-unitization of its coefficient algebra. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type. Entrywise
+inclusion of a matrix algebra into matrices over the unitization of its coefficient algebra.
+-/
 def matrixInr
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] :
@@ -50,7 +51,9 @@ def matrixInr
       CStarMatrix ι ι (Unitization ℂ A) :=
   CStarMatrix.mapₙₐ (Unitization.inrNonUnitalStarAlgHom ℂ A)
 
-/-- Exact entry action of the entrywise matrix inclusion. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type. For `M :
+CStarMatrix ι ι A` and `i` and `j : ι`. Exact entry action of the entrywise matrix inclusion.
+-/
 @[simp]
 theorem matrixInr_apply
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -59,8 +62,10 @@ theorem matrixInr_apply
     matrixInr A M i j = Unitization.inr (M i j) :=
   rfl
 
-/-- The canonical star-algebra map from the unitization of a matrix algebra
-to matrices over the unitization. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. The canonical star-algebra map from the unitization of a matrix algebra to matrices over
+the unitization.
+-/
 def matrixUnitizationMap
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] :
@@ -68,7 +73,10 @@ def matrixUnitizationMap
       CStarMatrix ι ι (Unitization ℂ A) :=
   Unitization.starLift (matrixInr A)
 
-/-- Exact entry action of the unitization-to-matrix map. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `x : Unitization ℂ (CStarMatrix ι ι A)` and `i` and `j : ι`. Exact entry action of the
+unitization-to-matrix map.
+-/
 @[simp]
 theorem matrixUnitizationMap_apply
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -82,8 +90,10 @@ theorem matrixUnitizationMap_apply
       matrixInr A x.snd) i j = _
   simp [CStarMatrix.algebraMap_apply, Unitization.algebraMap_eq_inl]
 
-/-- The scalar coordinate of each entry in the image is diagonal and
-constant along the diagonal. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `x : Unitization ℂ (CStarMatrix ι ι A)` and `i` and `j : ι`. The scalar coordinate of
+each entry in the image is diagonal and constant along the diagonal.
+-/
 @[simp, nolint simpNF]
 theorem matrixUnitizationMap_apply_fst
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -95,7 +105,10 @@ theorem matrixUnitizationMap_apply_fst
   rw [matrixUnitizationMap_apply]
   by_cases h : i = j <;> simp [h]
 
-/-- The ideal coordinate of the image recovers the original matrix entry. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `x : Unitization ℂ (CStarMatrix ι ι A)` and `i` and `j : ι`. The ideal coordinate of
+the image recovers the matrix entry.
+-/
 @[simp, nolint simpNF]
 theorem matrixUnitizationMap_apply_snd
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -106,7 +119,10 @@ theorem matrixUnitizationMap_apply_snd
   rw [matrixUnitizationMap_apply]
   by_cases h : i = j <;> simp [h]
 
-/-- On the ideal summand, the canonical map is entrywise `Unitization.inr`. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `M : CStarMatrix ι ι A`. On the ideal summand, the canonical map is entrywise
+`Unitization.inr`.
+-/
 @[simp]
 theorem matrixUnitizationMap_inr
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -117,8 +133,9 @@ theorem matrixUnitizationMap_inr
   intro i j
   apply Unitization.ext <;> simp
 
-/-- On the scalar summand, the canonical map is the scalar matrix algebra
-map. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `z : ℂ`. On the scalar summand, the canonical map is the scalar matrix algebra map.
+-/
 @[simp]
 theorem matrixUnitizationMap_inl
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -129,7 +146,9 @@ theorem matrixUnitizationMap_inl
       (algebraMap ℂ (Unitization ℂ (CStarMatrix ι ι A)) z) = _
   exact (matrixUnitizationMap A).commutes z
 
-/-- Entrywise scalar-coordinate projection on matrices over a unitization. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type. Entrywise
+scalar-coordinate projection on matrices over a unitization.
+-/
 def matrixFst
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] :
@@ -138,7 +157,10 @@ def matrixFst
   CStarMatrix.mapₙₐ
     (Unitization.fstStarAlgHom A).toNonUnitalStarAlgHom
 
-/-- Exact entry action of entrywise scalar-coordinate projection. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type. For `M :
+CStarMatrix ι ι (Unitization ℂ A)` and `i` and `j : ι`. Exact entry action of entrywise
+scalar-coordinate projection.
+-/
 @[simp]
 theorem matrixFst_apply
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -147,8 +169,10 @@ theorem matrixFst_apply
     matrixFst A M i j = (M i j).fst := by
   simp [matrixFst]
 
-/-- Applying scalar-coordinate projection to the image gives the scalar
-matrix with scalar `x.fst`. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `x : Unitization ℂ (CStarMatrix ι ι A)`. Applying scalar-coordinate projection to the
+image gives the scalar matrix with scalar `x.fst`.
+-/
 @[simp]
 theorem matrixFst_matrixUnitizationMap
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -160,19 +184,17 @@ theorem matrixFst_matrixUnitizationMap
   intro i j
   by_cases h : i = j <;> simp [CStarMatrix.algebraMap_apply, h]
 
-/-- Scalar-coordinate projection out of the unitization of a matrix algebra:
-the `Unitization.fstStarAlgHom` projection at the matrix coefficient
-algebra, bundled directly from `Unitization.fstHom`.
-
-Stating `Unitization.fstStarAlgHom (CStarMatrix ι ι A)` requires a
-`NonUnitalCStarAlgebra (CStarMatrix ..)` instance, whose Mathlib
-construction needs a `PartialOrder` and `StarOrderedRing` on `A` (the
-canonical spectral order) together with nondefault transparency to reconcile
-the projected instances with the direct matrix instances.  Naming the
-bundled hom here pins that elaboration once: the scalar squares in this file
-and on projection `K0` are stated against this hom with plain
-`[NonUnitalCStarAlgebra A]`, and its action is first projection by
-`matrixScalarFst_apply`. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type.
+Scalar-coordinate projection out of the unitization of a matrix algebra: the
+`Unitization.fstStarAlgHom` projection at the matrix coefficient algebra, bundled directly from
+`Unitization.fstHom`. Stating `Unitization.fstStarAlgHom (CStarMatrix ι ι A)` requires a
+`NonUnitalCStarAlgebra (CStarMatrix ..)` instance, whose Mathlib construction needs a `PartialOrder`
+and `StarOrderedRing` on `A` (the canonical spectral order) together with nondefault transparency to
+reconcile the projected instances with the direct matrix instances. Naming the bundled hom here pins
+that elaboration once: the scalar squares in this file and on projection `K0` are stated against
+this hom with plain `[NonUnitalCStarAlgebra A]`, and its action is first projection by
+`matrixScalarFst_apply`.
+-/
 def matrixScalarFst
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] :
@@ -180,7 +202,9 @@ def matrixScalarFst
   toAlgHom := Unitization.fstHom ℂ _
   map_star' := Unitization.fst_star
 
-/-- The matrix scalar-coordinate projection is first projection. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type. For `x :
+Unitization ℂ (CStarMatrix ι ι A)`. The matrix scalar-coordinate projection is first projection.
+-/
 @[simp]
 theorem matrixScalarFst_apply
     (A : Type u) [NonUnitalCStarAlgebra A]
@@ -189,8 +213,9 @@ theorem matrixScalarFst_apply
     matrixScalarFst A x = x.fst :=
   rfl
 
-/-- The scalar-coordinate square for the canonical unitization-to-matrix map
-commutes. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. The scalar-coordinate square for the canonical unitization-to-matrix map commutes.
+-/
 theorem matrixFst_comp_matrixUnitizationMap
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] :
@@ -203,8 +228,10 @@ theorem matrixFst_comp_matrixUnitizationMap
   intro x
   exact matrixFst_matrixUnitizationMap A x
 
-/-- The canonical unitization-to-matrix map is natural for nonunital complex
-star-algebra homomorphisms. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `B` be a possibly nonunital complex
+C*-algebra. Let `ι` be a finite index type with decidable equality. For `phi : A →⋆ₙₐ[ℂ] B`. The
+canonical unitization-to-matrix map is natural for nonunital complex star-algebra homomorphisms.
+-/
 theorem matrixUnitizationMap_naturality
     {A : Type u} {B : Type v}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -226,8 +253,9 @@ theorem matrixUnitizationMap_naturality
           Unitization.algebraMap_eq_inl, CStarMatrix.algebraMap_apply,
           CStarMatrix.zero_apply, h]
 
-/-- For a nonempty index type, the canonical unitization-to-matrix map is
-injective. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite nonempty index type with
+decidable equality. For a nonempty index type, the canonical unitization-to-matrix map is injective.
+-/
 theorem matrixUnitizationMap_injective
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι] :
@@ -246,8 +274,11 @@ theorem matrixUnitizationMap_injective
         (M i j).snd) hxy
     simpa only [matrixUnitizationMap_apply_snd] using h
 
-/-- A matrix over the unitization lies in the scalar-plus-matrix range exactly
-when all scalar coordinates form one scalar multiple of the identity. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `M : CStarMatrix ι ι (Unitization ℂ A)`. A matrix over the unitization lies in the
+scalar-plus-matrix range exactly when all scalar coordinates form one scalar multiple of the
+identity.
+-/
 theorem mem_range_matrixUnitizationMap_iff
     (A : Type u) [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] [DecidableEq ι]

@@ -44,41 +44,52 @@ universe uA
 
 variable (A : Type uA) [NonUnitalCStarAlgebra A]
 
-/-- The existing actual positive-contraction filter, with canonical order dictionaries kept local. -/
+/-- **Positive contractive approximate-unit filter.** Let `A` be a nonunital complex C*-algebra. This is
+the canonical filter of positive contractions in `A`, using spectral order, along which
+multiplication on either side converges to the identity. -/
 def canonicalApproximateUnit : Filter A := by
   let _ : PartialOrder A := spectralOrder A
   let _ : StarOrderedRing A := spectralOrderedRing A
   exact approximateUnit A
 
-/-- The computed canonical approximate-unit filter is proper, including for the zero algebra. -/
+/-- **Properness of the approximate-unit filter.** Let `A` be a nonunital complex C*-algebra. Its
+canonical positive contractive approximate-unit filter is proper, including when `A` is the zero
+algebra. -/
 theorem canonicalApproximateUnit_neBot : (canonicalApproximateUnit A).NeBot := by
   let _ : PartialOrder A := spectralOrder A
   let _ : StarOrderedRing A := spectralOrderedRing A
   change (approximateUnit A).NeBot
   exact (increasingApproximateUnit A).neBot
 
-/-- The original actual approximating coefficients are eventually contractions. -/
+/-- **Approximate-unit elements are contractions.** Let `A` be a nonunital complex C*-algebra. Along the
+canonical positive contractive approximate-unit filter, `‖a‖ ≤ 1` eventually. -/
 theorem canonicalApproximateUnit_eventually_norm_le_one :
     ∀ᶠ a in canonicalApproximateUnit A, ‖a‖ ≤ 1 := by
   let _ : PartialOrder A := spectralOrder A
   let _ : StarOrderedRing A := spectralOrderedRing A
   exact (increasingApproximateUnit A).eventually_norm
 
-/-- The original canonical coefficients multiply each actual element toward that same element. -/
+/-- **Approximate unit acts on the left.** Let `A` be a nonunital complex C*-algebra. For every fixed `x
+∈ A`, `a x` tends to `x` in norm as `a` follows the canonical positive contractive approximate-unit
+filter. -/
 theorem tendsto_canonicalApproximateUnit_mul_right (x : A) :
     Tendsto (fun a : A => a * x) (canonicalApproximateUnit A) (𝓝 x) := by
   let _ : PartialOrder A := spectralOrder A
   let _ : StarOrderedRing A := spectralOrderedRing A
   exact (increasingApproximateUnit A).tendsto_mul_right x
 
-/-- The original canonical filter also approximates every fixed coefficient by right multiplication. -/
+/-- **Approximate unit acts on the right.** Let `A` be a nonunital complex C*-algebra. For every fixed
+`x ∈ A`, `x a` tends to `x` in norm as `a` follows the canonical positive contractive
+approximate-unit filter. -/
 theorem tendsto_canonicalApproximateUnit_mul_left (x : A) :
     Tendsto (fun a : A => x * a) (canonicalApproximateUnit A) (𝓝 x) := by
   let _ : PartialOrder A := spectralOrder A
   let _ : StarOrderedRing A := spectralOrderedRing A
   exact (increasingApproximateUnit A).tendsto_mul_left x
 
-/-- Canonical coefficient multiplication approaches the identity uniformly on every compact range. -/
+/-- **Uniform approximate-unit convergence on compact sets.** Let `A` be a nonunital complex C*-algebra.
+For every norm-compact `K ⊆ A` and `ε > 0`, eventually `‖a x - x‖ < ε` for all `x ∈ K` as `a`
+follows the canonical positive contractive approximate-unit filter. -/
 theorem canonicalApproximateUnit_eventually_compact_mul_sub_lt
     (K : Set A) (hK : IsCompact K) (ε : ℝ) (hε : 0 < ε) :
     ∀ᶠ a in canonicalApproximateUnit A, ∀ x ∈ K, ‖a * x - x‖ < ε := by

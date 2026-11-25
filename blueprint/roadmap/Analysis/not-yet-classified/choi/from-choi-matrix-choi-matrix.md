@@ -1,3 +1,4 @@
-# From Choi Matrix choi Matrix
+# Reconstruction after the Choi construction
 
-`fromChoi( J(Φ) ) = Φ` : reconstruction of Choi is the original map.
+For finite decidable `n`, any index type `m`, and a
+complex-linear map `Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`, reconstructing from `J(Φ)` recovers `Φ`.

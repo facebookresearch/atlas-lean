@@ -1,5 +1,5 @@
-# Non Unital Completion Star Ring
+# Involution on a nonunital uniform completion
 
-The canonical star-ring structure over the exact semiring parent of the
-existing nonunital normed completion. Star is the completion map of source
-star; the ring operations and norm are not reconstructed.
+Let `A` be a nonunital seminormed ring with a
+continuous ring involution. The source involution extends to a ring involution on the uniform
+completion, with its induced nonunital normed ring operations.

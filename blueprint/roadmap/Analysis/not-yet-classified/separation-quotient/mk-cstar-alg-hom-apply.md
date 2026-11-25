@@ -1,3 +1,5 @@
-# Mk CStar Alg Hom apply
+# Value of the separation star homomorphism
 
-The quotient star-algebra homomorphism is the literal separation map.
+For a unital seminormed complex algebra `A` with
+isometric ring involution, the canonical star homomorphism sends `a` to its separation-quotient
+class.

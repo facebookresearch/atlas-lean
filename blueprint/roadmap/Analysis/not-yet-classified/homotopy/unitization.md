@@ -1,5 +1,5 @@
-# Homotopy
+# Unitization preserves point-norm homotopy
 
-Unitizing point-norm homotopic nonunital star homomorphisms gives
-point-norm homotopic homomorphisms between the unitizations.  The constructed
-homotopy fixes the scalar coordinate.
+For nonunital complex C*-algebras `A,B` and
+point-norm homotopic nonunital star homomorphisms `φ,ψ : A → B`, their unitized maps are point-norm
+homotopic between the complex unitizations. The induced homotopy keeps the scalar coordinate fixed.

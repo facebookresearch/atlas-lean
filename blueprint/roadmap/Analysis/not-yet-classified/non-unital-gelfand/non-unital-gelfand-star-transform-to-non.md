@@ -1,3 +1,5 @@
-# Non Unital Gelfand Star Transform to Non Unital Alg Hom
+# Algebra map of the nonunital Gelfand star transform
 
-The star packaging forgets to the exact existing nonunital Gelfand algebra map.
+Let `A` be a nonunital complex C*-algebra.
+Forgetting preservation of star from the Gelfand star transform recovers the character-evaluation
+nonunital complex algebra homomorphism.

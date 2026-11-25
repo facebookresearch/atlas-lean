@@ -179,7 +179,7 @@ theorem radonProductHFirstTensorUnitary_compact_tmul_ae
   have hpres := Measure.measurePreserving_prodSwap_radonProd μ ν
   have hQ : QuasiMeasurePreserving (Prod.swap : X × Y → Y × X)
       (Measure.radonProd μ ν) (Measure.radonProd ν μ) :=
-    ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+    hpres.quasiMeasurePreserving
   let t : Completion ((Completion ((Lp ℂ 2 ν) ⊗[ℂ] (Lp ℂ 2 μ))) ⊗[ℂ] H) :=
     ((((compactSupportInclusion ν g) ⊗ₜ[ℂ] (compactSupportInclusion μ f) :
       (Lp ℂ 2 ν) ⊗[ℂ] (Lp ℂ 2 μ)) :

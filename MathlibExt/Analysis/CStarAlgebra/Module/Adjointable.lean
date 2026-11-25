@@ -46,7 +46,13 @@ open Filter
 
 universe uB uE uF uG
 
-/-- A bounded adjointable operator between right C-star modules. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+An adjointable operator from E to F consists of bounded complex-linear maps T : E → F and T* : F
+→ E satisfying ⟨Tx, y⟩ = ⟨x, T*y⟩ for the coefficient-valued right inner products.
+-/
 structure AdjointableOperator
     (B : Type uB) (E : Type uE) (F : Type uF)
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
@@ -55,10 +61,20 @@ structure AdjointableOperator
     [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
     [CStarModule Bᵐᵒᵖ F]
     extends E →L[ℂ] F where
-  /-- The bounded adjoint. -/
+  /--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For an adjointable map T : E → F, this is its bounded complex-linear adjoint T* : F → E.
+-/
   adjoint : F →L[ℂ] E
-  /-- The existing adjoint-pair relation for the flipped C-star-module inner
-  forms. -/
+  /--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The forward map T : E → F and the bounded adjoint T* : F → E satisfy ⟨Tx, y⟩ = ⟨x, T*y⟩ for all
+x ∈ E and y ∈ F.
+-/
   isAdjointPair' : LinearMap.IsAdjointPair
     (LinearMap.flip (CStarModule.innerₛₗ (A := Bᵐᵒᵖ) (E := E)))
     ((CStarModule.innerₛₗ (A := Bᵐᵒᵖ) (E := F)).flip)
@@ -104,8 +120,13 @@ theorem isAdjointPair_iff_adjoint_inner
     rw [CStarModule.star_inner, CStarModule.star_inner] at hs
     exact hs
 
-/-- The stored generic adjoint-pair relation in source right-module
-orientation. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For an adjointable T : E → F and vectors x ∈ E and y ∈ F, the forward map and its adjoint
+satisfy ⟨Tx, y⟩ = ⟨x, T*y⟩.
+-/
 theorem adjoint_inner_toContinuousLinearMap
     (T : AdjointableOperator B E F) (x : E) (y : F) :
     rightInner (B := B) (T.toContinuousLinearMap x) y =
@@ -113,7 +134,13 @@ theorem adjoint_inner_toContinuousLinearMap
   (isAdjointPair_iff_adjoint_inner T.toContinuousLinearMap T.adjoint).1
     T.isAdjointPair' x y
 
-/-- Vectors are also determined by inner products in the first variable. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures.
+
+If x and y have the same coefficient-valued inner product with every vector in the second slot,
+then x = y.
+-/
 theorem ext_rightInner_left {x y : E}
     (h : ∀ z : E,
       rightInner (B := B) x z = rightInner (B := B) y z) :
@@ -126,7 +153,13 @@ theorem ext_rightInner_left {x y : E}
     _ = star (rightInner (B := B) y z) := congrArg star (h z)
     _ = rightInner (B := B) z y := star_rightInner y z
 
-/-- The adjoint associated to one forward map is unique. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+Let T : E → F and S₁, S₂ : F → E be bounded complex-linear maps. If both S₁ and S₂ satisfy the
+adjoint identity with T for every pair of vectors, then S₁ = S₂.
+-/
 theorem adjoint_unique
     (T : E →L[ℂ] F) {S₁ S₂ : F →L[ℂ] E}
     (h₁ : ∀ x y,
@@ -139,7 +172,12 @@ theorem adjoint_unique
   intro x
   exact (h₁ x y).symm.trans (h₂ x y)
 
-/-- Forgetting to the forward continuous linear map is injective. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The map sending an adjointable operator to its forward bounded complex-linear map is injective.
+-/
 theorem toContinuousLinearMap_injective :
     Function.Injective
       (fun T : AdjointableOperator B E F ↦ T.toContinuousLinearMap) := by
@@ -183,15 +221,25 @@ theorem coe_toContinuousLinearMap (T : AdjointableOperator B E F) :
     ((T.toContinuousLinearMap : E →L[ℂ] F) : E → F) = T :=
   rfl
 
-/-- The stored generic adjoint-pair relation in source right-module
-orientation, through the bundled-map coercion. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For an adjointable T : E → F and x ∈ E, y ∈ F, the right inner products satisfy ⟨Tx, y⟩ = ⟨x,
+T*y⟩.
+-/
 @[simp]
 theorem adjoint_inner (T : AdjointableOperator B E F) (x : E) (y : F) :
     rightInner (B := B) (T x) y =
       rightInner (B := B) x (T.adjoint y) :=
   adjoint_inner_toContinuousLinearMap T x y
 
-/-- Adjointable operators are determined by their forward action. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+Two adjointable operators E → F are equal whenever they agree on every vector of E.
+-/
 @[ext]
 theorem ext {T S : AdjointableOperator B E F}
     (h : ∀ x, T x = S x) : T = S := by
@@ -208,7 +256,12 @@ theorem ext {T S : AdjointableOperator B E F}
   cases S
   simp_all
 
-/-- The identity adjointable operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures.
+
+The identity map on E is adjointable and is its own adjoint.
+-/
 def id : AdjointableOperator B E E where
   toContinuousLinearMap := ContinuousLinearMap.id ℂ E
   adjoint := ContinuousLinearMap.id ℂ E
@@ -226,7 +279,12 @@ theorem id_adjoint : (id (B := B) (E := E)).adjoint =
     ContinuousLinearMap.id ℂ E :=
   rfl
 
-/-- The zero adjointable operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The zero map E → F is adjointable, with zero adjoint F → E.
+-/
 def zero : AdjointableOperator B E F where
   toContinuousLinearMap := 0
   adjoint := 0
@@ -246,7 +304,13 @@ theorem zero_apply (x : E) : (0 : AdjointableOperator B E F) x = 0 :=
 theorem zero_adjoint : (0 : AdjointableOperator B E F).adjoint = 0 :=
   rfl
 
-/-- Addition of adjointable operators. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The sum of two adjointable maps E → F is adjointable, with adjoint equal to the sum of their
+adjoints.
+-/
 def add (T S : AdjointableOperator B E F) :
     AdjointableOperator B E F where
   toContinuousLinearMap := T.toContinuousLinearMap + S.toContinuousLinearMap
@@ -273,7 +337,13 @@ theorem add_adjoint (T S : AdjointableOperator B E F) :
     (T + S).adjoint = T.adjoint + S.adjoint :=
   rfl
 
-/-- Negation of an adjointable operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The negative of an adjointable map E → F is adjointable, with adjoint equal to the negative
+adjoint.
+-/
 def neg (T : AdjointableOperator B E F) :
     AdjointableOperator B E F where
   toContinuousLinearMap := -T.toContinuousLinearMap
@@ -298,7 +368,13 @@ theorem neg_adjoint (T : AdjointableOperator B E F) :
     (-T).adjoint = -T.adjoint :=
   rfl
 
-/-- Complex scalar multiplication.  The adjoint scalar is conjugated. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For c ∈ ℂ and an adjointable map T : E → F, scalar multiplication gives the adjointable map cT
+with adjoint conjugate(c) T*.
+-/
 def smul (c : ℂ) (T : AdjointableOperator B E F) :
     AdjointableOperator B E F where
   toContinuousLinearMap := c • T.toContinuousLinearMap
@@ -353,7 +429,13 @@ theorem sub_adjoint (T S : AdjointableOperator B E F) :
     add_adjoint, neg_adjoint]
   exact (sub_eq_add_neg _ _).symm
 
-/-- Forget an adjointable operator to its forward continuous linear map. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+Sending an adjointable map E → F to its forward bounded complex-linear map defines an additive
+homomorphism.
+-/
 def forwardAddHom : AdjointableOperator B E F →+
     (E →L[ℂ] F) where
   toFun := AdjointableOperator.toContinuousLinearMap
@@ -373,8 +455,13 @@ instance : Module ℂ (AdjointableOperator B E F) :=
     (forwardAddHom (B := B) (E := E) (F := F))
     forwardAddHom_injective fun _ _ ↦ rfl
 
-/-- Forget an adjointable operator linearly to its forward continuous linear
-map. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+Sending an adjointable map E → F to its forward bounded complex-linear map defines a
+complex-linear map.
+-/
 def forwardLinearMap : AdjointableOperator B E F →ₗ[ℂ]
     (E →L[ℂ] F) where
   toFun := AdjointableOperator.toContinuousLinearMap
@@ -398,8 +485,13 @@ theorem norm_eq (T : AdjointableOperator B E F) :
     ‖T‖ = ‖T.toContinuousLinearMap‖ :=
   rfl
 
-/-- Forgetting the adjoint is an isometry onto the forward continuous linear
-map. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The forgetful map from adjointable operators E → F to bounded complex-linear maps E → F
+preserves distances in the operator norm.
+-/
 theorem isometry_toContinuousLinearMap :
     Isometry (fun T : AdjointableOperator B E F ↦
       T.toContinuousLinearMap) := by
@@ -412,7 +504,13 @@ theorem norm_eq_sqrt_norm_rightInner (x : E) :
   rw [CStarModule.norm_eq_sqrt_norm_inner_self (A := Bᵐᵒᵖ)]
   congr 2
 
-/-- The operator norm of the adjoint is bounded by the forward operator norm. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+For an adjointable map T : E → F, the operator norm of T* is at most the operator norm of T.
+-/
 theorem norm_adjoint_le [StarOrderedRing Bᵐᵒᵖ]
     (T : AdjointableOperator B E F) :
     ‖T.adjoint‖ ≤ ‖T‖ := by
@@ -444,7 +542,13 @@ theorem norm_adjoint_le [StarOrderedRing Bᵐᵒᵖ]
     exact le_of_mul_le_mul_right
       (by simpa only [pow_two] using hsq) hypos
 
-/-- Composition, with adjoints composed in reverse order. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For adjointable T : E → F and S : F → G, their composite S ∘ T is adjointable and has adjoint T*
+∘ S*.
+-/
 def comp (S : AdjointableOperator B F G)
     (T : AdjointableOperator B E F) :
     AdjointableOperator B E G where
@@ -471,8 +575,12 @@ theorem comp_adjoint (S : AdjointableOperator B F G)
     (S.comp T).adjoint = T.adjoint.comp S.adjoint :=
   rfl
 
-/-- The operator norm of a composite is bounded by the product of the
-operator norms. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For adjointable T : E → F and S : F → G, the operator norm satisfies ‖S ∘ T‖ ≤ ‖S‖ ‖T‖.
+-/
 theorem norm_comp_le (S : AdjointableOperator B F G)
     (T : AdjointableOperator B E F) :
     ‖S.comp T‖ ≤ ‖S‖ * ‖T‖ := by
@@ -480,8 +588,13 @@ theorem norm_comp_le (S : AdjointableOperator B F G)
     ‖S.toContinuousLinearMap‖ * ‖T.toContinuousLinearMap‖
   exact ContinuousLinearMap.opNorm_comp_le _ _
 
-/-- Postcomposition by a fixed adjointable operator, as a bounded linear
-map on adjointable operators. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For a fixed adjointable S : F → G, postcomposition T ↦ S ∘ T is a bounded complex-linear map
+from the adjointable maps E → F to those E → G.
+-/
 noncomputable def postcompCLM (S : AdjointableOperator B F G) :
     AdjointableOperator B E F →L[ℂ] AdjointableOperator B E G :=
   LinearMap.mkContinuous
@@ -508,8 +621,13 @@ theorem postcompCLM_apply (S : AdjointableOperator B F G)
     postcompCLM S T = S.comp T :=
   rfl
 
-/-- Precomposition by a fixed adjointable operator, as a bounded linear map
-on adjointable operators. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For a fixed adjointable T : E → F, precomposition S ↦ S ∘ T is a bounded complex-linear map from
+the adjointable maps F → G to those E → G.
+-/
 noncomputable def precompCLM (T : AdjointableOperator B E F) :
     AdjointableOperator B F G →L[ℂ] AdjointableOperator B E G :=
   LinearMap.mkContinuous
@@ -532,7 +650,12 @@ theorem precompCLM_apply (T : AdjointableOperator B E F)
     precompCLM T S = S.comp T :=
   rfl
 
-/-- Swap the forward map and adjoint. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The adjoint T* of an adjointable map T : E → F is an adjointable map F → E, with adjoint T.
+-/
 def adjointOperator (T : AdjointableOperator B E F) :
     AdjointableOperator B F E where
   toContinuousLinearMap := T.adjoint
@@ -598,7 +721,13 @@ theorem smul_adjointOperator (c : ℂ) (T : AdjointableOperator B E F) :
   ext x
   rfl
 
-/-- Taking the adjoint preserves the operator norm. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+The adjoint bounded complex-linear map of any adjointable T : E → F has operator norm ‖T‖.
+-/
 theorem norm_adjoint [StarOrderedRing Bᵐᵒᵖ]
     (T : AdjointableOperator B E F) :
     ‖T.adjoint‖ = ‖T‖ := by
@@ -610,15 +739,27 @@ theorem norm_adjoint [StarOrderedRing Bᵐᵒᵖ]
     _ = ‖T.adjoint‖ := by
       rfl
 
-/-- The bundled adjoint operator has the same norm. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+The adjoint, viewed as an adjointable map F → E, has the same operator norm as the original map
+E → F.
+-/
 @[simp]
 theorem norm_adjointOperator [StarOrderedRing Bᵐᵒᵖ]
     (T : AdjointableOperator B E F) :
     ‖T.adjointOperator‖ = ‖T‖ :=
   norm_adjoint T
 
-/-- Taking adjoints is an isometry between the two cross-module operator
-spaces. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+Taking adjoints is an isometry from the adjointable maps E → F to the adjointable maps F → E.
+-/
 theorem isometry_adjointOperator [StarOrderedRing Bᵐᵒᵖ] :
     Isometry (fun T : AdjointableOperator B E F ↦ T.adjointOperator) := by
   apply Isometry.of_dist_eq
@@ -626,8 +767,14 @@ theorem isometry_adjointOperator [StarOrderedRing Bᵐᵒᵖ] :
   rw [dist_eq_norm, dist_eq_norm, ← sub_adjointOperator,
     norm_adjointOperator]
 
-/-- The raw adjoint continuous linear map depends isometrically on an
-adjointable operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+The map sending an adjointable T : E → F to its adjoint bounded complex-linear map F → E is an
+isometry.
+-/
 theorem isometry_adjoint [StarOrderedRing Bᵐᵒᵖ] :
     Isometry (fun T : AdjointableOperator B E F ↦ T.adjoint) := by
   apply Isometry.of_dist_eq
@@ -635,13 +782,25 @@ theorem isometry_adjoint [StarOrderedRing Bᵐᵒᵖ] :
   rw [dist_eq_norm, dist_eq_norm]
   rw [← sub_adjoint, norm_adjoint]
 
-/-- Taking adjoints is continuous in the operator norm. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+Taking adjoints is continuous between the two adjointable operator spaces equipped with their
+operator norms.
+-/
 theorem continuous_adjointOperator [StarOrderedRing Bᵐᵒᵖ] :
     Continuous (fun T : AdjointableOperator B E F ↦ T.adjointOperator) :=
   isometry_adjointOperator.continuous
 
-/-- Bounded adjointable maps between complete right C-star modules are
-complete in the forward operator norm. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be complete normed right inner-product modules over
+B, with compatible complex normed-space structures.
+
+The space of adjointable maps E → F is complete for the forward operator norm.
+-/
 noncomputable instance [StarOrderedRing Bᵐᵒᵖ]
     [CompleteSpace E] [CompleteSpace F] :
     CompleteSpace (AdjointableOperator B E F) :=
@@ -684,7 +843,13 @@ noncomputable instance [StarOrderedRing Bᵐᵒᵖ]
     change Tendsto (fun n ↦ (T n).toContinuousLinearMap) atTop (nhds f)
     exact hf
 
-/-- The C-star square identity for a cross-module adjointable operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+Every adjointable T : E → F satisfies the C*-identity ‖T* ∘ T‖ = ‖T‖².
+-/
 theorem norm_adjoint_comp_self [StarOrderedRing Bᵐᵒᵖ]
     (T : AdjointableOperator B E F) :
     ‖T.adjointOperator.comp T‖ = ‖T‖ * ‖T‖ := by
@@ -725,7 +890,13 @@ theorem norm_adjoint_comp_self [StarOrderedRing Bᵐᵒᵖ]
         rw [mul_assoc, Real.sqrt_mul (norm_nonneg _) (‖x‖ * ‖x‖),
           Real.sqrt_mul_self (norm_nonneg x)]
 
-/-- Adjointable operators are automatically right-module linear. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+Every adjointable T : E → F respects the right coefficient action: T(xb) = (Tx)b for x ∈ E and b
+∈ B.
+-/
 theorem map_right_smul (T : AdjointableOperator B E F) (x : E) (b : B) :
     T (x <• b) = T x <• b := by
   apply ext_rightInner_left (B := B)
@@ -733,7 +904,13 @@ theorem map_right_smul (T : AdjointableOperator B E F) (x : E) (b : B) :
   rw [T.adjoint_inner, rightInner_left_smul,
     rightInner_left_smul, T.adjoint_inner]
 
-/-- Endomorphism adjointable operators. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures.
+
+The adjointable endomorphisms of E are the bounded complex-linear maps E → E admitting bounded
+adjoints for the coefficient-valued right inner product.
+-/
 abbrev End (B : Type uB) (E : Type uE)
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
     [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
@@ -866,8 +1043,13 @@ theorem star_adjoint (T : End B E) :
     (star T).adjoint = T.toContinuousLinearMap :=
   rfl
 
-/-- Adjointable endomorphisms form a complex algebra by pointwise scalar
-multiplication. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures.
+
+Adjointable endomorphisms of E form a complex algebra, with multiplication given by composition
+and unit given by the identity map.
+-/
 noncomputable instance : Algebra ℂ (End B E) where
   toSMul := inferInstance
   algebraMap :=
@@ -913,8 +1095,14 @@ noncomputable instance : NormedAlgebra ℂ (End B E) where
 instance : StarModule ℂ (End B E) where
   star_smul c T := smul_adjointOperator c T
 
-/-- On a complete right C-star module, adjointable endomorphisms form a
-unital C-star algebra in the operator norm. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures.
+
+The adjointable endomorphisms of E form a unital complex C*-algebra, with the operator norm and
+adjoint involution.
+-/
 noncomputable instance [StarOrderedRing Bᵐᵒᵖ] [CompleteSpace E] :
     CStarAlgebra (End B E) where
 

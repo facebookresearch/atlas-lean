@@ -1,3 +1,5 @@
 # Tendsto truncate
 
-Finite-coordinate truncations converge to every standard-module vector.
+Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Finite-
+coordinate truncations converge to every standard-module vector.

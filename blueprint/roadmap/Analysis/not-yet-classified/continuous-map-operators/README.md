@@ -1,4 +1,4 @@
 # Continuous Map Operators
 
-- [Constant Endomorphism Map is Homogeneous](constant-endomorphism-map-is-homogeneous.md)
-- [Constant Graded Endomorphism Map](constant-graded-endomorphism-map.md)
+- [Homogeneous operators under constant extension](constant-endomorphism-map-is-homogeneous.md)
+- [Graded constant extension of endomorphisms](constant-graded-endomorphism-map.md)

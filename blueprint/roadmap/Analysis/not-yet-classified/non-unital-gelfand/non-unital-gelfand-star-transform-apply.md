@@ -1,3 +1,4 @@
-# Non Unital Gelfand Star Transform apply
+# Evaluation of the nonunital Gelfand transform
 
-The canonical star map has the same literal original character evaluation.
+Let `A` be a nonunital complex C*-algebra. For `a
+∈ A` and a nonzero complex character `φ`, the Gelfand transform of `a` has value `φ(a)` at `φ`.

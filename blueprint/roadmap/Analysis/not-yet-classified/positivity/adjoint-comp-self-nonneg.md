@@ -1,5 +1,5 @@
 # Adjoint comp self nonneg
 
-The adjoint composite of an actual complete rectangular operator is
-positive in the canonical endomorphism order. The rectangular operator is
-never treated as an element of an endomorphism star ring.
+Let B be a possibly nonunital complex C-star algebra and E and F complete right Hilbert
+B-modules. For complete right Hilbert B-modules E and F, the adjoint of an adjointable map
+from E to F composed with that map is nonnegative in the endomorphism C-star order.

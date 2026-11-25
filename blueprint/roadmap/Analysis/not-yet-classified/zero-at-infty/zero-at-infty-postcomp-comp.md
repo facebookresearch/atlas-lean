@@ -1,3 +1,6 @@
-# Zero At Infty Postcomp comp
+# Composition of graded coefficient postcomposition
 
-Coefficient postcomposition preserves graded composition.
+For a topological space `X`, graded nonunital
+complex C*-algebras `A,B,C`, and equivariant star homomorphisms `φ : A → B`, `ψ : B → C`,
+postcomposition by `ψ ∘ φ` on vanishing functions equals postcomposition by `φ` followed by
+postcomposition by `ψ`.

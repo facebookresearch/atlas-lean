@@ -35,9 +35,9 @@ namespace UniformSpace.Completion
 
 universe uA
 
-/-- The canonical star-ring structure over the exact semiring parent of the
-existing nonunital normed completion. Star is the completion map of source
-star; the ring operations and norm are not reconstructed. -/
+/-- **Involution on a nonunital uniform completion.** Let `A` be a nonunital seminormed ring with a
+continuous ring involution. The source involution extends to a ring involution on the uniform
+completion, with its induced nonunital normed ring operations. -/
 @[instance_reducible]
 noncomputable def nonUnitalCompletionStarRing
     (A : Type uA) [NonUnitalSeminormedRing A]
@@ -112,8 +112,9 @@ noncomputable def nonUnitalCompletionStarRing
       star_add := hAdd
       star_mul := hMul }
 
-/-- The canonical completed star retains every source coefficient value,
-without requiring the source inclusion to be injective. -/
+/-- **Completion images commute with star.** Let `A` be a nonunital seminormed ring with a continuous
+ring involution. For every `a ∈ A`, the completed involution satisfies `(ι(a))* = ι(a*)` for the
+canonical map `ι` into the completion; injectivity of `ι` is not assumed. -/
 @[simp]
 theorem nonUnitalCompletionStarRing_star_coe
     (A : Type uA) [NonUnitalSeminormedRing A]
@@ -136,8 +137,8 @@ theorem nonUnitalCompletionStarRing_star_coe
       (show Continuous fStar from continuous_star)
   exact UniformSpace.Completion.map_coe hUC a
 
-/-- The computed completion star is continuous in the original completion
-topology. Activate this parent locally after the same ring and star ring. -/
+/-- **Continuity of the completed involution.** Let `A` be a nonunital seminormed ring with a continuous
+ring involution. The extended involution is continuous for the uniform-completion topology. -/
 theorem nonUnitalCompletionStarRing_continuousStar
     (A : Type uA) [NonUnitalSeminormedRing A]
     [StarRing A] [ContinuousStar A] :

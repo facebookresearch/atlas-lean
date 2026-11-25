@@ -1,3 +1,5 @@
-# Scalar Suspension Equiv
+# Scalar suspension equivalence
 
-The higher-universe scalar copy is pinned by the literal pointwise down map.
+The universe-lifted scalar suspension is star-algebra equivalent
+over `ℂ` to `C₀(ℝ,ℂ)`, the continuous complex-valued functions vanishing at infinity. The
+equivalence lowers the scalar value at each point.

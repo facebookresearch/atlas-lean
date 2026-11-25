@@ -1,3 +1,4 @@
-# Comm CStar Alg Cat
+# Category of commutative unital C*-algebras
 
-Commutative unital complex C-star algebras with their original dictionaries.
+**Category of commutative unital C*-algebras.** Objects are commutative unital complex C*-algebras
+and morphisms are unital complex star-algebra homomorphisms.

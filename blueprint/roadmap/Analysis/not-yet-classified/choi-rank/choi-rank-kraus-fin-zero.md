@@ -1,3 +1,4 @@
-# Choi Rank kraus fin zero
+# Choi rank of the empty Kraus family
 
-An empty `Fin 0` Kraus family has Choi rank zero.
+For finite decidable matrix index types `n` and `m`, any
+family `K : Fin 0 → Matrix m n ℂ` defines the zero completely positive map, whose Choi rank is zero.

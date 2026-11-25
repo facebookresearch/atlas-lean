@@ -37,12 +37,20 @@ universe u v
 variable {𝕜 : Type u} {E : Type v} [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace E]
 
-/-- Spectrum of an operator's class in the canonical Banach-space Calkin algebra. -/
+/-- Let `𝕜` be a nontrivially normed field, let `E` be a complete normed `𝕜`-vector space, and let
+`T : E →L[𝕜] E` be continuous and linear. Essential spectra are taken in the Calkin quotient of
+the operator algebra.
+
+Spectrum of an operator's class in the canonical Banach-space Calkin algebra. -/
 def essentialSpectrum (T : E →L[𝕜] E) : Set 𝕜 :=
   spectrum 𝕜 (CalkinAlgebra.classMap (𝕜 := 𝕜) (E := E) T)
 
-/-- Outside the essential spectrum, the scalar resolvent has an invertible
-Calkin class. The operator orientation is `T - z • 1`. -/
+/-- Let `𝕜` be a nontrivially normed field, let `E` be a complete normed `𝕜`-vector space, and let
+`T : E →L[𝕜] E` be continuous and linear. Essential spectra are taken in the Calkin quotient of
+the operator algebra.
+
+Outside the essential spectrum, the scalar resolvent has an invertible Calkin class. The
+operator orientation is `T - z • 1`. -/
 theorem notMem_essentialSpectrum_iff_isUnit (T : E →L[𝕜] E) (z : 𝕜) :
     z ∉ T.essentialSpectrum ↔
       IsUnit (CalkinAlgebra.classMap (𝕜 := 𝕜) (E := E) (T - z • 1)) := by
@@ -55,14 +63,22 @@ theorem notMem_essentialSpectrum_iff_isUnit (T : E →L[𝕜] E) (z : 𝕜) :
     simpa only [map_sub, map_smul, map_one, neg_sub,
       Algebra.algebraMap_eq_smul_one] using h.neg
 
-/-- Compact perturbations do not change the essential spectrum. -/
+/-- Let `𝕜` be a nontrivially normed field, let `E` be a complete normed `𝕜`-vector space, and let
+`T : E →L[𝕜] E` be continuous and linear. Essential spectra are taken in the Calkin quotient of
+the operator algebra. The perturbing operator `K` is compact.
+
+Compact perturbations do not change the essential spectrum. -/
 theorem essentialSpectrum_add_compact (T K : E →L[𝕜] E)
     (hK : IsCompactOperator K) :
     (T + K).essentialSpectrum = T.essentialSpectrum := by
   simp only [essentialSpectrum, map_add,
     (CalkinAlgebra.classMap_eq_zero_iff K).mpr hK, add_zero]
 
-/-- Subtracting a compact operator does not change the essential spectrum. -/
+/-- Let `𝕜` be a nontrivially normed field, let `E` be a complete normed `𝕜`-vector space, and let
+`T : E →L[𝕜] E` be continuous and linear. Essential spectra are taken in the Calkin quotient of
+the operator algebra. The perturbing operator `K` is compact.
+
+Subtracting a compact operator does not change the essential spectrum. -/
 theorem essentialSpectrum_sub_compact (T K : E →L[𝕜] E)
     (hK : IsCompactOperator K) :
     (T - K).essentialSpectrum = T.essentialSpectrum := by

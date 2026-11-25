@@ -1,3 +1,6 @@
-# C0 Sum Projection
+# Coordinate projection from a c₀ sum
 
-Coordinate evaluation on the actual completed c0 sum.
+For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. For `i ∈ I`,
+coordinate evaluation is a nonunital star homomorphism `⨁₀ Aᵢ → Aᵢ`.

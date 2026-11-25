@@ -217,10 +217,5 @@ theorem endpointHom_one_comp_glueHomN (n : ℕ)
     map_snd_comp_matchingEquiv_symm]
   rfl
 
-#print axioms endpointHom
-#print axioms iteratedMatchingPathsEquiv
-#print axioms glueHomN
-#print axioms endpointHom_zero_comp_glueHomN
-#print axioms endpointHom_one_comp_glueHomN
 
 end AsymptoticAlgebra

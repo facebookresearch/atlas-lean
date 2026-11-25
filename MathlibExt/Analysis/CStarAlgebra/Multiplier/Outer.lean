@@ -50,8 +50,9 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
 /-! ## The coefficient ideal -/
 
-/-- Multiplying an embedded coefficient on the left by a multiplier is an
-embedded coefficient. -/
+/-- **Coefficient multiplied by a multiplier.** Let `A` be a nonunital complex C*-algebra, let `M(A)` be
+its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient embedding. For
+`a ∈ A` and `T ∈ M(A)`, `ι(a) T = ι(T.snd(a))`, where `T.snd` is the right-centralizer action. -/
 theorem coe_mul (a : A) (T : 𝓜(ℂ, A)) :
     DoubleCentralizer.coeHom (𝕜 := ℂ) a * T =
       DoubleCentralizer.coeHom (𝕜 := ℂ) (T.snd a) := by
@@ -70,15 +71,18 @@ theorem coe_mul (a : A) (T : 𝓜(ℂ, A)) :
     _ = DoubleCentralizer.coeHom (𝕜 := ℂ) (T.snd a) := by
       simp
 
-/-- Left coefficient multiplication in the multiplier inclusion's normal form.
-The named `coe_mul` equation remains available for explicit rewrites. -/
+/-- **Right-centralizer formula for coefficient multiplication.** Let `A` be a nonunital complex
+C*-algebra, let `M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the
+coefficient embedding. For `a ∈ A` and `T ∈ M(A)`, multiplication `ι(a) T` is the embedded
+coefficient `ι(T.snd(a))`. -/
 @[simp]
 theorem coe_mul_normalized (a : A) (T : 𝓜(ℂ, A)) :
     DoubleCentralizer.coe ℂ a * T = DoubleCentralizer.coe ℂ (T.snd a) :=
   coe_mul a T
 
-/-- The closed two-sided star ideal of embedded coefficients in the multiplier
-algebra. -/
+/-- **Coefficient ideal in a multiplier algebra.** Let `A` be a nonunital complex C*-algebra, let `M(A)`
+be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient embedding.
+The range `ι(A)` is a closed two-sided star ideal of `M(A)`. -/
 noncomputable def coefficientIdeal (A : Type uA) [NonUnitalCStarAlgebra A] :
     ClosedStarIdeal 𝓜(ℂ, A) where
   carrier := NonUnitalStarAlgHom.range
@@ -112,8 +116,10 @@ theorem coeHom_mem_coefficientIdeal (a : A) :
     DoubleCentralizer.coeHom (𝕜 := ℂ) a ∈ coefficientIdeal A :=
   (mem_coefficientIdeal_iff _).2 ⟨a, rfl⟩
 
-/-- The coefficient algebra is canonically star-algebra equivalent to the
-coefficient ideal in its multiplier algebra. -/
+/-- **Coefficient algebra and its multiplier ideal.** Let `A` be a nonunital complex C*-algebra, let
+`M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient
+embedding. The embedding identifies `A` by a complex star-algebra equivalence with the closed ideal
+`ι(A) ⊆ M(A)`. -/
 noncomputable def coeEquivCoefficientIdeal :
     A ≃⋆ₐ[ℂ] coefficientIdeal A := by
   let f : A →⋆ₙₐ[ℂ] coefficientIdeal A :=
@@ -132,7 +138,10 @@ theorem coeEquivCoefficientIdeal_apply (a : A) :
       DoubleCentralizer.coeHom (𝕜 := ℂ) a :=
   rfl
 
-/-- The canonical coefficient ideal is essential in the multiplier algebra. -/
+/-- **Essentiality of the multiplier coefficient ideal.** Let `A` be a nonunital complex C*-algebra, let
+`M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient
+embedding. The closed ideal `ι(A)` is essential in `M(A)`: a multiplier annihilating every embedded
+coefficient is zero. -/
 theorem coefficientIdeal_isEssential :
     (coefficientIdeal A).IsEssential := by
   intro T hT
@@ -151,8 +160,10 @@ theorem coefficientIdeal_isEssential :
 
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 
-/-- Every ambient element acts as a multiplier on a closed ideal identified
-with the coefficient algebra. -/
+/-- **Multiplier action of an ambient algebra.** Let `A,B` be nonunital complex C*-algebras, let `I ⊆ B`
+be a closed two-sided star ideal, and let `e : A ≃ I` be a complex star-algebra equivalence.
+Multiplication in `B`, transported through `e`, gives a nonunital complex star homomorphism `B →
+M(A)`, with left action `e⁻¹(b e(a))` and right action `e⁻¹(e(a) b)`. -/
 noncomputable def multiplierExtension
     (I : ClosedStarIdeal B) (e : A ≃⋆ₐ[ℂ] I) :
     B →⋆ₙₐ[ℂ] 𝓜(ℂ, A) := by
@@ -340,8 +351,9 @@ theorem multiplierExtension_snd
   change ((e (e.symm (⟨(e a : B) * b, _⟩ : I)) : I) : B) = _
   rw [e.apply_symm_apply]
 
-/-- On the distinguished ideal, the universal multiplier extension is the
-canonical coefficient embedding. -/
+/-- **Multiplier extension on the distinguished ideal.** Let `A,B` be nonunital complex C*-algebras, let
+`I ⊆ B` be a closed two-sided star ideal, and let `e : A ≃ I` be a complex star-algebra equivalence.
+For `a ∈ A`, the multiplier assigned to `e(a) ∈ B` is the coefficient embedding `ι(a)`. -/
 @[simp]
 theorem multiplierExtension_idealEquiv
     (I : ClosedStarIdeal B) (e : A ≃⋆ₐ[ℂ] I) (a : A) :
@@ -364,8 +376,9 @@ theorem multiplierExtension_idealEquiv
     simp only [DoubleCentralizer.coeHom_apply, DoubleCentralizer.coe_snd]
     exact congrArg Subtype.val (map_mul e x a).symm
 
-/-- The universal multiplier extension is injective when the ambient ideal is
-essential. -/
+/-- **Faithful multiplier extension of an essential ideal.** Let `A,B` be nonunital complex C*-algebras,
+let `I ⊆ B` be a closed two-sided star ideal, and let `e : A ≃ I` be a complex star-algebra
+equivalence. If `I` is essential in `B`, the induced homomorphism `B → M(A)` is injective. -/
 theorem multiplierExtension_injective
     (I : ClosedStarIdeal B) (e : A ≃⋆ₐ[ℂ] I) (hI : I.IsEssential) :
     Function.Injective (multiplierExtension I e) := by
@@ -388,8 +401,11 @@ theorem multiplierExtension_injective
   change (b₁ - b₂) * (e a : B) = 0
   exact hambient
 
-/-- A multiplier-valued homomorphism with the prescribed left and right
-coefficient actions is the universal extension. -/
+/-- **Uniqueness of the ambient multiplier extension.** Let `A,B` be nonunital complex C*-algebras, let
+`I ⊆ B` be a closed two-sided star ideal, and let `e : A ≃ I` be a complex star-algebra equivalence.
+A nonunital complex star homomorphism `f : B → M(A)` equals the ambient extension if, for every `b ∈
+B` and `a ∈ A`, its left and right actions satisfy `e((f b).fst(a)) = b e(a)` and `e((f b).snd(a)) =
+e(a) b`. -/
 theorem multiplierExtension_unique
     (I : ClosedStarIdeal B) (e : A ≃⋆ₐ[ℂ] I)
     (f : B →⋆ₙₐ[ℂ] 𝓜(ℂ, A))
@@ -409,7 +425,10 @@ theorem multiplierExtension_unique
   · apply e_coe_injective
     exact (hsnd b a).trans (multiplierExtension_snd I e b a).symm
 
-/-- The unital form of the universal extension. -/
+/-- **Unital ambient multiplier extension.** Let `A` be a nonunital complex C*-algebra, `U` a unital
+complex C*-algebra, `I ⊆ U` a closed two-sided star ideal, and `e : A ≃ I` a complex star-algebra
+equivalence. The ambient action of `U` on `I`, transported by `e`, defines a unital complex star
+homomorphism `U → M(A)`. -/
 noncomputable def multiplierExtensionUnital
     {U : Type uB} [CStarAlgebra U]
     (I : ClosedStarIdeal U) (e : A ≃⋆ₐ[ℂ] I) :
@@ -464,8 +483,8 @@ theorem multiplierExtension_coefficientIdeal :
       coeEquivCoefficientIdeal_apply] using (coe_mul a T).symm
 
 variable (U : Type uA) [CStarAlgebra U] in
-/-- For a unital coefficient algebra, the coefficient embedding is a
-star-algebra equivalence onto the whole multiplier algebra. -/
+/-- **Multiplier algebra of a unital C*-algebra.** For a unital complex C*-algebra `U`, the coefficient
+embedding `U → M(U)` is a complex star-algebra equivalence onto the entire multiplier algebra. -/
 noncomputable def coeEquivOfUnital :
     U ≃⋆ₐ[ℂ] 𝓜(ℂ, U) := by
   apply StarAlgEquiv.ofBijective
@@ -492,19 +511,25 @@ theorem coefficientIdeal_eq_top_of_unital
 
 end DoubleCentralizer
 
-/-- The outer multiplier algebra is the quotient of the multiplier algebra by
-its canonical coefficient ideal. -/
+/-- **Outer multiplier algebra.** Let `A` be a nonunital complex C*-algebra, let `M(A)` be its
+double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient embedding. The
+outer multiplier algebra is `M(A)/ι(A)`, the quotient by the closed coefficient ideal. -/
 abbrev OuterMultiplier (A : Type uA) [NonUnitalCStarAlgebra A] :=
   (DoubleCentralizer.coefficientIdeal A).Quotient
 
-/-- The explicit unital C-star structure on the outer multiplier quotient. -/
+/-- **C*-structure of the outer multiplier algebra.** Let `A` be a nonunital complex C*-algebra, let
+`M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient
+embedding. The quotient `M(A)/ι(A)` is a unital complex C*-algebra with its quotient norm and
+induced star operations. -/
 @[instance_reducible]
 noncomputable def outerMultiplierCStarAlgebra
     (A : Type uA) [NonUnitalCStarAlgebra A] :
     CStarAlgebra (OuterMultiplier A) :=
   (DoubleCentralizer.coefficientIdeal A).unitalQuotientCStarAlgebra
 
-/-- The canonical unital quotient map onto the outer multiplier algebra. -/
+/-- **Projection onto the outer multiplier algebra.** Let `A` be a nonunital complex C*-algebra, let
+`M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient
+embedding. The projection `M(A) → M(A)/ι(A)` is a unital complex star-algebra homomorphism. -/
 noncomputable def outerQuotientMap
     {A : Type uA} [NonUnitalCStarAlgebra A] :
     let _ : CStarAlgebra (OuterMultiplier A) := outerMultiplierCStarAlgebra A
@@ -541,8 +566,9 @@ theorem outerQuotientMap_coe
   exact (outerQuotientMap_eq_zero_iff _).2
     (DoubleCentralizer.coeHom_mem_coefficientIdeal a)
 
-/-- An embedded coefficient vanishes in the outer quotient, in actual projection/coercion
-normal form. The named `outerQuotientMap_coe` equation remains available for rewrites. -/
+/-- **Coefficient classes vanish in the outer algebra.** Let `A` be a nonunital complex C*-algebra, let
+`M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient
+embedding. For every `a ∈ A`, the class of `ι(a)` in the outer multiplier algebra is zero. -/
 @[simp]
 theorem outerQuotient_mk_coe
     {A : Type uA} [NonUnitalCStarAlgebra A] (a : A) :
@@ -603,8 +629,9 @@ theorem mem_coefficientIdeal_congr_iff
     rw [mem_coefficientIdeal_iff]
     exact ⟨e a, (congr_coeHom e a).symm⟩
 
-/-- Coefficient-image membership is invariant under transport, in existential coercion
-normal form. The named membership iff keeps its original rewrite interface. -/
+/-- **Coefficient range under multiplier transport.** Let `A,B` be nonunital complex C*-algebras and `e
+: A ≃ B` a complex star-algebra equivalence. For `T ∈ M(A)`, its transported multiplier belongs to
+the coefficient image of `B` exactly when `T` belongs to the coefficient image of `A`. -/
 @[simp]
 theorem exists_coe_eq_congr_iff
     (e : A ≃⋆ₐ[ℂ] B) (T : 𝓜(ℂ, A)) :
@@ -613,8 +640,9 @@ theorem exists_coe_eq_congr_iff
   simpa only [mem_coefficientIdeal_iff, DoubleCentralizer.coeHom_apply] using
     mem_coefficientIdeal_congr_iff e T
 
-/-- Transport of outer multiplier algebras along a coefficient star-algebra
-equivalence. -/
+/-- **Transport of outer multiplier algebras.** Let `A,B` be nonunital complex C*-algebras and `e : A ≃
+B` a complex star-algebra equivalence. The equivalence induces a complex star-algebra equivalence
+`M(A)/A ≃ M(B)/B`. -/
 noncomputable def outerCongr (e : A ≃⋆ₐ[ℂ] B) :
     let _ : CStarAlgebra (OuterMultiplier A) := outerMultiplierCStarAlgebra A
     let _ : CStarAlgebra (OuterMultiplier B) := outerMultiplierCStarAlgebra B
@@ -680,8 +708,9 @@ theorem outerCongr_outerQuotientMap
     (coefficientIdeal A).carrier (coefficientIdeal B).carrier
     (DoubleCentralizer.congr e).toNonUnitalStarAlgHom _ T
 
-/-- Outer transport evaluates on the actual submodule quotient projection.
-The named `outerCongr_outerQuotientMap` equation remains available for rewrites. -/
+/-- **Classes under outer multiplier transport.** Let `A,B` be nonunital complex C*-algebras and `e : A
+≃ B` a complex star-algebra equivalence. The induced outer equivalence sends the class of `T ∈ M(A)`
+to the class of its transported multiplier in `M(B)`. -/
 @[simp]
 theorem outerCongr_mkQ
     (e : A ≃⋆ₐ[ℂ] B) (T : 𝓜(ℂ, A)) :

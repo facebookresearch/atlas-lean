@@ -1,3 +1,5 @@
-# Choi Rank eq one iff exists ne zero single Kraus
+# Characterization of Choi rank one
 
-A completely positive map has Choi rank one iff it is a nonzero single-Kraus map.
+For finite decidable `n,m`, a completely positive map `φ :
+Matrix n n ℂ →CP Matrix m m ℂ` has Choi rank one exactly when `φ(X) = K X Kᴴ` for a nonzero `K :
+Matrix m n ℂ`.

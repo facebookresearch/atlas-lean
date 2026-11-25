@@ -2,44 +2,46 @@
 
 ## The trivial grading
 
-- [Trivial](trivial.md)
+- [Trivial C*-grading](trivial.md)
 
 ## The swap grading on a product
 
-- [Swap Star Alg Equiv](swap-star-alg-equiv.md)
-- [Swap](swap.md)
+- [Swap automorphism of a C*-product](swap-star-alg-equiv.md)
+- [Swap grading of a C*-product](swap.md)
 
 ## Products of graded algebras
 
-- [Prod Generator](prod-generator.md)
-- [Prod](prod.md)
-- [Prod Fst](prod-fst.md)
-- [Prod Snd](prod-snd.md)
-- [Prod](prod-2.md)
+- [Product of grading generators](prod-generator.md)
+- [Product grading](prod.md)
+- [First graded product projection](prod-fst.md)
+- [Second graded product projection](prod-snd.md)
+- [Pairing graded homomorphisms](prod-2.md)
 
 ## Unitization
 
-- [Unitization](unitization.md)
-- [Unitization Inclusion](unitization-inclusion.md)
+- [Grading of the complex unitization](unitization.md)
+- [Graded inclusion into the unitization](unitization-inclusion.md)
 
 ## Graded closed star subalgebras
 
-- [Is Graded Subalgebra](is-graded-subalgebra.md)
+- [Invariance of a star subalgebra under grading](is-graded-subalgebra.md)
 
 ## Restriction to a closed invariant star subalgebra
 
-- [Restrict Generator](restrict-generator.md)
-- [Restrict Subalgebra](restrict-subalgebra.md)
-- [Restrict Subalgebra Inclusion](restrict-subalgebra-inclusion.md)
+- [Restricted grading generator](restrict-generator.md)
+- [Grading of a closed invariant star subalgebra](restrict-subalgebra.md)
+- [Equivariant inclusion of a restricted grading](restrict-subalgebra-inclusion.md)
 
 ## The standard-even grading on two-by-two matrices
 
+- [Signs for the standard two-by-two grading](standard-even-index-sign.md)
+- [Generator of the standard even matrix grading](standard-even-matrix-generator.md)
+- [Standard even grading on two-by-two matrices](standard-even-matrix.md)
 - [Standard Even Index Sign](standard-even-index-sign.md)
 - [Standard Even Matrix Generator](standard-even-matrix-generator.md)
 - [Standard Even Matrix](standard-even-matrix.md)
 
 ## Constructions of projection-valued measures
-
 - [Unitary Transport](unitary-transport.md)
 - [Range unitary Transport](range-unitary-transport.md)
 - [Unitary Transport trans](unitary-transport-trans.md)

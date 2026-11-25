@@ -51,21 +51,33 @@ variable {G : Type uG} [TopologicalSpace G] [MeasurableSpace G] [BorelSpace G]
 variable (μ : Measure G) [μ.Regular]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
-/-- The original compact-support L2 seminorm, from the exact computed inclusion. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The compact-support L2 seminorm, from the exact computed inclusion. -/
 def compactSupportL2Seminorm : Seminorm ℂ C_c(G, H) :=
   (normSeminorm ℂ (Lp H 2 μ)).comp (compactSupportInclusion (H := H) μ)
 
-/-- The seminorm's square is the original integral of squared vector norms. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The seminorm's square is the integral of squared vector norms. -/
 theorem compactSupportL2Seminorm_sq (f : C_c(G, H)) :
     compactSupportL2Seminorm (H := H) μ f ^ 2 = ∫ s : G, ‖f s‖ ^ 2 ∂μ :=
   norm_compactSupportInclusion_sq μ f
 
-/-- The original compact-support additive group with its computed L2 seminorm. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The compact-support additive group with its computed L2 seminorm. -/
 @[instance_reducible]
 def compactSupportSeminormedAddCommGroup : SeminormedAddCommGroup C_c(G, H) :=
   (compactSupportL2Seminorm (H := H) μ).toAddGroupSeminorm.toSeminormedAddCommGroup
 
-/-- The original complex module with the same computed source seminorm. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The complex module with the same computed source seminorm. -/
 @[instance_reducible]
 def compactSupportL2NormedSpace :
     let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
@@ -78,7 +90,10 @@ def compactSupportL2NormedSpace :
           ‖c‖ * compactSupportL2Seminorm (H := H) μ f
         exact (map_smul_eq_mul (compactSupportL2Seminorm (H := H) μ) c f).le }
 
-/-- The original integral inner product, compatible with the computed source seminorm. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The integral inner product, compatible with the computed source seminorm. -/
 @[instance_reducible]
 def compactSupportInnerProductSpace :
     let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
@@ -96,31 +111,46 @@ def compactSupportInnerProductSpace :
       add_left f g h := by rw [map_add, inner_add_left]
       smul_left f g c := by rw [map_smul, inner_smul_left] }
 
-/-- The actual quotient by zero distance in the original compact-support L2 seminorm. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The quotient by zero distance in the compact-support L2 seminorm. -/
 abbrev SeparatedCore : Type (max uG uH) :=
   let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
   SeparationQuotient C_c(G, H)
 
-/-- The quotient carries the stock normed additive group for the same source seminorm. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The quotient carries the normed additive group for the same source seminorm. -/
 instance instSeparatedNormedAddCommGroup : NormedAddCommGroup (SeparatedCore (H := H) μ) := by
   let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
   change NormedAddCommGroup (SeparationQuotient C_c(G, H))
   infer_instance
 
-/-- The stock quotient inner product descends the exact original integral pairing. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The quotient inner product descends the exact integral pairing. -/
 instance instSeparatedInnerProductSpace : InnerProductSpace ℂ (SeparatedCore (H := H) μ) := by
   let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
   let _ : InnerProductSpace ℂ C_c(G, H) := compactSupportInnerProductSpace (H := H) μ
   change InnerProductSpace ℂ (SeparationQuotient C_c(G, H))
   infer_instance
 
-/-- The literal source-to-separation map with its original complex linear action. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The source-to-separation map with its complex linear action. -/
 def toSeparated : C_c(G, H) →ₗ[ℂ] SeparatedCore (H := H) μ := by
   let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
   let _ : InnerProductSpace ℂ C_c(G, H) := compactSupportInnerProductSpace (H := H) μ
   exact (SeparationQuotient.mkCLM ℂ C_c(G, H)).toLinearMap
 
-/-- The computed inclusion descends isometrically through the actual source separation quotient. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The computed inclusion descends isometrically through the source separation quotient. -/
 def separatedToLp : SeparatedCore (H := H) μ →ₗᵢ[ℂ] Lp H 2 μ := by
   let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ
   let _ : InnerProductSpace ℂ C_c(G, H) := compactSupportInnerProductSpace (H := H) μ
@@ -137,11 +167,17 @@ def separatedToLp : SeparatedCore (H := H) μ →ₗᵢ[ℂ] Lp H 2 μ := by
   rw [SeparationQuotient.liftCLM_mk, SeparationQuotient.norm_mk]
   exact I.norm_map f
 
-/-- The ordinary completion of the same separated compact-support L2 source. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The ordinary completion of the same separated compact-support L2 source. -/
 abbrev CompletionCore : Type (max uG uH) :=
   UniformSpace.Completion (SeparatedCore (H := H) μ)
 
-/-- The original source map is quotient followed by the stock dense completion coercion. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The source map is quotient followed by the dense completion coercion. -/
 def toCompletion : C_c(G, H) →ₗ[ℂ] CompletionCore (H := H) μ := by
   let _ : UniformContinuousConstSMul ℂ (SeparatedCore (H := H) μ) :=
     uniformContinuousConstSMul_of_continuousConstSMul ℂ (SeparatedCore (H := H) μ)
@@ -150,7 +186,10 @@ def toCompletion : C_c(G, H) →ₗ[ℂ] CompletionCore (H := H) μ := by
 
 variable [CompleteSpace H]
 
-/-- Dense extension of the computed quotient inclusion to the same ordinary completion. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space. Assume `H` is complete.
+
+Dense extension of the computed quotient inclusion to the same ordinary completion. -/
 def completionEmbedding : CompletionCore (H := H) μ →ₗᵢ[ℂ] Lp H 2 μ := by
   let _ : UniformContinuousConstSMul ℂ (SeparatedCore (H := H) μ) :=
     uniformContinuousConstSMul_of_continuousConstSMul ℂ (SeparatedCore (H := H) μ)
@@ -168,7 +207,10 @@ def completionEmbedding : CompletionCore (H := H) μ →ₗᵢ[ℂ] Lp H 2 μ :=
   rw [ContinuousLinearMap.fromCompletion_apply_coe, UniformSpace.Completion.norm_coe]
   exact (separatedToLp μ).norm_map q
 
-/-- The extended inclusion has the exact original compact-support value on every source element. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space. Assume `H` is complete.
+
+The extended inclusion has the exact compact-support value on every source element. -/
 theorem completionEmbedding_apply_toCompletion (f : C_c(G, H)) :
     completionEmbedding (H := H) μ (toCompletion μ f) = compactSupportInclusion μ f := by
   let _ : UniformContinuousConstSMul ℂ (SeparatedCore (H := H) μ) :=
@@ -183,7 +225,11 @@ theorem completionEmbedding_apply_toCompletion (f : C_c(G, H)) :
 
 variable [R1Space G] [LocallyCompactSpace G]
 
-/-- The original separated C_c completion is canonically and isometrically the actual Lp H 2 carrier. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space. Assume `G` is locally compact and R₁.
+Assume `H` is complete.
+
+The separated C_c completion is canonically and isometrically the Lp H 2 carrier. -/
 def completionToLp : CompletionCore (H := H) μ ≃ₗᵢ[ℂ] Lp H 2 μ := by
   let I := completionEmbedding (H := H) μ
   have hrange : Set.range (compactSupportInclusion (H := H) μ) ⊆ Set.range I := by
@@ -200,13 +246,20 @@ def completionToLp : CompletionCore (H := H) μ ≃ₗᵢ[ℂ] Lp H 2 μ := by
     exact hξ
   exact LinearIsometryEquiv.ofSurjective I hsurj
 
-/-- The canonical comparison retains every original compact-support vector almost everywhere. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space. Assume `G` is locally compact and R₁.
+Assume `H` is complete.
+
+The canonical comparison retains every compact-support vector almost everywhere. -/
 theorem completionToLp_apply (f : C_c(G, H)) :
     completionToLp (H := H) μ (toCompletion μ f) = compactSupportInclusion μ f :=
   completionEmbedding_apply_toCompletion μ f
 
 omit [CompleteSpace H] [R1Space G] [LocallyCompactSpace G] in
-/-- The ordinary source completion retains the exact original compact-support integral inner product. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The ordinary source completion retains the exact compact-support integral inner product. -/
 theorem toCompletion_inner (f g : C_c(G, H)) :
     ⟪toCompletion (H := H) μ f, toCompletion μ g⟫_ℂ = ∫ s : G, ⟪f s, g s⟫_ℂ ∂μ := by
   let _ : SeminormedAddCommGroup C_c(G, H) := compactSupportSeminormedAddCommGroup (H := H) μ

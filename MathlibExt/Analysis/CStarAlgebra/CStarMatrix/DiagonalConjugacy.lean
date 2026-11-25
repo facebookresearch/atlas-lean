@@ -40,7 +40,9 @@ namespace Unitary
 
 variable {Q : Type uQ} [Semiring Q] [StarRing Q]
 
-/-- The actual matrix unitary with u and v as its two diagonal entries. -/
+/-- Let `Q` be a semiring. The star on `Q` is an additive involution reversing products. For `u` and `v
+: unitary Q`. The matrix unitary with u and v as its two diagonal entries.
+-/
 def blockDiagonalTwo (u v : unitary Q) :
     unitary (CStarMatrix (Fin 2) (Fin 2) Q) := by
   let entries : Fin 2 → Q := fun i => if i = 0 then (u : Q) else (v : Q)
@@ -58,20 +60,28 @@ def blockDiagonalTwo (u v : unitary Q) :
     M * Mᴴ = (1 : Matrix (Fin 2) (Fin 2) Q)
   exact hM
 
-/-- The block unitary's value is the literal diagonal matrix type copy. -/
+/-- Let `Q` be a semiring. The star on `Q` is an additive involution reversing products. For `u` and `v
+: unitary Q`. The block unitary's value is the diagonal `CStarMatrix` representation.
+-/
 theorem blockDiagonalTwo_val (u v : unitary Q) :
     (blockDiagonalTwo u v : CStarMatrix (Fin 2) (Fin 2) Q) =
       CStarMatrix.ofMatrix
         (Matrix.diagonal (fun i : Fin 2 => if i = 0 then (u : Q) else (v : Q))) := by
   rfl
 
-/-- Exact entries, including both off-diagonal zeros, of the computed unitary. -/
+/-- Let `Q` be a semiring. The star on `Q` is an additive involution reversing products. For `u` and `v
+: unitary Q` and `i` and `j : Fin 2`. Exact entries, including both off-diagonal zeros, of the
+computed unitary.
+-/
 theorem blockDiagonalTwo_apply (u v : unitary Q) (i j : Fin 2) :
     (blockDiagonalTwo u v : CStarMatrix (Fin 2) (Fin 2) Q) i j =
       if i = j then (if i = 0 then (u : Q) else (v : Q)) else 0 := by
   rfl
 
-/-- Actual conjugation by the block unitary multiplies each entry on the correct sides. -/
+/-- Let `Q` be a semiring. The star on `Q` is an additive involution reversing products. For `u` and `v
+: unitary Q`, `X : CStarMatrix (Fin 2) (Fin 2) Q` and `i` and `j : Fin 2`. Actual conjugation by the
+block unitary multiplies each entry on the correct sides.
+-/
 theorem blockDiagonalTwo_conj_apply (u v : unitary Q)
     (X : CStarMatrix (Fin 2) (Fin 2) Q) (i j : Fin 2) :
     ((blockDiagonalTwo u v : CStarMatrix (Fin 2) (Fin 2) Q) * X *
@@ -95,7 +105,13 @@ variable {C : Type uC} {Q : Type uQ}
 variable [NonUnitalNonAssocSemiring C] [DistribMulAction ℂ C] [Star C]
 variable [Semiring Q] [StarRing Q] [Algebra ℂ Q]
 
-/-- Two genuine input conjugacies give conjugacy of their actual diagonal hom maps. -/
+/-- Let `C` be a possibly nonunital, nonassociative semiring. Let `Q` be a semiring. `ℂ` acts on `C`
+preserving addition and zero. `C` has a star operation. The star on `Q` is an additive involution
+reversing products. `Q` has a complex algebra structure. For `phi₀`, `phi₁`, `psi₀` and `psi₁ : C
+→⋆ₙₐ[ℂ] Q` and `u` and `v : unitary Q`. Assume `∀ a : C, psi₀ a = (u : Q) * phi₀ a * star (u : Q)`
+and `∀ a : C, psi₁ a = (v : Q) * phi₁ a * star (v : Q)`. Two input conjugacies give conjugacy of
+their diagonal hom maps.
+-/
 theorem diagonalPair_conjugate
     (phi₀ phi₁ psi₀ psi₁ : C →⋆ₙₐ[ℂ] Q) (u v : unitary Q)
     (h₀ : ∀ a : C, psi₀ a = (u : Q) * phi₀ a * star (u : Q))
@@ -131,8 +147,12 @@ variable [NonUnitalCStarAlgebra P]
 
 attribute [local instance] CStarExtension.outerCStarAlgebra
 
-/-- Existing weak Busby conjugacies produce an actual block unitary for the raw diagonal pair.
-This is not a statement of sum descent or liftability invariance. -/
+/-- Let `C` be a possibly nonunital, nonassociative semiring. Let `P` be a possibly nonunital complex
+C*-algebra. `ℂ` acts on `C` preserving addition and zero. `C` has an additive star involution. For
+`tau₀`, `tau₁`, `sigma₀` and `sigma₁ : BusbyHom C P`, `h₀ : WeaklyUnitaryEquivalent tau₀ sigma₀` and
+`h₁ : WeaklyUnitaryEquivalent tau₁ sigma₁`. Existing weak Busby conjugacies produce an block unitary
+for the raw diagonal pair. This is not a statement of sum descent or liftability invariance.
+-/
 theorem diagonalPair_of_weakly_unitary_equivalent
     {tau₀ tau₁ sigma₀ sigma₁ : BusbyHom C P}
     (h₀ : WeaklyUnitaryEquivalent tau₀ sigma₀)

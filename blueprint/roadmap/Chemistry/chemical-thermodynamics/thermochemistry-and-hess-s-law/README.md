@@ -28,3 +28,7 @@
 - [Reaction heat in an isolated calorimeter](calorimetry-reaction-heat.md)
 - [Calorimeter temperature change from the reaction heat](calorimetry-temp-change.md)
 - [A reaction is exothermic iff the calorimeter warms](calorimetry-exothermic-iff-temp-rise.md)
+
+## Heat duty of process streams
+
+- [Heat duty under element-linear reference shifts](heat-duty-under-element-linear-reference-shifts.md)

@@ -35,8 +35,11 @@ open scoped RightActions
 
 universe uB uE uF uG
 
-/-- An explicit grading of a complete right Hilbert module over an explicitly
-graded coefficient C-star algebra. -/
+/-- **Grading of a complete right Hilbert module.** Let `B` be a graded nonunital complex C*-algebra
+with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. These covariance identities define
+compatibility with the coefficient grading. -/
 structure CStarModuleGrading
     {B : Type uB} [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
     (γ : CStarGrading B) (E : Type uE)
@@ -76,7 +79,11 @@ private theorem zmod_two_eq_zero_or_one (n : ZMod 2) : n = 0 ∨ n = 1 := by
   · exact Or.inl rfl
   · exact Or.inr rfl
 
-/-- The generating equivalence as a continuous linear map. -/
+/-- **Bounded linear module-grading generator.** Let `B` be a graded nonunital complex C*-algebra with
+an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The module generator `G` is a
+continuous complex-linear endomorphism of `E`. -/
 def generatorCLM (δ : CStarModuleGrading γ E) : E →L[ℂ] E :=
   δ.generator.toContinuousLinearMap
 
@@ -85,15 +92,27 @@ theorem generatorCLM_apply (δ : CStarModuleGrading γ E) (x : E) :
     δ.generatorCLM x = δ.generator x :=
   rfl
 
-/-- The even module component. -/
+/-- **Even part of a Hilbert-module grading.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete
+right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying
+`G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The even part is the complex-linear subspace `{x
+∈ E : Gx = x}`. -/
 def evenPart (δ : CStarModuleGrading γ E) : Submodule ℂ E :=
   LinearMap.ker (δ.generatorCLM.toLinearMap - LinearMap.id)
 
-/-- The odd module component. -/
+/-- **Odd part of a Hilbert-module grading.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete
+right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying
+`G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The odd part is the complex-linear subspace `{x ∈
+E : Gx = -x}`. -/
 def oddPart (δ : CStarModuleGrading γ E) : Submodule ℂ E :=
   LinearMap.ker (δ.generatorCLM.toLinearMap + LinearMap.id)
 
-/-- The degree-indexed module components. -/
+/-- **Degree-indexed Hilbert-module parts.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete
+right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying
+`G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The part of degree zero is the positive
+eigenspace of `G`; the part of degree one is its negative eigenspace. -/
 def part (δ : CStarModuleGrading γ E) : ZMod 2 → Submodule ℂ E :=
   fun n ↦ if n = 0 then δ.evenPart else δ.oddPart
 
@@ -144,11 +163,19 @@ theorem isClosed_part (δ : CStarModuleGrading γ E) (n : ZMod 2) :
 
 /-! ## Projections and decomposition -/
 
-/-- Projection onto the even module component. -/
+/-- **Even projection of a Hilbert-module grading.** Let `B` be a graded nonunital complex C*-algebra
+with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The continuous complex-linear even
+projection is `x ↦ (x+Gx)/2`. -/
 def evenProjection (δ : CStarModuleGrading γ E) : E →L[ℂ] E :=
   (2 : ℂ)⁻¹ • (ContinuousLinearMap.id ℂ E + δ.generatorCLM)
 
-/-- Projection onto the odd module component. -/
+/-- **Odd projection of a Hilbert-module grading.** Let `B` be a graded nonunital complex C*-algebra
+with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The continuous complex-linear odd
+projection is `x ↦ (x-Gx)/2`. -/
 def oddProjection (δ : CStarModuleGrading γ E) : E →L[ℂ] E :=
   (2 : ℂ)⁻¹ • (ContinuousLinearMap.id ℂ E - δ.generatorCLM)
 
@@ -213,8 +240,12 @@ theorem oddProjection_eq_zero_of_mem_even
   rw [oddProjection_apply, (δ.mem_evenPart_iff_generator x).1 hx]
   module
 
-/-- The canonical topological decomposition into even and odd module
-components. -/
+/-- **Even-odd topological decomposition of a Hilbert module.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let
+`E` be a complete right Hilbert `B`-module. A module grading has a continuous complex-linear
+involution `G` satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The even and odd
+projections give a continuous complex-linear equivalence from `E` to the product of its even and odd
+parts, with inverse addition. -/
 def decomposition (δ : CStarModuleGrading γ E) :
     E ≃L[ℂ] δ.evenPart × δ.oddPart := by
   let forward : E →L[ℂ] δ.evenPart × δ.oddPart :=
@@ -237,7 +268,10 @@ def decomposition (δ : CStarModuleGrading γ E) :
 
 /-! ## Isometry and homogeneous laws -/
 
-/-- The module grading generator preserves norms. -/
+/-- **Norm of the module-grading generator.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete
+right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying
+`G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. For every `x ∈ E`, `‖Gx‖ = ‖x‖`. -/
 @[simp]
 theorem norm_generator
     (δ : CStarModuleGrading γ E) (x : E) :
@@ -255,15 +289,22 @@ theorem norm_generator
     _ = ‖x‖ :=
       (CStarModule.AdjointableOperator.norm_eq_sqrt_norm_rightInner x).symm
 
-/-- The module grading generator is an isometry. -/
+/-- **Module-grading generator is an isometry.** Let `B` be a graded nonunital complex C*-algebra with
+an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The involution `G : E → E` preserves
+distances. -/
 theorem isometry_generator
     (δ : CStarModuleGrading γ E) : Isometry δ.generator := by
   apply Isometry.of_dist_eq
   intro x y
   rw [dist_eq_norm, dist_eq_norm, ← map_sub, δ.norm_generator]
 
-/-- A homogeneous module vector multiplied on the right by a homogeneous
-coefficient has the sum degree. -/
+/-- **Degree of a homogeneous right product.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete
+right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying
+`G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. For `x` of module degree `m` and `b` of
+coefficient degree `n`, the vector `x b` has degree `m+n`. -/
 theorem right_smul_mem_part (δ : CStarModuleGrading γ E)
     {m n : ZMod 2} {x : E} {b : B}
     (hx : x ∈ δ.part m) (hb : b ∈ γ.part n) :
@@ -276,8 +317,11 @@ theorem right_smul_mem_part (δ : CStarModuleGrading γ E)
   rw [mul_comm, ← CStarGrading.degreeSign_add]
   rw [add_comm n m]
 
-/-- The inner product of homogeneous module vectors has the sum degree in
-the coefficient grading. -/
+/-- **Degree of a Hilbert-module inner product.** Let `B` be a graded nonunital complex C*-algebra with
+an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. For module vectors `x,y` of degrees
+`m,n`, the coefficient-valued inner product `⟨x,y⟩_B` has degree `m+n`. -/
 theorem rightInner_mem_part (δ : CStarModuleGrading γ E)
     {m n : ZMod 2} {x y : E}
     (hx : x ∈ δ.part m) (hy : y ∈ δ.part n) :
@@ -291,8 +335,11 @@ theorem rightInner_mem_part (δ : CStarModuleGrading γ E)
     CStarGrading.star_degreeSign, smul_smul]
   rw [mul_comm, ← CStarGrading.degreeSign_add]
 
-/-- Move a module grading generator from the second vector to the first
-through the coefficient grading. -/
+/-- **Moving the generator from the second inner-product slot.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let
+`E` be a complete right Hilbert `B`-module. A module grading has a continuous complex-linear
+involution `G` satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. For `x,y ∈ E`,
+`⟨x,Gy⟩_B = σ(⟨Gx,y⟩_B)`. -/
 theorem rightInner_generator_right
     (δ : CStarModuleGrading γ E) (x y : E) :
     CStarModule.rightInner (B := B) x (δ.generator y) =
@@ -302,8 +349,11 @@ theorem rightInner_generator_right
   rw [δ.generator_involutive] at h
   exact h
 
-/-- Move a module grading generator from the first vector to the second
-through the coefficient grading. -/
+/-- **Moving the generator from the first inner-product slot.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let
+`E` be a complete right Hilbert `B`-module. A module grading has a continuous complex-linear
+involution `G` satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. For `x,y ∈ E`,
+`⟨Gx,y⟩_B = σ(⟨x,Gy⟩_B)`. -/
 theorem rightInner_generator_left
     (δ : CStarModuleGrading γ E) (x y : E) :
     CStarModule.rightInner (B := B) (δ.generator x) y =
@@ -315,7 +365,11 @@ theorem rightInner_generator_left
 
 /-! ## Opposite grading -/
 
-/-- Negate the generator, swapping the even and odd module components. -/
+/-- **Opposite module-grading generator.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete
+right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying
+`G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. The negated involution `-G` is a continuous
+complex-linear equivalence of `E`, interchanging the even and odd parts. -/
 def oppositeGenerator (δ : CStarModuleGrading γ E) : E ≃L[ℂ] E where
   toFun x := -δ.generator x
   invFun x := -δ.generator x
@@ -337,8 +391,11 @@ theorem oppositeGenerator_apply (δ : CStarModuleGrading γ E) (x : E) :
     δ.oppositeGenerator x = -δ.generator x :=
   rfl
 
-/-- The opposite module grading. This changes only the grading, not the
-underlying right module. -/
+/-- **Opposite Hilbert-module grading.** Let `B` be a graded nonunital complex C*-algebra with an order
+on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a complete right
+Hilbert `B`-module. A module grading has a continuous complex-linear involution `G` satisfying `G(x
+b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. Replacing `G` by `-G` gives another grading of the
+same right Hilbert module over the same coefficient grading, with even and odd parts interchanged. -/
 def opposite (δ : CStarModuleGrading γ E) : CStarModuleGrading γ E where
   generator := δ.oppositeGenerator
   generator_involutive := δ.oppositeGenerator.left_inv
@@ -403,9 +460,10 @@ variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
 variable [NormedAddCommGroup G] [NormedSpace ℂ G] [SMul Bᵐᵒᵖ G]
   [CStarModule Bᵐᵒᵖ G] [CompleteSpace G]
 
-/-- An adjointable operator is homogeneous of degree `n` when it commutes or
-anticommutes with the module grading generators according to the Koszul
-sign. -/
+/-- **Degree of an adjointable operator.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with compatible
+grading generators `G_E,G_F`. An adjointable operator `T : E → F` has degree `n ∈ ℤ/2ℤ` when `G_F T
+= (-1)^n T G_E`. -/
 def IsHomogeneousOperator
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F)
@@ -444,7 +502,10 @@ theorem comp_isHomogeneousOperator
   rw [mul_comm, ← CStarGrading.degreeSign_add]
   rfl
 
-/-- The adjoint of a homogeneous adjointable operator has the same degree. -/
+/-- **Adjoint of a homogeneous module operator.** Let `B` be a graded nonunital complex C*-algebra with
+an order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with
+compatible grading generators `G_E,G_F`. If an adjointable `T : E → F` has degree `n`, its adjoint
+`T* : F → E` has the same degree. -/
 theorem adjoint_isHomogeneousOperator
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F)
@@ -494,7 +555,10 @@ theorem adjoint_isHomogeneousOperator
           T.adjointOperator (δF.generator y)) := by
       rw [CStarModule.rightInner_smul_right]
 
-/-- Reversing both module gradings does not change operator degree. -/
+/-- **Operator degree under opposite module gradings.** Let `B` be a graded nonunital complex C*-algebra
+with an order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with
+compatible grading generators `G_E,G_F`. An adjointable `T : E → F` has degree `n` for the
+generators `-G_E,-G_F` exactly when it has degree `n` for `G_E,G_F`. -/
 theorem opposite_isHomogeneousOperator_iff
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F)
@@ -515,8 +579,10 @@ theorem opposite_isHomogeneousOperator_iff
       CStarGrading.degreeSign n • T (-δE.generator x)
     rw [map_neg, smul_neg, h x]
 
-/-- A rank-one operator generated by homogeneous vectors has their sum
-degree. -/
+/-- **Degree of a rank-one module operator.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with compatible
+grading generators `G_E,G_F`. For `x ∈ F` of degree `m` and `y ∈ E` of degree `n`, the rank-one
+adjointable operator `z ↦ x ⟨y,z⟩_B` has degree `m+n`. -/
 theorem rankOne_isHomogeneousOperator
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F)
@@ -548,7 +614,12 @@ section InducedEnd
 
 variable [StarOrderedRing Bᵐᵒᵖ]
 
-/-- Conjugate an adjointable endomorphism by the module grading generator. -/
+/-- **Conjugation of adjointable endomorphisms by a grading.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let
+`E` be a complete right Hilbert `B`-module. A module grading has a continuous complex-linear
+involution `G` satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. Assume also that the
+order on `Bᵐᵒᵖ` is star-compatible. For an adjointable endomorphism `T` of `E`, the formula `G T G`
+defines another adjointable endomorphism. -/
 def operatorConjugate
     (δ : CStarModuleGrading γ E)
     (T : CStarModule.AdjointableOperator.End B E) :
@@ -600,8 +671,12 @@ theorem operatorConjugate_adjointOperator
   ext x
   rfl
 
-/-- Conjugation by the module grading generator as an involutive star-algebra
-automorphism of adjointable endomorphisms. -/
+/-- **Grading automorphism of adjointable endomorphisms.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let
+`E` be a complete right Hilbert `B`-module. A module grading has a continuous complex-linear
+involution `G` satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. Assume also that the
+order on `Bᵐᵒᵖ` is star-compatible. Conjugation `T ↦ G T G` is an involutive complex star-algebra
+automorphism of the adjointable endomorphism C*-algebra of `E`. -/
 def operatorGenerator (δ : CStarModuleGrading γ E) :
     CStarModule.AdjointableOperator.End B E ≃⋆ₐ[ℂ]
       CStarModule.AdjointableOperator.End B E where
@@ -648,7 +723,12 @@ theorem operatorGenerator_involutive
     Function.Involutive (operatorGenerator δ) :=
   (operatorGenerator δ).left_inv
 
-/-- The grading induced on the adjointable endomorphism C-star algebra. -/
+/-- **Induced grading on adjointable endomorphisms.** Let `B` be a graded nonunital complex C*-algebra
+with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let `E` be a
+complete right Hilbert `B`-module. A module grading has a continuous complex-linear involution `G`
+satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. Assume also that the order on `Bᵐᵒᵖ`
+is star-compatible. Conjugation by `G` defines a point-norm continuous `ℤ/2ℤ` grading on the
+adjointable endomorphism C*-algebra of `E`. -/
 def operatorGrading (δ : CStarModuleGrading γ E) :
     CStarGrading (CStarModule.AdjointableOperator.End B E) :=
   CStarGrading.ofInvolution (operatorGenerator δ)
@@ -765,7 +845,12 @@ theorem operatorConjugate_mem_compact
     (StarAlgEquiv.isometry (operatorGenerator δ)).continuous hT
     (fun _ h ↦ operatorConjugate_mem_finiteRank δ h)
 
-/-- The grading induced on the actual compact-endomorphism C-star algebra. -/
+/-- **Induced grading on compact module endomorphisms.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, let `γ` be its grading with generator `σ`, and let
+`E` be a complete right Hilbert `B`-module. A module grading has a continuous complex-linear
+involution `G` satisfying `G(x b) = G(x) σ(b)` and `⟨Gx,Gy⟩_B = σ(⟨x,y⟩_B)`. Assume also that the
+order on `Bᵐᵒᵖ` is star-compatible. Conjugation by `G` restricts to a grading of the compact
+endomorphism C*-algebra, the norm-closed span of rank-one module operators. -/
 def compactGrading (δ : CStarModuleGrading γ E) :
     CStarGrading
       (CStarModule.AdjointableOperator.CompactEnd B E) :=
@@ -800,8 +885,10 @@ variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
 variable [NormedAddCommGroup G] [NormedSpace ℂ G] [SMul Bᵐᵒᵖ G]
   [CStarModule Bᵐᵒᵖ G] [CompleteSpace G]
 
-/-- A unitary module equivalence is graded when it intertwines the two
-module grading generators. -/
+/-- **Graded unitary module equivalence.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with compatible
+grading generators `G_E,G_F`. A unitary right-module equivalence `U : E → F` is graded when it
+satisfies `U G_E = G_F U`. -/
 def IsGradedUnitaryEquiv
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F)
@@ -853,7 +940,10 @@ variable [StarOrderedRing Bᵐᵒᵖ]
 variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
   [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 
-/-- Coordinatewise grading generator on the raw product topology. -/
+/-- **Generator on the topological product of graded modules.** Let `B` be a graded nonunital complex
+C*-algebra with an order on its opposite algebra, and let `E,F` be complete right Hilbert
+`B`-modules with compatible grading generators `G_E,G_F`. The coordinate map `(x,y) ↦ (G_E x,G_F y)`
+is a continuous complex-linear equivalence of `E × F` with its product norm topology. -/
 def prodGeneratorRaw
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F) :
@@ -886,7 +976,11 @@ theorem prodGeneratorRaw_apply
       (δE.generator p.1, δF.generator p.2) :=
   rfl
 
-/-- Coordinatewise generator on the actual C-star-module product view. -/
+/-- **Generator of the Hilbert-module direct sum.** Let `B` be a graded nonunital complex C*-algebra
+with an order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with
+compatible grading generators `G_E,G_F`. Assume also that the opposite coefficient order is
+star-compatible. On the direct-sum module `E ⊕ F`, with coefficient-valued inner product
+`⟨(x,y),(x′,y′)⟩ = ⟨x,x′⟩ + ⟨y,y′⟩` and its induced norm, the generator acts by `(G_E x,G_F y)`. -/
 def prodGenerator
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F) :
@@ -909,8 +1003,11 @@ theorem prodGenerator_apply
       (δE.generator x.1, δF.generator x.2) :=
   rfl
 
-/-- Coordinatewise grading on the actual direct sum of two right Hilbert
-modules. -/
+/-- **Grading of the Hilbert-module direct sum.** Let `B` be a graded nonunital complex C*-algebra with
+an order on its opposite algebra, and let `E,F` be complete right Hilbert `B`-modules with
+compatible grading generators `G_E,G_F`. Assume also that the opposite coefficient order is
+star-compatible. The coordinatewise generator `(x,y) ↦ (G_E x,G_F y)` defines a compatible grading
+on the complete right Hilbert-module direct sum `E ⊕ F`. -/
 def prod
     (δE : CStarModuleGrading γ E)
     (δF : CStarModuleGrading γ F) :
@@ -954,8 +1051,9 @@ section Self
 
 open scoped CStarModule.Right
 
-/-- The coefficient grading generator as a continuous linear equivalence
-of the original coefficient algebra. -/
+/-- **Generator on the coefficient self-module.** For a nonunital complex C*-algebra `B` with a `ℤ/2ℤ`
+grading, its degree-one star automorphism is a continuous complex-linear equivalence of the
+underlying vector space `B`. -/
 def selfGenerator (γ : CStarGrading B) : B ≃L[ℂ] B where
   toFun x := γ.generatorAut x
   invFun x := γ.generatorAut x
@@ -982,8 +1080,10 @@ theorem selfGenerator_apply (γ : CStarGrading B) (b : B) :
 
 variable [StarOrderedRing Bᵐᵒᵖ]
 
-/-- The grading of the original right coefficient self-module induced by
-its own algebra grading. -/
+/-- **Grading of the right coefficient self-module.** For a graded nonunital complex C*-algebra `B` with
+a star-compatible order on `Bᵐᵒᵖ`, regard `B` as its own complete right Hilbert module, with right
+multiplication and inner product `⟨x,y⟩_B = x* y`. Its coefficient grading generator defines the
+compatible module grading. -/
 def self (γ : CStarGrading B) : CStarModuleGrading γ B where
   generator := selfGenerator γ
   generator_involutive x := γ.generator_apply_generator x

@@ -1,3 +1,8 @@
-# Pullback Lift coe apply
+# Coordinate values of a graded pullback lift
 
-The graded lift has the same literal pair of coordinate values.
+Let `A,B,C` be graded nonunital complex C*-algebras
+with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star
+homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. Let `X` be another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be
+equivariant nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. At every `x ∈ X`, the lift has
+ambient pair `(u(x),v(x))`.

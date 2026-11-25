@@ -1,4 +1,4 @@
 # Unital Prod Alg Equiv
 
-The canonical algebra equivalence from a unital algebra's unitization to
-the product of the scalars and the original algebra.
+Let `R` be a commutative ring and `A` a unital `R`-algebra. The shear map `(r,a) ↦ (r, r • 1 + a)`
+gives an `R`-algebra equivalence from the unitization of `A` to `R × A`.

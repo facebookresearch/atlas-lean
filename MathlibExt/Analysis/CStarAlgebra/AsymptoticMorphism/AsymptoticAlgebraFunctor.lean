@@ -113,11 +113,5 @@ theorem asymptoticAlgebraConstant_app_injective
   rw [asymptoticAlgebraConstant_app]
   exact AsymptoticAlgebra.constantHom_injective A
 
-#print axioms asymptoticAlgebraObject
-#print axioms asymptoticAlgebraFunctor
-#print axioms asymptoticAlgebraFunctor_map
-#print axioms asymptoticAlgebraConstant
-#print axioms asymptoticAlgebraConstant_app
-#print axioms asymptoticAlgebraConstant_app_injective
 
 end NonUnitalCStarAlgCat

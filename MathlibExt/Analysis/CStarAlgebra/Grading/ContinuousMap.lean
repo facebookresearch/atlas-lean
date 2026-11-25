@@ -43,7 +43,11 @@ variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
 variable {γ : CStarGrading B}
 
-/-- Compute the pointwise module grading from the same input generator. -/
+/-- **Pointwise grading of continuous module sections.** Let `X` be a compact topological space, `B` a
+graded nonunital complex C*-algebra, and `E` a complete right Hilbert `B`-module with compatible
+generator `G`. Assume star-compatible orders on the opposite algebras of `B` and `C(X,B)`. The
+complete right Hilbert `C(X,B)`-module `C(X,E)`, with pointwise action and inner product and the
+supremum norm, is graded by `f ↦ (t ↦ G(f(t)))`. -/
 def continuousMap (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
     (δ : CStarModuleGrading γ E) :
@@ -101,7 +105,10 @@ def continuousMap (X : Type uX) [TopologicalSpace X] [CompactSpace X]
         simpa only [CStarModule.ContinuousMap.rightInner_apply, hU, hγ] using
           δ.generator_rightInner (f t) (g t) }
 
-/-- The lifted generator evaluates to the original generator at each point. -/
+/-- **Values of the continuous-section grading generator.** Let `X` be a compact topological space, `B`
+a graded nonunital complex C*-algebra, and `E` a complete right Hilbert `B`-module with compatible
+generator `G`. Assume star-compatible orders on the opposite algebras of `B` and `C(X,B)`. For a
+continuous section `f` and `t ∈ X`, the lifted grading generator has value `G(f(t))`. -/
 @[simp]
 theorem continuousMap_generator_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]

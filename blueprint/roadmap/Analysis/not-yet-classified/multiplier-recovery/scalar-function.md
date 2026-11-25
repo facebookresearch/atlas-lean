@@ -1,3 +1,6 @@
 # Scalar Function
 
-The scalar value extracted using the actual unit-norm-bounded point cutoff.
+Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The scalar value extracted using the unit-norm-bounded point cutoff.

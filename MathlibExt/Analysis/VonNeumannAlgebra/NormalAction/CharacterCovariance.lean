@@ -98,7 +98,7 @@ theorem characterMultiplier_scale_haarLeftRegular (χ : PontryaginDual G) (g : G
   have hinner := characterMultiplier_ae_eq μ χ⁻¹ ξ
   have hpres : MeasurePreserving (fun s : G => g⁻¹ * s) μ μ := measurePreserving_smul g⁻¹ μ
   have hquasi : QuasiMeasurePreserving (fun s : G => g⁻¹ * s) μ μ :=
-    ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+    ⟨hpres.measurable.aemeasurable, by rw [hpres.map_eq]⟩
   have hinner' := hquasi.ae_eq_comp hinner
   filter_upwards [houter, hleft, hinner', Lp.coeFn_smul (((χ g : Circle) : ℂ)) (L ξ),
     StronglyContinuousUnitaryRepresentation.haarLeftRegular_ae_eq G μ H g ξ] with s h₁ h₂ h₃ h₄ h₅

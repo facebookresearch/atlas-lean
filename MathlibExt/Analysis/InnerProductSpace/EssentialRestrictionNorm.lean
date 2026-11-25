@@ -34,7 +34,11 @@ universe uH
 
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- A subspace containing an operator and adjoint ranges preserves its exact operator norm. -/
+/-- Let `H` be a complete complex inner-product space, let `T : H →L[ℂ] H` be continuous and linear,
+and let `P` be a complex submodule of `H`. Assume that both `T` and its adjoint take every
+vector into `P`.
+
+A subspace containing an operator and adjoint ranges preserves its exact operator norm. -/
 theorem norm_domRestrict_codRestrict_eq_of_range_star (T : H →L[ℂ] H) (P : Submodule ℂ H)
     (hRange : ∀ ξ : H, T ξ ∈ P) (hStarRange : ∀ ξ : H, star T ξ ∈ P) :
     ‖(T.domRestrict P).codRestrict P (fun ξ => hRange ξ)‖ = ‖T‖ := by

@@ -6,19 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 -- Author: @toskua
 module
 
 public import MathlibExt.LinearAlgebra.ExteriorPower.RankOneSplitting
 
 /-!
-# Exterior powers after adjoining one free summand
+# Exterior powers after adjoining a free rank-one summand
 
-The original exterior power of M × R splits into the old exterior power
-and the old power one degree lower. The maps are the actual inclusion,
-projection, contraction by the last coordinate and wedge by its basis
-vector. Both inverse identities are proved in the original exterior
-algebra, with their literal order and signs.
+Each exterior power of `M × R` splits into the exterior power of `M` and
+the exterior power one degree lower. Inclusion, projection, contraction by
+the last coordinate and left exterior multiplication by its basis vector
+give the two maps. The inverse identities preserve this order and its signs.
 -/
 
 @[expose] public section
@@ -116,8 +116,7 @@ theorem productOneDecompose_assemble (n : ℕ)
       ExteriorAlgebra.map_id]
     rfl
 
-/-- The actual degreewise exterior-power splitting used in Koszul
-regular-sequence induction, with explicit inverse maps. -/
+/-- The exterior-power splitting after adjoining a free rank-one summand, with explicit inverse maps. -/
 def productOneEquiv (n : ℕ) :
     (⋀[R]^(n + 1) (M × R)) ≃ₗ[R] (⋀[R]^(n + 1) M) × (⋀[R]^n M) :=
   LinearEquiv.ofLinearMap (productOneDecompose R M n) (productOneAssemble R M n)

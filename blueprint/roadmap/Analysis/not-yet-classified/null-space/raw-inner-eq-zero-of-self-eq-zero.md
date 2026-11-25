@@ -1,4 +1,6 @@
 # Raw Inner eq zero of self eq zero
 
-A genuine raw tensor with zero self-inner annihilates every raw tensor.
-The proof uses a single common finite first-factor family, not a CS premise.
+Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. If an algebraic tensor has zero self-inner product, its inner product with every algebraic
+tensor is zero.

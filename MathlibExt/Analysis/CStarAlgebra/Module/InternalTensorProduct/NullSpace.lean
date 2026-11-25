@@ -138,8 +138,10 @@ private theorem rawInner_common_family_eq_zero_of_self_eq_zero
   rw [hRows k]
   exact rightInner_zero_left _
 
-/-- A genuine raw tensor with zero self-inner annihilates every raw tensor.
-The proof uses a single common finite first-factor family, not a CS premise. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. If an algebraic tensor has zero self-inner product, its inner product with every algebraic
+tensor is zero. -/
 theorem rawInner_eq_zero_of_self_eq_zero
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : AlgebraicTensor E₁ E₂) (h : rawInner φ z z = 0) :
@@ -180,8 +182,9 @@ theorem rawInner_eq_zero_of_self_eq_zero
   simpa only [hU, hV] using
     rawInner_common_family_eq_zero_of_self_eq_zero φ X U V hCommon
 
-/-- The actual radical is exactly the self-inner-zero set of the balanced
-form. No null closure or completed-model witness is an input. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. A balanced tensor belongs to the radical exactly when its self-inner product is zero. -/
 theorem mem_radicalSpace_iff_self_inner_eq_zero
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z : BalancedTensor (E₁ := E₁) φ) :
@@ -199,8 +202,10 @@ theorem mem_radicalSpace_iff_self_inner_eq_zero
     simpa only [balancedInner_mkQ_mkQ] using
       rawInner_eq_zero_of_self_eq_zero φ z w hRaw
 
-/-- The actual radical-quotient form is algebraically definite once the
-self-null/radical identification above is established. No norm is asserted. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. A vector in the radical quotient has zero self-inner product exactly when it is the zero
+vector. -/
 theorem radicalInner_self_eq_zero_iff
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (q : RadicalTensor (E₁ := E₁) φ) :

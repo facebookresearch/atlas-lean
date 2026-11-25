@@ -47,7 +47,17 @@ variable [NormedAddCommGroup X] [NormedSpace ℂ X] [SMul B₂ᵐᵒᵖ X]
 variable {φ : B₁ →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B₂ E₂}
 variable {pure : E₁ → E₂ → X}
 
-/-- The coefficient-inner formula bounds the norm of a pure tensor. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, with a partial order on B₁ᵐᵒᵖ and a
+star-compatible partial order on B₂ᵐᵒᵖ. Let E₁ be a complete normed right inner-product
+B₁-module, and let E₂ and X be complete normed right inner-product B₂-modules, all with
+compatible complex normed-space structures. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂. Let pure : E₁ × E₂ → X. Assume pure is complex-linear in
+each variable, balances the B₁-actions, respects the B₂-action and satisfies the internal-tensor
+inner-product law and has dense complex-linear span in X.
+
+For x ∈ E₁ and y ∈ E₂, the pure-vector norm satisfies ‖pure(x,y)‖ ≤ ‖x‖ ‖y‖.
+-/
 theorem norm_pure_le (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
     (x : E₁) (y : E₂) : ‖pure x y‖ ≤ ‖x‖ * ‖y‖ := by
   let a : B₁ := CStarModule.rightInner (B := B₁) x x
@@ -78,7 +88,18 @@ theorem norm_pure_le (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
       rw [CStarModule.norm_rightInner_self]
       ring
 
-/-- The pure map is continuous complex-linear in its first vector. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, with a partial order on B₁ᵐᵒᵖ and a
+star-compatible partial order on B₂ᵐᵒᵖ. Let E₁ be a complete normed right inner-product
+B₁-module, and let E₂ and X be complete normed right inner-product B₂-modules, all with
+compatible complex normed-space structures. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂. Let pure : E₁ × E₂ → X. Assume pure is complex-linear in
+each variable, balances the B₁-actions, respects the B₂-action and satisfies the internal-tensor
+inner-product law and has dense complex-linear span in X.
+
+For a fixed y ∈ E₂, the pure-vector map x ↦ pure(x,y) is bounded and complex-linear from E₁ to
+X.
+-/
 def pureLeftCLM (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
     (y : E₂) : E₁ →L[ℂ] X := by
   let L : E₁ →ₗ[ℂ] X :=
@@ -89,7 +110,17 @@ def pureLeftCLM (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
     change ‖pure x y‖ ≤ ‖y‖ * ‖x‖
     simpa only [mul_comm] using norm_pure_le hX x y
 
-/-- The bounded map retains the model's exact pure-tensor value. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, with a partial order on B₁ᵐᵒᵖ and a
+star-compatible partial order on B₂ᵐᵒᵖ. Let E₁ be a complete normed right inner-product
+B₁-module, and let E₂ and X be complete normed right inner-product B₂-modules, all with
+compatible complex normed-space structures. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂. Let pure : E₁ × E₂ → X. Assume pure is complex-linear in
+each variable, balances the B₁-actions, respects the B₂-action and satisfies the internal-tensor
+inner-product law and has dense complex-linear span in X.
+
+For y ∈ E₂, the bounded pure-vector map E₁ → X sends x to pure(x,y).
+-/
 @[simp]
 theorem pureLeftCLM_apply (hX : CStarModule.InternalTensorProduct.IsModel φ pure)
     (x : E₁) (y : E₂) : pureLeftCLM hX y x = pure x y := by

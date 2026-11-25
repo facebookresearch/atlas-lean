@@ -1,3 +1,7 @@
 # Pointed Top Cat
 
-Topological spaces equipped with a distinguished point and basepoint-preserving maps.
+The spaces are topological and carry a distinguished point. Their morphisms are continuous maps
+preserving that point.
+
+The category has pointed topological spaces as objects and continuous basepoint-preserving maps
+as morphisms.

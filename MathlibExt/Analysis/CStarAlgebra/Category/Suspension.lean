@@ -31,7 +31,10 @@ universe u
 
 namespace NonUnitalCStarAlgCat
 
-/-- The pointwise suspension endofunctor sending A to C₀(ℝ, A). -/
+/-- **Suspension functor for C*-algebras.** For a nonunital complex C*-algebra `A`, its suspension is
+`C₀(ℝ,A)`, the continuous `A`-valued functions vanishing at infinity, with the supremum C*-norm. A
+nonunital star homomorphism acts pointwise, giving an endofunctor on the nonunital C*-algebra
+category. -/
 def suspensionFunctor : NonUnitalCStarAlgCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj A := of C₀(ℝ, A)
   map f := ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp f
@@ -68,7 +71,9 @@ private def liftedComplexCStar : CStarAlgebra (ULift.{u} ℂ) where
     change ‖x.down‖ * ‖x.down‖ ≤ ‖star x.down * x.down‖
     exact (CStarRing.norm_star_mul_self (x := x.down)).symm.le
 
-/-- The actual C₀(R,C) scalar algebra in the chosen object universe. -/
+/-- **Scalar suspension.** This is the nonunital complex C*-algebra `C₀(ℝ,ℂ)` of continuous
+complex-valued functions on the real line vanishing at infinity, represented in the chosen object
+universe with its supremum norm. -/
 @[no_expose]
 def scalarSuspension : NonUnitalCStarAlgCat.{u} := by
   letI : CStarAlgebra (ULift.{u} ℂ) := liftedComplexCStar
@@ -76,7 +81,9 @@ def scalarSuspension : NonUnitalCStarAlgCat.{u} := by
     CStarAlgebra.toNonUnitalCStarAlgebra (ULift.{u} ℂ)
   exact of C₀(ℝ, ULift.{u} ℂ)
 
-/-- The higher-universe scalar copy is pinned by the literal pointwise down map. -/
+/-- **Scalar suspension equivalence.** The universe-lifted scalar suspension is star-algebra equivalent
+over `ℂ` to `C₀(ℝ,ℂ)`, the continuous complex-valued functions vanishing at infinity. The
+equivalence lowers the scalar value at each point. -/
 @[no_expose]
 def scalarSuspensionEquiv : scalarSuspension.{u} ≃⋆ₐ[ℂ] C₀(ℝ, ℂ) := by
   letI : CStarAlgebra (ULift.{u} ℂ) := liftedComplexCStar

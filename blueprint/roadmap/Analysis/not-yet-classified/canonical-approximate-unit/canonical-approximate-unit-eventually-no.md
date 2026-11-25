@@ -1,3 +1,4 @@
-# Canonical Approximate Unit eventually norm le one
+# Approximate-unit elements are contractions
 
-The original actual approximating coefficients are eventually contractions.
+Let `A` be a nonunital complex C*-algebra. Along the
+canonical positive contractive approximate-unit filter, `‖a‖ ≤ 1` eventually.

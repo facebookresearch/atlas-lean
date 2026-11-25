@@ -36,7 +36,8 @@ universe u
 
 variable {B : Type u} [Ring B] [Algebra ℂ B] [StarRing B] [StarModule ℂ B]
 
-/-- The seminorm of the original unit is at most one, also for the zero seminorm. -/
+/-- **C*-seminorm of the unit.** For a unital complex star algebra `B` with scalar-compatible involution
+and a C*-seminorm `p`, `p(1) ≤ 1`. This includes the zero seminorm. -/
 theorem map_one_le (p : CStarSeminorm B) : p (1 : B) ≤ 1 := by
   have hsq : p (1 : B) ^ 2 = p (1 : B) := by
     simpa only [star_one, mul_one] using (p.map_star_mul_self (1 : B)).symm
@@ -48,7 +49,8 @@ theorem map_one_le (p : CStarSeminorm B) : p (1 : B) ≤ 1 := by
       simpa only [mul_one, pow_two] using hsq
     exact hone.le
 
-/-- Every actual algebraic unitary has C-star seminorm at most one. -/
+/-- **C*-seminorm of a unitary.** For a unital complex star algebra `B` with scalar-compatible
+involution, a C*-seminorm `p`, and an algebraic unitary `u ∈ B`, one has `p(u) ≤ 1`. -/
 theorem map_unitary_le (p : CStarSeminorm B) (u : unitary B) : p (u : B) ≤ 1 := by
   have hsq : p (u : B) ^ 2 = p (1 : B) := by
     rw [← p.map_star_mul_self (u : B), Unitary.star_mul_self_of_mem u.property]

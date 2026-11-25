@@ -45,20 +45,28 @@ section Pointwise
 
 variable [Zero A] [TopologicalSpace A]
 
-/-- The support of every original compact-support function on a discrete group is finite. -/
+/-- Let `G` be a discrete topological space and let `A` be a topological type with zero.
+
+The support of every compact-support function on a discrete group is finite. -/
 theorem finite_support_of_discrete (f : C_c(G, A)) : (Function.support (f : G → A)).Finite :=
   f.hasCompactSupport.finite_of_discrete.subset subset_closure
 
-/-- The original finite coefficient values of a discrete compact-support function. -/
+/-- Let `G` be a discrete topological space and let `A` be a topological type with zero.
+
+The finite coefficient values of a discrete compact-support function. -/
 def toFinsupp (f : C_c(G, A)) : G →₀ A :=
   Finsupp.ofSupportFinite f (finite_support_of_discrete f)
 
-/-- Every extracted finite coefficient is the same original function value. -/
+/-- Let `G` be a discrete topological space and let `A` be a topological type with zero.
+
+Every extracted finite coefficient is the same function value. -/
 @[simp]
 theorem toFinsupp_apply (f : C_c(G, A)) (g : G) :
     toFinsupp f g = f g := rfl
 
-/-- A literal finite coefficient function as its actual compact-support continuous function. -/
+/-- Let `G` be a discrete topological space and let `A` be a topological type with zero.
+
+A finite coefficient function as its compact-support continuous function. -/
 def ofFinsupp (x : G →₀ A) : C_c(G, A) where
   toFun := x
   continuous_toFun := continuous_of_discreteTopology
@@ -68,7 +76,9 @@ def ofFinsupp (x : G →₀ A) : C_c(G, A) where
     intro g hg
     exact Finsupp.notMem_support_iff.mp hg
 
-/-- Reconstructing compact support retains every original finite coefficient. -/
+/-- Let `G` be a discrete topological space and let `A` be a topological type with zero.
+
+Reconstructing compact support retains every finite coefficient. -/
 @[simp]
 theorem ofFinsupp_apply (x : G →₀ A) (g : G) :
     ofFinsupp x g = x g := rfl
@@ -79,7 +89,10 @@ section ComplexLinear
 
 variable [NormedAddCommGroup A] [NormedSpace ℂ A]
 
-/-- The actual value-preserving complex linear equivalence between compact support and finite support. -/
+/-- Let `G` be a discrete topological space and let `A` be a topological type with zero. For the
+linear equivalence, `A` is a normed complex vector space.
+
+The value-preserving complex linear equivalence between compact support and finite support. -/
 def finsuppLinearEquiv : C_c(G, A) ≃ₗ[ℂ] (G →₀ A) where
   toFun := toFinsupp
   invFun := ofFinsupp

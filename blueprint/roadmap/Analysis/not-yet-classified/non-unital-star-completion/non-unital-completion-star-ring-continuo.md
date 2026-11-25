@@ -1,4 +1,4 @@
-# Non Unital Completion Star Ring continuous Star
+# Continuity of the completed involution
 
-The computed completion star is continuous in the original completion
-topology. Activate this parent locally after the same ring and star ring.
+Let `A` be a nonunital seminormed ring with a continuous
+ring involution. The extended involution is continuous for the uniform-completion topology.

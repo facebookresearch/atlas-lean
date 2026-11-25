@@ -1,3 +1,7 @@
-# Weakly unitary equivalent trans
+# Transitivity of weak Busby equivalence
 
-Weak conjugations compose in the order v*u, valid for noncommutative targets.
+Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Two consecutive weak unitary equivalences of Busby
+homomorphisms imply a weak unitary equivalence of the first and third.

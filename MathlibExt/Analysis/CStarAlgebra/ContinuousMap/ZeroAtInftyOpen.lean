@@ -46,8 +46,9 @@ namespace ZeroAtInftyContinuousMap
 
 /-! ## Point evaluation and its closed kernel -/
 
-/-- Point evaluation on a `C₀` function algebra, bundled as a nonunital
-star-algebra homomorphism. -/
+/-- Let `X` be a topological space. Let `A` be a possibly nonunital complex C*-algebra.
+
+Point evaluation on a `C₀` function algebra, bundled as a nonunital star-algebra homomorphism. -/
 def evalAt
     {X : Type u} [TopologicalSpace X]
     {A : Type v} [NonUnitalCStarAlgebra A]
@@ -67,8 +68,9 @@ theorem evalAt_apply
     evalAt x f = f x :=
   rfl
 
-/-- The closed star ideal of `C₀(X, A)` consisting of functions which
-vanish at `x`. -/
+/-- Let `X` be a topological space. Let `A` be a possibly nonunital complex C*-algebra.
+
+The closed star ideal of `C₀(X, A)` consisting of functions which vanish at `x`. -/
 def vanishingAt
     {X : Type u} [TopologicalSpace X]
     {A : Type v} [NonUnitalCStarAlgebra A]
@@ -85,8 +87,10 @@ theorem mem_vanishingAt
 
 /-! ## Extension by zero -/
 
-/-- The underlying extension-by-zero function from the positive half-line to
-the nonnegative reals. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+The underlying extension-by-zero function from the positive half-line to the nonnegative reals. -/
 def positiveNNRealExtendZeroFun
     {A : Type v} [NonUnitalCStarAlgebra A]
     (f : C₀(Set.Ioi (0 : ℝ≥0), A)) : ℝ≥0 → A :=
@@ -116,8 +120,10 @@ theorem positiveNNRealExtendZeroFun_zero
     simpa [hx] using x.property
   exact (lt_irrefl _ h00)
 
-/-- Closed intervals in the positive nonnegative reals are compact.  This is
-kept as explicit data rather than installed as a global instance. -/
+/-- The domain is the positive part `(0,∞)` of the nonnegative real numbers, with its usual order
+topology.
+
+Every closed order interval in this positive half-line is compact. -/
 theorem positiveNNRealCompactIccSpace :
     CompactIccSpace (Set.Ioi (0 : ℝ≥0)) where
   isCompact_Icc := by
@@ -136,8 +142,11 @@ theorem positiveNNRealCompactIccSpace :
     rw [himage]
     exact isCompact_Icc
 
-/-- Extension by zero from the positive half-line is continuous at the
-endpoint as well as at every positive point. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Extension by zero from the positive half-line is continuous at the endpoint as well as at every
+positive point. -/
 theorem positiveNNRealExtendZeroFun_continuous
     {A : Type v} [NonUnitalCStarAlgebra A]
     (f : C₀(Set.Ioi (0 : ℝ≥0), A)) :
@@ -168,7 +177,10 @@ theorem positiveNNRealExtendZeroFun_continuous
       (Filter.Eventually.of_forall fun y ↦
         (positiveNNRealExtendZeroFun_apply f y).symm)
 
-/-- Extension by zero from the positive half-line vanishes at infinity. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Extension by zero from the positive half-line vanishes at infinity. -/
 theorem positiveNNRealExtendZeroFun_zeroAtInfty
     {A : Type v} [NonUnitalCStarAlgebra A]
     (f : C₀(Set.Ioi (0 : ℝ≥0), A)) :
@@ -183,7 +195,10 @@ theorem positiveNNRealExtendZeroFun_zeroAtInfty
   exact htop.congr' (Filter.Eventually.of_forall fun x ↦
     (positiveNNRealExtendZeroFun_apply f x).symm)
 
-/-- Extension by zero from the positive half-line as a `C₀` function. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Extension by zero from the positive half-line as a `C₀` function. -/
 def positiveNNRealExtendZero
     {A : Type v} [NonUnitalCStarAlgebra A]
     (f : C₀(Set.Ioi (0 : ℝ≥0), A)) : C₀(ℝ≥0, A) where
@@ -191,8 +206,10 @@ def positiveNNRealExtendZero
   continuous_toFun := positiveNNRealExtendZeroFun_continuous f
   zero_at_infty' := positiveNNRealExtendZeroFun_zeroAtInfty f
 
-/-- Extend a `C₀` function on the positive nonnegative reals by zero at the
-origin. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Extend a `C₀` function on the positive nonnegative reals by zero at the origin. -/
 def extendZeroFromPositiveNNReal
     {A : Type v} [NonUnitalCStarAlgebra A] :
     C₀(Set.Ioi (0 : ℝ≥0), A) →⋆ₙₐ[ℂ] C₀(ℝ≥0, A) where
@@ -290,8 +307,10 @@ theorem vanishingAtZero_apply
     (g : C₀(ℝ≥0, A)) 0 = 0 :=
   (mem_vanishingAt (A := A) (0 : ℝ≥0) g).mp g.property
 
-/-- Restriction of a function vanishing at zero to the positive half-line,
-as a `C₀` function. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Restriction of a function vanishing at zero to the positive half-line, as a `C₀` function. -/
 def positiveNNRealRestrict
     {A : Type v} [NonUnitalCStarAlgebra A]
     (g : (vanishingAt (A := A) (0 : ℝ≥0)).carrier) :
@@ -316,8 +335,10 @@ def positiveNNRealRestrict
       rw [cocompact_eq_atTop] at htop
       exact htop
 
-/-- Restrict a `C₀` function on `ℝ≥0` which vanishes at zero to the
-positive half-line. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Restrict a `C₀` function on `ℝ≥0` which vanishes at zero to the positive half-line. -/
 def restrictToPositiveNNReal
     {A : Type v} [NonUnitalCStarAlgebra A] :
     (vanishingAt (A := A) (0 : ℝ≥0)).carrier →⋆ₙₐ[ℂ]
@@ -337,8 +358,10 @@ theorem restrictToPositiveNNReal_apply
     restrictToPositiveNNReal g x = (g : C₀(ℝ≥0, A)) x :=
   rfl
 
-/-- Extension by zero, with its codomain restricted to functions which vanish
-at zero. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Extension by zero, with its codomain restricted to functions which vanish at zero. -/
 def extendZeroFromPositiveNNRealToVanishingAtZero
     {A : Type v} [NonUnitalCStarAlgebra A] :
     C₀(Set.Ioi (0 : ℝ≥0), A) →⋆ₙₐ[ℂ]
@@ -368,9 +391,11 @@ theorem extendZeroFromPositiveNNRealToVanishingAtZero_apply
       extendZeroFromPositiveNNReal f x :=
   rfl
 
-/-- Extension by zero gives a canonical star-algebra equivalence between
-`C₀((0, ∞), A)` and the closed star ideal of `C₀(ℝ≥0, A)` consisting of
-functions which vanish at zero. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The domain is the positive half-line inside
+the nonnegative reals, and the target consists of `A`-valued functions vanishing at infinity.
+
+Extension by zero gives a canonical star-algebra equivalence between `C₀((0, ∞), A)` and the
+closed star ideal of `C₀(ℝ≥0, A)` consisting of functions which vanish at zero. -/
 def positiveNNRealStarAlgEquivVanishingAtZero
     {A : Type v} [NonUnitalCStarAlgebra A] :
     C₀(Set.Ioi (0 : ℝ≥0), A) ≃⋆ₐ[ℂ]

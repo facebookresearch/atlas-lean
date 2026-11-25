@@ -1,3 +1,6 @@
-# Hilbert Direct Sum apply
+# Coordinates of the Hilbert-sum representation
 
-Every direct-sum representation coordinate keeps the original coefficient action.
+Let `A` be a nonunital complex C*-algebra and let
+`(Hᵢ)ᵢ∈I` be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be
+nonunital complex star homomorphisms. For `a ∈ A`, `x ∈ ⨁₂ Hᵢ`, and `i ∈ I`, the direct-sum
+representation has coordinate `ρᵢ(a)(xᵢ)`.

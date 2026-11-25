@@ -1,4 +1,6 @@
-# Completion
+# Separated C*-seminorm completion
 
-The literal separation quotient followed by ordinary completion, using
-only the norm computed from the original seminorm.
+**Separated C*-seminorm completion.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. This is the uniform completion of
+the separation quotient of `B` for `p`, identifying elements at seminorm distance zero before
+completing.

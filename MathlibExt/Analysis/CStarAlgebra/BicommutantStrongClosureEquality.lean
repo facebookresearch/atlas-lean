@@ -40,7 +40,9 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Actual strong closure of the original unital star algebra is exactly its original double centralizer. -/
+/-- **Bicommutant theorem in strong topology.** Let `H` be a complete complex Hilbert space and `S` a
+unital complex star subalgebra of the bounded operators on `H`. The strong operator closure of `S`
+equals its bicommutant, where strong topology is uniform convergence on finite subsets of `H`. -/
 theorem strongClosure_eq_bicommutant (S : StarSubalgebra ℂ (H →L[ℂ] H)) :
     closure (Set.range fun a : S =>
       (ContinuousLinearMap.toUniformConvergenceCLM (RingHom.id ℂ) H

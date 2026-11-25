@@ -1,5 +1,5 @@
 # Representation Coefficient
 
-- [Representation Coefficient](representation-coefficient.md)
-- [Norm representation Coefficient le](norm-representation-coefficient-le.md)
-- [Representation Coefficient unitary Intertwiner](representation-coefficient-unitary-inter.md)
+- [Coefficient functional of a C*-representation](representation-coefficient.md)
+- [Norm of a representation coefficient](norm-representation-coefficient-le.md)
+- [Coefficients under a unitary intertwiner](representation-coefficient-unitary-inter.md)

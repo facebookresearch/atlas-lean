@@ -1,3 +1,4 @@
-# Is Self Adjoint op iff
+# Self-adjointness in an opposite type
 
-Self-adjointness is unchanged on passing to the opposite star ring.
+For a type `B` with a star operation and `a ∈ B`, `op(a)`
+is self-adjoint exactly when `a` is self-adjoint.

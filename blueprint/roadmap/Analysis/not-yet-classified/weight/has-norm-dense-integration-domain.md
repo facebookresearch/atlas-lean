@@ -1,3 +1,5 @@
-# Has Norm Dense Integration Domain
+# Norm density of a finite integration domain
 
-Norm density of the actual finite integration span, recorded separately.
+Let `A` be a nonunital complex C*-algebra with its
+canonical spectral order. A weight has this property when the complex-linear span of its finite
+positive elements is norm-dense in `A`.

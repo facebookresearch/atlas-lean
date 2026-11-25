@@ -43,16 +43,17 @@ namespace SeparationQuotient
 
 universe uA
 
-/-- The isometric source involution on the actual separation quotient.
-The quotient's ring and additive operations remain the stock operations. -/
+/-- **Involution on a unital separation quotient.** The involution of a unital seminormed ring `A`, when
+isometric, descends to a ring involution on its separation quotient. -/
 @[instance_reducible]
 def cstarStarRing
     (A : Type uA) [SeminormedRing A] [StarRing A] [NormedStarGroup A] :
     StarRing (SeparationQuotient A) :=
   nonUnitalCstarStarRing A
 
-/-- The quotient involution preserves the original involution on every
-canonical source representative. -/
+/-- **Classes of the separated involution.** For a unital seminormed ring `A` with isometric ring
+involution and every `a ∈ A`, the separation class of `a*` is the involution of the separation class
+of `a`. -/
 @[simp]
 theorem mk_cstarStar
     (A : Type uA) [SeminormedRing A] [StarRing A] [NormedStarGroup A] (a : A) :
@@ -61,8 +62,9 @@ theorem mk_cstarStar
   let _ : StarRing (SeparationQuotient A) := cstarStarRing A
   exact mk_nonUnitalCstarStar A a
 
-/-- Scalar conjugation descends with the same canonical quotient scalar
-operations. -/
+/-- **Complex scalars and the separated involution.** For a unital seminormed complex algebra `A` with
+scalar-compatible isometric ring involution, the separation quotient satisfies `(c x)* =
+conjugate(c) x*`. -/
 theorem cstarStarModule
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
     [StarRing A] [NormedStarGroup A] [StarModule ℂ A] :
@@ -71,8 +73,9 @@ theorem cstarStarModule
   let _ : StarRing (SeparationQuotient A) := cstarStarRing A
   exact nonUnitalCstarStarModule A
 
-/-- A proved C-star norm inequality on the original seminorm descends to
-the normed separation quotient. The source itself need not be normed. -/
+/-- **C*-identity on a unital separation quotient.** For a unital seminormed ring `A` with isometric
+ring involution and `‖a‖² ≤ ‖a* a‖` for all `a`, the separation quotient satisfies the C*-identity
+in its norm. -/
 theorem cstarRing
     (A : Type uA) [SeminormedRing A] [StarRing A] [NormedStarGroup A]
     (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) :
@@ -81,9 +84,9 @@ theorem cstarRing
   let _ : StarRing (SeparationQuotient A) := cstarStarRing A
   exact nonUnitalCstarRing A hCStar
 
-/-- The original algebra map into its actual separation quotient,
-with the descended involution. Its norm is exactly the original seminorm
-by `SeparationQuotient.norm_mk`. -/
+/-- **Star homomorphism onto a separation quotient.** For a unital seminormed complex algebra `A` with
+isometric ring involution, the separation projection is a unital complex star homomorphism to the
+induced star-algebra quotient. -/
 def mkCStarAlgHom
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
     [StarRing A] [NormedStarGroup A] :
@@ -99,7 +102,9 @@ def mkCStarAlgHom
       commutes' := mk_algebraMap
       map_star' := fun a => (mk_cstarStar A a).symm }
 
-/-- The quotient star-algebra homomorphism is the literal separation map. -/
+/-- **Value of the separation star homomorphism.** For a unital seminormed complex algebra `A` with
+isometric ring involution, the canonical star homomorphism sends `a` to its separation-quotient
+class. -/
 @[simp]
 theorem mkCStarAlgHom_apply
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]

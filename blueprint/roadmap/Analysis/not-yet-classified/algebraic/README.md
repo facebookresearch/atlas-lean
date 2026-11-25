@@ -41,6 +41,7 @@
 - [Radical Model Map norm](radical-model-map-norm.md)
 - [Radical Model Isometry](radical-model-isometry.md)
 - [Radical Model Isometry apply](radical-model-isometry-apply.md)
+- [Murray-von Neumann equivalence from opposite factorizations](murray-von-neumann-equivalent-of-mul-eq.md)
 - [Algebraic](murray-von-neumann-equivalent-of-mul-eq.md)
 - [Algebraic](algebraic.md)
 - [To DFinsupp](to-dfinsupp.md)

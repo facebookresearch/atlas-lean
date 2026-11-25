@@ -1,3 +1,5 @@
-# From Choi Matrix single
+# Choi reconstruction on matrix units
 
-Application to a matrix unit.
+For finite decidable `n`, any `m`, a complex matrix `J`
+indexed by `n × m`, indices `i,j ∈ n`, and `c ∈ ℂ`, reconstruction sends `c Eᵢⱼ` to the matrix with
+`(a,b)` entry `c J((i,a),(j,b))`.

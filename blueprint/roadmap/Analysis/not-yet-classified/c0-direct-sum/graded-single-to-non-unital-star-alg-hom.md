@@ -1,3 +1,7 @@
-# Graded Single to Non Unital Star Alg Hom
+# Underlying map of a graded coordinate inclusion
 
-The underlying graded inclusion is the actual ungraded single map.
+Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. Assume that equality in `I` is decidable.
+Forgetting equivariance gives the single-coordinate nonunital star homomorphism from `Aᵢ` to the c₀
+sum.

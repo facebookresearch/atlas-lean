@@ -1,4 +1,6 @@
-# Exists kraus choi Rank linear Independent
+# Independent minimal Kraus family
 
-Every completely positive map `φ` admits a Kraus representation indexed by
-`Fin (choiRank φ)` whose vectorized operators are linearly independent.
+For finite decidable `n,m`, every completely positive map `φ :
+Matrix n n ℂ →CP Matrix m m ℂ` has a representation `φ = kraus K` indexed by `Fin (choiRank φ)`
+whose vectorized matrices are complex-linearly independent. Rank zero and empty matrix index types
+are included.

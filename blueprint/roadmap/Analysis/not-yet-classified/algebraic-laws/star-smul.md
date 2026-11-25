@@ -1,3 +1,7 @@
-# Star smul
+# Conjugate-linearity of graded tensor star
 
-The signed star conjugates the complex scalar on every raw tensor.
+Let `A,B` be graded nonunital complex C*-algebras. On
+their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every `c ∈ ℂ` and tensor `x`, `(c x)* =
+conjugate(c) x*`.

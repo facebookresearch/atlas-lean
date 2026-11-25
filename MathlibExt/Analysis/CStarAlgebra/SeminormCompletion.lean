@@ -41,7 +41,9 @@ universe u
 
 variable {B : Type u} [Ring B] [Algebra ℂ B] [StarRing B] [StarModule ℂ B]
 
-/-- The original scalar algebra with the norm computed from the actual seminorm. -/
+/-- **Complex algebra structure for a C*-seminorm.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. Equipping `B` with seminorm `p`
+gives a seminormed complex algebra with its original multiplication and scalar action. -/
 @[instance_reducible]
 def sourceNormedAlgebra (p : CStarSeminorm B) :
     let _ : SeminormedRing B := p.toRingSeminorm.toSeminormedRing
@@ -53,7 +55,9 @@ def sourceNormedAlgebra (p : CStarSeminorm B) :
         change p (c • x) ≤ ‖c‖ * p x
         exact (map_smul_eq_mul p c x).le }
 
-/-- The original involution is isometric for the computed source seminorm. -/
+/-- **Isometric involution for a C*-seminorm.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. The involution of `B` preserves
+distances for the seminorm induced by `p`. -/
 theorem sourceNormedStarGroup (p : CStarSeminorm B) :
     let _ : SeminormedRing B := p.toRingSeminorm.toSeminormedRing
     NormedStarGroup B := by
@@ -63,13 +67,17 @@ theorem sourceNormedStarGroup (p : CStarSeminorm B) :
         change p (star x) ≤ p x
         exact (p.map_star x).le }
 
-/-- The literal separation quotient followed by ordinary completion, using
-only the norm computed from the original seminorm. -/
+/-- **Separated C*-seminorm completion.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. This is the uniform completion of
+the separation quotient of `B` for `p`, identifying elements at seminorm distance zero before
+completing. -/
 abbrev Completion (p : CStarSeminorm B) : Type u :=
   let _ : SeminormedRing B := p.toRingSeminorm.toSeminormedRing
   UniformSpace.Completion (SeparationQuotient B)
 
-/-- The computed complete C-star dictionary on the same separated completion. -/
+/-- **C*-structure on a seminorm completion.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. The separated completion for `p`
+is a unital complex C*-algebra with the extended multiplication, scalar action, and involution. -/
 @[instance_reducible]
 def completionCStarAlgebra (p : CStarSeminorm B) : CStarAlgebra p.Completion := by
   let _ : SeminormedRing B := p.toRingSeminorm.toSeminormedRing
@@ -81,7 +89,9 @@ def completionCStarAlgebra (p : CStarSeminorm B) : CStarAlgebra p.Completion := 
     change p x * p x ≤ p (star x * x)
     simpa only [pow_two] using (p.map_star_mul_self x).ge)
 
-/-- The actual unital star-algebra homomorphism into the computed completion. -/
+/-- **Star homomorphism into a C*-seminorm completion.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. The canonical map from `B` to its
+separated completion is a unital complex star-algebra homomorphism. -/
 def toCompletion (p : CStarSeminorm B) :
     let _ : CStarAlgebra p.Completion := p.completionCStarAlgebra
     B →⋆ₐ[ℂ] p.Completion := by
@@ -97,7 +107,10 @@ def toCompletion (p : CStarSeminorm B) :
   change B →⋆ₐ[ℂ] UniformSpace.Completion (SeparationQuotient B)
   exact CStarAlgebra.separatedCompletionStarAlgHom B hCStar
 
-/-- The canonical map is the original separation map followed by dense coercion. -/
+/-- **Canonical map into a seminorm completion.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. For every `x ∈ B`, the canonical
+map is the separation-quotient class of `x` followed by the dense inclusion into the uniform
+completion. -/
 @[simp]
 theorem toCompletion_apply (p : CStarSeminorm B) (x : B) :
     let _ : SeminormedRing B := p.toRingSeminorm.toSeminormedRing
@@ -105,7 +118,9 @@ theorem toCompletion_apply (p : CStarSeminorm B) (x : B) :
     p.toCompletion x = ((SeparationQuotient.mk x : SeparationQuotient B) : p.Completion) :=
   rfl
 
-/-- The actual completed norm equals the original seminorm on every source element. -/
+/-- **Completion norm equals the source seminorm.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. For every `x ∈ B`, its canonical
+image in the separated completion has norm `p(x)`. -/
 theorem norm_toCompletion (p : CStarSeminorm B) (x : B) :
     let _ : CStarAlgebra p.Completion := p.completionCStarAlgebra
     ‖p.toCompletion x‖ = p x := by

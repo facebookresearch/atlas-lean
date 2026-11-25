@@ -1,7 +1,5 @@
-# Choi Rank
+# Choi rank
 
-The Choi rank of a completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ`.
-
-In the repository input × output convention
-`J(φ) ((i,a),(j,b)) = φ (Matrix.single i j 1) a b` indexed by `n × m`,
-`choiRank φ` is the rank of the Choi matrix `J(φ)`.
+For finite decidable index types `n` and `m` and a completely positive map `φ :
+Matrix n n ℂ →CP Matrix m m ℂ`, its Choi rank is the complex rank of `J(φ)`, with input-output index
+order `n × m`.

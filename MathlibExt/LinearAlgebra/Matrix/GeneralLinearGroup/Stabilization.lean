@@ -87,7 +87,7 @@ matrix on the right block, with zero cross terms. -/
 lemma coe_blockDiagonalRight (g : GL m R) :
     (↑(blockDiagonalRight n m R g) : Matrix (n ⊕ m) (n ⊕ m) R) =
       fromBlocks 1 0 0 (↑g : Matrix m m R) := by
-  change reindex (Equiv.sumComm m n) (Equiv.sumComm m n)
+  change Matrix.reindex (Equiv.sumComm m n) (Equiv.sumComm m n)
     (fromBlocks (↑g : Matrix m m R) 0 0 1) = _
   ext i j
   rcases i with i | i <;> rcases j with j | j <;> rfl
@@ -177,7 +177,7 @@ def stabilization (R : Type uR) [Semiring R] {n : ℕ} :
 @[simp]
 lemma coe_stabilization {n : ℕ} (g : GL (Fin n) R) :
     (↑(stabilization R (n := n) g) : Matrix (Fin (n + 1)) (Fin (n + 1)) R) =
-      reindex (finSumFinEquiv (m := n) (n := 1)) (finSumFinEquiv (m := n) (n := 1))
+      Matrix.reindex (finSumFinEquiv (m := n) (n := 1)) (finSumFinEquiv (m := n) (n := 1))
         (fromBlocks (↑g : Matrix (Fin n) (Fin n) R) 0 0 1) :=
   rfl
 

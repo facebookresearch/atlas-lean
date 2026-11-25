@@ -1,3 +1,5 @@
-# Quotient Nat
+# Natural projection to the quotient pair
 
-The natural map (A,A)→(A/J,A/J) is the literal quotient projection.
+A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The quotient projections
+give a natural pair morphism `(A,A) → (A/J,A/J)`.

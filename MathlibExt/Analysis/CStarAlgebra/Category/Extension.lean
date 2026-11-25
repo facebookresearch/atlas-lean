@@ -31,7 +31,10 @@ universe u
 
 open CategoryTheory
 
-/-- An actual normalized extension, with its actual ideal and quotient algebras. -/
+/-- **Category of normalized C*-extensions.** A normalized extension of nonunital complex C*-algebras
+has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. Objects are these extensions; morphisms are
+compatible homomorphisms on their endpoints and middle algebras. -/
 structure CStarExtensionCat : Type (u + 1) where
   /-- The quotient algebra of the normalized extension. -/
   quotient : NonUnitalCStarAlgCat.{u}
@@ -56,45 +59,69 @@ instance category : Category.{u} CStarExtensionCat.{u} where
     intro X Y Z W f g h
     exact CStarExtension.Hom.comp_assoc h g f
 
-/-- Bundle existing normalized extension data, without reselecting its middle. -/
+/-- **Normalized C*-extension as an object.** A normalized extension of nonunital complex C*-algebras
+has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. It determines an object of the extension
+category with the same endpoint and middle algebras and maps. -/
 def ofExtension {A B : Type u} [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     (E : CStarExtension.{u, u, u} A B) : CStarExtensionCat.{u} where
   quotient := NonUnitalCStarAlgCat.of A
   ideal := NonUnitalCStarAlgCat.of B
   extension := E
 
-/-- The literal middle algebra of a normalized extension. -/
+/-- **Middle algebra of a C*-extension.** A normalized extension of nonunital complex C*-algebras has an
+ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. The middle algebra is an object of the
+nonunital complex C*-algebra category. -/
 def middle (E : CStarExtensionCat.{u}) : NonUnitalCStarAlgCat.{u} :=
   NonUnitalCStarAlgCat.of E.extension.Middle
 
-/-- The ideal endpoint, including its actual induced maps. -/
+/-- **Ideal functor of C*-extensions.** A normalized extension of nonunital complex C*-algebras has an
+ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. Sending an extension to its ideal endpoint
+and a compatible extension morphism to its ideal map defines a functor to nonunital complex
+C*-algebras. -/
 def idealFunctor : CStarExtensionCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj E := E.ideal
   map f := f.idealMap
   map_id _E := rfl
   map_comp _f _g := rfl
 
-/-- The middle endpoint, including its actual induced maps. -/
+/-- **Middle-algebra functor of C*-extensions.** A normalized extension of nonunital complex C*-algebras
+has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. Sending an extension to its middle algebra
+and a compatible extension morphism to its middle map defines a functor to nonunital complex
+C*-algebras. -/
 def middleFunctor : CStarExtensionCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj E := middle E
   map f := f.middleMap
   map_id _E := rfl
   map_comp _f _g := rfl
 
-/-- The quotient endpoint, including its actual induced maps. -/
+/-- **Quotient functor of C*-extensions.** A normalized extension of nonunital complex C*-algebras has
+an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. Sending an extension to its quotient
+endpoint and a compatible extension morphism to its quotient map defines a functor to nonunital
+complex C*-algebras. -/
 def quotientFunctor : CStarExtensionCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj E := E.quotient
   map f := f.quotientMap
   map_id _E := rfl
   map_comp _f _g := rfl
 
-/-- The inclusions form a real natural transformation of endpoint functors. -/
+/-- **Natural ideal inclusion of C*-extensions.** A normalized extension of nonunital complex
+C*-algebras has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective
+inclusion and surjective quotient map forming a short exact sequence. The ideal inclusions form a
+natural transformation from the ideal functor to the middle-algebra functor. -/
 def inclusionNat : NatTrans idealFunctor.{u} middleFunctor.{u} where
   app E := E.extension.inclusion
   naturality {X Y} f :=
     (show CStarExtension.Hom X.extension Y.extension from f).inclusion_commutes.symm
 
-/-- The quotient maps form a real natural transformation of endpoint functors. -/
+/-- **Natural quotient projection of C*-extensions.** A normalized extension of nonunital complex
+C*-algebras has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective
+inclusion and surjective quotient map forming a short exact sequence. The quotient projections form
+a natural transformation from the middle-algebra functor to the quotient functor. -/
 def quotientNat : NatTrans middleFunctor.{u} quotientFunctor.{u} where
   app E := E.extension.quotient
   naturality {X Y} f :=
@@ -110,17 +137,26 @@ theorem quotientNat_apply (E : CStarExtensionCat.{u}) (a : middle E) :
     quotientNat.app E a = E.extension.quotient a := by
   rfl
 
-/-- Every object carries its derived injective inclusion. -/
+/-- **Injectivity of extension inclusion.** A normalized extension of nonunital complex C*-algebras has
+an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. For every extension object, its inclusion
+from the ideal endpoint into the middle algebra is injective. -/
 theorem inclusion_injective (E : CStarExtensionCat.{u}) :
     Function.Injective (inclusionNat.app E) :=
   E.extension.inclusion_injective
 
-/-- Every object carries its derived surjective quotient. -/
+/-- **Surjectivity of extension projection.** A normalized extension of nonunital complex C*-algebras
+has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. For every extension object, its projection
+from the middle algebra onto the quotient endpoint is surjective. -/
 theorem quotient_surjective (E : CStarExtensionCat.{u}) :
     Function.Surjective (quotientNat.app E) :=
   E.extension.quotient_surjective
 
-/-- Exactness is the actual normalized inclusion/quotient exactness. -/
+/-- **Exactness of a C*-extension.** A normalized extension of nonunital complex C*-algebras has an
+ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. For every extension object, the range of its
+ideal inclusion equals the kernel of its quotient projection. -/
 theorem exact (E : CStarExtensionCat.{u}) :
     Function.Exact (inclusionNat.app E) (quotientNat.app E) :=
   E.extension.exact

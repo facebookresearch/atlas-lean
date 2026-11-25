@@ -36,9 +36,13 @@ variable {E : Type uE} [SeminormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [SeminormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 variable {ι : Type uι} {κ : Type uκ}
 
-/-- Finite rank-one sums sandwich a bounded map with its literal coefficients.
-The families need not be orthonormal or bases; the coefficient is linear in
-the source image, not its conjugate. Empty and repeated families are allowed. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` and `F` be seminormed inner-product spaces
+over `𝕜`. Specify arbitrary vector families indexed by types `ι` and `κ`, finite index subsets,
+and a continuous linear map `T : E →L[𝕜] F`.
+
+Finite rank-one sums sandwich a bounded map with its coefficients. The families need not be
+orthonormal or bases; the coefficient is linear in the source image, not its conjugate. Empty
+and repeated families are allowed. -/
 theorem sum_rankOne_comp_sum_rankOne
     (u : ι → E) (v : κ → F) (T : E →L[𝕜] F)
     (s : Finset ι) (t : Finset κ) :
@@ -63,9 +67,13 @@ variable {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 variable {ι : Type uι} {κ : Type uκ}
 
-/-- The actual finite projections of two Hilbert bases expose the bounded
-map's coefficient matrix, with target row before source column. No separate
-ambient completeness or compactness assumption is needed. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` and `F` be normed inner-product spaces
+over `𝕜`. Specify finite coordinate subsets and the indicated vector families or Hilbert bases,
+and a continuous linear map `T : E →L[𝕜] F`.
+
+The finite projections of two Hilbert bases expose the bounded map's coefficient matrix, with
+target row before source column. No separate ambient completeness or compactness assumption is
+needed. -/
 theorem proj_comp_proj_eq_sum_rankOne
     (bE : HilbertBasis ι 𝕜 E) (bF : HilbertBasis κ 𝕜 F)
     (T : E →L[𝕜] F) (s : Finset ι) (t : Finset κ) :

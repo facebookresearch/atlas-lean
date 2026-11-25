@@ -1,7 +1,7 @@
 # Intertwiner
 
-- [Mul source projection eq](mul-source-projection-eq.md)
-- [Target projection mul eq](target-projection-mul-eq.md)
-- [Norm intertwiner le one](norm-intertwiner-le-one.md)
-- [Norm star mul self sub le](norm-star-mul-self-sub-le.md)
-- [Murray Von Neumann Equivalent of approximate intertwiner](murray-von-neumann-equivalent-of-approxi.md)
+- [Source support of a partial isometry](mul-source-projection-eq.md)
+- [Target support of a partial isometry](target-projection-mul-eq.md)
+- [Norm bound from the source projection](norm-intertwiner-le-one.md)
+- [Difference bound for adjoint products](norm-star-mul-self-sub-le.md)
+- [Projection equivalence from an approximate intertwiner](murray-von-neumann-equivalent-of-approxi.md)

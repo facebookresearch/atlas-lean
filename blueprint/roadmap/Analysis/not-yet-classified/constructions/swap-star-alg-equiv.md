@@ -1,3 +1,4 @@
-# Swap Star Alg Equiv
+# Swap automorphism of a C*-product
 
-Swap the two factors of a product as a star-algebra equivalence.
+**Swap automorphism of a C*-product.** Let `A` be a nonunital complex C*-algebra. The map `(a,b) ↦
+(b,a)` is an involutive complex star-algebra automorphism of `A × A`, with the product C*-norm.

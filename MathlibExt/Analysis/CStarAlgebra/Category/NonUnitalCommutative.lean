@@ -42,7 +42,8 @@ open scoped CStarAlgebra OnePoint
 
 universe u
 
-/-- The original commutative nonunital complex C-star fields. -/
+/-- **Category of commutative nonunital C*-algebras.** Its objects are commutative nonunital complex
+C*-algebras and its morphisms are nonunital complex star-algebra homomorphisms. -/
 structure NonUnitalCommCStarAlgCat : Type (u + 1) where
   /-- The original algebra carrier. -/
   carrier : Type u
@@ -55,10 +56,12 @@ namespace NonUnitalCommCStarAlgCat
 
 instance instCoeSort : CoeSort NonUnitalCommCStarAlgCat.{u} (Type u) := ⟨carrier⟩
 
-/-- Bundle the existing nonunital algebra without replacing its norm or scalar structure. -/
+/-- **Commutative nonunital C*-algebra as an object.** A commutative nonunital complex C*-algebra `A`
+gives an object with its given carrier, norm, involution, and complex algebra structure. -/
 abbrev of (A : Type u) [NonUnitalCommCStarAlgebra A] : NonUnitalCommCStarAlgCat.{u} := ⟨A⟩
 
-/-- Forget only commutativity into the existing canonical category, retaining the actual carrier and norm. -/
+/-- **Forgetting commutativity of a C*-algebra.** A commutative nonunital complex C*-algebra `A` gives
+an object of the category of nonunital complex C*-algebras with the same carrier and norm. -/
 def toNonUnitalCStarAlgCat (A : NonUnitalCommCStarAlgCat.{u}) : NonUnitalCStarAlgCat.{u} :=
   NonUnitalCStarAlgCat.of A
 
@@ -71,20 +74,24 @@ instance category : Category.{u} NonUnitalCommCStarAlgCat.{u} where
   comp_id := by intro A B f; exact (NonUnitalCStarAlgCat.category).comp_id f
   assoc := by intro A B C D f g h; exact (NonUnitalCStarAlgCat.category).assoc f g h
 
-/-- The commutative dictionary is extra object data; morphisms are the same canonical nonunital star maps. -/
+/-- **Forgetful functor for commutative C*-algebras.** Sending commutative nonunital complex C*-algebras
+to nonunital complex C*-algebras and retaining their nonunital star homomorphisms defines a functor. -/
 def forgetfulFunctor : NonUnitalCommCStarAlgCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj := toNonUnitalCStarAlgCat
   map f := f
   map_id _ := rfl
   map_comp _ _ := rfl
 
-/-- The canonical forgetful comparison is fully faithful with the exact identity on every Hom. -/
+/-- **Full faithfulness of forgetting commutativity.** The forgetful functor from commutative nonunital
+complex C*-algebras to nonunital complex C*-algebras is fully faithful: it leaves each homomorphism
+set unchanged. -/
 def fullyFaithfulForgetful : forgetfulFunctor.FullyFaithful where
   preimage f := f
   map_preimage _ := rfl
   preimage_map _ := rfl
 
-/-- Forgetting commutativity preserves the exact original algebra carrier. -/
+/-- **Carrier under forgetting commutativity.** For a commutative nonunital complex C*-algebra `A`, the
+underlying set remains `A` after passage to the nonunital C*-algebra category. -/
 theorem toNonUnitalCStarAlgCat_carrier (A : NonUnitalCommCStarAlgCat.{u}) :
     ↥(toNonUnitalCStarAlgCat A) = A := rfl
 
@@ -97,23 +104,34 @@ instance concreteCategory :
   id_apply _a := rfl
   comp_apply _f _g _a := rfl
 
-/-- The faithful comparison keeps the original actual nonunital star-map value. -/
+/-- **Values of the forgetful functor on morphisms.** For commutative nonunital complex C*-algebras
+`A,B`, a nonunital star homomorphism `f : A → B`, and `a ∈ A`, the forgotten morphism evaluates to
+`f(a)`. -/
 theorem forgetfulFunctor_map_apply {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) (a : A) :
     forgetfulFunctor.map f a = f a := rfl
 
-/-- The existing weak character carrier with its original locally compact Hausdorff topology. -/
+/-- **Locally compact character space.** For a commutative nonunital complex C*-algebra `A`, its nonzero
+complex characters form a locally compact Hausdorff space with the topology of pointwise
+convergence. -/
 def characterSpaceObject (A : NonUnitalCommCStarAlgCat.{u}) : LocallyCompactHausPartialCat.{u} := by
   let : LocallyCompactSpace (characterSpace ℂ A) := CharacterSpace.locallyCompactSpaceNonUnital
   exact LocallyCompactHausPartialCat.of (characterSpace ℂ A)
 
-/-- The actual source pointed morphism, whose continuity comes from the original C-star map law. -/
+/-- **Partial character-space map.** For a nonunital star homomorphism `f : A → B` between commutative
+nonunital complex C*-algebras, character precomposition extends to a continuous map from the
+one-point compactification of the character space of `B` to that of `A`. It sends the point at
+infinity to infinity and represents a morphism of locally compact Hausdorff spaces with partial
+maps. -/
 def characterSpaceMap {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) :
     characterSpaceObject B ⟶ characterSpaceObject A := by
   let ρ : A →⋆ₙₐ[ℂ] B := ConcreteCategory.hom f
   exact LocallyCompactHausPartialCat.ofPointedMap
     (WeakDual.pointedCharacterMap ρ.toNonUnitalAlgHom (map_continuous ρ))
 
-/-- The exact original contravariant pointed-character functor. -/
+/-- **Contravariant nonunital character-space functor.** The character-space assignment for commutative
+nonunital complex C*-algebras, with maps given by character precomposition on one-point
+compactifications, defines a contravariant functor to locally compact Hausdorff spaces with partial
+maps. -/
 def characterSpaceFunctor : NonUnitalCommCStarAlgCat.{u} ⥤ LocallyCompactHausPartialCat.{u}ᵒᵖ where
   obj A := op (characterSpaceObject A)
   map f := (characterSpaceMap f).op
@@ -132,16 +150,22 @@ def characterSpaceFunctor : NonUnitalCommCStarAlgCat.{u} ⥤ LocallyCompactHausP
       (WeakDual.onePointCharacterPrecomposition_comp ρ.toNonUnitalAlgHom σ.toNonUnitalAlgHom
         (map_continuous ρ) (map_continuous σ))
 
-/-- Bundling an existing algebra preserves its exact original carrier. -/
+/-- **Carrier of a commutative nonunital C*-object.** Bundling a commutative nonunital complex
+C*-algebra `A` as a categorical object leaves its underlying set equal to `A`. -/
 @[simp]
 theorem of_carrier (A : Type u) [NonUnitalCommCStarAlgebra A] : ↥(of A) = A := rfl
 
-/-- The character object has exactly the original weak character carrier, without a replacement model. -/
+/-- **Carrier of the nonunital character-space object.** For a commutative nonunital complex C*-algebra
+`A`, the underlying set of its locally compact character-space object is exactly its space of
+nonzero complex characters. -/
 @[simp]
 theorem characterSpaceObject_carrier (A : NonUnitalCommCStarAlgCat.{u}) :
     ↥(characterSpaceObject A) = characterSpace ℂ A := rfl
 
-/-- The actual pointed character map is the original one-point precomposition map. -/
+/-- **One-point character precomposition.** For a nonunital star homomorphism `f : A → B` between
+commutative nonunital complex C*-algebras, the extension of its partial character-space map to
+one-point compactifications is precisely character precomposition, including the zero character
+represented by infinity. -/
 theorem characterSpaceMap_precomposition {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) :
     LocallyCompactHausPartialCat.extension
       (X := characterSpaceObject B) (Y := characterSpaceObject A) (characterSpaceMap f) =
@@ -149,7 +173,10 @@ theorem characterSpaceMap_precomposition {A B : NonUnitalCommCStarAlgCat.{u}} (f
         (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B).toNonUnitalAlgHom
         (map_continuous (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B)) := rfl
 
-/-- Evaluation of the actual character map is literal precomposition with the original nonunital homomorphism. -/
+/-- **Evaluation of nonunital character precomposition.** For a nonunital star homomorphism `f : A → B`
+between commutative nonunital complex C*-algebras, a character or the point at infinity `p` of `B`,
+and `a ∈ A`, evaluating the induced character at `a` gives the evaluation of `p` at `f(a)`. Infinity
+represents the zero character. -/
 theorem characterSpaceMap_evaluation {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B)
     (p : OnePoint (characterSpace ℂ B)) (a : A) :
     (onePointCharacterSpaceHomeomorph (A := A)
@@ -170,7 +197,9 @@ theorem characterSpaceMap_evaluation {A B : NonUnitalCommCStarAlgCat.{u}} (f : A
     (map_continuous (ConcreteCategory.hom f : A →⋆ₙₐ[ℂ] B))
     (onePointCharacterSpaceHomeomorph (A := B) p) a
 
-/-- Every original nonunital morphism preserves the actual point at infinity. -/
+/-- **Character precomposition fixes infinity.** For a nonunital star homomorphism between commutative
+nonunital complex C*-algebras, its map between the one-point compactified character spaces sends
+infinity to infinity. -/
 theorem characterSpaceMap_infty {A B : NonUnitalCommCStarAlgCat.{u}} (f : A ⟶ B) :
     LocallyCompactHausPartialCat.extension
       (X := characterSpaceObject B) (Y := characterSpaceObject A) (characterSpaceMap f) ∞ = ∞ :=

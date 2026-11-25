@@ -39,7 +39,11 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Original double-commutant membership gives simultaneous norm-closed orbit membership on finite vectors. -/
+/-- **Simultaneous approximation of finitely many vectors.** Let `H` be a complete complex Hilbert space
+and `S` a unital complex star subalgebra of the bounded operators on `H`. If `T` belongs to the
+bicommutant of `S`, then for every `n ∈ ℕ` and family `ξ : Fin n → H`, the tuple `(Tξᵢ)ᵢ` belongs to
+the norm closure of `{(aξᵢ)ᵢ : a ∈ S}` in the Hilbert direct sum of `n` copies of `H`. The empty
+tuple is allowed. -/
 theorem bicommutant_finiteOrbit_mem_closure (n : ℕ)
     (S : StarSubalgebra ℂ (H →L[ℂ] H)) (T : H →L[ℂ] H)
     (hT : T ∈ Set.centralizer (Set.centralizer (S : Set (H →L[ℂ] H)))) (ξ : Fin n → H) :

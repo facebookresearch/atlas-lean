@@ -6,19 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 -- Author: @toskua
 module
 
 public import MathlibExt.LinearAlgebra.ExteriorPower.ContractionWedge
 
 /-!
-# Actual rank-one splitting on exterior powers
+# Rank-one splittings of exterior powers
 
-Subtracting a rank-one map from the identity induces an exterior-algebra
-map equal to identity minus exterior multiplication followed by contraction.
-This identity is proved on the original exterior algebra by its genuine
-generator induction. It gives the degreewise splitting used in the Koszul
-regular-sequence induction.
+The exterior-algebra map induced by the identity minus a rank-one operator
+is the identity minus exterior multiplication followed by contraction.
+Applied to the last summand of a product, this formula gives a degreewise
+splitting of its exterior powers.
 -/
 
 @[expose] public section

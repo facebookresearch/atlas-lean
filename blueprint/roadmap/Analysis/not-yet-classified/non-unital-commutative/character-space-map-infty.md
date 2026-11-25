@@ -1,3 +1,5 @@
-# Character Space Map infty
+# Character precomposition fixes infinity
 
-Every original nonunital morphism preserves the actual point at infinity.
+For a nonunital star homomorphism between commutative
+nonunital complex C*-algebras, its map between the one-point compactified character spaces sends
+infinity to infinity.

@@ -1,3 +1,5 @@
-# Character Space Object
+# Locally compact character space
 
-The existing weak character carrier with its original locally compact Hausdorff topology.
+For a commutative nonunital complex C*-algebra `A`, its nonzero
+complex characters form a locally compact Hausdorff space with the topology of pointwise
+convergence.

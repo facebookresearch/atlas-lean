@@ -52,7 +52,11 @@ private theorem rankOne_mem_compact_ideal (x y : H) :
       ContinuousLinearMap.toLinearMap_comp] using hcomp
   exact hrank.isCompactOperator
 
-/-- The actual compact ideal has zero left annihilator, including zero Hilbert space. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+The compact ideal has zero left annihilator, including zero Hilbert space. -/
 theorem _root_.compactEndomorphismClosedStarIdeal_isEssential :
     (compactEndomorphismClosedStarIdeal (H := H)).IsEssential := by
   intro T hT
@@ -170,8 +174,12 @@ private theorem exists_operator_with_actions_of_norm_one (e : H) (he : ‖e‖ =
       _ = (a : EndH) (T x) :=
         congrArg (fun y : H => (a : EndH) y) (hT x).symm
 
-/-- Every multiplier of the actual compact ideal is induced by a bounded operator.
-No unit vector, nontriviality or desired action law is a caller hypothesis. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+Every multiplier of the compact ideal is induced by a bounded operator. No unit vector,
+nontriviality or desired action law is a caller hypothesis. -/
 theorem multiplierExtensionUnital_compact_surjective :
     let J := compactEndomorphismClosedStarIdeal (H := H);
     let _ : NonUnitalCStarAlgebra J.carrier := J.carrierCStarAlgebra;
@@ -224,8 +232,12 @@ theorem multiplierExtensionUnital_compact_surjective :
         (a : EndH) * T at h
       exact h.trans (hright a).symm
 
-/-- The actual bounded-operator algebra is star-algebra equivalent to the
-multipliers of its actual compact ideal, on the existing universal map. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+The bounded-operator algebra is star-algebra equivalent to the multipliers of its compact ideal,
+on the existing universal map. -/
 noncomputable def compactMultiplierEquiv :
     let J := compactEndomorphismClosedStarIdeal (H := H);
     let _ : NonUnitalCStarAlgebra J.carrier := J.carrierCStarAlgebra;
@@ -240,7 +252,11 @@ noncomputable def compactMultiplierEquiv :
   exact multiplierExtension_injective J (StarAlgEquiv.refl ℂ K)
     (compactEndomorphismClosedStarIdeal_isEssential (H := H))
 
-/-- The forward equivalence is literally the existing multiplier extension. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+The forward equivalence is literally the existing multiplier extension. -/
 @[simp]
 theorem compactMultiplierEquiv_apply (T : H →L[ℂ] H) :
     let J := compactEndomorphismClosedStarIdeal (H := H);

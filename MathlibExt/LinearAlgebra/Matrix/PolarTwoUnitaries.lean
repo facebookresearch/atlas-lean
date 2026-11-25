@@ -144,8 +144,7 @@ private theorem contractionGram_eigenvalues_le_one {n : Type*} [Fintype n] [Deci
   have hOne : ‖(1 : Matrix n n ℂ)‖ ≤ 1 := by
     classical
     have hEq : (1 : Matrix n n ℂ) = diagonal (fun _ : n => (1 : ℂ)) := by
-      ext a b
-      simp [diagonal, one_apply]
+      exact Matrix.diagonal_one.symm
     rw [hEq, l2_opNorm_diagonal]
     have hPi : ‖(fun _ : n => (1 : ℂ))‖ ≤ 1 := by
       apply pi_norm_le_iff_of_nonneg (by norm_num : (0 : ℝ) ≤ 1) |>.mpr
@@ -359,15 +358,15 @@ private theorem contractionSupportBasis_isometry {n : Type*} [Fintype n] [Decida
   have hMul :
       ((contractionSupportBasis X)ᴴ * contractionSupportBasis X) s t =
         (Uᴴ * U) s.1 t.1 := by
-    simp only [contractionSupportBasis, conjTranspose_apply, mul_apply,
-      RCLike.star_def]
+    change (∑ i : n, star (U i s.1) * U i t.1) =
+      ∑ i : n, star (U i s.1) * U i t.1
     rfl
   have hUU_entry :
       (Uᴴ * U) s.1 t.1 = (1 : Matrix n n ℂ) s.1 t.1 := by
     rw [hUU]
   have hOne_n : (1 : Matrix n n ℂ) s.1 t.1 =
       if s.1 = t.1 then 1 else 0 := by
-    simp [one_apply]
+    exact Matrix.one_apply (α := ℂ) (i := s.1) (j := t.1)
   have hValNe : s ≠ t → s.1 ≠ t.1 := by
     intro hne heq
     have : s = t := Subtype.ext heq
@@ -386,7 +385,7 @@ private theorem contractionSupportBasis_isometry {n : Type*} [Fintype n] [Decida
     _ = if s.1 = t.1 then 1 else 0 := hOne_n
     _ = if s = t then 1 else 0 := hIfEq
     _ = (1 : Matrix (contractionSupport X) (contractionSupport X) ℂ) s t := by
-        simp [one_apply]
+        exact (Matrix.one_apply (α := ℂ) (i := s) (j := t)).symm
 
 private theorem contractionGram_mulVec_eigenvectorBasis {n : Type*} [Fintype n] [DecidableEq n]
     (X : Matrix n n ℂ) (j : n) :

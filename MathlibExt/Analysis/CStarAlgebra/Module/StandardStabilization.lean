@@ -56,6 +56,5 @@ noncomputable def standardStabilizationCStarAlgebra
   exact (CStarModule.AdjointableOperator.compactClosedStarIdeal
     (B := B) (E := H B)).carrierCStarAlgebra
 
-#print axioms standardStabilizationCStarAlgebra
 
 end CStarModule.Right

@@ -36,17 +36,29 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [NormedAddCommGroup X] [NormedSpace ℂ X] [SMul Bᵐᵒᵖ X]
 
-/-- A right C-star module is countably generated when the complex span of
-all right coefficient multiples of one sequence is dense. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a
+complete normed right inner-product module over B, with compatible complex normed-space
+structures.
+
+The module E is countably generated when some sequence in E has right coefficient multiples
+whose complex-linear span is dense in E.
+-/
 def IsCountablyGenerated
     [CStarModule Bᵐᵒᵖ E] [CompleteSpace E] : Prop :=
   ∃ g : ℕ → E,
     Dense (Submodule.span ℂ
       (Set.range fun p : ℕ × B ↦ g p.1 <• p.2) : Set E)
 
-/-- Characteristic data for the completed countable direct sum of copies of
-`E`: coordinate inclusions preserve the right action, are pairwise
-orthogonal, and have dense span. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and X be
+complete normed right inner-product modules over B, with compatible complex normed-space
+structures.
+
+A family of bounded complex-linear inclusions E → X describes the completed countable direct sum
+when the inclusions preserve the coefficient action and inner products, distinct coordinate
+images are orthogonal, and the complex span of all coordinate images is dense in X.
+-/
 def IsCountableDirectSumModel
     [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
     [CStarModule Bᵐᵒᵖ X] [CompleteSpace X]

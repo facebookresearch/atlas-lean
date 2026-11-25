@@ -1,3 +1,4 @@
 # One
 
-The bundled unit projection, without installing a global `One` instance.
+Let `A` carry multiplication with a two-sided identity and a multiplication-reversing star
+involution. Its identity is a star projection.

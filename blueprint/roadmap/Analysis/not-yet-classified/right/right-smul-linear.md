@@ -1,4 +1,4 @@
 # Right SMul Linear
 
-Right multiplication as a complex-bilinear map, without installing an
-ambient `SMul B E`.  This construction is available at the pre-Hilbert level.
+Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. Right multiplication defines a complex-bilinear map from E × B into E.

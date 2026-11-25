@@ -98,19 +98,6 @@ public theorem_wanted arithProgPoly_root_norm_le {m a d : ℕ} (hm : 2 ≤ m) (h
     (hz : aeval z (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) = 0) :
     ‖z‖ ≤ lam ∧ (‖z‖ = lam → z = -(lam : ℂ))
 
-/-- **Lower bound on a power of the auxiliary root.** Let $m \ge 2$, let $a$, $d$ be integers with
-$0 < d \le a$, and let $\lambda > 0$ be a real number with
-$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then
-$a + md < a \lambda^m$.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 2 (`integers-2026-A92-lem-2`). -/
-public theorem_wanted arithProgPoly_lam_pow_gt {m a d : ℕ} (hm : 2 ≤ m) (hd : 0 < d)
-    (hda : d ≤ a) (lam : ℝ) (hlam : 0 < lam)
-    (hG : (a : ℝ) * lam ^ (m + 2) + ((a : ℝ) - d) * lam ^ (m + 1) -
-      ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) :
-    (a : ℝ) + m * d < a * lam ^ m
-
 /-- **Strict upper bound on floors at powers of the auxiliary root.** Let $m \ge 2$, let $a$, $d$
 be natural numbers with $d > 0$ and $(m + 1)d < 2a$, and let $\lambda > 0$ be a real number with
 $a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then

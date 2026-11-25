@@ -1,4 +1,5 @@
-# Quotient CStar Algebra
+# C*-algebra quotient by a closed ideal
 
-Explicit quotient C-star structure, delegated to the canonical quotient
-API and deliberately not installed as an instance.
+**C*-algebra quotient by a closed ideal.** Let `A` be a nonunital complex C*-algebra and let `I ⊆ A`
+be a closed two-sided star ideal. The quotient `A/I` is a nonunital complex C*-algebra with the
+quotient norm and induced involution and complex algebra operations.

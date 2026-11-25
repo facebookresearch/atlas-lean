@@ -36,7 +36,10 @@ set_option relaxedAutoImplicit false
 
 noncomputable section
 
-/-- The stock orthogonal product, without a new carrier or norm. -/
+/-- For arbitrary types `H` and `K`, the orthogonal-sum type is the product `H × K` viewed through
+the ℓ² type synonym; with normed factors it has the Euclidean product norm.
+
+The orthogonal product, without a new carrier or norm. -/
 abbrev OrthogonalSum (H : Type*) (K : Type*) := WithLp 2 (H × K)
 
 namespace OrthogonalSum
@@ -50,7 +53,10 @@ variable (H : Type uH) (K : Type uK)
 variable [NormedAddCommGroup H] [NormedSpace 𝕜 H]
 variable [NormedAddCommGroup K] [NormedSpace 𝕜 K]
 
-/-- The literal isometric inclusion into the first orthogonal summand. -/
+/-- Let `𝕜` be a normed field and let `H` and `K` be normed `𝕜`-vector spaces. Their two-factor sum
+carries the Euclidean product norm.
+
+The isometric inclusion into the first orthogonal summand. -/
 def inl : H →ₗᵢ[𝕜] OrthogonalSum H K where
   toLinearMap :=
     (WithLp.linearEquiv 2 𝕜 (H × K)).symm.toLinearMap.comp
@@ -59,7 +65,10 @@ def inl : H →ₗᵢ[𝕜] OrthogonalSum H K where
     change ‖WithLp.toLp 2 (h, (0 : K))‖ = ‖h‖
     exact WithLp.norm_toLp_fst 2 H K h
 
-/-- The literal isometric inclusion into the second orthogonal summand. -/
+/-- Let `𝕜` be a normed field and let `H` and `K` be normed `𝕜`-vector spaces. Their two-factor sum
+carries the Euclidean product norm.
+
+The isometric inclusion into the second orthogonal summand. -/
 def inr : K →ₗᵢ[𝕜] OrthogonalSum H K where
   toLinearMap :=
     (WithLp.linearEquiv 2 𝕜 (H × K)).symm.toLinearMap.comp
@@ -94,7 +103,10 @@ theorem fst_inr (k : K) : (inr (𝕜 := 𝕜) H K k).fst = 0 :=
 theorem snd_inr (k : K) : (inr (𝕜 := 𝕜) H K k).snd = k :=
   rfl
 
-/-- Every vector is the sum of its two actual orthogonal coordinates. -/
+/-- Let `𝕜` be a normed field and let `H` and `K` be normed `𝕜`-vector spaces. Their two-factor sum
+carries the Euclidean product norm.
+
+Every vector is the sum of its two orthogonal coordinates. -/
 theorem inl_fst_add_inr_snd (x : OrthogonalSum H K) :
     inl (𝕜 := 𝕜) H K x.fst + inr (𝕜 := 𝕜) H K x.snd = x := by
   apply WithLp.ofLp_injective 2
@@ -112,7 +124,10 @@ variable [NormedAddCommGroup K₁] [NormedSpace 𝕜 K₁]
 variable [NormedAddCommGroup H₂] [NormedSpace 𝕜 H₂]
 variable [NormedAddCommGroup K₂] [NormedSpace 𝕜 K₂]
 
-/-- First-to-first operator block, continuously linear in the actual operator. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+First-to-first operator block, continuously linear in the operator. -/
 def block11 :
     (OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂) →L[𝕜] H₁ →L[𝕜] H₂ :=
   ((ContinuousLinearMap.compL 𝕜 H₁ (OrthogonalSum H₁ K₁) H₂).flip
@@ -120,7 +135,10 @@ def block11 :
     (ContinuousLinearMap.compL 𝕜 (OrthogonalSum H₁ K₁)
       (OrthogonalSum H₂ K₂) H₂ (WithLp.fstL 2 𝕜 H₂ K₂))
 
-/-- Second-to-first operator block, with its genuine rectangular type. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+Second-to-first operator block, with its rectangular type. -/
 def block12 :
     (OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂) →L[𝕜] K₁ →L[𝕜] H₂ :=
   ((ContinuousLinearMap.compL 𝕜 K₁ (OrthogonalSum H₁ K₁) H₂).flip
@@ -128,7 +146,10 @@ def block12 :
     (ContinuousLinearMap.compL 𝕜 (OrthogonalSum H₁ K₁)
       (OrthogonalSum H₂ K₂) H₂ (WithLp.fstL 2 𝕜 H₂ K₂))
 
-/-- First-to-second operator block, with its genuine rectangular type. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+First-to-second operator block, with its rectangular type. -/
 def block21 :
     (OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂) →L[𝕜] H₁ →L[𝕜] K₂ :=
   ((ContinuousLinearMap.compL 𝕜 H₁ (OrthogonalSum H₁ K₁) K₂).flip
@@ -136,7 +157,10 @@ def block21 :
     (ContinuousLinearMap.compL 𝕜 (OrthogonalSum H₁ K₁)
       (OrthogonalSum H₂ K₂) K₂ (WithLp.sndL 2 𝕜 H₂ K₂))
 
-/-- Second-to-second operator block, continuously linear in the actual operator. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+Second-to-second operator block, continuously linear in the operator. -/
 def block22 :
     (OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂) →L[𝕜] K₁ →L[𝕜] K₂ :=
   ((ContinuousLinearMap.compL 𝕜 K₁ (OrthogonalSum H₁ K₁) K₂).flip
@@ -192,7 +216,10 @@ theorem block22_apply (T : OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂
   rw [block22_eq]
   rfl
 
-/-- Reconstruction of the first coordinate uses the actual two blocks. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+Reconstruction of the first coordinate uses the two blocks. -/
 theorem fst_apply_eq (T : OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂)
     (x : OrthogonalSum H₁ K₁) :
     (T x).fst = block11 T x.fst + block12 T x.snd := by
@@ -202,7 +229,10 @@ theorem fst_apply_eq (T : OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ 
         inr (𝕜 := 𝕜) H₁ K₁ x.snd)).fst := congrArg (fun y => (T y).fst) hx.symm
     _ = _ := by rw [map_add, WithLp.add_fst, block11_apply, block12_apply]
 
-/-- Reconstruction of the second coordinate uses the actual two blocks. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+Reconstruction of the second coordinate uses the two blocks. -/
 theorem snd_apply_eq (T : OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂)
     (x : OrthogonalSum H₁ K₁) :
     (T x).snd = block21 T x.fst + block22 T x.snd := by
@@ -212,7 +242,10 @@ theorem snd_apply_eq (T : OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ 
         inr (𝕜 := 𝕜) H₁ K₁ x.snd)).snd := congrArg (fun y => (T y).snd) hx.symm
     _ = _ := by rw [map_add, WithLp.add_snd, block21_apply, block22_apply]
 
-/-- The literal diagonal action on the stock orthogonal products. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+The diagonal action on the orthogonal products. -/
 def blockDiagonal (S : H₁ →L[𝕜] H₂) (T : K₁ →L[𝕜] K₂) :
     OrthogonalSum H₁ K₁ →L[𝕜] OrthogonalSum H₂ K₂ :=
   (WithLp.prodContinuousLinearEquiv 2 𝕜 H₂ K₂).symm.toContinuousLinearMap.comp
@@ -389,7 +422,10 @@ theorem inner_inl_inr (h : H) (k : K) :
 
 variable [CompleteSpace H] [CompleteSpace K]
 
-/-- The adjoint of the first isometric inclusion is the actual first coordinate. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+The adjoint of the first isometric inclusion is the first coordinate. -/
 @[simp]
 theorem adjoint_inl :
     ContinuousLinearMap.adjoint (inl (𝕜 := 𝕜) H K).toContinuousLinearMap =
@@ -399,7 +435,10 @@ theorem adjoint_inl :
   intro x h
   exact (inner_inl_right (𝕜 := 𝕜) H K x h).symm
 
-/-- The adjoint of the second isometric inclusion is the actual second coordinate. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+The adjoint of the second isometric inclusion is the second coordinate. -/
 @[simp]
 theorem adjoint_inr :
     ContinuousLinearMap.adjoint (inr (𝕜 := 𝕜) H K).toContinuousLinearMap =
@@ -478,7 +517,10 @@ variable {H : Type uH} {K : Type uK}
 variable [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 variable [NormedAddCommGroup K] [InnerProductSpace 𝕜 K] [CompleteSpace K]
 
-/-- The genuine unital star-algebra map taking two operators to their orthogonal diagonal. -/
+/-- Let `𝕜` be a nontrivially normed field and let `H₁`, `K₁`, `H₂` and `K₂` be normed `𝕜`-vector
+spaces. The source and target two-factor sums carry the Euclidean product norms.
+
+The unital star-algebra map taking two operators to their orthogonal diagonal. -/
 def blockDiagonalStarAlgHom :
     ((H →L[𝕜] H) × (K →L[𝕜] K)) →⋆ₐ[𝕜]
       (OrthogonalSum H K →L[𝕜] OrthogonalSum H K) where

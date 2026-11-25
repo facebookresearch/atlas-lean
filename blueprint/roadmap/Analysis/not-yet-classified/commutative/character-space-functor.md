@@ -1,3 +1,5 @@
-# Character Space Functor
+# Contravariant character-space functor
 
-The actual contravariant pointwise-character functor on the original unital maps.
+The assignment of a commutative unital complex C*-algebra
+to its compact Hausdorff character space and of a unital star homomorphism to character
+precomposition is a contravariant functor.

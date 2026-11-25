@@ -44,7 +44,9 @@ open scoped CStarAlgebra
 
 universe uA uB uC
 
-/-- An explicit point-norm continuous `ZMod 2`-grading. -/
+/-- **Grading of a nonunital C*-algebra.** For a nonunital complex C*-algebra `A`, a grading is a
+point-norm continuous action of `ℤ/2ℤ` by complex star-algebra automorphisms. Its degree-one
+automorphism is involutive, with even and odd parts given by its positive and negative eigenspaces. -/
 abbrev CStarGrading
     (A : Type uA) [NonUnitalCStarAlgebra A] :=
   PointNormCStarAddAction (ZMod 2) A
@@ -55,8 +57,9 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
   [NonUnitalCStarAlgebra C]
 
-/-- An equivariant nonunital star-algebra homomorphism between two explicit
-C-star gradings. -/
+/-- **Homomorphism of graded C*-algebras.** For nonunital complex C*-algebras `A,B` with point-norm
+continuous `ℤ/2ℤ` gradings `γ_A,γ_B`, a graded homomorphism is a nonunital complex star homomorphism
+`f : A → B` satisfying `f(γ_A(s)a) = γ_B(s)(f(a))` for every degree `s` and `a ∈ A`. -/
 abbrev Hom (γA : CStarGrading A) (γB : CStarGrading B) :=
   PointNormCStarAddAction.Hom γA γB
 
@@ -71,7 +74,10 @@ theorem equivariant (φ : Hom γA γB) (n : ZMod 2) (a : A) :
       PointNormCStarAddAction.aut γB n (φ a) :=
   PointNormCStarAddAction.Hom.equivariant φ n a
 
-/-- The identity grading homomorphism. -/
+/-- **Identity graded homomorphism.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The identity nonunital complex star homomorphism of `A` is
+equivariant for `γ`. -/
 def id (γ : CStarGrading A) : Hom γ γ :=
   PointNormCStarAddAction.Hom.id γ
 
@@ -79,7 +85,9 @@ def id (γ : CStarGrading A) : Hom γ γ :=
 theorem id_apply (γ : CStarGrading A) (a : A) : id γ a = a :=
   rfl
 
-/-- Composition of grading homomorphisms. -/
+/-- **Composition of graded homomorphisms.** For three graded nonunital complex C*-algebras `A,B,C`,
+equivariant nonunital star homomorphisms `φ : A → B` and `ψ : B → C` have the equivariant composite
+`ψ ∘ φ : A → C`. -/
 def comp (ψ : Hom γB γC) (φ : Hom γA γB) : Hom γA γC :=
   PointNormCStarAddAction.Hom.comp ψ φ
 
@@ -112,7 +120,9 @@ private theorem zmod_two_eq_zero_or_one (n : ZMod 2) : n = 0 ∨ n = 1 := by
 private theorem zmod_two_one_add_one : (1 : ZMod 2) + 1 = 0 := by
   decide
 
-/-- The automorphism at the nonzero element of `ZMod 2`. -/
+/-- **Degree-one grading automorphism.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The generator is the complex star-algebra automorphism `σ = γ(1)`. -/
 def generatorAut (γ : CStarGrading A) : A ≃⋆ₐ[ℂ] A :=
   PointNormCStarAddAction.aut γ 1
 
@@ -122,7 +132,10 @@ theorem generatorAut_apply (γ : CStarGrading A) (a : A) :
       γ (Multiplicative.ofAdd (1 : ZMod 2)) a :=
   rfl
 
-/-- The generating automorphism as a continuous linear map. -/
+/-- **Bounded linear grading generator.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The grading generator `σ` is a continuous complex-linear map `A →
+A`. -/
 def generatorCLM (γ : CStarGrading A) : A →L[ℂ] A :=
   LinearMap.mkContinuous
     { toFun := γ.generatorAut
@@ -138,7 +151,9 @@ theorem generatorCLM_apply (γ : CStarGrading A) (a : A) :
     γ.generatorCLM a = γ.generatorAut a :=
   rfl
 
-/-- The generator of a grading is involutive. -/
+/-- **The grading generator has order two.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. For every `a ∈ A`, `σ(σ(a)) = a`. -/
 theorem generator_involutive (γ : CStarGrading A) :
     Function.Involutive γ.generatorAut := by
   intro a
@@ -155,20 +170,30 @@ theorem generator_apply_generator (γ : CStarGrading A) (a : A) :
     γ.generatorAut (γ.generatorAut a) = a :=
   γ.generator_involutive a
 
-/-- The canonical even subalgebra, reusing the fixed-point construction. -/
+/-- **Even star subalgebra.** Let `A` be a nonunital complex C*-algebra and let `γ` be a point-norm
+continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for the
+automorphism of degree one. The even subalgebra is the fixed-point nonunital star subalgebra `{a ∈ A
+: σ(a) = a}`. -/
 abbrev evenSubalgebra (γ : CStarGrading A) :
     NonUnitalStarSubalgebra ℂ A :=
   PointNormCStarAction.fixedPointSubalgebra γ
 
-/-- The underlying complex submodule of the even subalgebra. -/
+/-- **Even complex-linear part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a point-norm
+continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for the
+automorphism of degree one. The even part is the complex-linear subspace `{a ∈ A : σ(a) = a}`. -/
 abbrev evenPart (γ : CStarGrading A) : Submodule ℂ A :=
   γ.evenSubalgebra.toNonUnitalSubalgebra.toSubmodule
 
-/-- The odd part, the negative eigenspace of the generating automorphism. -/
+/-- **Odd complex-linear part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a point-norm
+continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for the
+automorphism of degree one. The odd part is the negative eigenspace `{a ∈ A : σ(a) = -a}`. -/
 def oddPart (γ : CStarGrading A) : Submodule ℂ A :=
   LinearMap.ker (γ.generatorCLM.toLinearMap + LinearMap.id)
 
-/-- The degree-indexed family of homogeneous parts. -/
+/-- **Degree-indexed homogeneous parts.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The homogeneous part of degree zero is the even part, and that of
+degree one is the odd part. -/
 def part (γ : CStarGrading A) : ZMod 2 → Submodule ℂ A :=
   fun n => if n = 0 then γ.evenPart else γ.oddPart
 
@@ -180,7 +205,10 @@ theorem part_zero (γ : CStarGrading A) : γ.part 0 = γ.evenPart := by
 theorem part_one (γ : CStarGrading A) : γ.part 1 = γ.oddPart := by
   simp [part]
 
-/-- Being fixed by the generator is equivalent to being fixed by the action. -/
+/-- **Membership in the even part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. For every `a ∈ A`, membership in the even part is equivalent to
+`σ(a) = a`. -/
 theorem mem_evenPart_iff_generator (γ : CStarGrading A) (a : A) :
     a ∈ γ.evenPart ↔ γ.generatorAut a = a := by
   change (∀ g : Multiplicative (ZMod 2), γ g a = a) ↔ _
@@ -198,14 +226,17 @@ theorem mem_evenPart_iff_generator (γ : CStarGrading A) (a : A) :
       subst n
       exact h
 
-/-- Characteristic equation for the odd part. -/
+/-- **Membership in the odd part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. For every `a ∈ A`, membership in the odd part is equivalent to `σ(a)
+= -a`. -/
 theorem mem_oddPart_iff_generator (γ : CStarGrading A) (a : A) :
     a ∈ γ.oddPart ↔ γ.generatorAut a = -a := by
   change γ.generatorCLM a + a = 0 ↔ γ.generatorAut a = -a
   rw [generatorCLM_apply]
   exact add_eq_zero_iff_eq_neg
 
-/-- The sign attached to a degree. -/
+/-- **Sign of a parity degree.** For `n ∈ ℤ/2ℤ`, the complex sign is `1` when `n=0` and `-1` when `n=1`. -/
 def degreeSign (n : ZMod 2) : ℂ :=
   ((((-1 : ℤˣ) ^ n : ℤˣ) : ℤ) : ℂ)
 
@@ -250,15 +281,24 @@ theorem star_degreeSign (n : ZMod 2) : star (degreeSign n) = degreeSign n := by
   · rw [degreeSign_zero, star_one]
   · rw [degreeSign_one, star_neg, star_one]
 
-/-- A coefficient is homogeneous of degree `n`. -/
+/-- **Homogeneous element of a specified degree.** Let `A` be a nonunital complex C*-algebra and let `γ`
+be a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ`
+for the automorphism of degree one. An element `a ∈ A` is homogeneous of degree `n ∈ ℤ/2ℤ` when it
+belongs to the corresponding even or odd subspace. -/
 def IsHomogeneousOf (γ : CStarGrading A) (n : ZMod 2) (a : A) : Prop :=
   a ∈ γ.part n
 
-/-- A coefficient tagged with one of its homogeneous degrees. -/
+/-- **Degree-tagged homogeneous elements.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. An element of this type is a degree `n ∈ ℤ/2ℤ` together with an
+element of the homogeneous part of degree `n`. -/
 def Homogeneous (γ : CStarGrading A) :=
   Σ n : ZMod 2, γ.part n
 
-/-- The ambient coefficient of a tagged homogeneous element. -/
+/-- **Coefficient of a tagged homogeneous element.** Let `A` be a nonunital complex C*-algebra and let
+`γ` be a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write
+`σ` for the automorphism of degree one. For a tagged homogeneous element, this is its underlying
+element of `A`, with the degree tag forgotten. -/
 def Homogeneous.coe {γ : CStarGrading A} (x : γ.Homogeneous) : A :=
   x.2.1
 
@@ -311,16 +351,19 @@ theorem mul_mem_part (γ : CStarGrading A) {m n : ZMod 2} {a b : A}
   rw [map_mul, ha, hb, smul_mul_assoc, mul_smul_comm,
     ← mul_smul, ← degreeSign_add]
 
-/-- Multiplication is graded for the explicit family of parts.  This is a
-named value rather than a global instance, so two gradings on one algebra do
-not compete during typeclass search. -/
+/-- **Multiplication respects degree.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The product of elements of degrees `m,n` belongs to the homogeneous
+part of degree `m+n` in `ℤ/2ℤ`. -/
 theorem gradedMul (γ : CStarGrading A) : SetLike.GradedMul γ.part where
   mul_mem := by
     intro i j a b ha hb
     exact γ.mul_mem_part ha hb
 
-/-- The multiplication-as-scalar-action grading associated to
-`gradedMul`, again exposed as a named value. -/
+/-- **Multiplication action respects degree.** Let `A` be a nonunital complex C*-algebra and let `γ` be
+a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. Regarding multiplication as an action of `A` on itself, an element
+of degree `m` sends the part of degree `n` into the part of degree `m+n`. -/
 theorem gradedSMul (γ : CStarGrading A) : SetLike.GradedSMul γ.part γ.part := by
   constructor
   intro i j a b ha hb
@@ -365,11 +408,17 @@ theorem degree_eq_of_mem_mem (γ : CStarGrading A)
 
 /-! ## Canonical projections and decomposition -/
 
-/-- Projection onto the even part. -/
+/-- **Projection onto the even part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The continuous complex-linear projection onto the even part is `a ↦
+(a + σ(a))/2`. -/
 def evenProjection (γ : CStarGrading A) : A →L[ℂ] A :=
   (2 : ℂ)⁻¹ • (ContinuousLinearMap.id ℂ A + γ.generatorCLM)
 
-/-- Projection onto the odd part. -/
+/-- **Projection onto the odd part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The continuous complex-linear projection onto the odd part is `a ↦
+(a - σ(a))/2`. -/
 def oddProjection (γ : CStarGrading A) : A →L[ℂ] A :=
   (2 : ℂ)⁻¹ • (ContinuousLinearMap.id ℂ A - γ.generatorCLM)
 
@@ -509,7 +558,10 @@ theorem ker_oddProjection (γ : CStarGrading A) :
   · intro ha
     exact γ.oddProjection_eq_zero_of_mem_even ha
 
-/-- The canonical topological direct-sum decomposition into even and odd parts. -/
+/-- **Topological even-odd decomposition.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The map `a ↦ ((a+σ(a))/2,(a-σ(a))/2)` is a continuous complex-linear
+equivalence from `A` to the product of its even and odd parts, with inverse addition. -/
 def decomposition (γ : CStarGrading A) :
     A ≃L[ℂ] γ.evenPart × γ.oddPart := by
   let forward : A →L[ℂ] γ.evenPart × γ.oddPart :=
@@ -561,7 +613,10 @@ theorem even_odd_isCompl (γ : CStarGrading A) :
       Submodule.add_mem_sup (γ.evenProjection_mem a) (γ.oddProjection_mem a)
     rwa [γ.evenProjection_add_oddProjection a] at hmem
 
-/-- The explicit parts form an internal direct sum. -/
+/-- **Internal direct sum of homogeneous parts.** Let `A` be a nonunital complex C*-algebra and let `γ`
+be a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ`
+for the automorphism of degree one. The even and odd parts form an internal complex-linear direct
+sum in `A`. -/
 theorem isInternal_part (γ : CStarGrading A) :
     DirectSum.IsInternal γ.part := by
   have huniv : (Set.univ : Set (ZMod 2)) = {0, 1} := by
@@ -570,8 +625,10 @@ theorem isInternal_part (γ : CStarGrading A) :
   exact (DirectSum.isInternal_submodule_iff_isCompl γ.part
     (show (0 : ZMod 2) ≠ 1 by decide) huniv).2 γ.even_odd_isCompl
 
-/-- The direct-sum decomposition associated to the explicit family.  It is a
-named value and is not installed as a global instance. -/
+/-- **Direct-sum decomposition of a graded algebra.** Let `A` be a nonunital complex C*-algebra and let
+`γ` be a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write
+`σ` for the automorphism of degree one. The two homogeneous parts give a complex-linear direct-sum
+decomposition of `A` indexed by `ℤ/2ℤ`. -/
 @[instance_reducible]
 noncomputable def directSumDecomposition (γ : CStarGrading A) :
     DirectSum.Decomposition γ.part :=
@@ -583,7 +640,10 @@ namespace Homogeneous
 
 variable {γ : CStarGrading A}
 
-/-- Product of tagged homogeneous elements. -/
+/-- **Product of tagged homogeneous elements.** Let `A` be a nonunital complex C*-algebra and let `γ` be
+a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. For tagged elements of degrees `m,n`, their product is the product
+in `A` tagged with degree `m+n`. -/
 def mul (x y : γ.Homogeneous) : γ.Homogeneous :=
   ⟨x.1 + y.1,
     ⟨(x : A) * (y : A), γ.mul_mem_part x.2.property y.2.property⟩⟩
@@ -597,7 +657,10 @@ theorem coe_mul (x y : γ.Homogeneous) :
     ((mul x y : γ.Homogeneous) : A) = (x : A) * (y : A) :=
   rfl
 
-/-- Star of a tagged homogeneous element. -/
+/-- **Involution of a tagged homogeneous element.** Let `A` be a nonunital complex C*-algebra and let
+`γ` be a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write
+`σ` for the automorphism of degree one. Taking the involution of a homogeneous element keeps its
+degree in `ℤ/2ℤ`. -/
 def star (x : γ.Homogeneous) : γ.Homogeneous :=
   ⟨x.1, ⟨Star.star (x : A), γ.star_mem_part x.2.property⟩⟩
 
@@ -614,7 +677,9 @@ end Homogeneous
 
 /-! ## Gradings from involutions -/
 
-/-- The grading generated by an involutive star-algebra automorphism. -/
+/-- **Grading generated by an involution.** For a nonunital complex C*-algebra `A` and a complex
+star-algebra automorphism `σ : A → A` satisfying `σ² = id`, the identity and `σ` define a point-norm
+continuous `ℤ/2ℤ` grading of `A`. -/
 def ofInvolution (σ : A ≃⋆ₐ[ℂ] A) (hσ : Function.Involutive σ) :
     CStarGrading A := by
   let involutionAut : ZMod 2 → A ≃⋆ₐ[ℂ] A :=
@@ -687,7 +752,9 @@ theorem ofInvolution_generator_roundTrip (γ : CStarGrading A) :
 
 /-! ## Equivariant equivalences -/
 
-/-- A star-algebra equivalence intertwining two explicit gradings. -/
+/-- **Equivalence of graded C*-algebras.** For nonunital complex C*-algebras `A,B` with gradings
+`γ_A,γ_B`, a graded equivalence is a complex star-algebra equivalence `e : A ≃ B` satisfying
+`e(γ_A(s)a) = γ_B(s)(e(a))` for every `s,a`. -/
 structure Equiv (γA : CStarGrading A) (γB : CStarGrading B)
     extends A ≃⋆ₐ[ℂ] B where
   equivariant' : ∀ (n : ZMod 2) a,
@@ -737,7 +804,10 @@ theorem ext {e f : Equiv γA γB} (h : ∀ a, e a = f a) : e = f := by
       subst f
       rfl
 
-/-- Identity grading equivalence. -/
+/-- **Identity grading equivalence.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The identity star-algebra equivalence of `A` intertwines `γ` with
+itself. -/
 def refl (γ : CStarGrading A) : Equiv γ γ where
   toStarAlgEquiv := StarAlgEquiv.refl ℂ A
   equivariant' := fun _ _ => rfl
@@ -746,7 +816,9 @@ def refl (γ : CStarGrading A) : Equiv γ γ where
 theorem refl_apply (γ : CStarGrading A) (a : A) : refl γ a = a :=
   rfl
 
-/-- Inverse grading equivalence. -/
+/-- **Inverse grading equivalence.** Let `A,B` be nonunital complex C*-algebras with gradings `γ_A,γ_B`,
+and let `e : A ≃ B` be a complex star-algebra equivalence intertwining their `ℤ/2ℤ` actions. The
+inverse star-algebra equivalence `e⁻¹ : B ≃ A` intertwines the gradings in the opposite direction. -/
 def symm (e : Equiv γA γB) : Equiv γB γA where
   toStarAlgEquiv := e.toStarAlgEquiv.symm
   equivariant' := by
@@ -775,7 +847,9 @@ theorem apply_symm_apply (e : Equiv γA γB) (b : B) :
     e (CStarGrading.Equiv.symm e b) = b :=
   e.toStarAlgEquiv.right_inv b
 
-/-- Composition of grading equivalences. -/
+/-- **Composition of grading equivalences.** For graded nonunital complex C*-algebras `A,B,C`,
+grading-intertwining star-algebra equivalences `e : A ≃ B` and `f : B ≃ C` compose to a grading
+equivalence `f ∘ e : A ≃ C`. -/
 def trans (e : Equiv γA γB) (f : Equiv γB γC) : Equiv γA γC where
   toStarAlgEquiv := e.toStarAlgEquiv.trans f.toStarAlgEquiv
   equivariant' := by
@@ -806,7 +880,10 @@ theorem trans_assoc {D : Type*} [NonUnitalCStarAlgebra D]
   ext a
   rfl
 
-/-- The underlying equivariant homomorphism. -/
+/-- **Homomorphism underlying a grading equivalence.** Let `A,B` be nonunital complex C*-algebras with
+gradings `γ_A,γ_B`, and let `e : A ≃ B` be a complex star-algebra equivalence intertwining their
+`ℤ/2ℤ` actions. The nonunital complex star homomorphism underlying `e` is equivariant for the two
+gradings. -/
 def toHom (e : Equiv γA γB) : PointNormCStarAddAction.Hom γA γB where
   toNonUnitalStarAlgHom := e.toStarAlgEquiv.toNonUnitalStarAlgHom
   equivariant' := by
@@ -839,7 +916,10 @@ theorem mem_part_iff (e : Equiv γA γB) (n : ZMod 2) (a : A) :
   · intro ha
     exact e.mapsTo_part n ha
 
-/-- The underlying continuous linear equivalence. -/
+/-- **Continuous linear equivalence of graded algebras.** Let `A,B` be nonunital complex C*-algebras
+with gradings `γ_A,γ_B`, and let `e : A ≃ B` be a complex star-algebra equivalence intertwining
+their `ℤ/2ℤ` actions. The underlying complex-linear equivalence `A ≃ B` is continuous in both
+directions for their C*-norms. -/
 def toContinuousLinearEquiv (e : Equiv γA γB) : A ≃L[ℂ] B where
   toFun := e
   invFun := CStarGrading.Equiv.symm e
@@ -855,7 +935,10 @@ theorem toContinuousLinearEquiv_apply (e : Equiv γA γB) (a : A) :
     e.toContinuousLinearEquiv a = e a :=
   rfl
 
-/-- Restriction of a grading equivalence to one homogeneous part. -/
+/-- **Equivalence of homogeneous parts.** Let `A,B` be nonunital complex C*-algebras with gradings
+`γ_A,γ_B`, and let `e : A ≃ B` be a complex star-algebra equivalence intertwining their `ℤ/2ℤ`
+actions. For any degree `n ∈ ℤ/2ℤ`, restriction of `e` gives a continuous complex-linear equivalence
+between the degree-`n` parts. -/
 def partEquiv (e : Equiv γA γB) (n : ZMod 2) :
     γA.part n ≃L[ℂ] γB.part n := by
   let forward : γA.part n →L[ℂ] γB.part n :=
@@ -887,7 +970,10 @@ theorem partEquiv_apply (e : Equiv γA γB) (n : ZMod 2)
   simp only [partEquiv, ContinuousLinearEquiv.equivOfInverse_apply]
   exact toContinuousLinearEquiv_apply e a
 
-/-- Restriction to the odd parts. -/
+/-- **Equivalence of the odd parts.** Let `A,B` be nonunital complex C*-algebras with gradings
+`γ_A,γ_B`, and let `e : A ≃ B` be a complex star-algebra equivalence intertwining their `ℤ/2ℤ`
+actions. Restriction of `e` gives a continuous complex-linear equivalence between the odd subspaces
+of the two algebras. -/
 abbrev oddEquiv (e : Equiv γA γB) : γA.oddPart ≃L[ℂ] γB.oddPart :=
   e.partEquiv 1
 
@@ -896,7 +982,10 @@ theorem oddEquiv_apply (e : Equiv γA γB) (a : γA.oddPart) :
     ((e.oddEquiv a : γB.oddPart) : B) = e a :=
   partEquiv_apply e 1 a
 
-/-- Transport a tagged homogeneous element without changing its degree. -/
+/-- **Transport of tagged homogeneous elements.** Let `A,B` be nonunital complex C*-algebras with
+gradings `γ_A,γ_B`, and let `e : A ≃ B` be a complex star-algebra equivalence intertwining their
+`ℤ/2ℤ` actions. Applying `e` to the underlying element transports a tagged homogeneous element of
+`A` to one of `B` with the same degree. -/
 def mapHomogeneous (e : Equiv γA γB) (x : γA.Homogeneous) :
     γB.Homogeneous :=
   ⟨x.1, ⟨e x, e.mapsTo_part x.1 x.2.property⟩⟩
@@ -928,7 +1017,10 @@ theorem mapHomogeneous_star (e : Equiv γA γB) (x : γA.Homogeneous) :
   change e (Star.star (x : A)) = Star.star (e x)
   exact map_star e.toStarAlgEquiv (x : A)
 
-/-- Restriction to the canonical fixed-point even subalgebras. -/
+/-- **Star equivalence of the even subalgebras.** Let `A,B` be nonunital complex C*-algebras with
+gradings `γ_A,γ_B`, and let `e : A ≃ B` be a complex star-algebra equivalence intertwining their
+`ℤ/2ℤ` actions. Restriction of `e` gives a complex star-algebra equivalence between the fixed-point
+even subalgebras. -/
 def evenEquiv (e : Equiv γA γB) :
     γA.evenSubalgebra ≃⋆ₐ[ℂ] γB.evenSubalgebra :=
   StarAlgEquiv.ofBijective e.toHom.fixedPointMap
@@ -957,7 +1049,9 @@ end Equiv
 
 /-! ## Transport by conjugation -/
 
-/-- Transport a grading along a star-algebra equivalence. -/
+/-- **Transport of a C*-grading.** Let `A,B` be nonunital complex C*-algebras, `e : A ≃ B` a complex
+star-algebra equivalence, and `γ_A` a grading of `A`. Conjugating each grading automorphism by `e`
+defines a grading on `B`: `γ_B(s) = e ∘ γ_A(s) ∘ e⁻¹`. -/
 def transport (e : A ≃⋆ₐ[ℂ] B) (γ : CStarGrading A) :
     CStarGrading B := by
   let conjugateGenerator : B ≃⋆ₐ[ℂ] B :=
@@ -1029,7 +1123,9 @@ theorem transport_symm (e : A ≃⋆ₐ[ℂ] B) (γ : CStarGrading A) :
   rw [he, transport_refl] at h
   exact h.symm
 
-/-- The canonical grading equivalence to a transported grading. -/
+/-- **Equivalence to a transported grading.** Let `A,B` be nonunital complex C*-algebras, `e : A ≃ B` a
+complex star-algebra equivalence, and `γ_A` a grading of `A`. The equivalence `e` intertwines the
+grading of `A` with its conjugate grading on `B`. -/
 def transportEquiv (e : A ≃⋆ₐ[ℂ] B) (γ : CStarGrading A) :
     Equiv γ (transport e γ) where
   toStarAlgEquiv := e
@@ -1082,8 +1178,9 @@ theorem Equiv.map_decomposition {γA : CStarGrading A}
 
 /-! ## Graded commutators -/
 
-/-- The graded commutator for two specified degrees, as a continuous bilinear
-map. -/
+/-- **Bilinear commutator for specified parities.** For a nonunital complex C*-algebra `A` and degrees
+`m,n ∈ ℤ/2ℤ`, the formula `(x,y) ↦ x y - (-1)^(m n) y x` is a continuous complex-bilinear map from
+`A × A` to `A`. -/
 def commutatorOfDegreesL (m n : ZMod 2) :
     A →L[ℂ] A →L[ℂ] A :=
   ContinuousLinearMap.mul ℂ A -
@@ -1108,7 +1205,10 @@ namespace Homogeneous
 
 variable {γ : CStarGrading A}
 
-/-- Graded commutator of tagged homogeneous elements. -/
+/-- **Graded commutator of homogeneous elements.** Let `A` be a nonunital complex C*-algebra and let `γ`
+be a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ`
+for the automorphism of degree one. For homogeneous `x,y` of degrees `m,n`, their graded commutator
+is `x y - (-1)^(m n) y x`, tagged with degree `m+n`. -/
 def commutator (x y : γ.Homogeneous) : γ.Homogeneous :=
   ⟨x.1 + y.1,
     ⟨commutatorOfDegreesL (A := A) x.1 y.1 (x : A) (y : A),
@@ -1128,7 +1228,10 @@ theorem coe_commutator (x y : γ.Homogeneous) :
 
 end Homogeneous
 
-/-- The projection to one explicitly selected homogeneous part. -/
+/-- **Projection to a homogeneous part.** Let `A` be a nonunital complex C*-algebra and let `γ` be a
+point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. For `n ∈ ℤ/2ℤ`, this is the continuous complex-linear even
+projection when `n=0` and odd projection when `n=1`. -/
 def partProjection (γ : CStarGrading A) (n : ZMod 2) : A →L[ℂ] A :=
   if n = 0 then γ.evenProjection else γ.oddProjection
 
@@ -1166,8 +1269,11 @@ theorem partProjection_eq_zero_of_mem_ne (γ : CStarGrading A)
     · exact γ.evenProjection_eq_zero_of_mem_odd ha
     · exact (hmn rfl).elim
 
-/-- The general graded commutator, extended bilinearly through the canonical
-even/odd projections. -/
+/-- **Continuous bilinear graded commutator.** Let `A` be a nonunital complex C*-algebra and let `γ` be
+a point-norm continuous action of `ℤ/2ℤ` on `A` by complex star-algebra automorphisms. Write `σ` for
+the automorphism of degree one. The formula `[x_m,y_n] = x_m y_n - (-1)^(m n) y_n x_m` for
+homogeneous elements extends continuously and complex-bilinearly to all of `A × A` through the even
+and odd projections. -/
 def commutatorL (γ : CStarGrading A) : A →L[ℂ] A →L[ℂ] A := by
   let projected (m n : ZMod 2) : A →L[ℂ] A →L[ℂ] A :=
     let L : A →L[ℂ] A →L[ℂ] A := commutatorOfDegreesL m n

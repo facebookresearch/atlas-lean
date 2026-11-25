@@ -1,3 +1,4 @@
-# Character apply star of nonunital
+# Characters preserve the involution
 
-Every raw complex algebra homomorphism on a nonunital C-star algebra preserves star.
+Let `A` be a nonunital complex C*-algebra. Every nonunital
+complex algebra homomorphism `φ : A → ℂ` satisfies `φ(a*) = conjugate(φ(a))` for every `a ∈ A`.

@@ -1,4 +1,4 @@
 # Approximation
 
-- [Has Finite Rank CPCApproximation](has-finite-rank-cpcapproximation.md)
-- [Has Finite Rank CPCApproximation iff](has-finite-rank-cpcapproximation-iff.md)
+- [Finite-rank completely positive approximation](has-finite-rank-cpcapproximation.md)
+- [Finite-test characterization of finite-rank CP approximation](has-finite-rank-cpcapproximation-iff.md)

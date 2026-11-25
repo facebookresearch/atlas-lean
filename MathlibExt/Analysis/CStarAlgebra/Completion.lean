@@ -88,9 +88,10 @@ private theorem completionMapStar_norm_mul_self_le
   simpa only [UniformSpace.Completion.norm_coe] using
     CStarRing.norm_mul_self_le a
 
-/-- The canonical C-star-algebra structure on the uniform completion of an
-incomplete unital complex C-star ring. Activate it locally with `let _ := ...`.
--/
+/-- **C*-algebra structure on a uniform completion.** Let `A` be a normed unital complex algebra with a
+ring involution compatible with complex scalar multiplication and satisfying the C*-identity `‖a* a‖
+= ‖a‖²`. Its uniform completion carries a unital complex C*-algebra structure extending the
+algebraic operations and norm of `A`; completeness of `A` is not required. -/
 @[instance_reducible]
 noncomputable def completionCStarAlgebra
     (A : Type uA) [NormedRing A] [NormedAlgebra ℂ A]
@@ -111,8 +112,9 @@ noncomputable def completionCStarAlgebra
   norm_mul_self_le x := by
     exact completionMapStar_norm_mul_self_le A x
 
-/-- The canonical completion star agrees with the original star on the dense
-coercion. -/
+/-- **Involution on the completion extends the original involution.** Let `A` be a normed unital complex
+algebra with scalar-compatible ring involution and the C*-identity. For its canonical map `ι` into
+the uniform C*-completion and every `x ∈ A`, `(ι(x))* = ι(x*)`. -/
 theorem completionCStarAlgebra_star_coe
     (A : Type uA) [NormedRing A] [NormedAlgebra ℂ A]
     [StarRing A] [StarModule ℂ A] [CStarRing A] (x : A) :

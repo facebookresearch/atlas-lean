@@ -1,3 +1,4 @@
-# Non Unital Comm CStar Alg Cat
+# Category of commutative nonunital C*-algebras
 
-The original commutative nonunital complex C-star fields.
+**Category of commutative nonunital C*-algebras.** Its objects are commutative nonunital complex
+C*-algebras and its morphisms are nonunital complex star-algebra homomorphisms.

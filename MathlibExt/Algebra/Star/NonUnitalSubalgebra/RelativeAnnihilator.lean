@@ -34,7 +34,11 @@ variable {R : Type uR} {A : Type uA}
 variable [CommSemiring R] [NonUnitalSemiring A] [Module R A]
 variable [IsScalarTower R A A] [SMulCommClass R A A] [StarRing A]
 
-/-- Elements which annihilate `D` on both sides modulo `I`. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital star semiring with an `R`-module
+structure compatible with multiplication on both sides. Let `I` and `D` be star-closed nonunital
+`R`-subalgebras, with `I` two-sided. The relative annihilator consists of `x` satisfying both `x*d ∈
+I` and `d*x ∈ I` for every `d ∈ D`.
+-/
 def annihilatorModulo
     (I D : NonUnitalStarSubalgebra R A)
     [I.toNonUnitalSubalgebra.IsTwoSided] :
@@ -87,9 +91,11 @@ def annihilatorModulo
       simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
         NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
 
-/-- Literal left/right-intersection membership. This useful characteristic is
-not a simp rule because the expanded multiplication formula is the simp normal
-form. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital star semiring with an `R`-module
+structure compatible with multiplication on both sides. Let `I` and `D` be star-closed nonunital
+`R`-subalgebras, with `I` two-sided. An element lies in the relative annihilator exactly when it
+lies in both the left and right relative annihilators of the underlying subalgebra.
+-/
 theorem mem_annihilatorModulo_iff_sides
     (I D : NonUnitalStarSubalgebra R A)
     [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
@@ -98,7 +104,11 @@ theorem mem_annihilatorModulo_iff_sides
         x ∈ I.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A) :=
   Iff.rfl
 
-/-- Fully expanded membership, chosen as the simp normal form. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital star semiring with an `R`-module
+structure compatible with multiplication on both sides. Let `I` and `D` be star-closed nonunital
+`R`-subalgebras, with `I` two-sided. Membership of `x` is equivalent to the two conditions `∀ d ∈ D,
+x*d ∈ I` and `∀ d ∈ D, d*x ∈ I`.
+-/
 @[simp]
 theorem mem_annihilatorModulo_iff
     (I D : NonUnitalStarSubalgebra R A)
@@ -107,8 +117,11 @@ theorem mem_annihilatorModulo_iff
       (∀ d ∈ D, x * d ∈ I) ∧ ∀ d ∈ D, d * x ∈ I :=
   Iff.rfl
 
-/-- Star exchanges left relative annihilation with right relative
-annihilation. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital star semiring with an `R`-module
+structure compatible with multiplication on both sides. Let `I` and `D` be star-closed nonunital
+`R`-subalgebras, with `I` two-sided. The element `star x` annihilates `D` on the right modulo `I`
+exactly when `x` annihilates it on the left.
+-/
 theorem star_mem_rightAnnihilatorModulo_iff
     (I D : NonUnitalStarSubalgebra R A)
     [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
@@ -136,8 +149,11 @@ theorem star_mem_rightAnnihilatorModulo_iff
     simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
       NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
 
-/-- Star exchanges right relative annihilation with left relative
-annihilation. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital star semiring with an `R`-module
+structure compatible with multiplication on both sides. Let `I` and `D` be star-closed nonunital
+`R`-subalgebras, with `I` two-sided. The element `star x` annihilates `D` on the left modulo `I`
+exactly when `x` annihilates it on the right.
+-/
 theorem star_mem_leftAnnihilatorModulo_iff
     (I D : NonUnitalStarSubalgebra R A)
     [I.toNonUnitalSubalgebra.IsTwoSided] (x : A) :
@@ -165,7 +181,11 @@ theorem star_mem_leftAnnihilatorModulo_iff
     simpa only [star_mul, star_star, NonUnitalStarSubalgebra.mem_carrier,
       NonUnitalStarSubalgebra.mem_toNonUnitalSubalgebra] using hs
 
-/-- The two-sided modulus is contained in its relative annihilator. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital star semiring with an `R`-module
+structure compatible with multiplication on both sides. Let `I` and `D` be star-closed nonunital
+`R`-subalgebras, with `I` two-sided. Every element of the two-sided subalgebra `I` lies in its
+relative annihilator of `D`.
+-/
 theorem le_annihilatorModulo
     (I D : NonUnitalStarSubalgebra R A)
     [I.toNonUnitalSubalgebra.IsTwoSided] :

@@ -196,15 +196,5 @@ theorem constantHom_injective
   apply (constantHom_eq_zero_iff A (a - b)).1
   rw [map_sub, hab, sub_self]
 
-#print axioms map
-#print axioms map_quotientMap
-#print axioms map_comp_quotientMap
-#print axioms map_id
-#print axioms map_zero
-#print axioms map_comp
-#print axioms constantHom
-#print axioms map_comp_constantHom
-#print axioms constantHom_eq_zero_iff
-#print axioms constantHom_injective
 
 end AsymptoticAlgebra

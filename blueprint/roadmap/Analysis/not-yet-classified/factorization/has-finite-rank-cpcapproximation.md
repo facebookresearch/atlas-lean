@@ -1,5 +1,6 @@
-# Has Finite Rank CPCApproximation
+# Matrix approximation implies finite-rank CP approximation
 
-Actual matrix factorizations supply literal finite-rank CPC witnesses.
-This is only the elementary forward implication, not nuclearity or an
-analytic reverse-factorization/unital-normalization theorem.
+For nonunital complex C*-algebras
+`A,B`, if `f : A → B` is approximable on every finite set through finite complex matrix algebras by
+completely positive contractions, then it is approximable on every finite set by finite-rank
+completely positive contractions.

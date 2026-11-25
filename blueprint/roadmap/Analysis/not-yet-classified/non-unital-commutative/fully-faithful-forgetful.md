@@ -1,3 +1,5 @@
-# Fully Faithful Forgetful
+# Full faithfulness of forgetting commutativity
 
-The canonical forgetful comparison is fully faithful with the exact identity on every Hom.
+The forgetful functor from commutative nonunital
+complex C*-algebras to nonunital complex C*-algebras is fully faithful: it leaves each homomorphism
+set unchanged.

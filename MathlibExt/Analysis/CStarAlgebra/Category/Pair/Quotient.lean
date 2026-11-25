@@ -32,13 +32,17 @@ open CategoryTheory
 
 namespace CStarPairCat
 
-/-- The actual ambient closed-ideal quotient. -/
+/-- **Quotient of a C*-ideal pair.** A C*-ideal pair `(A,J)` consists of a nonunital complex C*-algebra
+`A` and a distinguished closed two-sided star ideal `J ⊆ A`. Its quotient `A/J`, with the quotient
+C*-norm, is a nonunital complex C*-algebra. -/
 def quotientObject (P : CStarPairCat.{u}) : NonUnitalCStarAlgCat.{u} := by
   letI : P.ideal.carrier.IsTwoSided := P.ideal.isTwoSided
   letI : NonUnitalCStarAlgebra P.ideal.Quotient := P.ideal.quotientCStarAlgebra
   exact NonUnitalCStarAlgCat.of P.ideal.Quotient
 
-/-- The induced map on real closed-ideal quotients. -/
+/-- **Induced homomorphism of pair quotients.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. A morphism `f : (A,J) →
+(B,K)` induces the nonunital star homomorphism `A/J → B/K` given by `[a] ↦ [f(a)]`. -/
 def quotientMap {P Q : CStarPairCat.{u}} (f : P ⟶ Q) :
     quotientObject P ⟶ quotientObject Q := by
   letI : P.ideal.carrier.IsTwoSided := P.ideal.isTwoSided
@@ -58,7 +62,10 @@ theorem quotientMap_apply {P Q : CStarPairCat.{u}} (f : P ⟶ Q)
   exact NonUnitalStarSubalgebra.Quotient.map_mk
     P.ideal.carrier Q.ideal.carrier f.hom f.ideal_mem a
 
-/-- Send a pair to its canonical quotient and a morphism to the induced map. -/
+/-- **Quotient functor for C*-ideal pairs.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The assignment `(A,J) ↦
+A/J`, with the homomorphisms induced by ideal-preserving maps, defines a functor to nonunital
+complex C*-algebras. -/
 def quotientFunctor : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj := quotientObject
   map := quotientMap
@@ -114,7 +121,9 @@ def quotientFunctor : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
     rw [hfg, hf, hg]
     rfl
 
-/-- The natural map (A,A)→(A/J,A/J) is the literal quotient projection. -/
+/-- **Natural projection to the quotient pair.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The quotient projections
+give a natural pair morphism `(A,A) → (A/J,A/J)`. -/
 def quotientNat :
     NatTrans (forget.{u} ⋙ diagonal) (quotientFunctor ⋙ diagonal) where
   app P :=
@@ -132,7 +141,9 @@ theorem quotientNat_apply (P : CStarPairCat.{u}) (a : P.algebra) :
         (Submodule.Quotient.mk a : P.ideal.Quotient) := by
   rfl
 
-/-- The genuine pair (A/K,q_K(J)), not a supplied quotient ideal. -/
+/-- **Image pair in a further quotient.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. For a closed two-sided star
+ideal `K ⊆ A`, the pair `(A/K,q_K(J))` has the image of `J` as its distinguished closed star ideal. -/
 def quotientImage (P : CStarPairCat.{u}) (K : ClosedStarIdeal P.algebra) :
     CStarPairCat.{u} := by
   letI : K.carrier.IsTwoSided := K.isTwoSided
@@ -142,7 +153,9 @@ def quotientImage (P : CStarPairCat.{u}) (K : ClosedStarIdeal P.algebra) :
       ideal := ClosedStarIdeal.mapOfSurjective
         K.quotientMap K.quotientMap_surjective P.ideal }
 
-/-- The actual excision comparison map induced by q_K. -/
+/-- **Pair map to a quotient image.** A C*-ideal pair `(A,J)` consists of a nonunital complex C*-algebra
+`A` and a distinguished closed two-sided star ideal `J ⊆ A`. For a closed two-sided star ideal `K ⊆
+A`, the quotient map gives a pair morphism `(A,J) → (A/K,q_K(J))`. -/
 def quotientImageMap (P : CStarPairCat.{u}) (K : ClosedStarIdeal P.algebra) :
     P ⟶ quotientImage P K := by
   letI : K.carrier.IsTwoSided := K.isTwoSided
@@ -162,7 +175,9 @@ theorem quotientImageMap_apply (P : CStarPairCat.{u})
     (quotientImageMap P K).hom a = K.quotientMap a := by
   rfl
 
-/-- Orthogonality of the actual closed ideals, in the printed coefficient ring. -/
+/-- **Orthogonality of closed star ideals.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. For another closed two-sided
+star ideal `K ⊆ A`, this means that every product `j k` with `j ∈ J` and `k ∈ K` is zero. -/
 def IdealsOrthogonal (P : CStarPairCat.{u}) (K : ClosedStarIdeal P.algebra) : Prop :=
   ∀ a ∈ P.ideal, ∀ b ∈ K, a * b = 0
 

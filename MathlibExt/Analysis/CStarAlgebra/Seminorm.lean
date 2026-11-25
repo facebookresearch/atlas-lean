@@ -44,7 +44,9 @@ noncomputable section
 
 universe u
 
-/-- A complex C-star seminorm on the original nonunital complex star algebra. -/
+/-- **Complex C*-seminorm.** Let `A` be a nonunital complex star algebra with scalar-compatible
+involution. A C*-seminorm is a complex seminorm `p` satisfying `p(x y) ≤ p(x)p(y)`, `p(x*) = p(x)`,
+and `p(x* x) = p(x)²`. -/
 structure CStarSeminorm (A : Type u) [NonUnitalRing A] [Module ℂ A]
     [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarRing A] [StarModule ℂ A]
     extends Seminorm ℂ A where
@@ -83,25 +85,33 @@ instance ringSeminormClass : RingSeminormClass (CStarSeminorm A) A ℝ where
   map_neg_eq_map p := p.toSeminorm.neg'
   map_mul_le_mul p := p.mul_le'
 
-/-- Equality of C-star seminorms is equality of their original gauges. -/
+/-- **Extensionality of C*-seminorms.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. Two C*-seminorms on `A` are equal if their real values agree at every
+element of `A`. -/
 @[ext] theorem ext {p q : CStarSeminorm A} (h : ∀ x, p x = q x) : p = q :=
   DFunLike.ext p q h
 
-/-- The same gauge, with its original ring operations, as a ring seminorm. -/
+/-- **Ring seminorm of a C*-seminorm.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. A complex C*-seminorm `p` defines a ring seminorm on `A` with exactly
+the same real-valued gauge. -/
 def toRingSeminorm (p : CStarSeminorm A) : RingSeminorm A where
   __ := p.toSeminorm.toAddGroupSeminorm
   mul_le' := p.mul_le'
 
-/-- Passing to the ring seminorm retains every original gauge value. -/
+/-- **Values of the associated ring seminorm.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. For a C*-seminorm `p` and `x ∈ A`, its associated ring seminorm has
+value `p(x)`. -/
 @[simp] theorem toRingSeminorm_apply (p : CStarSeminorm A) (x : A) :
     p.toRingSeminorm x = p x :=
   rfl
 
-/-- The original involution preserves every C-star seminorm. -/
+/-- **A C*-seminorm preserves the involution.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. For every C*-seminorm `p` and `x ∈ A`, `p(x*) = p(x)`. -/
 @[simp] theorem map_star (p : CStarSeminorm A) (x : A) : p (star x) = p x :=
   p.map_star' x
 
-/-- The square law is on the original multiplication and involution. -/
+/-- **C*-seminorm square identity.** Let `A` be a nonunital complex star algebra with scalar-compatible
+involution. For every C*-seminorm `p` and `x ∈ A`, `p(x* x) = p(x)²`. -/
 @[simp] theorem map_star_mul_self (p : CStarSeminorm A) (x : A) :
     p (star x * x) = p x ^ 2 :=
   p.cstar_identity' x
@@ -117,13 +127,17 @@ instance : Zero (CStarSeminorm A) where
         change (0 : ℝ) = 0 ^ 2
         simp only [pow_two, zero_mul] }
 
-/-- The zero C-star seminorm has zero value on every original element. -/
+/-- **Zero C*-seminorm.** Let `A` be a nonunital complex star algebra with scalar-compatible involution.
+The zero C*-seminorm on `A` has value zero at every `x ∈ A`. -/
 @[simp] theorem zero_apply (x : A) : (0 : CStarSeminorm A) x = 0 :=
   rfl
 
 instance : Inhabited (CStarSeminorm A) := ⟨0⟩
 
-/-- The computed supremum of a pointwise bounded nonempty family of C-star seminorms. -/
+/-- **Pointwise supremum of C*-seminorms.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. Let `S` be a nonempty set of C*-seminorms on `A` such that `{p(x) : p
+∈ S}` is bounded above for every `x ∈ A`. The pointwise supremum `x ↦ sup {p(x) : p ∈ S}` is a
+C*-seminorm. -/
 def sSup (S : Set (CStarSeminorm A)) (hS : S.Nonempty)
     (hb : ∀ x : A, BddAbove ((fun p : CStarSeminorm A => p x) '' S)) :
     CStarSeminorm A := by
@@ -183,7 +197,10 @@ def sSup (S : Set (CStarSeminorm A)) (hS : S.Nonempty)
           mul_le_mul hroot hroot (apply_nonneg q x) (Real.sqrt_nonneg _)
         _ = q (star x * x) := Real.mul_self_sqrt (apply_nonneg q (star x * x))
 
-/-- The supremum gauge is the literal real supremum of the original values. -/
+/-- **Evaluation of a supremum C*-seminorm.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. Let `S` be a nonempty set of C*-seminorms on `A` such that `{p(x) : p
+∈ S}` is bounded above for every `x ∈ A`. For each `x ∈ A`, the supremum C*-seminorm has value `sup
+{p(x) : p ∈ S}` in `ℝ`. -/
 theorem sSup_apply (S : Set (CStarSeminorm A)) (hS : S.Nonempty)
     (hb : ∀ x : A, BddAbove ((fun p : CStarSeminorm A => p x) '' S)) (x : A) :
     sSup S hS hb x = SupSet.sSup ((fun p : CStarSeminorm A => p x) '' S) := by
@@ -205,14 +222,20 @@ theorem sSup_apply (S : Set (CStarSeminorm A)) (hS : S.Nonempty)
   · rintro ⟨p, hp, rfl⟩
     exact ⟨⟨p, hp⟩, rfl⟩
 
-/-- Every original seminorm value is bounded by the computed supremum. -/
+/-- **Each seminorm lies below the pointwise supremum.** Let `A` be a nonunital complex star algebra
+with scalar-compatible involution. Let `S` be a nonempty set of C*-seminorms on `A` such that `{p(x)
+: p ∈ S}` is bounded above for every `x ∈ A`. For every `p ∈ S` and `x ∈ A`, `p(x)` is at most the
+supremum C*-seminorm at `x`. -/
 theorem le_sSup (S : Set (CStarSeminorm A)) (hS : S.Nonempty)
     (hb : ∀ x : A, BddAbove ((fun p : CStarSeminorm A => p x) '' S))
     {p : CStarSeminorm A} (hp : p ∈ S) (x : A) : p x ≤ sSup S hS hb x := by
   rw [sSup_apply S hS hb x]
   exact le_csSup (hb x) ⟨p, hp, rfl⟩
 
-/-- A common real bound on the original values bounds the computed supremum. -/
+/-- **Upper bound on a supremum C*-seminorm.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution. Let `S` be a nonempty set of C*-seminorms on `A` such that `{p(x) : p
+∈ S}` is bounded above for every `x ∈ A`. For fixed `x ∈ A`, if `p(x) ≤ C` for every `p ∈ S`, the
+supremum C*-seminorm at `x` is at most `C`. -/
 theorem sSup_le (S : Set (CStarSeminorm A)) (hS : S.Nonempty)
     (hb : ∀ x : A, BddAbove ((fun p : CStarSeminorm A => p x) '' S))
     {x : A} {C : ℝ} (hC : ∀ p ∈ S, p x ≤ C) : sSup S hS hb x ≤ C := by

@@ -46,8 +46,12 @@ variable [CompleteSpace B] [T0Space B] [ContinuousMul B]
 variable [Star B] [ContinuousStar B]
 variable [DistribMulAction R B] [UniformContinuousConstSMul R B]
 
-/-- Extend a continuous monoid-equivariant nonunital star hom through the
-existing additive extension, on the actual completed ring and star. -/
+/-- **Star-homomorphic extension from a uniform completion.** Let a monoid `R` act distributively on a
+nonunital seminormed ring `A` with continuous ring involution and on a nonunital, possibly
+nonassociative ring `B`. Assume that `B` has a complete separated additive uniformity, continuous
+multiplication and star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let
+`φ : A → B` be a continuous `R`-equivariant nonunital star homomorphism. The homomorphism extends to
+an `R`-equivariant nonunital star homomorphism from the uniform completion of `A` to `B`. -/
 noncomputable def fromCompletion
     (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
     let C := UniformSpace.Completion A;
@@ -125,8 +129,12 @@ noncomputable def fromCompletion
       map_mul' := hMul
       map_star' := hStar }
 
-/-- The extension's function is exactly the existing additive completion
-extension of the original hom, not a second linear or metric extension. -/
+/-- **Underlying additive completion extension.** Let a monoid `R` act distributively on a nonunital
+seminormed ring `A` with continuous ring involution and on a nonunital, possibly nonassociative ring
+`B`. Assume that `B` has a complete separated additive uniformity, continuous multiplication and
+star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let `φ : A → B` be a
+continuous `R`-equivariant nonunital star homomorphism. The function underlying the star-homomorphic
+extension is the continuous additive extension of `φ` to the uniform completion of `A`. -/
 theorem coe_fromCompletion
     (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
     let C := UniformSpace.Completion A;
@@ -148,8 +156,12 @@ theorem coe_fromCompletion
   let : DistribMulAction R C := mC
   rfl
 
-/-- The same extension retains every original coefficient value, without
-requiring source completeness or separation. -/
+/-- **Values of the completion extension.** Let a monoid `R` act distributively on a nonunital
+seminormed ring `A` with continuous ring involution and on a nonunital, possibly nonassociative ring
+`B`. Assume that `B` has a complete separated additive uniformity, continuous multiplication and
+star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let `φ : A → B` be a
+continuous `R`-equivariant nonunital star homomorphism. For every `a ∈ A`, the extended homomorphism
+satisfies `φ̄(ι(a)) = φ(a)` on the canonical completion image. -/
 @[simp]
 theorem fromCompletion_apply_coe
     (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) (a : A) :
@@ -178,8 +190,12 @@ theorem fromCompletion_apply_coe
     (fromCompletion φ hφ : C → B) (a : C) = e (a : C) := congrFun hFun (a : C)
     _ = φ a := φa.extension_coe hφa a
 
-/-- The actual monoid-equivariant star-hom extension is continuous in the
-original completion uniformity and the given target topology. -/
+/-- **Continuity of the extended star homomorphism.** Let a monoid `R` act distributively on a nonunital
+seminormed ring `A` with continuous ring involution and on a nonunital, possibly nonassociative ring
+`B`. Assume that `B` has a complete separated additive uniformity, continuous multiplication and
+star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let `φ : A → B` be a
+continuous `R`-equivariant nonunital star homomorphism. The extended `R`-equivariant nonunital star
+homomorphism is continuous from the uniform completion of `A` to `B`. -/
 theorem continuous_fromCompletion
     (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
     let C := UniformSpace.Completion A;
@@ -206,8 +222,13 @@ theorem continuous_fromCompletion
   rw [hFun]
   exact φa.continuous_extension hφa
 
-/-- A continuous star hom with the same dense coefficient values equals
-the constructed extension; no inverse or target-density assumption is used. -/
+/-- **Uniqueness of the completion star homomorphism.** Let a monoid `R` act distributively on a
+nonunital seminormed ring `A` with continuous ring involution and on a nonunital, possibly
+nonassociative ring `B`. Assume that `B` has a complete separated additive uniformity, continuous
+multiplication and star, and that every fixed-scalar map on `A` and `B` is uniformly continuous. Let
+`φ : A → B` be a continuous `R`-equivariant nonunital star homomorphism. Any continuous
+`R`-equivariant nonunital star homomorphism from the completion to `B` agreeing with `φ` on all
+canonical source images equals this extension. -/
 theorem fromCompletion_unique
     (φ : A →⋆ₙₐ[R] B) (hφ : Continuous φ) :
     let C := UniformSpace.Completion A;

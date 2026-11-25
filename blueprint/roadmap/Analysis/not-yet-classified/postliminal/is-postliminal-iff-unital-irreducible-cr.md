@@ -1,3 +1,6 @@
-# Is Postliminal iff unital irreducible criterion
+# Unital representation criterion for postliminality
 
-For unital algebras, the shared criterion equals the original unital irreducible criterion.
+A unital complex C*-algebra `A` is
+postliminal exactly when every irreducible unital star representation on a nontrivial complete
+complex Hilbert space has all compact operators in its range. Irreducibility here is stated for
+closed invariant complex-linear subspaces.

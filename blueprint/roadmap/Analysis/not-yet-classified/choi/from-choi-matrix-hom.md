@@ -1,3 +1,5 @@
-# From Choi Matrix Hom
+# Linearity of Choi reconstruction
 
-`fromChoiMatrix` as a linear map on Choi matrices.
+For finite decidable `n` and any index type `m`,
+reconstruction is a complex-linear map from complex matrices indexed by `n × m` to complex-linear
+maps `Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`.

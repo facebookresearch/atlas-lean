@@ -43,7 +43,10 @@ local instance coefficientSpectralOrder : PartialOrder Bᵐᵒᵖ :=
 local instance coefficientSpectralOrderedRing : StarOrderedRing Bᵐᵒᵖ :=
   CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ
 
-/-- Coordinatewise generator on finite-support standard vectors. -/
+/-- **Grading generator on finitely supported standard vectors.** Let `B` be a graded nonunital complex
+C*-algebra with generator `σ` and let `ι` be any index type. On the pre-Hilbert right module of
+finitely supported `B`-valued families indexed by `ι`, the generator applies `σ` to each coordinate
+and is a complex-linear equivalence. -/
 def standardPreGenerator (γ : CStarGrading B) :
     CStarModule.Right.StandardPre B ι ≃ₗ[ℂ]
       CStarModule.Right.StandardPre B ι :=
@@ -144,7 +147,10 @@ theorem standardComparison_norm (γ : CStarGrading B)
       (B := B) (ι := ι)).norm_map,
     norm_standardPreGenerator]
 
-/-- The coordinatewise generator on the completed standard module. -/
+/-- **Grading generator on the complete standard module.** Let `B` be a graded nonunital complex
+C*-algebra with generator `σ` and let `ι` be any index type. The coordinatewise generator on
+finitely supported `B`-valued families extends to a continuous complex-linear involution of their
+completed standard right Hilbert module. -/
 noncomputable def standardGenerator (γ : CStarGrading B) :
     CStarModule.Right.Standard B ι ≃L[ℂ]
       CStarModule.Right.Standard B ι :=
@@ -249,7 +255,9 @@ theorem standardGenerator_rightInner (γ : CStarGrading B)
         standardPreGenerator_rightInner]
   exact congrFun hfun (x, y)
 
-/-- The canonical coordinatewise grading of the completed standard module. -/
+/-- **Grading of the standard Hilbert module.** Let `B` be a graded nonunital complex C*-algebra with
+generator `σ` and let `ι` be any index type. The completed standard right Hilbert `B`-module indexed
+by `ι` has the grading extending coordinatewise application of `σ`. -/
 def standard (γ : CStarGrading B) :
     CStarModuleGrading γ (CStarModule.Right.Standard B ι) where
   generator := standardGenerator γ

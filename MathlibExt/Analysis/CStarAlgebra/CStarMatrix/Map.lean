@@ -37,7 +37,12 @@ universe uS uT
 variable {S : Type uS} [CommSemiring S] {T : Type uT}
 variable [Semiring T] [StarRing T] [Algebra S R] [Algebra S T]
 
-/-- Upgrade the stock entrywise nonunital star hom using its actual matrix identity value. -/
+/-- Let `R` be a semiring. Let `ι` be a finite index type with decidable equality. Let `S` be a
+commutative semiring. Let `T` be a semiring. The star on `R` is an additive involution reversing
+products. The star on `T` is an additive involution reversing products. `R` is an algebra over `S`.
+`T` is an algebra over `S`. For `f : R →⋆ₐ[S] T`. The construction upgrades the stock entrywise
+nonunital star hom using its matrix identity value.
+-/
 public def mapStarAlgHom (f : R →⋆ₐ[S] T) :
     CStarMatrix ι ι R →⋆ₐ[S] CStarMatrix ι ι T := by
   let g : CStarMatrix ι ι R →⋆ₙₐ[S] CStarMatrix ι ι T :=
@@ -57,7 +62,12 @@ public def mapStarAlgHom (f : R →⋆ₐ[S] T) :
         rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, map_smul, hOne]
       map_star' := map_star g }
 
-/-- Every actual unital matrix-hom value is the literal entrywise coefficient map. -/
+/-- Let `R` be a semiring. Let `ι` be a finite index type with decidable equality. Let `S` be a
+commutative semiring. Let `T` be a semiring. The star on `R` is an additive involution reversing
+products. The star on `T` is an additive involution reversing products. `R` is an algebra over `S`.
+`T` is an algebra over `S`. For `f : R →⋆ₐ[S] T`, `X : CStarMatrix ι ι R` and `i` and `j : ι`. Every
+unital matrix-hom value is the entrywise coefficient map.
+-/
 public theorem mapStarAlgHom_apply (f : R →⋆ₐ[S] T) (X : CStarMatrix ι ι R) (i j : ι) :
     mapStarAlgHom f X i j = f (X i j) := by
   change (X.map f) i j = f (X i j)

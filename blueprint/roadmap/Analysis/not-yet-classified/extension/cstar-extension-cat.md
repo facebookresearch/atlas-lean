@@ -1,3 +1,6 @@
-# CStar Extension Cat
+# Category of normalized C*-extensions
 
-An actual normalized extension, with its actual ideal and quotient algebras.
+**Category of normalized C*-extensions.** A normalized extension of nonunital complex C*-algebras
+has an ideal endpoint, a middle C*-algebra, and a quotient endpoint, with injective inclusion and
+surjective quotient map forming a short exact sequence. Objects are these extensions; morphisms are
+compatible homomorphisms on their endpoints and middle algebras.

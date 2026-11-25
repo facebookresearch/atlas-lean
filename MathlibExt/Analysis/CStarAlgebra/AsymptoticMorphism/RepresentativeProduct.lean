@@ -133,9 +133,5 @@ theorem productRepresentative_zero_right (n : ℕ)
   intro a
   rfl
 
-#print axioms productRepresentative
-#print axioms productRepresentative_apply
-#print axioms productRepresentative_zero_left
-#print axioms productRepresentative_zero_right
 
 end IteratedAsymptoticAlgebra

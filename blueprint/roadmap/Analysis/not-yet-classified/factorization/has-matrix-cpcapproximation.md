@@ -1,5 +1,6 @@
-# Has Matrix CPCApproximation
+# Approximation through finite matrix algebras
 
-Positive-size matrix CPC factorizations approximate the function on
-every finite test set. Zero maps through M₁ are allowed even for zero A/B.
-No factorization is chosen from this existence predicate.
+For nonunital complex C*-algebras `A,B`, a
+function `f : A → B` has this property when, for every finite `F ⊆ A` and `ε > 0`, there is a
+positive integer `n` and completely positive contractions `α : A → Mₙ(ℂ)` and `β : Mₙ(ℂ) → B` with
+`‖β(α(a)) - f(a)‖ < ε` for every `a ∈ F`.

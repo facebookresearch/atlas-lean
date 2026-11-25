@@ -1,4 +1,5 @@
-# Is AF of finite Dimensional
+# Finite-dimensional C*-algebras are AF
 
-Finite-dimensional algebras are AF, with the constant identity system.
-No nontriviality condition excludes the zero algebra.
+**Finite-dimensional C*-algebras are AF.** Every finite-dimensional nonunital complex C*-algebra is
+approximately finite-dimensional, using the constant sequence of the whole algebra. This includes
+the zero algebra.

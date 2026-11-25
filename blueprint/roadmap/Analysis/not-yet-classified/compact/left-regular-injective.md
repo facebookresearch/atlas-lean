@@ -1,4 +1,6 @@
 # Left Regular injective
 
-The left regular representation is faithful, without a unitality
-hypothesis.
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+The left multiplication representation of B on its right coefficient self-module is injective.

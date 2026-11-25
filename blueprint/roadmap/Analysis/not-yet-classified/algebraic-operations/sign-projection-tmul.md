@@ -1,3 +1,6 @@
-# Sign Projection tmul
+# Koszul sign formula for an elementary tensor
 
-The finite Koszul sign projection has its original elementary tensor value.
+Let `A,B` be nonunital complex C*-algebras with
+`ℤ/2ℤ` gradings `γ_A,γ_B`. Write `a_p` and `b_q` for their degree projections, and use their complex
+algebraic tensor product. For every `a ∈ A`, `b ∈ B`, the sign operator has value `∑ p q, (-1)^(p q)
+a_p ⊗ b_q`, summing over both parity degrees.

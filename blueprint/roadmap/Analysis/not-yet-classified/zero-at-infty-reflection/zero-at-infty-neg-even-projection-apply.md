@@ -1,3 +1,5 @@
-# Zero At Infty Neg even Projection apply
+# Even projection by reflection averaging
 
-The even projection averages each function with its reflection.
+Let `X` be a topological space with a continuous
+involutive negation `x ↦ -x`, and let `A` be a nonunital complex C*-algebra. The algebra `C₀(X,A)`
+carries the supremum norm. For `f ∈ C₀(X,A)`, its even projection at `x` is `(f(x) + f(-x))/2`.

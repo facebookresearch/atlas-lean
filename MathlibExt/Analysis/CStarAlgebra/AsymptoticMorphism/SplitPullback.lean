@@ -378,14 +378,5 @@ theorem sndHom_comp_splitPullbackEquiv
   rw [splitPullbackEquiv_toNonUnitalStarAlgHom]
   exact sndHom_comp_pullbackComparison f g
 
-#print axioms pullbackComparison
-#print axioms fstHom_comp_pullbackComparison
-#print axioms sndHom_comp_pullbackComparison
-#print axioms pullbackComparison_injective
-#print axioms pullbackComparison_surjective_of_rightInverse
-#print axioms splitPullbackEquiv
-#print axioms splitPullbackEquiv_toNonUnitalStarAlgHom
-#print axioms fstHom_comp_splitPullbackEquiv
-#print axioms sndHom_comp_splitPullbackEquiv
 
 end AsymptoticAlgebra

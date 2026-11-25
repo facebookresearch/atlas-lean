@@ -1,4 +1,5 @@
-# Fst Star Alg Hom comp star Map
+# Naturality of the unitization scalar projection
 
-Scalar projection is natural for the canonical unitization of a
-nonunital complex star algebra homomorphism.
+Let `A,B` be nonunital complex C*-algebras and
+`φ : A → B` a nonunital complex star homomorphism. Scalar projection after unitizing `φ` is the
+scalar projection of the source unitization.

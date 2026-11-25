@@ -1,4 +1,6 @@
-# Weight
+# Extended positive weight
 
-An extended positive weight on the original global positive cone.
-Only finite nonnegative-real scalars act on the algebra; weight values may be infinity.
+Let `A` be a nonunital complex C*-algebra with its canonical spectral
+order. A weight is a map `φ : A₊ → [0,∞]` that vanishes at zero, is additive on positive elements,
+and satisfies `φ(r a) = r φ(a)` for every finite nonnegative real scalar `r`. Infinite weight values
+are allowed.

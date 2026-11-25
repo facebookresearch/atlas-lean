@@ -1,3 +1,5 @@
-# To Continuous Linear Map to Linear Map
+# Underlying linear map of a bounded CP map
 
-The continuous adapter retains the original complex-linear map.
+For a completely positive map `φ : A → B` between
+nonunital complex C*-algebras with star-compatible partial orders, the associated continuous linear
+map has exactly the original complex-linear map.

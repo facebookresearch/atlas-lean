@@ -283,8 +283,5 @@ theorem sndHom_comp_iteratedSplitPullbackEquiv
       exact (IteratedAsymptoticAlgebra.map_succ n
         (NonUnitalCStarPullback.sndHom f g)).symm
 
-#print axioms iteratedSplitPullbackEquiv
-#print axioms fstHom_comp_iteratedSplitPullbackEquiv
-#print axioms sndHom_comp_iteratedSplitPullbackEquiv
 
 end AsymptoticAlgebra

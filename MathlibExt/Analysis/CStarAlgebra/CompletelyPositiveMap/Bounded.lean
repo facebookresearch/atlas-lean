@@ -46,30 +46,39 @@ variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [PartialOrder A] [StarOrderedRing A]
 variable [PartialOrder B] [StarOrderedRing B]
 
-/-- The actual continuous linear map of a CP map, using Mathlib's positive
-map continuity and positive continuous-map class adapter. -/
+/-- **Bounded linear map associated with a CP map.** A completely positive map `φ : A → B` between
+nonunital complex C*-algebras with star-compatible partial orders is continuous. This is its
+continuous complex-linear map, with the same values. -/
 def toContinuousLinearMap (phi : A →CP B) : A →L[ℂ] B :=
   (PositiveContinuousLinearMap.ofClass phi).toContinuousLinearMap
 
-/-- Bounded access retains the original function value. -/
+/-- **Evaluation of the bounded CP map.** For nonunital complex C*-algebras `A` and `B` with
+star-compatible partial orders, a completely positive map `φ : A → B`, and `a ∈ A`, its associated
+continuous linear map evaluates to `φ(a)`. -/
 @[simp]
 theorem toContinuousLinearMap_apply (phi : A →CP B) (a : A) :
     phi.toContinuousLinearMap a = phi a :=
   rfl
 
-/-- The continuous adapter retains the original complex-linear map. -/
+/-- **Underlying linear map of a bounded CP map.** For a completely positive map `φ : A → B` between
+nonunital complex C*-algebras with star-compatible partial orders, the associated continuous linear
+map has exactly the original complex-linear map. -/
 @[simp]
 theorem toContinuousLinearMap_toLinearMap (phi : A →CP B) :
     phi.toContinuousLinearMap.toLinearMap = phi.toLinearMap :=
   rfl
 
-/-- A supplied pointwise bound is a bound for the actual operator norm. -/
+/-- **Operator-norm bound for a CP map.** Let `φ : A → B` be completely positive between nonunital
+complex C*-algebras with star-compatible partial orders. If `C ≥ 0` and `‖φ(a)‖ ≤ C ‖a‖` for every
+`a ∈ A`, the operator norm of its associated continuous linear map is at most `C`. -/
 theorem norm_toContinuousLinearMap_le (phi : A →CP B)
     {C : ℝ} (hC : 0 ≤ C) (hphi : ∀ a : A, ‖phi a‖ ≤ C * ‖a‖) :
     ‖phi.toContinuousLinearMap‖ ≤ C := by
   exact ContinuousLinearMap.opNorm_le_bound _ hC hphi
 
-/-- A supplied pointwise contraction has operator norm at most one. -/
+/-- **Norm of a completely positive contraction.** For nonunital complex C*-algebras `A` and `B` with
+star-compatible partial orders, a completely positive map `φ : A → B` satisfying `‖φ(a)‖ ≤ ‖a‖` for
+every `a` has operator norm at most one. -/
 theorem norm_toContinuousLinearMap_le_one (phi : A →CP B)
     (hphi : ∀ a : A, ‖phi a‖ ≤ ‖a‖) :
     ‖phi.toContinuousLinearMap‖ ≤ 1 := by

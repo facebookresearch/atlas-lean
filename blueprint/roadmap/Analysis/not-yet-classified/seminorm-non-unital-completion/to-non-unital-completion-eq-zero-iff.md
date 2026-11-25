@@ -1,3 +1,5 @@
-# To Non Unital Completion eq zero iff
+# Null kernel of the nonunital completion map
 
-The canonical completed map has exactly the null kernel of the same source seminorm.
+Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. The completion image of `x ∈ B` is
+zero exactly when `p(x) = 0`.

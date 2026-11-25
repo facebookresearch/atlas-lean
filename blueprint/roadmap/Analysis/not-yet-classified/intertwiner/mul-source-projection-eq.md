@@ -1,3 +1,4 @@
-# Mul source projection eq
+# Source support of a partial isometry
 
-A partial-isometry witness is supported on its actual source projection.
+Let `A` be a nonunital complex C*-algebra. If `p` is a
+self-adjoint idempotent and `v ∈ A` satisfies `v* v = p`, then `v p = v`.

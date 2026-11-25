@@ -1,8 +1,5 @@
 # Is Coisometry
 
-A rectangular matrix `U : Matrix out inp R` is a coisometry when
-`U * Uᴴ = 1` on the output/row index `out`, where `Uᴴ = Matrix.conjTranspose U`.
-
-Orientation: `out` is the row/output index, `inp` is the column/input index.
-The condition `U * Uᴴ = 1` requires `[Fintype inp]` and `[DecidableEq out]`.
-Empty types are supported.
+Let `R` be a commutative star ring and let `out`, `inp` be index types. Assume `inp` is finite and
+equality is decidable on `out`. An `out × inp` matrix `U` is a coisometry when `U*Uᴴ = 1` on the
+output index. Empty index types are included.

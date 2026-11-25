@@ -30,13 +30,19 @@ noncomputable section
 
 universe u v w
 
-/-- The canonical cone `C₀(ℝ≥0, A)`. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+The canonical cone `C₀(ℝ≥0, A)`. -/
 abbrev Cone (A : Type u) [NonUnitalCStarAlgebra A] :=
   C₀(ℝ≥0, A)
 
 namespace Cone
 
-/-- Evaluation of a cone function at the endpoint zero. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Evaluation of a cone function at the endpoint zero. -/
 def evalZero (A : Type u) [NonUnitalCStarAlgebra A] :
     Cone A →⋆ₙₐ[ℂ] A where
   toFun f := f 0
@@ -52,7 +58,10 @@ theorem evalZero_apply
     evalZero A f = f 0 :=
   rfl
 
-/-- Pointwise coefficient postcomposition on cones. -/
+/-- Let `A`, `B` be possibly nonunital complex C*-algebras. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Pointwise coefficient postcomposition on cones. -/
 def map
     {A : Type u} {B : Type v}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -81,7 +90,10 @@ theorem map_comp
     map (psi.comp phi) = (map psi).comp (map phi) :=
   ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp_comp psi phi
 
-/-- Evaluation at zero is natural under coefficient homomorphisms. -/
+/-- Let `A`, `B` be possibly nonunital complex C*-algebras. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Evaluation at zero is natural under coefficient homomorphisms. -/
 theorem evalZero_naturality
     {A : Type u} {B : Type v}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]

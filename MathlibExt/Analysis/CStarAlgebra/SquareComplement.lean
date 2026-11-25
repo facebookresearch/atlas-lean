@@ -36,15 +36,24 @@ universe u
 
 variable {D : Type u} [CStarAlgebra D] [PartialOrder D] [StarOrderedRing D]
 
-/-- The positive CFC square root of the original norm-square scalar minus the adjoint square. -/
+/-- **Square complement of an adjoint product.** Let `D` be a unital complex C*-algebra with a
+star-compatible partial order and `a ∈ D`. Its norm-square complement is the positive
+continuous-functional-calculus square root `b = √(‖a‖² 1 - a* a)`. This defines the complement
+element `b ∈ D`. -/
 def normSquareComplement (a : D) : D :=
   CFC.sqrt (algebraMap ℝ D (‖a‖ ^ 2) - star a * a)
 
-/-- The computed square complement is positive in the actual C-star order. -/
+/-- **Positivity of the square complement.** Let `D` be a unital complex C*-algebra with a
+star-compatible partial order and `a ∈ D`. Its norm-square complement is the positive
+continuous-functional-calculus square root `b = √(‖a‖² 1 - a* a)`. The complement element `b` is
+positive. -/
 theorem normSquareComplement_nonneg (a : D) : 0 ≤ normSquareComplement a :=
   CFC.sqrt_nonneg _
 
-/-- The original adjoint square and computed complement square sum to the norm-square scalar. -/
+/-- **Adjoint square and complement square.** Let `D` be a unital complex C*-algebra with a
+star-compatible partial order and `a ∈ D`. Its norm-square complement is the positive
+continuous-functional-calculus square root `b = √(‖a‖² 1 - a* a)`. The identity `a* a + b* b = ‖a‖²
+1` holds in `D`. -/
 theorem star_mul_self_add_normSquareComplement (a : D) :
     star a * a + star (normSquareComplement a) * normSquareComplement a =
       algebraMap ℝ D (‖a‖ ^ 2) := by
@@ -57,7 +66,10 @@ theorem star_mul_self_add_normSquareComplement (a : D) :
   rw [add_comm (star a * a) _, hSquare]
   exact sub_add_cancel _ _
 
-/-- CFC keeps the computed complement in any commutant containing the element and its adjoint. -/
+/-- **Commutant of the square complement.** Let `D` be a unital complex C*-algebra with a
+star-compatible partial order and `a ∈ D`. Its norm-square complement is the positive
+continuous-functional-calculus square root `b = √(‖a‖² 1 - a* a)`. If an element `c ∈ D` commutes
+with both `a` and `a*`, it commutes with the complement `b`. -/
 theorem normSquareComplement_commute (a b : D)
     (hab : Commute a b) (hstarab : Commute (star a) b) :
     Commute (normSquareComplement a) b := by

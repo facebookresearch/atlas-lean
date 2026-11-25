@@ -1,4 +1,6 @@
-# Pullback
+# Pullback of nonunital C*-homomorphisms
 
-The pullback of two nonunital C-star algebra homomorphisms, as their
-literal equalizer inside the product algebra.
+**Pullback of nonunital C*-homomorphisms.** Let `A,B,C` be nonunital complex C*-algebras and `f : A
+→ C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. This equalizer is the pullback carrier inside the product
+algebra.

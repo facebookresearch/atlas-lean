@@ -1,3 +1,5 @@
-# Nontrivial of nonzero representation
+# Nonzero representations have nonzero Hilbert space
 
-Nonzero actual representations already imply the original Hilbert carrier is nontrivial.
+For a nonunital complex C*-algebra `A`, a
+complete complex Hilbert space `H`, and a nonzero nonunital complex star representation `π : A →
+B(H)`, the space `H` is nontrivial.

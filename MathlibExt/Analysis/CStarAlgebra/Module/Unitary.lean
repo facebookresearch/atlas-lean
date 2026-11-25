@@ -27,8 +27,10 @@ namespace CStarModule
 
 universe uB uE uF uG
 
-/-- A unitary equivalence between right C-star modules.  Its inverse is the
-canonical bundled adjoint, so no unrelated inverse map is stored. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. A unitary equivalence is an adjointable map between E and F whose adjoint is
+its two-sided inverse. -/
 structure UnitaryEquiv
     (B : Type uB) (E : Type uE) (F : Type uF)
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
@@ -36,13 +38,19 @@ structure UnitaryEquiv
     [CStarModule Bᵐᵒᵖ E]
     [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
     [CStarModule Bᵐᵒᵖ F] where
-  /-- The forward adjointable operator. -/
+  /-- Let B be a possibly nonunital complex C-star algebra and E and F normed right C-star modules
+over B. A unitary module equivalence is an adjointable map whose adjoint is its two-sided
+inverse. The forward map of the equivalence is an adjointable operator from E to F. -/
   toAdjointable : AdjointableOperator B E F
-  /-- The adjoint is a left inverse. -/
+  /-- Let B be a possibly nonunital complex C-star algebra and E and F normed right C-star modules
+over B. A unitary module equivalence is an adjointable map whose adjoint is its two-sided
+inverse. The adjoint of the forward map followed by that map is the identity of E. -/
   adjoint_comp_self :
     toAdjointable.adjointOperator.comp toAdjointable =
       AdjointableOperator.id
-  /-- The adjoint is a right inverse. -/
+  /-- Let B be a possibly nonunital complex C-star algebra and E and F normed right C-star modules
+over B. A unitary module equivalence is an adjointable map whose adjoint is its two-sided
+inverse. The forward map followed by its adjoint is the identity of F. -/
   comp_adjoint_self :
     toAdjointable.comp toAdjointable.adjointOperator =
       AdjointableOperator.id
@@ -95,7 +103,10 @@ theorem apply_adjoint_apply (U : UnitaryEquiv B E F) (y : F) :
     U.comp_adjoint_self
   simpa using h
 
-/-- A unitary equivalence preserves the coefficient-valued inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. A unitary module equivalence preserves the B-valued inner product of every pair
+of vectors. -/
 theorem rightInner_map_map (U : UnitaryEquiv B E F) (x y : E) :
     rightInner (B := B) (U x) (U y) = rightInner (B := B) x y := by
   change rightInner (B := B) (U.toAdjointable x) (U.toAdjointable y) = _
@@ -104,19 +115,25 @@ theorem rightInner_map_map (U : UnitaryEquiv B E F) (x y : E) :
     simpa only [coe_toAdjointable] using U.adjoint_apply_apply y
   rw [hy]
 
-/-- A unitary equivalence preserves norms. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. A unitary module equivalence preserves the norm of every vector. -/
 @[simp]
 theorem norm_map (U : UnitaryEquiv B E F) (x : E) :
     ‖U x‖ = ‖x‖ :=
   norm_map_of_map_rightInner id U (fun _ ↦ rfl) U.rightInner_map_map x
 
-/-- The underlying map of a unitary module equivalence is an isometry. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. The map of a unitary module equivalence is an isometry. -/
 theorem isometry (U : UnitaryEquiv B E F) : Isometry U := by
   apply Isometry.of_dist_eq
   intro x y
   rw [dist_eq_norm, dist_eq_norm, ← map_sub, U.norm_map]
 
-/-- The identity unitary equivalence. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. The identity map is a unitary equivalence of a module with itself. -/
 def refl : UnitaryEquiv B E E where
   toAdjointable := AdjointableOperator.id
   adjoint_comp_self := by
@@ -130,7 +147,9 @@ def refl : UnitaryEquiv B E E where
 theorem refl_apply (x : E) : refl (B := B) (E := E) x = x :=
   rfl
 
-/-- Reverse a unitary equivalence by taking its adjoint. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. The adjoint reverses a unitary module equivalence. -/
 def symm (U : UnitaryEquiv B E F) : UnitaryEquiv B F E where
   toAdjointable := U.toAdjointable.adjointOperator
   adjoint_comp_self := by
@@ -154,8 +173,10 @@ theorem apply_symm_apply (U : UnitaryEquiv B E F) (y : F) :
   simpa only [symm_apply, AdjointableOperator.adjointOperator_apply] using
     U.apply_adjoint_apply y
 
-/-- Forget a unitary module equivalence to a complex linear isometric
-equivalence. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. A unitary module equivalence defines a complex-linear isometric equivalence of
+the underlying normed spaces. -/
 noncomputable def toLinearIsometryEquiv (U : UnitaryEquiv B E F) :
     E ≃ₗᵢ[ℂ] F where
   toFun := U
@@ -166,8 +187,10 @@ noncomputable def toLinearIsometryEquiv (U : UnitaryEquiv B E F) :
   map_smul' := map_smul U
   norm_map' := U.norm_map
 
-/-- An inner-product-preserving complex linear isometric equivalence is a
-unitary equivalence of right C-star modules. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. A complex-linear isometric equivalence that also preserves the B-valued module
+inner product defines a unitary module equivalence. -/
 noncomputable def ofLinearIsometryEquiv
     (e : E ≃ₗᵢ[ℂ] F)
     (hinner : ∀ x y,
@@ -202,7 +225,9 @@ theorem ofLinearIsometryEquiv_apply
     ofLinearIsometryEquiv e hinner x = e x :=
   rfl
 
-/-- Compose unitary equivalences. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. Composition of unitary module equivalences is a unitary module equivalence. -/
 def trans (U : UnitaryEquiv B E F) (V : UnitaryEquiv B F G) :
     UnitaryEquiv B E G where
   toAdjointable := V.toAdjointable.comp U.toAdjointable
@@ -227,8 +252,10 @@ theorem trans_apply (U : UnitaryEquiv B E F)
     U.trans V x = V (U x) :=
   rfl
 
-/-- Conjugation of actual adjointable endomorphisms by a unitary module
-equivalence. No scalar Hilbert inner product or completeness is required. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. Conjugation by a unitary module equivalence is a unital complex star algebra
+homomorphism between the adjointable endomorphism algebras. -/
 @[no_expose]
 def conjStarAlgHom (U : UnitaryEquiv B E F) :
     AdjointableOperator.End B E →⋆ₐ[ℂ] AdjointableOperator.End B F where
@@ -269,7 +296,10 @@ def conjStarAlgHom (U : UnitaryEquiv B E F) :
     ext y
     rfl
 
-/-- The public conjugation formula avoids unfolding the homomorphism data. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E, F and G normed right C-star
+modules over B. A unitary module equivalence is an adjointable map whose adjoint is its two-
+sided inverse. Conjugation sends an endomorphism T of E to the composite of the unitary, T and
+the unitary adjoint. -/
 @[simp]
 theorem conjStarAlgHom_apply (U : UnitaryEquiv B E F)
     (T : AdjointableOperator.End B E) (y : F) :

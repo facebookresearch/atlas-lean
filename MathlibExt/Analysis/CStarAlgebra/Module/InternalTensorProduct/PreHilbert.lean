@@ -48,14 +48,20 @@ variable [SMul B₁ᵐᵒᵖ E₁] [CStarModule B₁ᵐᵒᵖ E₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
 
-/-- The genuine quotient norm expression, with no norm assumed on its carrier. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The norm on the radical tensor quotient is the square root of the
+norm of its coefficient-valued self-inner product. -/
 @[instance_reducible]
 def radicalTensorNorm
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     Norm (RadicalTensor (E₁ := E₁) φ) where
   norm q := Real.sqrt ‖radicalInner φ q q‖
 
-/-- The named norm data has its exact self-inner formula. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The norm of a radical-quotient vector q equals the square root of
+the norm of its coefficient-valued self-inner product. -/
 @[simp]
 theorem radicalTensorNorm_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -77,8 +83,10 @@ variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
 variable [StarOrderedRing B₁ᵐᵒᵖ] [CompleteSpace E₁]
 variable [StarOrderedRing B₂ᵐᵒᵖ] [CompleteSpace E₂]
 
-/-- Constructed pre-Hilbert data on the actual quotient, with its same norm,
-complex module, opposite coefficient action and coefficient-valued inner. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The radical tensor quotient is a right pre-Hilbert B₂-module with the descended inner
+product and the square-root self-inner norm. -/
 @[instance_reducible]
 def radicalTensorCStarModule
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -125,7 +133,10 @@ def radicalTensorCStarModule
       Real.sqrt ‖MulOpposite.op (radicalInner φ x x)‖
     rw [MulOpposite.norm_op]
 
-/-- The constructed class has the exact original coefficient-valued inner. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The coefficient-valued inner product on the radical quotient is the descended tensor form,
+viewed in B₂ᵐᵒᵖ. -/
 @[simp]
 theorem radicalTensorCStarModule_inner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -139,8 +150,10 @@ theorem radicalTensorCStarModule_inner
   let : CStarModule B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalTensorCStarModule φ
   rfl
 
-/-- The stock CStarModule core derives norm/scalar/triangle laws from the
-constructed class; no such law is an input to this theorem. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The square-root self-inner norm satisfies the complex normed-space axioms on the radical
+quotient. -/
 theorem radicalTensor_normedSpaceCore
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     letI : Norm (RadicalTensor (E₁ := E₁) φ) := radicalTensorNorm φ;
@@ -150,7 +163,10 @@ theorem radicalTensor_normedSpaceCore
   let : CStarModule B₂ᵐᵒᵖ (RadicalTensor (E₁ := E₁) φ) := radicalTensorCStarModule φ
   exact CStarModule.normedSpaceCore B₂ᵐᵒᵖ (E := RadicalTensor (E₁ := E₁) φ)
 
-/-- The same algebraic quotient with the normed group built by the stock core. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The radical tensor quotient is a normed additive group with the square-root self-inner
+norm. -/
 @[instance_reducible]
 def radicalTensorNormedAddCommGroup
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -158,7 +174,9 @@ def radicalTensorNormedAddCommGroup
   letI : Norm (RadicalTensor (E₁ := E₁) φ) := radicalTensorNorm φ
   exact NormedAddCommGroup.ofCore (radicalTensor_normedSpaceCore φ)
 
-/-- The core construction retains exactly the chosen norm expression. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The normed-group norm on the radical quotient equals the square-root self-inner norm. -/
 theorem radicalTensorNormedAddCommGroup_norm
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (q : RadicalTensor (E₁ := E₁) φ) :
@@ -167,7 +185,9 @@ theorem radicalTensorNormedAddCommGroup_norm
   let : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) := radicalTensorNormedAddCommGroup φ
   rfl
 
-/-- The normed complex module for the same group/core, not a second norm. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The radical quotient is a complex normed space with that same square-root self-inner norm. -/
 @[instance_reducible]
 def radicalTensorNormedSpace
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :

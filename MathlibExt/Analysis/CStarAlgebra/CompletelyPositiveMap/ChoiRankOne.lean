@@ -39,7 +39,8 @@ namespace CompletelyPositiveMap
 
 variable {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
 
-/-- The Choi rank of a single-Kraus map `X ↦ K * X * Kᴴ` is at most one. -/
+/-- **Rank bound for a single Kraus operator.** For finite decidable `n,m` and a complex rectangular
+matrix `K : Matrix m n ℂ`, the map `X ↦ K X Kᴴ` has Choi rank at most one. -/
 theorem choiRank_singleKraus_le_one (K : Matrix m n ℂ) :
     choiRank (singleKraus K) ≤ 1 := by
   let K₁ : Fin 1 → Matrix m n ℂ := fun _ => K
@@ -50,8 +51,9 @@ theorem choiRank_singleKraus_le_one (K : Matrix m n ℂ) :
     _ ≤ Fintype.card (Fin 1) := choiRank_kraus_le_card K₁
     _ = 1 := by simp
 
-/-- A completely positive map has Choi rank at most one iff it is a single-Kraus map.
-This includes the zero map and holds for empty input/output types without `Nonempty`. -/
+/-- **Choi rank at most one.** For finite decidable `n,m`, a completely positive map `φ : Matrix n n ℂ
+→CP Matrix m m ℂ` has Choi rank at most one exactly when `φ(X) = K X Kᴴ` for some `K : Matrix m n
+ℂ`. This includes the zero map and empty input or output types. -/
 theorem choiRank_le_one_iff_exists_singleKraus
     (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     choiRank φ ≤ 1 ↔ ∃ K : Matrix m n ℂ, φ = singleKraus K := by
@@ -140,7 +142,8 @@ private theorem choiRank_singleKraus_eq_finrank_span_vec_singleton
     _ = Module.finrank ℂ (Submodule.span ℂ (Set.range (fun i => Matrix.vec (K₁ i)))) := h_fin
     _ = Module.finrank ℂ (ℂ ∙ Matrix.vec K) := by rw [h_span]
 
-/-- A single-Kraus map has Choi rank zero iff its Kraus operator is zero. -/
+/-- **Zero rank of a single-Kraus map.** For finite decidable `n,m` and `K : Matrix m n ℂ`, the Choi
+rank of `X ↦ K X Kᴴ` is zero exactly when `K = 0`. -/
 theorem choiRank_singleKraus_eq_zero_iff (K : Matrix m n ℂ) :
     choiRank (singleKraus K) = 0 ↔ K = 0 := by
   have h_eq := choiRank_singleKraus_eq_finrank_span_vec_singleton K
@@ -167,7 +170,8 @@ theorem choiRank_singleKraus_eq_zero_iff (K : Matrix m n ℂ) :
       _ = 0 := by
         simp [finrank_bot]
 
-/-- A nonzero single-Kraus map has Choi rank exactly one. Requires `K ≠ 0`. -/
+/-- **Rank of a nonzero single Kraus operator.** For finite decidable `n,m`, a nonzero complex matrix `K
+: Matrix m n ℂ` gives a completely positive map `X ↦ K X Kᴴ` of Choi rank exactly one. -/
 theorem choiRank_singleKraus_eq_one_of_ne_zero {K : Matrix m n ℂ} (hK : K ≠ 0) :
     choiRank (singleKraus K) = 1 := by
   have h_vec_ne : Matrix.vec K ≠ 0 := by
@@ -180,7 +184,9 @@ theorem choiRank_singleKraus_eq_one_of_ne_zero {K : Matrix m n ℂ} (hK : K ≠ 
   calc choiRank (singleKraus K) = Module.finrank ℂ (ℂ ∙ Matrix.vec K) := h_eq
     _ = 1 := finrank_span_singleton h_vec_ne
 
-/-- A completely positive map has Choi rank one iff it is a nonzero single-Kraus map. -/
+/-- **Characterization of Choi rank one.** For finite decidable `n,m`, a completely positive map `φ :
+Matrix n n ℂ →CP Matrix m m ℂ` has Choi rank one exactly when `φ(X) = K X Kᴴ` for a nonzero `K :
+Matrix m n ℂ`. -/
 theorem choiRank_eq_one_iff_exists_ne_zero_singleKraus
     (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     choiRank φ = 1 ↔ ∃ K : Matrix m n ℂ, K ≠ 0 ∧ φ = singleKraus K := by

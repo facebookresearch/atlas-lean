@@ -1,4 +1,6 @@
 # Finite Column
 
-A finite family gives the actual column map b -> sum_i x_i b_i,
-with coefficient-inner coordinates as its computed adjoint.
+Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. For a finite vector family x indexed by I, the
+column map sends a coefficient family b to the sum of x(i)b(i); its adjoint sends a vector e
+to the family of inner products of x(i) with e.

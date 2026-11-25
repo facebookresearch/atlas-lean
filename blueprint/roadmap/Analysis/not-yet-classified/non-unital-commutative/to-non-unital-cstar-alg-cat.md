@@ -1,3 +1,4 @@
-# To Non Unital CStar Alg Cat
+# Forgetting commutativity of a C*-algebra
 
-Forget only commutativity into the existing canonical category, retaining the actual carrier and norm.
+**Forgetting commutativity of a C*-algebra.** A commutative nonunital complex C*-algebra `A` gives
+an object of the category of nonunital complex C*-algebras with the same carrier and norm.

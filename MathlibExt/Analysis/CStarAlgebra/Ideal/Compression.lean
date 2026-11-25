@@ -39,8 +39,11 @@ variable {A : Type uA} {D : Type uD}
 variable [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
 variable [NonUnitalCStarAlgebra D]
 
-/-- Literal representation and essentially-projection data modulo an ideal.
-The quotient homomorphism is constructed from these defining defects. -/
+/-- **Projection compression modulo an ideal.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and a star operation, let `D` be a nonunital complex
+C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. A compression pair consists of a
+complex nonunital star homomorphism `ρ : A → D` and `p ∈ D` such that `p²-p`, `p*-p`, and every
+commutator `pρ(a)-ρ(a)p` belong to `I`. -/
 structure CompressionPair (A : Type uA) (D : Type uD)
     [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
     [NonUnitalCStarAlgebra D] (I : ClosedStarIdeal D) where
@@ -60,7 +63,10 @@ namespace CompressionPair
 
 variable {I : ClosedStarIdeal D}
 
-/-- The ambient element becomes an actual star projection in the quotient. -/
+/-- **Compressed projection class.** Let `A` be a nonunital, possibly nonassociative semiring with a
+distributive complex scalar action and a star operation, let `D` be a nonunital complex C*-algebra,
+and let `I ⊆ D` be a closed two-sided star ideal. For a compression pair `(ρ,p)`, the class of `p`
+in `D/I` is self-adjoint and idempotent. -/
 theorem quotient_isStarProjection (P : CompressionPair A D I) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
     IsStarProjection (I.quotientMap P.projection) := by
@@ -76,7 +82,10 @@ theorem quotient_isStarProjection (P : CompressionPair A D I) :
     rw [map_sub, map_star, sub_eq_zero] at h
     exact h
 
-/-- The quotient projection commutes with every represented coefficient. -/
+/-- **Compression commutes modulo the ideal.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and a star operation, let `D` be a nonunital complex
+C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. For a compression pair `(ρ,p)` and
+every `a ∈ A`, the class of `p` in `D/I` commutes with the class of `ρ(a)`. -/
 theorem quotient_commute (P : CompressionPair A D I) (a : A) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
     Commute (I.quotientMap P.projection)
@@ -88,7 +97,10 @@ theorem quotient_commute (P : CompressionPair A D I) (a : A) :
   rw [map_sub, map_mul, map_mul, sub_eq_zero] at h
   exact h
 
-/-- The quotient representation obtained by projection compression. -/
+/-- **Compressed quotient homomorphism.** Let `A` be a nonunital, possibly nonassociative semiring with
+a distributive complex scalar action and a star operation, let `D` be a nonunital complex
+C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. A compression pair `(ρ,p)` defines the
+complex nonunital star homomorphism `A → D/I` sending `a` to the class of `pρ(a)p`. -/
 def quotientHom (P : CompressionPair A D I) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
     A →⋆ₙₐ[ℂ] I.Quotient := by
@@ -98,7 +110,10 @@ def quotientHom (P : CompressionPair A D I) :
     (I.quotientMap P.projection)
     P.quotient_isStarProjection P.quotient_commute
 
-/-- The constructed map is the literal quotient of two-sided compression. -/
+/-- **Evaluation of the compressed quotient map.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and a star operation, let `D` be a nonunital
+complex C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. For a compression pair `(ρ,p)`
+and every `a ∈ A`, the compressed quotient homomorphism evaluates to `[pρ(a)p]` in `D/I`. -/
 theorem quotientHom_apply (P : CompressionPair A D I) (a : A) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
     P.quotientHom a =
@@ -108,8 +123,11 @@ theorem quotientHom_apply (P : CompressionPair A D I) (a : A) :
   rw [map_mul, map_mul]
   rfl
 
-/-- An exact ambient projection with ideal-relative commutators provides the
-same essentially-projection data. -/
+/-- **Compression pair from an exact projection.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and a star operation, let `D` be a nonunital
+complex C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. If `ρ : A → D` is a complex
+nonunital star homomorphism, `p` is a self-adjoint idempotent, and `pρ(a)-ρ(a)p ∈ I` for every `a`,
+then `(ρ,p)` is a compression pair modulo `I`. -/
 def ofProjection (I : ClosedStarIdeal D) (rho : A →⋆ₙₐ[ℂ] D) (p : D)
     (hp : IsStarProjection p)
     (hcomm : ∀ a : A, p * rho a - rho a * p ∈ I) :
@@ -124,7 +142,10 @@ def ofProjection (I : ClosedStarIdeal D) (rho : A →⋆ₙₐ[ℂ] D) (p : D)
     exact I.carrier.zero_mem
   commutator_mem := hcomm
 
-/-- The exact-projection constructor retains its source representation. -/
+/-- **Representation of an exact-projection compression pair.** Let `A` be a nonunital, possibly
+nonassociative semiring with a distributive complex scalar action and a star operation, let `D` be a
+nonunital complex C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. The pair constructed
+from a self-adjoint idempotent `p` commuting with `ρ(A)` modulo `I` has representation `ρ`. -/
 @[simp]
 theorem ofProjection_representation (I : ClosedStarIdeal D)
     (rho : A →⋆ₙₐ[ℂ] D) (p : D) (hp : IsStarProjection p)
@@ -132,7 +153,10 @@ theorem ofProjection_representation (I : ClosedStarIdeal D)
     (ofProjection I rho p hp hcomm).representation = rho :=
   rfl
 
-/-- The exact-projection constructor retains its ambient projection. -/
+/-- **Projection of an exact-projection compression pair.** Let `A` be a nonunital, possibly
+nonassociative semiring with a distributive complex scalar action and a star operation, let `D` be a
+nonunital complex C*-algebra, and let `I ⊆ D` be a closed two-sided star ideal. The pair constructed
+from a self-adjoint idempotent `p` commuting with `ρ(A)` modulo `I` has projection element `p`. -/
 @[simp]
 theorem ofProjection_projection (I : ClosedStarIdeal D)
     (rho : A →⋆ₙₐ[ℂ] D) (p : D) (hp : IsStarProjection p)

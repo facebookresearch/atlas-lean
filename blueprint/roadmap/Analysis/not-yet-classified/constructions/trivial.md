@@ -1,3 +1,4 @@
-# Trivial
+# Trivial C*-grading
 
-The trivial grading: every group element acts as the identity.
+**Trivial C*-grading.** Let `A` be a nonunital complex C*-algebra. The action of every degree in
+`ℤ/2ℤ` is the identity automorphism.

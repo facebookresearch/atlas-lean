@@ -35,18 +35,27 @@ universe uR uI
 variable {R : Type uR} {ι : Type uI}
 variable [Semiring R] [StarRing R] [Fintype ι] [DecidableEq ι]
 
-/-- The actual unitary-to-ordinary-GL homomorphism, preserving both inverse matrix values. -/
+/-- Let `R` be a semiring. Let `ι` be a finite index type with decidable equality. The star on `R` is an
+additive involution reversing products. The unitary-to-ordinary-GL homomorphism, preserving both
+inverse matrix values.
+-/
 public def unitaryToGL :
     unitary (CStarMatrix ι ι R) →* Matrix.GeneralLinearGroup ι R :=
   (Units.map (CStarMatrix.ofMatrixRingEquiv (n := ι) (A := R)).symm.toMonoidHom).comp
     Unitary.toUnits
 
-/-- The whole ordinary matrix is exactly the original C-star matrix unitary's value. -/
+/-- Let `R` be a semiring. Let `ι` be a finite index type with decidable equality. The star on `R` is an
+additive involution reversing products. For `w : unitary (CStarMatrix ι ι R)`. The whole ordinary
+matrix is exactly the C-star matrix unitary's value.
+-/
 public theorem unitaryToGL_coe_matrix (w : unitary (CStarMatrix ι ι R)) :
     (unitaryToGL w : Matrix ι ι R) =
       (CStarMatrix.ofMatrixRingEquiv (n := ι) (A := R)).symm (w : CStarMatrix ι ι R) := rfl
 
-/-- Every ordinary finite matrix coefficient has its original unitary value. -/
+/-- Let `R` be a semiring. Let `ι` be a finite index type with decidable equality. The star on `R` is an
+additive involution reversing products. For `w : unitary (CStarMatrix ι ι R)` and `i` and `j : ι`.
+Every ordinary finite matrix coefficient has its unitary value.
+-/
 public theorem unitaryToGL_apply_entry (w : unitary (CStarMatrix ι ι R)) (i j : ι) :
     (unitaryToGL w : Matrix ι ι R) i j = (w : CStarMatrix ι ι R) i j := rfl
 

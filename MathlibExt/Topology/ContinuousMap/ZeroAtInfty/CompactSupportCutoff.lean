@@ -26,7 +26,10 @@ open scoped Topology ZeroAtInfty
 namespace ZeroAtInftyContinuousMap
 universe uX
 
-/-- A single actual cutoff retains compact support, all one-on-K values and both original norm bounds. -/
+/-- Let `X` be a regular locally compact topological space and let `K ⊆ X` be compact. The cutoff is
+complex-valued and continuous, with compact support.
+
+A single cutoff retains compact support, all one-on-K values and both norm bounds. -/
 theorem exists_compact_one_on_of_regularSpace
     {X : Type uX} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
     {K : Set X} (hK : IsCompact K) :

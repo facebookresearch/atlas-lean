@@ -1,3 +1,4 @@
-# Character Space Object
+# Compact character space
 
-The actual compact pointwise character space of the original algebra.
+For a commutative unital complex C*-algebra `A`, its nonzero complex
+characters form a compact Hausdorff space with the topology of pointwise convergence.

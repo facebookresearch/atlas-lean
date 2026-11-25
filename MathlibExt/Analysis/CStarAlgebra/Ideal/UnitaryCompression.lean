@@ -31,7 +31,9 @@ namespace ClosedStarIdeal
 
 variable {D : Type*} [CStarAlgebra D]
 
-/-- The class of an essential projection is an actual star projection. -/
+/-- **Projection modulo a closed ideal.** Let `D` be a unital complex C*-algebra and `I ⊆ D` a closed
+two-sided star ideal. If `p ∈ D` satisfies `p²-p ∈ I` and `p*-p ∈ I`, its class in `D/I` is a
+self-adjoint idempotent. -/
 theorem unitalQuotientMap_isStarProjection (I : ClosedStarIdeal D) (p : D)
     (hsquare : p * p - p ∈ I) (hstar : star p - p ∈ I) :
     let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
@@ -46,7 +48,9 @@ theorem unitalQuotientMap_isStarProjection (I : ClosedStarIdeal D) (p : D)
     rw [map_sub, map_star, sub_eq_zero] at h
     exact h
 
-/-- An essentially-unitary element has an actual unitary class. -/
+/-- **Unitary modulo a closed ideal.** Let `D` be a unital complex C*-algebra and `I ⊆ D` a closed
+two-sided star ideal. If `u ∈ D` satisfies `u* u - 1 ∈ I` and `u u* - 1 ∈ I`, its class in `D/I` is
+unitary. -/
 theorem unitalQuotientMap_mem_unitary (I : ClosedStarIdeal D) (u : D)
     (hleft : star u * u - 1 ∈ I) (hright : u * star u - 1 ∈ I) :
     let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
@@ -61,7 +65,9 @@ theorem unitalQuotientMap_mem_unitary (I : ClosedStarIdeal D) (u : D)
     rw [map_sub, map_mul, map_star, map_one, sub_eq_zero] at h
     exact h
 
-/-- The literal Fredholm-pair corner expression has a unitary class. -/
+/-- **Unitary compression modulo an ideal.** Let `D` be a unital complex C*-algebra and `I ⊆ D` a closed
+two-sided star ideal. If `p²-p`, `p*-p`, `u* u - 1`, `u u* - 1`, and `p u - u p` all belong to `I`,
+the class of `p u p + 1 - p` in `D/I` is unitary. -/
 theorem unitalQuotientMap_compression_mem_unitary (I : ClosedStarIdeal D)
     (p u : D) (hsquare : p * p - p ∈ I) (hstar : star p - p ∈ I)
     (hleft : star u * u - 1 ∈ I) (hright : u * star u - 1 ∈ I)

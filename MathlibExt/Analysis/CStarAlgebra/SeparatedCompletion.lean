@@ -37,8 +37,10 @@ namespace CStarAlgebra
 
 universe uA
 
-/-- The actual unital complex C-star structure on the computed separated
-completion of the source seminormed algebra. Activate the dictionary locally. -/
+/-- **C*-algebra of a separated completion.** Let `A` be a unital seminormed complex algebra with
+scalar-compatible isometric ring involution, and assume `‖a‖² ≤ ‖a* a‖` for every `a ∈ A`. The
+uniform completion of the separation quotient of `A` is a unital complex C*-algebra with the induced
+norm and operations. -/
 @[instance_reducible]
 def separatedCompletionCStarAlgebra
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
@@ -50,8 +52,10 @@ def separatedCompletionCStarAlgebra
   let _ : CStarRing (SeparationQuotient A) := SeparationQuotient.cstarRing A hCStar
   exact completionCStarAlgebra (SeparationQuotient A)
 
-/-- The canonical quotient and dense-completion map, preserving the original
-ring, complex scalar and involution operations. -/
+/-- **Canonical homomorphism to a separated C*-completion.** Let `A` be a unital seminormed complex
+algebra with scalar-compatible isometric ring involution, and assume `‖a‖² ≤ ‖a* a‖` for every `a ∈
+A`. The separation projection followed by completion inclusion is a unital complex star homomorphism
+from `A` to its separated completion. -/
 def separatedCompletionStarAlgHom
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
     [StarRing A] [NormedStarGroup A] [StarModule ℂ A]
@@ -112,7 +116,10 @@ def separatedCompletionStarAlgHom
             (completionCStarAlgebra_star_coe (SeparationQuotient A)
               (SeparationQuotient.mk a : SeparationQuotient A)).symm }
 
-/-- The canonical map has the literal quotient-completion value. -/
+/-- **Formula for the separated-completion homomorphism.** Let `A` be a unital seminormed complex
+algebra with scalar-compatible isometric ring involution, and assume `‖a‖² ≤ ‖a* a‖` for every `a ∈
+A`. The canonical image of `a ∈ A` is its separation-quotient class followed by the dense inclusion
+into the uniform completion. -/
 @[simp]
 theorem separatedCompletionStarAlgHom_apply
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
@@ -124,8 +131,10 @@ theorem separatedCompletionStarAlgHom_apply
       ((SeparationQuotient.mk a : SeparationQuotient A) : UniformSpace.Completion (SeparationQuotient A)) :=
   rfl
 
-/-- The computed completion preserves the original seminorm exactly,
-including when that seminorm vanishes on nonzero source elements. -/
+/-- **Norm preserved by a separated C*-completion.** Let `A` be a unital seminormed complex algebra with
+scalar-compatible isometric ring involution, and assume `‖a‖² ≤ ‖a* a‖` for every `a ∈ A`. For every
+`a ∈ A`, its canonical image has norm `‖a‖`, even when the source seminorm vanishes on nonzero
+elements. -/
 theorem separatedCompletionStarAlgHom_norm
     (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
     [StarRing A] [NormedStarGroup A] [StarModule ℂ A]

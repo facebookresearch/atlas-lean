@@ -1,3 +1,6 @@
-# Dense Range coe Non Unital Alg Hom
+# Dense range of the completion homomorphism
 
-The canonical nonunital completion map has dense range.
+Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. The canonical equivariant nonunital homomorphism has dense range in the uniform
+completion.

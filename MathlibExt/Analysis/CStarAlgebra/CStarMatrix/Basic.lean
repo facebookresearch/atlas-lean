@@ -46,7 +46,10 @@ namespace CStarMatrix
 
 universe uA uL uM uN
 
-/-- Transport rectangular multiplication through the matrix type copy. -/
+/-- Let `A` carry multiplication and an additive commutative monoid structure. Let `l`, `m`, `n` be
+index types with `m` finite. For `X : Matrix l m A` and `Y : Matrix m n A`, transporting the two
+matrices by `ofMatrix` preserves their rectangular product.
+-/
 @[simp]
 theorem of_mul_of {A : Type uA} {l : Type uL} {m : Type uM} {n : Type uN}
     [Mul A] [AddCommMonoid A] [Fintype m]
@@ -56,7 +59,9 @@ theorem of_mul_of {A : Type uA} {l : Type uL} {m : Type uM} {n : Type uN}
   intro i k
   simp only [CStarMatrix.mul_apply, CStarMatrix.ofMatrix_apply, Matrix.mul_apply]
 
-/-- The matrix type copy as a ring equivalence, without a coefficient unit. -/
+/-- Let `A` be an additive commutative monoid. Let `n` be a finite index type. `A` has a multiplication.
+The `CStarMatrix` representation as a ring equivalence, without a coefficient unit.
+-/
 def ofMatrixNonUnitalRingEquiv {A : Type uA} {n : Type uN}
     [Mul A] [AddCommMonoid A] [Fintype n] :
     Matrix n n A ≃+* CStarMatrix n n A :=
@@ -76,7 +81,10 @@ theorem ofMatrixNonUnitalRingEquiv_symm_apply {A : Type uA} {n : Type uN}
     ofMatrixNonUnitalRingEquiv.symm X = ofMatrix.symm X := by
   rfl
 
-/-- Inverse rectangular multiplication transport, with the caller's existing operations. -/
+/-- Let `A` be an additive commutative monoid. Let `l` be an index type. Let `m` be a finite index type.
+Let `n` be an index type. `A` has a multiplication. For `X : CStarMatrix l m A` and `Y : CStarMatrix
+m n A`. Inverse rectangular multiplication transport, with the caller's existing operations.
+-/
 @[simp]
 theorem ofMatrix_symm_mul {A : Type uA} {l : Type uL} {m : Type uM} {n : Type uN}
     [Mul A] [AddCommMonoid A] [Fintype m]
@@ -86,7 +94,10 @@ theorem ofMatrix_symm_mul {A : Type uA} {l : Type uL} {m : Type uM} {n : Type uN
   simpa only [Equiv.apply_symm_apply] using
     of_mul_of (ofMatrix.symm X) (ofMatrix.symm Y)
 
-/-- Reflect actual idempotence by entries, without identifying independent Mul records. -/
+/-- Let `A` be a possibly nonunital ring. Let `n` be a finite index type. For `M : CStarMatrix n n A`
+and `hM : IsIdempotentElem M`. Reflect idempotence by entries, without identifying independent Mul
+records.
+-/
 theorem ofMatrix_symm_isIdempotent {A : Type uA} {n : Type uN}
     [NonUnitalRing A] [Fintype n]
     (M : CStarMatrix n n A) (hM : IsIdempotentElem M) :
@@ -100,7 +111,11 @@ theorem ofMatrix_symm_isIdempotent {A : Type uA} {n : Type uN}
 
 universe uR uO
 
-/-- Typed reindexing entries, avoiding a raw Matrix operation on the type copy. -/
+/-- Let `R` be a semiring. Let `A` be a module over `R`. Let `m` be an index type. Let `n` be an index
+type. Let `l` be an index type. Let `o` be a type. For `em : m ≃ l`, `en : n ≃ o`, `M : CStarMatrix
+m n A`, `i : l` and `j : o`. Typed reindexing entries, avoiding a raw Matrix operation on the type
+copy.
+-/
 theorem reindexₗ_apply_entry {R : Type uR} {A : Type uA}
     {m : Type uM} {n : Type uN} {l : Type uL} {o : Type uO}
     [Semiring R] [AddCommMonoid A] [Module R A]
@@ -138,7 +153,10 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable [PartialOrder A] [StarOrderedRing A]
 variable {m : Type uM} {n : Type uN} [Fintype m] [Fintype n]
 
-/-- The original operator norm is bounded by the sum of the original entry norms. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order, and let `m`, `n` be
+finite index types. For `M : CStarMatrix m n A`, the operator norm is bounded by the sum of the
+norms of all its entries.
+-/
 theorem norm_le_sum_norm_entries (M : CStarMatrix m n A) :
     ‖M‖ ≤ ∑ j, ∑ i, ‖M i j‖ := by
   rw [norm_def]

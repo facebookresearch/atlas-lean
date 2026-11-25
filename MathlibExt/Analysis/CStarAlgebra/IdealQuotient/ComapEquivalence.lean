@@ -45,7 +45,9 @@ variable {D : Type u} {E : Type v}
 
 omit [IsScalarTower ℂ D D] [SMulCommClass ℂ D D] [StarModule ℂ D]
   [IsScalarTower ℂ E E] [SMulCommClass ℂ E E] [StarModule ℂ E] in
-/-- The comap under a genuine ambient star-algebra equivalence is two-sided. -/
+/-- **Preimage of a two-sided star subalgebra.** Let `D,E` be nonunital normed complex star algebras,
+let `e : D ≃ E` be a complex star-algebra equivalence, and let `T ⊆ E` be a two-sided nonunital star
+subalgebra. The preimage `e⁻¹(T)` is a two-sided star subalgebra of `D`. -/
 theorem quotientEquivComap_isTwoSided
     (e : D ≃⋆ₐ[ℂ] E) (T : NonUnitalStarSubalgebra ℂ E) [T.IsTwoSided] :
     (comap e.toNonUnitalStarAlgHom T).IsTwoSided := by
@@ -61,7 +63,10 @@ theorem quotientEquivComap_isTwoSided
     rw [map_mul]
     exact IsTwoSided.mul_mem_right hx (e a)
 
-/-- Descend a genuine ambient star-algebra equivalence through a two-sided star subalgebra. -/
+/-- **Quotient equivalence induced by an ambient equivalence.** Let `D,E` be nonunital normed complex
+star algebras, let `e : D ≃ E` be a complex star-algebra equivalence, and let `T ⊆ E` be a two-sided
+nonunital star subalgebra. The equivalence induces a complex star-algebra equivalence `D/e⁻¹(T) ≃
+E/T`. -/
 noncomputable def quotientEquivComap
     (e : D ≃⋆ₐ[ℂ] E) (T : NonUnitalStarSubalgebra ℂ E) [T.IsTwoSided] :
     let S := comap e.toNonUnitalStarAlgHom T;
@@ -113,7 +118,9 @@ noncomputable def quotientEquivComap
 
 omit [IsScalarTower ℂ D D] [SMulCommClass ℂ D D] [StarModule ℂ D]
   [IsScalarTower ℂ E E] [SMulCommClass ℂ E E] [StarModule ℂ E] in
-/-- Generic descent retains the canonical projection of the actual ambient map. -/
+/-- **Forward formula for quotient transport.** Let `D,E` be nonunital normed complex star algebras, let
+`e : D ≃ E` be a complex star-algebra equivalence, and let `T ⊆ E` be a two-sided nonunital star
+subalgebra. The induced equivalence sends the class of `d ∈ D` to the class of `e(d)` in `E/T`. -/
 theorem quotientEquivComap_mk
     (e : D ≃⋆ₐ[ℂ] E) (T : NonUnitalStarSubalgebra ℂ E) [T.IsTwoSided] :
     let S := comap e.toNonUnitalStarAlgHom T;
@@ -125,7 +132,10 @@ theorem quotientEquivComap_mk
 
 omit [IsScalarTower ℂ D D] [SMulCommClass ℂ D D] [StarModule ℂ D]
   [IsScalarTower ℂ E E] [SMulCommClass ℂ E E] [StarModule ℂ E] in
-/-- The generic inverse is induced by the actual ambient inverse on the same quotients. -/
+/-- **Inverse formula for quotient transport.** Let `D,E` be nonunital normed complex star algebras, let
+`e : D ≃ E` be a complex star-algebra equivalence, and let `T ⊆ E` be a two-sided nonunital star
+subalgebra. The inverse induced equivalence sends the class of `x ∈ E` to the class of `e⁻¹(x)` in
+`D/e⁻¹(T)`. -/
 theorem quotientEquivComap_symm_mk
     (e : D ≃⋆ₐ[ℂ] E) (T : NonUnitalStarSubalgebra ℂ E) [T.IsTwoSided] :
     let S := comap e.toNonUnitalStarAlgHom T;

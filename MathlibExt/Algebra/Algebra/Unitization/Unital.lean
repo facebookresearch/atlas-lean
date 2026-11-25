@@ -40,15 +40,18 @@ noncomputable section
 
 universe u v
 
-/-- The canonical shear homomorphism from the unitization of an already
-unital algebra to the scalar/algebra product. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The map from the unitization to `R × A`
+sends `(r,a)` to `(r, r • 1 + a)` and is an `R`-algebra homomorphism.
+-/
 def unitalProdAlgHom
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A] :
     Unitization R A →ₐ[R] R × A :=
   (fstHom R A).prod (lift (NonUnitalAlgHom.id R A))
 
-/-- Exact action of the canonical unitization product homomorphism. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. For `x` in the unitization, the
+homomorphism has value `(x.fst, x.fst • 1 + x.snd)`.
+-/
 theorem unitalProdAlgHom_apply
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A]
@@ -59,8 +62,9 @@ theorem unitalProdAlgHom_apply
   · change algebraMap R A x.fst + x.snd = x.fst • (1 : A) + x.snd
     rw [Algebra.algebraMap_eq_smul_one]
 
-/-- The canonical algebra equivalence from a unital algebra's unitization to
-the product of the scalars and the original algebra. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The shear map `(r,a) ↦ (r, r • 1 + a)`
+gives an `R`-algebra equivalence from the unitization of `A` to `R × A`.
+-/
 def unitalProdAlgEquiv
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A] :
@@ -87,7 +91,9 @@ def unitalProdAlgEquiv
           snd_inl, snd_inr, zero_add]
         abel)
 
-/-- Exact forward action of the canonical algebra equivalence. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The unitization/product equivalence
+sends `x` to `(x.fst, x.fst • 1 + x.snd)`.
+-/
 @[simp]
 theorem unitalProdAlgEquiv_apply
     (R : Type u) (A : Type v)
@@ -96,7 +102,9 @@ theorem unitalProdAlgEquiv_apply
     unitalProdAlgEquiv R A x = (x.fst, x.fst • (1 : A) + x.snd) :=
   unitalProdAlgHom_apply R A x
 
-/-- First coordinate of the canonical algebra equivalence. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The first coordinate of the image of a
+unitization element `x` is its scalar coordinate `x.fst`.
+-/
 theorem unitalProdAlgEquiv_apply_fst
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A]
@@ -104,7 +112,9 @@ theorem unitalProdAlgEquiv_apply_fst
     (unitalProdAlgEquiv R A x).1 = x.fst := by
   rw [unitalProdAlgEquiv_apply]
 
-/-- Second coordinate of the canonical algebra equivalence. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The second coordinate of the image of
+`x` is `x.fst • 1 + x.snd`.
+-/
 theorem unitalProdAlgEquiv_apply_snd
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A]
@@ -112,7 +122,9 @@ theorem unitalProdAlgEquiv_apply_snd
     (unitalProdAlgEquiv R A x).2 = x.fst • (1 : A) + x.snd := by
   rw [unitalProdAlgEquiv_apply]
 
-/-- Exact inverse action of the canonical algebra equivalence. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The inverse equivalence sends `(r,a)` to
+`inl r + inr (a - r • 1)`.
+-/
 @[simp]
 theorem unitalProdAlgEquiv_symm_apply
     (R : Type u) (A : Type v)
@@ -134,7 +146,9 @@ theorem unitalProdAlgEquiv_symm_apply
           snd_inl, snd_inr, zero_add]
         abel
 
-/-- The scalar inclusion has coordinates `(r, r • 1)`. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The scalar inclusion of `r` has image
+`(r, r • 1)` under the unitization/product equivalence.
+-/
 theorem unitalProdAlgEquiv_inl
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A] (r : R) :
@@ -142,7 +156,9 @@ theorem unitalProdAlgEquiv_inl
   rw [unitalProdAlgEquiv_apply]
   simp only [fst_inl, snd_inl, add_zero]
 
-/-- The canonical ideal inclusion has coordinates `(0, a)`. -/
+/-- Let `R` be a commutative ring and `A` a unital `R`-algebra. The ideal inclusion of `a` has image
+`(0,a)` under the unitization/product equivalence.
+-/
 theorem unitalProdAlgEquiv_inr
     (R : Type u) (A : Type v)
     [CommRing R] [Ring A] [Algebra R A] (a : A) :

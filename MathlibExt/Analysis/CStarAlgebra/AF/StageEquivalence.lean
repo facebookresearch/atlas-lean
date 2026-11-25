@@ -43,9 +43,11 @@ universe uA uN
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable {n : Type uN} [Fintype n]
 
-/-- Ambient equivalence of two actual stage projections is reflected in a
-common actual later stage. The original nonunital coefficient and matrix
-norm dictionaries are used throughout. -/
+/-- **Projection equivalence occurs at a later stage.** Let `A` be a nonunital complex C*-algebra and
+let `Aₖ ⊆ A`, for `k ∈ ℕ`, be increasing closed nonunital star subalgebras whose union is
+norm-dense. For a finite matrix index type `n`, suppose projections `p ∈ Mₙ(Aᵢ)` and `q ∈ Mₙ(Aⱼ)`
+become Murray-von Neumann equivalent in `Mₙ(A)`. There is `k ≥ i,j` at which their inclusions into
+`Mₙ(Aₖ)` are Murray-von Neumann equivalent. Matrix norms are inherited from the C*-algebras. -/
 theorem exists_later_stage_murrayVonNeumannEquivalent
     (stage : ℕ → NonUnitalStarSubalgebra ℂ A)
     [∀ k, IsClosed (stage k : Set A)] (hmono : Monotone stage)

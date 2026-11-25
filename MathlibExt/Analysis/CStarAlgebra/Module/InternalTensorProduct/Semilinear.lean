@@ -852,9 +852,14 @@ private theorem reverse_forward_linear :
           hinner₁ hinner₂ hφ z) = z at h
   exact h
 
-/-- Change both coefficient algebras and tensor factors along inner-covariant
-complex linear equivalences compatible with the left representations. The
-map and inverse are constructed through balancing, the radical and completion. -/
+/-- Let B₁, B₂, C₁ and C₂ be possibly nonunital complex C-star algebras and E₁, E₂, F₁ and F₂
+complete right Hilbert modules over their respective algebras. Let σ₁ and σ₂ be star algebra
+equivalences of the corresponding coefficient algebras and U₁ and U₂ complex-linear
+equivalences of the vector spaces that preserve the coefficient-valued inner products through
+σ₁ and σ₂. Assume U₂ intertwines the two left coefficient representations through σ₁. Change
+both coefficient algebras and tensor factors along inner-covariant complex linear equivalences
+compatible with the left representations. The map and inverse are through balancing, the
+radical and completion. -/
 @[no_expose]
 def completedSemilinearEquiv :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -877,8 +882,13 @@ def completedSemilinearEquiv :
 
 /-! ## Pure and finite-sum characteristics -/
 
-/-- The coefficient-changing equivalence sends a pure tensor to the tensor
-of the two transported vectors. -/
+/-- Let B₁, B₂, C₁ and C₂ be possibly nonunital complex C-star algebras and E₁, E₂, F₁ and F₂
+complete right Hilbert modules over their respective algebras. Let σ₁ and σ₂ be star algebra
+equivalences of the corresponding coefficient algebras and U₁ and U₂ complex-linear
+equivalences of the vector spaces that preserve the coefficient-valued inner products through
+σ₁ and σ₂. Assume U₂ intertwines the two left coefficient representations through σ₁. The
+coefficient-changing equivalence sends a pure tensor to the tensor of the two transported
+vectors. -/
 @[simp]
 theorem completedSemilinearEquiv_pure (x : E₁) (y : E₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -895,7 +905,12 @@ theorem completedSemilinearEquiv_pure (x : E₁) (y : E₂) :
   rw [completedPure_apply, completedPure_apply,
     completedForward_coe, radicalForward_pure]
 
-/-- Transport computes termwise on a finite sum of pure tensors. -/
+/-- Let B₁, B₂, C₁ and C₂ be possibly nonunital complex C-star algebras and E₁, E₂, F₁ and F₂
+complete right Hilbert modules over their respective algebras. Let σ₁ and σ₂ be star algebra
+equivalences of the corresponding coefficient algebras and U₁ and U₂ complex-linear
+equivalences of the vector spaces that preserve the coefficient-valued inner products through
+σ₁ and σ₂. Assume U₂ intertwines the two left coefficient representations through σ₁.
+Transport computes termwise on a finite sum of pure tensors. -/
 theorem completedSemilinearEquiv_sum_pure
     {I : Type uI} [Fintype I] (x : I → E₁) (y : I → E₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -939,8 +954,13 @@ private theorem targetCompletion_rightInner_coe
   simpa only [MulOpposite.unop_op] using congrArg MulOpposite.unop
     (radicalTensorCStarModule_inner ψ q r)
 
-/-- Transport intertwines the coefficient-valued inner product with the
-second coefficient-algebra equivalence. -/
+/-- Let B₁, B₂, C₁ and C₂ be possibly nonunital complex C-star algebras and E₁, E₂, F₁ and F₂
+complete right Hilbert modules over their respective algebras. Let σ₁ and σ₂ be star algebra
+equivalences of the corresponding coefficient algebras and U₁ and U₂ complex-linear
+equivalences of the vector spaces that preserve the coefficient-valued inner products through
+σ₁ and σ₂. Assume U₂ intertwines the two left coefficient representations through σ₁.
+Transport intertwines the coefficient-valued inner product with the second coefficient-algebra
+equivalence. -/
 theorem completedSemilinearEquiv_rightInner
     (z w : CompletedTensor (E₁ := E₁) φ) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -990,8 +1010,13 @@ theorem completedSemilinearEquiv_rightInner
       sourceCompletion_rightInner_coe,
       radicalInner_forward]
 
-/-- The right coefficient action is intertwined automatically by inner
-covariance; no separate semilinearity premise is required. -/
+/-- Let B₁, B₂, C₁ and C₂ be possibly nonunital complex C-star algebras and E₁, E₂, F₁ and F₂
+complete right Hilbert modules over their respective algebras. Let σ₁ and σ₂ be star algebra
+equivalences of the corresponding coefficient algebras and U₁ and U₂ complex-linear
+equivalences of the vector spaces that preserve the coefficient-valued inner products through
+σ₁ and σ₂. Assume U₂ intertwines the two left coefficient representations through σ₁. The
+induced equivalence of completed internal tensor products sends right multiplication by b in
+B₂ to right multiplication by σ₂(b) in C₂. -/
 theorem completedSemilinearEquiv_right_smul
     (z : CompletedTensor (E₁ := E₁) φ) (b : B₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=

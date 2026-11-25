@@ -18,12 +18,9 @@ public import Mathlib.Logic.Equiv.Fin.Basic
 /-!
 # The first coordinate of a tensor power
 
-The cons equivalence is the native singleton tensor equivalence, tensor-product
-concatenation, and reindexing. It is natural under the original linear map on
-every factor. Only a commutative semiring and its modules are required.
-
-This extracts the computed coordinate equivalence previously owned by the
-coefficient Hochschild construction so other tensor-power clients can use it.
+The cons equivalence separates the first factor of an indexed tensor
+power. It is natural in the linear map on each factor and is defined
+for modules over a commutative semiring.
 -/
 
 @[expose] public section
@@ -136,7 +133,7 @@ def consInsert (k : Type u) (M : Type v) [CommSemiring k] [AddCommMonoid M]
   (TensorProduct.mk k M (TensorPower k (n + 1) M) e).comp
     (consEquiv k M n).toLinearMap
 
-/-- The inserted vector precedes the actual first input vector and its tail. -/
+/-- The inserted vector precedes the first input vector and its tail. -/
 @[simp]
 theorem consInsert_tmul (k : Type u) (M : Type v) [CommSemiring k] [AddCommMonoid M]
     [Module k M] (e : M) (n : ℕ) (m : M) (a : Fin n → M) :

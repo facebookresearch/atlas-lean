@@ -65,7 +65,11 @@ private theorem centralizer_isClosedWOT
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The least concrete von Neumann algebra containing the given actual operators. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+The least concrete von Neumann algebra containing the given operators. -/
 noncomputable def generatedBy (s : Set (H →L[ℂ] H)) : VonNeumannAlgebra H :=
   ⟨StarSubalgebra.centralizer ℂ
       (StarSubalgebra.centralizer ℂ (StarAlgebra.adjoin ℂ s : Set (H →L[ℂ] H)) :
@@ -80,7 +84,11 @@ noncomputable def generatedBy (s : Set (H →L[ℂ] H)) : VonNeumannAlgebra H :=
     simp only [StarSubalgebra.coe_centralizer_centralizer,
       Set.centralizer_centralizer_centralizer]⟩
 
-/-- The generated carrier is the literal double commutant of the star adjoin. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+The generated carrier is the double commutant of the star adjoin. -/
 @[simp]
 theorem coe_generatedBy (s : Set (H →L[ℂ] H)) :
     (generatedBy s : Set (H →L[ℂ] H)) =
@@ -90,13 +98,21 @@ theorem coe_generatedBy (s : Set (H →L[ℂ] H)) :
       Set (H →L[ℂ] H)) : Set (H →L[ℂ] H)) = _
   rw [StarSubalgebra.coe_centralizer_centralizer, StarMemClass.star_coe_eq, Set.union_self]
 
-/-- Every original generator belongs to its actual generated von Neumann algebra. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+Every generator belongs to its generated von Neumann algebra. -/
 theorem subset_generatedBy (s : Set (H →L[ℂ] H)) :
     s ⊆ (generatedBy s : Set (H →L[ℂ] H)) := by
   rw [coe_generatedBy]
   exact (StarAlgebra.subset_adjoin ℂ s).trans Set.subset_centralizer_centralizer
 
-/-- Any concrete von Neumann algebra containing the generators contains their generated algebra. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+Any concrete von Neumann algebra containing the generators contains their generated algebra. -/
 theorem generatedBy_le {s : Set (H →L[ℂ] H)} {M : VonNeumannAlgebra H}
     (hs : s ⊆ (M : Set (H →L[ℂ] H))) : generatedBy s ≤ M := by
   have hA : StarAlgebra.adjoin ℂ s ≤ M.toStarSubalgebra := StarAlgebra.adjoin_le hs
@@ -105,7 +121,11 @@ theorem generatedBy_le {s : Set (H →L[ℂ] H)} {M : VonNeumannAlgebra H}
   rw [coe_generatedBy, ← M.centralizer_centralizer]
   exact Set.centralizer_subset (Set.centralizer_subset hA')
 
-/-- Containment of a generated von Neumann algebra is equivalent to containment of its generators. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+Containment of a generated von Neumann algebra is equivalent to containment of its generators. -/
 theorem generatedBy_le_iff {s : Set (H →L[ℂ] H)} {M : VonNeumannAlgebra H} :
     generatedBy s ≤ M ↔ s ⊆ (M : Set (H →L[ℂ] H)) := by
   constructor
@@ -113,18 +133,30 @@ theorem generatedBy_le_iff {s : Set (H →L[ℂ] H)} {M : VonNeumannAlgebra H} :
     exact (subset_generatedBy s).trans h
   · exact generatedBy_le
 
-/-- Enlarging the actual generator set enlarges the generated von Neumann algebra. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+Enlarging the generator set enlarges the generated von Neumann algebra. -/
 theorem generatedBy_mono {s t : Set (H →L[ℂ] H)} (hst : s ⊆ t) :
     generatedBy s ≤ generatedBy t :=
   generatedBy_le (hst.trans (subset_generatedBy t))
 
-/-- An existing concrete von Neumann algebra generates exactly itself. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+An existing concrete von Neumann algebra generates exactly itself. -/
 @[simp]
 theorem generatedBy_self (M : VonNeumannAlgebra H) :
     generatedBy (M : Set (H →L[ℂ] H)) = M :=
   le_antisymm (generatedBy_le (Set.Subset.refl _)) (subset_generatedBy _)
 
-/-- The actual generated carrier is closed in the stock weak operator topology. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+The generated carrier is closed in the weak operator topology. -/
 theorem generatedBy_isClosedWOT (s : Set (H →L[ℂ] H)) :
     IsClosed {T : H →WOT[ℂ] H | T.toCLM ∈ generatedBy s} := by
   change IsClosed {T : H →WOT[ℂ] H | T.toCLM ∈ (generatedBy s : Set (H →L[ℂ] H))}
@@ -132,7 +164,11 @@ theorem generatedBy_isClosedWOT (s : Set (H →L[ℂ] H)) :
   exact centralizer_isClosedWOT
     (Set.centralizer (StarAlgebra.adjoin ℂ s : Set (H →L[ℂ] H)))
 
-/-- Every existing concrete von Neumann algebra has a WOT-closed actual carrier. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+Every existing concrete von Neumann algebra has a WOT-closed carrier. -/
 theorem isClosedWOT (M : VonNeumannAlgebra H) :
     IsClosed {T : H →WOT[ℂ] H | T.toCLM ∈ M} := by
   rw [← generatedBy_self M]

@@ -1,3 +1,5 @@
-# Faithful Hilbert Representation Data
+# Chosen faithful Hilbert representation
 
-The one actual same-universe GN choice shared by source and Haar regular-model clients.
+Let `A` be a nonunital complex C*-algebra. This chooses
+a complete complex Hilbert space in the universe of `A` and a faithful nonunital complex star
+representation of `A` on it.

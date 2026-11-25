@@ -31,7 +31,9 @@ namespace ClosedStarIdeal
 variable {A : Type u} {B : Type v}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The actual closed two-sided image of an ideal under a surjective star map. -/
+/-- **Image ideal under a surjective star homomorphism.** Let `A,B` be nonunital complex C*-algebras and
+`f : A → B` a surjective nonunital complex star homomorphism. For a closed two-sided star ideal `I ⊆
+A`, its image `f(I)` is a closed two-sided star ideal of `B`. -/
 def mapOfSurjective (f : A →⋆ₙₐ[ℂ] B) (hf : Function.Surjective f)
     (I : ClosedStarIdeal A) : ClosedStarIdeal B where
   carrier := NonUnitalStarSubalgebra.map f I.carrier
@@ -72,7 +74,9 @@ theorem mem_mapOfSurjective (f : A →⋆ₙₐ[ℂ] B) (hf : Function.Surjectiv
     b ∈ mapOfSurjective f hf I ↔ ∃ a ∈ I, f a = b :=
   NonUnitalStarSubalgebra.mem_map
 
-/-- Image membership gives the literal ideal-preservation port. -/
+/-- **Ideal preservation by a surjective homomorphism.** Let `A,B` be nonunital complex C*-algebras and
+`f : A → B` a surjective nonunital complex star homomorphism. For a closed two-sided star ideal `I ⊆
+A`, every `a ∈ I` has `f(a) ∈ f(I)`. -/
 theorem mapsTo_mapOfSurjective (f : A →⋆ₙₐ[ℂ] B) (hf : Function.Surjective f)
     (I : ClosedStarIdeal A) :
     Set.MapsTo f I (mapOfSurjective f hf I) := by

@@ -1,3 +1,5 @@
 # Zero Extend Alg Hom
 
-The actual finite-corner transition as a native nonunital algebra map.
+Let `k` be a commutative ring and `A` a possibly nonunital ring with a `k`-module structure. For
+natural numbers `n ≤ m`, zero extension defines a multiplicative `k`-linear map between the two
+matrix sizes.

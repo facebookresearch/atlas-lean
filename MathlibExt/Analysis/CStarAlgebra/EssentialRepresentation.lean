@@ -47,7 +47,11 @@ section Algebraic
 
 variable {A : Type uA} [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
 
-/-- The actual closed span of the ranges of the original Hilbert representation. -/
+/-- **Essential subspace of a representation.** Let `H` be a complete complex Hilbert space and let `A`
+be a nonunital, possibly nonassociative semiring with a distributive complex scalar action and a
+star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star. The
+essential subspace is the norm-closed complex-linear span of all vectors `ρ(a)ξ`, for `a ∈ A` and `ξ
+∈ H`. -/
 def essentialSpace (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) : Submodule ℂ H :=
   (Submodule.span ℂ (Set.range fun p : A × H => ρ p.1 p.2)).topologicalClosure
 
@@ -56,25 +60,40 @@ instance completeSpaceEssentialSpace (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) 
     CompleteSpace ↥ρ.essentialSpace :=
   (Submodule.span ℂ (Set.range fun p : A × H => ρ p.1 p.2)).isClosed_topologicalClosure.completeSpace_coe
 
-/-- Every original operator value belongs to the actual essential subspace. -/
+/-- **Representation values lie in the essential subspace.** Let `H` be a complete complex Hilbert space
+and let `A` be a nonunital, possibly nonassociative semiring with a distributive complex scalar
+action and a star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars,
+and star. For every `a ∈ A` and `ξ ∈ H`, `ρ(a)ξ` belongs to the essential subspace. -/
 theorem range_mem_essentialSpace (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (a : A) (ξ : H) :
     ρ a ξ ∈ ρ.essentialSpace :=
   (Submodule.span ℂ (Set.range fun p : A × H => ρ p.1 p.2)).le_topologicalClosure
     (Submodule.subset_span ⟨(a, ξ), rfl⟩)
 
-/-- Restrict the original operator to the actual essential Hilbert subspace. -/
+/-- **Operator restricted to the essential subspace.** Let `H` be a complete complex Hilbert space and
+let `A` be a nonunital, possibly nonassociative semiring with a distributive complex scalar action
+and a star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and
+star. For `a ∈ A`, the operator `ρ(a)` restricts to a bounded operator on the closed essential
+subspace of `ρ`, with the inherited Hilbert norm. -/
 def essentialOperator (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (a : A) :
     ρ.essentialSpace →L[ℂ] ρ.essentialSpace :=
   ((ρ a).domRestrict ρ.essentialSpace).codRestrict ρ.essentialSpace
     fun ξ => ρ.range_mem_essentialSpace a ξ
 
-/-- The restricted operator retains every original vector value. -/
+/-- **Values of the essential operator.** Let `H` be a complete complex Hilbert space and let `A` be a
+nonunital, possibly nonassociative semiring with a distributive complex scalar action and a star
+operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star. For `a ∈
+A` and `ξ` in the essential subspace, including the restricted operator value into `H` gives
+`ρ(a)ξ`. -/
 @[simp]
 theorem essentialOperator_apply_coe (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (a : A)
     (ξ : ρ.essentialSpace) :
     (ρ.essentialOperator a ξ : H) = ρ a ξ := rfl
 
-/-- The original representation restricted to its actual essential Hilbert subspace. -/
+/-- **Representation on its essential subspace.** Let `H` be a complete complex Hilbert space and let
+`A` be a nonunital, possibly nonassociative semiring with a distributive complex scalar action and a
+star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star.
+Restricting each `ρ(a)` to the closed essential subspace gives a representation of `A` on that
+Hilbert space. -/
 def essentialRepresentation (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     A →⋆ₙₐ[ℂ] (ρ.essentialSpace →L[ℂ] ρ.essentialSpace) where
   toFun := ρ.essentialOperator
@@ -114,13 +133,20 @@ def essentialRepresentation (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     rw [map_star, ContinuousLinearMap.star_eq_adjoint]
     exact ContinuousLinearMap.adjoint_inner_left _ _ _
 
-/-- The restricted representation retains exactly the original vector values. -/
+/-- **Values of the essential representation.** Let `H` be a complete complex Hilbert space and let `A`
+be a nonunital, possibly nonassociative semiring with a distributive complex scalar action and a
+star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star. For
+`a ∈ A` and `ξ` in the essential subspace, the restricted representation evaluates to the same
+ambient vector `ρ(a)ξ`. -/
 @[simp]
 theorem essentialRepresentation_apply_coe (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (a : A)
     (ξ : ρ.essentialSpace) :
     (ρ.essentialRepresentation a ξ : H) = ρ a ξ := rfl
 
-/-- Restriction to the actual essential space preserves the original zero kernel. -/
+/-- **Kernel of the essential restriction.** Let `H` be a complete complex Hilbert space and let `A` be
+a nonunital, possibly nonassociative semiring with a distributive complex scalar action and a star
+operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star. For
+every `a ∈ A`, its operator in the essential representation is zero exactly when `ρ(a) = 0` on `H`. -/
 theorem essentialRepresentation_eq_zero_iff (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (a : A) :
     ρ.essentialRepresentation a = 0 ↔ ρ a = 0 := by
   constructor
@@ -146,7 +172,11 @@ theorem essentialRepresentation_eq_zero_iff (ρ : A →⋆ₙₐ[ℂ] (H →L[�
     rw [h]
     rfl
 
-/-- The actual essential restriction is nondegenerate: its operator ranges have dense span. -/
+/-- **Nondegeneracy of the essential restriction.** Let `H` be a complete complex Hilbert space and let
+`A` be a nonunital, possibly nonassociative semiring with a distributive complex scalar action and a
+star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star. The
+complex-linear span of the ranges of all operators in the essential representation is dense in its
+Hilbert space. -/
 theorem nondegenerate_essentialRepresentation (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     Dense (Submodule.span ℂ (Set.range fun p : A × ρ.essentialSpace =>
       ρ.essentialRepresentation p.1 p.2) : Set ρ.essentialSpace) := by
@@ -187,7 +217,10 @@ section AdditiveGroup
 
 variable {A : Type uA} [NonUnitalNonAssocRing A] [DistribMulAction ℂ A] [Star A]
 
-/-- Faithfulness of the original representation passes to its actual essential restriction. -/
+/-- **Faithfulness of the essential restriction.** Let `A` be a nonunital, possibly nonassociative ring
+with a distributive complex scalar action and a star operation, and let `H` be a complete complex
+Hilbert space. An injective complex star representation `ρ : A → B(H)` remains injective when
+restricted to its closed essential subspace. -/
 theorem injective_essentialRepresentation (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
     (hρ : Function.Injective ρ) : Function.Injective ρ.essentialRepresentation := by
   intro a b hab
@@ -203,7 +236,9 @@ section CStarNorm
 
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- The actual faithful essential restriction has the original C-star norm. -/
+/-- **Norm of a faithful essential representation.** For a nonunital complex C*-algebra `A`, a complete
+complex Hilbert space `H`, and an injective nonunital complex star homomorphism `ρ : A → B(H)`, the
+operator of `a ∈ A` on the closed essential subspace of `ρ` has norm `‖a‖`. -/
 theorem norm_essentialRepresentation (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
     (hρ : Function.Injective ρ) (a : A) : ‖ρ.essentialRepresentation a‖ = ‖a‖ :=
   NonUnitalStarAlgHom.norm_map ρ.essentialRepresentation (ρ.injective_essentialRepresentation hρ) a

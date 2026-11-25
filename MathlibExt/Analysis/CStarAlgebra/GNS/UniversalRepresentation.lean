@@ -49,75 +49,114 @@ local instance universalStateOrder : PartialOrder A := CStarAlgebra.spectralOrde
 /-- The matching stock ordered-star structure, with no order/model argument. -/
 local instance universalStateStarOrder : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
 
-/-- All original positive functionals whose actual continuous-linear norm is one. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+All positive functionals whose continuous-linear norm is one. -/
 abbrev NormalizedStateIndex :=
   { tau : A →ₚ[ℂ] ℂ //
     ‖(PositiveContinuousLinearMap.ofClass tau : A →P[ℂ] ℂ).toContinuousLinearMap‖ = 1 }
 
-/-- The actual original GNS completion of an indexed normalized state. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The GNS completion of an indexed normalized state. -/
 abbrev StateGNSpace (s : NormalizedStateIndex A) : Type uA := s.1.GNS
 
-/-- The Hilbert direct sum over all original normalized states, with its stock lp norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The Hilbert direct sum over all normalized states, with its lp norm. -/
 abbrev UniversalStateGNSpace : Type uA := lp (StateGNSpace A) 2
 
 /-- The actual bounded operators on the original universal Hilbert sum have stock C-star data. -/
 local instance universalStateOperatorCStar :
     CStarAlgebra (UniversalStateGNSpace A →L[ℂ] UniversalStateGNSpace A) := inferInstance
 
-/-- The actual coordinatewise original GNS action, bounded by the coefficient norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The coordinatewise GNS action, bounded by the coefficient norm. -/
 def universalStateGNSOperator (a : A) :
     UniversalStateGNSpace A →L[ℂ] UniversalStateGNSpace A :=
   NonUnitalStarAlgHom.hilbertSumOperator (H := StateGNSpace A)
     (fun s : NormalizedStateIndex A => s.1.gnsNonUnitalStarAlgHom) a
 
-/-- Every operator coordinate is the literal GNS representation of that state. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+Every operator coordinate is the GNS representation of that state. -/
 theorem universalStateGNSOperator_apply (a : A) (x : UniversalStateGNSpace A)
     (s : NormalizedStateIndex A) :
     universalStateGNSOperator A a x s = s.1.gnsNonUnitalStarAlgHom a (x s) :=
   NonUnitalStarAlgHom.hilbertSumOperator_apply (H := StateGNSpace A)
     (fun t : NormalizedStateIndex A => t.1.gnsNonUnitalStarAlgHom) a x s
 
-/-- The actual Hilbert-sum operator has the uniform original C-star coefficient bound. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The Hilbert-sum operator has the uniform C-star coefficient bound. -/
 theorem norm_universalStateGNSOperator_le (a : A) : ‖universalStateGNSOperator A a‖ ≤ ‖a‖ :=
   NonUnitalStarAlgHom.norm_apply_le
     (NonUnitalStarAlgHom.hilbertDirectSum (H := StateGNSpace A)
       (fun s : NormalizedStateIndex A => s.1.gnsNonUnitalStarAlgHom)) a
 
-/-- The actual direct-sum coefficient representation on all original state GNS spaces. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The direct-sum coefficient representation on all state GNS spaces. -/
 def universalStateGNSRepresentation :
     A →⋆ₙₐ[ℂ] (UniversalStateGNSpace A →L[ℂ] UniversalStateGNSpace A) :=
   NonUnitalStarAlgHom.hilbertDirectSum (H := StateGNSpace A)
     (fun s : NormalizedStateIndex A => s.1.gnsNonUnitalStarAlgHom)
 
-/-- The universal representation retains its literal state-coordinate operator values. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The universal representation retains its state-coordinate operator values. -/
 theorem universalStateGNSRepresentation_apply (a : A) (x : UniversalStateGNSpace A)
     (s : NormalizedStateIndex A) :
     universalStateGNSRepresentation A a x s = s.1.gnsNonUnitalStarAlgHom a (x s) :=
   NonUnitalStarAlgHom.hilbertDirectSum_apply (H := StateGNSpace A)
     (fun t : NormalizedStateIndex A => t.1.gnsNonUnitalStarAlgHom) a x s
 
-/-- The universal representation keeps the original coefficient contraction estimate. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The universal representation keeps the coefficient contraction estimate. -/
 theorem norm_universalStateGNSRepresentation_le (a : A) :
     ‖universalStateGNSRepresentation A a‖ ≤ ‖a‖ :=
   NonUnitalStarAlgHom.norm_apply_le (universalStateGNSRepresentation A) a
 
-/-- The actual original nonunital cyclic vector for each normalized state. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The nonunital cyclic vector for each normalized state. -/
 def universalStateCyclicVector (s : NormalizedStateIndex A) : StateGNSpace A s :=
   PositiveLinearMap.nonunitalGNSVector s.1 s.2
 
-/-- The original state vector has unit norm in its actual GNS Hilbert space. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The state vector has unit norm in its GNS Hilbert space. -/
 theorem norm_universalStateCyclicVector (s : NormalizedStateIndex A) :
     ‖universalStateCyclicVector A s‖ = 1 :=
   PositiveLinearMap.norm_nonunitalGNSVector s.1 s.2
 
-/-- The original A-orbit of each actual state vector has dense span. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The A-orbit of each state vector has dense span. -/
 theorem dense_universalStateCyclicVector_span (s : NormalizedStateIndex A) :
     Dense (Submodule.span ℂ (Set.range fun a : A =>
       s.1.gnsNonUnitalStarAlgHom a (universalStateCyclicVector A s)) : Set (StateGNSpace A s)) :=
   PositiveLinearMap.dense_nonunitalGNSVector_span s.1 s.2
 
 open scoped Classical in
-/-- The actual direct-sum action preserves a literal single-coordinate vector. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The direct-sum action preserves a single-coordinate vector. -/
 theorem universalStateGNSOperator_single (a : A) (s : NormalizedStateIndex A) (x : StateGNSpace A s) :
     universalStateGNSOperator A a
         (lp.single (E := fun t : NormalizedStateIndex A => t.val.GNS) 2 s x) =
@@ -131,7 +170,11 @@ theorem universalStateGNSOperator_single (a : A) (s : NormalizedStateIndex A) (x
     simp [universalStateGNSOperator_apply]
   · simp [universalStateGNSOperator_apply, Pi.single_eq_of_ne h]
 
-/-- The zero algebra has no original positive functional of norm one. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+Assume `A` has only one element.
+
+The zero algebra has no positive functional of norm one. -/
 instance normalizedStateIndexIsEmpty [Subsingleton A] : IsEmpty (NormalizedStateIndex A) where
   false s := by
     have hz : (PositiveContinuousLinearMap.ofClass s.1 : A →P[ℂ] ℂ).toContinuousLinearMap = 0 := by
@@ -143,7 +186,11 @@ instance normalizedStateIndexIsEmpty [Subsingleton A] : IsEmpty (NormalizedState
     rw [hz, norm_zero] at hn
     exact zero_ne_one hn
 
-/-- The actual Hilbert sum is the zero space when the original algebra is zero. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+Assume `A` has only one element.
+
+The Hilbert sum is the zero space when the algebra is zero. -/
 instance universalStateGNSpaceSubsingleton [Subsingleton A] : Subsingleton (UniversalStateGNSpace A) where
   allEq _ _ := lp.ext (funext fun s => isEmptyElim s)
 

@@ -1,4 +1,4 @@
-# Cstar Star Ring
+# Involution on a unital separation quotient
 
-The isometric source involution on the actual separation quotient.
-The quotient's ring and additive operations remain the stock operations.
+The involution of a unital seminormed ring `A`, when
+isometric, descends to a ring involution on its separation quotient.
