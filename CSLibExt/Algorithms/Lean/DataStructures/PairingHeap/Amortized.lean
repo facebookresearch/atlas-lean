@@ -768,7 +768,7 @@ noncomputable def pairingTreeAmortized [LinearOrder α] :
         cases ss with
         | nil =>
           have hh : isRoot h := hinv h (by simp)
-          show isRoot (insert x h)
+          change isRoot (insert x h)
           exact isRoot_insert hh
         | cons _ _ => simp [arityOp] at hlen
     | DelMin =>
@@ -778,7 +778,7 @@ noncomputable def pairingTreeAmortized [LinearOrder α] :
         cases ss with
         | nil =>
           have hh : isRoot h := hinv h (by simp)
-          show isRoot (delMin h)
+          change isRoot (delMin h)
           exact isRoot_delMin hh
         | cons _ _ => simp [arityOp] at hlen
     | Merge =>
@@ -792,7 +792,7 @@ noncomputable def pairingTreeAmortized [LinearOrder α] :
           | nil =>
             have hh1 : isRoot h1 := hinv h1 (by simp)
             have hh2 : isRoot h2 := hinv h2 (by simp)
-            show isRoot (merge h1 h2)
+            change isRoot (merge h1 h2)
             exact isRoot_merge hh1 hh2
           | cons _ _ => simp [arityOp] at hlen
   ppos := by
@@ -1002,11 +1002,11 @@ theorem szList_hps_link [LinearOrder α] (h1 h2 : Hp α) :
   obtain ⟨x2, hs2⟩ := h2
   by_cases hc : x1 < x2
   · rw [link_eq_pos hc]
-    show szList (.mk x2 hs2 :: hs1) = _
+    change szList (.mk x2 hs2 :: hs1) = _
     rw [szList_cons, szHp_eq, szHp_eq]
     omega
   · rw [link_eq_neg hc]
-    show szList (.mk x1 hs1 :: hs2) = _
+    change szList (.mk x1 hs1 :: hs2) = _
     rw [szList_cons, szHp_eq, szHp_eq]
     omega
 
@@ -1038,7 +1038,8 @@ theorem phiHp_link [LinearOrder α] (h1 h2 : Hp α) :
     have hlog2 : Real.logb 2 ((szList (.mk x2 hs2 :: hs1) : ℝ) + 1) =
         Real.logb 2 ((szHp (.mk x1 hs1) : ℝ) + (szHp (.mk x2 hs2) : ℝ)) := by
       congr 1
-      have : ((szList (.mk x2 hs2 :: hs1) : ℝ) + 1) = ((szHp (.mk x1 hs1) : ℝ) + (szHp (.mk x2 hs2) : ℝ)) := by
+      have : ((szList (.mk x2 hs2 :: hs1) : ℝ) + 1) =
+          ((szHp (.mk x1 hs1) : ℝ) + (szHp (.mk x2 hs2) : ℝ)) := by
         have hsz' : szList (.mk x2 hs2 :: hs1) + 1 = szHp (.mk x1 hs1) + szHp (.mk x2 hs2) := hsz
         have := congrArg (fun n : ℕ => (n : ℝ)) hsz'
         push_cast at this
@@ -1114,12 +1115,12 @@ theorem deltaPhi_insert [LinearOrder α] (x : α) (ho : Heap α) :
     phiHeap (insert x ho) - phiHeap ho ≤ Real.logb 2 ((szHeap ho : ℝ) + 1) := by
   cases ho with
   | none =>
-    show phiHeap (some (.mk x [])) - phiHeap none ≤ Real.logb 2 ((szHeap none : ℝ) + 1)
+    change phiHeap (some (.mk x [])) - phiHeap none ≤ Real.logb 2 ((szHeap none : ℝ) + 1)
     rw [phiHeap_none, szHeap_none, phiHeap_some, phiHp_eq, phiList_nil, szList_nil]
     simp
   | some h =>
     obtain ⟨r, hs⟩ := h
-    show phiHeap (some (link (.mk x []) (.mk r hs))) - phiHeap (some (.mk r hs)) ≤ _
+    change phiHeap (some (link (.mk x []) (.mk r hs))) - phiHeap (some (.mk r hs)) ≤ _
     rw [phiHeap_some, phiHeap_some, szHeap_some]
     have hlink := phiHp_link (.mk x []) (.mk r hs)
     have hphi : phiHp (.mk r hs) = phiList hs + Real.logb 2 ((szHp (.mk r hs) : ℝ)) := by
@@ -1129,7 +1130,8 @@ theorem deltaPhi_insert [LinearOrder α] (x : α) (ho : Heap α) :
       push_cast
       ring
     have hsz1 : szHp (.mk x []) = 1 := by rw [szHp_eq, szList_nil]
-    have hlist : phiList (hps (.mk x [])) = 0 := by rw [show hps (.mk x []) = [] from rfl, phiList_nil]
+    have hlist : phiList (hps (.mk x [])) = 0 := by
+      rw [show hps (.mk x []) = [] from rfl, phiList_nil]
     rw [hlink, hlist, hsz1, hphi, show hps (.mk r hs) = hs from rfl]
     simp only [Nat.cast_one]
     have hpos : (0 : ℝ) < (szHp (.mk r hs) : ℝ) := by
@@ -1454,7 +1456,7 @@ theorem deltaPhi_delMin [LinearOrder α] (h : Hp α) :
     phiHeap (delMin (some h)) - phiHeap (some h) ≤
       2 * Real.logb 2 ((szList (hps h) : ℝ) + 1) - ((hps h).length : ℝ) + 2 := by
   obtain ⟨x, hs⟩ := h
-  show phiHeap (delMin (some (.mk x hs))) - phiHeap (some (.mk x hs)) ≤
+  change phiHeap (delMin (some (.mk x hs))) - phiHeap (some (.mk x hs)) ≤
       2 * Real.logb 2 ((szList hs : ℝ) + 1) - (hs.length : ℝ) + 2
   rw [delMin_some, phiHeap_some]
   have hphi : phiHp (.mk x hs) = phiList hs +
@@ -1525,7 +1527,7 @@ theorem A_delMin [LinearOrder α] (ho : Heap α) :
   | some h =>
     obtain ⟨x, hs⟩ := h
     have hTnat : TdelMin (some (.mk x hs)) = hs.length + 2 := by
-      show Tpass1 hs + Tpass2 (pass1 hs) = hs.length + 2
+      change Tpass1 hs + Tpass2 (pass1 hs) = hs.length + 2
       have := Tpass2_pass1_add_Tpass1 hs
       omega
     have hT : (TdelMin (some (.mk x hs)) : ℝ) = (hs.length : ℝ) + 2 := by
@@ -1770,13 +1772,13 @@ theorem phiTree_trees (hs : List (Hp α)) :
 /-- Book §23.3: `sz` on a single heap is the size of its tree. -/
 theorem szHp_tree (h : Hp α) : szHp h = Tree.sizeTree (treeHp h) := by
   obtain ⟨x, hs⟩ := h
-  show szHp (.mk x hs) = Tree.sizeTree (Tree.BTree.node (trees hs) x Tree.BTree.leaf)
+  change szHp (.mk x hs) = Tree.sizeTree (Tree.BTree.node (trees hs) x Tree.BTree.leaf)
   rw [Tree.sizeTree_node, Tree.sizeTree_leaf, sizeTree_trees, szHp_eq]
 
 /-- Book §23.3: `Φ` on a single heap is the potential of its tree. -/
 theorem phiHp_tree (h : Hp α) : phiHp h = Tree.phiTree (treeHp h) := by
   obtain ⟨x, hs⟩ := h
-  show phiHp (.mk x hs) = Tree.phiTree (Tree.BTree.node (trees hs) x Tree.BTree.leaf)
+  change phiHp (.mk x hs) = Tree.phiTree (Tree.BTree.node (trees hs) x Tree.BTree.leaf)
   rw [Tree.phiTree_node, Tree.phiTree_leaf, phiTree_trees, phiHp_eq]
   have hsize : Tree.sizeTree (Tree.BTree.node (trees hs) x Tree.BTree.leaf) = szList hs + 1 := by
     rw [Tree.sizeTree_node, Tree.sizeTree_leaf, sizeTree_trees]
@@ -1813,7 +1815,7 @@ theorem link2 [LinearOrder α] (x : α) (lx : List (Hp α)) (h : Hp α) :
     link (.mk x lx) h = match h with
       | .mk y ly => if x < y then .mk x (.mk y ly :: lx) else .mk y (.mk x lx :: ly) := by
   obtain ⟨y, ly⟩ := h
-  show link (.mk x lx) (.mk y ly) =
+  change link (.mk x lx) (.mk y ly) =
     if x < y then .mk x (.mk y ly :: lx) else .mk y (.mk x lx :: ly)
   by_cases hc : x < y
   · rw [link_eq_pos hc]; simp only [hc, ite_true]

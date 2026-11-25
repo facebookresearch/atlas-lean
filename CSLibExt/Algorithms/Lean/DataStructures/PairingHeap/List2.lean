@@ -455,7 +455,7 @@ theorem Tpass2_eq_length (hs : List (Hp α)) : Tpass2 hs = hs.length + 1 := by
   induction hs with
   | nil => rfl
   | cons _ hs ih =>
-    show 1 + Tpass2 hs = hs.length + 1 + 1
+    change 1 + Tpass2 hs = hs.length + 1 + 1
     rw [ih]
     omega
 
@@ -472,9 +472,8 @@ theorem Tpass2_pass1_add_Tpass1 [LinearOrder α] (hs : List (Hp α)) :
   induction hs using List_pair_ind with
   | nil => rfl
   | single h =>
-    show Tpass2 (pass1 [h]) + Tpass1 [h] = 1 + 2
+    change Tpass2 (pass1 [h]) + Tpass1 [h] = 1 + 2
     rw [pass1_single]
-    show Tpass2 [h] + Tpass1 [h] = 1 + 2
     rw [Tpass2_eq_length]
     rfl
   | cons2 h1 h2 hs ih =>
@@ -535,10 +534,10 @@ theorem mset_insert [LinearOrder α] (x : α) (ho : Heap α) :
     msetHeap (insert x ho) = {x} + msetHeap ho := by
   cases ho with
   | none =>
-    show msetHeap (some (.mk x [])) = {x} + msetHeap none
+    change msetHeap (some (.mk x [])) = {x} + msetHeap none
     rw [msetHeap_some, msetHeap_none, msetHp_eq, msetHpList_nil, ← Multiset.singleton_add, add_zero]
   | some h =>
-    show msetHeap (some (link (.mk x []) h)) = {x} + msetHeap h
+    change msetHeap (some (link (.mk x []) h)) = {x} + msetHeap h
     rw [msetHeap_some, msetHp_link, msetHp_eq, msetHpList_nil, ← Multiset.singleton_add, add_zero]
     rw [msetHeap_some]
 
@@ -802,16 +801,17 @@ theorem priority_queue_merge [LinearOrder α] :
       msetHeap (merge ho1 ho2) = msetHeap ho1 + msetHeap ho2) ∧
     (∀ (ho1 ho2 : Heap α), invar ho1 → invar ho2 → invar (merge ho1 ho2)) := by
   refine ⟨rfl, ?_, mset_insert, mset_delMin, getMin_mem, getMin_le, ?_, trivial,
-    fun _ _ h => invar_insert h, fun ho h => invar_delMin h, mset_merge, fun ho1 ho2 h1 h2 => invar_merge h1 h2⟩
-  intro ho
-  cases ho with
-  | none => simp
-  | some h =>
-    constructor
-    · intro hcontra
-      exact absurd hcontra (msetHp_ne_zero h)
-    · intro hcontra
-      exact absurd hcontra (by simp)
+    fun _ _ h => invar_insert h, fun ho h => invar_delMin h, mset_merge,
+    fun ho1 ho2 h1 h2 => invar_merge h1 h2⟩
+  · intro ho
+    cases ho with
+    | none => simp
+    | some h =>
+      constructor
+      · intro hcontra
+        exact absurd hcontra (msetHp_ne_zero h)
+      · intro hcontra
+        exact absurd hcontra (by simp)
   · intro ho hne
     exact getMin_defined ho hne
 

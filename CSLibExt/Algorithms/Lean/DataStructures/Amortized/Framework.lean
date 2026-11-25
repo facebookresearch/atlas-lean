@@ -263,7 +263,7 @@ def amortizedTransfer {Op S T : Type u} {Base : AmortizedData Op S}
     have hexec := Tr.exec'_hom hall hlen
     have hmap : (ss.map (fun t => Base.Phi (Tr.hom t))) =
         (ss.map Tr.hom).map Base.Phi := by rw [List.map_map]; rfl
-    show (Tr.cost' f ss : ℝ) + Base.Phi (Tr.hom (Tr.exec' f ss)) -
+    change (Tr.cost' f ss : ℝ) + Base.Phi (Tr.hom (Tr.exec' f ss)) -
         (ss.map (fun t => Base.Phi (Tr.hom t))).sum ≤ Tr.U' f ss
     rw [hcost, hU, hmap, hexec]
     exact hA
