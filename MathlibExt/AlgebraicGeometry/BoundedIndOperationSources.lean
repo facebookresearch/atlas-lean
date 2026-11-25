@@ -44,7 +44,17 @@ section Tensor
 variable (X : TopCat.{0}) [CompactSheafSource k X]
   [HasSheafify (Opens.grothendieckTopology X) (ModuleCat.{0} k)]
 
-/-- Source proofs for the original compact-generator tensor and native bounded localization. -/
+/-- The condition, for ind-sheaves of $k$-vector spaces on $X$ ($k$ a field), that the sheafified
+tensor product of two compactly supported sheaves is compactly supported (`compact`); that this
+tensor product of compact generators, followed by the Yoneda embedding, has a left Kan extension
+along the product of the Yoneda embeddings into ind-sheaves, the tensor product of ind-sheaves
+(`ind`); that the latter is additive in each variable and every pair of cochain complexes of
+ind-sheaves has a total tensor complex (`cochain`); that every termwise bounded complex has bounded
+cohomology (`cohomology`) and the localization functor from termwise bounded complexes to the
+bounded derived category is a localization at the quasi-isomorphisms (`localization`); that the
+total tensor complex of two termwise bounded complexes is termwise bounded (`bounded`); and that
+the total tensor complex followed by the localization functor inverts quasi-isomorphisms in each
+variable (`derived`). -/
 structure TensorSource : Prop where
   compact : CompactTensorSource k X
   ind : IndTensorSource k X compact
@@ -54,7 +64,10 @@ structure TensorSource : Prop where
   bounded : BoundedTensorSource k X compact ind
   derived : DerivedTensorSource k X compact ind cohomology bounded
 
-/-- The actual native bounded derived tensor determined by those structural source proofs. -/
+/-- The derived tensor product on the bounded derived category of ind-sheaves of $k$-vector spaces
+on $X$, under the conditions $S$: the bifunctor induced, through the localization of termwise
+bounded complexes at quasi-isomorphisms in each variable, by the total tensor complex of two
+termwise bounded complexes followed by the localization functor. -/
 def tensorFunctor (S : TensorSource k X) :
     BoundedIndDerived k X ⥤ BoundedIndDerived k X ⥤ BoundedIndDerived k X :=
   letI := S.cochain
@@ -66,7 +79,15 @@ section Inverse
 
 variable {X Y : TopCat.{0}} [CompactSheafSource k X] [CompactSheafSource k Y] (f : X ⟶ Y)
 
-/-- Source proofs for the prescribed ordinary-generator inverse image on this actual map. -/
+/-- The condition, for a continuous map $f : X \to Y$ and ind-sheaves of $k$-vector spaces ($k$ a
+field), that for every sheaf $F$ on $X$ the functor $G \mapsto \mathrm{Hom}(G, F)$ on compactly
+supported sheaves $G$ is an ind-object, which defines the ind-sheaf of $F$ (`ordinary`); that the
+functor sending a compactly supported sheaf $G$ on $Y$ to the ind-sheaf of $f^{-1} G$ has a left
+Kan extension along the Yoneda embedding into ind-sheaves on $Y$, the inverse image of ind-sheaves
+(`ind`); that this inverse image is additive (`additive`); that, applied termwise to cochain
+complexes and followed by the localization functor, it inverts quasi-isomorphisms (`exact`), so
+that it induces a functor of derived categories; and that this functor sends bounded objects to
+bounded objects (`bounded`). -/
 structure InverseSource : Prop where
   ordinary : OrdinaryIndSource k X
   ind : IndInverseImageSource k f ordinary
@@ -85,7 +106,14 @@ section Proper
 
 variable {X Y : TopCat.{0}} [CompactSheafSource k X] [CompactSheafSource k Y] (f : X ⟶ Y)
 
-/-- Source proofs for the same actual compact-generator proper image and its boundedness. -/
+/-- The condition, for a continuous map $f : X \to Y$ and ind-sheaves of $k$-vector spaces ($k$ a
+field), that the direct image $f_* G$ of every compactly supported sheaf $G$ on $X$ is compactly
+supported (`compact`); that the functor sending a compactly supported sheaf $G$ on $X$ to $f_* G$,
+as an ind-sheaf on $Y$, has a left Kan extension along the Yoneda embedding into ind-sheaves on
+$X$, the proper direct image of ind-sheaves (`ind`); that this direct image is additive
+(`additive`); that, applied termwise to cochain complexes and followed by the localization
+functor, it has a total right derived functor with respect to quasi-isomorphisms (`derived`); and
+that this derived functor sends bounded objects to bounded objects (`bounded`). -/
 structure ProperSource : Prop where
   compact : CompactPushforwardSource k f
   ind : IndPushforwardSource k f compact
