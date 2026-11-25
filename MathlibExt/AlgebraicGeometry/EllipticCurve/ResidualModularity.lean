@@ -52,6 +52,8 @@ public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.FreyCurve
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.PointCount
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.PointGaloisAction
 public import MathlibExt.FieldTheory.Galois.ResidualGaloisRep
 public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
@@ -60,6 +62,10 @@ import Mathlib.Data.ZMod.Basic
 import Mathlib.FieldTheory.Finiteness
 import Mathlib.LinearAlgebra.Dimension.Constructions
 
+-- The point API needs decidable equality on `AlgebraicClosure ℚ`. Take it from classical
+-- logic for this file only, so that importers do not inherit a global instance.
+attribute [local instance] Classical.decEq
+
 @[expose] public section
 
 noncomputable section
@@ -67,104 +73,6 @@ noncomputable section
 open WeierstrassCurve
 
 open scoped WeierstrassCurve.Affine
-
-/-- Decidable equality on the algebraic closure of `ℚ`, from classical
-logic, as required by the point API. -/
-public noncomputable instance instDecidableEqAlgebraicClosureRat :
-    DecidableEq (AlgebraicClosure ℚ) :=
-  Classical.decEq _
-
-namespace WeierstrassCurve.Affine.Point
-
-variable {R S K : Type*} [CommRing R] [CommRing S] [Field K] [DecidableEq K]
-  {W' : Affine R} [Algebra R S] [Algebra R K] [Algebra S K]
-  [IsScalarTower R S K]
-
-/-- The Galois action on points, by applying an automorphism to the
-coordinates. -/
-public noncomputable instance instSMulAlgEquiv :
-    SMul (K ≃ₐ[S] K) (W'⁄K).Point :=
-  ⟨fun σ P => Point.map σ.toAlgHom P⟩
-
-public lemma algEquiv_smul_def (σ : K ≃ₐ[S] K) (P : (W'⁄K).Point) :
-    σ • P = Point.map σ.toAlgHom P :=
-  rfl
-
-/-- The Galois action on points is a distributive multiplicative action. -/
-public noncomputable instance instDistribMulActionAlgEquiv :
-    DistribMulAction (K ≃ₐ[S] K) (W'⁄K).Point where
-  one_smul P := by cases P <;> rfl
-  mul_smul σ τ P := by cases P <;> rfl
-  smul_zero _ := rfl
-  smul_add σ P Q := (Point.map σ.toAlgHom).map_add P Q
-
-public lemma algEquiv_smul_zsmul (σ : K ≃ₐ[S] K) (m : ℤ) (P : (W'⁄K).Point) :
-    σ • (m • P) = m • (σ • P) :=
-  (Point.map σ.toAlgHom).map_zsmul m P
-
-public lemma smul_mem_torsionBy {n : ℕ} (σ : K ≃ₐ[S] K) {P : (W'⁄K).Point}
-    (hP : P ∈ Submodule.torsionBy ℤ (W'⁄K).Point n) :
-    σ • P ∈ Submodule.torsionBy ℤ (W'⁄K).Point n := by
-  rw [Submodule.mem_torsionBy_iff] at hP ⊢
-  rw [← algEquiv_smul_zsmul, hP, smul_zero]
-
-/-- The Galois action restricts to the `n`-torsion submodule. -/
-public noncomputable instance instSMulTorsionBy (n : ℕ) :
-    SMul (K ≃ₐ[S] K) (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
-  ⟨fun σ P => ⟨σ • (P : (W'⁄K).Point), smul_mem_torsionBy σ P.property⟩⟩
-
-/-- The restricted Galois action is a distributive multiplicative action. -/
-public noncomputable instance instDistribMulActionTorsionBy (n : ℕ) :
-    DistribMulAction (K ≃ₐ[S] K) (Submodule.torsionBy ℤ (W'⁄K).Point n) where
-  one_smul P := Subtype.ext <| one_smul _ (P : (W'⁄K).Point)
-  mul_smul σ τ P := Subtype.ext <| mul_smul σ τ (P : (W'⁄K).Point)
-  smul_zero σ := Subtype.ext <| smul_zero (A := (W'⁄K).Point) σ
-  smul_add σ P Q := Subtype.ext <| smul_add σ (P : (W'⁄K).Point) (Q : (W'⁄K).Point)
-
-/-- The `n`-torsion submodule is a module over `ZMod n`. -/
-public noncomputable instance instModuleZModTorsionBy (n : ℕ) :
-    Module (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
-  AddCommGroup.zmodModule fun x => by
-    rw [← Nat.cast_smul_eq_nsmul ℤ n x]
-    exact Submodule.smul_torsionBy _ x
-
-public instance instSMulCommClassAlgEquivZModTorsionBy (n : ℕ) :
-    SMulCommClass (K ≃ₐ[S] K) (ZMod n)
-      (Submodule.torsionBy ℤ (W'⁄K).Point n) where
-  smul_comm σ c x :=
-    ZMod.map_smul (DistribSMul.toAddMonoidHom
-      (Submodule.torsionBy ℤ (W'⁄K).Point n) σ) c x
-
-variable (S) in
-/-- A submodule of the torsion points is Galois-stable when it is preserved
-by every Galois automorphism. -/
-public def IsGaloisStable {n : ℕ}
-    (N : Submodule (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n)) : Prop :=
-  ∀ (σ : K ≃ₐ[S] K), ∀ x ∈ N, σ • x ∈ N
-
-variable (S) in
-/-- The Galois representation on torsion points is irreducible when the
-torsion module is nontrivial and has no proper Galois-stable submodule. -/
-public def GaloisRepIsIrreducible (W' : Affine R) (n : ℕ) : Prop :=
-  Nontrivial (Submodule.torsionBy ℤ (W'⁄K).Point n) ∧
-    ∀ N : Submodule (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n),
-      IsGaloisStable S N → N = ⊥ ∨ N = ⊤
-
-variable (S) in
-/-- The Galois representation on `n`-torsion points, as a monoid
-homomorphism into module endomorphisms. -/
-public def galoisRepModuleEnd (W' : Affine R) (n : ℕ) :
-    (K ≃ₐ[S] K) →* Module.End (ZMod n)
-      (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
-  DistribMulAction.toModuleEnd (ZMod n)
-    (Submodule.torsionBy ℤ (W'⁄K).Point n)
-
-public lemma galoisRepModuleEnd_apply (W' : Affine R) (n : ℕ) (σ : K ≃ₐ[S] K)
-    (x : Submodule.torsionBy ℤ (W'⁄K).Point n) :
-    galoisRepModuleEnd S W' n σ x = σ • x :=
-  rfl
-
-end WeierstrassCurve.Affine.Point
 
 namespace CuspForm
 
@@ -192,26 +100,15 @@ end CuspForm
 
 namespace WeierstrassCurve
 
-variable {F : Type*} [CommRing F] (W : WeierstrassCurve F)
-
-/-- The number of points of a Weierstrass curve over a finite ring. -/
-public def card : ℕ := Nat.card W.toAffine.Point
-
-/-- The trace of Frobenius of a Weierstrass curve over a finite ring. -/
-public def traceOfFrobenius : ℤ := (Nat.card F : ℤ) + 1 - (W.card : ℤ)
-
-end WeierstrassCurve
-
-namespace WeierstrassCurve
-
 /-- The reduction of an integral Weierstrass curve modulo `p`. -/
 public def reductionMod (W : WeierstrassCurve ℤ) (p : ℕ) :
     WeierstrassCurve (ZMod p) :=
   W.map (Int.castRingHom (ZMod p))
 
-/-- The trace of Frobenius of the reduction of an integral model at `p`. -/
-public def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) : ℤ :=
-  (W.reductionMod p).traceOfFrobenius
+/-- The trace of Frobenius of the reduction of an integral model at a prime `p`: the
+Frobenius trace `p + 1 - #W(𝔽_p)` of the reduction over the finite field `ZMod p`. -/
+public def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) [hp : Fact p.Prime] : ℤ :=
+  (W.reductionMod p).toAffine.frobeniusTrace
 
 /-- An integral model has good reduction at `p` when `p` does not divide
 its discriminant. -/
@@ -226,9 +123,9 @@ public def IsResiduallyModularOfLevel (W : WeierstrassCurve ℤ) (p M : ℕ) :
   ∃ (f : CuspForm (CongruenceSubgroup.Gamma0 M) 2)
       (𝔪 : Ideal (integralClosure ℤ ℂ)),
     f.IsNormalizedEigenform ∧ 𝔪.IsMaximal ∧ (p : integralClosure ℤ ℂ) ∈ 𝔪 ∧
-    ∀ ℓ : ℕ, ℓ.Prime → W.IsGoodPrimeFor ℓ → ¬ ℓ ∣ M → ℓ ≠ p →
+    ∀ ℓ : ℕ, ∀ hℓ : ℓ.Prime, W.IsGoodPrimeFor ℓ → ¬ ℓ ∣ M → ℓ ≠ p →
       ∃ a : integralClosure ℤ ℂ, (a : ℂ) = ModularFormClass.qCoeff f ℓ ∧
-        a - ((W.apOfModel ℓ : ℤ) : integralClosure ℤ ℂ) ∈ 𝔪
+        a - ((W.apOfModel ℓ (hp := ⟨hℓ⟩) : ℤ) : integralClosure ℤ ℂ) ∈ 𝔪
 
 /-- An integral Weierstrass curve is residually modular at `p` when it is
 residually modular of some positive level. -/
@@ -325,7 +222,6 @@ public theorem
   induction M using Nat.strong_induction_on with
   | _ M ih =>
   intro hM0 hp2M hM3 hresM
-
   by_cases hsq : ∃ q : ℕ, q.Prime ∧ q ≠ p ∧ q ^ 2 ∣ M
   · obtain ⟨q, hq, hqp, hq2⟩ := hsq
     have hqM : q ∣ M := (dvd_pow_self q two_ne_zero).trans hq2
@@ -334,8 +230,7 @@ public theorem
     exact ih (M / q) hlt hMq0 (fun h => hp2M (h.trans (Nat.div_dvd_of_dvd hqM)))
       (fun r hr hrp h => hM3 r hr hrp (h.trans (Nat.div_dvd_of_dvd hqM)))
       (hSq M q hq hqp hq2 (hM3 q hq hqp) hresM)
-  push_neg at hsq
-
+  push Not at hsq
   have hMsqf : Squarefree M := by
     rw [Nat.squarefree_iff_prime_squarefree]
     intro q hq hq2
@@ -343,7 +238,6 @@ public theorem
     by_cases hqp : q = p
     · exact hp2M (hqp ▸ hq2)
     · exact hsq q hq hqp hq2
-
   by_cases hunr : ∃ q : ℕ, q.Prime ∧ q ≠ p ∧ q ∣ M ∧ ρbar.IsUnramifiedAt q
   · obtain ⟨q, hq, hqp, hqM, hu⟩ := hunr
     have hlt : M / q < M := Nat.div_lt_self (Nat.pos_of_ne_zero hM0) hq.one_lt
@@ -351,8 +245,7 @@ public theorem
     exact ih (M / q) hlt hMq0 (fun h => hp2M (h.trans (Nat.div_dvd_of_dvd hqM)))
       (fun r hr hrp h => hM3 r hr hrp (h.trans (Nat.div_dvd_of_dvd hqM)))
       (hQ M q hMsqf hq hqp hqM (hsq q hq hqp) hu hresM)
-  push_neg at hunr
-
+  push Not at hunr
   by_cases hss : (W.IsGoodPrimeFor p ∧ (p : ℤ) ∣ W.apOfModel p) ∧ p ∣ M
   · obtain ⟨hgs, hpM⟩ := hss
     have hlt : M / p < M := Nat.div_lt_self (Nat.pos_of_ne_zero hM0) hp.one_lt
@@ -360,7 +253,6 @@ public theorem
     exact ih (M / p) hlt hMp0 (fun h => hp2M (h.trans (Nat.div_dvd_of_dvd hpM)))
       (fun r hr hrp h => hM3 r hr hrp (h.trans (Nat.div_dvd_of_dvd hpM)))
       ((hP M hresM).1 hgs hpM hp2M)
-
   have hqiff : ∀ q : ℕ, q.Prime → q ≠ p → (q ∣ M ↔ ¬ ρbar.IsUnramifiedAt q) := fun q hq hqp =>
     ⟨fun hqM => hunr q hq hqp hqM,
       fun hram => by_contra fun hqM => hram (hU M q hq hqp hqM hresM)⟩

@@ -16,6 +16,34 @@ open WeierstrassCurve
 
 open scoped WeierstrassCurve.Affine
 
+/-- Importing the module adds no `DecidableEq` instance on `AlgebraicClosure ℚ`: the classical
+instance the point API needs is local to the module, and importers choose their own (below,
+with `open Classical in`). -/
+example : True := by
+  fail_if_success
+    have : DecidableEq (AlgebraicClosure ℚ) := inferInstance
+  trivial
+
+/-- `apOfModel` at a prime `p` is the Frobenius trace `p + 1 - #W(𝔽_p)` of the reduction, from
+the finite-field API `WeierstrassCurve.Affine.frobeniusTrace`. -/
+example (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
+    W.apOfModel p = (p : ℤ) + 1 - Nat.card (W.reductionMod p).toAffine.Point := by
+  rw [WeierstrassCurve.apOfModel, Affine.frobeniusTrace_eq, Nat.card_zmod]
+
+open Classical in
+/-- `ModRepIsIrreducible` says that the `n`-torsion is nontrivial and that its only
+Galois-stable submodules are `⊥` and `⊤`. -/
+example (W : WeierstrassCurve ℤ) (n : ℕ) :
+    W.ModRepIsIrreducible n ↔
+      Nontrivial (Submodule.torsionBy ℤ
+        ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).Point n) ∧
+      ∀ N : Submodule (ZMod n) (Submodule.torsionBy ℤ
+          ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).Point n),
+        (∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, ∀ x ∈ N, σ • x ∈ N) →
+          N = ⊥ ∨ N = ⊤ :=
+  Affine.Point.galoisRepIsIrreducible_iff _ _
+
+open Classical in
 /-- Consumer with the original binders. -/
 example (p : ℕ) [Fact p.Prime] (_hp2 : p ≠ 2) (W : WeierstrassCurve ℤ)
     (_hΔ : W.Δ ≠ 0) (_hW : W.IsSemistableModel)
