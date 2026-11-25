@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinModP
 
-/-! # Tests for digit congruences of Laurent constant terms -/
+/-! # Tests for constant terms modulo primes -/
 
 open MetaMathlibExt LaurentPolynomial
 
@@ -45,3 +45,18 @@ example : centralTrinomial 1 1 11 ≡ 0 [ZMOD 3] := by
   refine (constantTerm_linearLaurent_pow_digits 1 1 1 1 1 3 11 (by decide)).2.trans ?_
   rw [show Nat.digits 3 11 = [2, 0, 1] by decide]
   simp [h₂, Int.ModEq]
+
+-- Characteristic two, with odd middle weight.
+example : centralTrinomial 1 (-1) 1 ^ 2 ≡ 1 [ZMOD 2] :=
+  centralTrinomial_prime_minus_one_sq 1 (-1) 2 (by decide) (by decide)
+
+-- The outer weight vanishes modulo five, though it is nonzero over ℤ.
+example : centralTrinomial 5 2 4 ^ 2 ≡ 1 [ZMOD 5] :=
+  centralTrinomial_prime_minus_one_sq 5 2 5 (by decide) (by decide)
+
+-- The discriminants are respectively a nonzero square and a nonsquare modulo five.
+example : centralTrinomial 1 0 4 ^ 2 ≡ 1 [ZMOD 5] :=
+  centralTrinomial_prime_minus_one_sq 1 0 5 (by decide) (by decide)
+
+example : centralTrinomial 1 1 4 ^ 2 ≡ 1 [ZMOD 5] :=
+  centralTrinomial_prime_minus_one_sq 1 1 5 (by decide) (by decide)

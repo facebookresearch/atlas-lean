@@ -12,7 +12,10 @@ public import Mathlib.Algebra.Polynomial.Laurent
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Digits.Defs
 import Mathlib.Algebra.BigOperators.ModEq
+import Mathlib.Algebra.Polynomial.Eval.Degree
+import Mathlib.Algebra.QuadraticDiscriminant
 import Mathlib.FieldTheory.Finite.Basic
+import Mathlib.Tactic.LinearCombination
 public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinCentralTrinomial
 
 /-!
@@ -183,5 +186,201 @@ public theorem constantTerm_linearLaurent_pow_digits (α β γ a b : ℤ) (p n :
         simpa only [Nat.div_add_mod'] using
           step.trans ((ih (m / p) (Nat.div_lt_self (Nat.pos_of_ne_zero hm) hp.one_lt)).mul_right _)
   exact ⟨digits α β γ n, digits a b a n⟩
+
+section
+
+open Polynomial
+
+/-- Multiplying by `X^n` shifts the Laurent constant term to the middle coefficient. -/
+private theorem centralTrinomial_cast_eq_coeff (a b : ℤ) (p n : ℕ) :
+    (centralTrinomial a b n : ZMod p) =
+      ((Polynomial.C (a : ZMod p) * X ^ 2 + Polynomial.C (b : ZMod p) * X +
+        Polynomial.C (a : ZMod p)) ^ n).coeff n := by
+  let P : (ZMod p)[X] :=
+    Polynomial.C (a : ZMod p) * X ^ 2 + Polynomial.C (b : ZMod p) * X + Polynomial.C (a : ZMod p)
+  let reduce := AddMonoidAlgebra.mapRingHom ℤ (Int.castRingHom (ZMod p))
+  have hmap : reduce (trinomialLaurent a b) =
+      LaurentPolynomial.C (a : ZMod p) * T (-1) + LaurentPolynomial.C (b : ZMod p) +
+        LaurentPolynomial.C (a : ZMod p) * T 1 := by
+    unfold trinomialLaurent
+    rw [← single_eq_C_mul_T a (-1), ← single_eq_C_mul_T a 1, ← single_eq_C b]
+    simp only [reduce, map_add, AddMonoidAlgebra.mapRingHom_single]
+    simp only [single_eq_C_mul_T, T_zero, mul_one]
+    rfl
+  have hshift : P.toLaurent = reduce (trinomialLaurent a b) * T 1 := by
+    rw [hmap]
+    simp only [P, map_add, toLaurent_C_mul_eq, toLaurent_X_pow, toLaurent_X, toLaurent_C,
+      add_mul, mul_T_assoc]
+    norm_num
+    ac_rfl
+  have hpow : (P ^ n).toLaurent = reduce (trinomialLaurent a b ^ n) * T n := by
+    rw [map_pow, hshift, mul_pow, ← map_pow, T_pow, mul_one]
+  have h := congrArg (fun f : LaurentPolynomial (ZMod p) => f.coeff (n : ℤ)) hpow
+  change (P ^ n).toLaurent.coeff (Nat.castEmbedding n) = _ at h
+  rw [coeff_toLaurent, Finsupp.mapDomain_apply_of_injective Nat.castEmbedding.injective] at h
+  change (P ^ n).coeff n = _ at h
+  rw [T, AddMonoidAlgebra.coeff_mul_single_apply, add_neg_cancel, mul_one] at h
+  change (P ^ n).coeff n = (AddMonoidAlgebra.mapRingHom ℤ (Int.castRingHom (ZMod p))
+    (trinomialLaurent a b ^ n)).coeff 0 at h
+  rw [AddMonoidAlgebra.coeff_mapRingHom] at h
+  exact h.symm
+
+/-- Up to degree `2(p-1)`, precisely two power sums contribute to the sum of evaluations. -/
+private theorem sum_eval_eq_neg_coeffs {p : ℕ} [Fact p.Prime] (f : (ZMod p)[X])
+    (hf : f.natDegree ≤ 2 * (p - 1)) :
+    (∑ x : ZMod p, f.eval x) = -f.coeff (p - 1) - f.coeff (2 * (p - 1)) := by
+  let m := p - 1
+  have hm : 0 < m := Nat.sub_pos_of_lt (Fact.out : p.Prime).one_lt
+  have hsmall (i : ℕ) (hi : i < m) : (∑ x : ZMod p, x ^ i) = 0 :=
+    FiniteField.sum_pow_lt_card_sub_one _ i (by rwa [ZMod.card])
+  have hshift (i : ℕ) (hi : 0 < i) : (∑ x : ZMod p, x ^ (m + i)) = ∑ x : ZMod p, x ^ i := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hx : x = 0
+    · simp [hx, hi.ne']
+    · rw [pow_add, ZMod.pow_card_sub_one_eq_one hx, one_mul]
+  have hmSum : (∑ x : ZMod p, x ^ m) = -1 := by
+    calc
+      (∑ x : ZMod p, x ^ m) = ∑ x : ZMod p, ((1 : ZMod p) - if x = 0 then 1 else 0) := by
+        apply Finset.sum_congr rfl
+        intro x _
+        by_cases hx : x = 0 <;> simp [m, ZMod.pow_card_sub_one, hx]
+      _ = _ := by simp [Finset.sum_sub_distrib, ZMod.card]
+  have hsum (i : ℕ) (hi : i ≤ 2 * m) :
+      f.coeff i * (∑ x : ZMod p, x ^ i) =
+        (if i = m then -f.coeff i else 0) + (if i = 2 * m then -f.coeff i else 0) := by
+    by_cases h₁ : i = m
+    · subst i
+      simp [hmSum, show m ≠ 2 * m by omega]
+    by_cases h₂ : i = 2 * m
+    · subst i
+      simp only [ite_eq_right h₁, ite_true, zero_add]
+      rw [show 2 * m = m + m by omega, hshift m hm, hmSum, mul_neg_one]
+    rw [ite_eq_right h₁, ite_eq_right h₂, add_zero]
+    have hzero : (∑ x : ZMod p, x ^ i) = 0 := by
+      by_cases h : i < m
+      · exact hsmall i h
+      calc
+        _ = ∑ x : ZMod p, x ^ (i - m) := by
+          simpa only [show m + (i - m) = i by omega] using hshift (i - m) (by omega)
+        _ = 0 := hsmall (i - m) (by omega)
+    rw [hzero, mul_zero]
+  change _ = -f.coeff m - f.coeff (2 * m)
+  simp_rw [Polynomial.eval_eq_sum_range' (Nat.lt_succ_of_le hf)]
+  rw [Finset.sum_comm]
+  simp_rw [← Finset.mul_sum]
+  rw [Finset.sum_congr rfl (fun i hi => hsum i (Nat.le_of_lt_succ (Finset.mem_range.mp hi))),
+    Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.sum_ite_eq']
+  simp [Finset.mem_range, show m < 2 * m + 1 by omega, sub_eq_add_neg]
+
+/-- Fermat evaluation sums the indicator of the nonroots of the quadratic. -/
+private theorem sum_quadratic_pow {p : ℕ} [Fact p.Prime] (a b : ZMod p) :
+    (∑ x : ZMod p, (a * (x * x) + b * x + a) ^ (p - 1)) =
+      -(∑ x : ZMod p, if a * (x * x) + b * x + a = 0 then 1 else 0) := by
+  simp_rw [ZMod.pow_card_sub_one]
+  have h (x : ZMod p) : (if a * (x * x) + b * x + a ≠ 0 then 1 else 0) =
+      (1 : ZMod p) - (if a * (x * x) + b * x + a = 0 then 1 else 0) := by
+    by_cases hx : a * (x * x) + b * x + a = 0 <;> simp [hx]
+  simp_rw [h, Finset.sum_sub_distrib]
+  simp [ZMod.card]
+
+/-- **Squared central trinomial coefficient at one less than a prime.** Let $a, b$ be integers,
+let $T_n$ be the constant term of $(a x^{-1} + b + a x)^n$, and let $p$ be a prime with
+$b^2 - 4a^2 \not\equiv 0 \pmod p$. Then $T_{p-1}^2 \equiv 1 \pmod p$.
+
+This is the source's Corollary 2 in an equivalent squared form, which avoids an inverse residue
+modulo $p$.
+
+Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
+INTEGERS 26 (2026), Article A22, Corollary 2. -/
+public theorem centralTrinomial_prime_minus_one_sq
+    (a b : ℤ) (p : ℕ) (hp : p.Prime)
+    (hdisc : ¬(b ^ 2 - 4 * a ^ 2 ≡ 0 [ZMOD p])) :
+    centralTrinomial a b (p - 1) ^ 2 ≡ 1 [ZMOD p] := by
+  let : Fact p.Prime := ⟨hp⟩
+  let A : ZMod p := a
+  let B : ZMod p := b
+  let Q : (ZMod p)[X] := Polynomial.C A * X ^ 2 + Polynomial.C B * X + Polynomial.C A
+  have hd : discrim A B A ≠ 0 := by
+    rw [← ZMod.intCast_eq_intCast_iff] at hdisc
+    push_cast at hdisc
+    simpa only [discrim, pow_two, mul_assoc, A, B] using hdisc
+  rw [← ZMod.intCast_eq_intCast_iff, Int.cast_pow, Int.cast_one, centralTrinomial_cast_eq_coeff]
+  change ((Q ^ (p - 1)).coeff (p - 1)) ^ 2 = 1
+  rcases hp.two_le.eq_or_lt with rfl | hp2
+  · have h4 : (4 : ZMod 2) = 0 := by
+      exact (ZMod.natCast_eq_zero_iff 4 2).mpr (by decide)
+    have hB : B ≠ 0 := by
+      intro hB
+      exact hd (by simp [discrim, hB, h4])
+    have hcoeff : Q.coeff 1 = B := by
+      simp [Q, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
+    change ((Q ^ 1).coeff 1) ^ 2 = 1
+    rw [pow_one, hcoeff, show B = 1 by simpa using ZMod.pow_card_sub_one_eq_one hB, one_pow]
+  by_cases hA : A = 0
+  · have hB : B ≠ 0 := by
+      intro hB
+      exact hd (by simp [discrim, hA, hB])
+    have hQ : Q = Polynomial.C B * X := by simp [Q, hA]
+    rw [hQ, mul_pow, ← (Polynomial.C (R := ZMod p)).map_pow, Polynomial.coeff_C_mul,
+      Polynomial.coeff_X_pow, ite_eq_left rfl, mul_one, ZMod.pow_card_sub_one_eq_one hB, one_pow]
+  have htwo : (2 : ZMod p) ≠ 0 := by
+    exact fun h => (not_le_of_gt hp2) (Nat.le_of_dvd (by decide)
+      ((ZMod.natCast_eq_zero_iff 2 p).mp h))
+  let : NeZero (2 : ZMod p) := ⟨htwo⟩
+  have hQdeg : Q.natDegree ≤ 2 := by
+    apply Polynomial.natDegree_add_le_of_degree_le
+    · apply Polynomial.natDegree_add_le_of_degree_le
+      · exact Polynomial.natDegree_C_mul_X_pow_le A 2
+      · simpa only [pow_one] using
+          (Polynomial.natDegree_C_mul_X_pow_le B 1).trans (by decide : 1 ≤ 2)
+    · simp
+  have htop : (Q ^ (p - 1)).coeff (2 * (p - 1)) = 1 := by
+    rw [Nat.mul_comm 2, Polynomial.coeff_pow_of_natDegree_le hQdeg]
+    have h : Q.coeff 2 = A := by
+      simp [Q, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow]
+    rw [h, ZMod.pow_card_sub_one_eq_one hA]
+  have hEval := sum_eval_eq_neg_coeffs (Q ^ (p - 1))
+    (by simpa only [Nat.mul_comm 2] using Polynomial.natDegree_pow_le_of_le (p - 1) hQdeg)
+  have hEvalQ (x : ZMod p) : Q.eval x = A * (x * x) + B * x + A := by simp [Q, pow_two]
+  simp_rw [Polynomial.eval_pow, hEvalQ, htop] at hEval
+  rw [sum_quadratic_pow] at hEval
+  -- A nonzero discriminant gives either two distinct roots or none.
+  by_cases hs : ∃ s : ZMod p, discrim A B A = s * s
+  · obtain ⟨s, hs⟩ := hs
+    let u := (-B + s) / (2 * A)
+    let v := (-B - s) / (2 * A)
+    have hs0 : s ≠ 0 := by
+      intro h
+      exact hd (by simp [hs, h])
+    have huv : u ≠ v := by
+      intro h
+      have h' := (div_left_inj₀ (mul_ne_zero htwo hA)).mp h
+      apply mul_ne_zero htwo hs0
+      linear_combination h'
+    have hind (x : ZMod p) :
+        (if A * (x * x) + B * x + A = 0 then 1 else 0 : ZMod p) =
+          (if x = u then 1 else 0) + (if x = v then 1 else 0) := by
+      have hroot : A * (x * x) + B * x + A = 0 ↔ x = u ∨ x = v :=
+        quadratic_eq_zero_iff hA hs x
+      by_cases hu : x = u
+      · have hv : x ≠ v := hu ▸ huv
+        rw [ite_eq_left (hroot.mpr (Or.inl hu)), ite_eq_left hu, ite_eq_right hv, add_zero]
+      · by_cases hv : x = v
+        · rw [ite_eq_left (hroot.mpr (Or.inr hv)), ite_eq_right hu, ite_eq_left hv, zero_add]
+        · rw [ite_eq_right (fun h => (hroot.mp h).elim hu hv),
+            ite_eq_right hu, ite_eq_right hv, zero_add]
+    simp_rw [hind, Finset.sum_add_distrib, Fintype.sum_ite_eq'] at hEval
+    have h : (Q ^ (p - 1)).coeff (p - 1) = 1 := by linear_combination hEval
+    rw [h, one_pow]
+  · have hroot (x : ZMod p) : A * (x * x) + B * x + A ≠ 0 := by
+      intro h
+      apply hs
+      exact ⟨2 * A * x + B, by simpa only [pow_two] using discrim_eq_sq_of_quadratic_eq_zero h⟩
+    simp only [ite_eq_right (hroot _), Finset.sum_const_zero, neg_zero] at hEval
+    have h : (Q ^ (p - 1)).coeff (p - 1) = -1 := by linear_combination hEval
+    rw [h, neg_sq, one_pow]
+
+end
 
 end MetaMathlibExt
