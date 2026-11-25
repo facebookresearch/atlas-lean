@@ -11,18 +11,26 @@ module
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Lattice.Nat
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import Mathlib.Algebra.Order.Floor.Semiring
 import Mathlib.Data.Int.GCD
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Tauto
 
 /-!
-# A uniform bound for generalized knight distance
+# Distance for generalized knights
 
 A pair of knight moves travels along a coordinate axis. Bounded Bézout
 coefficients then give short paths for points with even coordinates. At most
 two additional moves correct the parities of an arbitrary point in the box.
+
+For the asymptotics, round the coefficients of the two adjacent moves in
+each sector and use the box bound to correct the residual. The maximum
+horizontal and diagonal advances of a single move give the lower bounds.
 -/
 
 namespace MetaMathlibExt
@@ -274,6 +282,187 @@ public theorem knight_distance_uniform_on_box :
   have hbnd : pieceDistance (knightMoves (a : ℤ) b) p ≤ 13 * b :=
     (distance_le_of_mem hmem).trans hn
   exact_mod_cast hbnd
+
+-- A path witness rules out the empty infimum in the definition of the distance.
+private theorem mem_distance_fold {A : Finset (ℤ × ℤ)} {p : ℤ × ℤ} {n : ℕ}
+    (hp : p ∈ n • A) : p ∈ pieceDistance A p • A := by
+  by_cases hzero : p = 0
+  · subst p
+    simp [pieceDistance]
+  · have hn : 1 ≤ n := by
+      cases n with
+      | zero => exact (hzero (by simpa using hp)).elim
+      | succ n => exact Nat.succ_le_succ (Nat.zero_le n)
+    have hs : ({h : ℕ | 1 ≤ h ∧ p ∈ h • A} : Set ℕ).Nonempty := ⟨n, hn, hp⟩
+    rw [pieceDistance, ite_eq_right hzero]
+    exact (Nat.sInf_mem hs).2
+
+private theorem knight_move_bounds {a b : ℕ} (hab : a ≤ b) {u : ℤ × ℤ}
+    (hu : u ∈ knightMoves (a : ℤ) (b : ℤ)) :
+    |u.1| ≤ (b : ℤ) ∧ |u.2| ≤ (b : ℤ) ∧ u.1 + u.2 ≤ (a : ℤ) + (b : ℤ) := by
+  simp only [knightMoves, Finset.mem_insert, Finset.mem_singleton] at hu
+  have ha' : (0 : ℤ) ≤ a := Int.natCast_nonneg a
+  have hb' : (0 : ℤ) ≤ b := Int.natCast_nonneg b
+  have hab' : (a : ℤ) ≤ b := by exact_mod_cast hab
+  rcases hu with (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl) <;>
+    simp only [abs_neg, abs_of_nonneg ha', abs_of_nonneg hb'] <;> omega
+
+private theorem knight_fold_bounds {a b : ℕ} (hab : a ≤ b) {p : ℤ × ℤ} {n : ℕ}
+    (hp : p ∈ n • knightMoves (a : ℤ) (b : ℤ)) :
+    p.1 ≤ (n : ℤ) * (b : ℤ) ∧ p.1 + p.2 ≤ (n : ℤ) * ((a : ℤ) + (b : ℤ)) := by
+  induction n generalizing p with
+  | zero =>
+    have hp0 : p = 0 := by simpa using hp
+    subst p
+    simp
+  | succ n ih =>
+    rw [succ_nsmul] at hp
+    obtain ⟨q, hq, u, hu, rfl⟩ := Finset.mem_add.mp hp
+    obtain ⟨hq₁, hq₂⟩ := ih hq
+    obtain ⟨hu₁, _, hu₂⟩ := knight_move_bounds hab hu
+    have hu' := (le_abs_self u.1).trans hu₁
+    push_cast
+    constructor
+    · change q.1 + u.1 ≤ _
+      nlinarith only [hq₁, hu']
+    · change (q.1 + u.1) + (q.2 + u.2) ≤ _
+      nlinarith only [hq₂, hu₂]
+
+private theorem rounded_bounds {s : ℝ} (hs : 0 ≤ s) :
+    (⌊s + 1 / 2⌋₊ : ℝ) ≤ s + 1 / 2 ∧ |s - (⌊s + 1 / 2⌋₊ : ℝ)| ≤ 1 / 2 := by
+  have hs' : 0 ≤ s + 1 / 2 := by linarith
+  refine ⟨Nat.floor_le hs', abs_le.mpr ⟨?_, ?_⟩⟩
+  · linarith [Nat.floor_le hs']
+  · linarith [Nat.lt_floor_add_one (s + 1 / 2)]
+
+-- Rounding both coefficients costs at most one move and leaves each residual
+-- coordinate at most b in absolute value.
+private theorem rounded_knight_path {a b : ℕ} (hab : a ≤ b) {x y : ℤ} {u v : ℤ × ℤ}
+    (hu : u ∈ knightMoves (a : ℤ) (b : ℤ))
+    (hv : v ∈ knightMoves (a : ℤ) (b : ℤ)) {s t : ℝ} (hs : 0 ≤ s) (ht : 0 ≤ t)
+    (hx : (x : ℝ) = s * (u.1 : ℝ) + t * (v.1 : ℝ))
+    (hy : (y : ℝ) = s * (u.2 : ℝ) + t * (v.2 : ℝ)) :
+    ∃ (n : ℕ) (q : ℤ × ℤ), q ∈ n • knightMoves (a : ℤ) (b : ℤ) ∧
+      (n : ℝ) ≤ s + t + 1 ∧
+      max |((x, y) - q).1| |((x, y) - q).2| ≤ ((a + b : ℕ) : ℤ) := by
+  let i := ⌊s + 1 / 2⌋₊
+  let j := ⌊t + 1 / 2⌋₊
+  have hi : (i : ℝ) ≤ s + 1 / 2 := (rounded_bounds hs).1
+  have hj : (j : ℝ) ≤ t + 1 / 2 := (rounded_bounds ht).1
+  have hcoord {z u' v' : ℤ} (hz : (z : ℝ) = s * (u' : ℝ) + t * (v' : ℝ))
+      (hu' : |u'| ≤ (b : ℤ)) (hv' : |v'| ≤ (b : ℤ)) :
+      |z - ((i : ℤ) * u' + (j : ℤ) * v')| ≤ ((a + b : ℕ) : ℤ) := by
+    have h₁ : |(u' : ℝ)| ≤ (b : ℝ) := by exact_mod_cast hu'
+    have h₂ : |(v' : ℝ)| ≤ (b : ℝ) := by exact_mod_cast hv'
+    have heq : (z : ℝ) - ((i : ℝ) * (u' : ℝ) + (j : ℝ) * (v' : ℝ)) =
+        (s - (i : ℝ)) * (u' : ℝ) + (t - (j : ℝ)) * (v' : ℝ) := by
+      rw [hz]
+      ring
+    have hbound : |(z : ℝ) - ((i : ℝ) * (u' : ℝ) + (j : ℝ) * (v' : ℝ))| ≤
+        (b : ℝ) := by
+      rw [heq]
+      calc
+        _ ≤ |(s - (i : ℝ)) * (u' : ℝ)| + |(t - (j : ℝ)) * (v' : ℝ)| := abs_add_le _ _
+        _ ≤ (1 / 2 : ℝ) * b + (1 / 2 : ℝ) * b := by
+          rw [abs_mul, abs_mul]
+          exact add_le_add (mul_le_mul (rounded_bounds hs).2 h₁ (abs_nonneg _) (by norm_num))
+            (mul_le_mul (rounded_bounds ht).2 h₂ (abs_nonneg _) (by norm_num))
+        _ = _ := by ring
+    exact (show |z - ((i : ℤ) * u' + (j : ℤ) * v')| ≤ (b : ℤ) by exact_mod_cast hbound).trans
+      (by omega)
+  refine ⟨i + j, i • u + j • v, ?_, ?_, max_le ?_ ?_⟩
+  · exact mem_fold_add (Finset.nsmul_mem_nsmul hu) (Finset.nsmul_mem_nsmul hv)
+  · push_cast
+    linarith
+  · simpa [nsmul_eq_mul] using hcoord hx (knight_move_bounds hab hu).1 (knight_move_bounds hab hv).1
+  · simpa [nsmul_eq_mul] using
+      hcoord hy (knight_move_bounds hab hu).2.1 (knight_move_bounds hab hv).2.1
+
+/--
+**Knight distance asymptotics.** There is an absolute constant $M \in \mathbb{R}$ with the
+following property. Let $a$ and $b$ be natural numbers with $1 \le a < b$, $\gcd(a, b) = 1$ and
+$a + b$ odd, let $N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set,
+and for $p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. Then
+for all integers $x$ and $y$ with $0 \le y \le x$: if $by \le ax$, then
+$|d_{a,b}(x, y) - x/b| \le Mb$; and if $ax < by$, then
+$|d_{a,b}(x, y) - (x + y)/(a + b)| \le Mb$.
+
+Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
+62(3) (2024), Theorem 1.1.
+-/
+public theorem knight_distance_asymptotics :
+    ∃ M : ℝ, ∀ (a b : ℕ) (x y : ℤ),
+      1 ≤ a → a < b → Nat.Coprime a b → Odd (a + b) →
+      0 ≤ y → y ≤ x →
+      (((b : ℤ) * y ≤ (a : ℤ) * x →
+          |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) -
+              (x : ℝ) / (b : ℝ)| ≤ M * b) ∧
+        ((a : ℤ) * x < (b : ℤ) * y →
+          |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) -
+              ((x : ℝ) + (y : ℝ)) / ((a : ℝ) + (b : ℝ))| ≤ M * b)) := by
+  refine ⟨14, fun a b x y ha hab hc ho hy hyx => ?_⟩
+  have hap : (0 : ℝ) < a := by exact_mod_cast (show 0 < a by omega)
+  have hab' : (a : ℝ) < b := by exact_mod_cast hab
+  have hb : (0 : ℝ) < b := hap.trans hab'
+  have hb₁ : (1 : ℝ) ≤ b := by exact_mod_cast (show 1 ≤ b by omega)
+  have hy' : (0 : ℝ) ≤ y := by exact_mod_cast hy
+  have hyx' : (y : ℝ) ≤ x := by exact_mod_cast hyx
+  have hx' := hy'.trans hyx'
+  have finish {u v : ℤ × ℤ} (hu : u ∈ knightMoves (a : ℤ) (b : ℤ))
+      (hv : v ∈ knightMoves (a : ℤ) (b : ℤ)) {s t L : ℝ} (hs : 0 ≤ s) (ht : 0 ≤ t)
+      (hx : (x : ℝ) = s * (u.1 : ℝ) + t * (v.1 : ℝ))
+      (hy : (y : ℝ) = s * (u.2 : ℝ) + t * (v.2 : ℝ)) (hL : s + t = L)
+      (hlower : ∀ m : ℕ, (x, y) ∈ m • knightMoves (a : ℤ) (b : ℤ) → L ≤ (m : ℝ)) :
+      |(pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) - L| ≤ 14 * b := by
+    obtain ⟨n, q, hq, hn, hres⟩ := rounded_knight_path hab.le hu hv hs ht hx hy
+    obtain ⟨k, hk, hkmem⟩ := exists_knight_path_on_box ha hab hc ho hres
+    have hp : (x, y) ∈ (n + k) • knightMoves (a : ℤ) (b : ℤ) := by
+      simpa only [add_sub_cancel] using mem_fold_add hq hkmem
+    rw [abs_of_nonneg (sub_nonneg.mpr (hlower _ (mem_distance_fold hp)))]
+    have hdist : (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) (x, y) : ℝ) ≤ n + k := by
+      exact_mod_cast distance_le_of_mem hp
+    have hkr : (k : ℝ) ≤ 13 * b := by exact_mod_cast hk
+    linarith only [hn, hkr, hb₁, hdist, hL]
+  constructor
+  · intro h
+    have h' : (b : ℝ) * y ≤ (a : ℝ) * x := by exact_mod_cast h
+    have hratio : (y : ℝ) / a ≤ (x : ℝ) / b := by
+      apply (div_le_div_iff₀ hap hb).2
+      linarith only [h']
+    let s := ((x : ℝ) / b + (y : ℝ) / a) / 2
+    let t := ((x : ℝ) / b - (y : ℝ) / a) / 2
+    refine finish (u := ((b : ℤ), (a : ℤ))) (v := ((b : ℤ), -(a : ℤ))) (s := s) (t := t)
+      (by simp [knightMoves]) (by simp [knightMoves]) (by dsimp [s]; positivity)
+      (by dsimp [t]; linarith only [hratio]) ?_ ?_ ?_ ?_
+    · push_cast; dsimp [s, t]; field_simp; ring
+    · push_cast; dsimp [s, t]; field_simp; ring
+    · dsimp [s, t]; ring
+    · intro m hm
+      have hl : (x : ℝ) ≤ (m : ℝ) * (b : ℝ) := by
+        exact_mod_cast (knight_fold_bounds hab.le hm).1
+      exact (div_le_iff₀ hb).2 hl
+  · intro h
+    have h' : (a : ℝ) * x < (b : ℝ) * y := by exact_mod_cast h
+    let D := (b : ℝ) ^ 2 - (a : ℝ) ^ 2
+    have hD : 0 < D := by
+      dsimp [D]
+      nlinarith only [mul_pos (sub_pos.mpr hab') (add_pos hb hap)]
+    let s := ((b : ℝ) * y - (a : ℝ) * x) / D
+    let t := ((b : ℝ) * x - (a : ℝ) * y) / D
+    have hfactor : D = ((b : ℝ) - a) * ((a : ℝ) + b) := by dsimp [D]; ring
+    refine finish (u := ((a : ℤ), (b : ℤ))) (v := ((b : ℤ), (a : ℤ))) (s := s) (t := t)
+      (by simp [knightMoves]) (by simp [knightMoves])
+      (div_nonneg (sub_pos.mpr h').le hD.le) ?_ ?_ ?_ ?_ ?_
+    · apply div_nonneg _ hD.le
+      exact sub_nonneg.mpr ((mul_le_mul_of_nonneg_left hyx' hap.le).trans
+        (mul_le_mul_of_nonneg_right hab'.le hx'))
+    · push_cast; dsimp [s, t]; field_simp; dsimp [D]; ring
+    · push_cast; dsimp [s, t]; field_simp; dsimp [D]; ring
+    · dsimp [s, t]; field_simp; rw [hfactor]; ring
+    · intro m hm
+      have hl : (x : ℝ) + (y : ℝ) ≤ (m : ℝ) * ((a : ℝ) + (b : ℝ)) := by
+        exact_mod_cast (knight_fold_bounds hab.le hm).2
+      exact (div_le_iff₀ (add_pos hap hb)).2 hl
 
 end
 

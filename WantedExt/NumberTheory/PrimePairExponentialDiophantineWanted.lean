@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.PrimePairPowSubTwoPowOddMulPowEqSq
 public import MathlibExt.NumberTheory.PrimePairTwoPowEvenMulPowSubPowEqSq
 public import MathlibExt.NumberTheory.PrimePairTwoPowOddMulPowSubPowEqSq
 public import MathlibExt.NumberTheory.PrimePowAddOneEqSq
+public import MathlibExt.NumberTheory.ThreePowEqSqAddTwoIff
 
 /-!
 # The equations `(-1)^α pˣ + (-1)^β (2ᵏ(2p - 1))ʸ = z²` for prime pairs `(p, 2p - 1)`
@@ -56,14 +57,6 @@ theorem_wanted mordell_curves_two_eighteen_one_six_two_integer_points :
     (∀ x y : ℤ, y ^ 2 = x ^ 3 - 2 ↔ x = 3 ∧ (y = 5 ∨ y = -5)) ∧
       (∀ x y : ℤ, y ^ 2 = x ^ 3 - 18 ↔ x = 3 ∧ (y = 3 ∨ y = -3)) ∧
       ∀ x y : ℤ, y ^ 2 ≠ x ^ 3 - 162
-
-/-- **Solutions of $3^x = y^2 + 2$.** For natural numbers $x, y$, we have $3^x = y^2 + 2$ if and
-only if $(x, y)$ is $(1, 1)$ or $(3, 5)$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Lemma 8. -/
-theorem_wanted three_pow_eq_sq_add_two_iff (x y : ℕ) :
-    3 ^ x = y ^ 2 + 2 ↔ (x, y) = (1, 1) ∨ (x, y) = (3, 5)
 
 /-- **Solutions of $2x^2 + 1 = 3^y$.** For natural numbers $x, y$, we have $2x^2 + 1 = 3^y$ if and
 only if $(x, y)$ is $(0, 0)$, $(1, 1)$, $(2, 2)$ or $(11, 5)$.

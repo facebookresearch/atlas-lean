@@ -7,3 +7,5 @@ Perfect secrecy of the one-time pad over a finite group, and pseudorandom functi
 - [Pseudorandom functions](pseudorandom-functions/README.md)
 - [Pseudorandom generators](pseudorandom-generators/README.md)
 - [Pseudorandom permutations](pseudorandom-permutations/README.md)
+- [MACs and modes](macs-and-modes/README.md)
+- [Pseudorandom constructions](pseudorandom-constructions/README.md)

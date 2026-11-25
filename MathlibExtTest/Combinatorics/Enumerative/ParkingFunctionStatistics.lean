@@ -50,6 +50,21 @@ example : countWith 4 (· < ·) {2, 3} = 9 := by
 
 end MetaMathlibExt.parkingFunction_descentSet_card_eq_ascentSet_reflect
 
+namespace MetaMathlibExt.parkingFunction_descentSet_card_reflect
+
+open parkingFunction_descentSet_card_eq_ascentSet
+
+-- A descent only at position 2 is as frequent as a descent only at position 1.
+example : countWith 3 (· > ·) {2} = 5 := by
+  have h : ({1} : Finset ℕ).image (fun i => 3 - i) = {2} := by decide
+  calc
+    _ = countWith 3 (· > ·) {1} := by
+      rw [← h]
+      exact (parkingFunction_descentSet_card_reflect 3 {1} (by decide)).symm
+    _ = 5 := by decide
+
+end MetaMathlibExt.parkingFunction_descentSet_card_reflect
+
 namespace MetaMathlibExt.sum_ndpf_multisetDescent_eq
 
 private def fiberCount {n : ℕ} (β : Fin n → Fin n) (I : Finset ℕ) : ℕ :=
