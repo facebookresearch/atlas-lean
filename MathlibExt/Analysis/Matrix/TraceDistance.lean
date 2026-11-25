@@ -18,7 +18,7 @@ public import MathlibExt.Analysis.Matrix.TraceNormScalar
 # Full and half-normalized trace distances
 
 For arbitrary finite square complex matrices `M,N`, `traceNormDist(M,N)`
-is the full Schatten-one quantity `traceNorm(M-N)`, while `traceDist(M,N)`
+is the full Schatten-one quantity `singularValueTraceNorm(M-N)`, while `traceDist(M,N)`
 is half that quantity. Their exact conversion factors are two and one-half.
 Both functions are nonnegative, symmetric, zero on identical matrices, and
 zero only on identical matrices.
@@ -41,7 +41,7 @@ variable {n : Type*} [Fintype n] [DecidableEq n]
 Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
 complex matrices, and the empty-index case is included. -/
 noncomputable def traceNormDist (M N : Matrix n n ℂ) : ℝ :=
-  (M - N).traceNorm
+  (M - N).singularValueTraceNorm
 
 /-- The full trace distance is the trace norm of the matrix difference.
 
@@ -50,11 +50,11 @@ complex matrices, and the empty-index case is included.
 
 ```lean
 theorem traceNormDist_def (M N : Matrix n n ℂ) :
-    traceNormDist M N = (M - N).traceNorm
+    traceNormDist M N = (M - N).singularValueTraceNorm
 ``` -/
 @[simp]
 theorem traceNormDist_def (M N : Matrix n n ℂ) :
-    traceNormDist M N = (M - N).traceNorm := rfl
+    traceNormDist M N = (M - N).singularValueTraceNorm := rfl
 
 /-- Standard quantum trace distance `(1/2)‖M - N‖₁`.
 
@@ -70,11 +70,11 @@ complex matrices, and the empty-index case is included.
 
 ```lean
 theorem traceDist_def (M N : Matrix n n ℂ) :
-    traceDist M N = (1 / 2 : ℝ) * (M - N).traceNorm
+    traceDist M N = (1 / 2 : ℝ) * (M - N).singularValueTraceNorm
 ``` -/
 @[simp]
 theorem traceDist_def (M N : Matrix n n ℂ) :
-    traceDist M N = (1 / 2 : ℝ) * (M - N).traceNorm := rfl
+    traceDist M N = (1 / 2 : ℝ) * (M - N).singularValueTraceNorm := rfl
 
 /-- The half-normalized trace distance is exactly one-half the full trace distance.
 
@@ -113,7 +113,7 @@ theorem traceNormDist_nonneg (M N : Matrix n n ℂ) :
 ``` -/
 theorem traceNormDist_nonneg (M N : Matrix n n ℂ) :
     0 ≤ traceNormDist M N :=
-  traceNorm_nonneg _
+  singularValueTraceNorm_nonneg _
 
 /-- Half-normalized trace distance between finite complex matrices is nonnegative.
 
@@ -172,7 +172,7 @@ theorem traceNormDist_comm (M N : Matrix n n ℂ) :
     traceNormDist M N = traceNormDist N M := by
   unfold traceNormDist
   have h : M - N = -(N - M) := by ext i j; simp
-  rw [h, traceNorm_neg]
+  rw [h, singularValueTraceNorm_neg]
 
 /-- Half-normalized trace distance is symmetric in the two matrices.
 
@@ -199,7 +199,7 @@ theorem traceNormDist_eq_zero_iff (M N : Matrix n n ℂ) :
 ``` -/
 theorem traceNormDist_eq_zero_iff (M N : Matrix n n ℂ) :
     traceNormDist M N = 0 ↔ M = N := by
-  rw [traceNormDist_def, traceNorm_eq_zero_iff, sub_eq_zero]
+  rw [traceNormDist_def, singularValueTraceNorm_eq_zero_iff, sub_eq_zero]
 
 /-- Half-normalized trace distance is zero exactly when the matrices are equal.
 

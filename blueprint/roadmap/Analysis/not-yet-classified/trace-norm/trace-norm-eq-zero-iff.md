@@ -6,6 +6,6 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_eq_zero_iff (M : Matrix n n ℂ) :
-    M.traceNorm = 0 ↔ M = 0
+theorem singularValueTraceNorm_eq_zero_iff (M : Matrix n n ℂ) :
+    M.singularValueTraceNorm = 0 ↔ M = 0
 ```

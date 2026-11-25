@@ -45,7 +45,7 @@ nonzero singular values for an `n × n` matrix.
 
 Here `n` is any finite index type with decidable equality. The matrices are arbitrary square
 complex matrices, and the empty-index case is included. -/
-noncomputable def traceNorm (M : Matrix n n ℂ) : ℝ :=
+noncomputable def singularValueTraceNorm (M : Matrix n n ℂ) : ℝ :=
   ∑ i ∈ Finset.range (Fintype.card n),
     (Matrix.toEuclideanLin M).singularValues i
 
@@ -56,13 +56,13 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_eq_sum (M : Matrix n n ℂ) :
-    M.traceNorm = ∑ i ∈ Finset.range (Fintype.card n),
+theorem singularValueTraceNorm_eq_sum (M : Matrix n n ℂ) :
+    M.singularValueTraceNorm = ∑ i ∈ Finset.range (Fintype.card n),
       (Matrix.toEuclideanLin M).singularValues i
 ``` -/
 @[simp]
-theorem traceNorm_eq_sum (M : Matrix n n ℂ) :
-    M.traceNorm = ∑ i ∈ Finset.range (Fintype.card n),
+theorem singularValueTraceNorm_eq_sum (M : Matrix n n ℂ) :
+    M.singularValueTraceNorm = ∑ i ∈ Finset.range (Fintype.card n),
       (Matrix.toEuclideanLin M).singularValues i := rfl
 
 /-- The finite complex matrix trace norm is nonnegative.
@@ -71,10 +71,10 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_nonneg (M : Matrix n n ℂ) : 0 ≤ M.traceNorm
+theorem singularValueTraceNorm_nonneg (M : Matrix n n ℂ) : 0 ≤ M.singularValueTraceNorm
 ``` -/
-theorem traceNorm_nonneg (M : Matrix n n ℂ) : 0 ≤ M.traceNorm := by
-  unfold traceNorm
+theorem singularValueTraceNorm_nonneg (M : Matrix n n ℂ) : 0 ≤ M.singularValueTraceNorm := by
+  unfold singularValueTraceNorm
   apply Finset.sum_nonneg
   intro i _
   exact (Matrix.toEuclideanLin M).singularValues_nonneg i
@@ -85,11 +85,11 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_zero : (0 : Matrix n n ℂ).traceNorm = 0
+theorem singularValueTraceNorm_zero : (0 : Matrix n n ℂ).singularValueTraceNorm = 0
 ``` -/
 @[simp]
-theorem traceNorm_zero : (0 : Matrix n n ℂ).traceNorm = 0 := by
-  unfold traceNorm
+theorem singularValueTraceNorm_zero : (0 : Matrix n n ℂ).singularValueTraceNorm = 0 := by
+  unfold singularValueTraceNorm
   simp
 
 /-- A finite complex matrix has trace norm zero exactly when it is the zero matrix.
@@ -98,14 +98,14 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_eq_zero_iff (M : Matrix n n ℂ) :
-    M.traceNorm = 0 ↔ M = 0
+theorem singularValueTraceNorm_eq_zero_iff (M : Matrix n n ℂ) :
+    M.singularValueTraceNorm = 0 ↔ M = 0
 ``` -/
-theorem traceNorm_eq_zero_iff (M : Matrix n n ℂ) :
-    M.traceNorm = 0 ↔ M = 0 := by
+theorem singularValueTraceNorm_eq_zero_iff (M : Matrix n n ℂ) :
+    M.singularValueTraceNorm = 0 ↔ M = 0 := by
   constructor
   · intro h
-    unfold traceNorm at h
+    unfold singularValueTraceNorm at h
     have h_nonneg : ∀ i ∈ Finset.range (Fintype.card n),
         0 ≤ (Matrix.toEuclideanLin M).singularValues i := fun i _ =>
       (Matrix.toEuclideanLin M).singularValues_nonneg i
@@ -133,6 +133,6 @@ theorem traceNorm_eq_zero_iff (M : Matrix n n ℂ) :
       simp [h_lin]
     exact h_eq
   · rintro rfl
-    exact traceNorm_zero
+    exact singularValueTraceNorm_zero
 
 end Matrix

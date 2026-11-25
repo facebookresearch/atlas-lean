@@ -7,7 +7,7 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_eq_sum (M : Matrix n n ℂ) :
-    M.traceNorm = ∑ i ∈ Finset.range (Fintype.card n),
+theorem singularValueTraceNorm_eq_sum (M : Matrix n n ℂ) :
+    M.singularValueTraceNorm = ∑ i ∈ Finset.range (Fintype.card n),
       (Matrix.toEuclideanLin M).singularValues i
 ```

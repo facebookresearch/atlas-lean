@@ -271,12 +271,12 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_smul (c : ℂ) (M : Matrix n n ℂ) :
-    (c • M).traceNorm = ‖c‖ * M.traceNorm
+theorem singularValueTraceNorm_smul (c : ℂ) (M : Matrix n n ℂ) :
+    (c • M).singularValueTraceNorm = ‖c‖ * M.singularValueTraceNorm
 ``` -/
-theorem traceNorm_smul (c : ℂ) (M : Matrix n n ℂ) :
-    (c • M).traceNorm = ‖c‖ * M.traceNorm := by
-  unfold traceNorm
+theorem singularValueTraceNorm_smul (c : ℂ) (M : Matrix n n ℂ) :
+    (c • M).singularValueTraceNorm = ‖c‖ * M.singularValueTraceNorm := by
+  unfold singularValueTraceNorm
   rw [show toEuclideanLin (c • M) = c • toEuclideanLin M from by
     simp [map_smul]]
   rw [Finset.mul_sum]
@@ -289,12 +289,12 @@ The index type is finite with decidable equality, and an empty index type
 or zero matrix is included.
 
 ```lean
-theorem traceNorm_neg (M : Matrix n n ℂ) :
-    (-M).traceNorm = M.traceNorm
+theorem singularValueTraceNorm_neg (M : Matrix n n ℂ) :
+    (-M).singularValueTraceNorm = M.singularValueTraceNorm
 ``` -/
-@[simp, nolint simpNF] theorem traceNorm_neg (M : Matrix n n ℂ) :
-    (-M).traceNorm = M.traceNorm := by
-  have h := traceNorm_smul (-1 : ℂ) M
+@[simp, nolint simpNF] theorem singularValueTraceNorm_neg (M : Matrix n n ℂ) :
+    (-M).singularValueTraceNorm = M.singularValueTraceNorm := by
+  have h := singularValueTraceNorm_smul (-1 : ℂ) M
   have h1 : ((-1 : ℂ) • M) = -M := by ext i j; simp
   rw [h1] at h; rw [h]; simp
 
@@ -305,12 +305,12 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_smul_sub (c : ℂ) (M N : Matrix n n ℂ) :
-    (c • M - c • N).traceNorm = ‖c‖ * (M - N).traceNorm
+theorem singularValueTraceNorm_smul_sub (c : ℂ) (M N : Matrix n n ℂ) :
+    (c • M - c • N).singularValueTraceNorm = ‖c‖ * (M - N).singularValueTraceNorm
 ``` -/
-theorem traceNorm_smul_sub (c : ℂ) (M N : Matrix n n ℂ) :
-    (c • M - c • N).traceNorm = ‖c‖ * (M - N).traceNorm := by
+theorem singularValueTraceNorm_smul_sub (c : ℂ) (M N : Matrix n n ℂ) :
+    (c • M - c • N).singularValueTraceNorm = ‖c‖ * (M - N).singularValueTraceNorm := by
   have : c • M - c • N = c • (M - N) := by ext i j; simp; ring
-  rw [this, traceNorm_smul]
+  rw [this, singularValueTraceNorm_smul]
 
 end Matrix

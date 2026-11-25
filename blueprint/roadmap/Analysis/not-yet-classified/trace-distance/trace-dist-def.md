@@ -7,5 +7,5 @@ complex matrices, and the empty-index case is included.
 
 ```lean
 theorem traceDist_def (M N : Matrix n n ℂ) :
-    traceDist M N = (1 / 2 : ℝ) * (M - N).traceNorm
+    traceDist M N = (1 / 2 : ℝ) * (M - N).singularValueTraceNorm
 ```

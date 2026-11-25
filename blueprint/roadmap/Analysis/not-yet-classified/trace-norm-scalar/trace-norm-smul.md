@@ -7,6 +7,6 @@ Here `n` is any finite index type with decidable equality. The matrices are arbi
 complex matrices, and the empty-index case is included.
 
 ```lean
-theorem traceNorm_smul (c : ℂ) (M : Matrix n n ℂ) :
-    (c • M).traceNorm = ‖c‖ * M.traceNorm
+theorem singularValueTraceNorm_smul (c : ℂ) (M : Matrix n n ℂ) :
+    (c • M).singularValueTraceNorm = ‖c‖ * M.singularValueTraceNorm
 ```
