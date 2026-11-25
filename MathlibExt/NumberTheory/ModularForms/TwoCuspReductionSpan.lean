@@ -709,7 +709,8 @@ public instance instAddCommGroupIntTwoCuspForms :
   inferInstanceAs (AddCommGroup
     (TwoCuspForms M H 2 p W (⊥ : Subring ℂ) (intIdeal p)))
 
-/-- The reduction of the two-cusp lattice modulo `p` has exponent `p`. -/
+/-- Every element of the reduction of the two-cusp lattice modulo `p` is
+annihilated by `p`, so its exponent divides `p`. -/
 public theorem IntTwoCuspForms.nsmul_eq_zero (x : IntTwoCuspForms M H p W) :
     p • x = 0 := by
   change p • (x : TwoCuspForms M H 2 p W (⊥ : Subring ℂ) (intIdeal p)) = 0
