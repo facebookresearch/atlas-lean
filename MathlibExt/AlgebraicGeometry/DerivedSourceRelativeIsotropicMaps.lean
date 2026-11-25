@@ -209,7 +209,12 @@ def sourceH {G : RelativeGeometry SX SY f} (C : ContractionPullbackHomotopy G)
   sourceIsotropicHomotopy SX n ((closedPullback f SY.forms SX.forms n).app (op ⦋0⦌) ω) h -
     pullbackCorrection C n ω
 
-/-- A witness records only the boundary proof for this fixed source path coefficient; its constructor is Wanted. -/
+/-- A boundary witness for the isotropic path coefficient. Let `f : X ⟶ Y` be a morphism of derived
+prestacks over a commutative $\mathbb{Q}$-algebra $k$ with relative source geometry `G` (for the
+given model data), `C` a contraction pullback homotopy for `G`, `ω` a source closed form of degree
+$n$ on `Y` and `h` an isotropic path for its pullback to `X` (a path from $0$ to that pullback in
+the space of closed $n$-forms). A witness is a proof that the differential of the degree $n - 1$
+map `sourceH C n ω h` equals `tangentArrow G` followed by `sourceB G n ω`. -/
 structure IsotropicBoundaryWitness {G : RelativeGeometry SX SY f} (C : ContractionPullbackHomotopy G)
     (n : ℤ) (ω : SourceClosedForm SY n)
     (h : IsotropicPath SX.forms n ((closedPullback f SY.forms SX.forms n).app (op ⦋0⦌) ω)) where

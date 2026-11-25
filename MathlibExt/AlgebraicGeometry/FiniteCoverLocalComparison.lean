@@ -46,8 +46,11 @@ theorem restriction_square {X Z : Scheme.{u}} (q : Z ⟶ X) (U : X.Opens) :
     (q ⁻¹ᵁ U).ι ≫ q = restrictedMap q U ≫ U.ι :=
   (Scheme.Hom.resLE_comp_ι q (U := U) (V := q ⁻¹ᵁ U) le_rfl).symm
 
-/-- The actual open base-change mate. Invertibility is a genuine toolbox
-condition, not a freely supplied comparison isomorphism. -/
+/-- The base-change morphism for `q : Z ⟶ X` over an open `U ⊆ X`: for a module `M` on `Z`, the
+morphism `j^* q_* M ⟶ q'_* j'^* M`, where `j : U ⟶ X` and `j' : q⁻¹ U ⟶ Z` are the open immersions
+and `q' : q⁻¹ U ⟶ U` is the restriction of `q`. It is the composite of `j^* q_*` applied to the
+unit `M ⟶ j'_* j'^* M`, the identification `q_* j'_* ≅ j_* q'_*` given by the square
+`j' ≫ q = q' ≫ j`, and the counit `j^* j_* ⟶ 𝟭` at `q'_* j'^* M`. -/
 def openBaseChangeMap {X Z : Scheme.{u}} (q : Z ⟶ X) (U : X.Opens) (M : Z.Modules) :
     (Scheme.Modules.pullback U.ι).obj ((Scheme.Modules.pushforward q).obj M) ⟶
       (Scheme.Modules.pushforward (restrictedMap q U)).obj
