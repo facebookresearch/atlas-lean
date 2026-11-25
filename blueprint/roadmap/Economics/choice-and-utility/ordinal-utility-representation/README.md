@@ -6,6 +6,7 @@
 - [Ordinal invariance of utility-maximizing choice](utility-choice-comp-strict-mono.md)
 - [Choice from a represented preference maximizes utility](choice-eq-utility-choice.md)
 - [Rational preferences on finite sets have utility representations](exists-represents.md)
+- [Two utility representations differ by a strictly increasing map](utility-representations-differ-by-increasing-maps.md)
 
 ## Sources
 
