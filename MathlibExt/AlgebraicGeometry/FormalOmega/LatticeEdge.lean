@@ -56,11 +56,11 @@ private theorem mulVec_tri (a b d : K) (w : Fin 2 → K) :
   ext i; fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
 
 private theorem exists_scalarGL_le_stdLattice (L : Submodule R (Fin 2 → K))
-    (hL : IsFullLattice L) :
+    (hL : Submodule.IsFullLattice K L) :
     ∃ d : R, ∃ hd : d ≠ 0,
       latticeMap (scalarGL (unitOfNeZero (K := K) hd)) L ≤ stdLattice R K := by
   classical
-  obtain ⟨S, hS⟩ := hL.1
+  obtain ⟨S, hS⟩ := Submodule.IsLattice.fg K L
   obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors R)
     (S ×ˢ (Finset.univ : Finset (Fin 2))) (fun p : (Fin 2 → K) × Fin 2 => p.1 p.2)
   have hb0 : (b : R) ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp b.2
@@ -78,7 +78,7 @@ private theorem exists_scalarGL_le_stdLattice (L : Submodule R (Fin 2 → K))
   exact this
 
 private theorem exists_eq_latticeMap_of_le_stdLattice (ϖ : R) (hϖ : Irreducible ϖ)
-    (L : Submodule R (Fin 2 → K)) (hL : IsFullLattice L) (hle : L ≤ stdLattice R K) :
+    (L : Submodule R (Fin 2 → K)) (hL : Submodule.IsFullLattice K L) (hle : L ≤ stdLattice R K) :
     ∃ (a b : ℕ) (β' : K) (g' : Matrix.GeneralLinearGroup (Fin 2) K),
       (g' : Matrix (Fin 2) (Fin 2) K) =
         !![algebraMap R K ϖ ^ a, β'; 0, algebraMap R K ϖ ^ b] ∧
@@ -219,12 +219,13 @@ an upper-triangular matrix `!![ϖ ^ n, β; 0, 1]`. -/
 theorem LT.LatticeTree.exists_eq_latticeMap_scalarGL_mul_triangular_stdLattice
     (R K : Type) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] [Field K] [Algebra R K]
     [IsFractionRing R K] (ϖ : R) (hϖ : Irreducible ϖ)
-    (L : Submodule R (Fin 2 → K)) (hL : IsFullLattice L) :
+    (L : Submodule R (Fin 2 → K)) (hL : Submodule.IsFullLattice K L) :
     ∃ (c : Kˣ) (n : ℤ) (β : K) (g : Matrix.GeneralLinearGroup (Fin 2) K),
       (g : Matrix (Fin 2) (Fin 2) K) = !![algebraMap R K ϖ ^ n, β; 0, 1] ∧
       L = latticeMap (scalarGL c * g) (stdLattice R K) := by
   obtain ⟨d, hd, hle⟩ := exists_scalarGL_le_stdLattice (K := K) L hL
-  have hL' : IsFullLattice (latticeMap (scalarGL (unitOfNeZero (K := K) hd)) L) := hL.map _
+  have hL' : Submodule.IsFullLattice K (latticeMap (scalarGL (unitOfNeZero (K := K) hd)) L) :=
+    IsFullLattice.map hL _
   obtain ⟨a, b, β', g', hg', hLg'⟩ := exists_eq_latticeMap_of_le_stdLattice ϖ hϖ
     (latticeMap (scalarGL (unitOfNeZero (K := K) hd)) L) hL' hle
   have hL1 : L = latticeMap ((scalarGL (unitOfNeZero (K := K) hd))⁻¹ * g')
@@ -664,7 +665,7 @@ theorem CerednikDrinfeld.FormalOmega.exists_fullLattice_lt_and_lt
     LT.LatticeTree.exists_eq_latticeMap_scalarGL_mul_triangular_stdLattice 𝒪 K π hπ M.1 M.2
   refine ⟨⟨latticeMap (scalarGL c * g₁)
       (latticeMap (diagSnd (unitOfNeZero (K := K) hπ.ne_zero)) (stdLattice 𝒪 K)),
-    ((isFullLattice_stdLattice (R := 𝒪) (K := K)).map _).map _⟩, ?_, ?_⟩
+    IsFullLattice.map (IsFullLattice.map (isFullLattice_stdLattice (R := 𝒪) (K := K)) _) _⟩, ?_, ?_⟩
   · change latticeMap (scalarGL (unitOfNeZero (K := K) hπ.ne_zero)) M.1 <
       latticeMap (scalarGL c * g₁)
         (latticeMap (diagSnd (unitOfNeZero (K := K) hπ.ne_zero)) (stdLattice 𝒪 K))
@@ -765,8 +766,7 @@ theorem LT.LatticeTree.FullLattice.eq_of_forall_smul_mem_of_le_of_le
     (hne₁ : ∃ v ∈ R₁, ∀ w ∈ M.1, v ≠ (algebraMap 𝒪 K π) • w) (hne₂ : R₂ ≠ M.1) :
     R₁ = R₂ := by
   classical
-  have hLat : Submodule.IsFullLattice K M.1 :=
-    { toIsLattice := Submodule.IsLattice.of_fg K M.2.1, span_eq_top := M.2.2 }
+  have hLat : Submodule.IsFullLattice K M.1 := M.2
   have := Submodule.IsLattice.free K M.1
   have := Submodule.IsLattice.finite K M.1
   have hrank : Module.finrank 𝒪 ↥M.1 = 2 :=

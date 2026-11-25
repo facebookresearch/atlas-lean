@@ -101,10 +101,10 @@ theorem pow_smul_mem (hϖ : Irreducible ϖ) (L : Submodule R (Fin 2 → K)) (n :
 
 /-- Some power of the uniformizer scales a given vector into a full lattice. -/
 theorem exists_pow_smul_mem (hϖ : Irreducible ϖ) {L : Submodule R (Fin 2 → K)}
-    (hL : IsFullLattice L) (v : Fin 2 → K) :
+    (hL : Submodule.IsFullLattice K L) (v : Fin 2 → K) :
     ∃ n : ℕ, ((piU (K := K) hϖ ^ n : Kˣ) : K) • v ∈ L := by
   have hv : v ∈ Submodule.span K (L : Set (Fin 2 → K)) := by
-    rw [hL.2]
+    rw [hL.span_eq_top]
     exact Submodule.mem_top
   induction hv using Submodule.span_induction with
   | mem x hx => exact ⟨0, by rwa [pow_zero, Units.val_one, one_smul]⟩
@@ -138,9 +138,9 @@ theorem exists_pow_smul_mem (hϖ : Irreducible ϖ) {L : Submodule R (Fin 2 → K
 
 /-- Some power of the uniformizer scales a full lattice `M` into a full lattice `L`. -/
 theorem exists_sc_pow_le (hϖ : Irreducible ϖ) {L M : Submodule R (Fin 2 → K)}
-    (hL : IsFullLattice L) (hM : IsFullLattice M) :
+    (hL : Submodule.IsFullLattice K L) (hM : Submodule.IsFullLattice K M) :
     ∃ n : ℕ, latticeMap (scalarGL (piU (K := K) hϖ ^ n)) M ≤ L := by
-  obtain ⟨s, hs⟩ := hM.1
+  obtain ⟨s, hs⟩ := Submodule.IsLattice.fg K M
   choose f hf using fun v : Fin 2 → K => exists_pow_smul_mem hϖ hL v
   refine ⟨s.sup f, (sc_le_iff _ _ _).2 ?_⟩
   rw [← hs]
@@ -174,7 +174,7 @@ theorem eq_zero_of_forall_pow_dvd (hϖ : Irreducible ϖ) {r : R}
 
 /-- A nonzero vector lies outside `ϖ ^ n • M` for some `n`. -/
 theorem exists_not_mem_sc_pow (hϖ : Irreducible ϖ) {M : Submodule R (Fin 2 → K)}
-    (hM : IsFullLattice M) {v : Fin 2 → K} (hv : v ≠ 0) :
+    (hM : Submodule.IsFullLattice K M) {v : Fin 2 → K} (hv : v ≠ 0) :
     ∃ n : ℕ, v ∉ latticeMap (scalarGL (piU (K := K) hϖ ^ n)) M := by
   by_contra hcon
   push Not at hcon
@@ -208,7 +208,7 @@ theorem exists_not_mem_sc_pow (hϖ : Irreducible ϖ) {M : Submodule R (Fin 2 →
 
 /-- Some homothety carries `L` into `M` but not into `ϖ • M`. -/
 theorem exists_sc_le_not_le (hϖ : Irreducible ϖ) {L M : Submodule R (Fin 2 → K)}
-    (hL : IsFullLattice L) (hM : IsFullLattice M) :
+    (hL : Submodule.IsFullLattice K L) (hM : Submodule.IsFullLattice K M) :
     ∃ c : Kˣ, latticeMap (scalarGL c) L ≤ M ∧
       ¬ latticeMap (scalarGL c) L ≤ latticeMap (scalarGL (piU (K := K) hϖ)) M := by
   obtain ⟨a, ha⟩ := exists_sc_pow_le hϖ hM hL
@@ -217,8 +217,8 @@ theorem exists_sc_le_not_le (hϖ : Irreducible ϖ) {L M : Submodule R (Fin 2 →
     push Not at hcon
     have hbot : latticeMap (scalarGL (piU (K := K) hϖ ^ a)) L = ⊥ := by
       rw [eq_bot_iff]; intro v hv; rw [Submodule.mem_bot]; exact hcon v hv
-    have hfull := hL.map (scalarGL (piU (K := K) hϖ ^ a))
-    have htop := hfull.2
+    have hfull := IsFullLattice.map hL (scalarGL (piU (K := K) hϖ ^ a))
+    have htop := hfull.span_eq_top
     rw [hbot] at htop
     have hbt : (⊤ : Submodule K (Fin 2 → K)) = ⊥ := by
       rw [← htop, Submodule.span_eq_bot]
@@ -262,7 +262,7 @@ theorem exists_sc_le_not_le (hϖ : Irreducible ϖ) {L M : Submodule R (Fin 2 →
 /-- For full lattices `L < M`, some vector of `L` is `ϖ` times a vector of `M` but not `ϖ` times a
 vector of `L`. -/
 theorem exists_mem_smul_not_mem_smul (hϖ : Irreducible ϖ)
-    {L M : Submodule R (Fin 2 → K)} (hL : IsFullLattice L) (hLM : L ≤ M) (hne : L ≠ M) :
+    {L M : Submodule R (Fin 2 → K)} (hL : Submodule.IsFullLattice K L) (hLM : L ≤ M) (hne : L ≠ M) :
     ∃ v ∈ L, (∃ w ∈ M, v = algebraMap R K ϖ • w) ∧
       ¬ ∃ w ∈ L, v = algebraMap R K ϖ • w := by
   classical

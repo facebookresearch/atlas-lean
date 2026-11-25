@@ -499,17 +499,16 @@ private theorem absorb (c : Kˣ) (hc : (c : K) = algebraMap 𝒪 K π) (X Y : Su
       exact sup_le ((sc_le c hc X).trans le_sup_left) le_sup_right
     exact h.trans (sup_le le_sup_left h1)
 
-private theorem isFullLattice_sup (L : FullLattice 𝒪 K) (Y : Submodule 𝒪 (Fin 2 → K))
-    (hY : Y.FG) : IsFullLattice (L.1 ⊔ Y) := by
-  refine ⟨L.2.1.sup hY, ?_⟩
-  apply le_antisymm le_top
-  rw [← L.2.2]
-  exact Submodule.span_mono (fun x hx => Submodule.mem_sup_left hx)
+private theorem isFullLattice_sup [IsFractionRing 𝒪 K] (L : FullLattice 𝒪 K)
+    (Y : Submodule 𝒪 (Fin 2 → K)) (hY : Y.FG) : Submodule.IsFullLattice K (L.1 ⊔ Y) :=
+  have := L.2
+  Submodule.IsFullLattice.of_le_of_fg K le_sup_left ((Submodule.IsLattice.fg K L.1).sup hY)
 
-private def P1 (c : Kˣ) (N A : FullLattice 𝒪 K) : FullLattice 𝒪 K :=
-  ⟨N.1 ⊔ latticeMap (scalarGL c) A.1, isFullLattice_sup N _ (A.2.map (scalarGL c)).1⟩
+private def P1 [IsFractionRing 𝒪 K] (c : Kˣ) (N A : FullLattice 𝒪 K) : FullLattice 𝒪 K :=
+  have := A.2
+  ⟨N.1 ⊔ latticeMap (scalarGL c) A.1, isFullLattice_sup N _ ((Submodule.IsLattice.fg K A.1).map _)⟩
 
-private theorem P1_val (c : Kˣ) (N A : FullLattice 𝒪 K) :
+private theorem P1_val [IsFractionRing 𝒪 K] (c : Kˣ) (N A : FullLattice 𝒪 K) :
     (P1 c N A).1 = N.1 ⊔ latticeMap (scalarGL c) A.1 := rfl
 
 end ShareVertex

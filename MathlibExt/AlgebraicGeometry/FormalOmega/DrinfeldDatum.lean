@@ -82,8 +82,8 @@ structure DrinfeldDatum : Type 1 where
   N₀ : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)
 
   N₁ : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)
-  full₀ : ∀ x, IsFullLattice (N₀ x)
-  full₁ : ∀ x, IsFullLattice (N₁ x)
+  full₀ : ∀ x, Submodule.IsFullLattice K (N₀ x)
+  full₁ : ∀ x, Submodule.IsFullLattice K (N₁ x)
 
   le : ∀ x, N₀ x ≤ N₁ x
 

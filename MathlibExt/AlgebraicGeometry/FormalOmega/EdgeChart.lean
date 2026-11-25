@@ -298,7 +298,8 @@ private theorem cov_isOpen_setOf_forall_not_mem [Finite (𝒪 ⧸ Ideal.span {π
       (1 : B) ⊗ₜ[𝒪] v ∉ N ⊔ (𝔮.asIdeal • ⊤ : Submodule B (latticeBaseChange 𝒪 K B L))} := by
   classical
   set I : Submodule 𝒪 ↥L.1 := (Ideal.span {π} : Ideal 𝒪) • ⊤ with hI
-  have : Module.Finite 𝒪 ↥L.1 := Module.Finite.iff_fg.2 L.2.1
+  have := L.2
+  have : Module.Finite 𝒪 ↥L.1 := Submodule.IsLattice.finite K L.1
   have : Finite (↥L.1 ⧸ I) := Module.finite_of_finite (𝒪 ⧸ (Ideal.span {π} : Ideal 𝒪))
   have hπ𝔮 : ∀ 𝔮 : PrimeSpectrum B, algebraMap 𝒪 B π ∈ 𝔮.asIdeal := fun 𝔮 => by
     obtain ⟨n, hn⟩ := hB

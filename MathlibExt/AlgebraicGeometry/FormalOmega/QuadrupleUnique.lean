@@ -731,8 +731,8 @@ private theorem ext_one_tmul {C : Type} [CommRing C] [Algebra 𝒪 C] {M : FullL
     rw [hc, map_smul, map_smul, h]
 
 private theorem ker_transfer (x : PrimeSpectrum B) {N N' : Submodule 𝒪 (Fin 2 → K)}
-    (hN : IsFullLattice N) (hN' : IsFullLattice N') (hNN' : N = N') {T T' : Type}
-    [AddCommGroup T] [Module B T] [AddCommGroup T'] [Module B T'] (τ : T ≃ₗ[B] T')
+    (hN : Submodule.IsFullLattice K N) (hN' : Submodule.IsFullLattice K N') (hNN' : N = N')
+    {T T' : Type} [AddCommGroup T] [Module B T] [AddCommGroup T'] [Module B T'] (τ : T ≃ₗ[B] T')
     (u : latticeBaseChange 𝒪 K (locRing B x) ⟨N, hN⟩ →ₗ[locRing B x] stalk B x T)
     (u' : latticeBaseChange 𝒪 K (locRing B x) ⟨N', hN'⟩ →ₗ[locRing B x] stalk B x T')
     (hu : ∀ (v : Fin 2 → K) (hv : v ∈ N) (hv' : v ∈ N'),

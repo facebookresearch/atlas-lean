@@ -479,7 +479,8 @@ private theorem map_map_toLocRing (d : DeligneDatum (K := K) π B) :
       (d.map π (toLocRing B (pointUnder f x'))).map π (locMap f x') := by
   rw [← DeligneDatum.map_comp, ← DeligneDatum.map_comp, toLocRing_comp]
 
-variable {N N' : Submodule 𝒪 (Fin 2 → K)} (hN : IsFullLattice N) (hN' : IsFullLattice N')
+variable {N N' : Submodule 𝒪 (Fin 2 → K)} (hN : Submodule.IsFullLattice K N)
+  (hN' : Submodule.IsFullLattice K N')
 variable {T : Type} [AddCommGroup T] [Module B T] {T' : Type} [AddCommGroup T'] [Module B' T']
 variable [Module.Invertible B T] [Module.Invertible B' T']
 variable (τ : T →ₛₗ[(f : B →+* B')] T')

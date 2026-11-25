@@ -26,6 +26,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.RingTheory.DiscreteValuationRing.Basic
@@ -191,38 +192,82 @@ theorem latticeMap_lt_latticeMap_iff (g : Matrix.GeneralLinearGroup (Fin 2) K)
     exact lt_of_le_of_ne (latticeMap_mono g h.1)
       (fun hEq => h.ne (latticeMap_injective g hEq))
 
-def IsFullLattice (L : Submodule R (Fin 2 → K)) : Prop :=
-  L.FG ∧ Submodule.span K (L : Set (Fin 2 → K)) = ⊤
+/-- The standard lattice is a `Submodule.IsLattice` for any `R`-algebra `K`: if `algebraMap R K`
+is injective, its `R`-rank is the `K`-dimension `2` of its span, and otherwise no nonempty subset
+of `K²` is `R`-linearly independent. -/
+theorem isLattice_stdLattice : Submodule.IsLattice K (stdLattice R K) := by
+  by_cases h : Function.Injective (algebraMap R K)
+  · have : FaithfulSMul R K := (faithfulSMul_iff_algebraMap_injective R K).mpr h
+    have : Nontrivial R := (algebraMap R K).domain_nontrivial
+    have hli : LinearIndependent R fun j : Fin 2 => (Pi.single j 1 : Fin 2 → K) :=
+      (Pi.linearIndependent_single_one (Fin 2) K).restrict_scalars' R
+    refine (Submodule.IsLattice.iff_fg_and_finrank_span_eq_finrank K _).mpr
+      ⟨stdLattice_fg R K, ?_⟩
+    rw [stdLattice_span_top R K, finrank_top, Module.finrank_fin_fun K, stdLattice_eq_span R K,
+      finrank_span_eq_card hli, Fintype.card_fin]
+  · obtain ⟨r, r', hrr', hne⟩ := Function.not_injective_iff.mp h
+    refine ⟨stdLattice_fg R K, fun s _ hs => ?_⟩
+    rcases s.eq_empty_or_nonempty with rfl | ⟨v, hv⟩
+    · exact linearIndepOn_empty K id
+    · refine absurd (LinearIndependent.smul_left_injective hs ⟨v, hv⟩ ?_) hne
+      change r • v = r' • v
+      rw [← algebraMap_smul K r v, ← algebraMap_smul K r' v, hrr']
 
-theorem isFullLattice_stdLattice : IsFullLattice (stdLattice R K) :=
-  ⟨stdLattice_fg R K, stdLattice_span_top R K⟩
+theorem isFullLattice_stdLattice : Submodule.IsFullLattice K (stdLattice R K) where
+  toIsLattice := isLattice_stdLattice
+  span_eq_top := stdLattice_span_top R K
 
-theorem IsFullLattice.map {L : Submodule R (Fin 2 → K)} (hL : IsFullLattice L)
-    (g : Matrix.GeneralLinearGroup (Fin 2) K) : IsFullLattice (latticeMap g L) := by
-  refine ⟨hL.1.map _, ?_⟩
-  rw [eq_top_iff]
-  intro v _
-
-  have hv : v = (g : Matrix (Fin 2) (Fin 2) K) *ᵥ
-      (((g⁻¹ : Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) *ᵥ v) := by
-    rw [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel, Units.val_one,
-      Matrix.one_mulVec]
-  rw [hv]
-  have hw : ((g⁻¹ : Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) *ᵥ v ∈
-      Submodule.span K (L : Set (Fin 2 → K)) := hL.2 ▸ Submodule.mem_top
-  refine Submodule.span_induction
-    (p := fun w _ => (g : Matrix (Fin 2) (Fin 2) K) *ᵥ w ∈
-      Submodule.span K ((latticeMap g L : Set (Fin 2 → K)))) ?_ ?_ ?_ ?_ hw
-  · intro x hx
-    exact Submodule.subset_span (mulVec_mem_latticeMap hx)
-  · simp only [Matrix.mulVec_zero]
-    exact Submodule.zero_mem _
-  · intro x y _ _ hx hy
-    simp only [Matrix.mulVec_add]
-    exact Submodule.add_mem _ hx hy
-  · intro c x _ hx
-    simp only [Matrix.mulVec_smul]
-    exact Submodule.smul_mem _ c hx
+theorem IsFullLattice.map {L : Submodule R (Fin 2 → K)} (hL : Submodule.IsFullLattice K L)
+    (g : Matrix.GeneralLinearGroup (Fin 2) K) : Submodule.IsFullLattice K (latticeMap g L) where
+  fg := (Submodule.IsLattice.fg K L).map _
+  linearIndepOn s hs hli := by
+    have hgg : ∀ v : Fin 2 → K, (g : Matrix (Fin 2) (Fin 2) K) *ᵥ
+        (((g⁻¹ : Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) *ᵥ v) = v :=
+      fun v => by
+        rw [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel, Units.val_one,
+          Matrix.one_mulVec]
+    have hgg' : ∀ v : Fin 2 → K,
+        ((g⁻¹ : Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) *ᵥ
+          ((g : Matrix (Fin 2) (Fin 2) K) *ᵥ v) = v :=
+      fun v => by
+        rw [Matrix.mulVec_mulVec, ← Units.val_mul, inv_mul_cancel, Units.val_one,
+          Matrix.one_mulVec]
+    have hsub : mulVecLinR (R := R) g⁻¹ '' s ⊆ L := by
+      rintro _ ⟨v, hv, rfl⟩
+      obtain ⟨w, hw, rfl⟩ := mem_latticeMap.mp (hs hv)
+      rwa [mulVecLinR_apply, hgg']
+    have hK := Submodule.IsLattice.linearIndepOn (A := K) _ hsub (hli.image (by
+      rw [LinearMap.ker_eq_bot.mpr fun v w hvw => by rw [← hgg v, ← hgg w]; exact congrArg _ hvw]
+      exact disjoint_bot_right))
+    have := hK.image (f := Matrix.mulVecLin (g : Matrix (Fin 2) (Fin 2) K)) (by
+      rw [LinearMap.ker_eq_bot.mpr fun v w hvw => by
+        rw [← hgg' v, ← hgg' w]; exact congrArg _ hvw]
+      exact disjoint_bot_right)
+    rwa [Set.image_image, Set.image_congr fun v _ => by
+      rw [Matrix.mulVecLin_apply, mulVecLinR_apply, hgg], Set.image_id'] at this
+  span_eq_top := by
+    rw [eq_top_iff]
+    intro v _
+    have hv : v = (g : Matrix (Fin 2) (Fin 2) K) *ᵥ
+        (((g⁻¹ : Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) *ᵥ v) := by
+      rw [Matrix.mulVec_mulVec, ← Units.val_mul, mul_inv_cancel, Units.val_one,
+        Matrix.one_mulVec]
+    rw [hv]
+    have hw : ((g⁻¹ : Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) *ᵥ v ∈
+        Submodule.span K (L : Set (Fin 2 → K)) := hL.span_eq_top ▸ Submodule.mem_top
+    refine Submodule.span_induction
+      (p := fun w _ => (g : Matrix (Fin 2) (Fin 2) K) *ᵥ w ∈
+        Submodule.span K ((latticeMap g L : Set (Fin 2 → K)))) ?_ ?_ ?_ ?_ hw
+    · intro x hx
+      exact Submodule.subset_span (mulVec_mem_latticeMap hx)
+    · simp only [Matrix.mulVec_zero]
+      exact Submodule.zero_mem _
+    · intro x y _ _ hx hy
+      simp only [Matrix.mulVec_add]
+      exact Submodule.add_mem _ hx hy
+    · intro c x _ hx
+      simp only [Matrix.mulVec_smul]
+      exact Submodule.smul_mem _ c hx
 
 theorem isInteger_apply_of_mem_range {g : Matrix.GeneralLinearGroup (Fin 2) K}
     (hg : g ∈ (Matrix.GeneralLinearGroup.map (n := Fin 2) (algebraMap R K)).range)
@@ -354,13 +399,13 @@ theorem Homothetic.trans {L L' L'' : Submodule R (Fin 2 → K)}
   exact ⟨c' * c, by rw [scalarGL_mul, latticeMap_mul]⟩
 
 theorem IsFullLattice.of_homothetic {L L' : Submodule R (Fin 2 → K)}
-    (hL : IsFullLattice L) (h : Homothetic L L') : IsFullLattice L' := by
+    (hL : Submodule.IsFullLattice K L) (h : Homothetic L L') : Submodule.IsFullLattice K L' := by
   obtain ⟨c, rfl⟩ := h
-  exact hL.map _
+  exact IsFullLattice.map hL _
 
 variable (R K) in
 
-def FullLattice : Type _ := {L : Submodule R (Fin 2 → K) // IsFullLattice L}
+def FullLattice : Type _ := {L : Submodule R (Fin 2 → K) // Submodule.IsFullLattice K L}
 
 
 end LT.LatticeTree

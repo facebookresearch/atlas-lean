@@ -31,7 +31,7 @@ theorem exactSource_isTranslateEven_iff
 /-- The standard lattice is a full lattice, and homothety is reflexive;
 these are the boundary cases for the lattice carriers. -/
 example {R : Type} [CommRing R] {K : Type} [Field K] [Algebra R K] :
-    LT.LatticeTree.IsFullLattice (LT.LatticeTree.stdLattice R K) :=
+    Submodule.IsFullLattice K (LT.LatticeTree.stdLattice R K) :=
   LT.LatticeTree.isFullLattice_stdLattice
 
 example {R : Type} [CommRing R] {K : Type} [Field K] [Algebra R K]

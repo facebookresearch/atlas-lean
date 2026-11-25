@@ -349,7 +349,7 @@ private theorem glue_mem_chart (x : PrimeSpectrum B) {v : Fin 2 → K} (hv : v �
   glue_eq_chart hN hιυ x ▸ hv
 
 include hN hιυ in
-private theorem glue_full (x : PrimeSpectrum B) : IsFullLattice (Ng x) := by
+private theorem glue_full (x : PrimeSpectrum B) : Submodule.IsFullLattice K (Ng x) := by
   rw [glue_eq_chart hN hιυ x]; exact (L (ι x) (υ x)).2
 
 /-- The glued lattice at `x`. -/

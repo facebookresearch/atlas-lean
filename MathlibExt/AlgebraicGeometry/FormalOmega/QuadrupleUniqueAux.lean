@@ -227,7 +227,7 @@ private theorem toSpanSingleton_surjective {M : Type} [AddCommGroup M] [Module B
       LocalizedModule.mk_cancel_common_left]
 
 private theorem exists_chart
-    (N : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)) (full : ∀ x, IsFullLattice (N x))
+    (N : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)) (full : ∀ x, Submodule.IsFullLattice K (N x))
     (T T' : Type) [AddCommGroup T] [Module B T] [AddCommGroup T'] [Module B T']
     [Module.Invertible B T] [Module.Invertible B T']
     (u : ∀ x : PrimeSpectrum B,
@@ -354,7 +354,7 @@ lattices `N x` onto the stalks of invertible modules `T` and `T'`, with equal ke
 given locally on basic opens by global sections, are related by a global isomorphism
 `τ : T' ≃ₗ[B] T`: `τ` localized at `x` carries `u' x` to `u x` for every point `x`. -/
 theorem exists_linearEquiv_map_comp_eq
-    (N : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)) (full : ∀ x, IsFullLattice (N x))
+    (N : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)) (full : ∀ x, Submodule.IsFullLattice K (N x))
     (T T' : Type) [AddCommGroup T] [Module B T] [AddCommGroup T'] [Module B T']
     [Module.Invertible B T] [Module.Invertible B T']
     (u : ∀ x : PrimeSpectrum B,

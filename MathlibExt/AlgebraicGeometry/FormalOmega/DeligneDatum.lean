@@ -75,7 +75,7 @@ noncomputable def latticeMapEquiv (g : Matrix.GeneralLinearGroup (Fin 2) K) (M :
 
 def FullLattice.act (g : Matrix.GeneralLinearGroup (Fin 2) K) (M : FullLattice 𝒪 K) : FullLattice 𝒪
   K :=
-  ⟨latticeMap g M.1, M.2.map g⟩
+  ⟨latticeMap g M.1, IsFullLattice.map M.2 g⟩
 
 noncomputable def actBaseChange (B : Type) [CommRing B] [Algebra 𝒪 B] (g :
   Matrix.GeneralLinearGroup (Fin 2) K)
