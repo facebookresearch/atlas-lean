@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC45
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBars
 
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
@@ -811,20 +812,6 @@ public theorem_wanted signedInvSeq_wilf_b1b0_b0b1_b0b0_1b0 :
         ⟨.gt, false, true⟩} =
       signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩,
           ⟨.gt, false, true⟩}
-
-/-- **Mansour–Safadi Theorem 9: a Wilf-equivalence of four-pattern sets.** Length-2 signed
-patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that
-for every $n \ge 0$ the number $|\bar I_n(B)|$ of signed inversion sequences of length $n$
-avoiding every pattern of $B$ equals $|\bar I_n(C)|$. Then
-$\{\bar1\bar0, \bar10, \bar0\bar0, 0\bar0\} \sim \{\bar1\bar0, \bar10, \bar00, 0\bar0\}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 9 (`integers-2026-A74-thm-9`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b10_b0b0_0b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, true⟩,
-        ⟨.eq, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.eq, true, false⟩,
-          ⟨.eq, false, true⟩}
 
 /-- **Mansour–Safadi Theorem 12: four Wilf-equivalences of five-pattern sets.** Length-2 signed
 patterns are written as in the paper, a bar marking a barred letter, and $B \sim C$ means that

@@ -14,8 +14,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Zeta
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.ArithmeticFunction.GcdSumMeanSquare
 public import MathlibExt.NumberTheory.ArithmeticFunction.GcdSumMoments
-import MathlibExt.NumberTheory.ArithmeticFunction.GcdSumTotient
 
 /-!
 # Moments of the mean gcd-sum function
@@ -38,46 +38,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Complex Filter Asymptotics Polynomial
-
-/-- **The mean gcd-sum function.** For a natural number $n$, let $P(n) = \sum_{j=1}^{n} \gcd(j, n)$
-be Pillai's gcd-sum function. The mean gcd-sum function is the real-valued function given by
-$A(n) = P(n)/n$ for $n \ge 1$ and $A(0) = 0$.
-
-Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
-Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (definition of `A(n)`). -/
-noncomputable def gcdSumMean (n : ℕ) : ℝ :=
-  (∑ j ∈ Finset.Icc 1 n, (Nat.gcd j n : ℝ)) / n
-
-/-- **The mean gcd-sum function at $1$.** The mean gcd-sum function $A$ satisfies $A(1) = 1$.
-
-Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
-Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (definition of `A(n)`). -/
-theorem gcdSumMean_one : gcdSumMean 1 = 1 := by
-  simp [gcdSumMean]
-
-/-- **The mean gcd-sum function at $2$.** The mean gcd-sum function $A$ satisfies $A(2) = 3/2$,
-since $A(2) = P(2)/2$, where $P(n) = \sum_{j=1}^{n} \gcd(j, n)$ is Pillai's gcd-sum function
-and $P(2) = \gcd(1, 2) + \gcd(2, 2) = 3$.
-
-Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
-Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (definition of `A(n)`). -/
-theorem gcdSumMean_two : gcdSumMean 2 = 3 / 2 := by
-  rw [gcdSumMean, show Finset.Icc 1 2 = {1, 2} by decide]
-  norm_num
-
-/-- **Divisor-sum formula for the mean gcd-sum function.** For every natural number $n \ge 1$,
-the mean gcd-sum function $A$ satisfies $A(n) = \sum_{d \mid n} \varphi(d)/d$, where $\varphi$ is
-Euler's totient function and the sum runs over the positive divisors $d$ of $n$.
-
-Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
-Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (Pillai's identity). -/
-theorem gcdSumMean_eq_sum_totient_div {n : ℕ} (hn : 0 < n) :
-    gcdSumMean n = ∑ d ∈ n.divisors, (Nat.totient d : ℝ) / d := by
-  have h := congrArg (fun q : ℚ => (q : ℝ)) (gcd_sum_eq_totient_sum n hn)
-  push_cast at h
-  rw [gcdSumMean, h]
-  have : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
-  field_simp
 
 /-- **Asymptotic formula for the second moment of the mean gcd-sum function.** For $n \ge 1$ let
 $A(n) = \frac{1}{n} \sum_{j=1}^{n} \gcd(j, n)$ be the mean gcd-sum function. There are a real
@@ -158,24 +118,6 @@ public theorem_wanted LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul (k : ℕ) :
       ∀ s : ℂ, 1 < s.re →
         LSeries (fun n => ((gcdSumMean n ^ k : ℝ) : ℂ)) s = riemannZeta s ^ (2 ^ k) * LSeries g s ∧
         LSeries g s * riemannZeta (2 * s) ^ (4 ^ k - 3 ^ k - (2 ^ k).choose 2) = LSeries h s
-
-/-- **Dirichlet series of the square of the mean gcd-sum function.** Let $A$ be the mean gcd-sum
-function. There is a function $h \colon \mathbb{N} \to \mathbb{C}$ such that the Dirichlet series
-$\tilde G_{2,2}(s) = \sum_{n \ge 1} h(n) n^{-s}$ converges absolutely for every complex $s$ with
-$\operatorname{Re} s > 0$, and for every complex $s$ with $\operatorname{Re} s > 1$,
-$$\sum_{n \ge 1} A(n)^2 n^{-s} = \frac{\zeta(s)^4}{\zeta(2s)} \, \tilde G_{2,2}(s).$$
-
-This is the case $k = 2$ of the paper's Theorem 5, which gives the absolute convergence of
-$\tilde G_{2,2}(s)$ in every half-plane $\operatorname{Re} s > 1/N$ with $N \ge 1$, that is, for
-$\operatorname{Re} s > 0$.
-
-Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
-Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 5 (`integers-2026-A70-thm-5`). -/
-public theorem_wanted LSeries_gcdSumMean_sq_eq_riemannZeta_pow_four_div :
-    ∃ h : ℕ → ℂ, (∀ s : ℂ, 0 < s.re → LSeriesSummable h s) ∧
-      ∀ s : ℂ, 1 < s.re →
-        LSeries (fun n => ((gcdSumMean n ^ 2 : ℝ) : ℂ)) s =
-          riemannZeta s ^ 4 / riemannZeta (2 * s) * LSeries h s
 
 /-- **Ivić's eighth-moment bound on the line $\operatorname{Re} s = 5/8$.** There are real
 constants $C$ and $T_0$ such that for every real $T \ge T_0$,
