@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.ModularForms.PeriodMapHecke
+import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
 @[expose] public section
 
@@ -35,7 +36,7 @@ open ModularForm
 
 /-! The `p = 0` convention: the matrices are the identity, `U_0 = 0` and `T_0 = id`. -/
 
-example (j : ℕ) : heckeMatrix 0 j = 1 := by simp [heckeMatrix]
+example (j : ℕ) : heckeUpperMatrix 0 j = 1 := by simp [heckeUpperMatrix]
 
 example (k : ℤ) (f : UpperHalfPlane → ℂ) : heckeU k 0 f = 0 := by simp [heckeU]
 
@@ -48,7 +49,7 @@ example (k : ℤ) (f : UpperHalfPlane → ℂ) : heckeT k 0 f = f := by simp [he
 example (τ : UpperHalfPlane) :
     heckeU 2 3 (fun z : UpperHalfPlane => (z : ℂ)) τ = (τ : ℂ) / 3 + 1 / 3 := by
   simp only [heckeU_apply 2 three_ne_zero, Finset.sum_range_succ, Finset.sum_range_zero,
-    coe_heckeMatrix_smul three_ne_zero]
+    coe_heckeUpperMatrix_smul three_ne_zero]
   push_cast
   ring
 
@@ -56,7 +57,7 @@ example (τ : UpperHalfPlane) :
 example (τ : UpperHalfPlane) :
     heckeT 2 2 (fun z : UpperHalfPlane => (z : ℂ)) τ = 9 / 2 * (τ : ℂ) + 1 / 4 := by
   simp only [heckeT_apply 2 two_ne_zero, Finset.sum_range_succ, Finset.sum_range_zero,
-    coe_heckeMatrix_smul two_ne_zero, coe_heckeDiagMatrix_smul two_ne_zero]
+    coe_heckeUpperMatrix_smul two_ne_zero, coe_heckeDiagMatrix_smul two_ne_zero]
   push_cast
   norm_num
   ring
@@ -77,6 +78,26 @@ example : coeffHeckeT 2 3 (fun n => (n : ℂ)) 2 = 6 := by norm_num [coeffHeckeT
 example : coeffHeckeT 4 2 (fun n => (n : ℂ)) 2 = 12 := by norm_num [coeffHeckeT]
 
 example : coeffHeckeU 3 (fun n => (n : ℂ)) 2 = 6 := by norm_num [coeffHeckeU]
+
+/-! The `q`-expansion coefficients of `T_p f` and `U_p f`, for a cusp form `f` on `Γ₀(N)`. -/
+
+/-- The first coefficient of `T_p f` is the `p`-th coefficient of `f`, for a prime `p`. -/
+example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ} (hp : p.Prime) :
+    ModularFormClass.qCoeff (heckeT k p ⇑f) 1 = ModularFormClass.qCoeff ⇑f p := by
+  rw [ModularFormClass.qCoeff_heckeT f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
+    hp.ne_zero, coeffHeckeT_of_not_dvd k hp.not_dvd_one, one_mul]
+
+/-- The `p`-th coefficient of `T_p f` is `a (p * p) + p ^ (k - 1) * a 1`. -/
+example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ} (hp : p.Prime) :
+    ModularFormClass.qCoeff (heckeT k p ⇑f) p
+      = ModularFormClass.qCoeff ⇑f (p * p) + (p : ℂ) ^ (k - 1) * ModularFormClass.qCoeff ⇑f 1 := by
+  rw [ModularFormClass.qCoeff_heckeT f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)
+    hp.ne_zero, coeffHeckeT_of_dvd k dvd_rfl, Nat.div_self hp.pos]
+
+/-- The `n`-th coefficient of `U_p f` is the `n * p`-th coefficient of `f`. -/
+example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : ℕ} (hp : p ≠ 0)
+    (n : ℕ) : ModularFormClass.qCoeff (heckeU k p ⇑f) n = ModularFormClass.qCoeff ⇑f (n * p) :=
+  ModularFormClass.qCoeff_heckeU f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp n
 
 /-! The Hecke operators on cusp forms act by `heckeT` and `heckeU` on the underlying
 functions. -/
