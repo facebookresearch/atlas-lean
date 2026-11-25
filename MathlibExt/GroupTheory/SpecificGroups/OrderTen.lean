@@ -159,9 +159,11 @@ private lemma outside_square_one
        _ = (x ^ k)⁻¹ * x ^ k := by rw [hconjk]
        _ = 1 := inv_mul_cancel _
 
-/-- Every noncyclic group of cardinality ten is isomorphic to the dihedral group of
-order ten. The generators and inversion argument are adapted from the archived
-AlgebraNotes source; the final isomorphism uses the shared index-two constructor. -/
+/-- **Noncyclic groups of order 10 are dihedral.** Every finite group of order $10$ that is not
+cyclic is isomorphic to the dihedral group $D_5$ of order $10$.
+
+Source: the generators and inversion argument are adapted from the archived AlgebraNotes source;
+the final isomorphism uses the shared index-two constructor. -/
 theorem nonempty_mulEquiv_dihedralGroup_of_card_eq_ten_of_not_isCyclic
     (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) (hnc : ¬IsCyclic G) :
     Nonempty (G ≃* DihedralGroup 5) := by
@@ -183,11 +185,8 @@ theorem nonempty_mulEquiv_dihedralGroup_of_card_eq_ten_of_not_isCyclic
   rw [hcard] at h
   exact h
 
-/-- **Classification of groups of order 10.** Every group of order 10 is
-isomorphic either to the cyclic group `C₁₀` (as `Multiplicative (ZMod 10)`)
-or to the dihedral group `D₅` (`DihedralGroup 5`). See
-`groups_of_order_10_classification_xor` for the exclusive form: exactly one
-of the two alternatives holds. -/
+/-- **Classification of groups of order 10.** Every finite group of order $10$ is isomorphic
+either to the cyclic group $C_{10}$ of order $10$ or to the dihedral group $D_5$ of order $10$. -/
 theorem groups_of_order_10_classification
     (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
     Nonempty (G ≃* Multiplicative (ZMod 10)) ∨ Nonempty (G ≃* DihedralGroup 5) := by
@@ -200,11 +199,12 @@ theorem groups_of_order_10_classification
   · right
     exact MetaMathlibExt.nonempty_mulEquiv_dihedralGroup_of_card_eq_ten_of_not_isCyclic G hG hcyc
 
-/-- **Exclusive classification of groups of order 10.** Exactly one of the two
-alternatives in `groups_of_order_10_classification` holds: a group of order 10
-cannot be isomorphic to both `C₁₀` and `D₅`, since `C₁₀` is cyclic while
-`DihedralGroup 5` is not (`DihedralGroup.not_isCyclic`), and cyclicity is
-preserved under multiplicative equivalences. -/
+/-- **Exclusive classification of groups of order 10.** Let $G$ be a finite group of order $10$.
+Then exactly one of the following holds: $G$ is isomorphic to the cyclic group $C_{10}$ of order
+$10$, or $G$ is isomorphic to the dihedral group $D_5$ of order $10$.
+
+The two alternatives cannot both hold, since $C_{10}$ is cyclic, $D_5$ is not, and cyclicity is
+preserved under isomorphism. -/
 theorem groups_of_order_10_classification_xor
     (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
     (Nonempty (G ≃* Multiplicative (ZMod 10)) ∧ ¬Nonempty (G ≃* DihedralGroup 5)) ∨
@@ -219,11 +219,11 @@ theorem groups_of_order_10_classification_xor
   · exact Or.inl ⟨⟨e⟩, fun h => hnotboth ⟨⟨e⟩, h⟩⟩
   · exact Or.inr ⟨fun h => hnotboth ⟨h, ⟨f⟩⟩, ⟨f⟩⟩
 
-/-- **Classification in the recorded product form.** Every group of order ten
-is isomorphic to `C₅ × C₂` or `D₅`, as stated in
-`v1/Atlas/AlgebraNotes/targets.yaml`, lines 297-301. The cyclic branch is
-transported from `C₁₀` by Mathlib's Chinese remainder equivalence. See
-`groups_of_order_10_classification_prod_xor` for the exclusive form. -/
+/-- **Classification of groups of order 10, product form.** Let $C_n$ denote the cyclic group of
+order $n$ and let $D_5$ denote the dihedral group of order $10$. Every finite group of order $10$
+is isomorphic to the direct product $C_5 \times C_2$ or to $D_5$.
+
+Source: `v1/Atlas/AlgebraNotes/targets.yaml`, lines 297-301. -/
 theorem groups_of_order_10_classification_prod
     (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
     Nonempty (G ≃* (Multiplicative (ZMod 5) × Multiplicative (ZMod 2))) ∨
@@ -237,10 +237,14 @@ theorem groups_of_order_10_classification_prod
     exact Or.inl ⟨e.trans eProd⟩
   · exact Or.inr hD
 
-/-- **Exclusive classification in the recorded product form.** Exactly one of
-the `C₅ × C₂` and `D₅` alternatives holds for a group of order ten, as in
-`v1/Atlas/AlgebraNotes/targets.yaml`, lines 297-301. The product is cyclic
-and `D₅` is not, so the ordinary product classification is exclusive. -/
+/-- **Exclusive classification of groups of order 10, product form.** Let $G$ be a finite group
+of order $10$, let $C_n$ denote the cyclic group of order $n$, and let $D_5$ denote the dihedral
+group of order $10$. Then exactly one of the following holds: $G$ is isomorphic to the direct
+product $C_5 \times C_2$, or $G$ is isomorphic to $D_5$.
+
+The product $C_5 \times C_2$ is cyclic and $D_5$ is not, so the two alternatives cannot both hold.
+
+Source: `v1/Atlas/AlgebraNotes/targets.yaml`, lines 297-301. -/
 theorem groups_of_order_10_classification_prod_xor
     (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
     (Nonempty (G ≃* (Multiplicative (ZMod 5) × Multiplicative (ZMod 2))) ∧

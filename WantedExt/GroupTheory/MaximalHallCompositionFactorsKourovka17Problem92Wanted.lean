@@ -38,23 +38,31 @@ normal in `H`. `L_n(q)` is Mathlib's `Matrix.ProjectiveSpecialLinearGroup (Fin n
 quotient `SL_n(q)/Z(SL_n(q))`.
 -/
 
-/-- A Hall subgroup: its order is coprime to its index. -/
+/-- **Hall subgroup (Kourovka 17.92).** A subgroup $H$ of a group $G$ is a Hall subgroup when its
+order $|H|$ is coprime to its index $|G : H|$.
+
+Here $|H|$ and $|G : H|$ are natural numbers, taken to be $0$ when infinite. -/
 def IsHallSubgroup {G : Type*} [Group G] (H : Subgroup G) : Prop :=
   Nat.Coprime (Nat.card H) H.index
 
-/-- `S` is a composition factor of `G`: `S ≅ H/K` for a subnormal subgroup `H` of `G` and a normal
-subgroup `K` of `H` with `H/K` simple. -/
+/-- **Composition factor of a group (Kourovka 17.92).** For groups $G$ and $S$, $S$ is a
+composition factor of $G$ when there are subgroups $H$ and $K$ of $G$ such that $H$ is subnormal in
+$G$, $H \cap K$ is normal in $H$, and the quotient $H/(H \cap K)$ is a simple group isomorphic to
+$S$. -/
 def IsCompositionFactor (G S : Type*) [Group G] [Group S] : Prop :=
   ∃ (H K : Subgroup G) (_ : (K.subgroupOf H).Normal), H.IsSubnormal ∧
     IsSimpleGroup (H ⧸ K.subgroupOf H) ∧ Nonempty (H ⧸ K.subgroupOf H ≃* S)
 
-/-- `G` is non-soluble and all of its maximal subgroups are Hall subgroups. -/
+/-- **Non-soluble groups with Hall maximal subgroups.** A group $G$ has this property when $G$ is
+not soluble and every maximal subgroup of $G$ is a Hall subgroup. -/
 def IsMaximalHallNonsoluble (G : Type*) [Group G] : Prop :=
   ¬ Group.IsSolvable G ∧ ∀ M : Subgroup G, IsCoatom M → IsHallSubgroup M
 
-/-- Kourovka 17.92 (V. S. Monakhov), first half of the answer: every non-abelian composition factor
-of a finite non-soluble group all of whose maximal subgroups are Hall subgroups is isomorphic to
-`L₂(7)`, `L₂(11)` or `L₅(2)`. -/
+/-- **Kourovka 17.92, first half: the possible composition factors.** The proposition that every
+non-abelian composition factor of a finite non-soluble group all of whose maximal subgroups are
+Hall subgroups is isomorphic to $L_2(7)$, $L_2(11)$ or $L_5(2)$. Here $L_n(q)$ is the projective
+special linear group $\mathrm{PSL}_n(\mathbb{Z}/q\mathbb{Z})$, the quotient of
+$\mathrm{SL}_n(\mathbb{Z}/q\mathbb{Z})$ by its centre. -/
 def maximalHallCompositionFactorsInList : Prop :=
   ∀ (G : Type) [Group G] [Finite G], IsMaximalHallNonsoluble G →
     ∀ (S : Type) [Group S], IsCompositionFactor G S → (∃ a b : S, a * b ≠ b * a) →
@@ -62,9 +70,11 @@ def maximalHallCompositionFactorsInList : Prop :=
         Nonempty (S ≃* Matrix.ProjectiveSpecialLinearGroup (Fin 2) (ZMod 11)) ∨
         Nonempty (S ≃* Matrix.ProjectiveSpecialLinearGroup (Fin 5) (ZMod 2))
 
-/-- Kourovka 17.92 (V. S. Monakhov), second half of the answer: each of `L₂(7)`, `L₂(11)` and
-`L₅(2)` is a composition factor of some finite non-soluble group all of whose maximal subgroups are
-Hall subgroups. -/
+/-- **Kourovka 17.92, second half: the three factors occur.** The proposition that each of
+$L_2(7)$, $L_2(11)$ and $L_5(2)$ is a composition factor of some finite non-soluble group all of
+whose maximal subgroups are Hall subgroups. Here $L_n(q)$ is the projective special linear group
+$\mathrm{PSL}_n(\mathbb{Z}/q\mathbb{Z})$, the quotient of $\mathrm{SL}_n(\mathbb{Z}/q\mathbb{Z})$
+by its centre. -/
 def maximalHallCompositionFactorsOccur : Prop :=
   (∃ (G : Type) (_ : Group G) (_ : Finite G), IsMaximalHallNonsoluble G ∧
       IsCompositionFactor G (Matrix.ProjectiveSpecialLinearGroup (Fin 2) (ZMod 7))) ∧
@@ -74,9 +84,15 @@ def maximalHallCompositionFactorsOccur : Prop :=
       IsCompositionFactor G (Matrix.ProjectiveSpecialLinearGroup (Fin 5) (ZMod 2)))
 
 /--
-Resolved true: Maslova (2012) proves that every non-abelian composition factor of a finite
-non-soluble group all of whose maximal subgroups are Hall subgroups is isomorphic to `L₂(7)`,
-`L₂(11)` or `L₅(2)`; the Kourovka Archive gives these three groups as the answer to 17.92. Source:
+**Maslova's theorem on groups with Hall maximal subgroups.** Every non-abelian composition factor
+of a finite non-soluble group all of whose maximal subgroups are Hall subgroups is isomorphic to
+$L_2(7)$, $L_2(11)$ or $L_5(2)$, so the first half of the answer to Kourovka 17.92 holds. Here
+$L_n(q)$ is the projective special linear group $\mathrm{PSL}_n(\mathbb{Z}/q\mathbb{Z})$, the
+quotient of $\mathrm{SL}_n(\mathbb{Z}/q\mathbb{Z})$ by its centre.
+
+Maslova (2012) proved this; the Kourovka Archive gives these three groups as the answer to 17.92.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.92 (V. S. Monakhov);
 resolution: N. V. Maslova, Siberian Math. J. 53 (2012), 853-861; N. V. Maslova and D. O. Revin,
@@ -91,10 +107,17 @@ public theorem_wanted maximalHallCompositionFactorsInList_holds :
     maximalHallCompositionFactorsInList
 
 /--
-Resolved true: `L₂(7)`, `L₂(11)` and `L₅(2)` are themselves non-soluble groups all of whose maximal
-subgroups are Hall subgroups (Levchuk-Likharev, Tyutyanov, as recalled by Maslova and Revin), so
-each is a composition factor of such a group; with Maslova's theorem the three groups are exactly
-the non-abelian composition factors, the answer recorded by the Kourovka Archive. Source: E. I.
+**The three answer groups of Kourovka 17.92 occur.** Each of $L_2(7)$, $L_2(11)$ and $L_5(2)$ is a
+composition factor of some finite non-soluble group all of whose maximal subgroups are Hall
+subgroups, so the second half of the answer to Kourovka 17.92 holds. Here $L_n(q)$ is the
+projective special linear group $\mathrm{PSL}_n(\mathbb{Z}/q\mathbb{Z})$, the quotient of
+$\mathrm{SL}_n(\mathbb{Z}/q\mathbb{Z})$ by its centre.
+
+Each of the three groups is itself non-soluble with all of its maximal subgroups Hall
+(Levchuk-Likharev, Tyutyanov, as recalled by Maslova and Revin); with Maslova's theorem the three
+groups are exactly the non-abelian composition factors.
+
+Source: E. I.
 Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.92 (V. S. Monakhov);
 resolution: N. V. Maslova, Siberian Math. J. 53 (2012), 853-861; N. V. Maslova and D. O. Revin,

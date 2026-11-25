@@ -161,6 +161,119 @@ example : modifiedCamClayYield 1 2 1 (-1) = 0 ∧
     ¬ ((0 : ℝ) ≤ -1 ∧ (-1 : ℝ) = 1 * 1) := by
   norm_num [modifiedCamClayYield]
 
+
+/-- Partial-derivative values at the focused data:
+zero at the critical pressure, `-3` dry of it, `3` wet
+of it. -/
+example : modifiedCamClayYieldPartialP 1 2 1 = 0 := by
+  norm_num [modifiedCamClayYieldPartialP]
+
+example : modifiedCamClayYieldPartialP 1 5 1 = -3 := by
+  norm_num [modifiedCamClayYieldPartialP]
+
+example : modifiedCamClayYieldPartialP 1 5 4 = 3 := by
+  norm_num [modifiedCamClayYieldPartialP]
+
+/-- The increment unfolds to multiplier times partial
+derivative. -/
+example (M pc p lam : ℝ) :
+    modifiedCamClayPlasticVolumetricIncrement M pc p lam
+      = lam * modifiedCamClayYieldPartialP M pc p := rfl
+
+/-- Numeric derivative check through the `deriv` form at
+the wet-side point. -/
+example : deriv (fun x => modifiedCamClayYield 1 5 x 2) 4 = 3 := by
+  rw [deriv_modifiedCamClayYield_p]
+  norm_num [modifiedCamClayYieldPartialP]
+
+/-- Critical-point witness (`M = 1`, `pc = 2`, `(1, 1)`,
+multiplier `1`): the increment vanishes, and the
+on-locus diagnostic's two equivalences both hold. -/
+example : modifiedCamClayPlasticVolumetricIncrement 1 2 1 1 = 0 := by
+  norm_num [modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP]
+
+example :
+    (modifiedCamClayPlasticVolumetricIncrement 1 2 1 1 = 0
+      ↔ (1 : ℝ) = 2 / 2) ∧ ((1 : ℝ) = 2 / 2 ↔ (1 : ℝ) = 1 * 1) :=
+  modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff_on_yield_locus
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num [modifiedCamClayYield]) (by norm_num)
+
+/-- On-locus dry/wet pair (`M = 1`, `pc = 5`, multiplier
+`1`): dry side `p = 1 < 5 / 2`, increment `-3` (negative,
+dilative); wet side `p = 4 > 5 / 2`, increment `3`
+(positive, compactive); both at `q = 2` on the locus. -/
+example : modifiedCamClayYield 1 5 1 2 = 0 ∧
+    modifiedCamClayYield 1 5 4 2 = 0 := by
+  norm_num [modifiedCamClayYield]
+
+example : modifiedCamClayPlasticVolumetricIncrement 1 5 1 1 = -3 ∧
+    modifiedCamClayPlasticVolumetricIncrement 1 5 1 1 < 0 := by
+  refine ⟨by norm_num [modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP], ?_⟩
+  exact modifiedCamClayPlasticVolumetricIncrement_neg_of_lt
+    (by norm_num) (by norm_num) (by norm_num)
+
+example : modifiedCamClayPlasticVolumetricIncrement 1 5 4 1 = 3 ∧
+    0 < modifiedCamClayPlasticVolumetricIncrement 1 5 4 1 := by
+  refine ⟨by norm_num [modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP], ?_⟩
+  exact modifiedCamClayPlasticVolumetricIncrement_pos_of_gt
+    (by norm_num) (by norm_num) (by norm_num)
+
+/-- Off-yield counterexample (`M = 1`, `pc = 4`,
+`p = q = 1`): on the line `q = M p` with `F = -2 ≠ 0`,
+increment `-2`, and `p ≠ pc / 2`; the yield-locus
+hypothesis of the diagnostic is essential. -/
+example : modifiedCamClayYield 1 4 1 1 = -2 ∧
+    modifiedCamClayPlasticVolumetricIncrement 1 4 1 1 = -2 ∧
+    ¬ ((1 : ℝ) = 4 / 2) := by
+  norm_num [modifiedCamClayYield,
+    modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP]
+
+/-- Zero-multiplier control: at multiplier `0` the
+increment is identically zero (here at the on-locus
+point `(2, 0)` with `p ≠ pc / 2`), so no critical-state
+conclusion follows from a zero increment alone. -/
+example (M pc p : ℝ) :
+    modifiedCamClayPlasticVolumetricIncrement M pc p 0 = 0 := by
+  simp [modifiedCamClayPlasticVolumetricIncrement]
+
+example : modifiedCamClayYield 1 2 2 0 = 0 ∧
+    modifiedCamClayPlasticVolumetricIncrement 1 2 2 0 = 0 ∧
+    ¬ ((2 : ℝ) = 2 / 2) := by
+  norm_num [modifiedCamClayYield,
+    modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP]
+
+/-- Origin control: the origin is on the locus and on
+the line, but its increment is `-2 ≠ 0`; the `0 < p`
+hypothesis of the diagnostic is essential. -/
+example : modifiedCamClayYield 1 2 0 0 = 0 ∧
+    modifiedCamClayPlasticVolumetricIncrement 1 2 0 1 = -2 := by
+  norm_num [modifiedCamClayYield,
+    modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP]
+
+/-- Lower-apex control for the increment: `(1, -1)` is
+on the locus at `p = pc / 2` with zero increment but on
+`q = -M p`; the `0 ≤ q` branch hypothesis is essential. -/
+example : modifiedCamClayYield 1 2 1 (-1) = 0 ∧
+    modifiedCamClayPlasticVolumetricIncrement 1 2 1 1 = 0 ∧
+    ¬ ((-1 : ℝ) = 1 * 1) := by
+  norm_num [modifiedCamClayYield,
+    modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP]
+
+/-- Degenerate `M = 0`: the increment is identically
+zero, so the `0 < M` hypothesis is essential. -/
+example (pc p lam : ℝ) :
+    modifiedCamClayPlasticVolumetricIncrement 0 pc p lam = 0 := by
+  norm_num [modifiedCamClayPlasticVolumetricIncrement,
+    modifiedCamClayYieldPartialP]
+
 /-! ## B. Invariant normalizations -/
 
 /-- Triaxial normalization `q = |σa - σr|`. -/
@@ -229,6 +342,16 @@ example : deviatoricInvariant !![0, 1, 0; 0, 0, 0; 0, 0, 0]
 #print axioms
   EarthScience.modifiedCamClayYield_eq_zero_on_critical_line_of_ne_zero
 #print axioms EarthScience.modifiedCamClayYield_on_critical_line_ne_zero
+#print axioms EarthScience.hasDerivAt_modifiedCamClayYield_p
+#print axioms EarthScience.deriv_modifiedCamClayYield_p
+#print axioms
+  EarthScience.modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff
+#print axioms
+  EarthScience.modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff_on_yield_locus
+#print axioms
+  EarthScience.modifiedCamClayPlasticVolumetricIncrement_neg_of_lt
+#print axioms
+  EarthScience.modifiedCamClayPlasticVolumetricIncrement_pos_of_gt
 #print axioms EarthScience.meanStress_effectiveStressCompressionPositive
 #print axioms EarthScience.deviatoricInvariant_effectiveStressCompressionPositive
 #print axioms EarthScience.deviatoricInvariant_compressionPositiveStress

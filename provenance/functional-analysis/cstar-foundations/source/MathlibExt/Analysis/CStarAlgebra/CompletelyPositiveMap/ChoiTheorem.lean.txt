@@ -1,0 +1,277 @@
+/-
+  Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Kraus
+public import Mathlib.Analysis.InnerProductSpace.Positive
+
+/-!
+# Choi theorem for completely positive maps (finite-dimensional)
+
+This module proves the finite-dimensional Choi theorem: a linear map
+`Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ` is completely positive iff its Choi
+matrix is positive semidefinite. The PSD→CP direction uses
+`Matrix.posSemidef_iff_eq_sum_vecMulVec` with exact unvectorization
+`K r a i = v r (i,a)` so `Matrix.vec (K r) = v r` in input×output order,
+and the finite Kraus API. It establishes exact Choi recovery, finite
+Kraus existence, and the equivalence `choiEquivPosSemidef`.
+
+## Tags
+
+choi, kraus, completely positive map
+-/
+
+@[expose] public section
+
+open Matrix
+open scoped Matrix.Norms.L2Operator CStarAlgebra MatrixOrder ComplexOrder
+
+namespace CompletelyPositiveMap
+
+variable {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
+
+omit [Fintype m] [DecidableEq m] in
+private def OmegaMatrix : Matrix n n (Matrix n n ℂ) :=
+  fun i j => Matrix.single i j (1 : ℂ)
+
+omit [Fintype m] [DecidableEq m] in
+private def omegaVec : n × n → ℂ :=
+  fun p => if p.1 = p.2 then (1 : ℂ) else 0
+
+private noncomputable def compStarAlgEquivLocal (I J : Type*) [Fintype I] [Fintype J]
+    [DecidableEq I] [DecidableEq J] :
+    Matrix I I (Matrix J J ℂ) ≃⋆ₐ[ℂ] Matrix (I × J) (I × J) ℂ :=
+  StarAlgEquiv.ofAlgEquiv (Matrix.compAlgEquiv I J ℂ ℂ) fun M =>
+    (Matrix.conjTranspose_comp' (M := M)).symm
+
+@[simp]
+private theorem compStarAlgEquivLocal_apply (I J : Type*) [Fintype I] [Fintype J]
+    [DecidableEq I] [DecidableEq J] (M : Matrix I I (Matrix J J ℂ)) :
+    compStarAlgEquivLocal I J M = Matrix.comp I I J J ℂ M :=
+  rfl
+
+omit [Fintype m] [DecidableEq m] in
+private noncomputable def flatEquivInput :
+    CStarMatrix n n (Matrix n n ℂ) ≃⋆ₐ[ℂ] Matrix (n × n) (n × n) ℂ :=
+  (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ)).symm.trans
+    (compStarAlgEquivLocal n n)
+
+private noncomputable def flatEquivOutput :
+    CStarMatrix n n (Matrix m m ℂ) ≃⋆ₐ[ℂ] Matrix (n × m) (n × m) ℂ :=
+  (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix m m ℂ)).symm.trans
+    (compStarAlgEquivLocal n m)
+
+omit [Fintype n] [Fintype m] [DecidableEq m] in
+private lemma comp_Omega_eq : Matrix.comp n n n n ℂ OmegaMatrix =
+    Matrix.vecMulVec omegaVec (star omegaVec) := by
+  ext ⟨i, a⟩ ⟨j, b⟩
+  simp only [Matrix.comp_apply, OmegaMatrix, omegaVec, Matrix.vecMulVec, Matrix.of_apply,
+    Matrix.single_apply, Pi.star_apply]
+  by_cases h1 : i = a
+  · by_cases h2 : j = b
+    · simp [h1, h2]
+    · simp [h1, h2]
+  · by_cases h2 : j = b
+    · simp [h1, h2]
+    · simp [h1, h2]
+
+omit [Fintype n] [Fintype m] [DecidableEq m] in
+private lemma posSemidef_comp_Omega [Finite n] :
+    (Matrix.comp n n n n ℂ OmegaMatrix).PosSemidef := by
+  rw [comp_Omega_eq]
+  exact Matrix.posSemidef_vecMulVec_self_star omegaVec
+
+omit [Fintype n] [Fintype m] [DecidableEq m] in
+private lemma nonneg_comp_Omega [Finite n] : 0 ≤ Matrix.comp n n n n ℂ OmegaMatrix :=
+  (posSemidef_comp_Omega).nonneg
+
+omit [Fintype m] [DecidableEq m] in
+private lemma flatInput_Omega_eq : flatEquivInput
+    (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) =
+    Matrix.comp n n n n ℂ OmegaMatrix := by
+  have h1 : (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ)).symm
+      (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) = OmegaMatrix := by
+    have h_eq : (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ))
+        OmegaMatrix = CStarMatrix.ofMatrix OmegaMatrix := by
+      rw [← CStarMatrix.ofMatrix_eq_ofMatrixStarAlgEquiv]
+    calc
+      (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ)).symm
+          (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ))
+          = (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ)).symm
+              ((CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ)) OmegaMatrix) := by
+            rw [h_eq]
+      _ = OmegaMatrix := StarAlgEquiv.symm_apply_apply _ _
+  calc
+    flatEquivInput (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ))
+        = (compStarAlgEquivLocal n n)
+            ((CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix n n ℂ)).symm
+              (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ))) := by
+          simp only [flatEquivInput, StarAlgEquiv.trans_apply]
+    _ = compStarAlgEquivLocal n n OmegaMatrix := by rw [h1]
+    _ = Matrix.comp n n n n ℂ OmegaMatrix := rfl
+
+omit [Fintype m] [DecidableEq m] in
+private lemma OmegaCStar_nonneg :
+    0 ≤ (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) := by
+  have h_forward : flatEquivInput
+      (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) =
+      Matrix.comp n n n n ℂ OmegaMatrix := flatInput_Omega_eq
+  have h_eq : flatEquivInput.symm (Matrix.comp n n n n ℂ OmegaMatrix) =
+      (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) := by
+    calc
+      flatEquivInput.symm (Matrix.comp n n n n ℂ OmegaMatrix)
+          = flatEquivInput.symm (flatEquivInput
+              (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ))) := by
+            rw [h_forward]
+      _ = (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) := by
+            rw [StarAlgEquiv.symm_apply_apply]
+  have h_symm_nonneg :
+      0 ≤ flatEquivInput.symm (Matrix.comp n n n n ℂ OmegaMatrix) :=
+    map_nonneg _ nonneg_comp_Omega
+  exact h_eq ▸ h_symm_nonneg
+
+private lemma flatOutput_mapOmega_eq_choi
+    (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    flatEquivOutput
+        ((CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)).map φ) =
+      choiMatrix φ := by
+  ext ⟨i, a⟩ ⟨j, b⟩
+  set M := (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)).map φ
+  have h_trans : flatEquivOutput M (i, a) (j, b) =
+      (compStarAlgEquivLocal n m
+        ((CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix m m ℂ)).symm M))
+        (i, a) (j, b) := by
+    simp only [flatEquivOutput, StarAlgEquiv.trans_apply]
+  rw [h_trans, compStarAlgEquivLocal_apply, Matrix.comp_apply]
+  have h_symm_entry :
+      ((CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix m m ℂ)).symm M) i j a b =
+      φ (OmegaMatrix i j) a b := by
+    have h_map : M i j = φ (OmegaMatrix i j) := rfl
+    have h_of :
+        (CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix m m ℂ)).symm M i j =
+        M i j := by rfl
+    calc
+      ((CStarMatrix.ofMatrixStarAlgEquiv (n := n) (A := Matrix m m ℂ)).symm M) i j a b
+          = (M i j) a b := by rw [h_of]
+      _ = φ (OmegaMatrix i j) a b := by rw [h_map]
+  rw [h_symm_entry]
+  rfl
+
+/-- The Choi matrix of a completely positive map is positive semidefinite. -/
+theorem choiMatrix_posSemidef (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    (choiMatrix φ).PosSemidef := by
+  have h_Omega : 0 ≤ (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) :=
+    OmegaCStar_nonneg
+  have h_map : 0 ≤ (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)).map φ :=
+    CompletelyPositiveMap.map_cstarMatrix_nonneg φ _ h_Omega
+  have h_flat : 0 ≤ flatEquivOutput
+      ((CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)).map φ) :=
+    map_nonneg _ h_map
+  rw [flatOutput_mapOmega_eq_choi φ] at h_flat
+  exact (Matrix.nonneg_iff_posSemidef.mp h_flat)
+
+/-- CP map reconstructed from a PSD Choi matrix, via exact unvectorization
+`K r a i = v r (i,a)` and the finite Kraus API. -/
+noncomputable def ofChoiMatrix (J : Matrix (n × m) (n × m) ℂ)
+    (hJ : J.PosSemidef) : Matrix n n ℂ →CP Matrix m m ℂ :=
+  let k := Classical.choose ((Matrix.posSemidef_iff_eq_sum_vecMulVec (M := J)).mp hJ)
+  let h_spec : ∃ v : Fin k → (n × m → ℂ),
+      J = ∑ r, Matrix.vecMulVec (v r) (star (v r)) :=
+    Classical.choose_spec ((Matrix.posSemidef_iff_eq_sum_vecMulVec (M := J)).mp hJ)
+  let v := Classical.choose h_spec
+  kraus (fun r : Fin k => (fun a i => v r (i, a) : Matrix m n ℂ))
+
+/-- Choi matrix of `ofChoiMatrix J hJ` recovers `J`. -/
+theorem choiMatrix_ofChoiMatrix (J : Matrix (n × m) (n × m) ℂ)
+    (hJ : J.PosSemidef) : choiMatrix (ofChoiMatrix J hJ) = J := by
+  have h_mp := (Matrix.posSemidef_iff_eq_sum_vecMulVec (M := J)).mp hJ
+  have h_spec : ∃ v : Fin (Classical.choose h_mp) → (n × m → ℂ),
+      J = ∑ r, Matrix.vecMulVec (v r) (star (v r)) :=
+    Classical.choose_spec h_mp
+  have h_vspec := Classical.choose_spec h_spec
+  have h_unfold : ofChoiMatrix J hJ =
+      kraus (fun r : Fin (Classical.choose h_mp) =>
+        (fun a i => (Classical.choose h_spec) r (i, a) : Matrix m n ℂ)) := by
+    unfold ofChoiMatrix
+    rfl
+  calc
+    choiMatrix (ofChoiMatrix J hJ)
+        = choiMatrix
+            (kraus (fun r : Fin (Classical.choose h_mp) =>
+              (fun a i => (Classical.choose h_spec) r (i, a) : Matrix m n ℂ))) := by
+          rw [h_unfold]
+    _ = ∑ r : Fin (Classical.choose h_mp),
+        Matrix.vecMulVec
+          (Matrix.vec
+            (fun a i => (Classical.choose h_spec) r (i, a) : Matrix m n ℂ))
+          (star
+            (Matrix.vec
+              (fun a i => (Classical.choose h_spec) r (i, a) : Matrix m n ℂ))) := by
+          exact choiMatrix_kraus _
+    _ = ∑ r : Fin (Classical.choose h_mp),
+        Matrix.vecMulVec ((Classical.choose h_spec) r)
+          (star ((Classical.choose h_spec) r)) := by
+          apply Finset.sum_congr rfl
+          intro r _
+          have h_vec : Matrix.vec
+              (fun a i => (Classical.choose h_spec) r (i, a) : Matrix m n ℂ) =
+              (Classical.choose h_spec) r := by
+            ext ⟨i, a⟩
+            rfl
+          rw [h_vec]
+    _ = J := h_vspec.symm
+
+/-- Reconstructing a CP map from its Choi matrix recovers the map. -/
+theorem ofChoiMatrix_choiMatrix (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ) = φ := by
+  have h_choi : choiMatrix
+      (ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)) = choiMatrix φ :=
+    choiMatrix_ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)
+  have h_lin_eq : LinearMap.choiMatrix
+      (ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)).toLinearMap =
+      LinearMap.choiMatrix φ.toLinearMap := by
+    calc
+      LinearMap.choiMatrix
+          (ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)).toLinearMap
+          = choiMatrix (ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)) := rfl
+      _ = choiMatrix φ := h_choi
+      _ = LinearMap.choiMatrix φ.toLinearMap := rfl
+  have h_toLinearMap :
+      (ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)).toLinearMap =
+        φ.toLinearMap :=
+    LinearMap.choiMatrix_injective h_lin_eq
+  apply DFunLike.ext
+  intro X
+  calc
+    ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ) X
+        = (ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ)).toLinearMap X := rfl
+    _ = φ.toLinearMap X := by rw [h_toLinearMap]
+    _ = φ X := rfl
+
+/-- Every CP map admits a finite Kraus representation `φ = kraus K` with `Fin k` operators. -/
+theorem exists_kraus (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
+    ∃ (k : ℕ) (K : Fin k → Matrix m n ℂ), φ = kraus K := by
+  refine ⟨Classical.choose
+      ((Matrix.posSemidef_iff_eq_sum_vecMulVec
+        (M := choiMatrix φ)).mp (choiMatrix_posSemidef φ)),
+    fun r => fun a i =>
+      (Classical.choose
+          (Classical.choose_spec
+            ((Matrix.posSemidef_iff_eq_sum_vecMulVec
+              (M := choiMatrix φ)).mp (choiMatrix_posSemidef φ)))) r (i, a), ?_⟩
+  exact (ofChoiMatrix_choiMatrix φ).symm
+
+/-- Equivalence between CP maps and PSD Choi matrices; inverse is `ofChoiMatrix`. -/
+noncomputable def choiEquivPosSemidef :
+    (Matrix n n ℂ →CP Matrix m m ℂ) ≃
+      {J : Matrix (n × m) (n × m) ℂ // J.PosSemidef} where
+  toFun φ := ⟨choiMatrix φ, choiMatrix_posSemidef φ⟩
+  invFun J := ofChoiMatrix J.1 J.2
+  left_inv φ := ofChoiMatrix_choiMatrix φ
+  right_inv := by
+    intro ⟨J, hJ⟩
+    apply Subtype.ext
+    exact choiMatrix_ofChoiMatrix J hJ
+
+end CompletelyPositiveMap

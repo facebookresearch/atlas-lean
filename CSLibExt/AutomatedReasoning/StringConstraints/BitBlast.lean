@@ -52,7 +52,7 @@ set_option autoImplicit false
 
 namespace Cslib.AutomatedReasoning.StringConstraints
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 variable {n : ℕ}
 

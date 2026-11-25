@@ -649,30 +649,32 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- Poly-Bernoulli number `Bₙ⁽ᵏ⁾` via Kaneko's explicit finite Stirling-number formula.
+/-- **Poly-Bernoulli numbers.** Let $S(n, r)$ denote the Stirling numbers of the second kind. For
+a natural number $n$ and an integer $k$, the poly-Bernoulli number $B_n^{(k)}$ is the rational
+number given by Kaneko's explicit formula
+$$B_n^{(k)} = (-1)^n \sum_{r=0}^{n} \frac{(-1)^r\, r!\, S(n, r)}{(r+1)^k}.$$
+
+Introduced by M. Kaneko, "Poly-Bernoulli numbers," Journal de Théorie des
+Nombres de Bordeaux 9 (1997), 221–228; see also T. Arakawa and M. Kaneko,
+"On poly-Bernoulli numbers," Commentarii Mathematici Universitatis
+Sancti Pauli 48 (1999), 159–167, as cited by the source.
 
 Source: Y. Hamahata and H. Masubuchi, "Special Multi-Poly-Bernoulli Numbers,"
 Journal of Integer Sequences 10 (2007), Article 07.4.1,
 <https://cs.uwaterloo.ca/journals/JIS/VOL10/Hamahata/hamahata3.tex>.
 The poly-Bernoulli generating-series definition and Kaneko's formula are
-lines 106–152 of the official TeX.
-
-The source sums over `m = 1, …, n + 1` with denominator `(m : ℚ) ^ k`;
-here this is reindexed by `r = m - 1` over `Finset.range (n + 1)`, so the
-denominator is `(((r + 1 : ℕ) : ℚ) ^ k)`. The two sign factors
-`(-1 : ℚ) ^ n` and `(-1 : ℚ) ^ r` are kept in this source-direct form.
-
-Introduced by M. Kaneko, "Poly-Bernoulli numbers," Journal de Théorie des
-Nombres de Bordeaux 9 (1997), 221–228; see also T. Arakawa and M. Kaneko,
-"On poly-Bernoulli numbers," Commentarii Mathematici Universitatis
-Sancti Pauli 48 (1999), 159–167, as cited by the source. -/
+lines 106–152 of the official TeX. -/
 def polyBernoulli (n : ℕ) (k : ℤ) : ℚ :=
   (-1 : ℚ) ^ n * ∑ r ∈ Finset.range (n + 1),
     (-1 : ℚ) ^ r * (Nat.factorial r : ℚ) * (Nat.stirlingSecond n r : ℚ) /
       (((r + 1 : ℕ) : ℚ) ^ k)
 
-/-- Arakawa–Kaneko duality for poly-Bernoulli numbers:
-`Bₙ⁽⁻ᵏ⁾ = Bₖ⁽⁻ⁿ⁾` for `n, k : ℕ`, with `polyBernoulli` as above.
+/-- **Arakawa–Kaneko duality for poly-Bernoulli numbers.** Let $S(n, r)$ denote the Stirling
+numbers of the second kind. For a natural number $n$ and an integer $k$, let $B_n^{(k)}$ be the
+poly-Bernoulli number given by Kaneko's explicit formula
+$$B_n^{(k)} = (-1)^n \sum_{r=0}^{n} \frac{(-1)^r\, r!\, S(n, r)}{(r+1)^k}.$$
+Then for all natural numbers $n$ and $k$,
+$$B_n^{(-k)} = B_k^{(-n)}.$$
 
 Source: Y. Hamahata and H. Masubuchi, "Special Multi-Poly-Bernoulli Numbers,"
 Journal of Integer Sequences 10 (2007), Article 07.4.1,

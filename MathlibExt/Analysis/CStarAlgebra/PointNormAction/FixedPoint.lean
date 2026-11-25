@@ -1,0 +1,153 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.PointNormAction
+
+/-!
+# Fixed points of point-norm C-star actions
+
+This file bundles the coefficients fixed by a point-norm continuous monoid
+action as a closed nonunital star subalgebra. Equivariant homomorphisms
+restrict to homomorphisms between the corresponding fixed-point subalgebras.
+-/
+
+@[expose] public section
+
+open Set
+open scoped CStarAlgebra
+
+noncomputable section
+
+universe uG uA uB uC
+
+namespace PointNormCStarAction
+
+variable {G : Type uG} {A : Type uA} {B : Type uB}
+variable [Monoid G] [TopologicalSpace G]
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The nonunital star subalgebra of coefficients fixed by every monoid element. -/
+def fixedPointSubalgebra (alpha : PointNormCStarAction G A) :
+    NonUnitalStarSubalgebra ℂ A where
+  carrier := {a | ∀ g, alpha g a = a}
+  zero_mem' := fun g ↦ alpha.apply_zero g
+  add_mem' := by
+    intro a b ha hb g
+    rw [alpha.apply_add, ha g, hb g]
+  mul_mem' := by
+    intro a b ha hb g
+    rw [alpha.apply_mul_elem, ha g, hb g]
+  smul_mem' := by
+    intro z a ha g
+    rw [alpha.apply_smul, ha g]
+  star_mem' := by
+    intro a ha g
+    rw [alpha.apply_star, ha g]
+
+@[simp]
+theorem mem_fixedPointSubalgebra
+    (alpha : PointNormCStarAction G A) (a : A) :
+    a ∈ alpha.fixedPointSubalgebra ↔ ∀ g, alpha g a = a :=
+  Iff.rfl
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The fixed-point subalgebra is closed in the ambient C-star algebra. -/
+theorem isClosed_fixedPointSubalgebra
+    (alpha : PointNormCStarAction G A) :
+    IsClosed (alpha.fixedPointSubalgebra : Set A) := by
+  rw [show (alpha.fixedPointSubalgebra : Set A) =
+      ⋂ g : G, {a : A | alpha g a = a} by
+    ext a
+    simp]
+  exact isClosed_iInter fun g ↦
+    isClosed_eq
+      (map_continuous (alpha.aut g).toNonUnitalStarAlgHom)
+      continuous_id
+
+@[simp]
+theorem fixedPointSubalgebra_trivial :
+    (PointNormCStarAction.trivial G A).fixedPointSubalgebra = ⊤ := by
+  ext a
+  simp
+
+namespace Hom
+
+variable {alpha : PointNormCStarAction G A}
+variable {beta : PointNormCStarAction G B}
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+An equivariant homomorphism sends fixed coefficients to fixed coefficients. -/
+theorem mapsTo_fixedPointSubalgebra (phi : PointNormCStarAction.Hom alpha beta) :
+    Set.MapsTo phi (alpha.fixedPointSubalgebra : Set A)
+      (beta.fixedPointSubalgebra : Set B) := by
+  intro a ha
+  change (∀ g, alpha g a = a) at ha
+  change ∀ g, beta g (phi a) = phi a
+  intro g
+  rw [← phi.equivariant g a, ha g]
+
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Restriction of an equivariant homomorphism to fixed-point subalgebras. -/
+def fixedPointMap (phi : PointNormCStarAction.Hom alpha beta) :
+    alpha.fixedPointSubalgebra →⋆ₙₐ[ℂ] beta.fixedPointSubalgebra :=
+  NonUnitalStarAlgHom.codRestrict
+    (phi.toNonUnitalStarAlgHom.comp
+      (NonUnitalStarSubalgebraClass.subtype alpha.fixedPointSubalgebra))
+    beta.fixedPointSubalgebra
+    fun a ↦ phi.mapsTo_fixedPointSubalgebra a.property
+
+@[simp]
+theorem fixedPointMap_apply
+    (phi : PointNormCStarAction.Hom alpha beta)
+    (a : alpha.fixedPointSubalgebra) :
+    ((phi.fixedPointMap a : beta.fixedPointSubalgebra) : B) = phi a :=
+  rfl
+
+@[simp]
+theorem fixedPointMap_id (alpha : PointNormCStarAction G A) :
+    (PointNormCStarAction.Hom.id alpha).fixedPointMap =
+      NonUnitalStarAlgHom.id ℂ alpha.fixedPointSubalgebra := by
+  apply NonUnitalStarAlgHom.ext
+  intro a
+  apply Subtype.ext
+  rfl
+
+@[simp]
+theorem fixedPointMap_comp
+    {C : Type uC} [NonUnitalCStarAlgebra C]
+    {gamma : PointNormCStarAction G C}
+    (psi : PointNormCStarAction.Hom beta gamma)
+    (phi : PointNormCStarAction.Hom alpha beta) :
+    (PointNormCStarAction.Hom.comp psi phi).fixedPointMap =
+      psi.fixedPointMap.comp phi.fixedPointMap := by
+  apply NonUnitalStarAlgHom.ext
+  intro a
+  apply Subtype.ext
+  rfl
+
+end Hom
+
+end PointNormCStarAction

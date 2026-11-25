@@ -44,6 +44,7 @@
 - [Anti-palindromic compositions of 6 with four parts](anti-palindromic-composition-count-six-f.md)
 - [Arndt compositions by last part](arndt-last-part-count.md)
 - [Arndt compositions of 6 by last part](arndt-last-part-count-six.md)
+- [Count by terminal block](count-by-terminal-block.md)
 - [Number of $k$-Arndt compositions](k-arndt-composition-count.md)
 - [Sample values of the $k$-Arndt composition counts](k-arndt-composition-count-examples.md)
 - [Number of $k$-block Arndt compositions](block-arndt-composition-count.md)

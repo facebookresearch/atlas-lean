@@ -20,7 +20,11 @@ This file defines the endomorphism ring of a complex period lattice.
 
 namespace PeriodPair
 
-/-- The subring of complex scalars whose multiplication preserves a period lattice. -/
+/-- **Endomorphism ring of a period lattice.** Let $\omega_1, \omega_2$ be
+$\mathbb{R}$-linearly independent complex numbers with period lattice
+$\Lambda = \mathbb{Z}\omega_1 + \mathbb{Z}\omega_2$. The endomorphism ring of $\Lambda$ is the
+subring of $\mathbb{C}$ consisting of all $a \in \mathbb{C}$ such that $a z \in \Lambda$ for every
+$z \in \Lambda$. -/
 def endomorphismRing (L : PeriodPair) : Subring ℂ where
   carrier := {a | ∀ z ∈ L.lattice, a * z ∈ L.lattice}
   mul_mem' ha hb z hz := by
@@ -40,10 +44,14 @@ theorem mem_endomorphismRing {L : PeriodPair} {a : ℂ} :
     a ∈ L.endomorphismRing ↔ ∀ z ∈ L.lattice, a * z ∈ L.lattice :=
   Iff.rfl
 
-/-- A period lattice is a proper ideal of `𝒪` when its endomorphism ring is exactly `𝒪`.
+/-- **Lattices that are proper ideals.** Let $\Lambda$ be the period lattice of a pair of
+$\mathbb{R}$-linearly independent complex numbers, and let $\mathcal{O}$ be a subring of
+$\mathbb{C}$. Then $\Lambda$ is a proper ideal of $\mathcal{O}$ when the endomorphism ring of
+$\Lambda$, the subring of all $a \in \mathbb{C}$ with $a z \in \Lambda$ for every $z \in \Lambda$,
+equals $\mathcal{O}$.
 
-The ambient assumptions that `𝒪` is an imaginary quadratic order and that the lattice is an
-`𝒪`-ideal are deliberately kept separate from this predicate. -/
+The ambient assumptions that $\mathcal{O}$ is an imaginary quadratic order and that $\Lambda$ is
+an $\mathcal{O}$-ideal are deliberately kept separate from this predicate. -/
 def IsProperIdeal (L : PeriodPair) (𝒪 : Subring ℂ) : Prop :=
   L.endomorphismRing = 𝒪
 

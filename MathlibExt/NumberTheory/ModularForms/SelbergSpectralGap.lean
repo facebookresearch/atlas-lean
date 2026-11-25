@@ -58,39 +58,62 @@ teorth/optimizationproblems commit
 `21fddd97d037cfa94393294ab112f709d5242cdc0ca11ef3bd62073408a80a8e`.
 -/
 
-/-- A subgroup of `SL(2, ℤ)` is a congruence subgroup when it contains a
-principal congruence subgroup: all matrices congruent to the identity
-modulo some positive level `N`. -/
+/-- **Congruence subgroup of the modular group.** A subgroup $\Gamma$ of
+$\mathrm{SL}(2, \mathbb{Z})$ is a congruence subgroup if there is a positive integer $N$
+such that every $\gamma \in \mathrm{SL}(2, \mathbb{Z})$ whose entries are congruent modulo
+$N$ to those of the identity matrix lies in $\Gamma$; that is, $\Gamma$ contains the
+principal congruence subgroup of level $N$. -/
 def IsCongruenceSubgroup (Γ : Subgroup SL(2, ℤ)) : Prop :=
   ∃ N : ℕ, 0 < N ∧ ∀ γ : SL(2, ℤ),
     (∀ i j, γ.1 i j ≡ (1 : Matrix (Fin 2) (Fin 2) ℤ) i j [ZMOD (N : ℤ)]) →
       γ ∈ Γ
 
-/-- The full modular group is a congruence subgroup (level `1`). -/
+/-- **The modular group is a congruence subgroup.** The full group
+$\mathrm{SL}(2, \mathbb{Z})$, as a subgroup of itself, is a congruence subgroup.
+
+It contains the principal congruence subgroup of level $1$, which is the whole group. -/
 theorem isCongruenceSubgroup_top : IsCongruenceSubgroup ⊤ :=
   ⟨1, one_pos, fun γ _ => Subgroup.mem_top γ⟩
 
-/-- Zero extension of an upper-half-plane function to the complex plane,
-used to read coordinate derivatives in the interior. -/
+/-- **Zero extension from the upper half plane.** For a function $f$ from the upper half plane
+to $\mathbb{C}$, its zero extension is the function from $\mathbb{C}$ to $\mathbb{C}$ that takes
+the value $f(z)$ at every $z$ with $\operatorname{Im} z > 0$ and the value $0$ at every other
+point.
+
+It is used to read coordinate derivatives of $f$ in the interior. -/
 def ext (f : UpperHalfPlane → ℂ) : ℂ → ℂ :=
   fun z => if hz : 0 < z.im then f ⟨z, hz⟩ else 0
 
-/-- The derivative of `f` in the real coordinate direction: the real
-Fréchet derivative of the zero extension applied to the vector `1`.
-Real (not complex) differentiability is essential here: with complex
-derivatives the two second derivatives below would cancel by
-Cauchy--Riemann and the Laplacian would be identically zero. -/
+/-- **Partial derivative in the real direction.** For a function
+$f \colon \mathbb{H} \to \mathbb{C}$ and a point $z \in \mathbb{H}$, $\partial_x f(z)$ is the real
+Fréchet derivative at $z$ of the zero extension of $f$ to $\mathbb{C}$, applied to the vector $1$.
+When the zero extension is real-differentiable at $z$ this is the partial derivative of $f$ with
+respect to $x = \operatorname{Re} z$; otherwise the value is $0$.
+
+Real, not complex, differentiability is essential: with complex derivatives the two second
+derivatives in the hyperbolic Laplacian would cancel by the Cauchy–Riemann equations, and the
+Laplacian would vanish identically. -/
 def partialRe (f : UpperHalfPlane → ℂ) (z : UpperHalfPlane) : ℂ :=
   fderiv ℝ (ext f) z (1 : ℂ)
 
-/-- The derivative of `f` in the imaginary coordinate direction: the real
-Fréchet derivative of the zero extension applied to the vector `I`. -/
+/-- **Partial derivative in the imaginary direction.** For a function
+$f \colon \mathbb{H} \to \mathbb{C}$ and a point $z \in \mathbb{H}$, $\partial_y f(z)$ is the real
+Fréchet derivative at $z$ of the zero extension of $f$ to $\mathbb{C}$, applied to the vector $i$.
+When the zero extension is real-differentiable at $z$ this is the partial derivative of $f$ with
+respect to $y = \operatorname{Im} z$; otherwise the value is $0$. -/
 def partialIm (f : UpperHalfPlane → ℂ) (z : UpperHalfPlane) : ℂ :=
   fderiv ℝ (ext f) z Complex.I
 
-/-- The hyperbolic Laplacian `-y² (∂²/∂x² + ∂²/∂y²)`, read through the
-zero extension. On smooth functions this agrees with the coordinate
-formula at every interior point. -/
+/-- **Hyperbolic Laplacian.** For a function $f$ from the upper half plane to $\mathbb{C}$ and a
+point $z = x + iy$ of the upper half plane, the hyperbolic Laplacian of $f$ at $z$ is
+$$\Delta f(z) = -y^2 \left(\partial_x \partial_x f(z) + \partial_y \partial_y f(z)\right),$$
+where, for a function $g$ from the upper half plane to $\mathbb{C}$, $\partial_x g(z)$ and
+$\partial_y g(z)$ are the real Fréchet derivatives at $z$ of the zero extension of $g$ to
+$\mathbb{C}$, applied to the vectors $1$ and $i$ respectively (taken to be $0$ where that
+extension is not real differentiable).
+
+On smooth functions this agrees with the coordinate formula
+$-y^2 (\partial^2 f / \partial x^2 + \partial^2 f / \partial y^2)$ at every interior point. -/
 def hyperbolicLaplacian (f : UpperHalfPlane → ℂ) (z : UpperHalfPlane) : ℂ :=
   -((z.im : ℂ) ^ 2) * (partialRe (partialRe f) z + partialIm (partialIm f) z)
 
@@ -111,7 +134,9 @@ theorem partialIm_const (c : ℂ) (z : UpperHalfPlane) :
     partialIm (fun _ => c) z = 0 :=
   ext_fderiv_const c Complex.I z
 
-/-- The hyperbolic Laplacian kills constant functions, as it should. -/
+/-- **The hyperbolic Laplacian kills constants.** For every complex number $c$ and every
+point $z$ of the upper half plane, the hyperbolic Laplacian of the constant function with
+value $c$ at $z$ is $0$. -/
 theorem hyperbolicLaplacian_const (c : ℂ) (z : UpperHalfPlane) :
     hyperbolicLaplacian (fun _ => c) z = 0 := by
   have hRe : partialRe (fun _ => c) = fun _ => 0 :=
@@ -170,8 +195,12 @@ private theorem fderiv_two_im_apply (w v : ℂ) :
     h4.fderiv]
   simp
 
-/-- Non-holomorphic sanity check: for `f(z) = (im z)^2`, the hyperbolic
-Laplacian is `-2 (im z)^2`, not zero. With complex derivatives this
+/-- **Hyperbolic Laplacian of the squared imaginary part.** Let $f$ be the function on the upper
+half plane given by $f(u) = (\operatorname{Im} u)^2$, viewed as a complex number. Then for
+every point $z$ of the upper half plane the hyperbolic Laplacian of $f$ at $z$ equals
+$-2 (\operatorname{Im} z)^2$.
+
+This is a non-holomorphic check: the value is not zero, whereas with complex derivatives the
 computation would collapse by Cauchy--Riemann. -/
 theorem hyperbolicLaplacian_im_sq (z : UpperHalfPlane) :
     hyperbolicLaplacian (fun u : UpperHalfPlane => (((u : ℂ).im ^ 2 : ℝ) : ℂ)) z =
@@ -199,60 +228,91 @@ theorem hyperbolicLaplacian_im_sq (z : UpperHalfPlane) :
   push_cast
   ring
 
-/-- Smoothness of order two on the upper half plane, through a complex
-extension that is twice real-differentiable at every interior point
-(real, not complex, differentiability: eigenfunctions need not be
-holomorphic). -/
+/-- **Twice continuously differentiable functions on the upper half-plane.** A function
+$f \colon \mathbb{H} \to \mathbb{C}$ is smooth (of order two) when it is the restriction of a
+function $F \colon \mathbb{C} \to \mathbb{C}$ that is twice continuously differentiable, in the real
+sense, on the open set $\{z \in \mathbb{C} : \operatorname{Im} z > 0\}$.
+
+Differentiability is real, not complex: eigenfunctions of the Laplacian need not be holomorphic. -/
 def IsSmooth (f : UpperHalfPlane → ℂ) : Prop :=
   ∃ F : ℂ → ℂ, ContDiffOn ℝ 2 F {z | 0 < z.im} ∧ ∀ z : UpperHalfPlane, f z = F z
 
-/-- The standard fundamental domain for `SL(2, ℤ)`, as a set in the upper
-half plane. -/
+/-- **Standard fundamental domain of the modular group.** The standard fundamental domain for
+$\mathrm{SL}(2, \mathbb{Z})$ is the set of points $z$ of the upper half plane with
+$|\operatorname{Re} z| \le 1/2$ and $|z| \ge 1$. -/
 def fundamentalDomain : Set UpperHalfPlane :=
   {z | |z.re| ≤ 1 / 2 ∧ 1 ≤ ‖(z : ℂ)‖}
 
-/-- A finite set of coset representatives covering `SL(2, ℤ)` by left
-cosets of `Γ`. -/
+/-- **Finite coset covers of the modular group.** A finite set
+$s \subseteq \mathrm{SL}(2, \mathbb{Z})$ covers $\mathrm{SL}(2, \mathbb{Z})$ by cosets of a subgroup
+$\Gamma$ when every $g \in \mathrm{SL}(2, \mathbb{Z})$ can be written as $g = \gamma a$ with
+$\gamma \in \Gamma$ and $a \in s$, that is, when the cosets $\Gamma a$ with $a \in s$ cover
+$\mathrm{SL}(2, \mathbb{Z})$. The elements of $s$ need not lie in distinct cosets. -/
 def IsCosetCover (Γ : Subgroup SL(2, ℤ)) (s : Finset SL(2, ℤ)) : Prop :=
   ∀ g : SL(2, ℤ), ∃ a ∈ s, ∃ γ ∈ Γ, g = γ * a
 
-/-- Square-integrability on the quotient `Γ \ ℍ`, expressed through one
-finite coset covering: the hyperbolic integral of `‖f‖²` over the
-corresponding translates of the standard fundamental domain is finite.
-Independence from the chosen covering is part of the recorded model
-scope in the module docstring. -/
+/-- **Square-integrable functions on a modular quotient.** For a subgroup $\Gamma$ of
+$\mathrm{SL}(2, \mathbb{Z})$, a function $f \colon \mathbb{H} \to \mathbb{C}$ is
+square-integrable on $\Gamma \backslash \mathbb{H}$ when there is a finite set
+$s \subseteq \mathrm{SL}(2, \mathbb{Z})$ whose cosets $\Gamma a$, $a \in s$, cover
+$\mathrm{SL}(2, \mathbb{Z})$, such that
+
+$$\int_{U} |f(z)|^2 \, d\mu(z) < \infty, \qquad U = \bigcup_{a \in s} a \cdot \mathcal{F},$$
+
+where $\mathcal{F} = \{z \in \mathbb{H} : |\operatorname{Re} z| \le 1/2,\ |z| \ge 1\}$ is the
+standard fundamental domain of $\mathrm{SL}(2, \mathbb{Z})$, $a \cdot \mathcal{F}$ is its image
+under the Möbius action of $a$, and $\mu$ is the hyperbolic area measure $dx \, dy / y^2$ on
+$\mathbb{H}$. -/
 def IsL2Quotient (Γ : Subgroup SL(2, ℤ)) (f : UpperHalfPlane → ℂ) : Prop :=
   ∃ s : Finset SL(2, ℤ), IsCosetCover Γ s ∧
     (∫⁻ z in ⋃ a ∈ (s : Set SL(2, ℤ)), (fun z => a • z) '' fundamentalDomain,
       ‖f z‖ₑ ^ 2) < ∞
 
-/-- `λ` is an eigenvalue of the hyperbolic Laplacian on `L²(Γ \ ℍ)`, in
-the smooth eigenfunction sense of this file: some nonzero smooth
-`Γ`-invariant square-integrable function satisfies `Δf = λ f`. -/
+/-- **Eigenvalues of the hyperbolic Laplacian on a modular quotient.** Let $\Gamma$ be a subgroup
+of $\mathrm{SL}(2, \mathbb{Z})$. A real number $\lambda$ is an eigenvalue of the hyperbolic
+Laplacian $\Delta$ for $\Gamma$ when there is a function $f \colon \mathbb{H} \to \mathbb{C}$ on
+the upper half plane $\mathbb{H}$ such that $f$ is not identically zero, $f$ is the restriction of
+a function on $\mathbb{C}$ that is twice continuously differentiable in the real sense on the
+upper half plane, $f(\gamma z) = f(z)$ for every $\gamma \in \Gamma$ and every $z \in \mathbb{H}$
+(Möbius action), $f$ is square-integrable on $\Gamma \backslash \mathbb{H}$, and
+$\Delta f(z) = \lambda f(z)$ for every $z \in \mathbb{H}$. -/
 def IsEigenvalue (Γ : Subgroup SL(2, ℤ)) (lam : ℝ) : Prop :=
   ∃ f : UpperHalfPlane → ℂ, f ≠ 0 ∧ IsSmooth f ∧
     (∀ γ : SL(2, ℤ), γ ∈ Γ → ∀ z : UpperHalfPlane, f (γ • z) = f z) ∧
     IsL2Quotient Γ f ∧
     ∀ z : UpperHalfPlane, hyperbolicLaplacian f z = (lam : ℂ) * f z
 
-/-- The set of gap contributions of `Γ`: `0` together with
-`√(1/4 - λ)` for every exceptional eigenvalue `λ ∈ (0, 1/4)`. -/
+/-- **Gap contributions of a subgroup of the modular group.** For a subgroup $\Gamma$ of
+$\mathrm{SL}(2, \mathbb{Z})$, the set of gap contributions of $\Gamma$ is the set of real
+numbers consisting of $0$ together with $\sqrt{1/4 - \lambda}$ for every real eigenvalue
+$\lambda$ of the hyperbolic Laplacian for $\Gamma$ with $0 < \lambda < 1/4$ (an exceptional
+eigenvalue). -/
 def exceptionalGaps (Γ : Subgroup SL(2, ℤ)) : Set ℝ :=
   {0} ∪ {y | ∃ lam : ℝ, IsEigenvalue Γ lam ∧ 0 < lam ∧ lam < 1 / 4 ∧
     y = Real.sqrt (1 / 4 - lam)}
 
-/-- The gap parameter `θ(Γ)`: the supremum of the gap contributions. -/
+/-- **Gap parameter of a subgroup of the modular group.** For a subgroup $\Gamma$ of
+$\mathrm{SL}(2, \mathbb{Z})$, the gap parameter $\theta(\Gamma)$ is the supremum of the set of
+gap contributions of $\Gamma$: the number $0$ together with $\sqrt{1/4 - \lambda}$ for every
+real eigenvalue $\lambda$ of the hyperbolic Laplacian for $\Gamma$ with $0 < \lambda < 1/4$. -/
 noncomputable def exceptionalGap (Γ : Subgroup SL(2, ℤ)) : ℝ :=
   sSup (exceptionalGaps Γ)
 
-/-- The **Selberg congruence spectral-gap constant** `C₆₁`: the supremum
-of `θ(Γ)` over all congruence subgroups `Γ` of `SL(2, ℤ)`. -/
+/-- **Selberg's congruence spectral-gap constant.** Selberg's constant $C_{61}$ is the supremum of
+the gap parameters $\theta(\Gamma)$ over all congruence subgroups $\Gamma$ of
+$\mathrm{SL}(2, \mathbb{Z})$, where $\theta(\Gamma)$ is the supremum of $0$ and of the numbers
+$\sqrt{1/4 - \lambda}$ for the eigenvalues $\lambda$ of $\Gamma$ with $0 < \lambda < 1/4$. -/
 noncomputable def selbergConstant : ℝ :=
   sSup {y | ∃ Γ : Subgroup SL(2, ℤ), IsCongruenceSubgroup Γ ∧
     y = exceptionalGap Γ}
 
-/-- Selberg's eigenvalue conjecture in the model of this file: no
-congruence subgroup has an eigenvalue in `(0, 1/4)`. -/
+/-- **Selberg's eigenvalue conjecture.** No congruence subgroup $\Gamma$ of
+$\mathrm{SL}(2, \mathbb{Z})$ has an eigenvalue $\lambda$ with $0 < \lambda < 1/4$: for every
+congruence subgroup $\Gamma$ and every eigenvalue $\lambda$ of $\Gamma$, either $\lambda \le 0$ or
+$\lambda \ge 1/4$.
+
+Here eigenvalues are realized by smooth square-integrable eigenfunctions, which captures the
+discrete spectrum of the hyperbolic Laplacian. -/
 def SelbergEigenvalueConjecture : Prop :=
   ∀ Γ : Subgroup SL(2, ℤ), IsCongruenceSubgroup Γ → ∀ lam : ℝ,
     IsEigenvalue Γ lam → ¬ (0 < lam ∧ lam < 1 / 4)
@@ -289,7 +349,10 @@ theorem exceptionalGap_le_half (Γ : Subgroup SL(2, ℤ)) :
   intro y hy
   exact le_half_of_mem_exceptionalGaps hy
 
-/-- An exceptional eigenvalue contributes its square-root gap. -/
+/-- **Exceptional eigenvalues bound the gap parameter.** Let $\Gamma$ be a subgroup of
+$\mathrm{SL}(2, \mathbb{Z})$ and let $\lambda$ be a real eigenvalue of the hyperbolic
+Laplacian on $L^2(\Gamma \backslash \mathbb{H})$ with $0 < \lambda < 1/4$. Then
+$\sqrt{1/4 - \lambda}$ is at most the gap parameter $\theta(\Gamma)$ of $\Gamma$. -/
 theorem sqrt_le_exceptionalGap {Γ : Subgroup SL(2, ℤ)} {lam : ℝ}
     (hlam : IsEigenvalue Γ lam) (hpos : 0 < lam) (hlt : lam < 1 / 4) :
     Real.sqrt (1 / 4 - lam) ≤ exceptionalGap Γ :=
@@ -307,7 +370,9 @@ theorem selbergGaps_nonempty :
       y = exceptionalGap Γ}.Nonempty :=
   ⟨exceptionalGap ⊤, ⊤, isCongruenceSubgroup_top, rfl⟩
 
-/-- The gap of any congruence subgroup is at most Selberg's constant. -/
+/-- **Congruence gaps are bounded by Selberg's constant.** For every congruence subgroup
+$\Gamma$ of $\mathrm{SL}(2, \mathbb{Z})$, the gap parameter $\theta(\Gamma)$ is at most the
+Selberg constant $C_{61}$. -/
 theorem exceptionalGap_le_selbergConstant {Γ : Subgroup SL(2, ℤ)}
     (hΓ : IsCongruenceSubgroup Γ) : exceptionalGap Γ ≤ selbergConstant :=
   le_csSup selbergGaps_bddAbove ⟨Γ, hΓ, rfl⟩
@@ -316,14 +381,19 @@ theorem zero_le_selbergConstant : 0 ≤ selbergConstant :=
   (zero_le_exceptionalGap ⊤).trans
     (exceptionalGap_le_selbergConstant isCongruenceSubgroup_top)
 
-/-- Elementary upper bound from the definition: `C₆₁ ≤ 1/2`. -/
+/-- **Selberg's constant is at most one half.** Selberg's constant $C_{61}$ satisfies
+$C_{61} \le 1/2$.
+
+This elementary bound follows directly from the definition. -/
 theorem selbergConstant_le_half : selbergConstant ≤ 1 / 2 := by
   apply csSup_le selbergGaps_nonempty
   rintro y ⟨Γ, _hΓ, rfl⟩
   exact exceptionalGap_le_half Γ
 
-/-- An exceptional eigenvalue for a congruence subgroup bounds Selberg's
-constant from below by its square-root gap. -/
+/-- **Exceptional eigenvalues bound Selberg's constant.** Let $\Gamma$ be a congruence
+subgroup of $\mathrm{SL}(2, \mathbb{Z})$ and let $\lambda$ be a real eigenvalue of the
+hyperbolic Laplacian on $L^2(\Gamma \backslash \mathbb{H})$ with $0 < \lambda < 1/4$.
+Then $\sqrt{1/4 - \lambda}$ is at most Selberg's constant $C_{61}$. -/
 theorem sqrt_le_selbergConstant {Γ : Subgroup SL(2, ℤ)}
     (hΓ : IsCongruenceSubgroup Γ) {lam : ℝ} (hlam : IsEigenvalue Γ lam)
     (hpos : 0 < lam) (hlt : lam < 1 / 4) :
@@ -331,9 +401,10 @@ theorem sqrt_le_selbergConstant {Γ : Subgroup SL(2, ℤ)}
   (sqrt_le_exceptionalGap hlam hpos hlt).trans
     (exceptionalGap_le_selbergConstant hΓ)
 
-/-- Selberg's constant vanishes exactly when no congruence subgroup has
-an exceptional eigenvalue; this is Selberg's eigenvalue conjecture in
-the model of this file. -/
+/-- **Selberg's constant vanishes exactly under Selberg's eigenvalue conjecture.** Selberg's
+constant $C_{61}$ equals $0$ if and only if Selberg's eigenvalue conjecture holds, that is, if and
+only if no congruence subgroup of $\mathrm{SL}(2, \mathbb{Z})$ has an eigenvalue $\lambda$ with
+$0 < \lambda < 1/4$. -/
 theorem selbergConstant_eq_zero_iff :
     selbergConstant = 0 ↔ SelbergEigenvalueConjecture := by
   constructor

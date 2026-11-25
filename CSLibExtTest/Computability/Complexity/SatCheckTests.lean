@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.SatCheck
 
 namespace Cslib.Complexity.SatVerifier.Check.Tests
 
-open Turing MetaMathlibExt Cslib.Complexity.SatVerifier Cslib.Logic.PL
+open Turing MetaMathlibExt Cslib.Complexity.SatVerifier Cslib.Logic.LegacyPL
 
 /-- Step a `TM2` program, with fuel, until the next step would halt; return the last
 configuration with a label. -/

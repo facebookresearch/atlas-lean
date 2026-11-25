@@ -9,6 +9,7 @@ module
 
 public import PhyslibExt.EarthScience.Geotechnical.EffectiveStress
 public import Mathlib.Analysis.Convex.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Linarith
@@ -33,8 +34,11 @@ stress; the physical branch is
 ellipse `F(p, q) ≤ 0`, convex for every real `M` and `pc`
 (the whole line `q = 0` at `M = 0`, for every `pc`; a
 single point at `pc = 0` when `M ≠ 0`). The
-preconsolidation pressure is fixed: no flow rule, hardening
-evolution, or return map is included.
+preconsolidation pressure is fixed. The file also carries
+the specified pointwise associated-flow volumetric increment
+and its critical-line diagnostic; still no hardening
+evolution, return map, flow trajectory, or critical-state
+prediction is included.
 
 ## ii. Key results
 
@@ -48,6 +52,13 @@ evolution, or return map is included.
   on the physical branch the critical-state line `q = M p`
   meets the yield locus exactly at the origin and
   `(pc / 2, M pc / 2)`.
+- `EarthScience.modifiedCamClayYieldPartialP`,
+  `modifiedCamClayPlasticVolumetricIncrement`, and
+  `modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff_on_yield_locus`:
+  for `M, pc > 0` on the yield locus with `p > 0`, `q ≥ 0`
+  and a positive plastic multiplier, the specified
+  associated-flow increment vanishes exactly at `p = pc / 2`,
+  equivalently on `q = M p`.
 - `EarthScience.deviatoricInvariant`: `q` from the stress
   tensor, unchanged by pore pressure and by the stress
   sign convention.
@@ -94,7 +105,7 @@ def modifiedCamClayElasticDomain (M pc : ℝ) : Set (ℝ × ℝ) :=
 `M, pc > 0` the semi-axes are `pc / 2` and `M * pc / 2`
 (in signed generality with `M ≠ 0` the geometric lengths
 are `|pc| / 2` and `|M * pc| / 2`). At `M = 0` the
-identity reduces to `q ^ 2 ≤ 0`: the domain is the line
+condition `F ≤ 0` reduces to `q ^ 2 ≤ 0`: the domain is the line
 `q = 0` with `p` unbounded, and there is no finite `p`
 semi-axis. -/
 lemma modifiedCamClayYield_eq_translated_ellipse (M pc p q : ℝ) :
@@ -236,6 +247,140 @@ lemma modifiedCamClayYield_on_critical_line_ne_zero {M pc p : ℝ}
     apply hpc2
     linarith
 
+/-- Partial derivative of the yield function with respect to the
+compression-positive pressure `p` at fixed `M`, `pc` and `q`, as the
+explicit algebraic expression `M ^ 2 * (2 * p - pc)`. It does not
+depend on `q`. -/
+noncomputable def modifiedCamClayYieldPartialP (M pc p : ℝ) : ℝ :=
+  M ^ 2 * (2 * p - pc)
+
+/-- Specified plastic volumetric increment for associated flow at
+fixed `M`, `pc`: the plastic multiplier `lam` times the partial
+derivative of the yield function with respect to `p`, in the
+compression-positive strain convention (a positive increment is
+compactive, a negative increment is dilative). A definition at a
+fixed stress point, not an evolution law. -/
+noncomputable def modifiedCamClayPlasticVolumetricIncrement
+    (M pc p lam : ℝ) : ℝ :=
+  lam * modifiedCamClayYieldPartialP M pc p
+
+/-- The algebraic partial derivative is the derivative of the yield
+function in `p` at fixed `M`, `pc` and `q`. -/
+lemma hasDerivAt_modifiedCamClayYield_p (M pc q p : ℝ) :
+    HasDerivAt (fun x => modifiedCamClayYield M pc x q)
+      (modifiedCamClayYieldPartialP M pc p) p := by
+  unfold modifiedCamClayYieldPartialP
+  rw [hasDerivAt_iff_tendsto]
+  have hres : ∀ x' : ℝ, modifiedCamClayYield M pc x' q
+      - modifiedCamClayYield M pc p q - (x' - p) * (M ^ 2 * (2 * p - pc))
+      = M ^ 2 * (x' - p) ^ 2 := by
+    intro x'
+    unfold modifiedCamClayYield
+    ring
+  have hfun : (fun x' : ℝ => ‖x' - p‖⁻¹ * ‖modifiedCamClayYield M pc x' q
+      - modifiedCamClayYield M pc p q - (x' - p) • (M ^ 2 * (2 * p - pc))‖)
+      = fun x' : ℝ => ‖M ^ 2 * (x' - p)‖ := by
+    funext x'
+    by_cases hx : x' = p
+    · subst hx
+      simp
+    · have hne : x' - p ≠ 0 := sub_ne_zero.mpr hx
+      have hnx : ‖x' - p‖ ≠ 0 := norm_ne_zero_iff.mpr hne
+      simp only [smul_eq_mul, hres x', norm_mul, norm_pow]
+      field_simp
+  rw [hfun]
+  have hcont : ContinuousAt (fun x' : ℝ => M ^ 2 * (x' - p)) p :=
+    continuousAt_const.mul (continuousAt_id.sub continuousAt_const)
+  have htend := hcont.norm.tendsto
+  have h0 : M ^ 2 * (p - p) = 0 := by ring
+  rw [h0, norm_zero] at htend
+  exact htend
+
+/-- The algebraic partial derivative as a `deriv` value in `p` at
+fixed `M`, `pc` and `q`. -/
+lemma deriv_modifiedCamClayYield_p (M pc q p : ℝ) :
+    deriv (fun x => modifiedCamClayYield M pc x q) p
+      = modifiedCamClayYieldPartialP M pc p :=
+  (hasDerivAt_modifiedCamClayYield_p M pc q p).deriv
+
+/-- Vanishing of the specified increment for a positive multiplier:
+with `M > 0` and `lam > 0`, the increment is zero exactly at
+`p = pc / 2`. No yield-locus hypothesis is needed for this
+equivalence; with `lam = 0` the increment is zero at every `p`. -/
+lemma modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff
+    {M pc p lam : ℝ} (hM : 0 < M) (hlam : 0 < lam) :
+    modifiedCamClayPlasticVolumetricIncrement M pc p lam = 0
+      ↔ p = pc / 2 := by
+  unfold modifiedCamClayPlasticVolumetricIncrement modifiedCamClayYieldPartialP
+  have hlam' : lam ≠ 0 := ne_of_gt hlam
+  have hM2 : M ^ 2 ≠ 0 := by positivity
+  constructor
+  · intro h
+    rcases mul_eq_zero.mp h with h1 | h1
+    · exact absurd h1 hlam'
+    · rcases mul_eq_zero.mp h1 with h2 | h2
+      · exact absurd h2 hM2
+      · linarith
+  · intro h
+    rw [h]
+    have hz : 2 * (pc / 2) - pc = 0 := by ring
+    rw [hz, mul_zero, mul_zero]
+
+/-- Associated-flow diagnostic on the yield locus: with `M, pc > 0`,
+`F = 0`, `p > 0`, `q ≥ 0` and a positive plastic multiplier, the
+specified plastic volumetric increment vanishes exactly at
+`p = pc / 2`, which on the locus holds exactly on the critical-state
+line `q = M * p`. A pointwise diagnostic at fixed `pc`; it asserts
+no hardening evolution and no prediction that flow reaches or stays
+at a critical state. -/
+theorem
+    modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff_on_yield_locus
+    {M pc p q lam : ℝ} (hM : 0 < M) (hpc : 0 < pc) (hp : 0 < p)
+    (hq : 0 ≤ q) (hF : modifiedCamClayYield M pc p q = 0)
+    (hlam : 0 < lam) :
+    (modifiedCamClayPlasticVolumetricIncrement M pc p lam = 0
+      ↔ p = pc / 2) ∧ (p = pc / 2 ↔ q = M * p) := by
+  constructor
+  · exact modifiedCamClayPlasticVolumetricIncrement_eq_zero_iff hM hlam
+  · constructor
+    · intro hp2
+      have hMp : 0 < M * p := mul_pos hM hp
+      have hsq : q ^ 2 = (M * p) ^ 2 := by
+        rw [hp2] at hF ⊢
+        unfold modifiedCamClayYield at hF
+        linear_combination hF
+      rcases sq_eq_sq_iff_eq_or_eq_neg.mp hsq with h | h
+      · exact h
+      · exfalso
+        linarith
+    · intro hline
+      exact (modifiedCamClayYield_eq_zero_on_critical_line_of_ne_zero hM hpc
+        hq hline hF (ne_of_gt hp)).1
+
+/-- Dry-side sign: with `M > 0` and a positive multiplier, the
+specified increment is negative (dilative) on the side
+`p < pc / 2` of the critical pressure. -/
+lemma modifiedCamClayPlasticVolumetricIncrement_neg_of_lt
+    {M pc p lam : ℝ} (hM : 0 < M) (hlam : 0 < lam) (hlt : p < pc / 2) :
+    modifiedCamClayPlasticVolumetricIncrement M pc p lam < 0 := by
+  unfold modifiedCamClayPlasticVolumetricIncrement modifiedCamClayYieldPartialP
+  have h1 : 0 < lam * M ^ 2 := by positivity
+  have h2 : 2 * p - pc < 0 := by linarith
+  have h := mul_neg_of_pos_of_neg h1 h2
+  rwa [mul_assoc] at h
+
+/-- Wet-side sign: with `M > 0` and a positive multiplier, the
+specified increment is positive (compactive) on the side
+`pc / 2 < p` of the critical pressure. -/
+lemma modifiedCamClayPlasticVolumetricIncrement_pos_of_gt
+    {M pc p lam : ℝ} (hM : 0 < M) (hlam : 0 < lam) (hgt : pc / 2 < p) :
+    0 < modifiedCamClayPlasticVolumetricIncrement M pc p lam := by
+  unfold modifiedCamClayPlasticVolumetricIncrement modifiedCamClayYieldPartialP
+  have h1 : 0 < lam * M ^ 2 := by positivity
+  have h2 : 0 < 2 * p - pc := by linarith
+  have h := mul_pos h1 h2
+  rwa [mul_assoc] at h
+
 /-! ## B. Compression-positive invariant bridge -/
 
 /-- Deviatoric invariant in Frobenius form,
@@ -243,7 +388,7 @@ lemma modifiedCamClayYield_on_critical_line_ne_zero {M pc p : ℝ}
 For symmetric (Cauchy) stress this is `√(3 J₂)` (see
 `deviatoricInvariant_eq_sqrt_neg_stressInvariant2_deviatoric`);
 for a nonsymmetric matrix it is the Frobenius extension,
-not `J₂`. -/
+not `√(3 J₂)`. -/
 noncomputable def deviatoricInvariant (σ : Matrix (Fin 3) (Fin 3) ℝ) : ℝ :=
   Real.sqrt (3 / 2 * ((deviatoricStress σ)ᵀ * deviatoricStress σ).trace)
 

@@ -39,13 +39,23 @@ namespace MetaMathlibExt
 
 universe u
 
-/-- Degree-`α` complex of the base-changed resolution: the complex of
-`K`-vector spaces assembled from the degree-`α` pieces. Source:
+/-- **Multidegree component complex of the base-changed resolution.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, let $M$ be a multigraded polynomial module over $R$, and let $F$ be a
+multigraded free resolution of $M$ whose term $F_i$ has the homogeneous basis
+$(e_j)_{j \in \iota_i}$. Write $K \otimes_R F$ for the chain complex of $K$-vector spaces obtained
+from $F$ by extending scalars along the evaluation $R \to K$ at $x = 0$, and for
+$\alpha \in \mathbb{Z}^n$ call the $K$-span of the vectors $1 \otimes e_j$ with $e_j$ of degree
+$\alpha$ the degree-$\alpha$ piece of $(K \otimes_R F)_i$. The degree-$\alpha$ complex is the
+chain complex of $K$-vector spaces whose term in homological degree $i$ is the degree-$\alpha$
+piece of $(K \otimes_R F)_i$ and whose differentials are the restrictions of the differentials
+of $K \otimes_R F$.
+
+Proves `Wanted` entry `MultigradedFreeResolution.baseChangedDegreeComplex`.
+
+Source:
 Benjamin Braun and Brian Davis, "Antichain Simplices," Journal of
 Integer Sequences 23 (2020), lines 864–867,
-`https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex`.
-
-Proves `Wanted` entry `MultigradedFreeResolution.baseChangedDegreeComplex`. -/
+`https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex`. -/
 public noncomputable def MultigradedFreeResolution.baseChangedDegreeComplex
     (K : Type u) [Field K] (n : Nat) (M : Type u) [AddCommGroup M]
     [Module (MvPolynomial (Fin n) K) M] [Module K M]
@@ -77,12 +87,22 @@ public noncomputable def MultigradedFreeResolution.baseChangedDegreeComplex
       have happ := LinearMap.congr_fun hhom ↑x
       simpa using happ)
 
-/-- Inclusion of the degree-`α` complex into the base-changed complex.
+/-- **Inclusion of a multidegree component complex.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, let $M$ be a multigraded polynomial module over $R$, and let $F$ be a
+multigraded free resolution of $M$ whose term $F_i$ has the homogeneous basis
+$(e_j)_{j \in \iota_i}$. Write $K \otimes_R F$ for the chain complex of $K$-vector spaces obtained
+from $F$ by extending scalars along the evaluation $R \to K$ at $x = 0$, and for
+$\alpha \in \mathbb{Z}^n$ call the $K$-span of the vectors $1 \otimes e_j$ with $e_j$ of degree
+$\alpha$ the degree-$\alpha$ piece of $(K \otimes_R F)_i$. The inclusion of the degree-$\alpha$
+complex is the chain map from the degree-$\alpha$ complex of $K \otimes_R F$ to $K \otimes_R F$
+whose component in each homological degree $i$ is the inclusion of the degree-$\alpha$ piece of
+$(K \otimes_R F)_i$ into $(K \otimes_R F)_i$.
+
+Proves `Wanted` entry `MultigradedFreeResolution.baseChangedDegreeInclusion`.
+
 Source: Benjamin Braun and Brian Davis, "Antichain Simplices,"
 Journal of Integer Sequences 23 (2020), lines 864–867,
-`https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex`.
-
-Proves `Wanted` entry `MultigradedFreeResolution.baseChangedDegreeInclusion`. -/
+`https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex`. -/
 public noncomputable def MultigradedFreeResolution.baseChangedDegreeInclusion
     (K : Type u) [Field K] (n : Nat) (M : Type u) [AddCommGroup M]
     [Module (MvPolynomial (Fin n) K) M] [Module K M]
@@ -180,14 +200,25 @@ private theorem mbc_finite_homology (K : Type u) [Field K]
     (ModuleCat.epi_iff_surjective _).mp inferInstance
   exact Module.Finite.of_surjective (C.homologyπ i).hom hsurj
 
-/-- Assembly of the repository's `MultigradedBaseChange` package: the
-base-changed resolution splits into the degree-`α` complexes above, and each
-of their homology groups is finite-dimensional because the degree pieces are.
+/-- **Existence of multigraded base-change data.** Let $K$ be a field, let
+$R = K[x_1, \dots, x_n]$, let $M$ be a multigraded polynomial module over $R$, and let $F$ be a
+multigraded free resolution of $M$ whose term $F_i$ has the homogeneous basis
+$(e_j)_{j \in \iota_i}$, where every index set $\iota_i$ is finite. Write $K \otimes_R F$ for the
+chain complex of $K$-vector spaces obtained from $F$ by extending scalars along the evaluation
+$R \to K$ at $x = 0$, and for $\alpha \in \mathbb{Z}^n$ call the $K$-span of the vectors
+$1 \otimes e_j$ with $e_j$ of degree $\alpha$ the degree-$\alpha$ piece of $(K \otimes_R F)_i$.
+Then multigraded base-change data for $F$ exist: each $(K \otimes_R F)_i$ is the direct sum of
+its degree-$\alpha$ pieces over $\alpha \in \mathbb{Z}^n$, the differentials of $K \otimes_R F$
+preserve these pieces, and for every $\alpha$ there is a chain complex $C^\alpha$ of $K$-vector
+spaces with finite-dimensional homology in every degree, together with a chain map
+$C^\alpha \to K \otimes_R F$ that is injective in each homological degree $i$ with image the
+degree-$\alpha$ piece of $(K \otimes_R F)_i$.
+
+Proves `Wanted` entry `MultigradedFreeResolution.multigradedBaseChange_nonempty`.
+
 Source: Benjamin Braun and Brian Davis, "Antichain Simplices," Journal of
 Integer Sequences 23 (2020), lines 862–867,
-`https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex`.
-
-Proves `Wanted` entry `MultigradedFreeResolution.multigradedBaseChange_nonempty`. -/
+`https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex`. -/
 public theorem MultigradedFreeResolution.multigradedBaseChange_nonempty
     {K : Type u} [Field K]
     {n : ℕ}

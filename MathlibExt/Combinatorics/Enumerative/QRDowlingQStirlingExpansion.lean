@@ -95,9 +95,14 @@ private theorem pascal_sum_aux
     rw [hz, add_zero]
   linear_combination eLHS - eR1 + eSb
 
-/-- Closed form of the `(q, r)`-Whitney numbers of the second kind through any family
-`qStirlingSecond` with the recurrence of the `q`-Stirling numbers of the second kind:
-`W(a, k) = ∑ j, C(a, j) * r ^ (a - j) * m ^ (j - k) * qStirlingSecond j k`. -/
+/-- **(q, r)-Whitney numbers of the second kind through q-Stirling numbers.** Let
+$m, r, q \in \mathbb{C}$ and write $[k + 1]_q = 1 + q + \dots + q^k$. Let $S$ be a complex-valued
+function on pairs of natural numbers satisfying the recurrence of the $q$-Stirling numbers of the
+second kind: for all $a, k \in \mathbb{N}$, $S(0, 0) = 1$, $S(0, k + 1) = 0$, $S(a + 1, 0) = 0$
+and $S(a + 1, k + 1) = q^k S(a, k) + [k + 1]_q \, S(a, k + 1)$. Then for all $a, k \in \mathbb{N}$
+the $(q, r)$-Whitney numbers of the second kind satisfy
+$$W_{m,r,q}(a, k) = \sum_{j=0}^{a} \binom{a}{j} r^{a-j} m^{j-k} S(j, k),$$
+where the exponent $j - k$ is read as $0$ when $j < k$. -/
 theorem QRWhitney.whitneySecond_eq_sum_qStirlingSecond
     (m r q : ℂ)
     (qStirlingSecond : ℕ → ℕ → ℂ)
@@ -241,10 +246,14 @@ theorem QRWhitney.whitneySecond_eq_sum_qStirlingSecond
           ring
 
 /--
-The `(q, r)`-Dowling polynomial of the `(q, r)`-Whitney numbers of the second kind expands
-through any family `qStirlingSecond` with the recurrence of the `q`-Stirling numbers of the
-second kind: `D(n,x) = ∑ k, C(n,k) * r ^ (n - k) * ∑ j, m ^ (k - j) *
-qStirlingSecond k j * x ^ j`.
+**Expansion of the (q, r)-Dowling polynomial in q-Stirling numbers.** Let
+$m, r, q, x \in \mathbb{C}$ and $n \in \mathbb{N}$, and write $[k + 1]_q = 1 + q + \dots + q^k$.
+Let $S$ be a complex-valued function on pairs of natural numbers satisfying the recurrence of the
+$q$-Stirling numbers of the second kind: for all $a, k \in \mathbb{N}$, $S(0, 0) = 1$,
+$S(0, k + 1) = 0$, $S(a + 1, 0) = 0$ and $S(a + 1, k + 1) = q^k S(a, k) + [k + 1]_q \, S(a, k + 1)$.
+Let $W_{m,r,q}$ be the $(q, r)$-Whitney numbers of the second kind, and let $D_n(x)$ be the
+value at $x$ of the $(q, r)$-Dowling polynomial $\sum_{k=0}^{n} W_{m,r,q}(n, k) \, X^k$. Then
+$$D_n(x) = \sum_{k=0}^{n} \binom{n}{k} r^{n-k} \sum_{j=0}^{k} m^{k-j} S(k, j) \, x^j.$$
 
 Source: M. M. Mangontarum, *Some Theorems and Applications of the (q,r)-Whitney
 Numbers*, Journal of Integer Sequences 20 (2017), Article 17.2.5, theorem equation
@@ -364,17 +373,24 @@ private theorem whitneySecond_eq_of_rec
           rfl
 
 /--
-The expansion of the `(q, r)`-Dowling polynomial in terms of the `q`-Stirling numbers
-of the second kind: `D(n,x) = ∑ k, C(n,k) * r ^ (n - k) * ∑ j, m ^ (k - j) *
-qStirlingSecond k j * x ^ j`, from the explicit `(q, r)`-Whitney and `q`-Stirling
-recurrences over `ℂ`.
+**(q, r)-Dowling polynomial expansion from the defining recurrences.** Let
+$q, m, r, x \in \mathbb{C}$ and $n \in \mathbb{N}$, and write $[k + 1]_q = \sum_{i=0}^{k} q^i$.
+Let $S$ and $W$ be complex-valued functions on pairs of natural numbers, and let $D(a, y)$ be a
+complex-valued function of $a \in \mathbb{N}$ and $y \in \mathbb{C}$, such that for all
+$a, k \in \mathbb{N}$ and $y \in \mathbb{C}$: $S(0, 0) = 1$, $S(0, k + 1) = 0$, $S(a + 1, 0) = 0$
+and $S(a + 1, k + 1) = q^k S(a, k) + [k + 1]_q \, S(a, k + 1)$ (the recurrence of the
+$q$-Stirling numbers of the second kind); $W(0, 0) = 1$, $W(0, k + 1) = 0$,
+$W(a + 1, 0) = r^{a + 1}$ and $W(a + 1, k + 1) = q^k W(a, k) + (m [k + 1]_q + r) \, W(a, k + 1)$
+(the recurrence of the $(q, r)$-Whitney numbers of the second kind); and
+$D(a, y) = \sum_{k=0}^{a} W(a, k) \, y^k$ (the $(q, r)$-Dowling polynomial). Then
+$$D(n, x) = \sum_{k=0}^{n} \binom{n}{k} r^{n-k} \sum_{j=0}^{k} m^{k-j} S(k, j) \, x^j.$$
+
+Proves `Wanted` entry `q_r_dowling_polynomial_q_stirling_expansion`.
 
 Source: M. M. Mangontarum, *Some Theorems and Applications of the (q,r)-Whitney
 Numbers*, Journal of Integer Sequences 20 (2017), Article 17.2.5, theorem equation
 `genpriv`, lines 782-789,
 <https://cs.uwaterloo.ca/journals/JIS/VOL20/Mangontarum/mango4.tex>.
-
-Proves `Wanted` entry `q_r_dowling_polynomial_q_stirling_expansion`.
 -/
 theorem q_r_dowling_polynomial_q_stirling_expansion
     (q m r x : ℂ) (n : ℕ)

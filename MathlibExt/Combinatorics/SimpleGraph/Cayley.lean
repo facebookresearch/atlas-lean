@@ -1056,11 +1056,13 @@ private theorem numSpanningTrees_top_eq_card_isTree {V : Type*} [Fintype V]
   exact e
 
 /--
-The complete graph on `n` vertices has `n^(n-2)` spanning trees.
-Source: A. Cayley, "A theorem on trees", Quarterly Journal of Pure and
-Applied Mathematics 23 (1889), 376-378.
+**Cayley's formula.** For every natural number $n \ge 2$, the complete graph on $n$ vertices has
+exactly $n^{n-2}$ spanning trees.
 
 Proves `Wanted` entry `cayley_formula`.
+
+Source: A. Cayley, "A theorem on trees", Quarterly Journal of Pure and
+Applied Mathematics 23 (1889), 376-378.
 -/
 theorem cayley_formula :
     ∀ {n : ℕ}, 2 ≤ n → numSpanningTrees (⊤ : _root_.SimpleGraph (Fin n)) = n ^ (n - 2) := by

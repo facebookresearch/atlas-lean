@@ -25,7 +25,14 @@ that actual short-circuit saved-state executor, including rejects.
 
 namespace Cslib.Algorithms.Lean.Graph
 
-/-- The actual verifier accepts exactly its graph encoding and ordered-cycle checks. -/
+/-- **Acceptance condition of the Hamiltonian-cycle verifier.** Let $x$ and $y$ be bit strings,
+$m = \lfloor \sqrt{|x|} \rfloor$, and $w$ the least natural number with $m \le 2^w$. For each $i$
+let $d_i$ be the number whose binary digits, least significant first, are the bits of $y$ at
+positions $iw, \dots, iw + w - 1$ (counting from $0$; positions past the end of $y$ are
+omitted). The Hamiltonian-cycle verifier accepts $x$ and $y$ if and only if $|x| = m^2$,
+$m \ge 3$, $|y| = mw$, and for all $i, j < m$: entry $im + i$ of $x$ is false, entries $im + j$
+and $jm + i$ of $x$ are equal, $d_i < m$, $d_i = d_j$ implies $i = j$, and entry
+$d_i m + d_{(i+1) \bmod m}$ of $x$ exists and is true. -/
 public theorem verifyHamiltonianCycle_iff (x y : Array Bool) :
     let m := Nat.sqrt x.size
     let w := Nat.clog 2 m
@@ -56,7 +63,11 @@ public theorem verifyHamiltonianCycle_iff (x y : Array Bool) :
     have he' := (order_optional_iff x _ d hs hr).mpr he
     exact ⟨hv, hm, hy, order_nat_backward x _ d hr hi he'⟩
 
-/-- Every accepted certificate gives a canonical Hamiltonian cycle in the encoded graph. -/
+/-- **Soundness of the Hamiltonian-cycle verifier.** If the Hamiltonian-cycle verifier accepts
+the bit strings $x$ and $y$, then, with $m = \lfloor \sqrt{|x|} \rfloor$, we have $|x| = m^2$ and
+$m \ge 3$, and there is a simple graph $G$ on the vertices $0, \dots, m - 1$ in which $i$ and $j$
+are adjacent exactly when entry $im + j$ of $x$ (counting from $0$) is true, and $G$ has a
+Hamiltonian cycle. -/
 public theorem verifyHamiltonianCycle_sound (x y : Array Bool)
     (h : (verifyHamiltonianCycle x y).ret = true) :
     let m := Nat.sqrt x.size
@@ -79,7 +90,12 @@ public theorem verifyHamiltonianCycle_sound (x y : Array Bool)
   have hr := graph_read_some x _ hb
   rwa [he i] at hr
 
-/-- Every canonical Hamiltonian cycle has an accepted exact fixed-width certificate. -/
+/-- **Completeness of the Hamiltonian-cycle verifier.** Let $x$ be a bit string and
+$m = \lfloor \sqrt{|x|} \rfloor$, suppose $|x| = m^2$, and let $G$ be a simple graph on the
+vertices $0, \dots, m - 1$ in which $i$ and $j$ are adjacent exactly when entry $im + j$ of $x$
+(counting from $0$) is true. If $G$ has a Hamiltonian cycle, then there is a bit string $y$ of
+length $mw$, where $w$ is the least natural number with $m \le 2^w$, such that the
+Hamiltonian-cycle verifier accepts $x$ and $y$. -/
 public theorem verifyHamiltonianCycle_complete (x : Array Bool) :
     let m := Nat.sqrt x.size
     ∀ G : SimpleGraph (Fin m), m * m = x.size →
@@ -103,7 +119,11 @@ public theorem verifyHamiltonianCycle_complete (x : Array Bool) :
   rw [(hG _ _).mp (he i)]
   rfl
 
-/-- Certificate existence is exactly strict canonical Hamiltonian-cycle existence. -/
+/-- **Certificates exist exactly for Hamiltonian graphs.** For every bit string $x$, with
+$m = \lfloor \sqrt{|x|} \rfloor$, some bit string $y$ makes the Hamiltonian-cycle verifier accept
+$x$ and $y$ if and only if $|x| = m^2$, $m \ge 3$, and there is a simple graph $G$ on the vertices
+$0, \dots, m - 1$ in which $i$ and $j$ are adjacent exactly when entry $im + j$ of $x$ (counting
+from $0$) is true, and $G$ has a Hamiltonian cycle. -/
 public theorem verifyHamiltonianCycle_language_iff (x : Array Bool) :
     (∃ y : Array Bool, (verifyHamiltonianCycle x y).ret = true) ↔
       let m := Nat.sqrt x.size
