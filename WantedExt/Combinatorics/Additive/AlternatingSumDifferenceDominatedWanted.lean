@@ -21,28 +21,14 @@ A finite set `A ⊆ ℤ` is MSTD (sum-dominated) when `|A + A| > |A - A|` and MD
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
-public import Mathlib.Data.Int.Interval
+public import MathlibExt.Combinatorics.Additive.IntervalEraseAddSub
+public import MathlibExt.Combinatorics.Additive.NathansonMSTD
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Pointwise
-
-/-- **Sums and differences of an interval with one point removed.** Let $m$ and $r$ be integers
-with $m \ge 4$ and $2 \le r \le m - 3$, and let $B = \{0, 1, \dots, m - 1\} \setminus \{r\}$. Then
-the sumset $B + B = \{b + b' : b, b' \in B\}$ is $\{0, 1, \dots, 2m - 2\}$ and the difference set
-$B - B = \{b - b' : b, b' \in B\}$ is the set of integers from $-(m - 1)$ to $m - 1$.
-
-Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
-Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference
-Dominated Sets*, INTEGERS 26 (2026), Article A88, Lemma 1 (`integers-2026-A88-lem-1`). -/
-public theorem_wanted interval_erase_add_sub {m r : ℤ} (hm : 4 ≤ m) (hr : 2 ≤ r)
-    (hrm : r ≤ m - 3) :
-    (Finset.Icc 0 (m - 1)).erase r + (Finset.Icc 0 (m - 1)).erase r = Finset.Icc 0 (2 * m - 2) ∧
-      (Finset.Icc 0 (m - 1)).erase r - (Finset.Icc 0 (m - 1)).erase r =
-        Finset.Icc (-(m - 1)) (m - 1)
 
 /-- **Alternating sum- and difference-dominated sets from shifted copies.** For a set $S$ of
 integers write $S + S = \{s + s' : s, s' \in S\}$ and $S - S = \{s - s' : s, s' \in S\}$. Let $A_1$
@@ -71,25 +57,6 @@ public theorem_wanted alternating_sequence_of_copies (A₁ : Finset ℤ) (n : �
     ∀ l ≥ 1, (A (2 * l) + A (2 * l)).card < (A (2 * l) - A (2 * l)).card ∧
       (A (2 * l + 1) - A (2 * l + 1)).card < (A (2 * l + 1) + A (2 * l + 1)).card ∧
       A (2 * l - 1) ⊂ A (2 * l) ∧ A (2 * l) ⊂ A (2 * l + 1)
-
-/-- **Nathanson's sum-dominated set.** For a set $S$ of integers write
-$S + S = \{s + s' : s, s' \in S\}$ and $S - S = \{s - s' : s, s' \in S\}$. Let $m$, $d$, $k$ be
-integers with $m \ge 4$, $1 \le d \le m - 1$ and $2d \ne m$, and suppose $k \ge 3$ if $2d < m$
-and $k \ge 4$ if $2d > m$. Let $B = \{0, 1, \dots, m - 1\} \setminus \{d\}$,
-$L = \{jm - d : 1 \le j \le k\}$, $A^* = B \cup L \cup \{(k + 1)m - 2d - b : b \in B\}$ and
-$A = A^* \cup \{m\}$. Then $|A - A| < |A + A|$, $2m \in A + A$, $2m \notin A^* + A^*$, and
-$\{a - m : a \in A^*\} \subseteq A^* - A^*$.
-
-Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
-Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference
-Dominated Sets*, INTEGERS 26 (2026), Article A88, Theorem 2 (`integers-2026-A88-thm-2`). -/
-public theorem_wanted nathanson_mstd_construction {m d k : ℤ} (hm : 4 ≤ m) (hd : 1 ≤ d)
-    (hdm : d ≤ m - 1) (hd2 : 2 * d ≠ m) (hk3 : 2 * d < m → 3 ≤ k) (hk4 : m < 2 * d → 4 ≤ k) :
-    let B := (Finset.Icc 0 (m - 1)).erase d
-    let As := B ∪ (Finset.Icc 1 k).image (fun j => j * m - d) ∪
-      B.image (fun b => (k + 1) * m - 2 * d - b)
-    let A := insert m As
-    (A - A).card < (A + A).card ∧ 2 * m ∈ A + A ∧ 2 * m ∉ As + As ∧ As - {m} ⊆ As - As
 
 /-- **Alternating sum- and difference-dominated sets from Nathanson's construction.** For a set
 $S$ of integers write $S + S = \{s + s' : s, s' \in S\}$, $S - S = \{s - s' : s, s' \in S\}$,

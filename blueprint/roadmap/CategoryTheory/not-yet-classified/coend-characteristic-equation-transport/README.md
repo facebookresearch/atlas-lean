@@ -1,0 +1,15 @@
+# Coend Characteristic Equation Transport
+
+- [Source Insertion](source-insertion.md)
+- [Target Insertion](target-insertion.md)
+- [Hom Map](hom-map.md)
+- [Weight Map](weight-map.md)
+- [Source Composite](source-composite.md)
+- [Target Composite](target-composite.md)
+- [Condition](condition.md)
+- [Source type eq](source-type-eq.md)
+- [Target type eq](target-type-eq.md)
+- [Hom type eq](hom-type-eq.md)
+- [Source composite heq](source-composite-heq.md)
+- [Target composite heq](target-composite-heq.md)
+- [Condition eq](condition-eq.md)

@@ -16,7 +16,7 @@ on Discrete Mathematics 2 (1989), 550-581, doi:10.1137/0402049.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Int.ModEq

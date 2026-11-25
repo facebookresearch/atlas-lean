@@ -14,6 +14,8 @@ public import Mathlib.Data.Multiset.Sort
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
+public import MathlibExt.Combinatorics.Enumerative.Partition.LitCellsIncreasing
+public import MathlibExt.Combinatorics.Enumerative.Partition.TriangularQBinomial
 
 /-!
 # Lit cells in integer partitions — wishlist
@@ -47,25 +49,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Parts of a partition in decreasing order.** For a partition $p$ of $n$ with $\ell$ parts,
-this is the list $x_1 \ge x_2 \ge \cdots \ge x_\ell$ of the parts of $p$, each repeated according
-to its multiplicity, sorted in weakly decreasing order.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 1 (weakly decreasing bargraphs). -/
-public def decreasingParts {n : ℕ} (p : Nat.Partition n) : List ℕ :=
-  p.parts.sort (· ≥ ·)
-
-/-- **Lit cells of a weakly increasing bargraph.** For a partition $p$ of $n$, the number of lit
-cells of $p$, drawn as a weakly increasing bargraph, is defined as the largest part of $p$ plus the
-number of parts of $p$ minus the number of distinct parts of $p$ (the largest part of the empty
-partition is $0$).
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 3, proof of Proposition 1. -/
-public def litCellsIncreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
-  p.parts.sup + p.parts.card - p.parts.dedup.card
-
 /-- **Lit nodes of a partition.** The number of lit nodes of a partition $p$, drawn as a weakly
 increasing Ferrers diagram of nodes, is defined as the largest part of $p$ plus the number of
 parts of $p$ minus one; for the empty partition it is $0$.
@@ -86,18 +69,6 @@ Partitions*, INTEGERS 24 (2024), Article A56, Section 5. -/
 public def litCellsDecreasing {n : ℕ} (p : Nat.Partition n) : ℕ :=
   ((decreasingParts p).mapIdx fun i x => x + i).foldr max 0
 
-/-- **Triangular $q$-binomial coefficient.** For natural numbers $r$ and $s$, the triangular
-$q$-binomial coefficient $t[r, s] \in \mathbb{Z}[[q]]$ is the power series whose coefficient of
-$q^n$ is the number of partitions of $n$ with exactly $s$ parts $x_1 \ge \dots \ge x_s$ that fit
-in the staircase with column heights $r, r - 1, \dots, r - s + 1$, that is, with
-$x_i + (i - 1) \le r$ for $1 \le i \le s$.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 4. -/
-public noncomputable def triangularQBinomial (r s : ℕ) : ℤ⟦X⟧ :=
-  mk fun n => ((Finset.univ.filter fun p : Nat.Partition n =>
-    p.parts.card = s ∧ ∀ i < s, (decreasingParts p).getD i 0 + i ≤ r).card : ℤ)
-
 /-- **Triangle partition series.** For a natural number $r$, the triangle partition series is the
 power series $T_q(r) = \sum_{s=0}^{r} t[r, s] \in \mathbb{Z}[[q]]$, where $t[r, s]$ is the
 triangular $q$-binomial coefficient. It is the generating function of partitions contained in the
@@ -107,15 +78,6 @@ Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on 
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public noncomputable def trianglePartitionSeries (r : ℕ) : ℤ⟦X⟧ :=
   ∑ s ∈ Finset.range (r + 1), triangularQBinomial r s
-
-/-- **Lit cells of a one-part increasing bargraph.** For every natural number $n \ge 1$, the
-partition $(n)$ of $n$ with a single part has $n$ lit cells as a weakly increasing bargraph.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 3 (definition of lit cells). -/
-public theorem litCellsIncreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
-    litCellsIncreasing (Nat.Partition.indiscrete n) = n := by
-  simp [litCellsIncreasing, hn]
 
 /-- **Lit nodes of a one-part partition.** For every natural number $n \ge 1$, the one-part
 partition $(n)$ of $n$ has exactly $n$ lit nodes.
@@ -135,28 +97,6 @@ public theorem litCellsDecreasing_indiscrete {n : ℕ} (hn : n ≠ 0) :
     litCellsDecreasing (Nat.Partition.indiscrete n) = n := by
   simp [litCellsDecreasing, decreasingParts, hn]
 
-/-- **Triangular $q$-binomial coefficients with no parts.** For every natural number $r$, the
-triangular $q$-binomial coefficient satisfies $t[r, 0] = 1$: only the empty partition has no
-parts.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Section 4, initial conditions (10). -/
-public theorem triangularQBinomial_zero_right (r : ℕ) : triangularQBinomial r 0 = 1 := by
-  ext n
-  rw [triangularQBinomial, coeff_mk, coeff_one]
-  split_ifs with h
-  · subst h
-    rw [Nat.cast_eq_one, Finset.card_eq_one]
-    refine ⟨default, ?_⟩
-    ext p
-    simp [Subsingleton.elim p default]
-  · rw [Nat.cast_eq_zero, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-    intro p _ hp
-    have h0 : p.parts = 0 := Multiset.card_eq_zero.mp hp.1
-    have := p.parts_sum
-    rw [h0, Multiset.sum_zero] at this
-    exact h this.symm
-
 /-- **Triangle partition series at zero.** The triangle partition series $T_q(r)$ at $r = 0$
 equals $1$, that is, $T_q(0) = 1$ in $\mathbb{Z}[[q]]$.
 
@@ -164,26 +104,6 @@ Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on 
 Partitions*, INTEGERS 24 (2024), Article A56, Definition 1. -/
 public theorem trianglePartitionSeries_zero : trianglePartitionSeries 0 = 1 := by
   simp [trianglePartitionSeries, triangularQBinomial_zero_right]
-
-/-- **Generating function for lit cells of weakly increasing bargraphs.** Let
-$P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
-$L(q) \in \mathbb{Z}[[q]]$ be the power series whose coefficient of $q^n$ is the total number of
-lit cells over all partitions of $n$ drawn as weakly increasing bargraphs. Then
-$$L(q) = 2P(q) \sum_{i \ge 1} \frac{q^i}{1 - q^i} - P(q) \frac{q}{1 - q}$$
-and
-$$L(q) = P(q) \sum_{i \ge 1} \frac{q^i (1 + q^i)}{1 - q^i},$$
-where the sums converge coefficientwise.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Proposition 1, eq. (5)
-(`integers-2024-A56-prop-1`). -/
-public theorem_wanted litCellsIncreasing_generatingFunction :
-    let P : ℤ⟦X⟧ := mk fun n => (Fintype.card (Nat.Partition n) : ℤ)
-    mk (fun n => ∑ p : Nat.Partition n, (litCellsIncreasing p : ℤ)) =
-        2 * P * ∑' i : ℕ, X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 -
-          P * X * invOfUnit (1 - X) 1 ∧
-      mk (fun n => ∑ p : Nat.Partition n, (litCellsIncreasing p : ℤ)) =
-        P * ∑' i : ℕ, X ^ (i + 1) * (1 + X ^ (i + 1)) * invOfUnit (1 - X ^ (i + 1)) 1
 
 /-- **Generating function for lit nodes of weakly increasing diagrams.** Let
 $P(q) = \sum_{n \ge 0} p(n) q^n$ be the partition generating function, and let
@@ -199,25 +119,6 @@ public theorem_wanted litNodesIncreasing_generatingFunction :
     mk (fun n => ∑ p : Nat.Partition n, (litNodesIncreasing p : ℤ)) =
       1 + (mk fun n => (Fintype.card (Nat.Partition n) : ℤ)) *
         (∑' i : ℕ, 2 * X ^ (i + 1) * invOfUnit (1 - X ^ (i + 1)) 1 - 1)
-
-/-- **Recursion for triangular $q$-binomial coefficients.** The triangular $q$-binomial
-coefficients $t[r, s] \in \mathbb{Z}[[q]]$ satisfy the recursion
-$t[r, s] = q^s \sum_{i=0}^{s} t[r - 1, i]$ for all natural numbers $r \ge 1$ and $s \le r$,
-together with the initial conditions $t[1, 1] = q$, $t[2, 1] = q(1 + q)$, $t[r, 0] = 1$ for
-every $r$, and $t[r, s] = 0$ whenever $r < s$.
-
-The recursion is stated for $s \le r$ only: for $s > r$ the left side is $0$, while the right
-side is $q^s \sum_{i=0}^{r-1} t[r - 1, i] \ne 0$; for example $t[1, 2] = 0$ but
-$q^2 (t[0, 0] + t[0, 1] + t[0, 2]) = q^2$.
-
-Source: Aubrey Blecher, Arnold Knopfmacher, and Michael Mays, *Casting Light on Integer
-Partitions*, INTEGERS 24 (2024), Article A56, Proposition 3, eqs. (9), (10)
-(`integers-2024-A56-prop-3`). -/
-public theorem_wanted triangularQBinomial_recursion :
-    (∀ r s : ℕ, s ≤ r + 1 →
-      triangularQBinomial (r + 1) s = X ^ s * ∑ i ∈ Finset.range (s + 1), triangularQBinomial r i) ∧
-    triangularQBinomial 1 1 = X ∧ triangularQBinomial 2 1 = X * (1 + X) ∧
-    (∀ r, triangularQBinomial r 0 = 1) ∧ ∀ r s, r < s → triangularQBinomial r s = 0
 
 /-- **Triangular $q$-binomial coefficients via Gaussian binomials.** For natural numbers $r$ and
 $s$ with $1 \le r$ and $s \le r$, the triangular $q$-binomial coefficient $t[r, s]$ satisfies

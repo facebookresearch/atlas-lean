@@ -35,7 +35,13 @@ universe u
 
 variable {α : Type u} [LinearOrder α]
 
-/-- Extract one minimum and return the remaining elements, charging once per comparison. -/
+/-- **Minimum extraction.** Given an initial candidate $c$ in a linearly ordered type and a list
+$L$, minimum extraction returns a pair $(m, r)$ together with a cost. If $L$ is empty, it returns
+$c$ with the empty list at cost $0$. If $L$ has head $x$ and tail $L'$, it compares $x$ with $c$
+at cost one: if $x < c$, it extracts from $L'$ with candidate $x$, obtaining $(m, r)$, and returns
+$m$ with the list $c$ followed by $r$; otherwise it extracts from $L'$ with candidate $c$,
+obtaining $(m, r)$, and returns $m$ with the list $x$ followed by $r$. The total cost is one plus
+the cost of the recursive extraction. -/
 def extractMin (candidate : α) : List α → TimeM Nat (α × List α)
   | [] => pure (candidate, [])
   | x :: xs => do
@@ -47,7 +53,11 @@ def extractMin (candidate : α) : List α → TimeM Nat (α × List α)
         let (minimum, rest) ← extractMin candidate xs
         return (minimum, x :: rest)
 
-/-- Selection sort by repeated minimum extraction. -/
+/-- **Selection sort.** Selection sort of a list $L$ over a linearly ordered type is defined
+recursively. If $L$ is empty, the result is the empty list at cost $0$. If $L$ has head $x$ and
+tail $L'$, minimum extraction from $L'$ with initial candidate $x$ yields a minimum $m$ and the
+list $r$ of remaining elements, and the result is $m$ followed by the selection sort of $r$. The
+cost is the sum of the costs of all these minimum extractions. -/
 def selectionSort (xs : List α) : TimeM Nat (List α) :=
   let rec loop : Nat → List α → TimeM Nat (List α)
     | 0, _ => pure []
@@ -58,7 +68,9 @@ def selectionSort (xs : List α) : TimeM Nat (List α) :=
         return minimum :: sorted
   loop xs.length xs
 
-/-- Minimum extraction compares the candidate with every remaining element exactly once. -/
+/-- **Cost of minimum extraction.** For every element $c$ of a linearly ordered type and every
+list $L$ over it, minimum extraction from $L$ with initial candidate $c$ has cost exactly $|L|$,
+the length of $L$; that is, it performs exactly $|L|$ order comparisons. -/
 @[simp]
 theorem extractMin_time (candidate : α) (xs : List α) :
     (extractMin candidate xs).time = xs.length := by
@@ -100,7 +112,10 @@ private theorem extractMin_minimum (candidate : α) (xs : List α) :
         obtain ⟨hmin, hall⟩ := ih candidate
         exact ⟨hmin, hmin.trans (le_of_not_gt h), hall⟩
 
-/-- Minimum extraction returns one minimum together with exactly the other input occurrences. -/
+/-- **Correctness of minimum extraction.** Let $c$ be an element of a linearly ordered type and
+$L$ a list over it, and let $(m, r)$ be the pair returned by minimum extraction from $L$ with
+initial candidate $c$. Then the list $m$ followed by $r$ is a permutation of the list $c$ followed
+by $L$, $m \le c$, and $m \le x$ for every element $x$ of $L$. -/
 theorem extractMin_correct (candidate : α) (xs : List α) :
     List.Perm
         ((extractMin candidate xs).ret.1 :: (extractMin candidate xs).ret.2)
@@ -116,7 +131,9 @@ private theorem extractMin_rest_length (candidate : α) (xs : List α) :
   have h := (extractMin_perm candidate xs).length_eq
   simpa only [List.length_cons, Nat.succ.injEq] using h
 
-/-- Selection sort returns a nondecreasing permutation, preserving duplicate multiplicities. -/
+/-- **Correctness of selection sort.** For every list $L$ over a linearly ordered type, the list
+returned by selection sort on $L$ is sorted in nondecreasing order (each entry is $\le$ every
+later entry) and is a permutation of $L$, so it preserves duplicate multiplicities. -/
 theorem selectionSort_correct (xs : List α) :
     List.Pairwise (fun x y => x ≤ y) (selectionSort xs).ret ∧
       List.Perm (selectionSort xs).ret xs := by
@@ -166,7 +183,9 @@ theorem selectionSort_correct (xs : List α) :
               And.intro hsortedCons hpermCons
   exact loop_correct xs.length xs rfl
 
-/-- Selection sort performs exactly `n * (n - 1) / 2` comparisons on `n` elements. -/
+/-- **Comparison count of selection sort.** For every list of length $n$ over a linearly ordered
+type, selection sort has cost exactly $n(n-1)/2$ in the model that charges one unit per order
+comparison; that is, it performs exactly $n(n-1)/2$ comparisons. -/
 theorem selectionSort_time (xs : List α) :
     (selectionSort xs).time = xs.length * (xs.length - 1) / 2 := by
   unfold selectionSort

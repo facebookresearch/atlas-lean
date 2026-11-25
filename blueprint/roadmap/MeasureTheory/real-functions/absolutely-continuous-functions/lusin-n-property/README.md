@@ -16,3 +16,7 @@ continuous, by the Banach–Zarecki theorem.
 ## Statements
 
 - [Absolutely continuous functions have the Lusin N property](volume-image-eq-zero-of-absolutely-conti.md)
+
+## Background
+
+- [Absolute continuity on an interval](../absolute-continuity-on-an-interval/README.md): the definition

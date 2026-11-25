@@ -8,8 +8,13 @@ Almost-sure behaviour of sums of independent variables: strong and weak laws of 
 - [Kolmogorov's maximal inequality for finitely-valued variables](kolmogorov-maximal-inequality-theorem/README.md)
 - [Deviations of mean-zero sums on the cube](deviations-on-the-cube/README.md)
 - [Variance of the sample mean](variance-of-the-sample-mean/README.md)
+- [L² weak law of large numbers](l2-weak-law-of-large-numbers/README.md)
 
 ## Related topics
 
 - [Limit theorems under sublinear expectations](../central-limit-theorems/limit-theorems-under-sublinear-expectations/README.md):
   Peng's law of large numbers under model uncertainty, whose limit is an interval of means.
+
+- [Variance of the sample mean](variance-sample-mean.md)
+
+- [Variance of the sample mean under pairwise independence](variance-sample-mean-of-pairwise.md)

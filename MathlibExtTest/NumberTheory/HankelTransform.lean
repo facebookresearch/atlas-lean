@@ -21,6 +21,12 @@ example {R : Type*} [CommRing R] (a : ℕ → R) :
     hankelTransform a 1 = a 0 * a 2 - a 1 * a 1 := by
   simp [hankelTransform, Matrix.det_fin_two]
 
+-- At order zero the recurrence forces the whole sequence to vanish, including its first term.
+example : hankelTransform (fun _ ↦ (0 : ℤ)) 0 = 0 := by
+  apply hankelTransform.eq_zero_of_recurrence _ (fun _ ↦ 1) (r := 0) le_rfl
+  · exact ⟨0, le_rfl, one_ne_zero⟩
+  · simp
+
 example {K : Type*} [Ring K] (a alpha beta : ℕ → K) (mu0 : K)
     (F : ℕ → PowerSeries K) (h : HasJacobiFraction a alpha beta mu0 F) :
     PowerSeries.mk a = PowerSeries.C mu0 * F 0 :=

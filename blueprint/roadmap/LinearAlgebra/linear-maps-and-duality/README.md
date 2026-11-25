@@ -9,3 +9,5 @@ Vector spaces and modules, linear maps and their invariants such as trace, dual 
 - [Evaluation of an affine function at two points](evaluation-of-affine-functions/README.md)
 - [Hom detects exact sequences ending in a surjection](hom-detects-exactness/README.md)
 - [Rank of a product of matrices](rank-of-a-matrix-product/README.md)
+- [Linear reflections](linear-reflections/README.md)
+- [Rank of a linear map](rank-of-a-linear-map/README.md)

@@ -81,7 +81,7 @@ private theorem snoc_apply_zero {S : Type*} (n : ℕ) (x : Fin (n + 1) → S) (j
   rw [← Fin.castSucc_zero, Fin.snoc_castSucc]
 
 /-- Survival weight factors over the appended last transition. -/
-private theorem survivalWeight_snoc {S : Type*} (Q : S → S → ℝ)
+theorem survivalWeight_snoc {S : Type*} (Q : S → S → ℝ)
     (n : ℕ) (x : Fin (n + 1) → S) (j : S) :
     survivalWeight Q (Fin.snoc (α := fun _ => S) x j) =
       survivalWeight Q x * Q (x (Fin.last n)) j := by
@@ -107,7 +107,7 @@ private theorem survivalMass_succ_eq {S : Type*} [Fintype S] [DecidableEq S]
     intro a b t
     change (Fin.snocEquiv fun _ => S) (b, a) t
       = Fin.snoc (α := fun _ => S) a b t
-    exact Fin.snocEquiv_apply _ _ _
+    exact congrFun (Fin.snocEquiv_apply _ _) t
   have hef : ∀ a b, e (a, b) = Fin.snoc (α := fun _ => S) a b :=
     fun a b => funext (he a b)
   calc ∑ y : Fin (n + 1 + 1) → S, (if y 0 = i then survivalWeight Q y else 0)

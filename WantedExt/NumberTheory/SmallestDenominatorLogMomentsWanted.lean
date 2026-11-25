@@ -86,7 +86,7 @@ Source: Jens Marklof, *The Log Moments of Smallest Denominators*, INTEGERS 24
 theorem smallestDenominator_spec (x : ℝ) {δ : ℝ} (hδ : 0 < δ) :
     0 < smallestDenominator x δ ∧
       ∃ p : ℤ, |x - p / smallestDenominator x δ| < δ / 2 :=
-  Nat.sInf_mem (exists_denominator_mem_window x hδ)
+  Nat.sInf_mem (s := .ofPred _) (exists_denominator_mem_window x hδ)
 
 /-- **Minimality of the smallest denominator.** Let $x$ and $\delta$ be real numbers and let $q$
 be a positive integer with $q < q_{\min}(x, \delta)$, where $q_{\min}(x, \delta)$ is the smallest

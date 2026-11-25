@@ -165,13 +165,12 @@ private theorem integral_split_at_absorption {g : ℝ → ℝ} (hg : Continuous 
   rw [htail, add_zero] at hsplit
   exact hsplit.symm
 
-/-- **Forward occupation functional.** For a solution of the neutral Wright-Fisher
-martingale problem started at frequency `x`, a continuous test function `g` with `C²`
-potential `u` satisfying `generator 0 u = -g` and `u(0) = u(1) = 0`, the expected
-forward occupation integral of `g` accumulated until absorption, in diffusion units
-(multiples of `2N` generations), is `u x`. This is the Maruyama-Kimura functional
-programme with `K = g` and boundary values `0` at both endpoints, in the repository
-scaling. -/
+/-- **Forward occupation functional.** For a solution of the neutral Wright-Fisher martingale
+problem started at frequency `x` under a probability measure, a continuous test function `g` with
+`C²` potential `u` satisfying `generator 0 u = -g` and `u(0) = u(1) = 0`, the forward occupation
+integral of `g` accumulated until absorption is integrable, and its expectation, in diffusion units
+(multiples of `2N` generations), is `u x`. This is the Maruyama-Kimura functional programme with
+`K = g` and boundary values `0` at both endpoints, in the repository scaling. -/
 theorem integral_absorptionTime_of_generator_eq_neg {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {x : ℝ} {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℝ≥0 → Ω → ℝ} (hX : IsWrightFisherSolution 0 ℱ μ X)
@@ -337,10 +336,10 @@ theorem integral_absorptionTime_of_generator_eq_neg_modifiedProcess (x : I) {u g
     (isWrightFisherSolution_zero_modifiedProcess x)
     (ae_of_all _ fun ω => modifiedProcess_zero x ω) hu hg hgen hu0 hu1
 
-/-- **Forward heterozygosity functional.** For a solution of the neutral Wright-Fisher
-martingale problem started at frequency `x`, the expected heterozygosity accumulated until
-absorption, in diffusion units (multiples of `2N` generations), is `2x(1-x)`. This is a
-derived corollary of the Maruyama-Kimura functional machinery with `K = f`,
+/-- **Forward heterozygosity functional.** For a solution of the neutral Wright-Fisher martingale
+problem started at frequency `x` under a probability measure, the heterozygosity accumulated until
+absorption is integrable, and its expectation, in diffusion units (multiples of `2N` generations),
+is `2x(1-x)`. This is a derived corollary of the Maruyama-Kimura functional machinery with `K = f`,
 `f(y) = 2y(1-y)` and boundary values `0` at both endpoints, in the repository scaling. -/
 theorem integral_two_mul_one_sub_absorptionTime {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {x : ℝ} {ℱ : Filtration ℝ≥0 mΩ} {μ : Measure Ω} [IsProbabilityMeasure μ]

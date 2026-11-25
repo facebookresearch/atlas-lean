@@ -11,6 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.Analysis.SpecialFunctions.Exp.Zelinsky
+public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
+public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
 
@@ -57,17 +61,6 @@ public theorem_wanted oddPerfect_abundancySup_sub_two_lt
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h11 : 11 ≤ n.minFac) :
     (abundancySup n : ℝ) - 2 < 25 / (8 * (n.minFac : ℝ) * Real.log n.minFac)
 
-/-- **Exponential lower bound for $1 + x + x^2$ on $[0, 1/11]$.** For every real $x$ with
-$0 \le x \le 1/11$, $\exp(x + 2x^2/5) \le 1 + x + x^2$, with equality if and only if $x = 0$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 3 (`integers-2025-A59-lem-3`). -/
-public theorem_wanted exp_add_two_fifths_sq_le_one_add_add_sq
-    (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 1 / 11) :
-    Real.exp (x + 2 * x ^ 2 / 5) ≤ 1 + x + x ^ 2 ∧
-      (Real.exp (x + 2 * x ^ 2 / 5) = 1 + x + x ^ 2 ↔ x = 0)
-
 /-- **Lower bound for the prime-counting function at primes $p \ge 19$.** For every prime
 $p \ge 19$, the number $\pi(p)$ of primes at most $p$ satisfies $\pi(p) \ge p/\log p + 1$,
 where $\log$ is the natural logarithm.
@@ -108,34 +101,6 @@ public theorem_wanted tsum_log_sq_div_sq_sub_one_primes_ge_le
       1 / ((q : ℝ) * Real.log q) * (1 + 2 * Real.log (Real.log q) / Real.log q) +
         4 / (q : ℝ) ^ 3
 
-/-- **Upper bound for $\log(1 + 1/(x-1))$.** For every integer $x \ge 2$,
-$\log(1 + 1/(x-1)) \le 1/x + 25/(32x^2)$, where $\log$ is the natural logarithm.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 8 (`integers-2025-A59-lem-8`). -/
-public theorem_wanted log_one_add_one_div_sub_one_le
-    (x : ℕ) (hx : 2 ≤ x) :
-    Real.log (1 + 1 / ((x : ℝ) - 1)) ≤ 1 / (x : ℝ) + 25 / (32 * (x : ℝ) ^ 2)
-
-/-- **Suryanarayana's bound for $H(n)/h(n)$ with one odd exponent.** For a positive integer
-$n$ write $h(n) = \sigma(n)/n$ for its abundancy index, where $\sigma(n)$ is the sum of the
-divisors of $n$, and $H(n) = \prod_{p \mid n} p/(p-1)$ for the product over its prime divisors.
-Let $n$ be odd and let $j$ be a prime divisor of $n$ whose exponent in $n$ is odd, while the
-exponent of every other prime divisor of $n$ is even. Then
-$$\frac{H(n)}{h(n)} \le \frac{j^2}{j^2 - 1} \prod_{p \mid n,\ p \ne j} \frac{p^3}{p^3 - 1},$$
-where $p$ runs over the prime divisors of $n$ other than $j$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 9 (`integers-2025-A59-lem-9`). -/
-public theorem_wanted abundancySup_div_abundancyIndex_le_of_single_odd_exponent
-    (n j : ℕ) (hn : Odd n) (hj : j ∈ n.primeFactors) (hjodd : Odd (n.factorization j))
-    (heven : ∀ p ∈ n.primeFactors, p ≠ j → Even (n.factorization p)) :
-    abundancySup n / abundancyIndex n ≤
-      (j : ℚ) ^ 2 / ((j : ℚ) ^ 2 - 1) *
-        ∏ p ∈ n.primeFactors.erase j, (p : ℚ) ^ 3 / ((p : ℚ) ^ 3 - 1)
-
 /-- **Odd perfect numbers divisible by 165 contain 5 exactly once.** If $n$ is an odd perfect
 number divisible by $165$, then $5$ divides $n$ exactly once: $5 \mid n$ but $25 \nmid n$.
 
@@ -145,21 +110,6 @@ Lemma 11 (`integers-2025-A59-lem-11`). -/
 public theorem_wanted oddPerfect_factorization_five_eq_one_of_dvd
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h165 : 165 ∣ n) :
     n.factorization 5 = 1
-
-/-- **Bound on a prime that pushes $\prod p/(p-1)$ past $2$.** Let $s$ be a finite set of odd
-primes with $\prod_{p \in s} p/(p-1) \le 2$, and let $q$ be an odd prime with
-$\left(\prod_{p \in s} p/(p-1)\right) \cdot q/(q-1) > 2$. Then
-$q \le 2 \prod_{p \in s} (p - 1) - 1$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 12 (`integers-2025-A59-lem-12`). -/
-public theorem_wanted le_two_mul_prod_sub_one_sub_one_of_two_lt
-    (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime ∧ Odd p)
-    (hle : ∏ p ∈ s, (p : ℚ) / ((p : ℚ) - 1) ≤ 2)
-    (q : ℕ) (hq : q.Prime) (hqodd : Odd q)
-    (hgt : 2 < (∏ p ∈ s, (p : ℚ) / ((p : ℚ) - 1)) * ((q : ℚ) / ((q : ℚ) - 1))) :
-    q ≤ 2 * ∏ p ∈ s, (p - 1) - 1
 
 /-- **Cohen–Hagis–Suryanarayana bounds on the prime reciprocal sum of an odd perfect number.**
 Let $n$ be an odd perfect number and $T(n) = \sum_{p \mid n} 1/p$, the sum over the primes $p$

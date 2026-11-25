@@ -161,7 +161,8 @@ private lemma ksAffine_isMonicOfDegree {p q : Polynomial ℂ} {n : ℕ}
     have hqcoeff : q.coeff n = 1 := by
       rw [← hq.natDegree_eq]
       exact hq.monic.coeff_natDegree
-    rw [coeff_add, coeff_smul, coeff_smul, hpcoeff, hqcoeff]
+    rw [coeff_add, AddMonoidAlgebra.coeff_smul_apply, AddMonoidAlgebra.coeff_smul_apply, hpcoeff,
+      hqcoeff]
     simp
 
 private lemma ksAffine_cauchyBound_le {p q : Polynomial ℂ} {n : ℕ}
@@ -187,7 +188,7 @@ private lemma ksAffine_cauchyBound_le {p q : Polynomial ℂ} {n : ℕ}
       (fun i ↦ ‖((1 - (t : ℂ)) • p + (t : ℂ) • q).coeff i‖₊) ≤ S := by
     apply Finset.sup_le
     intro i hi
-    simp only [coeff_add, coeff_smul]
+    simp only [coeff_add, AddMonoidAlgebra.coeff_smul_apply]
     calc
       ‖(1 - (t : ℂ)) • p.coeff i + (t : ℂ) • q.coeff i‖₊ ≤
           ‖(1 - (t : ℂ)) • p.coeff i‖₊ + ‖(t : ℂ) • q.coeff i‖₊ :=
@@ -259,7 +260,7 @@ private lemma ksMaxRealRoot_lt_of_segment
   have hPcoeffContinuous : ∀ i : ℕ, Continuous fun t ↦ (P t).coeff i := by
     intro i
     dsimp only [P]
-    simp only [coeff_add, coeff_smul]
+    simp only [coeff_add, AddMonoidAlgebra.coeff_smul_apply]
     fun_prop
   have hmaxContinuous : Continuous fun t ↦ (P t).maxRealRoot :=
     ksContinuous_maxRealRoot hn hPmonic hProoted hPdegree hPbound hPcoeffContinuous

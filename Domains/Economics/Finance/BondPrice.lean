@@ -40,9 +40,10 @@ namespace MathlibExt.Economics.Finance
 noncomputable def bondCashFlow (coupon face : ℝ) (n : ℕ) (t : ℕ) : ℝ :=
   coupon + (if t = n then face else 0)
 
-/-- Price of the bond at per-period rate `r`: the FI01 present value of its cash
-flows over the payment dates `1, …, n` (source clause: "price = PV of coupons
-plus redemption"). -/
+/-- Price of the bond at per-period rate `r`: the FI01 present value of its cash flows over the
+payment dates `1, …, n` (source clause: "price = PV of coupons plus redemption"). The sum is empty,
+so the price is `0`, when `n = 0`; the discount factor uses the convention `0⁻¹ = 0` when `r = -1`.
+-/
 noncomputable def bondPrice (coupon face : ℝ) (n : ℕ) (r : ℝ) : ℝ :=
   presentValue (discountFactor r) (Finset.Icc 1 n) (bondCashFlow coupon face n)
 

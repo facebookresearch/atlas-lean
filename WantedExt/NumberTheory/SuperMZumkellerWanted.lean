@@ -43,49 +43,13 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
-public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.SuperMZumkeller
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.SuperMZumkellerWanted
-
-/-- **Product of the divisors.** For a natural number $n$, $T(n)$ is the product of all positive
-divisors of $n$. For $n = 0$ the set of divisors is taken to be empty, so $T(0) = 1$. -/
-def divisorProd (n : ℕ) : ℕ := ∏ d ∈ n.divisors, d
-
-/-- **Super-m-Zumkeller numbers.** For a natural number $n$, let $T(n)$ be the product of the
-positive divisors of $n$ (for $n = 0$ the divisor set is taken to be empty, so $T(0) = 1$).
-Then $n$ is *super-m-Zumkeller* if there is a set $A$ of positive divisors of $T(n)$ such that
-the product of the elements of $A$ equals the product of the positive divisors of $T(n)$ that
-are not in $A$; that is, the divisors of $T(n)$ split into two complementary sets, one of which
-may be empty, with equal products. -/
-def IsSuperMZumkeller (n : ℕ) : Prop :=
-  ∃ A : Finset ℕ, A ⊆ (divisorProd n).divisors ∧
-    (∏ d ∈ A, d) = ∏ d ∈ (divisorProd n).divisors \ A, d
-
-/-- **$k$-m-perfect numbers.** For natural numbers $k$ and $n$, $n$ is $k$-m-perfect if
-$T(n) = n^k$, where $T(n)$ is the product of the divisors of $n$. -/
-def IsKMPerfect (k n : ℕ) : Prop := divisorProd n = n ^ k
-
-/-- **Square of the product of the divisors.** For every positive integer $n$, let $T(n)$ be the
-product of the positive divisors of $n$ and $\tau(n)$ their number. Then $T(n)^2 = n^{\tau(n)}$.
-
-The paper writes this as $T(n) = n^{\tau(n)/2}$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Lemma 1. -/
-theorem_wanted divisorProd_sq (n : ℕ) (hn : 0 < n) :
-    (divisorProd n) ^ 2 = n ^ (n.divisors.card)
-
-/-- **Super-m-Zumkeller numbers $n \ge 2$ have at least three divisors.** If a natural number
-$n \ge 2$ is super-m-Zumkeller, then the number $\tau(n)$ of positive divisors of $n$ satisfies
-$\tau(n) \ge 3$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 1. -/
-theorem_wanted three_le_card_divisors_of_isSuperMZumkeller (n : ℕ)
-    (hn : 2 ≤ n) (h : IsSuperMZumkeller n) :
-    3 ≤ n.divisors.card
 
 /-- **Criterion for super-m-Zumkeller numbers.** Let $n \ge 2$ be an integer, let $\tau(n)$ be the
 number of positive divisors of $n$ and $T(n)$ their product. Then $n$ is super-m-Zumkeller if and

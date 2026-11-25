@@ -1,19 +1,19 @@
 # Importing mathgraph
 
-`scripts/import_mathgraph.py` adds planned pages and their annotations to the
-wiki from Jack McCarthy's mathgraph, a graph of textbook results with
-statements, proof sketches, sources and prerequisites. This release imports
-planned pages only: pages that state a result and record their own
-prerequisites ([Writing pages](BLUEPRINT.md#writing-pages)). Pages credited to
-Mathlib declarations, and records that a result is already an existing page,
-are left to a later release, which will bind them to a validated registry of
-declarations.
+`scripts/import_mathgraph.py` adds pages and their annotations to the wiki from
+Jack McCarthy's mathgraph, a graph of textbook results with statements, proof
+sketches, sources and prerequisites. This release imports two kinds of page:
+planned pages, which state a result and record their own prerequisites
+([Writing pages](BLUEPRINT.md#writing-pages)), and pages credited to one Mathlib
+declaration, in the format of
+[Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages). Records that a
+result is already an existing page are left to a later release.
 
 Besides the repository, the importer reads one file, a reviewed manifest, in
-which each row authorises one planned page. It never reads mathgraph itself,
-matcher outputs, review candidates or any other private record: the manifest is
-built from them elsewhere, and reviewed, before it is applied. A PR made with
-the importer is a graph PR ([CONTRIBUTING.md](../CONTRIBUTING.md#graph-prs)),
+which each row authorises one page. It never reads mathgraph itself, matcher
+outputs, review candidates or any other private record: the manifest is built
+from them elsewhere, and reviewed, before it is applied. A PR made with the
+importer is a graph PR ([CONTRIBUTING.md](../CONTRIBUTING.md#graph-prs)),
 reviewed against the [graph rules](BLUEPRINT.md#graph-rules).
 
 ## Running it
@@ -45,10 +45,10 @@ existing page is bound to (`path`, `statement_sha256`, `annotation_sha256`; see
 below), with the importer's own definitions, so that a manifest is built with
 them; it refuses a page that can be no dependency, or that no manifest can name,
 as it does not match the schema's `page` pattern, and writes nothing.
-`--check-map` checks the map and, with `--base`, that it only grows
-([The map](#the-map)); it writes nothing. Here and below, "writes nothing" means
-nothing in the worktree: the checks try their edits of folder pages on copies in
-a temporary folder.
+`--check-map` checks the map and, with `--base`, that it only grows and that
+each new line records a page the change adds ([The map](#the-map)); it writes
+nothing. Here and below, "writes nothing" means nothing in the worktree: the
+checks try their edits of folder pages on copies in a temporary folder.
 
 What a run guarantees:
 
@@ -92,7 +92,7 @@ What a run guarantees:
   are not checked, as its SHA-256 must equal the reviewed digest, which is what
   binds its content. Folder listings, used to place pages and check names, and
   any other file that `sync_wiki.py`, `generate_wiki.py` and Autoform read, such
-  as `mkdocs.yml`, are read as those tools read them.
+  as `mkdocs.yml` and `lake-manifest.json`, are read as those tools read them.
 - **The worktree is the importer's alone.** The importer assumes an exclusive
   worktree that nothing else changes while it runs. It detects some concurrent
   changes and then refuses or reports an incomplete rollback, but it does not
@@ -105,13 +105,13 @@ What a run guarantees:
 
 ## The manifest
 
-The manifest is a JSON Lines file: one object per line, no blank line. Each
-row is a planned page (`kind` `planned`): `key` is the mathgraph key of its
-result, `seed` names that result (its mathgraph id and the revision the
-manifest was built at), `statement`, `sketch` and `sources` are what the page
-says, and `page_dir` and `stem` are where it goes. Paths are relative to the
-repository and lie under `blueprint/roadmap/`. A page's text may be adapted
-from mathgraph's, with the small edits a review asks for.
+The manifest is a JSON Lines file: one object per line, no blank line. Each row
+is a page, of `kind` `planned` or `mathlib`: `key` is the mathgraph key of its
+result, `seed` names that result (its mathgraph id and the revision the manifest
+was built at), `statement`, `sketch` and `sources` are what the page says, and
+`page_dir` and `stem` are where it goes. Paths are relative to the repository
+and lie under `blueprint/roadmap/`. A page's text may be adapted from
+mathgraph's, with the small edits a review asks for.
 
 - `depends` lists the page's own prerequisites, each with its kind, `statement`
   or `proof`. A target is either the key of another row of the manifest, or an
@@ -139,6 +139,16 @@ from mathgraph's, with the small edits a review asks for.
   leaves out (holds) a row whose endpoint's identity or statement cannot be
   confirmed. `not_ready` is true exactly when `pending` is not empty, and
   `prose_missing` is given exactly then: the text of the page's `## Expansion`.
+- `mathlib`, on a `mathlib` row only, is `{declaration, module}`: the one
+  Mathlib declaration the page states, and its module. The declaration is a name
+  with no whitespace, and the module lies under `Mathlib.`: narrower than the
+  format, on purpose, so that a Lean name quoted with «» that holds a space, a
+  row with no module and a module outside Mathlib are refused. Such a row has no
+  sketch, no `depends`, no `pending` and no `prose_missing`, and `not_ready` is
+  false: its page states what the declaration states and has no dependency
+  section, as the build derives its edges
+  ([Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages)). A planned row
+  may depend on a `mathlib` row's page, as on any other row's.
 - `statement_sha256` and `sketch_sha256` are the SHA-256s of the page's own
   `statement` and `sketch` (of the empty string when `sketch` is null), which
   the importer checks against the text.
@@ -172,7 +182,7 @@ a digest, a path or a line that ends in a line break:
   ],
   "properties": {
     "key": {"$ref": "#/$defs/key"},
-    "kind": {"enum": ["planned"]},
+    "kind": {"enum": ["planned", "mathlib"]},
     "mg_kind": {"enum": ["theorem", "definition"]},
     "title": {"$ref": "#/$defs/line"},
     "statement": {"$ref": "#/$defs/text"},
@@ -223,10 +233,33 @@ a digest, a path or a line that ends in a line break:
     "mg_statement_sha256": {"$ref": "#/$defs/sha256"},
     "mg_sketch_sha256": {"$ref": "#/$defs/sha256"},
     "reference_sha256": {"$ref": "#/$defs/sha256"},
-    "edges_sha256": {"$ref": "#/$defs/sha256"}
+    "edges_sha256": {"$ref": "#/$defs/sha256"},
+    "mathlib": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declaration", "module"],
+      "properties": {
+        "declaration": {"$ref": "#/$defs/declaration"},
+        "module": {"$ref": "#/$defs/module"}
+      }
+    }
   },
+  "if": {"required": ["kind"], "properties": {"kind": {"const": "mathlib"}}},
+  "then": {
+    "required": ["mathlib"],
+    "properties": {
+      "sketch": {"type": "null"},
+      "depends": {"maxItems": 0},
+      "pending": {"maxItems": 0},
+      "not_ready": {"const": false},
+      "prose_missing": {"type": "null"}
+    }
+  },
+  "else": {"properties": {"mathlib": {"not": {}}}},
   "$defs": {
     "key": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 96},
+    "declaration": {"type": "string", "pattern": "^\\S+$"},
+    "module": {"type": "string", "pattern": "^Mathlib(?:\\.[A-Za-z0-9_']+)+$"},
     "line": {"type": "string", "pattern": "^\\S(?:[^\\n\\r]*\\S)?$"},
     "text": {"type": "string", "pattern": "^\\S(?:[^\\r]*\\S)?$"},
     "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -281,6 +314,26 @@ Beyond the schema, the importer checks that:
   this last rule against earlier lines only: a line keeps the `pending` list its
   row had when one of those prerequisites is imported later;
 - the map holds no row's key;
+- for `mathlib` rows, as `sync_wiki.py` reads credit: no two name one
+  declaration, and no page credits it already, to Mathlib or as a declaration of
+  this project (`page_owner`), a row an earlier sync wrote with a module and a
+  name only being resolved by the build, which has the Lean index, not here, and
+  a Mathlib link on a row without the `mathlib` flag being a reference, which
+  credits nothing; the links folder's credits are not ambiguous, which
+  `sync_wiki.py mathlib-names` refuses too; `lake-manifest.json` pins a Mathlib
+  commit; and the links folder as the change would leave it passes
+  `sync_wiki.py`'s credit check (`credit_problems`), each new page's row
+  crediting what its manifest row says. The importer does not check that the
+  declaration is Mathlib's at that revision, that the module is its, or that it
+  is no declaration of this project that has no page: the manifest's review
+  checks these against the pinned source. After the import, the wiki job's
+  registry steps (`sync_wiki.py mathlib-names`, then `lean-facts --registry` on
+  a clean checkout) check them as they check every credited row: a module that
+  is not the declaration's, for a declaration the build finds, stops
+  `lean-facts` and fails the job, until the row names the right one; a
+  declaration the build does not find, or finds to be this project's, only
+  unlinks the page, with a warning
+  ([Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages));
 - no string holds a reference the Public references check reports
   ([CONTRIBUTING.md](../CONTRIBUTING.md#public-references)), read as file
   contents and, for keys, stems, folders and targets, also as file names; no
@@ -432,10 +485,14 @@ subject's links file. A page's row has:
 - for a page with a pending prerequisite, `extensions.org.atlas-wiki.pending`,
   the row's `pending` list, and `extensions.org.autoform.not_ready: true`
   ([Nodes still to expand](BLUEPRINT.md#nodes-still-to-expand)).
+- for a `mathlib` row, `object`: one Lean link to Mathlib's repository,
+  `https://github.com/leanprover-community/mathlib4`, whose `location` is the
+  row's `declaration` and `module`; and `extensions.org.autoform.mathlib: true`,
+  as [Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages) specifies.
 
-No row gets an `object`, a `kind` or a `status`, which the tools own. A folder
-page's row has its `id`, the same digest of
-`["folder","<folder path>","<manifest SHA-256>"]`, and a part's has
+No row gets a `kind` or a `status`, which the tools own, and only a `mathlib`
+row's page gets an `object`. A folder page's row has its `id`, the same digest
+of `["folder","<folder path>","<manifest SHA-256>"]`, and a part's has
 `navigation: transparent`.
 
 ## The map
@@ -458,6 +515,7 @@ A line has:
 | `mg_statement_sha256`, `mg_sketch_sha256` | the digests of mathgraph's statement and sketch |
 | `reference_sha256`, `edges_sha256` | the digests of mathgraph's reference and outgoing edges |
 | `pending` | the row's `pending` list |
+| `mathlib` | for a `mathlib` row only: its `declaration` and `module`, and `rev`, the Mathlib revision lake-manifest.json pins when it is imported |
 
 Every line must match this JSON Schema, `MAP_SCHEMA` in the importer, each
 `pattern` a full-string match as in the manifest's; a test keeps the two equal:
@@ -502,31 +560,52 @@ Every line must match this JSON Schema, `MAP_SCHEMA` in the importer, each
           }
         }
       }
+    },
+    "mathlib": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declaration", "module", "rev"],
+      "properties": {
+        "declaration": {"$ref": "#/$defs/declaration"},
+        "module": {"$ref": "#/$defs/module"},
+        "rev": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    }
+  },
+  "if": {"required": ["mathlib"]},
+  "then": {
+    "properties": {
+      "pending": {"maxItems": 0},
+      "sketch_sha256": {"const": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
     }
   },
   "$defs": {
     "key": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 96},
-    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "declaration": {"type": "string", "pattern": "^\\S+$"},
+    "module": {"type": "string", "pattern": "^Mathlib(?:\\.[A-Za-z0-9_']+)+$"}
   }
 }
 ```
 
 A line must also be in the form the importer writes: the fields in the order
-above, a `pending` entry's as `key`, `kind`, `reason`, serialised by
-`json.dumps` with its default separators (`, ` and `: `) and non-ASCII
-characters as they are (`ensure_ascii=False`), then a line break. It is also
-held to those rules of a manifest row that need nothing but the line itself: its
-`node` is mathgraph's id of its `key`, its `page` lies in a folder a manifest's
-`page_dir` can name, at least one folder below its subject, under a file name a
-new page may take (not `readme`, `index` or `part-NN`, and at most 96
-characters), and its `pending` list names neither its own `key` nor a key twice.
-Across lines, no two have the same `key` or the same `page`, and the check looks
-strictly backwards: no `pending` key of a line is the key of an earlier line, as
-the importer refuses a pending key the map holds. A line is never judged by a
-later one, nor against the pages. A later change that tightens these rules must
-accept every line already on `main`, as lines are never edited. `--check` and
-`--apply` refuse a map with any other line, naming it, and write nothing; so
-does `--check-map`.
+above, a `pending` entry's as `key`, `kind`, `reason`, and `mathlib`, when the
+line has it, last, as `declaration`, `module`, `rev`, serialised by `json.dumps`
+with its default separators (`, ` and `: `) and non-ASCII characters as they are
+(`ensure_ascii=False`), then a line break. It is also held to those rules of a
+manifest row that need nothing but the line itself: its `node` is mathgraph's id
+of its `key`, its `page` lies in a folder a manifest's `page_dir` can name, at
+least one folder below its subject, under a file name a new page may take (not
+`readme`, `index` or `part-NN`, and at most 96 characters), its `pending` list
+names neither its own `key` nor a key twice, and a line with `mathlib` has no
+`pending` entry and the `sketch_sha256` of the empty string, as its row has
+neither. Across lines, no two have the same `key` or the same `page`, and the
+check looks strictly backwards: no `pending` key of a line is the key of an
+earlier line, as the importer refuses a pending key the map holds. A line is
+never judged by a later one, nor against the pages. A later change that tightens
+these rules must accept every line already on `main`, as lines are never edited.
+`--check` and `--apply` refuse a map with any other line, naming it, and write
+nothing; so does `--check-map`.
 
 The importer only appends to the map: it never edits, removes or moves a line,
 and never edits a planned page an earlier import wrote or that page's
@@ -536,13 +615,34 @@ appended, and the older line and planned page stay as written
 ([Policy](#policy), "`pending` and `not_ready`"). With `--base <commit>`,
 `--check-map` also reads the map at that commit with `git` (a map absent there
 is empty), checks its lines the same way, and refuses the map unless that one is
-its start, ending at a line break, naming the first line that differs. Blueprint
-Pages runs `--check-map` right after the wiki tests: on a pull request that
-touches a path in its filter, the map among them, with the base commit as
-`--base`, and on its runs of `main` without. Blueprint Pages is not a required
-check
+its start, ending at a line break, naming the first line that differs.
+
+It then checks each line appended since that commit against the page it records,
+which the same change must add: the page is not in the commit's tree and is a
+file in the worktree, with no symbolic link on its path, and it has exactly one
+annotation row, whose seed is the line's (`source` `mathgraph`, the line's
+`node` and `revision`), whose `id` is the one that seed gives, whose `pending`
+list, none when it records none, is the line's, and which credits, as
+`sync_wiki.py` reads it (`page_owner`), the declaration and module of the line's
+`mathlib`, which no other page may credit, to Mathlib or as this project's, and
+whose `rev` must be the Mathlib revision lake-manifest.json pins, or no
+declaration when the line has none. The line's `statement_sha256` and
+`sketch_sha256` must be those of the page's statement and `## Proof sketch` (the
+empty string when it has none) as Autoform reads them, computed again with the
+importer's own functions. The line's `mg_statement_sha256`, `mg_sketch_sha256`,
+`reference_sha256` and `edges_sha256` come from mathgraph, which the importer
+does not read, and are not recomputed. The check binds a line to its page and
+annotation; it cannot tell whether the importer wrote them, nor whether a
+declaration is Mathlib's. The lines of the map at that commit are never checked
+against the pages, which may have moved since; without `--base`, the lines are
+checked alone.
+
+Blueprint Pages runs `--check-map` right after the wiki tests: on a pull request
+that changes one of the paths that let its build run, the map among them, with
+the base commit as `--base`, and on its runs of `main` without. Blueprint Pages
+is not a required check
 ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)):
-it reports a map that does not only grow, but does not by itself stop a merge.
+it reports a map that fails these checks, but does not by itself stop a merge.
 
 Content PRs add lines to it, so it is a graph file: the
 [graph rules](BLUEPRINT.md#graph-rules) and `REVIEWING.md` list it with the
@@ -561,13 +661,20 @@ checks.
   manifest is built from, stays private.
 - **Each manifest is reviewed in full** (every row, no sampling) before it is
   applied; the PR body names the manifest's SHA-256 and the review.
-- **Planned pages only.** This release writes no page credited to a
-  declaration and records no existing page as standing for a result.
+- **Planned and Mathlib-credited pages only.** This release writes planned pages
+  and pages credited to one Mathlib declaration, and records no existing page as
+  standing for a result. A `mathlib` row's page states what its declaration
+  states. For each `mathlib` row, the manifest's review checks the declaration
+  against the pinned source and records that no ATLAS declaration, paged or
+  unpaged, states the result, so that only Mathlib proves it, and that the
+  Mathlib declaration has one page. The manifest PR's Blueprint Pages job must
+  pass, its `lean-facts` step reporting none of the manifest's pages as
+  unlinked.
 - **Inputs fail closed.** A failed check writes nothing, and an exception
   while writing is rolled back, within the limits [Running it](#running-it)
   states.
 - **Statuses are not exported.** mathgraph's kinds, tiers and verdicts never
-  become annotation facts: a planned page has no kind or status
+  become annotation facts: a page the importer writes has no kind or status
   ([What the tools own](BLUEPRINT.md#what-the-tools-own)).
 - **Dependencies on exact identities only.** A planned page is imported with
   dependencies on another row's page, or on an existing page whose statement and

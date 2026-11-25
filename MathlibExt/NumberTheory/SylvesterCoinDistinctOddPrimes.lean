@@ -203,7 +203,7 @@ theorem sylvester_coin_distinct_odd_primes
   have hcardS : Nat.card { n : ℕ // ¬ ∃ x y : ℕ, n = p * x + q * y } = B.card := by
     have h1c : Nat.card { n : ℕ // ¬ ∃ x y : ℕ, n = p * x + q * y } =
         ({n : ℕ | ¬ ∃ x y : ℕ, n = p * x + q * y}).ncard :=
-      Nat.card_coe_set_eq _
+      Nat.card_coe_set_eq {n : ℕ | ¬ ∃ x y : ℕ, n = p * x + q * y}
     rw [h1c]
     have h2c : ({n : ℕ | ¬ ∃ x y : ℕ, n = p * x + q * y} : Set ℕ) = ↑B := by
       ext n

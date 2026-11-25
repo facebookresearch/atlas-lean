@@ -19,7 +19,7 @@ edge lengths 0 or 1 [Even and Johnson, 1977]" (S. Even and D. S. Johnson, unpubl
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.CapacitatedSpanningTreeWanted

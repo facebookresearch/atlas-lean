@@ -32,13 +32,18 @@ Mazurov). UnsolvedMath record UM-00701045 (`KOU-14.60`), dataset ulamai/Unsolved
 1`.
 -/
 
-/-- The projective special linear group `PSL_n(F) = SL_n(F) / Z(SL_n(F))`. -/
+/-- **Projective special linear group.** For a natural number $n$ and a field $F$,
+$\mathrm{PSL}_n(F)$ is the quotient $\mathrm{SL}_n(F)/Z(\mathrm{SL}_n(F))$ of the special linear
+group $\mathrm{SL}_n(F)$ of $n \times n$ matrices over $F$ with determinant $1$ by its centre. -/
 abbrev PSL (n : ℕ) (F : Type) [Field F] : Type :=
   Matrix.SpecialLinearGroup (Fin n) F ⧸ Subgroup.center (Matrix.SpecialLinearGroup (Fin n) F)
 
-/-- Kourovka 14.60 (V. D. Mazurov): let `n ≥ 3`, let `q = pᵏ` be a prime power, and let `H` be a
-nontrivial normal subgroup of a finite group `G` with `G / H ≅ L_n(q) = PSL_n(𝔽_q)`. Then some
-element of `G` has an order that is not the order of any element of `G / H`. -/
+/-- **Kourovka 14.60: new element orders in extensions of projective special linear groups.**
+The proposition that for every $n \ge 3$, every prime $p$ and every $k \ge 1$, with $q = p^k$ and
+$\mathbb{F}_q$ the field with $q$ elements, the following holds: whenever $H$ is a nontrivial normal
+subgroup of a finite group $G$ and $G/H$ is isomorphic to the projective special linear group
+$\mathrm{PSL}_n(\mathbb{F}_q)$, some element of $G$ has an order that is not the order of any
+element of $G/H$. -/
 def extensionOfPSLHasNewElementOrder : Prop :=
   ∀ (n p k : ℕ) [Fact p.Prime], 3 ≤ n → 0 < k →
     ∀ (G : Type) [Group G] [Finite G] (H : Subgroup G) [H.Normal], H ≠ ⊥ →

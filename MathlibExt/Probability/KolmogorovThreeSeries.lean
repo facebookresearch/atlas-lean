@@ -167,7 +167,8 @@ theorem ae_tendsto_sum_of_indep_centered_L1bdd {Z : ℕ → Ω → ℝ}
     simp only [Pi.add_apply] at hω1
     rw [hSi_ce] at hω1
     linarith
-  exact hS_mart.submartingale.exists_ae_tendsto_of_bdd (R := R) hZ_L1_bdd
+  exact hS_mart.submartingale.exists_ae_tendsto_of_bdd
+    ((iSup_le hZ_L1_bdd).trans_lt ENNReal.coe_lt_top)
 
 end ProbabilityTheory
 

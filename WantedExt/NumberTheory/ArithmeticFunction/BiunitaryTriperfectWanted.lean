@@ -11,8 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Data.Rat.Defs
-public import MathlibExt.NumberTheory.PrimitiveDivisor
-public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisor
+public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowAddOne
+public import MathlibExt.NumberTheory.PrimitivePrimeDivisorPowSubOne
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -52,15 +54,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Theorem 1 (`jis-2025-25.
 public theorem_wanted sigmaBiunitary_eq_three_mul_iff_of_twentySeven_dvd (N : ℕ) (hN : 0 < N)
     (h27 : 27 ∣ N) : sigmaBiunitary N = 3 * N ↔ N = 2160
 
-/-- **Parity of the biunitary divisor sum.** For every positive integer $n$, the biunitary divisor
-sum $\sigma^{**}(n)$ is odd if and only if $n = 2^k$ for some natural number $k$ (so $n = 1$ is
-included).
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
-public theorem_wanted odd_sigmaBiunitary_iff (n : ℕ) (hn : 0 < n) :
-    Odd (sigmaBiunitary n) ↔ ∃ k : ℕ, n = 2 ^ k
-
 /-- **Powers of two dividing the biunitary divisor sum of an odd number.** For every odd natural
 number $n$, $2^{\omega(n)}$ divides $\sigma^{**}(n)$, where $\omega(n)$ is the number of distinct
 prime factors of $n$ and $\sigma^{**}$ is the biunitary divisor sum.
@@ -79,20 +72,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.
 public theorem_wanted two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even (n : ℕ)
     (hn : 0 < n) (he : Even n) : 2 ^ (n.primeFactors.card - 1) ∣ sigmaBiunitary n
 
-/-- **Lower bounds for the biunitary divisor sum of a prime power.** Let $p$ be a prime and
-$e \ge 1$, and write $\sigma^{**}$ for the biunitary divisor sum. Then, in $\mathbb{Q}$,
-$\sigma^{**}(p^e)/p^e \ge 1 + 1/p^2$; if moreover $e \ne 2$, then
-$\sigma^{**}(p^e)/p^e \ge 1 + 1/p$; and if $e \ge 3$, then
-$\sigma^{**}(p^e)/p^e \ge (1 + 1/p)(1 + 1/p^3)$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 3 (`jis-2025-25.4.5-lem-3`). -/
-public theorem_wanted sigmaBiunitary_prime_pow_div_ge (p e : ℕ) (hp : p.Prime) (he : 0 < e) :
-    (1 + 1 / (p : ℚ) ^ 2 ≤ (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
-      (e ≠ 2 → 1 + 1 / (p : ℚ) ≤ (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
-      (3 ≤ e → (1 + 1 / (p : ℚ)) * (1 + 1 / (p : ℚ) ^ 3) ≤
-        (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e)
-
 /-- **Comparison bounds for the biunitary divisor sum of a prime power.** Let $p$ be a prime and
 let $m \ge 1$ and $e \ge 2m - 1$ be natural numbers, and write $\sigma^{**}$ for the biunitary
 divisor sum. Then, in $\mathbb{Q}$,
@@ -107,39 +86,6 @@ public theorem_wanted sigmaBiunitary_prime_pow_div_ge_of_two_mul_sub_one_le (p m
         (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e) ∧
       (e ≠ 2 * m → ∑ i ∈ Finset.range (m + 1), 1 / (p : ℚ) ^ i ≤
         (sigmaBiunitary (p ^ e) : ℚ) / (p : ℚ) ^ e)
-
-/-- **Primitive prime divisors of $a^n - 1$ are $1$ modulo $n$.** Let $a \ge 2$ and $n \ge 2$ be
-natural numbers, and let $p$ be a primitive prime divisor of the integer sequence $m \mapsto
-a^m - 1$ at index $n$, that is, a prime that divides $a^n - 1$ and divides no $a^m - 1$ with
-$1 \le m < n$. Then $p \equiv 1 \pmod n$.
-
-This is the congruence half of Bang's theorem. Its existence half (such a $p$ exists unless
-$(a, n) = (2, 6)$, or $n = 2$ and $a + 1$ is a power of $2$) is the case $b = 1$ of the
-Bang–Zsigmondy theorem.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 4 (`jis-2025-25.4.5-lem-4`),
-quoting Bang. -/
-public theorem_wanted primitivePrimeDivisor_pow_sub_one_mod_eq_one (a n p : ℕ) (ha : 2 ≤ a)
-    (hn : 2 ≤ n)
-    (hp : IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - 1) n p) :
-    p % n = 1
-
-/-- **Primitive prime factors of $a^n + 1$.** Let $a \ge 2$ and $n \ge 1$ be integers with
-$(a, n) \ne (2, 3)$, and if $n = 1$ suppose that $a + 1$ is not a power of $2$. Then $a^n + 1$
-has a primitive prime factor $p$, that is, a prime $p$ that divides $a^n + 1$ but divides no
-$a^m + 1$ with $1 \le m < n$, such that $p \equiv 1 \pmod{2n}$.
-
-The second exception is not in the printed statement: for $a = 3$, $n = 1$ the only prime factor
-of $3 + 1 = 4$ is $2 \not\equiv 1 \pmod 2$; the paper's proof applies Lemma 2.3 to
-$a^{2n} - 1$, whose exceptions include exactly this case.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 5 (`jis-2025-25.4.5-lem-5`). -/
-public theorem_wanted exists_primitivePrimeDivisor_pow_add_one (a n : ℕ) (ha : 2 ≤ a)
-    (hn : 1 ≤ n) (hexc : ¬ (a = 2 ∧ n = 3)) (hexc' : ¬ (n = 1 ∧ ∃ k : ℕ, a + 1 = 2 ^ k)) :
-    ∃ p, IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m + 1) n p ∧
-      p % (2 * n) = 1
 
 /-- **Prime factors of the biunitary divisor sum of a power of $3$.** Let $f$, $t$ and $\eta$ be
 natural numbers with $\eta \in \{0, 1\}$ and $f = 2t - 1 - \eta$, suppose $f \ge 5$, and write
@@ -216,14 +162,6 @@ public theorem_wanted exists_two_primes_dvd_sigmaBiunitary_thirteen_pow (g : ℕ
     ∃ q₁ q₂, q₁ ≠ q₂ ∧ q₁.Prime ∧ q₂.Prime ∧ q₁ ∣ sigmaBiunitary (13 ^ g) ∧
       q₂ ∣ sigmaBiunitary (13 ^ g) ∧ q₁ ∉ ({2, 3, 41, 547} : Finset ℕ) ∧
       q₂ ∉ ({2, 3, 41, 547} : Finset ℕ)
-
-/-- **Prime factors of the biunitary divisor sum of $41^g$.** For every integer $g \ge 1$, the
-biunitary divisor sum $\sigma^{**}(41^g)$ has a prime factor $q$ with $q \notin \{2, 3, 5, 13\}$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 8 (V) (`jis-2025-25.4.5-lem-8`). -/
-public theorem_wanted exists_prime_dvd_sigmaBiunitary_fortyOne_pow (g : ℕ) (hg : 1 ≤ g) :
-    ∃ q, q.Prime ∧ q ∣ sigmaBiunitary (41 ^ g) ∧ q ∉ ({2, 3, 5, 13} : Finset ℕ)
 
 /-- **Biunitary triperfect numbers divisible by $27$ are divisible by $16$.** Let $N$ be a
 biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where

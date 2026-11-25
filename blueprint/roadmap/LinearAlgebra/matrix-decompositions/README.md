@@ -17,6 +17,8 @@ Factorizations of matrices (QR, singular value, polar, Schur and LU decompositio
 - [Convergence of the Jacobi method](jacobi-method/README.md)
 - [Rouché–Capelli theorem](rouche-capelli-theorem/README.md)
 - [Schur decomposition](schur-decomposition/README.md)
+- [Singular values](singular-values/README.md)
+- [Pseudoinverse](pseudoinverse/README.md)
 
 ## Related topics
 

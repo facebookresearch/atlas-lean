@@ -68,7 +68,7 @@ def IncentiveCompatible (θL θH : ℝ) (m : Menu) : Prop :=
 
 /-- The second-best menu of the linear-quadratic two-type model:
 `q_L = θ_L - (p_H / p_L)(θ_H - θ_L)`, `t_L = θ_L q_L`, `q_H = θ_H`,
-`t_H = θ_H q_H - (θ_H - θ_L) q_L`. -/
+`t_H = θ_H q_H - (θ_H - θ_L) q_L`. The ratio `p_H / p_L` is read as `0` when `p_L = 0`. -/
 noncomputable def secondBestMenu (θL θH pL pH : ℝ) : Menu where
   qL := θL - pH / pL * (θH - θL)
   tL := θL * (θL - pH / pL * (θH - θL))

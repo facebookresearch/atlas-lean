@@ -16,3 +16,7 @@ line.
 ## Statements
 
 - [Jordan decomposition of a continuous function of bounded variation](exists-continuous-monotone-sub-of-bounde.md)
+
+## Background
+
+- [Functions of bounded variation](../bounded-variation-and-total-variation/README.md): the definition, applied on $\mathbb{R}$

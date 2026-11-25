@@ -39,7 +39,9 @@ law, then identifies the Galois action with the Artin map.
 
 ## Proof depends on
 
-- [Global Artin reciprocity](../global-artin-reciprocity.md)
+- [Global reciprocity law](../reciprocity-law/global-reciprocity-law.md), for the isomorphism from the class group of $K$ onto $\mathrm{Gal}(H/K)$ induced by the Artin map
+- [The global Artin map at unramified places](../reciprocity-law/artin-map-at-unramified-places.md), which identifies the global Artin map of $H/K$ with its Artin map on ideals
+- [Existence theorem of global class field theory](../existence-theorem/existence-of-class-fields.md), for an unramified abelian extension of $K$ of degree the class number, the class field of the idèles that are units at all finite places, so that the kernel of the Artin map of $H/K$ is the group of principal ideals
 
 ## Sources
 

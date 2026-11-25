@@ -1,0 +1,3 @@
+# A Voigt matrix with cubic invariances is cubic
+
+Voigt indices $0, \dots, 5$ encode the symmetric index pairs $xx, yy, zz, yz, xz, xy$. The axis swaps act on Voigt indices by the permutations $s_{xy} = (1, 0, 2, 4, 3, 5)$, $s_{xz} = (2, 1, 0, 5, 4, 3)$ and $s_{yz} = (0, 2, 1, 3, 5, 4)$, and the quarter-turn $R_z^{\mathsf T}$ about $z$ acts by the permutation $q = (1, 0, 2, 4, 3, 5)$ with signs $\varepsilon = (1, 1, 1, -1, 1, -1)$. A $6 \times 6$ matrix $C$ is invariant under them when $C_{ij} = C_{s(i)s(j)}$ for each swap $s$ and $C_{ij} = \varepsilon_i \varepsilon_j C_{q(i)q(j)}$. If $C$ is a real symmetric $6 \times 6$ matrix with these invariances, then $C$ is the cubic Voigt matrix with $c_{11} = C_{00}$, $c_{12} = C_{01}$ and $c_{44} = C_{33}$.

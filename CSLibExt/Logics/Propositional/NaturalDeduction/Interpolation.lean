@@ -23,8 +23,8 @@ atoms that `A` and `B` share (and the constant `⊥`), such that `A → I` and
 completeness of classical natural deduction (`derivableIn_cpl_iff`) the same
 interpolant works for derivability in `CPL`.
 
-As elsewhere in this directory, `⊥` is upstream CSLib's atom `.atom ⊥`, read as
-false by the classical semantics; `⊤` is written `⊥ → ⊥`.
+As elsewhere in this directory, `⊥` is the atom `.atom ⊥` of CSLib v4.35's propositions, restored
+in `Cslib.Logic.LegacyPL`, read as false by the classical semantics; `⊤` is written `⊥ → ⊥`.
 
 ## Main definitions
 
@@ -54,7 +54,7 @@ false by the classical semantics; `⊤` is written `⊥ → ⊥`.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem
 
@@ -268,4 +268,4 @@ theorem exists_interpolant_cpl {A B : Proposition Atom}
     · simp [hIv]
     · simp [hIB v hv hIv]
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

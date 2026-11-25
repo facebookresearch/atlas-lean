@@ -23,39 +23,51 @@ This file defines the square of a simple graph and proves its basic properties.
 
 namespace SimpleGraph
 
-/-- The square of a simple graph: distinct vertices are adjacent when they are adjacent in the
-original graph or have a common neighbor. -/
+/-- **Square of a graph.** The square of a simple graph $G$ is the simple graph on the same vertex
+set in which two distinct vertices $u$ and $v$ are adjacent when they are adjacent in $G$ or have
+a common neighbor in $G$, that is, a vertex $w$ adjacent in $G$ to both $u$ and $v$. -/
 public def square {V : Type*} (G : SimpleGraph V) : SimpleGraph V where
   Adj u v := u ≠ v ∧ (G.Adj u v ∨ ∃ w, G.Adj u w ∧ G.Adj w v)
   symm := ⟨fun _ _ h ↦ ⟨h.1.symm, h.2.elim (fun huv ↦ Or.inl huv.symm)
     (fun ⟨w, huw, hwv⟩ ↦ Or.inr ⟨w, hwv.symm, huw.symm⟩)⟩⟩
   loopless := ⟨fun _ h ↦ h.1 rfl⟩
 
-/-- Adjacency in the square of a simple graph. -/
+/-- **Adjacency in the graph square.** For a simple graph $G$ and vertices $u$ and $v$, the
+vertices $u$ and $v$ are adjacent in the square of $G$ if and only if $u \ne v$ and either $u$
+and $v$ are adjacent in $G$ or there is a vertex $w$ with $u$ adjacent to $w$ and $w$ adjacent
+to $v$ in $G$. -/
 @[simp]
 public theorem square_adj {V : Type*} (G : SimpleGraph V) (u v : V) :
     G.square.Adj u v ↔ u ≠ v ∧ (G.Adj u v ∨ ∃ w, G.Adj u w ∧ G.Adj w v) :=
   Iff.rfl
 
-/-- Taking graph squares is monotone. -/
+/-- **Monotonicity of the graph square.** Let $G$ and $H$ be simple graphs on the same vertex set
+such that every edge of $G$ is an edge of $H$. Then every edge of the square of $G$ is an edge of
+the square of $H$. -/
 public theorem square_mono {V : Type*} {G H : SimpleGraph V} (hGH : G ≤ H) :
     G.square ≤ H.square := by
   rintro u v ⟨huv, h | ⟨w, huw, hwv⟩⟩
   · exact ⟨huv, Or.inl (hGH h)⟩
   · exact ⟨huv, Or.inr ⟨w, hGH huw, hGH hwv⟩⟩
 
-/-- The square of a connected graph is connected. -/
+/-- **The square of a connected graph is connected.** If a simple graph $G$ is connected, then
+the square of $G$ is connected. -/
 public theorem Connected.square {V : Type*} {G : SimpleGraph V} (hG : G.Connected) :
     G.square.Connected :=
   hG.mono fun _ _ h ↦ ⟨G.ne_of_adj h, Or.inl h⟩
 
-/-- A Hamiltonian square remains Hamiltonian after edges are added to the original graph. -/
+/-- **Adding edges preserves a Hamiltonian square.** Let $G$ and $H$ be simple graphs on the same
+finite vertex set such that every edge of $G$ is an edge of $H$. If the square of $G$ is
+Hamiltonian, then the square of $H$ is Hamiltonian. -/
 public theorem IsHamiltonian.square_mono {V : Type*} [Fintype V] [DecidableEq V]
     {G H : SimpleGraph V}
     (hGH : G ≤ H) (hG : G.square.IsHamiltonian) : H.square.IsHamiltonian :=
   hG.mono (SimpleGraph.square_mono hGH)
 
-/-- A graph is the square of `G` exactly when it has the expected adjacency relation. -/
+/-- **Characterization of the graph square.** Let $G$ and $H$ be simple graphs on the same vertex
+set. Then $H$ equals the square of $G$ if and only if, for all vertices $u$ and $v$, the vertices
+$u$ and $v$ are adjacent in $H$ exactly when $u \ne v$ and either $u$ and $v$ are adjacent in $G$
+or there is a vertex $w$ with $u$ adjacent to $w$ and $w$ adjacent to $v$ in $G$. -/
 public theorem eq_square_iff {V : Type*} {G H : SimpleGraph V} :
     H = G.square ↔
       ∀ u v, H.Adj u v ↔ u ≠ v ∧ (G.Adj u v ∨ ∃ w, G.Adj u w ∧ G.Adj w v) := by
@@ -66,7 +78,10 @@ public theorem eq_square_iff {V : Type*} {G H : SimpleGraph V} :
     ext u v
     exact h u v
 
-/-- Replacing two consecutive edges by their endpoints preserves a chain in the graph square. -/
+/-- **Skipping a vertex of a walk in the graph square.** Let $G$ be a simple graph and let
+$u, w, v, x_1, \dots, x_k$ (with $k \ge 0$) be a sequence of vertices in which consecutive
+vertices are adjacent in $G$. If $u \ne v$, then in the sequence $u, v, x_1, \dots, x_k$
+consecutive vertices are adjacent in the square of $G$. -/
 public theorem isChain_square_of_isChain_cons_cons {V : Type*} {G : SimpleGraph V}
     {u w v : V} {l : List V} (hchain : List.IsChain G.Adj (u :: w :: v :: l))
     (huv : u ≠ v) : List.IsChain G.square.Adj (u :: v :: l) := by
@@ -78,8 +93,11 @@ public theorem isChain_square_of_isChain_cons_cons {V : Type*} {G : SimpleGraph 
   refine ⟨⟨huv, Or.inr ⟨w, huw, hwv⟩⟩, ?_⟩
   exact htail.imp fun ⦃_ _⦄ hab ↦ ⟨G.ne_of_adj hab, Or.inl hab⟩
 
-/-- Shortcutting length-two steps in a closed cyclic listing produces a Hamiltonian cycle in the
-square. -/
+/-- **A cyclic listing by square adjacencies gives a Hamiltonian square.** Let $G$ be a simple
+graph on a finite vertex set $V$, and let $v_0, v_1, \dots, v_n$ be vertices with $n \ge 3$ and
+$v_0 = v_n$, such that $v_1, \dots, v_n$ are pairwise distinct and every vertex of $V$ is among
+them. If for each $i < n$ the vertices $v_i$ and $v_{i+1}$ are distinct and either adjacent in
+$G$ or have a common neighbor in $G$, then the square of $G$ is Hamiltonian. -/
 public theorem IsHamiltonian.square_of_cyclic_list {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) (l : List V) (hne : l ≠ [])
     (hclosed : l.head hne = l.getLast hne)
@@ -93,8 +111,9 @@ public theorem IsHamiltonian.square_of_cyclic_list {V : Type*} [Fintype V] [Deci
   · exact hmem
   · exact hthree
 
-/-- In a 2-vertex-connected graph on at least five vertices, every vertex has at least four
-neighbors in the graph square. -/
+/-- **Minimum degree in the square of a 2-connected graph.** In a 2-vertex-connected simple graph
+on a finite vertex set with at least five vertices, every vertex has at least four neighbors in
+the square of the graph. -/
 public theorem IsVertexConnected.four_le_square_degree
     {V : Type*} [Fintype V] {G : SimpleGraph V}
     [DecidableRel G.square.Adj] (hG : G.IsVertexConnected 2)
