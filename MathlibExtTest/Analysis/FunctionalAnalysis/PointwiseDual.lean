@@ -23,4 +23,4 @@ example : ∃ (n : ℕ) (t : Fin n → ℕ) (a : Fin n → ℝ), ∀ x : ℕ →
     change Continuous (fun x : ℕ → ℝ => f x)
     rw [heq]
     exact h3.sub h7
-  simpa [f, smul_eq_mul] using f.exists_fin_sum_mul_apply_of_continuous hf
+  simpa [f, smul_eq_mul] using f.exists_fin_sum_mul_apply_of_continuous ℕ hf

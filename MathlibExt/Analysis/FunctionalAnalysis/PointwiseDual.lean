@@ -18,11 +18,15 @@ public import Mathlib.LinearAlgebra.Pi
 
 /-- **Continuous linear functionals on the space of all real functions.** A linear
 functional on `H → ℝ` that is continuous for the product topology is a finite linear
-combination of coordinate evaluations.
+combination of coordinate evaluations. The statement is universe-polymorphic: `H` may lie in
+any universe, not only in `Type`.
 
-This is Banach and Mazur's theorem from Problem 10 of the *Scottish Book*, with continuity
-made explicit. -/
-theorem LinearMap.exists_fin_sum_mul_apply_of_continuous {H : Type*}
+This is the version of Banach and Mazur's theorem, Problem 10 of the *Scottish Book*, for
+functionals that are continuous in the product topology. The typescript defines the pointwise
+convergence of sequences in `H → ℝ` and then states the theorem for each linear functional,
+with no continuity qualification; for an arbitrary `H`, continuity in the product topology
+cannot simply be read off that sequential formulation. -/
+theorem LinearMap.exists_fin_sum_mul_apply_of_continuous (H : Type*)
     (f : (H → ℝ) →ₗ[ℝ] ℝ) (hf : Continuous f) :
     ∃ (n : ℕ) (t : Fin n → H) (a : Fin n → ℝ), ∀ x : H → ℝ,
       f x = ∑ i, a i * x (t i) := by
