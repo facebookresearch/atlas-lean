@@ -39,14 +39,15 @@ public import MathlibExt.AlgebraicGeometry.DrinfeldBasis
 /-!
 # Sections of a Drinfeld basis are torsion
 
-For a separated relative group law `G` over `Spec R` and a level `q ≥ 2`, the basis
-tuple of a Drinfeld basis `(P, Q)` contains `P` and `Q`. Since the basis divisor is the
+For a relative group law `G` on a separated `f : A ⟶ Spec R` and a level `q ≥ 2`, the
+basis tuple of a Drinfeld basis `(P, Q)` contains `P` and `Q`. Since the basis divisor is the
 torsion ideal, the graphs of `P` and `Q` factor through the kernel of multiplication by
 `q`, so both sections are `q`-torsion.
 
-Over a field `K`, if the `K`-sections are identified additively with the points of a
-Weierstrass curve with no nontrivial `q`-torsion over `K`, the only Drinfeld basis at
-level `q` is the pair of unit sections.
+Over a field `K`, suppose that a family of additive identifications, one for every field
+`F` over `K`, matches the points of `G` over `F` with the `F`-points of a Weierstrass curve
+`W`, and that `W` has no nonzero `q`-torsion `K`-point. Then any Drinfeld basis at level
+`q ≥ 2` consists of the unit sections.
 
 ## Main results
 
@@ -86,13 +87,11 @@ private theorem toPullbackId_fst :
     toPullbackId (f := f) ≫ pullback.fst f (𝟙 (Spec (CommRingCat.of R))) = 𝟙 A :=
   pullback.lift_fst _ _ _
 
-private theorem isIso_toPullbackId : IsIso (toPullbackId (f := f)) :=
-  ⟨⟨pullback.fst f (𝟙 (Spec (CommRingCat.of R))), toPullbackId_fst, by
-    apply pullback.hom_ext
-    · simp only [Category.assoc, toPullbackId, pullback.lift_fst, Category.id_comp,
-        Category.comp_id]
-    · simp only [Category.assoc, toPullbackId, pullback.lift_snd, Category.id_comp,
-        Category.comp_id, pullback.condition]⟩⟩
+private theorem isIso_toPullbackId : IsIso (toPullbackId (f := f)) := by
+  have : IsIso (toPullbackId (f := f) ≫ pullback.fst f (𝟙 (Spec (CommRingCat.of R)))) := by
+    rw [toPullbackId_fst]
+    infer_instance
+  exact IsIso.of_isIso_comp_right _ (pullback.fst f (𝟙 (Spec (CommRingCat.of R))))
 
 private theorem isClosedImmersion_one [IsSeparated f] :
     IsClosedImmersion (G.one (𝟙 (Spec (CommRingCat.of R)))).left := by
@@ -101,14 +100,7 @@ private theorem isClosedImmersion_one [IsSeparated f] :
     Over.w (G.one (𝟙 (Spec (CommRingCat.of R))))
   have : IsClosedImmersion ((G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ f) := by
     rw [hone]
-    exact {
-      stalkMap_surjective := fun x ↦
-        (ConcreteCategory.bijective_of_isIso
-          (Scheme.Hom.stalkMap (𝟙 (Spec (CommRingCat.of R))) x)).2
-      isClosedEmbedding := Homeomorph.isClosedEmbedding <|
-        TopCat.homeoOfIso (asIso
-          ((𝟙 (Spec (CommRingCat.of R)) :
-            (Spec (CommRingCat.of R)) ⟶ (Spec (CommRingCat.of R))).base)) }
+    exact inferInstanceAs (IsClosedImmersion (𝟙 (Spec (CommRingCat.of R))))
   exact IsClosedImmersion.of_comp _ f
 
 /-- A section that occurs in the basis tuple of a Drinfeld basis is `q`-torsion. -/
@@ -144,9 +136,10 @@ private theorem isTorsionPoint_of_basisTuple_eq [IsSeparated f] {q : ℕ} {P Q X
   rw [← hi, ← hfst, Category.assoc, pullback.condition, ← Category.assoc, hsnd]
   simp
 
-/-- At a level `q ≥ 2`, both sections of a Drinfeld basis of a separated relative group
-law are `q`-torsion: the basis tuple contains `P` and `Q`, and the torsion ideal is
-contained in the ideal of each graph in the tuple. -/
+variable {G} in
+/-- At a level `q ≥ 2`, both sections of a Drinfeld basis of a relative group law on a
+separated `f` are `q`-torsion: the basis tuple contains `P` and `Q`, and the torsion ideal
+is contained in the ideal of each graph in the tuple. -/
 theorem IsDrinfeldBasis.isTorsionPoint [IsSeparated f] {q : ℕ} (hq : 2 ≤ q)
     {P Q : Section f} (h : IsDrinfeldBasis G q P Q) :
     G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q P ∧
@@ -162,12 +155,13 @@ theorem IsDrinfeldBasis.isTorsionPoint [IsSeparated f] {q : ℕ} (hq : 2 ≤ q)
     rw [Nat.div_eq_of_lt hq1, Nat.mod_eq_of_lt hq1, linComb, G.nsmul_one, G.nsmul_zero,
       G.one_mul]
 
-/-- At a level `q ≥ 2` the torsion and positivity conditions of
-`IsValidDrinfeldBasis` follow from the source predicate `IsDrinfeldBasis`. -/
+/-- For a relative group law on a separated `f` and a level `q ≥ 2`, `IsValidDrinfeldBasis`
+is equivalent to `IsDrinfeldBasis`: its positivity and torsion conditions follow from
+`IsDrinfeldBasis`. -/
 theorem isValidDrinfeldBasis_iff_isDrinfeldBasis [IsSeparated f] {q : ℕ} (hq : 2 ≤ q)
     (P Q : Section f) : IsValidDrinfeldBasis G q P Q ↔ IsDrinfeldBasis G q P Q :=
   ⟨fun h => h.isDrinfeldBasis, fun h =>
-    ⟨by omega, (h.isTorsionPoint G hq).1, (h.isTorsionPoint G hq).2, h⟩⟩
+    ⟨by omega, (h.isTorsionPoint hq).1, (h.isTorsionPoint hq).2, h⟩⟩
 
 end Ring
 
@@ -226,17 +220,18 @@ private theorem eq_one_of_isTorsionPoint (hev : IsAdditivePointsEval W G ev) {q 
   ext
   simpa [ι] using congrArg (fun x => x.left) h1
 
-/-- Over a field `K`, if the `K`-sections of a separated relative group law are
-identified additively with the points of a Weierstrass curve that has no nontrivial
-`q`-torsion over `K`, then a Drinfeld basis at level `q ≥ 2` consists of the unit
+/-- Over a field `K`, let `G` be a relative group law on a separated `f : A ⟶ Spec K`, and
+let `ev` be a family of additive identifications, one for every field `F` over `K`, of the
+points of `A` over `F` with the `F`-points of a Weierstrass curve `W`. If `W` has no nonzero
+`q`-torsion `K`-point, then any Drinfeld basis of `G` at level `q ≥ 2` consists of the unit
 sections. -/
 theorem IsDrinfeldBasis.eq_one_of_forall_nsmul_eq_zero [IsSeparated f]
     (hev : IsAdditivePointsEval W G ev) {q : ℕ} (hq : 2 ≤ q)
     (hss : ∀ R : W.toAffine.Point, q • R = 0 → R = 0) {P Q : Section f}
     (hPQ : IsDrinfeldBasis G q P Q) :
     P = G.one (𝟙 _) ∧ Q = G.one (𝟙 _) :=
-  ⟨eq_one_of_isTorsionPoint hev hss (hPQ.isTorsionPoint G hq).1,
-    eq_one_of_isTorsionPoint hev hss (hPQ.isTorsionPoint G hq).2⟩
+  ⟨eq_one_of_isTorsionPoint hev hss (hPQ.isTorsionPoint hq).1,
+    eq_one_of_isTorsionPoint hev hss (hPQ.isTorsionPoint hq).2⟩
 
 end Field
 
