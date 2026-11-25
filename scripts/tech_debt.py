@@ -101,14 +101,13 @@ def unlinted_kind(message: str) -> str:
 def warning_counts(lines) -> tuple[Counter, Counter]:
     """Count the warnings of a build log by linter option and by top-level directory.
 
-    A warning repeated verbatim (Lake replays a module's log each time a build reaches it)
-    counts once. A warning without a "can be disabled" note counts as a deprecation or under the first
+    A warning repeated verbatim counts once (CI's build log repeats some). A warning without a "can be disabled" note counts as a deprecation or under the first
     words of its message, so no warning goes uncounted.
     """
     by_linter: Counter = Counter()
     by_library: Counter = Counter()
     pending = None  # (path, message) of the warning whose note may follow
-    seen = set()  # a log can replay a module's warnings more than once
+    seen = set()  # a log can repeat a warning verbatim
 
     def flush():
         if pending is not None:
