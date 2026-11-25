@@ -107,6 +107,7 @@ private lemma p_d_zero_neg_one : P.d 0 (-1) = twiceFirst := by
   let statement (i : ℤ) : Prop := HEq (P.d i (-1)) twiceFirst
   have hstep : HEq (chainStep (-1)) twiceFirst := by
     simp only [chainStep, dite_eq_left]
+    rfl
   have hbase : statement ((-1 : ℤ) + 1) :=
     (heq_of_eq (ChainComplex.of_d chainTerm chainStep (-1))).trans hstep
   have hzero : statement 0 := Eq.mp (congrArg statement hindex) hbase
@@ -125,6 +126,7 @@ private lemma q_d_neg_one_zero_heq :
   let statement (j : ℤ) : Prop := HEq (Q.d (-1) j) ((2 : ℤ) • 𝟙 (V 1))
   have hstep : HEq (coefficientStep (-1)) ((2 : ℤ) • 𝟙 (V 1)) := by
     simp only [coefficientStep, dite_eq_left]
+    rfl
   have hbase : statement ((-1 : ℤ) + 1) :=
     (heq_of_eq (CochainComplex.of_d coefficientTerm coefficientStep (-1))).trans hstep
   exact Eq.mp (congrArg statement (by omega : (-1 : ℤ) + 1 = 0)) hbase
@@ -161,6 +163,7 @@ private lemma transportHom_function_heq
   subst B'
   simp only [eqToIso_refl, Iso.refl_hom, Iso.refl_inv,
     Category.id_comp, Category.comp_id]
+  rfl
 
 private lemma zeroHom_heq
     {A B A' B' : ModuleCat.{0} ℤ} (hA : A = A') (hB : B = B') :
@@ -189,7 +192,7 @@ private lemma comp_XIsoOfEq_heq
     HEq (f ≫ (K.XIsoOfEq h).hom) f := by
   subst j
   simpa only [HomologicalComplex.XIsoOfEq_rfl, Iso.refl_hom,
-    Category.comp_id] using (HEq.rfl f)
+    Category.comp_id] using (show HEq f f from HEq.rfl)
 
 private lemma cochainComponent_heq
     {K L : CochainComplex (ModuleCat.{0} ℤ) ℤ} {n i i' j j' : ℤ}
@@ -315,6 +318,7 @@ private lemma degreeMinusTwo_one_heq :
     (degreeMinusTwoFamily 1)
   have hf : HEq (degreeMinusTwoFamily 1) (𝟙 (V 1)) := by
     simp only [degreeMinusTwoFamily, dite_eq_left]
+    rfl
   exact (heq_of_eq h).trans (h'.trans hf)
 
 private lemma degreeMinusTwo_two_heq :
@@ -346,6 +350,7 @@ private lemma degreeMinusOne_one_heq :
     (degreeMinusOneFamily 1)
   have hf : HEq (degreeMinusOneFamily 1) (𝟙 (V 1)) := by
     simp only [degreeMinusOneFamily, dite_eq_left]
+    rfl
   exact (heq_of_eq h).trans (h'.trans hf)
 
 private lemma degreeMinusOne_zero_heq :
@@ -356,6 +361,7 @@ private lemma degreeMinusOne_zero_heq :
   have hf : HEq (degreeMinusOneFamily 0) secondCoordinate := by
     simp only [degreeMinusOneFamily, dite_eq_right (by decide : (0 : ℤ) ≠ 1),
       dite_eq_left]
+    rfl
   exact (heq_of_eq h).trans (h'.trans hf)
 
 private lemma reindexed_d_zero_one_heq :
@@ -435,7 +441,7 @@ example :
         ModuleCat.hom_neg, ModuleCat.hom_zero, ModuleCat.hom_id, ModuleCat.hom_ofHom,
         twiceFirst, secondCoordinate, LinearMap.comp_apply, LinearMap.add_apply,
         LinearMap.smul_apply, LinearMap.id_apply, LinearMap.zero_apply,
-        Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+        Pi.add_apply, Pi.smul_apply, Pi.mul_apply, Pi.neg_apply, smul_eq_mul]
 
 example :
     ((((homCochainComplex P Q).d (-2) (-1)).hom degreeMinusTwo).v
@@ -499,7 +505,7 @@ example :
         ModuleCat.hom_neg, ModuleCat.hom_zero, ModuleCat.hom_id, ModuleCat.hom_ofHom,
         twiceFirst, secondCoordinate, LinearMap.comp_apply, LinearMap.add_apply,
         LinearMap.smul_apply, LinearMap.id_apply, LinearMap.zero_apply,
-        Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+        Pi.add_apply, Pi.smul_apply, Pi.mul_apply, Pi.neg_apply, smul_eq_mul]
 
 example :
     ((((homCochainComplex P Q).d (-1) 0).hom degreeMinusOne).v
@@ -561,7 +567,7 @@ example :
         ModuleCat.hom_neg, ModuleCat.hom_zero, ModuleCat.hom_id, ModuleCat.hom_ofHom,
         twiceFirst, secondCoordinate, LinearMap.comp_apply, LinearMap.add_apply,
         LinearMap.smul_apply, LinearMap.id_apply, LinearMap.zero_apply,
-        Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+        Pi.add_apply, Pi.smul_apply, Pi.mul_apply, Pi.neg_apply, smul_eq_mul]
 
 example : UCT.ShortExact :=
   homUniversalCoefficientSequence_shortExact P Q 0 projectiveTerms projectiveImages
@@ -637,7 +643,7 @@ example :
       norm_num [ModuleCat.hom_comp, ModuleCat.hom_zsmul, ModuleCat.hom_neg,
         ModuleCat.hom_id, ModuleCat.hom_ofHom, secondCoordinate,
         LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
-        Pi.smul_apply, smul_eq_mul]
+        Pi.smul_apply, Pi.mul_apply, Pi.neg_apply, smul_eq_mul]
 
 private abbrev uctMap : UCT ⟶ UCT :=
   homUniversalCoefficientSequenceMap sourceMap coefficientMap 0
@@ -648,17 +654,6 @@ private lemma homologyEndomorphism_heq
     {i j : ℤ} (h : i = j) :
     HEq (HomologicalComplex.homologyMap f i) (HomologicalComplex.homologyMap f j) := by
   subst j
-  rfl
-
-private lemma extPostComp_heq [HasExt.{1} (ModuleCat.{0} ℤ)]
-    {A B B' : ModuleCat.{0} ℤ} (hB : B = B')
-    (x : Ext.{1} A B 1) (y : Ext.{1} A B' 1) (hxy : HEq x y)
-    (f : B ⟶ B) (g : B' ⟶ B') (hfg : HEq f g) :
-    HEq (x.comp (Ext.mk₀ f) (add_zero 1))
-      (y.comp (Ext.mk₀ g) (add_zero 1)) := by
-  subst B'
-  cases hxy
-  cases hfg
   rfl
 
 example : uctMap.τ₂ = AddCommGrpCat.uliftFunctor.{1, 0}.map
@@ -673,16 +668,25 @@ example (e : UCT.X₁) :
         (zero_add 1)).comp (Ext.mk₀ (HomologicalComplex.homologyMap coefficientMap 0))
           (add_zero 1) := by
   letI : HasExt.{1} (ModuleCat.{0} ℤ) := HasExt.standard (ModuleCat.{0} ℤ)
+  have postComp_heq {A B B' : ModuleCat.{0} ℤ} (hB : B = B')
+      (x : Ext.{1} A B 1) (y : Ext.{1} A B' 1) (hxy : HEq x y)
+      (f : B ⟶ B) (g : B' ⟶ B') (hfg : HEq f g) :
+      HEq (x.comp (Ext.mk₀ f) (add_zero 1))
+        (y.comp (Ext.mk₀ g) (add_zero 1)) := by
+    subst B'
+    cases hxy
+    cases hfg
+    rfl
   have hdegree : (0 : ℤ) - 1 - (-1) = 0 := by omega
   have h := homUniversalCoefficientSequenceMap_τ₁_apply sourceMap coefficientMap 0
     projectiveTerms projectiveImages projectiveTerms projectiveImages e (-1)
   have hobject : Q.homology ((0 : ℤ) - 1 - (-1)) = Q.homology 0 :=
-    congrArg Q.homology hdegree
+    congrArg (fun j : ℤ => HomologicalComplex.homology Q j) hdegree
   have hmap := homologyEndomorphism_heq coefficientMap hdegree
-  have hpost := extPostComp_heq hobject
+  have hpost := postComp_heq hobject
     ((Ext.mk₀ (HomologicalComplex.homologyMap sourceMap (-1))).comp (e (-1)) (zero_add 1))
     ((Ext.mk₀ (HomologicalComplex.homologyMap sourceMap (-1))).comp (e (-1)) (zero_add 1))
-    (HEq.rfl _)
+    HEq.rfl
     (HomologicalComplex.homologyMap coefficientMap ((0 : ℤ) - 1 - (-1)))
     (HomologicalComplex.homologyMap coefficientMap 0) hmap
   exact h.trans (eq_of_heq hpost)
