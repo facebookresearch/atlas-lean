@@ -10620,6 +10620,7 @@
   "MathlibExt/Combinatorics/CanonicalLineEhrhart": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Ehrhart polynomials with roots on the canonical line"},
   "MathlibExt/Combinatorics/CanonicalLineInterlacing": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Ehrhart polynomials with roots on the canonical line"},
   "MathlibExt/Combinatorics/CatalanTransformPair": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Catalan transform"},
+  "MathlibExt/Combinatorics/ClassicalWythoffGrundy": {"to": "GameTheory/combinatorial-games", "title": "Wythoff's game"},
   "MathlibExt/Combinatorics/CleanLatticeParallelogram": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Clean lattice parallelograms"},
   "MathlibExt/Combinatorics/CleanLatticeParallelogram/ConvergentVectors": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Clean lattice parallelograms"},
   "MathlibExt/Combinatorics/CleanLatticeParallelogram/Determinant": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Clean lattice parallelograms"},
