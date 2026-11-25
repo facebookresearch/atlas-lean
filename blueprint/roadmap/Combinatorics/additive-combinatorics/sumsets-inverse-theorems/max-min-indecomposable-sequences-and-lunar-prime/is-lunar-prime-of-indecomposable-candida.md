@@ -1,11 +1,14 @@
 # Indecomposable prime candidates are lunar primes
 
-Let $n$ and $b \ge 2$ be natural
-numbers, let $a = (a_0, \dots, a_{n-1})$ be a digit string with digits in $\{0, \dots, b - 1\}$,
-and let $f$ be its coefficient sequence. If $f$ is a prime candidate in base $b$ and $f$ is
-max-min indecomposable, then $f$ is a lunar prime of base $b$.
+Let $b \ge 2$, and let $f$ be the coefficient sequence of a base-$b$ digit string. Suppose $f$ is
+a prime candidate, is not a monomial, and every max-min factorization of $f$ has a monomial
+factor. Then $f$ differs from the lunar unit and every factorization by base-$b$ coefficient
+sequences has a unit factor.
 
-This is Lemma 30 (Applegate, LeBrun and Sloane).
+The nonmonomial hypothesis and nonunit conclusion are the exclusions from Definition 5.
+The predicates `IsMaxMinIndecomposable` and `IsLunarPrime` record just the factorization
+conditions, so the exclusions are stated explicitly. This is Lemma 30 (Applegate, LeBrun and
+Sloane).
 
 ## Sources
 

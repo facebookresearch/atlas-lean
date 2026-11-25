@@ -41,10 +41,15 @@ private theorem aux_convex_upper {d : ℕ} (v : EuclideanSpace ℝ (Fin d)) (t :
     linarith
 
 /--
-Every finite point set in R^d has a centerpoint with at least 1/(d+1) points in any halfspace.
-Source: R. Rado, J. London Math. Soc. s1-21 (1946), 291-300, DOI 10.1112/jlms/s1-21.4.291.
+**Rado's centerpoint theorem.** Let $n \ge 1$ and let $p_1, \dots, p_n$ be points of
+$\mathbb{R}^d$, not necessarily distinct. Then some point $x$ in the convex hull of
+$\{p_1, \dots, p_n\}$ has at least $n/(d+1)$ of the points in every closed halfspace containing
+it: for all $v \in \mathbb{R}^d$ and $t \in \mathbb{R}$ with $\langle v, x \rangle \le t$, the
+number of indices $i$ with $\langle v, p_i \rangle \le t$ is at least $n/(d+1)$.
 
 Proves `Wanted` entry `rado_centerpoint`.
+
+Source: R. Rado, J. London Math. Soc. s1-21 (1946), 291-300, DOI 10.1112/jlms/s1-21.4.291.
 -/
 theorem rado_centerpoint
     {d n : ℕ} (hn : 0 < n)

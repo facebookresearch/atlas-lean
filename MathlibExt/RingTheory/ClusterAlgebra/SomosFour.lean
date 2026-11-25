@@ -22,8 +22,7 @@ The Somos-4 sequence `1, 1, 1, 1, 2, 3, 7, 23, 59, 314, …` is defined by
 `z₀ = z₁ = z₂ = z₃ = 1` and `z_{m+2} z_{m-2} = z_{m+1} z_{m-1} + z_m²` (Fomin, Williams and
 Zelevinsky, *Introduction to cluster algebras, Chapters 1–3*, arXiv:1608.05735v5,
 Example 3.4.3). It is defined here over `ℚ`; its terms are positive, so the defining division
-is never by zero. Integrality of all terms is recorded as a wanted theorem
-(`WantedExt.RingTheory.ClusterAlgebra.LaurentPhenomenonWanted`).
+is never by zero.
 -/
 
 @[expose] public section

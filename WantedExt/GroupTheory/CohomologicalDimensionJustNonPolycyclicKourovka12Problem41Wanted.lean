@@ -40,35 +40,57 @@ over `ℚ` is the largest `n` with `Hⁿ(G, M) ≠ 0` for some `ℚG`-module `M`
 
 open scoped commutatorElement
 
-/-- The relators of `K = F / F''(F')²`, `F = ⟨x, y⟩` (the values of `[[a, b], [c, d]]` and
-`[a, b]²`, which generate `F''(F')²` as a normal subgroup), written over `⟨x, y, t⟩` with
-`x = of 0`, `y = of 1`. -/
+/-- **Base relators of the Kropholler group.** Let $F$ be the free group on $x, y$, viewed inside
+the free group on $x, y, t$. The base relators are the elements $[[a, b], [c, d]]$ and $[a, b]^2$
+for all $a, b, c, d \in F$.
+
+These elements generate $F''(F')^2$ as a normal subgroup of $F$, so they are relators for
+$K = F/F''(F')^2$. -/
 def baseRelators : Set (FreeGroup (Fin 3)) :=
   FreeGroup.map Fin.castSucc ''
     ({w : FreeGroup (Fin 2) | ∃ a b c d : FreeGroup (Fin 2), w = ⁅⁅a, b⁆, ⁅c, d⁆⁆} ∪
       {w : FreeGroup (Fin 2) | ∃ a b : FreeGroup (Fin 2), w = ⁅a, b⁆ ^ 2})
 
-/-- The relations `t x t⁻¹ = φ(x) = y` and `t y t⁻¹ = φ(y) = x y`, with `t = of 2`. -/
+/-- **Twist relators of the Kropholler group.** In the free group on $x, y, t$, the twist relators
+are the two elements $t x t^{-1} y^{-1}$ and $t y t^{-1} (x y)^{-1}$; they encode the relations
+$t x t^{-1} = y$ and $t y t^{-1} = x y$, so conjugation by $t$ acts as the automorphism
+$\varphi \colon x \mapsto y,\ y \mapsto x y$. -/
 def twistRelators : Set (FreeGroup (Fin 3)) :=
   {FreeGroup.of 2 * FreeGroup.of 0 * (FreeGroup.of 2)⁻¹ * (FreeGroup.of 1)⁻¹,
     FreeGroup.of 2 * FreeGroup.of 1 * (FreeGroup.of 2)⁻¹ * (FreeGroup.of 0 * FreeGroup.of 1)⁻¹}
 
-/-- `G = (F / F''(F')²) ⋊ ⟨φ⟩` with `φ : x ↦ y, y ↦ x y`, presented as the mapping torus
-`⟨x, y, t | relators of K, t x t⁻¹ = φ(x), t y t⁻¹ = φ(y)⟩` (`φ` has infinite order on `K`). -/
+/-- **The Kropholler group.** The Kropholler group $G$ is the group with generators $x, y, t$ whose
+relators are the base relators, namely $[[a, b], [c, d]]$ and $[a, b]^2$ for all $a, b, c, d$ in
+the free group $F$ on $x, y$, together with the twist relators $t x t^{-1} y^{-1}$ and
+$t y t^{-1} (x y)^{-1}$.
+
+With $K = F/F''(F')^2$ and $\varphi$ the automorphism $x \mapsto y$, $y \mapsto x y$ of $K$, this is
+the mapping torus of $\varphi$, that is, the semidirect product $K \rtimes \langle \varphi \rangle$
+($\varphi$ has infinite order on $K$). -/
 abbrev KrophollerGroup : Type :=
   PresentedGroup (baseRelators ∪ twistRelators)
 
-/-- Kourovka 12.41 (P. H. Kropholler), answer: the cohomological dimension of `G` over `ℚ` is
-`4`: `H⁴(G, M) ≠ 0` for some `ℚG`-module `M`, and `Hⁿ(G, M) = 0` for all `n > 4` and all `M`. -/
+/-- **Rational cohomological dimension 4 of the Kropholler group (Kourovka 12.41).** Let $G$ be
+the Kropholler group. This is the proposition that $H^4(G, M) \neq 0$ for some $\mathbb{Q}G$-module
+$M$, and $H^n(G, M) = 0$ for every $\mathbb{Q}G$-module $M$ and every integer $n > 4$; that is, the
+cohomological dimension of $G$ over $\mathbb{Q}$ is $4$.
+
+This is the answer to Kourovka Notebook Problem 12.41 (P. H. Kropholler). -/
 def rationalCohomologicalDimensionEqFour : Prop :=
   (∃ M : Rep ℚ KrophollerGroup, Nontrivial (groupCohomology M 4)) ∧
     ∀ (M : Rep ℚ KrophollerGroup) (n : ℕ), 4 < n → Subsingleton (groupCohomology M n)
 
 /--
-Resolved true: the answer is 4. The Kourovka Notebook (21st issue) marks 12.41 solved: `G` is not
-constructible, so by Theorem III.8 of Bridson and Kropholler (J. Reine Angew. Math. 699 (2015)) its
-cohomological dimension over `ℚ` is its homological dimension plus 1, and the homological dimension
-is the Hirsch length 3 (U. Stammbach, J. London Math. Soc. (2) 2 (1970)). Source: E. I. Khukhro and
+**The Kropholler group has rational cohomological dimension 4.** Let $G$ be the Kropholler group.
+Then $H^4(G, M) \neq 0$ for some $\mathbb{Q}G$-module $M$, and $H^n(G, M) = 0$ for every
+$\mathbb{Q}G$-module $M$ and every integer $n > 4$. This resolves Kourovka Notebook Problem 12.41
+by P. H. Kropholler, which asks whether this cohomological dimension is 3 or 4.
+
+The Kourovka Notebook (21st issue) marks 12.41 solved: $G$ is not constructible, so by Theorem
+III.8 of Bridson and Kropholler its cohomological dimension over $\mathbb{Q}$ is its homological
+dimension plus 1, and the homological dimension is the Hirsch length 3 (U. Stammbach).
+
+Source: E. I. Khukhro and
 V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Problem 12.41 (P. H. Kropholler); resolution: M. R. Bridson and P. H.
 Kropholler, J. Reine Angew. Math. 699 (2015), 217-243; U. Stammbach, J. London Math. Soc. (2) 2

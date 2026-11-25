@@ -24,7 +24,7 @@ Symposium on Theory of Computing (1971), 151-158, doi:10.1145/800157.805047.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -45,7 +45,7 @@ Crescenzi and Kann (Kann's Max # Sat), whose measure is the number of formulas s
 Kann's thesis, a 3CNF formula is a conjunction of clauses of at most three literals. With one
 formula and `K = 1` the question is 3-SATISFIABILITY.
 
-The variables are `0, …, |U| - 1`, each formula is a `Cslib.Logic.PL.CNF` (a literal is a
+The variables are `0, …, |U| - 1`, each formula is a `Cslib.Logic.LegacyPL.CNF` (a literal is a
 variable with its polarity) with at most three literals per clause, and an assignment is a list
 of `|U|` truth values. The formulas are a list (a formula listed twice counts twice), and the
 satisfied formulas are a sublist of it.
@@ -62,7 +62,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: `|U|`, the formulas `C`, and the bound `K`. -/
-abbrev MaximumNumberOfSatisfiableFormulasInstance := ℕ × List Cslib.Logic.PL.CNF × ℕ
+abbrev MaximumNumberOfSatisfiableFormulasInstance := ℕ × List Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance: every clause of every formula has at most three literals,
 all over the variables `0, …, |U| - 1`, and `K` is positive. -/
@@ -74,8 +74,8 @@ at least `K` formulas, all satisfied. -/
 def MaximumNumberOfSatisfiableFormulasFeasible
     (i : MaximumNumberOfSatisfiableFormulasInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    ∃ S : List Cslib.Logic.PL.CNF, S.Sublist i.2.1 ∧ i.2.2 ≤ S.length ∧
-      ∀ F ∈ S, Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) F
+    ∃ S : List Cslib.Logic.LegacyPL.CNF, S.Sublist i.2.1 ∧ i.2.2 ≤ S.length ∧
+      ∀ F ∈ S, Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) F
 
 open Classical in
 /-- MAXIMUM NUMBER OF SATISFIABLE FORMULAS as a decision problem over bitstrings. -/

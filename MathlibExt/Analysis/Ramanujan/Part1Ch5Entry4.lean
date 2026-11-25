@@ -24,7 +24,7 @@ namespace MathlibExt.Analysis.Ramanujan.Part1Ch5
 
 namespace Entry4
 
-open scoped Nat Real BigOperators Interval Polynomial
+open scoped Nat Real BigOperators Interval
 open Asymptotics Filter Finset Complex Topology
 
 noncomputable section
