@@ -23,6 +23,16 @@ example :
   have hs : IsPerfectMCover 2 s := by decide +revert
   exact isPerfectMCover_fst_snd (m := 1) (n := 2) (by decide) (by decide) hs
 
+/-- A nonzero adjoiner can repeat the value of an existing index. -/
+example : IsPerfectMCover 2 (Fin.cons (1 : ZMod 4) (![1, 2] : Fin 2 → ZMod 4)) := by
+  have hs : IsPerfectMCover 1 (![1, 2] : Fin 2 → ZMod 4) := by decide
+  exact isPerfectMCover_cons hs 1
+
+/-- A zero adjoiner doubles the multiplicity of a cover with repeated entries. -/
+example : IsPerfectMCover 4 (Fin.cons (0 : ZMod 2) (![1, 1] : Fin 2 → ZMod 2)) := by
+  have hs : IsPerfectMCover 2 (![1, 1] : Fin 2 → ZMod 2) := by decide
+  exact isPerfectMCover_cons hs 0
+
 /-- The empty family covers zero exactly once, through the empty subset. -/
 example : coverCount (Fin.elim0 : Fin 0 → ZMod 2) 0 = 1 ∧
     coverCount (Fin.elim0 : Fin 0 → ZMod 2) 1 = 0 := by decide
@@ -38,5 +48,31 @@ example : (2 : ℤ) ∉ oddCombinations {1} := by
   have h := hc 1 (by simp)
   simp at heq
   rcases h with hz | ⟨k, hk⟩ <;> omega
+
+/-- The two coordinate generators of `ZMod 2 × ZMod 2` satisfy the odd-combination condition. -/
+example : IsPerfectMCover 1 (![(1, 0), (0, 1)] : Fin 2 → ZMod 2 × ZMod 2) := by
+  let s : Fin 2 → ZMod 2 × ZMod 2 := ![(1, 0), (0, 1)]
+  have hs (i : Fin 2) : s i ∉ oddCombinations ((Finset.Iio i).image s) := by
+    have hIio0 : Finset.Iio (0 : Fin 2) = ∅ := by decide
+    have hIio1 : Finset.Iio (1 : Fin 2) = {0} := by decide
+    rcases (show i = 0 ∨ i = 1 by omega) with rfl | rfl
+    · rw [hIio0, Finset.image_empty, oddCombinations_empty]
+      decide
+    · rw [hIio1, Finset.image_singleton]
+      rintro ⟨c, -, h⟩
+      have hcoord := congrArg Prod.snd h
+      simp [s] at hcoord
+  exact (coverCount_le_one_of_not_mem_oddCombinations hs).2 (by
+    rw [Nat.card_eq_fintype_card]
+    decide)
+
+-- An odd multiple may be negative, and an unused generator keeps coefficient zero.
+example : (-3 : ℤ) ∈ oddCombinations {1, 2} := by
+  have h : (1 : ℤ) ∈ oddCombinations {1, 2} := mem_oddCombinations_of_mem (by simp)
+  simpa using zsmul_mem_oddCombinations {1, 2} h (-2)
+
+-- Closure includes the zero combination on the empty set.
+example (j : ℤ) : (2 * j + 1) • (0 : ℤ) ∈ oddCombinations ∅ :=
+  zsmul_mem_oddCombinations ∅ (zero_mem_oddCombinations ∅) j
 
 end MetaMathlibExt

@@ -51,23 +51,28 @@ namespace MathlibExt.Probability.Finance.TangencyPortfolio
 open Matrix
 open MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence (quadForm)
 
-/-- The Sharpe ratio `(μᵀ w - r) / √(wᵀ S w)` of the portfolio `w`, for expected asset returns
-`μ`, covariance matrix `S` and risk-free return `r`. -/
+/-- The Sharpe ratio `(μᵀ w - r) / √(wᵀ S w)` of the portfolio `w`, for expected asset returns `μ`,
+covariance matrix `S` and risk-free return `r`. With the conventions `√x = 0` for `x < 0` and
+`x / 0 = 0`, the ratio is `0` when `wᵀ S w ≤ 0`. -/
 noncomputable def sharpeRatio {ι : Type*} [Fintype ι] (S : Matrix ι ι ℝ) (μ : ι → ℝ) (r : ℝ)
     (w : ι → ℝ) : ℝ :=
   (μ ⬝ᵥ w - r) / Real.sqrt (quadForm S w)
 
-/-- The unnormalized tangency direction `z = S⁻¹ (μ - r 1)`. -/
+/-- The unnormalized tangency direction `z = S⁻¹ (μ - r 1)`. It is defined for every square matrix
+`S`: for singular `S` the convention `S⁻¹ = 0` makes `z = 0`; the intended domain is invertible
+`S`. -/
 noncomputable def tangencyDirection {ι : Type*} [Fintype ι] [DecidableEq ι]
     (S : Matrix ι ι ℝ) (μ : ι → ℝ) (r : ℝ) : ι → ℝ :=
   S⁻¹ *ᵥ (μ - r • (1 : ι → ℝ))
 
-/-- The fully invested tangency portfolio `z / (1ᵀ z)`; it is normalizable when `1ᵀ z ≠ 0`. -/
+/-- The fully invested tangency portfolio `z / (1ᵀ z)`; it is normalizable when `1ᵀ z ≠ 0`. It is
+fully invested when `1ᵀ z ≠ 0`; when `1ᵀ z = 0` the convention `1 / 0 = 0` makes it the zero vector.
+-/
 noncomputable def tangencyPortfolio {ι : Type*} [Fintype ι] [DecidableEq ι]
     (S : Matrix ι ι ℝ) (μ : ι → ℝ) (r : ℝ) : ι → ℝ :=
   (∑ i, tangencyDirection S μ r i)⁻¹ • tangencyDirection S μ r
 
-/-- Orientation identity: `1ᵀ z = 1ᵀ S⁻¹ μ - r · 1ᵀ S⁻¹ 1`, i.e. `C (μ_GMV - r)` with
+/-- Orientation identity: `1ᵀ z = 1ᵀ S⁻¹ μ - r · 1ᵀ S⁻¹ 1`, i.e. `C (μ_GMV - r)` when `C ≠ 0`, with
 `C = 1ᵀ S⁻¹ 1` and `μ_GMV = (1ᵀ S⁻¹ μ) / C` the expected return of the global
 minimum-variance portfolio. -/
 theorem sum_tangencyDirection {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -85,7 +90,8 @@ theorem sum_tangencyDirection {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [dotProduct_smul]
   simp [smul_eq_mul]
 
-/-- Orientation: the tangency direction has positive total weight iff the risk-free return is
+/-- Orientation: for positive definite `S` and at least one asset, the tangency direction has
+positive total weight iff the risk-free return is
 below `μ_GMV = (1ᵀ S⁻¹ μ) / (1ᵀ S⁻¹ 1)`. -/
 theorem sum_tangencyDirection_pos_iff {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) (r : ℝ) :
@@ -156,7 +162,8 @@ private theorem excess_ne_zero_of_ne {ι : Type*} [Fintype ι] [DecidableEq ι] 
     rw [hA, mul_div_cancel_right₀ _ hCne]
   exact hr hdiv.symm
 
-/-- The Sharpe ratio of the tangency portfolio is `√((μ - r 1)ᵀ S⁻¹ (μ - r 1))` when the
+/-- For positive definite `S` and at least one asset, the Sharpe ratio of the tangency portfolio
+is `√((μ - r 1)ᵀ S⁻¹ (μ - r 1))` when the
 risk-free return is below `μ_GMV`. -/
 theorem sharpeRatio_tangencyPortfolio {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) {r : ℝ}
@@ -269,7 +276,8 @@ private theorem ne_zero_of_sum_one {ι : Type*} [Fintype ι]
   rw [hcon] at hw
   simp at hw
 
-/-- **Tangency portfolio maximizes the Sharpe ratio.** If the risk-free return is below `μ_GMV`,
+/-- **Tangency portfolio maximizes the Sharpe ratio.** For positive definite `S` and at least
+one asset, if the risk-free return is below `μ_GMV`,
 every fully invested portfolio has Sharpe ratio at most that of the tangency portfolio. -/
 theorem sharpeRatio_le_sharpeRatio_tangencyPortfolio {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Nonempty ι] {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) {r : ℝ}
@@ -386,7 +394,8 @@ private theorem sharpeRatio_tangencyPortfolio_neg {ι : Type*} [Fintype ι] [Dec
   field_simp
   linarith [hqeq]
 
-/-- Negative-excess-return branch: if the risk-free return is above `μ_GMV`, the normalized
+/-- Negative-excess-return branch: for positive definite `S` and at least one asset, if the
+risk-free return is above `μ_GMV`, the normalized
 tangency portfolio minimizes the Sharpe ratio over fully invested portfolios. -/
 theorem sharpeRatio_tangencyPortfolio_le_of_lt {ι : Type*} [Fintype ι] [DecidableEq ι]
     [Nonempty ι] {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) {r : ℝ}

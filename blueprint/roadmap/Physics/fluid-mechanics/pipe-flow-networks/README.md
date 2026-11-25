@@ -7,3 +7,6 @@ flows and heads are unique once one head is fixed.
 - [Heads of a pipe network are determined by the flows and one anchor](pipe-flow-equations-head-eq-of-flow-eq.md)
 - [Uniqueness of pipe-network flows and heads with one anchored head](pipe-flow-equations-unique-of-anchor.md)
 - [Uniqueness of passive pipe flows with one anchored head](passive-pipe-flow-unique-of-anchor.md)
+- [Pump power and the Poiseuille pipe law](pump-power-and-the-poiseuille-pipe-law.md)
+- [Square law for mine ventilation networks](square-law-for-mine-ventilation-networks.md)
+- [Pumps, reservoirs, valves and general passive losses](pumps-reservoirs-valves-and-general-passive-losses.md)
