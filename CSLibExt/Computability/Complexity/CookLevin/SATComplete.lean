@@ -8,8 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Computability.CookLevin
-public import Batteries.Util.ProofWanted
+public import CSLibExt.Computability.Complexity.SatVerifierTM
+
+/-!
+# Cook–Levin theorem: SAT is NP-complete
+
+This module states the Cook–Levin theorem in its canonical form: the SAT
+decision problem belongs to NP, and every decision problem in NP is
+polynomial-time many-one reducible to SAT.
+-/
 
 @[expose] public section
 
@@ -28,9 +35,10 @@ STOC 1971, 151–158, <https://doi.org/10.1145/800157.805047>; Leonid A. Levin,
 "Universal Sequential Search Problems," *Problems of Information
 Transmission* 9.3 (1973), 265–266; and
 <https://en.wikipedia.org/wiki/Cook%E2%80%93Levin_theorem>. -/
-theorem_wanted cook_levin_SAT_np_complete :
+theorem cook_levin_SAT_np_complete :
     satDec ∈ ComplexityTheory.NP ∧
       ∀ L : ComplexityTheory.DecisionProblem,
-        L ∈ ComplexityTheory.NP → PolyManyOneRed L satDec
+        L ∈ ComplexityTheory.NP → PolyManyOneRed L satDec :=
+  Cslib.Complexity.SatVerifier.Machine.cook_levin_SAT_np_complete
 
 end MetaMathlibExt
