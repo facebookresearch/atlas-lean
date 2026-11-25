@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.LurothConvergent
+public import MathlibExt.NumberTheory.LurothBorelBernstein
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
@@ -100,22 +100,6 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Proposit
 public theorem_wanted volume_lurothCylinder {n : ℕ} (c : Fin n → ℕ) :
     volume {x ∈ Set.Ioc (0 : ℝ) 1 | ∀ j : Fin n, lurothDigitSeq x j = c j} =
       ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1)))
-
-/-- **Borel–Bernstein theorem for Lüroth digits.** Let $(\Psi(n))_{n \ge 0}$ be a sequence of
-positive reals, write $d_k(x)$ for the $k$-th Lüroth digit of $x$, and let $E$ be the set of
-$x \in (0, 1]$ such that $d_{n+1}(x) \ge \Psi(n)$ for infinitely many $n$. If
-$\sum_{n \ge 0} 1 / \Psi(n) < \infty$ then $E$ has Lebesgue measure $0$, and if
-$\sum_{n \ge 0} 1 / \Psi(n) = \infty$ then $E$ has Lebesgue measure $1$.
-
-The paper quotes this result from Jager and de Vroedt (its reference [3]).
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 1
-(`integers-2024-A67-thm-1`). -/
-public theorem_wanted volume_lurothDigit_ge_zero_one (Ψ : ℕ → ℝ) (hΨ : ∀ n, 0 < Ψ n) :
-    let E := {x ∈ Set.Ioc (0 : ℝ) 1 | ∃ᶠ n in atTop, Ψ n ≤ lurothDigitSeq x n}
-    (Summable (fun n => (Ψ n)⁻¹) → volume E = 0) ∧
-      (¬ Summable (fun n => (Ψ n)⁻¹) → volume E = 1)
 
 /-- **Zero-one law for weighted products of consecutive Lüroth digits.** Let $m \ge 1$, let
 $t_0, \dots, t_{m-1}$ be positive reals, let $T = \max_i t_i$ and let $\ell$ be the number of

@@ -174,9 +174,10 @@ structure RationalUnitFamily (X : Stack S) where
   naturality : ∀ (a b : IntegralAtlas X) (f : ChartArrow a b),
     (chartFieldPull f).hom (value b : ChartField b) = (value a : ChartField a)
 
-/-- A scheme principal cycle is fixed on every point by native local ord.
-Its standard locally-finite construction is completed upstream scheme
-mathematics; this type is its source-integration dictionary. -/
+/-- The principal cycle of a rational function $f$ on an integral Noetherian scheme $U$, as a
+subtype: the algebraic cycles $c$ on $U$ with integer coefficients whose coefficient at every point
+$x$ is `U.ord f x`, the order of vanishing of $f$ at $x$ when $x$ has codimension one and $0$ at
+other points (and at every point when $f = 0$). -/
 abbrev PrincipalSchemeCycle (U : Scheme.{0}) [IsIntegral U] [IsNoetherian U]
     (f : U.functionField) :=
   {c : AlgebraicCycle U ℤ // ∀ x : U, c x = U.ord f x}
