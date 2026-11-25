@@ -1,0 +1,3 @@
+# The lifted unit-preserving tensor map kills unit...
+
+The lifted unit-preserving tensor map kills unit degeneracies after normalization.

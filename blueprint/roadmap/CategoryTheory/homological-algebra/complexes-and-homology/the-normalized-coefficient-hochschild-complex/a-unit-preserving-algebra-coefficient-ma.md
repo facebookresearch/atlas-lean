@@ -1,0 +1,3 @@
+# A unit-preserving algebra/coefficient map descends in the...
+
+A unit-preserving algebra/coefficient map descends in the common lifted category.

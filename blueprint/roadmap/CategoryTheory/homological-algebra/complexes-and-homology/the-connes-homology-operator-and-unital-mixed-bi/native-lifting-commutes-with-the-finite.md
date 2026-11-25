@@ -1,0 +1,3 @@
+# Native lifting commutes with the finite diagonal total of...
+
+Native lifting commutes with the finite diagonal total of the raw mixed model.

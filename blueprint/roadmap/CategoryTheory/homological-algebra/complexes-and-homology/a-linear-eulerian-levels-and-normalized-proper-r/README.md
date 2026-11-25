@@ -1,0 +1,16 @@
+# A-linear Eulerian levels and normalized proper relation kernels
+
+- [Algebra Eulerian Operator](algebra-eulerian-operator.md)
+- [Algebra Normalized Eulerian Operator](algebra-normalized-eulerian-operator.md)
+- [Algebra Eulerian Operator restrict Scalars](algebra-eulerian-operator-restrict-scala.md)
+- [Algebra Normalized Eulerian Operator restrict Scalars](algebra-normalized-eulerian-operator-res.md)
+- [Algebra Normalization Level Map eulerian](algebra-normalization-level-map-eulerian.md)
+- [Algebra First Eulerian Operator](algebra-first-eulerian-operator.md)
+- [Algebra Normalized First Eulerian Operator](algebra-normalized-first-eulerian-operat.md)
+- [Algebra First Eulerian Operator restrict Scalars](algebra-first-eulerian-operator-restrict.md)
+- [Algebra First Eulerian Operator idempotent](algebra-first-eulerian-operator-idempote.md)
+- [Algebra Normalization Level Map first Eulerian](algebra-normalization-level-map-first-eu.md)
+- [Algebra Positive Relations eq first Eulerian Kernel](algebra-positive-relations-eq-first-eule.md)
+- [Algebra Normalized Positive Relations eq first Eulerian Kernel](algebra-normalized-positive-relations-eq.md)
+- [Algebra First Eulerian Quotient Level Equiv](algebra-first-eulerian-quotient-level-eq.md)
+- [Algebra Normalized First Eulerian Quotient Level Equiv](algebra-normalized-first-eulerian-quotie.md)

@@ -39,10 +39,9 @@ variable (k : Type u) [CommRing k] [Algebra ℚ k] (σ : Type v)
 local notation "A" => MvPolynomial σ k
 local notation "V" => σ →₀ k
 
-local instance : Module Aᵐᵒᵖ M := Symmetric.opModule A M
-local instance : SMulCommClass A Aᵐᵒᵖ M := Symmetric.actionsComm A M
-local instance : SMulCommClass k Aᵐᵒᵖ M := Symmetric.kOpComm k A M
-local instance : IsScalarTower k Aᵐᵒᵖ M := Symmetric.kOpTower k A M
+-- Use the canonical symmetric opposite-action dictionaries locally.
+attribute [local instance] Symmetric.opModule Symmetric.actionsComm
+  Symmetric.kOpComm Symmetric.kOpTower
 
 /-- Every original signed polynomial degree-n tensor has exactly its top Eulerian weight. -/
 theorem polynomialSignedRepresentative_eulerian (n i : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :

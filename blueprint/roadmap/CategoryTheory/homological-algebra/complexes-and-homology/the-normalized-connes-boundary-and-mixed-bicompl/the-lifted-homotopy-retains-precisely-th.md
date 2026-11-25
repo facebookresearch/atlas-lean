@@ -1,0 +1,3 @@
+# The lifted homotopy retains precisely the mapped normalized...
+
+The lifted homotopy retains precisely the mapped normalized B component.

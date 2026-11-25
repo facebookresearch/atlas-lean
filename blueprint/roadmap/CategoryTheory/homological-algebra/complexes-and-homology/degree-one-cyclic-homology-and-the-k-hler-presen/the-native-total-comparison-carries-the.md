@@ -1,0 +1,3 @@
+# The native total comparison carries the same first-column...
+
+The native total comparison carries the same first-column chain map.

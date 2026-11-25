@@ -1,0 +1,15 @@
+# Total cotangent comparison for simplicial polynomial presentations
+
+- [Simplicial Bicomplex](simplicial-bicomplex.md)
+- [Simplicial Cotangent Bicomplex](simplicial-cotangent-bicomplex.md)
+- [Simplicial Bicomplex Map](simplicial-bicomplex-map.md)
+- [Simplicial Bicomplex Map f](simplicial-bicomplex-map-f.md)
+- [Simplicial Total Complex](simplicial-total-complex.md)
+- [Simplicial Cotangent Total Complex](simplicial-cotangent-total-complex.md)
+- [Simplicial Total Map](simplicial-total-map.md)
+- [Simplicial Total Map quasi Iso of polynomial Presentations](simplicial-total-map-quasi-iso-of-polyno.md)
+- [Simplicial Total Homology Iso of polynomial Presentations](simplicial-total-homology-iso-of-polynom.md)
+- [Simplicial Cotangent Complex](simplicial-cotangent-complex.md)
+- [Simplicial Cotangent Total Iso](simplicial-cotangent-total-iso.md)
+- [Simplicial Cotangent Comparison](simplicial-cotangent-comparison.md)
+- [Simplicial Cotangent Comparison quasi Iso of polynomial Presentations](simplicial-cotangent-comparison-quasi-is.md)

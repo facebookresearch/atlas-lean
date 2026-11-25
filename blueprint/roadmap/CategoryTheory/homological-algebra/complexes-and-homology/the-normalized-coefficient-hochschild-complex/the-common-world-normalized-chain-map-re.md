@@ -1,0 +1,3 @@
+# The common-world normalized chain map retains coefficient...
+
+The common-world normalized chain map retains coefficient and algebra values.

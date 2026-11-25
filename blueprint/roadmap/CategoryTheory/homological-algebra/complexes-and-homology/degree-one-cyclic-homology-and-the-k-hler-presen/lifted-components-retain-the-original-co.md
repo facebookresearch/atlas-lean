@@ -1,0 +1,3 @@
+# Lifted components retain the original column, with...
+
+Lifted components retain the original column, with independent lift and carrier worlds.

@@ -2,6 +2,12 @@
 
 - [Involute ι](involute.md)
 - [Ι mul eq involute mul](mul-eq-involute-mul.md)
+- [Projection](projection.md)
+- [Projection comp subtype](projection-comp-subtype.md)
+- [Projection comp subtype ne](projection-comp-subtype-ne.md)
+- [Involute ιMulti](involute-multi.md)
+- [Projection involute](projection-involute.md)
+- [Projection naturality](projection-naturality.md)
 - [Involute of mem exterior Power](involute-of-mem-exterior-power.md)
 - [Involute of mem exterior Power two](involute-of-mem-exterior-power-two.md)
 - [Ι mul comm of mem exterior Power two](mul-comm-of-mem-exterior-power-two.md)

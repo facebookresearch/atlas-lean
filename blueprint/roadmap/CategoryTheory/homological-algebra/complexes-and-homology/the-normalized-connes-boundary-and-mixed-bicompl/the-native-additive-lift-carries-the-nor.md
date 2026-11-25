@@ -1,0 +1,3 @@
+# The native additive lift carries the normalized zero...
+
+The native additive lift carries the normalized zero homotopy.

@@ -1,0 +1,16 @@
+# Antisymmetric Koszul-to-bar degree maps
+
+- [Left Outer Linear](left-outer-linear.md)
+- [Right Outer Linear](right-outer-linear.md)
+- [Outer Difference Linear](outer-difference-linear.md)
+- [Outer Difference Linear apply](outer-difference-linear-apply.md)
+- [Generator Difference Functional](generator-difference-functional.md)
+- [Generator Difference Functional tmul](generator-difference-functional-tmul.md)
+- [Exterior Antisymmetrization Along](exterior-antisymmetrization-along.md)
+- [Exterior Antisymmetrization Along ιMulti](exterior-antisymmetrization-along-multi.md)
+- [Enveloping Bar Degree Equiv Base Change symm tprod](enveloping-bar-degree-equiv-base-change.md)
+- [Koszul Antisymmetrization Level](koszul-antisymmetrization-level.md)
+- [Koszul Antisymmetrization Level smul ιMulti](koszul-antisymmetrization-level-smul-mul.md)
+- [Koszul Antisymmetrization Level ιMulti](koszul-antisymmetrization-level-multi.md)
+- [Koszul Antisymmetrization Level boundary word](koszul-antisymmetrization-level-boundary.md)
+- [Koszul Antisymmetrization Level boundary](koszul-antisymmetrization-level-boundary-2.md)

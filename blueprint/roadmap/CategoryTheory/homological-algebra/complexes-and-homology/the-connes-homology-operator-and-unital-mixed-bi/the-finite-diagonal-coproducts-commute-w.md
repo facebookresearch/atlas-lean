@@ -1,0 +1,3 @@
+# The finite diagonal coproducts commute with native universe...
+
+The finite diagonal coproducts commute with native universe lifting, without a unit.

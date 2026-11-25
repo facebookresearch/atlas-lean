@@ -1,0 +1,3 @@
+# Its forward map is inverse homology of the quotient...
+
+Its forward map is inverse homology of the quotient followed by homology of positive I.

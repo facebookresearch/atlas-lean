@@ -1,0 +1,3 @@
+# The total comparison sends the mapped quotient to its...
+
+The total comparison sends the mapped quotient to its lifted total map.

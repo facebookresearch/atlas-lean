@@ -1,0 +1,3 @@
+# The canonical normalized lift retains the original lifted...
+
+The canonical normalized lift retains the original lifted quotient complex.

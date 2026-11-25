@@ -1,0 +1,17 @@
+# Algebra scalars and coefficient normalization data
+
+- [Scalar Tensor Map](scalar-tensor-map.md)
+- [Scalar Tensor Map apply](scalar-tensor-map-apply.md)
+- [Scalar Bar Map Component](scalar-bar-map-component.md)
+- [Scalar Bar Map Component face](scalar-bar-map-component-face.md)
+- [Scalar Bar Map Component degeneracy](scalar-bar-map-component-degeneracy.md)
+- [Scalar Bar Map](scalar-bar-map.md)
+- [Scalar Bar Map app](scalar-bar-map-app.md)
+- [Raw Native Normalization Projector](raw-native-normalization-projector.md)
+- [Raw Native Normalization Homotopy Component](raw-native-normalization-homotopy-compon.md)
+- [Raw Native Normalization Projector smul](raw-native-normalization-projector-smul.md)
+- [Raw Native Normalization Homotopy Component smul](raw-native-normalization-homotopy-compon-2.md)
+- [Raw Native Normalization Projector Complex](raw-native-normalization-projector-compl.md)
+- [Raw Native Normalization Projector Complex f](raw-native-normalization-projector-compl-2.md)
+- [Raw Native Normalization Homotopy](raw-native-normalization-homotopy.md)
+- [Raw Native Normalization Homotopy hom](raw-native-normalization-homotopy-hom.md)

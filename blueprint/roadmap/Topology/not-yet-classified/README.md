@@ -127,8 +127,6 @@ Topics added since this subject's fields were last revised.
 - [Enriched Ordinary](to-unit-e-hom-equiv-tensor-hom-comp-e-co.md)
 - [Symmetric Spectrum](symmetric-spectrum.md)
 - [Order Hom ULift](mem-range-ulift-map-iff.md)
-- [Alexander Whitney](alexander-whitney/README.md)
-- [Augmented Whiskering](augmented-whiskering/README.md)
 - [Bisimplicial Alexander Whitney](bisimplicial-alexander-whitney/README.md)
 - [Bisimplicial Alternating](bisimplicial-alternating/README.md)
 - [Bisimplicial Map](bisimplicial-map/README.md)

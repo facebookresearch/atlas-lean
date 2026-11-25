@@ -1,0 +1,3 @@
+# Each supported quotient coordinate is the original...
+
+Each supported quotient coordinate is the original degreewise projection.

@@ -1,0 +1,15 @@
+# Coefficient and algebra naturality of the symmetric shuffle
+
+- [Coefficient Bar Map Component](coefficient-bar-map-component.md)
+- [Coefficient Bar Map Component face](coefficient-bar-map-component-face.md)
+- [Coefficient Bar Map Component degeneracy](coefficient-bar-map-component-degeneracy.md)
+- [Coefficient Bar Map](coefficient-bar-map.md)
+- [Coefficient Bar Map app mk](coefficient-bar-map-app-mk.md)
+- [Coefficient Chain Map](coefficient-chain-map.md)
+- [Coefficient Chain Map f](coefficient-chain-map-f.md)
+- [Coefficient Chain Map comp chain Complex Iso](coefficient-chain-map-comp-chain-complex.md)
+- [Normalized Coefficient Map](normalized-coefficient-map.md)
+- [Normalization Projection coefficient Map](normalization-projection-coefficient-map.md)
+- [Diagonal Chain Map naturality](diagonal-chain-map-naturality.md)
+- [Pairing naturality](pairing-naturality.md)
+- [Pairing normalization Projection naturality](pairing-normalization-projection-natural.md)

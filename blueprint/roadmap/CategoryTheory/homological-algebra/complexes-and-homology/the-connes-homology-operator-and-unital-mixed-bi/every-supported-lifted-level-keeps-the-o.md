@@ -1,0 +1,3 @@
+# Every supported lifted level keeps the original even term...
+
+Every supported lifted level keeps the original even term and the positive inserted norm.

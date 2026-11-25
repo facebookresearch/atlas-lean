@@ -1,0 +1,15 @@
+# The two-cut shuffle count and its rational polynomial value
+
+- [Shuffle Degree Cut Position](shuffle-degree-cut-position.md)
+- [Compatible Two Cuts](compatible-two-cuts.md)
+- [Is Shuffle iff descent Boundaries subset](is-shuffle-iff-descent-boundaries-subset.md)
+- [Compatible Two Cuts Equiv](compatible-two-cuts-equiv.md)
+- [Card compatible Two Cuts](card-compatible-two-cuts.md)
+- [Shuffle Degree Cut Shuffle Equiv](shuffle-degree-cut-shuffle-equiv.md)
+- [Shuffle Degree Cut Shuffle Equiv perm](shuffle-degree-cut-shuffle-equiv-perm.md)
+- [Swap Cut Permutation](swap-cut-permutation.md)
+- [Shuffle Cut Permutation Equiv](shuffle-cut-permutation-equiv.md)
+- [Shuffle Cut Permutation Equiv perm](shuffle-cut-permutation-equiv-perm.md)
+- [Shuffle Cut End eq sum cast](shuffle-cut-end-eq-sum-cast.md)
+- [Shuffle Convolution Two eq descent sum](shuffle-convolution-two-eq-descent-sum.md)
+- [Shuffle Convolution Two eq polynomial](shuffle-convolution-two-eq-polynomial.md)

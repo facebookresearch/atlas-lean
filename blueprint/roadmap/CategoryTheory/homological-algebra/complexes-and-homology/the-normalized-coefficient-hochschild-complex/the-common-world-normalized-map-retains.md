@@ -1,0 +1,3 @@
+# The common-world normalized map retains the original raw...
+
+The common-world normalized map retains the original raw projection square.

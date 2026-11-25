@@ -1,0 +1,16 @@
+# Degree-zero comparison for a characterized Hochschild bar
+
+- [Boundary Submodule](boundary-submodule.md)
+- [Boundary Submodule eq commutator Submodule](boundary-submodule-eq-commutator-submodu.md)
+- [Coordinate Face](coordinate-face.md)
+- [Right Ground Smul](right-ground-smul.md)
+- [Left Ground Smul](left-ground-smul.md)
+- [Boundary Linear Map](boundary-linear-map.md)
+- [Range boundary Linear Map](range-boundary-linear-map.md)
+- [Bottom Differential square](bottom-differential-square.md)
+- [Quotient Projection](quotient-projection.md)
+- [Differential exact quotient Projection](differential-exact-quotient-projection.md)
+- [Differential quotient Projection](differential-quotient-projection.md)
+- [Quotient Cofork](quotient-cofork.md)
+- [Quotient Cofork Is Colimit](quotient-cofork-is-colimit.md)
+- [Homology Zero Iso](homology-zero-iso.md)

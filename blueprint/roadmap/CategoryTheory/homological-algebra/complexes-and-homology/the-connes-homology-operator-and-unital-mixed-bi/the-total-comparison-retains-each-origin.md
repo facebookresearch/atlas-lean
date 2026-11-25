@@ -1,0 +1,3 @@
+# The total comparison retains each original cyclic-column...
+
+The total comparison retains each original cyclic-column coprojection.

@@ -1,0 +1,15 @@
+# Descent-compatible labelings and stable-sort fibers
+
+- [Descent Prefix](descent-prefix.md)
+- [Descent Labeling](descent-labeling.md)
+- [Descent Prefix zero](descent-prefix-zero.md)
+- [Descent Prefix succ](descent-prefix-succ.md)
+- [Descent Prefix monotone](descent-prefix-monotone.md)
+- [Descent Prefix last](descent-prefix-last.md)
+- [Descent Prefix le label](descent-prefix-le-label.md)
+- [Label sub descent Prefix monotone](label-sub-descent-prefix-monotone.md)
+- [Descent Number lt label Alphabet](descent-number-lt-label-alphabet.md)
+- [Descent Labeling Equiv Monotone](descent-labeling-equiv-monotone.md)
+- [Card descent Labeling](card-descent-labeling.md)
+- [Sort Fiber Equiv Descent Labeling](sort-fiber-equiv-descent-labeling.md)
+- [Card sort Fiber](card-sort-fiber.md)

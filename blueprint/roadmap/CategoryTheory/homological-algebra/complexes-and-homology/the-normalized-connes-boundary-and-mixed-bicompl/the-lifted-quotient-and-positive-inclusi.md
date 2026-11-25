@@ -1,0 +1,3 @@
+# The lifted quotient and positive inclusion give the...
+
+The lifted quotient and positive inclusion give the canonical homology comparison.

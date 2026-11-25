@@ -1,0 +1,3 @@
+# The canonical normalized lifted B is the native lift of the...
+
+The canonical normalized lifted B is the native lift of the original descended operator.

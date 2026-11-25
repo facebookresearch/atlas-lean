@@ -1,0 +1,3 @@
+# Lifted supported coordinates still include the original bar...
+
+Lifted supported coordinates still include the original bar level in the native mixed total.

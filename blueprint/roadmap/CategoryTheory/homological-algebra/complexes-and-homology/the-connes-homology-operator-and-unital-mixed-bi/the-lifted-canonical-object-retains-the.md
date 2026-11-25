@@ -1,0 +1,3 @@
+# The lifted canonical object retains the complete original...
+
+The lifted canonical object retains the complete original lifted b-complex.

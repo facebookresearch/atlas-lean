@@ -1,0 +1,3 @@
+# Exact native lifting and the finite-diagonal comparison...
+
+Exact native lifting and the finite-diagonal comparison identify lifted mixed homology.

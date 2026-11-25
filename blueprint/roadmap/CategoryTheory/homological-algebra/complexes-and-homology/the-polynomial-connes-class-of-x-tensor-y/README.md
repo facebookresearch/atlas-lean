@@ -1,0 +1,16 @@
+# The polynomial Connes class of x tensor y
+
+- [Polynomial Connes Input Exterior](polynomial-connes-input-exterior.md)
+- [Polynomial Connes Output Exterior](polynomial-connes-output-exterior.md)
+- [Polynomial Connes Pair Input](polynomial-connes-pair-input.md)
+- [Polynomial Connes Pair Output](polynomial-connes-pair-output.md)
+- [Polynomial Connes Pair Input eq signed](polynomial-connes-pair-input-eq-signed.md)
+- [Polynomial Connes Pair Output eq signed](polynomial-connes-pair-output-eq-signed.md)
+- [Polynomial Connes Pair Input cycle](polynomial-connes-pair-input-cycle.md)
+- [Polynomial Connes Pair Output cycle](polynomial-connes-pair-output-cycle.md)
+- [Polynomial Connes Pair Input Class](polynomial-connes-pair-input-class.md)
+- [Polynomial Connes Pair Output Class](polynomial-connes-pair-output-class.md)
+- [Regular Normalized Connes Homology polynomial Pair](regular-normalized-connes-homology-polyn.md)
+- [Polynomial Connes Pair Output Class eq exterior](polynomial-connes-pair-output-class-eq-e.md)
+- [Polynomial Connes Pair Input Class eq exterior](polynomial-connes-pair-input-class-eq-ex.md)
+- [Polynomial Connes Pair Output Class coordinates](polynomial-connes-pair-output-class-coor.md)

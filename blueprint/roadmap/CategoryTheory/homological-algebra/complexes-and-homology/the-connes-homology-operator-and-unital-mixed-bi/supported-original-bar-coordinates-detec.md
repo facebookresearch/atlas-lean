@@ -1,0 +1,3 @@
+# Supported original bar coordinates detect maps from the...
+
+Supported original bar coordinates detect maps from the lifted mixed total.

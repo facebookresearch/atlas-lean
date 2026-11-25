@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 
 
-/- Source proposal; Native elaboration is unexecuted. -/
 module
 
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialNormalizedExterior
@@ -40,10 +39,9 @@ local notation "V" => σ →₀ k
 local notation "Q" => (ModuleCat.Algebra.Hochschild.quotientCarrier k A)
 local notation "q" => Submodule.mkQ (ModuleCat.Algebra.Hochschild.unitSubmodule k A)
 
-local instance : Module Aᵐᵒᵖ A := Symmetric.opModule A A
-local instance : SMulCommClass A Aᵐᵒᵖ A := Symmetric.actionsComm A A
-local instance : SMulCommClass k Aᵐᵒᵖ A := Symmetric.kOpComm k A A
-local instance : IsScalarTower k Aᵐᵒᵖ A := Symmetric.kOpTower k A A
+-- Use the canonical symmetric opposite-action dictionaries locally.
+attribute [local instance] Symmetric.opModule Symmetric.actionsComm
+  Symmetric.kOpComm Symmetric.kOpTower
 
 /-- The free exterior input for the original polynomial one-form X s d(X t). -/
 def polynomialConnesInputExterior (s t : σ) : A ⊗[k] (⋀[k]^1 V) := by

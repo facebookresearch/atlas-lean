@@ -1,0 +1,16 @@
+# Cyclic rotation and head-fixing decomposition
+
+- [Rotation Power apply](rotation-power-apply.md)
+- [Rotation Power at Fin apply](rotation-power-at-fin-apply.md)
+- [Rotation Power inverse](rotation-power-inverse.md)
+- [Rotation Power zero](rotation-power-zero.md)
+- [Rotation Power last](rotation-power-last.md)
+- [Closing Cut Equiv](closing-cut-equiv.md)
+- [Closing Cut Equiv apply](closing-cut-equiv-apply.md)
+- [Head Fixing Permutation](head-fixing-permutation.md)
+- [Head Fixing Permutation sign](head-fixing-permutation-sign.md)
+- [Head Fixing Hom](head-fixing-hom.md)
+- [Head Fixing Hom injective](head-fixing-hom-injective.md)
+- [Rotation Head uncurry injective](rotation-head-uncurry-injective.md)
+- [Rotation Head Equiv](rotation-head-equiv.md)
+- [Sum rotation Head](sum-rotation-head.md)

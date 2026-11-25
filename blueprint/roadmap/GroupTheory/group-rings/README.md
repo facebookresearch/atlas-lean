@@ -13,3 +13,4 @@ Group rings and group algebras: unit and zero-divisor questions (Kaplansky unit 
 - [Units of integral group rings](units-of-integral-group-rings/README.md)
 - [Zassenhaus conjectures](zassenhaus-conjectures/README.md)
 - [Augmentation right ideal of a subset](augmentation-right-ideal.md)
+- [Finite-fiber sums in monoid algebras](sum-single-eq-sum-fiber.md)

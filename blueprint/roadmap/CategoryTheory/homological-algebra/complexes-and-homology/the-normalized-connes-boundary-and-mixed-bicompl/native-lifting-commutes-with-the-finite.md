@@ -1,0 +1,3 @@
+# Native lifting commutes with the finite-diagonal normalized...
+
+Native lifting commutes with the finite-diagonal normalized mixed total.

@@ -1,0 +1,3 @@
+# Its forward map is exactly homology of the transported...
+
+Its forward map is exactly homology of the transported original positive inclusion.

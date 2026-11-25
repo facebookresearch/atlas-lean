@@ -1,0 +1,3 @@
+# The original normalized lifted b/B data form the canonical...
+
+The original normalized lifted b/B data form the canonical mixed object.

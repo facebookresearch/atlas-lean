@@ -1,0 +1,16 @@
+# The proper-shuffle cotangent diagram over a coefficient algebra
+
+- [Coefficient Compatibility](coefficient-compatibility.md)
+- [Complex](complex.md)
+- [Map](map.md)
+- [Functor](functor.md)
+- [Map mk Q](map-mk-q.md)
+- [Cotangent Module](cotangent-module.md)
+- [Cotangent Map](cotangent-map.md)
+- [Scalar Augmentation](scalar-augmentation.md)
+- [Scalar Augmentation naturality](scalar-augmentation-naturality.md)
+- [Cotangent Map id](cotangent-map-id.md)
+- [Cotangent Map comp](cotangent-map-comp.md)
+- [Cotangent Functor](cotangent-functor.md)
+- [Augmentation Nat](augmentation-nat.md)
+- [Augmentation Nat app](augmentation-nat-app.md)

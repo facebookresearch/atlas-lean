@@ -1,0 +1,16 @@
+# Koszul complexes on arbitrary finitely supported free coordinates
+
+- [Finsupp Functional](finsupp-functional.md)
+- [Finsupp Functional comp finset Include](finsupp-functional-comp-finset-include.md)
+- [Finsupp exact cycles of finite is Weakly Regular](finsupp-exact-cycles-of-finite-is-weakly.md)
+- [Finsupp Complex](finsupp-complex.md)
+- [Finsupp Differential apply basis](finsupp-differential-apply-basis.md)
+- [Finsupp Differential smul basis](finsupp-differential-smul-basis.md)
+- [Finsupp Ideal eq span](finsupp-ideal-eq-span.md)
+- [Finsupp Complex free](finsupp-complex-free.md)
+- [Finsupp Complex projective](finsupp-complex-projective.md)
+- [Finsupp Augmentation](finsupp-augmentation.md)
+- [Finsupp Augmentation exact zero](finsupp-augmentation-exact-zero.md)
+- [Finsupp Complex exact At of finite is Weakly Regular](finsupp-complex-exact-at-of-finite-is-we.md)
+- [Finsupp Augmentation quasi Iso of finite is Weakly Regular](finsupp-augmentation-quasi-iso-of-finite.md)
+- [Finsupp Projective Resolution Of Finite Is Weakly Regular](finsupp-projective-resolution-of-finite.md)

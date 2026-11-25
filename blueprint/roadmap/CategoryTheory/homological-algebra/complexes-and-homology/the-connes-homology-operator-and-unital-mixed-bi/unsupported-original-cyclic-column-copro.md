@@ -1,0 +1,3 @@
+# Unsupported original cyclic-column coprojections remain...
+
+Unsupported original cyclic-column coprojections remain zero under the same comparison.

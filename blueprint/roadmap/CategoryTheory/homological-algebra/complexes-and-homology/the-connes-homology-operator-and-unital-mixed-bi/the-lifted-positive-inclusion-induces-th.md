@@ -1,0 +1,3 @@
+# The lifted positive inclusion induces the lifted...
+
+The lifted positive inclusion induces the lifted mixed-to-cyclic homology comparison.

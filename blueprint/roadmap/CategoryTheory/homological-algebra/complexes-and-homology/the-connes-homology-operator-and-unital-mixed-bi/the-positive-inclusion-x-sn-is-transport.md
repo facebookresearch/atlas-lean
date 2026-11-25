@@ -1,0 +1,3 @@
+# The positive inclusion x+sN is transported by the total...
+
+The positive inclusion x+sN is transported by the total comparisons.

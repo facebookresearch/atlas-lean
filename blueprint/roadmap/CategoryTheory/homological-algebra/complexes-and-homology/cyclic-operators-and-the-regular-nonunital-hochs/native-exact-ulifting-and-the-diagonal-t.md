@@ -1,0 +1,3 @@
+# Native exact ULifting and the diagonal total comparison...
+
+Native exact ULifting and the diagonal total comparison identify lifted homology.

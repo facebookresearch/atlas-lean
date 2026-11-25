@@ -1,0 +1,18 @@
+# The diagonal action on symmetric Hochschild coefficient chains
+
+- [Diagonal Coefficient](diagonal-coefficient.md)
+- [Diagonal Coefficient tmul](diagonal-coefficient-tmul.md)
+- [Diagonal Tail](diagonal-tail.md)
+- [Diagonal Tail tprod](diagonal-tail-tprod.md)
+- [Diagonal Raw](diagonal-raw.md)
+- [Diagonal Raw tprod](diagonal-raw-tprod.md)
+- [Raw Face](raw-face.md)
+- [Raw Face tprod](raw-face-tprod.md)
+- [Diagonal Raw face](diagonal-raw-face.md)
+- [Diagonal Component](diagonal-component.md)
+- [Diagonal Component face](diagonal-component-face.md)
+- [Target Differential](target-differential.md)
+- [Diagonal Chain Map](diagonal-chain-map.md)
+- [Pairing](pairing.md)
+- [Pairing pair](pairing-pair.md)
+- [Pairing pair zero zero tprod](pairing-pair-zero-zero-tprod.md)

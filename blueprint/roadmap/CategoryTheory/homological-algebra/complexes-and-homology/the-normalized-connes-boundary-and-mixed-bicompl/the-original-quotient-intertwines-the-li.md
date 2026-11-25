@@ -1,0 +1,3 @@
+# The original quotient intertwines the lifted degree-one...
+
+The original quotient intertwines the lifted degree-one boundaries in every universe.
