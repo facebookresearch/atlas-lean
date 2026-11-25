@@ -6,4 +6,6 @@ Named transcendental functions and their series, integral representations and id
 - [Hypergeometric functions](hypergeometric-functions/README.md)
 - [Exponential, logarithmic and related functions](elementary-transcendental-functions/README.md)
 - [Bernoulli polynomials, polylogarithms and Clausen functions](bernoulli-polylog-clausen/README.md)
+- [Bessel functions](bessel-functions/README.md)
 - [Elliptic functions](elliptic-functions/README.md)
+- [Jacobi triple product for the two-variable theta function](jacobi-theta-eq-tprod.md)

@@ -46,6 +46,7 @@ stabilisation for nonlinear ones.
 - [Complex analysis](complex-analysis/README.md)
 - [Potential theory](potential-theory/README.md)
 - [Harmonic analysis](harmonic-analysis/README.md)
+- [Normed groups, rings and fields](normed-groups-and-fields/README.md)
 - [Banach space theory](banach-spaces/README.md)
 - [Hilbert spaces](hilbert-spaces/README.md)
 - [Operator theory](operator-theory/README.md)
@@ -61,4 +62,3 @@ stabilisation for nonlinear ones.
 - [Numerical analysis](numerical-analysis/README.md)
 - [Approximation theory](approximation-theory/README.md)
 - [Not yet classified](not-yet-classified/README.md)
-- [Differential calculus in normed spaces](calculus-in-normed-spaces/README.md)

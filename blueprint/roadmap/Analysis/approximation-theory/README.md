@@ -27,3 +27,5 @@ Approximation and interpolation of functions: Chebyshev equioscillation, best ap
 
 - [Two-layer neural networks and Barron space](../../ComputerScience/machine-learning/supervised-learning/two-layer-neural-networks-and-barron-space/README.md): the quantitative counterpart of the [universal approximation theorem](universal-approximation.md); on the Barron space two-layer ReLU networks of width $m$ approximate at the dimension-free rate $m^{-1/2}$ in $L^2$, with controlled path norm.
 - [Müntz–Szász theorem in $L^1[0,1]$: non-density for a convergent reciprocal series](muntz-szasz-non-density-in-l1.md)
+
+- [Vanishing of all Chebyshev U moments forces a function to vanish](eq-zero-on-ioo-of-forall-interval-integr.md)

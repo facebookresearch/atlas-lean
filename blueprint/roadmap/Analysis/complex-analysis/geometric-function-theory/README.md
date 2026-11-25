@@ -2,6 +2,7 @@
 
 Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz–Pick and half-plane self-maps, starlike and univalent coefficient problems, Loewner equation, holomorphic motions.
 
+- [Classification of Möbius transformations](classification-of-m-bius-transformations/README.md)
 - [Hadamard products of univalent functions](hadamard-products-of-univalent-functions/README.md)
 - [Holomorphic maps from the disc into a strip](holomorphic-maps-from-the-disc-into-a-strip/README.md)
 - [Holomorphic motions](holomorphic-motions/README.md)
@@ -14,6 +15,7 @@ Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz
 - [Schwarz–Pick lemma](schwarz-pick-lemma/README.md)
 - [Successive coefficients of starlike functions](successive-coefficients-of-starlike-functions/README.md)
 - [A Möbius map from the unit disk onto the upper half-plane](bij-on-cayley-ball-upper-half-plane.md)
+- [Biholomorphic maps between open sets of the plane](is-biholomorphic-on.md)
 - [Bloch's theorem](bloch.md)
 - [Diameter bound for the derivative at the center of the disc](two-mul-norm-deriv-le-ediam-image-ball.md)
 - [No proper holomorphic map from the unit disc to the complex plane](not-exists-differentiable-on-ball-is-com.md)

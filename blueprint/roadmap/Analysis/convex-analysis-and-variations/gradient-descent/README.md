@@ -45,3 +45,6 @@ How far the gradient update $G(w) = w - \alpha \nabla f(w)$ can move two points 
 - [Algorithmic stability](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/algorithmic-stability/README.md): the expansiveness properties of the gradient step make stochastic gradient descent on convex, smooth, Lipschitz losses uniformly stable, which bounds its generalization gap by $2L^2/n$ times its total step length for a loss bounded at the starting point.
 - [Mirror descent](../mirror-descent/README.md): the subgradient method with a non-Euclidean proximal setup (a norm and a strongly convex distance-generating function), of which the Euclidean subgradient method and stochastic gradient descent are special cases.
 - [Accelerated gradient methods](../accelerated-gradient-methods/README.md): Nesterov's method, which couples a gradient step with a dual-averaging step to improve the $O(1/k)$ rate to $O(1/k^2)$ under the same hypotheses, and its continuous-time limit.
+
+
+

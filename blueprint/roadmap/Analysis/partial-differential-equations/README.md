@@ -26,3 +26,4 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Global regularity of the three-dimensional Navier–Stokes equations](global-regularity-of-the-navier-stokes-equations.md)
 
 - [Optimality system for linear-quadratic elliptic optimal control](optimality-system-for-linear-quadratic-elliptic-optimal-control.md)
+- [Regularity of domain boundaries](regularity-of-domain-boundaries/README.md)

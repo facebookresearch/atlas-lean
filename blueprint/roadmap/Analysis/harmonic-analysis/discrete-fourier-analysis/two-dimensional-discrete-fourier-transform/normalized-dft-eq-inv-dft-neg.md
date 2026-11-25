@@ -1,0 +1,4 @@
+# The normalized transform is the inverse transform at negated frequency
+
+The `1/N`-normalized DFT is the inverse DFT at the negated frequency:
+normalization and inversion are consistent.

@@ -1,5 +1,6 @@
 # Power series in sin x and tan x
 
+- [A bound on central binomial ratios](two-pow-mul-factorial-sq-div-factorial-l.md)
 - [A series in even powers of $\sin x$ involving $\zeta(3)$](ramanujan-part1-ch9-entry20-piseries1.md)
 - [A series in even powers of $\tan x$ with odd harmonic numbers](ramanujan-part1-ch9-entry21-piseries2.md)
 - [Odd reciprocal cubes in Entries 21 and 22](chapter9-chi3-term-eq-entry21.md)

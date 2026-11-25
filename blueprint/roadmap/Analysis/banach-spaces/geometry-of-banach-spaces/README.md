@@ -20,4 +20,5 @@ Convexity and smoothness of norms (uniform convexity, Kadec–Klee, Birkhoff–J
 - [Dvoretzky–Rogers theorem](dvoretzky-rogers-unconditional-not-absol.md)
 - [Grothendieck's inequality (real case)](grothendieck-inequality-real.md)
 - [Milman–Pettis theorem](milman-pettis.md)
+- [Volumetric covering bound for Euclidean balls](euclidean-ball-net.md)
 - [Banach–Saks theorem for uniformly convex spaces](banach-saks.md)

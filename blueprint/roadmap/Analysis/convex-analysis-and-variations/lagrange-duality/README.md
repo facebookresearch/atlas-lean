@@ -41,6 +41,11 @@ Equality constraints are not covered yet: Boyd–Vandenberghe's Slater theorem a
 
 - [Duality gap of central points in the barrier method](central-point-duality-gap.md)
 
+## The resource multiplier is the marginal value
+
+- [Shadow-price bound for a concave resource problem](le-add-multiplier-mul-of-kkt.md)
+- [The Lagrange multiplier is the marginal value of the resource](has-deriv-at-value-eq-multiplier.md)
+
 ## Related topics
 
 - [First-order conditions for convexity and optimality](../first-order-conditions-for-convexity/README.md)

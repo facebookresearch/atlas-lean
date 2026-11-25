@@ -10,6 +10,7 @@ Contour integrals, Cauchy's theorem, residues, argument principle, Rouché, Laur
 - [Great Picard theorem](great-picard-theorem/README.md)
 - [Normal families](normal-families/README.md)
 - [Removable lines for holomorphic functions](removable-lines-for-holomorphic-functions/README.md)
+- [Residue theorem](residue-theorem/README.md)
 - [Rouché's theorem](rouch-s-theorem/README.md)
 - [A dominated series of holomorphic functions is holomorphic](holomorphic-sum-of-dominated-series.md)
 - [A holomorphic function not identically zero has finitely many zeros in a disc](finite-zeros-in-ball-of-not-identically.md)
