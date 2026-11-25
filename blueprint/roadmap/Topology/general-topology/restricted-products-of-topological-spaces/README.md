@@ -34,3 +34,7 @@
 - [Continuity of the map from the direct limit of the pieces](continuous-from-direct-limit.md)
 - [Continuity of the map to the direct limit of the pieces](continuous-to-direct-limit.md)
 - [The restricted product is the direct limit of its finite-support pieces](homeomorph-direct-limit.md)
+
+## Measurable
+
+- [Measurable maps into a restricted product](measurable-iff-forall-measurable-apply.md)
