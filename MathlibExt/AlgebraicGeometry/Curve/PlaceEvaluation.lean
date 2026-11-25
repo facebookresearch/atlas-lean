@@ -32,6 +32,44 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
 public import MathlibExt.AlgebraicGeometry.Curve.Divisor
+public import MathlibExt.AlgebraicGeometry.Curve.LPolynomial
+
+/-!
+# Evaluation at rational places
+
+Let `F` be a function field over a base field `K`. A place `v` of `F` is rational when the map
+from `K` to the residue field of `v` is surjective, which happens exactly when `v` has degree one
+over `K`. At a rational place, an element of the valuation subring of `v` has a value in `K`: the
+element of `K` with the same residue. This file defines that value and the evaluation of a
+function on a divisor supported on rational places, and states Weil reciprocity for such divisors.
+
+## Main definitions
+
+* `AlgebraicCurve.Place.IsRational`: the base field `K` surjects onto the residue field.
+* `AlgebraicCurve.Place.residueEquiv`: at a rational place, the `K`-algebra isomorphism from `K`
+  onto the residue field; `AlgebraicCurve.Place.residueInv` is its inverse map.
+* `AlgebraicCurve.Place.evalAt`: the value in `K` of a function at a rational place, with the
+  value `0` at a pole.
+* `CurveDivisor.evalFun`: the product of `f(v) ^ D(v)` over the support of a divisor `D` of
+  rational places.
+* `AlgebraicCurve.WeilReciprocity`: the statement `f(div g) = g(div f)` for nonzero `f` and `g`
+  with disjoint divisors supported on rational places.
+
+## Main results
+
+* `AlgebraicCurve.Place.isRational_iff_deg_eq_one`: a place is rational exactly when it has
+  degree one.
+* `AlgebraicCurve.Place.evalAt_add` and `AlgebraicCurve.Place.evalAt_mul`: on the valuation
+  subring, evaluation at a rational place is additive and multiplicative.
+
+## Implementation notes
+
+The source defines `residueInv`, `evalAt` and `evalFun` at every place, through
+`Function.invFun`. Here they take a proof that the place is rational, or that every place in the
+support of the divisor is, so no choice is made at other places; at rational places the values
+are the source's. `WeilReciprocity` keeps the source's hypotheses and passes its rationality
+hypotheses on to `evalFun`.
+-/
 
 @[expose] public section
 
@@ -43,30 +81,49 @@ namespace Place
 
 variable (v : Place K F)
 
-/-- A place is rational when the constant field surjects onto its residue
-field. -/
+/-- A place is rational when the base field `K` surjects onto its residue field. -/
 def IsRational : Prop := Function.Surjective (algebraMap K v.ResidueField)
 
-theorem algebraMap_residueField_injective :
-    Function.Injective (algebraMap K v.ResidueField) :=
-  (algebraMap K v.ResidueField).injective
+/-- At a rational place, the isomorphism of `K`-algebras from the base field `K` onto the residue
+field. -/
+noncomputable def residueEquiv (hv : v.IsRational) : K ≃ₐ[K] v.ResidueField :=
+  AlgEquiv.ofBijective (Algebra.ofId K v.ResidueField)
+    ⟨(algebraMap K v.ResidueField).injective, hv⟩
 
-/-- The inverse of the constant-field map into the residue field at a rational
-place. -/
+@[simp]
+theorem residueEquiv_apply (hv : v.IsRational) (a : K) :
+    v.residueEquiv hv a = algebraMap K v.ResidueField a :=
+  rfl
+
+/-- The inverse of the map from the base field `K` into the residue field at a rational place. -/
 noncomputable def residueInv (hv : v.IsRational) : v.ResidueField → K :=
-  Function.surjInv hv
+  (v.residueEquiv hv).symm
 
 theorem algebraMap_residueInv (hv : v.IsRational) (x : v.ResidueField) :
     algebraMap K v.ResidueField (v.residueInv hv x) = x :=
-  Function.surjInv_eq hv x
+  (v.residueEquiv hv).apply_symm_apply x
 
 theorem residueInv_algebraMap (hv : v.IsRational) (a : K) :
     v.residueInv hv (algebraMap K v.ResidueField a) = a :=
-  Function.leftInverse_surjInv ⟨v.algebraMap_residueField_injective, hv⟩ a
+  (v.residueEquiv hv).symm_apply_apply a
+
+/-- A place is rational exactly when it has degree one. `Place.deg` is a `Module.finrank`, which
+is `0` when the residue field has infinite degree over `K`; degree one makes that degree finite,
+so no finiteness hypothesis is needed. -/
+theorem isRational_iff_deg_eq_one : v.IsRational ↔ v.deg = 1 := by
+  refine ⟨fun hv => ?_, fun h x => ?_⟩
+  · change Module.finrank K v.ResidueField = 1
+    rw [← (v.residueEquiv hv).toLinearEquiv.finrank_eq, Module.finrank_self]
+  · have hbot : (⊥ : Subalgebra K v.ResidueField) = ⊤ :=
+      Subalgebra.bot_eq_top_iff_finrank_eq_one.mpr h
+    have hx : x ∈ (⊥ : Subalgebra K v.ResidueField) := by
+      rw [hbot]
+      exact Algebra.mem_top
+    exact Algebra.mem_bot.mp hx
 
 open Classical in
-/-- Evaluation of a function-field element at a rational place: the
-constant-field element whose image in the residue field is the residue of the
+/-- Evaluation of a function-field element at a rational place: the element of
+the base field `K` whose image in the residue field is the residue of the
 element when the element lies in the valuation subring, and `0` otherwise. -/
 noncomputable def evalAt (hv : v.IsRational) (f : F) : K :=
   if hf : f ∈ v.toValuationSubring then
@@ -83,6 +140,22 @@ theorem algebraMap_evalAt (hv : v.IsRational) {f : F}
       = IsLocalRing.residue v.toValuationSubring (⟨f, hf⟩ : v.toValuationSubring) := by
   rw [v.evalAt_of_mem hv hf]
   exact v.algebraMap_residueInv hv _
+
+theorem evalAt_add (hv : v.IsRational) {f g : F} (hf : f ∈ v.toValuationSubring)
+    (hg : g ∈ v.toValuationSubring) :
+    v.evalAt hv (f + g) = v.evalAt hv f + v.evalAt hv g := by
+  apply (algebraMap K v.ResidueField).injective
+  rw [map_add, v.algebraMap_evalAt hv (add_mem hf hg), v.algebraMap_evalAt hv hf,
+    v.algebraMap_evalAt hv hg, ← map_add]
+  rfl
+
+theorem evalAt_mul (hv : v.IsRational) {f g : F} (hf : f ∈ v.toValuationSubring)
+    (hg : g ∈ v.toValuationSubring) :
+    v.evalAt hv (f * g) = v.evalAt hv f * v.evalAt hv g := by
+  apply (algebraMap K v.ResidueField).injective
+  rw [map_mul, v.algebraMap_evalAt hv (mul_mem hf hg), v.algebraMap_evalAt hv hf,
+    v.algebraMap_evalAt hv hg, ← map_mul]
+  rfl
 
 @[simp]
 theorem evalAt_one (hv : v.IsRational) : v.evalAt hv (1 : F) = 1 := by
@@ -102,7 +175,14 @@ variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 /-- Evaluation of a divisor of places supported on rational places against a
 function-field element: the product over the divisor of the values of the
-element at each place, raised to the divisor coefficient at that place. -/
+element at each place, raised to the divisor coefficient at that place.
+
+The value is multiplicative in the divisor only where the element has nonzero
+values. If `f` has the value `0` at `v` (a zero of `f`, or a pole, where
+`Place.evalAt` gives `0`), then `[v]` and `-[v]` both evaluate to `0`, since
+`0⁻¹ = 0`, while their sum evaluates to `1`. `WeilReciprocity` evaluates each
+function only on the divisor of the other, whose support carries none of its
+zeros or poles. -/
 noncomputable def evalFun (f : F) (D : CurveDivisor (Place K F))
     (hD : ∀ v ∈ D.support, v.IsRational) : K :=
   ∏ v ∈ D.support.attach, (v : Place K F).evalAt (hD v v.2) f ^ D v
