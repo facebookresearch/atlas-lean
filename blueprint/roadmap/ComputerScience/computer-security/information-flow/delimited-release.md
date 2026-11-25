@@ -14,4 +14,3 @@ separate pages.
 ## Sources
 
 - A. Sabelfeld and D. Sands, "Declassification: dimensions and principles", *Journal of Computer Security* 17(5):517–548, 2009, <https://www.cse.chalmers.se/~andrei/sabelfeld-sands-jcs07.pdf>: Section 2.1, "What", paragraph "Delimited release" (the definition and the example).
-- A. Sabelfeld and A. C. Myers, "A model for delimited information release", *ISSS 2003*, LNCS 3233, Springer, 2004 (not opened; checked against Sabelfeld and Sands).

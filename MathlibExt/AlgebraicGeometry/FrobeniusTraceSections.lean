@@ -189,9 +189,10 @@ structure TraceTrivializingCover (S : TraceSystem V C D p hp (structureModule V.
   contains : ∀ x, x ∈ (openSet x).val
   frames : ∀ x, LocalFrames V C D p hp S (openSet x).val
 
-/-- An ideal sheaf agreeing on every affine trace frame with the infimum of the nonzero
-compatible ideals. With that infimum nonzero (the request `localTestInfimum_ne_bot`), it is the
-least nonzero compatible ideal on each frame (`localTestInfimum_isLeast`), i.e. the big test
+/-- An ideal sheaf on $V$ (`ideal`) whose sections on every affine open $U$ are, for every family
+of trace frames on $U$, the infimum of the nonzero ideals of $\Gamma(U, \mathcal{O}_V)$ compatible
+with every admissible trace of the trace system $S$ (`normalized`). When that infimum is nonzero,
+it is the least nonzero compatible ideal on $U$ (`localTestInfimum_isLeast`), that is, the big test
 ideal. -/
 structure TestIdealComparison (S : TraceSystem V C D p hp (structureModule V.X.left))
     (A : TraceTrivializingCover V C D p hp S) where

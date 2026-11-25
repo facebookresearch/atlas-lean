@@ -47,9 +47,11 @@ variable {X : Scheme.{0}}
   (D : Structure A) (j : A ⟶ B) (G : GroupifiedDF D)
   (R : DenominatorRootStacks.Model I D j (𝟙 X))
 
-/-- All data are selected together on the same literal root restrictions.
-Generic dictionary producers are source integration, independently of
-the Borne–Vistoli equivalence proof. -/
+/-- Data on the root stack of `R` over every étale $U \to X$: the restriction of the root stack to
+$U$ is a stack for the fppf topology over $U$, with a root-stack model over $U$ whose stack is that
+restriction; and, on these same restrictions, a projection to the scheme stack of $U$ with its
+direct image, module and tensor dictionaries, tensor products on both stacks, weights and their
+tensor compatibility, a base lift and period data. -/
 structure EtaleRootData where
   isStack : ∀ U : X.Etale,
     (RootEtaleRestrictions.pseudofunctor U.hom R.stack).IsStack (Scheme.fppfTopology.over U.left)
