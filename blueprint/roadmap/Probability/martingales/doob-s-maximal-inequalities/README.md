@@ -20,3 +20,4 @@ $\lambda\, P(M \ge \lambda) \le \mathbb{E}[|f_n| \mathbf{1}_{\{M \ge \lambda\}}]
 ## Background
 
 - [Convex functions of martingales](../convex-functions-of-martingales/README.md)
+- [Doob's $L^p$ maximal inequality](../doob-s-lp-maximal-inequality/README.md): the $L^p$ inequality for submartingales, whose martingale case $p = 2$ is the main statement here

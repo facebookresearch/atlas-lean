@@ -65,7 +65,9 @@ theorem encodeNum_bit0 {n : Num} (hn : n ≠ 0) : encodeNum n.bit0 = false :: en
 
 theorem encodeNat_zero : encodeNat 0 = [] := rfl
 
-/-- The binary encoding is least significant bit first. -/
+/-- **Binary encoding, least significant bit first.** For every natural number $n \neq 0$, the
+binary encoding of $n$ is the list whose first bit is true exactly when $n$ is odd, followed by
+the binary encoding of $\lfloor n/2 \rfloor$. -/
 theorem encodeNat_eq_cons {n : ℕ} (hn : n ≠ 0) :
     encodeNat n = decide (n % 2 = 1) :: encodeNat (n / 2) := by
   have key : ∀ b m, encodeNat (Nat.bit b m) =
@@ -115,7 +117,9 @@ theorem primrec_encodeNat : Primrec encodeNat := by
       rw [encodeNat_eq_cons hn, List.getD_eq_getElem _ _ (by simp; omega)]
       simp
 
-/-- Little-endian value of a list of bits. -/
+/-- **Value of a little-endian bit list.** The value of a list of bits $b_0, b_1, \dots, b_{m-1}$
+is $\sum_{i < m} [b_i]\, 2^i$, where $[b_i]$ is $1$ if $b_i$ is true and $0$ otherwise. So the
+first bit is the least significant, and the empty list has value $0$. -/
 def bitsVal (l : List Bool) : ℕ := l.foldr (fun b n ↦ 2 * n + cond b 1 0) 0
 
 theorem primrec_bitsVal : Primrec bitsVal :=
@@ -140,8 +144,13 @@ section Run
 
 variable {α σ β : Type*} [Primcodable α] [Primcodable σ] [Primcodable β]
 
-/-- Iterating a primitive recursive step until a primitive recursive halting test succeeds, and
-reading off the first halted state, is partial recursive. -/
+/-- **Running a primitive recursive machine is partial recursive.** Let $\alpha$, $\sigma$ and
+$\beta$ be primitive recursively encodable types, and let $\mathrm{init} : \alpha \to \sigma$,
+$\mathrm{step} : \sigma \to \sigma$, $\mathrm{halted} : \sigma \to \mathrm{Bool}$ and
+$\mathrm{out} : \sigma \to \beta$ be primitive recursive. Then the partial function sending $a$
+to $\mathrm{out}(\mathrm{step}^k(\mathrm{init}(a)))$, where $k$ is the least natural number for
+which $\mathrm{halted}(\mathrm{step}^k(\mathrm{init}(a)))$ is true, and undefined when there is
+no such $k$, is partial recursive. -/
 theorem partrec_run {init : α → σ} {step : σ → σ} {halted : σ → Bool} {out : σ → β}
     (hi : Primrec init) (hs : Primrec step) (hh : Primrec halted) (ho : Primrec out) :
     Partrec fun a ↦ (Nat.rfind fun k ↦ Part.some (halted (step^[k] (init a)))).map
@@ -159,7 +168,9 @@ section Helpers
 
 variable {α β : Type*} [Primcodable α] [Primcodable β]
 
-/-- A function of a natural number that is constant from `N` on is primitive recursive. -/
+/-- **Eventually constant functions on ℕ are primitive recursive.** Let $\beta$ be a primitive
+recursively encodable type. If $g : \mathbb{N} \to \beta$ and $N \in \mathbb{N}$ satisfy
+$g(c) = g(N)$ for all $c \ge N$, then $g$ is primitive recursive. -/
 theorem primrec_of_eventually_const {g : ℕ → β} (N : ℕ) (hg : ∀ c ≥ N, g c = g N) :
     Primrec g := by
   refine ((Primrec.list_getD (g N)).comp (Primrec.const (List.ofFn fun i : Fin N ↦ g i))
@@ -169,7 +180,11 @@ theorem primrec_of_eventually_const {g : ℕ → β} (N : ℕ) (hg : ∀ c ≥ N
     simp
   · rw [List.getD_eq_default _ _ (by simpa using hc), hg c (by omega)]
 
-/-- Over a finite parameter type, eventual constancy in the natural argument suffices. -/
+/-- **Eventually constant functions of a finite parameter are primitive recursive.** Let $\alpha$
+be a finite primitive recursively encodable type and $\beta$ a primitive recursively encodable
+type. If $g : \alpha \to \mathbb{N} \to \beta$ and $N \in \mathbb{N}$ satisfy
+$g(a, c) = g(a, N)$ for all $a \in \alpha$ and all $c \ge N$, then $g$ is primitive recursive as
+a function of two arguments. -/
 theorem primrec₂_of_eventually_const [Finite α] {g : α → ℕ → β} (N : ℕ)
     (hg : ∀ a, ∀ c ≥ N, g a c = g a N) : Primrec₂ g := by
   refine (Primrec.option_getD.comp (Primrec.list_getElem?.comp
@@ -180,8 +195,10 @@ theorem primrec₂_of_eventually_const [Finite α] {g : α → ℕ → β} (N : 
   · simp [hc]
   · simp [hc, hg a c (by omega)]
 
-/-- Over a finite type of first arguments, primitive recursion in the second argument for each
-fixed first argument suffices. -/
+/-- **Joint primitive recursion over a finite first argument.** Let $\alpha$, $\beta$ and
+$\sigma$ be primitive recursively encodable types with $\alpha$ finite, and let
+$g : \alpha \to \beta \to \sigma$. If $b \mapsto g(a, b)$ is primitive recursive for every
+$a \in \alpha$, then $g$ is primitive recursive as a function of two arguments. -/
 theorem primrec₂_of_finite_left [Finite α] {σ : Type*} [Primcodable σ] {g : α → β → σ}
     (hg : ∀ a, Primrec (g a)) : Primrec₂ g := by
   have := Fintype.ofFinite α
@@ -192,7 +209,10 @@ theorem primrec₂_of_finite_left [Finite α] {σ : Type*} [Primcodable σ] {g :
 
 end Helpers
 
-/-- Functions from a finite type, coded through `Fin n`. -/
+/-- **Encoding of functions on a finite type.** For a finite type $K$ and a primitive recursively
+encodable type $\beta$, the primitive recursive encoding of the functions $K \to \beta$
+transported from that of the functions $\mathrm{Fin}\, n \to \beta$, where $n$ is the cardinality
+of $K$, along a chosen bijection between $K$ and $\mathrm{Fin}\, n$. -/
 @[instance_reducible]
 noncomputable def primcodableArrow (K : Type*) [Fintype K] (β : Type*) [Primcodable β] :
     Primcodable (K → β) :=
@@ -248,7 +268,10 @@ section Machine
 
 variable (tm : FinTM2)
 
-/-- The symbols a statement can push onto stack `k`. -/
+/-- **Symbols a statement may push.** For a finite multi-stack machine, a stack $k$ and a
+statement $q$ over the machine's stack alphabets, labels and internal states, the set of symbols
+of stack $k$ consisting of every value, at every internal state, of the symbol function of every
+push instruction onto stack $k$ that occurs in $q$, in either branch of each conditional. -/
 def pushes (k : tm.K) : Turing.TM2.Stmt tm.Γ tm.Λ tm.σ → Set (tm.Γ k)
   | .push k' f q => (if h : k' = k then Set.range (h ▸ f) else ∅) ∪ pushes k q
   | .peek _ _ q => pushes k q
@@ -273,8 +296,12 @@ theorem pushes_finite (k : tm.K) (q : Turing.TM2.Stmt tm.Γ tm.Λ tm.σ) :
   | goto _ => exact Set.finite_empty
   | halt => exact Set.finite_empty
 
-/-- The symbols that can ever be on stack `k`: input symbols on the input stack, and symbols
-pushed by the program. -/
+/-- **Relevant symbols of a stack.** For a stack index $k$, the relevant symbols of stack $k$ are
+the symbols $f(v)$ of $\Gamma_k$, for every internal state $v$, over all statements that push $f$
+onto stack $k$ and occur in the program of some label, together with, when $k$ is the input stack
+$k_0$, every symbol of $\Gamma_{k_0}$.
+
+Along a run started from an initial configuration, only relevant symbols occur on the stacks. -/
 def relevant (k : tm.K) : Set (tm.Γ k) :=
   (⋃ l, pushes tm k (tm.m l)) ∪ {_x | k = tm.k₀}
 
@@ -285,15 +312,23 @@ theorem relevant_finite (k : tm.K) : (relevant tm k).Finite := by
     exact Set.toFinite _
   · simp [h]
 
-/-- The relevant symbols of stack `k`, listed. -/
+/-- **Enumeration of the relevant symbols of a stack.** For a finite multi-stack machine and a
+stack index $k$, a list without repetitions whose entries are exactly the relevant symbols of
+stack $k$, in an order fixed by choice. -/
 noncomputable def symList (k : tm.K) : List (tm.Γ k) := (relevant_finite tm k).toFinset.toList
 
-/-- The code of a symbol: its index in `symList`. -/
+/-- **Code of a stack symbol.** For a finite multi-stack machine, a stack index $k$ and a symbol
+$x$ of stack $k$, the code of $x$ is the position of $x$ (counting from $0$) in the chosen
+enumeration of the relevant symbols of stack $k$, or the length of that enumeration if $x$ is not
+a relevant symbol. -/
 noncomputable def code (k : tm.K) (x : tm.Γ k) : ℕ :=
   letI := Classical.decEq (tm.Γ k)
   (symList tm k).idxOf x
 
-/-- Decoding a code; `none` past the end of `symList`. -/
+/-- **Decoding a stack symbol.** For a finite multi-stack machine, a stack index $k$ and a natural
+number $c$, the decoding of $c$ is the entry at position $c$ (counting from $0$) of the chosen
+enumeration of the relevant symbols of stack $k$, and is undefined when $c$ is at least the length
+of that enumeration. -/
 noncomputable def decode (k : tm.K) (c : ℕ) : Option (tm.Γ k) := (symList tm k)[c]?
 
 theorem decode_code {k : tm.K} {x : tm.Γ k} (hx : x ∈ relevant tm k) :
@@ -306,40 +341,68 @@ theorem decode_eq_none {k : tm.K} {c : ℕ} (hc : (symList tm k).length ≤ c) :
     decode tm k c = none := by
   simp [decode, hc]
 
-/-- All symbols on the stacks are relevant. -/
+/-- **Stacks with only relevant symbols.** A family of stacks $S$, consisting of a list $S_k$ of
+symbols of $\Gamma_k$ for each stack index $k$, has only relevant symbols when for every stack
+index $k$, every symbol on $S_k$ is a relevant symbol of stack $k$. -/
 def Relevant (S : ∀ k, List (tm.Γ k)) : Prop := ∀ k, ∀ x ∈ S k, x ∈ relevant tm k
 
 /-! ### The coded machine -/
 
 attribute [local instance] primcodableArrow
 
-/-- Labels, coded through `Fin n`. -/
+/-- **Encoding of labels.** For a finite multi-stack machine, the primitive recursive encoding of
+its finite type of labels transported from that of $\mathrm{Fin}\, n$, where $n$ is the number of
+labels, along a chosen bijection between the two. -/
 @[instance_reducible]
 noncomputable def primcodableΛ : Primcodable tm.Λ :=
   Primcodable.ofEquiv _ (Fintype.equivFin tm.Λ)
 
-/-- Internal states, coded through `Fin n`. -/
+/-- **Encoding of internal states.** For a finite multi-stack machine, the primitive recursive
+encoding of its finite type of internal states transported from that of $\mathrm{Fin}\, n$, where
+$n$ is the number of internal states, along a chosen bijection between the two. -/
 @[instance_reducible]
 noncomputable def primcodableσ : Primcodable tm.σ :=
   Primcodable.ofEquiv _ (Fintype.equivFin tm.σ)
 
 attribute [local instance] primcodableΛ primcodableσ
 
-/-- Coded configurations: label, internal state, and stacks of symbol codes. -/
+/-- **Coded configurations of a multi-stack machine.** For a finite multi-stack machine with label
+set $\Lambda$, internal state set $\sigma$ and stack index set $K$, a coded configuration is a
+triple consisting of an optional label in $\Lambda$ (no label marks a halted configuration), an
+internal state in $\sigma$, and an assignment of a list of natural numbers to each $k \in K$. -/
 abbrev CodedCfg := Option tm.Λ × tm.σ × (tm.K → List ℕ)
 
-/-- Code the stacks. -/
+/-- **Coded stacks.** For a finite multi-stack machine, the coded stacks of a family $S$ of stacks
+assign to each stack index $k$ the list obtained from the stack $S_k$ by replacing each symbol
+with its code. -/
 noncomputable def encStk (S : ∀ k, List (tm.Γ k)) : tm.K → List ℕ :=
   fun k ↦ (S k).map (code tm k)
 
-/-- Code a configuration. -/
+/-- **Coding a configuration.** For a finite multi-stack machine, the coded configuration of a
+configuration $c$ has the same optional label and internal state as $c$, and the coded stacks of
+the stacks of $c$. -/
 noncomputable def enc (c : tm.Cfg) : CodedCfg tm := (c.l, c.var, encStk tm c.stk)
 
-/-- Read the top of a coded stack. -/
+/-- **Reading the top of a coded stack.** Let $k$ be a stack index of the machine and let $S$ assign
+to each stack index $j$ a list $S_j$ of natural numbers (codes of symbols). The top of stack $k$ as
+read from $S$ is no symbol when $S_k$ is empty. Otherwise, if $c$ is the first entry of $S_k$, it is
+the decoding of $c$: the symbol of $\Gamma_k$ at position $c$, counting from $0$, in the list of
+relevant symbols of stack $k$, or no symbol when $c$ is at least the length of that list. -/
 noncomputable def readTop (k : tm.K) (S : tm.K → List ℕ) : Option (tm.Γ k) :=
   (S k).head?.bind (decode tm k)
 
-/-- The coded version of `TM2.stepAux`. -/
+/-- **The coded execution of a statement.** This mirrors the machine's execution of one statement
+on stacks of symbol codes. Given a statement $q$, an internal state $v$ and coded stacks $S$ (a list
+$S_k$ of natural numbers for each stack index $k$), it returns a coded configuration (an optional
+label, an internal state and coded stacks), by recursion on $q$. A push of $f$ onto stack $k$
+followed by $q'$ replaces $S_k$ by the code of the symbol $f(v)$ of stack $k$ followed by $S_k$, and
+continues with $q'$. A peek at stack $k$ with update $f$ followed by $q'$ continues with $q'$ from
+the internal state $f(v, t)$, where $t$ is the top of coded stack $k$ as read from $S$. A pop is
+the same as a peek but also removes the first entry of $S_k$ (if there is one). A load of $a$
+followed by $q'$ continues with $q'$ from the internal state $a(v)$. A branch on $f$ executes its
+first statement if $f(v)$ is true and its second otherwise. A goto $f$ stops with label $f(v)$,
+internal state $v$ and stacks $S$, and a halt stops with no label, internal state $v$ and stacks
+$S$. -/
 noncomputable def stepAuxC :
     Turing.TM2.Stmt tm.Γ tm.Λ tm.σ → tm.σ → (tm.K → List ℕ) → CodedCfg tm
   | .push k f q, v, S => stepAuxC q v (Function.update S k (code tm k (f v) :: S k))
@@ -350,12 +413,22 @@ noncomputable def stepAuxC :
   | .goto f, v, S => (some (f v), v, S)
   | .halt, v, S => (none, v, S)
 
-/-- The coded step. -/
+/-- **The coded step.** For a coded configuration $(l, v, S)$, consisting of an optional label $l$,
+an internal state $v$ and coded stacks $S$, the coded step is undefined when $l$ is absent (the
+configuration has halted). When $l$ is a label, it is the coded configuration obtained by the coded
+execution of the program statement of $l$ from the internal state $v$ on the coded stacks $S$. -/
 noncomputable def stepC (c : CodedCfg tm) : Option (CodedCfg tm) :=
   c.1.map fun l ↦ stepAuxC tm (tm.m l) c.2.1 c.2.2
 
 /-! ### The coded step is primitive recursive -/
 
+/-- **Updating the state from the top of a coded stack is primitive recursive.** Let $k$ be a
+stack index of a finite multi-stack machine, write $\Gamma_k$ for the alphabet of stack $k$, and
+let $f$ be any function sending an internal state and an optional symbol of $\Gamma_k$ to an
+internal state. Then the map sending an internal state $v$ and coded stacks $S$ (a list $S_j$ of
+natural numbers for each stack index $j$) to $f(v, t)$, where $t$ is the top of stack $k$ as read
+from $S$, is primitive recursive as a function of two arguments, for the encoding of internal
+states and the encoding of functions on the finite type of stack indices. -/
 theorem primrec₂_readTop {k : tm.K} {f : tm.σ → Option (tm.Γ k) → tm.σ} :
     Primrec₂ fun (v : tm.σ) (S : tm.K → List ℕ) ↦ f v (readTop tm k S) := by
   have hG : Primrec₂ fun (v : tm.σ) (o : Option ℕ) ↦ f v (o.bind (decode tm k)) := by
@@ -394,6 +467,10 @@ theorem primrec_stepC : Primrec (stepC tm) := by
 
 /-! ### The coded step simulates the machine -/
 
+/-- **Coded stacks after replacing one stack.** For a finite multi-stack machine, a family $S$ of
+stacks, a stack index $k$ and a list $l$ of symbols of stack $k$, the coded stacks of the family
+obtained from $S$ by replacing stack $k$ with $l$ are the coded stacks of $S$ with the entry at
+$k$ replaced by the list obtained from $l$ by replacing each symbol with its code. -/
 theorem encStk_update (S : ∀ k, List (tm.Γ k)) (k : tm.K) (l : List (tm.Γ k)) :
     encStk tm (Function.update S k l) = Function.update (encStk tm S) k (l.map (code tm k)) := by
   funext k'
@@ -471,14 +548,22 @@ theorem stepC_enc {c : tm.Cfg} (hc : Relevant tm c.stk) :
       obtain rfl := Option.mem_some_iff.mp hc'
       exact h₂
 
-/-- The coded step on optional configurations. -/
+/-- **The coded step on optional configurations.** For a finite multi-stack machine, the coded
+step extended to optional coded configurations: it sends the absent configuration to the absent
+configuration, and a coded configuration $c$ to the coded step of $c$, which is itself absent
+when $c$ has halted. -/
 noncomputable def optStepC (o : Option (CodedCfg tm)) : Option (CodedCfg tm) := o.bind (stepC tm)
 
 theorem primrec_optStepC : Primrec (optStepC tm) :=
   Primrec.option_bind Primrec.id ((primrec_stepC tm).comp Primrec.snd).to₂
 
-/-- The coded run follows the machine's run, and every configuration on it has relevant
-symbols. -/
+/-- **The coded run simulates the machine's run.** Let $o$ be either no configuration or a
+configuration of a finite multi-stack machine all of whose stack symbols are relevant. Let
+running one step send a running configuration to its successor, and a halted configuration or no
+configuration to no configuration. Then for every $j$, applying the coded step on optional
+configurations $j$ times to the coding of $o$ gives the coding of the result of running $j$
+steps from $o$, and if running $j$ steps from $o$ gives a configuration, all of its stack symbols
+are relevant. -/
 theorem optStepC_iterate (j : ℕ) {o : Option tm.Cfg} (ho : ∀ c ∈ o, Relevant tm c.stk) :
     (optStepC tm)^[j] (o.map (enc tm)) = ((flip bind tm.step)^[j] o).map (enc tm) ∧
       ∀ c ∈ (flip bind tm.step)^[j] o, Relevant tm c.stk := by
@@ -497,6 +582,10 @@ theorem optStepC_iterate (j : ℕ) {o : Option tm.Cfg} (ho : ∀ c ∈ o, Releva
 
 /-! ### Input, output and halting -/
 
+/-- **The initial stacks have only relevant symbols.** For a finite multi-stack machine and every
+list $s$ of symbols of the input alphabet $\Gamma_{k_0}$, the stacks of the initial configuration
+with input $s$ (the list $s$ on the input stack $k_0$ and every other stack empty) have only
+relevant symbols. -/
 theorem relevant_initList (s : List (tm.Γ tm.k₀)) : Relevant tm (initList tm s).stk := by
   intro k x hx
   by_cases hk : k = tm.k₀
@@ -519,7 +608,11 @@ theorem iterate_none (m : ℕ) : (flip bind tm.step)^[m] none = none := by
   | zero => rfl
   | succ m ih => rw [Function.iterate_succ_apply]; exact ih
 
-/-- Before the halting configuration of a run, every configuration is running. -/
+/-- **Configurations before a reached one are running.** Write $\mathrm{step}$ for the machine's
+step map, which is undefined on halted configurations (those with no label), and iterate it as a
+partial map. Let $c_0$ and $c$ be configurations and $s$ a natural number such that $s$ steps from
+$c_0$ reach $c$. Then for every $j < s$, $j$ steps from $c_0$ reach some configuration $c'$, and
+$c'$ is running: its label is defined. -/
 theorem running_before_halt {c₀ : tm.Cfg} {s : ℕ} {c : tm.Cfg}
     (hs : (flip bind tm.step)^[s] (some c₀) = some c) {j : ℕ} (hj : j < s) :
     ∃ c', (flip bind tm.step)^[j] (some c₀) = some c' ∧ c'.l.isSome := by
@@ -551,8 +644,15 @@ end Machine
 
 attribute [local instance] primcodableArrow primcodableΛ primcodableσ
 
-/-- **Turing-computable functions are recursive.** A function `ℕ → ℕ` computed by a bundled
-finite multi-stack machine (`FinTM2`) under the binary encoding `encodeNat` is `Computable`. -/
+/-- **Turing-computable functions are recursive.** Let $f : \mathbb{N} \to \mathbb{N}$ and suppose
+that some finite multi-stack Turing machine (finitely many stacks, labels and internal states,
+and a finite input alphabet), together with identifications of its input and output stack
+alphabets with the booleans, computes $f$ under the binary encoding of natural numbers (least
+significant bit first, with $0$ encoded as the empty list): for every $n$, the machine started
+at its main label in its initial internal state, with the encoding of $n$ on its input stack and
+all other stacks empty, eventually reaches the halted configuration whose output stack holds the
+encoding of $f(n)$, whose other stacks are empty and whose internal state is the initial one.
+Then $f$ is computable (recursive). -/
 theorem computable_of_tm2Computable {f : ℕ → ℕ} (h : TM2Computable encodeNat encodeNat f) :
     Computable f := by
   let tm := h.tm

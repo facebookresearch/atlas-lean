@@ -119,6 +119,13 @@ private theorem predictablePartSup_nonneg (ω : Ω) : 0 ≤ predictablePartSup f
   ENNReal.toReal_nonneg
 
 omit [IsProbabilityMeasure μ] in
+/-- A uniformly integrable family has a uniform `L¹` bound in `ℝ≥0`. -/
+private theorem exists_eLpNorm_le_of_uniformIntegrable {g : ℕ → Ω → ℝ}
+    (hg : UniformIntegrable g 1 μ) : ∃ C : ℝ≥0, ∀ n, eLpNorm (g n) 1 μ ≤ C :=
+  ⟨_, fun n => (le_iSup (fun i => eLpNorm (g i) 1 μ) n).trans_eq
+    (ENNReal.coe_toNNReal hg.iSup_eLpNorm_lt.ne).symm⟩
+
+omit [IsProbabilityMeasure μ] in
 /-- An integral is bounded by its `L¹` norm. -/
 private theorem integral_le_eLpNorm_one {g : Ω → ℝ} (hg : Integrable g μ)
     (C : ℝ≥0) (hC : eLpNorm g 1 μ ≤ C) : ∫ ω, g ω ∂μ ≤ (C : ℝ) := by
@@ -239,7 +246,7 @@ private theorem predictablePartSup_spec (hsub : Submartingale f ℱ μ) {C : ℝ
 uniformly integrable. -/
 private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) : UniformIntegrable (predictablePart f ℱ μ) 1 μ := by
-  obtain ⟨_, ⟨C, hC⟩⟩ := hui
+  obtain ⟨C, hC⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   obtain ⟨hMemLp, hle, -⟩ := predictablePartSup_spec hsub hC
   have hae : ∀ n, AEStronglyMeasurable (predictablePart f ℱ μ n) μ := fun n =>
     ((stronglyAdapted_predictablePart' (f := f) (ℱ := ℱ) (μ := μ) n).mono (ℱ.le n)).aestronglyMeasurable
@@ -264,7 +271,7 @@ private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ
       (hsub.predictablePart_nonneg.mono fun ω hω => hω n)]
     exact ENNReal.ofReal_le_ofReal (integral_predictablePart_le hsub hC n)
   refine ⟨UnifIntegrable.ae_mono (unifIntegrable_const le_rfl ENNReal.one_ne_top hMemLp) hae
-      (fun n => ?_), Real.toNNReal (2 * (C : ℝ)), fun n => hBound n⟩
+      (fun n => ?_), (iSup_le hBound).trans_lt ENNReal.coe_lt_top⟩
   · filter_upwards [hsub.predictablePart_nonneg, hle] with ω hω hleω
     rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hω n), Real.enorm_eq_ofReal_abs,
       abs_of_nonneg (predictablePartSup_nonneg (f := f) (ℱ := ℱ) (μ := μ) ω)]
@@ -276,10 +283,11 @@ families. -/
 private theorem uniformIntegrable_martingalePart (hsub : Submartingale f ℱ μ)
     (hui : UniformIntegrable f 1 μ) : UniformIntegrable (martingalePart f ℱ μ) 1 μ := by
   have hA_UI := uniformIntegrable_predictablePart hsub hui
-  obtain ⟨h1, ⟨Cf, hCf⟩⟩ := hui
-  obtain ⟨hA1, ⟨CA, hCA⟩⟩ := hA_UI
+  obtain ⟨Cf, hCf⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
+  obtain ⟨CA, hCA⟩ := exists_eLpNorm_le_of_uniformIntegrable hA_UI
   have hsub_UI : UniformIntegrable (f - predictablePart f ℱ μ) 1 μ := by
-    refine ⟨h1.sub hA1 le_rfl, ⟨Cf + CA, fun n => ?_⟩⟩
+    refine ⟨hui.1.sub hA_UI.1,
+      (iSup_le fun n => ?_).trans_lt (ENNReal.coe_lt_top (r := Cf + CA))⟩
     calc eLpNorm ((f - predictablePart f ℱ μ) n) 1 μ
         = eLpNorm (f n - predictablePart f ℱ μ n) 1 μ := rfl
       _ ≤ eLpNorm (f n) 1 μ + eLpNorm (predictablePart f ℱ μ n) 1 μ :=
@@ -293,12 +301,13 @@ private theorem uniformIntegrable_stoppedProcess_predictablePart
     (hsub : Submartingale f ℱ μ) (hui : UniformIntegrable f 1 μ)
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :
     UniformIntegrable (stoppedProcess (predictablePart f ℱ μ) τ) 1 μ := by
-  obtain ⟨_, ⟨C, hC⟩⟩ := hui
+  obtain ⟨C, hC⟩ := exists_eLpNorm_le_of_uniformIntegrable hui
   obtain ⟨hMemLp, hle, hSupLe⟩ := predictablePartSup_spec hsub hC
   have hae : ∀ n, AEStronglyMeasurable (stoppedProcess (predictablePart f ℱ μ) τ n) μ :=
     fun n => ((stronglyAdapted_predictablePart' (f := f) (ℱ := ℱ) (μ := μ)).stronglyMeasurable_stoppedProcess_of_discrete hτ n).aestronglyMeasurable
   refine ⟨UnifIntegrable.ae_mono (unifIntegrable_const le_rfl ENNReal.one_ne_top hMemLp) hae
-      (fun n => ?_), Real.toNNReal (2 * (C : ℝ)), fun n => ?_⟩
+      (fun n => ?_), (iSup_le fun n => ?_).trans_lt
+        (ENNReal.coe_lt_top (r := Real.toNNReal (2 * (C : ℝ))))⟩
   · filter_upwards [hsub.predictablePart_nonneg, hle] with ω hω hleω
     have hstop : stoppedProcess (predictablePart f ℱ μ) τ n ω =
         predictablePart f ℱ μ (min (↑n : WithTop ℕ) (τ ω)).untopA ω := rfl
@@ -342,9 +351,10 @@ theorem Submartingale.uniformIntegrable_stoppedProcess_of_uniformIntegrable
     simp only [stoppedProcess, Pi.add_apply]
     exact h'.symm
   rw [hdecomp]
-  obtain ⟨hM1, ⟨CM, hCM⟩⟩ := hMstop_UI
-  obtain ⟨hA1, ⟨CA, hCA⟩⟩ := hA_UI
-  refine ⟨hM1.add hA1 le_rfl, ⟨CM + CA, fun n => ?_⟩⟩
+  obtain ⟨CM, hCM⟩ := exists_eLpNorm_le_of_uniformIntegrable hMstop_UI
+  obtain ⟨CA, hCA⟩ := exists_eLpNorm_le_of_uniformIntegrable hA_UI
+  refine ⟨hMstop_UI.1.add hA_UI.1,
+    (iSup_le fun n => ?_).trans_lt (ENNReal.coe_lt_top (r := CM + CA))⟩
   calc eLpNorm ((stoppedProcess (martingalePart f ℱ μ) τ +
         stoppedProcess (predictablePart f ℱ μ) τ) n) 1 μ
       = eLpNorm (stoppedProcess (martingalePart f ℱ μ) τ n +
@@ -366,11 +376,10 @@ theorem Submartingale.integral_stoppedValueAtTop_of_uniformIntegrable
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :
     (∫ ω, f 0 ω ∂μ ≤ ∫ ω, stoppedValueAtTop f τ ω ∂μ) ∧
     (∫ ω, stoppedValueAtTop f τ ω ∂μ ≤ ∫ ω, ℱ.limitProcess f μ ω ∂μ) := by
-  obtain ⟨R, hR⟩ := hui.2
   have hUIstop : UniformIntegrable (stoppedProcess f τ) 1 μ :=
     hsub.uniformIntegrable_stoppedProcess_of_uniformIntegrable hui τ hτ
   have hae_lim : ∀ᵐ ω ∂μ, Tendsto (fun n => f n ω) atTop (𝓝 (ℱ.limitProcess f μ ω)) :=
-    hsub.ae_tendsto_limitProcess hR
+    hsub.ae_tendsto_limitProcess hui.iSup_eLpNorm_lt
   have hae_stop : ∀ᵐ ω ∂μ, Tendsto (fun n => stoppedProcess f τ n ω) atTop
       (𝓝 (stoppedValueAtTop f τ ω)) := by
     filter_upwards [hae_lim] with ω hω

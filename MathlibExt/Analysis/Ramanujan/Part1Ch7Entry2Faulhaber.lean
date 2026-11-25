@@ -384,10 +384,9 @@ private lemma etaPair_deriv_bound (n : ℕ) (s : ℂ) (δ M : ℝ) (t : ℝ)
   have h1t : (1 : ℝ) ≤ t := by linarith
   have hnpos : (0 : ℝ) < ((n : ℝ) + 1) := by linarith
   have hle_nt : (n : ℝ) + 1 ≤ t := by linarith
-  have hc_ne : (-s) ≠ 0 := neg_ne_zero.mpr hs0
   have hderiv : deriv (fun y : ℝ => (y : ℂ) ^ (-s)) t
       = (-s) * ((t : ℂ) ^ (-s - 1)) :=
-    Complex.deriv_ofReal_cpow_const ht_ne hc_ne
+    Complex.deriv_ofReal_cpow_const (-s) ht_ne
   rw [hderiv, norm_mul, norm_neg]
   have hnorm : ‖((t : ℂ) ^ (-s - 1))‖ = t ^ ((-s - 1).re) :=
     Complex.norm_cpow_eq_rpow_re_of_pos ht_pos (-s - 1)
@@ -1057,9 +1056,17 @@ private lemma eta_tendsto_of_pos_re {s : ℂ} (hs : 0 < s.re) :
     rw [hk]
     exact hN2 k hk_ge
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
+/-- **Ramanujan's formula for the alternating zeta function at $-r$.** Let
+$\eta(s) = (1 - 2^{1-s})\,\zeta(s)$ for $s \ne 1$ and $\eta(1) = \log 2$, where $\zeta$ is the
+Riemann zeta function, and let $B^*(z) = 2\,\Gamma(z + 1)\,\zeta(z) / (2\pi)^z$. Then for every
+$s \in \mathbb{C}$ with $\mathrm{Re}\, s > 0$ the partial sums $\sum_{j=0}^{N-1} (-1)^j / (j+1)^s$
+tend to $\eta(s)$ as $N \to \infty$; the functions $r \mapsto \eta(-r)$ and
+$r \mapsto (2^{r+1} - 1)\, B^*(r + 1) \sin(\pi r/2) / (r + 1)$ are meromorphic on $\mathbb{C}$;
+and these two functions agree outside a closed discrete subset of $\mathbb{C}$.
 
 Proves `Wanted` entry `ramanujan_part1_ch7_entry2_faulhaber`.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
 -/
 theorem ramanujan_part1_ch7_entry2_faulhaber :
     (∀ s : ℂ, 0 < s.re →

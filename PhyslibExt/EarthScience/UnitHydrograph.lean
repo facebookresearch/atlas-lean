@@ -72,6 +72,7 @@ theorem discreteConvolution_sum_eq {p u : ℕ → ℝ} {n m : ℕ}
   AdditiveCombinatorics.sum_range_sumConv p u hp hu
 
 /-- Volume form, with the unit-hydrograph normalization as a hypothesis:
+for `p` supported before `n` and `u` before `m`,
 if `dt * ∑ j, u j = A` (`p`: excess depth per step; `u`: discharge
 per unit depth; `q`: discharge; the unit response integrates to catchment area
 `A` over the time step, i.e. unit depth over the catchment), then the

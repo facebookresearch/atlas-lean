@@ -444,7 +444,7 @@ private theorem glk_unique_seq
     q = F := by
   funext m
   induction m using Nat.strong_induction_on with
-  | h m ih =>
+  | ind m ih =>
     by_cases hm : m < C + 1
     · rw [glk_seq_initial C Y q hq hq0 hqcomp m hm,
         glk_seq_initial C Y F hF hF0 hFcomp m hm]

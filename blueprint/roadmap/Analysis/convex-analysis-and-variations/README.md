@@ -20,6 +20,7 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Nesterov smoothing](nesterov-smoothing/README.md)
 - [Newton's method for minimization](newton-s-method-for-minimization/README.md)
 - [Polar sets](polar-sets/README.md)
+- [Random reshuffling](random-reshuffling/README.md)
 - [Second-order condition for convexity](second-order-condition-for-convexity/README.md)
 - [Self-concordant functions and barriers](self-concordant-functions-and-barriers/README.md)
 - [Stampacchia's theorem](stampacchia-s-theorem/README.md)
@@ -34,3 +35,9 @@ Convex functions and sets in analysis and optimization: first-order and second-o
 - [Least squares, ridge and lasso regression](../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)
 - [Newton's method](../numerical-analysis/newton-s-method/README.md)
 - [Conjugate gradient method](../../LinearAlgebra/matrix-decompositions/conjugate-gradient-method/README.md)
+
+## Research directions
+
+- [Existence of minimizers for quasiconvex elastic energies](existence-of-minimizers-for-quasiconvex-elastic-energies.md)
+
+- [Regularity and singularities of elastic energy minimizers](regularity-and-singularities-of-elastic-minimizers.md)
