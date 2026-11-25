@@ -22,10 +22,11 @@ example (P : RealArchParam) (d : ArchDatumR P)
         (Matrix.of.symm g) (Matrix.of.symm (g * X)) :=
   ArchDatumR.exists_W_eq_fderivWithin_mul P d X
 
+/-- Along the zero matrix the derivative datum has Whittaker function zero on invertible
+matrices. -/
 example (P : RealArchParam) (d : ArchDatumR P) :
-    ∃ d' : ArchDatumR P, ∀ g : Matrix (Fin 2) (Fin 2) ℝ, g.det ≠ 0 →
-      d'.W g = fderivWithin ℝ (ArchR.asPi d.W) ArchR.glSet
-        (Matrix.of.symm g) (Matrix.of.symm (g * 0)) :=
-  ArchDatumR.exists_W_eq_fderivWithin_mul P d 0
+    ∃ d' : ArchDatumR P, ∀ g : Matrix (Fin 2) (Fin 2) ℝ, g.det ≠ 0 → d'.W g = 0 := by
+  obtain ⟨d', hd'⟩ := ArchDatumR.exists_W_eq_fderivWithin_mul P d 0
+  exact ⟨d', fun g hg => by rw [hd' g hg, mul_zero]; exact map_zero _⟩
 
 end LanglandsTunnell.Converse
