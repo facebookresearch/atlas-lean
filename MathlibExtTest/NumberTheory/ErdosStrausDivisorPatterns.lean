@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.ErdosStrausDivisorPatterns
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for the type I Erdős–Straus divisor criteria -/
+/-! # Tests for the Erdős–Straus divisor criteria -/
 
 open MetaMathlibExt
 
@@ -50,3 +50,17 @@ example (y z : ℕ) (hxy : 5 ≤ y) (hyz : y ≤ z) (hpy : ¬ 7 ∣ y) :
   have := (erdosStraus_typeI_exists_dvd_sq (p := 7) (x := 5) (by decide) (by decide) hxy hyz
     (by exact_mod_cast h) hpy).2.1
   omega
+
+-- At p = 2 the two larger denominators coincide and the divisor attains d = x.
+example : ∃ d : ℕ, d = 1 ∧ 0 < d ∧ d ∣ 1 ^ 2 ∧ d ≤ 1 := by
+  obtain ⟨-, -, d, hd0, hd, hdx, -, hy, -⟩ := erdosStraus_typeII_exists_dvd_sq
+    (p := 2) (x := 1) (y := 2) (z := 2) (by decide) (by decide) (by decide) le_rfl
+    (by norm_num) (by decide)
+  exact ⟨d, by omega, hd0, hd, hdx⟩
+
+-- For p = 19, x = 6 is strictly between the two bounds, and y = 38 < 57 = z.
+example : ∃ d : ℕ, d = 4 ∧ d ∣ 6 ^ 2 ∧ (5 : ℤ) ∣ (d : ℤ) + 6 := by
+  obtain ⟨-, -, d, -, hd, -, hmod, hy, -⟩ := erdosStraus_typeII_exists_dvd_sq
+    (p := 19) (x := 6) (y := 38) (z := 57) (by decide) (by decide) (by decide) (by decide)
+    (by norm_num) (by decide)
+  exact ⟨d, by omega, hd, by simpa using hmod⟩

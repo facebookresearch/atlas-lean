@@ -33,6 +33,10 @@ hence `d ((4x - p) z - p x) = p² x²`; since `p ∤ x` and `p ∤ y`, also `p �
 `x² = d e`. The number `4x - p` is prime to `x` and divides `(4x - p) (x + y) = d (4e + 1)`, so it
 divides `4e + 1`. If `2x ≥ p + 2`, then `x ≤ y` gives `d ≥ 4x`, so `4e + 1 ≤ x + 1 < 4x - p`, a
 contradiction; hence `x ≤ ⌈p/2⌉`.
+
+For type II (`p ∣ y`), `erdosStraus_typeII_exists_dvd_sq` proves Proposition 4. Writing `y = p k`
+gives `d = (4x - p) k - x` with `d z = x y`. Thus `0 < d ≤ x < p`, so the factor of `p` can be
+cancelled from `d ∣ p x²`.
 -/
 
 namespace MetaMathlibExt
@@ -196,5 +200,82 @@ public theorem erdosStraus_typeI_exists_dvd_sq {p x y z : ℕ} (hp : p.Prime) (h
     linarith
   refine ⟨by omega, by omega, d, hd0, ⟨e, he⟩, ⟨y, by rw [hdy]; ring⟩, hdy, ?_⟩
   linear_combination (4 * x - p : ℤ) * hdz + (p * x : ℤ) * hdy
+
+/-- **Divisor criterion necessary for type II Erdős–Straus solutions.** Let $p$ be a prime and let
+$x \le y \le z$ be positive integers with $4/p = 1/x + 1/y + 1/z$ and $p \mid y$. Then
+$\lceil p/4 \rceil \le x \le \lceil p/2 \rceil$, and there is a positive divisor $d$ of $x^2$ with
+$d \le x$, $d \equiv -x \pmod{4x - p}$, $(4x - p)\,y = p(x + d)$ and $(4x - p)\,d\,z = px(x + d)$.
+
+Since $4x > p$, the last two equations say $y = p(x + d)/(4x - p)$ and
+$z = p(x + x^2/d)/(4x - p)$.
+
+Source: Kyle Bradford, *Elementary Patterns from the Erdős-Straus Conjecture*, INTEGERS 25 (2025),
+Article A54, Proposition 4 (`integers-2025-A54-prop-4`). -/
+public theorem erdosStraus_typeII_exists_dvd_sq {p x y z : ℕ} (hp : p.Prime) (hx : 0 < x)
+    (hxy : x ≤ y) (hyz : y ≤ z) (h : (4 : ℚ) / p = 1 / x + 1 / y + 1 / z) (hpy : p ∣ y) :
+    (p + 3) / 4 ≤ x ∧ x ≤ (p + 1) / 2 ∧
+      ∃ d : ℕ, 0 < d ∧ d ∣ x ^ 2 ∧ d ≤ x ∧ (4 * x - p : ℤ) ∣ d + x ∧
+        (4 * x - p : ℤ) * y = p * (x + d) ∧ (4 * x - p : ℤ) * d * z = p * x * (x + d) := by
+  have hy : 0 < y := hx.trans_le hxy
+  have hz : 0 < z := hy.trans_le hyz
+  have hyz₀ := Nat.mul_pos hy hz
+  have hpy' : p ≤ y := Nat.le_of_dvd hy hpy
+  have hpz : p ≤ z := hpy'.trans hyz
+  -- Clear the denominators. Since both y and z are at least p, we get 2x ≤ p.
+  have key : 4 * x * y * z = p * (y * z + x * z + x * y) := by
+    have hp0 : (p : ℚ) ≠ 0 := by exact_mod_cast hp.ne_zero
+    have hx0 : (x : ℚ) ≠ 0 := by exact_mod_cast hx.ne'
+    have hy0 : (y : ℚ) ≠ 0 := by exact_mod_cast hy.ne'
+    have hz0 : (z : ℚ) ≠ 0 := by exact_mod_cast hz.ne'
+    field_simp at h
+    exact_mod_cast (by linear_combination h : (4 * x * y * z : ℚ) = p * (y * z + x * z + x * y))
+  have hp4x : p < 4 * x := by
+    by_contra! hle
+    nlinarith only [key, Nat.mul_le_mul_right (y * z) hle,
+      Nat.mul_pos hp.pos (Nat.mul_pos hx hz), Nat.mul_pos hp.pos (Nat.mul_pos hx hy)]
+  have h2x : 2 * x ≤ p := by
+    have hle : (4 * x) * (y * z) ≤ (p + 2 * x) * (y * z) := by
+      nlinarith only [key, Nat.mul_le_mul_right (x * z) hpy', Nat.mul_le_mul_right (x * y) hpz]
+    have := Nat.le_of_mul_le_mul_right hle hyz₀
+    omega
+  have hxp : x < p := by omega
+  obtain ⟨k, hk⟩ := hpy
+  have hk' : (y : ℤ) = p * k := by exact_mod_cast hk
+  -- Cancel p after substituting y = p * k. The resulting divisor satisfies d * z = x * y.
+  let D : ℤ := (4 * x - p : ℤ) * k - x
+  have hDk : (4 * x - p : ℤ) * k * z = x * (y + z) := by
+    have hp0 : (p : ℤ) ≠ 0 := by exact_mod_cast hp.ne_zero
+    apply mul_left_cancel₀ hp0
+    have key' : (4 * x * y * z : ℤ) = p * (y * z + x * z + x * y) := by exact_mod_cast key
+    linear_combination key' - ((4 * x - p : ℤ) * z) * hk'
+  have hDz : D * z = x * y := by
+    dsimp [D]
+    linear_combination hDk
+  have hx' : (0 : ℤ) < x := by exact_mod_cast hx
+  have hy' : (0 : ℤ) < y := by exact_mod_cast hy
+  have hz' : (0 : ℤ) < z := by exact_mod_cast hz
+  have hD0 : 0 < D := pos_of_mul_pos_left (hDz.symm ▸ mul_pos hx' hy') hz'.le
+  obtain ⟨d, hd⟩ : ∃ d : ℕ, (d : ℤ) = D := ⟨_, Int.toNat_of_nonneg hD0.le⟩
+  have hd0 : 0 < d := by exact_mod_cast (hd ▸ hD0 : (0 : ℤ) < d)
+  have hdz : (d : ℤ) * z = x * y := by rw [hd, hDz]
+  have hdx : d ≤ x := by
+    have hyz' : (y : ℤ) ≤ z := by exact_mod_cast hyz
+    have hle : (d : ℤ) * z ≤ x * z := hdz.symm ▸ mul_le_mul_of_nonneg_left hyz' hx'.le
+    exact_mod_cast le_of_mul_le_mul_right hle hz'
+  have hdy : (4 * x - p : ℤ) * y = p * (x + d) := by
+    rw [hk', hd]
+    dsimp [D]
+    ring
+  have hmod : (4 * x - p : ℤ) ∣ d + x := ⟨k, by rw [hd]; dsimp [D]; ring⟩
+  have hz'': (4 * x - p : ℤ) * d * z = p * x * (x + d) := by
+    linear_combination (4 * x - p : ℤ) * hdz + (x : ℤ) * hdy
+  -- Subtract p * x * d and cancel p by coprimality, using 0 < d ≤ x < p.
+  have hdpx : d ∣ p * x ^ 2 := by
+    have hdpx' : (d : ℤ) ∣ (p : ℤ) * x ^ 2 :=
+      ⟨(4 * x - p : ℤ) * z - p * x, by linear_combination -hz''⟩
+    exact_mod_cast hdpx'
+  have hpd : ¬ p ∣ d := Nat.not_dvd_of_pos_of_lt hd0 (hdx.trans_lt hxp)
+  exact ⟨by omega, by omega, d, hd0, (hp.coprime_iff_not_dvd.mpr hpd).symm.dvd_of_dvd_mul_left hdpx,
+    hdx, hmod, hdy, hz''⟩
 
 end MetaMathlibExt
