@@ -88,8 +88,10 @@ def deficitList {n : ℕ} (R Q : Fin n → ℝ) : List ℝ :=
 reflected walk of the first `t` deficits, i.e. the sequent-peak
 drawdown below a full reservoir at time `t` (excess inflow
 spilled). It equals the largest net deficit over a final window
-`[i, t)`. The storage capacity that meets the release over the
-whole horizon is `worstRequiredStorage`, not this value. -/
+`[i, t)`. For `t ≥ n` all `n` deficits enter, so the value is the
+deficit at the end of the horizon. The storage capacity that meets
+the release over the whole horizon is `worstRequiredStorage`, not
+this value. -/
 def requiredStorageAt {n : ℕ} (R Q : Fin n → ℝ) (t : ℕ) : ℝ :=
   lindley ((deficitList R Q).take t)
 
@@ -98,7 +100,9 @@ def terminalStorageDeficit {n : ℕ} (R Q : Fin n → ℝ) : ℝ :=
   lindley (deficitList R Q)
 
 /-- The signed deficit accumulated over the suffix of steps
-`i, …, t - 1` (empty, hence zero, when `i = t`). -/
+`i, …, t - 1` (empty, hence zero, when `i ≥ t`, the step count
+`t - i` being truncated subtraction); steps from `n` on contribute
+nothing. -/
 def suffixDeficitSum {n : ℕ} (R Q : Fin n → ℝ) (i t : ℕ) : ℝ :=
   (((deficitList R Q).drop i).take (t - i)).sum
 
@@ -259,8 +263,8 @@ private lemma requiredStorageAt_le_worst_and_exists_eq_of
 
 /-! ## C. Storage-deficit results from the canonical walk -/
 
-/-- One-step update of required storage: append step `t`'s
-deficit and reflect at zero. -/
+/-- One-step update of required storage at a step `t < n`: append
+step `t`'s deficit and reflect at zero. -/
 theorem requiredStorageAt_succ {n : ℕ} (R Q : Fin n → ℝ)
     {t : ℕ} (ht : t < n) :
     requiredStorageAt R Q (t + 1)
@@ -276,16 +280,16 @@ theorem requiredStorageAt_eq_walkMax_reverse {n : ℕ}
   requiredStorageAt_eq_walkMax_reverse_of lindley_eq_walkMax_reverse
     R Q t
 
-/-- Every suffix deficit is at most the required storage
-at `t`. -/
+/-- For `i ≤ t ≤ n`, every suffix deficit is at most the required
+storage at `t`. -/
 theorem suffixDeficitSum_le_requiredStorageAt {n : ℕ}
     (R Q : Fin n → ℝ) {i t : ℕ} (hi : i ≤ t) (ht : t ≤ n) :
     suffixDeficitSum R Q i t ≤ requiredStorageAt R Q t :=
   suffixDeficitSum_le_requiredStorageAt_of
     lindley_eq_walkMax_reverse sum_le_walkMax_of_prefix R Q hi ht
 
-/-- Some suffix attains the required storage at `t` (possibly
-the empty suffix, whose deficit is zero). -/
+/-- For `t ≤ n`, some suffix attains the required storage at `t`
+(possibly the empty suffix, whose deficit is zero). -/
 theorem exists_suffixDeficitSum_eq_requiredStorageAt {n : ℕ}
     (R Q : Fin n → ℝ) {t : ℕ} (ht : t ≤ n) :
     ∃ i ≤ t, suffixDeficitSum R Q i t = requiredStorageAt R Q t :=
