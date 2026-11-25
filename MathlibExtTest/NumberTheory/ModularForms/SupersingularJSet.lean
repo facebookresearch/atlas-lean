@@ -48,59 +48,27 @@ example : True := by
   fail_if_success have := ssJSet 1
   trivial
 
-/-- In characteristic `2`, every elliptic curve with `j = 0` is supersingular: `j = 0` forces
-`a₁ = 0`, the discriminant is then `a₃ ^ 4`, and a point equal to its negative would force
-`a₃ = 0`. -/
-private theorem zero_mem_ssJSet_two : (0 : AlgebraicClosure (ZMod 2)) ∈ ssJSet 2 := by
-  refine mem_ssJSet_iff.mpr fun W _ hj P hP => ?_
-  have ha₁ : W.a₁ = 0 := W.j_eq_zero_iff_of_char_two.mp hj
-  have ha₃ : W.a₃ ≠ 0 := by
-    intro h
-    have hΔ := W.isUnit_Δ
-    rw [W.Δ_of_char_two, ha₁, h] at hΔ
-    simp at hΔ
-  rcases P with _ | ⟨x, y, hxy⟩
-  · rfl
-  · exfalso
-    rw [two_nsmul] at hP
-    by_cases hy : y = W.toAffine.negY x y
-    · apply ha₃
-      rw [Affine.negY, ha₁] at hy
-      linear_combination hy - y * (CharTwo.two_eq_zero : (2 : AlgebraicClosure (ZMod 2)) = 0)
-    · rw [Affine.Point.add_self_of_Y_ne hy] at hP
-      exact Affine.Point.some_ne_zero _ hP
-
-/-- In characteristic `2`, a nonzero `j` is not supersingular: the curve `WeierstrassCurve.ofJ j`
-has the nonzero point `(0, y)` with `y ^ 2 = a₆`, which equals its negative. -/
-private theorem eq_zero_of_mem_ssJSet_two {j : AlgebraicClosure (ZMod 2)} (hj : j ∈ ssJSet 2) :
-    j = 0 := by
-  by_contra h0
-  have h1728 : j ≠ 1728 := by
-    have : (1728 : AlgebraicClosure (ZMod 2)) = 0 := by
-      linear_combination 864 * (CharTwo.two_eq_zero : (2 : AlgebraicClosure (ZMod 2)) = 0)
-    rwa [this]
-  obtain ⟨y, hy⟩ := IsAlgClosed.exists_pow_nat_eq (-(j - 1728) ^ 5) two_pos
-  have hW := ofJ_ne_0_ne_1728 j h0 h1728
-  have heq : (ofJ j).toAffine.Equation 0 y := by
-    rw [Affine.equation_iff', hW]
-    simp [ofJNe0Or1728, hy]
-  have hns := Affine.equation_iff_nonsingular.mp heq
-  have h2 : 2 • (Affine.Point.some 0 y hns) = 0 := by
-    rw [two_nsmul]
-    refine Affine.Point.add_self_of_Y_eq ?_
-    rw [Affine.negY, hW]
-    simp [ofJNe0Or1728, CharTwo.neg_eq]
-  exact Affine.Point.some_ne_zero hns (mem_ssJSet_iff.mp hj (ofJ j) (ofJ_j j) _ h2)
+end Locus
 
 /-- In characteristic `2` the supersingular `j`-invariants are the image of `ssSetTwo`. -/
-private theorem ssJSet_two :
-    ssJSet 2 = algebraMap (ZMod 2) (AlgebraicClosure (ZMod 2)) '' ssSetTwo := by
-  ext j
-  simp only [ssSetTwo, Finset.coe_singleton, Set.image_singleton, map_zero,
-    Set.mem_singleton_iff]
-  exact ⟨eq_zero_of_mem_ssJSet_two, fun h => h ▸ zero_mem_ssJSet_two⟩
+example : ssJSet 2 = algebraMap (ZMod 2) (AlgebraicClosure (ZMod 2)) '' ssSetTwo := ssJSet_two
 
-end Locus
+/-- So `0` is supersingular in characteristic `2`: every elliptic curve with `j = 0` over an
+algebraic closure of `ZMod 2` is supersingular. -/
+example (W : WeierstrassCurve (AlgebraicClosure (ZMod 2))) [W.IsElliptic] (hW : W.j = 0) :
+    W.toAffine.IsSupersingular := by
+  refine mem_ssJSet_iff.mp ?_ W hW
+  rw [ssJSet_two]
+  exact ⟨0, by simp [ssSetTwo], map_zero _⟩
+
+/-- And `1` is not: some elliptic curve with `j = 1` over an algebraic closure of `ZMod 2` is not
+supersingular. -/
+example : (1 : AlgebraicClosure (ZMod 2)) ∉ ssJSet 2 := by
+  rw [ssJSet_two]
+  rintro ⟨a, ha, h⟩
+  simp only [ssSetTwo, Finset.coe_singleton, Set.mem_singleton_iff] at ha
+  subst ha
+  simp at h
 
 /-- Consumer with the source's binders, at a prime characteristic `p`. -/
 example (N p : ℕ) [Fact p.Prime] :
@@ -137,8 +105,8 @@ example : eichlerMass 1 13 = 1 := by norm_num [eichlerMass_one]
 example : eichlerMass 2 13 = 3 := by
   norm_num [eichlerMass, ArithmeticFunction.dedekindPsi_prime Nat.prime_two]
 
-/-! At level one the count formula gives the number of supersingular `j`-invariants listed by
-`ssSetTwo`, ..., `ssSetThirteen`. -/
+/-! At level one the count formula gives the number of entries of the tables `ssSetTwo`, ...,
+`ssSetThirteen`. -/
 
 private theorem nuTwo_one : nuTwo 1 = 1 := by rw [nuTwo, Nat.card_eq_fintype_card]; decide
 private theorem nuThree_one : nuThree 1 = 1 := by rw [nuThree, Nat.card_eq_fintype_card]; decide

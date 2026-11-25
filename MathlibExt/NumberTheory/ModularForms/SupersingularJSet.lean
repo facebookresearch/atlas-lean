@@ -10,6 +10,7 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Definitions/Def_ModularCurve_EichlerMass.lean`,
+`Definitions/Def_ModularCurve_GenusNumerics.lean`,
 `Definitions/Def_ModularCurve_SupersingularLocus.lean` and
 `Definitions/Def_ModularCurve_SupersingularModuli.lean`
 (https://github.com/anthropics/fermats-last-theorem):
@@ -34,22 +35,40 @@ public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.Supersingular
 public import MathlibExt.NumberTheory.ArithmeticFunction.DedekindPsi
+import Mathlib.AlgebraicGeometry.EllipticCurve.ModelsWithJ
 import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 
 /-!
 # Supersingular `j`-invariants, short Weierstrass models and the Eichler mass
 
 This file defines the supersingular `j`-invariants in characteristic `p` (`ModularCurve.ssJSet`,
-through `WeierstrassCurve.Affine.IsSupersingular`), lists the supersingular `j`-invariants and
-polynomials in characteristics `2`, `3`, `5`, `7`, `11` and `13`, and defines the automorphism
-weights, the short Weierstrass models with their affine point counts, the Eichler mass and the
-supersingular count formula.
+through `WeierstrassCurve.Affine.IsSupersingular`) and shows that in characteristic `2` they are
+the image of the table `ssSetTwo = {0}` (`ModularCurve.ssJSet_two`). The tables `ssSetThree`,
+`ssSetFive`, `ssSetSeven`, `ssSetEleven` and `ssSetThirteen`, and the polynomials `∏ (X - j)` over
+them, are numerical data: the supersingular `j`-invariants in characteristics `3`, `5`, `7`, `11`
+and `13` as tabulated by Birch and Kuyk. The file also defines the automorphism weights, the short
+Weierstrass models with their affine point counts, the Eichler mass and the supersingular count
+formula.
 
 Scope: every declaration that reads `ZMod p` as the field with `p` elements takes
 `[Fact p.Prime]`. These declarations are defined for the prime fields `ZMod p` only; prime-power
 fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope (`ZMod (p ^ n)` is not a field for
 `n > 1`). The levels `N` of `nuTwo`, `nuThree`, `eichlerMass` and `ssCountFormula` are arbitrary
 natural numbers, with `ZMod N` read as a ring.
+
+## References
+
+* B. J. Birch and W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in
+  Mathematics 476, Springer, 1975, pp. 142–144: the table of supersingular `j`-invariants that
+  `ssSetTwo`, ..., `ssSetThirteen` record.
+* J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed., Graduate Texts in Mathematics
+  106, Springer, 2009, Theorem III.10.1: the orders of the automorphism groups behind
+  `autWeight`.
+* J. Voight, *Quaternion Algebras*, Graduate Texts in Mathematics 288, Springer, 2021,
+  Theorem 25.3.18 (Eichler's mass formula for Eichler orders), Theorem 30.1.5 (Eichler's class
+  number formula), and Corollary 42.3.7, paragraph 42.3.8 and Remark 42.3.10 (the Deuring
+  correspondence, also with a cyclic subgroup of order prime to `p`): the mass and count formulas
+  behind `eichlerMass` and `ssCountFormula`.
 -/
 
 @[expose] public section
@@ -66,18 +85,22 @@ public noncomputable def nuThree (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 
 
 /-- The Eichler mass `(p - 1) * ψ(N) / 12` of level `N` in prime characteristic `p`, where `ψ` is
 the Dedekind psi function `ArithmeticFunction.dedekindPsi`. For a level `N ≥ 1` not divisible by
-`p`, Eichler's mass formula says that the supersingular points of `X₀(N)` over an algebraic
-closure of `ZMod p`, each weighted by `2 / |Aut|`, have total mass `eichlerMass N p`; this file
-does not prove it. Defined for prime `p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`,
-are out of scope. -/
+`p`, Eichler's mass formula (J. Voight, *Quaternion Algebras*, Theorem 25.3.18 and
+Remark 42.3.10) says that the supersingular points of `X₀(N)` over an algebraic closure of
+`ZMod p`, each weighted by `2 / |Aut|`, have total mass `eichlerMass N p`; this file does not
+prove it. Defined for prime `p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out
+of scope. -/
 public noncomputable def eichlerMass (N p : ℕ) [Fact p.Prime] : ℚ :=
   ((p : ℚ) - 1) * (ArithmeticFunction.dedekindPsi N : ℚ) / 12
 
 /-- The supersingular count formula of level `N` in prime characteristic `p`: the Eichler mass plus
 the `ν₂`, `ν₃` corrections, with `nuTwo` and `nuThree` evaluated at the level `N` and in the prime
-field `ZMod p`. For a level `N ≥ 1` not divisible by `p` it is the number of supersingular points of
-`X₀(N)` over an algebraic closure of `ZMod p`; this file does not prove it. Defined for prime
-fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+field `ZMod p`. For a level `N ≥ 1` not divisible by `p` it is Eichler's class number formula for
+an Eichler order of level `N` in the quaternion algebra over `ℚ` ramified at `p` and `∞`, hence,
+by the Deuring correspondence, the number of supersingular points of `X₀(N)` over an algebraic
+closure of `ZMod p` (J. Voight, *Quaternion Algebras*, Theorem 30.1.5 and Remark 42.3.10); this
+file does not prove it. Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with
+`q = p ^ n`, `n > 1`, are out of scope. -/
 public noncomputable def ssCountFormula (N p : ℕ) [Fact p.Prime] : ℚ :=
   eichlerMass N p + (2 - (nuTwo p : ℚ)) * (nuTwo N : ℚ) / 4
     + (2 - (nuThree p : ℚ)) * (nuThree N : ℚ) / 3
@@ -95,11 +118,12 @@ order of the automorphism group of an elliptic curve `E` over an algebraic closu
 with `j`-invariant `j`, that is, the order of `Aut E / {±1}`. It is `12` in characteristic `2` at
 `j = 0` (`|Aut E| = 24`), `6` in characteristic `3` at `j = 0` (`|Aut E| = 12`), `3` at `j = 0`
 (`|Aut E| = 6`) and `2` at `j = 1728` (`|Aut E| = 4`) in characteristic greater than `3`, and `1`
-otherwise (`|Aut E| = 2`). So `1 / autWeight p j` is the normalized weight `2 / |Aut E|`, and in
-this normalization the Eichler mass formula reads `∑ 1 / autWeight p j = eichlerMass 1 p`, the sum
-running over the supersingular `j`. This file computes neither the automorphism groups nor the
-mass formula. Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`,
-`n > 1`, are out of scope. -/
+otherwise (`|Aut E| = 2`); see J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed.,
+Theorem III.10.1. So `1 / autWeight p j` is the normalized weight `2 / |Aut E|`, and in this
+normalization the Eichler mass formula (J. Voight, *Quaternion Algebras*, (42.3.9)) reads
+`∑ 1 / autWeight p j = eichlerMass 1 p`, the sum running over the supersingular `j`. This file
+computes neither the automorphism groups nor the mass formula. Defined for prime fields `ZMod p`
+only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
 public def autWeight (p : ℕ) [Fact p.Prime] (j : ZMod p) : ℕ :=
   if p = 2 then (if j = 0 then 12 else 1)
   else if p = 3 then (if j = 0 then 6 else 1)
@@ -112,36 +136,52 @@ public theorem autWeight_of_ne {p : ℕ} [Fact p.Prime] (h2 : p ≠ 2) (h3 : p �
     (h0 : j ≠ 0) (h1728 : j ≠ 1728) : autWeight p j = 1 := by
   simp [autWeight, h2, h3, h0, h1728]
 
-/-- The supersingular `j`-invariants in characteristic `2`. -/
+-- Only the characteristic-`2` table is proved to enumerate `ssJSet` (`ssJSet_two` below); the
+-- other tables, and the polynomials over them, are numerical data from the cited table.
+
+/-- The supersingular `j`-invariants in characteristic `2`, as tabulated by B. J. Birch and
+W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in Mathematics 476,
+pp. 142–144: `ssJSet 2` is the image of this set in an algebraic closure of `ZMod 2`
+(`ssJSet_two`). -/
 public def ssSetTwo : Finset (ZMod 2) := {0}
-/-- The supersingular `j`-invariants in characteristic `3`. -/
+/-- Numerical data: the supersingular `j`-invariants in characteristic `3` as tabulated by
+B. J. Birch and W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in
+Mathematics 476, pp. 142–144, as elements of `ZMod 3` (where `1728 = 0`). -/
 public def ssSetThree : Finset (ZMod 3) := {0}
-/-- The supersingular `j`-invariants in characteristic `5`. -/
+/-- Numerical data: the supersingular `j`-invariants in characteristic `5` as tabulated by
+B. J. Birch and W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in
+Mathematics 476, pp. 142–144, as elements of `ZMod 5`. -/
 public def ssSetFive : Finset (ZMod 5) := {0}
-/-- The supersingular `j`-invariants in characteristic `7`. -/
+/-- Numerical data: the supersingular `j`-invariants in characteristic `7` as tabulated by
+B. J. Birch and W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in
+Mathematics 476, pp. 142–144, as elements of `ZMod 7`. -/
 public def ssSetSeven : Finset (ZMod 7) := {1728}
-/-- The supersingular `j`-invariants in characteristic `11`. -/
+/-- Numerical data: the supersingular `j`-invariants in characteristic `11` as tabulated by
+B. J. Birch and W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in
+Mathematics 476, pp. 142–144, as elements of `ZMod 11`. -/
 public def ssSetEleven : Finset (ZMod 11) := {0, 1728}
-/-- The supersingular `j`-invariants in characteristic `13`. -/
+/-- Numerical data: the supersingular `j`-invariants in characteristic `13` as tabulated by
+B. J. Birch and W. Kuyk (eds.), *Modular functions of one variable IV*, Lecture Notes in
+Mathematics 476, pp. 142–144, as elements of `ZMod 13`. -/
 public def ssSetThirteen : Finset (ZMod 13) := {5}
 
-/-- The supersingular polynomial in characteristic `2`, the product of
-`X - j` over the supersingular `j`-invariants. -/
+/-- The product of `X - j` over the supersingular `j`-invariants `ssSetTwo` in
+characteristic `2`. -/
 public noncomputable def ssPolyTwo : Polynomial (ZMod 2) :=
   ∏ a ∈ ssSetTwo, (Polynomial.X - Polynomial.C a)
-/-- The supersingular polynomial in characteristic `3`. -/
+/-- Numerical data: the product of `X - j` over the tabulated `j` in `ssSetThree`. -/
 public noncomputable def ssPolyThree : Polynomial (ZMod 3) :=
   ∏ a ∈ ssSetThree, (Polynomial.X - Polynomial.C a)
-/-- The supersingular polynomial in characteristic `5`. -/
+/-- Numerical data: the product of `X - j` over the tabulated `j` in `ssSetFive`. -/
 public noncomputable def ssPolyFive : Polynomial (ZMod 5) :=
   ∏ a ∈ ssSetFive, (Polynomial.X - Polynomial.C a)
-/-- The supersingular polynomial in characteristic `7`. -/
+/-- Numerical data: the product of `X - j` over the tabulated `j` in `ssSetSeven`. -/
 public noncomputable def ssPolySeven : Polynomial (ZMod 7) :=
   ∏ a ∈ ssSetSeven, (Polynomial.X - Polynomial.C a)
-/-- The supersingular polynomial in characteristic `11`. -/
+/-- Numerical data: the product of `X - j` over the tabulated `j` in `ssSetEleven`. -/
 public noncomputable def ssPolyEleven : Polynomial (ZMod 11) :=
   ∏ a ∈ ssSetEleven, (Polynomial.X - Polynomial.C a)
-/-- The supersingular polynomial in characteristic `13`. -/
+/-- Numerical data: the product of `X - j` over the tabulated `j` in `ssSetThirteen`. -/
 public noncomputable def ssPolyThirteen : Polynomial (ZMod 13) :=
   ∏ a ∈ ssSetThirteen, (Polynomial.X - Polynomial.C a)
 
@@ -253,5 +293,68 @@ public theorem mem_ssJSet_iff {p : ℕ} [Fact p.Prime] {j : AlgebraicClosure (ZM
     j ∈ ssJSet p ↔ ∀ (W : WeierstrassCurve (AlgebraicClosure (ZMod p))) [W.IsElliptic],
       W.j = j → W.toAffine.IsSupersingular :=
   Iff.rfl
+
+section CharacteristicTwo
+
+attribute [local instance] Classical.decEq
+
+open WeierstrassCurve
+
+/-- In characteristic `2`, every elliptic curve with `j = 0` is supersingular: `j = 0` forces
+`a₁ = 0`, the discriminant is then `a₃ ^ 4`, and a point equal to its negative would force
+`a₃ = 0`. -/
+private theorem zero_mem_ssJSet_two : (0 : AlgebraicClosure (ZMod 2)) ∈ ssJSet 2 := by
+  refine mem_ssJSet_iff.mpr fun W _ hj P hP => ?_
+  have ha₁ : W.a₁ = 0 := W.j_eq_zero_iff_of_char_two.mp hj
+  have ha₃ : W.a₃ ≠ 0 := by
+    intro h
+    have hΔ := W.isUnit_Δ
+    rw [W.Δ_of_char_two, ha₁, h] at hΔ
+    simp at hΔ
+  rcases P with _ | ⟨x, y, hxy⟩
+  · rfl
+  · exfalso
+    rw [two_nsmul] at hP
+    by_cases hy : y = W.toAffine.negY x y
+    · apply ha₃
+      rw [Affine.negY, ha₁] at hy
+      linear_combination hy - y * (CharTwo.two_eq_zero : (2 : AlgebraicClosure (ZMod 2)) = 0)
+    · rw [Affine.Point.add_self_of_Y_ne hy] at hP
+      exact Affine.Point.some_ne_zero _ hP
+
+/-- In characteristic `2`, a nonzero `j` is not supersingular: the curve `WeierstrassCurve.ofJ j`
+has the nonzero point `(0, y)` with `y ^ 2 = a₆`, which equals its negative. -/
+private theorem eq_zero_of_mem_ssJSet_two {j : AlgebraicClosure (ZMod 2)} (hj : j ∈ ssJSet 2) :
+    j = 0 := by
+  by_contra h0
+  have h1728 : j ≠ 1728 := by
+    have : (1728 : AlgebraicClosure (ZMod 2)) = 0 := by
+      linear_combination 864 * (CharTwo.two_eq_zero : (2 : AlgebraicClosure (ZMod 2)) = 0)
+    rwa [this]
+  obtain ⟨y, hy⟩ := IsAlgClosed.exists_pow_nat_eq (-(j - 1728) ^ 5) two_pos
+  have hW := ofJ_ne_0_ne_1728 j h0 h1728
+  have heq : (ofJ j).toAffine.Equation 0 y := by
+    rw [Affine.equation_iff', hW]
+    simp [ofJNe0Or1728, hy]
+  have hns := Affine.equation_iff_nonsingular.mp heq
+  have h2 : 2 • (Affine.Point.some 0 y hns) = 0 := by
+    rw [two_nsmul]
+    refine Affine.Point.add_self_of_Y_eq ?_
+    rw [Affine.negY, hW]
+    simp [ofJNe0Or1728, CharTwo.neg_eq]
+  exact Affine.Point.some_ne_zero hns (mem_ssJSet_iff.mp hj (ofJ j) (ofJ_j j) _ h2)
+
+/-- **Supersingular `j`-invariants in characteristic two.** In characteristic `2` the supersingular
+`j`-invariants are the image of the table `ssSetTwo = {0}`: every elliptic curve with `j = 0` over
+an algebraic closure of `ZMod 2` is supersingular, and for `j ≠ 0` the curve
+`WeierstrassCurve.ofJ j` is not. -/
+public theorem ssJSet_two :
+    ssJSet 2 = algebraMap (ZMod 2) (AlgebraicClosure (ZMod 2)) '' ssSetTwo := by
+  ext j
+  simp only [ssSetTwo, Finset.coe_singleton, Set.image_singleton, map_zero,
+    Set.mem_singleton_iff]
+  exact ⟨eq_zero_of_mem_ssJSet_two, fun h => h ▸ zero_mem_ssJSet_two⟩
+
+end CharacteristicTwo
 
 end ModularCurve
