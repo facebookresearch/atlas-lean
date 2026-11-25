@@ -13514,6 +13514,7 @@
 "Cslib.Algorithms.Lean.Geometry.InStrip": "e6f25834a7ae8a1e",
 "Cslib.Algorithms.Lean.Geometry.IsAnswer": "9f5e69acd61fff17",
 "Cslib.Algorithms.Lean.Geometry.IsMinPairDist2": "26c82c5e85d1feeb",
+"Cslib.Algorithms.Lean.Geometry.IsSimplePolygon": "8bf22e7f10fa9608",
 "Cslib.Algorithms.Lean.Geometry.SameSideFar": "7a33fd0a5f432499",
 "Cslib.Algorithms.Lean.Geometry.Straddles": "2bb346ad0c02b378",
 "Cslib.Algorithms.Lean.Geometry.Straddles.param_mem": "6384cd55ea72a179",
