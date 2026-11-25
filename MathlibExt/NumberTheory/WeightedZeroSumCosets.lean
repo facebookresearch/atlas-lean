@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Field.Defs
+public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.GroupTheory.Coset.Defs
@@ -100,5 +101,37 @@ public theorem pair_no_weightedZeroSum_iff {F : Type*} [Field F] (A : Subgroup F
       have hval := congrArg (fun z : Fˣ => (z : F)) hwu
       change (w : F) * x = -y at hval
       simp [Fin.sum_univ_two, hval]
+
+/-- **Weighted zero-sum free pairs for a proper subgroup of $F^\times$.** Let $F$ be a field and
+$A$ a proper subgroup of the multiplicative group $F^\times$. Then some sequence $x_1, x_2$ in
+$F$ has no $A$-weighted zero-sum subsequence: there is no nonempty $I \subseteq \{1, 2\}$ with
+weights $a_i \in A$ for $i \in I$ such that $\sum_{i \in I} a_i x_i = 0$.
+
+Hence the weighted Davenport constant $D_A(F)$, the least positive $k$ such that every sequence
+of length $k$ in $F$ has an $A$-weighted zero-sum subsequence, is at least $3$ when it exists.
+
+Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
+of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Corollary 7.7 (`integers-2024-A38-cor-7-7`). -/
+public theorem davenport_proper_subgroup_ge_three {F : Type*} [Field F]
+    (A : Subgroup Fˣ) (hA : A ≠ ⊤) :
+    2 ∉ {k : ℕ | 0 < k ∧ ∀ x : Fin k → F,
+      ∃ I : Finset (Fin k), I.Nonempty ∧ ∃ a : Fin k → F,
+        (∀ i ∈ I, a i ∈ ((↑) : Fˣ → F) '' A) ∧ ∑ i ∈ I, a i • x i = 0} := by
+  have hex : ∃ u : Fˣ, u ∉ A := by
+    by_contra! hall
+    exact hA (eq_top_iff.mpr fun u _ => hall u)
+  obtain ⟨u, hu⟩ := hex
+  have hx : (1 : F) ≠ 0 := one_ne_zero
+  have hy : -(u : F) ≠ 0 := neg_ne_zero.mpr u.ne_zero
+  have hcosets : (QuotientGroup.mk (Units.mk0 (1 : F) hx) : Fˣ ⧸ A) ≠
+      QuotientGroup.mk (Units.mk0 (-(-(u : F))) (neg_ne_zero.mpr hy)) := by
+    have h₁ : Units.mk0 (1 : F) hx = 1 := Units.ext rfl
+    have h₂ : Units.mk0 (-(-(u : F))) (neg_ne_zero.mpr hy) = u := Units.ext (neg_neg _)
+    intro heq
+    rw [h₁, h₂, QuotientGroup.eq] at heq
+    exact hu (by simpa using heq)
+  rintro ⟨_, hall⟩
+  exact (pair_no_weightedZeroSum_iff A hx hy).2 hcosets
+    (by simpa only [smul_eq_mul] using hall ![1, -(u : F)])
 
 end MetaMathlibExt

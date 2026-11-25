@@ -44,4 +44,15 @@ example : hasWeightedZeroSum ⊤ 2 3 := by
   exact (pair_no_weightedZeroSum_iff (⊤ : Subgroup ℚˣ) (x := 2) (y := 3)
     (by norm_num) (by norm_num)).1 h (QuotientGroup.eq.mpr (Subgroup.mem_top _))
 
+-- The unit 2 makes the bottom subgroup of rational units proper.
+example : 2 ∉ {k : ℕ | 0 < k ∧ ∀ x : Fin k → ℚ,
+    ∃ I : Finset (Fin k), I.Nonempty ∧ ∃ a : Fin k → ℚ,
+      (∀ i ∈ I, a i ∈ ((↑) : ℚˣ → ℚ) '' (⊥ : Subgroup ℚˣ)) ∧ ∑ i ∈ I, a i • x i = 0} := by
+  apply davenport_proper_subgroup_ge_three
+  intro heq
+  let u : ℚˣ := Units.mk0 2 (by norm_num)
+  have hm : u ∈ (⊥ : Subgroup ℚˣ) := heq ▸ Subgroup.mem_top u
+  have hv := congrArg (fun z : ℚˣ => (z : ℚ)) (Subgroup.mem_bot.mp hm)
+  norm_num [u] at hv
+
 end MetaMathlibExt
