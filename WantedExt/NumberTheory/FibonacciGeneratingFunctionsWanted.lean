@@ -15,41 +15,11 @@ public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.FibonacciGeneratingFunctions
 public import MathlibExt.NumberTheory.GibonacciNumber
+public import MathlibExt.NumberTheory.GibonacciPowerSeries
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generating series of a Gibonacci sequence.** Let $a$ and $b$ be integers and let
-$(G_n)_{n \ge 0}$ be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. In the ring
-$\mathbb{Q}[[X]]$ of formal power series with rational coefficients,
-
-$$(1 - X - X^2) \sum_{n \ge 0} G_n X^n = a + (b - a) X.$$
-
-This is the product form of the quotient $\frac{(b - a)x + a}{1 - x - x^2}$ for the generating
-function of $(G_n)$.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Lemma 5
-(`jis-2024-24.3.1-lem-5`). -/
-public theorem_wanted gibonacci_powerSeries_mul (a b : ℤ) :
-    (1 - PowerSeries.X - PowerSeries.X ^ 2 : PowerSeries ℚ)
-        * PowerSeries.mk (fun n => ((gibonacciNumber a b n : ℤ) : ℚ))
-      = PowerSeries.C (a : ℚ)
-        + PowerSeries.C ((b : ℚ) - (a : ℚ)) * PowerSeries.X
-
-/-- **Goodness passes to two transformed fractions.** Let $a$, $b$, $p$, $q$ be integers with
-$q \ne 0$ and $\gcd(p, q) = 1$, and suppose that $p/q$ is good for $(a, b)$. If $p + q \ne 0$,
-then $q/(p + q)$ is good for $(a, b)$; and if $p \ne 0$, then $(q - p)/p$ is good for $(a, b)$.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Theorem 1
-(`jis-2024-24.3.1-thm-1`). -/
-public theorem_wanted isGibonacciGood_transform (a b p q : ℤ)
-    (hcop : Int.gcd p q = 1) (hq : q ≠ 0)
-    (h : IsGibonacciGood a b ((p : ℚ) / (q : ℚ))) :
-    (p + q ≠ 0 → IsGibonacciGood a b ((q : ℚ) / ((p : ℚ) + (q : ℚ)))) ∧
-    (p ≠ 0 → IsGibonacciGood a b (((q : ℚ) - (p : ℚ)) / (p : ℚ)))
 
 /-- **Congruence criterion for good fractions.** Let $a, b, p, q$ be integers with
 $(a, b) \ne (0, 0)$, $q \ne 0$ and $\gcd(p, q) = 1$, and put $m = |q^2 - pq - p^2|$. Then
@@ -69,22 +39,6 @@ public theorem_wanted isGibonacciGood_iff (a b p q : ℤ)
       p * v ≡ 1 [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
       a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
       a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|]
-
-/-- **Two standard families of good values.** Let $a$ and $b$ be integers and let $(G_n)_{n \ge 0}$
-be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. For every natural number $n$, the ratio
-$F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$, and if $G_n \ne 0$, then
-$-G_{n+1} / G_n$ is good for $(a, b)$.
-
-The source indexes both families by all integers ($n \ne -1$ for the first).
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Corollary 2
-(`jis-2024-24.3.1-cor-2`). -/
-public theorem_wanted isGibonacciGood_standard_values (a b : ℤ) :
-    (∀ n : ℕ, IsGibonacciGood a b ((Nat.fib n : ℚ) / (Nat.fib (n + 1) : ℚ))) ∧
-    (∀ n : ℕ, gibonacciNumber a b n ≠ 0 →
-      IsGibonacciGood a b
-        (-(gibonacciNumber a b (n + 1) : ℚ) / (gibonacciNumber a b n : ℚ)))
 
 /-- **Consecutive ratios of a shifted Gibonacci sequence are good.** Let $a$ and $b$ be integers
 and let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = -b$ and $H_1 = a$. For every

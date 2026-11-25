@@ -1,0 +1,114 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.FiniteCoordinateAmplification
+
+/-!
+# Actual finite coordinate amplification preserves original double-commutant membership
+
+The original diagonal operator map has literal finite l² coordinates.
+Entries of an operator commuting with the amplified source algebra are
+actual original-H operators obtained by coordinate projection and inclusion.
+They commute with the source algebra; original T in its double commutant
+commutes with every such entry. The finite coordinate decomposition then
+proves amplified T commutes with the entire amplified commutant. No entry,
+amplification, closure, basis or operator-model certificate is input.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped BigOperators
+
+namespace MathlibExt.Analysis.CStarAlgebra
+
+noncomputable section
+
+universe u
+
+variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- **Bicommutant membership under finite amplification.** Let `H` be a complete complex Hilbert space,
+let `S ⊆ B(H)` be a unital complex star subalgebra, and let `T` belong to its bicommutant. For every
+`n ∈ ℕ`, the diagonal amplification of `T` to the Hilbert sum of `n` copies of `H` belongs to the
+bicommutant of the diagonally amplified algebra `S`. -/
+theorem finiteCoordinateStarAlgHom_mem_bicommutant (n : ℕ)
+    (S : StarSubalgebra ℂ (H →L[ℂ] H)) (T : H →L[ℂ] H)
+    (hT : T ∈ Set.centralizer (Set.centralizer (S : Set (H →L[ℂ] H)))) :
+    finiteCoordinateStarAlgHom (H := H) n T ∈
+      Set.centralizer (Set.centralizer
+        (((finiteCoordinateStarAlgHom (H := H) n).comp S.subtype).range :
+          Set (PiLp 2 (fun _ : Fin n => H) →L[ℂ] PiLp 2 (fun _ : Fin n => H)))) := by
+  classical
+  let V := PiLp 2 (fun _ : Fin n => H)
+  let d := finiteCoordinateStarAlgHom (H := H) n
+  let e := PiLp.continuousLinearEquiv 2 ℂ (fun _ : Fin n => H)
+  let project (i : Fin n) : V →L[ℂ] H := (ContinuousLinearMap.proj i).comp e.toContinuousLinearMap
+  let inclusion (j : Fin n) : H →L[ℂ] V :=
+    e.symm.toContinuousLinearMap.comp (ContinuousLinearMap.single ℂ (fun _ : Fin n => H) j)
+  have hproject (i : Fin n) (v : V) : project i v = v i := rfl
+  have hinclude (j i : Fin n) (w : H) :
+      inclusion j w i = (Pi.single j w : Fin n → H) i := rfl
+  have happly (A : H →L[ℂ] H) (v : V) (i : Fin n) : d A v i = A (v i) :=
+    finiteCoordinateStarAlgHom_apply (H := H) n A v i
+  have hproject_diagonal (A : H →L[ℂ] H) (v : V) (i : Fin n) :
+      project i (d A v) = A (project i v) := happly A v i
+  have hdiagonal_include (A : H →L[ℂ] H) (j : Fin n) (w : H) :
+      d A (inclusion j w) = inclusion j (A w) := by
+    apply PiLp.ext
+    intro i
+    rw [happly, hinclude, hinclude]
+    exact LinearMap.apply_single (fun _ : Fin n => A.toLinearMap) j i w
+  have hdecompose (v : V) : (∑ j : Fin n, inclusion j (v j)) = v := by
+    apply WithLp.ofLp_injective
+    rw [WithLp.ofLp_sum]
+    change (∑ j : Fin n, Pi.single j (v j)) = WithLp.ofLp v
+    exact LinearMap.sum_single_apply _ _
+  apply Set.mem_centralizer_iff.mpr
+  intro C hC
+  let entry (i j : Fin n) : H →L[ℂ] H := (project i).comp (C.comp (inclusion j))
+  have hentry (i j : Fin n) : entry i j ∈ Set.centralizer (S : Set (H →L[ℂ] H)) := by
+    apply Set.mem_centralizer_iff.mpr
+    intro A hAS
+    have hA : d A ∈ ((d.comp S.subtype).range : Set (V →L[ℂ] V)) := ⟨⟨A, hAS⟩, rfl⟩
+    have hAC := (Set.mem_centralizer_iff.mp hC) (d A) hA
+    apply ContinuousLinearMap.ext
+    intro w
+    have hvalue := congrArg (fun B : V →L[ℂ] V => project i (B (inclusion j w))) hAC
+    simp only [mul_apply_eq_comp, hproject_diagonal, hdiagonal_include] at hvalue
+    change A (project i (C (inclusion j w))) = project i (C (inclusion j (A w)))
+    exact hvalue
+  have hTentry (i j : Fin n) : entry i j * T = T * entry i j :=
+    (Set.mem_centralizer_iff.mp hT) (entry i j) (hentry i j)
+  have hinclude_commute (j : Fin n) (w : H) : C (d T (inclusion j w)) = d T (C (inclusion j w)) := by
+    apply PiLp.ext
+    intro i
+    have hvalue := congrArg (fun B : H →L[ℂ] H => B w) (hTentry i j)
+    change project i (C (inclusion j (T w))) = T (project i (C (inclusion j w))) at hvalue
+    rw [hdiagonal_include, happly]
+    exact hvalue
+  apply ContinuousLinearMap.ext
+  intro v
+  change C (d T v) = d T (C v)
+  calc
+    C (d T v) = C (d T (∑ j : Fin n, inclusion j (v j))) := by rw [hdecompose]
+    _ = ∑ j : Fin n, C (d T (inclusion j (v j))) := by rw [map_sum, map_sum]
+    _ = ∑ j : Fin n, d T (C (inclusion j (v j))) :=
+      Finset.sum_congr rfl (fun j _hj => hinclude_commute j (v j))
+    _ = d T (C v) := by rw [← map_sum, ← map_sum, hdecompose]
+
+end
+
+end MathlibExt.Analysis.CStarAlgebra

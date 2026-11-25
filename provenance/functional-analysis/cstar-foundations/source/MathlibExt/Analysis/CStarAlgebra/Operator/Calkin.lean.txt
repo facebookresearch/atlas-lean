@@ -1,0 +1,146 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.IdealQuotient
+import MathlibExt.Analysis.InnerProductSpace.CompactOperator
+public import MathlibExt.Analysis.Normed.Operator.Compact.Calkin
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+
+/-!
+# The C-star Calkin algebra
+
+For a complete complex Hilbert space, compact endomorphisms are closed under
+adjoint. They therefore form a closed two-sided star ideal, and the existing
+Banach-space Calkin quotient inherits the canonical C-star structure. The
+carrier, quotient norm, multiplication, unit, scalar action, and unital class
+map are those of `CalkinAlgebra`; no second quotient is introduced.
+
+The quotient may be the zero ring in finite dimension, so no nontriviality or
+`NormOneClass` instance is asserted.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open NonUnitalSubalgebra
+open scoped InnerProduct
+
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+  [CompleteSpace H]
+
+/-- Compact continuous linear endomorphisms of a complex Hilbert space are
+closed under the operator adjoint. -/
+theorem compactEndomorphismIdeal_star_closed {T : H →L[ℂ] H}
+    (hT : T ∈ compactEndomorphismIdeal (𝕜 := ℂ) (E := H)) :
+    star T ∈ compactEndomorphismIdeal (𝕜 := ℂ) (E := H) := by
+  rw [mem_compactEndomorphismIdeal] at hT ⊢
+  rw [ContinuousLinearMap.star_eq_adjoint]
+  exact hT.adjoint
+
+/-- The compact endomorphisms, bundled as the canonical closed two-sided star
+ideal of the bounded operators on a complex Hilbert space. -/
+def compactEndomorphismClosedStarIdeal : ClosedStarIdeal (H →L[ℂ] H) where
+  carrier :=
+    { compactEndomorphismIdeal (𝕜 := ℂ) (E := H) with
+      star_mem' := compactEndomorphismIdeal_star_closed }
+  isTwoSided := by
+    constructor
+    · intro a x hx
+      exact NonUnitalSubalgebra.IsTwoSided.mul_mem_left a hx
+    · intro x hx a
+      exact NonUnitalSubalgebra.IsTwoSided.mul_mem_right hx a
+  isClosed := compactEndomorphismIdeal_isClosed
+
+@[simp]
+theorem compactEndomorphismClosedStarIdeal_toNonUnitalSubalgebra :
+    (compactEndomorphismClosedStarIdeal (H := H)).carrier.toNonUnitalSubalgebra =
+      compactEndomorphismIdeal (𝕜 := ℂ) (E := H) :=
+  rfl
+
+@[simp]
+theorem compactEndomorphismClosedStarIdeal_toSubmodule :
+    (compactEndomorphismClosedStarIdeal (H := H)).carrier.toSubmodule =
+      compactOperator (RingHom.id ℂ) H H :=
+  rfl
+
+namespace CalkinAlgebra
+
+/-- The closed-star-ideal quotient carrier is definitionally the existing
+Banach-space Calkin algebra. -/
+theorem eq_compactEndomorphismClosedStarIdeal_quotient :
+    CalkinAlgebra ℂ H =
+      (compactEndomorphismClosedStarIdeal (H := H)).Quotient :=
+  rfl
+
+/-- The canonical C-star structure on the existing Calkin carrier. Its normed
+ring and normed algebra parents are the pre-existing quotient structures; the
+star and C-star data come from the canonical closed-star-ideal quotient. -/
+noncomputable instance instCStarAlgebra : CStarAlgebra (CalkinAlgebra ℂ H) := by
+  let I := compactEndomorphismClosedStarIdeal (H := H)
+  let hCStar : CStarAlgebra (CalkinAlgebra ℂ H) :=
+    I.unitalQuotientCStarAlgebra
+  exact
+    { toNormedRing := CalkinAlgebra.instNormedRing
+      toStarRing := hCStar.toStarRing
+      toCompleteSpace := hCStar.toCompleteSpace
+      toCStarRing := hCStar.toCStarRing
+      toNormedAlgebra := CalkinAlgebra.instNormedAlgebra
+      toStarModule := hCStar.toStarModule }
+
+/-- Taking the star of an operator class is represented by taking the
+operator adjoint before quotienting. -/
+@[simp]
+theorem classMap_star (T : H →L[ℂ] H) :
+    classMap (𝕜 := ℂ) (E := H) (star T) =
+      star (classMap (𝕜 := ℂ) (E := H) T) :=
+  rfl
+
+/-- The continuous unital star-algebra projection onto the Calkin algebra. -/
+def classStarMap : (H →L[ℂ] H) →⋆ₐ[ℂ] CalkinAlgebra ℂ H where
+  toAlgHom := (classMap (𝕜 := ℂ) (E := H)).toAlgHom
+  map_star' := classMap_star
+
+/-- Explicit representative conversion, kept out of simp so class-map and
+compactness laws normalize at the bundled map rather than raw quotient constructors. -/
+theorem classStarMap_apply (T : H →L[ℂ] H) :
+    classStarMap (H := H) T = Submodule.Quotient.mk T :=
+  rfl
+
+/-- The star class map agrees pointwise with the existing continuous unital
+algebra class map. -/
+theorem classStarMap_apply_eq_classMap (T : H →L[ℂ] H) :
+    classStarMap (H := H) T = classMap (𝕜 := ℂ) (E := H) T :=
+  rfl
+
+/-- Agreement of the two class maps as functions. -/
+theorem coe_classStarMap_eq_classMap :
+    (classStarMap (H := H) : (H →L[ℂ] H) → CalkinAlgebra ℂ H) =
+      classMap (𝕜 := ℂ) (E := H) :=
+  rfl
+
+/-- The star class map is continuous. -/
+theorem classStarMap_continuous : Continuous (classStarMap (H := H)) :=
+  (classMap (𝕜 := ℂ) (E := H)).continuous
+
+/-- The star class map is onto. -/
+theorem classStarMap_surjective :
+    Function.Surjective (classStarMap (H := H)) :=
+  classMap_surjective
+
+/-- An operator has zero class under the star class map exactly when it is
+compact. -/
+@[simp]
+theorem classStarMap_eq_zero_iff (T : H →L[ℂ] H) :
+    classStarMap (H := H) T = 0 ↔ IsCompactOperator T :=
+  classMap_eq_zero_iff T
+
+/-- The class of an adjoint is the adjoint of the class. -/
+@[simp]
+theorem classStarMap_star (T : H →L[ℂ] H) :
+    classStarMap (H := H) (star T) = star (classStarMap (H := H) T) :=
+  map_star (classStarMap (H := H)) T
+
+end CalkinAlgebra

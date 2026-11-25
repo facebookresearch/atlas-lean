@@ -1,0 +1,52 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Normed.Operator.Basic
+public import Mathlib.Topology.Algebra.Module.Basic
+
+/-!
+# Closed linear orbits of arbitrary bounded-operator sets
+
+The carrier is the norm closure of the complex span of the literal images
+of the original vector. An operator set need not be an algebra, be unital,
+or be closed. The ambient complex normed space need not be a Hilbert space
+or be complete. The subtype-range and set-image presentations have exactly
+the same generators.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace ContinuousLinearMap
+
+noncomputable section
+
+universe u v
+
+variable {H : Type u} [NormedAddCommGroup H] [NormedSpace ℂ H]
+
+/-- The norm-closed complex linear orbit of a vector under an arbitrary operator set. -/
+def orbitSubspace (S : Set (H →L[ℂ] H)) (ξ : H) : Submodule ℂ H :=
+  (Submodule.span ℂ (Set.range fun T : S => (T : H →L[ℂ] H) ξ)).topologicalClosure
+
+/-- The subtype-range carrier is exactly the closure of the span of the original set image. -/
+theorem orbitSubspace_eq_span_image (S : Set (H →L[ℂ] H)) (ξ : H) :
+    orbitSubspace S ξ =
+      (Submodule.span ℂ ((fun T : H →L[ℂ] H => T ξ) '' S)).topologicalClosure := by
+  rw [orbitSubspace, Set.image_eq_range]
+
+/-- An operator family and its range generate the same closed orbit, with an
+independent universe for the index type. -/
+theorem orbitSubspace_range {ι : Type v} (T : ι → H →L[ℂ] H) (ξ : H) :
+    orbitSubspace (Set.range T) ξ =
+      (Submodule.span ℂ (Set.range fun i : ι => T i ξ)).topologicalClosure := by
+  rw [orbitSubspace_eq_span_image, ← Set.range_comp']
+
+end
+
+end ContinuousLinearMap

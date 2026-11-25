@@ -133,7 +133,7 @@ cost discarded, equals the array returned by sift-down from $i$. -/
 theorem ret_siftDown {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftDown a i).ret = Cslib.Algorithms.Lean.siftDown a i := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [siftDown, Cslib.Algorithms.Lean.siftDown]
     dsimp only
     split
@@ -220,7 +220,7 @@ counted by timed sift-down from $i$ is at most $\max(0, \ell(|a|) - \ell(i+1))$.
 theorem siftDown_swaps_le {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftDown a i).time.2 ≤ Nat.log2 a.size - Nat.log2 (i + 1) := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [siftDown]
     dsimp only
     split
@@ -258,7 +258,7 @@ comparisons counted by timed sift-down from $i$ is at most $2 \max(0, \ell(|a|) 
 theorem siftDown_comparisons_le {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftDown a i).time.1 ≤ 2 * (Nat.log2 a.size - Nat.log2 (i + 1)) := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [siftDown]
     dsimp only
     split

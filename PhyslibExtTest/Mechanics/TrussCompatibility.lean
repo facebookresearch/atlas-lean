@@ -137,7 +137,7 @@ example : (axialCompatibility r3 ![0] ![1] * S6)ᵀ *ᵥ (![2] : Fin 1 → ℝ)
   obtain ⟨j, k⟩ := q
   fin_cases j <;> fin_cases k <;>
     simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
-      Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+      Matrix.of_apply, dotProduct, fB, r3, -Matrix.transpose_of] <;> norm_num
 
 /-- Forward direction at the nonzero virtual displacement
 `u6`: internal and external virtual work are both `16`.
@@ -152,7 +152,7 @@ example : (![2] : Fin 1 → ℝ)
     obtain ⟨j, k⟩ := q
     fin_cases j <;> fin_cases k <;>
       simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
-        Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+        Matrix.of_apply, dotProduct, fB, r3, -Matrix.transpose_of] <;> norm_num
   refine ⟨(supported_virtualWork_iff r3 ![0] ![1] S6 _ _).mp heq u6, ?_⟩
   simp only [dotProduct, u6, fB, Fintype.sum_prod_type, Fin.sum_univ_three,
     Fin.sum_univ_two]
@@ -503,7 +503,7 @@ private lemma supportedStiffnessF :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;> norm_num
+      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;> norm_num
 
 /-- Focused check as a truss instance:
 `K *ᵥ ![3, 5] = ![0, 6]`, with `![3, 5]` the unique
@@ -1114,7 +1114,7 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1, 1] ![2, 0]
       ext i j
       fin_cases i <;> fin_cases j <;>
         simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;>
+          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;>
         norm_num
     rw [hK]
     funext i
