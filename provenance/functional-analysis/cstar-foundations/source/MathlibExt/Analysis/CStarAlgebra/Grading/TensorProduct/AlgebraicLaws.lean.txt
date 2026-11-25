@@ -1,0 +1,374 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading.TensorProduct.AlgebraicOperations
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Ring
+
+/-!
+# Nonunital star-algebra laws for the Koszul tensor operations
+
+The actual even/odd decomposition gives homogeneous tensor induction on the
+same raw carrier. Associativity and signed-star reversal reduce to the finite
+degree cocycles, and star involution reduces to the square of the real degree
+sign. All ring, star and scalar dictionaries below use the fixed operation
+maps from the preceding owner.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped TensorProduct
+
+namespace CStarGrading.AlgebraicTensorProduct
+
+universe uA uB
+
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable (γA : CStarGrading A) (γB : CStarGrading B)
+
+private theorem tmul_split (a : A) (b : B) :
+    tmul γA γB a b =
+      (tmul γA γB (γA.evenProjection a) (γB.evenProjection b) +
+        tmul γA γB (γA.evenProjection a) (γB.oddProjection b)) +
+      (tmul γA γB (γA.oddProjection a) (γB.evenProjection b) +
+        tmul γA γB (γA.oddProjection a) (γB.oddProjection b)) := by
+  apply (linearEquiv γA γB).injective
+  change a ⊗ₜ[ℂ] b =
+    ((γA.evenProjection a ⊗ₜ[ℂ] γB.evenProjection b) +
+      (γA.evenProjection a ⊗ₜ[ℂ] γB.oddProjection b)) +
+    ((γA.oddProjection a ⊗ₜ[ℂ] γB.evenProjection b) +
+      (γA.oddProjection a ⊗ₜ[ℂ] γB.oddProjection b))
+  calc
+    a ⊗ₜ[ℂ] b =
+        (γA.evenProjection a + γA.oddProjection a) ⊗ₜ[ℂ]
+          (γB.evenProjection b + γB.oddProjection b) := by
+      rw [γA.evenProjection_add_oddProjection,
+        γB.evenProjection_add_oddProjection]
+    _ = _ := by
+      rw [TensorProduct.add_tmul, TensorProduct.tmul_add, TensorProduct.tmul_add]
+
+private theorem homogeneous_induction
+    (P : AlgebraicTensorProduct γA γB → Prop)
+    (hadd : ∀ x y, P x → P y → P (x + y))
+    (hpure : ∀ (m n : ZMod 2) (a : A) (b : B),
+      a ∈ γA.part m → b ∈ γB.part n → P (tmul γA γB a b))
+    (x : AlgebraicTensorProduct γA γB) : P x := by
+  have hTensor : ∀ z : A ⊗[ℂ] B, P (ofTensor γA γB z) := by
+    intro z
+    induction z using TensorProduct.inductionOn with
+    | tmul a b =>
+        change P (tmul γA γB a b)
+        rw [tmul_split]
+        refine hadd _ _ (hadd _ _ ?_ ?_) (hadd _ _ ?_ ?_)
+        · exact hpure 0 0 _ _
+            (by simpa only [CStarGrading.part_zero] using γA.evenProjection_mem a)
+            (by simpa only [CStarGrading.part_zero] using γB.evenProjection_mem b)
+        · exact hpure 0 1 _ _
+            (by simpa only [CStarGrading.part_zero] using γA.evenProjection_mem a)
+            (by simpa only [CStarGrading.part_one] using γB.oddProjection_mem b)
+        · exact hpure 1 0 _ _
+            (by simpa only [CStarGrading.part_one] using γA.oddProjection_mem a)
+            (by simpa only [CStarGrading.part_zero] using γB.evenProjection_mem b)
+        · exact hpure 1 1 _ _
+            (by simpa only [CStarGrading.part_one] using γA.oddProjection_mem a)
+            (by simpa only [CStarGrading.part_one] using γB.oddProjection_mem b)
+    | add z w hz hw =>
+        simpa only [map_add] using hadd (ofTensor γA γB z) (ofTensor γA γB w) hz hw
+  simpa only [ofTensor_toTensor] using hTensor x.toTensor
+
+/-- The signed bilinear multiplication distributes in its second variable. -/
+theorem mul_add (x y z : AlgebraicTensorProduct γA γB) :
+    x * (y + z) = x * y + x * z :=
+  (mulMap γA γB x).map_add y z
+
+/-- The signed bilinear multiplication distributes in its first variable. -/
+theorem add_mul (x y z : AlgebraicTensorProduct γA γB) :
+    (x + y) * z = x * z + y * z := by
+  change mulMap γA γB (x + y) z = mulMap γA γB x z + mulMap γA γB y z
+  simpa only [LinearMap.add_apply] using
+    congrArg (fun L : AlgebraicTensorProduct γA γB →ₗ[ℂ]
+      AlgebraicTensorProduct γA γB => L z) ((mulMap γA γB).map_add x y)
+
+/-- The signed multiplication sends a zero second factor to zero. -/
+theorem mul_zero (x : AlgebraicTensorProduct γA γB) : x * 0 = 0 :=
+  (mulMap γA γB x).map_zero
+
+/-- The signed multiplication sends a zero first factor to zero. -/
+theorem zero_mul (x : AlgebraicTensorProduct γA γB) : 0 * x = 0 := by
+  change mulMap γA γB 0 x = 0
+  simpa only [LinearMap.zero_apply] using
+    congrArg (fun L : AlgebraicTensorProduct γA γB →ₗ[ℂ]
+      AlgebraicTensorProduct γA γB => L x) (mulMap γA γB).map_zero
+
+/-- The signed multiplication is complex linear in its first variable. -/
+theorem smul_mul (c : ℂ) (x y : AlgebraicTensorProduct γA γB) :
+    (c • x) * y = c • (x * y) := by
+  change mulMap γA γB (c • x) y = c • mulMap γA γB x y
+  simpa only [LinearMap.smul_apply] using
+    congrArg (fun L : AlgebraicTensorProduct γA γB →ₗ[ℂ]
+      AlgebraicTensorProduct γA γB => L y) ((mulMap γA γB).map_smul c x)
+
+/-- The signed multiplication is complex linear in its second variable. -/
+theorem mul_smul (c : ℂ) (x y : AlgebraicTensorProduct γA γB) :
+    x * (c • y) = c • (x * y) :=
+  (mulMap γA γB x).map_smul c y
+
+/-- The signed star is additive on every raw tensor. -/
+theorem star_add (x y : AlgebraicTensorProduct γA γB) :
+    star (x + y) = star x + star y :=
+  (starMap γA γB).map_add x y
+
+/-- The signed star conjugates the complex scalar on every raw tensor. -/
+theorem star_smul (c : ℂ) (x : AlgebraicTensorProduct γA γB) :
+    star (c • x) = star c • star x :=
+  (starMap γA γB).map_smulₛₗ c x
+
+private theorem associativity_tmul (a c e : A) (b d f : B)
+    {n q r s : ZMod 2} (hb : b ∈ γB.part n) (hc : c ∈ γA.part q)
+    (hd : d ∈ γB.part r) (he : e ∈ γA.part s) :
+    (tmul γA γB a b * tmul γA γB c d) * tmul γA γB e f =
+      tmul γA γB a b * (tmul γA γB c d * tmul γA γB e f) := by
+  have hbd : b * d ∈ γB.part (n + r) := γB.mul_mem_part hb hd
+  have hce : c * e ∈ γA.part (q + s) := γA.mul_mem_part hc he
+  have hsign : degreeSign (n * q) * degreeSign ((n + r) * s) =
+      degreeSign (r * s) * degreeSign (n * (q + s)) := by
+    rw [← degreeSign_add, ← degreeSign_add]
+    congr 1
+    ring
+  rw [tmul_mul_tmul_of_mem γA γB a c b d hb hc,
+    smul_mul,
+    tmul_mul_tmul_of_mem γA γB (a * c) e (b * d) f hbd he,
+    smul_smul,
+    tmul_mul_tmul_of_mem γA γB c e d f hd he,
+    mul_smul,
+    tmul_mul_tmul_of_mem γA γB a (c * e) b (d * f) hb hce,
+    smul_smul, hsign]
+  simp only [_root_.mul_assoc]
+
+/-- The signed multiplication is associative on all raw tensors. -/
+theorem mul_assoc (x y z : AlgebraicTensorProduct γA γB) :
+    (x * y) * z = x * (y * z) := by
+  refine homogeneous_induction γA γB
+    (fun x => (x * y) * z = x * (y * z)) ?_ ?_ x
+  · intro x₁ x₂ hx₁ hx₂
+    simpa only [add_mul] using congrArg₂ (· + ·) hx₁ hx₂
+  · intro _m n a b _ha hb
+    refine homogeneous_induction γA γB
+      (fun y => (tmul γA γB a b * y) * z = tmul γA γB a b * (y * z)) ?_ ?_ y
+    · intro y₁ y₂ hy₁ hy₂
+      simpa only [add_mul, mul_add] using congrArg₂ (· + ·) hy₁ hy₂
+    · intro q r c d hc hd
+      refine homogeneous_induction γA γB
+        (fun z => (tmul γA γB a b * tmul γA γB c d) * z =
+          tmul γA γB a b * (tmul γA γB c d * z)) ?_ ?_ z
+      · intro z₁ z₂ hz₁ hz₂
+        simpa only [mul_add] using congrArg₂ (· + ·) hz₁ hz₂
+      · intro s _t e f he _hf
+        exact associativity_tmul γA γB a c e b d f hb hc hd he
+
+/-- The actual signed multiplication is an associative nonunital ring
+multiplication on the original algebraic tensor carrier. -/
+instance instNonUnitalRing : NonUnitalRing (AlgebraicTensorProduct γA γB) where
+  __ := instAddCommGroup γA γB
+  __ := instMul γA γB
+  mul_assoc := mul_assoc γA γB
+  left_distrib := mul_add γA γB
+  right_distrib := add_mul γA γB
+  mul_zero := mul_zero γA γB
+  zero_mul := zero_mul γA γB
+
+private theorem involution_tmul (a : A) (b : B)
+    {m n : ZMod 2} (ha : a ∈ γA.part m) (hb : b ∈ γB.part n) :
+    star (star (tmul γA γB a b)) = tmul γA γB a b := by
+  rw [star_tmul_of_mem γA γB a b ha hb, star_smul, star_degreeSign,
+    star_tmul_of_mem γA γB (star a) (star b)
+      (γA.star_mem_part ha) (γB.star_mem_part hb),
+    smul_smul, degreeSign_sq, one_smul, star_star, star_star]
+
+/-- The signed star is involutive on the full raw tensor carrier. -/
+theorem star_involutive :
+    Function.Involutive (star : AlgebraicTensorProduct γA γB →
+      AlgebraicTensorProduct γA γB) := by
+  intro x
+  refine homogeneous_induction γA γB (fun x => star (star x) = x) ?_ ?_ x
+  · intro x y hx hy
+    simpa only [star_add] using congrArg₂ (· + ·) hx hy
+  · intro m n a b ha hb
+    exact involution_tmul γA γB a b ha hb
+
+private theorem star_product_tmul (a c : A) (b d : B)
+    {m n q r : ZMod 2} (ha : a ∈ γA.part m) (hb : b ∈ γB.part n)
+    (hc : c ∈ γA.part q) (hd : d ∈ γB.part r) :
+    star (tmul γA γB a b * tmul γA γB c d) =
+      star (tmul γA γB c d) * star (tmul γA γB a b) := by
+  have hsign : degreeSign (n * q) * degreeSign ((m + q) * (n + r)) =
+      degreeSign (q * r) * (degreeSign (m * n) * degreeSign (r * m)) := by
+    calc
+      degreeSign (n * q) * degreeSign ((m + q) * (n + r)) =
+          degreeSign (n * q + (m + q) * (n + r)) :=
+        (degreeSign_add _ _).symm
+      _ = degreeSign (q * r + (m * n + r * m)) := by
+        congr 1
+        fin_cases m <;> fin_cases n <;> fin_cases q <;> fin_cases r <;> decide
+      _ = _ := by rw [degreeSign_add, degreeSign_add]
+  rw [tmul_mul_tmul_of_mem γA γB a c b d hb hc,
+    star_smul, star_degreeSign,
+    star_tmul_of_mem γA γB (a * c) (b * d)
+      (γA.mul_mem_part ha hc) (γB.mul_mem_part hb hd),
+    smul_smul, star_mul, star_mul,
+    star_tmul_of_mem γA γB c d hc hd,
+    star_tmul_of_mem γA γB a b ha hb,
+    smul_mul, mul_smul,
+    tmul_mul_tmul_of_mem γA γB (star c) (star a) (star d) (star b)
+      (γB.star_mem_part hd) (γA.star_mem_part ha),
+    smul_smul, smul_smul, hsign]
+  simp only [_root_.mul_assoc]
+
+/-- The signed star reverses every product. -/
+theorem star_mul (x y : AlgebraicTensorProduct γA γB) :
+    star (x * y) = star y * star x := by
+  refine homogeneous_induction γA γB (fun x => star (x * y) = star y * star x) ?_ ?_ x
+  · intro x₁ x₂ hx₁ hx₂
+    simpa only [add_mul, mul_add, star_add] using congrArg₂ (· + ·) hx₁ hx₂
+  · intro m n a b ha hb
+    refine homogeneous_induction γA γB
+      (fun y => star (tmul γA γB a b * y) = star y * star (tmul γA γB a b)) ?_ ?_ y
+    · intro y₁ y₂ hy₁ hy₂
+      simpa only [add_mul, mul_add, star_add] using congrArg₂ (· + ·) hy₁ hy₂
+    · intro q r c d hc hd
+      exact star_product_tmul γA γB a c b d ha hb hc hd
+
+/-- The fixed signed star is an involutive additive product-reversing star
+on the actual nonunital algebraic tensor ring. -/
+instance instStarRing : StarRing (AlgebraicTensorProduct γA γB) where
+  star x := starMap γA γB x
+  star_involutive := star_involutive γA γB
+  star_add := star_add γA γB
+  star_mul := star_mul γA γB
+
+instance instStarModule : StarModule ℂ (AlgebraicTensorProduct γA γB) where
+  star_smul := star_smul γA γB
+
+instance instIsScalarTower : IsScalarTower ℂ
+    (AlgebraicTensorProduct γA γB) (AlgebraicTensorProduct γA γB) where
+  smul_assoc c x y := smul_mul γA γB c x y
+
+instance instSMulCommClass : SMulCommClass ℂ
+    (AlgebraicTensorProduct γA γB) (AlgebraicTensorProduct γA γB) where
+  smul_comm c x y := (mul_smul γA γB c x y).symm
+
+private theorem generator_mem_part
+    {C : Type*} [NonUnitalCStarAlgebra C] (γ : CStarGrading C)
+    {n : ZMod 2} {c : C} (hc : c ∈ γ.part n) :
+    γ.generatorAut c ∈ γ.part n := by
+  apply (γ.mem_part_iff_generator n _).2
+  rw [γ.generator_involutive, (γ.mem_part_iff_generator n c).1 hc,
+    smul_smul, degreeSign_sq, one_smul]
+
+private theorem generator_mul_tmul (a c : A) (b d : B)
+    {n q : ZMod 2} (hb : b ∈ γB.part n) (hc : c ∈ γA.part q) :
+    generator γA γB (tmul γA γB a b * tmul γA γB c d) =
+      generator γA γB (tmul γA γB a b) *
+        generator γA γB (tmul γA γB c d) := by
+  rw [tmul_mul_tmul_of_mem γA γB a c b d hb hc, map_smul,
+    generator_tmul, map_mul, map_mul, generator_tmul, generator_tmul,
+    tmul_mul_tmul_of_mem γA γB
+      (γA.generatorAut a) (γA.generatorAut c)
+      (γB.generatorAut b) (γB.generatorAut d)
+      (generator_mem_part γB hb) (generator_mem_part γA hc)]
+
+/-- The factor generator preserves every signed tensor product. -/
+theorem generator_mul (x y : AlgebraicTensorProduct γA γB) :
+    generator γA γB (x * y) = generator γA γB x * generator γA γB y := by
+  refine homogeneous_induction γA γB
+    (fun x => generator γA γB (x * y) = generator γA γB x * generator γA γB y) ?_ ?_ x
+  · intro x₁ x₂ hx₁ hx₂
+    simpa only [add_mul, map_add] using congrArg₂ (· + ·) hx₁ hx₂
+  · intro _m n a b _ha hb
+    refine homogeneous_induction γA γB
+      (fun y => generator γA γB (tmul γA γB a b * y) =
+        generator γA γB (tmul γA γB a b) * generator γA γB y) ?_ ?_ y
+    · intro y₁ y₂ hy₁ hy₂
+      simpa only [mul_add, map_add] using congrArg₂ (· + ·) hy₁ hy₂
+    · intro q _r c d hc _hd
+      exact generator_mul_tmul γA γB a c b d hb hc
+
+private theorem generator_star_tmul (a : A) (b : B)
+    {m n : ZMod 2} (ha : a ∈ γA.part m) (hb : b ∈ γB.part n) :
+    generator γA γB (star (tmul γA γB a b)) =
+      star (generator γA γB (tmul γA γB a b)) := by
+  rw [star_tmul_of_mem γA γB a b ha hb, map_smul,
+    generator_tmul, map_star, map_star, generator_tmul,
+    star_tmul_of_mem γA γB (γA.generatorAut a) (γB.generatorAut b)
+      (generator_mem_part γA ha) (generator_mem_part γB hb)]
+
+/-- The factor generator preserves the signed tensor star. -/
+theorem generator_star (x : AlgebraicTensorProduct γA γB) :
+    generator γA γB (star x) = star (generator γA γB x) := by
+  refine homogeneous_induction γA γB
+    (fun x => generator γA γB (star x) = star (generator γA γB x)) ?_ ?_ x
+  · intro x y hx hy
+    simpa only [star_add, map_add] using congrArg₂ (· + ·) hx hy
+  · intro m n a b ha hb
+    exact generator_star_tmul γA γB a b ha hb
+
+/-- The actual factor generator is a nonunital star-algebra automorphism
+of the fixed signed tensor ring. -/
+def generatorStarAlgEquiv : AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ]
+    AlgebraicTensorProduct γA γB :=
+  { (generator γA γB).toEquiv with
+    map_add' := (generator γA γB).map_add
+    map_mul' := generator_mul γA γB
+    map_star' := generator_star γA γB
+    map_smul' := (generator γA γB).map_smul }
+
+@[simp]
+theorem generatorStarAlgEquiv_apply (x : AlgebraicTensorProduct γA γB) :
+    generatorStarAlgEquiv γA γB x = generator γA γB x := rfl
+
+/-- The grading group acts by the actual nonunital star-algebra
+automorphisms, with the fixed factor generator in degree one. -/
+def gradingActionHom : Multiplicative (ZMod 2) →*
+    (AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ] AlgebraicTensorProduct γA γB) := by
+  let action (n : ZMod 2) : AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ]
+      AlgebraicTensorProduct γA γB :=
+    if n = 0 then StarAlgEquiv.refl ℂ _ else generatorStarAlgEquiv γA γB
+  have hAction (n : ZMod 2) (x : AlgebraicTensorProduct γA γB) :
+      action n x = gradingAction γA γB n x := by
+    by_cases h : n = 0
+    · simp [action, gradingAction, h]
+    · simp [action, gradingAction, h, generatorStarAlgEquiv_apply]
+  exact
+    { toFun := fun n => action n.toAdd
+      map_one' := by
+        apply StarAlgEquiv.ext
+        intro x
+        change action 0 x = x
+        rw [hAction, gradingAction_zero]
+      map_mul' := by
+        intro m n
+        apply StarAlgEquiv.ext
+        intro x
+        change action (m.toAdd + n.toAdd) x = action m.toAdd (action n.toAdd x)
+        simp only [hAction, gradingAction_add] }
+
+/-- The star-algebra action has the original computed linear action on
+every tensor, so its pure and involution characteristics are retained. -/
+@[simp]
+theorem gradingActionHom_apply (n : ZMod 2) (x : AlgebraicTensorProduct γA γB) :
+    gradingActionHom γA γB (Multiplicative.ofAdd n) x = gradingAction γA γB n x := by
+  change (if n = 0 then StarAlgEquiv.refl ℂ _ else generatorStarAlgEquiv γA γB) x =
+    gradingAction γA γB n x
+  by_cases h : n = 0
+  · simp [gradingAction, h]
+  · simp [gradingAction, h, generatorStarAlgEquiv_apply]
+
+end CStarGrading.AlgebraicTensorProduct

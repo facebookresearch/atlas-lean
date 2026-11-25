@@ -11,3 +11,4 @@ A median splits the mass in half: at least half lies on each side of $m$, with $
 - [Median of a measure on the real line](is-median.md)
 - [A median minimizes the expected absolute loss](integral-abs-sub-le-of-is-median.md): a median minimises expected absolute loss
 - [Absolute deviations are integrable exactly when the mean exists](integrable-abs-sub-iff.md): lemma used for the minimisation property
+- [Absolute-deviation minimizers of a sample are the median interval](sample-median-interval-minimizes-absolute-deviation.md)
