@@ -15,7 +15,7 @@ Portions of this file are adapted from:
 status archived). The adapted portions are the statement of `kolmogorov_arnold` and the accompanying
 documentation from `WantedExt/Analysis/KolmogorovArnoldWanted.lean`.
 Copyright 2026 Lean FRO, LLC.
-Authors: Kim Morrison
+Authors: Kim Morrison (problem submitter)
 Licensed under the Apache License, Version 2.0 (the "License"). You may obtain a copy at
 
     https://www.apache.org/licenses/LICENSE-2.0

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Analytic.Basic
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
@@ -17,7 +18,8 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 # Ulam's perfect set problem
 
 We refute the claim that every continuous function on `[0, 1]` agrees with an analytic
-function on some nonempty perfect subset. The counterexample is a cosine series with
+function on some nonempty perfect subset. The claim fails even for smooth functions.
+The counterexample is a cosine series with
 frequencies chosen so that at each point its derivatives violate every analytic growth bound.
 -/
 
@@ -35,6 +37,14 @@ def IsPerfectSet (s : Set ℝ) : Prop :=
 function `φ` with `f x = φ x` for every `x ∈ C`? -/
 def ScottishBookProblem17Point1Claim : Prop :=
   ∀ (f : ℝ → ℝ), ContinuousOn f (Set.Icc (0 : ℝ) 1) →
+    ∃ (C : Set ℝ) (φ : ℝ → ℝ), IsPerfectSet C ∧ C ⊆ Set.Icc (0 : ℝ) 1 ∧
+      AnalyticOn ℝ φ (Set.Icc (0 : ℝ) 1) ∧ ∀ x ∈ C, f x = φ x
+
+/-- The claim of Problem 17.1 for `C ^ ∞` functions on `ℝ`, the case refuted by
+Zahorski's construction. The smoothness order is `(⊤ : ℕ∞)`; a bare `⊤` would
+mean analytic. -/
+def ScottishBookProblem17Point1SmoothClaim : Prop :=
+  ∀ (f : ℝ → ℝ), ContDiff ℝ (⊤ : ℕ∞) f →
     ∃ (C : Set ℝ) (φ : ℝ → ℝ), IsPerfectSet C ∧ C ⊆ Set.Icc (0 : ℝ) 1 ∧
       AnalyticOn ℝ φ (Set.Icc (0 : ℝ) 1) ∧ ∀ x ∈ C, f x = φ x
 
@@ -269,21 +279,13 @@ private lemma analytic_deriv_bound {φ : ℝ → ℝ} {x : ℝ} (h : AnalyticAt 
       gcongr
     _ = _ := by rw [pow_succ]; ring
 
-/--
-Problem 17.1 is false: the answer is negative. Source: S. Ulam, Problem 17.1
-of the Scottish Book; Z. Zahorski gave a negative answer by constructing a
-`C ^ ∞` function that agrees with every real-analytic function on at most
-finitely many points, so no nonempty perfect set `C` can work for it: Z.
-Zahorski, "Sur l'ensemble des points singuliers d'une fonction d'une
-variable reelle admettant les derivees de tous les ordres", Fund. Math. 34
-(1947), 183-245. The 2026 survey "90+ years of the Scottish Book"
-(arXiv:2603.27867) confirms the negative solution.
--/
-public theorem continuousFunctionPerfectAnalytic_refuted :
-    ¬ ScottishBookProblem17Point1Claim := by
+/-- Zahorski's stronger answer: the claim fails already for `C ^ ∞` functions.
+Source: Z. Zahorski, "Sur l'ensemble des points singuliers d'une fonction d'une variable
+reelle admettant les derivees de tous les ordres", Fund. Math. 34 (1947), 183-245. -/
+public theorem smoothFunctionPerfectAnalytic_refuted :
+    ¬ ScottishBookProblem17Point1SmoothClaim := by
   intro h
-  obtain ⟨C, φ, hC, hCI, hφ, heq⟩ :=
-    h (cosineSeries 0) contDiff_cosineSeries.continuous.continuousOn
+  obtain ⟨C, φ, hC, hCI, hφ, heq⟩ := h (cosineSeries 0) contDiff_cosineSeries
   have hdiffC : UniqueDiffOn ℝ C := by
     intro x hx
     rw [uniqueDiffWithinAt_iff_accPt, accPt_principal_iff_nhdsWithin,
@@ -328,5 +330,19 @@ public theorem continuousFunctionPerfectAnalytic_refuted :
   exact (cosineSeries_growth n x).elim
     (fun hlarge => hlarge.not_ge (hupper _ (by omega)))
     (fun hlarge => hlarge.not_ge (hupper _ le_rfl))
+
+/--
+Problem 17.1 is false: the answer is negative. Source: S. Ulam, Problem 17.1
+of the Scottish Book; Z. Zahorski gave a negative answer by constructing a
+`C ^ ∞` function that agrees with every real-analytic function on at most
+finitely many points, so no nonempty perfect set `C` can work for it: Z.
+Zahorski, "Sur l'ensemble des points singuliers d'une fonction d'une
+variable reelle admettant les derivees de tous les ordres", Fund. Math. 34
+(1947), 183-245. The 2026 survey "90+ years of the Scottish Book"
+(arXiv:2603.27867) confirms the negative solution.
+-/
+public theorem continuousFunctionPerfectAnalytic_refuted :
+    ¬ ScottishBookProblem17Point1Claim :=
+  fun h => smoothFunctionPerfectAnalytic_refuted fun f hf => h f hf.continuous.continuousOn
 
 end MathlibExt.Analysis.ScottishBook17Point1Wanted

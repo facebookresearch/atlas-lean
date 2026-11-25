@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.ComplementaryPolynomials
-import Mathlib.Tactic
+import Mathlib.Algebra.Polynomial.Degree.Operations
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+
+/-! # Tests for complementary polynomials on the unit circle -/
 
 open Polynomial
 open scoped Polynomial

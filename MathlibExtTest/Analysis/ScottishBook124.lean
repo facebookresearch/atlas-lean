@@ -19,9 +19,20 @@ example (y : ℝ → ℝ) (hy : IntegrableOn y (Icc 0 1))
     y =ᵐ[volume.restrict (Icc 0 1)] 0 := by
   exact marcinkiewicz124_holds (fun u => |u - 1 / 2| - 1 / 4) (by fun_prop) (by norm_num) y hy h
 
--- For the constant kernel, checking just the right endpoint would miss this nonzero input.
-example : (∫ t : ℝ in 0..1, (t - 1 / 2)) = 0 ∧ (∫ t : ℝ in 0..1 / 2, (t - 1 / 2)) = -1 / 8 := by
-  constructor <;>
+-- For the constant kernel the integral vanishes at 1, but the Volterra hypothesis fails at 1/2.
+example : (∫ t : ℝ in 0..1, (t - 1 / 2) * 1) = 0 ∧
+    ¬ (∀ x ∈ Icc (0 : ℝ) 1, ∫ t in 0..x, (t - 1 / 2) * 1 = 0) := by
+  have integral_eq (x : ℝ) : (∫ t in 0..x, (t - 1 / 2) * 1) = x ^ 2 / 2 - x / 2 := by
+    simp only [mul_one]
     rw [intervalIntegral.integral_sub (f := fun t : ℝ => t) (g := fun _ => 1 / 2)
       (continuous_id.intervalIntegrable ..) (continuous_const.intervalIntegrable ..), integral_id,
-      intervalIntegral.integral_const] <;> norm_num
+      intervalIntegral.integral_const]
+    simp
+    ring
+  constructor
+  · rw [integral_eq]
+    norm_num
+  · intro h
+    have hhalf := h (1 / 2) (by constructor <;> norm_num)
+    rw [integral_eq] at hhalf
+    norm_num at hhalf

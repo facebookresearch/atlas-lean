@@ -166,7 +166,7 @@ private lemma circlePoint_pow (n : ℕ) (x : UnitAddCircle) :
   | succ n ih =>
     rw [pow_succ, ih, Nat.cast_succ, fourier_add, circlePoint]
 
-private lemma integral_mul_const {X : Type*} [MeasurableSpace X] (μ : ComplexMeasure X)
+private lemma vectorIntegral_const_mul {X : Type*} [MeasurableSpace X] (μ : ComplexMeasure X)
     (c : ℂ) (f : X → ℂ) :
     ∫ᵛ x, c * f x ∂[ContinuousLinearMap.mul ℝ ℂ; μ] =
       c * ∫ᵛ x, f x ∂[ContinuousLinearMap.mul ℝ ℂ; μ] := by
@@ -213,7 +213,7 @@ private lemma integral_eq_origin (μ : ComplexMeasure UnitAddCircle)
   · simp only [Nat.cast_zero, fourier_zero, mul_one, VectorMeasure.integral_const,
       ContinuousLinearMap.mul_apply', show a 0 = F 0 from hp.coeff_zero _]
   · intro n hn
-    rw [integral_mul_const, hμ n (Nat.pos_of_ne_zero hn), mul_zero]
+    rw [vectorIntegral_const_mul, hμ n (Nat.pos_of_ne_zero hn), mul_zero]
 
 private noncomputable def herglotzIntegral (U : Set ℂ) (w : ℂ) : ℂ :=
   ∫ z in U, herglotzRieszKernel 0 w z ∂circleMeasure

@@ -12,6 +12,8 @@ import MathlibExt.Analysis.ErdosEntireFunctionCountableDensePreimage
 import Mathlib.Analysis.Calculus.FDeriv.Basic
 import Mathlib.Topology.Separation.Basic
 
+/-! # Tests for preimages of countable dense sets under entire functions -/
+
 open MathlibExt.Analysis.ErdosEntireFunctionCountableDensePreimageWanted
 
 -- The source set includes 1 and excludes 0 regardless of which points are in the target.

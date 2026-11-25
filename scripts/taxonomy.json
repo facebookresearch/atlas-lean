@@ -14852,7 +14852,6 @@
   "WantedExt/Analysis/RubelHInfinityCoherenceWanted": {"to": "Analysis/complex-analysis/analytic-function-spaces", "title": "Finitely generated ideals of H^∞"},
   "WantedExt/Analysis/ScottishBook151Wanted": {"to": "Analysis/potential-theory", "title": "Harmonic functions vanishing on the edges of a cube"},
   "WantedExt/Analysis/ScottishBook157Wanted": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Approximate derivatives and monotonicity"},
-  "WantedExt/Analysis/ScottishBook17Point1Wanted": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Smooth functions and analytic functions on perfect sets"},
   "WantedExt/Analysis/ScottishBook184Wanted": {"to": "Analysis/potential-theory", "title": "Subharmonic functions"},
   "WantedExt/Analysis/SendovRadiusConstantWanted": {"to": "Analysis/complex-analysis/zeros-of-polynomials", "title": "Sendov's conjecture"},
   "WantedExt/Analysis/Series/ScottishBook5BoundedWanted": {"to": "Analysis/sequences-and-series/summability", "title": "Permanent summability methods"},
