@@ -34,6 +34,8 @@ public import Mathlib.Data.Finsupp.Antidiagonal
 public import Mathlib.Data.Finsupp.Weight
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.MvPowerSeries.Basic
+public import MathlibExt.RingTheory.AdicCompletion.Nilpotent
+public import MathlibExt.RingTheory.MvPowerSeries.SpecialFibreCoordinates
 
 @[expose] public section
 
@@ -76,7 +78,9 @@ theorem mem_boundFinset [Finite σ] {N : ℕ} {d : σ →₀ ℕ} :
 ideal. If `J ^ N = ⊥` and every `x s` lies in `J`, then every monomial of
 degree at least `N` evaluates to `0`, so the evaluation is the finite sum
 over the monomials bounded by `N`. The value does not depend on the chosen
-exponent `N`; see `nilpotentEval_eq_sum`. -/
+exponent `N`; see `nilpotentEval_eq_sum`. It is the adic evaluation
+`MvPowerSeries.adicEval` (`nilpotentEval_eq_adicEval`) and the underlying
+function of the algebra homomorphism `nilpotentEvalAlgHom`. -/
 noncomputable def nilpotentEval {C : Type*} [CommRing C] [Algebra R C] [Finite σ]
     (J : Ideal C) (hJ : IsNilpotent J) (x : σ → C) (_hx : ∀ s, x s ∈ J)
     (f : MvPowerSeries σ R) : C :=
@@ -270,6 +274,65 @@ theorem nilpotentEval_coe [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
   obtain ⟨N, hN⟩ := hJ
   exact nilpotentEval_eq_aeval_of_forall_coeff J ⟨N, hN⟩ hN hx _ p
     (fun d _ => by rw [MvPolynomial.coeff_coe])
+
+/-- `nilpotentEval` is the adic evaluation `MvPowerSeries.adicEval` at the
+nilpotent ideal: `C` is `J`-adically complete (`IsAdicComplete.of_isNilpotent`),
+the point lies in `J`, hence in `J.radical`, and the adic sum has only the
+finitely many nonzero terms that `nilpotentEval` adds up. -/
+theorem nilpotentEval_eq_adicEval [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) (f : MvPowerSeries σ R) :
+    nilpotentEval J hJ x hx f = adicEval J x f := by
+  obtain ⟨N, hN⟩ := hJ
+  replace hN : J ^ N = ⊥ := hN
+  let : UniformSpace R := ⊥
+  let : WithIdeal C := ⟨J⟩
+  have hc : IsAdicComplete J C := IsAdicComplete.of_isNilpotent ⟨N, hN⟩
+  have : CompleteSpace C :=
+    ((IsAdic.isAdicComplete_iff (show IsAdic J from rfl)).mp hc).1
+  have : T2Space C :=
+    ((IsAdic.isAdicComplete_iff (show IsAdic J from rfl)).mp hc).2
+  have hsum := hasSum_eval₂ (φ := algebraMap R C) continuous_of_discreteTopology
+    (hasEval_of_mem_radical J fun s => Ideal.le_radical (hx s)) f
+  rw [nilpotentEval_eq_sum J ⟨N, hN⟩ hN hx f _ (le_degree_of_not_mem_bound N)]
+  refine (hsum.unique (hasSum_sum_of_ne_finset_zero fun d hd => ?_)).symm
+  rw [prod_pow_eq_zero_of_le_degree J hN hx d
+      (le_degree_of_not_mem_bound N d hd), mul_zero]
+
+/-- Evaluation at a point of a nilpotent ideal as an `R`-algebra homomorphism:
+the specialization of `MvPowerSeries.adicEvalAlgHom` to a nilpotent ideal, at
+which `C` is adically complete (`IsAdicComplete.of_isNilpotent`). Its underlying
+function is `nilpotentEval` (`MvPowerSeries.coe_nilpotentEvalAlgHom`). -/
+noncomputable def nilpotentEvalAlgHom [Finite σ] (J : Ideal C)
+    (hJ : IsNilpotent J) (x : σ → C) (hx : ∀ s, x s ∈ J) :
+    MvPowerSeries σ R →ₐ[R] C :=
+  haveI := IsAdicComplete.of_isNilpotent hJ
+  adicEvalAlgHom J fun s => Ideal.le_radical (hx s)
+
+theorem coe_nilpotentEvalAlgHom [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    (x : σ → C) (hx : ∀ s, x s ∈ J) :
+    ⇑(nilpotentEvalAlgHom (R := R) J hJ x hx) = nilpotentEval J hJ x hx := by
+  have := IsAdicComplete.of_isNilpotent hJ
+  funext f
+  rw [nilpotentEval_eq_adicEval]
+  exact congrFun (coe_adicEvalAlgHom J fun s => Ideal.le_radical (hx s)) f
+
+@[simp]
+theorem nilpotentEval_one [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) :
+    nilpotentEval J hJ x hx (1 : MvPowerSeries σ R) = 1 := by
+  rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_one]
+
+theorem nilpotentEval_add [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) (f g : MvPowerSeries σ R) :
+    nilpotentEval J hJ x hx (f + g) =
+      nilpotentEval J hJ x hx f + nilpotentEval J hJ x hx g := by
+  rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_add]
+
+theorem nilpotentEval_mul [Finite σ] (J : Ideal C) (hJ : IsNilpotent J)
+    {x : σ → C} (hx : ∀ s, x s ∈ J) (f g : MvPowerSeries σ R) :
+    nilpotentEval J hJ x hx (f * g) =
+      nilpotentEval J hJ x hx f * nilpotentEval J hJ x hx g := by
+  rw [← coe_nilpotentEvalAlgHom J hJ x hx, map_mul]
 
 universe u
 
