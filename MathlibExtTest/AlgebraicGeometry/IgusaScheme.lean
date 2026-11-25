@@ -15,7 +15,7 @@ public import MathlibExt.AlgebraicGeometry.IgusaScheme
 open AlgebraicGeometry
 
 /-- Exact-source consumer, with the original binders. -/
-theorem exactSource (N : ℕ) [NeZero N] (ℓ : ℕ) [Fact ℓ.Prime] :
+private theorem exactSource (N : ℕ) [NeZero N] (ℓ : ℕ) [Fact ℓ.Prime] :
     IsIntegral (ModularCurve.IgusaScheme N ℓ) :=
   ModularCurve.IgusaScheme.isIntegral N ℓ
 
