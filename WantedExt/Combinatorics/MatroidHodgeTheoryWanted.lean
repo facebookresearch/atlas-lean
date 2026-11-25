@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Matroid.DegreeMap
 public import MathlibExt.Combinatorics.Matroid.MixedDegrees
 public import WantedExt.Combinatorics.MatroidReducedCharacteristicPolynomialWanted
 public import Mathlib.Combinatorics.Matroid.Rank.ENat
@@ -33,16 +34,6 @@ with the Hodge–Riemann relations in degree at most one this gives the log-conc
 namespace MathlibExt.Combinatorics.MatroidHodgeTheoryWanted
 
 open MathlibExt.Combinatorics.Matroid.Chow
-
-/-- **The degree map of a matroid** (Adiprasito, Huh and Katz, *Hodge theory for combinatorial
-geometries*, Ann. of Math. 188 (2018), Definition 5.9 and Proposition 5.10). For a finite
-loopless matroid `M` of rank `r + 1` there is exactly one linear map `deg : A*(M)_ℝ → ℝ` that
-vanishes on the graded pieces `A^q(M)_ℝ` with `q ≠ r` and takes the value `1` on
-`x_{F₁} ⋯ x_{F_r}` for every flag `F₁ ⊊ ⋯ ⊊ F_r` of nonempty proper flats; it restricts to an
-isomorphism `A^r(M)_ℝ ≅ ℝ`. -/
-theorem_wanted existsUnique_isDegreeMap {α : Type*} (M : _root_.Matroid α) [M.Finite]
-    [M.Loopless] (r : ℕ) (hr : M.eRank = r + 1) :
-    ∃! deg : ChowRing M →ₗ[ℝ] ℝ, IsDegreeMap M r deg
 
 /-- **Hard Lefschetz theorem for matroids** (Adiprasito, Huh and Katz, *Hodge theory for
 combinatorial geometries*, Ann. of Math. 188 (2018), Theorem 1.4 (1)). Let `M` be a finite

@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Combinatorics.Enumerative.BinomialInversion
+public import MathlibExt.Combinatorics.Enumerative.CarlitzBetaClosedForms
 public import MathlibExt.Combinatorics.Enumerative.CarlitzTypeQPolynomials
 public import MathlibExt.Combinatorics.Enumerative.ConsecutiveBernoulliNumbers
 public import MathlibExt.Combinatorics.Enumerative.QFallingFactorialSums
@@ -80,33 +81,6 @@ public theorem_wanted carlitzType_symbolic_recurrence (q : ℝ) (hq0 : 0 < q) (h
     (ha : ∀ k : ℕ, qBracket q ((k + r : ℕ) : ℝ) * a k = P.eval (k : ℝ))
     (T : ℕ → ℝ → ℝ) (hT : IsCarlitzTypeWith q T a) (n : ℕ) (hn : P.natDegree < n) :
     q ^ r * ∑ j ∈ range (n + 1), (n.choose j : ℝ) * q ^ j * T j 0 = T n 0
-
-/-- **Closed forms for the extended Carlitz $q$-Bernoulli polynomials.** Let $q > 0$ with
-$q \ne 1$ be real, write $[x] = (q^x - 1)/(q - 1)$, let $r$ be a natural number, and let
-$\beta_n^{(r)}(x)$ be the extended Carlitz $q$-Bernoulli polynomials. Put $a_k = (k + r)/[k + r]$
-for natural $k$ with $k + r \ne 0$, and $a_0 = 1$ if $r = 0$. Then:
-(i) for every natural $n$ and real $x$,
-$\beta_n^{(r)}(x) = (q - 1)^{-n} \sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} a_k q^{kx}$;
-(ii) for every natural $n$ and real $x$,
-$\beta_n^{(r)}(x) = \sum_{k=0}^{n} \binom{n}{k} \beta_k^{(r)}(0) q^{kx} [x]^{n-k}$;
-(iii) for every natural $n \ge 2$,
-$q^r \sum_{j=0}^{n} \binom{n}{j} q^j \beta_j^{(r)}(0) = \beta_n^{(r)}(0)$.
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Proposition 2.9
-(`integers-2026-A85-prop-2-9`). -/
-public theorem_wanted extendedCarlitzBetaPoly_closed_forms (q : ℝ) (hq0 : 0 < q) (hq1 : q ≠ 1)
-    (r : ℕ) :
-    (∀ n x, extendedCarlitzBetaPoly q r n x = ((q - 1) ^ n)⁻¹ *
-        ∑ k ∈ range (n + 1), (-1 : ℝ) ^ (n - k) * (n.choose k : ℝ) *
-          (if k + r = 0 then 1 else ((k + r : ℕ) : ℝ) / qBracket q ((k + r : ℕ) : ℝ)) *
-            q ^ ((k : ℝ) * x)) ∧
-      (∀ n x, extendedCarlitzBetaPoly q r n x = ∑ k ∈ range (n + 1),
-        (n.choose k : ℝ) * extendedCarlitzBetaPoly q r k 0 * q ^ ((k : ℝ) * x) *
-          qBracket q x ^ (n - k)) ∧
-      ∀ n, 2 ≤ n → q ^ r * ∑ j ∈ range (n + 1),
-        (n.choose j : ℝ) * q ^ j * extendedCarlitzBetaPoly q r j 0 =
-          extendedCarlitzBetaPoly q r n 0
 
 /-- **Series for the extended Carlitz $q$-Bernoulli numbers.** Let $0 < q < 1$, write
 $[x] = (q^x - 1)/(q - 1)$, and let $\beta_n^{(r)} = \beta_n^{(r)}(0)$ be the extended Carlitz
