@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.InnerProductSpace.Orthogonal
+public import Mathlib.MeasureTheory.Function.L2Space
 public import Mathlib.MeasureTheory.Function.LpSpace.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
@@ -15,13 +17,15 @@ public import Mathlib.MeasureTheory.Measure.Restrict
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
+import Mathlib.Order.SuccPred.IntervalSucc
 import MathlibExt.Analysis.ODE.GreensOperator
 
 /-!
 # Banach's Scottish Book Problem 86
 
-We give a bounded orthonormal sequence on the unit interval that has no complete
-orthonormal extension with the same bound.
+We give a bounded orthonormal sequence on the unit interval whose closed span has
+infinite-dimensional orthogonal complement and which has no complete orthonormal extension
+with the same bound.
 -/
 
 @[expose] public section
@@ -264,6 +268,59 @@ private lemma no_orthogonal_unit {f : ℝ → ℝ} (hf : AEStronglyMeasurable f 
   rw [hnorm, integral_const, measureReal_right, smul_eq_mul] at hle
   norm_num at hle
 
+private lemma rescaledSine_memLp (n : ℕ) : MemLp (rescaledSine n) 2 μ₀ := by
+  have : IsFiniteMeasure μ₀ :=
+    isFiniteMeasure_restrict.2 (by simp [Real.volume_Icc])
+  exact MemLp.of_bound (rescaledSine_measurable n).aestronglyMeasurable 2
+    (Filter.Eventually.of_forall (abs_rescaledSine_le n))
+
+private lemma rescaledSine_infinite_complement :
+    ¬ FiniteDimensional ℝ (Submodule.span ℝ
+      (range fun n => (rescaledSine_memLp n).toLp (rescaledSine n))).topologicalClosureᗮ := by
+  rw [Submodule.orthogonal_closure]
+  let K := Submodule.span ℝ (range fun n => (rescaledSine_memLp n).toLp (rescaledSine n))
+  have : IsFiniteMeasure μ₀ :=
+    isFiniteMeasure_restrict.2 (by simp [Real.volume_Icc])
+  -- Successive intervals inside the last fifth have positive mass and are pairwise disjoint.
+  obtain ⟨a, ha, ha_mem, _⟩ := exists_seq_strictMono_tendsto' (by norm_num : (4 / 5 : ℝ) < 1)
+  let s (n : ℕ) := Ioc (a n) (a (n + 1))
+  have hsub (n : ℕ) : s n ⊆ rightInterval :=
+    fun x hx => ⟨(ha_mem n).1.trans hx.1, hx.2.trans (ha_mem (n + 1)).2.le⟩
+  let e (n : ℕ) : Lp ℝ 2 μ₀ := indicatorConstLp 2 (s := s n) measurableSet_Ioc
+    (measure_ne_top _ _) 1
+  have he_mem (n : ℕ) : e n ∈ Kᗮ := by
+    rw [Submodule.mem_orthogonal']
+    suffices h : K ≤ (innerSL ℝ (e n)).ker from fun x hx => h hx
+    apply Submodule.span_le.mpr
+    rintro _ ⟨i, rfl⟩
+    change inner ℝ (e n) ((rescaledSine_memLp i).toLp _) = 0
+    dsimp only [e]
+    rw [L2.inner_indicatorConstLp_one]
+    apply integral_eq_zero_of_ae
+    filter_upwards [ae_restrict_mem (μ := μ₀) (s := s n) measurableSet_Ioc,
+      ae_restrict_of_ae (μ := μ₀) (s := s n) (rescaledSine_memLp i).coeFn_toLp] with x hx heq
+    have hxL : x ∉ leftInterval := fun h => not_lt_of_ge h.2 (hsub n hx).1
+    exact heq.trans (indicator_of_notMem hxL _)
+  let v (n : ℕ) : Kᗮ := ⟨e n, he_mem n⟩
+  intro hfin
+  apply Module.Finite.not_linearIndependent_of_infinite (R := ℝ) v
+  apply linearIndependent_of_ne_zero_of_inner_eq_zero
+  · intro n
+    apply real_inner_self_pos.mp
+    change 0 < inner ℝ (e n) (e n)
+    dsimp only [e]
+    rw [L2.real_inner_indicatorConstLp_one_indicatorConstLp_one, inter_self,
+      scottishBook86Measure, measureReal_restrict_apply measurableSet_Ioc,
+      inter_eq_left.mpr ((hsub n).trans right_subset_unit),
+      Real.volume_real_Ioc_of_le (ha.monotone (Nat.le_succ n))]
+    exact sub_pos.mpr (ha (Nat.lt_succ_self n))
+  · intro n m hnm
+    change inner ℝ (e n) (e m) = 0
+    dsimp only [e]
+    have hd : Disjoint (s n) (s m) := ha.monotone.pairwise_disjoint_on_Ioc_succ hnm
+    rw [L2.real_inner_indicatorConstLp_one_indicatorConstLp_one, hd.inter_eq]
+    simp
+
 private noncomputable def rightIndicator : ℝ → ℝ :=
   rightInterval.indicator (fun _ => 1)
 
@@ -281,6 +338,58 @@ private lemma rightIndicator_ne_zero : ¬ rightIndicator =ᵐ[μ₀] 0 := by
   rw [rightIndicator, integral_indicator measurableSet_Ioc, hr,
     integral_const, measureReal_right, smul_eq_mul] at hi
   norm_num at hi
+
+/-- **A bounded orthonormal sequence of infinite codimension with no same-bound completion.**
+There is a real orthonormal sequence on the unit interval bounded pointwise by $2$ whose
+closed span in $L^2$ has infinite-dimensional orthogonal complement. No complete orthonormal
+sequence bounded by $2$ contains it.
+
+Rescale the sine basis to $[0,4/5]$. Indicators of disjoint positive-length subintervals
+of $(4/5,1]$ give infinitely many independent vectors in the complement. Every member of the
+complement bounded by $2$ has squared norm at most $4/5$.
+
+Source: K. S. Kazarian, “On a problem of S. Banach from The Scottish book”,
+Proc. Amer. Math. Soc. 110 (1990), 881–887. The abstract gives an infinite-codimension
+example whose complement contains no nonzero bounded function. The interval construction
+above uses the real sine basis from `MathlibExt.Analysis.ODE.GreensOperator`. -/
+theorem banach86_infinite_codimension :
+    ∃ (φ : ℕ → ℝ → ℝ) (hφ : ∀ n, MemLp (φ n) 2 μ₀),
+      ¬ FiniteDimensional ℝ (Submodule.span ℝ
+        (range fun n => (hφ n).toLp (φ n))).topologicalClosureᗮ ∧
+      (∀ n m, ∫ t, φ n t * φ m t ∂μ₀ = if n = m then 1 else 0) ∧
+      (∀ n t, t ∈ Icc (0 : ℝ) 1 → |φ n t| ≤ 2) ∧
+      ¬ ∃ ψ : ℕ → ℝ → ℝ,
+        (∀ n, AEStronglyMeasurable (ψ n) μ₀) ∧
+        (∀ n m, ∫ t, ψ n t * ψ m t ∂μ₀ = if n = m then 1 else 0) ∧
+        (∀ n t, t ∈ Icc (0 : ℝ) 1 → |ψ n t| ≤ 2) ∧
+        (∀ n, ∃ m, ψ m = φ n) ∧
+        ∀ g : ℝ → ℝ, MemLp g 2 μ₀ → (∀ n, ∫ t, ψ n t * g t ∂μ₀ = 0) → g =ᵐ[μ₀] 0 := by
+  refine ⟨rescaledSine, rescaledSine_memLp, rescaledSine_infinite_complement,
+    integral_rescaledSine_product, fun n t _ => abs_rescaledSine_le n t, ?_⟩
+  rintro ⟨ψ, hmeas, horth, hbounded, hcontains, hcomplete⟩
+  -- An extra term would be a bounded unit vector orthogonal to the entire sine sequence.
+  have hterm (j : ℕ) : ∃ n, ψ j = rescaledSine n := by
+    by_contra! hj
+    apply no_orthogonal_unit (hmeas j) (hbounded j) _ (by simpa using horth j j)
+    intro n
+    obtain ⟨m, hm⟩ := hcontains n
+    have hne : m ≠ j := by
+      rintro rfl
+      exact hj n hm
+    simpa [hm, hne] using horth m j
+  apply rightIndicator_ne_zero (hcomplete rightIndicator rightIndicator_memLp ?_)
+  intro j
+  obtain ⟨n, hn⟩ := hterm j
+  rw [hn]
+  calc
+    _ = ∫ _ : ℝ, (0 : ℝ) ∂μ₀ := by
+      apply integral_congr_ae
+      filter_upwards with t
+      by_cases ht : t ∈ rightInterval
+      · have hleft : t ∉ leftInterval := fun hmem => not_lt_of_ge hmem.2 ht.1
+        simp [rescaledSine, indicator_of_notMem hleft]
+      · simp [rightIndicator, indicator_of_notMem ht]
+    _ = 0 := integral_zero _ _
 
 /--
 **Banach's Scottish Book Problem 86 fails.** The Scottish Book Problem 86 claim is false: there
@@ -305,32 +414,7 @@ S. Kaczmarz (1936) and K. S. Kazarian ("On a problem of S. Banach
 from the Scottish Book", Proc. Amer. Math. Soc. 110 (1990), 881–887).
 -/
 theorem banach86_refuted : ¬ ScottishBookProblem86Claim := by
-  intro h
-  obtain ⟨ψ, hmeas, horth, hbounded, hcontains, hcomplete⟩ :=
-    h 2 rescaledSine (by norm_num) (fun n => (rescaledSine_measurable n).aestronglyMeasurable)
-      integral_rescaledSine_product (fun n t _ => abs_rescaledSine_le n t)
-  -- An extra term would be a bounded unit vector orthogonal to the entire sine sequence.
-  have hterm (j : ℕ) : ∃ n, ψ j = rescaledSine n := by
-    by_contra! hj
-    apply no_orthogonal_unit (hmeas j) (hbounded j) _ (by simpa using horth j j)
-    intro n
-    obtain ⟨m, hm⟩ := hcontains n
-    have hne : m ≠ j := by
-      rintro rfl
-      exact hj n hm
-    simpa [hm, hne] using horth m j
-  apply rightIndicator_ne_zero (hcomplete rightIndicator rightIndicator_memLp ?_)
-  intro j
-  obtain ⟨n, hn⟩ := hterm j
-  rw [hn]
-  calc
-    _ = ∫ _ : ℝ, (0 : ℝ) ∂μ₀ := by
-      apply integral_congr_ae
-      filter_upwards with t
-      by_cases ht : t ∈ rightInterval
-      · have hleft : t ∉ leftInterval := fun hmem => not_lt_of_ge hmem.2 ht.1
-        simp [rescaledSine, indicator_of_notMem hleft]
-      · simp [rightIndicator, indicator_of_notMem ht]
-    _ = 0 := integral_zero _ _
+  obtain ⟨φ, hφ, _, horth, hbound, hno⟩ := banach86_infinite_codimension
+  exact fun h => hno (h 2 φ (by norm_num) (fun n => (hφ n).aestronglyMeasurable) horth hbound)
 
 end MathlibExt.Analysis.FunctionalAnalysis.ScottishBook86Wanted
