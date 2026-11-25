@@ -20,9 +20,9 @@ The Golden–Thompson inequality states that `tr e^{A + B} ≤ tr (e^A e^B)` for
 C. J. Thompson, *Inequality with applications in statistical mechanics*, J. Math. Phys. 6 (1965)
 1812; see P. J. Forrester and C. J. Thompson, *The Golden–Thompson inequality — historical aspects
 and random matrix applications*, arXiv:1408.2008v1, equation (1.1)). The general inequality is
-recorded as wanted in `WantedExt.LinearAlgebra.Matrix.GoldenThompsonWanted`.
+proved in `MathlibExt.LinearAlgebra.Matrix.GoldenThompsonInequality`.
 
-This file proves two pieces of it, and nothing more:
+This file proves two related results.
 
 * `trace_exp_add_of_commute`: for **commuting** matrices the two sides are equal, since then
   `e^{A + B} = e^A e^B`; hence `golden_thompson_of_commute`, the inequality restricted to commuting
@@ -51,7 +51,7 @@ theorem trace_exp_add_of_commute {A B : Matrix n n ℂ} (h : Commute A B) :
 /-- **Golden–Thompson inequality for commuting matrices.** If `A` and `B` commute then
 `tr e^{A + B} ≤ tr (e^A e^B)` in the partial order of `ℂ`, with equality. This is only the
 restriction to commuting matrices of the Golden–Thompson inequality (Forrester and Thompson,
-arXiv:1408.2008v1, equation (1.1)); the general case is wanted. -/
+arXiv:1408.2008v1, equation (1.1)). -/
 theorem golden_thompson_of_commute {A B : Matrix n n ℂ} (h : Commute A B) :
     (NormedSpace.exp (A + B)).trace ≤ (NormedSpace.exp A * NormedSpace.exp B).trace :=
   (trace_exp_add_of_commute h).le

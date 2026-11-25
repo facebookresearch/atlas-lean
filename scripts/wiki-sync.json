@@ -51421,7 +51421,7 @@
 "MathlibExt.LinearAlgebra.Matrix.GaussianChannelDiagonalReduction.powerAllocation_nonneg": "35e49d18bdb6180b",
 "MathlibExt.LinearAlgebra.Matrix.GaussianChannelDiagonalReduction.rotatedCovariance": "c39f8e619d83cbaf",
 "MathlibExt.LinearAlgebra.Matrix.GaussianChannelDiagonalReduction.trace_diagonalizedCovariance": "05b2248f667aa671",
-"MathlibExt.LinearAlgebra.Matrix.GoldenThompson.golden_thompson_of_commute": "7a3fb701c62ee02a",
+"MathlibExt.LinearAlgebra.Matrix.GoldenThompson.golden_thompson_of_commute": "6e4c0e39ec7c9217",
 "MathlibExt.LinearAlgebra.Matrix.GoldenThompson.trace_exp_add_of_commute": "4c7128f40373504f",
 "MathlibExt.LinearAlgebra.Matrix.GoldenThompson.trace_exp_mul_exp_nonneg": "9415f99f0103d709",
 "MathlibExt.LinearAlgebra.Matrix.GoldenThompsonWanted.golden_thompson": "cb3043ccfca2f1f9",
