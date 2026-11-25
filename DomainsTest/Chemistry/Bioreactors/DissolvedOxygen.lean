@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Domains.Chemistry.Bioreactor.DissolvedOxygen
+public import Domains.Chemistry.Bioreactors.DissolvedOxygen
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 import Mathlib.Tactic.Linarith
@@ -25,9 +25,9 @@ leaves `[0, C*]` once the uptake exceeds `K_L a C*`.
 
 @[expose] public section
 
-open Set Real Chemistry.Bioreactor
+open Set Real Chemistry.Bioreactors.DissolvedOxygen
 
-namespace DomainsTest.Chemistry.Bioreactor.DissolvedOxygen
+namespace DomainsTest.Chemistry.Bioreactors.DissolvedOxygen
 
 /-- Aeration without uptake or dilution: `C(t) = C* - (C* - C₀) e^{-K_L a t}` solves the balance
 with `u = D = 0`. -/
@@ -43,7 +43,7 @@ theorem hasDerivWithinAt_aeration (kLa Cstar C₀ T t : ℝ) :
 /-- Aeration from any `C₀ ∈ [0, C*]` stays in `[0, C*]`. -/
 example {kLa Cstar C₀ T : ℝ} (hkLa : 0 < kLa) (hC₀ : C₀ ∈ Icc 0 Cstar) :
     ∀ t ∈ Icc 0 T, Cstar - (Cstar - C₀) * exp (-kLa * t) ∈ Icc 0 Cstar := by
-  refine (dissolvedOxygen_balance (u := fun _ ↦ 0) (D := fun _ ↦ 0) hkLa (fun _ _ ↦ le_rfl)
+  refine (balance (u := fun _ ↦ 0) (D := fun _ ↦ 0) hkLa (fun _ _ ↦ le_rfl)
     (fun _ _ ↦ le_rfl) (fun t _ ↦ hasDerivWithinAt_aeration kLa Cstar C₀ T t)).1
     (fun _ _ ↦ mul_nonneg hkLa.le (hC₀.1.trans hC₀.2)) ?_
   simpa using hC₀
@@ -57,7 +57,7 @@ theorem hasDerivWithinAt_equilibrium (T t : ℝ) :
 
 /-- The equilibrium itself meets the critical-oxygen condition with equality: `C_crit = C_eq`. -/
 example {T : ℝ} : ∀ t ∈ Icc 0 T, (5 / 3 : ℝ) ≤ (fun _ ↦ (5 / 3 : ℝ)) t :=
-  (dissolvedOxygen_balance (u := fun _ ↦ 1) (D := fun _ ↦ 1) (by norm_num)
+  (balance (u := fun _ ↦ 1) (D := fun _ ↦ 1) (by norm_num)
     (fun _ _ ↦ zero_le_one) (fun _ _ ↦ zero_le_one)
     (fun t _ ↦ hasDerivWithinAt_equilibrium T t)).2.1 _ le_rfl (fun _ _ ↦ by norm_num)
 
@@ -74,7 +74,7 @@ example : ¬ (1 : ℝ) + 1 * 2 ≤ 2 * (3 - 2) := fun h ↦ by
 /-- The constant-input clause of the balance, on a horizon `[0, 1]`. -/
 example : ((∀ t ∈ Icc (0 : ℝ) 1, (fun _ ↦ (1 : ℝ)) t + (fun _ ↦ (1 : ℝ)) t * (3 / 2) ≤
     2 * (3 - 3 / 2)) ↔ (3 / 2 : ℝ) ≤ (2 * 3 - 1) / (2 + 1)) :=
-  (dissolvedOxygen_balance (u := fun _ ↦ 1) (D := fun _ ↦ 1) (by norm_num)
+  (balance (u := fun _ ↦ 1) (D := fun _ ↦ 1) (by norm_num)
     (fun _ _ ↦ zero_le_one) (fun _ _ ↦ zero_le_one)
     (fun t _ ↦ hasDerivWithinAt_equilibrium 1 t)).2.2 1 1 (3 / 2) zero_le_one
     (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
@@ -83,7 +83,7 @@ example : ((∀ t ∈ Icc (0 : ℝ) 1, (fun _ ↦ (1 : ℝ)) t + (fun _ ↦ (1 :
 lower end of `[0, C*]` is attained. -/
 example {kLa Cstar T : ℝ} {D : ℝ → ℝ} (hkLa : 0 < kLa) (hCstar : 0 ≤ Cstar)
     (hD : ∀ t ∈ Icc 0 T, 0 ≤ D t) : ∀ t ∈ Icc 0 T, (fun _ ↦ (0 : ℝ)) t ∈ Icc 0 Cstar :=
-  (dissolvedOxygen_balance (u := fun _ ↦ kLa * Cstar) hkLa
+  (balance (u := fun _ ↦ kLa * Cstar) hkLa
     (fun _ _ ↦ mul_nonneg hkLa.le hCstar) hD
     (fun t _ ↦ by
       convert hasDerivWithinAt_const t (Icc 0 T) (0 : ℝ) using 1
@@ -100,4 +100,4 @@ example : (∀ t ∈ Icc (0 : ℝ) 1, HasDerivWithinAt (fun s ↦ exp (-s) - 1)
   · have := exp_lt_one_iff.mpr (by norm_num : (-1 : ℝ) < 0)
     linarith
 
-end DomainsTest.Chemistry.Bioreactor.DissolvedOxygen
+end DomainsTest.Chemistry.Bioreactors.DissolvedOxygen

@@ -35,13 +35,15 @@ not continuous.
 
 ## Main results
 
-* `Chemistry.Bioreactor.le_dissolvedOxygen`: if `C(0) ≥ C_crit` and
+All in the namespace `Chemistry.Bioreactors.DissolvedOxygen`:
+
+* `le_of_uptake_add_dilution_le_transfer`: if `C(0) ≥ C_crit` and
   `K_L a (C* - C_crit) ≥ u(t) + D(t) C_crit` on `[0, T]`, then `C ≥ C_crit` on `[0, T]`.
-* `Chemistry.Bioreactor.dissolvedOxygen_mem_Icc`: if `u ≤ K_L a C*` on `[0, T]` and
-  `C(0) ∈ [0, C*]`, then `C` stays in `[0, C*]` on `[0, T]`.
-* `Chemistry.Bioreactor.uptake_add_dilution_le_transfer_iff`: for constant inputs `u₀` and `D₀`
-  that condition is `C_eq = (K_L a C* - u₀) / (K_L a + D₀) ≥ C_crit`.
-* `Chemistry.Bioreactor.dissolvedOxygen_balance`: the three statements together.
+* `mem_Icc`: if `u ≤ K_L a C*` on `[0, T]` and `C(0) ∈ [0, C*]`, then `C` stays in `[0, C*]` on
+  `[0, T]`.
+* `uptake_add_dilution_le_transfer_iff`: for constant inputs `u₀` and `D₀` that condition is
+  `C_eq = (K_L a C* - u₀) / (K_L a + D₀) ≥ C_crit`.
+* `balance`: the three statements together.
 
 ## Proof
 
@@ -61,7 +63,7 @@ every `ε > 0`, Mathlib's `image_le_of_deriv_right_lt_deriv_boundary` keeps `-w`
 
 open Set
 
-namespace Chemistry.Bioreactor
+namespace Chemistry.Bioreactors.DissolvedOxygen
 
 /-- A function differentiable on `[0, T]` (one-sided at the endpoints) that is nonnegative at `0`
 and has nonnegative derivative wherever it is negative stays nonnegative on `[0, T]`. -/
@@ -99,8 +101,8 @@ differentiable on $[0, T]$, with one-sided derivatives at the endpoints. If
 $C(0) \ge C_{\mathrm{crit}}$ and
 $K_L a\,(C^* - C_{\mathrm{crit}}) \ge u(t) + D(t)\,C_{\mathrm{crit}}$ for every $t \in [0, T]$, then
 $C(t) \ge C_{\mathrm{crit}}$ for every $t \in [0, T]$. -/
-theorem le_dissolvedOxygen {kLa Cstar Ccrit T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 ≤ kLa)
-    (hD : ∀ t ∈ Icc 0 T, 0 ≤ D t)
+theorem le_of_uptake_add_dilution_le_transfer {kLa Cstar Ccrit T : ℝ} {u D C : ℝ → ℝ}
+    (hkLa : 0 ≤ kLa) (hD : ∀ t ∈ Icc 0 T, 0 ≤ D t)
     (hC : ∀ t ∈ Icc 0 T,
       HasDerivWithinAt C (kLa * (Cstar - C t) - u t - D t * C t) (Icc 0 T) t)
     (hC0 : Ccrit ≤ C 0) (hcrit : ∀ t ∈ Icc 0 T, u t + D t * Ccrit ≤ kLa * (Cstar - Ccrit)) :
@@ -118,14 +120,14 @@ and $D(t) \ge 0$ for every $t \in [0, T]$, and let $C$ solve
 $C' = K_L a\,(C^* - C) - u(t) - D(t)\,C$ on $[0, T]$: differentiable on $[0, T]$, with one-sided
 derivatives at the endpoints. If $u(t) \le K_L a\,C^*$ for every $t \in [0, T]$ and
 $C(0) \in [0, C^*]$, then $C(t) \in [0, C^*]$ for every $t \in [0, T]$. -/
-theorem dissolvedOxygen_mem_Icc {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 ≤ kLa)
+theorem mem_Icc {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 ≤ kLa)
     (hu : ∀ t ∈ Icc 0 T, 0 ≤ u t) (hD : ∀ t ∈ Icc 0 T, 0 ≤ D t)
     (hC : ∀ t ∈ Icc 0 T,
       HasDerivWithinAt C (kLa * (Cstar - C t) - u t - D t * C t) (Icc 0 T) t)
     (huC : ∀ t ∈ Icc 0 T, u t ≤ kLa * Cstar) (hC0 : C 0 ∈ Icc 0 Cstar) :
     ∀ t ∈ Icc 0 T, C t ∈ Icc 0 Cstar := by
   have hCstar : 0 ≤ Cstar := hC0.1.trans hC0.2
-  have lower := le_dissolvedOxygen hkLa hD hC hC0.1 (fun t ht ↦ by
+  have lower := le_of_uptake_add_dilution_le_transfer hkLa hD hC hC0.1 (fun t ht ↦ by
     simpa using huC t ht)
   have upper := nonneg_of_deriv_nonneg_of_neg (w := fun t ↦ Cstar - C t)
     (w' := fun t ↦ -(kLa * (Cstar - C t) - u t - D t * C t))
@@ -161,7 +163,7 @@ differentiable on $[0, T]$, with one-sided derivatives at the endpoints. Then:
    and only if $C_{\mathrm{eq}} = (K_L a\,C^* - u_0)/(K_L a + D_0) \ge C_{\mathrm{crit}}$.
 
 No continuity of $u$ or $D$ is needed. -/
-theorem dissolvedOxygen_balance {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 < kLa)
+theorem balance {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa : 0 < kLa)
     (hu : ∀ t ∈ Icc 0 T, 0 ≤ u t) (hD : ∀ t ∈ Icc 0 T, 0 ≤ D t)
     (hC : ∀ t ∈ Icc 0 T,
       HasDerivWithinAt C (kLa * (Cstar - C t) - u t - D t * C t) (Icc 0 T) t) :
@@ -172,8 +174,8 @@ theorem dissolvedOxygen_balance {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa 
       (∀ u₀ D₀ Ccrit, 0 ≤ T → (∀ t ∈ Icc 0 T, u t = u₀) → (∀ t ∈ Icc 0 T, D t = D₀) →
         ((∀ t ∈ Icc 0 T, u t + D t * Ccrit ≤ kLa * (Cstar - Ccrit)) ↔
           Ccrit ≤ (kLa * Cstar - u₀) / (kLa + D₀))) := by
-  refine ⟨fun huC hC0 ↦ dissolvedOxygen_mem_Icc hkLa.le hu hD hC huC hC0,
-    fun Ccrit hC0 hcrit ↦ le_dissolvedOxygen hkLa.le hD hC hC0 hcrit,
+  refine ⟨fun huC hC0 ↦ mem_Icc hkLa.le hu hD hC huC hC0,
+    fun Ccrit hC0 hcrit ↦ le_of_uptake_add_dilution_le_transfer hkLa.le hD hC hC0 hcrit,
     fun u₀ D₀ Ccrit hT hu₀ hD₀ ↦ ?_⟩
   have h0 : (0 : ℝ) ∈ Icc 0 T := ⟨le_rfl, hT⟩
   rw [← uptake_add_dilution_le_transfer_iff hkLa (hD₀ 0 h0 ▸ hD 0 h0)]
@@ -184,4 +186,4 @@ theorem dissolvedOxygen_balance {kLa Cstar T : ℝ} {u D C : ℝ → ℝ} (hkLa 
     rw [hu₀ t ht, hD₀ t ht]
     exact h
 
-end Chemistry.Bioreactor
+end Chemistry.Bioreactors.DissolvedOxygen
