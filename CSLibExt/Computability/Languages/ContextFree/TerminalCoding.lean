@@ -228,7 +228,7 @@ theorem mapTerminalForm_injective {φ : T → List T'}
       mapTerminalForm φ u = mapTerminalForm φ v → u = v := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro u v hlen he
       rcases firstNonterminal_cases u with ⟨p, rfl⟩ | ⟨p, A, u, rfl⟩ <;>
         rcases firstNonterminal_cases v with ⟨q, rfl⟩ | ⟨q, B, v, rfl⟩

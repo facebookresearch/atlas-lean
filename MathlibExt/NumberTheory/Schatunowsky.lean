@@ -31,7 +31,7 @@ namespace MetaMathlibExt
 /-- For `n ≥ 7`, the product of the primes up to `n` exceeds the next square. -/
 private theorem succ_sq_lt_primorial (n : ℕ) (hn : 7 ≤ n) : (n + 1) ^ 2 < primorial n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hsmall : n < 14
     · calc
         (n + 1) ^ 2 ≤ 14 ^ 2 := Nat.pow_le_pow_left (by omega) _

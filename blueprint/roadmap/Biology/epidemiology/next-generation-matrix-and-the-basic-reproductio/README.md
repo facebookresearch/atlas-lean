@@ -10,3 +10,6 @@
 - [Hurwitz criterion for block lower-triangular matrices](is-hurwitz-from-blocks-zero-iff.md)
 - [Threshold theorem, stability half, conditional decay form](global-solution-decay-of-r0-lt-one.md)
 - [Threshold theorem, instability half, spectral form](exists-re-pos-jacobian-of-one-lt-r0.md)
+
+- [Spectral bound and reproduction number for infinite-dimensional population structure](spectral-bound-and-reproduction-number-for-infinite-dimensional-structure.md)
+- [Threshold dynamics of compartmental epidemic models in periodic environments](threshold-dynamics-in-periodic-environments.md)

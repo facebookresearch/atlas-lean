@@ -92,7 +92,7 @@ private theorem lowerBound_loop_spec (xs : Array α) (key : α)
       (∀ j (_hj : j < result.ret) (_hjs : j < xs.size), xs[j] < key) ∧
       (∀ j (_hj : result.ret ≤ j) (_hjs : j < xs.size), key ≤ xs[j]) := by
   induction hmeasure : hi - lo using Nat.strong_induction_on generalizing lo hi with
-  | h d ih =>
+  | ind d ih =>
       rw [lowerBound.loop.eq_def]
       split
       next hlt =>
@@ -154,7 +154,7 @@ private theorem lowerBound_loop_time_le (xs : Array α) (key : α) (lo hi : Nat)
     (hlohi : lo ≤ hi) (hhi : hi ≤ xs.size) :
     (lowerBound.loop xs key lo hi hlohi hhi).time ≤ Nat.clog 2 (hi - lo + 1) := by
   induction hmeasure : hi - lo using Nat.strong_induction_on generalizing lo hi with
-  | h d ih =>
+  | ind d ih =>
       rw [lowerBound.loop.eq_def]
       split
       next hlt =>

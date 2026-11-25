@@ -25,9 +25,9 @@ Proposition 1: the paper allows real parameters `a, b`
 (cf. `MetaMathlibExt.AbGeneralizedFibonacciSequence`),
 whereas `LucasSequenceParams` requires integer `P, Q`
 with `Q ≠ 0`, i.e. integer `a` and nonzero integer `b`.
-The identity below was verified
-numerically for `(P, Q)` among seven sample pairs and
-`m, n ≤ 12`.
+That identity is proved in
+`MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition`,
+which this module re-exports.
 
 Theorem 2, Theorem 3 and Corollaries 4 and 5 use the same
 integer specialization (`a = P`, `b = -Q`). Theorem 3 is
@@ -39,6 +39,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Basic
@@ -49,24 +50,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted
-
-/-- **Addition formula $2U_{m+n} = U_m V_n + V_m U_n$ for Lucas sequences.** For all integers
-$P$ and $Q$ with $Q \neq 0$ and all natural numbers $m$ and $n$, the Lucas sequences
-$U_n = U_n(P, Q)$ and $V_n = V_n(P, Q)$ satisfy $2U_{m+n} = U_m V_n + V_m U_n$.
-
-This is the integer specialization of the paper's Proposition 1: its generalized Fibonacci
-numbers $F_n$ and Lucas numbers $L_n$, with recurrence $x_{n+2} = a x_{n+1} + b x_n$, are
-$U_n(a, -b)$ and $V_n(a, -b)$, and the paper allows real $a$ and $b$.
-
-Source: Vladimir V. Kruchinin and Maria Y. Perminova,
-"Identities and Hadamard Product of the Generalized
-Fibonacci, Lucas, Catalan, and Harmonic Numbers",
-Proposition 1. -/
-theorem_wanted two_mul_lucasU_add
-    (params : MetaMathlibExt.LucasSequenceParams) (m n : ℕ) :
-    2 * MetaMathlibExt.lucasU params (m + n) =
-      MetaMathlibExt.lucasU params m * MetaMathlibExt.lucasV params n +
-        MetaMathlibExt.lucasV params m * MetaMathlibExt.lucasU params n
 
 /-- **Theorem 2** (integer specialization): for a symmetric
 array `T` (`T_{i, j} = T_{j, i}`) and

@@ -972,7 +972,7 @@ lemma transpose_designMatrix_mulVec {ι : Type*} [Fintype ι] (x v : ι → ℝ)
 lemma det_gram_designMatrix {ι : Type*} [Fintype ι] (x : ι → ℝ) :
     ((designMatrix x)ᵀ * designMatrix x).det = Fintype.card ι * sxy x x := by
   rw [Matrix.det_fin_two, sxy_eq_sum_mul_sub]
-  simp [designMatrix, Matrix.mul_apply, Finset.card_univ, ← card_mul_sampleMean x]
+  simp [designMatrix, Matrix.mul_apply, Function.swap, Finset.card_univ, ← card_mul_sampleMean x]
   ring
 
 /-- The design matrix of the simple linear model has full column rank iff `0 < S_xx`. -/

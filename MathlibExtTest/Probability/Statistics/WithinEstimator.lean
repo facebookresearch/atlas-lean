@@ -237,7 +237,7 @@ private theorem two_regressor_within_normal_eq_test :
   ext j
   fin_cases j <;>
     norm_num [withinMat, withinVec, groupMean, converseGroups, converseDesign,
-      converseResponse, Matrix.mulVec, Matrix.mul_apply, dotProduct,
+      converseResponse, Matrix.mulVec, Matrix.mul_apply, dotProduct, -Matrix.transpose_of,
       hu4, Finset.filter_insert, Finset.filter_singleton, Fin.sum_univ_succ]
 
 /-- The converse chooses zero for the unused group's intercept. -/
