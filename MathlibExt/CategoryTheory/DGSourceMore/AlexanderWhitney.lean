@@ -290,7 +290,8 @@ private lemma alexanderWhitneyTerm_whiskerRight_associator (n p c : ℕ) (h : p 
   dsimp only [alternatingFaceMapComplex_obj_X] at hα
   rw [alexanderWhitneyTerm_of_eq _ _ _ _ _ rfl, alexanderWhitneyTerm₃, dite_eq_left (by omega),
     comp_whiskerRight_assoc, hα]
-  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← tensorHom_id, tensorHom_comp_tensorHom,
+  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← tensorHom_id,
+    MonoidalCategory.tensorHom_comp_tensorHom,
     Category.comp_id]
   rw [Category.assoc, associator_naturality]
   simp only [Category.assoc, ← Functor.map_comp, ← op_comp,
@@ -309,7 +310,8 @@ private lemma alexanderWhitneyTerm_whiskerLeft (n a m : ℕ) (h : a + m = n) :
   refine Finset.sum_congr rfl fun bc hbc ↦ ?_
   obtain rfl : bc.1 + bc.2 = m := Finset.mem_antidiagonal.mp hbc
   rw [alexanderWhitneyTerm_of_eq _ _ _ _ _ rfl, alexanderWhitneyTerm₃, dite_eq_left h]
-  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← id_tensorHom, tensorHom_comp_tensorHom,
+  simp only [Monoidal.tensorObj_map, ← Category.assoc, ← id_tensorHom,
+    MonoidalCategory.tensorHom_comp_tensorHom,
     Category.comp_id]
   simp only [← Functor.map_comp, ← op_comp,
     MathlibExt.DGSource.SimplexCategory.subinterval_comp_subinterval _ _ _ _ _ _ rfl, Nat.add_zero]
