@@ -256,37 +256,6 @@ theorem eq_zero_of_prime_smul_eq_zero (hαβ : α ≠ -W.a₁ - α) {p : ℕ}
 
 end Group
 
-
-
-variable {k K : Type*} [Field k] [Field K] [DecidableEq k] [DecidableEq K]
-
-omit hd in
-noncomputable def toMap (W : WeierstrassCurve k) (f : k →+* K) (hf : Function.Injective f) :
-    W.toAffine.Point →+ (W.map f).toAffine.Point where
-  toFun P := match P with
-    | 0 => 0
-    | .some x y h => .some (f x) (f y) ((Affine.map_nonsingular W hf x y).mpr h)
-  map_zero' := rfl
-  map_add' := by
-    rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩)
-    any_goals rfl
-    by_cases hxy : x₁ = x₂ ∧ y₁ = W.toAffine.negY x₂ y₂
-    · rw [add_of_Y_eq hxy.left hxy.right,
-        add_of_Y_eq (congr_arg f hxy.left) (by rw [hxy.right, map_negY])]
-    · have hxy' : ¬(f x₁ = f x₂ ∧ f y₁ = (W.map f).toAffine.negY (f x₂) (f y₂)) :=
-        fun h => hxy ⟨hf h.1, hf (by rw [map_negY] at h; exact h.2)⟩
-      rw [add_some hxy, add_some hxy']
-      simp only [map_slope, map_addX, map_addY]
-
-omit hd in
-lemma toMap_injective (W : WeierstrassCurve k) (f : k →+* K) (hf : Function.Injective f) :
-    Function.Injective (toMap W f hf) := by
-  rintro (_ | _) (_ | _) h
-  any_goals contradiction
-  · rfl
-  · simpa only [some.injEq] using ⟨hf (some.inj h).left, hf (some.inj h).right⟩
-
-
 omit hd in
 lemma exists_frame {k : Type*} [Field k] (W : WeierstrassCurve k) (x₀ y₀ : k)
     (he : W.toAffine.Equation x₀ y₀) (hs : ¬ W.toAffine.Nonsingular x₀ y₀)
@@ -346,14 +315,11 @@ theorem WeierstrassCurve.Affine.Point.eq_zero_of_prime_smul_eq_zero_of_isNode
   classical
   obtain ⟨α, hd, hαβ⟩ := NodalTorsion.exists_frame (K := AlgebraicClosure k) W x₀ y₀ he hs
     hnode (algebraMap k (AlgebraicClosure k)) (algebraMap k _).injective
-  have hP' : p • NodalTorsion.toMap W (algebraMap k (AlgebraicClosure k))
-      (algebraMap k _).injective P = 0 := by
-    rw [← map_nsmul, hP]
-    exact (NodalTorsion.toMap W (algebraMap k (AlgebraicClosure k))
-      (algebraMap k _).injective).map_zero
-  have h0 := NodalTorsion.eq_zero_of_prime_smul_eq_zero hd hαβ
-    (NodalTorsion.toMap W (algebraMap k (AlgebraicClosure k)) (algebraMap k _).injective P) hP'
-  exact NodalTorsion.toMap_injective W _ _ (by
-    rw [h0]
-    exact (NodalTorsion.toMap W (algebraMap k (AlgebraicClosure k))
-      (algebraMap k _).injective).map_zero.symm)
+  let φ := Point.map (W' := W.toAffine) (Algebra.ofId k (AlgebraicClosure k))
+  have h0 : φ P = 0 := by
+    refine NodalTorsion.eq_zero_of_prime_smul_eq_zero (p := p) hd hαβ _ ?_
+    calc p • φ P = φ (p • P) := (_root_.map_nsmul φ p P).symm
+      _ = φ 0 := congrArg φ hP
+      _ = 0 := _root_.map_zero φ
+  exact Point.map_injective (W' := W.toAffine) (Algebra.ofId k (AlgebraicClosure k))
+    (h0.trans (_root_.map_zero φ).symm)
