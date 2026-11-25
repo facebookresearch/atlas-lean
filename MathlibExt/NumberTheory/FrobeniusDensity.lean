@@ -35,27 +35,17 @@ Released under the Apache License, Version 2.0.
 module
 
 public import Mathlib.NumberTheory.NumberField.DedekindZeta
-public import Mathlib.NumberTheory.RamificationInertia.Galois
 public import Mathlib.NumberTheory.RamificationInertia.Basic
-public import Mathlib.NumberTheory.RamificationInertia.Inertia
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 public import Mathlib.FieldTheory.Fixed
-public import Mathlib.GroupTheory.GroupAction.ConjAct
-public import Mathlib.GroupTheory.Subgroup.Centralizer
+public import MathlibExt.GroupTheory.ConjClassCard
 
-public import Mathlib.RingTheory.Frobenius
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.RingTheory.UniqueFactorizationDomain.NormalizedFactors
-public import Mathlib.Data.ZMod.QuotientRing
-public import Mathlib.RingTheory.Ideal.Quotient.HasFiniteQuotients
-public import Mathlib.LinearAlgebra.Matrix.Trace
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 import Mathlib.Algebra.BigOperators.Ring.Nat
-public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 
 /-!
 # Frobenius density for degree-one primes
@@ -65,9 +55,9 @@ assembled from ideal and prime sums over the ring of integers.  The
 prime sum has the same logarithmic pole at `s = 1` as the Dedekind zeta
 function; discarding the finitely many bad (ramified or small) primes and
 the higher-degree primes leaves the degree-one sum, whose
-`log (s - 1)`-shifted form is bounded near `1`.  A separate count gives
-`|conj class| * |centralizer| = |G|` for every element of any group, as an
-identity of cardinals.
+`log (s - 1)`-shifted form is bounded near `1`.  The group-theoretic count
+`|conj class| * |centralizer| = |G|` is in `MathlibExt.GroupTheory.ConjClassCard`,
+which this module imports.
 -/
 
 @[expose] public section
@@ -75,33 +65,6 @@ identity of cardinals.
 noncomputable section
 
 
-
-namespace Matrix
-
-variable {R : Type*} [CommRing R]
-
-theorem sq_eq_trace_smul_sub_det_smul_one (M : Matrix (Fin 2) (Fin 2) R) :
-    M ^ 2 = M.trace • M - M.det • (1 : Matrix (Fin 2) (Fin 2) R) := by
-  ext i j
-  simp only [pow_two, Matrix.mul_apply, Fin.sum_univ_two, Matrix.trace_fin_two,
-    Matrix.det_fin_two, Matrix.sub_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
-  fin_cases i <;> fin_cases j <;> simp <;> ring
-
-theorem pow_add_two_eq_trace_smul_sub_det_smul (M : Matrix (Fin 2) (Fin 2) R) (k : ℕ) :
-    M ^ (k + 2) = M.trace • M ^ (k + 1) - M.det • M ^ k := by
-  have h : M ^ (k + 2) = M ^ k * M ^ 2 := by rw [← pow_add]
-  rw [h, sq_eq_trace_smul_sub_det_smul_one, Matrix.mul_sub, mul_smul_comm, mul_smul_comm,
-    mul_one, ← pow_succ]
-
-theorem trace_pow_add_two (M : Matrix (Fin 2) (Fin 2) R) (k : ℕ) :
-    (M ^ (k + 2)).trace = M.trace * (M ^ (k + 1)).trace - M.det * (M ^ k).trace := by
-  rw [pow_add_two_eq_trace_smul_sub_det_smul, Matrix.trace_sub, Matrix.trace_smul,
-    Matrix.trace_smul, smul_eq_mul, smul_eq_mul]
-
-def HasDistinctRationalEigenvalues (M : Matrix (Fin 2) (Fin 2) R) : Prop :=
-  ∃ α β : R, α ≠ β ∧ M.trace = α + β ∧ M.det = α * β
-
-end Matrix
 
 namespace FrobeniusDensity
 
@@ -123,58 +86,11 @@ variable {L}
 
 omit [IsGalois ℚ L] in
 
-theorem finite_quotient_of_ne_bot {Q : Ideal (𝓞 L)} (hQ : Q ≠ ⊥) : Finite (𝓞 L ⧸ Q) :=
-  Ring.HasFiniteQuotients.finiteQuotient hQ
-
-omit [IsGalois ℚ L] in
-
 theorem ne_bot_of_liesOver_ratPrimeIdeal {ℓ : ℕ} (hℓ : ℓ.Prime) {Q : Ideal (𝓞 L)}
     [Q.IsPrime] [Q.LiesOver (ratPrimeIdeal ℓ)] : Q ≠ ⊥ :=
   Ideal.ne_bot_of_liesOver_of_ne_bot (ratPrimeIdeal_ne_bot hℓ) Q
 
-variable (L)
-
-def RealizesCyclicAt (σ : L ≃ₐ[ℚ] L) (ℓ : ℕ) : Prop :=
-  ∃ _ : ℓ.Prime, ∀ (Q : Ideal (𝓞 L)) (_ : Q.IsPrime) (_ : Q.LiesOver (ratPrimeIdeal ℓ))
-    (_ : Finite (𝓞 L ⧸ Q)),
-    ∃ k : ℕ, k.Coprime (orderOf σ) ∧ IsConj (σ ^ k) (arithFrobAt ℤ (L ≃ₐ[ℚ] L) Q)
-
-def Statement : Prop :=
-  ∀ (σ : L ≃ₐ[ℚ] L) (S : Finset ℕ), ∃ ℓ : ℕ, ℓ ∉ S ∧ RealizesCyclicAt L σ ℓ
-
 end FrobeniusDensity
-
-namespace TaylorWiles
-
-open NumberField Ideal FrobeniusDensity
-
-variable {L : Type*} [Field L] [NumberField L] [IsGalois ℚ L]
-variable {𝕜 : Type*} [Field 𝕜]
-
-variable (L) in
-
-abbrev ResidualRep (𝕜 : Type*) [Field 𝕜] := (L ≃ₐ[ℚ] L) →* Matrix (Fin 2) (Fin 2) 𝕜
-
-variable (ρ : ResidualRep L 𝕜) (p n : ℕ)
-
-def IsTaylorWilesPrime (q : ℕ) : Prop :=
-  q.Prime ∧ q ≡ 1 [MOD p ^ n] ∧
-    ∀ (Q : Ideal (𝓞 L)) (_ : Q.IsPrime) (_ : Q.LiesOver (ratPrimeIdeal q))
-      (_ : Finite (𝓞 L ⧸ Q)),
-      (ρ (arithFrobAt ℤ (L ≃ₐ[ℚ] L) Q)).HasDistinctRationalEigenvalues
-
-structure Seed (S : Finset ℕ) where
-
-  σ : L ≃ₐ[ℚ] L
-
-  regular : (ρ σ).HasDistinctRationalEigenvalues
-
-  congruent : ∀ ℓ : ℕ, ℓ ∉ S → RealizesCyclicAt L σ ℓ → ℓ ≡ 1 [MOD p ^ n]
-
-def SeedExists (S : Finset ℕ) : Prop := Nonempty (Seed ρ p n S)
-
-end TaylorWiles
-
 
 open scoped NNReal
 open Filter Topology Asymptotics
@@ -218,15 +134,6 @@ namespace FrobeniusDensity
 
 open NumberField Ideal IsDedekindDomain UniqueFactorizationMonoid
 
-theorem card_quotient_ratPrimeIdeal (ℓ : ℕ) :
-    Nat.card (ℤ ⧸ ratPrimeIdeal ℓ) = ℓ := by
-  rw [ratPrimeIdeal, Nat.card_congr (Int.quotientSpanNatEquivZMod ℓ).toEquiv, Nat.card_zmod]
-
-theorem card_quotient_under_int {L : Type*} [Field L] [NumberField L] {ℓ : ℕ}
-    (Q : Ideal (𝓞 L)) [Q.LiesOver (ratPrimeIdeal ℓ)] :
-    Nat.card (ℤ ⧸ Q.under ℤ) = ℓ := by
-  rw [← Q.over_def (ratPrimeIdeal ℓ), card_quotient_ratPrimeIdeal]
-
 section Ramified
 
 variable {K : Type*} [Field K] [NumberField K]
@@ -240,51 +147,6 @@ lemma finite_setOf_dvd {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) :
   rintro J ⟨v, hv, rfl⟩
   simpa only [Finset.mem_coe, Multiset.mem_toFinset] using
     (UniqueFactorizationMonoid.mem_normalizedFactors_iff hI).mpr ⟨v.prime, hv⟩
-
-variable (L : Type*) [Field L] [NumberField L]
-
-theorem exists_smul_ne {g : L ≃ₐ[ℚ] L} (hg : g ≠ 1) :
-    ∃ x : 𝓞 L, g • x ≠ x := by
-  by_contra hcon'
-  have hcon : ∀ x : 𝓞 L, g • x = x := fun x => not_not.mp fun h => hcon' ⟨x, h⟩
-  refine hg (AlgEquiv.ext fun z => ?_)
-  obtain ⟨x, y, hy, hxy⟩ := IsFractionRing.div_surjective (A := 𝓞 L) (K := L) z
-  have hx : g (algebraMap (𝓞 L) L x) = algebraMap (𝓞 L) L x :=
-    congrArg (algebraMap (𝓞 L) L) (hcon x)
-  have hy' : g (algebraMap (𝓞 L) L y) = algebraMap (𝓞 L) L y :=
-    congrArg (algebraMap (𝓞 L) L) (hcon y)
-  rw [← hxy, map_div₀, hx, hy', AlgEquiv.one_apply]
-
-theorem finite_setOf_inertia_ne_bot_heightOneSpectrum :
-    {v : HeightOneSpectrum (𝓞 L) | v.asIdeal.inertia (L ≃ₐ[ℚ] L) ≠ ⊥}.Finite := by
-  classical
-  choose x hx using fun g : {g : L ≃ₐ[ℚ] L // g ≠ 1} => exists_smul_ne L g.2
-  refine Set.Finite.subset (Set.Finite.biUnion
-    (Set.finite_univ (α := {g : L ≃ₐ[ℚ] L // g ≠ 1}))
-    (fun g _ => finite_setOf_dvd (I := Ideal.span {g.1 • x g - x g}) ?_)) ?_
-  · rw [Ne, Ideal.span_singleton_eq_bot, sub_eq_zero]
-    exact hx g
-  · intro v hv
-    simp only [Set.mem_setOf_eq] at hv
-    obtain ⟨g, hgmem, hgne⟩ := (v.asIdeal.inertia (L ≃ₐ[ℚ] L)).bot_or_exists_ne_one.resolve_left hv
-    simp only [Set.mem_iUnion, Set.mem_setOf_eq]
-    refine ⟨⟨g, hgne⟩, Set.mem_univ _, ?_⟩
-    rw [Ideal.dvd_iff_le, Ideal.span_singleton_le_iff_mem]
-    exact hgmem (x ⟨g, hgne⟩)
-
-noncomputable def badPrimes : Finset ℕ :=
-  insert 0 (insert 1 (((finite_setOf_inertia_ne_bot_heightOneSpectrum L).image
-    (fun v => Nat.card (ℤ ⧸ v.asIdeal.under ℤ))).toFinset))
-
-theorem inertia_eq_bot_of_notMem_badPrimes {ℓ : ℕ} (hℓ : ℓ.Prime)
-    (hℓbad : ℓ ∉ badPrimes L) (Q : Ideal (𝓞 L)) [Q.IsPrime] [Q.LiesOver (ratPrimeIdeal ℓ)] :
-    Q.inertia (L ≃ₐ[ℚ] L) = ⊥ := by
-  by_contra hcon
-  apply hℓbad
-  have hQbot : Q ≠ ⊥ := ne_bot_of_liesOver_ratPrimeIdeal hℓ
-  refine Finset.mem_insert.mpr (Or.inr (Finset.mem_insert.mpr (Or.inr ?_)))
-  rw [Set.Finite.mem_toFinset]
-  exact ⟨⟨Q, inferInstance, hQbot⟩, hcon, card_quotient_under_int (ℓ := ℓ) Q⟩
 
 end Ramified
 
@@ -303,34 +165,6 @@ theorem degOneCount_of_prime {ℓ : ℕ} (hℓ : ℓ.Prime) :
   rw [degOneCount, if_pos hℓ]
 
 end DegOneCount
-
-section Frob
-
-variable {L : Type*} [Field L] [NumberField L] [IsGalois ℚ L]
-
-theorem isConj_arithFrobAt_of_liesOver {ℓ : ℕ} (hℓ : ℓ.Prime) (Q₁ Q₂ : Ideal (𝓞 L))
-    [Q₁.IsPrime] [Q₂.IsPrime] [Q₁.LiesOver (ratPrimeIdeal ℓ)] [Q₂.LiesOver (ratPrimeIdeal ℓ)] :
-    letI : Finite (𝓞 L ⧸ Q₁) := finite_quotient_of_ne_bot (ne_bot_of_liesOver_ratPrimeIdeal hℓ)
-    letI : Finite (𝓞 L ⧸ Q₂) := finite_quotient_of_ne_bot (ne_bot_of_liesOver_ratPrimeIdeal hℓ)
-    IsConj (arithFrobAt ℤ (L ≃ₐ[ℚ] L) Q₁) (arithFrobAt ℤ (L ≃ₐ[ℚ] L) Q₂) := by
-  letI : Finite (𝓞 L ⧸ Q₁) := finite_quotient_of_ne_bot (ne_bot_of_liesOver_ratPrimeIdeal hℓ)
-  letI : Finite (𝓞 L ⧸ Q₂) := finite_quotient_of_ne_bot (ne_bot_of_liesOver_ratPrimeIdeal hℓ)
-  exact isConj_arithFrobAt ℤ (L ≃ₐ[ℚ] L) Q₁ Q₂
-    ((Q₁.over_def (ratPrimeIdeal ℓ)).symm.trans (Q₂.over_def (ratPrimeIdeal ℓ)))
-
-variable (L)
-
-theorem realizesCyclicAt_of_exists (σ : L ≃ₐ[ℚ] L) {ℓ : ℕ} (hℓ : ℓ.Prime)
-    (Q₀ : Ideal (𝓞 L)) [Q₀.IsPrime] [Q₀.LiesOver (ratPrimeIdeal ℓ)]
-    (h : ∀ _ : Finite (𝓞 L ⧸ Q₀),
-      ∃ k : ℕ, k.Coprime (orderOf σ) ∧ IsConj (σ ^ k) (arithFrobAt ℤ (L ≃ₐ[ℚ] L) Q₀)) :
-    RealizesCyclicAt L σ ℓ := by
-  refine ⟨hℓ, fun Q hQp hQl hQf => ?_⟩
-  haveI : Finite (𝓞 L ⧸ Q₀) := finite_quotient_of_ne_bot (ne_bot_of_liesOver_ratPrimeIdeal hℓ)
-  obtain ⟨k, hk, hconj⟩ := h ‹_›
-  exact ⟨k, hk, hconj.trans (isConj_arithFrobAt_of_liesOver hℓ Q₀ Q)⟩
-
-end Frob
 
 end FrobeniusDensity
 
@@ -730,9 +564,6 @@ lemma normRpow_le_one {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) (hs : 0 ≤ s) : nor
 lemma normRpow_ne_top {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) (hs : 0 ≤ s) : normRpow K s I ≠ ∞ :=
   ((normRpow_le_one hI hs).trans_lt ENNReal.one_lt_top).ne
 
-lemma normRpow_pos {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) : 0 < normRpow K s I :=
-  ENNReal.rpow_pos (zero_lt_one.trans_le (one_le_cast_absNorm hI)) (by simp)
-
 lemma one_lt_cast_absNorm (v : HeightOneSpectrum (𝓞 K)) :
     (1 : ℝ≥0∞) < (Ideal.absNorm v.asIdeal : ℝ≥0∞) := by
   exact_mod_cast Nat.lt_of_lt_of_le Nat.one_lt_two (two_le_absNorm v)
@@ -959,10 +790,6 @@ lemma idealSum_toReal_pos {s : ℝ} (hfin : idealSum K s ≠ ∞) : 0 < (idealSu
   ENNReal.toReal_pos_iff.mpr
     ⟨lt_of_lt_of_le zero_lt_one (one_le_idealSum s), lt_top_iff_ne_top.mpr hfin⟩
 
-lemma one_le_idealSum_toReal {s : ℝ} (hfin : idealSum K s ≠ ∞) : 1 ≤ (idealSum K s).toReal := by
-  have := (ENNReal.toReal_le_toReal (by simp) hfin).mpr (one_le_idealSum (K := K) s)
-  simpa using this
-
 end Comparisons
 
 section LogIneq
@@ -1019,10 +846,6 @@ lemma toReal_eulerFactor (v : HeightOneSpectrum (𝓞 K)) (hs : 1 ≤ s) :
       (1 - (normRpow K s v.asIdeal).toReal)⁻¹ := by
   rw [ENNReal.toReal_inv,
     ENNReal.toReal_sub_of_le (normRpow_lt_one v (by linarith)).le (by simp), ENNReal.toReal_one]
-
-lemma one_sub_normRpow_toReal_pos (v : HeightOneSpectrum (𝓞 K)) (hs : 1 ≤ s) :
-    (0 : ℝ) < 1 - (normRpow K s v.asIdeal).toReal := by
-  linarith [normRpow_toReal_lt_one v hs]
 
 lemma log_factoredSum_toReal (T : Finset (HeightOneSpectrum (𝓞 K))) (hs : 1 ≤ s) :
     Real.log ((factoredSum K T s).toReal) =
@@ -1413,146 +1236,5 @@ public theorem FrobeniusDensity.degOneAsymptotic (L : Type*) [Field L] [NumberFi
     FrobeniusDensity.degOneSum_add_log_isBigO
       (FixedPoints.intermediateField H : IntermediateField ℚ L) S₀⟩
 
-
-open scoped Classical
-
-namespace FrobeniusDensity
-
-variable {G : Type*} [Group G]
-
-theorem coprime_mod_iff {k n : ℕ} : (k % n).Coprime n ↔ k.Coprime n := by
-  unfold Nat.Coprime
-  rw [← Nat.gcd_rec, Nat.gcd_comm]
-
-theorem card_filter_conj_eq [Fintype G] (a b : G) (h : IsConj a b) :
-    (Finset.univ.filter (fun g : G => g * a * g⁻¹ = b)).card
-      = Fintype.card (Subgroup.centralizer ({a} : Set G)) := by
-  obtain ⟨c, hc⟩ := isConj_iff.mp h
-  have key : ∀ g : G, g * a * g⁻¹ = b ↔ c⁻¹ * g ∈ Subgroup.centralizer ({a} : Set G) := by
-    intro g
-    rw [Subgroup.mem_centralizer_singleton_iff]
-    constructor
-    · intro hg
-      have h1 : g * a * g⁻¹ = c * a * c⁻¹ := by rw [hg, hc]
-      have h2 : c⁻¹ * (g * a * g⁻¹) * c = a := by
-        rw [h1]; group
-      calc c⁻¹ * g * a = c⁻¹ * (g * a * g⁻¹) * c * (c⁻¹ * g) := by group
-        _ = a * (c⁻¹ * g) := by rw [h2]
-    · intro hg
-      have h3 : g * a * g⁻¹ = c * (c⁻¹ * g * a) * g⁻¹ := by group
-      rw [h3, hg, ← hc]; group
-  rw [← Fintype.card_coe]
-  refine Fintype.card_congr (Equiv.subtypeEquiv (Equiv.mulLeft c⁻¹) (fun g => ?_))
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Equiv.coe_mulLeft]
-  exact key g
-
-theorem card_filter_conj_eq_zero [Fintype G] (a b : G) (h : ¬ IsConj a b) :
-    (Finset.univ.filter (fun g : G => g * a * g⁻¹ = b)).card = 0 := by
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-  intro g _ hg
-  exact h (isConj_iff.mpr ⟨g, hg⟩)
-
-theorem centralizer_pow_eq_of_coprime (σ : G) {k : ℕ} (hk : k.Coprime (orderOf σ)) :
-    Subgroup.centralizer ({σ ^ k} : Set G) = Subgroup.centralizer ({σ} : Set G) := by
-  ext g
-  rw [Subgroup.mem_centralizer_singleton_iff, Subgroup.mem_centralizer_singleton_iff]
-  constructor
-  · intro h
-    obtain ⟨m, hm⟩ := exists_pow_eq_self_of_coprime hk
-    rw [← hm]
-    exact (Commute.pow_right (show Commute g (σ ^ k) from h) m)
-  · intro h
-    exact (Commute.pow_right (show Commute g σ from h) k)
-
-theorem ncard_conj_gen_eq_of_rational [Finite G] (σ τ : G)
-    (hrat : ∀ k : ℕ, k.Coprime (orderOf σ) → IsConj σ (σ ^ k)) :
-    {g : G | ∃ k : ℕ, k.Coprime (orderOf σ) ∧ g * σ ^ k * g⁻¹ = τ}.ncard
-      = if IsConj σ τ then (orderOf σ).totient * Nat.card (Subgroup.centralizer ({σ} : Set G))
-        else 0 := by
-  haveI := Fintype.ofFinite G
-  set n := orderOf σ with hn
-  have hn0 : 0 < n := orderOf_pos σ
-  set K : Finset ℕ := (Finset.range n).filter (fun k => n.Coprime k) with hK
-  have hKcard : K.card = n.totient := (Nat.totient_eq_card_coprime n).symm
-  set S : Set G := {g : G | ∃ k : ℕ, k.Coprime (orderOf σ) ∧ g * σ ^ k * g⁻¹ = τ} with hS
-  set T : ℕ → Finset G := fun k => Finset.univ.filter (fun g : G => g * σ ^ k * g⁻¹ = τ) with hT
-  have hST : S.toFinset = K.biUnion T := by
-    ext g
-    simp only [Set.mem_toFinset, hS, Set.mem_setOf_eq, Finset.mem_biUnion, hK, hT,
-      Finset.mem_filter, Finset.mem_range, Finset.mem_univ, true_and]
-    constructor
-    · rintro ⟨k, hk, hgk⟩
-      refine ⟨k % n, ⟨Nat.mod_lt _ hn0, ?_⟩, ?_⟩
-      · exact Nat.coprime_comm.mp (coprime_mod_iff.mpr hk)
-      · rwa [pow_mod_orderOf]
-    · rintro ⟨k, ⟨-, hk⟩, hgk⟩
-      exact ⟨k, Nat.coprime_comm.mp hk, hgk⟩
-  have hdisj : (K : Set ℕ).PairwiseDisjoint T := by
-    intro k hk k' hk' hne
-    simp only [Finset.coe_filter, hK, Set.mem_setOf_eq, Finset.mem_range] at hk hk'
-    rw [Function.onFun, Finset.disjoint_left]
-    intro g hg hg'
-    simp only [hT, Finset.mem_filter, Finset.mem_univ, true_and] at hg hg'
-    apply hne
-    have hpow : σ ^ k = σ ^ k' := by
-      have := hg.trans hg'.symm
-      simpa using this
-    exact pow_injOn_Iio_orderOf (Set.mem_Iio.mpr hk.1) (Set.mem_Iio.mpr hk'.1) hpow
-  rw [Set.ncard_eq_toFinset_card' S, hST, Finset.card_biUnion hdisj]
-  by_cases hc : IsConj σ τ
-  · rw [if_pos hc]
-    have hterm : ∀ k ∈ K, (T k).card = Nat.card (Subgroup.centralizer ({σ} : Set G)) := by
-      intro k hk
-      simp only [hK, Finset.mem_filter, Finset.mem_range] at hk
-      have hk' : k.Coprime (orderOf σ) := Nat.coprime_comm.mp hk.2
-      have hconj : IsConj (σ ^ k) τ := (hrat k hk').symm.trans hc
-      rw [hT, card_filter_conj_eq _ _ hconj, centralizer_pow_eq_of_coprime σ hk',
-        Nat.card_eq_fintype_card]
-    rw [Finset.sum_congr rfl hterm, Finset.sum_const, smul_eq_mul, hKcard]
-  · rw [if_neg hc]
-    refine Finset.sum_eq_zero fun k hk => ?_
-    simp only [hK, Finset.mem_filter, Finset.mem_range] at hk
-    have hk' : k.Coprime (orderOf σ) := Nat.coprime_comm.mp hk.2
-    have hnc : ¬ IsConj (σ ^ k) τ := fun h => hc ((hrat k hk').trans h)
-    exact card_filter_conj_eq_zero _ _ hnc
-
-theorem setOf_isConj_eq_orbit_conjAct (σ : G) :
-    {τ : G | IsConj σ τ} = MulAction.orbit (ConjAct G) σ := by
-  ext τ
-  rw [ConjAct.orbit_eq_carrier_conjClasses, Set.mem_setOf_eq, ConjClasses.mem_carrier_iff_mk_eq,
-    ConjClasses.mk_eq_mk_iff_isConj]
-  exact ⟨IsConj.symm, IsConj.symm⟩
-
-theorem mk_stabilizer_conjAct_eq_mk_centralizer (σ : G) :
-    Cardinal.mk (MulAction.stabilizer (ConjAct G) σ) =
-      Cardinal.mk (Subgroup.centralizer ({σ} : Set G)) := by
-  refine Cardinal.mk_congr (Equiv.subtypeEquiv ConjAct.ofConjAct.toEquiv fun g => ?_)
-  show g ∈ MulAction.stabilizer (ConjAct G) σ ↔
-    ConjAct.ofConjAct g ∈ Subgroup.centralizer ({σ} : Set G)
-  rw [MulAction.mem_stabilizer_iff, Subgroup.mem_centralizer_singleton_iff, ConjAct.smul_def]
-  rw [mul_inv_eq_iff_eq_mul]
-  exact Iff.rfl
-
-public theorem mk_setOf_isConj_mul_mk_centralizer (σ : G) :
-    Cardinal.mk {τ : G | IsConj σ τ} * Cardinal.mk (Subgroup.centralizer ({σ} : Set G)) =
-      Cardinal.mk G := by
-  rw [setOf_isConj_eq_orbit_conjAct, ← mk_stabilizer_conjAct_eq_mk_centralizer,
-    Cardinal.mk_congr (MulAction.orbitEquivQuotientStabilizer (ConjAct G) σ), Cardinal.mul_def,
-    ← Cardinal.mk_congr Subgroup.groupEquivQuotientProdSubgroup]
-  rfl
-
-theorem sum_moebius_mul_eq_totient (n : ℕ) (hn : 0 < n) :
-    ∑ f ∈ n.divisors, (ArithmeticFunction.moebius (n / f)) * (f : ℤ) = (Nat.totient n : ℤ) := by
-  have key : ∀ m > 0, ∑ x ∈ m.divisorsAntidiagonal,
-      (ArithmeticFunction.moebius x.fst : ℤ) * (x.snd : ℤ) = (Nat.totient m : ℤ) := by
-    refine (ArithmeticFunction.sum_eq_iff_sum_mul_moebius_eq (R := ℤ)
-      (f := fun k => (Nat.totient k : ℤ)) (g := fun k => (k : ℤ))).mp ?_
-    intro m _
-    exact_mod_cast Nat.sum_totient m
-  rw [← key n hn]
-  exact (Nat.sum_divisorsAntidiagonal'
-    (fun a b => (ArithmeticFunction.moebius a : ℤ) * (b : ℤ))).symm
-
-end FrobeniusDensity
 
 end
