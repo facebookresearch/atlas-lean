@@ -46,22 +46,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Unimodular equivalences between the parallelograms $P_{b,n}$.** For natural numbers $b$
-and $n$ let $P_{b,n}$ be the parallelogram spanned by $(1, 0)$ and $(b, n)$, with vertices
-$(0, 0)$, $(1, 0)$, $(b, n)$, $(b + 1, n)$. Let $n$, $a$ and $a'$ be natural numbers with $n > 1$,
-$1 \le a < n$, $\gcd(a, n) = 1$, $1 \le a' < n$ and $a a' \equiv 1 \pmod{n}$. Then $P_{a,n}$ is
-unimodularly equivalent to each of $P_{n-a,n}$, $P_{a',n}$ and $P_{n-a',n}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 2 (`integers-2026-A10-lem-2`). -/
-public theorem_wanted stdCleanParallelogram_unimodularlyEquivalent {a n ai : ℕ} (hn : 1 < n)
-    (ha : 1 ≤ a) (han : a < n) (hcop : Nat.Coprime a n) (hai : 1 ≤ ai) (hain : ai < n)
-    (hinv : a * ai ≡ 1 [MOD n]) :
-    UnimodularlyEquivalent (stdCleanParallelogram a n) (stdCleanParallelogram (n - a) n) ∧
-      UnimodularlyEquivalent (stdCleanParallelogram a n) (stdCleanParallelogram ai n) ∧
-      UnimodularlyEquivalent (stdCleanParallelogram a n) (stdCleanParallelogram (n - ai) n)
-
 /-- **Clean parallelograms are unimodularly equivalent to standard ones.** Let $u$ and $v$ be
 lattice points spanning a clean lattice parallelogram $P$ whose area is an integer $n \ge 2$. Then
 there is an integer $a$ with $1 \le a < n$ and $\gcd(a, n) = 1$ such that $P$ is unimodularly

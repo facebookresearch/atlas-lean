@@ -10,9 +10,17 @@ module
 
 import MathlibExt.Combinatorics.CleanLatticeParallelogram
 
-/-! # Tests for the integer heights of vertical columns -/
+/-! # Tests for clean lattice parallelograms -/
 
 open MetaMathlibExt
+
+-- The inverse of 2 modulo 7 is 4, giving three distinct target parallelograms.
+example :
+    UnimodularlyEquivalent (stdCleanParallelogram 2 7) (stdCleanParallelogram 5 7) ∧
+      UnimodularlyEquivalent (stdCleanParallelogram 2 7) (stdCleanParallelogram 4 7) ∧
+      UnimodularlyEquivalent (stdCleanParallelogram 2 7) (stdCleanParallelogram 3 7) :=
+  stdCleanParallelogram_unimodularlyEquivalent (a := 2) (n := 7) (ai := 4)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 -- The smallest admissible parallelogram has just one interior height.
 example : stdColumn 1 2 1 = {1} := by
