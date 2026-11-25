@@ -27,7 +27,7 @@ over `[t k, t (m-k))` for knots `t 0, …, t m`.
 
 @[expose] public section
 
-namespace Cslib.Algorithms.Lean.Geometry.BSpline
+namespace MathlibExt.Interpolation.BSpline
 
 /-- B-spline basis by Cox-de Boor. Real division by zero is zero in Lean,
 which is exactly the 0/0 := 0 convention for repeated knots. -/
@@ -236,4 +236,4 @@ theorem B_empty_denom_left {t : ℕ → ℝ} {i k : ℕ} {x : ℝ}
   have hd : t (i + k + 1) - t i = 0 := by rw [← h, sub_self]
   simp [hd]
 
-end Cslib.Algorithms.Lean.Geometry.BSpline
+end MathlibExt.Interpolation.BSpline
