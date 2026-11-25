@@ -53,12 +53,20 @@ theorem corner_choice_homology (b b' : ι) (n : ℕ) :
   exact (Morita.finiteHomologyIsoAt.{t} k A M ι b n).inv_hom_id.trans
     (Morita.finiteHomologyIsoAt.{t} k A M ι b' n).inv_hom_id.symm
 
+section
+
+local instance : SMulCommClass (Matrix (Fin 2) (Fin 2) ℤ)
+    (Matrix (Fin 2) (Fin 2) ℤ)ᵐᵒᵖ (ULift.{2} (Matrix (Fin 2) (Fin 2) ℤ)) :=
+  ⟨fun a b x => ULift.ext (smul_comm a b x.down)⟩
+
 /-- The coefficient carrier and common lift can both lie above a noncommutative algebra. -/
 example (n : ℕ) :
     IsIso (HomologicalComplex.homologyMap
       (traceChainMapAt.{3} ℤ (Matrix (Fin 2) (Fin 2) ℤ)
-        (ULift.{2} (Matrix (Fin 2) (Fin 2) ℤ)) (Fin 3)) n) :=
-  (Morita.finiteHomologyIsoAt.{3} ℤ (Matrix (Fin 2) (Fin 2) ℤ)
+        (ULift.{2} (Matrix (Fin 2) (Fin 2) ℤ)) (Fin 3)) n) := by
+  exact (Morita.finiteHomologyIsoAt.{3} ℤ (Matrix (Fin 2) (Fin 2) ℤ)
     (ULift.{2} (Matrix (Fin 2) (Fin 2) ℤ)) (Fin 3) 0 n).isIso_hom
+
+end
 
 end MathlibExtTest.HochschildMatrixMorita
