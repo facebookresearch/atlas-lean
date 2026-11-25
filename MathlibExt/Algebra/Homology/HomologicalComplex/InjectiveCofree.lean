@@ -1,0 +1,201 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+-- Author: @toskua
+module
+
+public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
+public import Mathlib.CategoryTheory.Preadditive.Injective.Basic
+
+/-!
+# Finite cofree complexes
+
+For a complex shape `c` and a coefficient family `I`, the cofree complex
+has terms `I i ⊞ I (c.next i)`. Its differential carries the second
+coefficient to the first coefficient of the next term.
+
+When every index has an outgoing arrow, a map to the cofree complex is
+determined by its first coefficients. Injective coefficient objects give
+an injective complex. Degreewise injective covers therefore supply enough
+injectives in the category of complexes, using only binary biproducts.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+noncomputable section
+
+open CategoryTheory CategoryTheory.Limits
+open scoped Classical
+
+universe u v w
+
+namespace HomologicalComplex
+
+variable {A : Type u} [Category.{v} A] [Abelian A]
+variable {ι : Type w} {c : ComplexShape ι}
+
+/-- The finite cofree complex on a coefficient family. -/
+def injectiveCofree (I : ι → A) : HomologicalComplex A c where
+  X i := I i ⊞ I (c.next i)
+  d i j := if hij : c.Rel i j then
+    (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) ≫
+      eqToHom (congrArg I (c.next_eq' hij)) ≫
+        (biprod.inl : I j ⟶ I j ⊞ I (c.next j)) else 0
+  shape i j hij := by simp only [dif_neg hij]
+  d_comp_d' i j k hij hjk := by
+    simp only [dif_pos hij, dif_pos hjk, Category.assoc,
+      biprod.inl_snd_assoc, comp_zero, zero_comp]
+
+/-- The cofree differential includes the canonical transport of the next index. -/
+theorem injectiveCofree_d (I : ι → A) {i j : ι} (hij : c.Rel i j) :
+    (injectiveCofree (c := c) I).d i j =
+      (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) ≫
+        eqToHom (congrArg I (c.next_eq' hij)) ≫
+          (biprod.inl : I j ⟶ I j ⊞ I (c.next j)) := by
+  exact dif_pos hij
+
+/-- At the native next index, the cofree differential is second projection then insertion. -/
+theorem injectiveCofree_d_next (I : ι → A) (i : ι) (hi : c.Rel i (c.next i)) :
+    (injectiveCofree (c := c) I).d i (c.next i) =
+      (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) ≫
+        (biprod.inl : I (c.next i) ⟶ I (c.next i) ⊞ I (c.next (c.next i))) := by
+  rw [injectiveCofree_d I hi]
+  simp only [eqToHom_refl, Category.id_comp]
+
+/-- A coefficient family determines its cofree complex map. -/
+def injectiveCofreeHom (K : HomologicalComplex A c) (I : ι → A)
+    (a : ∀ i, K.X i ⟶ I i) : K ⟶ injectiveCofree (c := c) I where
+  f i := biprod.lift (a i) (K.d i (c.next i) ≫ a (c.next i))
+  comm' i j hij := by
+    obtain rfl := c.next_eq' hij
+    rw [injectiveCofree_d_next I i hij]
+    apply biprod.hom_ext
+    · simp only [Category.assoc, biprod.inl_fst, Category.comp_id,
+        biprod.lift_snd, biprod.lift_fst]
+    · simp only [Category.assoc, biprod.inl_snd, comp_zero, biprod.lift_snd]
+      rw [← Category.assoc, K.d_comp_d, zero_comp]
+
+/-- The first coefficient of the cofree map is the prescribed coefficient. -/
+@[reassoc]
+theorem injectiveCofreeHom_fst (K : HomologicalComplex A c) (I : ι → A)
+    (a : ∀ i, K.X i ⟶ I i) (i : ι) :
+    (injectiveCofreeHom K I a).f i ≫
+      (biprod.fst : I i ⊞ I (c.next i) ⟶ I i) = a i :=
+  biprod.lift_fst _ _
+
+/-- The second coefficient of the cofree map is obtained from the source differential. -/
+@[reassoc]
+theorem injectiveCofreeHom_snd (K : HomologicalComplex A c) (I : ι → A)
+    (a : ∀ i, K.X i ⟶ I i) (i : ι) :
+    (injectiveCofreeHom K I a).f i ≫
+      (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) =
+        K.d i (c.next i) ≫ a (c.next i) :=
+  biprod.lift_snd _ _
+
+/-- Every cofree map has its second coefficient forced at an outgoing index. -/
+@[reassoc]
+theorem injectiveCofree_snd (K : HomologicalComplex A c) (I : ι → A)
+    (g : K ⟶ injectiveCofree (c := c) I) (i : ι) (hi : c.Rel i (c.next i)) :
+    g.f i ≫ (biprod.snd : I i ⊞ I (c.next i) ⟶ I (c.next i)) =
+      K.d i (c.next i) ≫ g.f (c.next i) ≫
+        (biprod.fst : I (c.next i) ⊞ I (c.next (c.next i)) ⟶ I (c.next i)) := by
+  have h := congrArg (fun f : K.X i ⟶ (injectiveCofree (c := c) I).X (c.next i) =>
+    f ≫ (biprod.fst : I (c.next i) ⊞ I (c.next (c.next i)) ⟶ I (c.next i)))
+      (g.comm i (c.next i))
+  rw [injectiveCofree_d_next I i hi] at h
+  simpa only [Category.assoc, biprod.inl_fst, Category.comp_id] using h
+
+/-- First coefficients determine maps to a cofree complex when every index is outgoing. -/
+theorem injectiveCofree_hom_ext (I : ι → A) (hc : ∀ i, c.Rel i (c.next i))
+    {K : HomologicalComplex A c} {f g : K ⟶ injectiveCofree (c := c) I}
+    (h : ∀ i, f.f i ≫ biprod.fst = g.f i ≫ biprod.fst) : f = g := by
+  apply HomologicalComplex.hom_ext
+  intro i
+  apply biprod.hom_ext
+  · exact h i
+  · rw [injectiveCofree_snd K I f i (hc i), injectiveCofree_snd K I g i (hc i),
+      h (c.next i)]
+
+/-- The universal coefficient equivalence for the finite cofree complex. -/
+def injectiveCofreeHomEquiv (K : HomologicalComplex A c) (I : ι → A)
+    (hc : ∀ i, c.Rel i (c.next i)) :
+    (K ⟶ injectiveCofree (c := c) I) ≃ (∀ i, K.X i ⟶ I i) where
+  toFun g i := g.f i ≫ biprod.fst
+  invFun a := injectiveCofreeHom K I a
+  left_inv g := by
+    apply injectiveCofree_hom_ext I hc
+    intro i
+    exact injectiveCofreeHom_fst K I _ i
+  right_inv a := funext fun i => injectiveCofreeHom_fst K I a i
+
+/-- Cofree maps commute with precomposition by a complex map. -/
+@[reassoc]
+theorem injectiveCofreeHom_precomp {K L : HomologicalComplex A c} (g : K ⟶ L)
+    (I : ι → A) (a : ∀ i, L.X i ⟶ I i) :
+    g ≫ injectiveCofreeHom L I a =
+      injectiveCofreeHom K I (fun i => g.f i ≫ a i) := by
+  apply HomologicalComplex.hom_ext
+  intro i
+  apply biprod.hom_ext
+  · simp only [HomologicalComplex.comp_f, Category.assoc, injectiveCofreeHom_fst]
+  · simp only [HomologicalComplex.comp_f, Category.assoc, injectiveCofreeHom_snd]
+    exact g.comm_assoc i (c.next i) (a (c.next i))
+
+/-- A family of coefficient morphisms induces its cofree map. -/
+def injectiveCofreeMap {I J : ι → A} (a : ∀ i, I i ⟶ J i) :
+    injectiveCofree (c := c) I ⟶ injectiveCofree (c := c) J :=
+  injectiveCofreeHom (injectiveCofree (c := c) I) J (fun i => biprod.fst ≫ a i)
+
+/-- Cofree coefficient maps commute with a prescribed coefficient family. -/
+@[reassoc]
+theorem injectiveCofreeHom_naturality (K : HomologicalComplex A c) {I J : ι → A}
+    (hc : ∀ i, c.Rel i (c.next i)) (a : ∀ i, K.X i ⟶ I i) (b : ∀ i, I i ⟶ J i) :
+    injectiveCofreeHom K I a ≫ injectiveCofreeMap b =
+      injectiveCofreeHom K J (fun i => a i ≫ b i) := by
+  apply injectiveCofree_hom_ext J hc
+  intro i
+  simp only [HomologicalComplex.comp_f, Category.assoc, injectiveCofreeMap,
+    injectiveCofreeHom_fst]
+  rw [← Category.assoc, injectiveCofreeHom_fst]
+
+/-- A finite cofree complex of injective coefficient objects is injective. -/
+theorem injectiveCofree_injective (I : ι → A) (hc : ∀ i, c.Rel i (c.next i))
+    [∀ i, Injective (I i)] : Injective (injectiveCofree (c := c) I) where
+  factors {X Y} g m hm := by
+    letI : Mono m := hm
+    let a : ∀ i, Y.X i ⟶ I i := fun i =>
+      Injective.factorThru (g.f i ≫ biprod.fst) (m.f i)
+    refine ⟨injectiveCofreeHom Y I a, ?_⟩
+    apply injectiveCofree_hom_ext I hc
+    intro i
+    change (m.f i ≫ (injectiveCofreeHom Y I a).f i) ≫ biprod.fst =
+      g.f i ≫ biprod.fst
+    rw [Category.assoc, injectiveCofreeHom_fst]
+    exact Injective.comp_factorThru _ _
+
+/-- Monic first coefficients give a monic cofree complex map. -/
+theorem injectiveCofreeHom_mono (K : HomologicalComplex A c) (I : ι → A)
+    (a : ∀ i, K.X i ⟶ I i) [∀ i, Mono (a i)] : Mono (injectiveCofreeHom K I a) := by
+  apply HomologicalComplex.mono_of_mono_f
+  intro i
+  exact mono_of_mono_fac (injectiveCofreeHom_fst K I a i)
+
+/-- Injective covers give enough injectives for a shape with an outgoing arrow at every index. -/
+theorem enoughInjectives_of_rel_next (hc : ∀ i, c.Rel i (c.next i))
+    [EnoughInjectives A] : EnoughInjectives (HomologicalComplex A c) where
+  presentation K := by
+    let I : ι → A := fun i => Injective.under (K.X i)
+    let a : ∀ i, K.X i ⟶ I i := fun i => Injective.ι (K.X i)
+    letI : ∀ i, Injective (I i) := fun i => by dsimp only [I]; infer_instance
+    letI : ∀ i, Mono (a i) := fun i => by dsimp only [a, I]; infer_instance
+    letI : Injective (injectiveCofree (c := c) I) := injectiveCofree_injective I hc
+    letI : Mono (injectiveCofreeHom K I a) := injectiveCofreeHom_mono K I a
+    exact ⟨{ J := injectiveCofree (c := c) I, f := injectiveCofreeHom K I a }⟩
+
+end HomologicalComplex
