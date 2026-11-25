@@ -1,11 +1,14 @@
--- Copyright (c) 2026 Meta Platforms, Inc. and affiliates.
---
--- This source code is licensed under the MIT license found in the
--- LICENSE file in the root directory of this source tree.
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
 
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
 module
 
 public import Mathlib
+public import PhyslibExt.EarthScience.WeakDiffusion
 
 
 open MeasureTheory
@@ -22,17 +25,6 @@ set_option linter.unusedVariables false
 set_option linter.style.haveILetI false
 
 namespace EarthScience
-
-/-- H¹₀(0,1) in one dimension. -/
-structure WeakH10 where
-  toFun : ℝ → ℝ
-  weakDeriv : ℝ → ℝ
-  weakDeriv_memLp :
-    MemLp weakDeriv 2 (volume.restrict (Set.Icc 0 1))
-  toFun_eq_integral :
-    ∀ x ∈ Set.Icc (0 : ℝ) 1, toFun x = ∫ t in (0 : ℝ)..x, weakDeriv t
-  integral_weakDeriv_eq_zero :
-    ∫ t in (0 : ℝ)..1, weakDeriv t = 0
 
 /-- Test functions for the parabolic weak formulation: smooth functions on
 time × space, compactly supported inside `(t0, t1) × (0, 1)`.
