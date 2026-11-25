@@ -1591,34 +1591,42 @@ def discreteCoefficientGroupLongSequenceMap
     {φ : H →ₜ* G} (f : DiscreteCoefficientGroupHom.{v, z, w} S T φ) (n : ℕ) :
     discreteCoefficientLongSequence.{v, max z w} S hS n ⟶
       discreteCoefficientLongSequence.{z, max v w} T hT n := by
-  let A := AddCommGrpCat.{max v (max z w)}
-  let F : TopModuleCat.{max v (max z w)} ℤ ⥤ A :=
+  let C := AddCommGrpCat.{max v (max z w)}
+  let GS := DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G
+  let HT := DiscreteContAction (TopModuleCat.{max z (max v w)} ℤ) H
+  let F : TopModuleCat.{max v (max z w)} ℤ ⥤ C :=
     discreteCoefficientForget.{max v (max z w)}
-  let LS : ComposableArrows A 5 := discreteCoefficientLongSequence.{v, max z w} S hS n
-  let LT : ComposableArrows A 5 := discreteCoefficientLongSequence.{z, max v w} T hT n
-  let a₀ : LS.obj' 0 ⟶ LT.obj' 0 :=
+  let HS₀ : GS ⥤ C := discreteCoefficientCohomologyFunctor.{v, max z w} G n
+  let HS₁ : GS ⥤ C := discreteCoefficientCohomologyFunctor.{v, max z w} G (n + 1)
+  let HT₀ : HT ⥤ C := discreteCoefficientCohomologyFunctor.{z, max v w} H n
+  let HT₁ : HT ⥤ C := discreteCoefficientCohomologyFunctor.{z, max v w} H (n + 1)
+  let LS : ComposableArrows C 5 := discreteCoefficientLongSequence.{v, max z w} S hS n
+  let LT : ComposableArrows C 5 := discreteCoefficientLongSequence.{z, max v w} T hT n
+  let a₀ : HS₀.obj S.X₁ ⟶ HT₀.obj T.X₁ :=
     F.map (nativeGroupCoefficientCohomologyMap.{0, v, z, w} φ f.τ₁ n)
-  let a₁ : LS.obj' 1 ⟶ LT.obj' 1 :=
+  let a₁ : HS₀.obj S.X₂ ⟶ HT₀.obj T.X₂ :=
     F.map (nativeGroupCoefficientCohomologyMap.{0, v, z, w} φ f.τ₂ n)
-  let a₂ : LS.obj' 2 ⟶ LT.obj' 2 :=
+  let a₂ : HS₀.obj S.X₃ ⟶ HT₀.obj T.X₃ :=
     F.map (nativeGroupCoefficientCohomologyMap.{0, v, z, w} φ f.τ₃ n)
-  let a₃ : LS.obj' 3 ⟶ LT.obj' 3 :=
+  let a₃ : HS₁.obj S.X₁ ⟶ HT₁.obj T.X₁ :=
     F.map (nativeGroupCoefficientCohomologyMap.{0, v, z, w} φ f.τ₁ (n + 1))
-  let a₄ : LS.obj' 4 ⟶ LT.obj' 4 :=
+  let a₄ : HS₁.obj S.X₂ ⟶ HT₁.obj T.X₂ :=
     F.map (nativeGroupCoefficientCohomologyMap.{0, v, z, w} φ f.τ₂ (n + 1))
-  let a₅ : LS.obj' 5 ⟶ LT.obj' 5 :=
+  let a₅ : HS₁.obj S.X₃ ⟶ HT₁.obj T.X₃ :=
     F.map (nativeGroupCoefficientCohomologyMap.{0, v, z, w} φ f.τ₃ (n + 1))
-  have w₀ : LS.map' 0 1 ≫ a₁ = a₀ ≫ LT.map' 0 1 :=
+  have w₀ : HS₀.map S.f ≫ a₁ = a₀ ≫ HT₀.map T.f :=
     discreteCoefficientGroupCohomologySquare.{v, z, w} φ S.f T.f f.τ₁ f.τ₂ f.comm₁₂ n
-  have w₁ : LS.map' 1 2 ≫ a₂ = a₁ ≫ LT.map' 1 2 :=
+  have w₁ : HS₀.map S.g ≫ a₂ = a₁ ≫ HT₀.map T.g :=
     discreteCoefficientGroupCohomologySquare.{v, z, w} φ S.g T.g f.τ₂ f.τ₃ f.comm₂₃ n
-  have w₂ : LS.map' 2 3 ≫ a₃ = a₂ ≫ LT.map' 2 3 :=
+  have w₂ : discreteCoefficientConnecting.{v, max z w} S hS n ≫ a₃ =
+      a₂ ≫ discreteCoefficientConnecting.{z, max v w} T hT n :=
     discreteCoefficientConnecting_group_naturality.{v, z, w} hS hT f n
-  have w₃ : LS.map' 3 4 ≫ a₄ = a₃ ≫ LT.map' 3 4 :=
+  have w₃ : HS₁.map S.f ≫ a₄ = a₃ ≫ HT₁.map T.f :=
     discreteCoefficientGroupCohomologySquare.{v, z, w} φ S.f T.f f.τ₁ f.τ₂ f.comm₁₂ (n + 1)
-  have w₄ : LS.map' 4 5 ≫ a₅ = a₄ ≫ LT.map' 4 5 :=
+  have w₄ : HS₁.map S.g ≫ a₅ = a₄ ≫ HT₁.map T.g :=
     discreteCoefficientGroupCohomologySquare.{v, z, w} φ S.g T.g f.τ₂ f.τ₃ f.comm₂₃ (n + 1)
-  exact ComposableArrows.homMk₅ a₀ a₁ a₂ a₃ a₄ a₅ w₀ w₁ w₂ w₃ w₄
+  exact ComposableArrows.homMk₅ (C := C) (f := LS) (g := LT)
+    a₀ a₁ a₂ a₃ a₄ a₅ w₀ w₁ w₂ w₃ w₄
 
 /-- The common coefficient enlargement retains the literal identity evaluation. -/
 theorem discreteCoefficientZeroIso_cycle_value (G : ProfiniteGrp.{v})
@@ -1719,31 +1727,22 @@ def DiscreteCoefficientLongExactLaws {G : ProfiniteGrp.{v}}
       ((discreteCoefficientLongSequenceFunctor.{v, w} G n).map f).app i ≫
         ((discreteCoefficientLongSequenceFunctor.{v, w} G n).obj B).map (homOfLE h)
 
-/-- The full coefficient theorem for arbitrary original equivariant additive f and g. -/
-theorem original_continuous_cochain_long_exact_sequence (G : ProfiniteGrp.{v})
-    {A B C : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
-    (f : A ⟶ B) (g : B ⟶ C)
-    (hf : Function.Injective (discreteCoefficientHom.{v, w} f))
-    (hfg : (discreteCoefficientHom.{v, w} f).range =
-      (discreteCoefficientHom.{v, w} g).ker)
-    (hg : Function.Surjective (discreteCoefficientHom.{v, w} g)) :
-    DiscreteCoefficientLongExactLaws.{v, w}
-      (discreteCoefficientShortComplex.{v, w} f g hfg)
-      (discreteCoefficientShortComplex_exact.{v, w} f g hf hfg hg) := by
+/-- Literal coefficient exactness gives the cochain, cohomology, and functorial laws. -/
+private theorem discreteCoefficientLongExactLaws_of_exact {G : ProfiniteGrp.{v}}
+    (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
+    (hS : DiscreteCoefficientExact.{v, w} S) :
+    DiscreteCoefficientLongExactLaws.{v, w} S hS := by
   let D := DiscreteContAction (TopModuleCat.{max v w} ℤ) G
   let F : D ⥤ CochainComplex AddCommGrpCat.{max v w} ℕ :=
     discreteCoefficientCochainFunctor.{v, w} G
-  let S : ShortComplex D := discreteCoefficientShortComplex.{v, w} f g hfg
-  let hS : DiscreteCoefficientExact.{v, w} S :=
-    discreteCoefficientShortComplex_exact.{v, w} f g hf hfg hg
   have hCochain : (S.map F).ShortExact := discreteCoefficientCochain_shortExact.{v, w} S hS
   have hInjective : ∀ n, Function.Injective ((F.map S.f).f n) :=
-    fun n => discreteCoefficientCochain_injective.{v, w} f hf n
+    fun n => discreteCoefficientCochain_injective.{v, w} S.f hS.1 n
   have hKernel : ∀ n (c : (F.obj S.X₂).X n), (F.map S.g).f n c = 0 →
       ∃ b : (F.obj S.X₁).X n, (F.map S.f).f n b = c :=
-    fun n c hc => discreteCoefficientCochain_lift_kernel.{v, w} f g hfg n c hc
+    fun n c hc => discreteCoefficientCochain_lift_kernel.{v, w} S.f S.g hS.2.1 n c hc
   have hSurjective : ∀ n, Function.Surjective ((F.map S.g).f n) :=
-    fun n => discreteCoefficientCochain_surjective.{v, w} g hg n
+    fun n => discreteCoefficientCochain_surjective.{v, w} S.g hS.2.2 n
   have hExact : ∀ n, (discreteCoefficientLongSequence.{v, w} S hS n).Exact :=
     fun n => discreteCoefficientLongSequence_exact.{v, w} S hS n
   have hMono : Mono ((discreteCoefficientCohomologyFunctor.{v, w} G 0).map S.f) :=
@@ -1780,6 +1779,21 @@ theorem original_continuous_cochain_long_exact_sequence (G : ProfiniteGrp.{v})
       ((discreteCoefficientLongSequenceFunctor.{v, w} G n).map f).naturality (homOfLE h)
   exact ⟨hCochain, hInjective, hKernel, hSurjective, hExact, hMono, hConnecting,
     hZero, hCycle, hInverse, hIdentity, hComposition, hNaturality⟩
+
+/-- The full coefficient theorem for arbitrary original equivariant additive f and g. -/
+theorem original_continuous_cochain_long_exact_sequence (G : ProfiniteGrp.{v})
+    {A B C : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
+    (f : A ⟶ B) (g : B ⟶ C)
+    (hf : Function.Injective (discreteCoefficientHom.{v, w} f))
+    (hfg : (discreteCoefficientHom.{v, w} f).range =
+      (discreteCoefficientHom.{v, w} g).ker)
+    (hg : Function.Surjective (discreteCoefficientHom.{v, w} g)) :
+    DiscreteCoefficientLongExactLaws.{v, w}
+      (discreteCoefficientShortComplex.{v, w} f g hfg)
+      (discreteCoefficientShortComplex_exact.{v, w} f g hf hfg hg) := by
+  exact discreteCoefficientLongExactLaws_of_exact.{v, w}
+    (discreteCoefficientShortComplex.{v, w} f g hfg)
+    (discreteCoefficientShortComplex_exact.{v, w} f g hf hfg hg)
 
 /-- Every group/coefficient diagram gives the actual six components and ALL squares. -/
 theorem original_continuous_cochain_group_coefficient_naturality
