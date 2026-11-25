@@ -60,16 +60,16 @@ change welfare. -/
 def IsSymmetric {ι : Type*} (W : (ι → ℝ) → ℝ) : Prop :=
   ∀ (σ : Equiv.Perm ι) (y : ι → ℝ), W (y ∘ σ) = W y
 
-/-- Equalization preserves total income in a nonempty population. -/
+/-- Equalization preserves total income in a finite nonempty population. -/
 theorem sum_equalize {ι : Type*} [Fintype ι] [Nonempty ι] (x : ι → ℝ) :
     ∑ i, equalize x i = ∑ i, x i := by
   have hcard : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   simp only [equalize, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
   rw [mul_comm, div_mul_cancel₀ _ hcard]
 
-/-- **A symmetric concave welfare function weakly prefers equalization.** If `W` is concave on
-a set `s` that contains every relabeling of `x`, and `W` is symmetric, then replacing every
-income by the mean does not lower welfare. -/
+/-- **A symmetric concave welfare function weakly prefers equalization.** For a finite
+population, if `W` is concave on a set `s` that contains every relabeling of `x`, and `W` is
+symmetric, then replacing every income by the mean does not lower welfare. -/
 theorem le_welfare_equalize {ι : Type*} [Fintype ι] {W : (ι → ℝ) → ℝ} {s : Set (ι → ℝ)}
     (hW : ConcaveOn ℝ s W) (hsym : IsSymmetric W) (x : ι → ℝ)
     (hs : ∀ σ : Equiv.Perm ι, x ∘ σ ∈ s) :

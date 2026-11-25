@@ -1,0 +1,121 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.Normed.Algebra.NonUnitalStarCompletion.Scalar
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Normed.Module.Completion
+public import Mathlib.Topology.Algebra.Star
+
+/-!
+# The original involution on the ordinary ring completion
+
+The existing continuous-star nonunital completion hierarchy supplies the
+actual involution, ring laws and scalar law. For a unital source its completed
+nonunital normed-ring dictionary is definitionally the stock completion parent.
+The primary factories therefore reuse that hierarchy directly and require only
+continuous source star. The stock completed ring, norm and scalar action remain
+unchanged, with no new global completion instance.
+
+The older normed-star factories retain their original signatures and values as
+compatibility wrappers. Only the norm-isometry result needs NormedStarGroup;
+it uses the stock isometric completion map.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace UniformSpace.Completion
+
+noncomputable section
+
+universe u v
+
+/-- The existing nonunital completion factory is exactly the stock unital completion's nonunital parent. -/
+theorem nonUnitalCompletionNormedRing_eq (A : Type u) [SeminormedRing A] :
+    nonUnitalCompletionNormedRing A =
+      (inferInstance : NonUnitalNormedRing (Completion A)) :=
+  rfl
+
+section Continuous
+
+variable (A : Type u) [SeminormedRing A] [StarRing A] [ContinuousStar A]
+
+/-- The primary completed star ring reuses the existing weak hierarchy over the stock ring. -/
+@[instance_reducible]
+def completionStarRing : StarRing (Completion A) :=
+  nonUnitalCompletionStarRing A
+
+/-- Both explicit factories have exactly the same original star-ring dictionary. -/
+theorem completionStarRing_eq_nonUnital :
+    completionStarRing A = nonUnitalCompletionStarRing A :=
+  rfl
+
+/-- The shared actual involution agrees with source star on every dense coefficient. -/
+theorem completionStarRing_star_coe (a : A) :
+    letI : StarRing (Completion A) := completionStarRing A
+    star (a : Completion A) = ((star a : A) : Completion A) := by
+  exact nonUnitalCompletionStarRing_star_coe A a
+
+/-- The shared completed involution is continuous for the original completion topology. -/
+theorem completionStarRing_continuousStar :
+    letI : StarRing (Completion A) := completionStarRing A
+    ContinuousStar (Completion A) := by
+  exact nonUnitalCompletionStarRing_continuousStar A
+
+/-- The primary scalar law reuses the original completion action and only uniform source scalar maps. -/
+theorem completionStarModule {R : Type v}
+    [Star R] [SMul R A] [UniformContinuousConstSMul R A] [StarModule R A] :
+    letI : StarRing (Completion A) := completionStarRing A
+    StarModule R (Completion A) := by
+  exact nonUnitalCompletionStarRing_starModule A
+
+end Continuous
+
+section Compatibility
+
+variable (A : Type u) [NormedRing A] [StarRing A] [NormedStarGroup A]
+
+/-- Compatibility wrapper with the original normed-star signature and shared actual star value.
+Use completionStarRing when only continuous source star is available. -/
+@[instance_reducible]
+def normedStarRing : StarRing (Completion A) :=
+  completionStarRing A
+
+/-- The original named coefficient characteristic for the same shared completion star. -/
+theorem normedStarRing_star_coe (a : A) :
+    let _ : StarRing (Completion A) := normedStarRing A
+    star (a : Completion A) = ((star a : A) : Completion A) := by
+  exact completionStarRing_star_coe A a
+
+/-- Norm-star isometry alone needs the source normed-star hypothesis, on the stock completed norm. -/
+theorem normedStarGroup :
+    let _ : StarRing (Completion A) := normedStarRing A
+    NormedStarGroup (Completion A) := by
+  let _ : StarRing (Completion A) := normedStarRing A
+  have hIso : Isometry (star : Completion A → Completion A) := by
+    change Isometry (Completion.map (star : A → A))
+    exact (star_isometry : Isometry (star : A → A)).completion_map
+  refine { norm_star_le := ?_ }
+  intro x
+  have hnorm : ‖star x‖ = ‖x‖ := by
+    simpa only [star_zero, dist_eq_norm, sub_zero] using hIso.dist_eq x 0
+  exact hnorm.le
+
+variable [NormedAlgebra ℂ A] [StarModule ℂ A]
+
+/-- Compatibility wrapper with the original complex normed-star signature and shared scalar law.
+Use completionStarModule for the continuous-star and general-scalar interface. -/
+theorem normedStarModule :
+    let _ : StarRing (Completion A) := normedStarRing A
+    StarModule ℂ (Completion A) := by
+  exact completionStarModule A
+
+end Compatibility
+
+end
+
+end UniformSpace.Completion

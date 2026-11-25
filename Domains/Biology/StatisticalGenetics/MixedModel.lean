@@ -190,9 +190,9 @@ With random effects `γ ~ N(0, G)` and residuals `ε ~ N(0, R)` independent, the
 positive semidefiniteness of `G` and `R` is assumed. The reverse conditional law, of the random
 effects given the response, is `condDistrib_mixedModel`. -/
 
-/-- Marginal law of the mixed-model response: with `γ ~ N(0, G)` and
-`ε ~ N(0, R)` independent, `Y = X β + Z γ + ε` is
-`N(X β, Z G Zᵀ + R)`. -/
+/-- Marginal law of the mixed-model response: with `γ ~ N(0, G)` and `ε ~ N(0, R)` measurable and
+independent under the probability measure `P`, `G` and `R` positive semidefinite,
+`Y = X β + Z γ + ε` is `N(X β, Z G Zᵀ + R)`. -/
 theorem map_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
     [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
@@ -228,8 +228,8 @@ theorem map_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
     simp [phenCov]
   rw [hphen, map_add_multivariateGaussian, add_zero]
 
-/-- The marginal covariance `Z G Zᵀ + R` of the mixed model is positive
-semidefinite. -/
+/-- The marginal covariance `Z G Zᵀ + R` of the mixed model is positive semidefinite when `G` and
+`R` are. -/
 theorem posSemidef_phenCov_of_posSemidef {n q : Type*} [Finite n]
     [Fintype q] (Z : Matrix n q ℝ) (G : Matrix q q ℝ)
     (R : Matrix n n ℝ) (hG : G.PosSemidef) (hR : R.PosSemidef) :
@@ -244,7 +244,8 @@ theorem posSemidef_phenCov_of_posSemidef {n q : Type*} [Finite n]
   rw [hphen]
   exact hZG.add hR
 
-/-- Marginal mean of the mixed-model response: `E[Y] = X β`. -/
+/-- Marginal mean of the mixed-model response: with `γ ~ N(0, G)` and `ε ~ N(0, R)` measurable and
+independent under the probability measure `P`, `G` and `R` positive semidefinite, `E[Y] = X β`. -/
 theorem integral_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
     [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
@@ -273,7 +274,9 @@ theorem integral_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
         rw [hmap]
     _ = toEuclideanLin X β := integral_id_multivariateGaussian
 
-/-- Marginal covariance of the mixed-model response: `Cov(Y) = Z G Zᵀ + R`. -/
+/-- Marginal covariance of the mixed-model response: with `γ ~ N(0, G)` and `ε ~ N(0, R)` measurable
+and independent under the probability measure `P`, `G` and `R` positive semidefinite,
+`Cov(Y) = Z G Zᵀ + R` entrywise. -/
 theorem covariance_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
     [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
@@ -316,8 +319,10 @@ theorem covariance_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq 
   rw [hcov, hmap]
   exact covariance_eval_multivariateGaussian hpsd i j
 
-/-- Conditional law of the mixed-model response given the random effects:
-`Y | γ = g ~ N(X β + Z g, R)`. -/
+/-- Conditional law of the mixed-model response given the random effects: with `γ` and `ε`
+measurable and independent under the probability measure `P` and `ε ~ N(0, R)` (no assumption on the
+law of `γ`), `Y | γ = g ~ N(X β + Z g, R)` for almost every `g` under the law of `γ`. For a matrix
+`S` that is not positive semidefinite, `multivariateGaussian m S` is the point mass at `m`. -/
 theorem condDistrib_mixedModel_response {n p q : Type*} [Fintype n]
     [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
@@ -347,7 +352,10 @@ theorem condDistrib_mixedModel_response {n p q : Type*} [Fintype n]
     noiseKernel_apply _ _ _ _
   rw [h2, map_add_multivariateGaussian, add_zero]
 
-/-- Conditional mean of the mixed-model response: `E[Y | γ] = X β + Z γ`. -/
+/-- Conditional mean of the mixed-model response: with `γ` and `ε` measurable and independent under
+the probability measure `P` and `ε ~ N(0, R)` (no assumption on the law of `γ`),
+`E[Y | γ = g] = X β + Z g` for almost every `g` under the law of `γ`. For a matrix `S` that is not
+positive semidefinite, `multivariateGaussian m S` is the point mass at `m`. -/
 theorem integral_condDistrib_mixedModel_response {n p q : Type*}
     [Fintype n] [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q]
     [DecidableEq q]
@@ -365,7 +373,9 @@ theorem integral_condDistrib_mixedModel_response {n p q : Type*}
   rw [hg]
   exact integral_id_multivariateGaussian
 
-/-- Conditional covariance of the mixed-model response: `Cov(Y | γ) = R`. -/
+/-- Conditional covariance of the mixed-model response: with `γ` and `ε` measurable and independent
+under the probability measure `P`, `R` positive semidefinite and `ε ~ N(0, R)` (no assumption on the
+law of `γ`), `Cov(Y | γ = g) = R` entrywise for almost every `g` under the law of `γ`. -/
 theorem covariance_condDistrib_mixedModel_response {n p q : Type*}
     [Fintype n] [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q]
     [DecidableEq q]
@@ -384,8 +394,10 @@ theorem covariance_condDistrib_mixedModel_response {n p q : Type*}
   rw [hg]
   exact covariance_eval_multivariateGaussian hR i j
 
-/-- Planned-contrast variance in any mixed model: for fixed coefficients
-`c`, the variance under the marginal law is the `phenCov` quadratic form. -/
+/-- Variance of a linear combination in the Gaussian mixed model: with `γ ~ N(0, G)` and
+`ε ~ N(0, R)` measurable and independent under the probability measure `P`, `G` and `R` positive
+semidefinite, for fixed coefficients `c` (not necessarily summing to zero) the variance of
+`∑ k, c k * Y k` is the `phenCov` quadratic form `cᵀ (Z G Zᵀ + R) c`. -/
 theorem variance_contrast_mixedModel_response {n p q : Type*} [Fintype n]
     [DecidableEq n] [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]

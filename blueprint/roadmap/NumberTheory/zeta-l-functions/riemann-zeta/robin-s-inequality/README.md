@@ -1,6 +1,7 @@
 # Robin's inequality
 
 - [Robin's criterion for the Riemann hypothesis](robin-criterion-for-riemann-hypothesis.md)
+- [Robin's inequality for every $n > 5040$](robin-inequality-above-5040.md)
 - [Robin exceptional set](robin-exceptional-set.md)
 - [The Robin exceptional set is empty up to $7!$](robin-exceptional-set-eq-empty-of-le.md)
 - [Failures of Robin's inequality number $O(x/\log\log x)$](card-robin-exceptional-set-is-big-o-div.md)

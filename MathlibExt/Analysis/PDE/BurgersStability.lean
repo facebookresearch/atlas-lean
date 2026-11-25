@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.PDE.BurgersComparison
+import MathlibExt.Analysis.PDE.BurgersBounds
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Tactic.FieldSimp

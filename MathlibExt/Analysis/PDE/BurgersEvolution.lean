@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.PDE.BurgersUniqueness
+import MathlibExt.Analysis.PDE.BurgersBounds
 import Mathlib.Analysis.Calculus.Deriv.Shift
 
 /-!

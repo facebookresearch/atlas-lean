@@ -33,7 +33,19 @@ universe u
 
 variable {α : Type u} [LinearOrder α]
 
-/-- Return the element at zero-based rank `k`, or `none` when `k` is out of range. -/
+/-- **Quickselect.** Deterministic quickselect takes a list $L$ over a linear order and a
+zero-based rank $k$ and returns an element or no element, together with its cost, the number
+of element comparisons it makes. If $k \ge |L|$, it returns no element at no cost. Otherwise
+it runs the following recursion, starting from the list $L$ and the rank $k$. On an empty list
+it returns no element. On a list with first entry $p$ and remaining entries $T$, and a rank
+$r$, it forms the three-way partition of $T$ around $p$, with blocks $B$, $E$, $A$ of entries
+below, equal to and above $p$, at a cost of $|T|$ comparisons. If $r < |B|$, it recurses on
+$B$ with rank $r$; if $|B| \le r < |B| + |E| + 1$, it returns $p$; otherwise it recurses on
+$A$ with rank $r - (|B| + |E| + 1)$.
+
+The recursion carries a fuel counter that starts at $|L|$ and drops by one per call, and it
+returns no element when the fuel is exhausted; since every recursive call is on a strictly
+shorter list, the fuel never runs out on a nonempty list. -/
 def quickselect (xs : List α) (k : Nat) : TimeM Nat (Option α) :=
   let rec loop : Nat → List α → Nat → TimeM Nat (Option α)
     | 0, _, _ => pure none
@@ -81,7 +93,9 @@ private theorem quickselect_loop_eq_none_iff (fuel : Nat) (xs : List α) (k : Na
               simp [quickselect.loop, hparts, hbelowRank, hblockRank, habove]
               omega
 
-/-- Quickselect returns `none` exactly for an out-of-range rank. -/
+/-- **Quickselect fails exactly out of range.** Let $L$ be a list over a linear order and let
+$k$ be a natural number. Quickselect on $L$ with zero-based rank $k$ returns no element if and
+only if $|L| \le k$. -/
 theorem quickselect_eq_none_iff (xs : List α) (k : Nat) :
     (quickselect xs k).ret = none ↔ xs.length ≤ k := by
   by_cases hk : k < xs.length
@@ -137,7 +151,12 @@ private theorem countP_cons_eq_block_add_above (pivot : α) (xs : List α)
   simp [hpivot]
   omega
 
-/-- Predicate counts survive partitioning when both other parts contribute zero. -/
+/-- **Counting through the below block.** Let $L$ be a list over a linear order, let $p$ be an
+element, let $q$ be a Boolean predicate on the elements, and let $B$, $E$, $A$ be the blocks of
+entries below, equal to and above $p$ in the three-way partition of $L$ around $p$. If $q$ is
+false on every entry of $E$ and on every entry of $A$, then the number of entries of $L$
+satisfying $q$ equals the number of entries of $B$ satisfying $q$, both counted with
+multiplicity. -/
 theorem partition3_countP_eq_below {α : Type u} [LinearOrder α]
     (pivot : α) (xs : List α) (p : α → Bool)
     (hequal : ∀ x ∈ (partition3 pivot xs).ret.equal, p x = false)
@@ -154,7 +173,12 @@ theorem partition3_countP_eq_below {α : Type u} [LinearOrder α]
   simp only [List.countP_append, hequalZero, haboveZero, Nat.add_zero] at hcount
   exact hcount.symm
 
-/-- Filled below and equal blocks contribute their lengths to an above-part count. -/
+/-- **Counting through the above block.** Let $L$ be a list over a linear order, let $p$ be an
+element, let $q$ be a Boolean predicate on the elements, and let $B$, $E$, $A$ be the blocks of
+entries below, equal to and above $p$ in the three-way partition of $L$ around $p$. If $q$ is
+true on every entry of $B$ and on every entry of $E$, then the number of entries of $L$
+satisfying $q$ equals $|B| + |E|$ plus the number of entries of $A$ satisfying $q$, all counted
+with multiplicity. -/
 theorem partition3_countP_eq_block_add_above {α : Type u} [LinearOrder α]
     (pivot : α) (xs : List α) (p : α → Bool)
     (hbelow : ∀ x ∈ (partition3 pivot xs).ret.below, p x = true)
@@ -208,12 +232,18 @@ private theorem count_le_pivot (pivot : α) (xs : List α) :
       simp [not_le_of_gt (hparts.2.2.2 x hx)]
   simpa [haboveZero] using hcount
 
-/-- The below block counts exactly the original occurrences below the pivot. -/
+/-- **Entries below the pivot.** Let $L$ be a list over a linear order, let $p$ be an element,
+and let $B$ be the block of entries below $p$ in the three-way partition of $L$ around $p$.
+Then the number of entries of $L$ that are strictly less than $p$, counted with multiplicity,
+equals $|B|$. -/
 theorem partition3_count_lt {α : Type u} [LinearOrder α] (pivot : α) (xs : List α) :
     xs.countP (fun x => decide (x < pivot)) = (partition3 pivot xs).ret.below.length := by
   simpa using count_lt_pivot pivot xs
 
-/-- The below and equal blocks count all original occurrences at most the pivot. -/
+/-- **Entries at most the pivot.** Let $L$ be a list over a linear order, let $p$ be an element,
+and let $B$ and $E$ be the blocks of entries below and equal to $p$ in the three-way partition
+of $L$ around $p$. Then the number of entries of $L$ that are at most $p$, counted with
+multiplicity, equals $|B| + |E|$. -/
 theorem partition3_count_le {α : Type u} [LinearOrder α] (pivot : α) (xs : List α) :
     xs.countP (fun x => decide (x ≤ pivot)) =
       (partition3 pivot xs).ret.below.length + (partition3 pivot xs).ret.equal.length := by
@@ -346,7 +376,12 @@ private theorem quickselect_loop_correct (fuel : Nat) (xs : List α) (k : Nat) (
               · dsimp [block] at hlt hle ⊢
                 omega
 
-/-- A successful selection returns the value occupying rank `k`, including duplicate blocks. -/
+/-- **Correctness of quickselect.** Let $L$ be a list over a linear order and let $k$ be a
+natural number. If quickselect on $L$ with zero-based rank $k$ returns an element $x$, then $x$
+is an entry of $L$, and, counting entries of $L$ with multiplicity, the number of entries less
+than $x$ is at most $k$ and $k$ is less than the number of entries at most $x$.
+
+Thus $x$ occupies zero-based position $k$ in the sorted order of $L$, also when $x$ is repeated. -/
 theorem quickselect_correct {xs : List α} {k : Nat} {x : α}
     (hresult : (quickselect xs k).ret = some x) :
     x ∈ xs ∧
@@ -395,7 +430,10 @@ private theorem getElem?_eq_some_of_count_rank {ys : List α} {k : Nat} {x : α}
               simp [hzero]
           simpa only [List.getElem?_cons_succ] using ih htail hltTail hleTail
 
-/-- Quickselect equals the zero-based entry of the canonical sorted permutation. -/
+/-- **Quickselect agrees with sorting.** Let $L$ be a list over a linear order, let $S$ be the
+insertion sort of $L$ in nondecreasing order, and let $k$ be a natural number. If $k < |L|$,
+quickselect on $L$ with zero-based rank $k$ returns the entry of $S$ at zero-based position $k$;
+if $k \ge |L|$, it returns no element. -/
 theorem quickselect_eq_getElem?_insertionSort (xs : List α) (k : Nat) :
     (quickselect xs k).ret = (xs.insertionSort (· ≤ ·))[k]? := by
   cases hresult : (quickselect xs k).ret with
@@ -413,7 +451,10 @@ theorem quickselect_eq_getElem?_insertionSort (xs : List α) (k : Nat) :
       · omega
       · omega
 
-/-- The duplicate-safe rank inequalities characterize a successful quickselect value. -/
+/-- **Rank inequalities determine the quickselect value.** Let $L$ be a list over a linear
+order, let $k$ be a natural number and let $x$ be an element. Counting entries of $L$ with
+multiplicity, if the number of entries less than $x$ is at most $k$ and $k$ is less than the
+number of entries at most $x$, then quickselect on $L$ with zero-based rank $k$ returns $x$. -/
 theorem quickselect_eq_some_of_count_rank {α : Type u} [LinearOrder α]
     {xs : List α} {k : Nat} {x : α}
     (hlt : xs.countP (fun y => decide (y < x)) ≤ k)
@@ -436,7 +477,9 @@ private theorem recursive_cost_le_choose (m n : Nat) (h : m ≤ n) :
   have hsum := choose_two_add_self n
   omega
 
-/-- Quickselect uses at most `n * (n - 1) / 2` comparisons on a list of length `n`. -/
+/-- **Worst-case comparison bound for quickselect.** For every list $L$ over a linear order, of
+length $n$, and every natural number $k$, quickselect on $L$ with rank $k$ makes at most
+$n(n-1)/2$ comparisons. -/
 theorem quickselect_time (xs : List α) (k : Nat) :
     (quickselect xs k).time ≤ xs.length * (xs.length - 1) / 2 := by
   have loop_time : ∀ (fuel : Nat) (ys : List α) (rank : Nat), ys.length ≤ fuel →

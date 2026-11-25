@@ -65,7 +65,7 @@ theorem initialInverseProfile_continuousOn_finite {u : ℝ → ℝ → ℝ} {T :
     ContinuousOn (Function.uncurry (initialInverseProfile ν u a)) (Icc 0 T ×ˢ univ) := by
   have hh := initialInverseProfile_continuousOn (u := fun t x => u (min (max t 0) T) x)
     (finite_clamp_continuous hT hc).continuousOn ν a
-  exact (hh.mono (fun _ hp => ⟨hp.1.1, hp.2⟩)).congr
+  exact (hh.mono (fun p (hp : p ∈ Icc (0 : ℝ) T ×ˢ (univ : Set ℝ)) => ⟨hp.1.1, hp.2⟩)).congr
     (fun p hp => (initialInverseProfile_congrOn (u := fun t x => u (min (max t 0) T) x)
       (v := u) finite_clamp_eq ν a hp.1 p.2).symm)
 
@@ -89,7 +89,7 @@ private theorem rate_continuousOn_finite {u : ℝ → ℝ → ℝ} {T : ℝ}
     (ν a : ℝ) : ContinuousOn (initialInverseRate ν u a) (Icc 0 T) := by
   have hh := initialInverseRate_continuousOn (u := fun t x => u (min (max t 0) T) x)
     (finite_clamp_continuous hT hc).continuousOn ν a
-  exact (hh.mono (fun _ ht => ht.1)).congr (fun t ht => by
+  exact (hh.mono (fun t (ht : t ∈ Icc (0 : ℝ) T) => ht.1)).congr (fun t ht => by
     simp only [initialInverseRate, max_eq_left ht.1, min_eq_left ht.2])
 
 /-- Interior derivative of the finite-time normalization; neither endpoint needs derivatives. -/

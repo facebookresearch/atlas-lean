@@ -19,7 +19,7 @@ intervals", Operations Research 32 (1984), 80-88, doi:10.1287/opre.32.1.80.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Fintype.Card
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

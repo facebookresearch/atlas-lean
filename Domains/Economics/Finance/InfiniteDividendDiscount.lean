@@ -45,8 +45,9 @@ namespace MathlibExt.Economics.Finance.InfiniteDividendDiscount
 open MathlibExt.Economics.Finance
 open MathlibExt.Economics.Finance.FiniteDividendDiscount
 
-/-- Discounted dividend at date `t + 1`, indexed from `t = 0` (so the `t`-th summand of
-the infinite dividend sum is the dividend paid at date `t + 1`, discounted at rate `r`). -/
+/-- Discounted dividend at date `t + 1`, indexed from `t = 0` (so the `t`-th summand of the infinite
+dividend sum is the dividend paid at date `t + 1`, discounted at rate `r`). At `r = -1` the factor
+is `0`, by the convention `0⁻¹ = 0`. -/
 noncomputable def dividendTerm (r : ℝ) (D : ℕ → ℝ) (t : ℕ) : ℝ :=
   discountFactor r (t + 1) * D (t + 1)
 
@@ -66,8 +67,8 @@ private theorem sum_range_dividendTerm_eq_presentValue {r : ℝ} {D : ℕ → �
     unfold presentValue dividendTerm
     rw [Finset.sum_Icc_succ_top (by omega : 1 ≤ n + 1)]
 
-/-- **Infinite dividend-discount identity.** If the finite identity holds for every `n`
-(proved for the one-period recursion in FI14.T01), the discounted terminal price vanishes
+/-- **Infinite dividend-discount identity.** If `0 < 1 + r`, the finite identity holds for every
+`n` (proved for the one-period recursion in FI14.T01), the discounted terminal price vanishes
 (source clause: "no-bubble / vanishing discounted terminal-value condition"), and dividends
 are nonnegative, then the infinite sum of discounted dividends equals today's price.
 The finite identity is taken as a hypothesis so this theorem is exactly the limit passage;
@@ -99,8 +100,8 @@ theorem dividendDiscountInfinite_of_finite {r : ℝ} (hr : 0 < 1 + r) {D P : ℕ
     simpa using h
   exact (hasSum_iff_tendsto_nat_of_nonneg hnonneg (P 0)).mpr hlim
 
-/-- **Infinite dividend-discount identity, unconditional.** If prices satisfy the
-one-period recursion, the discounted terminal price vanishes, and dividends are
+/-- **Infinite dividend-discount identity under the price recursion.** If `0 < 1 + r`, prices
+satisfy the one-period recursion, the discounted terminal price vanishes, and dividends are
 nonnegative, then the infinite sum of discounted dividends equals today's price.
 Discharge the finite-identity hypothesis of `dividendDiscountInfinite_of_finite` with
 FI14.T01's `finiteDividendDiscount` (note `1 + r ≠ 0` follows from `0 < 1 + r`). -/

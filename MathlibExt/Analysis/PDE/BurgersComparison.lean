@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.PDE.BurgersEvolution
+import MathlibExt.Analysis.PDE.BurgersExponentialGrowth
 public import MathlibExt.MeasureTheory.Integral.FirstMomentComparison
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Tactic.FieldSimp

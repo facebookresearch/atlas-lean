@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.PDE.BurgersFiniteTime
+import MathlibExt.Analysis.PDE.BurgersBounds
 import MathlibExt.Analysis.PDE.BurgersStability
 import Mathlib.Tactic.FunProp
 

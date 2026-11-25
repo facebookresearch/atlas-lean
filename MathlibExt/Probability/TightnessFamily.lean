@@ -39,14 +39,18 @@ open scoped ENNReal
 
 namespace MathlibExt.Probability.TightnessFamily
 
-/-- An indexed family of probability measures is tight when its range is a
-tight set of measures in Mathlib's complementary-mass sense. -/
+/-- **Tight family of probability measures.** Let $\alpha$ be a space carrying a σ-algebra and a
+topology. A family $(\mu_i)_{i \in \iota}$ of probability measures on $\alpha$ is tight if its
+range $\{\mu_i : i \in \iota\}$ is a tight set of measures: for every $\varepsilon \in (0, \infty]$
+there is a compact set $K \subseteq \alpha$ such that $\mu_i(\alpha \setminus K) \le \varepsilon$
+for every index $i$. -/
 def IsTightFamily {α : Type*} [MeasurableSpace α] [TopologicalSpace α]
     {ι : Type*} (μ : ι → Measure α) [∀ i, IsProbabilityMeasure (μ i)] : Prop :=
   IsTightMeasureSet (Set.range μ)
 
-/-- A family of probability measures on `ℝ` is **tight** if for every `ε > 0`
-there exists `M` such that `μ i [-M, M] ≥ 1 - ε` for every index `i`. -/
+/-- **Tightness on the real line.** A family $(\mu_i)_{i \in \iota}$ of probability measures on
+$\mathbb{R}$ is tight in the real-line sense if for every $\varepsilon \in (0, \infty]$ there is
+$M \in \mathbb{R}$ such that $\mu_i([-M, M]) \ge 1 - \varepsilon$ for every index $i$. -/
 def IsTightFamilyReal {ι : Type*} (μ : ι → Measure ℝ)
     [∀ i, IsProbabilityMeasure (μ i)] : Prop :=
   ∀ ε : ℝ≥0∞, 0 < ε → ∃ M : ℝ, ∀ i, μ i (Set.Icc (-M) M) ≥ 1 - ε
@@ -85,9 +89,14 @@ private theorem compact_mass_iff_isTightMeasureSet {ι : Type*} {μ : ι → Mea
           (tsub_add_cancel_of_le (prob_le_one (μ := μ i))).symm
       _ ≤ (1 - μ i Kᶜ) + ε := add_le_add (le_refl (1 - μ i Kᶜ)) hcompl
 
-/-- Tightness in the real-line sense (`[-M, M]` exhausts mass uniformly)
-implies tightness in the general topological sense (a compact set exhausts
-mass uniformly), since `[-M, M]` is compact. -/
+/-- **Real-line tightness implies tightness.** Let $(\mu_i)_{i \in \iota}$ be a family of
+probability measures on $\mathbb{R}$. If the family is tight in the real-line sense, that is,
+for every $\varepsilon \in (0, \infty]$ there is $M \in \mathbb{R}$ with
+$\mu_i([-M, M]) \ge 1 - \varepsilon$ for every $i$, then the family is tight, that is, for every
+$\varepsilon \in (0, \infty]$ there is a compact set $K \subseteq \mathbb{R}$ with
+$\mu_i(\mathbb{R} \setminus K) \le \varepsilon$ for every $i$.
+
+The interval $[-M, M]$ is compact. -/
 theorem IsTightFamilyReal.isTightFamily {ι : Type*} {μ : ι → Measure ℝ}
     [∀ i, IsProbabilityMeasure (μ i)]
     (h : IsTightFamilyReal μ) : IsTightFamily μ := by
@@ -96,9 +105,14 @@ theorem IsTightFamilyReal.isTightFamily {ι : Type*} {μ : ι → Measure ℝ}
   obtain ⟨M, hM⟩ := h ε hε
   exact ⟨Set.Icc (-M) M, isCompact_Icc, hM⟩
 
-/-- Converse: tightness in the general topological sense for measures on `ℝ`
-implies the real-line `[-M, M]` formulation, by enclosing the compact set in
-a closed ball. -/
+/-- **Tight families on the real line concentrate on bounded intervals.** Let
+$(\mu_i)_{i \in \iota}$ be a family of probability measures on $\mathbb{R}$. If the family is
+tight, that is, for every $\varepsilon \in (0, \infty]$ there is a compact set
+$K \subseteq \mathbb{R}$ with $\mu_i(\mathbb{R} \setminus K) \le \varepsilon$ for every $i$, then
+it is tight in the real-line sense: for every $\varepsilon \in (0, \infty]$ there is
+$M \in \mathbb{R}$ with $\mu_i([-M, M]) \ge 1 - \varepsilon$ for every $i$.
+
+The proof encloses the compact set in a closed ball. -/
 theorem IsTightFamily.isTightFamilyReal {ι : Type*} {μ : ι → Measure ℝ}
     [∀ i, IsProbabilityMeasure (μ i)]
     (h : IsTightFamily μ) : IsTightFamilyReal μ := by
@@ -112,15 +126,17 @@ theorem IsTightFamily.isTightFamilyReal {ι : Type*} {μ : ι → Measure ℝ}
         rw [← Real.closedBall_zero_eq_Icc]
         exact measure_mono hr
 
-/-- An indexed probability-measure family is tight exactly when its range
-is a tight set of measures. -/
+/-- **Tightness of a family is tightness of its range.** Let $\alpha$ be a space carrying a
+σ-algebra and a topology. A family $(\mu_i)_{i \in \iota}$ of probability measures on $\alpha$ is
+tight exactly when its range $\{\mu_i : i \in \iota\}$ is a tight set of measures. -/
 theorem isTightFamily_iff_isTightMeasureSet {α : Type*}
     [MeasurableSpace α] [TopologicalSpace α] {ι : Type*} {μ : ι → Measure α}
     [∀ i, IsProbabilityMeasure (μ i)] :
     IsTightFamily μ ↔ IsTightMeasureSet (Set.range μ) :=
   Iff.rfl
 
-/-- A constant family of probability measures on `ℝ` is tight. -/
+/-- **Constant families on the real line are tight.** For every index type $\iota$ and every
+probability measure $\mu$ on $\mathbb{R}$, the constant family $(\mu)_{i \in \iota}$ is tight. -/
 theorem isTightFamily_of_singleton {ι : Type*} {μ : Measure ℝ}
     [IsProbabilityMeasure μ] :
     IsTightFamily (fun _ : ι => μ) := by
