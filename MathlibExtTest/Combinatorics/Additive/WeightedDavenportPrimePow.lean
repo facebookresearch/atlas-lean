@@ -36,4 +36,14 @@ example : weightedDavenport {4, 7} (Fin 2 → ZMod 8) = 3 :=
     (fun _ => 3) monotone_const (by decide) (by decide) {4, 7}
     (by decide) (by decide) (by decide) (by decide)).trans (by decide)
 
+/-- The empty product has ordinary Davenport constant one. -/
+example (e : Fin 0 → ℕ) : weightedDavenport {1} ((i : Fin 0) → ZMod (2 ^ e i)) = 1 := by
+  simpa using (weightedDavenport_one_pi_zmod_prime_pow
+    (p := 2) (r := 0) (hp := Nat.prime_two) (e := e) (he := fun i => Fin.elim0 i))
+
+/-- The factors of orders four and two, in decreasing order, give a threshold of five. -/
+example : weightedDavenport {1} ((i : Fin 2) → ZMod (2 ^ (2 - (i : ℕ)))) = 5 :=
+  (weightedDavenport_one_pi_zmod_prime_pow (p := 2) (r := 2) (hp := Nat.prime_two)
+    (e := fun i => 2 - (i : ℕ)) (he := by decide)).trans (by decide)
+
 end MetaMathlibExt

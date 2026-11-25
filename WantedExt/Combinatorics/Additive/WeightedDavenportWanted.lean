@@ -58,19 +58,6 @@ public theorem_wanted weightedDavenport_one_zmod_prod_of_dvd (h k : ℕ) (hh : 1
     (hdvd : h ∣ k) (hk : 1 ≤ k) :
     weightedDavenport {1} (ZMod h × ZMod k) = ((h + k - 1 : ℕ) : ℕ∞)
 
-/-- **Olson's theorem for abelian $p$-groups.** Let $p$ be a prime, $r \ge 0$ and let
-$e_1, \dots, e_r \ge 1$ be natural numbers. The Davenport constant $D(G) = D_{\{1\}}(G)$ of
-$G = \mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$ is
-$D(G) = 1 + \sum_{i=1}^{r} (p^{e_i} - 1)$. For $r = 0$ the group $G$ is trivial and this reads
-$D(G) = 1$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Theorem 4 (`integers-2026-A89-thm-4`). -/
-public theorem_wanted weightedDavenport_one_pi_zmod_prime_pow (p r : ℕ) (hp : p.Prime)
-    (e : Fin r → ℕ) (he : ∀ i, 1 ≤ e i) :
-    weightedDavenport {1} ((i : Fin r) → ZMod (p ^ e i)) =
-      ((1 + ∑ i, (p ^ e i - 1) : ℕ) : ℕ∞)
-
 /-- **Weight sets with weighted Davenport constant $m$ on $\mathbb{Z}/n\mathbb{Z}$.** Let
 $n \ge 2$ be a natural number and $m \ge 2$ a divisor of $n$. Every finite set $A$ of natural
 numbers with $n/m \in A \subseteq \{1, \dots, \lceil n/(m-1) \rceil - 1\}$ has $A$-weighted
