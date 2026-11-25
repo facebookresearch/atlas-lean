@@ -1,0 +1,136 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.PositiveLinearFunctional
+public import Mathlib.Analysis.CStarAlgebra.PositiveLinearMap
+public import Mathlib.Analysis.CStarAlgebra.Unitization
+import Mathlib.Tactic.Ring
+
+/-!
+# The actual state extension to forced C-star unitization
+
+A given positive continuous functional of norm one extends by
+`(z, a) ↦ z + f a`. Positivity follows from the original nonunital
+C-star functional Schwarz bound. The unitization keeps its stock norm.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped ComplexOrder
+
+namespace PositiveContinuousLinearMap
+
+universe uA
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+  [PartialOrder A] [StarOrderedRing A]
+
+/-- The stock spectral order on the actual forced C-star unitization. -/
+local instance stateUnitizationOrder : PartialOrder (Unitization ℂ A) :=
+  CStarAlgebra.spectralOrder _
+
+/-- The matching stock ordered-star structure on the forced unitization. -/
+local instance stateUnitizationStarOrder :
+    @StarOrderedRing (Unitization ℂ A) _ stateUnitizationOrder _ :=
+  CStarAlgebra.spectralOrderedRing _
+
+/-- The literal linear extension with scalar value one, before positivity is proved. -/
+def unitizationLinearExtension (f : A →P[ℂ] ℂ) : Unitization ℂ A →ₗ[ℂ] ℂ :=
+  (Unitization.fstHom ℂ A).toLinearMap +
+    f.toLinearMap.comp (Unitization.sndHom ℂ ℂ A)
+
+omit [StarOrderedRing A] in
+/-- The forced unitization extension has its actual coordinate formula. -/
+@[simp]
+theorem unitizationLinearExtension_apply (f : A →P[ℂ] ℂ) (x : Unitization ℂ A) :
+    unitizationLinearExtension f x = x.fst + f x.snd := rfl
+
+/-- The genuine norm-one nonunital Schwarz bound makes the scalar variance nonnegative. -/
+theorem state_variance_nonneg (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) (a : A) :
+    0 ≤ f (star a * a) - star (f a) * f a := by
+  have hAA : 0 ≤ f (star a * a) := f.map_nonneg (star_mul_self_nonneg a)
+  have hff : 0 ≤ star (f a) * f a := star_mul_self_nonneg (f a)
+  have hNorm : ‖star (f a) * f a‖ ≤ ‖f (star a * a)‖ := by
+    simpa only [CStarRing.norm_star_mul_self, pow_two, hf, one_mul] using
+      f.norm_map_sq_le_opNorm_mul a
+  apply sub_nonneg.mpr
+  rw [Complex.eq_coe_norm_of_nonneg hff, Complex.eq_coe_norm_of_nonneg hAA]
+  exact (RCLike.ofReal_le_ofReal (K := ℂ)).2 hNorm
+
+/-- The extension's value on a star square is the ordinary scalar square
+plus the actual variance of the original state. -/
+theorem unitizationLinearExtension_star_square (f : A →P[ℂ] ℂ)
+    (x : Unitization ℂ A) :
+    unitizationLinearExtension f (star x * x) =
+      star (x.fst + f x.snd) * (x.fst + f x.snd) +
+        (f (star x.snd * x.snd) - star (f x.snd) * f x.snd) := by
+  simp only [unitizationLinearExtension_apply, Unitization.fst_mul, Unitization.snd_mul,
+    Unitization.fst_star, Unitization.snd_star, map_add, map_smul, map_star,
+    smul_eq_mul, star_add]
+  ring
+
+/-- Every actual unitization star square has a nonnegative extension value. -/
+theorem unitizationLinearExtension_square_nonneg (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) (x : Unitization ℂ A) :
+    0 ≤ unitizationLinearExtension f (star x * x) := by
+  rw [unitizationLinearExtension_star_square]
+  exact add_nonneg (star_mul_self_nonneg _) (state_variance_nonneg f hf x.snd)
+
+/-- Additive closure of the actual positive star squares proves positivity
+on the full stock unitization cone. -/
+theorem unitizationLinearExtension_nonneg (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) (x : Unitization ℂ A) (hx : 0 ≤ x) :
+    0 ≤ unitizationLinearExtension f x := by
+  have hmem := (StarOrderedRing.nonneg_iff).1 hx
+  refine AddSubmonoid.closure_induction
+    (motive := fun x _ => 0 ≤ unitizationLinearExtension f x) ?_ ?_ ?_ hmem
+  · rintro _ ⟨y, rfl⟩
+    exact unitizationLinearExtension_square_nonneg f hf y
+  · simp only [map_zero, le_refl]
+  · intro a b _ _ ha hb
+    simpa only [map_add] using add_nonneg ha hb
+
+/-- The actual positive linear state on forced unitization. Its positivity
+is proved from the given original state, not supplied as a premise. -/
+def unitizationPositiveState (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
+    Unitization ℂ A →ₚ[ℂ] ℂ :=
+  PositiveLinearMap.mk₀ (unitizationLinearExtension f) (unitizationLinearExtension_nonneg f hf)
+
+/-- The actual positive extension is continuous because its domain is the
+already constructed stock C-star unitization. -/
+def unitizationState (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
+    Unitization ℂ A →P[ℂ] ℂ :=
+  PositiveContinuousLinearMap.ofClass (unitizationPositiveState f hf)
+
+/-- The continuous state retains the literal scalar-plus-original-state formula. -/
+@[simp]
+theorem unitizationState_apply (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1)
+    (x : Unitization ℂ A) : unitizationState f hf x = x.fst + f x.snd := rfl
+
+/-- Restriction through the actual isometric ideal embedding recovers the given state. -/
+theorem unitizationState_inr (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) (a : A) :
+    unitizationState f hf (Unitization.inr a) = f a := by
+  simp only [unitizationState_apply, Unitization.fst_inr, Unitization.snd_inr, zero_add]
+
+/-- The literal forced unit has state value one. -/
+theorem unitizationState_one (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
+    unitizationState f hf (1 : Unitization ℂ A) = 1 := by
+  simp only [unitizationState_apply, Unitization.fst_one, Unitization.snd_one, map_zero, add_zero]
+
+/-- Positivity and the value at the actual unit give norm one in the original
+stock unitization norm. -/
+theorem norm_unitizationState (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
+    ‖(unitizationState f hf).toContinuousLinearMap‖ = 1 := by
+  have h := (unitizationState f hf).ofReal_opNorm_eq_map_one
+  rw [unitizationState_one] at h
+  exact_mod_cast h
+
+end PositiveContinuousLinearMap

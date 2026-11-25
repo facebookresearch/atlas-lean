@@ -30,3 +30,4 @@
 - [Range report of a built kd-tree up to order](report-build-perm.md)
 - [Membership in the range report of a built kd-tree](mem-report-build-iff.md)
 - [Range report of a kd-tree built from the first axis](mem-report-build-root-iff.md)
+- [Orthogonal range reporting in a kd-tree](orthogonal-range-reporting-in-a-kd-tree.md)
