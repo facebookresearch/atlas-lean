@@ -548,6 +548,13 @@ def stableHomologyIsoAt (G : J ⥤ ℕ) (n : ℕ) :
   let e : K ⋙ H ≅ (Functor.const J).obj X := traceHomologyNatIsoAt.{t} k A M G n
   let c : ColimitCocone ((Functor.const J).obj X) :=
     ⟨constCocone J X, isColimitConstCocone J X⟩
+  letI : HasColimit (K ⋙ H) :=
+    HasColimitsOfShape.has_colimit (J := J) (C := ModuleCat.{max u v w t} k) (K ⋙ H)
+  letI : HasColimit ((Functor.const J).obj X) := HasColimit.mk c
+  letI : PreservesFiniteLimits (colim (J := J) (C := ModuleCat.{max u v w t} k)) :=
+    HasExactColimitsOfShape.preservesFiniteLimits (J := J) (C := ModuleCat.{max u v w t} k)
+  letI : (colim (J := J) (C := ModuleCat.{max u v w t} k)).PreservesHomology :=
+    Functor.preservesHomologyOfExact (colim (J := J) (C := ModuleCat.{max u v w t} k))
   HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k)
       K n ≪≫ HasColimit.isoOfNatIso e ≪≫
     colimit.isoColimitCocone c
@@ -567,6 +574,13 @@ theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
   let e : K ⋙ H ≅ (Functor.const J).obj X := traceHomologyNatIsoAt.{t} k A M G n
   let c : ColimitCocone ((Functor.const J).obj X) :=
     ⟨constCocone J X, isColimitConstCocone J X⟩
+  letI : HasColimit (K ⋙ H) :=
+    HasColimitsOfShape.has_colimit (J := J) (C := ModuleCat.{max u v w t} k) (K ⋙ H)
+  letI : HasColimit ((Functor.const J).obj X) := HasColimit.mk c
+  letI : PreservesFiniteLimits (colim (J := J) (C := ModuleCat.{max u v w t} k)) :=
+    HasExactColimitsOfShape.preservesFiniteLimits (J := J) (C := ModuleCat.{max u v w t} k)
+  letI : (colim (J := J) (C := ModuleCat.{max u v w t} k)).PreservesHomology :=
+    Functor.preservesHomologyOfExact (colim (J := J) (C := ModuleCat.{max u v w t} k))
   change (HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k) K n ≪≫
        HasColimit.isoOfNatIso e ≪≫ colimit.isoColimitCocone c).hom = _
   apply (cancel_epi (HomologicalComplex.homologyColimitIso
