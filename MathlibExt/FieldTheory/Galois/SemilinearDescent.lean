@@ -65,13 +65,13 @@ private theorem f_smul (σ : Gal) (l : L) (x : L ⊗[K] U) :
 omit [FiniteDimensional K L] in
 private theorem f_mul (τ σ : Gal) (x : L ⊗[K] U) : f (τ * σ) x = f τ (f σ x) := by
   induction x using TensorProduct.inductionOn with
-  | tmul l u => rw [hf, hf, hf, map_mul, AlgEquiv.mul_apply, Module.End.mul_apply]
+  | tmul l u => rw [hf, hf, hf, map_mul, AlgEquiv.mul_apply, mul_apply_eq_comp]
   | add x y hx hy => simp only [map_add, hx, hy]
 
 omit [FiniteDimensional K L] in
 private theorem f_one (x : L ⊗[K] U) : f 1 x = x := by
   induction x using TensorProduct.inductionOn with
-  | tmul l u => rw [hf, map_one, AlgEquiv.one_apply, Module.End.one_apply]
+  | tmul l u => rw [hf, map_one, AlgEquiv.one_apply, one_apply_eq_self]
   | add x y hx hy => simp only [map_add, hx, hy]
 
 private def inv : AddSubgroup (L ⊗[K] U) where
@@ -94,7 +94,7 @@ private theorem sum_mem_inv [Fintype Gal] (x : L ⊗[K] U) :
 private theorem one_tmul_mem_span [IsGalois K L] (u : U) :
     (1 : L) ⊗ₜ[K] u ∈ Submodule.span L (inv f : Set (L ⊗[K] U)) := by
   classical
-  haveI : Fintype Gal := Fintype.ofFinite _
+  have : Fintype Gal := Fintype.ofFinite _
   set n := Module.finrank K L with hn
   have hcard : Fintype.card Gal = n := by
     rw [Fintype.card_eq_nat_card, IsGalois.card_aut_eq_finrank]
@@ -158,7 +158,7 @@ private theorem one_tmul_mem_span [IsGalois K L] (u : U) :
         mul_one, mul_comm]
     simp_rw [hthis, hAc']
     simp only [ite_smul, one_smul, zero_smul, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
-      map_one, Module.End.one_apply]
+      map_one, one_apply_eq_self]
   rw [← hcomb]
   refine Submodule.sum_mem _ fun j _ => Submodule.smul_mem _ _
     (Submodule.subset_span (hmem j))
@@ -193,8 +193,9 @@ public theorem IsGalois.exists_basis_baseChange_forall_apply_eq_self
   have htop : ⊤ ≤ Submodule.span L (Set.range ((↑) : B → L ⊗[K] U)) := by
     rw [Subtype.range_coe, hBspan, span_inv_eq_top ρ f hf]
   let b₀ : Module.Basis B L (L ⊗[K] U) := Module.Basis.mk hBind htop
-  haveI : Fintype B := (Module.Basis.finite_index_of_rank_lt_aleph0 (b := b₀)
-    (Module.rank_lt_aleph0 L (L ⊗[K] U))).fintype
+  have : Finite B := Module.Basis.finite_index_of_rank_lt_aleph0 (b := b₀)
+    (Module.rank_lt_aleph0 L (L ⊗[K] U))
+  have : Fintype B := Fintype.ofFinite B
   have hcardB : Fintype.card B = Module.finrank K U := by
     rw [← Module.finrank_eq_card_basis b₀, Module.finrank_baseChange]
   refine ⟨b₀.reindex (Fintype.equivFinOfCardEq hcardB), fun σ i => ?_⟩
