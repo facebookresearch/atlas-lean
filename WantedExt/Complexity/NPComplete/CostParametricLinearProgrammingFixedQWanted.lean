@@ -20,7 +20,7 @@ Verlag Anton Hain, Meisenheim (1976), 205-216.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.CostParametricLinearProgrammingWanted

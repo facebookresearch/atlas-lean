@@ -20,7 +20,7 @@ below, attributed to Lubiw).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import MathlibExt.Computability.BinaryNatEncoding

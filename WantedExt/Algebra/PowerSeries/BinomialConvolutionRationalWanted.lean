@@ -11,9 +11,12 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.LinearAlgebra.OrthogonalDescent
 public import MathlibExt.RingTheory.Polynomial.PairwiseSumResultant
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductGeometric
 public import MathlibExt.RingTheory.PowerSeries.BinomialProductMonomial
+public import MathlibExt.RingTheory.PowerSeries.HadamardProductRational
+public import MathlibExt.RingTheory.PowerSeries.RationalityDescent
 
 /-!
 # Binomial convolutions for rational power series
@@ -35,47 +38,6 @@ namespace MetaMathlibExt
 open PowerSeries
 
 @[expose] public section
-
-/-- **Rationality of power series descends from field extensions.** Let $F$ be a field, let $G$ be
-a field extension of $F$ (a field with an $F$-algebra structure), and let $A$ be a power series
-over $F$. If there are polynomials $p$, $q$ over $G$ with $q \ne 0$ and $A q = p$, where $A$ is
-viewed as a power series over $G$, then there are polynomials $P$, $Q$ over $F$ with $Q \ne 0$ and
-$A Q = P$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 1 (`jis-2024-24.1.3-thm-1`). -/
-public theorem_wanted exists_polynomial_quotient_of_extension {F G : Type*} [Field F] [Field G]
-    [Algebra F G] (A : PowerSeries F) (p q : Polynomial G) (hq : q ≠ 0)
-    (h : PowerSeries.map (algebraMap F G) A * (q : PowerSeries G) = p) :
-    ∃ P Q : Polynomial F, Q ≠ 0 ∧ A * (Q : PowerSeries F) = P
-
-/-- **Orthogonal vectors descend from field extensions.** Let $F$ be a field, let $G$ be a field
-extension of $F$ (a field with an $F$-algebra structure), let $n \in \mathbb{N}$ and let
-$S \subseteq F^n$. If some nonzero $t \in G^n$ satisfies $\sum_{i=1}^n s_i t_i = 0$ in $G$ for
-every $s \in S$, then some nonzero $u \in F^n$ satisfies $\sum_{i=1}^n s_i u_i = 0$ for every
-$s \in S$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Lemma 3 (`jis-2024-24.1.3-lem-3`). -/
-public theorem_wanted exists_orthogonal_of_orthogonal_over_extension {F G : Type*} [Field F]
-    [Field G] [Algebra F G] {n : ℕ} (S : Set (Fin n → F)) (t : Fin n → G) (ht : t ≠ 0)
-    (horth : ∀ s ∈ S, ∑ i, algebraMap F G (s i) * t i = 0) :
-    ∃ u : Fin n → F, u ≠ 0 ∧ ∀ s ∈ S, ∑ i, s i * u i = 0
-
-/-- **Binomial product with a geometric series.** For every field $K$ of characteristic $0$, every
-power series $A(x)$ over $K$ and every $\beta \in K$,
-
-$$A(x) \odot \frac{1}{1 - \beta x} = \frac{1}{1 - \beta x} A\left(\frac{x}{1 - \beta x}\right),$$
-
-where $\odot$ is the binomial product and $A(x/(1 - \beta x))$ is the substitution of the series
-$x/(1 - \beta x)$, which has zero constant term, into $A$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Corollary 5 (`jis-2024-24.1.3-cor-5`). -/
-public theorem_wanted binomialProduct_inv_one_sub {K : Type*} [Field K] [CharZero K]
-    (A : PowerSeries K) (β : K) :
-    binomialProduct A (1 - C β * X)⁻¹ =
-      (1 - C β * X)⁻¹ * PowerSeries.subst (X * (1 - C β * X)⁻¹) A
 
 /-- **Binomial products of proper rational series.** Let $K$ be a field of characteristic $0$, let
 $\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, not necessarily distinct or nonzero,
@@ -171,29 +133,6 @@ public theorem_wanted binomialProduct_cubic_denominator {K : Type*} [Field K] [C
         (u : PowerSeries K) * (1 + C (2 * A) * X + C (4 * B) * X ^ 2 + C (8 * C') * X ^ 3)⁻¹ +
           binomialProduct (1 + C A * X)⁻¹
             ((v : PowerSeries K) * (1 - C A * X + C B * X ^ 2 - C C' * X ^ 3)⁻¹)
-
-/-- **Hadamard products of rational series.** Let $K$ be a field of characteristic $0$, let
-$\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, and let $A = \sum_k a_k x^k$ and
-$B = \sum_k b_k x^k$ be power series over $K$ such that $A(x) \prod_{i=1}^m (1 - \alpha_i x)$ and
-$B(x) \prod_{j=1}^n (1 - \beta_j x)$ are polynomials. Then their Hadamard product
-$A * B = \sum_k a_k b_k x^k$ has the property that
-$(A * B)(x) \prod_{i=1}^m \prod_{j=1}^n (1 - \alpha_i \beta_j x)$ is a polynomial. Moreover, call a
-power series $f$ over $K$ proper if $f Q = P$ for some polynomials $P$, $Q$ over $K$ with
-$Q(0) \ne 0$ and $\deg P < \deg Q$. If $A$ and $B$ are proper, then so is $A * B$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 13 (`jis-2024-24.1.3-thm-13`). -/
-public theorem_wanted hadamardProduct_rational {K : Type*} [Field K] [CharZero K] (m n : ℕ)
-    (α : Fin m → K) (β : Fin n → K) (R S : Polynomial K) (A B : PowerSeries K)
-    (hA : A * ∏ i, (1 - C (α i) * X) = (R : PowerSeries K)) (hB : B * ∏ j, (1 - C (β j) * X) = (S : PowerSeries K)) :
-    (∃ T : Polynomial K, PowerSeries.mk (fun k => PowerSeries.coeff k A * PowerSeries.coeff k B) *
-        ∏ i, ∏ j, (1 - C (α i * β j) * X) = (T : PowerSeries K)) ∧
-      ((∃ P Q : Polynomial K, Q.coeff 0 ≠ 0 ∧ P.degree < Q.degree ∧ A * (Q : PowerSeries K) = (P : PowerSeries K)) →
-        (∃ P Q : Polynomial K, Q.coeff 0 ≠ 0 ∧ P.degree < Q.degree ∧
-          B * (Q : PowerSeries K) = (P : PowerSeries K)) →
-        ∃ P Q : Polynomial K, Q.coeff 0 ≠ 0 ∧ P.degree < Q.degree ∧
-          PowerSeries.mk (fun k => PowerSeries.coeff k A * PowerSeries.coeff k B) *
-            (Q : PowerSeries K) = (P : PowerSeries K))
 
 /-- **Resultant identity for pairwise products.** Let $K$ be a field of characteristic $0$, let
 $m, n \ge 0$ be integers, and let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be

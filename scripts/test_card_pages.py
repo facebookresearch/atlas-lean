@@ -1,19 +1,26 @@
 """The site's cards (docs/cards.md#reading): hooks/card_pages.py shows card data only from a rollup of the commit being
-built, shows each card's derived edges with their witnesses, and keeps every address the move ledger retired."""
+built, shows each card's derived edges with their witnesses, and keeps every address the move ledger retired, with the
+ledger check's receipt and with or without card data."""
 
 from __future__ import annotations
 
+import contextlib
+import hashlib
 import importlib.util
+import io
 import json
 import logging
+import os
 import posixpath
 import shutil
 import subprocess
 import sys
 import tempfile
+import types
 import unittest
 from collections import Counter
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -135,6 +142,29 @@ def rename(old: str, new: str, number: int, pages: dict[str, int] | None = None,
     rows += [{"folder": f"{old}/{name}", "to": f"{new}/{name}", "article_id": af(folder)}
              for name, folder in (folders or {}).items()]
     return rows
+
+
+def links_digest(files: dict[str, bytes | None]) -> str:
+    """The digest of a links folder's files, by name, as docs/cards.md#move-ledger gives it: sha256 over each file,
+    in sorted order of name, as its name, a NUL, its length in bytes (`-` for a defaults file that is no regular
+    file), a NUL and its bytes."""
+    digest = hashlib.sha256()
+    for name in sorted(files):
+        data = files[name]
+        size = b"-" if data is None else str(len(data)).encode()
+        digest.update(name.encode() + b"\0" + size + b"\0" + (data or b""))
+    return digest.hexdigest()
+
+
+def receipt(commit: str, rows: str, cards: dict[str, str], links: dict[str, bytes | None] | None = None,
+            complete: bool = True, replacements: dict[str, dict[str, str]] | None = None) -> dict:
+    """The receipt `scripts/cards.py moves` writes for the commit, the ledger ``rows``, the links folder's files, the
+    cards it lists and the replacements of the ledger's retirements (by default, every listed card, as a folder)."""
+    if replacements is None:
+        replacements = {card: {"kind": "folder", "node": folder} for card, folder in cards.items()}
+    return {"schema": "atlas-card-moves/v2", "commit": commit,
+            "ledger_sha256": hashlib.sha256(rows.encode()).hexdigest(), "annotations_sha256": links_digest(links or {}),
+            "cards": cards, "cards_complete": complete, "replacements": replacements}
 
 
 T = "A/f/t"
@@ -340,6 +370,18 @@ class CardDataTests(unittest.TestCase):
         changed = rollup([held])
         changed["cards"][0]["main"]["headline"] = "fully_proved"
         self.assertRejected(changed)
+
+    def test_a_planned_main_with_a_kind_is_shown_by_its_state(self) -> None:
+        # A planned page with the kind lean-facts gives one that counts as a statement not yet in Lean shows
+        # Autoform's state, as its task does; with no kind it is page only.
+        typed = card(1, f"{T}/x", ["x-main", "x-lemma"], main=f"{T}/x/x-main", headline="can_state")
+        data = rollup([typed])
+        data["cards"][0]["main"]["credit"] = "none"
+        data["pages"][f"{T}/x/x-main"].update(credit="none", kind="def")
+        block = self.library.build(data).blocks[f"roadmap/{T}/x/index.html"]
+        self.assertIn('<span class="atlas-card-state atlas-card-can_state">ready to state</span>', block)
+        data["pages"][f"{T}/x/x-main"]["kind"] = None
+        self.assertRejected(data)
 
     def test_a_route_outside_the_site_is_rejected(self) -> None:
         for route in ("../../outside.html", "/roadmap/A/index.html", "https://example.com/a.html",
@@ -591,6 +633,136 @@ class RedirectTests(unittest.TestCase):
             with self.subTest(rows=rows), self.assertRaises(card_pages.CardDataError):
                 self.site([leaf(f"{T}/c/x")], [card(1, f"{T}/c", ["x"])], *rows)
 
+    @staticmethod
+    def retired(entries: list[dict], replacements: dict[str, tuple[str, str]], *rows: dict) -> card_pages.Site:
+        """The redirects of ``rows``, with no card, the ledger check giving each retirement's replacement."""
+        with tempfile.TemporaryDirectory() as docs:
+            return card_pages.build(rollup([]), index(*entries), ledger(*rows), Path(docs), listed={},
+                                    replacements=replacements)
+
+    def test_a_retired_statement_leads_to_its_replacement(self) -> None:
+        # The node T/node was expanded and its page deleted; its replacement, a statement boxed on the topic's page or
+        # one with a page of its own. Both routes the node may have had lead there.
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)}
+        for replacement, own_page, target in ((f"{T}/node-a", False, "index.html#node-a"),
+                                              (f"{T}/node-b", True, "node-b.html")):
+            with self.subTest(replacement):
+                site = self.retired([leaf(replacement, own_page=own_page)], {af(21): ("page", replacement)}, retire)
+                notice = site.files[f"roadmap/{T}/node.md"]
+                self.assertIn(f'<p><a href="{target}">Continue to the mathematical page</a></p>', notice)
+                anchor = target.removeprefix("index.html")
+                self.assertEqual(self.elements(site.anchors[f"roadmap/{T}/index.html"][0][1]), [("node", anchor)])
+                self.assertEqual(self.moves(site), {f"{T}/node": replacement})
+
+    def test_a_retired_statement_may_lead_to_a_folder(self) -> None:
+        # Expanded into a folder of its own name, whose folder page replaces it, or into a folder elsewhere. An
+        # explorer link to the node's address names the folder of its own name already, and needs no rewrite.
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(25)}
+        for replacement, target in ((f"{T}/node", "node/index.html"), (f"{T}/elsewhere", "elsewhere/index.html")):
+            with self.subTest(replacement):
+                site = self.retired([leaf(f"{replacement}/part"), folder(replacement, "Replacement")],
+                                    {af(25): ("folder", replacement)}, retire)
+                notice = site.files[f"roadmap/{T}/node.md"]
+                self.assertIn(f'<p><a href="{target}">Continue to the mathematical page</a></p>', notice)
+                self.assertIn(f'<meta http-equiv="refresh" content="0; url={target}">', notice)
+                self.assertEqual(self.elements(site.anchors[f"roadmap/{T}/index.html"][0][1]), [("node", target)])
+                if replacement == f"{T}/node":
+                    self.assertEqual((card_pages.SCRIPT in site.files, site.head), (False, {}))
+                else:
+                    self.assertEqual(self.moves(site), {f"{T}/node": replacement})
+
+    def test_a_retired_statement_s_replacements_are_followed(self) -> None:
+        # node-a replaced the node and was retired in turn, for node-b; and a statement replaced by card 7, which was
+        # retired for card 1.
+        site = self.retired([leaf(f"{T}/node-b")], {af(22): ("page", f"{T}/node-b")},
+                            {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)},
+                            {"statement": af(21), "page": f"{T}/node-a", "replaced_by": af(22)})
+        self.assertEqual(self.moves(site), {f"{T}/node": f"{T}/node-b", f"{T}/node-a": f"{T}/node-b"})
+        site = self.retired([leaf(f"{T}/c/c-main"), folder(f"{T}/c", "Card C")], {af(1): ("folder", f"{T}/c")},
+                            {"statement": af(20), "page": f"{T}/node", "replaced_by": af(7)},
+                            {"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)})
+        self.assertEqual(self.moves(site), {f"{T}/node": f"{T}/c", f"{T}/z": f"{T}/c"})
+
+    def test_a_statement_replaced_in_place_keeps_the_route_its_replacement_lacks(self) -> None:
+        # The node T/node is replaced by a new statement at its address, whose route may be the other form: the node's
+        # old route of that form leads to it, and its own route is left alone, never redirected to itself.
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(24)}
+        # Boxed: the node may have had a page of its own, which now leads to the box.
+        site = self.retired([leaf(f"{T}/node"), leaf(f"{T}/other")], {af(24): ("page", f"{T}/node")}, retire)
+        self.assertEqual(list(site.files), [f"roadmap/{T}/node.md"])
+        self.assertIn('<p><a href="index.html#node">Continue to the mathematical page</a></p>',
+                      site.files[f"roadmap/{T}/node.md"])
+        self.assertEqual((site.anchors, site.head), ({}, {}))
+        # On a page of its own: the node may have been boxed on the topic's page, whose old anchor now leads to the
+        # page; no notice takes the page's place.
+        site = self.retired([leaf(f"{T}/node", own_page=True), leaf(f"{T}/other")],
+                            {af(24): ("page", f"{T}/node")}, retire)
+        self.assertEqual(site.files, {})
+        self.assertEqual(self.elements(site.anchors[f"roadmap/{T}/index.html"][0][1]), [("node", "node.html")])
+        self.assertEqual(site.head, {})
+
+    def test_an_address_has_one_owner(self) -> None:
+        # Two statements retired at one address in favour of different articles, whatever their order, and two cards
+        # retired at one folder likewise: two owners, no redirect.
+        entries = [leaf(f"{T}/a"), leaf(f"{T}/b"), leaf(f"{T}/c/c-main"), leaf(f"{T}/d/d-main"),
+                   folder(f"{T}/c", "Card C"), folder(f"{T}/d", "Card D")]
+        replacements = {af(21): ("page", f"{T}/a"), af(22): ("page", f"{T}/b"), af(1): ("folder", f"{T}/c"),
+                        af(2): ("folder", f"{T}/d")}
+        for name, rows in (
+            ("two statements", [{"statement": af(20), "page": f"{T}/gone", "replaced_by": af(21)},
+                                {"statement": af(30), "page": f"{T}/gone", "replaced_by": af(22)}]),
+            ("two statements, the other way", [{"statement": af(30), "page": f"{T}/gone", "replaced_by": af(22)},
+                                               {"statement": af(20), "page": f"{T}/gone", "replaced_by": af(21)}]),
+            ("two cards", [{"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)},
+                           {"card": af(8), "folder": f"{T}/z", "replaced_by": af(2)}]),
+        ):
+            with self.subTest(name), self.assertRaises(card_pages.CardDataError) as refused:
+                self.retired(entries, replacements, *rows)
+            self.assertIn("an address has one owner", str(refused.exception))
+        # One history at one address, each retired in place by the next, leads to the last replacement.
+        site = self.retired(entries, replacements, {"statement": af(20), "page": f"{T}/gone", "replaced_by": af(30)},
+                            {"statement": af(30), "page": f"{T}/gone", "replaced_by": af(22)})
+        self.assertEqual(self.moves(site), {f"{T}/gone": f"{T}/b"})
+
+    def test_a_replacement_that_moves_into_the_retired_address(self) -> None:
+        # The node is retired in favour of the lemma, which then moves into the node's address: the lemma's old
+        # address leads there, and the node's keeps the route form the lemma lacks.
+        site = self.retired([leaf(f"{T}/node", own_page=True)], {af(21): ("page", f"{T}/node")},
+                            {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)},
+                            {"page": f"{T}/lemma", "to": f"{T}/node", "article_id": af(21)})
+        self.assertEqual(self.moves(site), {f"{T}/lemma": f"{T}/node"})
+        self.assertEqual(sorted(site.files), [card_pages.SCRIPT, f"roadmap/{T}/lemma.md"])
+        self.assertEqual(sorted(slug for slug, _ in site.anchors[f"roadmap/{T}/index.html"]), ["lemma", "node"])
+
+    def test_a_retired_statement_needs_its_replacement_and_a_well_formed_row(self) -> None:
+        retire = {"statement": af(20), "page": f"{T}/node", "replaced_by": af(21)}
+        entries = [leaf(f"{T}/node-a"), leaf(f"{T}/c/c-main")]
+        for name, replacements, rows in (
+            ("a replacement not listed", {}, [retire]),
+            ("a page the site does not publish", {af(21): ("page", f"{T}/gone")}, [retire]),
+            ("a page given as a folder", {af(21): ("folder", f"{T}/node-a")}, [retire]),
+            ("a card's replacement that is a page", {af(1): ("page", f"{T}/c/c-main")},
+             [{"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)}]),
+            ("replacements that go round", {}, [retire, {"statement": af(21), "page": f"{T}/node-a",
+                                                         "replaced_by": af(20)}]),
+            ("a malformed id", {af(21): ("page", f"{T}/node-a")}, [{**retire, "statement": "af_20"}]),
+            ("a page address with `.md`", {af(21): ("page", f"{T}/node-a")}, [{**retire, "page": f"{T}/node.md"}]),
+            ("a statement retired twice", {af(21): ("page", f"{T}/node-a")}, [retire, retire]),
+            ("a statement retired as a card too", {af(21): ("page", f"{T}/node-a")},
+             [retire, {"card": af(20), "folder": f"{T}/z", "replaced_by": af(1)}]),
+            ("an address that moved too", {af(21): ("page", f"{T}/node-a")},
+             [retire, {"page": f"{T}/node", "to": f"{T}/node-a", "article_id": af(21)}]),
+            ("an address a retired card had", {af(21): ("page", f"{T}/node-a"), af(1): ("folder", f"{T}/c")},
+             [retire, {"card": af(7), "folder": f"{T}/node", "replaced_by": af(1)}]),
+        ):
+            with self.subTest(name), self.assertRaises(card_pages.CardDataError):
+                self.retired(entries + [folder(f"{T}/c", "Card C")], replacements, *rows)
+        # Another article at the retired address, live there or moved in.
+        for rows in ([retire], [retire, {"page": f"{T}/q", "to": f"{T}/node", "article_id": af(23)}]):
+            with self.subTest(rows=rows), self.assertRaises(card_pages.CardDataError) as refused:
+                self.retired(entries + [leaf(f"{T}/node")], {af(21): ("page", f"{T}/node-a")}, *rows)
+            self.assertIn(f"the last address {T}/node of", str(refused.exception))
+
     def test_an_old_anchor_that_names_an_element_of_the_page_is_left_to_it(self) -> None:
         site = self.site([leaf(f"{T}/other"), leaf(f"{T}/c/idea"), leaf(f"{T}/c/x")],
                          [card(1, f"{T}/c", ["idea", "x"])],
@@ -628,6 +800,242 @@ class RedirectTests(unittest.TestCase):
         shown = self.render(site, f"roadmap/{T}/x/index.html", page)
         self.assertIn('<div class="bp-progress-overview"></div><div class="atlas-card">', shown)
         self.assertTrue(shown.endswith('</div><h2 id="idea">Idea</h2></div>'))
+
+
+class ReceiptTests(unittest.TestCase):
+    """The moved addresses are kept only with the ledger check's receipt of this commit, of its ledger and of its
+    annotations, which places each card the history leads to; card data, which they never need, is shown only when its
+    cards are the receipt's complete list. One history: card 7, retired at a folder z that is gone, replaced by card 1,
+    which the receipt places at a; and a moved page."""
+
+    ENTRIES = [leaf(f"{T}/a/a-main"), leaf(f"{T}/a/lemma"), leaf(f"{T}/b/b-main")]
+    ROWS = ledger({"page": f"{T}/lemma", "to": f"{T}/a/lemma", "article_id": af(11)},
+                  {"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)})
+    CARDS = {af(1): f"{T}/a", af(2): f"{T}/b"}
+    LINKS = {"A.jsonl": b'{"subject": [{"type": "generic", "uri": "../roadmap/A/f/t/a/README.md"}]}\n',
+             "_defaults.json": b'{"object": {"type": "lean", "uri": "../.."}}\n'}
+    MOVES = {f"{T}/z": f"{T}/a", f"{T}/lemma": f"{T}/a/lemma"}
+    NO_DATA = "there is no build/cards.json (the rollup writes none when the strict check fails)"
+    STILL = "::warning title=Card data not shown::{}; moved addresses are still kept\n"
+
+    def hook(self, data=None, change=None, rows: str = ROWS) -> tuple[card_pages.Site | None, str]:
+        """Run the hook as under GitHub Actions on a checkout with the ledger ``rows``, the links folder LINKS, the
+        rollup ``data`` gives for the commit being built, and the receipt of that commit, ledger and links folder with
+        the cards CARDS, which ``change`` may alter (``change(receipt, root)``; a receipt it returns as text is written
+        as it is, and None writes none): the site the hook keeps, and what it prints."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            git = ["git", "-C", str(root), "-c", "user.name=Test", "-c", "user.email=test@example.com"]
+            subprocess.run([*git, "init", "-q"], check=True)
+            subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "fixture"], check=True)
+            commit = subprocess.run([*git, "rev-parse", "HEAD"], check=True, capture_output=True,
+                                    text=True).stdout.strip()
+            files = {"site-src/dependencies/index.json": json.dumps(index(*self.ENTRIES)).encode(),
+                     "scripts/card-moves.jsonl": rows.encode(),
+                     **{f"blueprint/links/{name}": data for name, data in self.LINKS.items()}}
+            if data is not None:
+                files["build/cards.json"] = json.dumps(data(commit)).encode()
+            for path, content in files.items():
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_bytes(content)
+            made = receipt(commit, rows, dict(self.CARDS), self.LINKS)
+            if change is not None:
+                made = change(made, root)
+            if made is not None:
+                (root / "build").mkdir(exist_ok=True)
+                (root / "build" / "card-moves.json").write_text(made if isinstance(made, str) else json.dumps(made))
+            config = types.SimpleNamespace(config_file_path=str(root / "mkdocs.yml"), docs_dir=str(root / "site-src"),
+                                           extra_css=[])
+            printed = io.StringIO()
+            with mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(root / "s.md")}), \
+                    contextlib.redirect_stdout(printed), self.assertLogs("mkdocs.hooks.card_pages", "INFO"):
+                card_pages.on_config(config)
+            site, card_pages._site = card_pages._site, None
+            return site, printed.getvalue()
+
+    def assertMoves(self, site: card_pages.Site | None) -> None:
+        self.assertIsNotNone(site)
+        self.assertEqual(RedirectTests.moves(site), self.MOVES)
+        self.assertIn('<p><a href="../a/index.html">Continue to the mathematical page</a></p>',
+                      site.files[f"roadmap/{T}/z/README.md"])
+        self.assertEqual([slug for slug, _ in site.anchors[f"roadmap/{T}/index.html"]], ["lemma"])
+
+    def test_the_four_states_of_card_data(self) -> None:
+        a, b = (lambda folder, pages: card(1, folder, pages)), (lambda: card(2, f"{T}/b", ["b-main"]))
+        # No rollup: both addresses are kept, the retired card's leading to a, and no card is shown.
+        site, printed = self.hook()
+        self.assertMoves(site)
+        self.assertEqual((site.blocks, printed), ({}, self.STILL.format(self.NO_DATA)))
+        # A complete rollup, which places card 1 at a, as the receipt does: its cards, and the same addresses.
+        site, printed = self.hook(lambda commit: rollup([a(f"{T}/a", ["a-main", "lemma"]), b()], commit=commit))
+        self.assertMoves(site)
+        self.assertEqual((sorted(site.blocks), printed),
+                         ([f"roadmap/{T}/a/index.html", f"roadmap/{T}/b/index.html"], ""))
+        # A consistent rollup with no card, and one that places card 1 at the published b: the same addresses, z
+        # still leading to a, and no card, as the rollup is not the receipt's list.
+        for data, reason in (
+                (lambda commit: rollup([], commit=commit),
+                 f"the rollup has no card {af(1)}, which build/card-moves.json places at {T}/a"),
+                (lambda commit: rollup([a(f"{T}/b", ["b-main"])], commit=commit),
+                 f"the rollup places {af(1)} at {T}/b, but build/card-moves.json places it at {T}/a")):
+            with self.subTest(reason):
+                site, printed = self.hook(data)
+                self.assertMoves(site)
+                self.assertEqual((site.blocks, printed), ({}, self.STILL.format(reason)))
+        # An ordinary card error: the addresses are kept, and no card is shown.
+        site, printed = self.hook(lambda commit: rollup([a(f"{T}/a", ["a-main", "gone"])], commit=commit))
+        self.assertMoves(site)
+        self.assertEqual((site.blocks, printed),
+                         ({}, self.STILL.format(f"{af(1)}: its statements are not published statement pages")))
+
+    def test_an_incomplete_list_of_cards_keeps_the_addresses_and_shows_no_card(self) -> None:
+        # The ledger check lists only the cards with an article id no other article has: card 2's id is shared, say.
+        def incomplete(made: dict, root: Path) -> dict:
+            return {**made, "cards": {af(1): f"{T}/a"}, "cards_complete": False}
+
+        site, printed = self.hook(lambda commit: rollup([card(1, f"{T}/a", ["a-main", "lemma"])], commit=commit),
+                                  incomplete)
+        self.assertMoves(site)
+        self.assertEqual((site.blocks, printed), ({}, self.STILL.format(
+            "build/card-moves.json lists only the cards with an article id no other article has, not all of them")))
+
+    def test_a_retired_statement_leads_where_the_receipt_says(self) -> None:
+        # The ledger retires the node T/old-note in favour of the lemma, which the receipt places: its old page of its
+        # own and its old box both lead there, whatever the card data.
+        rows = self.ROWS + ledger({"statement": af(40), "page": f"{T}/old-note", "replaced_by": af(11)})
+
+        def replaced(made: dict, root: Path) -> dict:
+            return {**made, "replacements": {**made["replacements"], af(11): {"kind": "page", "node": f"{T}/a/lemma"}}}
+
+        site, printed = self.hook(change=replaced, rows=rows)
+        self.assertEqual(printed, self.STILL.format(self.NO_DATA))
+        self.assertIn('<p><a href="a/index.html#lemma">Continue to the mathematical page</a></p>',
+                      site.files[f"roadmap/{T}/old-note.md"])
+        self.assertEqual(RedirectTests.moves(site), {**self.MOVES, f"{T}/old-note": f"{T}/a/lemma"})
+        # Without the replacement in the receipt, nothing is kept.
+        site, printed = self.hook(rows=rows)
+        self.assertIsNone(site)
+        self.assertIn(f"::error title=Moved addresses not kept::scripts/card-moves.jsonl: a retired statement's "
+                      f"replacements end at {af(11)}, which build/card-moves.json does not list\n", printed)
+
+    def test_a_missing_ledger_is_no_empty_one(self) -> None:
+        # A receipt of an empty ledger shows the card data; with the ledger then deleted at the same commit, the hook
+        # keeps no moved address and shows no card, as card data needs the moved addresses.
+        def full(commit: str) -> dict:
+            return rollup([card(1, f"{T}/a", ["a-main", "lemma"]), card(2, f"{T}/b", ["b-main"])], commit=commit)
+
+        site, printed = self.hook(full, rows="")
+        self.assertEqual((len(site.blocks), printed), (2, ""))
+        site, printed = self.hook(full, lambda made, root: ((root / "scripts/card-moves.jsonl").unlink(), made)[1],
+                                  rows="")
+        self.assertIsNone(site)
+        self.assertEqual(printed, "::warning title=Card data not shown::there is no scripts/card-moves.jsonl\n"
+                                  "::error title=Moved addresses not kept::there is no scripts/card-moves.jsonl\n")
+
+    def test_without_this_receipt_no_moved_address_is_kept(self) -> None:
+        not_this = "build/card-moves.json is not a receipt of atlas-card-moves/v2"
+        for name, change, reason in (
+            ("no receipt", lambda made, root: None,
+             "there is no build/card-moves.json (the ledger check writes none when the ledger is invalid)"),
+            ("not JSON", lambda made, root: "{", "build/card-moves.json is not JSON: "),
+            ("another schema", lambda made, root: {**made, "schema": "atlas-card-moves/v0"}, not_this),
+            ("a key too many", lambda made, root: {**made, "note": ""}, not_this),
+            ("a key missing", lambda made, root: {key: value for key, value in made.items() if key != "cards_complete"},
+             not_this),
+            ("another commit's", lambda made, root: {**made, "commit": COMMIT},
+             "build/card-moves.json is not the ledger check of the commit being built"),
+            ("another ledger's", lambda made, root: {**made, "ledger_sha256": hashlib.sha256(b"").hexdigest()},
+             "build/card-moves.json is the check of another scripts/card-moves.jsonl than the one being built"),
+            ("a malformed ledger digest", lambda made, root: {**made, "ledger_sha256": made["ledger_sha256"].upper()},
+             "build/card-moves.json is the check of another scripts/card-moves.jsonl than the one being built"),
+            ("annotations changed since",
+             lambda made, root: ((root / "blueprint/links/A.jsonl").write_bytes(b"\n"), made)[1],
+             "build/card-moves.json is the check of other annotations than blueprint/links/ as it is now"),
+            ("defaults changed since", lambda made, root: (root / "blueprint/links/_defaults.json").unlink() or made,
+             "build/card-moves.json is the check of other annotations than blueprint/links/ as it is now"),
+            ("cards that are no table", lambda made, root: {**made, "cards": [af(1)]},
+             "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
+            ("a card that is no article id", lambda made, root: {**made, "cards": {"af_1": f"{T}/a"}},
+             "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
+            ("a folder that is no address", lambda made, root: {**made, "cards": {af(1): f"../{T}/a"}},
+             "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
+            ("two cards in one folder", lambda made, root: {**made, "cards": {af(1): f"{T}/a", af(2): f"{T}/a"}},
+             "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
+            ("a completeness that is no flag", lambda made, root: {**made, "cards_complete": 1},
+             "build/card-moves.json's cards are not a list of card ids and their folders, one card a folder"),
+            ("replacements that are no table", lambda made, root: {**made, "replacements": [af(1)]},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement of another kind", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "card", "node": f"{T}/a"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement with a key too many", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/a", "title": "A"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement at no address", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/a.md"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("two replacements at one address", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/a"}, af(2): {"kind": "folder", "node": f"{T}/a"}}},
+             "build/card-moves.json's replacements are not a list of article ids and their pages or folders, one "
+             "article an address"),
+            ("a replacement it does not list", lambda made, root: {**made, "replacements": {
+                af(2): {"kind": "folder", "node": f"{T}/b"}}},
+             f"scripts/card-moves.jsonl: a retired card's replacements end at {af(1)}, which build/card-moves.json "
+             "does not list"),
+            ("a replacement in no published folder", lambda made, root: {**made, "replacements": {
+                af(1): {"kind": "folder", "node": f"{T}/gone"}}},
+             f"scripts/card-moves.jsonl: a retired card's replacements end at {af(1)}, whose folder {T}/gone the site "
+             "does not publish"),
+        ):
+            with self.subTest(name):
+                site, printed = self.hook(change=change)
+                self.assertIsNone(site)
+                warning, error = printed.splitlines()
+                self.assertEqual(warning, f"::warning title=Card data not shown::{self.NO_DATA}")
+                self.assertTrue(error.startswith(f"::error title=Moved addresses not kept::{reason}"), error)
+        # With card data of this commit too, the hook shows nothing, and says so twice.
+        def full(commit: str) -> dict:
+            return rollup([card(1, f"{T}/a", ["a-main", "lemma"]), card(2, f"{T}/b", ["b-main"])], commit=commit)
+
+        site, printed = self.hook(full, lambda made, root: None)
+        self.assertIsNone(site)
+        self.assertEqual(printed.count("there is no build/card-moves.json"), 2)
+
+
+class ReportTests(unittest.TestCase):
+    """What the site does not show, the build says: at INFO in its log, since `mkdocs build --strict` fails on a
+    warning, and under GitHub Actions as a workflow annotation and a line of the job summary."""
+
+    def report(self, environment: dict[str, str]) -> tuple[list[str], str]:
+        printed = io.StringIO()
+        with mock.patch.dict(os.environ, environment), contextlib.redirect_stdout(printed), \
+                self.assertLogs("mkdocs.hooks.card_pages", "INFO") as logged:
+            card_pages.report("error", "Moved addresses not kept", "100% <gone>:\r\nnext, line",
+                              said="Moved addresses NOT kept")
+        self.assertEqual([record.levelname for record in logged.records], ["INFO"])
+        return logged.output, printed.getvalue()
+
+    def test_a_report_under_github_actions(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            summary = Path(temporary) / "summary.md"
+            summary.write_text("Before.\n", encoding="utf-8")
+            logged, printed = self.report({"GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(summary)})
+            self.assertEqual(summary.read_text(encoding="utf-8"),
+                             "Before.\n- **Moved addresses not kept**: 100% &lt;gone&gt;: next, line\n")
+        self.assertEqual(logged, ["INFO:mkdocs.hooks.card_pages:Moved addresses NOT kept: 100% <gone>:\r\nnext, line"])
+        # One workflow command: `%`, CR and LF escaped in its message, and `:` and `,` in a property too.
+        self.assertEqual(printed, "::error title=Moved addresses not kept::100%25 <gone>:%0D%0Anext, line\n")
+        self.assertEqual(card_pages.workflow_text("a: b, c", True), "a%3A b%2C c")
+
+    def test_a_report_elsewhere_is_a_log_line_alone(self) -> None:
+        with mock.patch.dict(os.environ):
+            os.environ.pop("GITHUB_ACTIONS", None)
+            logged, printed = self.report({"GITHUB_STEP_SUMMARY": ""})
+        self.assertEqual((len(logged), printed), (1, ""))
 
 
 @unittest.skipIf(shutil.which("node") is None, "needs Node.js to run the explorer's rewrite")
@@ -688,7 +1096,8 @@ class ExplorerLinkTests(unittest.TestCase):
 
 class SiteBuildTests(unittest.TestCase):
     """Build a small site with the repository's configuration, theme and hooks: without card data of the commit
-    being built, the site is byte for byte the site without the card hook."""
+    being built, the site is byte for byte the site without the card hook but for the moved addresses, which it keeps
+    with the ledger check's receipt, and the build says why it shows no card."""
 
     PAGES = {
         "index.md": "# Home\n",
@@ -705,6 +1114,13 @@ class SiteBuildTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         logging.getLogger("mkdocs").setLevel(logging.ERROR)
+        # The hook reports to GitHub Actions, where these tests run too: only a test that asks for its reports gets
+        # them.
+        environment = mock.patch.dict(os.environ)
+        environment.start()
+        cls.addClassCleanup(environment.stop)
+        for name in ("GITHUB_ACTIONS", "GITHUB_STEP_SUMMARY"):
+            os.environ.pop(name, None)
         temporary = tempfile.TemporaryDirectory(prefix="atlas-card-pages-")
         cls.addClassCleanup(temporary.cleanup)
         cls.root = Path(temporary.name)
@@ -738,18 +1154,27 @@ class SiteBuildTests(unittest.TestCase):
         cls.baseline = cls.build("without-cards.yml", None)
 
     LEDGER = ledger({"page": f"{T}/main", "to": f"{T}/c/main", "article_id": af(10)})
+    # The cards the ledger check lists: card 1, whose folder is the card page.
+    CARDS = {af(1): f"{T}/c"}
 
     @classmethod
-    def build(cls, configuration: str, data: dict | str | None, rows: str = LEDGER) -> dict[str, bytes]:
+    def build(cls, configuration: str, data: dict | str | None, rows: str = LEDGER, cards: dict | None = CARDS
+              ) -> dict[str, bytes]:
+        """The site built with the card data ``data``, the ledger ``rows`` and the receipt of the ledger check, which
+        lists ``cards`` (None: no receipt)."""
         from mkdocs.commands.build import build
         from mkdocs.config import load_config
 
         (cls.root / "scripts" / "card-moves.jsonl").write_text(rows, encoding="utf-8")
-        cards = cls.root / "build" / "cards.json"
-        cards.unlink(missing_ok=True)
+        (cls.root / "build").mkdir(exist_ok=True)
+        moves = cls.root / "build" / "card-moves.json"
+        moves.unlink(missing_ok=True)
+        if cards is not None:
+            moves.write_text(json.dumps(receipt(cls.commit, rows, cards)), encoding="utf-8")
+        data_file = cls.root / "build" / "cards.json"
+        data_file.unlink(missing_ok=True)
         if data is not None:
-            cards.parent.mkdir(exist_ok=True)
-            cards.write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
+            data_file.write_text(data if isinstance(data, str) else json.dumps(data), encoding="utf-8")
         site = cls.root / "site"
         shutil.rmtree(site, ignore_errors=True)
         build(load_config(str(cls.root / configuration), site_dir=str(site)))
@@ -759,22 +1184,104 @@ class SiteBuildTests(unittest.TestCase):
     def data(self, commit: str | None = None) -> dict:
         return rollup([card(1, f"{T}/c", ["main"])], commit=commit or self.commit)
 
-    def test_without_card_data_of_this_commit_the_site_is_unchanged(self) -> None:
+    def assertSameSite(self, site: dict[str, bytes], expected: dict[str, bytes]) -> None:
+        self.assertEqual(sorted(site), sorted(expected))
+        self.assertEqual([path for path in site if site[path] != expected[path]], [])
+
+    @contextlib.contextmanager
+    def github(self):
+        """As under GitHub Actions: what the hook prints, and the job summary it writes to."""
+        summary = self.root / "summary.md"
+        summary.unlink(missing_ok=True)
+        printed = io.StringIO()
+        with mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true", "GITHUB_STEP_SUMMARY": str(summary)}), \
+                contextlib.redirect_stdout(printed):
+            yield printed, summary
+
+    def bad(self) -> dict:
+        """Card data of this commit with a card error: a statement the site does not publish."""
         bad = self.data()
         bad["cards"][0]["pages"] = [f"{T}/c/main", f"{T}/c/unpublished"]
+        return bad
+
+    def test_without_card_data_of_this_commit_only_the_moved_addresses_are_kept(self) -> None:
+        # The site of card data with no card, on a commit with no card, and the same ledger; with no moved address,
+        # the site without the hook.
+        moved = self.build("mkdocs.yml", rollup([], commit=self.commit), cards={})
+        self.assertIn("javascripts/atlas-card-moves.js", moved)
         for name, data in (("no card data", None), ("another commit's", self.data(COMMIT)), ("not JSON", "{"),
-                           ("a bad card", bad), ("another schema", {**self.data(), "schema": "atlas-cards/v0"})):
+                           ("a bad card", self.bad()), ("another schema", {**self.data(), "schema": "atlas-cards/v0"})):
             with self.subTest(name):
-                self.assertEqual(self.build("mkdocs.yml", data), self.baseline)
+                self.assertSameSite(self.build("mkdocs.yml", data), moved)
+                self.assertSameSite(self.build("mkdocs.yml", data, ""), self.baseline)
+
+    def test_a_card_error_on_main_keeps_every_moved_address_and_says_so(self) -> None:
+        # A card error on main, which the merge queue does not stop, leaves no card data or card data the hook
+        # refuses: the site shows no card, but every address of the ledger still leads to its page, and the build
+        # says why there is no card.
+        for name, data, reason in (
+                ("no card data", None, f"there is no {card_pages.DATA} (the rollup writes none when the strict check "
+                                       "fails)"),
+                ("a bad card", self.bad(), f"{af(1)}: its statements are not published statement pages")):
+            with self.subTest(name), self.assertLogs("mkdocs.hooks.card_pages", "INFO") as logged, \
+                    self.github() as (printed, summary):
+                site = self.build("mkdocs.yml", data)
+            topic = site[f"roadmap/{T}/index.html"].decode()
+            # On the old folder page: the old anchor with its plain link, and the stylesheet that styles it.
+            self.assertIn('<p class="atlas-moved" id="main">This statement moved: <a href="c/index.html#main">Main'
+                          "</a>.</p>", topic)
+            self.assertIn('<link rel="stylesheet" href="../../../../stylesheets/atlas-cards.css">', topic)
+            # The explorer's rewrite, which the pages an old explorer link reaches load first.
+            self.assertIn('<script src="../../../../javascripts/atlas-card-moves.js"></script></head>', topic)
+            self.assertIn("javascripts/atlas-card-moves.js", site)
+            # The notice at the statement's old page of its own.
+            self.assertIn('<p><a href="c/index.html#main">Continue to the mathematical page</a></p>',
+                          site[f"roadmap/{T}/main.html"].decode())
+            # No card block.
+            self.assertNotIn("atlas-card\"", site[f"roadmap/{T}/c/index.html"].decode())
+            # Said at INFO, as a warning would fail `mkdocs build --strict`, and to GitHub Actions.
+            said = f"{reason}; moved addresses are still kept"
+            self.assertIn(f"INFO:mkdocs.hooks.card_pages:Card data not shown: {said}", logged.output)
+            self.assertEqual({record.levelname for record in logged.records}, {"INFO"})
+            self.assertEqual(printed.getvalue(), f"::warning title=Card data not shown::{said}\n")
+            self.assertEqual(summary.read_text(encoding="utf-8"), f"- **Card data not shown**: {said}\n")
+
+    def test_without_the_ledger_checks_receipt_nothing_is_kept_and_it_says_so(self) -> None:
+        # The ledger check wrote no receipt (the ledger is invalid), with or without card data: nothing is added.
+        reason = "there is no build/card-moves.json (the ledger check writes none when the ledger is invalid)"
+        for name, data in (("no card data", None), ("card data of this commit", self.data())):
+            with self.subTest(name), self.assertLogs("mkdocs.hooks.card_pages", "INFO") as logged, \
+                    self.github() as (printed, summary):
+                self.assertSameSite(self.build("mkdocs.yml", data, cards=None), self.baseline)
+            self.assertIn(f"INFO:mkdocs.hooks.card_pages:Moved addresses NOT kept: {reason}", logged.output)
+            self.assertEqual({record.levelname for record in logged.records}, {"INFO"})
+            self.assertIn(f"::error title=Moved addresses not kept::{reason}\n", printed.getvalue())
+            self.assertIn(f"- **Moved addresses not kept**: {reason}\n", summary.read_text(encoding="utf-8"))
+            self.assertIn("::warning title=Card data not shown::", printed.getvalue())
+            self.assertNotIn("still kept", "\n".join(logged.output))
+
+    def test_a_ledger_that_leads_nowhere_the_site_publishes_keeps_nothing_and_says_so(self) -> None:
+        rows = ledger({"page": f"{T}/main", "to": f"{T}/c/gone", "article_id": af(10)})
+        reason = f"scripts/card-moves.jsonl: the page {T}/main leads to {T}/c/gone, which is no published statement"
+        for name, data in (("no card data", None), ("card data of this commit", self.data())):
+            with self.subTest(name), self.assertLogs("mkdocs.hooks.card_pages", "INFO") as logged, \
+                    self.github() as (printed, summary):
+                self.assertSameSite(self.build("mkdocs.yml", data, rows), self.baseline)
+            self.assertIn(f"INFO:mkdocs.hooks.card_pages:Moved addresses NOT kept: {reason}", logged.output)
+            self.assertIn(f"::error title=Moved addresses not kept::{reason}\n", printed.getvalue())
+            self.assertIn(f"- **Moved addresses not kept**: {reason}\n", summary.read_text(encoding="utf-8"))
+            # Card data needs the moved addresses too: none is shown, and nothing says that they are kept.
+            self.assertIn("::warning title=Card data not shown::", printed.getvalue())
+            self.assertNotIn("still kept", "\n".join(logged.output))
 
     def test_a_rollup_with_nothing_to_show_changes_nothing(self) -> None:
         # Before any card merges, the rollup of the commit passes with no card, and the ledger is empty.
         with self.assertLogs("mkdocs.hooks.card_pages", "INFO") as logged:
-            self.assertEqual(self.build("mkdocs.yml", rollup([], commit=self.commit), ""), self.baseline)
+            self.assertEqual(self.build("mkdocs.yml", rollup([], commit=self.commit), "", cards={}), self.baseline)
         self.assertIn("Card data with no card and no moved address", "\n".join(logged.output))
 
     def test_moved_addresses_are_kept_with_no_card(self) -> None:
-        site = self.build("mkdocs.yml", rollup([], commit=self.commit))
+        site = self.build("mkdocs.yml", rollup([], commit=self.commit), cards={})
         topic = site[f"roadmap/{T}/index.html"].decode()
         self.assertIn('<p class="atlas-moved" id="main">', topic)
         self.assertIn('href="../../../../stylesheets/atlas-cards.css"', topic)

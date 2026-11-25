@@ -112,7 +112,7 @@ Fractional Base Expansions*, INTEGERS 26 (2026), Article A54, Theorem 1. -/
 private theorem baseThreeHalvesValue_digits (N : ℕ) :
     baseThreeHalvesValue (baseThreeHalvesDigits N) = 2 * (N : ℚ) := by
   induction N using Nat.strong_induction_on with
-  | h N ih =>
+  | ind N ih =>
     cases N with
     | zero => simp [baseThreeHalvesDigits, baseThreeHalvesValue]
     | succ n =>
@@ -156,7 +156,7 @@ Fractional Base Expansions*, INTEGERS 26 (2026), Article A54, Theorem 1. -/
 public theorem baseThreeHalvesDigits_lt_three (N d : ℕ)
     (hd : d ∈ baseThreeHalvesDigits N) : d < 3 := by
   induction N using Nat.strong_induction_on with
-  | h N ih =>
+  | ind N ih =>
     cases N with
     | zero => simp [baseThreeHalvesDigits] at hd
     | succ n =>

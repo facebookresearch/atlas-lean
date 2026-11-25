@@ -44,24 +44,31 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-- The backward generator of the Wright–Fisher diffusion with genic selection and two-way
 mutation:
-`(L f)(x) = x (1 - x) / 2 · f''(x) + (α x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2) · f'(x)`. -/
+`(L f)(x) = x (1 - x) / 2 · D(Df)(x) + (α x (1 - x) + (θ₁ (1 - x) - θ₂ x) / 2) · Df(x)`,
+where `D g` is the derivative of `g` where it exists and `0` elsewhere (`deriv`), applied twice in
+the second-order term. The intended domain is `x ∈ [0, 1]`, `θ₁, θ₂ ≥ 0` and twice differentiable
+`f`. -/
 noncomputable def selectionMutationGenerator (α θ₁ θ₂ : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   x * (1 - x) / 2 * deriv (deriv f) x +
     (α * x * (1 - x) + (θ₁ * (1 - x) - θ₂ * x) / 2) * deriv f x
 
-/-- Without mutation the generator is the selection generator `generator α`. -/
+/-- Without mutation the generator is the selection generator `generator α`, both with the total
+derivative `D` (`deriv`, `0` where a derivative does not exist) applied once and twice. -/
 theorem selectionMutationGenerator_zero_zero (α : ℝ) (f : ℝ → ℝ) (x : ℝ) :
     selectionMutationGenerator α 0 0 f x = generator α f x := by
   simp only [selectionMutationGenerator, generator]
   ring
 
-/-- Without selection the generator is the mutation generator `mutationGenerator θ₁ θ₂`. -/
+/-- Without selection the generator is the mutation generator `mutationGenerator θ₁ θ₂`, both with
+the total derivative `D` (`deriv`, `0` where a derivative does not exist) applied once and twice. -/
 theorem selectionMutationGenerator_zero_left (θ₁ θ₂ : ℝ) (f : ℝ → ℝ) (x : ℝ) :
     selectionMutationGenerator 0 θ₁ θ₂ f x = mutationGenerator θ₁ θ₂ f x := by
   simp only [selectionMutationGenerator, mutationGenerator]
   ring
 
-/-- The neutral case `L₀ f = x (1 - x) f'' / 2`. -/
+/-- The neutral case `L₀ f = x (1 - x) D(Df) / 2`, where `D g` is the derivative of `g` where it
+exists and `0` elsewhere (`deriv`); `D(Df)` can be nonzero where `f` has no classical second
+derivative. -/
 theorem selectionMutationGenerator_neutral (f : ℝ → ℝ) (x : ℝ) :
     selectionMutationGenerator 0 0 0 f x = x * (1 - x) / 2 * deriv (deriv f) x := by
   simp only [selectionMutationGenerator]
@@ -83,7 +90,8 @@ theorem selectionMutationGenerator_id (α θ₁ θ₂ x : ℝ) :
   simp only [selectionMutationGenerator, deriv_id', deriv_const']
   ring
 
-/-- The neutral generator on `y ↦ y ^ 2` is the infinitesimal variance `x (1 - x)`. -/
+/-- The neutral generator sends `y ↦ y ^ 2` to `x (1 - x)` for every real `x`; for a frequency
+`x ∈ [0, 1]` this is the infinitesimal variance (outside `[0, 1]` it is negative). -/
 theorem selectionMutationGenerator_neutral_sq (x : ℝ) :
     selectionMutationGenerator 0 0 0 (fun y => y ^ 2) x = x * (1 - x) := by
   rw [selectionMutationGenerator_zero_zero, generator_pow]

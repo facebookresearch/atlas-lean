@@ -92,7 +92,7 @@ public theorem fib_linear_coeff_add_alternating_isInt_iff (a b c d e f : ℚ) :
     exact ⟨by ring, by ring, by ring, by ring, by ring, by ring⟩
   · rintro ⟨v₀, v₁, v₂, v₃, v₄, v₅, ha, hb, hc, hd, he, hf⟩ n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       refine match n, ih with
         | 0, _ => ⟨v₀, ?_⟩
         | 1, _ => ⟨v₁, ?_⟩

@@ -20,7 +20,7 @@ its NP-completeness, already for bipartite graphs, credited to Charon, Hudry and
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Combinatorics.SimpleGraph.Domination
 public import MathlibExt.Computability.BinaryNatEncoding
