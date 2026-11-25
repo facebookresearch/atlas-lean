@@ -46,3 +46,4 @@ compatibility class.
 - [Mathematical epidemiology](epidemiology/README.md)
 - [Molecular evolution](molecular-evolution/README.md)
 - [Conservation genetics](conservation-genetics/README.md)
+- [Not yet classified](not-yet-classified/README.md)

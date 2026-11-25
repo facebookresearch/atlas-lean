@@ -46,3 +46,9 @@ Cytoplasmic incompatibility likewise needs explicit maternal/paternal
 infection states and offspring-viability rules; it is not included by
 calling an element maternally transmitted. This page organizes those
 residual models and the linked results, not one universal conflict law.
+
+## Sources
+
+- J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Chapter II, Exercise 19, p. 135: the meiotic-drive model with drive in both sexes.
+- T. Nagylaki, "Evolution of a large population under gene conversion", PNAS 80 (1983), 5941–5945, <https://doi.org/10.1073/pnas.80.19.5941>, abstract: the gene-conversion transmission model.
+- The recessive-lethal drive and maternal-inheritance results are derived on their linked pages from the stated life cycles.
