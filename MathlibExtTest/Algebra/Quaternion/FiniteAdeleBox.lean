@@ -19,7 +19,7 @@ noncomputable section
 
 variable {D : Type*} [Ring D] [Algebra ℚ D] (Λ : Submodule ℤ D)
 
-theorem exactSource_finiteAdeleBox (z : D) :
+private theorem exactSource_finiteAdeleBox (z : D) :
     z ∈ Submodule.ofFiniteIdele Λ
         (1 : (D ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) ↔
       z ⊗ₜ[ℚ] (1 : FiniteAdeleRing (𝓞 ℚ) ℚ) ∈

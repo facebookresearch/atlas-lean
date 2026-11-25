@@ -28,7 +28,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.NumberTheory.NumberField.AdeleRing
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 
 @[expose] public section
 

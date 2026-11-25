@@ -71,8 +71,13 @@ def IsOptimalDatum (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) : P
 def UnitConj {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ} (d d' : EmbeddingDatum Λ t n) : Prop :=
   ∃ u : ℍ[ℚ, a, b], IsUnitOf Λ u ∧ d'.1 * u = u * d.1
 
-def HasEmbeddingConductor (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) (f : ℕ) : Prop :=
-  (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
+/-- `f` is the embedding conductor of `α` in `Λ`: the least positive `f` with
+`f • x ∈ ℤ + ℤα` for every `x ∈ Λ` in the rational span of `1` and `α`.
+Unlike the adapted source, `f` must be positive: for `f = 0` the other two
+clauses hold for every `α`. -/
+def HasEmbeddingConductor (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b])
+    (f : ℕ) : Prop :=
+  0 < f ∧ (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
       ∃ p q : ℤ, (f : ℚ) • x = (p : ℚ) • (1 : ℍ[ℚ, a, b]) + (q : ℚ) • α) ∧
     (∀ g : ℕ, 0 < g → g < f →
       ¬ (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
@@ -180,9 +185,12 @@ def HeckeIncidence (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 
   {c : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ ⧸ U //
     ∃ h ∈ S, (h : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ ⧸ U) = c ∧ ClassSet.mk U (x * h) = y}
 
+/-- The Hecke kernel at `x` and `y`: the number of cosets `hU` with `h ∈ S` and `x.out * h` in
+the class `y`. Unlike the adapted source, it is `ℕ∞`-valued, so an infinite incidence set gives
+`⊤` rather than `0`. -/
 def heckeKernel (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
-    (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (x y : ClassSet U) : ℤ :=
-  Nat.card (HeckeIncidence U S x.out y)
+    (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (x y : ClassSet U) : ℕ∞ :=
+  ENat.card (HeckeIncidence U S x.out y)
 
 def heckeIncidenceEquiv (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
@@ -206,7 +214,7 @@ theorem heckeKernel_mk (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (�
     (S : Set (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ)
     (hS : ∀ u ∈ U, ∀ s ∈ S, u * s ∈ S)
     (x : (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (𝓞 ℚ) ℚ)ˣ) (y : ClassSet U) :
-    heckeKernel U S (ClassSet.mk U x) y = Nat.card (HeckeIncidence U S x y) := by
+    heckeKernel U S (ClassSet.mk U x) y = ENat.card (HeckeIncidence U S x y) := by
   obtain ⟨δ, hδ, u, hu, hout⟩ :=
     DoubleCoset.mk_out_eq_mul (Submodule.finiteIdeleDiagonal ℍ[ℚ, a, b]).range U x
   unfold heckeKernel
@@ -217,7 +225,7 @@ theorem heckeKernel_mk (U : Subgroup (ℍ[ℚ, a, b] ⊗[ℚ] FiniteAdeleRing (�
     refine Equiv.subtypeEquivRight fun c => ?_
     obtain ⟨δ', rfl⟩ := MonoidHom.mem_range.mp hδ
     simp only [mul_assoc, ClassSet.mk_diagonal_mul]
-  rw [Nat.card_congr (e1.trans e2)]
+  rw [ENat.card_congr (e1.trans e2)]
 
 end HeckeKernel
 
