@@ -11,10 +11,10 @@ LICENSE file in the root directory of this source tree.
 
 For `k` strings and a pairwise scoring `s` on `Option α` (`none` is a gap)
 with zero self-costs (`s x x = 0`, in particular `s none none = 0`), the triangle inequality,
-and symmetry, let `Xc`
-minimize the total optimal-pairwise distance `∑ⱼ D(Xc, Xⱼ)` and let `Ac` be
+and symmetry, let the center `X c` be an input string minimizing the total optimal-pairwise
+distance `∑ⱼ D(X c, Xⱼ)` over the inputs (Gusfield's selection rule) and let `Ac` be
 the center-star multiple alignment built from optimal pairwise alignments to
-`Xc`. With `V` the sum-of-pairs value and `A*` an optimal multiple alignment,
+`X c`. With `V` the sum-of-pairs value and `A*` an optimal multiple alignment,
 `k * V(Ac) ≤ 2 * (k - 1) * V(A*)`, i.e. `V(Ac) / V(A*) ≤ 2 * (k - 1) / k < 2`.
 The symmetry of `s` and the zero self-costs (which give `D(X, X) = 0`) are used by the source
 without being stated and are explicit hypotheses here.
@@ -106,8 +106,10 @@ noncomputable def centerTotal (s : Option α → Option α → ℝ) {k : ℕ}
 a gap scoring with `s none none = 0` (`hgap`) and zero self-costs `s x x = 0` for every
 `x : Option α` (`hdiag`), the triangle inequality
 (`htria`), explicit symmetry (`hsymm`), at least two strings (`hk`), the
-`pairDist` characterization (`hD_le`, `hD_att`), a center string `Xc`
-minimizing the center total (`hcenter`), spoke alignments `P j` that are
+`pairDist` characterization (`hD_le`, `hD_att`), a center index `c : Fin k`
+whose input string minimizes the center total over the inputs,
+`∑ j, D (X c) (X j) ≤ ∑ j, D (X i) (X j)` for every `i : Fin k` (`hcenter`, Gusfield's selection
+rule), spoke alignments `P j` that are
 valid and attain the pairwise optima (`hspoke`), a star alignment `Ac`
 whose induced pairwise values obey the star triangle bound (`hstar`), and an
 optimal alignment `Astar` valid for `X` and minimal (`hopt`). Conclusion:
@@ -125,11 +127,11 @@ theorem_wanted centerStar_bound (s : Option α → Option α → ℝ)
       IsPairAlignmentOf A U V → pairDist s U V ≤ alignValue s A)
     (hD_att : ∀ U V : List α, ∃ A : PairAlignment α,
       IsPairAlignmentOf A U V ∧ pairDist s U V = alignValue s A)
-    (Xc : List α)
-    (hcenter : ∀ Y : List α, centerTotal s X Xc ≤ centerTotal s X Y)
+    (c : Fin k)
+    (hcenter : ∀ i : Fin k, centerTotal s X (X c) ≤ centerTotal s X (X i))
     (P : Fin k → PairAlignment α)
-    (hspoke : ∀ j, IsPairAlignmentOf (P j) Xc (X j) ∧
-      pairDist s Xc (X j) = alignValue s (P j))
+    (hspoke : ∀ j, IsPairAlignmentOf (P j) (X c) (X j) ∧
+      pairDist s (X c) (X j) = alignValue s (P j))
     (Ac : MSAlignment α k)
     (hac : msErasesTo Ac X)
     (hstar : ∀ i j, inducedValue s Ac i j ≤
@@ -157,11 +159,11 @@ theorem_wanted centerStar_ratio (s : Option α → Option α → ℝ)
       IsPairAlignmentOf A U V → pairDist s U V ≤ alignValue s A)
     (hD_att : ∀ U V : List α, ∃ A : PairAlignment α,
       IsPairAlignmentOf A U V ∧ pairDist s U V = alignValue s A)
-    (Xc : List α)
-    (hcenter : ∀ Y : List α, centerTotal s X Xc ≤ centerTotal s X Y)
+    (c : Fin k)
+    (hcenter : ∀ i : Fin k, centerTotal s X (X c) ≤ centerTotal s X (X i))
     (P : Fin k → PairAlignment α)
-    (hspoke : ∀ j, IsPairAlignmentOf (P j) Xc (X j) ∧
-      pairDist s Xc (X j) = alignValue s (P j))
+    (hspoke : ∀ j, IsPairAlignmentOf (P j) (X c) (X j) ∧
+      pairDist s (X c) (X j) = alignValue s (P j))
     (Ac : MSAlignment α k)
     (hac : msErasesTo Ac X)
     (hstar : ∀ i j, inducedValue s Ac i j ≤
