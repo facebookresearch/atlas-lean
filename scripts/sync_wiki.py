@@ -136,7 +136,6 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
-import errno
 import functools
 import hashlib
 import importlib
@@ -3185,18 +3184,6 @@ INDEX_DIFFERS = ("the index holds it otherwise than the working tree, and a comm
                  "tree's, or restore the index's, and check again")
 
 
-def git_path_records(*args: str, paths: list[str]) -> bytes:
-    """List NUL-terminated Git records, splitting pathspecs if they exceed the OS limit."""
-    try:
-        return git(*args, "--", *paths)
-    except OSError as error:
-        if error.errno != errno.E2BIG or len(paths) <= 1:
-            raise
-    middle = len(paths) // 2
-    left = git_path_records(*args, paths=paths[:middle])
-    return left + git_path_records(*args, paths=paths[middle:])
-
-
 def disagreeing(paths: set[str]) -> dict[str, str]:
     """Of *paths*, those the index holds otherwise than the working tree, as Git compares them (with the line ends it
     normalises), each with what is wrong: anything but a file in the index, a submodule among them, is not the sync's;
@@ -3207,13 +3194,13 @@ def disagreeing(paths: set[str]) -> dict[str, str]:
     ordered = sorted(paths)
     literal = [f":(literal){path}" for path in ordered]
     modes = {}
-    for record in git_path_records("ls-files", "-s", "-z", paths=literal).split(b"\0"):
+    for record in git("ls-files", "-s", "-z", "--", *literal).split(b"\0"):
         if record:
             meta, raw = record.split(b"\t", 1)
             modes[os.fsdecode(raw)] = meta.decode("ascii").split(" ")[0]
-    diff = git_path_records("diff", "--name-only", "--no-renames", "--ignore-submodules=none",
-                            "-z", paths=literal)
-    unstaged = {os.fsdecode(path) for path in diff.split(b"\0") if path}
+    unstaged = {os.fsdecode(path) for path in git("diff", "--name-only", "--no-renames", "--ignore-submodules=none",
+                                                  "-z", "--", *literal).split(
+        b"\0") if path}
     found = {}
     for path in ordered:
         mode = modes.get(path)
