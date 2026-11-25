@@ -69,10 +69,11 @@ theorem mk_X_mul_mk_X : mk t (X 0) * mk t (X 1) = algebraMap W (CrossingQuotient
 def monomial (n : ℤ) : CrossingQuotient W t :=
   if 0 ≤ n then mk t (X 0) ^ n.toNat else mk t (X 1) ^ (-n).toNat
 
-theorem monomial_of_nonneg {n : ℤ} (h : 0 ≤ n) : monomial t n = mk t (X 0) ^ n.toNat := if_pos h
+theorem monomial_of_nonneg {n : ℤ} (h : 0 ≤ n) : monomial t n = mk t (X 0) ^ n.toNat :=
+  ite_eq_left h
 
 theorem monomial_of_neg {n : ℤ} (h : n < 0) :
-    monomial t n = mk t (X 1) ^ (-n).toNat := if_neg (not_le.mpr h)
+    monomial t n = mk t (X 1) ^ (-n).toNat := ite_eq_right (not_le.mpr h)
 
 @[simp] theorem monomial_natCast (n : ℕ) : monomial t (n : ℤ) = mk t (X 0) ^ n := by
   rw [monomial_of_nonneg t (Int.natCast_nonneg n), Int.toNat_natCast]
