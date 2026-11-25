@@ -108,8 +108,9 @@ noncomputable def baseExcitedA (m c k : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
 
 /-- Input matrix `!![0, 0; 1 / m, -1]` for the input `(p, a_g)`: the applied force
 `p` enters the velocity row with gain `1 / m`, the base acceleration `a_g` with
-gain `-1`, and neither enters the displacement row. Meaningful for `m > 0`. The force
-channel is the `OscillatorResponse.phaseForcing` channel on `ℝ × ℝ`. -/
+gain `-1`, and neither enters the displacement row. Meaningful for `m > 0`; with `u / 0 = 0`
+the force gain is `0` at `m = 0`. The force channel is the `OscillatorResponse.phaseForcing`
+channel on `ℝ × ℝ`. -/
 noncomputable def baseExcitedB (m : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![0, 0; 1 / m, -1]
 
@@ -124,7 +125,8 @@ def baseExcitedD : Matrix (Fin 1) (Fin 2) ℝ :=
 
 /-- The base-excited oscillator as an owner state-space record: the pinned matrices
 assembled by `ControlTheory.StateSpaceCoeffs.ofMatrix`, with state `(u, u')`, input
-`(p, a_g)` and output `u`. -/
+`(p, a_g)` and output `u`. With `u / 0 = 0`, the entries `k / m`, `c / m` and `1 / m` are `0` at
+`m = 0`. -/
 noncomputable def baseExcitedPlant (m c k : ℝ) :
     ControlTheory.StateSpaceCoeffs ℝ (Fin 2 → ℝ) (Fin 2 → ℝ) (Fin 1 → ℝ) :=
   ControlTheory.StateSpaceCoeffs.ofMatrix (baseExcitedA m c k) (baseExcitedB m) baseExcitedC

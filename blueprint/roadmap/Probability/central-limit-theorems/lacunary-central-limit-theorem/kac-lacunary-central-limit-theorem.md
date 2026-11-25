@@ -56,14 +56,10 @@ $|g_n| \le 2$ for large $n$, and $g_n \to e^{-t^2/4}$ in measure. By the Cauchy�
 bounded convergence theorem, $\int_0^1 R_n (g_n - e^{-t^2/4}) \to 0$, and as $\int_0^1 R_n = 1$ this gives
 $\varphi_n(t) \to e^{-t^2/4}$.
 
-## Depends on
+## Informally uses
 
-- [Central limit theorem for lacunary sine sums](lacunary-clt.md)
-
-## Proof depends on
-
-- [Lévy's continuity theorem](../../characteristic-functions/levy-continuity-theorem/levy-continuity-of-char-fun.md)
-- [Bounded convergence theorem](../../../MeasureTheory/integration/bounded-convergence-theorem/tendsto-integral-of-bounded-convergence.md)
+- [Lévy's continuity theorem](../../characteristic-functions/levy-continuity-theorem/levy-continuity-of-char-fun.md): the proof above reduces the limit law to convergence of the characteristic functions $\varphi_n(t) \to e^{-t^2/4}$.
+- [Bounded convergence theorem](../../../MeasureTheory/integration/bounded-convergence-theorem/tendsto-integral-of-bounded-convergence.md): the proof above uses it for $\int_0^1 R_n (g_n - e^{-t^2/4}) \to 0$.
 
 ## Sources
 

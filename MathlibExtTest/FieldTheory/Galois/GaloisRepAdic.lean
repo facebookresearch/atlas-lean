@@ -12,7 +12,7 @@ public import MathlibExt.FieldTheory.Galois.GaloisRepAdic
 
 @[expose] public section
 
-universe u
+universe u v
 
 /-- Consumer with the original binders. -/
 example {A : Type} [CommRing A] [IsLocalRing A] [Finite A] (p : ℕ) [Fact p.Prime]
@@ -45,3 +45,48 @@ example {A : Type (u + 1)} [CommRing A] [IsLocalRing A] [Finite A] (p : ℕ)
 /-- Boundary: the primality hypothesis excludes `p = 1`, for which the
 localization and the `p`-adic integers used in the statement degenerate. -/
 example : ¬ Nat.Prime 1 := by decide
+
+/-- Consumer with the original binders: the residual representation of an
+adic representation, its determinant, trace, and unramifiedness predicate. -/
+example {A : Type} [CommRing A] [IsLocalRing A] (ρ : GaloisRepAdic A)
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (q : ℕ) :
+    True := by
+  let _ := ρ.residual
+  let _ := ρ.det σ
+  let _ := ρ.trace σ
+  let _ : Prop := ρ.IsUnramifiedAt q
+  trivial
+
+/-- Higher-universe consumer. -/
+example {A : Type (u + 1)} [CommRing A] [IsLocalRing A]
+    (ρ : GaloisRepAdic A) (q : ℕ) : Prop :=
+  ρ.IsUnramifiedAt q
+
+/-- An adic representation over a field gives a residual representation,
+and a residual representation lifts to an adic one over the same field. -/
+example {k : Type} [Field k] (ρ : GaloisRepAdic k)
+    (τ : ResidualGaloisRep k) : True := by
+  let _ := ρ.toResidualGaloisRep
+  let _ := GaloisRepAdic.ofResidualGaloisRep τ
+  trivial
+
+/-- Equivalences of adic representations are equivalences of the underlying
+representations: they use the standard `refl`, `symm` and `trans`, and induce
+equivalences of residual representations. -/
+example {A : Type} [CommRing A] [IsLocalRing A] (ρ : GaloisRepAdic A) :
+    True := by
+  let e : GaloisRepAdic.Equiv ρ ρ := Representation.Equiv.refl ρ.ρ
+  let _ : GaloisRepAdic.Equiv ρ ρ := e.symm.trans e
+  let _ := e.residual
+  let _ : GaloisRepAdic.IsEquiv ρ ρ := ⟨e⟩
+  trivial
+
+/-- Boundary: unramifiedness at `q` is a statement about inertia over `q`;
+for a representation that is unramified at `q`, the predicate is exactly
+the quantified triviality statement in its definition. -/
+example {A : Type} [CommRing A] [IsLocalRing A] (ρ : GaloisRepAdic A)
+    (q : ℕ) :
+    ρ.IsUnramifiedAt q ↔
+      ∀ P : ValuationSubring (AlgebraicClosure ℚ), P.LiesOverPrime q →
+        ∀ σ ∈ P.inertiaSubgroupIn ℚ, ρ.ρ σ = 1 :=
+  Iff.rfl

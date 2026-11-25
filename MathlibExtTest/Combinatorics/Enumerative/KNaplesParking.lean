@@ -33,3 +33,10 @@ example : (naplesPark 5 1 [1, 2] [2, 3, 4]).isSome := by
     have : j = 1 := by omega
     subst j
     decide
+
+-- The second car backs into spot 1 when the limit increases, displacing the last car to 3.
+example : naplesPark 3 0 [] [2, 2, 1] = some [1, 3, 2] ∧
+    naplesPark 3 1 [] [2, 2, 1] = some [3, 1, 2] := by decide
+
+example : IsNaplesParkingFunction 1 ![2, 2, 1] :=
+  IsNaplesParkingFunction.succ (k := 0) (by decide)

@@ -97,4 +97,42 @@ public theorem_wanted partitionIntoPerfectMatchings_npComplete :
         L ∈ MetaMathlibExt.ComplexityTheory.NP →
           Cslib.CookLevin.PolyManyOneRed L partitionIntoPerfectMatchingsDec
 
+-- Regression examples for `PartitionIntoPerfectMatchingsFeasible`: every vertex must have
+-- exactly one neighbour in its own block.
+
+-- One isolated vertex with `K = 1` is a no-instance: its block `{0}` has no edge.
+private example : ¬ PartitionIntoPerfectMatchingsFeasible (1, [], 1) := by
+  rintro ⟨k, -, c, hc⟩
+  obtain ⟨w, hw, -⟩ := hc (c 0) (v := 0) rfl
+  have h := hw.adj_sub
+  rw [Fin.fin_one_eq_zero w] at h
+  exact h.ne rfl
+
+-- A single edge with `K = 1` is a yes-instance.
+private example : PartitionIntoPerfectMatchingsFeasible (2, [(0, 1)], 1) := by
+  refine ⟨1, le_rfl, fun _ => 0, fun j v _ => ⟨v + 1, ?_, ?_⟩⟩
+  · simp only [SimpleGraph.Subgraph.induce_adj, SimpleGraph.Subgraph.top_adj]
+    refine ⟨Subsingleton.elim _ _, Subsingleton.elim _ _, ?_⟩
+    fin_cases v <;> simp [Graph, Cslib.Complexity.Karp.edgeGraph]
+  · intro w hw
+    have h := hw.adj_sub
+    fin_cases v <;> fin_cases w <;> simp_all [Graph, Cslib.Complexity.Karp.edgeGraph]
+
+-- The 4-cycle `0-1-2-3-0` with `K = 2` is a yes-instance with blocks `{0, 1}` and `{2, 3}`.
+-- Neither block contains all four vertices, so each block's induced subgraph is a perfect
+-- matching of its block but not a spanning subgraph of the whole graph.
+private example :
+    PartitionIntoPerfectMatchingsFeasible (4, [(0, 1), (1, 2), (2, 3), (3, 0)], 2) := by
+  refine ⟨2, le_rfl, fun v => if (v : ℕ) < 2 then 0 else 1, fun j v hv => ?_⟩
+  simp only [SimpleGraph.Subgraph.induce_verts, Set.mem_ofPred_eq] at hv
+  subst hv
+  refine ⟨if (v : ℕ) % 2 = 0 then v + 1 else v - 1, ?_, ?_⟩
+  · simp only [SimpleGraph.Subgraph.induce_adj, SimpleGraph.Subgraph.top_adj]
+    fin_cases v <;> simp [Graph, Cslib.Complexity.Karp.edgeGraph]
+  · intro w hw
+    have h := hw.adj_sub
+    have h2 := hw.snd_mem
+    simp only [SimpleGraph.Subgraph.induce_verts, Set.mem_ofPred_eq] at h2
+    fin_cases v <;> fin_cases w <;> simp_all [Graph, Cslib.Complexity.Karp.edgeGraph]
+
 end MetaMathlibExt.Complexity.NPComplete.PartitionIntoPerfectMatchings

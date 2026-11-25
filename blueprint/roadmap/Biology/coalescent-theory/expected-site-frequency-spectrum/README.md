@@ -39,3 +39,5 @@
 - [Frequency-class branch lengths sum to the total branch length](sum-sfs-length-eq-total-length-of-invari.md)
 - [Almost surely the frequency-class lengths sum to the total length](sum-sfs-length-ae-eq-total-length.md)
 - [Expected folded site frequency spectrum under Kingman's coalescent](integral-folded-count-kingman.md)
+
+- [Expected total age of mutations of a given size in Kingman's coalescent](expected-total-age-of-size-i-mutations-explicit.md)

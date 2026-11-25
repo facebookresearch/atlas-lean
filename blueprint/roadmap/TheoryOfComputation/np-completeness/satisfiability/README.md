@@ -17,4 +17,5 @@ Variants of SAT and CSP: 3SAT and the SAT-to-3SAT reduction, bounded-occurrence,
 - [Non-tautology](non-tautology/README.md)
 - [Non-tautology of 3DNF](non-tautology-of-3dnf/README.md)
 - [Not-all-equal 3-SAT](not-all-equal-3-sat/README.md)
+- [Polynomial equations over GF(2)](polynomial-equations-over-gf-2/README.md)
 - [Stable model existence](stable-model-existence/README.md)
