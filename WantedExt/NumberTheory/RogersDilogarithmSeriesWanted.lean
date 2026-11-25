@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.BridgemanPellPositiveSeries
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.RogersDilogLucasUSeries
 public import MathlibExt.NumberTheory.SanfordCoupledRecurrence
 public import MathlibExt.NumberTheory.SanfordSymmetricSeries
 
@@ -95,26 +96,6 @@ public theorem_wanted rogersDilog_sanford_principal_series {a b : ℝ} (ha₀ : 
     ∑' n : ℕ, L (a * b * (a - b) ^ 2 * (1 - a) ^ n * (1 - b) ^ n /
         (a * (1 - b) ^ (n + 1) - b * (1 - a) ^ (n + 1)) ^ 2) =
       L a + L b - L (|a - b| / (1 - min a b))
-
-/-- **Sanford's Lucas-sequence dilogarithm series for $Q > 0$.** Write
-$L(x) = \sum_{m \ge 1} x^m/m^2 + \frac{1}{2} \log x \log(1 - x)$ for the Rogers dilogarithm on
-$[0, 1]$ (with $\log 0 = 0$). Let $(P, Q)$ be Lucas sequence parameters with $P > 0$, $Q > 0$ and
-$D = P^2 - 4Q > 0$, let $U = U(P, Q)$ be the Lucas sequence, and put $\alpha = (P + \sqrt{D})/2$.
-Then for every integer $k \ge 1$,
-$$
-\sum_{n \ge 1} L\left(\frac{U_k^2 Q^{kn}}{U_{k(n+1)}^2}\right) =
-L\left(\frac{Q^k}{\alpha^{2k}}\right).
-$$
-
-Source: Chance Sanford, *A Dilogarithm Series and a Generalization of a Theorem of Bridgeman*,
-INTEGERS 25 (2025), Article A52, Theorem 5 (8) (`integers-2025-A52-thm-5`). -/
-public theorem_wanted rogersDilog_lucasU_series (params : LucasSequenceParams)
-    (hP : 0 < params.p) (hQ : 0 < params.q) (hD : 0 < params.p ^ 2 - 4 * params.q)
-    {k : ℕ} (hk : 0 < k) :
-    let L : ℝ → ℝ := fun x => (∑' n : ℕ, x ^ (n + 1) / ((n : ℝ) + 1) ^ 2) + log x * log (1 - x) / 2
-    let α : ℝ := (params.p + √((params.p ^ 2 - 4 * params.q : ℤ) : ℝ)) / 2
-    ∑' n : ℕ, L ((lucasU params k : ℝ) ^ 2 * (params.q : ℝ) ^ (k * (n + 1)) /
-        (lucasU params (k * (n + 2)) : ℝ) ^ 2) = L ((params.q : ℝ) ^ k / α ^ (2 * k))
 
 /-- **Sanford's Lucas-sequence dilogarithm series for $Q < 0$.** Write
 $L(x) = \sum_{m \ge 1} x^m/m^2 + \frac{1}{2} \log x \log(1 - x)$ for the Rogers dilogarithm on

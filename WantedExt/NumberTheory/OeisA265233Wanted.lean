@@ -36,7 +36,10 @@ this module imports.
 Corollary 2(1) is stated analytically on the common
 convergence domain `|x| < 1/12` and
 `|27x(1 - 4x)^2| < 1` (Mathlib's `₂F₁` takes the junk
-value `0` outside its radius of convergence).
+value `0` outside its radius of convergence). It is
+proved in
+`MathlibExt.NumberTheory.OeisA265233GeneratingFunction`,
+which this module imports.
 -/
 module
 
@@ -51,26 +54,13 @@ public import Mathlib.Analysis.Real.Sqrt
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 public import MathlibExt.NumberTheory.FranelDiagonalCoeff
 public import MathlibExt.NumberTheory.OeisA265233
+public import MathlibExt.NumberTheory.OeisA265233GeneratingFunction
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.OeisA265233Wanted
-
-/-- **Generating function of A265233.** Let $(a_n)_{n \ge 0}$ be the sequence A265233 and let
-${}_2F_1$ be the Gauss hypergeometric function. For every real number $x$ with $|x| < 1/12$ and
-$|27x(1 - 4x)^2| < 1$,
-
-$$\sum_{n \ge 0} a_n x^n = \frac{{}_2F_1\bigl(\tfrac13, \tfrac23; 1; 27x(1 - 4x)^2\bigr) + 5}{6}.$$
-
-Source: Juntao Jin, "An Explicit Formula and a
-Recurrence for OEIS A265233", Corollary 2. -/
-theorem_wanted tsum_a265233_eq (x : ℝ) (hx : |x| < 1 / 12)
-    (hz : |27 * x * (1 - 4 * x) ^ 2| < 1) :
-    ∑' n : ℕ, (a265233 n : ℝ) * x ^ n =
-      (ordinaryHypergeometric (1 / 3 : ℝ) (2 / 3 : ℝ) 1
-        (27 * x * (1 - 4 * x) ^ 2) + 5) / 6
 
 /-- **Asymptotics of A265233.** The sequence $(a_n)_{n \ge 0}$ A265233 satisfies
 

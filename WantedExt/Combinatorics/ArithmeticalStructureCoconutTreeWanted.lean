@@ -16,6 +16,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutCount
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutSubdivision
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
+public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTwoLeaves
 public import MathlibExt.Combinatorics.ArithmeticalStructureStar
 public import MathlibExt.Combinatorics.EuclideanChainLength
 
@@ -79,23 +80,6 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one {p
     Set.ncard {x : (Fin p ⊕ Fin 1 → ℕ) × (Fin p ⊕ Fin 1 → ℕ) |
       IsArithmeticalStructure (coconutTree p 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1}
       = catalan p - catalan (p - 1)
-
-/-- **Number of arithmetical structures on coconut trees with two leaves.** For $p \ge 2$, the
-number of arithmetical structures on the coconut tree $CT(p, 2)$ is
-$$2 C_p - C_{p-1} + \sum_{i=3}^{p+2} B(p - 1, p + 2 - i)\, N(i - 2),$$
-where $C_n$ is the $n$-th Catalan number, $B(n, k)$ is the ballot number and $N(q)$ is the number
-of smooth arithmetical structures on $CT(q, 2)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 2
-(`integers-2025-A82-cor-2`). -/
-public theorem_wanted ncard_arithmeticalStructure_coconutTree_two {p : ℕ} (hp : 2 ≤ p) :
-    Set.ncard {x : (Fin p ⊕ Fin 2 → ℕ) × (Fin p ⊕ Fin 2 → ℕ) |
-      IsArithmeticalStructure (coconutTree p 2) x.1 x.2}
-      = 2 * catalan p - catalan (p - 1) + ∑ i ∈ Finset.Icc 3 (p + 2),
-          ballotNumber (p - 1) (p + 2 - i) *
-            Set.ncard {z : (Fin (i - 2) ⊕ Fin 2 → ℕ) × (Fin (i - 2) ⊕ Fin 2 → ℕ) |
-              IsSmoothCoconut (i - 2) 2 z.1 z.2}
 
 /-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
 $a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
