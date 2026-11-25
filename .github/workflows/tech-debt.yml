@@ -1,0 +1,115 @@
+name: Technical debt
+
+# Weekly technical-debt counts for main (scripts/tech_debt.py): source markers in the
+# library roots, and the compiler warnings of main's newest successful CI build, by
+# linter and by library. Each run compares its counts with the previous run's report
+# and writes the table to the job summary. Nothing here gates a merge.
+#
+# To keep a tracking issue current, set the repository variable TECH_DEBT_ISSUE to its
+# number; the publish job then rewrites the counts between that issue's
+# `<!-- tech-debt:begin -->` and `<!-- tech-debt:end -->` markers.
+
+on:
+  schedule:
+    - cron: "0 5 * * 1" # 05:00 UTC every Monday
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    if: github.repository == 'facebookresearch/atlas-lean'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      # Count the commit whose build log is counted, so both halves describe one commit.
+      - name: Find main's newest successful CI build
+        id: build
+        run: |
+          set -euo pipefail
+          run="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?branch=main&event=push&status=success&per_page=1" \
+            --jq '.workflow_runs[0] | "\(.id) \(.head_sha)"')"
+          read -r run_id sha <<< "$run"
+          job="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs?per_page=100" \
+            --jq '[.jobs[] | select(.name == "build")][0].id')"
+          # The log has terminal escape sequences, which some gh versions refuse to print.
+          curl -fsSL --retry 3 -H "Authorization: Bearer ${GH_TOKEN}" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/jobs/${job}/logs" -o "$RUNNER_TEMP/build.log"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Counting ${sha} and the build log of CI run ${run_id}." >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.build.outputs.sha }}
+          persist-credentials: false
+
+      - name: Fetch the previous report
+        id: previous
+        run: |
+          set -euo pipefail
+          previous="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow tech-debt.yml --status success \
+            --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+          if [[ -n "$previous" ]] && gh run download "$previous" --repo "$GITHUB_REPOSITORY" \
+              --name tech-debt --dir "$RUNNER_TEMP/previous"; then
+            echo "base=--base=$RUNNER_TEMP/previous/tech-debt.json" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Count
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/report"
+          python3 -m unittest discover -s scripts -p test_tech_debt.py -v
+          python3 scripts/tech_debt.py --build-log "$RUNNER_TEMP/build.log" ${{ steps.previous.outputs.base }} \
+            --json "$RUNNER_TEMP/report/tech-debt.json" --markdown "$RUNNER_TEMP/report/tech-debt.md"
+          cat "$RUNNER_TEMP/report/tech-debt.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tech-debt
+          path: ${{ runner.temp }}/report/
+          retention-days: 90
+
+  publish:
+    needs: report
+    if: vars.TECH_DEBT_ISSUE != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE: ${{ vars.TECH_DEBT_ISSUE }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: tech-debt
+          path: report
+
+      # Only the part between the two markers is generated; the rest of the body is the
+      # maintainers' (plans, owners, links). An issue without the markers is left unchanged
+      # and fails this job.
+      - name: Update the tracking issue's counts
+        run: |
+          set -euo pipefail
+          gh issue view "$ISSUE" --repo "$GITHUB_REPOSITORY" --json body --jq .body > body.md
+          python3 - <<'PY'
+          import re
+          body = open("body.md", encoding="utf-8").read()
+          table = open("report/tech-debt.md", encoding="utf-8").read()
+          begin, end = "<!-- tech-debt:begin -->", "<!-- tech-debt:end -->"
+          pattern = re.compile(re.escape(begin) + ".*?" + re.escape(end), re.S)
+          if not pattern.search(body):
+              raise SystemExit(f"the issue body has no {begin} ... {end} section")
+          new = pattern.sub(lambda _: f"{begin}\n{table}\n{end}", body, count=1)
+          open("body.md", "w", encoding="utf-8").write(new)
+          PY
+          gh issue edit "$ISSUE" --repo "$GITHUB_REPOSITORY" --body-file body.md
