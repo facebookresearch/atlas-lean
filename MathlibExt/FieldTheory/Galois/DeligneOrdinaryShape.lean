@@ -37,10 +37,10 @@ open Matrix
 namespace GaloisRep
 
 /-- A local representation has Deligne's ordinary shape when, in some basis,
-it is lower-triangular, inertia acts on the lower-right entry trivially and
-on the upper-left entry through `χ ^ (k - 1)`, Frobenius has lower-right
-entry `ap`, and the two diagonal Frobenius entries multiply, up to `ap`, to
-`χ(frob) ^ (k - 1) * εp`. -/
+it is upper-triangular (the lower-left entry `(1, 0)` vanishes), inertia acts
+on the lower-right entry trivially and on the upper-left entry through
+`χ ^ (k - 1)`, Frobenius has lower-right entry `ap`, and `ap` times the
+upper-left Frobenius entry is `χ(frob) ^ (k - 1) * εp`. -/
 public def DeligneOrdinaryShape {A : Type*} [CommRing A] {H : Type*}
     [Group H] (ρloc : H →* GL (Fin 2) A) (I : Subgroup H) (frob : H)
     (χ : H →* A) (k : ℕ) (ap εp : A) : Prop :=
@@ -57,39 +57,43 @@ variable {A : Type*} [CommRing A] {H : Type*} [Group H]
   {ρloc : H →* GL (Fin 2) A} {I : Subgroup H} {frob : H}
   {χ : H →* A} {k : ℕ} {ap εp : A}
 
-/-- In the ordinary shape, some conjugate of every group element is
-lower-triangular. -/
-public theorem exists_conj_apply_one_zero
+/-- A change of basis witnessing the ordinary shape. Every accessor below is
+stated for this one element, so its clauses can be combined. -/
+public noncomputable def conj (h : DeligneOrdinaryShape ρloc I frob χ k ap εp) :
+    GL (Fin 2) A :=
+  Classical.choose h
+
+/-- Conjugation by `h.conj` makes every group element upper-triangular. -/
+public theorem conj_apply_one_zero
     (h : DeligneOrdinaryShape ρloc I frob χ k ap εp) (σ : H) :
-    ∃ g : GL (Fin 2) A, (g * ρloc σ * g⁻¹).val 1 0 = 0 := by
-  obtain ⟨g, hg, -, -, -, -⟩ := h
-  exact ⟨g, hg σ⟩
+    (h.conj * ρloc σ * h.conj⁻¹).val 1 0 = 0 :=
+  (Classical.choose_spec h).1 σ
 
-/-- In the ordinary shape, inertia has lower-right entry `1` after the
-same conjugation that makes the representation lower-triangular. -/
-public theorem exists_conj_inertia_apply_one_one
+/-- After conjugation by `h.conj`, inertia has lower-right entry `1`. -/
+public theorem conj_inertia_apply_one_one
     (h : DeligneOrdinaryShape ρloc I frob χ k ap εp) {σ : H} (hσ : σ ∈ I) :
-    ∃ g : GL (Fin 2) A, (g * ρloc σ * g⁻¹).val 1 1 = 1 := by
-  obtain ⟨g, -, hg, -, -, -⟩ := h
-  exact ⟨g, hg σ hσ⟩
+    (h.conj * ρloc σ * h.conj⁻¹).val 1 1 = 1 :=
+  (Classical.choose_spec h).2.1 σ hσ
 
-/-- In the ordinary shape, the conjugated Frobenius has lower-right
-entry `ap`. -/
-public theorem exists_conj_frob_apply_one_one
+/-- After conjugation by `h.conj`, Frobenius has lower-right entry `ap`. -/
+public theorem conj_frob_apply_one_one
     (h : DeligneOrdinaryShape ρloc I frob χ k ap εp) :
-    ∃ g : GL (Fin 2) A, (g * ρloc frob * g⁻¹).val 1 1 = ap := by
-  obtain ⟨g, -, -, hg, -, -⟩ := h
-  exact ⟨g, hg⟩
+    (h.conj * ρloc frob * h.conj⁻¹).val 1 1 = ap :=
+  (Classical.choose_spec h).2.2.1
 
-/-- The upper-left Frobenius entry is constrained by the determinant-type
-identity in the shape: `ap` times that entry equals
-`χ(frob) ^ (k - 1) * εp` for the witnessing basis. -/
-public theorem exists_conj_frob_mul_apply_zero_zero
+/-- After conjugation by `h.conj`, inertia acts on the upper-left entry
+through `χ ^ (k - 1)`. -/
+public theorem conj_inertia_apply_zero_zero
+    (h : DeligneOrdinaryShape ρloc I frob χ k ap εp) {σ : H} (hσ : σ ∈ I) :
+    (h.conj * ρloc σ * h.conj⁻¹).val 0 0 = χ σ ^ (k - 1) :=
+  (Classical.choose_spec h).2.2.2.1 σ hσ
+
+/-- After conjugation by `h.conj`, `ap` times the upper-left Frobenius entry
+is `χ(frob) ^ (k - 1) * εp`. -/
+public theorem conj_frob_mul_apply_zero_zero
     (h : DeligneOrdinaryShape ρloc I frob χ k ap εp) :
-    ∃ g : GL (Fin 2) A,
-      ap * (g * ρloc frob * g⁻¹).val 0 0 = χ frob ^ (k - 1) * εp := by
-  obtain ⟨g, -, -, -, -, hg⟩ := h
-  exact ⟨g, hg⟩
+    ap * (h.conj * ρloc frob * h.conj⁻¹).val 0 0 = χ frob ^ (k - 1) * εp :=
+  (Classical.choose_spec h).2.2.2.2
 
 end DeligneOrdinaryShape
 
