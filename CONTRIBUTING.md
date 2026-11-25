@@ -511,7 +511,8 @@ map, the card move ledger, the tooling that builds and checks the site, the
 toolchain pins, a path where the build writes or fetches its outputs, Git
 attributes, or a file named like an Autoform output marker; PRs that change
 only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
-run only its unit tests, in a few minutes
+run only its unit tests, in a few minutes, and PRs that change only Lean library
+files those tests do not read, provenance and documentation run neither
 ([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
 With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
 and checks a branch on demand; only `main` publishes.
