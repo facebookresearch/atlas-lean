@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2ClassC45
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBarCount
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2FirstBars
 
 /-!
@@ -95,23 +96,6 @@ public theorem_wanted signedInvSeq_wilf_and_count_b0b1_b0b0_0b1 :
       signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.lt, false, true⟩, ⟨.eq, false, true⟩} ∧
     ∀ n, (signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, false, true⟩} n : ℚ) =
         n ! * (1 + harmonic n)
-
-/-- **Mansour–Safadi Lemma 4 (signed patterns 0̄1̄, 0̄0̄, 0̄1).** A signed inversion sequence of
-length $n$ is a word $e_1 \cdots e_n$ with $e_k \in \{0, \bar 0, 1, \bar 1, \dots, k - 1,
-\overline{k - 1}\}$. It avoids a length-2 signed pattern $\tau_1\tau_2$ (one of $00$, $01$, $10$,
-each letter possibly barred) when no $i < j$ have $|e_i|$, $|e_j|$ in the same order as $|\tau_1|$,
-$|\tau_2|$ with $e_i$, $e_j$ barred exactly when $\tau_1$, $\tau_2$ are. Write $\bar I_n(B)$ for the
-set of signed inversion sequences of length $n$ that avoid every pattern in $B$. For every
-$n \ge 0$, $|\bar I_n(\{\bar 0\bar 1, \bar 0\bar 0, \bar 0 1\})| =
-|\bar I_n(\{\bar 0\bar 1, \bar 0 0, \bar 0 1\})| = \sum_{j=0}^{n} j!\,(j + 1)^{n - j}$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 4 (`integers-2026-A74-lem-4`). -/
-public theorem_wanted signedInvSeq_wilf_and_count_b0b1_b0b0_b01 :
-    signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩} =
-      signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, true, false⟩} ∧
-    ∀ n, signedInvAvoidCount {⟨.lt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩} n =
-        ∑ j ∈ Finset.range (n + 1), j ! * (j + 1) ^ (n - j)
 
 /-- **Signed inversion sequences avoiding $\{\bar1\bar0, \bar0\bar1, 01\}$.** For a set $B$ of
 length-2 signed patterns (a bar marks a barred letter), let $|\bar I_n(B)|$ be the number of signed
