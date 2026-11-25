@@ -13,3 +13,4 @@
 - [Soundness of the graph 3-coloring protocol](soundness-of-the-graph-3-coloring-protocol.md)
 - [Succinct arguments from probabilistically checkable proofs](succinct-arguments-from-probabilistically.md)
 - [Zero knowledge of the graph 3-coloring protocol](zero-knowledge-of-the-graph-3-coloring-protocol.md)
+- [Zero-knowledge interactive proofs](zero-knowledge-interactive-proofs.md)

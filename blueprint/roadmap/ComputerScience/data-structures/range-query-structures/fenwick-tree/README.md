@@ -28,3 +28,4 @@
 - [Prefix sums after a point update](prefix-sum-add.md)
 - [Fenwick tree range sum](range-sum.md)
 - [Correctness of Fenwick tree range sums](range-sum-eq.md)
+- [Fenwick-tree operations take logarithmic time](fenwick-tree-operations-take-logarithmic-time.md)
