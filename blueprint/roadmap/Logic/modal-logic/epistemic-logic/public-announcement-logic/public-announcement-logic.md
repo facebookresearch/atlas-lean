@@ -5,7 +5,8 @@ Extend the multi-agent epistemic language with formulas $[F!]G$. In a Kripke mod
 - $[F!]p \leftrightarrow (F \to p)$ for propositional letters $p$;
 - $[F!]\bigl(G \wedge H\bigr) \leftrightarrow ([F!]G \wedge [F!]H)$;
 - $[F!]\neg G \leftrightarrow (F \to \neg [F!]G)$;
-- $[F!][a]G \leftrightarrow (F \to [a][F!]G)$,
+- $[F!][a]G \leftrightarrow (F \to [a][F!]G)$;
+- $[F!][H!]K \leftrightarrow [(F \wedge [F!]H)!]K$,
 
 together with replacement of provable equivalents. This axiomatization is sound and complete for the language with announcements and without common knowledge.
 
@@ -20,6 +21,7 @@ together with replacement of provable equivalents. This axiomatization is sound 
 - [Reduction law for announced atoms](reduction-law-for-announced-atoms.md)
 - [Announcements distribute over implication](announcements-distribute-over-implication.md)
 - [Reduction law for knowledge after an announcement](reduction-law-for-knowledge-after-an-announcement.md)
+- [Composition of announcements](composition-of-announcements.md)
 - [Announcement elimination](announcement-elimination.md)
 - [The announcement translation is free of announcements and common knowledge](the-announcement-translation-is-announcement-free.md)
 

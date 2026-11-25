@@ -1324,3 +1324,4 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/propositional-logic/finite-ground-positive-program-to-data-datalog-horn-correspo.md"}], "id": "af_5e639123bb32246d163bccd6", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/propositional-logic/basic-properties-of-stable-models.md"}], "id": "af_5bdc1c1262c5b06d650bd451", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/epistemic-logic/public-announcement-logic/README.md"}], "id": "af_f6ce534eb882c9998ec2b060"}
+{"subject": [{"type": "generic", "uri": "../roadmap/Logic/modal-logic/epistemic-logic/public-announcement-logic/composition-of-announcements.md"}], "id": "af_70010a104fc1574798385b53", "object": [{"location": {"declaration": "Cslib.Epistemic.sat_announce_announce"}}]}
