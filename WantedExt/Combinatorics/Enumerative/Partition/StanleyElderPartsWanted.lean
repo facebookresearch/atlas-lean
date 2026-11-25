@@ -242,20 +242,6 @@ public theorem_wanted nColor_oddParts_generatingFunction :
         PowerSeries.mk fun n =>
           ((∑ s ∈ nColorPartitions n, (s.filter fun p => Odd p.1).card : ℕ) : ℚ)
 
-/-- **Generating function for colored parts of multiplicity at least $t$.** Let $t \ge 1$. For
-$m \ge 0$ let $N^t(m)$ be the sum, over all $n$-color partitions of $m$, of the number of
-distinct colored parts that occur at least $t$ times. Then, as formal power series in $q$ with
-rational coefficients,
-$$\sum_{m \ge 1} m q^{mt} = \prod_{m \ge 1} (1 - q^m)^m \sum_{m \ge 0} N^t(m) q^m.$$
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 6 (`integers-2025-A94-thm-6`). -/
-public theorem_wanted nColor_partsMultiplicityGe_generatingFunction (t : ℕ) (ht : 1 ≤ t) :
-    ∑' m : ℕ, ((m + 1 : ℕ) : ℚ⟦X⟧) * X ^ ((m + 1) * t) =
-      (∏' m : ℕ, (1 - X ^ (m + 1)) ^ (m + 1) : ℚ⟦X⟧) *
-        PowerSeries.mk fun n =>
-          ((∑ s ∈ nColorPartitions n, (s.toFinset.filter fun p => t ≤ s.count p).card : ℕ) : ℚ)
-
 /-- **Generating function for parts in a residue class over n-color partitions.** Let $r$ and
 $k$ be natural numbers with $0 < k < r$, and for $i \ge 0$ let $C(k \bmod r, i)$ be the total
 number of parts of size congruent to $k$ modulo $r$, counted with multiplicity, over the

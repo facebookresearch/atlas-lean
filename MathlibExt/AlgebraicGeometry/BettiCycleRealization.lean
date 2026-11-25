@@ -42,7 +42,6 @@ open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry
 open PerverseSheaves ComplexAnalytification
 open CompactSupportBetti VerdierBetti ProperBettiFunctoriality
-open DeCataldoMiglioriniDecompositionWanted (IsProjectiveOverC)
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -79,27 +78,36 @@ variable
   (P : ∀ {X Y : ComplexScheme} [IsComplexVariety X] [IsComplexVariety Y]
     (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
 
-/-- Actual Chow-to-Borel–Moore maps normalized on smooth proper presentations.
-This is specified input data; its existence is not asserted here. -/
+/-- A Chow-to-Borel–Moore cycle map for the given dualizing complexes `D` and proper pullbacks `P`.
+Its data are a purity isomorphism $D_X \cong \mathbb{Q}[2d]$ between the dualizing complex of $X$
+and the shifted constant sheaf on its analytification, for every smooth proper projective complex
+variety $X$ of dimension $d$; and, for every proper projective complex variety $X$ and every $r$, a
+$\mathbb{Q}$-linear map from the rational Chow group of $r$-cycles on $X$ to the Borel–Moore
+homology of $X$ in degree $2r$. It is normalized on smooth proper presentations: when $X$ is
+moreover Noetherian and smooth of dimension $d$, the fundamental $d$-cycle of $X$ maps to the
+fundamental class given by the purity of $X$; and for a proper map $f : X \to Y$ of proper
+projective complex varieties with $X$ Noetherian and smooth of dimension $r$, the pushforward of the
+fundamental $r$-cycle of $X$ maps to the Borel–Moore pushforward along `P f` of the fundamental
+class of $X$. -/
 structure CycleMap where
   /-- A compatible selected purity, relative to which fundamental classes
   and their traces are interpreted. -/
   purity : ∀ (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom],
-    IsProjectiveOverC X →
+    ProjectiveSpace.IsProjective X →
       ((D X).obj ≅
         (BettiRealization.rationalUnit (space X))⟦(2 * d : ℤ)⟧)
   /-- Rational cycle realization on the actual projective quotient by fibre
   relations. Proper projective resolutions normalize every such cycle. -/
   cycleClass : ∀ (X : ComplexScheme) [IsComplexVariety X] [IsProper X.hom]
-    (r : ℕ), IsProjectiveOverC X → GeometricChow.ChowGroup X r →ₗ[ℚ]
+    (r : ℕ), ProjectiveSpace.IsProjective X → GeometricChow.ChowGroup X r →ₗ[ℚ]
       BorelMoore (space X) (D X) (2 * r)
   /-- The whole smooth scheme realizes as the nonzero oriented fundamental
   morphism determined by its selected purity. -/
   fundamental_normalization : ∀ (X : ComplexScheme) [IsComplexVariety X]
     [IsNoetherian X.left] (d : ℕ)
     [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-    (hX : IsProjectiveOverC X),
+    (hX : ProjectiveSpace.IsProjective X),
     cycleClass X d hX ((GeometricChow.rationalEquivalences X d).mkQ
         (GeometricChow.fundamentalCycleOfDimension X.left d)) =
       fundamentalClass (space X) (D X) d (purity X d hX)
@@ -109,8 +117,8 @@ structure CycleMap where
     [IsComplexVariety X] [IsComplexVariety Y]
     (f : X ⟶ Y) [IsProper f.left] [IsProper X.hom] [IsProper Y.hom]
     [IsNoetherian X.left] (r : ℕ)
-    [SmoothOfRelativeDimension r X.hom] (hX : IsProjectiveOverC X)
-    (hY : IsProjectiveOverC Y),
+    [SmoothOfRelativeDimension r X.hom] (hX : ProjectiveSpace.IsProjective X)
+    (hY : ProjectiveSpace.IsProjective Y),
     cycleClass Y r hY
         ((GeometricChow.rationalEquivalences Y r).mkQ
           (pushedFundamentalCycle f r)) =
@@ -125,7 +133,7 @@ variable {D P} (S : CycleMap D P)
 the same selected ambient purity. The degree is the actual codimension. -/
 def cohomologyClass (X : ComplexScheme) [IsComplexVariety X]
     (d r : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-    (hX : IsProjectiveOverC X) :
+    (hX : ProjectiveSpace.IsProjective X) :
     GeometricChow.ChowGroup X r →ₗ[ℚ]
       BettiRealization.Cohomology (space X)
         (2 * (d : ℤ) - 2 * (r : ℤ)) where
@@ -142,8 +150,10 @@ def cohomologyClass (X : ComplexScheme) [IsComplexVariety X]
 
 end CycleMap
 
-/-- Purity makes the fundamental-class morphism an actual isomorphism.
-This provides a direct normalization test for every realization provider. -/
+/-- For a topological space $Z$ with a dualizing complex $D_Z$ and a purity isomorphism
+$e : D_Z \cong \mathbb{Q}_Z[2d]$, the fundamental class $\mathbb{Q}_Z \to D_Z[-2d]$ defined by $e$
+(a class in the Borel–Moore homology of $Z$ in degree $2d$) is an isomorphism in the derived
+category of rational sheaves on $Z$. -/
 theorem fundamentalClass_isIso (Z : TopCat.{0}) (DZ : DualizingComplex Z)
     (d : ℕ) (e : DZ.obj ≅ (BettiRealization.rationalUnit Z)⟦(2 * d : ℤ)⟧) :
     IsIso (fundamentalClass Z DZ d e) := by
@@ -155,9 +165,13 @@ also available as `BettiCycleRealization.cohomologyCast`. -/
 
 export BettiRealization (cohomologyCast)
 
-/-- The ordinary product compatibility is anchored to an actual transverse
-smooth closed intersection. Full singular intersection machinery is not
-silently assumed. The existence of a realization is not asserted here. -/
+/-- A cycle realization: a cycle map (`CycleMap`) for the given `D` and `P` that is compatible with
+products on transverse smooth closed intersections. Let $X$ be a smooth proper projective complex
+variety of dimension $d$ and $Y \to X$, $Z \to X$ closed immersions, with $Y$ and $Z$ Noetherian and
+smooth of dimensions $r$ and $s$, whose intersection $Y \times_X Z$ is Noetherian and smooth of
+dimension $t$, where $r + s = d + t$. Then the cup product of the cohomology classes
+(`CycleMap.cohomologyClass`, through the purity of $X$) of the pushed-forward fundamental cycles of
+$Y$ and $Z$ is the cohomology class of the pushed-forward fundamental cycle of $Y \times_X Z$. -/
 structure CycleRealization where
   /-- The selected actual cycle map and its fundamental normalizations. -/
   toCycleMap : CycleMap D P
@@ -165,7 +179,7 @@ structure CycleRealization where
   actual Yoneda cup product on the same ambient Betti complex. -/
   transverse_product : ∀ (X : ComplexScheme) [IsComplexVariety X]
     (d r s t : ℕ) [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-    (hX : IsProjectiveOverC X) (Y Z : ComplexScheme)
+    (hX : ProjectiveSpace.IsProjective X) (Y Z : ComplexScheme)
     (i : Y ⟶ X) (j : Z ⟶ X)
     [IsClosedImmersion i.left] [IsClosedImmersion j.left]
     [IsNoetherian Y.left] [IsNoetherian Z.left]
