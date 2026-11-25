@@ -135,6 +135,39 @@ theorem not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
     _ ↔ l ≡ 1 [MOD m / Nat.gcd a m] := (Nat.modEq_iff_dvd' hl).symm.trans Nat.ModEq.comm
   exact ⟨fun hd => by simpa only [hd, Nat.div_one] using criterion, fun _ => criterion⟩
 
+/-- **Congruence upper bound for modular Schur numbers.** Let $m$, $k$, $l$ and $a$ be natural
+numbers with $k \ge 1$, $l \ge 1$ and $1 \le a \le m - 1$, and let $d = \gcd(a, m)$. If
+$l \equiv 1 \pmod{m/d}$, then the generalized Schur number $S_m(k, l)$ modulo $m$ satisfies
+$S_m(k, l) < a$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 3
+(`integers-2025-A62-cor-3`). -/
+theorem modularSchurNumber_lt_of_modEq (m k l a : ℕ) (hk : 0 < k) (hl : 0 < l)
+    (ha : 0 < a) (ham : a ≤ m - 1) (hla : l ≡ 1 [MOD m / Nat.gcd a m]) :
+    modularSchurNumber m k l < a := by
+  have hma : ¬ m ∣ a := fun h => (show a < m by omega).not_ge (Nat.le_of_dvd ha h)
+  obtain ⟨hcop, hnoncop⟩ := not_isSumFreeMod_singleton_iff a l m hl (by omega) hma
+  have hsingle : ¬ IsSumFreeMod m l {(a : ℤ)} := by
+    by_cases hd : Nat.gcd a m = 1
+    · exact (hcop hd).mpr (by simpa only [hd, Nat.div_one] using hla)
+    · have hpos := Nat.gcd_pos_of_pos_left m ha
+      exact (hnoncop (by omega)).mpr hla
+  have hzero : HasSumFreePartitionMod m k l 0 := by
+    obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk.ne'
+    exact hasSumFreePartitionMod_zero m j l
+  have hbound : modularSchurNumber m k l ≤ a - 1 := by
+    refine csSup_le ⟨0, hzero⟩ ?_
+    intro n hn
+    by_contra! han
+    obtain ⟨c, hc⟩ := hn
+    -- The singleton at a would inherit sum-freeness from its color class.
+    have hmem (x : ℤ) (hx : x ∈ ({(a : ℤ)} : Set ℤ)) :
+        x ∈ {z : ℤ | ∃ b : ℕ, 1 ≤ b ∧ b ≤ n ∧ c b = c a ∧ z = b} :=
+      ⟨a, ha, by omega, rfl, Set.mem_singleton_iff.mp hx⟩
+    exact hsingle fun x hx y hy => hc (c a) x (fun i => hmem (x i) (hx i)) y (hmem y hy)
+  omega
+
 /-- **Elements of a sum-free pair are congruent modulo $p$.** Let $p$ be a prime, let $i$ be a
 positive integer, and let $l$ be a natural number with $l \ge p^i - 1$ and
 $l \not\equiv 1 \pmod{p}$. If $a$ and $b$ are natural numbers such that $\{a, b\}$ is

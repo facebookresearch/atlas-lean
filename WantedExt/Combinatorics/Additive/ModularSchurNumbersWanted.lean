@@ -44,18 +44,6 @@ Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 2
 public theorem_wanted modularSchurNumber_eq_zero_iff (m k l : ℕ) (hm : 0 < m) (hk : 0 < k)
     (hl : 0 < l) : modularSchurNumber m k l = 0 ↔ l ≡ 1 [MOD m]
 
-/-- **Congruence upper bound for modular Schur numbers.** Let $m$, $k$, $l$ and $a$ be natural
-numbers with $k \ge 1$, $l \ge 1$ and $1 \le a \le m - 1$, and let $d = \gcd(a, m)$. If
-$l \equiv 1 \pmod{m/d}$, then the generalized Schur number $S_m(k, l)$ modulo $m$ satisfies
-$S_m(k, l) < a$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 3
-(`integers-2025-A62-cor-3`). -/
-public theorem_wanted modularSchurNumber_lt_of_modEq (m k l a : ℕ) (hk : 0 < k) (hl : 0 < l)
-    (ha : 0 < a) (ham : a ≤ m - 1) (hla : l ≡ 1 [MOD m / Nat.gcd a m]) :
-    modularSchurNumber m k l < a
-
 /-- **Lower bound for modular Schur numbers modulo a prime power.** Let $p$ be a prime, let $i$
 and $l$ be positive integers with $l \not\equiv 1 \pmod{p}$, and let $1 \le k \le p - 1$. Then
 the generalized Schur number $S_{p^i}(k, l)$, the largest $n$ such that $\{1, \dots, n\}$ admits
