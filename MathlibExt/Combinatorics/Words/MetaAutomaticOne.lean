@@ -152,6 +152,55 @@ public theorem metaAutomaticOne_pair_closure (b : ℕ → Bool)
   rw [e0, e1, e2, e3, f0, f1, f2, f3]
   exact ⟨rfl, rfl, rfl, rfl⟩
 
+/-- **$\mathcal{M}_1$ as a coding of a uniform morphism fixed point.** Let $\sigma$ be the
+$4$-uniform morphism on $\{0, 1, 2, 3\}$ with $\sigma(0) = 0112$, $\sigma(1) = 1230$,
+$\sigma(2) = 2301$ and $\sigma(3) = 3023$, and write $\sigma(c)_r$ for the letter of $\sigma(c)$
+at position $r$, counted from $0$. There is a sequence $w : \mathbb{N} \to \mathbb{N}$ with
+$w(0) = 0$ and $w(4n + r) = \sigma(w(n))_r$ for all $n \in \mathbb{N}$ and $r < 4$, such that,
+reading the values of the meta-automatic sequence $\mathcal{M}_1$ as $0$ and $1$,
+$\mathcal{M}_1(n) = w(n) \bmod 2$ for every $n \in \mathbb{N}$. In other words, $\mathcal{M}_1$
+is the image of the fixed point of $\sigma$ starting with $0$ under the coding $0, 2 \mapsto 0$,
+$1, 3 \mapsto 1$.
+
+Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
+Integer Sequences 29 (2026), Article 26.4.1, Corollary 16 (`jis-2026-26.4.1-cor-16`). -/
+public theorem metaAutomaticOne_morphism_coding :
+    ∃ w : ℕ → ℕ, w 0 = 0 ∧
+      (∀ n r, r < 4 → w (4 * n + r) =
+        ([[0, 1, 1, 2], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 2, 3]].getD (w n) []).getD r 0) ∧
+      ∀ n, metaAutomaticOne n = decide (w n % 2 = 1) := by
+  let b (n : ℕ) := metaAutomaticOne (2 * n + 1 - (metaAutomaticOne n).toNat)
+  -- The first coordinate is the low bit; complement the high bit so the initial pair is 0.
+  let encode (s : Bool × Bool) : ℕ := 2 * (!s.2).toNat + s.1.toNat
+  let w (n : ℕ) := encode (metaAutomaticOne n, b n)
+  let step (x y : Bool) (r : ℕ) : Bool × Bool :=
+    match r with
+    | 0 => (x, y)
+    | 1 => (!x, xor x y)
+    | 2 => (y, !x)
+    | _ => (!y, !xor x y)
+  have digits (r : ℕ) (hr : r < 4) : r = 0 ∨ r = 1 ∨ r = 2 ∨ r = 3 := by omega
+  let morphism : List (List ℕ) := [[0, 1, 1, 2], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 2, 3]]
+  have table (x y : Bool) (r : ℕ) (hr : r < 4) :
+      encode (step x y r) = (morphism.getD (encode (x, y)) []).getD r 0 := by
+    rcases digits r hr with rfl | rfl | rfl | rfl <;> cases x <;> cases y <;> decide
+  have lowBit (x y : Bool) : x = decide (encode (x, y) % 2 = 1) := by
+    cases x <;> cases y <;> decide
+  refine ⟨w, by decide +kernel, ?_, fun n => lowBit (metaAutomaticOne n) (b n)⟩
+  intro n r hr
+  by_cases hn : n = 0
+  · subst n
+    rcases digits r hr with rfl | rfl | rfl | rfl <;> decide +kernel
+  obtain ⟨h0, h1, h2, h3⟩ := metaAutomaticOne_pair_closure b (fun _ => rfl) n (by omega)
+  have hpair : (metaAutomaticOne (4 * n + r), b (4 * n + r)) =
+      step (metaAutomaticOne n) (b n) r := by
+    rcases digits r hr with rfl | rfl | rfl | rfl
+    · simpa only [Nat.add_zero, step] using h0
+    · exact h1
+    · exact h2
+    · exact h3
+  exact (congrArg encode hpair).trans (table (metaAutomaticOne n) (b n) r hr)
+
 end
 
 end MetaMathlibExt
