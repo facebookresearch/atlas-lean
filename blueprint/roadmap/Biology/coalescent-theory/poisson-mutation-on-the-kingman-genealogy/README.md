@@ -44,3 +44,8 @@
 - [Variance of the segregating-site count in the marked Kingman model](variance-seg-sites-kingman-mutation-meas.md)
 - [Expected number of segregating sites in the marked Kingman model](integral-seg-sites-kingman-mutation-meas.md)
 - [Tajima's variance estimator is unbiased in the marked Kingman model](integral-tajima-var-estimator-kingman-mu.md)
+
+## Consequences for inference from small samples
+
+- [Data with no segregating sites do not identify the topology of three genes](zero-mutation-data-leave-the-local-topology-unid.md)
+- [Tajima's numerator vanishes identically for three genes](tajima-s-numerator-pathwise-zero-at-n-3-and-exac.md)
