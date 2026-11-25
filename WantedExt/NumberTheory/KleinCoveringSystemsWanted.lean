@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Algebra.Order.Field.Rat
 public import MathlibExt.NumberTheory.CoveringSystem
 public import MathlibExt.NumberTheory.CoveringSystem.DiscardPrimePower
+public import MathlibExt.NumberTheory.CoveringSystem.MinSeven
 public import MathlibExt.NumberTheory.CoveringSystem.SwapResidues
 public import MathlibExt.NumberTheory.CoveringSystem.Translate
 public import MathlibExt.NumberTheory.CoveringSystem.TrifonovCovering
@@ -77,19 +78,6 @@ public theorem_wanted lcm_moduli_ge_5040_of_distinct_covering_min_six
     (classes : Finset (ℤ × ℕ)) (hcov : Int.IsCoveringSystem classes)
     (hdist : Set.InjOn Prod.snd (classes : Set (ℤ × ℕ))) (hmin : ∀ c ∈ classes, 6 ≤ c.2)
     (hsix : ∃ c ∈ classes, c.2 = 6) : 5040 ≤ classes.lcm Prod.snd
-
-/-- **A distinct covering system with minimum modulus 7 and moduli of lcm 15120.** There is a
-distinct covering system, that is, a finite set of congruences $x \equiv r \pmod m$ with
-$r \in \mathbb{Z}$, $m \in \mathbb{N}$ and no two with the same modulus, such that every
-integer satisfies at least one of them, whose moduli are all at least $7$, include $7$, and have
-least common multiple $15120$.
-
-Source: Jonah Klein, *On a Conjecture of Krukenberg and a Problem of Dalton and Trifonov*,
-INTEGERS 26 (2026), Article A38, Theorem 5 (`integers-2026-A38-thm-5`). -/
-public theorem_wanted exists_distinct_covering_min_seven_lcm_15120 :
-    ∃ classes : Finset (ℤ × ℕ), Int.IsCoveringSystem classes ∧
-      Set.InjOn Prod.snd (classes : Set (ℤ × ℕ)) ∧ (∀ c ∈ classes, 7 ≤ c.2) ∧
-      (∃ c ∈ classes, c.2 = 7) ∧ classes.lcm Prod.snd = 15120
 
 /-- **Merging the p classes whose modulus is divisible by a prime power.** Let $C$ be a
 covering system with positive moduli: a finite set of congruences $x \equiv r \pmod m$ with
