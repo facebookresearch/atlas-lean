@@ -456,7 +456,8 @@ private theorem isFrameOn_tensorSections {L M : X.Modules} {U V : X.Opens} {s : 
 
 end FrameTensor
 
-/-- **Tensor product of frames.** The tensor product of two frames on `V` is a frame on `V`. -/
+/-- **Tensor product of frames.** If sections `s` of `L` and `t` of `M` over the same open `U`
+are frames on `V`, then `tensorSections s t` is a frame of `L ⊗ M` on `V`. -/
 theorem IsFrameOn.tensorSections {X : Scheme.{u}} {L M : X.Modules} {U V : X.Opens} {s : Γ(L, U)}
     {t : Γ(M, U)} (hs : IsFrameOn s V) (ht : IsFrameOn t V) :
     IsFrameOn (Modules.tensorSections s t) V :=
@@ -576,8 +577,8 @@ private noncomputable def trivializationBelow
 end FrameBridge
 
 open FrameBridge FrameTensor in
-/-- **Frames from trivializations.** A trivialization of `M` over `U` gives a frame of `M` on
-`U`. -/
+/-- **Frames from trivializations.** If the pullback of `M` to an open `U` is isomorphic to the
+structure sheaf of `U`, then `M` has a section over `U` that is a frame on `U`. -/
 theorem exists_isFrameOn_of_pullback_iso_unit {X : Scheme.{u}} {M : X.Modules} (U : X.Opens)
     (eU : (Modules.pullback U.ι).obj M ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf) :
     ∃ s : Γ(M, U), IsFrameOn s U := by

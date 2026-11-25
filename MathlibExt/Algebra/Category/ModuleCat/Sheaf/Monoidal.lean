@@ -40,12 +40,13 @@ import Mathlib.CategoryTheory.Functor.ReflectsIso.Balanced
 /-!
 # The monoidal structure on sheaves of modules
 
-For a sheaf of commutative rings `𝒪`, the class of morphisms of presheaves of modules that
+For a presheaf of commutative rings `𝒪` with a locally bijective morphism from its underlying
+presheaf of rings to a sheaf of rings, the class of morphisms of presheaves of `𝒪`-modules that
 become isomorphisms after sheafification is stable under tensoring
-(`PresheafOfModules.isMonoidal_inverseImage_W_toPresheaf`). Hence the monoidal structure on
-presheaves of modules descends along sheafification, and sheaves of modules over `𝒪` form a
-symmetric monoidal closed category whose tensor product is the sheafified tensor product
-(`SheafOfModules.tensorIsoSheafify`).
+(`PresheafOfModules.isMonoidal_inverseImage_W_toPresheaf`). For a sheaf of commutative rings `𝒪`
+(the identity morphism), the monoidal structure on presheaves of modules therefore descends along
+sheafification, and sheaves of modules over `𝒪` form a symmetric monoidal closed category whose
+tensor product is the sheafified tensor product (`SheafOfModules.tensorIsoSheafify`).
 -/
 
 @[expose] public section
@@ -124,11 +125,16 @@ private lemma W_whiskerRight {d₁ d₂ : PresheafOfModulesOfCommRing.{u} 𝒪} 
 end PresheafOfModules.IsMonoidalW
 
 open PresheafOfModules.IsMonoidalW in
-/-- **Tensoring preserves morphisms inverted by sheafification.** Morphisms of presheaves of
-modules that become isomorphisms after sheafification are stable under tensoring. This
-generalizes the instance `PresheafOfModules.isMonoidal_W_inverseImage_toPresheaf`, the case of a
-sheaf `𝒪` with `α = 𝟙` stated in more general universes; for `C : Type u` with `Category.{u} C`,
-that instance follows from this theorem. -/
+/-- **Tensoring preserves morphisms inverted by sheafification.** Let `𝒪` be a presheaf of
+commutative rings on a site `(C, J)` on which presheaves of abelian groups have sheafifications
+and `J.W` consists of the locally bijective morphisms, and let `α` be a locally injective and
+locally surjective morphism from the underlying presheaf of rings of `𝒪` to a sheaf of rings `R`.
+Then the morphisms of presheaves of `𝒪`-modules whose underlying morphism of presheaves of
+abelian groups becomes an isomorphism after sheafification (lies in `J.W`) are stable under
+tensoring, on either side, with any presheaf of `𝒪`-modules. This generalizes the instance
+`PresheafOfModules.isMonoidal_W_inverseImage_toPresheaf`, the case of a sheaf `𝒪` with `α = 𝟙`
+stated in more general universes; for `C : Type u` with `Category.{u} C`, that instance follows
+from this theorem. -/
 theorem PresheafOfModules.isMonoidal_inverseImage_W_toPresheaf {C : Type u} [Category.{u} C] {J :
   GrothendieckTopology C}
     (𝒪 : Cᵒᵖ ⥤ CommRingCat.{u}) (R : Sheaf J RingCat.{u})
@@ -148,18 +154,21 @@ variable {C : Type u} [Category.{u} C] {J : GrothendieckTopology C}
   (𝒪 : Cᵒᵖ ⥤ CommRingCat.{u}) (h𝒪 : Presheaf.IsSheaf J (𝒪 ⋙ forget₂ CommRingCat RingCat))
   [J.WEqualsLocallyBijective AddCommGrpCat.{u}] [HasWeakSheafify J AddCommGrpCat.{u}]
 
-/-- **Underlying sheaf of rings.** The sheaf of rings underlying a sheaf of commutative rings. -/
+/-- **Underlying sheaf of rings.** For a presheaf of commutative rings `𝒪` whose underlying
+presheaf of rings is a sheaf (`h𝒪`), that sheaf of rings. -/
 abbrev ringSheaf : Sheaf J RingCat.{u} := ⟨𝒪 ⋙ forget₂ CommRingCat RingCat, h𝒪⟩
 
-/-- **Morphisms inverted by sheafification.** Morphisms of presheaves of modules that become
-isomorphisms after sheafification. -/
+/-- **Morphisms inverted by sheafification.** The morphisms of presheaves of `𝒪`-modules whose
+underlying morphism of presheaves of abelian groups lies in `J.W`, i.e. becomes an isomorphism
+after sheafification. -/
 abbrev presheafW (J : GrothendieckTopology C) (𝒪 : Cᵒᵖ ⥤ CommRingCat.{u}) :
     MorphismProperty (PresheafOfModulesOfCommRing.{u} 𝒪) :=
   (J.W (A := AddCommGrpCat.{u})).inverseImage
     (PresheafOfModules.toPresheaf (𝒪 ⋙ forget₂ CommRingCat RingCat))
 
-/-- **Sheafification of presheaves of modules.** Sheafification of presheaves of modules over
-`𝒪`. -/
+/-- **Sheafification of presheaves of modules.** For a presheaf of commutative rings `𝒪` whose
+underlying presheaf of rings is a sheaf (`h𝒪`), sheafification of presheaves of `𝒪`-modules, with
+values in sheaves of modules over that sheaf of rings. -/
 abbrev sheafifyFunctor : PresheafOfModulesOfCommRing.{u} 𝒪 ⥤ SheafOfModules.{u} (ringSheaf 𝒪 h𝒪) :=
   PresheafOfModules.sheafification (R := ringSheaf 𝒪 h𝒪) (𝟙 (𝒪 ⋙ forget₂ CommRingCat RingCat))
 
