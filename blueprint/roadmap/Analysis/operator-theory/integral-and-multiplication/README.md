@@ -9,6 +9,7 @@ Volterra and kernel integral operators, Cesàro and Hilbert operators, multiplic
 - [Multiplication operators on spaces of continuous functions](multiplication-operators-on-spaces-of-continuous/README.md)
 - [Schur test](schur-test/README.md)
 - [Titchmarsh convolution theorem](titchmarsh-convolution-theorem/README.md)
+- [Toeplitz operators on the Fock space](toeplitz-operators-on-the-fock-space/README.md)
 - [Volterra operator](volterra-operator/README.md)
 - [An $L^p$ bound for Hilbert's integral operator](e-lp-norm-hilbert-integral-operator-le.md)
 - [Integral operators with an $L^p$ kernel map $L^q$ to $L^p$](integrable-kernel-mul-and-exists-clm-int.md)

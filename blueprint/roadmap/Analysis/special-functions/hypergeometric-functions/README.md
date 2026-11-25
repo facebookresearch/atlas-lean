@@ -5,3 +5,4 @@ Generalized and basic hypergeometric series and their summation theorems (Gauss,
 - [Basic hypergeometric series](basic-hypergeometric-series/README.md)
 - [Frisch and Klamkin binomial identities](frisch-and-klamkin-binomial-identities/README.md)
 - [Generalized hypergeometric series](generalized-hypergeometric-series/README.md)
+- [Christol's criterion for N-integrality of hypergeometric series](christol-s-criterion-for-n-integrality-of-hyperg/README.md)
