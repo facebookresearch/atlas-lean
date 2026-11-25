@@ -8,6 +8,7 @@
 - [Deleting one time from a finite Markov chain kernel](finite-chain-kernel-map-erase-coordinate-2.md)
 - [Restricting a finite Markov kernel along an increasing reindexing](finite-chain-kernel-map-strict-mono.md)
 - [Restricting a finite Markov law along an increasing reindexing](finite-chain-law-map-strict-mono.md)
+- [Appending one time to a finite chain law](map-init-last-finite-chain-law-snoc.md)
 - [Reindexing an ordered vector by a finite set](order-measurable-equiv.md)
 - [Increasing reindexing of a subset within a finite set](order-restriction.md)
 - [Markov law at a finite set of times](finite-law.md)
