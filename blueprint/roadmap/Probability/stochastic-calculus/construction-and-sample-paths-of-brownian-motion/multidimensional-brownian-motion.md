@@ -6,8 +6,10 @@ For a positive semidefinite $d\times d$ matrix $C$, with positive semidefinite s
 
 1. $B$ has continuous paths, $B_0=0$, and independent stationary increments with $B_t-B_s\sim\mathcal N(0,(t-s)I_d)$.
 2. The finite-dimensional laws of $B^C$ are centred Gaussian with
-$$\operatorname{Cov}\bigl(B^C_s,B^C_t\bigr)=\min(s,t)\,C,\qquad s,t\ge0,$$
-and conversely a continuous centred Gaussian process $X$ with $X_0=0$ and $\operatorname{Cov}(X_s,X_t)=\min(s,t)C$ has the law of $B^C$.
+
+    $$\operatorname{Cov}\bigl(B^C_s,B^C_t\bigr)=\min(s,t)\,C,\qquad s,t\ge0,$$
+
+    and conversely a continuous centred Gaussian process $X$ with $X_0=0$ and $\operatorname{Cov}(X_s,X_t)=\min(s,t)C$ has the law of $B^C$.
 3. For $C=I_d$ the process $B^C$ is the standard $d$-dimensional Brownian motion; any $A\in\mathbb R^{d\times d}$ with $AA^{\mathsf T}=C$ gives a process $AB$ with the same law as $C^{1/2}B$.
 
 ## Depends on
