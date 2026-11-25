@@ -12650,6 +12650,7 @@
   "MathlibExt/NumberTheory/LambertSeriesVariants": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Lambert series"},
   "MathlibExt/NumberTheory/LandsbergSchaar": {"to": "NumberTheory/exponential-sums", "title": "Landsberg–Schaar relation"},
   "MathlibExt/NumberTheory/LaplaceQPolynomial": {"to": "NumberTheory/continued-fractions-expansions", "title": "Laplace continued fraction"},
+  "MathlibExt/NumberTheory/LaurentCartierCongruence": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Constant terms of powers of Laurent polynomials"},
   "MathlibExt/NumberTheory/LaurentSeriesBoundedPartialQuotients": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LaurentSeriesConvergentProperties": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of Laurent series"},
   "MathlibExt/NumberTheory/LcmDenseSets": {"to": "NumberTheory/additive-number-theory", "title": "Reciprocal lcm sums of integer sets"},
