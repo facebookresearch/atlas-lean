@@ -20,8 +20,9 @@ taking the same value within each set (a matching variable) drops out.
 For 1:1 matching on a binary exposure, let `n₁₀` pairs have the case exposed and the control not,
 and `n₀₁` the reverse. The conditional likelihood is maximized at `ψ = exp β = n₁₀ / n₀₁`. By
 contrast, maximizing the likelihood jointly over `β` and a separate intercept for every pair (the
-incidental-parameter likelihood) gives `ψ = (n₁₀ / n₀₁)²`, which overstates the odds ratio; this is
-the bias that conditioning removes (Breslow and Day 1980, p. 250). Concordant pairs carry no
+incidental-parameter likelihood) yields `β̂ = 2 log (n₁₀ / n₀₁)`, i.e. `ψ̂ = (n₁₀ / n₀₁)²` — the
+square of the conditional estimate (for any positive estimate `≠ 1`, squaring moves it farther
+from `1`, e.g. `1/2 ↦ 1/4` and `2 ↦ 4`; Breslow and Day 1980, p. 250). Concordant pairs carry no
 information about `β`.
 
 Here `σ t = 1 / (1 + exp (-t))` is the logistic function, Mathlib's `Real.sigmoid`.
@@ -124,14 +125,15 @@ noncomputable def perPairInterceptLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin
   (∑ i, Real.log (Real.sigmoid (α₁₀ i + β) * (1 - Real.sigmoid (α₁₀ i)))) +
     ∑ i, Real.log (Real.sigmoid (α₀₁ i) * (1 - Real.sigmoid (α₀₁ i + β)))
 
-/-- **The incidental-parameter estimate is biased** (Breslow and Day 1980, p. 250). For `n₁₀ > 0`
-discordant pairs with the case exposed and `n₀₁ > 0` with the control exposed, let
+/-- **Maximizer of the incidental-parameter log-likelihood** (Breslow and Day 1980, p. 250). For
+`n₁₀ > 0` discordant pairs with the case exposed and `n₀₁ > 0` with the control exposed, let
 `β̂ = 2 log (n₁₀ / n₀₁)`, so that `e^β̂ = (n₁₀ / n₀₁)²`. Then the incidental-parameter
 log-likelihood, with a separate intercept for every pair, is maximized at `β = β̂` with every
-intercept equal to `-β̂ / 2`: for all intercepts `α₁₀, α₀₁` and every `β`, its value is at most the
-value at that point. The maximizing odds ratio is the square of the conditional estimate
-`n₁₀ / n₀₁` of `pairedConditionalLogLik_max`, which shows the bias of estimating `β` jointly with
-one nuisance intercept per pair.
+intercept equal to `-β̂ / 2`: for all intercepts `α₁₀, α₀₁` and every `β`, its value is at most
+the value at that point. Thus the maximizing odds ratio `(n₁₀ / n₀₁)²` is the square of the
+conditional estimate `n₁₀ / n₀₁` of `pairedConditionalLogLik_max` (moving any positive estimate
+`≠ 1` farther from `1`; this algebraic identity for the maximizer does not by itself state a
+statistical expectation/bias theorem).
 
 Source: Breslow and Day (1980), p. 250. -/
 public theorem_wanted perPairInterceptLogLik_le {n₁₀ n₀₁ : ℕ} (h₁₀ : 0 < n₁₀) (h₀₁ : 0 < n₀₁)

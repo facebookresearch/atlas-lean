@@ -8,4 +8,4 @@
 - [Paired Conditional Log Lik](paired-conditional-log-lik.md)
 - [Conditional MLE for 1:1 matching](paired-conditional-log-lik-max.md)
 - [Per Pair Intercept Log Lik](per-pair-intercept-log-lik.md)
-- [The incidental-parameter estimate is biased](per-pair-intercept-log-lik-le.md)
+- [Maximizer of the incidental-parameter log-likelihood](per-pair-intercept-log-lik-le.md)
