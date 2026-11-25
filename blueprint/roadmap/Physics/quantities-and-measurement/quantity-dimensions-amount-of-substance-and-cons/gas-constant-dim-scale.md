@@ -1,0 +1,3 @@
+# Molar gas constant rescales by its own factor
+
+For unit scales $u_1, u_2$ on the seven ISQ base quantities (each assigns a positive magnitude $u_i(b)$ to every base quantity $b$), write $\lambda_{u_1\to u_2}(d) = \prod_b (u_1(b)/u_2(b))^{d_b}$ for the positive factor by which a coordinate of dimension $d$ is multiplied when converted from $u_1$ to $u_2$. For all $N_A$ and $k_B$, the molar gas constant computed from the quantities with coordinates $\lambda_{u_1\to u_2}(\mathsf{N}^{-1})\,N_A$ and $\lambda_{u_1\to u_2}([k_B])\,k_B$ is the quantity with coordinate $\lambda_{u_1\to u_2}([R])\,(N_A\,k_B)$, where $[k_B] = \mathsf{M}\,\mathsf{L}^{2}\,\mathsf{T}^{-2}\,\Theta^{-1}$ and $[R] = \mathsf{M}\,\mathsf{L}^{2}\,\mathsf{T}^{-2}\,\mathsf{N}^{-1}\,\Theta^{-1}$.

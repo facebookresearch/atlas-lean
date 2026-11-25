@@ -2,12 +2,15 @@
 
 Conformal and univalent maps: Riemann mapping, Koebe and Bloch theorems, Schwarz–Pick and half-plane self-maps, starlike and univalent coefficient problems, Loewner equation, holomorphic motions.
 
+- [Convexity of lemniscate components (Erdős problem 1047)](convexity-of-lemniscate-components-erd-s-problem/README.md)
+- [Diameters of lemniscate components (Erdős problem 1048)](diameters-of-lemniscate-components-erd-s-problem/README.md)
 - [Hadamard products of univalent functions](hadamard-products-of-univalent-functions/README.md)
 - [Holomorphic maps from the disc into a strip](holomorphic-maps-from-the-disc-into-a-strip/README.md)
 - [Holomorphic motions](holomorphic-motions/README.md)
 - [Holomorphic self-maps of the upper half-plane](holomorphic-self-maps-of-the-upper-half-plane/README.md)
 - [Koebe quarter theorem](koebe-quarter-theorem/README.md)
 - [Loewner equation](loewner-equation/README.md)
+- [Projections of polynomial lemniscates (Erdős problem 1043)](projections-of-polynomial-lemniscates-erd-s-prob/README.md)
 - [Radius of convexity of starlike functions](radius-of-convexity-of-starlike-functions/README.md)
 - [Riemann mapping theorem](riemann-mapping-theorem/README.md)
 - [Robertson's conjecture on odd univalent functions](robertson-s-conjecture-on-odd-univalent-function/README.md)

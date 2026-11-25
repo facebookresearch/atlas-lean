@@ -12,5 +12,6 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [Log-rank test](log-rank-test/README.md)
 - [Nelson–Aalen estimator and Greenwood's formula](nelson-aalen-estimator-and-greenwood-s-formula/README.md)
 - [Potential outcomes and causal identification](potential-outcomes-and-causal-identification/README.md)
+- [Single-epoch conditional physical failure probability](single-epoch-conditional-physical-failure-probab/README.md)
 - [U-statistics](u-statistics/README.md)
 - [Reliability and monitoring](reliability-and-monitoring/README.md)

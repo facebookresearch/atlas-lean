@@ -1,0 +1,3 @@
+# Molar energy rescales by its own factor
+
+For unit scales $u_1, u_2$ on the seven ISQ base quantities (each assigns a positive magnitude $u_i(b)$ to every base quantity $b$), write $\lambda_{u_1\to u_2}(d) = \prod_b (u_1(b)/u_2(b))^{d_b}$ for the positive factor by which a coordinate of dimension $d$ is multiplied when converted from $u_1$ to $u_2$. For all $N_A$ and per-particle energies $e$, the molar energy computed from the quantities with coordinates $\lambda_{u_1\to u_2}(\mathsf{N}^{-1})\,N_A$ and $\lambda_{u_1\to u_2}(\mathsf{M}\,\mathsf{L}^{2}\,\mathsf{T}^{-2})\,e$ is the quantity with coordinate $\lambda_{u_1\to u_2}(\mathsf{M}\,\mathsf{L}^{2}\,\mathsf{T}^{-2}\,\mathsf{N}^{-1})\,(N_A\,e)$.

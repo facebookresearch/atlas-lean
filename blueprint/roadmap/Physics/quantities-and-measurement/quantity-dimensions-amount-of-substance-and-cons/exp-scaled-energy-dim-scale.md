@@ -1,0 +1,3 @@
+# Boltzmann factor is unchanged by a change of units
+
+For unit scales $u_1, u_2$ on the seven ISQ base quantities (each assigns a positive magnitude $u_i(b)$ to every base quantity $b$), write $\lambda_{u_1\to u_2}(d) = \prod_b (u_1(b)/u_2(b))^{d_b}$ for the positive factor by which a coordinate of dimension $d$ is multiplied when converted from $u_1$ to $u_2$. For a molar energy $E$, a gas constant $R > 0$ and a temperature $T > 0$, the Boltzmann factor of the rescaled quantities $\lambda_{u_1\to u_2}([E])\,E$, $\lambda_{u_1\to u_2}([R])\,R$ and $\lambda_{u_1\to u_2}(\Theta)\,T$ equals the Boltzmann factor $\exp\!\big(-E/(R\,T)\big)$ of $E$, $R$, $T$.

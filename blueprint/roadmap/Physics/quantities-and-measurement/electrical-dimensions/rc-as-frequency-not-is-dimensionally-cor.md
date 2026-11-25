@@ -1,0 +1,3 @@
+# RC read as a frequency is not dimensionally correct
+
+A relation between quantities is dimensionally correct when, for all unit choices $u_1, u_2$ of the length, time, mass, charge and temperature units and all arguments, it holds of the coordinates exactly when it holds of the coordinates converted from $u_1$ to $u_2$, each quantity rescaled by the factor of its own dimension. The relation $f = R\,C$ between a frequency (dimension $\mathsf{T}^{-1}$), a resistance and a capacitance is not dimensionally correct: for some unit choices and some arguments its truth value changes under conversion.

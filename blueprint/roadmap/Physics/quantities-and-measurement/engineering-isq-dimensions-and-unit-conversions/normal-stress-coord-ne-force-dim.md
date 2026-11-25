@@ -1,0 +1,3 @@
+# Force over area does not convert as a force
+
+Let $\mathrm{m}$ be the unit scale with magnitude $1$ at every ISQ base quantity and $\mathrm{mm}$ the one with magnitude $1/1000$ at length and $1$ elsewhere; $\lambda_{\mathrm{m}\to\mathrm{mm}}(d)$ is the factor for converting a coordinate of dimension $d$ from $\mathrm{m}$ to $\mathrm{mm}$. Then $\dfrac{\lambda_{\mathrm{m}\to\mathrm{mm}}([F])\cdot 1}{\lambda_{\mathrm{m}\to\mathrm{mm}}(\mathsf{L}^{2})\cdot 1} \neq \lambda_{\mathrm{m}\to\mathrm{mm}}([F])\cdot\dfrac{1}{1}$: read as a force rather than a stress, the quotient of a force by an area does not convert correctly.
