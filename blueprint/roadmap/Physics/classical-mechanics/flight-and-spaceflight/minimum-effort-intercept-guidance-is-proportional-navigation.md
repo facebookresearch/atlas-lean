@@ -20,7 +20,7 @@ $$
 $$
 By the Cauchy–Schwarz inequality, $z(t_0)^2 \le \int u^2 \cdot \int (t_f - \tau)^2\,d\tau$, with equality exactly when $u$ is proportional to $t_f - \tau$. So the unique minimizer is $u(\tau) = 3 z(t_0)(t_f - \tau)/(t_f - t_0)^3$. Restarting the argument at any later time $t$, the same law gives $u(t) = 3 z(t)/t_{go}^2$. Substituting into $\dot z = -t_{go} u$ gives $\dot z = -3z/t_{go}$, so $z \propto t_{go}^3$.
 
-More generally, the error dynamics $\dot z + (N/t_{go}) z = 0$ minimize the weighted effort $\tfrac12 \int u^2 / t_{go}^{N-3}\,d\tau$. Constrained flight, with state, input and terminal constraints, and existence of optimal controls for nonlinear engagement models go beyond this linear-quadratic case.
+More generally, for a constant $N > 0$, the error dynamics $\dot z + (N/t_{go}) z = 0$, produced by the command $u = N z/t_{go}^2$, minimize the weighted effort $\tfrac12 \int u^2 / t_{go}^{N-3}\,d\tau$; they give $z \propto t_{go}^N$ and hence zero miss. For $N > 3$ the weight $1/t_{go}^{N-3}$ grows without bound as $t_{go} \to 0$, and the command tends to zero at intercept. Constrained flight, with state, input and terminal constraints, and existence of optimal controls for nonlinear engagement models go beyond this linear-quadratic case.
 
 ## Background
 
@@ -30,4 +30,4 @@ More generally, the error dynamics $\dot z + (N/t_{go}) z = 0$ minimize the weig
 
 - S. He and C.-H. Lee, "Optimality of error dynamics in missile guidance problems", *Journal of Guidance, Control, and Dynamics* 41(7):1624–1633, 2018, author manuscript <https://pdfs.semanticscholar.org/57cd/173b0998ea5ad3a67675d85551e769832c55.pdf>:
     - Section I: proportional navigation;
-    - Section IV.A: the linearized zero-effort miss $z = y + v t_{go} + \tfrac12 a_T t_{go}^2$ (35) and its dynamics $\dot z = -t_{go} a_M$ (36), the error dynamics $\dot z + (N/t_{go}) z = 0$ (37) with performance index $\tfrac12 \int u^2/t_{go}^{N-3}$ (38), $N = 3$ as energy minimization, and the command $a_M = N z/t_{go}^2$ (39). The Cauchy–Schwarz proof is written out here.
+    - Section IV.A: the linearized zero-effort miss $z = y + v t_{go} + \tfrac12 a_T t_{go}^2$ (35) and its dynamics $\dot z = -t_{go} a_M$ (36), the error dynamics $\dot z + (N/t_{go}) z = 0$ (37) with a positive constant $N$, its performance index $\tfrac12 \int u^2/t_{go}^{N-3}$ (38), $N = 3$ as energy minimization and $N > 3$ for zero terminal acceleration command, and the command $a_M = N z/t_{go}^2$ (39). The Cauchy–Schwarz proof is written out here.

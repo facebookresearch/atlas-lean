@@ -8,12 +8,12 @@ $$
 **Theorem (Babuška–Brezzi).** The problem is well posed for all $f$ and $g$ if and only if both of the following hold.
 1. $a$ satisfies the inf-sup conditions on the kernel:
 $$
-\inf_{v \in \ker B}\,\sup_{w \in \ker B} \frac{a(v, w)}{\|v\|\,\|w\|} =: \alpha > 0,
+\inf_{v \in \ker B \setminus \{0\}}\,\sup_{w \in \ker B \setminus \{0\}} \frac{a(v, w)}{\|v\|\,\|w\|} =: \alpha > 0,
 $$
 and if $w \in \ker B$ has $a(v, w) = 0$ for all $v \in \ker B$, then $w = 0$.
 2. $b$ satisfies the inf-sup condition
 $$
-\inf_{q \in Q}\,\sup_{v \in V} \frac{b(v, q)}{\|v\|\,\|q\|} =: \beta > 0.
+\inf_{q \in Q \setminus \{0\}}\,\sup_{v \in V \setminus \{0\}} \frac{b(v, q)}{\|v\|\,\|q\|} =: \beta > 0.
 $$
 
 In that case,
@@ -24,7 +24,7 @@ $$
 
 **Proof sketch.** The problem is well posed if and only if the restriction of $a$ to $\ker B$ induces an isomorphism $\ker B \to (\ker B)'$, and the operator $B : V \to Q'$ induced by $b$ is surjective. For surjectivity, use that $B$ has closed range with $\operatorname{im}(B^*) = (\ker B)^\perp$. By the [Banach–Nečas–Babuška theorem](banach-ne-as-babu-ka-theorem/continuous-linear-equiv-of-bilinear-form.md), the first property is condition 1, and the second is condition 2. For the estimates, lift $g$ to some $u_g$ with $\|u_g\| \le \|g\|/\beta$, solve on $\ker B$, and then recover $p$ from the inf-sup condition for $b$.
 
-The constants depend only on $\alpha$, $\beta$ and $\|a\|$. So a family of problems has parameter-uniform stability exactly when these three quantities are bounded uniformly. That is the mechanism behind locking-free mixed methods for nearly incompressible elasticity, where a Galerkin pair must satisfy a discrete inf-sup condition uniformly in the mesh size and in the Lamé parameter.
+The constants depend only on $\alpha$, $\beta$ and $\|a\|$. So a family of problems is stable uniformly in its parameters when $\alpha$ and $\beta$ stay uniformly bounded away from zero and $\|a\|$ stays uniformly bounded above. That is the mechanism behind locking-free mixed methods for nearly incompressible elasticity, where a Galerkin pair must satisfy a discrete inf-sup condition uniformly in the mesh size and in the Lamé parameter.
 
 ## Depends on
 

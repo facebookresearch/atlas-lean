@@ -13,7 +13,7 @@ $$
 $$
 \Sigma = \begin{pmatrix} \dfrac{\sigma^2}{2ck} & 0 \\[1ex] 0 & \dfrac{\sigma^2}{2cm} \end{pmatrix}.
 $$
-So in the stationary regime, displacement and velocity are uncorrelated, with variances $\sigma^2/(2ck)$ and $\sigma^2/(2cm)$. If the forcing is instead specified by a two-sided spectral density $S_0$, then $\sigma^2 = 2\pi S_0$, and the displacement variance is $\pi S_0/(ck)$.
+So in the stationary regime, displacement and velocity are uncorrelated, with variances $\sigma^2/(2ck)$ and $\sigma^2/(2cm)$.
 
 **Proof.** The characteristic polynomial of $A$ is $\lambda^2 + (c/m)\lambda + k/m$, and both of its coefficients are positive, so both roots have negative real part. For a linear stochastic differential equation with Hurwitz drift matrix, the stationary covariance is the unique solution of the Lyapunov equation $A\Sigma + \Sigma A^\top + BB^\top = 0$. Write $\Sigma = \begin{pmatrix} p & q \\ q & r \end{pmatrix}$. The three independent entries of the Lyapunov equation give:
 - $2q = 0$;
