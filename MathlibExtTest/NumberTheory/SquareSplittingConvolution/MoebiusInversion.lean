@@ -31,3 +31,19 @@ example (hf : f = squareSplitConv m F) : F 8 = f 8 + (f 4 + (f 2 + f 1)) := by
   have hA : squareSplitDivisors 8 = {1, 2, 4, 8} := by decide +kernel
   have hsum := (squareSplit_moebius_inversion m hm f F).mpr hf
   simpa [squareSplitConv_apply, hA] using DFunLike.congr_fun hsum 8
+
+-- At (1, 1) each divisor sum has exactly one term.
+example (a b : ArithmeticFunction ℂ) : squareSplitConv a b 1 = a 1 * b 1 := by
+  simpa using squareSplitConv_bivariate_iso.1 a b 1 1 squarefree_one (by decide)
+
+-- The two coordinates can share a prime; the four pairs still give four terms.
+example (a b : ArithmeticFunction ℂ) :
+    squareSplitConv a b 8 = a 8 * b 1 + a 2 * b 4 + (a 4 * b 2 + a 1 * b 8) := by
+  have hd : (2 : ℕ).divisors = {2, 1} := by decide +kernel
+  simpa [hd] using squareSplitConv_bivariate_iso.1 a b 2 2 Nat.prime_two.squarefree (by decide)
+
+-- The interpolant reads arbitrary data at shared coordinates, but always vanishes at zero.
+example (G : ℕ → ℕ → ℂ) : ∃ a : ArithmeticFunction ℂ, a 216 = G 6 6 ∧ a 0 = 0 := by
+  obtain ⟨a, ha, _⟩ := squareSplitConv_bivariate_iso.2 G
+  have hu : Squarefree (6 : ℕ) := by decide +kernel
+  exact ⟨a, ha 6 6 hu (by decide), by simp⟩

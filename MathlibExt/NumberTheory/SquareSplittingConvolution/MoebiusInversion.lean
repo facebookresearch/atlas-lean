@@ -154,4 +154,61 @@ public theorem squareSplit_moebius_inversion (m : ArithmeticFunction ℂ)
   · rintro rfl
     exact (cancel_conv _ _ _ h).symm
 
+/-- **Square-splitting convolution as a bivariate Dirichlet convolution.** Let $\star$ be the
+square-splitting convolution. For all complex arithmetic functions $f$ and $g$, every squarefree
+natural number $u$ and every natural number $v \ge 1$,
+$$(f \star g)(u v^2) = \sum_{u_1 \mid u} \sum_{v_1 \mid v} f(u_1 v_1^2)\, g((u/u_1)(v/v_1)^2).$$
+Moreover, for every function $F : \mathbb{N} \times \mathbb{N} \to \mathbb{C}$ there is exactly
+one complex arithmetic function $f$ with $f(u v^2) = F(u, v)$ for every squarefree $u$ and every
+$v \ge 1$.
+
+Thus $f \mapsto \big((u, v) \mapsto f(u v^2)\big)$ is a bijection from complex arithmetic functions
+onto functions on $\{(u, v) : u \text{ squarefree},\ v \ge 1\}$, and it turns $\star$ into the
+bivariate Dirichlet convolution
+$(\Phi \odot \Psi)(u, v) = \sum_{u_1 \mid u} \sum_{v_1 \mid v} \Phi(u_1, v_1)\, \Psi(u/u_1, v/v_1)$.
+
+Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
+A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 2
+(`integers-2026-A56-thm-2`). -/
+public theorem squareSplitConv_bivariate_iso :
+    (∀ (f g : ArithmeticFunction ℂ) (u v : ℕ), Squarefree u → 0 < v →
+      squareSplitConv f g (u * v ^ 2) =
+        ∑ u₁ ∈ u.divisors, ∑ v₁ ∈ v.divisors,
+          f (u₁ * v₁ ^ 2) * g ((u / u₁) * (v / v₁) ^ 2)) ∧
+    ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
+      ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v := by
+  constructor
+  · intro f g u v hu _
+    change inCoords (squareSplitConv f g) u v = _
+    rw [inCoords_conv f g hu, ArithmeticFunction.mul_apply,
+      Nat.sum_divisorsAntidiagonal (fun a c => inCoords f a * inCoords g c)]
+    let ev : ArithmeticFunction ℂ →+ ℂ :=
+      ⟨⟨fun h => h v, rfl⟩, fun _ _ => rfl⟩
+    change ev (∑ a ∈ u.divisors, inCoords f a * inCoords g (u / a)) = _
+    rw [map_sum]
+    apply Finset.sum_congr rfl
+    intro a _
+    change (inCoords f a * inCoords g (u / a)) v = _
+    rw [ArithmeticFunction.mul_apply,
+      Nat.sum_divisorsAntidiagonal (fun b d => inCoords f a b * inCoords g (u / a) d)]
+    rfl
+  · intro F
+    let f : ArithmeticFunction ℂ :=
+      ⟨fun n => if n = 0 then 0 else F (squareSplitU n) (squareSplitV n), by simp⟩
+    have hf : ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v := by
+      intro u v hu hv
+      obtain ⟨hU, hV⟩ := split_coords hu hv.ne'
+      have hn := mul_ne_zero hu.ne_zero (pow_ne_zero 2 hv.ne')
+      simp [f, hn, hU, hV]
+    refine ⟨f, hf, ?_⟩
+    intro g hg
+    apply ArithmeticFunction.ext
+    intro n
+    obtain rfl | hn := eq_or_ne n 0
+    · simp
+    obtain ⟨v, u, h, hu⟩ := exists_sq_mul_squarefree n
+    have hv : 0 < v := Nat.pos_of_ne_zero fun hv => hn (by simpa [hv] using h.symm)
+    rw [← h, mul_comm (v ^ 2)]
+    exact (hg u v hu hv).trans (hf u v hu hv).symm
+
 end MetaMathlibExt
