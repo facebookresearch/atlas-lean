@@ -1,0 +1,3 @@
+# Decision tree querying a list of variables
+
+For a set $E$, a function $\varphi : \{0, 1\}^E \to \{0, 1\}$ and a list $l = (e_1, \dots, e_k)$ of variables, this is the [decision tree](decision-tree.md) that queries $e_1, \dots, e_k$ in order and then outputs $\varphi$ at the configuration that agrees with the answers on $e_1, \dots, e_k$ and is $0$ elsewhere. It is defined recursively: for the empty list it is the leaf labelled $\varphi(0, \dots, 0)$, and for $(e, l')$ it queries $e$ and continues with the tree for $\omega \mapsto \varphi(\omega^{e \to 1})$ and $l'$ when $\omega_e = 1$, and for $\omega \mapsto \varphi(\omega^{e \to 0})$ and $l'$ when $\omega_e = 0$. It computes $\varphi$ when $\varphi$ [depends only on the coordinates in $l$](insens-outside.md).

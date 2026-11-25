@@ -1,0 +1,17 @@
+# Gaussian primes
+
+- [Units of the Gaussian integers](gaussian-int-is-unit-iff.md)
+- [Gaussian integers of prime norm are prime](gaussian-int-prime-of-nat-abs-norm-prime.md)
+- [1 + i is a Gaussian prime](gaussian-int-prime-one-add-i.md)
+- [Factorization of 2 in the Gaussian integers](gaussian-int-two-eq.md)
+- [Enumeration of the Gaussian units](unit-val.md)
+- [The four Gaussian units are distinct](unit-val-inj.md)
+- [The enumeration of the Gaussian units is complete](unit-val-complete.md)
+- [Inverses of the Gaussian units](unit-val-inv.md)
+- [Each Gaussian unit times its listed inverse is one](unit-val-mul-unit-val-inv.md)
+- [Explicit Gaussian prime factors of a prime congruent to 1 mod 4](gaussian-int-split-prime-sq-add-sq.md)
+- [Classification of the Gaussian primes](gaussian-int-prime-associated.md)
+- [Primes congruent to 1 mod 4 split in the Gaussian integers](gaussian-int-split-prime.md)
+- [Factoring a prime as a Gaussian integer times its conjugate](gaussian-int-split-conj.md)
+- [Gaussian integers of split prime norm are not associate to their conjugates](gaussian-int-split-nonassociated.md)
+- [Number of Gaussian integers of norm a power of a split prime](gaussian-int-card-repr-prime-pow.md)

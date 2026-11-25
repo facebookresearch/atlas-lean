@@ -1,0 +1,17 @@
+# (ℓ, k)-regular partitions
+
+- [Number of $(\ell, k)$-regular partitions](regular-partition-count.md)
+- [The $(4, 9)$-regular partition count at zero](regular-partition-count-four-nine-zero.md)
+- [For small $n$ every partition is $(\ell, k)$-regular](regular-partition-count-of-lt.md)
+- [Parity of $(4, p)$-regular partitions in nonresidue progressions](regular-partition-count-four-prime-mod-t.md)
+- [Parity of $(2, p)$-regular partitions in nonresidue progressions](regular-partition-count-two-prime-mod-tw.md)
+- [Congruences modulo $12$ for $b_{4,9}$ along powers of $2$](regular-partition-count-four-nine-mod-tw.md)
+- [The 2-dissection of $f_9/f_1$](f9-div-f1-two-dissection.md)
+- [The 2-dissection of $f_3/f_1^3$](f3-div-f1-cube-two-dissection.md)
+- [The 2-dissection of $f_3^2/f_1^2$](f3-sq-div-f1-sq-two-dissection.md)
+- [The 2-dissections of $1/f_1^4$, $1/f_1^8$ and $1/f_1^{12}$](one-div-f1-pow-four-eight-twelve-two-dis.md)
+- [The 2-dissection of $1/(f_1 f_3)$](one-div-f1-f3-two-dissection.md)
+- [Generating function of $b_{4,9}$ at odd arguments](regular-partition-count-four-nine-odd-ge.md)
+- [An internal congruence modulo $4$ for $b_{4,9}$](regular-partition-count-four-nine-intern.md)
+- [$b_{4,9}(16n + 13)$ is divisible by $4$](regular-partition-count-four-nine-sixtee.md)
+- [$b_{4,9}(32n + 25)$ is divisible by $4$](regular-partition-count-four-nine-thirty.md)

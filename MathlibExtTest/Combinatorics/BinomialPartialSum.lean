@@ -42,3 +42,11 @@ example : (∑ j ∈ range 2, (Nat.choose 1 j : ℝ)) ≤ (3 * 1 / 1 : ℝ) ^ 1 
 #print axioms Real.pow_mul_sum_choose_le
 #print axioms Real.pow_mul_sum_choose_le_exp
 #print axioms Real.sum_choose_le_pow
+
+-- The sharp counting bound: with r = D = 3 it reads 2^3 ≤ e^3.
+example : (∑ j ∈ range 4, (Nat.choose 3 j : ℝ)) ≤ (Real.exp 1 * 3 / 3 : ℝ) ^ 3 := by
+  simpa using Real.sum_choose_le_exp_mul_div_pow (D := 3) (r := 3) (by norm_num) le_rfl
+
+-- It implies the (3D/r)^r bound, since e < 3.
+example : (∑ j ∈ range 3, (Nat.choose 5 j : ℝ)) ≤ (Real.exp 1 * 5 / 2 : ℝ) ^ 2 := by
+  simpa using Real.sum_choose_le_exp_mul_div_pow (D := 5) (r := 2) (by norm_num) (by norm_num)

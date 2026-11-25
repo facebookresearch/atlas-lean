@@ -1,0 +1,3 @@
+# Peeling a cycle from an even-degree subgraph
+
+Let $P$ be a finite graph $G = (V, E)$ with an injective map $\iota : V \to \mathbb{Z}^2$ sending edges to edges of the square lattice. For a subgraph $K \le G$ write $\beta(K) + 1$ for its face count ($\beta$ the cycle rank) and $r(K)$ for the number of connected components of the face-region graph of $\iota(K)$. $P$ has this property when every subgraph $K \le G$ with at least one edge whose image has even degree at every site admits a subgraph $K' \le G$ whose image also has even degree at every site, with $|E(K')| < |E(K)|$, $\beta(K') + 1 = \beta(K)$ and $r(K) = r(K') + 1$.

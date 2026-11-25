@@ -1,0 +1,16 @@
+# Genocchi numbers
+
+- [Generating function of the Genocchi numbers](genocchi-power-series.md)
+- [Genocchi numbers](genocchi-number.md)
+- [The Genocchi power series is $2x/(e^x + 1)$](genocchi-power-series-eq.md)
+- [Genocchi numbers from their generating function](genocchi-number-eq.md)
+- [Genocchi numbers in terms of Bernoulli numbers](genocchi-number-eq-bernoulli.md)
+- [The two definitions of the Genocchi numbers agree](genocchi-number-via-bernoulli-eq-genocch.md)
+- [Iterated forward differences of a power on $\mathbb{Q}$](diff-pow-eval.md)
+- [The Zerroukhat–Khaldi sum $U(m, k)$](zerro-u.md)
+- [The Zerroukhat–Khaldi sum $H_{n,m}$](zerro-h.md)
+- [Explicit formula for Genocchi numbers via Stirling numbers](genocchi-number-eq-sum.md)
+- [Bernoulli numbers via forward differences at $0$](neg-one-pow-mul-bernoulli-eq-sum-zero.md)
+- [Bernoulli numbers via forward differences at $1$](neg-one-pow-mul-bernoulli-eq-sum-one.md)
+- [Recurrence for the Zerroukhat–Khaldi sums $U$](zerro-u-succ.md)
+- [A step identity for the Zerroukhat–Khaldi sums $H_{n,m}$](zerro-h-eq.md)

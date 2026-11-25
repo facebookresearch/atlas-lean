@@ -1,0 +1,3 @@
+# Canonical contour of a finite origin cluster
+
+Let $\omega$ be a bond configuration on $\mathbb{Z}^2$ whose open cluster $C$ of the origin is finite, and let $e$ be its [exit dart](exit-dart.md), a boundary dart of $C$. Consider the graph on boundary darts of $C$ in which two distinct darts are adjacent when one is the successor of the other (the successor map $\sigma$ is described in the [face walk along a boundary orbit](dart-orbit-face-walk.md)). The canonical contour of $C$ is the closed walk $e, \sigma(e), \sigma^2(e), \dots, \sigma^T(e) = e$ in this graph, where $T$ is the minimal period of $e$ under $\sigma$; it runs once around the boundary orbit of the exit dart.

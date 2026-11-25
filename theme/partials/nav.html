@@ -1,0 +1,77 @@
+{#-
+  The left navigation lists Home, the sections that lead to the page, the
+  page's siblings, and its own entries. Listing every subject, field and topic
+  beside the page made it the largest part of the site. Readers with
+  JavaScript use the explorer's Contents pane instead, since the explorer
+  hides this sidebar; the list serves readers without JavaScript and the
+  layout the site falls back to. Material's classes are kept, so the sidebar
+  and the drawer on narrow screens style it as before, and a page without
+  entries of its own keeps its table of contents in the drawer, as in
+  Material's navigation.
+-#}
+{%- macro href(item) -%}
+  {%- if item.is_section -%}
+    {#- A section opens its index page (navigation.indexes); a section without one is only a heading. -#}
+    {%- for child in item.children if child.is_page and child.is_index -%}
+      {%- if loop.first -%}{{ child.url | url }}{%- endif -%}
+    {%- endfor -%}
+  {%- else -%}
+    {{- item.url | url -}}
+  {%- endif -%}
+{%- endmacro -%}
+{%- macro entries(items, node, toc) -%}
+  {%- for item in items -%}
+    {%- set target = href(item) -%}
+    {%- if item.is_section and not target -%}
+      {{- entries(item.children, node, toc) -}}
+    {%- elif item.parent and target == href(item.parent) -%}
+      {#- The section's own index page: the section's entry already opens it. -#}
+    {%- elif item == node and item.is_section -%}
+      <li class="md-nav__item md-nav__item--active"><a href="{{ target }}" class="md-nav__link md-nav__link--active">{{ item.title }}</a><ul class="md-nav__list">{{ entries(item.children, node, toc) }}</ul></li>
+    {%- elif item == node -%}
+      <li class="md-nav__item md-nav__item--active"><input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      {%- if toc -%}
+        <label class="md-nav__link md-nav__link--active" for="__toc">{{ item.title }}<span class="md-nav__icon md-icon"></span></label>
+      {%- endif -%}
+      <a href="{{ target }}" class="md-nav__link md-nav__link--active">{{ item.title }}</a>{{ toc }}</li>
+    {%- else -%}
+      <li class="md-nav__item"><a href="{{ target }}" class="md-nav__link">{{ item.title }}</a></li>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endmacro -%}
+{#- The page's entry: its section when it is that section's index page. -#}
+{%- set node = page -%}
+{%- if page.parent and page.is_index and href(page.parent) == href(page) -%}
+  {%- set node = page.parent -%}
+{%- endif -%}
+{%- set ancestors = node.ancestors | reverse | list -%}
+{#- The page's table of contents, which Material's drawer shows under the page's entry. -#}
+{%- set headings = page.toc -%}
+{%- set first = headings | first -%}
+{%- if first and first.level == 1 -%}
+  {%- set headings = first.children -%}
+{%- endif -%}
+{%- set toc -%}
+  {%- if headings and node == page -%}{% include "partials/toc.html" %}{%- endif -%}
+{%- endset -%}
+<nav class="md-nav md-nav--primary" aria-label="{{ lang.t('nav') }}" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}" title="{{ config.site_name | e }}" class="md-nav__button md-logo" aria-label="{{ config.site_name }}" data-md-component="logo">
+      {% include "partials/logo.html" %}
+    </a>
+    {{ config.site_name }}
+  </label>
+  <ul class="md-nav__list" data-md-scrollfix>
+    {#- Top-level entries, Home among them, are the page's siblings when it has no parent. -#}
+    {%- if nav.homepage and node and node.parent -%}
+      <li class="md-nav__item"><a href="{{ nav.homepage.url | url }}" class="md-nav__link">{{ nav.homepage.title }}</a></li>
+    {%- endif -%}
+    {%- for section in ancestors if href(section) -%}
+      <li class="md-nav__item md-nav__item--active"><a href="{{ href(section) }}" class="md-nav__link">{{ section.title }}</a><ul class="md-nav__list">
+    {%- endfor -%}
+    {{- entries(node.parent.children if node.parent else nav.items, node, toc) -}}
+    {%- for section in ancestors if href(section) -%}
+      </ul></li>
+    {%- endfor -%}
+  </ul>
+</nav>

@@ -14,7 +14,8 @@ import PhyslibExt.EarthScience.FloodFrequency
 
 Concrete consumers of `PhyslibExt.EarthScience.FloodFrequency`:
 the `n = 1` case, the `100`-year flood (`p = 0.01`) over 100 years,
-and the `p = 0` / `p = 1` and `n = 0` boundaries.
+the at-least-one and reciprocal forms, and the `p = 0` / `p = 1`
+and `n = 0` boundaries.
 
 ## i. Overview
 
@@ -28,6 +29,7 @@ No new definitions or results are introduced here.
 
 - A. `n = 1` and the 100-year flood
 - B. Boundaries
+- C. At least one exceedance
 
 ## iv. References
 
@@ -98,3 +100,89 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
     (EarthScience.no_exceedance_prob (μ := μ) (p := p)
       (F := fun _ : Fin 0 => (∅ : Set Ω))
       hp (fun _ => MeasurableSet.empty) hIndep (fun i => Fin.elim0 i))
+
+/-- `n = 1`: at least one exceedance in one year has
+probability `1 - (1 - p) ^ 1`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {p : ℝ} {F : Fin 1 → Set Ω}
+    (hp : 0 ≤ p ∧ p ≤ 1) (hMeas : ∀ i, MeasurableSet (F i))
+    (hIndep : iIndepSet F μ) (hProb : ∀ i, (μ (F i)).toReal = 1 - p) :
+    (μ (⋃ i, (F i)ᶜ)).toReal = 1 - (1 - p) ^ 1 :=
+  EarthScience.at_least_one_exceedance_prob hp hMeas hIndep hProb
+
+/-- A `100`-year flood (`p = 0.01`) has at-least-one
+exceedance probability `1 - (0.99) ^ 100` over 100 years. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {F : Fin 100 → Set Ω}
+    (hMeas : ∀ i, MeasurableSet (F i))
+    (hIndep : iIndepSet F μ) (hProb : ∀ i, (μ (F i)).toReal = 1 - (0.01 : ℝ)) :
+    (μ (⋃ i, (F i)ᶜ)).toReal = 1 - (1 - (0.01 : ℝ)) ^ 100 :=
+  EarthScience.at_least_one_exceedance_prob (by norm_num) hMeas hIndep hProb
+
+/-- Reciprocal display at `p = 0.01`, `T = 100`, over 50 years. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {F : Fin 50 → Set Ω}
+    (hMeas : ∀ i, MeasurableSet (F i))
+    (hIndep : iIndepSet F μ) (hProb : ∀ i, (μ (F i)).toReal = 1 - (0.01 : ℝ)) :
+    (μ (⋃ i, (F i)ᶜ)).toReal = 1 - (1 - 1 / (100 : ℝ)) ^ 50 :=
+  EarthScience.at_least_one_exceedance_prob_inv (by norm_num) (by norm_num)
+    (by norm_num) hMeas hIndep hProb
+
+/-- `p = 0`: five certain no-exceedance events give at-least-one
+exceedance probability `0`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
+    [IsProbabilityMeasure μ] :
+    (μ (⋃ _ : Fin 5, (Set.univ : Set Ω)ᶜ)).toReal = 0 := by
+  have hIndep : iIndepSet (fun _ : Fin 5 => (Set.univ : Set Ω)) μ := by
+    apply (iIndepSet_iff_meas_biInter (fun _ => MeasurableSet.univ)).2
+    intro s
+    simp
+  have h := EarthScience.at_least_one_exceedance_prob (μ := μ) (p := 0)
+    (F := fun _ : Fin 5 => (Set.univ : Set Ω))
+    (by norm_num) (fun _ => MeasurableSet.univ) hIndep (by intro i; simp)
+  simp only [sub_zero, one_pow, sub_self] at h
+  exact h
+
+/-- `p = 1`: three impossible no-exceedance events give
+at-least-one exceedance probability `1`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
+    [IsProbabilityMeasure μ] :
+    (μ (⋃ _ : Fin 3, (∅ : Set Ω)ᶜ)).toReal = 1 := by
+  have hIndep : iIndepSet (fun _ : Fin 3 => (∅ : Set Ω)) μ := by
+    apply (iIndepSet_iff_meas_biInter (fun _ => MeasurableSet.empty)).2
+    intro s
+    rcases s.eq_empty_or_nonempty with rfl | hs
+    · simp
+    · have hInter : (⋂ i ∈ s, (∅ : Set Ω)) = ∅ := by
+        obtain ⟨i, hi⟩ := hs
+        exact Set.eq_empty_of_subset_empty
+          (Set.iInter_subset_of_subset i (Set.iInter_subset _ hi))
+      simp [hInter, Finset.card_ne_zero.mpr hs]
+  simpa using
+    (EarthScience.at_least_one_exceedance_prob (μ := μ) (p := 1)
+      (F := fun _ : Fin 3 => (∅ : Set Ω))
+      (by norm_num) (fun _ => MeasurableSet.empty) hIndep (by intro i; simp))
+
+/-- `n = 0`: an empty observation window has at-least-one
+exceedance probability `0`, even at `p = 1`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
+    [IsProbabilityMeasure μ] {p : ℝ} (hp : 0 ≤ p ∧ p ≤ 1) :
+    (μ (⋃ _ : Fin 0, (∅ : Set Ω)ᶜ)).toReal = 0 := by
+  have hIndep : iIndepSet (fun _ : Fin 0 => (∅ : Set Ω)) μ := by
+    apply (iIndepSet_iff_meas_biInter (fun _ => MeasurableSet.empty)).2
+    intro s
+    have hs : s = ∅ := Subsingleton.elim _ _
+    simp [hs]
+  have h := EarthScience.at_least_one_exceedance_prob (μ := μ) (p := p)
+    (F := fun _ : Fin 0 => (∅ : Set Ω))
+    hp (fun _ => MeasurableSet.empty) hIndep (fun i => Fin.elim0 i)
+  simp only [pow_zero, sub_self] at h
+  exact h
+
+/-- Dependence control at the event level: repeating the same
+no-exceedance event in both years collapses the at-least-one
+event to that event's complement; the bridge's independence
+hypothesis is what excludes using a common marginal alone in
+the nondegenerate repeated-event case. -/
+example {Ω : Type*} (s : Set Ω) : (⋃ _ : Fin 2, sᶜ) = sᶜ :=
+  Set.iUnion_const _

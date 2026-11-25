@@ -1,0 +1,3 @@
+# Quarter turn between consecutive boundary darts modulo 4
+
+Let $K \subseteq \mathbb{Z}^2$ and let $e$ be a dart of the square lattice with tail $t$, head $h$ and direction $u = (u_0, u_1)$; let $r = (u_1, -u_0)$ be $u$ rotated clockwise by a quarter turn. The turn of $e$ is the element of $\mathbb{Z}/4\mathbb{Z}$ equal to $1$ if $h + r \in K$, to $0$ if $h + r \notin K$ and $t + r \in K$, and to $3$ otherwise. It is the number of counterclockwise quarter turns from the direction of $e$ to that of its boundary successor $\sigma_K(e)$: $1$ for a left turn, $0$ for going straight, $3$ for a right turn.

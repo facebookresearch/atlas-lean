@@ -1,0 +1,18 @@
+# Polynomial time in a cost-annotated programming model
+
+- [Declared polynomial time for timed deciders](decides-in-declared-poly-time.md)
+- [Declared polynomial time for timed functions on bitstrings](computes-in-declared-poly-time.md)
+- [Verifiers with polynomial declared time](verifier-in-declared-poly-time.md)
+- [Verifying a decision problem with a witness bound](verifies.md)
+- [Declared-time many-one reduction by a timed function](declared-poly-many-one-red-via.md)
+- [Every decision problem has a timed decider in declared polynomial time](exists-decides-in-declared-poly-time.md)
+- [A decider with polynomial declared time gives a verifier with polynomial declared time](verifier-in-declared-poly-time-of-decide.md)
+- [A decider is a verifier with witness bound zero](verifies-of-decides.md)
+- [Declared-time many-one reduction is reflexive](declared-poly-many-one-red-via-refl.md)
+- [Declared-time many-one reductions compose](declared-poly-many-one-red-via-trans.md)
+- [Declared polynomial time is preserved under precomposition with a reduction](decides-in-declared-poly-time-comp-reduc.md)
+- [A declared-time reduction followed by a decider for the target decides the source](decides-comp-reduction.md)
+- [Pulling a verifier back along a declared reduction](verifies-comp-reduction.md)
+- [A timed decider with polynomial-time output function gives membership in P](mem-p-of-decides.md)
+- [A timed verifier with polynomial-time output function puts its language in NP](mem-np-of-verifies.md)
+- [From declared-time to polynomial-time many-one reductions](cook-levin-poly-many-one-red-of-declared.md)

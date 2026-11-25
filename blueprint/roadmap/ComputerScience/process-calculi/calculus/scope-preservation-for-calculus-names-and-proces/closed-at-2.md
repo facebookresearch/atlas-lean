@@ -1,0 +1,3 @@
+# Locally closed processes at a binder depth
+
+For a depth $d \in \mathbb{N}$, a [process](../the-calculus-syntax-substitution-structural-cong/proc.md) is scoped at depth $d$ when every variable occurring in it refers to an enclosing input or restriction binder or to one of $d$ surrounding binders. Recursively: $\mathbf{0}$ is scoped; $\bar{a}\langle b\rangle.P$ is scoped at depth $d$ when $a$, $b$ are [scoped at depth $d$](closed-at.md) and $P$ is; $a(\cdot).P$ when $a$ is scoped at depth $d$ and $P$ at depth $d + 1$; $\nu P$ when $P$ is scoped at depth $d + 1$; $P \mid Q$ and $P + Q$ when $P$ and $Q$ are; and $!P$ when $P$ is. A process scoped at depth $0$ may contain free channels but no dangling de Bruijn variables.

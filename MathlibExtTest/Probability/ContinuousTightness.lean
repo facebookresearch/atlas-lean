@@ -112,6 +112,23 @@ example : IsTightMeasureSet (Set.range fun n : ℕ =>
   rw [hempty, measureReal_empty]
   exact hb.le
 
+-- Tight initial values suffice without pinning: the constant path `1` has a tight (singleton)
+-- initial law and zero oscillation, so its laws are tight.
+example : IsTightMeasureSet (Set.range fun _n : ℕ =>
+    (Measure.dirac ()).map (fun _ : Unit => constPath 1)) := by
+  refine isTightMeasureSet_of_modulus_of_isTight_initial (P := Measure.dirac ())
+    (fun _n _ => constPath 1) (fun _ => measurable_const) ?_ ?_
+  · simpa [constPath, zeroT] using
+      (isTightMeasureSet_singleton (μ := (Measure.dirac ()).map (fun _ : Unit => (1 : ℝ))))
+  · intro ε hε b hb
+    refine ⟨1, one_pos, Eventually.of_forall fun n => ?_⟩
+    have hempty : {ω : Unit | ∃ s t : I, dist s t ≤ 1 ∧
+        ε ≤ dist (constPath (1 : ℝ) s) (constPath (1 : ℝ) t)} = ∅ := by
+      ext ω
+      simp [constPath, not_le.2 hε]
+    rw [hempty, measureReal_empty]
+    exact hb.le
+
 -- The pinning hypothesis `W n 0 = 0` cannot be dropped from `isTightMeasureSet_of_modulus`:
 -- the constant paths `n` satisfy measurability and the modulus bound (every increment is `0`),
 -- but their laws escape every compact set.
@@ -150,5 +167,7 @@ example : ¬ ∀ W : ℕ → Unit → C(I, ℝ), (∀ n, Measurable (W n)) →
   exact absurd h (by norm_num)
 
 end
+
+#print axioms isTightMeasureSet_of_modulus_of_isTight_initial
 
 end MathlibExtTest.Probability.ContinuousTightness

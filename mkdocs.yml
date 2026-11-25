@@ -1,0 +1,88 @@
+site_name: "ATLAS"
+
+# `autoform render` writes this directory from blueprint/. The vault stays the
+# source of truth; everything here is regenerated.
+docs_dir: site-src
+site_dir: site
+use_directory_urls: false
+# blueprint/migrations/ holds the records of the pinned-bump tooling
+# (scripts/bump/), not wiki pages, so the site leaves them out. Only the
+# top-level folder: a topic the taxonomy names "Migrations" keeps its pages.
+exclude_docs: |
+  /migrations/
+
+hooks:
+  # Material eagerly builds its search index in every browser tab. Keep one
+  # title-only record per page so the index of the ~9,000-page site stays bounded.
+  - hooks/title_only_search.py
+  # A page that only says where an old explorer URL moved is a bare redirect,
+  # and every page loses the indentation the theme writes.
+  - hooks/trim_pages.py
+  # Each card's folder page shows the card, and every address the card move
+  # ledger retired keeps leading to its page (docs/cards.md#reading), with the
+  # ledger check's receipt of the commit being built. Without card data of that
+  # commit, it shows no card but still keeps those addresses.
+  - hooks/card_pages.py
+
+# The nav is not listed here. `autoform render` writes it to SUMMARY.md from
+# the vault's own page order, which mkdocs-literate-nav reads, so a project's
+# chapters cannot drift out of step with a second list kept in this file.
+theme:
+  name: material
+  custom_dir: theme
+  # `autoform render` writes this mark into the site source on every build, so
+  # it is always present and never has to be committed to the project.
+  logo: assets/autoform.svg
+  favicon: assets/autoform.svg
+  font:
+    text: Plus Jakarta Sans
+    code: JetBrains Mono
+  # Readers with JavaScript browse with the explorer, which hides the theme's
+  # header, sidebars and footer. For everyone else, theme/partials/nav.html
+  # lists Home, the sections above the page, its siblings and its entries.
+  features:
+    - navigation.top
+    - toc.follow
+    - search.suggest
+  # The site opens in the reader's own light or dark setting, and the sun or
+  # moon in the header switches it; Material remembers the choice.
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Use dark theme
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Use light theme
+
+plugins:
+  - search
+  # The nav is generated from the vault into SUMMARY.md; mkdocs.yml cannot
+  # know a project's chapters and a hand-written list would drift.
+  - literate-nav:
+      nav_file: SUMMARY.md
+
+markdown_extensions:
+  - attr_list
+  # Statement boxes carry h6 note headings; keep them out of the TOC.
+  - toc:
+      toc_depth: 2-3
+  - md_in_html          # lets the generated statement boxes contain Markdown
+  - tables
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
+extra_css:
+  - stylesheets/blueprint.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - javascripts/blueprint-mermaid.js

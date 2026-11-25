@@ -37,10 +37,11 @@ open scoped ENNReal NNReal
 
 namespace MathlibExt.Probability.CharFunLattice
 
-/-- A probability measure `μ` on `ℝ` corresponds to a **lattice random
-variable** when its characteristic function equals `1` at some nonzero
-frequency but is not identically `1` (so `μ` is not a point mass at `0`).
-This is the v1 definition, restated in this namespace. -/
+/-- **Lattice random variable.** A measure $\mu$ on $\mathbb{R}$ with characteristic function
+$\varphi(t) = \int e^{itx} \, d\mu(x)$ is a lattice random variable if $\varphi(l) = 1$ for some
+real $l \ne 0$ and $\varphi(t) \ne 1$ for some real $t$.
+
+For a probability measure, the second condition says that $\mu$ is not the point mass at $0$. -/
 def IsLatticeRV (μ : Measure ℝ) : Prop :=
   (∃ l : ℝ, l ≠ 0 ∧ charFun μ l = 1) ∧ ¬ (∀ t : ℝ, charFun μ t = 1)
 
@@ -77,14 +78,15 @@ private lemma integrable_cos_mul (μ : Measure ℝ) [IsProbabilityMeasure μ] (l
       rw [Real.norm_eq_abs]
       exact Real.abs_cos_le_one _)
 
-/-- **Characteristic function `= 1` detects lattice support.** For a
-probability measure `μ` on `ℝ` and a nonzero frequency `l`, `charFun μ l = 1`
-if and only if `μ` gives full mass to the lattice `(2π / l) ℤ`.
+/-- **A characteristic function equal to one detects lattice support.** Let $\mu$ be a
+probability measure on $\mathbb{R}$ with characteristic function
+$\varphi(t) = \int e^{itx} \, d\mu(x)$, and let $l \ne 0$ be real. Then $\varphi(l) = 1$ if and
+only if $\mu$ gives mass $1$ to the lattice $\{(2\pi / l) k : k \in \mathbb{Z}\}$.
 
-Forward direction: `Re (charFun μ l) = ∫ cos (l x) dμ = 1` forces
-`∫ (1 - cos (l x)) dμ = 0`, hence `cos (l x) = 1` almost everywhere, hence
-`l x ∈ 2π ℤ` almost everywhere. Backward direction: on the lattice the
-integrand `exp (i l x)` is identically `1`. -/
+Forward direction: $\operatorname{Re} \varphi(l) = \int \cos(lx) \, d\mu(x) = 1$ forces
+$\int (1 - \cos(lx)) \, d\mu(x) = 0$, hence $\cos(lx) = 1$ almost everywhere, hence
+$lx \in 2\pi\mathbb{Z}$ almost everywhere. Backward direction: on the lattice the integrand
+$e^{ilx}$ is identically $1$. -/
 theorem charFun_eq_one_iff_measure_eq_one_of_lattice {μ : Measure ℝ}
     [IsProbabilityMeasure μ] {l : ℝ} (hl : l ≠ 0) :
     charFun μ l = 1 ↔
@@ -175,10 +177,13 @@ theorem charFun_eq_one_iff_measure_eq_one_of_lattice {μ : Measure ℝ}
     rw [charFun_apply_real]
     exact hInt
 
-/-- A lattice random variable in the sense of `IsLatticeRV` is supported on
-some lattice `h ℤ` with `h ≠ 0`: take `h = 2π / l` for the frequency `l`
-witnessed by the definition. The second conjunct of `IsLatticeRV` (not a
-point mass at `0`) is not needed for this conclusion. -/
+/-- **Lattice random variables are supported on a lattice.** Let $\mu$ be a probability measure
+on $\mathbb{R}$ that is a lattice random variable. Then there is a real number $h \ne 0$ such
+that $\mu$ gives mass $1$ to the lattice $\{hk : k \in \mathbb{Z}\}$.
+
+One can take $h = 2\pi / l$ for a nonzero frequency $l$ at which the characteristic function of
+$\mu$ equals $1$. The condition that the characteristic function is not identically $1$ is not
+needed. -/
 theorem IsLatticeRV.exists_lattice_support {μ : Measure ℝ} [IsProbabilityMeasure μ]
     (h : IsLatticeRV μ) : ∃ hstep : ℝ, hstep ≠ 0 ∧
       μ {x : ℝ | ∃ k : ℤ, x = hstep * k} = 1 := by

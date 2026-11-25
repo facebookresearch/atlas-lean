@@ -1,0 +1,3 @@
+# Set and walk interior share boundary edges
+
+Let $K \subseteq \mathbb{Z}^2$ and let $W$ be a closed walk in the square lattice. For a site $z$, let $n_z(W)$ be the number of steps of $W$ (counted with multiplicity) along vertical edges $\{(a, z_2 - 1), (a, z_2)\}$ with $a \le z_1 - 1$, the edges crossed by the horizontal ray going left from the corner $z$. The inside of $W$ by the even–odd rule is the set of sites $z$ with $n_z(W)$ odd. The condition is that $K$ and the inside of $W$ have the same boundary edges: for every unordered pair $\{x, y\}$ of sites, exactly one of $x, y$ lies in $K$ if and only if exactly one of them lies in the inside of $W$.

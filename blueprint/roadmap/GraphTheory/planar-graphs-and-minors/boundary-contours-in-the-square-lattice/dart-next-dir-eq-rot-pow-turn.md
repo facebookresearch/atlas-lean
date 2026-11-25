@@ -1,0 +1,3 @@
+# Next boundary dart direction is rotated by the turn
+
+Let $K \subseteq \mathbb{Z}^2$ and let $e$ be any dart of the square lattice (not necessarily a boundary dart of $K$). Let $\rho(a, b) = (-b, a)$ be the counterclockwise quarter-turn rotation of $\mathbb{Z}^2$, and for $s \in \mathbb{Z}/4\mathbb{Z}$ let $\rho^s$ be $\rho$ applied $s$ times (with $s$ represented in $\{0, 1, 2, 3\}$). Then the direction of the successor $\sigma_K(e)$ of $e$ along the boundary of $K$ is $\rho^{t_K(e)}$ applied to the direction of $e$, where $t_K(e) \in \mathbb{Z}/4\mathbb{Z}$ is the turn of $e$: $1$ if $\mathrm{head}(e) - \rho(u) \in K$, $0$ if not but $\mathrm{tail}(e) - \rho(u) \in K$, and $3$ otherwise, $u$ being the direction of $e$.

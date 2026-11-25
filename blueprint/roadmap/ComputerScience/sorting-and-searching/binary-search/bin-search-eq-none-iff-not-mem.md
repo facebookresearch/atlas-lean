@@ -1,0 +1,6 @@
+# Binary search on a sorted array fails exactly on non-members
+
+Let $A$ be an array with entries in a linearly ordered type, sorted so that an earlier entry is
+never greater than a later one, and let $k$ be an element of that type. Binary search for $k$ over
+the whole of $A$ (bounds $0$ and $|A| - 1$), with the strict order $<$ as comparison, returns no
+element if and only if $k$ is not an entry of $A$.

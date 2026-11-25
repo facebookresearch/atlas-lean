@@ -1,0 +1,3 @@
+# No north step arrives at a lowest vertex
+
+Let $n \ge 1$ and let $d = (d_0, \dots, d_{n-1})$ be a cyclic sequence of directions $d_i \in \mathbb{Z}/4\mathbb{Z}$, indices taken modulo $n$. Direction $k$ is the unit step $s(k)$, with $s(0) = (1, 0)$ (east), $s(1) = (0, 1)$ (north), $s(2) = (-1, 0)$ (west), $s(3) = (0, -1)$ (south), and the walk with step directions $d$ has vertices $p_k = \sum_{0 \le i < k} s(d_i)$ for $k = 0, \dots, n-1$ (so $p_0 = 0$; vertex indices are also taken modulo $n$). If the walk is closed, $\sum_{i} s(d_i) = 0$, and $p_k$ has the smallest $y$-coordinate among all vertices, then $d_{k-1} \neq 1$: no north step arrives at $p_k$.

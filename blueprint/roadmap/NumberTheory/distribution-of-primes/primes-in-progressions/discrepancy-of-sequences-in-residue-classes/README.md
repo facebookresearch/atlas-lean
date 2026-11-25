@@ -1,0 +1,17 @@
+# Discrepancy of sequences in residue classes
+
+- [Discrepancy in a residue class](discrepancy.md)
+- [A sequence supported at index zero has zero discrepancy](discrepancy-single-zero.md)
+- [Discrepancy of a single positive term](discrepancy-single.md)
+- [Primitive discrepancy](primitive-discrepancy.md)
+- [The primitive discrepancy is attained](primitive-discrepancy-attained.md)
+- [Primitive residue-class discrepancies are bounded by the primitive discrepancy](abs-discrepancy-le-primitive-discrepancy.md)
+- [Averaged discrepancy](averaged-discrepancy.md)
+- [The averaged discrepancy with cutoff zero vanishes](averaged-discrepancy-zero.md)
+- [Multiplicative convolution of finitely supported sequences](convolution.md)
+- [Coefficients of the multiplicative convolution](convolution-apply.md)
+- [The multiplicative convolution vanishes at index zero](convolution-apply-zero.md)
+- [Convolving a sequence supported at zero gives zero](convolution-single-zero-left.md)
+- [Convolving with a sequence supported at zero gives zero](convolution-single-zero-right.md)
+- [Von Mangoldt function on a dyadic interval](dyadic-von-mangoldt.md)
+- [Values of the dyadic von Mangoldt function](dyadic-von-mangoldt-apply.md)

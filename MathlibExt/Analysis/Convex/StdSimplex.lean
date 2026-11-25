@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 /-
 Ported from fairinternal/formal-math at `c3bae57ddba11aa34b3cbc61270f587aa4c40152`.
 
-Introduced by Avocado; principal content by Tsutomu Okano (@toskua), as credited
-in the upstream author line; ported with attribution.
+Introduced by Meta Muse; principal content by Tsutomu Okano (@toskua),
+as credited in the upstream author line; ported with attribution.
 -/
 
 module

@@ -1,0 +1,3 @@
+# Gluing horizontal crossings through a vertical overlap crossing
+
+For a bond configuration $\omega$ on $\mathbb{Z}^2$ and integers $a, m, m', b, c, d$, the condition that if $\omega$ has [open left–right crossings](../../russo-seymour-welsh-theory/rectangles-crossings-annuli-and-the-box-crossing/horizontal-crossing.md) of $[a, m'] \times [c, d]$ and of $[m, b] \times [c, d]$ and an [open bottom–top crossing](../../russo-seymour-welsh-theory/rectangles-crossings-annuli-and-the-box-crossing/vertical-crossing.md) of the overlap $[m, m'] \times [c, d]$, then it has an open left–right crossing of $[a, b] \times [c, d]$.

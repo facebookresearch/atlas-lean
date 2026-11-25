@@ -13,6 +13,7 @@ public import Mathlib.Probability.CramerWold
 public import Mathlib.Probability.Distributions.Gaussian.Fernique
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import Mathlib.Probability.Moments.CovarianceBilin
 
 /-!
 # The multivariate central limit theorem
@@ -31,6 +32,9 @@ whose every scalar projection `⟪Y, t⟫` is a centered real Gaussian of varian
   whose projections `⟪A z, t⟫` under `stdGaussian E` have law `gaussianReal 0 Var[⟪X₀, t⟫]`.
 * `ProbabilityTheory.exists_tendstoInDistribution_inv_sqrt_smul_sum_sub`: the multivariate CLT
   with that constructed Gaussian limit on `stdGaussian E`.
+* `ProbabilityTheory.exists_tendstoInDistribution_sqrt_smul_mean_sub`: the mean form
+  `√B (mean_B X - μ)`, with the constructed limit identified as a centered Gaussian whose
+  covariance bilinear form is that of `X 0`.
 
 ## Proof
 
@@ -195,5 +199,73 @@ theorem exists_tendstoInDistribution_inv_sqrt_smul_sum_sub {X : ℕ → Ω → E
     tendstoInDistribution_inv_sqrt_smul_sum_sub A.continuous.aemeasurable hA hX hindep hident⟩
 
 end Existence
+
+/-! ### Mean form with covariance identification -/
+
+omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] [IsProbabilityMeasure P] in
+/-- The mean form `√B • (B⁻¹ • ∑ - μ)` equals the sum form `(√B)⁻¹ • (∑ - B • μ)` for every
+block count `B`; at `B = 0` both sides are `0`. -/
+private lemma sqrt_smul_mean_sub (X : ℕ → Ω → E) (m : E) (B : ℕ) (ω : Ω) :
+    √(B : ℝ) • ((B : ℝ)⁻¹ • ∑ b ∈ range B, X b ω - m) =
+      (√(B : ℝ))⁻¹ • (∑ b ∈ range B, X b ω - B • m) := by
+  rcases Nat.eq_zero_or_pos B with rfl | hB
+  · simp
+  · have hB' : (0 : ℝ) < B := Nat.cast_pos.mpr hB
+    have h1 : √(B : ℝ) * (B : ℝ)⁻¹ = (√(B : ℝ))⁻¹ := by
+      rw [← div_eq_mul_inv, Real.sqrt_div_self]
+    have h2 : (√(B : ℝ))⁻¹ * (B : ℝ) = √(B : ℝ) := by
+      rw [inv_mul_eq_div, Real.div_sqrt]
+    rw [smul_sub, smul_sub, smul_smul, ← Nat.cast_smul_eq_nsmul ℝ, smul_smul, h1, h2]
+
+omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] in
+/-- Polarization: a symmetric bilinear form is determined by its diagonal. -/
+private lemma bilin_eq_of_diag (C D : E →L[ℝ] E →L[ℝ] ℝ) (hC : ∀ x y, C x y = C y x)
+    (hD : ∀ x y, D x y = D y x) (h : ∀ t, C t t = D t t) : C = D := by
+  ext x y
+  have key : ∀ (K : E →L[ℝ] E →L[ℝ] ℝ), (∀ x y, K x y = K y x) →
+      K x y = (K (x + y) (x + y) - K x x - K y y) / 2 := by
+    intro K hK
+    simp only [map_add, add_apply]
+    rw [hK y x]
+    ring
+  rw [key C hC, key D hD, h, h, h]
+
+/-- **Multivariate central limit theorem, mean form.** For i.i.d. square-integrable random
+vectors `X : ℕ → Ω → E` in a finite-dimensional real inner product space, there is a Gaussian
+random vector `A` on `stdGaussian E`, centered and with covariance bilinear form equal to that
+of `X 0`, such that `√B • (B⁻¹ • ∑_{b < B} X b - ∫ ω, X 0 ω ∂P)` converges in distribution to
+`A`. The covariance may be singular. -/
+theorem exists_tendstoInDistribution_sqrt_smul_mean_sub {X : ℕ → Ω → E}
+    (hX : MemLp (X 0) 2 P) (hindep : iIndepFun X P)
+    (hident : ∀ b, IdentDistrib (X b) (X 0) P P) :
+    ∃ A : E →L[ℝ] E, HasGaussianLaw A (stdGaussian E) ∧
+      ∫ z, A z ∂stdGaussian E = 0 ∧
+      covarianceBilin ((stdGaussian E).map A) = covarianceBilin (P.map (X 0)) ∧
+      TendstoInDistribution
+        (fun (B : ℕ) ω ↦ √(B : ℝ) • ((B : ℝ)⁻¹ • ∑ b ∈ range B, X b ω - ∫ ω, X 0 ω ∂P))
+        atTop A (fun _ ↦ P) (stdGaussian E) := by
+  obtain ⟨A, hG, hlaw, hT⟩ := exists_tendstoInDistribution_inv_sqrt_smul_sum_sub hX hindep hident
+  refine ⟨A, hG, ?_, ?_, ?_⟩
+  · rw [A.integral_comp_id_comm IsGaussian.integrable_id, integral_id_stdGaussian, map_zero]
+  · have hA2 : MemLp id 2 ((stdGaussian E).map A) :=
+      (memLp_map_measure_iff aestronglyMeasurable_id A.continuous.aemeasurable).2 hG.memLp_two
+    have hX2 : MemLp id 2 (P.map (X 0)) :=
+      (memLp_map_measure_iff aestronglyMeasurable_id hX.aemeasurable).2 hX
+    refine bilin_eq_of_diag _ _ covarianceBilin_comm covarianceBilin_comm fun t => ?_
+    have hinner : Measurable fun u : E ↦ ⟪t, u⟫ := (continuous_const.inner continuous_id).measurable
+    rw [covarianceBilin_self hA2, covarianceBilin_self hX2,
+      variance_map hinner.aemeasurable A.continuous.aemeasurable,
+      variance_map hinner.aemeasurable hX.aemeasurable]
+    have h1 := (hlaw t).variance_eq
+    rw [variance_id_gaussianReal, Real.coe_toNNReal _ (variance_nonneg _ _)] at h1
+    simp_rw [real_inner_comm t] at h1
+    exact h1
+  · have hfun : (fun (B : ℕ) ω ↦ √(B : ℝ) • ((B : ℝ)⁻¹ • ∑ b ∈ range B, X b ω -
+        ∫ ω, X 0 ω ∂P)) = fun (B : ℕ) ω ↦
+        (√(B : ℝ))⁻¹ • (∑ b ∈ range B, X b ω - B • ∫ ω, X 0 ω ∂P) := by
+      funext B ω
+      exact sqrt_smul_mean_sub X _ B ω
+    rw [hfun]
+    exact hT
 
 end ProbabilityTheory

@@ -1,0 +1,3 @@
+# Single west run covering the top row
+
+Let $n \ge 1$ and let $d = (d_0, \dots, d_{n-1})$ be a cyclic sequence of directions $d_i \in \mathbb{Z}/4\mathbb{Z}$, indices taken modulo $n$. Direction $k$ is the unit step $s(k)$, with $s(0) = (1, 0)$ (east), $s(1) = (0, 1)$ (north), $s(2) = (-1, 0)$ (west), $s(3) = (0, -1)$ (south), and the walk with step directions $d$ has vertices $p_k = \sum_{0 \le i < k} s(d_i)$ for $k = 0, \dots, n-1$ (so $p_0 = 0$; vertex indices are also taken modulo $n$). For an index $M$, the walk has a single top run from $M$ when every vertex $p_v$ with $y(p_v) = y(p_M)$ satisfies $x(p_v) = x(p_M) - j$ for some natural number $j$ such that $d_{M+i} = 2$ (west) for all $0 \le i < j$.

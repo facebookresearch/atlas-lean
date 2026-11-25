@@ -1,0 +1,18 @@
+# Hoffman algebra and its bases
+
+- [The letter $x$ as a word](x-word.md)
+- [The letter $y$ as a word](y-word.md)
+- [Entries of an index as positive integers](pnat-entries.md)
+- [Hoffman word of a list of positive integers](z-word-pnat.md)
+- [Hoffman word of an index](z-word.md)
+- [Hoffman monomial of an index](z-monomial.md)
+- [Words of $\mathfrak{H}^1$](is-hone-word.md)
+- [Words of $\mathfrak{H}^0$](is-hzero-word.md)
+- [The monoid of $\mathfrak{H}^1$-words](word-submonoid-hone.md)
+- [The monoid of $\mathfrak{H}^0$-words](word-submonoid-hzero.md)
+- [The subalgebra $\mathfrak{H}^1$](h-one.md)
+- [The subalgebra $\mathfrak{H}^0$](h-zero.md)
+- [Empty or admissible indices](is-hzero-index.md)
+- [The type of empty or admissible indices](hzero-index.md)
+- [Hoffman basis of $\mathfrak{H}^1$](h-one-basis.md)
+- [Hoffman monomial basis of $\mathfrak{H}^0$](h-zero-basis.md)

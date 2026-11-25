@@ -56,13 +56,14 @@ the binders renamed to Mathlib's `f` / `f'` / `g` / `g'` convention
 
 open Filter Topology Set MeasureTheory intervalIntegral
 
-/-- **Interchange of limits and derivatives on a closed interval.** Let
-`f n : ℝ → ℝ` be a sequence of functions on `[a, b]` such that each
-`f n` is differentiable on `[a, b]` with derivative `f' n` continuous
-on `[a, b]`. If `f' n → g'` uniformly on `[a, b]` and `f n x → g x`
-pointwise on `[a, b]`, then the limit function `g` is differentiable
-within `[a, b]` with derivative `g'`, including at the endpoints, and
-`g'` is continuous on `[a, b]`. -/
+/-- **Interchange of limits and derivatives on a closed interval.** Let $a < b$ be real
+numbers, and let $f_n, f_n' : \mathbb{R} \to \mathbb{R}$ for $n \in \mathbb{N}$ and
+$g, g' : \mathbb{R} \to \mathbb{R}$ be functions. Suppose that for every $n$ and every
+$x \in [a, b]$, $f_n$ is differentiable at $x$ (two-sided, also at the endpoints) with
+derivative $f_n'(x)$; that each $f_n'$ is continuous on $[a, b]$; that $f_n' \to g'$
+uniformly on $[a, b]$; and that $f_n(x) \to g(x)$ for every $x \in [a, b]$. Then for every
+$x \in [a, b]$, $g$ has derivative $g'(x)$ at $x$ within $[a, b]$ (a one-sided derivative at
+the endpoints), and $g'$ is continuous on $[a, b]$. -/
 theorem hasDerivWithinAt_of_tendstoUniformlyOn_Icc
     {f : ℕ → ℝ → ℝ} {g : ℝ → ℝ} {f' : ℕ → ℝ → ℝ} {g' : ℝ → ℝ}
     {a b : ℝ} (hab : a < b)
@@ -142,8 +143,13 @@ theorem hasDerivWithinAt_of_tendstoUniformlyOn_Icc
   rw [zero_add] at hFTC3
   exact hFTC3.congr (fun u hu => heq u hu) (heq x hx)
 
-/-- Interior corollary: at `x ∈ (a, b)` the within-derivative upgrades
-to an ordinary derivative. -/
+/-- **Interchange of limits and derivatives at interior points.** Let $a < b$ be real numbers,
+and let $f_n, f_n' : \mathbb{R} \to \mathbb{R}$ for $n \in \mathbb{N}$ and
+$g, g' : \mathbb{R} \to \mathbb{R}$ be functions. Suppose that for every $n$ and every
+$x \in [a, b]$, $f_n$ is differentiable at $x$ (two-sided, also at the endpoints) with
+derivative $f_n'(x)$; that each $f_n'$ is continuous on $[a, b]$; that $f_n' \to g'$
+uniformly on $[a, b]$; and that $f_n(x) \to g(x)$ for every $x \in [a, b]$. Then $g$ is
+differentiable at every $x \in (a, b)$ with derivative $g'(x)$. -/
 theorem hasDerivAt_of_tendstoUniformlyOn_Icc
     {f : ℕ → ℝ → ℝ} {g : ℝ → ℝ} {f' : ℕ → ℝ → ℝ} {g' : ℝ → ℝ}
     {a b : ℝ} (hab : a < b)

@@ -1,0 +1,3 @@
+# Set of sites is the inside of a closed lattice walk
+
+For a site $z \in \mathbb{Z}^2$ and a walk $w$ in the square lattice, the ray count of $z$ is the number of steps of $w$ along vertical edges $\{(c, z_1 - 1), (c, z_1)\}$ with $c \le z_0 - 1$, the edges crossed by the horizontal ray going left from $(z_0 - \tfrac12, z_1 - \tfrac12)$. A set $K \subseteq \mathbb{Z}^2$ has this property when there are a site $a$ and a closed walk $w$ from $a$ to $a$ in the square lattice such that the ray count of $z$ with respect to $w$ is odd for every $z \in K$ and even for every $z \notin K$; that is, $K$ is the inside of $w$ by the even–odd rule.

@@ -1,0 +1,3 @@
+# Fredholmness of a direct sum operator
+
+Let $\mathbb{k}$ be a nontrivially normed field and let $E, E', F, F'$ be normed spaces over $\mathbb{k}$; products of normed spaces carry the maximum norm, and $T \oplus S$ denotes the operator $(x, y) \mapsto (Tx, Sy)$. Assume moreover that $\mathbb{k}$ is complete. For bounded operators $T : E \to E'$ and $S : F \to F'$, the direct sum $T \oplus S$ is Fredholm if and only if $T$ and $S$ are both Fredholm. Here an operator is Fredholm if its kernel is finite-dimensional and topologically complemented, its range is closed and of finite codimension, and it is strict: the induced map from the quotient by the kernel onto the range is an isomorphism of normed spaces. The index is $\dim \ker - \dim \operatorname{coker}$.

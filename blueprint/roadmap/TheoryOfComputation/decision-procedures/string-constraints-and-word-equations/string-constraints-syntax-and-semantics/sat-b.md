@@ -1,0 +1,7 @@
+# Boolean checker for formula satisfaction
+
+Let $\alpha$ be an alphabet and $V$ a set of variables. String terms over $\alpha$ with variables in $V$ are built from constant words $w \in \alpha^*$, variables $x \in V$, concatenations $t_1 \cdot t_2$ and morphism applications $h(t)$, where $h$ is a map $\alpha \to \alpha^*$ extended letter by letter to words. The value $\sigma(t)$ of a term $t$ under an assignment $\sigma : V \to \alpha^*$ is defined recursively: a constant word $w$ has value $w$, a variable $x$ has value $\sigma(x)$, $\sigma(t_1 \cdot t_2) = \sigma(t_1)\sigma(t_2)$, and $\sigma(h(t)) = h(a_1) \cdots h(a_k)$ where $\sigma(t) = a_1 \cdots a_k$. An atom is an equation $t_1 = t_2$, a membership $t \in L(e)$ for a regular expression $e$ over $\alpha$, or a length bound $|t| \le k$ or $|t| \ge k$ with $k \in \mathbb{N}$, where $t, t_1, t_2$ are terms. Formulas are built from atoms, true and false by conjunction and disjunction (there is no negation). For an assignment $\sigma : V \to \alpha^*$, the Boolean formula checker is defined
+recursively: on an atom it returns the answer of the Boolean atom checker (which compares the values of
+the terms under $\sigma$, or tests regular membership); on $\varphi \wedge \psi$ it returns the Boolean
+conjunction of its answers on $\varphi$ and $\psi$; on $\varphi \vee \psi$ their Boolean disjunction; on true
+it returns true and on false it returns false.

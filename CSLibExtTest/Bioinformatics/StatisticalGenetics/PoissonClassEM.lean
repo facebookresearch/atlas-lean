@@ -24,7 +24,8 @@ theorem rate_pos : ∀ c, 0 < rate c := by
   intro c; fin_cases c <;> norm_num [rate]
 
 /-- Non-vacuity: equal weights are admissible. -/
-noncomputable def half : PosWeights (Fin 2) :=
+noncomputable def half :
+    Cslib.Bioinformatics.StatisticalGenetics.PoissonClassEM.PosWeights (Fin 2) :=
   ⟨fun _ => 1 / 2, fun _ => by norm_num, by norm_num⟩
 
 /-- Three genes: one with no LoF variants of `E = 10`, two near expectation. -/

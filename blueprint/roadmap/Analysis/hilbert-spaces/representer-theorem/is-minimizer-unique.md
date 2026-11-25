@@ -1,0 +1,3 @@
+# Uniqueness of the minimizer
+
+Let $V$ be a real inner product space, let $H$ be a real inner product space of functions $X \to V$ on which evaluation at each point is continuous (a reproducing kernel space; completeness is not needed here), and let $x_1, \dots, x_n \in X$. Let $L : V^n \to \mathbb{R}$ be convex and let $\Omega : \mathbb{R} \to \mathbb{R}$ be strictly convex and monotone on $[0, \infty)$ (for instance $\Omega(t) = \lambda t^2$ with $\lambda > 0$). Then the [regularized risk](regularized-risk.md) $L(f(x_1), \dots, f(x_n)) + \Omega(\|f\|)$ has at most one global minimizer: two global minimizers $f_1, f_2 \in H$ are equal.

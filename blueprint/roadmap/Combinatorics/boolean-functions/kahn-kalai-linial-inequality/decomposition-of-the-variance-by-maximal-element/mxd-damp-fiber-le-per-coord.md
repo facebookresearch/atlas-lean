@@ -1,0 +1,5 @@
+# Hypercontractive bound on the damped fiber weight
+
+Let $E$ be a finite nonempty set, $0 < p < 1$, and $f = 1_A$ the indicator of a set $A \subseteq \{0, 1\}^E$. Write $\hat f(S)$, for $S \subseteq E$, for the [$p$-biased Fourier coefficients](../../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/pbiased-tensorize/ptn-coeff.md) of $f$, $\mathrm{Inf}_e = \mathbb{E}_p\lvert f(\omega^{e \to 1}) - f(\omega^{e \to 0})\rvert$ for the [influence](../../osss-inequality-for-decision-trees/infl.md) of $e \in E$ under the $p$-biased product measure $\mu_p$, $\delta = \max_{e \in E} \mathrm{Inf}_e$ and $I = \sum_{e \in E} \mathrm{Inf}_e$. Fix a linear order on $E$, and let $D_e(\rho) = \sum \rho^{2\lvert S\rvert} \hat f(S)^2$, the sum over the nonempty $S \subseteq E$ with $\max S = e$, be the [damped fiber weight](mxd-damp-fiber.md) of $e$. If $0 \le \rho \le 1$, $1 \le q \le 2$ and $\rho^2 = 4(q - 1)p(1-p)$, then for every $e \in E$
+
+$$D_e(\rho) \le \rho^2\, p(1-p)\, \mathrm{Inf}_e^{2/q}.$$

@@ -1,0 +1,3 @@
+# Bounded regions indexed by the cycle rank
+
+Let $P$ be a finite graph $G = (V, E)$ with an injective map into $\mathbb{Z}^2$ sending edges to edges of the square lattice, with image graph $H$. A bijection between the bounded regions of $P$ (the connected components with finitely many vertices of the face-region graph of $H$, in which two adjacent unit faces are joined unless the primal edge separating them is an edge of $H$) and the set $\{0, 1, \dots, \beta(G) - 1\}$, where $\beta(G) = |E| + c(G) - |V|$ is the cycle rank of $G$ and $c(G)$ its number of connected components. Such a bijection exists by the discrete Jordan–Euler theorem; this is one chosen bijection.

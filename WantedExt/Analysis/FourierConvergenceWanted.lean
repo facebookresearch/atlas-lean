@@ -34,11 +34,15 @@ into a Batteries `theorem_wanted` (data/instance holes into
 and placed the declarations in the `MathlibExt.Analysis.FourierConvergenceWanted` namespace.
 Mathematical
 statements are unchanged. Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
+Later change (ATLAS, 2026): `fejer` was proved, and it and the definitions
+`fourierPartialSum` and `fourierCesaroMean` moved to `MathlibExt/Analysis/Fourier/Fejer.lean`
+with unchanged names, statements and docstrings.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Analysis.Fourier.Fejer
 
 @[expose] public section
 
@@ -55,7 +59,9 @@ namespace Analysis
   `S_N(f)(x) = ∑_{n = -N}^{N} f̂_n e^{inx}` converge to `f(x)` at every `x ∈ ℝ`.
 * **Fejér's theorem** (additional): for a merely *continuous* 2π-periodic `f`,
   the Cesàro means `σ_N(f) = (S_0 + ⋯ + S_N)/(N+1)` of the partial sums converge
-  to `f` uniformly on `ℝ`.
+  to `f` uniformly on `ℝ`. It is proved as `fejer` in
+  `MathlibExt/Analysis/Fourier/Fejer.lean`, next to the definitions
+  `fourierPartialSum` and `fourierCesaroMean`; only Dirichlet's theorem stays wanted here.
 
 mathlib has the circle, the Fourier characters, `fourierCoeffOn`, the `L²`
 Fourier series, Parseval's identity (`hasSum_sq_fourierCoeffOn`), and uniform
@@ -68,11 +74,11 @@ Cauchy–Schwarz inequality.
 `MathlibExt/Analysis/Fourier/AddCircle/FejerTheorem.lean` supplies the Fejér
 kernel, Cesàro–Fourier means, and uniform convergence on `AddCircle T`.
 The circle and real-line Fourier-coefficient interfaces use the same symmetric
-partial-sum order and `N + 1` normalization. Transport from the circle interface
-requires descending a continuous periodic function to `AddCircle (2 * Real.pi)`,
-identifying `fourierCoeffOn` and the exponential modes with the circle coefficients
-and modes, and pulling uniform convergence back to `ℝ`. This catalogue does not
-supply those interface bridges.
+partial-sum order and `N + 1` normalization. `MathlibExt/Analysis/Fourier/Fejer.lean`
+descends a continuous periodic function to `AddCircle (2 * Real.pi)`, identifies
+the real-line partial sums and Cesàro means with the circle ones
+(`fourierPartialSum_eq_partialFourierSum`, `fourierCesaroMean_eq_cesaroFourierMean`),
+and pulls uniform convergence back to `ℝ` to prove `fejer`.
 
 `MathlibExt/Analysis/Fourier/AddCircle/C1FourierSummable.lean` proves that
 summability for a `T`-periodic `C¹` function
@@ -85,34 +91,23 @@ statements to `dirichlet_pointwise`.
 
 open Filter Topology
 
-/-- The symmetric Fourier partial sum of `f : ℝ → ℂ` on the period `[0, 2π]`:
-`S_N(f)(x) = ∑_{n = -N}^{N} f̂_n · e^{inx}`, with `f̂_n = fourierCoeffOn _ f n`. -/
-noncomputable def fourierPartialSum (f : ℝ → ℂ) (N : ℕ) (x : ℝ) : ℂ :=
-  ∑ n ∈ Finset.Icc (-(N : ℤ)) N,
-    fourierCoeffOn Real.two_pi_pos f n * Complex.exp (Complex.I * (n : ℂ) * (x : ℂ))
-
-/-- The Cesàro mean of the first `N + 1` Fourier partial sums:
-`σ_N(f)(x) = (S_0(f)(x) + S_1(f)(x) + ⋯ + S_N(f)(x)) / (N + 1)`. -/
-noncomputable def fourierCesaroMean (f : ℝ → ℂ) (N : ℕ) (x : ℝ) : ℂ :=
-  (∑ k ∈ Finset.range (N + 1), fourierPartialSum f k x) / (N + 1 : ℂ)
-
 /- **Dirichlet's pointwise convergence theorem** (§46). For every `C¹`
 2π-periodic complex function `f`, the symmetric Fourier partial sums `S_N(f)(x)`
 converge to `f(x)` at every point `x ∈ ℝ`. -/
-/-- Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `fourier_dirichlet_fejer`. -/
+/-- **Dirichlet's theorem on pointwise convergence of Fourier series.** Let
+$f \colon \mathbb{R} \to \mathbb{C}$ be $2\pi$-periodic and continuously differentiable, and for
+$n \in \mathbb{Z}$ let $\hat f_n = \frac{1}{2\pi} \int_0^{2\pi} e^{-int} f(t)\,dt$ be the $n$-th
+Fourier coefficient of $f$ on $[0, 2\pi]$. Then for every $x \in \mathbb{R}$ the symmetric Fourier
+partial sums $S_N(f)(x) = \sum_{n=-N}^{N} \hat f_n e^{inx}$ converge to $f(x)$ as $N \to \infty$.
+
+Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental
+Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `fourier_dirichlet_fejer`. -/
 public theorem_wanted dirichlet_pointwise
     {f : ℝ → ℂ} (_hperiod : Function.Periodic f (2 * Real.pi)) (_hC1 : ContDiff ℝ 1 f)
     (x : ℝ) :
     Tendsto (fun N : ℕ => fourierPartialSum f N x) atTop (𝓝 (f x))
-
-/- **Fejér's theorem** (§46). For every *continuous* 2π-periodic complex
-function `f` — without the `C¹` hypothesis of Dirichlet's theorem — the Cesàro
-means `σ_N(f)` of the symmetric Fourier partial sums converge to `f` uniformly
-on `ℝ`. -/
-/-- Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `fourier_dirichlet_fejer`. -/
-public theorem_wanted fejer
-    {f : ℝ → ℂ} (_hperiod : Function.Periodic f (2 * Real.pi)) (_hcont : Continuous f) :
-    TendstoUniformly (fun N : ℕ => fourierCesaroMean f N) f atTop
 
 end Analysis
 

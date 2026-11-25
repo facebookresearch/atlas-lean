@@ -35,6 +35,7 @@ public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 public import Mathlib.RingTheory.MvPowerSeries.Trunc
 public import Mathlib.LinearAlgebra.SModEq.Basic
 import Mathlib.RingTheory.Ideal.BigOperators
+import MathlibExt.RingTheory.MvPowerSeries.VariableIdealPower
 
 /-!
 # Adic completeness of multivariate power series
@@ -67,78 +68,10 @@ private theorem maximalIdeal_eq_comap [IsLocalRing R] :
   rw [Ideal.mem_comap, mem_maximalIdeal, mem_maximalIdeal, mem_nonunits_iff, mem_nonunits_iff,
     isUnit_iff_constantCoeff]
 
-private def dropVar (i : σ) (φ : MvPowerSeries σ R) : MvPowerSeries σ R :=
-  fun m => if m i = 0 then φ m else 0
-
-private theorem coeff_dropVar (i : σ) (φ : MvPowerSeries σ R) (m : σ →₀ ℕ) :
-    coeff m (dropVar i φ) = if m i = 0 then coeff m φ else 0 := rfl
-
-private theorem mem_pow_span_X_of_coeff_eq_zero [Finite σ] (k : ℕ) (φ : MvPowerSeries σ R)
-    (hφ : ∀ m : σ →₀ ℕ, m.degree < k → coeff m φ = 0) :
-    φ ∈ Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ^ k := by
-  classical
-  haveI := Fintype.ofFinite σ
-  set J : Ideal (MvPowerSeries σ R) := Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) with hJ
-  induction k generalizing φ with
-  | zero => simp
-  | succ k ihk =>
-    suffices h : ∀ (s : Finset σ) (ψ : MvPowerSeries σ R),
-        (∀ m : σ →₀ ℕ, m.degree < k + 1 → coeff m ψ = 0) →
-        (∀ m : σ →₀ ℕ, ¬ (m.support ⊆ s) → coeff m ψ = 0) → ψ ∈ J ^ (k + 1) by
-      exact h Finset.univ φ hφ fun m hm => (hm (Finset.subset_univ _)).elim
-    intro s
-    induction s using Finset.induction_on with
-    | empty =>
-      intro ψ h0 hs
-      have : ψ = 0 := by
-        ext m
-        by_cases hm : m = 0
-        · subst hm; rw [map_zero]; exact h0 0 (by simp)
-        · rw [map_zero]
-          refine hs m fun hsub => hm ?_
-          ext j
-          have : j ∉ m.support := fun hj => by simpa using hsub hj
-          simpa [Finsupp.mem_support_iff] using this
-      rw [this]; exact Ideal.zero_mem _
-    | insert i s hi ih =>
-      intro ψ h0 hs
-      have hdiv : (X i : MvPowerSeries σ R) ∣ ψ - dropVar i ψ := by
-        rw [X_dvd_iff]
-        intro m hm
-        rw [map_sub, coeff_dropVar, ite_eq_left hm, sub_self]
-      obtain ⟨q, hq⟩ := hdiv
-      have hqk : ∀ m : σ →₀ ℕ, m.degree < k → coeff m q = 0 := by
-        intro m hm
-        have h1 : coeff (Finsupp.single i 1 + m) (X i * q) = coeff m q := by
-          rw [X, coeff_add_monomial_mul, one_mul]
-        have h2 : coeff (Finsupp.single i 1 + m) (ψ - dropVar i ψ) = 0 := by
-          rw [map_sub, coeff_dropVar, ite_eq_right (by simp), sub_zero]
-          exact h0 _ (by rw [map_add, Finsupp.degree_single]; omega)
-        rw [← h1, ← hq, h2]
-      have hrest : dropVar i ψ ∈ J ^ (k + 1) := by
-        refine ih _ ?_ ?_
-        · intro m hm
-          rw [coeff_dropVar]
-          split_ifs
-          · exact h0 m hm
-          · rfl
-        · intro m hm
-          rw [coeff_dropVar]
-          split_ifs with hmi
-          · refine hs m fun hsub => hm fun j hj => ?_
-            rcases Finset.mem_insert.mp (hsub hj) with rfl | h
-            · exact absurd hmi (by simpa [Finsupp.mem_support_iff] using hj)
-            · exact h
-          · rfl
-      have : ψ = dropVar i ψ + X i * q := by rw [← hq]; ring
-      rw [this, pow_succ']
-      exact Ideal.add_mem _ (pow_succ' J k ▸ hrest)
-        (Ideal.mul_mem_mul (Ideal.subset_span ⟨i, rfl⟩) (ihk q hqk))
-
 private theorem sub_truncTotal_mem_pow_span_X [Finite σ] (k : ℕ) (φ : MvPowerSeries σ R) :
     φ - (truncTotal k φ : MvPolynomial σ R) ∈
       Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ^ k := by
-  refine mem_pow_span_X_of_coeff_eq_zero k _ fun m hm => ?_
+  refine MvPowerSeries.mem_pow_span_X_of_coeff_eq_zero k _ fun m hm => ?_
   rw [map_sub, MvPolynomial.coeff_coe, coeff_truncTotal _ hm, sub_self]
 
 section LocalCoeff
@@ -207,7 +140,7 @@ private theorem monomial_one_mem_pow (m : σ →₀ ℕ) :
     (monomial m (1 : R) : MvPowerSeries σ R) ∈ 𝔐 ^ m.degree := by
   classical
   refine Ideal.pow_right_mono span_X_le m.degree
-    (mem_pow_span_X_of_coeff_eq_zero _ _ fun m' hm' => ?_)
+    (MvPowerSeries.mem_pow_span_X_of_coeff_eq_zero _ _ fun m' hm' => ?_)
   rw [coeff_monomial, ite_eq_right]
   rintro rfl
   exact lt_irrefl _ hm'

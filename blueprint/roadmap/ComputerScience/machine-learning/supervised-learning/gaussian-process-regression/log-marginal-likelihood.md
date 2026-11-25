@@ -1,0 +1,7 @@
+# Log marginal likelihood of Gaussian-process regression
+
+For a kernel $k$, a real number $\sigma^2$ (the noise variance), a finite family $x = (x_j)_{j \in \nu}$ of $n = |\nu|$ training inputs and targets $y \in \mathbb{R}^\nu$, the log marginal likelihood of Gaussian-process regression is the number
+
+$$-\tfrac12\, y^\top (K + \sigma^2 I)^{-1} y - \tfrac12 \log \det(K + \sigma^2 I) - \tfrac{n}{2} \log 2\pi, \qquad K = K(x, x)$$
+
+(Rasmussen and Williams 2006, Equation 2.30), where the inverse of a singular matrix is taken to be $0$ and $\log t$ means $\log |t|$ with $\log 0 = 0$. When $K$ is positive semidefinite and $\sigma^2 > 0$, the matrix $K + \sigma^2 I$ is positive definite and this number is $\log p(y \mid x)$, the logarithm of the Gaussian density $\mathcal{N}(y \mid 0, K + \sigma^2 I)$ of the targets ([the log marginal likelihood of Gaussian-process regression](log-marginal-likelihood-2.md)); for other inputs it is only the formula above, read with these conventions. The first term measures the data fit, the second penalizes model complexity through the determinant of the prior covariance of the targets, and the third is a normalization constant. As a function of the kernel hyperparameters and $\sigma^2$, it is the objective of type-II maximum likelihood, the Bayesian model selection that Rasmussen and Ghahramani (*Occam's razor*, NIPS 13, 2001) present as an automatic Occam's razor.

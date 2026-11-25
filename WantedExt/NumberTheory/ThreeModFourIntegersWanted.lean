@@ -33,15 +33,19 @@ namespace MetaMathlibExt
 
 open Filter Asymptotics
 
-/-- **Theorem 1** (Raikov). Let `F(s) = ∑ aₙ n^{-s}` have nonnegative coefficients and
-converge for `Re s > 1`, and suppose `F(s) = H(s) / (s - 1)^{1-α}` for `Re s > 1`, where
-`H` is holomorphic on an open set containing `Re s ≥ 1` and nonzero on `Re s ≥ 1`. Then
-`∑_{n ≤ x} aₙ ∼ c x / (ln x)^α` with `c = H(1) / Γ(1 - α)`.
+/-- **Raikov's Tauberian theorem.** Let $a_1, a_2, \ldots$ be nonnegative real numbers whose
+Dirichlet series $F(s) = \sum_{n \ge 1} a_n n^{-s}$ converges absolutely for $\mathrm{Re}\, s > 1$,
+and let $\alpha < 1$ be real. Suppose that $H$ is a function holomorphic on an open set containing
+the half-plane $\mathrm{Re}\, s \ge 1$ and nonzero on that half-plane, and that
+$F(s) = H(s) / (s - 1)^{1 - \alpha}$ for $\mathrm{Re}\, s > 1$, with the principal branch of the
+power. Then
+$$\sum_{n=1}^{x} a_n \sim \frac{H(1)}{\Gamma(1 - \alpha)} \cdot \frac{x}{(\ln x)^\alpha}$$
+as the natural number $x$ tends to infinity.
 
-The paper allows any real `α`; `α < 1` is added. For `α = 1` the statement fails:
-`a₁ = 1`, `aₙ = 0` otherwise, `H = 1` gives `F = 1 = H / (s - 1)^0`, but `Γ(0)` is a
-pole and `∑_{n ≤ x} aₙ = 1`. The analytic continuation of `F` across `Re s = 1`, `s ≠ 1`,
-assumed in the paper, follows from the representation through `H`.
+The paper allows any real $\alpha$; for $\alpha = 1$ the statement fails: $a_1 = 1$, $a_n = 0$
+otherwise and $H = 1$ give $F = 1 = H / (s - 1)^0$, but $\Gamma$ has a pole at $0$ and
+$\sum_{n \le x} a_n = 1$. The analytic continuation of $F$ across $\mathrm{Re}\, s = 1$,
+$s \neq 1$, assumed in the paper, follows from the representation through $H$.
 
 Source: Jones and Zvonkin, *A Number-Theoretic Problem Concerning Pseudo-Real Riemann
 Surfaces*, INTEGERS 25 (2025), Article A75, Theorem 1 (`integers-2025-A75-thm-1`). -/
@@ -55,12 +59,16 @@ public theorem_wanted isEquivalent_sum_of_LSeries_eq_div_cpow {a : ℕ → ℝ} 
     IsEquivalent atTop (fun x : ℕ => ∑ n ∈ Finset.Icc 1 x, (a n : ℂ))
       (fun x : ℕ => H 1 / Complex.Gamma (1 - α) * x / (Real.log x ^ α : ℝ))
 
-/-- **Theorem 2.** The number `g(x)` of `n ≤ x` all of whose prime factors are
-`≡ -1 (mod 4)` satisfies `g(x) ∼ c x / √(ln x)` with `c = √(e^γ / π) · C / 2`, where
-`C = C(4, 1) = lim (ln x)^{1/2} ∏_{q ≤ x, q ≡ 1 (4)} (1 - 1/q)`.
+/-- **Counting integers whose prime factors are all $\equiv 3 \pmod 4$.** Let $C$ be a real
+number such that $\sqrt{\ln x} \prod_{q \le x} (1 - 1/q) \to C$ as the natural number $x$ tends
+to infinity, where $q$ runs over the primes with $q \equiv 1 \pmod 4$. Let $g(x)$ be the number
+of integers $n$ with $1 \le n \le x$ all of whose prime factors are $\equiv 3 \pmod 4$ (so
+$n = 1$ is counted). Then
+$$g(x) \sim \sqrt{e^\gamma / \pi} \cdot \frac{C}{2} \cdot \frac{x}{\sqrt{\ln x}}$$
+as the natural number $x$ tends to infinity, where $\gamma$ is the Euler–Mascheroni constant.
 
-`x` runs over the natural numbers. The record's flattened display is read as
-`√(e^γ / π) · C / 2`, matching the paper's value `c = 0.48651…` for `C = 1.29230…`.
+In the source $C = C(4, 1)$ is the constant of Languasco and Zaccagnini; for $C = 1.29230\ldots$
+the constant in front of $x / \sqrt{\ln x}$ is $0.48651\ldots$.
 
 Source: Jones and Zvonkin, *A Number-Theoretic Problem Concerning Pseudo-Real Riemann
 Surfaces*, INTEGERS 25 (2025), Article A75, Theorem 2 (`integers-2025-A75-thm-2`). -/

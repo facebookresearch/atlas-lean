@@ -1,0 +1,15 @@
+# Palindromes in arithmetic progressions
+
+- [Two floor-function identities](floor-add-floor-neg-and-floor-add-eq.md)
+- [Palindromes in an arithmetic progression](palindrome-apcount.md)
+- [Palindromic half copy](palindromic-half-copy.md)
+- [Digit-sum congruence count](digit-sum-congruence-count.md)
+- [Two small palindrome counts](palindrome-apcount-small.md)
+- [Palindromic half copies of $5570$ in bases $5$ and $8$](palindromic-half-copy-example.md)
+- [A small value of the digit-sum congruence count](digit-sum-congruence-count-small.md)
+- [Counting digit tuples by their sum modulo a divisor of the base minus one](digit-sum-congruence-count-of-mod-eq-one.md)
+- [Palindromes in residue classes modulo a divisor of the base](palindrome-apcount-of-dvd-base.md)
+- [Counting palindromes up to $m$ and by parity](palindrome-count-closed-form.md)
+- [Palindromes in residue classes modulo a divisor of the base minus one](palindrome-apcount-of-mod-eq-one.md)
+- [Palindromes up to a power of the base in residue classes](palindrome-apcount-base-pow.md)
+- [Palindromes in residue classes: a logarithmic error bound](abs-palindrome-apcount-sub-le.md)
