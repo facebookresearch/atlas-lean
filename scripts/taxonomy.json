@@ -13237,6 +13237,7 @@
   "MathlibExt/NumberTheory/RamificationInertia/ResidueGenerator": {"to": "NumberTheory/algebraic-number-theory/discriminants-ramification", "title": "Residue maps of singly generated algebras"},
   "MathlibExt/NumberTheory/RamificationInertia/Tame": {"to": "RingTheory/ramification", "title": "Tame and wild ramification"},
   "MathlibExt/NumberTheory/RamirezAlfonsinSkalba": {"to": "NumberTheory/numerical-semigroups", "title": "Primes in numerical semigroups with two generators"},
+  "MathlibExt/NumberTheory/RankinSmoothReciprocal": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Rankin’s bound for smooth numbers"},
   "MathlibExt/NumberTheory/Rat/Place": {"to": "NumberTheory/algebraic-number-theory/adeles-class-field-theory", "title": "Places and completions of the rationals"},
   "MathlibExt/NumberTheory/RatResidue": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/RationalParametrizationPowSwap": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Equation xʸ = yˣ"},

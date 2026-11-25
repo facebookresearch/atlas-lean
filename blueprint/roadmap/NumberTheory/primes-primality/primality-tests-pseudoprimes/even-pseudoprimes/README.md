@@ -11,9 +11,10 @@
 - [Square prime factors of even pseudoprimes are Wieferich primes](even-pseudoprime-wieferich-of-sq-dvd.md)
 - [Reciprocal sum over a residue class in an exponential window](sum-inv-mod-eq-order-of-le.md)
 - [Reciprocal sum over a residue class restricted modulo 16](sum-inv-mod-eq-order-of-mod-sixteen-le.md)
-- [Rankin's bound for reciprocal sums of smooth numbers](smooth-reciprocal-tail-le-rpow-mul-smoot.md)
 - [Nguyen–Pomerance bound for reciprocal sums of smooth numbers](smooth-reciprocal-tail-lt-nguyen-pomeran.md)
 - [Primes with odd order of 2 of small size](order-of-two-odd-small-count-lt.md)
 - [Primes with odd order of 2 of medium size](order-of-two-odd-medium-count-lt.md)
 - [Beeger's theorem](even-pseudoprimes-infinite.md)
 - [Cheng–Kinlaw–Nguyen reciprocal-sum bounds](even-pseudoprime-reciprocal-sum-bounds.md)
+
+Related estimate: [Rankin's bound for reciprocal sums of smooth numbers](../../../arithmetic-functions/special-integer-classes/rankin-smooth-reciprocal-tail.md).

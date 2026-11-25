@@ -19,4 +19,5 @@ Squarefree, k-free, k-full and powerful, smooth and rough numbers, highly compos
 - [Abs card hfree sub le](abs-card-hfree-sub-le.md)
 - [Average number of prime factors of h-free integers](average-card-factors-over-h-free.md)
 - [Consecutive polynomial family](is-consecutive-polynomial-family.md)
+- [Rankin's bound for reciprocal sums of smooth numbers](rankin-smooth-reciprocal-tail.md)
 - [Natural numbers with the same prime divisors](same-prime-support.md)

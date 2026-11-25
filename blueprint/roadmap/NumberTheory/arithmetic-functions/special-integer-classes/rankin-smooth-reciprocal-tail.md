@@ -8,4 +8,5 @@ integers $n$. Then $S(x, y) \le x^{-s} \zeta(1 - s, y)$, where both series conve
 
 ## Sources
 
+- Nguyen and Pomerance, *The Reciprocal Sum of the Amicable Numbers*, Mathematics of Computation 88 (2019), no. 317, 1503–1526, Lemma 2.9 (first inequality) (<https://doi.org/10.1090/mcom/3362>).
 - Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of Integer Sequences 29 (2026), Article 26.1.3, Lemma 8, display (smooth1) (`jis-2026-26.1.3-lem-8`).
