@@ -4,6 +4,7 @@
 
 - for every abstraction, $\lambda X \in [\![\lambda X.\, E]\!]$;
 - for every application $E_1\,E_2$ and every abstraction $\lambda X.\, E$, the conditional constraint
+
 $$\lambda X \in [\![E_1]\!] \implies [\![E_2]\!] \subseteq [\![X]\!] \ \wedge\ [\![E]\!] \subseteq [\![E_1\,E_2]\!].$$
 
 It states that the argument may flow into the formal parameter and that the body's values are among the results of the call.

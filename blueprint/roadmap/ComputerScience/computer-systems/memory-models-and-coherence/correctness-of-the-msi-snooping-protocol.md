@@ -11,7 +11,7 @@ In the MSI protocol each cache holds each block in one of three stable states:
 
 A load miss issues GetS and ends in S; loads in S or M and stores in M hit locally and issue no request; a store in I or S issues GetM and ends in M. Writing back a Modified block issues PutM, while an S copy may be evicted silently. When a controller snoops another core's GetS for a block it holds in M, it sends the current data both to the requester and to main memory, which is thereby updated, and moves to S. When it snoops another core's GetM, it moves to I from S or M, supplying the data from M.
 
-In this system the protocol maintains the [coherence invariants](cache-coherence-invariants.md) in the logical time given by the bus order:
+Order all memory operations to a block in logical time as follows: bus transactions in bus order, and each local hit after the last bus transaction of its core for that block and before the next one, in the core's program order. A local hit happens while its core holds the block in S or M, so it falls inside the epoch begun by that core's last GetS or GetM. In this logical time the protocol maintains the [coherence invariants](cache-coherence-invariants.md):
 - At most one cache holds a block in M, and then no other cache holds it in S.
 - Every read returns the value of the last write in that order.
 

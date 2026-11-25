@@ -3,7 +3,9 @@
 Consider Plotkin's PCF, with ground types $o$ (truth values) and $\iota$ (natural numbers), call-by-name evaluation, and its standard Scott model, in which each type denotes a domain of continuous functions. The model is adequate: denotational equality of terms implies operational (contextual) equivalence. The converse fails.
 
 For $i = 0, 1$, let $M_i$ be the closed term of type $(o \to o \to o) \to \iota$ given by
+
 $$M_i = \lambda a.\ \mathrm{if}\ a\,\mathit{tt}\,\Omega\ \mathrm{then}\ \bigl(\mathrm{if}\ a\,\Omega\,\mathit{tt}\ \mathrm{then}\ (\mathrm{if}\ a\,\mathit{ff}\,\mathit{ff}\ \mathrm{then}\ \Omega\ \mathrm{else}\ i)\ \mathrm{else}\ \Omega\bigr)\ \mathrm{else}\ \Omega,$$
+
 where $\Omega$ is a divergent term of the appropriate ground type.
 
 - **Different denotations.** Applied to parallel or, the continuous function $V$ with $V(\mathit{tt}, x) = V(x, \mathit{tt}) = \mathit{tt}$ for all $x$ and $V(\mathit{ff}, \mathit{ff}) = \mathit{ff}$, the denotation of $M_i$ yields $i$. So $M_0$ and $M_1$ have different denotations.
