@@ -6,6 +6,8 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+module
+
 import Domains.Biology.Dynamics.PlanarStability
 import Domains.Biology.Ecology.NicholsonBailey
 import Mathlib.Tactic.FieldSimp
@@ -112,6 +114,43 @@ private theorem scale_equilibrium {r a c : ℝ}
   · field_simp [ha.ne', hc.ne', hr1]
   · field_simp [ha.ne']
 
+/-- The headline spectral theorem on the concrete instance `r = 2`, `a = 1`, `c = 1`: the
+Jacobian at the positive equilibrium has two nonreal conjugate eigenvalues of modulus
+`√(2 log 2) > 1`. -/
+private theorem concrete_spectrum :
+    ∃ z : ℂ, 0 < z.im ∧
+      spectrum ℂ ((jacobian 2 1 1 (positiveEquilibrium 2 1 1)).map (algebraMap ℝ ℂ)) =
+        {z, star z} ∧
+      ‖z‖ = Real.sqrt (2 * Real.log 2) ∧ ‖star z‖ = ‖z‖ ∧ 1 < ‖z‖ := by
+  obtain ⟨z, him, hspec, hnorm, hstar, hz⟩ :=
+    spectrum_jacobian_positiveEquilibrium (r := 2) (a := 1) (c := 1)
+      (by norm_num) one_pos one_pos
+  refine ⟨z, him, hspec, ?_, hstar, hz⟩
+  rw [hnorm]
+  norm_num
+
+/-- The eigenvalue modulus of the concrete instance agrees with its Jacobian determinant:
+`‖z‖ ^ 2 = det J = 2 log 2`. -/
+private theorem concrete_spectrum_norm_sq :
+    ∃ z : ℂ, z ∈ spectrum ℂ
+        ((jacobian 2 1 1 (positiveEquilibrium 2 1 1)).map (algebraMap ℝ ℂ)) ∧
+      ‖z‖ ^ 2 = (jacobian 2 1 1 (positiveEquilibrium 2 1 1)).det := by
+  obtain ⟨z, -, hspec, hnorm, -, -⟩ := concrete_spectrum
+  refine ⟨z, by rw [hspec]; simp, ?_⟩
+  obtain ⟨-, hdet, -, -⟩ := concrete_spectral_data
+  rw [hnorm, Real.sq_sqrt (by positivity), hdet]
+
+/-- The headline instability theorem on the concrete instance `r = 2`, `a = 1`, `c = 1`, with
+the equilibrium `(2 log 2, log 2)` written out: positive initial states arbitrarily near it have
+forward iterates a fixed positive distance away. -/
+private theorem concrete_lyapunovUnstable :
+    ∃ ε > 0, ∀ δ > 0, ∃ x₀ ∈ positiveQuadrant,
+      ‖x₀ - (2 * Real.log 2, Real.log 2)‖ < δ ∧
+      ∃ n : ℕ, ε ≤ ‖(step 2 1 1)^[n] x₀ - (2 * Real.log 2, Real.log 2)‖ := by
+  have h := positiveEquilibrium_lyapunovUnstable (r := 2) (a := 1) (c := 1)
+    (by norm_num) one_pos one_pos
+  rwa [concrete_equilibrium] at h
+
 #print axioms mapsTo_step_positiveQuadrant
 #print axioms mapsTo_iterate_step_positiveQuadrant
 #print axioms not_isFixedPt_of_le_one
@@ -127,6 +166,11 @@ private theorem scale_equilibrium {r a c : ℝ}
 #print axioms scale_bijective
 #print axioms scale_quadrant
 #print axioms scale_equilibrium
+#print axioms spectrum_jacobian_positiveEquilibrium
+#print axioms positiveEquilibrium_lyapunovUnstable
+#print axioms concrete_spectrum
+#print axioms concrete_spectrum_norm_sq
+#print axioms concrete_lyapunovUnstable
 
 open MathlibExt.Biology.Dynamics.PlanarStability
 open MathlibExt.Analysis.PDE.SemilinearFlow.Instability

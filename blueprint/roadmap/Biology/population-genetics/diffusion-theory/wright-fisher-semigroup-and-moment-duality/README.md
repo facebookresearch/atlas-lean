@@ -52,3 +52,5 @@
 - [Wright–Fisher transitions at time zero are Dirac masses](wf-transition-kernel-zero-apply.md)
 - [Chapman–Kolmogorov equation for the Wright–Fisher diffusion](wf-transition-kernel-add.md)
 - [Kernel form of Wright–Fisher moment duality](integral-wf-transition-kernel-x-pow.md)
+
+- [Kimura operators with affine drift are twice the mutation generator](affine-drift-one-dimensional-kimura-operator-on.md)

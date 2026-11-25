@@ -45,3 +45,6 @@ compatibility class.
 - [Mathematical neuroscience](mathematical-neuroscience/README.md)
 - [Mathematical epidemiology](epidemiology/README.md)
 - [Not yet classified](not-yet-classified/README.md)
+- [Molecular evolution](molecular-evolution/README.md)
+- [Conservation genetics](conservation-genetics/README.md)
+- [Not yet classified](not-yet-classified/README.md)
