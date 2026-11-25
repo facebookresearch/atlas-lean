@@ -1,0 +1,5 @@
+# Global error bound for the periodic Yee leapfrog scheme
+
+Let $N > 0$, $h > 0$, $\Delta t > 0$, $c > 0$, $L = Nh$, $M_t \ge 0$, $M_x \ge 0$, and $c\,\Delta t/h \le \rho < 1$. Let $(u, v)$ solve $u_t = c\,v_x$, $v_t = c\,u_x$, be $L$-periodic in $x$, be three times continuously differentiable in each variable separately, and have all third time derivatives bounded by $M_t$ and all third space derivatives bounded by $M_x$ in absolute value. Let $(u^n, v^n)$ be the leapfrog iterates $v^{n+1} = v^n - c\,\Delta t\, D_+^{*} u^n$, $u^{n+1} = u^n + c\,\Delta t\, D_+ v^{n+1}$ from arbitrary initial data $(u^0, v^0)$, with $D_+$ the periodic forward difference and $D_+^{*}$ its transpose. With staggered samples $U^n_j = u(n\Delta t, jh)$, $V^n_j = v(n\Delta t - \Delta t/2, jh - h/2)$, pair norm $\lVert (a,b) \rVert = \sqrt{h\sum_j a_j^2 + h\sum_j b_j^2}$ and initial mismatch $E_0 = \lVert (U^0 - u^0, V^0 - v^0) \rVert$, for every $n$ with $n\,\Delta t \le T$,
+
+$$\lVert (U^n - u^n, V^n - v^n) \rVert \le \sqrt{\frac{1+\rho}{1-\rho}}\left(E_0 + \frac{T\sqrt{L}\,(M_t\,\Delta t^2 + c\,M_x\,h^2)}{6}\right).$$

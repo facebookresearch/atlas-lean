@@ -16,3 +16,4 @@ Probability measures and laws of random variables, expected value and the change
 - [Regular conditional distributions](regular-conditional-distributions/README.md)
 - [De Finetti's theorem for binary sequences](de-finetti-theorem/README.md)
 - [Sublinear expectations and model uncertainty](sublinear-expectations-and-model-uncertainty/README.md)
+- [Almost-everywhere uniqueness of the MMSE predictor](ae-eq-cond-exp-of-integral-sq-sub-le.md)
