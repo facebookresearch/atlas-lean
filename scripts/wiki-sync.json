@@ -112012,6 +112012,7 @@
     "TensorProduct.homTensorFiniteFactorEquivOfSurjectiveScalars_tmul": "4e7affd95fe4a1ce",
     "TensorProduct.homTensorFiniteFactorEquivOfSurjectiveScalars_toLinearMap": "861746e1d23eb992",
     "TensorProduct.homTensorFiniteFactor_bijective": "8bdefde04d9529b4",
+    "TensorProduct.homTensorFiniteFactor_bijective_of_surjective_scalars": "c1f9502bd0905a0c",
     "TensorProduct.homTensorFiniteFree_bijective": "90717449dbdcaf2c",
     "TensorProduct.homTensorHomMap_injective": "86fcc733ad13b64b",
     "TensorProduct.intTensor_nsmul_eq_zero": "e0737dc1547bd32c",
