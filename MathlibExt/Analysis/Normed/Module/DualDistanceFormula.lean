@@ -60,13 +60,19 @@ open Metric
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 
-/-- The norm of the quotient map applied to `x` is the distance from `x`
-to `S`. -/
+/-- **Quotient seminorm equals distance to the subspace.** Let $E$ be a normed space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a linear subspace of
+$E$, and give $E/S$ the quotient seminorm. Then for every $x \in E$ the class $q(x)$ of $x$ under
+the quotient map $q \colon E \to E/S$ satisfies $\|q(x)\| = d(x, S)$, where
+$d(x, S) = \inf_{s \in S} \|x - s\|$ is the distance from $x$ to $S$. -/
 theorem norm_mkQL_apply (S : Submodule 𝕜 E) (x : E) :
     ‖S.mkQL x‖ = Metric.infDist x (S : Set E) :=
   QuotientAddGroup.norm_mk x
 
-/-- The quotient map has operator norm at most `1`. -/
+/-- **The quotient map has norm at most one.** Let $E$ be a normed space over $\mathbb{K}$,
+where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a linear subspace of $E$, and give
+$E/S$ the quotient seminorm. Then the quotient map $q \colon E \to E/S$, a continuous linear map,
+has operator norm $\|q\| \le 1$. -/
 theorem norm_mkQL_le (S : Submodule 𝕜 E) : ‖S.mkQL‖ ≤ 1 := by
   refine S.mkQL.opNorm_le_bound zero_le_one fun y => ?_
   rw [norm_mkQL_apply, one_mul]
@@ -74,9 +80,11 @@ theorem norm_mkQL_le (S : Submodule 𝕜 E) : ‖S.mkQL‖ ≤ 1 := by
         Metric.infDist_le_dist_of_mem (zero_mem S)
     _ = ‖y‖ := by simp [dist_eq_norm]
 
-/-- Hahn–Banach distance formula, attainment form: there is a continuous
-linear functional of norm at most `1` that vanishes on `S` and takes the
-value `infDist x S` at `x`. -/
+/-- **Hahn–Banach distance formula, attainment form.** Let $E$ be a normed space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a linear subspace of
+$E$, not necessarily closed, and let $x \in E$. Then there is a continuous linear functional
+$f \colon E \to \mathbb{K}$ with $\|f\| \le 1$ that vanishes on $S$ and satisfies
+$f(x) = d(x, S)$, where $d(x, S) = \inf_{s \in S} \|x - s\|$ is the distance from $x$ to $S$. -/
 theorem exists_annihilating_apply_eq_infDist (S : Submodule 𝕜 E) (x : E) :
     ∃ f : E →L[𝕜] 𝕜, (∀ s ∈ S, f s = 0) ∧ ‖f‖ ≤ 1 ∧
       f x = (Metric.infDist x (S : Set E) : 𝕜) := by
@@ -92,11 +100,15 @@ theorem exists_annihilating_apply_eq_infDist (S : Submodule 𝕜 E) (x : E) :
       _ = 1 := one_mul 1
   · rw [ContinuousLinearMap.comp_apply, hg_val, norm_mkQL_apply]
 
-/-- If the distance from `x` to `S` is positive, the attaining functional
-can be chosen with norm exactly `1`: from `‖f‖ ≤ 1` and
-`‖f x‖ = infDist x S`, the inequality `infDist x S ≤ ‖f‖ * dist x s`
-for `s ∈ S` forces `1 ≤ ‖f‖` once a point `s` almost realizing the
-distance is chosen. -/
+/-- **Norm-one annihilating functional at positive distance.** Let $E$ be a normed space over
+$\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a linear subspace of
+$E$, and let $x \in E$ have positive distance $d(x, S) = \inf_{s \in S} \|x - s\| > 0$ from $S$.
+Then there is a continuous linear functional $f \colon E \to \mathbb{K}$ with $\|f\| = 1$ that
+vanishes on $S$ and satisfies $f(x) = d(x, S)$.
+
+A functional with $\|f\| \le 1$ that vanishes on $S$ and satisfies $f(x) = d(x, S)$ has norm
+exactly $1$: for $s \in S$ we have $d(x, S) = |f(x - s)| \le \|f\| \, \|x - s\|$, and $s$ can be
+chosen with $\|x - s\|$ arbitrarily close to $d(x, S) > 0$. -/
 theorem exists_annihilating_norm_one (S : Submodule 𝕜 E) {x : E}
     (hx : 0 < Metric.infDist x (S : Set E)) :
     ∃ f : E →L[𝕜] 𝕜, (∀ s ∈ S, f s = 0) ∧ ‖f‖ = 1 ∧
@@ -133,17 +145,26 @@ theorem exists_annihilating_norm_one (S : Submodule 𝕜 E) {x : E}
       _ = Metric.infDist x (S : Set E) := mul_div_cancel₀ _ (ne_of_gt hfpos)
   exact absurd (lt_of_le_of_lt hle hlt2) (lt_irrefl _)
 
-/-- The norm-one form for a point outside a closed subspace: the distance
-is positive, so `exists_annihilating_norm_one` applies. -/
+/-- **Norm-one annihilating functional outside a closed subspace.** Let $E$ be a normed space
+over $\mathbb{K}$, where $\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a closed linear
+subspace of $E$ and let $x \in E$ with $x \notin S$. Then there is a continuous linear functional
+$f \colon E \to \mathbb{K}$ with $\|f\| = 1$ that vanishes on $S$ and satisfies
+$f(x) = d(x, S)$, where $d(x, S) = \inf_{s \in S} \|x - s\|$ is the distance from $x$ to $S$.
+
+Since $S$ is closed and $x \notin S$, the distance $d(x, S)$ is positive. -/
 theorem exists_annihilating_of_notMem (S : Submodule 𝕜 E) (hS : IsClosed (S : Set E))
     {x : E} (hx : x ∉ S) :
     ∃ f : E →L[𝕜] 𝕜, (∀ s ∈ S, f s = 0) ∧ ‖f‖ = 1 ∧
       f x = (Metric.infDist x (S : Set E) : 𝕜) :=
   exists_annihilating_norm_one S ((hS.notMem_iff_infDist_pos ⟨0, zero_mem S⟩).mp hx)
 
-/-- The distance from `x` to `S` is the supremum of `‖f x‖` over the
-continuous linear functionals of norm at most `1` that vanish on `S`.
-The supremum is attained, by `exists_annihilating_apply_eq_infDist`. -/
+/-- **Hahn–Banach distance formula.** Let $E$ be a normed space over $\mathbb{K}$, where
+$\mathbb{K}$ is $\mathbb{R}$ or $\mathbb{C}$, let $S$ be a linear subspace of $E$, not
+necessarily closed, and let $x \in E$. Then the distance $d(x, S) = \inf_{s \in S} \|x - s\|$
+from $x$ to $S$ equals the supremum of $|f(x)|$ over all continuous linear functionals
+$f \colon E \to \mathbb{K}$ with $\|f\| \le 1$ that vanish on $S$.
+
+The supremum is attained, by the attainment form of the distance formula. -/
 theorem infDist_eq_sSup_norm_apply (S : Submodule 𝕜 E) (x : E) :
     Metric.infDist x (S : Set E) =
       sSup { r : ℝ | ∃ f : E →L[𝕜] 𝕜, ‖f‖ ≤ 1 ∧ (∀ s ∈ S, f s = 0) ∧ ‖f x‖ = r } := by

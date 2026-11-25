@@ -3149,12 +3149,6 @@ private theorem hsPad_arith (n k : ℕ) (hk : 0 < k) :
   have e : k * (n / k + 1) = k * (n / k) + k := by rw [mul_add, mul_one]
   exact ⟨n / k + 1, k * (n / k + 1) - n, rfl, by omega, by omega, by omega⟩
 
-/-- Auxiliary: no edges between the two sides of a sum. -/
-private theorem hsSum_nocross {V W : Type*}
-    (G : SimpleGraph V) (H : SimpleGraph W) (a : V) (b : W) :
-    ¬ (G ⊕g H).Adj (Sum.inl a) (Sum.inr b) := by
-  simp
-
 private theorem hsSum_nocrossR {V W : Type*}
     (G : SimpleGraph V) (H : SimpleGraph W) (a : V) (b : W) :
     ¬ (G ⊕g H).Adj (Sum.inr b) (Sum.inl a) := by
@@ -3182,7 +3176,7 @@ private theorem hsDeg_sum {V : Type*} [Fintype V] [DecidableEq V]
             exact hadj
           exact Finset.mem_image.mpr ⟨b, hb', rfl⟩
         | inr j =>
-          exact (hsSum_nocross G ⊤ a j hadj).elim
+          exact (SimpleGraph.not_adj_sum_inl_inr a j hadj).elim
       · intro hmem
         obtain ⟨b, hb, rfl⟩ := Finset.mem_image.mp hmem
         rw [SimpleGraph.sum_adj_inl]
@@ -3526,8 +3520,11 @@ private theorem hsNcard_eq {V : Type*} [Fintype V]
       exact hCv
   rw [hcoe, Set.ncard_coe_finset]
 
-/-- Hajnal–Szemerédi theorem: every finite simple graph with max degree < k
-has an equitable k-coloring. Needs no decidable equality on `V`. -/
+/-- **Equitable coloring with more colors than the maximum degree.** Let $G$ be a simple graph on a
+finite vertex set with maximum degree $\Delta(G)$, and let $k$ be a natural number with
+$\Delta(G) < k$. Then $G$ has a proper coloring with the $k$ colors $0, 1, \dots, k-1$ that is
+equitable: for any two colors $i$ and $j$, the number of vertices of color $i$ is at most one more
+than the number of vertices of color $j$. -/
 public theorem exists_equitable_coloring_of_maxDegree_lt
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -3562,12 +3559,15 @@ public theorem exists_equitable_coloring_of_maxDegree_lt
   omega
 
 /--
-Hajnal-Szemerédi theorem: every finite simple graph with max degree < k has an equitable k-coloring;
-any two color classes differ by at most one.
-Source: A. Hajnal and E. Szemerédi, "Proof of a conjecture of P. Erdős", Combinatorial Theory and
-Its Applications II, Colloq. Math. Soc. János Bolyai 4 (1970), 601-623.
+**Hajnal–Szemerédi theorem.** Let $G$ be a simple graph on a finite vertex set with maximum
+degree $\Delta(G)$, and let $k$ be a natural number with $\Delta(G) < k$. Then $G$ has a proper
+coloring with the $k$ colors $0, 1, \dots, k-1$ that is equitable: for any two colors $i$ and $j$,
+the number of vertices of color $i$ is at most one more than the number of vertices of color $j$.
 
 Proves `Wanted` entry `hajnal_szemeredi_equitable_coloring`.
+
+Source: A. Hajnal and E. Szemerédi, "Proof of a conjecture of P. Erdős", Combinatorial Theory and
+Its Applications II, Colloq. Math. Soc. János Bolyai 4 (1970), 601-623.
 -/
 public theorem hajnal_szemeredi_equitable_coloring
     {V : Type*} [Fintype V] [DecidableEq V]

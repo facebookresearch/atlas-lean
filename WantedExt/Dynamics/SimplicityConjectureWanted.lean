@@ -63,7 +63,12 @@ notation "𝔻ᵒ" => Subtype.val ⁻¹' Metric.ball (0 : EuclideanSpace ℝ (Fi
 
 noncomputable instance : MeasureSpace 𝔻 := Measure.Subtype.measureSpace
 
-/-- Area preserving homeomorphisms of `𝔻` that are the identity near the boundary. -/
+/-- **Area-preserving homeomorphisms of the disc supported in the interior.** Let $\mathbb{D}$ be
+the closed unit disc in $\mathbb{R}^2$ and let $\omega$ be the restriction of Lebesgue measure to
+$\mathbb{D}$. $\mathrm{Homeo}_c(\mathbb{D}, \omega)$ is the subgroup of the group of
+homeomorphisms of $\mathbb{D}$ consisting of the homeomorphisms $\phi$ that preserve $\omega$ and
+whose support, the closure of $\{x \in \mathbb{D} : \phi(x) \neq x\}$, is contained in the open
+unit disc. -/
 def Homeo : Subgroup (𝔻 ≃ₜ 𝔻) where
   carrier := {ϕ | MeasurePreserving ϕ volume volume ∧ fixedSupport ϕ ⊆ 𝔻ᵒ}
   one_mem' := ⟨MeasurePreserving.id _, by simp [one_def, fixedSupport_def]⟩
@@ -75,9 +80,13 @@ def Homeo : Subgroup (𝔻 ≃ₜ 𝔻) where
     grw [← this, Set.compl_inter, closure_union, hϕ2, hψ2, Set.union_self]⟩
 
 /--
-Statement of Theorem 1.2:
+**Simplicity conjecture.** Let $\mathbb{D} \subseteq \mathbb{R}^2$ be the closed unit disc and let
+$\omega$ be the restriction of Lebesgue measure to $\mathbb{D}$. The group
+$\mathrm{Homeo}_c(\mathbb{D}, \omega)$ of homeomorphisms of $\mathbb{D}$ that preserve $\omega$
+and whose support, the closure of the set of non-fixed points, lies in the open unit disc is not
+simple: it is trivial or it has a normal subgroup other than the trivial subgroup and the whole
+group.
 
-The group `Homeo_c(𝔻, ω)` is not simple.
 Source: D. Cristofaro-Gardiner, V. Humilière, and S. Seyfaddini, `Proof of the simplicity conjecture`, Annals of Math, 199 (1) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-1-SimplicityConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_simplicity_conjecture`.
 -/
 public theorem_wanted theorem_1_2 : ¬ IsSimpleGroup Homeo

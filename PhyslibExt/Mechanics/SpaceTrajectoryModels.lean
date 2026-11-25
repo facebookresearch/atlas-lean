@@ -173,7 +173,8 @@ open Set PhyslibExt.Mechanics.PropulsionPorts Units.EngineeringFrames
 /-! ## A. The rotating frame, the primaries and the effective potential -/
 
 /-- Orientation at time `t` of the frame rotating with the primaries: the rotation by the angle `t`
-about the third axis (unit angular speed). -/
+about the third axis, counterclockwise seen from the positive third axis (unit angular speed,
+angular velocity `e₃`). -/
 noncomputable def rotatingFrame (t : ℝ) : Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
   ⟨rotZ t, rotZ_mem_specialOrthogonalGroup t⟩
 
@@ -182,14 +183,17 @@ noncomputable def rotatingFrame (t : ℝ) : Matrix.specialOrthogonalGroup (Fin 3
 noncomputable def rotatingToInertial (ξ : Fin 3 → ℝ) (t : ℝ) : Fin 3 → ℝ :=
   bodyToInertial 0 (rotatingFrame t) ξ
 
-/-- Newtonian attraction `-m d / |d|³` toward a point mass `m` at relative position `d`, with
-gravitational constant one and the Euclidean length `|d| = √(d ⬝ᵥ d)`. At `d = 0` Lean's
-convention `x / 0 = 0` gives a meaningless value. -/
+/-- Newtonian acceleration `-m d / |d|³` due to a point mass `m`, where `d` is the position of the
+attracted point relative to the mass, with gravitational constant one and the Euclidean length
+`|d| = √(d ⬝ᵥ d)`. For `m > 0` and `d ≠ 0` it points toward the mass (an attraction); the definition
+takes any real `m`. At `d = 0` the value is the zero vector, not a physical attraction. -/
 noncomputable def pointMassPull (m : ℝ) (d : Fin 3 → ℝ) : Fin 3 → ℝ :=
   -(m / Real.sqrt (d ⬝ᵥ d) ^ 3) • d
 
 /-- Inertial gravitational field at the position `X` and time `t` of the two primaries: mass
-`1 - μ` fixed at `(-μ, 0, 0)` and mass `μ` fixed at `(1 - μ, 0, 0)` in the rotating frame. -/
+`1 - μ` fixed at `(-μ, 0, 0)` and mass `μ` fixed at `(1 - μ, 0, 0)` in the rotating frame. The
+intended domain is off both primaries; at a primary's position that primary's pull is the zero
+vector, so the value is the other primary's pull alone. -/
 noncomputable def primaryGravity (μ t : ℝ) (X : Fin 3 → ℝ) : Fin 3 → ℝ :=
   pointMassPull (1 - μ) (X - rotatingToInertial ![-μ, 0, 0] t) +
     pointMassPull μ (X - rotatingToInertial ![1 - μ, 0, 0] t)
@@ -202,8 +206,9 @@ noncomputable def primaryDistOne (μ x y : ℝ) : ℝ := Real.sqrt ((x + μ) ^ 2
 `(1 - μ, 0)`. -/
 noncomputable def primaryDistTwo (μ x y : ℝ) : ℝ := Real.sqrt ((x - (1 - μ)) ^ 2 + y ^ 2)
 
-/-- Effective potential `Ω = (x² + y²) / 2 + (1 - μ) / r₁ + μ / r₂` of the rotating frame. At a
-primary Lean's convention `x / 0 = 0` gives a finite meaningless value. -/
+/-- Effective potential `Ω = (x² + y²) / 2 + (1 - μ) / r₁ + μ / r₂` of the rotating frame. The
+intended domain is off both primaries; with the convention `u / 0 = 0` it takes the finite value
+`μ² / 2 + μ` at the first primary and `(1 - μ)² / 2 + (1 - μ)` at the second. -/
 noncomputable def effectivePotential (μ x y : ℝ) : ℝ :=
   (x ^ 2 + y ^ 2) / 2 + (1 - μ) / primaryDistOne μ x y + μ / primaryDistTwo μ x y
 
@@ -527,7 +532,8 @@ lemma primaries_two_body (μ t : ℝ) :
 /-! ## D. The Jacobi function and the Coriolis power -/
 
 /-- The Jacobi function `C = 2 Ω - (vx² + vy²)` of the rotating-frame state with position
-`(x, y)` and velocity `(vx, vy)`. -/
+`(x, y)` and velocity `(vx, vy)`. The intended domain is off both primaries; at a primary it uses
+the finite value that the convention `u / 0 = 0` gives `Ω` there. -/
 noncomputable def jacobiConstant (μ x y vx vy : ℝ) : ℝ :=
   2 * effectivePotential μ x y - (vx ^ 2 + vy ^ 2)
 
@@ -677,8 +683,10 @@ lemma jacobiConstant_eq_of_newton {μ t₀ t₁ : ℝ} {x y : ℝ → ℝ} (hx :
 
 /-! ## F. The forbidden region -/
 
-/-- **Zero-velocity bound.** Under the hypotheses of `jacobiConstant_eq_of_rotating_equations`,
-the trajectory stays in the region `2 Ω ≥ C` of its initial Jacobi constant `C`. -/
+/-- **Zero-velocity bound.** Let `x`, `y` be `C²`, avoid both primaries and obey the rotating
+equations `x'' - 2 y' = Ω_x`, `y'' + 2 x' = Ω_y` at every time of `[t₀, t₁]`. Then the
+trajectory stays in the region `2 Ω ≥ C` of its initial Jacobi constant `C`: `C ≤ 2 Ω` at every
+time of `[t₀, t₁]`. -/
 lemma jacobiConstant_le_two_effectivePotential {μ t₀ t₁ : ℝ} {x y : ℝ → ℝ}
     (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
     (h₁ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistOne μ (x t) (y t))
@@ -696,10 +704,11 @@ lemma jacobiConstant_le_two_effectivePotential {μ t₀ t₁ : ℝ} {x y : ℝ �
   unfold jacobiConstant at hC ⊢
   linarith
 
-/-- **A forbidden point is not reached.** Under the hypotheses of
-`jacobiConstant_eq_of_rotating_equations`, a point `(a, b)` with `2 Ω(a, b) < C`, for the
-initial Jacobi constant `C`, is not the position at any time of `[t₀, t₁]`; in particular it is
-not the terminal point. -/
+/-- **A forbidden point is not reached.** Let `x`, `y` be `C²`, avoid both primaries and obey the
+rotating equations `x'' - 2 y' = Ω_x`, `y'' + 2 x' = Ω_y` at every time of `[t₀, t₁]`. Then a
+point `(a, b)` with `2 Ω(a, b) < C`, for the initial Jacobi constant `C`, is not the position at
+any time of `[t₀, t₁]`; in particular, when `t₀ ≤ t₁`, it is not the position at `t₁`. At a
+primary `Ω(a, b)` is the finite value that `u / 0 = 0` gives, and the path avoids it anyway. -/
 lemma not_reach_of_two_effectivePotential_lt {μ t₀ t₁ a b : ℝ} {x y : ℝ → ℝ}
     (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
     (h₁ : ∀ t ∈ Icc t₀ t₁, 0 < primaryDistOne μ (x t) (y t))
@@ -723,11 +732,16 @@ lemma not_reach_of_two_effectivePotential_lt {μ t₀ t₁ a b : ℝ} {x y : ℝ
 flow `1`, so the mass falls from `2` to `1` on the burn interval `[0, 1]`. -/
 def burnMass (t : ℝ) : ℝ := 2 - t
 
-/-- The velocity history `v t = log (2 / (2 - t))` of the burn, from rest at `t = 0`. -/
+/-- The velocity history `v t = log (2 / (2 - t))` of the burn, from rest at `t = 0`, measured
+along the thrust direction. The intended domain is the burn interval `[0, 1]`; with `u / 0 = 0`,
+`log 0 = 0` and `log u = log |u|` it is `0` at the depletion time `t = 2` and
+`log (2 / (t - 2))` for `t > 2`. -/
 noncomputable def burnVelocity (t : ℝ) : ℝ := Real.log (2 / (2 - t))
 
 /-- The position history `x t = t + (2 - t) * log ((2 - t) / 2)` of the burn, from the origin at
-`t = 0`. -/
+`t = 0`, measured along the thrust direction. The intended domain is the burn interval `[0, 1]`;
+with `log 0 = 0` and `log u = log |u|` it is `2` at the depletion time `t = 2` and
+`t + (2 - t) * log ((t - 2) / 2)` for `t > 2`. -/
 noncomputable def burnPosition (t : ℝ) : ℝ := t + (2 - t) * Real.log ((2 - t) / 2)
 
 /-- The target `x_target t = 1 - 2 * log 2 + t * log 2`, coasting at the constant speed `log 2`.
@@ -771,7 +785,8 @@ lemma hasDerivAt_burnVelocity {t : ℝ} (ht : t < 2) :
   exact hlog
 
 /-- On `[0, 1]` the burn obeys the reduced variable-mass law `m v' = -ve * m'` with exhaust speed
-`ve = 1` and `m' = -1`, and the common value, the thrust `ve * (-m')`, is `1`. -/
+`ve = 1`, `m' = -1` and the velocity rate `v' = 1 / (2 - t)`: `m * (1 / (2 - t)) = -1 * (-1)`,
+and the common value, the thrust `ve * (-m')`, is `1`. -/
 lemma burn_law {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     burnMass t * (1 / (2 - t)) = -1 * (-1) ∧ burnMass t * (1 / (2 - t)) = 1 := by
   have hne : (2 : ℝ) - t ≠ 0 := by

@@ -184,8 +184,8 @@ private lemma exp_mul_kernel_integral_eq_tail {x : ℝ} (hx : 0 < x) :
     · exact
         ((Real.continuous_exp.comp continuous_neg).continuousOn.div
           (continuousOn_id.add continuousOn_const)
-          (fun t ht => (hx.trans_le (le_add_of_nonneg_left ht.le)).ne')).aestronglyMeasurable
-            measurableSet_Ioi
+          (fun t (ht : t ∈ Ioi 0) => (hx.trans_le (le_add_of_nonneg_left ht.le)).ne'))
+            |>.aestronglyMeasurable measurableSet_Ioi
     · filter_upwards [ae_restrict_mem measurableSet_Ioi] with t ht
       have htx : 0 < t + x := add_pos ht hx
       simpa [Real.norm_eq_abs, abs_div, abs_of_pos (Real.exp_pos _), abs_of_pos htx,

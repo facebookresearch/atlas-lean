@@ -28,12 +28,18 @@ open MathlibExt.GameTheory.ShapleyValue
 
 variable {Player : Type*} [Fintype Player] [DecidableEq Player]
 
-/-- Core allocation: efficiency and coalitional rationality. -/
+/-- **Core allocation.** A payoff vector $x \colon N \to \mathbb{R}$ is a core allocation of a
+cooperative game $v$ on a finite set $N$ of players if it is efficient,
+$\sum_{i \in N} x_i = v(N)$, and coalitionally rational, $v(S) \le \sum_{i \in S} x_i$ for every
+coalition $S \subseteq N$. -/
 def IsCoreAllocation (v : CoopGame Player) (x : Player → ℝ) : Prop :=
   (∑ i : Player, x i = v.charFun Set.univ) ∧
     ∀ S : Finset Player, v.charFun (S : Set Player) ≤ ∑ i ∈ S, x i
 
-/-- Balanced game via Bondareva-Shapley weights. -/
+/-- **Balanced cooperative game.** A cooperative game $v$ on a finite set $N$ of players is
+balanced if for every family of real weights $(\lambda_S)_{S \subseteq N}$ with $\lambda_S \ge 0$
+for every coalition $S \subseteq N$ and $\sum_{S \subseteq N,\, i \in S} \lambda_S = 1$ for every
+player $i \in N$, one has $\sum_{S \subseteq N} \lambda_S \, v(S) \le v(N)$. -/
 def IsBalanced (v : CoopGame Player) : Prop :=
   ∀ lam : Finset Player → ℝ,
     (∀ S, 0 ≤ lam S) →
@@ -479,7 +485,10 @@ private theorem exact_core_of_approx
   exact ⟨xstar, heq, hxstar_le⟩
 
 /--
-Bondareva-Shapley: cooperative game has nonempty core iff balanced.
+**Bondareva–Shapley theorem.** Let $v$ be a cooperative game with transferable utility on a
+finite set $N$ of players. Then $v$ has a core allocation $x \colon N \to \mathbb{R}$, that is,
+the core of $v$ is nonempty, if and only if $v$ is balanced.
+
 Source: O. N. Bondareva, Probl. Kibernet. 10 (1963), 119-139; L. S. Shapley, Naval Res. Log. Quart.
 14 (1967), 453-460, DOI 10.1002/nav.3800140404.
 

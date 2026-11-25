@@ -57,9 +57,10 @@ in v1) — is not claimed.
 
 open Finset BigOperators
 
-/-- A `StochasticMatrix M` is an `(M + 1) × (M + 1)` row-stochastic matrix: entries
-`prob i j` are non-negative real numbers, and the rows sum to `1`. This is the
-transition matrix of a Markov chain on the finite state space `Fin (M + 1)`. -/
+/-- **Stochastic matrix.** For a natural number $M$, a stochastic matrix of size $M + 1$ is a
+square matrix $P = (P_{ij})$ indexed by the states $\{0, 1, \dots, M\}$, with real entries
+$P_{ij} \ge 0$ for all states $i, j$, whose rows sum to $1$: $\sum_j P_{ij} = 1$ for every $i$.
+It is the transition matrix of a Markov chain on these $M + 1$ states. -/
 structure StochasticMatrix (M : ℕ) where
   prob : Fin (M + 1) → Fin (M + 1) → ℝ
   nonneg : ∀ i j, 0 ≤ prob i j
@@ -69,45 +70,53 @@ namespace StochasticMatrix
 
 variable {M : ℕ}
 
-/-- The `n`-th matrix power of a stochastic transition matrix `P`. Entry `(i, j)`
-represents the probability of moving from state `i` to state `j` in exactly `n` steps. -/
+/-- **Matrix powers of a stochastic matrix.** For a stochastic matrix $P$ on the finite state
+space $\{0, 1, \dots, M\}$ and $n \in \mathbb{N}$, the $n$-th matrix power $P^n$ is defined by
+$P^0 = I$, the identity matrix, and $(P^{n+1})_{ij} = \sum_k P(i, k) (P^n)_{kj}$. The entry
+$(P^n)_{ij}$ is the probability of moving from state $i$ to state $j$ in exactly $n$ steps. -/
 def matPow (P : StochasticMatrix M) : ℕ → (Fin (M + 1) → Fin (M + 1) → ℝ)
   | 0 => fun i j => if i = j then 1 else 0
   | n + 1 => fun i j => ∑ k, P.prob i k * P.matPow n k j
 
-/-- A stochastic matrix `P` is **irreducible** if for every pair of states `i, j` there is some
-positive number of steps `n` such that `P ^ n i j > 0`; i.e., every state is reachable from
-every other state in finitely many steps. -/
+/-- **Irreducible stochastic matrix.** Let $P$ be a stochastic matrix on the finite state space
+$\{0, 1, \dots, M\}$ and write $P^n$ for its $n$-th matrix power. Then $P$ is irreducible if for
+all states $i$ and $j$ there is an $n \ge 1$ with $(P^n)_{ij} > 0$; that is, every state can be
+reached from every state, itself included, in a positive number of steps. -/
 def IsIrreducible (P : StochasticMatrix M) : Prop :=
   ∀ i j : Fin (M + 1), ∃ n : ℕ, 0 < n ∧ 0 < P.matPow n i j
 
-/-- A **probability distribution** on the finite state space `Fin (M + 1)`: a function
-`val : Fin (M + 1) → ℝ` whose values are nonnegative and sum to `1`. -/
+/-- **Probability distribution on a finite state space.** A probability distribution on the
+finite state space $\{0, 1, \dots, M\}$ is a function $\pi$ from the states to $\mathbb{R}$
+with $\pi(i) \ge 0$ for every state $i$ and $\sum_i \pi(i) = 1$. -/
 structure Distribution (M : ℕ) where
   val : Fin (M + 1) → ℝ
   nonneg : ∀ i, 0 ≤ val i
   sum_one : ∑ i, val i = 1
 
-/-- A distribution `π` is **stationary** for the transition matrix `P` if `π P = π`, i.e.,
-`∑ᵢ π(i) P(i, j) = π(j)` for every state `j`. -/
+/-- **Stationary distribution.** A probability distribution $\pi$ on the finite state space
+$\{0, 1, \dots, M\}$ is stationary for a stochastic matrix $P$ on the same states if
+$\pi P = \pi$, that is, $\sum_i \pi(i) P(i, j) = \pi(j)$ for every state $j$. -/
 def IsStationary (P : StochasticMatrix M) (π : Distribution M) : Prop :=
   ∀ j, ∑ i, π.val i * P.prob i j = π.val j
 
-/-- The **detailed balance** (reversibility) equations between `P` and `π`:
-`π(i) P(i, j) = π(j) P(j, i)` for all states `i, j`. -/
+/-- **Detailed balance.** A probability distribution $\pi$ and a stochastic matrix $P$ on the
+finite state space $\{0, 1, \dots, M\}$ satisfy the detailed balance (reversibility) equations
+when $\pi(i) P(i, j) = \pi(j) P(j, i)$ for all states $i$ and $j$. -/
 def DetailedBalance (P : StochasticMatrix M) (π : Distribution M) : Prop :=
   ∀ i j : Fin (M + 1), π.val i * P.prob i j = π.val j * P.prob j i
 
-/-- A transition matrix `P` is **reversible** if there exists a distribution `π` that is
-both stationary and satisfies the detailed balance equations with `P`. -/
+/-- **Reversible stochastic matrix.** A stochastic matrix $P$ on the finite state space
+$\{0, 1, \dots, M\}$ is reversible if there is a probability distribution $\pi$ on the states
+that is stationary for $P$ and satisfies the detailed balance equations
+$\pi(i) P(i, j) = \pi(j) P(j, i)$ for all states $i, j$. -/
 def IsReversible (P : StochasticMatrix M) : Prop :=
   ∃ π : Distribution M, P.IsStationary π ∧ P.DetailedBalance π
 
-/-- **Kolmogorov's cycle condition** on a stochastic matrix `P`:
-(1) `symm_support`: `P(x, y) > 0` implies `P(y, x) > 0`; and
-(2) `cycle_prod`: for any loop `x₀, x₁, …, xₙ = x₀` whose reverse path has positive
-probability, the product of forward transition probabilities along the loop equals the
-product of backward transition probabilities. -/
+/-- **Kolmogorov's cycle condition.** A stochastic matrix $P$ on the finite state space
+$\{0, 1, \dots, M\}$ satisfies Kolmogorov's cycle condition when (1) for all states $x, y$,
+$P(x, y) > 0$ implies $P(y, x) > 0$; and (2) for every $n \ge 0$ and every loop of states
+$x_0, x_1, \dots, x_n$ with $x_n = x_0$ and $\prod_{i=0}^{n-1} P(x_{i+1}, x_i) > 0$, we have
+$\prod_{i=0}^{n-1} P(x_i, x_{i+1}) = \prod_{i=0}^{n-1} P(x_{i+1}, x_i)$. -/
 structure KolmogorovCycleCondition (P : StochasticMatrix M) : Prop where
   symm_support : ∀ x y : Fin (M + 1), P.prob x y > 0 → P.prob y x > 0
   cycle_prod : ∀ (n : ℕ) (c : Fin (n + 1) → Fin (M + 1)), c 0 = c (Fin.last n) →
@@ -115,8 +124,11 @@ structure KolmogorovCycleCondition (P : StochasticMatrix M) : Prop where
     (∏ i : Fin n, P.prob (c i.castSucc) (c i.succ)) =
       (∏ i : Fin n, P.prob (c i.succ) (c i.castSucc))
 
-/-- If `π` satisfies detailed balance with `P`, then `π` is stationary for `P`. Detailed
-balance is a strictly stronger condition than stationarity. -/
+/-- **Detailed balance implies stationarity.** Let $P$ be a stochastic matrix on the finite state
+space $\{0, 1, \dots, M\}$ and let $\pi$ be a probability distribution on the same states. If
+$\pi$ and $P$ satisfy the detailed balance equations $\pi(i) P(i, j) = \pi(j) P(j, i)$ for all
+states $i, j$, then $\pi$ is stationary for $P$: $\sum_i \pi(i) P(i, j) = \pi(j)$ for every
+state $j$. -/
 theorem detailedBalance_isStationary (P : StochasticMatrix M) (π : Distribution M)
     (hdb : P.DetailedBalance π) : P.IsStationary π := by
   intro j
@@ -138,8 +150,10 @@ lemma matPow_nonneg (P : StochasticMatrix M) : ∀ (n : ℕ) (i j : Fin (M + 1))
     simp only [matPow]
     exact Finset.sum_nonneg fun c _ => mul_nonneg (P.nonneg i c) (ih c j)
 
-/-- For an irreducible chain `P`, any distribution `π` satisfying detailed balance
-must assign strictly positive mass to every state. -/
+/-- **Detailed balance distributions of irreducible chains are positive.** Let $P$ be an
+irreducible stochastic matrix on the finite state space $\{0, 1, \dots, M\}$. If a probability
+distribution $\pi$ satisfies the detailed balance equations $\pi(i) P(i, j) = \pi(j) P(j, i)$
+for all states $i, j$, then $\pi(i) > 0$ for every state $i$. -/
 theorem distribution_pos_of_irreducible_detailedBalance
     (P : StochasticMatrix M) (π : Distribution M)
     (hirr : P.IsIrreducible) (hdb : P.DetailedBalance π) :
@@ -221,13 +235,14 @@ private lemma prod_castSucc_eq_prod_succ {n : ℕ} {M : ℕ}
         rw [mul_comm (f (c 0))]; exact heq
       exact mul_left_cancel₀ hfc heq'
 
-/-- **Kolmogorov's cycle theorem, necessity half.** For an irreducible finite
-Markov chain with transition matrix `P`, if there exists a reversible measure
-(i.e. `P.IsReversible`) then `P` satisfies Kolmogorov's cycle condition:
-(1) `P(x, y) > 0` implies `P(y, x) > 0`; and
-(2) for any loop `x₀, x₁, …, xₙ = x₀` with `∏ P(xᵢ, xᵢ₋₁) > 0`, the product
-of forward transition probabilities along the loop equals the product of
-backward transition probabilities. -/
+/-- **Kolmogorov's cycle theorem, necessity half.** Let $P$ be an irreducible stochastic matrix
+on the finite state space $\{0, 1, \dots, M\}$. If $P$ is reversible, that is, some probability
+distribution $\pi$ is stationary for $P$ and satisfies the detailed balance equations
+$\pi(i) P(i, j) = \pi(j) P(j, i)$ for all states $i, j$, then $P$ satisfies Kolmogorov's cycle
+condition: (1) for all states $x, y$, $P(x, y) > 0$ implies $P(y, x) > 0$; and (2) for every
+$n \ge 0$ and every loop of states $x_0, x_1, \dots, x_n$ with $x_n = x_0$ and
+$\prod_{i=0}^{n-1} P(x_{i+1}, x_i) > 0$, we have
+$\prod_{i=0}^{n-1} P(x_i, x_{i+1}) = \prod_{i=0}^{n-1} P(x_{i+1}, x_i)$. -/
 theorem kolmogorov_cycle_necessity {M : ℕ} (P : StochasticMatrix M)
     (hirr : P.IsIrreducible) (hrev : P.IsReversible) :
     P.KolmogorovCycleCondition := by

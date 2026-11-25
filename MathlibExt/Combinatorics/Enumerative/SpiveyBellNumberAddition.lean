@@ -199,10 +199,12 @@ private theorem key_identity (j n : ℕ) :
   rw [hpeel, Finset.sum_add_distrib, hmid, add_assoc, hthird]
   exact add_comm _ _
 
-/-- Spivey's Bell-number addition formula: `(n + m).bell` equals the double
-sum over `j = 0..m` and `k = 0..n` of
-`j ^ (n - k) * S(m, j) * C(n, k) * B_k`, with natural subtraction and power
-(`0 ^ 0 = 1`).
+/-- **Spivey's Bell number formula.** For all natural numbers $m$ and $n$,
+
+$$B_{n+m} = \sum_{j=0}^{m} \sum_{k=0}^{n} j^{n-k} \, S(m, j) \binom{n}{k} B_k,$$
+
+where $B_k$ is the $k$-th Bell number, $S(m, j)$ is the Stirling number of the second kind, and
+$0^0 = 1$.
 
 Source: Michael Z. Spivey, *A Generalized Recurrence for Bell Numbers*,
 Journal of Integer Sequences 11 (2008), Article 08.2.5, equation `Bell_Gen`,
@@ -280,9 +282,12 @@ theorem spivey_bell_number_add (m n : ℕ) : (n + m).bell = ∑ j ∈ Finset.ran
 
 end
 
-/-- Spivey recurrence expressing a Bell number as a double sum involving Stirling
-numbers of the second kind, binomial coefficients, and smaller Bell numbers. This is
-`spivey_bell_number_add` with the two finite sums commuted.
+/-- **Spivey's recurrence for Bell numbers.** For all natural numbers $n$ and $m$,
+
+$$B_{n+m} = \sum_{k=0}^{n} \sum_{j=0}^{m} j^{n-k} \, S(m, j) \binom{n}{k} B_k,$$
+
+where $B_k$ is the $k$-th Bell number, $S(m, j)$ is the Stirling number of the second kind, and
+$0^0 = 1$. This is Spivey's Bell number formula with the two finite sums interchanged.
 
 Source: Jacob Katriel, "On a Generalized Recurrence for Bell Numbers",
 Journal of Integer Sequences 11 (2008), Article 08.3.8, equation (Spivey),

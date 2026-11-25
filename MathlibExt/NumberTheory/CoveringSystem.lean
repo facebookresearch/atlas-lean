@@ -27,9 +27,11 @@ public import Mathlib.RingTheory.Ideal.Defs
 open Pointwise
 
 /--
-A covering system of a semiring `R` is a finite set of cosets of non-zero ideals whose union
-covers the whole ring. In the case where `R = ℤ`, this corresponds to a choice of finitely many
-congruence relations such that every integer satisfies at least one of the relations.
+**Covering system.** A covering system of a commutative semiring $R$ is a finite family of cosets
+$r_i + I_i = \{r_i + a : a \in I_i\}$, where each $I_i$ is an ideal of $R$ different from both
+$\{0\}$ and $R$, whose union is all of $R$. In the case $R = \mathbb{Z}$, this corresponds to a
+choice of finitely many congruences $x \equiv r_i \pmod{n_i}$ with moduli $n_i \ge 2$ such that
+every integer satisfies at least one of them.
 -/
 structure CoveringSystem (R : Type*) [CommSemiring R] where
   ι : Type
@@ -41,12 +43,14 @@ structure CoveringSystem (R : Type*) [CommSemiring R] where
   ne_top : ∀ i, moduli i ≠ ⊤
 
 /--
-We say a covering system is strict if all the congruence relations that define it are take modulo
-a different ideal (or number).
+**Strict covering system.** A covering system of a commutative semiring $R$, given by cosets
+$r_i + I_i$, is strict if the ideals $I_i$ are pairwise distinct. In the case $R = \mathbb{Z}$, this
+means that the congruences defining it have pairwise distinct moduli.
 
-Note: this corresponds to the notion of a covering system that Erdos was using in
-[ErGr80] Erdős, P. and Graham, R., Old and new problems and results in combinatorial number theory.
-Monographies de L'Enseignement Mathematique (1980).
+This corresponds to the notion of covering system that Erdős and Graham use.
+
+Source: [ErGr80] Erdős, P. and Graham, R., Old and new problems and results in combinatorial number
+theory. Monographies de L'Enseignement Mathematique (1980).
 -/
 structure StrictCoveringSystem (R : Type*) [CommSemiring R] extends CoveringSystem R where
   injective_moduli : moduli.Injective

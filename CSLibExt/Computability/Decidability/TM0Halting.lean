@@ -48,23 +48,35 @@ open Computability Turing Encodable MetaMathlibExt.TM2Recursive
 open Nat.Partrec (Code)
 open scoped MetaMathlibExt.TM2ToTM0
 
-/-- `TM0HaltsOn M l`: the single-tape machine `M` halts when started on the input word `l`. -/
+/-- **Halting of a single-tape machine.** A single-tape Turing machine $M$ halts on an input word
+$l$ when its run, started in its start state with $l$ on the tape, reaches a halting
+configuration. -/
 def TM0HaltsOn {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ] (M : TM0.Machine Γ Λ) (l : List Γ) :
     Prop :=
   (TM0.eval M l).Dom
 
-/-- A bundled machine halts iff `TM2.eval` with its main label as default does. -/
+/-- **Halting agrees with evaluation for multi-stack machines.** A multi-stack machine halts on a
+word $l$ over the alphabet of its input stack if and only if the evaluation of its transition
+function, started at its main label and initial internal state with $l$ on the input stack and
+all other stacks empty, is defined. -/
 theorem tm2HaltsOn_iff_eval_dom (tm : FinTM2) (l : List (tm.Γ tm.k₀)) :
     TM2HaltsOn tm l ↔ (TM2.eval tm.m tm.k₀ l).Dom := by
   rw [TM2HaltsOn, MetaMathlibExt.TM2ToTM0.initList_eq_init, TM2.eval, Part.map_Dom]
   rfl
 
-/-- A primitive recursive coding of a finite type, through `Fintype.equivFin`. -/
+/-- **Primitive recursive coding of a finite type.** A finite type $\alpha$ with $n$ elements gets
+the primitive recursive coding transported from $\{0, \dots, n - 1\}$ along a fixed (noncanonically
+chosen) bijection between $\alpha$ and $\{0, \dots, n - 1\}$. -/
 @[instance_reducible]
 noncomputable def primcodableOfFintype (α : Type*) [Fintype α] : Primcodable α :=
   Primcodable.ofEquiv (Fin (Fintype.card α)) (Fintype.equivFin α)
 
-/-- The input encoding of the single-tape emulation is primitive recursive in the binary code. -/
+/-- **The input encoding of the single-tape emulation is primitive recursive.** Let $M$ be a
+multi-stack machine together with a bijection $e$ from the alphabet of its input stack to the
+Booleans, and suppose the tape alphabet $\Gamma'$ of the single-tape emulation of $M$ is finite and
+carries a primitive recursive coding. Then the map sending $n \in \mathbb{N}$ to the initial tape
+of the emulation on the input word $e^{-1}(b_1) \cdots e^{-1}(b_m)$, where $b_1 \cdots b_m$ is the
+binary code of $n$, is primitive recursive. -/
 theorem primrec_trInit_encodeNat (tm : FinTM2) [Primcodable (TM2to1.Γ' tm.K tm.Γ)]
     [Finite (TM2to1.Γ' tm.K tm.Γ)] (e : tm.Γ tm.k₀ ≃ Bool) :
     Primrec fun n ↦ TM2to1.trInit tm.k₀ ((encodeNat n).map e.symm) := by
@@ -85,9 +97,12 @@ theorem primrec_trInit_encodeNat (tm : FinTM2) [Primcodable (TM2to1.Γ' tm.K tm.
   rw [key]
   rfl
 
-/-- **The halting problem for single-tape machines is undecidable.** Some single-tape machine
-with a finite tape alphabet and a finite set of reachable states has a halting set that no
-`FinTM2` decides. -/
+/-- **The halting problem for single-tape machines is undecidable.** There are a finite tape
+alphabet $\Gamma$ with a blank symbol, decidable equality and a primitive recursive coding, a type
+of states $\Lambda$ with a start state, a single-tape Turing machine $M$ with alphabet $\Gamma$ and
+states $\Lambda$, and a finite set $S$ of states that contains the start state and is closed under
+the transitions of $M$, such that the set of input words on which $M$ halts is not decidable by a
+multi-stack machine. -/
 theorem exists_not_tm2Decidable_tm0HaltsOn :
     ∃ (Γ Λ : Type) (_ : Inhabited Γ) (_ : Inhabited Λ) (_ : Fintype Γ) (_ : DecidableEq Γ)
       (_ : Primcodable Γ) (M : TM0.Machine Γ Λ) (S : Finset Λ),

@@ -27,7 +27,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Algorithms.SAT.TwoSAT
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.TwoSAT Cslib.Algorithms.SAT.DPLL
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.TwoSAT Cslib.Algorithms.SAT.DPLL
 
 /-- All four 2-clauses over `x₀, x₁`: unsatisfiable. -/
 private def allFour : CNF :=

@@ -31,7 +31,10 @@ open MeasureTheory ProbabilityTheory Set
 
 namespace MathlibExt.Probability.ConvexSubGaussianComparison
 
-/-- A measurable, integrable, centered random variable with the strict two-sided tail bound. -/
+/-- **Random variables with a 1-sub-Gaussian tail.** Let $\mu$ be a probability measure on a
+measurable space $\Omega$. A function $X : \Omega \to \mathbb{R}$ has a 1-sub-Gaussian tail when
+it is measurable and integrable, has mean $\int X \, d\mu = 0$, and satisfies
+$\mu\{\omega : |X(\omega)| > t\} \le 2 e^{-t^2/2}$ for every real $t \ge 0$. -/
 structure IsOneSubGaussianTail {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (X : Ω → ℝ) : Prop where
   measurable : Measurable X
@@ -40,7 +43,11 @@ structure IsOneSubGaussianTail {Ω : Type*} [MeasurableSpace Ω]
   tail_le : ∀ t : ℝ, 0 ≤ t →
     μ {ω | |X ω| > t} ≤ ENNReal.ofReal (2 * Real.exp (-t ^ 2 / 2))
 
-/-- Convex order between real random variables, for convex tests with both expectations finite. -/
+/-- **Convex domination.** Let $\mu_X$ and $\mu_Y$ be measures on measurable spaces $\Omega_X$
+and $\Omega_Y$, and let $X : \Omega_X \to \mathbb{R}$ and $Y : \Omega_Y \to \mathbb{R}$. Then $X$
+(under $\mu_X$) is convexly dominated by $Y$ (under $\mu_Y$) when every convex function
+$f : \mathbb{R} \to \mathbb{R}$ for which $f \circ X$ is $\mu_X$-integrable and $f \circ Y$ is
+$\mu_Y$-integrable satisfies $\int f(X) \, d\mu_X \le \int f(Y) \, d\mu_Y$. -/
 def ConvexDominated {ΩX ΩY : Type*}
     [MeasurableSpace ΩX] [MeasurableSpace ΩY]
     (μX : Measure ΩX) (X : ΩX → ℝ) (μY : Measure ΩY) (Y : ΩY → ℝ) : Prop :=
@@ -54,7 +61,12 @@ theorem ConvexDominated.refl {Ω : Type*} [MeasurableSpace Ω]
   intro f _ _ _
   exact le_rfl
 
-/-- A positive finite variance factor comparing every admissible law to `sqrt C * G`. -/
+/-- **Admissible convex sub-Gaussian comparison constants.** An extended nonnegative real
+$C \in [0, \infty]$ is an admissible comparison constant when $0 < C < \infty$ and, for every
+probability measure $\mu$ on a measurable space $\Omega$ and every function
+$X : \Omega \to \mathbb{R}$ with a 1-sub-Gaussian tail under $\mu$, $X$ under $\mu$ is convexly
+dominated by the function $g \mapsto \sqrt{C}\, g$ under the standard Gaussian measure
+$\mathcal{N}(0, 1)$ on $\mathbb{R}$. -/
 def IsAdmissibleConstant (C : ENNReal) : Prop :=
   C ≠ ⊤ ∧ 0 < C ∧
     ∀ (Ω : Type) [MeasurableSpace Ω]
@@ -62,7 +74,9 @@ def IsAdmissibleConstant (C : ENNReal) : Prop :=
       IsOneSubGaussianTail μ X →
         ConvexDominated μ X (gaussianReal 0 1) (fun g : ℝ => Real.sqrt C.toReal * g)
 
-/-- The infimum of positive finite comparator variance factors; an empty family gives `top`. -/
+/-- **The convex sub-Gaussian comparison constant.** The comparison constant is the infimum, in
+$[0, \infty]$, of the set of admissible comparison constants $C$; it equals $\infty$ when no
+admissible constant exists. -/
 noncomputable def comparisonConstant : ENNReal :=
   sInf {C : ENNReal | IsAdmissibleConstant C}
 
@@ -90,7 +104,8 @@ theorem comparisonConstant_eq_top_iff :
 @[simp] theorem not_isAdmissibleConstant_top : ¬IsAdmissibleConstant ⊤ := by
   simp [IsAdmissibleConstant]
 
-/-- The capped tail envelope from the probability tail constraint. -/
+/-- **The capped Gaussian tail envelope.** For a real number $t$, the capped Gaussian tail
+envelope at $t$ is $\min\{1, 2 e^{-t^2/2}\}$. -/
 noncomputable def gaussianTailEnvelope (t : ℝ) : ℝ :=
   min 1 (2 * Real.exp (-t ^ 2 / 2))
 
@@ -142,7 +157,11 @@ theorem IsOneSubGaussianTail.of_hasSubgaussianMGF {Ω : Type*} [MeasurableSpace 
       congr 1
       ring
 
-/-- The standard Gaussian's quadratic test forces every comparator to be at least one. -/
+/-- **Admissible comparison constants are at least one.** Every admissible comparison constant
+$C$ satisfies $C \ge 1$.
+
+The proof applies the comparison to a standard Gaussian variable and the convex test function
+$x \mapsto x^2$. -/
 theorem one_le_of_isAdmissibleConstant {C : ENNReal} (hC : IsAdmissibleConstant C) :
     1 ≤ C := by
   have hmgf : HasSubgaussianMGF (fun x : ℝ => x) 1 (gaussianReal 0 1) := by
@@ -175,13 +194,21 @@ theorem one_le_of_isAdmissibleConstant {C : ENNReal} (hC : IsAdmissibleConstant 
     _ ≤ ENNReal.ofReal C.toReal := ENNReal.ofReal_le_ofReal hcomparison
     _ = C := ENNReal.ofReal_toReal hC.1
 
-/-- The Gaussian lower bound also holds if the comparator family is empty. -/
+/-- **The comparison constant is at least one.** The convex sub-Gaussian comparison constant is
+at least $1$. This holds also when no admissible comparison constant exists, in which case the
+constant is $\infty$. -/
 theorem one_le_comparisonConstant : (1 : ENNReal) ≤ comparisonConstant :=
   (le_comparisonConstant_iff 1).2 (fun _ hC => one_le_of_isAdmissibleConstant hC)
 
-/-- Universe-polymorphic form of admissibility: an admissible constant also compares
-admissible variables on sample spaces in any universe, by pushing the law of the
-variable forward to a probability measure on `ℝ`. -/
+/-- **Admissible constants compare variables on every sample space.** Let $C$ be an admissible
+comparison constant, let $\mu$ be a probability measure on a measurable space $\Omega$, and let
+$X : \Omega \to \mathbb{R}$ have a 1-sub-Gaussian tail. Then $X$ is convexly dominated by
+$\sqrt{C}\,G$, where $G$ is a standard Gaussian random variable (the identity on $\mathbb{R}$
+under the standard normal law $N(0, 1)$).
+
+The definition of admissibility quantifies only over sample spaces in the lowest universe; this
+form allows $\Omega$ in any universe, by pushing the law of $X$ forward to a probability measure
+on $\mathbb{R}$. -/
 theorem IsAdmissibleConstant.elim {C : ENNReal} (hC : IsAdmissibleConstant C)
     {Ω : Type u} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (X : Ω → ℝ) (hX : IsOneSubGaussianTail μ X) :
@@ -209,7 +236,10 @@ theorem IsAdmissibleConstant.elim {C : ENNReal} (hC : IsAdmissibleConstant C)
   rw [hmap]
   exact hdom
 
-/-- Saturation of the actual strict-tail event at every nonnegative threshold. -/
+/-- **Saturating the Gaussian tail envelope.** Let $\mu$ be a measure on a measurable space
+$\Omega$. A function $X : \Omega \to \mathbb{R}$ saturates the Gaussian tail when
+$\mu\{\omega : |X(\omega)| > t\} = \min\{1, 2 e^{-t^2/2}\}$ for every real $t \ge 0$, that is,
+its strict tails equal the capped Gaussian tail envelope. -/
 def SaturatesGaussianTail {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) (X : Ω → ℝ) : Prop :=
   ∀ t : ℝ, 0 ≤ t →

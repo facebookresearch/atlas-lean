@@ -31,19 +31,26 @@ UM-00701734 (`KOU-20.76`), dataset ulamai/UnsolvedMath v1.8.0.
 Stated for all primes `p` and all `k`; abelian subgroups are written by pairwise commutation.
 -/
 
-/-- Kourovka 20.76 (L. Pyber): for every prime `p` and every `k`, if all abelian normal
-subgroups of a finite `p`-group `G` have order at most `p^k`, then every abelian subgroup of `G`
-has order at most `p^(2k)`. -/
+/-- **Pyber's question on orders of abelian subgroups (Kourovka 20.76).** The proposition that for
+every prime $p$, every natural number $k$ and every finite $p$-group $G$, if every abelian normal
+subgroup of $G$ has order at most $p^k$, then every abelian subgroup of $G$ has order at most
+$p^{2k}$. -/
 def abelianSubgroupOrderLeSquareNormal : Prop :=
   ∀ (p k : ℕ) (G : Type) [Group G] [Finite G], p.Prime → IsPGroup p G →
     (∀ A : Subgroup G, A.Normal → (∀ x ∈ A, ∀ y ∈ A, x * y = y * x) → Nat.card A ≤ p ^ k) →
     ∀ B : Subgroup G, (∀ x ∈ B, ∀ y ∈ B, x * y = y * x) → Nat.card B ≤ p ^ (2 * k)
 
-/--
-Resolved false: Muliarchyk (Theorem 1.1) constructs a finite `2`-group of order `2^(144e+1)`, `e =
-256363762`, whose abelian normal subgroups have order at most `2^(42e)` while it has an elementary
-abelian subgroup of order `2^(85e) > 2^(84e)`; the 21st issue of the Kourovka Notebook marks 20.76
-solved ("No, it is not"). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+/-- **Kourovka Problem 20.76 has a negative answer.** The statement of Kourovka Problem 20.76 is
+false: there are a prime $p$, a natural number $k$, a finite $p$-group $G$ all of whose abelian
+normal subgroups have order at most $p^k$, and an abelian subgroup of $G$ of order greater than
+$p^{2k}$.
+
+Muliarchyk's counterexample (Theorem 1.1) is a finite $2$-group of order $2^{144e+1}$, with
+$e = 256363762$, whose abelian normal subgroups have order at most $2^{42e}$ while it has an
+elementary abelian subgroup of order $2^{85e} > 2^{84e}$; the 21st issue of the Kourovka Notebook
+marks 20.76 solved ("No, it is not").
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.76 (L. Pyber);
 resolution: K. Muliarchyk, Abelian subgroups of finite 2-groups: counterexamples to Problems 20.75
 and 20.76, preprint (2026), Kourovka Notebook site, Theorem 1.1: for e = 256363762 an explicitly
