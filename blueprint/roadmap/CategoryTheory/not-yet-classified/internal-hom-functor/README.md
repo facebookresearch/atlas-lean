@@ -1,0 +1,18 @@
+# Internal Hom Functor
+
+- [Unbalanced Post evaluation](unbalanced-post-evaluation.md)
+- [Unbalanced Pre evaluation](unbalanced-pre-evaluation.md)
+- [Unbalanced Post equalizes](unbalanced-post-equalizes.md)
+- [Hom Map](hom-map.md)
+- [Hom Map inclusion](hom-map-inclusion.md)
+- [Hom Map id](hom-map-id.md)
+- [Hom Map comp](hom-map-comp.md)
+- [Hom Functor](hom-functor.md)
+- [Unbalanced Pre equalizes](unbalanced-pre-equalizes.md)
+- [Hom Pre](hom-pre.md)
+- [Hom Pre inclusion](hom-pre-inclusion.md)
+- [Hom Pre id](hom-pre-id.md)
+- [Hom Pre comp](hom-pre-comp.md)
+- [Hom Pre hom Map](hom-pre-hom-map.md)
+- [Hom Pre Natural](hom-pre-natural.md)
+- [Hom Contravariant](hom-contravariant.md)

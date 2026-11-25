@@ -10,3 +10,8 @@
 - [Curry free Evaluation Adjunction hom Equiv stabilization](curry-free-evaluation-adjunction-hom-equ.md)
 - [Bijective free Stabilization Map precomp iff](bijective-free-stabilization-map-precomp.md)
 - [Is Iso adjoint Structure Map iff](is-iso-adjoint-structure-map-iff.md)
+- [Structure Transformation](structure-transformation.md)
+- [Stabilization Map](stabilization-map.md)
+- [Stabilization Map hom Equiv](stabilization-map-hom-equiv.md)
+- [Stabilization Map naturality](stabilization-map-naturality.md)
+- [Stabilization Transformation](stabilization-transformation.md)

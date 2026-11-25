@@ -1,0 +1,15 @@
+# Right Left Tensor Hom
+
+- [Monadic Action](monadic-action.md)
+- [Base Evaluation](base-evaluation.md)
+- [Hom Action Pairing](hom-action-pairing.md)
+- [Hom Action](hom-action.md)
+- [Hom Algebra](hom-algebra.md)
+- [Hom Object](hom-object.md)
+- [Hom Algebra Map](hom-algebra-map.md)
+- [Hom Map](hom-map.md)
+- [Hom Functor](hom-functor.md)
+- [Curry linear iff](curry-linear-iff.md)
+- [Tensor Hom Equiv Module](tensor-hom-equiv-module.md)
+- [Tensor Hom Adjunction](tensor-hom-adjunction.md)
+- [Left Tensor Functor preserves Colimits](left-tensor-functor-preserves-colimits.md)

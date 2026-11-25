@@ -65,3 +65,6 @@
 - [Power](power.md)
 - [Copower](copower.md)
 - [Enriched Hom](enriched-hom.md)
+- [Adjoint Structure Map](adjoint-structure-map.md)
+- [Adjoint Structure Map naturality](adjoint-structure-map-naturality.md)
+- [Is Omega](is-omega.md)

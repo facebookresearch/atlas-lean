@@ -1,0 +1,15 @@
+# Finite Bijection Matrix
+
+- [Finite Bijection Matrix](finite-bijection-matrix.md)
+- [Finite Bijection Matrix isometry](finite-bijection-matrix-isometry.md)
+- [Finite Bijection Matrix apply](finite-bijection-matrix-apply.md)
+- [Finite Bijection Matrix reindex](finite-bijection-matrix-reindex.md)
+- [Finite Bijection Matrix mul Vec](finite-bijection-matrix-mul-vec.md)
+- [Finite Bijection Matrix comp](finite-bijection-matrix-comp.md)
+- [Finite Bijection Matrix refl](finite-bijection-matrix-refl.md)
+- [Finite Bijection Matrix symm](finite-bijection-matrix-symm.md)
+- [Finite Bijection Matrix inverse equations](finite-bijection-matrix-inverse-equation.md)
+- [Small Finite Bijection](small-finite-bijection.md)
+- [Small Bijection Matrix](small-bijection-matrix.md)
+- [Small Bijection Matrix id](small-bijection-matrix-id.md)
+- [Small Bijection Matrix comp](small-bijection-matrix-comp.md)
