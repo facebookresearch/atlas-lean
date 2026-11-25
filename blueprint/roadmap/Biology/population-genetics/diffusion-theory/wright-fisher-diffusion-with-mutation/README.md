@@ -15,3 +15,8 @@
 - [Allele frequency after one generation of two-way mutation](mutated-freq.md)
 - [Drift of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-drift.md)
 - [Infinitesimal variance of the Wright–Fisher chain with mutation](integral-binomial-mutated-freq-sq.md)
+
+- [Martingale problem for the Wright-Fisher diffusion with selection and two-way mutation](two-way-mutation-and-selection-wright-fisher-mar.md)
+- [Moment duality for the Wright-Fisher diffusion with two-way mutation](moment-duality-with-mutation-killed-absorbed-blo.md)
+
+- [Polynomial spectrum of the neutral Wright–Fisher generator with mutation](spectral-structure-of-l-0-theta-on-polynomials.md)

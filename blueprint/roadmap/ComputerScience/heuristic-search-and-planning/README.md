@@ -10,6 +10,11 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [Optimality of stationary policies](optimality-of-stationary-policies/README.md)
 - [Stochastic shortest path problems](stochastic-shortest-path-problems/README.md)
 
+- [Markov decision processes](markov-decision-processes/README.md)
+- [Partially observable planning](partially-observable-planning/README.md)
+- [STRIPS planning complexity](strips-planning-complexity/README.md)
+- [Sampling-based motion planning](sampling-based-motion-planning/README.md)
+
 ## Related topics
 
 - [Reinforcement learning theory](../machine-learning/reinforcement-learning/README.md)
