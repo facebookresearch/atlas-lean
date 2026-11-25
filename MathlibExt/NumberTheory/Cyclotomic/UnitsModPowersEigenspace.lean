@@ -122,7 +122,9 @@ variable (A K L B : Type*) [CommRing A] [CommRing B] [Algebra A B]
   [Algebra K L] [Algebra A L] [IsScalarTower A K L] [Algebra.IsAlgebraic K L]
   [Algebra B L] [IsScalarTower A B L] [IsIntegralClosure B A L]
 
-/-- The restriction of `Gal(L / K)` to ring automorphisms of the integral closure `B`. -/
+/-- For a commutative ring `A` with fraction field `K`, an algebraic extension `L / K` and an
+integral closure `B` of `A` in `L`, the restriction of `Gal(L / K)` to ring automorphisms of `B`,
+as a monoid hom. -/
 noncomputable def galRestrictRingAut : (L ≃ₐ[K] L) →* (B ≃+* B) :=
   (MulSemiringAction.toRingAut (B ≃ₐ[A] B) B).comp (galRestrict A K L B).toMonoidHom
 
