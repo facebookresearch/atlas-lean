@@ -28,7 +28,11 @@ second partial derivatives of a twice continuously differentiable real function 
 
 namespace MetaMathlibExt
 
-/-- Coordinate partial derivative of `f` along the `i`-th axis.
+/-- **Partial derivative along a coordinate axis.** For $f : \mathbb{R}^n \to \mathbb{R}$ and a
+coordinate index $i$, let $e_i$ be the $i$-th standard basis vector. The partial derivative
+$\partial_i f : \mathbb{R}^n \to \mathbb{R}$ sends $x$ to the derivative at $t = 0$ of
+$t \mapsto f(x + t e_i)$, taken to be $0$ when this function is not differentiable at $0$.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential calculus`, entries `partial derivatives` and
 `k-th order partial derivatives` (unmapped);
@@ -38,8 +42,12 @@ noncomputable def partialDeriv {n : ℕ} (f : (Fin n → ℝ) → ℝ) (i : Fin 
     (Fin n → ℝ) → ℝ :=
   fun x => deriv (fun t : ℝ => f (x + t • Pi.single i (1 : ℝ))) 0
 
-/-- Characteristic spec: the partial is the single-variable derivative of the
-axis slice.
+/-- **Partial derivative as the derivative of a coordinate slice.** For
+$f : \mathbb{R}^n \to \mathbb{R}$, a coordinate index $i$ and a point $x \in \mathbb{R}^n$, let
+$e_i$ be the $i$-th standard basis vector. The partial derivative of $f$ along the $i$-th
+coordinate axis at $x$ equals the derivative at $t = 0$ of the one-variable function
+$t \mapsto f(x + t e_i)$, taken to be $0$ when that function is not differentiable at $0$.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential calculus`, entry `partial derivatives` (unmapped);
 W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9. -/
@@ -53,15 +61,18 @@ private theorem partialDeriv_hasDerivAt_axis {n : ℕ} (i : Fin n) (x : Fin n �
   simpa only [id_eq, one_smul] using
     ((hasDerivAt_id (𝕜 := ℝ) 0).smul_const (Pi.single i (1 : ℝ))).const_add x
 
-/-- A partial derivative is the Frechet derivative applied to the axis vector.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential calculus`, entry `partial derivatives` (unmapped);
-W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9.
+/-- **Partial derivative as a Fréchet derivative.** Let $f : \mathbb{R}^n \to \mathbb{R}$ be
+differentiable at a point $x$, and let $e_i$ be the $i$-th standard basis vector of
+$\mathbb{R}^n$. Then the partial derivative of $f$ along the $i$-th coordinate axis at $x$ equals
+$Df(x)\,e_i$, the Fréchet derivative of $f$ at $x$ applied to $e_i$.
 
 Proves `Wanted` entry `partialDeriv_eq_fderiv_apply`.
 
-Proof: Differentiate the affine coordinate line `t ↦ x + t • Pi.single i 1` and compose with `f`
-by the chain rule `HasFDerivAt.comp_hasDerivAt`.
+The proof differentiates $f$ along the line $t \mapsto x + t e_i$ by the chain rule.
+
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential calculus`, entry `partial derivatives` (unmapped);
+W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9.
 -/
 theorem partialDeriv_eq_fderiv_apply {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (i : Fin n) (x : Fin n → ℝ) (hf : DifferentiableAt ℝ f x) :
@@ -72,8 +83,11 @@ theorem partialDeriv_eq_fderiv_apply {n : ℕ} (f : (Fin n → ℝ) → ℝ)
   simpa only [partialDeriv, Function.comp_def] using
     (hf'.comp_hasDerivAt 0 (partialDeriv_hasDerivAt_axis i x)).deriv
 
-/-- For a differentiable function, the coordinate partial derivative is its Fréchet derivative
-applied pointwise to the coordinate vector. -/
+/-- **Partial derivative function of a differentiable function.** Let
+$f : \mathbb{R}^n \to \mathbb{R}$ be differentiable and let $e_i$ be the $i$-th standard basis
+vector of $\mathbb{R}^n$. Then the partial derivative $\partial_i f$ of $f$ along the $i$-th
+coordinate axis is the function $x \mapsto Df(x)\,e_i$, where $Df(x)$ is the Fréchet derivative
+of $f$ at $x$. -/
 theorem partialDeriv_eq_fderiv_apply_of_differentiable {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (i : Fin n) (hf : Differentiable ℝ f) :
     partialDeriv f i = fun x => fderiv ℝ f x (Pi.single i (1 : ℝ)) := by
@@ -101,8 +115,14 @@ private theorem partialDeriv_fderiv_apply_eq {n : ℕ} (f : (Fin n → ℝ) → 
     ContinuousLinearMap.apply_apply] using
       congrArg (fun L : (Fin n → ℝ) →L[ℝ] ℝ => L (Pi.single j (1 : ℝ))) hderiv
 
-/-- An iterated coordinate partial derivative is the second Fréchet derivative applied to the
-corresponding pair of coordinate vectors. -/
+/-- **Mixed partial derivatives via the second Fréchet derivative.** Let
+$f : \mathbb{R}^n \to \mathbb{R}$ be twice continuously differentiable, write $e_k$ for the $k$-th
+standard basis vector of $\mathbb{R}^n$ and $\partial_k g$ for the partial derivative of a
+function $g$ along the $k$-th coordinate axis, and let $Df$ be the Fréchet derivative of $f$,
+a map from $\mathbb{R}^n$ to the linear maps $\mathbb{R}^n \to \mathbb{R}$. Then for all coordinate
+indices $i, j$ and every $x \in \mathbb{R}^n$,
+$\partial_j (\partial_i f)(x) = \big(D(Df)(x)\,e_j\big)\,e_i$, where $D(Df)(x)$ is the Fréchet
+derivative of $Df$ at $x$. -/
 theorem partialDeriv_partialDeriv_eq_fderiv_fderiv {n : ℕ}
     (f : (Fin n → ℝ) → ℝ) (i j : Fin n) (x : Fin n → ℝ) (hf : ContDiff ℝ 2 f) :
     partialDeriv (partialDeriv f i) j x =
@@ -118,16 +138,20 @@ theorem partialDeriv_partialDeriv_eq_fderiv_fderiv {n : ℕ}
     _ = fderiv ℝ (fderiv ℝ f) x (Pi.single j (1 : ℝ)) (Pi.single i (1 : ℝ)) :=
       partialDeriv_fderiv_apply_eq f i j x hf
 
-/-- Iterated partials commute for `C^2` functions (Clairaut's theorem).
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential calculus`, entry `k-th order partial derivatives` (unmapped);
-W. Rudin, Principles of Mathematical Analysis, 3rd ed., Theorem 9.41 (pp. 235–236).
+/-- **Symmetry of mixed partial derivatives (Clairaut's theorem).** For a function
+$g : \mathbb{R}^n \to \mathbb{R}$, write $\partial_i g$ for its partial derivative along the
+$i$-th coordinate axis. If $f : \mathbb{R}^n \to \mathbb{R}$ is twice continuously
+differentiable, then for all coordinate indices $i, j$ and every point $x \in \mathbb{R}^n$,
+$\partial_j (\partial_i f)(x) = \partial_i (\partial_j f)(x)$.
 
 Proves `Wanted` entry `iterated_partialDeriv_commute`.
 
-Proof: Rewrite both iterated partials through the Fréchet bridge above, then apply Mathlib's
-`ContDiffAt.isSymmSndFDerivAt`, Schwarz's theorem as stated in Wikipedia, "Symmetry of second
-derivatives".
+The proof writes both mixed partials as values of the second Fréchet derivative of $f$ at $x$
+and applies Schwarz's theorem on the symmetry of second derivatives.
+
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential calculus`, entry `k-th order partial derivatives` (unmapped);
+W. Rudin, Principles of Mathematical Analysis, 3rd ed., Theorem 9.41 (pp. 235–236).
 -/
 theorem iterated_partialDeriv_commute {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (i j : Fin n) (x : Fin n → ℝ) (hf : ContDiff ℝ 2 f) :

@@ -67,8 +67,8 @@ theorem D₀_partitionProd :
   rw [partitionProd_P₀]
   unfold MultiStateData.naCumHazard stepCumHazard MultiStateData.naIncrement
   simp only [CompetingRiskData.toMultiState, Option.elim_none, Option.elim_some, a0, a1,
-    sum_erase_eq_sub (mem_univ _), Fintype.sum_option, Fin.sum_univ_two, mul_apply,
-    Matrix.add_apply, Matrix.sub_apply, one_apply]
+    sum_erase_eq_sub (mem_univ _), Fintype.sum_option, Fin.sum_univ_two, Matrix.mul_apply,
+    Matrix.add_apply, Matrix.sub_apply, Matrix.one_apply]
   simp [D₀]
   norm_num
 
@@ -181,8 +181,8 @@ theorem D₁_partitionProd :
   rw [partitionProd_P₀]
   unfold MultiStateData.naCumHazard stepCumHazard MultiStateData.naIncrement
   simp only [CompetingRiskData.toMultiState, Option.elim_none, Option.elim_some, a0, a1,
-    sum_erase_eq_sub (mem_univ _), Fintype.sum_option, Fin.sum_univ_two, mul_apply,
-    Matrix.add_apply, Matrix.sub_apply, one_apply]
+    sum_erase_eq_sub (mem_univ _), Fintype.sum_option, Fin.sum_univ_two, Matrix.mul_apply,
+    Matrix.add_apply, Matrix.sub_apply, Matrix.one_apply]
   simp [D₁]
   norm_num
 

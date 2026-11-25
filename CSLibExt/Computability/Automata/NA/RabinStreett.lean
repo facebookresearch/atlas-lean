@@ -60,9 +60,9 @@ open Filter Set ωSequence ωAcceptor
 
 variable {State Symbol : Type*}
 
-/-- A Rabin automaton: a nondeterministic automaton with a set of Rabin pairs
-`(E, F)`. A run is accepting when some pair is hit: the run visits `E` infinitely
-often and `F` only finitely often. -/
+/-- **Rabin automaton.** A Rabin automaton is a nondeterministic automaton together with a set
+of Rabin pairs $(E, F)$, each a pair of sets of states. A run is accepting when some pair is
+hit: the run visits $E$ infinitely often and $F$ only finitely often. -/
 structure Rabin (State Symbol : Type*) extends NA State Symbol where
   /-- The Rabin pairs. -/
   accept : Set (Set State × Set State)
@@ -75,21 +75,29 @@ instance : ωAcceptor (Rabin State Symbol) Symbol where
     ∃ ss, r.Run xs ss ∧ ∃ p ∈ r.accept, (∃ᶠ k in atTop, ss k ∈ p.1) ∧
       (∀ᶠ k in atTop, ss k ∉ p.2)
 
-/-- Membership in the language of a Rabin automaton, unfolded. -/
+/-- **Membership in the language of a Rabin automaton.** An infinite word $x$ is accepted by a
+Rabin automaton $r$ if and only if there is a run $s$ of $r$ on $x$ and a Rabin pair $(E, F)$ of
+$r$ such that $s$ visits $E$ infinitely often and visits $F$ only finitely often. -/
 theorem mem_language_iff {r : Rabin State Symbol} {xs : ωSequence Symbol} :
     xs ∈ language r ↔
       ∃ ss, r.Run xs ss ∧ ∃ p ∈ r.accept, (∃ᶠ k in atTop, ss k ∈ p.1) ∧
         (∀ᶠ k in atTop, ss k ∉ p.2) :=
   Iff.rfl
 
-/-- A Rabin automaton as a Muller automaton: the Muller acceptance sets are the
-sets `S` with `S ∩ E` nonempty and `S ∩ F` empty for some Rabin pair `(E, F)`. -/
+/-- **Muller presentation of a Rabin automaton.** Given a Rabin automaton with set of Rabin
+pairs $\mathcal{R}$, this is the Muller automaton with the same states, initial states and
+transitions whose accepting family consists of the sets $S$ of states for which some pair
+$(E, F) \in \mathcal{R}$ satisfies $S \cap E \neq \emptyset$ and $S \cap F = \emptyset$. A
+Muller automaton accepts a run when the set of states that the run visits infinitely often
+belongs to its accepting family. -/
 def toMuller (r : Rabin State Symbol) : Muller State Symbol where
   toNA := r.toNA
   accept := {S | ∃ p ∈ r.accept, (S ∩ p.1).Nonempty ∧ Disjoint S p.2}
 
-/-- A Rabin automaton and its Muller presentation accept the same language, on a
-finite state space. -/
+/-- **Rabin-to-Muller conversion preserves the language.** If the state space is finite, then a
+Rabin automaton $r$ accepts the same language as its Muller presentation: the Muller automaton
+with the same transitions and initial states as $r$ whose acceptance sets are the sets $S$ of
+states such that, for some Rabin pair $(E, F)$ of $r$, $S$ meets $E$ and is disjoint from $F$. -/
 theorem language_toMuller [Finite State] (r : Rabin State Symbol) :
     language r.toMuller = language r := by
   apply ωLanguage.mem_ext
@@ -119,9 +127,9 @@ theorem language_toMuller [Finite State] (r : Rabin State Symbol) :
 
 end Rabin
 
-/-- A Streett automaton: a nondeterministic automaton with a set of Streett pairs
-`(E, F)`. A run is accepting when every pair is respected: if the run visits `E`
-infinitely often then it also visits `F` infinitely often. -/
+/-- **Streett automaton.** A Streett automaton is a nondeterministic automaton together with a
+set of Streett pairs $(E, F)$, each a pair of sets of states. A run is accepting when every pair
+is respected: if the run visits $E$ infinitely often then it also visits $F$ infinitely often. -/
 structure Streett (State Symbol : Type*) extends NA State Symbol where
   /-- The Streett pairs. -/
   accept : Set (Set State × Set State)
@@ -134,22 +142,29 @@ instance : ωAcceptor (Streett State Symbol) Symbol where
     ∃ ss, r.Run xs ss ∧
       ∀ p ∈ r.accept, (∃ᶠ k in atTop, ss k ∈ p.1) → (∃ᶠ k in atTop, ss k ∈ p.2)
 
-/-- Membership in the language of a Streett automaton, unfolded. -/
+/-- **Membership in the language of a Streett automaton.** An infinite word $x$ is accepted by a
+Streett automaton $r$ if and only if there is a run $s$ of $r$ on $x$ such that for every Streett
+pair $(E, F)$ of $r$, if $s$ visits $E$ infinitely often then $s$ visits $F$ infinitely often. -/
 theorem mem_language_iff {r : Streett State Symbol} {xs : ωSequence Symbol} :
     xs ∈ language r ↔
       ∃ ss, r.Run xs ss ∧
         ∀ p ∈ r.accept, (∃ᶠ k in atTop, ss k ∈ p.1) → (∃ᶠ k in atTop, ss k ∈ p.2) :=
   Iff.rfl
 
-/-- A Streett automaton as a Muller automaton: the Muller acceptance sets are the
-sets `S` that respect every Streett pair, in the sense that `S ∩ E` nonempty
-implies `S ∩ F` nonempty. -/
+/-- **Muller presentation of a Streett automaton.** Given a Streett automaton with set of
+Streett pairs $\mathcal{P}$, this is the Muller automaton with the same states, initial states
+and transitions whose accepting family consists of the sets $S$ of states such that every pair
+$(E, F) \in \mathcal{P}$ with $S \cap E \neq \emptyset$ also satisfies $S \cap F \neq \emptyset$.
+A Muller automaton accepts a run when the set of states that the run visits infinitely often
+belongs to its accepting family. -/
 def toMuller (r : Streett State Symbol) : Muller State Symbol where
   toNA := r.toNA
   accept := {S | ∀ p ∈ r.accept, (S ∩ p.1).Nonempty → (S ∩ p.2).Nonempty}
 
-/-- A Streett automaton and its Muller presentation accept the same language, on a
-finite state space. -/
+/-- **Streett-to-Muller conversion preserves the language.** If the state space is finite, then a
+Streett automaton $r$ accepts the same language as its Muller presentation: the Muller automaton
+with the same transitions and initial states as $r$ whose acceptance sets are the sets $S$ of
+states such that, for every Streett pair $(E, F)$ of $r$, if $S$ meets $E$ then $S$ meets $F$. -/
 theorem language_toMuller [Finite State] (r : Streett State Symbol) :
     language r.toMuller = language r := by
   apply ωLanguage.mem_ext
@@ -175,14 +190,19 @@ end Streett
 
 namespace Parity
 
-/-- A parity automaton as a Rabin automaton: the pairs are
-`(Eᵢ, Fᵢ)` with `Eᵢ = {priority = 2i}` and `Fᵢ = {priority > 2i}`. -/
+/-- **Rabin presentation of a parity automaton.** Given a parity automaton with priority
+function $\Omega$ from states to natural numbers, this is the Rabin automaton with the same
+states, initial states and transitions whose Rabin pairs are the pairs $(E_i, F_i)$ for
+$i \in \mathbb{N}$, where $E_i = \{s : \Omega(s) = 2i\}$ and $F_i = \{s : \Omega(s) > 2i\}$. -/
 def toRabin (a : Parity State Symbol) : Rabin State Symbol where
   toNA := a.toNA
   accept := {p | ∃ i, p = ({s | a.priority s = 2 * i}, {s | a.priority s > 2 * i})}
 
-/-- A parity automaton and its Rabin presentation accept the same language, on a
-finite state space. -/
+/-- **Parity-to-Rabin conversion preserves the language.** If the state space is finite, then a
+parity automaton $a$ accepts the same language as its Rabin presentation: the Rabin automaton
+with the same transitions and initial states as $a$ whose Rabin pairs are the pairs
+$(E_i, F_i)$ for $i \in \mathbb{N}$, where $E_i$ is the set of states of priority $2i$ and
+$F_i$ the set of states of priority greater than $2i$. -/
 theorem language_toRabin [Finite State] (a : Parity State Symbol) :
     language a.toRabin = language a := by
   apply ωLanguage.mem_ext
@@ -229,15 +249,21 @@ theorem language_toRabin [Finite State] (a : Parity State Symbol) :
         have hgt' : a.priority (ss k) > 2 * m := hgt
         omega)
 
-/-- A parity automaton as a Streett automaton: the pairs are
-`(Eᵢ, Fᵢ)` with `Eᵢ = {priority = 2i + 1}` and `Fᵢ = {priority > 2i + 1}`. -/
+/-- **Streett presentation of a parity automaton.** Given a parity automaton with priority
+function $\Omega$ from states to natural numbers, this is the Streett automaton with the same
+states, initial states and transitions whose Streett pairs are the pairs $(E_i, F_i)$ for
+$i \in \mathbb{N}$, where $E_i = \{s : \Omega(s) = 2i + 1\}$ and
+$F_i = \{s : \Omega(s) > 2i + 1\}$. -/
 def toStreett (a : Parity State Symbol) : Streett State Symbol where
   toNA := a.toNA
   accept := {p | ∃ i, p = ({s | a.priority s = 2 * i + 1},
     {s | a.priority s > 2 * i + 1})}
 
-/-- A parity automaton and its Streett presentation accept the same language, on a
-finite state space. -/
+/-- **Parity-to-Streett conversion preserves the language.** If the state space is finite, then
+a parity automaton $a$ accepts the same language as its Streett presentation: the Streett
+automaton with the same transitions and initial states as $a$ whose Streett pairs are the pairs
+$(E_i, F_i)$ for $i \in \mathbb{N}$, where $E_i$ is the set of states of priority $2i + 1$ and
+$F_i$ the set of states of priority greater than $2i + 1$. -/
 theorem language_toStreett [Finite State] (a : Parity State Symbol) :
     language a.toStreett = language a := by
   apply ωLanguage.mem_ext
@@ -299,12 +325,18 @@ theorem language_toStreett [Finite State] (a : Parity State Symbol) :
       rw [h1]
       exact hlt)
 
-/-- A parity automaton as a Muller automaton, via Rabin. -/
+/-- **Muller presentation of a parity automaton.** The Muller automaton of a parity automaton
+is the Muller presentation of its Rabin presentation. It has the same states, initial states
+and transitions, and its accepting family consists of the sets $S$ of states for which there
+is a natural number $i$ such that $S$ contains a state of priority $2i$ and no state of
+priority greater than $2i$. A Muller automaton accepts a run when the set of states that the
+run visits infinitely often belongs to its accepting family. -/
 def toMuller (a : Parity State Symbol) : Muller State Symbol :=
   a.toRabin.toMuller
 
-/-- A parity automaton and its Muller presentation accept the same language, on a
-finite state space. -/
+/-- **Parity-to-Muller conversion preserves the language.** If the state space is finite, then a
+parity automaton accepts the same language as its Muller presentation, the Muller automaton
+obtained by converting it to its Rabin presentation and that to a Muller automaton. -/
 theorem language_toMuller [Finite State] (a : Parity State Symbol) :
     language a.toMuller = language a := by
   show language a.toRabin.toMuller = language a
@@ -314,18 +346,26 @@ end Parity
 
 namespace Rabin
 
-/-- A Rabin automaton as a Streett automaton, with the same pairs: for a fixed
-run, the Streett condition on a pair `(E, F)` is the negation of the Rabin
-condition on that pair, since `¬ (freq E ∧ ev ∉ F)` is `freq E → freq F`. -/
+/-- **Streett automaton with the pairs of a Rabin automaton.** Given a Rabin automaton, this is
+the Streett automaton with the same states, initial states and transitions and the same set
+of pairs.
+
+For a fixed run and a pair $(E, F)$, the Streett condition (if the run visits $E$ infinitely
+often, then it visits $F$ infinitely often) is the negation of the Rabin condition (the run
+visits $E$ infinitely often and $F$ only finitely often). -/
 def toStreett (r : Rabin State Symbol) : Streett State Symbol where
   toNA := r.toNA
   accept := r.accept
 
-/-- **Run-wise Rabin/Streett duality.** For a fixed run, the Rabin condition holds
-iff the same-pairs Streett condition fails: the two conditions are negations
-of each other, run by run. (For languages of nondeterministic automata there is
-no such complementation statement, since complementation also swaps the run
-quantifier.) -/
+/-- **Run-wise Rabin/Streett duality.** Let $r$ be a Rabin automaton and let $s$ be an infinite
+sequence of states. Then $s$ satisfies the Rabin condition of $r$, that is, for some Rabin pair
+$(E, F)$ of $r$ the sequence $s$ visits $E$ infinitely often and $F$ only finitely often, if and
+only if $s$ fails the Streett condition with the same pairs, that is, it is not the case that for
+every Rabin pair $(E, F)$ of $r$, if $s$ visits $E$ infinitely often then $s$ visits $F$
+infinitely often.
+
+The sequence $s$ need not be a run of $r$. (For languages of nondeterministic automata there is
+no such complementation statement, since complementation also swaps the run quantifier.) -/
 theorem acceptsRun_iff_not_streett {r : Rabin State Symbol} {ss : ωSequence State} :
     (∃ p ∈ r.accept, (∃ᶠ k in atTop, ss k ∈ p.1) ∧ (∀ᶠ k in atTop, ss k ∉ p.2)) ↔
       ¬ (∀ p ∈ r.toStreett.accept, (∃ᶠ k in atTop, ss k ∈ p.1) →

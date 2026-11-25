@@ -37,20 +37,26 @@ with the formal-conjectures statement `ErdosProblems/877.lean` (equivalent; no c
 open MathlibExt.Combinatorics.GreenProblem1LargeSumFreeWanted (IsSumFree)
 
 open Classical in
-/-- `f_m(n)`: the number of maximal sum-free subsets of `{1, …, n}`. -/
+/-- **Number of maximal sum-free subsets of $\{1, \dots, n\}$.** For a natural number $n$,
+$f_m(n)$ is the number of sets $A \subseteq \{1, \dots, n\}$ that are sum-free, meaning
+$x + y \notin A$ for all $x, y \in A$ (including $x = y$), and maximal with this property:
+every sum-free set $B$ with $A \subseteq B \subseteq \{1, \dots, n\}$ equals $A$. -/
 noncomputable def maximalSumFreeCount (n : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter fun A =>
     IsSumFree A ∧ ∀ B ⊆ Finset.Icc 1 n, A ⊆ B → IsSumFree B → B = A).card
 
-/-- Erdős Problem 877 (Cameron and Erdős): `f_m(n) = o(2^{n/2})`. -/
+/-- **Erdős Problem 877 on maximal sum-free sets.** Let $f_m(n)$ be the number of maximal
+sum-free subsets of $\{1, \dots, n\}$. This is the statement, asked by Cameron and Erdős, that
+$f_m(n) / 2^{n/2} \to 0$ as $n \to \infty$, that is, $f_m(n) = o(2^{n/2})$. -/
 def maximalSumFreeCountSmall : Prop :=
   Filter.Tendsto (fun n : ℕ => (maximalSumFreeCount n : ℝ) / 2 ^ ((n : ℝ) / 2))
     Filter.atTop (nhds 0)
 
-/--
-Resolved true: Łuczak and Schoen proved `f_m(n) ≤ 2^{n/2 - 2^{-28} n}` for all large `n`, so `f_m(n)
-= o(2^{n/2})` (later `f_m(n) = 2^{(1/4 + o(1)) n}`); erdosproblems.com/877 lists the problem as
-proved. Source: T. F. Bloom, Erdős Problems, Problem #877, https://www.erdosproblems.com/877 (status
+/-- **Maximal sum-free subsets of $\{1, \dots, n\}$ number $o(2^{n/2})$.** Let $f_m(n)$ be the
+number of maximal sum-free subsets of $\{1, \dots, n\}$. Then $f_m(n) / 2^{n/2} \to 0$ as
+$n \to \infty$, that is, $f_m(n) = o(2^{n/2})$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #877, https://www.erdosproblems.com/877 (status
 PROVED); resolution: T. Łuczak and T. Schoen, On the number of maximal sum-free sets, Proc. Amer.
 Math. Soc. 129 (2001), 2205-2207, abstract: {1, 2, …, n} contains at most 2^{n/2 - 2^{-28} n}
 maximal sum-free subsets, provided n is large enough; erdosproblems.com/877: this resolves the

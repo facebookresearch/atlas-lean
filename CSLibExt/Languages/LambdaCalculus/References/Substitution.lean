@@ -62,7 +62,10 @@ variable (ρ : Nat → Nat) (σ : Nat → Term Base)
 
 end ConstructorEquations
 
-/-- Renamings that agree pointwise act identically. -/
+/-- **Renaming respects pointwise equality.** Let $\rho, \rho' : \mathbb{N} \to \mathbb{N}$ be
+renamings of de Bruijn variables with $\rho(x) = \rho'(x)$ for every $x \in \mathbb{N}$. Then for
+every term $t$ of the simply typed lambda calculus with references, renaming $t$ by $\rho$ gives
+the same term as renaming $t$ by $\rho'$. -/
 theorem rename_congr {ρ ρ' : Nat → Nat} (h : ∀ x, ρ x = ρ' x) (t : Term Base) :
     rename ρ t = rename ρ' t := by
   induction t generalizing ρ ρ' with
@@ -80,7 +83,9 @@ theorem rename_congr {ρ ρ' : Nat → Nat} (h : ∀ x, ρ x = ρ' x) (t : Term 
   | deref t ih => simp [ih h]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁ h, ih₂ h]
 
-/-- The identity renaming. -/
+/-- **Renaming by the identity.** For every term $t$ of the simply typed lambda calculus with
+references, renaming the de Bruijn variables of $t$ by the identity map of $\mathbb{N}$ gives
+back $t$. -/
 @[simp] theorem rename_id (t : Term Base) : rename id t = t := by
   induction t with
   | var => rfl
@@ -95,7 +100,10 @@ theorem rename_congr {ρ ρ' : Nat → Nat} (h : ∀ x, ρ x = ρ' x) (t : Term 
   | deref t ih => simp [ih]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁, ih₂]
 
-/-- Composition of renamings. -/
+/-- **Composition of renamings.** For all renamings $\rho, \rho' : \mathbb{N} \to \mathbb{N}$ of
+de Bruijn variables and every term $t$ of the simply typed lambda calculus with references,
+renaming $t$ by $\rho$ and then renaming the result by $\rho'$ gives the same term as renaming $t$
+by the composite $\rho' \circ \rho$. -/
 theorem rename_rename (ρ ρ' : Nat → Nat) (t : Term Base) :
     rename ρ' (rename ρ t) = rename (ρ' ∘ ρ) t := by
   induction t generalizing ρ ρ' with
@@ -113,7 +121,10 @@ theorem rename_rename (ρ ρ' : Nat → Nat) (t : Term Base) :
   | deref t ih => simp [ih]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁, ih₂]
 
-/-- Substitutions that agree pointwise act identically. -/
+/-- **Substitution respects pointwise equality.** Let $\sigma, \sigma'$ be parallel substitutions,
+each sending every de Bruijn index to a term of the simply typed lambda calculus with references,
+with $\sigma(x) = \sigma'(x)$ for every $x \in \mathbb{N}$. Then for every term $t$, applying
+$\sigma$ to $t$ gives the same term as applying $\sigma'$ to $t$. -/
 theorem subst_congr {σ σ' : Nat → Term Base} (h : ∀ x, σ x = σ' x) (t : Term Base) :
     subst σ t = subst σ' t := by
   induction t generalizing σ σ' with
@@ -131,7 +142,9 @@ theorem subst_congr {σ σ' : Nat → Term Base} (h : ∀ x, σ x = σ' x) (t : 
   | deref t ih => simp [ih h]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁ h, ih₂ h]
 
-/-- The identity substitution. -/
+/-- **Substitution by variables is the identity.** For every term $t$ of the simply typed lambda
+calculus with references, applying the parallel substitution that sends each de Bruijn index $x$
+to the variable term $x$ gives back $t$. -/
 @[simp] theorem subst_id (t : Term Base) : subst .var t = t := by
   induction t with
   | var => rfl
@@ -146,7 +159,10 @@ theorem subst_congr {σ σ' : Nat → Term Base} (h : ∀ x, σ x = σ' x) (t : 
   | deref t ih => simp [ih]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁, ih₂]
 
-/-- A renaming followed by a substitution is a substitution. -/
+/-- **Renaming then substituting.** Let $\rho : \mathbb{N} \to \mathbb{N}$ be a renaming of de
+Bruijn variables, $\sigma$ a parallel substitution sending each index to a term of the simply
+typed lambda calculus with references, and $t$ a term. Renaming $t$ by $\rho$ and then applying
+$\sigma$ gives the same term as applying the substitution $\sigma \circ \rho$ to $t$. -/
 theorem subst_rename (ρ : Nat → Nat) (σ : Nat → Term Base) (t : Term Base) :
     subst σ (rename ρ t) = subst (σ ∘ ρ) t := by
   induction t generalizing ρ σ with
@@ -164,7 +180,11 @@ theorem subst_rename (ρ : Nat → Nat) (σ : Nat → Term Base) (t : Term Base)
   | deref t ih => simp [ih]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁, ih₂]
 
-/-- A substitution followed by a renaming is a substitution. -/
+/-- **Substituting then renaming.** Let $\rho : \mathbb{N} \to \mathbb{N}$ be a renaming of de
+Bruijn variables, $\sigma$ a parallel substitution sending each index to a term of the simply
+typed lambda calculus with references, and $t$ a term. Applying $\sigma$ to $t$ and then renaming
+the result by $\rho$ gives the same term as applying to $t$ the substitution that sends each
+index $x$ to the renaming of $\sigma(x)$ by $\rho$. -/
 theorem rename_subst (ρ : Nat → Nat) (σ : Nat → Term Base) (t : Term Base) :
     rename ρ (subst σ t) = subst (rename ρ ∘ σ) t := by
   induction t generalizing ρ σ with
@@ -186,7 +206,11 @@ theorem rename_subst (ρ : Nat → Nat) (σ : Nat → Term Base) (t : Term Base)
   | deref t ih => simp [ih]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁, ih₂]
 
-/-- Composition of substitutions. -/
+/-- **Composition of substitutions in the lambda calculus with references.** For all parallel
+substitutions $\sigma, \tau$, each sending every de Bruijn index to a term of the simply typed
+lambda calculus with references, and every term $t$, applying $\sigma$ to $t$ and then $\tau$ to
+the result gives the same term as applying to $t$ the substitution that sends each index $x$ to
+the result of applying $\tau$ to $\sigma(x)$. -/
 theorem subst_subst (σ τ : Nat → Term Base) (t : Term Base) :
     subst τ (subst σ t) = subst (fun x => subst τ (σ x)) t := by
   induction t generalizing σ τ with
@@ -208,7 +232,10 @@ theorem subst_subst (σ τ : Nat → Term Base) (t : Term Base) :
   | deref t ih => simp [ih]
   | assign t₁ t₂ ih₁ ih₂ => simp [ih₁, ih₂]
 
-/-- Instantiating a weakened term gives back the term. -/
+/-- **Instantiating a shifted term.** For all terms $t$ and $s$ of the simply typed lambda calculus
+with references, shift every free de Bruijn variable of $t$ up by one (rename by
+$x \mapsto x + 1$), then instantiate the result with $s$, replacing variable $0$ by $s$ and
+lowering every other variable $x + 1$ to $x$. The outcome is $t$. -/
 @[simp] theorem instantiate_rename_succ (t s : Term Base) :
     (rename Nat.succ t).instantiate s = t := by
   rw [instantiate, subst_rename]

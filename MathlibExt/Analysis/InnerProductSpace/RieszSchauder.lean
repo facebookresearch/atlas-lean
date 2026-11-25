@@ -36,11 +36,13 @@ variable {𝕜 : Type*} [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E]
   [InnerProductSpace 𝕜 E] [CompleteSpace E]
 variable {T : E →L[𝕜] E} {μ : 𝕜}
 
-/-- **Riesz–Schauder theorem on a Hilbert space.** For a compact operator `T` and
-`μ ≠ 0`, the range of `μ • 1 - T` is the orthogonal complement of the kernel
-of its adjoint. This follows from closedness of the range (the Banach-space
-Riesz–Schauder theorem) and Mathlib's `ContinuousLinearMap.orthogonal_range`.
-For self-adjoint `T` this recovers `Range (μ • 1 - T) = (ker (μ • 1 - T))ᗮ`. -/
+/-- **Riesz–Schauder theorem on a Hilbert space.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a compact operator on $E$, let
+$\mu \in \mathbb{K}$ with $\mu \ne 0$, and let $I$ be the identity operator on $E$. Then the range
+of $\mu I - T$ is the orthogonal complement of the kernel of its adjoint:
+$\operatorname{ran}(\mu I - T) = \ker\big((\mu I - T)^*\big)^\perp$.
+
+For self-adjoint $T$ this gives $\operatorname{ran}(\mu I - T) = \ker(\mu I - T)^\perp$. -/
 theorem range_eq_orthogonal_ker_adjoint (hT : IsCompactOperator T) (hμ : μ ≠ 0) :
     LinearMap.range ((μ • 1 - T : E →L[𝕜] E).toLinearMap)
       = (LinearMap.ker ((μ • 1 - T : E →L[𝕜] E)†.toLinearMap))ᗮ := by
@@ -52,13 +54,21 @@ theorem range_eq_orthogonal_ker_adjoint (hT : IsCompactOperator T) (hμ : μ ≠
     _ = (LinearMap.ker ((μ • 1 - T : E →L[𝕜] E)†.toLinearMap))ᗮ := by
         rw [(μ • 1 - T : E →L[𝕜] E).orthogonal_range]
 
-/-- The adjoint of `μ • 1 - T` is `star μ • 1 - T†`. -/
+/-- **Adjoint of a shifted operator.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a bounded linear operator on $E$ with
+adjoint $T^*$, let $\mu \in \mathbb{K}$ and let $I$ be the identity operator on $E$. Then
+$(\mu I - T)^* = \overline{\mu} I - T^*$, where $\overline{\mu}$ is the complex conjugate of
+$\mu$ (so $\overline{\mu} = \mu$ when $\mathbb{K} = \mathbb{R}$). -/
 theorem adjoint_smul_one_sub :
     (μ • 1 - T : E →L[𝕜] E)† = star μ • 1 - T† := by
   simp [← ContinuousLinearMap.star_eq_adjoint]
 
-/-- **Riesz–Schauder theorem on a Hilbert space, adjoint form.** The range of
-`μ • 1 - T` is the orthogonal complement of the kernel of `star μ • 1 - T†`. -/
+/-- **Riesz–Schauder theorem on a Hilbert space, adjoint form.** Let $E$ be a Hilbert space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a compact operator on $E$ with adjoint $T^*$,
+let $\mu \in \mathbb{K}$ with $\mu \ne 0$, and let $I$ be the identity operator on $E$. Then the
+range of $\mu I - T$ is the orthogonal complement of the kernel of $\overline{\mu} I - T^*$,
+where $\overline{\mu}$ is the complex conjugate of $\mu$:
+$\operatorname{ran}(\mu I - T) = \ker(\overline{\mu} I - T^*)^\perp$. -/
 theorem range_eq_orthogonal_ker_smul_one_sub_adjoint (hT : IsCompactOperator T)
     (hμ : μ ≠ 0) :
     LinearMap.range ((μ • 1 - T : E →L[𝕜] E).toLinearMap)

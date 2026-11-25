@@ -178,7 +178,7 @@ theorem test_rydberg_lyman_alpha_pos : 0 < rydbergWavenumber 1 1 1 2 :=
 
 /-- Bridge: Physlib's ground level `0` of a three-dimensional hydrogen atom is the level with
 principal quantum number `1`. -/
-theorem test_energyLevel_ground (H : QuantumMechanics.HydrogenAtom) (hd : H.d = 3) :
+theorem test_energyLevel_ground {d : ℕ} (H : QuantumMechanics.HydrogenAtom d) (hd : d = 3) :
     H.energyLevel 0 = hydrogenEnergy 1 H.rydbergEnergy 1 :=
   energyLevel_eq_hydrogenEnergy H hd 0
 

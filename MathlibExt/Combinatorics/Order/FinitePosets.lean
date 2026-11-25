@@ -23,21 +23,27 @@ namespace MathlibExt.Combinatorics.Order.FinitePosets
 
 -- Finite antichain covers.
 
-/-- `C` is a finite family of antichains whose union is all of `α`. -/
+/-- **Finite antichain covers.** Let $\alpha$ be a partially ordered set. A finite family $C$ of
+finite subsets of $\alpha$ is a finite antichain cover of $\alpha$ when every member of $C$ is an
+antichain and every element of $\alpha$ belongs to some member of $C$. -/
 def IsAntichainCoverFin {α : Type*} [PartialOrder α] (C : Finset (Finset α)) : Prop :=
   (∀ s ∈ C, IsAntichain (· ≤ ·) (s : Set α)) ∧ ∀ a : α, ∃ s ∈ C, a ∈ s
 
 -- Natural-number invariants via sup/inf over powersets (avoids heavy `Fintype (Finset α)`).
 
 open Classical in
-/-- The largest cardinality of a chain in `α`. -/
+/-- **Maximum chain size.** For a finite partially ordered set $\alpha$, the maximum chain size of
+$\alpha$ is the largest cardinality of a chain in $\alpha$, that is, of a set of pairwise
+comparable elements. -/
 noncomputable def maxChainSize
     (α : Type*) [Fintype α] [PartialOrder α] : ℕ :=
   ((Finset.univ : Finset α).powerset).sup fun s =>
     if IsChain (· ≤ ·) (s : Set α) then s.card else 0
 
 open Classical in
-/-- The smallest number of antichains covering `α`. -/
+/-- **Minimum antichain cover size.** For a finite partially ordered set $\alpha$, the minimum
+antichain cover size of $\alpha$ is the smallest number of antichains in $\alpha$ whose union is
+all of $\alpha$. -/
 noncomputable def minAntichainCoverSize
     (α : Type*) [Fintype α] [PartialOrder α] : ℕ :=
   let all : Finset (Finset (Finset α)) := (Finset.univ.powerset).powerset
@@ -376,7 +382,9 @@ theorem exists_antichainCover_card_eq_minAntichainCoverSize {α : Type*} [Fintyp
   exact ⟨C, (Finset.mem_filter.mp hC).2, by rw [heq, hCeq]⟩
 
 
-/-- In a finite poset max chain size equals min antichain-cover size. -/
+/-- **Dual of Dilworth's theorem.** For every finite partially ordered set $\alpha$, the maximum
+chain size of $\alpha$ equals its minimum antichain cover size: the largest cardinality of a chain
+in $\alpha$ equals the smallest number of antichains whose union is $\alpha$. -/
 theorem mirsky_dual_general {α : Type*} [Fintype α] [PartialOrder α] :
     maxChainSize α = minAntichainCoverSize α := by
   exact le_antisymm maxChainSize_le_minAntichainCoverSize
@@ -384,12 +392,15 @@ theorem mirsky_dual_general {α : Type*} [Fintype α] [PartialOrder α] :
 
 set_option linter.unusedDecidableInType false in
 /--
-In a finite poset max chain size equals min antichain-cover size.
+**Mirsky's theorem.** For every finite partially ordered set $\alpha$, the maximum chain size of
+$\alpha$ equals its minimum antichain cover size: the largest cardinality of a chain in $\alpha$
+equals the smallest number of antichains whose union is $\alpha$.
+
+Proves `Wanted` entry `mirsky_dual`.
+
 Source: L. Mirsky, Amer. Math. Monthly 78 (1971), 876-877, DOI 10.2307/2316481.
 It follows from `mirsky_dual_general`; the instance `[DecidableEq α]` is unused and keeps the
 Wanted entry's shape.
-
-Proves `Wanted` entry `mirsky_dual`.
 -/
 @[nolint unusedArguments]
 theorem mirsky_dual {α : Type*} [Fintype α] [DecidableEq α] [PartialOrder α] :

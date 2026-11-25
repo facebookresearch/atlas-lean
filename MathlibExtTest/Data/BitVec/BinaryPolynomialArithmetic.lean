@@ -455,13 +455,8 @@ example :
     _ = (3#3).adjoinRootEquiv (1#3) :=
       congrArg ((3#3).adjoinRootEquiv) powMod_two_seven
     _ = 1 := by
-      have hone : (1#3).toPolynomial = 1 := by
-        ext i
-        rw [BitVec.coeff_toPolynomial, BitVec.getLsbD_one,
-          Polynomial.coeff_one]
-        simp
       rw [BitVec.adjoinRootEquiv_apply]
-      simp [hone]
+      simp [BitVec.toPolynomial_one (by decide : 0 < 3)]
 
 #print axioms BitVec.mulXMod
 #print axioms BitVec.mulMod
