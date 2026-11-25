@@ -1,0 +1,3 @@
+# TIMETABLE DESIGN WITH THREE PERIODS as a decision problem
+
+The decision problem TIMETABLE DESIGN WITH THREE PERIODS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of sextuples (three natural numbers and three lists of lists of natural numbers), to an instance that is well-formed for TIMETABLE DESIGN WITH THREE PERIODS and feasible for TIMETABLE DESIGN (some $f : C \times T \times H \to \{0, 1\}$ has $f(c, t, h) = 1$ only when $h \in A(c) \cap A(t)$, gives each craftsman at most one task per hour and each task at most one craftsman per hour, and assigns craftsman $c$ to task $t$ in exactly $R(c, t)$ hours). It rejects every bitstring that does not decode to such an instance.

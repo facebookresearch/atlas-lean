@@ -193,13 +193,14 @@ lemma decodeToken_fixtures :
 
 -- Bounded decimal decoding: the run `0010` has four digits and the positional value `10`.
 example : decodeDecimal "0010".toList = some 10 :=
-  decodeDecimal_eq_some_iff.mpr ⟨by unfold IsDecimalDigits; decide +kernel, by decide +kernel⟩
+  decodeDecimal_eq_some_iff.mpr
+    ⟨by unfold IsDecimalDigits; simp only [← List.all_eq_true]; decide +kernel, by decide +kernel⟩
 
 -- An admissible token: `-0/1`, with sign `-` and digit runs `0` and `1`, decodes to its value `0`.
 example : decodeToken "-0/1".toList = some 0 :=
   decodeToken_eq_some_iff.mpr ⟨⟨true, ['0'], ['1']⟩,
-    by unfold TraceToken.Admissible IsDecimalDigits; decide +kernel, by decide +kernel,
-    by decide +kernel⟩
+    by unfold TraceToken.Admissible IsDecimalDigits; simp only [← List.all_eq_true]; decide +kernel,
+    by decide +kernel, by decide +kernel⟩
 
 -- The reduced encoding is the comma-joined encoding of eleven admissible tokens.
 example : ∃ ts : List TraceToken, ts.length = 11 ∧ (∀ t ∈ ts, t.Admissible) ∧

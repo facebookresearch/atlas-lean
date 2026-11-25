@@ -39,10 +39,9 @@ escaping mode is a non-homogeneous one (`0 < n`).
 
 ## Setting
 
-The phase space is `C([0, L]; ℝ²)` with the sup norm, the frozen space of the PDE-01 interface
-(`MathlibExt.Analysis.PDE.SemilinearFlow.Interface`) with `Ω = (0, L)` and two species.
-Neither the Neumann heat semigroup nor the local flow of the Turing system is constructed here.
-They enter as hypotheses:
+The phase space is `C([0, L]; ℝ²)` with the sup norm, the phase space of the semilinear-flow
+interface (`MathlibExt.Analysis.PDE.SemilinearFlow.Interface`) with `Ω = (0, L)` and two species.
+The Neumann heat semigroup and the local flow of the Turing system enter as hypotheses:
 
 * **spectral input**: `IsUnstableMode J d_u d_v k_n`, as proved in `TuringPatterns` (e.g. by
   `isUnstableMode_neumannWavenumber_iff`), with `tr J < 0` and `d_u, d_v ≥ 0` (for the Turing
@@ -54,10 +53,9 @@ They enter as hypotheses:
   spectrum of the generator does not bound `‖S t‖`, so this bound is assumed rather than derived;
 * **differentiability**: the kinetics `f` have Jacobian `J` at the steady state with a Hölder
   remainder of order `p`. From it, `exists_norm_timeMap_sub_le` *derives* the expansion
-  `Φ T (u₀ + y) = u₀ + S T y + O(‖y‖ᵖ)` of the time-`T` map in the PDE-01 mild formulation;
+  `Φ T (u₀ + y) = u₀ + S T y + O(‖y‖ᵖ)` of the time-`T` map in the mild formulation;
 * **flow**: mild solutions on `[0, T]` from a ball around the steady state, plus the step
-  identity of the semiflow (what the PDE-01 local-flow instantiation for the Turing system
-  provides).
+  identity of the semiflow (what a local flow of the Turing system provides).
 
 ## Main results
 
@@ -71,7 +69,7 @@ They enter as hypotheses:
 * `exists_norm_timeMap_sub_le`: time-map expansion from a Hölder-differentiable reaction
   (Duhamel, Lipschitz dependence on data, Grönwall).
 * `norm_nemytskii_sub_le`: the Nemytskii reaction term inherits the Hölder remainder, with
-  derivative `pointwiseMatrix J`.
+  linear part `pointwiseMatrix J`.
 * `exists_escape_of_isUnstableMode`: nonlinear instability from an unstable Neumann mode, given
   the time-map expansion (no stability-without-diffusion assumption).
 * `exists_escape_of_isUnstableMode_of_mild`: the same with the expansion derived from the
@@ -114,7 +112,7 @@ open MathlibExt.Analysis.PDE.SemilinearFlow
 /-- The **growth rate** of the Fourier mode of wavenumber `k`: the larger root
 `λ = (τ + √(τ² - 4 δ)) / 2` of the characteristic polynomial `λ² - τ λ + δ` of the mode matrix
 `J - k² D`, where `τ = tr (J - k² D)` and `δ = det (J - k² D)`. When `δ < 0` (which is what an
-unstable mode has when `tr J < 0`) it is a positive real eigenvalue of `J - k² D`
+unstable mode has when `tr J < 0` and `d_u, d_v ≥ 0`) it is a positive real eigenvalue of `J - k² D`
 (`exists_mulVec_eq_growthRate_smul`, `growthRate_pos`). It is a root whenever `τ² - 4 δ ≥ 0`
 (`growthRate_sq_sub`); for a negative discriminant `Real.sqrt` truncates to `0` and the value is
 only the common real part `τ / 2`. -/
@@ -178,10 +176,11 @@ theorem exists_growthRate_of_isUnstableMode {J : Matrix (Fin 2) (Fin 2) ℝ} {du
 
 /-! ### Neumann modes in the phase space `C([0, L]; ℝ²)` -/
 
-/-- The real **Neumann mode** `x ↦ cos(k_n x) w` on `[0, L]`, `k_n = n π / L`, as an element of
-the phase space `C([0, L]; ℝ²)` (sup norm) of the frozen PDE-01 setting with `Ω = (0, L)` and two
-species. It has zero flux at both ends (`hasDerivAt_fourierMode_neumannWavenumber`) and
-`Δ_N cos(k_n x) = -k_n² cos(k_n x)`. -/
+/-- The real **Neumann mode** `x ↦ cos(k_n x) w` on `[0, L]`, `k_n = n π / L`, as an element of the
+phase space `C([0, L]; ℝ²)` (sup norm), with `Ω = (0, L)` and two species. For `L > 0` it has zero
+flux at both ends (`hasDerivAt_fourierMode_neumannWavenumber`) and
+`Δ_N cos(k_n x) = -k_n² cos(k_n x)`; at `L = 0` the totalized division gives `k_n = 0`, and the mode
+is the constant `w` on `[0, 0]`; for `L < 0` the interval is empty. -/
 noncomputable def neumannMode (L : ℝ) (n : ℕ) (w : Fin 2 → ℝ) : C(Icc (0 : ℝ) L, Fin 2 → ℝ) :=
   ⟨fun x => Real.cos (neumannWavenumber L n * x) • w, by fun_prop⟩
 
@@ -205,7 +204,8 @@ theorem norm_neumannMode {L : ℝ} (hL : 0 ≤ L) (n : ℕ) (w : Fin 2 → ℝ) 
   · have := (neumannMode L n w).norm_coe_le_norm ⟨0, le_rfl, hL⟩
     simpa using this
 
-/-- A Neumann mode with nonzero amplitude is a nonzero element of the phase space. -/
+/-- On a nonempty interval (`0 ≤ L`), a Neumann mode with nonzero amplitude is a nonzero element of
+the phase space. -/
 theorem neumannMode_ne_zero {L : ℝ} (hL : 0 ≤ L) (n : ℕ) {w : Fin 2 → ℝ} (hw : w ≠ 0) :
     neumannMode L n w ≠ 0 := by
   rw [← norm_ne_zero_iff, norm_neumannMode hL]
@@ -213,22 +213,23 @@ theorem neumannMode_ne_zero {L : ℝ} (hL : 0 ≤ L) (n : ℕ) {w : Fin 2 → �
 
 /-! ### The linearized semigroup on a Neumann mode -/
 
-/-- A family `S` of bounded operators on `C([0, L]; ℝ²)` **acts on the Neumann mode `n` through
-the modal ODE** of the matrix `M`: for every amplitude `w` there is a solution `c` of
-`c' = M c`, `c 0 = w`, with `S t (cos(k_n ·) w) = cos(k_n ·) c t` for all `t ≥ 0`.
+/-- A family `S` of bounded operators on `C([0, L]; ℝ²)` **acts on the Neumann mode `n` through the
+modal ODE** of the matrix `M`: for every amplitude `w` there is a solution `c` of `c' = M c`,
+`c 0 = w`, with `S t (cos(k_n ·) w) = cos(k_n ·) c t` for all `t ≥ 0` (`k_n = 0` when `L = 0`).
 
-For the semigroup generated by the linearization `D Δ_N + J` of the Turing system this holds
-with `M = J - k_n² D`, because `Δ_N cos(k_n x) = -k_n² cos(k_n x)` turns the linearized PDE on
-the mode into that ODE (`fourierMode_isLinearizedSolution_iff`). Constructing the Neumann
-semigroup is outside PDE-01, so this is the semigroup hypothesis of the instability theorems. -/
+For the semigroup generated by the linearization `D Δ_N + J` of the Turing system this holds with
+`M = J - k_n² D`, because `Δ_N cos(k_n x) = -k_n² cos(k_n x)` turns the linearized PDE on the mode
+into that ODE (`fourierMode_isLinearizedSolution_iff`). The instability theorems take it as their
+semigroup hypothesis. -/
 def ActsByModalODE {L : ℝ} (S : ℝ≥0 → C(Icc (0 : ℝ) L, Fin 2 → ℝ) →L[ℝ] C(Icc (0 : ℝ) L, Fin 2 → ℝ))
     (n : ℕ) (M : Matrix (Fin 2) (Fin 2) ℝ) : Prop :=
   ∀ w : Fin 2 → ℝ, ∃ c : ℝ → Fin 2 → ℝ, c 0 = w ∧ (∀ t, HasDerivAt c (M *ᵥ c t) t) ∧
     ∀ t : ℝ≥0, S t (neumannMode L n w) = neumannMode L n (c t)
 
 /-- **Eigenfunctions of the linearized semigroup.** If `S` acts on the Neumann mode `n` through
-the modal ODE of `M` and `M v = r v`, then `cos(k_n ·) v` is an eigenfunction of every `S t`
-with eigenvalue `e^{r t}` (uniqueness for the linear ODE `c' = M c`). -/
+the modal ODE of `M` and `M v = r v`, then `S t (cos(k_n ·) v) = e^{r t} cos(k_n ·) v`; for
+`L ≥ 0` and `v ≠ 0` the mode is nonzero, so it is an eigenfunction of every `S t` with eigenvalue
+`e^{r t}` (uniqueness for the linear ODE `c' = M c`). -/
 theorem ActsByModalODE.apply_eigen {L : ℝ}
     {S : ℝ≥0 → C(Icc (0 : ℝ) L, Fin 2 → ℝ) →L[ℝ] C(Icc (0 : ℝ) L, Fin 2 → ℝ)} {n : ℕ}
     {M : Matrix (Fin 2) (Fin 2) ℝ} (hS : ActsByModalODE S n M) {r : ℝ} {v : Fin 2 → ℝ}
@@ -343,8 +344,9 @@ private theorem pow_eq_nsmul {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ
 
 /-- **Nonlinear instability from an unstable Neumann mode, time-map form.**
 
-Let `J` be the Jacobian of the kinetics at a homogeneous steady state `u₀` with `tr J < 0`,
-`d_u, d_v ≥ 0`, and let the Neumann mode `n` on `[0, L]` be linearly unstable
+Let `J` be a matrix with `tr J < 0` (in applications the Jacobian of the kinetics at the
+homogeneous steady state `u₀`), `d_u, d_v ≥ 0`, and let the Neumann mode `n` on `[0, L]`
+(`0 ≤ L`; `k_n = 0` when `L = 0`) be linearly unstable
 (`IsUnstableMode J d_u d_v k_n`, e.g. from `isUnstableMode_neumannWavenumber_iff`). The phase
 space is `C([0, L]; ℝ²)` with the sup norm. Assume:
 
@@ -352,9 +354,9 @@ space is `C([0, L]; ℝ²)` with the sup norm. Assume:
   through the modal ODE of `J - k_n² D` (`ActsByModalODE`), with growth bound
   `‖S t‖ ≤ M e^{ω t}` where `ω < p λ` for the growth rate `λ = growthRate J d_u d_v k_n`
   (e.g. `ω = λ + ε` when the mode `n` is dominant);
-* **differentiability**: the time-`T` map of the nonlinear flow `Φ` is
-  `u₀ + S T y + O(‖y‖ᵖ)` on the ball `‖y‖ ≤ ρ` (derived from a Hölder-differentiable reaction in
-  `exists_norm_timeMap_sub_le`);
+* **differentiability**: for some `T > 0`, `ρ > 0`, `C ≥ 0` and `p > 1`, the time-`T` map of the
+  nonlinear flow `Φ` satisfies `‖Φ T (u₀ + y) - u₀ - S T y‖ ≤ C ‖y‖ᵖ` on the ball `‖y‖ ≤ ρ`
+  (derived from a Hölder-differentiable reaction in `exists_norm_timeMap_sub_le`);
 * **flow**: `Φ` starts at the identity and steps by its time-`T` map along orbits that stay in
   the ball.
 
@@ -394,7 +396,8 @@ theorem exists_escape_of_isUnstableMode {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv 
     push_cast; ring_nf
 
 /-- An unstable Neumann mode of kinetics that are stable without diffusion (`tr J < 0`,
-`0 < det J`) is non-homogeneous: `n ≠ 0`, since mode `0` is the homogeneous mode `k_0 = 0`. -/
+`0 < det J`) is non-homogeneous: `n ≠ 0`, since mode `0` is the homogeneous mode `k_0 = 0`. No
+sign condition on `d_u`, `d_v` or `L` is needed; for `L = 0` every `k_n` is `0`. -/
 theorem pos_of_isUnstableMode_neumannWavenumber {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
     {n : ℕ} (htr : J.trace < 0) (hdet : 0 < J.det)
     (hunst : IsUnstableMode J du dv (neumannWavenumber L n)) : 0 < n := by
@@ -404,17 +407,16 @@ theorem pos_of_isUnstableMode_neumannWavenumber {J : Matrix (Fin 2) (Fin 2) ℝ}
 /-- **Nonlinear Turing instability, time-map form.**
 
 The diffusion-driven case of `exists_escape_of_isUnstableMode`: the kinetics are stable without
-diffusion (`tr J < 0`, `0 < det J`, Turing's first condition), and the Neumann mode `n` on
-`[0, L]` is linearly unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Besides the
+diffusion (`tr J < 0`, `0 < det J`, Turing's first condition), and the Neumann mode `n` on `[0, L]`
+(`0 ≤ L`) is linearly unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Besides the
 semigroup, differentiability and flow hypotheses of `exists_escape_of_isUnstableMode`, the
 linearized semigroup `S` acts on the homogeneous mode (the constant states, `k_0 = 0`) through the
 kinetics ODE `c' = J c` (`ActsByModalODE S 0 J`); this ties the stability of `J` to `S`.
 
-Conclusions: homogeneous perturbations stay bounded under `S`
-(`‖S t (const w)‖ ≤ C ‖w‖`), the homogeneous mode is not linearly unstable, the unstable mode is
-non-homogeneous (`0 < n`), and the homogeneous steady state `u₀` is nonlinearly unstable: some
-distance `ε > 0` is reached at a nonnegative time from initial data arbitrarily close to
-`u₀`. -/
+Conclusions: homogeneous perturbations stay bounded under `S` (`‖S t (const w)‖ ≤ C ‖w‖`), the
+homogeneous mode is not linearly unstable, the unstable mode is non-homogeneous (`0 < n`), and the
+homogeneous steady state `u₀` is nonlinearly unstable: some distance `ε > 0` is reached at a
+nonnegative time from initial data arbitrarily close to `u₀`. -/
 theorem turing_instability_exists_escape {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ} {n : ℕ}
     (htr : J.trace < 0) (hdet : 0 < J.det) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hL : 0 ≤ L)
     (hunst : IsUnstableMode J du dv (neumannWavenumber L n))
@@ -439,17 +441,19 @@ theorem turing_instability_exists_escape {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv
 
 /-! ### The time-map expansion from a differentiable reaction -/
 
-/-- **Time-map expansion from a Hölder-differentiable reaction** (the differentiability input
-of linearized instability, in the PDE-01 mild formulation).
+/-- **Time-map expansion from a Hölder-differentiable reaction** (the differentiability input of
+linearized instability, in the mild formulation).
 
 Let `SA` be a C₀ semigroup on a real Banach space `X` (for the Turing system, the Neumann heat
 semigroup `e^{t D Δ_N}` on `C(Ω̄; ℝ²)`) and `F` a reaction term that is Lipschitz on bounded sets.
 Let `u₀` be an equilibrium: `SA t u₀ = u₀` (a homogeneous state is fixed by the Neumann heat
-semigroup) and `F u₀ = 0`. Suppose `F` is differentiable at `u₀` with a Hölder remainder:
-`‖F (u₀ + z) - F u₀ - B z‖ ≤ K ‖z‖ᵖ` for `‖z‖ ≤ r`. Let `S` be the linearized semigroup, i.e.
-`t ↦ S t y` is the mild solution of `w' = A w + B w`, `w 0 = y`. Let `Φ` be the nonlinear flow on
-`[0, T]` from the ball `‖x - u₀‖ ≤ ρ₀`, bounded by `R` there. Then the time-`T` map satisfies
-`‖Φ T (u₀ + y) - u₀ - S T y‖ ≤ C ‖y‖ᵖ` for `‖y‖ ≤ ρ`, for some `ρ > 0` and `C ≥ 0`.
+semigroup) and `F u₀ = 0`. Suppose `F` has linear part `B` at `u₀` with a Hölder remainder of order
+`p ≥ 0` (a derivative when `p > 1`): `‖F (u₀ + z) - F u₀ - B z‖ ≤ K ‖z‖ᵖ` for `‖z‖ ≤ r`, with
+`r > 0` and `K ≥ 0`. Let `S` be the linearized semigroup, i.e. `t ↦ S t y` is the mild solution of
+`w' = A w + B w`, `w 0 = y`. Let `Φ` be the nonlinear flow on `[0, T]` (`T ≥ 0`) from the ball
+`‖x - u₀‖ ≤ ρ₀` (`ρ₀ > 0`), bounded by `R` there. Then the time-`T` map satisfies
+`‖Φ T (u₀ + y) - u₀ - S T y‖ ≤ C ‖y‖ᵖ` for `‖y‖ ≤ ρ`, for some `ρ > 0` and `C ≥ 0`. The powers are
+real powers, with `0 ^ 0 = 1`.
 
 The proof writes the error `e t = Φ t x - u₀ - S t y` as a Duhamel integral of
 `F (Φ s x) - B (S s y) = [Hölder remainder] + B (e s)`, bounds `‖Φ s x - u₀‖` by Lipschitz
@@ -575,10 +579,11 @@ theorem pointwiseMatrix_apply {K : Type*} [TopologicalSpace K] [CompactSpace K]
     pointwiseMatrix K J y x = J *ᵥ y x :=
   rfl
 
-/-- **Differentiability of the Nemytskii reaction term.** If the kinetics `f : ℝ² → ℝ²` have
-Jacobian `J` at `a` with a Hölder remainder, `‖f (a + z) - f a - J z‖ ≤ C ‖z‖ᵖ` for `‖z‖ ≤ r`,
-then the reaction term `u ↦ f ∘ u` on `C(K; ℝ²)` (sup norm) has derivative `pointwiseMatrix K J`
-at the constant state `a`, with the same remainder bound. -/
+/-- **Hölder remainder of the Nemytskii reaction term.** If the kinetics `f : ℝ² → ℝ²` have
+linear part `J` at `a` with a Hölder remainder, `‖f (a + z) - f a - J z‖ ≤ C ‖z‖ᵖ` for `‖z‖ ≤ r`,
+then the reaction term `u ↦ f ∘ u` on `C(K; ℝ²)` (sup norm) has linear part `pointwiseMatrix K J`
+at the constant state `a`, with the same remainder bound (real powers, `0 ^ 0 = 1`). For `r > 0`
+and `p > 1` this is a derivative. -/
 theorem norm_nemytskii_sub_le {K : Type*} [TopologicalSpace K] [CompactSpace K]
     {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hfc : Continuous f) {a : Fin 2 → ℝ}
     {J : Matrix (Fin 2) (Fin 2) ℝ} {r C p : ℝ} (hC : 0 ≤ C) (hp : 0 ≤ p)
@@ -592,29 +597,29 @@ theorem norm_nemytskii_sub_le {K : Type*} [TopologicalSpace K] [CompactSpace K]
     _ ≤ C * ‖y‖ ^ p :=
       mul_le_mul_of_nonneg_left (Real.rpow_le_rpow (norm_nonneg _) hyx hp) hC
 
-/-! ### Nonlinear instability in the PDE-01 mild formulation -/
+/-! ### Nonlinear instability in the mild formulation -/
 
 /-- **Nonlinear instability from an unstable Neumann mode (mild formulation).**
 
-The two-species system `u_t = D u_xx + f(u)` on `[0, L]` with Neumann boundary conditions, in
-the phase space `C([0, L]; ℝ²)` (sup norm) of PDE-01, at a homogeneous steady state `a`
-(`f a = 0`). Hypotheses:
+The two-species system `u_t = D u_xx + f(u)` on `[0, L]` (`0 ≤ L`; `k_n = 0` when `L = 0`) with
+Neumann boundary conditions, in the phase space `C([0, L]; ℝ²)` (sup norm), at a homogeneous
+steady state `a` (`f a = 0`). Hypotheses:
 
 * **spectral input** (from `TuringPatterns`): `tr J < 0`, `d_u, d_v ≥ 0`, and the Neumann
   mode `n` is linearly unstable, `IsUnstableMode J d_u d_v k_n` (stability without diffusion,
   `0 < det J`, is not assumed; see `turing_instability_exists_escape_of_mild` for the Turing
   case);
 * **differentiability**: the kinetics are Lipschitz on bounded sets and have Jacobian `J` at `a`
-  with a Hölder remainder `‖f (a + z) - f a - J z‖ ≤ K ‖z‖ᵖ` (`‖z‖ ≤ r`, `p > 1`; e.g. `f` of
-  class `C²` with `p = 2`);
+  with a Hölder remainder `‖f (a + z) - f a - J z‖ ≤ K ‖z‖ᵖ` (`‖z‖ ≤ r`, with `r > 0`,
+  `K ≥ 0` and `p > 1`; e.g. `f` of class `C²` with `p = 2`);
 * **semigroups**: the diffusion semigroup `SA` (`e^{t D Δ_N}`) is C₀ and fixes the constant
   state; the linearized semigroup `S` is C₀, its orbits are the mild solutions of
   `w' = D Δ_N w + J w`, it acts on the Neumann mode `n` through the modal ODE of
   `J - k_n² D`, and it has growth bound `‖S t‖ ≤ M e^{ω t}` with `ω < p λ`, where
   `λ = growthRate J d_u d_v k_n`;
-* **flow**: `Φ` starts at the identity, steps by its time-`T` map along orbits in the ball
-  `‖x - a‖ ≤ ρ₀`, and from that ball gives mild solutions on `[0, T]` bounded by `R`
-  (the local-flow instantiation of PDE-01 for the Turing system supplies these).
+* **flow**: `Φ` starts at the identity, steps by its time-`T` map (`T > 0`) along orbits in the
+  ball `‖x - a‖ ≤ ρ₀` (`ρ₀ > 0`), and from that ball gives mild solutions on `[0, T]` bounded by
+  `R` (a local flow of the Turing system supplies these).
 
 Then the steady state is nonlinearly unstable. -/
 theorem exists_escape_of_isUnstableMode_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
@@ -654,8 +659,8 @@ theorem exists_escape_of_isUnstableMode_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ}
 /-- **Nonlinear Turing instability (mild formulation).**
 
 The diffusion-driven case of `exists_escape_of_isUnstableMode_of_mild`: the kinetics are stable
-without diffusion (`tr J < 0`, `0 < det J`), and the Neumann mode `n` on `[0, L]` is linearly
-unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Besides the differentiability,
+without diffusion (`tr J < 0`, `0 < det J`), and the Neumann mode `n` on `[0, L]` (`0 ≤ L`) is
+linearly unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Besides the differentiability,
 semigroup and flow hypotheses of `exists_escape_of_isUnstableMode_of_mild`, the linearized
 semigroup `S` acts on the homogeneous mode through the kinetics ODE `c' = J c`
 (`ActsByModalODE S 0 J`). Then homogeneous perturbations stay bounded under `S`, the homogeneous

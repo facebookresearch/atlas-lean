@@ -18,7 +18,7 @@ hardness results", STOC 2013, doi:10.1145/2488608.2488644 (Section 1, recording 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Finset.Card
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

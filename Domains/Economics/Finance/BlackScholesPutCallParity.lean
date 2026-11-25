@@ -41,7 +41,9 @@ namespace MathlibExt.Probability.Finance.BlackScholesPutCallParity
 open MeasureTheory ProbabilityTheory Real MathlibExt.Probability.Finance.BlackScholes
 
 /-- The Black-Scholes price of a European put with strike `K` and maturity `T`:
-`K e^{-rT} Φ(-d₂) - S0 Φ(-d₁)`, with `Φ = cdf (gaussianReal 0 1)`. -/
+`K e^{-rT} Φ(-d₂) - S0 Φ(-d₁)`, with `Φ = cdf (gaussianReal 0 1)`. It is the usual price for
+`S0, K, σ, T > 0`; when `σ = 0` or `T ≤ 0`, `x / 0 = 0` and `√T = 0` give `d₁ = d₂ = 0`. When
+`S0 / K ≤ 0`, `d₁` uses the conventions `log 0 = 0` and `log x = log |x|`. -/
 noncomputable def blackScholesPut (S0 K r σ T : ℝ) : ℝ :=
   K * exp (-(r * T)) * cdf (gaussianReal 0 1) (-d2 S0 K r σ T) -
     S0 * cdf (gaussianReal 0 1) (-d1 S0 K r σ T)
@@ -96,7 +98,8 @@ theorem blackScholes_putCallParity (S0 K r σ T : ℝ) :
   rw [cdf_gaussianReal_neg, cdf_gaussianReal_neg]
   ring
 
-/-- Static bounds for the call (FI17.T02): `max (S0 - K e^{-rT}) 0 ≤ C ≤ S0`.
+/-- Static bounds for the call (FI17.T02): for `S0, K, σ, T > 0`,
+`max (S0 - K e^{-rT}) 0 ≤ C ≤ S0`.
 The upper bound is algebra from `0 ≤ Φ ≤ 1`. The lower bound `0 ≤ C` holds
 because `C` is the discounted expectation of the nonnegative payoff
 `max (x - K) 0` (`discounted_integral_call_riskNeutralLaw`); the lower bound
@@ -128,7 +131,8 @@ theorem blackScholesCall_bounds {S0 K r σ T : ℝ} (hS0 : 0 < S0) (hK : 0 < K)
     simp only [blackScholesCall]
     linarith
 
-/-- Static bounds for the put (FI17.T02): `max (K e^{-rT} - S0) 0 ≤ P ≤ K e^{-rT}`.
+/-- Static bounds for the put (FI17.T02): for `S0, K, σ, T > 0`,
+`max (K e^{-rT} - S0) 0 ≤ P ≤ K e^{-rT}`.
 Consequences of put-call parity plus the call bounds. -/
 theorem blackScholesPut_bounds {S0 K r σ T : ℝ} (hS0 : 0 < S0) (hK : 0 < K)
     (hσ : 0 < σ) (hT : 0 < T) :
