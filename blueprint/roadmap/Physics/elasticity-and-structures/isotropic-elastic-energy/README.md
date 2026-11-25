@@ -10,3 +10,4 @@
 - [The isotropic elastic energy is nonnegative](elastic-energy-nonneg.md)
 - [The isotropic elastic energy of a nonzero small strain is positive](elastic-energy-pos.md)
 - [An infinitesimal rigid rotation stores no elastic energy](elastic-energy-of-skew.md)
+- [Griffith energy balance for brittle fracture](griffith-energy-balance-for-brittle-fracture.md)
