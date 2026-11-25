@@ -7,13 +7,18 @@ $$R=SV-V\Lambda,\qquad E=V^{\top}V-I,\qquad \kappa=\lVert V\rVert_2\lVert V^{-1}
 with $\lVert\cdot\rVert_2$ the spectral norm. Two approximants must be distinguished, since $e^{tV\Lambda V^{\top}}\ne Ve^{t\Lambda}V^{\top}$ unless $V$ is orthogonal. For $t\ge0$:
 
 - **(A)** $X_A(t)=Ve^{t\Lambda}V^{-1}=e^{tV\Lambda V^{-1}}$ satisfies $X_A(0)=I$ and
-$$\lVert e^{tS}-X_A(t)\rVert_2\le t\,\lVert R\rVert_2\,\lVert V^{-1}\rVert_2\,\kappa\,e^{t\lambda_+}.$$
+
+    $$\lVert e^{tS}-X_A(t)\rVert_2\le t\,\lVert R\rVert_2\,\lVert V^{-1}\rVert_2\,\kappa\,e^{t\lambda_+}.$$
+
 - **(B)** $X_B(t)=Ve^{t\Lambda}V^{\top}$ satisfies $X_B(0)=VV^{\top}$, with $\lVert I-VV^{\top}\rVert_2=\lVert E\rVert_2$, and
-$$\lVert e^{tS}-X_B(t)\rVert_2\le\bigl(t\,\lVert R\rVert_2\,\lVert V^{-1}\rVert_2+\lVert E\rVert_2\bigr)\,\kappa\,e^{t\lambda_+}.$$
+
+    $$\lVert e^{tS}-X_B(t)\rVert_2\le\bigl(t\,\lVert R\rVert_2\,\lVert V^{-1}\rVert_2+\lVert E\rVert_2\bigr)\,\kappa\,e^{t\lambda_+}.$$
+
 - **(C)** If $\lVert E\rVert_2<1$, then $\lVert V\rVert_2\le\sqrt{1+\lVert E\rVert_2}$, $\lVert V^{-1}\rVert_2\le(1-\lVert E\rVert_2)^{-1/2}$ and $\kappa\le\sqrt{(1+\lVert E\rVert_2)/(1-\lVert E\rVert_2)}$.
 - **(D)** $\lambda_{\max}(V\Lambda V^{\top})\le\lambda_+\lVert V\rVert_2^2$, hence $\le\lambda_+(1+\lVert E\rVert_2)$ when $\lVert E\rVert_2<1$ (used only when comparing with $e^{tV\Lambda V^{\top}}$).
 - **(E)** For $X\in\{X_A,X_B\}$ and all $i,j$,
-$$\bigl|(e^{tQ})_{ij}-(D^{-1/2}X(t)D^{1/2})_{ij}\bigr|\le\sqrt{\pi_j/\pi_i}\;\lVert e^{tS}-X(t)\rVert_2 .$$
+
+    $$\bigl|(e^{tQ})_{ij}-(D^{-1/2}X(t)D^{1/2})_{ij}\bigr|\le\sqrt{\pi_j/\pi_i}\;\lVert e^{tS}-X(t)\rVert_2 .$$
 
 Exact orthonormal eigenpairs give $R=0$ and $E=0$, and both bounds vanish.
 
