@@ -1,0 +1,3 @@
+# Feasible instances of N-QUEENS COMPLETION
+
+Let $n$ be the number of rows of the board, and write $(\alpha, \beta)$ for the cell in column $\alpha$ of row $\beta$; cells missing from the board read as empty. Two cells $(\alpha, \beta) \ne (\alpha', \beta')$ attack each other when $\alpha = \alpha'$, $\beta = \beta'$, $\alpha + \beta = \alpha' + \beta'$, or $\alpha - \beta = \alpha' - \beta'$ (computed in the integers). An instance is feasible when some set of $n$ cells with $\alpha, \beta < n$, no two of which attack each other, contains every placed queen $(\alpha, \beta)$ with $\alpha, \beta < n$.

@@ -37,38 +37,55 @@ are asymptotic).
 open Filter Topology
 
 open Classical in
-/-- The probability that the uniformly random `3`-uniform hypergraph on `3n` vertices with `ℓ`
-edges (a uniformly random `ℓ`-element set of triples of `Fin (3n)`) contains `n` pairwise
-vertex-disjoint edges. -/
+/-- **Probability of a perfect matching in a random $3$-uniform hypergraph.** For natural numbers
+$n$ and $\ell$, let $T$ be the set of $3$-element subsets of $\{0, 1, \dots, 3n - 1\}$. This is the
+proportion of the $\ell$-element subsets $E \subseteq T$ that contain $n$ pairwise disjoint
+triples, that is, the probability that the uniformly random $3$-uniform hypergraph on $3n$
+vertices with $\ell$ edges has a perfect matching. When $\ell > \binom{3n}{3}$ there is no such
+hypergraph and the value is $0$. -/
 noncomputable def matchingProbability (n ℓ : ℕ) : ℝ :=
   (((Finset.univ.filter fun e : Finset (Fin (3 * n)) => e.card = 3).powersetCard ℓ).filter
       fun E => ∃ M : Finset (Finset (Fin (3 * n))), M ⊆ E ∧ M.card = n ∧
         (M : Set (Finset (Fin (3 * n)))).PairwiseDisjoint id).card /
     ((Finset.univ.filter fun e : Finset (Fin (3 * n)) => e.card = 3).powersetCard ℓ).card
 
-/-- Erdős Problem 747 (Shamir's problem), upper half of the threshold `ℓ(n) ∼ n log n`: with
-`ℓ(n) = ⌈(1 + ε) n log n⌉` edges the random hypergraph has `n` disjoint edges with probability
-tending to `1`. -/
+/-- **Statement of the upper half of Shamir's problem.** The proposition that for every real
+$\varepsilon > 0$, the probability that the uniformly random $3$-uniform hypergraph on $3n$
+vertices with $\lceil (1 + \varepsilon) n \log n \rceil$ edges has a perfect matching ($n$
+pairwise disjoint edges) tends to $1$ as $n \to \infty$, where $\log$ is the natural logarithm.
+
+Erdős Problem 747 (Shamir's problem) asks for the number $\ell(n)$ of edges at which a perfect
+matching becomes almost sure; this is the upper half of the answer $\ell(n) \sim n \log n$. -/
 def matchingAboveThreshold : Prop :=
   ∀ ε : ℝ, 0 < ε →
     Tendsto (fun n : ℕ => matchingProbability n ⌈(1 + ε) * n * Real.log n⌉₊) atTop (𝓝 1)
 
-/-- The threshold `ℓ_c(n)`: the least `ℓ` such that the random `3`-uniform hypergraph on `3n`
-vertices with `ℓ` edges has `n` disjoint edges with probability at least `1 / 2` (the set is
-nonempty: with all triples present the probability is `1`). -/
+/-- **Threshold for a perfect matching in a random $3$-uniform hypergraph.** For a natural number
+$n$, the threshold $\ell_c(n)$ is the least natural number $\ell$ such that the uniformly random
+$3$-uniform hypergraph on $3n$ vertices with $\ell$ edges has a perfect matching ($n$ pairwise
+disjoint edges) with probability at least $1/2$.
+
+The set of such $\ell$ is nonempty: with all triples present the probability is $1$. -/
 noncomputable def matchingThreshold (n : ℕ) : ℕ :=
   sInf {ℓ | 1 / 2 ≤ matchingProbability n ℓ}
 
-/-- Erdős Problem 747 (Shamir's problem), the answer: the threshold is asymptotic to `n log n`,
-i.e. `ℓ_c(n) / (n log n) → 1`. -/
+/-- **Statement of Shamir's problem: the matching threshold is asymptotic to $n \log n$.** Let
+$\ell_c(n)$ be the least number $\ell$ such that the uniformly random $3$-uniform hypergraph on
+$3n$ vertices with $\ell$ edges has a perfect matching with probability at least $1/2$. The
+proposition that $\ell_c(n) / (n \log n) \to 1$ as $n \to \infty$, where $\log$ is the natural
+logarithm.
+
+This is the answer to Erdős Problem 747 (Shamir's problem). -/
 def matchingThresholdAsymptotic : Prop :=
   Tendsto (fun n : ℕ => (matchingThreshold n : ℝ) / (n * Real.log n)) atTop (𝓝 1)
 
 /--
-Resolved true: Kahn proved that with `M > (1 + ε)(N / r) log N` edges the random `r`-graph on `N`
-vertices has a perfect matching with probability tending to `1` (here `r = 3`, `N = 3n`), completing
-the threshold `∼ n log n` (Johansson, Kahn and Vu had `≍ n log n`); erdosproblems.com/747 lists the
-problem as solved. Source: T. F. Bloom, Erdős Problems, Problem #747,
+**Kahn's theorem on Shamir's problem, upper half.** For every real $\varepsilon > 0$, the
+probability that the uniformly random $3$-uniform hypergraph on $3n$ vertices with
+$\lceil (1 + \varepsilon) n \log n \rceil$ edges has a perfect matching ($n$ pairwise disjoint
+edges) tends to $1$ as $n \to \infty$, where $\log$ is the natural logarithm.
+
+Source: T. F. Bloom, Erdős Problems, Problem #747,
 https://www.erdosproblems.com/747 (status SOLVED); resolution: J. Kahn, Asymptotics for Shamir's
 problem, Adv. Math. 422 (2023), Paper 109019, Theorem 1 of arXiv:1909.06834 (abstract; Theorem 1.2
 in the text): for fixed r ≥ 3, ε > 0 and M > (1 + ε)(n/r) log n, the random M-edge r-graph on [n]
@@ -80,10 +97,12 @@ is ∼ n log n, https://arxiv.org/abs/1909.06834.
 public theorem_wanted matchingAboveThreshold_holds : matchingAboveThreshold
 
 /--
-Resolved true: Kahn proved that the threshold for a perfect matching in the random `r`-uniform
-hypergraph on `N` vertices (the least number of edges at which a perfect matching appears with
-probability at least `1/2`) is `∼ (N / r) log N`; with `r = 3` and `N = 3n` this is `∼ n log n`, the
-answer recorded on erdosproblems.com/747 (Johansson, Kahn and Vu had the order `n log n`). Source:
+**Kahn's theorem: the threshold in Shamir's problem is asymptotic to $n \log n$.** Let $\ell_c(n)$
+be the least number $\ell$ such that the uniformly random $3$-uniform hypergraph on $3n$ vertices
+with $\ell$ edges has a perfect matching with probability at least $1/2$. Then
+$\ell_c(n) / (n \log n) \to 1$ as $n \to \infty$, where $\log$ is the natural logarithm.
+
+Source:
 T. F. Bloom, Erdős Problems, Problem #747, https://www.erdosproblems.com/747 (status SOLVED);
 resolution: J. Kahn, Asymptotics for Shamir's problem, Adv. Math. 422 (2023), Paper 109019, Theorem
 1 of arXiv:1909.06834 (abstract; Theorem 1.2 in the text): for fixed r ≥ 3, ε > 0 and M > (1 +

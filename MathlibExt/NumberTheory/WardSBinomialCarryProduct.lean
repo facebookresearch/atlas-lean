@@ -117,10 +117,16 @@ private theorem ffact_eq_extend (s f : Nat → Int)
 @[expose] public section
 namespace MetaMathlibExt
 
-/-- Ward's identity with hypotheses only on positive indices: if `f k = ∏_{d ∣ k} s d` and
-`s b ≠ 0` for all positive `k` and `b`, then the `f`-factorial quotient
-`f!(n + m) / (f!(n) f!(m))` equals `wardGeneralizedBinomialCoefficient s n m`.
-`ward_sbinomial_carry_product` is the source-shaped form. -/
+/-- **Ward's identity with hypotheses at positive indices.** Let
+$s, f : \mathbb{N} \to \mathbb{Z}$ satisfy $s(b) \ne 0$ for every $b \ge 1$ and
+$f(k) = \prod_{d \mid k} s(d)$ for every $k \ge 1$, the product running over the positive
+divisors of $k$. Write $f!(t) = \prod_{i=1}^{t} f(i)$. Let $n$ and $m$ be natural numbers, and
+let $\binom{n+m}{n}_s$ be the Ward generalized binomial coefficient of $s$ at $n$ and $m$. Then
+the identity
+
+$$\frac{f!(n+m)}{f!(n) \, f!(m)} = \binom{n+m}{n}_s$$
+
+holds in $\mathbb{Q}$. -/
 theorem ward_sbinomial_carry_product_general
     (s : ℕ → ℤ) (hs : ∀ b, 0 < b → s b ≠ 0)
     (f : ℕ → ℤ) (hf : ∀ k, 0 < k → f k = ∏ d ∈ Nat.divisors k, s d)
@@ -174,7 +180,20 @@ theorem ward_sbinomial_carry_product_general
   subst hb1'
   simp [Nat.mod_one]
 
-/-- Generalized Ward identity for `f`-binomial coefficients via ones-position carries.
+/-- **Ward's identity for generalized binomial coefficients.** Let
+$s, f : \mathbb{N} \to \mathbb{Z}$ satisfy $s(b) \ne 0$ for every natural number $b$ and
+$f(k) = \prod_{d \mid k} s(d)$ for every natural number $k$, the product running over the
+positive divisors of $k$ (empty for $k = 0$). Write $f!(t) = \prod_{i=1}^{t} f(i)$. Then for all
+natural numbers $n$ and $m$, the identity
+
+$$\frac{f!(n+m)}{f!(n) \, f!(m)} =
+\prod_{b=2}^{n+m} s(b)^{\lfloor ((n \bmod b) + (m \bmod b)) / b \rfloor}$$
+
+holds in $\mathbb{Q}$.
+
+The exponent $\lfloor ((n \bmod b) + (m \bmod b)) / b \rfloor$ is the carry in the ones position
+when adding $n$ and $m$ in base $b$; for the classical case this recovers Kummer's carry-count
+theorem.
 
 Source: Tom Edgar and Michael Z. Spivey,
 "Multiplicative Functions, Generalized Binomial Coefficients, and Generalized Catalan Numbers,"
@@ -182,13 +201,6 @@ Journal of Integer Sequences 19 (2016), Article 16.1.6,
 Theorem [Ward] `thmward` (equation `wardeqn`), lines 475–482,
 <https://cs.uwaterloo.ca/journals/JIS/VOL19/Edgar/edgar3.tex>;
 attributed there to M. Ward.
-
-Math notes: `(n % b + m % b) / b` is the carry in the ones position when adding `n`
-and `m` in base `b`; for the classical case this recovers Kummer's carry-count theorem.
-It follows from `ward_sbinomial_carry_product_general` and
-`wardGeneralizedBinomialCoefficient_eq_prod_Icc`; the hypotheses `hs` and `hf` are used only at
-positive indices.
-Proves `Wanted` entry `ward_sbinomial_carry_product`.
 -/
 theorem ward_sbinomial_carry_product
     (s : Nat → Int) (hs : ∀ b, s b ≠ 0)

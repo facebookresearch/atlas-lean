@@ -59,7 +59,9 @@ namespace Cslib.Kolmogorov
 
 open Encodable
 
-/-- Being described by `p` is recognizable. -/
+/-- **The description relation is recognizable.** Let $U$ be the universal description method.
+The set of pairs $(x, p)$ of binary strings such that $U(p)$ is defined and equal to $x$ is
+recursively enumerable (recognizable). -/
 theorem rePred_mem_U : REPred fun q : List Bool × List Bool ↦ q.1 ∈ U q.2 := by
   have h : Partrec fun q : List Bool × List Bool ↦
       (U q.2).bind fun y ↦ bif decide (y = q.1) then Part.some 0 else Part.none :=
@@ -77,7 +79,9 @@ theorem rePred_mem_U : REPred fun q : List Bool × List Bool ↦ q.1 ∈ U q.2 :
   · intro hq
     exact Part.dom_iff_mem.mpr ⟨0, Part.mem_bind_iff.mpr ⟨q.1, hq, by simp⟩⟩
 
-/-- **Kolmogorov complexity is upper semicomputable**: `K x ≤ n` is recognizable. -/
+/-- **Kolmogorov complexity is upper semicomputable.** Let $K$ denote Kolmogorov complexity. The
+set of pairs $(x, n)$ of a binary string $x$ and a natural number $n$ with $K(x) \le n$ is
+recursively enumerable (recognizable). -/
 theorem rePred_K_le : REPred fun q : List Bool × ℕ ↦ K q.1 ≤ q.2 := by
   have hlenB : Computable fun r : (List Bool × ℕ) × List Bool ↦ decide (r.2.length ≤ r.1.2) :=
     (Primrec.nat_le.decide.comp (Primrec.list_length.comp Primrec.snd)
@@ -99,7 +103,10 @@ theorem rePred_K_le : REPred fun q : List Bool × ℕ ↦ K q.1 ≤ q.2 := by
     obtain ⟨p, hp, hx⟩ := exists_length_eq_K q.1
     exact ⟨p, hp.le.trans h, hx⟩
 
-/-- **A partial recursive map raises complexity by at most a constant.** -/
+/-- **A partial recursive map raises complexity by at most a constant.** Let $K$ denote Kolmogorov
+complexity and let $f$ be a partial recursive function from binary strings to binary strings.
+Then there is a natural number $c$ such that $K(y) \le K(x) + c$ for all binary strings $x$ and
+$y$ such that $f(x)$ is defined and equal to $y$. -/
 theorem exists_K_map_le {f : List Bool →. List Bool} (hf : Partrec f) :
     ∃ c, ∀ x y : List Bool, y ∈ f x → K y ≤ K x + c := by
   obtain ⟨c, hc⟩ := exists_K_le_of_partrec (D := fun p ↦ (U p).bind f)
@@ -109,15 +116,23 @@ theorem exists_K_map_le {f : List Bool →. List Bool} (hf : Partrec f) :
   rw [← hp]
   exact hc y p (Part.mem_bind_iff.mpr ⟨x, hx, hy⟩)
 
-/-- **Shortest descriptions are incompressible** up to a constant. -/
+/-- **Shortest descriptions are incompressible.** Let $U$ be the universal description method,
+$K$ Kolmogorov complexity, and $|p|$ the length of a binary string $p$. There is a natural number
+$b$ such that for all binary strings $x$ and $p$, if $p$ is a shortest description of $x$, that
+is, $U(p)$ is defined and equal to $x$ and $|p| = K(x)$, then $|p| \le K(p) + b$. -/
 theorem exists_shortest_incompressible :
     ∃ b, ∀ x p : List Bool, p.length = K x → x ∈ U p → p.length ≤ K p + b := by
   obtain ⟨b, hb⟩ := exists_K_map_le partrec_U
   exact ⟨b, fun x p hp hx ↦ hp.le.trans (hb p x hx)⟩
 
-/-- **Chaitin's incompleteness theorem**, abstract form: a recognizable set of true lower bounds
-`n ≤ K x` has bounded `n`. Think of `S` as the statements `K x ≥ n` that a sound formal system
-proves. Search `S` for a bound above `2|p| + 1` and apply optimality (Berry's paradox). -/
+/-- **Chaitin's incompleteness theorem.** Let $K$ denote Kolmogorov complexity, and let $S$ be a
+recursively enumerable (recognizable) set of pairs $(x, n)$ of a binary string $x$ and a natural
+number $n$ such that $n \le K(x)$ for every $(x, n) \in S$. Then there is a natural number $B$
+with $n \le B$ for every $(x, n) \in S$.
+
+This is the abstract form of the theorem: think of $S$ as the statements $K(x) \ge n$ that a sound
+formal system proves. The proof searches $S$ for a pair with a large bound $n$ and applies
+optimality of the universal description method (Berry's paradox). -/
 theorem exists_bound_of_rePred_le_K {S : List Bool × ℕ → Prop} (hS : REPred S)
     (hsound : ∀ q, S q → q.2 ≤ K q.1) : ∃ B, ∀ q, S q → q.2 ≤ B := by
   by_contra! H
@@ -141,7 +156,10 @@ theorem exists_bound_of_rePred_le_K {S : List Bool × ℕ → Prop} (hS : REPred
   simp only [List.length_replicate] at hK
   omega
 
-/-- **A computable lower bound of `K` is bounded.** -/
+/-- **A computable lower bound of Kolmogorov complexity is bounded.** Let $K$ denote Kolmogorov
+complexity. If $f$ is a computable function from binary strings to natural numbers with
+$f(x) \le K(x)$ for every binary string $x$, then there is a natural number $B$ with $f(x) \le B$
+for every binary string $x$. -/
 theorem exists_bound_of_computable_le_K {f : List Bool → ℕ} (hf : Computable f)
     (hle : ∀ x, f x ≤ K x) : ∃ B, ∀ x, f x ≤ B := by
   obtain ⟨B, hB⟩ := exists_bound_of_rePred_le_K (S := fun q ↦ q.2 = f q.1)
@@ -150,7 +168,9 @@ theorem exists_bound_of_computable_le_K {f : List Bool → ℕ} (hf : Computable
     fun q hq ↦ hq ▸ hle q.1
   exact ⟨B, fun x ↦ hB (x, f x) rfl⟩
 
-/-- **`K` is not lower semicomputable**: the relation `n ≤ K x` is not recognizable. -/
+/-- **Kolmogorov complexity is not lower semicomputable.** Let $K$ denote Kolmogorov complexity.
+The set of pairs $(x, n)$ of a binary string $x$ and a natural number $n$ with $n \le K(x)$ is not
+recursively enumerable (recognizable). -/
 theorem not_rePred_le_K : ¬REPred fun q : List Bool × ℕ ↦ q.2 ≤ K q.1 := by
   intro h
   obtain ⟨B, hB⟩ := exists_bound_of_rePred_le_K h fun _ hq ↦ hq
@@ -158,7 +178,10 @@ theorem not_rePred_le_K : ¬REPred fun q : List Bool × ℕ ↦ q.2 ≤ K q.1 :=
   have := hB (x, B + 1) hx
   omega
 
-/-- **No recognizable set with arbitrarily long members consists of incompressible strings.** -/
+/-- **No recognizable set with arbitrarily long members consists of incompressible strings.**
+Let $K$ denote Kolmogorov complexity and $|x|$ the length of a binary string $x$. There is no
+recursively enumerable (recognizable) set $S$ of binary strings such that for every natural
+number $n$ some $x \in S$ has $|x| \ge n$, and every $x \in S$ satisfies $|x| \le K(x)$. -/
 theorem not_rePred_of_forall_incompressible {S : List Bool → Prop} (hS : REPred S)
     (hlong : ∀ n, ∃ x, S x ∧ n ≤ x.length) (hinc : ∀ x, S x → x.length ≤ K x) : False := by
   obtain ⟨B, hB⟩ := exists_bound_of_rePred_le_K (S := fun q ↦ S q.1 ∧ q.2 = q.1.length)
@@ -171,14 +194,18 @@ theorem not_rePred_of_forall_incompressible {S : List Bool → Prop} (hS : REPre
   have := hB (x, x.length) ⟨hx, rfl⟩
   omega
 
-/-- **The incompressible strings are not recognizable.** -/
+/-- **The incompressible strings are not recognizable.** Let $K$ denote Kolmogorov complexity
+and $|x|$ the length of a binary string $x$. The set of incompressible binary strings, that is,
+of binary strings $x$ with $|x| \le K(x)$, is not recursively enumerable (recognizable). -/
 theorem not_rePred_incompressible : ¬REPred fun x : List Bool ↦ x.length ≤ K x := by
   intro h
   refine not_rePred_of_forall_incompressible h (fun n ↦ ?_) fun _ hx ↦ hx
   obtain ⟨x, hx₁, hx₂⟩ := exists_incompressible n
   exact ⟨x, by omega, by omega⟩
 
-/-- **The incompressible strings are not decidable.** -/
+/-- **The incompressible strings are not decidable.** Let $K$ denote Kolmogorov complexity and
+$|x|$ the length of a binary string $x$. The set of incompressible binary strings, that is, of
+binary strings $x$ with $|x| \le K(x)$, is not decidable. -/
 theorem not_computablePred_incompressible : ¬ComputablePred fun x : List Bool ↦ x.length ≤ K x :=
   fun h ↦ not_rePred_incompressible h.to_re
 

@@ -125,7 +125,7 @@ example : TendstoInDistribution (fun n ω => ∑ k ∈ range n, rademacherArray 
   filter_upwards [eventually_ne_atTop 0] with n hn
   have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hn
   symm
-  convert measure_empty (μ := coins)
+  convert measure_empty (μ := coins) using 2
   ext ω
   simp only [id, predictableQuadraticVariation_rademacherArray, NNReal.coe_one,
     div_self hn', dist_self, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
@@ -144,7 +144,7 @@ example : TendstoInDistribution (fun n ω => ∑ k ∈ range n, rademacherArray 
   filter_upwards [eventually_ne_atTop 0] with n hn
   have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hn
   symm
-  convert measure_empty (μ := coins)
+  convert measure_empty (μ := coins) using 2
   ext ω
   simp only [predictableQuadraticVariation_rademacherArray, NNReal.coe_one,
     div_self hn', dist_self, Set.mem_ofPred_eq, Set.mem_empty_iff_false,
@@ -197,7 +197,7 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [(Metric.tendsto_nhds.1 hlim) ε hε] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le, hsum]
     exact hn

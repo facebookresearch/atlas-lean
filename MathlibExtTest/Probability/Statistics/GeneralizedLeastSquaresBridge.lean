@@ -10,7 +10,6 @@ module
 
 public import MathlibExt.Probability.Statistics.GeneralizedLeastSquaresBridge
 public import MathlibExt.Probability.FiniteProbability
-public import MathlibExt.Biology.StatisticalGenetics.MixedModel
 public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Algebra.Order.Star.Real

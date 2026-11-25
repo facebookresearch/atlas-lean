@@ -108,12 +108,9 @@ theorem adjoinRoot_root_pow {s : Nat} (g : BitVec s) :
       rw [← monicModulus]
       exact AdjoinRoot.mk_self
     simpa only [map_add, map_pow, AdjoinRoot.mk_X] using h
-  have hzero : (0#s).toPolynomial = 0 := by
-    ext i
-    simp [coeff_toPolynomial]
   have htwo : g.adjoinRootEquiv g + g.adjoinRootEquiv g = 0 := by
     rw [← adjoinRootEquiv_xor, BitVec.xor_self, adjoinRootEquiv_apply,
-      hzero, map_zero]
+      toPolynomial_zero, map_zero]
   calc
     AdjoinRoot.root g.monicModulus ^ s =
         AdjoinRoot.root g.monicModulus ^ s +

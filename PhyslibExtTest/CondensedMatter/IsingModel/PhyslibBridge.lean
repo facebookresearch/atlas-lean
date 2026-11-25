@@ -48,26 +48,26 @@ example (h : ℝ) :
   ring
 
 -- Physlib's partition function at `β = 0` counts the four configurations.
-example (h : ℝ) :
-    (canonicalEnsemble edge h).mathematicalPartitionFunction (Temperature.ofβ 0) = 4 := by
+example (h : ℝ) (kB : BoltzmannConstant) :
+    (canonicalEnsemble edge h).mathematicalPartitionFunction kB (Temperature.ofβ kB 0) = 4 := by
   rw [← isingZ_eq_mathematicalPartitionFunction, Temperature.β_ofβ]
   simp [isingZ, isingWeight]
 
 -- Physlib's canonical probability at `β = 0` is uniform.
-example (h : ℝ) (s : ConfigSpace (Fin 2)) :
-    (canonicalEnsemble edge h).probability (Temperature.ofβ 0) s = 1 / 4 := by
+example (h : ℝ) (kB : BoltzmannConstant) (s : ConfigSpace (Fin 2)) :
+    (canonicalEnsemble edge h).probability kB (Temperature.ofβ kB 0) s = 1 / 4 := by
   rw [← isingProb_eq_probability, Temperature.β_ofβ]
   simp [isingProb, isingZ, isingWeight]
 
 -- Physlib's canonical probabilities of the Ising ensemble are positive.
-example (h : ℝ) (T : Temperature) (s : ConfigSpace (Fin 2)) :
-    0 < (canonicalEnsemble edge h).probability T s := by
+example (h : ℝ) (kB : BoltzmannConstant) (T : Temperature) (s : ConfigSpace (Fin 2)) :
+    0 < (canonicalEnsemble edge h).probability kB T s := by
   rw [← isingProb_eq_probability]
   exact isingProb_pos edge _ h s
 
 -- Physlib's canonical probabilities of the Ising ensemble sum to one.
-example (h : ℝ) (T : Temperature) :
-    ∑ s : ConfigSpace (Fin 2), (canonicalEnsemble edge h).probability T s = 1 := by
+example (h : ℝ) (kB : BoltzmannConstant) (T : Temperature) :
+    ∑ s : ConfigSpace (Fin 2), (canonicalEnsemble edge h).probability kB T s = 1 := by
   simp_rw [← isingProb_eq_probability]
   exact isingProb_sum_eq_one edge _ h
 

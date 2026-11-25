@@ -75,9 +75,11 @@ private theorem tendsto_of_tendsto_re_inner_and_tendsto_norm {u : ℕ → H} {x 
   rw [tendsto_iff_dist_tendsto_zero]
   simpa [dist_eq_norm] using hnorm0
 
-/-- **Radon–Riesz theorem, inner-product form.** If the inner products
-`⟪u n, y⟫` converge to `⟪x, y⟫` for every `y` and `‖u n‖ → ‖x‖`, then
-`u n → x` in norm. -/
+/-- **Radon–Riesz theorem, inner-product form.** Let $H$ be an inner product space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, not necessarily complete, let
+$(u_n)_{n \in \mathbb{N}}$ be a sequence in $H$ and let $x \in H$. If
+$\langle u_n, y \rangle \to \langle x, y \rangle$ for every $y \in H$ and $\|u_n\| \to \|x\|$,
+then $u_n \to x$ in norm. -/
 theorem tendsto_of_tendsto_inner_and_tendsto_norm {u : ℕ → H} {x : H}
     (hinner : ∀ y : H, Tendsto (fun n => ⟪u n, y⟫_𝕜) atTop (𝓝 ⟪x, y⟫_𝕜))
     (hnorm : Tendsto (fun n => ‖u n‖) atTop (𝓝 ‖x‖)) :
@@ -86,9 +88,11 @@ theorem tendsto_of_tendsto_inner_and_tendsto_norm {u : ℕ → H} {x : H}
   have h := ((RCLike.continuous_re (K := 𝕜)).tendsto _).comp (hinner x)
   rwa [inner_self_eq_norm_sq] at h
 
-/-- **Radon–Riesz theorem, dual-functionals form.** If `f (u n) → f x`
-for every continuous linear functional `f` and `‖u n‖ → ‖x‖`, then
-`u n → x` in norm. -/
+/-- **Radon–Riesz theorem, dual-functionals form.** Let $H$ be an inner product space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, not necessarily complete, let
+$(u_n)_{n \in \mathbb{N}}$ be a sequence in $H$ and let $x \in H$. If $f(u_n) \to f(x)$ for
+every continuous linear functional $f : H \to \mathbb{K}$ and $\|u_n\| \to \|x\|$, then
+$u_n \to x$ in norm. -/
 theorem tendsto_of_forall_tendsto_and_tendsto_norm {u : ℕ → H} {x : H}
     (h : ∀ f : StrongDual 𝕜 H, Tendsto (fun n => f (u n)) atTop (𝓝 (f x)))
     (hnorm : Tendsto (fun n => ‖u n‖) atTop (𝓝 ‖x‖)) :
@@ -109,16 +113,22 @@ private theorem forall_tendsto_of_tendsto_weakSpace {u : ℕ → H} {x : H}
       congrFun (congrArg DFunLike.coe hab) f
   exact (WeakBilin.tendsto_iff_forall_eval_tendsto (topDualPairing 𝕜 H).flip hinj).mp h
 
-/-- **Radon–Riesz theorem, `toWeakSpace` form.** -/
+/-- **Radon–Riesz theorem, weak-topology form.** Let $H$ be an inner product space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, not necessarily complete, let
+$(u_n)_{n \in \mathbb{N}}$ be a sequence in $H$ and let $x \in H$. If $u_n \to x$ in the weak
+topology of $H$ (the coarsest topology making every continuous linear functional
+$H \to \mathbb{K}$ continuous) and $\|u_n\| \to \|x\|$, then $u_n \to x$ in norm. -/
 theorem tendsto_of_tendsto_weakSpace_and_tendsto_norm {u : ℕ → H} {x : H}
     (h : Tendsto (fun n => toWeakSpace 𝕜 H (u n)) atTop (𝓝 (toWeakSpace 𝕜 H x)))
     (hnorm : Tendsto (fun n => ‖u n‖) atTop (𝓝 ‖x‖)) :
     Tendsto u atTop (𝓝 x) :=
   tendsto_of_forall_tendsto_and_tendsto_norm (forall_tendsto_of_tendsto_weakSpace h) hnorm
 
-/-- **Radon–Riesz iff.** Norm convergence is equivalent to weak
-convergence (in inner-product form) together with convergence of the
-norms. -/
+/-- **Radon–Riesz characterization of norm convergence.** Let $H$ be an inner product space
+over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, not necessarily complete, let
+$(u_n)_{n \in \mathbb{N}}$ be a sequence in $H$ and let $x \in H$. Then $u_n \to x$ in norm if
+and only if $\langle u_n, y \rangle \to \langle x, y \rangle$ for every $y \in H$ and
+$\|u_n\| \to \|x\|$. -/
 theorem tendsto_iff_tendsto_inner_and_tendsto_norm {u : ℕ → H} {x : H} :
     Tendsto u atTop (𝓝 x) ↔
       (∀ y : H, Tendsto (fun n => ⟪u n, y⟫_𝕜) atTop (𝓝 ⟪x, y⟫_𝕜)) ∧
