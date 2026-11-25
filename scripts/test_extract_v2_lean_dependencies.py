@@ -1088,5 +1088,182 @@ class BridgeConvention(unittest.TestCase):
         self.assertNotIn("bridge_rule", found["inputs"])
 
 
+class QuotedArticleNames(unittest.TestCase):
+    def run_join(self, rows: list[dict], articles: set[str], *, lean_sources: dict[str, str],
+                 duplicates: dict[str, str] | None = None, registered: list[dict] | None = None,
+                 index_error: OSError | None = None, expect_no_join: bool = False,
+                 toolchain: str | None = "leanprover/lean4:v4.36.0"
+                 ) -> tuple[int, bytes, bytes, str]:
+        # Use the real pinned source scanner (and ordinary module paths), not a normalization mock.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            if toolchain is not None:
+                (root / "lean-toolchain").write_text(toolchain + "\n", encoding="utf-8")
+            for path, source in lean_sources.items():
+                file = root / path
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text(source, encoding="utf-8")
+            dump, output, registry, names = (root / label for label in ("dump", "output", "registry", "names"))
+            payload = rows if registered is None else framed(rows + registered)
+            dump.write_text("".join(json.dumps(record) + "\n" for record in payload), encoding="utf-8")
+            output.write_bytes(b"original output")
+            registry.write_bytes(b"original registry")
+            argv = ["extract", str(dump), str(output)]
+            if registered is not None:
+                names.write_text("".join(record["name"] + "\n" for record in registered), encoding="utf-8")
+                argv += ["--registry", str(registry), "--names", str(names)]
+            index = extract.lean_index
+            with patch.object(extract, "article_manifest", return_value=articles), \
+                    patch.object(extract, "article_aliases", return_value=duplicates or {}), \
+                    patch.object(extract, "mathlib_revision", return_value=PIN), \
+                    patch.object(extract, "ROOT", root), \
+                    patch.object(extract, "BLUEPRINT", root / "blueprint"), \
+                    patch.object(extract, "lean_index", wraps=index, side_effect=index_error) as source_index, \
+                    patch.object(extract, "join_missing_quoted_articles",
+                                 wraps=extract.join_missing_quoted_articles) as join, \
+                    patch("sys.argv", argv), redirect_stderr(io.StringIO()) as errors, redirect_stdout(io.StringIO()):
+                status = extract.main()
+                if expect_no_join:
+                    join.assert_not_called()
+                    source_index.assert_not_called()
+            return status, output.read_bytes(), registry.read_bytes(), errors.getvalue()
+
+    def test_only_authored_quotes_can_fall_back(self) -> None:
+        sources = {"MathlibExt/T.lean": "namespace A\ndef x := 0\nend A\n"}
+        quoted = row("A.«x»", "def", [], [])
+        for payload in ([quoted], [quoted, row("A.x", "theorem", [], [])]):
+            with self.subTest(exact=len(payload) == 2):
+                status, out, _, errors = self.run_join(payload, {"A.x"}, lean_sources=sources, expect_no_join=True)
+                self.assertEqual(status, 0)
+                got = json.loads(out)
+                self.assertEqual(set(got["articles"]), {"A.x"} if len(payload) == 2 else set())
+                self.assertEqual(got["missing_articles"]["unprefixed"], [] if len(payload) == 2 else ["A.x"])
+                self.assertEqual("A.x" in errors, len(payload) == 1)
+
+    def test_stock_exact_quoted_and_private_resolution_take_precedence(self) -> None:
+        source = {"MathlibExt/T.lean": "namespace A\ndef «x» := 0\nend A\n"}
+        quoted = "A.«x»"
+        for exact in (quoted, "_private.MathlibExt.T.0." + quoted):
+            with self.subTest(exact=exact):
+                payload = [row("A.x", "def", ["Canonical"], []), row(exact, "def", ["Exact"], []),
+                           row("Canonical", "def", [], []), row("Exact", "def", [], [])]
+                payload[1]["private"] = exact != quoted
+                status, out, _, errors = self.run_join(payload, {quoted, "Exact", "Canonical"},
+                                                      lean_sources=source, expect_no_join=True)
+                self.assertEqual((status, errors), (0, ""))
+                self.assertEqual(json.loads(out)["articles"][quoted]["statement"], ["Exact"])
+
+    def test_renderer_exception_is_not_a_source_equivalence(self) -> None:
+        # For both names the pinned Lean renderer suppresses escaping at `_inaccessible`.
+        first, second = "A.«b.c»._inaccessible", "A.b.«c»._inaccessible"
+        source = {"MathlibExt/T.lean": f"def {first} := 0\ndef {second} := 1\n"}
+        status, out, _, errors = self.run_join([row("A.b.c._inaccessible", "def", ["Unrelated"], [])],
+                                              {second}, lean_sources=source)
+        self.assertEqual(status, 0)
+        self.assertEqual(json.loads(out)["articles"], {})
+        self.assertEqual(json.loads(out)["missing_articles"]["unprefixed"], [second])
+        self.assertIn(second, errors)
+        self.assertIsNone(extract.compiled_spelling(first))
+        self.assertIsNone(extract.compiled_spelling(second))
+
+    def test_preexisting_dangling_project_references_refuse_before_writes(self) -> None:
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        quoted = "A.«x»"
+        for field in ("type", "value"):
+            with self.subTest(field=field):
+                consumer = row("Consumer", "theorem", [], [])
+                consumer[field] = [quoted]
+                rows = [with_mathlib(record, [], []) for record in [row("A.x", "def", [], []), consumer]]
+                status, out, registry, errors = self.run_join(rows, {quoted, "Consumer"}, lean_sources=source,
+                                                             registered=[])
+                self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+                self.assertIn(f"dangling {field} reference", errors)
+
+    def test_ordinary_fallback_preserves_both_dependency_directions_and_registry(self) -> None:
+        raw, quoted = "A.x", "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        payload = [with_mathlib(row(raw, "def", ["Index"], []), ["M.fact"], [], type_direct=["M.fact"]),
+                   with_mathlib(row("Index", "def", [], []), [], []),
+                   with_mathlib(row("Consumer", "theorem", [raw], []), [], [])]
+        status, out, registry, errors = self.run_join(payload, {quoted, "Index", "Consumer"}, lean_sources=source,
+                                                     registered=[credited("M.fact", "theorem", [], [])])
+        self.assertEqual((status, errors), (0, ""))
+        articles = json.loads(out)["articles"]
+        self.assertEqual(articles[quoted]["statement"], ["Index"])
+        self.assertEqual(articles["Consumer"]["statement"], [quoted])
+        self.assertNotIn(raw, articles)
+        payload = json.loads(registry)
+        self.assertEqual(payload["bridges"][quoted]["statement"], ["M.fact"])
+        self.assertNotIn(raw, payload["bridges"])
+        self.assertEqual(payload["inputs"]["extraction_sha256"], hashlib.sha256(out).hexdigest())
+
+    def test_no_general_name_decoder(self) -> None:
+        self.assertEqual(extract.compiled_spelling("CategoryTheory.«prefix»"), "CategoryTheory.prefix")
+        self.assertEqual(extract.compiled_spelling("«A».«x2».y_z"), "A.x2.y_z")
+        for name in ("A.x", "A.«b.c»", "A.«with space»", "A.«1»", "A.«»", "A.«α»", "«A».1",
+                     "A.«foo'»", "A.«x!»", "A.«b«c»", "A.«x»,y", "A.«x", "A.x»", "A..«x»", "A.«x».\n",
+                     "_root_.A.«x»", "«_root_».A.«x»", "A.«x»._inaccessible", "A.«x✝»", "A.«x»._hyg"):
+            with self.subTest(name=name):
+                self.assertIsNone(extract.compiled_spelling(name))
+
+    def test_competing_article_or_source_claims_refuse_before_writes(self) -> None:
+        raw, quoted, competing = "A.x", "A.«x»", "«A».x"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        cases = [({quoted, raw}, [raw], source, "article"),
+                 ({quoted, competing}, [raw, competing], source, "article"),
+                 ({quoted}, [raw, competing], source, "compiled"),
+                 ({quoted}, [raw], {**source, "MathlibExt/U.lean": "def A.x := 1\n"}, "source")]
+        for articles, names, lean_sources, reason in cases:
+            with self.subTest(reason=reason):
+                status, out, registry, errors = self.run_join([row(name, "def", [], []) for name in names], articles,
+                                                             lean_sources=lean_sources)
+                self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+                self.assertIn(f"competing {reason}", errors)
+
+    def test_overlap_wrong_owner_or_private_row_refuses_before_writes(self) -> None:
+        raw, quoted = "A.x", "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        normal = with_mathlib(row(raw, "def", [], []), [], [])
+        cases = [([normal], {"Twin": quoted}, [], source, "duplicate or registry"),
+                 ([normal], {}, [{"name": raw, "registered": True, "missing": True,
+                                  "module_given": False, "project": True}], source, "duplicate or registry"),
+                 ([normal], {}, [], {"MathlibExt/U.lean": "def A.«x» := 0\n"}, "unique public source owner"),
+                 ([{**normal, "private": True}], {}, [], source, "unique public source owner"),
+                 ([normal, {**normal, "name": "_private.MathlibExt.T.0.A.x", "private": True}], {}, [], source,
+                  "private row")]
+        for rows, duplicates, registered, lean_sources, reason in cases:
+            with self.subTest(reason=reason):
+                status, out, registry, errors = self.run_join(rows, {quoted}, lean_sources=lean_sources,
+                                                             duplicates=duplicates, registered=registered)
+                self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+                self.assertIn(reason, errors)
+
+    def test_fallback_requires_the_pinned_lean_toolchain(self) -> None:
+        quoted = "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        for toolchain in (None, "leanprover/lean4:v4.37.0"):
+            with self.subTest(toolchain=toolchain):
+                status, out, _, errors = self.run_join([row("A.x", "def", [], [])], {quoted},
+                                                       lean_sources=source, toolchain=toolchain)
+                self.assertEqual(status, 0)
+                self.assertEqual(json.loads(out)["missing_articles"]["unprefixed"], [quoted])
+                self.assertIn(quoted, errors)
+
+    def test_missing_target_remains_missing_and_index_error_is_safe(self) -> None:
+        from scripts import sync_wiki
+        from autoform_cli.lean import LeanSourceError
+
+        quoted = "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        status, out, _, _ = self.run_join([], {quoted}, lean_sources=source)
+        self.assertEqual(status, 0)
+        self.assertEqual(sync_wiki.uncompiled_articles(json.loads(out), SimpleNamespace(declarations={quoted})),
+                         [quoted])
+        status, out, registry, errors = self.run_join([row("A.x", "def", [], [])], {quoted}, lean_sources=source,
+                                                     index_error=LeanSourceError("MathlibExt/T.lean changed"))
+        self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+        self.assertEqual(errors, "error: Lean sources could not be indexed: MathlibExt/T.lean changed\n")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -62,6 +62,7 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import secrets
 import shutil
 import sys
@@ -382,6 +383,86 @@ def publish_private_targets(rows: dict[str, dict], manifest: set[str]) -> dict[s
         }
         for name, row in rows.items()
     }
+
+
+# A conservative ASCII subset of Lean 4.36.0 (611c117b) `Name.toString`'s ordinary
+# identifier components. A leading letter excludes `_root_`, `_private`, `_hyg`,
+# `_inaccessible`, and other internal names. This is not a Lean Name decoder.
+_QUOTED_NAME_TOOLCHAIN = "leanprover/lean4:v4.36.0"
+_ORDINARY_COMPONENT = r"[A-Za-z][A-Za-z0-9_]*"
+_ORDINARY_AUTHORED = re.compile(
+    rf"(?:{_ORDINARY_COMPONENT}|«{_ORDINARY_COMPONENT}»)(?:\.(?:{_ORDINARY_COMPONENT}|«{_ORDINARY_COMPONENT}»))*"
+)
+
+
+def compiled_spelling(authored: str) -> str | None:
+    """The one canonical spelling for an ordinary name with redundant source quotes, if supported."""
+    if "«" not in authored or _ORDINARY_AUTHORED.fullmatch(authored) is None:
+        return None
+    return ".".join(part[1:-1] if part.startswith("«") else part for part in authored.split("."))
+
+
+def join_missing_quoted_articles(rows: dict[str, dict], missing: set[str], manifest: set[str],
+                                 listed: dict[str, str], registered: dict[str, dict],
+                                 source_index) -> dict[str, dict]:
+    """Try the authored-to-compiled fallback only after stock exact and private resolution."""
+    candidates = [(compiled, authored) for authored in sorted(missing)
+                  if (compiled := compiled_spelling(authored)) is not None and compiled in rows]
+    if not candidates:
+        return rows
+    try:
+        toolchain = (ROOT / "lean-toolchain").read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return rows
+    if toolchain != _QUOTED_NAME_TOOLCHAIN:
+        return rows
+
+    rename: dict[str, str] = {}
+    for compiled, authored in candidates:
+        if compiled in manifest or compiled in rename:
+            raise ValueError(f"competing article spellings for {compiled}")
+        rename[compiled] = authored
+
+    destinations = set(rename.values())
+    for name in manifest - destinations:
+        if compiled_spelling(name) in rename:
+            raise ValueError(f"competing article spelling for a quoted target: {name}")
+    for name in listed.keys() | set(listed.values()) | registered.keys():
+        if name in rename or name in destinations or compiled_spelling(name) in rename:
+            raise ValueError(f"quoted-name fallback overlaps a duplicate or registry endpoint: {name}")
+
+    index = source_index()
+    for names in (index.declarations, index.duplicates):
+        for name in names:
+            if name in rename or (name not in destinations and compiled_spelling(name) in rename):
+                raise ValueError(f"competing source spelling for a quoted article: {name}")
+    for compiled, authored in rename.items():
+        sources = index.occurrences(authored)
+        row = rows[compiled]
+        if (len(sources) != 1 or sources[0].private or row.get("private") is not False or
+                sources[0].path.with_suffix("").as_posix().replace("/", ".") != row["module"]):
+            raise ValueError(f"cannot bind {compiled} to the unique public source owner of {authored}")
+
+    result: dict[str, dict] = {}
+    for name, row in rows.items():
+        if compiled_spelling(name) in rename:
+            raise ValueError(f"competing compiled spelling for a quoted target: {name}")
+        if row.get("private"):
+            prefix = f"_private.{row['module']}.0."
+            if (suffix := name.removeprefix(prefix)) != name and (
+                    suffix in rename or suffix in destinations or compiled_spelling(suffix) in rename):
+                raise ValueError(f"quoted-name fallback overlaps a private row: {name}")
+        authored = rename.get(name, name)
+        changed = authored != name
+        for field in ("type", "value"):
+            for use in row[field]:
+                if use in destinations:
+                    raise ValueError(f"{name} has a dangling {field} reference to quoted target {use}")
+                changed |= use in rename
+        result[authored] = ({**row, "name": authored,
+                             **{field: [rename.get(use, use) for use in row[field]]
+                                for field in ("type", "value")}} if changed else row)
+    return result
 
 
 def article_manifest() -> set[str]:
@@ -914,9 +995,22 @@ def main() -> int:
     collisions = private_collisions(project_rows, listed.keys() | set(listed.values()))
     # The credited Mathlib declarations' rows serve only the registry: OUTPUT.json is the same without them.
     rows = publish_private_targets(project_rows, manifest | listed.keys())
+    sources = functools.cache(lean_index)
+    missing = manifest - rows.keys()
+    if any("«" in name for name in missing):
+        try:
+            rows = join_missing_quoted_articles(rows, missing, manifest, listed, registered, sources)
+        except ValueError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 1
+        except OSError as error:
+            from autoform_cli.lean import index_failure_message
+
+            print(f"error: {index_failure_message(error)}", file=sys.stderr)
+            return 1
+        missing -= rows.keys()
     # A use of a duplicate counts as a use of its article, which only the compiled rows of both can show; the Lean
     # sources, read only for a row the dump lacks, tell a deleted declaration from an incomplete dump.
-    sources = functools.cache(lean_index)
     alias, problems, warnings = resolve_aliases(listed, manifest, rows, lambda name: name in sources().declarations,
                                                 collisions)
     for warning in warnings:
@@ -927,7 +1021,7 @@ def main() -> int:
         print(f"error: {len(problems)} declarations listed as duplicates whose uses could not count as uses of their "
               "articles; make the dump again, or fix the lists", file=sys.stderr)
         return 1
-    missing = sorted(manifest - rows.keys())
+    missing = sorted(missing)
     if missing:
         for name in missing[:20]:
             print(f"warning: roadmap Lean target is absent from the compiled dependency dump: {name}", file=sys.stderr)
