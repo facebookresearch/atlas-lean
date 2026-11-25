@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.LinearAlgebra.Matrix.PositiveMinors
 public import MathlibExt.NumberTheory.Recurrences.GeneralizedHyperFibonacci
 public import MathlibExt.NumberTheory.Recurrences.HyperFibonacciBinomial
+public import MathlibExt.NumberTheory.Recurrences.HyperFibonacciLogConcave
 
 /-!
 # Totally positive matrices and initial minors
@@ -116,27 +117,6 @@ public theorem_wanted generalizedHyperFibonacci_eventually_logConcave (p a b : �
     ∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci p a b r n ∧
       generalizedHyperFibonacci p a b r n * generalizedHyperFibonacci p a b r (n + 2) ≤
         generalizedHyperFibonacci p a b r (n + 1) ^ 2
-
-/-- **Eventual log-concavity of hyper $p$-Fibonacci and hyper $p$-Lucas numbers.** Let
-$p \ge 1$ be an integer and $r \ge 1$ a natural number, and let $F_{p,n}^{(r)}$ and
-$L_{p,n}^{(r)}$ be the generalized hyper-Fibonacci numbers $W_{p,n}^{(r)}$ with initial values
-$(a, b) = (0, 1)$ and $(a, b) = (2, p)$ respectively (the hyper $p$-Fibonacci and hyper
-$p$-Lucas numbers). Both sequences are eventually log-concave: there is $N$ such that for all
-$n \ge N$, $F_{p,n}^{(r)} > 0$ and $F_{p,n}^{(r)} F_{p,n+2}^{(r)} \le (F_{p,n+1}^{(r)})^2$, and
-there is $N'$ such that for all $n \ge N'$, $L_{p,n}^{(r)} > 0$ and
-$L_{p,n}^{(r)} L_{p,n+2}^{(r)} \le (L_{p,n+1}^{(r)})^2$.
-
-Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
-Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
-Sequences 29 (2026), Article 26.2.5, Corollary 11 (`jis-2026-26.2.5-cor-11`). -/
-public theorem_wanted hyperPFibonacci_hyperPLucas_eventually_logConcave (p : ℤ) (hp : 1 ≤ p)
-    (r : ℕ) (hr : 1 ≤ r) :
-    (∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci p 0 1 r n ∧
-      generalizedHyperFibonacci p 0 1 r n * generalizedHyperFibonacci p 0 1 r (n + 2) ≤
-        generalizedHyperFibonacci p 0 1 r (n + 1) ^ 2) ∧
-    (∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci p 2 p r n ∧
-      generalizedHyperFibonacci p 2 p r n * generalizedHyperFibonacci p 2 p r (n + 2) ≤
-        generalizedHyperFibonacci p 2 p r (n + 1) ^ 2)
 
 /-- **Eventual total positivity of hyper-Fibonacci Toeplitz matrices.** Let $p, a, b$ be integers
 with $p \ge 1$, $a \ge 0$ and $b > 0$, put $\Delta = a^2 + pab - b^2$, let $W^{(r)}_{p,n}$
