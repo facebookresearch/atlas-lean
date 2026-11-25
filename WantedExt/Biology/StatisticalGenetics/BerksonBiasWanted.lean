@@ -69,7 +69,7 @@ noncomputable def hospitalFrequency (p : ι → ℝ) (t₀ : ℝ) (t : ι → �
     ∑ S ∈ Finset.univ.filter G, hospitalMass p t₀ t S
 
 /-- **Admitted persons with multiple diagnoses are over-represented** (Berkson 1946). For a
-common transmission probability `t ∈ [0, 1)` (selective rate `1 - t`) and `t₀ = 1`,
+common probability `t ∈ [0, 1)` of not triggering admission (selective rate `1 - t`) and `t₀ = 1`,
 `f_2 / f_1 = (1 - t²) / (1 - t) = 1 + t` and `f_3 / f_1 = (1 - t³) / (1 - t) = 1 + t + t²`;
 as the selective rate tends to `0` (`t → 1⁻`) these ratios tend to `2` and `3`.
 
@@ -81,11 +81,12 @@ public theorem_wanted admission_ratios :
     Tendsto (fun t : ℝ => (1 - t ^ 2) / (1 - t)) (𝓝[<] 1) (𝓝 2) ∧
     Tendsto (fun t : ℝ => (1 - t ^ 3) / (1 - t)) (𝓝[<] 1) (𝓝 3)
 
-/-- **Berkson's inequality** (Berkson 1946). Let the diseases have incidences `p_i ∈ (0, 1)` and
-transmission probabilities `t_i ∈ [0, 1]`, let `t₀ ∈ (0, 1]`, and let `a ≠ b` be two diseases
-with `t_a < 1` and `t_b < 1` (each raises the admission probability). Then among admitted
-persons, disease `a` is strictly less frequent among those with disease `b` than among those
-without it: `hospitalFrequency (b ∈ S) a < hospitalFrequency (b ∉ S) a`.
+/-- **Berkson's inequality** (Berkson 1946). Under the independent population disease law
+(`diseaseSetProb`), let the diseases occur independently with incidences `p_i ∈ (0, 1)` and
+probabilities `t_i ∈ [0, 1]` of not triggering admission, let `t₀ ∈ (0, 1]`, and let `a ≠ b` be
+two diseases with `t_a < 1` and `t_b < 1` (each raises the admission probability). Then among
+admitted persons, disease `a` is strictly less frequent among those with disease `b` than among
+those without it: `hospitalFrequency (b ∈ S) a < hospitalFrequency (b ∉ S) a`.
 
 Source: Berkson (1946); derived from his selection model. -/
 public theorem_wanted hospitalFrequency_lt (p t : ι → ℝ) (t₀ : ℝ) (hp0 : ∀ i, 0 < p i)
@@ -94,11 +95,12 @@ public theorem_wanted hospitalFrequency_lt (p t : ι → ℝ) (t₀ : ℝ) (hp0 
     hospitalFrequency p t₀ t (fun S => b ∈ S) a < hospitalFrequency p t₀ t (fun S => b ∉ S) a
 
 /-- **The odds ratio among admitted persons, two diseases** (Berkson 1946). For two independent
-diseases with incidences `p_a, p_b ∈ (0, 1)`, transmission probabilities `t_a, t_b ∈ [0, 1)` and
-`t₀ ∈ (0, 1]`, the admitted masses are `p_a p_b f_{ab}`, `p_a (1 - p_b) f_a`,
-`(1 - p_a) p_b f_b` and `(1 - p_a)(1 - p_b) f_∅`, with `f_{ab} = 1 - t₀ t_a t_b`,
-`f_a = 1 - t₀ t_a`, `f_b = 1 - t₀ t_b` and `f_∅ = 1 - t₀`. The odds ratio between the diseases
-among admitted persons is `f_{ab} f_∅ / (f_a f_b)`, and it is strictly less than `1`.
+diseases in the population with incidences `p_a, p_b ∈ (0, 1)`, probabilities `t_a, t_b ∈ [0, 1)`
+of not triggering admission and `t₀ ∈ (0, 1]`, the admitted masses are `p_a p_b f_{ab}`,
+`p_a (1 - p_b) f_a`, `(1 - p_a) p_b f_b` and `(1 - p_a)(1 - p_b) f_∅`, with
+`f_{ab} = 1 - t₀ t_a t_b`, `f_a = 1 - t₀ t_a`, `f_b = 1 - t₀ t_b` and `f_∅ = 1 - t₀`. The odds
+ratio between the diseases among admitted persons is `f_{ab} f_∅ / (f_a f_b)`, and it is strictly
+less than `1`.
 
 Source: Berkson (1946); derived from his selection model. -/
 public theorem_wanted hospitalOddsRatio (pa pb ta tb t₀ : ℝ) (hpa0 : 0 < pa) (hpa1 : pa < 1)
@@ -124,11 +126,13 @@ public theorem_wanted hospitalFrequency_tables :
       hospitalFrequency ![0.03, 0.01, 0.1] 1 ![0.85, 0.95, 0.80] (fun S => 2 ∈ S ∧ 1 ∉ S) 0 <
         hospitalFrequency ![0.03, 0.01, 0.1] 1 ![0.85, 0.95, 0.80] (fun S => 1 ∈ S) 0
 
-/-- **A disease with selective rate zero is compared validly** (Berkson 1946). Let the diseases
-have incidences `p_i ∈ (0, 1)` and transmission probabilities `t_i ∈ [0, 1]`, let `t₀ ∈ (0, 1]`,
-and let disease `c` have selective rate zero, `t_c = 1`. For a diagnostic group given by a
-predicate `G` on the other diseases, `S ∈ group ↔ G (S.erase c)`, with positive admitted mass,
-the frequency of `c` among admitted members of the group is its population incidence `p_c`.
+/-- **A disease with selective rate zero is compared validly** (Berkson 1946). Under the
+independent population disease law (`diseaseSetProb`), let the diseases occur independently with
+incidences `p_i ∈ (0, 1)` and probabilities `t_i ∈ [0, 1]` of not triggering admission, let
+`t₀ ∈ (0, 1]`, and let disease `c` have selective rate zero, `t_c = 1`. For a diagnostic group
+given by a predicate `G` on the other diseases, `S ∈ group ↔ G (S.erase c)`, with positive
+admitted mass, the frequency of `c` among admitted members of the group is its population
+incidence `p_c`.
 
 Source: Berkson (1946), comment on valid comparisons. -/
 public theorem_wanted hospitalFrequency_eq_of_rate_zero (p t : ι → ℝ) (t₀ : ℝ)
@@ -137,8 +141,9 @@ public theorem_wanted hospitalFrequency_eq_of_rate_zero (p t : ι → ℝ) (t₀
     (hpos : 0 < ∑ S ∈ Finset.univ.filter (fun S => G (S.erase c)), hospitalMass p t₀ t S) :
     hospitalFrequency p t₀ t (fun S => G (S.erase c)) c = p c
 
-/-- **Single-disease groups with equal selective rates are compared validly** (Berkson 1946). Let
-the diseases have incidences `p_i ∈ (0, 1)` and transmission probabilities `t_i ∈ [0, 1]`, let
+/-- **Single-disease groups with equal selective rates are compared validly** (Berkson 1946). Under
+the independent population disease law (`diseaseSetProb`), let the diseases occur independently
+with incidences `p_i ∈ (0, 1)` and probabilities `t_i ∈ [0, 1]` of not triggering admission, let
 `t₀ ∈ (0, 1]`, and let `c`, `d`, `r` be three distinct diseases with `t_d = t_r`. Suppose both
 groups have positive admitted mass: the admitted persons whose diseases other than `c` are
 exactly `{d}`, and those whose diseases other than `c` are exactly `{r}`. Then the frequency of

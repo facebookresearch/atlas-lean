@@ -13,6 +13,7 @@ Topics added since this subject's fields were last revised.
 - [Good Turing](good-turing/README.md)
 - [Kong Cox Allele Sharing](kong-cox-allele-sharing/README.md)
 - [Mantel Haenszel](mantel-haenszel/README.md)
+- [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Odds Ratio Collapsibility](odds-ratio-collapsibility/README.md)
 - [Pearson Aitken Lawley Selection](pearson-aitken-lawley-selection/README.md)
