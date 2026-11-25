@@ -17,6 +17,7 @@ public import Mathlib.RingTheory.Norm.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.Data.Nat.Nth
 public import MathlibExt.NumberTheory.Schatunowsky
+public import MathlibExt.NumberTheory.SchatunowskyImaginaryQuadratic
 
 /-!
 # Bertrand postulates and Schatunowsky-type theorems in ℕ and Gaussian and Eisenstein integers
@@ -99,96 +100,6 @@ public theorem_wanted gaussianInt_schatunowsky_max_norm_five_add_five_i :
       ∀ α ∈ S, α.norm = 50 → Associated α ⟨5, 5⟩
 
 
-/-- **Norm of the $n$-th prime.** Let $K$ be a number field with ring of integers $\mathcal{O}_K$.
-For $n \ge 1$, $N(\pi_n)$ is the $n$-th smallest natural number that is the absolute norm of some
-nonzero prime ideal of $\mathcal{O}_K$, each such norm counted once however many prime ideals
-have it; and $N(\pi_0) = 1$.
-
-For an imaginary quadratic field $K = \mathbb{Q}(\sqrt{m})$ of class number one the prime ideals
-above distinct rational primes $p$ have distinct norms $p$ or $p^2$, so $N(\pi_n)$ is the norm of
-the $n$-th prime $\pi_n$ of the paper's norm-ordered set $P_m^+$ (Definition 1), and
-$N(\pi_0) = 1$ matches its convention $\pi_0 = 1$.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 and
-Section 4 (`N(π_n)`). -/
-public noncomputable def quadPrimeNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
-  if n = 0 then 1
-  else Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (n - 1)
-
-/-- **The zeroth prime norm is one.** For every number field $K$, the zeroth prime norm
-$N(\pi_0)$ of $K$ equals $1$.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1
-(convention `π_0 = 1`). -/
-public theorem quadPrimeNorm_zero (K : Type*) [Field K] [NumberField K] :
-    quadPrimeNorm K 0 = 1 := by
-  simp [quadPrimeNorm]
-
-/-- **Norm of the $n$-th primorial.** Let $K$ be a number field with ring of integers
-$\mathcal{O}_K$, and let $n$ be a natural number. The primorial norm $N(\pi_n\#)$ is the product of
-the absolute norms of the nonzero prime ideals of $\mathcal{O}_K$ whose norm is at most $N(\pi_n)$,
-where $N(\pi_n)$ is the $n$-th smallest norm of a nonzero prime ideal of $\mathcal{O}_K$ for
-$n \ge 1$ and $N(\pi_0) = 1$.
-
-There are finitely many such prime ideals. For an imaginary quadratic field of class number one,
-$N(\pi_n\#)$ is the norm of the paper's quadratic primorial $\pi_n\#$ (Definition 2).
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
-(`π_n#`). -/
-public noncomputable def quadPrimorialNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
-  ∏ᶠ P ∈ {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ quadPrimeNorm K n},
-    Ideal.absNorm P
-
-/-- **The zeroth primorial norm is one.** For every number field $K$ with ring of integers
-$\mathcal{O}_K$, the primorial norm $N(\pi_0\#)$ of $K$ equals $1$: no nonzero prime ideal of
-$\mathcal{O}_K$ has norm at most $1$.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
-(`π_0# = 1`). -/
-public theorem quadPrimorialNorm_zero (K : Type*) [Field K] [NumberField K] :
-    quadPrimorialNorm K 0 = 1 := by
-  have hempty : {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ 1} = ∅ := by
-    refine Set.eq_empty_of_forall_notMem fun P ⟨hP, hbot, hle⟩ => ?_
-    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hle with h | h
-    · exact hbot (Ideal.absNorm_eq_zero_iff.mp h)
-    · exact hP.ne_top (Ideal.absNorm_eq_one_iff.mp h)
-  rw [quadPrimorialNorm, quadPrimeNorm_zero, hempty, finprod_mem_empty]
-
-/-- **Schatunowsky set of a number field.** Let $K$ be a number field with ring of integers
-$\mathcal{O}_K$ and let $\ell$ be a natural number. For $\alpha \in \mathcal{O}_K$ write $N(\alpha)$
-for the absolute norm of the principal ideal $(\alpha)$ and $\Omega(\alpha)$ for the number of
-prime ideal factors of $(\alpha)$ counted with multiplicity. The Schatunowsky set $Q_\ell(K)$ is
-the set of $\alpha \in \mathcal{O}_K$ with $N(\alpha) > 1$ such that every $\beta \in \mathcal{O}_K$
-coprime to $\alpha$ (that is, $(\alpha) + (\beta) = \mathcal{O}_K$) with $1 < N(\beta) < N(\alpha)$
-satisfies $\Omega(\beta) \le \ell$.
-
-The set is closed under multiplication by units. For $K = \mathbb{Q}(\sqrt{m})$ imaginary quadratic
-of class number one it is the paper's set $Q_{m,\ell}$ (Equation (4)).
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
-(4). -/
-public def quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) : Set (𝓞 K) :=
-  {α | 1 < Ideal.absNorm (Ideal.span {α}) ∧ ∀ β : 𝓞 K,
-      1 < Ideal.absNorm (Ideal.span {β}) →
-      Ideal.absNorm (Ideal.span {β}) < Ideal.absNorm (Ideal.span {α}) →
-    IsCoprime α β → (UniqueFactorizationMonoid.normalizedFactors (Ideal.span {β})).card ≤ ℓ}
-
-/-- **One is not in the Schatunowsky set.** For every number field $K$ and every natural number
-$\ell$, the element $1$ of the ring of integers $\mathcal{O}_K$ does not lie in the Schatunowsky
-set $Q_\ell(K)$, because the ideal it generates has norm $1$.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
-(4). -/
-public theorem one_not_mem_quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) :
-    (1 : 𝓞 K) ∉ quadSchatunowskySet K ℓ := by
-  simp [quadSchatunowskySet]
-
 /-- **Unit groups of imaginary quadratic fields.** Let $K$ be an imaginary quadratic field with
 discriminant $d_K$. The unit group of its ring of integers $\mathcal{O}_K$ is cyclic, of order
 $4$ if $d_K = -4$, of order $6$ if $d_K = -3$, and of order $2$ otherwise.
@@ -261,25 +172,6 @@ public theorem_wanted mem_prime_of_mem_quadSchatunowskySet {K : Type*} [Field K]
     (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K ℓ)
     (hn : quadPrimeNorm K n ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α})) :
     ∀ P : Ideal (𝓞 K), P.IsPrime → P ≠ ⊥ → Ideal.absNorm P ≤ quadPrimeNorm K n → α ∈ P
-
-/-- **Norm bound and finiteness of the Schatunowsky set.** Let $K$ be an imaginary quadratic field
-(a totally complex number field of degree $2$ over $\mathbb{Q}$) with class number $1$ and ring of
-integers $\mathcal{O}_K$, and let $\ell$ and $n_0$ be natural numbers such that
-$N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$ for every $n \ge n_0$, where $N(\pi_n)$ and $N(\pi_n\#)$ are
-the prime and primorial norms of $K$. Then no $\alpha \in \mathcal{O}_K$ whose principal ideal
-$(\alpha)$ has absolute norm greater than $N(\pi_{n_0})^{\ell+1}$ lies in the Schatunowsky set
-$Q_\ell(K)$, and $Q_\ell(K)$ is finite.
-
-Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 4
-(`integers-2026-A110-thm-4`). -/
-public theorem_wanted quadSchatunowskySet_norm_bound_and_finite {K : Type*} [Field K]
-    [NumberField K]
-    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
-    (hn₀ : ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n) :
-    (∀ α : 𝓞 K, quadPrimeNorm K n₀ ^ (ℓ + 1) < Ideal.absNorm (Ideal.span {α}) →
-        α ∉ quadSchatunowskySet K ℓ) ∧
-      (quadSchatunowskySet K ℓ).Finite
 
 /-- **Decomposition of the Schatunowsky set.** Let $K$ be an imaginary quadratic field (a totally
 complex number field of degree $2$ over $\mathbb{Q}$) with class number $1$ and ring of integers
