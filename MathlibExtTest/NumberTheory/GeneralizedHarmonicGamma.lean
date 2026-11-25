@@ -92,3 +92,22 @@ example : ∫ x, Real.exp (-x) ∂gammaMeasure 1 1 = 1 / 2 := by
   norm_num [Finset.sum_range_succ, Nat.stirlingFirst, Nat.factorial, Nat.choose,
     generalizedHarmonic_succ, Real.rpow_neg_one] at h
   linarith
+
+/-! ## Binomially weighted sums -/
+
+-- With constant binomial weight, the correction is a single harmonic number of order α - 1.
+example (α : ℝ) (n : ℕ) :
+    ∑ j ∈ Finset.Ico 1 n, generalizedHarmonic α j =
+      n * generalizedHarmonic α n - generalizedHarmonic (α - 1) n := by
+  simpa [Finset.sum_range_succ, Nat.stirlingFirst] using
+    sum_choose_mul_generalizedHarmonic 0 n α
+
+-- When the weight is j, the two shifted orders occur with opposite signs.
+example (α : ℝ) (n : ℕ) :
+    ∑ j ∈ Finset.Ico 1 n, (j : ℝ) * generalizedHarmonic α j =
+      (n.choose 2 : ℝ) * generalizedHarmonic α n -
+        (generalizedHarmonic (α - 2) n - generalizedHarmonic (α - 1) n) / 2 := by
+  have h := sum_choose_mul_generalizedHarmonic 1 n α
+  norm_num [Finset.sum_range_succ, Nat.stirlingFirst, Nat.factorial] at h
+  rw [h]
+  ring

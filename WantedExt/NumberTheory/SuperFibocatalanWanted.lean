@@ -30,7 +30,8 @@ of denominators, as in the paper's proofs.
 Of the paper's thirteen numbered statements, ten are
 available here (including the super FiboCatalan half of
 Corollary 5). The product identities, FiboCatalan numbers and their identity,
-Lucas factorial and Lucas Catalan identity are imported from
+fibonomial coefficients and the integral fibonomial quotient, Lucas factorial and
+Lucas Catalan identity are imported from
 `MathlibExt.NumberTheory.SuperFibocatalan`. One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
@@ -65,16 +66,6 @@ namespace MathlibExt.NumberTheory.SuperFibocatalanWanted
 
 open MetaMathlibExt
 
-/-- **Fibonomial coefficients.** For natural numbers $n$ and $k$, the fibonomial coefficient
-$\binom{n}{k}_F$ is the rational number $F_n!/(F_k! \, F_{n-k}!)$ when $k \le n$, where $F_i$ is
-the $i$-th Fibonacci number and $F_j! = F_1 F_2 \cdots F_j$ is the Fibonacci factorial, and $0$
-when $k > n$. -/
-noncomputable def fibonomial (n k : ℕ) : ℚ :=
-  if k ≤ n then
-    fibonacciFactorial n /
-      (fibonacciFactorial k * fibonacciFactorial (n - k))
-  else 0
-
 /-- **Super FiboCatalan numbers are positive integers.** For all natural numbers $m$ and $n$, the
 super FiboCatalan number
 
@@ -90,26 +81,6 @@ theorem_wanted superFibonacciCatalan_isPosInt (m n : ℕ) :
       fibonacciFactorial (2 * m) * fibonacciFactorial (2 * n) /
         (fibonacciFactorial m * fibonacciFactorial n *
           fibonacciFactorial (m + n))
-
-/-- **Integrality of $F_{2n+1} F_{2n}!/(F_{n+2}! \, F_n!)$.** Let $F_k$ be the Fibonacci
-numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and, for $k \le m$,
-$\binom{m}{k}_F = F_m!/(F_k! \, F_{m-k}!)$ the fibonomial coefficient. For every natural
-number $n \ge 1$,
-$$F_{2n+1} \frac{F_{2n}!}{F_{n+2}! \, F_n!} = \frac{1}{F_{n+2}} \binom{2n+1}{n}_F,$$
-and this rational number is an integer.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Corollary 8. -/
-theorem_wanted fib_mul_factorialQuotient_eq_and_isInt
-    (n : ℕ) (hn : 1 ≤ n) :
-    (Nat.fib (2 * n + 1) : ℚ) *
-          (fibonacciFactorial (2 * n) /
-            (fibonacciFactorial (n + 2) * fibonacciFactorial n)) =
-        fibonomial (2 * n + 1) n / (Nat.fib (n + 2) : ℚ) ∧
-      ∃ k : ℤ, (k : ℚ) =
-        (Nat.fib (2 * n + 1) : ℚ) *
-          (fibonacciFactorial (2 * n) /
-            (fibonacciFactorial (n + 2) * fibonacciFactorial n))
 
 /-- **$k$-divisible Lucas factorial.** For natural numbers $k$ and $n$, the $k$-divisible Lucas
 factorial $\{n : k\}!$ is the product $\{n : k\}! = \{k\}\{2k\} \cdots \{nk\}$ of the Lucas

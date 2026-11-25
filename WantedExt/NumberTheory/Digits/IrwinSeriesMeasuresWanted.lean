@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Analysis.Series.RiemannRearrangement
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasures
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesLeadingIntegral
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
 
@@ -145,21 +146,6 @@ public theorem_wanted irwinSum_zero_lowerBounds
     (b : ℝ) * Real.log b - (b : ℝ) * Real.log (1 + 1 / (d : ℝ)) <
       irwinSum b d 0 ∧
     (b : ℝ) * Real.log ((b : ℝ) / 2) < irwinSum b d 0
-
-/-- **Prefix reciprocal sums as integrals against the Irwin measure.** Let $b > 1$ and $d < b$
-be natural numbers, let $n > 0$ and $k$ be natural numbers, let $k(n)$ be the number of
-occurrences of the digit $d$ in the base-$b$ representation of $n$, and let $\mu_k$ be the Irwin
-measure of base $b$ and digit $d$ with index $k$. Then the family that assigns $1/m$ to each
-positive integer $m$ whose base-$b$ representation begins with that of $n$ and contains exactly
-$k(n) + k$ occurrences of $d$, and $0$ to every other natural number $m$, is summable with sum
-$\int_{[0,1)} \frac{1}{n + x}\, d\mu_k(x)$.
-
-Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
-INTEGERS 26 (2026), Article A11, Proposition 4. -/
-public theorem_wanted integral_eq_leadingReciprocal_hasSum
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (n k : ℕ) (hn : 0 < n) :
-    HasSum (leadingReciprocalTerm b d (digitCount b d n + k) n)
-      (∫ x in Set.Ico (0 : ℝ) 1, ((n : ℝ) + x)⁻¹ ∂irwinMeasure b d k hd)
 
 /-- **Prefix sums as alternating ordinary-moment series.** Let $b > 1$, let $d < b$ be a digit, let
 $n$ be a positive integer, let $k(n)$ be the number of occurrences of $d$ in the base-$b$

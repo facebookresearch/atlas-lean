@@ -111,29 +111,6 @@ public theorem_wanted oneSilent_terms (x y z : ℤ → ℤ)
       extendedContinuant x (-(i : ℤ) - 3) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
     (∀ n : ℕ, x n = y n) ∧ (∀ n : ℕ, 1 ≤ n → x (-(n : ℤ)) = -z n) ∧ z 0 = 0
 
-/-- **Terms of 3-silent sequences.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
-integer sequences, and write $K_a(x)_b$ for the extended continuant of $x$ of order $a$ with start
-index $b$. Suppose that for every natural number $i$ we have $K_i(x)_0 = K_i(y)_0$,
-$K_{i-1}(x)_1 = K_{i-1}(y)_1$, $K_{-i-4}(x)_0 = K_i(z)_0$ and
-$K_{-i-5}(x)_1 = K_{i-1}(z)_1$, and that $x_{-1} = 0$. Then $x_n = y_n$ for every $n \ge 0$, and
-$x_{-n} = -z_{n-2}$ for every $n \ge 2$.
-
-In the paper's terms, the hypotheses say that the raw convergents
-$k_n = K_n(x)_0 / K_{n-1}(x)_1$ of $x$ satisfy $k_i \doteq c_i$ and $k_{-i-4} \doteq d_i$ for all
-$i \ge 0$, where $c_i$ and $d_i$ are the corresponding raw convergents of $y$ and $z$ and $\doteq$
-is equality of numerators and of denominators; the periodicity and limit conditions of a
-bi-infinite periodic continued fraction are not assumed.
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Theorem 6 and its proof (option 2, `x_{-1} = 0`). -/
-public theorem_wanted threeSilent_terms (x y z : ℤ → ℤ)
-    (heast : ∀ i : ℕ, extendedContinuant x i 0 = extendedContinuant y i 0 ∧
-      extendedContinuant x ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
-    (hwest : ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - 4) 0 = extendedContinuant z i 0 ∧
-      extendedContinuant x (-(i : ℤ) - 5) 1 = extendedContinuant z ((i : ℤ) - 1) 1)
-    (hx : x (-1) = 0) :
-    (∀ n : ℕ, x n = y n) ∧ ∀ n : ℕ, 2 ≤ n → x (-(n : ℤ)) = -z ((n : ℤ) - 2)
-
 /-- **Terms of a $\sigma$-silent sequence for odd $\sigma \ge 5$.** Let $\sigma \ge 5$ be an odd
 integer, let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite integer sequences, and write
 $K_a(x)_b$ for the extended continuant of order $a$ with start index $b$. Suppose that for every

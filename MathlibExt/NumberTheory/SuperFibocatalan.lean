@@ -18,7 +18,8 @@ import Mathlib.Tactic.LinearCombination
 # Fibonacci and Lucas polynomial identities for super FiboCatalan numbers
 
 This module proves the Fibonacci and Lucas cross-product identities and uses them to relate
-consecutive FiboCatalan numbers and consecutive Lucas Catalan numbers.
+consecutive FiboCatalan numbers and consecutive Lucas Catalan numbers. It also proves the
+integrality of a fibonomial quotient.
 -/
 
 public section
@@ -83,6 +84,48 @@ theorem fiboCatalan_identity (n : ℕ) :
   field_simp [fibonacciFactorial_ne]
   simp only [fibonacciFactorial]
   ring
+
+/-- **Fibonomial coefficients.** For natural numbers $n$ and $k$, the fibonomial coefficient
+$\binom{n}{k}_F$ is the rational number $F_n!/(F_k! \, F_{n-k}!)$ when $k \le n$, where $F_i$ is
+the $i$-th Fibonacci number and $F_j! = F_1 F_2 \cdots F_j$ is the Fibonacci factorial, and $0$
+when $k > n$. -/
+@[expose] noncomputable def fibonomial (n k : ℕ) : ℚ :=
+  if k ≤ n then
+    fibonacciFactorial n /
+      (fibonacciFactorial k * fibonacciFactorial (n - k))
+  else 0
+
+/-- **Integrality of $F_{2n+1} F_{2n}!/(F_{n+2}! \, F_n!)$.** Let $F_k$ be the Fibonacci
+numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and, for $k \le m$,
+$\binom{m}{k}_F = F_m!/(F_k! \, F_{m-k}!)$ the fibonomial coefficient. For every natural
+number $n \ge 1$,
+$$F_{2n+1} \frac{F_{2n}!}{F_{n+2}! \, F_n!} = \frac{1}{F_{n+2}} \binom{2n+1}{n}_F,$$
+and this rational number is an integer.
+
+Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
+Their Lucas Analogues", Corollary 8. -/
+theorem fib_mul_factorialQuotient_eq_and_isInt
+    (n : ℕ) (hn : 1 ≤ n) :
+    (Nat.fib (2 * n + 1) : ℚ) *
+          (fibonacciFactorial (2 * n) /
+            (fibonacciFactorial (n + 2) * fibonacciFactorial n)) =
+        fibonomial (2 * n + 1) n / (Nat.fib (n + 2) : ℚ) ∧
+      ∃ k : ℤ, (k : ℚ) =
+        (Nat.fib (2 * n + 1) : ℚ) *
+          (fibonacciFactorial (2 * n) /
+            (fibonacciFactorial (n + 2) * fibonacciFactorial n)) := by
+  constructor
+  · rw [fibonomial, ite_eq_left (by omega), show 2 * n + 1 - n = n + 1 by omega]
+    simp only [fibonacciFactorial, div_eq_mul_inv, mul_inv_rev]
+    ring
+  · -- With parameters (n, 1), the generalized FiboCatalan number is exactly this quotient.
+    obtain ⟨k, _, hk⟩ := generalizedFibonacciCatalan_isPosInt n 1
+    refine ⟨k, ?_⟩
+    rw [Int.cast_natCast, hk, generalizedFibonacciCatalan, fibonacciJordanQuotient]
+    rw [show 1 + n + 1 = n + 2 by omega, fibonacciFactorial_one, fibonacciFactorial_two,
+      mul_one, one_mul]
+    simp only [fibonacciFactorial, div_eq_mul_inv, mul_inv_rev]
+    ring
 
 /-- **Lucas polynomials in $s$ and $t$.** The Lucas polynomials $\{n\}$, for natural numbers
 $n$, are the polynomials in two variables $s$ and $t$ with integer coefficients defined by

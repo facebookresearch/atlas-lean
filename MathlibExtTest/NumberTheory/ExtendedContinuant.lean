@@ -98,3 +98,22 @@ example :
       -1 := by decide
 
 end MetaMathlibExt.silentTerms_table_five_mod_six
+
+namespace MetaMathlibExt.threeSilent_terms
+
+private def quadratic (i : ℤ) : ℤ := (i + 1) * (i + 2)
+
+-- The first westbound numerator vanishes. The next term is recovered from the denominator.
+example (y z : ℤ → ℤ)
+    (heast : ∀ i : ℕ, extendedContinuant quadratic i 0 = extendedContinuant y i 0 ∧
+      extendedContinuant quadratic ((i : ℤ) - 1) 1 = extendedContinuant y ((i : ℤ) - 1) 1)
+    (hwest : ∀ i : ℕ, extendedContinuant quadratic (-(i : ℤ) - 4) 0 = extendedContinuant z i 0 ∧
+      extendedContinuant quadratic (-(i : ℤ) - 5) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
+    y 0 = 2 ∧ z 0 = 0 ∧ z 1 = -2 := by
+  obtain ⟨he, hw⟩ := threeSilent_terms quadratic y z heast hwest (by decide)
+  have h₂ := hw 2 (by decide)
+  have h₃ := hw 3 (by decide)
+  norm_num [quadratic] at h₂ h₃
+  exact ⟨(he 0).symm, by omega, by omega⟩
+
+end MetaMathlibExt.threeSilent_terms
