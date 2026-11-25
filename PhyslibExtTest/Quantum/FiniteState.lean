@@ -234,12 +234,12 @@ lemma rotation_mem_unitaryGroup : rotation ∈ unitaryGroup (Fin 2) ℂ := by
   rw [mem_unitaryGroup_iff, star_eq_conjTranspose]
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [rotation, mul_apply, Fin.sum_univ_two, Complex.conj_ofNat] <;> norm_num
+    simp [rotation, Matrix.mul_apply, Fin.sum_univ_two, Complex.conj_ofNat] <;> norm_num
 
 lemma varMatrix_eq : varMatrix = rotation * diagonal (fun i => (eigs i : ℂ)) * rotationᴴ := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [varMatrix, rotation, eigs, mul_apply, vecMul_diagonal, Fin.sum_univ_two,
+    simp [varMatrix, rotation, eigs, Matrix.mul_apply, vecMul_diagonal, Fin.sum_univ_two,
       Complex.conj_ofNat] <;> norm_num
 
 example : varMatrix.IsHermitian := by

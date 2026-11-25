@@ -172,13 +172,6 @@ private lemma coeff_transfer (n k : ℕ) :
   simp only [Polynomial.coeff_map] at hcoeff
   simpa using hcoeff.symm
 
-private lemma tri_zero : trinomialCoefficient 0 0 = 1 := by
-  simp [trinomialCoefficient]
-
-private lemma tri_one_one : trinomialCoefficient 1 1 = 1 := by
-  unfold trinomialCoefficient
-  simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X, Polynomial.coeff_X_pow]
-
 private lemma tri_two_two : trinomialCoefficient 2 2 = 3 := by
   unfold trinomialCoefficient
   have h : ((1 + Polynomial.X + Polynomial.X ^ 2 : Polynomial ℕ) ^ 2)
@@ -187,18 +180,19 @@ private lemma tri_two_two : trinomialCoefficient 2 2 = 3 := by
   simp [Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X, Polynomial.coeff_X_pow]
 
 /--
-The central trinomial coefficients satisfy a three-term recurrence.
+**Three-term recurrence for central trinomial coefficients.** For a natural number $m$, let
+$T_m$ be the central trinomial coefficient, the coefficient of $x^m$ in $(1 + x + x^2)^m$.
+For every natural number $n$ the following holds, where for $n = 0$ the index $n - 1$ is read
+as $0$ (the last term then vanishes, since $3n = 0$):
+$$(n + 1)\,T_{n+1} = (2n + 1)\,T_n + 3n\,T_{n-1}.$$
+
+Proves `Wanted` entry `centralTrinomialCoeff_three_term_recurrence`.
 
 Source: P. Blasiak, G. Dattoli, A. Horzela, K. A. Penson, and K. Zhukovsky,
 "Motzkin Numbers, Central Trinomial Coefficients and Hybrid Polynomials,"
 Journal of Integer Sequences 11 (2008), Article 08.1.1,
 Corollary containing Equation (24), lines 364–369,
 <https://cs.uwaterloo.ca/journals/JIS/VOL11/Penson/penson131.tex>.
-
-The central coefficient in row `m` is the canonical
-`MetaMathlibExt.trinomialCoefficient m m`.
-
-Proves `Wanted` entry `centralTrinomialCoeff_three_term_recurrence`.
 -/
 theorem centralTrinomialCoeff_three_term_recurrence (n : ℕ) :
     (n + 1) * trinomialCoefficient (n + 1) (n + 1) =
@@ -206,8 +200,8 @@ theorem centralTrinomialCoeff_three_term_recurrence (n : ℕ) :
         3 * n * trinomialCoefficient (n - 1) (n - 1) := by
   by_cases h : n < 2
   · interval_cases n
-    · simp [tri_zero, tri_one_one]
-    · simp [tri_one_one, tri_two_two, tri_zero]
+    · simp [trinomialCoefficient_zero_zero, trinomialCoefficient_one_one]
+    · simp [trinomialCoefficient_one_one, tri_two_two, trinomialCoefficient_zero_zero]
   · have hle : 2 ≤ n := by omega
     obtain ⟨t, rfl⟩ : ∃ t, n = t + 2 := ⟨n - 2, by omega⟩
     have hsub : (t + 2) - 1 = t + 1 := by omega

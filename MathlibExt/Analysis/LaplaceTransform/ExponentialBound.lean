@@ -114,7 +114,11 @@ private lemma integrableOn_mul_exp_neg_Ioi' {r : ℝ} (hr : 0 < r) :
           simp only [neg_mul, add_neg_cancel, Real.exp_zero]
           ring
 
-/-- Laplace convergence from an exponential norm bound. -/
+/-- **Convergence of the Laplace transform under an exponential bound.** Let $E$ be a complex
+normed space, $f : \mathbb{R} \to E$ almost everywhere strongly measurable on $(0, \infty)$, and
+$a, C \in \mathbb{R}$ with $C \ge 0$ such that $\|f(t)\| \le C e^{a t}$ for all $t \ge 0$. Then for
+every $s \in \mathbb{C}$ with $\operatorname{Re} s > a$ the Laplace transform of $f$ converges at
+$s$, that is, $t \mapsto e^{-st} f(t)$ is integrable on $(0, \infty)$. -/
 theorem laplaceConvergent_of_norm_le_exp
     (f : ℝ → E) (a C : ℝ)
     (hf : AEStronglyMeasurable f (volume.restrict (Set.Ioi 0)))
@@ -159,16 +163,19 @@ theorem laplaceConvergent_of_norm_le_exp
         rw [Real.norm_of_nonneg
           (mul_nonneg hC (Real.exp_nonneg _))]
 
-/-- Laplace convergence from a source-shaped eventual exponential Big-O bound.
+/-- **Convergence of the Laplace transform under exponential growth.** Let $E$ be a complex
+normed space, $a \in \mathbb{R}$, and $f : \mathbb{R} \to E$ locally integrable on $[0, \infty)$
+with $\|f(t)\| = O(e^{a t})$ as $t \to \infty$. Then for every $s \in \mathbb{C}$ with
+$\operatorname{Re} s > a$ the Laplace transform of $f$ converges at $s$, that is,
+$t \mapsto e^{-st} f(t)$ is integrable on $(0, \infty)$.
 
-This is the first half of a corrected, strengthened-premise formalization of the
-ATLAS N320 intended convergence claim: a locally integrable function with
-`f =O[atTop] exp (a * t)` has a convergent Laplace transform for `a < s.re`.
-The `LocallyIntegrableOn f (Set.Ici 0)` premise explicitly repairs the missing
-endpoint condition: ATLAS's piecewise continuity on `ℝ_{>0}` does not supply
-near-zero integrability (counterexample `f(t) = 1/t`); the tail is handled by the
-asymptotic integrability API. This is not a literal proof of the under-specified
-source wording. -/
+Local integrability on $[0, \infty)$, not only on $(0, \infty)$, is needed: $f(t) = 1/t$ is
+continuous on $(0, \infty)$ and bounded at infinity, but not integrable near $0$.
+
+Source: ATLAS NumberTheoryI N320 (Sutherland, 18.785 Number Theory I, Lecture 16); a corrected,
+strengthened-premise formalization of the intended convergence claim, since the source's piecewise
+continuity on the open ray does not give integrability near 0. This is not a literal proof of the
+under-specified source wording. -/
 theorem laplaceConvergent_of_isBigO_exp
     (f : ℝ → E) (a : ℝ)
     (hloc : LocallyIntegrableOn f (Set.Ici 0))
@@ -214,7 +221,11 @@ theorem laplaceConvergent_of_isBigO_exp
     hF_loc.integrableOn_of_isBigO_atTop hbig htail
   exact hIci.mono_set Set.Ioi_subset_Ici_self
 
-/-- Holomorphy of the Laplace transform from an exponential bound. -/
+/-- **Holomorphy of the Laplace transform under an exponential bound.** Let $E$ be a complex
+Banach space, $f : \mathbb{R} \to E$ almost everywhere strongly measurable on $(0, \infty)$, and
+$a, C \in \mathbb{R}$ with $C \ge 0$ such that $\|f(t)\| \le C e^{a t}$ for all $t \ge 0$. Then the
+Laplace transform $s \mapsto \int_{(0, \infty)} e^{-st} f(t)\,dt$ is complex differentiable at
+every point of the half-plane $\{s \in \mathbb{C} : \operatorname{Re} s > a\}$. -/
 theorem differentiableOn_laplace_of_norm_le_exp
     (f : ℝ → E) (a C : ℝ)
     (hf : AEStronglyMeasurable f (volume.restrict (Set.Ioi 0)))
@@ -341,16 +352,20 @@ theorem differentiableOn_laplace_of_norm_le_exp
     rw [heq] at h2
     exact h2
 
-/-- Holomorphy of the Laplace transform from an eventual exponential Big-O bound.
+/-- **Holomorphy of the Laplace transform under exponential growth.** Let $E$ be a complex
+Banach space, $a \in \mathbb{R}$, and $f : \mathbb{R} \to E$ locally integrable on $[0, \infty)$
+with $\|f(t)\| = O(e^{a t})$ as $t \to \infty$. Then the Laplace transform
+$s \mapsto \int_{(0, \infty)} e^{-st} f(t)\,dt$ is complex differentiable at every point of the
+half-plane $\{s \in \mathbb{C} : \operatorname{Re} s > a\}$.
 
-This completes the source-shaped endpoint as a corrected, strengthened-premise
-formalization of the ATLAS N320 intended holomorphy claim: with
-`LocallyIntegrableOn f (Set.Ici 0)` explicitly repairing the missing endpoint
-condition, an eventual bound `f =O[atTop] exp (a * t)` gives holomorphy on
-`{s | a < s.re}`. ATLAS's piecewise continuity on `ℝ_{>0}` does not supply
-near-zero integrability (counterexample `f(t) = 1/t`). The `Ici 0` hypothesis is
-load-bearing: local integrability on the open ray plus an `atTop` bound would not
-suffice. This is not a literal proof of the under-specified source wording. -/
+Local integrability on $[0, \infty)$, not only on $(0, \infty)$, is what makes the Laplace
+integral converge on this half-plane: $f(t) = 1/t$ is continuous on $(0, \infty)$ and bounded at
+infinity, but not integrable near $0$, so its Laplace integral diverges for every $s$.
+
+Source: ATLAS NumberTheoryI N320 (Sutherland, 18.785 Number Theory I, Lecture 16); a corrected,
+strengthened-premise formalization of the intended holomorphy claim, since the source's piecewise
+continuity on the open ray does not give integrability near 0. This is not a literal proof of the
+under-specified source wording. -/
 theorem differentiableOn_laplace_of_isBigO_exp
     (f : ℝ → E) (a : ℝ)
     (hf : LocallyIntegrableOn f (Set.Ici 0))

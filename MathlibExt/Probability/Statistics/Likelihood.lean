@@ -43,9 +43,14 @@ open MeasureTheory
 
 open scoped BigOperators ENNReal
 
-/-- Genuine dominated population family: `AEMeasurable` densities normalized
-to one under a common dominating measure. Both counting measure (pmf) and
-volume (pdf) are permitted. No pointwise finiteness is imposed. -/
+/-- **Normalized density family.** Let $\Omega$ be a measurable space with a measure $\mu$ and
+let $\Theta$ be a set of parameters. A normalized density family on $\Omega$ indexed by $\Theta$
+with dominating measure $\mu$ consists of a function $f_\theta : \Omega \to [0, \infty]$ for
+each $\theta \in \Theta$ such that $f_\theta$ is $\mu$-almost everywhere measurable and
+$\int_\Omega f_\theta \, d\mu = 1$.
+
+Taking $\mu$ to be counting measure gives probability mass functions, and taking $\mu$ to be
+volume gives probability density functions. The densities may take the value $\infty$. -/
 structure NormalizedDensityFamily (Ω : Type*) (Θ : Type*) [MeasurableSpace Ω]
     (μ : Measure Ω) where
   dens : Θ → Ω → ℝ≥0∞
@@ -56,8 +61,14 @@ namespace NormalizedDensityFamily
 
 variable {Ω Θ : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- Two families with pointwise equal density data are equal. Only `dens` is
-compared; measurability and normalization fields are propositions. -/
+/-- **Normalized density families are determined by their densities.** Let $F$ and $G$ be
+normalized density families on a measurable space $\Omega$ with the same parameter set
+$\Theta$ and the same dominating measure $\mu$. If for every $\theta \in \Theta$ and every
+$x \in \Omega$ the density of $F$ at $\theta$ and the density of $G$ at $\theta$ take the same
+value at $x$, then $F = G$.
+
+Only the densities are compared; the measurability and normalization conditions are
+propositions. -/
 @[ext]
 theorem ext {F G : NormalizedDensityFamily Ω Θ μ}
     (h : ∀ θ x, F.dens θ x = G.dens θ x) : F = G := by
@@ -67,20 +78,30 @@ theorem ext {F G : NormalizedDensityFamily Ω Θ μ}
   subst hdens
   rfl
 
-/-- Population law defined by `withDensity`. -/
+/-- **Population law.** Let $F$ be a normalized density family on a measurable space $\Omega$
+with parameter set $\Theta$, dominating measure $\mu$ and densities $f_\theta$. The population
+law at $\theta \in \Theta$ is the measure $P_\theta$ on $\Omega$ with density $f_\theta$ with
+respect to $\mu$, so that $P_\theta(A) = \int_A f_\theta \, d\mu$ for every measurable set
+$A \subseteq \Omega$. -/
 noncomputable def law (F : NormalizedDensityFamily Ω Θ μ) (θ : Θ) :
     Measure Ω :=
   μ.withDensity (F.dens θ)
 
-/-- Probability normalization derived from the density integral. -/
+/-- **Population laws are probability measures.** Let $F$ be a normalized density family on
+$\Omega$ with parameter set $\Theta$, dominating measure $\mu$ and densities $f_\theta$. For
+every $\theta \in \Theta$, the population law $P_\theta$, the measure with density $f_\theta$
+with respect to $\mu$, is a probability measure. -/
 theorem isProbabilityMeasure_law (F : NormalizedDensityFamily Ω Θ μ)
     (θ : Θ) : IsProbabilityMeasure (F.law θ) := by
   constructor
   rw [law, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ,
     F.normalized θ]
 
-/-- Iid sample likelihood: the actual finite product of population densities.
-For `n = 0` this is the empty product `1`. -/
+/-- **Likelihood of an iid sample.** Let $F$ be a normalized density family on $\Omega$ with
+parameter set $\Theta$ and densities $f_\theta$ for $\theta \in \Theta$. For a sample size $n$,
+a parameter $\theta \in \Theta$ and a sample $x = (x_0, \dots, x_{n-1}) \in \Omega^n$, the iid
+likelihood of $\theta$ at $x$ is $L_n(\theta; x) = \prod_{i < n} f_\theta(x_i)$, a value in
+$[0, \infty]$. For $n = 0$ this is the empty product $1$. -/
 noncomputable def iidLikelihood (F : NormalizedDensityFamily Ω Θ μ) (n : ℕ)
     (θ : Θ) (x : Fin n → Ω) : ℝ≥0∞ :=
   ∏ i, F.dens θ (x i)
@@ -91,19 +112,30 @@ theorem iidLikelihood_apply (F : NormalizedDensityFamily Ω Θ μ) (n : ℕ)
     F.iidLikelihood n θ x = ∏ i, F.dens θ (x i) :=
   rfl
 
-/-- Empty sample gives the empty product `1`. -/
+/-- **Likelihood of the empty sample.** For a normalized density family $F$, every parameter
+$\theta$ and the empty sample $x$ (sample size $n = 0$), the iid likelihood of $\theta$ at $x$
+equals $1$, the empty product. -/
 @[simp]
 theorem iidLikelihood_nil (F : NormalizedDensityFamily Ω Θ μ) (θ : Θ)
     (x : Fin 0 → Ω) : F.iidLikelihood 0 θ x = 1 := by
   simp [iidLikelihood]
 
-/-- Complete all-sample MLE map: one fixed map attaining the global likelihood
-maximum at every sample. The pointwise order predicate is native `IsMaxOn`. -/
+/-- **Maximum likelihood estimator.** Let $F$ be a normalized density family on $\Omega$ with
+parameter set $\Theta$, let $n$ be a sample size, and let $L_n(\theta; x)$ denote the iid
+likelihood of $\theta \in \Theta$ at a sample $x \in \Omega^n$. A map $\hat\theta$ from
+$\Omega^n$ to $\Theta$ is a maximum likelihood estimator for samples of size $n$ if for every
+sample $x \in \Omega^n$ the parameter $\hat\theta(x)$ maximizes $\theta \mapsto L_n(\theta; x)$
+over all of $\Theta$. -/
 def IsMaximumLikelihoodEstimator (F : NormalizedDensityFamily Ω Θ μ) (n : ℕ)
     (θhat : (Fin n → Ω) → Θ) : Prop :=
   ∀ x, IsMaxOn (fun θ => F.iidLikelihood n θ x) Set.univ (θhat x)
 
-/-- Unfolded form: every sample, every parameter is below the estimate. -/
+/-- **Characterization of maximum likelihood estimators.** Let $F$ be a normalized density
+family on $\Omega$ with parameter set $\Theta$, let $n$ be a sample size, let $L_n(\theta; x)$
+denote the iid likelihood of $\theta \in \Theta$ at a sample $x \in \Omega^n$, and let
+$\hat\theta$ be a map from $\Omega^n$ to $\Theta$. Then $\hat\theta$ is a maximum likelihood
+estimator for samples of size $n$ if and only if $L_n(\theta; x) \le L_n(\hat\theta(x); x)$
+for every sample $x \in \Omega^n$ and every $\theta \in \Theta$. -/
 theorem isMaximumLikelihoodEstimator_iff (F : NormalizedDensityFamily Ω Θ μ)
     (n : ℕ) (θhat : (Fin n → Ω) → Θ) :
     F.IsMaximumLikelihoodEstimator n θhat ↔
@@ -114,9 +146,15 @@ theorem isMaximumLikelihoodEstimator_iff (F : NormalizedDensityFamily Ω Θ μ)
   · intro h x
     exact isMaxOn_univ_iff.mpr (h x)
 
-/-- Induced likelihood under a parameter transformation: whole-fiber supremum
-on the image of `τ`. The argument `η` ranges over `Set.range τ`, so each
-fiber is inhabited. No inverse selection is assumed. -/
+/-- **Induced likelihood.** Let $F$ be a normalized density family on $\Omega$ with parameter
+set $\Theta$, let $n$ be a sample size, let $\tau : \Theta \to H$ be a map into a set $H$, and
+let $x \in \Omega^n$ be a sample. For $\eta$ in the image of $\tau$, the induced likelihood of
+$\eta$ at $x$ is the supremum, in $[0, \infty]$, of the iid likelihood $L_n(\theta; x)$ over
+the fiber of $\tau$ above $\eta$:
+$$L^*_n(\eta; x) = \sup_{\theta \in \Theta,\ \tau(\theta) = \eta} L_n(\theta; x).$$
+
+Since $\eta$ lies in the image of $\tau$, the fiber is nonempty; no inverse of $\tau$ is
+chosen. -/
 noncomputable def inducedLikelihood (F : NormalizedDensityFamily Ω Θ μ)
     (n : ℕ) {H : Type*} (τ : Θ → H) (x : Fin n → Ω)
     (η : Set.range τ) : ℝ≥0∞ :=

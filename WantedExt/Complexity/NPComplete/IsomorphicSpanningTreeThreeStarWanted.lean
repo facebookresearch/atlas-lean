@@ -19,7 +19,7 @@ V_T = {v₀} ∪ {uᵢ, vᵢ, wᵢ : 1 ≤ i ≤ n}, E_T = {{v₀, uᵢ}, {uᵢ,
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.IsomorphicSpanningTreeWanted

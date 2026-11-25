@@ -70,7 +70,16 @@ termination_by min cutoff m - j
     pure table
 termination_by m - i
 
-/-- Compute indexed bad-character and strong good-suffix tables for a finite alphabet.
+/-- **Boyer–Moore preprocessing.** Given a pattern $p = p_0 \cdots p_{m-1}$ over the alphabet
+$\{0, \dots, \sigma - 1\}$, this computes a bad-character table $B$ of length $\sigma$ and a
+strong good-suffix table $G$ of length $m$. The table $B$ starts with every entry equal to $m$,
+and then for $k = 0, 1, \dots, m - 2$ in turn the entry $B_{p_k}$ is set to $m - 1 - k$. For
+$G$, let $s_i$ be the length of the longest common suffix of $p_0 \cdots p_i$ and $p$, computed
+with the Z algorithm on the reversed pattern. The table $G$ starts with every entry equal to
+$m$; then for $i = m - 1, \dots, 0$ in turn, if $s_i = i + 1$, every entry $G_j$ with
+$j < m - 1 - i$ that still equals $m$ is set to $m - 1 - i$; finally, for
+$i = 0, 1, \dots, m - 2$ in turn, the entry $G_{m - 1 - s_i}$ is set to $m - 1 - i$.
+
 The event cost includes table slots, copies, fill iterations and canonical Z events;
 it does not count machine instructions or unbounded-integer bit operations. -/
 public def preprocess {σ m : Nat} (p : Vector (Fin σ) m) :
@@ -167,8 +176,12 @@ private lemma preprocess_time_le_z {σ m : Nat} (p : Vector (Fin σ) m) (hm : 0 
     (Vector.replicate m m)
   omega
 
-/-- The executed preprocessor's selected-event cost, including alphabet-table
-initialization. This is not a word-RAM or bit-cost bound. -/
+/-- **Cost of Boyer–Moore preprocessing.** For a pattern of length $m$ over an alphabet of size
+$\sigma$, the event cost of the Boyer–Moore preprocessing is at most $\sigma$ when $m = 0$ and at
+most $\sigma + 10m - 6$ when $m \ge 1$.
+
+The cost counts the selected events of the preprocessor, including initialization of the
+alphabet table; it is not a word-RAM or bit-cost bound. -/
 public theorem preprocess_time_le {σ m : Nat} (p : Vector (Fin σ) m) :
     (preprocess p).time ≤ if m = 0 then σ else σ + 10 * m - 6 := by
   by_cases hm : m = 0
@@ -232,8 +245,14 @@ private lemma preprocess_bad_ret {σ m : Nat} (p : Vector (Fin σ) m) :
     rw [badScan]
     simp only [show ¬0 + 1 < m by omega, ↓reduceDIte, TimeM.ret_pure]
 
-/-- A bad-character slot is the distance from the last pattern position to the
-rightmost occurrence before that position, or the pattern length if absent. -/
+/-- **Bad-character table of Boyer–Moore preprocessing.** Let $p = p_0 \cdots p_{m-1}$ be a
+pattern over the alphabet $\{0, \dots, \sigma - 1\}$ and let $B$ be the bad-character table
+computed by the Boyer–Moore preprocessing of $p$. For every symbol $c$, either $B_c = m$ and
+$p_k \ne c$ for every $k$ with $k + 1 < m$, or there is $j$ with $j + 1 < m$ and $p_j = c$ such
+that $B_c = m - 1 - j$ and every $k$ with $k + 1 < m$ and $p_k = c$ satisfies $k \le j$.
+
+Thus $B_c$ is the distance from the last position of $p$ to the rightmost occurrence of $c$
+before that position, or $m$ if $c$ does not occur there. -/
 public theorem preprocess_badCharacter {σ m : Nat} (p : Vector (Fin σ) m) (c : Fin σ) :
     ((preprocess p).ret.1[c.val] = m ∧
       ∀ (k : Nat) (hk : k + 1 < m), p[k] ≠ c) ∨
@@ -688,8 +707,16 @@ private lemma strong_shiftCandidate {σ m : Nat} (p : Vector (Fin σ) m) (k : Fi
     · dsimp only [j]
       omega
 
-/-- A good-suffix slot is the least positive shift preserving the matched suffix
-and, when its predecessor overlaps, a different predecessor symbol. -/
+/-- **Good-suffix table of Boyer–Moore preprocessing.** Let $p = p_0 \cdots p_{m-1}$ be a
+pattern over the alphabet $\{0, \dots, \sigma - 1\}$, let $G$ be the good-suffix table computed
+by the Boyer–Moore preprocessing of $p$, and let $i < m$. Call a positive integer $e$ an
+admissible shift at $i$ if $p_{t - e} = p_t$ for every $t < m$ with $i < t$ and $e \le t$, and
+$p_{i - e} \ne p_i$ whenever $e \le i$. Then $1 \le G_i \le m$ and $G_i$ is the least
+admissible shift at $i$.
+
+After a mismatch at position $i$, shifting by $G_i$ keeps the matched suffix
+$p_{i+1} \cdots p_{m-1}$ aligned where it overlaps and, when $G_i \le i$, places the symbol
+$p_{i - G_i} \ne p_i$ under the mismatched position. -/
 public theorem preprocess_goodSuffix {σ m : Nat} (p : Vector (Fin σ) m) (i : Fin m) :
     let d := (preprocess p).ret.2[i.val]
     0 < d ∧ d ≤ m ∧
@@ -708,8 +735,15 @@ public theorem preprocess_goodSuffix {σ m : Nat} (p : Vector (Fin σ) m) (i : F
   · exact hl.2 e (strong_shiftCandidate p i e hem ⟨he, hmatch, hpred⟩)
   · omega
 
-/-- The full-match shift is the least positive period of the pattern, so later
-matcher stages may continue without discarding overlapping occurrences. -/
+/-- **The full-match shift is the least period of the pattern.** Let $p = p_0 \cdots p_{m-1}$
+be a nonempty pattern over the alphabet $\{0, \dots, \sigma - 1\}$ and let $G$ be the good-suffix
+table computed by the Boyer–Moore preprocessing of $p$. Then $1 \le G_0 \le m$,
+$p_{t - G_0} = p_t$ for every $t < m$ with $G_0 \le t$, and $G_0 \le e$ for every positive
+integer $e$ such that $p_{t - e} = p_t$ for every $t < m$ with $e \le t$. That is, $G_0$ is the
+least positive period of $p$.
+
+So after a full match the matcher may shift by $G_0$ without discarding overlapping
+occurrences. -/
 public theorem preprocess_fullMatch {σ m : Nat} (p : Vector (Fin σ) m) (hm : 0 < m) :
     let d := (preprocess p).ret.2[0]
     0 < d ∧ d ≤ m ∧
