@@ -22,3 +22,4 @@ Differential-equation and matrix models of population growth, structure, species
 - [Stable population theory](stable-population-theory/README.md)
 - [Competition and coexistence](competition-and-coexistence/README.md)
 - [Optimal foraging and life history](optimal-foraging-and-life-history/README.md)
+- [Life tables](life-tables/README.md)

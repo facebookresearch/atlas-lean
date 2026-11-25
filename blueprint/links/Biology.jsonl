@@ -7062,6 +7062,8 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/not-yet-classified/string-overlap/overlap.md"}], "id": "af_cd28189875b0faa810698cba", "object": [{"location": {"declaration": "Cslib.Bioinformatics.Assembly.StringOverlap.overlap"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/not-yet-classified/string-overlap/overlap-spec.md"}], "id": "af_31b15bea896b5e6c39c60231", "object": [{"location": {"declaration": "Cslib.Bioinformatics.Assembly.StringOverlap.overlap_spec"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/not-yet-classified/string-overlap/README.md"}], "id": "af_a49c6b5b1d3214e10f58bb70", "extensions": {"org.autoform": {"navigation": "module"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/life-tables/multistate-life-table-by-matrix-products.md"}], "id": "af_3c23e57c57abda2809588db7", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/life-tables/README.md"}], "id": "af_084e3039f303729c101c7cff"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/systems-biology/multisite-phosphorylation/README.md"}], "id": "af_9a5eb96f9b6e24bc7822aa9b"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/population-dynamics/discrete-population-models/README.md"}], "id": "af_7fa6ebd7b3b82186d79a89b8"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Biology/mathematical-neuroscience/hopfield-networks/README.md"}], "id": "af_9ef15d22ff4b1fc02969f2ea"}
