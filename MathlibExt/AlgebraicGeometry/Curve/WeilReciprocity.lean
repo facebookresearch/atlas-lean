@@ -255,7 +255,7 @@ open AlgebraicCurve
 
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
-theorem finsupp_prod_zpow_const {c : K} (hc : c ≠ 0) (D : Divisor K F) :
+private theorem finsupp_prod_zpow_const {c : K} (hc : c ≠ 0) (D : Divisor K F) :
     (D.prod fun _ n => c ^ n) = c ^ (D.sum fun _ n => n) := by
   classical
   unfold Finsupp.prod Finsupp.sum
@@ -263,7 +263,7 @@ theorem finsupp_prod_zpow_const {c : K} (hc : c ≠ 0) (D : Divisor K F) :
   | empty => simp
   | cons a s ha ih => rw [Finset.prod_cons, Finset.sum_cons, zpow_add₀ hc, ih]
 
-theorem degree_eq_sum_of_rational (D : Divisor K F)
+private theorem degree_eq_sum_of_rational (D : Divisor K F)
     (hrat : ∀ v ∈ D.support, Place.IsRational v) :
     Divisor.degree D = D.sum fun _ n => n := by
   unfold Divisor.degree
@@ -337,4 +337,3 @@ theorem AlgebraicCurve.weilReciprocity (K F : Type*) [Field K] [IsAlgClosed K] [
 end
 
 end
-

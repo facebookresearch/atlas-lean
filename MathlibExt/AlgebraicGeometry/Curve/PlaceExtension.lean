@@ -613,27 +613,6 @@ namespace AlgebraicCurve
 
 namespace Place
 
-section SinglePlace
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-theorem ord_nonneg_of_mem_593 {f : F} (hf : f ∈ v.toValuationSubring) : 0 ≤ v.ord f := by
-  rcases eq_or_ne f 0 with rfl | hf0
-  · simp
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
-  obtain ⟨n, u, hu⟩ :=
-    IsDiscreteValuationRing.eq_unit_mul_pow_irreducible
-      (x := (⟨f, hf⟩ : v.toValuationSubring)) (by simpa [Subtype.ext_iff] using hf0) hπ
-  have hcoe : f = ((u : v.toValuationSubring) : F) * ((π : F) ^ (n : ℤ)) := by
-    have h := congrArg (Subtype.val) hu
-    push_cast at h
-    rw [zpow_natCast]
-    exact h
-  rw [hcoe, v.ord_unit_smul_zpow u hπ (n : ℤ)]
-  exact Int.natCast_nonneg n
-
-end SinglePlace
-
 section IntegrallyClosed
 
 open Polynomial
@@ -660,7 +639,7 @@ theorem mem_maximalIdeal_iff_ord_pos {x : F} (hx : x ≠ 0)
     (hmem : x ∈ w.toValuationSubring) :
     (⟨x, hmem⟩ : w.toValuationSubring) ∈ IsLocalRing.maximalIdeal w.toValuationSubring ↔
       0 < w.ord x := by
-  have hnonneg : 0 ≤ w.ord x := w.ord_nonneg_of_mem_593 hmem
+  have hnonneg : 0 ≤ w.ord x := w.ord_nonneg_of_mem hmem
   have hcoe : ((⟨x, hmem⟩ : w.toValuationSubring) : F) = x := rfl
   rw [IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, ← w.adicValuation_coe_eq_one_iff,
     hcoe, ← w.ord_eq_zero_iff_adicValuation_eq_one hx]
@@ -1083,85 +1062,6 @@ namespace AlgebraicCurve
 
 namespace Place
 
-section Uniqueness
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (w : Place K F)
-
-private theorem eq_ord_of_addHom_of_nonneg_iff_loc (φ : F → ℤ)
-    (hmul : ∀ x y, x ≠ 0 → y ≠ 0 → φ (x * y) = φ x + φ y)
-    (hone : ∃ t, t ≠ 0 ∧ φ t = 1)
-    (hiff : ∀ x, x ≠ 0 → (0 ≤ φ x ↔ x ∈ w.toValuationSubring))
-    {x : F} (hx : x ≠ 0) : φ x = w.ord x := by
-  obtain ⟨t, ht0, ht1⟩ := hone
-
-  have hφ1 : φ 1 = 0 := by
-    have := hmul 1 1 one_ne_zero one_ne_zero
-    rw [mul_one] at this
-    omega
-
-  have hinv : ∀ y, y ≠ 0 → φ y⁻¹ = -φ y := by
-    intro y hy
-    have h1 : φ (y * y⁻¹) = φ y + φ y⁻¹ := hmul y y⁻¹ hy (inv_ne_zero hy)
-    rw [mul_inv_cancel₀ hy, hφ1] at h1
-    omega
-
-  have hpow : ∀ (y : F), y ≠ 0 → ∀ m : ℕ, φ (y ^ m) = m * φ y := by
-    intro y hy m
-    induction m with
-    | zero => simpa using hφ1
-    | succ m ih =>
-      rw [pow_succ, hmul _ _ (pow_ne_zero _ hy) hy, ih]
-      push_cast
-      ring
-  have hzpow : ∀ (y : F) (n : ℤ), y ≠ 0 → φ (y ^ n) = n * φ y := by
-    intro y n hy
-    rcases n with m | m
-    · simpa using hpow y hy m
-    · rw [zpow_negSucc, hinv _ (pow_ne_zero _ hy), hpow y hy, Int.negSucc_eq]
-      push_cast
-      ring
-
-  have hsign : ∀ y, y ≠ 0 → (0 ≤ φ y ↔ 0 ≤ w.ord y) := by
-    intro y hy
-    rw [hiff y hy, w.mem_iff_ord_nonneg hy]
-  have hzero : ∀ y, y ≠ 0 → (φ y = 0 ↔ w.ord y = 0) := by
-    intro y hy
-    have h1 := hsign y hy
-    have h2 := hsign y⁻¹ (inv_ne_zero hy)
-    rw [hinv y hy, w.ord_inv] at h2
-    omega
-
-  have htord : 0 < w.ord t := by
-    have h1 := (hsign t ht0).mp (by omega)
-    have h2 := (hzero t ht0).not.mp (by omega)
-    omega
-
-  have hcancel : ∀ y, y ≠ 0 → w.ord y = φ y * w.ord t := by
-    intro y hy
-    have hyt : y * t ^ (-(φ y)) ≠ 0 := mul_ne_zero hy (zpow_ne_zero _ ht0)
-    have h1 : φ (y * t ^ (-(φ y))) = 0 := by
-      rw [hmul _ _ hy (zpow_ne_zero _ ht0), hzpow t _ ht0, ht1]
-      ring
-    have h2 : w.ord (y * t ^ (-(φ y))) = 0 := (hzero _ hyt).mp h1
-    rw [w.ord_mul hy (zpow_ne_zero _ ht0), w.ord_zpow] at h2
-    linarith
-
-  obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible w.toValuationSubring
-  have hπ0 : (π : F) ≠ 0 := by
-    simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  have hπcancel := hcancel (π : F) hπ0
-  rw [w.ord_coe_irreducible hπ] at hπcancel
-
-  have htord1 : w.ord t = 1 := by
-    have hdvd : w.ord t ∣ 1 := ⟨φ (π : F), by linarith⟩
-    have := Int.le_of_dvd one_pos hdvd
-    omega
-  have := hcancel x hx
-  rw [htord1, mul_one] at this
-  exact this.symm
-
-end Uniqueness
-
 variable {K F F' : Type*} [Field K] [Field F] [Field F']
   [Algebra K F] [Algebra K F'] [Algebra F F'] [IsScalarTower K F F']
   [FiniteDimensional F F'] [Algebra.IsSeparable F F']
@@ -1173,7 +1073,7 @@ variable {v : Place K F} {w : Place K F'}
 private theorem neg_log_valuation_fiberCenter_eq_ord_ram (hw : w.restrict F = v) {x : F'}
     (hx : x ≠ 0) :
     -log ((fiberCenter F' v hw).valuation F' x) = w.ord x := by
-  refine eq_ord_of_addHom_of_nonneg_iff_loc w
+  refine eq_ord_of_addHom_of_nonneg_iff w
     (fun y => -log ((fiberCenter F' v hw).valuation F' y)) ?_ ?_ ?_ hx
   ·
     intro a b ha hb
@@ -1314,7 +1214,7 @@ def residueOfCenter (hw : w.restrict F = v) :
   (IsLocalRing.residue w.toValuationSubring).comp (toValuationSubringOfRestrictEq hw)
 
 omit [FiniteDimensional F F'] in
-private theorem residueOfCenter_apply (hw : w.restrict F = v) (c : integralClosureAt F' v) :
+theorem residueOfCenter_apply (hw : w.restrict F = v) (c : integralClosureAt F' v) :
     residueOfCenter hw c = IsLocalRing.residue w.toValuationSubring
       (toValuationSubringOfRestrictEq hw c) := rfl
 
@@ -1668,4 +1568,3 @@ theorem AlgebraicCurve.Divisor.support_pullback_subset {K F F' : Type*} [Field K
 end
 
 end
-

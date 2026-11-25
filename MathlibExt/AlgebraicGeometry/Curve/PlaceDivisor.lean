@@ -54,6 +54,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
+public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
 public import MathlibExt.AlgebraicGeometry.Curve.Place
 import Mathlib.LinearAlgebra.Charpoly.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Zero
@@ -86,9 +87,6 @@ variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 namespace Place
 
 variable {K F} (v : Place K F)
-
-/-- The residue field of a place. -/
-abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
 
 /-- The degree of a place: the dimension of its residue field over `K`. -/
 def deg : ℕ := Module.finrank K v.ResidueField
@@ -588,27 +586,6 @@ end
 
 section
 
-theorem Algebra.norm_of_subsingleton {R A : Type*} [CommRing R] [Ring A] [Algebra R A]
-  [Subsingleton A] (a : A) : Algebra.norm R a = 1 :=
-  LinearMap.det_eq_one_of_subsingleton _
-
-end
-
-section
-
-theorem Algebra.norm_prod {R A B : Type*} [CommRing R] [Ring A] [Ring B] [Algebra R A] [Algebra R
-  B] [Module.Free R A] [Module.Finite R A] [Module.Free R B] [Module.Finite R B] (x : A × B) :
-    Algebra.norm R x = Algebra.norm R x.1 * Algebra.norm R x.2 := by
-  have lmul_prod : Algebra.lmul R (A × B) x
-      = ((Algebra.lmul R A x.1).prodMap (Algebra.lmul R B x.2) : A × B →ₗ[R] A × B) := by
-    ext y <;> rfl
-  rw [Algebra.norm_apply, Algebra.norm_apply, Algebra.norm_apply, lmul_prod,
-    LinearMap.det_prodMap]
-
-end
-
-section
-
 open AlgebraicCurve
 
 theorem AlgebraicCurve.Divisor.evalFun_add {K F : Type*} [Field K] [Field F] [Algebra K F] (f : F)
@@ -879,27 +856,10 @@ section
 
 open IsDedekindDomain WithZero IsLocalRing
 
-section
-
-namespace AlgebraicCurve
-
-namespace Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-private theorem rowMain : v.adicValuation.IsRankOneDiscrete :=
-  IsDiscreteValuationRing.isRankOneDiscrete v.toValuationSubring F
-
-end Place
-
-end AlgebraicCurve
-
-end
-
 open AlgebraicCurve in
 theorem AlgebraicCurve.Place.adicValuation_isRankOneDiscrete {K F : Type*} [Field K] [Field F]
     [Algebra K F] (v : Place K F) : v.adicValuation.IsRankOneDiscrete :=
-  AlgebraicCurve.Place.rowMain v
+  v.instIsRankOneDiscreteAdicValuation
 
 end
 
@@ -907,44 +867,10 @@ section
 
 open IsDedekindDomain WithZero IsLocalRing
 
-section
-
-namespace AlgebraicCurve
-
-namespace Place
-
-variable {K F : Type*} [Field K] [Field F] [Algebra K F] (v : Place K F)
-
-private theorem _root_.AlgebraicCurve.Place.adicValuation_valuationSubring_loc :
-    v.adicValuation.valuationSubring = v.toValuationSubring := by
-  ext x
-  rw [Valuation.mem_valuationSubring_iff]
-  constructor
-  · intro hx
-    obtain ⟨a, rfl⟩ := IsDiscreteValuationRing.exists_lift_of_le_one hx
-    exact a.2
-  · intro hx
-    exact v.heightOneSpectrum.valuation_le_one (⟨x, hx⟩ : v.toValuationSubring)
-
-private theorem _root_.AlgebraicCurve.Place.mem_iff_adicValuation_le_one_loc {f : F} :
-    f ∈ v.toValuationSubring ↔ v.adicValuation f ≤ 1 := by
-  rw [← v.adicValuation_valuationSubring_loc]
-  exact Valuation.mem_valuationSubring_iff _ _
-
-private theorem rowMain_838 : v.adicValuation.IsTrivialOn K :=
-  Valuation.IsTrivialOn.of_le_one v.adicValuation fun a =>
-    v.mem_iff_adicValuation_le_one_loc.mp (v.algebraMap_mem' a)
-
-end Place
-
-end AlgebraicCurve
-
-end
-
 open AlgebraicCurve in
 theorem AlgebraicCurve.Place.adicValuation_isTrivialOn {K F : Type*} [Field K] [Field F]
     [Algebra K F] (v : Place K F) : v.adicValuation.IsTrivialOn K :=
-  AlgebraicCurve.Place.rowMain_838 v
+  v.instIsTrivialOnAdicValuation
 
 end
 
@@ -1055,7 +981,7 @@ namespace AlgebraicCurve
 namespace WFa
 open AlgebraicCurve
 
-theorem le_exp_neg_one_of_lt_one {x : ℤᵐ⁰} (hx : x < 1) : x ≤ exp (-1 : ℤ) := by
+private theorem le_exp_neg_one_of_lt_one {x : ℤᵐ⁰} (hx : x < 1) : x ≤ exp (-1 : ℤ) := by
   rcases eq_or_ne x 0 with rfl | hx0
   · exact zero_le'
   · rw [← exp_log hx0] at hx ⊢
@@ -1098,4 +1024,3 @@ theorem AlgebraicCurve.Place.ord_eq_neg_log_of_valuationSubring_eq {K F : Type*}
 end
 
 end
-

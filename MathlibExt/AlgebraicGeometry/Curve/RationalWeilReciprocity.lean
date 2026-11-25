@@ -139,7 +139,7 @@ section IrreducibleDivisor
 
 variable [DecidableEq (RatFunc K)]
 
-theorem single_add_single_apply_eq_ord_loc {p : K[X]} (hp : Irreducible p)
+private theorem single_add_single_apply_eq_ord_loc {p : K[X]} (hp : Irreducible p)
     (v : Place K (RatFunc K)) :
     (Finsupp.single (finitePlace K hp) (1 : ℤ)
         + Finsupp.single (placeInfty K) (-(p.natDegree : ℤ))) v
@@ -290,12 +290,6 @@ theorem ord_placeOfPoint_algebraMap (a : K) {q : K[X]} (hq : q ≠ 0) :
   rw [ord_placeOfPoint_algebraMap_eq_mul a hq, ord_placeOfPoint_X_sub_C a, mul_one]
 
 variable (K)
-
-theorem deg_eq_one_of_isAlgClosed_loc [IsAlgClosed K] (v : Place K (RatFunc K)) : v.deg = 1 := by
-  classical
-  rcases eq_placeOfPoint_or_eq_placeInfty K v with ⟨a, rfl⟩ | rfl
-  · exact deg_placeOfPoint K a
-  · exact deg_placeInfty K
 
 end RationalFunctionField
 
@@ -484,7 +478,7 @@ variable [IsAlgClosed K] [DecidableEq (RatFunc K)]
 omit [DecidableEq (RatFunc K)] in
 
 theorem isRational_of_isAlgClosed (v : Place K (RatFunc K)) : v.IsRational :=
-  Place.isRational_of_deg_eq_one v (deg_eq_one_of_isAlgClosed_loc K v)
+  Place.isRational_of_deg_eq_one v (deg_eq_one_of_isAlgClosed K v)
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
 
@@ -505,7 +499,7 @@ theorem sum_ord_eq_zero {f : RatFunc K} (hf : f ≠ 0) :
     ∑ v ∈ (principalDivisor hf).support, v.ord f = 0 := by
   rw [← sum_ord_mul_deg_eq_zero hf]
   exact Finset.sum_congr rfl fun v _ => by
-    rw [deg_eq_one_of_isAlgClosed_loc K v, Nat.cast_one, mul_one]
+    rw [deg_eq_one_of_isAlgClosed K v, Nat.cast_one, mul_one]
 
 omit [IsAlgClosed K] [DecidableEq (RatFunc K)] in
 
@@ -1072,4 +1066,3 @@ theorem AlgebraicCurve.RationalFunctionField.weilReciprocity (K : Type*) [Field 
 end
 
 end
-
