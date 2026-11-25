@@ -11,10 +11,6 @@ horizon, and the observed return from each visited state and depth is used to up
 count of the selected action there; estimates are kept per state, depth and action. Selecting an untried
 action first is a convention for the case $s_a = 0$, where the bonus is undefined. Each simulator call uses fresh randomness independent of the past.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Markov decision process](../value-iteration/mdp.md)

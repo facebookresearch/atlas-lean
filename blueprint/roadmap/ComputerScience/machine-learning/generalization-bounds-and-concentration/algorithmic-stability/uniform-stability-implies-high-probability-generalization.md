@@ -8,10 +8,6 @@ $S \sim D^m$, $R(A_S) \le R_{\mathrm{emp}}(A_S) + 2\beta + (4m\beta + M)\sqrt{\l
 Theorem 12, inequality (11)); the leave-one-out estimate satisfies the analogous bound (12). Deletion stability is distinct from
 replace-one stability and from expectation bounds.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Expected risk](../risk.md)

@@ -7,10 +7,6 @@ It returns a solution with exactly $d$ actions; counting the root as generated o
 total number of generated nodes is at most $\sum_{i=0}^{d} (d + 1 - i)\, b^i$, and the search keeps
 $O(bd)$ nodes in memory. For $d = 0$ it returns the empty plan after generating only the root.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Deterministic search problem](deterministic-search-problem.md)

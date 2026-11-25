@@ -6,10 +6,6 @@ $h_{\max}(s)$ the max-heuristic, each taking the value $\infty$ when no plan exi
 $h_{\max}(s) \le h^+(s) \le h^*(s)$ for every state $s$. In particular $h^+(s) = \infty$ exactly when the
 goal is not relaxed reachable from $s$, and then $h^*(s) = \infty$.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Delete relaxation](delete-relaxation.md)

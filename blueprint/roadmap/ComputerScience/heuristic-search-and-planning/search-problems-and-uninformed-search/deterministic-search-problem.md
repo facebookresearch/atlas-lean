@@ -8,10 +8,6 @@ in a goal state; its cost is the sum of its step costs; $h^*(s) \in [0, \infty]$
 costs of solutions from $s$, and $\infty$ when there is none. The problem is finitely branching if every
 $\mathrm{Act}(s)$ is finite; this does not require $S$ to be finite.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Sources
 
 - P. E. Hart, N. J. Nilsson and B. Raphael, *A formal basis for the heuristic determination of minimum cost paths*, IEEE Transactions on Systems Science and Cybernetics 4(2) (1968) 100–107, Section I-B (pp. 100–101): graphs given implicitly by a start node and a successor operator returning successors with arc costs, paths and their costs, goal sets, and $h(n)$, the cost of an optimal path from $n$ to a goal. Actions here label the arcs. <https://ai.stanford.edu/~nilsson/OnlinePubs-Nils/PublishedPapers/astar.pdf>

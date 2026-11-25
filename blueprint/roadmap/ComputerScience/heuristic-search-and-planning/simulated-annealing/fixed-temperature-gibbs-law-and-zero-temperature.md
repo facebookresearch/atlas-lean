@@ -9,10 +9,6 @@ $S^*$ is the set of global minimizers of $V$, and $\pi_T$ converges to the unifo
 $\pi_T(x)/\pi_T(s^*) = \exp(-(V(x) - \min V)/T) \to 0$ for any $s^* \in S^*$. The statement concerns the chain at a fixed
 temperature and says nothing about the time-inhomogeneous annealing chain.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Metropolis–Hastings step](../../machine-learning/bayesian-inference-and-sampling/markov-chain-monte-carlo/mh-step.md)

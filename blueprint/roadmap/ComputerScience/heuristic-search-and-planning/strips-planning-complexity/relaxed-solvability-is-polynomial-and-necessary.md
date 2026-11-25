@@ -11,10 +11,6 @@ For a STRIPS task in positive normal form with atom set $F$ and operator set $O$
 3. every plan of the original task from $s$ is a relaxed plan, so relaxed unsolvability certifies
    unsolvability.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Delete relaxation](delete-relaxation.md)

@@ -8,10 +8,6 @@ $t$, a probability mass function on histories of length $t$, by the finite produ
 transition kernels. For $0 \le \gamma < 1$ the discounted value $V^\pi(s_0) = \sum_{t \ge 0} \gamma^t
 \mathbb{E}[r(s_t, a_t)]$ converges absolutely.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Markov decision process](../value-iteration/mdp.md)

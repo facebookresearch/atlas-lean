@@ -7,10 +7,6 @@ equal to the least $f = g + h$ value that exceeded the previous threshold. Every
 $C^*$, the thresholds strictly increase until a solution is found, and IDA* terminates and returns a
 solution of cost $C^*$.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Deterministic search problem](../search-problems-and-uninformed-search/deterministic-search-problem.md)

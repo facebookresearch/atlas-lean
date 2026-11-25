@@ -11,10 +11,6 @@ some $h \in H$ consistent with every $(x_t, y_t)$. The environment is adaptive (
 predictions) for deterministic learners and oblivious (fixing the sequence in advance) for randomized learners,
 unless stated otherwise.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Sources
 
 - S. Shalev-Shwartz and S. Ben-David, *Understanding Machine Learning: From Theory to Algorithms*, Cambridge University Press, 2014 (author copy), Chapter 21: the online classification protocol and mistake bounds (Section 21.1) and online learnability in the unrealizable case with randomized predictions and regret (Section 21.2). <https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf>

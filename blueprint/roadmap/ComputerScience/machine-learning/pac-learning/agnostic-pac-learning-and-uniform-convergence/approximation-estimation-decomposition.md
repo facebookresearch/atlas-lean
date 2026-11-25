@@ -8,10 +8,6 @@ $L_D(h_S) = \varepsilon_{\mathrm{app}} + \varepsilon_{\mathrm{est}}$. The infimu
 is, it is a minimum. Enlarging $H$ can only decrease $\varepsilon_{\mathrm{app}}$ (a separate remark); the
 no-free-lunch theorem is a separate result and is not part of this definition.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Expected risk](../../generalization-bounds-and-concentration/risk.md)

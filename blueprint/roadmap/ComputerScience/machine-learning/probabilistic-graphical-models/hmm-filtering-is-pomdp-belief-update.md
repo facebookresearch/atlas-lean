@@ -10,10 +10,6 @@ belief obtained from $b_0 = \pi_0$ by $t$ successive belief updates $b_j = \tau(
 HMM instead emits an observation from the initial state, the encoding conditions $b_0$ on that first
 observation.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Hidden Markov model](hidden-markov-models/hmm.md)

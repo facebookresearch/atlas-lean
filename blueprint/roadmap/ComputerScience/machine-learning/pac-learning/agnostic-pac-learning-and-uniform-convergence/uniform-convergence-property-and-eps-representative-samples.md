@@ -7,10 +7,6 @@ every distribution $D$ and every $m \ge m^{UC}_H(\varepsilon, \delta)$, the prob
 $\varepsilon$-representative is at least $1 - \delta$. The event is assumed measurable, or the probability is read as
 an inner probability, by a stated convention.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Expected risk](../../generalization-bounds-and-concentration/risk.md)

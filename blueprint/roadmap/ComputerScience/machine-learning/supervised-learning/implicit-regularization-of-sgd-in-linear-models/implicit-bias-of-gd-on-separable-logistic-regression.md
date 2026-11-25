@@ -9,10 +9,6 @@ $\hat w / \lVert \hat w \rVert$, where $\hat w$ solves the hard-margin SVM probl
 decreases as $O(1/\log t)$ in the regimes stated in the source. The rate statements are those of the source and
 are not claimed for every loss with exponential tail.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Hard-margin SVM and margin-based sample complexity](../logistic-regression-and-support-vector-machines/hard-margin-svm-and-margin-based-sample-complexity.md)

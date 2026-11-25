@@ -12,9 +12,7 @@ of $T$; $C$ is subsumed by $D$ if $C^I \subseteq D^I$ in every model of $T$; an 
 has a model together with $T$; and entailment of an assertion is truth in every such model. Subsumption reduces to unsatisfiability:
 $C \sqsubseteq_T D$ if and only if $C \sqcap \neg D$ is unsatisfiable with respect to the same $T$.
 
-## Expansion
-
-This node states a precise definition. The reduction of subsumption to unsatisfiability is a theorem, and a good expansion states it on a page of its own.
+The reduction of subsumption to unsatisfiability is a theorem, not part of the definition.
 
 ## Sources
 

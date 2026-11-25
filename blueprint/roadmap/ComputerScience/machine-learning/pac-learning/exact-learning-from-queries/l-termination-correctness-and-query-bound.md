@@ -7,10 +7,6 @@ membership queries polynomial in $\lvert\Sigma\rvert$, $n$ and $m$, and its runn
 step, is polynomial in $\lvert \Sigma \rvert$, $n$ and $m$ (Angluin, Theorem 6; for a fixed alphabet, polynomial in
 $m$ and $n$).
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Minimally adequate teacher and observation tables](minimally-adequate-teacher-and-observation-tables.md)

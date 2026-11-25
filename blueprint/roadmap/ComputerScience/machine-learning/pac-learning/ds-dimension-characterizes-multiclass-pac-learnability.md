@@ -8,10 +8,6 @@ learnable if and only if its DS dimension is finite (Brukhim, Carmon, Dinur, Mor
 the Natarajan dimension does not suffice in general: there are classes with Natarajan dimension $1$ that are
 not learnable.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Learners and agnostic PAC learnability](agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)

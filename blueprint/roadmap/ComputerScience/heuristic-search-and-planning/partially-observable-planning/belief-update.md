@@ -11,10 +11,6 @@ $$\tau(b, a, o)(s') = \frac{Z(o \mid s', a) \sum_s P(s' \mid s, a)\, b(s)}{\Pr(o
 The update is undefined for observations of zero predictive probability; any convention for that case
 (for example, leaving the belief unchanged) is a separate choice that no statement may rely on.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Finite POMDPs](finite-pomdps.md)

@@ -12,9 +12,7 @@ The equal-halves split requires the number of agents in each recursive call to b
 for powers of two. For other $n$ it fails: with three agents having the same uniform valuation, a half
 of the cake shared by two of them cannot give both value $1/3$.
 
-## Expansion
-
-This node states a precise result for powers of two. The general-$n$ protocol is a separate page and is not
+The statement covers $n$ a power of two. The general-$n$ protocol is a separate page and is not
 covered by this one: with $n_1 = \lfloor n/2 \rfloor$, each agent marks the point $z_i$ with
 $V_i([s, z_i]) = (n_1/n) V_i([s,t])$, the $n_1$ agents with the first $n_1$ marks recurse on $[s, z^*]$ for the $n_1$-th mark
 $z^*$, and the others recurse on $[z^*, t]$.

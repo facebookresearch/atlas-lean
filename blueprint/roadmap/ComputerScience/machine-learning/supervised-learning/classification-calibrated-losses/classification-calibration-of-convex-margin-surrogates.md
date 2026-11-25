@@ -7,10 +7,6 @@ classification-calibrated if $H^-(\eta) > H(\eta)$ for every $\eta \ne 1/2$; no 
 $\Phi$ is classification-calibrated if and only if $\Phi$ is differentiable at $0$ and $\Phi'(0) < 0$ (Bartlett,
 Jordan and McAuliffe, Theorem 4, part 1). The formulation that assumes conditional minimizers exist is a separate presentation.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [The Bayes classifier is optimal](../bayes-classifier/is-bayes-estimator.md)

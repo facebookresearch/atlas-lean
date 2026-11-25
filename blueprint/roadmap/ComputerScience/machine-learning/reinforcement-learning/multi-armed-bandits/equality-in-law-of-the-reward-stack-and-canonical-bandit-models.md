@@ -9,10 +9,6 @@ $(A_1, X_1, \dots, A_n, X_n)$ in the reward-stack model equals the canonical law
 regret, pull counts and every measurable functional of the history have the same distribution in the
 two models.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Reward-stack model of a stochastic bandit](reward-stack-model-of-a-stochastic-bandit.md)

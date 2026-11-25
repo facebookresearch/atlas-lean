@@ -7,10 +7,6 @@ linear and convex on the belief simplex. One can take $\Gamma_0 = \{0\}$ and obt
 $\Gamma_H$ by choosing an action and, for each observation, a vector of $\Gamma_H$. The statement is for
 finite horizons; infinite-horizon discounted values are a separate matter.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Finite POMDPs](finite-pomdps.md)

@@ -9,10 +9,6 @@ from $c_v^{(0)} = x_v$ and sets $c_v^{(k)} = \mathrm{HASH}(c_v^{(k-1)}, \{\!\{ c
 injective encoding applied to both graphs at once; it distinguishes two graphs at iteration $k$ if their colour
 multisets differ.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Sources
 
 - How Powerful are Graph Neural Networks? (Xu, Hu, Leskovec, Jegelka, ICLR 2019; arXiv:1810.00826) — arXiv / ICLR 2019, Sec 2 (eqs. 2.1-2.4), Sec 3 (WL test). <https://arxiv.org/pdf/1810.00826>

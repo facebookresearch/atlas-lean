@@ -9,10 +9,6 @@ $w^*(d)$ the induced width along $d$ of the moral graph with all pairs of query 
 query variables come first in $d$ (so they are never eliminated), it uses
 $O\bigl((n + \lvert E \rvert)\, k^{w^*(d) + 1}\bigr)$ arithmetic operations.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Bayesian network](bayesian-networks/bayes-net.md)

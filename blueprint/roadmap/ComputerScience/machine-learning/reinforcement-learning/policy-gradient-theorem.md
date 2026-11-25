@@ -10,10 +10,6 @@ $$\nabla_\theta V^{\pi_\theta}(\mu) = \frac{1}{1-\gamma}\, \mathbb{E}_{s \sim d^
 Without positivity, the same identity holds in the form
 $\frac{1}{1-\gamma} \mathbb{E}_{s \sim d^{\pi_\theta}_\mu} \sum_a \nabla_\theta \pi_\theta(a \mid s)\, Q^{\pi_\theta}(s,a)$.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Markov decision process](../../heuristic-search-and-planning/value-iteration/mdp.md)

@@ -7,10 +7,6 @@ $\Delta_i > 0$ and every $n \ge K$,
 
 $$\mathbb{E}[T_i(n)] \le \frac{8 \ln n}{\Delta_i^2} + 1 + \frac{\pi^2}{3}.$$
 
-## Expansion
-
-This node states a precise result, the per-arm bound established in the proof of Auer, Cesa-Bianchi and Fischer's Theorem 1.
-
 ## Related topics
 
 - [Anytime regret bound for UCB1](anytime-regret-bound-for-ucb1.md)

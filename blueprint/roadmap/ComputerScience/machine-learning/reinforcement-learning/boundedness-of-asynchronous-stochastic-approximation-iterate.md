@@ -9,10 +9,6 @@ $0 \le \beta < 1$ and $D \ge 0$ with $\lVert F(x) \rVert_v \le \beta \lVert x \r
 $\lVert x \rVert_v = \max_i \lvert x_i \rvert / v_i$. Then the iterates $x(t)$ are bounded with probability
 one.
 
-## Expansion
-
-This node states a precise result.
-
 ## Sources
 
 - J. N. Tsitsiklis, *Asynchronous stochastic approximation and Q-learning*, Machine Learning 16 (1994) 185–202, Assumptions 1–3 and 6 (pp. 188–189) and Theorem 1 (p. 189). <https://www.mit.edu/~jnt/Papers/J052-94-jnt-q.pdf>

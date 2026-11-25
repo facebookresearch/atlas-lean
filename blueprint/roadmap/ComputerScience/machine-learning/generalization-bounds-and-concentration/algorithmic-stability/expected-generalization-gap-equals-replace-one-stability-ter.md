@@ -7,10 +7,6 @@ $$\mathbb{E}_{S \sim D^m}\bigl[L_D(A(S)) - L_S(A(S))\bigr] = \mathbb{E}\bigl[\el
 where on the right $S \sim D^m$, $z' \sim D$ and $i$ uniform on $\{1, \dots, m\}$ are independent, $S^{(i)}$ replaces $z_i$
 by $z'$, and both sides also average over $A$'s randomness (Shalev-Shwartz and Ben-David, Theorem 13.2).
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [On-average replace-one stability](on-average-replace-one-stability.md)

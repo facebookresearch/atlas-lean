@@ -8,10 +8,6 @@ width over all orderings. Ordinary width is not the induced width: the induced w
 after adding fill edges between earlier neighbours (a separate definition), and its minimum over
 orderings is the treewidth. Forests have width at most $1$.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Binary constraint satisfaction problem](../ac-3-algorithm/binary-csp.md)

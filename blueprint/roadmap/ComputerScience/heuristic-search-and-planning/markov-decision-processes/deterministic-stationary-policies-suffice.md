@@ -5,10 +5,6 @@ fixed point of the Bellman optimality operator. For every state $s$, the supremu
 history-dependent randomized policies $\pi$ equals $V^*(s)$, and it is attained simultaneously for all
 states by any deterministic stationary policy that is greedy with respect to $V^*$.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [History-dependent randomized policies and trajectory laws](history-dependent-randomized-policies-and-trajectory-laws.md)

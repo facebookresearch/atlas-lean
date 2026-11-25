@@ -11,10 +11,6 @@ from the frontier may be inserted again when a strictly cheaper path is found. A
 $N$ performs at most $N$ removals and reports failure, success with a path, or exhaustion of fuel;
 termination and optimality are separate theorems under explicit finiteness and cost hypotheses.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Deterministic search problem](deterministic-search-problem.md)

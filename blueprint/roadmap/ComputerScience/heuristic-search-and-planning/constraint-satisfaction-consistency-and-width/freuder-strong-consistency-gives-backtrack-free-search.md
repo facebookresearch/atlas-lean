@@ -6,10 +6,6 @@ search that assigns the variables in the order $d$, giving each variable a value
 constraints to the earlier variables, never reaches a variable without such a value; in particular
 the network has a solution, found without backtracking.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Strong k-consistency](strong-k-consistency.md)

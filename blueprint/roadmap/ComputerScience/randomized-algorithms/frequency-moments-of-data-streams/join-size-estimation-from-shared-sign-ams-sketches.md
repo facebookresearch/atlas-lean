@@ -14,10 +14,7 @@ its [variance bound](variance-sketch-sq-le.md)
 and the [median-of-means estimate](measure-real-ams-estimate-le.md)
 are stated on their own pages.
 
-## Expansion
-
-This node states a precise result. The identity $\mathbb{E}[s_i s_j] = 0$ for $i \ne j$ is the only
-property of the signs the proof uses.
+The identity $\mathbb{E}[s_i s_j] = 0$ for $i \ne j$ is the only property of the signs the proof uses.
 
 ## Depends on
 

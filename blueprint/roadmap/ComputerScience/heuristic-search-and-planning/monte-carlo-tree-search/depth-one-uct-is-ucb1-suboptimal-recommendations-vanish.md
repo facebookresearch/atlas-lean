@@ -12,9 +12,7 @@ $\sum_{a : \Delta_a > 0} K\, \mathbb{E}[T_a(n)]/n$ (if a suboptimal action is mo
 $n/K$ plays; apply Markov's inequality), which tends to $0$. This is a statement about one decision node,
 not consistency of multilevel UCT.
 
-## Expansion
-
-This node states a precise result. The corollary is an elementary consequence, not a statement of the cited sources.
+The corollary is an elementary consequence, not a statement of the cited sources.
 
 ## Depends on
 

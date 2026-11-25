@@ -9,10 +9,6 @@ probability distribution on $A$; it never sees states. The finite-horizon value 
 $0$ and, for $0 \le \gamma < 1$, the discounted value are the expected total (discounted) rewards under
 the trajectory law induced by $b_0$, the policy, $P$ and $Z$.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Depends on
 
 - [Markov decision process](../value-iteration/mdp.md)

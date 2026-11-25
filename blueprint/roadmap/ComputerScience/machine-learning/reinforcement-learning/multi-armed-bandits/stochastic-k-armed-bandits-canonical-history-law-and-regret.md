@@ -8,10 +8,6 @@ probability law $\mathbb{P}_{\nu,\pi}$ on $(\{1, \dots, k\} \times \mathbb{R})^n
 $\pi_t$ and the reward distribution $P_{A_t}$ of the chosen arm. The pull count of arm $i$ is
 $T_i(n) = \#\{t \le n : A_t = i\}$ and the regret is $R_n = n\mu^* - \mathbb{E}_{\nu,\pi}[\sum_{t \le n} X_t]$.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Sources
 
 - T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020 (author copy), Section 4.5 (regret, pull counts) and Section 4.6 (policies as probability kernels, the density (4.7) of the canonical bandit model and Proposition 4.8). <https://tor-lattimore.com/downloads/book/book.pdf>

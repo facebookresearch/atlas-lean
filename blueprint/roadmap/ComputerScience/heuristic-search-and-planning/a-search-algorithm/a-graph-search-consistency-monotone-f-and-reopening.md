@@ -14,9 +14,7 @@ with the goal test applied when a node is removed from the frontier.
    admissible and inconsistent; without reopening, $C$ is closed with cost $3$ via $A$ before $B$ is
    expanded, and the search returns cost $6$ instead of the optimum $11/2$.
 
-## Expansion
-
-This node states a precise result. The search model and admissibility are those of the tree-search page.
+The search model and admissibility are those of the tree-search page.
 
 ## Depends on
 

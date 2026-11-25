@@ -10,10 +10,6 @@ $\lVert \hat Q^* - Q^* \rVert_\infty \le \gamma\eta/(1-\gamma)^2$ by the simulat
 $[0, 1/(1-\gamma)]$). This restricted bound has suboptimal dependence on $1-\gamma$ and is not the minimax
 generative-model theorem; rewards in $[0, R_{\max}]$ multiply the value bound by $R_{\max}$.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Markov decision process](../../heuristic-search-and-planning/value-iteration/mdp.md)

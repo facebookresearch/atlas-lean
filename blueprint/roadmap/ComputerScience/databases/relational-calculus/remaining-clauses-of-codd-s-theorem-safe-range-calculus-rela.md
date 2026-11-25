@@ -10,10 +10,7 @@ domain-independent calculus query is equivalent, under the natural semantics (wh
 the active-domain semantics), to a relational-algebra expression, and every relational-algebra expression is
 equivalent to a domain-independent calculus query (Abiteboul, Hull and Vianu, Theorem 5.3.10).
 
-## Expansion
-
-This node states a precise result. Its proof translates a calculus query under the active-domain semantics into the
-algebra; the converse direction follows from Codd's theorem, since every safe-range query is domain independent.
+Its proof translates a calculus query under the active-domain semantics into the algebra; the converse direction follows from Codd's theorem, since every safe-range query is domain independent.
 
 ## Depends on
 

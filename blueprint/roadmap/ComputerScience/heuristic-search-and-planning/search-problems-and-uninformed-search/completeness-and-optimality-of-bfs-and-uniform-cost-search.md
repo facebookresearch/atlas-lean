@@ -11,10 +11,6 @@ Consider a deterministic search problem with finite branching in which some goal
    cost. The hypothesis matters: with zero-cost cycles or infinitely many applicable actions the search
    can fail to terminate or to return an optimal solution.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Deterministic search problem](deterministic-search-problem.md)

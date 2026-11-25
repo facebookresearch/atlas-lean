@@ -10,10 +10,7 @@ minus one; with this convention a graph with an edge has tree-width at least $1$
 $w^*$ for that minimum and states it as tree-width minus one, a convention in which tree-width is the
 largest bag size.
 
-## Expansion
-
-This node states a precise definition. The equality between the minimum induced width and the tree-width
-is a theorem, not part of the definition, and a good expansion states it on a page of its own.
+The equality between the minimum induced width and the tree-width is a theorem, not part of the definition.
 
 ## Related topics
 

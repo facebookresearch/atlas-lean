@@ -6,10 +6,6 @@ protocol of the online-classification page. Then $H$ is agnostically online lear
 Littlestone dimension is finite (Ben-David, Pál and Shalev-Shwartz). The two directions are the regret upper bound
 for finite dimension and the linear lower bound for infinite dimension.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Online classification protocol, mistakes and regret](online-classification-protocol-mistakes-and-regret.md)

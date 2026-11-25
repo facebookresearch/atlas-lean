@@ -7,10 +7,6 @@ on-average-replace-one-stable with rate $\varepsilon(m)$ if
 $\mathbb{E}[\ell(A(S^{(i)}), z_i) - \ell(A(S), z_i)] \le \varepsilon(m)$ for every distribution $D$, the expectation being
 over all of these and $A$'s randomness.
 
-## Expansion
-
-This node states a precise definition.
-
 ## Sources
 
 - S. Shalev-Shwartz and S. Ben-David, *Understanding Machine Learning: From Theory to Algorithms*, Cambridge University Press, 2014 (author copy), Definition 13.3 (on-average-replace-one-stable). <https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf>

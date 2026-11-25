@@ -16,11 +16,7 @@ The exponential form is stated under the sufficient conditions $c, h \ge 0$, and
 with $L = 1/2$ (so $c = -1/2$, $h = 1$), $y_0 = x_0$ and one perturbation of size $\tau$, the error after one
 step is $\tau$, larger than $e^{-1/2}\tau$.
 
-## Expansion
-
-This node states a precise result. A good expansion instantiates it for one-step integrators (the
-defect is $h$ times the truncation error) and for floating-point evaluation (the defect is the rounding
-error) as separate pages.
+Its instantiations for one-step integrators (the defect is $h$ times the truncation error) and for floating-point evaluation (the defect is the rounding error) are separate statements.
 
 ## Sources
 

@@ -8,10 +8,6 @@ every node it expands has $f \le C^*$, and only finitely many nodes have $g \le 
 $h$ is part of the hypothesis; the solution-cost guarantee is a separate statement from bounds on the
 number of expanded nodes.
 
-## Expansion
-
-This node states a precise result.
-
 ## Depends on
 
 - [Deterministic search problem](../search-problems-and-uninformed-search/deterministic-search-problem.md)
