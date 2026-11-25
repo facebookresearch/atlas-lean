@@ -46,6 +46,7 @@ public import Mathlib.Order.ConditionallyCompleteLattice.Finset
 namespace WantedExt.Biology.Neuroscience.PulseCoupledSynchronyWanted
 
 open MeasureTheory Finset
+open scoped ContDiff
 
 variable {N : ℕ}
 
@@ -54,7 +55,7 @@ Section 2.1): `f` is smooth on `[0, 1]`, with `f(0) = 0`, `f(1) = 1`, `f' > 0` a
 `[0, 1]` (one-sided derivatives at the endpoints); `g` maps `[0, 1]` to `[0, 1]` and is the
 inverse of `f` there. -/
 structure StateFunction (f g : ℝ → ℝ) : Prop where
-  contDiffOn : ContDiffOn ℝ ⊤ f (Set.Icc 0 1)
+  contDiffOn : ContDiffOn ℝ ∞ f (Set.Icc 0 1)
   map_zero : f 0 = 0
   map_one : f 1 = 1
   deriv_pos : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 < derivWithin f (Set.Icc 0 1) x

@@ -92,9 +92,10 @@ structure BoundaryHypotheses (a b d : ι → ℝ → ℝ) (C : Matrix ι ι ℝ)
 
 /-- **Positivity and boundedness** (Cohen and Grossberg 1983, Lemma 1). Assume hypotheses a)–d)
 (`StandingHypotheses`) and e)–f) (`BoundaryHypotheses`). Let `x` be a forward solution of
-Eq. (1) on `[0, ∞)` (right derivative `field (x t)` at every `t ≥ 0`) with every coordinate of
-`x 0` positive. Then every coordinate of `x t` is positive for all `t ≥ 0`, and the trajectory
-is bounded: there is `M` with `x t i ≤ M` for all `t ≥ 0` and all `i`.
+Eq. (1) on `[0, ∞)` (derivative `field (x t)` within `[0, ∞)` at every `t ≥ 0`, one-sided at
+`0`) with every coordinate of `x 0` positive. Then every coordinate of `x t` is positive for all
+`t ≥ 0`, and the trajectory is bounded: there is `M` with `x t i ≤ M` for all `t ≥ 0` and all
+`i`.
 
 Source: Cohen and Grossberg (1983), Lemma 1. -/
 theorem_wanted pos_and_bounded (a b d : ι → ℝ → ℝ) (C : Matrix ι ι ℝ)
@@ -126,10 +127,10 @@ in the form "with strictly increasing signal functions and a totally disconnecte
 set, every bounded trajectory converges"). Assume hypotheses a)–d) (`StandingHypotheses`),
 that each `d_i` is strictly increasing on `[0, ∞)` and continuously differentiable on
 `(0, ∞)`, and that the set of equilibria `{e | ∀ i, 0 < e i ∧ field e = 0}` in the open positive
-orthant is totally disconnected. Let `x` be a forward solution of Eq. (1) on `[0, ∞)` (right
-derivative `field (x t)` at every `t ≥ 0`) that stays in a compact set `K` contained in the
-open positive orthant. Then there is an equilibrium `e` with every coordinate positive and
-`field e = 0` such that `x t → e` as `t → ∞`.
+orthant is totally disconnected. Let `x` be a forward solution of Eq. (1) on `[0, ∞)`
+(derivative `field (x t)` within `[0, ∞)` at every `t ≥ 0`, one-sided at `0`) that stays in a
+compact set `K` contained in the open positive orthant. Then there is an equilibrium `e` with
+every coordinate positive and `field e = 0` such that `x t → e` as `t → ∞`.
 
 Source: Cohen and Grossberg (1983), Theorem 1 and Corollary 1. -/
 theorem_wanted tendsto_equilibrium (a b d : ι → ℝ → ℝ) (C : Matrix ι ι ℝ)

@@ -31,7 +31,7 @@ arXiv version is inconsistent with Eq. (10) and is not used. Attractivity of the
 non-Lorentzian frequency densities and finite-`N` statements are not claimed.
 
 Sources: E. Ott and T. M. Antonsen, "Low dimensional behavior of large systems of globally
-coupled oscillators", Chaos 18 (2008) 037113, Eqs. (4)–(10), (13)–(14) and Section IV
+coupled oscillators", Chaos 18 (2008) 037113, Eqs. (4)–(10), (13)–(14), Sections III and IV.b
 (arXiv:0806.0004).
 -/
 module
@@ -76,7 +76,7 @@ noncomputable def orderField (K Λ Ω ω₀ : ℝ) (r : ℂ) : ℂ :=
 noncomputable def lorentzian (ω₀ Δ ω : ℝ) : ℝ :=
   Δ / Real.pi / ((ω - ω₀) ^ 2 + Δ ^ 2)
 
-/-- An admissible function in the sense of Ott and Antonsen (Section IV): bounded by `1` and
+/-- An admissible function in the sense of Ott and Antonsen (Section III): bounded by `1` and
 continuous on the closed lower half-plane, holomorphic on the open lower half-plane, of modulus
 `< 1` on the real axis, and tending to `0` as `Im w → -∞`, uniformly in `Re w`. -/
 structure Admissible (β : ℂ → ℂ) : Prop where
@@ -111,10 +111,10 @@ theorem_wanted poissonDensity_moments (α : ℂ) (hα : ‖α‖ < 1) :
 /-- **The unit disk is invariant** (Ott and Antonsen 2008, Eq. (9)). Let `K, Λ, Ω` be real, let
 `r : ℝ → ℂ` be continuous, and let `w` be a frequency with `Im w ≤ 0` and `‖α₀‖ < 1`. Then the
 ansatz equation `α' = ansatzField Ω w (K r(t) + Λ) α` has a solution `α` on `[0, ∞)` with
-`α 0 = α₀` (right derivative at every `t ≥ 0`), it satisfies `‖α t‖ < 1` for all `t ≥ 0`, and
-any other such solution agrees with it on `[0, ∞)`.
+`α 0 = α₀` (derivative within `[0, ∞)` at every `t ≥ 0`, one-sided at `0`), it satisfies
+`‖α t‖ < 1` for all `t ≥ 0`, and any other such solution agrees with it on `[0, ∞)`.
 
-Source: Ott and Antonsen (2008), Eq. (9) and Section IV. -/
+Source: Ott and Antonsen (2008), Eq. (9) and Section III. -/
 theorem_wanted exists_unique_ansatz_solution (K Λ Ω : ℝ) (r : ℝ → ℂ) (hr : Continuous r)
     (w α₀ : ℂ) (hw : w.im ≤ 0) (hα₀ : ‖α₀‖ < 1) :
     ∃ α : ℝ → ℂ, α 0 = α₀ ∧
@@ -124,30 +124,30 @@ theorem_wanted exists_unique_ansatz_solution (K Λ Ω : ℝ) (r : ℝ → ℂ) (
         (∀ t, 0 ≤ t → HasDerivWithinAt β (ansatzField Ω w (K * r t + Λ) (β t)) (Set.Ici 0) t) →
         ∀ t, 0 ≤ t → β t = α t
 
-/-- **Lorentzian evaluation** (Ott and Antonsen 2008, Section IV, the closure at the pole). Let
+/-- **Lorentzian evaluation** (Ott and Antonsen 2008, Section III, the closure at the pole). Let
 `Δ > 0` and `ω₀` be real, and let `β` be bounded by `1` and continuous on the closed lower
 half-plane and holomorphic on the open lower half-plane. Then
 `∫ β(ω) g_L(ω) dω = β(ω₀ - iΔ)`, where `g_L = lorentzian ω₀ Δ`.
 
-Source: Ott and Antonsen (2008), Section IV. -/
+Source: Ott and Antonsen (2008), Section III. -/
 theorem_wanted integral_mul_lorentzian (ω₀ Δ : ℝ) (hΔ : 0 < Δ) (β : ℂ → ℂ)
     (hβ1 : ∀ w : ℂ, w.im ≤ 0 → ‖β w‖ ≤ 1) (hβc : ContinuousOn β {w | w.im ≤ 0})
     (hβd : DifferentiableOn ℂ β {w | w.im < 0}) :
     ∫ ω : ℝ, β ω * (lorentzian ω₀ Δ ω : ℂ) = β (ω₀ - Δ * I)
 
 /-- **The Lorentzian ansatz manifold is invariant and closes on the order parameter** (Ott and
-Antonsen 2008, Section IV and Eq. (14)). Let `K, Λ, Ω, ω₀` be real and let `α₀` be admissible
-(`Admissible`). Then there is a solution `r` of the order-parameter equation (14)
-(`r' = orderField K Λ Ω ω₀ r`, right derivative at every `t ≥ 0`) on `[0, ∞)` with
-`r 0 = conj (α₀ (ω₀ - i))`, such that:
+Antonsen 2008, Sections III and IV.b and Eq. (14)). Let `K, Λ, Ω, ω₀` be real and let `α₀` be
+admissible (`Admissible`). Then there is a solution `r` of the order-parameter equation (14)
+(`r' = orderField K Λ Ω ω₀ r`, derivative within `[0, ∞)` at every `t ≥ 0`, one-sided at `0`)
+on `[0, ∞)` with `r 0 = conj (α₀ (ω₀ - i))`, such that:
 * there is a family `α(w, t)` that, for each `w` with `Im w ≤ 0`, solves the ansatz equation
-  `α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` (right derivative at every
-  `t ≥ 0`) with `α(w, 0) = α₀ w`; and
+  `α(w, ·)' = ansatzField Ω w (K r(t) + Λ) α(w, ·)` on `[0, ∞)` (derivative within `[0, ∞)` at
+  every `t ≥ 0`, one-sided at `0`) with `α(w, 0) = α₀ w`; and
 * every such family satisfies, for every `t ≥ 0`: `α(·, t)` is admissible, and
   `conj (r t) = ∫ α(ω, t) g_L(ω) dω` for the Lorentzian density `g_L` with `Δ = 1` centred at
   `ω₀` (self-consistency, Eq. (7)).
 
-Source: Ott and Antonsen (2008), Section IV and Eq. (14). -/
+Source: Ott and Antonsen (2008), Sections III and IV.b and Eq. (14). -/
 theorem_wanted exists_order_parameter_invariant (K Λ Ω ω₀ : ℝ) (α₀ : ℂ → ℂ)
     (hα₀ : Admissible α₀) :
     ∃ r : ℝ → ℂ, r 0 = (starRingEnd ℂ) (α₀ (ω₀ - I)) ∧
