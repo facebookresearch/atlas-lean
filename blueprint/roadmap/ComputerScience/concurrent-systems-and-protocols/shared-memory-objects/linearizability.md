@@ -8,7 +8,7 @@ Appending responses lets a pending invocation take effect before its response is
 
 - [Linearizable histories](../linearizability/linearizable.md)
 - [Concurrent histories](concurrent-histories.md)
-- [Sequential specifications of objects](sequential-specifications-of-objects.md)
+- [Prefix-closed and total sequential specifications](sequential-specifications-of-objects.md)
 
 ## Sources
 
