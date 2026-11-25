@@ -1,0 +1,100 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.BicommutantFiniteOrbit
+public import Mathlib.Topology.Algebra.Module.Spaces.PointwiseConvergenceCLM
+public import Mathlib.Data.Fintype.EquivFin
+
+/-!
+# Original full-H double commutant lies in actual strong-operator closure
+
+The pointwise operator topology embeds into the product of original
+vector coordinates. A neighborhood tests a finite subset of H. Literal
+finite l² orbit closure supplies one original source operator meeting
+those coordinate neighborhoods. No strong closure, amplified model,
+finite-dimensional H or approximating-family certificate is input.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open Set Topology
+
+namespace MathlibExt.Analysis.CStarAlgebra
+
+noncomputable section
+
+universe u
+
+variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- **Bicommutant lies in strong closure.** Let `H` be a complete complex Hilbert space and `S` a unital
+complex star subalgebra of the bounded operators on `H`. Every bounded operator in the bicommutant
+of `S` lies in the closure of `S` for the strong operator topology, namely uniform convergence on
+finite subsets of `H`. -/
+theorem bicommutant_mem_strongClosure
+    (S : StarSubalgebra ℂ (H →L[ℂ] H)) (T : H →L[ℂ] H)
+    (hT : T ∈ Set.centralizer (Set.centralizer (S : Set (H →L[ℂ] H)))) :
+    (ContinuousLinearMap.toUniformConvergenceCLM (RingHom.id ℂ) H {s : Set H | Finite s} T :
+      H →Lₚₜ[ℂ] H) ∈ closure (Set.range fun a : S =>
+        (ContinuousLinearMap.toUniformConvergenceCLM (RingHom.id ℂ) H
+          {s : Set H | Finite s} (a : H →L[ℂ] H) : H →Lₚₜ[ℂ] H)) := by
+  classical
+  let P := ContinuousLinearMap.toUniformConvergenceCLM (RingHom.id ℂ) H {s : Set H | Finite s}
+  let c : (H →Lₚₜ[ℂ] H) → (H → H) := DFunLike.coe
+  have hc := (PointwiseConvergenceCLM.isEmbedding_coeFn (RingHom.id ℂ) H H).isInducing
+  change P T ∈ closure (Set.range fun a : S => P (a : H →L[ℂ] H))
+  rw [hc.closure_eq_preimage_closure_image]
+  have hImage : c '' (Set.range fun a : S => P (a : H →L[ℂ] H)) =
+      Set.range (fun a : S => fun x : H => (a : H →L[ℂ] H) x) := by
+    ext f
+    constructor
+    · rintro ⟨p, ⟨a, rfl⟩, rfl⟩
+      exact ⟨a, rfl⟩
+    · rintro ⟨a, rfl⟩
+      exact ⟨P (a : H →L[ℂ] H), ⟨a, rfl⟩, rfl⟩
+  change c (P T) ∈ closure (c '' (Set.range fun a : S => P (a : H →L[ℂ] H)))
+  rw [hImage]
+  apply mem_closure_iff.mpr
+  intro o ho hTo
+  have hoN : o ∈ Filter.pi (fun x : H => 𝓝 (T x)) := by
+    rw [← nhds_pi]
+    exact ho.mem_nhds hTo
+  obtain ⟨I, t, ht, hto⟩ := Filter.mem_pi'.mp hoN
+  let e := I.equivFin
+  let ξ : Fin I.card → H := fun i => (e.symm i : H)
+  choose b hb using fun i : Fin I.card => mem_nhds_iff.mp (ht (ξ i))
+  let U : Set (PiLp 2 (fun _ : Fin I.card => H)) := {v | ∀ i, v i ∈ b i}
+  have hU : IsOpen U := by
+    have hUeq : U = ⋂ i : Fin I.card, {v : PiLp 2 (fun _ : Fin I.card => H) | v i ∈ b i} := by
+      ext v
+      simp only [U, Set.mem_iInter, mem_ofPred_eq]
+    rw [hUeq]
+    exact isOpen_iInter_of_finite fun i => (hb i).2.1.preimage
+      (PiLp.continuous_apply 2 (fun _ : Fin I.card => H) i)
+  have hTU : (WithLp.toLp 2 (fun i : Fin I.card => T (ξ i)) : PiLp 2 (fun _ : Fin I.card => H)) ∈ U :=
+    fun i => (hb i).2.2
+  obtain ⟨v, hvU, hv⟩ := mem_closure_iff.mp
+    (bicommutant_finiteOrbit_mem_closure I.card S T hT ξ) U hU hTU
+  obtain ⟨a, rfl⟩ := hv
+  refine ⟨(fun x : H => (a : H →L[ℂ] H) x), hto ?_, ⟨a, rfl⟩⟩
+  intro x hx
+  have hxi : ξ (e ⟨x, hx⟩) = x := congrArg (fun z : I => (z : H)) (e.symm_apply_apply ⟨x, hx⟩)
+  have ha := (hb (e ⟨x, hx⟩)).1 (hvU (e ⟨x, hx⟩))
+  simpa only [hxi] using ha
+
+end
+
+end MathlibExt.Analysis.CStarAlgebra
