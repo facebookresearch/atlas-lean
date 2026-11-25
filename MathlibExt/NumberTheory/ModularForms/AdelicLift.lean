@@ -71,10 +71,6 @@ theorem idealBound_le_one (N : Ideal R) (v : HeightOneSpectrum R) :
   · rw [idealBound_of_ne_bot R hN, ← WithZero.exp_zero, WithZero.exp_le_exp]
     simp
 
-/-- The integral finite adeles: those integral at every finite place. -/
-def integralFiniteAdeles : Set (FiniteAdeleRing R K) :=
-  {x | ∀ v : HeightOneSpectrum R, x v ∈ v.adicCompletionIntegers K}
-
 /-- Matrices over the finite adeles with trivial archimedean part. -/
 def finMat (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) :
     Matrix (Fin 2) (Fin 2) (AdeleRing R K) :=
@@ -165,7 +161,7 @@ end AdelicDock
 
 namespace LanglandsTunnell
 
-/-- The real archimedean component of a rational adelic `GL(2)` element. -/
+/-- The unique infinite place of `ℚ` is real. -/
 theorem rat_infinitePlace_isReal :
     InfinitePlace.IsReal (default : InfinitePlace ℚ) :=
   InfinitePlace.isReal_iff.mpr (ComplexEmbedding.isReal_iff.mpr (by
