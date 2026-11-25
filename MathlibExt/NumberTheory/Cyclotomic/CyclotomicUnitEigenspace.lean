@@ -221,8 +221,9 @@ noncomputable def unitsEndHom : (R ≃+* R) →* Module.End (ZMod p) (ModP p (Ad
 end UnitsGalAction
 
 set_option backward.isDefEq.respectTransparency false in
-
-noncomputable instance instIsCycExt :
+/-- `ℚ(ζ_p)` is a `p`-th cyclotomic extension; kept local so importers keep the
+Mathlib instance. -/
+noncomputable local instance instIsCycExt :
     IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ) :=
   inferInstance
 
