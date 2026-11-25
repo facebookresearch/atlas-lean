@@ -1580,24 +1580,6 @@ theorem discreteCoefficientGroupZeroIso_naturality
     (h.trans (F.map_comp (ContinuousCohomology.zeroIso X).hom
       (TopRep.invariantsResMap (φ : H →* G) f)))
 
-private def longSequenceHomOfSquares {C : Type a} [Category.{b} C]
-    {X₀ X₁ X₂ X₃ X₄ X₅ Y₀ Y₁ Y₂ Y₃ Y₄ Y₅ : C}
-    (s₀ : X₀ ⟶ X₁) (s₁ : X₁ ⟶ X₂) (s₂ : X₂ ⟶ X₃)
-    (s₃ : X₃ ⟶ X₄) (s₄ : X₄ ⟶ X₅)
-    (t₀ : Y₀ ⟶ Y₁) (t₁ : Y₁ ⟶ Y₂) (t₂ : Y₂ ⟶ Y₃)
-    (t₃ : Y₃ ⟶ Y₄) (t₄ : Y₄ ⟶ Y₅)
-    (a₀ : X₀ ⟶ Y₀) (a₁ : X₁ ⟶ Y₁) (a₂ : X₂ ⟶ Y₂)
-    (a₃ : X₃ ⟶ Y₃) (a₄ : X₄ ⟶ Y₄) (a₅ : X₅ ⟶ Y₅)
-    (w₀ : s₀ ≫ a₁ = a₀ ≫ t₀) (w₁ : s₁ ≫ a₂ = a₁ ≫ t₁)
-    (w₂ : s₂ ≫ a₃ = a₂ ≫ t₂) (w₃ : s₃ ≫ a₄ = a₃ ≫ t₃)
-    (w₄ : s₄ ≫ a₅ = a₄ ≫ t₄) :
-    ComposableArrows.mk₅ s₀ s₁ s₂ s₃ s₄ ⟶
-      ComposableArrows.mk₅ t₀ t₁ t₂ t₃ t₄ :=
-  ComposableArrows.homMk₅
-    (f := ComposableArrows.mk₅ s₀ s₁ s₂ s₃ s₄)
-    (g := ComposableArrows.mk₅ t₀ t₁ t₂ t₃ t₄)
-    a₀ a₁ a₂ a₃ a₄ a₅ w₀ w₁ w₂ w₃ w₄
-
 /-- All six components and every square are the original native group/coefficient maps. -/
 def discreteCoefficientGroupLongSequenceMap
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -1640,11 +1622,11 @@ def discreteCoefficientGroupLongSequenceMap
     discreteCoefficientGroupCohomologySquare.{v, z, w} φ S.f T.f f.τ₁ f.τ₂ f.comm₁₂ (n + 1)
   let w₄ : HS₁.map S.g ≫ a₅ = a₄ ≫ HT₁.map T.g :=
     discreteCoefficientGroupCohomologySquare.{v, z, w} φ S.g T.g f.τ₂ f.τ₃ f.comm₂₃ (n + 1)
-  longSequenceHomOfSquares (C := C)
-    (HS₀.map S.f) (HS₀.map S.g) (discreteCoefficientConnecting.{v, max z w} S hS n)
-    (HS₁.map S.f) (HS₁.map S.g)
-    (HT₀.map T.f) (HT₀.map T.g) (discreteCoefficientConnecting.{z, max v w} T hT n)
-    (HT₁.map T.f) (HT₁.map T.g)
+  ComposableArrows.homMk₅
+    (f := ComposableArrows.mk₅ (HS₀.map S.f) (HS₀.map S.g)
+      (discreteCoefficientConnecting.{v, max z w} S hS n) (HS₁.map S.f) (HS₁.map S.g))
+    (g := ComposableArrows.mk₅ (HT₀.map T.f) (HT₀.map T.g)
+      (discreteCoefficientConnecting.{z, max v w} T hT n) (HT₁.map T.f) (HT₁.map T.g))
     a₀ a₁ a₂ a₃ a₄ a₅ w₀ w₁ w₂ w₃ w₄
 
 /-- The common coefficient enlargement retains the literal identity evaluation. -/

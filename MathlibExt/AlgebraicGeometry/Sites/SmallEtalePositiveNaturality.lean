@@ -88,7 +88,10 @@ private theorem representativeComparison_naturality
   let R : InjectiveResolution Q := injectiveResolution Q
   let R' : InjectiveResolution Q' := injectiveResolution Q'
   let φ : R.Hom R' τ :=
-    ⟨InjectiveResolution.desc τ R' R, InjectiveResolution.desc_commutes_zero τ R' R⟩
+    { hom := InjectiveResolution.desc τ R' R
+      ι_f_zero_comp_hom_f_zero := by
+        simpa only [CochainComplex.single₀_map_f_zero] using
+          InjectiveResolution.desc_commutes_zero τ R' R }
   let a : G.obj (R.cocomplex.X (n + 1)) ⟶ G.obj (R'.cocomplex.X (n + 1)) :=
     G.map (φ.hom.f (n + 1))
   let d : (G.rightDerived (n + 1)).obj Q ⟶ (G.rightDerived (n + 1)).obj Q' :=
