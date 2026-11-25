@@ -329,8 +329,8 @@ theorem le_div_of_diploidStep_eq {s t U q : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (
 
 /-- Mutation–selection balance for a recessive allele in an infinite, randomly mating diploid
 population with nonoverlapping generations. The newborn frequencies are in Hardy–Weinberg
-proportions, the viabilities of `AA`, `Aa`, and `aa` are `1`, `1`, and `1 - s`, and mutation
-from `A` to `a` occurs at rate `u` after selection, with no back mutation.
+proportions, the viabilities of `AA`, `Aa`, and `aa` are `1`, `1`, and `1 - s` with `0 < s ≤ 1`,
+and mutation from `A` to `a` occurs at rate `0 < u < 1` after selection, with no back mutation.
 
 For wild-type frequency `p ∈ [0, 1]`, `diploidStep 0 s u (1 - p)` updates the mutant
 frequency. It models a generation only when mean fitness is positive
