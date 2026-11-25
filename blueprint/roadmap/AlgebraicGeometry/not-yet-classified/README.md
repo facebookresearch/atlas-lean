@@ -1185,3 +1185,6 @@ Topics added since this subject's fields were last revised.
 - [Witt Loop Ind Geometry](witt-loop-ind-geometry/README.md)
 - [Witt Quotient Action Models](witt-quotient-action-models/README.md)
 - [Relative Group Law End Degree Nsmul](relative-group-law-end-degree-nsmul/README.md)
+- [Frame of a sheaf of modules](is-frame-on.md)
+- [Invertible Tensor Sections](invertible-tensor-sections/README.md)
+- [Monoidal](monoidal/README.md)
