@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Scheduling.CriticalPath
+public import CSLibExt.Algorithms.Lean.Approximation.ListScheduling
 
 /-! # Critical-path fixtures (SCH-001, C10).
 
@@ -20,7 +21,10 @@ Kernel-elaborated contract checks over the frozen production definitions:
 * API-shape `example`s whose proof term is exactly a production theorem;
 * concrete end-to-end fixtures whose forward/reverse run values are derived
   from `forward_run_ok` / `reversed_run_ok` via `earliestStart_spec`,
-  `longestToSink_spec` and the none-iff lemmas, never invented.
+  `longestToSink_spec` and the none-iff lemmas, never invented;
+* an integration check that this module imports the list-scheduling API too, whose
+  `makespan` (largest machine load) is a different declaration from
+  `CriticalPath.makespan` (earliest sink event time).
 
 Each fixture uses explicit tiny `IsWeightedPath` witnesses for attainment, a
 potential upper bound proved by path induction for maximality, and a closed
@@ -33,11 +37,11 @@ list, integer, or equality facts that do not evaluate a production algorithm.
 
 set_option autoImplicit false
 
-namespace Cslib.Algorithms.Lean.Scheduling.Tests
+namespace Cslib.Algorithms.Lean.Scheduling.CriticalPath.Tests
 
 open Cslib.Algorithms.Lean.BellmanFord
 open Cslib.Algorithms.Lean.DAGShortestPaths
-open Cslib.Algorithms.Lean.Scheduling
+open Cslib.Algorithms.Lean.Scheduling.CriticalPath
 
 -- Pure `Option` arithmetic: `latestStart`, by `rfl` on literals.
 
@@ -1126,6 +1130,15 @@ example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
           ∀ v, IsModelEvent edges s t v → τ' v ≤ τ v :=
   latestSchedule_feasible hacyc hnn hcover hst hf hr hT
 
+-- Integration: the list-scheduling and critical-path APIs load into one environment, and
+-- their makespans are different declarations: the largest machine load of a machine
+-- assignment, and the earliest sink event time of the forward run.
+
+example : (Cslib.Algorithms.Lean.Scheduling.makespan : (Fin 2 → List ℕ) → ℕ) =
+    fun σ => Finset.univ.sup fun i => (σ i).sum := rfl
+example : (Cslib.Algorithms.Lean.Scheduling.CriticalPath.makespan :
+    Distances 2 → Fin 2 → Option Int) = fun result t => earliestStart result t := rfl
+
 -- Public-name checks for the main definitions and theorems.
 
 #check negEdges
@@ -1158,4 +1171,4 @@ example {n : Nat} {edges : List (Edge n)} {s t : Fin n}
 #check feasible_activity_finishes_by_sink
 #check latestSchedule_feasible
 
-end Cslib.Algorithms.Lean.Scheduling.Tests
+end Cslib.Algorithms.Lean.Scheduling.CriticalPath.Tests

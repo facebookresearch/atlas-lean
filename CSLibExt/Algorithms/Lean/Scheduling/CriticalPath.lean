@@ -21,6 +21,15 @@ sink `LT`). Derived latest starts `LS`, vertex slack, and activity float are
 `Option`-valued and defined exactly where their prerequisites are; orphan
 occurrences are reported, never filled with `0`.
 
+The declarations live in the namespace `Cslib.Algorithms.Lean.Scheduling.CriticalPath`, so
+they load together with the list-scheduling API of
+`CSLibExt.Algorithms.Lean.Approximation.ListScheduling`, whose `makespan` is a different
+quantity. `MathlibExt.Combinatorics.Graph.ArcNetworkCriticalPath` (critical-path lower bound,
+earliest event dates) and `Cslib.Scheduling.ProjectNetwork` state the specification over an
+arc type with `ℕ` durations, without a longest-path algorithm, backward pass or float; this
+module computes these quantities with `dagShortestPaths` over integer-weighted `BellmanFord`
+edge lists.
+
 This file is a proved module: concrete definitions with no holes, and explicit
 theorems with complete proofs. Clause map (`C1`-`C9` in
 this file; `C10` is the separate test library):
@@ -47,11 +56,25 @@ this file; `C10` is the separate test library):
   `makespan_le_completion`, `feasible_activity_finishes_by_sink`,
   `latestSchedule_feasible`.
 * `C10` (fixtures): separate test library, not in this file.
+
+## References
+
+* J. E. Kelley Jr. and M. R. Walker, Critical-path planning and scheduling, *Proceedings of
+  the Eastern Joint Computer Conference*, 1959, pp. 160-173: the critical-path method on an
+  activity-on-arc network, with earliest and latest times, float, and the project duration
+  as the length of a longest source-to-sink path.
+* D. G. Malcolm, J. H. Roseboom, C. E. Clark and W. Fazar, Application of a technique for
+  research and development program evaluation, *Operations Research* 7 (1959), pp. 646-669:
+  PERT event slack, the latest minus the earliest event time.
+* T. H. Cormen, C. E. Leiserson, R. L. Rivest and C. Stein, *Introduction to Algorithms*,
+  3rd ed., MIT Press, 2009, Section 24.2: a critical path of a weighted DAG is a longest
+  path, found by running the DAG shortest-path algorithm on negated edge weights, and its
+  weight is a lower bound on the time to perform all jobs.
 -/
 
 set_option autoImplicit false
 
-namespace Cslib.Algorithms.Lean.Scheduling
+namespace Cslib.Algorithms.Lean.Scheduling.CriticalPath
 
 open BellmanFord
 
@@ -73,7 +96,9 @@ open BellmanFord
     Option Int :=
   (result.distance.get v).map Neg.neg
 
-/-- Project makespan read from the forward run at the sink; absent when unreachable. (`C5`) -/
+/-- Project makespan read from the forward run at the sink; absent when unreachable. It is the
+earliest sink event time, the longest source-to-sink duration, not the largest machine load
+that the list-scheduling `Cslib.Algorithms.Lean.Scheduling.makespan` measures. (`C5`) -/
 @[expose] public def makespan {n : Nat} (result : Distances n) (t : Fin n) : Option Int :=
   earliestStart result t
 
@@ -127,7 +152,9 @@ open BellmanFord
   v = s ∨ v = t ∨ ∃ e ∈ edges, e.source = v ∨ e.target = v
 
 /-- A feasible event schedule: nonnegative model-event times and every precedence
-constraint. (`C9`) -/
+constraint. Unlike `MathlibExt.Combinatorics.Graph.ArcNetwork.IsFeasibleSchedule`, which has
+`ℕ` times over an arc type, times here are integers over the `BellmanFord` occurrence list
+that the runs read, so nonnegativity on model events is part of the definition. (`C9`) -/
 @[expose] public def IsFeasibleSchedule {n : Nat} (edges : List (Edge n)) (s t : Fin n)
     (τ : Fin n → Int) : Prop :=
   (∀ v, IsModelEvent edges s t v → 0 ≤ τ v) ∧
@@ -201,7 +228,7 @@ private theorem pathWeight_reverse_map {n : Nat} (p : List (Edge n)) :
     simp only [List.map_cons, List.reverse_cons]
     rw [pathWeight_append_edge, hhead, ih]
     simp only [pathWeight, List.map_cons, List.sum_cons, neg_add]
-    try omega
+    omega
 
 /-- The chain condition transfers through weight negation. -/
 private theorem isChain_neg_map {n : Nat} (q : List (Edge n)) :
@@ -273,7 +300,7 @@ private theorem getLast?_reverse {α : Type*} (l : List α) :
   | cons e es ih =>
     simp only [List.reverse_cons]
     rw [getLast?_append_singleton]
-    try rfl
+    rfl
 
 /-- The head of a reversed list is the last element. -/
 private theorem head?_reverse {α : Type*} (l : List α) :
@@ -347,7 +374,7 @@ private theorem negEdges_toDirectedAdjacency {n : Nat} (edges : List (Edge n)) :
   congr 1
   funext s
   simp only [List.filter_map, List.map_map]
-  try rfl
+  rfl
 
 /-- Weighted paths transfer across negation with negated total weight. (`C2`, private) -/
 private theorem isWeightedPath_negEdges_iff {n : Nat} {edges : List (Edge n)}
@@ -1734,4 +1761,4 @@ public theorem latestSchedule_feasible {n : Nat} {edges : List (Edge n)}
     rw [hτv]
     omega
 
-end Cslib.Algorithms.Lean.Scheduling
+end Cslib.Algorithms.Lean.Scheduling.CriticalPath
