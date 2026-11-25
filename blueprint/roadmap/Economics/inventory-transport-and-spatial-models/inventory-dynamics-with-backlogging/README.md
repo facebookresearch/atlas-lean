@@ -37,3 +37,4 @@
 - [Simulated pipeline equals the outstanding pipeline](run-snd-eq-pipeline.md)
 - [Ledger stock as a zero-lead-time inventory trajectory](stock-eq-stock-trace.md)
 - [Terminal stock equals initial stock plus gains minus draws](terminal-accounting.md)
+- [Inventory balance with lost sales and a replenishment pipeline](lost-sales-and-pipeline-conservation.md)
