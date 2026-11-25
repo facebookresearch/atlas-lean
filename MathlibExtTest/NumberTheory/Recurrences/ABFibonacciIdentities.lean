@@ -54,3 +54,13 @@ example :
   obtain ⟨hEven, hOdd⟩ := sum_neg_b_pow_fibAB_disc 1 2 (by norm_num) 2
   rw [hEven, hOdd]
   norm_num [lucasAB]
+
+-- The first negative summand distinguishes the even and odd Pell and Pell–Lucas sums.
+example :
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * fibAB 2 1 (2 * i)) = -2 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i)) = -4 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1)) = -4 ∧
+    (∑ i ∈ Finset.range 2, (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1)) = -12 := by
+  obtain ⟨hPe, hQe, hPo, hQo⟩ := sum_neg_one_pow_pell 1
+  rw [hPe, hQe, hPo, hQo]
+  norm_num [fibAB, lucasAB]

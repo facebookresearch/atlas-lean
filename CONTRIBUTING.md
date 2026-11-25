@@ -398,6 +398,18 @@ To queue a standalone PR, use one of:
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
   now, and otherwise returns an error that says why; it never merges directly.
 
+Before you queue a PR, run `python3 -I scripts/queue/preflight.py <number>` from
+an up-to-date checkout of `main`, never from the PR's branch. It prints READY or
+NOT READY and what to do next. It checks Codex's approval of the exact head and
+the required checks. It checks that CI tested the head on a `main` that has the
+current pins, less than 6 hours ago. It checks conflicts with `main` and the
+queued PRs, and declarations that a queued PR also adds. With `--enqueue` it
+queues a READY PR with `enqueuePullRequest`, pinned to the head it checked. The
+[atlas-merge-queue](.agents/skills/atlas-merge-queue/SKILL.md) skill gives the
+rules that no check enforces. Never push to a queued PR. Take a PR out of the
+middle of the queue only when it is known to be bad. After a bump, check PRs
+again before you queue them.
+
 To queue a stack of pull requests (its branches must be in this repository), use
 the merge box of the highest PR you want to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
 `"merge_action": "merge_queue"` on that PR. Either queues that PR together with

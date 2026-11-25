@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -16,14 +13,11 @@ public import Mathlib.Algebra.Homology.Embedding.Extend
 public import Mathlib.Algebra.Homology.TotalComplex
 
 /-!
-# Signed rows in natural total degree
+# Signed rows in total degree
 
-For a natural first-quadrant bicomplex and a fixed first-coordinate degree
-`p`, this file places the `p`th row in total degrees `p + q`.  Its vertical
-differential is multiplied by the total-complex sign `(-1) ^ p`.
-
-This is the target of the successor quotient in the first-coordinate
-partial-total filtration.  The quotient itself is constructed separately.
+For a nonnegative bicomplex and a first-coordinate degree p, its pth
+row is placed in total degree p + q. Its vertical differential is
+multiplied by the totalization sign (-1)^p.
 -/
 
 @[expose] public section

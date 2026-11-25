@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -34,7 +31,7 @@ lemmas for components, and the inherited unit/associativity laws in the
 expected module form.  The regular module carried by `T` itself and the free
 left-module functor `X ↦ X ⋙ T` (needed later for `B(R,T,T X)`) are included.
 
-We then extend the API with reusable outer-category whiskering:
+We then extend the API with outer-category whiskering:
 
 * postcomposition of a right `T`-module `R : C ⥤ D` along `K : D ⥤ E`,
   yielding a right module `R ⋙ K : C ⥤ E`;
@@ -53,8 +50,10 @@ namespace Monad
 
 universe v₁ v₂ v₃ v₄ v₅ u₁ u₂ u₃ u₄ u₅
 
-/-- Monad on `C ⥤ D` lifting precomposition with `T`, sending `R` to `T ⋙ R`,
-with unit and multiplication from `T` whiskered on the right. -/
+/--
+Monad on `C ⥤ D` lifting precomposition with `T`, sending `R` to `T ⋙ R`,
+with unit and multiplication from `T` whiskered on the right.
+-/
 abbrev precompMonad {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
     (T : Monad C) : Monad (C ⥤ D) where
   toFunctor :=
@@ -99,8 +98,10 @@ abbrev precompMonad {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Categor
     rw [T.left_unit X]
     simp
 
-/-- Monad on `A ⥤ C` lifting postcomposition with `T`, sending `L` to `L ⋙ T`,
-with unit and multiplication from `T` whiskered on the left. -/
+/--
+Monad on `A ⥤ C` lifting postcomposition with `T`, sending `L` to `L ⋙ T`,
+with unit and multiplication from `T` whiskered on the left.
+-/
 abbrev postcompMonad {C : Type u₁} [Category.{v₁} C] {A : Type u₃} [Category.{v₃} A]
     (T : Monad C) : Monad (A ⥤ C) where
   toFunctor :=
@@ -218,16 +219,20 @@ lemma postcompMonadHom_app_app {C : Type u₁} [Category.{v₁} C] {A : Type u�
     {T S : Monad C} (h : T ⟶ S) (L : A ⥤ C) (X : A) :
     ((postcompMonadHom (A := A) h).toNatTrans.app L).app X = h.app (L.obj X) := rfl
 
-/-- Right `T`-module functor `R : C ⥤ D`: an algebra for the precomposition
+/--
+Right `T`-module functor `R : C ⥤ D`: an algebra for the precomposition
   monad `precompMonad T` (`R ↦ T ⋙ R`), with action `T ⋙ R ⟶ R`.
-  Reuses `Monad.Algebra`. -/
+  Reuses `Monad.Algebra`.
+-/
 abbrev RightModule {C : Type u₁} [Category.{v₁} C] (T : Monad C) (D : Type u₂)
     [Category.{v₂} D] :=
   (precompMonad (D := D) T).Algebra
 
-/-- Left `T`-module functor `L : A ⥤ C`: an algebra for the postcomposition
+/--
+Left `T`-module functor `L : A ⥤ C`: an algebra for the postcomposition
   monad `postcompMonad T` (`L ↦ L ⋙ T`), with action `L ⋙ T ⟶ L`.
-  Reuses `Monad.Algebra`. -/
+  Reuses `Monad.Algebra`.
+-/
 abbrev LeftModule {C : Type u₁} [Category.{v₁} C] (A : Type u₃) [Category.{v₃} A]
     (T : Monad C) :=
   (postcompMonad (A := A) T).Algebra
@@ -277,8 +282,10 @@ lemma hom_condition_app {M N : RightModule T D} (f : M ⟶ N) (X : C) :
   have h := congr_app f.h X
   exact h
 
-/-- Regular right `T`-module on `T` itself for `precompMonad T`: underlying
-  functor `T` with action `T ⋙ T ⟶ T` by multiplication `T.μ`. -/
+/--
+Regular right `T`-module on `T` itself for `precompMonad T`: underlying
+  functor `T` with action `T ⋙ T ⟶ T` by multiplication `T.μ`.
+-/
 def regular (T : Monad C) : RightModule T C where
   A := T.toFunctor
   a := T.μ
@@ -342,7 +349,7 @@ lemma postcomp_action_eq_whiskerRight (M : RightModule T D) (K : D ⥤ E) :
 lemma postcomp_regular_action_app (K : C ⥤ E) (X : C) :
     ((regular T).postcomp K).action.app X = K.map (T.μ.app X) := rfl
 
-/-- Identity comparison: postcomposition with `𝟭 D` is isomorphic to the original module. -/
+/-- Identity comparison: postcomposition with `𝟭 D` is isomorphic to the module. -/
 def postcompIdIso (M : RightModule T D) : M.postcomp (𝟭 D) ≅ M :=
   Iso.refl _
 
@@ -376,10 +383,12 @@ abbrev postcompFunctor (K : D ⥤ E) : RightModule T D ⥤ RightModule T E where
 lemma postcompFunctor_map_f (K : D ⥤ E) {M N : RightModule T D} (f : M ⟶ N) :
     ((postcompFunctor (T := T) K).map f).f = Functor.whiskerRight f.f K := rfl
 
-/-- Identity coherence for outer target whiskering as a natural isomorphism.
-The right-module variable is covariant and the left-module argument is held
-fixed/transported separately by `Iso.refl`. Reuses the existing functor and the
-objectwise `postcompIdIso` (definitionally the unitor); no pseudofunctor is built. -/
+/--
+Identity coherence for outer target whiskering as a natural isomorphism. The right-module variable
+is covariant and the left-module argument is held fixed/transported separately by `Iso.refl`.
+Reuses the functor and the objectwise `postcompIdIso` (definitionally the unitor); no
+pseudofunctor is built.
+-/
 def postcompId :
     (postcompFunctor (T := T) (D := D) (E := D) (𝟭 D) : RightModule T D ⥤ RightModule T D) ≅
     𝟭 (RightModule T D) :=
@@ -410,9 +419,11 @@ lemma postcompId_inv_f_app (M : RightModule T D) (X : C) :
     (((postcompId (D := D) (T := T)).inv.app M).f).app X = 𝟙 _ :=
   rfl
 
-/-- Composition coherence for outer target whiskering as a natural isomorphism.
-Reuses the existing functors and the objectwise `postcompCompIso` (definitionally
-the associator); only the coherence needed by the bar consumer is packaged. -/
+/--
+Composition coherence for outer target whiskering as a natural isomorphism. Reuses the functors
+and the objectwise `postcompCompIso` (definitionally the associator); only the coherence needed by
+the bar consumer is packaged.
+-/
 def postcompComp (K : D ⥤ E) (L : E ⥤ F) :
     (postcompFunctor (T := T) (D := D) (E := E) K ⋙ postcompFunctor (T := T) (D := E) (E := F) L :
       RightModule T D ⥤ RightModule T F) ≅
@@ -698,8 +709,10 @@ lemma hom_condition_app {M N : LeftModule A T} (f : M ⟶ N) (X : A) :
   have h := congr_app f.h X
   exact h
 
-/-- Regular left `T`-module on `T` itself for `postcompMonad T`: underlying
-  functor `T` with action `T ⋙ T ⟶ T` by multiplication `T.μ`. -/
+/--
+Regular left `T`-module on `T` itself for `postcompMonad T`: underlying
+  functor `T` with action `T ⋙ T ⟶ T` by multiplication `T.μ`.
+-/
 def regular (T : Monad C) : LeftModule C T where
   A := T.toFunctor
   a := T.μ
@@ -712,8 +725,10 @@ lemma regular_functor (T : Monad C) : (regular (T := T)).functor = T.toFunctor :
 @[simp]
 lemma regular_action (T : Monad C) : (regular (T := T)).action = T.μ := rfl
 
-/-- Free left module on `L : A ⥤ C`: underlying functor `L ⋙ T` with action
-  `L`-whiskered `T.μ`; the free endpoint orientation for `B(R, T, _ ⋙ T)`. -/
+/--
+Free left module on `L : A ⥤ C`: underlying functor `L ⋙ T` with action
+  `L`-whiskered `T.μ`; the free endpoint orientation for `B(R, T, _ ⋙ T)`.
+-/
 def freeObj (L : A ⥤ C) : LeftModule A T where
   A := L ⋙ T.toFunctor
   a := Functor.whiskerLeft L T.μ
@@ -793,13 +808,14 @@ lemma precomp_regular_action_app (K : B ⥤ C) (X : B) :
 lemma precomp_freeObj_action_app (L : A ⥤ C) (K : B ⥤ A) (X : B) :
     ((freeObj (T := T) L).precomp K).action.app X = T.μ.app (L.obj (K.obj X)) := rfl
 
-/-- Identity comparison: precomposition with `𝟭 A` is isomorphic to the original module. -/
+/-- Identity comparison: precomposition with `𝟭 A` is isomorphic to the module. -/
 def precompIdIso (M : LeftModule A T) : M.precomp (𝟭 A) ≅ M :=
   Iso.refl _
 
-/-- For a left `T`-module `M` indexed by `A` and functors `K : B ⥤ A` and
-`L : B₂ ⥤ B`, precomposition gives an isomorphism of left `T`-modules indexed by `B₂`:
-`(M.precomp K).precomp L ≅ M.precomp (L ⋙ K)`. -/
+/--
+Composition comparison:
+`(M ∘ K) ∘ H ≅ M ∘ (H ⋙ K)`.
+-/
 def precompCompIso (M : LeftModule A T) (K : B ⥤ A) (L : B₂ ⥤ B) :
     (M.precomp K).precomp L ≅ M.precomp (L ⋙ K) :=
   Iso.refl _
@@ -825,9 +841,11 @@ abbrev precompFunctor (K : B ⥤ A) : LeftModule A T ⥤ LeftModule B T where
 lemma precompFunctor_map_f (K : B ⥤ A) {M N : LeftModule A T} (f : M ⟶ N) :
     ((precompFunctor (T := T) K).map f).f = Functor.whiskerLeft K f.f := rfl
 
-/-- Identity coherence for outer source whiskering as a natural isomorphism.
-Source precomposition is contravariant in its outer category. Reuses the existing
-functor and the objectwise `precompIdIso` (definitionally the unitor). -/
+/--
+Identity coherence for outer source whiskering as a natural isomorphism. Source precomposition is
+contravariant in its outer category. Reuses the functor and the objectwise `precompIdIso`
+(definitionally the unitor).
+-/
 def precompId :
     (precompFunctor (T := T) (A := A) (B := A) (𝟭 A) : LeftModule A T ⥤ LeftModule A T) ≅
     𝟭 (LeftModule A T) :=
@@ -858,10 +876,12 @@ lemma precompId_inv_f_app (M : LeftModule A T) (X : A) :
     (((precompId (A := A) (T := T)).inv.app M).f).app X = 𝟙 _ :=
   rfl
 
-/-- For functors `K : B ⥤ A` and `L : B₂ ⥤ B`, the composite
-`precompFunctor K ⋙ precompFunctor L` is naturally isomorphic to `precompFunctor (L ⋙ K)`
-as functors from `LeftModule A T` to `LeftModule B₂ T`. Its component at `M` is
-`(M.precomp K).precomp L ≅ M.precomp (L ⋙ K)`. -/
+/--
+Composition coherence for outer source whiskering as a natural isomorphism. For `K : B ⥤ A` and `L
+: B₂ ⥤ B`, this is `precomp K ⋙ precomp L ≅ precomp (L ⋙ K)`. Reuses the functors and the
+objectwise `precompCompIso` (definitionally the associator pair); only the coherence needed by the
+bar consumer is packaged.
+-/
 def precompComp (K : B ⥤ A) (L : B₂ ⥤ B) :
     (precompFunctor (T := T) (A := A) (B := B) K ⋙ precompFunctor (T := T) (A := B) (B := B₂) L :
       LeftModule A T ⥤ LeftModule B₂ T) ≅

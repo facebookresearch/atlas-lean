@@ -65,7 +65,12 @@ open MathlibExt.AlgebraicGeometry.FourierMukai
 open MathlibExt.AlgebraicGeometry.BirationalDualityReferences
 open MathlibExt.AlgebraicGeometry.QuasicoherentDualityReferences
 
-/-- Source-complete power pullback on arbitrary scheme maps, including R→κ specialization. -/
+/-- Comparison isomorphisms $f^*(L^{\otimes m}) \cong (f^*L)^{\otimes m}$ between pullback along a
+morphism of schemes $f : Y \to X$ and tensor powers of sheaves of modules (`PullbackPowers f`),
+normalized on local sections: for every sheaf of modules $L$ on $X$, opens $U \subseteq X$ and
+$W \subseteq f^{-1}(U)$, section $s$ of $L$ over $U$ and $m \in \mathbb{N}$, the comparison sends
+the pullback to $W$ of $s^{\otimes m}$ to the $m$-th tensor power of the pullback of $s$ to $W$
+(with $s^{\otimes 0} = 1$). -/
 structure PowerPullback {X Y : Scheme.{0}} (f : Y ⟶ X) where
   powers : PullbackPowers f
   normalized : ∀ (L : X.Modules) (U : X.Opens) (W : Y.Opens) (h : W ≤ f ⁻¹ᵁ U)
@@ -271,9 +276,10 @@ def LogFanoFibre.IsValuativelySemistable
     ((CenteredValuationSections.expectedVanishing (F.sectionSeries v)) : EReal) / (e : EReal) ≤
       ((D.scale * LogPairs.logDiscrepancy D.model D.prime : ℝ) : EReal)
 
-/-- Both actual special log-Fano pairs and their native valuative inequalities.
-Finite generation of the resulting Rees ring remains a paper theorem,
-rather than an assumption reclassified as an external toolbox result. -/
+/-- Valuatively semistable log-Fano special fibres for both models: log-Fano fibre structures on
+the special fibres of the first and of the second model, with their given lines and with the
+boundary ideals and exponent given by `B`, both valuatively semistable
+(`LogFanoFibre.IsValuativelySemistable`). -/
 structure SemistableSpecialFibres (D : TwoModels (R := R) (K := K)) {n : ℕ}
     (B : LogAnticanonicalModels D n) where
   first : LogFanoFibre D.first D.firstLine B.firstBoundary n B.exponent

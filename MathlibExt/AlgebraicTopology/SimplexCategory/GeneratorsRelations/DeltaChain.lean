@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -29,14 +26,15 @@ namespace SimplexCategoryGenRel
 
 open CategoryTheory
 
-/-- Indexed face chain for the `P_δ` normal form.
+/--
+Indexed face chain for the `P_δ` normal form.
 
-`DeltaChain n m` represents a composite of `m - n` face maps `δ`
-from `mk n` to `mk m`. The constructors store `Fin` indices and target
-degrees definitionally, eliminating internal `eqToHom` and `Fin.ofNat`.
+`DeltaChain n m` represents a composite of `m - n` face maps `δ` from `mk n` to `mk m`. The
+constructors store `Fin` indices and target degrees definitionally, eliminating internal `eqToHom`
+and `Fin.ofNat`.
 
-The file also supplies native insertion-sort normalization to admissible
-strictly increasing form; uniqueness and equivalence remain later results. -/
+Insertion-sort normalization gives an admissible strictly increasing face chain.
+-/
 inductive DeltaChain (n : ℕ) : ℕ → Type
   | nil : DeltaChain n n
   | snoc {m : ℕ} : DeltaChain n m → Fin (m + 2) → DeltaChain n (m + 1)
@@ -45,9 +43,11 @@ namespace DeltaChain
 
 variable {n : ℕ}
 
-/-- Evaluation of a `DeltaChain` as a morphism `mk n ⟶ mk m` in
+/--
+Evaluation of a `DeltaChain` as a morphism `mk n ⟶ mk m` in
 `SimplexCategoryGenRel`. `nil` is the identity and `snoc` composes by
-the delta generator `δ`. -/
+the delta generator `δ`.
+-/
 def eval : {m : ℕ} → DeltaChain n m → (mk n ⟶ mk m)
   | _, .nil => 𝟙 (mk n)
   | _, .snoc c i => c.eval ≫ δ i
@@ -65,17 +65,21 @@ theorem eval_mem_P_delta {n : ℕ} {m : ℕ} (c : DeltaChain n m) : P_δ c.eval 
   | nil => simpa [eval] using P_δ.id_mem (mk n)
   | snoc c i ih => simpa [eval] using P_δ.comp_mem _ _ ih (P_δ.δ i)
 
-/-- Structural monotonicity: `n ≤ m` for any `DeltaChain n m`.
+/--
+Structural monotonicity: `n ≤ m` for any `DeltaChain n m`.
 The indexed type already encodes this definitionally via construction,
-but the inequality is convenient for downstream lemmas. -/
+but the inequality is convenient for downstream lemmas.
+-/
 theorem le {n m : ℕ} (c : DeltaChain n m) : n ≤ m := by
   induction c with
   | nil => exact Nat.le_refl _
   | snoc _ _ ih => exact Nat.le_succ_of_le ih
 
-/-- Append two indexed face chains. This concatenates the underlying
+/--
+Append two indexed face chains. This concatenates the underlying
 composites of face maps. The equations for `nil` and `snoc` are
-transparent by definition. -/
+transparent by definition.
+-/
 def append {m k : ℕ} (c₁ : DeltaChain n m) (c₂ : DeltaChain m k) :
     DeltaChain n k :=
   match c₂ with
@@ -99,10 +103,12 @@ theorem eval_append {m k : ℕ} (c₁ : DeltaChain n m) (c₂ : DeltaChain m k) 
   | nil => simp [append, eval]
   | snoc c₂' i ih => simp [append, eval, ih]
 
-/-- Evaluated order-preserving map of a face chain in `SimplexCategory`.
+/--
+Evaluated order-preserving map of a face chain in `SimplexCategory`.
 
 For `c : DeltaChain n m`, this is `(toSimplexCategory.map c.eval).toOrderHom`,
-viewed as an order-homomorphism `Fin (n+1) →o Fin (m+1)`. -/
+viewed as an order-homomorphism `Fin (n+1) →o Fin (m+1)`.
+-/
 def evalOrderHom {n₁ m₁ : ℕ} (c : DeltaChain n₁ m₁) :
     Fin (n₁ + 1) →o Fin (m₁ + 1) :=
   (toSimplexCategory.map c.eval).toOrderHom
@@ -229,8 +235,10 @@ theorem mem_range_evalOrderHom_snoc_pred_iff_of_gt {m : ℕ} (c : DeltaChain n m
       (j.pred (Fin.ne_zero_of_lt h)) ∈ Set.range (evalOrderHom c) :=
   mem_range_evalOrderHom_snoc_of_gt c i j h
 
-/-- Homogeneous natural-number list of the stored face indices, in stored order.
-`nil` maps to `[]` and `snoc c i` maps to `c.toNatList ++ [i.val]`. -/
+/--
+Homogeneous natural-number list of the stored face indices, in stored order.
+`nil` maps to `[]` and `snoc c i` maps to `c.toNatList ++ [i.val]`.
+-/
 def toNatList : {m : ℕ} → DeltaChain n m → List ℕ
   | _, .nil => []
   | _, .snoc c i => c.toNatList ++ [i.val]
@@ -296,8 +304,10 @@ private theorem append_singleton_inj {α : Type*} {l₁ l₂ : List α} {a b : �
       · rw [hx, ih_res.1]
       · exact ih_res.2
 
-/-- Fixed-endpoint injectivity of `toNatList`: equality of the stored natural-number lists
-implies equality of the chains. -/
+/--
+Fixed-endpoint injectivity of `toNatList`: equality of the stored natural-number lists
+implies equality of the chains.
+-/
 theorem eq_of_toNatList_eq {m : ℕ} {c d : DeltaChain n m}
     (h : c.toNatList = d.toNatList) : c = d := by
   induction c with
@@ -325,11 +335,13 @@ theorem eq_of_toNatList_eq {m : ℕ} {c d : DeltaChain n m}
       have hi_eq : i = j := Fin.ext h_inj.2
       rw [hc_eq, hi_eq]
 
-/-- Source-general existence: a `P_δ` morphism from an arbitrary source
+/--
+Source-general existence: a `P_δ` morphism from an arbitrary source
 that is known to be `mk n` is represented by a `DeltaChain n m` up to
 outer `eqToHom` transports. The proof is by direct induction on the
 `multiplicativeClosure` witness for `P_δ`, using `snoc` for the face
-step and keeping all transports at the boundary. -/
+step and keeping all transports at the boundary.
+-/
 theorem exists_chain_of_P_delta {x y : SimplexCategoryGenRel}
     (f : x ⟶ y) (hf : P_δ f) {n : ℕ} (hx : x = mk n) :
     ∃ m, ∃ (hy : y = mk m), ∃ (c : DeltaChain n m),
@@ -354,8 +366,10 @@ theorem exists_chain_of_P_delta {x y : SimplexCategoryGenRel}
       refine ⟨a + 1, rfl, c₁.snoc i, ?_⟩
       simp [eval, hc₁]
 
-/-- Source-fixed corollary: `f : mk n ⟶ y` with `P_δ f` is a chain up to
-a final target transport. -/
+/--
+Source-fixed corollary: `f : mk n ⟶ y` with `P_δ f` is a chain up to
+a final target transport.
+-/
 theorem exists_chain_mk_of_P_delta {n : ℕ} {y : SimplexCategoryGenRel}
     (f : mk n ⟶ y) (hf : P_δ f) :
     ∃ m, ∃ (hy : y = mk m), ∃ (c : DeltaChain n m),
@@ -364,8 +378,10 @@ theorem exists_chain_mk_of_P_delta {n : ℕ} {y : SimplexCategoryGenRel}
   refine ⟨m, hy, c, ?_⟩
   simpa [eqToHom_refl] using hc
 
-/-- Canonical-target corollary: a `P_δ` morphism between canonical
-simplices is exactly a chain evaluation. -/
+/--
+Canonical-target corollary: a `P_δ` morphism between canonical
+simplices is exactly a chain evaluation.
+-/
 theorem exists_chain_mk_mk_of_P_delta {n m : ℕ}
     (f : mk n ⟶ mk m) (hf : P_δ f) :
     ∃ c : DeltaChain n m, c.eval = f := by
@@ -558,8 +574,10 @@ theorem insert_eval {n m : ℕ} (c : DeltaChain n m) (i : Fin (m + 2)) :
         _ = (c₀.eval ≫ δ j) ≫ δ i := by rw [← Category.assoc]
         _ = (DeltaChain.snoc c₀ j).eval ≫ δ i := rfl
 
-/-- `insert` preserves a `≤` bound when the inserted index
-is `≤` a strict upper bound of the chain. -/
+/--
+`insert` preserves a `≤` bound when the inserted index
+is `≤` a strict upper bound of the chain.
+-/
 theorem insert_allValsLe {n : ℕ} {m : ℕ} {c : DeltaChain n m}
     (hc : Admissible c) {B : ℕ} (hB : AllValsLt c B)
     (i : Fin (m + 2)) (hi : i.val ≤ B) :
@@ -654,7 +672,7 @@ theorem normalize_admissible {n m : ℕ} (c : DeltaChain n m) :
     simp only [normalize]
     exact insert_admissible ih _
 
-/-- Helper: appending a strictly larger element preserves `Pairwise (<)`. -/
+/-- Appending a strictly larger element preserves `Pairwise (<)`. -/
 private theorem pairwise_append_singleton {l : List ℕ} {a : ℕ}
     (hl : l.Pairwise (· < ·)) (ha : ∀ x ∈ l, x < a) :
     (l ++ [a]).Pairwise (· < ·) := by
@@ -704,8 +722,10 @@ theorem Admissible.toNatList_pairwise_lt {n : ℕ} {m : ℕ} {c : DeltaChain n m
         exact hlt
     exact pairwise_append_singleton ih h_forall
 
-/-- Admissible chains: their stored indices are exactly the missing values of
-the evaluated order embedding. -/
+/--
+Admissible chains: their stored indices are exactly the missing values of
+the evaluated order embedding.
+-/
 theorem Admissible.mem_toNatList_iff_not_mem_range_evalOrderHom
     {n m : ℕ} {c : DeltaChain n m} (hc : Admissible c) (j : Fin (m + 1)) :
     j.val ∈ c.toNatList ↔ j ∉ Set.range (evalOrderHom c) := by
@@ -822,9 +842,11 @@ theorem exists_admissible_chain_of_P_delta {n m : ℕ}
   refine ⟨normalize c, normalize_admissible c, ?_⟩
   rw [normalize_eval, hc]
 
-/-- Fixed-endpoint uniqueness of admissible chains from equality of evaluated
+/--
+Fixed-endpoint uniqueness of admissible chains from equality of evaluated
 order homomorphisms. This is the primary uniqueness theorem; the range/list
-argument occurs only here and is reused by the weaker corollaries below. -/
+argument occurs only here and is reused by the weaker corollaries below.
+-/
 theorem Admissible.eq_of_evalOrderHom_eq {n m : ℕ} {c d : DeltaChain n m}
     (hc : Admissible c) (hd : Admissible d)
     (h : evalOrderHom c = evalOrderHom d) : c = d := by
@@ -859,9 +881,11 @@ theorem Admissible.eq_of_evalOrderHom_eq {n m : ℕ} {c d : DeltaChain n m}
     List.Pairwise.eq_of_mem_iff hc_pair hd_pair h_mem_iff
   exact eq_of_toNatList_eq h_list_eq
 
-/-- Fixed-endpoint uniqueness from equality of the images under
+/--
+Fixed-endpoint uniqueness from equality of the images under
 `toSimplexCategory.map`. Thin corollary of `eq_of_evalOrderHom_eq` usable
-for faithfulness. -/
+for faithfulness.
+-/
 theorem Admissible.eq_of_toSimplexCategory_map_eq {n m : ℕ} {c d : DeltaChain n m}
     (hc : Admissible c) (hd : Admissible d)
     (h : toSimplexCategory.map c.eval = toSimplexCategory.map d.eval) : c = d := by

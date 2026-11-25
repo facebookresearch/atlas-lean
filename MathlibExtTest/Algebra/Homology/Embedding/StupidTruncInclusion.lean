@@ -50,7 +50,7 @@ example :
         (ComplexShape.embeddingDownNatInitialSegment 0)
         (show (ComplexShape.embeddingDownNatInitialSegment 0).f
           (0 : Fin 1) = 0 from rfl)).hom := by
-  exact ιStupidTrunc_f_eq (i := (0 : Fin 1)) K
+  exact stupidTruncι.f_eq (i := (0 : Fin 1)) K
     (ComplexShape.embeddingDownNatInitialSegment 0) rfl
 
 example :
