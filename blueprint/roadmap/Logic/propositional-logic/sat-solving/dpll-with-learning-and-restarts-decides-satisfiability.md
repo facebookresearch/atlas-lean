@@ -9,7 +9,7 @@ Then every run reaches a state $S$ that is final with respect to Basic DPLL, and
 - $S$ is FailState exactly when $F$ is unsatisfiable;
 - otherwise $S$ is $M \parallel F'$ with $M$ a model of $F$.
 
-So these systems are decision procedures for propositional satisfiability. Conflict-driven solvers apply Learn only to backjump clauses and Forget only to learned lemmas, so they satisfy the second condition; the first and third are properties of the strategy that must be checked separately.
+So these systems are decision procedures for propositional satisfiability. The second condition is an independent scheduling assumption: learning and forgetting the same entailed clause at a conflict could otherwise alternate forever. Conflict-driven solvers meet it by learning a clause only together with the Backjump step that uses it, so every Learn step is followed by a Basic DPLL step. The first and third conditions are likewise properties of the strategy that must be checked separately.
 
 **Proof.** By [termination](termination-of-abstract-dpll-with-learning.md), every such run is finite, and its last state admits no Basic DPLL step. The [final-state theorem](final-states-of-abstract-dpll-with-learning.md) then characterizes that state.
 
