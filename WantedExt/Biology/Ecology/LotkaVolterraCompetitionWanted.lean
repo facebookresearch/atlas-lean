@@ -81,8 +81,11 @@ noncomputable def field (z : ℝ × ℝ) : ℝ × ℝ :=
 /-- `z` solves the competition equations on `[0, ∞)`: `z'(t) = field (z t)` for every `t ≥ 0`. -/
 def IsSolution (z : ℝ → ℝ × ℝ) : Prop := ∀ t : ℝ, 0 ≤ t → HasDerivAt z (p.field (z t)) t
 
-/-- The interior equilibrium
-`((K₁ - α₁₂ K₂) / (1 - α₁₂ α₂₁), (K₂ - α₂₁ K₁) / (1 - α₁₂ α₂₁))`. -/
+/-- The candidate algebraic formula
+`((K₁ - α₁₂ K₂) / (1 - α₁₂ α₂₁), (K₂ - α₂₁ K₁) / (1 - α₁₂ α₂₁))` for a coexistence equilibrium.
+It defines a positive interior equilibrium when `α₁₂ α₂₁ ≠ 1` and both quotients are positive (as
+in the strict coexistence and bistability regimes); when `α₁₂ α₂₁ = 1`, totalized division by zero
+gives `(0, 0)`. -/
 noncomputable def interiorEq : ℝ × ℝ :=
   ((p.K₁ - p.α₁₂ * p.K₂) / (1 - p.α₁₂ * p.α₂₁), (p.K₂ - p.α₂₁ * p.K₁) / (1 - p.α₁₂ * p.α₂₁))
 

@@ -32,6 +32,7 @@ exclusion principle in the chemostat", arXiv:1711.06928 (2017), Lemma 1 and Prop
 module
 
 public import Batteries.Util.ProofWanted
+public import WantedExt.Biology.Ecology.ChemostatWashoutWanted
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Basic.Real.Basic
@@ -41,6 +42,7 @@ public import Mathlib.Basic.Real.Basic
 namespace WantedExt.Biology.Ecology.ChemostatCompetitiveExclusionWanted
 
 open Filter Topology
+open ChemostatWashoutWanted (breakEven)
 
 /-- `(S, x)` solves the **multispecies chemostat** on `[0, ∞)`: for every `t ≥ 0`,
 `S'(t) = (S⁰ - S(t)) D - ∑ᵢ (1/yᵢ) mᵢ xᵢ(t) S(t) / (aᵢ + S(t))` and, for every species `i`,
@@ -50,10 +52,6 @@ def IsSolution {ι : Type*} [Fintype ι] (S₀ D : ℝ) (m a y : ι → ℝ) (S 
   ∀ t : ℝ, 0 ≤ t →
     HasDerivAt S ((S₀ - S t) * D - ∑ i, 1 / y i * m i * x t i * S t / (a i + S t)) t ∧
       ∀ i, HasDerivAt (fun s => x s i) (x t i * (m i * S t / (a i + S t) - D)) t
-
-/-- The **break-even concentration** `λᵢ = aᵢ / (mᵢ / D - 1)` of a species, meaningful when
-`mᵢ > D`. -/
-noncomputable def breakEven (D mᵢ aᵢ : ℝ) : ℝ := aᵢ / (mᵢ / D - 1)
 
 /-- **Competitive exclusion** (Hsu, Hubbell and Waltman 1977, Theorem 3.1): let `S⁰ > 0`,
 `D > 0`, and for every species `i` let `mᵢ, aᵢ, yᵢ > 0`. Suppose species `i₀` has `m_{i₀} > D`
