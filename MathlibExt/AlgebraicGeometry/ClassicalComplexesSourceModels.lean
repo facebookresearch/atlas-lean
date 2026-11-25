@@ -119,7 +119,9 @@ def etalePullbackBeforeDeriving {O : ∀ X : Scheme.{u}, EtaleStructureSource X}
     CochainComplex (EtaleModules O Y) ℤ ⥤ EtaleDerived O X :=
   (etaleModulePullback D).mapHomologicalComplex (.up ℤ) ⋙ DerivedCategory.Q
 
-/-- Existence is a source construction request for the prescribed native inverse image. -/
+/-- The condition that the inverse image of étale modules along `f` given by the ringed-site data
+`D`, applied degreewise to complexes and followed by the localization to the derived category, has a
+left derived functor with respect to quasi-isomorphisms. -/
 structure EtaleDerivedPullbackSource {O : ∀ X : Scheme.{u}, EtaleStructureSource X}
     {X Y : Scheme.{u}} {f : X ⟶ Y} (D : EtaleRingedMapSource O f) : Prop where
   hasLeftDerived : (etalePullbackBeforeDeriving D).HasLeftDerivedFunctor

@@ -68,10 +68,15 @@ variable (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n)
 
 abbrev Forms (p : ℕ) := GlobalForms ℝ (Coordinates n) M p
 
-/-- A smooth wedge product, fixed on every pointwise tangent tuple, with the
-constant unit `0`-form. The data are determined by their values; the content
-of an instance is that the pointwise wedge of smooth forms is smooth. Instances
-are requested in `ManifoldDifferentialFormsWanted`. -/
+/-- A wedge product on smooth real differential forms on the complex manifold $M$ modelled on
+$\mathbb{C}^n$: a smooth $0$-form `unit` with value $1$ at every point, and for all $p, q$ a map
+`wedge` sending smooth forms $\alpha$ of degree $p$ and $\beta$ of degree $q$ to a smooth
+$(p+q)$-form whose value at every point on every tuple $v$ of tangent vectors is $\frac{1}{p!\,q!}$
+times the sum, over the permutations $\sigma$ of $p + q$ indices, of
+$\operatorname{sign}(\sigma)\, \alpha(v_{\sigma(1)}, \dots, v_{\sigma(p)})$ times
+$\beta(v_{\sigma(p+1)}, \dots, v_{\sigma(p+q)})$. The data are determined by these values, so an
+instance amounts to the smoothness of the constant $0$-form $1$ and of the pointwise wedge of smooth
+forms. -/
 class WedgeTheory where
   unit : Forms n M 0
   unit_value : ∀ x : M, unit.val ⟨x, by trivial⟩ (fun i : Fin 0 ↦ Fin.elim0 i) = 1
@@ -120,9 +125,11 @@ def chartDensity (α : Forms n M (n * 2)) (i : Fin A.count) (z : RealCoordinates
 def integral (α : Forms n M (n * 2)) : ℝ :=
   ∑ i, ∫ z : RealCoordinates n, chartDensity n M C A α i z
 
-/-- Integrability, linearity and Stokes' theorem for the displayed integral. No
-analytic cycle pairing or Kähler/period conclusion is included. Instances are
-requested in `ManifoldDifferentialFormsWanted`. -/
+/-- Integrability, linearity and Stokes' theorem for `integral`, the integral of top-degree forms on
+$M$ defined by the real coordinates $C$ and the finite smooth partition of unity $A$ subordinate to
+charts: an instance asserts that every chart density of every smooth $2n$-form is Lebesgue
+integrable, that `integral` is additive and commutes with real scalars, and that `integral` vanishes
+on $d\alpha$ for every smooth form $\alpha$ of degree $p$ with $p + 1 = 2n$. -/
 class IntegrationTheory : Prop where
   integrable : ∀ α i, Integrable (chartDensity n M C A α i)
   add : ∀ α β, integral n M C A (α + β) = integral n M C A α + integral n M C A β
