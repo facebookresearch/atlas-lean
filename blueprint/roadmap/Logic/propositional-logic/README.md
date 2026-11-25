@@ -16,6 +16,7 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Davis–Putnam algorithm](davis-putnam-algorithm/README.md)
 - [Tseitin transformation](tseitin-transformation/README.md)
 - [Propositional proof complexity](propositional-proof-complexity/README.md)
+- [Sat solving](sat-solving/README.md)
 
 - [Kripke semantics for intuitionistic propositional logic](kripke-semantics-for-intuitionistic-propositional-logic.md)
 - [Fages: stable models of tight programs = completion models](fages-stable-models-of-tight-programs-completion-models.md)

@@ -9,6 +9,7 @@ Register (URM), counter and RAM machines, and theorems that Turing machines and 
 - [Single-tape machines decide the recursive predicates](single-tape-machines-decide-the-recursive-predic/README.md)
 - [Nondeterministic Turing machines](nondeterministic-turing-machines/README.md)
 - [Unlimited register machines](unlimited-register-machines/README.md)
+- [Counter and combinator models](counter-and-combinator-models/README.md)
 - [Counter machines compute exactly the computable predicates](counter-decidable-iff-computable-pred.md)
 - [Untyped lambda calculus](untyped-lambda-calculus/README.md)
 - [Computable predicates are decidable by multi-tape machines](tm2-decidable-implies-multi-tape-decidab.md)
