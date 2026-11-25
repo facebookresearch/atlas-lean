@@ -1058,4 +1058,150 @@ theorem test_domination_half_via :
 #print axioms test_domination_half_compute
 #print axioms test_domination_half_via
 
+
+-- Pair-local assembly tests: two-sided `maxDivLE` for the test kernels at
+-- `ε = log 3`, the `k = 2`, `δ' = 1 / 2` advanced-composition instance for the
+-- fixture, and the `ε = 0`, `P = Q` adapter sanity check.
+
+-- Convert an `IsDP`-shaped `ENNReal` bound into a real-mass bound.
+theorem test_pair_toReal_le_of_le {a b : ENNReal} {c : ℝ} (hc : 0 ≤ c)
+    (hb : b ≠ ⊤) (h : a ≤ ENNReal.ofReal c * b) :
+    a.toReal ≤ c * b.toReal := by
+  have hfin : ENNReal.ofReal c * b ≠ ⊤ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top hb
+  have hle := ENNReal.toReal_mono hfin h
+  rwa [ENNReal.toReal_mul, ENNReal.toReal_ofReal hc] at hle
+
+-- Two-sided `maxDivLE` for the test kernels at `ε = log 3`, forward direction.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_maxDivLE_false_true (n : ℕ) (h : Hist Bool Bool n) :
+    maxDivLE (testK n h false) (testK n h true) (Real.log 3) := by
+  intro o
+  exact test_pair_toReal_le_of_le (Real.exp_pos _).le
+    ((testK n h true).apply_ne_top o) ((testK_isDP n h).2 false true trivial o)
+
+-- Two-sided `maxDivLE` for the test kernels at `ε = log 3`, reverse direction.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_maxDivLE_true_false (n : ℕ) (h : Hist Bool Bool n) :
+    maxDivLE (testK n h true) (testK n h false) (Real.log 3) := by
+  intro o
+  exact test_pair_toReal_le_of_le (Real.exp_pos _).le
+    ((testK n h false).apply_ne_top o) ((testK_isDP n h).2 true false trivial o)
+
+-- Pairwise advanced composition for the two-stage fixture at `δ' = 1 / 2`.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_adv_comp_pair :
+    approxMaxDivLE (transcript testCoin testK 2 false) (transcript testCoin testK 2 true)
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1))) (1 / 2 : ℝ) ∧
+    approxMaxDivLE (transcript testCoin testK 2 true) (transcript testCoin testK 2 false)
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1))) (1 / 2 : ℝ) :=
+  transcript_approxMaxDivLE_advanced_composition_pair testCoin testK (Real.log 3) 2 (1 / 2)
+    (Real.log_nonneg (by norm_num))
+    (fun n h => ⟨test_pair_maxDivLE_false_true n h, test_pair_maxDivLE_true_false n h⟩)
+    (by norm_num) (by norm_num)
+
+-- Adapter sanity: `maxDivLE` is reflexive at `ε = 0`.
+open CSLibExt.Privacy.MaxDivergenceDecomposition in
+theorem test_pair_adapter_zero_refl (P : PMF Bool) : maxDivLE P P 0 := by
+  intro o
+  rw [Real.exp_zero, one_mul]
+
+#print axioms transcript_approxMaxDivLE_advanced_composition_pair
+
+
+theorem test_advcomp_testK_approx (n : ℕ) (h : Hist Bool Bool n) :
+    IsApproxDP (fun d => testK n h d) testAdj (Real.log 3) 0 :=
+  isApproxDP_zero_iff.mpr (testK_isDP n h)
+
+theorem test_advcomp_weaken {D A : Type*} {M : D → PMF A}
+    {adj : D → D → Prop} {eps delta delta₂ : ℝ}
+    (h : IsApproxDP M adj eps delta) (hle : delta ≤ delta₂) :
+    IsApproxDP M adj eps delta₂ := by
+  obtain ⟨hε, hδ, hmain⟩ := h
+  refine ⟨hε, hδ.trans hle, fun d d' hadj s => ?_⟩
+  exact (hmain d d' hadj s).trans
+    (add_le_add le_rfl (ENNReal.ofReal_le_ofReal hle))
+
+theorem test_advcomp_adj_symm (d d' : Bool) (_ : testAdj d d') :
+    testAdj d' d :=
+  True.intro
+
+theorem test_advcomp_k2_pure :
+    IsApproxDP (fun d => transcript testCoin testK 2 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (((2 : ℕ) : ℝ) * 0 + 1 / 2) :=
+  transcript_isApproxDP_advanced_composition testCoin testK testAdj
+    (Real.log 3) 0 2 (1 / 2) (fun n h => test_advcomp_testK_approx n h)
+    (Real.log_nonneg (by norm_num)) le_rfl test_advcomp_adj_symm
+    (by norm_num) (by norm_num)
+
+theorem test_advcomp_k2_approx :
+    IsApproxDP (fun d => transcript testCoin testK 2 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (((2 : ℕ) : ℝ) * (1 / 10) + 1 / 2) :=
+  transcript_isApproxDP_advanced_composition testCoin testK testAdj
+    (Real.log 3) (1 / 10) 2 (1 / 2)
+    (fun n h => test_advcomp_weaken (test_advcomp_testK_approx n h)
+      (show (0 : ℝ) ≤ 1 / 10 by norm_num))
+    (Real.log_nonneg (by norm_num)) (show (0 : ℝ) ≤ 1 / 10 by norm_num)
+    test_advcomp_adj_symm (by norm_num) (by norm_num)
+
+theorem test_advcomp_k0 :
+    IsApproxDP (fun d => transcript testCoin testK 0 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((0 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((0 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (((0 : ℕ) : ℝ) * 0 + 1 / 2) :=
+  transcript_isApproxDP_advanced_composition testCoin testK testAdj
+    (Real.log 3) 0 0 (1 / 2) (fun n h => test_advcomp_testK_approx n h)
+    (Real.log_nonneg (by norm_num)) le_rfl test_advcomp_adj_symm
+    (by norm_num) (by norm_num)
+
+theorem test_advcomp_k1 :
+    IsApproxDP (fun d => transcript testCoin testK 1 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((1 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((1 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (((1 : ℕ) : ℝ) * 0 + 1 / 2) :=
+  transcript_isApproxDP_advanced_composition testCoin testK testAdj
+    (Real.log 3) 0 1 (1 / 2) (fun n h => test_advcomp_testK_approx n h)
+    (Real.log_nonneg (by norm_num)) le_rfl test_advcomp_adj_symm
+    (by norm_num) (by norm_num)
+
+noncomputable def test_advcomp_constK :
+    (n : ℕ) → Hist Bool Bool n → Bool → PMF Bool :=
+  fun _ _ _ => testCoin
+
+theorem test_advcomp_constK_approx (n : ℕ) (h : Hist Bool Bool n) :
+    IsApproxDP (fun d => test_advcomp_constK n h d) testAdj 0 (1 / 10) := by
+  show IsApproxDP (fun _ => testCoin) testAdj 0 (1 / 10)
+  exact test_advcomp_weaken (isApproxDP_zero_iff.mpr (isDP_const testCoin testAdj))
+    (show (0 : ℝ) ≤ 1 / 10 by norm_num)
+
+theorem test_advcomp_constK_k2 :
+    IsApproxDP (fun d => transcript testCoin test_advcomp_constK 2 d) testAdj
+      (0 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (0 * (Real.exp 0 - 1)))
+      (((2 : ℕ) : ℝ) * (1 / 10) + 1 / 2) :=
+  transcript_isApproxDP_advanced_composition testCoin test_advcomp_constK testAdj
+    0 (1 / 10) 2 (1 / 2) (fun n h => test_advcomp_constK_approx n h)
+    le_rfl (show (0 : ℝ) ≤ 1 / 10 by norm_num) test_advcomp_adj_symm
+    (by norm_num) (by norm_num)
+
+theorem test_advcomp_k2_delta1 :
+    IsApproxDP (fun d => transcript testCoin testK 2 d) testAdj
+      (Real.log 3 * Real.sqrt (2 * ((2 : ℕ) : ℝ) * Real.log (1 / (1 / 2 : ℝ))) +
+        ((2 : ℕ) : ℝ) * (Real.log 3 * (Real.exp (Real.log 3) - 1)))
+      (((2 : ℕ) : ℝ) * 1 + 1 / 2) :=
+  transcript_isApproxDP_advanced_composition testCoin testK testAdj
+    (Real.log 3) 1 2 (1 / 2)
+    (fun n h => test_advcomp_weaken (test_advcomp_testK_approx n h)
+      (show (0 : ℝ) ≤ 1 by norm_num))
+    (Real.log_nonneg (by norm_num)) (show (0 : ℝ) ≤ 1 by norm_num)
+    test_advcomp_adj_symm (by norm_num) (by norm_num)
+
+#print axioms transcript_isApproxDP_advanced_composition
+
 end CSLibExt.Privacy.DifferentialPrivacy

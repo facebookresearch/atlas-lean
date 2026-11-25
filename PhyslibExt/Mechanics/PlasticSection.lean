@@ -94,10 +94,10 @@ This is the rectangular case of Jones, *Structural Impact*, §1.2: `z` there is 
 
 namespace Mechanics.PlasticSection
 
-/-- Elastic first-yield stress at height `y` (locked definition): the linear
-distribution `σy * (2 * y / h)` through a section of height `h`, equal to
-`σy` at the outer fiber `y = h / 2` and to `-σy` at `y = -h / 2` when
-`h ≠ 0` (tension positive). -/
+/-- Elastic first-yield stress at height `y` (locked definition): the linear distribution
+`σy * (2 * y / h)` through a section of height `h`, equal to `σy` at the outer fiber `y = h / 2` and
+to `-σy` at `y = -h / 2` when `h ≠ 0` (tension positive). With the convention `x / 0 = 0` it is
+identically `0` when `h = 0`. -/
 noncomputable def firstYieldStress (σy h y : ℝ) : ℝ :=
   σy * (2 * y / h)
 
@@ -107,16 +107,15 @@ is a convention on a null set. -/
 noncomputable def fullyPlasticStress (σy y : ℝ) : ℝ :=
   if 0 ≤ y then σy else -σy
 
-/-- Axial force resultant `∫ y in (-h / 2)..(h / 2), b * σ y` of a normal
-stress distribution `σ` (tension positive) over a rectangular section of
-width `b` and height `h`, as an oriented interval integral. -/
+/-- Axial force resultant `∫ y in (-h / 2)..(h / 2), b * σ y` of a normal stress distribution `σ`
+(tension positive) over a rectangular section of width `b` and height `h`, as an oriented interval
+integral. It is `0` when the integrand is not integrable on the interval. -/
 noncomputable def sectionForce (b h : ℝ) (σ : ℝ → ℝ) : ℝ :=
   ∫ y in (-h / 2)..(h / 2), b * σ y
 
-/-- Bending moment about the neutral axis,
-`∫ y in (-h / 2)..(h / 2), y * (b * σ y)`, of a normal stress distribution
-`σ` (tension positive) over a rectangular section of width `b` and height
-`h`, as an oriented interval integral. -/
+/-- Bending moment about the neutral axis, `∫ y in (-h / 2)..(h / 2), y * (b * σ y)`, of a normal
+stress distribution `σ` (tension positive) over a rectangular section of width `b` and height `h`,
+as an oriented interval integral. It is `0` when the integrand is not integrable on the interval. -/
 noncomputable def sectionMoment (b h : ℝ) (σ : ℝ → ℝ) : ℝ :=
   ∫ y in (-h / 2)..(h / 2), y * (b * σ y)
 

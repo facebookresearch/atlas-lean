@@ -60,6 +60,71 @@ public theorem isWeakSidonSet_of_isSidon {A : Set ℕ} (h : A.IsSidon) :
   · exact h1
   · omega
 
+private def SidonIdeal.leftEndpoint (A : Set ℕ) (n l : ℕ) : Prop :=
+  l < n ∧ l ∈ A ∧ ∃ r ∈ A, n < r ∧ l + r = n + n
+
+-- A midpoint gets the opposite color from its left endpoint. The recursion decreases on ℕ,
+-- so it colors an infinite set as well as a finite one.
+open Classical in
+private noncomputable def SidonIdeal.partitionColor (A : Set ℕ) (n : ℕ) : Bool :=
+  if h : ∃ l, SidonIdeal.leftEndpoint A n l then
+    !(SidonIdeal.partitionColor A h.choose)
+  else false
+termination_by n
+decreasing_by exact h.choose_spec.1
+
+private theorem SidonIdeal.partitionColor_ne {A : Set ℕ} (hA : IsWeakSidonSet A)
+    {l n r : ℕ} (hl : l ∈ A) (hr : r ∈ A) (hln : l < n) (hnr : n < r)
+    (hadd : l + r = n + n) : SidonIdeal.partitionColor A n ≠ SidonIdeal.partitionColor A l := by
+  have hex : ∃ a, SidonIdeal.leftEndpoint A n a := ⟨l, hln, hl, r, hr, hnr, hadd⟩
+  have hleft : hex.choose = l := by
+    obtain ⟨ha, haA, b, hbA, hb, hab⟩ := hex.choose_spec
+    exact hA _ haA _ hbA _ hl _ hr (ha.trans hb) (hln.trans hnr) (hab.trans hadd.symm)
+  have hcolor : SidonIdeal.partitionColor A n = !(SidonIdeal.partitionColor A l) := by
+    conv_lhs => rw [SidonIdeal.partitionColor, dite_eq_left hex, hleft]
+  rw [hcolor]
+  cases SidonIdeal.partitionColor A l <;> decide
+
+/-- **Weak Sidon sets split into two Sidon sets.** Every weak Sidon set $A \subseteq \mathbb{N}$ is
+the union of two disjoint Sidon sets $B$ and $C$.
+
+Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
+Theorem 1 (`integers-2025-A91-thm-1`). -/
+public theorem exists_partition_isSidon_of_isWeakSidonSet {A : Set ℕ}
+    (hA : IsWeakSidonSet A) :
+    ∃ B C : Set ℕ, B ∪ C = A ∧ Disjoint B C ∧ B.IsSidon ∧ C.IsSidon := by
+  let cell (e : Bool) : Set ℕ := {n | n ∈ A ∧ SidonIdeal.partitionColor A n = e}
+  have hsid (e : Bool) : (cell e).IsSidon := by
+    have ordered {a b c d : ℕ} (ha : a ∈ cell e) (hb : b ∈ cell e)
+        (hc : c ∈ cell e) (hd : d ∈ cell e) (hab : a ≤ b) (hcd : c ≤ d)
+        (hsum : a + b = c + d) : a = c := by
+      by_cases hab' : a = b
+      · by_cases hcd' : c = d
+        · omega
+        · exact False.elim (SidonIdeal.partitionColor_ne hA hc.1 hd.1
+            (show c < a by omega) (show a < d by omega) (by omega) (ha.2.trans hc.2.symm))
+      · by_cases hcd' : c = d
+        · exact False.elim (SidonIdeal.partitionColor_ne hA ha.1 hb.1
+            (show a < c by omega) (show c < b by omega) (by omega) (hc.2.trans ha.2.symm))
+        · exact hA a ha.1 b hb.1 c hc.1 d hd.1 (lt_of_le_of_ne hab hab')
+            (lt_of_le_of_ne hcd hcd') hsum
+    intro a ha b hb c hc d hd hsum
+    rcases le_total a b with hab | hba <;> rcases le_total c d with hcd | hdc
+    · have heq := ordered ha hb hc hd hab hcd hsum
+      exact Or.inl ⟨heq, by omega⟩
+    · have heq := ordered ha hb hd hc hab hdc (by omega)
+      exact Or.inr ⟨heq, by omega⟩
+    · have heq := ordered hb ha hc hd hba hcd (by omega)
+      exact Or.inr ⟨by omega, heq⟩
+    · have heq := ordered hb ha hd hc hba hdc (by omega)
+      exact Or.inl ⟨by omega, heq⟩
+  refine ⟨cell false, cell true, ?_, ?_, hsid false, hsid true⟩
+  · ext n
+    change (n ∈ A ∧ SidonIdeal.partitionColor A n = false) ∨
+      (n ∈ A ∧ SidonIdeal.partitionColor A n = true) ↔ n ∈ A
+    cases SidonIdeal.partitionColor A n <;> simp
+  · exact Set.disjoint_left.2 fun _ h₀ h₁ => Bool.false_ne_true (h₀.2.symm.trans h₁.2)
+
 private theorem SidonIdeal.isSidon_of_double_le {A : Set ℕ} (h0 : 0 ∉ A)
     (double_le : ∀ {x y}, x ∈ A → y ∈ A → x < y → 2 * x ≤ y) : A.IsSidon := by
   have pos {x : ℕ} (hx : x ∈ A) : 0 < x := Nat.pos_of_ne_zero fun e => h0 (e ▸ hx)

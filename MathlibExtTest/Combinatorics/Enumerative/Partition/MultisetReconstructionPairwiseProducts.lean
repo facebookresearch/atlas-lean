@@ -21,3 +21,14 @@ example {n : ℕ} (hn : 0 < n) (p : Nat.Partition n) :
   simpa [Nat.Partition.indiscrete_parts hn.ne', pairwiseProducts,
     Multiset.powersetCard_eq_empty] using
     partition_pairwiseProducts_eq_iff hn p (Nat.Partition.indiscrete n)
+
+-- Two occurrences of the largest part contribute its square exactly once.
+example (p : Nat.Partition 4) (htwo : 2 ∈ p.parts) (hbound : ∀ x ∈ p.parts, x ≤ 2)
+    (hp : pairwiseProducts p.parts = {4}) :
+    p = Nat.Partition.ofSums 4 {2, 2} (by decide) := by
+  let q := Nat.Partition.ofSums 4 {2, 2} (by decide)
+  have hq : q.parts = {2, 2} := by decide
+  apply partition_eq_of_pairwiseProducts_eq_of_max_eq (by decide) p q
+  · exact ⟨2, htwo, by simp [hq], hbound, by simp [hq]⟩
+  · rw [hp, hq]
+    decide

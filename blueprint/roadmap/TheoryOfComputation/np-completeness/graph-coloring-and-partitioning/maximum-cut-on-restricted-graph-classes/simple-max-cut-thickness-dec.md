@@ -1,0 +1,3 @@
+# MAXIMUM CUT ON GRAPHS OF THICKNESS AT MOST k as a decision problem
+
+Fix a natural number $k$. The decision problem MAXIMUM CUT ON GRAPHS OF THICKNESS AT MOST $k$ accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for MAXIMUM CUT ON GRAPHS OF THICKNESS AT MOST $k$ and feasible for MAXIMUM CUT: some set $S$ of vertices, all less than $n$, and some sublist $C$ of $E$ with at least $K$ entries have exactly one endpoint of every pair in $C$ in $S$. It rejects every bitstring that does not decode to such an instance.
