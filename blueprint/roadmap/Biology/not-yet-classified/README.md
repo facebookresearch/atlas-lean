@@ -2,13 +2,11 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Balke Pearl Bounds](balke-pearl-bounds/README.md)
 - [Capture Recapture](capture-recapture/README.md)
-- [Der Simonian Laird](der-simonian-laird/README.md)
-- [Fieller Ratio](fieller-ratio/README.md)
-- [Kruskal Wallis](kruskal-wallis/README.md)
-- [Manski Treatment Bounds](manski-treatment-bounds/README.md)
-- [Mediation Formula](mediation-formula/README.md)
-- [Neyman Scott](neyman-scott/README.md)
-- [Rosenbaum Sensitivity](rosenbaum-sensitivity/README.md)
-- [Wilcoxon Signed Rank](wilcoxon-signed-rank/README.md)
+- [Cherry Distribution](cherry-distribution/README.md)
+- [General Markov Flattening](general-markov-flattening/README.md)
+- [General Markov Identifiability](general-markov-identifiability/README.md)
+- [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
+- [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
+- [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
+- [TBRAgreement Forest](tbragreement-forest/README.md)

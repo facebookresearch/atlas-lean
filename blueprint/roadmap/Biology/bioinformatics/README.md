@@ -15,3 +15,8 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Position weight matrices](position-weight-matrices/README.md)
 - [Profile scores for amino acid substitutions](profile-scores-for-amino-acid-substitutions/README.md)
 - [Zuker's minimum free energy algorithm](zuker-s-minimum-free-energy-algorithm/README.md)
+
+- [Transposition diameter of the symmetric group](transposition-diameter-of-the-symmetric-group.md)
+- [Approximation ratio for sorting by transpositions](approximation-ratio-for-sorting-by-transpositions.md)
+
+- [Genome rearrangements](genome-rearrangements/README.md)
