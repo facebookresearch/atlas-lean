@@ -10255,6 +10255,7 @@
   "Domains/Biology/PopulationGenetics/TreeFStatistics": {"to": "Biology/population-structure", "title": "Outgroup f3 and admixed branches"},
   "Domains/Biology/PopulationGenetics/TwoLocusCoalescent": {"to": "Biology/coalescent-theory", "title": "Two-locus coalescent"},
   "Domains/Biology/PopulationGenetics/TwoLocusCoalescentPath": {"to": "Biology/coalescent-theory", "title": "Two-locus coalescent"},
+  "Domains/Biology/PopulationGenetics/WrightFStatistics": {"to": "Biology/population-structure", "title": "Wright's F-statistics"},
   "Domains/Biology/PopulationGenetics/WrightFisherChain": {"to": "Biology/population-genetics", "title": "Wright–Fisher Markov chain"},
   "Domains/Biology/PopulationGenetics/WrightFisherChainConstruction": {"to": "Biology/population-genetics", "title": "Wright–Fisher Markov chain"},
   "Domains/Biology/StatisticalGenetics/BOLTLMM": {"to": "Biology/statistical-genetics", "title": "BOLT-LMM mixed-model association"},
