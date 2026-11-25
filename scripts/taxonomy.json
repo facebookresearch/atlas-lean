@@ -13448,6 +13448,7 @@
   "MathlibExt/NumberTheory/TriangularRepresentationWindow": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Representations by squares and triangular numbers"},
   "MathlibExt/NumberTheory/TribonacciInt": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/BrocardRamanujanNotTetranacci": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Brocard–Ramanujan equation in recurrence sequences"},
+  "MathlibExt/NumberTheory/BrocardRamanujanPowerFree": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Brocard–Ramanujan equation"},
   "MathlibExt/NumberTheory/TribonacciPadicValInt": {"to": "NumberTheory/linear-recurrences/diophantine-recurrences", "title": "Brocard–Ramanujan equation in recurrence sequences"},
   "MathlibExt/NumberTheory/TribonacciSequenceWithInitialValues001": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/TribonacciSequenceWithInitialValues111": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
