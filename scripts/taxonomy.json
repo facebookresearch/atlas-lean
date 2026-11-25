@@ -15909,6 +15909,7 @@
   "WantedExt/GraphTheory/TournamentScoreSequenceWanted": {"to": "GraphTheory/directed-graphs", "title": "Tournaments and score sequences"},
   "WantedExt/GraphTheory/TwoRegularMinorForcingWanted": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Two-regular minors"},
   "WantedExt/GraphTheory/UniversalPointSetsSubquadraticWanted": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Universal point sets for planar graphs"},
+  "WantedExt/FieldTheory/KummerCorrespondenceWanted": {"to": "FieldTheory/galois-theory", "title": "Kummer correspondence"},
   "WantedExt/GroupTheory/AbelianImagesUltraproductsKourovka20Problem13Wanted": {"to": "GroupTheory/abelian-groups", "title": "Homomorphic images of ultraproducts of groups"},
   "WantedExt/GroupTheory/AbelianLocallyQuaternionProductKourovka18Problem95Wanted": {"to": "GroupTheory/periodic-and-locally-finite-groups", "title": "Products of abelian and locally quaternion groups"},
   "WantedExt/GroupTheory/AbelianNormalGeneratorsPGroupKourovka20Problem75Wanted": {"to": "GroupTheory/finite-p-groups", "title": "Abelian subgroups of p-groups"},
