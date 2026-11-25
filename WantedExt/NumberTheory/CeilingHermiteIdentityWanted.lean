@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.InclExclLikeSumBounds
 public import MathlibExt.NumberTheory.InclExclLikeSumRelations
 public import MathlibExt.NumberTheory.TverbergSumPeriodic
+public import MathlibExt.Algebra.Order.Floor.HalfShift
 
 /-!
 # Inclusion-exclusion-like sums with floor, ceiling and nearest-integer functions (statements)
@@ -134,17 +135,6 @@ public theorem_wanted tverbergPartialSum_vanish_and_periodic {ℓ : ℕ} (hℓ :
           ∀ (K : ℕ) (i : Fin ℓ) (q : ℤ),
             ∑ k ∈ Finset.Icc 1 K, tverbergSum F (Function.update a i (a i + q * m)) m k =
               ∑ k ∈ Finset.Icc 1 K, tverbergSum F a m k
-
-/-- **Floor and ceiling of a quotient plus one half.** For every integer $q$ and every positive
-integer $m$, $\lfloor q/m + 1/2 \rfloor = \lfloor (q + \lfloor m/2 \rfloor)/m \rfloor$ and
-$\lceil q/m + 1/2 \rceil = \lceil (q + \lceil m/2 \rceil)/m \rceil$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 8. -/
-public theorem_wanted floor_ceil_div_add_half (q : ℤ) (m : ℕ) (hm : 0 < m) :
-    ⌊(q : ℝ) / m + 1 / 2⌋ = ⌊((q + (m / 2 : ℕ) : ℤ) : ℝ) / m⌋ ∧
-      ⌈(q : ℝ) / m + 1 / 2⌉ = ⌈((q + ((m + 1) / 2 : ℕ) : ℤ) : ℝ) / m⌉
 
 /-- **Extrema of the ceiling inclusion-exclusion-like sum.** Let $n \ge 2$ and let $g_2$ be the
 inclusion-exclusion-like sum $g^{(F)}$ in $n$ real variables with $F$ the ceiling function. Then

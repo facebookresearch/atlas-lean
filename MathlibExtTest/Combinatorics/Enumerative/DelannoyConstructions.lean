@@ -12,6 +12,19 @@ import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
 
 namespace MetaMathlibExt.DelannoyConstructions
 
+-- At the boundary n = 0, the formula has only its constant term.
+example (m : ℕ) : ordinaryRiordanPascalLikeMatrix m m 1 = 1 := by
+  simpa using delannoy_eq_sum_choose_mul_choose_two_pow m 0
+
+-- With m > n, the right-hand sum stops strictly before the triangle entry's sum.
+example : ordinaryRiordanPascalLikeMatrix 5 3 1 = 25 := by
+  rw [delannoy_eq_sum_choose_mul_choose_two_pow 3 2]
+  decide +kernel
+
+-- Independently evaluate the original entry with the two coordinates reversed.
+example : ordinaryRiordanPascalLikeMatrix 5 2 1 = 25 := by
+  decide +kernel
+
 -- On row zero only the initial summand contributes.
 example : genDelannoyUpper 3 0 4 = 1 := by decide
 

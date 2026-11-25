@@ -84,17 +84,6 @@ of the squares of the divisors of $n$. -/
 def IsNearFPerfect (n : ℕ) : Prop :=
   IsKLNearPerfect 2 3 n
 
-/-- **$2$ is $[k,1]$-deficient-perfect.** For every natural number $k$, the number $2$ is
-$[k,1]$-deficient-perfect.
-
-The divisor is $d = 1$, since $1 + 2^k + 1^k = 2^k + 1 \cdot 2$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Corollary 1. -/
-theorem_wanted isKLDeficientPerfect_two (k : ℕ) :
-    IsKLDeficientPerfect k 1 2
-
 /-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
 $F$-perfect.
 

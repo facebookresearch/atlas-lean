@@ -19,4 +19,6 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Weighted means and scatter matrices](weighted-means-and-scatter-matrices/README.md)
 - [Gaussian maximum likelihood](gaussian-maximum-likelihood/README.md)
 - [Kernel principal component analysis](kernel-principal-component-analysis/README.md)
+- [Factor analysis and structural equation models](factor-analysis-and-structural-equation-models/README.md)
+- [Panel data models](panel-data-models/README.md)
 - [Gauss–Markov covariance minimality](gauss-markov-covariance-minimality.md)
