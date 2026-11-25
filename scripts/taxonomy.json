@@ -19769,7 +19769,11 @@
   "MathlibExt/Topology/Category/TopCat/PushoutOpenComplement": {"to": "Topology/categorical-topology", "title": "PushoutOpenComplement"},
   "MathlibExt/Topology/Category/TopCat/Subspace": {"to": "Topology/categorical-topology", "title": "Subspace inclusions and maps in TopCat"},
   "MathlibExt/RingTheory/HopfAlgebra/Hom": {"to": "Algebra/associative-algebras", "title": "Naturality of Hopf antipodes"},
-  "MathlibExt/RingTheory/Bialgebra/BaseChange": {"to": "Algebra/associative-algebras", "title": "Bialgebra scalar extension through an algebra tower"}
+  "MathlibExt/RingTheory/Bialgebra/BaseChange": {"to": "Algebra/associative-algebras", "title": "Bialgebra scalar extension through an algebra tower"},
+  "MathlibExt/Algebra/Lie/BaseChange": {"to": "Algebra/nonassociative-algebras", "title": "Scalar extension of Lie algebra morphisms"},
+  "MathlibExt/Algebra/Lie/UniversalEnveloping/BaseChange": {"to": "Algebra/nonassociative-algebras", "title": "Universal enveloping algebras under scalar extension"},
+  "MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Connecting": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Connecting maps of balanced tensor complexes"}
+
 
 
 

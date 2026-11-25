@@ -59,7 +59,7 @@ private lemma F_antipode_x :
       MonoidAlgebra.single (ULift.up (Multiplicative.ofAdd (-2))) (2 : R) := by
   rw [F.map_antipode]
   simp only [F, x, MonoidAlgebra.mapDomainBialgHom_single,
-    MonoidAlgebra.antipode_single, HopfAlgebra.antipode_eq_id, LinearMap.id_apply]
+    MonoidAlgebra.antipode_single, CommSemiring.antipode_eq_id, LinearMap.id_apply]
   rfl
 
 example : (2 : R) * 3 = 0 ∧ (2 : R) ≠ 0 ∧ (3 : R) ≠ 0 := by norm_num

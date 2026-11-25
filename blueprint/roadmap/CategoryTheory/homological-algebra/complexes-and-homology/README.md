@@ -579,3 +579,4 @@ Chain and cochain complexes indexed by complex shapes, short complexes, homology
 - [Twisted bar differential](twisted-bar-differential/README.md)
 - [Twisted cobar differential](twisted-cobar-differential/README.md)
 - [Two-sided twisting Hom complex](two-sided-twisting-hom-complex/README.md)
+- [Connecting maps of balanced tensor complexes](connecting-maps-of-balanced-tensor-complexes/README.md)
