@@ -10,6 +10,9 @@ the build never reads: graph data (blueprint/ and the graph's data files in scri
 documentation (Markdown outside scripts/ and .github/, and the agent guidance in .agents/ and
 .claude/). Any other path, or no path at all, prints `build=true`. The workflow skips `build` only on
 `false`, so a failure here, or of the job, builds as before. Changed paths are never printed.
+
+It reads no file but the listing, and imports only the standard library: scripts/queue/preflight.py
+takes the paths named here for rules, not inputs (NAMES_ONLY).
 """
 
 from __future__ import annotations

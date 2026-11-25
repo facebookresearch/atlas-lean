@@ -2,6 +2,9 @@
 """Tests for scripts/ci_scope.py and the `changes` job of .github/workflows/ci.yml that runs it.
 
     python3 -m unittest discover -s scripts -p test_ci_scope.py -v
+
+The paths below are examples: these tests read only ci.yml and ci_scope.py, which
+scripts/queue/preflight.py relies on (NAMES_ONLY).
 """
 
 from __future__ import annotations

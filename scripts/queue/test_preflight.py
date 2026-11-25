@@ -1651,6 +1651,25 @@ class GitTests(unittest.TestCase):
             named = (root / workflow).read_text()  # a module the workflow names itself is its input; others are not
             self.assertFalse([c for c in code if c.endswith(".lean") and c.split("/", 1)[0] in preflight.LIBRARIES
                               and c not in named], workflow)
+        # The paths that scripts/ci_scope.py and its test name are rules and examples, not inputs (NAMES_ONLY).
+        self.assertEqual(preflight._code_closure(own, head, {"scripts/test_ci_scope.py"}),
+                         {"scripts/test_ci_scope.py", "scripts/ci_scope.py"})
+
+    def test_a_script_that_only_names_paths(self):
+        r = self.remote
+        ci = ".github/workflows/ci.yml"
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 -I scripts/ci_scope.py x\n"
+                                     "      - run: python3 scripts/other.py\n",
+                 "scripts/ci_scope.py": "import sys\nimport helper\nDATA = {'scripts/data.json'}\n",
+                 "scripts/helper.py": "x = 1\n", "scripts/other.py": "open('scripts/read.json')\n",
+                 "scripts/data.json": "{}\n", "scripts/read.json": "{}\n"})
+        base = r.commit("Merge pull request #300 from x")
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
+        code = preflight.workflow_code(self.git, base, [ci])
+        self.assertTrue({"scripts/ci_scope.py", "scripts/helper.py", "scripts/other.py", "scripts/read.json"} <= set(code),
+                        code)  # its imports are followed, and another script's names still count
+        self.assertNotIn("scripts/data.json", code)
 
     def test_a_local_action(self):
         r = self.remote

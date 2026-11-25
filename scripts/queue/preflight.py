@@ -702,6 +702,11 @@ def workflow_code(git: "Git", commit: str, paths: list[str]) -> list[str]:
 
 _SCRIPT = r"\.(?:py|sh|bash|js|mjs|cjs|ts|rb|pl|lua)$"
 _CONFIG = r"\.(?:json|toml|ya?ml|txt|cfg|ini)$"  # files that name the paths a check reads: followed, not run
+# Scripts the checks run whose path names are rules or examples, not files they read: only their imports
+# lead to more code. scripts/ci_scope.py compares a pull request's changed paths with the graph's data
+# files, and its test names such paths; as inputs, those files would make every check stale whenever main
+# changes one of them.
+NAMES_ONLY = frozenset({"scripts/ci_scope.py", "scripts/test_ci_scope.py"})
 
 
 def code_signature(git: "Git", commit: str, entry: str) -> str | None:
@@ -770,6 +775,8 @@ def _code_closure(git: "Git", commit: str, start: set[str], limit: int = 500) ->
         found = set()
         for path, oid in oids.items():
             text, here = texts.get(oid, ""), path.rsplit("/", 1)[0] if "/" in path else ""
+            if path in NAMES_ONLY:  # only its imports lead to more code
+                text = "\n".join(re.findall(r"^\s*(?:from|import)\s+[A-Za-z_]\w*", text, re.M))
             text = re.sub(r"\$\{?\w+\}?/", "", text).replace('"', " ").replace("'", " ")  # "$REPO_ROOT/scripts/x" is scripts/x
             for ref in (re.sub(r"^(?:\./)+", "", r) for r in re.findall(r"(?<![\w/-])((?:\./)*[\w.-]+(?:/[\w.*-]+)+)", text)):
                 if "*" in ref and ref.split("/", 1)[0] not in LIBRARIES and ".." not in ref.split("/") \
