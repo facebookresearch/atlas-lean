@@ -62,7 +62,7 @@ namespace Engineering.Process.ReactiveBalance
 
 /-- Product rule for one species stock `V * c i`: its derivative is
 `V' * c i + V * c' i` at the instant `t`. -/
-theorem stock_deriv_eq {ι : Type*} {V : ℝ → ℝ} {c : ℝ → ι → ℝ}
+lemma stock_deriv_eq {ι : Type*} {V : ℝ → ℝ} {c : ℝ → ι → ℝ}
     {V' : ℝ} {c' : ι → ℝ} {t : ℝ}
     (hV : HasDerivAt V V' t) (i : ι)
     (hc : HasDerivAt (fun t => c t i) (c' i) t) :
@@ -122,7 +122,7 @@ theorem closed_constant_volume {ι : Type*} {V0 : ℝ} {c : ℝ → ι → ℝ}
 `V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`, which shows why mass
 conservation alone is insufficient for a volume law when the density
 changes. -/
-theorem volume_deriv_eq {rho V : ℝ → ℝ} {rho' V' t : ℝ}
+lemma volume_deriv_eq {rho V : ℝ → ℝ} {rho' V' t : ℝ}
     (hrho : HasDerivAt rho rho' t) (hV : HasDerivAt V V' t)
     (hrho0 : rho t ≠ 0) (rho_in Qin Qout : ℝ)
     (hmass : HasDerivAt (fun t => rho t * V t)
