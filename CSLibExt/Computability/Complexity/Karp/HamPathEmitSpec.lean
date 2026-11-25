@@ -31,7 +31,7 @@ shorter than the token list (`name_le`).
 
 namespace Cslib.Complexity.Karp.EmitHam
 
-open Cslib.CookLevin Cslib.Logic.PL Computability Cslib.Complexity.SatVerifier
+open Cslib.CookLevin Cslib.Logic.LegacyPL Computability Cslib.Complexity.SatVerifier
 
 /-- **The HAMPATH instance as unary blocks and arc bits.** Let $\varphi$ be a CNF formula with $m$
 clauses and $k$ distinct variables, and let $t = m + k(3m + 2)$ be the top of diamond $k$. Then

@@ -1238,8 +1238,13 @@ private lemma rmap_posReal_eq {d e : ℂ} (hd_im : d.im = 0) (hd_re : 0 < d.re)
   · rw [hd_im, he_im]
 
 /--
-For open simply connected proper `U ⊆ ℂ` and `z₀ ∈ U`, there exists holomorphic bijection `f : U →
-ball 0 1` with `f z₀ = 0` and `deriv f z₀` positive real, unique up to `Set.EqOn` on `U`. Source:
+**Riemann mapping theorem.** Let $U$ be a simply connected open subset of $\mathbb{C}$ with
+$U \ne \mathbb{C}$, and let $z_0 \in U$. Then there is a function $f : \mathbb{C} \to \mathbb{C}$,
+holomorphic on $U$, that maps $U$ bijectively onto the open unit disc $\{w : |w| < 1\}$, with
+$f(z_0) = 0$ and $f'(z_0)$ a positive real number. It is unique on $U$: every function
+$g : \mathbb{C} \to \mathbb{C}$ with the same four properties agrees with $f$ at every point of $U$.
+
+Source:
 same as Riemann mapping; B. Riemann thesis 1851; W. F. Osgood Trans. Amer. Math. Soc. 1 (1900),
 310–314, DOI 10.2307/1986285; C. Carathéodory Math. Ann. 72 (1912), 107–144, DOI
 10.1007/BF01456892; Ahlfors; Lean adds f z₀=0 positive real derivative via im=0 re>0 and EqOn

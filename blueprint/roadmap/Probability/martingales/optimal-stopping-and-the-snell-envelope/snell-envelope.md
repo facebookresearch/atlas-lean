@@ -17,4 +17,4 @@ for $0 \le n \le N$.
 
 ## Background
 
-- The dynamic programming policy: the same backward recursion for a finite Markov decision process.
+- [The dynamic programming policy](../../../ComputerScience/heuristic-search-and-planning/optimality-of-stationary-policies/dp-policy.md): the same backward recursion for a finite Markov decision process.

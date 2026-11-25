@@ -12,7 +12,7 @@ This is Proposition 1.7 of Green and Tao; Gowers's Theorem 3.2 is the case $G = 
 
 ## Background
 
-- Counting lemma: the graph analogue, in which subgraph counts are controlled by the cut norm, as progression counts are controlled by $U^{k-1}$ here.
+- [Counting lemma](../../../../GraphTheory/random-graphs/graph-limits/abs-hom-density-sub-hom-density-le.md): the graph analogue, in which subgraph counts are controlled by the cut norm, as progression counts are controlled by $U^{k-1}$ here.
 
 ## Sources
 

@@ -14,7 +14,7 @@
 - [Yao's XOR lemma](../yao-s-xor-lemma/README.md): hardness amplification, turning a mildly
   unpredictable Boolean function into a strongly unpredictable one; the Goldreich–Levin theorem
   instead extracts a strongly unpredictable bit from one-wayness.
-- Encryption from hard-core predicates:
+- [Encryption from hard-core predicates](../../../ComputerScience/cryptography/public-key/encryption-from-hard-core-predicates/README.md):
   public-key encryption from a trapdoor permutation and a hard-core predicate, semantically secure.
-- Goldwasser–Micali encryption:
+- [Goldwasser–Micali encryption](../../../ComputerScience/cryptography/public-key/goldwasser-micali-encryption/README.md):
   probabilistic encryption from a specific hard decision problem, quadratic residuosity.

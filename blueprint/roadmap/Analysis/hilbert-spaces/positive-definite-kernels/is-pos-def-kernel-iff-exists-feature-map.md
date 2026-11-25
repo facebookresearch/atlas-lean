@@ -10,7 +10,7 @@ The two directions are the Gram-matrix argument and the construction of the repr
 
 ## Background
 
-- Rademacher average of a ball of linear predictors: background, the dimension-free complexity bound that applies to balls of the feature space.
+- [Rademacher average of a ball of linear predictors](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-average-linear-ball-le.md): background, the dimension-free complexity bound that applies to balls of the feature space.
 - [Kernel ridge regression](../representer-theorem/kernel-ridge-risk-kernel-ridge-fit-le.md): background, the estimator computed in the reproducing kernel Hilbert space.
 
 ## Sources

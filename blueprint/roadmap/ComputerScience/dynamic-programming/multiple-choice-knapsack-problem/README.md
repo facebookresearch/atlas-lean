@@ -1,0 +1,16 @@
+# Multiple-choice knapsack problem
+
+- [Knapsack item with weight and value](item.md)
+- [Multiple-choice knapsack selection](is-selection.md)
+- [Total weight of a knapsack selection](total-weight.md)
+- [Total value of a knapsack selection](total-value.md)
+- [Packing recurrence for multiple-choice knapsack](best-packing.md)
+- [Covering recurrence for multiple-choice knapsack](best-covering.md)
+- [Packing recurrence bounds every feasible selection's value](le-best-packing.md)
+- [Packing recurrence is attained by a feasible selection](exists-eq-of-best-packing-eq-coe.md)
+- [Packing recurrence is bottom iff no selection fits the capacity](best-packing-eq-bot-iff.md)
+- [Covering recurrence bounds every covering selection's value](le-best-covering.md)
+- [Covering recurrence is attained by a covering selection](exists-eq-of-best-covering-eq-coe.md)
+- [Covering recurrence is bottom iff no selection reaches the target](best-covering-eq-bot-iff.md)
+- [Bottom-up packing table for multiple-choice knapsack](packing-table.md)
+- [Packing table computes the packing recurrence](packing-table-eq.md)

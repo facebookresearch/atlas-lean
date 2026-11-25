@@ -13,11 +13,12 @@ public import Mathlib.Topology.MetricSpace.Lipschitz
 import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import PhyslibExt.SpaceSystems.MissionLedger
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
 /-!
-# Space thermal-power ports: radiator box trapping
+# Space thermal-power ports: radiator box trapping and battery loss heat
 
 ## i. Overview
 
@@ -33,6 +34,31 @@ box, and a last-exit-time argument with the inward signs traps
 every forward solution in the box, where it therefore solves the
 original field.
 
+A battery on a finite mission schedule is charged with the terminal
+power `Pc ≥ 0` or discharged with the terminal power `Pd ≥ 0` on each
+interval `k` of length `dt k`, never both (`Pc * Pd = 0`), with
+charge and discharge efficiencies `ηc, ηd ∈ (0, 1]`. The electrical
+port law is a supplied model input: the stored energy changes by
+`dt k * (ηc Pc k - Pd k / ηd)` (`batteryFlow`), so it is a stock of
+`MissionLedger` and every prefix of the schedule, start and end
+included, is checked by `MissionLedger.PrefixFeasible`; a feasible
+terminal stock does not repair a deficit in the middle of an
+eclipse. The terminal power `Pc - Pd` is counted positive when
+absorbed by the battery and the storage power `ηc Pc - Pd / ηd`
+positive when the stored energy grows; the port balance
+`Pc - Pd = (ηc Pc - Pd / ηd) + q` defines the dissipated heat
+`q = (1 - ηc) Pc + (1 / ηd - 1) Pd` (`batteryLossHeat`), which is
+nonnegative. For `ηc = ηd = 4/5`, charging at `100 W` stores `80 W`
+and dissipates `20 W`, and discharging `16 W` draws `20 W` from
+storage and dissipates `4 W`. The heat of interval `j` is added to
+the environmental heat input of mode `j` of the eclipse-mode
+gluing; being nonnegative, it keeps the lower inward sign of the
+radiator box, while the upper sign has to be checked on the total
+heat input. Energies are in joules, powers in watts and durations in
+seconds (or watt-hours, watts and hours throughout); efficiencies
+are dimensionless. No electrochemical model, efficiency dependence,
+degradation, illumination model or qualification claim is made.
+
 ## ii. Key results
 
 - `ThermalPowerPorts.clippedRadiatorRate_lipschitzWith`: the
@@ -46,15 +72,40 @@ original field.
   initial temperature in the box, the clipped field's global
   solution (global existence for globally Lipschitz fields) stays
   in the box for `t ≥ 0` and there solves the original field.
+- `ThermalPowerPorts.terminalPower_eq_storage_add_loss`: the battery
+  port balance; `batteryLossHeat_nonneg`: the dissipated heat is
+  nonnegative; `battery_port_of_complementary`: with
+  complementarity, storage power and heat depend on the terminal
+  power only.
+- `ThermalPowerPorts.stock_batteryFlow_succ`,
+  `ThermalPowerPorts.prefixFeasible_battery`: the stored energy on the
+  mission ledger, bounded at every prefix of a feasible schedule.
+- `ThermalPowerPorts.batteryLossHeat_lower_sign`,
+  `ThermalPowerPorts.batteryHeat_glued`: the battery heat keeps the
+  lower inward sign and enters the eclipse-mode gluing as a heat
+  input.
 
 ## iii. Table of contents
 
 - A. The clipped radiator field and box trapping
+- B. Battery loss heat and the mission schedule
+  - B.1. Port law and dissipated heat
+  - B.2. Stored energy on the mission ledger
+  - B.3. Battery heat in the eclipse-mode gluing
 
 ## iv. References
 
 - The model is the standard lumped Stefan-Boltzmann radiator
   balance; the statement is self-contained.
+- J. R. Wertz and W. J. Larson (eds.), *Space Mission Analysis and
+  Design*, 3rd edition, power-subsystem chapter (battery charge and
+  discharge efficiencies, eclipse energy balance).
+- D. G. Gilmore (ed.), *Spacecraft Thermal Control Handbook*, Vol. I,
+  2nd edition (battery dissipation as an internal heat load).
+- D. Linden and T. B. Reddy (eds.), *Handbook of Batteries*, 4th
+  edition (charge and discharge efficiency and heat generation).
+- `PhyslibExt.SpaceSystems.MissionLedger`: the every-prefix stock
+  check reused for the stored energy.
 
 ## A. The clipped radiator field and box trapping
 
@@ -915,5 +966,131 @@ theorem glued_trapped {C Krad Tmin Tmax : ℝ} {m : ℕ} {τ : ℕ → ℝ}
       · exact htrap m (Nat.lt_succ_self m) hτm_box t ⟨hge, ht.2⟩
   exact aux m hcont hode htrap h0 t ht
 
+/-! ## B. Battery loss heat and the mission schedule -/
+
+/-! ### B.1. Port law and dissipated heat -/
+
+/-- Heat dissipated in the battery (W) when it is charged with the terminal power `Pc` and
+discharged with the terminal power `Pd`, with charge and discharge efficiencies `ηc` and `ηd`:
+`(1 - ηc) Pc + (1 / ηd - 1) Pd`. -/
+noncomputable def batteryLossHeat (ηc ηd Pc Pd : ℝ) : ℝ :=
+  (1 - ηc) * Pc + (1 / ηd - 1) * Pd
+
+/-- Port balance: the terminal power `Pc - Pd` absorbed by the battery is the storage power
+`ηc Pc - Pd / ηd` plus the dissipated heat. -/
+lemma terminalPower_eq_storage_add_loss (ηc ηd Pc Pd : ℝ) :
+    Pc - Pd = (ηc * Pc - Pd / ηd) + batteryLossHeat ηc ηd Pc Pd := by
+  unfold batteryLossHeat
+  ring
+
+/-- The dissipated heat is nonnegative for nonnegative charge and discharge powers and
+efficiencies `ηc, ηd ∈ (0, 1]`. -/
+lemma batteryLossHeat_nonneg {ηc ηd Pc Pd : ℝ} (hPc : 0 ≤ Pc) (hPd : 0 ≤ Pd)
+    (hηc : ηc ∈ Set.Ioc 0 1) (hηd : ηd ∈ Set.Ioc 0 1) :
+    0 ≤ batteryLossHeat ηc ηd Pc Pd := by
+  have hc1 : ηc ≤ 1 := hηc.2
+  have hd0 : 0 < ηd := hηd.1
+  have hd1 : ηd ≤ 1 := hηd.2
+  unfold batteryLossHeat
+  have h1 : (0 : ℝ) ≤ 1 - ηc := by linarith
+  have h2 : (0 : ℝ) ≤ 1 / ηd - 1 := by
+    have h3 : (1 : ℝ) ≤ 1 / ηd := by
+      rw [le_div_iff₀ hd0]
+      linarith
+    linarith
+  exact add_nonneg (mul_nonneg h1 hPc) (mul_nonneg h2 hPd)
+
+/-- With complementarity, `Pc * Pd = 0`, the charge and discharge powers are the positive and
+negative parts of the terminal power `Pc - Pd`, so the storage power and the heat depend on the
+terminal power only. -/
+lemma battery_port_of_complementary {ηc ηd Pc Pd : ℝ} (hPc : 0 ≤ Pc) (hPd : 0 ≤ Pd)
+    (hcd : Pc * Pd = 0) :
+    ηc * Pc - Pd / ηd = ηc * max (Pc - Pd) 0 - max (-(Pc - Pd)) 0 / ηd ∧
+      batteryLossHeat ηc ηd Pc Pd =
+        (1 - ηc) * max (Pc - Pd) 0 + (1 / ηd - 1) * max (-(Pc - Pd)) 0 := by
+  rcases mul_eq_zero.mp hcd with hPc0 | hPd0
+  · subst hPc0
+    have hm1 : max ((0 : ℝ) - Pd) 0 = 0 := max_eq_right (by linarith)
+    have hm2 : max (-((0 : ℝ) - Pd)) 0 = Pd := by
+      have heq : -((0 : ℝ) - Pd) = Pd := by ring
+      rw [heq]
+      exact max_eq_left hPd
+    rw [hm1, hm2]
+    constructor
+    · ring
+    · unfold batteryLossHeat
+      ring
+  · subst hPd0
+    have hm1 : max (Pc - (0 : ℝ)) 0 = Pc := by
+      have heq : Pc - (0 : ℝ) = Pc := by ring
+      rw [heq]
+      exact max_eq_left hPc
+    have hm2 : max (-(Pc - (0 : ℝ))) 0 = 0 := max_eq_right (by linarith)
+    rw [hm1, hm2]
+    constructor
+    · ring
+    · unfold batteryLossHeat
+      ring
+
+/-! ### B.2. Stored energy on the mission ledger -/
+
+/-- Stored-energy flow of schedule interval `k` (J): `dt k * (ηc Pc k - Pd k / ηd)`. -/
+noncomputable def batteryFlow (ηc ηd : ℝ) (dt Pc Pd : ℕ → ℝ) (k : ℕ) : ℝ :=
+  dt k * (ηc * Pc k - Pd k / ηd)
+
+/-- The stored energy is the resource `e` of the mission ledger whose flow is the battery flow:
+on every schedule interval `k` it changes by `dt k * (ηc Pc k - Pd k / ηd)`. -/
+lemma stock_batteryFlow_succ {ι : Type*} {s₀ : ι → ℝ} {flow : ι → ℕ → ℝ} {e : ι} {ηc ηd : ℝ}
+    {dt Pc Pd : ℕ → ℝ} (hflow : flow e = batteryFlow ηc ηd dt Pc Pd) (k : ℕ) :
+    MissionLedger.stock s₀ flow e (k + 1) =
+      MissionLedger.stock s₀ flow e k + dt k * (ηc * Pc k - Pd k / ηd) := by
+  rw [MissionLedger.stock_succ, hflow]
+  rfl
+
+/-- Every electrical-stock prefix is checked: in a prefix-feasible ledger whose resource `e` has
+the battery flow, the stored energy after every prefix `t ≤ N` of the schedule lies between the
+floor raised by the reserve and the capacity. -/
+lemma prefixFeasible_battery {ι : Type*} {lo hi s₀ : ι → ℝ} {r : ι → NNReal}
+    {flow : ι → ℕ → ℝ} {N : ℕ} {e : ι} {ηc ηd : ℝ} {dt Pc Pd : ℕ → ℝ}
+    (hflow : flow e = batteryFlow ηc ηd dt Pc Pd)
+    (h : MissionLedger.PrefixFeasible lo hi r s₀ flow N) {t : ℕ} (ht : t ≤ N) :
+    lo e + r e ≤ s₀ e + ∑ k ∈ Finset.range t, dt k * (ηc * Pc k - Pd k / ηd) ∧
+      s₀ e + ∑ k ∈ Finset.range t, dt k * (ηc * Pc k - Pd k / ηd) ≤ hi e := by
+  have h2 := h e t ht
+  simp only [MissionLedger.stock, hflow, batteryFlow] at h2
+  exact h2
+
+/-! ### B.3. Battery heat in the eclipse-mode gluing -/
+
+/-- The battery heat keeps the lower inward sign of the radiator box: if the environmental heat
+input satisfies `0 ≤ Qenv - Krad * Tmin ^ 4`, so does the total heat input with the battery heat
+added. -/
+lemma batteryLossHeat_lower_sign {ηc ηd Pc Pd Qenv Krad Tmin : ℝ} (hPc : 0 ≤ Pc) (hPd : 0 ≤ Pd)
+    (hηc : ηc ∈ Set.Ioc 0 1) (hηd : ηd ∈ Set.Ioc 0 1) (h : 0 ≤ Qenv - Krad * Tmin ^ 4) :
+    0 ≤ Qenv + batteryLossHeat ηc ηd Pc Pd - Krad * Tmin ^ 4 := by
+  have hq := batteryLossHeat_nonneg hPc hPd hηc hηd
+  have heq : Qenv + batteryLossHeat ηc ηd Pc Pd - Krad * Tmin ^ 4 =
+      (Qenv - Krad * Tmin ^ 4) + batteryLossHeat ηc ηd Pc Pd := by ring
+  rw [heq]
+  exact add_nonneg h hq
+
+/-- The battery heat as a heat input of the eclipse-mode gluing: if on every piece
+`[τ j, τ (j + 1)]` of a strict partition the temperature is continuous and solves the radiator
+equation with the heat input `Qenv j + batteryLossHeat ηc ηd (Pc j) (Pd j)` on the open piece,
+then it is continuous on the whole horizon and satisfies the integral form of that equation on
+every piece. -/
+lemma batteryHeat_glued {C Krad ηc ηd : ℝ} (hC : 0 < C) {m : ℕ} {τ : ℕ → ℝ} (hτ : StrictMono τ)
+    {Qenv Pc Pd : ℕ → ℝ} {T : ℝ → ℝ}
+    (hcont : ∀ j : ℕ, j < m → ContinuousOn T (Set.Icc (τ j) (τ (j + 1))))
+    (hode : ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+      HasDerivAt T (radiatorRate C Krad (Qenv j + batteryLossHeat ηc ηd (Pc j) (Pd j)) (T t)) t) :
+    ContinuousOn T (Set.Icc (τ 0) (τ m)) ∧
+      ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Icc (τ j) (τ (j + 1)) →
+        T t - T (τ j) = ∫ s in τ j..t,
+          radiatorRate C Krad (Qenv j + batteryLossHeat ηc ηd (Pc j) (Pd j)) (T s) := by
+  constructor
+  · exact glued_continuous hτ hcont hode
+  · intro j hj t ht
+    exact glued_integral_on_piece hC hτ hcont hode hj ht
 
 end ThermalPowerPorts

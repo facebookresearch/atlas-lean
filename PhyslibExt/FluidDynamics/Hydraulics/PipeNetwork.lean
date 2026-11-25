@@ -11,6 +11,8 @@ public import MathlibExt.Combinatorics.Graph.ArcNetwork
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.Monovary
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -50,11 +52,15 @@ valve, cavitation, or positive-flow admission claim is included.
   sign; for a passive flow the sign needs no extra hypothesis.
 - `FluidDynamics.Hydraulics.PipeNetwork.pipeFlowEquations_reverse`:
   reversing all orientations and signed flows preserves the predicate.
+- `FluidDynamics.Hydraulics.PipeNetwork.passivePipeFlow_flow_unique`: with
+  strictly positive resistances and the same demand, edge flows are
+  unique (heads need not be).
 
 ## iii. Table of contents
 
 - A. Pipe-flow equations, head drop, dissipation, and reversal
 - B. Passive refinement
+- C. Flow uniqueness
 
 ## iv. References
 
@@ -224,5 +230,128 @@ theorem passivePipeFlow_reverse {V : Type*} [Fintype V]
     (hp : IsPassivePipeFlow tail head r q d h) :
     IsPassivePipeFlow head tail r (-q) d h :=
   ⟨pipeFlowEquations_reverse hp.1, hp.2⟩
+
+/-! ## C. Flow uniqueness -/
+
+/-- The signed-square law value is strictly monotone. -/
+private lemma strictMono_mul_abs_self :
+    StrictMono (fun q : ℝ => q * |q|) := by
+  intro a b hab
+  show a * |a| < b * |b|
+  by_cases ha : 0 ≤ a
+  · by_cases hb : 0 ≤ b
+    · rw [abs_of_nonneg ha, abs_of_nonneg hb]
+      nlinarith
+    · have hb' : b < 0 := lt_of_not_ge hb
+      linarith
+  · have ha' : a < 0 := lt_of_not_ge ha
+    by_cases hb : 0 ≤ b
+    · rw [abs_of_neg ha', abs_of_nonneg hb]
+      nlinarith [mul_self_nonneg a, mul_self_nonneg b]
+    · have hb' : b < 0 := lt_of_not_ge hb
+      rw [abs_of_neg ha', abs_of_neg hb']
+      nlinarith
+
+/-- With strictly positive resistances and the same demand,
+two pipe-flow solutions have identical edge flows. -/
+theorem pipeFlowEquations_flow_unique {V : Type*} [Fintype V]
+    [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
+    {tail head : E → V} {r q₁ q₂ : E → ℝ} {d h₁ h₂ : V → ℝ}
+    (hr : ∀ e, 0 < r e)
+    (hp₁ : IsPipeFlowEquations tail head r q₁ d h₁)
+    (hp₂ : IsPipeFlowEquations tail head r q₂ d h₂) :
+    q₁ = q₂ := by
+  obtain ⟨hbal1, hhead1⟩ := hp₁
+  obtain ⟨hbal2, hhead2⟩ := hp₂
+  have hB : (incidenceMatrix tail head).mulVec (q₁ - q₂) = 0 := by
+    rw [Matrix.mulVec_sub, hbal1, hbal2, sub_self]
+  have hpair : (q₁ - q₂) ⬝ᵥ (((incidenceMatrix tail head)ᵀ).mulVec (h₁ - h₂)) = 0 := by
+    rw [Matrix.dotProduct_transpose_mulVec, hB]
+    simp [dotProduct]
+  have hhead1' : ∀ e, (((incidenceMatrix tail head)ᵀ).mulVec h₁) e
+      = -(r e * q₁ e * |q₁ e|) := by
+    intro e
+    have h := congrFun hhead1 e
+    simp only [Pi.neg_apply] at h
+    linarith
+  have hhead2' : ∀ e, (((incidenceMatrix tail head)ᵀ).mulVec h₂) e
+      = -(r e * q₂ e * |q₂ e|) := by
+    intro e
+    have h := congrFun hhead2 e
+    simp only [Pi.neg_apply] at h
+    linarith
+  have hsum0 : ∑ e, (q₁ e - q₂ e) *
+      ((((incidenceMatrix tail head)ᵀ).mulVec h₁) e -
+       (((incidenceMatrix tail head)ᵀ).mulVec h₂) e) = 0 := by
+    have h := hpair
+    rw [dotProduct] at h
+    simpa [Pi.sub_apply, Matrix.mulVec_sub] using h
+  have hsum1 : ∑ e, (q₁ e - q₂ e) *
+      ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|)) = 0 := by
+    have hrewrite : ∀ e, (q₁ e - q₂ e) *
+          ((((incidenceMatrix tail head)ᵀ).mulVec h₁) e -
+           (((incidenceMatrix tail head)ᵀ).mulVec h₂) e)
+        = -((q₁ e - q₂ e) *
+          ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|))) := by
+      intro e
+      rw [hhead1' e, hhead2' e]
+      ring
+    have hneg : (∑ e, (q₁ e - q₂ e) *
+          ((((incidenceMatrix tail head)ᵀ).mulVec h₁) e -
+           (((incidenceMatrix tail head)ᵀ).mulVec h₂) e))
+        = -(∑ e, (q₁ e - q₂ e) *
+          ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|))) := by
+      rw [← Finset.sum_neg_distrib]
+      apply Finset.sum_congr rfl
+      intro e _
+      exact hrewrite e
+    rw [hneg] at hsum0
+    simpa using hsum0
+  have hmono : Monotone (fun q : ℝ => q * |q|) := strictMono_mul_abs_self.monotone
+  have hmov : Monovary (fun q : ℝ => q * |q|) id := monovary_id_iff.mpr hmono
+  have hmov' : Monovary id (fun q : ℝ => q * |q|) := hmov.symm
+  have hnonneg : ∀ e ∈ Finset.univ,
+      0 ≤ (q₁ e - q₂ e) * ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|)) := by
+    intro e _
+    have hbase : 0 ≤ (q₁ e - q₂ e) * ((q₁ e * |q₁ e|) - (q₂ e * |q₂ e|)) := by
+      have h := Monovary.sub_mul_sub_nonneg hmov' (q₂ e) (q₁ e)
+      simpa using h
+    have hrnonneg : 0 ≤ r e := le_of_lt (hr e)
+    have halg : (q₁ e - q₂ e) * ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|))
+        = r e * ((q₁ e - q₂ e) * ((q₁ e * |q₁ e|) - (q₂ e * |q₂ e|))) := by
+      ring
+    rw [halg]
+    exact mul_nonneg hrnonneg hbase
+  have hforall : ∀ e ∈ Finset.univ,
+      (q₁ e - q₂ e) * ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|)) = 0 := by
+    have hiff := Finset.sum_eq_zero_iff_of_nonneg hnonneg
+    have hsum1' : ∑ e ∈ Finset.univ, (q₁ e - q₂ e) *
+        ((r e * q₁ e * |q₁ e|) - (r e * q₂ e * |q₂ e|)) = 0 := by
+      simpa using hsum1
+    exact hiff.mp hsum1'
+  have hinj : Function.Injective (fun q : ℝ => q * |q|) :=
+    strictMono_mul_abs_self.injective
+  funext e
+  have he := hforall e (Finset.mem_univ e)
+  rw [mul_eq_zero] at he
+  rcases he with he | he
+  · exact sub_eq_zero.mp he
+  · have hFeq : r e * q₁ e * |q₁ e| = r e * q₂ e * |q₂ e| := sub_eq_zero.mp he
+    have hrne : r e ≠ 0 := ne_of_gt (hr e)
+    have hcancel : r e * (q₁ e * |q₁ e|) = r e * (q₂ e * |q₂ e|) := by
+      simpa only [← mul_assoc] using hFeq
+    have hbase : q₁ e * |q₁ e| = q₂ e * |q₂ e| :=
+      mul_left_cancel₀ hrne hcancel
+    exact hinj hbase
+
+/-- Passive form of flow uniqueness. -/
+theorem passivePipeFlow_flow_unique {V : Type*} [Fintype V]
+    [DecidableEq V] {E : Type*} [Fintype E] [DecidableEq E]
+    {tail head : E → V} {r q₁ q₂ : E → ℝ} {d h₁ h₂ : V → ℝ}
+    (hr : ∀ e, 0 < r e)
+    (hp₁ : IsPassivePipeFlow tail head r q₁ d h₁)
+    (hp₂ : IsPassivePipeFlow tail head r q₂ d h₂) :
+    q₁ = q₂ := by
+  exact pipeFlowEquations_flow_unique hr hp₁.1 hp₂.1
 
 end FluidDynamics.Hydraulics.PipeNetwork

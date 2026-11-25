@@ -9,8 +9,10 @@ module
 
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.Clusters
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarDual
+public import MathlibExt.Combinatorics.SimpleGraph.Lattice.WhitneyBridge
 public import MathlibExt.Probability.Percolation.TwoDimensional.Crossings
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+import MathlibExt.Combinatorics.SimpleGraph.Lattice.CrossingParity
 import Mathlib.Tactic.FinCases
 
 /-!
@@ -26,8 +28,9 @@ elementary facts only; no RSW inequality is proved here.
 
 * `StatMech.RSW.Box.rect` and its sides `leftSide`, `rightSide`, `bottomSide`, `topSide`.
 * `StatMech.RSW.Box.HorizontalCrossing`, `StatMech.RSW.Box.VerticalCrossing` and their events.
-* `StatMech.RSW.Box.DualHorizontalCrossing`, `StatMech.RSW.Box.DualVerticalCrossing`: crossings in
-  the dual configuration `dualConfig ω`.
+* `StatMech.RSW.Box.DualHorizontalCrossing`: left–right crossings on the shifted dual lattice.
+* `StatMech.RSW.Box.DualVerticalCrossing`: bottom–top crossings in the rotated complement
+  `dualConfig ω`.
 * `StatMech.RSW.Box.annulus`, `StatMech.RSW.Box.AnnulusCircuit`: open circuits in an annulus.
 * `StatMech.RSW.Box.boxCrossingEvent`: the left–right crossing of `[0, ⌊αn⌋] × [0, n]`.
 * `StatMech.RSW.Box.P5`, `StatMech.RSW.Box.P5c`: the box-crossing property for one family of
@@ -275,10 +278,24 @@ theorem horizontalCrossing_eq_twoDim (ω : ConfigSpace (Sym2 (Site 2))) (a b : �
     HorizontalCrossing ω 0 a 0 b ↔ TwoDim.HorizontalCrossing ω a b :=
   Iff.rfl
 
-/-- A left–right crossing of `rect a b c d` in the dual configuration `dualConfig ω` (an open
-crossing of the dual lattice, read through the primal coordinates of `dualConfig`). -/
+private theorem faceRegion_openSubgraph_adj (ω : ConfigSpace (Sym2 (Site 2))) (f g : Site 2) :
+    (whb_faceRegion (openSubgraph 2 ω)).Adj f g ↔
+      dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false := by
+  rw [whb_faceRegion_adj]
+  change dualLattice.Adj f g ∧ _ ↔ _
+  refine and_congr_right fun hfg => ?_
+  obtain ⟨p, q, hpq, hadj⟩ := sharedPrimalEdge_isLatticeEdge hfg
+  rw [hpq, SimpleGraph.mem_edgeSet, openSubgraph_adj, and_iff_right hadj]
+  cases ω s(p, q) <;> simp
+
+/-- An open left–right crossing of `(1/2, 1/2) + ([a, b] × [c, d])` on the dual lattice.
+The integer labels are the lower left corners of the faces, and a step is open exactly when
+its crossed primal edge (`sharedPrimalEdge`) is closed in `ω`. The path stays inside the shifted
+rectangle; it may have length zero when the two sides coincide. -/
 def DualHorizontalCrossing (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) : Prop :=
-  HorizontalCrossing (dualConfig ω) a b c d
+  ∃ (x : leftSide a b c d) (y : rightSide a b c d),
+    ((whb_faceRegion (openSubgraph 2 ω)).induce (rect a b c d)).Reachable
+      ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨(y : Site 2), rightSide_subset y.2⟩
 
 /-- A bottom–top crossing of `rect a b c d` in the dual configuration `dualConfig ω`. -/
 def DualVerticalCrossing (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) : Prop :=
@@ -300,16 +317,43 @@ def dualVerticalCrossingEvent (a b c d : ℤ) : Set (ConfigSpace (Sym2 (Site 2))
     ω ∈ dualVerticalCrossingEvent a b c d ↔ DualVerticalCrossing ω a b c d := Iff.rfl
 
 theorem dualHorizontalCrossing_iff (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) :
-    DualHorizontalCrossing ω a b c d ↔ HorizontalCrossing (dualConfig ω) a b c d := Iff.rfl
+    DualHorizontalCrossing ω a b c d ↔
+      ∃ (x : leftSide a b c d) (y : rightSide a b c d),
+        Relation.ReflTransGen (fun f g : rect a b c d =>
+          dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false)
+          ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨(y : Site 2), rightSide_subset y.2⟩ := by
+  have hsteps : ((whb_faceRegion (openSubgraph 2 ω)).induce (rect a b c d)).Adj =
+      (fun f g : rect a b c d => dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false) := by
+    funext f g
+    exact propext (faceRegion_openSubgraph_adj ω f g)
+  simp only [DualHorizontalCrossing, SimpleGraph.reachable_iff_reflTransGen, hsteps]
 
 theorem dualVerticalCrossing_iff (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) :
     DualVerticalCrossing ω a b c d ↔ VerticalCrossing (dualConfig ω) a b c d := Iff.rfl
 
+theorem dualHorizontalCrossingEvent_antitone {a b c d : ℤ}
+    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : ω' ≤ ω)
+    (hω : ω ∈ dualHorizontalCrossingEvent a b c d) :
+    ω' ∈ dualHorizontalCrossingEvent a b c d := by
+  obtain ⟨x, y, hxy⟩ := hω
+  refine ⟨x, y, hxy.mono ?_⟩
+  intro f g
+  simp only [SimpleGraph.induce_adj, faceRegion_openSubgraph_adj]
+  rintro ⟨hfg, hclosed⟩
+  exact ⟨hfg, le_antisymm (by simpa only [hclosed] using h (sharedPrimalEdge f g))
+    (Bool.false_le _)⟩
+
 theorem dualHorizontalCrossingEvent_increasing {a b c d : ℤ}
     {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')
     (hω : ω ∈ dualHorizontalCrossingEvent a b c d) :
-    ω' ∈ dualHorizontalCrossingEvent a b c d :=
-  horizontalCrossingEvent_increasing h hω
+    ω' ∈ dualHorizontalCrossingEvent a b c d := by
+  apply dualHorizontalCrossingEvent_antitone _ hω
+  intro e
+  have he := h (crossEdge e)
+  change (!(ω (crossEdge.symm (crossEdge e)))) ≤
+    (!(ω' (crossEdge.symm (crossEdge e)))) at he
+  rw [Equiv.symm_apply_apply] at he
+  cases hωe : ω e <;> cases hω'e : ω' e <;> simp_all
 
 theorem dualVerticalCrossingEvent_increasing {a b c d : ℤ}
     {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')

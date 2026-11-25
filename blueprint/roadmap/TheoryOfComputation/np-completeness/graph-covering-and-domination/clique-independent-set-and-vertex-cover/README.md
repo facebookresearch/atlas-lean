@@ -174,9 +174,20 @@
 - [CLIQUE is NP-complete](part-08/clique-dec-np-complete.md)
 - [INDEPENDENT-SET is NP-complete](part-08/ind-set-dec-np-complete.md)
 - [VERTEX-COVER (exact size $k$) is NP-complete](part-08/vertex-cover-dec-np-complete.md)
+- [Well-formed instances of CLIQUE ON HAMILTONIAN GRAPHS](part-08/well-formed.md)
+- [CLIQUE ON HAMILTONIAN GRAPHS as a decision problem](part-08/clique-hamiltonian-dec.md)
+- [CLIQUE ON HAMILTONIAN GRAPHS is NP-complete](part-08/clique-hamiltonian-np-complete.md)
+- [Well-formed instances of CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4](part-08/well-formed-2.md)
+- [Feasible instances of CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4](part-08/connected-vertex-cover-planar-max-degree-2.md)
+- [CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 as a decision problem](part-08/connected-vertex-cover-planar-max-degree-3.md)
+- [CONNECTED VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 4 is NP-complete](part-08/connected-vertex-cover-planar-max-degree.md)
+- [Well-formed instances of VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3](part-08/well-formed-3.md)
+- [Feasible instances of VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3](part-08/vertex-cover-planar-max-degree-three-fea.md)
+- [VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3 as a decision problem](part-08/vertex-cover-planar-max-degree-three-dec.md)
+- [VERTEX COVER ON PLANAR GRAPHS OF MAXIMUM DEGREE 3 is NP-complete](part-08/vertex-cover-planar-max-degree-three-np.md)
 
 ## Related topics
 
 - [Kőnig's theorem](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/README.md): in bipartite graphs a minimum vertex cover has the size of a maximum matching, so VERTEX-COVER restricted to bipartite graphs is solved by matching algorithms such as Hopcroft–Karp.
-- Vertex cover 2-approximation: the endpoints of a maximal matching form a vertex cover at most twice the minimum.
-- Weighted vertex cover by the pricing method: a primal-dual 2-approximation for the weighted version.
+- [Vertex cover 2-approximation](../../../../ComputerScience/approximation-algorithms/vertex-cover-2-approximation/README.md): the endpoints of a maximal matching form a vertex cover at most twice the minimum.
+- [Weighted vertex cover by the pricing method](../../../../ComputerScience/approximation-algorithms/weighted-vertex-cover-by-the-pricing-method/README.md): a primal-dual 2-approximation for the weighted version.

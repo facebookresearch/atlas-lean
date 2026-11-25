@@ -46,9 +46,9 @@ $\alpha < 1$.
   is the scan analysed here.
 - [Parking functions](../../../../Combinatorics/parking-functions/README.md): non-overflow hash
   sequences are partial parking functions, and their count is Pollak's.
-- Average-case running time:
+- [Average-case running time](../../../randomized-algorithms/average-case-running-time/README.md):
   the expected-cost framework for random inputs used elsewhere in the graph.
 - [Amortized analysis](../../amortized-analysis/README.md): the worst-case-over-sequences
   counterpart of the expected costs computed here.
-- Sorting and searching: searching by comparisons,
+- [Sorting and searching](../../../sorting-and-searching/README.md): searching by comparisons,
   the alternative to hashing for table look-up.

@@ -10,7 +10,7 @@ that is, the [entropy](entropy.md) is $1$-strongly convex with respect to $\|\cd
 
 ## Background
 
-- Csiszár–Kullback–Pinsker inequality with zero entries allowed: applied to $u$ and $x$, it replaces the source's Hessian computation.
+- [Csiszár–Kullback–Pinsker inequality with zero entries allowed](../../../InformationTheory/information-inequalities/csiszar-kullback-pinsker-of-nonneg.md): applied to $u$ and $x$, it replaces the source's Hessian computation.
 
 ## Sources
 

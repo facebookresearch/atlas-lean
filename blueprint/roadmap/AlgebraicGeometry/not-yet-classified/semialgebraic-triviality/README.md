@@ -1,0 +1,16 @@
+# Semialgebraic Triviality
+
+- [Ambient Map](ambient-map.md)
+- [Semialgebraic Homeomorphism](semialgebraic-homeomorphism.md)
+- [Fiber](fiber.md)
+- [Patch](patch.md)
+- [Coordinate Product](coordinate-product.md)
+- [Product Point](product-point.md)
+- [Polynomial Map continuous](polynomial-map-continuous.md)
+- [Fiber semialgebraic](fiber-semialgebraic.md)
+- [Patch semialgebraic](patch-semialgebraic.md)
+- [Coordinate Product semialgebraic](coordinate-product-semialgebraic.md)
+- [Hardt Trivialization](hardt-trivialization.md)
+- [Reference mem image](reference-mem-image.md)
+- [Fiber nonempty](fiber-nonempty.md)
+- [Hardt's semialgebraic triviality theorem](hardt-trivialization-2.md)

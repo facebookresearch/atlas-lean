@@ -68,59 +68,83 @@ variable {n : ℕ}
 
 /-! ## Preferences -/
 
-/-- The strict preference given by a ranking `σ` (`σ k` is the `k`-th choice, `0` the best):
-`a` is preferred to `b` when `σ.symm a < σ.symm b`. -/
+/-- **Preference order of a ranking.** A permutation $\sigma$ of $\{0, \dots, n-1\}$, read as a
+ranking ($\sigma(k)$ is the $k$-th choice, $\sigma(0)$ the best), gives the strict total order on
+$\{0, \dots, n-1\}$ in which $a$ is preferred to $b$ when $\sigma^{-1}(a) < \sigma^{-1}(b)$. -/
 def toOrder (σ : Equiv.Perm (Fin n)) : MathlibExt.Order.StrictTotalOrder (Fin n) where
   lt a b := σ.symm a < σ.symm b
   irrefl _ := lt_irrefl _
   trans h1 h2 := lt_trans h1 h2
   total h := lt_or_gt_of_ne fun e => h (σ.symm.injective e)
 
-/-- The proposers' preferences in MathlibExt's sense. -/
+/-- **Proposers' preferences from rankings.** Given for each proposer $m$ a ranking $\sigma_m$ of
+the $n$ receivers ($\sigma_m(k)$ is the choice of $m$ of rank $k$, rank $0$ the best), the
+proposers' preference profile assigns to $m$ the strict total order in which $m$ prefers $w$ to
+$w'$ when $\sigma_m^{-1}(w) < \sigma_m^{-1}(w')$. -/
 def mprefs (mp : Fin n → Equiv.Perm (Fin n)) : MPrefs (Fin n) (Fin n) := fun m => toOrder (mp m)
 
-/-- The receivers' preferences in MathlibExt's sense. -/
+/-- **Receivers' preference profile from rankings.** Given for each receiver $w$ a ranking
+$\sigma_w$ of the $n$ proposers (a permutation of $\{0, \dots, n-1\}$, with $\sigma_w(0)$ her first
+choice), the receivers' preference profile assigns to $w$ the preference order of $\sigma_w$: $w$
+prefers $a$ to $b$ when $\sigma_w^{-1}(a) < \sigma_w^{-1}(b)$. -/
 def wprefs (wp : Fin n → Equiv.Perm (Fin n)) : WPrefs (Fin n) (Fin n) := fun w => toOrder (wp w)
 
 /-! ## The algorithm -/
 
-/-- The state of deferred acceptance: how many proposals each proposer has made (his next
-proposal goes to his choice of that rank), and whom each receiver holds. -/
+/-- **Deferred-acceptance state.** A state of deferred acceptance with $n$ proposers and $n$
+receivers, both numbered $0, \dots, n-1$, records for each proposer a natural number, the number of
+proposals he has made (his next proposal goes to his choice of that rank), and for each receiver
+either the proposer she currently holds or that she holds nobody. -/
 structure State (n : ℕ) where
   /-- The number of proposals made by each proposer. -/
   next : Vector ℕ n
   /-- The proposer each receiver holds, if any. -/
   holder : Vector (Option (Fin n)) n
 
-/-- The initial state: no proposals, nobody held. -/
+/-- **Initial state of deferred acceptance.** The initial state with $n$ proposers and
+$n$ receivers: every proposer has made $0$ proposals and no receiver holds anyone. -/
 def init (n : ℕ) : State n := ⟨Vector.replicate n 0, Vector.replicate n none⟩
 
-/-- A proposer is free when no receiver holds him. -/
+/-- **Free proposer.** A proposer $m$ is free in a state $s$ of deferred acceptance when no
+receiver holds $m$ in $s$. -/
 def Free (s : State n) (m : Fin n) : Prop := ∀ w : Fin n, s.holder[w] ≠ some m
 
 instance (s : State n) (m : Fin n) : Decidable (Free s m) := by unfold Free; infer_instance
 
 variable (mp wp : Fin n → Equiv.Perm (Fin n))
 
-/-- Whom receiver `w` holds after `m` proposes to her: `m` if she held nobody or prefers him,
-her old holder otherwise. -/
+/-- **Receiver's holder after a proposal.** In a state $s$ of deferred acceptance, the proposer
+whom receiver $w$ holds after proposer $m$ proposes to her is $m$ if she holds nobody in $s$ or
+ranks $m$ strictly better than her current holder $m'$ in her ranking, and $m'$ otherwise. -/
 def newHolder (s : State n) (m w : Fin n) : Option (Fin n) :=
   match s.holder[w] with
   | none => some m
   | some m' => if (wp w).symm m < (wp w).symm m' then some m else some m'
 
-/-- `m` proposes to his best receiver not yet proposed to (his choice of rank `s.next[m]`). -/
+/-- **A proposal.** Fix, for each proposer, a ranking of the $n$ receivers and, for each receiver,
+a ranking of the $n$ proposers (rank $0$ is the first choice). Let $s$ be a state of deferred
+acceptance in which proposer $m$ has made $k$ proposals. If $k < n$, then $m$ proposes to the
+receiver $w$ of rank $k$ in his ranking: his number of proposals becomes $k + 1$, and $w$ now
+holds $m$ if she held nobody or ranks $m$ strictly above the proposer she held, and keeps her old
+holder otherwise; all other counts and holders are unchanged. If $k \ge n$, the state is
+unchanged. -/
 def propose (s : State n) (m : Fin n) : State n :=
   if h : s.next[m] < n then
     ⟨s.next.set m (s.next[m] + 1),
       s.holder.set (mp m ⟨s.next[m], h⟩) (newHolder wp s m (mp m ⟨s.next[m], h⟩))⟩
   else s
 
-/-- The first free proposer who has not proposed to everyone, if any. -/
+/-- **Choosing the next proposer.** In a state $s$ of deferred acceptance with proposers
+$0, 1, \dots, n-1$, the chooser returns the least proposer $m$ who is free in $s$ and has made
+fewer than $n$ proposals in $s$, or no proposer if there is none. -/
 def chooser (s : State n) : Option (Fin n) :=
   (List.finRange n).find? fun m => decide (Free s m) && decide (s.next[m] < n)
 
-/-- Run deferred acceptance for at most `fuel` proposals. -/
+/-- **Running deferred acceptance.** Fix rankings for $n$ proposers and $n$ receivers, both
+numbered $0, \dots, n-1$. Starting from a state $s$ with a budget of $f$ proposals: if $f = 0$, or
+if no proposer is both free (held by no receiver) and has made fewer than $n$ proposals, the run
+returns $s$; otherwise the lowest-numbered such proposer makes a proposal, and the run continues
+from the resulting state with budget $f - 1$. -/
 def run : ℕ → State n → State n
   | 0, s => s
   | fuel + 1, s =>
@@ -128,8 +152,16 @@ def run : ℕ → State n → State n
       | none => s
       | some m => run fuel (propose mp wp s m)
 
-/-- **Deferred acceptance** (proposers propose): `n * n` proposals always suffice
-(`galeShapley_spec`). -/
+/-- **Deferred acceptance.** Let each of $n$ proposers rank the $n$ receivers, and each receiver
+rank the $n$ proposers, with rank $0$ the best. Deferred acceptance is the state reached from the
+initial state, in which no one has proposed and no receiver holds anyone, by repeating the
+following step at most $n^2$ times, stopping early once no proposer is both free and has made
+fewer than $n$ proposals: the least such proposer, having made $p$ proposals so far, proposes to
+the receiver of rank $p$ in his ranking, and she then holds whichever of him and her current
+holder she ranks better, or him if she held no one.
+
+These $n^2$ steps always suffice: in the resulting state no proposer is both free and has made
+fewer than $n$ proposals. -/
 def galeShapley : State n := run mp wp (n * n) (init n)
 
 /-! ## Accessors -/
@@ -177,7 +209,16 @@ theorem chooser_none {s : State n} (h : chooser s = none) (m : Fin n) :
 /-! ## The invariant -/
 
 variable (mp wp) in
-/-- The invariant of deferred acceptance. -/
+/-- **Invariant of deferred acceptance.** Let each proposer $m$ have a ranking $\sigma_m$ of the
+$n$ receivers and each receiver $w$ a ranking $\tau_w$ of the $n$ proposers, where $\sigma_m(k)$
+is the choice of $m$ of rank $k$ (rank $0$ is the best) and $\tau_w^{-1}(x)$ is the rank of $x$
+for $w$. A state $s$ of deferred acceptance satisfies the invariant when: every proposer has made
+at most $n$ proposals; if $w$ holds $m$, then $m$ has made $k + 1$ proposals for some rank $k$
+with $\sigma_m(k) = w$; no proposer is held by two different receivers; for every proposer $m$
+and every rank $k$ less than the number of proposals of $m$, the receiver $w = \sigma_m(k)$ holds
+some $m'$ with $\tau_w^{-1}(m') \le \tau_w^{-1}(m)$; and for such $m$ and $k$, if $\sigma_m(k)$
+does not hold $m$, then no perfect matching that is stable for the preferences given by the
+rankings matches $m$ with $\sigma_m(k)$. -/
 structure Inv (s : State n) : Prop where
   /-- Nobody proposes more than `n` times. -/
   next_le : ∀ m : Fin n, s.next[m] ≤ n
@@ -197,15 +238,25 @@ theorem inv_init : Inv mp wp (init n) := by
     fun w w' m h => by simp [init] at h, fun m k hk => by simp [init] at hk,
     fun m k hk => by simp [init] at hk⟩
 
-/-- A blocking pair contradicts stability. -/
+/-- **A stable matching has no blocking pair.** Let each proposer $m$ have a ranking $\sigma_m$ of
+the $n$ receivers and each receiver $w$ a ranking $\tau_w$ of the $n$ proposers, where
+$\sigma_m^{-1}(x)$ and $\tau_w^{-1}(x)$ are ranks ($0$ the best). If $\nu$ is a perfect matching
+that is stable for the preferences given by these rankings, there are no proposer $m$ and
+receiver $w$ with $\sigma_m^{-1}(w) < \sigma_m^{-1}(\nu(m))$ and
+$\tau_w^{-1}(m) < \tau_w^{-1}(\nu^{-1}(w))$. -/
 theorem not_blocking {ν : PerfectMatching (Fin n) (Fin n)}
     (hν : IsStable (mprefs mp) (wprefs wp) ν) {m w : Fin n}
     (h1 : (mp m).symm w < (mp m).symm (ν m)) (h2 : (wp w).symm m < (wp w).symm (ν.symm w)) :
     False :=
   hν m w ⟨h1, h2⟩
 
-/-- If every proposal of `m` below rank `b` was rejected, every stable partner of `m` has rank at
-least `b`. -/
+/-- **Rejected proposals bound stable partners.** Let each proposer $m$ have a ranking
+$\sigma_m$ of the $n$ receivers ($\sigma_m(k)$ is the choice of $m$ of rank $k$, rank $0$ the
+best), and each receiver a ranking of the $n$ proposers. Let $s$ be a state of deferred
+acceptance satisfying the invariant, let $\nu$ be a perfect matching that is stable for the
+preferences given by the rankings, let $m$ be a proposer, and let $b$ be a natural number at most
+the number of proposals $m$ has made in $s$. If for every rank $k < b$ the receiver $\sigma_m(k)$
+does not hold $m$ in $s$, then $\sigma_m^{-1}(\nu(m)) \ge b$. -/
 theorem le_rank_of_rejected {s : State n} (hI : Inv mp wp s) {ν : PerfectMatching (Fin n) (Fin n)}
     (hν : IsStable (mprefs mp) (wprefs wp) ν) (m : Fin n) {b : ℕ} (hb : b ≤ s.next[m])
     (hrej : ∀ k : Fin n, k.val < b → s.holder[mp m k] ≠ some m) :
@@ -218,7 +269,12 @@ private theorem vget_congr {α : Type*} (v : Vector α n) {a b : Fin n} (h : a =
     v[a] = v[b] := by
   subst h; rfl
 
-/-- `newHolder` keeps the better of the old holder and the proposer. -/
+/-- **Cases of the receiver's new holder.** Let $s$ be a state of deferred acceptance, $m$ a
+proposer and $w$ a receiver with ranking $\tau_w$ of the proposers ($\tau_w^{-1}(x)$ is the rank
+of $x$, rank $0$ the best). Then one of the following holds: $w$ holds nobody in $s$ and holds $m$
+after $m$ proposes to her; or $w$ holds some $y$ in $s$ with $\tau_w^{-1}(m) < \tau_w^{-1}(y)$
+and holds $m$ after $m$ proposes to her; or $w$ holds some $y$ in $s$ with
+$\tau_w^{-1}(m) \ge \tau_w^{-1}(y)$ and holds $y$ after $m$ proposes to her. -/
 theorem newHolder_cases (s : State n) (m w : Fin n) :
     (s.holder[w] = none ∧ newHolder wp s m w = some m) ∨
     (∃ y, s.holder[w] = some y ∧ (wp w).symm m < (wp w).symm y ∧ newHolder wp s m w = some m) ∨
@@ -378,13 +434,18 @@ theorem inv_propose {s : State n} (hI : Inv mp wp s) {m : Fin n} (hfree : Free s
 
 /-! ## Termination within `n²` proposals -/
 
-/-- The proposals still available: `∑ m, (n - next m)`. -/
+/-- **Remaining proposals.** For a state $s$ of deferred acceptance with $n$ proposers and $n$
+receivers, in which each proposer $m$ has made $k_m$ proposals, the number of proposals still
+available is $\sum_{m} \max(n - k_m, 0)$, the sum running over all $n$ proposers. -/
 def remaining (s : State n) : ℕ := ∑ m : Fin n, (n - s.next[m])
 
 theorem remaining_init : remaining (init n) = n * n := by
   simp [remaining, init]
 
-/-- Each proposal advances exactly one proposer's count, so `∑ m, next m` counts the proposals. -/
+/-- **A proposal adds one to the proposal count.** Fix rankings for $n$ proposers and $n$
+receivers. If proposer $m$ has made fewer than $n$ proposals in a state $s$ of deferred
+acceptance, then after $m$ proposes, the total number of proposals made by all proposers is one
+more than in $s$. -/
 theorem sum_next_propose {s : State n} {m : Fin n} (h : s.next[m] < n) :
     ∑ m' : Fin n, (propose mp wp s m).next[m'] = ∑ m' : Fin n, s.next[m'] + 1 := by
   simp only [next_propose h]
@@ -430,9 +491,11 @@ theorem galeShapley_spec :
   run_spec _ _ inv_init (by rw [remaining_init])
 
 variable (mp wp) in
-/-- **At most `n²` proposals**: no proposer proposes more than `n` times, so the total number of
-proposals `∑ m, next m` (`sum_next_propose`) is at most `n * n`; and when the run stops no free
-proposer can still propose (`galeShapley_spec`). -/
+/-- **Deferred acceptance makes at most n² proposals.** For any rankings of the $n$ receivers by
+each of the $n$ proposers and of the proposers by each receiver, in the final state of deferred
+acceptance the numbers of proposals made by the proposers sum to at most $n \cdot n$.
+
+No proposer proposes more than $n$ times. -/
 theorem sum_next_galeShapley_le : ∑ m : Fin n, (galeShapley mp wp).next[m] ≤ n * n := by
   calc ∑ m : Fin n, (galeShapley mp wp).next[m] ≤ ∑ _m : Fin n, n :=
         Finset.sum_le_sum fun m _ => (galeShapley_spec mp wp).1.next_le m
@@ -440,7 +503,11 @@ theorem sum_next_galeShapley_le : ∑ m : Fin n, (galeShapley mp wp).next[m] ≤
 
 /-! ## The output is a perfect matching -/
 
-/-- When no free proposer can propose, every proposer is held. -/
+/-- **When deferred acceptance stops, every proposer is held.** Fix rankings of the $n$ receivers
+by each of $n$ proposers and of the proposers by each receiver. Let $s$ be a state of deferred
+acceptance that satisfies the invariant of deferred acceptance for these rankings, and suppose
+that no proposer is both free in $s$ and has made fewer than $n$ proposals in $s$. Then every
+proposer is held by some receiver in $s$. -/
 theorem held_of_done {s : State n} (hI : Inv mp wp s) (hc : chooser s = none) (m : Fin n) :
     ∃ w : Fin n, s.holder[w] = some m := by
   by_contra hno
@@ -468,7 +535,9 @@ theorem held_of_done {s : State n} (hI : Inv mp wp s) (hc : chooser s = none) (m
   have : 0 < n := Fin.pos m
   omega
 
-/-- When every proposer is held, every receiver holds someone. -/
+/-- **Every receiver holds someone once every proposer is held.** Let $s$ be a state of deferred
+acceptance with $n$ proposers and $n$ receivers. If every proposer is held by some receiver in
+$s$, then every receiver holds some proposer in $s$. -/
 theorem holds_of_held {s : State n}
     (hall : ∀ m : Fin n, ∃ w : Fin n, s.holder[w] = some m)
     (w : Fin n) : ∃ m, s.holder[w] = some m := by
@@ -480,10 +549,15 @@ theorem holds_of_held {s : State n}
   obtain ⟨m, hm⟩ := (Finite.injective_iff_surjective.1 hinj) w
   exact ⟨m, hm ▸ hf m⟩
 
-/-- The receiver's partner: the proposer she holds. -/
+/-- **Receiver's partner.** In a state $s$ of deferred acceptance with $n$ proposers and $n$
+receivers, both numbered $0, \dots, n-1$, the partner of a receiver $w$ is the proposer she holds
+in $s$; if she holds nobody, it is the proposer numbered $w$ (a default value). -/
 def partnerW (s : State n) (w : Fin n) : Fin n := s.holder[w].getD w
 
-/-- The proposer's partner: the receiver holding him. -/
+/-- **Proposer's partner.** In a state $s$ of deferred acceptance with $n$ proposers and $n$
+receivers, both numbered $0, \dots, n-1$, the partner of a proposer $m$ is the lowest-numbered
+receiver that holds $m$ in $s$; if no receiver holds $m$, it is the receiver numbered $m$
+(a default value). -/
 def partnerM (s : State n) (m : Fin n) : Fin n :=
   ((List.finRange n).find? fun w : Fin n => s.holder[w] == some m).getD m
 
@@ -529,14 +603,21 @@ theorem gsMatching_symm_apply (w : Fin n) :
 
 /-! ## Stability and optimality -/
 
-/-- The rank of a proposer's final partner is his last proposal. -/
+/-- **A proposer's final partner is his last proposal.** Let each proposer $m$ rank the $n$
+receivers by a permutation $\sigma_m$ of $\{0, \dots, n-1\}$, where $\sigma_m(k)$ is his choice
+of rank $k$, let each receiver rank the $n$ proposers, and let $p_m$ be the number of proposals
+$m$ has made in the final state of deferred acceptance. Then $p_m \ge 1$, and the Gale-Shapley
+partner $\mu(m)$ of $m$ has rank $p_m - 1$ in his ranking, that is,
+$\sigma_m^{-1}(\mu(m)) = p_m - 1$. -/
 theorem exists_rank_gsMatching (m : Fin n) : ∃ k : Fin n,
     k.val + 1 = (galeShapley mp wp).next[m] ∧ (mp m).symm (gsMatching mp wp m) = k := by
   obtain ⟨k, hk, hkw⟩ := (galeShapley_spec mp wp).1.last _ m (holder_gsMatching m)
   exact ⟨k, hk, by rw [← hkw]; simp⟩
 
 variable (mp wp) in
-/-- **The Gale-Shapley matching is stable** in MathlibExt's sense (`IsStable`). -/
+/-- **The Gale-Shapley matching is stable.** For $n$ proposers and $n$ receivers, each with a
+ranking of the other side, the perfect matching computed by deferred acceptance is stable for the
+strict preferences given by these rankings. -/
 theorem isStable_gsMatching : IsStable (mprefs mp) (wprefs wp) (gsMatching mp wp) := by
   intro m w hb
   obtain ⟨h1, h2⟩ := hb
@@ -588,7 +669,9 @@ theorem gsMatching_receiver_pessimal {ν : PerfectMatching (Fin n) (Fin n)}
 
 /-! ## Every MathlibExt preference on `Fin n` is a ranking -/
 
-/-- The rank of `a` under a strict total order: the number of elements preferred to it. -/
+/-- **Rank under a strict total order.** For a strict total order $<$ on $\{0, \dots, n-1\}$, the
+rank of an element $a$ is the number of elements $b$ with $b < a$ (the elements preferred to $a$),
+as an element of $\{0, \dots, n-1\}$. -/
 def orderRank (T : MathlibExt.Order.StrictTotalOrder (Fin n)) [DecidableRel T.lt] (a : Fin n) :
     Fin n :=
   ⟨(Finset.univ.filter fun b => T.lt b a).card, by
@@ -614,8 +697,11 @@ theorem orderRank_lt_iff {T : MathlibExt.Order.StrictTotalOrder (Fin n)} [Decida
   · exact absurd h (lt_irrefl _)
   · exact (T.total hne).resolve_right fun hba => absurd h (not_lt.2 (orderRank_lt hba).le)
 
-/-- **Every strict total order on `Fin n` is given by a ranking**, so the algorithm applies to all
-of MathlibExt's preferences on `Fin n`. -/
+/-- **Every strict total order on $\{0, \dots, n-1\}$ is given by a ranking.** For every strict
+total order $\prec$ on $\{0, \dots, n-1\}$ there is a permutation $\sigma$ of $\{0, \dots, n-1\}$
+such that, for all $a$ and $b$, $a \prec b$ holds exactly when $\sigma^{-1}(a) < \sigma^{-1}(b)$.
+
+Hence the Gale-Shapley algorithm on rankings applies to every preference on $\{0, \dots, n-1\}$. -/
 theorem exists_toOrder_eq (T : MathlibExt.Order.StrictTotalOrder (Fin n)) :
     ∃ σ : Equiv.Perm (Fin n), toOrder σ = T := by
   classical
@@ -632,10 +718,17 @@ theorem exists_toOrder_eq (T : MathlibExt.Order.StrictTotalOrder (Fin n)) :
   simp only [Equiv.symm_symm]
   exact orderRank_lt_iff
 
-/-- **The algorithm serves every MathlibExt preference profile on `Fin n`**: there are rankings
-`σ, τ` presenting `mp'` and `wp'` (`mprefs σ = mp'`, `wprefs τ = wp'`), and the Gale-Shapley
-matching of those rankings is stable for `mp'` and `wp'` and proposer-optimal among all of their
-stable matchings. -/
+/-- **Gale-Shapley serves every preference profile with $n$ proposers and $n$ receivers.** Let
+the $n$ proposers and the $n$ receivers both be numbered $0, \dots, n-1$. Let each proposer $m$
+have a strict total order $<_m$ of preference on the receivers and each receiver $w$ a strict
+total order $<_w$ of preference on the proposers, where $x <_m y$ means that $m$ prefers $x$ to
+$y$, and likewise for $<_w$. Then there are permutations $\sigma_m$ (one for each proposer $m$)
+and $\tau_w$ (one for each receiver $w$) of $\{0, \dots, n-1\}$, read as rankings, such that
+$w <_m w'$ exactly when $\sigma_m^{-1}(w) < \sigma_m^{-1}(w')$ and $a <_w b$ exactly when
+$\tau_w^{-1}(a) < \tau_w^{-1}(b)$, and the Gale-Shapley matching $\mu$ of the rankings $\sigma$
+and $\tau$ is stable for these preferences and proposer-optimal: for every perfect matching $\nu$
+that is stable for these preferences and every proposer $m$, it is not the case that
+$\nu(m) <_m \mu(m)$. -/
 theorem exists_rankings_gsMatching (mp' : MPrefs (Fin n) (Fin n)) (wp' : WPrefs (Fin n) (Fin n)) :
     ∃ σ τ : Fin n → Equiv.Perm (Fin n), mprefs σ = mp' ∧ wprefs τ = wp' ∧
       IsStable mp' wp' (gsMatching σ τ) ∧

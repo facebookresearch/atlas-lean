@@ -1,0 +1,3 @@
+# The admixture log-likelihood is monotone along the FRAPPE EM iterates
+
+Let $I$ and $J$ be finite, $J$ and $K$ nonempty, and let $g$ be a [polymorphic](polymorphic.md) genotype matrix. Then for all [admixture parameters](params.md) $\theta_0$, the sequence $t \mapsto \ell_g(T^t \theta_0)$ is nondecreasing, where $\ell_g$ is the [admixture log-likelihood](admixture-log-lik.md) and $T$ the [FRAPPE EM step](em-step.md).

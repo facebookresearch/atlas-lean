@@ -1,0 +1,15 @@
+# Capture-avoiding binding laws for kinded type operators
+
+- [Renaming of type operators depends only on variable images](rename-congr.md)
+- [Identity renaming fixes type operators](rename-id.md)
+- [Composition of kind-preserving renamings](rename-rename.md)
+- [Substitution of type operators depends only on variable images](subst-congr.md)
+- [Identity substitution fixes type operators](subst-id.md)
+- [Substitution after renaming of type operators](subst-rename.md)
+- [Renaming after substitution of type operators](rename-subst.md)
+- [Composition of simultaneous type-operator substitutions](subst-subst.md)
+- [Instantiating a weakened type operator leaves it unchanged](instantiate-rename-succ.md)
+- [Substitution commutes with type-binder instantiation](subst-instantiate.md)
+- [Renaming commutes with type-binder instantiation](rename-instantiate.md)
+- [Renaming as substitution by variables](subst-var-rename.md)
+- [Lifted substitution commutes with weakening](subst-lift-rename.md)

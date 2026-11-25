@@ -1,0 +1,14 @@
+# Wired uniform bulk deviation at $q = 2$
+
+For $d, N \in \mathbb{N}$, the wired uniform bulk deviation holds when for every edge $e'$ of $\Lambda_N = \{-N, \dots, N\}^d$ and every $t \in \mathbb{R}$, there are sets $I_n$ of edges of $\Lambda_n$ and numbers $\delta_n \ge 0$ with $\delta_n \to 0$ such that $|\phi^w_n(e \text{ open}) - \theta^1_{e'}(\sigma(t))| \le \delta_n$ for every $e \in I_n$, and $(E(n) - |I_n|)/E(n) \to 0$ (read as $0$ when $E(n) = 0$). Here $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$), $\phi^w_n$ is the [wired random-cluster probability](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) of $\Lambda_n = \{-n, \dots, n\}^d$ with boundary $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$ at $(\sigma(t), 2)$, $E(n)$ is the number of edges of $\Lambda_n = \{-n, \dots, n\}^d$, and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).
+
+## Depends on
+
+- [Wired infinite-volume edge density](wired-edge-density.md)
+- [Logistic function $e^t/(1+e^t)$](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md)
+- [Edge marginal of a mass function](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md)
+- [Vertex boundary of a box](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-boundary.md)
+- [Nearest-neighbour graph on a box](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-graph.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Inclusion of box edges into $\mathbb{Z}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/edge-incl.md)
+- [Wired random-cluster probability of a configuration](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md)

@@ -32,7 +32,9 @@ prover commits to `H = graphAct ρ G₀`; on the challenge `b` it answers `ρ⁻
 * `GraphIso.sigma_complete`: completeness; the honest prover is accepted for every choice of
   coins and challenge.
 
-Special soundness and honest-verifier zero knowledge are not proved here.
+Special soundness and honest-verifier zero knowledge are not proved here; they are proved for the
+`SimpleGraph` formulation in `CSLibExt.Crypto.Identification.GraphIsomorphism`
+(`GraphIsomorphism.sigma_specialSound`, `GraphIsomorphism.sigma_hvzk`).
 
 ## References
 

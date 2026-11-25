@@ -20,13 +20,15 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Topology.MetricSpace.Lipschitz
 import Mathlib.Algebra.Ring.Parity
+import Mathlib.Analysis.ODE.DiscreteGronwall
 import MathlibExt.Analysis.ODE.ExplicitEuler
 
 /-!
 # Numerical time stepping for ODEs and diffusion
 
 Explicit Euler reuse for scalar decay, discrete conservation and positivity,
-periodic-grid FTCS diffusion, and a certified analytic-vs-numerical comparison.
+periodic-grid FTCS diffusion, a certified analytic-vs-numerical comparison, and per-step
+defects through the ten-step decay recurrence.
 
 ## i. Overview
 
@@ -38,6 +40,15 @@ structure-preserving discrete-time checks: linear conservation and
 step-size-restricted positivity for a chosen update, positivity, conservation and
 FTCS analysis on a periodic finite grid, and a certified analytic-vs-numerical
 comparison for scalar decay.
+
+Section E follows per-step defects through the recurrence of that comparison, the Euler
+iterates of `x' = -x` at `h = 1 / 10` over ten steps: if `e_{j+1} = (9 / 10) e_j + η_j` for
+`j < 10` (for example `e_j` the deviation of a perturbed run from the exact iterates and `η_j`
+its defect at step `j`), then `e_10 = (9 / 10) ^ 10 e_0 + ∑_{j < 10} (9 / 10) ^ (9 - j) η_j`, and
+the product-form discrete Grönwall inequality, applied to the sequences extended past the
+ten-step horizon, bounds `|e_10|` by the same weights applied to `|e_0|` and the `|η_j|`. A defect
+at an early step is damped by more steps than one at a late step; the exponential form of the
+inequality, with rate `0`, keeps only the unweighted sum `|e_0| + ∑_{j < 10} |η_j|`.
 
 ## ii. Key results
 
@@ -59,6 +70,10 @@ comparison for scalar decay.
 * `decay_euler_error_le`, `decay_euler_numeric_bound`: certified `O(h)` comparison
   of Euler iterates against `Real.exp`, plus the `λ = 1`, `T = 1`, `h = 1 / 10`,
   `n = 10` instance with explicit constant.
+* `tenStep_defect_eq`, `tenStep_defect_le`, `tenStep_defect_le_unweighted`: the exact
+  ten-step accumulation of defects through `e_{j+1} = (9 / 10) e_j + η_j`, its weighted
+  bound from the product-form discrete Grönwall inequality, and the unweighted bound from
+  the exponential form.
 
 ## iii. Table of contents
 
@@ -66,12 +81,15 @@ comparison for scalar decay.
 * B. Discrete conservation and step-size-restricted positivity
 * C. Explicit 1D diffusion (FTCS) on a periodic grid
 * D. Certified analytic-vs-numerical comparison
+* E. Defects through the ten-step decay recurrence
 
 ## iv. References
 
 * E. Hairer, S. P. Nørsett and G. Wanner, Solving Ordinary Differential
   Equations I, 2nd ed., Section I.7 and Theorem I.7.3.
 * `MathlibExt.Analysis.ODE.ExplicitEuler`: landed ATLAS Euler theory reused here.
+* Mathlib's `discrete_gronwall_prod_general` and `discrete_gronwall`
+  (`Mathlib.Analysis.ODE.DiscreteGronwall`), used in section E.
 * R. J. LeVeque, Finite Difference Methods for Ordinary and Partial Differential
   Equations, SIAM (2007), Sections 9.3 and 9.6: stability of the FTCS scheme for
   `u_t = D u_xx` exactly when `k ≤ h² / (2 D)`, i.e. `r ≤ 1 / 2` with `r = D k / h²`, by
@@ -409,5 +427,94 @@ lemma decay_euler_numeric_bound : |(9 / 10 : ℝ) ^ 10 - Real.exp (-1)| ≤ 1 * 
   have hneg : (0.3486784401 : ℝ) - Real.exp (-1 : ℝ) < 0 := by linarith
   rw [abs_of_neg hneg]
   linarith
+
+/-! ## E. Defects through the ten-step decay recurrence -/
+
+section DefectRecurrence
+
+open Finset
+
+/-- **Exact ten-step accumulation.** If `e_{j+1} = (9 / 10) e_j + η_j` for the ten steps
+`j < 10`, then `e_10 = (9 / 10) ^ 10 e_0 + ∑_{j < 10} (9 / 10) ^ (9 - j) η_j`. -/
+lemma tenStep_defect_eq {e η : ℕ → ℝ} (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j) :
+    e 10 = (9 / 10) ^ 10 * e 0 + ∑ j ∈ range 10, (9 / 10) ^ (9 - j) * η j := by
+  have h1 : e 1 = 9 / 10 * e 0 + η 0 := h 0 (by norm_num)
+  have h2 : e 2 = 9 / 10 * e 1 + η 1 := h 1 (by norm_num)
+  have h3 : e 3 = 9 / 10 * e 2 + η 2 := h 2 (by norm_num)
+  have h4 : e 4 = 9 / 10 * e 3 + η 3 := h 3 (by norm_num)
+  have h5 : e 5 = 9 / 10 * e 4 + η 4 := h 4 (by norm_num)
+  have h6 : e 6 = 9 / 10 * e 5 + η 5 := h 5 (by norm_num)
+  have h7 : e 7 = 9 / 10 * e 6 + η 6 := h 6 (by norm_num)
+  have h8 : e 8 = 9 / 10 * e 7 + η 7 := h 7 (by norm_num)
+  have h9 : e 9 = 9 / 10 * e 8 + η 8 := h 8 (by norm_num)
+  have h10 : e 10 = 9 / 10 * e 9 + η 9 := h 9 (by norm_num)
+  simp only [sum_range_succ, sum_range_zero, zero_add]
+  rw [h10, h9, h8, h7, h6, h5, h4, h3, h2, h1]
+  norm_num
+  ring
+
+/-- One step of the defect recurrence in absolute value, for the explicit extension beyond the
+ten-step horizon used with the discrete Gronwall inequalities: `u n = |e (min n 10)|`, residual
+weight `b n = |η n|` on the horizon and `|e 10|` after it. -/
+private lemma defect_extension_step {e η : ℕ → ℝ} (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j)
+    (n : ℕ) :
+    |e (min (n + 1) 10)| ≤ 9 / 10 * |e (min n 10)| + (if n < 10 then |η n| else |e 10|) := by
+  by_cases hn : n < 10
+  · rw [ite_eq_left hn, min_eq_left (by omega : n + 1 ≤ 10), min_eq_left (by omega : n ≤ 10),
+      h n hn]
+    calc |9 / 10 * e n + η n| ≤ |9 / 10 * e n| + |η n| := abs_add_le _ _
+      _ = 9 / 10 * |e n| + |η n| := by rw [abs_mul]; norm_num
+  · rw [ite_eq_right hn, min_eq_right (by omega : 10 ≤ n + 1), min_eq_right (by omega : 10 ≤ n)]
+    have := abs_nonneg (e 10)
+    linarith
+
+/-- **Weighted ten-step bound (discrete Gronwall, product form).** If
+`e_{j+1} = (9 / 10) e_j + η_j` for the ten steps `j < 10`, then
+`|e_10| ≤ (9 / 10) ^ 10 |e_0| + ∑_{j < 10} (9 / 10) ^ (9 - j) |η_j|`: the residual of step `j` is
+damped by the remaining `9 - j` steps. -/
+lemma tenStep_defect_le {e η : ℕ → ℝ} (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j) :
+    |e 10| ≤ (9 / 10) ^ 10 * |e 0| + ∑ j ∈ range 10, (9 / 10) ^ (9 - j) * |η j| := by
+  have hrec : ∀ n ≥ 0, |e (min (n + 1) 10)| ≤
+      9 / 10 * |e (min n 10)| + (if n < 10 then |η n| else |e 10|) :=
+    fun n _ => defect_extension_step h n
+  have hg := discrete_gronwall_prod_general (u := fun m => |e (min m 10)|)
+    (b := fun m => if m < 10 then |η m| else |e 10|) (c := fun _ => (9 / 10 : ℝ)) hrec
+    (fun _ _ => by norm_num) (n := 10) (by norm_num)
+  simp only [prod_const, Nat.card_Ico, min_self, Nat.zero_min] at hg
+  have hsum : ∑ k ∈ Ico 0 10, (if k < 10 then |η k| else |e 10|) * (9 / 10 : ℝ) ^ (10 - (k + 1)) =
+      ∑ j ∈ range 10, (9 / 10 : ℝ) ^ (9 - j) * |η j| := by
+    rw [← range_eq_Ico]
+    refine sum_congr rfl fun k hk => ?_
+    have hk' : k < 10 := mem_range.mp hk
+    rw [ite_eq_left hk', mul_comm, show 10 - (k + 1) = 9 - k by omega]
+  rw [hsum] at hg
+  linarith
+
+/-- **The exponential form forgets the weights.** Under the hypothesis of `tenStep_defect_le`,
+the exponential discrete Gronwall inequality with rate `0` gives only
+`|e_10| ≤ |e_0| + ∑_{j < 10} |η_j|`, every residual with weight `1`. -/
+lemma tenStep_defect_le_unweighted {e η : ℕ → ℝ}
+    (h : ∀ j < 10, e (j + 1) = 9 / 10 * e j + η j) :
+    |e 10| ≤ |e 0| + ∑ j ∈ range 10, |η j| := by
+  have hrec : ∀ n ≥ 0, |e (min (n + 1) 10)| ≤
+      (1 + 0) * |e (min n 10)| + (if n < 10 then |η n| else |e 10|) := by
+    intro n _
+    have h1 := defect_extension_step h n
+    have h2 := abs_nonneg (e (min n 10))
+    linarith
+  have hb : ∀ n ≥ 0, (0 : ℝ) ≤ if n < 10 then |η n| else |e 10| := by
+    intro n _
+    split_ifs <;> exact abs_nonneg _
+  have hg := discrete_gronwall (u := fun m => |e (min m 10)|)
+    (b := fun m => if m < 10 then |η m| else |e 10|) (c := fun _ => (0 : ℝ)) (abs_nonneg _) hrec
+    (fun _ _ => le_refl _) hb (n := 10) (by norm_num)
+  simp only [sum_const_zero, Real.exp_zero, mul_one, min_self, Nat.zero_min] at hg
+  have hsum : ∑ k ∈ Ico 0 10, (if k < 10 then |η k| else |e 10|) = ∑ j ∈ range 10, |η j| := by
+    rw [← range_eq_Ico]
+    exact sum_congr rfl fun k hk => ite_eq_left (mem_range.mp hk)
+  rw [hsum] at hg
+  exact hg
+
+end DefectRecurrence
 
 end MathlibExt.Analysis.ODE.TimeStepping

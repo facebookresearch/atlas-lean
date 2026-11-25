@@ -1,0 +1,3 @@
+# Box configurations as box-graph colorings with boundary color $0$
+
+Let $d, n \in \mathbb{N}$ and $\Lambda_m = \{-m, \dots, m\}^d$. The map sending a configuration $\tau : \Lambda_n \to \{\text{true}, \text{false}\}$ to the coloring of $\Lambda_{n+1}$ with color $0$ at $v \in \Lambda_n$ with $\tau(v)$ true, color $1$ at $v \in \Lambda_n$ with $\tau(v)$ false, and color $0$ on $\Lambda_{n+1} \setminus \Lambda_n$, is a bijection onto the two-state colorings of $\Lambda_{n+1}$ that equal $0$ on the vertex boundary $\Lambda_{n+1} \setminus \Lambda_n$. Its inverse restricts a coloring $\sigma$ to $\Lambda_n$ and reads color $0$ as true and $1$ as false.

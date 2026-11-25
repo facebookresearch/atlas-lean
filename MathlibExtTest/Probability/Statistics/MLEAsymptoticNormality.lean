@@ -201,4 +201,63 @@ example (θ x : ℝ) : score (fun _ (_ : ℝ) => (0 : ℝ)) θ x = 0 := by
 
 #print axioms tendstoInDistribution_sqrt_mul_sampleMean
 
+/-! Affine Gaussian location family `N(c θ + m, v)`: score and Fisher information. -/
+
+/-- The law with density `N(c θ + m, v)`, `v ≠ 0`, is `gaussianReal (c θ + m) v`. -/
+example (c m θ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    lawOf volume (fun t x => gaussianPDFReal (c * t + m) v x) θ =
+      gaussianReal (c * θ + m) v := by
+  rw [gaussianReal_of_var_ne_zero _ hv]
+  rfl
+
+/-- The score of the affine Gaussian location family has mean zero under its own law. -/
+example (c m θ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    ∫ x, score (fun t x => gaussianPDFReal (c * t + m) v x) θ x
+      ∂lawOf volume (fun t x => gaussianPDFReal (c * t + m) v x) θ = 0 := by
+  have hlaw : lawOf volume (fun t x => gaussianPDFReal (c * t + m) v x) θ =
+      gaussianReal (c * θ + m) v := by
+    rw [gaussianReal_of_var_ne_zero _ hv]
+    rfl
+  have hint : Integrable (fun x : ℝ => x) (gaussianReal (c * θ + m) v) :=
+    (memLp_id_gaussianReal (μ := c * θ + m) (v := v) 1).integrable le_rfl
+  simp_rw [hlaw, score_gaussianPDFReal_affine c m hv]
+  rw [integral_div, integral_const_mul, integral_sub hint (integrable_const _),
+    integral_id_gaussianReal]
+  simp
+
+/-- With slope `c = 0` the family does not depend on the parameter: zero Fisher information. -/
+example (m θ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    fisherInformation volume (fun t x => gaussianPDFReal (0 * t + m) v x) θ = 0 := by
+  rw [fisherInformation_gaussianPDFReal_affine 0 m hv θ]
+  simp
+
+/-- The Fisher information is unchanged when the slope changes sign. -/
+example (c m θ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    fisherInformation volume (fun t x => gaussianPDFReal (-c * t + m) v x) θ =
+      fisherInformation volume (fun t x => gaussianPDFReal (c * t + m) v x) θ := by
+  rw [fisherInformation_gaussianPDFReal_affine _ m hv θ,
+    fisherInformation_gaussianPDFReal_affine c m hv θ, neg_sq]
+
+/-- The Fisher information does not depend on the offset or on the parameter value. -/
+example (c m m' θ θ' : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    fisherInformation volume (fun t x => gaussianPDFReal (c * t + m) v x) θ =
+      fisherInformation volume (fun t x => gaussianPDFReal (c * t + m') v x) θ' := by
+  rw [fisherInformation_gaussianPDFReal_affine c m hv θ,
+    fisherInformation_gaussianPDFReal_affine c m' hv θ']
+
+/-- A non-unit variance: `N(3 θ + 1, 2)` has Fisher information `9 / 2`, and score
+`3 (x - (3 θ + 1)) / 2`. -/
+example (θ x : ℝ) :
+    fisherInformation volume (fun t x => gaussianPDFReal (3 * t + 1) 2 x) θ = 9 / 2 ∧
+      score (fun t x => gaussianPDFReal (3 * t + 1) 2 x) θ x = 3 * (x - (3 * θ + 1)) / 2 := by
+  have h2 : (2 : NNReal) ≠ 0 := two_ne_zero
+  refine ⟨?_, ?_⟩
+  · rw [fisherInformation_gaussianPDFReal_affine 3 1 h2 θ]
+    norm_num
+  · rw [score_gaussianPDFReal_affine 3 1 h2 θ x]
+    norm_num
+
+#print axioms score_gaussianPDFReal_affine
+#print axioms fisherInformation_gaussianPDFReal_affine
+
 end MathlibExtTest.Probability.Statistics.MLEAsymptoticNormality

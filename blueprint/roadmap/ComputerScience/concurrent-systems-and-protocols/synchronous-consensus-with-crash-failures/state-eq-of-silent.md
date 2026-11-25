@@ -1,0 +1,3 @@
+# A silent process changes nothing for the others
+
+Let $Q$ be a [synchronous protocol with crash failures](crash-protocol.md), $x$, $x'$ assignments of inputs, $\pi$, $\pi'$ [crash patterns](crash-pattern.md), $q$ a process and $k_0 \in \mathbb{N}$. Suppose that the processes other than $q$ are in the same [states](state.md) after $k_0$ rounds of the executions $(x, \pi)$ and $(x', \pi')$, that in every round $r \ge k_0$ every process other than $q$ delivers its messages under $\pi$ exactly as under $\pi'$, and that in every round $r \ge k_0$ the process $q$ delivers no message under either pattern. Then for every $r \ge k_0$ the processes other than $q$ are in the same states after $r$ rounds of the two executions.

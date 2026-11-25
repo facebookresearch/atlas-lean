@@ -1,0 +1,3 @@
+# One round of an execution under crash failures
+
+Let $Q$ be a [synchronous protocol with crash failures](crash-protocol.md), $x$ an assignment of inputs, $\pi$, $\pi'$ [crash patterns](crash-pattern.md), $r$ a round and $i$ a process. If every process is in the same [state](state.md) after $r$ rounds under $\pi$ as under $\pi'$, and in round $r$ every message to $i$ is [delivered](delivers.md) under $\pi$ exactly when it is delivered under $\pi'$, then $i$ is in the same state after $r + 1$ rounds under both patterns: a process's next state depends only on the current states and on what it receives.

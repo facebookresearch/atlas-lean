@@ -12,11 +12,15 @@ An exponential family with sufficient statistic $\phi$ is the family of densitie
 - [Gibbs variational principle, upper bound](sum-mul-inner-sub-log-le.md)
 - [Gibbs variational principle, attainment](sum-density-mul-inner-sub-log.md)
 - [The log-partition function is convex](convex-on-log-partition.md)
+- [Log-partition function of an exponential family with base weights](log-partition-2.md)
+- [Density of an exponential family with base weights](density-2.md)
+- [The log-partition function with base weights is convex](convex-on-log-partition-2.md)
+- [The gradient of the log-partition function with base weights is the mean](has-gradient-at-log-partition-2.md)
 
 ## Related topics
 
-- Mean-field variational inference: the ELBO is the Gibbs variational objective restricted to a tractable family of distributions $q$.
-- Variable elimination and belief propagation: exact computation of marginals, that is of mean parameters, in tree-structured exponential families.
+- [Mean-field variational inference](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/mean-field-variational-inference/README.md): the ELBO is the Gibbs variational objective restricted to a tractable family of distributions $q$.
+- [Variable elimination and belief propagation](../../../ComputerScience/machine-learning/probabilistic-graphical-models/variable-elimination-and-belief-propagation/README.md): exact computation of marginals, that is of mean parameters, in tree-structured exponential families.
 - [Likelihood and maximum likelihood estimators](../likelihood-and-maximum-likelihood-estimators/README.md): in an exponential family the likelihood equation is the moment-matching condition $\nabla A(\theta) = \bar\phi$.
-- Donsker–Varadhan variational formula: the Gibbs variational principle over general measures; the finite variational principle is its case with a uniform base measure.
-- Natural policy gradient: its softmax policies are exponential families with indicator statistics, and its log-partition function and first-order convexity inequality are per-state instances of these results.
+- [Donsker–Varadhan variational formula](../../../InformationTheory/information-inequalities/donsker-varadhan-variational-formula/README.md): the Gibbs variational principle over general measures; the finite variational principle is its case with a uniform base measure.
+- [Natural policy gradient](../../../ComputerScience/machine-learning/reinforcement-learning/natural-policy-gradient/README.md): its softmax policies are exponential families with indicator statistics, and its log-partition function and first-order convexity inequality are per-state instances of these results.

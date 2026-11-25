@@ -19,7 +19,7 @@ Discrete & Computational Geometry 50(3) (2013), 771-783, doi:10.1007/s00454-013-
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Basic.Real.Basic

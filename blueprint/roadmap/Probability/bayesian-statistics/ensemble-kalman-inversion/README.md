@@ -15,6 +15,6 @@ Ensemble Kalman inversion solves an inverse problem $y = G(u) + \eta$ derivative
 
 ## Related topics
 
-- Kalman filter: the exact linear-Gaussian update that the ensemble update imitates with empirical covariances.
+- [Kalman filter](../../../ComputerScience/machine-learning/probabilistic-graphical-models/kalman-filter/README.md): the exact linear-Gaussian update that the ensemble update imitates with empirical covariances.
 - [Gaussian conditioning](../../distributions/continuous/gaussian-conditioning/README.md): the conditioning formula behind the Kalman gain $C^{up}(C^{pp} + \Gamma)^{-1}$.
 - [Bayesian inverse problems](../bayesian-inverse-problems/README.md): the inverse problems the method addresses, and their posteriors.

@@ -27,6 +27,9 @@ has another internal event.
 * The execution is well formed; a receipt naming a later event is not.
 * Lamport's total order follows happened-before and breaks the tie between
   the concurrent events `3` and `4`, which share a timestamp, by process.
+* Happened-before is a strict order; the position in the list is a clock satisfying C1 and C2;
+  the list order and Lamport's own order, two total orders extending happened-before that
+  disagree on the events `3` and `4`, each come from a clock system.
 -/
 
 @[expose] public section
@@ -81,5 +84,40 @@ example : TotalBefore tr 4 3 := ⟨_, _, rfl, rfl, by decide⟩
 
 example : ¬ TotalBefore tr 3 4 := fun h =>
   totalBefore_irrefl tr 3 (totalBefore_trans h ⟨_, _, rfl, rfl, by decide⟩)
+
+/-! ### Happened-before as a strict order, and clock systems -/
+
+example : ¬ HappensBefore tr 3 3 := happensBefore_irrefl tr 3
+
+example : IsStrictOrder ℕ (HappensBefore tr) := isStrictOrder_happensBefore tr
+
+/-- The position in the list is a clock satisfying C1 and C2, hence the clock condition. -/
+example : (0 : ℕ) < 3 :=
+  clockCondition_of_c1_c2 (tr := tr) id (fun _ _ _ _ h _ _ _ => h) (fun _ _ _ h _ _ => h) hb03
+
+/-- The list order is a total order extending happened-before; the clock it yields orders the
+concurrent events `3` and `4` the other way round from `TotalBefore`. -/
+example : ∃ C : ℕ → ℕ, (∀ a b, HappensBefore tr a b → C a < C b) ∧ ClockBefore tr C 3 4 := by
+  obtain ⟨C, hC, hiff⟩ := exists_clock_of_extends (tr := tr) (· < ·) (fun a => lt_irrefl a)
+    (fun _ _ _ => lt_trans) (fun a b _ _ hab => lt_or_gt_of_ne hab) (fun _ _ h => h.lt)
+  exact ⟨C, hC, (hiff 3 4).mpr ⟨by decide, by decide, by decide⟩⟩
+
+/-- Lamport's own order `TotalBefore` is a strict total order extending happened-before, so it
+also comes from a clock system. -/
+example : ∃ C : ℕ → ℕ, ∀ a b, ClockBefore tr C a b ↔
+    a < tr.length ∧ b < tr.length ∧ TotalBefore tr a b := by
+  obtain ⟨C, -, hiff⟩ := exists_clock_of_extends (tr := tr) (TotalBefore tr)
+    (totalBefore_irrefl tr) (fun _ _ _ => totalBefore_trans)
+    (fun a b ha hb hab => totalBefore_total (List.getElem?_eq_getElem ha)
+      (List.getElem?_eq_getElem hb) hab)
+    (fun _ _ h => totalBefore_of_happensBefore h)
+  exact ⟨C, hiff⟩
+
+/-- Any clock satisfying the clock condition, here the position in the list, induces a strict
+total order extending happened-before. -/
+example : ClockBefore tr id 0 3 ∧ (ClockBefore tr id 3 4 ∨ ClockBefore tr id 4 3) ∧
+    ¬ ClockBefore tr id 2 2 :=
+  ⟨clockBefore_of_happensBefore (fun _ _ h => h.lt) hb03,
+    clockBefore_total (fun _ _ h => h.lt) rfl rfl (by decide), clockBefore_irrefl tr id 2⟩
 
 end Cslib.Distributed.LamportClock.Tests
