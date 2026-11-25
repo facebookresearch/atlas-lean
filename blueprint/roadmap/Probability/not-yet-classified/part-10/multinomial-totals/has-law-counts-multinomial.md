@@ -1,6 +1,3 @@
-# The cell counts of `n` i.i.d. draws are multinomial, as a law
+# Cell counts of n i.i.d. draws are multinomial
 
-Under the hypotheses of
-`measureReal_counts_eq_multinomialReal`, the count vector `i ↦ #{k < n | X k = i}` has law
-`multinomial n p` (the PMF of the merged `Distributions.Multinomial`). The probability-vector
-conditions `hp₀`, `hp₁` are needed only to form that PMF.
+On a probability space, let $X_1, X_2, \dots$ be independent measurable random variables with values in a finite set, each with $P(X_k = i) = p_i$, where $p_i \ge 0$ and $\sum_i p_i = 1$. Then for every $n$, the count vector $i \mapsto \#\{k < n : X_k = i\}$ has the multinomial law with parameters $n$ and $p$.

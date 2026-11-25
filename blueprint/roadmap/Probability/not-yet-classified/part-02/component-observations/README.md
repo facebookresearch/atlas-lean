@@ -2,14 +2,14 @@
 
 ## A. Component table adapter and counts
 
-- [Component Failure Data](component-failure-data.md)
-- [Component Failure Data events](component-failure-data-events.md)
-- [Component Failure Data censored](component-failure-data-censored.md)
+- [Component failure data](component-failure-data.md)
+- [Failure counts in a component table](component-failure-data-events.md)
+- [Censoring counts of the component failure table](component-failure-data-censored.md)
 
 ## B. All-censored tables
 
 - [Of Subjects events eq zero of all censored](of-subjects-events-eq-zero-of-all-censor.md)
-- [Of Subjects cif Increment eq zero of all censored](of-subjects-cif-increment-eq-zero-of-all.md)
-- [Of Subjects cumulative Incidence eq zero of all censored](of-subjects-cumulative-incidence-eq-zero.md)
-- [Of Subjects survival Before eq one of all censored](of-subjects-survival-before-eq-one-of-al.md)
-- [Of Subjects km Tail eq one of all censored](of-subjects-km-tail-eq-one-of-all-censor.md)
+- [All-censored competing-risks data have zero Aalen-Johansen increments](of-subjects-cif-increment-eq-zero-of-all.md)
+- [All-censored data give zero cumulative incidence](of-subjects-cumulative-incidence-eq-zero.md)
+- [All-censored data have survival one](of-subjects-survival-before-eq-one-of-al.md)
+- [Kaplan-Meier tail mass for all-censored data](of-subjects-km-tail-eq-one-of-all-censor.md)

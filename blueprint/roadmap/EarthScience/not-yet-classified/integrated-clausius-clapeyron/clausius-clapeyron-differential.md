@@ -1,5 +1,3 @@
-# Clausius clapeyron differential
+# Clausius-Clapeyron equation, differential form
 
-Clausius-Clapeyron differential form under the ideal-vapor approximation:
-if `dp / dT = L / (T * (v₂ - v₁))` (latent-heat Clapeyron form) and the vapour
-specific volume dominates, `v₂ - v₁ = R * T / p`, then `dp / dT = L * p / (R * T ^ 2)`.
+Let $T \neq 0$, $p \neq 0$, $R \neq 0$. If $\frac{dp}{dT} = \frac{L}{T (v_2 - v_1)}$ (Clapeyron relation) and $v_2 - v_1 = \frac{R T}{p}$ (ideal vapor dominating the volume change), then $\frac{dp}{dT} = \frac{L p}{R T^2}$.

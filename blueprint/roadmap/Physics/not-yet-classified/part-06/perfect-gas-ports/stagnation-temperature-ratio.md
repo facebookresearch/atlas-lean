@@ -1,6 +1,4 @@
-# Stagnation temperature
+# Stagnation temperature ratio
 
-For `γ > 1`, `R > 0`, `T > 0`, `cp = γ R / (γ - 1)`, a sound
-speed `a` with `a ^ 2 = γ R T`, the Mach number `M = |u| / a` of the velocity coordinate `u`, and
-the stagnation energy balance `cp T + u ^ 2 / 2 = cp T0`, the stagnation-to-static temperature
-ratio is `T0 / T = 1 + (γ - 1) M ^ 2 / 2`. No entropy hypothesis enters.
+Let $\gamma > 1$, $R > 0$, $T > 0$, $c_p = \gamma R/(\gamma - 1)$, $a^2 = \gamma R T$, $M = |u|/a$ and $c_p T + u^2/2 = c_p T_0$. Then
+$$\frac{T_0}{T} = 1 + \frac{\gamma - 1}{2}M^2.$$

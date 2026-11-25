@@ -1,5 +1,3 @@
-# Circle Velocity kutta trailing Edge
+# Kutta circulation and the trailing edge
 
-Kutta value at the trailing edge: with the Kutta circulation
-`Γ = -4πaU sin α` from `kutta_cancellation`, the circle velocity
-vanishes at `ζ = a`.
+For $a > 0$ and real $U$, $\alpha$, let $w(\zeta) = U\left(e^{-i\alpha} - a^2 e^{i\alpha}/\zeta^2\right) + \Gamma/(2\pi i \zeta)$ be the complex velocity of flow past the circle of radius $a$. With the Kutta circulation $\Gamma = -4\pi a U \sin\alpha$, $w(a) = 0$.

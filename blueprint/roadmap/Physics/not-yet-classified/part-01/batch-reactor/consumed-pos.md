@@ -1,3 +1,3 @@
-# Consumed pos
+# Batch reactor: strict consumption
 
-Strict consumption in the interior regime `k > 0`, `c0 > 0`, `t > 0`.
+For $k > 0$, $c_0 > 0$ and $t > 0$, the amount consumed in a first-order batch reactor, $c_0 - c_0 e^{-kt}$, is strictly positive.

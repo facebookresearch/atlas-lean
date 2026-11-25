@@ -1,4 +1,3 @@
-# Dry Of Wet unbounded
+# Dry basis is unbounded at the wet end
 
-Divergence at the wet end: the dry basis is unbounded as the wet
-basis approaches `1` from below.
+For every real $M$ there is a wet-basis moisture $w$ with $0 \le w < 1$ and $M < w/(1 - w)$.

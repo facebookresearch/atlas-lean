@@ -1,4 +1,3 @@
-# Pipe Poiseuille Velocity pos inside
+# Poiseuille pipe velocity is positive inside the pipe
 
-For `G, μ > 0` the axial velocity is positive strictly inside the pipe,
-`x 0² + x 1² < R²`.
+For pressure gradient $G > 0$ and viscosity $\mu > 0$, the axial velocity $G (R^2 - x_0^2 - x_1^2)/(4\mu)$ of Poiseuille flow in a pipe of radius $R$ is positive at every point strictly inside the pipe, $x_0^2 + x_1^2 < R^2$.

@@ -1,5 +1,4 @@
-# Dependability le generalizability
+# Dependability is at most generalizability
 
-For nonnegative variance components, `m ≥ 1` items, and positive denominators, the
-dependability coefficient lies between `0` and the generalizability coefficient, which is at
-most `1`.
+Let $\sigma_P^2, \sigma_I^2, \sigma_e^2 \ge 0$, $m \ge 1$, and suppose $\sigma_P^2 + \sigma_e^2/m > 0$ and $\sigma_P^2 + (\sigma_I^2 + \sigma_e^2)/m > 0$. With the generalizability coefficient $E\rho^2 = \sigma_P^2 / (\sigma_P^2 + \sigma_e^2/m)$ and the dependability coefficient $\Phi = \sigma_P^2 / (\sigma_P^2 + (\sigma_I^2 + \sigma_e^2)/m)$,
+$$0 \le \Phi \le E\rho^2 \le 1.$$

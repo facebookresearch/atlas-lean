@@ -1,4 +1,4 @@
-# Norm denominator ge
+# Lower bound on the Joukowski conformal denominator
 
-Route step: for `4 * a ≤ ‖z‖` the conformal denominator is bounded
-away from zero, `3 / 4 ≤ ‖1 - a^2 / ζ(z)^2‖`.
+Let $a > 0$ and let $\zeta(z) = \tfrac{z}{2}\bigl(1 + \sqrt{1 - 4a^2/z^2}\bigr)$ with the principal square root. For every complex $z$ with $|z| \ge 4a$,
+$$\left|1 - \frac{a^2}{\zeta(z)^2}\right| \ge \frac34.$$

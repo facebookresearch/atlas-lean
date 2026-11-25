@@ -1,9 +1,3 @@
-# Heat inventory deriv
+# Zone heat inventory balance
 
-Zone heat inventory balance: for zones indexed by a fintype,
-with constant capacities `C i`, reciprocal conductances
-`G i j = G j i`, zone temperatures `T i t` with supplied derivatives
-`Tv i t`, and zone equations
-`C i * Tv i t = Σ j, G i j * (T j t - T i t) + b i t + P i t`,
-the total heat inventory `Σ i, C i * T i t` has derivative
-`Σ i, (b i t + P i t)`: internal exchange cancels by reciprocity.
+Let the zones form a finite set, with capacities $C_i$, symmetric conductances $G_{ij} = G_{ji}$, and zone temperatures $T_i$ differentiable with derivative $\dot T_i(t)$ at every $t$. If every zone satisfies $C_i \dot T_i(t) = \sum_j G_{ij}\big(T_j(t) - T_i(t)\big) + b_i(t) + P_i(t)$, then the total heat inventory $\sum_i C_i T_i$ has derivative $\sum_i \big(b_i(t) + P_i(t)\big)$ at every $t$.

@@ -1,5 +1,3 @@
-# Conductive Dissipation
+# Conductive dissipation is nonnegative
 
-With nonnegative conductivity `k`, the conductive dissipation is
-nonnegative: pointwise, `0 ≤ k * (T'(z))^2`, and integrated over
-`[a, b]`, `0 ≤ ∫ z in a..b, k * (T'(z))^2`.
+For conductivity $k \ge 0$, a real function $T$, $a \le b$, and $z \mapsto k\,T'(z)^2$ interval integrable on $[a, b]$: $0 \le k\,T'(z)^2$ at every $z$, and $0 \le \int_a^b k\,T'(z)^2\,dz$.

@@ -1,7 +1,3 @@
 # Almost-sure bootstrap validity for smooth finite-dimensional statistics
 
-Under the
-hypotheses of `ae_tendstoInDistribution_bootMeanVec`, let `g : E → F` be measurable and
-strictly differentiable at the mean `E X` with derivative `L`. Then for `P`-almost every
-realised data sequence, the conditional law of `√n (g(x̄*ₙ) - g(x̄ₙ))` given the data converges
-weakly to the law of `L Z`, the delta-method limit of `√n (g(x̄ₙ) - g(E X))`.
+Let $X_0, X_1, \ldots$ be pairwise independent, identically distributed, square-integrable random vectors in a finite-dimensional real inner product space $E$, and let $Z$ satisfy $\langle Z, t\rangle \sim \mathcal{N}(0, \mathrm{Var}\langle X_0, t\rangle)$ for every $t$. Let $g : E \to F$ be measurable and strictly differentiable at $\mathbb{E}X_0$ with derivative $L$. Then for almost every data sequence, the bootstrap law of $\sqrt{n}\,(g(\bar x^*_n) - g(\bar x_n))$, with $\bar x^*_n$ the mean of $n$ draws from the empirical law of the first $n$ observations, converges weakly to the law of $LZ$.

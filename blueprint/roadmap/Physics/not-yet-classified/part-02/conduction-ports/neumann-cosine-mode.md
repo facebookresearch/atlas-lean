@@ -1,7 +1,3 @@
-# Neumann Cosine Mode
+# Neumann cosine mode
 
-Neumann cosine mode (nonzero boundary fixture, `h0 = hL = 0`). With
-`μ = π / L`, `u t x = Ta + exp (-D * μ^2 * t) * cos (μ * x)` has zero flux
-at both ends and `θ(t, 0) ≠ 0`. This fixture records only the first
-spatial derivative and the zero-flux boundary conditions; the
-heat-equation content for cosine modes is in `robinCosineMode`.
+Let $L > 0$, $\mu = \pi/L$ and $u(t,x) = T_a + e^{-D\mu^2 t}\cos(\mu x)$ for real $D$, $k$, $T_a$. Then $\partial_x u(t,x) = -\mu e^{-D\mu^2 t}\sin(\mu x)$ for all $t, x$; the zero-flux boundary conditions $k\,\partial_x u(t,0) = 0$ and $-k\,\partial_x u(t,L) = 0$ hold for all $t$; and $u(t,0) - T_a \ne 0$ for all $t$. The heat equation itself is not part of this statement.

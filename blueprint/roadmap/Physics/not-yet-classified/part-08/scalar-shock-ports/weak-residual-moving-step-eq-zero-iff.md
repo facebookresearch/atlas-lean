@@ -1,6 +1,3 @@
-# Weak Residual moving Step eq zero iff
+# Weak form of a moving step and the Rankine-Hugoniot condition
 
-Weak jump equivalence for the straight step: the weak residual of the moving step vanishes
-against every admissible test (smooth, vanishing outside some bounded rectangle, with its time
-and space partials) if and only if the Rankine-Hugoniot identity `c * (uR - uL) = f uR - f uL`
-holds. The forward direction tests against an interface test.
+For a flux $f$ and states $u_L$, $u_R$, let $u$ be the step moving at speed $c$: $u = u_L$ where $x < c t$ and $u = u_R$ where $x \ge c t$. Then $\iint (u\, \varphi_t + f(u)\, \varphi_x)\, dt\, dx = 0$ for every smooth test function $\varphi$ supported in a bounded rectangle if and only if $c (u_R - u_L) = f(u_R) - f(u_L)$.

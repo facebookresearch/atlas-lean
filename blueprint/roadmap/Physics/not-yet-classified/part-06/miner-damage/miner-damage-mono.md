@@ -1,6 +1,4 @@
-# Miner Damage mono
+# Monotonicity of Miner damage
 
-Monotonicity. More declared cycles and shorter calibrated lives never decrease the damage:
-for nonnegative counts `n ≤ n'` and positive lives `N' ≤ N`, `D(n, N) ≤ D(n', N')`. Damage only
-accumulates as cycles are added, and a shorter-life (conservative) calibration gives a larger
-`D`.
+For finitely many cycle classes $i$ with declared counts $0 \le n_i \le n'_i$ and calibrated lives $0 < N'_i \le N_i$, the Palmgren–Miner damage sums satisfy
+$$\sum_i \frac{n_i}{N_i} \le \sum_i \frac{n'_i}{N'_i}.$$

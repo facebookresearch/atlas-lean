@@ -1,3 +1,3 @@
-# Couette Velocity upper wall
+# Couette velocity at the upper wall
 
-The upper wall `y = H` moves with velocity `(Uwall, 0, 0)`.
+For $H > 0$ and wall speed $U_{\mathrm{wall}}$, the plane Couette velocity $(U_{\mathrm{wall}}\, y/H, 0, 0)$ equals $(U_{\mathrm{wall}}, 0, 0)$ at every point with $y = H$.

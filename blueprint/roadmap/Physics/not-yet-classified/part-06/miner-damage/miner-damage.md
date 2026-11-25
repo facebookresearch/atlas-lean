@@ -1,5 +1,3 @@
-# Miner Damage
+# Miner damage
 
-Palmgren–Miner damage sum `D = ∑ i, n i / N i`: `n i` declared cycles and calibrated life
-`N i` cycles in class `i`. Defined only for positive lives, so a zero life is rejected. An
-empirical index: no failure is asserted at `D = 1`.
+For a finite set of load classes $i$, with $n_i$ applied cycles and positive life $N_i > 0$ cycles in class $i$, the Palmgren-Miner damage sum is $D = \sum_i n_i / N_i$.

@@ -1,5 +1,3 @@
-# Component Failure Data events
+# Failure counts in a component table
 
-Failure counts of the component table: the failures at
-recorded time `j` are exactly the components grouped at `j`
-with `failed = true`, ties counted with multiplicity.
+Given strictly increasing recorded times, an assignment of $n$ components to times and a failure flag for each component, the number of failures recorded at time $j$ equals the number of components assigned to $j$ with failure flag set, ties counted with multiplicity.

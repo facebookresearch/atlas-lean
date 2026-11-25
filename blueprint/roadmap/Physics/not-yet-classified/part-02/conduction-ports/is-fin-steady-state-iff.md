@@ -1,4 +1,3 @@
-# Is Fin Steady State iff
+# Steady fin equations as cable equations
 
-The fin equations are the steady cable equations for `θ = T - Ta` and `q`, with
-`rm = 1 / (h P)` and `ri = 1 / (k A)`.
+For real $k$, $A$, $h$, $P$, $T_a$, $L$ and functions $T$, $q$ on $[0, L]$, the steady fin equations $T' = -q/(kA)$ and $q' = -hP(T - T_a)$ (derivatives within $[0, L]$) hold exactly when $\theta = T - T_a$ and $q$ satisfy the steady cable equations $\theta' = -r_i q$ and $q' = -\theta/r_m$ on $[0, L]$, with $r_m = 1/(hP)$ and $r_i = 1/(kA)$.

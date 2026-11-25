@@ -1,4 +1,3 @@
-# Diffusion contribution nonpos
+# Diffusion contribution is nonpositive
 
-The diffusion contribution is nonpositive when the diffusivity
-is nonnegative: `-D * ∫₀ᴸ ux^2 ≤ 0` for `0 ≤ D` and `0 ≤ L`.
+For $D \ge 0$, $L \ge 0$, and a gradient $u_x(t, \cdot)$ whose square is integrable on $[0, L]$, $-D \int_0^L u_x(t, x)^2\, dx \le 0$.

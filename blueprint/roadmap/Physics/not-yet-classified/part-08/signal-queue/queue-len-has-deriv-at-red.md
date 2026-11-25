@@ -1,4 +1,3 @@
-# Queue Len has Deriv At red
+# Queue grows at the arrival rate during red
 
-Red-phase rate: inside the red phase the queue derivative is
-the arrival rate.
+Let the queue length be $\lambda t$ for $t \le R$ and $\max\bigl(0,\ \lambda R - (\mu - \lambda)(t - R)\bigr)$ for $t > R$. For $0 < t < R$, its derivative at $t$ is the arrival rate $\lambda$.

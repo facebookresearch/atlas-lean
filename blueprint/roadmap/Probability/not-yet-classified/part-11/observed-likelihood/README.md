@@ -1,4 +1,4 @@
 # Observed Likelihood
 
-- [Likelihood factorization](likelihood-factorization.md)
-- [Likelihood proportional of realized MAR](likelihood-proportional-of-realized-mar.md)
+- [Likelihood factorization under missing at random](likelihood-factorization.md)
+- [Observed likelihood proportional under realized MAR](likelihood-proportional-of-realized-mar.md)

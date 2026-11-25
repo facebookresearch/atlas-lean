@@ -1,4 +1,4 @@
 # Scales
 
-- [Sample Rank comp of strict Mono](sample-rank-comp-of-strict-mono.md)
-- [Exists strict Mono reverses group Mean](exists-strict-mono-reverses-group-mean.md)
+- [Ranks are invariant under strictly increasing maps](sample-rank-comp-of-strict-mono.md)
+- [Monotone recoding can reverse a group-mean comparison](exists-strict-mono-reverses-group-mean.md)

@@ -1,4 +1,3 @@
-# Gaussian Discrepancy eq zero iff
+# Gaussian discrepancy vanishes exactly at equality
 
-The discrepancy is zero exactly at `S = C`
-(Bartlett, STAT 241A (2007), Lemma 2).
+For positive definite matrices $S$ and $C$, the discrepancy $\log\det C + \operatorname{tr}(SC^{-1}) - \log\det S - p$, with $p$ the dimension, equals $0$ if and only if $S = C$.

@@ -1,7 +1,3 @@
-# Integrable weak Residual moving Step
+# Integrability for the moving-step weak residual
 
-Explicit integrability. For a smooth test `φ` vanishing outside the bounded
-rectangle `[T0, T1] × [X0, X1]`, with time and space partial derivatives `φt`
-and `φx`, the residual integrand of the moving step and the trace
-`t ↦ φ t (c * t)` along the interface are both integrable, so the two integrals
-in `weakResidual_movingStep` are genuine.
+Let $\varphi$ be a smooth function on $\mathbb R^2$ vanishing outside $[T_0, T_1] \times [X_0, X_1]$, with partial derivatives $\varphi_t$ and $\varphi_x$, and let $u(t, x) = u_L$ for $x < c t$ and $u(t, x) = u_R$ for $x \ge c t$. Then for any flux $f : \mathbb R \to \mathbb R$, the function $u\,\varphi_t + f(u)\,\varphi_x$ is integrable on $\mathbb R^2$, and the trace $t \mapsto \varphi(t, c t)$ is integrable on $\mathbb R$.

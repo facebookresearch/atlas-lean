@@ -1,5 +1,3 @@
-# Tendsto degroot Opinion of mem doubly Stochastic
+# DeGroot consensus at the average
 
-A derived application (not a source clause): for a doubly-stochastic primitive
-influence matrix, every agent's opinion tends to the arithmetic mean of the initial
-beliefs. The uniform weights are stationary because the columns sum to 1.
+For a finite nonempty set of $n$ agents and a doubly stochastic primitive matrix $T$, the DeGroot opinions $x(t) = T^t x_0$ satisfy $x_i(t) \to \frac{1}{n} \sum_j x_{0,j}$ for every agent $i$.

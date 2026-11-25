@@ -1,9 +1,4 @@
-# Advection diffusion nondimensional
+# Nondimensional advection-diffusion equation
 
-Nondimensionalization of the advection-diffusion equation: with
-`x = L * x̂`, `t = (L / U) * t̂`, `c = C0 * ĉ`, the chain rule gives
-`c_t = C0 * (U / L) * ĉ_t̂`, `c_x = (C0 / L) * ĉ_x̂`,
-`c_xx = (C0 / L ^ 2) * ĉ_x̂x̂` (as derivative values at corresponding
-points). If `c` satisfies `c_t + U * c_x = D * c_xx`, then the scaled
-derivatives satisfy `ĉ_t̂ + ĉ_x̂ = (1 / Pe) * ĉ_x̂x̂` with
-`Pe = U * L / D`.
+Let $L, U, D, C_0 > 0$. Scale $x = L\hat x$, $t = (L/U)\hat t$, $c = C_0\hat c$, so that the derivative values at corresponding points satisfy $c_t = C_0 (U/L)\,\hat c_{\hat t}$, $c_x = (C_0/L)\,\hat c_{\hat x}$ and $c_{xx} = (C_0/L^2)\,\hat c_{\hat x\hat x}$. If $c_t + U c_x = D c_{xx}$, then
+$$\hat c_{\hat t} + \hat c_{\hat x} = \frac{1}{\mathrm{Pe}}\,\hat c_{\hat x\hat x}, \qquad \mathrm{Pe} = \frac{UL}{D}.$$

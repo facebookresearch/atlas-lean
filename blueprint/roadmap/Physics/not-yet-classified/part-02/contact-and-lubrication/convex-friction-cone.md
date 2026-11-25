@@ -1,5 +1,3 @@
-# Convex friction Cone
+# The friction cone is convex
 
-Main result, convex part: for a friction coefficient `0 ≤ μ` the friction cone is convex
-in `(N, t)`. This is the only convexity claim; the complementarity set is not convex
-(`not_convex_complementarity`).
+Let $E$ be a real inner product space and $\mu \ge 0$. The friction cone $\{(N, t) \in \mathbb R \times E : \|t\| \le \mu N,\ N \ge 0\}$ is convex.

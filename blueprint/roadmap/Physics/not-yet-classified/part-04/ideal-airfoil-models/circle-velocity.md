@@ -1,4 +1,3 @@
-# Circle Velocity
+# Circle-plane complex velocity
 
-Circle-plane complex velocity (the Kutta numerator):
-`U * (exp (-α * I) - a^2 * exp (α * I) / ζ^2) + Γ / (2 * π * I * ζ)`.
+For circle radius $a$, freestream speed $U$, circulation $\Gamma$, angle of attack $\alpha$ and a point $\zeta$ of the circle plane, the circle-plane complex velocity (the Kutta numerator) is\n\n$$U\left(e^{-i\alpha} - \frac{a^2 e^{i\alpha}}{\zeta^2}\right) + \frac{\Gamma}{2\pi i \zeta}.$$

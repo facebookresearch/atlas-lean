@@ -1,6 +1,3 @@
-# Bare Sum at zero life misreports
+# Unweighted damage sum ignores a class with zero life
 
-Zero life rejected, control. Without the positivity precondition, Lean's `x / 0 = 0` makes
-the bare sum `∑ i, n i / N i` blind to the count at a class `j` with `N j = 0`: any count there
-registers no damage, although a vanishing life would mean immediate failure. This is why
-`minerDamage` demands `∀ i, 0 < N i`.
+Let $\iota$ be a finite index set, $n, N : \iota \to \mathbb R$, and $j \in \iota$ with $N_j = 0$. With division by zero taken as $0$, replacing $n_j$ by any real $x$ leaves the sum $\sum_i n_i/N_i$ unchanged. So without the hypothesis $N_i > 0$ for all $i$, a class with vanishing life registers no damage whatever its count.

@@ -1,4 +1,3 @@
-# Consumed amount mem Icc
+# Consumed amount in a first-order batch reactor
 
-Amount form at constant volume `V > 0`: the consumed amount
-`V * consumed` lies between `0` and the initial amount `V * c0`.
+For $k \ge 0$, $c_0 \ge 0$, $t \ge 0$ and volume $V > 0$, the consumed amount $V(c_0 - c_0 e^{-kt})$ lies in $[0, V c_0]$.

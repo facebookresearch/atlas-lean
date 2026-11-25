@@ -1,3 +1,3 @@
-# Admissible Set nonempty
+# The admissible set is nonempty
 
-The admissible set is nonempty: it contains the obstacle position.
+For every real obstacle position $g$, the admissible set $\{u \in \mathbb{R} : u \le g\}$ is nonempty: it contains $g$.

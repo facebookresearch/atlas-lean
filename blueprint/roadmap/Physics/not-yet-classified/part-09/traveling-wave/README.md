@@ -1,9 +1,9 @@
 # Traveling Wave
 
-- [H R](h-r.md)
-- [Q R](q-r.md)
-- [H L](h-l.md)
-- [Q L](q-l.md)
+- [Right-traveling water-hammer head](h-r.md)
+- [Right-traveling water-hammer discharge](q-r.md)
+- [Left-traveling water-hammer head](h-l.md)
+- [Left-traveling water-hammer discharge](q-l.md)
 - [Q R eq](q-r-eq.md)
-- [Jump right](jump-right.md)
-- [Jump left](jump-left.md)
+- [Joukowsky relation for a right-traveling wave](jump-right.md)
+- [Joukowsky relation for a left-traveling wave](jump-left.md)

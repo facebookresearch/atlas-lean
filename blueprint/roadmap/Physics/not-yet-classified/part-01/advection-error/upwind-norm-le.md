@@ -1,4 +1,3 @@
-# Upwind norm le
+# Max-norm nonexpansiveness of the periodic upwind update
 
-Max-norm nonexpansiveness: for `0 ≤ ν ≤ 1` the periodic upwind update does not increase the
-maximum nodal modulus.
+Let $n \ge 1$ and $0 \le \nu \le 1$. For every $e : \mathbb{Z}/n \to \mathbb{R}$, the periodic upwind update $j \mapsto (1 - \nu) e_j + \nu e_{j-1}$ satisfies $\max_j |(1-\nu)e_j + \nu e_{j-1}| \le \max_j |e_j|$.

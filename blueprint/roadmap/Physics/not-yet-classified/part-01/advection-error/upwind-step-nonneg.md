@@ -1,4 +1,3 @@
-# Upwind Step nonneg
+# Upwind step preserves nonnegativity
 
-Positivity under the CFL condition: for `dt ≥ 0`, `v ≥ 0` and `v * dt / dx ≤ 1`, the
-conservative upwind step maps nonnegative cell values to nonnegative cell values.
+On a periodic grid of $n \ge 1$ cells with cross-section area $A > 0$ and spacing $\Delta x > 0$, let $\Delta t \ge 0$ and velocity $v \ge 0$ satisfy the CFL condition $v\,\Delta t/\Delta x \le 1$. If $c_i \ge 0$ for all cells and $c^{\text{next}}$ is the conservative update of $c$ with the upwind face flux, then $c^{\text{next}}_i \ge 0$ for all cells.

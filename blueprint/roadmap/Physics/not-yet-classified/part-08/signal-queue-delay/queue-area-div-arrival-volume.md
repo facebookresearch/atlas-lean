@@ -1,5 +1,4 @@
 # Normalized queue area
 
-For one clearing cycle, the queue area over `[0, R + G]` divided
-by the arrival volume `lam * (R + G)` is `R ^ 2 * mu / (2 * (mu - lam) * (R + G))`, a time.
-The area itself is the one-cycle area formula `queueLen_integral_cycle`.
+For arrival rate $\lambda > 0$, service rate $\mu > \lambda$, red time $R \ge 0$ and green time $G \ge 0$ with $\lambda(R + G) < \mu G$, let $q(t) = \lambda t$ for $t \le R$ and $q(t) = \max\big(0, \lambda R - (\mu - \lambda)(t - R)\big)$ for $t > R$. Then
+$$\frac{1}{\lambda (R + G)} \int_0^{R + G} q(t) \, dt = \frac{R^2 \mu}{2 (\mu - \lambda)(R + G)}.$$

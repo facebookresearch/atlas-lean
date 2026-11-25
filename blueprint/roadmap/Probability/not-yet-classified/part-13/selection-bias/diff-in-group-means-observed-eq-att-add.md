@@ -1,7 +1,3 @@
 # Selection-bias decomposition
 
-For integrable potential outcomes and the observed
-outcome `observed T Y₀ Y₁` (consistency), the observed difference in group means equals the
-average treatment effect on the treated plus the selection bias,
-`E[Y | T] - E[Y | Tᶜ] = E[Y₁ - Y₀ | T] + (E[Y₀ | T] - E[Y₀ | Tᶜ])`. No positivity is needed for
-the identity; when `0 < P(T) < 1` the three terms are genuine conditional means.
+On a probability space, let $T$ be a measurable treatment event and $Y_0, Y_1$ integrable potential outcomes, and let the observed outcome be $Y = Y_1$ on $T$ and $Y = Y_0$ off $T$. Write $E[\,\cdot \mid T]$ for the expectation under the measure conditioned on $T$. Then the observed difference in group means equals the average treatment effect on the treated plus the selection bias:\n$$E[Y \mid T] - E[Y \mid T^c] = E[Y_1 - Y_0 \mid T] + \big(E[Y_0 \mid T] - E[Y_0 \mid T^c]\big).$$\nNo positivity of $P(T)$ or $P(T^c)$ is needed.

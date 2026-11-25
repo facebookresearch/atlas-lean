@@ -1,5 +1,5 @@
 # Inverse Calibration Budget
 
-- [Inverse Prediction error le](inverse-prediction-error-le.md)
-- [Inverse Prediction error le known params](inverse-prediction-error-le-known-params.md)
-- [Inverse Prediction error event measure le](inverse-prediction-error-event-measure-l.md)
+- [Inverse prediction error under bounded parameter errors](inverse-prediction-error-le.md)
+- [Inverse prediction error with known calibration parameters](inverse-prediction-error-le-known-params.md)
+- [Bad-event bound for inverse calibration](inverse-prediction-error-event-measure-l.md)

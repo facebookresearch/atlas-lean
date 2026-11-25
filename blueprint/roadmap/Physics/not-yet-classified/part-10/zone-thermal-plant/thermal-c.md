@@ -1,3 +1,3 @@
-# Thermal C
+# Zone thermal output matrix
 
-Output matrix `1`: the output is the vector of zone temperatures.
+The output matrix of the zone thermal plant is the identity, so the output is the vector of zone temperatures.

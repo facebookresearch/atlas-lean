@@ -1,6 +1,3 @@
-# Total vehicle change eq discrete
+# Total vehicle change equals the discrete flux balance
 
-The accounting identity in terms of the finite-volume
-`totalDiscreteChange` API: the summed vehicle change is
-`dx * dt` times the total discrete balance of the face fluxes
-(the discrete balance is the per-unit-width boundary rate).
+For $n \in \mathbb N$, cell densities $k_i$, face fluxes $F_i$, a time step $dt$ and a cell width $dx > 0$, after one conservative update $k_i' = k_i + (dt/dx)(F_i - F_{i+1})$,\n\n$$\sum_{i<n} dx\,(k_i' - k_i) = dx\,dt \sum_{i<n} \left(-\frac{F_{i+1} - F_i}{dx}\right).$$

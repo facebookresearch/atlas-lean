@@ -1,4 +1,3 @@
-# Vapor Mass eq humidity Ratio mul
+# Vapor mass from the humidity ratio
 
-Vapor mass recovered from the humidity ratio and the
-(constant, positive) dry-air mass.
+For dry-air mass $m_{da} > 0$ and any vapor mass $m_v$, $m_v = \omega\, m_{da}$, where $\omega = m_v / m_{da}$ is the humidity ratio.

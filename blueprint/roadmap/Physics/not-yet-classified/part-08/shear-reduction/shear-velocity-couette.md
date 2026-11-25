@@ -1,3 +1,3 @@
-# Shear Velocity couette
+# Steady shear flow is plane Couette flow
 
-The steady member `U = Uwall y / H` of the shear family is the plane Couette velocity.
+For real $U_{\mathrm{wall}}$ and $H$ and any time $t$, the parallel shear velocity $(U(t, y), 0, 0)$ with the steady profile $U(t, y) = U_{\mathrm{wall}}\, y / H$ equals the plane Couette velocity $(U_{\mathrm{wall}}\, y/H, 0, 0)$.

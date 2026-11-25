@@ -1,7 +1,3 @@
-# Exact two-sided one-sample `t` interval at the proved quantile
+# Exact coverage of the one-sample t interval
 
-**Exact two-sided one-sample `t` interval at the proved quantile** (variance unknown).
-For an i.i.d. `N(μ, v)` sample of size `n ≥ 2` with `v ≠ 0` and `α ∈ (0, 1)`, let
-`c = cdfQuantile (t_{n-1}) (1 - α/2)` be the upper `α/2` point of Student's `t` law on `n - 1`
-degrees of freedom. Then `P(|X̄ - μ| ≤ c S / √n) = 1 - α` exactly, with
-`S = √(∑ (Xᵢ - X̄)² / (n - 1))`.
+For an i.i.d. $N(\mu, v)$ sample of size $n \ge 2$ with $v \ne 0$ and $\alpha \in (0, 1)$, let $c$ be the $1 - \alpha/2$ quantile of Student's $t$ law with $n - 1$ degrees of freedom and $S = \sqrt{\sum_i (X_i - \bar X)^2/(n - 1)}$. Then $P(\lvert\bar X - \mu\rvert \le c S/\sqrt{n}) = 1 - \alpha$.

@@ -1,8 +1,5 @@
-# Is Normal Shock Jump distinct
+# Distinct branch of the normal-shock jump conditions
 
-The distinct branch solves the jump conditions: for `γ > 1`, `R > 0`, an upstream perfect-gas
-state `p1 = ρ1 R T1` with `T1 > 0` and `u1 > 0`, sound speed `a1 ^ 2 = γ R T1` and Mach number
-`M1 = |u1| / a1`, the state with `ρ2 = ρ1 r`, `u2 = u1 / r`, `p2 = p1 P` and `T2 = T1 P / r`,
-where `r` and `P` are the density and pressure ratios at `m = M1 ^ 2`, satisfies the jump
-conditions. This holds whatever the sign of `P`: it is an algebraic statement, and
-`isNormalShockJump_distinct_pos_iff` says when the root is a positive state.
+Let $\gamma > 1$, $R > 0$, and let the upstream state satisfy $p_1 = \rho_1 R T_1$ with $T_1 > 0$ and $u_1 > 0$, with sound speed $a_1^2 = \gamma R T_1$ and Mach number $M_1 = |u_1|/a_1$. Put $m = M_1^2$,
+$$r = \frac{(\gamma+1)m}{(\gamma-1)m + 2}, \qquad P = \frac{2\gamma m - (\gamma - 1)}{\gamma + 1}.$$
+Then $\rho_2 = \rho_1 r$, $u_2 = u_1/r$, $p_2 = p_1 P$, $T_2 = T_1 P/r$ satisfy the normal-shock jump conditions: $p_2 = \rho_2 R T_2$, $\rho_1 u_1 = \rho_2 u_2$, $p_1 + \rho_1 u_1^2 = p_2 + \rho_2 u_2^2$ and $\frac{\gamma R}{\gamma-1}T_1 + \frac{u_1^2}{2} = \frac{\gamma R}{\gamma-1}T_2 + \frac{u_2^2}{2}$. No sign condition on $P$ is needed.

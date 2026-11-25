@@ -1,20 +1,7 @@
 # Asymptotic normality of the misspecified MLE
 
-**Asymptotic normality of the misspecified MLE** (White 1982, Theorem 3.2). Let
-`X 0, X 1, …` be IID with an arbitrary law `μX` (not assumed to belong to any model), `ℓ θ x` a
-log-likelihood, and `est` a maximum-likelihood estimator on a compact `K ⊆ E`, a.e. strongly
-measurable. Assume:
+Let $X_0, X_1, \ldots$ be i.i.d. with law $\mu_X$, not assumed to lie in the model, $\ell(\theta, x)$ a log-likelihood on a finite-dimensional real inner product space, and $\hat\theta_n$ a.e. strongly measurable maximum-likelihood estimators over a compact $K$. Assume: $\ell(\cdot, x)$ is continuous on $K$, a uniform law of large numbers holds on $K$, and the expected log-likelihood has a unique maximizer $\theta^*$ on $K$ lying in the interior of $K$; for some $\delta > 0$, on the ball of radius $\delta$ about $\theta^*$, $\ell(\cdot, x)$ has gradient $\psi(\theta, x)$ with $\|\psi(\theta, x)\| \le G(x)$ for an integrable $G$, $\psi(\cdot, x)$ is differentiable, and $\|D\psi(\theta, x) - D\psi(\theta^*, x)\| \le M(x)\|\theta - \theta^*\|$ for a measurable integrable $M$; $\ell(\theta, \cdot)$ is a.e. strongly measurable there and $\ell(\theta^*, \cdot)$ integrable; $\psi(\theta^*, \cdot)$ is measurable and square-integrable; $D\psi(\theta^*, \cdot)$ is strongly measurable and integrable; and $A = \mathbb{E}\,D\psi(\theta^*, X)$ is invertible. Let $B$ be the covariance of $\psi(\theta^*, X)$. Then $\sqrt{n}(\hat\theta_n - \theta^*)$ converges in distribution to every $Z$ with $\langle Z, t\rangle \sim \mathcal{N}(0, \langle A^{-1} B A^{-\top} t, t\rangle)$ for all $t$.
 
-* **Wald conditions**: `θ ↦ ℓ θ x` continuous on `K`, the uniform LLN on `K`, and a unique
-  maximizer `θstar` of the expected log-likelihood on `K` (the pseudo-true value, equivalently the
-  Kullback–Leibler projection, `isIdentifiedOn_popCrit_iff_isKLProjectionOn`), lying in the
-  **interior** of `K`;
-* **score**: on the ball of radius `δ > 0` about `θstar`, `ℓ · x` has gradient `ψ θ x`, with
-  `‖ψ θ x‖ ≤ G x` for an integrable `G`, `ℓ θ` a.e. strongly measurable and `ℓ θstar` integrable;
-* **Cramér conditions** on `ψ` as in the vector Z-estimator theorem, and a nonsingular
-  `A = E Dψ θstar`.
+## Sources
 
-Then `√n (est n - θstar) ⇒ Z` for every `Z` with `⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`, where
-`A⁻¹ B A⁻ᵀ = GEE.sandwichCovariance A B` and `B = covarianceOperator (μX.map (ψ θstar))`. The
-estimating equation `E ψ θstar = 0`, the root of the likelihood equation and the consistency of
-`est` are derived, not assumed.
+- H. White, "Maximum likelihood estimation of misspecified models", Econometrica 50 (1982), Theorem 3.2.

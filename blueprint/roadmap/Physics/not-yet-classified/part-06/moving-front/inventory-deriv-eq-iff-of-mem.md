@@ -1,6 +1,3 @@
-# Inventory deriv eq iff of mem
+# Conservation form while the front is inside the interval
 
-Conservation form while the front lies inside the finite control
-interval: under `a < s * t + xi0 < b`, the inventory derivative equals
-the net inflow `qL - qR` exactly when the Rankine-Hugoniot balance
-`s * (kR - kL) = qR - qL` holds.
+Let a front move as $\xi(t) = s t + \xi_0$ and let the inventory of $[a, b]$ be $k_L(\xi - a) + k_R(b - \xi)$. If $a < s t + \xi_0 < b$, the inventory has derivative $q_L - q_R$ at time $t$ if and only if $s (k_R - k_L) = q_R - q_L$.

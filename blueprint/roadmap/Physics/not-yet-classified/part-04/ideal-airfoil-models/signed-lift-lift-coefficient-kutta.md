@@ -1,11 +1,3 @@
-# Signed Lift lift Coefficient kutta
+# Kutta-Joukowski lift and thin-airfoil lift coefficient
 
-Kutta-selected signed lift, lift coefficient, and small-angle
-bound for the physical velocity, at any contour radius `R > 2 * a`.
-
-The Blasius force value at radius `R` comes from the far-field
-package through `blasiusForce_physicalVelocity`. With chord
-`c = 4 * a`, the signed lift is `-ρ * U * Γ` at the Kutta
-circulation `Γ = -4 * π * a * U * sin α`, the lift coefficient is
-`2 * π * sin α`, and it differs from `2 * π * α` by at most
-`π * |α|^3 / 3`.
+Consider the flat-plate airfoil obtained from a circle of radius $a > 0$ by the Joukowski map, with chord $c = 4a$, in a stream of density $\rho > 0$ and speed $U > 0$ at angle of attack $\alpha$, with the Kutta circulation $\Gamma = -4 \pi a U \sin\alpha$. For every contour radius $R > 2a$, the Blasius force on the contour of radius $R$ gives signed lift $-\rho U \Gamma$, the lift coefficient $L / (\rho U^2 c / 2)$ equals $2 \pi \sin\alpha$, and\n$$\left| C_L - 2 \pi \alpha \right| \le \frac{\pi |\alpha|^3}{3}.$$

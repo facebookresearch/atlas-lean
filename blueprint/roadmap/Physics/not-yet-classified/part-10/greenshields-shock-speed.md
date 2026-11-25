@@ -1,8 +1,3 @@
-# Front Speed
+# Greenshields shock speed
 
-Greenshields shock speed between two distinct states. With
-the Greenshields flux `greenshieldsFlux vf kj`, the shock speed
-`ShockOrdering.shockSpeed (greenshieldsFlux vf kj) kL kR` between
-distinct densities `kL ≠ kR` (with `kj ≠ 0`) is
-`vf * (1 - (kL + kR) / kj)`. For complementary densities
-(`kL + kR = kj`) the front is stationary.
+For $k_j \ne 0$ and distinct densities $k_L \ne k_R$, the shock speed $(q(k_R) - q(k_L))/(k_R - k_L)$ of the Greenshields flux $q(k) = v_f k (1 - k/k_j)$ equals $v_f\big(1 - (k_L + k_R)/k_j\big)$. In particular the front is stationary when $k_L + k_R = k_j$.

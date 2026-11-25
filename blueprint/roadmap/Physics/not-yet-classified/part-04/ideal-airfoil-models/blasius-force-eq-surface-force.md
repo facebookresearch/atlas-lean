@@ -1,5 +1,3 @@
-# Blasius Force eq surface Force
+# Blasius force equals the surface-pressure force
 
-The regular surface-pressure force agrees with the contour force: on every circle
-`|z| = R` with `a ≤ R`, the Blasius force is `Fx - I * Fy` for the surface-pressure force
-`(Fx, Fy)` of the whole-domain pressure law.
+Let $\rho > 0$, $a > 0$, $U > 0$, and let $w(z) = U(1 - a^2/z^2) + \Gamma/(2\pi i z)$ be the complex velocity of flow past the cylinder $|z| = a$ with circulation $\Gamma$. Suppose the pressure satisfies $p(z) = p_\infty + \rho(U^2 - |w(z)|^2)/2$ for $|z| \ge a$. Then for every $R \ge a$, the Blasius contour force on $|z| = R$ equals $F_x - i F_y$, where $(F_x, F_y)$ is the pressure force on the circle $|z| = a$.

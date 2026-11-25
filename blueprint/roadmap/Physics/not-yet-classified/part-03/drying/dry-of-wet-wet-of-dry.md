@@ -1,3 +1,3 @@
-# Dry Of Wet wet Of Dry
+# Dry and wet moisture bases are inverse
 
-The two basis maps are inverse on nonnegative dry basis.
+For a nonnegative dry-basis moisture content $X \ge 0$, converting to the wet basis $w = X/(1+X)$ and back with $X = w/(1-w)$ returns $X$.

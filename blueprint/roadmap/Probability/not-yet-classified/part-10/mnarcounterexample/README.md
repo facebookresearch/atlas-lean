@@ -6,4 +6,4 @@
 
 ## An explicit pair of full-data laws
 
-- [Explicit nonidentifiability](const-outcome-law-self-masking-law-nonid.md)
+- [Explicit nonidentifiability of a missing-not-at-random mean](const-outcome-law-self-masking-law-nonid.md)

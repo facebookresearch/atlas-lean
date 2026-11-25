@@ -1,7 +1,3 @@
 # Mole to mass and back
 
-Converting a stream's mole composition to mass
-fractions and back returns the mole composition. This is the imported
-`Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one`
-applied to the flow fractions, which lie on the simplex by
-`Chemistry.Amounts.sum_moleFraction`.
+For a stream with positive total flow and species with positive molar masses $M_i$, converting the stream's mole fractions to mass fractions with $M$ and then back to mole fractions returns the original mole fractions.

@@ -1,7 +1,3 @@
 # A positive eddy viscosity does not give realizability
 
-For `k ≥ 0`, `νt > 0` and a
-symmetric trace-free `S` the closure need not be positive semidefinite (`Matrix.PosSemidef`),
-although the quadratic form of every Reynolds stress of `L²` velocities is nonnegative
-(`reynoldsStress_posSemidef`): for the plane-strain fixture the quadratic form of the closure
-along `e₀` is `Rm₀₀ = -4/3 < 0`.
+The eddy-viscosity closure $R = \tfrac{2k}{3}I - 2\nu_t S$ for $3\times 3$ matrices is not positive semidefinite for all $k \ge 0$, $\nu_t > 0$ and symmetric trace-free $S$. For a plane-strain example the quadratic form along $e_0$ equals $-4/3$.

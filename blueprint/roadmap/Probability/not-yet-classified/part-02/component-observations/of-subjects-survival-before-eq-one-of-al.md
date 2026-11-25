@@ -1,4 +1,3 @@
-# Of Subjects survival Before eq one of all censored
+# All-censored data have survival one
 
-An all-censored table has overall survival `1` before every
-observation time.
+For subjects grouped at strictly increasing observation times, if every subject is censored, the Kaplan-Meier overall survival just before each observation time equals $1$.

@@ -1,4 +1,5 @@
-# Single Mode Profile heat
+# Single-mode shear profile solves the heat equation
 
-The single-mode profile solves `U_t = ν U_yy` at every time and height; its derivatives are
-computed from the explicit formula.
+For all real $A$, $L$, $\nu$, the profile
+$$U(t, y) = \frac{A y}{L} - \frac{A}{\pi}\sin\!\left(\frac{\pi y}{L}\right)e^{-\nu(\pi/L)^2 t}$$
+satisfies $U_t(t, y) = \nu\,U_{yy}(t, y)$ at every time $t$ and height $y$.

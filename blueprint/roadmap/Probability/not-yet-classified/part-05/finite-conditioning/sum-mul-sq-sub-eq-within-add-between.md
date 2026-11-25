@@ -1,6 +1,3 @@
 # Total-variance decomposition
 
-The variance of `Y` is the mean within-cell variance
-plus the variance of the cell means under the cell law,
-`Var(Y) = E[Var(Y | G)] + Var(E[Y | G])`. The centre of the second term is the cell-law mean
-of the cell means, which equals `E[Y]` by `sum_mul_eq_sum_cellMass_mul_cellMean`.
+Let $\alpha$ and $C$ be finite, $p \ge 0$ a weight on $\alpha$, $G : \alpha \to C$ and $Y : \alpha \to \mathbb R$. For each cell $c$ let $m_c = \sum_{G(x) = c} p(x)$, $\bar Y_c = \frac{1}{m_c}\sum_{G(x) = c} p(x) Y(x)$ and $V_c = \frac{1}{m_c}\sum_{G(x) = c} p(x)(Y(x) - \bar Y_c)^2$ (both $0$ when $m_c = 0$). Then\n\n$$\sum_x p(x)\Big(Y(x) - \sum_y p(y) Y(y)\Big)^2 = \sum_c m_c V_c + \sum_c m_c \Big(\bar Y_c - \sum_{c'} m_{c'} \bar Y_{c'}\Big)^2,$$\n\nthat is, $\operatorname{Var}(Y) = \mathbb E[\operatorname{Var}(Y \mid G)] + \operatorname{Var}(\mathbb E[Y \mid G])$. The weights need not sum to $1$.

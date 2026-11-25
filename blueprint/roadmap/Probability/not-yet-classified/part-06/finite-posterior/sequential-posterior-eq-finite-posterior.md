@@ -1,6 +1,3 @@
-# Sequential/batch agreement
+# Sequential and batch Bayesian updates agree
 
-For a normalized nonnegative prior and nonnegative
-likelihoods, updating one observation at a time gives the batch posterior. No evidence
-hypothesis is needed: at zero evidence both sides are the zero function. `∑ π = 1` is used
-for the empty list.
+Let $\Theta$ be finite, let $\pi \ge 0$ be a prior with $\sum_\theta \pi(\theta) = 1$, and let $L_1, \dots, L_m$ be nonnegative likelihood functions. Write the posterior of weights $\pi$ under $L$ as $\pi(\theta)L(\theta)/\sum_{\theta'}\pi(\theta')L(\theta')$, taken as $0$ when the denominator is $0$. Updating $\pi$ by $L_1, \dots, L_m$ one at a time gives the posterior of $\pi$ under the product likelihood $\prod_j L_j$.

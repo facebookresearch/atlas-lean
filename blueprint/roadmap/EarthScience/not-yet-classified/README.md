@@ -3,7 +3,7 @@
 Topics added since this subject's fields were last revised.
 
 - [Shallow Water Lake At Rest Update](shallow-water-lake-at-rest-update/README.md)
-- [Conductive Dissipation](conductive-dissipation-nonneg.md)
+- [Conductive dissipation is nonnegative](conductive-dissipation-nonneg.md)
 - [Gibbs Energy Differential](gibbs-energy-differential.md)
 - [Instrument Bias Bound](instrument-bias-output-bound.md)
 - [Advection Diffusion Nondimensional](advection-diffusion-nondimensional/README.md)

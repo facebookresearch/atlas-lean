@@ -1,5 +1,3 @@
-# Pipe Poiseuille Flow convective Navier Stokes
+# Pipe Poiseuille flow solves the convective Navier-Stokes equations
 
-For `μ ≠ 0` cylindrical Poiseuille flow satisfies Physlib's convective Navier-Stokes
-equations with the pressure `p₀ - G z`, shear viscosity `μ`, second viscosity `lam` and no
-body force, on all of `Space`.
+For $\mu \neq 0$ and constant density $\rho$, cylindrical Poiseuille flow with velocity $(0, 0, G(R^2 - x^2 - y^2)/(4\mu))$, pressure $p_0 - G z$, shear viscosity $\mu$, second viscosity $\lambda$ and no body force satisfies the convective Navier-Stokes equations at every point of space.

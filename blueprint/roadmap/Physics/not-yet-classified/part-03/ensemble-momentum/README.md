@@ -2,7 +2,7 @@
 
 ## A. Ensemble means and the Reynolds stress
 
-- [Reynolds Stress eq](reynolds-stress-eq.md)
+- [Covariance form of the Reynolds stress](reynolds-stress-eq.md)
 
 ## B. The mean momentum equation
 
@@ -10,5 +10,5 @@
 
 ## D. Closure dissipation versus realizability
 
-- [The converse needs a nonzero strain](mean-flow-extraction-modeled-reynolds-st-3.md)
+- [Sign of energy extraction by an eddy-viscosity closure](mean-flow-extraction-modeled-reynolds-st-3.md)
 - [A positive eddy viscosity does not give realizability](modeled-reynolds-stress-realizability-fa.md)

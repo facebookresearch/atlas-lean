@@ -1,19 +1,4 @@
-# Heat Energy has Deriv At
+# Heat energy derivative with boundary work
 
-Quadratic heat-energy identity with explicit boundary work, at
-one time `t`: for a temperature field `u` with actual time
-derivative `ut`, spatial derivatives `ux`, `uxx` in `HasDerivAt`
-form on `Set.uIcc 0 L` (`0 ≤ L`), satisfying
-`ut t x = D * uxx t x + src t x` there, the energy
-`E(τ) = ∫₀ᴸ u(τ, x)^2 / 2 dx` has derivative at `t` equal to
-`-D * ∫₀ᴸ ux^2 dx + D * (u(t, L) * ux(t, L) - u(t, 0) * ux(t, 0))
-+ ∫₀ᴸ u * src dx`. The boundary terms are retained, not discarded.
-All hypotheses are scoped to the single time `t` and the interval
-`[0, L]`. The hypothesis `hE` is the differentiation under the
-integral, as a `HasDerivAt` for the energy itself; `ut` is
-required to be the actual time derivative (`hut`). No joint
-regularity hypothesis is declared: the assumptions are exactly
-the pointwise derivative and continuity data at this `t`. The integration by parts is proved
-from the stated derivative and continuity data. The first term is
-the diffusion contribution; it is a dissipation only when
-`0 ≤ D` (see `diffusion_contribution_nonpos`).
+Let $L \ge 0$, $D$ real, and fix a time $t$. Suppose that for every $x \in [0, L]$: $\tau \mapsto u(\tau, x)$ has derivative $u_t(t, x)$ at $t$; $y \mapsto u(t, y)$ has derivative $u_x(t, x)$ at $x$; $y \mapsto u_x(t, y)$ has derivative $u_{xx}(t, x)$ at $x$; and $u_t(t, x) = D u_{xx}(t, x) + s(t, x)$. Suppose also that $u(t, \cdot)$, $u_x(t, \cdot)$ and $u_{xx}(t, \cdot)$ are continuous on $[0, L]$, that $x \mapsto u(t, x) u_t(t, x)$ is integrable on $[0, L]$, and that the energy $E(\tau) = \int_0^L u(\tau, x)^2/2 \, dx$ has derivative $\int_0^L u(t, x) u_t(t, x) \, dx$ at $t$. Then $E$ has derivative at $t$
+$$-D \int_0^L u_x(t, x)^2 \, dx + D\big(u(t, L) u_x(t, L) - u(t, 0) u_x(t, 0)\big) + \int_0^L u(t, x) s(t, x) \, dx.$$

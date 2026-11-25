@@ -1,3 +1,4 @@
-# Q R
+# Right-traveling water-hammer discharge
 
-Right-traveling discharge.
+For gravity $g$, pipe area $A$, wave speed $a$ and a profile $F$, the right-traveling discharge is defined as
+$$q(t,x) = \frac{gA}{a}\,F(x - at).$$

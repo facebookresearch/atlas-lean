@@ -1,7 +1,3 @@
-# Pinsker PMF
+# Pinsker's inequality for finite probability mass functions
 
-Pinsker's inequality for probability mass functions on a finite
-type, with no positivity hypotheses: the squared `L1` distance is at
-most twice the Kullback-Leibler divergence (in nats). The right side
-is stated in `ℝ≥0∞`, so it stays correct when the divergence is
-infinite (the `ENNReal.toReal` form would be false there).
+For probability mass functions $p, q$ on a finite type, $\left(\sum_a |p(a) - q(a)|\right)^2 \le 2\,D_{KL}(p \,\|\, q)$, with the divergence in nats and allowed to be $+\infty$. No positivity hypotheses are needed.

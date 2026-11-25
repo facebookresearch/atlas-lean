@@ -1,4 +1,4 @@
 # Scalar Potentials
 
-- [Quadratic has Deriv At](quadratic-has-deriv-at.md)
-- [Quadratic second has Deriv At](quadratic-second-has-deriv-at.md)
+- [Derivative of a quadratic potential](quadratic-has-deriv-at.md)
+- [Second derivative of a quadratic potential](quadratic-second-has-deriv-at.md)

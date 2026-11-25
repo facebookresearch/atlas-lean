@@ -1,6 +1,6 @@
 # Advection Diffusion Nondimensional
 
-- [Advection diffusion nondimensional](advection-diffusion-nondimensional.md)
+- [Nondimensional advection-diffusion equation](advection-diffusion-nondimensional.md)
 
 ## B. Péclet number
 
@@ -8,4 +8,4 @@
 
 ## C. Concrete witness
 
-- [Peclet example](peclet-example.md)
+- [Péclet number example](peclet-example.md)

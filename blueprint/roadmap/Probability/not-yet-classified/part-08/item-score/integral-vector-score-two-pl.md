@@ -1,10 +1,3 @@
-# The 2PL score has actual mean zero
+# The 2PL score has mean zero
 
-**The 2PL score has actual mean zero** .
-
-For the same finite item type and arbitrary real discriminations, the Bochner integral of the
-`VectorInference.score` of the `toReal`-of-`twoPLPMF` density, taken
-against its canonical `FisherInformation.lawOf` on counting measure
-(which `twoPL_lawOf_eq_toMeasure` identifies with the actual PMF measure
-`(twoPLPMF a b θ).toMeasure`), is `0`.  This is the score mean-zero
-identity for this model only; no generic score theorem is restated.
+For a finite set of items with arbitrary real discriminations $a_i$, difficulties $b_i$ and ability $\theta$, let $p_\theta$ be the two-parameter logistic model on response patterns $Y \in \{0, 1\}^{\text{items}}$, with independent responses and $P(Y_i = 1) = \sigma(a_i(\theta - b_i))$, where $\sigma$ is the logistic function. Then the score $\partial_\theta \log p_\theta(Y)$ has mean zero under $p_\theta$.

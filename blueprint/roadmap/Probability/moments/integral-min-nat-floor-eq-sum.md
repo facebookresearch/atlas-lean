@@ -1,5 +1,3 @@
-# Truncated tail sums
+# Truncated curtate expectation as a tail sum
 
-Truncated curtate expectation as a finite tail sum: for a lifetime `T`
-on a probability space, the expectation of `min ⌊T⌋₊ n` is the sum over
-`k = 1, …, n` of the probabilities `P (k ≤ T)`.
+For a measurable lifetime $T \ge 0$ almost surely on a probability space and $n \in \mathbb{N}$, $E[\min(\lfloor T\rfloor, n)] = \sum_{k=1}^{n} P(T \ge k)$.

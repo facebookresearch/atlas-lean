@@ -1,3 +1,3 @@
-# Identifiable iff trivial ker
+# Identifiability iff trivial kernel
 
-Identifiability holds iff the kernel is trivial: `A *ᵥ θ = 0 → θ = 0`.
+A real $m \times n$ matrix $A$ is identifiable, meaning $\theta \mapsto A\theta$ is injective, if and only if $A\theta = 0$ implies $\theta = 0$.

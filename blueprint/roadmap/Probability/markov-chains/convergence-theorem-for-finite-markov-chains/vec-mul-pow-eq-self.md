@@ -1,6 +1,3 @@
 # A stationary vector is invariant under repeated transition
 
-Row-vector convention:
-`π` is stationary for `P` when `π ᵥ* P = π`. Then `π ᵥ* P ^ n = π` for every `n`. The
-identity is purely algebraic: it needs neither stochasticity of `P` nor nonnegativity or
-normalization of `π`, so it holds over any semiring.
+Let $S$ be a finite index set and $P$ an $S \times S$ matrix over a semiring. If the row vector $\pi$ satisfies $\pi P = \pi$, then $\pi P^n = \pi$ for every $n \ge 0$. No stochasticity of $P$ and no nonnegativity or normalization of $\pi$ is required.

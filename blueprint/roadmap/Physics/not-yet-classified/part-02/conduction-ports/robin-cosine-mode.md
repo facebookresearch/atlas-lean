@@ -1,7 +1,5 @@
-# Robin Cosine Mode
+# Cosine mode with Robin boundary conditions
 
-Robin cosine mode (nonzero fixture). `u t x = Ta + exp (-D * μ^2 * t) *
-cos (μ * (x - L / 2))` with `ux` its `x`-derivative solves `u_t = D * u_xx` at
-every point, satisfies the outward Robin conditions at both ends with
-`h = k * μ * tan (μ * L / 2)`, has `h ≥ 0` when `0 ≤ μ`, `0 ≤ L` and
-`μ * L / 2 < π / 2`, and has `θ(t, 0) ≠ 0` there.
+Let $k > 0$, $\mu \ge 0$, $L \ge 0$ and $\mu L/2 < \pi/2$, and set
+$$u(t,x) = T_a + e^{-D\mu^2 t}\cos\bigl(\mu(x - L/2)\bigr), \qquad h = k\mu\tan(\mu L/2).$$
+Then, for all $t$ and $x$, $u$ has the stated derivatives $u_t$, $u_x$, $u_{xx}$ and solves $u_t = D u_{xx}$; it satisfies the outward Robin conditions $k\,u_x(t,0) = h\,(u(t,0) - T_a)$ and $-k\,u_x(t,L) = h\,(u(t,L) - T_a)$; $h \ge 0$; and $u(t,0) - T_a \ne 0$ for every $t$.

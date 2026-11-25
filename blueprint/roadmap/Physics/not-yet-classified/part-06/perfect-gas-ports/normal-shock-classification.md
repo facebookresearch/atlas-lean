@@ -1,9 +1,3 @@
-# Branch classification on the positive domain
+# Classification of normal-shock branches
 
-For `γ > 1`, `R > 0`, an upstream state
-with `ρ1, T1 > 0`, sound speed `a1 ^ 2 = γ R T1`, Mach number `M1 = |u1| / a1`, and a downstream
-state with `ρ2, T2 > 0` satisfying the jump conditions, either the downstream state is the
-upstream one (trivial branch), or `ρ2 / ρ1`, `p2 / p1` and `T2 / T1` are the density, pressure
-and temperature ratios of the distinct branch at `m = M1 ^ 2`, and then
-`m > (γ - 1) / (2 γ)`. With zero velocity the trivial branch is forced, so no sign hypothesis on
-`u1` is needed here.
+Let $\gamma > 1$, $R > 0$, $\rho_1, T_1, \rho_2, T_2 > 0$, $a_1^2 = \gamma R T_1$ and $M_1 = |u_1|/a_1$. Suppose the states satisfy the ideal-gas law $p_j = \rho_j R T_j$ and the jump conditions $\rho_1 u_1 = \rho_2 u_2$, $p_1 + \rho_1 u_1^2 = p_2 + \rho_2 u_2^2$ and $c_p T_1 + u_1^2/2 = c_p T_2 + u_2^2/2$ with $c_p = \gamma R/(\gamma - 1)$. Then either $(\rho_2, u_2, p_2, T_2) = (\rho_1, u_1, p_1, T_1)$, or, with $m = M_1^2$, $\frac{\rho_2}{\rho_1} = \frac{(\gamma + 1)m}{(\gamma - 1)m + 2}$, $\frac{p_2}{p_1} = \frac{2\gamma m - (\gamma - 1)}{\gamma + 1}$, $\frac{T_2}{T_1}$ is their quotient, and $m > (\gamma - 1)/(2\gamma)$.

@@ -1,3 +1,3 @@
-# Wet Basis
+# Wet-basis moisture fraction
 
-Wet-basis moisture fraction `w = mw / (mw + ms)`.
+For water mass $m_w$ and dry solid mass $m_s$, the wet-basis moisture fraction is $w = m_w/(m_w + m_s)$.

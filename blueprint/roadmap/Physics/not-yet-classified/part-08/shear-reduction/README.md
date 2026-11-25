@@ -4,14 +4,14 @@
 
 - [Shear Velocity](shear-velocity.md)
 - [Shear Fluid](shear-fluid.md)
-- [Shear Flow](shear-flow.md)
+- [Parallel shear flow](shear-flow.md)
 - [Shear Kinetic Energy](shear-kinetic-energy.md)
-- [Shear Velocity couette](shear-velocity-couette.md)
+- [Steady shear flow is plane Couette flow](shear-velocity-couette.md)
 
 ## B. Reduction to the heat equation
 
-- [Shear Flow stress](shear-flow-stress.md)
-- [Shear Flow navier Stokes iff](shear-flow-navier-stokes-iff.md)
+- [Stress of a parallel shear flow](shear-flow-stress.md)
+- [Shear flow reduces Navier-Stokes to the heat equation](shear-flow-navier-stokes-iff.md)
 
 ## C. Kinetic energy with wall work
 
@@ -19,12 +19,12 @@
 
 ## D. A single-mode transient with a moving wall
 
-- [Single Mode Profile](single-mode-profile.md)
-- [Single Mode Profile cont Diff](single-mode-profile-cont-diff.md)
-- [Single Mode Profile heat](single-mode-profile-heat.md)
-- [Single Mode Profile walls](single-mode-profile-walls.md)
-- [Single Mode Flow navier Stokes](single-mode-flow-navier-stokes.md)
-- [Single Mode Profile energy balance](single-mode-profile-energy-balance.md)
-- [Single Mode Profile energy pos](single-mode-profile-energy-pos.md)
+- [Single-mode shear profile](single-mode-profile.md)
+- [The single-mode shear profile is C²](single-mode-profile-cont-diff.md)
+- [Single-mode shear profile solves the heat equation](single-mode-profile-heat.md)
+- [Wall values of the single-mode shear profile](single-mode-profile-walls.md)
+- [Single-mode shear flow solves the Navier-Stokes equations](single-mode-flow-navier-stokes.md)
+- [Energy balance of the single-mode shear flow](single-mode-profile-energy-balance.md)
+- [Single-mode shear flow has positive kinetic energy](single-mode-profile-energy-pos.md)
 - [Single Mode Profile energy strict Mono On](single-mode-profile-energy-strict-mono-o.md)
-- [Single Mode Profile no wall work](single-mode-profile-no-wall-work.md)
+- [Dropping the moving-wall term predicts false decay](single-mode-profile-no-wall-work.md)

@@ -1,10 +1,3 @@
-# Conditional binomial law in the fixed-total model, as a law
+# Conditional binomial law in the fixed-total model
 
-Under the hypotheses of
-`cond_measureReal_counts_eq_binomial`, given `Cₐ + C_b = d` (an event of positive probability)
-the count `Cₐ` has law `Bin(d, pₐ / (pₐ + p_b))`. For `pₐ = p_b` (McNemar's null of marginal
-homogeneity, or the TDT null of no transmission distortion) with `pₐ > 0` this is
-`Bin(d, 1/2)` after rewriting the success probability; if `pₐ = p_b = 0` the conditioning forces
-`d = 0` and the stated law is `Bin(0, 0)`, equal to `Bin(0, 1/2)` as a measure but not
-syntactically. The nonnegativity `hp₀` is needed only to form the success probability in
-`[0, 1]`.
+Let $\mu$ be a probability measure and $X_0, X_1, \dots$ independent measurable random variables with values in a finite set, with $P(X_k = i) = p_i$ for all $k$ and $i$, where every $p_i \ge 0$. Fix categories $a \ne b$, a sample size $n$ and $d \in \mathbb N$, and let $C_a$ and $C_b$ count the indices $k < n$ with $X_k = a$ and $X_k = b$. If $P(C_a + C_b = d) > 0$, then conditionally on $C_a + C_b = d$, the count $C_a$ has law $\operatorname{Bin}(d, p_a/(p_a + p_b))$.

@@ -1,11 +1,6 @@
 # Martingale CLT under the Lindeberg condition
 
-For a martingale difference array (row `n`
-has `n` increments, as in `LindebergConditionTriangular`) with square-integrable increments, if
-the realized quadratic variation `∑_{k<n} X n k²` tends to `v` in probability and the Lindeberg
-condition holds, the row sums converge in distribution to `N(0, v)`. The Lindeberg condition
-implies McLeish's conditions (a) and (b), so this is a corollary of
-`tendstoInDistribution_martingale_mcLeish`.
+On a probability space, let $X_{n,k}$ ($k < n$) be a triangular array such that for each $n$ the partial sums $\sum_{j<k} X_{n,j}$ form a martingale for a filtration $\mathcal F_n$, and each $X_{n,k}^2$ is integrable. Suppose the Lindeberg condition holds: for every $\varepsilon > 0$, $\sum_{k<n} \mathbb E\big[X_{n,k}^2 \mathbf 1\{|X_{n,k}| > \varepsilon\}\big] \to 0$, and suppose $\sum_{k<n} X_{n,k}^2 \to v$ in probability for a constant $v \ge 0$. Then $\sum_{k<n} X_{n,k}$ converges in distribution to $N(0, v)$.
 
 ## Sources
 

@@ -1,4 +1,3 @@
-# Couette Flow navier Stokes
+# Plane Couette flow solves the Navier-Stokes equations
 
-Plane Couette flow satisfies Physlib's conservative Navier-Stokes equations with constant
-pressure `p₀`, shear viscosity `μ` and second viscosity `lam`.
+For constant density $\rho$, wall speed $U$, gap $H$, constant pressure $p_0$, shear viscosity $\mu$ and second viscosity $\lambda$, the plane Couette flow with velocity $(U y/H, 0, 0)$, Newtonian stress and no body force satisfies the conservative Navier-Stokes equations in three dimensions. No sign conditions are needed.

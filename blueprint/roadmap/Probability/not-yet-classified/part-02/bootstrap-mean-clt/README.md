@@ -1,3 +1,3 @@
 # Bootstrap Mean CLT
 
-- [Empirical Law eq](empirical-law-eq.md)
+- [Empirical law as an average of point masses](empirical-law-eq.md)

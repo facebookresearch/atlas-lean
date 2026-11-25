@@ -1,4 +1,3 @@
-# Pipe Poiseuille Velocity
+# Pipe Poiseuille velocity
 
-Cylindrical Poiseuille velocity `(0, 0, G (R² - x² - y²) / (4 μ))`, with `x = x 0`,
-`y = x 1` the transverse coordinates and `G = -∂p/∂z` the signed pressure-drop rate.
+The cylindrical Poiseuille velocity field is $u(x, y, z) = \big(0, 0, G(R^2 - x^2 - y^2)/(4\mu)\big)$, where $x, y$ are the transverse coordinates and $G = -\partial p/\partial z$ is the signed pressure-drop rate.

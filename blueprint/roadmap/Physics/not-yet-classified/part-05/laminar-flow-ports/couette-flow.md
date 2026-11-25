@@ -1,5 +1,3 @@
-# Couette Flow
+# Plane Couette flow
 
-Plane Couette flow: constant density `ρ`, the steady Couette velocity, Physlib's Newtonian
-stress for constant pressure `p₀`, shear viscosity `μ` and second viscosity `lam`, and no body
-force.
+For constants $\rho$, $\mu$, $\lambda$, $p_0$, $U_{\text{wall}}$ and $H$, plane Couette flow is the flow with constant density $\rho$, steady velocity $(U_{\text{wall}}\,y/H, 0, 0)$ where $y$ is the wall-normal coordinate, the Newtonian stress for constant pressure $p_0$, shear viscosity $\mu$ and second viscosity $\lambda$, and no body force.

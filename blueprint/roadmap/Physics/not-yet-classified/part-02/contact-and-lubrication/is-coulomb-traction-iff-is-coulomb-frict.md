@@ -1,5 +1,3 @@
-# Is Coulomb Traction iff is Coulomb Friction
+# Vector and scalar Coulomb friction agree on a line
 
-On a tangent line, `E = ℝ`, the vector law is exactly the scalar Coulomb friction graph:
-for `v ≠ 0`, `‖v‖⁻¹ • v = Real.sign v`, and `‖F‖ ≤ μ * N` holds iff
-`F ∈ [-(μ * N), μ * N]`.
+For real $\mu$, $N$, $v$, $F$, the vector Coulomb law on the line (if $v \ne 0$ then $F = -\mu N\, v/|v|$; if $v = 0$ then $|F| \le \mu N$) holds if and only if the scalar Coulomb friction graph holds (if $v \ne 0$ then $F = -\mu N \operatorname{sign} v$; if $v = 0$ then $F \in [-\mu N, \mu N]$).

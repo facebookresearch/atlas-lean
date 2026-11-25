@@ -1,4 +1,4 @@
 # Spatial Predictor
 
 - [Cov Vector](cov-vector.md)
-- [Predictor unbiased and error variance](predictor-unbiased-and-error-variance.md)
+- [Unbiased linear predictor and its error variance](predictor-unbiased-and-error-variance.md)

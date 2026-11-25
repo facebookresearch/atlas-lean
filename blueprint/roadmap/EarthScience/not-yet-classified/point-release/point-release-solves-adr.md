@@ -1,9 +1,3 @@
-# Point release solves adr
+# Point-release kernel solves the advection-diffusion-reaction equation
 
-The point-release kernel
-`c(t, x) = M exp(-k t) exp(-(x - U t)² / (4 D t)) / √(4 π D t)` solves the
-advection-diffusion-reaction equation `c_t + U c_x = D c_xx - k c` for `t > 0`
-and every real `k` (derivatives written with `deriv`, with the other variable
-held fixed). The reaction is decay only when `k ≥ 0`. The derivatives exist:
-see `point_release_hasDerivAt_t`, `point_release_hasDerivAt_x` and
-`point_release_hasDerivAt_xx`.
+For $D > 0$, $t > 0$ and all real $M$, $k$, $U$, $x$, the kernel $c(t, x) = M e^{-k t} \exp\!\big(-(x - U t)^2/(4 D t)\big) / \sqrt{4 \pi D t}$ satisfies $c_t + U c_x = D c_{xx} - k c$ at $(t, x)$, where each partial derivative is taken with the other variable held fixed.

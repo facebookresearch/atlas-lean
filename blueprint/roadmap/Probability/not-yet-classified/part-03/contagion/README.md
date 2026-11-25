@@ -1,3 +1,3 @@
 # Contagion
 
-- [Homophily contagion same observed Law](homophily-contagion-same-observed-law.md)
+- [Homophily and contagion give the same observed law](homophily-contagion-same-observed-law.md)

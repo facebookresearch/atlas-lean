@@ -7,4 +7,4 @@
 
 ## Finite-dimensional convergence
 
-- [Finite-dimensional convergence under the Lindeberg condition](tendsto-in-distribution-fdd-martingale-l.md)
+- [Martingale CLT for finite-dimensional laws under the Lindeberg condition](tendsto-in-distribution-fdd-martingale-l.md)

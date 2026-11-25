@@ -1,3 +1,3 @@
 # Finite Argmin
 
-- [Bayes Risk eq lintegral i Inf of finite](bayes-risk-eq-lintegral-i-inf-of-finite.md)
+- [Bayes risk over a finite action space](bayes-risk-eq-lintegral-i-inf-of-finite.md)

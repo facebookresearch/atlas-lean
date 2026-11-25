@@ -1,4 +1,4 @@
-# Logistic Cumulant glm Hessian
+# Hessian of the logistic GLM log-likelihood
 
-The generic Hessian of `logisticCumulant` at unit dispersion is `-Xᵀ W X` with Bernoulli
-weights `Wᵢ = σ(ηᵢ)(1 - σ(ηᵢ))`.
+For a design matrix $X$, offset $o$ and coefficients $\beta$, let $\eta = X\beta + o$ and $\sigma$ the logistic function. At unit dispersion, the Hessian of the logistic (Bernoulli) GLM log-likelihood in $\beta$ is
+$$-X^\top W X, \qquad W = \operatorname{diag}\bigl(\sigma(\eta_i)(1 - \sigma(\eta_i))\bigr).$$

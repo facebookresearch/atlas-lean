@@ -1,4 +1,3 @@
-# Plane Poiseuille Flow stress
+# Stress of plane Poiseuille flow
 
-For `μ ≠ 0` the Newtonian stress of plane Poiseuille flow has normal entries `-p` and shear
-entries `G (H - 2 y) / 2`; the second viscosity drops out.
+For $\mu \ne 0$, the Newtonian stress of plane Poiseuille flow with velocity $(Gy(H - y)/(2\mu), 0, 0)$ and pressure $p = p_0 - Gx$ has diagonal entries $-p$, shear entries $\sigma_{xy} = \sigma_{yx} = G(H - 2y)/2$, and all other entries zero. The second viscosity does not appear.

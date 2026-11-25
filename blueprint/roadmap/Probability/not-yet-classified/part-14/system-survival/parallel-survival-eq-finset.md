@@ -1,6 +1,4 @@
-# Parallel survival eq finset
+# Parallel survival over a finite component set
 
-Parallel survival under mutual independence over a finite
-component set: one minus the product of component failure
-probabilities. This is the finite-set form of
-`parallel_survival_eq`.
+Let $T_i$ be mutually independent measurable real lifetimes under a probability measure $P$, $s$ a finite set of components and $x$ real. Then
+$$P(\exists i \in s,\ T_i > x) = 1 - \prod_{i \in s} \bigl(1 - P(T_i > x)\bigr).$$

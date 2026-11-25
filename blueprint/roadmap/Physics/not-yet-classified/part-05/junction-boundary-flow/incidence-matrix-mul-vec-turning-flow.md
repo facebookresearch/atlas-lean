@@ -1,8 +1,3 @@
-# Physical-to-canonical bridge
+# Turning flows and link boundary flows
 
-On the turning-movement network, whose nodes are links and
-whose arcs are ordered link pairs, the canonical incidence transfer of the aggregate turning
-flows at link `e` is the aggregate upstream boundary flow of `e` minus its aggregate downstream
-boundary flow. So over a step of length `dt` the junction transfer changes link vehicle
-counts by `dt` times this canonical incidence transfer, in addition to the external source
-and sink faces, in the inflow-minus-outflow sign of `incidenceMatrix`.
+Let $E$ be a finite set of links, $C$ a set of commodities, and $q_c(e, e')$ the turning flow of commodity $c$ from link $e$ to link $e'$. On the network whose nodes are links and whose arcs are ordered pairs $(e, e')$, apply the incidence matrix (inflow minus outflow) to the aggregate turning flows $\sum_c q_c(e, e')$. At link $e$ the result is $\sum_c \sum_{e_0} q_c(e_0, e) - \sum_c \sum_{e'} q_c(e, e')$, the aggregate upstream boundary flow minus the aggregate downstream boundary flow.

@@ -1,4 +1,3 @@
-# Erm Idx
+# Empirical risk minimizer over a finite class
 
-Deterministic tie-broken empirical-risk minimizer over the finite candidate class
-(registry-required public selector API), directly the `Finite.exists_min` witness.
+For $M \ge 1$ candidate loss functions $f_1, \dots, f_M$ and a sample $S_1, \dots, S_n$, a chosen index $\hat m$ minimizing the empirical risk $\frac1n\sum_{i=1}^n f_m(S_i)$ over $m \in \{1, \dots, M\}$.

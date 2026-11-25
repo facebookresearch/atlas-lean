@@ -1,4 +1,5 @@
-# Point release has Deriv At t
+# Time differentiability of the point-release kernel
 
-The time derivative in `point_release_solves_adr` exists: for `t > 0` the
-kernel has derivative `deriv (fun t => c t x) t` in `t`.
+For $D > 0$, $t > 0$ and any $M$, $k$, $U$, $x$, the function
+$$t \mapsto \frac{M e^{-k t} \exp\!\left(-(x - U t)^2/(4 D t)\right)}{\sqrt{4 \pi D t}}$$
+is differentiable at $t$.

@@ -1,4 +1,3 @@
-# Composition port
+# Composition of a stream with positive flow
 
-Under a positive total flow, the composition of a
-stream is `Chemistry.Amounts.moleFraction` of its flow vector.
+For a stream with nonnegative species flow rates $\dot n_i$ and positive total flow $\sum_j \dot n_j > 0$, the composition is defined and equals the vector of mole fractions $\dot n_i / \sum_j \dot n_j$.

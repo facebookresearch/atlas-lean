@@ -1,4 +1,3 @@
-# Supply nonneg le
+# Cell supply is nonnegative and capacity-bounded
 
-Supply is nonnegative and capacity-bounded on admissible
-densities.
+For free-flow speed $v > 0$, wave speed $w > 0$, jam density $k_j \ge 0$ and density $k \le k_j$, the supply $\min(w(k_j - k), C)$ satisfies $0 \le \text{supply} \le C$, where $C = v w k_j/(v + w)$ is the capacity.

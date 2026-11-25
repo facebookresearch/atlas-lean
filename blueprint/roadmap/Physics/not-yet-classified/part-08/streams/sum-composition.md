@@ -1,5 +1,3 @@
-# Sum composition
+# Composition sums to one
 
-The composition of a stream sums to one: whenever
-`s.composition = some x`, `∑ i, x i = 1`. By the imported
-`Chemistry.Amounts.sum_moleFraction`.
+For a stream with nonnegative species flows over a finite set of species and positive total flow, the mole fractions $x_i = \dot n_i / \sum_j \dot n_j$ of its composition satisfy $\sum_i x_i = 1$.

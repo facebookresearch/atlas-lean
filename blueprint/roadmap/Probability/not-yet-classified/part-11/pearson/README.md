@@ -6,4 +6,4 @@
 
 ## Fitted cell probabilities
 
-- [Pearson's chi-square theorem with `s` estimated parameters](tendsto-in-distribution-pearson-statisti-3.md)
+- [Pearson's chi-square theorem with estimated parameters](tendsto-in-distribution-pearson-statisti-3.md)

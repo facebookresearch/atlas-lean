@@ -1,4 +1,3 @@
-# Front speed eq of ne
+# Rankine-Hugoniot speed of a moving front
 
-When the two states differ, the front speed is forced to be the
-Rankine-Hugoniot speed `(qR - qL) / (kR - kL)`.
+If $k_R \neq k_L$ and the front speed $s$ satisfies the balance $s (k_R - k_L) = q_R - q_L$, then $s = (q_R - q_L)/(k_R - k_L)$.

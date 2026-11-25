@@ -1,4 +1,4 @@
 # Finite Prefix
 
-- [Mass prefix match](mass-prefix-match.md)
-- [Map take](map-take.md)
+- [Mass of a word under a next-token law](mass-prefix-match.md)
+- [Prefix marginals of autoregressive word laws](map-take.md)

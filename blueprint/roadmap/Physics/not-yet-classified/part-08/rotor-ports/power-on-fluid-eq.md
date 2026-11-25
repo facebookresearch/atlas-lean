@@ -1,6 +1,3 @@
 # Euler torque and power on the fluid
 
-If the rotor torque on the fluid is exerted by forces
-at points moving with the rotor, no other external moment acts and the steady lumped mass and
-angular-momentum balances hold, the torque on the fluid is `τ = ṁ (r₂ cθ₂ - r₁ cθ₁)` and the
-power on the fluid is `P = ω τ = ṁ (U₂ cθ₂ - U₁ cθ₁)` with the signed blade speeds `U = ω r`.
+Let forces $F_k$ act on the fluid at points $x_k$ of a rotor turning at signed angular speed $\omega$ about a shaft through $o$. If the inlet and outlet lumped mass flows are $-\dot m$ and $\dot m$ and the axial torque equals the sum of the ports' axial angular-momentum fluxes, then the torque is $\tau = \dot m (r_2 c_{\theta 2} - r_1 c_{\theta 1})$ and the power of the forces is $P = \omega \tau = \dot m (U_2 c_{\theta 2} - U_1 c_{\theta 1})$, with signed blade speeds $U = \omega r$.

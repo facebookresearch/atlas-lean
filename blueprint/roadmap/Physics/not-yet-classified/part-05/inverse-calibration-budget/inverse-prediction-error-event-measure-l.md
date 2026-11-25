@@ -1,7 +1,4 @@
-# Inverse Prediction error event measure le
+# Bad-event bound for inverse calibration
 
-Calibration bad-event bound, derived from the deterministic
-known-parameter bound: on the good event that the residual obeys
-`|e ω| ≤ E`, the recovered input `inversePrediction a b (y ω)` with
-`y ω = b * x ω + a + e ω` differs from `x ω` by at most `E / |b|`,
-so the bad event is contained in the residual bad event.
+Let $\mu$ be a measure, let $a$, $b$, $E$, $p$ be real with $b \ne 0$ and $E \ge 0$, and let $x$ and $e$ be real functions on the sample space with $\mu\{|e| > E\} \le p$. For the response $y = b x + a + e$ and the inverse prediction $\hat x = (y - a)/b$,
+$$\mu\{|\hat x - x| > E/|b|\} \le p.$$

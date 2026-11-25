@@ -1,3 +1,3 @@
 # Held DACSettling
 
-- [Settling correct](settling-correct.md)
+- [Settling of a first-order output on a holding interval](settling-correct.md)

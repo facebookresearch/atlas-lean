@@ -1,4 +1,3 @@
-# Plane Poiseuille Flow navier Stokes
+# Plane Poiseuille flow solves Navier-Stokes
 
-For `μ ≠ 0` plane Poiseuille flow satisfies Physlib's conservative Navier-Stokes equations
-with the pressure `p₀ - G x`, shear viscosity `μ` and second viscosity `lam`.
+For $\mu \ne 0$ and any $\rho, \lambda, p_0, G, H$, plane Poiseuille flow with constant density $\rho$, velocity $\bigl(G y (H - y)/(2\mu), 0, 0\bigr)$ and no body force satisfies the conservative Navier-Stokes equations with pressure $p_0 - G x$, shear viscosity $\mu$ and second viscosity $\lambda$.

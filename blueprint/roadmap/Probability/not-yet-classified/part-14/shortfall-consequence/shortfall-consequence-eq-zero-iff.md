@@ -1,5 +1,3 @@
-# Shortfall Consequence eq zero iff
+# Shortfall consequence vanishes exactly without failure
 
-The shortfall consequence is zero exactly when the load does
-not exceed the resistance; on the failure event it is zero only
-at equality.
+The shortfall consequence $\max(S(\omega) - R(\omega), 0)$ of a load effect $S$ and a resistance $R$ is zero if and only if $S(\omega) \le R(\omega)$.

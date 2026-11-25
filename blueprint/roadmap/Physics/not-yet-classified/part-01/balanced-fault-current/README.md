@@ -2,4 +2,4 @@
 
 ## F. Headline
 
-- [Fault correct](fault-correct.md)
+- [Balanced three-phase fault current](fault-correct.md)

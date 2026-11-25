@@ -1,4 +1,3 @@
-# System Lifetime univ
+# System lifetime of the universal event
 
-Always-up (universal) event boundary equation. The universal event
-contains the all-down configuration with lifetime `⊤`, so the maximum is `⊤`.
+For any finite set of components with lifetimes $T_e \in [0, \infty]$, the system lifetime for the event containing every up/down configuration is $\infty$: the all-down configuration has lifetime $\infty$ (an empty minimum), so the maximum over all configurations is $\infty$.

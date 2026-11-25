@@ -17,5 +17,5 @@
 ## G. The hovering rotor
 
 - [Hover thrust](hover-thrust-eq.md)
-- [Induced velocity](hover-induced-velocity-eq.md)
+- [Induced velocity of a hovering rotor](hover-induced-velocity-eq.md)
 - [Hover power](hover-power-eq.md)

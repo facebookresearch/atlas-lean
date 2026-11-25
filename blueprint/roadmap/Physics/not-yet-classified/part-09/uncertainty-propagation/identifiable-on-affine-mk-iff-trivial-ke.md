@@ -1,6 +1,3 @@
-# Identifiable On Affine mk' iff trivial ker
+# Affine identifiability and the kernel
 
-Affine identifiability on `theta0 + V` holds iff the kernel
-inside the direction space `V` is trivial: `A *ᵥ v = 0` with
-`v ∈ V` forces `v = 0`. The base point `theta0` cancels; only
-differences matter.
+For a real $n_m \times n_p$ matrix $A$, a point $\theta_0$ and a subspace $V$, the map $\theta \mapsto A\theta$ is injective on $\theta_0 + V$ if and only if $A v = 0$ with $v \in V$ implies $v = 0$.

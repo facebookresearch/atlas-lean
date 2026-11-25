@@ -1,4 +1,4 @@
 # Integrated Clausius Clapeyron
 
-- [Clausius clapeyron differential](clausius-clapeyron-differential.md)
-- [Integrated clausius clapeyron](integrated-clausius-clapeyron.md)
+- [Clausius-Clapeyron equation, differential form](clausius-clapeyron-differential.md)
+- [Integrated Clausius-Clapeyron equation](integrated-clausius-clapeyron.md)

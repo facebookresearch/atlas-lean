@@ -1,5 +1,5 @@
 # True Score
 
-- [Variance eq variance cond Exp add variance sub cond Exp](variance-eq-variance-cond-exp-add-varian.md)
-- [Coefficient Alpha eq variance div of tau Equivalent](coefficient-alpha-eq-variance-div-of-tau.md)
-- [Coefficient Omega eq variance div variance](coefficient-omega-eq-variance-div-varian.md)
+- [Total variance splits into true-score and error variance](variance-eq-variance-cond-exp-add-varian.md)
+- [Coefficient alpha under tau-equivalence](coefficient-alpha-eq-variance-div-of-tau.md)
+- [Coefficient omega as a variance ratio](coefficient-omega-eq-variance-div-varian.md)

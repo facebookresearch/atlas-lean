@@ -1,5 +1,3 @@
-# One-way ANOVA `F` test
+# One-way ANOVA $F$ test
 
-Under `H₀` with `G ≥ 2` groups and `n > G`, the standardized
-ratio `((SSB / v) / (G - 1)) / ((SSW / v) / (n - G)) ~ F(G - 1, n - G)`. For the observable
-statistic without the unknown variance `v`, use `hasLaw_oneWay_ANOVA_F_varianceFree`.
+Let $n$ observations be split into $G \ge 2$ nonempty groups with $n > G$, and let the observations be i.i.d. $N(m_0, v)$ with $v \ne 0$. Then $\dfrac{(SSB/v)/(G - 1)}{(SSW/v)/(n - G)}$ has the $F(G - 1, n - G)$ distribution, where $SSB$ and $SSW$ are the between-group and within-group sums of squares.

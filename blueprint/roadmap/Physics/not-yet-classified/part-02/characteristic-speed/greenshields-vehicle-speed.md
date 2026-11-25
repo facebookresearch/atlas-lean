@@ -1,3 +1,3 @@
-# Greenshields Vehicle Speed
+# Greenshields vehicle speed
 
-Vehicle speed under the Greenshields closure.
+For free-flow speed $v_f$, jam density $k_j$ and density $k$, the Greenshields vehicle speed is $v_f (1 - k/k_j)$.

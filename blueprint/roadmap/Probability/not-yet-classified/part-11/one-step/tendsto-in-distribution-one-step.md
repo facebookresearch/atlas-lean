@@ -1,9 +1,4 @@
 # One-step estimator asymptotic normality
 
-From a `√n`-bounded starter, one Newton
-step with the score sum (`θ_init + J⁻¹ S_n(θ_init)/n`) is asymptotically normal with the
-`+J⁻¹ Y` limit law. The score CLT is `VectorInference.tendstoInDistribution_score`, and the
-strong law for the envelope average `n⁻¹ ∑ |M (X i)|` is `VectorInference.ae_tendsto_average`.
-`hdiff` is needed because `hlip` constrains only `fderiv`, which is `0` wherever the score is
-not differentiable, so `hlip` alone allows a score with a jump; `hscore_meas` makes the score
-sums at the random starter measurable.
+Let $E$ be a finite-dimensional real inner product space, $X_1, X_2, \dots$ i.i.d. with law $P_{\theta_0}$ (density $p(\theta_0, \cdot)$ with respect to $\nu$), and $s(\theta, x)$ the score, jointly measurable, with $\mathbb{E}\|s(\theta_0, X)\|^2 < \infty$ and $\mathbb{E}\, s(\theta_0, X) = 0$. Suppose that for some $\delta > 0$ and integrable measurable $M$, each $s(\cdot, x)$ is differentiable on the ball of radius $\delta$ about $\theta_0$ with $\|D_\theta s(\theta, x) - D_\theta s(\theta_0, x)\| \le M(x)\|\theta - \theta_0\|$ there; that $H(x) = D_\theta s(\theta_0, x)$ has $n^{-1} \sum_{i < n} H(X_i) \to \mathbb{E} H$ in probability with $\mathbb{E} H = -J$, where the Fisher information $J$ is invertible; and that $Y$ satisfies $\langle Y, t \rangle \sim N(0, \langle J t, t \rangle)$ for every $t$. If the starters $\tilde\theta_n$ are measurable and $\sqrt{n}(\tilde\theta_n - \theta_0)$ is bounded in probability, then
+$$\sqrt{n}\Big(\tilde\theta_n + J^{-1} \frac{1}{n} \sum_{i < n} s(\tilde\theta_n, X_i) - \theta_0\Big) \Rightarrow J^{-1} Y.$$

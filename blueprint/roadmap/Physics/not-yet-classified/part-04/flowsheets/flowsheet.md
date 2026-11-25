@@ -1,9 +1,5 @@
-# Flowsheet
+# Process flowsheet
 
-A finite process flowsheet over process units and species. For each
-species, every unit obeys a holdup balance whose internal transfer from
-unit `i` to unit `j` appears once as an outflow of `i` and once as an
-inflow of `j`; external inflow, external outflow, and generation are
-supplied separately. This is the single graph type reused by later network
-models; dynamics existence is not claimed, since the unit balances are
-hypotheses.
+A process flowsheet over a finite set of process units and a set of species consists of, for each species $s$, unit $u$ and time $t$: a holdup $H_{s,u}(t)$, internal transfer rates $T_{s,i\to j}(t)$ between units, an external inflow rate $I_{s,u}(t)$, an external outflow rate $O_{s,u}(t)$ and a generation rate $G_{s,u}(t)$, subject to the unit balance
+$$H_{s,u}'(t) = \sum_j \bigl(T_{s,j\to u}(t) - T_{s,u\to j}(t)\bigr) + I_{s,u}(t) - O_{s,u}(t) + G_{s,u}(t)$$
+for every $s$, $u$ and $t$. Each internal transfer thus appears once as an outflow and once as an inflow.

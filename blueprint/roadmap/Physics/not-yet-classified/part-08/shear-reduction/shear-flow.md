@@ -1,5 +1,3 @@
-# Shear Flow
+# Parallel shear flow
 
-Parallel shear flow: constant density `ρ`, the velocity `(U(t, y), 0, 0)`, Physlib's
-Newtonian stress for the spatially uniform pressure `p(t)`, shear viscosity `μ` and second
-viscosity `lam`, and no body force.
+Parallel shear flow with constant density $\rho$, velocity $(U(t, y), 0, 0)$, the Newtonian stress for a spatially uniform pressure $p(t)$ with shear viscosity $\mu$ and second viscosity $\lambda$, and no body force.

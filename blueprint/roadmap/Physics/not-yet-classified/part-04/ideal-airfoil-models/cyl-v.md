@@ -1,4 +1,4 @@
-# Cyl V
+# Cylinder flow vertical velocity
 
-Vertical velocity: `v = -2Ua²xy/r⁴ + Γx/(2πr²)`, the negative
-imaginary part of `W` under the `u - iv` convention.
+For freestream speed $U$, cylinder radius $a$ and circulation $\Gamma$, the vertical velocity at $(x, y)$ with $r^2 = x^2 + y^2$ is
+$$v = -\frac{2 U a^2 x y}{r^4} + \frac{\Gamma x}{2\pi r^2}.$$

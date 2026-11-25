@@ -1,4 +1,3 @@
-# Up Config apply eq true
+# Components up at time t
 
-Characterization of `upConfig`. The `Bool` is `true` exactly for
-strictly-up components.
+For component lifetimes $T_e \in [0, \infty]$ and a time $t \ge 0$, component $e$ is up in the configuration at time $t$ if and only if $t < T_e$.

@@ -1,5 +1,3 @@
 # Fitted values and residuals are independent
 
-**Fitted values and residuals are independent** under a spherical Gaussian error law:
-in `y = X β + ε` with `σ > 0` and `σ⁻¹ • ε` standard Gaussian, the fitted vector
-`X *ᵥ β̂` is independent of the residual vector `y - X *ᵥ β̂`.
+In the linear model $y = X\beta + \varepsilon$ with $X^\top X$ invertible, $\sigma > 0$ and $\sigma^{-1}\varepsilon$ having independent standard normal coordinates, the fitted vector $X\hat\beta$ and the residual vector $y - X\hat\beta$ are independent, where $\hat\beta$ is the least-squares estimator.

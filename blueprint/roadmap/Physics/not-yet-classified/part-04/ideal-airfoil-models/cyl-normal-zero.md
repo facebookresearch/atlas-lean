@@ -1,6 +1,3 @@
-# Cyl normal zero
+# No penetration on the cylinder
 
-No penetration on the cylinder: on `x² + y² = a²` with
-`a ≠ 0`, the radial velocity vanishes, `x * u + y * v = 0`
-(the circulation terms cancel and the freestream part is
-`U * x * (1 - a²/r²)`).
+For real $U$, $\Gamma$, $a \ne 0$ and a point with $x^2 + y^2 = a^2$, the velocity of ideal flow past a cylinder of radius $a$ with freestream $U$ and circulation $\Gamma$, $u = U\left(1 - a^2 (x^2 - y^2)/r^4\right) - \Gamma y/(2\pi r^2)$ and $v = -2 U a^2 x y / r^4 + \Gamma x/(2\pi r^2)$ with $r^2 = x^2 + y^2$, satisfies $x u + y v = 0$.

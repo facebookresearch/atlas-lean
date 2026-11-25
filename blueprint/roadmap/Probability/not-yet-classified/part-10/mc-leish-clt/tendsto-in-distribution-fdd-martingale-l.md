@@ -1,8 +1,3 @@
-# Finite-dimensional convergence under the Lindeberg condition
+# Martingale CLT for finite-dimensional laws under the Lindeberg condition
 
-The Lindeberg form of
-`tendstoInDistribution_fdd_martingale_mcLeish`: rows of length `n`, square-integrable
-increments, `LindebergConditionTriangular`, quadratic-variation convergence
-`∑_{k < N n s} X n k² → A s` in probability at every time `s`, and `N n s ≤ n`. The
-finite-dimensional distributions of `S n s = ∑_{k < N n s} X n k` converge to those of any
-process `Z` with centered Gaussian finite-dimensional laws of covariance `A (min s u)`.
+On a probability space, let $X_{n,k}$ be a triangular array whose row partial sums form a martingale for a filtration $\mathcal F_n$, with $X_{n,k}^2$ integrable for $k < n$, satisfying the Lindeberg condition. Let $N_n(s) \le n$ be nondecreasing in $s$ (over a linearly ordered index set), and suppose $\sum_{k < N_n(s)} X_{n,k}^2 \to A(s)$ in probability for every $s$. Let $Z$ be a process of measurable variables such that every linear combination $\sum_s c_s Z_s$ over a finite set of times is centered Gaussian with variance $\sum_{s,u} c_s c_u A(\min(s,u))$. Then for every finite set $I$ of times, $\big(\sum_{k < N_n(s)} X_{n,k}\big)_{s \in I}$ converges in distribution to $(Z_s)_{s \in I}$.

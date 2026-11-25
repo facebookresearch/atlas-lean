@@ -1,7 +1,3 @@
-# Cell Assignment
+# Complete randomization over four cells
 
-Complete randomization over the four cells: uniform on `cellAssignSpace`. With positive
-cell sizes summing to `card ι` it is a probability measure
-(`isProbabilityMeasure_cellAssignment`). When no assignment has the prescribed sizes (for
-example, sizes that do not sum to `card ι`), `cellAssignSpace n` is empty and
-`cellAssignment n` is the zero measure.
+For a finite set of units $\iota$ and prescribed cell sizes $n_0, \dots, n_3$, complete randomization is the uniform measure on the assignments $f : \iota \to \{0,1,2,3\}$ that put exactly $n_c$ units in each cell $c$. When no assignment has these sizes, for example when they do not sum to $|\iota|$, it is the zero measure.

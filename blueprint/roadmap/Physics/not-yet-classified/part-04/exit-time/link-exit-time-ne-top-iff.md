@@ -1,8 +1,3 @@
-# Admission
+# Finite exit time criterion
 
-For a nondecreasing cumulative departure count `D`, the vehicle that enters
-at time `t` has a finite exit time if and only if the departure count reaches its number
-`N0 + A t` at some time. Otherwise the vehicle never leaves and its exit time is `⊤`: a missing
-finite exit time is reported, not replaced by an arbitrary value. It transports
-`MeasureTheory.hittingAfter_eq_top_iff`; monotonicity of `D` removes the restriction to times
-after the entry.
+Let $N_0 \ge 0$ be the initial number of vehicles on a link, $A$ and $D$ the cumulative arrival and departure counts on $[0, \infty)$ with $D$ nondecreasing, and let the exit time of the vehicle entering at time $t$ be the infimum of the times $s \ge t$ with $D(s) \ge N_0 + A(t)$, or $\infty$ if there is none. This exit time is finite if and only if $N_0 + A(t) \le D(s)$ for some $s$.

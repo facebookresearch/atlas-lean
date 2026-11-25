@@ -1,8 +1,3 @@
 # Asymptotic coverage of the heteroskedasticity-robust Wald interval
 
-In the i.i.d.
-random-design linear model with measurable regressors and errors in which the HC0 sandwich estimator is consistent, fix a
-contrast `c` with nondegenerate robust variance `v = cᵀ Q⁻¹ Ω Q⁻ᵀ c ≠ 0`. If the contrast is
-asymptotically normal, `√n (c ⬝ᵥ β̂ₙ - c ⬝ᵥ β) ⟶ N(0, v)` (a hypothesis of the statement),
-then the Wald interval `c ⬝ᵥ β̂ₙ ± z √(cᵀ V̂ₙ c) / √n` built from the HC0 sandwich `V̂ₙ` covers
-`c ⬝ᵥ β` with probability tending to the standard-normal mass of `[-z, z]`. The consistency of the robust standard error needs no homoskedasticity.
+Let the regressor index set be finite and nonempty, and let $(X_i, U_i)$ be i.i.d. measurable pairs under a probability measure, with $\mathbb{E}\|X_0\|^4 < \infty$, $\mathbb{E}[\|X_0\|^2 U_0^2] < \infty$, $\mathbb{E}[U_0 X_0] = 0$, and invertible $Q = \mathbb{E}[X_0 X_0^\top]$. Let $Y_i = X_i^\top \beta + U_i$, $\hat\beta_n$ the OLS estimator from the first $n$ observations, and $\hat V_n$ the HC0 sandwich estimator. Fix a contrast $c$ with $v = c^\top Q^{-1} \Omega Q^{-\top} c \ne 0$, where $\Omega = \mathbb{E}[U_0^2 X_0 X_0^\top]$. If $\sqrt{n}\,(c^\top \hat\beta_n - c^\top \beta)$ converges in distribution to $N(0, v)$, then for every $z$ the probability that the interval $c^\top \hat\beta_n \pm z \sqrt{c^\top \hat V_n c} / \sqrt{n}$ contains $c^\top \beta$ tends to the standard normal probability of $[-z, z]$. No homoskedasticity is assumed.

@@ -1,5 +1,3 @@
-# Measure failure bracket upper
+# Distribution-free failure bracket, upper side
 
-Distribution-free error bracket, upper side: if `|g - L| ≤ delta` on
-an event `B`, then `P (g ≤ 0) ≤ P (L ≤ delta) + P (Bᶜ)`, with no
-measurability or distribution assumption.
+For any measure $\mu$, functions $g, L$, event $B$ and $\delta$, if $|g - L| \le \delta$ on $B$, then $\mu(g \le 0) \le \mu(L \le \delta) + \mu(B^c)$. No measurability or distributional assumption is needed.

@@ -1,4 +1,3 @@
-# H R
+# Right-traveling water-hammer head
 
-Right-traveling water-hammer state from a profile `F`:
-`h(t,x) = F (x - a t)`, `q(t,x) = (gA/a) F (x - a t)`.
+For wave speed $a$ and profile $F : \mathbb{R} \to \mathbb{R}$, the right-traveling head is $h(t, x) = F(x - a t)$.

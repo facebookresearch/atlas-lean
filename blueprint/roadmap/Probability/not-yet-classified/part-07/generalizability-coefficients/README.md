@@ -1,4 +1,4 @@
 # Generalizability Coefficients
 
-- [Dependability le generalizability](dependability-le-generalizability.md)
-- [Dependability lt generalizability](dependability-lt-generalizability.md)
+- [Dependability is at most generalizability](dependability-le-generalizability.md)
+- [Dependability is below generalizability](dependability-lt-generalizability.md)

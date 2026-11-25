@@ -1,4 +1,3 @@
-# Contact vi iff
+# Contact variational inequality solution
 
-The solution of the contact variational inequality is the contact displacement
-`min g (f / k)`.
+For stiffness $k > 0$ and real $g$, $f$, $u$: $u$ solves the contact variational inequality, that is, $u \le g$ and $(k u - f)(v - u) \ge 0$ for every $v \le g$, if and only if $u = \min(g, f/k)$.

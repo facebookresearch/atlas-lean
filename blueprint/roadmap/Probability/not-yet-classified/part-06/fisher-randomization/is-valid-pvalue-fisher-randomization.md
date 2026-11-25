@@ -1,4 +1,3 @@
 # Validity of the Fisher randomization test
 
-Let a finite population of units be assigned by complete randomization, which treats a uniformly random set of exactly $n_1$ units, where $n_1$ is at most the number of units. Then the Fisher randomization test, the permutation p-value over the full symmetric group of any measurable statistic of the treated set, is valid.
-Here the potential outcomes are fixed with no interference, the statistic is any measurable function of the treated set, and the sharp null hypothesis of no effect is the case of a difference in means of the control outcomes; the proof uses the invariance of complete randomization under relabeling of units.
+Let a finite population of units be assigned by complete randomization: the treated set is uniformly distributed over the sets of exactly $n_1$ units, where $n_1$ is at most the number of units. For any measurable real statistic $T$ of the treated set $S$, the permutation p-value, the fraction of permutations $g$ of the units with $T(g S) \ge T(S)$, is valid: its probability of being at most $\alpha$ is at most $\alpha$ for every $\alpha \in [0, 1]$.

@@ -1,3 +1,3 @@
 # Omitted Variable Bias
 
-- [Ols Slope eq long add omitted](ols-slope-eq-long-add-omitted.md)
+- [Omitted-variable formula for the OLS slope](ols-slope-eq-long-add-omitted.md)

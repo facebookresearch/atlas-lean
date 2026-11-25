@@ -1,4 +1,3 @@
-# Coulomb not exists stick of neg
+# Negative friction coefficient admits no stick force
 
-A negative coefficient admits no stick force: for `μ < 0 < N` the interval `[-μ N, μ N]` is
-empty, so no force is admissible at rest.
+For $\mu < 0 < N$, no force $F$ satisfies the Coulomb friction law at zero sliding velocity: the stick condition $F \in [-\mu N, \mu N]$ describes an empty interval.

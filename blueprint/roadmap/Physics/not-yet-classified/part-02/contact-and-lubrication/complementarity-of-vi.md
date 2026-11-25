@@ -1,5 +1,3 @@
 # Complementarity from the variational inequality
 
-A solution of the contact
-variational inequality has a nonnegative contact force `λ = f - k u`, a nonnegative gap `g - u`,
-and `λ (g - u) = 0`: the force vanishes off contact and the gap vanishes under load.
+Let $k, g, f$ be real and let $u \le g$ satisfy $(k u - f)(v - u) \ge 0$ for every $v \le g$. Then the contact force $\lambda = f - k u$ and the gap $g - u$ satisfy $\lambda \ge 0$, $g - u \ge 0$ and $\lambda (g - u) = 0$.

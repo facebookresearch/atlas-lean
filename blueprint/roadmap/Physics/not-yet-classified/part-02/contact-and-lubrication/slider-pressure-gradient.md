@@ -1,4 +1,3 @@
-# Slider Pressure Gradient
+# Slider pressure gradient
 
-Plane-slider pressure gradient `6 μ U (h - 2 h0 hL / (h0 + hL)) / h³` with
-`h = sliderFilm h0 hL L x`.
+The pressure gradient of the plane slider bearing with viscosity $\mu$, sliding speed $U$, inlet film $h_0$, outlet film $h_L$ and length $L$, at position $x$: $6 \mu U (h - 2 h_0 h_L/(h_0 + h_L))/h^3$ with linear film thickness $h = h_0 + (h_L - h_0)x/L$.

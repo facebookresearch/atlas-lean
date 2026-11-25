@@ -1,5 +1,3 @@
 # Routing certificates are turning certificates
 
-If every commodity is a route given by a
-valid walk and carries flow only from an arc of its route to the next arc, then its turning
-flows are supported on movements: a flow from `e` to `e'` with `head e ≠ tail e'` is zero.
+Let each commodity $c$ follow a walk of arcs from its origin to its destination, and let its turning flow $q_c(e, e')$ be nonzero only when $e'$ immediately follows $e$ on that walk. Then for arcs $e$, $e'$ with $\mathrm{head}(e) \neq \mathrm{tail}(e')$, $q_c(e, e') = 0$.

@@ -1,3 +1,3 @@
-# H L
+# Left-traveling water-hammer head
 
-Left-traveling water-hammer state: `h(t,x) = F (x + a t)`.
+For wave speed $a$ and profile $F : \mathbb{R} \to \mathbb{R}$, the left-traveling head is $h(t, x) = F(x + a t)$.

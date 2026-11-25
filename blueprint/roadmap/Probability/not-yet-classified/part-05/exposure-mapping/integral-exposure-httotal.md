@@ -1,8 +1,7 @@
-# Design-unbiasedness under the design-free Condition 1
+# Design-unbiasedness of the exposure Horvitz-Thompson estimator
 
-If
-`ExposureSufficiency e yr` holds and `πᵢ(d) > 0` for every unit, the
-expectation of the estimator is `∑ i, exposurePotential e yr i d`. This is
-`integral_exposureHTTotal_of_consistent` with the potentials
-`exposurePotential e yr`, consistent at every assignment by
-`exposurePotential_factorization`.
+Let finitely many units have exposures $e_i(z)$ under a random assignment $z$ with a countable law, and suppose each outcome $y_i(z)$ depends on $z$ only through $e_i(z)$. If every unit has positive probability $\pi_i(d)$ of exposure $d$, then the Horvitz-Thompson estimator $\sum_{i : e_i(z) = d} y_i(z)/\pi_i(d)$ has expectation $\sum_i y_i(d)$.
+
+## Sources
+
+- P. M. Aronow and C. Samii, "Estimating average causal effects under general interference, with application to a social network experiment", Annals of Applied Statistics 11 (2017).

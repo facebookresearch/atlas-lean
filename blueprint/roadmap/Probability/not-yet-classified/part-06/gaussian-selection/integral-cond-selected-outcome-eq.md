@@ -1,6 +1,5 @@
-# Integral cond selected outcome eq
+# Selected-sample mean under Gaussian selection
 
-Heckman's equation (2) with the first display: the selected-sample
-mean equals `m + σ₁₂ * λ(c)`. See `covariance_outcomeError_selectionError` and
-`variance_outcomeError` for the covariance interpretation of `σ₁₂`
-and `σ₁₁`; no validity hypothesis is needed for this identity.
+Let $u$ and $\eta$ be independent standard normal random variables on a probability space, with $u$ measurable, and let the outcome be $m + \sigma_{12}u + \sqrt{\sigma_{11} - \sigma_{12}^2}\,\eta$. Conditional on selection $\{u \ge -c\}$, its mean is
+$$m + \sigma_{12}\,\lambda(c), \qquad \lambda(c) = \frac{\varphi(c)}{\Phi(c)},$$
+where $\varphi$ and $\Phi$ are the standard normal density and distribution function (Heckman's selection equation).

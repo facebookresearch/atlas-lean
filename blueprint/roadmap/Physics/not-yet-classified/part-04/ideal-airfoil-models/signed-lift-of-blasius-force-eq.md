@@ -1,9 +1,3 @@
-# Signed Lift of blasius Force eq
+# Signed lift from the Blasius force
 
-Signed lift from the Blasius force value. If the contour force
-for `physicalVelocity a U Γ α` is `I * ρ * U * Γ * exp (-α * I)`,
-then rotating that complex force by `exp (α * I)` gives
-`I * ρ * U * Γ`; hence the component perpendicular to the free
-stream, with the sign convention in `signedLift`, is `-ρ * U * Γ`.
-No positivity or nonvanishing hypothesis is needed for this
-algebraic step.
+For the Joukowski-airfoil flow with free-stream speed $U$, circulation $\Gamma$ and angle of attack $\alpha$, if the Blasius contour force at density $\rho$ equals $i \rho U \Gamma e^{-i\alpha}$, then the signed lift, the force component perpendicular to the free stream, equals $-\rho U \Gamma$. No positivity or nonvanishing hypothesis is needed.

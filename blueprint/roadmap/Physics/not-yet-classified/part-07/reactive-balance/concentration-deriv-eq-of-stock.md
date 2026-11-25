@@ -1,5 +1,4 @@
-# Concentration deriv eq of stock
+# Concentration derivative from the stock balance
 
-At an instant of nonzero volume, the stock balance determines the
-concentration derivative by division. At zero volume this division is not
-available, which is why `V t ≠ 0` is a hypothesis.
+Let $V$ be differentiable at $t$ with derivative $V'$, let the concentration $c_i$ be differentiable at $t$ with derivative $c_i'$, and suppose $V(t) \ne 0$. If the stock $V c_i$ has derivative $F_{\text{in}} - F_{\text{out}} + G$ at $t$, then
+$$c_i' = \frac{F_{\text{in}} - F_{\text{out}} + G - V' c_i(t)}{V(t)}.$$

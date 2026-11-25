@@ -6,4 +6,4 @@
 
 ## Extinction: specialisation of the least-fixed-point interface
 
-- [Is Least binary Fixed Point one of le](is-least-binary-fixed-point-one-of-le.md)
+- [Least fixed point of the binary offspring equation](is-least-binary-fixed-point-one-of-le.md)

@@ -1,3 +1,3 @@
-# Variance eq variance cond Exp add variance sub cond Exp
+# Total variance splits into true-score and error variance
 
-Total spread splits into true-score plus error spread.
+For a probability measure $\mu$, a sub-$\sigma$-algebra $\mathcal G$ and a square-integrable random variable $X$,\n\n$$\operatorname{Var}(X) = \operatorname{Var}\big(\mathbb E[X \mid \mathcal G]\big) + \operatorname{Var}\big(X - \mathbb E[X \mid \mathcal G]\big).$$

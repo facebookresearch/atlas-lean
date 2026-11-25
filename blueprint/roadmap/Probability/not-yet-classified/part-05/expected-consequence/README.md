@@ -1,5 +1,5 @@
 # Expected Consequence
 
-- [Expected Consequence](expected-consequence.md)
-- [Expected Consequence fintype](expected-consequence-fintype.md)
-- [Expected Consequence mono](expected-consequence-mono.md)
+- [Expected consequence](expected-consequence.md)
+- [Expected consequence over finitely many damage states](expected-consequence-fintype.md)
+- [Expected consequence is monotone in the loss](expected-consequence-mono.md)

@@ -1,7 +1,3 @@
-# Is Admissible Contact zero tangent iff
+# Admissible frictionless contact states
 
-Frictionless slice: for `0 ≤ μ`, a contact state with zero tangent traction is admissible
-exactly when `(N, g)` satisfies the scalar unilateral complementarity. This is the
-conclusion shape of `Elasticity.ContactAndLubrication.complementarity_of_vi` with
-`N = contactForce k f u` and the gap `contactGap x₀ u` of an obstacle at `x₀`, so the
-frictionless scalar contact solution is admissible for every `0 ≤ μ`.
+Let $E$ be a real inner product space and $\mu \ge 0$. A contact state with normal force $N$, gap $g$ and zero tangential traction is admissible (that is, $N \ge 0$, $g \ge 0$, $Ng = 0$ and $\|t\| \le \mu N$ with $t = 0$) if and only if $N \ge 0$, $g \ge 0$ and $Ng = 0$.

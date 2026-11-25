@@ -1,8 +1,3 @@
-# Clapeyron dp d T
+# Clapeyron relation
 
-Clapeyron relation along a coexistence curve: with
-`dμᵢ = vᵢ dp - sᵢ dT` and equal chemical potentials near the point
-(`μ1 =ᶠ[𝓝 t] μ2`, so `μ1 - μ2` has derivative `0` there),
-`dp/dT = (s2 - s1) / (v2 - v1)` when `v2 ≠ v1` and `dT ≠ 0`. Here
-`dp`, `dT` are the derivatives of the pressure and temperature along
-the curve at the point.
+Let $\mu_1, \mu_2$ be chemical potentials along a coexistence curve with derivatives $v_1\,dp - s_1\,dT$ and $v_2\,dp - s_2\,dT$ at a point $t$, and suppose $\mu_1 = \mu_2$ on a neighborhood of $t$. If $v_2 \ne v_1$ and $dT \ne 0$, then $dp/dT = (s_2 - s_1)/(v_2 - v_1)$. Here $dp$ and $dT$ are the derivatives of pressure and temperature along the curve at $t$.

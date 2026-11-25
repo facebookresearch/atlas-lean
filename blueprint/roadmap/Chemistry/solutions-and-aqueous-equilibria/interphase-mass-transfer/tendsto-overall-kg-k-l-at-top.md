@@ -1,4 +1,3 @@
-# Tendsto overall KG k L at Top
+# Overall gas-side coefficient as the liquid film coefficient grows
 
-Vanishing liquid-side resistance: as `kL → ∞`, the gas-basis overall
-coefficient tends to the gas film coefficient `kG`.
+For $H > 0$ and $k_G > 0$, the overall gas-side coefficient $K_G = 1/(1/k_G + 1/(H k_L))$ tends to $k_G$ as $k_L \to \infty$.

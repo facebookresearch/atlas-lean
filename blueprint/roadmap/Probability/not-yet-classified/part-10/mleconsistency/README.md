@@ -2,7 +2,7 @@
 
 ## The maximum-likelihood setup
 
-- [Is MLEOn](is-mleon.md)
+- [Maximum likelihood estimator on a set](is-mleon.md)
 - [Identifiability on `K`](is-identified-on.md)
 
 ## Almost-sure consistency

@@ -1,3 +1,3 @@
 # Generalizability
 
-- [Variance absolute relative errors](variance-absolute-relative-errors.md)
+- [Variances of absolute and relative errors](variance-absolute-relative-errors.md)

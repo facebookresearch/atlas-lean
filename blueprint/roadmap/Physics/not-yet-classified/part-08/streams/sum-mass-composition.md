@@ -1,5 +1,3 @@
-# Sum mass Composition
+# Mass composition sums to one
 
-The mass composition of a stream sums to one for positive molar masses:
-whenever `s.massComposition M = some w`, `∑ i, w i = 1`. By the imported
-`Chemistry.Amounts.sum_massFraction`.
+For a stream with species flows $\dot n_i$ over a finite set of species and molar masses $M_i > 0$, whenever the mass composition $w$ is defined (it requires a positive total flow), $\sum_i w_i = 1$.

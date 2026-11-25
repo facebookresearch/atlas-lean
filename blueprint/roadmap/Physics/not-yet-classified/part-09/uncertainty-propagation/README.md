@@ -11,6 +11,6 @@
 
 ## D. Rank-deficient calibration and parameter identification
 
-- [Identifiable](identifiable.md)
-- [Identifiable iff trivial ker](identifiable-iff-trivial-ker.md)
-- [Identifiable On Affine mk' iff trivial ker](identifiable-on-affine-mk-iff-trivial-ke.md)
+- [Identifiability of a linear calibration model](identifiable.md)
+- [Identifiability iff trivial kernel](identifiable-iff-trivial-ker.md)
+- [Affine identifiability and the kernel](identifiable-on-affine-mk-iff-trivial-ke.md)

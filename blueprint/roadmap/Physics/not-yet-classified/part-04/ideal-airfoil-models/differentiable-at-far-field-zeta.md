@@ -1,3 +1,3 @@
-# Differentiable At far Field Zeta
+# Holomorphy of the far-field Joukowski inverse branch
 
-The far-field branch is holomorphic on the exterior region.
+For $a > 0$, the far-field inverse branch $\zeta(z) = \frac{z}{2}\left(1 + \sqrt{1 - 4a^2/z^2}\right)$ (principal square root) is complex differentiable at every $z$ with $|z| > 2a$.

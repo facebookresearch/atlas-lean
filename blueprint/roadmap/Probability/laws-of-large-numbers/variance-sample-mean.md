@@ -1,6 +1,3 @@
-# Variance sample mean
+# Variance of the sample mean
 
-The sample mean of finitely many independent square-integrable
-variables with common variance `sigma2` has
-variance `sigma2 / n`. Independence enters through `IndepFun.variance_sum`;
-no probability-measure hypothesis is needed.
+Let $X_1, \dots, X_n$ ($n \ge 1$) be independent, square-integrable random variables, each with variance $\sigma^2$. Then the sample mean $\frac{1}{n} \sum_i X_i$ has variance $\sigma^2/n$. No probability-measure hypothesis is needed.

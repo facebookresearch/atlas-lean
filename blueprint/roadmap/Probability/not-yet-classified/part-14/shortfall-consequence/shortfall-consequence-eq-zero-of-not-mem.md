@@ -1,3 +1,3 @@
-# Shortfall Consequence eq zero of not Mem
+# Shortfall consequence vanishes off failure
 
-The shortfall consequence vanishes off the failure event.
+For resistance $R$ and load effect $S$, if $R(\omega) - S(\omega) > 0$, then the shortfall consequence $\max(S(\omega) - R(\omega), 0)$ is $0$.

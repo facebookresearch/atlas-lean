@@ -1,4 +1,3 @@
-# Uniqueness under full rank
+# Uniqueness of the OLS solution under full rank
 
-If `Xᵀ X` is invertible, `olsEstimator X y` is the only
-solution of the normal equations `Xᵀ X β = Xᵀ y`.
+If $X^\top X$ is invertible, then $\beta$ solves the normal equations $X^\top X \beta = X^\top y$ if and only if $\beta = (X^\top X)^{-1} X^\top y$.

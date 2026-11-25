@@ -1,4 +1,3 @@
-# Efficiency adiabatic
+# Adiabatic-tip fin efficiency
 
-Adiabatic-tip efficiency: the heat rate over the rate `h (P L) θ 0` of a fin at the base
-temperature is `tanh (m L) / (m L)`, for a nonzero base excess.
+Let $k, A, h, P, L > 0$ and let $T$, $q$ satisfy the steady fin equations on $[0, L]$: $T' = -q/(kA)$ and $q' = -hP(T - T_a)$. If the tip is adiabatic, $q(L) = 0$, and $T(0) \ne T_a$, then $\dfrac{q(0)}{hPL\,(T(0) - T_a)} = \dfrac{\tanh(mL)}{mL}$ with $m = \sqrt{hP/(kA)}$.

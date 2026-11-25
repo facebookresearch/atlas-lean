@@ -1,5 +1,3 @@
 # Zero-excitation non-identification
 
-At `p = p0`, two different
-pore volumes give the same (zero) produced mass, so pore volume cannot
-be identified without a pressure excursion.
+For all real $\rho_0$, $c$ and $p_0$, the produced mass $V_p(\rho(p_0) - \rho(p))$ at $p = p_0$ is the same (zero) for the pore volumes $V_p = 1$ and $V_p = 2$, so pore volume cannot be identified without a pressure excursion.

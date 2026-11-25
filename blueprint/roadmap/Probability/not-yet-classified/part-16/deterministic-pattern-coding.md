@@ -1,8 +1,3 @@
-# Pattern Coding
+# Deterministic pattern coding
 
-Deterministic pattern coding. For any law `p` on finite response
-patterns, the locally independent mixture whose latent state is the
-pattern itself, and whose component at latent pattern `s` uses the
-zero/one coordinates of `s` as success probabilities, reproduces `p`
-exactly. The mixture is formed with `PMF.bind`; no support, positivity,
-or independence assumption on `p` is imposed.
+For a finite item set and any probability law $p$ on binary response patterns, the mixture that draws a latent pattern $s$ from $p$ and then draws responses independently across items with success probability $1$ where $s_i$ is a success and $0$ otherwise has law exactly $p$. No support, positivity or independence assumption on $p$ is needed.

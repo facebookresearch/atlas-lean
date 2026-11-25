@@ -1,5 +1,4 @@
-# Is Conservative Step upwind Face Flux iff
+# Conservative upwind step is the periodic upwind update
 
-For positive `area` and `dx` and speed `v ≥ 0`, the state `cNext` is reached from `c` by the
-conservative shared-face step with the upwind face flux exactly when it is the canonical
-periodic upwind update with Courant number `ν = v * dt / dx`.
+Let $n$ cells be indexed periodically by $\mathbb Z/n$, with $\text{area} > 0$, $\Delta x > 0$ and speed $v \ge 0$. A state $c^{\text{next}}$ is reached from $c$ by the conservative shared-face step with time step $\Delta t$ and the upwind face flux if and only if, for every $i$,
+$$c^{\text{next}}_i = (1 - \nu)\,c_i + \nu\,c_{i-1}, \qquad \nu = v\,\Delta t/\Delta x.$$

@@ -1,6 +1,3 @@
-# Is Admissible Contact
+# Coulomb tractions are admissible closed contact states
 
-Slip and stick tractions are admissible contact states: for `0 ≤ μ` and `0 ≤ N` a Coulomb
-traction, sliding or sticking, is an admissible closed contact state (`g = 0`). A sliding
-traction has norm `μ * N`, the slip threshold; a sticking traction satisfies the Coulomb
-bound by the stick rule.
+Let $\mu \ge 0$, $N \ge 0$ and let $t$ be a Coulomb traction for the slip velocity $v$ in a real inner product space: $t = -\mu N\, v/\lVert v\rVert$ if $v \ne 0$, and $\lVert t\rVert \le \mu N$ if $v = 0$. Then normal force $N$, gap $0$ and traction $t$ form an admissible contact state: $N \ge 0$, $N \cdot 0 = 0$ and $\lVert t\rVert \le \mu N$.

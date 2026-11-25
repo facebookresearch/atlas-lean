@@ -1,4 +1,4 @@
 # Zone Heat Inventory
 
-- [Heat inventory has Deriv At](heat-inventory-has-deriv-at.md)
-- [Heat inventory deriv](heat-inventory-deriv.md)
+- [Zone heat inventory balance](heat-inventory-has-deriv-at.md)
+- [Zone heat inventory balance](heat-inventory-deriv.md)

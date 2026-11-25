@@ -1,12 +1,7 @@
-# Is Pipe Flow Equations
+# Pipe-flow equations on a network
 
-Pipe-flow equations on a fixed finite arc topology.
-Arc IDs are retained, including parallel pipes. The first
-equation says `B *ᵥ q = d`, where `d` is net inflow at nodes.
-The second says the head drop from tail to head on each arc is
-the quadratic passive law `r e * q e * |q e|`, written in
-incidence form as `-Bᵀ *ᵥ h`. No existence, pump, valve,
-cavitation, or positive-flow admission claim is included. Resistance
-coefficients are unconstrained in this equation relation, so a
-negative resistance (an active element) can satisfy it; passivity
-is the refinement `IsPassivePipeFlow` below.
+Let a finite set of pipes (arcs, parallel pipes allowed) join a finite set of nodes, each pipe $e$ running from a tail node to a head node, with incidence matrix $B$. Given resistances $r_e$, pipe flows $q_e$, nodal net inflows $d_v$ and nodal heads $h_v$, the pipe-flow equations hold when
+- $Bq = d$ (flow balance at every node), and
+- for every pipe $e$, the head drop $-(B^\top h)_e$ from tail to head equals $r_e\,q_e|q_e|$.
+
+The resistances are unconstrained, so a negative resistance (an active element) can satisfy the equations.

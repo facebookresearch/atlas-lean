@@ -1,5 +1,3 @@
-# Is Coulomb Friction
+# Coulomb friction law
 
-The declared scalar Coulomb friction graph with coefficient `μ` and normal force `N`: at a
-nonzero sliding velocity `v` the friction force is `F = -μ N sign v`, and at `v = 0` it may take
-any value in `[-μ N, μ N]`.
+The scalar Coulomb friction law with coefficient $\mu$ and normal force $N$ relates sliding velocity $v$ and friction force $F$: if $v \ne 0$ then $F = -\mu N \operatorname{sign} v$, and if $v = 0$ then $F \in [-\mu N, \mu N]$.

@@ -1,4 +1,3 @@
-# Stock deriv eq
+# Product rule for a species stock
 
-Product rule for one species stock `V * c i`: its derivative is
-`V' * c i + V * c' i` at the instant `t`.
+If $V$ has derivative $V'$ at $t$ and $c_i$ has derivative $c_i'$ at $t$, then the stock $V c_i$ has derivative $V' c_i(t) + V(t) c_i'$ at $t$.

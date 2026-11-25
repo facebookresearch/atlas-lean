@@ -1,5 +1,5 @@
 # Gibbs Energy Minimization
 
-- [Gibbs min two phase](gibbs-min-two-phase.md)
-- [Gibbs min two phase strict](gibbs-min-two-phase-strict.md)
-- [Gibbs min equal potentials](gibbs-min-equal-potentials.md)
+- [Gibbs-energy minimization for two phases](gibbs-min-two-phase.md)
+- [Gibbs energy minimization: strict two-phase split](gibbs-min-two-phase-strict.md)
+- [Equal chemical potentials make the Gibbs energy independent of the split](gibbs-min-equal-potentials.md)

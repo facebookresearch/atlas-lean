@@ -1,8 +1,3 @@
-# Miner Damage cycle Class Counts
+# Miner damage by cycle class
 
-Declared-count adapter, the bridge from declared records to the class spectrum. Records with
-nonnegative counts `r k` are assigned classes `g k` with positive calibrated lives `N i`.
-Aggregating by class gives nonnegative class counts, conserves the total count, and gives the
-record-wise damage `∑ k, r k / N (g k)`, each record read as its own class with the life of its
-class. So regrouping records within classes, or merging and splitting classes of equal life,
-leaves the damage unchanged.
+Let finitely many records $k$ carry counts $r_k \ge 0$ and classes $g(k)$, and let each class $i$ have life $N_i > 0$. Define the class counts $n_i = \sum_{k : g(k) = i} r_k$. Then every $n_i \ge 0$, $\sum_i n_i = \sum_k r_k$, and the Miner damage $\sum_i n_i/N_i$ equals the record-wise damage $\sum_k r_k/N_{g(k)}$.

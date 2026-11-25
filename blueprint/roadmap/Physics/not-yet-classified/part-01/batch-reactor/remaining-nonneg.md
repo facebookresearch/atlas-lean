@@ -1,3 +1,3 @@
-# Remaining nonneg
+# Nonnegativity of the remaining batch concentration
 
-Remaining concentration at time `t`: `c0 * exp (-k * t)`.
+For $c_0 \ge 0$ and any real $k$ and $t$, $0 \le c_0 e^{-kt}$.

@@ -1,5 +1,3 @@
-# Unit Conversion
+# Unit conversion
 
-Unit-scale conversion by a strictly positive scale `a`: `C_a(x) = a * x`.
-Scales are units of `NNReal`, so strict positivity is carried by the
-type and the scale `0` is excluded.
+For a scale $a > 0$, the unit conversion is the map $C_a(x) = a x$ on the reals.

@@ -1,8 +1,3 @@
 # FIFO: no overtaking
 
-If the cumulative arrival count `A` is nondecreasing, the exit
-time `linkExitTime N0 A D t` is nondecreasing in the entry time `t`: a vehicle that enters later
-leaves no earlier. This holds for every departure count `D` and every initial count `N0`, as an
-order statement in `WithTop ℝ≥0`, so an entry with no finite exit time is followed only by
-entries with none. It transports `MeasureTheory.hittingAfter_mono` (a later start time) and
-`MeasureTheory.hittingAfter_anti` (a higher vehicle number).
+On a link with $N_0 \ge 0$ vehicles at time $0$ and cumulative arrival and departure counts $A$, $D$, let the exit time of a vehicle entering at $t$ be the infimum of times $s \ge t$ with $D(s) \ge N_0 + A(t)$, or $+\infty$ if there is none. If $A$ is nondecreasing, the exit time is nondecreasing in the entry time $t$, for every $D$ and $N_0$. In particular an entry with no finite exit time is followed only by entries with none.

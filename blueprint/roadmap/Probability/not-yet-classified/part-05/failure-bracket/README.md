@@ -1,5 +1,5 @@
 # Failure Bracket
 
-- [Measure failure bracket upper](measure-failure-bracket-upper.md)
-- [Measure failure bracket lower](measure-failure-bracket-lower.md)
-- [Measure failure bracket](measure-failure-bracket.md)
+- [Distribution-free failure bracket, upper side](measure-failure-bracket-upper.md)
+- [Distribution-free failure bracket, lower side](measure-failure-bracket-lower.md)
+- [Failure-probability bracket](measure-failure-bracket.md)

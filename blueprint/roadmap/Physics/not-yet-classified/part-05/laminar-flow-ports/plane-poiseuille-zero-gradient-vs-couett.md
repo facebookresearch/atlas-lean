@@ -1,5 +1,3 @@
-# Plane Poiseuille zero gradient vs couette
+# Poiseuille flow without a pressure gradient vs Couette flow
 
-No pressure gradient and stationary walls give no flow: with `G = 0` the Poiseuille velocity
-vanishes everywhere, whereas plane Couette flow, also without a pressure gradient, has the
-nonzero flow rate `Uwall H / 2` when its upper wall moves with speed `Uwall ≠ 0`.
+Let $U \ne 0$ and $H > 0$. With pressure-drop rate $G = 0$ the plane Poiseuille velocity $G y (H - y)/(2\mu)$ vanishes everywhere, for every $\mu$. Plane Couette flow with velocity $(U y/H, 0, 0)$, also without a pressure gradient, has flow rate $\int_0^H U y/H\,dy = U H/2 \ne 0$.

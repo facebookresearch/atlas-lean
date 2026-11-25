@@ -1,5 +1,3 @@
-# Wet Basis eq one of zero solids
+# Wet-basis moisture with no dry solids
 
-Assumption necessity: with no dry solids and positive water mass, the
-wet basis equals `1`, so the `ms > 0` hypothesis in `wetBasis_lt_one`
-cannot be dropped and `w = 1` stays outside the conversion.
+With water mass $m_w > 0$ and no dry solids, the wet-basis moisture $m_w/(m_w + 0)$ equals $1$. So positivity of the solid mass is needed for the wet-basis value to stay below $1$.

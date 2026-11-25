@@ -1,4 +1,4 @@
 # Product Moments
 
-- [Local Indep PMF to Real apply](local-indep-pmf-to-real-apply.md)
-- [Local Indep PMF coordinate moments](local-indep-pmf-coordinate-moments.md)
+- [Mass of an outcome under a product Bernoulli law](local-indep-pmf-to-real-apply.md)
+- [Coordinate moments of an independent Bernoulli product law](local-indep-pmf-coordinate-moments.md)

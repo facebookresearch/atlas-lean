@@ -1,5 +1,3 @@
-# Time-unit erasure
+# Integrating a constant stream preserves its composition
 
-For a positive duration `Δt > 0`, the amount
-fractions of the integrated batch equal the flow fractions of the stream:
-integrating a constant stream does not change its composition.
+Let a stream have nonnegative species flow rates $\dot n_i$ over a finite set of species with positive total flow. For a duration $\Delta t > 0$, the mole fractions of the integrated amounts $\Delta t\,\dot n_i$ equal the flow fractions $\dot n_i/\sum_j \dot n_j$.

@@ -1,3 +1,3 @@
-# Char Resistance fin
+# Characteristic resistance of a fin
 
-The cable characteristic resistance of the fin is `1 / sqrt (h P k A)`.
+For $k, A, h, P > 0$, viewing the fin as a passive cable with membrane resistance $1/(hP)$ and axial resistance $1/(kA)$, the characteristic resistance $\sqrt{r_m r_i}$ is $1/\sqrt{hPkA}$.

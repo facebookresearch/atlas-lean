@@ -1,7 +1,3 @@
-# Arrival-average delay
+# Arrival-average delay at a signal
 
-For one clearing cycle, the arrival-weighted virtual delay over
-`[0, R + G)` divided by the arrival volume `lam * (R + G)` is
-`R ^ 2 * mu / (2 * (mu - lam) * (R + G))`: the normalized queue area is the mean
-first-in-first-out delay of the vehicles arriving in the cycle. The area enters through the
-one-cycle area formula `queueLen_integral_cycle`.
+Let vehicles arrive at rate $\lambda > 0$ and discharge at rate $\mu > \lambda$ during green, with red duration $R \ge 0$, green duration $G \ge 0$, and $\lambda (R + G) < \mu G$ so the queue clears within the cycle. Then the first-in-first-out delay of vehicles arriving in $[0, R + G)$, integrated against the arrival rate and divided by the arrival volume $\lambda (R + G)$, equals $\dfrac{R^2 \mu}{2 (\mu - \lambda)(R + G)}$.

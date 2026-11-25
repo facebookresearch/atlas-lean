@@ -1,11 +1,3 @@
-# Shortfall Consequence bind eq
+# Expected shortfall of a limit state
 
-Extended-risk bridge for the shortfall consequence. On one
-joint probability law for the resistance and load variables,
-with no independence or integrability assumption, pushing the
-law through the deterministic shortfall response gives the same
-extended value as the extended frequentist risk of that
-response with identity loss, and both equal the extended
-expected shortfall, which accumulates only on the failure
-event. All values are in the extended nonnegative reals and
-may be infinite.
+Let resistance $R$ and load $S$ be real random variables on one probability space, with no independence or integrability assumption, and let the shortfall be $C = \max(S - R, 0)$, assumed measurable. In the extended nonnegative reals, the mean of the law of $C$ equals the frequentist risk of $C$ with identity loss, both equal $\mathbb{E}[\max(S - R, 0)]$, and this equals the integral of $S - R$ over the failure event $\{R \le S\}$.

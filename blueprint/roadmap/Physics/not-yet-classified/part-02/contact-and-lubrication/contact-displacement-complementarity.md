@@ -1,4 +1,3 @@
-# Contact Displacement complementarity
+# Complementarity of the scalar contact displacement
 
-The contact displacement `u = min g (f / k)` satisfies the complementarity conditions
-`λ ≥ 0`, `g - u ≥ 0` and `λ (g - u) = 0` with `λ = f - k u`.
+Let $k > 0$ and $g, f \in \mathbb{R}$, and set $u = \min(g, f/k)$ and $\lambda = f - ku$. Then $\lambda \ge 0$, $g - u \ge 0$ and $\lambda (g - u) = 0$.

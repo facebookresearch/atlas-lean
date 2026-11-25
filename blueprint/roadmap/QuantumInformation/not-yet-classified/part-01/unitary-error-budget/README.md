@@ -1,4 +1,4 @@
 # Unitary Error Budget
 
-- [Norm list of Fn prod sub le](norm-list-of-fn-prod-sub-le.md)
-- [Norm inner circuit conj sub le](norm-inner-circuit-conj-sub-le.md)
+- [Telescoping bound for products of contractions](norm-list-of-fn-prod-sub-le.md)
+- [Error budget for projected measurements of unitary circuits](norm-inner-circuit-conj-sub-le.md)

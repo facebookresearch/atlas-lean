@@ -1,5 +1,3 @@
-# Sum mass Flow pos
+# Positive total mass flow
 
-With positive molar masses, a positive total amount flow gives a
-positive total mass flow. By the imported
-`Chemistry.Amounts.sum_amount_mul_molarMass_pos`.
+For a stream with finitely many species, positive molar masses $M_i$ and positive total amount flow, the total mass flow $\sum_i M_i n_i$ is positive.

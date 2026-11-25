@@ -1,3 +1,3 @@
 # Exposure Mapping
 
-- [Design-unbiasedness under the design-free Condition 1](integral-exposure-httotal.md)
+- [Design-unbiasedness of the exposure Horvitz-Thompson estimator](integral-exposure-httotal.md)

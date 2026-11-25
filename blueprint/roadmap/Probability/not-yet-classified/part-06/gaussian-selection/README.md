@@ -1,3 +1,3 @@
 # Gaussian Selection
 
-- [Integral cond selected outcome eq](integral-cond-selected-outcome-eq.md)
+- [Selected-sample mean under Gaussian selection](integral-cond-selected-outcome-eq.md)

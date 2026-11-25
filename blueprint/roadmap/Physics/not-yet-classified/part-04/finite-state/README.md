@@ -2,7 +2,7 @@
 
 ## A. Normalized states
 
-- [Is Normalized](is-normalized.md)
+- [Normalized state vector](is-normalized.md)
 
 ## B. Born probabilities
 

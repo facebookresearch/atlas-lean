@@ -1,4 +1,3 @@
-# Pow card eq zero of topological Order
+# Nilpotency of DAG-supported coefficient matrices
 
-Nilpotency of DAG-supported coefficient matrices: `B ^ Fintype.card V = 0`
-when parents precede children in `ord` (Drton, arXiv:1612.05994).
+Let $V$ be finite and $B$ a $V \times V$ matrix over a commutative ring. If some $\mathrm{ord}: V \to \{0, \dots, \lvert V\rvert - 1\}$ satisfies $\mathrm{ord}(j) < \mathrm{ord}(i)$ whenever $B_{ij} \ne 0$, then $B^{\lvert V\rvert} = 0$ (Drton, arXiv:1612.05994).

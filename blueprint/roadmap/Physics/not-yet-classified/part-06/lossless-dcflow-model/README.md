@@ -2,4 +2,4 @@
 
 ## F. Headline
 
-- [Model correct](model-correct.md)
+- [Lossless DC load-flow model](model-correct.md)

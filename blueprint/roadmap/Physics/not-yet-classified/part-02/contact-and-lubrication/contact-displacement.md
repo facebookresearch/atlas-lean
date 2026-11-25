@@ -1,4 +1,3 @@
-# Contact Displacement
+# Contact displacement
 
-The contact displacement `min g (f / k)` of a spring of stiffness `k` under the load `f`
-below an obstacle at `g`.
+For a spring of stiffness $k$ under load $f$ below a rigid obstacle at height $g$, the contact displacement is $\min(g,\ f/k)$.

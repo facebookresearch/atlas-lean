@@ -6,4 +6,4 @@
 
 ## B. Dimension form
 
-- [Phase rule finrank](phase-rule-finrank.md)
+- [Gibbs phase rule as a rank-nullity count](phase-rule-finrank.md)

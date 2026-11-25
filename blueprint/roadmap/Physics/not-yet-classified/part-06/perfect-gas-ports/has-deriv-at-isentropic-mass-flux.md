@@ -1,5 +1,6 @@
-# Derivative of the flux
+# Derivative of the isentropic mass flux
 
-For `γ > 1`, at every `M`,
-`G'(M) = p0 √(γ / (R T0)) (1 - M ^ 2) (1 + (γ - 1) M ^ 2 / 2) ^ (-(γ + 1) / (2 (γ - 1)) - 1)`.
-The base `1 + (γ - 1) M ^ 2 / 2` is at least `1`, so the real power is differentiable.
+For $\gamma > 1$ and real $p_0$, $T_0$, $R$, let
+$$G(M) = p_0 \sqrt{\frac{\gamma}{R T_0}}\, M \Big(1 + \frac{\gamma - 1}{2} M^2\Big)^{-\frac{\gamma + 1}{2(\gamma - 1)}}.$$
+Then at every $M$,
+$$G'(M) = p_0 \sqrt{\frac{\gamma}{R T_0}}\, (1 - M^2) \Big(1 + \frac{\gamma - 1}{2} M^2\Big)^{-\frac{\gamma + 1}{2(\gamma - 1)} - 1}.$$

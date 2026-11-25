@@ -1,7 +1,3 @@
-# Model correct
+# Lossless DC load-flow model
 
-Lossless DC load-flow model and its per-line angle error. The DC flow
-is `f e = b e * (θ tail - θ head)`, the DC injection is `L_b * θ` for the
-full weighted Laplacian, the lossless unit-magnitude AC sending-end real
-power is `b e * sin(θ tail - θ head)`, and the two differ by at most
-`b e * |θ tail - θ head| ^ 3 / 6` on every branch.
+For branch susceptances $b_e > 0$ and node angles $\theta$: the DC flow is $f_e = b_e(\theta_{\text{tail}(e)} - \theta_{\text{head}(e)})$; the DC injection is $L_b \theta$ with $L_b = B\,\mathrm{diag}(b)\,B^\top$ the full weighted Laplacian; the lossless unit-magnitude AC sending-end real power is $P_e = b_e \sin(\theta_{\text{tail}(e)} - \theta_{\text{head}(e)})$; and $|P_e - f_e| \le b_e |\theta_{\text{tail}(e)} - \theta_{\text{head}(e)}|^3/6$ on every branch.

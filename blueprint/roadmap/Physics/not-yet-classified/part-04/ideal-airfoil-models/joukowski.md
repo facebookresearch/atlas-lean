@@ -1,3 +1,3 @@
-# Joukowski
+# Joukowski map
 
-The Joukowski map `J(ζ) = ζ + a^2 / ζ` (totalized at `ζ = 0`).
+For complex $a$, the Joukowski map is $J(\zeta) = \zeta + a^2/\zeta$, with the convention $a^2/0 = 0$, so $J(0) = 0$.

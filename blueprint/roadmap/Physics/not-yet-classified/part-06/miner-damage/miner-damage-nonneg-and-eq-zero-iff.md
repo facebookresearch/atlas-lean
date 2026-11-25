@@ -1,5 +1,3 @@
-# Miner Damage nonneg and eq zero iff
+# Miner damage is nonnegative and vanishes only with no cycles
 
-Damage domain and zero cycles. For nonnegative counts and positive lives, `0 ≤ D`, and
-`D = 0` exactly when every declared count is zero: no cycles give no damage, and every declared
-cycle registers.
+For finitely many load classes $i$ with cycle counts $n_i \ge 0$ and lives $N_i > 0$, the Palmgren-Miner damage $D = \sum_i n_i/N_i$ satisfies $D \ge 0$, and $D = 0$ if and only if $n_i = 0$ for every $i$.

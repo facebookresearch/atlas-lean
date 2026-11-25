@@ -1,4 +1,3 @@
-# Shortfall Consequence measurable
+# Shortfall consequence is measurable
 
-The shortfall consequence is measurable for measurable
-resistance and load variables.
+For measurable real random variables $R$ (resistance) and $S$ (load), the shortfall consequence $\omega \mapsto \max(S(\omega) - R(\omega), 0)$ is measurable.

@@ -1,3 +1,4 @@
-# Quadratic Functional nonneg
+# Quadratic functional is nonnegative
 
-The quadratic functional is nonnegative for nonnegative capacities.
+For a finite index set, capacities $C_i \ge 0$ and any temperatures $T_i$,
+$$0 \le \sum_i \frac{C_i T_i^2}{2}.$$

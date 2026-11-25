@@ -1,4 +1,4 @@
 # Finite Prefix Stopping
 
-- [Terminated Mass cons](terminated-mass-cons.md)
-- [Survival Mass succ](survival-mass-succ.md)
+- [One-step unfolding of terminated mass](terminated-mass-cons.md)
+- [One-step recursion for survival mass](survival-mass-succ.md)

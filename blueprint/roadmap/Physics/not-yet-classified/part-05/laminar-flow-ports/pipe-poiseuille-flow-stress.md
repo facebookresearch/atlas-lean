@@ -1,4 +1,4 @@
-# Pipe Poiseuille Flow stress
+# Stress of cylindrical Poiseuille flow
 
-For `μ ≠ 0` the Newtonian stress of cylindrical Poiseuille flow has normal entries `-p` and
-axial shear entries `-G x 0 / 2` and `-G x 1 / 2`; the second viscosity drops out.
+Let $\mu \ne 0$. For cylindrical Poiseuille flow with velocity $(0, 0, G(R^2 - x^2 - y^2)/(4\mu))$, pressure $p = p_0 - Gz$, shear viscosity $\mu$ and any second viscosity, the Newtonian stress at every time and point $(x, y, z)$ is
+$$\begin{pmatrix} -p & 0 & -Gx/2 \\ 0 & -p & -Gy/2 \\ -Gx/2 & -Gy/2 & -p \end{pmatrix}.$$

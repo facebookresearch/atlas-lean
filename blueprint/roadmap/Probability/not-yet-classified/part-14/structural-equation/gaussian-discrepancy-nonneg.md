@@ -1,4 +1,3 @@
-# Gaussian Discrepancy nonneg
+# Gaussian discrepancy is nonnegative
 
-The discrepancy is nonnegative for positive definite `S`, `C`
-(Bartlett, STAT 241A (2007), Lemma 2).
+For positive definite real matrices $S$ and $C$ of size $d$, the Gaussian discrepancy $\log\det C + \operatorname{tr}(S C^{-1}) - \log\det S - d$ is nonnegative.

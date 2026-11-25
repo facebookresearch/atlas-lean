@@ -1,4 +1,3 @@
 # Normal equations, matrix form
 
-If `Xᵀ X` is invertible, ATLAS's least-squares estimator
-`olsEstimator X y = (Xᵀ X)⁻¹ Xᵀ y` solves `Xᵀ X β = Xᵀ y`.
+For a real matrix $X$ with $X^{\mathsf T} X$ invertible and any $y$, the least-squares estimator $\hat\beta = (X^{\mathsf T} X)^{-1} X^{\mathsf T} y$ satisfies $X^{\mathsf T} X\,\hat\beta = X^{\mathsf T} y$.

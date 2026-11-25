@@ -1,6 +1,3 @@
-# Greenshields Flux half
+# Greenshields flux at half the jam density
 
-Midpoint value: at half the jam density the flux equals
-`vf * kj / 4`. This is a value identity for any `vf`; it is capacity
-attainment only under `0 < vf`, as in
-`greenshieldsFlux_capacity_attained`.
+For jam density $k_j > 0$ and any free-flow speed $v_f$, the Greenshields flux $q(k) = v_f k(1 - k/k_j)$ satisfies $q(k_j/2) = v_f k_j/4$.

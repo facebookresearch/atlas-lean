@@ -1,7 +1,3 @@
-# Canonical 2PL score
+# Score of the two-parameter logistic model
 
-The `VectorInference.score` (parameter
-space `E = ℝ`) of the twoPL density at `θ` is, at every response
-pattern `Y`, `∑ j, a j * ((if Y j then 1 else 0) - p_j (θ))` with
-`p_j (θ) = Real.sigmoid (a j * (θ - b j))`. No new score definition is
-introduced.
+For finitely many items $j$ with discriminations $a_j$ and difficulties $b_j$, let the two-parameter logistic model give binary responses with success probabilities $p_j(\theta) = \sigma\big(a_j(\theta - b_j)\big)$, $\sigma$ the logistic sigmoid, independent across items. For every ability $\theta$ and every response pattern $Y$, the score $\frac{d}{d\theta} \log P_\theta(Y)$ equals\n$$\sum_j a_j\big(Y_j - p_j(\theta)\big),$$\nwith $Y_j \in \{0, 1\}$.

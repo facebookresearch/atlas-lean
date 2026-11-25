@@ -1,3 +1,5 @@
-# Slider Load
+# Plane slider load
 
-Load per unit width: the integral of the slider pressure over `[0, L]`.
+The load per unit width of a plane slider bearing with viscosity $\mu$, sliding speed $U$, inlet film thickness $h_0$, outlet thickness $h_L$ and length $L$ is
+$$W = \int_0^L p(x)\,dx, \qquad p(x) = \frac{6 \mu U L\,(h_0 - h(x))\,(h(x) - h_L)}{(h_0^2 - h_L^2)\,h(x)^2},$$
+where $h(x) = h_0 + (h_L - h_0)\,x/L$ is the linear film thickness.

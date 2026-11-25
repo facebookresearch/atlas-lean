@@ -14,4 +14,4 @@
 
 ## G. Bounds and the flow-arrangement comparison
 
-- [Counterflow bounds](counterflow-effectiveness-bounds.md)
+- [Counterflow effectiveness lies in [0, 1]](counterflow-effectiveness-bounds.md)

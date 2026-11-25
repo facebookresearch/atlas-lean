@@ -1,5 +1,3 @@
-# Departures
+# Cumulative signal-queue departures
 
-Cumulative departures by time `s` from the signal queue: the arrivals minus the vehicles
-still queued, `lam * s - queueLen lam mu R s`, as an `ℝ≥0` count through `Real.toNNReal`
-(exact on the admitted domain `0 < lam < mu`).
+For arrival rate $\lambda$, service rate $\mu$ and red time $R$, the cumulative departures by time $s \ge 0$ are the arrivals minus the vehicles still queued, $\max(0, \lambda s - Q(s))$, where $Q$ is the queue length: $Q(s) = \lambda s$ for $s \le R$ and $Q(s) = \max(0, \lambda R - (\mu - \lambda)(s - R))$ for $s > R$.

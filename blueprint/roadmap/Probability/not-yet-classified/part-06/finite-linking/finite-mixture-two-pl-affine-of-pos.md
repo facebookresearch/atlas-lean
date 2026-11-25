@@ -1,6 +1,3 @@
-# Finite Mixture two PL affine of pos
+# Affine rescaling of a finite 2PL latent mixture
 
-Under a positive change of ability scale `θ ↦ A * θ + B` with `0 < A`,
-positive discriminations stay positive after the 2PL rule `a ↦ a / A`, and
-the observed response law of the finite-grid latent mixture is unchanged
-when the latent law is pushed forward along the same map.
+Let a finite set of latent grid points carry a probability mass function and abilities $\zeta$, and let the 2PL items have discriminations $a_i > 0$ and difficulties $b_i$. For $A > 0$ and real $B$, the discriminations $a_i/A$ are positive, and the response law of the mixture is unchanged when the abilities are mapped by $\theta \mapsto A\theta + B$ and the items replaced by discriminations $a_i/A$ and difficulties $Ab_i + B$.

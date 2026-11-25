@@ -1,6 +1,3 @@
-# Lift Coefficient
+# Lift coefficient
 
-Lift coefficient for a two-dimensional force per unit span:
-`L / (ρ * U^2 * c / 2)`, where `L` is signed lift and `c` is chord.
-As usual in Lean, division by zero is totalized; the coefficient
-formulas below assume the factors being cancelled are nonzero.
+The lift coefficient of a two-dimensional signed lift $L$ per unit span, density $\rho$, speed $U$ and chord $c$: $C_L = L/(\rho U^2 c/2)$.

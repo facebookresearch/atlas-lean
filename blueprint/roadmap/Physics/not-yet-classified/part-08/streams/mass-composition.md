@@ -1,6 +1,5 @@
-# Mass Composition
+# Mass composition of a stream
 
-The mass composition of a stream for molar masses `M`, as mass fractions
-of its flow vector, in the imported API's domain `∀ i, 0 < M i`. Produced
-only in that domain and under a positive total flow; otherwise (zero or
-negative molar masses at any species, zero total flow) it returns `none`.
+For a stream with nonnegative species amount flows $\dot n_i$ over a finite set of species and molar masses $M_i$, the mass composition is defined when every $M_i > 0$ and the total flow $\sum_i \dot n_i$ is positive, and is then the vector of mass fractions
+$$w_i = \frac{\dot n_i M_i}{\sum_j \dot n_j M_j}.$$
+Otherwise it is undefined.

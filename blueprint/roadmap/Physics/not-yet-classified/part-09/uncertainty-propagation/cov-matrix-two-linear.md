@@ -1,8 +1,3 @@
 # Correlated two-input variance
 
-**Correlated two-input variance**, via `covMatrix` entries so the cross term is
-explicit: the variance of `a₁ X₁ + a₂ X₂` is
-`a₁² Var X₁ + a₂² Var X₂ + 2 a₁ a₂ Cov(X₁, X₂)`, for every weight. The linear combination
-is the single entry of a `1 × 2` measurement matrix, so this is
-`FiniteProbability.covMatrix_mulVec`; the `2 a₁ a₂` cross term comes from the symmetry
-`covariance_comm`, not from any independence assumption.
+On a finite sample space with any weight function $p$, define expectation as $\sum_\omega p(\omega) X(\omega)$ and covariance and variance from it. For a two-component random vector $(X_1, X_2)$ and any real weights $a_1, a_2$,\n$$\mathrm{Var}(a_1 X_1 + a_2 X_2) = a_1^2 \mathrm{Var}\,X_1 + a_2^2 \mathrm{Var}\,X_2 + 2 a_1 a_2 \mathrm{Cov}(X_1, X_2).$$\nNo independence is assumed.

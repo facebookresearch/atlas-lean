@@ -1,4 +1,5 @@
-# Bayes Risk eq lintegral i Inf of finite
+# Bayes risk over a finite action space
 
-Over a finite nonempty action space, the Bayes risk equals the integral, over the marginal law
-of the data, of the smallest posterior expected loss.
+Let the parameter space $\Theta$ be a nonempty standard Borel space, the action space $\mathcal Y$ finite and nonempty, and the loss $\ell : \Theta \times \mathcal Y \to [0,\infty]$ measurable. Let $P$ be a finite kernel from $\Theta$ to the data space and $\pi$ a finite prior. Then the Bayes risk equals
+$$\int \min_{y \in \mathcal Y} \int \ell(\theta, y)\,\pi_x(d\theta)\;(P\circ\pi)(dx),$$
+where $\pi_x$ is the posterior given $x$ and $P\circ\pi$ is the marginal law of the data.

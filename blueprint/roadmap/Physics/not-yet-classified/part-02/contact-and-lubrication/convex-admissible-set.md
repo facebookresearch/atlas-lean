@@ -1,3 +1,3 @@
-# Convex admissible Set
+# Convexity of the contact admissible set
 
-The admissible set is convex.
+For every gap $g$, the admissible set $\{u \in \mathbb R : u \le g\}$ is convex.

@@ -1,7 +1,7 @@
 # Point Release
 
-- [Point release solves adr](point-release-solves-adr.md)
-- [Point release has Deriv At t](point-release-has-deriv-at-t.md)
-- [Point release has Deriv At x](point-release-has-deriv-at-x.md)
-- [Point release has Deriv At xx](point-release-has-deriv-at-xx.md)
+- [Point-release kernel solves the advection-diffusion-reaction equation](point-release-solves-adr.md)
+- [Time differentiability of the point-release kernel](point-release-has-deriv-at-t.md)
+- [Point-release kernel is differentiable in space](point-release-has-deriv-at-x.md)
+- [Point release: the second spatial derivative exists](point-release-has-deriv-at-xx.md)
 - [Point release integral](point-release-integral.md)

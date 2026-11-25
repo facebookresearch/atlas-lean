@@ -1,3 +1,3 @@
-# Has Deriv At slab profile
+# Derivative of the linear slab profile
 
-The slab profile has constant first derivative `(TL - T0) / L`.
+For $L > 0$ and any $T_0$, $T_L$, the profile $T(z) = T_0 + (T_L - T_0) z / L$ has derivative $(T_L - T_0)/L$ at every $z$.

@@ -1,7 +1,3 @@
-# Gibbs min two phase
+# Gibbs-energy minimization for two phases
 
-Gibbs-energy minimisation for a two-phase system at fixed `T, p`, in the
-linear model where the chemical potentials `μ₁, μ₂` are independent of
-composition: with total amount `N` and `n₁ ∈ [0, N]` in phase 1,
-`G(n₁) = n₁ * μ₁ + (N - n₁) * μ₂`. If `μ₁ ≤ μ₂`, putting everything in
-phase 1 minimises `G`.
+In the linear two-phase model with composition-independent chemical potentials $\mu_1, \mu_2$, total amount $N$ and amount $n_1$ in phase 1, the Gibbs energy is $G(n_1) = n_1\mu_1 + (N - n_1)\mu_2$. If $0 \le n_1 \le N$ and $\mu_1 \le \mu_2$, then $G(N) = N\mu_1 \le G(n_1)$: putting everything in phase 1 minimizes $G$.

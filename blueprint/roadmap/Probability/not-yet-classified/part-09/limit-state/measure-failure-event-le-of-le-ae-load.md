@@ -1,5 +1,5 @@
-# Measure failure Event le of le ae load
+# Smaller load effect gives smaller failure measure
 
-Decreasing the load effect almost everywhere can only decrease the
-failure measure; for a probability measure this is the failure
-probability.
+For any measure $\mu$, resistance $R$ and load effects $S$, $S'$ with $S' \le S$ $\mu$-almost everywhere,
+$$\mu(R - S' \le 0) \le \mu(R - S \le 0).$$
+For a probability measure these are failure probabilities.

@@ -1,5 +1,4 @@
-# Bernoulli along streamline space
+# Bernoulli's theorem along a streamline
 
-Bernoulli's theorem along a streamline in `Space`, for a steady constant-density
-inviscid Physlib Euler flow with body-force potential: the head `p / ρ + ‖u‖² / 2 + Φ`
-takes the same value at any two points of an integral curve of the velocity.
+Consider a three-dimensional inviscid flow satisfying the Euler equations with pressure $p$, constant density $\rho > 0$, a steady velocity field $u$ that is differentiable in space, and a body force with potential $\Phi$. Let $\gamma$ be an integral curve of $u$ on an open preconnected set $s \subseteq \mathbb R$, and assume $p$ and $\Phi$ are differentiable at every point $\gamma(\tau)$, $\tau \in s$. Then for all $a, b \in s$,
+$$\frac{p(\gamma(a))}{\rho} + \frac{|u(\gamma(a))|^2}{2} + \Phi(\gamma(a)) = \frac{p(\gamma(b))}{\rho} + \frac{|u(\gamma(b))|^2}{2} + \Phi(\gamma(b)).$$

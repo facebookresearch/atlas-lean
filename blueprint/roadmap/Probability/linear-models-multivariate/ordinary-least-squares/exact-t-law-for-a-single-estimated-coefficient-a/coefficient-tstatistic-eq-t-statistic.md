@@ -1,4 +1,3 @@
-# Coefficient TStatistic eq t Statistic
+# Coefficient t statistic as a contrast t statistic
 
-The coefficient `t` statistic is the general contrast `t` statistic
-`tStatistic` at the coordinate contrast `Pi.single j 1`.
+For a design matrix $X$, coefficient index $j$, coefficients $\beta$ and responses $y$, the $t$ statistic of coefficient $j$ equals the general contrast $t$ statistic at the unit contrast vector $e_j$.

@@ -1,8 +1,3 @@
 # Identifiability of the population criterion for a density model
 
-Let `ν` be σ-finite,
-`θ₀ ∈ K`, and for `θ ∈ K` let `densityModel ν p θ` be a probability measure with `p θ`
-measurable and `ν`-a.e. positive. If the law of `X 0` under `P` is `densityModel ν p θ₀`, the
-log-density `log ∘ p θ` is integrable under it for `θ ∈ K`, and the law is identified on `K`
-(`densityModel ν p θ = densityModel ν p θ₀`, `θ ∈ K` forces `θ = θ₀`), then `θ₀` is the unique
-maximizer of the expected log-likelihood on `K`.
+Let $\nu$ be $\sigma$-finite, $\theta_0 \in K$, and for $\theta \in K$ let $P_\theta = p_\theta\,\nu$ be a probability measure with $p_\theta$ measurable and $p_\theta > 0$ $\nu$-a.e. Suppose $X_0$ is a.e. measurable with law $P_{\theta_0}$, $\log p_\theta$ is $P_{\theta_0}$-integrable for $\theta \in K$, and $P_\theta = P_{\theta_0}$ with $\theta \in K$ forces $\theta = \theta_0$. Then $\theta_0$ is the unique maximizer on $K$ of the expected log-likelihood $\theta \mapsto E[\log p_\theta(X_0)]$: $E[\log p_\theta(X_0)] < E[\log p_{\theta_0}(X_0)]$ for every $\theta \in K$, $\theta \ne \theta_0$.

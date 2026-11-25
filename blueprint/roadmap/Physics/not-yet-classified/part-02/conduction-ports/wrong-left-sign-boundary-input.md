@@ -1,5 +1,3 @@
-# Wrong Left Sign boundary Input
+# Wrong left boundary sign admits boundary input
 
-Invalid: the wrong left sign (`-k * ux(0) = h0 * θ(0)`, i.e. normal `+1` at `0`)
-admits boundary input: with `k = h0 = D = 1`, `θ(0) = 1`, `ux(0) = -1`,
-`θ(L) = ux(L) = 0`, the boundary work `D * (θ(L) ux(L) - θ(0) ux(0))` is `1 > 0`.
+There are $k > 0$, $h_0 > 0$, $D > 0$ and boundary values $\theta(0)$, $u_x(0)$, $\theta(L)$, $u_x(L)$ satisfying the wrong-sign left condition $-k u_x(0) = h_0 \theta(0)$ and the right condition $-k u_x(L) = 0$, with positive boundary work $D\big(\theta(L) u_x(L) - \theta(0) u_x(0)\big) > 0$. For example $k = h_0 = D = 1$, $\theta(0) = 1$, $u_x(0) = -1$, $\theta(L) = u_x(L) = 0$.

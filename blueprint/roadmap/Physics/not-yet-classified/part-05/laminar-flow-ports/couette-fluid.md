@@ -1,3 +1,3 @@
-# Couette Fluid
+# Plane Couette fluid
 
-Density and velocity of plane Couette flow with constant density `ρ`.
+For density $\rho$, wall speed $U_{\mathrm{wall}}$ and gap $H$, the plane Couette fluid has constant density $\rho$ and steady velocity $(U_{\mathrm{wall}}\, y / H, 0, 0)$, where $y$ is the wall-normal coordinate.

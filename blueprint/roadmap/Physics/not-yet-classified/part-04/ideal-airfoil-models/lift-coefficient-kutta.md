@@ -1,7 +1,3 @@
-# Lift Coefficient kutta
+# Kutta lift coefficient
 
-Lift coefficient for the Kutta circulation
-`Γ = -4 * π * a * U * sin α`, signed lift `-ρ * U * Γ`, and chord
-`c = 4 * a`: the coefficient is `2 * π * sin α`. The nonzero
-hypotheses are the factors cancelled in
-`(-ρ * U * Γ) / (ρ * U^2 * (4 * a) / 2)`.
+Let $a \ne 0$, $\rho \ne 0$ and $U \ne 0$. With the Kutta circulation $\Gamma = -4\pi a U \sin\alpha$, signed lift $-\rho U \Gamma$ and chord $c = 4a$, the lift coefficient $\dfrac{-\rho U \Gamma}{\rho U^2 c / 2}$ equals $2\pi \sin\alpha$.

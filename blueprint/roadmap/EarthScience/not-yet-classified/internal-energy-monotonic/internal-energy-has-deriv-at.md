@@ -1,3 +1,3 @@
-# Internal Energy has Deriv At
+# Derivative of the linear internal energy
 
-The internal energy `U(T) = U0 + C * (T - T0)` has derivative `C` at every `T`.
+For real constants $C$, $U_0$, $T_0$, the internal energy $U(T) = U_0 + C(T - T_0)$ has derivative $C$ at every $T$.

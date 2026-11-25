@@ -1,4 +1,3 @@
-# Burgers rankine Hugoniot iff
+# Rankine-Hugoniot speed for Burgers' equation
 
-Rankine-Hugoniot speed for Burgers: for unequal states `uL ≠ uR`, the jump
-identity `c * (uR - uL) = f uR - f uL` holds exactly when `c = (uL + uR) / 2`.
+For states $u_L \ne u_R$ and flux $f(u) = u^2/2$, the jump condition $c (u_R - u_L) = f(u_R) - f(u_L)$ holds if and only if $c = (u_L + u_R)/2$.

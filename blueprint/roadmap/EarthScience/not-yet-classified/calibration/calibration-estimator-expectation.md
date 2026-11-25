@@ -1,7 +1,3 @@
-# Calibration estimator expectation
+# Expectation of the calibration estimator
 
-Unbiasedness of the calibrated estimator: with known calibration
-`y = a * x + b + ε`, `a ≠ 0`, integrable error `ε` whose expectation is
-`e`, the expectation of the estimator `(y - b) / a` is `x + e / a`.
-In particular when `E[ε] = 0` it is exactly `x`. A fitted `a` creates
-a different nonlinear bias problem and is out of scope.
+On a probability space, let $a \neq 0$, $b$, $x$ be real and let the error $\varepsilon$ be integrable with $\mathbb{E}[\varepsilon] = e$. For the calibration $y = a x + b + \varepsilon$, the estimator $(y - b)/a$ has expectation $x + e/a$. In particular, if $\mathbb{E}[\varepsilon] = 0$ its expectation is exactly $x$.

@@ -1,5 +1,3 @@
-# Blasius Force
+# Blasius force
 
-Blasius force per unit span (as `Fx - I * Fy`) for the complex
-velocity `W` on the circle of radius `R` about `0`, at density
-`ρ`: `(I * ρ / 2) * ∮ W^2`.
+For density $\rho$, complex velocity $W$ and radius $R$, the Blasius force per unit span, written $F_x - iF_y$, is $\frac{i\rho}{2}\oint_{|z| = R} W(z)^2\,dz$.

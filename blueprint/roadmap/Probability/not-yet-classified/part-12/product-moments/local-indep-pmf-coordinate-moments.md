@@ -1,5 +1,3 @@
-# Local Indep PMF coordinate moments
+# Coordinate moments of an independent Bernoulli product law
 
-(2)+(3) Coordinate moments under `PMF.toMeasure`: each coordinate has
-mean `q i`, and two distinct coordinates have product-mean `q i * q j`.
-The `i ≠ j` hypothesis is required only for the product identity.
+For a finite index set and probabilities $q_i \in [0, 1]$, under the product law of independent Bernoulli coordinates $Z_i$ with $\Pr(Z_i = 1) = q_i$, each coordinate has mean $\mathbb{E}[Z_i] = q_i$, and distinct coordinates $i \neq j$ satisfy $\mathbb{E}[Z_i Z_j] = q_i q_j$.

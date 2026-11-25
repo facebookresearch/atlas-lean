@@ -2,7 +2,7 @@
 
 - [Reconstructed depth](face-depth.md)
 - [Reconstructed face state](face-state.md)
-- [Interface flux](interface-flux.md)
+- [Interface flux with hydrostatic reconstruction](interface-flux.md)
 - [Left numerical flux](left-flux.md)
 - [Right numerical flux](right-flux.md)
 

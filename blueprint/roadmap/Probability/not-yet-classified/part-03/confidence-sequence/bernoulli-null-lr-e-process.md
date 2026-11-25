@@ -1,8 +1,3 @@
-# Bernoulli null LR family is a mean-1 nonnegative e-process under each null
+# Bernoulli likelihood-ratio e-process
 
-For fixed reference `p0 ∈ (0,1)`, every interior null `θ` with iid Bernoulli(`θ.val`)
-data carries a `Filtration.natural`-supermartingale that is pointwise nonnegative with
-initial mean exactly 1. The family is parameterized by the interior subtype, so no laws
-outside `(0,1)` are required. The filtration is the natural filtration of the observations
-(a general adapted filtration does NOT suffice: with the constant full filtration the
-conditional-expectation step fails).
+Fix $p_0 \in (0,1)$. For every $\theta \in (0,1)$, if the observations $X_0, X_1, \ldots$ are i.i.d. Bernoulli($\theta$) under $\mu_\theta$, then the likelihood ratio $M_n = \prod_{i \le n} \frac{p_0^{X_i}(1-p_0)^{1-X_i}}{\theta^{X_i}(1-\theta)^{1-X_i}}$ is a nonnegative supermartingale for the natural filtration of the observations with $\mathbb{E}_\theta[M_0] = 1$.

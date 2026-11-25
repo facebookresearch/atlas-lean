@@ -1,6 +1,4 @@
-# Interface flux
+# Interface flux with hydrostatic reconstruction
 
-**Interface flux** `F_{i+1/2}`, source (2.11): the numerical flux
-evaluated at the reconstructed states of the face between a left cell
-`(hL, uL)` on bed `zL` and a right cell `(hR, uR)` on bed `zR`, with
-face bed `max zL zR`.
+Given a numerical flux $\mathcal F$, a left cell with depth $h_L$, velocity $u_L$ on bed $z_L$, and a right cell with $h_R$, $u_R$ on bed $z_R$, set the face bed $z^* = \max(z_L, z_R)$ and the reconstructed depths $h_L^* = \max(0, h_L + z_L - z^*)$, $h_R^* = \max(0, h_R + z_R - z^*)$. The interface flux is defined as
+$$F = \mathcal F\big((h_L^*, h_L^* u_L),\,(h_R^*, h_R^* u_R)\big).$$

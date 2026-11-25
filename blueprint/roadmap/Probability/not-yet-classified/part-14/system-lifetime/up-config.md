@@ -1,5 +1,3 @@
-# Up Config
+# Up configuration
 
-Up-configuration at finite time `t`. A component `e` is up iff
-`(t : ENNReal) < T e` with strict inequality, so ties with `t` are down. Zero
-and infinite lifetimes are included via the `ENNReal` order.
+For component lifetimes $T_e \in [0, \infty]$ and a finite time $t \ge 0$, the up configuration marks component $e$ as up exactly when $t < T_e$; ties $T_e = t$ count as down, and zero and infinite lifetimes are allowed.

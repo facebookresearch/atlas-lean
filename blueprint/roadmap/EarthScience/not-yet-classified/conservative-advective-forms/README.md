@@ -1,4 +1,4 @@
 # Conservative Advective Forms
 
 - [Flux divergence eq advective](flux-divergence-eq-advective.md)
-- [Conservative advective pde equiv](conservative-advective-pde-equiv.md)
+- [Conservative and advective forms of the advection-diffusion-reaction equation](conservative-advective-pde-equiv.md)

@@ -1,7 +1,3 @@
-# Bernoulli MLE (ST09.T01)
+# Bernoulli MLE is the sample proportion
 
-For a nonempty sample, the Bernoulli
-likelihood at any `θ ∈ [0, 1]` is at most the likelihood at the sample
-proportion: the sample proportion maximizes the likelihood. Boundary
-cases are included: if there are no successes the proportion is `0`,
-and if all observations succeed it is `1`.
+For a sample $x_1, \dots, x_n$ of successes and failures with $n > 0$, and any $\theta \in [0, 1]$, the likelihood $L(\theta) = \prod_i \theta^{[x_i]} (1 - \theta)^{1 - [x_i]}$ satisfies $L(\theta) \le L(\hat p)$, where $\hat p$ is the fraction of successes. This includes $\hat p = 0$ and $\hat p = 1$.

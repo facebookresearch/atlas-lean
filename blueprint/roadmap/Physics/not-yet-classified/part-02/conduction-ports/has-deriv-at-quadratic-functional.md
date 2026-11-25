@@ -1,7 +1,5 @@
-# Has Deriv At quadratic Functional
+# Quadratic Lyapunov identity for a conduction network
 
-Quadratic Lyapunov identity at time `t`: with symmetric conductances and no external inputs,
-the functional `∑ i, C i * T i ^ 2 / 2` has derivative
-`-∑ i, ∑ j, G i j * (T i t - T j t) ^ 2 / 2` at `t`. This is
-`ZoneHeatInventory.quadratic_dissipation_hasDerivAt` with no boundary conductance, zero
-reference and no heating power.
+Let $\iota$ be a finite set of zones with capacities $C_i$ and symmetric conductances $G_{ij} = G_{ji}$. Suppose each temperature $T_i$ has derivative $\dot T_i$ at time $t$ and the balance $C_i \dot T_i = \sum_j G_{ij}(T_j(t) - T_i(t))$ holds for every $i$ (no boundary conductance or external heating). Then $\tau \mapsto \sum_i C_i T_i(\tau)^2/2$ has derivative
+$$-\sum_i \sum_j \frac{G_{ij}\,(T_i(t) - T_j(t))^2}{2}$$
+at $t$.

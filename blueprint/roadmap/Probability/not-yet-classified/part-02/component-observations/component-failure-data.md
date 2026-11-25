@@ -1,11 +1,3 @@
-# Component Failure Data
+# Component failure data
 
-Single-cause infrastructure component failure data from an
-observation table: `time (group i)` is component `i`'s exact
-recorded event or censoring time; `failed i = true` means the
-failure occurred at that time, and `failed i = false` means
-right-censoring at that time. Components tied at the same
-recorded time are counted together. Current-status inspection
-data (failure known only to have occurred by inspection) is
-not represented. No population consistency or identifiability
-claim is made.
+Single-cause component failure data from an observation table with strictly increasing recorded times $\tau_1 < \dots < \tau_k$: component $i$ is assigned a recorded time $\tau_{g(i)}$, at which it either failed (when its failure flag is true) or was right-censored (when it is false). Components tied at the same recorded time are counted together.

@@ -2,4 +2,4 @@
 
 ## C. The line-voltage base and the impedance base
 
-- [Bases correct](bases-correct.md)
+- [Per-unit bases](bases-correct.md)

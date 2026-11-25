@@ -1,6 +1,3 @@
-# Is Least binary Fixed Point one of le
+# Least fixed point of the binary offspring equation
 
-Least-fixed-point equation characterisation, subcritical/critical
-case: for `p ≤ 1 / 2`, `1` is the least binary fixed point in `[0, 1]`
-(the other root `(1 - p) / p`, when `p ≠ 0`, is `≥ 1`).  This is the
-stated lemma the closed form needs beyond `isLeast_extinctionProb`.
+For $0 \le p \le 1/2$, $s = 1$ is the least solution in $[0, 1]$ of $s = 1 - p + p s^2$. (For $p \ne 0$ the other root $(1 - p)/p$ is at least $1$.)

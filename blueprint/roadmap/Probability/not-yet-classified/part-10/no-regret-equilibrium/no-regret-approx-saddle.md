@@ -1,8 +1,3 @@
 # No-regret dynamics give approximate saddle points
 
-In the matrix game `A` (row player
-maximizes `u(p, q) = p.weights ⬝ᵥ (A *ᵥ q.weights)`), suppose the row player's average regret
-`(1/T) ∑ₜ u(x, q t) - (1/T) ∑ₜ u(p t, q t)` is at most `εrow` for every mixed strategy `x` and the
-column player's average regret `(1/T) ∑ₜ u(p t, q t) - (1/T) ∑ₜ u(p t, y)` is at most `εcol` for
-every mixed strategy `y`. Then the average strategies `p̄ = avgStrategy hT p` and
-`q̄ = avgStrategy hT q` satisfy `u(x, q̄) - u(p̄, y) ≤ εrow + εcol` for all `x` and `y`.
+In a matrix game with payoff $u(p, q) = p^{\mathsf T} A q$ to the row player, let $p_1, \dots, p_T$ and $q_1, \dots, q_T$ ($T \ge 1$) be mixed strategies. Suppose $\frac{1}{T}\sum_t u(x, q_t) - \frac{1}{T}\sum_t u(p_t, q_t) \le \varepsilon_{\mathrm{row}}$ for every mixed $x$ and $\frac{1}{T}\sum_t u(p_t, q_t) - \frac{1}{T}\sum_t u(p_t, y) \le \varepsilon_{\mathrm{col}}$ for every mixed $y$. Then the average strategies $\bar p = \frac{1}{T}\sum_t p_t$ and $\bar q = \frac{1}{T}\sum_t q_t$ satisfy $u(x, \bar q) - u(\bar p, y) \le \varepsilon_{\mathrm{row}} + \varepsilon_{\mathrm{col}}$ for all mixed $x$, $y$.
