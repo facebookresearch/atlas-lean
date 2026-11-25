@@ -23,6 +23,19 @@ example : (Nat.fib 6 : ℤ) * Nat.fib 5 - (Nat.fib 8 : ℤ) * Nat.fib 3 = -2 :=
 example : (Nat.fib 8 : ℤ) * Nat.fib 6 - (Nat.fib 10 : ℤ) * Nat.fib 4 = 3 :=
   fib_mul_sub_mul 4
 
+example : fiboCatalan 0 = 1 := by
+  norm_num [fiboCatalan, MetaMathlibExt.fibonacciFactorial, Nat.fib]
+
+example : 2 * fiboCatalan 1 - fiboCatalan 2 = -1 := by
+  have h := fiboCatalan_identity 1
+  norm_num [Nat.fib, MetaMathlibExt.fibonacciFactorial] at h
+  exact h
+
+example : 15 * fiboCatalan 2 - 2 * fiboCatalan 3 = 5 := by
+  have h := fiboCatalan_identity 2
+  norm_num [Nat.fib, MetaMathlibExt.fibonacciFactorial] at h
+  exact h
+
 open MvPolynomial
 
 example : lucasPoly 0 * lucasPoly 2 - lucasPoly 2 * lucasPoly 0 = 0 := by
