@@ -112,35 +112,31 @@ open MathlibExt.AlgebraicGeometry.PointedPicardFamilies
 
 variable {k : Type u} [Field k]
 
-/-- A proper morphism stays proper as the structure morphism of its
-over-object, so `PicardZeroModel (Over.mk c) p` elaborates from `[IsProper c]`. -/
-public instance isProper_overMk_hom {X Y : Scheme.{u}} (f : X ⟶ Y) [IsProper f] :
-    IsProper (Over.mk f).hom :=
-  ‹IsProper f›
-
-/-- Jacobian scheme data of a proper scheme `c` over `k` with a rational point
-`p`, such as a pointed curve: a pointed scheme with a group law, an
-identification of it with the Picard-zero model of `c` normalized along `p`
-that respects the group laws, a points bridge, properness, and smoothness of
-relative dimension `g`. `JacobianSchemeData.abelianScheme` is the resulting
-abelian scheme. -/
+/-- Jacobian scheme data of a proper scheme `C` over `k` with a rational point
+`p`, such as a pointed curve: a pointed scheme with a group law whose identity
+is the zero section, an identification of it with the Picard-zero model of `C`
+normalized along `p` that respects the group laws, a points bridge,
+properness, and smoothness of relative dimension `g`.
+`JacobianSchemeData.abelianScheme` is the resulting abelian scheme. -/
 public structure JacobianSchemeData (A : Type*) [AddCommGroup A]
-    {C : Scheme.{u}} (c : C ⟶ Spec (CommRingCat.of k)) [IsProper c]
-    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ Over.mk c) (g : ℕ)
+    (C : Over (Spec (CommRingCat.of k))) [IsProper C.hom]
+    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ C) (g : ℕ)
     {T : Scheme.{u}} (σ : T ⟶ Spec (CommRingCat.of k)) where
   /-- The pointed scheme. -/
   D : PointedRelativeScheme k
   /-- The relative group law on the scheme. -/
   L : RelativeGroupLaw k D.toBase
+  /-- The zero section is the identity section of the group law. -/
+  zeroSection_eq : D.zeroSection = (L.one (𝟙 (Spec (CommRingCat.of k)))).left
   /-- The points bridge. -/
   bridge : AvatarSchemeBridge A D L σ
   /-- The scheme is proper. -/
   hProper : IsProper D.toBase
   /-- The scheme is smooth of relative dimension `g`. -/
   hDim : SmoothOfRelativeDimension g D.toBase
-  /-- The Picard-zero model of `c`, normalized along `p`. -/
-  picard : PicardZeroModel (Over.mk c) p
-  /-- The scheme is the Picard-zero scheme of `c`. -/
+  /-- The Picard-zero model of `C`, normalized along `p`. -/
+  picard : PicardZeroModel C p
+  /-- The scheme is the Picard-zero scheme of `C`. -/
   picardIso : Over.mk D.toBase ≅ picard.J
   /-- The identification carries the group law to that of the Picard-zero
   model, under which addition represents the tensor product of line bundles. -/
@@ -153,10 +149,10 @@ that of `J.L`. Smoothness comes from `hDim` and properness from `hProper`;
 commutativity and geometric connectedness are carried over from the
 Picard-zero model through `picardIso`. -/
 public noncomputable def JacobianSchemeData.abelianScheme {A : Type*} [AddCommGroup A]
-    {C : Scheme.{u}} {c : C ⟶ Spec (CommRingCat.of k)} [IsProper c]
-    {p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ Over.mk c} {g : ℕ}
+    {C : Over (Spec (CommRingCat.of k))} [IsProper C.hom]
+    {p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ C} {g : ℕ}
     {T : Scheme.{u}} {σ : T ⟶ Spec (CommRingCat.of k)}
-    (J : JacobianSchemeData A c p g σ) : AbelianScheme (Spec (CommRingCat.of k)) :=
+    (J : JacobianSchemeData A C p g σ) : AbelianScheme (Spec (CommRingCat.of k)) :=
   letI := J.L.grpObjOverMk
   letI := J.picard.group
   haveI := J.picard.commutative
@@ -182,35 +178,39 @@ public noncomputable def JacobianSchemeData.abelianScheme {A : Type*} [AddCommGr
       infer_instance }
 
 /-- Jacobian scheme data assembled from a scheme with a group law, a points
-identification, smoothness of relative dimension `g`, properness, and an
-identification with the Picard-zero model of `c` compatible with the group
-laws. -/
+identification over the base, smoothness of relative dimension `g`,
+properness, and an identification with the Picard-zero model of `C`
+compatible with the group laws. The zero section is the image of zero, which
+is the identity of the group law. -/
 public noncomputable def JacobianSchemeData.ofCore (A : Type*) [AddCommGroup A]
-    {C : Scheme.{u}} (c : C ⟶ Spec (CommRingCat.of k)) [IsProper c]
-    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ Over.mk c) (g : ℕ)
+    (C : Over (Spec (CommRingCat.of k))) [IsProper C.hom]
+    (p : 𝟙_ (Over (Spec (CommRingCat.of k))) ⟶ C) (g : ℕ)
     {J : Scheme.{u}} (f : J ⟶ Spec (CommRingCat.of k))
     (L : RelativeGroupLaw k f)
     (pts : A ≃ SchemeHomOver (𝟙 (Spec (CommRingCat.of k))) f)
     (pts_add : ∀ x y : A,
       pts (x + y) = L.mul (𝟙 (Spec (CommRingCat.of k))) (pts x) (pts y))
     (hdim : SmoothOfRelativeDimension g f) (hproper : IsProper f)
-    (M : PicardZeroModel (Over.mk c) p) (e : Over.mk f ≅ M.J)
+    (M : PicardZeroModel C p) (e : Over.mk f ≅ M.J)
     (he : letI := L.grpObjOverMk; letI := M.group; IsMonHom e.hom) :
-    JacobianSchemeData A c p g (𝟙 (Spec (CommRingCat.of k))) where
-  D :=
+    JacobianSchemeData A C p g (𝟙 (Spec (CommRingCat.of k))) :=
+  let D : PointedRelativeScheme k :=
     { P := J
       toBase := f
       zeroSection := (pts 0).left
       zeroSection_toBase := Over.w (pts 0) }
-  L := L
-  bridge :=
+  let B : AvatarSchemeBridge A D L (𝟙 (Spec (CommRingCat.of k))) :=
     { pts := pts
       pts_add := pts_add
       pts_zero := (Category.id_comp _).symm }
-  hProper := hproper
-  hDim := hdim
-  picard := M
-  picardIso := e
-  picardIso_isMonHom := he
+  { D := D
+    L := L
+    zeroSection_eq := (congrArg Over.Hom.left B.law_one_eq_pts_zero).symm
+    bridge := B
+    hProper := hproper
+    hDim := hdim
+    picard := M
+    picardIso := e
+    picardIso_isMonHom := he }
 
 end MilneJVScheme
