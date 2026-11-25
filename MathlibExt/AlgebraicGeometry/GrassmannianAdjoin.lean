@@ -243,7 +243,10 @@ private lemma map_ofHomX_toSubmodule (ψ : HomX R x A) :
       simp [TensorProduct.smul_tmul'], map_smul, map_smul,
       LinearMap.comp_apply, hbc]
     ext i
-    simp [pushHomX_apply, TensorProduct.piScalarRight_apply]
+    simp only [Submodule.mkQ_apply, LinearEquiv.coe_coe, LinearEquiv.trans_apply,
+      LinearEquiv.baseChange_tmul, TensorProduct.piScalarRight_apply,
+      TensorProduct.piScalarRightHom_tmul, Pi.smul_apply, smul_eq_mul, Algebra.mul_smul_comm,
+      mul_one, LinearMap.liftBaseChange_tmul, one_smul, pushHomX_apply]
     rw [← Submodule.mkQ_apply, quotEquiv_mkQ, LinearMap.liftBaseChange_tmul,
       one_smul, Algebra.smul_def, mul_comm]
     rfl
@@ -451,7 +454,6 @@ end GrassChartGen
 namespace Module
 namespace Grassmannian
 
-set_option maxHeartbeats 800000 in
 /-- If a scheme represents the Grassmannian functor and the chart at `x`
 is an open whose representing map is an open immersion, then the chart
 coordinates of a spanning family already generate the whole coordinate
@@ -488,7 +490,7 @@ theorem adjoin_eq_top_of_isOpenImmersion_of_opensRange_eq
       ∑ i, v i • N.toSubmodule.mkQ ((1 : S) ⊗ₜ[R] x i) :=
     (hVchart x S N).mp hrange.le
   let Nc : GrassChartGen.Chart R x S := ⟨N, hx⟩
-  show GrassChartGen.T (R := R) x Nc g = ⊤
+  change GrassChartGen.T (R := R) x Nc g = ⊤
   set T' : Subalgebra R S := GrassChartGen.T (R := R) x Nc g with hT'
   let NT' : GrassChartGen.Chart R x T' := GrassChartGen.NT x Nc g hg
   let t : Spec (CommRingCat.of T') ⟶ Gr := (pt T' NT'.1).1
