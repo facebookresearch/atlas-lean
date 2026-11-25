@@ -8,6 +8,8 @@ Structure in unlabelled data: k-means, single-linkage hierarchical clustering, a
 - [Probabilistic principal component analysis](probabilistic-principal-component-analysis/README.md)
 - [Single-linkage hierarchical clustering](single-linkage-hierarchical-clustering/README.md)
 - [Successive projection algorithm](successive-projection-algorithm/README.md)
+- [Lloyd assignment stabilization under an explicit tie rule](lloyd-assignment-stabilization-under-an-explicit-tie-rule.md)
+- [Lloyd cost is eventually constant](lloyd-cost-is-eventually-constant.md)
 
 ## Related topics
 

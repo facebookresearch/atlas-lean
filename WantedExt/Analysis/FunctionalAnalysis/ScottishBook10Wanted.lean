@@ -22,14 +22,18 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook10Wanted
 
 /--
-Let `H` be an arbitrary set and `E` the set of all real-valued functions on
-`H`, with pointwise convergence. Then every continuous linear functional `f`
-on `E` has the form `f x = ∑ i, α i * x (t i)` for some finite list of
-scalars `α i` and points `t i` in `H`. Continuity is for the pointwise
-convergence (product) topology; this is the intended reading of the
-typescript, whose statement prints no continuity hypothesis. Without
-continuity the claim is false: the algebraic dual of `ℝ ^ H` is strictly
-larger than the span of the evaluations when `H` is infinite. Source:
+**Continuous linear functionals on the space of all real functions.** Let $H$ be a set and give
+the space $\mathbb{R}^H$ of all real-valued functions on $H$ the topology of pointwise
+convergence. Then for every continuous linear functional $f \colon \mathbb{R}^H \to \mathbb{R}$
+there are a natural number $n$, points $t_1, \dots, t_n \in H$ and real numbers
+$\alpha_1, \dots, \alpha_n$ such that $f(x) = \sum_{i=1}^n \alpha_i \, x(t_i)$ for every
+$x \in \mathbb{R}^H$.
+
+Continuity is the intended reading of the typescript, whose statement prints no continuity
+hypothesis. Without continuity the claim is false: when $H$ is infinite, the algebraic dual of
+$\mathbb{R}^H$ is strictly larger than the span of the evaluations.
+
+Source:
 S. Banach and S. Mazur, Problem 10 of the Scottish Book, stated as a theorem
 in the Scottish Book typescript.
 -/

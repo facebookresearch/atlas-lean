@@ -59,7 +59,12 @@ private theorem extraction {n : Nat} (edges : List (Edge n)) (source : Fin n)
       hbound hroot (run_infinite_predecessor edges source order horder) hfinite
       (run_predecessor_spec edges source order horder)
 
-/-- Predecessor extraction fails exactly at infinite estimates. -/
+/-- **Predecessor extraction fails exactly at infinite distances.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$, $s$ a source vertex, and
+$\sigma$ a topological order of the directed graph with an edge $u \to v$ for each edge of $E$
+from $u$ to $v$. After the one-pass relaxation of $E$ from $s$ in the order $\sigma$, for every
+vertex $t$, following the predecessor edges back from $t$ fails to reach $s$ within $n$ steps if
+and only if the computed distance to $t$ is infinite. -/
 public theorem run_pathTo?_eq_none_iff {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -68,7 +73,16 @@ public theorem run_pathTo?_eq_none_iff {n : Nat} (edges : List (Edge n)) (source
       (run edges source order horder).ret.distance.get target = none :=
   (extraction edges source order horder target).1
 
-/-- An extracted path is a concrete shortest input path with at most n-1 edges. -/
+/-- **Paths extracted after topological relaxation are shortest paths.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$, $s$ a source vertex, and
+$\sigma$ a topological order of the directed graph with an edge $u \to v$ for each edge of $E$
+from $u$ to $v$. After the one-pass relaxation of $E$ from $s$ in the order $\sigma$, suppose
+following the predecessor edges back from a vertex $t$ reaches $s$ within $n$ steps, giving the
+path $P$. Then $P$ is a path from $s$ to $t$ in $E$, the computed distance to $t$ is finite and
+equals the weight of $P$, $P$ has fewer than $n$ edges, and every path from $s$ to $t$ in $E$ has
+weight at least the weight of $P$. Here a path from $s$ to $t$ in $E$ is a list of edges of $E$,
+each starting where the previous one ends, the first starting at $s$ and the last ending at $t$
+(the empty list when $t = s$), and its weight is the sum of its edge weights. -/
 public theorem run_pathTo?_spec {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (order : List (Fin n))
     (horder : TopologicalSort.IsTopologicalOrder (toDirectedAdjacency edges) order)
@@ -91,7 +105,12 @@ public theorem run_pathTo?_spec {n : Nat} (edges : List (Edge n)) (source : Fin 
       exact run_distance_minimal edges source order horder target value hd other ho
 
 
-/-- Every failure certifies an actual directed cycle among the remaining vertices. -/
+/-- **A failed DAG shortest-path run exhibits a cycle.** Let $E$ be a list of integer-weighted
+directed edges on the vertices $\{0, \dots, n-1\}$ and $s$ a source vertex. If the DAG
+shortest-path algorithm on $E$ from $s$ fails, reporting the processed vertices and the list $R$
+of remaining vertices of its topological sort, then the directed graph with an edge $u \to v$ for
+each edge of $E$ from $u$ to $v$ contains a nonempty directed cycle without repeated vertices
+whose vertices all lie in $R$. -/
 public theorem dagShortestPaths_failure_cycle {n : Nat} (edges : List (Edge n)) (source : Fin n)
     (processed remaining : List (Fin n))
     (hf : (dagShortestPaths edges source).ret = .error (processed, remaining)) :
@@ -99,7 +118,12 @@ public theorem dagShortestPaths_failure_cycle {n : Nat} (edges : List (Edge n)) 
   TopologicalSort.failure_cycle _ _ _
     ((dagShortestPaths_eq_error_iff edges source processed remaining).mp hf)
 
-/-- The total wrapper succeeds exactly on DAGs, including disconnected DAGs. -/
+/-- **The DAG shortest-path algorithm succeeds exactly on acyclic graphs.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and $s$ a source vertex. The
+DAG shortest-path algorithm on $E$ from $s$ succeeds if and only if the directed graph with an
+edge $u \to v$ for each edge of $E$ from $u$ to $v$ has no directed cycle.
+
+This includes disconnected graphs: a cycle unreachable from $s$ still causes failure. -/
 public theorem dagShortestPaths_returns_iff_acyclic {n : Nat} (edges : List (Edge n))
     (source : Fin n) :
     (∃ result, (dagShortestPaths edges source).ret = .ok result) ↔
@@ -114,7 +138,14 @@ public theorem dagShortestPaths_returns_iff_acyclic {n : Nat} (edges : List (Edg
     exact ⟨(run edges source order horder).ret,
       (dagShortestPaths_eq_ok_iff edges source _).mpr ⟨order, horder, hs, rfl⟩⟩
 
-/-- Successful wrapper distances are realized and minimal; failure is not a distance result. -/
+/-- **DAG shortest-path distances are shortest-path weights.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and $s$ a source vertex.
+Suppose the DAG shortest-path algorithm on $E$ from $s$ succeeds and returns a finite distance
+$d \in \mathbb{Z}$ for a vertex $t$. Then some path from $s$ to $t$ in $E$ has weight $d$, and
+every path from $s$ to $t$ in $E$ has weight at least $d$. Here a path from $s$ to $t$ in $E$ is a
+list of edges of $E$, each starting where the previous one ends, the first starting at $s$ and
+the last ending at $t$ (the empty list when $t = s$), and its weight is the sum of its edge
+weights. -/
 public theorem dagShortestPaths_distance_spec {n : Nat} (edges : List (Edge n))
     (source : Fin n) (result : Distances n)
     (hr : (dagShortestPaths edges source).ret = .ok result) (target : Fin n) (value : Int)
@@ -125,7 +156,11 @@ public theorem dagShortestPaths_distance_spec {n : Nat} (edges : List (Edge n))
   exact ⟨run_distance_realized edges source order horder target value hd,
     run_distance_minimal edges source order horder target value hd⟩
 
-/-- Successful-wrapper infinity denotes precisely canonical unreachability. -/
+/-- **Unreachable vertices are exactly those at infinite DAG distance.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and $s$ a source vertex.
+If the DAG shortest-path algorithm on $E$ from $s$ succeeds, then for every vertex $t$ the
+returned distance to $t$ is infinite if and only if $t$ is not reachable from $s$ in the directed
+graph with an edge $u \to v$ for each edge of $E$ from $u$ to $v$. -/
 public theorem dagShortestPaths_distance_eq_none_iff {n : Nat} (edges : List (Edge n))
     (source : Fin n) (result : Distances n)
     (hr : (dagShortestPaths edges source).ret = .ok result) (target : Fin n) :
@@ -133,7 +168,15 @@ public theorem dagShortestPaths_distance_eq_none_iff {n : Nat} (edges : List (Ed
   obtain ⟨order, horder, _, rfl⟩ := (dagShortestPaths_eq_ok_iff edges source result).mp hr
   exact run_distance_eq_none_iff edges source order horder target
 
-/-- A successful-wrapper predecessor path is an actual shortest path with at most n-1 edges. -/
+/-- **Extracted DAG shortest paths are shortest paths.** Let $E$ be a list of integer-weighted
+directed edges on the vertices $\{0, \dots, n-1\}$ and $s$ a source vertex. Suppose the DAG
+shortest-path algorithm on $E$ from $s$ succeeds, and following its predecessor edges back from a
+vertex $t$ reaches $s$ within $n$ steps, giving the path $P$. Then $P$ is a path from $s$ to $t$
+in $E$, the returned distance to $t$ is finite and equals the weight of $P$, $P$ has fewer than
+$n$ edges, and every path from $s$ to $t$ in $E$ has weight at least the weight of $P$. Here a
+path from $s$ to $t$ in $E$ is a list of edges of $E$, each starting where the previous one ends,
+the first starting at $s$ and the last ending at $t$ (the empty list when $t = s$), and its weight
+is the sum of its edge weights. -/
 public theorem dagShortestPaths_pathTo?_spec {n : Nat} (edges : List (Edge n))
     (source : Fin n) (result : Distances n)
     (hr : (dagShortestPaths edges source).ret = .ok result) (target : Fin n)

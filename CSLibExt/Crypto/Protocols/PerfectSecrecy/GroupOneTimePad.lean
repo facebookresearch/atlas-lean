@@ -39,18 +39,28 @@ universe u
 
 variable (G : Type u) [Group G] [Fintype G]
 
-/-- The group one-time pad: `Enc_k(m) = k * m` with `k` uniform on `G`. -/
+/-- **The group one-time pad.** Let $G$ be a finite group. The group one-time pad on $G$ is the
+private-key encryption scheme with messages, keys and ciphertexts in $G$ whose key $k$ is drawn
+uniformly from $G$, which encrypts a message $m$ as $k m$, and which decrypts a ciphertext $c$
+as $k^{-1} c$. -/
 noncomputable def groupOTP : EncScheme G G G :=
   .ofPure (Cslib.Probability.PMF.uniformOfFintype G) (· * ·) (fun k c => k⁻¹ * c) fun k m => by simp
 
-/-- Every ciphertext of the group one-time pad is uniform, whatever the message. -/
+/-- **Group one-time pad ciphertexts are uniform.** Let $G$ be a finite group. For every
+message $m \in G$, the ciphertext of $m$ under the group one-time pad on $G$, whose key is
+drawn uniformly from $G$, is uniformly distributed on $G$. -/
 theorem groupOTP_ciphertextDist_eq_uniform (m : G) :
     (groupOTP G).ciphertextDist m = Cslib.Probability.PMF.uniformOfFintype G := by
   change (Cslib.Probability.PMF.uniformOfFintype G).bind (fun k => PMF.pure (k * m)) = _
   have h : (fun k : G => PMF.pure (k * m)) = PMF.pure ∘ ⇑(Equiv.mulRight m) := rfl
   rw [h, PMF.bind_pure_comp, uniformOfFintype_map_equiv]
 
-/-- **The group one-time pad is perfectly secret** (Katz and Lindell, Lemma 11.15). -/
+/-- **The group one-time pad is perfectly secret.** Let $G$ be a finite group. The group
+one-time pad on $G$ is perfectly secret: for every probability distribution on messages in $G$
+and every ciphertext $c$ that occurs with positive probability, the conditional distribution
+of the message given that the ciphertext is $c$ equals the prior distribution of the message.
+
+Source: Katz and Lindell, Lemma 11.15. -/
 theorem groupOTP_perfectlySecret : (groupOTP G).PerfectlySecret :=
   (EncScheme.perfectlySecret_iff_ciphertextIndist _).mpr fun m₀ m₁ =>
     (groupOTP_ciphertextDist_eq_uniform G m₀).trans

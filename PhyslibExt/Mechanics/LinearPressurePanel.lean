@@ -46,12 +46,11 @@ namespace PhyslibExt.Mechanics.LinearPressurePanel
 
 /-! ## A. Resultant force and moment -/
 
-/-- Resultant force from a linear pressure profile `p (z) = c * z` acting
-over depth interval `[a, b]` on a panel of width `w`:
-`∫ z in a..b, w * (c * z)`. Physically `w > 0`, `0 ≤ a < b`, `z` is depth
-from the zero-pressure datum, and `c` is the pressure gradient; with `c` in
-force/length³ and `w`, `z` in length, the force is in force units. The
-identity also holds for all real inputs, as oriented interval integrals. -/
+/-- Resultant force from a linear pressure profile `p (z) = c * z` acting over depth interval
+`[a, b]` on a panel of width `w`: `∫ z in a..b, w * (c * z)`. Physically `w > 0`, `0 ≤ a < b`, `z`
+is depth from the zero-pressure datum, and `c` is the pressure gradient; with `c` in force/length³
+and `w`, `z` in length, the force is in force units. It is defined for all real inputs, as an
+oriented interval integral. -/
 noncomputable def linearPressureForce (c w a b : ℝ) : ℝ :=
   ∫ z in a..b, w * (c * z)
 
