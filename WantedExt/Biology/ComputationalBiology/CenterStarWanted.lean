@@ -10,13 +10,14 @@ LICENSE file in the root directory of this source tree.
 # Center-star multiple alignment is a (2 - 2/k)-approximation
 
 For `k` strings and a pairwise scoring `s` on `Option α` (`none` is a gap)
-with `s none none = 0`, the triangle inequality, and symmetry, let `Xc`
+with zero self-costs (`s x x = 0`, in particular `s none none = 0`), the triangle inequality,
+and symmetry, let `Xc`
 minimize the total optimal-pairwise distance `∑ⱼ D(Xc, Xⱼ)` and let `Ac` be
 the center-star multiple alignment built from optimal pairwise alignments to
 `Xc`. With `V` the sum-of-pairs value and `A*` an optimal multiple alignment,
 `k * V(Ac) ≤ 2 * (k - 1) * V(A*)`, i.e. `V(Ac) / V(A*) ≤ 2 * (k - 1) / k < 2`.
-The symmetry of `s` is used by the source without being stated and is an
-explicit hypothesis here.
+The symmetry of `s` and the zero self-costs (which give `D(X, X) = 0`) are used by the source
+without being stated and are explicit hypotheses here.
 
 Overlap: `CSLibExt/Algorithms/Lean/DynamicProgramming/MultipleSequenceAlignment.lean`
 has the sum-of-pairs score as a sum of induced pairwise scores
@@ -102,7 +103,8 @@ noncomputable def centerTotal (s : Option α → Option α → ℝ) {k : ℕ}
   Finset.sum Finset.univ fun j => pairDist s C (X j)
 
 /-- **Center-star approximation** (Gusfield 1993, Theorem 3.1): hypotheses are
-a gap scoring with `s none none = 0` (`hgap`), the triangle inequality
+a gap scoring with `s none none = 0` (`hgap`) and zero self-costs `s x x = 0` for every
+`x : Option α` (`hdiag`), the triangle inequality
 (`htria`), explicit symmetry (`hsymm`), at least two strings (`hk`), the
 `pairDist` characterization (`hD_le`, `hD_att`), a center string `Xc`
 minimizing the center total (`hcenter`), spoke alignments `P j` that are
@@ -114,6 +116,7 @@ optimal alignment `Astar` valid for `X` and minimal (`hopt`). Conclusion:
 Source: Gusfield (1993), Theorem 3.1 (via Lemma 3.1). -/
 theorem_wanted centerStar_bound (s : Option α → Option α → ℝ)
     (hgap : s none none = 0)
+    (hdiag : ∀ x : Option α, s x x = 0)
     (htria : ∀ x y z : Option α, s x z ≤ s x y + s y z)
     (hsymm : ∀ x y : Option α, s x y = s y x)
     (k : ℕ) (hk : 2 ≤ k)
@@ -138,12 +141,14 @@ theorem_wanted centerStar_bound (s : Option α → Option α → ℝ)
     (k : ℝ) * msaValue s Ac ≤ 2 * ((k : ℝ) - 1) * msaValue s Astar
 
 /-- **Center-star ratio form** (Gusfield 1993, Theorem 3.1): same hypotheses
-as `centerStar_bound` plus positivity of the optimum (`hpos`). Conclusion:
+as `centerStar_bound` (including `s none none = 0` and zero self-costs `s x x = 0` for every
+`x : Option α`, `hdiag`) plus positivity of the optimum (`hpos`). Conclusion:
 `V(Ac) / V(Astar) ≤ 2 * (k - 1) / k < 2`.
 
 Source: Gusfield (1993), Theorem 3.1. -/
 theorem_wanted centerStar_ratio (s : Option α → Option α → ℝ)
     (hgap : s none none = 0)
+    (hdiag : ∀ x : Option α, s x x = 0)
     (htria : ∀ x y z : Option α, s x z ≤ s x y + s y z)
     (hsymm : ∀ x y : Option α, s x y = s y x)
     (k : ℕ) (hk : 2 ≤ k)

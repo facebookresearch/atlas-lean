@@ -1,7 +1,8 @@
 # Center-star approximation
 
 **Center-star approximation** (Gusfield 1993, Theorem 3.1): hypotheses are
-a gap scoring with `s none none = 0` (`hgap`), the triangle inequality
+a gap scoring with `s none none = 0` (`hgap`) and zero self-costs `s x x = 0` for every
+`x : Option α` (`hdiag`), the triangle inequality
 (`htria`), explicit symmetry (`hsymm`), at least two strings (`hk`), the
 `pairDist` characterization (`hD_le`, `hD_att`), a center string `Xc`
 minimizing the center total (`hcenter`), spoke alignments `P j` that are
