@@ -123,16 +123,6 @@ public theorem isKDyckPath_example :
   unfold IsKDyckPath latticeHeight dyckStepHeight
   decide
 
-/-- **Every $k$-Naples parking function is $(k + 1)$-Naples.** For all natural numbers $k$
-and $n$, every $k$-Naples parking function $\alpha$ of length $n$ is also a $(k + 1)$-Naples
-parking function.
-
-Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
-*Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
-Article A44, Proposition 1. -/
-public theorem_wanted IsNaplesParkingFunction.succ {k n : ℕ} {α : Fin n → ℕ}
-    (h : IsNaplesParkingFunction k α) : IsNaplesParkingFunction (k + 1) α
-
 /-- **A $2$-Naples parking example on $\mathbb{Z}$.** Under the $2$-Naples rule on $\mathbb{Z}$,
 the cars with preferences $(4, 2, 2, 2)$, arriving in order with no spot occupied, park in the
 spots $4, 2, 1, 0$ respectively.

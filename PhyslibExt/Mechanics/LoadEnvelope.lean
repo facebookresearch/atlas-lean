@@ -215,13 +215,13 @@ lemma lowerBoxLoad_attains_boxLower {ι : Type*} [Fintype ι]
 
 /-! ## B. Supported bridge -/
 
-/-- Supported upper box bound: for the fixed output `aout`, every
-supported pattern load in the box `0 ≤ f i ≤ cap i` over the free
-coordinates has unit-load response at most the upper envelope
-value at the exported influence vector. The influence coordinates
-are those of the one vector `Mechanics.TrussCompatibility.influenceVector r a b S k aout`; no
-further inverse is formed and no solve reading of the response is
-used. -/
+/-- Supported upper box bound: for the fixed output `aout`, every supported pattern load in the box
+`0 ≤ f i ≤ cap i` over the free coordinates has unit-load response at most the upper envelope value
+at the exported influence vector. The influence coordinates are those of the one vector
+`Mechanics.TrussCompatibility.influenceVector r a b S k aout`; no further inverse is formed and no
+solve reading of the response is used. No positivity of `k` or definiteness of the supported
+stiffness is assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness,
+and then the influence vector and every response are `0`. -/
 lemma supported_unitLoadResponse_le_boxUpper {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -233,11 +233,12 @@ lemma supported_unitLoadResponse_le_boxUpper {J M F : Type*}
   rw [Mechanics.TrussCompatibility.unitLoadResponse_apply]
   exact dotProduct_le_boxUpper _ _ _ hf0 hfc
 
-/-- Supported upper attainment: for nonnegative pattern
-capacities over the free coordinates, the upper endpoint load at
-the exported influence vector lies in the box and its unit-load
-response is the supported upper envelope value, so the supported
-upper box bound is attained without forming another inverse. -/
+/-- Supported upper attainment: for nonnegative pattern capacities over the free coordinates, the
+upper endpoint load at the exported influence vector lies in the box and its unit-load response is
+the supported upper envelope value, so the supported upper box bound is attained without forming
+another inverse. No positivity of `k` or definiteness of the supported stiffness is assumed: its
+inverse is the totalized matrix inverse, zero for a singular stiffness, and then the influence
+vector and every response are `0`. -/
 lemma supported_boxUpper_attained {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -252,13 +253,13 @@ lemma supported_boxUpper_attained {J M F : Type*}
   rw [Mechanics.TrussCompatibility.unitLoadResponse_apply]
   exact upperBoxLoad_attains_boxUpper _ _ hcap
 
-/-- Supported lower box bound: for the fixed output `aout`, every
-supported pattern load in the box `0 ≤ f i ≤ cap i` over the free
-coordinates has unit-load response at least the lower envelope
-value at the exported influence vector. The influence coordinates
-are those of the one vector `Mechanics.TrussCompatibility.influenceVector r a b S k aout`; no
-further inverse is formed and no solve reading of the response is
-used. -/
+/-- Supported lower box bound: for the fixed output `aout`, every supported pattern load in the box
+`0 ≤ f i ≤ cap i` over the free coordinates has unit-load response at least the lower envelope value
+at the exported influence vector. The influence coordinates are those of the one vector
+`Mechanics.TrussCompatibility.influenceVector r a b S k aout`; no further inverse is formed and no
+solve reading of the response is used. No positivity of `k` or definiteness of the supported
+stiffness is assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness,
+and then the influence vector and every response are `0`. -/
 lemma supported_boxLower_le_unitLoadResponse {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -270,11 +271,12 @@ lemma supported_boxLower_le_unitLoadResponse {J M F : Type*}
   rw [Mechanics.TrussCompatibility.unitLoadResponse_apply]
   exact boxLower_le_dotProduct _ _ _ hf0 hfc
 
-/-- Supported lower attainment: for nonnegative pattern
-capacities over the free coordinates, the lower endpoint load at
-the exported influence vector lies in the box and its unit-load
-response is the supported lower envelope value, so the supported
-lower box bound is attained without forming another inverse. -/
+/-- Supported lower attainment: for nonnegative pattern capacities over the free coordinates, the
+lower endpoint load at the exported influence vector lies in the box and its unit-load response is
+the supported lower envelope value, so the supported lower box bound is attained without forming
+another inverse. No positivity of `k` or definiteness of the supported stiffness is assumed: its
+inverse is the totalized matrix inverse, zero for a singular stiffness, and then the influence
+vector and every response are `0`. -/
 lemma supported_boxLower_attained {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)

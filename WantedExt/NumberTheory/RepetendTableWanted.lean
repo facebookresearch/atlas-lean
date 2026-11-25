@@ -19,10 +19,12 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
 public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
+public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
 public import MathlibExt.NumberTheory.RepetendTable.OrderCount
 public import MathlibExt.NumberTheory.RepetendTable.OrderSix
+public import MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation
 public import MathlibExt.Analysis.Series.InversePowerTail
 
 /-!
@@ -38,6 +40,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MetaMathlibExt.digit_add_mul_modulus_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.BaseShift`.
 
+`MetaMathlibExt.repetend_digit_sub_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.DigitDifference`.
+
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
 
@@ -49,6 +54,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.orderOf_eq_six_ne_small_residues` is proved in
 `MathlibExt.NumberTheory.RepetendTable.OrderSix`.
+
+`MetaMathlibExt.padicValNat_sq_sub_add_one_of_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation`.
 
 `MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
 `MathlibExt.Analysis.Series.InversePowerTail`.
@@ -230,31 +238,6 @@ public theorem_wanted repetend_columns_match_iff_triple_sum_eq (p k a b : ℕ) (
     (∀ i < L, Nat.Coprime i L →
         (b ^ i % n + b ^ (i + L / 3) % n + b ^ (i + 2 * L / 3) % n) / n = 1) ↔
       (C (2 * a + 1) = C (4 * a + 2) ∧ C (8 * a + 4) = C (10 * a + 5))
-
-/-- **Differences of repetend digits.** Let $n \ge 1$ and $b$ be natural numbers with
-$\gcd(b, n) = 1$. For $x, j \ge 0$ put $b_x = b^x \bmod n$ and
-$r_{x,j} = \lfloor b_x^{j+1}/n \rfloor \bmod b_x$. Then for all natural numbers $y, m, d, e$,
-$$n (r_{ym,e} - r_{y,d}) = b_{ym} b_{yme} - b_{ym(e+1)} - b_y b_{yd} + b_{y(d+1)}.$$
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 7 (`integers-2025-A26-lem-7`). -/
-public theorem_wanted repetend_digit_sub_eq (n b y m d e : ℕ) (hn : 0 < n) (hb : Nat.Coprime b n) :
-    let r : ℕ → ℕ → ℕ := fun x j => (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-    (n : ℤ) * ((r (y * m) e : ℤ) - r y d) =
-      ((b ^ (y * m) % n : ℕ) : ℤ) * (b ^ (y * m * e) % n : ℕ) - (b ^ (y * m * (e + 1)) % n : ℕ) -
-        ((b ^ y % n : ℕ) : ℤ) * (b ^ (y * d) % n : ℕ) + (b ^ (y * (d + 1)) % n : ℕ)
-
-/-- **The $p$-adic valuation of $B^2 - B + 1$ for a base of order $6p^j$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 6$, let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, and
-let $B$ be a natural number whose multiplicative order modulo $p^i$ is $6p^j$. Then the $p$-adic
-valuation of $B^2 - B + 1$ is exactly $i - j$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 8 (`integers-2025-A26-lem-8`). -/
-public theorem_wanted padicValNat_sq_sub_add_one_of_orderOf_eq (p i j B : ℕ) (hp : p.Prime)
-    (hp6 : p % 6 = 1)
-    (hj : 0 < j) (hij : 2 * j ≤ i) (hB : orderOf (B : ZMod (p ^ i)) = 6 * p ^ j) :
-    padicValNat p (B ^ 2 - B + 1) = i - j
 
 /-- **A power of $B$ equal to $B - 1$ modulo $p^i$.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
 let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, put $n = p^i$ and $Q = p^j$, and

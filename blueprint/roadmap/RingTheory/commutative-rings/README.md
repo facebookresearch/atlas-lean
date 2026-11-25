@@ -4,3 +4,4 @@ Ideals of commutative rings and the operations on them: generation, sums, produc
 
 - [An ideal of a commutative ring with identity is maximal iff the quotient is a field](maximal-ideal-field.md)
 - [Units characterization of the Jacobson radical of a commutative ring](jacobson-radical-unit-characterization.md)
+- [Products and powers of ideals](products-and-powers-of-ideals/README.md)

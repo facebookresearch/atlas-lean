@@ -27,9 +27,8 @@ is read here as `(1, …, p + 1)`, i.e. `y_i = i + 1`.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Nat.Choose.Basic
 public import MathlibExt.NumberTheory.Recurrences.SchutzKellyBinomialSum
-public import MathlibExt.NumberTheory.Recurrences.SuperLeonardoP
+public import MathlibExt.NumberTheory.Recurrences.SuperLeonardoPBinomial
 
 namespace MetaMathlibExt
 
@@ -88,48 +87,6 @@ public theorem_wanted superLeonardoP_eq_fibonacciP_sum (p k : ℕ) (hp : 1 ≤ p
       (fibonacciP p (n - p + 1) : ℝ) * x p +
         (∑ i ∈ Finset.range (min (p - 1) (n - p - 1) + 1),
           (fibonacciP p (n - p - i) : ℝ) * x i) +
-        max 0 (∑ j ∈ Finset.range ((n - p) / (p + 1) + 1),
-          ((n - p - p * j).choose (j + 1) : ℝ)) * k
-
-/-- **Binomial sum formula for Fibonacci p-numbers.** For all natural numbers $p \ge 1$ and $n$,
-the Fibonacci $p$-numbers $F_p$ satisfy
-$$F_p(n+1) = \sum_{i=0}^{\lfloor n/(p+1) \rfloor} \binom{n-ip}{i}.$$
-
-The paper (Theorem 8, quoting Kuhapatanakul) also gives the form
-$F_p(n) = \sum_{i=0}^{\lfloor (n-1)/(p+1) \rfloor} \binom{n-1-ip}{i}$, which is the same identity
-with $n$ shifted by one. The paper allows all natural $p$, but at $p = 0$ the sequence is
-identically zero ($F_0(1) = F_0(0) + F_0(0) = 0$) while the sum at $n = 0$ is
-$\binom{0}{0} = 1$, so $p \ge 1$ is assumed.
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Theorem 8 (Kuhapatanakul). -/
-public theorem_wanted fibonacciP_succ_eq_sum_choose (p n : ℕ) (hp : 1 ≤ p) :
-    fibonacciP p (n + 1) = ∑ i ∈ Finset.range (n / (p + 1) + 1), (n - i * p).choose i
-
-/-- **Explicit formula for the supergeneralized Leonardo p-numbers.** For all natural numbers
-$p \ge 1$, $k$ and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo
-$p$-numbers $\mathcal{L}_{p,k,x}$ satisfy
-$$\mathcal{L}_{p,k,x}(n) =
-\Big(\sum_{i=0}^{\lfloor (n-p)/(p+1) \rfloor} \binom{n-p-ip}{i}\Big) x_p +
-\sum_{i=0}^{\min(p-1,\,n-p-1)} \Big(\sum_{j=0}^{\lfloor (n-p-i-1)/(p+1) \rfloor}
-\binom{n-p-i-1-jp}{j}\Big) x_i +
-\max\Big\{0, \sum_{j=0}^{\lfloor (n-p)/(p+1) \rfloor} \binom{n-p-pj}{j+1}\Big\} \cdot k.$$
-
-This is Theorem 9 of the paper with the factor $k$ restored: as in Corollary 7, the printed
-theorem omits the factor $k$ on the last term and is false without it (same counterexample:
-$p = 1$, $k = 2$, $n = 2$, $x = (1, 1)$ gives $4$ versus $3$).
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Theorem 9. -/
-public theorem_wanted superLeonardoP_eq_sum_choose (p k : ℕ) (hp : 1 ≤ p) (x : ℕ → ℝ) (n : ℕ)
-    (hn : p < n) :
-    superLeonardoP p k x n =
-      (∑ i ∈ Finset.range ((n - p) / (p + 1) + 1), ((n - p - i * p).choose i : ℝ)) * x p +
-        (∑ i ∈ Finset.range (min (p - 1) (n - p - 1) + 1),
-          (∑ j ∈ Finset.range ((n - p - i - 1) / (p + 1) + 1),
-            ((n - p - i - 1 - j * p).choose j : ℝ)) * x i) +
         max 0 (∑ j ∈ Finset.range ((n - p) / (p + 1) + 1),
           ((n - p - p * j).choose (j + 1) : ℝ)) * k
 

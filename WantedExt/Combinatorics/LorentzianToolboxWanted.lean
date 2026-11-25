@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.BivariateLorentzian
+public import MathlibExt.Combinatorics.Matroid.IndependenceLorentzian
 public import MathlibExt.Combinatorics.Matroid.MConvex
 public import WantedExt.Combinatorics.LorentzianPolynomialsWanted
 public import Mathlib.Combinatorics.Matroid.Rank.ENat
@@ -87,17 +88,5 @@ theorem_wanted basisGeneratingPolynomial_mem_L {n d : ℕ} (M : _root_.Matroid (
     (hg : g.1 = ∑ B ∈ Finset.univ.filter (fun B : Finset (Fin n) => M.IsBase (B : Set (Fin n))),
       monomial (indicatorVec B) (1 : ℝ)) :
     g ∈ L n d
-
-open scoped Classical in
-/-- **Independence generating polynomials of matroids are Lorentzian** (Brändén and Huh,
-*Lorentzian polynomials*, Ann. of Math. 192 (2020), proof of Theorem 4.14, from Theorem 4.10).
-For a matroid `M` on `[n]`, the homogeneous polynomial
-`f_M(w_0, w_1, …, w_n) = ∑_{A independent} w^A w_0^{n - |A|}` of degree `n` in `n + 1` variables
-lies in `L (n + 1) n`. Here `w_0` is the variable `0 : Fin (n + 1)` and `w_i` is `i.succ`. -/
-theorem_wanted independenceGeneratingPolynomial_mem_L {n : ℕ} (M : _root_.Matroid (Fin n))
-    (g : H (n + 1) n)
-    (hg : g.1 = ∑ A ∈ Finset.univ.filter (fun A : Finset (Fin n) => M.Indep (A : Set (Fin n))),
-      monomial (single 0 (n - A.card) + indicatorVec (A.map (Fin.succEmb n))) (1 : ℝ)) :
-    g ∈ L (n + 1) n
 
 end MathlibExt.Combinatorics.LorentzianToolboxWanted

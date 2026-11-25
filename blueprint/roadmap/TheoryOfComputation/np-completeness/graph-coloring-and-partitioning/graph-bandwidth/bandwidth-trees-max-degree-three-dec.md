@@ -1,0 +1,3 @@
+# BANDWIDTH ON TREES OF MAXIMUM DEGREE 3 as a decision problem
+
+The decision problem BANDWIDTH ON TREES OF MAXIMUM DEGREE 3 accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for BANDWIDTH ON TREES OF MAXIMUM DEGREE 3 and feasible for BANDWIDTH: some ordering of $0, \dots, n-1$ places the endpoints of every pair in $E$ at positions differing by at most $K$. It rejects every bitstring that does not decode to such an instance.

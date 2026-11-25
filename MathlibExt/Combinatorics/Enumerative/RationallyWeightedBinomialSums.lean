@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Intervals
@@ -22,6 +23,7 @@ import Mathlib.Algebra.Order.Field.Rat
 import Mathlib.Order.Fin.Basic
 import Mathlib.RingTheory.Polynomial.Bernstein
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 import MathlibExt.NumberTheory.BinomialFibonacciConvolution
 import MathlibExt.NumberTheory.DilcherFiniteMultipleHarmonic
@@ -357,6 +359,104 @@ public theorem sum_pow_mul_choose_mul_fib_small (N : ℕ) :
     Finset.Ico_add_one_right_eq_Icc] at moment
   simpa [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial, mul_assoc, mul_comm,
     mul_left_comm] using (show _ ∧ _ ∧ _ ∧ _ from ⟨moment 1, moment 2, moment 3, moment 4⟩)
+
+namespace sum_pow_mul_choose_mul_secondOrder
+
+-- One binomial step applies the recurrence once, advancing the sequence by two.
+private theorem binomial_shift (a b : ℝ) (W : ℕ → ℝ)
+    (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (n m : ℕ) :
+    ∑ k ∈ Finset.range (n + 1), (n.choose k : ℝ) * (a ^ k * b ^ (n - k) * W (k + m)) =
+      W (2 * n + m) := by
+  induction n generalizing m with
+  | zero => simp
+  | succ n ih =>
+    rw [Finset.sum_choose_succ_mul (fun k j ↦ a ^ k * b ^ j * W (k + m)) n,
+      ← Finset.sum_add_distrib, show 2 * (n + 1) + m = 2 * n + (m + 2) by omega, ← ih]
+    refine Finset.sum_congr rfl fun k hk => ?_
+    have hk' := Finset.mem_range.mp hk
+    rw [show n + 1 - k = (n - k) + 1 by omega, pow_succ b, pow_succ a,
+      show k + (m + 2) = (k + m) + 2 by omega, hW, show k + 1 + m = k + m + 1 by omega]
+    ring
+
+-- Each falling-factorial factor lowers the binomial row and contributes a factor of a.
+private theorem factorial_moment (a b : ℝ) (W : ℕ → ℝ)
+    (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (n i m : ℕ) :
+    ∑ k ∈ Finset.range (n + 1),
+        (k.descFactorial i : ℝ) * n.choose k * a ^ k * b ^ (n - k) * W (k + m) =
+      (n.descFactorial i : ℝ) * a ^ i * W (2 * n + m - i) := by
+  induction i generalizing n m with
+  | zero => simpa [mul_assoc] using binomial_shift a b W hW n m
+  | succ i ih =>
+    cases n with
+    | zero => simp
+    | succ n =>
+      rw [Finset.sum_range_succ']
+      simp only [Nat.zero_descFactorial_succ, Nat.cast_zero, zero_mul, add_zero]
+      calc
+        _ = ((n : ℝ) + 1) * a * ∑ k ∈ Finset.range (n + 1),
+            (k.descFactorial i : ℝ) * n.choose k * a ^ k * b ^ (n - k) * W (k + (m + 1)) := by
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl fun k _ => ?_
+          have h : ((n : ℝ) + 1) * n.choose k = ((n + 1).choose (k + 1) : ℝ) * (k + 1) := by
+            exact_mod_cast Nat.add_one_mul_choose_eq n k
+          rw [Nat.succ_descFactorial_succ, Nat.cast_mul, Nat.cast_succ, pow_succ,
+            Nat.add_sub_add_right, show k + 1 + m = k + (m + 1) by omega]
+          linear_combination
+            -(k.descFactorial i : ℝ) * a ^ k * a * b ^ (n - k) * W (k + (m + 1)) * h
+        _ = _ := by
+          rw [ih, Nat.succ_descFactorial_succ, Nat.cast_mul, Nat.cast_succ, pow_succ,
+            show 2 * (n + 1) + m - (i + 1) = 2 * n + (m + 1) - i by omega]
+          ring
+
+end sum_pow_mul_choose_mul_secondOrder
+
+/-- **Power-weighted binomial sums of a second-order linear recurrence.** Let $a$ and $b$ be real
+numbers and let $(W_n)_{n \ge 0}$ be a real sequence with $W_{n+2} = a W_{n+1} + b W_n$ for all
+$n \ge 0$. Write $S(r, i)$ for the Stirling numbers of the second kind and
+$(N)_i = N(N-1) \cdots (N-i+1)$ for the falling factorial, with $(N)_0 = 1$. Then for all natural
+numbers $N$ and $r$, with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r \binom{N}{k} a^k b^{N-k} W_k = \sum_{i=0}^{r} S(r, i) (N)_i a^i W_{2N-i},$$
+where the terms with $i > N$ vanish because $(N)_i = 0$.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
+public theorem sum_pow_mul_choose_mul_secondOrder (a b : ℝ) (W : ℕ → ℝ)
+    (hW : ∀ n, W (n + 2) = a * W (n + 1) + b * W n) (N r : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), (k : ℝ) ^ r * N.choose k * a ^ k * b ^ (N - k) * W k =
+      ∑ i ∈ Finset.range (r + 1),
+        (Nat.stirlingSecond r i : ℝ) * N.descFactorial i * a ^ i * W (2 * N - i) := by
+  have hpow (k : ℕ) : (k : ℝ) ^ r =
+      ∑ i ∈ Finset.range (r + 1), (Nat.stirlingSecond r i : ℝ) * k.descFactorial i := by
+    exact_mod_cast Nat.pow_eq_sum_stirlingSecond_mul_descFactorial k r
+  simp_rw [hpow, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simpa only [Finset.mul_sum, mul_assoc, Nat.add_zero] using
+    congrArg ((Nat.stirlingSecond r i : ℝ) * ·)
+      (sum_pow_mul_choose_mul_secondOrder.factorial_moment a b W hW N i 0)
+
+/-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
+($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
+kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling factorial, with $(N)_0 = 1$. For all natural
+numbers $N$ and $r$, with the convention $0^0 = 1$,
+$$\sum_{k=0}^{N} k^r \binom{N}{k} L_k = \sum_{i=0}^{r} S(r, i) \, (N)_i \, L_{2N-i},$$
+where the terms with $i > N$ vanish because $(N)_i = 0$.
+
+Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
+Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
+Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
+public theorem sum_pow_mul_choose_mul_lucasNumber (N r : ℕ) :
+    ∑ k ∈ Finset.range (N + 1), k ^ r * N.choose k * lucasNumber k =
+      ∑ i ∈ Finset.range (r + 1),
+        Nat.stirlingSecond r i * N.descFactorial i * lucasNumber (2 * N - i) := by
+  have hL (n : ℕ) :
+      (lucasNumber (n + 2) : ℝ) = 1 * (lucasNumber (n + 1) : ℝ) + 1 * (lucasNumber n : ℝ) := by
+    rw [one_mul, one_mul, ← Nat.cast_add]
+    rfl
+  have h := sum_pow_mul_choose_mul_secondOrder 1 1 (fun n ↦ (lucasNumber n : ℝ)) hL N r
+  simp only [one_pow, mul_one] at h
+  exact_mod_cast h
 
 open Polynomial in
 /-- **Scherk's identity.** Write $S(r, i)$ for the Stirling numbers of the second kind. Let $N$ and

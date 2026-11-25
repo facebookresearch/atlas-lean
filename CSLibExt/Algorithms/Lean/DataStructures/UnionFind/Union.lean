@@ -19,9 +19,10 @@ import all CSLibExt.Algorithms.Lean.DataStructures.UnionFind.Find
 # Canonical rank-directed union and link
 
 The three public facts give the complete saved rank frame and the deterministic
-rank-selected root of canonical Batteries LINK/UNION. Private source-refinement
-proofs count actual rank tests and parent/rank assignments, and reuse the settled
-FIND refinement through a private import rather than a copied implementation.
+rank-selected root of canonical Batteries LINK/UNION. Source-refinement
+definitions and proofs in `LinkInternal` count actual rank tests and parent/rank
+assignments, and reuse the settled FIND refinement through a private import
+rather than a copied implementation.
 
 Distinct-root rank branches follow CLRS4 §19.3, printed530. Equal-index LINK
 returns without events as a disclosed library extension. These selected events
@@ -39,7 +40,7 @@ $\rho_A(i)$ for the rank stored at index $i$ of $A$, or $0$ if $i$ is not an ind
 $x, y$ be indices of $A$ and let $A'$ be the array obtained from $A$ by the Batteries link by rank
 of $x$ and $y$. Then for every natural number $i$, $\rho_{A'}(i) = \rho_A(y) + 1$ if $x \ne y$,
 $\rho_A(x) = \rho_A(y)$ and $i = y$, and $\rho_{A'}(i) = \rho_A(i)$ otherwise. -/
-theorem rankD_linkAux (arr : Array UFNode) (x y : Fin arr.size) (i : Nat) :
+public theorem rankD_linkAux (arr : Array UFNode) (x y : Fin arr.size) (i : Nat) :
     UnionFind.rankD (UnionFind.linkAux arr x y) i =
       if x.val ≠ y.val ∧ arr[x.val].rank = arr[y.val].rank ∧ y.val = i then
         arr[y.val].rank + 1 else UnionFind.rankD arr i := by
@@ -120,7 +121,7 @@ obtained from the node array of $U_2$ by linking $r_x$ and $r_y$ by rank: nothin
 $r_x = r_y$; otherwise, if $\operatorname{rank}(r_y) < \operatorname{rank}(r_x)$ then $r_y$ gets
 parent $r_x$, and if not then $r_x$ gets parent $r_y$ and, when the two ranks are equal, the rank
 of $r_y$ increases by one. -/
-theorem union_carried (self : UnionFind) (x y : Fin self.size) :
+public theorem union_carried (self : UnionFind) (x y : Fin self.size) :
     let first := self.find x
     let y₁ : Fin first.1.size := ⟨y.val, by rw [first.2.property]; exact y.isLt⟩
     let second := first.1.find y₁
@@ -133,7 +134,7 @@ theorem union_carried (self : UnionFind) (x y : Fin self.size) :
 $S$, and let $S'$ be the structure returned by FIND on $x$ with path compression. For every
 natural number $i$, the rank of $i$ in $S'$ equals the rank of $i$ in $S$, where the rank of an
 index that is not a node is $0$. -/
-theorem rank_find (self : UnionFind) (x : Fin self.size) (i : Nat) :
+public theorem rank_find (self : UnionFind) (x : Fin self.size) (i : Nat) :
     (self.find x).1.rank i = self.rank i := by
   exact UnionFind.rankD_findAux
 
@@ -164,7 +165,7 @@ the parent of $x$ to $y$ (one parent write) and makes a second rank test, and if
 and $y$ are equal it also increases the rank of $y$ by one (one rank write).
 
 The equality test $x = y$ is not counted as a rank test. -/
-@[no_expose] def countedLinkAux (arr : Array UFNode) (x y : Fin arr.size) :
+@[no_expose] public def countedLinkAux (arr : Array UFNode) (x y : Fin arr.size) :
     TimeM (Nat × Nat × Nat) (Array UFNode) := do
   if x.val = y then
     pure arr
@@ -188,7 +189,7 @@ The equality test $x = y$ is not counted as a rank test. -/
 /-- **Counted linking returns the linked array.** For an array $A$ of union-find nodes and
 indices $x, y$ of $A$, the array returned by counted linking of $x$ and $y$ in $A$ is exactly the
 array produced by the uncounted Batteries link by rank of $x$ and $y$ in $A$. -/
-theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
+public theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
     (countedLinkAux arr x y).ret = UnionFind.linkAux arr x y := by
   by_cases hxy : x.val = y.val
   · simp [countedLinkAux, UnionFind.linkAux, hxy]
@@ -203,7 +204,7 @@ of $x$ and $y$ in $A$ makes $(t, p, w)$ rank tests, parent writes and rank write
 $(t, p, w)$ is $(0, 0, 0)$ if $x = y$, is $(1, 1, 0)$ if $x \ne y$ and $r_y < r_x$, is
 $(2, 1, 1)$ if $x \ne y$ and $r_x = r_y$, and is $(2, 1, 0)$ otherwise, that is, if $x \ne y$
 and $r_x < r_y$. -/
-theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
+public theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
     (countedLinkAux arr x y).time =
       if x.val = y.val then (0, 0, 0)
       else if arr[y.val].rank < arr[x.val].rank then (1, 1, 0)
@@ -224,7 +225,7 @@ linking of $r_x$ and $r_y$ in the node array of $S_2$. It returns the array prod
 linking, with cost $((a, b), (t, p, w))$, where $a$ and $b$ are the total numbers of root tests
 and parent writes of the two FIND calls, and $(t, p, w)$ counts the rank tests, parent writes and
 rank writes of the linking. -/
-@[no_expose] def countedUnion (self : UnionFind) (x y : Fin self.size) :
+@[no_expose] public def countedUnion (self : UnionFind) (x y : Fin self.size) :
     TimeM ((Nat × Nat) × (Nat × Nat × Nat)) (Array UFNode) :=
   let first := Internal.countedFind self x
   let y₁ : Fin first.ret.1.size :=
@@ -238,7 +239,7 @@ rank writes of the linking. -/
 /-- **Counted union returns the union's array.** For a union-find structure $S$ and indices
 $x, y$ of $S$, the array returned by the counted union of $x$ and $y$ in $S$ equals the node array
 of the Batteries union of $x$ and $y$ in $S$ (union by rank with path compression). -/
-theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
+public theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
     (countedUnion self x y).ret = (self.union x y).arr := by
   let last (first : (s : UnionFind) × {_root : Fin s.size // s.size = self.size})
       (second : (s : UnionFind) × {_root : Fin s.size // s.size = first.1.size}) :=
@@ -260,7 +261,7 @@ theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
 union-find structure $S$ and indices $x, y$ of $S$, in the counted union of $x$ and $y$ in $S$ the
 total number of root tests made by its two FIND calls equals the total number of parent writes
 they make plus $2$. -/
-theorem countedUnion_find_balance (self : UnionFind) (x y : Fin self.size) :
+public theorem countedUnion_find_balance (self : UnionFind) (x y : Fin self.size) :
     (countedUnion self x y).time.1.1 = (countedUnion self x y).time.1.2 + 2 := by
   let first := Internal.countedFind self x
   let y₁ : Fin first.ret.1.size :=
