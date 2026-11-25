@@ -1,6 +1,12 @@
 # McLeish's martingale central limit theorem
 
-On a probability space, let $X_{n,k}$ be a martingale difference array: for each row $n$ the partial sums $\sum_{j<k} X_{n,j}$ form a martingale with respect to a filtration $\mathcal{F}_n$. Consider the row sums $S_n = \sum_{k < r_n} X_{n,k}$. Assume\n\n- (a) there is a finite $B$ with $E\big[\max_{k<r_n} X_{n,k}^2\big] \le B$ for all large $n$;\n- (b) $\max_{k<r_n} |X_{n,k}| \to 0$ in probability;\n- (c) $\sum_{k<r_n} X_{n,k}^2 \to v$ in probability, for a constant $v \ge 0$.\n\nThen $S_n$ converges in distribution to $N(0, v)$. No independence and no conditional variance assumption is made.
+On a probability space, let $X_{n,k}$ be a martingale difference array: for each row $n$ the partial sums $\sum_{j<k} X_{n,j}$ form a martingale with respect to a filtration $\mathcal{F}_n$. Consider the row sums $S_n = \sum_{k < r_n} X_{n,k}$. Assume
+
+- (a) there is a finite $B$ with $E\big[\max_{k<r_n} X_{n,k}^2\big] \le B$ for all large $n$;
+- (b) $\max_{k<r_n} |X_{n,k}| \to 0$ in probability;
+- (c) $\sum_{k<r_n} X_{n,k}^2 \to v$ in probability, for a constant $v \ge 0$.
+
+Then $S_n$ converges in distribution to $N(0, v)$. No independence and no conditional variance assumption is made.
 
 ## Sources
 
