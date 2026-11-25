@@ -10,6 +10,7 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Rigid footing on a Winkler foundation](rigid-footing-on-a-winkler-foundation/README.md)
 - [Stiffness method for beams and frames](stiffness-method-for-beams-and-frames/README.md)
 - [Truss equilibrium, load envelopes and load inference](truss-equilibrium-load-envelopes-and-load-infere/README.md)
+- [Vibrations of a monatomic chain](vibrations-of-a-monatomic-chain/README.md)
 - [Kern rule for eccentrically loaded footings](kern-condition-iff.md)
 - [Contact and tribology](contact-and-tribology/README.md)
 - [Plasticity](plasticity/README.md)
