@@ -244,7 +244,9 @@ nonempty closed walk, and every event reachable from the source event `s`, some 
 schedule puts `s` at tick `0` and every event `v` at the duration of a walk from `s` to `v`. With
 the critical-path lower bound this is the earliest schedule (`τ' s + τ v ≤ τ' v` for every
 feasible `τ'`), and the provided walk to each event, a sink in particular, has maximum duration
-among walks from `s`. A specification, not an algorithm. -/
+among walks from `s`. No separate finiteness hypothesis on the events is needed: by reachability
+every event other than `s` is the head of an arc, so there are finitely many. A specification,
+not an algorithm. -/
 theorem exists_isFeasibleSchedule_eq_sum {V E : Type*} [Finite E] {tail head : E → V}
     (dur : E → ℕ) {s : V} (hacyc : ∀ v (l : List E), IsArcWalk tail head v v l → l = [])
     (hreach : ∀ v, ∃ l, IsArcWalk tail head s v l) :
