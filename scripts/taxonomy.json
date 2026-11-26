@@ -1340,6 +1340,7 @@
   "CSLibExt/Algorithms/SAT/Horn/Basic": {"to": "Logic/propositional-logic", "title": "Horn satisfiability"},
   "CSLibExt/Algorithms/SAT/Tseitin/Basic": {"to": "Logic/propositional-logic", "title": "Tseitin transformation"},
   "CSLibExt/Algorithms/SAT/TwoSAT/Basic": {"to": "Logic/propositional-logic", "title": "2-satisfiability"},
+  "CSLibExt/Algorithms/Simulation/SelectBest": {"to": "ComputerScience/randomized-algorithms", "title": "Monte Carlo estimation"},
   "CSLibExt/AutomatedReasoning/StringConstraints": {"to": "TheoryOfComputation/decision-procedures", "title": "String constraints and word equations"},
   "CSLibExt/Bioinformatics/Alignment/GotohTable": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Gotoh affine-gap alignment"},
   "CSLibExt/Bioinformatics/Alignment/NeedlemanWunschTable": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Pairwise sequence alignment"},
