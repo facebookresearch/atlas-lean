@@ -7,3 +7,4 @@
 - [Invariant subsets lie in the largest one](subset-largest-invariant-subset.md)
 - [Largest Invariant Subset subset largest Forward Invariant Subset](largest-invariant-subset-subset-largest.md)
 - [Cluster points lie in eventually containing closed sets](mem-of-map-cluster-pt-of-eventually-mem.md)
+- [LaSalle's invariance principle](lasalle-invariant.md)

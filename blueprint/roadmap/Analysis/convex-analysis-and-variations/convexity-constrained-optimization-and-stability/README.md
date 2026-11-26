@@ -47,3 +47,5 @@
 - [Derivative of the ideal mixing energy](has-deriv-at-ideal-mixing-energy.md)
 - [Fderiv ideal Mixing Energy half](fderiv-ideal-mixing-energy-half.md)
 - [Supporting line of the ideal mixing energy](ideal-mixing-energy-add-fderiv-le.md)
+- [Convex KKT conditions with affine equalities are sufficient](is-min-on-of-karush-kuhn-tucker-convex-a.md)
+- [Convex KKT sufficiency with affine equality constraints](is-min-on-of-karush-kuhn-tucker-convex-l.md)

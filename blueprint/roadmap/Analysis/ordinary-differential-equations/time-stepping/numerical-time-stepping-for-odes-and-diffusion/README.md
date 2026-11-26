@@ -13,3 +13,6 @@
 ## E. Defects through the ten-step decay recurrence
 
 - [The exponential form forgets the weights](ten-step-defect-le-unweighted.md)
+- [Convex-combination form of an FTCS step](ftcs-step-convex.md)
+- [FTCS preserves nonnegativity](ftcs-step-nonneg.md)
+- [Numeric error bound for explicit Euler on exponential decay](decay-euler-numeric-bound.md)
