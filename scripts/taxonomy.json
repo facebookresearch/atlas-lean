@@ -9896,6 +9896,7 @@
   "MathlibExt/Analysis/OperatorTheory/LpKernelIntegralOperatorBounded": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Integral operators with L^p kernels"},
   "MathlibExt/Analysis/OperatorTheory/MulByIdOnL2OneTwoSelfAdjoint": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Multiplication operators on L²"},
   "MathlibExt/Analysis/OperatorTheory/MulByIdentityBoundedOnL2UnitInterval": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Multiplication operators on L²"},
+  "MathlibExt/Analysis/OperatorTheory/UnilateralShiftCharacterization": {"to": "Analysis/operator-theory/shift-toeplitz-hankel", "title": "Unilateral shift"},
   "MathlibExt/Analysis/OperatorTheory/VolterraBesselExpansion": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Volterra operator"},
   "MathlibExt/Analysis/Optimization/BarzilaiBorwein": {"to": "Analysis/numerical-analysis", "title": "Barzilai–Borwein step size"},
   "MathlibExt/Analysis/Optimization/DaiYuan": {"to": "Analysis/numerical-analysis", "title": "Nonlinear conjugate gradient methods"},
