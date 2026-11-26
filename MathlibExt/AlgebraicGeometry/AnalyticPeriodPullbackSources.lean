@@ -113,7 +113,10 @@ def originalMap : SY.regular ⟶ (push p K B X Y f PX PY E Q).obj SX.regular :=
             (inverseScalar E.functor (regularEtale p Y.left SY.regularSheaf) (regularEtale p X.left SX.regularSheaf)
               (AnalyticRelativeDeRhamSources.regularScalar p f.left E SX.regularSheaf SY.regularSheaf)))
 
-/-- Original stalk-valuative integrality preservation is a direct source proof target. -/
+/-- The condition that pullback along $f$ preserves integral functions: for every object $U$ of the
+small étale site of $Y$, pullback along the projection $U \times_Y X \to U$ maps the functions $a$
+on $U$ with $|a(x)| \le 1$ at every point $x$ (for the valuation at $x$) to functions on
+$U \times_Y X$ with the same property. -/
 def PositivePreservation : Prop :=
   ∀ (U : (AnalyticProObjectSites.Etale p Y.left)ᵒᵖ) (a : SY.integral.rings U),
     ((E.regularScalar.app U).hom a.val) ∈ SX.integral.rings (E.functor.op.obj U)
@@ -225,9 +228,18 @@ def hatMap (a : positiveCompletion p SY.positive ⟶ (push p K B X Y f PX PY E Q
   MathlibExt.CategoryTheory.RingSheafMapOperations.localizePMap Q.functor p
     (positiveCompletion p SY.positive) (positiveCompletion p SX.positive) a
 
-/-- Every map in this source is fixed by ALL original finite projections or pushout units.
-The remaining provider work constructs/proves those intermediate sources; there is no cohomology
-object, higher connection or final comparison morphism among its fields. -/
+/-- Maps of period sheaves along $f$, from the period sheaves of $Y$ to the pushforwards along $f$
+of those of $X$: maps on the completed integral structure sheaf $\widehat{\mathcal{O}}^+$, on its
+tilt, on $\mathbb{B}^+_{\mathrm{dR}}$ and on the naive structural sheaves
+$\mathcal{O}\mathbb{B}_{\mathrm{inf}}$ and $\mathcal{O}\mathbb{B}^+_{\mathrm{dR}}$. Each of these
+maps commutes with the projections to the finite quotient levels, on which it induces the maps
+given by the integral pullback `h` (for $\widehat{\mathcal{O}}^+$ and the tilt) or by the maps on
+$\mathbb{B}_{\mathrm{inf}}$ and $\mathcal{O}\mathbb{B}_{\mathrm{inf}}$ (for
+$\mathbb{B}^+_{\mathrm{dR}}$ and $\mathcal{O}\mathbb{B}^+_{\mathrm{dR}}$). The maps commute with
+$\theta$, with the structure maps from $\mathcal{O}$ and $\mathbb{B}_{\mathrm{inf}}$ to
+$\mathcal{O}\mathbb{B}_{\mathrm{inf}}$ and with the map from $\mathbb{B}^+_{\mathrm{dR}}$ to
+$\mathcal{O}\mathbb{B}^+_{\mathrm{dR}}$, and the map on $\mathbb{B}^+_{\mathrm{dR}}$ sends local
+generators of $\ker\theta$ to local generators of $\ker\theta$. -/
 structure NaturalPeriodMaps where
   completedPositive : positiveCompletion p SY.positive ⟶
     (push p K B X Y f PX PY E Q).obj (positiveCompletion p SX.positive)
