@@ -1,5 +1,6 @@
 # Fermat's Last Theorem for a regular prime
 
-**Fermat's Last Theorem for a regular prime**, in the form with the
-canonical cyclotomic field `CyclotomicField p ℚ`: if `p` is coprime to the
-class number of that field and `p ≠ 2`, then `FermatLastTheoremFor p`.
+Let `p` be an odd prime that is
+coprime to the class number of the canonical `p`-th cyclotomic field
+`CyclotomicField p ℚ`. Then `FermatLastTheoremFor p`: there are no positive integers
+`a`, `b`, `c` with `a ^ p + b ^ p = c ^ p`.
