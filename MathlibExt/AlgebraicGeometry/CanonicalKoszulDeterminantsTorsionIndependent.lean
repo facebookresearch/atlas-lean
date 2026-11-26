@@ -27,8 +27,10 @@ Authors: Johannes Hölzl, Patrick Massot, Casper Putz, Anne Baanen
 The literal kernel-basis/lift torsion is independent of the adapted bases
 in the original cochain degree order.
 
-Sources: Knudsen--Mumford, Sections 1--2; Yuan--Zhang,
-arXiv:2105.13587v9, Section 4.2.1, pp108--110.
+Sources: Knudsen--Mumford, *The projectivity of the moduli space of stable
+curves I: preliminaries on 'det' and 'Div'*, Math. Scand. 39 (1976), 19--55,
+Chapter I, pp. 21 and 31--34 (the determinant construction). The Lean proof
+keeps its own fixed degree order.
 -/
 
 set_option autoImplicit false
