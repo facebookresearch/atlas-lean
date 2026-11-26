@@ -1,6 +1,6 @@
 # Homomorphism testing over finite abelian groups and plurality correction
 
-Let $G, H$ be finite abelian groups and $f : G \to H$. Let $\varepsilon = \Pr_{x, y}[f(x) + f(y) \ne f(x + y)]$ with $x, y$ uniform and independent, and let $\delta$ be the minimum over homomorphisms $\phi$ of $\Pr_x[f(x) \ne \phi(x)]$. Then: (1) for every $x$ the plurality value $g(x)$ of $f(x + y) - f(y)$ over uniform $y$ has frequency at least $1 - 2\varepsilon$; (2) if $\varepsilon < 1/6$ then $g$ is a homomorphism and $\Pr_x[f(x) \ne g(x)] \le 2\varepsilon$; (3) unconditionally $\varepsilon \ge \min(1/6,\ \delta/2)$.
+Let $G, H$ be finite abelian groups and $f : G \to H$. Let $\varepsilon = \Pr_{x, y}[f(x) + f(y) \ne f(x + y)]$ with $x, y$ uniform and independent, and let $\delta$ be the minimum over homomorphisms $\phi$ of $\Pr_x[f(x) \ne \phi(x)]$. Then: (1) for every $x$ the plurality value $g(x)$ of $f(x + y) - f(y)$ over uniform $y$ has frequency at least $1 - 2\varepsilon$; (2) if $\varepsilon < 1/6$ then $g$ is a homomorphism and $\Pr_x[f(x) \ne g(x)] \le 2\varepsilon$; (3) unconditionally $\varepsilon \ge \min(1/6,\ \delta/2)$ (Goldreich 2008, Exercise 9.21).
 
 ## Proof sketch
 

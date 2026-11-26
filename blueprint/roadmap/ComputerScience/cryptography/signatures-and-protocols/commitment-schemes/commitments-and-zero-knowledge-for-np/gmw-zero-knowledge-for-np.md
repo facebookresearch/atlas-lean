@@ -4,7 +4,7 @@ If one-way functions secure against nonuniform adversaries exist, then every lan
 
 ## Proof sketch
 
-Nonuniform one-way functions give nonuniform pseudorandom generators and hence Naor commitments with nonuniform hiding. Commitments yield a zero-knowledge proof for an NP-complete relation (graph 3-colorability, or a masked 3SAT protocol) with constant soundness error; sequential repetition makes the error negligible, and Levin reductions transfer the proof to every NP relation.
+Nonuniform one-way functions give nonuniform pseudorandom generators and hence Naor commitments with nonuniform hiding. Commitments yield a zero-knowledge proof for an NP-complete relation (graph 3-colorability) with constant soundness error; sequential repetition makes the error negligible, and Levin reductions transfer the proof to every NP relation.
 
 ## Depends on
 

@@ -11,4 +11,3 @@
 - [IND-CCA security of $\mathrm{FO}^{\perp}$ in the random oracle model](fo-explicit-rejection-ind-cca.md)
 - [IND-CCA security of $\mathrm{FO}^{\not\perp}$ in the random oracle model](fo-implicit-rejection-ind-cca.md)
 - [Correctness hop for salted implicit-rejection Fujisaki–Okamoto transforms](salted-fo-correctness-hop.md)
-- [The spreadness term of $\mathrm{FO}^{\perp}$ is tight](fo-spreadness-term-tight.md)

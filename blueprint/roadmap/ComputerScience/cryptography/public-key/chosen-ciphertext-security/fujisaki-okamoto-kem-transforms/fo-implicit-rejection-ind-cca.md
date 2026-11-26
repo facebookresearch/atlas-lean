@@ -3,10 +3,10 @@
 Let $\mathrm{PKE}$ be $\delta$-correct with a finite message space $M$ (no spreadness is required). For every IND-CCA adversary $\mathcal{A}$ against the implicit-rejection KEM $\mathrm{FO}^{\not\perp}[\mathrm{PKE}, G, H]$ making at most $q_G$, $q_H$ random-oracle queries and any number of decapsulation queries, there is an IND-CPA adversary $\mathcal{B}$ against $\mathrm{PKE}$ whose running time exceeds that of $\mathcal{A}$ by at most a polynomial in its numbers of queries and the running times of the algorithms of $\mathrm{PKE}$ such that
 
 $$
-\mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\not\perp}}(\mathcal{A}) \le 2 (q_G + q_H)\delta + \frac{2 (q_G + q_H) + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})
+\mathrm{Adv}^{\mathrm{ind\text{-}cca}}_{\mathrm{FO}^{\not\perp}}(\mathcal{A}) \le (q_G + q_H)\delta + \frac{2 q_G + q_H + 1}{|M|} + 3\,\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}_{\mathrm{PKE}}(\mathcal{B})
 $$
 
-Part of the guessing term accounts for random-oracle queries that hit the secret rejection seed. No term depends on the number of decapsulation queries. Asymptotically, for an efficient, IND-CPA-secure, $\delta$-correct word-level PKE family with $\delta$ and $1/|M|$ negligible, $\mathrm{FO}^{\not\perp}$ is IND-CCA secure in the random oracle model against probabilistic polynomial-time adversaries.
+(Hofheinz, Hövelmanns and Kiltz, Theorem 3.4 combined with Theorem 3.2, with the errata's correctness term $(q_G + q_P)\delta$ for $q_P \le q_H$ plaintext-checking queries and no validity queries, so that the spreadness term vanishes.) The term $q_H/|M|$ of Theorem 3.4 accounts for random-oracle queries that hit the secret rejection seed. No term depends on the number of decapsulation queries. Asymptotically, for an efficient, IND-CPA-secure, $\delta$-correct word-level PKE family with $\delta$ and $1/|M|$ negligible, $\mathrm{FO}^{\not\perp}$ is IND-CCA secure in the random oracle model against probabilistic polynomial-time adversaries.
 
 ## Proof sketch
 
@@ -28,4 +28,4 @@ First replace the implicit-rejection keys $H(s, c)$ by an independent random tab
 
 ## Sources
 
-- Dennis Hofheinz, Kathrin Hövelmanns and Eike Kiltz, "A Modular Analysis of the Fujisaki–Okamoto Transformation", Theory of Cryptography (TCC 2017), 2017, Section 3.3, with the corrected $\delta$ terms of the errata in Cryptology ePrint Archive, Paper 2017/604.
+- Dennis Hofheinz, Kathrin Hövelmanns and Eike Kiltz, "A Modular Analysis of the Fujisaki–Okamoto Transformation", Theory of Cryptography (TCC 2017), 2017, Theorems 3.2 and 3.4, with the corrected $\delta$ terms of the errata in Cryptology ePrint Archive, Paper 2017/604.

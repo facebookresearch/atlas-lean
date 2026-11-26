@@ -1,6 +1,6 @@
 # The McKay–Murray–Williams merge tree is a local circuit
 
-Unconditionally, for every constructive $s(n)$ with $n \le s(n) \le 2^n / \mathrm{poly}(n)$ at input length $N = 2^n$, $\mathrm{MCSP}[s]$ is computed by oracle circuits with one fixed oracle for all lengths, $O(N / \mathrm{poly}(s))$ oracle gates each of fan-in $\mathrm{poly}(s)$, at most $O(n / \log s)$ oracle gates on any path, and $N / \mathrm{poly}(s)$ gates in total: in the notation of local classes, $\mathrm{MCSP}[s] \in [O(N / \mathrm{poly}(s)), \mathrm{poly}(s), O(n / \log s)]\text{-}\mathrm{Circuit}[N / \mathrm{poly}(s)]$ (Chen et al. 2020, building on McKay, Murray and Williams 2019).
+Unconditionally, for every constructive $s(n) \le 2^n / \mathrm{poly}(n)$ at input length $N = 2^n$, $\mathrm{MCSP}[s]$ is computed by oracle circuits with one fixed oracle for all lengths, $O(N / \mathrm{poly}(s))$ oracle gates each of fan-in $\mathrm{poly}(s)$, at most $O(n / \log s)$ oracle gates on any path, and $N / \mathrm{poly}(s)$ gates in total: in the notation of local classes, $\mathrm{MCSP}[s] \in [O(N / \mathrm{poly}(s)), \mathrm{poly}(s), O(n / \log s)]\text{-}\mathrm{Circuit}[N / \mathrm{poly}(s)]$ (Chen et al. 2020, building on McKay, Murray and Williams 2019).
 
 ## Proof sketch
 

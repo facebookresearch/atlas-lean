@@ -1,6 +1,6 @@
 # Triangle-freeness is testable with a constant number of queries
 
-The triangle tester samples $k$ independent uniformly random ordered vertex triples and rejects iff some sampled triple spans a triangle. On a graph with $t$ triangles one trial accepts with probability exactly $1 - 6t/n^3$. By the triangle removal lemma, for every $\varepsilon > 0$ there is $\delta(\varepsilon) > 0$ such that every graph $\varepsilon$-far from triangle-free has at least $\delta(\varepsilon) n^3$ triangles; hence $k = O(1/\delta(\varepsilon))$ trials give a one-sided tester whose query complexity depends only on $\varepsilon$.
+The triangle tester samples $k$ independent uniformly random ordered vertex triples and rejects iff some sampled triple spans a triangle. On a graph with $t$ triangles one trial accepts with probability exactly $1 - 6t/n^3$. By the triangle removal lemma, for every $\varepsilon > 0$ there is $\delta(\varepsilon) > 0$ such that every graph $\varepsilon$-far from triangle-free has at least $\delta(\varepsilon) n^3$ triangles (Goldreich 2017, Theorem 8.18, Part 1); hence $k = O(1/\delta(\varepsilon))$ trials give a one-sided tester whose query complexity depends only on $\varepsilon$.
 
 ## Proof sketch
 

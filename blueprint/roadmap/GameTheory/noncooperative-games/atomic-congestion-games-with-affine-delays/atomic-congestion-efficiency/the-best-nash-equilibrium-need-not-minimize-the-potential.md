@@ -13,4 +13,4 @@ Direct computation: the potential of the shared profile is $2 H_3 = 11/3$, which
 
 ## Sources
 
-- Eva Tardos and Tom Wexler, "Network Formation Games and the Potential Function Method", Algorithmic Game Theory, Cambridge University Press, 2007.
+- Eva Tardos and Tom Wexler, "Network Formation Games and the Potential Function Method", Algorithmic Game Theory, Cambridge University Press, 2007, Section 19.3 and Exercise 19.14.

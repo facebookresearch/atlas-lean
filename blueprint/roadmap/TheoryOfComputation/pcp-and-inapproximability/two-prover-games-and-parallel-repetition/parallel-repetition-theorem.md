@@ -1,6 +1,6 @@
 # Parallel repetition theorem (Raz, Holenstein)
 
-For every two-prover one-round game $G$ with answer sets satisfying $|A||B| \ge 2$ and value $\mathrm{val}(G) \le 1 - \varepsilon$, and every $n \ge 1$,
+For every two-prover one-round game $G$ with answer sets satisfying $|A||B| \ge 2$ and value $\mathrm{val}(G) \le 1 - \varepsilon$, and every $n \ge 1$ (Holenstein 2009, Theorem 2.5, stated there with $1 - \mathrm{val}(G)$ in place of $\varepsilon$),
 
 $$\mathrm{val}(G^n) \le \Big(1 - \frac{\varepsilon^3}{6000}\Big)^{n / \log_2(|A||B|)}.$$
 

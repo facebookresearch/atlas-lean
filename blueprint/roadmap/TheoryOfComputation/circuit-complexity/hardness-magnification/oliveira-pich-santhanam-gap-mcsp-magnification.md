@@ -1,6 +1,6 @@
 # Oliveira–Pich–Santhanam: N^{1+ε} lower bounds for Gap-MCSP imply NP ⊄ P/poly
 
-Suppose there is $\varepsilon > 0$ such that for every sufficiently small $\beta > 0$, for infinitely many $n$, no Boolean function on $N = 2^n$ bits that accepts all yes-instances and rejects all no-instances of $\mathrm{Gap\text{-}MCSP}\big[2^{\beta n}/(10 n),\ 2^{\beta n}\big]$ has De Morgan circuits of size at most $N^{1 + \varepsilon}$. Then $\mathrm{NP} \not\subseteq \mathrm{P/poly}$ and $\mathrm{P} \ne \mathrm{NP}$.
+There is a universal constant $c \ge 1$ such that the following holds (Oliveira, Pich and Santhanam 2019, Theorem 4; its proof takes $c = 10$). Suppose there is $\varepsilon > 0$ such that for every sufficiently small $\beta > 0$, for infinitely many $n$, no Boolean function on $N = 2^n$ bits that accepts all yes-instances and rejects all no-instances of $\mathrm{Gap\text{-}MCSP}\big[2^{\beta n}/(c n),\ 2^{\beta n}\big]$ has fan-in-two circuits of size at most $N^{1 + \varepsilon}$. Then $\mathrm{NP} \not\subseteq \mathrm{P/poly}$ and $\mathrm{P} \ne \mathrm{NP}$.
 
 ## Proof sketch
 

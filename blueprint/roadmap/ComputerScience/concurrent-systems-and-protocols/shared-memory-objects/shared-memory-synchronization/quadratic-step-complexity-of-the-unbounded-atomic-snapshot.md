@@ -1,6 +1,6 @@
 # Quadratic step complexity of the unbounded atomic snapshot
 
-In the unbounded single-writer atomic snapshot algorithm of Afek et al., in which scans repeat double collects of all $n$ registers and borrow the embedded view of a process seen to move twice, every scan or update operation completes within $2n^2 + 4n + 3$ of its own steps regardless of the other processes' behaviour, and every reachable execution is linearizable with respect to the sequential snapshot specification.
+In the unbounded single-writer atomic snapshot algorithm of Afek et al., in which scans repeat double collects of all $n$ registers and borrow the embedded view of a process seen to move twice, every scan or update operation completes within $O(n^2)$ of its own steps regardless of the other processes' behaviour (Afek et al., Lemma 3.4), and every reachable execution is linearizable with respect to the sequential snapshot specification (Afek et al., Theorem 1).
 
 ## Proof sketch
 
@@ -18,4 +18,4 @@ Each unsuccessful double collect observes some process move; after $n + 1$ doubl
 
 ## Sources
 
-- Yehuda Afek et al., "Atomic Snapshots of Shared Memory", Journal of the ACM, 1993.
+- Yehuda Afek et al., "Atomic Snapshots of Shared Memory", Journal of the ACM, 1993, Lemma 3.4 and Theorem 1.

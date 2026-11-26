@@ -4,7 +4,6 @@ Let $G$ be a $d$-regular constraint graph over $\Sigma$ with self-loops, and let
 
 ## Depends on
 
-- [Dinur's amplification lemma for graph powering](../dinur-s-gap-amplification/dinur-s-amplification-lemma-for-graph-powering.md)
 - [Spectral expander](../../../GraphTheory/graph-families-and-operations/expander-graphs/is-spectral-expander.md)
 
 ## Sources

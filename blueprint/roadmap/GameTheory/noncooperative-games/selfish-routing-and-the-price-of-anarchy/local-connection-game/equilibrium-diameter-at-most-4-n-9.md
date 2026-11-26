@@ -1,10 +1,10 @@
 # Equilibrium diameter at most 4α/√n + 9
 
-Every pure Nash equilibrium of the local connection game with $\alpha \ge 0$ on $n$ vertices forms a graph of diameter at most $4\alpha/\sqrt n + 9$, and its social cost is at most $(12\alpha/\sqrt n + 27)$ times the social cost of every profile. In particular the price of anarchy is $O(1 + \alpha / \sqrt n)$, hence constant for $\alpha = O(\sqrt n)$.
+Every pure Nash equilibrium of the local connection game with $\alpha \ge 0$ on $n$ vertices forms a graph of diameter at most $4\alpha/\sqrt n + 9$ (Tardos and Wexler, proof of Theorem 19.6). Combined with the $O(d)$ bound on the social cost of a diameter-$d$ equilibrium, the price of anarchy is $O(1 + \alpha / \sqrt n)$, hence constant for $\alpha = O(\sqrt n)$ (Tardos and Wexler, Theorem 19.6).
 
 ## Proof sketch
 
-Balls of radius about $2\alpha/\sqrt n$ around a vertex must contain many vertices, otherwise buying an edge to a far vertex is profitable; a counting argument over disjoint balls along a long shortest path bounds the diameter.
+Let $u, v$ be at distance $d$ and let $B$ be the ball of radius $d' = (d - 1)/4$ around $u$. If $v$ buys the edge $vu$ it saves at least $(d - 1)|B|/2$, so $(d - 1)|B|/2 \le \alpha$; if $u$ buys an edge to a suitable vertex on the boundary of $B$ it saves enough to force $|B| \ge n(d' - 1)/(2\alpha)$. Together these give $\alpha^2 \ge n(d' - 1)^2$, hence the diameter bound.
 
 ## Depends on
 
@@ -16,5 +16,5 @@ Balls of radius about $2\alpha/\sqrt n$ around a vertex must contain many vertic
 
 ## Sources
 
-- Eva Tardos and Tom Wexler, "Network Formation Games and the Potential Function Method", Algorithmic Game Theory, Cambridge University Press, 2007.
+- Eva Tardos and Tom Wexler, "Network Formation Games and the Potential Function Method", Algorithmic Game Theory, Cambridge University Press, 2007, Lemma 19.4 and Theorem 19.6.
 - Susanne Albers et al., "On Nash Equilibria for a Network Creation Game", Proceedings of the Seventeenth Annual ACM-SIAM Symposium on Discrete Algorithms, 2006.

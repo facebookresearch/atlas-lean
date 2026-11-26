@@ -13,4 +13,4 @@ Compute all seven coalition costs of the explicit instance, average marginal cos
 
 ## Sources
 
-- Kamal Jain and Mohammad Mahdian, "Cost Sharing", Algorithmic Game Theory, Cambridge University Press, 2007.
+- Kamal Jain and Mohammad Mahdian, "Cost Sharing", Algorithmic Game Theory, Cambridge University Press, 2007, Examples 15.2, 15.4 and 15.24.

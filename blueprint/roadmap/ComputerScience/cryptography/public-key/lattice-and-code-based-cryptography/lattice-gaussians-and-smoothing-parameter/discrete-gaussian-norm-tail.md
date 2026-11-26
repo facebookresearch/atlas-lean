@@ -1,8 +1,8 @@
 # Norm tail of the discrete Gaussian above the smoothing parameter
 
-Let $0 < \varepsilon < 1$ and $s \ge \eta_\varepsilon(L)$ for a full-rank lattice $L$ in dimension $n$. For every center $v$,
+Let $0 < \varepsilon < 1$ and $s \ge \eta_\varepsilon(L)$ for a full-rank lattice $L$ in dimension $n$. For every center $v$ (Micciancio and Regev, Lemma 4.4),
 
-$$\Pr_{x \leftarrow D_{L,s,v}}\bigl[\|x - v\| > s\sqrt{n}\bigr] < \frac{1+\varepsilon}{1-\varepsilon}\cdot 4^{-n}.$$
+$$\Pr_{x \leftarrow D_{L,s,v}}\bigl[\|x - v\| > s\sqrt{n}\bigr] \le \frac{1+\varepsilon}{1-\varepsilon}\cdot 2^{-n}.$$
 
 ## Proof sketch
 

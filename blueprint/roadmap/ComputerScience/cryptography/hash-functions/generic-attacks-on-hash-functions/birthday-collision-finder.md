@@ -4,11 +4,11 @@ Let $f : M \to D$ with $M, D$ finite. Sampling $s$ independent uniform messages 
 
 $$1 - e^{-s(s-1)/(2|D|)} - \binom{s}{2}\frac{1}{|M|}.$$
 
-When $|M| \ge 100|D|$ and $s = \lceil 2\sqrt{|D|}\,\rceil + 1$, the success probability is at least $1/2$. The bound holds for every $f$, not only for regular functions.
+When $|M| \ge 100|D|$ and $s = \lceil 2\sqrt{|D|}\,\rceil + 1$, the success probability is at least $1/2$ (Boneh and Shoup, Lemma 8.2). The bound holds for every $f$, not only for regular functions.
 
 ## Proof sketch
 
-The probability of a digest collision is minimized when $f$ is regular, where it is at least the birthday bound; subtract the probability that two of the sampled messages are themselves equal.
+The probability of a digest collision is minimized when $f$ is regular, where it is at least the birthday bound (Boneh and Shoup, Corollary B.2); subtract the probability that two of the sampled messages are themselves equal.
 
 ## Depends on
 

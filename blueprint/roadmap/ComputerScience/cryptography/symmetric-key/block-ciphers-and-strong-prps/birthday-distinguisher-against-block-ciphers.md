@@ -4,7 +4,7 @@ Let $E$ be any block cipher on a block set of size $N$, and let the distinguishe
 
 $$\min\Bigl(\frac{Q(Q-1)}{4N},\ 0.63\Bigr),$$
 
-and at least $1/2$ when $Q = N \ge 2$. Consequently a block cipher whose block space $N = 2^{b(n)}$ is not super-polynomial (and $b(n) \ge 1$ eventually) is not a PRF: with $q = \min(Q(n), N)$ polynomially many queries the advantage is non-negligible.
+and at least $1/2$ when $Q = N \ge 2$ (Boneh and Shoup, Section 4.4.3 and Theorem B.1). Consequently a block cipher whose block space $N = 2^{b(n)}$ is not super-polynomial (and $b(n) \ge 1$ eventually) is not a PRF: with $q = \min(Q(n), N)$ polynomially many queries the advantage is non-negligible.
 
 ## Proof sketch
 

@@ -1,6 +1,6 @@
 # Testing strict majority by sampling
 
-Let $L$ be the set of binary strings in which ones form a strict majority, and let $x$ of length $|x| \ge 4/\varepsilon$ either belong to $L$ or be $\varepsilon$-far from $L$ (more than $\varepsilon|x|$ bits must change to enter $L$). The tester that samples $O(1/\varepsilon^2)$ positions independently and uniformly (with replacement) and accepts iff the observed fraction of ones exceeds $1/2 - \varepsilon/2$ accepts members with probability at least $2/3$ and rejects strings $\varepsilon$-far from $L$ with probability at least $2/3$; it runs in time polynomial in the logarithm of the input length given direct access.
+Let $L$ be the set of binary strings in which ones form a strict majority, and let $x$ of length $|x| \ge 4/\varepsilon$ either belong to $L$ or be $\varepsilon$-far from $L$ (more than $\varepsilon|x|$ bits must change to enter $L$). The tester that samples $O(1/\varepsilon^2)$ positions independently and uniformly (with replacement) and accepts iff the observed fraction of ones exceeds $1/2 - \varepsilon/2$ accepts members with probability at least $2/3$ and rejects strings $\varepsilon$-far from $L$ with probability at least $2/3$; it runs in time polynomial in the logarithm of the input length given direct access (Goldreich 2008, Exercise 10.9).
 
 ## Proof sketch
 

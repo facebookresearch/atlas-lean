@@ -1,10 +1,10 @@
 # GSW is bootstrappable and yields leveled FHE from LWE
 
-At the logarithmic-depth parameter family ($t = 1 + \lceil\log_2(\lambda+2)\rceil$, $w = 16384 t^2$, $L = 512 t$), GSW evaluates its own decryption circuit and its NAND-augmented decryption circuit within the depth budget, so it is bootstrappable for the identity and NAND gates; its secret keys, fresh ciphertexts and evaluation outputs have fixed widths, and evaluation of every permitted circuit is perfectly correct. Consequently, under decision LWE for this family, Gentry's bootstrapping construction instantiated with GSW is a leveled fully homomorphic encryption scheme that is correct, compact and IND-CPA secure; under an additional circular-security assumption it is fully homomorphic.
+For GSW parameters with $q/B > 8(N+1)^{L}$, where $L = O(\log n)$ bounds the NAND depth of the GSW decryption circuit augmented by one NAND gate (so a ratio $q/B$ quasi-polynomial in $n$ suffices; Gentry, Sahai and Waters, Section 3.4), GSW evaluates its own decryption circuit and its NAND-augmented decryption circuit within the depth budget, so it is bootstrappable for the identity and NAND gates; its secret keys, fresh ciphertexts and evaluation outputs have fixed widths, and evaluation of every permitted circuit is perfectly correct. Consequently, under decision LWE for these parameters, Gentry's bootstrapping construction instantiated with GSW is a leveled fully homomorphic encryption scheme that is correct, compact and IND-CPA secure; under an additional circular-security assumption it is fully homomorphic.
 
 ## Proof sketch
 
-The decryption circuit has depth $O(\log n + \log w) = O(t)$, which fits the budget $L = 512t$ with room for the NAND gate; then apply the leveled bootstrapping theorem with GSW's IND-CPA security.
+The decryption circuit, essentially Regev decryption, has depth $O(\log n)$, so the NAND-augmented decryption circuit fits the depth budget $L$; then apply the leveled bootstrapping theorem with GSW's IND-CPA security.
 
 ## Depends on
 

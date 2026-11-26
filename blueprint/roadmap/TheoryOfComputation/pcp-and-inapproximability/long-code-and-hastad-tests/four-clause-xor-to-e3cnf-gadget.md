@@ -12,4 +12,4 @@ The four violating assignments of a parity constraint on three bits are pairwise
 
 ## Sources
 
-- J. Håstad, "Some Optimal Inapproximability Results", Journal of the ACM 48(4), 2001.
+- J. Håstad, "Some Optimal Inapproximability Results", Journal of the ACM 48(4), 2001, proof of Theorem 6.1.

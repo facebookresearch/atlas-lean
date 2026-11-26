@@ -1,12 +1,14 @@
 # Generic lower bound for computational Diffie–Hellman
 
-For prime $q$, every generic algorithm that receives $L(1), L(\alpha), L(\beta)$ for uniform $\alpha, \beta$ and makes at most $T$ group-oracle queries outputs the label $L(\alpha\beta)$ with probability at most
+For prime $q$, every generic algorithm that receives $L(1), L(\alpha), L(\beta)$ for uniform $\alpha, \beta$ and makes at most $T$ group-oracle queries outputs the label $L(\alpha\beta)$ with probability
 
-$$\frac{(3T + 4)^2/2 + 2}{q}.$$
+$$O\!\left(\frac{T^2}{q}\right)$$
+
+(Shoup, Theorem 3; Boneh and Shoup, Exercise 16.5).
 
 ## Proof sketch
 
-Track labels as linear polynomials in two unknowns. A collision between distinct tracked polynomials, or between the output and the degree-two polynomial $XY$, occurs with probability at most $1/q$ for each pair of distinct tracked linear polynomials and at most $2/q$ for the output against $XY$, by the Schwartz–Zippel lemma, and there are at most $\binom{3T+4}{2}$ pairs of tracked polynomials.
+Track labels as linear polynomials in two unknowns. A collision between distinct tracked polynomials, or between the output and the degree-two polynomial $XY$, occurs with probability at most $1/q$ for each pair of distinct tracked linear polynomials and at most $2/q$ for the output against $XY$, by the Schwartz–Zippel lemma, and each query adds at most a constant number of tracked polynomials, so there are $O(T^2)$ pairs.
 
 ## Depends on
 

@@ -4,7 +4,7 @@ Every authenticated-encryption cipher is CCA secure. Concretely, for a CCA adver
 
 $$\mathrm{CCAadv} \le \mathrm{CPAadv}(B_1) + 2 Q_d \cdot \mathrm{CIadv}(B_2)$$
 
-for reductions $B_1, B_2$ of comparable cost. The same holds for one-time authenticated encryption and one-time CCA security.
+for reductions $B_1, B_2$ whose running times exceed that of the CCA adversary by at most the time of recording its encryption queries with their answers and one lookup in that record for each decryption query. The same holds for one-time authenticated encryption and one-time CCA security.
 
 ## Proof sketch
 

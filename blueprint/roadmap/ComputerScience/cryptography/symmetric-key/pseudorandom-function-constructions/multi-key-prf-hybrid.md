@@ -1,6 +1,6 @@
 # Several independent keys of a pseudorandom function
 
-Let $F$ be a PRF and $Q$ a polynomial. An adversary given oracle access to $F(k_1, \cdot), \dots, F(k_Q, \cdot)$ for independent uniform keys distinguishes them from $Q$ independent random functions with advantage at most $Q \cdot \varepsilon$, where $\varepsilon$ is the best PRF advantage of an adversary with comparable running time. Hence $Q$ independent keys of a secure PRF are jointly pseudorandom.
+Let $F$ be a PRF and $Q$ a polynomial. An adversary making $q$ queries in total, given oracle access to $F(k_1, \cdot), \dots, F(k_Q, \cdot)$ for independent uniform keys, distinguishes them from $Q$ independent random functions with advantage at most $Q \cdot \varepsilon$, where $\varepsilon$ is the best PRF advantage of an adversary whose running time exceeds that of the given one by at most the time of answering its $q$ oracle queries with $q$ evaluations of $F$ or lazily sampled random-function values. Hence $Q$ independent keys of a secure PRF are jointly pseudorandom.
 
 ## Proof sketch
 

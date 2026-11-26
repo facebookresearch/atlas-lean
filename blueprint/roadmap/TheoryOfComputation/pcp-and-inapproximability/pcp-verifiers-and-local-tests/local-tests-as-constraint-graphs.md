@@ -9,7 +9,6 @@ On a random string where the proof read from the positions is rejected, either t
 ## Depends on
 
 - [Local test on a proof string](local-test-on-a-proof-string.md)
-- [Assignment testers](../pcp-constructions/assignment-testers.md)
 
 ## Sources
 

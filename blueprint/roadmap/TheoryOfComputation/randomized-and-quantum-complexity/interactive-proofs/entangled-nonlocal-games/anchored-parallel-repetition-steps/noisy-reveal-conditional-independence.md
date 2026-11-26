@@ -1,10 +1,10 @@
 # Conditional independence of the noisy reveal in anchored repetition
 
-In the dependency-breaking step for repetitions of an $\alpha$-anchored game, a coordinate's question pair $(x, y)$ is accompanied by a public *noisy message* which reveals Alice's question, Bob's question, or an anchor symbol, according to fixed rates. For every joint question law, the joint law of $(x, y)$ and the message factors as the message mass times two local conditional laws, so $x$ and $y$ are conditionally independent given every supported message. For either designated player, forgetting the message recovers the anchored question law exactly (for all $\alpha \in [0,1]$), and for interior rates the left-message conditional agrees with the original anchored conditional at supported messages.
+Let $\mu$ be the question law of an $\alpha$-anchored game with $0 < \alpha < 1$, and let $0 \le \eta \le \alpha$ (Bavarian, Vidick and Yuen take $\eta = \alpha/2$). Draw $D$ uniformly from $\{A, B\}$. If $D = A$, let $M$ take each question $x \ne \perp$ of Alice with probability $\mu_X(x)/(1 - \eta)$ and the value $\perp$ with probability $(\alpha - \eta)/(1 - \eta)$, let $X = M$ with probability $1 - \eta$ and $X = \perp$ otherwise, and draw $Y$ from $\mu_{Y \mid X}(\cdot \mid M)$; if $D = B$, do the same with the players exchanged. Then $X$ and $Y$ are independent given $(D, M)$, and for each $d \in \{A, B\}$ the law of $(X, Y)$ given $D = d$ is $\mu$ (Bavarian, Vidick and Yuen, Section 4.1, Claims 4.1 and 4.2).
 
 ## Proof sketch
 
-Write the noisy-message channel explicitly: given a message revealing one side, the other side is drawn from the conditional of $\mu$, and anchors are chosen independently; summing out the message telescopes back to the anchored marginal.
+Given $(D, M) = (A, m)$, $X$ is a function of $m$ and independent noise, while $Y$ is drawn from a law that depends only on $m$, which gives the conditional independence. Summing over $M$ given $D = A$, $X = x \ne \perp$ has probability $(1 - \eta)\mu_X(x)/(1 - \eta) = \mu_X(x)$ and $X = \perp$ has probability $\alpha$, and since $\mu_{XY}(\perp, y) = \alpha\,\mu_Y(y)$ in an anchored game, $Y$ given $X$ has law $\mu_{Y \mid X}$; the case $D = B$ is symmetric.
 
 ## Depends on
 

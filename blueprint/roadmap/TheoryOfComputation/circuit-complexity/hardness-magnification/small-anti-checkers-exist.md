@@ -1,10 +1,10 @@
 # Small anti-checkers exist for functions without small circuits
 
-Let $\mathcal{F}$ be a family of fewer than $2^b$ functions on at most $2^m$ inputs ($m > 0$). If no $m$ members of $\mathcal{F}$ have $f$ as their strict pointwise majority, then some set of at most $16 b$ inputs refutes every member of $\mathcal{F}$ (each member disagrees with $f$ somewhere on the set). Consequently, for $n \le m$, if $\mathrm{CC}(f)$ exceeds $m s$ plus the size of a circuit for strict majority on $m$ bits, then $\mathrm{CC}_Y(f) > s$ for some $Y$ with $|Y| \le 16 b$, where $b = O(s \log s)$ bounds the description length of circuits of size $s$.
+There is a number $N_0$ such that for every $n > N_0$, every $\varepsilon > 0$, every $f : \{0,1\}^n \to \{0,1\}$ and every $s \le \mathrm{CC}(f)\,\varepsilon^2/(3n)$, there is a multiset of $s/\varepsilon^2$ inputs such that every circuit of size $s$ misclassifies at least a $1/2 - \varepsilon$ fraction of them (Lipton and Young 1994, Theorem 6; circuit size is the length of a circuit's binary encoding). In particular, taking $\varepsilon = 1/3$: if $s \le \mathrm{CC}(f)/(27 n)$, then some $Y$ with $|Y| \le 9 s$ has $\mathrm{CC}_Y(f) > s$, since every circuit of size $s$ errs on a sixth of a multiset of $9s$ inputs.
 
 ## Proof sketch
 
-Minimax (Lipton–Young): view the game in which one player picks a circuit of size $s$ and the other an input, with payoff for disagreement. If no small anti-checker exists, a multiplicative-weights / sampling argument finds a distribution on circuits that agrees with $f$ on every input with probability above $1/2$; sampling $m$ circuits and taking their majority yields a circuit of size $m s + O(\mathrm{size}(\mathrm{MAJ}_m))$ computing $f$.
+Minimax (Lipton–Young): view the game in which one player picks a circuit of size $s$ and the other an input, with payoff $1$ for disagreement, and let $1/2 - \delta$ be its value. Sampling from optimal strategies (Corollary 4 of the source) gives $1 + n \ln 2/(2\delta^2)$ circuits whose majority is correct on every input, hence a circuit of size about $n s \ln 2/(2\delta^2) + s + O(n/\delta^2)$ computing $f$; as this is at least $\mathrm{CC}(f)$, $\delta$ is small compared with $\varepsilon$, and sampling the other player's optimal strategy gives $s \ln 2/(2(\varepsilon - \delta)^2) \le s/\varepsilon^2$ inputs on which every circuit of size $s$ errs on at least a $1/2 - \varepsilon$ fraction.
 
 ## Depends on
 

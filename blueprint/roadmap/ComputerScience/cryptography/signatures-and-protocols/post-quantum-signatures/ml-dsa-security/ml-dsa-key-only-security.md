@@ -1,6 +1,6 @@
 # Key-only unforgeability of ML-DSA from Module-LWE and SelfTargetMSIS
 
-For every key-only forger $\mathcal{F}$ against ML-DSA (uncompressed or compressed public key, fixed or random-oracle hash), there are adversaries $\mathcal{D}$ and $\mathcal{S}$ with about the running time of $\mathcal{F}$ such that
+For every key-only forger $\mathcal{F}$ against ML-DSA (uncompressed or compressed public key, fixed or random-oracle hash), there are adversaries $\mathcal{D}$ and $\mathcal{S}$ whose running times exceed that of $\mathcal{F}$ by at most the time of computing the public key from their instance, answering the random-oracle queries of $\mathcal{F}$ by lazy sampling, and one ML-DSA verification, such that
 
 $$
 \Pr[\mathcal{F} \text{ forges}] \le \mathrm{Adv}^{\mathrm{mlwe}}_{k, \ell, \eta}(\mathcal{D}) + \Pr[\mathcal{S} \text{ solves SelfTargetMSIS for } [\,I \mid \mathbf{A} \mid \mathbf{t}\,]],

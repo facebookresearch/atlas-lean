@@ -1,8 +1,8 @@
 # Holenstein's embedding lemma for conditioned repetitions
 
-Fix strategies for $G^n$ and a set $C \subseteq [n]$ of coordinates, and let $W_C$ be the event that every coordinate in $C$ is won. Then for each free coordinate $j \notin C$ there is an error $\varepsilon_j \ge 0$ such that Alice and Bob, without communication but with shared randomness, can jointly sample from a distribution within statistical distance $\varepsilon_j$ of the law of the full questions conditioned on $W_C$ and on $(x_j, y_j) = (x, y)$, given only $x$ and $y$ respectively with $(x,y) \sim \mu$, and
+Fix strategies for $G^n$ and a set $C \subseteq [n]$ of coordinates, and let $W_C$ be the event that every coordinate in $C$ is won. Then for each free coordinate $j \notin C$ there is an error $\varepsilon_j \ge 0$ such that Alice and Bob, without communication but with shared randomness, can jointly sample from a distribution within statistical distance $\varepsilon_j$ of the law of the full questions conditioned on $W_C$ and on $(x_j, y_j) = (x, y)$, given only $x$ and $y$ respectively with $(x,y) \sim \mu$, and (Holenstein 2009, Lemma 6.4)
 
-$$\sum_{j \notin C} \varepsilon_j \le \frac{27}{\sqrt 2} \sqrt{|C^c| \Big(|C| \ln(|A||B|) + \ln \frac{1}{\Pr[W_C]}\Big)}.$$
+$$\sum_{j \notin C} \varepsilon_j \le 15 \sqrt{|C^c| \Big(|C| \log_2(|A||B|) + \log_2 \frac{1}{\Pr[W_C]}\Big)}.$$
 
 ## Proof sketch
 

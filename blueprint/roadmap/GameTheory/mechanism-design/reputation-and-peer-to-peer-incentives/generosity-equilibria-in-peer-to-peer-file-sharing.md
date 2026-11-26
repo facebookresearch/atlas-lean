@@ -12,4 +12,4 @@ Equilibria solve $x = \Pr[\theta > 1/x] = 1 - 1/(x\theta_m)$, i.e. $\theta_m x^2
 
 ## Sources
 
-- Moshe Babaioff, John Chuang and Michal Feldman, "Incentives in Peer-to-Peer Systems", Algorithmic Game Theory, Cambridge University Press, 2007.
+- Moshe Babaioff, John Chuang and Michal Feldman, "Incentives in Peer-to-Peer Systems", Algorithmic Game Theory, Cambridge University Press, 2007, Section 23.3 and Claims 23.1 and 23.2.

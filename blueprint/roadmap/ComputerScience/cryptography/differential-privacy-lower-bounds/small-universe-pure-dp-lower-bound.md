@@ -4,7 +4,7 @@ Let $k, d, n \in \mathbb{N}$ and $\varepsilon \in (0, 1/40]$ with $n \ge \min(k,
 
 ## Proof sketch
 
-Choose $2^{\Omega(L)}$ datasets, with $L = \min(k, d)/16$, that pairwise differ in many rows but are all within $O(L/\varepsilon)$ of a centre, together with Lipschitz-extension queries whose answers separate them by large margins. Accurate answers would place most mass of the mechanism in disjoint regions, contradicting the pure packing bound.
+With $\ell = \min(k, d)$, choose $2^s$ datasets, $s = \ell/400$, each of weight at most $w = \ell/(1280\varepsilon)$ and pairwise at $\ell_1$ distance at least $w/10$, together with Lipschitz-extension queries whose answers separate them by large margins. Accurate answers would place most mass of the mechanism in disjoint regions, contradicting the pure packing bound.
 
 ## Depends on
 
