@@ -10946,6 +10946,7 @@
   "MathlibExt/Combinatorics/Enumerative/GeneralizedEulerianGamma": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Generalized Eulerian polynomials and gamma-positivity"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedEulerianUnimodal": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Generalized Eulerian polynomials and gamma-positivity"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedLeonardoLogBehavior": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
+  "MathlibExt/Combinatorics/Enumerative/GeneralizedLeonardoLogBehaviorGenLeonardoPowSelfLogConvex": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedMotzkinCentralTrinomial": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Generalized Motzkin numbers modulo primes"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedMotzkinModP": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Generalized Motzkin numbers modulo primes"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedRascalTriangle": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Rascal triangle"},
