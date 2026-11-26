@@ -22,11 +22,13 @@ import Mathlib.Tactic.Ring
 
 This module proves that positive strings of length three have no nontrivial symmetry and that
 there are infinitely many positive strings with nontrivial symmetries at every length at least
-four. Private lemmas relate the mass to the characteristic number and construct stable strings.
+four. It also proves that positive strings of the same length parity have equal Gauss–Kuzmin
+masses exactly when their characteristic numbers agree. Private lemmas relate the mass to the
+characteristic number and construct stable strings.
 
 Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
 Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Theorem 3.
+Lemma 5.2 and Theorem 3.
 -/
 
 namespace MetaMathlibExt
@@ -170,17 +172,27 @@ private theorem log_argument_pos (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) :
       have hi : 1 / (characteristicNumber a : ℝ) < 1 := (div_lt_one (by linarith)).2 hc
       linarith
 
-private theorem mass_eq_iff (a b : List ℕ) (ha : ∀ x ∈ a, 0 < x)
-    (hb : ∀ x ∈ b, 0 < x) (hlen : a.length = b.length) :
+/-- **Gauss–Kuzmin masses agree exactly when characteristic numbers do.** Write $P_{GK}$ for the
+Gauss–Kuzmin mass and $\chi$ for the characteristic number of a string. If $a$ and $b$ are strings
+of positive integers whose lengths have the same parity, then $P_{GK}(a) = P_{GK}(b)$ if and only
+if $\chi(a) = \chi(b)$.
+
+Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
+Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
+Lemma 5.2 (`integers-2025-A89-lem-5-2`). -/
+public theorem gaussKuzminMass_eq_iff_characteristicNumber_eq (a b : List ℕ)
+    (ha : (∀ x ∈ a, 0 < x)) (hb : ∀ x ∈ b, 0 < x) (hpar : a.length % 2 = b.length % 2) :
     gaussKuzminMass a = gaussKuzminMass b ↔ characteristicNumber a = characteristicNumber b := by
-  rw [mass_formula a ha, mass_formula b hb, ← hlen]
+  have hsign : (-1 : ℝ) ^ b.length = (-1 : ℝ) ^ a.length := by
+    rw [neg_one_pow_eq_pow_mod_two a.length, neg_one_pow_eq_pow_mod_two b.length, hpar]
+  rw [mass_formula a ha, mass_formula b hb, hsign]
   have hs : (-1 : ℝ) ^ a.length ≠ 0 := pow_ne_zero _ (by norm_num)
   have hl : log (2 : ℝ) ≠ 0 := ne_of_gt (log_pos (by norm_num))
   rw [div_left_inj₀ hl, mul_right_inj' hs]
   constructor
   · intro h
     have he := strictMonoOn_log.injOn (log_argument_pos a ha)
-      (by simpa [hlen] using log_argument_pos b hb) h
+      (by simpa [hsign] using log_argument_pos b hb) h
     have hd : (-1 : ℝ) ^ a.length / (characteristicNumber a : ℝ) =
         (-1 : ℝ) ^ a.length / (characteristicNumber b : ℝ) := by linarith
     rw [div_eq_mul_inv, div_eq_mul_inv, mul_right_inj' hs] at hd
@@ -199,7 +211,8 @@ private theorem triple (x y z : ℕ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) :
   rintro ⟨b, hp, hn, hr, hm⟩
   have ha : ∀ t ∈ [x, y, z], 0 < t := by simpa using And.intro hx (And.intro hy hz)
   have hb : ∀ t ∈ b, 0 < t := fun t ht => ha t (hp.mem_iff.mp ht)
-  have hc := (mass_eq_iff b [x, y, z] hb ha hp.length_eq).1 hm
+  have hc := (gaussKuzminMass_eq_iff_characteristicNumber_eq b [x, y, z] hb ha
+    (congrArg (· % 2) hp.length_eq)).1 hm
   have hrev : characteristicNumber [z, y, x] = characteristicNumber [x, y, z] :=
     characteristic_reverse [x, y, z] ha
   rcases permutations_three x y z b hp with rfl | rfl | rfl | rfl | rfl | rfl
@@ -328,7 +341,8 @@ private theorem plus_symmetry (a : List ℕ) (ha : ∀ x ∈ a, 0 < x) (hne : a 
     · exact hb x hx
     · decide
   refine ⟨2 :: b.reverse ++ [1], hp, hn, hr, ?_⟩
-  apply (mass_eq_iff _ _ hsg (plus_positive a ha hne) hp.length_eq).2
+  apply (gaussKuzminMass_eq_iff_characteristicNumber_eq _ _ hsg (plus_positive a ha hne)
+    (congrArg (· % 2) hp.length_eq)).2
   simpa [hap] using hc
 
 private theorem stable_family (n : ℕ) (hn : 2 ≤ n) :
