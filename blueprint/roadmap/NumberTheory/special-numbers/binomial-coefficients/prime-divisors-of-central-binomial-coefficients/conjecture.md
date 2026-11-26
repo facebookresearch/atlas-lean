@@ -2,7 +2,7 @@
 
 The statement that there are infinitely many pairs $0 < n < m$ of natural numbers such that $\binom{2n}{n}$ and $\binom{2m}{m}$ have the same prime divisors.
 
-This page records the statement as a proposition. Its resolution: [Infinitely many pairs of central binomial coefficients with the same prime divisors](conjecture-holds.md).
+This page records the statement as a proposition.
 
 ## Sources
 

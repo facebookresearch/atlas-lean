@@ -5,4 +5,3 @@
 - [Numbers of the form a^k b^l c^m](is-smooth-form.md)
 - [Divisibility antichains](antichain.md)
 - [Erdős Problem 123 (sums of smooth numbers forming a divisibility antichain)](conjecture.md)
-- [Large integers are antichain sums of numbers a^k b^l c^m](conjecture-holds.md)

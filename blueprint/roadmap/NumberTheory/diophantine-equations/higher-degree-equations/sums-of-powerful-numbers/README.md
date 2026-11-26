@@ -3,7 +3,6 @@
 - [Collectively coprime finite sets](is-coprime.md)
 - [Coprime powerful sets with powerful sum](erdos939-sums.md)
 - [Erdős Problem 939, second question (finiteness of powerful sums)](conjecture.md)
-- [Infinitely many coprime powerful sets with powerful sum](conjecture-refuted.md)
 - [Three-powerful numbers](is-three-powerful.md)
 - [Erdős Problem 939, third question (sums of two 3-powerful numbers)](conjecture-2.md)
 - [Infinitely many coprime 3-powerful solutions of a + b = c](conjecture-holds.md)
