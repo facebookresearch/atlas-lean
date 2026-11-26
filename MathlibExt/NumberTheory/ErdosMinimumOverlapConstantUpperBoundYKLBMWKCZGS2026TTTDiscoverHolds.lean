@@ -6,12 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`results/mathematics/ttt_erdos_sequence.json` (test-time-training/discover),
+at commit c9f51e47b653dc3359f33eb61aa291964890c958:
+Copyright (c) 2025 Mert Yuksekgonul.
+Licensed under the MIT License (https://opensource.org/licenses/MIT).
+Authors: Yuksekgonul, Koceja, Li, Bianchi, McCaleb, Wang, Kautz, Choi, Zou, Guestrin, Sun.
+Modifications: the heights are rounded to multiples of 1e-12, and entry 270 (0-based) is raised
+by 6e-12 so that the integral is 1.
+-/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Real.Sqrt
-public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
-public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstant
 
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
 import Mathlib.Algebra.BigOperators.Group.List.Basic
