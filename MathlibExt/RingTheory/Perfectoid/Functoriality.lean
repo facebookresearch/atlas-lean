@@ -145,6 +145,12 @@ end PreTilt
 
 namespace WittVector
 
+/-- `WittVector.map` maps a composite of ring maps to the composite of their maps. -/
+theorem map_comp {p : ℕ} [Fact p.Prime] (g : S →+* T) (f : R →+* S) :
+    WittVector.map (p := p) (g.comp f) = (WittVector.map g).comp (WittVector.map f) :=
+  RingHom.ext fun x => WittVector.ext fun n => by
+    simp only [WittVector.map_coeff, RingHom.comp_apply]
+
 variable (p : ℕ) [Fact p.Prime] [Fact ¬IsUnit (p : R)] [Fact ¬IsUnit (p : S)]
   [IsAdicComplete (Ideal.span {(p : R)}) R] [IsAdicComplete (Ideal.span {(p : S)}) S]
 
@@ -251,12 +257,6 @@ theorem ker_fontaineThetaInvertP_le_comap (f : R →+* S) :
   rw [Ideal.mem_comap, RingHom.mem_ker, ← RingHom.comp_apply,
     fontaineThetaInvertP_comp_awayMapNatCast, RingHom.comp_apply, RingHom.mem_ker.1 hx, map_zero]
 
-private theorem wittVector_map_comp {A B C : Type*} [CommRing A] [CommRing B] [CommRing C]
-    (g : B →+* C) (f : A →+* B) :
-    WittVector.map (p := p) (g.comp f) = (WittVector.map g).comp (WittVector.map f) :=
-  RingHom.ext fun x => WittVector.ext fun n => by
-    simp only [WittVector.map_coeff, RingHom.comp_apply]
-
 omit [IsAdicComplete (Ideal.span {(p : R)}) R] [IsAdicComplete (Ideal.span {(p : S)}) S] in
 /-- For a ring isomorphism `e : R ≃+* S`, the map on `W(·♭)[1/p]` induced by `e` is a right
 inverse of the map induced by `e.symm`. -/
@@ -265,7 +265,7 @@ private theorem awayMapNatCast_symm_apply (e : R ≃+* S)
     Localization.awayMapNatCast (WittVector.map (PreTilt.map p e.toRingHom)) p
         (Localization.awayMapNatCast (WittVector.map (PreTilt.map p e.symm.toRingHom)) p x) =
       x := by
-  rw [← RingHom.comp_apply, ← Localization.awayMapNatCast_comp, ← wittVector_map_comp,
+  rw [← RingHom.comp_apply, ← Localization.awayMapNatCast_comp, ← WittVector.map_comp,
     ← PreTilt.map_comp, RingEquiv.toRingHom_comp_symm_toRingHom, PreTilt.map_id,
     WittVector.map_id, Localization.awayMapNatCast_id, RingHom.id_apply]
 
