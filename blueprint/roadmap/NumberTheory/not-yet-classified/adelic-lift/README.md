@@ -3,6 +3,7 @@
 ## Adelic Level
 
 - [Arch Component](arch-component.md)
+- [Fin Component](fin-component.md)
 - [Fin Embed](fin-embed.md)
 - [Rat Level](rat-level.md)
 
