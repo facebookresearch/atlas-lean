@@ -38,9 +38,17 @@ and of the network that connects its servers.
 Responses carry their sender and, for AppendEntries, the index of the last entry matched, which
 stand in for the context of a remote procedure call. After the rule for a newer term, a response
 is acted on only by a candidate (a vote) or a leader (an AppendEntries response) whose current
-term it carries, and a leader ignores AppendEntries requests of its own term. A leader may send
-any number of consecutive entries from `nextIndex` on. Figure 2's update of a follower's
-`commitIndex` is taken literally; on an old or duplicated request it can lower `commitIndex`.
+term it carries, and a leader ignores AppendEntries requests of its own term. Without that
+context, a leader re-elected in a later term may act on a refusal of one of its requests of an
+earlier term, which carries the responder's current term, and lower `nextIndex`. On success a
+leader takes the larger of `matchIndex` and the reported match index. A leader may send any number
+of consecutive entries from `nextIndex` on.
+
+Figure 2's update of a follower's `commitIndex` to `min(leaderCommit, p + |entries|)` is taken
+literally, the index of the last new entry being read as the preceding index `p` for a request
+with no entries. It lowers `commitIndex` on any accepted request whose leader commit exceeds
+`commitIndex` but whose match index is below it: an old or duplicated request, or a fresh one with
+fewer entries, such as a heartbeat sent while `nextIndex` lags.
 
 **Main definitions.** `Server`, `Message`, `State`, `State.init`, `Server.handle` (how a server
 handles a message), `Step` and `lts`.
@@ -462,8 +470,8 @@ theorem currentTerm_le_of_step {s s' : State S C} {μ : Event S C} (h : Step s �
     · subst hi; simp [Server.crash]
     · exact le_rfl
 
-/-- **Terms never decrease in Raft.** Along every execution, the `currentTerm` of every server
-stays the same or increases, crashes and recoveries included. -/
+/-- **Terms never decrease in Raft.** For every sequence of steps from any state, the
+`currentTerm` of every server stays the same or increases, crashes and recoveries included. -/
 theorem currentTerm_le_of_mTr {s s' : State S C} {μs : List (Event S C)}
     (h : lts.MTr s μs s') (i : S) : (s.server i).currentTerm ≤ (s'.server i).currentTerm := by
   induction h with
@@ -493,9 +501,9 @@ theorem votedFor_eq_of_step {s s' : State S C} {μ : Event S C} (h : Step s μ s
     · subst hi; simpa [Server.crash] using hv
     · exact hv
 
-/- **A Raft server's vote is never changed within a term.** Along every execution in which the
-`currentTerm` of a server ends as it started, a vote the server had cast for `j` at the start is
-still its vote at the end, crashes and recoveries included. -/
+/- **A Raft server's vote is never changed within a term.** For every sequence of steps from any
+state after which the `currentTerm` of a server is what it was, a vote the server had cast for `j`
+at the start is still its vote at the end, crashes and recoveries included. -/
 theorem votedFor_eq_of_mTr {s s' : State S C} {μs : List (Event S C)} (h : lts.MTr s μs s')
     {i j : S} (ht : (s'.server i).currentTerm = (s.server i).currentTerm)
     (hv : (s.server i).votedFor = some j) : (s'.server i).votedFor = some j := by
