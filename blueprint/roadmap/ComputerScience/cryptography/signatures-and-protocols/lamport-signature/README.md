@@ -11,3 +11,4 @@
 - [Planted public key](plant.md)
 - [Inverter built from a forger](invert.md)
 - [Security reduction for Lamport one-time signatures](forge-game-le.md)
+- [One-Time Signature Encodings and Constructions](one-time-signature-encodings/README.md)

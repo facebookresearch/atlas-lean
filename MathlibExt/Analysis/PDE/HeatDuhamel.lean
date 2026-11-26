@@ -153,6 +153,22 @@ private theorem continuous_clamped_integrand {f : ℝ → ℝ → ℝ} {T : ℝ}
     (continuous_const.mul ((continuous_fst.comp continuous_fst).sub continuous_snd))).prodMk
       (continuous_snd.comp continuous_fst))
 
+/-- The heat evolution of a continuous, uniformly exponentially bounded family is
+jointly continuous in its family parameter, heat time, and spatial position. Heat
+time may be nonpositive, using the stationary extension. -/
+theorem heatSolution_family_continuousOn {f : ℝ → ℝ → ℝ} {T : ℝ} (hT : 0 ≤ T)
+    (hf : ContinuousOn (Function.uncurry f) (Icc 0 T ×ˢ univ))
+    (hg : HeatWholeLine.HasExpGrowthOnStrip f T) :
+    ContinuousOn (fun p : (ℝ × ℝ) × ℝ => heatSolution (f p.1.1) p.1.2 p.2)
+      ((Icc 0 T ×ˢ univ) ×ˢ univ) := by
+  obtain ⟨M, c, hM, hc, hb⟩ := hg
+  have h := continuous_heat_family (continuous_clampForcing hT hf) hM hc
+    (fun s x => hb _ (clamp_mem hT s) x)
+  apply h.continuousOn.congr
+  intro p hp
+  dsimp only
+  rw [clampForcing_eq hp.1.1]
+
 /-- Continuous forcing with uniform exponential growth has an integrable time integrand
 at each point of a closed nonnegative strip. -/
 theorem intervalIntegrable_heatDuhamel {f : ℝ → ℝ → ℝ} {T : ℝ}
