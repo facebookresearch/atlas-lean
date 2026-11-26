@@ -1196,4 +1196,7 @@ Topics added since this subject's fields were last revised.
 - [Iter Cech](iter-cech/README.md)
 - [Drinfeld Basis Torsion](drinfeld-basis-torsion/README.md)
 - [Cassels Tate Pairing](cassels-tate-pairing/README.md)
+- [Faltings Height](faltings-height/README.md)
+- [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
+- [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Coherent Base Change](coherent-base-change/README.md)
