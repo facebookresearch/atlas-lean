@@ -4,6 +4,6 @@ The decision problem GRAPH THICKNESS 2 accepts a bitstring $x$ exactly when $x$ 
 the canonical bitstring encoding of its instances, to an instance $(n, E)$ such that the [GRAPH
 THICKNESS instance](with-bound.md) $(n, E, 2)$ is
 [well-formed](../graph-thickness/well-formed.md) and
-[feasible](../graph-thickness/graph-thickness-feasible.md): the edges can be partitioned into
-two classes, each spanning a planar subgraph. It rejects every bitstring that does not decode to
+[feasible](../graph-thickness/graph-thickness-feasible.md): the edges can be assigned to
+two possibly empty layers, each spanning a planar subgraph. It rejects every bitstring that does not decode to
 an instance.

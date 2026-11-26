@@ -1,4 +1,3 @@
 # Instances of INTERSECTION GRAPH BASIS
 
-An instance of INTERSECTION GRAPH BASIS consists of vertex count `n`, edge list over the vertices $0, \dots, n-1$,
-and the bound `K`.
+An instance of INTERSECTION GRAPH BASIS consists of a vertex count $n$, an edge list and the bound $K$. A raw edge may have an endpoint outside $0, \dots, n-1$; that the edges are in range and simple is checked separately by [well-formedness](well-formed.md).

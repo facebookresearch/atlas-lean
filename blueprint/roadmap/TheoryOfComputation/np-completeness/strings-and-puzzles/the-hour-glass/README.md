@@ -4,4 +4,3 @@
 - [Well-formed THE HOUR-GLASS instances](well-formed.md)
 - [Feasible THE HOUR-GLASS instances](hour-glass-feasible.md)
 - [THE HOUR-GLASS as a decision problem](hour-glass-dec.md)
-- [THE HOUR-GLASS is NP-complete](hour-glass-np-complete.md)

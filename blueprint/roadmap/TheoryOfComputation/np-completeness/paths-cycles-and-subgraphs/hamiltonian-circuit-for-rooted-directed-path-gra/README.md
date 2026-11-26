@@ -2,4 +2,3 @@
 
 - [Well-formed HAMILTONIAN CIRCUIT for rooted directed path graphs instances](well-formed.md)
 - [HAMILTONIAN CIRCUIT for rooted directed path graphs as a decision problem](hamiltonian-circuit-rooted-directed-path.md)
-- [HAMILTONIAN CIRCUIT for rooted directed path graphs is NP-complete](hamiltonian-circuit-rooted-directed-path-2.md)

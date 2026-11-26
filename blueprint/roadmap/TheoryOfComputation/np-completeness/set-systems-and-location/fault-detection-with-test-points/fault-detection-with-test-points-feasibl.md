@@ -1,6 +1,3 @@
 # Feasible FAULT DETECTION WITH TEST POINTS instances
 
-A FAULT DETECTION WITH TEST POINTS instance is feasible when some set `A'` of at most `K` arcs
-makes the test set `T = ({s} ∪ {tails of A'}) × ({t} ∪ {heads of A'})` locate every single
-fault: for all distinct `v, v' ∉ {s, t}` some `(u₁, u₂) ∈ T` has `v` on a directed path from
-`u₁` to `u₂` and `v'` on no such path.
+A FAULT DETECTION WITH TEST POINTS instance is feasible when some set $A'$ of at most $K$ arcs makes the test set $T = (\{s\} \cup \{\text{tails of } A'\}) \times (\{t\} \cup \{\text{heads of } A'\})$ locate every single fault: for all distinct $v, v' \notin \{s, t\}$ some $(u_1, u_2) \in T$ has $u_1$ reaching $v$ and $v$ reaching $u_2$, while $u_1$ does not reach $v'$ or $v'$ does not reach $u_2$. These are two reachability tests (a directed walk through the vertex); on a well-formed, acyclic instance they say that the vertex lies on a directed path from $u_1$ to $u_2$.

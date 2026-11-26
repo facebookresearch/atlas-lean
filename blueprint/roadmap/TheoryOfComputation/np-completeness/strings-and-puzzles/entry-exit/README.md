@@ -7,4 +7,3 @@
 - [Well-formed ENTRY EXIT instances](well-formed.md)
 - [Feasible ENTRY EXIT instances](entry-exit-feasible.md)
 - [ENTRY EXIT as a decision problem](entry-exit-dec.md)
-- [ENTRY EXIT is NP-complete](entry-exit-np-complete.md)

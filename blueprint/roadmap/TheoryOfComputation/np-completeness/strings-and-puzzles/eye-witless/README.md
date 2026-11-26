@@ -13,4 +13,3 @@
 - [Well-formed EYE-WITLESS instances](well-formed.md)
 - [Feasible EYE-WITLESS instances](eye-witless-feasible.md)
 - [EYE-WITLESS as a decision problem](eye-witless-dec.md)
-- [EYE-WITLESS is NP-complete](eye-witless-np-complete.md)
