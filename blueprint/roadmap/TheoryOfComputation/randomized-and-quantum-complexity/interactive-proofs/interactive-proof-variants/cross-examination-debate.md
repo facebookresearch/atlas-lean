@@ -1,6 +1,6 @@
 # Cross-examination debate with a stochastic oracle
 
-Consider a randomized computation given by a step law: from the bits written so far, a distribution of the next bit, with output the final bit. In the cross-examination debate, a proposer and a challenger argue about the output in front of a verifier who samples the law at only one step selected through the provers' claims. If the output is $1$ with probability at least $2/3$, the honest proposer wins with probability at least $3/5$ against every challenger; if the output is $1$ with probability at most $1/3$ and the step law is Lipschitz at the relevant points, every proposer loses to the honest challenger except with probability at most $2/5$. Both honest strategies need only polynomially many oracle samples ('doubly efficient' debate).
+Let $M$ be a probabilistic oracle machine with a stochastic oracle $O$, running in time $T$ with oracle queries of length $l$, that decides a language $L$: it outputs $1$ with probability at least $2/3$ on every $x \in L$ and at most $1/3$ on every $x \notin L$. For $K > 0$, $M$ is *$K$-Lipschitz at $O$* if $\sup_x \lvert\Pr[M^{O}(x)=1]-\Pr[M^{O'}(x)=1]\rvert < K \sup_z \lvert\Pr[O(z)=1]-\Pr[O'(z)=1]\rvert$ for every oracle $O'$. If $M$ is $K$-Lipschitz at $O$, there is a debate protocol with cross-examination that decides $L$ with completeness $3/5$ and soundness $2/5$: for $x \in L$ the honest proposer makes the verifier output $1$ with probability at least $3/5$ against every challenger, and for $x \notin L$ the honest challenger keeps that probability at most $2/5$ against every proposer. The honest provers run in time $O(K^2 T \log T)$, and the verifier runs in time $O(K^2 + l \log T)$ and makes $O(K^2)$ oracle queries.
 
 ## Proof sketch
 
@@ -12,4 +12,4 @@ The proposer commits to conditional acceptance probabilities along the run; the 
 
 ## Sources
 
-- Jonah Brown-Cohen, Geoffrey Irving and Georgios Piliouras, "Scalable AI Safety via Doubly-Efficient Debate", Proceedings of the 41st International Conference on Machine Learning, arXiv:2311.14125, 2024, Section 6 and Appendix D.
+- Jonah Brown-Cohen, Geoffrey Irving and Georgios Piliouras, "Scalable AI Safety via Doubly-Efficient Debate", Proceedings of the 41st International Conference on Machine Learning, arXiv:2311.14125, 2024, Definition 6.1, Theorem 6.2 and Appendix D.

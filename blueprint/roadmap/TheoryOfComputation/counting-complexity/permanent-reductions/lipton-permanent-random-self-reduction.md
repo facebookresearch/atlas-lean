@@ -13,4 +13,3 @@ Choose a uniformly random $R$ and query $O(M+iR)$ for $i=1,\dots,n+1$. The univa
 ## Sources
 
 - Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.
-- Sanjeev Arora and Boaz Barak, "Computational Complexity - A Modern Approach", Cambridge University Press, 2009.

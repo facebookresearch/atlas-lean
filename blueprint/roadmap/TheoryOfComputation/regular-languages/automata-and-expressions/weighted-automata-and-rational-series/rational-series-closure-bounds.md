@@ -1,6 +1,6 @@
 # Closure of rational series with dimension bounds
 
-If $f\in\mathrm{Rat}_{\le m}$ and $g\in\mathrm{Rat}_{\le n}$ then $f+g\in\mathrm{Rat}_{\le m+n}$, the Cauchy product $f\cdot g\in\mathrm{Rat}_{\le m+n}$, scalar multiples $cf\in\mathrm{Rat}_{\le m}$, and (when $f(\varepsilon)=0$) the star $f^{*}=\sum_{k\ge0}f^{k}\in\mathrm{Rat}_{\le m+1}$; each single-letter series lies in $\mathrm{Rat}_{\le2}$. Every rational series has a normal-form representation with a single initial and a single final state agreeing on non-empty words, and padding words with a trailing idle letter raises the dimension by at most one.
+If $f\in\mathrm{Rat}_{\le m}$ and $g\in\mathrm{Rat}_{\le n}$ then $f+g\in\mathrm{Rat}_{\le m+n}$, the Cauchy product $f\cdot g\in\mathrm{Rat}_{\le m+n}$, scalar multiples $cf\in\mathrm{Rat}_{\le m}$, and (when $f(\varepsilon)=0$) the star $f^{*}=\sum_{k\ge0}f^{k}\in\mathrm{Rat}_{\le m+1}$; each single-letter series lies in $\mathrm{Rat}_{\le2}$. Every rational series $f \in \mathrm{Rat}_{\le m}$ admits a representation of dimension at most $m + 2$ with a single initial basis vector $e_1$ and a single final basis vector $e_{m+2}$ agreeing with $f$ on all non-empty words.
 
 ## Proof sketch
 

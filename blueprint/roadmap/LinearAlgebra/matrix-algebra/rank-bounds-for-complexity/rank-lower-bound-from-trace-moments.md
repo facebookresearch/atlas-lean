@@ -12,11 +12,6 @@ so $\operatorname{rank}A\ge(\operatorname{tr}A^TA)^2/\operatorname{tr}\bigl((A^T
 
 $H$ is symmetric positive semidefinite of rank $\operatorname{rank}A$; its trace is the sum of its nonzero eigenvalues and $\operatorname{tr}H^2$ is the sum of their squares, so Cauchy–Schwarz over the $\operatorname{rank}A$ nonzero eigenvalues gives the inequality.
 
-## Depends on
-
-- [Subadditivity of the rank](../../../Analysis/approximation-theory/low-rank-matrix-recovery/rank-sub-le.md)
-
 ## Sources
 
-- OpenAI, "Homogeneous Depth-Five Lower Bounds for Iterated Matrix Multiplication", Preprint, 2026.
 - Stasys Jukna, "Boolean Function Complexity: Advances and Frontiers", Springer, 2012.
