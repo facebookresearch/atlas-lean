@@ -24,6 +24,15 @@ A radial test vector on a ball has adjacency Rayleigh quotient close to `2 √(d
 A linear cutoff in the radial weight lets us bound the error pointwise, even at the
 boundary. Subtracting the mean of the test vector costs little when the ball occupies
 only a small fraction of the graph.
+
+## References
+
+* A. Nilli, "On the second eigenvalue of a graph", *Discrete Mathematics* 91(2) (1991),
+  207–210, proof of the finite-distance bound. Nilli's localized Rayleigh-quotient argument uses
+  neighborhoods of two separated edges. The linear taper and the use of a single ball centered
+  by subtracting the mean are adaptations in this proof.
+* S. Vadhan, *Pseudorandomness*, *Foundations and Trends in Theoretical Computer Science*
+  7(1–3) (2012), 1–336, Theorem 4.11, is the source for the statement, not the proof.
 -/
 
 @[expose] public section
