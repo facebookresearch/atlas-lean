@@ -1,0 +1,7 @@
+# Erdős Problem 803 (balanced subgraphs of graphs with $n \log n$ edges)
+
+The statement that there are real constants $D$ and $c > 0$ such that for every natural number $m \ge 1$ and all sufficiently large $n$, every simple graph $G$ on $\{0, \dots, n-1\}$ with at least $n \log n$ edges (natural logarithm) has a subgraph $H$, not necessarily induced, with exactly $m$ vertices and at least $c\, m \log m$ edges that is $D$-balanced as a graph on its own vertex set: its maximum degree is at most $D$ times its minimum degree. Stated here as a proposition; its resolution: [Resolution of Erdős Problem 803](balanced-dense-subgraphs-refuted.md).
+
+## Sources
+
+- T. F. Bloom, Erdős Problems, Problem #803, https://www.erdosproblems.com/803.
