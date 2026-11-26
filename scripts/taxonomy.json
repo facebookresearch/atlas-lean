@@ -13966,6 +13966,7 @@
   "MathlibExt/Probability/PACBayes": {"to": "ComputerScience/machine-learning/generalization-bounds-and-concentration", "title": "PAC-Bayes bounds"},
   "MathlibExt/Probability/PairwiseIndepSLLN": {"to": "Probability/laws-of-large-numbers", "title": "Strong law of large numbers"},
   "MathlibExt/Probability/PaleyZygmund": {"to": "Probability/concentration-inequalities", "title": "Paley–Zygmund inequality"},
+  "MathlibExt/Probability/PengCentralLimitTheorem": {"to": "Probability/central-limit-theorems", "title": "Limit theorems under sublinear expectations"},
   "MathlibExt/Probability/Percolation/BurtonKeane": {"to": "Probability/percolation/phase-transition", "title": "Uniqueness of the infinite cluster"},
   "MathlibExt/Probability/Percolation/ClusterCountEvents": {"to": "Probability/percolation/phase-transition", "title": "Number of infinite clusters"},
   "MathlibExt/Probability/Percolation/ClusterMerging": {"to": "Probability/percolation/phase-transition", "title": "Number of infinite clusters"},
