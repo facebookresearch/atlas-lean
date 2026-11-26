@@ -77,18 +77,6 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq {k p d₁ d₂ : ℕ
     (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + d₁ + d₂) :
     2 ^ k * p ^ 2 = 18 ∨ 2 ^ k * p ^ 2 = 36 ∨ 2 ^ k * p ^ 2 = 200
 
-/-- **No $2$-near perfect $2^k p^2$ with omitted divisors $2^i$ and $p$ or $p^2$.** Let $p$ be an
-odd prime, let $k$ and $i$ be natural numbers with $i \le k$, let $m$ be $1$ or $2$, and let
-$n = 2^k p^2$. Then $\sigma(n) \ne 2n + 2^i + p^m$, where $\sigma$ is the sum-of-divisors
-function; that is, $n$ is not $2$-near perfect with omitted divisors $2^i$ and $p^m$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 2
-(`integers-2024-A61-prop-2`). -/
-public theorem_wanted not_two_near_perfect_two_pow_mul_prime_sq_case_two {k p i m : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hi : i ≤ k) (hm : m = 1 ∨ m = 2) :
-    ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) ≠ 2 * (2 ^ k * p ^ 2) + 2 ^ i + p ^ m
-
 /-- **$2$-near perfect $2^k p^2$ with omitted divisors $1$ and $2^b p^2$.** Let $p$ be an odd
 prime and let $b, k$ be integers with $1 \le b \le k$. If $n = 2^k p^2$ satisfies
 $\sigma(n) = 2n + 1 + 2^b p^2$, where $\sigma$ is the sum-of-divisors function (that is, $n$ is
