@@ -10,6 +10,10 @@ $$\mathcal{P}_{\mathrm{tot}} = \sum_{\text{paths}} \prod_{\text{steps}} p_{\math
 
 In the strong-selection limit $N \to \infty$, $\gamma \to \infty$, the step probability becomes the indicator of $\Delta > 0$ and $\mathcal{P}_{\mathrm{tot}}$ counts the strictly uphill paths.
 
+## Depends on
+
+- [Truncated-order epistasis model of a combinatorial landscape](truncated-order-epistasis-model-of-a-combinatorial-landscape.md)
+
 ## Expansion
 
 In the weak-mutation regime the population is monomorphic between fixation events and moves along the hypercube as a Markov chain whose transition weights are fixation probabilities. A path from germline to somatic sequence is an ordering of the $L$ mutations, so there are $L!$ paths, and the $(s_g, s_s)$ entry of the matrix product sums the product of step weights over all of them. As $\sigma \to 0$, $p_{\mathrm{step}} \to 1/N$ (neutral fixation). The rows of $P^{ag}$ are not normalized, so $\mathcal{P}_{\mathrm{tot}}$ compares antigen scenarios (single antigen, sequential antigens, or mixtures) for one antibody but not across antibodies. For CR9114 (16 heavy-chain mutations) the source finds that a sequential scenario, selecting for affinity to each influenza antigen in turn, gives the somatic sequence a much higher total probability than single-antigen or random mixed scenarios, because affinity to diverse antigens is acquired in a nested, epistatic order; for CR6261, whose antigens are more similar, many paths remain accessible under all scenarios.

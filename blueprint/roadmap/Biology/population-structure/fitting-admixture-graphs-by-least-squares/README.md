@@ -19,3 +19,4 @@
 - [A positive definite Gram matrix makes the constrained maximizer unique](eq-of-is-constrained-maximizer-of-pos-de.md)
 - [One-edge example where the nonnegativity constraint is active](is-constrained-maximizer-one-neg.md)
 - [Profiling the admixture proportions in the qpGraph fit](outer-optimization-over-admixture-proportions.md)
+- [Two-way mixture fitting on a scaffold tree](two-way-mixture-fitting-on-a-scaffold-tree/README.md)

@@ -10,7 +10,11 @@ $$\hat\mu = \frac{n\,(1 - \mathrm{FDR})}{2 \cdot \mathrm{CG} \cdot (1 - \mathrm{
 
 $$\widehat{\mathrm{FNR}} = \frac{\#\{\text{true heterozygous sites outside the allelic-balance interval}\}}{\#\{\text{true heterozygous sites}\}}.$$
 
-Alternatively, the denominator can be computed site by site as $\sum_s \pi_s$, where $\pi_s$ is the probability that a DNM at site $s$ would pass all filters given the depths there, which merges $\mathrm{CG}$ and $1 - \mathrm{FNR}$ into one term.
+Alternatively, the effective callable site count $\mathrm{CG}\,(1 - \mathrm{FNR})$ can be computed site by site as $\sum_s \pi_s$, where $\pi_s$ is the probability that a DNM at genomic site $s$ would pass all filters given the depths there, which merges $\mathrm{CG}$ and $1 - \mathrm{FNR}$ into one term. The two transmitted copies of each site keep the factor $2$, so the denominator becomes $2\sum_s \pi_s$:
+
+$$\hat\mu = \frac{n\,(1 - \mathrm{FDR})}{2\sum_s \pi_s}.$$
+
+With perfect detection at $L$ callable sites, $\pi_s = 1$ and both forms divide by $2L$.
 
 ## Expansion
 

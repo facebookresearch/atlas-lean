@@ -74,4 +74,7 @@
 - [Closed form is the unique REML maximizer for positive class means](is-max-on-reml-log-lik-two-level-reml.md)
 - [The closed-form REML estimator is unbiased when both eigenvalues occur](integral-two-level-reml.md)
 - [LD-weighted genetic relationship matrix (LDAK)](ld-weighted-relationship-matrix-ldak.md)
-- [Thresholded-GRM model for joint SNP and pedigree heritability](thresholded-grm-model-for-snp-and-pedigree-heritability.md)
+- [Thresholded-relatedness variance-component model for total and SNP heritability](../../quantitative-genetics/heritability-from-relatedness-classes/thresholded-relatedness-model-for-total-and-snp-heritability.md)
+- [Polygenicity bounds from regional heritability](polygenicity-bounds-from-regional-heritability/README.md)
+- [IBD variance components for expression heritability](ibd-variance-components-for-expression-heritability/README.md)
+- [Heritability from local ancestry](heritability-from-local-ancestry/README.md)

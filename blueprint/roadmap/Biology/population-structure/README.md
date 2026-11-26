@@ -29,8 +29,3 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
-- [Archaic introgression detection](archaic-introgression-detection/README.md)
-- [Dating archaic gene flow from LD decay](dating-archaic-gene-flow-from-ld-decay/README.md)
-- [IBD score for founder events](ibd-score-for-founder-events/README.md)
-- [Two-way mixture fitting on a scaffold tree](two-way-mixture-fitting-on-a-scaffold-tree/README.md)
-- [X-to-autosome genetic drift](x-to-autosome-genetic-drift/README.md)

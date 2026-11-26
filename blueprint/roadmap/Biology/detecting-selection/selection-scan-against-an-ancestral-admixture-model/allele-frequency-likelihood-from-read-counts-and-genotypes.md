@@ -6,6 +6,10 @@ $$L(p; D) = B(X, 2N, p)\prod_{i=N+1}^{N+M}\Big\{p^2 B(R_i, T_i, 1-\varepsilon) +
 
 The maximum-likelihood frequency $\hat p = \arg\max_p L(p; D)$ is used as the population frequency estimate, and the log-likelihood $\ell(p; D) = \log L(p; D)$ is the building block of frequency-based tests.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+
 ## Expansion
 
 Each read-only individual contributes a mixture over its three possible genotypes, with Hardy–Weinberg weights $p^2, 2p(1-p), (1-p)^2$ and read-count likelihoods that are binomial with success probability $1-\varepsilon$ for a reference homozygote, $1/2$ for a heterozygote and $\varepsilon$ for an alternative homozygote. Genotyped individuals contribute the binomial likelihood of their allele count. The approach avoids calling diploid genotypes from one or two reads, which would bias frequencies, and lets individuals with very different coverage share one model. Mathieson et al. set $\varepsilon = 0.001$ and maximize the likelihood numerically per population and SNP.

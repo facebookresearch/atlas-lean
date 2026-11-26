@@ -64,3 +64,4 @@
 - [Functionally informed prior causal probabilities (PolyFun)](functionally-informed-prior-causal-probabilities-polyfun.md)
 - [PAINTOR: annotation-informed fine-mapping of causal variants across loci](paintor-annotation-informed-fine-mapping.md)
 - [Polygenic localization](polygenic-localization.md)
+- [Functionally informed eQTL fine-mapping](functionally-informed-eqtl-fine-mapping/README.md)

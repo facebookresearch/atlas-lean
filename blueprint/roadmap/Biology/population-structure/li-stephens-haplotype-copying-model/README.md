@@ -22,3 +22,4 @@
 
 - [Diploid Li–Stephens model: collapsed forward step and imputed dosage as a posterior mean](diploid-li-stephens-phasing-and-genotype-imputat.md)
 - [HAPMIX local-ancestry hidden Markov model](hapmix-local-ancestry-hidden-markov-model.md)
+- [Archaic introgression detection](archaic-introgression-detection/README.md)

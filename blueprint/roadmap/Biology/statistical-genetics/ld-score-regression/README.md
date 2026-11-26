@@ -133,3 +133,4 @@
 
 - [Residual stratification produces covariance between a polygenic score and ancestry](residual-stratification-produces-prs-ancestry-co.md)
 - [Covariate-adjusted LD score regression (cov-LDSC)](covariate-adjusted-ld-score-regression.md)
+- [Genomic structural equation modelling](genomic-structural-equation-modelling/README.md)

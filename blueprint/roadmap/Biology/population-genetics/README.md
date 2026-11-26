@@ -28,10 +28,3 @@ Mathematical models of allele frequencies in populations under random mating, se
 - [Effective population size](effective-population-size/README.md)
 
 - [Bernstein's law for the ABO blood groups](bernstein-s-law-for-the-abo-blood-groups/README.md)
-- [CRISPR homing drive invasion and stability](crispr-homing-drive-invasion-and-stability/README.md)
-- [Daisy-chain gene drives](daisy-chain-gene-drives/README.md)
-- [Founder events in endogamous groups](founder-events-in-endogamous-groups/README.md)
-- [Multilocus index of association](multilocus-index-of-association/README.md)
-- [Non-crossover gene conversion](non-crossover-gene-conversion/README.md)
-- [Random match probability of SNP barcodes](random-match-probability-of-snp-barcodes/README.md)
-- [Stochastic homing gene-drive dynamics](stochastic-homing-gene-drive-dynamics/README.md)
