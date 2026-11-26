@@ -97439,6 +97439,8 @@
 "Module.alternating_length_of_exact_chain": "b8ed651b24014a1a",
 "Module.alternating_sum_of_consecutive_ranges": "1c77c4f140ff45b9",
 "Module.exactPair_length_toNat": "0f7cf8cba5cd384e",
+"Module.free_of_isRegular_of_span_eq_maximalIdeal": "363c5baf72cb6d49",
+"Module.free_of_isWeaklyRegular_of_span_eq_maximalIdeal": "50e4554adfe21d9a",
 "Module.isMaximal_of_mem_support_of_length_ne_top": "ad0021fa8e1380b4",
 "Module.length_ne_top_of_finite_of_ideal_le_annihilator": "8aa762f694fe47f6",
 "Module.length_ne_top_of_forall_isMaximal_mem_support": "a3599ac57aff62d3",
