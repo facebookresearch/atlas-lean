@@ -10,11 +10,13 @@ A cast $f : T_1 \Rightarrow^\ell T_2$ has type $T_2$ when $f : T_1$ and $T_1 \si
 
 - **Cast insertion.** $\Gamma \vdash e \rightsquigarrow f : T$ translates a GTLC term; at an application it casts the function to $T_{11} \to T_{12} = \mathrm{fun}(T_1)$ and the argument to
   $T_{11}$, both with the application's label.
-- **Reduction.** $(\lambda x{:}T.\, f)\, v \longmapsto [x := v]f$; identity casts at a base type or at $?$ vanish; $v : G \Rightarrow^{\ell_1} ? \Rightarrow^{\ell_2} G \longmapsto v$, while
+- **Reduction.** $(\lambda x{:}T.\, f)\, v \longmapsto [x := v]f$; a function constant applied to a constant reduces by its interpretation, $k\, k' \longmapsto \delta(k, k')$; identity casts at a base type or at $?$ vanish; $v : G \Rightarrow^{\ell_1} ? \Rightarrow^{\ell_2} G \longmapsto v$, while
   $v : G_1 \Rightarrow^{\ell_1} ? \Rightarrow^{\ell_2} G_2 \longmapsto \mathrm{blame}_{G_2}\, \ell_2$ when $G_1 \ne G_2$; a function cast distributes over application,
   $(v_1 : T_1 \to T_2 \Rightarrow^\ell T_3 \to T_4)\, v_2 \longmapsto v_1\, (v_2 : T_3 \Rightarrow^\ell T_1) : T_2 \Rightarrow^\ell T_4$; a cast from $T$ to $?$ or from $?$ to $T$, where
   $T \ne ?$, $T \ne G$ and $T \sim G$ for a ground type $G$, factors through $G$ (rules Ground and Expand); reduction proceeds under evaluation frames, and blame propagates to the top.
 - **Evaluation of the GTLC.** $e \Downarrow r$ if $\emptyset \vdash e \rightsquigarrow f : T$ and $f \longmapsto^* r$; $e \Uparrow$ if the reduction of $f$ does not terminate.
+
+The rule for function constants is not in the source's Figure 4, which lists constants such as $\mathrm{inc}$ but no rule for applying them; without it a well-typed application such as $\mathrm{inc}\; 0$ would be stuck.
 
 ## Depends on
 

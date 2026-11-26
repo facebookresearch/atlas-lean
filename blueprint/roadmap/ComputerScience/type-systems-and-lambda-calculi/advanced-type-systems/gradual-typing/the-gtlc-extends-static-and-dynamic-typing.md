@@ -6,7 +6,7 @@ Let $\vdash_S$ and $\Downarrow_S$ be typing and evaluation of the simply typed �
    $e \Downarrow_S v$ if and only if $e \Downarrow v'$ for a value $v'$ whose cast erasure is $v$. Cast insertion puts only identity casts $T_1 \Rightarrow^\ell T_1$ into a fully
    annotated static term, and an identity cast at a function type is not removed until the function is applied: with $A = \mathrm{int} \to \mathrm{int}$,
    $(\lambda f{:}A.\, f)\, (\lambda x{:}\mathrm{int}.\, x)$ evaluates in the STLC to $\lambda x{:}\mathrm{int}.\, x$ and in the GTLC to that function wrapped in identity casts.
-2. **Dynamic.** Let $\lceil e \rceil$ embed a DTLC term into the GTLC by casting every constant to $?$. Then $\vdash \lceil e \rceil : ?$, and $e \Downarrow_D r$ if and only if
+2. **Dynamic.** Let $\lceil e \rceil$ embed a DTLC term into the GTLC by annotating every bound variable with $?$ and casting every constant and every abstraction to $?$. Then $\vdash \lceil e \rceil : ?$, and $e \Downarrow_D r$ if and only if
    $\lceil e \rceil \Downarrow r'$ for a result $r'$ corresponding to $r$: a constant $k$ of base type $B$ corresponds to its injection $k : B \Rightarrow ?$, a function value to a
    function value that erases to the embedding of it, and an error to blame.
 
@@ -23,7 +23,7 @@ This page becomes ready once:
 
 - The simply typed λ-calculus with base types $\mathrm{int}$ and $\mathrm{bool}$ and their constants, with its typing $\vdash_S$ and big-step evaluation $\Downarrow_S$ (statement prerequisite; not yet stated)
 - The dynamically typed λ-calculus with constants and its big-step evaluation $\Downarrow_D$, including its errors (statement prerequisite; not yet stated)
-- The embedding $\lceil \cdot \rceil$ of dynamically typed terms into the GTLC, which casts every constant to $?$ (statement prerequisite; not yet stated)
+- The embedding $\lceil \cdot \rceil$ of dynamically typed terms into the GTLC, which casts every constant and every abstraction to $?$; the source casts only the constants, which leaves $\lambda x{:}?.\, x$ at type $? \to ?$ (statement prerequisite; not yet stated)
 
 ## Sources
 
