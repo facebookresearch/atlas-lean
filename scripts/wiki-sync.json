@@ -837,7 +837,6 @@
 "AlgebraicGeometry.Surjective.of_isPullback": "72a1c96b7aa08afb",
 "AlgebraicGeometry.UniversallyClosed.of_isPullback": "cf0beac8cba408e8",
 "AlgebraicGeometry.dense_setOf_exists_section_of_isAlgClosed": "f4aaa889636cb940",
-"AlgebraicGeometry.existsUnique_lift_fromNormalization_kummer_of_isAffineOpen": "ed9f412e75241e59",
 "AlgebraicGeometry.exists_comp_eq_of_surjective_of_locallyOfFiniteType_of_isAlgClosed": "9355ab9964863e26",
 "AlgebraicGeometry.exists_over_hom_base_closedPoint_eq_of_isClosed_singleton": "e7a9a75fba21210c",
 "AlgebraicGeometry.exists_section_comp_eq_iff_factors_of_universallyClosed_of_valuationRing": "66ca0b64f8336b0c",
