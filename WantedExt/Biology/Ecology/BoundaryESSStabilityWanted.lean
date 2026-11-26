@@ -19,8 +19,11 @@ the boundary of `Δ`, is asymptotically stable. An interior ESS attracts every i
 statement for a regular ESS. The converse fails: the interior rest point of the four-member
 hypercycle is asymptotically stable but not an ESS.
 
-The related interior-ESS development lives in `Domains.Biology.Dynamics.ReplicatorStability`;
-this module states the general boundary-ESS and global-attraction results.
+The related interior-ESS development lives in `Domains.Biology.Dynamics.ReplicatorStability`.
+The global-attraction result `IsESS.tendsto_of_pos` is proved in
+`Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos`, where `simplex`, `replicatorField`,
+`IsReplicatorSolution` and `IsESS` are defined; this module states the general boundary-ESS
+results.
 
 Sources: J. Hofbauer, P. Schuster and K. Sigmund, "A note on evolutionary stable strategies and
 game dynamics", J. Theor. Biol. 81 (1979) 609–612; P. D. Taylor and L. B. Jonker,
@@ -37,6 +40,7 @@ public import Mathlib.Analysis.Normed.Group.Constructions
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 public import Mathlib.Analysis.Complex.Basic
+public import Domains.Biology.Ecology.BoundaryESSStabilityTendstoOfPos
 
 @[expose] public section
 
@@ -45,26 +49,6 @@ namespace WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
 open Matrix Filter Topology
 
 variable {ι : Type*} [Fintype ι]
-
-/-- The simplex of mixed strategies `Δ = {x | ∀ i, 0 ≤ x i, ∑ i, x i = 1}`. -/
-def simplex (ι : Type*) [Fintype ι] : Set (ι → ℝ) :=
-  {x | (∀ i, 0 ≤ x i) ∧ ∑ i, x i = 1}
-
-/-- The **replicator vector field** of the matrix game `A`:
-`F(x)_i = x_i ((A x)_i - x · A x)`. -/
-def replicatorField (A : Matrix ι ι ℝ) (x : ι → ℝ) : ι → ℝ :=
-  fun i => x i * ((A *ᵥ x) i - x ⬝ᵥ A *ᵥ x)
-
-/-- `x` solves the replicator equation `ẋ = F(x)` of `A` for all times `t ≥ 0`. -/
-def IsReplicatorSolution (A : Matrix ι ι ℝ) (x : ℝ → ι → ℝ) : Prop :=
-  ∀ i t, 0 ≤ t → HasDerivAt (fun s => x s i) (replicatorField A (x t) i) t
-
-/-- `p` is an **evolutionarily stable state** of `A` (Maynard Smith and Price): `p ∈ Δ` and for
-every `q ∈ Δ` with `q ≠ p`, either `q · A p < p · A p`, or `q · A p = p · A p` and
-`q · A q < p · A q`. -/
-def IsESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  p ∈ simplex ι ∧ ∀ q ∈ simplex ι, q ≠ p →
-    q ⬝ᵥ A *ᵥ p < p ⬝ᵥ A *ᵥ p ∨ (q ⬝ᵥ A *ᵥ p = p ⬝ᵥ A *ᵥ p ∧ q ⬝ᵥ A *ᵥ q < p ⬝ᵥ A *ᵥ q)
 
 /-- `p` is **locally superior**: `p ∈ Δ` and `x · A x < p · A x` for every `x ≠ p` in `Δ`
 near `p`. -/
@@ -112,15 +96,6 @@ Lyapunov stable on `Δ`, and `p` attracts every solution starting in `Δ` near `
 Source: Hofbauer, Schuster and Sigmund (1979), corollary after D4. -/
 public theorem_wanted IsESS.isAsymptoticallyStable {A : Matrix ι ι ℝ} {p : ι → ℝ}
     (h : IsESS A p) : IsAsymptoticallyStable A p
-
-/-- **An interior ESS attracts every interior orbit** (Hofbauer and Sigmund 2003, Theorem 7).
-For every payoff matrix `A` and every ESS `p` of `A` with `p i > 0` for all `i`, every solution
-`x` of the replicator equation with `x 0 ∈ Δ` and `x 0 i > 0` for all `i` converges to `p`.
-
-Source: Hofbauer and Sigmund (2003), §2.6, Theorem 7. -/
-public theorem_wanted IsESS.tendsto_of_pos {A : Matrix ι ι ℝ} {p : ι → ℝ} (h : IsESS A p)
-    (hp : ∀ i, 0 < p i) {x : ℝ → ι → ℝ} (hx : IsReplicatorSolution A x)
-    (hx₀ : x 0 ∈ simplex ι) (hx₀pos : ∀ i, 0 < x 0 i) : Tendsto x atTop (𝓝 p)
 
 /-- **A regular ESS is linearly stable** (Taylor and Jonker 1978, §3 Theorem). For every payoff
 matrix `A` and every regular ESS `p` of `A`, every complex eigenvalue `μ` of the Jacobian of the
