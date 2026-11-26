@@ -15,3 +15,8 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Darwinian dynamics of cancer drug resistance](darwinian-dynamics-of-drug-resistance/README.md)
+- [Multi-copy copy-number profile transformation](multi-copy-copy-number-profile-transformation/README.md)
+- [Mutational burden after treatment in birth–death tumours](mutational-burden-after-treatment-in-birth-death-tumours/README.md)
+- [Stability of persistence curves for copy-number signals](stability-of-persistence-curves-for-copy-number-signals/README.md)
+- [Survival-associated mutated subnetworks](survival-associated-mutated-subnetworks/README.md)
