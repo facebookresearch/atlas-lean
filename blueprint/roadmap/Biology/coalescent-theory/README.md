@@ -27,9 +27,3 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
 - [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
-- [Bayesian species delimitation under the multispecies coalescent](bayesian-species-delimitation/README.md)
-- [Conjugate priors in multispecies-coalescent inference](conjugate-priors-in-multispecies-coalescent-inference/README.md)
-- [Epidemic coalescent models](epidemic-coalescent-models/README.md)
-- [Inverse-gamma integration of species-tree population sizes](inverse-gamma-integration-of-species-tree-population-sizes/README.md)
-- [Multispecies network coalescent with branch lengths](multispecies-network-coalescent-with-branch-lengths/README.md)
-- [SNP-based divergence-time estimation under the multispecies coalescent](snp-based-divergence-time-estimation-under-the-msc/README.md)

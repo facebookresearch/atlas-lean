@@ -12,10 +12,6 @@ $$f(\beta_b \mid \hat\beta_b, \hat D_b) \propto \mathcal{N}\!\Big(\hat\beta_b;\ 
 
 and a polygenic risk score is $\mathrm{PRS} = \sum_j X_j\, \mathbb{E}(\beta_j \mid \hat\beta, \hat D)$, with $\hat D$ replaced by a reference-panel LD matrix when individual genotypes are unavailable.
 
-## Depends on
-
-- [The LDpred-inf posterior](../../quantitative-genetics/linear-mixed-models-and-blup/cond-distrib-ldpred-inf.md)
-
 ## Expansion
 
 Write $\hat\beta_b = \frac1N X_b^{\top}(X_b\beta_b + X_{-b}\beta_{-b} + \varepsilon)$. The first term is $\hat D_b\beta_b$. The remainder $\frac1N X_b^{\top}(X_{-b}\beta_{-b} + \varepsilon)$ has mean zero, and since $X_{-b}\beta_{-b} + \varepsilon$ has per-individual variance $1 - h_b^2$ (the total phenotypic variance one minus what block $b$ explains), its covariance is $\frac{1}{N^2}X_b^{\top}(1 - h_b^2)I\,X_b = \frac{1 - h_b^2}{N}\hat D_b$. Working block by block avoids inverting the full, typically singular $M \times M$ LD matrix. When the prior is a mixture of a point mass and normals, each coordinate of $\beta_b$ given $\hat\beta_b$ and the other coordinates is again a two-component mixture, so the posterior mean can be approximated by Gibbs sampling. Using $1 - h_b^2$ instead of $1 - h_g^2$ (whole-genome SNP heritability) is the refinement that conditions on the block's own contribution.

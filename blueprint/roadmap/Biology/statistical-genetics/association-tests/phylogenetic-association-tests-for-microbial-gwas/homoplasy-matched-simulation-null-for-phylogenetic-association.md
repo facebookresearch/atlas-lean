@@ -16,7 +16,7 @@
 
 ## Depends on
 
-- [Fitch's algorithm](../../phylogenetics/small-parsimony-problem/fitch.md)
+- [Fitch's algorithm](../../../phylogenetics/small-parsimony-problem/fitch.md)
 - [Terminal, simultaneous and subsequent association scores on a phylogeny](treewas-terminal-simultaneous-and-subsequent-scores.md)
 
 ## Expansion

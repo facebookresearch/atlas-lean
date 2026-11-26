@@ -16,7 +16,11 @@ and the posterior of each $N_b$ given the gene trees is inverse-gamma$(\alpha + 
 
 ## Depends on
 
-- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](../multispecies-coalescent/network-multispecies-coalescent-fixed-network-ge.md)
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](../../../coalescent-theory/multispecies-coalescent/network-multispecies-coalescent-fixed-network-ge.md)
+
+## Proof depends on
+
+- [Euler's gamma integral](../../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/lintegral-rpow-mul-exp-neg-mul-ioi.md)
 
 ## Expansion
 

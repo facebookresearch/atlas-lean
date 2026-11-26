@@ -8,7 +8,7 @@ and the likelihood of $S$ independent SNPs is $\prod_{s=1}^{S} P(x_s \mid \psi)\
 
 ## Depends on
 
-- [Rooted binary species tree with branch lengths](../multispecies-coalescent/species-tree.md)
+- [Rooted binary species tree with branch lengths](../../../coalescent-theory/multispecies-coalescent/species-tree.md)
 
 ## Expansion
 

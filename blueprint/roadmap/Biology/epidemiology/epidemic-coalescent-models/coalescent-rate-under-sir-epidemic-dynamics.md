@@ -17,8 +17,9 @@ Properties:
 
 ## Depends on
 
-- [Expected time to the most recent common ancestor](../kingman-s-coalescent-and-watterson-s-estimator/integral-tmrca.md)
-- [Exponential generation interval](../../epidemiology/euler-lotka-equation-and-the-reproduction-number/reproduction-number-exp-measure.md)
+- [Kingman's coalescent](../../coalescent-theory/coalescents/merger-rate-dirac-zero.md)
+- [Solution of the Kermack–McKendrick SIR system](../kermack-mckendrick-sir-model/is-solution.md)
+- [Exponential generation interval](../euler-lotka-equation-and-the-reproduction-number/reproduction-number-exp-measure.md)
 
 ## Expansion
 

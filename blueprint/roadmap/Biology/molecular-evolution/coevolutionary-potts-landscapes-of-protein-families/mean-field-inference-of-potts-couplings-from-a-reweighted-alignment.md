@@ -20,15 +20,15 @@ Let $C_{ij}(a,b) = f_{ij}^{\Lambda_2}(a,b) - f_i^{\Lambda_2}(a) f_j^{\Lambda_2}(
 correlation matrix over non-gap symbols, computed with a large pseudocount $\Lambda_2$. The
 mean-field approximation to the
 [Potts model](potts-model-of-a-protein-family-and-context-dependent-mutational-effects.md)
-$P \propto \exp\{\sum_i \varphi_i + \sum_{i \le j}\varphi_{ij}\}$ sets the couplings to the
-negative inverse correlation matrix,
+$P \propto \exp\{\sum_i \varphi_i + \sum_{i < j}\varphi_{ij}\}$ sets the couplings of distinct
+sites $i \ne j$ to the negative inverse correlation matrix,
 
-$$\varphi_{ij}(a,b) = -\big[C^{-1}\big]_{ij}(a,b),$$
+$$\varphi_{ij}(a,b) = -\big[C^{-1}\big]_{ij}(a,b) \qquad (i \ne j),$$
 
-with couplings involving the gap symbol set to zero, and the fields, with a small pseudocount
-$\Lambda_1$, to
+with couplings involving the gap symbol set to zero (since $C$ is symmetric, so is $C^{-1}$, and
+$\varphi_{ji}(b,a) = \varphi_{ij}(a,b)$), and the fields, with a small pseudocount $\Lambda_1$, to
 
-$$\varphi_i(a) = \log\frac{f_i^{\Lambda_1}(a)}{f_i^{\Lambda_1}(-)} - \sum_{j, b}\varphi_{ij}(a,b)\,
+$$\varphi_i(a) = \log\frac{f_i^{\Lambda_1}(a)}{f_i^{\Lambda_1}(-)} - \sum_{j \ne i}\sum_{b}\varphi_{ij}(a,b)\,
 f_j^{\Lambda_1}(b).$$
 
 ## Depends on
@@ -46,7 +46,9 @@ denominator of the field formula. The correlation matrix is singular without reg
 the source uses a large pseudocount ($\Lambda_2 = 0.5$) to counter the systematic bias of the
 mean-field approximation, but the Bayesian-size pseudocount $\Lambda_1 = 1/M_{\mathrm{eff}}$ for the
 fields. The source writes the step function on the distance directly and prints the coupling formula without the minus sign; the forms above are the standard ones for identity-threshold reweighting, and for couplings the sign depends on whether
-the Potts energy enters the exponent with a plus or a minus.
+the Potts energy enters the exponent with a plus or a minus. The source also lets $i = j$ in the
+couplings and in the field sum; the diagonal blocks of $C^{-1}$ are not used here, matching the
+restriction of the Potts couplings to distinct sites.
 
 ## Sources
 

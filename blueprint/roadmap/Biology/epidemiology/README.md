@@ -20,3 +20,4 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
+- [Epidemic coalescent models](epidemic-coalescent-models/README.md)

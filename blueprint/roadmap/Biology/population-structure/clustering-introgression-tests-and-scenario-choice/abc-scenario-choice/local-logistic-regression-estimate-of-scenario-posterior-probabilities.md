@@ -14,6 +14,10 @@ $$\widehat{P}_{\mathrm{log}}(M = j \mid s_{\mathrm{obs}}) = \frac{e^{\hat\beta_{
 
 with confidence intervals from the asymptotic normal law of the maximum-likelihood estimates.
 
+## Depends on
+
+- [Local-linear regression adjustment in approximate Bayesian computation](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/rejection-sampling/abc-local-linear-regression-adjustment-beaumont.md)
+
 ## Expansion
 
 As $\delta \to 0$ and $n \to \infty$ the accepted simulations are drawn from the joint law of $(M, S)$ conditioned on $S$ near $s_{\mathrm{obs}}$, so the proportion of each scenario among them converges to $P(M = j \mid S = s_{\mathrm{obs}})$; this is the direct estimate, but at practical tolerances it depends on the arbitrary choice of $n_\delta$. Centring the covariates at $s_{\mathrm{obs}}$ makes the intercepts the log-odds at the observed point, so the regression borrows strength from simulations farther away while correcting, to first order in $s - s_{\mathrm{obs}}$, for the trend of scenario frequencies across the acceptance region. This is the classification analogue of the local-linear regression adjustment used for parameter posteriors, and the scenario indicator, being categorical, gets a logit link.

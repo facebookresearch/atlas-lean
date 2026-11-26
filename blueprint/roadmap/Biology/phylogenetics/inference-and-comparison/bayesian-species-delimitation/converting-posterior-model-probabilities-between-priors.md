@@ -12,7 +12,7 @@ so the posterior under $\pi'$ is recovered from the posterior under $\pi$ by $\m
 
 ## Depends on
 
-- [Proportional priors on joint species-delimitation and species-tree models](proportional-priors-on-species-delimitation-and-species-tree-models.md)
+- [Bayes' rule for countably many hypotheses](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/bayes-rule/bayes-posterior-apply-singleton.md)
 
 ## Expansion
 

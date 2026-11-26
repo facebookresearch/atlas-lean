@@ -19,7 +19,12 @@ Under Prior 1, for every $s \ge 3$, $P_1 = P_2 = P_s$.
 
 ## Depends on
 
-- [Rooted binary species tree with branch lengths](../multispecies-coalescent/species-tree.md)
+- [Rooted binary species tree with branch lengths](../../../coalescent-theory/multispecies-coalescent/species-tree.md)
+- [Ranked labeled history](../../../coalescent-theory/ranked-labeled-histories-of-coalescent-trees/ranked-history.md)
+
+## Proof depends on
+
+- [Schröder's count of rooted binary phylogenetic trees](../../../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/nat-card-rooted-binary-tree.md)
 
 ## Expansion
 
@@ -27,4 +32,4 @@ Every guide tree has exactly one representation with $U = \varnothing$ (one spec
 
 ## Sources
 
-- Yang Z, Rannala B. Unguided species delimitation using DNA sequence data from multiple loci. *Molecular Biology and Evolution* 31:3125–3135 (2014), section "Prior on Models of Species Delimitation and Species Phylogeny", Table 1, and Discussion. DOI <https://doi.org/10.1093/molbev/msu279>. PMCID PMC4245825.
+- Yang Z, Rannala B. Unguided species delimitation using DNA sequence data from multiple loci. *Molecular Biology and Evolution* 31:3125–3135 (2014), section "Priors on Species Delimitation and Species Phylogeny", Table 1, and Discussion. DOI <https://doi.org/10.1093/molbev/msu279>. PMCID PMC4245825.

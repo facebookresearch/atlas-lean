@@ -19,7 +19,7 @@ $D_1$ uses derived alleles present in $P_{3_1}$ but not $P_{3_2}$, $D_2$ those p
 
 ## Depends on
 
-- [The unpolarized D-statistic numerator vanishes on a tree](../abba-baba-test-and-f-statistic-estimators/integral-sample-expect-abba-eq-baba.md)
+- [The unpolarized D-statistic numerator vanishes on a tree](../../abba-baba-test-and-f-statistic-estimators/integral-sample-expect-abba-eq-baba.md)
 
 ## Expansion
 

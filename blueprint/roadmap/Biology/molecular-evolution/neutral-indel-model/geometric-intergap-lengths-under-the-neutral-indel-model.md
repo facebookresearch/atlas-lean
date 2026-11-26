@@ -18,7 +18,7 @@ with short segments ($\ell < \ell_{\min}$, about 20 bp for human–mouse alignme
 
 1. Indel-purifying selection, which removes indels from functional segments, lengthens some IGS and makes $\sigma > 0$.
 2. Neutral variation of the indel rate (for example with G+C content or between the X chromosome and autosomes) turns the IGS distribution into a mixture of geometrics, which is convex in log-linear coordinates and also gives $\sigma > 0$; stratifying by such covariates and averaging $\sigma$ removes this contribution.
-3. $\sigma$ is not itself the fraction of sites under selection, but bounds it from above.
+3. $\sigma$ is not itself the fraction of sites under selection; the source treats it as a rough upper bound on that fraction.
 
 ## Expansion
 

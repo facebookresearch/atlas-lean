@@ -19,6 +19,10 @@ and the posterior over partitions is $p(S \mid x) \propto p(x \mid S)\, p(S)$, m
 - The prior penalizes additional clusters beyond the uniform-on-$k$ choice: since $\mathcal S(n, k)$ increases with $k$ up to its mode $k^\dagger(n)$ and $\mathcal S(n, k) / \mathcal S(n, k-1)$ is large for small $k$ (e.g. $\mathcal S(n,2) = 2^{n-1} - 1$ versus $\mathcal S(n,1) = 1$), a single partition into more blocks receives a much smaller prior mass than one into fewer blocks, for $k \le k^\dagger(n)$.
 - Hierarchical reclustering: when only the sequences of one first-stage cluster are reclustered, many sites that are variable elsewhere in the sample are monomorphic within that cluster, so the second-stage model has far fewer polymorphic sites whose frequencies must be estimated per sub-cluster; this increases power to resolve nested lineages that the first stage merges.
 
+## Proof depends on
+
+- [Dirichlet–multinomial conjugacy](../../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/with-density-prod-pow-dirichlet-measure.md)
+
 ## Expansion
 
 The Stirling formula counts surjections from $n$ sequences onto $k$ labelled clusters by inclusion–exclusion and divides by $k!$ for unlabelled blocks. The Dirichlet–multinomial factor is the standard conjugate integral $\int \prod_a p_a^{n_a}\,\mathrm{Dir}(p \mid \alpha)\,dp = \frac{B(\alpha + n)}{B(\alpha)}$ with $B$ the multivariate beta function. Uniform-on-$k$ versus uniform-on-partitions: a uniform prior on all partitions would weight $k$ in proportion to $\mathcal S(n,k)$, strongly favouring many clusters; dividing by $\mathcal S(n,k)$ removes that combinatorial weight. Because both prior and likelihood are available in closed form, the posterior can be optimized directly over partitions rather than by Markov chain Monte Carlo over continuous parameters. The spatially explicit BAPS variant replaces the partition prior by a spatial prior over a tessellation of the sample locations that favours geographically coherent clusters; its parameters, like the allele frequencies, are integrated out analytically, which is what allows posterior-mode search instead of MCMC.

@@ -25,9 +25,8 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Rank of the f4 matrix of left and right populations](rank-of-the-f4-matrix-of-left-and-right-populati/README.md)
 - [Tree-shaped admixture graphs and the four-point condition](tree-shaped-admixture-graphs-and-the-four-point/README.md)
 - [Wright's F-statistics](wright-s-f-statistics/README.md)
+- [Clustering, introgression tests and scenario choice](clustering-introgression-tests-and-scenario-choice/README.md)
 
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
-- [Bayesian partition models for sequence clustering](bayesian-partition-models-for-sequence-clustering/README.md)
-- [Partitioned D-statistics](partitioned-d-statistics/README.md)

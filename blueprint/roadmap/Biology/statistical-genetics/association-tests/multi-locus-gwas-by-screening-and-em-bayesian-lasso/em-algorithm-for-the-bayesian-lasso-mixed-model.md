@@ -16,9 +16,9 @@ $$\mathbb{E}(\gamma_k^{\mathsf T}\gamma_k) = \mathbb{E}(\gamma_k)^{\mathsf T} \m
 
 with the residual variance updated as $\hat\sigma^2 = \frac{1}{n} (Y - X\beta)^{\mathsf T}\bigl[(Y - X\beta) - \sum_k Z_k \mathbb{E}(\gamma_k)\bigr]$. The M-step updates each $\sigma_k^2$ from $\mathbb{E}(\gamma_k^{\mathsf T}\gamma_k)$ according to its hyperprior, and loci whose $\hat\gamma_k$ shrink to zero are dropped.
 
-## Depends on
+## Proof depends on
 
-- [Iterative sure independence screening with the SCAD penalty](iterative-sure-independence-screening-with-the-scad-penalty.md)
+- [Gaussian conditioning (Schur complement)](../../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-multivariate-gaussian.md)
 
 ## Expansion
 

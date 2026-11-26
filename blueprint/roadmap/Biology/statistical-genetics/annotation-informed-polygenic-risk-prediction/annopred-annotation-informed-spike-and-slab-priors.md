@@ -8,7 +8,7 @@
 
 $$\beta_i \sim p_0\, \mathcal{N}\!\Big(0, \frac{\hat\sigma_i^2}{p_0}\Big) + (1 - p_0)\,\delta_0, \qquad \hat\sigma_i^2 = c \sum_{j : i \in S_j} \hat\tau_j,$$
 
-with $c$ chosen so that $\sum_i \hat\sigma_i^2 = \hat H^2$.
+with $c > 0$ chosen so that $\sum_i \hat\sigma_i^2 = \hat H^2$. The estimates $\hat\tau_j$ can be negative, so this prior is defined only when $\sum_i \sum_{j : i \in S_j} \hat\tau_j > 0$ and $\hat\sigma_i^2 \ge 0$ for every $i$.
 2. *Common effect size, annotation-dependent causal proportion.* Let $T_i$ be the set of SNPs with exactly the same annotation membership as SNP $i$ and $M_{T_i} = |T_i|$. With $M_0$ SNPs in total and causal-effect variance $V$, so that $H_0^2 = p_0 M_0 V$,
 
 $$\beta_i \sim p_{T_i}\, \mathcal{N}(0, V) + (1 - p_{T_i})\,\delta_0, \qquad V = \frac{H_0^2}{p_0 M_0}, \qquad p_{T_i} = \frac{p_0\, M_0\, H_{T_i}^2}{M_{T_i}\, H_0^2},$$
@@ -16,6 +16,8 @@ $$\beta_i \sim p_{T_i}\, \mathcal{N}(0, V) + (1 - p_{T_i})\,\delta_0, \qquad V =
 where the heritability of $T_i$ is estimated by apportioning $\hat H^2$ in proportion to the per-SNP estimates,
 
 $$\hat H_{T_i}^2 = \frac{\sum_{k \in T_i} \sum_{j : k \in S_j} \hat\tau_j}{\sum_{k=1}^{M_0} \sum_{j : k \in S_j} \hat\tau_j}\, \hat H^2 .$$
+
+This prior is defined only when $0 \le p_{T_i} \le 1$ for every $i$, that is, $0 \le H_{T_i}^2 \le M_{T_i} H_0^2 / (p_0 M_0)$.
 
 **Properties.**
 
@@ -26,7 +28,6 @@ $$\hat H_{T_i}^2 = \frac{\sum_{k \in T_i} \sum_{j : k \in S_j} \hat\tau_j}{\sum_
 ## Depends on
 
 - [Random-effects model of stratified LD-score regression](../stratified-ld-score-regression/model.md)
-- [Block-conditional likelihood of marginal association effects](block-conditional-likelihood-of-marginal-effects.md)
 
 ## Expansion
 
