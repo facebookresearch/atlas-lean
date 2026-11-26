@@ -45,6 +45,7 @@ public import Mathlib.Data.Nat.Factors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import MathlibExt.NumberTheory.SuperMZumkeller
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
+public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes
 
 set_option autoImplicit false
 
@@ -73,15 +74,6 @@ theorem_wanted isSuperMZumkeller_prime_pow_iff (p : ℕ)
     (hp : p.Prime) (a : ℕ) (ha : 1 ≤ a) :
     IsSuperMZumkeller (p ^ a) ↔
       a % 16 ∈ ({0, 2, 5, 7, 8, 10, 13, 15} : Finset ℕ)
-
-/-- **Products of at least three distinct primes are super-m-Zumkeller.** For every finite set
-$S$ of at least three primes, the product $\prod_{p \in S} p$ is super-m-Zumkeller.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers",
-Corollary 1. -/
-theorem_wanted isSuperMZumkeller_prod_primes (s : Finset ℕ)
-    (hs : ∀ p ∈ s, p.Prime) (hcard : 3 ≤ s.card) :
-    IsSuperMZumkeller (∏ p ∈ s, p)
 
 /-- **Odd powers of $2$ times two distinct odd primes are super-m-Zumkeller.** Let $k$ be an odd
 natural number and let $p$ and $q$ be distinct odd primes. Then $2^k p q$ is super-m-Zumkeller.
