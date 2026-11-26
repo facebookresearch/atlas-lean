@@ -151,116 +151,116 @@ theorem fEpsDelta_zero_eq (eps delta : ℝ) (hε : 0 ≤ eps) (hδ : delta ≤ 1
 
 /-! ## Four-outcome randomized-response dominance tests -/
 
-theorem test_rrC_delta_one (eps : ℝ) : rrC eps 1 = 0 := by
+private theorem test_rrC_delta_one (eps : ℝ) : rrC eps 1 = 0 := by
   unfold rrC
   norm_num
 
-theorem test_rrC_zero_eps (delta : ℝ) : rrC 0 delta = (1 - delta) / 2 := by
+private theorem test_rrC_zero_eps (delta : ℝ) : rrC 0 delta = (1 - delta) / 2 := by
   unfold rrC
   rw [Real.exp_zero]
   norm_num
 
-theorem test_rr_exp_log3 : Real.exp (Real.log 3) = 3 :=
+private theorem test_rr_exp_log3 : Real.exp (Real.log 3) = 3 :=
   Real.exp_log (by norm_num)
 
-theorem test_rr_exp_neg_log3 : Real.exp (-Real.log 3) = 1/3 := by
+private theorem test_rr_exp_neg_log3 : Real.exp (-Real.log 3) = 1/3 := by
   have hEE : Real.exp (-Real.log 3) * Real.exp (Real.log 3) = 1 := by
     rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
   rw [test_rr_exp_log3] at hEE
   linarith [hEE]
 
-theorem test_rr_log3_nonneg : (0:ℝ) ≤ Real.log 3 :=
+private theorem test_rr_log3_nonneg : (0:ℝ) ≤ Real.log 3 :=
   Real.log_nonneg (by norm_num)
 
-theorem test_rr_max_self (x : ℝ) : max x x = x :=
+private theorem test_rr_max_self (x : ℝ) : max x x = x :=
   le_antisymm (max_le (le_refl x) (le_refl x)) (le_max_left x x)
 
-theorem test_rrC_log3_half : rrC (Real.log 3) (1/2) = 1/8 := by
+private theorem test_rrC_log3_half : rrC (Real.log 3) (1/2) = 1/8 := by
   unfold rrC
   rw [test_rr_exp_log3]
   norm_num
 
-theorem test_rrMass0_zero : rrMass0 (Real.log 3) (1/2) 0 = 1/2 := by
+private theorem test_rrMass0_zero : rrMass0 (Real.log 3) (1/2) 0 = 1/2 := by
   simp [rrMass0]
 
-theorem test_rrMass0_one : rrMass0 (Real.log 3) (1/2) 1 = 3/8 := by
+private theorem test_rrMass0_one : rrMass0 (Real.log 3) (1/2) 1 = 3/8 := by
   have hval : rrMass0 (Real.log 3) (1/2) 1
       = Real.exp (Real.log 3) * rrC (Real.log 3) (1/2) := by simp [rrMass0]
   rw [hval, test_rr_exp_log3, test_rrC_log3_half]
   norm_num
 
-theorem test_rrMass0_two : rrMass0 (Real.log 3) (1/2) 2 = 1/8 := by
+private theorem test_rrMass0_two : rrMass0 (Real.log 3) (1/2) 2 = 1/8 := by
   have hval : rrMass0 (Real.log 3) (1/2) 2 = rrC (Real.log 3) (1/2) := by
     simp [rrMass0]
   rw [hval, test_rrC_log3_half]
 
-theorem test_rrMass0_three : rrMass0 (Real.log 3) (1/2) 3 = 0 := by
+private theorem test_rrMass0_three : rrMass0 (Real.log 3) (1/2) 3 = 0 := by
   simp [rrMass0]
 
-theorem test_rrMass1_zero : rrMass1 (Real.log 3) (1/2) 0 = 0 := by
+private theorem test_rrMass1_zero : rrMass1 (Real.log 3) (1/2) 0 = 0 := by
   simp [rrMass1]
 
-theorem test_rrMass1_one : rrMass1 (Real.log 3) (1/2) 1 = 1/8 := by
+private theorem test_rrMass1_one : rrMass1 (Real.log 3) (1/2) 1 = 1/8 := by
   have hval : rrMass1 (Real.log 3) (1/2) 1 = rrC (Real.log 3) (1/2) := by
     simp [rrMass1]
   rw [hval, test_rrC_log3_half]
 
-theorem test_rrMass1_two : rrMass1 (Real.log 3) (1/2) 2 = 3/8 := by
+private theorem test_rrMass1_two : rrMass1 (Real.log 3) (1/2) 2 = 3/8 := by
   have hval : rrMass1 (Real.log 3) (1/2) 2
       = Real.exp (Real.log 3) * rrC (Real.log 3) (1/2) := by simp [rrMass1]
   rw [hval, test_rr_exp_log3, test_rrC_log3_half]
   norm_num
 
-theorem test_rrMass1_three : rrMass1 (Real.log 3) (1/2) 3 = 1/2 := by
+private theorem test_rrMass1_three : rrMass1 (Real.log 3) (1/2) 3 = 1/2 := by
   simp [rrMass1]
 
-theorem test_rrR0_toReal_zero (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR0_toReal_zero (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR0 (Real.log 3) (1/2) hδ0 hδ1) 0).toReal = 1/2 := by
   rw [rrR0_toReal_zero]
 
-theorem test_rrR0_toReal_one (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR0_toReal_one (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR0 (Real.log 3) (1/2) hδ0 hδ1) 1).toReal = 3/8 := by
   rw [rrR0_toReal_one, test_rr_exp_log3, test_rrC_log3_half]
   norm_num
 
-theorem test_rrR0_toReal_two (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR0_toReal_two (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR0 (Real.log 3) (1/2) hδ0 hδ1) 2).toReal = 1/8 := by
   rw [rrR0_toReal_two, test_rrC_log3_half]
 
-theorem test_rrR0_toReal_three (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR0_toReal_three (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR0 (Real.log 3) (1/2) hδ0 hδ1) 3).toReal = 0 := by
   rw [rrR0_toReal_three]
 
-theorem test_rrR1_toReal_zero (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR1_toReal_zero (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR1 (Real.log 3) (1/2) hδ0 hδ1) 0).toReal = 0 := by
   rw [rrR1_toReal_zero]
 
-theorem test_rrR1_toReal_one (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR1_toReal_one (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR1 (Real.log 3) (1/2) hδ0 hδ1) 1).toReal = 1/8 := by
   rw [rrR1_toReal_one, test_rrC_log3_half]
 
-theorem test_rrR1_toReal_two (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR1_toReal_two (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR1 (Real.log 3) (1/2) hδ0 hδ1) 2).toReal = 3/8 := by
   rw [rrR1_toReal_two, test_rr_exp_log3, test_rrC_log3_half]
   norm_num
 
-theorem test_rrR1_toReal_three (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rrR1_toReal_three (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     ((rrR1 (Real.log 3) (1/2) hδ0 hδ1) 3).toReal = 1/2 := by
   rw [rrR1_toReal_three]
 
-theorem test_rrMass0_zero_delta_zero (eps : ℝ) : rrMass0 eps 0 0 = 0 := by
+private theorem test_rrMass0_zero_delta_zero (eps : ℝ) : rrMass0 eps 0 0 = 0 := by
   simp [rrMass0]
 
-theorem test_rrMass0_three_delta_zero (eps : ℝ) : rrMass0 eps 0 3 = 0 := by
+private theorem test_rrMass0_three_delta_zero (eps : ℝ) : rrMass0 eps 0 3 = 0 := by
   simp [rrMass0]
 
-theorem test_rrMass1_zero_delta_zero (eps : ℝ) : rrMass1 eps 0 0 = 0 := by
+private theorem test_rrMass1_zero_delta_zero (eps : ℝ) : rrMass1 eps 0 0 = 0 := by
   simp [rrMass1]
 
-theorem test_rrMass1_three_delta_zero (eps : ℝ) : rrMass1 eps 0 3 = 0 := by
+private theorem test_rrMass1_three_delta_zero (eps : ℝ) : rrMass1 eps 0 3 = 0 := by
   simp [rrMass1]
 
-theorem test_rrMass0_middle_sum_delta_zero (eps : ℝ) :
+private theorem test_rrMass0_middle_sum_delta_zero (eps : ℝ) :
     rrMass0 eps 0 1 + rrMass0 eps 0 2 = 1 := by
   have hadd := rrC_add_exp_mul eps 0
   have h1 : rrMass0 eps 0 1 = Real.exp eps * rrC eps 0 := by simp [rrMass0]
@@ -268,7 +268,7 @@ theorem test_rrMass0_middle_sum_delta_zero (eps : ℝ) :
   rw [h1, h2]
   linarith
 
-theorem test_rr_fEpsDelta_zero_half_quarter : fEpsDelta 0 (1/2) (1/4) = 1/4 := by
+private theorem test_rr_fEpsDelta_zero_half_quarter : fEpsDelta 0 (1/2) (1/4) = 1/4 := by
   have e1 : (1 - (1/2:ℝ) - Real.exp 0 * (1/4)) = 1/4 := by
     rw [Real.exp_zero]
     norm_num
@@ -281,7 +281,7 @@ theorem test_rr_fEpsDelta_zero_half_quarter : fEpsDelta 0 (1/2) (1/4) = 1/4 := b
   rw [e1, e2, hmax]
   exact max_eq_right (by norm_num)
 
-theorem test_rr_fEpsDelta_delta_one (eps : ℝ) : fEpsDelta eps 1 0 = 0 := by
+private theorem test_rr_fEpsDelta_delta_one (eps : ℝ) : fEpsDelta eps 1 0 = 0 := by
   have e1 : (1 - (1:ℝ) - Real.exp eps * 0) = 0 := by simp
   have e2 : (Real.exp (-eps) * (1 - 1 - 0) : ℝ) = 0 := by simp
   show max 0 (max (1 - 1 - Real.exp eps * 0)
@@ -289,7 +289,7 @@ theorem test_rr_fEpsDelta_delta_one (eps : ℝ) : fEpsDelta eps 1 0 = 0 := by
   rw [e1, e2]
   simp only [test_rr_max_self]
 
-theorem test_rr_fEpsDelta_log3_half_zero :
+private theorem test_rr_fEpsDelta_log3_half_zero :
     fEpsDelta (Real.log 3) (1/2) 0 = 1/2 := by
   have e1 : (1 - (1/2:ℝ) - Real.exp (Real.log 3) * 0) = 1/2 := by
     rw [test_rr_exp_log3]
@@ -303,7 +303,7 @@ theorem test_rr_fEpsDelta_log3_half_zero :
   rw [e1, e2, hmax]
   exact max_eq_right (by norm_num)
 
-theorem test_rr_fEpsDelta_log3_half_eighth :
+private theorem test_rr_fEpsDelta_log3_half_eighth :
     fEpsDelta (Real.log 3) (1/2) (1/8) = 1/8 := by
   have e1 : (1 - (1/2:ℝ) - Real.exp (Real.log 3) * (1/8)) = 1/8 := by
     rw [test_rr_exp_log3]
@@ -317,7 +317,7 @@ theorem test_rr_fEpsDelta_log3_half_eighth :
   rw [e1, e2, hmax]
   exact max_eq_right (by norm_num)
 
-theorem test_rr_fEpsDelta_log3_half_half :
+private theorem test_rr_fEpsDelta_log3_half_half :
     fEpsDelta (Real.log 3) (1/2) (1/2) = 0 := by
   have e1 : (1 - (1/2:ℝ) - Real.exp (Real.log 3) * (1/2)) = -1 := by
     rw [test_rr_exp_log3]
@@ -331,7 +331,7 @@ theorem test_rr_fEpsDelta_log3_half_half :
   rw [e1, e2, hmax]
   exact test_rr_max_self 0
 
-theorem test_rr_fEpsDelta_log3_half_one :
+private theorem test_rr_fEpsDelta_log3_half_one :
     fEpsDelta (Real.log 3) (1/2) 1 = 0 := by
   have e1 : (1 - (1/2:ℝ) - Real.exp (Real.log 3) * 1) = -5/2 := by
     rw [test_rr_exp_log3]
@@ -345,7 +345,7 @@ theorem test_rr_fEpsDelta_log3_half_one :
   rw [e1, e2, hmax]
   exact max_eq_left (by norm_num)
 
-theorem test_rr_fEpsDelta_log3_zero_eighth :
+private theorem test_rr_fEpsDelta_log3_zero_eighth :
     fEpsDelta (Real.log 3) 0 (1/8) = 5/8 := by
   have e1 : (1 - (0:ℝ) - Real.exp (Real.log 3) * (1/8)) = 5/8 := by
     rw [test_rr_exp_log3]
@@ -359,7 +359,7 @@ theorem test_rr_fEpsDelta_log3_zero_eighth :
   rw [e1, e2, hmax]
   exact max_eq_right (by norm_num)
 
-theorem test_rr_tradeoff_zero_half_quarter (hδ0 : (0:ℝ) ≤ 1/2)
+private theorem test_rr_tradeoff_zero_half_quarter (hδ0 : (0:ℝ) ≤ 1/2)
     (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 0 (1/2) hδ0 hδ1) (rrR1 0 (1/2) hδ0 hδ1)
       (1/4) = 1/4 := by
@@ -367,13 +367,13 @@ theorem test_rr_tradeoff_zero_half_quarter (hδ0 : (0:ℝ) ≤ 1/2)
     (by norm_num) (by norm_num)]
   exact test_rr_fEpsDelta_zero_half_quarter
 
-theorem test_rr_tradeoff_delta_one (eps : ℝ) (hε : 0 ≤ eps)
+private theorem test_rr_tradeoff_delta_one (eps : ℝ) (hε : 0 ≤ eps)
     (hδ0 : (0:ℝ) ≤ 1) (hδ1 : (1:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 eps 1 hδ0 hδ1) (rrR1 eps 1 hδ0 hδ1) 0 = 0 := by
   rw [rr_tradeoff_eq_fEpsDelta eps 1 0 hε hδ0 hδ1 (by norm_num) (by norm_num)]
   exact test_rr_fEpsDelta_delta_one eps
 
-theorem test_rr_tradeoff_log3_half_zero (hδ0 : (0:ℝ) ≤ 1/2)
+private theorem test_rr_tradeoff_log3_half_zero (hδ0 : (0:ℝ) ≤ 1/2)
     (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
       (rrR1 (Real.log 3) (1/2) hδ0 hδ1) 0 = 1/2 := by
@@ -381,7 +381,7 @@ theorem test_rr_tradeoff_log3_half_zero (hδ0 : (0:ℝ) ≤ 1/2)
     hδ1 (by norm_num) (by norm_num)]
   exact test_rr_fEpsDelta_log3_half_zero
 
-theorem test_rr_tradeoff_log3_half_eighth (hδ0 : (0:ℝ) ≤ 1/2)
+private theorem test_rr_tradeoff_log3_half_eighth (hδ0 : (0:ℝ) ≤ 1/2)
     (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
       (rrR1 (Real.log 3) (1/2) hδ0 hδ1) (1/8) = 1/8 := by
@@ -389,7 +389,7 @@ theorem test_rr_tradeoff_log3_half_eighth (hδ0 : (0:ℝ) ≤ 1/2)
     hδ0 hδ1 (by norm_num) (by norm_num)]
   exact test_rr_fEpsDelta_log3_half_eighth
 
-theorem test_rr_tradeoff_log3_half_half (hδ0 : (0:ℝ) ≤ 1/2)
+private theorem test_rr_tradeoff_log3_half_half (hδ0 : (0:ℝ) ≤ 1/2)
     (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
       (rrR1 (Real.log 3) (1/2) hδ0 hδ1) (1/2) = 0 := by
@@ -397,7 +397,7 @@ theorem test_rr_tradeoff_log3_half_half (hδ0 : (0:ℝ) ≤ 1/2)
     hδ0 hδ1 (by norm_num) (by norm_num)]
   exact test_rr_fEpsDelta_log3_half_half
 
-theorem test_rr_tradeoff_log3_half_one (hδ0 : (0:ℝ) ≤ 1/2)
+private theorem test_rr_tradeoff_log3_half_one (hδ0 : (0:ℝ) ≤ 1/2)
     (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
       (rrR1 (Real.log 3) (1/2) hδ0 hδ1) 1 = 0 := by
@@ -405,7 +405,7 @@ theorem test_rr_tradeoff_log3_half_one (hδ0 : (0:ℝ) ≤ 1/2)
     hδ1 (by norm_num) (by norm_num)]
   exact test_rr_fEpsDelta_log3_half_one
 
-theorem test_rr_bool_kovpair_half :
+private theorem test_rr_bool_kovpair_half :
     KOVpair Bool PH5 QH5 (Real.log 3) (1/2) := by
   rw [kovpair_iff_event_bounds]
   have hev :=
@@ -414,7 +414,7 @@ theorem test_rr_bool_kovpair_half :
   obtain ⟨h1, h2⟩ := hev S
   exact ⟨by linarith, by linarith⟩
 
-theorem test_rr_tradeoff_bool_eighth : tradeoff Bool PH5 QH5 (1/8 : ℝ) = 5/8 := by
+private theorem test_rr_tradeoff_bool_eighth : tradeoff Bool PH5 QH5 (1/8 : ℝ) = 5/8 := by
   have hphiT : (fun w => if w = true then (0:ℝ) else 1/2) true = 0 :=
     ite_eq_left rfl
   have hphiF : (fun w => if w = true then (0:ℝ) else 1/2) false = 1/2 :=
@@ -449,7 +449,7 @@ theorem test_rr_tradeoff_bool_eighth : tradeoff Bool PH5 QH5 (1/8 : ℝ) = 5/8 :
   rw [test_rr_fEpsDelta_log3_zero_eighth] at hlow
   exact le_antisymm hub hlow
 
-theorem test_rr_strict_dominance (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rr_strict_dominance (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
           (rrR1 (Real.log 3) (1/2) hδ0 hδ1) (1/8) = 1/8 ∧
       tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
@@ -459,7 +459,7 @@ theorem test_rr_strict_dominance (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 
   rw [test_rr_tradeoff_log3_half_eighth hδ0 hδ1, test_rr_tradeoff_bool_eighth]
   norm_num
 
-theorem test_rr_le_of_kovpair_inst (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
+private theorem test_rr_le_of_kovpair_inst (hδ0 : (0:ℝ) ≤ 1/2) (hδ1 : (1/2:ℝ) ≤ 1) :
     tradeoff (Fin 4) (rrR0 (Real.log 3) (1/2) hδ0 hδ1)
           (rrR1 (Real.log 3) (1/2) hδ0 hδ1) (1/8) ≤
       tradeoff Bool PH5 QH5 (1/8) :=
