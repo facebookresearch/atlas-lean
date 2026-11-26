@@ -1,0 +1,3 @@
+# Feasible instances of PARTITION INTO ISOMORPHIC SUBGRAPHS
+
+Let $G$ be the graph on the vertices $0, \dots, n-1$ given by $E$ and $H$ the graph on the vertices $0, \dots, m-1$ given by $F$ (in each, $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is listed). An instance $(n, E, m, F)$ is feasible for PARTITION INTO ISOMORPHIC SUBGRAPHS when, for some positive $q$, the vertices of $G$ split into $q$ blocks such that for each block there is a bijection from the vertices of $H$ onto the block mapping every edge of $H$ to an edge of $G$; that is, each block's induced subgraph contains a spanning copy of $H$, which need not be induced.

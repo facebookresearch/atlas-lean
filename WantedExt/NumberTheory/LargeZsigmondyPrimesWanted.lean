@@ -16,7 +16,8 @@ public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.ArithmeticFunction.TotientSqrtLowerBound
-public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicProduct
+public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimeMul
+public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimitiveDivisor
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 
 /-!
@@ -90,21 +91,6 @@ theorem_wanted homogenizedCyclotomic_mem_Icc {a b n : ℕ} (hb : 0 < b) (hba : b
     ((a : ℤ) - b) ^ Nat.totient n ≤ homogenizedCyclotomic n a b ∧
       homogenizedCyclotomic n a b ≤ ((a : ℤ) + b) ^ Nat.totient n
 
-/-- **Homogenized cyclotomic values at $pn$.** Let $p$ be a prime, $n$ a positive integer and
-$a, b$ integers, and write $\Phi_m(a, b)$ for the homogenized cyclotomic value. If $p \mid n$,
-then $\Phi_{pn}(a, b) = \Phi_n(a^p, b^p)$. If $p \nmid n$, then
-$\Phi_{pn}(a, b) \cdot \Phi_n(a, b) = \Phi_n(a^p, b^p)$.
-
-The paper states the case $p \nmid n$ as a quotient; here it is cleared of its denominator.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (iii)
-(quoted from reference [6]). -/
-theorem_wanted homogenizedCyclotomic_prime_mul {p n : ℕ} (hp : p.Prime) (hn : 0 < n)
-    (a b : ℤ) :
-    (p ∣ n → homogenizedCyclotomic (p * n) a b = homogenizedCyclotomic n (a ^ p) (b ^ p)) ∧
-      (¬ p ∣ n → homogenizedCyclotomic (p * n) a b * homogenizedCyclotomic n a b =
-        homogenizedCyclotomic n (a ^ p) (b ^ p))
-
 /-- **$p$-adic valuation of homogenized cyclotomic values at an odd prime.** Let $a > b$ be
 positive integers, let $p$ be an odd prime dividing neither $a$ nor $b$, and let $k$ be the least
 positive integer such that $p$ divides $a^k - b^k$. Write $v_p$ for the $p$-adic valuation and
@@ -159,17 +145,6 @@ theorem_wanted prime_dvd_homogenizedCyclotomic_cases {a b n p k : ℕ} (hb : 0 <
         IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n p) ∨
       (p ∈ n.primeFactors ∧ (∀ r ∈ n.primeFactors, r ≤ p) ∧ 2 < p ∧
         (∃ β, 1 ≤ β ∧ n = p ^ β * k) ∧ padicValInt p (homogenizedCyclotomic n a b) = 1)
-
-/-- **Zsigmondy primes divide the homogenized cyclotomic value.** Let $a$ and $b$ be distinct
-coprime positive integers and let $n \ge 2$. If $p$ is a primitive prime divisor of the term
-$a^n - b^n$ of the integer sequence $(a^m - b^m)_{m \ge 0}$ (a Zsigmondy prime for $(a, b, n)$),
-then $p$ divides the homogenized cyclotomic value $\Phi_n(a, b)$.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 5. -/
-theorem_wanted dvd_homogenizedCyclotomic_of_isPrimitivePrimeDivisor {a b n p : ℕ}
-    (ha : 0 < a) (hb : 0 < b) (hab : a ≠ b) (hcop : a.Coprime b) (hn : 2 ≤ n)
-    (hp : IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n p) :
-    (p : ℤ) ∣ homogenizedCyclotomic n a b
 
 /-- **A Zsigmondy prime $q$ that is not large satisfies $n = q - 1$.** Let $a > b$ be coprime
 positive integers and let $n \ge 2$. If $q$ is a primitive prime divisor of the term $a^n - b^n$

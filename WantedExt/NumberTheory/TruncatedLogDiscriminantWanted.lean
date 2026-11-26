@@ -11,7 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-public import MathlibExt.NumberTheory.TruncatedLogDiscriminant
+public import MathlibExt.NumberTheory.TruncatedLogResultantPos
+public import MathlibExt.NumberTheory.TruncatedLogResultantPrimePower
 
 /-!
 # Discriminants of truncated logarithmic polynomials
@@ -77,15 +78,6 @@ public def truncatedLogExceptionalPrimes (m : ℕ) : Set ℕ :=
   {ℓ | ℓ.Prime ∧ (0 < padicValRat ℓ (truncatedLogAuxProduct m) ∨
     0 < padicValRat ℓ (_root_.harmonic m)) ∧ m * ℓ % 4 = 1}
 
-/-- **Positivity of the resultant product.** For every natural number $n \ge 1$, the resultant
-product $\mathcal{P}_n$ is a positive integer.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Lemma 1
-(`integers-2025-A39-lem-1`). -/
-public theorem_wanted truncatedLogResultantProduct_pos {n : ℕ} (hn : 1 ≤ n) :
-    0 < truncatedLogResultantProduct n
-
 /-- **Nonsquare discriminants of $F_n$ for positive $n \equiv 0, 2, 3 \pmod 4$.** Let
 $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial and let
 $n \ge 1$ be a natural number with $n \equiv 0$, $2$ or $3 \pmod 4$. Then the discriminant of
@@ -132,17 +124,6 @@ Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 3
 (`integers-2025-A39-thm-3`). -/
 public theorem_wanted finite_primes_isSquare_discr_truncatedLog {m : ℕ} (hm : 1 ≤ m) :
     {q : ℕ | q.Prime ∧ m * q % 4 = 1 ∧ IsSquare (truncatedLogPolynomial (m * q)).discr}.Finite
-
-/-- **A prime $p \equiv 1 \pmod 4$ does not divide $\mathcal{P}_{p^e}$.** Let $p$ be a prime with
-$p \equiv 1 \pmod 4$, let $e \ge 1$, and let $\mathcal{P}_n$ be the truncated logarithmic
-resultant product. Then $p$ does not divide $\mathcal{P}_{p^e}$.
-
-Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
-Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Theorem 4
-(`integers-2025-A39-thm-4`). -/
-public theorem_wanted not_dvd_truncatedLogResultantProduct_of_prime_power {p e : ℕ}
-    (hp : p.Prime) (hp4 : p % 4 = 1) (he : 1 ≤ e) :
-    ¬ (p : ℤ) ∣ truncatedLogResultantProduct (p ^ e)
 
 /-- **Discriminants of $F_{p^e}$ for primes $p \equiv 1 \pmod 4$.** Let $p$ be a prime with
 $p \equiv 1 \pmod 4$, let $e \ge 1$, let $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the

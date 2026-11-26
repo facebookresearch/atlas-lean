@@ -13,6 +13,9 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.Sequences.ThrowbackFrequency
+public import MathlibExt.Combinatorics.Sequences.ThrowbackLeaderTime
+public import MathlibExt.Combinatorics.Sequences.ThrowbackPerfectMixing
+public import MathlibExt.Combinatorics.Sequences.ThrowbackRecurrence
 public import MathlibExt.Combinatorics.Sequences.ThrowbackUniformRecurrence
 
 /-!
@@ -30,39 +33,6 @@ The throwback operation moves the leader `x₀` of a sequence `X = (x₀, x₁, 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Every term recurs in the throwback sequence.** Let $X = (x_0, x_1, \dots)$ be a sequence of
-pairwise distinct positive integers, and let $T(X) = (t_0, t_1, \dots)$ be its throwback
-sequence. Then every term $x_j$ of $X$ appears infinitely often in $T(X)$: there are infinitely
-many $k$ with $t_k = x_j$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 2 (`jis-2025-25.5.1-thm-2`). -/
-public theorem_wanted throwbackSequence_infinite_eq (X : ℕ → ℕ) (hX : ∀ n, 0 < X n)
-    (hinj : Function.Injective X) (j : ℕ) :
-    {k | throwbackSequence X k = X j}.Infinite
-
-/-- **Recursive bound on the time to become leader.** Let $X = (x_0, x_1, \dots)$ be a sequence
-of pairwise distinct positive integers, with positions numbered from $0$, the leader being at
-position $0$. Let $\tau$ be the throwback and $T(X) = (t_0, t_1, \dots)$ the throwback
-sequence, so $t_k$ is the leader of $\tau^k(X)$. Let $n \ge 1$, and let $N$ be the number of
-indices $i$ with $x_i < n$. Suppose $a$ and $b$ are natural numbers such that for every
-$m \ge 0$, the term at position $n - 1$ of $\tau^m(X)$ equals $t_{m+k}$ for some $k \le a$, and
-the term at position $N$ of $\tau^m(X)$ equals $t_{m+k}$ for some $k \le b$. Then for every
-$m \ge 0$, the term at position $n$ of $\tau^m(X)$ equals $t_{m+k}$ for some $k \le a + b + 1$.
-
-This is the bound $M(n) \le M(n - 1) + M(N) + 1$ of the source, stated for upper bounds, where
-$M(n)$ is the largest number of throwbacks the term at position $n$ of any $\tau^m(X)$ needs to
-become leader.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Lemma 3 (`jis-2025-25.5.1-lem-3`). -/
-public theorem_wanted throwback_leader_time_le (X : ℕ → ℕ) (hX : ∀ n, 0 < X n)
-    (hinj : Function.Injective X) (n : ℕ) (hn : 0 < n) (a b : ℕ)
-    (ha : ∀ m, ∃ k ≤ a, throwbackSequence X (m + k) = ((throwback id)^[m] X) (n - 1))
-    (hb : ∀ m, ∃ k ≤ b,
-      throwbackSequence X (m + k) = ((throwback id)^[m] X) (Set.ncard {i | X i < n})) :
-    ∀ m, ∃ k ≤ a + b + 1, throwbackSequence X (m + k) = ((throwback id)^[m] X) n
 
 open Classical in
 /-- **Limiting frequencies in throwback sequences.** Let $X = (x_0, x_1, \dots)$ be a sequence of
@@ -125,21 +95,6 @@ public theorem_wanted partialPlacement_minimal_complete_blocks_iff_configuration
     (∀ k l : ℕ, block k = block l ↔
       ∀ i ≤ n, ∀ p, (((throwback id)^[k] X) p = X i ↔ ((throwback id)^[l] X) p = X i)) ∧
       ∀ z : ℤ, ∃ k : ℕ, block z = block k
-
-/-- **Perfect mixing for consecutive integers.** Let $m \ge 1$ and $n \ge 0$, let
-$X = (m, m + 1, m + 2, \dots)$, and let $\tau$ be the throwback. Then the positions of the terms
-$m, m + 1, \dots, m + n$ in $\tau^k(X)$ are different for different $k$ with
-$0 \le k < (m + 1)^{n + 1}$: for $0 \le k < l < (m + 1)^{n + 1}$, some $m + i$ with $i \le n$
-occupies different positions in $\tau^k(X)$ and $\tau^l(X)$. Moreover, each of
-$m, m + 1, \dots, m + n$ occupies the same positions in $\tau^{(m+1)^{n+1}}(X)$ as in $X$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 9 (`jis-2025-25.5.1-thm-9`). -/
-public theorem_wanted throwback_consecutive_perfect_mixing (m n : ℕ) (hm : 0 < m) :
-    let Y : ℕ → ℕ → ℕ := fun k => (throwback id)^[k] (fun i => m + i)
-    (∀ i ≤ n, ∀ p, (Y ((m + 1) ^ (n + 1)) p = m + i ↔ Y 0 p = m + i)) ∧
-      ∀ k l, k < l → l < (m + 1) ^ (n + 1) →
-        ¬ ∀ i ≤ n, ∀ p, (Y k p = m + i ↔ Y l p = m + i)
 
 end
 

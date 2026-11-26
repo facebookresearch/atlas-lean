@@ -10,14 +10,17 @@ module
 
 public import Mathlib.Algebra.Polynomial.Laurent
 public import Mathlib.Data.Int.ModEq
+public import Mathlib.Data.Nat.Digits.Defs
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.FieldTheory.Finite.Basic
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinCentralTrinomial
 
 /-!
 # Digit congruences for constant terms of Laurent polynomial powers
 
 For a prime `p` and a Laurent polynomial supported in the interval from `-1` to `1`, appending
 a base-`p` digit to the exponent multiplies the constant term modulo `p` by its digit factor.
+Iterating gives the product over all digits, including for the central trinomial coefficients.
 -/
 
 namespace MetaMathlibExt
@@ -144,5 +147,41 @@ public theorem constantTermLinearCombination_small_last_digit
     simpa only [mul_left_comm] using (digit (highDigits k) (n₀ + i) (by omega)).mul_left (c i)
   refine ⟨hshift.trans ((hHighDigits k).mul_right _), ?_⟩
   simpa only [hn, Nat.add_sub_cancel, Nat.mul_div_cancel _ hp.pos, highDigits] using hshift
+
+/-- **Lucas property for constant terms of powers of linear Laurent polynomials.** Let $p$ be a
+prime, let $\alpha$, $\beta$, $\gamma$, $a$, $b$ be integers, and let $n$ be a natural number whose
+base-$p$ digits are $d_0, \dots, d_s$ (there are none when $n = 0$, and both products below are
+then $1$). Write $\operatorname{ct}(F)$ for the constant term of a Laurent polynomial $F$ and put
+$P = \alpha x^{-1} + \beta + \gamma x$. Then
+$$
+\operatorname{ct}(P^n) \equiv \prod_{i=0}^{s} \operatorname{ct}(P^{d_i}) \pmod p,
+$$
+and the generalized central trinomial coefficients $T_r = \operatorname{ct}((a x^{-1} + b + a x)^r)$
+satisfy $T_n \equiv \prod_{i=0}^{s} T_{d_i} \pmod p$.
+
+The source assumes that $P$ has degree one; here $\alpha$ and $\gamma$ are arbitrary, which
+includes that case.
+
+Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
+(2026), Article A22, Proposition 4. -/
+public theorem constantTerm_linearLaurent_pow_digits (α β γ a b : ℤ) (p n : ℕ)
+    (hp : p.Prime) :
+    (linearLaurent α β γ ^ n).coeff 0 ≡
+        ((Nat.digits p n).map fun d => (linearLaurent α β γ ^ d).coeff 0).prod [ZMOD p] ∧
+      centralTrinomial a b n ≡
+        ((Nat.digits p n).map fun d => centralTrinomial a b d).prod [ZMOD p] := by
+  have digits (x y z : ℤ) (m : ℕ) :
+      (linearLaurent x y z ^ m).coeff 0 ≡
+        ((p.digits m).map fun d => (linearLaurent x y z ^ d).coeff 0).prod [ZMOD p] := by
+    induction m using Nat.strong_induction_on with
+    | ind m ih =>
+      rcases eq_or_ne m 0 with rfl | hm
+      · simp [AddMonoidAlgebra.one_def, -single_eq_C_mul_T]
+      · rw [Nat.digits_eq_cons_digits_div hp.one_lt hm, List.map_cons, List.prod_cons, mul_comm]
+        have step := constantTermLinearCombination_small_last_digit.append_digit
+          x y z hp (m / p) (m % p) (Nat.mod_lt _ hp.pos)
+        simpa only [Nat.div_add_mod'] using
+          step.trans ((ih (m / p) (Nat.div_lt_self (Nat.pos_of_ne_zero hm) hp.one_lt)).mul_right _)
+  exact ⟨digits α β γ n, digits a b a n⟩
 
 end MetaMathlibExt
