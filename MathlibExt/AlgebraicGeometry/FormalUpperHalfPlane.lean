@@ -42,9 +42,9 @@ public import MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum
 /-!
 # Charts of the formal upper half plane
 
-The functors of this file go from commutative `𝒪`-algebras to types: they are functors
-`CommAlgCat 𝒪 ⥤ Type`, maps between them are natural transformations, and corepresentability is
-`Functor.CorepresentableBy`.
+For a commutative ring `𝒪`, the functors of this file go from commutative `𝒪`-algebras to types:
+they are functors `CommAlgCat 𝒪 ⥤ Type`, maps between them are natural transformations, and
+corepresentability is `Functor.CorepresentableBy`.
 
 * `chartV 𝒪 q`: the vertex chart, the points `ζ` with `ζ ^ q - ζ` a unit.
 * `chartE 𝒪 π q`: the edge chart, the pairs `(ξ, η)` with `ξ * η = π` and with `ξ ^ (q - 1) - 1`
@@ -63,9 +63,9 @@ The functors of this file go from commutative `𝒪`-algebras to types: they are
 * `truncRing 𝒪 π n`, the quotient `𝒪 ⧸ (π ^ (n + 1))`, and the chart rings `chartVRingMod` and
   `chartERingMod` over it. The image of `π` is nilpotent in every `𝒪`-algebra whose structure map
   factors through `truncRing 𝒪 π n` (`isNilpotent_algebraMap_of_isScalarTower`).
-* `padicChartV r` and `padicChartE r`: the two charts over `ℤ_[r]` for `q = r` and `π = r`. In a
-  field of characteristic `r`, `ζ ^ r - ζ` is a unit exactly when `ζ` is not the image of an
-  element of `ZMod r` (`isUnit_pow_sub_iff_forall_ne_cast`).
+* `padicChartV r` and `padicChartE r`: for a prime `r`, the two charts over `ℤ_[r]` for `q = r`
+  and `π = r`. In a field of characteristic `r`, `ζ ^ r - ζ` is a unit exactly when `ζ` is not the
+  image of an element of `ZMod r` (`isUnit_pow_sub_iff_forall_ne_cast`).
 * `OmegaNrObj` and `OmegaNr.IsTwistedAct`: pairs of an `Onr`-point and a Deligne datum of
   `MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum`, and the relation saying that `x'` is
   obtained from `x` by `g ∈ GL₂(K)`: the point is twisted by `frobTwist` (from
@@ -85,15 +85,17 @@ section NatTrans
 
 variable {𝒪 : Type} [CommRing 𝒪]
 
-/-- **Isomorphism on the nilpotent locus.** A natural transformation `η : F ⟶ G` of functors
-`CommAlgCat 𝒪 ⥤ Type` is an isomorphism on the nilpotent locus of `π : 𝒪` when `η.app B` is
-bijective for every commutative `𝒪`-algebra `B` in which the image of `π` is nilpotent. -/
+/-- **Isomorphism on the nilpotent locus.** Let `𝒪` be a commutative ring and `π : 𝒪`. A natural
+transformation `η : F ⟶ G` of functors `CommAlgCat 𝒪 ⥤ Type` is an isomorphism on the nilpotent
+locus of `π` when `η.app B` is bijective for every commutative `𝒪`-algebra `B` in which the image
+of `π` is nilpotent. -/
 def IsIsoOnNilp (π : 𝒪) {F G : CommAlgCat.{0} 𝒪 ⥤ Type} (η : F ⟶ G) : Prop :=
   ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) → Function.Bijective (η.app B)
 
-/-- **Monomorphism on the nilpotent locus.** A natural transformation `η : F ⟶ G` of functors
-`CommAlgCat 𝒪 ⥤ Type` is a monomorphism on the nilpotent locus of `π : 𝒪` when `η.app B` is
-injective for every commutative `𝒪`-algebra `B` in which the image of `π` is nilpotent. -/
+/-- **Monomorphism on the nilpotent locus.** Let `𝒪` be a commutative ring and `π : 𝒪`. A natural
+transformation `η : F ⟶ G` of functors `CommAlgCat 𝒪 ⥤ Type` is a monomorphism on the nilpotent
+locus of `π` when `η.app B` is injective for every commutative `𝒪`-algebra `B` in which the image
+of `π` is nilpotent. -/
 def IsMonoOnNilp (π : 𝒪) {F G : CommAlgCat.{0} 𝒪 ⥤ Type} (η : F ⟶ G) : Prop :=
   ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) → Function.Injective (η.app B)
 
@@ -103,18 +105,20 @@ section Charts
 
 variable (𝒪 : Type) [CommRing 𝒪]
 
-/-- **Vertex chart.** The functor `CommAlgCat 𝒪 ⥤ Type` that sends a commutative `𝒪`-algebra `B`
-to the set of `ζ : B` such that `ζ ^ q - ζ` is a unit; an algebra map `f` acts by `ζ ↦ f ζ`. -/
+/-- **Vertex chart.** For a commutative ring `𝒪` and `q : ℕ`, the functor `CommAlgCat 𝒪 ⥤ Type`
+that sends a commutative `𝒪`-algebra `B` to the set of `ζ : B` such that `ζ ^ q - ζ` is a unit; an
+algebra map `f` acts by `ζ ↦ f ζ`. -/
 def chartV (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
   obj B := { ζ : B // IsUnit (ζ ^ q - ζ) }
   map f := TypeCat.ofHom fun x => ⟨f.hom x.1, by
     have h := x.2.map f.hom
     rwa [map_sub, map_pow] at h⟩
 
-/-- **Edge chart.** The functor `CommAlgCat 𝒪 ⥤ Type` that sends a commutative `𝒪`-algebra `B`
-to the set of pairs `(ξ, η) : B × B` such that `ξ * η` is the image of `π` and `ξ ^ (q - 1) - 1`
-and `η ^ (q - 1) - 1` are units, where `q - 1` is truncated subtraction in `ℕ`; an algebra map
-`f` acts by `(ξ, η) ↦ (f ξ, f η)`. -/
+/-- **Edge chart.** For a commutative ring `𝒪`, `π : 𝒪` and `q : ℕ`, the functor
+`CommAlgCat 𝒪 ⥤ Type` that sends a commutative `𝒪`-algebra `B` to the set of pairs
+`(ξ, η) : B × B` such that `ξ * η` is the image of `π` and `ξ ^ (q - 1) - 1` and `η ^ (q - 1) - 1`
+are units, where `q - 1` is truncated subtraction in `ℕ`; an algebra map `f` acts by
+`(ξ, η) ↦ (f ξ, f η)`. -/
 def chartE (π : 𝒪) (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
   obj B := { p : B × B // p.1 * p.2 = algebraMap 𝒪 B π ∧
     IsUnit (p.1 ^ (q - 1) - 1) ∧ IsUnit (p.2 ^ (q - 1) - 1) }
@@ -127,9 +131,9 @@ def chartE (π : 𝒪) (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
     · have h := h₃.map f.hom
       rwa [map_sub, map_pow, map_one] at h⟩
 
-/-- **Unit vertex chart.** The functor `CommAlgCat 𝒪 ⥤ Type` that sends a commutative
-`𝒪`-algebra `B` to the set of `ζ : B` such that both `ζ ^ q - ζ` and `ζ` are units; an algebra
-map `f` acts by `ζ ↦ f ζ`. -/
+/-- **Unit vertex chart.** For a commutative ring `𝒪` and `q : ℕ`, the functor
+`CommAlgCat 𝒪 ⥤ Type` that sends a commutative `𝒪`-algebra `B` to the set of `ζ : B` such that
+both `ζ ^ q - ζ` and `ζ` are units; an algebra map `f` acts by `ζ ↦ f ζ`. -/
 def chartVUnit (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
   obj B := { ζ : B // IsUnit (ζ ^ q - ζ) ∧ IsUnit ζ }
   map f := TypeCat.ofHom fun x => ⟨f.hom x.1, by
@@ -217,12 +221,12 @@ section PadicInstance
 
 variable (r : ℕ) [Fact r.Prime]
 
-/-- **The `r`-adic vertex chart.** The vertex chart `chartV ℤ_[r] r` over the `r`-adic integers,
-with exponent `q = r`. -/
+/-- **The `r`-adic vertex chart.** For a prime `r`, the vertex chart `chartV ℤ_[r] r` over the
+`r`-adic integers, with exponent `q = r`. -/
 noncomputable abbrev padicChartV : CommAlgCat.{0} ℤ_[r] ⥤ Type := chartV ℤ_[r] r
 
-/-- **The `r`-adic edge chart.** The edge chart `chartE ℤ_[r] r r` over the `r`-adic integers,
-with `π = r` and exponent `q = r`. -/
+/-- **The `r`-adic edge chart.** For a prime `r`, the edge chart `chartE ℤ_[r] r r` over the
+`r`-adic integers, with `π = r` and exponent `q = r`. -/
 noncomputable abbrev padicChartE : CommAlgCat.{0} ℤ_[r] ⥤ Type := chartE ℤ_[r] (r : ℤ_[r]) r
 
 /-- **Special fibre of the vertex chart.** Let `r` be a prime and `𝔽` a field of characteristic
@@ -254,8 +258,9 @@ variable (R : Type) [CommRing R]
 
 abbrev vertexDiscr (q : ℕ) : R[X] := X ^ q - X
 
-/-- **Vertex chart ring.** The localization of the polynomial ring `R[X]` away from `X ^ q - X`;
-it corepresents the vertex chart `chartV R q` (`chartVRing.corepIso`). -/
+/-- **Vertex chart ring.** For a commutative ring `R` and `q : ℕ`, the localization of the
+polynomial ring `R[X]` away from `X ^ q - X`; it corepresents the vertex chart `chartV R q`
+(`chartVRing.corepIso`). -/
 abbrev chartVRing (q : ℕ) : Type := Localization.Away (vertexDiscr R q)
 
 namespace chartVRing
@@ -360,8 +365,8 @@ abbrev edgeDiscr (q : ℕ) : MvPolynomial (Fin 2) R :=
 
 def edgeQuot.discr (π : R) (q : ℕ) : edgeQuot R π := edgeQuot.mk R π (edgeDiscr R q)
 
-/-- **Edge chart ring.** The localization of the quotient
-`MvPolynomial (Fin 2) R ⧸ (X 0 * X 1 - C π)` away from the image of
+/-- **Edge chart ring.** For a commutative ring `R`, `π : R` and `q : ℕ`, the localization of the
+quotient `MvPolynomial (Fin 2) R ⧸ (X 0 * X 1 - C π)` away from the image of
 `(X 0 ^ (q - 1) - 1) * (X 1 ^ (q - 1) - 1)`, where `q - 1` is truncated subtraction in `ℕ`; it
 corepresents the edge chart `chartE R π q` (`chartERing.corepIso`). -/
 abbrev chartERing (π : R) (q : ℕ) : Type := Localization.Away (edgeQuot.discr R π q)
@@ -510,15 +515,16 @@ section Level
 
 variable (𝒪 : Type) [CommRing 𝒪] (π : 𝒪) (q n : ℕ)
 
-/-- **Truncation at level `n`.** The quotient ring `𝒪 ⧸ (π ^ (n + 1))`. -/
+/-- **Truncation at level `n`.** For a commutative ring `𝒪`, `π : 𝒪` and `n : ℕ`, the quotient
+ring `𝒪 ⧸ (π ^ (n + 1))`. -/
 abbrev truncRing : Type := 𝒪 ⧸ Ideal.span {π ^ (n + 1)}
 
-/-- **Vertex chart ring at level `n`.** The vertex chart ring `chartVRing` over the truncation
-`truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`. -/
+/-- **Vertex chart ring at level `n`.** The vertex chart ring `chartVRing` with exponent `q` over
+the truncation `truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`. -/
 abbrev chartVRingMod : Type := chartVRing (truncRing 𝒪 π n) q
 
-/-- **Edge chart ring at level `n`.** The edge chart ring `chartERing` over the truncation
-`truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`, for the image of `π` there. -/
+/-- **Edge chart ring at level `n`.** The edge chart ring `chartERing` with exponent `q` over the
+truncation `truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`, for the image of `π` there. -/
 abbrev chartERingMod : Type :=
   chartERing (truncRing 𝒪 π n) (Ideal.Quotient.mk (Ideal.span {π ^ (n + 1)}) π) q
 
@@ -551,16 +557,19 @@ variable {𝒪 : Type} [CommRing 𝒪] {K : Type} [Field K] [Algebra 𝒪 K] (π
 variable (Onr : Type) [CommRing Onr] [Algebra 𝒪 Onr] (Fr : Onr ≃ₐ[𝒪] Onr)
 variable (vdet : Matrix.GeneralLinearGroup (Fin 2) K →* Multiplicative ℤ)
 
-/-- **Pairs of an `Onr`-point and a Deligne datum.** For a commutative `𝒪`-algebra `B`, the pairs
-of an `𝒪`-algebra map `Onr →ₐ[𝒪] B` and a Deligne datum over `B` (`OmegaObj`). -/
+/-- **Pairs of an `Onr`-point and a Deligne datum.** Let `𝒪` be a commutative ring, `K` a field
+with an `𝒪`-algebra structure, `π : 𝒪`, and `Onr` a commutative `𝒪`-algebra. For a commutative
+`𝒪`-algebra `B`, the pairs of an `𝒪`-algebra map `Onr →ₐ[𝒪] B` and a Deligne datum over `B` for
+`K` and `π` (`OmegaObj`). -/
 abbrev OmegaNrObj (B : Type) [CommRing B] [Algebra 𝒪 B] : Type :=
   (Onr →ₐ[𝒪] B) × OmegaObj (K := K) π B
 
-/-- **The Frobenius-twisted relation.** For `g ∈ GL₂(K)`, the relation that holds between pairs
-`x` and `x'` when the algebra map `x'.1` is `x.1` twisted by `frobTwist` with exponent `-vdet g`
-and the Deligne datum `x'.2` is the pullback of `x.2` along `g⁻¹` (`DeligneDatum.IsPullback`).
-The automorphism `Fr` of `Onr` and the homomorphism `vdet : GL₂(K) →* Multiplicative ℤ` are
-arbitrary inputs. -/
+/-- **The Frobenius-twisted relation.** With `𝒪`, `K`, `π` and `Onr` as in `OmegaNrObj`, let `B`
+be a commutative `𝒪`-algebra. For `g ∈ GL₂(K)`, the relation that holds between pairs `x` and `x'`
+of `OmegaNrObj` over `B` when the algebra map `x'.1` is `x.1` twisted by `frobTwist` with exponent
+`-vdet g` and the Deligne datum `x'.2` is the pullback of `x.2` along `g⁻¹`
+(`DeligneDatum.IsPullback`). The automorphism `Fr` of `Onr` and the homomorphism
+`vdet : GL₂(K) →* Multiplicative ℤ` are arbitrary inputs. -/
 def OmegaNr.IsTwistedAct (B : Type) [CommRing B] [Algebra 𝒪 B]
     (g : Matrix.GeneralLinearGroup (Fin 2) K) (x x' : OmegaNrObj (K := K) π Onr B) : Prop :=
   x'.1 = frobTwist Onr Fr (- Multiplicative.toAdd (vdet g)) x.1 ∧
