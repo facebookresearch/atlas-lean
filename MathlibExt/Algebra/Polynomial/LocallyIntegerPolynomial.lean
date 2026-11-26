@@ -11,6 +11,7 @@ module
 public import Mathlib.LinearAlgebra.Lagrange
 import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.Data.Int.Interval
+import Mathlib.RingTheory.Int.Basic
 
 /-!
 # Locally integer polynomial functions
@@ -171,6 +172,52 @@ public theorem lipSubring_isDomain {U : Set ℤ} (hU : U.Infinite) :
   obtain hf | hg := Set.infinite_union.mp (Set.infinite_univ.mono hcover)
   · exact Or.inl (Subtype.ext (lip_eq_zero_of_infinite_zeros f.property hf))
   · exact Or.inr (Subtype.ext (lip_eq_zero_of_infinite_zeros g.property hg))
+
+/-- **Units of $\mathrm{LIP}(U)$.** For every infinite set $U \subseteq \mathbb{Z}$, the only
+units of the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions on $U$ are the
+constant functions $1$ and $-1$.
+
+Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
+Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
+public theorem lipSubring_units_eq {U : Set ℤ} (hU : U.Infinite)
+    (u : (lipSubring U)ˣ) : u = 1 ∨ u = -1 := by
+  have := lipSubring_isDomain hU
+  have hsq : (u : lipSubring U) * u = 1 := by
+    apply Subtype.ext
+    funext x
+    exact Int.isUnit_mul_self
+      (u.isUnit.map ((Pi.evalRingHom (fun _ : U => ℤ) x).comp (lipSubring U).subtype))
+  exact (mul_self_eq_one_iff.mp hsq).imp Units.ext Units.ext
+
+/-- **LIP functions with infinitely many prime values are irreducible.** Let
+$U \subseteq \mathbb{Z}$, and write $\mathrm{LIP}(U)$ for the ring of locally integer polynomial
+functions on $U$: the functions $U \to \mathbb{Z}$ whose restriction to every finite subset of $U$
+agrees with a polynomial with integer coefficients. Let $f \in \mathrm{LIP}(U)$. If $|f(x)|$ is a
+prime number for infinitely many $x \in U$, then $f$ is irreducible in the ring $\mathrm{LIP}(U)$.
+
+Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
+Article A41, Theorem 2 (`integers-2025-A41-thm-2`). -/
+public theorem irreducible_of_infinite_prime_values {U : Set ℤ} (f : lipSubring U)
+    (h : {x : U | ((f : U → ℤ) x).natAbs.Prime}.Infinite) : Irreducible f := by
+  constructor
+  · intro hf
+    obtain ⟨x, hx⟩ := h.nonempty
+    exact (Int.prime_iff_natAbs_prime.mpr hx).not_isUnit
+      (hf.map ((Pi.evalRingHom (fun _ : U => ℤ) x).comp (lipSubring U).subtype))
+  · intro g k hfg
+    have hcover : {x : U | (f.val x).natAbs.Prime} ⊆
+        {x | IsUnit (g.val x)} ∪ {x | IsUnit (k.val x)} := by
+      intro x hx
+      exact (Int.prime_iff_natAbs_prime.mpr hx).irreducible.isUnit_or_isUnit
+        (congrArg (fun a : lipSubring U => a.val x) hfg)
+    have unit_of_infinite (a : lipSubring U) (ha : {x | IsUnit (a.val x)}.Infinite) :
+        IsUnit a := by
+      have hz : a * a - 1 = 0 := by
+        apply Subtype.ext
+        apply lip_eq_zero_of_infinite_zeros (a * a - 1).property
+        exact ha.mono fun x hx => sub_eq_zero.mpr (Int.isUnit_mul_self hx)
+      exact IsUnit.of_mul_eq_one a (sub_eq_zero.mp hz)
+    exact (Set.infinite_union.mp (h.mono hcover)).imp (unit_of_infinite g) (unit_of_infinite k)
 
 /-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under the discrete derivative.** If $f$ lies in
 $\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
