@@ -11788,6 +11788,7 @@
   "MathlibExt/Combinatorics/SphereRepeatedDistancesErdosProblem605": {"to": "Geometry/discrete-geometry", "title": "Distinct and unit distances"},
   "MathlibExt/Combinatorics/StaverReciprocalBinomialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Staver's identity"},
   "MathlibExt/Combinatorics/StrehlFranel": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Franel numbers"},
+  "MathlibExt/Combinatorics/SubsetSumConcentrationErdosProblem362": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Concentration of subset sums"},
   "MathlibExt/Combinatorics/StronglyMaximalMatchingAMR29Problem0084": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Strong matchings and covers in hypergraphs"},
   "MathlibExt/Combinatorics/StronglyMinimalCover": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Strong matchings and covers in hypergraphs"},
   "MathlibExt/Combinatorics/SulankeNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Sulanke arrays"},
