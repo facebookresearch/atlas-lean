@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleDerangements
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleFirstCorrectThree
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleFirstCorrectTwo
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleLeftShift
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -59,18 +60,6 @@ public theorem_wanted card_solvedIn_three_firstCorrectAt_one (n : ℕ) (hn : 4 �
     (Nat.card {π : Equiv.Perm (Fin n) //
         PermWordleSolvedIn S π 3 ∧ PermWordleFirstCorrectAt S π 1} : ℚ) =
       1 - 2 ^ (n + 1) + 3 ^ n + (n : ℚ) ^ 2 / 2 + 5 * (n : ℚ) / 2 - n * 2 ^ n
-
-/-- **Three-guess solves of cyclic shift first correct at guess two.** For $n \ge 4$, the number
-of permutations $\pi$ of $\{0, \dots, n-1\}$ that the cyclic shift strategy guesses in exactly
-three guesses, with the second guess being the first guess that has a correct position, is
-$2^n - 2n - 2$.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Theorem 12 (`jis-2026-26.1.7-thm-12`). -/
-public theorem_wanted card_solvedIn_three_firstCorrectAt_two_cyclicShift (n : ℕ) (hn : 4 ≤ n) :
-    Nat.card {π : Equiv.Perm (Fin n) //
-      PermWordleSolvedIn cyclicShiftStrategy π 3 ∧
-        PermWordleFirstCorrectAt cyclicShiftStrategy π 2} = 2 ^ n - 2 * n - 2
 
 /-- **Upper bound on three-guess solves first correct at guess two.** Let $n \ge 4$ and let $S$
 be an inductive strategy of length $n$ whose component $S[n]$ is not the cyclic shift
