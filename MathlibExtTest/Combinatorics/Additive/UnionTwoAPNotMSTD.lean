@@ -14,14 +14,20 @@ namespace MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD
 
 open MetaMathlibExt
 
--- The smallest allowed parameters: `n = 3`, `m = 2`, `d = 2`, `x = 5 = 2 * n - 1`.
-example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet ((5 : ℕ) : ℝ) 2 ((2 : ℕ) : ℝ)) :=
-  not_isMSTDSet_intervalAP_nat_of_two_mul_sub_one_le 3 2 2 5 (by decide) (by decide)
-    (by decide) (by decide)
+-- Smallest case: `I_3 ∪ {4, 6, 8}`.
+example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet ((4 : ℕ) : ℝ) 2 ((2 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 3 2 2 4
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
--- A larger gap and step: `n = 4`, `m = 3`, `d = 5`, `x = 9 ≥ 2 * n - 1`.
-example : ¬ IsMSTDSet (realIntervalSet 4 ∪ realAPSet ((9 : ℕ) : ℝ) 3 ((5 : ℕ) : ℝ)) :=
-  not_isMSTDSet_intervalAP_nat_of_two_mul_sub_one_le 4 3 5 9 (by decide) (by decide)
-    (by decide) (by decide)
+-- Larger gap and step: `I_5 ∪ {8, 12, 16, 20}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((8 : ℕ) : ℝ) 3 ((4 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 3 4 8
+    (by decide) (by decide) (by decide) (by decide) (by decide)
+
+-- Start strictly inside the window `[6, 8]`, with disjoint cross-sum blocks:
+-- `I_5 ∪ {7, 12, 17}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((7 : ℕ) : ℝ) 2 ((5 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 2 5 7
+    (by decide) (by decide) (by decide) (by decide) (by decide)
 
 end MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD
