@@ -30,8 +30,10 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.55 (V. S.
 Monakhov). UnsolvedMath record UM-00701603 (`KOU-19.55`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Supersoluble: a normal series with cyclic factors, written with generators `g₀, …, g_{n-1}` whose
-initial segments generate normal subgroups. A composition factor `S` of `G` is a simple group onto
+`MathlibExt/GroupTheory/FullPrimeMaximalSupersolubleKourovka19Problem55.lean` defines
+`IsSupersoluble` and `MaximalFullPrimeSupersoluble` and proves `fittingHeightUnbounded_holds`.
+Supersolubility is expressed by generators `g₀, …, g_{n-1}` whose initial segments generate a
+normal series with cyclic factors. A composition factor `S` of `G` is a simple group onto
 which some subnormal subgroup of `G` maps (`IsCompositionFactor`). The nilpotency length is the
 Fitting height (least length of a normal series with nilpotent factors). The rank of a soluble group
 is read as the largest rank of its chief factors (Huppert's rank; a chief factor of a finite soluble
@@ -40,8 +42,10 @@ V₁ ⋯ V_n` (proof of Theorem B) the minimal normal subgroup `V_n` is such a c
 tends to infinity. A chief factor of rank `k` is a section that needs `k` generators, so the target
 also gives unbounded Prüfer rank (the largest number of generators a subgroup needs). `p`-length at
 most `1` means normal subgroups `N ≤ M` with `N` a `p'`-group, `M / N` a `p`-group and `G / M` a
-`p'`-group. The four targets give the answers: (a) every non-abelian simple group occurs; (b) the
-Fitting height and the rank are unbounded and the `p`-length is at most `1`. `IsChiefFactor`,
+`p'`-group.
+
+The three targets in this module state that every non-abelian simple group occurs in (a) and that
+the rank is unbounded and the `p`-length is at most `1` in (b). `IsChiefFactor`,
 `IsCompositionFactor` and `FittingHeightLE` are shared definitions. The latter is defined in
 `MathlibExt/GroupTheory/FittingHeight.lean`.
 -/
