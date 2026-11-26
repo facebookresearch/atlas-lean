@@ -6,10 +6,14 @@ balances mutation, which pushes the nose forward, against selection, which moves
 Requiring that the subpopulation sizes, which decrease geometrically from the class nearest the mean out
 to the nose, sum to $N$, and taking every establishment interval to equal its mean $\langle \tau_q\rangle$,
 gives the transcendental equation
+
 $$q \approx \frac{2\ln[Nqs]}{\ln\bigl[(s/U_b)\bigl((q-1)\sin(\pi/q)/(\pi e^{\pi/q})\bigr)\bigr]} .$$
+
 Because $q$ appears only inside logarithms on the right, iteration converges quickly, and the zeroth
 iterate
+
 $$q \approx \frac{2\ln[Ns]}{\ln[s/U_b]}$$
+
 is accurate enough for most purposes. The lead grows with $N$, since in a larger population the less-fit
 classes take longer to be eliminated and more mutations accumulate meanwhile, and grows with $U_b$, since
 mutations then arrive faster at the nose. Its dependence on $s$ is not monotone in an obvious way,

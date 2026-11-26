@@ -1,11 +1,17 @@
 # KING-robust kinship estimator
 
 Let individuals $i$ and $j$ be genotyped at $M_{ij}$ biallelic SNPs (those non-missing in both), with genotypes coded as allele counts $x \in \{0, 1, 2\}$. Write $N_{Aa}^{(i)}$ and $N_{Aa}^{(j)}$ for the numbers of heterozygous SNPs of $i$ and of $j$, $N_{Aa,Aa}$ for the number of SNPs at which both are heterozygous, and $N_{AA,aa}$ for the number at which they carry opposite homozygotes. At every SNP,
+
 $$(x_i - x_j)^2 = I_{Aa}(i) + I_{Aa}(j) - 2I_{Aa,Aa} + 4I_{AA,aa}.$$
+
 Assume the two individuals are non-inbred, come from the same population, and are in Hardy–Weinberg proportions across SNPs sharing the same allele frequency. Estimating each individual's average heterozygosity $\mathbb E[2P(1-P)]$ by its observed heterozygosity rate, the **KING-robust** estimator of the kinship coefficient $\varphi_{ij}$ is
+
 $$\hat\varphi_{ij} = \frac{N_{Aa,Aa} - 2N_{AA,aa}}{N_{Aa}^{(i)} + N_{Aa}^{(j)}},$$
+
 a consistent estimator of $\varphi_{ij}$ that uses only the two individuals' genotypes. For between-family comparisons the heterozygosity is replaced by the smaller rate; if $N_{Aa}^{(i)} \le N_{Aa}^{(j)}$,
+
 $$\hat\varphi_{ij}' = \frac12 - \frac{N_{Aa}^{(i)} + N_{Aa}^{(j)} - 2N_{Aa,Aa} + 4N_{AA,aa}}{4N_{Aa}^{(i)}} .$$
+
 Both estimators are bounded above by $1/2$ and $\hat\varphi'_{ij} \le \hat\varphi_{ij}$. For unrelated individuals from different populations, $\hat\varphi_{ij}$ converges to a negative value, so strongly negative estimates flag population heterogeneity.
 
 ## Depends on

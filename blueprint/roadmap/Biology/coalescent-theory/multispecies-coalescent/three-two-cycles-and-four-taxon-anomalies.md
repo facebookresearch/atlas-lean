@@ -20,7 +20,9 @@ For the explicit $3_2$-cycle of the source, with hybrid inheritance probabilitie
 $\gamma_2 = 1 - \gamma_1$, hybrid edge lengths $s_1, s_2$, the cycle's tree edge of length $s_0$ and the
 edge below the hybrid of length $t$, the concordance factor of the displayed quartet $a_1a_2|b_1b_2$ is
 minimized at $s_1 = s_2 = 0$, where
+
 $$P_\rho(a_1a_2|b_1b_2 \mid \mathcal{N}) = \frac13 + \frac23\bigl(1 - e^{-t}\bigr) - \frac23 e^{-t}(1-\rho)\gamma_1\gamma_2\bigl(1 - e^{-s_0}\bigr).$$
+
 Letting $t = 0$ and $s_0 \to \infty$ gives the limit $1/3 - (2/3)(1-\rho)\gamma_1\gamma_2 \le 1/3$, so the
 network is anomalous for every fixed $\rho < 1$ and every $\gamma_1 \in (0,1)$ once the hybrid edges are
 short enough and the cycle's tree edge long enough.

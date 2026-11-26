@@ -6,12 +6,16 @@ matrix. For a selection candidate $i$ with breeding value $u_i$, let $G_i \in \m
 so that $\operatorname{Cov}(y, u_i) = \sigma_u^2 G_i$, and let $\lambda_0 = \sigma_\varepsilon^2/\sigma_u^2 = (1 - h^2)/h^2$.
 
 **Standard selection index.** The index $T_i = \beta_i^\top y$ minimizing $\tfrac12 E(u_i - \beta_i^\top y)^2$ solves
+
 $$\hat\beta_i = \arg\min_{\beta_i} \Bigl\{ \tfrac12 \beta_i^\top (G + \lambda_0 I) \beta_i - G_i^\top \beta_i \Bigr\} = (G + \lambda_0 I)^{-1} G_i ,$$
+
 and $\hat T_i = \hat\beta_i^\top y$ equals the BLUP of $u_i$ (pedigree BLUP or G-BLUP, according to $G$). When $G$ is a genomic relationship
 matrix, $\hat\beta_i$ typically has no zero entries, so every training record contributes to every prediction.
 
 **Sparse selection index (SSI).** For $\lambda \ge 0$,
+
 $$\tilde\beta_i(\lambda) = \arg\min_{\beta_i} \Bigl\{ \tfrac12 \beta_i^\top (G + \lambda_0 I) \beta_i - G_i^\top \beta_i + \lambda \sum_{j=1}^n |\beta_{ij}| \Bigr\},$$
+
 a strictly convex problem (since $G + \lambda_0 I \succ 0$) with a unique solution; $\tilde\beta_i(0) = \hat\beta_i$, and as $\lambda$ grows the
 solution becomes sparse, selecting for each candidate its own subset of training individuals (support points). $\lambda$ is tuned to
 maximize the prediction accuracy of $\tilde T_i = \tilde\beta_i^\top y$.

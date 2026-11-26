@@ -14,7 +14,9 @@ The prior factorizes over the terms, $p(\theta)=p(\mu)\,p(B_1)p(B_2)\cdots p(U_1
 - **Kernel random effects:** $\operatorname{vec}(U_*)\sim\mathrm{MVN}(0,\Omega_*\otimes K_*)$, where $\operatorname{vec}$ stacks columns, $\Omega_*$ is an unknown $t\times t$ covariance between traits and $K_*$ is a known $n\times n$ covariance structure such as a genomic relationship matrix.
 - **Gaussian regression:** the rows $b_{*j}$ of $B_*$ are independent $\mathrm{MVN}(0,\Omega_*)$, $j=1,\ldots,p_*$.
 - **Spike–slab regression (multitrait BayesC):** $b_{*jk}=\alpha_{*jk}\,d_{*jk}$ with $d_{*jk}\in\{0,1\}$ and
+
   $$p(A_*,D_*)=\prod_{j=1}^{p_*}\mathrm{MVN}(\alpha_{*j}\mid0,\Omega_*)\times\prod_{j=1}^{p_*}\prod_{k=1}^{t}\pi_{*k}^{d_{*jk}}(1-\pi_{*k})^{1-d_{*jk}},$$
+
   where $\pi_{*k}$ is the prior proportion of predictors with a nonzero effect on trait $k$, given independent Beta priors. A predictor may thus affect some traits and not others.
 - **Covariances:** each $\Omega_*$ and $R_0$ is either unstructured with an inverse-Wishart prior $\mathrm{IW}(S_0,\mathrm{df}_0)$, or structured (diagonal with scaled inverse-$\chi^2$ variances, factor analytic, or recursive).
 

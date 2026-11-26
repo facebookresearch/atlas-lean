@@ -13,7 +13,9 @@ parallel hybrid edges, with edge probabilities $h_1, h_2$ and inheritance parame
 $\gamma_1, \gamma_2 = 1 - \gamma_1$. Under the network multispecies coalescent, every quartet concordance
 factor of $\mathcal{N}^+$ is unchanged when that $2$-cycle is replaced by a single edge with edge
 probability $\ell \in (0,1)$ determined by
+
 $$1 - \ell = \gamma_1^2(1 - h_1) + (1-\gamma_1)^2(1 - h_2).$$
+
 Since the right-hand side sweeps all of $(0,1)$ as the $2$-cycle parameters vary, a topological level-1
 network carrying a $2$-cycle cannot be distinguished from the network obtained by replacing that cycle
 with an edge.

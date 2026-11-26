@@ -9,7 +9,9 @@ with no-flux boundaries except at the corners where all $x_i = 0$ or all $x_i = 
 Demographic events act on the dimension of $\phi$:
 
 - **Admixture.** A new population $P+1$ formed from populations $i$ and $j$ in proportions $f$ and $1 - f$ has
+
 $$\phi(x_1, \dots, x_P, x_{P+1}) = \phi(x_1, \dots, x_P)\, \delta\bigl(x_{P+1} - [f x_i + (1 - f) x_j]\bigr).$$
+
 - **Split.** A split of population $i$ is the case $f = 1$, $x_{P+1} = x_i$.
 - **Removal.** Dropping population $k$ marginalizes: $\phi \mapsto \int_0^1 \phi\, dx_k$.
 

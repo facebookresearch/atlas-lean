@@ -9,6 +9,7 @@ As $f_0\to\infty$, $\sigma_d^2(f_0)$ is the Ohta-Kimura ratio $\sigma_d^2=\langl
 **Rare-mutation limit.** For $f_0\ll1$ the mutant haplotypes follow the branching-process (Langevin) equations
 
 $$\dot f_{Ab}=-s_Af_{Ab}+\mu+RD+\sqrt{f_{Ab}/N}\,\eta_{Ab},\quad \dot f_{aB}=-s_Bf_{aB}+\mu+RD+\sqrt{f_{aB}/N}\,\eta_{aB},$$
+
 $$\dot f_{AB}=-s_{AB}f_{AB}-RD+\mu(f_{Ab}+f_{aB})+\sqrt{f_{AB}/N}\,\eta_{AB},$$
 
 with independent unit white noises. In the scaled parameters

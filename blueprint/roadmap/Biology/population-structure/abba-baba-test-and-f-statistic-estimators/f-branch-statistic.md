@@ -3,11 +3,15 @@
 Fix a rooted phylogeny of populations with outgroup $O$. For populations $P_1, P_2, P_3$ the
 [$f_4$-ratio](../bias-of-the-f4-ratio-estimator/f4-ratio-eq-mul-div.md) estimate of the admixture proportion from $P_3$ into $P_2$
 relative to $P_1$ is
+
 $$f_4\text{-ratio}(P_1, P_2; P_3, O) = \frac{\sum_{i} (\hat p_{i3a} - \hat p_{iO})(\hat p_{i2} - \hat p_{i1})}{\sum_{i} (\hat p_{i3a} - \hat p_{iO})(\hat p_{i3b} - \hat p_{i1})},$$
+
 where $P_3$ is split into two halves $P_{3a}, P_{3b}$ (alleles sampled at random at each site). For a branch $b$ of the tree, let
 $\mathcal B$ be the set of populations descending from $b$ and $\mathcal A$ the set descending from the sister branch of $b$. For a
 population $C$ outside $\mathcal A \cup \mathcal B$, the **f-branch statistic** is
+
 $$f_b(C) = \operatorname{median}_{B \in \mathcal B} \Bigl( \min_{A \in \mathcal A}\ f_4\text{-ratio}(A, B; C, O) \Bigr).$$
+
 It measures excess allele sharing between $C$ and the lineage $b$, relative to its sister lineage. Taking the minimum over
 $A$ removes signal produced by gene flow into a sublineage of $\mathcal A$; taking the median over $B$ discounts gene flow into a single
 descendant of $b$, so a high $f_b(C)$ attributes the signal to branch $b$ itself, possibly an internal branch.

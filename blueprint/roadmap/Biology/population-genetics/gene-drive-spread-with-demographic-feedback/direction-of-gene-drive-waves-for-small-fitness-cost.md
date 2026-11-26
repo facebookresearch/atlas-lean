@@ -5,6 +5,7 @@ In the [gene drive model](gene-drive-reaction-diffusion-model.md), let $(p, n)(t
 **Theorem.** If $s \le 1/2$, then $c < 0$, $P(+\infty) = 1$, and
 
 $$c \le -2\sqrt{1 - 2s}.$$
+
  The paper gives further parameter regions with $1/2 < s < 2/3$ where $c < 0$, and regions with $s \ge 1/2$ where $c > 0$ (the drive retreats).
 
 ## Depends on

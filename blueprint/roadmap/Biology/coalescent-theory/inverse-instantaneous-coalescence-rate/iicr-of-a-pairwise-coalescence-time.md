@@ -3,14 +3,18 @@
 Let $T_2 \ge 0$ be the coalescence time of a sample of two genes, an absolutely continuous random variable with distribution
 function $F$, density $f = F'$ and survival function $R(t) = \Pr(T_2 \ge t) = 1 - F(t)$. The **inverse instantaneous coalescence
 rate** (IICR) is the reciprocal of the hazard rate of $T_2$:
+
 $$\mathrm{IICR}(t) = \frac{R(t)}{f(t)} = -\frac{R(t)}{R'(t)}, \qquad t \ge 0 \text{ with } f(t) > 0 .$$
+
 Equivalently $R(t) = \exp\bigl(-\int_0^t \mathrm{IICR}(s)^{-1}\, ds\bigr)$, so the IICR determines the law of $T_2$.
 
 **Proposition (panmixia).** In a single panmictic population whose relative size at time $t$ before the present is $\lambda(t) > 0$
 (time measured in units of $2N_0$ generations), the pair coalesces at rate $1/\lambda(t)$ under the
 [time-changed coalescent](../site-frequency-spectrum-under-variable-populatio/derivation-of-the-time-changed-coalescent-from-a.md),
 so $R(t) = \exp\bigl(-\int_0^t \lambda(s)^{-1} ds\bigr)$ and
+
 $$\mathrm{IICR}(t) = \lambda(t).$$
+
 For any other model (population structure, heterogeneous effective size along the genome) the IICR is still a well-defined
 function of the law of $T_2$, but need not equal any population size.
 

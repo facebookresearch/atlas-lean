@@ -8,7 +8,9 @@ coalescence time, has density
 $$p_r(d \mid \mathcal{T}) = \frac{\rho}{2}\,\alpha(\mathcal{T})\,L(\mathcal{T})\,
 \exp\Bigl[-\frac{\rho}{2}\,\alpha(\mathcal{T})\,L(\mathcal{T})\,d\Bigr], \qquad d > 0,$$
 where
+
 $$\alpha(\mathcal{T}) = 1 - \mathbb{P}(\text{tree unchanged} \mid \mathcal{T})$$
+
 is the probability that a recombination event changes the tree. The waiting distance is therefore still
 exponential, as it is for recombination events themselves, but with the intensity reduced by the thinning
 factor $\alpha(\mathcal{T}) \in (0,1)$ rather than the unthinned intensity $(\rho/2)L(\mathcal{T})$ of the

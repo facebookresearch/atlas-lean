@@ -8,7 +8,9 @@ Let a phased admixed haplotype be modeled against $J$ phased reference panels, p
 - **Emission.** If $I_m(h) = 1$ when haplotype $h$ carries the observed target allele at $m$ and $0$ otherwise, then for $h$ in panel $j$, $e_m(i, h) = 1 - \theta_{ij}$ if $I_m(h) = 1$ and $e_m(i,h) = \theta_{ij}$ otherwise (biallelic markers).
 
 Under the reading that an ancestry crossover redrawing the same ancestry also redraws the donor, the transition kernel is, with $a = e^{-d_mT}$ and $b_i = e^{-d_m\rho_i}$,
+
 $$P\big((i,h)\to(i',h')\big) = \begin{cases} (1-a)\,\mu_{i'}\,q_{i'h'}, & i' \ne i,\\ a\,b_i\,\mathbf 1[h'=h] + \big(a(1-b_i) + (1-a)\mu_i\big)\,q_{ih'}, & i' = i,\end{cases}$$
+
 whose rows sum to one. Local ancestry is called as the ancestry with the largest posterior probability $\Pr(S_m \in \{i\}\times\text{panels} \mid \text{data})$, computed by forward–backward recursions.
 
 ## Depends on

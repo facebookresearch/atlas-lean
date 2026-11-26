@@ -3,7 +3,9 @@
 Consider a diploid, randomly mating population of $N$ individuals at two loci $A$ and $B$ with recombination fraction $r$, alleles $A_1, A_2$ and $B_1, B_2$, and haplotypes $1 = A_1B_1$, $2 = A_1B_2$, $3 = A_2B_1$, $4 = A_2B_2$. Viability selection acts multiplicatively across loci; at locus $A$ the genotypes $A_1A_1$, $A_1A_2$, $A_2A_2$ have relative viabilities $1$, $1 - h_A s_A$, $1 - s_A$ (similarly at $B$), with $s_A, s_B, h_A, h_B \in [0, 1]$. Rescale time by $2N$ and let $N \to \infty$ with $\alpha_A = 2Ns_A$, $\alpha_B = 2Ns_B$ and $\rho = 4Nr$ fixed.
 
 **Model (He, Dai, Beaumont and Yu 2020, Eqs. 1–5).** The haplotype frequencies $X(t) = (X_1, \dots, X_4)$ in the simplex $\Omega_X = \{x \in [0,1]^4 : \sum_i x_i = 1\}$ solve
+
 $$dX(t) = \mu(X(t))\, dt + \sigma(X(t))\, dW(t),$$
+
 with $W$ a six-dimensional standard Brownian motion. Writing $p_A = x_1 + x_2$, $p_B = x_1 + x_3$, $\eta_A(x) = p_A h_A + (1 - p_A)(1 - h_A)$, $\eta_B(x) = p_B h_B + (1 - p_B)(1 - h_B)$ and $D(x) = x_1x_4 - x_2x_3$, the drift is
 $$\begin{aligned}
 \mu_1 &= \alpha_A x_1 (1 - p_A)\eta_A + \alpha_B x_1 (1 - p_B)\eta_B - \tfrac{\rho}{2} D, &
@@ -20,7 +22,9 @@ $$\sigma(x) = \begin{pmatrix}
 \end{pmatrix}.$$
 
 **Proposition.** $\sigma(x)\sigma(x)^{\top} = \Sigma(x)$ with $\Sigma_{ii} = x_i(1 - x_i)$ and $\Sigma_{ij} = -x_ix_j$ ($i \ne j$), the Wright–Fisher infinitesimal covariance. Hence this SDE has the same generator
+
 $$\mathcal{L} = \sum_{i=1}^4 \mu_i(x)\frac{\partial}{\partial x_i} + \frac12\sum_{i=1}^4\sum_{j=1}^4 \Sigma_{ij}(x)\frac{\partial^2}{\partial x_i\, \partial x_j}$$
+
 as the formulation with a $4 \times 3$ square root of $\Sigma$, while avoiding a Cholesky factor that is singular on the boundary of the simplex. Each column moves mass between one pair of haplotypes, so $\sum_i dX_i = 0$ and the simplex constraint is preserved.
 
 ## Depends on

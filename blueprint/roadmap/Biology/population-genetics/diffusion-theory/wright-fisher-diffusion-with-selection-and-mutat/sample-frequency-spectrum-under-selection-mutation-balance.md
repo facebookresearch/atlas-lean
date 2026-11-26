@@ -1,12 +1,17 @@
 # Sample frequency spectrum of a two-state marker under selection–mutation balance
 
 Consider a biallelic (or two-state epigenetic) marker with states $U$ and $M$ in a randomly mating diploid population of constant effective size $N_e$ at mutation–selection–drift equilibrium. Let $\mu$ be the per-generation rate $U \to M$, $\nu$ the rate $M \to U$, and $s$ the semidominant selective advantage of $U$ over $M$; set
+
 $$\alpha = 4N_e\mu, \qquad \beta = 4N_e\nu, \qquad \gamma = 4N_es.$$
+
 In the diffusion limit the frequency $x$ of state $U$ has Wright's stationary density proportional to
+
 $$e^{\gamma x}\,x^{\beta-1}(1-x)^{\alpha-1}, \qquad 0 < x < 1.$$
 
 **Proposition.** For $\alpha, \beta > 0$, the probability that a sample of $n$ chromosomes carries exactly $k$ copies of $U$ and $n-k$ copies of $M$ is
+
 $$p_k = \binom nk\frac{{}_1F_1(\beta+k;\ \alpha+\beta+n;\ \gamma)\,(\beta)_k\,(\alpha)_{n-k}}{{}_1F_1(\beta;\ \alpha+\beta;\ \gamma)\,(\alpha+\beta)_n}, \qquad k = 0,1,\dots,n,$$
+
 where ${}_1F_1$ is Kummer's confluent hypergeometric function and $(x)_m = x(x+1)\cdots(x+m-1)$ is the Pochhammer symbol. If instead $M$ is favored, exchange $\alpha$ and $\beta$ (and use the selective advantage of $M$). For loci $j$ with independent histories and $d_k$ loci observed with $k$ copies of $U$, the likelihood of $(\mu,\nu,s)$ is $L = \prod_{k=0}^n p_k^{d_k}$, using both segregating and fixed classes.
 
 ## Depends on

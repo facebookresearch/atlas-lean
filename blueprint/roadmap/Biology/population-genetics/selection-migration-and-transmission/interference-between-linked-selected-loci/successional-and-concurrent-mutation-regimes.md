@@ -14,12 +14,18 @@ mean fitness.
 A single established mutant lineage grows at rate $s$ and so fixes in time of order $\ln[Ns]/s$, while
 the waiting time for the next mutation destined to establish is of order $1/(NU_b s)$. Fixation precedes
 establishment when
+
 $$\tau_{\mathrm{fix}} \approx \frac{\ln[Ns]}{s} \ll \tau_{\mathrm{establish}} \approx \frac{1}{NU_b s},$$
+
 which is the **successional-mutations regime**. There each mutation fixes before the next establishes,
 substitutions occur at rate $NU_b s$, and
+
 $$v = NU_b s^2 .$$
+
 The opposite inequality,
+
 $$NU_b \gtrsim \frac{1}{\ln[Ns]},$$
+
 is the **concurrent-mutations regime**, in which establishment times are shorter than fixation times,
 many mutant lineages segregate at once, and beneficial mutations arising in different lineages interfere.
 Throughout, strong selection is assumed: $Ns \gg 1$, so drift matters only while a subpopulation is

@@ -1,18 +1,27 @@
 # Bayesian sparse linear mixed model (BSLMM) and the PVE/PGE parameterization
 
 For $n$ individuals with phenotypes $y \in \mathbb R^n$, genotypes $X \in \mathbb R^{n\times p}$ (centered) and a known relatedness matrix $K$, the **BSLMM** is
+
 $$y = \mathbf 1_n\mu + X\tilde\beta + u + \epsilon, \qquad u \sim \mathrm{MVN}_n(0, \sigma_b^2\tau^{-1}K), \qquad \epsilon \sim \mathrm{MVN}_n(0, \tau^{-1}I_n),$$
+
 $$\tilde\beta_i \overset{\text{iid}}{\sim} \pi\,N(0, \sigma_a^2\tau^{-1}) + (1-\pi)\,\delta_0 ,$$
+
 with sparse effects $\tilde\beta$, a polygenic random effect $u$, residual precision $\tau$ and sparsity $\pi \in (0,1]$.
 
 **Special cases.** If $K = p^{-1}XX^\top$, then $u \overset{d}{=} Xb$ with $b_i \overset{\text{iid}}{\sim} N(0, \sigma_b^2/(p\tau))$, so the model is the linear regression $y = \mathbf 1\mu + X\beta + \epsilon$ with the two-normal mixture prior
+
 $$\beta_i \sim \pi\,N\big(0, \sigma_a^2\tau^{-1} + \sigma_b^2(p\tau)^{-1}\big) + (1-\pi)\,N\big(0, \sigma_b^2(p\tau)^{-1}\big).$$
+
 Setting $\pi = 0$ (no sparse effects) gives the LMM/ridge regression (BLUP); setting $\sigma_b = 0$ gives Bayesian variable selection regression with a point-normal prior.
 
 **PVE and PGE.** With $V(x) = n^{-1}\sum_i(x_i - \bar x)^2$,
+
 $$\mathrm{PVE} = \frac{V(X\tilde\beta + u)}{V(X\tilde\beta + u) + \tau^{-1}}, \qquad \mathrm{PGE} = \frac{V(X\tilde\beta)}{V(X\tilde\beta + u)},$$
+
 the proportion of phenotypic variance explained by all genetic terms and the proportion of genetic variance explained by the sparse effects. Priors are placed through the approximations
+
 $$h = \frac{p\pi s_a\sigma_a^2 + s_b\sigma_b^2}{p\pi s_a\sigma_a^2 + s_b\sigma_b^2 + 1}, \qquad \rho = \frac{p\pi s_a\sigma_a^2}{p\pi s_a\sigma_a^2 + s_b\sigma_b^2},$$
+
 where $s_a = (np)^{-1}\sum_{i,j}x_{ij}^2$ is the average genotype variance and $s_b = n^{-1}\sum_i k_{ii}$; the default priors are $h \sim U(0,1)$, $\rho \sim U(0,1)$ and $\log\pi \sim U(\log(1/p), 0)$, with $\rho = 0$ the LMM and $\rho = 1$ BVSR.
 
 ## Depends on

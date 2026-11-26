@@ -3,6 +3,7 @@
 **Setting.** A diploid population of size $N$ carries a balanced biallelic polymorphism (alleles $W$ and $S$) whose frequency follows a periodic trajectory $\pi_0,\dots,\pi_{G-1}$ of period $G$ generations. For example, $g$ generations of winter favour $W$ and $g$ generations of summer favour $S$ ($G=2g$), with stable polymorphism under marginal overdominance. A neutral biallelic site at recombination probability $r$ from the selected site mutates symmetrically at rate $u$ per generation, and the selected site mutates at rate $u$ as well. Assume coalescence, mutation and recombination are rare per cycle, so the background-structured coalescent of two lineages (states $(2,0)$, $(0,2)$, $(1,1)$ and coalesced) can be replaced by its cycle average, a time-homogeneous chain with rates:
 
 $$c=\frac1G\sum_{t=0}^{G-1}\frac1{2N\pi_t}=\frac1{2N\tilde p}\quad\text{(coalescence within a background)},$$
+
 $$m=u\Big(\frac1{\tilde p}-1\Big)+r\,\bar p\quad\text{(switching background, per lineage)},$$
 
 where $\tilde p$ is the harmonic mean and $\bar p$ the arithmetic mean of $\pi_t$ over the cycle. These forms of $c$ and of the mutation part of $m$ hold for each allele in **symmetric** cycles, in which $\pi_t$ and $1-\pi_t$ have the same harmonic mean and $\bar p=1/2$.

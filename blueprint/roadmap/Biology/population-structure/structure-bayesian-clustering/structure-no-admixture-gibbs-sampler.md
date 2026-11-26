@@ -9,8 +9,11 @@ i.e. Hardy–Weinberg proportions within populations and linkage equilibrium bet
 **Full conditionals.** Let $n_{klj} = \#\{(i, a) : z^{(i)} = k,\ x_l^{(i,a)} = j\}$ be the number of copies of allele $j$ at locus $l$ among individuals currently assigned to population $k$. Then
 
 1. given $(X, Z)$, the vectors $p_{kl\cdot}$ are independent with
+
 $$p_{kl\cdot} \mid X, Z \sim \mathrm{Dirichlet}(\lambda_1 + n_{kl1}, \dots, \lambda_{J_l} + n_{klJ_l});$$
+
 2. given $(X, P)$, the labels $z^{(i)}$ are independent with
+
 $$\Pr\bigl(z^{(i)} = k \mid X, P\bigr) = \frac{\prod_{l=1}^{L} \prod_{a=1}^{2} p_{k l x_l^{(i,a)}}}{\sum_{k'=1}^{K} \prod_{l=1}^{L} \prod_{a=1}^{2} p_{k' l x_l^{(i,a)}}}.$$
 
 Alternating these two draws is a Gibbs sampler whose stationary law is the posterior $\Pr(Z, P \mid X)$.

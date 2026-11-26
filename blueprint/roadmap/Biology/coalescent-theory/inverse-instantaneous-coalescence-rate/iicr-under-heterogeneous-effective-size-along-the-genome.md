@@ -3,10 +3,13 @@
 Consider a stationary panmictic population in which a fraction $a_i > 0$ of the genome ($\sum_{i=1}^K a_i = 1$) evolves with
 constant relative effective size $\lambda_i > 0$, $i = 1, \dots, K$ (for example through linked selection). Writing $\mu_i = 1/\lambda_i$,
 the pairwise coalescence time at a random genomic position is a mixture of exponentials:
+
 $$R(t) = \Pr(T_2 \ge t) = \sum_{i=1}^K a_i e^{-\mu_i t}.$$
 
 **Proposition.** The [IICR](iicr-of-a-pairwise-coalescence-time.md) of $T_2$ is
+
 $$\mathrm{IICR}(t) = \frac{\sum_{i=1}^K a_i e^{-\mu_i t}}{\sum_{i=1}^K a_i \mu_i e^{-\mu_i t}},$$
+
 and, whenever at least two distinct $\lambda_i$ have positive weight:
 1. $\mathrm{IICR}$ is strictly increasing on $[0, \infty)$ (backward in time);
 2. $\mathrm{IICR}(0) = \bigl(\sum_i a_i/\lambda_i\bigr)^{-1}$, the $a$-weighted harmonic mean of the $\lambda_i$;

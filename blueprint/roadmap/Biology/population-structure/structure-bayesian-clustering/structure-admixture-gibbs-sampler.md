@@ -11,6 +11,7 @@ Priors: $q^{(i)} \sim \mathrm{Dirichlet}(\alpha, \dots, \alpha)$ independently, 
 1. $p_{kl\cdot} \mid X, Z \sim \mathrm{Dirichlet}(\lambda_1 + n_{kl1}, \dots, \lambda_{J_l} + n_{klJ_l})$, independently over $(k, l)$;
 2. $q^{(i)} \mid X, Z \sim \mathrm{Dirichlet}(\alpha + m_1^{(i)}, \dots, \alpha + m_K^{(i)})$, independently over $i$;
 3. given $(X, P, Q)$ the origins are independent with
+
 $$\Pr\bigl(z_l^{(i,a)} = k \mid X, P, Q\bigr) = \frac{q_k^{(i)}\, p_{k l x_l^{(i,a)}}}{\sum_{k'=1}^{K} q_{k'}^{(i)}\, p_{k' l x_l^{(i,a)}}}.$$
 
 Summing out $Z$, the likelihood of $(P, Q)$ is $\prod_{i,l,a} \sum_k q_k^{(i)} p_{k l x_l^{(i,a)}}$, the [admixture log-likelihood](../admixture-model-and-the-frappe-em-algorithm/admixture-log-lik.md) in exponentiated form for biallelic loci.

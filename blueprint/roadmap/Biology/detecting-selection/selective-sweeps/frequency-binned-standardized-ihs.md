@@ -3,10 +3,14 @@
 Let a biallelic core site have derived allele frequency $p \in (0,1)$ in a sample of haplotypes, and let
 $\mathrm{iHH}_A$ and $\mathrm{iHH}_D$ denote the integrated extended haplotype homozygosity computed with
 respect to the ancestral and the derived core allele. Write
+
 $$X = \log\frac{\mathrm{iHH}_A}{\mathrm{iHH}_D}$$
+
 for the unstandardized integrated haplotype score at that site. The standardized integrated haplotype
 score is
+
 $$\mathrm{iHS} = \frac{X - E_p[X]}{\mathrm{SD}_p[X]},$$
+
 where $E_p[X]$ and $\mathrm{SD}_p[X]$ are the mean and the standard deviation of $X$ over the collection of
 all scored sites whose derived allele frequency equals $p$, so that the standardization is carried out
 separately within each derived-frequency bin.

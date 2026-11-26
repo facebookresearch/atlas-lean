@@ -1,9 +1,13 @@
 # Simulation-based composite likelihood of the site frequency spectrum
 
 Let a sample of $n$ sequences from one population cover $L$ sites, of which $S$ are polymorphic, and let $m_i$ be the number of sites at which the derived allele occurs in exactly $i$ sequences ($i = 1, \dots, n-1$), so $\sum_i m_i = S$. Under a demographic model with parameters $\theta$ and infinite-sites mutation at rate $\mu$ per site, let $t_i$ be the total length of genealogy branches subtending exactly $i$ leaves and $T = \sum_i t_i$ the total tree length. The probability that a polymorphic site falls in class $i$ is
+
 $$p_i = \frac{\mathbb E(t_i \mid \theta)}{\mathbb E(T \mid \theta)},$$
+
 estimated from $Z$ coalescent simulations by $\hat p_i = \sum_{k=1}^Z t_{i,k} \big/ \sum_{k=1}^Z T_k$. With $P_0 = e^{-\mu T}$ the probability of no mutation on the tree at a site, the composite likelihood of the observed spectrum is
+
 $$CL(\theta) \propto P_0^{\,L - S}\,(1 - P_0)^{S}\prod_{i=1}^{n-1}\hat p_i^{\,m_i}.$$
+
 For two populations with joint spectrum entries $m_{ij}$ and joint class probabilities $\hat p_{ij}$, the same form holds with the product over $(i, j)$. Including the monomorphic sites makes absolute parameter values (e.g. population sizes in units of the mutation rate) identifiable, not just ratios.
 
 ## Depends on

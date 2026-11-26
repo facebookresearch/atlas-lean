@@ -7,6 +7,7 @@ $$P = V^{-1} - V^{-1} X (X^\top V^{-1} X)^{-1} X^\top V^{-1}.$$
 The restricted (REML) log-likelihood $\ell_R(\sigma) = -\tfrac12\bigl(\log\det V + \log\det(X^\top V^{-1} X) + y^\top P y\bigr) + \text{const}$ has score and information
 
 $$\frac{\partial \ell_R}{\partial \sigma_i} = -\tfrac12\bigl(\operatorname{tr}(P V_i) - y^\top P V_i P y\bigr),$$
+
 $$\mathcal I^{O}_{ij} = -\frac{\partial^2 \ell_R}{\partial \sigma_i \partial \sigma_j} = -\tfrac12 \operatorname{tr}(P V_i P V_j) + y^\top P V_i P V_j P y, \qquad \mathcal I^{E}_{ij} = E\,\mathcal I^{O}_{ij} = \tfrac12 \operatorname{tr}(P V_i P V_j).$$
 
 The **average information** matrix is their mean,

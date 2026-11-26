@@ -6,7 +6,9 @@ is obtained by deleting everything above the lowest stable ancestor, undirecting
 suppressing the resulting degree-$2$ node. Then under the network multispecies coalescent with correlated
 inheritance $\mathrm{NMSC}(\rho)$, for every value of the correlation parameter $\rho \in [0,1]$ and every
 $4$-taxon subset of $X$,
+
 $$\mathrm{qCF}(\mathcal{N}_1^+) = \mathrm{qCF}(\mathcal{N}_2^+),$$
+
 where $\mathrm{qCF}(\mathcal{N}^+) = \bigl(P_\rho(ab|cd \mid \mathcal{N}^+), P_\rho(ac|bd \mid \mathcal{N}^+), P_\rho(ad|bc \mid \mathcal{N}^+)\bigr)$
 is the vector of expected quartet concordance factors. In particular the subgraph above the lowest stable
 ancestor does not affect quartet concordance factors, the root of a rooted network is not identifiable

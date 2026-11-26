@@ -6,7 +6,9 @@ $$n_{ABBA} = \sum_{i=1}^n (1-\hat p_{i1})\,\hat p_{i2}\,\hat p_{i3}, \qquad
 n_{BABA} = \sum_{i=1}^n \hat p_{i1}\,(1-\hat p_{i2})\,\hat p_{i3}, \qquad
 n_{BBAA} = \sum_{i=1}^n \hat p_{i1}\,\hat p_{i2}\,(1-\hat p_{i3}),$$
 the expected numbers of sites with each pattern when one allele is drawn per population, and
+
 $$D = \frac{n_{ABBA} - n_{BABA}}{n_{ABBA} + n_{BABA}} .$$
+
 For a trio $\{X, Y, Z\}$ there are three assignments of which population plays $P_3$; for each, $D$ is computed with
 $P_1, P_2$ ordered so that $D \ge 0$. The **$D_{\min}$ score** of the trio is the minimum of these three values of $D$, i.e. the
 value of $D$ in the arrangement minimizing $|n_{ABBA} - n_{BABA}|$. Under a tree with no gene flow and $P_3$ the outgroup to

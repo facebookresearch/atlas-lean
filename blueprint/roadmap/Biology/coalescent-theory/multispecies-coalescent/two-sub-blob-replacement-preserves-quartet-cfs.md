@@ -10,7 +10,9 @@ network lies in $G \setminus \partial G$.
 
 Let $G$ be a $2$-sub-blob of $\mathcal{N}$ with boundary nodes $u$ and $v$, and work under the network
 multispecies coalescent with correlated inheritance $\mathrm{NMSC}(\rho)$. Then there is a length
+
 $$t = t(G,\rho) \ge -\log(3/2)$$
+
 such that deleting $G$ and inserting a single tree edge $(u,v)$ or $(v,u)$ of length $t$, placing the root
 at $u$ or $v$ when the root lay in $G$, leaves every quartet concordance factor of $\mathcal{N}$
 unchanged. If $G$ does not trap the root, or if $u$ (respectively $v$) has a single descendant leaf in
@@ -18,6 +20,7 @@ $\mathcal{N} \setminus \{v\}$ (respectively $\mathcal{N} \setminus \{u\}$), then
 
 In the special case where $G$ consists of $m$ parallel edges between $u$ and $v$ with lengths $t_j$ and
 inheritance probabilities $\gamma_j$, the replacement length satisfies
+
 $$1 - e^{-t} = \sum_{j=1}^{m} \bigl((1-\rho)\gamma_j^2 + \rho\gamma_j\bigr)\bigl(1 - e^{-t_j}\bigr), \qquad t \ge 0.$$
 
 Consequently, if every non-trivial blob of a metric $4$-taxon network $\mathcal{N}$ has degree at most $2$

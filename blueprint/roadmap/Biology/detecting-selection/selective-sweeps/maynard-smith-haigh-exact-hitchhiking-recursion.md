@@ -3,6 +3,7 @@
 **Model (haploid, deterministic).** A favourable allele $B$ (fitness $1 + s$, $s > 0$) replaces $b$ (fitness $1$) at one locus; a neutral locus with alleles $A, a$ lies at recombination fraction $c \in (0, 1]$. Let $p_n$ be the frequency of $B$ in generation $n$, and $Q_n$, $R_n$ the proportions of $A$ among $B$- and $b$-bearing chromosomes. All $B$ descend from one mutant on an $a$ chromosome, so $Q_0 = 0$, and $0 < p_0 < 1$. The recursions are
 
 $$p_{n+1} = \frac{(1 + s) p_n}{1 + s p_n}, \qquad Q_n - R_n = -R_0 (1 - c)^n,$$
+
 $$Q_{n+1} = Q_n + c\, \frac{(1 - p_n)(R_n - Q_n)}{1 + s p_n}.$$
 
 **Result.** $p_n = p_0 (1 + s)^n / (1 - p_0 + p_0 (1 + s)^n)$, and the proportion of $A$ on $B$ chromosomes after $B$ has replaced $b$ is

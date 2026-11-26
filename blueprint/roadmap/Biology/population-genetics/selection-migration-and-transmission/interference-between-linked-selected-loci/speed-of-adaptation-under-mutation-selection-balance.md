@@ -3,15 +3,21 @@
 In the steady state of an asexual population of size $N$ with beneficial mutation rate $U_b$ and common
 mutation effect $s$, the mean fitness and the nose of the fitness distribution both advance by $s$ in one
 establishment interval, so the speed of evolution is
+
 $$v = \frac{s}{\langle \tau_q \rangle}.$$
+
 Substituting the mean establishment interval and the lowest-order solution for the steady-state lead
 gives, in the concurrent-mutations regime,
+
 $$v \approx s^2\,\frac{2\ln[Ns] - \ln[s/U_b]}{\ln^2[s/U_b]},$$
+
 valid when the lead $q$ is reasonably large, which holds roughly when $2\ln[Ns] > \ln(s/U_b)$, that is
 when $NU_b \gg 1$. The speed therefore grows only logarithmically in $N$ and in $U_b$, in contrast with
 the linear dependence $v = NU_b s^2$ of the successional regime. For $NU_b \ll 1$ the two regimes are
 joined by
+
 $$v \approx \frac{s^2}{\ln Ns + 1/(NU_b)},$$
+
 which reduces to $NU_b s^2$ when $NU_b \ln[Ns] \ll 1$ and to the $q = 2$ result $s^2/\ln[Ns]$ when
 $NU_b \gtrsim 1$.
 

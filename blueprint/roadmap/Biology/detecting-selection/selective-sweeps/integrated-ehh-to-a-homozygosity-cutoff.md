@@ -7,11 +7,15 @@ on one side of the core site and $x > 0$ on the other. The sample provides $\mat
 genotyped sites only, and the curve between consecutive sites is defined by linear interpolation.
 
 Let
+
 $$x_- = \sup\{x < 0 : \mathrm{EHH}(x) < c\}, \qquad x_+ = \inf\{x > 0 : \mathrm{EHH}(x) < c\}$$
+
 be the nearest points on either side of the core site at which the interpolated curve drops below the
 cutoff $c$, with $c = 0.05$ in the source. The integrated EHH of that core allele is the area under the
 interpolated curve between those two points,
+
 $$\mathrm{iHH} = \int_{x_-}^{x_+} \mathrm{EHH}(x)\, dx,$$
+
 so it is a two-sided integral, and $\mathrm{iHH}_A$ and $\mathrm{iHH}_D$ denote its values for the
 ancestral and the derived core allele. The quantity is defined only when both $x_-$ and $x_+$ exist within
 the available data; in the source no value is reported for a core site when the region with

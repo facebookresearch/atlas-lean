@@ -1,7 +1,9 @@
 # TreeMix covariance relative to the mean population
 
 Let $X = (X_1, \dots, X_m)$ be the allele frequencies of a SNP in $m$ populations related to an ancestral population of frequency $x_A$ by a population graph, with $\mathbb E X_i = x_A$ for all $i$ and covariance matrix $V = (V_{ij})$ implied by the graph (in TreeMix, $X \approx \mathcal N_m(x_A\mathbf 1, V)$ with $V$ proportional to $x_A(1 - x_A)$ times the shared drift of the graph). Let $\bar X = \frac1m\sum_{k=1}^m X_k$ be the mean across populations. Then the covariance of frequencies measured relative to that mean is
+
 $$W_{ij} := \mathbb E\big[(X_i - \bar X)(X_j - \bar X)\big] = V_{ij} - \frac1m\sum_{k=1}^m V_{ik} - \frac1m\sum_{k=1}^m V_{jk} + \frac1{m^2}\sum_{k=1}^m\sum_{l=1}^m V_{kl},$$
+
 i.e. $W = CVC$ with the centring matrix $C = I_m - \frac1m\mathbf 1\mathbf 1^{\top}$. $W$ depends only on observed descendant frequencies, not on the unknown $x_A$, and is the quantity TreeMix fits.
 
 ## Depends on
