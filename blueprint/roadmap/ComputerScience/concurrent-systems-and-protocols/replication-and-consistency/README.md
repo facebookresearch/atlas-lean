@@ -1,6 +1,17 @@
 # Replication and consistency
 
+- [History](history.md)
+- [Delivered](delivered.md)
+- [Delivered mono](delivered-mono.md)
+- [Eventual Delivery](eventual-delivery.md)
+- [Termination](termination.md)
+- [Eventual Convergence](eventual-convergence.md)
+- [Strong Convergence](strong-convergence.md)
+- [Eventual Consistency](eventual-consistency.md)
 - [Strong eventual consistency](strong-eventual-consistency.md)
+- [Strong convergence implies eventual convergence](eventual-convergence-2.md)
+- [Strong eventual consistency implies eventual consistency](eventual-consistency-2.md)
+- [Strong Eventual Consistency iff](strong-eventual-consistency-iff.md)
 - [Causal delivery of updates](causal-delivery-of-updates.md)
 - [Convergence of operation-based CRDTs](convergence-of-operation-based-crdts.md)
 - [The ABD emulation of an atomic register](the-abd-emulation-of-an-atomic-register.md)
