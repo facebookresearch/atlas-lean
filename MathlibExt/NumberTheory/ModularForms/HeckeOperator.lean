@@ -131,10 +131,12 @@ On modular forms for `Γ₀(N)` it is the classical Hecke operator `T_p` only fo
 dividing `N` (`ModularForm.heckeTLin`); for composite `p` it is not `T_p`, and for a prime
 `p ∣ N` the classical operator is `U_p`, given by `heckeU k p` (`ModularForm.heckeULin`). On
 forms for a group `GammaH N H` between `Γ₁(N)` and `Γ₀(N)`, the classical `T_p` for a prime
-`p ∤ N` is `heckeU k p f + (⟨p⟩ f) ∣[k] heckeDiagMatrix p` (as in `CuspForm.heckeTLinH`), where
-the diamond operator `⟨p⟩` slashes by a matrix of `Γ₀(N)` whose lower-right entry is `p` modulo
-`N`. So the classical `T_p f` equals `heckeT k p f` exactly when `⟨p⟩ f = f`, for instance when
-`p` modulo `N` lies in `H`. -/
+`p ∤ N` is `heckeU k p f + (⟨p⟩ f) ∣[k] heckeDiagMatrix p`, where the diamond operator `⟨p⟩`
+slashes by a matrix of `Γ₀(N)` whose lower-right entry is `p` modulo `N`. So the classical
+`T_p f` equals `heckeT k p f` exactly when `⟨p⟩ f = f`, for instance when `p` modulo `N` lies in
+`H`. In Lean, `CuspForm.coe_heckeTLinH_apply` gives this formula for `CuspForm.heckeTLinH` on
+cusp forms for `GammaH N H`, under the explicit hypothesis `CuspForm.StableT N H k p`; when that
+hypothesis does not hold, `CuspForm.heckeTLinH` is defined to be zero. -/
 def heckeT (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : UpperHalfPlane → ℂ :=
   heckeU k p f + f ∣[k] heckeDiagMatrix p
 
