@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensors
+public import MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsFiniteTensorTransition
 
 /-!
 # Completed filtered prismatic tensor construction requests
@@ -16,8 +17,11 @@ public import MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensors
 The coefficient rings, signed finite words, relative tensor, dual
 evaluation, coefficient transitions and all finite completion maps are
 fixed native operations. The derived limit resolves the actual finite
-tower before taking products. These endpoints certify that finite
-tensor/evaluation recipe and its native projection comparisons.
+tower before taking products. These endpoints, together with
+`finiteTensorTransition` (now proved in
+`MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsFiniteTensorTransition`),
+certify that finite tensor/evaluation recipe and its native projection
+comparisons.
 
 No unfiltered tensor inversion or raw-product derived-limit equivalence
 is requested. The source inverse is realized in the completion of the
@@ -42,19 +46,6 @@ attribute [local instance] HasDerivedCategory.standard
 public def_wanted prismaticKInjectiveResolution
     (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p) :
     FunctorialKInjective (PrismaticNygaardCohomology.Sheaves p A)
-
-/-- For a prime $p$, a quasisyntomic ring `A` with chosen initial prisms `D` over the semiperfectoid
-basis of its site, a zero reduction `Z` and a twist tower `T` (finite filtered Breuil–Kisin lines
-$L_n$ and their duals $L_n^\vee$ over the finite quotient coefficient rings): the transition from
-level $n + 1$ to level $n$ of the tensor products $L_n^\vee \otimes L_n$, obtained from the
-weight-zero transition of `T` through the evaluation isomorphisms, sends every pure tensor
-$f \otimes x$ to $f' \otimes x'$, where $f'$ and $x'$ are the images of $f$ and $x$ under the dual
-and line transitions. -/
-public theorem_wanted finiteTensorTransition
-    (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
-    (D : ∀ B : Basis p A, InitialLift p (ring p B))
-    (Z : ZeroReduction p A D) (T : TwistTower p A D Z) :
-    TensorTransitionNormalization p A D Z T
 
 /-- For a prime $p$, a quasisyntomic ring `A` with chosen initial prisms `D`, a zero reduction `Z`,
 a twist tower `T` and a functorial K-injective resolution `R` of sheaves on its site: for every
