@@ -13421,6 +13421,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/ChebyshevThetaBounds": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Chebyshev function bounds"},
   "MathlibExt/NumberTheory/PrimeCounting/ChebyshevThetaLowerBound": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Chebyshev function bounds"},
   "MathlibExt/NumberTheory/PrimeCounting/DirichletDensityArithmeticProgression": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Dirichlet's theorem on arithmetic progressions"},
+  "MathlibExt/NumberTheory/PrimeCounting/DusartMertensReciprocalSumDefs": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Mertens' theorems"},
   "MathlibExt/NumberTheory/PrimeCounting/GandhiNthPrimeFormula": {"to": "NumberTheory/primes-primality/special-primes", "title": "Formulas for primes"},
   "MathlibExt/NumberTheory/PrimeCounting/LaishramRamanujanPrimeBound": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Ramanujan primes"},
   "MathlibExt/NumberTheory/PrimeCounting/LandauAlmostPrimeAsymptotic": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Almost primes"},
