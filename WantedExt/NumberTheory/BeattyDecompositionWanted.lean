@@ -13,6 +13,7 @@ public import Mathlib.NumberTheory.Rayleigh
 public import Mathlib.Data.Set.Card
 public import MathlibExt.NumberTheory.Beatty.CountIncrement
 public import MathlibExt.NumberTheory.Beatty.FloorFiber
+public import MathlibExt.NumberTheory.Beatty.FloorFiberIndicator
 public import MathlibExt.NumberTheory.Beatty.FloorSubTwoIdentity
 public import MathlibExt.NumberTheory.Beatty.FloorTwoSubIdentity
 public import MathlibExt.NumberTheory.Beatty.SelfBetween
@@ -118,20 +119,6 @@ public theorem_wanted beatty_floor_fiber_card_sets_isBeatty {α : ℝ} {k : ℕ}
         {beattySeq γ m | m > 0} ∧
       {t : ℤ | 0 < t ∧ {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k} =
         {beattySeq δ m | m > 0}
-
-/-- **Multiplicities of $\lfloor n\alpha\rfloor$ are $k$ plus the indicator of a Beatty set.** Let
-$k$ be a positive integer and let $\alpha$ be an irrational number with
-$1/(k + 1) < \alpha < 1/k$. Then there is a real number $\delta > 0$ such that, writing $D$ for
-the set of the numbers $\lfloor m\delta\rfloor$ for positive integers $m$, every non-negative
-integer $t$ equals $\lfloor n\alpha\rfloor$ for exactly $k + 1$ positive integers $n$ if $t \in D$,
-and for exactly $k$ positive integers $n$ if $t \notin D$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Corollary 2 (`integers-2025-A104-cor-2`). -/
-public theorem_wanted beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : ℕ}
-    (hirr : Irrational α) (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
-    ∃ δ : ℝ, 0 < δ ∧ ∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard =
-      k + {beattySeq δ m | m > 0}.indicator (1 : ℤ → ℕ) t
 
 /-- **Multiplicities of Polanco's skipping sequence.** Let $k \ge 1$ be an integer, let
 $\alpha$ be an irrational real number with $(2k - 1)/k < \alpha < (2k + 1)/(k + 1)$, and let
