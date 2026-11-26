@@ -70,17 +70,20 @@ section KleinForms
 
 variable {R : Type*} [CommRing R]
 
-/-- Klein's icosahedral form `V(u) = u (u¹⁰ + 11 u⁵ - 1)` (degree `12` homogeneous). -/
+/-- Klein's icosahedral form `V(u) = u (u¹⁰ + 11 u⁵ - 1)`, the dehomogenization of the
+degree-`12` binary form `kleinVHom`. -/
 def kleinV (u : R) : R := u * (u ^ 10 + 11 * u ^ 5 - 1)
 
-/-- Klein's icosahedral form `H(u)` of degree `20`. -/
+/-- Klein's icosahedral form `H(u) = u²⁰ - 228 u¹⁵ + 494 u¹⁰ + 228 u⁵ + 1` of degree `20`. -/
 def kleinH (u : R) : R := u ^ 20 - 228 * u ^ 15 + 494 * u ^ 10 + 228 * u ^ 5 + 1
 
-/-- Klein's icosahedral form `T(u)` of degree `30`. -/
+/-- Klein's icosahedral form `T(u) = u³⁰ + 522 u²⁵ - 10005 u²⁰ - 10005 u¹⁰ - 522 u⁵ + 1` of
+degree `30`. -/
 def kleinT (u : R) : R :=
   u ^ 30 + 522 * u ^ 25 - 10005 * u ^ 20 - 10005 * u ^ 10 - 522 * u ^ 5 + 1
 
-/-- The homogenization of `kleinV` in the variables `n`, `d`. -/
+/-- The homogenization `n d (n¹⁰ + 11 n⁵ d⁵ - d¹⁰)` of `kleinV` to degree `12`, in the
+variables `n`, `d`. -/
 def kleinVHom (n d : R) : R := n * d * (n ^ 10 + 11 * n ^ 5 * d ^ 5 - d ^ 10)
 
 /-- The homogenization of `kleinH` in the variables `n`, `d`. -/
@@ -142,18 +145,20 @@ section Family
 
 variable {K : Type*} [Field K]
 
-/-- The Weierstrass curve `y² = x³ - H(u)/48 · x + T(u)/864`. By Klein's syzygy its
-discriminant is a nonzero multiple of `V(u)⁵`, and when `V(u) ≠ 0` its `j`-invariant is
-`-H(u)³ / V(u)⁵`. -/
+/-- The Weierstrass curve `y² = x³ - H(u)/48 · x + T(u)/864`. When `6` is invertible in `K`,
+Klein's syzygy gives it discriminant `-V(u)⁵`, so for `V(u) ≠ 0` it is an elliptic curve with
+`j`-invariant `-H(u)³ / V(u)⁵`. -/
 def kleinCurve (u : K) : WeierstrassCurve K :=
   ⟨0, 0, 0, -kleinH u / 48, kleinT u / 864⟩
 
-/-- The coefficient `β(u)` of the Möbius substitution defining the Rubin–Silverberg family. -/
+/-- The coefficient `β(u) = T(u) (57 u¹⁵ - 247 u¹⁰ - 171 u⁵ - 1) / (144 u⁴ (u¹⁰ + 11 u⁵ - 1)⁴)`
+of the Möbius substitution defining the Rubin–Silverberg family. -/
 def rsBeta (u : K) : K :=
   kleinT u * (57 * u ^ 15 - 247 * u ^ 10 - 171 * u ^ 5 - 1)
     / (144 * u ^ 4 * (u ^ 10 + 11 * u ^ 5 - 1) ^ 4)
 
-/-- The coefficient `γ(u)` of the Möbius substitution defining the Rubin–Silverberg family. -/
+/-- The coefficient `γ(u) = T(u) (u¹⁵ - 171 u¹⁰ + 247 u⁵ + 57) / (144 (u¹⁰ + 11 u⁵ - 1)⁴)` of
+the Möbius substitution defining the Rubin–Silverberg family. -/
 def rsGamma (u : K) : K :=
   kleinT u * (u ^ 15 - 171 * u ^ 10 + 247 * u ^ 5 + 57) / (144 * (u ^ 10 + 11 * u ^ 5 - 1) ^ 4)
 
@@ -176,9 +181,9 @@ def rsMember (a b u₀ l t : K) : WeierstrassCurve K :=
   ⟨0, 0, 0, rsFamilyA a u₀ l t, rsFamilyB b u₀ l t⟩
 
 /-- `u₀` is a Klein datum for `y² = x³ + a x + b`: it satisfies
-`H(u₀)³ (4a³ + 27b²) + 6912 a³ V(u₀)⁵ = 0` and `V(u₀) ≠ 0`. When `4a³ + 27b² ≠ 0` this says
-that the `j`-invariant of the curve is `-H(u₀)³ / V(u₀)⁵`, the `j`-invariant of
-`kleinCurve u₀`. -/
+`H(u₀)³ (4a³ + 27b²) + 6912 a³ V(u₀)⁵ = 0` and `V(u₀) ≠ 0`. When `6` is invertible in `K` and
+`4a³ + 27b² ≠ 0`, this says that the `j`-invariant of the curve is `-H(u₀)³ / V(u₀)⁵`, the
+`j`-invariant of `kleinCurve u₀`. -/
 def IsKleinDatum (a b u₀ : K) : Prop :=
   kleinH u₀ ^ 3 * (4 * a ^ 3 + 27 * b ^ 2) + 6912 * a ^ 3 * kleinV u₀ ^ 5 = 0 ∧ kleinV u₀ ≠ 0
 

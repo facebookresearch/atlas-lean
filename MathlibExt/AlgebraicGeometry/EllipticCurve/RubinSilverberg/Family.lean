@@ -44,18 +44,19 @@ import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 /-!
 # The `3`-division polynomial of a Rubin–Silverberg family member
 
-For a Klein datum `u₀` of `y² = x³ + a x + b` with `a b ≠ 0`, the generic member
-`rsMember a b u₀ l t` of the Rubin–Silverberg family (with `t` transcendental) is a quadratic
-twist of `kleinCurve` evaluated at a Möbius transform of `t`. Since the `3`-division polynomial
-of `kleinCurve u` has no root in `K(u)`, neither does that of the family member.
+Let `K` be a field of characteristic zero containing a primitive fifth root of unity. For a
+Klein datum `u₀ ∈ K` of `y² = x³ + a x + b` with `a b ≠ 0` and a parameter `l ∈ K`, the generic
+member `rsMember a b u₀ l t` of the Rubin–Silverberg family (with `t` transcendental) is a
+quadratic twist of `kleinCurve` evaluated at a Möbius transform of `t`. Since the `3`-division
+polynomial of `kleinCurve u` has no root in `K(u)`, neither does that of the family member.
 
 ## Main statements
 
-* `RubinSilverberg.rsMember_Psi3_eval_ne_zero`: over `K(t)`, `Ψ₃` of the generic member has no
-  root.
-* `RubinSilverberg.Psi3_eval_ne_zero_of_rsFamily`: the same over `K[t]` for a family with
-  coefficients in a subfield `K` of an algebraically closed field `F` of characteristic zero,
-  with the base point `u₀ ∈ F`.
+* `RubinSilverberg.rsMember_Psi3_eval_ne_zero`: for `K` of characteristic zero containing a
+  primitive fifth root of unity, `Ψ₃` of the generic member over `K(t)` has no root.
+* `RubinSilverberg.Psi3_eval_ne_zero_of_rsFamily`: the same over `K[t]`, for `K` a subfield of
+  an algebraically closed field `F` of characteristic zero, a base point `u₀ ∈ F` and `l ∈ K`,
+  when the family's coefficients `A(t)`, `B(t)` are polynomials over `K`.
 -/
 
 @[expose] public section
@@ -88,8 +89,10 @@ private theorem psi3_kleinCurve_transport (φ : RatFunc K ≃ₐ[K] RatFunc K) (
   rw [eval₂_at_apply]
   rfl
 
-/-- Over `K(t)`, the `3`-division polynomial of the generic member of the Rubin–Silverberg
-family attached to a Klein datum `u₀` of `y² = x³ + a x + b` with `a b ≠ 0` has no root. -/
+/-- Let `K` be a field of characteristic zero containing a primitive fifth root of unity. Over
+`K(t)`, the `3`-division polynomial of the generic member of the Rubin–Silverberg family attached
+to a Klein datum `u₀` of `y² = x³ + a x + b` with `a b ≠ 0` and a parameter `l ∈ K` has no
+root. -/
 theorem rsMember_Psi3_eval_ne_zero (ζ : K) (hζ : IsPrimitiveRoot ζ 5) {a b u₀ : K}
     (ha : a ≠ 0) (hb : b ≠ 0) (hu₀ : IsKleinDatum a b u₀) (l : K) (x : RatFunc K) :
     ((rsMember (RatFunc.C a) (RatFunc.C b) (RatFunc.C u₀) (RatFunc.C l)
@@ -215,10 +218,10 @@ private theorem map_eq_rsFamilyB_poly {b l : K} {u₀ : F} {pb : K[X]}
 end descent
 
 /-- Let `K ⊆ F` with `F` algebraically closed of characteristic zero, and let `u₀ ∈ F` be a
-Klein datum for `y² = x³ + a x + b` with `a, b ∈ K` nonzero. If the Rubin–Silverberg
-coefficients `A(t)`, `B(t)` of the family through `u₀` are given by polynomials `pa`, `pb`
-over `K`, then the `3`-division polynomial of `y² = x³ + pa x + pb` over `K[t]` has no root
-in `K[t]`. -/
+Klein datum for `y² = x³ + a x + b` with `a, b ∈ K` nonzero. If, for some `l ∈ K`, the
+Rubin–Silverberg coefficients `A(t)`, `B(t)` of the family through `u₀` with parameter `l` are
+given by polynomials `pa`, `pb` over `K`, then the `3`-division polynomial of
+`y² = x³ + pa x + pb` over `K[t]` has no root in `K[t]`. -/
 theorem Psi3_eval_ne_zero_of_rsFamily {K F : Type*} [Field K] [Field F] [CharZero F]
     [IsAlgClosed F] [Algebra K F] {a b l : K} {u₀ : F} (ha : a ≠ 0) (hb : b ≠ 0)
     (hu₀ : IsKleinDatum (algebraMap K F a) (algebraMap K F b) u₀) {pa pb : K[X]}
