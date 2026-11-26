@@ -7,4 +7,5 @@ Let $E$ be a real normed space, $S \subseteq E$ a linear subspace, $\Pi : E \to 
 - the second derivative in direction $h$ satisfies $D^2\Pi(x_0 + t h)(h, h) \ge \alpha \|h\|^2$ for all $t \in [0,1]$.
 
 Then
+
 $$\Pi(x_0 + h) - \Pi(x_0) \ge \frac{\alpha \|h\|^2}{2}.$$
