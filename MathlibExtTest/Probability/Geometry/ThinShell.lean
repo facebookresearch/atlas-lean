@@ -58,3 +58,6 @@ example : IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace �
 example : IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin 2))) ∧
     normalizedRadiusVariance (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin 2))) = 2 :=
   stdGaussian_isotropic_variance 2 (by norm_num)
+
+example : (2 : ℝ≥0∞) ≤ MathlibExt.Probability.ThinShell.thinShellVarianceConstant :=
+  MathlibExt.Probability.ThinShell.two_le_thinShellVarianceConstant
