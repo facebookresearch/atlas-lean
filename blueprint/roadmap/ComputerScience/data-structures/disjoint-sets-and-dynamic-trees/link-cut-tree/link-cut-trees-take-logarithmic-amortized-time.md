@@ -1,25 +1,21 @@
 # Link-cut trees take logarithmic amortized time
 
-A [link-cut tree](access.md) represents a forest of rooted trees on $n$ vertices under the operations $\mathrm{link}(v, w)$, which makes the root $v$ a child of $w$ in another tree, $\mathrm{cut}(v)$, $\mathrm{find\text{-}root}(v)$, and aggregates over root-to-vertex paths.
-- Each vertex has at most one *preferred child*: the child whose subtree contains the most recent access in its own subtree.
-- The preferred edges partition the forest into *preferred paths*. Each preferred path is stored as a splay tree keyed by depth.
-- Every operation is reduced to $\mathrm{access}(v)$. This makes the root-to-$v$ path preferred by walking up and switching preferred children, splaying at each step.
+**Theorem (Sleator–Tarjan).** Start with an empty rooted forest. In a legal history of $m$ operations let $n$ be the number of vertices ever allocated, also the maximum number present. One constant $C$ bounds the total work of the splay-based implementation by
 
-**Theorem (Sleator–Tarjan).** Every link-cut tree operation takes $O(\log n)$ amortized time.
+$$
+C m\bigl(1+\lfloor\log_2 n\rfloor\bigr),
+$$
 
-**Proof.**
-1. *Preferred-child changes.* Call the edge to a child $v$ *heavy* if $\mathrm{size}(v) > \mathrm{size}(\mathrm{parent}(v))/2$, and *light* otherwise. Each vertex has at most one heavy child edge, and every root-to-vertex path has at most $\log_2 n$ light edges. An access makes at most $\log_2 n$ light edges preferred. A heavy edge becomes unpreferred only when a light edge beside it becomes preferred, at the end of an access, or when a link or cut changes subtree sizes, which affects $O(\log n)$ edges on one path. So over $m$ operations, heavy edges become preferred $O(m\log n + n)$ times. The number of preferred-child changes is therefore $O(\log n)$ amortized per operation, once $m \ge n$.
-2. *Cost of the splays.* Use the potential $\Phi = \sum_v \log_2 s(v)$, where $s(v)$ is the size of $v$'s subtree in the tree of auxiliary splay trees. By the access lemma for splay trees, splaying $v$ within its auxiliary tree costs at most $3(\log s(\text{aux root}) - \log s(v)) + 1$. Along one access these bounds telescope to $3\log_2 n + O(\#\text{preferred-child changes}) = O(\log n)$.
-3. A cut only decreases sizes. A link increases the potential by at most $\log_2 n$.
+with the logarithmic term taken as zero for $n=0$. The execution returns the specified answers and its final auxiliary trees represent the specified forest and preferred paths. An individual operation on a long path need not be fast.
 
-## Depends on
+Make-tree allocates a fresh singleton. Link makes the specified root a child of a vertex in a **different** tree, assigning the new edge its weight. Cut removes the parent edge of a non-root. [Access](access.md) makes the root-to-target path preferred, clears the target's preferred child and leaves preferences at off-path parents alone. Find-root returns the represented root. Path-aggregate returns the ordered product of the incoming edge weights from the root **down** to the target, with identity for an empty edge path. Handles and aggregates occupy constant space and monoid multiplication costs constant time; returning a list of all path edges is not such a query.
 
-- [Access in a link-cut tree](access.md)
+Each maximal preferred path occupies one auxiliary splay tree in increasing depth **order**, without storing absolute depth keys. Its root points across a dashed edge to the represented parent of the path's first vertex, if any. Physical access splays within these trees, detaches an ordinary right child and attaches the previously exposed suffix in its place, climbs the path-parent pointers, then splays the original target. Find-root also charges the leftward walk and the final splay of the vertex it returns. If that vertex has auxiliary depth $d$ after exposure, the walk visits $d+1$ cells without moving them, and the immediately following splay performs $d$ rotations and one completion, so charging the walk to that splay doubles its cost. Rotations, iterations, local pointer updates and repairs to cached products all contribute to the cost. The represented-forest specification is not the implementation being timed.
+
+**Why the logarithm is single.** An edge is heavy if its child's **represented** subtree contains strictly more than half its parent's vertices, and light otherwise. At most one child is heavy, and every light edge on a descending path at least halves subtree size. Count the heavy edges that are currently dashed. Promoting one spends one unit of this count. An access can demote a heavy edge only when it promotes a light edge at the same parent, or clears the preference at the endpoint. There are at most $\lfloor\log_2 n\rfloor$ light edges on the access path. A link below an exposed path increases subtree sizes along that path, so its off-path children cannot newly become heavy. After a cut, a surviving off-path child that becomes heavy has a light sibling on the surviving exposed ancestor path, except possibly at the former parent of the cut vertex. Thus structural changes add at most logarithmically many units per operation. This bounds the total number of switches, not the length of the worst access. Charging a full logarithm independently for each splay would give only a squared logarithm.
+
+Instead give an auxiliary node weight one plus the mass of the dashed subtrees attached there. Its rank is the logarithm of the total such weight in its **ordinary auxiliary** subtree. The potential sums these ranks. Switching a right child exchanges ordinary and dashed mass without changing the total mass at the switch. The rank differences in the weighted splay bounds therefore telescope up the exposed path, leaving a logarithm plus constant charges per switch. After exposure a cut does not increase this rank potential; at the final attachment of a link only the new auxiliary root gains mass, at most a logarithm of potential. The empty start has no banked potential: even the operations that build the initial trees are counted. A bound starting in an arbitrary configuration must instead allow for its initial credit.
 
 ## Sources
 
-- E. Demaine, *6.851: Advanced Data Structures*, Lecture 19 "Dynamic graphs I: link-cut trees" (scribe notes, Spring 2012), MIT, <https://courses.csail.mit.edu/6.851/spring21/scribe/lec19.pdf>:
-    - Section 2: the link-cut tree operations, all in $O(\lg n)$ amortized time;
-    - Section 3: preferred children and paths, auxiliary splay trees keyed by depth, and access;
-    - Section 4.1: the heavy-light decomposition (heavy when $\mathrm{size}(v) > \tfrac12\mathrm{size}(\mathrm{parent}(v))$, light depth at most $\lg n$) and $O(\lg n)$ amortized preferred-child changes;
-    - Section 4.2: the potential $\sum_v \lg s(v)$, the access theorem, the telescoping sum, and the potential change under link and cut.
+- E. Demaine, *6.851: Advanced Data Structures*, [Lecture 19, scribe notes dated 1 May 2012](https://courses.csail.mit.edu/6.851/spring21/scribe/lec19.pdf), §2 (operations), §3 (preferred paths and their physical implementation), §§4.1–4.2 (heavy/light and weighted splay analyses).
