@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 public import MathlibExt.NumberTheory.GeneralizedMarkovVietaEq
 public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul
+public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessPairwiseCoprime
 public import MathlibExt.NumberTheory.GeneralizedMarkovUniquenessVieta
 
 namespace MetaMathlibExt
@@ -120,16 +121,6 @@ public theorem_wanted card_maxGenMarkovTriples_le {k b : ℕ}
     ((range (b + 1) ×ˢ range (b + 1)).filter fun q =>
         q.1 ≤ q.2 ∧ IsGenMarkovTriple k q.1 b q.2).card ≤
       2 ^ ((b.primeFactors.filter (· ≠ 2)).card - 1)
-
-/-- **Generalized Markov triples are pairwise coprime.** If $(a, b, c)$ is a $k$-generalized
-Markov triple, then $\gcd(a, b) = \gcd(b, c) = \gcd(a, c) = 1$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.3 (citing Gyoda and
-Matsushita, Corollary 8). -/
-public theorem_wanted IsGenMarkovTriple.pairwise_coprime {k a b c : ℕ}
-    (h : IsGenMarkovTriple k a b c) :
-    Nat.Coprime a b ∧ Nat.Coprime b c ∧ Nat.Coprime a c
 
 /-- **An even generalized Markov number forces $k$ to be even.** Let $k$ be a natural number. If
 some $k$-generalized Markov number $b$ is even, then $k$ is even.
