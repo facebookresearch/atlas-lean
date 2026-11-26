@@ -25,7 +25,7 @@ The absorption equations on an irreducible doubly stochastic graph determine the
 fixation probability for a uniformly placed single mutant.
 
 Sources: E. Lieberman, C. Hauert and M. A. Nowak, "Evolutionary dynamics on graphs", Nature 433
-(2005) 312–316, p. 313 and eq. (1); F. Keller and B. Uğurlu, arXiv:2403.12598; Y. Kaveh,
+(2005) 312–316, p. 313 and eq. (1); P. Keller and M. Uğurlu, arXiv:2403.12598; K. Kaveh,
 N. L. Komarova and M. Kohandel, R. Soc. Open Sci. (2015), arXiv:1411.4556.
 -/
 
