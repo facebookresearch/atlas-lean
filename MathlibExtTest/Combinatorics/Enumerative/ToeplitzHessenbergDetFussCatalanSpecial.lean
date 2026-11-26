@@ -46,3 +46,30 @@ example : toeplitzHessenbergDet
   have h := toeplitzHessenbergDet_fussCatalan_special.2.2.1 4 (by decide)
   norm_num [Nat.choose] at h
   linarith
+
+-- At the lower endpoint for the H-shift, the sign is negative.
+example : toeplitzHessenbergDet
+    (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 3 (i + 1) 1 : ℚ)) 2 = -3 := by
+  have h := toeplitzHessenbergDet_ternary.1 2 le_rfl
+  norm_num [Nat.choose] at h
+  exact h
+
+-- Independently, the size-two determinant is H₂² - H₃ = 3² - 12.
+example : toeplitzHessenbergDet
+    (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 3 (i + 1) 1 : ℚ)) 2 = -3 := by
+  rw [toeplitzHessenbergDet_two]
+  norm_num [show generalizedFussCatalanNumber 3 2 1 = 3 by decide,
+    show generalizedFussCatalanNumber 3 3 1 = 12 by decide]
+
+-- The J-shift starts at J₀, and at size one the determinant equals H₁.
+example : toeplitzHessenbergDet
+    (fun i => if i = 0 then -1 else (generalizedFussCatalanNumber 3 (i - 1) 2 : ℚ)) 1 = 1 := by
+  simpa [generalizedFussCatalanNumber_one] using toeplitzHessenbergDet_ternary.2 1 le_rfl
+
+-- At size two the superdiagonal contributes with the opposite sign: J₀² + J₁ = H₂.
+example : toeplitzHessenbergDet
+    (fun i => if i = 0 then -1 else (generalizedFussCatalanNumber 3 (i - 1) 2 : ℚ)) 2 =
+      (generalizedFussCatalanNumber 3 2 1 : ℚ) := by
+  rw [toeplitzHessenbergDet_two]
+  norm_num [show generalizedFussCatalanNumber 3 0 2 = 1 by decide,
+    generalizedFussCatalanNumber_one, show generalizedFussCatalanNumber 3 2 1 = 3 by decide]

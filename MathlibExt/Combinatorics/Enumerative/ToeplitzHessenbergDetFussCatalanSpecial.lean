@@ -22,8 +22,21 @@ import Mathlib.Tactic.Ring
 The theorem `toeplitzHessenbergDet_fussCatalan_special` evaluates the signed Toeplitz–Hessenberg
 determinants $D_n(p, r) = (-1)^{n-1} \det(1; A_1(p, r), \dots, A_n(p, r))$ of the Fuss–Catalan
 numbers for $(p, r) = (2, 3), (2, 4), (3, 1), (3, 2)$: the first two are differences of Catalan
-numbers, the last two are single binomial coefficients. The proof combines Brioschi's formula
-with the evaluation of Trudi's partition sums of Fuss–Catalan numbers.
+numbers, the last two are single binomial coefficients. The theorem `toeplitzHessenbergDet_ternary`
+evaluates two determinants with shifted ternary Fuss–Catalan entries. The proofs combine Trudi's
+formula with evaluations of the corresponding partition sums.
+
+## References
+
+* Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with Fuss-Catalan
+  Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, pp. 1–23. Corollary 4 and
+  Theorem 8 give the determinant evaluations; Lemma 1 and Corollary 9 give the Trudi formula and
+  the partition-sum evaluations used here.
+* Taras Goy and Mark Shattuck, *Determinants of Some Hessenberg–Toeplitz Matrices with Motzkin
+  Number Entries*, Journal of Integer Sequences 26 (2023), Article 23.3.4, pp. 1–21, Lemma 1
+  (the determinant-to-sum conversion).
+* Mircea Merca, *A note on the determinant of a Toeplitz-Hessenberg matrix*, Special Matrices
+  1 (2013), pp. 10–16, Theorem 1 (Trudi's formula).
 -/
 
 namespace MetaMathlibExt
@@ -179,5 +192,40 @@ public theorem toeplitzHessenbergDet_fussCatalan_special :
           (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 3 i 2 : ℚ)) n =
         2 / (n : ℚ) * ((3 * n - 3).choose (n - 1) : ℚ) :=
   ⟨case_two_three, case_two_four, case_three_one, case_three_two⟩
+
+/-- **Toeplitz–Hessenberg determinants of ternary Fuss–Catalan numbers.** Write
+$\det(a_0; a_1, \dots, a_n)$ for the determinant of the $n \times n$ Toeplitz–Hessenberg matrix
+whose entry in row $i$ and column $j$ is $a_{i+1-j}$ for $j \le i + 1$ and $0$ above the
+superdiagonal, and let $H_n = \frac{1}{3n + 1} \binom{3n + 1}{n}$ and
+$J_n = \frac{2}{3n + 2} \binom{3n + 2}{n}$. Then, in $\mathbb{Q}$,
+$\det(1; H_2, H_3, \dots, H_{n+1}) = \frac{2 (-1)^{n-1}}{n} \binom{3n - 3}{n - 1}$ for every
+$n \ge 2$, and $\det(-1; J_0, J_1, \dots, J_{n-1}) = H_n$ for every $n \ge 1$.
+
+Source: Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with
+Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, Theorem 8, equations
+(21) and (23) (`jis-2026-26.1.2-thm-8`). -/
+public theorem toeplitzHessenbergDet_ternary :
+    (∀ n : ℕ, 2 ≤ n →
+      toeplitzHessenbergDet
+          (fun i => if i = 0 then 1 else (generalizedFussCatalanNumber 3 (i + 1) 1 : ℚ)) n =
+        2 * (-1) ^ (n - 1) / (n : ℚ) * ((3 * n - 3).choose (n - 1) : ℚ)) ∧
+    ∀ n : ℕ, 1 ≤ n →
+      toeplitzHessenbergDet
+          (fun i => if i = 0 then -1 else (generalizedFussCatalanNumber 3 (i - 1) 2 : ℚ)) n =
+        (generalizedFussCatalanNumber 3 n 1 : ℚ) := by
+  constructor
+  · intro n hn
+    have hsign : (-1 : ℚ) ^ n = (-1) ^ (n - 1) * (-1) := by
+      rw [← pow_succ, Nat.sub_add_cancel (show 1 ≤ n by omega)]
+    rw [toeplitzHessenbergDet_eq_neg_one_pow_mul_trudiPartitionSum _ (by simp),
+      trudi_congr _ _ (fun i => (generalizedFussCatalanNumber 3 (i + 1) 1 : ℚ))
+        (fun i hi => by simp [hi.ne']),
+      hsign, mul_assoc, neg_one_mul, trudiPartitionSum_fussCatalan.2.2.2.1 n hn]
+    ring
+  · intro n hn
+    rw [toeplitzHessenbergDet_eq_trudiPartitionSum_one _ (by simp),
+      trudi_congr _ _ (fun i => (generalizedFussCatalanNumber 3 (i - 1) 2 : ℚ))
+        (fun i hi => by simp [hi.ne'])]
+    exact trudiPartitionSum_fussCatalan.2.2.2.2 n hn
 
 end MetaMathlibExt
