@@ -13764,6 +13764,7 @@
   "MathlibExt/NumberTheory/RepetendTable/LastDigit": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RidoutPadicRoth": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
   "MathlibExt/NumberTheory/RieselRepdigit101": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
+  "MathlibExt/NumberTheory/RogersDilogLucasUSeries": {"to": "Analysis/special-functions/bernoulli-polylog-clausen", "title": "Dilogarithm identities"},
   "MathlibExt/NumberTheory/RobinExceptionalCount": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Robin's inequality"},
   "MathlibExt/NumberTheory/RothAuxiliary": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
   "MathlibExt/NumberTheory/RoughNumberSieve": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Euler's function and divisor sums along linear recurrences"},
