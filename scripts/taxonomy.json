@@ -13388,6 +13388,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/BrunTitchmarshUniform": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Brun–Titchmarsh theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/BrunTwinPrimeReciprocals": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Brun's theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/CalzadoSieveEulerProduct": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Sieving shifted primes and the parity problem"},
+  "MathlibExt/NumberTheory/PrimeCounting/CalzadoTotientsFifthToHalf": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Sieving shifted primes and the parity problem"},
   "MathlibExt/NumberTheory/PrimeCounting/CalzadoTotientsNearSqrt": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Sieving shifted primes and the parity problem"},
   "MathlibExt/NumberTheory/PrimeCounting/Chebyshev": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Prime number theorem"},
   "MathlibExt/NumberTheory/PrimeCounting/ChebyshevThetaBounds": {"to": "NumberTheory/distribution-of-primes/prime-number-theorem", "title": "Chebyshev function bounds"},
