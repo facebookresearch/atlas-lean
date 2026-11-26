@@ -12980,6 +12980,7 @@
   "MathlibExt/NumberTheory/GeneralizedMarkovCongruence": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovDiscriminant": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovEquation": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
+  "MathlibExt/NumberTheory/GeneralizedMarkovUniquenessVieta": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedMarkovVietaEq": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/NumberTheory/GeneralizedPadovanPerrinCompanion": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
   "MathlibExt/NumberTheory/GeneralizedPadovanPerrinExpansion": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Padovan–Perrin recurrences"},
