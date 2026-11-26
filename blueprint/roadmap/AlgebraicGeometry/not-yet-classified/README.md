@@ -1199,6 +1199,6 @@ Topics added since this subject's fields were last revised.
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
-- [Frame of a sheaf of modules](is-frame-on.md)
 - [Invertible Tensor Sections](invertible-tensor-sections/README.md)
+- [Is Frame On](is-frame-on/README.md)
 - [Monoidal](monoidal/README.md)

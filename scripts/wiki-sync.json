@@ -666,6 +666,7 @@
 "AlgebraicGeometry.Scheme.Modules.exists_isFrameOn_of_pullback_iso_unit": "d3b55657071c9d0f",
 "AlgebraicGeometry.Scheme.Modules.moduleTensorIso": "33108bbf5a04c3c2",
 "AlgebraicGeometry.Scheme.Modules.sheafify": "1101c871973fe679",
+"AlgebraicGeometry.Scheme.Modules.smulSectionHom": "25fc88c0513c617f",
 "AlgebraicGeometry.Scheme.Modules.tensorIsoSheafify": "529bd4319176ae94",
 "AlgebraicGeometry.Scheme.Modules.tensorSections": "dfb5791d65352bd6",
 "AlgebraicGeometry.Scheme.Modules.tensorSectionsBilin": "37a974327adb9fbd",
