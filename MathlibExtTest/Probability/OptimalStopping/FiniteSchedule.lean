@@ -23,25 +23,53 @@ private def informationAtTwo : Filtration ℕ (⊤ : MeasurableSpace Bool) where
     · simp [hs]
   le' _ := le_top
 
--- The schedule has unequal gaps, and the index depends on the revealed outcome.
-example : ∃ τ : Bool → ℕ,
-    IsStoppingTime informationAtTwo (fun ω => τ ω) ∧ τ false = 2 ∧ τ true = 9 := by
-  let e : Fin 3 → ℕ := fun j => if j = 0 then 2 else if j = 1 then 5 else 9
-  have he : StrictMono e := by
-    change ∀ j k : Fin 3, j < k → e j < e k
-    decide
-  have he_min : ∀ j : Fin 3, 2 ≤ e j := by decide
-  obtain ⟨E, hdate⟩ := finite_schedule_stopping_times informationAtTwo e he
-  let i : Bool → Fin 3 := fun ω => if ω then 2 else 0
-  have hi (k : ℕ) :
-      MeasurableSet[informationAtTwo (e ⟨min k 2, Nat.lt_succ_of_le (min_le_right _ _)⟩)]
-        {ω | (↑(i ω).val : WithTop ℕ) ≤ ↑k} := by
-    let j : Fin 3 := ⟨min k 2, Nat.lt_succ_of_le (min_le_right _ _)⟩
-    change MeasurableSet[if 2 ≤ e j then ⊤ else ⊥] {ω | (↑(i ω).val : WithTop ℕ) ≤ ↑k}
-    rw [ite_eq_left (he_min j)]
-    exact MeasurableSpace.measurableSet_top
-  let τ := E ⟨i, hi⟩
-  exact ⟨τ.val, τ.property.1, (hdate ⟨i, hi⟩ false).trans rfl, (hdate ⟨i, hi⟩ true).trans rfl⟩
+private def nonuniformDates (j : Fin 3) : ℕ := if j = 0 then 1 else if j = 1 then 2 else 9
+
+private theorem nonuniformDates_strictMono : StrictMono nonuniformDates := by
+  change ∀ j k : Fin 3, j < k → nonuniformDates j < nonuniformDates k
+  decide
+
+-- The schedule starts before the outcome is revealed at its second date.
+example :
+    finiteScheduleFiltration informationAtTwo nonuniformDates nonuniformDates_strictMono.monotone
+      0 = ⊥ ∧
+    finiteScheduleFiltration informationAtTwo nonuniformDates nonuniformDates_strictMono.monotone
+      1 = ⊤ :=
+  ⟨(finiteScheduleFiltration_apply _ _ _ (0 : Fin 3)).trans rfl,
+    (finiteScheduleFiltration_apply _ _ _ (1 : Fin 3)).trans rfl⟩
+
+-- Start with a stopping date and check that the inverse recovers both indices.
+example : ∃ i : Bool → Fin 3,
+    IsStoppingTime
+      (finiteScheduleFiltration informationAtTwo nonuniformDates nonuniformDates_strictMono.monotone)
+      (fun ω => (i ω).val) ∧ i false = 1 ∧ i true = 2 := by
+  let τ : Bool → ℕ := fun ω => if ω then 9 else 2
+  have hτ : IsStoppingTime informationAtTwo (fun ω => τ ω) := by
+    intro t
+    change MeasurableSet[if 2 ≤ t then ⊤ else ⊥] {ω | (τ ω : WithTop ℕ) ≤ ↑t}
+    by_cases ht : 2 ≤ t
+    · rw [ite_eq_left ht]
+      exact MeasurableSpace.measurableSet_top
+    · rw [ite_eq_right ht]
+      have hempty : {ω | (τ ω : WithTop ℕ) ≤ ↑t} = ∅ := by
+        ext ω
+        simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, Nat.cast_withTop, WithTop.coe_le_coe]
+        cases ω <;> simp [τ] <;> omega
+      rw [hempty]
+      exact @MeasurableSet.empty Bool ⊥
+  have hrange (ω : Bool) : τ ω ∈ Set.range nonuniformDates := by
+    cases ω
+    · exact ⟨1, rfl⟩
+    · exact ⟨2, rfl⟩
+  let E := finiteScheduleStoppingEquiv informationAtTwo nonuniformDates nonuniformDates_strictMono
+  let i := E.symm ⟨τ, hτ, hrange⟩
+  have hdate (ω : Bool) : nonuniformDates (i.val ω) = τ ω := by
+    calc
+      nonuniformDates (i.val ω) = (E i).val ω :=
+        (finiteScheduleStoppingEquiv_apply _ _ _ i ω).symm
+      _ = τ ω := congrArg (fun s => s.val ω) (E.apply_symm_apply ⟨τ, hτ, hrange⟩)
+  exact ⟨i.val, i.property, nonuniformDates_strictMono.injective ((hdate false).trans rfl),
+    nonuniformDates_strictMono.injective ((hdate true).trans rfl)⟩
 
 -- On a singleton schedule the image of any sampled stopping index is the terminal date.
 example {Ω ι : Type*} {m : MeasurableSpace Ω} [LinearOrder ι] (F : Filtration ι m) (T : ι) :
