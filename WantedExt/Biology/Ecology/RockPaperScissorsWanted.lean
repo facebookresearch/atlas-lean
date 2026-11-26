@@ -26,8 +26,10 @@ Solutions are those of the library's replicator equation
 the linear fitness `y ↦ A y`, and a point of the simplex is the library's
 `MathlibExt.Biology.Dynamics.AsymmetricESS.IsMixed` (`Domains.Biology.Dynamics.AsymmetricESS`).
 Asymptotic stability is relative to the simplex; global stability means Lyapunov stability plus
-convergence of every interior solution. Zeeman (1980) and Hofbauer–Sigmund (1998, §7.7) were not
-read; the statement follows Hofbauer and Sigmund (2003).
+convergence of every interior solution. Each stability predicate requires `z` to be a rest point
+in the simplex, so none of them holds vacuously at a point off the simplex. Zeeman (1980) and
+Hofbauer–Sigmund (1998, §7.7) were not read; the statement follows Hofbauer and Sigmund (2003),
+§2.4.
 
 Sources: E. C. Zeeman, "Population dynamics from game theory", in *Global Theory of Dynamical
 Systems*, Lecture Notes in Math. 819, Springer (1980); J. Hofbauer and K. Sigmund, "Evolutionary
@@ -66,31 +68,34 @@ simplex (`IsMixed z`: every `zᵢ ≥ 0` and `∑ zᵢ = 1`) and some coordinate
 is the heteroclinic cycle `e₁ → e₂ → e₃ → e₁`. -/
 def InBoundary (z : Fin 3 → ℝ) : Prop := IsMixed z ∧ ∃ i, z i = 0
 
-/-- **Lyapunov stability.** `z` is Lyapunov stable for solutions starting in the simplex: for
-every `ε > 0` there is `δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex
-(`IsMixed (x 0)`) and `‖x(0) - z‖ < δ` has `‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
+/-- **Lyapunov stability.** `z` is a Lyapunov stable rest point for solutions starting in the
+simplex: `z` is a point of the simplex (`IsMixed z`) and a rest point of the replicator equation,
+and for every `ε > 0` there is `δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the
+simplex (`IsMixed (x 0)`) and `‖x(0) - z‖ < δ` has `‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
 def IsLyapunovStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin 3 → ℝ,
-    Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
-      ‖x 0 - z‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - z‖ < ε
+  IsMixed z ∧ Replicator.IsRestPoint (fun y => A *ᵥ y) z ∧
+    ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin 3 → ℝ,
+      Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
+        ‖x 0 - z‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - z‖ < ε
 
-/-- **Asymptotic stability.** `z` is asymptotically stable: Lyapunov stable, and there is
-`δ₀ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex (`IsMixed (x 0)`) and
-`‖x(0) - z‖ < δ₀` converges to `z`. -/
+/-- **Asymptotic stability.** `z` is asymptotically stable: it is Lyapunov stable (in particular a
+rest point in the simplex), and there is `δ₀ > 0` such that every solution on `[0, ∞)` with `x(0)`
+in the simplex (`IsMixed (x 0)`) and `‖x(0) - z‖ < δ₀` converges to `z`. -/
 def IsAsymptoticallyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
   IsLyapunovStable A z ∧ ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ x : ℝ → Fin 3 → ℝ,
     Replicator.IsSolution (fun y => A *ᵥ y) x → IsMixed (x 0) →
       ‖x 0 - z‖ < δ₀ → Tendsto x atTop (𝓝 z)
 
-/-- **Global stability.** `z` is globally stable: Lyapunov stable, and every solution on `[0, ∞)`
-with `x(0)` in the interior of `S₃` converges to `z`. -/
+/-- **Global stability.** `z` is globally stable: it is Lyapunov stable (in particular a rest point
+in the simplex), and every solution on `[0, ∞)` with `x(0)` in the interior of `S₃` converges to
+`z`. -/
 def IsGloballyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
   IsLyapunovStable A z ∧ ∀ x : ℝ → Fin 3 → ℝ,
     Replicator.IsSolution (fun y => A *ᵥ y) x → InInterior (x 0) → Tendsto x atTop (𝓝 z)
 
 /-- **Unique interior rest point.** For losses `aᵢ > 0` and wins `bᵢ > 0`, the rock–paper–scissors
 replicator equation has exactly one rest point in the interior of `S₃` (Hofbauer and Sigmund
-2003, §3).
+2003, §2.4).
 
 Source: Hofbauer and Sigmund (2003), Theorem 2 and the text before it. -/
 public theorem_wanted existsUnique_interiorRestPoint (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
