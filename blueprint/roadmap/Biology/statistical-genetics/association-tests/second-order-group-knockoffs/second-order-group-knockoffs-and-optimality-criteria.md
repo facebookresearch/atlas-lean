@@ -16,15 +16,15 @@ $$L_{\mathrm{SDP}}(S) = \sum_{\gamma=1}^g \frac{1}{|A_\gamma|^2} \sum_{i, j \in 
 
 SDP minimizes within-group correlation between features and knockoffs. MVR minimizes $\sum_j \bigl(\mathbb{E}[\mathrm{Var}(X_j \mid X_{-j}, \tilde X)]\bigr)^{-1}$ (minimum variance-based reconstructability). ME maximizes the entropy of $(X, \tilde X)$, equivalently minimizes their mutual information. ME is convex in $S$. The equivariant special case $S_\gamma = \tau \Sigma_\gamma$ has the closed form $\tau = \min\{1, 2\lambda_{\min}(B \Sigma B)\}$ with $B = \mathrm{diag}(\Sigma_1^{-1/2}, \dots, \Sigma_g^{-1/2})$.
 
-**Coordinate updates.** Write $D = \tfrac{m+1}{m}\Sigma - S$. A symmetric update $S_{ij} \leftarrow S_{ij} + \delta_{ij}$ (and $S_{ji} \leftarrow S_{ji} + \delta_{ij}$) keeps $S \succ 0$ and $D \succ 0$ whenever $\delta_{ij}$ lies in the following feasible region (Chu et al., Eq. (9)): for $i = j$,
+**Coordinate updates.** Write $D = \tfrac{m+1}{m}\Sigma - S$. A symmetric update $S_{ij} \leftarrow S_{ij} + \delta_{ij}$ (and $S_{ji} \leftarrow S_{ji} + \delta_{ij}$) keeps $S \succ 0$ and $D \succ 0$ if and only if $\delta_{ij}$ lies in the following feasible region: for $i = j$,
 
 $$-\frac{1}{e_j^\top S^{-1} e_j} < \delta_{jj} < \frac{1}{e_j^\top D^{-1} e_j},$$
 
-and, for $i \ne j$,
+and, for $i \ne j$, writing $a = e_i^\top S^{-1} e_i$, $b = e_j^\top S^{-1} e_j$, $c = e_i^\top S^{-1} e_j$ and $a' = e_i^\top D^{-1} e_i$, $b' = e_j^\top D^{-1} e_j$, $c' = e_i^\top D^{-1} e_j$, the exact condition $(1 + \delta_{ij} c)^2 - \delta_{ij}^2 ab > 0$ for $S$ and $(1 - \delta_{ij} c')^2 - \delta_{ij}^2 a' b' > 0$ for $D$ gives
 
-$$-\frac{2}{e_i^\top S^{-1} e_i + 2 e_i^\top S^{-1} e_j + e_j^\top S^{-1} e_j} < \delta_{ij} < \frac{2}{e_i^\top D^{-1} e_i + 2 e_i^\top D^{-1} e_j + e_j^\top D^{-1} e_j}.$$
+$$\max\!\left(-\frac{1}{\sqrt{ab} + c},\ -\frac{1}{\sqrt{a' b'} - c'}\right) < \delta_{ij} < \min\!\left(\frac{1}{\sqrt{ab} - c},\ \frac{1}{\sqrt{a' b'} + c'}\right).$$
 
-Both intervals contain $0$. For $i \ne j$ the interval is only sufficient, not necessary, since the exact condition for $S$ is $(1 + \delta c)^2 - \delta^2 ab > 0$ with $a = e_i^\top S^{-1} e_i$, $b = e_j^\top S^{-1} e_j$, $c = e_i^\top S^{-1} e_j$, and $a + b \ge 2\sqrt{ab}$ (similarly for $D$). Global moves $S \leftarrow S + \delta_i v_i v_i^\top$, with $v_i$ the eigenvectors of $\mathrm{diag}(\Sigma_1, \dots, \Sigma_g)$, have for ME the closed-form step
+Both intervals contain $0$. A simpler sufficient inner region for $i \ne j$ is obtained from $a + b \ge 2\sqrt{ab}$ by intersecting Chu et al.'s Eq. (8) bounds $-2/(v^\top S^{-1} v) < \delta_{ij} < 2/(v^\top D^{-1} v)$ ($v = e_i + e_j$) with the complementary bounds $-2/(w^\top D^{-1} w) < \delta_{ij} < 2/(w^\top S^{-1} w)$ ($w = e_i - e_j$); Chu et al.'s Eq. (8) omits the $w$-bounds and is not by itself sufficient for both $S \succ 0$ and $D \succ 0$. Global moves $S \leftarrow S + \delta_i v_i v_i^\top$, with $v_i$ the eigenvectors of $\mathrm{diag}(\Sigma_1, \dots, \Sigma_g)$, have for ME the closed-form step
 
 $$\delta_i = \frac{m\, v_i^\top S^{-1} v_i - v_i^\top D^{-1} v_i}{(m+1)\, v_i^\top S^{-1} v_i \; v_i^\top D^{-1} v_i},$$
 
