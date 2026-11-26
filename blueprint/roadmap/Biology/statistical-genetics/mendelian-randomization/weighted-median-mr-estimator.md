@@ -5,10 +5,14 @@ Let $\hat\beta_{(1)} \le \dots \le \hat\beta_{(J)}$ be the ordered single-SNP
 satisfying $\sum_{j=1}^J w_j = 1$ (typically proportional to the
 [inverse-variance weights](ivw-weight.md) $w'_j = \hat\gamma_j^2 / \sigma_{Yj}^2$).
 Define the cumulative weights $s_j = \sum_{k=1}^j w_k$ and mid-point percentiles
+
 $$p_j = s_j - \frac{w_j}{2} \qquad (j = 1, \dots, J).$$
+
 Let $F_w : [p_1, p_J] \to \mathbb{R}$ be the continuous piecewise-linear function interpolating
 the points $(p_j, \hat\beta_{(j)})$. The **weighted median Mendelian randomization estimator** is
+
 $$\hat\beta_{\mathrm{WM}} = F_w(1/2).$$
+
 When all weights are equal ($w_j = 1/J$), $\hat\beta_{\mathrm{WM}}$ reduces to the
 [simple median estimator](simple-median-mr-estimator.md).
 

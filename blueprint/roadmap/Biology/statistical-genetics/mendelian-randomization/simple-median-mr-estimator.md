@@ -3,7 +3,9 @@
 Let $\hat\beta_1, \dots, \hat\beta_J$ be the single-SNP [ratio estimates](ratio-estimate.md)
 for $J \ge 1$ genetic variants, and let $\hat\beta_{(1)} \le \hat\beta_{(2)} \le \dots \le \hat\beta_{(J)}$
 denote their order statistics. The **simple median Mendelian randomization estimator** is
+
 $$\hat\beta_{\mathrm{M}} = \begin{cases} \hat\beta_{(k+1)} & \text{if } J = 2k + 1, \\ \tfrac{1}{2}\bigl(\hat\beta_{(k)} + \hat\beta_{(k+1)}\bigr) & \text{if } J = 2k. \end{cases}$$
+
 Unlike the [IVW estimator](ivw.md) (which has a $0\%$ breakdown point under invalid instruments),
 $\hat\beta_{\mathrm{M}}$ has a $50\%$ breakdown point: as sample size $N \to \infty$, if
 strictly more than $J/2$ genetic variants are valid instrumental variables (so their ratio estimates

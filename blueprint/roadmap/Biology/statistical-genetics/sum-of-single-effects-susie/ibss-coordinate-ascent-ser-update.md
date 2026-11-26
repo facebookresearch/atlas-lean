@@ -4,9 +4,12 @@ Under the [SuSiE model](sum-of-single-effects-model.md) with factored variationa
 $q(b_1, \dots, b_L) = \prod_{l=1}^L q_l(b_l)$, fix $l \in \{1, \dots, L\}$ and hold the
 other factors $\{q_{l'} : l' \ne l\}$ fixed with finite first and second moments. Let
 $\bar b_{l'} = \mathbb{E}_{q_{l'}}[b_{l'}]$ and define the expected residual vector
+
 $$\bar r_l := y - X \sum_{l' \ne l} \bar b_{l'}.$$
+
 Then the unique maximizer of the ELBO $F(q_1, \dots, q_L; \sigma^2, \sigma_0^2)$ over all
 distributions $q_l$ is the exact single-effect regression posterior on expected residuals:
+
 $$\arg\max_{q_l} F(q_1, \dots, q_L; \sigma^2, \sigma_0^2) = \operatorname{SER}(X, \bar r_l; \sigma^2, \sigma_{0l}^2).$$
 
 ## Depends on

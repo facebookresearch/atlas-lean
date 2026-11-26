@@ -3,10 +3,14 @@
 Let $M \in \mathbb{R}^{m \times n}$ have i.i.d. $\mathcal{N}(0, \sigma^2)$ entries, and let
 $\lambda_1, \dots, \lambda_m$ be the eigenvalues of the $m \times m$ Wishart matrix $X = M M^\top$.
 Define the first two empirical eigenvalue sums
+
 $$L_1 = \sum_{i=1}^m \lambda_i = \operatorname{tr}(X), \qquad L_2 = \sum_{i=1}^m \lambda_i^2 = \operatorname{tr}(X^2).$$
+
 Then $\mathbb{E}[L_1] = m n \sigma^2$ and $\mathbb{E}[L_2] = m n (m + n + 1) \sigma^4$.
 Consequently, when $n$ and $\sigma^2$ are unknown, the method-of-moments estimators
+
 $$\hat n' = \frac{(m + 1) L_1^2}{m L_2 - L_1^2}, \qquad \hat\sigma^2 = \frac{L_1}{m \hat n'}$$
+
 satisfy $L_1 = m \hat n' \hat\sigma^2$ and $L_2 = m \hat n' (m + \hat n' + 1) \hat\sigma^4$,
 matching both observed eigenvalue sums to their Wishart expectations.
 

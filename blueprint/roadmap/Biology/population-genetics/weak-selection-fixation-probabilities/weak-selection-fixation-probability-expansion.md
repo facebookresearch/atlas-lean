@@ -5,7 +5,9 @@ reproductive values $\pi_1, \dots, \pi_N$, let $\widehat\Delta_{\mathrm{sel}}(x)
 be the expected one-step change in reproductive-value-weighted allele frequency from state $x$.
 Then for any fixed initial configuration $\xi \in \mathbb{B}^N$, the fixation probability of allele $A$
 satisfies the first-order weak-selection expansion
+
 $$\rho_A(\xi) = \hat\xi + \delta \left\langle \left.\frac{d}{d\delta} \widehat\Delta_{\mathrm{sel}}\right|_{\delta=0} \right\rangle_\xi^\circ + O(\delta^2),$$
+
 where $\langle \cdot \rangle_\xi^\circ$ is the neutral sojourn-time operator from initial state $\xi$.
 
 ## Depends on

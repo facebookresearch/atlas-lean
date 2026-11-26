@@ -3,9 +3,13 @@
 Let $M \in \mathbb{R}^{m \times n}$ have i.i.d. $\mathcal{N}(0, 1)$ entries, and let
 $\lambda_1 \ge \dots \ge \lambda_m$ be the eigenvalues of $X = M M^\top$. Define the
 unnormalized and trace-normalized largest eigenvalues
+
 $$L = \lambda_1, \qquad L' = \frac{m \lambda_1}{\sum_{i=1}^m \lambda_i} \cdot n,$$
+
 and the Johnstone centering and scaling parameters
+
 $$\mu(m, n) = \bigl(\sqrt{n - 1} + \sqrt{m}\bigr)^2, \qquad \sigma(m, n) = \bigl(\sqrt{n - 1} + \sqrt{m}\bigr)\left(\frac{1}{\sqrt{n - 1}} + \frac{1}{\sqrt{m}}\right)^{1/3}.$$
+
 As $m, n \to \infty$ with $n / m \to \gamma \in [1, \infty)$, both $(L - \mu)/\sigma$ and
 $(L' - \mu)/\sigma$ converge in distribution to the Tracy–Widom law $\mathrm{TW}_1$.
 

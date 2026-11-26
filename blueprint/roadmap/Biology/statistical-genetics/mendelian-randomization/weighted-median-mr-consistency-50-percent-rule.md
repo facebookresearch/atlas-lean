@@ -7,8 +7,11 @@ be the subset of valid instrumental variables (satisfying $\hat\beta_j \xrightar
 all $j \in V$).
 
 If the valid instruments carry strictly more than half of the limiting weight,
+
 $$\sum_{j \in V} w_j^\infty > \frac{1}{2},$$
+
 then the [weighted median estimator](weighted-median-mr-estimator.md) is consistent for the causal effect:
+
 $$\hat\beta_{\mathrm{WM}} \xrightarrow{p} \beta.$$
 
 ## Depends on
