@@ -22,16 +22,24 @@ under the time-reversed protocol, odd under time reversal in the sense
 
   `P[x | λ] = e^{-β Q_F[x]} P[x̄(-t) | λ̄]`,
 
-relating the conditional path probabilities of the two protocols. The entropy production of the
-forward process is `ω_F[x] = ln ρ_F(x_0) - ln ρ_R(x̄_n) - β Q_F[x]`
-(Eq. (6), with the final forward density equal to the time-reversed initial
-reverse density; for arbitrary positive `ρ_F`, `ρ_R`, as here, it is the finite path log-ratio
-of this formula), and that of the reverse process is
-`ω_R[y] = ln ρ_R(y_0) - ln ρ_F(ȳ_n) - β Q_R[y]`. The fluctuation
-theorem (Eq. (2)) is `P_F(+ω) = e^{ω} P_R(-ω)` for the distributions of entropy production.
+relating the conditional path probabilities of the two protocols. For arbitrary positive initial
+densities `ρ_F`, `ρ_R`, as here, the statements use the path functionals
+`ω_F[x] = ln ρ_F(x_0) - ln ρ_R(x̄_n) - β Q_F[x]` of the forward process and
+`ω_R[y] = ln ρ_R(y_0) - ln ρ_F(ȳ_n) - β Q_R[y]` of the reverse process. By microscopic
+reversibility, `ω_F[x]` agrees with the log-ratio `ln (P_F[x] / P_R[x̄(-t)])` of the path
+probabilities where these are positive (they vanish together), and extends it to the paths of
+probability zero in both directions, where the ratio is undefined: transitions need only be
+nonnegative, and with identity transitions every path that changes state is such a path.
+`ω_F` is Crooks's entropy production (Eq. (6)) when the initial density of the reverse process
+is the time reversal of the final density of the forward process. The fluctuation theorem
+(Eq. (2)) is `P_F(+ω) = e^{ω} P_R(-ω)` for the distributions of `ω_F` and `ω_R`.
 When both processes start in equilibrium (`ρ_F ∝ e^{-β E_0}`, `ρ_R(x̄) ∝ e^{-β E_1(x)}`),
-`ω_F = β (W - ΔF)` with the work `W = E_1(x_n) - E_0(x_0) - Q_F[x]`, and summing the theorem
-gives the nonequilibrium work relation `⟨e^{-β W}⟩ = e^{-β ΔF}` (Eqs. (10), (3)).
+`ω_F = β (W - ΔF)` with the work `W = E_1(x_n) - E_0(x_0) - Q_F[x]` (Eq. (10)), and summing the
+theorem gives the nonequilibrium work relation `⟨e^{-β W}⟩ = e^{-β ΔF}` (Eq. (3)). Canonical
+initial densities do not make the final forward density that of `E_1` (identity transitions keep
+`ρ_F`), so `β (W - ΔF)` is the entropy production of Eq. (6) only when the forward process ends
+in the equilibrium of `E_1`, as in the source, where the system relaxes to it after the driving;
+the work relation holds without this.
 The continuous-time version and the steady-state case of the source are not stated.
 
 Sources: G. E. Crooks, "Entropy production fluctuation theorem and the nonequilibrium work
@@ -70,11 +78,15 @@ density `ρ` and transition matrices `M`. -/
 def pathProb (ρ : σ → ℝ) (M : Fin n → σ → σ → ℝ) (x : Path σ n) : ℝ :=
   ρ (x 0) * condPathProb M x
 
-/-- The path log-ratio `ω[x] = ln ρ(x_0) - ln ρ'(x̄_n) - β Q[x]` of a path of the process with
+/-- The path functional `ω[x] = ln ρ(x_0) - ln ρ'(x̄_n) - β Q[x]` of a path of the process with
 initial density `ρ` and heat functional `Q` (that of its own protocol), where `ρ'` is the initial
-density of the other process; `ρ` and `ρ'` are arbitrary positive laws. This is Crooks's entropy
-production (Eq. (6)) when the reverse initial density matches the time reversal of the final
-density of the forward process; in general it is only this finite log-ratio. -/
+density of the other process; `ρ` and `ρ'` are arbitrary positive laws. Under microscopic
+reversibility (`MicroReversible`), it agrees with the log-ratio `ln (P[x] / P'[x̄(-t)])` of the
+probability of `x` under this process and that of its time reversal under the other on their
+common positive support (the two probabilities vanish together), and extends it to the paths
+where both vanish and the ratio is undefined: transitions need only be nonnegative, and with
+identity transitions every path that changes state is such a path. It is Crooks's entropy
+production (Eq. (6)) when `ρ'` is the time reversal of the final density of this process. -/
 noncomputable def entropyProduction (bar : σ → σ) (ρ ρ' : σ → ℝ) (β : ℝ) (Q : Path σ n → ℝ)
     (x : Path σ n) : ℝ :=
   Real.log (ρ (x 0)) - Real.log (ρ' (bar (x (Fin.last n)))) - β * Q x
@@ -100,16 +112,18 @@ structure MicroReversible (bar : σ → σ) (β : ℝ) (ρF ρR : σ → ℝ) (M
   micro_rev : ∀ x,
     condPathProb M x = Real.exp (-β * QF x) * condPathProb MR (reversePath bar x)
 
-/-- **Crooks fluctuation theorem** (Crooks 1999, Eq. (2)). Assume the setting
-`MicroReversible` (`bar` an involution; positive initial probability vectors `ρ_F`, `ρ_R`;
-stochastic matrices `M`, `MR`; forward and reverse heats with `QR[x̄(-t)] = -QF[x]`;
-microscopic reversibility with `QF`). Then for every real `ω`, the probability
-`P_F(ω) = ∑_{x : ω_F[x] = ω} P_F[x]` and `P_R(-ω) = ∑_{y : ω_R[y] = -ω} P_R[y]` satisfy
-`P_F(+ω) = e^{ω} P_R(-ω)`, where `ω_F[x] = ln ρ_F(x_0) - ln ρ_R(x̄_n) - β QF[x]` and
-`ω_R[y] = ln ρ_R(y_0) - ln ρ_F(ȳ_n) - β QR[y]` are the finite path log-ratios of the forward and
-reverse processes, for arbitrary positive initial laws `ρ_F`, `ρ_R`. They are Crooks's entropy
-productions when `ρ_R` is the time reversal of the final density of the forward process (and
-`ρ_F` that of the reverse process), as in the source.
+/-- **Crooks fluctuation theorem.** Assume the setting `MicroReversible` (`bar` an involution;
+positive initial probability vectors `ρ_F`, `ρ_R`; stochastic matrices `M`, `MR`; forward and
+reverse heats with `QR[x̄(-t)] = -QF[x]`; microscopic reversibility with `QF`). Then for every
+real `ω`, the probabilities `P_F(ω) = ∑_{x : ω_F[x] = ω} P_F[x]` and
+`P_R(-ω) = ∑_{y : ω_R[y] = -ω} P_R[y]` satisfy `P_F(+ω) = e^{ω} P_R(-ω)` (Crooks 1999, Eq. (2)),
+where `ω_F[x] = ln ρ_F(x_0) - ln ρ_R(x̄_n) - β QF[x]` and
+`ω_R[y] = ln ρ_R(y_0) - ln ρ_F(ȳ_n) - β QR[y]` are the path functionals of the forward and
+reverse processes (`entropyProduction`), for arbitrary positive initial laws `ρ_F`, `ρ_R`. Each
+agrees with the log-ratio of the probabilities of a path and of its time reversal on their common
+positive support, and extends it to the paths where both probabilities vanish. They are Crooks's
+entropy productions when `ρ_R` is the time reversal of the final density of the forward process
+(and `ρ_F` that of the reverse process), as in the source.
 
 Source: G. E. Crooks, "Entropy production fluctuation theorem and the nonequilibrium work
 relation for free energy differences", Phys. Rev. E 60 (1999) 2721–2726, Eq. (2)
@@ -121,12 +135,18 @@ theorem_wanted fluctuation_theorem (bar : σ → σ) (β : ℝ) (ρF ρR : σ �
       Real.exp ω *
         ∑ y ∈ univ.filter (fun y => entropyProduction bar ρR ρF β QR y = -ω), pathProb ρR MR y
 
-/-- **Nonequilibrium work relation** (Crooks 1999, Eqs. (10) and (3)). Assume the setting
-`MicroReversible` with `β > 0` and canonical initial densities: `ρ_F(s) = e^{-β E_0(s)} / Z_0`
-and `ρ_R(bar s) = e^{-β E_1(s)} / Z_1` for all `s`, with `Z_0 = ∑_s e^{-β E_0(s)}` and
+/-- **Nonequilibrium work relation.** Assume the setting `MicroReversible` with `β > 0` and
+canonical initial densities: `ρ_F(s) = e^{-β E_0(s)} / Z_0` and
+`ρ_R(bar s) = e^{-β E_1(s)} / Z_1` for all `s`, with `Z_0 = ∑_s e^{-β E_0(s)}` and
 `Z_1 = ∑_s e^{-β E_1(s)}`. Let the work be `W[x] = E_1(x_n) - E_0(x_0) - QF[x]` and
-`ΔF = -β⁻¹ ln Z_1 + β⁻¹ ln Z_0`. Then the entropy production is `ω_F[x] = β (W[x] - ΔF)` for
-every path (with the forward heat `QF`), and `∑_x P_F[x] e^{-β W[x]} = e^{-β ΔF}`.
+`ΔF = -β⁻¹ ln Z_1 + β⁻¹ ln Z_0`. Then the forward path functional
+`ω_F[x] = ln ρ_F(x_0) - ln ρ_R(x̄_n) - β QF[x]` (`entropyProduction` with the forward heat `QF`,
+which agrees with the forward path log-ratio where that is defined) is `β (W[x] - ΔF)` for every
+path (Crooks 1999, Eq. (10)), and `∑_x P_F[x] e^{-β W[x]} = e^{-β ΔF}` (Eq. (3)). Canonical
+initial densities do not make the final density of the forward process that of `E_1` (identity
+transitions keep `ρ_F`), so `ω_F` is the entropy production of Eq. (6) only when the forward
+process ends in the equilibrium of `E_1`, as in the source, where the system relaxes to it after
+the driving; the work relation holds without this.
 
 Source: G. E. Crooks, "Entropy production fluctuation theorem and the nonequilibrium work
 relation for free energy differences", Phys. Rev. E 60 (1999) 2721–2726, Eqs. (10) and (3)
