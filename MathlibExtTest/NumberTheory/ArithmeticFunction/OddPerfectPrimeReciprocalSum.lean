@@ -13,9 +13,19 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
 
-open MathlibExt.NumberTheory.PrimitiveNondeficientWanted MetaMathlibExt
+/-! # Tests for `MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum` -/
 
 namespace MathlibExtTest.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
+
+open MathlibExt.NumberTheory.PrimitiveNondeficientWanted MetaMathlibExt
+
+-- With exponent 5 the disjunct `e = 1` is impossible, so the fifth-power bound holds.
+example (n q m : ℕ) (h : EulerianForm n q 5 m) : q ^ 5 < 2 * m ^ 2 := by
+  simpa using eulerianForm_exponent_eq_one_or_pow_five_lt n q 5 m h
+
+-- Corollary: an exponent different from 1 forces the fifth-power bound.
+example (n q e m : ℕ) (h : EulerianForm n q e m) (he : e ≠ 1) : q ^ 5 < 2 * m ^ 2 := by
+  simpa [he] using eulerianForm_exponent_eq_one_or_pow_five_lt n q e m h
 
 -- For least prime factor 3, the bound is 2 + 9 / 36 = 9 / 4.
 example (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h3 : n.minFac = 3) :
