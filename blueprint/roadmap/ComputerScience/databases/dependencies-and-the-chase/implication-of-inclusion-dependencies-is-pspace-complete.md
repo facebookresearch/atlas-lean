@@ -6,6 +6,13 @@ $j_1, \dots, j_k$. The problem of deciding, for a set $\Sigma$ of inclusion depe
 $\sigma$, whether every finite database satisfying $\Sigma$ satisfies $\sigma$ is PSPACE-complete: it is in PSPACE, and every
 problem in PSPACE has a polynomial-time many-one reduction to it.
 
+## Expansion
+
+This node states a precise result. Finite controllability relates the finite and unrestricted implication tests; the
+PSPACE lower bound is a separate reduction from acceptance of an input word by a two-tape Turing machine that runs in
+linear space (the cited textbook's Exercise 1.17). A good expansion adds a page for the PSPACE-completeness of that
+acceptance problem and for the reduction, and links them under `## Proof depends on`.
+
 ## Depends on
 
 - [Inclusion dependencies and finite implication](inclusion-dependencies-and-finite-implication.md)
