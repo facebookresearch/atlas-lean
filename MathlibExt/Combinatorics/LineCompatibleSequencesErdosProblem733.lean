@@ -41,9 +41,9 @@ The complete line-size profile of a finite planar point set `P` records `|ℓ �
 line `ℓ` through two distinct points of `P`. The number of distinct complete profiles of `n`-point
 sets is at most `exp(C √n)` for an absolute constant `C`. For `n = 0` the only profile is empty.
 
-This is the case of Erdős Problem 733 in which all determined lines are used. The general problem
-allows a choice of distinct lines. For three noncollinear points the complete profile is
-`[2, 2, 2]`, while selecting one side gives `[2]`.
+This formulation of Erdős Problem 733 uses all determined lines, as in Erdős Problem 607.
+Distinct lines of equal size each contribute an entry, so three noncollinear points give
+the profile `[2, 2, 2]`, one entry for each side of the triangle.
 
 Source: T. F. Bloom, Erdős Problems, Problem #733, https://www.erdosproblems.com/733 (status
 PROVED). UnsolvedMath record UM-30006999 (`EP-733`), dataset ulamai/UnsolvedMath v1.8.0.
@@ -70,8 +70,9 @@ noncomputable def lineCompatibleCount (n : ℕ) : ℕ :=
 
 /-- **Subexponential count of complete line-size profiles (statement).** There is a real constant
 $C$ such that for every natural number $n$, at most $e^{C \sqrt{n}}$ distinct complete line-size
-profiles occur among $n$-point sets in the plane. Each profile counts the points on every line
-determined by a pair of distinct points of the set. -/
+profiles occur among $n$-point sets in the plane. In this formulation of Erdős Problem 733,
+each profile records the number of points on every line determined by two distinct points of
+the set. -/
 def lineCompatibleCountSubexponential : Prop :=
   ∃ C : ℝ, ∀ n : ℕ, (lineCompatibleCount n : ℝ) ≤ Real.exp (C * Real.sqrt n)
 
@@ -1130,7 +1131,8 @@ private theorem count_zero : lineCompatibleCount 0 = 1 := by
 for every natural number $n$, the number of line-compatible sequences for $n$, that is, of
 distinct multisets of the numbers $|\ell \cap P|$ over the distinct lines $\ell$ through two
 distinct points of an $n$-point set $P \subseteq \mathbb{R}^2$, each line counted once, is at
-most $e^{C \sqrt{n}}$. This answers Erdős Problem 733.
+most $e^{C \sqrt{n}}$. This answers Erdős Problem 733 with the sequence taken over all
+determined lines.
 
 Source: T. F. Bloom, Erdős Problems,
 Problem #733, https://www.erdosproblems.com/733 (status PROVED); resolution: E. Szemerédi and W. T.
