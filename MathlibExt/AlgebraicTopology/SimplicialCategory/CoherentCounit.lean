@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentUnit
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentVertices
 
 /-!
-# Actual evaluation counit of coherent realization
+# The evaluation counit of coherent realization
 
-Each coherent generator is evaluated by its original enriched simplex
-functor. The original endpoint equations determine the equality
-transports. All defining relations are proved on these literal maps.
+Evaluation sends each coherent generator to its image under the enriched
+simplex functor. The generator relations are respected, giving a counit
+map whose object and Hom maps are determined by evaluation.
 -/
 
 noncomputable section
@@ -26,12 +26,12 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment SimplicialQuiver
 
-/-- Reading a vertex of a coherent-nerve simplex gives exactly its original enriched object. -/
+/-- Reading a vertex of a coherent-nerve simplex gives exactly its enriched object. -/
 theorem vertexOf_vertex (C : Carrier.{u}) {n : SimplexCategory} (σ : CoherentSimplexIn C n)
     (i : coherentSimplex.{u} n) :
     vertexOf C (vertex (coherentNerveFunctor.obj C) σ i) = σ.obj i := rfl
 
-/-- The actual original object and Hom evaluation of the coherent generating quiver. -/
+/-- The object and Hom evaluation of the coherent generating quiver. -/
 def counitInterpretation (C : Carrier.{u}) :
     Interpretation (generatingQuiver (coherentNerveFunctor.obj C)) C where
   obj := vertexOf C
@@ -49,7 +49,7 @@ def counitInterpretation (C : Carrier.{u}) :
               (congrArg (vertexOf C) hx) (congrArg (vertexOf C) hy))
           exact congr($(φ.naturality f) a) }
 
-/-- Each generating path is evaluated by its actual original enriched Hom map and endpoint
+/-- Each generating path is evaluated by its enriched Hom map and endpoint
 transports. -/
 theorem counit_eval_arrow (C : Carrier.{u}) {n : SimplexCategory} (σ : CoherentSimplexIn C n)
     (i j : coherentSimplex.{u} n) {x y : (coherentNerveFunctor.obj C) _⦋0⦌}
@@ -62,7 +62,7 @@ theorem counit_eval_arrow (C : Carrier.{u}) {n : SimplexCategory} (σ : Coherent
   congr($((counitInterpretation C).generator_eval x y).app q
     (arrow (coherentNerveFunctor.obj C) σ i j hx hy a))
 
-/-- Actual evaluation satisfies every defining coherent realization equation. -/
+/-- Evaluation satisfies every defining coherent realization equation. -/
 theorem counit_relations (C : Carrier.{u}) (q : SimplexCategoryᵒᵖ)
     (x y : (coherentNerveFunctor.obj C) _⦋0⦌)
     (p r : Path (generatingQuiver (coherentNerveFunctor.obj C)) q x y)
@@ -118,15 +118,15 @@ theorem counit_relations (C : Carrier.{u}) (q : SimplexCategoryᵒᵖ)
           (vertex_operator (coherentNerveFunctor.obj C) f σ j).symm
           (((coherentSimplexMap f).map i j).app q a)).symm
 
-/-- The genuine coherent realization evaluation counit on the original enriched category carrier. -/
+/-- The coherent realization evaluation counit on the enriched category carrier. -/
 def counit (C : Carrier.{u}) : realization (coherentNerveFunctor.obj C) ⟶ C :=
   (counitInterpretation C).descend (relations (coherentNerveFunctor.obj C)) (counit_relations C)
 
-/-- The actual counit reads the individual original enriched object of the given coherent vertex. -/
+/-- The counit reads the individual enriched object of the given coherent vertex. -/
 theorem counit_obj (C : Carrier.{u}) (x : (coherentNerveFunctor.obj C) _⦋0⦌) :
     (counit C).obj x = vertexOf C x := rfl
 
-/-- Counit evaluation of a whole inserted coherent Hom is the same original enriched Hom map. -/
+/-- Counit evaluation of a inserted coherent Hom is the same enriched Hom map. -/
 theorem counit_simplexHom (C : Carrier.{u}) {n : SimplexCategory} (σ : CoherentSimplexIn C n)
     (i j : coherentSimplex.{u} n) :
     simplexHom (coherentNerveFunctor.obj C) σ i j rfl rfl ≫
@@ -136,7 +136,7 @@ theorem counit_simplexHom (C : Carrier.{u}) {n : SimplexCategory} (σ : Coherent
   ext q a
   exact counit_eval_arrow C σ i j rfl rfl a
 
-/-- The whole nerve triangle is the identity on every original coherent simplex. -/
+/-- The nerve triangle is the identity on every coherent simplex. -/
 theorem nerve_triangle (C : Carrier.{u}) :
     unit (coherentNerveFunctor.obj C) ≫ coherentNerveFunctor.map (counit C) =
       𝟙 (coherentNerveFunctor.obj C) := by

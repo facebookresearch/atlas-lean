@@ -11,10 +11,10 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.OriginalUnderHomFunctor
 import Mathlib.CategoryTheory.Filtered.Final
 
 /-!
-# The SAME original filtered Hom diagram on the actual under-source tail
+# The same filtered Hom diagram on the under-source tail
 
-Each original indexing arrow out of j gives its complete original
-enriched functor. The full Under triangle and original functor laws
+Each indexing arrow out of j gives its complete 
+enriched functor. The full Under triangle and functor laws
 retain every source object, Hom map and ordinal coefficient.
 -/
 
@@ -26,7 +26,7 @@ namespace CategoryTheory.SimplicialEnrichment.OriginalFilteredUnderHom
 
 variable {J : Type u} [Category.{u} J] (F : J ⥤ Carrier.{u}) (j : J)
 
-/-- The complete original diagram under its SAME original source enrichment. -/
+/-- The complete diagram under its same source enrichment. -/
 def sourceDiagram : Under j ⥤ Under (F.obj j) where
   obj a := Under.mk (F.map a.hom)
   map f := Under.homMk (F.map f.right)
@@ -38,12 +38,12 @@ def sourceDiagram : Under j ⥤ Under (F.obj j) where
     apply Under.UnderMorphism.ext
     exact F.map_comp f.right g.right
 
-/-- The SAME full original stage Hom diagram at the actual images of the two original source
-objects. -/
+/-- The same full stage Hom diagram at the images of the two source
+Objects. -/
 def homDiagram (x y : F.obj j) : Under j ⥤ SSet.{u} :=
   sourceDiagram F j ⋙ OriginalUnderHom.functor (F.obj j) x y
 
-/-- Every original full Hom object is read back at the SAME original diagram-arrow images. -/
+/-- Every Hom object is read back at the same diagram-arrow images. -/
 theorem homDiagram_obj (x y : F.obj j) (a : Under j) :
     (homDiagram F j x y).obj a = ((F.map a.hom).obj x ⟶[SSet.{u}] (F.map a.hom).obj y) := rfl
 

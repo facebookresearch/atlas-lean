@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornFaces
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentOrdinalFace
 
 /-!
-# Whole Hom maps of the supplied original coherent horn faces
+# Hom maps of the supplied coherent horn faces
 
-The maps are extracted from the actual horn map. Their targets use the
+The maps are extracted from the horn map. Their targets use the
 same individual horn vertices, with both endpoint transports explicit.
-The negative face reads back the original coherent face Hom map. All
-common-face agreements follow from the original horn map, rather than
+The negative face reads back the coherent face Hom map. All
+common-face agreements follow from the horn map, rather than
 from supplied compatibility data.
 -/
 
@@ -28,12 +28,12 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.HornHomFaces
 open SimplicialEnrichment
 
-/-- Retarget an actual enriched Hom map using precisely its two original endpoint equalities. -/
+/-- Retarget an enriched Hom map using precisely its two endpoint equalities. -/
 def retargetMap {C D : Carrier.{u}} (F : C ⟶ D) (a b : C) {x y : D}
     (ha : F.obj a = x) (hb : F.obj b = y) : (a ⟶[SSet.{u}] b) ⟶ (x ⟶[SSet.{u}] y) :=
   F.map a b ≫ eqToHom (congrArg₂ (fun x y : D => x ⟶[SSet.{u}] y) ha hb)
 
-/-- Whole enriched-map equality retains the same Hom map with the same original endpoint
+/-- Enriched-map equality retains the same Hom map with the same endpoint
 transports. -/
 theorem retargetMap_eq {C D : Carrier.{u}} {F G : C ⟶ D} (h : F = G) (a b : C)
     {x y : D} (ha : F.obj a = x) (hb : F.obj b = y)
@@ -45,7 +45,7 @@ theorem retargetMap_eq {C D : Carrier.{u}} {F G : C ⟶ D} (h : F = G) (a b : C)
 variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The actual supplied face Hom map into the same individual original horn endpoints. -/
+/-- The supplied face Hom map into the same individual horn endpoints. -/
 def faceMap (j : Fin (n + 3)) (hj : j ≠ i) (a b : coherentSimplex.{u} ⦋n + 1⦌) :
     (a ⟶[SSet.{u}] b) ⟶
       (HornFaces.object f (j.succAbove a.as.down) ⟶[SSet.{u}]
@@ -53,7 +53,7 @@ def faceMap (j : Fin (n + 3)) (hj : j ≠ i) (a b : coherentSimplex.{u} ⦋n + 1
   retargetMap (HornFaces.faceFunctor f j hj) a b
     (HornFaces.faceFunctor_obj f j hj a) (HornFaces.faceFunctor_obj f j hj b)
 
-/-- The actual negative face map with the same original ordinal embedding and endpoints. -/
+/-- The negative face map with the same ordinal embedding and endpoints. -/
 def negativeMap (j : Fin (n + 3)) (hj : j ≠ i) (a b : ULift.{u} (Fin (n + 2))) :
     (HomBoxDecomposition.negative ((OrdinalFace.embedding j) a) (ULift.up j)
       ((OrdinalFace.embedding j) b) : SSet.{u}) ⟶
@@ -61,7 +61,7 @@ def negativeMap (j : Fin (n + 3)) (hj : j ≠ i) (a b : ULift.{u} (Fin (n + 2)))
           HornFaces.object f (j.succAbove b.down)) :=
   (OrdinalFace.negativeIso j a b).inv ≫ faceMap f j hj (.mk a) (.mk b)
 
-/-- Reading the whole supplied negative face returns exactly its original face Hom map. -/
+/-- Reading the supplied negative face returns exactly its face Hom map. -/
 theorem negativeMap_readback (j : Fin (n + 3)) (hj : j ≠ i)
     (a b : ULift.{u} (Fin (n + 2))) :
     (OrdinalFace.negativeIso j a b).hom ≫ negativeMap f j hj a b =
@@ -71,7 +71,7 @@ theorem negativeMap_readback (j : Fin (n + 3)) (hj : j ≠ i)
     ((congrArg (fun g => g ≫ faceMap f j hj (.mk a) (.mk b))
       (OrdinalFace.negativeIso j a b).hom_inv_id).trans (Category.id_comp _))
 
-/-- The two actual common ordinal faces have exactly the same original vertex label. -/
+/-- The two common ordinal faces have exactly the same vertex label. -/
 theorem common_vertex (j k : Fin (n + 3)) (hjk : j < k) (a : Fin (n + 1)) :
     j.succAbove ((k.pred (Fin.ne_zero_of_lt hjk)).succAbove a) =
       k.succAbove ((j.castPred (Fin.ne_last_of_lt hjk)).succAbove a) := by
@@ -81,7 +81,7 @@ theorem common_vertex (j k : Fin (n + 3)) (hjk : j < k) (a : Fin (n + 1)) :
     simpa only [Fin.castSucc_castPred] using hjk
   exact (congrArg (fun g : ⦋n⦌ ⟶ ⦋n + 2⦌ => g.toOrderHom a) h).symm
 
-/-- The two supplied common coherent faces agree on the whole original Hom map with literal
+/-- The two supplied common coherent faces agree on the Hom map with literal
 common endpoints. -/
 theorem common_map (j k : Fin (n + 3)) (hj : j ≠ i) (hk : k ≠ i) (hjk : j < k)
     (a b : coherentSimplex.{u} ⦋n⦌) :

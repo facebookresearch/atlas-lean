@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentMappingCube
 
 /-!
-# Actual order-embedding faces of coherent Hom objects
+# Order-embedding faces of coherent Hom objects
 
-The original direct-image coherent Hom map of an order embedding is
-identified with the actual subcomplex whose whole path chain lies in that
-embedding's range. The inverse takes genuine preimages of the same path
-subsets. Both whole scalar inverse equations are proved, with the original
-endpoints retained. No face or mapping-space outcome is assumed.
+The direct-image coherent Hom map of an order embedding is
+identified with the subcomplex whose path chain lies in that
+embedding's range. The inverse takes preimages of the same path
+subsets. Both scalar inverse equations hold, with the 
+endpoints retained. 
 -/
 
 noncomputable section
@@ -32,12 +32,12 @@ private instance (a b : SimplicialThickening.Path i j) : Subsingleton (a ⟶ b) 
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
 
-/-- The actual original coherent Hom map induced by the supplied order embedding. -/
+/-- The coherent Hom map induced by the supplied order embedding. -/
 def imageMap : nerve (SimplicialThickening.Path i j) ⟶
     nerve (SimplicialThickening.Path (e i) (e j)) :=
   nerveMap (SimplicialThickening.functorMap e.toOrderHom (.mk i) (.mk j))
 
-/-- The whole scalar path chain lies in the same supplied embedding range. -/
+/-- The scalar path chain lies in the same supplied embedding range. -/
 def imageFace : (nerve (SimplicialThickening.Path (e i) (e j))).Subcomplex where
   obj q := {p | ∀ t, (p.obj t).I ⊆ Set.range e}
   map f p hp := by
@@ -46,7 +46,7 @@ def imageFace : (nerve (SimplicialThickening.Path (e i) (e j))).Subcomplex where
 
 variable {e i j}
 
-/-- Preimage of the same original endpoint-containing path under the actual order embedding. -/
+/-- Preimage of the same endpoint-containing path under the order embedding. -/
 def preimagePath (p : SimplicialThickening.Path (e i) (e j)) : SimplicialThickening.Path i j where
   I := e ⁻¹' p.I
   left := p.left
@@ -54,7 +54,7 @@ def preimagePath (p : SimplicialThickening.Path (e i) (e j)) : SimplicialThicken
   left_le t ht := e.le_iff_le.mp (p.left_le (e t) ht)
   le_right t ht := e.le_iff_le.mp (p.le_right (e t) ht)
 
-/-- Taking preimage of the original direct-image path returns its actual whole original subset. -/
+/-- Taking preimage of the direct-image path returns its subset. -/
 theorem preimage_image (p : SimplicialThickening.Path i j) :
     preimagePath ((SimplicialThickening.functorMap e.toOrderHom (.mk i) (.mk j)).obj p) = p := by
   apply SimplicialThickening.Path.ext
@@ -66,7 +66,7 @@ theorem preimage_image (p : SimplicialThickening.Path i j) :
   · intro ht
     exact ⟨t, ht, rfl⟩
 
-/-- A whole original supported path is exactly recovered from its actual embedding preimage. -/
+/-- A supported path is exactly recovered from its embedding preimage. -/
 theorem image_preimage (p : SimplicialThickening.Path (e i) (e j)) (hp : p.I ⊆ Set.range e) :
     (SimplicialThickening.functorMap e.toOrderHom (.mk i) (.mk j)).obj (preimagePath p) = p := by
   apply SimplicialThickening.Path.ext
@@ -80,13 +80,13 @@ theorem image_preimage (p : SimplicialThickening.Path (e i) (e j)) (hp : p.I ⊆
 
 variable (e i j)
 
-/-- The actual preimage chain at every scalar vertex and arrow of the original supported face. -/
+/-- The preimage chain at every scalar vertex and arrow of the supported face. -/
 def preimageChain {q : SimplexCategoryᵒᵖ} (p : (imageFace e i j : SSet.{u}).obj q) :
     (nerve (SimplicialThickening.Path i j)).obj q where
   obj t := preimagePath (p.val.obj t)
   map f := ⟨homOfLE (fun t ht => (p.val.map f).hom.down.down ht)⟩
 
-/-- The actual direct-image coherent map with values in its original supported face. -/
+/-- The direct-image coherent map with values in its supported face. -/
 def toFace : nerve (SimplicialThickening.Path i j) ⟶ imageFace e i j where
   app q := ↾fun p => ⟨(imageMap e i j).app q p, fun t x hx => by
     obtain ⟨y, hy, rfl⟩ := hx
@@ -97,7 +97,7 @@ def toFace : nerve (SimplicialThickening.Path i j) ⟶ imageFace e i j where
     apply Subtype.ext
     exact congr($((imageMap e i j).naturality f) p)
 
-/-- The actual supported-face inverse on whole original scalar path chains. -/
+/-- The supported-face inverse on scalar path chains. -/
 def fromFace : (imageFace e i j : SSet.{u}) ⟶ nerve (SimplicialThickening.Path i j) where
   app q := ↾fun p => preimageChain e i j p
   naturality q r f := by
@@ -107,8 +107,7 @@ def fromFace : (imageFace e i j : SSet.{u}) ⟶ nerve (SimplicialThickening.Path
     intro x y g
     exact Subsingleton.elim _ _
 
-/-- The genuine original order-embedding Hom-face isomorphism, with both entire scalar
-inverses proved. -/
+/-- The Hom-face isomorphism induced by the specified order embedding. -/
 def faceIso : nerve (SimplicialThickening.Path i j) ≅ imageFace e i j where
   hom := toFace e i j
   inv := fromFace e i j
@@ -131,7 +130,7 @@ def faceIso : nerve (SimplicialThickening.Path i j) ≅ imageFace e i j where
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
 
-/-- The actual face comparison followed by its subcomplex inclusion is the original whole
+/-- The face comparison followed by its subcomplex inclusion is the 
 coherent direct-image map. -/
 theorem faceIso_imageMap : (faceIso e i j).hom ≫ (imageFace e i j).ι = imageMap e i j := rfl
 

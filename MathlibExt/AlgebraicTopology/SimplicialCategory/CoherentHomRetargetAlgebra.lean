@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornMapAlgebra
 
 /-!
-# Exact source and target retargeting of original enriched Hom maps
+# Exact source and target retargeting of enriched Hom maps
 
-The actual enriched map commutes with source equality transports and
+The enriched map commutes with source equality transports and
 successive target endpoint transports. These equations retain the same
-original objects and whole scalar Hom maps. No object quotient or
+Objects and scalar Hom maps. No object quotient or
 coherence outcome is introduced.
 -/
 
@@ -26,7 +26,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.HomRetargetAlgebra
 open SimplicialEnrichment HornHomFaces
 
-/-- Source retargeting of an actual whole enriched Hom map keeps its exact original target
+/-- Source retargeting of an enriched Hom map keeps its exact target
 endpoints. -/
 theorem source_reindex {A B : Carrier.{u}} (F : A ⟶ B) {a b a' b' : A}
     (ha : a = a') (hb : b = b') {x y : B} (hx : F.obj a' = x) (hy : F.obj b' = y) :
@@ -37,7 +37,7 @@ theorem source_reindex {A B : Carrier.{u}} (F : A ⟶ B) {a b a' b' : A}
   change 𝟙 _ ≫ retargetMap F a b hx hy = retargetMap F a b hx hy
   exact Category.id_comp _
 
-/-- Successive original target equality transports are the same whole retargeted enriched
+/-- Successive target equality transports are the same retargeted enriched
 Hom map. -/
 theorem target_trans {A B : Carrier.{u}} (F : A ⟶ B) (a b : A) {x y x' y' : B}
     (ha : F.obj a = x) (hb : F.obj b = y) (hx : x = x') (hy : y = y') :
@@ -45,8 +45,8 @@ theorem target_trans {A B : Carrier.{u}} (F : A ⟶ B) (a b : A) {x y x' y' : B}
       retargetMap F a b (ha.trans hx) (hb.trans hy) := by
   rw [retargetMap, retargetMap, Category.assoc, eqToHom_trans]
 
-/-- The actual source restriction and its two original source endpoint equations read back the whole
-  composite enriched functor map. -/
+/-- The source restriction and its two source endpoint equations read back the 
+ composite enriched functor map. -/
 theorem restriction_reindex {A B C : Carrier.{u}} (F : A ⟶ B) (G : B ⟶ C) (a b : A)
     {a' b' : B} (ha : F.obj a = a') (hb : F.obj b = b') {x y : C}
     (hx : G.obj a' = x) (hy : G.obj b' = y) :

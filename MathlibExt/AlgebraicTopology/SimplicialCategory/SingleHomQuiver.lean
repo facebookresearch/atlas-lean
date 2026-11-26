@@ -11,10 +11,10 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FreeUniversalProperty
 import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 
 /-!
-# One supplied simplicial Hom among fixed original labels
+# One supplied simplicial Hom among fixed labels
 
 The only noninitial generating Hom is at the supplied ordered pair. The
-labels may coincide: a loop is still an original generator, and the free
+labels may coincide: a loop is still a generator, and the free
 category retains all its finite words.
 -/
 
@@ -26,7 +26,7 @@ namespace CategoryTheory.SimplicialQuiver.SingleHom
 
 variable {O : Type u} (x y : O)
 
-/-- Put the supplied simplicial set at exactly the given ordered pair of original labels. -/
+/-- Put the supplied simplicial set at exactly the given ordered pair of labels. -/
 def quiver (X : SSet.{u}) : Data O := by
   classical
   exact ⟨fun a b => if a = x ∧ b = y then X else ⊥_ SSet.{u}⟩
@@ -37,7 +37,7 @@ theorem quiver_at (X : SSet.{u}) : (quiver x y X).Hom x y = X := by
   classical
   simp [quiver]
 
-/-- All other ordered pairs have the actual initial generating Hom. -/
+/-- All other ordered pairs have the initial generating Hom. -/
 theorem quiver_other (X : SSet.{u}) (a b : O) (h : ¬(a = x ∧ b = y)) :
     (quiver x y X).Hom a b = ⊥_ SSet.{u} := by
   classical
@@ -45,7 +45,7 @@ theorem quiver_other (X : SSet.{u}) (a b : O) (h : ¬(a = x ∧ b = y)) :
 
 variable {C : Type v} [EnrichedCategory SSet.{u} C]
 
-/-- Extend a supplied Hom map to the whole generating family at the fixed object function. -/
+/-- Extend a supplied Hom map to the generating family at the fixed object function. -/
 def maps (X : SSet.{u}) (obj : O → C) (f : X ⟶ obj x ⟶[SSet.{u}] obj y)
     (a b : O) : (quiver x y X).Hom a b ⟶ obj a ⟶[SSet.{u}] obj b := by
   classical
@@ -56,13 +56,13 @@ def maps (X : SSet.{u}) (obj : O → C) (f : X ⟶ obj x ⟶[SSet.{u}] obj y)
     exact eqToHom (quiver_at x y X) ≫ f
   · exact eqToHom (quiver_other x y X a b h) ≫ initial.to _
 
-/-- Read the supplied Hom map from the whole generator family. -/
+/-- Read the supplied Hom map from the generator family. -/
 def restrict (X : SSet.{u}) (obj : O → C)
     (f : ∀ a b : O, (quiver x y X).Hom a b ⟶ obj a ⟶[SSet.{u}] obj b) :
     X ⟶ obj x ⟶[SSet.{u}] obj y :=
   eqToHom (quiver_at x y X).symm ≫ f x y
 
-/-- Reading the specified generator after extension returns its whole original Hom map. -/
+/-- Reading the specified generator after extension returns its Hom map. -/
 @[simp]
 theorem restrict_maps (X : SSet.{u}) (obj : O → C)
     (f : X ⟶ obj x ⟶[SSet.{u}] obj y) :
@@ -70,7 +70,7 @@ theorem restrict_maps (X : SSet.{u}) (obj : O → C)
   classical
   simp [restrict, maps]
 
-/-- The only remaining generating Homs are initial, so extension recovers the entire family. -/
+/-- The only remaining generating Homs are initial, so extension recovers the family. -/
 @[simp]
 theorem maps_restrict (X : SSet.{u}) (obj : O → C)
     (f : ∀ a b : O, (quiver x y X).Hom a b ⟶ obj a ⟶[SSet.{u}] obj b) :
@@ -85,7 +85,7 @@ theorem maps_restrict (X : SSet.{u}) (obj : O → C)
   · apply (cancel_epi (eqToIso (quiver_other x y X a b h)).inv).1
     exact initial.hom_ext _ _
 
-/-- The actual fixed-object generator family is equivalent to one original simplicial Hom map. -/
+/-- The fixed-object generator family is equivalent to one simplicial Hom map. -/
 def mapEquiv (X : SSet.{u}) (obj : O → C) :
     (∀ a b : O, (quiver x y X).Hom a b ⟶ obj a ⟶[SSet.{u}] obj b) ≃
       (X ⟶ obj x ⟶[SSet.{u}] obj y) where
@@ -94,13 +94,13 @@ def mapEquiv (X : SSet.{u}) (obj : O → C) :
   left_inv := maps_restrict x y X obj
   right_inv := restrict_maps x y X obj
 
-/-- The genuine generator interpretation with the supplied original object function. -/
+/-- The generator interpretation with the supplied object function. -/
 def interpretation (X : SSet.{u}) (obj : O → C)
     (f : X ⟶ obj x ⟶[SSet.{u}] obj y) : Interpretation (quiver x y X) C where
   obj := obj
   map := maps x y X obj f
 
-/-- Its actual path extension sends the specified generator to the supplied whole Hom map. -/
+/-- Its path extension sends the specified generator to the supplied Hom map. -/
 theorem generator_extend (X : SSet.{u}) (obj : O → C)
     (f : X ⟶ obj x ⟶[SSet.{u}] obj y) :
     eqToHom (quiver_at x y X).symm ≫ generator (quiver x y X) x y ≫

@@ -28,7 +28,8 @@ simplicial category `C` functorial in simplicial functors, and identifies its ve
 A functor `G : J ⥤ C` out of a linear order induces a simplicial functor
 `SimplicialThickening.ofFunctor G : C[Δ^J] ⥤ C`, which sends every chain of paths from `i` to `j`
 to the image of the unique morphism `i ⟶ j` (see
-`MathlibExt.CategoricalSource.AlgebraicTopology.SimplicialNerve.SimplicialThickening`). Applied to `J = Fin (n + 1)`
+`MathlibExt.CategoricalSource.AlgebraicTopology.SimplicialNerve.SimplicialThickening`).
+Applied to `J = Fin (n + 1)`
 this gives a map of simplicial sets `SimplicialNerve.fromNerve C : nerve C ⟶ SimplicialNerve C`
 from the ordinary nerve of the underlying category. When no element of `J` lies strictly between
 two others, every poset of paths is a subsingleton and `ofFunctor` is a bijection

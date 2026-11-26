@@ -11,13 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentMappingCube
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentOpenBox
 
 /-!
-# Actual distinguished-coordinate coherent open boxes
+# Distinguished-coordinate coherent open boxes
 
-A supplied original coordinate is split off from the actual scalar cube
-by explicit inverse maps. An upper open box in those actual coordinates
-has an anodyne inclusion into the whole original cube and an actual Kan
-extension retaining its entire original restriction. No enriched model,
-fixed-face principle, or lifting outcome is an assumption.
+A supplied coordinate is split off from the scalar cube
+by explicit inverse maps. An upper open box in those coordinates
+has an anodyne inclusion into the cube and a Kan
+Extension retaining its restriction. 
 -/
 
 noncomputable section
@@ -29,17 +28,17 @@ namespace CategoryTheory.CoherentRealization.CubeBoxes
 open MappingCube
 variable {I : Type u} (j : I)
 
-/-- The other supplied original cube coordinates, excluding exactly the distinguished label. -/
+/-- The other supplied cube coordinates, excluding exactly the distinguished label. -/
 abbrev Remaining := {i : I // i ≠ j}
 
-/-- The actual coordinate splitting map to the original other-coordinate cube and
+/-- The coordinate splitting map to the other-coordinate cube and
 distinguished interval. -/
 def splitHom : cube I ⟶ cube (Remaining j) ⊗ Δ[1] :=
   CartesianMonoidalCategory.lift
     (Limits.Pi.lift (fun i : Remaining j => Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) i.val))
     (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) j)
 
-/-- The actual inverse coordinate assembly, retaining every original label. -/
+/-- The inverse coordinate assembly, retaining every label. -/
 def assembleHom : cube (Remaining j) ⊗ Δ[1] ⟶ cube I := by
   classical
   exact Limits.Pi.lift (fun i : I => if hi : i = j then
@@ -47,14 +46,14 @@ def assembleHom : cube (Remaining j) ⊗ Δ[1] ⟶ cube I := by
       CartesianMonoidalCategory.fst _ _ ≫ Limits.Pi.π (fun _ : Remaining j =>
         (Δ[1] : SSet.{u})) ⟨i, hi⟩)
 
-/-- The actual assembled distinguished coordinate is the original interval projection. -/
+/-- The assembled distinguished coordinate is the interval projection. -/
 theorem assembleHom_self :
     assembleHom j ≫ Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) j =
       CartesianMonoidalCategory.snd _ _ := by
   classical
   simp [assembleHom]
 
-/-- Every other assembled coordinate is the actual supplied original other-coordinate projection. -/
+/-- Every other assembled coordinate is the supplied other-coordinate projection. -/
 theorem assembleHom_other (i : Remaining j) :
     assembleHom j ≫ Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) i.val =
       CartesianMonoidalCategory.fst _ _ ≫ Limits.Pi.π (fun _ : Remaining j =>
@@ -62,7 +61,7 @@ theorem assembleHom_other (i : Remaining j) :
   classical
   simp [assembleHom, i.property]
 
-/-- The actual full cube and its distinguished-coordinate scalar product are strictly isomorphic. -/
+/-- The full cube and its distinguished-coordinate scalar product are strictly isomorphic. -/
 def splitIso : cube I ≅ cube (Remaining j) ⊗ Δ[1] where
   hom := splitHom j
   inv := assembleHom j
@@ -87,22 +86,21 @@ def splitIso : cube I ≅ cube (Remaining j) ⊗ Δ[1] where
     · simp only [Category.assoc, splitHom, CartesianMonoidalCategory.lift_snd, assembleHom_self,
         Category.id_comp]
 
-/-- The actual distinguished-coordinate open-box domain in its concrete scalar product chart. -/
+/-- The distinguished-coordinate open-box domain in its concrete scalar product chart. -/
 abbrev boxDomain (A : (cube (Remaining j)).Subcomplex) : SSet.{u} := OpenBox.upper A
 
-/-- Its actual inclusion into the whole original cube, through the proved inverse coordinate
-chart. -/
+/-- The box inclusion expressed through the inverse coordinate chart. -/
 def boxι (A : (cube (Remaining j)).Subcomplex) : boxDomain j A ⟶ cube I :=
   (OpenBox.upper A).ι ≫ (splitIso j).inv
 
-/-- This actual coherent cube inclusion is an anodyne extension by genuine scalar
+/-- This coherent cube inclusion is an anodyne extension by scalar
 pushout-product geometry. -/
 theorem boxι_anodyne (A : (cube (Remaining j)).Subcomplex) : SSet.anodyneExtensions (boxι j A) :=
   MorphismProperty.comp_mem SSet.anodyneExtensions _ _ (OpenBox.upper_anodyne A)
     (SSet.anodyneExtensions.of_isIso _)
 
-/-- An actual distinguished-coordinate box map into a Kan complex extends on the whole
-original coherent cube. -/
+/-- A distinguished-coordinate box map into a Kan complex extends on the 
+coherent cube. -/
 theorem exists_fill {Y : SSet.{u}} [SSet.KanComplex Y]
     (A : (cube (Remaining j)).Subcomplex) (f : boxDomain j A ⟶ Y) :
     ∃ g : cube I ⟶ Y, boxι j A ≫ g = f := by

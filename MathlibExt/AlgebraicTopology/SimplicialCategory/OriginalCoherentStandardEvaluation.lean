@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentRepresentables
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCounitNaturality
 
 /-!
-# The SAME original standard-simplex evaluation and full Hom readback
+# The same standard-simplex evaluation and Hom readback
 
-The existing adjunction-derived standard simplex isomorphism is the
-SAME original evaluation composite. Every original generating Hom is
-read through its actual coherent simplex and exact endpoint equations.
-No global Quillen-equivalence or weak comparison outcome is assumed.
+The adjunction-derived standard simplex isomorphism is the
+same evaluation composite. Every generating Hom is
+read through its coherent simplex and exact endpoint equations.
+
 -/
 
 noncomputable section
@@ -30,19 +30,19 @@ namespace CategoryTheory.CoherentRealization
 
 open SimplicialEnrichment
 
-/-- The SAME native standard-simplex nerve chart of the original identity coherent simplex. -/
+/-- The same native standard-simplex nerve chart of the identity coherent simplex. -/
 def standardChart (n : SimplexCategory) : SSet.stdSimplex.{u}.obj n ⟶
     coherentNerveFunctor.obj (coherentSimplex.{u} n) :=
   SSet.yonedaEquiv.symm (𝟙 (coherentSimplex.{u} n))
 
-/-- The original standard-simplex Iso has precisely its SAME genuine evaluation composite. -/
+/-- The standard-simplex Iso has precisely its same evaluation composite. -/
 theorem simplexIso_hom_evaluation (n : SimplexCategory) :
     (simplexIso.{u} n).hom = realizationMap (standardChart n) ≫ counit (coherentSimplex.{u} n) := by
   rw [simplexIso_hom_eq]
   rfl
 
-/-- EVERY whole original standard-simplex Hom retains the actual evaluation chart and
-original endpoint equations. -/
+/-- EVERY standard-simplex Hom retains the evaluation chart and
+endpoint equations. -/
 theorem simplexIso_hom_simplexHom (n : SimplexCategory) {m : SimplexCategory}
     (σ : (SSet.stdSimplex.{u}.obj n).obj (op m)) (i j : coherentSimplex.{u} m)
     {x y : (SSet.stdSimplex.{u}.obj n) _⦋0⦌}
@@ -65,7 +65,7 @@ theorem simplexIso_hom_simplexHom (n : SimplexCategory) {m : SimplexCategory}
     ((congrArg (fun e => e ≫ (counit (coherentSimplex.{u} n)).map
       ((standardChart n).app (op ⦋0⦌) x) ((standardChart n).app (op ⦋0⦌) y)) hm).trans hc)
 
-/-- The SAME entire original native identity chart retains the original simplex operator. -/
+/-- The same native identity chart retains the simplex operator. -/
 theorem standardChart_operator {n m : SimplexCategory} (f : m ⟶ n) :
     (standardChart.{u} n).app (op m) (SSet.stdSimplex.objEquiv.symm f) = coherentSimplexMap f := by
   change coherentSimplexMap f ≫ 𝟙 (coherentSimplex.{u} n) = coherentSimplexMap f

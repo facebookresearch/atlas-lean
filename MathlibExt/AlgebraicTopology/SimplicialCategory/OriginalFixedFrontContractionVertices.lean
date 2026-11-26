@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFixedFrontOperators
 
 /-!
-# The full original fixed-front contraction prism
+# The full fixed-front contraction prism
 
-The actual last vertex is retained. Each front vertex is sent to the
-original first vertex at time zero and retained at time one. This
-monotone full simplex prism retains every original scalar operator and
-the original front relation, rather than assuming a weak resolution.
+The last vertex is retained. Each front vertex is sent to the
+first vertex at time zero and retained at time one. This
+monotone full simplex prism retains every scalar operator and
+the front relation, rather than assuming a weak resolution.
 -/
 
 noncomputable section
@@ -29,11 +29,11 @@ namespace CategoryTheory.CoherentRealization.OriginalFixedFrontContraction
 
 open FixedFrontCollapse
 
-/-- The actual full original contraction keeps the last vertex and the time-one front. -/
+/-- The full contraction keeps the last vertex and the time-one front. -/
 def vertex (n : ℕ) (j : Fin (n + 2)) (t : Fin 2) : Fin (n + 2) :=
   if j = Fin.last (n + 1) ∨ t = 1 then j else 0
 
-/-- The SAME actual contraction is monotone in both original full coordinates. -/
+/-- The same contraction is monotone in both full coordinates. -/
 theorem vertex_monotone (n : ℕ) {j k : Fin (n + 2)} {s t : Fin 2}
     (hjk : j ≤ k) (hst : s ≤ t) : vertex n j s ≤ vertex n k t := by
   classical
@@ -53,7 +53,7 @@ theorem vertex_monotone (n : ℕ) {j k : Fin (n + 2)} {s t : Fin 2}
   · rw [vertex, ite_eq_right h]
     exact Fin.zero_le _
 
-/-- The SAME full original simplex and time parameter give their literal full contraction
+/-- The same full simplex and time parameter give their literal full contraction
 simplex. -/
 def simplex {n : ℕ} {q : SimplexCategoryᵒᵖ}
     (a : (Δ[n + 1] : SSet.{u}).obj q) (t : (Δ[1] : SSet.{u}).obj q) : (Δ[n + 1] : SSet.{u}).obj q :=
@@ -62,14 +62,14 @@ def simplex {n : ℕ} {q : SimplexCategoryᵒᵖ}
       monotone' _i _j h := vertex_monotone n (a.down.toOrderHom.monotone h)
         (t.down.toOrderHom.monotone h) })
 
-/-- Every complete original scalar face or degeneracy commutes with the SAME full
+/-- Every complete scalar face or degeneracy commutes with the same full
 contraction prism. -/
 theorem simplex_operator {n : ℕ} {q r : SimplexCategoryᵒᵖ} (θ : q ⟶ r)
     (a : (Δ[n + 1] : SSet.{u}).obj q) (t : (Δ[1] : SSet.{u}).obj q) :
     (Δ[n + 1] : SSet.{u}).map θ (simplex a t) =
       simplex ((Δ[n + 1] : SSet.{u}).map θ a) ((Δ[1] : SSet.{u}).map θ t) := rfl
 
-/-- The SAME full contraction retains the original complete front property. -/
+/-- The same full contraction retains the complete front property. -/
 theorem simplex_front {n : ℕ} {q : SimplexCategoryᵒᵖ}
     (a : (Δ[n + 1] : SSet.{u}).obj q) (ha : InFront a) (t : (Δ[1] : SSet.{u}).obj q) :
     InFront (simplex a t) := by

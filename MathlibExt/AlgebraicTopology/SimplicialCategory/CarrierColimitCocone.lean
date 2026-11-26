@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelDiagram
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectColimits
 import Mathlib.CategoryTheory.Limits.Types.Colimits
 
-/-! # The actual changing-object enriched colimit cocone
+/-! # The changing-object enriched colimit cocone
 
-The object type is the actual Type colimit of the original label diagram.
-Pushforward along its entire cocone gives the fixed-label diagram. Its
-genuine enriched colimit supplies the carrier, while every original stage
-leg retains the original object map and complete Hom functor.
+The object type is the Type colimit of the label diagram.
+Pushforward along its cocone gives the fixed-label diagram. Its
+enriched colimit supplies the carrier, while every stage
+leg retains the object map and complete Hom functor.
 -/
 
 noncomputable section
@@ -28,31 +28,31 @@ open FixedObjects
 
 variable {J : Type u} [Category.{u} J] (F : J ⥤ Carrier.{u})
 
-/-- The genuine Type-colimit cocone of the original object functions. -/
+/-- The Type-colimit cocone of the object functions. -/
 def labelCocone : Cocone (F ⋙ forgetObjects) := colimit.cocone (F ⋙ forgetObjects)
 
-/-- The actual entire pushed-forward diagram on the original colimit labels. -/
+/-- The pushed-forward diagram on the colimit labels. -/
 def stages : J ⥤ FixedObjects (labelCocone F).pt :=
   CarrierLabelDiagram.functor F (labelCocone F)
 
-/-- The genuine fixed-label enriched colimit of those original stage sources. -/
+/-- The fixed-label enriched colimit of those stage sources. -/
 abbrev fixedObject : FixedObjects (labelCocone F).pt := DiagramPresentation.object (stages F)
 
-/-- The actual enriched carrier with the original Type-colimit object labels. -/
+/-- The enriched carrier with the Type-colimit object labels. -/
 abbrev object : Carrier.{u} := (fixedObject F).val
 
-/-- Every original stage functor factors through its complete path source and fixed-label
+/-- Every stage functor factors through its complete path source and fixed-label
 colimit leg. -/
 def leg (j : J) : F.obj j ⟶ object F :=
   CarrierLabelDiagram.leg F (labelCocone F) j ≫ (DiagramPresentation.injection (stages F) j).val
 
-/-- The whole original stage object is sent to its actual original Type-colimit label. -/
+/-- The stage object is sent to its Type-colimit label. -/
 theorem leg_obj (j : J) (x : F.obj j) :
     (leg F j).obj x = vertex (fixedObject F) (CarrierLabelDiagram.label F (labelCocone F) j x) :=
   map_vertex (DiagramPresentation.injection (stages F) j)
     (CarrierLabelDiagram.label F (labelCocone F) j x)
 
-/-- All original stage functors satisfy the full enriched cocone equations. -/
+/-- All stage functors satisfy the full enriched cocone equations. -/
 theorem leg_naturality {j k : J} (f : j ⟶ k) : F.map f ≫ leg F k = leg F j := by
   have hi := congrArg
     (fun H : (stages F).obj j ⟶ fixedObject F => H.val)
@@ -70,7 +70,7 @@ theorem leg_naturality {j k : J} (f : j ⟶ k) : F.map f ≫ leg F k = leg F j :
         ((Category.assoc _ _ _).trans
           (congrArg (fun H => CarrierLabelDiagram.leg F (labelCocone F) j ≫ H) hi)))
 
-/-- The actual whole enriched cocone, constructed on the original object-colimit labels. -/
+/-- The enriched cocone, constructed on the object-colimit labels. -/
 def cocone : Cocone F where
   pt := object F
   ι := {

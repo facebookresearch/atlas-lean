@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.OriginalCoherentBeadCompo
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomUnitsAndEmpty
 
 /-!
-# The actual original zero-bead identity relation
+# The zero-bead identity relation
 
-A zero-dimensional original bead has the same two original vertices.
-Its complete original singleton coefficient evaluates to the actual
-original empty path, by the original identity relation.
+A zero-dimensional bead has the same two vertices.
+Its complete singleton coefficient evaluates to the 
+empty path, by the identity relation.
 -/
 
 noncomputable section
@@ -29,7 +29,7 @@ namespace CategoryTheory.CoherentRealization.OriginalBead
 
 open SimplicialEnrichment SimplicialQuiver
 
-/-- A genuinely zero-dimensional original bead has the same actual original endpoints. -/
+/-- A genuinely zero-dimensional bead has the same endpoints. -/
 theorem zero_endpoints {K : SSet.{u}} {x y : K _⦋0⦌} {q : SimplexCategoryᵒᵖ}
     (b : Bead K x y q) (h : b.dimension = 0) : x = y := by
   cases b with
@@ -38,7 +38,7 @@ theorem zero_endpoints {K : SSet.{u}} {x y : K _⦋0⦌} {q : SimplexCategoryᵒ
     subst n
     exact hx.symm.trans hy
 
-/-- The complete original zero bead is the actual original presented empty path. -/
+/-- The complete zero bead is the presented empty path. -/
 theorem zero_evaluation {K : SSet.{u}} {x : K _⦋0⦌} {q : SimplexCategoryᵒᵖ}
     (b : Bead K x x q) (h : b.dimension = 0) :
     b.evaluation =

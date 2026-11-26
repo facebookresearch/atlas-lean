@@ -15,8 +15,8 @@ public import Mathlib.CategoryTheory.Enriched.Basic
 /-!
 # The ordinary category at a scalar simplex
 
-Evaluate each original enriched Hom, identity and composition at one
-scalar simplex. Original simplex operators and strict enriched functors
+Evaluate each enriched Hom, identity and composition at one
+scalar simplex. simplex operators and strict enriched functors
 give ordinary functors between these categories. The object labels and
 the enriched Hom universe are retained independently.
 -/
@@ -32,13 +32,13 @@ namespace SSet
 /-- The unchanged object label at a specified scalar simplex. -/
 structure ScalarObject (C : Type v) [EnrichedCategory SSet.{u} C]
     (Δ : SimplexCategoryᵒᵖ) where
-  /-- The original enriched object. -/
+  /-- The enriched object. -/
   obj : C
 
 variable {C : Type v} [EnrichedCategory SSet.{u} C]
   {D : Type w} [EnrichedCategory SSet.{u} D]
 
-/-- The ordinary category formed by the original evaluated enriched structure maps. -/
+/-- The ordinary category formed by the evaluated enriched structure maps. -/
 instance (Δ : SimplexCategoryᵒᵖ) : Category.{u} (ScalarObject C Δ) where
   Hom x y := (x.obj ⟶[SSet.{u}] y.obj).obj Δ
   id x := (eId SSet.{u} x.obj).app Δ PUnit.unit
@@ -50,7 +50,7 @@ instance (Δ : SimplexCategoryᵒᵖ) : Category.{u} (ScalarObject C Δ) where
   assoc f g h := by
     exact congrArg (fun q => q.app Δ ⟨f, g, h⟩) (e_assoc SSet.{u} _ _ _ _)
 
-/-- The ordinary functor induced by one original scalar simplex operator. -/
+/-- The ordinary functor induced by one scalar simplex operator. -/
 def scalarOperator {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ ⟶ Δ') :
     ScalarObject C Δ ⥤ ScalarObject C Δ' where
   obj x := ⟨x.obj⟩

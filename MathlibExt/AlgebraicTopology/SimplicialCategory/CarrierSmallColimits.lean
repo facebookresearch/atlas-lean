@@ -9,11 +9,12 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierColimits
 
-/-! # Small changing-object enriched coproducts, coequalizers and colimits
+/-!
+# Small colimits of simplicial enrichments
 
-The genuine original Type-label and whole enriched universal properties
-supply all small carrier colimits at the original scalar universe.
-No fixed-label colimit is promoted without the proved label pushforward.
+Small colimits are obtained by taking the colimit of object sets and then
+a fixed-object enriched colimit over those labels. This gives coproducts,
+coequalizers and colimits of arbitrary small diagrams.
 -/
 
 noncomputable section
@@ -22,7 +23,7 @@ open CategoryTheory Limits
 
 namespace CategoryTheory.SimplicialEnrichment.CarrierColimit
 
-/-- All small colimits exist in the actual changing-object category of original simplicial
+/-- All small colimits exist in the changing-object category of simplicial
 enrichments. -/
 instance hasSmallColimits : HasColimitsOfSize.{u, u} Carrier.{u} where
   has_colimits_of_shape _J _ := inferInstance

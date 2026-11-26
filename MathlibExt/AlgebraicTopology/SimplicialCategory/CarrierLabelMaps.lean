@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabelPushforwardAdjunction
 
-/-! # Whole changing-object enriched maps with prescribed original label functions
+/-! # Changing-object enriched maps with prescribed label functions
 
 The canonical reindexed target and its identity Hom projection retain
-all original Hom maps. Its fixed-source maps are determined by their
-whole projected functors. An actual object-function equation transports
-the canonical fixed part, giving a genuine whole map with that boundary.
+all Hom maps. Its fixed-source maps are determined by their
+projected functors. An object-function equation transports
+the canonical fixed part, giving a map with that boundary.
 -/
 
 noncomputable section
@@ -29,7 +29,7 @@ private theorem map_heq_of_eq {C D : Carrier.{u}} {F G : C ⟶ D}
   cases h
   rfl
 
-/-- The whole projected map has exactly its prescribed original object function. -/
+/-- The projected map has exactly its prescribed object function. -/
 theorem projected_obj {C D : Carrier.{u}} (a : C → D)
     (F : source C ⟶ object D a) (x : C) :
     (F.val ≫ toTarget D a).obj x = a x := by
@@ -38,7 +38,7 @@ theorem projected_obj {C D : Carrier.{u}} (a : C → D)
   change F.val.obj x = x at h
   rw [h]
 
-/-- Whole fixed-source maps into a reindexed target are determined by their same projected
+/-- Fixed-source maps into a reindexed target are determined by their same projected
 functors. -/
 theorem projection_injective {A : Type u} {C : FixedObjects A} {D : Carrier.{u}} (a : A → D) :
     Function.Injective (fun F : C ⟶ object D a => F.val ≫ toTarget D a) := by
@@ -64,20 +64,19 @@ theorem projection_injective {A : Type u} {C : FixedObjects A} {D : Carrier.{u}}
   have hm : fmap x y ≫ 𝟙 _ = gmap x y ≫ 𝟙 _ := eq_of_heq hh
   simpa only [eqToHom_refl, Category.comp_id] using hm
 
-/-- An actual equality of the prescribed object functions retains the complete projection. -/
+/-- An equality of the prescribed object functions retains the complete projection. -/
 theorem projection_transport {C D : Carrier.{u}} {a b : C → D} (h : a = b) :
     (eqToHom (congrArg (object D) h)).val ≫ toTarget D b = toTarget D a := by
   cases h
   change (𝟙 (object D a).val) ≫ toTarget D a = toTarget D a
   exact Category.id_comp _
 
-/-- The actual whole functor is transported only through its proved original object-function
-equation. -/
+/-- The functor obtained by transporting its objects along the specified equality. -/
 def ofObjectEquation {C D : Carrier.{u}} (a : C → D) (F : C ⟶ D) (h : F.obj = a) :
     source C ⟶ object D a :=
   fixedPart F ≫ eqToHom (congrArg (object D) h)
 
-/-- The transported fixed part retains the same whole original enriched functor. -/
+/-- The transported fixed part retains the same enriched functor. -/
 theorem ofObjectEquation_fac {C D : Carrier.{u}} (a : C → D) (F : C ⟶ D) (h : F.obj = a) :
     (ofObjectEquation a F h).val ≫ toTarget D a = F := by
   change ((fixedPart F).val ≫ (eqToHom (congrArg (object D) h)).val) ≫ toTarget D a = F
@@ -85,7 +84,7 @@ theorem ofObjectEquation_fac {C D : Carrier.{u}} (a : C → D) (F : C ⟶ D) (h 
     ((congrArg (fun k => (fixedPart F).val ≫ k) (projection_transport h)).trans
       (factorization F))
 
-/-- Every fixed-source lift retaining that entire original functor is the same transported
+/-- Every fixed-source lift retaining that functor is the same transported
 fixed part. -/
 theorem ofObjectEquation_unique {C D : Carrier.{u}} (a : C → D) (F : C ⟶ D)
     (h : F.obj = a) (G : source C ⟶ object D a)

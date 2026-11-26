@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabelPushforwardPresentation
 
-/-! # Whole original interpretations of arbitrary-label pushforward
+/-! # Interpretations of arbitrary-label pushforward
 
-An actual source enriched functor supplies every original generator map.
-Its actual unit and composition laws prove the presentation relations.
-The existing full simplicial presentation theorem constructs the whole
-extension, retaining all original scalar operators and generator maps.
+A source enriched functor supplies every generator map.
+Its unit and composition laws prove the presentation relations.
+The full simplicial presentation theorem constructs the 
+Extension, retaining all scalar operators and generator maps.
 -/
 
 noncomputable section
@@ -28,7 +28,7 @@ open SimplicialQuiver
 variable {A O : Type u} (a : A → O) (C : FixedObjects A)
 variable {D : FixedObjects O}
 
-/-- Evaluate an original generator through the same source functor and its prescribed image
+/-- Evaluate a generator through the same source functor and its prescribed image
 equalities. -/
 def generatorImage (F : C ⟶ LabelRestriction.object a D)
     {x y : O} (q : SimplexCategoryᵒᵖ) (g : Generator a C x y q) :
@@ -38,7 +38,7 @@ def generatorImage (F : C ⟶ LabelRestriction.object a D)
   cases ht
   exact (homMap F s t).app q c
 
-/-- The whole original generator image is a genuine simplicial map. -/
+/-- The generator image is a simplicial map. -/
 def imageMap (F : C ⟶ LabelRestriction.object a D) (x y : O) :
     (quiver a C).Hom x y ⟶ hom D x y where
   app q := ↾generatorImage a C F q
@@ -51,18 +51,18 @@ def imageMap (F : C ⟶ LabelRestriction.object a D) (x y : O) :
       (hom D (a s) (a t)).map f ((homMap F s t).app q c)
     exact ConcreteCategory.congr_hom (C := Type u) ((homMap F s t).naturality f) c
 
-/-- The same whole original Hom map is recovered after its prescribed generator inclusion. -/
+/-- The same Hom map is recovered after its prescribed generator inclusion. -/
 theorem inclusion_imageMap (F : C ⟶ LabelRestriction.object a D) (s t : A) :
     inclusion a C s t ≫ imageMap a C F (a s) (a t) = homMap F s t := by
   ext q c
   rfl
 
-/-- The actual target interpretation retains every original target object and generator map. -/
+/-- The target interpretation retains every target object and generator map. -/
 def interpretation (F : C ⟶ LabelRestriction.object a D) : Interpretation (quiver a C) D.val where
   obj := vertex D
   map := imageMap a C F
 
-/-- The entire original length-one Hom path evaluates by the same source functor. -/
+/-- The length-one Hom path evaluates by the same source functor. -/
 theorem source_eval (F : C ⟶ LabelRestriction.object a D) (q : SimplexCategoryᵒᵖ)
     (s t : A) (c : (hom C s t).obj q) :
     (interpretation a C F).evalPath q ((freeSourceHom a C s t).app q c) =
@@ -72,7 +72,7 @@ theorem source_eval (F : C ⟶ LabelRestriction.object a D) (q : SimplexCategory
   have he := congrArg (fun m => m.app q c) h
   exact he.trans (congrArg (fun m => m.app q c) (inclusion_imageMap a C F s t))
 
-/-- The actual source functor proves every original identity and composition relation. -/
+/-- The source functor proves every identity and composition relation. -/
 theorem interpretation_relations (F : C ⟶ LabelRestriction.object a D)
     (q : SimplexCategoryᵒᵖ) (x y : O) (p r : Path (quiver a C) q x y)
     (h : relations a C q x y p r) :
@@ -89,18 +89,18 @@ theorem interpretation_relations (F : C ⟶ LabelRestriction.object a D)
           erw [source_eval, Interpretation.evalPath_comp, source_eval, source_eval]
           exact congrArg (fun m => m.app q (f, g)) (compositionMap_homMap F s t r)
 
-/-- The actual relation-respecting original source functor extends to the whole presented target. -/
+/-- The relation-respecting source functor extends to the presented target. -/
 def desc (F : C ⟶ LabelRestriction.object a D) : object a C ⟶ D :=
   Presentations.extend (quiver a C) (relations a C) D (imageMap a C F)
     (interpretation_relations a C F)
 
-/-- Every entire original target-label generator is read back by the same source functor. -/
+/-- Every target-label generator is read back by the same source functor. -/
 theorem generator_desc (F : C ⟶ LabelRestriction.object a D) (x y : O) :
     Presentations.generator (quiver a C) (relations a C) x y ≫
       homMap (desc a C F) x y = imageMap a C F x y :=
   Presentations.generator_extend _ _ _ _ _ x y
 
-/-- Extending the actual source functor and restricting it back recovers every original Hom
+/-- Extending the source functor and restricting it back recovers every Hom
 and object. -/
 theorem unit_desc (F : C ⟶ LabelRestriction.object a D) :
     unit a C ≫ LabelRestriction.map a (desc a C F) = F := by

@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.StrictCategory
 
 /-!
-# Actual enriched Hom transport through isomorphic Hom maps
+# Enriched Hom transport through isomorphic Hom maps
 
-An actual enriched functor whose supplied Hom maps are isomorphisms lets
-another actual enriched functor act on those same target Hom objects.
-The transported maps preserve the whole original identity and
-composition. The isomorphism hypotheses concern actual Hom maps; no
+An enriched functor whose supplied Hom maps are isomorphisms lets
+another enriched functor act on those same target Hom objects.
+The transported maps preserve the identity and
+Composition. The isomorphism hypotheses concern Hom maps; no
 transported-functor or coherence outcome is supplied as data.
 -/
 
@@ -27,25 +27,25 @@ open scoped Simplicial
 namespace CategoryTheory.SimplicialEnrichment.HomTransport
 variable {A B C : Carrier.{u}} (E : A ⟶ B) (F : A ⟶ C)
 
-/-- The actual whole Hom map transported through the inverse of the supplied original Hom
+/-- The Hom map transported through the inverse of the supplied Hom
 isomorphism. -/
 def map (a b : A) [IsIso (E.map a b)] :
     (E.obj a ⟶[SSet.{u}] E.obj b) ⟶ (F.obj a ⟶[SSet.{u}] F.obj b) :=
   inv (E.map a b) ≫ F.map a b
 
-/-- Transport reads back the entire original enriched functor Hom map. -/
+/-- Transport reads back the enriched functor Hom map. -/
 theorem map_readback (a b : A) [IsIso (E.map a b)] : E.map a b ≫ map E F a b = F.map a b := by
   exact (Category.assoc _ _ _).symm.trans
     ((congrArg (fun h => h ≫ F.map a b) (IsIso.hom_inv_id (E.map a b))).trans (Category.id_comp _))
 
-/-- The transported Hom map preserves the original enriched identity at that supplied object. -/
+/-- The transported Hom map preserves the enriched identity at that supplied object. -/
 theorem map_id (a : A) [IsIso (E.map a a)] :
     eId SSet.{u} (E.obj a) ≫ map E F a a = eId SSet.{u} (F.obj a) := by
   exact (congrArg (fun h => h ≫ map E F a a) (E.map_id a).symm).trans
     ((Category.assoc _ _ _).trans
       ((congrArg (fun h => eId SSet.{u} a ≫ h) (map_readback E F a a)).trans (F.map_id a)))
 
-/-- The transported maps preserve the actual whole enriched composition at the same three
+/-- The transported maps preserve the enriched composition at the same three
 supplied objects. -/
 theorem map_comp (a b c : A) [IsIso (E.map a b)] [IsIso (E.map b c)] [IsIso (E.map a c)] :
     eComp SSet.{u} (E.obj a) (E.obj b) (E.obj c) ≫ map E F a c =

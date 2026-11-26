@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFullBoundaryVerti
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornBoxFaces
 
 /-!
-# Full original boundary negative Hom maps
+# Full boundary negative Hom maps
 
-Every actual interior boundary face has its complete original negative
-Hom map, through the same existing chart and its true original
+Every interior boundary face has its complete negative
+Hom map, through the same chart and its true 
 endpoints. It agrees with the same map extracted from any retaining
-original horn; no compatibility or weak outcome is assumed.
+horn; no compatibility or weak outcome is assumed.
 -/
 
 noncomputable section
@@ -30,7 +30,7 @@ open SimplicialEnrichment HornBoxFaces
 variable {C : Carrier.{u}} {n : ℕ}
   (f : (∂Δ[n + 2] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The whole original negative Hom map of every supplied full-boundary interior face. -/
+/-- The negative Hom map of every supplied full-boundary interior face. -/
 def negativeMap (k : Interior.{u} n) :
     (HomBoxDecomposition.negative (ULift.up 0) k.val (ULift.up (Fin.last (n + 2))) : SSet.{u}) ⟶
       (BoundaryFaces.object f 0 ⟶[SSet.{u}] BoundaryFaces.object f (Fin.last (n + 2))) :=
@@ -42,7 +42,7 @@ def negativeMap (k : Interior.{u} n) :
     ((BoundaryFaces.faceFunctor_obj f (HornBoxFaces.vertex k) _).trans
       (congrArg (BoundaryFaces.object f) (target_last k)))
 
-/-- The actual original negative chart reads back the same whole supplied boundary Hom map. -/
+/-- The negative chart reads back the same supplied boundary Hom map. -/
 theorem negativeMap_readback (k : Interior.{u} n) :
     (negativeChart k).hom ≫ negativeMap f k =
       HornHomFaces.retargetMap (BoundaryFaces.faceFunctor f (HornBoxFaces.vertex k))
@@ -54,7 +54,7 @@ theorem negativeMap_readback (k : Interior.{u} n) :
   (Category.assoc _ _ _).symm.trans
     ((congrArg (fun q => q ≫ _) (negativeChart k).hom_inv_id).trans (Category.id_comp _))
 
-/-- Any original horn retaining that full face extracts precisely the same whole boundary
+/-- Any horn retaining that full face extracts precisely the same boundary
 negative Hom map. -/
 theorem negativeMap_horn (i : Fin (n + 3)) (k : Interior.{u} n) (hk : HornBoxFaces.vertex k ≠ i) :
     HornBoxFaces.negativeMap (BoundaryFaces.horn f i) k hk = negativeMap f k := by

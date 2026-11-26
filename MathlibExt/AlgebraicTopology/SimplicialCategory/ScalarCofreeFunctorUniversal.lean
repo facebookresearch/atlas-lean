@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarCofreeEnrichment
 
 /-!
-# The genuine whole cofree scalar-functor universal property
+# The cofree scalar-functor universal property
 
-A functor from the SAME canonical scalar category extends to all
-original enriched coefficients by every full ordinal operator. Reading
-the actual identity operator recovers both entire original functors.
-Original source and target object universes remain independent.
+A functor from the same canonical scalar category extends to all
+enriched coefficients by every full ordinal operator. Reading
+the identity operator recovers both functors.
+source and target object universes remain independent.
 -/
 
 noncomputable section
@@ -27,7 +27,7 @@ namespace SSet.ScalarCofree
 variable (q : SimplexCategoryᵒᵖ) {C : Type v} [EnrichedCategory SSet.{u} C]
   (E : Type w) [Category.{u} E]
 
-/-- The SAME original scalar functor supplies every full original coefficient at all operators. -/
+/-- The same scalar functor supplies every full coefficient at all operators. -/
 def ofFunctor (F : ScalarObject C q ⥤ E) :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E
     EnrichedFunctor SSet.{u} C E := by
@@ -67,15 +67,15 @@ def ofFunctor (F : ScalarObject C q ⥤ E) :
           (Z := (⟨z⟩ : ScalarObject C q)) ((x ⟶[SSet.{u}] y).map θ h.1) ((y
             ⟶[SSet.{u}] z).map θ h.2)) }
 
-/-- Read the SAME actual original scalar functor through the complete cofree
-identity-operator evaluation. -/
+/-- Read the same scalar functor through the complete cofree
+Identity-operator evaluation. -/
 def toFunctor :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E
     EnrichedFunctor SSet.{u} C E → (ScalarObject C q ⥤ E) := by
   let _ : EnrichedCategory SSet.{u} E := enrichment q E
   exact fun G => scalarFunctor G q ⋙ evaluation q E
 
-/-- Reading the full original extension recovers the SAME entire original scalar functor. -/
+/-- Reading the full extension recovers the same scalar functor. -/
 theorem toFunctor_ofFunctor (F : ScalarObject C q ⥤ E) :
     toFunctor q E (ofFunctor q E F) = F := by
   apply Functor.hext (F := toFunctor q E (ofFunctor q E F)) (G := F) (fun _ => rfl)
@@ -83,7 +83,7 @@ theorem toFunctor_ofFunctor (F : ScalarObject C q ⥤ E) :
   exact heq_of_eq (congrArg (fun a : x ⟶ y => F.map a)
     (Functor.map_id_apply (x.obj ⟶[SSet.{u}] y.obj) q h))
 
-/-- Extending and reading every original coefficient recovers the SAME entire original
+/-- Extending and reading every coefficient recovers the same 
 enriched functor. -/
 theorem ofFunctor_toFunctor :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E
@@ -102,7 +102,7 @@ theorem ofFunctor_toFunctor :
     (NatTrans.naturality_apply (G.map x y) θ h)
   exact hn.trans (congrArg ((G.map x y).app n h) (Category.comp_id θ))
 
-/-- The complete genuine original cofree Hom bijection retains both full original inverse
+/-- The complete cofree Hom bijection retains both full inverse
 functors. -/
 def homEquiv :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E

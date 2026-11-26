@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentVertices
 
 /-!
-# Independent original object and Hom universes
+# Independent object and Hom universes
 
-An actual simplicial enrichment with independent object and Hom universes
+A simplicial enrichment with independent object and Hom universes
 has an explicit common-universe lift. Objects are individual `ULift`
-vertices and Hom simplices are the original simplices with `ULift` tags.
+vertices and Hom simplices are the simplices with `ULift` tags.
 Identity, composition, all operators and enriched maps retain literal
-up/down readback. No original objects are replaced by component classes.
+up/down readback. No objects are replaced by component classes.
 -/
 
 noncomputable section
@@ -27,7 +27,7 @@ open scoped Simplicial
 namespace CategoryTheory.SimplicialEnrichment
 variable (C : Type v) [EnrichedCategory SSet.{u} C]
 
-/-- The explicit common-universe enrichment of the same individual original objects and Hom
+/-- The explicit common-universe enrichment of the same individual objects and Hom
 simplices. -/
 @[instance_reducible]
 def liftedEnrichment : EnrichedCategory SSet.{max u v w} (ULift.{max u w} C) where
@@ -58,14 +58,14 @@ def liftedEnrichment : EnrichedCategory SSet.{max u v w} (ULift.{max u w} C) whe
     exact congr($(e_assoc SSet.{u} a.down b.down c.down d.down).app n
       (p.1.down, p.2.1.down, p.2.2.down))
 
-/-- Bundle the actual common-universe lift for the coherent realization and nerve adjunction. -/
+/-- Bundle the common-universe lift for the coherent realization and nerve adjunction. -/
 def liftedCarrier : Carrier.{max u v w} := by
   letI := liftedEnrichment.{u, v, w} C
   exact SimplicialEnrichment.of (ULift.{max u w} C)
 
 variable {C} {D : Type v} [EnrichedCategory SSet.{u} D]
 
-/-- A supplied original enriched functor acts on the exact lifted original objects and Hom
+/-- A supplied enriched functor acts on the exact lifted objects and Hom
 simplices. -/
 def liftedMap (F : EnrichedFunctor SSet.{u} C D) : liftedCarrier.{u, v,
   w} C ⟶ liftedCarrier.{u, v, w} D where
@@ -85,23 +85,23 @@ def liftedMap (F : EnrichedFunctor SSet.{u} C D) : liftedCarrier.{u, v,
     apply ULift.ext
     exact congr($(F.map_comp x.down y.down z.down).app n (a.1.down, a.2.down))
 
-/-- Lifted object maps read back the same supplied individual original object map. -/
+/-- Lifted object maps read back the same supplied individual object map. -/
 theorem liftedMap_obj_up (F : EnrichedFunctor SSet.{u} C D) (x : C) :
     (liftedMap.{u, v, w} F).obj (ULift.up x) = ULift.up (F.obj x) := rfl
 
-/-- Every lifted original Hom simplex reads back exactly the supplied actual enriched Hom map. -/
+/-- Every lifted Hom simplex reads back exactly the supplied enriched Hom map. -/
 theorem liftedMap_hom_up (F : EnrichedFunctor SSet.{u} C D) (x y : C) (n : SimplexCategoryᵒᵖ)
     (a : (x ⟶[SSet.{u}] y).obj n) :
     (((liftedMap.{u, v, w} F).map (ULift.up x) (ULift.up y)).app n (ULift.up a)).down =
       (F.map x y).app n a := rfl
 
 /-- Coherent-nerve vertices of the explicit common-universe lift are the same individual
-original objects. -/
+Objects. -/
 def originalVerticesEquiv (C : Type v) [EnrichedCategory SSet.{u} C] :
     CoherentSimplexIn (liftedCarrier.{u, v, w} C) ⦋0⦌ ≃ C :=
   (verticesEquiv (liftedCarrier C)).trans Equiv.ulift
 
-/-- Original vertex readback commutes with the supplied actual enriched functor in the
+/-- Vertex readback commutes with the supplied enriched functor in the
 independent universes. -/
 theorem originalVerticesEquiv_map (F : EnrichedFunctor SSet.{u} C D)
     (σ : CoherentSimplexIn (liftedCarrier.{u, v, w} C) ⦋0⦌) :

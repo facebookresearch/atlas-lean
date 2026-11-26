@@ -29,7 +29,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.HomOpenBox
 open MappingCube CubeBoxes CubeBoundary
 
-/-- The actual range inclusion of a monomorphic anodyne map is itself anodyne by its genuine
+/-- The range inclusion of a monomorphic anodyne map is itself anodyne by its 
 domain isomorphism. -/
 theorem range_anodyne {X Y : SSet.{u}} (f : X ⟶ Y) [Mono f] (hf : SSet.anodyneExtensions f) :
     SSet.anodyneExtensions (SSet.Subcomplex.range f).ι := by
@@ -41,19 +41,18 @@ private instance {I : Type u} (k : I) : Mono (boxι k (boundary (Remaining k))) 
   change Mono ((OpenBox.upper (boundary (Remaining k))).ι ≫ (splitIso k).inv)
   infer_instance
 
-/-- The intrinsic original cube upper-box inclusion is an actual scalar anodyne map. -/
+/-- The intrinsic cube upper-box inclusion is a scalar anodyne map. -/
 theorem upperBox_anodyne {I : Type u} (k : I) : SSet.anodyneExtensions (upperBox k).ι :=
   range_anodyne _ (boxι_anodyne k (boundary (Remaining k)))
 
 variable {J : Type u} [LinearOrder J] {i j : J}
 
-/-- The actual box domain with the original strict interior labels of the supplied coherent
+/-- The box domain with the strict interior labels of the supplied coherent
 Hom interval. -/
 abbrev domain (k : IntervalHom.Interior i j) : SSet.{u} :=
   boxDomain k (boundary (Remaining k))
 
-/-- The actual coherent Hom open-box map through the inverse of the proved interval-cube
-isomorphism. -/
+/-- The open-box inclusion transported through the interval-cube isomorphism. -/
 def ι (hij : i ≤ j) (k : IntervalHom.Interior i j) : domain k ⟶ nerve
   (SimplicialThickening.Path i j) :=
   boxι k (boundary (Remaining k)) ≫ (intervalCubeIso hij).inv
@@ -62,13 +61,12 @@ private instance (hij : i ≤ j) (k : IntervalHom.Interior i j) : Mono (ι hij k
   change Mono (boxι k (boundary (Remaining k)) ≫ (intervalCubeIso hij).inv)
   infer_instance
 
-/-- This actual coherent Hom box map is anodyne by genuine scalar geometry and the proved
-Hom isomorphism. -/
+/-- The transported coherent Hom open-box inclusion is an anodyne extension. -/
 theorem ι_anodyne (hij : i ≤ j) (k : IntervalHom.Interior i j) : SSet.anodyneExtensions (ι hij k) :=
   MorphismProperty.comp_mem SSet.anodyneExtensions _ _ (boxι_anodyne k (boundary (Remaining k)))
     (SSet.anodyneExtensions.of_isIso _)
 
-/-- The actual original coherent Hom box as a subcomplex of its literal interval-subset nerve. -/
+/-- The coherent Hom box as a subcomplex of its literal interval-subset nerve. -/
 def subcomplex (hij : i ≤ j) (k : IntervalHom.Interior i j) :
     (nerve (SimplicialThickening.Path i j)).Subcomplex := SSet.Subcomplex.range (ι hij k)
 

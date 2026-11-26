@@ -10,9 +10,9 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FreeEvaluation
 
 /-!
-# The actual free simplicial universal property
+# The free simplicial universal property
 
-Restriction and extension are the existing computad `functorEquiv`,
+Restriction and extension are the computad `functorEquiv`,
 transported through the path-label adapter and the singleton-operator
 assignment equivalence. There is one free enriched universal property.
 -/
@@ -25,7 +25,7 @@ open scoped Simplicial
 namespace CategoryTheory.SimplicialQuiver
 variable {O : Type u} (Q : Data O) {C : Type v} [EnrichedCategory SSet.{u} C]
 
-/-- Unwrapping the labels identifies functors from the same actual free path category. -/
+/-- Unwrapping the labels identifies functors from the same free path category. -/
 def computadFunctorEquiv :
     (EnrichedFunctor SSet.{u} (free Q) C) ≃
       EnrichedFunctor SSet.{u} (computad Q).Object C where
@@ -44,17 +44,17 @@ def computadFunctorEquiv :
     change (F.map x y).app n (toNativePath Q n (fromNativePath Q n p)) = (F.map x y).app n p
     exact congrArg ((F.map x y).app n) (toNativePath_fromNativePath Q n p)
 
-/-- The canonical computad universal property, with the original quiver labels and maps retained. -/
+/-- The canonical computad universal property, with the quiver labels and maps retained. -/
 def interpretationEquiv :
     (EnrichedFunctor SSet.{u} (free Q) C) ≃ Interpretation Q C :=
   (computadFunctorEquiv Q).trans
     ((SSet.SimplicialComputad.functorEquiv (computad Q)).trans assignmentEquiv)
 
-/-- Restrict a genuine enriched functor to the supplied individual generating arrows. -/
+/-- Restrict an enriched functor to the supplied individual generating arrows. -/
 def restrict (F : EnrichedFunctor SSet.{u} (free Q) C) : Interpretation Q C :=
   interpretationEquiv Q F
 
-/-- Restriction followed by path evaluation reads back every original enriched Hom simplex. -/
+/-- Restriction followed by path evaluation reads back every enriched Hom simplex. -/
 theorem evalPath_restrict (F : EnrichedFunctor SSet.{u} (free Q) C)
     (n : SimplexCategoryᵒᵖ) {x y : O} (p : Path Q n x y) :
     (restrict Q F).evalPath n p = (F.map x y).app n p := by
@@ -64,12 +64,12 @@ theorem evalPath_restrict (F : EnrichedFunctor SSet.{u} (free Q) C)
     (restrict Q F).evalPath n p at h
   exact h.symm.trans (congrArg ((F.map x y).app n) (fromNativePath_toNativePath Q n p))
 
-/-- The free extension of the actual generator restriction is the whole original enriched
+/-- The free extension of the generator restriction is the enriched
 functor. -/
 theorem extend_restrict (F : EnrichedFunctor SSet.{u} (free Q) C) :
     (restrict Q F).extend = F := (interpretationEquiv Q).left_inv F
 
-/-- Restricting the genuine free extension returns the same actual generator interpretation. -/
+/-- Restricting the free extension returns the same generator interpretation. -/
 theorem restrict_extend (I : Interpretation Q C) : restrict Q I.extend = I :=
   (interpretationEquiv Q).right_inv I
 

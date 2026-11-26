@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierColimitCocone
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelLift
 
-/-! # Whole original cocones interpret the actual enriched colimit
+/-! # Cocones interpret the enriched colimit
 
-The original target object function is obtained from the genuine Type
-colimit. Each complete original cocone leg has that exact label equation.
-Its actual enriched extension supplies a fixed-label cocone; the whole
-source equations prove its naturality, including all original Hom maps.
+The target object function is obtained from the Type
+colimit. Each complete cocone leg has that exact label equation.
+Its enriched extension supplies a fixed-label cocone; the 
+source equations prove its naturality, including all Hom maps.
 -/
 
 noncomputable section
@@ -27,18 +27,18 @@ open FixedObjects
 
 variable {J : Type u} [Category.{u} J] (F : J ⥤ Carrier.{u}) (s : Cocone F)
 
-/-- The actual target object function induced by all original cocone object maps. -/
+/-- The target object function induced by all cocone object maps. -/
 def targetLabels : (labelCocone F).pt → s.pt :=
   colimit.desc (F ⋙ forgetObjects) (forgetObjects.mapCocone s)
 
-/-- Each entire original cocone leg has its exact Type-colimit object-function equation. -/
+/-- Each cocone leg has its exact Type-colimit object-function equation. -/
 theorem input_object_eq (j : J) : (s.ι.app j).obj =
     fun x => targetLabels F s (CarrierLabelDiagram.label F (labelCocone F) j x) := by
   funext x
   exact (ConcreteCategory.congr_hom (C := Type u)
     (colimit.ι_desc (forgetObjects.mapCocone s) j) x).symm
 
-/-- The actual whole original cocone leg extended to the original target labels. -/
+/-- The cocone leg extended to the target labels. -/
 def fixedLeg (j : J) : (stages F).obj j ⟶ CarrierReindexing.object s.pt (targetLabels F s) :=
   CarrierLabelLift.fixedLift (F.obj j) (CarrierLabelDiagram.label F (labelCocone F) j)
     (targetLabels F s) (s.ι.app j) (input_object_eq F s j)
@@ -47,19 +47,19 @@ def fixedLeg (j : J) : (stages F).obj j ⟶ CarrierReindexing.object s.pt (targe
 def rawLeg (j : J) : ((stages F).obj j).val ⟶ s.pt :=
   (fixedLeg F s j).val ≫ CarrierReindexing.toTarget s.pt (targetLabels F s)
 
-/-- The entire original stage functor is retained after its actual source unit. -/
+/-- The stage functor is retained after its source unit. -/
 theorem rawLeg_fac (j : J) :
     CarrierLabelDiagram.leg F (labelCocone F) j ≫ rawLeg F s j = s.ι.app j :=
   CarrierLabelLift.lift_fac (F.obj j) (CarrierLabelDiagram.label F (labelCocone F) j)
     (targetLabels F s) (s.ι.app j) (input_object_eq F s j)
 
-/-- Every original colimit label has its same prescribed target image in each extended leg. -/
+/-- Every colimit label has its same prescribed target image in each extended leg. -/
 theorem rawLeg_obj (j : J) (x : (labelCocone F).pt) :
     (rawLeg F s j).obj x = targetLabels F s x :=
   CarrierLabelLift.lift_obj (F.obj j) (CarrierLabelDiagram.label F (labelCocone F) j)
     (targetLabels F s) (s.ι.app j) (input_object_eq F s j) x
 
-/-- The actual fixed-label extensions satisfy the same whole original cocone equations. -/
+/-- The fixed-label extensions satisfy the same cocone equations. -/
 theorem fixedLeg_naturality {j k : J} (f : j ⟶ k) :
     (stages F).map f ≫ fixedLeg F s k = fixedLeg F s j := by
   let H : ((stages F).obj j).val ⟶ s.pt := ((stages F).map f).val ≫ rawLeg F s k
@@ -85,7 +85,7 @@ theorem fixedLeg_naturality {j k : J} (f : j ⟶ k) :
     CarrierReindexing.toTarget s.pt (targetLabels F s) = rawLeg F s j
   exact (Category.assoc _ _ _).trans hu
 
-/-- All whole original cocone legs form the genuine cocone on the same fixed target labels. -/
+/-- All cocone legs form the cocone on the same fixed target labels. -/
 def targetCocone : Cocone (stages F) where
   pt := CarrierReindexing.object s.pt (targetLabels F s)
   ι := {

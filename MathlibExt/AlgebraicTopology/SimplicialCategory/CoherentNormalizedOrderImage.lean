@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentRightCubeOrdinalEmbedding
 
 /-!
-# Actual injected images of least-vertex normalized supports
+# Injected images of least-vertex normalized supports
 
 An order embedding need not preserve the least vertex. Nevertheless,
-adjoining the actual target least vertex and cutting at the embedded
+adjoining the target least vertex and cutting at the embedded
 retained label detects the same source cut. This is the concrete set
-geometry needed for original right-cube face injectivity.
+geometry needed for right-cube face injectivity.
 -/
 
 noncomputable section
@@ -25,22 +25,22 @@ open CategoryTheory
 namespace CategoryTheory.CoherentRealization.NormalizedOrderImage
 variable {J : Type u} {K : Type v} [LinearOrder J] [OrderBot J] [LinearOrder K] [OrderBot K]
 
-/-- The actual retained source support, with its original least vertex adjoined. -/
+/-- The retained source support, with its least vertex adjoined. -/
 def cut (a : J) (S : Set J) : Set J := {⊥} ∪ {x | x ∈ S ∧ a ≤ x}
 
-/-- The actual target support after original direct image, least-vertex adjunction and
+/-- The target support after direct image, least-vertex adjunction and
 cutting at the same
-  embedded label. -/
+ embedded label. -/
 def imageCut (e : J ↪o K) (a : J) (S : Set J) : Set K := {⊥} ∪ {y | y ∈ e '' S ∧ e a ≤ y}
 
-/-- A genuine order embedding cannot send a nonleast original source label to the target
+/-- A order embedding cannot send a nonleast source label to the target
 least label. -/
 theorem image_ne_bot (e : J ↪o K) {x : J} (hx : x ≠ ⊥) : e x ≠ ⊥ := by
   intro h
   have he : e (⊥ : J) = e x := le_antisymm (e.monotone bot_le) (h.symm ▸ bot_le)
   exact hx (e.injective he).symm
 
-/-- Every nonleast original source label is retained precisely when its actual embedded
+/-- Every nonleast source label is retained precisely when its embedded
 target label is retained. -/
 theorem mem_imageCut_iff (e : J ↪o K) (a : J) (S : Set J) {x : J} (hx : x ≠ ⊥) :
     e x ∈ imageCut e a S ↔ x ∈ cut a S := by
@@ -54,7 +54,7 @@ theorem mem_imageCut_iff (e : J ↪o K) (a : J) (S : Set J) {x : J} (hx : x ≠ 
     · exact False.elim (hx h)
     · exact Or.inr ⟨⟨x, hs, rfl⟩, e.monotone ha⟩
 
-/-- Equality of actual normalized embedded supports reflects equality of the whole original
+/-- Equality of normalized embedded supports reflects equality of the 
 source cuts. -/
 theorem cut_injective (e : J ↪o K) (a : J) (S T : Set J)
     (h : imageCut e a S = imageCut e a T) : cut a S = cut a T := by
@@ -65,9 +65,9 @@ theorem cut_injective (e : J ↪o K) (a : J) (S T : Set J)
   · rw [← mem_imageCut_iff e a S hx, h, mem_imageCut_iff e a T hx]
 
 omit [OrderBot J] in
-/-- The original target zero adjunction contributes no extra retained support beyond its
-same actual outer
-  least vertex. -/
+/-- The target zero adjunction contributes no extra retained support beyond its
+same outer
+ least vertex. -/
 theorem imageCut_zero_adjunction (e : J ↪o K) (a : J) (S : Set J) :
     {⊥} ∪ {y | y ∈ ({⊥} ∪ e '' S) ∧ e a ≤ y} = imageCut e a S := by
   ext y

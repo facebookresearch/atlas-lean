@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.OriginalCoherentStandardEvaluation
 
 /-!
-# The SAME original standard-simplex inverse and full insertion
+# The same standard-simplex inverse and full insertion
 
-The actual adjunction-derived standard simplex Iso has the original
-whole simplex insertion as its inverse. Every entire original input
-simplex is inserted by the SAME realized Yoneda map, with both actual
+The adjunction-derived standard simplex Iso has the 
+simplex insertion as its inverse. Every input
+simplex is inserted by the same realized Yoneda map, with both 
 functor directions retained and no global QE outcome assumed.
 -/
 
@@ -29,11 +29,11 @@ namespace CategoryTheory.CoherentRealization
 
 open SimplicialEnrichment
 
-/-- The SAME native original top simplex of the full standard simplex. -/
+/-- The same native top simplex of the full standard simplex. -/
 def topSimplex (n : SimplexCategory) : (SSet.stdSimplex.{u}.obj n).obj (op n) :=
   SSet.yonedaEquiv (𝟙 (SSet.stdSimplex.{u}.obj n))
 
-/-- The actual inverse of the SAME standard simplex Iso is its entire original simplex insertion. -/
+/-- The inverse of the same standard simplex Iso is its simplex insertion. -/
 theorem simplexIso_inverse_insertion (n : SimplexCategory) :
     (simplexIso.{u} n).inv = simplexInto (SSet.stdSimplex.{u}.obj n) (topSimplex n) := by
   have h := congrArg
@@ -46,7 +46,7 @@ theorem simplexIso_inverse_insertion (n : SimplexCategory) :
   apply (cancel_mono (simplexIso.{u} n).hom).1
   exact (simplexIso.{u} n).inv_hom_id.trans (h.trans ht).symm
 
-/-- EVERY entire original input simplex has its SAME whole original realized Yoneda
+/-- EVERY input simplex has its same realized Yoneda
 insertion formula. -/
 theorem simplexIso_hom_insertion {K : SSet.{u}} {n : SimplexCategory} (σ : K.obj (op n)) :
     (simplexIso.{u} n).hom ≫ simplexInto K σ = realizationMap (SSet.yonedaEquiv.symm σ) := by

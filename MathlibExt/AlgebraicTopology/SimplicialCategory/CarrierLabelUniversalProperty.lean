@@ -9,11 +9,12 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelExtension
 
-/-! # Whole carrier maps satisfy the actual label-source universal property
+/-!
+# The universal property of label pushforward
 
-The fixed-object universal map is interpreted in the original carrier.
-The exact reindexing projections retain every original input map.
-Uniqueness is proved from those whole functors and all original generators.
+A map from the label pushforward is uniquely determined by its restriction
+to the source enrichment. Extension and restriction preserve the object
+labels and all Hom maps.
 -/
 
 noncomputable section
@@ -26,7 +27,7 @@ open FixedObjects CarrierLabelExtension
 variable (C : Carrier.{u}) {O : Type u} (a : C → O)
 variable {D : FixedObjects O}
 
-/-- Projecting the whole restricted unit composition retains the same original carrier map. -/
+/-- Projecting the restricted unit composition retains the same carrier map. -/
 theorem unit_projection (G : object C a ⟶ D) :
     (LabelPushforward.unit a (CarrierReindexing.source C) ≫ LabelRestriction.map a G).val ≫
         CarrierReindexing.toTarget D.val (fun s => vertex D (a s)) =
@@ -40,7 +41,7 @@ theorem unit_projection (G : object C a ⟶ D) :
     ((congrArg (fun k => (LabelPushforward.unit a (CarrierReindexing.source C)).val ≫ k)
       (restriction_projection a G)).trans (Category.assoc _ _ _).symm)
 
-/-- The actual original carrier extension factors the same whole supplied source map. -/
+/-- The carrier extension factors the same supplied source map. -/
 theorem desc_fac (F : CarrierReindexing.source C ⟶ LabelRestriction.object a D) :
     inclusion C a ≫ (LabelPushforward.desc a (CarrierReindexing.source C) F).val =
       F.val ≫ CarrierReindexing.toTarget D.val (fun s => vertex D (a s)) := by
@@ -50,7 +51,7 @@ theorem desc_fac (F : CarrierReindexing.source C ⟶ LabelRestriction.object a D
     (LabelPushforward.unit_desc a (CarrierReindexing.source C) F)
   exact (unit_projection C a (LabelPushforward.desc a (CarrierReindexing.source C) F)).symm.trans h
 
-/-- Whole fixed-target-label maps are determined by their actual original generator unit. -/
+/-- Fixed-target-label maps are determined by their generator unit. -/
 theorem precomposition_injective :
     Function.Injective (fun G : object C a ⟶ D => inclusion C a ≫ G.val) := by
   intro F G h
@@ -60,7 +61,7 @@ theorem precomposition_injective :
   apply CarrierLabelMaps.projection_injective (fun s => vertex D (a s))
   exact (unit_projection C a F).trans (h.trans (unit_projection C a G).symm)
 
-/-- Every whole extension retaining the supplied original source map is the canonical extension. -/
+/-- Every extension retaining the supplied source map is the canonical extension. -/
 theorem desc_unique (F : CarrierReindexing.source C ⟶ LabelRestriction.object a D)
     (G : object C a ⟶ D)
     (h : inclusion C a ≫ G.val =

@@ -11,13 +11,13 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectCodiscreteTerm
 import MathlibExt.AlgebraicTopology.SimplicialCategory.SimplicialUnitScalarFunctorNaturality
 
 /-!
-# Actual unit-category isomorphisms of the SAME original codiscrete terminal
+# Unit-category isomorphisms of the same codiscrete terminal
 
-Every original Hom of the original fixed-label unit target is the SAME
-scalar unit. Its original identity unit coefficients give both complete
-underlying inverse maps between any original object pair. Both inverse
-identities are genuine original unit-shaped map identities. Every scalar
-readback remains the same original unit simplex.
+Every Hom of the fixed-label unit target is the same
+scalar unit. Its identity unit coefficients give both complete
+underlying inverse maps between any object pair. Both inverse
+identities are unit-shaped map identities. Every scalar
+readback remains the same unit simplex.
 -/
 
 noncomputable section
@@ -27,8 +27,8 @@ open CategoryTheory Limits MonoidalCategory CartesianMonoidalCategory
 namespace CategoryTheory.SimplicialEnrichment.FixedObjects.CodiscreteTerminal
 variable (O : Type u)
 
-/-- The SAME original unit coefficients give an actual unit-category isomorphism between any
-original object pair. -/
+/-- The same unit coefficients give a unit-category isomorphism between any
+object pair. -/
 def unitIso (a b : (object O).val) :
     ForgetEnrichment.of SSet.{u} a ≅ ForgetEnrichment.of SSet.{u} b where
   hom := ForgetEnrichment.homOf SSet.{u} (𝟙 (𝟙_ SSet.{u}))
@@ -40,13 +40,13 @@ def unitIso (a b : (object O).val) :
     change (_ : 𝟙_ SSet.{u} ⟶ 𝟙_ SSet.{u}) = _
     exact (isTerminalTensorUnit : IsTerminal (𝟙_ SSet.{u})).hom_ext _ _
 
-/-- The actual original forward unit coefficient retains its SAME unit simplex at every
-original scalar degree. -/
+/-- The forward unit coefficient retains its same unit simplex at every
+scalar degree. -/
 theorem unitIso_hom_scalar (a b : (object O).val) (q : SimplexCategoryᵒᵖ) :
     (SSet.unitScalarFunctor (object O).val q).map (unitIso O a b).hom = PUnit.unit := rfl
 
-/-- The actual original inverse unit coefficient retains its SAME unit simplex at every
-original scalar degree. -/
+/-- The inverse unit coefficient retains its same unit simplex at every
+scalar degree. -/
 theorem unitIso_inv_scalar (a b : (object O).val) (q : SimplexCategoryᵒᵖ) :
     (SSet.unitScalarFunctor (object O).val q).map (unitIso O a b).inv = PUnit.unit := rfl
 

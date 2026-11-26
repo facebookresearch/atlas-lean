@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornBoxFaces
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomRetargetAlgebra
 
 /-!
-# Literal original negative-piece chart and map comparisons
+# Literal negative-piece chart and map comparisons
 
-The supplied negative Hom-box chart reads back the original ordinal face
-operator with its actual two outer endpoint transports. Its constructed
-map is precisely the original supplied negative-face map under those same
-source and object transports. No overlap or filler conclusion is an input.
+The supplied negative Hom-box chart reads back the ordinal face
+operator with its two outer endpoint transports. Its constructed
+map is precisely the supplied negative-face map under those same
+source and object transports. 
 -/
 
 noncomputable section
@@ -28,7 +28,7 @@ namespace CategoryTheory.CoherentRealization.HornNegativeMaps
 open SimplicialEnrichment HornBoxFaces
 variable {n : ℕ} (k : Interior.{u} n)
 
-/-- The original raw face endpoints agree with the actual two outer endpoints. -/
+/-- The raw face endpoints agree with the two outer endpoints. -/
 def endpointIso :
     (HomBoxDecomposition.negative ((OrdinalFace.embedding (HornBoxFaces.vertex k)) (ULift.up
       0)) k.val
@@ -38,9 +38,9 @@ def endpointIso :
     (HomBoxDecomposition.negative a k.val b : SSet.{u}))
     (ULift.ext (source_zero k)) (ULift.ext (target_last k)))
 
-/-- The actual whole negative chart followed by its original inclusion is the original
+/-- The negative chart followed by its inclusion is the 
 ordinal Hom map with
-  exact outer endpoint transport. -/
+ exact outer endpoint transport. -/
 theorem chart_operator :
     (negativeChart k).hom ≫ (HomBoxDecomposition.negative (ULift.up 0) k.val (ULift.up
       (Fin.last (n + 2)))).ι =
@@ -81,9 +81,9 @@ theorem chart_operator :
 variable {C : Carrier.{u}} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C) (hk : HornBoxFaces.vertex k ≠ i)
 
-/-- The constructed negative piece is the original supplied negative map with the same exact
+/-- The constructed negative piece is the supplied negative map with the same exact
 source and
-  object endpoint transports. -/
+ object endpoint transports. -/
 theorem map_original :
     (endpointIso k).inv ≫
       HornHomFaces.negativeMap f (HornBoxFaces.vertex k) hk

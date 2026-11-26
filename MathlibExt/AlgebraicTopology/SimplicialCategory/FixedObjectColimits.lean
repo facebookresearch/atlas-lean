@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectColimitCocone
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectColimitInterpretation
 
 /-!
-# Genuine arbitrary small colimits of fixed-object simplicial enrichments
+# Arbitrary small colimits of fixed-object simplicial enrichments
 
-The presentation of the actual stage Homs and diagram equations has
-the full enriched colimit universal property. The original object labels
-are unchanged, including empty diagrams; only the actual generating Hom
-paths are identified by the proved relation families.
+The presentation of the stage Homs and diagram equations has
+the full enriched colimit universal property. The object labels
+are unchanged, including empty diagrams; only the generating Hom
+paths are identified by the relation families.
 -/
 
 noncomputable section
@@ -28,24 +28,24 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects.DiagramPresentation
 variable {O : Type u} {J : Type v} [Category.{w} J] [Small.{u} J]
   (F : J ⥤ FixedObjects O)
 
-/-- The actual enriched universal map, interpreting every original stage Hom by the supplied
+/-- The enriched universal map, interpreting every stage Hom by the supplied
 cocone. -/
 def desc (s : Cocone F) : object F ⟶ s.pt :=
   Presentations.extend (quiver F) (relations F) s.pt (interpretation F s).map
     (interpretation_relations F s)
 
-/-- Each original generator is read back by its same actual cocone interpretation. -/
+/-- Each generator is read back by its same cocone interpretation. -/
 theorem generator_desc (s : Cocone F) (x y : O) :
     Presentations.generator (quiver F) (relations F) x y ≫ homMap (desc F s) x y =
       (interpretation F s).map x y :=
   Presentations.generator_extend (quiver F) (relations F) s.pt
     (interpretation F s).map (interpretation_relations F s) x y
 
-/-- The universal map retains each same individual original object label. -/
+/-- The universal map retains each same individual object label. -/
 @[simp]
 theorem desc_obj (s : Cocone F) (a : O) : (desc F s).val.obj a = vertex s.pt a := rfl
 
-/-- The universal enriched map factors every whole original cocone leg. -/
+/-- The universal enriched map factors every cocone leg. -/
 theorem desc_fac (s : Cocone F) (j : J) : injection F j ≫ desc F s = s.ι.app j := by
   apply homMaps_ext
   intro x y
@@ -55,7 +55,7 @@ theorem desc_fac (s : Cocone F) (j : J) : injection F j ≫ desc F s = s.ι.app 
   rw [Category.assoc, generator_desc]
   exact stage_interpretation F s j x y
 
-/-- Whole original colimit maps are unique on all actual stage Homs and fixed object labels. -/
+/-- Colimit maps are unique on all stage Homs and fixed object labels. -/
 theorem desc_uniq (s : Cocone F) (d : object F ⟶ s.pt)
     (hd : ∀ j, injection F j ≫ d = s.ι.app j) : d = desc F s := by
   apply Presentations.generators_ext (quiver F) (relations F)
@@ -71,13 +71,13 @@ theorem desc_uniq (s : Cocone F) (d : object F ⟶ s.pt)
   rw [homMap_comp, homMap_injection] at h hf
   exact (Category.assoc _ _ _).symm.trans ((h.trans hf.symm).trans (Category.assoc _ _ _))
 
-/-- The actual presentation cocone satisfies the entire enriched colimit universal property. -/
+/-- The presentation cocone satisfies the enriched colimit universal property. -/
 def isColimit : IsColimit (cocone F) where
   desc := desc F
   fac := desc_fac F
   uniq := desc_uniq F
 
-/-- Fixed-object simplicial enrichments have these actual arbitrary small colimits. -/
+/-- Fixed-object simplicial enrichments have these arbitrary small colimits. -/
 instance hasColimitsOfShape : HasColimitsOfShape J (FixedObjects O) where
   has_colimit F := HasColimit.mk ⟨cocone F, isColimit F⟩
 

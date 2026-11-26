@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSuspensionGene
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentVertices
 
 /-!
-# Actual original unit and empty Hom objects of the simplicial suspension
+# Unit and empty Hom objects of the simplicial suspension
 
-The original free suspension has only its empty paths on either
-individual object label and no reverse path. Its two whole diagonal
-Hom objects are the actual tensor unit. The given simplicial generating
+The free suspension has only its empty paths on either
+individual object label and no reverse path. Its two diagonal
+Hom objects are the tensor unit. The given simplicial generating
 Hom is not quotiented or replaced by an assumed model.
 -/
 
@@ -27,14 +27,14 @@ namespace CategoryTheory.CoherentRealization.HomSuspensionUnits
 open SimplicialQuiver HomSuspensionGenerators
 variable (K : SSet.{u})
 
-/-- Every original reverse free path would force the two distinct original suspension labels
+/-- Every reverse free path would force the two distinct suspension labels
 to coincide. -/
 theorem no_reverse {n : SimplexCategoryᵒᵖ}
     (p : SimplicialQuiver.Path (quiver K) n right left) : False :=
   left_ne_right (path_to_left K p).symm
 
-/-- Every original free path beginning at the right label has no generator and ends at that
-same original label. -/
+/-- Every free path beginning at the right label has no generator and ends at that
+same label. -/
 theorem path_from_right {n : SimplexCategoryᵒᵖ} {a : Objects.{u}}
     (p : SimplicialQuiver.Path (quiver K) n right a) : a = right := by
   let _ : Quiver Objects.{u} := quiverAt (quiver K) n
@@ -44,7 +44,7 @@ theorem path_from_right {n : SimplexCategoryᵒᵖ} {a : Objects.{u}}
     subst b
     exact False.elim (no_generator_from_right K a)
 
-/-- An actual free path on the right label is the original empty path. -/
+/-- A free path on the right label is the empty path. -/
 theorem path_right_right {n : SimplexCategoryᵒᵖ}
     (p : SimplicialQuiver.Path (quiver K) n right right) :
     p = @Quiver.Path.nil Objects.{u} (quiverAt (quiver K) n) right := by
@@ -56,7 +56,7 @@ theorem path_right_right {n : SimplexCategoryᵒᵖ}
     subst b
     exact False.elim (no_generator_from_right K a)
 
-/-- The whole actual free left diagonal Hom is the original simplicial tensor unit. -/
+/-- The free left diagonal Hom is the simplicial tensor unit. -/
 def leftUnitIso : 𝟙_ SSet.{u} ≅ freeHom (quiver K) left left where
   hom := freeId (quiver K) left
   inv := SimplicialEnrichment.toUnit _
@@ -68,7 +68,7 @@ def leftUnitIso : 𝟙_ SSet.{u} ≅ freeHom (quiver K) left left where
     intro p
     exact (path_left_left K p).symm
 
-/-- The whole actual free right diagonal Hom is the original simplicial tensor unit. -/
+/-- The free right diagonal Hom is the simplicial tensor unit. -/
 def rightUnitIso : 𝟙_ SSet.{u} ≅ freeHom (quiver K) right right where
   hom := freeId (quiver K) right
   inv := SimplicialEnrichment.toUnit _
@@ -80,7 +80,7 @@ def rightUnitIso : 𝟙_ SSet.{u} ≅ freeHom (quiver K) right right where
     intro p
     exact (path_right_right K p).symm
 
-/-- The actual original reverse Hom is empty in every scalar degree. -/
+/-- The reverse Hom is empty in every scalar degree. -/
 def reverseEmptyIso : freeHom (quiver K) right left ≅ empty.{u} where
   hom := {
     app n := ↾fun p => False.elim (no_reverse K p)

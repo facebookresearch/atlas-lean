@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLimitLift
 
 /-!
-# The full universal property of actual varying-object enriched limits
+# The full universal property of varying-object enriched limits
 
-The original object-limit property fixes every individual object of a
-whole candidate cone map. Its canonical original fixed-label readback
-then has all the same full cone triangles. Uniqueness in the actual
-restricted Hom limit proves uniqueness of the entire original enriched
-map. Together with the constructed whole lift this proves the genuine
+The object-limit property fixes every individual object of a
+candidate cone map. Its canonical fixed-label readback
+then has all the same full cone triangles. Uniqueness in the 
+restricted Hom limit proves uniqueness of the enriched
+map. Together with the constructed lift this proves the 
 changing-object enriched limit, not merely separate Hom limits.
 -/
 
@@ -30,14 +30,14 @@ open FixedObjects
 variable {J : Type v} [SmallCategory J] (F : J ⥤ Carrier.{u})
 variable [HasLimit (F ⋙ forgetObjects)] [HasLimitsOfShape J SSet.{u}]
 
-/-- The original object label of any actual limit object reads every complete original cone
+/-- The object label of any limit object reads every complete cone
 projection. -/
 theorem projection_obj_label (j : J) (x : object F) :
     (projection F j).obj x = (limit.π (F ⋙ forgetObjects) j) (label (fixedObject F) x) :=
   (congrArg (projection F j).obj (vertex_label (fixedObject F) x).symm).trans
     (projection_obj F j (label (fixedObject F) x))
 
-/-- The genuine object-limit property fixes each individual original label of any whole cone map. -/
+/-- The object-limit property fixes each individual label of any cone map. -/
 theorem label_of_fac (s : Cone F) (m : s.pt ⟶ object F)
     (hm : ∀ j, m ≫ projection F j = s.π.app j) (x : s.pt) :
     label (fixedObject F) (m.obj x) = coneLabel F s x := by
@@ -48,7 +48,7 @@ theorem label_of_fac (s : Cone F) (m : s.pt ⟶ object F)
   exact (projection_obj_label F j (m.obj x)).symm.trans
     (hx.trans (coneLabel_projection F s j x).symm)
 
-/-- Every actual whole cone map has the SAME original individual-object function as the
+/-- Every cone map has the same individual-object function as the
 constructed lift. -/
 theorem objects_of_fac (s : Cone F) (m : s.pt ⟶ object F)
     (hm : ∀ j, m ≫ projection F j = s.π.app j) (x : s.pt) :
@@ -56,14 +56,14 @@ theorem objects_of_fac (s : Cone F) (m : s.pt ⟶ object F)
   (vertex_label (fixedObject F) (m.obj x)).symm.trans
     (congrArg (vertex (fixedObject F)) (label_of_fac F s m hm x))
 
-/-- Read the SAME entire candidate cone map into the actual original restricted enrichment. -/
+/-- Read the same candidate cone map into the restricted enrichment. -/
 def readback (s : Cone F) (m : s.pt ⟶ object F)
     (hm : ∀ j, m ≫ projection F j = s.π.app j) :
     CarrierReindexing.source s.pt ⟶ (restriction F s).obj (fixedObject F) :=
   CarrierLabelReadback.map (CarrierReindexing.source s.pt)
     (fun x => vertex (fixedObject F) (coneLabel F s x)) m (objects_of_fac F s m hm)
 
-/-- The complete original candidate map is recovered, with EVERY original Hom retained. -/
+/-- The complete candidate map is recovered, with EVERY Hom retained. -/
 theorem readback_fac (s : Cone F) (m : s.pt ⟶ object F)
     (hm : ∀ j, m ≫ projection F j = s.π.app j) :
     (readback F s m hm).val ≫ LabelRestriction.projection (coneLabel F s) (fixedObject F) = m :=
@@ -84,7 +84,7 @@ private theorem restrictedMap_projection (s : Cone F)
               (diagram F) j)).symm).trans
           (Category.assoc _ _ _)))).trans (Category.assoc _ _ _).symm)
 
-/-- The SAME whole candidate cone map has every complete triangle in the actual restricted
+/-- The same candidate cone map has every complete triangle in the restricted
 fixed-label Hom limit. -/
 theorem readback_projection (s : Cone F) (m : s.pt ⟶ object F)
     (hm : ∀ j, m ≫ projection F j = s.π.app j) (j : J) :
@@ -110,7 +110,7 @@ theorem readback_projection (s : Cone F) (m : s.pt ⟶ object F)
         (s.π.app j) (fun x => (coneLabel_projection F s j x).symm)
   exact left.trans right.symm
 
-/-- The SAME entire original enriched cone map is uniquely the constructed whole lift. -/
+/-- The same enriched cone map is uniquely the constructed lift. -/
 theorem lift_unique (s : Cone F) (m : s.pt ⟶ object F)
     (hm : ∀ j, m ≫ projection F j = s.π.app j) : m = lift F s := by
   have h : readback F s m hm = fixedLift F s :=
@@ -119,7 +119,7 @@ theorem lift_unique (s : Cone F) (m : s.pt ⟶ object F)
     (congrArg (fun G : CarrierReindexing.source s.pt ⟶ (restriction F s).obj (fixedObject F) =>
       G.val ≫ LabelRestriction.projection (coneLabel F s) (fixedObject F)) h)
 
-/-- The actual original compatible-object/full-Hom cone has the full changing-object
+/-- The compatible-object/Hom cone has the full changing-object
 enriched limit universal
 property. -/
 def isLimit : IsLimit (cone F) where

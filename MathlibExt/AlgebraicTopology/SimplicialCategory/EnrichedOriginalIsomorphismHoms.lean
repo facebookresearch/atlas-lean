@@ -12,12 +12,12 @@ import Mathlib.CategoryTheory.Functor.FullyFaithful
 import Mathlib.CategoryTheory.Equivalence
 
 /-!
-# Every full original Hom map of a genuine carrier isomorphism is an isomorphism
+# Every Hom map of a carrier isomorphism is an isomorphism
 
-The canonical scalar functor reads each complete original Hom component.
-Its image of the genuine whole enriched isomorphism is a Cat isomorphism,
-whose original functor is fully faithful. Every original coefficient map
-is therefore bijective, retaining all original objects and operators.
+The canonical scalar functor reads each complete Hom component.
+Its image of the enriched isomorphism is a Cat isomorphism,
+whose functor is fully faithful. Every coefficient map
+is therefore bijective, retaining all objects and operators.
 -/
 
 noncomputable section
@@ -26,7 +26,7 @@ open CategoryTheory
 
 namespace CategoryTheory.SimplicialEnrichment
 
-/-- A genuine whole original carrier isomorphism retains an isomorphism on every SAME full Hom. -/
+/-- A carrier isomorphism retains an isomorphism on every same Hom. -/
 theorem originalIso_hom_isIso {C D : Carrier.{u}} (e : C ≅ D) (x y : C) : IsIso (e.hom.map
   x y) := by
   have hq (q : SimplexCategoryᵒᵖ) : IsIso ((e.hom.map x y).app q) := by
@@ -37,7 +37,7 @@ theorem originalIso_hom_isIso {C D : Carrier.{u}} (e : C ≅ D) (x y : C) : IsIs
   let _ : ∀ q, IsIso ((e.hom.map x y).app q) := hq
   exact NatIso.isIso_of_isIso_app _
 
-/-- The SAME full original Hom map is invertible from the actual whole original functor inverse. -/
+/-- The same Hom map is invertible from the functor inverse. -/
 theorem originalMap_hom_isIso {C D : Carrier.{u}} (F : C ⟶ D) [IsIso F] (x y : C) : IsIso
   (F.map x y) :=
   originalIso_hom_isIso (asIso F) x y

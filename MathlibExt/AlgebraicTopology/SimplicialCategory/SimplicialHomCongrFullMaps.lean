@@ -11,13 +11,13 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.SimplicialUnitScalarFunct
 import Mathlib.CategoryTheory.Enriched.HomCongr
 
 /-!
-# Canonical enriched Hom isomorphisms retain every full scalar composition map
+# Canonical enriched Hom isomorphisms retain every scalar composition map
 
-The existing Iso.eHomCongr has its SAME complete original Hom maps and
-both inverse identities. Read those maps in the canonical original
-scalar categories using the genuine unit-coefficient functor. The full
-original unit and all two-input composition equations follow there by
-the actual supplied isomorphism identities, for every original simplex.
+The Iso.eHomCongr has its same complete Hom maps and
+both inverse identities. Read those maps in the canonical 
+scalar categories using the unit-coefficient functor. The full
+unit and all two-input composition equations follow there by
+the supplied isomorphism identities, for every simplex.
 No component-only or Kan-space replacement is used.
 -/
 
@@ -28,13 +28,13 @@ open CategoryTheory MonoidalCategory
 namespace SSet
 variable (C : Type v) [EnrichedCategory SSet.{u} C]
 
-/-- Every actual original scalar operator retains the SAME full original unit-coefficient map. -/
+/-- Every scalar operator retains the same full unit-coefficient map. -/
 theorem unitScalarFunctor_operator {q r : SimplexCategoryᵒᵖ} (θ : q ⟶ r)
     {x y : ForgetEnrichment SSet.{u} C} (f : x ⟶ y) :
     (scalarOperator θ).map ((unitScalarFunctor C q).map f) = (unitScalarFunctor C r).map f :=
   (NatTrans.naturality_apply (ForgetEnrichment.homTo SSet.{u} f) θ PUnit.unit).symm
 
-/-- The SAME whole canonical enriched Hom isomorphism reads as its actual original scalar
+/-- The same canonical enriched Hom isomorphism reads as its scalar
 conjugation. -/
 theorem homCongr_scalar (q : SimplexCategoryᵒᵖ)
     {x y x' y' : ForgetEnrichment SSet.{u} C} (α : x ≅ x') (β : y ≅ y')
@@ -48,7 +48,7 @@ theorem homCongr_scalar (q : SimplexCategoryᵒᵖ)
   change (a.inv ≫ f) ≫ b.hom = a.inv ≫ f ≫ b.hom
   exact Category.assoc _ _ _
 
-/-- The canonical SAME full Hom isomorphism retains every original enriched identity map. -/
+/-- The canonical same Hom isomorphism retains every enriched identity map. -/
 theorem homCongr_identity {x x' : ForgetEnrichment SSet.{u} C} (α : x ≅ x') :
     eId SSet.{u} x ≫ (Iso.eHomCongr SSet.{u} α α).hom = eId SSet.{u} x' := by
   apply NatTrans.ext
@@ -63,8 +63,8 @@ theorem homCongr_identity {x x' : ForgetEnrichment SSet.{u} C} (α : x ≅ x') :
   change a.inv ≫ 𝟙 ((unitScalarFunctor C q).obj x) ≫ a.hom = 𝟙 ((unitScalarFunctor C q).obj x')
   exact (congrArg (fun h => a.inv ≫ h) (Category.id_comp a.hom)).trans a.inv_hom_id
 
-/-- The canonical SAME full Hom isomorphisms preserve the entire original enriched
-composition object. -/
+/-- The canonical same Hom isomorphisms preserve the enriched
+Composition object. -/
 theorem homCongr_composition {x y z x' y' z' : ForgetEnrichment SSet.{u} C}
     (α : x ≅ x') (β : y ≅ y') (γ : z ≅ z') :
     eComp SSet.{u} x y z ≫ (Iso.eHomCongr SSet.{u} α γ).hom =

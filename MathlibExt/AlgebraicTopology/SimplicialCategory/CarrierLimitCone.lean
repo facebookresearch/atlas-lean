@@ -11,13 +11,13 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLimitLabelDiagram
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLimits
 
 /-!
-# The actual changing-object enriched limit cone
+# The changing-object enriched limit cone
 
-Take the native limit of the SAME original object diagram, reindex the
-full original enrichments at its compatible individual objects, and
-take the existing whole Hom limit. The full original cone projections
-retain those actual object functions and complete scalar limit maps.
-Their entire enriched naturality holds for every indexing arrow.
+Take the native limit of the same object diagram, reindex the
+full enrichments at its compatible individual objects, and
+take the Hom limit. The full cone projections
+retain those object functions and complete scalar limit maps.
+Their enriched naturality holds for every indexing arrow.
 -/
 
 noncomputable section
@@ -30,33 +30,33 @@ open FixedObjects
 variable {J : Type v} [SmallCategory J] (F : J ⥤ Carrier.{u})
 variable [HasLimit (F ⋙ forgetObjects)] [HasLimitsOfShape J SSet.{u}]
 
-/-- The native limit of the original individual-object diagram. -/
+/-- The native limit of the individual-object diagram. -/
 abbrev labels : Type u := limit (F ⋙ forgetObjects)
 
-/-- The actual full enrichment diagram at those SAME compatible object labels. -/
+/-- The full enrichment diagram at those same compatible object labels. -/
 abbrev diagram : J ⥤ FixedObjects (labels F) :=
   CarrierLimitLabelDiagram.functor F (limit.cone (F ⋙ forgetObjects))
 
-/-- The existing entire Hom-limit enrichment on the actual original object limit. -/
+/-- The simplicial enrichment on the limit of the diagram’s object types. -/
 abbrev fixedObject : FixedObjects (labels F) := HomLimit.object (diagram F)
 
-/-- The genuine candidate changing-object enriched limit. -/
+/-- The candidate changing-object enriched limit. -/
 abbrev object : Carrier.{u} := (fixedObject F).val
 
-/-- Its individual original objects correspond exactly to the entire native original object
+/-- Its individual objects correspond exactly to the native object
 limit. -/
 def objectsEquiv : object F ≃ labels F := (verticesEquiv (fixedObject F)).symm
 
-/-- The actual full original limit Hom is the native scalar limit at those same original labels. -/
+/-- The limit Hom is the native scalar limit at those same labels. -/
 theorem object_hom (x y : labels F) :
     hom (fixedObject F) x y = limit (homDiagram (diagram F) x y) := rfl
 
-/-- The entire original enriched projection through the SAME scalar Hom-limit leg. -/
+/-- The enriched projection through the same scalar Hom-limit leg. -/
 def projection (j : J) : object F ⟶ F.obj j :=
   (HomLimit.projection (diagram F) j).val ≫
     CarrierLimitLabelDiagram.projection F (limit.cone (F ⋙ forgetObjects)) j
 
-/-- Each full projection has the literal native original object-limit component. -/
+/-- Each full projection has the literal native object-limit component. -/
 theorem projection_obj (j : J) (x : labels F) :
     (projection F j).obj (vertex (fixedObject F) x) = (limit.π (F ⋙ forgetObjects) j) x :=
   congrArg (CarrierLimitLabelDiagram.label F (limit.cone (F ⋙ forgetObjects)) j)
@@ -67,8 +67,8 @@ private theorem heq_comp_eqToHom {A B C : SSet.{u}} (f : A ⟶ B) (h : B = C) :
   cases h
   rw [eqToHom_refl, Category.comp_id]
 
-/-- The whole original projection Hom is literally the SAME complete scalar limit leg, with
-its actual dependent
+/-- The projection Hom is literally the same complete scalar limit leg, with
+its dependent
 endpoints retained. -/
 theorem projection_hom (j : J) (x y : labels F) :
     HEq ((projection F j).map (vertex (fixedObject F) x) (vertex (fixedObject F) y))
@@ -85,8 +85,8 @@ theorem projection_hom (j : J) (x y : labels F) :
     (limit.π (homDiagram (diagram F) x y) j)
   exact (heq_of_eq (Category.comp_id _)).trans h
 
-/-- The SAME entire original varying-object enrichment has a genuine full cone over every
-original diagram arrow. -/
+/-- The same varying-object enrichment has a full cone over every
+diagram arrow. -/
 def cone : Cone F where
   pt := object F
   π := {

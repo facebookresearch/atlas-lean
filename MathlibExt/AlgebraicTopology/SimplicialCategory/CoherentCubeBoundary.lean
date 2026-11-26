@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCubeBoxes
 
 /-!
-# Actual coherent cube boundary and open-box subcomplex
+# Coherent cube boundary and open-box subcomplex
 
-The boundary is the union of actual scalar coordinate-boundary preimages.
-The distinguished upper open box is the actual range of the proved chart
-inclusion. Its membership condition uses exactly the original coordinate
-labels and full scalar words. No enriched horn-compatibility conclusion
+The boundary is the union of scalar coordinate-boundary preimages.
+The distinguished upper open box is the range of the chart
+inclusion. Its membership condition uses exactly the coordinate
+labels and scalar words. No enriched horn-compatibility conclusion
 is taken as an input.
 -/
 
@@ -28,24 +28,24 @@ namespace CategoryTheory.CoherentRealization.CubeBoundary
 open MappingCube CubeBoxes
 variable {I : Type u}
 
-/-- The union of all actual scalar coordinate-boundary preimages in the original cube. -/
+/-- The union of all scalar coordinate-boundary preimages in the cube. -/
 def boundary (I : Type u) : (cube I).Subcomplex :=
   ⨆ i : I, (∂Δ[1]).preimage (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) i)
 
-/-- A whole original cube simplex is on the boundary exactly when some original coordinate
+/-- A cube simplex is on the boundary exactly when some coordinate
 word is on the
-  interval boundary. -/
+ interval boundary. -/
 theorem mem_boundary_iff {q : SimplexCategoryᵒᵖ} (x : (cube I).obj q) :
     x ∈ (boundary I).obj q ↔
       ∃ i : I, (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) i).app q x ∈ (∂Δ[1]).obj q := by
   simp only [boundary, Subfunctor.iSup_obj, SSet.Subcomplex.preimage_obj, Set.mem_iUnion,
     Set.mem_preimage]
 
-/-- The actual upper distinguished-coordinate open-box subcomplex of the original cube. -/
+/-- The upper distinguished-coordinate open-box subcomplex of the cube. -/
 def upperBox (j : I) : (cube I).Subcomplex :=
   SSet.Subcomplex.range (boxι j (boundary (Remaining j)))
 
-/-- The actual split distinguished coordinate reads back its same original scalar word. -/
+/-- The split distinguished coordinate reads back its same scalar word. -/
 theorem split_self (j : I) (q : SimplexCategoryᵒᵖ) (x : (cube I).obj q) :
     ((splitIso j).hom.app q x).2 =
       (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) j).app q x :=
@@ -53,7 +53,7 @@ theorem split_self (j : I) (q : SimplexCategoryᵒᵖ) (x : (cube I).obj q) :
     (Limits.Pi.lift (fun i : Remaining j => Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) i.val))
     (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) j)).app q x)
 
-/-- Every other split original coordinate reads back its same original scalar word. -/
+/-- Every other split coordinate reads back its same scalar word. -/
 theorem split_other (j : I) (i : Remaining j) (q : SimplexCategoryᵒᵖ) (x : (cube I).obj q) :
     (Limits.Pi.π (fun _ : Remaining j => (Δ[1] : SSet.{u})) i).app q (((splitIso
       j).hom.app q x).1) =
@@ -65,20 +65,20 @@ theorem split_other (j : I) (i : Remaining j) (q : SimplexCategoryᵒᵖ) (x : (
         (Limits.Pi.lift_comp_π _ i)
   exact congr($(h).app q x)
 
-/-- The actual assembled distinguished coordinate is the same supplied interval word. -/
+/-- The assembled distinguished coordinate is the same supplied interval word. -/
 theorem assemble_self (j : I) (q : SimplexCategoryᵒᵖ) (x : (cube (Remaining j) ⊗ Δ[1]).obj q) :
     (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) j).app q ((splitIso j).inv.app q x) = x.2 :=
   congr($(assembleHom_self j).app q x)
 
-/-- The actual assembled other coordinate is the same original remaining-coordinate word. -/
+/-- The assembled other coordinate is the same remaining-coordinate word. -/
 theorem assemble_other (j : I) (i : Remaining j) (q : SimplexCategoryᵒᵖ)
     (x : (cube (Remaining j) ⊗ Δ[1]).obj q) :
     (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) i.val).app q ((splitIso j).inv.app q x) =
       (Limits.Pi.π (fun _ : Remaining j => (Δ[1] : SSet.{u})) i).app q x.1 :=
   congr($(assembleHom_other j i).app q x)
 
-/-- Actual whole open-box membership is exactly the retained top coordinate or another
-original boundary coordinate. -/
+/-- Open-box membership is exactly the retained top coordinate or another
+boundary coordinate. -/
 theorem mem_upperBox_iff (j : I) {q : SimplexCategoryᵒᵖ} (x : (cube I).obj q) :
     x ∈ (upperBox j).obj q ↔
       (Limits.Pi.π (fun _ : I => (Δ[1] : SSet.{u})) j).app q x ∈ (Λ[1, (1 : Fin 2)]).obj q ∨

@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentOrdinalFace
 
 /-!
-# Actual entire coherent Hom intervals carried by an ordinal face
+# Coherent Hom intervals carried by an ordinal face
 
-A supplied order embedding covering the original endpoint interval gives
-a genuine whole Hom isomorphism. For the actual ordinal face, the coverage
-is proved when its omitted vertex lies outside those endpoints. No Hom
-comparison is assumed as data; both whole inverses are the original path
+A supplied order embedding covering the endpoint interval gives
+a Hom isomorphism. For the ordinal face, the coverage
+holds when its omitted vertex lies outside those endpoints. No Hom
+comparison is assumed as data; both inverses are the path
 image/preimage maps.
 -/
 
@@ -28,7 +28,7 @@ namespace CategoryTheory.CoherentRealization.IntervalFaceCover
 variable {J K : Type u} [LinearOrder J] [LinearOrder K]
   (e : J ↪o K) (a b : J)
 
-/-- Actual interval coverage identifies the original embedding face with the entire target Hom. -/
+/-- Interval coverage identifies the embedding face with the target Hom. -/
 theorem imageFace_eq_top (h : ∀ x : K, e a ≤ x → x ≤ e b → x ∈ Set.range e) :
     OrderEmbeddingFace.imageFace e a b = ⊤ := by
   apply Subfunctor.ext
@@ -40,14 +40,14 @@ theorem imageFace_eq_top (h : ∀ x : K, e a ≤ x → x ≤ e b → x ∈ Set.r
   · intro _ t x hx
     exact h x ((p.obj t).left_le x hx) ((p.obj t).le_right x hx)
 
-/-- The genuine entire original Hom isomorphism from actual interval coverage. -/
+/-- The Hom isomorphism from interval coverage. -/
 def wholeHomIso (h : ∀ x : K, e a ≤ x → x ≤ e b → x ∈ Set.range e) :
     nerve (SimplicialThickening.Path a b) ≅ nerve (SimplicialThickening.Path (e a) (e b)) :=
   OrderEmbeddingFace.faceIso e a b ≪≫
     SSet.Subcomplex.eqToIso (imageFace_eq_top e a b h) ≪≫
       SSet.Subcomplex.topIso _
 
-/-- The entire interval forward map is the original whole direct-image enriched Hom map. -/
+/-- The interval forward map is the direct-image enriched Hom map. -/
 theorem wholeHomIso_hom (h : ∀ x : K, e a ≤ x → x ≤ e b → x ∈ Set.range e) :
     (wholeHomIso e a b h).hom = OrderEmbeddingFace.imageMap e a b := by
   change (OrderEmbeddingFace.faceIso e a b).hom ≫ (OrderEmbeddingFace.imageFace e a b).ι = _
@@ -55,7 +55,7 @@ theorem wholeHomIso_hom (h : ∀ x : K, e a ≤ x → x ≤ e b → x ∈ Set.ra
 
 variable {n : ℕ} (t : Fin (n + 2)) (i j : ULift.{u} (Fin (n + 1)))
 
-/-- The original ordinal face covers its entire endpoint interval when the omitted vertex is
+/-- The ordinal face covers its endpoint interval when the omitted vertex is
 outside it. -/
 theorem ordinal_coverage
     (h : (ULift.up t : ULift.{u} (Fin (n + 2))) < (OrdinalFace.embedding t) i ∨
@@ -70,7 +70,7 @@ theorem ordinal_coverage
   · exact (not_lt_of_ge hi) h
   · exact (not_lt_of_ge hj) h
 
-/-- The actual whole coherent Hom isomorphism of an outside ordinal face. -/
+/-- The coherent Hom isomorphism of an outside ordinal face. -/
 def outsideIso
     (h : (ULift.up t : ULift.{u} (Fin (n + 2))) < (OrdinalFace.embedding t) i ∨
       (OrdinalFace.embedding t) j < ULift.up t) :
@@ -79,7 +79,7 @@ def outsideIso
         t) j)) :=
   wholeHomIso (OrdinalFace.embedding t) i j (ordinal_coverage t i j h)
 
-/-- The outside-face Hom isomorphism retains exactly the actual original coherent simplex
+/-- The outside-face Hom isomorphism retains exactly the coherent simplex
 operator. -/
 theorem outsideIso_operator
     (h : (ULift.up t : ULift.{u} (Fin (n + 2))) < (OrdinalFace.embedding t) i ∨

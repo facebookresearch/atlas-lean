@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentPathLastMaximum
 
 /-!
-# Actual flag sections of original coherent last-front maxima
+# Flag sections of coherent last-front maxima
 
-The front ordinal maps to the same original zero-to-last coherent Hom by
-its complete initial flags. The original maximum reads the same supplied
-front label. Each original path is contained in its actual maximum flag;
+The front ordinal maps to the same zero-to-last coherent Hom by
+its complete initial flags. The maximum reads the same supplied
+front label. Each path is contained in its maximum flag;
 no strict inverse is asserted for paths with skipped front vertices.
 -/
 
@@ -26,8 +26,8 @@ namespace CategoryTheory.CoherentRealization.PathMaximumFlags
 open PathLastMaximum
 variable {n : ℕ}
 
-/-- The original complete flag through the supplied front vertex, retaining zero and the
-actual last endpoint. -/
+/-- The complete flag through the supplied front vertex, retaining zero and the
+last endpoint. -/
 def flag (k : Fin (n + 1)) : LastPath.{u} (0 : Fin (n + 1)) where
   I := Set.Iic (ULift.up.{u} k.castSucc) ∪ {ULift.up.{u} (Fin.last (n + 1))}
   left := Or.inl (Fin.zero_le _)
@@ -35,7 +35,7 @@ def flag (k : Fin (n + 1)) : LastPath.{u} (0 : Fin (n + 1)) where
   left_le x _ := Fin.zero_le x.down
   le_right x _ := Fin.le_last x.down
 
-/-- The actual original front labels of a flag are precisely those at or below its supplied
+/-- The front labels of a flag are precisely those at or below its supplied
 vertex. -/
 theorem mem_front_flag (k j : Fin (n + 1)) : j ∈ frontSet 0 (flag.{u} k) ↔ j ≤ k := by
   rw [mem_frontSet]
@@ -50,7 +50,7 @@ theorem mem_front_flag (k j : Fin (n + 1)) : j ∈ frontSet 0 (flag.{u} k) ↔ j
     left
     exact h
 
-/-- The genuine original maximum of a complete flag is exactly its supplied front vertex. -/
+/-- The maximum of a complete flag is exactly its supplied front vertex. -/
 theorem maximum_flag (k : Fin (n + 1)) : maximum 0 (flag.{u} k) = k := by
   apply le_antisymm
   · apply Finset.max'_le
@@ -58,29 +58,29 @@ theorem maximum_flag (k : Fin (n + 1)) : maximum 0 (flag.{u} k) = k := by
     exact (mem_front_flag k j).mp hj
   · exact le_maximum 0 (flag.{u} k) k ((mem_front_flag k k).mpr le_rfl)
 
-/-- Increasing the original front label gives an actual inclusion of its complete flags. -/
+/-- Increasing the front label gives an inclusion of its complete flags. -/
 theorem flag_mono {k l : Fin (n + 1)} (h : k ≤ l) : (flag.{u} k).I ⊆ (flag.{u} l).I := by
   rintro x (hx | hx)
   · left
     exact hx.trans (show ULift.up.{u} k.castSucc ≤ ULift.up.{u} l.castSucc from h)
   · exact Or.inr hx
 
-/-- The genuine original flag functor from the same lifted front ordinal to the coherent
+/-- The flag functor from the same lifted front ordinal to the coherent
 zero-to-last path category. -/
 def flagFunctor : ULift.{u} (Fin (n + 1)) ⥤ LastPath.{u} (0 : Fin (n + 1)) where
   obj k := flag k.down
   map f := ⟨homOfLE (flag_mono f.down.down)⟩
 
-/-- The original maximum functor has the actual flag functor as a section on every whole
+/-- The maximum functor has the flag functor as a section on every 
 front ordinal
-  object and arrow. -/
+ object and arrow. -/
 theorem flag_section : flagFunctor.{u} ⋙ maximumFunctor (0 : Fin (n + 1)) =
   𝟭 (ULift.{u} (Fin (n + 1))) := by
   refine Functor.ext (fun k => ULift.ext (maximum_flag k.down)) ?_
   intro k l f
   exact Subsingleton.elim _ _
 
-/-- Every original front member has its actual source ordinal preimage, distinct from the
+/-- Every front member has its source ordinal preimage, distinct from the
 last endpoint. -/
 theorem front_vertex {p : LastPath.{u} (0 : Fin (n + 1))} {x : ULift.{u} (Fin (n + 2))}
     (hx : x ∈ p.I) (hLast : x ≠ ULift.up (Fin.last (n + 1))) :
@@ -98,8 +98,8 @@ theorem front_vertex {p : LastPath.{u} (0 : Fin (n + 1))} {x : ULift.{u} (Fin (n
   change x.down.val ≤ (maximum 0 p).val
   exact hV.symm ▸ h
 
-/-- The actual original path is contained in its complete maximum flag, including its
-original last endpoint. -/
+/-- The path is contained in its complete maximum flag, including its
+last endpoint. -/
 theorem path_le_flag (p : LastPath.{u} (0 : Fin (n + 1))) : p.I ⊆ (flag (maximum 0 p)).I := by
   classical
   intro x hx

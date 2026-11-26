@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FreeEvaluation
 
 /-!
-# Actual presentations of simplicial categories
+# Presentations of simplicial categories
 
 The generating relations are closed under equivalence, composition,
 and every simplex operator. Only Hom paths are identified: the supplied
 individual object type is retained exactly. An interpretation descends
-by proving the stated relations on its actual generating maps.
+by proving the stated relations on its generating maps.
 -/
 
 noncomputable section
@@ -27,11 +27,11 @@ namespace CategoryTheory.SimplicialQuiver
 
 variable {O : Type u} (Q : Data O)
 
-/-- A family of actual relations on whole generating paths in every scalar degree. -/
+/-- A family of relations on generating paths in every scalar degree. -/
 abbrev Relations := ∀ (n : SimplexCategoryᵒᵖ) (x y : O), Path Q n x y → Path Q n x y → Prop
 
 /-- The smallest equivalence and composition congruence containing the given relations
-and stable under all original scalar simplex operators. -/
+and stable under all scalar simplex operators. -/
 inductive Closure (R : Relations Q) :
     ∀ {n : SimplexCategoryᵒᵖ} {x y : O}, Path Q n x y → Path Q n x y → Prop
   | relation {n x y} {p q : Path Q n x y} : R n x y p q → Closure R p q
@@ -47,12 +47,12 @@ inductive Closure (R : Relations Q) :
 
 variable {Q}
 
-/-- The actual generated Hom congruence in one scalar degree at the same two original vertices. -/
+/-- The generated Hom congruence in one scalar degree at the same two vertices. -/
 def congruence (R : Relations Q) (n : SimplexCategoryᵒᵖ) (x y : O) : Setoid (Path Q n x y) where
   r := Closure Q R
   iseqv := ⟨Closure.refl, Closure.symm, Closure.trans⟩
 
-/-- The presented Hom simplicial set, retaining its specified original source and target. -/
+/-- The presented Hom simplicial set, retaining its specified source and target. -/
 def presentedHom (R : Relations Q) (x y : O) : SSet.{u} where
   obj n := _root_.Quotient (congruence R n x y)
   map f := ↾_root_.Quotient.map (mapPath Q f) (fun _ _ h => Closure.operator f h)
@@ -70,17 +70,17 @@ def presentedHom (R : Relations Q) (x y : O) : SSet.{u} where
           _root_.Quotient.mk _ (mapPath Q g (mapPath Q f p))
         rw [mapPath_comp]
 
-/-- The actual quotient of free paths is a simplicial map at the original vertices. -/
+/-- The quotient of free paths is a simplicial map at the vertices. -/
 def quotientHom (R : Relations Q) (x y : O) : freeHom Q x y ⟶ presentedHom R x y where
   app n := ↾_root_.Quotient.mk (congruence R n x y)
   naturality n m f := by ext p; rfl
 
-/-- The empty original path supplies the presented identity. -/
+/-- The empty path supplies the presented identity. -/
 def presentedId (R : Relations Q) (x : O) : 𝟙_ SSet.{u} ⟶ presentedHom R x x where
   app n := ↾fun _ => _root_.Quotient.mk _ (@Quiver.Path.nil O (quiverAt Q n) x)
   naturality n m f := by ext p; rfl
 
-/-- Presented composition is induced by concatenation of the actual original paths. -/
+/-- Presented composition is induced by concatenation of the paths. -/
 def presentedComp (R : Relations Q) (x y z : O) :
     presentedHom R x y ⊗ presentedHom R y z ⟶ presentedHom R x z where
   app n := ↾fun p => _root_.Quotient.map₂
@@ -100,7 +100,7 @@ def presentedComp (R : Relations Q) (x y z : O) :
               (@Prefunctor.mapPath_comp O (quiverAt Q n) O (quiverAt Q m)
                 (operator Q f) x y a z b).symm
 
-/-- The genuine presented enriched category on the unchanged original vertex type. -/
+/-- The presented enriched category on the unchanged vertex type. -/
 @[instance_reducible]
 def presentedEnrichment (R : Relations Q) : EnrichedCategory SSet.{u} O where
   Hom := presentedHom R
@@ -134,14 +134,14 @@ def presentedEnrichment (R : Relations Q) : EnrichedCategory SSet.{u} O where
                 exact congrArg (fun p : Path Q n w z => _root_.Quotient.mk (congruence R n w z) p)
                   (@Quiver.Path.comp_assoc O (quiverAt Q n) w x y z a b c)
 
-/-- Bundle the genuine presented simplicial category without identifying original objects. -/
+/-- Bundle the presented simplicial category without identifying objects. -/
 def presented (R : Relations Q) : EnrichedCat SSet.{u} := by
   letI := presentedEnrichment R
   exact EnrichedCat.of SSet.{u} O
 
 variable {C : Type v} [EnrichedCategory SSet.{u} C]
 
-/-- Actual evaluation of the given generators kills every generated simplicial congruence
+/-- Evaluation of the given generators kills every generated simplicial congruence
 relation. -/
 theorem Interpretation.evalPath_congruent (I : Interpretation Q C) (R : Relations Q)
     (hR : ∀ n x y p q, R n x y p q → I.evalPath n p = I.evalPath n q)
@@ -155,7 +155,7 @@ theorem Interpretation.evalPath_congruent (I : Interpretation Q C) (R : Relation
   | comp h k ih jk => rw [I.evalPath_comp, I.evalPath_comp, ih, jk]
   | operator f h ih => rw [I.evalPath_naturality, I.evalPath_naturality, ih]
 
-/-- The genuine presented Hom map obtained from an actual relation-respecting interpretation. -/
+/-- The presented Hom map obtained from a relation-respecting interpretation. -/
 def Interpretation.descendHom (I : Interpretation Q C) (R : Relations Q)
     (hR : ∀ n x y p q, R n x y p q → I.evalPath n p = I.evalPath n q) (x y : O) :
     presentedHom R x y ⟶ I.obj x ⟶[SSet.{u}] I.obj y where
@@ -165,7 +165,7 @@ def Interpretation.descendHom (I : Interpretation Q C) (R : Relations Q)
     induction a using _root_.Quotient.inductionOn with
     | h p => exact I.evalPath_naturality f p
 
-/-- The complete enriched extension to the actual presentation, not a supplied comparison
+/-- The complete enriched extension to the presentation, not a supplied comparison
 functor. -/
 def Interpretation.descend (I : Interpretation Q C) (R : Relations Q)
     (hR : ∀ n x y p q, R n x y p q → I.evalPath n p = I.evalPath n q) :
@@ -184,7 +184,7 @@ def Interpretation.descend (I : Interpretation Q C) (R : Relations Q)
           induction b using _root_.Quotient.inductionOn with
           | h b => exact I.evalPath_comp n a b }
 
-/-- The descended map evaluates the same whole original path represented by its quotient class. -/
+/-- The descended map evaluates the same path represented by its quotient class. -/
 theorem Interpretation.quotient_descend (I : Interpretation Q C) (R : Relations Q)
     (hR : ∀ n x y p q, R n x y p q → I.evalPath n p = I.evalPath n q) (x y : O) :
     quotientHom R x y ≫ I.descendHom R hR x y = I.evalHom x y := by ext n p; rfl

@@ -12,3 +12,4 @@ Category theory organizes mathematical structures through morphisms, functors, u
 - [Homological algebra](homological-algebra/README.md)
 - [Additive and abelian categories](additive-and-abelian-categories/README.md)
 - [Monads and algebras](monads/README.md)
+- [Enriched categories](enriched-categories/README.md)

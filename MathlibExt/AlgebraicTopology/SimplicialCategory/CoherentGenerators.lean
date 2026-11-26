@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentSimplex
 import MathlibExt.AlgebraicTopology.SimplicialCategory.Presentation
 
 /-!
-# The actual generators for coherent realization
+# The generators for coherent realization
 
-Objects are the original vertices of the input simplicial set. A
+Objects are the vertices of the input simplicial set. A
 generating Hom simplex retains an input simplex, its two specified
-vertices, and an actual Hom simplex of the corresponding coherent
+vertices, and an Hom simplex of the corresponding coherent
 simplex. The inner simplicial operators act on that Hom simplex.
 -/
 
@@ -27,12 +27,12 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment
 
-/-- Read the supplied individual vertex of an actual input simplex. -/
+/-- Read the supplied individual vertex of an input simplex. -/
 def vertex (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i : coherentSimplex.{u} n) : K _⦋0⦌ :=
   K.map (SimplexCategory.const ⦋0⦌ n i.as.down).op σ
 
-/-- The actual vertex map commutes with each original outer simplex operator. -/
+/-- The vertex map commutes with each outer simplex operator. -/
 theorem vertex_operator (K : SSet.{u}) {n m : SimplexCategory} (f : n ⟶ m)
     (σ : K.obj (op m)) (i : coherentSimplex.{u} n) :
     vertex K (K.map f.op σ) i = vertex K σ ((coherentSimplexMap f).obj i) := by
@@ -40,31 +40,31 @@ theorem vertex_operator (K : SSet.{u}) {n m : SimplexCategory} (f : n ⟶ m)
   rw [← CategoryTheory.comp_apply, ← K.map_comp]
   rfl
 
-/-- An original coherent Hom generator with both individual endpoint equations retained. -/
+/-- A coherent Hom generator with both individual endpoint equations retained. -/
 structure Arrow (K : SSet.{u}) (x y : K _⦋0⦌) (q : SimplexCategoryᵒᵖ) where
   /-- The outer input simplex degree. -/
   degree : SimplexCategory
-  /-- The original supplied input simplex. -/
+  /-- The supplied input simplex. -/
   simplex : K.obj (op degree)
-  /-- Its specified original source vertex. -/
+  /-- Its specified source vertex. -/
   source : coherentSimplex.{u} degree
-  /-- Its specified original target vertex. -/
+  /-- Its specified target vertex. -/
   target : coherentSimplex.{u} degree
   /-- The source is the given individual input vertex. -/
   source_eq : vertex K simplex source = x
   /-- The target is the given individual input vertex. -/
   target_eq : vertex K simplex target = y
-  /-- The actual coherent-simplex Hom simplex, at the given inner scalar degree. -/
+  /-- The coherent-simplex Hom simplex, at the given inner scalar degree. -/
   hom : (source ⟶[SSet.{u}] target).obj q
 
-/-- Every inner scalar operator acts on the actual coherent Hom, retaining all outer
+/-- Every inner scalar operator acts on the coherent Hom, retaining all outer
 endpoint data. -/
 def Arrow.map {K : SSet.{u}} {x y : K _⦋0⦌} {q r : SimplexCategoryᵒᵖ}
     (f : q ⟶ r) (a : Arrow K x y q) : Arrow K x y r :=
   ⟨a.degree, a.simplex, a.source, a.target, a.source_eq, a.target_eq,
     (a.source ⟶[SSet.{u}] a.target).map f a.hom⟩
 
-/-- The vertex-indexed simplicial quiver of actual coherent generators. -/
+/-- The vertex-indexed simplicial quiver of coherent generators. -/
 def generatingQuiver (K : SSet.{u}) : SimplicialQuiver.Data (K _⦋0⦌) where
   Hom x y := {
     obj := Arrow K x y
@@ -85,7 +85,7 @@ def generatingQuiver (K : SSet.{u}) : SimplicialQuiver.Data (K _⦋0⦌) where
           rw [(i ⟶[SSet.{u}] j).map_comp]
           rfl }
 
-/-- The specified actual Hom simplex becomes a generator with exactly its original endpoint
+/-- The specified Hom simplex becomes a generator with exactly its endpoint
 equations. -/
 def arrow (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}
@@ -93,7 +93,7 @@ def arrow (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (a : (i ⟶[SSet.{u}] j).obj q) : ((generatingQuiver K).Hom x y).obj q :=
   ⟨n, σ, i, j, hx, hy, a⟩
 
-/-- Its corresponding original whole free path has one actual coherent generator. -/
+/-- Its corresponding free path has one coherent generator. -/
 def arrowPath (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}
     (hx : vertex K σ i = x) (hy : vertex K σ j = y) {q : SimplexCategoryᵒᵖ}
@@ -101,7 +101,7 @@ def arrowPath (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
   @Quiver.Hom.toPath (K _⦋0⦌) (SimplicialQuiver.quiverAt (generatingQuiver K) q) x y
     (arrow K σ i j hx hy a)
 
-/-- Inner scalar operators preserve the original coherent generating path and its full
+/-- Inner scalar operators preserve the coherent generating path and its full
 endpoint data. -/
 theorem arrowPath_operator (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}

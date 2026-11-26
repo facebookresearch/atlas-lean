@@ -12,13 +12,13 @@ import MathlibExt.CategoryTheory.Enriched.HomEqualityTransport
 import Mathlib.CategoryTheory.Retract
 
 /-!
-# Actual original Hom arrows retain changing-object retracts
+# Hom arrows retain changing-object retracts
 
-The full original enriched arrow retract gives the actual object
+The full enriched arrow retract gives the object
 equations in both rows. Only those equations transport the endpoints
-of every original scalar Hom map. The whole original functor equations
+of every scalar Hom map. The functor equations
 then prove both complete scalar squares and both retract identities.
-No model, fibrancy or weak-map outcome is assumed.
+
 -/
 
 noncomputable section
@@ -37,8 +37,8 @@ private theorem identity_obj (X : Carrier.{u}) (x : X) : (𝟙 X : X ⟶ X).obj 
 private theorem identity_map (X : Carrier.{u}) (x y : X) :
     (𝟙 X : X ⟶ X).map x y = 𝟙 (x ⟶[SSet.{u}] y) := rfl
 
-/-- The SAME original source pair gives an actual retract of the full original Hom arrow
-through the original
+/-- The same source pair gives a retract of the Hom arrow
+through the 
 changing-object retract. -/
 def originalHomArrowRetract (h : RetractArrow F G) (x y : A) :
     RetractArrow (F.map x y) (G.map (h.i.left.obj x) (h.i.left.obj y)) := by

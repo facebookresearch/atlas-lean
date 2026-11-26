@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.StrictCategory
 import Mathlib.CategoryTheory.FiberedCategory.Fiber
 
 /-!
-# Simplicial enrichments with fixed original objects
+# Simplicial enrichments with fixed objects
 
 The fiber of the object-forgetting functor retains every individual object
-label. Its arrows are genuine enriched functors over the identity of that
-object type. Hom evaluation uses the original Hom map and only the two
+label. Its arrows are enriched functors over the identity of that
+object type. Hom evaluation uses the Hom map and only the two
 endpoint equality transports.
 -/
 
@@ -25,19 +25,19 @@ open CategoryTheory MonoidalCategory
 
 namespace CategoryTheory.SimplicialEnrichment
 
-/-- Forget only the enrichment, retaining the original object type and object maps. -/
+/-- Forget only the enrichment, retaining the object type and object maps. -/
 def forgetObjects : Carrier.{u} ⥤ Type u where
   obj C := C
   map F := ↾F.obj
 
-/-- The existing functor fiber, with strict identity-on-object enriched maps. -/
+/-- The fibre of object forgetting over `O`, with morphisms that preserve its object labels. -/
 abbrev FixedObjects (O : Type u) := Functor.Fiber forgetObjects O
 
 namespace FixedObjects
 
 variable {O : Type u}
 
-/-- The individual original vertex carrying the supplied fixed object label. -/
+/-- The individual vertex carrying the supplied fixed object label. -/
 def vertex (C : FixedObjects O) (x : O) : C.val :=
   (eqToHom C.property.symm) x
 
@@ -45,7 +45,7 @@ def vertex (C : FixedObjects O) (x : O) : C.val :=
 def of (O : Type u) [EnrichedCategory SSet.{u} O] : FixedObjects O :=
   ⟨SimplicialEnrichment.of O, rfl⟩
 
-/-- Literal enrichments retain every original label without an object quotient. -/
+/-- Bundle an enrichment on `O` as an object in the fibre over `O`. -/
 @[simp]
 theorem vertex_of (O : Type u) [EnrichedCategory SSet.{u} O] (x : O) :
     vertex (of O) x = x := rfl
@@ -64,11 +64,11 @@ theorem map_vertex {C D : FixedObjects O} (F : C ⟶ D) (x : O) :
     (eqToHom D.property.symm) x
   exact congrArg (fun k => k x) hc
 
-/-- The original scalar Hom object at two individual fixed labels. -/
+/-- The scalar Hom object at two individual fixed labels. -/
 abbrev hom (C : FixedObjects O) (x y : O) : SSet.{u} :=
   vertex C x ⟶[SSet.{u}] vertex C y
 
-/-- The actual enriched Hom map followed by the proved endpoint equalities. -/
+/-- The enriched Hom map transported along the functor’s endpoint equalities. -/
 def homMap {C D : FixedObjects O} (F : C ⟶ D) (x y : O) :
     hom C x y ⟶ hom D x y :=
   F.val.map (vertex C x) (vertex C y) ≫
@@ -91,7 +91,7 @@ theorem homMap_id (C : FixedObjects O) (x y : O) :
   change 𝟙 _ ≫ eqToHom _ = 𝟙 _
   simp
 
-/-- Evaluation preserves composition of the same original enriched maps. -/
+/-- Evaluation preserves composition of the same enriched maps. -/
 @[simp]
 theorem homMap_comp {C D E : FixedObjects O} (F : C ⟶ D) (G : D ⟶ E)
     (x y : O) : homMap (F ≫ G) x y = homMap F x y ≫ homMap G x y := by
@@ -105,7 +105,7 @@ theorem homMap_comp {C D E : FixedObjects O} (F : C ⟶ D) (G : D ⟶ E)
       G.val.map (vertex D x) (vertex D y) ≫ eqToHom _
   simpa only [Category.assoc, eqToHom_trans] using h.symm
 
-/-- Hom evaluation on the actual fixed-object category. -/
+/-- Hom evaluation on the fixed-object category. -/
 def evaluation (x y : O) : FixedObjects O ⥤ SSet.{u} where
   obj C := hom C x y
   map F := homMap F x y

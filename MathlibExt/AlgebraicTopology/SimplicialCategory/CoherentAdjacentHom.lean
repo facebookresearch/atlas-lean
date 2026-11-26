@@ -10,10 +10,10 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomUnitsAndEmpty
 
 /-!
-# Literal original coherent Hom of adjacent vertices
+# Literal coherent Hom of adjacent vertices
 
-If an original interval has only its two endpoint vertices, its actual
-path category has one original path and its whole nerve is the tensor
+If an interval has only its two endpoint vertices, its 
+path category has one path and its nerve is the tensor
 unit. The comparison is given by that endpoint path, not by a component
 or a supplied enriched-equivalence outcome.
 -/
@@ -27,7 +27,7 @@ namespace CategoryTheory.CoherentRealization.AdjacentHom
 open SimplicialEnrichment
 variable {J : Type u} [LinearOrder J] (a b : J) (hab : a ≤ b)
 
-/-- The actual original path containing precisely the two supplied endpoint vertices. -/
+/-- The path containing precisely the two supplied endpoint vertices. -/
 def endpointPath : SimplicialThickening.Path a b where
   I := {a, b}
   left := Or.inl rfl
@@ -35,7 +35,7 @@ def endpointPath : SimplicialThickening.Path a b where
   left_le k := by rintro (rfl | rfl); exacts [le_rfl, hab]
   le_right k := by rintro (rfl | rfl); exacts [hab, le_rfl]
 
-/-- With no original vertex between the two endpoints, every original interval path is that
+/-- With no vertex between the two endpoints, every interval path is that
 same endpoint path. -/
 theorem path_eq (hAdj : ∀ k : J, a ≤ k → k ≤ b → k = a ∨ k = b)
     (p : SimplicialThickening.Path a b) : p = endpointPath a b hab := by
@@ -47,15 +47,15 @@ theorem path_eq (hAdj : ∀ k : J, a ≤ k → k ≤ b → k = a ∨ k = b)
   · rintro (rfl | rfl)
     exacts [p.left, p.right]
 
-/-- The whole simplicial tensor-unit map carrying the same original two-endpoint path in
+/-- The simplicial tensor-unit map carrying the same two-endpoint path in
 every degree. -/
 def fromUnit : 𝟙_ SSet.{u} ⟶ nerve (SimplicialThickening.Path a b) where
   app q := ↾fun _ => (Functor.const (Fin (q.unop.len + 1))).obj (endpointPath a b hab)
   naturality q r f := by ext t; rfl
 
-/-- The entire original adjacent-interval Hom is the actual tensor unit, with the supplied
-original endpoint
-  path as forward map. -/
+/-- The adjacent-interval Hom is the tensor unit, with the supplied
+endpoint
+ path as forward map. -/
 def unitIso (hAdj : ∀ k : J, a ≤ k → k ≤ b → k = a ∨ k = b) :
     𝟙_ SSet.{u} ≅ nerve (SimplicialThickening.Path a b) where
   hom := fromUnit a b hab
@@ -71,12 +71,12 @@ def unitIso (hAdj : ∀ k : J, a ≤ k → k ≤ b → k = a ∨ k = b) :
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
 
-/-- The supplied original endpoint path is the degree-zero forward vertex of the full unit
+/-- The supplied endpoint path is the degree-zero forward vertex of the full unit
 comparison. -/
 theorem unit_vertex : (fromUnit a b hab).app (op ⦋0⦌) PUnit.unit =
     ComposableArrows.mk₀ (endpointPath a b hab) := rfl
 
-/-- Every actual original interval path between zero and one has no other original vertex. -/
+/-- Every interval path between zero and one has no other vertex. -/
 theorem finTwo_vertices (k : ULift.{u} (Fin 2)) :
     k = ULift.up (0 : Fin 2) ∨ k = ULift.up (1 : Fin 2) := by
   by_cases h₀ : k.down = 0

@@ -11,10 +11,10 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.SimplicialHomCongrFullMap
 import MathlibExt.AlgebraicTopology.SimplicialCategory.SimplicialUnitScalarFunctorNaturality
 
 /-!
-# The SAME whole enriched Hom isomorphism commutes with every original full functor map
+# The same enriched Hom isomorphism commutes with every functor map
 
-Canonical full Hom congruence is read in the original scalar categories.
-The SAME original scalarFunctor preserves all coefficient compositions
+Canonical Hom congruence is read in the scalar categories.
+The same scalarFunctor preserves all coefficient compositions
 and retains every unit-coordinate image. This proves the full enriched
 map square, at independent source, target and coefficient universes.
 -/
@@ -27,7 +27,7 @@ namespace SSet
 variable {C : Type v} [EnrichedCategory SSet.{u} C]
   {D : Type w} [EnrichedCategory SSet.{u} D]
 
-/-- Every SAME original enriched functor preserves the actual full canonical source and
+/-- Every same enriched functor preserves the full canonical source and
 target Hom isomorphisms. -/
 theorem homCongr_functor_natural (F : EnrichedFunctor SSet.{u} C D)
     {x y x' y' : ForgetEnrichment SSet.{u} C} (α : x ≅ x') (β : y ≅ y') :

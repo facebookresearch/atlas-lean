@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentDoubleCompositionFace
 
 /-!
-# Original interval projections of the double composition face
+# Interval projections of the double composition face
 
-The actual triple-Hom chart projects to each original positive face by
-the corresponding original union composition. Both parenthesizations
-retain their literal scalar maps and original interval endpoints.
+The tripleHom chart projects to each positive face by
+the corresponding union composition. Both parenthesizations
+retain their literal scalar maps and interval endpoints.
 -/
 
 noncomputable section
@@ -26,17 +26,17 @@ namespace CategoryTheory.CoherentRealization.DoubleFaceProjections
 open CompositionFace DoubleCompositionFace
 variable {J : Type u} [LinearOrder J] (i j k l : J) (hjk : j ≤ k)
 
-/-- The actual first projection from the double composition face. -/
+/-- The first projection from the double composition face. -/
 def first : (DoubleCompositionFace.face i j k l : SSet.{u}) ⟶ positive i j l :=
   SSet.Subcomplex.homOfLE (show DoubleCompositionFace.face i j k l ≤ positive i j l from
     inf_le_left)
 
-/-- The actual second projection from the same double composition face. -/
+/-- The second projection from the same double composition face. -/
 def second : (DoubleCompositionFace.face i j k l : SSet.{u}) ⟶ positive i k l :=
   SSet.Subcomplex.homOfLE (show DoubleCompositionFace.face i j k l ≤ positive i k l from
     inf_le_right)
 
-/-- The first projection reads back the whole right short-leg union before the original
+/-- The first projection reads back the right short-leg union before the 
 positive chart. -/
 theorem first_chart : (faceIso i j k l hjk).hom ≫ first i j k l =
     nerve (SimplicialThickening.Path i j) ◁ CompositionFace.composition j k l ≫
@@ -54,7 +54,7 @@ theorem first_chart : (faceIso i j k l hjk).hom ≫ first i j k l =
         (positiveIso_composition i j l))
   exact h₁.trans ((faceIso_composition i j k l hjk).trans h₂.symm)
 
-/-- The other projection reads back the whole left short-leg union with the actual original
+/-- The other projection reads back the left short-leg union with the 
 associator. -/
 theorem second_chart : (faceIso i j k l hjk).hom ≫ second i j k l =
     (α_ (nerve (SimplicialThickening.Path i j)) (nerve (SimplicialThickening.Path j k))

@@ -12,12 +12,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomFrontFamily
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSuspensionForward
 
 /-!
-# Actual front-compatible maps into the free right-cube suspension
+# Front-compatible maps into the free right-cube suspension
 
-Each original last interval is prepended by the original zero vertex and
-then mapped into the actual front-composition quotient. The generating
-quotient relation proves compatibility with every original front prefix.
-The free suspension supplies its original whole forward Hom; no realized
+Each last interval is prepended by the zero vertex and
+then mapped into the front-composition quotient. The generating
+quotient relation proves compatibility with every front prefix.
+The free suspension supplies its forward Hom; no realized
 Hom identification is assumed.
 -/
 
@@ -30,7 +30,7 @@ namespace CategoryTheory.CoherentRealization.RightCubeFrontFamily
 open SimplicialEnrichment PathLastMaximum RightCubeRelations
 variable {n : ℕ}
 
-/-- The original zero-prepended front prefix of an actual supplied interval. -/
+/-- The zero-prepended front prefix of a supplied interval. -/
 def zeroPrefix {i j : Fin (n + 1)}
     (p : SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u} j.castSucc)) :
     SimplicialThickening.Path (ULift.up.{u} (0 : Fin (n + 2))) (ULift.up.{u} j.castSucc) where
@@ -43,14 +43,14 @@ def zeroPrefix {i j : Fin (n + 1)}
     · exact Fin.zero_le _
     · exact p.le_right k hk
 
-/-- The whole original front-prefix zero insertion functor. -/
+/-- The front-prefix zero insertion functor. -/
 def zeroPrefixFunctor (i j : Fin (n + 1)) :
     SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u} j.castSucc) ⥤
       SimplicialThickening.Path (ULift.up.{u} (0 : Fin (n + 2))) (ULift.up.{u} j.castSucc) where
   obj := zeroPrefix
   map f := ⟨homOfLE (Set.union_subset_union le_rfl f.hom.down.down)⟩
 
-/-- Original zero insertion commutes with the whole union of a front prefix and last interval. -/
+/-- Zero insertion commutes with the union of a front prefix and last interval. -/
 theorem prepend_union (i j : Fin (n + 1))
     (p : SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u} j.castSucc))
     (r : LastPath.{u} j) :
@@ -58,7 +58,7 @@ theorem prepend_union (i j : Fin (n + 1))
   apply SimplicialThickening.Path.ext
   exact (Set.union_assoc _ _ _).symm
 
-/-- The same original zero-prefix union equation retains every scalar simplex and its operators. -/
+/-- The same zero-prefix union equation retains every scalar simplex and its operators. -/
 theorem prepend_chain (i j : Fin (n + 1)) (q : SimplexCategoryᵒᵖ)
     (p : (nerve (SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u}
       j.castSucc))).obj q)
@@ -73,8 +73,8 @@ theorem prepend_chain (i j : Fin (n + 1)) (q : SimplexCategoryᵒᵖ)
   apply InducedCategory.Hom.ext
   exact Subsingleton.elim _ _
 
-/-- The actual original front-composition quotient removes every front prefix at its
-supplied original endpoint. -/
+/-- The front-composition quotient removes every front prefix at its
+supplied endpoint. -/
 theorem quotient_union (i j : Fin (n + 1)) (q : SimplexCategoryᵒᵖ)
     (p : (nerve (SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u}
       j.castSucc))).obj q)
@@ -87,7 +87,7 @@ theorem quotient_union (i j : Fin (n + 1)) (q : SimplexCategoryᵒᵖ)
     (_root_.Quotient.sound (Relation.EqvGen.rel _ _
       (RightCubeRelations.Relation.composition (n := n) j (p ⋙ zeroPrefixFunctor i j) r)))
 
-/-- The genuine whole original last-interval family into the constructed free suspension of
+/-- The last-interval family into the constructed free suspension of
 the right cube. -/
 def family (n : ℕ) : HomFrontFamily.Family
     (C := HomSuspensionGenerators.carrier (RightCubeRelations.object.{u} n))
@@ -98,7 +98,7 @@ def family (n : ℕ) : HomFrontFamily.Family
     ((HomSuspensionForward.homIso (RightCubeRelations.object n)).hom.app q) (quotient_union
       i j q p r)
 
-/-- The original successor simplex gives an actual enriched functor into the free right-cube
+/-- The successor simplex gives an enriched functor into the free right-cube
 suspension. -/
 def functor (n : ℕ) : coherentSimplex.{u} ⦋n + 1⦌ ⟶
     HomSuspensionGenerators.carrier (RightCubeRelations.object.{u} n) :=

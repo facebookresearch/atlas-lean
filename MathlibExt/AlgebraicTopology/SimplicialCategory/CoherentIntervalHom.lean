@@ -11,12 +11,18 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomObjects
 import Mathlib.CategoryTheory.Pi.Basic
 
 /-!
-# Actual interval-subset coherent Hom coordinates
+# Interval-subset coherent Hom coordinates
 
-The original coherent paths between supplied ordered vertices are
-identified with subsets of their strict interior. This is a genuine
-isomorphism of their Hom nerves, retaining the endpoints and the entire
-scalar simplex data. No Kan or comparison outcome is an input.
+The coherent paths between supplied ordered vertices are
+identified with subsets of their strict interior. This is a 
+isomorphism of their Hom nerves, retaining the endpoints and the 
+scalar simplex data.
+
+## References
+
+- Emily Riehl, *Homotopy coherent structures*, Example II.1.4 (the
+  finite-ordinal interval-subset model),
+  https://emilyriehl.github.io/files/coherent-structures.pdf.
 -/
 
 noncomputable section
@@ -27,7 +33,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.IntervalHom
 variable {J : Type u} [LinearOrder J] (i j : J)
 
-/-- The actual strict interior of the supplied original coherent interval. -/
+/-- The strict interior of the supplied coherent interval. -/
 abbrev Interior := {k : J // i < k ∧ k < j}
 
 private instance (a b : SimplicialThickening.Path i j) : Subsingleton (a ⟶ b) where
@@ -35,14 +41,14 @@ private instance (a b : SimplicialThickening.Path i j) : Subsingleton (a ⟶ b) 
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
 
-/-- Restrict an actual endpoint-containing path to its strict interior coordinates. -/
+/-- Restrict an endpoint-containing path to its strict interior coordinates. -/
 def restrictPath : SimplicialThickening.Path i j ⥤ Set (Interior i j) where
   obj p := {k | k.val ∈ p.I}
   map f := homOfLE (fun _ hk => f.hom.down.down hk)
 
 variable {i j}
 
-/-- Reinsert exactly the two original endpoints into the supplied strict interior subset. -/
+/-- Reinsert exactly the two endpoints into the supplied strict interior subset. -/
 def reinsert (hij : i ≤ j) (S : Set (Interior i j)) : SimplicialThickening.Path i j where
   I := {i} ∪ {j} ∪ (Subtype.val '' S)
   left := by simp
@@ -60,7 +66,7 @@ def reinsert (hij : i ≤ j) (S : Set (Interior i j)) : SimplicialThickening.Pat
     · obtain ⟨l, _, rfl⟩ := h
       exact l.property.2.le
 
-/-- The same endpoint reinsertion is a genuine functor on the strict interior subset poset. -/
+/-- The same endpoint reinsertion is a functor on the strict interior subset poset. -/
 def reinsertFunctor (hij : i ≤ j) : Set (Interior i j) ⥤ SimplicialThickening.Path i j where
   obj := reinsert hij
   map f := ⟨homOfLE (by
@@ -70,7 +76,7 @@ def reinsertFunctor (hij : i ≤ j) : Set (Interior i j) ⥤ SimplicialThickenin
     · obtain ⟨l, hl, rfl⟩ := h
       exact Or.inr ⟨l, f.down.down hl, rfl⟩)⟩
 
-/-- Restriction after actual endpoint reinsertion returns every original strict interior subset. -/
+/-- Restriction after endpoint reinsertion returns every strict interior subset. -/
 theorem restrict_reinsert (hij : i ≤ j) (S : Set (Interior i j)) :
     (restrictPath i j).obj (reinsert hij S) = S := by
   ext k
@@ -85,7 +91,7 @@ theorem restrict_reinsert (hij : i ≤ j) (S : Set (Interior i j)) :
   · intro hk
     exact Or.inr ⟨k, hk, rfl⟩
 
-/-- Reinserted restriction is the whole original coherent path, including both individual
+/-- Reinserted restriction is the coherent path, including both individual
 endpoints. -/
 theorem reinsert_restrict (hij : i ≤ j) (p : SimplicialThickening.Path i j) :
     reinsert hij ((restrictPath i j).obj p) = p := by
@@ -105,7 +111,7 @@ theorem reinsert_restrict (hij : i ≤ j) (p : SimplicialThickening.Path i j) :
     exact Or.inr ⟨⟨k, lt_of_le_of_ne (p.left_le k hk) (Ne.symm hki),
       lt_of_le_of_ne (p.le_right k hk) hkj⟩, hk, rfl⟩
 
-/-- The restriction and reinsertion functors are actual inverses on the entire original path
+/-- The restriction and reinsertion functors are inverses on the path
 category. -/
 theorem restrict_reinsert_functor (hij : i ≤ j) :
     restrictPath i j ⋙ reinsertFunctor hij = 𝟭 (SimplicialThickening.Path i j) := by
@@ -113,14 +119,14 @@ theorem restrict_reinsert_functor (hij : i ≤ j) :
   intro p q f
   exact Subsingleton.elim _ _
 
-/-- The same actual functors are inverses on the strict interior subset category. -/
+/-- The same functors are inverses on the strict interior subset category. -/
 theorem reinsert_restrict_functor (hij : i ≤ j) :
     reinsertFunctor hij ⋙ restrictPath i j = 𝟭 (Set (Interior i j)) := by
   refine CategoryTheory.Functor.ext (fun S => restrict_reinsert hij S) ?_
   intro p q f
   exact Subsingleton.elim _ _
 
-/-- The entire original coherent Hom nerve is the nerve of its strict interior subset cube. -/
+/-- The coherent Hom nerve is the nerve of its strict interior subset cube. -/
 def intervalNerveIso (hij : i ≤ j) :
     nerve (SimplicialThickening.Path i j) ≅ nerve (Set (Interior i j)) where
   hom := nerveMap (restrictPath i j)

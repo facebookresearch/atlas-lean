@@ -9,11 +9,11 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabelPushforwardAdjunction
 
-/-! # Original paths survive a proper collapse of enriched object labels
+/-! # Paths survive a proper collapse of enriched object labels
 
-A free noninvertible arrow has two different original objects. Collapsing
+A free noninvertible arrow has two different objects. Collapsing
 both labels produces a loop. Its square is distinct from the loop: an
-actual free-loop interpreter distinguishes their lengths. Every scalar
+free-loop interpreter distinguishes their lengths. Every scalar
 degree is checked, together with both complete-map inverse laws.
 -/
 
@@ -122,7 +122,7 @@ theorem loop_ne_square (q : SimplexCategoryᵒᵖ) : retainedLoop.{u} q ≠ reta
   rw [loop_length, square_length] at hh
   exact (by decide : (1 : ℕ) ≠ 2) hh
 
-/-- The collapse is proper at the original object level. -/
+/-- The collapse is proper at the object level. -/
 example : start.{u} ≠ finish ∧ collapse start = collapse finish := by
   constructor
   · intro h
@@ -130,7 +130,7 @@ example : start.{u} ≠ finish ∧ collapse start = collapse finish := by
     exact Bool.false_ne_true this
   · rfl
 
-/-- Both whole-map inverse equations retain the actual original noninvertible arrow. -/
+/-- Both map inverse equations retain the noninvertible arrow. -/
 example :
     (LabelPushforward.homEquiv collapse arrow loop) readback = toLoop ∧
       (LabelPushforward.homEquiv collapse arrow loop).symm toLoop = readback := by
@@ -142,12 +142,13 @@ example :
 example : retainedLoop.{u + 1} (op ⦋2⦌) ≠ retainedSquare (op ⦋2⦌) :=
   loop_ne_square _
 
-/-- Every unused target object is still an actual original label of the empty-source pushforward. -/
+/-- Every unused target object is still a label of the empty-source pushforward. -/
 example (O : Type u) (C : FixedObjects PEmpty.{u + 1})
     (a : PEmpty.{u + 1} → O) (x : O) :
     vertex (LabelPushforward.object a C) x = x := rfl
 
-/-- A proper extra target label is retained independently of the collapsed original objects. -/
-example : vertex (LabelPushforward.object (fun _ : ArrowLabels.{u} => start) arrow) finish = finish := rfl
+/-- A proper extra target label is retained independently of the collapsed objects. -/
+example : vertex (LabelPushforward.object (fun _ : ArrowLabels.{u} => start) arrow) finish =
+    finish := rfl
 
 end FixedObjectLabelPushforwardTest

@@ -11,13 +11,13 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectFreeAdjunction
 import Mathlib.CategoryTheory.Monad.Adjunction
 
 /-!
-# Actual fixed-object free-path algebras are simplicial enrichments
+# Fixed-object free-path algebras are simplicial enrichments
 
-The monad comes from the genuine canonical free/Hom adjunction. Its unit
-retains the original generators and its multiplication evaluates whole
-nested paths. The two algebra equations derive the actual enriched identity,
-binary composition and associativity on the unchanged original Hom family.
-No supplied enriched structure or comparison certificate is an input.
+The monad comes from the canonical free/Hom adjunction. Its unit
+retains the generators and its multiplication evaluates 
+nested paths. The two algebra equations derive the enriched identity,
+binary composition and associativity on the unchanged Hom family.
+
 -/
 
 noncomputable section
@@ -30,16 +30,16 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects.FixedObjectFree
 
 variable {O : Type u}
 
-/-- The actual whole free-path monad, induced by the canonical free/Hom adjunction. -/
+/-- The free-path monad, induced by the canonical free/Hom adjunction. -/
 def pathMonad (O : Type u) : Monad (Families O) := (adjunction.{u} (O := O)).toMonad
 
-/-- Two actual original generators concatenate in the same canonical free enrichment. -/
+/-- Two generators concatenate in the same canonical free enrichment. -/
 def pairWord (Q : SimplicialQuiver.Data O) (x y z : O) :
     Q.Hom x y ⊗ Q.Hom y z ⟶ SimplicialQuiver.freeHom Q x z :=
   (SimplicialQuiver.generator Q x y ⊗ₘ SimplicialQuiver.generator Q y z) ≫
     SimplicialQuiver.freeComp Q x y z
 
-/-- Evaluating the full two-letter word is the original target composition. -/
+/-- Evaluating the full two-letter word is the target composition. -/
 theorem pairWord_evaluate (C : FixedObjects O) (x y z : O) :
     pairWord (quiver ((underlyingFunctor.{u} (O := O)).obj C)) x y z ≫
       homMap (evaluate C) x z = compositionMap C x y z := by
@@ -49,7 +49,7 @@ theorem pairWord_evaluate (C : FixedObjects O) (x y z : O) :
   erw [generator_evaluate, generator_evaluate]
   exact Category.id_comp (compositionMap C x y z)
 
-/-- The same whole two-letter word retains the actual generator maps under every free functor. -/
+/-- The same two-letter word retains the generator maps under every free functor. -/
 theorem pairWord_map {Q R : SimplicialQuiver.Data O}
     (f : ∀ x y : O, Q.Hom x y ⟶ R.Hom x y) (x y z : O) :
     pairWord Q x y z ≫ homMap (FreeQuiver.map f) x z =
@@ -59,24 +59,24 @@ theorem pairWord_map {Q R : SimplicialQuiver.Data O}
 
 variable (A : (pathMonad O).Algebra)
 
-/-- The actual algebra action on the concrete original whole finite-path Hom. -/
+/-- The algebra action on the concrete finite-path Hom. -/
 def action (x y : O) : SimplicialQuiver.freeHom (quiver A.A) x y ⟶ A.A (x, y) :=
   A.a (x, y)
 
-/-- Algebra unit retains the identical original complete generating Hom. -/
+/-- Algebra unit retains the identical complete generating Hom. -/
 theorem generator_action (x y : O) :
     SimplicialQuiver.generator (quiver A.A) x y ≫ action A x y = 𝟙 (A.A (x, y)) :=
   congrArg (fun f => f (x, y)) A.unit
 
-/-- The actual empty path supplies the original enriched identity. -/
+/-- The empty path supplies the enriched identity. -/
 def algebraIdentity (x : O) : 𝟙_ SSet.{u} ⟶ A.A (x, x) :=
   SimplicialQuiver.freeId (quiver A.A) x ≫ action A x x
 
-/-- The actual original two-letter path supplies binary enriched composition. -/
+/-- The two-letter path supplies binary enriched composition. -/
 def algebraComposition (x y z : O) : A.A (x, y) ⊗ A.A (y, z) ⟶ A.A (x, z) :=
   pairWord (quiver A.A) x y z ≫ action A x z
 
-/-- The algebra associativity equation evaluates arbitrary whole original path concatenations. -/
+/-- The algebra associativity equation evaluates arbitrary path concatenations. -/
 theorem action_composition (x y z : O) :
     SimplicialQuiver.freeComp (quiver A.A) x y z ≫ action A x z =
       (action A x y ⊗ₘ action A y z) ≫ algebraComposition A x y z := by
@@ -91,7 +91,7 @@ theorem action_composition (x y z : O) :
   erw [← Category.assoc, pairWord_map, Category.assoc] at h'
   exact h'
 
-/-- Whole path concatenation is preserved in every original scalar degree. -/
+/-- Path concatenation is preserved in every scalar degree. -/
 theorem action_comp_apply (n : SimplexCategoryᵒᵖ) {x y z : O}
     (p : SimplicialQuiver.Path (quiver A.A) n x y)
     (q : SimplicialQuiver.Path (quiver A.A) n y z) :
@@ -100,13 +100,13 @@ theorem action_comp_apply (n : SimplexCategoryᵒᵖ) {x y z : O}
       (algebraComposition A x y z).app n ((action A x y).app n p, (action A y z).app n q) :=
   congrArg (fun f => f.app n (p, q)) (action_composition A x y z)
 
-/-- Every original generating scalar arrow is retained by the algebra action. -/
+/-- Every generating scalar arrow is retained by the algebra action. -/
 theorem action_generator_apply (n : SimplexCategoryᵒᵖ) {x y : O} (f : (A.A (x, y)).obj n) :
     (action A x y).app n ((SimplicialQuiver.generator (quiver A.A) x y).app n f) = f :=
   congrArg (fun k => k.app n f) (generator_action A x y)
 
-/-- The two algebra equations construct the genuine simplicial enrichment on the original
-objects. -/
+/-- The two algebra equations construct the simplicial enrichment on the 
+Objects. -/
 @[instance_reducible]
 def algebraEnrichment : EnrichedCategory SSet.{u} O where
   Hom x y := A.A (x, y)
@@ -162,12 +162,12 @@ def algebraEnrichment : EnrichedCategory SSet.{u} O where
       (@Quiver.Path.comp_assoc O (SimplicialQuiver.quiverAt (quiver A.A) n) w x y z p q
         r)).trans hr')
 
-/-- Bundle the constructed enrichment without changing its original object or whole Hom family. -/
+/-- Bundle the constructed enrichment without changing its object or Hom family. -/
 def ofAlgebra : FixedObjects O := by
   letI := algebraEnrichment A
   exact of O
 
-/-- Every actual algebra action is the full enriched path-evaluation map into the
+/-- Every algebra action is the full enriched path-evaluation map into the
 constructed enrichment. -/
 def actionMap : FreeQuiver.object (quiver A.A) ⟶ ofAlgebra A :=
   ofHomMaps (fun x y => action A x y)

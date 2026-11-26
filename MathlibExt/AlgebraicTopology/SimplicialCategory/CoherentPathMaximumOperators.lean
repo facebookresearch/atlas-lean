@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentPathFlagCompariso
 import Mathlib.AlgebraicTopology.SimplexCategory.Augmented.Monoidal
 
 /-!
-# Actual simplex operators on original last-front path maxima
+# Simplex operators on last-front path maxima
 
 The right join of a front simplex operator and the identity of the last
-vertex acts by the original path direct image. Its maximum is the image
-of the same original front maximum, for faces and degeneracies alike.
+vertex acts by the path direct image. Its maximum is the image
+of the same front maximum, for faces and degeneracies alike.
 -/
 
 noncomputable section
@@ -27,39 +27,39 @@ namespace CategoryTheory.CoherentRealization.PathMaximumOperators
 open PathLastMaximum
 variable {n m : ℕ}
 
-/-- The actual ordinal-sum operator, fixing the last vertex and applying the supplied
+/-- The ordinal-sum operator, fixing the last vertex and applying the supplied
 operator to the front. -/
 abbrev extension (θ : ⦋n⦌ ⟶ ⦋m⦌) : ⦋n + 1⦌ ⟶ ⦋m + 1⦌ :=
   AugmentedSimplexCategory.tensorHomOf θ (𝟙 ⦋0⦌)
 
-/-- The genuine join operator sends each original front vertex to its supplied front image. -/
+/-- The join operator sends each front vertex to its supplied front image. -/
 theorem extension_front (θ : ⦋n⦌ ⟶ ⦋m⦌) (j : Fin (n + 1)) :
     (extension θ).toOrderHom j.castSucc = (θ.toOrderHom j).castSucc := by
   change Fin.addCases (fun j => (θ.toOrderHom j).castAdd 1)
     (fun j : Fin 1 => j.natAdd (m + 1)) (j.castAdd 1) = (θ.toOrderHom j).castAdd 1
   exact Fin.addCases_left j
 
-/-- The genuine right join operator retains the actual last vertex. -/
+/-- The right join operator retains the last vertex. -/
 theorem extension_last (θ : ⦋n⦌ ⟶ ⦋m⦌) :
     (extension θ).toOrderHom (Fin.last (n + 1)) = Fin.last (m + 1) := by
   change Fin.addCases (fun j => (θ.toOrderHom j).castAdd 1)
     (fun j : Fin 1 => j.natAdd (m + 1)) ((0 : Fin 1).natAdd (n + 1)) = (0 : Fin 1).natAdd (m + 1)
   exact Fin.addCases_right 0
 
-/-- The lifted right join operator sends the same actual original front label to its lifted
+/-- The lifted right join operator sends the same front label to its lifted
 image. -/
 theorem lifted_front (θ : ⦋n⦌ ⟶ ⦋m⦌) (j : Fin (n + 1)) :
     (extension θ).toOrderHom.uliftMap (ULift.up.{u} j.castSucc) =
       ULift.up.{u} (θ.toOrderHom j).castSucc :=
   congrArg ULift.up (extension_front θ j)
 
-/-- The lifted right join operator retains the same actual last endpoint. -/
+/-- The lifted right join operator retains the same last endpoint. -/
 theorem lifted_last (θ : ⦋n⦌ ⟶ ⦋m⦌) :
     (extension θ).toOrderHom.uliftMap (ULift.up.{u} (Fin.last (n + 1))) =
       ULift.up.{u} (Fin.last (m + 1)) :=
   congrArg ULift.up (extension_last θ)
 
-/-- The original direct-image last path under the actual right join simplex operator. -/
+/-- The direct-image last path under the right join simplex operator. -/
 def image (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) (p : LastPath.{u} i) :
     LastPath.{u} (θ.toOrderHom i) where
   I := (extension θ).toOrderHom.uliftMap '' p.I
@@ -82,11 +82,11 @@ def image (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) (p : LastPath.{u} i) :
     rw [lifted_last] at h
     exact h
 
-/-- The actual image retains the same whole path direct-image subset. -/
+/-- The image retains the same path direct-image subset. -/
 theorem image_I (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) (p : LastPath.{u} i) :
     (image θ i p).I = (extension θ).toOrderHom.uliftMap '' p.I := rfl
 
-/-- The original front maximum commutes with every actual simplex operator, including
+/-- The front maximum commutes with every simplex operator, including
 noninjective degeneracies. -/
 theorem maximum_image (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) (p : LastPath.{u} i) :
     maximum (θ.toOrderHom i) (image θ i p) = θ.toOrderHom (maximum i p) := by
@@ -117,13 +117,13 @@ theorem maximum_image (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) (p : LastPath
     refine ⟨ULift.up.{u} (maximum i p).castSucc, (mem_frontSet i p _).mp (maximum_mem i p), ?_⟩
     exact congrArg ULift.up (extension_front θ (maximum i p))
 
-/-- The whole original direct-image path functor for the actual right join operator. -/
+/-- The direct-image path functor for the right join operator. -/
 def imageFunctor (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) :
     LastPath.{u} i ⥤ LastPath.{u} (θ.toOrderHom i) where
   obj := image θ i
   map f := ⟨homOfLE (Set.image_mono f.hom.down.down)⟩
 
-/-- The actual maximum functor is natural for every original front simplex operator. -/
+/-- The maximum functor is natural for every front simplex operator. -/
 theorem maximumFunctor_naturality (θ : ⦋n⦌ ⟶ ⦋m⦌) (i : Fin (n + 1)) :
     imageFunctor θ i ⋙ maximumFunctor (θ.toOrderHom i) =
       maximumFunctor i ⋙ θ.toOrderHom.uliftMap.monotone.functor := by

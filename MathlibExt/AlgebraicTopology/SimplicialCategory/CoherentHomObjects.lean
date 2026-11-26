@@ -11,13 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentRepresentables
 import MathlibExt.AlgebraicTopology.SimplicialCategory.StrictIsoHom
 
 /-!
-# The actual coherent realization mapping objects
+# Mapping objects of coherent realization
 
-A strict enriched isomorphism induces a genuine isomorphism on each
-whole original Hom simplicial set. Applied to the proved standard-simplex
-comparison, this identifies the actual realization Hom objects with the
-original endpoint-containing interval-subset nerves, including all
-scalar degrees and the original enriched composition.
+An isomorphism of simplicial enrichments induces an isomorphism on every
+Hom simplicial set. For a standard simplex, its realization Hom objects
+are the nerves of endpoint-containing interval-subset posets, with
+Composition induced by union.
 -/
 
 noncomputable section
@@ -28,15 +27,15 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment
 
-/-- A whole enriched-functor equality gives the actual Hom-map equality with its precise
+/-- An enriched-functor equality gives the Hom-map equality with its precise
 endpoint transports. -/
 theorem enriched_map_of_eq {C D : Carrier.{u}} {F G : C ⟶ D} (h : F = G) (x y : C) :
     F.map x y ≫ eqToHom (congrArg₂ (fun x y : D => x ⟶[SSet.{u}] y)
       (congrArg (fun F : C ⟶ D => F.obj x) h) (congrArg (fun F : C ⟶ D => F.obj y) h)) =
         G.map x y :=
-  functorHom_congr h x y
+  EnrichedFunctor.homMap_transport_of_eq h x y
 
-/-- Both actual enriched inverse maps read back the identity on the entire original Hom
+/-- Both enriched inverse maps read back the identity on the Hom
 simplicial set. -/
 theorem iso_hom_inv_readback {C D : Carrier.{u}} (e : C ≅ D) (x y : C) :
     (e.hom.map x y ≫ e.inv.map (e.hom.obj x) (e.hom.obj y)) ≫
@@ -45,14 +44,14 @@ theorem iso_hom_inv_readback {C D : Carrier.{u}} (e : C ≅ D) (x y : C) :
         (congrArg (fun F : C ⟶ C => F.obj y) e.hom_inv_id)) = 𝟙 (x ⟶[SSet.{u}] y) :=
   enriched_map_of_eq e.hom_inv_id x y
 
-/-- The coherent-realization name retains the canonical whole strict Hom isomorphism and its
-original maps. -/
+/-- The coherent-realization name retains the canonical strict Hom isomorphism and its
+Maps. -/
 abbrev isoHomIso {C D : Carrier.{u}} (e : C ≅ D) (x y : C) :
     (x ⟶[SSet.{u}] y) ≅ (e.hom.obj x ⟶[SSet.{u}] e.hom.obj y) :=
   SimplicialEnrichment.isoHomIso e x y
 
-/-- The actual realization Hom at two individual standard-simplex vertices is the original coherent
-  interval-subset nerve. -/
+/-- The realization Hom at two individual standard-simplex vertices is the coherent
+ interval-subset nerve. -/
 def simplexHomIso (n : SimplexCategory) (i j : Fin (n.len + 1)) :
     hom (SSet.stdSimplex.{u}.obj n)
       (SSet.stdSimplex.objEquiv.symm (SimplexCategory.const ⦋0⦌ n i))
@@ -62,7 +61,7 @@ def simplexHomIso (n : SimplexCategory) (i j : Fin (n.len + 1)) :
     (SSet.stdSimplex.objEquiv.symm (SimplexCategory.const ⦋0⦌ n i))
     (SSet.stdSimplex.objEquiv.symm (SimplexCategory.const ⦋0⦌ n j))
 
-/-- The mapping-object comparison preserves the entire original enriched composition, which
+/-- The mapping-object comparison preserves the enriched composition, which
 is coherent-path union. -/
 theorem simplexHomIso_comp (n : SimplexCategory) (i j k : Fin (n.len + 1)) :
     eComp SSet.{u} (C := realization (SSet.stdSimplex.obj n))

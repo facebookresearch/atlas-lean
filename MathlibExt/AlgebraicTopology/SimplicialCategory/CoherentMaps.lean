@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentExt
 
 /-!
-# Actual maps of coherent realizations
+# Maps of coherent realizations
 
-An original simplicial map sends a coherent generator to the same
+A simplicial map sends a coherent generator to the same
 coherent Hom simplex over the image input simplex. The two endpoint
-equations are the actual vertex naturality equations. The defining
+equations are the vertex naturality equations. The defining
 relations are preserved by construction and the resulting enriched map
-acts on every whole original Hom path.
+acts on every Hom path.
 -/
 
 noncomputable section
@@ -27,19 +27,19 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment SimplicialQuiver
 
-/-- Original vertex evaluation is natural for an actual simplicial map. -/
+/-- Vertex evaluation is natural for a simplicial map. -/
 theorem vertex_map {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCategory} (σ : K.obj (op n))
     (i : coherentSimplex.{u} n) :
     vertex L (f.app (op n) σ) i = f.app (op ⦋0⦌) (vertex K σ i) :=
   congr($(f.naturality (SimplexCategory.const ⦋0⦌ n i.as.down).op) σ).symm
 
-/-- The same actual original endpoint equation at the image supplied vertex. -/
+/-- The same endpoint equation at the image supplied vertex. -/
 theorem vertex_image {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCategory} (σ : K.obj (op n))
     (i : coherentSimplex.{u} n) {x : K _⦋0⦌} (hx : vertex K σ i = x) :
     vertex L (f.app (op n) σ) i = f.app (op ⦋0⦌) x :=
   (vertex_map f σ i).trans (congrArg (fun x => f.app (op ⦋0⦌) x) hx)
 
-/-- The actual original image interpretation of the coherent generating quiver. -/
+/-- The image interpretation of the coherent generating quiver. -/
 def mapInterpretation {K L : SSet.{u}} (f : K ⟶ L) :
     Interpretation (generatingQuiver K) (realization L) where
   obj x := f.app (op ⦋0⦌) x
@@ -50,7 +50,7 @@ def mapInterpretation {K L : SSet.{u}} (f : K ⟶ L) :
         (vertex_image f a.simplex a.target a.target_eq) a.hom)
     naturality q r g := by ext a; rfl }
 
-/-- A coherent generating path maps to the same actual Hom simplex over its image original
+/-- A coherent generating path maps to the same Hom simplex over its image 
 simplex. -/
 theorem map_eval_arrow {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}
@@ -61,7 +61,7 @@ theorem map_eval_arrow {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCategory} (σ 
         (arrowPath L (f.app (op n) σ) i j (vertex_image f σ i hx) (vertex_image f σ j hy) a) :=
   congr($((mapInterpretation f).generator_eval x y).app q (arrow K σ i j hx hy a))
 
-/-- The actual image interpretation respects all original coherent presentation equations. -/
+/-- The image interpretation respects all coherent presentation equations. -/
 theorem map_relations {K L : SSet.{u}} (f : K ⟶ L) (q : SimplexCategoryᵒᵖ)
     (x y : K _⦋0⦌) (p r : Path (generatingQuiver K) q x y) (h : relations K q x y p r) :
     (mapInterpretation f).evalPath q p = (mapInterpretation f).evalPath q r := by
@@ -116,15 +116,15 @@ theorem map_relations {K L : SSet.{u}} (f : K ⟶ L) (q : SimplexCategoryᵒᵖ)
           ((vertex_operator K g σ i).symm.trans hx) ((vertex_operator K g σ j).symm.trans hy)
             (((coherentSimplexMap g).map i j).app q a)).symm))
 
-/-- The genuine enriched realization map on all whole original coherent Hom paths. -/
+/-- The enriched realization map on all coherent Hom paths. -/
 def realizationMap {K L : SSet.{u}} (f : K ⟶ L) : realization K ⟶ realization L :=
   (mapInterpretation f).descend (relations K) (map_relations f)
 
-/-- The actual realization map has exactly the original map on individual vertices. -/
+/-- The realization map has exactly the map on individual vertices. -/
 theorem realizationMap_obj {K L : SSet.{u}} (f : K ⟶ L) (x : K _⦋0⦌) :
     (realizationMap f).obj x = f.app (op ⦋0⦌) x := rfl
 
-/-- Whole inserted coherent Homs commute with the original realization map and its actual
+/-- Inserted coherent Homs commute with the realization map and its 
 endpoint equations. -/
 theorem realizationMap_simplexHom {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCategory}
     (σ : K.obj (op n)) (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}

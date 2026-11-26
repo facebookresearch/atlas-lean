@@ -12,12 +12,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectHomMaps
 import Mathlib.CategoryTheory.Monoidal.Limits.Basic
 
 /-!
-# Actual limits of fixed-object simplicial enrichments
+# Limits of fixed-object simplicial enrichments
 
 The scalar limit functor has its native lax monoidal structure. Transport
-of the actual Hom-diagram enrichment therefore constructs the limit on
-the same original object labels. Its whole enriched cone and universal
-property retain every original Hom simplex, identity and composition.
+of the Hom-diagram enrichment therefore constructs the limit on
+the same object labels. Its enriched cone and universal
+property retain every Hom simplex, identity and composition.
 -/
 
 noncomputable section
@@ -29,25 +29,25 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects.HomLimit
 variable {O : Type u} {J : Type v} [SmallCategory J] [HasLimitsOfShape J SSet.{u}]
   (F : J ⥤ FixedObjects O)
 
-/-- The actual scalar limit enrichment on the same individually supplied original labels. -/
+/-- The scalar limit enrichment on the same individually supplied labels. -/
 def object : FixedObjects O := by
   letI := diagramEnrichment F
   let X := TransportEnrichment (lim : (J ⥤ SSet.{u}) ⥤ SSet.{u}) O
   exact ⟨SimplicialEnrichment.of X, rfl⟩
 
-/-- The whole original limit Hom is the actual scalar limit of those same Hom objects. -/
+/-- The limit Hom is the scalar limit of those same Hom objects. -/
 theorem object_hom (x y : O) : hom (object F) x y = limit (homDiagram F x y) := rfl
 
-/-- The native lax monoidal unit gives the actual original limit identity. -/
+/-- The native lax monoidal unit gives the limit identity. -/
 theorem object_identity (x : O) : identityMap (object F) x =
     Functor.LaxMonoidal.ε (lim : (J ⥤ SSet.{u}) ⥤ SSet.{u}) ≫ lim.map (diagramIdentity F x) := rfl
 
-/-- The native limit tensorator gives actual composition at the same three original labels. -/
+/-- The native limit tensorator gives composition at the same three labels. -/
 theorem object_composition (x y z : O) : compositionMap (object F) x y z =
     Functor.LaxMonoidal.μ (lim : (J ⥤ SSet.{u}) ⥤ SSet.{u}) (homDiagram F x y) (homDiagram F y z) ≫
       lim.map (diagramComposition F x y z) := rfl
 
-/-- The actual scalar Hom projection at the supplied indexing object. -/
+/-- The scalar Hom projection at the supplied indexing object. -/
 def projectionHom (j : J) (x y : O) : hom (object F) x y ⟶ hom (F.obj j) x y :=
   limit.π (homDiagram F x y) j
 
@@ -67,15 +67,15 @@ private theorem projection_composition (j : J) (x y z : O) :
   rw [Category.assoc, limMap_π, ← Category.assoc, lim_μ_π]
   rfl
 
-/-- The genuine whole enriched limit projection fixes every individual original label. -/
+/-- The enriched limit projection fixes every individual label. -/
 def projection (j : J) : object F ⟶ F.obj j :=
   ofHomMaps (projectionHom F j) (projection_identity F j) (projection_composition F j)
 
-/-- The whole original Hom map of the limit projection is its literal scalar limit leg. -/
+/-- The Hom map of the limit projection is its literal scalar limit leg. -/
 theorem homMap_projection (j : J) (x y : O) :
     homMap (projection F j) x y = limit.π (homDiagram F x y) j := homMap_ofHomMaps _ _ _ x y
 
-/-- The actual original fixed-object limit cone. -/
+/-- The fixed-object limit cone. -/
 def cone : Cone F where
   pt := object F
   π := {
@@ -88,10 +88,10 @@ def cone : Cone F where
         homMap_comp, homMap_projection]
       exact (limit.w (homDiagram F x y) f).symm }
 
-/-- Evaluate the supplied whole original cone at the same two individual labels. -/
+/-- Evaluate the supplied cone at the same two individual labels. -/
 abbrev homCone (s : Cone F) (x y : O) : Cone (homDiagram F x y) := (evaluation x y).mapCone s
 
-/-- The actual scalar universal Hom map from the supplied original cone. -/
+/-- The scalar universal Hom map from the supplied cone. -/
 def homLift (s : Cone F) (x y : O) : hom s.pt x y ⟶ hom (object F) x y :=
   limit.lift (homDiagram F x y) (homCone F s x y)
 
@@ -133,23 +133,23 @@ private theorem homLift_composition (s : Cone F) (x y z : O) :
             (projectionHom F j x y) (projectionHom F j y z)).symm).trans (Category.assoc _ _ _)
     _ = _ := by rw [Category.assoc, projection_composition]
 
-/-- The genuine whole enriched universal cone map preserves all original identities and
-composition. -/
+/-- The enriched universal cone map preserves all identities and
+Composition. -/
 def lift (s : Cone F) : s.pt ⟶ object F := ofHomMaps (homLift F s) (homLift_identity F s)
   (homLift_composition F s)
 
-/-- The universal enriched map has the same whole scalar Hom lift. -/
+/-- The universal enriched map has the same scalar Hom lift. -/
 theorem homMap_lift (s : Cone F) (x y : O) : homMap (lift F s) x y = homLift F s x y :=
   homMap_ofHomMaps _ _ _ x y
 
-/-- Every original whole cone leg is read back exactly by the limit universal map. -/
+/-- Every cone leg is read back exactly by the limit universal map. -/
 theorem lift_projection (s : Cone F) (j : J) : lift F s ≫ projection F j = s.π.app j := by
   apply homMaps_ext
   intro x y
   rw [homMap_comp, homMap_lift, homMap_projection]
   exact limit.lift_π (homCone F s x y) j
 
-/-- The actual fixed-object enriched cone has the full original limit universal property. -/
+/-- The fixed-object enriched cone has the limit universal property. -/
 def isLimit : IsLimit (cone F) where
   lift := lift F
   fac := lift_projection F
@@ -172,7 +172,7 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 
 variable {O : Type u} {J : Type v} [SmallCategory J] [HasLimitsOfShape J SSet.{u}]
 
-/-- Actual scalar limits supply all limits of this small shape in the original fixed-object
+/-- Scalar limits supply all limits of this small shape in the fixed-object
 enrichment category. -/
 instance hasLimitsOfShape : HasLimitsOfShape J (FixedObjects O) where
   has_limit F := ⟨⟨HomLimit.cone F, HomLimit.isLimit F⟩⟩

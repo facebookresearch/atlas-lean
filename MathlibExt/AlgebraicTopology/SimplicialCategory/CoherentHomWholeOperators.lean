@@ -10,10 +10,10 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomFrontRestriction
 
 /-!
-# All original simplex-operator laws of the whole Hom construction
+# All simplex-operator laws of the Hom construction
 
-The entire enriched simplex constructed from a supplied original Hom
-simplex commutes with every actual right-join operator. Original
+The enriched simplex constructed from a supplied Hom
+simplex commutes with every right-join operator. 
 front, last and empty reverse intervals remain separate in the proof.
 -/
 
@@ -59,7 +59,7 @@ private theorem homMap_front_heq (τ : (Δ[n] : SSet.{u}) ⟶ (x ⟶[SSet.{u}] y
         SSet.{u} x) :=
   (comp_eqToHom_heq _ _).symm.trans (heq_of_eq (homMap_front x y τ i j))
 
-/-- The entire original enriched simplex follows every actual front simplex operator joined
+/-- The enriched simplex follows every front simplex operator joined
 with the last identity. -/
 theorem simplex_operator (θ : ⦋n⦌ ⟶ ⦋m⦌) (τ : (Δ[m] : SSet.{u}) ⟶ (x ⟶[SSet.{u}] y)) :
     coherentSimplexMap (extension θ) ≫ simplex x y τ = simplex x y (SSet.stdSimplex.map θ ≫ τ) := by

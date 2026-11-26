@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomFrontFamily
 
 /-!
-# Actual postcomposition of front-compatible Hom families
+# Postcomposition of front-compatible Hom families
 
-Strict original enriched maps act on the actual whole last-interval
-families. The corresponding entire enriched simplex follows that same
-map, including the original source, target and constant front identities.
+Strict enriched maps act on the last-interval
+families. The corresponding enriched simplex follows that same
+map, including the source, target and constant front identities.
 There is no Kan, weak-equivalence or comparison outcome hypothesis.
 -/
 
@@ -27,7 +27,7 @@ namespace CategoryTheory.CoherentRealization.HomFrontFamilyStrictMaps
 open SimplicialEnrichment HomFrontFamily
 variable {C D : Carrier.{u}} {n : ℕ} (F : C ⟶ D) (x y : C)
 
-/-- Postcompose every actual original last-interval map by the same supplied strict enriched
+/-- Postcompose every last-interval map by the same supplied strict enriched
 functor. -/
 def postFamily (family : Family x y n) : Family (C := D) (F.obj x) (F.obj y) n where
   map i := family.map i ≫ F.map x y
@@ -35,12 +35,10 @@ def postFamily (family : Family x y n) : Family (C := D) (F.obj x) (F.obj y) n w
 
 private theorem map_reindex {a a' b b' : C} (ha : a = a') (hb : b = b') :
     F.map a b ≫ EqualityTransport.hom (congrArg F.obj ha) (congrArg F.obj hb) =
-      EqualityTransport.hom ha hb ≫ F.map a' b' := by
-  subst a'
-  subst b'
-  simp only [EqualityTransport.hom, eqToHom_refl, Category.id_comp, Category.comp_id]
+      EqualityTransport.hom ha hb ≫ F.map a' b' :=
+  EnrichedHomEqualityTransport.functor_map F ha hb
 
-/-- The actual source/last object assignment follows the same original strict enriched functor. -/
+/-- The source/last object assignment follows the same strict enriched functor. -/
 theorem object_map (a : Fin (n + 2)) :
     F.obj (HomFrontFamily.object x y a) = HomFrontFamily.object (F.obj x) (F.obj y) a := by
   cases a using Fin.lastCases <;>
@@ -60,9 +58,10 @@ private theorem postcomp_retarget {X : SSet.{u}} {a a' b b' : C} (ha : a = a') (
       (U ≫ F.map a b) ≫ EqualityTransport.hom (congrArg F.obj ha) (congrArg F.obj hb) :=
     (Category.assoc _ _ _).trans
       ((congrArg (fun t => U ≫ t) h.symm).trans (Category.assoc _ _ _).symm)
+  dsimp only [EqualityTransport.hom, EnrichedHomEqualityTransport.hom] at h₀
   exact (heq_of_eq h₀).trans (comp_eqToHom_heq _ _)
 
-/-- The entire original maximum simplex follows the same supplied strict enriched map. -/
+/-- The maximum simplex follows the same supplied strict enriched map. -/
 theorem simplex_postcompose (family : Family x y n) :
     simplex x y family ≫ F = simplex (F.obj x) (F.obj y) (postFamily F x y family) := by
   let L := simplex x y family ≫ F
@@ -80,7 +79,8 @@ theorem simplex_postcompose (family : Family x y n) :
             cases b using Fin.lastCases with
             | last =>
               change (homMap x y family _ _ ≫ F.map _ _) ≍ homMap (F.obj x) (F.obj y) _ _ _
-              simp only [homMap, Fin.lastCases_last]
+              simp only [homMap, EqualityTransport.hom, EnrichedHomEqualityTransport.hom,
+                Fin.lastCases_last]
               have h := postcomp_retarget F (object_last (n := n) x y).symm (object_last (n
                 := n) x y).symm
                 (toUnit (nerve (SimplicialThickening.Path (ULift.up.{u} (Fin.last (n + 1)))
@@ -109,7 +109,8 @@ theorem simplex_postcompose (family : Family x y n) :
             cases b using Fin.lastCases with
             | last =>
               change (homMap x y family _ _ ≫ F.map _ _) ≍ homMap (F.obj x) (F.obj y) _ _ _
-              simp only [homMap, Fin.lastCases_castSucc, Fin.lastCases_last]
+              simp only [homMap, EqualityTransport.hom, EnrichedHomEqualityTransport.hom,
+                Fin.lastCases_castSucc, Fin.lastCases_last]
               exact (postcomp_retarget F (object_front x y i).symm (object_last (n :=
                 n) x y).symm (family.map i)).trans
                 ((heq_of_eq ((rfl : family.map i ≫ F.map x y =
@@ -117,7 +118,8 @@ theorem simplex_postcompose (family : Family x y n) :
                   (comp_eqToHom_heq _ _).symm)
             | cast j =>
               change (homMap x y family _ _ ≫ F.map _ _) ≍ homMap (F.obj x) (F.obj y) _ _ _
-              simp only [homMap, Fin.lastCases_castSucc]
+              simp only [homMap, EqualityTransport.hom, EnrichedHomEqualityTransport.hom,
+                Fin.lastCases_castSucc]
               have h := postcomp_retarget F (object_front x y i).symm (object_front x y
                 j).symm (toUnit
                 (nerve (SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u}

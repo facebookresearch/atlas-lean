@@ -12,15 +12,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedSingletonHomUnits
 import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedEqualityTransport
 
 /-!
-# Whole coherent simplices from actual front-compatible Hom families
+# Coherent simplices from front-compatible Hom families
 
-An actual family of last-interval maps, compatible with each original
-front-prefix union, supplies all Hom maps of a genuine enriched simplex.
-Its front identities, reverse empty intervals, units and composition
-are proved using the original interval nerves. The input consists of
-these actual Hom maps and their generating union law, not a comparison
-or weak-equivalence outcome. The original Hom simplex construction of
-`CoherentHomSimplex` is the instance of this one for the maximum maps.
+Last-interval Hom maps compatible with union by a front interval define
+an enriched simplex. Every front object is the specified source and the
+last object is the specified target. The maximum maps associated with
+a Hom simplex give one such family.
 -/
 
 noncomputable section
@@ -31,11 +28,11 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.HomFrontFamily
 open SimplicialEnrichment PathLastMaximum
 
-/-- Actual original last-interval maps with their generating front-prefix union law. -/
+/-- Last-interval maps with their generating front-prefix union law. -/
 structure Family {C : Carrier.{u}} (x y : C) (n : ℕ) where
-  /-- The whole map on each original last interval. -/
+  /-- The map on each last interval. -/
   map (i : Fin (n + 1)) : nerve (LastPath.{u} i) ⟶ (x ⟶[SSet.{u}] y)
-  /-- Union with an original front-prefix interval reads the same actual last factor. -/
+  /-- Union with a front-prefix interval reads the same last factor. -/
   map_comp (i j : Fin (n + 1)) (q : SimplexCategoryᵒᵖ)
       (p : (nerve (SimplicialThickening.Path (ULift.up.{u} i.castSucc) (ULift.up.{u}
         j.castSucc))).obj q)
@@ -46,17 +43,17 @@ structure Family {C : Carrier.{u}} (x y : C) (n : ℕ) where
 
 variable {C : Carrier.{u}} {n : ℕ} (x y : C) (family : Family x y n)
 
-/-- The supplied source at every original front vertex and supplied target at the actual
+/-- The supplied source at every front vertex and supplied target at the 
 last vertex. -/
 abbrev object (a : Fin (n + 2)) : C := Fin.lastCases y (fun _ => x) a
 
-/-- The original front object reads the supplied source. -/
+/-- The front object reads the supplied source. -/
 theorem object_front (i : Fin (n + 1)) : object x y i.castSucc = x := Fin.lastCases_castSucc i
 
-/-- The original last object reads the supplied target. -/
+/-- The last object reads the supplied target. -/
 theorem object_last : object x y (Fin.last (n + 1)) = y := Fin.lastCases_last
 
-/-- The actual whole Hom maps, including constant original front identities and genuinely
+/-- The Hom maps, including constant front identities and genuinely
 empty reverse intervals. -/
 def homMap (a b : Fin (n + 2)) :
     nerve (SimplicialThickening.Path (ULift.up.{u} a) (ULift.up.{u} b)) ⟶
@@ -82,38 +79,41 @@ def homMap (a b : Fin (n + 2)) :
       exact (toUnit _ ≫ eId SSet.{u} x) ≫
         EqualityTransport.hom (object_front x y i).symm (object_front x y j).symm
 
-/-- The whole original last Hom map reads back the maximum map after the exact endpoint
+/-- The last Hom map reads back the maximum map after the exact endpoint
 equalities. -/
 theorem homMap_last (i : Fin (n + 1)) :
     homMap x y family i.castSucc (Fin.last (n + 1)) ≫
       eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b) (object_front x y i)
         (object_last x y)) = family.map i := by
-  simp only [homMap, EqualityTransport.hom, Fin.lastCases_castSucc, Fin.lastCases_last,
+  simp only [homMap, EqualityTransport.hom, EnrichedHomEqualityTransport.hom,
+    Fin.lastCases_castSucc, Fin.lastCases_last,
     Category.assoc,
     eqToHom_trans, eqToHom_refl, Category.comp_id]
 
-/-- The whole original front Hom map reads back the supplied source identity after the same
+/-- The front Hom map reads back the supplied source identity after the same
 exact endpoint
-  equalities. -/
+ equalities. -/
 theorem homMap_front (i j : Fin (n + 1)) :
     homMap x y family i.castSucc j.castSucc ≫
       eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b) (object_front x y i)
         (object_front x y j)) =
       toUnit _ ≫ eId SSet.{u} x := by
-  simp only [homMap, EqualityTransport.hom, Fin.lastCases_castSucc, Category.assoc, eqToHom_trans,
+  simp only [homMap, EqualityTransport.hom, EnrichedHomEqualityTransport.hom,
+    Fin.lastCases_castSucc, Category.assoc, eqToHom_trans,
     eqToHom_refl, Category.comp_id]
 
-/-- The last whole diagonal Hom map reads back the supplied target identity after its exact
+/-- The last diagonal Hom map reads back the supplied target identity after its exact
 object equality. -/
 theorem homMap_last_last :
     homMap x y family (Fin.last (n + 1)) (Fin.last (n + 1)) ≫
       eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b) (object_last x y) (object_last x y)) =
       toUnit _ ≫ eId SSet.{u} y := by
-  simp only [homMap, EqualityTransport.hom, Fin.lastCases_last, Category.assoc,
+  simp only [homMap, EqualityTransport.hom, EnrichedHomEqualityTransport.hom,
+    Fin.lastCases_last, Category.assoc,
     eqToHom_trans, eqToHom_refl,
     Category.comp_id]
 
-/-- The constructed whole Hom maps preserve the original enriched identity at every original
+/-- The constructed Hom maps preserve the enriched identity at every 
 vertex. -/
 theorem homMap_id (a : Fin (n + 2)) :
     eId SSet.{u} (SimplicialThickening.mk (ULift.up.{u} a)) ≫ homMap x y family a a =
@@ -136,8 +136,8 @@ theorem homMap_id (a : Fin (n + 2)) :
     ext q p
     rfl
 
-/-- The constructed whole Hom maps preserve actual original union composition at every
-triple of original vertices. -/
+/-- The constructed Hom maps preserve union composition at every
+triple of vertices. -/
 theorem homMap_comp (a b c : Fin (n + 2)) :
     eComp SSet.{u} (SimplicialThickening.mk (ULift.up.{u} a))
       (SimplicialThickening.mk (ULift.up.{u} b)) (SimplicialThickening.mk (ULift.up.{u} c))
@@ -234,20 +234,20 @@ theorem homMap_comp (a b c : Fin (n + 2)) :
             (eId SSet.{u} x).app q PUnit.unit)
         exact congr($(e_id_comp SSet.{u} x x).app q ((eId SSet.{u} x).app q PUnit.unit)).symm
 
-/-- The actual enriched coherent simplex, with the original supplied source and target and
-every whole Hom map. -/
+/-- The enriched coherent simplex, with the supplied source and target and
+every Hom map. -/
 def simplex : coherentSimplex.{u} ⦋n + 1⦌ ⟶ C where
   obj a := object x y a.as.down
   map a b := homMap x y family a.as.down b.as.down
   map_id a := homMap_id x y family a.as.down
   map_comp a b c := homMap_comp x y family a.as.down b.as.down c.as.down
 
-/-- Every front object is the supplied individual original source. -/
+/-- Every front object is the supplied individual source. -/
 theorem simplex_front (i : Fin (n + 1)) : (simplex x y family).obj (.mk (ULift.up
   i.castSucc)) = x := by
   simp only [simplex, object_front]
 
-/-- The actual last object is the supplied individual original target. -/
+/-- The last object is the supplied individual target. -/
 theorem simplex_last : (simplex x y family).obj (.mk (ULift.up (Fin.last (n + 1)))) = y := by
   simp only [simplex, object_last]
 

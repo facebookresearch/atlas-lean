@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomOpenBox
 
 /-!
-# Genuine relative lifting of the original coherent Hom open box
+# Relative lifting of the coherent Hom open box
 
-The existing actual scalar anodyne inclusion lifts against a genuine
-Kan–Quillen fibration, retaining both the whole prescribed box map and
-the whole prescribed target Hom map. No ambient source or target Kan
+The scalar anodyne inclusion lifts against a 
+Kan–Quillen fibration, retaining both the prescribed box map and
+the prescribed target Hom map. No ambient source or target Kan
 hypothesis and no enriched model outcome is assumed.
 -/
 
@@ -27,7 +27,7 @@ namespace CategoryTheory.CoherentRealization.RelativeOpenBox
 
 variable {J : Type u} [LinearOrder J] {i j : J}
 
-/-- An original coherent open-box square lifts through an actual scalar fibration with both
+/-- A coherent open-box square lifts through a scalar fibration with both
 full equations. -/
 theorem exists_fill (hij : i ≤ j) (k : IntervalHom.Interior i j)
     {X Y : SSet.{u}} (p : X ⟶ Y) [Fibration p]

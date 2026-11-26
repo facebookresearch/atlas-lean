@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentVertices
 
 /-!
-# Literal identity and empty original coherent Hom objects
+# Literal identity and empty coherent Hom objects
 
-A same-endpoint interval path is the original singleton path. Its whole
-Hom nerve is the actual tensor unit. A reverse interval has no original
-path simplex in any scalar degree. These facts keep the original objects
+A same-endpoint interval path is the singleton path. Its 
+Hom nerve is the tensor unit. A reverse interval has no 
+path simplex in any scalar degree. These facts keep the objects
 and do not use a Kan or enriched-model assumption.
 -/
 
@@ -27,7 +27,7 @@ namespace CategoryTheory.CoherentRealization.HomUnitsAndEmpty
 open SimplicialEnrichment
 variable {J : Type u} [LinearOrder J]
 
-/-- A same-endpoint original interval path is determined by that individual endpoint. -/
+/-- A same-endpoint interval path is determined by that individual endpoint. -/
 theorem diagonalPath_unique (a : J) (p q : SimplicialThickening.Path a a) : p = q := by
   apply SimplicialThickening.Path.ext
   ext x
@@ -44,13 +44,13 @@ private instance (a : J) (p q : SimplicialThickening.Path a a) : Subsingleton (p
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
 
-/-- Every original same-endpoint scalar Hom simplex is the same whole singleton path chain. -/
+/-- Every same-endpoint scalar Hom simplex is the same singleton path chain. -/
 theorem diagonalSimplex_unique (a : J) (q : SimplexCategoryᵒᵖ)
     (p r : (nerve (SimplicialThickening.Path a a)).obj q) : p = r :=
   CategoryTheory.Functor.ext (fun _ => diagonalPath_unique a _ _) (fun _ _ _ =>
     Subsingleton.elim _ _)
 
-/-- The actual enriched identity gives the whole original same-endpoint Hom isomorphism from
+/-- The enriched identity gives the same-endpoint Hom isomorphism from
 the tensor unit. -/
 def unitIso (a : J) : 𝟙_ SSet.{u} ≅ nerve (SimplicialThickening.Path a a) where
   hom := eId SSet.{u} (SimplicialThickening.mk a)
@@ -68,16 +68,16 @@ def unitIso (a : J) : 𝟙_ SSet.{u} ≅ nerve (SimplicialThickening.Path a a) w
     intro p
     exact diagonalSimplex_unique a q _ _
 
-/-- The original enriched identity map is genuinely an isomorphism on its same-endpoint
-whole Hom. -/
+/-- The enriched identity map is genuinely an isomorphism on its same-endpoint
+Hom. -/
 theorem unit_isIso (a : J) : IsIso (eId SSet.{u} (SimplicialThickening.mk a)) :=
   (unitIso a).isIso_hom
 
-/-- An actual original scalar interval-Hom simplex supplies the original endpoint order. -/
+/-- A scalar intervalHom simplex supplies the endpoint order. -/
 theorem source_order {a b : J} {q : SimplexCategoryᵒᵖ}
     (p : (nerve (SimplicialThickening.Path a b)).obj q) : a ≤ b := (p.obj 0).le
 
-/-- The whole original reverse-interval Hom maps uniquely, since it has no original scalar
+/-- The reverse-interval Hom maps uniquely, since it has no scalar
 simplices. -/
 def emptyMap {a b : J} (h : ¬a ≤ b) (Y : SSet.{u}) : nerve (SimplicialThickening.Path a b) ⟶ Y where
   app q := ↾fun p => False.elim (h (source_order p))
@@ -86,7 +86,7 @@ def emptyMap {a b : J} (h : ¬a ≤ b) (Y : SSet.{u}) : nerve (SimplicialThicken
     intro p
     exact False.elim (h (source_order p))
 
-/-- Two whole maps from a genuinely reverse original interval Hom are equal in every scalar
+/-- Two maps from a genuinely reverse interval Hom are equal in every scalar
 degree. -/
 theorem empty_hom_ext {a b : J} (h : ¬a ≤ b) {Y : SSet.{u}}
     (f g : nerve (SimplicialThickening.Path a b) ⟶ Y) : f = g := by

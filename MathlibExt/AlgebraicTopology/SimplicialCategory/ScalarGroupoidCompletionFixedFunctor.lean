@@ -11,13 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarGroupoidCompletionF
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectHomMaps
 
 /-!
-# The SAME native canonical completion on original fixed-label enrichments
+# Groupoid completion on fixed-object enrichments
 
-The actual full completion object retains the original fixed-label
-object equality. Its SAME original completion map and unit become
-genuine arrows of the original fibre by their actual original object
-functions. Whole identity, composition and unit naturality remain the
-same original enriched maps, with no weak comparison premise.
+Degreewise groupoid completion defines a functor on enrichments with
+fixed object set. Its maps and unit preserve those object labels and
+commute with all simplicial operators.
 -/
 
 noncomputable section
@@ -29,10 +27,10 @@ open FixedObjects
 
 variable {O : Type u}
 
-/-- The SAME actual canonical completion retains its original fixed-label object equality. -/
+/-- The same canonical completion retains its fixed-label object equality. -/
 def fixedObject (C : FixedObjects O) : FixedObjects O := ⟨object C.val, C.property⟩
 
-/-- The SAME entire original canonical completion map lifts to the actual original object fibre. -/
+/-- The same canonical completion map lifts to the object fibre. -/
 def fixedMap {C D : FixedObjects O} (F : C ⟶ D) : fixedObject C ⟶ fixedObject D := by
   refine ⟨map F.val, ?_⟩
   apply IsHomLift.of_fac' forgetObjects (𝟙 O) (map F.val) (fixedObject C).property
@@ -41,7 +39,7 @@ def fixedMap {C D : FixedObjects O} (F : C ⟶ D) : fixedObject C ⟶ fixedObjec
   have h := IsHomLift.fac' forgetObjects (𝟙 O) F.val
   exact h
 
-/-- The SAME actual full original completion unit is a genuine fixed-label arrow. -/
+/-- The same full completion unit is a fixed-label arrow. -/
 def fixedUnit (C : FixedObjects O) : C ⟶ fixedObject C := by
   rcases C with ⟨C, hC⟩
   cases hC
@@ -50,42 +48,42 @@ def fixedUnit (C : FixedObjects O) : C ⟶ fixedObject C := by
   ext x
   rfl
 
-/-- Every original fixed label retains the SAME actual native completed object under its
-whole map. -/
+/-- Every fixed label retains the same native completed object under its
+map. -/
 theorem fixedMap_val {C D : FixedObjects O} (F : C ⟶ D) : (fixedMap F).val = map F.val := rfl
 
-/-- The entire fixed unit reads back to the SAME actual original raw native unit. -/
+/-- The fixed unit reads back to the same raw native unit. -/
 theorem fixedUnit_val (C : FixedObjects O) : (fixedUnit C).val = unit C.val := by
   rcases C with ⟨C, hC⟩
   cases hC
   rfl
 
-/-- The SAME complete original fixed completion map preserves the whole identity. -/
+/-- The same complete fixed completion map preserves the identity. -/
 theorem fixedMap_id (C : FixedObjects O) : fixedMap (𝟙 C) = 𝟙 (fixedObject C) := by
   apply Functor.Fiber.hom_ext
   exact map_id C.val
 
-/-- The actual full fixed completion map retains both SAME original maps under composition. -/
+/-- The full fixed completion map retains both same maps under composition. -/
 theorem fixedMap_comp {C D E : FixedObjects O} (F : C ⟶ D) (G : D ⟶ E) :
     fixedMap (F ≫ G) = fixedMap F ≫ fixedMap G := by
   apply Functor.Fiber.hom_ext
   exact map_comp F.val G.val
 
-/-- The SAME native whole completion functor on the actual original fixed-label fibre. -/
+/-- The same native completion functor on the fixed-label fibre. -/
 def fixedFunctor : FixedObjects O ⥤ FixedObjects O where
   obj := fixedObject
   map := fixedMap
   map_id := fixedMap_id
   map_comp := fixedMap_comp
 
-/-- The actual fixed original unit square is the SAME whole raw enriched unit square. -/
+/-- The fixed unit square is the same raw enriched unit square. -/
 theorem fixedUnit_naturality {C D : FixedObjects O} (F : C ⟶ D) :
     fixedUnit C ≫ fixedMap F = F ≫ fixedUnit D := by
   apply Functor.Fiber.hom_ext
   exact (congrArg (fun m => m ≫ map F.val) (fixedUnit_val C)).trans
     ((unit_naturality F.val).trans (congrArg (fun m => F.val ≫ m) (fixedUnit_val D)).symm)
 
-/-- The SAME actual original unit is a genuine natural transformation of the full original
+/-- The same unit is a natural transformation of the full 
 fixed-label category. -/
 def fixedNaturalUnit : 𝟭 (FixedObjects O) ⟶ fixedFunctor where
   app := fixedUnit

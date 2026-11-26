@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornOutsideInterv
 import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedHomTransportEndpoints
 
 /-!
-# Whole composition of actual supplied outside-face Hom maps
+# Composition of supplied outside-face Hom maps
 
-An original ordinal face whose omitted label lies outside each interval
-has genuine Hom isomorphisms. The supplied horn face therefore gives
-whole composition at those individual original endpoint labels.
+An ordinal face whose omitted label lies outside each interval
+has Hom isomorphisms. The supplied horn face therefore gives
+Composition at those individual endpoint labels.
 -/
 
 noncomputable section
@@ -28,7 +28,7 @@ open SimplicialEnrichment
 variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The actual enriched Hom map of a supplied outside face is an isomorphism. -/
+/-- The enriched Hom map of a supplied outside face is an isomorphism. -/
 theorem outside_isIso (j : Fin (n + 3)) (a' b' : ULift.{u} (Fin (n + 2)))
     (h : (ULift.up j : ULift.{u} (Fin (n + 3))) < (OrdinalFace.embedding j) a' ∨
       (OrdinalFace.embedding j) b' < ULift.up j) :
@@ -36,9 +36,9 @@ theorem outside_isIso (j : Fin (n + 3)) (a' b' : ULift.{u} (Fin (n + 2)))
   (IntervalFaceCover.outsideIso_operator j a' b' h) ▸ (IntervalFaceCover.outsideIso j a'
     b' h).isIso_hom
 
-/-- The actual supplied outside-face map is the genuine Hom-isomorphism transport with its
-two original
-  endpoint equations. -/
+/-- The supplied outside-face map is the Hom-isomorphism transport with its
+two 
+ endpoint equations. -/
 theorem faceMap_eq_transport (j : Fin (n + 3)) (hj : j ≠ i) (a' b' : ULift.{u} (Fin (n + 2)))
     (h : (ULift.up j : ULift.{u} (Fin (n + 3))) < (OrdinalFace.embedding j) a' ∨
       (OrdinalFace.embedding j) b' < ULift.up j)
@@ -68,8 +68,8 @@ theorem faceMap_eq_transport (j : Fin (n + 3)) (hj : j ≠ i) (a' b' : ULift.{u}
   rw [hInv]
   rfl
 
-/-- The supplied outside-face maps preserve actual enriched composition with the same three
-original vertices. -/
+/-- The supplied outside-face maps preserve enriched composition with the same three
+vertices. -/
 theorem faceMap_comp (j : Fin (n + 3)) (hj : j ≠ i) (a' b' c' : ULift.{u} (Fin (n + 2)))
     (hab : (ULift.up j : ULift.{u} (Fin (n + 3))) < (OrdinalFace.embedding j) a' ∨
       (OrdinalFace.embedding j) b' < ULift.up j)

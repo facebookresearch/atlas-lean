@@ -10,13 +10,18 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomBoxWords
 
 /-!
-# Actual open-box inclusions in original coherent Hom objects
+# Open-box inclusions in coherent Hom objects
 
-The source is the genuine distinguished-coordinate scalar box. Its map
-to the actual interval-subset Hom nerve is constructed through the proved
-whole Hom cube isomorphism. The actual range inclusion is anodyne, and
-an actual Kan target admits an extension retaining the whole original
-box. All comparisons use explicit isomorphisms, not higher right properness.
+The coherent Hom open box is the union of the positive faces and the
+negative faces other than the distinguished negative face. Its inclusion
+in the interval-subset Hom nerve is anodyne, so maps from the box to
+a Kan complex extend to the Hom nerve.
+
+## References
+
+- Emily Riehl, *Homotopy coherent structures*, the open-box description
+  in the proof of Theorem II.2.7,
+  https://emilyriehl.github.io/files/coherent-structures.pdf.
 -/
 
 noncomputable section
@@ -29,16 +34,15 @@ open MappingCube CubeBoxes CubeBoundary
 
 variable {J : Type u} [LinearOrder J] {i j : J}
 
-/-- Its actual subcomplex inclusion is an anodyne extension, without an enriched-model
-hypothesis. -/
+/-- The coherent Hom open-box inclusion is an anodyne extension. -/
 theorem subcomplex_anodyne (hij : i ≤ j) (k : IntervalHom.Interior i j) :
     SSet.anodyneExtensions (subcomplex hij k).ι := by
   rw [subcomplex_eq_hornPaths hij k]
   exact MathlibExt.CategoricalSource.anodyneExtensions_hornPaths_ι k.property.1 k.property.2
 
 open SSet.modelCategoryQuillen in
-/-- An actual map from the original coherent Hom box into a Kan target extends on the entire
-original Hom nerve. -/
+/-- A map from the coherent Hom box into a Kan target extends on the 
+Hom nerve. -/
 theorem exists_fill (hij : i ≤ j) (k : IntervalHom.Interior i j) {Y : SSet.{u}} [SSet.KanComplex Y]
     (f : (subcomplex hij k : SSet) ⟶ Y) :
     ∃ g : nerve (SimplicialThickening.Path i j) ⟶ Y, (subcomplex hij k).ι ≫ g = f := by

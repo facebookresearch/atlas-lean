@@ -10,10 +10,10 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornOutsideIntervals
 
 /-!
-# Original preimage equality for an actual whole outside-face map
+# Preimage equality for an outside-face map
 
-Equality of the two original source vertices gives the same whole face
-map at fixed original target endpoints. All supplied interval and endpoint
+Equality of the two source vertices gives the same face
+map at fixed target endpoints. All supplied interval and endpoint
 equations are retained, including their dependent source types.
 -/
 
@@ -25,9 +25,9 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.OutsideFaceMapCongruence
 open SimplicialEnrichment
 
-/-- Replacing original outside-face preimages by equal vertices preserves the entire Hom map
+/-- Replacing outside-face preimages by equal vertices preserves the Hom map
 at the same
-  supplied original target endpoints. -/
+ supplied target endpoints. -/
 theorem source_eq {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
     (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
     (j : Fin (n + 3)) (hj : j ≠ i) (a' b' c' d' : ULift.{u} (Fin (n + 2)))

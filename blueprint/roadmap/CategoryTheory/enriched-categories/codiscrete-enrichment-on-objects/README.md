@@ -1,0 +1,16 @@
+# Codiscrete enrichment on objects
+
+- [To Unit](../../../Topology/simplicial-homotopy-theory/individual-vertices-of-the-coherent-nerve/to-unit.md)
+- [Enrichment](enrichment.md)
+- [Object](object.md)
+- [Map](map.md)
+- [Functor](functor.md)
+- [Extend](extend.md)
+- [Hom Equiv](hom-equiv.md)
+- [Hom Equiv source](hom-equiv-source.md)
+- [Hom Equiv target](hom-equiv-target.md)
+- [Adjunction](adjunction.md)
+- [Unit obj](unit-obj.md)
+- [Counit obj](counit-obj.md)
+- [Left triangle](left-triangle.md)
+- [Right triangle](right-triangle.md)

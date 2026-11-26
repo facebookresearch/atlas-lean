@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFullBoundaryNegat
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornShortLegs
 
 /-!
-# Same complete original positive boundary Hom maps
+# Same complete positive boundary Hom maps
 
 The full boundary contains both endpoint faces. Every inner-horn
-restriction therefore extracts the same original short Hom maps and
-the same complete original positive composition-face map. All actual
+Restriction therefore extracts the same short Hom maps and
+the same complete positive composition-face map. All 
 vertices, scalar maps and endpoint equations are retained.
 -/
 
@@ -30,31 +30,31 @@ open SimplicialEnrichment HornBoxFaces
 variable {C : Carrier.{u}} {n : ℕ}
   (f : (∂Δ[n + 2] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The actual canonical original interior index, available in every dimension at least two. -/
+/-- The canonical interior index, available in every dimension at least two. -/
 def canonicalIndex : Fin (n + 3) := 1
 
-/-- The canonical original index is strictly after the first endpoint. -/
+/-- The canonical index is strictly after the first endpoint. -/
 theorem canonicalIndex_ne_zero : canonicalIndex (n := n) ≠ 0 := by
   intro h
   have hv := congrArg Fin.val h
   change 1 = 0 at hv
   omega
 
-/-- The canonical original index is strictly before the last endpoint. -/
+/-- The canonical index is strictly before the last endpoint. -/
 theorem canonicalIndex_ne_last : canonicalIndex (n := n) ≠ Fin.last (n + 2) := by
   intro h
   have hv := congrArg Fin.val h
   change 1 = n + 2 at hv
   omega
 
-/-- The whole original left short Hom is extracted from the same full boundary endpoint faces. -/
+/-- The left short Hom is extracted from the same full boundary endpoint faces. -/
 def leftMap (b : Interior.{u} n) :
     nerve (SimplicialThickening.Path (ULift.up.{u} (0 : Fin (n + 3))) b.val) ⟶
       (BoundaryFaces.object f 0 ⟶[SSet.{u}] BoundaryFaces.object f (HornBoxFaces.vertex b)) :=
   HornBoxFaces.leftMap (BoundaryFaces.horn f canonicalIndex)
     canonicalIndex_ne_zero canonicalIndex_ne_last b
 
-/-- The whole original right short Hom is extracted from the same full boundary endpoint faces. -/
+/-- The right short Hom is extracted from the same full boundary endpoint faces. -/
 def rightMap (b : Interior.{u} n) :
     nerve (SimplicialThickening.Path b.val (ULift.up.{u} (Fin.last (n + 2)))) ⟶
       (BoundaryFaces.object f (HornBoxFaces.vertex b) ⟶[SSet.{u}] BoundaryFaces.object f
@@ -62,7 +62,7 @@ def rightMap (b : Interior.{u} n) :
   HornBoxFaces.rightMap (BoundaryFaces.horn f canonicalIndex)
     canonicalIndex_ne_zero canonicalIndex_ne_last b
 
-/-- Every original retaining inner horn reads the same entire original left boundary Hom map. -/
+/-- Every retaining inner horn reads the same left boundary Hom map. -/
 theorem leftMap_horn (i : Fin (n + 3)) (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.last (n + 2))
     (b : Interior.{u} n) :
     HornBoxFaces.leftMap (BoundaryFaces.horn f i) hi₀ hiₙ b = leftMap f b := by
@@ -71,7 +71,7 @@ theorem leftMap_horn (i : Fin (n + 3)) (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.last
   rw [HornShortLegs.leftMap_eq_lastFace]
   rfl
 
-/-- Every original retaining inner horn reads the same entire original right boundary Hom map. -/
+/-- Every retaining inner horn reads the same right boundary Hom map. -/
 theorem rightMap_horn (i : Fin (n + 3)) (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.last (n + 2))
     (b : Interior.{u} n) :
     HornBoxFaces.rightMap (BoundaryFaces.horn f i) hi₀ hiₙ b = rightMap f b := by
@@ -80,7 +80,7 @@ theorem rightMap_horn (i : Fin (n + 3)) (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.las
   rw [HornShortLegs.rightMap_eq_firstFace]
   rfl
 
-/-- The complete original positive composition-face map uses both same original short Hom maps. -/
+/-- The complete positive composition-face map uses both same short Hom maps. -/
 def positiveMap (b : Interior.{u} n) :
     (CompositionFace.positive (ULift.up 0) b.val (ULift.up (Fin.last (n + 2))) : SSet.{u}) ⟶
       (BoundaryFaces.object f 0 ⟶[SSet.{u}] BoundaryFaces.object f (Fin.last (n + 2))) :=
@@ -89,7 +89,7 @@ def positiveMap (b : Interior.{u} n) :
       eComp SSet.{u} (BoundaryFaces.object f 0) (BoundaryFaces.object f (HornBoxFaces.vertex b))
         (BoundaryFaces.object f (Fin.last (n + 2)))
 
-/-- Every original inner-horn restriction extracts the same entire original positive
+/-- Every inner-horn restriction extracts the same positive
 boundary map. -/
 theorem positiveMap_horn (i : Fin (n + 3)) (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.last (n + 2))
     (b : Interior.{u} n) :

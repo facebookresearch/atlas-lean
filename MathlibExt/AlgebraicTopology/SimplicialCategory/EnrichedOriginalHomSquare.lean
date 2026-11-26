@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedHomEqualityTransport
 
 /-!
-# Full original Hom squares at actual prescribed endpoints
+# Full Hom squares at prescribed endpoints
 
-The SAME whole original enriched square and its true endpoint equations
-give the complete coefficient square. All original maps and inverses
-of equality transports are retained, in the original coefficient universe.
+The same enriched square and its true endpoint equations
+give the complete coefficient square. All maps and inverses
+of equality transports are retained, in the coefficient universe.
 -/
 
 noncomputable section
@@ -23,8 +23,8 @@ open CategoryTheory
 
 namespace CategoryTheory.SimplicialEnrichment
 
-/-- A genuine whole original enriched square retains its SAME full Hom square at every
-actual endpoint. -/
+/-- An enriched square retains its same Hom square at every
+endpoint. -/
 theorem originalHomSquare {A B C D : Carrier.{u}} (E : A ⟶ B) (F : A ⟶ C)
     (G : B ⟶ D) (H : C ⟶ D) (sq : E ≫ G = F ≫ H) (a b : A)
     {x₀ x₁ : B} {y₀ y₁ : C} {z₀ z₁ : D}

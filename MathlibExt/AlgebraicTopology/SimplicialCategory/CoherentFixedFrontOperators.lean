@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFixedFrontCollapse
 
 /-!
-# Actual cosimplicial operators of the fixed-front coherent resolution
+# Cosimplicial operators of the fixed-front coherent resolution
 
-The genuine right-join operator sends front simplices to front simplices
-and retains the structural last vertex. It therefore acts on the actual
-fixed-front quotient. The entire identity and composition equations use
-the original simplex maps, with no resolution-comparison outcome.
+The right-join operator sends front simplices to front simplices
+and retains the structural last vertex. It therefore acts on the 
+fixed-front quotient. The identity and composition equations use
+the simplex maps, with no resolution-comparison outcome.
 -/
 
 noncomputable section
@@ -27,11 +27,11 @@ namespace CategoryTheory.CoherentRealization.FixedFrontOperators
 open FixedFrontCollapse PathMaximumOperators
 variable {n m k : ℕ}
 
-/-- Every original front vertex has its actual preimage in the front ordinal. -/
+/-- Every front vertex has its preimage in the front ordinal. -/
 theorem front_preimage (j : Fin (n + 2)) (hj : j ≠ Fin.last (n + 1)) :
     ∃ i : Fin (n + 1), i.castSucc = j := ⟨j.castPred hj, Fin.castSucc_castPred j hj⟩
 
-/-- The original right-join operator retains the actual front condition of every whole
+/-- The right-join operator retains the front condition of every 
 resolving simplex. -/
 theorem inFront_operator (θ : ⦋n⦌ ⟶ ⦋m⦌) {q : SimplexCategoryᵒᵖ}
     (a : (Δ[n + 1] : SSet.{u}).obj q) (ha : InFront a) :
@@ -42,7 +42,7 @@ theorem inFront_operator (θ : ⦋n⦌ ⟶ ⦋m⦌) {q : SimplexCategoryᵒᵖ}
   rw [← hi, extension_front]
   exact ne_of_lt (Fin.castSucc_lt_last _)
 
-/-- The genuine whole quotient operator of the fixed-front resolving simplicial set. -/
+/-- The quotient operator of the fixed-front resolving simplicial set. -/
 def map (θ : ⦋n⦌ ⟶ ⦋m⦌) : FixedFrontCollapse.object.{u} n ⟶ FixedFrontCollapse.object.{u} m where
   app q := ↾fun a => _root_.Quotient.map ((SSet.stdSimplex.map (extension θ)).app q) (by
     rintro a b (rfl | hab)
@@ -57,18 +57,18 @@ def map (θ : ⦋n⦌ ⟶ ⦋m⦌) : FixedFrontCollapse.object.{u} n ⟶ FixedFr
       exact congrArg (fun a => _root_.Quotient.mk _ a) (congr($((SSet.stdSimplex.map
         (extension θ)).naturality ψ) a))
 
-/-- The entire original successor-simplex map is the actual projected quotient operator. -/
+/-- The successor-simplex map is the projected quotient operator. -/
 theorem projection_map (θ : ⦋n⦌ ⟶ ⦋m⦌) : projection.{u} n ≫ map θ =
     SSet.stdSimplex.map (extension θ) ≫ projection m := by ext q a; rfl
 
-/-- The genuine right-join extension preserves the original identity operator. -/
+/-- The right-join extension preserves the identity operator. -/
 theorem extension_id (n : ℕ) : extension (𝟙 ⦋n⦌) = 𝟙 ⦋n + 1⦌ := by
   ext j : 3
   cases j using Fin.lastCases with
   | last => exact extension_last _
   | cast i => exact extension_front _ i
 
-/-- The genuine right-join extension preserves original simplex-operator composition. -/
+/-- The right-join extension preserves simplex-operator composition. -/
 theorem extension_comp (θ : ⦋n⦌ ⟶ ⦋m⦌) (ψ : ⦋m⦌ ⟶ ⦋k⦌) :
     extension (θ ≫ ψ) = extension θ ≫ extension ψ := by
   ext j : 3
@@ -83,7 +83,7 @@ theorem extension_comp (θ : ⦋n⦌ ⟶ ⦋m⦌) (ψ : ⦋m⦌ ⟶ ⦋k⦌) :
     rw [extension_front, extension_front, extension_front]
     rfl
 
-/-- The actual entire quotient identity operator fixes every original structural resolving
+/-- The quotient identity operator fixes every structural resolving
 simplex. -/
 theorem map_id (n : ℕ) : map.{u} (𝟙 ⦋n⦌) = 𝟙 (FixedFrontCollapse.object n) := by
   apply SSet.hom_ext
@@ -98,7 +98,7 @@ theorem map_id (n : ℕ) : map.{u} (𝟙 ⦋n⦌) = 𝟙 (FixedFrontCollapse.obj
     exact (congrArg (fun a => _root_.Quotient.mk _ a) h).trans
       (congrArg (fun a => _root_.Quotient.mk _ a) hI)
 
-/-- The actual entire fixed-front quotient preserves every original simplex-operator composite. -/
+/-- The fixed-front quotient preserves every simplex-operator composite. -/
 theorem map_comp (θ : ⦋n⦌ ⟶ ⦋m⦌) (ψ : ⦋m⦌ ⟶ ⦋k⦌) : map.{u} (θ ≫ ψ) = map θ ≫ map ψ := by
   apply SSet.hom_ext
   intro q

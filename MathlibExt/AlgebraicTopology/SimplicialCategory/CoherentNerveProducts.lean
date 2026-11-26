@@ -12,11 +12,11 @@ import Mathlib.CategoryTheory.Pi.Basic
 import Mathlib.CategoryTheory.Limits.FunctorCategory.Shapes.Products
 
 /-!
-# Actual products of categorical nerves
+# Products of categorical nerves
 
-The original pointwise category and its projections are the pinned
+The pointwise category and its projections are the pinned
 `CategoryTheory.pi` and `Pi.eval`. Assembly reuses `Functor.pi'`.
-The resulting actual nerve/product isomorphism preserves every original
+The resulting nerve/product isomorphism preserves every 
 object, arrow, scalar operator and projection, including an empty index.
 -/
 
@@ -28,19 +28,19 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.NerveProducts
 variable {I : Type u} (C : I → Type u) [∀ i, Category.{u} (C i)]
 
-/-- The actual family of original categorical nerves. -/
+/-- The family of categorical nerves. -/
 abbrev nerves (i : I) : SSet.{u} := nerve (C i)
 
-/-- Original nerve projections into the actual product of the coordinate nerves. -/
+/-- Nerve projections into the product of the coordinate nerves. -/
 def toProduct : nerve (∀ i, C i) ⟶ ∏ᶜ nerves C :=
   Limits.Pi.lift (fun i => nerveMap (CategoryTheory.Pi.eval C i))
 
-/-- Each actual product projection is the original categorical nerve projection map. -/
+/-- Each product projection is the categorical nerve projection map. -/
 theorem toProduct_π (i : I) :
     toProduct C ≫ Limits.Pi.π (nerves C) i = nerveMap (CategoryTheory.Pi.eval C i) :=
   Limits.Pi.lift_comp_π _ _
 
-/-- Assemble the same original coordinate simplices by the pinned whole categorical product
+/-- Assemble the same coordinate simplices by the pinned categorical product
 functor. -/
 def fromProduct : ∏ᶜ nerves C ⟶ nerve (∀ i, C i) where
   app q := ↾fun p => CategoryTheory.Functor.pi'
@@ -51,7 +51,7 @@ def fromProduct : ∏ᶜ nerves C ⟶ nerve (∀ i, C i) where
     exact congrArg (fun F => CategoryTheory.Functor.pi' F)
       (funext (fun i => congr($((Limits.Pi.π (nerves C) i).naturality f) p)))
 
-/-- The actual original nerve of the pointwise product category is the whole product of its
+/-- The nerve of the pointwise product category is the product of its
 nerves. -/
 def nervePiIso : nerve (∀ i, C i) ≅ ∏ᶜ nerves C where
   hom := toProduct C
@@ -80,7 +80,7 @@ def nervePiIso : nerve (∀ i, C i) ≅ ∏ᶜ nerves C where
     intro p
     exact congr($(toProduct_π C i).app q ((fromProduct C).app q p))
 
-/-- Whole original coordinate projection readback for the actual nerve/product isomorphism. -/
+/-- Coordinate projection readback for the nerve/product isomorphism. -/
 theorem nervePiIso_π (i : I) :
     (nervePiIso C).hom ≫ Limits.Pi.π (nerves C) i = nerveMap (CategoryTheory.Pi.eval C i) :=
   toProduct_π C i

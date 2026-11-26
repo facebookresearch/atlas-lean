@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectColimits
 
 /-!
-# Actual small coproducts, pushouts and iteration for fixed-object enrichments
+# Small colimits of fixed-object simplicial enrichments
 
-The proved arbitrary presentation colimits supply all small enriched
-colimits at the original scalar universe. The empty diagram retains
-every original object label; coproducts and pushouts do likewise.
+Presentation colimits give small colimits in the category of enrichments
+on a fixed object set. The initial enrichment, coproducts and pushouts
+all retain that object set.
 -/
 
 noncomputable section
@@ -25,7 +25,7 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 
 variable {O : Type u}
 
-/-- All small colimits exist in the genuine enriched category on the same object labels. -/
+/-- All small colimits exist in the enriched category on the same object labels. -/
 instance hasSmallColimits : HasColimitsOfSize.{u, u} (FixedObjects O) where
   has_colimits_of_shape _ _ := inferInstance
 

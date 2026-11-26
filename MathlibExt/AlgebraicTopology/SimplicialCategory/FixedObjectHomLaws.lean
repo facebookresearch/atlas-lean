@@ -8,12 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabels
+import MathlibExt.CategoryTheory.Enriched.HomEqualityTransport
 
 /-!
-# Actual identity and composition on fixed-label Hom maps
+# Identity and composition on fixed-label Hom maps
 
-The fixed-object Hom evaluation retains the original enriched identities
-and composition. These equations follow from the original enriched map
+The fixed-object Hom evaluation retains the enriched identities
+and composition. These equations follow from the enriched map
 and its exact endpoint equalities, and assemble Hom diagrams without a
 supplied colimit or model-law certificate.
 -/
@@ -26,36 +27,32 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 
 variable {O : Type u}
 
-/-- The original identity at the individually supplied fixed object label. -/
+/-- The identity at the individually supplied fixed object label. -/
 abbrev identityMap (C : FixedObjects O) (x : O) : 𝟙_ SSet.{u} ⟶ hom C x x :=
   eId SSet.{u} (vertex C x)
 
-/-- The original enriched composition at three individually supplied labels. -/
+/-- The enriched composition at three individually supplied labels. -/
 abbrev compositionMap (C : FixedObjects O) (x y z : O) :
     hom C x y ⊗ hom C y z ⟶ hom C x z :=
   eComp SSet.{u} (vertex C x) (vertex C y) (vertex C z)
 
-/-- Equality of original vertices transports the entire original enriched identity. -/
+/-- Equality of vertices transports the enriched identity. -/
 theorem identity_eqToHom (C : Carrier.{u}) {a b : C} (h : a = b) :
     eId SSet.{u} a ≫ eqToHom (by rw [h] : (a ⟶[SSet.{u}] a) = (b ⟶[SSet.{u}] b)) =
-      eId SSet.{u} b := by
-  cases h
-  exact Category.comp_id _
+      eId SSet.{u} b :=
+  EnrichedHomEqualityTransport.identity h
 
-/-- Equality of three original vertices transports the entire original enriched composition. -/
+/-- Equality of three vertices transports the enriched composition. -/
 theorem composition_eqToHom (C : Carrier.{u}) {a b c a' b' c' : C}
     (ha : a = a') (hb : b = b') (hc : c = c') :
     eComp SSet.{u} a b c ≫ eqToHom (by rw [ha, hc] :
       (a ⟶[SSet.{u}] c) = (a' ⟶[SSet.{u}] c')) =
         (eqToHom (by rw [ha, hb] : (a ⟶[SSet.{u}] b) = (a' ⟶[SSet.{u}] b')) ⊗ₘ
           eqToHom (by rw [hb, hc] : (b ⟶[SSet.{u}] c) = (b' ⟶[SSet.{u}] c'))) ≫
-            eComp SSet.{u} a' b' c' := by
-  cases ha
-  cases hb
-  cases hc
-  simp
+            eComp SSet.{u} a' b' c' :=
+  EnrichedHomEqualityTransport.composition ha hb hc
 
-/-- The same original fixed-object map preserves the whole enriched identity. -/
+/-- The same fixed-object map preserves the enriched identity. -/
 theorem identityMap_homMap {C D : FixedObjects O} (F : C ⟶ D) (x : O) :
     identityMap C x ≫ homMap F x x = identityMap D x := by
   change eId SSet.{u} (vertex C x) ≫
@@ -64,7 +61,7 @@ theorem identityMap_homMap {C D : FixedObjects O} (F : C ⟶ D) (x : O) :
     ((congrArg (fun k => k ≫ eqToHom _) (F.val.map_id (vertex C x))).trans
       (identity_eqToHom D.val (map_vertex F x)))
 
-/-- The same original fixed-object map preserves the whole enriched binary composition. -/
+/-- The same fixed-object map preserves the enriched binary composition. -/
 theorem compositionMap_homMap {C D : FixedObjects O} (F : C ⟶ D) (x y z : O) :
     compositionMap C x y z ≫ homMap F x z =
       (homMap F x y ⊗ₘ homMap F y z) ≫ compositionMap D x y z := by

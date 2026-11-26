@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornHomFaces
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentIntervalFaceCover
 
 /-!
-# The actual entire nonexceptional Hom maps of an inner coherent horn
+# The nonexceptional Hom maps of an inner coherent horn
 
-Every original interval except the two outer endpoints is carried by an
-available endpoint face. Its entire Hom map is extracted from the actual
-horn map by the proved outside-face isomorphism. Both original endpoint
+Every interval except the two outer endpoints is carried by an
+available endpoint face. Its Hom map is extracted from the 
+horn map by the outside-face isomorphism. Both endpoint
 labels are retained. No Kan structure or enriched-filler conclusion is
 needed for this extraction.
 -/
@@ -30,7 +30,7 @@ open SimplicialEnrichment
 variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The whole original outside-face Hom map, with both supplied original endpoint labels
+/-- The outside-face Hom map, with both supplied endpoint labels
 explicit. -/
 def faceMap (j : Fin (n + 3)) (hj : j ≠ i) (a' b' : ULift.{u} (Fin (n + 2)))
     (h : (ULift.up j : ULift.{u} (Fin (n + 3))) < (OrdinalFace.embedding j) a' ∨
@@ -45,7 +45,7 @@ def faceMap (j : Fin (n + 3)) (hj : j ≠ i) (a' b' : ULift.{u} (Fin (n + 2)))
         eqToHom (congrArg₂ (fun a b : C => a ⟶[SSet.{u}] b)
           (congrArg (HornFaces.object f) ha) (congrArg (HornFaces.object f) hb))
 
-/-- The whole outside-face extraction reads back precisely the original supplied face Hom map. -/
+/-- The outside-face extraction reads back precisely the supplied face Hom map. -/
 theorem faceMap_readback (j : Fin (n + 3)) (hj : j ≠ i) (a' b' : ULift.{u} (Fin (n + 2)))
     (h : (ULift.up j : ULift.{u} (Fin (n + 3))) < (OrdinalFace.embedding j) a' ∨
       (OrdinalFace.embedding j) b' < ULift.up j)
@@ -68,7 +68,7 @@ theorem faceMap_readback (j : Fin (n + 3)) (hj : j ≠ i) (a' b' : ULift.{u} (Fi
     ((congrArg (fun g => g ≫ HornHomFaces.faceMap f j hj (.mk a') (.mk b'))
       (IntervalFaceCover.outsideIso j a' b' h).hom_inv_id).trans (Category.id_comp _))
 
-/-- The actual inner horn supplies every whole ordered Hom interval except the two outer
+/-- The inner horn supplies every ordered Hom interval except the two outer
 endpoints. -/
 def homMap (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.last (n + 2))
     (a b : Fin (n + 3)) (hab : a ≤ b) (h : a ≠ 0 ∨ b ≠ Fin.last (n + 2)) :

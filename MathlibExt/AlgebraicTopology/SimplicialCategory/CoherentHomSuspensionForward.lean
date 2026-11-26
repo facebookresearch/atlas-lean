@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSuspensionGenerators
 
 /-!
-# Whole original forward Hom of the simplicial suspension
+# Forward Hom of the simplicial suspension
 
-The sole original generating simplicial set identifies with the entire
-forward Hom of its actual free enriched suspension. Both inverse maps
-retain every original scalar cell and the same two original object
-labels. No locally Kan or Bergner-model assumption is used.
+The sole generating simplicial set identifies with the 
+forward Hom of its free enriched suspension. Both inverse maps
+retain every scalar cell and the same two object
+labels. 
 -/
 
 noncomputable section
@@ -26,11 +26,11 @@ namespace CategoryTheory.CoherentRealization.HomSuspensionForward
 open SimplicialQuiver HomSuspensionGenerators
 variable (K : SSet.{u})
 
-/-- The whole original generating map into the actual forward Hom of the free suspension. -/
+/-- The generating map into the forward Hom of the free suspension. -/
 def generator : K ⟶ freeHom (quiver K) left right :=
   eqToHom (quiver_forward K).symm ≫ SimplicialQuiver.generator (quiver K) left right
 
-/-- The supplied original generating simplicial set is exactly the entire actual forward
+/-- The supplied generating simplicial set is exactly the forward
 free Hom. -/
 theorem generator_isIso : IsIso (SimplicialQuiver.generator (quiver K) left right) := by
   rw [NatTrans.isIso_iff_isIso_app]
@@ -45,23 +45,23 @@ theorem generator_isIso : IsIso (SimplicialQuiver.generator (quiver K) left righ
     obtain ⟨a, ha⟩ := path_forward K p
     exact ⟨a, ha.symm⟩
 
-/-- The actual whole forward Hom isomorphism from the supplied original simplicial set. -/
+/-- The forward Hom isomorphism from the supplied simplicial set. -/
 def homIso : K ≅ freeHom (quiver K) left right := by
   let _ := generator_isIso K
   exact (eqToIso (quiver_forward K).symm) ≪≫ asIso (SimplicialQuiver.generator (quiver
     K) left right)
 
-/-- The entire forward map is precisely the original generating inclusion with its actual
-generating-Hom equality. -/
+/-- The forward map is precisely the generating inclusion with its 
+generatingHom equality. -/
 theorem homIso_hom : (homIso K).hom = generator K := rfl
 
-/-- The actual whole inverse reads each supplied original generating cell back without
+/-- The inverse reads each supplied generating cell back without
 changing its scalar degree. -/
 theorem generator_readback (n : SimplexCategoryᵒᵖ) (a : K.obj n) :
     (homIso K).inv.app n ((generator K).app n a) = a :=
   congr($((homIso K).hom_inv_id).app n a)
 
-/-- The same entire original free forward Hom cell is recovered after its actual original
+/-- The same free forward Hom cell is recovered after its 
 generating-cell readback. -/
 theorem inverse_readback (n : SimplexCategoryᵒᵖ) (p : (freeHom (quiver K) left right).obj n) :
     (generator K).app n ((homIso K).inv.app n p) = p :=

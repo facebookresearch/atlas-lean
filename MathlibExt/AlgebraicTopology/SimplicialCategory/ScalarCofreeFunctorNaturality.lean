@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarCofreeFunctorUniversal
 
 /-!
-# The SAME complete cofree scalar maps and original universal-map naturality
+# The same complete cofree scalar maps and universal-map naturality
 
-Every original ordinary functor acts on each complete operator-indexed
-Hom family. The full original inverse functor bijection is natural in
-both the original source enrichment and the original ordinary target.
+Every ordinary functor acts on each complete operator-indexed
+Hom family. The full inverse functor bijection is natural in
+both the source enrichment and the ordinary target.
 All object and coefficient universes remain independent.
 -/
 
@@ -26,7 +26,7 @@ namespace SSet.ScalarCofree
 
 variable (q : SimplexCategoryᵒᵖ) {E : Type v} [Category.{u} E] {D : Type w} [Category.{u} D]
 
-/-- The SAME original ordinary functor acts on every whole original operator family. -/
+/-- The same ordinary functor acts on every operator family. -/
 def map (F : E ⥤ D) :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E
     let _ : EnrichedCategory SSet.{u} D := enrichment q D
@@ -56,7 +56,7 @@ def map (F : E ⥤ D) :
       funext θ
       exact F.map_comp (h.1 θ) (h.2 θ) }
 
-/-- The SAME full original cofree identity is the entire original enriched identity. -/
+/-- The same full cofree identity is the enriched identity. -/
 theorem map_id :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E
     map q (𝟭 E) = EnrichedFunctor.id SSet.{u} E := by
@@ -70,7 +70,7 @@ theorem map_id :
   intro h
   rfl
 
-/-- The entire original cofree map retains composition of the SAME complete ordinary functors. -/
+/-- The cofree map retains composition of the same complete ordinary functors. -/
 theorem map_comp {K : Type z} [Category.{u} K] (F : E ⥤ D) (G : D ⥤ K) :
     let _ : EnrichedCategory SSet.{u} E := enrichment q E
     let _ : EnrichedCategory SSet.{u} D := enrichment q D
@@ -88,7 +88,7 @@ theorem map_comp {K : Type z} [Category.{u} K] (F : E ⥤ D) (G : D ⥤ K) :
   intro h
   rfl
 
-/-- The original cofree universal map retains the SAME actual original ordinary target
+/-- The cofree universal map retains the same ordinary target
 postcomposition. -/
 theorem ofFunctor_target {C : Type t} [EnrichedCategory SSet.{u} C]
     (F : ScalarObject C q ⥤ E) (G : E ⥤ D) :
@@ -106,7 +106,7 @@ theorem ofFunctor_target {C : Type t} [EnrichedCategory SSet.{u} C]
   intro h
   rfl
 
-/-- Reading the original universal functor retains the SAME full original enriched source
+/-- Reading the universal functor retains the same full enriched source
 precomposition. -/
 theorem toFunctor_source {C : Type z} [EnrichedCategory SSet.{u} C]
     {K : Type t} [EnrichedCategory SSet.{u} K] (F : EnrichedFunctor SSet.{u} C K) :

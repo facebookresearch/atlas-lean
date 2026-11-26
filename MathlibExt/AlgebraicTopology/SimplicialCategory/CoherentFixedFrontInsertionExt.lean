@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFixedFrontInsertion
 
 /-!
-# Actual universal determination by the distinguished fixed-front simplex
+# Universal determination by the distinguished fixed-front simplex
 
-Every resolving simplex is an actual operator of the distinguished
-successor simplex. The genuine realization adjunction therefore detects
-the equality of whole enriched functors from their distinguished
-insertion. No assumed Hom chart or quotient normal form is needed.
+Every resolving simplex is an operator of the distinguished
+successor simplex. The realization adjunction therefore detects
+the equality of enriched functors from their distinguished
+insertion. 
 -/
 
 noncomputable section
@@ -26,8 +26,8 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.FixedFrontInsertionExt
 open SimplicialEnrichment FixedFrontInsertion
 
-/-- Whole enriched maps out of the actual fixed-front realization are determined by their original
-  distinguished successor simplex. -/
+/-- Enriched maps out of the fixed-front realization are determined by their 
+ distinguished successor simplex. -/
 theorem functor_ext (n : ℕ) {C : Carrier.{u}}
     (F G : realization (FixedFrontCollapse.object.{u} n) ⟶ C)
     (h : FixedFrontInsertion.functor n ≫ F = FixedFrontInsertion.functor n ≫ G) : F = G := by

@@ -11,12 +11,17 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCounitNaturality
 import Mathlib.CategoryTheory.Adjunction.Basic
 
 /-!
-# The genuine coherent realization and nerve adjunction
+# The coherent realization and nerve adjunction
 
-The left adjoint is the actual simplicial presentation on the original
+The left adjoint is the simplicial presentation on the 
 input vertices. Its unit and evaluation counit are the constructed maps.
 Both full triangle identities follow from literal generator evaluation
-and original endpoint equations; neither is an assumption.
+and endpoint equations; neither is an assumption.
+
+## References
+
+- Emily Riehl, *Homotopy coherent structures*, Definition II.2.1 and
+  Corollary II.2.6, https://emilyriehl.github.io/files/coherent-structures.pdf.
 -/
 
 noncomputable section
@@ -27,13 +32,13 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment SimplicialQuiver
 
-/-- The zero-simplex vertex is literally the same individual original input vertex. -/
+/-- The zero-simplex vertex is literally the same individual input vertex. -/
 theorem vertex_zero (K : SSet.{u}) (x : K _⦋0⦌) : vertex K x zeroPoint = x := by
   change K.map (SimplexCategory.const ⦋0⦌ ⦋0⦌ 0).op x = x
   rw [SimplexCategory.const_eq_id]
   exact congr($(K.map_id (op ⦋0⦌)) x)
 
-/-- The realization triangle holds on every whole original coherent Hom with its exact
+/-- The realization triangle holds on every coherent Hom with its exact
 endpoint equations. -/
 theorem realization_triangle_simplexHom (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}
@@ -64,7 +69,7 @@ theorem realization_triangle_simplexHom (K : SSet.{u}) {n : SimplexCategory} (σ
         ((counit (realization K)).map (η.app (op ⦋0⦌) x) (η.app (op ⦋0⦌) y))).symm).trans
           (hw.trans (simplexHom_reindex_comp K σ i j Hx Hy (vertex_zero K x) (vertex_zero K y)))
 
-/-- The whole realization triangle is the enriched identity, preserving every original input
+/-- The realization triangle is the enriched identity, preserving every input
 vertex and Hom path. -/
 theorem realization_triangle (K : SSet.{u}) :
     realizationMap (unit K) ≫ counit (realization K) = 𝟙 (realization K) := by
@@ -75,23 +80,22 @@ theorem realization_triangle (K : SSet.{u}) :
   | mk n σ i j hx hy a =>
       exact congr($(realization_triangle_simplexHom K σ i j hx hy).app q a)
 
-/-- The genuine original coherent realization and nerve adjunction, with both actual
-triangles proved. -/
+/-- Homotopy coherent realization is left adjoint to the homotopy coherent nerve. -/
 def realizationAdjunction : realizationFunctor.{u} ⊣ coherentNerveFunctor where
   unit := unitNatTrans
   counit := counitNatTrans
   left_triangle_components := realization_triangle
   right_triangle_components := nerve_triangle
 
-/-- The actual adjunction unit is precisely the whole original simplex insertion map. -/
+/-- The adjunction unit is precisely the simplex insertion map. -/
 theorem realizationAdjunction_unit (K : SSet.{u}) : realizationAdjunction.unit.app K = unit K := rfl
 
-/-- The actual adjunction counit is precisely the whole original enriched generator
-evaluation map. -/
+/-- The adjunction counit is precisely the enriched generator
+Evaluation map. -/
 theorem realizationAdjunction_counit (C : Carrier.{u}) : realizationAdjunction.counit.app C
   = counit C := rfl
 
-/-- The genuine coherent Hom equivalence is a natural bijection of actual strict maps. -/
+/-- The coherent Hom equivalence is a natural bijection of strict maps. -/
 def coherentHomEquiv (K : SSet.{u}) (C : Carrier.{u}) :
     (realization K ⟶ C) ≃ (K ⟶ coherentNerveFunctor.obj C) := realizationAdjunction.homEquiv K C
 

@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelExtension
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelReadback
 
 /-!
-# The actual label-pushforward unit on every original fixed-label source
+# The label-pushforward unit on every fixed-label source
 
-The original source may have any genuine fixed-fiber presentation. Its
-whole carrier unit, original source maps and generator universal property
-are retained, including all actual endpoint-label equalities.
+The source may have any fixed-fiber presentation. Its
+carrier unit, source maps and generator universal property
+are retained, including all endpoint-label equalities.
 -/
 
 noncomputable section
@@ -26,19 +26,19 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects.LabelPushforward
 
 variable {A O : Type u} (a : A → O) (C : FixedObjects A)
 
-/-- The SAME whole original carrier unit of the actual label-pushforward source. -/
+/-- The same carrier unit of the label-pushforward source. -/
 def carrierUnit : C.val ⟶ (object a C).val :=
   (unit a C).val ≫ CarrierReindexing.toTarget (object a C).val
     (fun s => vertex (object a C) (a s))
 
-/-- Every original source vertex has precisely its prescribed original target label. -/
+/-- Every source vertex has precisely its prescribed target label. -/
 theorem carrierUnit_vertex (s : A) :
     (carrierUnit a C).obj (vertex C s) = vertex (object a C) (a s) :=
   congrArg (fun t => vertex (object a C) (a t)) (map_vertex (unit a C) s)
 
 variable {D : FixedObjects O}
 
-/-- The complete restricted original unit square retains the SAME full carrier map. -/
+/-- The complete restricted unit square retains the same full carrier map. -/
 theorem carrierUnit_projection (G : object a C ⟶ D) :
     (unit a C ≫ LabelRestriction.map a G).val ≫
       CarrierReindexing.toTarget D.val (fun s => vertex D (a s)) =
@@ -51,7 +51,7 @@ theorem carrierUnit_projection (G : object a C ⟶ D) :
     ((congrArg (fun k => (unit a C).val ≫ k)
       (CarrierLabelExtension.restriction_projection a G)).trans (Category.assoc _ _ _).symm)
 
-/-- The SAME whole original source functor is recovered from the actual presented descender. -/
+/-- The same source functor is recovered from the presented descender. -/
 theorem carrierUnit_desc (F : C ⟶ LabelRestriction.object a D) :
     carrierUnit a C ≫ (desc a C F).val =
       F.val ≫ CarrierReindexing.toTarget D.val (fun s => vertex D (a s)) := by
@@ -59,7 +59,7 @@ theorem carrierUnit_desc (F : C ⟶ LabelRestriction.object a D) :
     G.val ≫ CarrierReindexing.toTarget D.val (fun s => vertex D (a s))) (unit_desc a C F)
   exact (carrierUnit_projection a C (desc a C F)).symm.trans h
 
-/-- The entire original fixed-label target map is determined by its SAME original carrier unit. -/
+/-- The fixed-label target map is determined by its same carrier unit. -/
 theorem carrierUnit_ext :
     Function.Injective (fun G : object a C ⟶ D => carrierUnit a C ≫ G.val) := by
   intro F G h

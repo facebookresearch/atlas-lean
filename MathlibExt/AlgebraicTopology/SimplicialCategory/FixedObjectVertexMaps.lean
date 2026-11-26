@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabels
 
 /-!
-# The SAME whole carrier functor with its actual fixed-vertex equations
+# The same carrier functor with its fixed-vertex equations
 
-Only the genuine equations at every original label are required. The
-fixed-fiber arrow retains the entire supplied enriched functor and all
-its original Hom maps literally, without rebuilding any coefficients.
+Only the equations at every label are required. The
+fixed-fiber arrow retains the supplied enriched functor and all
+its Hom maps literally, without rebuilding any coefficients.
 -/
 
 noncomputable section
@@ -25,7 +25,7 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 
 variable {O : Type u} {C D : FixedObjects O}
 
-/-- Regard the SAME supplied whole original functor as a fixed-label arrow. -/
+/-- Regard the same supplied functor as a fixed-label arrow. -/
 def ofVertexEquation (F : C.val ⟶ D.val)
     (h : ∀ o : O, F.obj (vertex C o) = vertex D o) : C ⟶ D := by
   refine ⟨F, ?_⟩
@@ -35,12 +35,12 @@ def ofVertexEquation (F : C.val ⟶ D.val)
   have ha := h (label C a)
   exact (congrArg F.obj (vertex_label C a).symm).trans ha
 
-/-- The SAME complete original enriched functor is retained literally. -/
+/-- The same complete enriched functor is retained literally. -/
 theorem ofVertexEquation_val (F : C.val ⟶ D.val)
     (h : ∀ o : O, F.obj (vertex C o) = vertex D o) :
     (ofVertexEquation F h).val = F := rfl
 
-/-- The full original Hom map is retained literally at every original source pair. -/
+/-- The Hom map is retained literally at every source pair. -/
 theorem ofVertexEquation_map (F : C.val ⟶ D.val)
     (h : ∀ o : O, F.obj (vertex C o) = vertex D o) (a b : C.val) :
     (ofVertexEquation F h).val.map a b = F.map a b := rfl

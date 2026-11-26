@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornHomFaces
 
 /-!
-# Original identity and composition of the actual coherent horn face maps
+# Identity and composition of the coherent horn face maps
 
-The actual enriched face functors preserve whole original identities and
+The enriched face functors preserve identities and
 union composition. Both endpoint transports use the same individual
-horn vertices. A coherent face restriction precomposes its original whole
+horn vertices. A coherent face restriction precomposes its 
 Hom map; this permits common-face equalities to be used without replacing
-any original source or target.
+any source or target.
 -/
 
 noncomputable section
@@ -27,7 +27,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.HornMapAlgebra
 open SimplicialEnrichment HornHomFaces
 
-/-- The retargeted original enriched Hom map preserves the actual entire enriched identity. -/
+/-- The retargeted enriched Hom map preserves the enriched identity. -/
 theorem retargetMap_id {C D : Carrier.{u}} (F : C ⟶ D) (a : C) {x : D} (ha : F.obj a = x) :
     eId SSet.{u} a ≫ retargetMap F a a ha ha = eId SSet.{u} x := by
   subst x
@@ -35,9 +35,9 @@ theorem retargetMap_id {C D : Carrier.{u}} (F : C ⟶ D) (a : C) {x : D} (ha : F
   exact (Category.assoc _ _ _).symm.trans
     ((congrArg (fun g => g ≫ 𝟙 _) (F.map_id a)).trans (Category.comp_id _))
 
-/-- The retargeted original enriched Hom maps preserve the actual entire composition map
+/-- The retargeted enriched Hom maps preserve the composition map
 with all three
-  original vertices. -/
+ vertices. -/
 theorem retargetMap_comp {C D : Carrier.{u}} (F : C ⟶ D) (a b c : C) {x y z : D}
     (ha : F.obj a = x) (hb : F.obj b = y) (hc : F.obj c = z) :
     eComp SSet.{u} a b c ≫ retargetMap F a c ha hc =
@@ -50,8 +50,8 @@ theorem retargetMap_comp {C D : Carrier.{u}} (F : C ⟶ D) (a b c : C) {x y z : 
       eComp SSet.{u} (F.obj a) (F.obj b) (F.obj c)
   simpa only [Category.comp_id] using F.map_comp a b c
 
-/-- Actual restriction of a retargeted coherent face precomposes precisely its original
-whole Hom map. -/
+/-- Restriction of a retargeted coherent face precomposes precisely its 
+Hom map. -/
 theorem retargetMap_precomp {A B C : Carrier.{u}} (F : A ⟶ B) (G : B ⟶ C) (a b : A)
     {x y : C} (ha : G.obj (F.obj a) = x) (hb : G.obj (F.obj b) = y) :
     F.map a b ≫ retargetMap G (F.obj a) (F.obj b) ha hb = retargetMap (F ≫ G) a b ha hb :=
@@ -60,16 +60,16 @@ theorem retargetMap_precomp {A B C : Carrier.{u}} (F : A ⟶ B) (G : B ⟶ C) (a
 variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The supplied original horn face preserves its actual identity at the same individual
+/-- The supplied horn face preserves its identity at the same individual
 horn vertex. -/
 theorem faceMap_id (j : Fin (n + 3)) (hj : j ≠ i) (a : coherentSimplex.{u} ⦋n + 1⦌) :
     eId SSet.{u} a ≫ HornHomFaces.faceMap f j hj a a =
       eId SSet.{u} (HornFaces.object f (j.succAbove a.as.down)) :=
   retargetMap_id (HornFaces.faceFunctor f j hj) a (HornFaces.faceFunctor_obj f j hj a)
 
-/-- The supplied original horn face preserves its whole actual composition with the same
-three original horn
-  vertices. -/
+/-- The supplied horn face preserves its composition with the same
+three horn
+ vertices. -/
 theorem faceMap_comp (j : Fin (n + 3)) (hj : j ≠ i) (a b c : coherentSimplex.{u} ⦋n + 1⦌) :
     eComp SSet.{u} a b c ≫ HornHomFaces.faceMap f j hj a c =
       (HornHomFaces.faceMap f j hj a b ⊗ₘ HornHomFaces.faceMap f j hj b c) ≫

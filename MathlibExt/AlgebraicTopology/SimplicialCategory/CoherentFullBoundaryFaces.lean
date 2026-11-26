@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornFaces
 import Mathlib.AlgebraicTopology.SimplicialSet.Boundary
 
 /-!
-# Every whole original coherent boundary face
+# Every coherent boundary face
 
-The supplied actual boundary map has all its original vertices and
+The supplied boundary map has all its vertices and
 complete enriched face functors. Every common-face equation follows
-from its original naturality. Restriction to any original horn
-retains the same whole faces and individual vertices.
+from its naturality. Restriction to any horn
+retains the same faces and individual vertices.
 -/
 
 noncomputable section
@@ -30,27 +30,27 @@ open SimplicialEnrichment
 variable {C : Carrier.{u}} {n : ℕ}
   (f : (∂Δ[n + 2] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The supplied whole original boundary face functor at its same individual ordinal label. -/
+/-- The supplied boundary face functor at its same individual ordinal label. -/
 def faceFunctor (j : Fin (n + 3)) : coherentSimplex.{u} ⦋n + 1⦌ ⟶ C :=
   SSet.yonedaEquiv (SSet.boundary.ι j ≫ f)
 
-/-- The SAME full original boundary contains each original horn. -/
+/-- The same full boundary contains each horn. -/
 theorem horn_le_boundary (i : Fin (n + 3)) :
     (Λ[n + 2, i] : (Δ[n + 2] : SSet.{u}).Subcomplex) ≤ ∂Δ[n + 2] := by
   rw [SSet.horn_eq_iSup]
   exact iSup_le (fun j => SSet.face_singleton_compl_le_boundary j.1)
 
-/-- The actual original boundary map restricted to the same specified original horn. -/
+/-- The boundary map restricted to the same specified horn. -/
 def horn (i : Fin (n + 3)) : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C :=
   SSet.Subcomplex.homOfLE (horn_le_boundary i) ≫ f
 
-/-- The original horn restriction retains the same entire original supplied face. -/
+/-- The horn restriction retains the same supplied face. -/
 theorem horn_face (i j : Fin (n + 3)) (hj : j ≠ i) :
     HornFaces.faceFunctor (horn f i) j hj = faceFunctor f j := by
   rw [HornFaces.faceFunctor_yoneda]
   congr 1
 
-/-- Every pair of full original boundary faces agrees on the same whole original common face. -/
+/-- Every pair of full boundary faces agrees on the same common face. -/
 theorem faceFunctor_compatibility (j k : Fin (n + 3)) (hjk : j < k) :
     coherentSimplexMap (SimplexCategory.δ (k.pred (Fin.ne_zero_of_lt hjk))) ≫ faceFunctor f j =
       coherentSimplexMap (SimplexCategory.δ (j.castPred (Fin.ne_last_of_lt hjk))) ≫

@@ -13,13 +13,13 @@ public import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarCategory
 public import Mathlib.CategoryTheory.Category.Cat
 
 /-!
-# Whole original canonical scalar functor laws in independent universes
+# Canonical scalar functor laws in independent universes
 
 The canonical ScalarObject, scalarOperator and scalarFunctor retain the
-original objects and every full Hom simplex. Their actual whole functor
+Objects and every Hom simplex. Their functor
 laws hold with independent source/target object and coefficient universes.
-The complete canonical scalar category diagram then retains these SAME
-original maps in every degree.
+The complete canonical scalar category diagram then retains these same
+Maps in every degree.
 -/
 
 @[expose] public section
@@ -33,7 +33,7 @@ namespace SSet
 variable {C : Type v} [EnrichedCategory SSet.{u} C]
   {D : Type w} [EnrichedCategory SSet.{u} D] {E : Type z} [EnrichedCategory SSet.{u} E]
 
-/-- The entire SAME original canonical scalar identity operator is the actual identity functor. -/
+/-- The same canonical scalar identity operator is the identity functor. -/
 theorem scalarOperator_id (q : SimplexCategoryᵒᵖ) :
     scalarOperator (C := C) (𝟙 q) = 𝟭 (ScalarObject C q) := by
   refine Functor.hext (F := scalarOperator (C := C) (𝟙 q))
@@ -42,7 +42,7 @@ theorem scalarOperator_id (q : SimplexCategoryᵒᵖ) :
   apply heq_of_eq
   exact Functor.map_id_apply (x.obj ⟶[SSet.{u}] y.obj) q a
 
-/-- The whole original canonical composite operator is the composite of the SAME supplied
+/-- The canonical composite operator is the composite of the same supplied
 scalar maps. -/
 theorem scalarOperator_comp {q r s : SimplexCategoryᵒᵖ} (f : q ⟶ r) (g : r ⟶ s) :
     scalarOperator (C := C) (f ≫ g) = scalarOperator (C := C) f ⋙ scalarOperator (C := C) g := by
@@ -52,17 +52,17 @@ theorem scalarOperator_comp {q r s : SimplexCategoryᵒᵖ} (f : q ⟶ r) (g : r
   apply heq_of_eq
   exact Functor.map_comp_apply (x.obj ⟶[SSet.{u}] y.obj) f g a
 
-/-- The SAME original enriched identity gives the whole canonical scalar identity functor. -/
+/-- The same enriched identity gives the canonical scalar identity functor. -/
 theorem scalarFunctor_id (q : SimplexCategoryᵒᵖ) :
     scalarFunctor (EnrichedFunctor.id SSet.{u} C) q = 𝟭 (ScalarObject C q) := rfl
 
-/-- The complete canonical scalar map retains actual enriched composition at all independent
-original universes. -/
+/-- The complete canonical scalar map retains enriched composition at all independent
+universes. -/
 theorem scalarFunctor_comp (F : EnrichedFunctor SSet.{u} C D) (G : EnrichedFunctor SSet.{u} D E)
     (q : SimplexCategoryᵒᵖ) : scalarFunctor (F.comp SSet.{u} G) q =
       scalarFunctor F q ⋙ scalarFunctor G q := rfl
 
-/-- Both full canonical scalar functors retain the SAME original Hom naturality and
+/-- Both full canonical scalar functors retain the same Hom naturality and
 individual object maps. -/
 theorem scalarFunctor_operator (F : EnrichedFunctor SSet.{u} C D)
     {q r : SimplexCategoryᵒᵖ} (f : q ⟶ r) :
@@ -73,7 +73,7 @@ theorem scalarFunctor_operator (F : EnrichedFunctor SSet.{u} C D)
   intro x y a
   exact heq_of_eq (NatTrans.naturality_apply (F.map x.obj y.obj) f a)
 
-/-- The SAME canonical scalar category diagram retains an arbitrary independent original
+/-- The same canonical scalar category diagram retains an arbitrary independent 
 object universe. -/
 def scalarCategoryDiagramUniverse (C : Type v) [EnrichedCategory SSet.{u} C] :
     SimplexCategoryᵒᵖ ⥤ Cat.{u, v} where
@@ -86,7 +86,7 @@ def scalarCategoryDiagramUniverse (C : Type v) [EnrichedCategory SSet.{u} C] :
     apply Cat.ext
     exact scalarOperator_comp f g
 
-/-- The SAME whole canonical scalar category map uses every original enriched Hom and object map. -/
+/-- The same canonical scalar category map uses every enriched Hom and object map. -/
 def scalarCategoryMapUniverse {D' : Type v} [EnrichedCategory SSet.{u} D']
     (F : EnrichedFunctor SSet.{u} C D') :
     scalarCategoryDiagramUniverse C ⟶ scalarCategoryDiagramUniverse D' where

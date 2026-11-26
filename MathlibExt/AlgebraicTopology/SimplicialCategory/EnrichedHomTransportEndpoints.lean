@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedHomTransport
 
 /-!
-# Actual enriched Hom transport with specified original endpoints
+# Enriched Hom transport with specified endpoints
 
-The inverse of a genuine Hom isomorphism transports an actual enriched
+The inverse of a Hom isomorphism transports an enriched
 functor map to the supplied source and target vertices. The complete
-identity and composition equations retain those individual vertices.
+Identity and composition equations retain those individual vertices.
 -/
 
 noncomputable section
@@ -25,7 +25,7 @@ open scoped Simplicial
 namespace CategoryTheory.SimplicialEnrichment.HomTransportEndpoints
 variable {A B C : Carrier.{u}} (E : A ⟶ B) (F : A ⟶ C)
 
-/-- The whole transported Hom map at the supplied individual source and target endpoints. -/
+/-- The transported Hom map at the supplied individual source and target endpoints. -/
 def map (a b : A) [IsIso (E.map a b)] {x₀ x₁ : B} {y₀ y₁ : C}
     (hx₀ : E.obj a = x₀) (hx₁ : E.obj b = x₁)
     (hy₀ : F.obj a = y₀) (hy₁ : F.obj b = y₁) :
@@ -34,7 +34,7 @@ def map (a b : A) [IsIso (E.map a b)] {x₀ x₁ : B} {y₀ y₁ : C}
     HomTransport.map E F a b ≫
       eqToHom (congrArg₂ (fun x y : C => x ⟶[SSet.{u}] y) hy₀ hy₁)
 
-/-- The supplied source endpoints read back the entire original enriched Hom map. -/
+/-- The supplied source endpoints read back the enriched Hom map. -/
 theorem readback (a b : A) [IsIso (E.map a b)] {x₀ x₁ : B} {y₀ y₁ : C}
     (hx₀ : E.obj a = x₀) (hx₁ : E.obj b = x₁)
     (hy₀ : F.obj a = y₀) (hy₁ : F.obj b = y₁) :
@@ -48,7 +48,7 @@ theorem readback (a b : A) [IsIso (E.map a b)] {x₀ x₁ : B} {y₀ y₁ : C}
   simpa only [map, eqToHom_refl, Category.id_comp, Category.comp_id] using
     HomTransport.map_readback E F a b
 
-/-- The transported map preserves the whole original identity at the specified vertex. -/
+/-- The transported map preserves the identity at the specified vertex. -/
 theorem map_id (a : A) [IsIso (E.map a a)] {x : B} {y : C}
     (hx : E.obj a = x) (hy : F.obj a = y) :
     eId SSet.{u} x ≫ map E F a a hx hx hy hy = eId SSet.{u} y := by
@@ -56,7 +56,7 @@ theorem map_id (a : A) [IsIso (E.map a a)] {x : B} {y : C}
   subst y
   simpa only [map, eqToHom_refl, Category.id_comp, Category.comp_id] using HomTransport.map_id E F a
 
-/-- The transported maps preserve the whole composition at the same three specified vertices. -/
+/-- The transported maps preserve the composition at the same three specified vertices. -/
 theorem map_comp (a b c : A)
     [IsIso (E.map a b)] [IsIso (E.map b c)] [IsIso (E.map a c)]
     {x₀ x₁ x₂ : B} {y₀ y₁ y₂ : C}

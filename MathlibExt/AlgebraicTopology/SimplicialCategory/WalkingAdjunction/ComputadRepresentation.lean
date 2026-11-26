@@ -13,13 +13,17 @@ public import MathlibExt.AlgebraicTopology.SimplicialCategory.WalkingAdjunction.
 public import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarCategory
 
 /-!
-# Strict representation of the original simplicial computad
+# Representations of simplicial computads
 
-An interpretation consists of the actual object function and the images
-of atomic arrows, with their original scalar equations. The native free
-category constructs the entire strict enriched functor. Conversely,
-reading a strict functor recovers those primitive fields; both entire
-round trips are proved.
+A representation assigns objects and images to the atomic arrows,
+compatibly with the simplicial operators. Free extension gives an
+enriched functor, and restriction to atoms recovers the assignment.
+These operations are mutually inverse.
+
+## References
+
+- Emily Riehl and Dominic Verity, *Homotopy coherent adjunctions and the
+  formal theory of monads*, Section 2.1, https://arxiv.org/abs/1310.8279.
 -/
 
 @[expose] public section
@@ -33,7 +37,7 @@ namespace SSet.SimplicialComputad
 variable {O : Type w} {C : Type v} [EnrichedCategory SSet.{max u w} C]
   {G H : O → O → Type u}
 
-/-- Evaluate original paths by the native free-category functor into the scalar category. -/
+/-- Evaluate paths by the native free-category functor into the scalar category. -/
 def evaluate (a : O → C) (Δ : SimplexCategoryᵒᵖ)
     (g : ∀ {x y}, G x y → (a x ⟶[SSet.{max u w}] a y).obj Δ) {x y : O} :
     Path G x y → (a x ⟶[SSet.{max u w}] a y).obj Δ :=
@@ -42,13 +46,13 @@ def evaluate (a : O → C) (Δ : SimplexCategoryᵒᵖ)
       map := g }
   (Paths.lift φ).map
 
-/-- The original identity path is interpreted as the native enriched identity. -/
+/-- The identity path is interpreted as the native enriched identity. -/
 theorem evaluate_nil (a : O → C) (Δ : SimplexCategoryᵒᵖ)
     (g : ∀ {x y}, G x y → (a x ⟶[SSet.{max u w}] a y).obj Δ) (x : O) :
     evaluate a Δ g (Quiver.Path.nil : Path G x x) =
       (eId SSet.{max u w} (a x)).app Δ PUnit.unit := rfl
 
-/-- Interpreting a cons uses the original enriched composition. -/
+/-- Interpreting a cons uses the enriched composition. -/
 theorem evaluate_cons (a : O → C) (Δ : SimplexCategoryᵒᵖ)
     (g : ∀ {x y}, G x y → (a x ⟶[SSet.{max u w}] a y).obj Δ) {x y z : O}
     (p : Path G x y) (e : G y z) :
@@ -64,7 +68,7 @@ theorem evaluate_single (a : O → C) (Δ : SimplexCategoryᵒᵖ)
       map := g }
   exact Paths.lift_toPath φ e
 
-/-- Interpretation preserves the actual full path composition. -/
+/-- Interpretation preserves the path composition. -/
 theorem evaluate_comp (a : O → C) (Δ : SimplexCategoryᵒᵖ)
     (g : ∀ {x y}, G x y → (a x ⟶[SSet.{max u w}] a y).obj Δ) {x y z : O}
     (p : Path G x y) (q : Path G y z) :
@@ -87,7 +91,7 @@ theorem evaluate_congr (a : O → C) (Δ : SimplexCategoryᵒᵖ)
   | nil => rfl
   | cons p f ih => rw [evaluate_cons, evaluate_cons, ih, e]
 
-/-- Interpreting a free extension evaluates each of its original path images. -/
+/-- Interpreting a free extension evaluates each of its path images. -/
 theorem evaluate_pathMap (a : O → C) (Δ : SimplexCategoryᵒᵖ)
     (g : ∀ {x y}, H x y → (a x ⟶[SSet.{max u w}] a y).obj Δ)
     (f : ∀ {x y}, G x y → Path H x y) {x y : O} (p : Path G x y) :
@@ -102,7 +106,7 @@ theorem evaluate_pathMap (a : O → C) (Δ : SimplexCategoryᵒᵖ)
   | cons p e ih =>
     rw [pathMap_cons, evaluate_comp, ih, evaluate_cons]
 
-/-- Original scalar operators commute with the whole interpretation of paths. -/
+/-- Scalar operators commute with the interpretation of paths. -/
 theorem evaluate_scalar (a : O → C) {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ ⟶ Δ')
     (g : ∀ {x y}, G x y → (a x ⟶[SSet.{max u w}] a y).obj Δ) {x y : O} (p : Path G x y) :
     (a x ⟶[SSet.{max u w}] a y).map θ (evaluate a Δ g p) =
@@ -124,15 +128,15 @@ theorem evaluate_scalar (a : O → C) {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ 
 
 variable (A : SimplicialComputad.{u, w} O)
 
-/-- The original primitive interpretation, with no assumed strict-functor extension. -/
+/-- The primitive interpretation, with no assumed strict-functor extension. -/
 @[ext]
 structure Assignment where
-  /-- The original object function. -/
+  /-- The object function. -/
   obj : O → C
-  /-- The original images of all atomic arrows. -/
+  /-- The images of all atomic arrows. -/
   atom (Δ : SimplexCategoryᵒᵖ) {x y : O} :
     A.generator Δ x y → (obj x ⟶[SSet.{max u w}] obj y).obj Δ
-  /-- Scalar faces and degeneracies use their actual, possibly composite, path images. -/
+  /-- Scalar faces and degeneracies use their , possibly composite, path images. -/
   operator {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ ⟶ Δ') {x y : O} (g : A.generator Δ x y) :
     (obj x ⟶[SSet.{max u w}] obj y).map θ (atom Δ g) =
       evaluate obj Δ' (atom Δ') (A.operator θ g)
@@ -147,7 +151,7 @@ theorem Assignment.map_natural (d : Assignment A (C := C))
     ((evaluate_congr d.obj Δ' _ _ (fun g => d.operator θ g) p).trans
       (evaluate_pathMap d.obj Δ' (d.atom Δ') (A.operator θ) p).symm)
 
-/-- The native free-category construction gives the entire strict enriched interpretation. -/
+/-- The native free-category construction gives the strict enriched interpretation. -/
 def Assignment.toFunctor (d : Assignment A (C := C)) : EnrichedFunctor SSet.{max u w}
   A.Object C where
   obj x := d.obj x.label
@@ -164,7 +168,7 @@ def Assignment.toFunctor (d : Assignment A (C := C)) : EnrichedFunctor SSet.{max
     ext Δ p
     exact evaluate_comp d.obj Δ (d.atom Δ) p.1 p.2
 
-/-- A strict enriched functor is exactly the native free evaluation of its original atomic
+/-- A strict enriched functor is exactly the native free evaluation of its atomic
 images. -/
 theorem functor_map_path (F : EnrichedFunctor SSet.{max u w} A.Object C)
     (Δ : SimplexCategoryᵒᵖ) {x y : O} (p : Path (A.generator Δ) x y) :
@@ -186,7 +190,7 @@ theorem functor_map_path (F : EnrichedFunctor SSet.{max u w} A.Object C)
       (fun q => (eComp SSet.{max u w} (F.obj ⟨x.label⟩) (F.obj ⟨y.label⟩) (F.obj ⟨z.label⟩)).app Δ
         ⟨q, (F.map ⟨y.label⟩ ⟨z.label⟩).app Δ (single g)⟩) ih)
 
-/-- Read the actual object function and every atomic image of a strict enriched functor. -/
+/-- Read the object function and every atomic image of a strict enriched functor. -/
 def readback (F : EnrichedFunctor SSet.{max u w} A.Object C) : Assignment A (C := C) where
   obj x := F.obj ⟨x⟩
   atom Δ {x y} g := (F.map ⟨x⟩ ⟨y⟩).app Δ (single g)
@@ -201,7 +205,7 @@ def readback (F : EnrichedFunctor SSet.{max u w} A.Object C) : Assignment A (C :
           (fun {x y} e => (F.map ⟨x⟩ ⟨y⟩).app Δ' (single e)) (A.operator θ g) :=
         functor_map_path A F Δ' (A.operator θ g)
 
-/-- The reconstruction retains the entire original strict enriched functor. -/
+/-- The reconstruction retains the strict enriched functor. -/
 theorem toFunctor_readback (F : EnrichedFunctor SSet.{max u w} A.Object C) :
     (readback A F).toFunctor A = F := by
   refine EnrichedFunctor.ext SSet.{max u w} (F := (readback A F).toFunctor A) (G := F)
@@ -210,7 +214,7 @@ theorem toFunctor_readback (F : EnrichedFunctor SSet.{max u w} A.Object C) :
   ext Δ p
   exact (functor_map_path A F Δ p).symm
 
-/-- Reading the reconstructed functor retains every original primitive field. -/
+/-- Reading the reconstructed functor retains every primitive field. -/
 theorem readback_toFunctor (d : Assignment A (C := C)) :
     readback A (d.toFunctor A) = d := by
   apply Assignment.ext
@@ -219,7 +223,7 @@ theorem readback_toFunctor (d : Assignment A (C := C)) :
     funext Δ x y g
     exact evaluate_single d.obj Δ (d.atom Δ) g
 
-/-- The strict functors and their actual primitive interpretations are genuinely equivalent. -/
+/-- The strict functors and their primitive interpretations are genuinely equivalent. -/
 def functorEquiv : (EnrichedFunctor SSet.{max u w} A.Object C) ≃ Assignment A (C := C) where
   toFun := readback A
   invFun := Assignment.toFunctor A

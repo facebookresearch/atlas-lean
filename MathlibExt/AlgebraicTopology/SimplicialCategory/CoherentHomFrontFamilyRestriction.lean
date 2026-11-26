@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomFrontFamily
 
 /-!
-# Whole front restriction of an actual compatible Hom family
+# Front restriction of a compatible Hom family
 
-Every original front-compatible last-interval family restricts to the
-whole constant enriched functor on each genuine front operator. The
-original endpoints and every whole Hom map are retained. The proof uses
-the actual enriched maps and their equality transports.
+Every front-compatible last-interval family restricts to the
+constant enriched functor on each front operator. The
+endpoints and every Hom map are retained. The proof uses
+the enriched maps and their equality transports.
 -/
 
 noncomputable section
@@ -27,7 +27,7 @@ namespace CategoryTheory.CoherentRealization.HomFrontFamilyRestriction
 open SimplicialEnrichment HomFrontFamily
 variable {C A : Carrier.{u}} {n : ℕ} (x y : C) (family : Family x y n)
 
-/-- A whole original family map retains the exact supplied pair of original endpoint equalities. -/
+/-- A family map retains the exact supplied pair of endpoint equalities. -/
 theorem homMap_reindex {a a' b b' : Fin (n + 2)} (ha : a = a') (hb : b = b') :
     homMap x y family a b ≫ eqToHom (congrArg₂ (fun a b : Fin (n + 2) =>
       (HomFrontFamily.object x y a ⟶[SSet.{u}] HomFrontFamily.object x y b)) ha hb) =
@@ -38,7 +38,7 @@ theorem homMap_reindex {a a' b b' : Fin (n + 2)} (ha : a = a') (hb : b = b') :
   subst b'
   simp only [eqToHom_refl, Category.comp_id, Category.id_comp]
 
-/-- A whole original Hom map whose endpoints lie in the front reads the constant supplied
+/-- A Hom map whose endpoints lie in the front reads the constant supplied
 source identity. -/
 theorem hom_constant (F : A ⟶ coherentSimplex.{u} ⦋n + 1⦌)
     (i : A → Fin (n + 1)) (hi : ∀ a, (F.obj a).as.down = (i a).castSucc) (a b : A) :
@@ -79,7 +79,7 @@ theorem hom_constant (F : A ⟶ coherentSimplex.{u} ⦋n + 1⦌)
       ((Category.assoc U _ _).symm.trans (congrArg (fun g => g ≫ eId SSet.{u} x) hU))
   exact hs₀.trans (hs₁.trans (hs₂.trans (hs₃.trans (hs₄.trans hs₅))))
 
-/-- The entire actual enriched front restriction is the supplied source's constant simplex. -/
+/-- The enriched front restriction is the supplied source's constant simplex. -/
 theorem front (m : SimplexCategory) (F : coherentSimplex.{u} m ⟶ coherentSimplex.{u} ⦋n + 1⦌)
     (i : coherentSimplex.{u} m → Fin (n + 1)) (hi : ∀ a, (F.obj a).as.down = (i a).castSucc) :
     F ≫ simplex x y family = constantSimplex C m x := by

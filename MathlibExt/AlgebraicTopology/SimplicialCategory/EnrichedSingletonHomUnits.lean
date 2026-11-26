@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomUnitsAndEmpty
 
 /-!
-# Whole composition at an original singleton enriched Hom
+# Composition at a singleton enriched Hom
 
-When the actual source identity is a Hom isomorphism from the scalar
+When the source identity is a Hom isomorphism from the scalar
 tensor unit, an identity-preserving diagonal map composes correctly with
-any supplied whole Hom map. This includes an independently constructed
+any supplied Hom map. This includes an independently constructed
 outer Horn map; no transported-functor outcome is an input.
 -/
 
@@ -32,9 +32,9 @@ private theorem unit_elem {Y : SSet.{u}} (e : 𝟙_ SSet.{u} ⟶ Y) [IsIso e]
   rw [h₀] at h
   exact h.symm
 
-/-- A whole diagonal map preserving the original identity composes with every supplied Hom
+/-- A diagonal map preserving the identity composes with every supplied Hom
 map when the
-  source diagonal Hom is genuinely the tensor unit. -/
+ source diagonal Hom is genuinely the tensor unit. -/
 theorem left_comp {A B : Carrier.{u}} (a b : A) (x y : B)
     [IsIso (eId SSet.{u} a)]
     (d : (a ⟶[SSet.{u}] a) ⟶ (x ⟶[SSet.{u}] x)) (m : (a ⟶[SSet.{u}] b) ⟶ (x ⟶[SSet.{u}] y))
@@ -60,9 +60,9 @@ theorem left_comp {A B : Carrier.{u}} (a b : A) (x y : B)
   rw [h₀, hS, hD]
   exact hT.symm
 
-/-- The actual right diagonal identity composes with any supplied whole Hom map under the
-same genuine
-  singleton source-Hom hypothesis. -/
+/-- The right diagonal identity composes with any supplied Hom map under the
+same 
+ singleton sourceHom hypothesis. -/
 theorem right_comp {A B : Carrier.{u}} (a b : A) (x y : B)
     [IsIso (eId SSet.{u} b)]
     (d : (b ⟶[SSet.{u}] b) ⟶ (y ⟶[SSet.{u}] y)) (m : (a ⟶[SSet.{u}] b) ⟶ (x ⟶[SSet.{u}] y))

@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCompositionFace
 
 /-!
-# Actual intersections of coherent composition faces
+# Intersections of coherent composition faces
 
-The intersection of two original middle-vertex faces is identified with
-the literal product of the three original coherent Hom objects. The
-inverse splits that same whole path twice. Both scalar inverse equations
-and the original left/right union-composition agreement are proved.
+The intersection of two middle-vertex faces is identified with
+the literal product of the three coherent Hom objects. The
+inverse splits that same path twice. Both scalar inverse equations
+and the left/right union-composition agreement hold.
 Coincident middle vertices are included.
 -/
 
@@ -33,21 +33,21 @@ private instance (a b : SimplicialThickening.Path i l) : Subsingleton (a ⟶ b) 
     apply InducedCategory.Hom.ext
     exact Subsingleton.elim _ _
 
-/-- The same original path has both specified middle vertices at every scalar vertex. -/
+/-- The same path has both specified middle vertices at every scalar vertex. -/
 def face : (nerve (SimplicialThickening.Path i l)).Subcomplex :=
   positive i j l ⊓ positive i k l
 
-/-- The literal original three-Hom product with the right parenthesization. -/
+/-- The literal threeHom product with the right parenthesization. -/
 abbrev triple : SSet.{u} :=
   nerve (SimplicialThickening.Path i j) ⊗
     (nerve (SimplicialThickening.Path j k) ⊗ nerve (SimplicialThickening.Path k l))
 
-/-- The actual right-parenthesized coherent union composition on the three original Hom objects. -/
+/-- The right-parenthesized coherent union composition on the three Hom objects. -/
 def composition : triple i j k l ⟶ nerve (SimplicialThickening.Path i l) :=
   nerve (SimplicialThickening.Path i j) ◁ CompositionFace.composition j k l ≫
     CompositionFace.composition i j l
 
-/-- The original triple union lies in both original middle-vertex faces. -/
+/-- The triple union lies in both middle-vertex faces. -/
 def glue : triple i j k l ⟶ face i j k l where
   app q := ↾fun p => ⟨(composition i j k l).app q p,
     ⟨fun t => Or.inl (p.1.obj t).right,
@@ -60,7 +60,7 @@ def glue : triple i j k l ⟶ face i j k l where
 
 variable {i j k l}
 
-/-- The actual right interval path retains the second supplied middle vertex. -/
+/-- The right interval path retains the second supplied middle vertex. -/
 theorem middle_mem (hjk : j ≤ k) {q : SimplexCategoryᵒᵖ}
     (p : (face i j k l : SSet.{u}).obj q) (t : Fin (q.unop.len + 1)) :
     k ∈ (rightPath (p.val.obj t) (p.property.1 t)).I :=
@@ -68,12 +68,12 @@ theorem middle_mem (hjk : j ≤ k) {q : SimplexCategoryᵒᵖ}
 
 variable (i j k l)
 
-/-- The actual second and third original path chains after the first original interval split. -/
+/-- The second and third path chains after the first interval split. -/
 def rightFace (hjk : j ≤ k) {q : SimplexCategoryᵒᵖ}
     (p : (face i j k l : SSet.{u}).obj q) : (positive j k l : SSet.{u}).obj q :=
   ⟨rightChain i j l ⟨p.val, p.property.1⟩, middle_mem hjk p⟩
 
-/-- Split the same whole original double face into its three original interval Hom chains. -/
+/-- Split the same double face into its three interval Hom chains. -/
 def split (hjk : j ≤ k) : (face i j k l : SSet.{u}) ⟶ triple i j k l where
   app q := ↾fun p =>
     (leftChain i j l ⟨p.val, p.property.1⟩,
@@ -93,8 +93,8 @@ def split (hjk : j ≤ k) : (face i j k l : SSet.{u}) ⟶ triple i j k l where
         intro x y g
         exact Subsingleton.elim _ _
 
-/-- The genuine whole triple-Hom isomorphism onto the intersection of the two original
-composition faces. -/
+/-- The tripleHom isomorphism onto the intersection of the two 
+Composition faces. -/
 def faceIso (hjk : j ≤ k) : triple i j k l ≅ face i j k l where
   hom := glue i j k l
   inv := split i j k l hjk
@@ -155,13 +155,13 @@ def faceIso (hjk : j ≤ k) : triple i j k l ≅ face i j k l where
     · intro x y g
       exact Subsingleton.elim _ _
 
-/-- The original double-face forward map reads back the entire original right-parenthesized
-composition. -/
+/-- The double-face forward map reads back the right-parenthesized
+Composition. -/
 theorem faceIso_composition (hjk : j ≤ k) :
     (faceIso i j k l hjk).hom ≫ (face i j k l).ι = composition i j k l := rfl
 
-/-- Both original parenthesizations give exactly the same whole coherent Hom map on the
-actual double face. -/
+/-- Both parenthesizations give exactly the same coherent Hom map on the
+double face. -/
 theorem left_composition :
     (α_ (nerve (SimplicialThickening.Path i j)) (nerve (SimplicialThickening.Path j k))
       (nerve (SimplicialThickening.Path k l))).inv ≫

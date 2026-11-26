@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedHomEqualityTransport
 
 /-!
-# Injective whole-map postcomposition from original object and Hom maps
+# Injective map postcomposition from object and Hom maps
 
-A whole original enriched map with injective object map and monic
-full Hom maps reflects equality of whole original functors. The source,
+An enriched map with injective object map and monic
+Hom maps reflects equality of functors. The source,
 middle and target object universes are independent; no fixed-object
-restriction is made.
+Restriction is made.
 -/
 
 noncomputable section
@@ -27,8 +27,8 @@ namespace CategoryTheory.EnrichedFunctor
 variable {C : Type v} {D : Type w} {E : Type z}
   [EnrichedCategory SSet.{u} C] [EnrichedCategory SSet.{u} D] [EnrichedCategory SSet.{u} E]
 
-/-- Whole original functor postcomposition is injective when the actual object and full Hom
-maps are injective. -/
+/-- Functor postcomposition is injective when the object and Hom
+Maps are injective. -/
 theorem postcomp_injective (F : EnrichedFunctor SSet.{u} D E)
     (hObj : Function.Injective F.obj) (hHom : ∀ x y : D, Mono (F.map x y)) :
     Function.Injective (fun G : EnrichedFunctor SSet.{u} C D =>

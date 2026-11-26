@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFixedFrontCollapse
 
 /-!
-# The SAME original zero-dimensional fixed-front quotient is the walking arrow
+# The same zero-dimensional fixed-front quotient is the walking arrow
 
-The original front of Δ[1] consists of the single original source
-vertex in every scalar degree. Its original quotient relation is
-therefore equality. Both full inverse maps retain the actual original
+The front of Δ[1] consists of the single source
+vertex in every scalar degree. Its quotient relation is
+therefore equality. Both full inverse maps retain the 
 projection, every simplex and all scalar operators.
 -/
 
@@ -29,7 +29,7 @@ namespace CategoryTheory.CoherentRealization.OriginalFixedFrontContraction
 
 open FixedFrontCollapse
 
-/-- Every original zero-front pair has its SAME original simplex equality. -/
+/-- Every zero-front pair has its same simplex equality. -/
 theorem zero_front_eq {q : SimplexCategoryᵒᵖ} (a b : (Δ[1] : SSet.{u}).obj q)
     (ha : InFront (n := 0) a) (hb : InFront (n := 0) b) : a = b := by
   apply SSet.stdSimplex.ext
@@ -46,7 +46,7 @@ theorem zero_front_eq {q : SimplexCategoryᵒᵖ} (a b : (Δ[1] : SSet.{u}).obj 
   have hbx : (b.down.toOrderHom i).val ≠ 1 := fun h => hb' (Fin.ext h)
   omega
 
-/-- The actual whole original inverse from the zero-front quotient retains every original
+/-- The inverse from the zero-front quotient retains every 
 simplex. -/
 def zeroObjectInverse : FixedFrontCollapse.object.{u} 0 ⟶ (Δ[1] : SSet.{u}) where
   app q := ↾_root_.Quotient.lift id (by
@@ -59,7 +59,7 @@ def zeroObjectInverse : FixedFrontCollapse.object.{u} 0 ⟶ (Δ[1] : SSet.{u}) w
     induction p using _root_.Quotient.inductionOn' with
     | h a => rfl
 
-/-- Both inverse maps identify the SAME original zero-front quotient with the original
+/-- Both inverse maps identify the same zero-front quotient with the 
 walking arrow. -/
 def zeroObjectIso : FixedFrontCollapse.object.{u} 0 ≅ (Δ[1] : SSet.{u}) where
   hom := zeroObjectInverse
@@ -78,7 +78,7 @@ def zeroObjectIso : FixedFrontCollapse.object.{u} 0 ≅ (Δ[1] : SSet.{u}) where
     intro a
     rfl
 
-/-- The SAME zero-front inverse is literally the original complete quotient projection. -/
+/-- The same zero-front inverse is literally the complete quotient projection. -/
 theorem zeroObjectIso_inv : zeroObjectIso.{u}.inv = projection.{u} 0 := rfl
 
 end CategoryTheory.CoherentRealization.OriginalFixedFrontContraction

@@ -11,13 +11,13 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomOpenBox
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCompositionFace
 
 /-!
-# The actual coherent Hom box as original zero and composition faces
+# The coherent Hom box as zero and composition faces
 
-The box is exactly the union of whole path chains missing one retained
+The box is exactly the union of path chains missing one retained
 interior vertex or containing a middle vertex throughout. These are the
-original coherent face and union-composition conditions at every scalar
+coherent face and union-composition conditions at every scalar
 degree, including degenerate simplices. The missing negative face has its
-original distinguished label.
+distinguished label.
 -/
 
 noncomputable section
@@ -29,14 +29,14 @@ namespace CategoryTheory.CoherentRealization.HomBoxDecomposition
 open IntervalHom HomBoxWords CubeCoordinates
 variable {J : Type u} [LinearOrder J] {i j : J}
 
-/-- The original negative coherent face: the supplied vertex is absent from the whole path chain. -/
+/-- The negative coherent face: the supplied vertex is absent from the path chain. -/
 def negative (i t j : J) : (nerve (SimplicialThickening.Path i j)).Subcomplex where
   obj q := {p | ∀ a, t ∉ (p.obj a).I}
   map f p hp := by
     intro a
     exact hp (f.unop.toOrderHom a)
 
-/-- The box condition on the same entire original path chain and the same distinguished
+/-- The box condition on the same path chain and the same distinguished
 interior vertex. -/
 theorem mem_iff (hij : i ≤ j) (k : Interior i j) {q : SimplexCategoryᵒᵖ}
     (p : (nerve (SimplicialThickening.Path i j)).obj q) :
@@ -46,8 +46,8 @@ theorem mem_iff (hij : i ≤ j) (k : Interior i j) {q : SimplexCategoryᵒᵖ}
           (∀ a, t.val.val ∉ (p.obj a).I) ∨ (∀ a, t.val.val ∈ (p.obj a).I) :=
   HomOpenBox.mem_iff hij k p
 
-/-- The actual coherent Hom-box subcomplex is exactly its retained negative and original
-composition faces. -/
+/-- The coherent Hom-box subcomplex is exactly its retained negative and 
+Composition faces. -/
 theorem subcomplex_eq (hij : i ≤ j) (k : Interior i j) :
     HomOpenBox.subcomplex hij k =
       CompositionFace.positive i k.val j ⊔
@@ -60,7 +60,7 @@ theorem subcomplex_eq (hij : i ≤ j) (k : Interior i j) :
   simp only [Subfunctor.max_obj, Subfunctor.iSup_obj, Set.mem_union, Set.mem_iUnion]
   rfl
 
-/-- Every actual original composition face is retained in the box, including the
+/-- Every composition face is retained in the box, including the
 distinguished one. -/
 theorem positive_le (hij : i ≤ j) (k t : Interior i j) :
     CompositionFace.positive i t.val j ≤ HomOpenBox.subcomplex hij k := by
@@ -72,7 +72,7 @@ theorem positive_le (hij : i ≤ j) (k t : Interior i j) :
     exact Or.inl hp
   · exact Or.inr ⟨⟨t, h⟩, Or.inr hp⟩
 
-/-- The retained negative face keeps its original label different from the missing interior
+/-- The retained negative face keeps its label different from the missing interior
 label. -/
 theorem negative_le (hij : i ≤ j) (k t : Interior i j) (ht : t ≠ k) :
     negative i t.val j ≤ HomOpenBox.subcomplex hij k := by

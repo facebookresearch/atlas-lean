@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectPresentations
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectDiagramGenerators
 
 /-!
-# The actual arbitrary fixed-object presentation cocone
+# The arbitrary fixed-object presentation cocone
 
-The three original relation families enforce stage identities, stage
-composition and actual diagram maps. They construct the whole enriched
+The three relation families enforce stage identities, stage
+Composition and diagram maps. They construct the enriched
 cocone on the unchanged object labels, with exact generator readback.
-No colimit or enriched-model conclusion is supplied as an input.
+
 -/
 
 noncomputable section
@@ -29,10 +29,10 @@ open SimplicialQuiver
 variable {O : Type u} {J : Type v} [Category.{w} J] [Small.{u} J]
   (F : J ⥤ FixedObjects O)
 
-/-- The actual presentation of the original diagram on its same individual object labels. -/
+/-- The presentation of the diagram on its same individual object labels. -/
 abbrev object : FixedObjects O := Presentations.object (quiver F) (relations F)
 
-/-- The same original stage Hom injection into the actual presented enrichment. -/
+/-- The same stage Hom injection into the presented enrichment. -/
 def injectionHom (j : J) (x y : O) : hom (F.obj j) x y ⟶ hom (object F) x y :=
   stageHom F j x y ≫ Presentations.generator (quiver F) (relations F) x y
 
@@ -51,17 +51,17 @@ private theorem injection_composition (j : J) (x y z : O) :
   exact Presentations.relation_eq (quiver F) (relations F) q x z _ _
     (Relation.composition j q x y z a b)
 
-/-- The actual whole enriched cocone leg, derived from the original unit and composition
+/-- The enriched cocone leg, derived from the unit and composition
 relations. -/
 def injection (j : J) : F.obj j ⟶ object F :=
   ofHomMaps (injectionHom F j) (injection_identity F j) (injection_composition F j)
 
-/-- Each cocone leg is the same whole original stage Hom injection. -/
+/-- Each cocone leg is the same stage Hom injection. -/
 @[simp]
 theorem homMap_injection (j : J) (x y : O) :
     homMap (injection F j) x y = injectionHom F j x y := homMap_ofHomMaps _ _ _ x y
 
-/-- Each cocone leg retains the same supplied individual original object label. -/
+/-- Each cocone leg retains the same supplied individual object label. -/
 @[simp]
 theorem injection_obj (j : J) (a : (F.obj j).val) :
     (injection F j).val.obj a = vertex (object F) (label (F.obj j) a) := rfl
@@ -72,7 +72,7 @@ private theorem injection_naturality {j k : J} (f : j ⟶ k) (x y : O) :
   exact (Presentations.relation_eq (quiver F) (relations F) q x y _ _
     (Relation.diagram f q x y a)).symm
 
-/-- The genuine fixed-object cocone over the original arbitrary small diagram. -/
+/-- The fixed-object cocone over the arbitrary small diagram. -/
 def cocone : Cocone F where
   pt := object F
   ι := {

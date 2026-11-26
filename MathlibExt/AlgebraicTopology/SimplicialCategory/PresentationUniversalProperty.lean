@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.Presentation
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FreeUniversalProperty
 
 /-!
-# The actual simplicial presentation universal property
+# The simplicial presentation universal property
 
-Genuine enriched functors from the presentation correspond to original
+enriched functors from the presentation correspond to 
 generator interpretations satisfying its explicit generating equations.
-The proof descends the full path evaluation and establishes both whole
+The proof descends the path evaluation and establishes both 
 inverse equations, rather than providing a comparison certificate.
 -/
 
@@ -28,18 +28,18 @@ namespace CategoryTheory.SimplicialQuiver
 variable {O : Type u} {Q : Data O} (R : Relations Q)
     {C : Type v} [EnrichedCategory SSet.{u} C]
 
-/-- The actual enriched quotient functor on whole original paths, fixing every original object. -/
+/-- The enriched quotient functor on paths, fixing every object. -/
 def quotientFunctor : EnrichedFunctor SSet.{u} (free Q) (presented R) where
   obj x := x
   map x y := quotientHom R x y
   map_id x := by ext n a; rfl
   map_comp x y z := by ext n a; rfl
 
-/-- Restriction of a genuine presentation functor to its original generating simplicial arrows. -/
+/-- Restriction of a presentation functor to its generating simplicial arrows. -/
 def restrictPresented (F : EnrichedFunctor SSet.{u} (presented R) C) : Interpretation Q C :=
   restrict Q ((quotientFunctor R).comp SSet.{u} F)
 
-/-- Whole-path evaluation of this restriction reads the actual presentation functor on that
+/-- path evaluation of this restriction reads the presentation functor on that
 path class. -/
 theorem evalPath_restrictPresented (F : EnrichedFunctor SSet.{u} (presented R) C)
     (n : SimplexCategoryᵒᵖ) {x y : O} (p : Path Q n x y) :
@@ -47,7 +47,7 @@ theorem evalPath_restrictPresented (F : EnrichedFunctor SSet.{u} (presented R) C
       (F.map x y).app n (_root_.Quotient.mk (congruence R n x y) p) :=
   evalPath_restrict Q ((quotientFunctor R).comp SSet.{u} F) n p
 
-/-- The actual restricted generators satisfy every original stated presentation equation. -/
+/-- The restricted generators satisfy every stated presentation equation. -/
 theorem restrictPresented_relations (F : EnrichedFunctor SSet.{u} (presented R) C)
     (n : SimplexCategoryᵒᵖ) (x y : O) (p q : Path Q n x y) (h : R n x y p q) :
     (restrictPresented R F).evalPath n p = (restrictPresented R F).evalPath n q := by
@@ -55,7 +55,7 @@ theorem restrictPresented_relations (F : EnrichedFunctor SSet.{u} (presented R) 
     ((congrArg (fun a => (F.map x y).app n a) (_root_.Quotient.sound (Closure.relation h))).trans
       (evalPath_restrictPresented R F n q).symm)
 
-/-- Descending the original generator restriction recovers the whole enriched presentation
+/-- Descending the generator restriction recovers the enriched presentation
 functor. -/
 theorem descend_restrictPresented (F : EnrichedFunctor SSet.{u} (presented R) C) :
     (restrictPresented R F).descend R (restrictPresented_relations R F) = F := by
@@ -72,7 +72,7 @@ theorem descend_restrictPresented (F : EnrichedFunctor SSet.{u} (presented R) C)
   induction a using _root_.Quotient.inductionOn with
   | h p => exact evalPath_restrictPresented R F n p
 
-/-- Restricting the descended original generator interpretation recovers every given
+/-- Restricting the descended generator interpretation recovers every given
 generator map. -/
 theorem restrictPresented_descend (I : Interpretation Q C)
     (hR : ∀ n x y p q, R n x y p q → I.evalPath n p = I.evalPath n q) :
@@ -88,7 +88,7 @@ theorem restrictPresented_descend (I : Interpretation Q C)
         (Interpretation.quotient_descend ⟨obj, map⟩ R hR x y)).trans
           (Interpretation.generator_eval ⟨obj, map⟩ x y)
 
-/-- The genuine Hom equivalence for the actual simplicial presentation and its original
+/-- The Hom equivalence for the simplicial presentation and its 
 generators. -/
 def presentedInterpretationEquiv : EnrichedFunctor SSet.{u} (presented R) C ≃
     {I : Interpretation Q C // ∀ n x y p q, R n x y p q → I.evalPath n p = I.evalPath n q} where

@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHornBoxFaces
 
 /-!
-# Literal supplied endpoint faces of the actual short Hom maps
+# Literal supplied endpoint faces of the short Hom maps
 
-The two actual short-leg maps used on a positive Hom-box face are the
-original last and first supplied horn-face extractions. Their preimage
-vertices and both original endpoint equations remain explicit. No
+The two short-leg maps used on a positive Hom-box face are the
+last and first supplied horn-face extractions. Their preimage
+vertices and both endpoint equations remain explicit. No
 compatibility or filler conclusion is an input.
 -/
 
@@ -29,8 +29,8 @@ variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
   (hi₀ : i ≠ 0) (hiₙ : i ≠ Fin.last (n + 2)) (b : Interior.{u} n)
 
-/-- The actual short Hom from zero to the supplied interior vertex is carried by its
-original last-face preimages. -/
+/-- The short Hom from zero to the supplied interior vertex is carried by its
+last-face preimages. -/
 theorem leftMap_eq_lastFace : leftMap f hi₀ hiₙ b =
     HornOutsideIntervals.faceMap f (Fin.last (n + 2)) hiₙ.symm
       (ULift.up (0 : Fin (n + 2))) (ULift.up ((HornBoxFaces.vertex b).castPred (vertex_ne_last b)))
@@ -48,9 +48,9 @@ theorem leftMap_eq_lastFace : leftMap f hi₀ hiₙ b =
   simp only [HornBoxFaces.leftMap, HornOutsideIntervals.homMap]
   rfl
 
-/-- The actual short Hom from the interior vertex to the last endpoint is carried by its
-original first-face
-  preimages. -/
+/-- The short Hom from the interior vertex to the last endpoint is carried by its
+first-face
+ preimages. -/
 theorem rightMap_eq_firstFace : rightMap f hi₀ hiₙ b =
     HornOutsideIntervals.faceMap f (0 : Fin (n + 3)) hi₀.symm
       (ULift.up ((HornBoxFaces.vertex b).pred (vertex_ne_zero b))) (ULift.up (Fin.last (n + 1)))

@@ -53,7 +53,7 @@ theorem index_eq (x : Index.{u} (1 : Fin 3)) : x = .inl (inner 1 one_ne_zero one
   · exact congrArg Sum.inl (interior_eq_inner b)
   · exact (no_negative k).elim
 
-/-- The interior is inhabited: the middle vertex is a genuine interior label. -/
+/-- The interior is inhabited: the middle vertex is a interior label. -/
 theorem vertex_inner : vertex (inner.{u} (1 : Fin 3) one_ne_zero one_ne_last) = 1 := rfl
 
 /-- `cover` read back at `n = 0`: the Hom box is the single positive composition face. -/
@@ -82,7 +82,7 @@ theorem maps_inl :
       positiveMap f one_ne_zero one_ne_last (inner 1 one_ne_zero one_ne_last) := rfl
 
 /-- Map readback at `n = 0`: through the composition-face chart, the box map is the target
-composition of the two short Hom maps `0 → 1` and `1 → 2`. -/
+Composition of the two short Hom maps `0 → 1` and `1 → 2`. -/
 theorem maps_readback :
     (CompositionFace.positiveIso (ULift.up 0) (ULift.up 1) (ULift.up (Fin.last 2))).hom ≫
         maps f one_ne_zero one_ne_last (.inl (inner 1 one_ne_zero one_ne_last)) =

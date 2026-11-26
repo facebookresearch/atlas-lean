@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelUniversalProperty
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelReadback
 
-/-! # Genuine whole enriched extension along an arbitrary original label map
+/-! # Enriched extension along an arbitrary label map
 
-An actual source functor whose object function factors through the
-specified labels extends to the original path source. All original Hom
-maps and the whole source functor are retained. The extension is unique
+A source functor whose object function factors through the
+specified labels extends to the path source. All Hom
+Maps and the source functor are retained. The extension is unique
 with its prescribed target object function, including noninjective maps.
 -/
 
@@ -25,7 +25,7 @@ open CategoryTheory MonoidalCategory
 namespace CategoryTheory.SimplicialEnrichment.CarrierLabelLift
 open FixedObjects CarrierLabelExtension CarrierLabelUniversalProperty
 
-/-- The two original identity-Hom reindexing projections compose to their same object function. -/
+/-- The two identityHom reindexing projections compose to their same object function. -/
 theorem projection_comp {A O : Type u} (a : A → O) {D : Carrier.{u}} (b : O → D) :
     CarrierReindexing.toTarget (CarrierReindexing.object D b).val a ≫
       CarrierReindexing.toTarget D b = CarrierReindexing.toTarget D (fun x => b (a x)) := by
@@ -40,7 +40,7 @@ theorem projection_comp {A O : Type u} (a : A → O) {D : Carrier.{u}} (b : O �
 variable (C : Carrier.{u}) {O : Type u} (a : C → O) {D : Carrier.{u}}
 variable (b : O → D)
 
-/-- Projecting the complete original unit through both label rows retains the whole target
+/-- Projecting the complete unit through both label rows retains the target
 functor. -/
 theorem unit_target_projection (G : object C a ⟶ CarrierReindexing.object D b) :
     (LabelPushforward.unit a (CarrierReindexing.source C) ≫ LabelRestriction.map a G).val ≫
@@ -55,17 +55,17 @@ theorem unit_target_projection (G : object C a ⟶ CarrierReindexing.object D b)
 
 variable (F : C ⟶ D) (h : F.obj = fun x => b (a x))
 
-/-- The actual original source functor as a fixed-source map through the two prescribed
+/-- The source functor as a fixed-source map through the two prescribed
 label rows. -/
 def fixedInput : CarrierReindexing.source C ⟶
     LabelRestriction.object a (CarrierReindexing.object D b) :=
   CarrierLabelMaps.ofObjectEquation (fun x => b (a x)) F h
 
-/-- The genuine fixed-target-label extension of the actual source functor. -/
+/-- The fixed-target-label extension of the source functor. -/
 def fixedLift : object C a ⟶ CarrierReindexing.object D b :=
   LabelPushforward.desc a (CarrierReindexing.source C) (fixedInput C a b F h)
 
-/-- The whole enriched functor on the original target labels, constructed from the actual source. -/
+/-- The enriched functor on the target labels, constructed from the source. -/
 def lift : (object C a).val ⟶ D :=
   (fixedLift C a b F h).val ≫ CarrierReindexing.toTarget D b
 
@@ -76,7 +76,7 @@ theorem lift_obj (x : O) : (lift C a b F h).obj x = b x := by
   change (fixedLift C a b F h).val.obj x = x at hx
   exact congrArg b hx
 
-/-- The constructed extension retains the entire original source enriched functor. -/
+/-- The constructed extension retains the source enriched functor. -/
 theorem lift_fac : inclusion C a ≫ lift C a b F h = F := by
   have hu := congrArg
     (fun H : CarrierReindexing.source C ⟶ LabelRestriction.object a
@@ -86,7 +86,7 @@ theorem lift_fac : inclusion C a ≫ lift C a b F h = F := by
   exact (unit_target_projection C a b (fixedLift C a b F h)).symm.trans
     (hu.trans (CarrierLabelMaps.ofObjectEquation_fac (fun x => b (a x)) F h))
 
-/-- Any whole extension with the same target objects and original source functor is the
+/-- Any extension with the same target objects and source functor is the
 constructed extension. -/
 theorem lift_unique (H : (object C a).val ⟶ D) (hH : H.obj = b)
     (hF : inclusion C a ≫ H = F) : H = lift C a b F h := by

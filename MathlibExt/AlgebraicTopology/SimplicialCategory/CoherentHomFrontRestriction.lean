@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSimplexNaturality
 
 /-!
-# Whole constant front restrictions of original Hom simplices
+# Constant front restrictions of Hom simplices
 
-An actual enriched functor whose original vertices land in the front
+An enriched functor whose vertices land in the front
 ordinal restricts the constructed Hom simplex to the supplied source
-identity. The conclusion follows from the entire original Hom maps and
-the specified vertex equations, without a coherence certificate.
+Identity. The conclusion follows from the Hom maps and
+the specified vertex equations.
 -/
 
 noncomputable section
@@ -28,7 +28,7 @@ open SimplicialEnrichment HomSimplex HomSimplexNaturality
 variable {C A : Carrier.{u}} {n : ℕ} (x y : C)
   (τ : (Δ[n] : SSet.{u}) ⟶ (x ⟶[SSet.{u}] y))
 
-/-- A whole original Hom map whose endpoints lie in the front reads the constant supplied
+/-- A Hom map whose endpoints lie in the front reads the constant supplied
 source identity. -/
 theorem hom_constant (F : A ⟶ coherentSimplex.{u} ⦋n + 1⦌)
     (i : A → Fin (n + 1)) (hi : ∀ a, (F.obj a).as.down = (i a).castSucc) (a b : A) :
@@ -69,7 +69,7 @@ theorem hom_constant (F : A ⟶ coherentSimplex.{u} ⦋n + 1⦌)
       ((Category.assoc U _ _).symm.trans (congrArg (fun g => g ≫ eId SSet.{u} x) hU))
   exact hs₀.trans (hs₁.trans (hs₂.trans (hs₃.trans (hs₄.trans hs₅))))
 
-/-- The entire actual enriched front restriction is the supplied source's constant simplex. -/
+/-- The enriched front restriction is the supplied source's constant simplex. -/
 theorem front (m : SimplexCategory) (F : coherentSimplex.{u} m ⟶ coherentSimplex.{u} ⦋n + 1⦌)
     (i : coherentSimplex.{u} m → Fin (n + 1)) (hi : ∀ a, (F.obj a).as.down = (i a).castSucc) :
     F ≫ simplex x y τ = constantSimplex C m x := by

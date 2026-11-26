@@ -11,12 +11,17 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentAdjunction
 import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 
 /-!
-# Actual coherent realization of the standard simplices
+# Coherent realization of the standard simplices
 
-The proved adjunction identifies the realization of each standard
-simplex with Mathlib's original coherent simplex. This is a strict
-enriched isomorphism, with both whole inverses, original vertex readback,
+The adjunction identifies the realization of each standard
+simplex with Mathlib's coherent simplex. This is a strict
+enriched isomorphism, with both inverses, vertex readback,
 and every simplex-operator comparison.
+
+## References
+
+- Emily Riehl, *Homotopy coherent structures*, Definition II.2.1,
+  https://emilyriehl.github.io/files/coherent-structures.pdf.
 -/
 
 noncomputable section
@@ -27,18 +32,18 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment
 
-/-- The actual coherent-nerve simplex evaluation functor in the supplied scalar degree. -/
+/-- The coherent-nerve simplex evaluation functor in the supplied scalar degree. -/
 def simplexEvaluation (n : SimplexCategory) : Carrier.{u} ⥤ Type u :=
   coherentNerveFunctor ⋙ SSet.evaluation.obj (op n)
 
-/-- The original coherent simplex genuinely corepresents its actual enriched simplex functors. -/
+/-- The coherent simplex genuinely corepresents its enriched simplex functors. -/
 def corepresentedBySimplex (n : SimplexCategory) :
     (simplexEvaluation.{u} n).CorepresentableBy (coherentSimplex n) where
   homEquiv := Equiv.refl _
   homEquiv_comp _ _ := rfl
 
-/-- The actual realization corepresentation derived from the proved adjunction and ordinary
-simplicial Yoneda. -/
+/-- Maps from the realization of the standard simplex correspond to simplicial functors
+from the coherent simplex. -/
 def corepresentedByRealization (n : SimplexCategory) :
     (simplexEvaluation.{u} n).CorepresentableBy (realization (SSet.stdSimplex.obj n)) where
   homEquiv := (realizationAdjunction.homEquiv (SSet.stdSimplex.obj n) _).trans SSet.yonedaEquiv
@@ -49,20 +54,20 @@ def corepresentedByRealization (n : SimplexCategory) :
     exact (congrArg SSet.yonedaEquiv (realizationAdjunction.homEquiv_naturality_right f g)).trans
       (SSet.yonedaEquiv_comp _ _)
 
-/-- The genuine strict enriched isomorphism from realization of the standard simplex to the original
-  coherent simplex. -/
+/-- The strict enriched isomorphism from realization of the standard simplex to the 
+ coherent simplex. -/
 def simplexIso (n : SimplexCategory) : realization (SSet.stdSimplex.{u}.obj n) ≅
   coherentSimplex.{u} n :=
   (corepresentedByRealization n).uniqueUpToIso (corepresentedBySimplex n)
 
-/-- The actual forward simplex isomorphism is the adjunction transpose of the original
-identity coherent simplex. -/
+/-- The forward simplex isomorphism is the adjunction transpose of the 
+Identity coherent simplex. -/
 theorem simplexIso_hom_eq (n : SimplexCategory) :
     (simplexIso.{u} n).hom = (realizationAdjunction.homEquiv (SSet.stdSimplex.obj n)
       (coherentSimplex n)).symm
       (SSet.yonedaEquiv.symm (𝟙 (coherentSimplex n))) := rfl
 
-/-- The complete inverse is the original enriched insertion of the identity standard simplex. -/
+/-- The complete inverse is the enriched insertion of the identity standard simplex. -/
 theorem simplexIso_inv_eq (n : SimplexCategory) :
     (simplexIso.{u} n).inv =
       simplexInto (SSet.stdSimplex.{u}.obj n) (SSet.yonedaEquiv (𝟙
@@ -72,14 +77,14 @@ theorem simplexIso_inv_eq (n : SimplexCategory) :
   rw [realizationAdjunction.homEquiv_id]
   rfl
 
-/-- Its actual forward map reads every individual original standard-simplex vertex as the
+/-- Its forward map reads every individual standard-simplex vertex as the
 corresponding
-  coherent vertex. -/
+ coherent vertex. -/
 theorem simplexIso_hom_obj (n : SimplexCategory) (i : Fin (n.len + 1)) :
     (simplexIso.{u} n).hom.obj (SSet.stdSimplex.objEquiv.symm (SimplexCategory.const ⦋0⦌ n i)) =
       SimplicialThickening.mk (ULift.up i) := rfl
 
-/-- The whole standard-simplex comparison has the literal identity coherent simplex as its
+/-- The standard-simplex comparison has the literal identity coherent simplex as its
 adjunction readback. -/
 theorem simplexIso_hom_adjunction (n : SimplexCategory) :
     realizationAdjunction.homEquiv (SSet.stdSimplex.{u}.obj n) (coherentSimplex n)
@@ -88,7 +93,7 @@ theorem simplexIso_hom_adjunction (n : SimplexCategory) :
   rw [simplexIso_hom_eq]
   exact (realizationAdjunction.homEquiv _ _).apply_symm_apply _
 
-/-- All original simplex operators commute with the whole enriched standard-simplex comparison. -/
+/-- All simplex operators commute with the enriched standard-simplex comparison. -/
 theorem simplexIso_naturality {n m : SimplexCategory} (f : n ⟶ m) :
     realizationMap (SSet.stdSimplex.{u}.map f) ≫ (simplexIso m).hom =
       (simplexIso n).hom ≫ coherentSimplexMap f := by

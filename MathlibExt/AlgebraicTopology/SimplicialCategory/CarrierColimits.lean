@@ -9,13 +9,12 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierColimitInterpretation
 
-/-! # Genuine arbitrary small colimits of changing-object simplicial enrichments
+/-!
+# Colimits of changing-object simplicial enrichments
 
-The actual Type-colimit labels and the proved fixed-label enriched
-colimit give the complete carrier universal property. The universal
-object map is derived from every original stage object. Its whole Hom
-functor is constructed from the actual cocone and proved unique on all
-original stage functors, with no model or comparison-outcome premise.
+A colimit of object sets labels a fixed-object enriched diagram. Its colimit
+gives a colimit of the original diagram of simplicial enrichments. The
+resulting cocone has the universal property on both objects and Hom maps.
 -/
 
 noncomputable section
@@ -27,15 +26,15 @@ open FixedObjects
 
 variable {J : Type u} [Category.{u} J] (F : J ⥤ Carrier.{u})
 
-/-- The genuine enriched fixed-label universal map of the entire original cocone. -/
+/-- The enriched fixed-label universal map of the cocone. -/
 def fixedDesc (s : Cocone F) : fixedObject F ⟶ (targetCocone F s).pt :=
   DiagramPresentation.desc (stages F) (targetCocone F s)
 
-/-- The whole original changing-object universal map on the actual Type-colimit labels. -/
+/-- The changing-object universal map on the Type-colimit labels. -/
 def desc (s : Cocone F) : object F ⟶ s.pt :=
   (fixedDesc F s).val ≫ CarrierReindexing.toTarget s.pt (targetLabels F s)
 
-/-- The actual universal functor retains the prescribed target image of every original
+/-- The universal functor retains the prescribed target image of every 
 colimit label. -/
 theorem desc_obj (s : Cocone F) (x : (labelCocone F).pt) :
     (desc F s).obj x = targetLabels F s x := by
@@ -43,7 +42,7 @@ theorem desc_obj (s : Cocone F) (x : (labelCocone F).pt) :
   change (fixedDesc F s).val.obj x = x at hx
   exact congrArg (targetLabels F s) hx
 
-/-- The same entire original enriched cocone leg factors through the actual universal map. -/
+/-- The same enriched cocone leg factors through the universal map. -/
 theorem desc_fac (s : Cocone F) (j : J) : leg F j ≫ desc F s = s.ι.app j := by
   have hi := congrArg
     (fun H : (stages F).obj j ⟶ (targetCocone F s).pt => H.val)
@@ -59,7 +58,7 @@ theorem desc_fac (s : Cocone F) (j : J) : leg F j ≫ desc F s = s.ι.app j := b
         (congrArg (fun H => H ≫ CarrierReindexing.toTarget s.pt (targetLabels F s)) hi))).trans
           (rawLeg_fac F s j))
 
-/-- All original stage object equations determine the same actual universal target object
+/-- All stage object equations determine the same universal target object
 function. -/
 theorem desc_object_unique (s : Cocone F) (d : object F ⟶ s.pt)
     (hd : ∀ j, leg F j ≫ d = s.ι.app j) : d.obj = targetLabels F s := by
@@ -75,7 +74,7 @@ theorem desc_object_unique (s : Cocone F) (d : object F ⟶ s.pt)
   funext x
   exact ConcreteCategory.congr_hom (C := Type u) he x
 
-/-- Every whole original carrier map factoring the cocone is the actual constructed
+/-- Every carrier map factoring the cocone is the constructed
 universal functor. -/
 theorem desc_unique (s : Cocone F) (d : object F ⟶ s.pt)
     (hd : ∀ j, leg F j ≫ d = s.ι.app j) : d = desc F s := by
@@ -110,13 +109,13 @@ theorem desc_unique (s : Cocone F) (d : object F ⟶ s.pt)
     (congrArg (fun H : fixedObject F ⟶ CarrierReindexing.object s.pt b =>
       H.val ≫ CarrierReindexing.toTarget s.pt b) hg)
 
-/-- The whole changing-object enriched cocone satisfies the actual colimit universal property. -/
+/-- The changing-object enriched cocone satisfies the colimit universal property. -/
 def isColimit : IsColimit (cocone F) where
   desc := desc F
   fac := desc_fac F
   uniq := desc_unique F
 
-/-- Actual small diagram colimits exist in the ordinary carrier category of original
+/-- Small diagram colimits exist in the ordinary carrier category of 
 simplicial enrichments. -/
 instance hasColimitsOfShape : HasColimitsOfShape J Carrier.{u} where
   has_colimit F := HasColimit.mk ⟨cocone F, isColimit F⟩

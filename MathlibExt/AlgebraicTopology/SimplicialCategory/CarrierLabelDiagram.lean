@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelUniversalProperty
 
-/-! # The actual fixed-target-label diagram of changing-object enrichments
+/-!
+# Fixed-target-label diagrams of simplicial enrichments
 
-An original object cocone supplies its actual label maps. Each original
-enrichment is pushed forward to those same target labels. The original
-diagram functors extend by their proved object equations; their full
-identity and composition laws give the resulting fixed-object diagram.
+An object cocone gives label maps for each enrichment in a diagram.
+Pushing these enrichments forward along the label maps gives a diagram
+of enrichments on the common object set.
 -/
 
 noncomputable section
@@ -27,18 +27,18 @@ open FixedObjects
 variable {J : Type u} [Category.{u} J] (F : J ⥤ Carrier.{u})
 variable (s : Cocone (F ⋙ forgetObjects))
 
-/-- Each actual original object has its specified cocone label. -/
+/-- Each object has its specified cocone label. -/
 def label (j : J) : F.obj j → s.pt := s.ι.app j
 
-/-- Push forward the entire original enrichment to the actual cocone labels. -/
+/-- Push forward the enrichment to the cocone labels. -/
 abbrev object (j : J) : FixedObjects s.pt :=
   CarrierLabelExtension.object (F.obj j) (label F s j)
 
-/-- The same original whole source-generator leg at its cocone label map. -/
+/-- The same source-generator leg at its cocone label map. -/
 def leg (j : J) : F.obj j ⟶ (object F s j).val :=
   CarrierLabelExtension.inclusion (F.obj j) (label F s j)
 
-/-- The actual whole original diagram map has its same prescribed target-label equation. -/
+/-- The diagram map has its same prescribed target-label equation. -/
 theorem input_object_eq {j k : J} (f : j ⟶ k) :
     (F.map f ≫ leg F s k).obj = fun x => vertex (object F s k) (label F s j x) := by
   funext x
@@ -47,17 +47,17 @@ theorem input_object_eq {j k : J} (f : j ⟶ k) :
   exact (CarrierLabelExtension.inclusion_obj (F.obj k) (label F s k) ((F.map f).obj x)).trans
     (congrArg (vertex (object F s k)) hx)
 
-/-- The original changing-object diagram map with its actual source-label boundary. -/
+/-- The changing-object diagram map with its source-label boundary. -/
 def input {j k : J} (f : j ⟶ k) : CarrierReindexing.source (F.obj j) ⟶
     LabelRestriction.object (label F s j) (object F s k) :=
   CarrierLabelMaps.ofObjectEquation (fun x => vertex (object F s k) (label F s j x))
     (F.map f ≫ leg F s k) (input_object_eq F s f)
 
-/-- Extend the original whole diagram functor to the fixed-target-label path sources. -/
+/-- Extend the diagram functor to the fixed-target-label path sources. -/
 def map {j k : J} (f : j ⟶ k) : object F s j ⟶ object F s k :=
   LabelPushforward.desc (label F s j) (CarrierReindexing.source (F.obj j)) (input F s f)
 
-/-- The same entire original source functor is retained by every pushed-forward diagram map. -/
+/-- The same source functor is retained by every pushed-forward diagram map. -/
 theorem leg_naturality {j k : J} (f : j ⟶ k) :
     leg F s j ≫ (map F s f).val = F.map f ≫ leg F s k :=
   (CarrierLabelUniversalProperty.desc_fac (F.obj j) (label F s j) (input F s f)).trans
@@ -65,7 +65,7 @@ theorem leg_naturality {j k : J} (f : j ⟶ k) :
       (fun x => vertex (object F s k) (label F s j x))
       (F.map f ≫ leg F s k) (input_object_eq F s f))
 
-/-- The actual entire diagram on the same target labels, with both full functor laws proved. -/
+/-- The diagram of enrichments pushed forward to the cocone’s object labels. -/
 def functor : J ⥤ FixedObjects s.pt where
   obj := object F s
   map := map F s

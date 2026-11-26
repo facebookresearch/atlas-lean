@@ -42,13 +42,17 @@ is a quasicategory.
 
 ## Main declarations
 
-* `MathlibExt.CategoricalSource.hornPaths i j c`: the chains of paths from `i` to `j` omitting a common interior vertex
+* `MathlibExt.CategoricalSource.hornPaths i j c`: the chains of paths from `i` to `j`
+  omitting a common interior vertex
   other than `c` or passing through a common interior vertex.
-* `MathlibExt.CategoricalSource.anodyneExtensions_hornPaths_ι`: for `i < c < j` its inclusion into `N(Path i j)` is an
+* `MathlibExt.CategoricalSource.anodyneExtensions_hornPaths_ι`: for `i < c < j`
+  its inclusion into `N(Path i j)` is an
   anodyne extension.
-* `MathlibExt.CategoricalSource.HornThickening J c`: the simplicial category `C[Λ^J_c]`, with its inclusion
+* `MathlibExt.CategoricalSource.HornThickening J c`: the simplicial category `C[Λ^J_c]`,
+  with its inclusion
   `HornThickening.ι J c` into `SimplicialThickening J`.
-* `MathlibExt.CategoricalSource.HornThickening.exists_extension`: simplicial functors from `C[Λ^J_c]` whose mapping
+* `MathlibExt.CategoricalSource.HornThickening.exists_extension`: simplicial functors
+  from `C[Λ^J_c]` whose mapping
   simplicial set from `F ⊥` to `F ⊤` is a Kan complex extend to `C[Δ^J]`.
 * `MathlibExt.CategoricalSource.HornThickening.δ`: for `J = Fin (n + 3)` and `j ≠ i`, the inclusion
   `C[Δ^{n+1}] ⥤ C[Λ^{n+2}_i]` of the `j`-th face of the horn.

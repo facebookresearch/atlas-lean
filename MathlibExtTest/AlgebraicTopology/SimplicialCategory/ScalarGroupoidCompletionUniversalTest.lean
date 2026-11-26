@@ -15,7 +15,7 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CodiscreteEnrichment
 A codiscrete carrier has the point as every Hom, so each of its scalar categories is a
 groupoid. Enriched maps from the groupoid completion of a carrier into it correspond,
 by `homEquiv`, to enriched maps from the carrier itself. On objects both directions
-keep the original object function; for the codiscrete carrier on `Bool` the inverse of
+keep the object function; for the codiscrete carrier on `Bool` the inverse of
 the map induced by negation sends `true` to `false`.
 -/
 

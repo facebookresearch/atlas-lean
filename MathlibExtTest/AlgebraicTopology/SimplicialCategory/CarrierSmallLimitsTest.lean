@@ -15,7 +15,7 @@ import Mathlib.CategoryTheory.Limits.Types.Products
 
 The small-limit instances apply to `Carrier.{u + 1}` with indexing shapes in `Type 0`.
 For a product of two codiscrete carriers with different object types (two and three
-objects), the product's objects are exactly the pairs of objects, read back through the
+Objects), the product's objects are exactly the pairs of objects, read back through the
 two projections. The empty limit has exactly one object.
 -/
 

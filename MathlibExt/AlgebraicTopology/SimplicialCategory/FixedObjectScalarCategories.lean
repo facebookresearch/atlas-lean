@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectHomLaws
 import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarCategory
 
 /-!
-# Actual scalar categories on the original fixed object labels
+# Scalar categories on the fixed object labels
 
 The canonical `SSet.ScalarObject` category is transported to the
-individual labels by the actual vertex equivalence. Its Hom sets are the same original evaluated
-Hom objects. Every scalar operator and every actual fixed-object map
-preserves these literal labels and the original identity/composition.
+individual labels by the vertex equivalence. Its Hom sets are the same evaluated
+Hom objects. Every scalar operator and every fixed-object map
+preserves these literal labels and the identity/composition.
 -/
 
 noncomputable section
@@ -27,7 +27,7 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 
 variable {O : Type u}
 
-/-- The original scalar category at the same individually supplied fixed object labels. -/
+/-- The scalar category at the same individually supplied fixed object labels. -/
 @[instance_reducible]
 def scalarCategory (C : FixedObjects O) (q : SimplexCategoryᵒᵖ) : Category.{u} O where
   Hom x y := (hom C x y).obj q
@@ -41,7 +41,7 @@ def scalarCategory (C : FixedObjects O) (q : SimplexCategoryᵒᵖ) : Category.{
     @Category.assoc (SSet.ScalarObject C.val q) inferInstance
       ⟨vertex C w⟩ ⟨vertex C x⟩ ⟨vertex C y⟩ ⟨vertex C z⟩ a b c
 
-/-- The actual scalar operator keeps the same labels and acts on their entire original Hom
+/-- The scalar operator keeps the same labels and acts on their Hom
 simplices. -/
 def scalarOperator (C : FixedObjects O) {q r : SimplexCategoryᵒᵖ} (f : q ⟶ r) :
     @Functor O (scalarCategory C q) O (scalarCategory C r) :=
@@ -51,7 +51,7 @@ def scalarOperator (C : FixedObjects O) {q r : SimplexCategoryᵒᵖ} (f : q ⟶
     (fun {x y z} a b => (SSet.scalarOperator (C := C.val) f).map_comp
       (X := ⟨vertex C x⟩) (Y := ⟨vertex C y⟩) (Z := ⟨vertex C z⟩) a b)
 
-/-- Every original fixed-object map gives its actual same-label scalar functor. -/
+/-- Every fixed-object map gives its same-label scalar functor. -/
 def scalarFunctor {C D : FixedObjects O} (F : C ⟶ D) (q : SimplexCategoryᵒᵖ) :
     @Functor O (scalarCategory C q) O (scalarCategory D q) :=
   @Functor.mk O (scalarCategory C q) O (scalarCategory D q) (fun x => x)
@@ -59,7 +59,7 @@ def scalarFunctor {C D : FixedObjects O} (F : C ⟶ D) (q : SimplexCategoryᵒ�
     (fun x => congr($(identityMap_homMap F x).app q PUnit.unit))
     (fun {x y z} a b => congr($(compositionMap_homMap F x y z).app q (a, b)))
 
-/-- The same original scalar functor commutes with every actual simplex operator. -/
+/-- The same scalar functor commutes with every simplex operator. -/
 theorem scalarFunctor_operator {C D : FixedObjects O} (F : C ⟶ D)
     {q r : SimplexCategoryᵒᵖ} (f : q ⟶ r) (x y : O) (a : (hom C x y).obj q) :
     (homMap F x y).app r ((hom C x y).map f a) =

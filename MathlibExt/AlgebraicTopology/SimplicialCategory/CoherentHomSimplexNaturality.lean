@@ -11,9 +11,9 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSimplexOperato
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentPathEndpointTransport
 
 /-!
-# Whole original enriched-simplex naturality of Hom comparisons
+# Enriched-simplex naturality of Hom comparisons
 
-Every right-join simplex operator acts on the original enriched simplex
+Every right-join simplex operator acts on the enriched simplex
 built from the same Hom simplex. The complete Hom equality retains its
 specified source and target, not only its vertices or components.
 -/
@@ -33,7 +33,7 @@ private theorem whole_ext {A B : Carrier.{u}} (F G : A ⟶ B)
   intro a b
   exact eq_of_heq ((comp_eqToHom_heq _ _).trans (hm a b))
 
-/-- Actual Hom maps are natural for the exact equality of two original endpoint pairs. -/
+/-- Hom maps are natural for the exact equality of two endpoint pairs. -/
 theorem homMap_reindex (τ : (Δ[m] : SSet.{u}) ⟶ (x ⟶[SSet.{u}] y))
     {a a' b b' : Fin (m + 2)} (ha : a = a') (hb : b = b') :
     homMap x y τ a b ≫ eqToHom (congrArg₂ (fun a b : Fin (m + 2) =>
@@ -45,7 +45,7 @@ theorem homMap_reindex (τ : (Δ[m] : SSet.{u}) ⟶ (x ⟶[SSet.{u}] y))
   subst b'
   simp only [eqToHom_refl, Category.comp_id, Category.id_comp]
 
-/-- The actual Hom comparison is natural on the original front-to-last whole Hom under the
+/-- The Hom comparison is natural on the front-to-last Hom under the
 right join operator. -/
 theorem last_hom_operator (θ : ⦋n⦌ ⟶ ⦋m⦌)
     (τ : (Δ[m] : SSet.{u}) ⟶ (x ⟶[SSet.{u}] y)) (i : Fin (n + 1)) :

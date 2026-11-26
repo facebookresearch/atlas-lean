@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectHomLaws
 
 /-!
-# Whole original Hom maps in the fixed-object category
+# Hom maps in the fixed-object category
 
-Original endpoints are transported only through the actual label
-equalities. A family of Hom maps preserving the original identity and
-composition constructs a genuine fixed-object enriched functor, and
-the whole enriched functor is determined by that family.
+endpoints are transported only through the label
+equalities. A family of Hom maps preserving the identity and
+Composition constructs a fixed-object enriched functor, and
+the enriched functor is determined by that family.
 -/
 
 noncomputable section
@@ -26,18 +26,18 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 
 variable {O : Type u}
 
-/-- The actual original Hom isomorphism induced only by its individual endpoint label equalities. -/
+/-- The Hom isomorphism induced only by its individual endpoint label equalities. -/
 def originalHomIso (C : FixedObjects O) (a b : C.val) :
     (a ⟶[SSet.{u}] b) ≅ hom C (label C a) (label C b) :=
   eqToIso (by change _ = (vertex C (label C a) ⟶[SSet.{u}] vertex C (label C b))
               rw [vertex_label, vertex_label])
 
-/-- Label transport retains the entire original identity morphism. -/
+/-- Label transport retains the identity morphism. -/
 theorem identity_originalHomIso (C : FixedObjects O) (a : C.val) :
     eId SSet.{u} a ≫ (originalHomIso C a a).hom = identityMap C (label C a) :=
   identity_eqToHom C.val (vertex_label C a).symm
 
-/-- Label transport retains the entire original composition at all three individual endpoints. -/
+/-- Label transport retains the composition at all three individual endpoints. -/
 theorem composition_originalHomIso (C : FixedObjects O) (a b c : C.val) :
     eComp SSet.{u} a b c ≫ (originalHomIso C a c).hom =
       ((originalHomIso C a b).hom ⊗ₘ (originalHomIso C b c).hom) ≫
@@ -45,8 +45,8 @@ theorem composition_originalHomIso (C : FixedObjects O) (a b c : C.val) :
   composition_eqToHom C.val (vertex_label C a).symm
     (vertex_label C b).symm (vertex_label C c).symm
 
-/-- Construct the actual fixed-object enriched map from its whole identity- and
-composition-preserving Hom maps. -/
+/-- Construct the fixed-object enriched map from its identity- and
+Composition-preserving Hom maps. -/
 def ofHomMaps {C D : FixedObjects O} (m : ∀ x y : O, hom C x y ⟶ hom D x y)
     (hi : ∀ x, identityMap C x ≫ m x x = identityMap D x)
     (hc : ∀ x y z, compositionMap C x y z ≫ m x z =
@@ -74,7 +74,7 @@ def ofHomMaps {C D : FixedObjects O} (m : ∀ x y : O, hom C x y ⟶ hom D x y)
   ext a
   rfl
 
-/-- The constructed enriched map carries the same individual original object label. -/
+/-- The constructed enriched map carries the same individual object label. -/
 @[simp]
 theorem ofHomMaps_obj {C D : FixedObjects O} (m : ∀ x y : O, hom C x y ⟶ hom D x y)
     (hi : ∀ x, identityMap C x ≫ m x x = identityMap D x)
@@ -90,7 +90,7 @@ private theorem family_cast {C D : FixedObjects O} (m : ∀ x y : O, hom C x y �
   cases hy
   simp
 
-/-- Evaluation reads back the exact supplied whole Hom map at every original ordered pair. -/
+/-- Evaluation reads back the exact supplied Hom map at every ordered pair. -/
 @[simp]
 theorem homMap_ofHomMaps {C D : FixedObjects O} (m : ∀ x y : O, hom C x y ⟶ hom D x y)
     (hi : ∀ x, identityMap C x ≫ m x x = identityMap D x)
@@ -108,7 +108,7 @@ theorem homMap_ofHomMaps {C D : FixedObjects O} (m : ∀ x y : O, hom C x y ⟶ 
         hom D (label C (vertex C x)) (label C (vertex C y)) = hom D x y) = m x y
   simpa only [Category.assoc, eqToHom_trans, eqToHom_refl, Category.comp_id] using h'
 
-/-- Every genuine fixed-object map is determined by its full original Hom maps. -/
+/-- Every fixed-object map is determined by its Hom maps. -/
 theorem homMaps_ext {C D : FixedObjects O} {F G : C ⟶ D}
     (h : ∀ x y : O, homMap F x y = homMap G x y) : F = G := by
   apply Functor.Fiber.hom_ext

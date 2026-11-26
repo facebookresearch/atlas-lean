@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentMaps
 
 /-!
-# Genuine coherent realization functor and unit naturality
+# Coherent realization and unit naturality
 
-Identity and composition are proved on the actual original coherent
-generators and then on whole enriched maps. The unit is natural for
-every original simplicial map, with its exact endpoint transports.
+Coherent realization acts on simplicial maps by their action on coherent
+generators. This action preserves identities and composition, and the
+unit is natural with respect to simplicial maps.
 -/
 
 noncomputable section
@@ -25,7 +25,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment SimplicialQuiver
 
-/-- The actual realization of an identity map is the whole enriched identity. -/
+/-- The realization of an identity map is the enriched identity. -/
 theorem realizationMap_id (K : SSet.{u}) : realizationMap (𝟙 K) = 𝟙 (realization K) := by
   refine CoherentRealization.hom_ext rfl ?_
   intro x y
@@ -36,7 +36,7 @@ theorem realizationMap_id (K : SSet.{u}) : realizationMap (𝟙 K) = 𝟙 (reali
         _root_.Quotient.mk (congruence (relations K) q x y) (arrowPath K σ i j hx hy a)
       exact map_eval_arrow (𝟙 K) σ i j hx hy a
 
-/-- The actual realization preserves composition on all whole original enriched Hom paths. -/
+/-- The realization preserves composition on all enriched Hom paths. -/
 theorem realizationMap_comp {K L N : SSet.{u}} (f : K ⟶ L) (g : L ⟶ N) :
     realizationMap (f ≫ g) = realizationMap f ≫ realizationMap g := by
   refine CoherentRealization.hom_ext rfl ?_
@@ -54,14 +54,14 @@ theorem realizationMap_comp {K L N : SSet.{u}} (f : K ⟶ L) (g : L ⟶ N) :
       exact hfg.trans (hg.symm.trans (congrArg
         (fun t => ((realizationMap g).map (f.app (op ⦋0⦌) x) (f.app (op ⦋0⦌) y)).app q t) hf.symm))
 
-/-- The genuine original coherent realization functor, with proved identity and composition. -/
+/-- The homotopy coherent realization functor on simplicial sets. -/
 def realizationFunctor : SSet.{u} ⥤ Carrier.{u} where
   obj := realization
   map f := realizationMap f
   map_id := realizationMap_id
   map_comp := realizationMap_comp
 
-/-- The whole original unit simplex is natural for every actual input simplicial map. -/
+/-- The unit simplex is natural for every input simplicial map. -/
 theorem unit_simplex_naturality {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCategory}
     (σ : K.obj (op n)) :
     simplexInto K σ ≫ realizationMap f = simplexInto L (f.app (op n) σ) := by
@@ -79,7 +79,7 @@ theorem unit_simplex_naturality {K L : SSet.{u}} (f : K ⟶ L) {n : SimplexCateg
           (vertex_image f σ i rfl) (vertex_image f σ j rfl)
           (vertex_map f σ i).symm (vertex_map f σ j).symm)
 
-/-- The unit is a genuine natural transformation on the actual simplicial and enriched carriers. -/
+/-- The unit is a natural transformation on the simplicial and enriched carriers. -/
 def unitNatTrans : 𝟭 SSet.{u} ⟶ realizationFunctor ⋙ coherentNerveFunctor where
   app := unit
   naturality K L f := by

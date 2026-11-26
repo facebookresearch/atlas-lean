@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabelCarrierUnit
 
 /-!
-# The SAME entire original label-pushforward carrier unit is natural
+# The same label-pushforward carrier unit is natural
 
-The existing original fixed-label unit naturality is projected through
-its genuine full reindexed carrier maps. Every original coefficient and
-both original object functions are retained.
+The fixed-label unit naturality is projected through
+its full reindexed carrier maps. Every coefficient and
+both object functions are retained.
 -/
 
 noncomputable section
@@ -25,7 +25,7 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects.LabelPushforward
 
 variable {A O : Type u} (a : A → O) {C D : FixedObjects A}
 
-/-- The SAME full original carrier-unit square for every original fixed-label enriched functor. -/
+/-- The same full carrier-unit square for every fixed-label enriched functor. -/
 theorem carrierUnit_naturality (F : C ⟶ D) :
     carrierUnit a C ≫ (map a F).val = F.val ≫ carrierUnit a D := by
   have h := congrArg (fun G : C ⟶ LabelRestriction.object a (object a D) =>

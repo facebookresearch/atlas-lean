@@ -9,13 +9,13 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelMaps
 
-/-! # Exact full carrier readback through prescribed original labels
+/-! # Exact full carrier readback through prescribed labels
 
-An actual enriched functor with a proved equation at every original
-label vertex gives a genuine map into the canonical reindexed target.
-Every original identity, composition and whole Hom map is transported
-only through those endpoint equations. Projection recovers the entire
-original functor, including objects outside a literal carrier presentation.
+An enriched functor with a equation at every 
+label vertex gives a map into the canonical reindexed target.
+Every identity, composition and Hom map is transported
+only through those endpoint equations. Projection recovers the 
+functor, including objects outside a literal carrier presentation.
 -/
 
 noncomputable section
@@ -28,7 +28,7 @@ open FixedObjects
 variable {O : Type u} (C : FixedObjects O) {D : Carrier.{u}}
 variable (b : O → D) (F : C.val ⟶ D) (h : ∀ x, F.obj (vertex C x) = b x)
 
-/-- The same entire original Hom map, with only its two proved endpoint transports. -/
+/-- The Hom map transported along its specified endpoint equalities. -/
 def originalHom (x y : O) : hom C x y ⟶ hom (CarrierReindexing.object D b) x y :=
   F.map (vertex C x) (vertex C y) ≫ eqToHom (by rw [h x, h y]; rfl)
 
@@ -57,19 +57,19 @@ private theorem originalHom_composition (x y z : O) :
   simpa only [Category.assoc, ← tensorHom_comp_tensorHom] using
     (Category.assoc _ _ _).symm.trans (hf.trans ((Category.assoc _ _ _).trans hh))
 
-/-- Construct the genuine fixed-label map from its actual whole functor and original vertex
+/-- Construct the fixed-label map from its functor and vertex
 equations. -/
 def map : C ⟶ CarrierReindexing.object D b :=
   ofHomMaps (originalHom C b F h) (originalHom_identity C b F h) (originalHom_composition C b F h)
 
-/-- Each actual source object keeps its own original label in the reindexed target. -/
+/-- Each source object keeps its own label in the reindexed target. -/
 theorem map_obj (x : C.val) : (map C b F h).val.obj x = label C x := rfl
 
-/-- Every whole original Hom is read back with precisely the prescribed endpoint transports. -/
+/-- Every Hom is read back with precisely the prescribed endpoint transports. -/
 theorem homMap_map (x y : O) : homMap (map C b F h) x y = originalHom C b F h x y :=
   homMap_ofHomMaps _ _ _ x y
 
-/-- The same entire original carrier functor is recovered by the canonical projection. -/
+/-- The same carrier functor is recovered by the canonical projection. -/
 theorem map_fac : (map C b F h).val ≫ CarrierReindexing.toTarget D b = F := by
   refine EnrichedFunctor.ext SSet.{u}
     (F := (map C b F h).val ≫ CarrierReindexing.toTarget D b) (G := F) (fun x => ?_) ?_
@@ -108,7 +108,7 @@ theorem map_fac : (map C b F h).val ≫ CarrierReindexing.toTarget D b = F := by
       F.map (vertex C s) (vertex C t)
     simpa only [Category.comp_id] using he
 
-/-- Any fixed-label map retaining that same whole original functor is the actual constructed map. -/
+/-- Any fixed-label map retaining that same functor is the constructed map. -/
 theorem map_unique (G : C ⟶ CarrierReindexing.object D b)
     (hG : G.val ≫ CarrierReindexing.toTarget D b = F) : G = map C b F h :=
   CarrierLabelMaps.projection_injective b (hG.trans (map_fac C b F h).symm)

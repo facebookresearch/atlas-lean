@@ -10,14 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLimitUniversal
 
 /-!
-# Actual small varying-object enriched limits and their object readback
+# Small limits of simplicial enrichments
 
-The complete original compatible-object/full-Hom universal property
-constructs every supported small enriched limit. The SAME original
-object-forgetting functor preserves these limits by the actual original
-vertex equivalence of their whole cones. This supplies finite limits
-for the original global Bergner model prerequisites without assuming
-a changing-object model structure.
+A limit consists of compatible objects together with the corresponding
+Hom limits. Object forgetting preserves these limits. In particular,
+the category of simplicial enrichments has finite limits.
 -/
 
 noncomputable section
@@ -30,8 +27,8 @@ open FixedObjects
 variable {J : Type v} [SmallCategory J] (F : J ⥤ Carrier.{u})
 variable [HasLimit (F ⋙ forgetObjects)] [HasLimitsOfShape J SSet.{u}]
 
-/-- The original object cone of the actual full enriched limit is genuinely the SAME
-original object limit. -/
+/-- The object cone of the full enriched limit is genuinely the same
+object limit. -/
 def objectConeIsLimit : IsLimit (forgetObjects.mapCone (cone F)) := by
   apply IsLimit.ofIsoLimit (limit.isLimit (F ⋙ forgetObjects))
   refine Cone.ext (verticesEquiv (fixedObject F)).toIso ?_
@@ -40,30 +37,30 @@ def objectConeIsLimit : IsLimit (forgetObjects.mapCone (cone F)) := by
   intro x
   exact projection_obj F j x
 
-/-- The SAME original object-forgetting functor preserves the complete genuine enriched limit. -/
+/-- The same object-forgetting functor preserves the complete enriched limit. -/
 instance forgetObjectsPreservesLimit : PreservesLimit F forgetObjects :=
   preservesLimit_of_preserves_limit_cone (isLimit F) (objectConeIsLimit F)
 
-/-- Original object and scalar limits give genuine changing-object enriched limits of the
+/-- Object and scalar limits give changing-object enriched limits of the
 full supported shape. -/
 instance hasLimitsOfShape [HasLimitsOfShape J (Type u)] : HasLimitsOfShape J Carrier.{u} where
   has_limit F := ⟨⟨cone F, isLimit F⟩⟩
 
-/-- Original object forgetting preserves every entire enriched limit of the supported
+/-- Object forgetting preserves every enriched limit of the supported
 indexing shape. -/
 instance forgetObjectsPreservesLimitsOfShape [HasLimitsOfShape J (Type u)] :
     PreservesLimitsOfShape J forgetObjects.{u} where
   preservesLimit {F} := forgetObjectsPreservesLimit F
 
-/-- Every small diagram has its genuinely constructed original varying-object enriched limit. -/
+/-- Every small diagram has its genuinely constructed varying-object enriched limit. -/
 instance hasSmallLimits : HasLimitsOfSize.{u, u} Carrier.{u} where
   has_limits_of_shape _J _ := inferInstance
 
-/-- The SAME original object-forgetting functor preserves all small enriched limits. -/
+/-- The same object-forgetting functor preserves all small enriched limits. -/
 instance forgetObjectsPreservesSmallLimits : PreservesLimitsOfSize.{u, u} forgetObjects.{u} where
   preservesLimitsOfShape := inferInstance
 
-/-- The actual original global enriched carrier has all finite limits required by the
+/-- The global enriched carrier has all finite limits required by the
 model-category axioms. -/
 theorem hasFiniteLimits_original : HasFiniteLimits Carrier.{u} := inferInstance
 

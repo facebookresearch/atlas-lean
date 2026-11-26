@@ -12,9 +12,9 @@ import Mathlib.CategoryTheory.Adjunction.Basic
 
 /-! # Arbitrary-label enriched pushforward is genuinely left adjoint to restriction
 
-The two whole-map inverse laws and original source and target naturality
-construct the actual adjunction. Its unit is the original source-generator
-inclusion; its counit evaluates the presented original generators.
+The two map inverse laws and source and target naturality
+construct the adjunction. Its unit is the source-generator
+inclusion; its counit evaluates the presented generators.
 -/
 
 noncomputable section
@@ -25,7 +25,7 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects.LabelPushforward
 
 variable {A O : Type u} (a : A → O)
 
-/-- The actual original path pushforward is left adjoint to the literal label restriction. -/
+/-- The path pushforward is left adjoint to the literal label restriction. -/
 def adjunction : functor a ⊣ LabelRestriction.functor a :=
   Adjunction.mkOfHomEquiv {
     homEquiv := homEquiv a
@@ -38,17 +38,17 @@ def adjunction : functor a ⊣ LabelRestriction.functor a :=
       rw [← homEquiv_symm_apply, Equiv.apply_symm_apply]
     homEquiv_naturality_right := homEquiv_target a }
 
-/-- The actual adjunction unit is the same whole original source-generator map. -/
+/-- The adjunction unit is the same source-generator map. -/
 theorem unit_app (C : FixedObjects A) : (adjunction a).unit.app C = unit a C := by
   change unit a C ≫ (LabelRestriction.functor a).map (𝟙 (object a C)) = unit a C
   exact (congrArg (fun k => unit a C ≫ k)
     ((LabelRestriction.functor a).map_id (object a C))).trans (Category.comp_id _)
 
-/-- The actual adjunction counit is the whole extension of the original identity functor. -/
+/-- The adjunction counit is the extension of the identity functor. -/
 theorem counit_app (D : FixedObjects O) :
     (adjunction a).counit.app D = desc a (LabelRestriction.object a D) (𝟙 _) := rfl
 
-/-- Every counit generator is evaluated through its original Hom map and both image equalities. -/
+/-- Every counit generator is evaluated through its Hom map and both image equalities. -/
 theorem counit_generator (D : FixedObjects O) (x y : O) :
     Presentations.generator (quiver a (LabelRestriction.object a D))
       (relations a (LabelRestriction.object a D)) x y ≫
@@ -56,7 +56,7 @@ theorem counit_generator (D : FixedObjects O) (x y : O) :
         imageMap a (LabelRestriction.object a D) (𝟙 _) x y :=
   generator_desc a (LabelRestriction.object a D) (𝟙 _) x y
 
-/-- The counit preserves the complete original enriched composition on every target-label triple. -/
+/-- The counit preserves the complete enriched composition on every target-label triple. -/
 theorem counit_composition (D : FixedObjects O) (x y z : O) :
     compositionMap ((functor a).obj ((LabelRestriction.functor a).obj D)) x y z ≫
       homMap ((adjunction a).counit.app D) x z =
@@ -64,14 +64,14 @@ theorem counit_composition (D : FixedObjects O) (x y z : O) :
           homMap ((adjunction a).counit.app D) y z) ≫ compositionMap D x y z :=
   compositionMap_homMap ((adjunction a).counit.app D) x y z
 
-/-- The whole original left triangle is retained by the constructed adjunction. -/
+/-- The left triangle is retained by the constructed adjunction. -/
 theorem left_triangle (C : FixedObjects A) :
     (functor a).map (unit a C) ≫
       (adjunction a).counit.app ((functor a).obj C) = 𝟙 ((functor a).obj C) := by
   rw [← unit_app]
   exact (adjunction a).left_triangle_components C
 
-/-- The whole original right triangle is retained by the constructed adjunction. -/
+/-- The right triangle is retained by the constructed adjunction. -/
 theorem right_triangle (D : FixedObjects O) :
     unit a ((LabelRestriction.functor a).obj D) ≫
       (LabelRestriction.functor a).map ((adjunction a).counit.app D) =

@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSuspensionForw
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomSuspensionUnits
 
 /-!
-# Actual enriched suspension functors of original Hom maps
+# Enriched suspension functors of Hom maps
 
-A supplied original simplicial map into one enriched Hom extends to a
-genuine enriched functor from its free two-object suspension. The actual
-free universal property gives every original path map and both whole
-inverse readbacks. Object labels and original cells are retained.
+A supplied simplicial map into one enriched Hom extends to a
+enriched functor from its free two-object suspension. The 
+free universal property gives every path map and both 
+inverse readbacks. Object labels and cells are retained.
 -/
 
 noncomputable section
@@ -27,19 +27,19 @@ namespace CategoryTheory.CoherentRealization.HomSuspensionFunctor
 open SimplicialEnrichment SimplicialQuiver HomSuspensionGenerators
 variable (K : SSet.{u}) (C : Type v) (x y : C)
 
-/-- The supplied original source and target as the two actual suspension object images. -/
+/-- The supplied source and target as the two suspension object images. -/
 def objectMap (a : Objects.{u}) : C := if a = left then x else y
 
-/-- The original source object label is sent to the supplied individual target source. -/
+/-- The source object label is sent to the supplied individual target source. -/
 theorem objectMap_left : objectMap.{u, v} C x y left = x := by simp only [objectMap, ite_true]
 
-/-- The original right object label is sent to the supplied individual target target. -/
+/-- The right object label is sent to the supplied individual target target. -/
 theorem objectMap_right : objectMap.{u, v} C x y right = y := by
   simp only [objectMap, ite_eq_right left_ne_right.symm]
 
 variable [EnrichedCategory SSet.{u} C]
 
-/-- Interpret the sole original simplicial generator by the supplied actual Hom map. -/
+/-- Interpret the sole simplicial generator by the supplied Hom map. -/
 def interpretation (f : K ⟶ (x ⟶[SSet.{u}] y)) : Interpretation (quiver K) C where
   obj := objectMap.{u, v} C x y
   map a b := by
@@ -53,20 +53,20 @@ def interpretation (f : K ⟶ (x ⟶[SSet.{u}] y)) : Interpretation (quiver K) C
         app n := ↾fun a => False.elim (h (generator_endpoints K a))
         naturality n m θ := by ext a; exact False.elim (h (generator_endpoints K a)) }
 
-/-- The actual enriched functor extending the supplied original simplicial Hom map and
+/-- The enriched functor extending the supplied simplicial Hom map and
 object labels. -/
 def functor (f : K ⟶ (x ⟶[SSet.{u}] y)) : EnrichedFunctor SSet.{u} (carrier K) C :=
   (interpretation K C x y f).extend
 
-/-- The genuine suspension functor keeps the supplied individual original source image. -/
+/-- The suspension functor keeps the supplied individual source image. -/
 theorem functor_left (f : K ⟶ (x ⟶[SSet.{u}] y)) : (functor K C x y f).obj left = x :=
   objectMap_left.{u, v} C x y
 
-/-- The genuine suspension functor keeps the supplied individual original target image. -/
+/-- The suspension functor keeps the supplied individual target image. -/
 theorem functor_right (f : K ⟶ (x ⟶[SSet.{u}] y)) : (functor K C x y f).obj right = y :=
   objectMap_right.{u, v} C x y
 
-/-- The entire original simplicial generating map is the actual Hom readback of the
+/-- The simplicial generating map is the Hom readback of the
 suspension functor. -/
 theorem generator_readback (f : K ⟶ (x ⟶[SSet.{u}] y)) :
     HomSuspensionForward.generator K ≫ (functor K C x y f).map left right ≫

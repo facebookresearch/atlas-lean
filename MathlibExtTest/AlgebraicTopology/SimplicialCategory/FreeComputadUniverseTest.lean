@@ -12,9 +12,9 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FreeUniversalProperty
 /-!
 # Independent object universes for computads and scalar-degree functors
 
-The generator universe is independent of the large original label type.
+The generator universe is independent of the large label type.
 The target object universe is also independent of both. These clients
-exercise the canonical computad API and the existing scalar-category API.
+exercise the canonical computad API and the scalar-category API.
 -/
 
 noncomputable section
@@ -24,7 +24,7 @@ open scoped Simplicial
 
 namespace MathlibExtTest.SimplicialComputadUniverse
 
-/-- Constant atoms on an independently large original object type. -/
+/-- Constant atoms on an independently large object type. -/
 def largeComputad (O : Type (v + 31)) : SSet.SimplicialComputad.{u, v + 31} O where
   generator _ _ _ := ULift.{u} Unit
   operator {_Δ _Δ'} _θ {_x _y} a := SSet.SimplicialComputad.single a
@@ -33,6 +33,20 @@ def largeComputad (O : Type (v + 31)) : SSet.SimplicialComputad.{u, v + 31} O wh
     (SSet.SimplicialComputad.pathMap_single
       (G := fun (_ _ : O) => ULift.{u} Unit) (H := fun (_ _ : O) => ULift.{u} Unit)
       (fun a => SSet.SimplicialComputad.single a) a).symm
+  operator_epi := by
+    intro Δ Δ' θ _ x y a
+    exact ⟨a, rfl⟩
+
+example {O : Type (v + 31)} (A : SSet.SimplicialComputad.{u, v + 31} O)
+    {Δ Δ' : SimplexCategoryᵒᵖ} (θ : Δ ⟶ Δ') [Epi θ.unop]
+    {x y z : O} (a : A.generator Δ x z)
+    (b : A.generator Δ' x y) (c : A.generator Δ' y z) :
+    A.operator θ a ≠ (SSet.SimplicialComputad.single b).cons c := by
+  intro h
+  have hlen := A.operator_epi_length θ a
+  rw [h] at hlen
+  change 2 = 1 at hlen
+  exact Nat.succ_ne_zero 0 (Nat.succ.inj hlen)
 
 example (O : Type (v + 31)) (x y : O) : SSet.{max u (v + 31)} :=
   (largeComputad.{u, v} O).hom x y

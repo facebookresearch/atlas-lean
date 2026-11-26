@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFixedFrontOperators
 
 /-!
-# Actual injected right-join ordinal embeddings
+# Injected right-join ordinal embeddings
 
-A genuinely injective original front operator has an injective right
-join, with the original last vertex retained. The same whole lifted
-map is an order embedding. This is geometric input for the actual cube
+A genuinely injective front operator has an injective right
+join, with the last vertex retained. The same lifted
+map is an order embedding. This is geometric input for the cube
 face range, without a supplied quotient injectivity outcome.
 -/
 
@@ -27,7 +27,7 @@ namespace CategoryTheory.CoherentRealization.RightCubeOrdinalEmbedding
 open PathMaximumOperators
 variable {n m : ℕ}
 
-/-- An injective monotone map between actual linear orders is its genuine order embedding. -/
+/-- An injective monotone map between linear orders is its order embedding. -/
 def ofInjective {J : Type u} {K : Type v} [LinearOrder J] [LinearOrder K]
     (f : J →o K) (hf : Function.Injective f) : J ↪o K where
   toFun := f
@@ -43,7 +43,7 @@ def ofInjective {J : Type u} {K : Type v} [LinearOrder J] [LinearOrder K]
     · intro h
       exact f.monotone h
 
-/-- The actual original right-join extension of a genuinely injective front operator is
+/-- The right-join extension of a genuinely injective front operator is
 injective. -/
 theorem extension_injective (θ : ⦋n⦌ ⟶ ⦋m⦌) (hθ : Function.Injective θ.toOrderHom) :
     Function.Injective (extension θ).toOrderHom := by
@@ -67,20 +67,20 @@ theorem extension_injective (θ : ⦋n⦌ ⟶ ⦋m⦌) (hθ : Function.Injective
         (extension_front θ i).symm.trans (hab.trans (extension_front θ j))
       exact congrArg Fin.castSucc (hθ (Fin.castSucc_injective _ h))
 
-/-- The genuine finite right-join order embedding of the same original operator. -/
+/-- The finite right-join order embedding of the same operator. -/
 def rightJoin (θ : ⦋n⦌ ⟶ ⦋m⦌) (hθ : Function.Injective θ.toOrderHom) : Fin (n + 2) ↪o Fin (m + 2) :=
   ofInjective (extension θ).toOrderHom (extension_injective θ hθ)
 
-/-- The whole original lifted right-join embedding on the actual path labels. -/
+/-- The lifted right-join embedding on the path labels. -/
 def lifted (θ : ⦋n⦌ ⟶ ⦋m⦌) (hθ : Function.Injective θ.toOrderHom) :
     ULift.{u} (Fin (n + 2)) ↪o ULift.{u} (Fin (m + 2)) where
   toFun x := ULift.up ((rightJoin θ hθ) x.down)
   inj' _ _ h := ULift.ext ((rightJoin θ hθ).injective (congrArg ULift.down h))
   map_rel_iff' := (rightJoin θ hθ).map_rel_iff'
 
-/-- The actual lifted order embedding is the very same original right-join path-label
+/-- The lifted order embedding is the very same right-join path-label
 function used by the
-  quotient operator. -/
+ quotient operator. -/
 theorem lifted_apply (θ : ⦋n⦌ ⟶ ⦋m⦌) (hθ : Function.Injective θ.toOrderHom)
     (x : ULift.{u} (Fin (n + 2))) : lifted θ hθ x = (extension θ).toOrderHom.uliftMap x := rfl
 

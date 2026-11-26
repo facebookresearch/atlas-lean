@@ -10,10 +10,10 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentOutsideFaceAlgebra
 
 /-!
-# The original enriched identity in an actual supplied outside face
+# The enriched identity in a supplied outside face
 
-The genuine outside-face Hom isomorphism transports the supplied face
-functor's whole identity to the same individual original vertex.
+The outside-face Hom isomorphism transports the supplied face
+functor's identity to the same individual vertex.
 -/
 
 noncomputable section
@@ -26,7 +26,7 @@ open SimplicialEnrichment
 variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The entire original outside-face Hom extraction preserves the actual enriched identity
+/-- The outside-face Hom extraction preserves the enriched identity
 at its supplied vertex. -/
 theorem faceMap_id (j : Fin (n + 3)) (hj : j ≠ i) (a' : ULift.{u} (Fin (n + 2)))
     (h : (ULift.up j : ULift.{u} (Fin (n + 3))) < (OrdinalFace.embedding j) a' ∨

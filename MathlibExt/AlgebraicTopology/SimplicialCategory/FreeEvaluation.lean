@@ -12,8 +12,8 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FreeQuiver
 /-!
 # Evaluation of the free simplicial category
 
-An interpretation consists only of an original object map and actual
-simplicial maps on the generating Homs. The genuine enriched functor
+An interpretation consists only of an object map and 
+simplicial maps on the generating Homs. The enriched functor
 on all paths is the canonical computad evaluation, transported along
 the explicit label adapter.
 -/
@@ -27,11 +27,11 @@ namespace CategoryTheory.SimplicialQuiver
 
 variable {O : Type u} (Q : Data O) (C : Type v) [EnrichedCategory SSet.{u} C]
 
-/-- Actual images of original objects and generating simplicial arrows. -/
+/-- Images of objects and generating simplicial arrows. -/
 structure Interpretation where
-  /-- The unchanged original object indexing of the chosen target images. -/
+  /-- The unchanged object indexing of the chosen target images. -/
   obj : O → C
-  /-- A genuine simplicial map on each original generating Hom object. -/
+  /-- A simplicial map on each generating Hom object. -/
   map (x y : O) : Q.Hom x y ⟶ obj x ⟶[SSet.{u}] obj y
 
 variable {Q C}
@@ -49,24 +49,24 @@ def Interpretation.assignment (I : Interpretation Q C) :
     rw [SSet.SimplicialComputad.evaluate_single]
     exact congr($((I.map x y).naturality f) a).symm
 
-/-- The image of a whole original generating path uses actual target enriched composition. -/
+/-- The image of a generating path uses target enriched composition. -/
 def Interpretation.evalPath (I : Interpretation Q C) (n : SimplexCategoryᵒᵖ) {x y : O}
     (p : Path Q n x y) : (I.obj x ⟶[SSet.{u}] I.obj y).obj n :=
   SSet.SimplicialComputad.evaluate I.obj n (I.assignment.atom n) (toNativePath Q n p)
 
-/-- The empty path evaluates to the actual enriched identity in its scalar degree. -/
+/-- The empty path evaluates to the enriched identity in its scalar degree. -/
 theorem Interpretation.evalPath_nil (I : Interpretation Q C) (n : SimplexCategoryᵒᵖ) (x : O) :
     I.evalPath n (@Quiver.Path.nil O (quiverAt Q n) x) =
       (eId SSet.{u} (I.obj x)).app n PUnit.unit := rfl
 
-/-- Appending a supplied generating arrow evaluates by the actual enriched composition. -/
+/-- Appending a supplied generating arrow evaluates by the enriched composition. -/
 theorem Interpretation.evalPath_cons (I : Interpretation Q C) (n : SimplexCategoryᵒᵖ)
     {x y z : O} (p : Path Q n x y) (a : (Q.Hom y z).obj n) :
     I.evalPath n (@Quiver.Path.cons O (quiverAt Q n) x y z p a) =
       (eComp SSet.{u} (I.obj x) (I.obj y) (I.obj z)).app n
         (I.evalPath n p, (I.map y z).app n a) := rfl
 
-/-- Evaluation respects concatenation of arbitrary whole original paths. -/
+/-- Evaluation respects concatenation of arbitrary paths. -/
 theorem Interpretation.evalPath_comp (I : Interpretation Q C) (n : SimplexCategoryᵒᵖ)
     {x y z : O} (p : Path Q n x y) (q : Path Q n y z) :
     I.evalPath n (@Quiver.Path.comp O (quiverAt Q n) x y z p q) =
@@ -77,7 +77,7 @@ theorem Interpretation.evalPath_comp (I : Interpretation Q C) (n : SimplexCatego
   exact SSet.SimplicialComputad.evaluate_comp I.obj n (I.assignment.atom n)
     (toNativePath Q n p) (toNativePath Q n q)
 
-/-- Every original scalar operator commutes with evaluation of the full generating path. -/
+/-- Every scalar operator commutes with evaluation of the full generating path. -/
 theorem Interpretation.evalPath_naturality (I : Interpretation Q C)
     {n m : SimplexCategoryᵒᵖ} (f : n ⟶ m) {x y : O} (p : Path Q n x y) :
     I.evalPath m (mapPath Q f p) =
@@ -87,7 +87,7 @@ theorem Interpretation.evalPath_naturality (I : Interpretation Q C)
   rw [toNativePath_map]
   exact (I.assignment.map_natural (computad Q) f (toNativePath Q n p)).symm
 
-/-- The actual simplicial map evaluating all original free paths. -/
+/-- The simplicial map evaluating all free paths. -/
 def Interpretation.evalHom (I : Interpretation Q C) (x y : O) :
     freeHom Q x y ⟶ I.obj x ⟶[SSet.{u}] I.obj y where
   app n := ↾fun p => I.evalPath n p
@@ -95,20 +95,20 @@ def Interpretation.evalHom (I : Interpretation Q C) (x y : O) :
     ext p
     exact I.evalPath_naturality f p
 
-/-- The genuine enriched free extension of the supplied interpretation. -/
+/-- The enriched free extension of the supplied interpretation. -/
 def Interpretation.extend (I : Interpretation Q C) :
     letI := freeEnrichment Q
     EnrichedFunctor SSet.{u} O C := by
   letI := freeEnrichment Q
   exact EnrichedFunctor.comp SSet.{u} (toComputad Q) (I.assignment.toFunctor (computad Q))
 
-/-- Every supplied original generator is read back by its actual given simplicial map. -/
+/-- Every supplied generator is read back by its given simplicial map. -/
 theorem Interpretation.generator_eval (I : Interpretation Q C) (x y : O) :
     generator Q x y ≫ I.evalHom x y = I.map x y := by
   ext n a
   exact SSet.SimplicialComputad.evaluate_single I.obj n (I.assignment.atom n) a
 
-/-- A canonical singleton-operator assignment gives its original simplicial generator maps. -/
+/-- A canonical singleton-operator assignment gives its simplicial generator maps. -/
 def interpretationOfAssignment (d : SSet.SimplicialComputad.Assignment (computad Q) (C := C)) :
     Interpretation Q C where
   obj := d.obj

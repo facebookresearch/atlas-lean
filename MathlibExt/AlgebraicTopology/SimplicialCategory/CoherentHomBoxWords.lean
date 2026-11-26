@@ -12,11 +12,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentCubeCoordinates
 import MathlibExt.AlgebraicTopology.CategoricalSource.HornBasic
 
 /-!
-# Actual coherent Hom-box word conditions
+# Coherent Hom-box word conditions
 
-The original coherent Hom-box membership is stated on the same whole
-original path chain. A retained top face means the supplied middle vertex
-is in every scalar vertex; another boundary face means its original
+The coherent Hom-box membership is stated on the same 
+path chain. A retained top face means the supplied middle vertex
+is in every scalar vertex; another boundary face means its 
 vertex is in none or all of them. No compatibility or filler conclusion
 is an input.
 -/
@@ -29,7 +29,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.HomBoxWords
 open MappingCube CubeCoordinates CubeBoundary
 
-/-- The actual scalar interval word at the supplied original scalar degree. -/
+/-- The scalar interval word at the supplied scalar degree. -/
 abbrev word {q : SimplexCategoryᵒᵖ} (s : (Δ[1] : SSet.{u}).obj q) : Fin (q.unop.len + 1) →o Fin 2 :=
   (SSet.stdSimplex.objEquiv s).toOrderHom
 
@@ -37,7 +37,7 @@ private theorem bit_one_of_ne_zero (b : Fin 2) (h : b ≠ 0) : b = 1 := by omega
 private theorem bit_zero_of_ne_one (b : Fin 2) (h : b ≠ 1) : b = 0 := by omega
 private theorem bit_zero_ne_one : (0 : Fin 2) ≠ 1 := by decide
 
-/-- The retained upper endpoint horn is exactly a whole original coordinate word at one. -/
+/-- The retained upper endpoint horn is exactly a coordinate word at one. -/
 theorem upper_word_iff {q : SimplexCategoryᵒᵖ} (s : (Δ[1] : SSet.{u}).obj q) :
     s ∈ (Λ[1, (1 : Fin 2)]).obj q ↔ ∀ t, word s t = 1 := by
   rcases q with ⟨⟨d⟩⟩
@@ -55,7 +55,7 @@ theorem upper_word_iff {q : SimplexCategoryᵒᵖ} (s : (Δ[1] : SSet.{u}).obj q
     have h1 : (s t : Fin 2) = 1 := h t
     exact bit_zero_ne_one (ht.symm.trans h1)
 
-/-- An actual interval boundary word is exactly constant zero or constant one. -/
+/-- An interval boundary word is exactly constant zero or constant one. -/
 theorem boundary_word_iff {q : SimplexCategoryᵒᵖ} (s : (Δ[1] : SSet.{u}).obj q) :
     s ∈ (∂Δ[1]).obj q ↔ (∀ t, word s t = 0) ∨ (∀ t, word s t = 1) := by
   rcases q with ⟨⟨d⟩⟩
@@ -81,7 +81,7 @@ theorem boundary_word_iff {q : SimplexCategoryᵒᵖ} (s : (Δ[1] : SSet.{u}).ob
       have h1 : (s t : Fin 2) = 1 := h t
       exact bit_zero_ne_one (ht.symm.trans h1)
 
-/-- Original coherent Hom-box membership is transported by its actual entire Hom-cube
+/-- Coherent Hom-box membership is transported by its Hom-cube
 isomorphism. -/
 theorem mem_homBox_iff {J : Type u} [LinearOrder J] {i j : J} (hij : i ≤ j)
     (k : IntervalHom.Interior i j) {q : SimplexCategoryᵒᵖ}
@@ -104,8 +104,8 @@ theorem mem_homBox_iff {J : Type u} [LinearOrder J] {i j : J} (hij : i ≤ j)
     exact (congrArg (fun x => (intervalCubeIso hij).inv.app q x) hy).trans
       (congr($((intervalCubeIso hij).hom_inv_id).app q p))
 
-/-- Original coordinate zero means absence of that same original interior vertex in the
-actual original path. -/
+/-- Coordinate zero means absence of that same interior vertex in the
+path. -/
 theorem coordinate_zero_iff {J : Type u} [LinearOrder J] {i j : J} (hij : i ≤ j)
     {q : SimplexCategoryᵒᵖ} (p : (nerve (SimplicialThickening.Path i j)).obj q)
     (t : IntervalHom.Interior i j) (a : Fin (q.unop.len + 1)) :
@@ -166,7 +166,7 @@ theorem mem_iff (hij : i ≤ j) (k : Interior i j) {q : SimplexCategoryᵒᵖ}
         exact (interval_coordinate_one_iff hij p t.val a).mpr (ht a)
 
 /-- The range of the geometric coherent Hom box is the intrinsic horn-path subcomplex.
-Monotonicity reduces whole-chain omission to the last path and retention to the first. -/
+Monotonicity reduces -chain omission to the last path and retention to the first. -/
 theorem subcomplex_eq_hornPaths (hij : i ≤ j) (k : Interior i j) :
     subcomplex hij k = MathlibExt.CategoricalSource.hornPaths i j k.val := by
   apply Subfunctor.ext

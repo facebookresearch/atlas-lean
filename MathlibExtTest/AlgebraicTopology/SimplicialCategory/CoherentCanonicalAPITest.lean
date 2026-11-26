@@ -15,10 +15,10 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomOpenBox
 # Coherent constructions as clients of the canonical simplicial-category APIs
 
 The realization adjunction and raised-universe limits use `EnrichedCat` directly.
-Its counit evaluates whole coherent Hom maps, and the canonical vertex inverse
-is the original constant simplex. For the smallest inner horn, a growing path
-chain from the endpoint-only path to the full path is excluded, while the chain
-which stays on the full path belongs to the horn.
+Its counit evaluates coherent Hom maps, and the canonical vertex inverse
+is the constant simplex. For the smallest inner horn, a growing path
+chain from the endpoint-only path to the path is excluded, while the chain
+which stays on the path belongs to the horn.
 -/
 
 noncomputable section
@@ -33,11 +33,11 @@ namespace CoherentCanonicalAPITest
 abbrev canonicalAdjunction : realizationFunctor.{u} ⊣ simplicialNerveFunctor.{u, u} :=
   realizationAdjunction
 
-/-- The existing limit instance applies directly to the canonical category, one universe up. -/
+/-- The canonical category of simplicial enrichments has limits one universe above its objects. -/
 example : HasLimitsOfSize.{u + 1, u + 1}
     (EnrichedCat.{u + 1, u + 2, u + 1} SSet.{u + 1}) := inferInstance
 
-/-- The canonical vertex inverse is equal as a whole enriched functor to the constant simplex. -/
+/-- The canonical vertex inverse is equal as an enriched functor to the constant simplex. -/
 example (C : EnrichedCat.{u, u + 1, u} SSet.{u}) (c : C) :
     (SimplicialNerve.vertexEquiv (ForgetEnrichment SSet.{u} C)).symm c =
       constantSimplex C ⦋0⦌ c := by
@@ -48,11 +48,11 @@ example (C : EnrichedCat.{u, u + 1, u} SSet.{u}) (c : C) :
 example (i j : coherentSimplex.{u} ⦋0⦌) :
     Subsingleton (SimplicialThickening.Path i.as j.as) := inferInstance
 
-/-- Its original path morphisms still have their subsingleton instance. -/
+/-- Its path morphisms still have their subsingleton instance. -/
 example (i j : coherentSimplex.{u} ⦋0⦌) (a b : SimplicialThickening.Path i.as j.as) :
     Subsingleton (a ⟶ b) := inferInstance
 
-/-- A counit in the canonical category evaluates every Hom simplex with its original endpoints. -/
+/-- A counit in the canonical category evaluates every Hom simplex with its endpoints. -/
 example (C : EnrichedCat.{u, u + 1, u} SSet.{u}) {n : SimplexCategory}
     (σ : (simplicialNerveFunctor.obj C).obj (op n)) (i j : coherentSimplex.{u} n) :
     simplexHom (simplicialNerveFunctor.obj C) σ i j rfl rfl ≫
@@ -82,7 +82,7 @@ example : growingChain ∉ (HomOpenBox.subcomplex hij middle).obj (op ⦋1⦌) :
     change (1 : Fin 3) ∈ (IntervalHom.reinsert hij ∅).I at ht
     simp [IntervalHom.reinsert] at ht
 
-/-- The edge which retains the middle vertex at both ends belongs to the same original horn. -/
+/-- The edge which retains the middle vertex at both ends belongs to the same horn. -/
 example : retainedChain ∈ (HomOpenBox.subcomplex hij middle).obj (op ⦋1⦌) := by
   rw [HomOpenBox.subcomplex_eq_hornPaths, MathlibExt.CategoricalSource.mem_hornPaths_iff]
   refine Or.inr ⟨1, by decide, by decide, ?_⟩

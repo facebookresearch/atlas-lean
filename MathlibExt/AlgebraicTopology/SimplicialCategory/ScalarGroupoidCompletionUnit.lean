@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarGroupoidCompletionEnrichment
 
 /-!
-# The same original full unit into canonical scalar groupoid completion
+# The same full unit into canonical scalar groupoid completion
 
-Every original object is kept literally. On every full original Hom
-simplex the unit is Mathlib's native FreeGroupoid.of map of the SAME
-canonical ScalarObject category. All original operators, identities and
-compositions are retained by the actual full simplicial enriched map.
-No scalar weakness of this unit is a hypothesis or a conclusion here.
+Every object is kept literally. On every Hom
+simplex the unit is Mathlib's native FreeGroupoid.of map of the same
+canonical ScalarObject category. All operators, identities and
+compositions are retained by the full simplicial enriched map.
+
 -/
 
 noncomputable section
@@ -27,11 +27,11 @@ namespace CategoryTheory.SimplicialEnrichment.ScalarGroupoidCompletion
 
 variable (C : Carrier.{u})
 
-/-- The SAME canonical original scalar category maps to its genuine native completion. -/
+/-- The same canonical scalar category maps to its native completion. -/
 abbrev scalarUnit (q : SimplexCategoryᵒᵖ) : SSet.ScalarObject C q ⥤ category C q :=
   FreeGroupoid.of (SSet.ScalarObject C q)
 
-/-- Each entire original Hom simplex is included by the SAME native canonical scalar unit. -/
+/-- Each Hom simplex is included by the same native canonical scalar unit. -/
 def unitHom (x y : C) : (x ⟶[SSet.{u}] y) ⟶ hom C x y where
   app q := ↾fun a => (scalarUnit C q).map (X := SSet.ScalarObject.mk (Δ := q) x)
     (Y := SSet.ScalarObject.mk (Δ := q) y) a
@@ -39,7 +39,7 @@ def unitHom (x y : C) : (x ⟶[SSet.{u}] y) ⟶ hom C x y where
     ext a
     rfl
 
-/-- The actual complete original unit is an enriched functor on the SAME original objects
+/-- The complete unit is an enriched functor on the same objects
 and Homs. -/
 def unit : C ⟶ object C where
   obj x := x
@@ -52,16 +52,16 @@ def unit : C ⟶ object C where
     exact (scalarUnit C q).map_comp (X := SSet.ScalarObject.mk (Δ := q) x)
       (Y := SSet.ScalarObject.mk (Δ := q) y) (Z := SSet.ScalarObject.mk (Δ := q) z) a.1 a.2
 
-/-- The SAME full original completion unit retains every individual object literally. -/
+/-- The same full completion unit retains every individual object literally. -/
 theorem unit_obj (x : C) : (unit C).obj x = x := rfl
 
-/-- Every actual full original unit Hom is its SAME native scalar inclusion in every degree. -/
+/-- Every full unit Hom is its same native scalar inclusion in every degree. -/
 theorem unitHom_apply (q : SimplexCategoryᵒᵖ) (x y : C) (a : (x ⟶[SSet.{u}] y).obj q) :
     ((unit C).map x y).app q a =
       (scalarUnit C q).map (X := SSet.ScalarObject.mk (Δ := q) x)
         (Y := SSet.ScalarObject.mk (Δ := q) y) a := rfl
 
-/-- Every SAME original ordinal operator commutes with the actual entire unit Hom. -/
+/-- Every same ordinal operator commutes with the unit Hom. -/
 theorem unitHom_operator {q r : SimplexCategoryᵒᵖ} (f : q ⟶ r) (x y : C)
     (a : (x ⟶[SSet.{u}] y).obj q) :
     (unitHom C x y).app r ((x ⟶[SSet.{u}] y).map f a) =

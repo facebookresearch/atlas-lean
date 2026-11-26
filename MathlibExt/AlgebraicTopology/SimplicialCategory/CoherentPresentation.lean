@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentGenerators
 
 /-!
-# The genuine coherent realization presentation
+# The coherent realization presentation
 
-Its original object type is the set of input vertices. The actual
+Its object type is the set of input vertices. The 
 generating relations impose coherent-simplex identities, composition,
 and every outer simplex operator. Their simplicial congruence produces
-actual Hom simplicial sets and a genuine enriched category.
+Hom simplicial sets and an enriched category.
 -/
 
 noncomputable section
@@ -26,7 +26,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment SimplicialQuiver
 
-/-- The actual generating equations for coherent realization, at the same original endpoints. -/
+/-- The generating equations for coherent realization, at the same endpoints. -/
 inductive Equations (K : SSet.{u}) :
     ∀ {q : SimplexCategoryᵒᵖ} {x y : K _⦋0⦌},
       Path (generatingQuiver K) q x y → Path (generatingQuiver K) q x y → Prop
@@ -50,20 +50,20 @@ inductive Equations (K : SSet.{u}) :
           ((vertex_operator K f σ i).symm.trans hx) ((vertex_operator K f σ j).symm.trans hy)
           (((coherentSimplexMap f).map i j).app q a))
 
-/-- These equations are actual relations on the original free coherent generating paths. -/
+/-- These equations are relations on the free coherent generating paths. -/
 def relations (K : SSet.{u}) : Relations (generatingQuiver K) :=
   fun _ _ _ p q => Equations K p q
 
-/-- The actual coherent realization, with the individual original input vertices as its objects. -/
+/-- The coherent realization, with the individual input vertices as its objects. -/
 def realization (K : SSet.{u}) : Carrier.{u} := by
   letI := presentedEnrichment (relations K)
   exact SimplicialEnrichment.of (K _⦋0⦌)
 
-/-- The actual Hom simplicial set of coherent realization at the two supplied original vertices. -/
+/-- The Hom simplicial set of coherent realization at the two supplied vertices. -/
 abbrev hom (K : SSet.{u}) (x y : K _⦋0⦌) : SSet.{u} :=
   presentedHom (relations K) x y
 
-/-- A whole coherent Hom is inserted into realization with exactly its supplied endpoint
+/-- A coherent Hom is inserted into realization with exactly its supplied endpoint
 equations. -/
 def simplexHom (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}
@@ -72,7 +72,7 @@ def simplexHom (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
   app q := ↾fun a => _root_.Quotient.mk _ (arrowPath K σ i j hx hy a)
   naturality q r f := by ext a; rfl
 
-/-- Every original input simplex determines a genuine enriched functor into its coherent
+/-- Every input simplex determines an enriched functor into its coherent
 realization. -/
 def simplexInto (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n)) :
     coherentSimplex.{u} n ⟶ realization K where
@@ -86,12 +86,12 @@ def simplexInto (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n)) :
     exact _root_.Quotient.sound
       (Closure.relation (Equations.composition q σ i j k rfl rfl rfl a.1 a.2))
 
-/-- The inserted coherent Hom keeps precisely its original source and target, not their
+/-- The inserted coherent Hom keeps precisely its source and target, not their
 component classes. -/
 theorem simplexInto_obj (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i : coherentSimplex.{u} n) : (simplexInto K σ).obj i = vertex K σ i := rfl
 
-/-- The inserted actual Hom simplex is represented by the original coherent generating path. -/
+/-- The inserted Hom simplex is represented by the coherent generating path. -/
 theorem simplexInto_map (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) (q : SimplexCategoryᵒᵖ) (a : (i ⟶[SSet.{u}] j).obj q) :
     ((simplexInto K σ).map i j).app q a =

@@ -12,12 +12,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.StrictCategory
 import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-# The canonical original scalar-category functor has a genuine cofree right adjoint
+# Scalar-category evaluation and its cofree right adjoint
 
-The left functor uses the SAME original ScalarObject and scalarFunctor.
-The complete cofree right functor and the genuine whole Hom bijection
-retain all original object maps, coefficients and ordinal operators.
-This proves actual colimit preservation without a colimit certificate.
+Evaluation of a simplicial enrichment in one degree has a cofree right
+adjoint. The adjunction retains object functions and relates enriched
+functors to ordinary functors in that degree. Evaluation consequently
+preserves colimits.
 -/
 
 noncomputable section
@@ -28,23 +28,23 @@ namespace CategoryTheory.SimplicialEnrichment.ScalarCategoryAdjunction
 
 variable (q : SimplexCategoryᵒᵖ)
 
-/-- The SAME complete original canonical scalar-category functor at the selected ordinal. -/
+/-- The same complete canonical scalar-category functor at the selected ordinal. -/
 def scalar : Carrier.{u} ⥤ Cat.{u, u} where
   obj C := Cat.of (SSet.ScalarObject C q)
   map F := (SSet.scalarFunctor F q).toCatHom
   map_id _C := Cat.ext (SSet.scalarFunctor_id q)
   map_comp F G := Cat.ext (SSet.scalarFunctor_comp F G q)
 
-/-- The genuine complete original cofree enrichment on the SAME original ordinary target objects. -/
+/-- The complete cofree enrichment on the same ordinary target objects. -/
 def cofreeObject (E : Cat.{u, u}) : Carrier.{u} := by
   let _ : EnrichedCategory SSet.{u} E := SSet.ScalarCofree.enrichment q E
   exact of E
 
-/-- The SAME entire original ordinary functor on every full operator-indexed coefficient family. -/
+/-- The same ordinary functor on every full operator-indexed coefficient family. -/
 def cofreeMap {E D : Cat.{u, u}} (F : E ⟶ D) : cofreeObject q E ⟶ cofreeObject q D :=
   SSet.ScalarCofree.map (E := (E : Type u)) (D := (D : Type u)) q F.toFunctor
 
-/-- The actual complete original cofree right functor, with both whole original functor laws. -/
+/-- The complete cofree right functor, with both functor laws. -/
 def cofree : Cat.{u, u} ⥤ Carrier.{u} where
   obj := cofreeObject q
   map := cofreeMap q
@@ -52,14 +52,14 @@ def cofree : Cat.{u, u} ⥤ Carrier.{u} where
   map_comp {E D K} F G := SSet.ScalarCofree.map_comp
     (E := (E : Type u)) (D := (D : Type u)) (K := (K : Type u)) q F.toFunctor G.toFunctor
 
-/-- The actual full original Hom bijection uses the SAME canonical scalar category and
+/-- The Hom bijection uses the same canonical scalar category and
 complete cofree target. -/
 def fullHomEquiv (C : Carrier.{u}) (E : Cat.{u, u}) :
     ((scalar q).obj C ⟶ E) ≃ (C ⟶ cofreeObject q E) :=
   (Cat.Hom.equivFunctor ((scalar q).obj C) E).trans
     (SSet.ScalarCofree.homEquiv (C := (C : Type u)) q (E : Type u)).symm
 
-/-- The genuine original scalar/cofree adjunction retains both entire original inverse Hom maps. -/
+/-- The scalar/cofree adjunction retains both inverse Hom maps. -/
 def adjunction : scalar q ⊣ cofree q :=
   Adjunction.mkOfHomEquiv {
     homEquiv := fullHomEquiv q
@@ -74,7 +74,7 @@ def adjunction : scalar q ⊣ cofree q :=
         (C := (C : Type u)) (E := (E : Type u)) (D := (D : Type u)) q F.toFunctor
           G.toFunctor).symm }
 
-/-- The SAME actual original scalar-category functor preserves every existing full colimit. -/
+/-- The scalar-category functor in the specified degree preserves colimits. -/
 instance preservesColimits : Limits.PreservesColimits (scalar q) :=
   (adjunction q).leftAdjoint_preservesColimits
 

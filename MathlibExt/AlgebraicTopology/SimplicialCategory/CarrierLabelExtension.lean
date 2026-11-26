@@ -9,11 +9,11 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelMaps
 
-/-! # The whole changing-object unit and prescribed-label extension
+/-! # The changing-object unit and prescribed-label extension
 
-The actual path-presentation unit has its original object function and
-original generator maps. Reindexing projections commute with complete
-fixed-object functors, retaining every original Hom map and endpoint.
+The path-presentation unit has its object function and
+generator maps. Reindexing projections commute with complete
+Fixed-object functors, retaining every Hom map and endpoint.
 -/
 
 noncomputable section
@@ -29,7 +29,7 @@ private theorem restricted_val_map {A O : Type u} (a : A → O)
   change 𝟙 (hom C (a s) (a t)) ≫ homMap F (a s) (a t) = homMap F (a s) (a t)
   exact Category.id_comp _
 
-/-- Projection retains the whole original fixed-object functor and its two endpoint maps. -/
+/-- Projection retains the fixed-object functor and its two endpoint maps. -/
 theorem restriction_projection {A O : Type u} (a : A → O)
     {C D : FixedObjects O} (F : C ⟶ D) :
     (LabelRestriction.map a F).val ≫
@@ -56,20 +56,20 @@ theorem restriction_projection {A O : Type u} (a : A → O)
 
 variable {O : Type u}
 
-/-- The actual fixed-target-label path source of the original changing-object enrichment. -/
+/-- The fixed-target-label path source of the changing-object enrichment. -/
 abbrev object (C : Carrier.{u}) (a : C → O) : FixedObjects O :=
   LabelPushforward.object a (CarrierReindexing.source C)
 
-/-- The whole changing-object generator unit has the original prescribed object function. -/
+/-- The changing-object generator unit has the prescribed object function. -/
 def inclusion (C : Carrier.{u}) (a : C → O) : C ⟶ (object C a).val :=
   (LabelPushforward.unit a (CarrierReindexing.source C)).val ≫
     CarrierReindexing.toTarget (object C a).val (fun s => vertex (object C a) (a s))
 
-/-- The original individual object maps to the same prescribed target label. -/
+/-- The individual object maps to the same prescribed target label. -/
 theorem inclusion_obj (C : Carrier.{u}) (a : C → O) (x : C) :
     (inclusion C a).obj x = vertex (object C a) (a x) := rfl
 
-/-- The entire original Hom maps by the same path-generator inclusion. -/
+/-- The Hom maps by the same path-generator inclusion. -/
 theorem inclusion_map (C : Carrier.{u}) (a : C → O) (x y : C) :
     (inclusion C a).map x y = LabelPushforward.unitHom a (CarrierReindexing.source C) x y := by
   change (𝟙 (hom (CarrierReindexing.source C) x y) ≫

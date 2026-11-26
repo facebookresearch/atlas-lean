@@ -11,10 +11,10 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjects
 import MathlibExt.AlgebraicTopology.SimplicialCategory.SingleHomQuiver
 
 /-!
-# The free single-Hom object in the actual fixed-object fiber
+# The free singleHom object in the fixed-object fiber
 
-Restriction and path extension are inverse on genuine enriched functors
-that fix every original object label. Their target object map is the
+Restriction and path extension are inverse on enriched functors
+that fix every object label. Their target object map is the
 literal equality transport furnished by the functor fiber.
 -/
 
@@ -27,25 +27,25 @@ open SimplicialQuiver
 
 variable {O : Type u} (x y : O)
 
-/-- The actual free enrichment, with the original fixed object labels. -/
+/-- The free enrichment, with the fixed object labels. -/
 abbrev object (X : SSet.{u}) : FixedObjects O :=
   ⟨SimplicialQuiver.free (SingleHom.quiver x y X), rfl⟩
 
-/-- Every original free vertex has exactly its supplied fixed label. -/
+/-- Every free vertex has exactly its supplied fixed label. -/
 @[simp]
 theorem vertex_object (X : SSet.{u}) (a : O) :
     vertex (object x y X) a = a := rfl
 
-/-- The specified original generator, as a whole map into the actual free Hom. -/
+/-- The specified generator, as a map into the free Hom. -/
 def generator (X : SSet.{u}) : X ⟶ hom (object x y X) x y :=
   eqToHom (SingleHom.quiver_at x y X).symm ≫
     SimplicialQuiver.generator (SingleHom.quiver x y X) x y
 
-/-- Restrict a genuine fixed-object enriched map to the supplied original generator. -/
+/-- Restrict a fixed-object enriched map to the supplied generator. -/
 def restrict (X : SSet.{u}) (D : FixedObjects O) (F : object x y X ⟶ D) :
     X ⟶ hom D x y := generator x y X ≫ homMap F x y
 
-/-- Extend the supplied whole Hom map by actual evaluation of every original free path. -/
+/-- Extend the supplied Hom map by evaluation of every free path. -/
 def extend (X : SSet.{u}) (D : FixedObjects O) (f : X ⟶ hom D x y) :
     object x y X ⟶ D := by
   let I := SingleHom.interpretation x y X (vertex D) f
@@ -55,12 +55,12 @@ def extend (X : SSet.{u}) (D : FixedObjects O) (f : X ⟶ hom D x y) :
   ext a
   rfl
 
-/-- The extension fixes the actual original label at every object. -/
+/-- The extension fixes the label at every object. -/
 @[simp]
 theorem extend_obj (X : SSet.{u}) (D : FixedObjects O) (f : X ⟶ hom D x y) (a : O) :
     (extend x y X D f).val.obj a = vertex D a := rfl
 
-/-- Restriction of the genuine path extension recovers the same original simplicial Hom map. -/
+/-- Restriction of the path extension recovers the same simplicial Hom map. -/
 @[simp]
 theorem restrict_extend (X : SSet.{u}) (D : FixedObjects O) (f : X ⟶ hom D x y) :
     restrict x y X D (extend x y X D f) = f := by
@@ -70,7 +70,7 @@ theorem restrict_extend (X : SSet.{u}) (D : FixedObjects O) (f : X ⟶ hom D x y
   simpa only [SingleHom.interpretation, Category.comp_id, Category.assoc] using
     SingleHom.generator_extend x y X (vertex D) f
 
-/-- The entire enriched functor is recovered, including all original finite path simplices. -/
+/-- The enriched functor is recovered, including all finite path simplices. -/
 @[simp]
 theorem extend_restrict (X : SSet.{u}) (D : FixedObjects O) (F : object x y X ⟶ D) :
     extend x y X D (restrict x y X D F) = F := by
@@ -104,7 +104,7 @@ theorem extend_restrict (X : SSet.{u}) (D : FixedObjects O) (F : object x y X �
   rw [he]
   exact SimplicialQuiver.extend_restrict Q G
 
-/-- The genuine free/evaluation Hom equivalence in the existing fixed-object category. -/
+/-- Maps from the free singleHom enrichment correspond to maps into the selected Hom object. -/
 def homEquiv (X : SSet.{u}) (D : FixedObjects O) :
     (object x y X ⟶ D) ≃ (X ⟶ hom D x y) where
   toFun := restrict x y X D
@@ -112,7 +112,7 @@ def homEquiv (X : SSet.{u}) (D : FixedObjects O) :
   left_inv := extend_restrict x y X D
   right_inv := restrict_extend x y X D
 
-/-- Restriction commutes with the same original target enriched map. -/
+/-- Restriction commutes with the same target enriched map. -/
 theorem restrict_comp (X : SSet.{u}) {C D : FixedObjects O}
     (F : object x y X ⟶ C) (G : C ⟶ D) :
     restrict x y X D (F ≫ G) = restrict x y X C F ≫ homMap G x y := by

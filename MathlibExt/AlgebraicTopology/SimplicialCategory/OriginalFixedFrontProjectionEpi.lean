@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFixedFrontCollapse
 
 /-!
-# The entire original fixed-front projection is epi
+# The fixed-front projection is epi
 
-Every original quotient simplex has an actual original successor
-representative. The original full projection is therefore epi in every
-scalar degree and as a whole simplicial-set map.
+Every quotient simplex has a successor
+representative. The full projection is therefore epi in every
+scalar degree and as a simplicial-set map.
 -/
 
 noncomputable section
@@ -26,7 +26,7 @@ open scoped Simplicial
 
 namespace CategoryTheory.CoherentRealization.OriginalFixedFrontContraction
 
-/-- The SAME complete original fixed-front projection is epi in every original dimension. -/
+/-- The same complete fixed-front projection is epi in every dimension. -/
 theorem projection_epi (n : ℕ) : Epi (FixedFrontCollapse.projection.{u} n) := by
   let _ : ∀ q, Epi ((FixedFrontCollapse.projection.{u} n).app q) := fun q =>
     (CategoryTheory.epi_iff_surjective _).mpr (fun p => _root_.Quotient.exists_rep p)

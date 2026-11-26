@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentAdjunction
 import Mathlib.AlgebraicTopology.Quasicategory.Basic
 
 /-!
-# Actual original vertices and coherent faces of a supplied horn map
+# Vertices and coherent faces of a supplied horn map
 
-The data below is extracted from the actual map into the existing
-coherent nerve. Original vertices are individual objects and each supplied
-face is a genuine enriched functor. All two-face compatibility equations
-are proved from the original horn map; none is a comparison certificate.
+The data below is extracted from the map into the 
+coherent nerve. vertices are individual objects and each supplied
+face is an enriched functor. All two-face compatibility equations
+hold from the horn map; none is a comparison certificate.
 -/
 
 noncomputable section
@@ -29,15 +29,15 @@ open SimplicialEnrichment
 variable {C : Carrier.{u}} {n : ℕ} {i : Fin (n + 3)}
   (f : (Λ[n + 2, i] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The supplied original horn vertex read as its individual enriched object. -/
+/-- The supplied horn vertex read as its individual enriched object. -/
 def object (t : Fin (n + 3)) : C :=
   vertexOf C (f.app (op ⦋0⦌) ⟨SSet.stdSimplex.obj₀Equiv.symm t, by simp⟩)
 
-/-- The actual original coherent face functor obtained from the supplied horn map. -/
+/-- The coherent face functor obtained from the supplied horn map. -/
 def faceFunctor (j : Fin (n + 3)) (hj : j ≠ i) : coherentSimplex.{u} ⦋n + 1⦌ ⟶ C :=
   f.app (op ⦋n + 1⦌) (SSet.horn.face i j hj)
 
-/-- Each supplied actual face retains the same original horn vertex under its genuine
+/-- Each supplied face retains the same horn vertex under its 
 ordinal face map. -/
 theorem faceFunctor_obj (j : Fin (n + 3)) (hj : j ≠ i) (t : coherentSimplex.{u} ⦋n + 1⦌) :
     (faceFunctor f j hj).obj t = object f (j.succAbove t.as.down) := by
@@ -45,11 +45,11 @@ theorem faceFunctor_obj (j : Fin (n + 3)) (hj : j ≠ i) (t : coherentSimplex.{u
     (SSet.horn.face i j hj))
   exact (congrArg (vertexOf C) h).symm
 
-/-- The supplied coherent face is exactly the original simplex classified by its actual face map. -/
+/-- The supplied coherent face is exactly the simplex classified by its face map. -/
 theorem faceFunctor_yoneda (j : Fin (n + 3)) (hj : j ≠ i) :
     faceFunctor f j hj = SSet.yonedaEquiv (SSet.horn.ι i j hj ≫ f) := rfl
 
-/-- Every supplied pair of original coherent faces agrees on the whole common coherent subface. -/
+/-- Every supplied pair of coherent faces agrees on the common coherent subface. -/
 theorem faceFunctor_compatibility (j k : Fin (n + 3)) (hj : j ≠ i) (hk : k ≠ i) (hjk : j < k) :
     coherentSimplexMap (SimplexCategory.δ (k.pred (Fin.ne_zero_of_lt hjk))) ≫ faceFunctor f j hj =
       coherentSimplexMap (SimplexCategory.δ (j.castPred (Fin.ne_last_of_lt hjk))) ≫

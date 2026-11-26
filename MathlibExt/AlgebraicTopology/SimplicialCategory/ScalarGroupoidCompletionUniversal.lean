@@ -10,14 +10,12 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.ScalarGroupoidCompletionLift
 
 /-!
-# The genuine full enriched universal property of canonical completion
+# The universal property of degreewise groupoid completion
 
-Every whole enriched map from the actual completion is recovered from
-its SAME original unit restriction. The entire native scalar groupoid
-functor has the same individual original objects and full Hom maps.
-Native FreeGroupoid lift uniqueness proves recovery on every scalar
-degree, yielding both full enriched inverse maps of the universal Hom
-equivalence. No weak-map recognition theorem is assumed.
+Maps from the degreewise completion to an enrichment whose scalar
+categories are groupoids correspond to maps from the source enrichment.
+Restriction along the unit and degreewise extension are inverse
+on object functions and Hom maps.
 -/
 
 noncomputable section
@@ -28,21 +26,21 @@ namespace CategoryTheory.SimplicialEnrichment.ScalarGroupoidCompletion
 
 variable {C D : Carrier.{u}}
 
-/-- The SAME original object is read from its actual native completion wrapper at one scalar
+/-- The same object is read from its native completion wrapper at one scalar
 degree. -/
 def originalVertex (q : SimplexCategoryᵒᵖ) (a : category C q) : C := a.as.as.obj
 
-/-- Reading the original object after its actual native scalar completion image is literal. -/
+/-- Reading the object after its native scalar completion image is literal. -/
 theorem originalVertex_vertex (q : SimplexCategoryᵒᵖ) (x : C) :
     originalVertex (C := C) q (vertex C q x) = x := rfl
 
-/-- Every actual native completion object retains its SAME original scalar object exactly. -/
+/-- Every native completion object retains its same scalar object exactly. -/
 theorem vertex_originalVertex (q : SimplexCategoryᵒᵖ) (a : category C q) :
     vertex C q (originalVertex (C := C) q a) = a := by
   cases a
   rfl
 
-/-- The SAME entire enriched map acts on every actual native completed arrow in one original
+/-- The same enriched map acts on every native completed arrow in one 
 scalar degree. -/
 def nativeFunctor (H : object C ⟶ D) (q : SimplexCategoryᵒᵖ) :
     category C q ⥤ SSet.ScalarObject D q where
@@ -54,8 +52,8 @@ def nativeFunctor (H : object C ⟶ D) (q : SimplexCategoryᵒᵖ) :
     exact congr($(H.map_comp (originalVertex (C := C) q a)
       (originalVertex (C := C) q b) (originalVertex (C := C) q c)).app q (f, g))
 
-/-- The actual native scalar restriction is exactly the SAME original full enriched unit
-restriction. -/
+/-- The native scalar restriction is exactly the same full enriched unit
+Restriction. -/
 theorem scalarUnit_nativeFunctor (H : object C ⟶ D) (q : SimplexCategoryᵒᵖ) :
     scalarUnit C q ⋙ nativeFunctor H q = SSet.scalarFunctor (unit C ≫ H) q := by
   apply Functor.hext (F := scalarUnit C q ⋙ nativeFunctor H q)
@@ -65,7 +63,7 @@ theorem scalarUnit_nativeFunctor (H : object C ⟶ D) (q : SimplexCategoryᵒᵖ
 
 variable [∀ q, IsGroupoid (SSet.ScalarObject D q)]
 
-/-- Every native completed arrow is recovered by the SAME full scalar lift of the original
+/-- Every native completed arrow is recovered by the same scalar lift of the 
 unit restriction. -/
 theorem scalarLift_restriction (H : object C ⟶ D) (q : SimplexCategoryᵒᵖ) :
     scalarLift (unit C ≫ H) q = nativeFunctor H q := by
@@ -73,8 +71,8 @@ theorem scalarLift_restriction (H : object C ⟶ D) (q : SimplexCategoryᵒᵖ) 
   exact (FreeGroupoid.lift_unique (SSet.scalarFunctor (unit C ≫ H) q)
     (nativeFunctor H q) (scalarUnit_nativeFunctor H q)).symm
 
-/-- The genuine enriched lift of the SAME full original unit restriction recovers the entire
-original completion map. -/
+/-- The enriched lift of the same full unit restriction recovers the 
+completion map. -/
 theorem lift_unit (H : object C ⟶ D) : lift (unit C ≫ H) = H := by
   apply EnrichedFunctor.ext SSet.{u} (F := lift (unit C ≫ H)) (G := H) (fun _ => rfl)
   intro x y
@@ -85,7 +83,7 @@ theorem lift_unit (H : object C ⟶ D) : lift (unit C ≫ H) = H := by
   exact (congrArg (fun m => m ≫ eqToHom (rfl : (H.obj x ⟶[SSet.{u}] H.obj y) =
     (H.obj x ⟶[SSet.{u}] H.obj y))) hm).trans (Category.comp_id _)
 
-/-- Both genuine full inverse maps identify actual completion functors with SAME original
+/-- Both full inverse maps identify completion functors with same 
 enriched functors into
 scalar-groupoid targets. -/
 def homEquiv : (object C ⟶ D) ≃ (C ⟶ D) where
@@ -94,7 +92,7 @@ def homEquiv : (object C ⟶ D) ≃ (C ⟶ D) where
   left_inv := lift_unit
   right_inv := unit_lift
 
-/-- The SAME actual original whole unit restriction detects equality of complete enriched
+/-- The same unit restriction detects equality of complete enriched
 completion functors. -/
 theorem unit_restriction_injective : Function.Injective (fun H : object C ⟶ D => unit C ≫ H) :=
   homEquiv.injective

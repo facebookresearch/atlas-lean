@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.StrictCategory
 import MathlibExt.CategoryTheory.Enriched.HomEqualityTransport
 
 /-!
-# Exact original Hom transports from whole functor and endpoint equalities
+# Exact Hom transports from functor and endpoint equalities
 
-Only actual original object equations transport the endpoints of the
-SAME full enriched Hom maps. These elementary equations retain every
-Hom operator and support original changing-object arrow retracts.
+Only object equations transport the endpoints of the
+same enriched Hom maps. These elementary equations retain every
+Hom operator and support changing-object arrow retracts.
 -/
 
 noncomputable section
@@ -27,8 +27,8 @@ namespace CategoryTheory.EnrichedFunctor
 variable {C : Type v} [EnrichedCategory SSet.{u} C]
 variable {D : Type w} [EnrichedCategory SSet.{u} D]
 
-/-- Equality of the SAME whole original enriched functors transports each full Hom through
-precisely its original
+/-- Equality of the same enriched functors transports each Hom through
+precisely its 
 object equations. -/
 theorem homMap_transport_of_eq {F G : EnrichedFunctor SSet.{u} C D} (h : F = G) (x y : C) :
     F.map x y ≫ eqToHom (congrArg₂ (fun a b : D => (a ⟶[SSet.{u}] b))
@@ -36,7 +36,7 @@ theorem homMap_transport_of_eq {F G : EnrichedFunctor SSet.{u} C D} (h : F = G) 
   cases h
   simp only [eqToHom_refl, Category.comp_id]
 
-/-- The SAME original Hom map commutes with transports from its two actual original source
+/-- The same Hom map commutes with transports from its two source
 endpoint equations. -/
 theorem homMap_endpoint_transport (F : EnrichedFunctor SSet.{u} C D)
     {x y x' y' : C} (hx : x = x') (hy : y = y') :

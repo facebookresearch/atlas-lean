@@ -11,12 +11,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierSmallColimits
 import MathlibExtTest.AlgebraicTopology.SimplicialCategory.FixedObjectLabelPushforwardTest
 import Mathlib.CategoryTheory.Limits.Shapes.Equalizers
 
-/-! # Actual changing-object coequalizers retain original enriched functors
+/-! # Changing-object coequalizers retain enriched functors
 
-Two genuinely different point maps select the original ends of a free
-noninvertible arrow. Their actual carrier coequalizer identifies those
-objects. Its universal map reads back the complete original collapse
-functor into the free-loop target, including every original Hom simplex.
+Two genuinely different point maps select the ends of a free
+noninvertible arrow. Their carrier coequalizer identifies those
+Objects. Its universal map reads back the complete collapse
+functor into the free-loop target, including every Hom simplex.
 The construction is checked at an arbitrary and a raised value universe.
 -/
 
@@ -48,12 +48,12 @@ def right : pointCarrier.{u} ⟶ arrow.val := atObject finish
 def collapseWhole : arrow.{u}.val ⟶ loop.val :=
   toLoop.val ≫ CarrierReindexing.toTarget loop.val collapse
 
-/-- The two actual point functors have genuinely distinct original object maps. -/
+/-- The two point functors have genuinely distinct object maps. -/
 theorem point_maps_distinct : left.{u}.obj point ≠ right.{u}.obj point := by
   intro h
   exact Bool.false_ne_true (congrArg ULift.down h)
 
-/-- The same original collapse functor satisfies the whole enriched coequalizer condition. -/
+/-- The same collapse functor satisfies the enriched coequalizer condition. -/
 theorem agreement : left.{u} ≫ collapseWhole = right.{u} ≫ collapseWhole := by
   apply (interpretationEquiv pointQuiver (C := loop.val)).injective
   change Interpretation.mk (C := loop.val) (fun _ => (point : loop.val))
@@ -65,7 +65,7 @@ theorem agreement : left.{u} ≫ collapseWhole = right.{u} ≫ collapseWhole := 
   ext q p
   exact PEmpty.elim p
 
-/-- The actual changing-object coequalizer identifies the two supplied original object images. -/
+/-- The changing-object coequalizer identifies the two supplied object images. -/
 theorem identified :
     (coequalizer.π left.{u} right.{u}).obj start.{u} =
       (coequalizer.π left.{u} right.{u}).obj finish.{u} :=
@@ -75,7 +75,7 @@ theorem identified :
 def readback : coequalizer left.{u} right.{u} ⟶ loop.val :=
   coequalizer.desc collapseWhole agreement
 
-/-- The whole original collapse functor is retained, including its complete noninvertible Hom map. -/
+/-- The collapse functor is retained, including its complete noninvertible Hom map. -/
 example : coequalizer.π left.{u} right.{u} ≫ readback = collapseWhole := by
   simp [readback]
 
@@ -83,7 +83,7 @@ example : coequalizer.π left.{u} right.{u} ≫ readback = collapseWhole := by
 example : (coequalizer.π left.{u + 1} right.{u + 1}).obj start.{u + 1} =
     (coequalizer.π left.{u + 1} right.{u + 1}).obj finish.{u + 1} := identified
 
-/-- The actual constructed colimits also supply the empty diagram without changing the value universe. -/
+/-- The constructed colimits also supply the empty diagram without changing the value universe. -/
 example : HasInitial Carrier.{u} := inferInstance
 
 end CarrierColimitTest

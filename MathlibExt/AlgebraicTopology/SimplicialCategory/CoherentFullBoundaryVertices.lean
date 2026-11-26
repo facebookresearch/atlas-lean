@@ -10,11 +10,11 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentFullBoundaryFaces
 
 /-!
-# Literal vertices of the same full original coherent boundary
+# Literal vertices of the same coherent boundary
 
-Every original horn restriction retains precisely the same individual
+Every horn restriction retains precisely the same individual
 boundary vertex. Each supplied full face reads that vertex along its
-same original ordinal inclusion. All original face labels are included.
+same ordinal inclusion. All face labels are included.
 -/
 
 noncomputable section
@@ -28,15 +28,15 @@ open SimplicialEnrichment
 variable {C : Carrier.{u}} {n : ℕ}
   (f : (∂Δ[n + 2] : SSet.{u}) ⟶ coherentNerveFunctor.obj C)
 
-/-- The same original full-boundary vertex, read from the canonical original inner-horn
-restriction. -/
+/-- The same full-boundary vertex, read from the canonical inner-horn
+Restriction. -/
 def object (t : Fin (n + 3)) : C := HornFaces.object (horn f (1 : Fin (n + 3))) t
 
-/-- Every full original horn restriction retains the same literal individual boundary vertex. -/
+/-- Every full horn restriction retains the same literal individual boundary vertex. -/
 theorem object_horn (i t : Fin (n + 3)) :
     HornFaces.object (horn f i) t = object f t := rfl
 
-/-- The supplied whole original face reads every same original vertex under its actual
+/-- The supplied face reads every same vertex under its 
 ordinal face map. -/
 theorem faceFunctor_obj (j : Fin (n + 3)) (t : coherentSimplex.{u} ⦋n + 1⦌) :
     (faceFunctor f j).obj t = object f (j.succAbove t.as.down) := by

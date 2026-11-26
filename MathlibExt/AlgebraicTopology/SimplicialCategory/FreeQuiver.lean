@@ -13,18 +13,17 @@ import Mathlib.CategoryTheory.PathCategory.Basic
 import MathlibExt.AlgebraicTopology.SimplicialCategory.WalkingAdjunction.ComputadRepresentation
 
 /-!
-# The actual free simplicial category on a simplicial quiver
+# Free simplicial categories on simplicial quivers
 
-Objects are the supplied vertices. In each scalar degree the Hom objects
-are genuine finite paths of supplied quiver arrows. Simplicial operators
-act on every arrow of those same paths; identities are empty paths and
-composition concatenates paths. All enriched laws are proved on these
-actual maps, without a model structure or a comparison outcome input.
+The free enrichment has the quiver’s object set. Its Hom objects are
+finite paths of generating Hom simplices; simplicial operators act on
+each edge, identities are empty paths, and composition concatenates
+paths. Assignment of the generators determines an enriched functor.
 
-This is a label-preserving adapter to `SSet.SimplicialComputad`: the
-canonical construction supplies the operators, evaluation and universal
-property. The explicit path relabeling retains the existing path API on
-the supplied vertex type instead of exposing the computad's label wrapper.
+## References
+
+- Clemens Berger and Ieke Moerdijk, *On the homotopy theory of enriched
+  categories*, Section 3.3(e), https://arxiv.org/abs/1201.2134.
 -/
 
 noncomputable section
@@ -34,9 +33,9 @@ open scoped Simplicial
 
 namespace CategoryTheory.SimplicialQuiver
 
-/-- Original vertex-indexed simplicial generating Hom objects. -/
+/-- Vertex-indexed simplicial generating Hom objects. -/
 structure Data (O : Type u) where
-  /-- The actual simplicial object of generating arrows at the two supplied vertices. -/
+  /-- The simplicial object of generating arrows at the two supplied vertices. -/
   Hom : O → O → SSet.{u}
 
 variable {O : Type u}
@@ -51,24 +50,27 @@ def computad (Q : Data O) : SSet.SimplicialComputad.{u, u} O where
   operator_comp {n m k} f g {x y} a := by
     rw [SSet.SimplicialComputad.pathMap_single, (Q.Hom x y).map_comp]
     rfl
+  operator_epi := by
+    intro n m f _ x y a
+    exact ⟨(Q.Hom x y).map f a, rfl⟩
 
-/-- The actual generating quiver in one scalar degree. -/
+/-- The generating quiver in one scalar degree. -/
 @[instance_reducible]
 def quiverAt (Q : Data O) (n : SimplexCategoryᵒᵖ) : Quiver O where
   Hom x y := (Q.Hom x y).obj n
 
-/-- Every arrow in a free Hom is an actual finite original generating path. -/
+/-- Every arrow in a free Hom is a finite generating path. -/
 def Path (Q : Data O) (n : SimplexCategoryᵒᵖ) (x y : O) : Type u :=
   @Quiver.Path O (quiverAt Q n) x y
 
-/-- An original simplex operator acts on the generating arrows and keeps each original
+/-- A simplex operator acts on the generating arrows and keeps each 
 vertex fixed. -/
 def operator (Q : Data O) {n m : SimplexCategoryᵒᵖ} (f : n ⟶ m) :
     @Prefunctor O (quiverAt Q n) O (quiverAt Q m) :=
   @Prefunctor.mk O (quiverAt Q n) O (quiverAt Q m) (fun x => x)
     (fun {x y} a => (Q.Hom x y).map f a)
 
-/-- The same simplex operator acts on the whole original generating path. -/
+/-- The same simplex operator acts on the generating path. -/
 def mapPath (Q : Data O) {n m : SimplexCategoryᵒᵖ} (f : n ⟶ m) {x y : O}
     (p : Path Q n x y) : Path Q m x y :=
   @Prefunctor.mapPath O (quiverAt Q n) O (quiverAt Q m) (operator Q f) x y p
@@ -81,27 +83,27 @@ def toComputadQuiver (Q : Data O) (n : SimplexCategoryᵒᵖ) :
     (SSet.SimplicialComputad.Vertex ((computad Q).generator n)) inferInstance
     (fun x => ⟨x⟩) (fun {_x _y} a => a)
 
-/-- Read the same original label and arrow from the canonical computad quiver. -/
+/-- Read the same label and arrow from the canonical computad quiver. -/
 def fromComputadQuiver (Q : Data O) (n : SimplexCategoryᵒᵖ) :
     @Prefunctor (SSet.SimplicialComputad.Vertex ((computad Q).generator n)) inferInstance
       O (quiverAt Q n) :=
   @Prefunctor.mk (SSet.SimplicialComputad.Vertex ((computad Q).generator n)) inferInstance
     O (quiverAt Q n) (fun x => x.label) (fun {_x _y} a => a)
 
-/-- Relabel an original path as the same path in the canonical computad. -/
+/-- Relabel a path as the same path in the canonical computad. -/
 def toNativePath (Q : Data O) (n : SimplexCategoryᵒᵖ) {x y : O} (p : Path Q n x y) :
     SSet.SimplicialComputad.Path ((computad Q).generator n) x y :=
   @Prefunctor.mapPath O (quiverAt Q n)
     (SSet.SimplicialComputad.Vertex ((computad Q).generator n)) inferInstance
     (toComputadQuiver Q n) x y p
 
-/-- Read the original labels of a canonical computad path. -/
+/-- Read the labels of a canonical computad path. -/
 def fromNativePath (Q : Data O) (n : SimplexCategoryᵒᵖ) {x y : O}
     (p : SSet.SimplicialComputad.Path ((computad Q).generator n) x y) : Path Q n x y :=
   @Prefunctor.mapPath (SSet.SimplicialComputad.Vertex ((computad Q).generator n)) inferInstance
     O (quiverAt Q n) (fromComputadQuiver Q n) ⟨x⟩ ⟨y⟩ p
 
-/-- Relabeling and reading back retain every arrow of the original path. -/
+/-- Relabeling and reading back retain every arrow of the path. -/
 theorem fromNativePath_toNativePath (Q : Data O) (n : SimplexCategoryᵒᵖ)
     {x y : O} (p : Path Q n x y) : fromNativePath Q n (toNativePath Q n p) = p := by
   let := quiverAt Q n
@@ -124,7 +126,7 @@ theorem toNativePath_fromNativePath (Q : Data O) (n : SimplexCategoryᵒᵖ)
     change Quiver.Path.cons (toNativePath Q n (fromNativePath Q n q)) g = q.cons g
     rw [ih]
 
-/-- The native label relabeling is an actual equivalence on complete paths. -/
+/-- The native label relabeling is an equivalence on complete paths. -/
 def nativePathEquiv (Q : Data O) (n : SimplexCategoryᵒᵖ) (x y : O) :
     Path Q n x y ≃ SSet.SimplicialComputad.Path ((computad Q).generator n) x y where
   toFun := toNativePath Q n
@@ -132,7 +134,7 @@ def nativePathEquiv (Q : Data O) (n : SimplexCategoryᵒᵖ) (x y : O) :
   left_inv := fromNativePath_toNativePath Q n
   right_inv := toNativePath_fromNativePath Q n
 
-/-- The label adapter preserves the actual full path composition. -/
+/-- The label adapter preserves the path composition. -/
 theorem toNativePath_comp (Q : Data O) (n : SimplexCategoryᵒᵖ) {x y z : O}
     (p : Path Q n x y) (q : Path Q n y z) :
     toNativePath Q n (@Quiver.Path.comp O (quiverAt Q n) x y z p q) =
@@ -153,20 +155,20 @@ theorem toNativePath_map (Q : Data O) {n m : SimplexCategoryᵒᵖ} (f : n ⟶ m
       Quiver.Path.cons ((computad Q).map f (toNativePath Q n p)) ((Q.Hom y z).map f a)
     rw [ih]
 
-/-- The identity operator fixes each full original path. -/
+/-- The identity operator fixes each path. -/
 theorem mapPath_id (Q : Data O) (n : SimplexCategoryᵒᵖ) {x y : O} (p : Path Q n x y) :
     mapPath Q (𝟙 n) p = p := by
   apply (nativePathEquiv Q n x y).injective
   exact (toNativePath_map Q (𝟙 n) p).trans ((computad Q).map_id n (toNativePath Q n p))
 
-/-- Composition of original simplex operators has the same action on every generating path. -/
+/-- Composition of simplex operators has the same action on every generating path. -/
 theorem mapPath_comp (Q : Data O) {n m k : SimplexCategoryᵒᵖ} (f : n ⟶ m) (g : m ⟶ k)
     {x y : O} (p : Path Q n x y) : mapPath Q (f ≫ g) p = mapPath Q g (mapPath Q f p) := by
   apply (nativePathEquiv Q k x y).injective
   change toNativePath Q k (mapPath Q (f ≫ g) p) = toNativePath Q k (mapPath Q g (mapPath Q f p))
   rw [toNativePath_map, (computad Q).map_comp, toNativePath_map, toNativePath_map]
 
-/-- The actual free simplicial Hom between the supplied individual original vertices. -/
+/-- The free simplicial Hom between the supplied individual vertices. -/
 def freeHom (Q : Data O) (x y : O) : SSet.{u} where
   obj n := Path Q n x y
   map f := ↾fun p => mapPath Q f p
@@ -177,7 +179,7 @@ def freeHom (Q : Data O) (x y : O) : SSet.{u} where
     ext p
     exact mapPath_comp Q f g p
 
-/-- The original free Hom is the canonical computad Hom with only its labels unwrapped. -/
+/-- The free Hom is the canonical computad Hom with only its labels unwrapped. -/
 def freeHomIso (Q : Data O) (x y : O) : freeHom Q x y ≅ (computad Q).hom x y where
   hom :=
     { app n := ↾toNativePath Q n
@@ -202,14 +204,14 @@ def freeHomIso (Q : Data O) (x y : O) : freeHom Q x y ≅ (computad Q).hom x y w
     ext n p
     exact toNativePath_fromNativePath Q n p
 
-/-- The actual free identity is the empty original path in every scalar degree. -/
+/-- The free identity is the empty path in every scalar degree. -/
 def freeId (Q : Data O) (x : O) : 𝟙_ SSet.{u} ⟶ freeHom Q x x where
   app n := ↾fun _ => @Quiver.Path.nil O (quiverAt Q n) x
   naturality n m f := by
     ext p
     rfl
 
-/-- The actual free composition concatenates the two original finite paths. -/
+/-- The free composition concatenates the two finite paths. -/
 def freeComp (Q : Data O) (x y z : O) : freeHom Q x y ⊗ freeHom Q y z ⟶ freeHom Q x z where
   app n := ↾fun p => @Quiver.Path.comp O (quiverAt Q n) x y z p.1 p.2
   naturality n m f := by
@@ -217,7 +219,7 @@ def freeComp (Q : Data O) (x y z : O) : freeHom Q x y ⊗ freeHom Q y z ⟶ free
     exact (@Prefunctor.mapPath_comp O (quiverAt Q n) O (quiverAt Q m) (operator Q f) x y p.1
       z p.2).symm
 
-/-- The complete free enriched category structure on the unchanged original vertex type. -/
+/-- The complete free enriched category structure on the unchanged vertex type. -/
 @[instance_reducible]
 def freeEnrichment (Q : Data O) : EnrichedCategory SSet.{u} O where
   Hom := freeHom Q
@@ -236,13 +238,13 @@ def freeEnrichment (Q : Data O) : EnrichedCategory SSet.{u} O where
     let : Quiver O := quiverAt Q n
     exact Quiver.Path.comp_assoc p.1 p.2.1 p.2.2
 
-/-- Bundle the same actual free enriched category, with no quotient or replacement of
-original objects. -/
+/-- Bundle the same free enriched category, with no quotient or replacement of
+Objects. -/
 def free (Q : Data O) : EnrichedCat SSet.{u} := by
   letI : EnrichedCategory SSet.{u} O := freeEnrichment Q
   exact EnrichedCat.of SSet.{u} O
 
-/-- The actual enriched label adapter to the canonical computad construction. -/
+/-- The enriched label adapter to the canonical computad construction. -/
 def toComputad (Q : Data O) : EnrichedFunctor SSet.{u} (free Q) (computad Q).Object where
   obj x := ⟨x⟩
   map x y := (freeHomIso Q x y).hom
@@ -253,7 +255,7 @@ def toComputad (Q : Data O) : EnrichedFunctor SSet.{u} (free Q) (computad Q).Obj
     ext n p
     exact toNativePath_comp Q n p.1 p.2
 
-/-- The inverse enriched label adapter retains the same original objects and paths. -/
+/-- The inverse enriched label adapter retains the same objects and paths. -/
 def fromComputad (Q : Data O) : EnrichedFunctor SSet.{u} (computad Q).Object (free Q) where
   obj x := x.label
   map x y := (freeHomIso Q x.label y.label).inv
@@ -271,18 +273,18 @@ def fromComputad (Q : Data O) : EnrichedFunctor SSet.{u} (computad Q).Object (fr
     rw [toNativePath_comp, toNativePath_fromNativePath, toNativePath_fromNativePath,
       toNativePath_fromNativePath]
 
-/-- A specified generating arrow is the same length-one original free path. -/
+/-- A specified generating arrow is the same length-one free path. -/
 def generator (Q : Data O) (x y : O) : Q.Hom x y ⟶ freeHom Q x y where
   app n := ↾fun a => @Quiver.Hom.toPath O (quiverAt Q n) x y a
   naturality n m f := by
     ext a
     rfl
 
-/-- Length of the actual original path in its specified generating scalar quiver. -/
+/-- Length of the path in its specified generating scalar quiver. -/
 def pathLength (Q : Data O) (n : SimplexCategoryᵒᵖ) {x y : O} (p : Path Q n x y) : ℕ :=
   @Quiver.Path.length O (quiverAt Q n) x y p
 
-/-- The free generator retains exactly one supplied original arrow. -/
+/-- The free generator retains exactly one supplied arrow. -/
 theorem generator_length (Q : Data O) (n : SimplexCategoryᵒᵖ) (x y : O) (a : (Q.Hom x y).obj n) :
     pathLength Q n ((generator Q x y).app n a) = 1 := rfl
 

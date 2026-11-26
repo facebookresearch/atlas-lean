@@ -11,11 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentUnit
 import MathlibExt.AlgebraicTopology.SimplicialCategory.PresentationUniversalProperty
 
 /-!
-# Whole original generator determination for coherent realization
+# Generator determination for coherent realization
 
-An enriched map from the actual realization is determined by its original
-object map and its maps on the actual coherent generators. Equality is
-of whole enriched functors, without choosing representatives of objects.
+An enriched map from the realization is determined by its 
+object map and its maps on the coherent generators. Equality is
+of enriched functors, without choosing representatives of objects.
 -/
 
 noncomputable section
@@ -26,7 +26,7 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization
 open SimplicialEnrichment SimplicialQuiver
 
-/-- Equality on individual original objects and actual generating Homs determines the whole
+/-- Equality on individual objects and generating Homs determines the 
 enriched map. -/
 theorem hom_ext {K : SSet.{u}} {C : Carrier.{u}} {F G : realization K ⟶ C}
     (hobj : F.obj = G.obj)
@@ -57,7 +57,7 @@ theorem hom_ext {K : SSet.{u}} {C : Carrier.{u}} {F G : realization K ⟶ C}
             generator (generatingQuiver K) x y ≫ quotientHom (relations K) x y ≫ mapG x y at h
           exact (Category.comp_id _).symm.trans h
 
-/-- Relabeling through a second pair of original endpoint equations is literal equality
+/-- Relabeling through a second pair of endpoint equations is literal equality
 transport composition. -/
 theorem simplexHom_reindex_comp (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj (op n))
     (i j : coherentSimplex.{u} n) {x y x' y' : K _⦋0⦌}
@@ -69,7 +69,7 @@ theorem simplexHom_reindex_comp (K : SSet.{u}) {n : SimplexCategory} (σ : K.obj
   change simplexHom K σ i j hx hy ≫ 𝟙 _ = simplexHom K σ i j hx hy
   exact Category.comp_id _
 
-/-- Equal original outer simplices determine equal actual generating paths with the same
+/-- Equal outer simplices determine equal generating paths with the same
 endpoint labels. -/
 theorem arrowPath_simplex_congr (K : SSet.{u}) {n : SimplexCategory} {σ τ : K.obj (op n)}
     (h : σ = τ) (i j : coherentSimplex.{u} n) {x y : K _⦋0⦌}

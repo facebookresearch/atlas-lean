@@ -14,12 +14,12 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentHomUnitsAndEmpty
 import MathlibExt.AlgebraicTopology.SimplicialCategory.EnrichedEqualityTransport
 
 /-!
-# Actual unit Hom maps of the fixed-front realization
+# Unit Hom maps of the fixed-front realization
 
-The entire original front of the distinguished simplex is constant. The
-genuine outside-face Hom isomorphism therefore identifies every front
+The front of the distinguished simplex is constant. The
+outside-face Hom isomorphism therefore identifies every front
 interval map with the structural source identity. The last diagonal is
-the target identity by the original enriched functor law.
+the target identity by the enriched functor law.
 -/
 
 noncomputable section
@@ -30,16 +30,16 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.FixedFrontHomUnits
 open SimplicialEnrichment FixedFrontCollapse FixedFrontInsertion HornHomFaces
 
-/-- The genuine original coherent front inclusion. -/
+/-- The coherent front inclusion. -/
 abbrev front (n : ℕ) := coherentSimplexMap (SimplexCategory.δ (Fin.last (n + 1)))
 
-/-- The front operator retains the literal original cast-successor vertex. -/
+/-- The front operator retains the literal cast-successor vertex. -/
 theorem front_vertex (n : ℕ) (i : Fin (n + 1)) :
     (front.{u} n).obj (SimplicialThickening.mk (ULift.up i)) =
       SimplicialThickening.mk (ULift.up i.castSucc) := by
   exact congrArg (fun j => SimplicialThickening.mk (ULift.up.{u} j)) (Fin.succAbove_last_apply i)
 
-/-- Each genuine original coherent front Hom map is an isomorphism, including residual
+/-- Each coherent front Hom map is an isomorphism, including residual
 height zero. -/
 theorem front_isIso (n : ℕ) (i j : Fin (n + 1)) :
     IsIso ((front.{u} n).map (SimplicialThickening.mk (ULift.up i))
@@ -52,9 +52,9 @@ theorem front_isIso (n : ℕ) (i j : Fin (n + 1)) :
     (Or.inr h)) ▸ (IntervalFaceCover.outsideIso (Fin.last (n + 1)) (ULift.up i) (ULift.up
       j) (Or.inr h)).isIso_hom
 
-/-- Every whole original front interval map into realization is the actual structural source
-identity after
-  its exact endpoint transports. -/
+/-- Every front interval map into realization is the structural source
+Identity after
+ its exact endpoint transports. -/
 theorem front_hom (n : ℕ) (i j : Fin (n + 1)) :
     retargetMap (functor.{u} n) (SimplicialThickening.mk (ULift.up i.castSucc))
       (SimplicialThickening.mk (ULift.up j.castSucc)) (front_obj n i) (front_obj n j) =
@@ -83,7 +83,7 @@ theorem front_hom (n : ℕ) (i j : Fin (n + 1)) :
     (front_vertex n i) (front_vertex n j))) _).trans
     (hr.trans (he.trans (by ext q p; rfl)))
 
-/-- The actual last diagonal Hom map is the structural target identity on every whole scalar
+/-- The last diagonal Hom map is the structural target identity on every scalar
 simplex. -/
 theorem last_hom (n : ℕ) :
     retargetMap (functor.{u} n) (SimplicialThickening.mk (ULift.up (Fin.last (n + 1))))

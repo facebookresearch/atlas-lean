@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectLabelPushforwardUniversalProperty
 
-/-! # The actual arbitrary-label enriched pushforward functor
+/-! # The arbitrary-label enriched pushforward functor
 
-The original source functor followed by the presented unit defines its
-whole extension. The proved generator universal property gives both
+The source functor followed by the presented unit defines its
+Extension. The generator universal property gives both
 ordinary functor laws and the full source and target naturality equations.
 -/
 
@@ -32,16 +32,16 @@ private theorem restriction_map_comp {D E H : FixedObjects O} (F : D ⟶ E) (G :
     LabelRestriction.map a (F ≫ G) = LabelRestriction.map a F ≫ LabelRestriction.map a G :=
   (LabelRestriction.functor a).map_comp F G
 
-/-- Push forward the whole original source functor by the actual presented extension. -/
+/-- Push forward the source functor by the presented extension. -/
 def map {C E : FixedObjects A} (F : C ⟶ E) : object a C ⟶ object a E :=
   desc a C (F ≫ unit a E)
 
-/-- The pushed-forward map retains the entire original functor after the same unit. -/
+/-- The pushed-forward map retains the functor after the same unit. -/
 theorem unit_naturality {C E : FixedObjects A} (F : C ⟶ E) :
     unit a C ≫ LabelRestriction.map a (map a F) = F ≫ unit a E :=
   unit_desc a C (F ≫ unit a E)
 
-/-- The genuine left functor on all enrichments with the prescribed original source labels. -/
+/-- The left functor on all enrichments with the prescribed source labels. -/
 def functor : FixedObjects A ⥤ FixedObjects O where
   obj := object a
   map := map a
@@ -58,14 +58,14 @@ def functor : FixedObjects A ⥤ FixedObjects O where
       ((congrArg (fun k => F ≫ k) (unit_naturality a G).symm).trans
         (Category.assoc F (unit a E) (LabelRestriction.map a (map a G))).symm)
 
-/-- Whole-Hom naturality in the original source enrichment. -/
+/-- Hom naturality in the source enrichment. -/
 theorem homEquiv_source {C E : FixedObjects A} {D : FixedObjects O}
     (F : C ⟶ E) (G : object a E ⟶ D) :
     homEquiv a C D (map a F ≫ G) = F ≫ homEquiv a E D G := by
   rw [homEquiv_apply, homEquiv_apply, restriction_map_comp, ← Category.assoc, unit_naturality]
   exact Category.assoc _ _ _
 
-/-- Whole-Hom naturality in the original target enrichment. -/
+/-- Hom naturality in the target enrichment. -/
 theorem homEquiv_target {C : FixedObjects A} {D E : FixedObjects O}
     (F : object a C ⟶ D) (G : D ⟶ E) :
     homEquiv a C E (F ≫ G) = homEquiv a C D F ≫ LabelRestriction.map a G := by

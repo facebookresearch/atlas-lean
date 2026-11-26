@@ -11,13 +11,13 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentPathMaximumOperat
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CoherentAdjunction
 
 /-!
-# The actual fixed-front collapse for coherent right resolutions
+# The fixed-front collapse for coherent right resolutions
 
-The original last-face simplices of the standard successor simplex are
+The last-face simplices of the standard successor simplex are
 collapsed to one structural source vertex, while every simplex meeting
-the original last vertex is retained individually. This is a quotient
-of the finite resolving simplex, not a quotient of any target's original
-object type. Its whole operators are defined on the actual quotient.
+the last vertex is retained individually. This is a quotient
+of the finite resolving simplex, not a quotient of any target's 
+object type. Its operators are defined on the quotient.
 -/
 
 noncomputable section
@@ -28,12 +28,12 @@ open scoped Simplicial
 namespace CategoryTheory.CoherentRealization.FixedFrontCollapse
 variable {n : ℕ}
 
-/-- A resolving simplex is in the original front when none of its actual vertices is the
+/-- A resolving simplex is in the front when none of its vertices is the
 last vertex. -/
 def InFront {q : SimplexCategoryᵒᵖ} (a : (Δ[n + 1] : SSet.{u}).obj q) : Prop :=
   ∀ i : Fin (q.unop.len + 1), a.down.toOrderHom i ≠ Fin.last (n + 1)
 
-/-- The actual degreewise fixed-front relation, retaining every nonfront original simplex
+/-- The degreewise fixed-front relation, retaining every nonfront simplex
 individually. -/
 def relation (q : SimplexCategoryᵒᵖ) : Setoid ((Δ[n + 1] : SSet.{u}).obj q) where
   r a b := a = b ∨ InFront a ∧ InFront b
@@ -47,14 +47,14 @@ def relation (q : SimplexCategoryᵒᵖ) : Setoid ((Δ[n + 1] : SSet.{u}).obj q)
       · exact Or.inr hab
       · exact Or.inr ⟨hab.1, hbc.2⟩ }
 
-/-- Original simplex restriction retains the actual front property. -/
+/-- Simplex restriction retains the front property. -/
 theorem inFront_map {q r : SimplexCategoryᵒᵖ} (θ : q ⟶ r)
     (a : (Δ[n + 1] : SSet.{u}).obj q) (ha : InFront a) : InFront ((Δ[n + 1] :
       SSet.{u}).map θ a) := by
   intro i
   exact ha (θ.unop.toOrderHom i)
 
-/-- The actual fixed-front resolving simplicial set. -/
+/-- The fixed-front resolving simplicial set. -/
 def object (n : ℕ) : SSet.{u} where
   obj q := _root_.Quotient (relation (n := n) q)
   map θ := ↾fun a => _root_.Quotient.map ((Δ[n + 1] : SSet.{u}).map θ) (by
@@ -77,27 +77,27 @@ def object (n : ℕ) : SSet.{u} where
       exact congrArg (fun a => _root_.Quotient.mk _ a) (congr($((Δ[n + 1] :
         SSet.{u}).map_comp θ ψ) a))
 
-/-- The entire original successor simplex maps to its actual structural fixed-front quotient. -/
+/-- The successor simplex maps to its structural fixed-front quotient. -/
 def projection (n : ℕ) : (Δ[n + 1] : SSet.{u}) ⟶ object.{u} n where
   app q := ↾fun a => _root_.Quotient.mk _ a
   naturality q r θ := by ext a; rfl
 
-/-- Two original front simplices have precisely the same structural quotient image in their
-original scalar degree. -/
+/-- Two front simplices have precisely the same structural quotient image in their
+scalar degree. -/
 theorem projection_front_eq {q : SimplexCategoryᵒᵖ} (a b : (Δ[n + 1] : SSet.{u}).obj q)
     (ha : InFront a) (hb : InFront b) : (projection n).app q a = (projection n).app q b :=
   _root_.Quotient.sound (Or.inr ⟨ha, hb⟩)
 
-/-- The original structural source vertex is the projected first original vertex. -/
+/-- The structural source vertex is the projected first vertex. -/
 def source (n : ℕ) : (object.{u} n) _⦋0⦌ :=
   (projection n).app (op ⦋0⦌) (SSet.stdSimplex.objEquiv.symm (SimplexCategory.const ⦋0⦌ ⦋n + 1⦌ 0))
 
-/-- The original structural target vertex is the projected last original vertex. -/
+/-- The structural target vertex is the projected last vertex. -/
 def target (n : ℕ) : (object.{u} n) _⦋0⦌ :=
   (projection n).app (op ⦋0⦌) (SSet.stdSimplex.objEquiv.symm (SimplexCategory.const
     ⦋0⦌ ⦋n + 1⦌ (Fin.last (n + 1))))
 
-/-- The actual coherent right-resolution Hom of this constructed fixed-front simplicial quotient. -/
+/-- The coherent right-resolution Hom of this constructed fixed-front simplicial quotient. -/
 def rightHom (n : ℕ) : SSet.{u} := CoherentRealization.hom (object.{u} n) (source n) (target n)
 
 end CategoryTheory.CoherentRealization.FixedFrontCollapse

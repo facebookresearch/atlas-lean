@@ -11,13 +11,11 @@ import MathlibExt.AlgebraicTopology.SimplicialCategory.FixedObjectFreeMonadEquiv
 import Mathlib.CategoryTheory.Functor.ReflectsIso.Basic
 
 /-!
-# Actual full Hom isomorphisms detect the original fixed-label isomorphism
+# Hom isomorphisms detect fixed-object enriched isomorphisms
 
-The SAME original whole-Hom functor is the forgetful functor of the
-proved canonical free-path algebra comparison. The genuine comparison
-and native algebra forgetful functor reflect isomorphisms. Thus every
-original full Hom map being an isomorphism detects the original full
-enriched map, with every original object label unchanged.
+A fixed-object enriched map is an isomorphism when every Hom map is
+an isomorphism. Hom forgetting is the algebra forgetful functor of the
+free-path monad and reflects isomorphisms.
 -/
 
 noncomputable section
@@ -28,8 +26,8 @@ namespace CategoryTheory.SimplicialEnrichment.FixedObjects
 open FixedObjectFree
 variable {O : Type u} {C D : FixedObjects O}
 
-/-- Every SAME whole original fixed-label map is an isomorphism when all its actual full Hom
-maps are. -/
+/-- Every same fixed-label map is an isomorphism when all its Hom
+Maps are. -/
 theorem isIso_of_homMap (f : C ⟶ D) (h : ∀ x y : O, IsIso (homMap f x y)) : IsIso f := by
   let _ : (comparison (O := O)).IsEquivalence := comparison_isEquivalence (O := O)
   let _ : IsIso ((pathMonad O).forget.map ((comparison (O := O)).map f)) :=

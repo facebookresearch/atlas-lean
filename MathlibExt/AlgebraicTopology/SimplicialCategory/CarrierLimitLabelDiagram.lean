@@ -10,13 +10,13 @@ LICENSE file in the root directory of this source tree.
 import MathlibExt.AlgebraicTopology.SimplicialCategory.CarrierLabelReadback
 
 /-!
-# The actual fixed-cone-label diagram of changing-object enrichments
+# The fixed-cone-label diagram of changing-object enrichments
 
-The entire original object cone supplies its compatible individual
-labels. Reindex each whole enrichment at those exact labels, with the
-identity Hom projections. Original cone equations give every complete
-diagram map, its functor laws, and all original scalar Hom readbacks.
-This is the input to genuine varying-object enriched limits.
+The object cone supplies its compatible individual
+labels. Reindex each enrichment at those exact labels, with the
+Identity Hom projections. cone equations give every complete
+diagram map, its functor laws, and all scalar Hom readbacks.
+This is the input to varying-object enriched limits.
 -/
 
 noncomputable section
@@ -29,35 +29,35 @@ open FixedObjects
 variable {J : Type v} [SmallCategory J] (F : J ⥤ Carrier.{u})
 variable (s : Cone (F ⋙ forgetObjects))
 
-/-- Each actual compatible object-cone label keeps its individual original image. -/
+/-- Each compatible object-cone label keeps its individual image. -/
 def label (j : J) : s.pt → F.obj j := s.π.app j
 
-/-- The entire original enrichment reindexed at the exact compatible cone labels. -/
+/-- The enrichment reindexed at the exact compatible cone labels. -/
 abbrev object (j : J) : FixedObjects s.pt :=
   CarrierReindexing.object (F.obj j) (label F s j)
 
-/-- Its whole original projection keeps the actual object function and identity Hom maps. -/
+/-- Its projection keeps the object function and identity Hom maps. -/
 def projection (j : J) : (object F s j).val ⟶ F.obj j :=
   CarrierReindexing.toTarget (F.obj j) (label F s j)
 
-/-- The supplied original object cone gives the exact object equation of every original
+/-- The supplied object cone gives the exact object equation of every 
 diagram map. -/
 theorem input_object_eq {j k : J} (f : j ⟶ k) (x : s.pt) :
     (projection F s j ≫ F.map f).obj (vertex (object F s j) x) = label F s k x := by
   exact ConcreteCategory.congr_hom (C := Type u) (s.w f) x
 
-/-- Reindex the complete original diagram map at its SAME compatible cone-label equations. -/
+/-- Reindex the complete diagram map at its same compatible cone-label equations. -/
 def map {j k : J} (f : j ⟶ k) : object F s j ⟶ object F s k :=
   CarrierLabelReadback.map (object F s j) (label F s k)
     (projection F s j ≫ F.map f) (input_object_eq F s f)
 
-/-- Projection recovers the SAME whole original diagram functor at every arrow. -/
+/-- Projection recovers the same diagram functor at every arrow. -/
 theorem projection_naturality {j k : J} (f : j ⟶ k) :
     (map F s f).val ≫ projection F s k = projection F s j ≫ F.map f :=
   CarrierLabelReadback.map_fac (object F s j) (label F s k)
     (projection F s j ≫ F.map f) (input_object_eq F s f)
 
-/-- Every scalar operator of the original Hom map is retained with only the actual cone
+/-- Every scalar operator of the Hom map is retained with only the cone
 endpoint equations. -/
 theorem homMap_map {j k : J} (f : j ⟶ k) (x y : s.pt) :
     homMap (map F s f) x y =
@@ -72,7 +72,7 @@ theorem homMap_map {j k : J} (f : j ⟶ k) (x y : s.pt) :
           (input_object_eq F s f x) (input_object_eq F s f y)))
         (Category.id_comp ((F.map f).map (label F s j x) (label F s j y))))
 
-/-- The complete original changing-object diagram on its actual compatible cone labels. -/
+/-- The complete changing-object diagram on its compatible cone labels. -/
 def functor : J ⥤ FixedObjects s.pt where
   obj := object F s
   map := map F s
