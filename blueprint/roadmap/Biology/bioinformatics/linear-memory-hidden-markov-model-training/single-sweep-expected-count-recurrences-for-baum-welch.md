@@ -3,13 +3,17 @@
 **Setting.** An HMM with states $1,\dots,N$, transition probabilities $a_{i,j}$, emission probabilities $b_m(o)$ over symbols $\gamma \in \{1,\dots,D\}$, observations $o_1,\dots,o_T$, and forward variables $\alpha_t(m) = \Pr(o_1,\dots,o_t, q_t = m)$; $Q_{\max}$ is the maximum in-degree of a state.
 
 **Transition counts.** Let $t_{i,j}(t,m)$ be the sum, over state paths emitting $o_1,\dots,o_t$ and ending in $m$, of the path probability weighted by the number of $i\to j$ transitions it uses. Then $t_{i,j}(1,m) = 0$ and
+
 $$t_{i,j}(t,m) = \alpha_{t-1}(i)\,a_{i,m}\,b_m(o_t)\,\mathbf 1[m = j] + \sum_{n=1}^N t_{i,j}(t-1,n)\,a_{n,m}\,b_m(o_t).$$
 
 **Emission counts.** Let $e_i(\gamma,t,m)$ be the analogous weighted sum with weight the number of emissions of $\gamma$ from state $i$. Then $e_i(\gamma,1,m) = \alpha_1(m)\mathbf 1[i = m]\mathbf 1[\gamma = o_1]$ and
+
 $$e_i(\gamma,t,m) = \alpha_t(m)\,\mathbf 1[i = m]\,\mathbf 1[\gamma = o_t] + \sum_{n=1}^N e_i(\gamma,t-1,n)\,a_{n,m}\,b_m(o_t).$$
 
 **Theorem.** The recurrences compute these weighted path sums, so with $t^{\mathrm{END}}_{i,j} = \sum_m t_{i,j}(T,m)$ and $e^{\mathrm{END}}_i(\gamma) = \sum_m e_i(\gamma,T,m)$ the Baum–Welch updates are
+
 $$\hat a_{i,j} = \frac{t^{\mathrm{END}}_{i,j}}{\sum_{j'\in\mathrm{out}(i)} t^{\mathrm{END}}_{i,j'}}, \qquad \hat b_i(\gamma) = \frac{e^{\mathrm{END}}_i(\gamma)}{\sum_{\gamma'} e^{\mathrm{END}}_i(\gamma')}.$$
+
 Only the previous time slice is needed, so memory is $O(NQ)$ for transitions and $O(NED)$ for emissions ($E$ states with free emissions), independent of $T$, at time cost $O(TNQQ_{\max})$ and $O(TNEDQ_{\max})$. The mirror-image backward sweep with scaled backward probabilities $\tilde\beta_t = d_t\beta_t$ yields the same estimates, since every scaled count is the true count times the same factor $D_1$, which cancels in each ratio, and it also gives the initial-state estimate $\hat\pi_i \propto \alpha_1(i)\beta_1(i)$.
 
 ## Expansion

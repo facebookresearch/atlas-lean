@@ -26,7 +26,9 @@ best reply to it yields both players exactly $R$.
 1. $p$ is a partner strategy;
 2. against AllD $= (0, 0, 0, 0; 0)$ and against $(0, 1, 1, 1; 0)$ the co-player earns less than $R$;
 3. $B_1 < 0$ and $B_2 < 0$, where
+
    $$B_1 = \delta (T - R) p_{DD} - \delta (R - P)(1 - p_{CD}) + (1 - \delta)(T - R),$$
+
    $$B_2 = \delta (T - R) p_{DC} - \delta (R - S)(1 - p_{CD}) + (1 - \delta)(T - R).$$
 
 **Corollary.** A memory-one partner strategy exists if and only if Grim $= (1, 0, 0, 0; 1)$ is one, that

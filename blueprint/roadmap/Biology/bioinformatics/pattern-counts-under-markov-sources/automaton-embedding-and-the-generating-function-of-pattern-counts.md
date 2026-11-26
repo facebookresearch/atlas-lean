@@ -5,11 +5,15 @@
 **Theorem (Markov chain embedding).** The state sequence $Y_i = \delta(\sigma, X_1\cdots X_i)$, restricted to the reachable set $\mathcal Q'$ of states, is a (heterogeneous) order-1 Markov chain whose transition probabilities from $p$ to $q = \delta(p,b)$ equal the source probability of letter $b$ after the context determined by $p$. Split its transition matrix as $T_{i+d} = P_{i+d} + Q_{i+d}$, where $Q_{i+d}$ holds the transitions into final states $\mathcal F$ (each completing an occurrence) and $P_{i+d}$ the others. The pattern complexity is $L = |\mathcal Q'|$.
 
 **Proposition (generating function).** With $u_d$ the distribution of $Y_d$ (a row vector) and $\mathbf 1$ the all-ones vector,
+
 $$F_\ell(y) = \mathbb E\big[y^{N_\ell}\big] = u_d\Big(\prod_{i=1}^{\ell-d}\big(P_{i+d} + yQ_{i+d}\big)\Big)\mathbf 1^{\mathsf T};$$
+
 for a homogeneous chain, $F_\ell(y) = u_d\,(P + yQ)^{\ell-d}\,\mathbf 1^{\mathsf T}$.
 
 **Set of sequences.** For $r$ independent sequences of lengths $\ell_1,\dots,\ell_r$ with counts $N^{(j)}$ and generating functions $F^{(j)}(y)$, the total count $N = N^{(1)} + \cdots + N^{(r)}$ has
+
 $$\mathbb E[y^N] = \prod_{j=1}^r F^{(j)}(y),\qquad \text{and in the homogeneous case}\qquad \mathbb E[y^N] = \prod_{j=1}^r u_d\,(P + yQ)^{\ell_j - d}\,\mathbf 1^{\mathsf T}.$$
+
 Truncating polynomials at degree $n_{\max}$, the distribution of $N$ up to $n_{\max}$ is obtained by propagating polynomial-valued state vectors through the sequences (no convolutions needed), or, for homogeneous models, by recycling the powers $(P+yQ)^\ell$ across sequence lengths, with binary exponentiation reducing the dependence on length to logarithmic for low-complexity patterns.
 
 ## Expansion

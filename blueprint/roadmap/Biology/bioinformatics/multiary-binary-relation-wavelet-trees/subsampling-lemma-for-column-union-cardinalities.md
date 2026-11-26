@@ -1,10 +1,15 @@
 # Subsampling lemma for column union cardinalities
 
 **Lemma 1 (subsampling lemma).** Let $o_1, \dots, o_m \subset \{1, \dots, n\}$ with minimum cardinality $d = \min_i |o_i| > 0$. Sample each element of $\{1, \dots, n\}$ independently with probability $p$ into a set $S$, put $\tilde{o}_i = o_i \cap S$, and estimate the union cardinalities $u_{ij} = |o_i \cup o_j|$ by
+
 $$\hat{u}_{ij} = \frac{1}{p} \, |\tilde{o}_i \cup \tilde{o}_j|.$$
+
 Then for all $0 < \varepsilon < 1$ and $0 < \delta < 1$, if
+
 $$p \ge \min\left\{ \frac{3 \ln\big((m^2 + m)/\delta\big)}{d \, \varepsilon^2}, \ 1 \right\},$$
+
 it holds that
+
 $$\Pr\Big( \bigcap_{i,j=1}^{m} \big\{ |\hat{u}_{ij} - u_{ij}| < \varepsilon \, u_{ij} \big\} \Big) \ge 1 - \delta.$$
 
 In the annotation setting the $o_i$ are the object sets of the label columns, and the lemma justifies estimating all pairwise column similarities used for greedy column matching from a random subset of about $3 n \ln((m^2 + m)/\delta)/(d \varepsilon^2)$ rows instead of all $n$ rows, reducing the $O(n m^2)$ cost of exact computation.

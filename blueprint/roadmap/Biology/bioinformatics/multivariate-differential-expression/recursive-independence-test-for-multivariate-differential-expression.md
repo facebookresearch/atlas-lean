@@ -1,7 +1,9 @@
 # Recursive independence test for multivariate differential expression
 
 Let $X = (X_1,\dots,X_n)$ be gene expression levels and $Y$ a class label (e.g. disease status). Gene $X_i$ is **univariately differentially expressed** (UDE) if $X_i \not\perp Y$, and **multivariately differentially expressed** (MDE) if
+
 $$\exists\, S \subseteq X \setminus \{X_i\}:\quad X_i \not\perp Y \mid S,$$
+
 i.e. it carries information about $Y$ in some context of other genes. The MDE set $M$ contains every gene relevant to $Y$, including genes that are redundant for prediction, and in general requires an exhaustive subset search.
 
 A distribution is **PCWT** if it is strictly positive and its independence relation satisfies the composition and weak transitivity properties (in addition to the semi-graphoid axioms).

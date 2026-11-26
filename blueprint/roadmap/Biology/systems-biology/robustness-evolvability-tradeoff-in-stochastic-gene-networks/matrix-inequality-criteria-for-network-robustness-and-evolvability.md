@@ -1,18 +1,25 @@
 # Matrix inequality criteria for network robustness and evolvability
 
 **Model.** Linearize a gene regulatory network around a target phenotype (shifted to $x_e = 0$) as $\dot x = Ax$, $x \in \mathbb R^n$. Heritable kinetic-parameter fluctuations driven by independent unit white noises $n_l(t)$, $l = 1, \dots, L$, with fluctuation matrices $A_l$, and environmental stimuli $v(t)$ entering through $B$, give the Itô system
+
 $$dx = \big(Ax + Bv\big)\,dt + \sum_{l=1}^L A_l x\, dw_l, \qquad dw_l = n_l\, dt.$$
 
 **Proposition 1 (genetic robustness).** If there is $P \succ 0$ with
+
 $$PA + A^{\mathsf T}P + \sum_{l=1}^L A_l^{\mathsf T}PA_l \preceq 0,$$
+
 then the network without stimuli ($v = 0$) is robustly (mean-square) stable at $x_e = 0$ despite the parameter fluctuations; with $A_l = 0$ this reduces to the Lyapunov inequality $PA + A^{\mathsf T}P \preceq 0$.
 
 **Evolvability level.** For the stimulus-driven network, the attenuation level is the smallest $\rho$ such that, for zero initial state and all $v$,
+
 $$E\int_0^{t_p} x^{\mathsf T}x\, dt \le \rho\, E\int_0^{t_p} v^{\mathsf T}v\, dt,$$
+
 the worst-case energy ratio from environmental stimuli to phenotype deviation up to the present time $t_p$; $1/\rho$ measures environmental robustness of the phenotype.
 
 **Proposition 3 (joint criterion).** If there is $P \succ 0$ with
+
 $$A^{\mathsf T}P + PA + \sum_{l=1}^L A_l^{\mathsf T}PA_l + I + \tfrac1\rho PBB^{\mathsf T}P \preceq 0,$$
+
 then the network tolerates the genetic fluctuations and attenuates environmental stimuli to level $\rho$. The best certified level is $\rho_0 = \min \rho$ subject to this inequality, which by a Schur complement is a linear matrix inequality in $(P, \rho)$.
 
 ## Expansion

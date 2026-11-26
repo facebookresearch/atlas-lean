@@ -1,16 +1,21 @@
 # Alien k-mer rejection probability of an Othello index
 
 **Othello.** Let $S$ be a set of $n$ k-mers, each with a category $T(s) \in V = \{1,\dots,v\}$, and let $C = \{0, 1, \dots, 2^l - 1\}$ with $l = \lceil \log_2(v+1)\rceil$. An Othello $O(S,V)$ consists of two uniform random hash functions $h_a, h_b$ and two arrays $A, B$ of $l$-bit integers of lengths $m_a = 2^{\lceil \log_2 n\rceil}$ and $m_b = 2^{\lceil \log_2 (4n/3)\rceil}$, so $2.67 n \le m_a + m_b < 4n$; it is built in $O(n)$ time, uses at most $4n\lceil\log_2(v+1)\rceil$ bits, and answers
+
 $$\tau(s) = A[h_a(s)] \oplus B[h_b(s)]$$
+
 with two memory accesses and one XOR. For $s \in S$, $\tau(s) = T(s)$. A k-mer $s' \notin S$ (an *alien*) is recognized as absent when $\tau(s') \in C \setminus V = \{0, v+1, \dots, 2^l - 1\}$ and is a false positive otherwise.
 
 **Lemma 1.** Let $a_x$ and $b_x$ be the fractions of entries equal to $x$ in $A$ and $B$. For an alien $s'$,
+
 $$p_x := \Pr[\tau(s') = x] = \sum_{t=0}^{2^l - 1} a_t\, b_{x \oplus t}.$$
 
 **Lemma 2.** The probability $p_0$ that an alien is assigned category 0 satisfies $p_0 > 0.223$ as $n \to \infty$.
 
 **Theorem.** For any alien k-mer $s' \notin S$,
+
 $$P_{\text{Alien}} = p_0 + \sum_{x = v+1}^{2^l - 1} p_x,$$
+
 and $P_{\text{Alien}} > 0.223$ as $|S| \to \infty$.
 
 ## Expansion

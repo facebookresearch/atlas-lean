@@ -1,19 +1,27 @@
 # Log-series as the maximum relative entropy abundance distribution
 
 **Setting.** Let $P(n)$, $n = 1,2,\dots$, be the species abundance distribution: the probability that a species present in the community has $n$ individuals. Given a prior $P_\pi(n)$, the relative entropy of $P$ is
+
 $$\Delta H[P] = -\sum_{n \ge 1} P(n)\log\frac{P(n)}{P_\pi(n)} .$$
+
 Constraints have the form $\sum_n P(n)\,h_j(n) = z_j$ for $j = 0,\dots,J-1$, with $h_0 \equiv 1$, $z_0 = 1$ (normalization).
 
 **Maximum relative entropy.** The maximizer of $\Delta H$ under these constraints is the Gibbs form
+
 $$P(n) = P_\pi(n)\exp\Big(-\sum_{j}\lambda_j h_j(n)\Big),$$
+
 with Lagrange multipliers $\lambda_j$ fixed by the constraints.
 
 **Scale-invariant prior.** If organisms are randomly placed (more generally, if each species' abundance in a subarea is negative binomial with any clumping parameter), the only abundance distribution that is unchanged by changing the sampled area, and thus carries no information about spatial scale, is
+
 $$P_\pi(n) \propto \frac{1}{n},$$
+
 the discrete Jeffreys prior, uniform in $\log n$.
 
 **Theorem (log-series).** With $P_\pi(n) \propto 1/n$ and the two constraints $h_0 = 1$ and $h_1(n) = n$ (fixed mean abundance $\bar n > 1$), the maximum relative entropy SAD is Fisher's log-series
+
 $$P(n) = \phi\,\frac{\omega^n}{n}, \qquad 0 < \omega < 1, \quad \phi = \frac{-1}{\log(1-\omega)},$$
+
 where $\omega = e^{-\lambda_1}$ is determined by $\bar n = \dfrac{-\omega}{(1-\omega)\log(1-\omega)}$.
 
 ## Expansion

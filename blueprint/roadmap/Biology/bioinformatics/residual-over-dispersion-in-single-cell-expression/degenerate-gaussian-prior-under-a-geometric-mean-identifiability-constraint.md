@@ -1,16 +1,21 @@
 # Degenerate Gaussian prior under a geometric-mean identifiability constraint
 
 In a multiplicative count model $X_{ijk} \sim \mathrm{Poisson}(\nu_{jk}\mu_i\rho_{ijk})$ for gene $i \in \{1,\dots,q\}$, cell $j$ and batch $k$, with $\nu_{jk} \sim \mathrm{Gamma}(1/\theta_k, 1/(s_{jk}\theta_k))$ and $\rho_{ijk} \sim \mathrm{Gamma}(1/\delta_i, 1/\delta_i)$, the scale of the cell factors $s_{jk}$ and of the gene means $\mu_i$ is not identifiable. It is fixed by the restriction
+
 $$\Big(\prod_{i=1}^q \mu_i\Big)^{1/q} = \mu_0 \iff \frac1q \sum_{i=1}^q \log\mu_i = \log\mu_0 .$$
 
 **Proposition 1.** The prior $\mu_i \overset{\text{iid}}{\sim} \log\text{-}\mathcal N(0, a_\mu^2)$ conditioned on the restriction is
+
 $$\log\boldsymbol\mu \sim \mathcal N_q\Big(\log(\mu_0)\,\mathbf 1_q,\; a_\mu^2\big(I_q - \tfrac1q \mathbf 1_q \mathbf 1_q'\big)\Big),$$
+
 a degenerate normal law supported on the hyperplane of the restriction.
 
 **Proposition 2.** For any reference gene $r$, this law factorizes as $\log\boldsymbol\mu_{-r} \sim \mathcal N_{q-1}\big(\log(\mu_0)\mathbf 1_{q-1}, a_\mu^2(I_{q-1} - \tfrac1q\mathbf 1_{q-1}\mathbf 1_{q-1}')\big)$ and a point mass
+
 $$\log\mu_r \mid \log\boldsymbol\mu_{-r} = q\log\mu_0 - \sum_{i \ne r}\log\mu_i .$$
 
 **Proposition 3.** For $i \ne r$, with $\boldsymbol\mu_{-i,r}$ the vector without entries $i$ and $r$,
+
 $$\log\mu_i \mid \log\boldsymbol\mu_{-i,r} \sim \mathcal N\Big(\tfrac12\big(q\log\mu_0 - \mathbf 1_{q-2}'\log\boldsymbol\mu_{-i,r}\big),\; \tfrac12 a_\mu^2\Big).$$
 
 ## Expansion

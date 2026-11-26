@@ -1,9 +1,13 @@
 # Champagne updates as majorization–minimization algorithms
 
 **Model.** Sensor data $y(t) \in \mathbb{R}^M$, $t = 1,\dots,T$, satisfy $y(t) = L x(t) + \varepsilon(t)$ with lead field $L \in \mathbb{R}^{M \times N}$ (columns $L_n$), Gaussian noise $\varepsilon(t) \sim \mathcal{N}(0, \sigma^2 I)$ and sources $x(t) \sim \mathcal{N}(0, \Gamma)$ independently over $t$, $\Gamma = \operatorname{diag}(\gamma)$, $\gamma \in \mathbb{R}^N_{\ge 0}$. The posterior of the sources is Gaussian with
+
 $$\bar x(t) = \Gamma L^{\mathsf T}\Sigma_y^{-1} y(t),\qquad \Sigma_x = \Gamma - \Gamma L^{\mathsf T}\Sigma_y^{-1} L\Gamma,\qquad \Sigma_y = \sigma^2 I + L\Gamma L^{\mathsf T},$$
+
 and the Type-II (negative log marginal likelihood) cost is
+
 $$\mathcal{L}_{II}(\gamma) = \frac1T\sum_{t=1}^T y(t)^{\mathsf T}\Sigma_y^{-1} y(t) + \log|\Sigma_y| = \operatorname{tr}(C_y \Sigma_y^{-1}) + \log|\Sigma_y|,$$
+
 with $C_y$ the sample covariance; it is non-convex in $\gamma$.
 
 **MM framework.** A sequence $u^{k+1} = \arg\min_u g(u \mid u^k)$ is a majorization–minimization (MM) algorithm for $f$ if [A1] $g(u^k \mid u^k) = f(u^k)$, [A2] $g(u \mid u^k) \ge f(u)$ for all $u$, and [A3] $u^{k+1}$ minimizes $g(\cdot \mid u^k)$. Then $f(u^{k+1}) \le f(u^k)$ (Corollary 1). If moreover [A4] $\nabla g(u \mid u^k)|_{u=u^k} = \nabla f(u^k)$, every limit point of $(u^k)$ is a stationary point of $f$ (Theorem 1).

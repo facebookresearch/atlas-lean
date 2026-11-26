@@ -1,15 +1,21 @@
 # Coarsened signals make high-signal treatment a Markov perfect equilibrium
 
 **Model.** Two physicians each see one patient per period. A patient has a bacterial infection ($B$) with prior probability $P(B)$, independently across patients and periods. Each physician observes a private signal inducing a posterior $p \in [0,1]$ with continuous density $f > 0$ and distribution function $F$, so $P(B) = \int_0^1 p f(p)\,dp = \mathbb E[p]$. The antibiotic's effectiveness is $e = k\alpha$, where the E-state $k \in \{0,1,\dots,M\}$ counts remaining doses; each treatment lowers $k$ by one in the next period (both treat: $k \to k-2$; one treats: $k \to k-1$; none: $k$ stays), and the game ends at $k = 0$. With no harm from treating uninfected patients, treating a patient with posterior $p$ in E-state $k$ yields immediate expected payoff
+
 $$u(p,k) = p\,k\alpha\,(r_2 - r_1),\qquad r_2 > r_1,$$
+
 where $r_2$ and $r_1$ are the utilities of a bacterial infection with and without effective treatment; withholding yields $0$. Each physician maximizes the total payoff of his own patients; strategies are stationary Markov decision rules (treatment thresholds depending on $k$).
 
 **Coarsening.** Replace the continuous signal by a dichotomous one with threshold $T$: signal $H$ if $p \ge T$ and $L$ if $p < T$, so $P(L) = F(T)$ and the induced posteriors are
+
 $$p_H = \mathbb E[p \mid p \ge T],\qquad p_L = \mathbb E[p \mid p < T],\qquad (1 - F(T))\,p_H + F(T)\,p_L = P(B).$$
+
 Each physician can then only treat everyone or treat only high-signal patients.
 
 **Theorem.** Under the dichotomous signal, the symmetric profile in which both physicians treat only high-signal patients in every E-state is a Markov perfect equilibrium if and only if
+
 $$p_H - p_L \ \ge\ (1 - F(T))\,p_H + F(T)\,p_L = P(B).$$
+
 That is, the gap between the two posteriors must be at least the prior probability of infection; the condition involves only the information structure, not the utilities, the effectiveness levels or the depletion rate.
 
 **Related results.** In the original continuous-signal game a symmetric pure-strategy Markov perfect equilibrium always exists, but the socially optimal symmetric policy (which, while effectiveness remains large, treats only patients with posterior close to $1$) is never an equilibrium.

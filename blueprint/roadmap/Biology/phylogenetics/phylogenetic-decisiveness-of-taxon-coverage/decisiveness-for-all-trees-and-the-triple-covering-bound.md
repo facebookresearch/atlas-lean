@@ -10,11 +10,15 @@ Rooted trees on $n$ taxa are handled as unrooted trees on $n+1$ taxa with a fixe
 **Necessary condition (triples).** If $\mathcal S$ is decisive for all trees, then every 3-subset of $X$ is contained in some $Y_j$. A sufficient condition is that some reference taxon $x_0$ lies in every $Y_j$ and every 4-subset containing $x_0$ lies in some $Y_j$; the exact criterion (Steel and Sanderson) is that for every partition of $X$ into four blocks some $Y_j$ meets all four blocks.
 
 **Theorem 1 (locus-number lower bound).** If $\mathcal S$ is phylogenetically decisive for all trees, then
+
 $$\sum_{j=1}^{k} \binom{n_j}{3} \;\ge\; \binom{n}{3}.$$
+
 In particular, if every $n_j \le m$, then $k \ge \binom{n}{3} \big/ \binom{m}{3}$, roughly $(n/m)^3$ loci.
 
 **Comparison with a single tree.** If $\mathcal S$ is decisive for a given tree $T$, then counting internal edges gives
+
 $$\sum_{j=1}^{k} (n_j - 3) \;\ge\; n - 3,$$
+
 so with $n_j \le m$ only about $n/m$ loci are needed; for every binary $T$ there are $n-3$ quadruples decisive for $T$, while any family of quadruples decisive for all trees has size cubic in $n$.
 
 ## Depends on

@@ -5,7 +5,9 @@
 **Quadratic-form lemma.** If $G \sim N(0, \Phi)$ and $A, B$ are fixed symmetric matrices, then $\mathrm{Cov}(G^{\mathsf T}AG, G^{\mathsf T}BG) = 2\,\mathrm{tr}(\Phi A \Phi B)$. With $G = (X, Y)$, the inner products $X^{\mathsf T}X$, $Y^{\mathsf T}Y$, $X^{\mathsf T}Y$ are quadratic forms in $G$.
 
 **Variance (xDF).** Propagating these moments through $\hat\rho$ gives
+
 $$V(\hat\rho) = N^{-2}\Big[\tfrac{\rho^2}{2}\mathrm{tr}(\Sigma_X^2) + \tfrac{\rho^2}{2}\mathrm{tr}(\Sigma_Y^2) + \rho^2\,\mathrm{tr}(\Sigma_{YX}\Sigma_{XY}) + \mathrm{tr}(\Sigma_{XY}^2) + \mathrm{tr}(\Sigma_X\Sigma_Y) - \rho\,\mathrm{tr}(\Sigma_X\Sigma_{XY}) - \rho\,\mathrm{tr}(\Sigma_{YX}\Sigma_X) - \rho\,\mathrm{tr}(\Sigma_{XY}\Sigma_Y) - \rho\,\mathrm{tr}(\Sigma_Y\Sigma_{YX})\Big],$$
+
 which for stationary series can be rewritten as weighted sums over lags of products of auto- and cross-correlations.
 
 **Special cases.**

@@ -3,7 +3,9 @@
 **Network histories.** Nodes (genes or proteins) descend from ancestral nodes by duplications encoded in a binary *duplication forest* $F$: an internal node $u$ duplicates into children $u_L, u_R$ and then ceases to exist, and leaves are labelled Present or Absent (lost). Interaction gain and loss are recorded by *flip edges*: non-tree edges $\{u,v\}$ between forest nodes, each toggling the interaction between the lineages of $u$ and $v$. With $P_u$ the path from $u$ to its root, two Present leaves $u, v$ interact iff an odd number of flip edges join a node of $P_u$ to a node of $P_v$. The union $H$ of $F$ and the flip edges is a *network history*; it *constructs* a graph $G$ if its Present leaves are the nodes of $G$ and the implied interactions are exactly the edges of $G$.
 
 **Validity.** $H$ is *valid* if there are creation and duplication times $t^c_u < t^d_u$ for every node (with $t^d_u = \infty$ for Present leaves and $t^d_u = t^c_v$ for each child $v$ of $u$) and a time $t_{\{u,w\}}$ for every flip edge with
+
 $$t^c_u \le t_{\{u,w\}} < t^d_u \quad\text{and}\quad t^c_w \le t_{\{u,w\}} < t^d_w,$$
+
 i.e. each interaction event happens while both endpoints exist.
 
 **Blocking loops.** A *$k$-blocking loop* is a set of flip edges $\{u_i, v_i\}$, $0 \le i < k$, such that $u_{i+1}$ is an ancestor of $v_i$ in the forest for every $i$ (indices modulo $k$).

@@ -1,11 +1,17 @@
 # Uniform competitive-ability distributions are the equilibrium strategies
 
 **Game.** There are $n$ competing species. In the discrete model the possible competitive abilities are $x_j = j/M$, $j = 0,\dots,M$, and a strategy is a map $B : \{x_j\} \to [0,\infty)$ with abundance $|B| = \sum_j B(x_j) > 0$ and mean competitive ability
+
 $$\mathrm{MCA}(B) = \frac{1}{|B|}\sum_{j=0}^M x_j B(x_j) \le \frac12;$$
+
 $B(x_j)/|B|$ is the probability that a random individual of the species has ability $x_j$. In an encounter the more able individual wins (it replicates and the loser dies) and equal abilities draw. The payoff to species $A_k$ against $A_1,\dots,A_n$ is
+
 $$\wp(A_k; A_{-k}) = \frac{1}{\sum_\ell |A_\ell|}\sum_{j=0}^M A_k(x_j)\Big[\sum_{i<j}\sum_{\ell} A_\ell(x_i) - \sum_{i>j}\sum_\ell A_\ell(x_i)\Big].$$
+
 In the continuous model a strategy is a continuous $f : [0,1] \to [0,\infty)$ with $F(1) = \int_0^1 f > 0$ and $\mathrm{MCA}(f) = \frac{1}{F(1)}\int_0^1 x f(x)\,dx \le \frac12$, with payoff
+
 $$\wp(f_k; f_{-k}) = \frac{1}{\sum_\ell F_\ell(1)}\int_0^1 f_k(x)\Big[\int_0^x \sum_\ell f_\ell(t)\,dt - \int_x^1 \sum_\ell f_\ell(t)\,dt\Big]dx.$$
+
 An equilibrium point is a profile from which no species can raise its payoff by changing only its own strategy.
 
 **Theorem.**

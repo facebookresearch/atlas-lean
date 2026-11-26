@@ -1,9 +1,13 @@
 # Fitness-dependent transitions between amplification and suppression
 
 **Moran process on a graph.** Let $G$ be a connected undirected graph on $V = \{1,\dots,N\}$ with degrees $d_i$ and $w_{ij} = 1/d_i$ for neighbours ($0$ otherwise). Mutants have fitness $r > 0$ and residents fitness $1$. The state is the set $S$ of mutant vertices, the total reproductive weight is $w_S(r) = r|S| + N - |S|$, and
+
 $$P_{S,S\cup\{j\}}(r) = \frac{r\sum_{i\in S} w_{ij}}{w_S(r)},\qquad P_{S,S\setminus\{j\}}(r) = \frac{\sum_{i\notin S} w_{ij}}{w_S(r)}$$
+
 (a reproducing individual is chosen proportionally to fitness and its offspring replaces a uniformly chosen neighbour). The fixation probabilities $\Phi_S(r)$ solve $\Phi_S = \sum_{S'}P_{S,S'}\Phi_{S'}$ with $\Phi_\emptyset = 0$, $\Phi_V = 1$, i.e. $(I - Q(r))\Psi(r) = c(r)$ on the $2^N - 2$ transient states, and $\Phi(r) = \frac1N\sum_i \Phi_{\{i\}}(r)$ is a rational function of $r$ with rational coefficients. For the well-mixed population
+
 $$\Phi_0(r) = \frac{1 - r^{-1}}{1 - r^{-N}} = \frac{r^{N-1}}{r^{N-1} + \cdots + r + 1},$$
+
 and $\Phi = \Phi_0$ iff $G$ is regular (isothermal). For $r > 1$, $G$ is an amplifier at $r$ if $\Phi(r) > \Phi_0(r)$ and a suppressor if $\Phi(r) < \Phi_0(r)$; a transition is a fitness $r_c > 1$ where $\Phi - \Phi_0$ changes sign.
 
 **Results (exhaustive over all connected undirected graphs with $N \le 10$).**

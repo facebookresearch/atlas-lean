@@ -1,6 +1,7 @@
 # Feasibility of direct optimization tree costs
 
 **Tree alignment problem.** Given a rooted binary tree $T = (V,E)$, an alphabet $\Sigma$ containing an indel symbol, a distance $d$ on $\Sigma$, and sequences $\chi(v) \in \Sigma^*$ at the leaves, find an extension $\chi'$ of $\chi$ to all vertices minimizing $\sum_{(u,v)\in E} e(\chi'(u),\chi'(v))$, where $e$ is the (Needleman–Wunsch) edit distance
+
 $$e(A_{1..i},B_{1..j}) = \min\{e(A_{1..i-1},B_{1..j-1}) + d(A_i,B_j),\ e(A_{1..i-1},B_{1..j}) + d(A_i,\text{indel}),\ e(A_{1..i},B_{1..j-1}) + d(B_j,\text{indel})\}.$$
 
 **Reduced alignment graphs.** Let $\Sigma_P = \mathcal P(\Sigma)\setminus\{\emptyset\}$. A reduced alignment graph (RAG) is a string $A \in \Sigma_P^*$; it contains every sequence obtained by choosing one element from each set and deleting indels, so it contains at most $\prod_{X\in A}|X|$ sequences. With $d_P(X,Y) = \min_{x\in X, y\in Y} d(x,y)$, the RAG edit distance $e_P$ is the recursion above with $d$ replaced by $d_P$. For aligned RAGs $A,B$ of equal length, the median RAG is $m_P(A,B) = \langle m(A_i,B_i)\rangle_i$, where $m(X,Y)$ is the set of elements of $X$ and $Y$ realizing $d_P(X,Y)$. Assume a linear indel cost: $d(x,\text{indel}) = b$ for all $x \ne \text{indel}$.
@@ -10,7 +11,9 @@ $$e(A_{1..i},B_{1..j}) = \min\{e(A_{1..i-1},B_{1..j-1}) + d(A_i,B_j),\ e(A_{1..i
 2. If $C = m_P(A,B)$, then for every sequence $X$ in $C$ there are $Y$ in $A$ and $Z$ in $B$ with $e_P(A,B) = e(Y,Z) = e(X,Y) + e(X,Z)$.
 
 **Theorem.** Direct optimization assigns $S(v) = $ the leaf sequence at leaves and $S(v) = m_P(U,W)$ at an internal vertex with children $u,w$, where $U,W$ is an optimal alignment of $S(u),S(w)$, and returns $\mathrm{DO}(T,\chi) = \sum_{v \text{ internal}} e_P(S(u),S(w))$. There is an assignment $\chi'$ agreeing with $\chi$ on the leaves such that
+
 $$\mathrm{DO}(T,\chi) = \sum_{(u,v)\in E} e(\chi'(u),\chi'(v)),$$
+
 so the returned cost is an upper bound on the optimal tree alignment cost. It runs in $O(n^2|V|)$ time for small alphabets ($O(n^2|V||\Sigma|)$ otherwise), with $n$ the maximum sequence length.
 
 **Affine gaps.** For affine indel costs $G(k) = a + bk$ the median property (Lemma 2) fails, and using $e_P$ directly can report costs that no assignment achieves; a modified pairwise RAG alignment with four dynamic-programming matrices (Affine-DO) restores the guarantee that some compatible assignment has cost at most the reported value, with the same time complexity.

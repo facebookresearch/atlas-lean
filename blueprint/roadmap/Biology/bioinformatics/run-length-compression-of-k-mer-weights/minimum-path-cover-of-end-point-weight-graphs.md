@@ -17,7 +17,9 @@ After preprocessing with Lemma 1 (collapsing all $(x, x)$ nodes and all copies o
 **Lemma 5.** Repeatedly merging two nodes on a weight of minimum even frequency simplifies each connected component either to a single node or to a graph with $I_w = \emptyset$ for all even-frequency weights $w$.
 
 **Theorem 1.** Let $\mathcal{C}_{\mathrm{even}}$ be the set of connected components of the preprocessed graph whose nodes have only even-frequency end-points. Then a minimum path cover $C^*$ satisfies
+
 $$|C^*| = |\mathcal{C}_{\mathrm{even}}| + \frac{|W_{\mathrm{odd}}|}{2},$$
+
 and the min-cover algorithm (preprocess, merge on minimum even frequency, then greedy cover) is optimal and runs in $\Theta(m)$ amortized time and space for $m$ nodes.
 
 Although minimum path cover is NP-hard on general directed graphs, this structure makes it linear-time here, which gives the optimal reordering and reorientation of strings for run-length compressed $k$-mer weights.

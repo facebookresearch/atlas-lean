@@ -1,9 +1,13 @@
 # Three-dimensional chaos game representation of proteins
 
 **Construction.** Place the 20 amino acids $\Omega$ at the vertices of a regular dodecahedron inscribed in the unit ball $B$ centred at $X_0 = (1,1,1)$ (so its edge length is $a = 4/(\sqrt3(1+\sqrt5)) \approx 0.7136$). For a protein $\omega_1\omega_2\cdots\omega_N$, define the chaos game points
+
 $$X_0 = (1,1,1), \qquad X_n = (1-u)\,\omega_n + u\, X_{n-1}, \quad n \ge 1,$$
+
 with contraction parameter
+
 $$u = \frac{\sqrt5 - 1}{\sqrt5 + 2\sqrt3 - 1} \approx 0.263.$$
+
 The *ball controlled by* $\omega$ is $B_\omega$, centred at $u X_0 + (1-u)\omega$ with radius $u$; the ball controlled by a dipeptide $\omega_1\omega_2$ is $B_{\omega_1\omega_2}$, centred at $u(1-u)(\omega_1 - X_0) + (u X_0 + (1-u)\omega_2)$ with radius $u^2$.
 
 **Theorem.** For every amino acid sequence of length $N$:

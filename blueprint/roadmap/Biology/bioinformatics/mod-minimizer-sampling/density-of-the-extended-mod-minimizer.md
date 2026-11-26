@@ -9,7 +9,9 @@
 **Lemma 1 (unique anchors).** For every $\epsilon > 0$, if $t > (3+\epsilon)\log_\sigma(w+k-1)$, the probability that a uniformly random window of $w+k-t$ $t$-mers contains two identical $t$-mers is $o(1/(w+k-1))$.
 
 **Theorem 2 (closed form).** If $t \equiv k \pmod w$ satisfies the hypothesis of Lemma 1 and $A$ is the random minimizer, the density of the extended mod-minimizer is
+
 $$\frac{2 + \frac{k-t}{w}}{w+k-t+1} + o\!\left(\frac{1}{w+k-1}\right).$$
+
 In particular, for fixed $w$ and $k \to \infty$ the density tends to the lower bound $1/w$.
 
 ## Expansion

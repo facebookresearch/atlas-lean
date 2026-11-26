@@ -3,9 +3,13 @@
 Model a genome on $2g$ gene extremities as a matching of **adjacencies**: $a$ observed adjacencies between consecutive genes, completed to a perfect matching of $n$ adjacencies by adding telomeric and $f$ fictional elements (with $f$ and the number of telomeres $o(n)$). A **double cut-and-join (DCJ)** replaces two distinct adjacencies $AB, CD$ by $AC, BD$ or by $AD, BC$. In the **mechanistic DCJ model**, each step picks one of the $n(n-1)$ equiprobable DCJs on the completed genome, so genomes evolve as a Markov chain on perfect matchings. A **breakpoint** of $G$ with respect to $G'$ is an observed adjacency $AB$ of $G$ such that $A$ and $B$ are not adjacent in $G'$.
 
 **Theorem.** If $G_k$ is obtained from $G$ by $k$ random DCJs, the expected number of breakpoints is
+
 $$\mathbb E[B_k] = a\,\frac{2n - 2}{2n - 1}\left[1 - \left(1 - \frac{1}{n-1} - \frac1n\right)^{k}\right].$$
+
 Inverting it gives the distance estimator
+
 $$\widetilde{\mathrm{DCJ}}(G_1, G_2) = \frac{\log\!\Big(1 - \dfrac{B\,(2n-1)}{a\,(2n-2)}\Big)}{\log\!\Big(1 - \dfrac{1}{n-1} - \dfrac1n\Big)}$$
+
 from the observed number $B$ of breakpoints.
 
 **Proposition (binary-sequence coding).** Coding adjacencies as sites of a binary sequence evolving by single-site flips, $\mathbb E[D_{k_s}] = \tfrac N2\big(1 - (1 - \tfrac2N)^{k_s}\big)$ differences after $k_s$ flips. This equals twice the DCJ breakpoint expectation exactly when the sequence length is $N = 4a\frac{2n-2}{2n-1} \approx 4a$ and $k_s \approx 4ka/n$; coding all absent adjacencies as sites, or none, biases the distance.

@@ -1,6 +1,7 @@
 # Intermediate thresholds for PSSM search
 
 **Setting.** A PSSM of length $m$ over alphabet $\mathcal A$ is a function $M : [0, m-1] \times \mathcal A \to \mathbb R$, and the score of a word $w = w_0 \cdots w_{m-1}$ is $sc(w, M) = \sum_{h=0}^{m-1} M(h, w_h)$. Given a sequence $S$ of length $n$ and a threshold $th$, the PSSM matching problem asks for every $j \in [0, n-m]$ with $sc(S[j..j+m-1], M) \ge th$. Let $\max_h = \max_{a} M(h,a)$ and define, for $d \in [0, m-1]$,
+
 $$\sigma_d = \sum_{h=d+1}^{m-1} \max_h, \qquad th_d = th - \sigma_d, \qquad pfxsc_d(w, M) = \sum_{h=0}^{d} M(h, w_h).$$
 
 **Lemma (lookahead scoring).** The following are equivalent: (1) $pfxsc_d(w, M) \ge th_d$ for all $d \in [0, m-1]$; (2) $sc(w, M) \ge th$.

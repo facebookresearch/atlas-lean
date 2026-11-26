@@ -3,7 +3,9 @@
 **Reconciliations.** Let $S$ be a rooted species tree whose node $s$ carries the length $|s|$ of the branch ending at $s$, and $G$ a rooted binary gene tree with LCA mapping $m^*$ into $S$. A node $g$ is an **lca-speciation** if its two children are not mapped to $m^*(g)$. A **reconciliation** is a pair $R = \langle m, \Sigma\rangle$ where $m : V(G) \to V(S)$ is a mapping that respects ancestry and $\Sigma$ is a set of lca-speciations with $m(g) = m^*(g)$ for $g \in \Sigma$; the elements of $\Sigma$ are the speciations of $R$ and every other internal node is a duplication. Let $\mathrm{dup}_R(s)$ be the number of duplications with $m(g) = s$. Reconciliations correspond one-to-one with embeddings of $G$ into $S$ that contain neither a duplication followed immediately by loss of one copy nor a gene lost in all descendants of a speciation, the events that leave no trace in $G$.
 
 **Likelihood.** With a constant duplication rate $\lambda$, the number of duplications on a branch of length $\tau$ is Poisson, $P(\tau, d \mid \lambda) = e^{-\lambda\tau}(\lambda\tau)^d / d!$, and the likelihood of a reconciliation is
+
 $$L(S, G, R) = \prod_{s \in S} P\big(|s|,\ \mathrm{dup}_R(s) \mid \lambda\big).$$
+
 An **optimal reconciliation** maximizes $L$ over all reconciliations of $G$ and $S$.
 
 **Dynamic program.** Define $M(s, \kappa)$ for $s \in S$ and $\kappa$ the number of duplication and speciation nodes placed in the subtree $S(s)$: $M(s,\kappa) = P(|s|, \kappa \mid \lambda)$ at a leaf, and at an internal node with children $s_1, s_2$ a maximum over $\delta$ duplications on the branch ending at $s$, $\sigma$ speciations mapped to $s$, and splits $\kappa = \kappa_1 + \kappa_2 + \sigma + \delta$ restricted to *acceptable triplets* $\langle \sigma, \kappa_1, \kappa_2\rangle$ that some reconciliation realizes, of $p(s,\delta)\, M(s_1, \kappa_1)\, M(s_2, \kappa_2)$.

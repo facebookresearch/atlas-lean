@@ -1,11 +1,15 @@
 # Stochasticity-heterogeneity decomposition of longevity variance
 
 **Markov chain moments.** Let $\tilde U$ be the $\omega g \times \omega g$ substochastic transient matrix of an absorbing Markov chain over age × frailty states, with death absorbing; individuals age one class per step and keep their frailty class. The fundamental matrix $\tilde N = (I - \tilde U)^{-1}$ has $(i,j)$ entry equal to the expected number of visits to state $i$ by an individual starting in state $j$. The vectors of first and second moments and variance of longevity (remaining life measured in steps) from each starting state are
+
 $$\tilde\eta_1 = \big(\mathbf 1^{\mathsf T}\tilde N\big)^{\mathsf T}, \qquad \tilde\eta_2 = \big[\tilde\eta_1^{\mathsf T}(2\tilde N - I)\big]^{\mathsf T}, \qquad V(\tilde\eta) = \tilde\eta_2 - \tilde\eta_1 \circ \tilde\eta_1.$$
+
 For the $g$ frailty groups in age class 1, $E(\eta_{\text{groups}}) = (e_1^{\mathsf T} \otimes I_g)\tilde\eta_1$ and $V(\eta_{\text{groups}}) = (e_1^{\mathsf T} \otimes I_g)V(\tilde\eta)$.
 
 **Decomposition.** If age-1 individuals are a mixture of frailty groups with mixing distribution $\pi$, the variance of longevity satisfies the law of total variance
+
 $$V(\eta) = \underbrace{\pi^{\mathsf T} V(\eta_{\text{groups}})}_{V_{\text{within}}} + \underbrace{\pi^{\mathsf T}\big[E(\eta_{\text{groups}}) \circ E(\eta_{\text{groups}})\big] - \big[\pi^{\mathsf T} E(\eta_{\text{groups}})\big]^2}_{V_{\text{between}}},$$
+
 where $V_{\text{within}}$ is the variance due to individual stochasticity (random survival outcomes among individuals with identical rates) and $V_{\text{between}}$ is the variance due to heterogeneity in frailty; the ratio $V_{\text{between}}/V(\eta)$ is the fraction of longevity variance explained by heterogeneity.
 
 ## Depends on

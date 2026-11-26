@@ -5,6 +5,7 @@
 **Proposition 1.** FLATSP is NP-complete, even when restricted to unit costs and instances with $l = |V| = t$.
 
 **Graph read mapping problem (GRMP).** Given a directed graph $G = (V, A, x)$ whose edges carry symbols $x : A \to \Sigma$, a word $q = q_1 \cdots q_{|q|} \in \Sigma^*$, a cost function $F : \Sigma \times \Sigma \to \mathbb{N}$ and a threshold $t$, decide whether there is a path $p = (v_1, \dots, v_{|q|+1})$ of $G$ with $|q| + 1$ nodes whose generated word $m$, with $m_i = x((v_i, v_{i+1}))$, satisfies
+
 $$\sum_{i=1}^{|q|} F(m_i, q_i) \le t.$$
 
 **Proposition 2.** GRMP is NP-complete.

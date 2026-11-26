@@ -1,7 +1,9 @@
 # Bourque distance between labeled trees with different label sets
 
 A **labeled tree** $S$ assigns each node a nonempty set of labels (mutations), the sets partitioning the label set $L(S)$; each edge $e = (u,v)$ induces the bipartition $P(e) = \{L(u), L(v)\}$ of $L(S)$ into labels nearer $u$ and nearer $v$, and $\mathcal{P}(S)$ is the set of these. For trees $S, T$ with common labels $C = L(S) \cap L(T) \ne \emptyset$, a bipartition $\{X, L(S)\setminus X\}$ of $S$ is **similar** to a bipartition $\{C', C''\}$ of $C$ if $\{X \cap C, (L(S)\setminus X)\cap C\} = \{C', C''\}$. With $Q_S(P)$, $Q_T(P)$ the edge bipartitions of $S$, $T$ similar to $P$, the **Bourque distance** is
+
 $$B(S,T) = |\mathcal{P}(S) \cup \mathcal{P}(T)| - \sum_{P} \min\big(|Q_S(P)|, |Q_T(P)|\big),$$
+
 the sum over nontrivial bipartitions $P = \{C', C\setminus C'\}$ of $C$.
 
 **Proposition.** Let $S$, $T$ have $s$ and $t$ edges. (i) If $L(S) = L(T)$ then $B(S,T) = \mathrm{RF}(S,T) \ge |s - t|$. (ii) If $L(S) \cap L(T) = \emptyset$ then $B(S,T) = \mathrm{RF}(S,T) = s + t$. (iii) If $L(S) \ne L(T)$ then $\max(s,t) \le B(S,T) \le s + t$.

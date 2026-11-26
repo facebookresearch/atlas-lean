@@ -3,7 +3,9 @@
 **Setting.** Let $X$ and $Y$ be strings and $AM$ their edit-distance dynamic-programming matrix, $AM[i,j]$ being the edit distance between the length-$i$ prefix of one string and the length-$j$ prefix of the other. Adjacent cells in a row or column differ by at most $1$.
 
 **Clusters.** In a fixed column $j$, a *cluster* $\{s,c,e\}$ with $s \le c < e$ is the set of cells $AM[i,j]$, $s \le i < e$, such that
+
 $$AM[i,j] = AM[c,j] + |c-i| .$$
+
 The cell $AM[c,j]$ is the cluster's *centre*, a local minimum of the column.
 
 **Lemma 1.** For every optimal alignment path that passes through one or more cells of a cluster $\{s,c,e\}$ but not through its centre, there is an alternative optimal alignment path that passes through the centre.

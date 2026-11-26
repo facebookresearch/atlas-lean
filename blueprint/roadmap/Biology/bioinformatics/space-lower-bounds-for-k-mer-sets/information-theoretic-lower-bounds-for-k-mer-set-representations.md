@@ -3,9 +3,13 @@
 **Setting.** Let $S$ be a set of $n$ distinct $k$-mers over an alphabet $\Sigma$ of size $\sigma$, so $S$ is an $n$-element subset of a universe of size $\sigma^k$. A *membership* data structure answers, for any $k$-mer $x$, whether $x \in S$, without errors. A *navigational* data structure answers, for $x \in S$, which of its $2\sigma$ possible one-character extensions belong to $S$ (the neighbours of $x$ in the node-centric de Bruijn graph of $S$).
 
 **Membership lower bound.** In the worst case over sets $S$ of size $n$, any membership data structure needs at least
+
 $$L(n,k) = \log_2\binom{\sigma^k}{n}$$
+
 bits, and
+
 $$n\log_2\frac{\sigma^k}{n} \;\le\; L(n,k) \;\le\; n\log_2\frac{\sigma^k}{n} + n\log_2 e .$$
+
 Since $0 \le \log_2(\sigma^k/n) \le k\log_2\sigma$, a set that is exponentially sparse in $k$ needs $L(n,k) = \Theta(nk)$ bits.
 
 **Navigational lower bounds.** For $\sigma = 4$, every navigational data structure needs at least $3.24\,n$ bits in the worst case. If $S$ is *linear*, i.e. its node-centric de Bruijn graph is a single unitig, $2n$ bits are necessary.

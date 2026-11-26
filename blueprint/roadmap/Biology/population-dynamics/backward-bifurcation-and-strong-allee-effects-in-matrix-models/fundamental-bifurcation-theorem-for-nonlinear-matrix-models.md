@@ -1,6 +1,7 @@
 # Fundamental bifurcation theorem for nonlinear matrix models
 
 **Setting.** A population distribution $x \in \mathbb R^n_+$ evolves by $x' = r\,P(x)\,x$, where (A1) the entries $p_{ij}(x)$ are non-negative and twice continuously differentiable on an open set containing $\mathbb R^n_+$, $P(x)$ is primitive, and $P$ is normalized so that $\rho[P(0)] = 1$. Then $r$ is the spectral radius of the linearization at extinction, the **inherent population growth rate**. An **equilibrium pair** $(r,x)$ solves $x = rP(x)x$; it is positive if $x \in \mathbb R^n_+ \setminus\{0\}$. Let $v > 0$ and $w > 0$ be right and left eigenvectors of $P(0)$ for the eigenvalue $1$, and
+
 $$\kappa = -\sum_{i,j} w_i\,v_j\,\big(\nabla_x p_{ij}(0)\cdot v\big).$$
 
 **Theorem.**

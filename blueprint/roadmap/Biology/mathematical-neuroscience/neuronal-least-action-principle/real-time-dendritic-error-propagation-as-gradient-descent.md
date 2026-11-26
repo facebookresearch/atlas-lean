@@ -1,6 +1,7 @@
 # Real-time dendritic error propagation as gradient descent
 
 **Setting.** A network $W$ (arbitrary, possibly recurrent) runs the least-action voltage and error dynamics $\tau\dot u = -u + Wr + e$, $\bar e = \bar r'_{\mathrm{net}}\odot W^{\mathsf T}_{\mathrm{net}}\bar e + \beta\bar e^*$, with Lagrangian $L = E^M + \beta C$, mismatch energy $E^M = \tfrac12\|u - W\bar r\|^2$ and output cost $C = \tfrac12\|u^*_o - u_o\|^2$. Synapses follow the local rule ("postsynaptic dendritic error times low-pass filtered presynaptic rate")
+
 $$\dot W = \eta\,(u - W\bar r)\,\bar r^{\mathsf T} = \eta\,\bar e\,\bar r^{\mathsf T}.$$
 
 **Theorem (rt-DeEP).** Along the voltage trajectories, at every moment long enough after initialization,

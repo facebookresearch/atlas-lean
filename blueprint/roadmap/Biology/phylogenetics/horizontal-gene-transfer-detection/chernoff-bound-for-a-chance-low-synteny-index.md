@@ -1,14 +1,19 @@
 # Chernoff bound for a chance-low synteny index
 
 **Definitions.** A genome is an ordered set of genes. The $k$-neighbourhood $N_k(G,g_0)$ of gene $g_0$ in genome $G$ is the set of genes at most $k$ positions upstream or downstream of $g_0$ (excluding $g_0$). For genomes $G_1, G_2$, the **$k$-synteny index** of a common gene $g_0 \in G_1 \cap G_2$ is
+
 $$\mathrm{SI}(g_0,G_1,G_2) = |N_k(G_1,g_0) \cap N_k(G_2,g_0)|,$$
+
 and $\mathrm{SI} = 0$ for genes not in the core set. Genes in the symmetric difference $G_1 \triangle G_2$ are **singular**.
 
 **Lemma.** Let $|G_1| = |G_2| = n$, $g \in G_1 \cap G_2$, $k \ll n$, and let neighbours be singular independently with probability $p = |G_1\triangle G_2|/(2n)$. For any $\delta_{\mathrm{SI}} \in (0,1)$,
+
 $$\Pr\Big(\mathrm{SI} < \frac{k}{n}\big(2n - |G_1\triangle G_2|\big) - \sqrt{-k\log_e\delta_{\mathrm{SI}}}\Big) \le \delta_{\mathrm{SI}},$$
+
 i.e. a synteny index below $2k(1-p) - \sqrt{-k\log\delta_{\mathrm{SI}}}$ arises from gene gain and loss alone with probability at most $\delta_{\mathrm{SI}}$, and the significance grows exponentially as $\mathrm{SI}$ decreases.
 
 **Corollary (neighbourhood size).** A significant low synteny index can be certified at level $\delta_{\mathrm{SI}}$ only if
+
 $$k \ge -\frac{\log_e \delta_{\mathrm{SI}}}{4(1-p)^2}.$$
 
 ## Expansion

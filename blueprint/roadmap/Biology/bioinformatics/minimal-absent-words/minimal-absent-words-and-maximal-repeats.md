@@ -1,7 +1,9 @@
 # Minimal absent words and maximal repeats
 
 **Setting.** Let $S$ be a string over a finite alphabet $\Sigma$, with virtual end characters $S[0] = \#$ and $S[|S| + 1] = \dagger$ not in $\Sigma$. For a substring $\alpha$ of $S$ with occurrence set $P_\alpha$, let $\mathcal{L}_\alpha$ and $\mathcal{R}_\alpha$ be the sets of characters immediately left and right of the occurrences of $\alpha$, and let
+
 $$\mathcal{E}_\alpha = \{ (S[p-1], S[p + |\alpha|]) : p \in P_\alpha \} \subseteq (\Sigma \cup \{\#\}) \times (\Sigma \cup \{\dagger\})$$
+
 be the set of enclosing character pairs.
 
 A **maximal repeated pair** is a triple $(p_1, p_2, \alpha)$ with $p_1 \ne p_2$ occurrences of $\alpha$ such that $S[p_1 - 1] \ne S[p_2 - 1]$ and $S[p_1 + |\alpha|] \ne S[p_2 + |\alpha|]$; $\alpha$ is a **maximal repeat** if some maximal repeated pair has the form $(p_1, p_2, \alpha)$.

@@ -1,10 +1,13 @@
 # Generalized score of a partition of a tree profile
 
 **Setting.** A profile $\pi$ is a list of $m$ unrooted phylogenetic trees on the same taxon set $X$, $|X| = n$; each tree is identified with the set of bipartitions (splits) given by its internal edges. A bipartition $P_i$ has support $m_i$, the number of trees of the profile containing it, and is a **majority** bipartition if $m_i > m/2$. The majority-rule consensus tree $C$ of $\pi$ consists of all majority bipartitions, and its weight is
+
 $$W_\pi(C) = \sum_{P_i \in C} m_i.$$
 
 **Definition.** For a partition $\mathcal P_\pi = \{\pi_1,\dots,\pi_k\}$ of the profile into classes of sizes $p_1,\dots,p_k$ with majority consensus trees $C_1,\dots,C_k$, the **generalized score** is
+
 $$W^k(\mathcal P_\pi) = \sum_{i=1}^k p_i\,W_{\pi_i}(C_i).$$
+
 The single-class value $W^1 = m\,W_\pi(C)$ is the reference; the atomic partition into singletons gives $W^m = \sum_{i=1}^m n_i \le m(n-3)$, where $n_i$ is the number of internal edges of tree $i$. The profile admits a single, multiple or atomic consensus according to which partition maximizes $W$.
 
 **Proposition.** Two trees with $n_1$ and $n_2$ internal edges sharing $k$ of them satisfy $W^1 = 4k$ and $W^2 = n_1 + n_2$, so they admit a single consensus iff $k > (n_1+n_2)/4$; for two fully resolved trees ($n_1 = n_2 = n-3$) this means sharing more than half of their internal edges.

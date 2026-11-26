@@ -1,7 +1,9 @@
 # Approximation schemes for maximum agreement relation editing
 
 Use the relation graphs, satisfiability ($P_4$-freeness) and $S$-consistency of weighted cograph editing of orthology relation graphs, now unweighted. For a relation graph $R = (\Gamma, E_R)$ with $n = |\Gamma|$ and a candidate $R' = (\Gamma, E_{R'})$, the **agreement value** counts preserved orthologies and paralogies:
+
 $$A(R', R) = |E_R \cap E_{R'}| + |\bar E_R \cap \bar E_{R'}| .$$
+
 **MaxES** asks for a satisfiable $R'$ maximizing $A(R', R)$; **MaxEC** asks for an $S$-consistent $R'$ maximizing it.
 
 **Lemma 6.** For both problems the optimum agreement is at least $n^2/8$.

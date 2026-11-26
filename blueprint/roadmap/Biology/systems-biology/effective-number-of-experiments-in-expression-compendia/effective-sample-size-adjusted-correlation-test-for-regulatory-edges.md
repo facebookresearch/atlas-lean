@@ -4,7 +4,9 @@ Let $X$ be a doubly standardized $p \times n$ expression compendium with gene-ge
 
 1. compute the Fisher transforms $z_{ii'} = \frac12 \log \frac{1 + \hat\Sigma_{ii'}}{1 - \hat\Sigma_{ii'}}$;
 2. compute two-sided p-values for each transcription factor-gene pair against the null distribution
+
 $$z_{ii'} \sim N\big(0, (n_{\mathrm{eff}} - 3)^{-1}\big);$$
+
 3. order the $m$ p-values $p_{(1)} \le \dots \le p_{(m)}$ and report as edges the pairs with $p_{(k)} \le q k / m$ (Benjamini-Hochberg control of the false discovery rate at level $q$).
 
 (Eqs. (7)-(10) of the source.) With independent experiments the classical null is $N(0, (n-3)^{-1})$; replacing $n$ by $n_{\mathrm{eff}}$ widens the null to account for dependence between microarrays.

@@ -1,15 +1,21 @@
 # Residual over-dispersion regression and the differential variability test
 
 Let $X_{ij}$ be the count of gene $i \in \{1,\dots,q_0\}$ in cell $j \in \{1,\dots,n\}$. In the hierarchical Poisson–gamma model
+
 $$X_{ij} \mid \mu_i, \phi_j, \nu_j, \rho_{ij} \sim \mathrm{Poisson}(\phi_j \nu_j \mu_i \rho_{ij}), \qquad \nu_j \sim \mathrm{Gamma}\!\Big(\tfrac1\theta, \tfrac{1}{s_j \theta}\Big), \qquad \rho_{ij} \sim \mathrm{Gamma}\!\Big(\tfrac1{\delta_i}, \tfrac1{\delta_i}\Big),$$
+
 $\mu_i > 0$ is the mean expression of gene $i$, $\phi_j, s_j$ are cell-specific normalization factors, $\theta$ is global technical noise, and $\delta_i > 0$ is the biological **over-dispersion** of gene $i$, its excess variability beyond Poisson and technical noise.
 
 **Mean–dispersion regression prior.** Take $\mu_i \sim \log\text{-}\mathcal N(0, s_\mu^2)$ and
+
 $$\log \delta_i = f(\mu_i) + \epsilon_i, \qquad \epsilon_i \sim t_\eta(0, \sigma^2),$$
+
 $$f(\mu) = \alpha_0 + \alpha_1 \log\mu + \sum_{l=1}^{L} \beta_l \exp\!\Big\{-\tfrac12\Big(\tfrac{\log\mu - m_l}{h_l}\Big)^2\Big\},$$
+
 a linear trend plus $L$ Gaussian radial basis functions with fixed centres $m_l$ and widths $h_l$, with $\beta \mid \sigma^2 \sim \mathcal N(m_\beta, \sigma^2 V_\beta)$ and $\sigma^2 \sim \text{Inv-Gamma}(a_{\sigma^2}, b_{\sigma^2})$. The latent $\epsilon_i$ is the **residual over-dispersion**: positive values mean more variability than genes of similar mean.
 
 **Decomposition.** For two populations $A, B$,
+
 $$\log_2\frac{\delta_i^A}{\delta_i^B} = \log_2(e)\Big[\underbrace{f^A(\mu_i^A) - f^B(\mu_i^B)}_{\text{mean contribution}} + \underbrace{\epsilon_i^A - \epsilon_i^B}_{\text{residual change}}\Big].$$
 
 **Decision rule.** Gene $i$ is called differentially variable when $\mathbb P(|\epsilon_i^A - \epsilon_i^B| > \psi_0 \mid \text{data}) > \alpha_R$ for a tolerance $\psi_0 > 0$, or, for $\psi_0 = 0$, when $2\max\{\pi_i, 1 - \pi_i\} - 1 > \alpha_R$ with $\pi_i = \mathbb P(\epsilon_i^A - \epsilon_i^B > 0 \mid \text{data})$; the threshold $\alpha_R$ is calibrated to a target expected false discovery rate.

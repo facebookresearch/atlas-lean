@@ -5,7 +5,9 @@ Use the notation of the standard loss count entry: $gt$ is a rooted binary gene 
 Let $L_{bd}(gt, ST)$ be the minimum number of losses without assuming the gene was present at the root of $ST$, and $L^*_{bd}(gt, ST)$ the minimum assuming it was. Theorem 2 (from Chauve et al. and Górecki and Tiuryn) says that the LCA mapping still minimizes duplications and losses under this interpretation, and the duplication nodes are exactly the $v$ with $M(v) \in \{M(l), M(r)\}$.
 
 **Theorem 3.** For every $gt$, $ST$ with $L(gt) \subseteq L(ST)$,
+
 $$L_{bd}(gt, ST) = \sum_{u \in V_{int}(gt)} F(u, ST), \qquad L^*_{bd}(gt, ST) = L_{bd}(gt, ST) + |\mathrm{UMMC}(gt, ST)|,$$
+
 and both are computable in $O(n + n')$ time, where $ST$ has $n$ leaves and $gt$ has $n'$ leaves. If $M(r(gt)) \ne r(ST)$ then $|\mathrm{UMMC}(gt, ST)| = d(M(r(gt)), r(ST)) + 1$.
 
 In general $L_{bd} \ne L_{std}$: for $gt = ((a,b),c)$ and $ST = ((a,(b,d)),c)$ one has $L_{std} = 0$ but $L_{bd} = 1$ (the gene was lost on the branch to $d$). The difference changes the optimal species tree: **Theorem 4** exhibits 14 gene trees for which the species tree minimizing $\sum L_{std}$ does not minimize $\sum L_{bd}$ (nor $\sum L^*_{bd}$).

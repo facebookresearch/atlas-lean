@@ -1,10 +1,13 @@
 # Ordered Jaccard index equals the k-mer Jaccard index for paralogs
 
 **Definitions.** For a string $s$ let $K(s)$ be its set of $k$-mers. With $E(s,s')$ the edit distance and $\ell$ the length of an optimal alignment ($\max(|s|,|s'|) \le \ell \le |s| + |s'|$), the edit error is $\mathrm{err}(s,s') = E(s,s')/\ell$. A **segmental duplication** (SD) within error threshold $\varepsilon$ is a pair of paralogous sequences $(G_i, G_j)$ of a genome with $\mathrm{err}(G_i, G_j) \le \varepsilon$, alignment length $\ell \ge 1000$, and overlap of at most $\varepsilon \cdot n$ bases between the copies. A **colinear $k$-mer matching** between $s$ and $s'$ is a set of index pairs $(i,j)$ such that the $k$-mers starting at $i$ in $s$ and at $j$ in $s'$ are equal and no two pairs cross ($i < i'$ iff $j < j'$); $s \circledast s'$ is the size of a maximum colinear matching, and the **ordered Jaccard index** is
+
 $$\hat J(s, s') = \frac{s \circledast s'}{|K(s) \cup K(s')|}.$$
 
 **Lemma.** Let $s, s'$ be paralogs that arose by copying a sequence with no repeated $k$-mers and then diverged by independent point mutations and small indels, and assume every $k$-mer they share was already shared before any mutation. Then
+
 $$\hat J(s,s') = J\big(K(s), K(s')\big) = \frac{|K(s) \cap K(s')|}{|K(s) \cup K(s')|}.$$
+
 Moreover $s \circledast s'$ can then be computed in linear time by scanning $s$ and $s'$ simultaneously.
 
 ## Expansion

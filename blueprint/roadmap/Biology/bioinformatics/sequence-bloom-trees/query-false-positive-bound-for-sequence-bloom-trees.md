@@ -3,9 +3,13 @@
 **Setting.** A node of a sequence Bloom tree reports a query string $q$ when at least a fraction $\theta \in (0,1)$ of the distinct $k$-mers of $q$ test positive in the node's Bloom filter $U$. Let $q$ contain $\ell$ distinct $k$-mers, none of which is truly in $U$, and let $\xi$ be the false-positive rate of $U$ (for example $\xi = (1/2)^{h^*}$ as in [Union Bloom filter size and optimal hash count](union-bloom-filter-size-and-optimal-hash-count.md)).
 
 **Theorem 2.** If the $\ell$ $k$-mers of $q$ are treated as independent filter queries, the probability that more than $\lfloor\theta\ell\rfloor$ of them are false positives in $U$ is
+
 $$1 - \sum_{i=0}^{\lfloor\theta\ell\rfloor}\binom{\ell}{i}\xi^i(1-\xi)^{\ell-i}.$$
+
 If moreover $\theta \ge \xi$, this probability is at most
+
 $$\exp\!\left(-\frac{\ell(\theta-\xi)^2}{2(1-\xi)}\right),$$
+
 so it is nearly $0$ when $\xi \ll \theta$ and $\ell$ is large.
 
 ## Depends on

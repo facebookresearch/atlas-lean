@@ -5,11 +5,15 @@
 **Lemma (transposition lower bound).** If $\alpha = \alpha_1 \cdots \alpha_m$ with every $\alpha_i$ a 2-cycle, then $m \ge n - f(\alpha)$.
 
 **Canonical order.** Some optimal scenario performs all fusions first, then all block-interchanges, then all fissions. If the bipartite graph $G(\alpha, I)$ joining a chromosome of $\alpha$ to a chromosome of $I$ whenever they share a gene is connected, an optimal scenario uses
+
 $$n_{fu} = \chi(\alpha) - 1, \qquad n_{fi} = \chi(I) - 1, \qquad n_{bi} = \frac{n - f(I\alpha^{-1}) - n_{fu} - n_{fi}}{2}$$
+
 fusions, fissions and block-interchanges respectively.
 
 **Theorem.** Let $G(\alpha, I)$ have $\omega$ connected components. Then
+
 $$d(\alpha, I) = \frac{n - f(I\alpha^{-1}) + \chi(\alpha) + \chi(I)}{2} - \omega,$$
+
 and an optimal scenario in canonical order can be computed in $O(n^2)$ time.
 
 ## Expansion

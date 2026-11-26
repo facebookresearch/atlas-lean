@@ -3,12 +3,17 @@
 Use the generative model of [Variational free energy of a POMDP generative model](variational-free-energy-of-a-pomdp-generative-model.md). Fix a future time $\tau > t$, let $P(s_\tau, A)$ be the preferred (target) distribution over final states and parameters specified by the generative model, and let $Q = Q(o_\tau, s_\tau, A, \pi) \approx P(o_\tau, s_\tau, A, \pi \mid o_{1:t})$ be the predictive approximate posterior, in which policies and outcomes are conditionally independent given $(s_\tau, A)$.
 
 **Expected free energy.** The posterior over policies is
+
 $$Q(\pi) = \sigma(-G(\pi)), \qquad G(\pi) = \underbrace{D_{KL}[Q(s_\tau,A\mid\pi)\,\|\,P(s_\tau,A)]}_{\text{risk}} \;\underbrace{-\;\mathbb{E}_{Q(s_\tau,A\mid\pi)P(o_\tau\mid s_\tau,A)}[\log P(o_\tau\mid s_\tau,A)]}_{\text{ambiguity}},$$
+
 where $\sigma$ is the softmax over $\Pi$; the ambiguity term is the expected entropy of outcomes given states, $\mathbb{E}_{Q(s_\tau,A\mid\pi)}H[P(o_\tau\mid s_\tau,A)]$.
 
 **Lemma 1 (steady state).** Suppose $D_{KL}[Q(s_\tau,A)\,\|\,P(s_\tau,A)] < \infty$. For $\beta \ge 0$ let
+
 $$G(\pi;\beta) = D_{KL}[Q(s_\tau,A\mid\pi)\,\|\,P(s_\tau,A)] - \mathbb{E}_{Q(o_\tau,s_\tau,A\mid\pi)}[\beta\log P(o_\tau\mid s_\tau,A)],$$
+
 with $\beta = \mathbb{E}_Q[\log Q(\pi\mid s_\tau,A)] \,/\, \mathbb{E}_Q[\log P(o_\tau\mid s_\tau,A)]$. Then the predicted distribution reaches the target, $Q(s_\tau,A) = P(s_\tau,A)$, if and only if
+
 $$\mathbb{E}_Q[-\log Q(\pi)] = \mathbb{E}_Q[G(\pi;\beta)].$$
 
 **Corollary 2.** Under the same finiteness assumption, each softmax posterior $Q(\pi) = \sigma(-G(\pi;\beta))$ with $\beta \ge 0$ describes a system that reaches a steady-state distribution; $\beta = 1$ gives the expected free energy $G(\pi)$ above, and $\beta = 0$ gives KL (risk-sensitive) control, $G(\pi;0) = D_{KL}[Q(s_\tau,A\mid\pi)\|P(s_\tau,A)]$.

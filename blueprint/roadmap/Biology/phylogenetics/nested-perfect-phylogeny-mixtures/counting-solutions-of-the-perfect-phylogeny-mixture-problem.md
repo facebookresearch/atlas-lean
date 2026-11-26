@@ -9,6 +9,7 @@ Let $F = (f_{p,c}) \in [0,1]^{m \times n}$ give the frequency of mutation $c \in
 3. $G_F$ is acyclic iff $F$ has no repeated columns; then every spanning arborescence is rooted at the unique source $r$, the founder mutation with $f_{p,r} \ge f_{p,c}$ for all $p, c$.
 
 **Theorem (upper bound).** If $F$ has no repeated columns, the number of PPM solutions is at most
+
 $$\prod_{c \ne r} \deg^{\mathrm{in}}_{G_F}(c).$$
 
 **Theorem (hardness).** Counting PPM solutions (#PPM) is #P-complete, even for $m = 2$ samples.

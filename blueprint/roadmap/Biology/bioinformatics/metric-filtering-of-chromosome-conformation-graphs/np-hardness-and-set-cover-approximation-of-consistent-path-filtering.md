@@ -1,7 +1,9 @@
 # NP-hardness and set-cover approximation of consistent path filtering
 
 **Problem (Consistent-$k$-Paths).** Given an integer $k \ge 2$ and a graph $G = (V,E)$ whose edges carry a nonnegative length $d(e)$ (an inferred spatial distance) and a positive reward $r(e)$ (a confidence), find $S \subseteq E$ maximizing $R(S) = \sum_{e\in S} r(e)$ such that every $e \in S$ is $k$-consistent: for every path $P$ of at most $k$ edges of $S$ joining the endpoints of $e$,
+
 $$\sum_{e'\in P} d(e') \ \ge\ d(e). \tag{1}$$
+
 The case $k = 2$ (only triangles must satisfy the triangle inequality) is ConsT; the case $k = |V| - 1$ (every path) is ConsP.
 
 **Theorem.** Consistent-$k$-Paths is NP-hard for every $k \ge 2$, and remains NP-hard when all rewards are $1$.

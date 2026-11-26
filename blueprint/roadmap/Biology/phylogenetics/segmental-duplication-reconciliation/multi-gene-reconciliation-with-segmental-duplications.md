@@ -3,7 +3,9 @@
 **Setting.** Let $S$ be a rooted binary species tree and $\mathcal G$ a forest of rooted binary gene trees whose leaves are labelled by species. A reconciliation $\alpha$ maps every gene node $u$ to a species node $\alpha_r(u)$ and an event $\alpha_e(u) \in \{S, D, C\}$ (speciation, duplication, contemporary leaf) such that leaves map to their species, a speciation $u$ with children $u_1, u_2$ has $\alpha_r(u) = \mathrm{LCA}_S(\alpha_r(u_1), \alpha_r(u_2))$ with $\alpha_r(u_1), \alpha_r(u_2)$ incomparable, and a duplication satisfies $\alpha_r(u) \ge \alpha_r(u_1), \alpha_r(u_2)$ (evolution cannot go back in time). The LCA mapping $\mu$ is the reconciliation mapping each node as low as possible. Let $l(\alpha)$ be the number of gene losses implied by $\alpha$.
 
 **Segmental duplication count.** For $s \in V(S)$ let $G[\alpha, s]$ be the forest induced by the duplications mapped to $s$. Duplications in one segmental event must be pairwise incomparable, and the minimum number of segmental events explaining them is the minimum number of antichains covering $G[\alpha,s]$, which equals its height $h_\alpha(s)$. Define $\hat d(\alpha) = \sum_{s} h_\alpha(s)$ and, for costs $\delta$ (duplication) and $\lambda$ (loss),
+
 $$\mathrm{cost}_{SD}(\mathcal G, S, \alpha) = \delta\, \hat d(\alpha) + \lambda\, l(\alpha).$$
+
 The problem MPRST-SD asks for a reconciliation minimizing this cost.
 
 **Theorem.**

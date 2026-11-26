@@ -3,7 +3,9 @@
 **Social balance.** Let $X(t) \in \mathbb R^{n\times n}$ hold reputations on a complete graph, $X_{ij} > 0$ meaning $i$ regards $j$ as a friend and $X_{ij} < 0$ as a foe. The network is **balanced** if, after relabelling, the sign pattern of $X$ is $\begin{pmatrix} + & - \\ - & + \end{pmatrix}$ in block form (or all positive): equivalently, every triad is balanced and the individuals split into at most two factions. A rank-one matrix $ww^{\mathsf T}$ with $w$ having no zero entries is balanced, with factions given by the signs of $w$.
 
 **Two gossip models.**
+
 $$\text{(A)}\quad \dot X = X^2, \qquad \dot X_{ij} = \sum_k X_{ik}X_{kj}; \qquad\qquad \text{(B)}\quad \dot X = XX^{\mathsf T}, \qquad \dot X_{ij} = \sum_k X_{ik}X_{jk}.$$
+
 In (A) $i$ updates its view of $j$ by asking every $k$ what $k$ thinks of $j$; in (B) $i$ asks $j$ what $j$ thinks of everyone and compares it with its own views.
 
 **Theorem.**

@@ -7,8 +7,11 @@
 **Compound Poisson process.** Let a carrier Poisson process have rate $\nu$. At each carrier event, an amplitude $a \in \{1,\dots,N\}$ is drawn independently from an amplitude distribution $f_A$, and a spike is inserted simultaneously into $a$ of the $N$ processes $x_1(t),\dots,x_N(t)$; the population process is $z(t) = \sum_i x_i(t)$. Write $\mu_m = \sum_{a} a^m f_A(a)$ for the $m$-th moment of $f_A$.
 
 **Theorem 2.** For a CPP with amplitude distribution $f_A$ and carrier rate $\nu$, and the counts $X_i$ obtained with bin width $h$,
+
 $$\kappa_m[Z] = \mu_m\,\nu\,h \qquad (m \ge 1).$$
+
 If $\xi \le N$ is the maximal correlation order, i.e. $f_A(a) = 0$ for $a > \xi$, and $\nu_a = \nu f_A(a)$ is the rate of events of amplitude $a$, then
+
 $$\kappa_m[Z] = \sum_{a=1}^{\xi} a^m\,\nu_a\,h .$$
 
 ## Expansion

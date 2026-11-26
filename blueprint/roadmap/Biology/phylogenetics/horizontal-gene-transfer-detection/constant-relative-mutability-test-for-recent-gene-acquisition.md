@@ -5,12 +5,17 @@
 **Observation.** Under CRM, the expected distance for $g'$ between two sequences is $\delta_{g'} = \mathrm{corr}(h_g)/\rho$.
 
 **Lemma.** If $h_{g'} = \mathrm{corr}^{-1}(\delta_{g'})$ is the expected Hamming distance and $\hat h_{g'}$ the observed one over $n$ sites, then
+
 $$\Pr\big(|h_{g'} - \hat h_{g'}| > \varepsilon\big) \le 2e^{-2n\varepsilon^2}.$$
 
 **Theorem.** Let $g$ (length $n$) be suspected of transfer between strains $S_1, S_2$; let $w$ be a witness gene present in $S_1, S_2$ and in two reference organisms $R_1, R_2$ that also carry $g$. With observed Hamming distances $\hat h_g(R), \hat h_w(R), \hat h_w(S)$, set
+
 $$d_g(S) = \frac{\mathrm{corr}(\hat h_g(R))}{\mathrm{corr}(\hat h_w(R))}\,\mathrm{corr}(\hat h_w(S)).$$
+
 Under vertical inheritance with CRM,
+
 $$\Pr\big(|\hat h_g(S) - \mathrm{corr}^{-1}(d_g(S))| > \varepsilon\big) \le 2e^{-2n\varepsilon^2},$$
+
 so vertical descent of $g$ is rejected at level $\delta_r$ when $|\hat h_g(S) - \mathrm{corr}^{-1}(d_g(S))| > \sqrt{\ln(2/\delta_r)/(2n)}$.
 
 ## Depends on

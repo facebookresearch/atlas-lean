@@ -3,13 +3,21 @@
 **Model.** Time is measured from disease onset at age $T$. The primary tumor size is $\Phi(t) = \Phi_0(t)$ for $0 \le t \le V - T$ and $\Phi(t) = \Phi_1(t-(V-T))\,\Phi_0(V-T)$ afterwards, where treatment starts at age $V$, $\Phi_0$ is continuous, strictly increasing with $\Phi_0(0) = 1$, and $\Phi_1 \equiv 0$ for a resected, non-recurrent primary; observing size $S$ at age $V$ gives $T = V - \varphi(S)$ with $\varphi = \Phi_0^{-1}$. Metastases are shed by a Poisson process with rate $\mu(t) = \alpha\,\Phi(t)^\theta$ ($\alpha > 0$, $\theta \ge 0$), each founds a viable metastasis in a given site independently with probability $q$, and after an i.i.d. latency with density $f$ and distribution function $F$ it starts growing from one cell. A metastasis of age $y$ has size $\Psi(y) = \Psi_1(y)$ for $0 \le y \le W - V$ and $\Psi(y) = \Psi_0(y - (W-V))\,\Psi_1(W-V)$ for $W - V < y \le W - T$, where $W > V$ is the age at observation and $\Psi_0,\Psi_1$ are strictly increasing, differentiable, with $\Psi_0(0) = \Psi_1(0) = 1$; let $\psi = \Psi^{-1}$, $M = \Psi_0(V-T)\,\Psi_1(W-V)$, and let $m$ be the detection threshold. Metastases do not seed further metastases.
 
 **Theorem.** For a primary tumor resected at age $V$, the ordered sizes $X_1 < \cdots < X_n$ of the metastases detectable in a given site at age $W$, conditional on their number $n$, are distributed as the order statistics of an i.i.d. sample of size $n$ from the density
+
 $$p(x) = \omega\big(W - T - \psi(x)\big)\,\psi'(x),\qquad m \le x \le M,$$
+
 and $p(x) = 0$ otherwise, where for $0 \le t \le W - T - \psi(m)$
+
 $$\omega(t) = \frac{\int_0^{\min\{t,\,V-T\}} \Phi(s)^\theta\, f(t-s)\,ds}{\int_0^{\min\{W-T-\psi(m),\,V-T\}} \Phi(s)^\theta\, F\big(W-T-\psi(m)-s\big)\,ds}.$$
+
 The law is free of $\alpha$, $q$ and $n$. For $\theta = 0$ it does not depend on primary tumor growth:
+
 $$\omega(t) = \frac{F(t) - F(\max\{0,\,t - V + T\})}{\int_0^{\min\{W-T-\psi(m),\,V-T\}} F\big(W-T-\psi(m)-s\big)\,ds}.$$
+
 The total number of viable metastases in the site at age $t$ is Poisson with mean
+
 $$E(t) = q\alpha\int_0^{\min\{t-T,\,V\}} \Phi(s)^\theta\, F(W-T-s)\,ds,$$
+
 so the probability of having at least one is $1 - e^{-E(t)}$.
 
 ## Expansion

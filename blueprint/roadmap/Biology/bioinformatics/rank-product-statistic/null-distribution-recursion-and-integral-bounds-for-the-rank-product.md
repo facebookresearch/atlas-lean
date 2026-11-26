@@ -1,15 +1,21 @@
 # Null distribution recursion and integral bounds for the rank product
 
 **Setting.** $n$ molecules are profiled in $k$ independent (paired) experiments. Under the null hypothesis that a molecule is not differentially expressed, its rank $r_i$ in experiment $i$ is uniform on $\{1,\dots,n\}$, independently across experiments, and its **rank product** is $r_1r_2\cdots r_k$. Define
+
 $$G_k(\rho) = \sum_{r_1=1}^n\cdots\sum_{r_k=1}^n \Theta\big(\rho - r_1r_2\cdots r_k\big), \qquad \Theta(x) = \mathbf 1[x \ge 0],$$
+
 so that $G_k(\rho)/n^k$ is the null probability that the rank product is at most $\rho$ (the $p$-value of an observed rank product $\rho$). Then $G_k(\rho) = 0$ for $\rho < 1$ and $G_k(\rho) = n^k$ for $\rho \ge n^k$.
 
 **Recursion.** Splitting off the first rank,
+
 $$G_k(\rho) = \sum_{r_1=1}^n G_{k-1}(\rho/r_1) = G_{k-1}(\rho) + \sum_{r_1=2}^{\min(\rho,n)} G_{k-1}(\rho/r_1).$$
 
 **Theorem (integral bounds).** Let $\overline G_k$ and $\underline G_k$ satisfy
+
 $$\overline G_k(\rho) = \overline G_{k-1}(\rho) + \int_1^{\min(\rho,n)}\overline G_{k-1}(\rho/r)\,dr, \qquad \underline G_k(\rho) = \underline G_{k-1}\big(\max(1,\rho/n)\big) + \int_1^{\min(\rho,n)} \underline G_{k-1}(\rho/r)\,dr,$$
+
 with $\overline G_0(\rho) = \underline G_0(\rho) = G_0(\rho) = \Theta(\rho - 1)$. Then for every $k \ge 0$ and $\rho \le n^k$,
+
 $$\underline G_k(\rho) \le G_k(\rho) \le \overline G_k(\rho).$$
 
 ## Expansion

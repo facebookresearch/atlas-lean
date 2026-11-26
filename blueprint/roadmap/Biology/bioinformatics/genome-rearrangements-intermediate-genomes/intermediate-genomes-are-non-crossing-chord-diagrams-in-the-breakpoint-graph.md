@@ -5,7 +5,9 @@
 **Theorem.** A genome $M$ is an intermediate genome of $A$ and $B$ in an independent component scenario if and only if every edge (adjacency) of $M$ is a chord inside an $AB$-cycle of $BP(A,B)$, no two such chords cross, and the edges of $M$ cover all vertices of $BP(A,B)$.
 
 **Counting.** An $AB$-cycle with $2n$ vertices admits exactly the Catalan number $C_n = \frac{1}{n+1}\binom{2n}{n}$ perfect non-crossing chord diagrams, so the number of such intermediate genomes is
+
 $$IG(A,B) = \prod_{K \in BP(A,B)} C_{|K|/2},$$
+
 the product over the $AB$-cycles $K$ with $|K|$ vertices.
 
 ## Depends on

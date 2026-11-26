@@ -1,7 +1,9 @@
 # Breakpoint median and halving by maximum-weight perfect matching
 
 **Setting.** A gene $g$ has two extremities, a tail $g^t$ and a head $g^h$. A genome $\Pi$ on a gene set of size $n$ is a set of adjacencies (unordered pairs of extremities) in which every extremity lies in at most one adjacency; an extremity in no adjacency is a telomere. Linear and circular chromosomes may both occur (a *mixed* multichromosomal genome). For genomes $\Pi,\Gamma$ on the same genes let $a(\Pi,\Gamma)$ be the number of common adjacencies and $e(\Pi,\Gamma)$ the number of common telomeres. The multichromosomal breakpoint distance is
+
 $$d_{BP}(\Pi,\Gamma) = n - a(\Pi,\Gamma) - \tfrac12\, e(\Pi,\Gamma).$$
+
 For an all-duplicates genome $\Delta$ (two copies $x_1,x_2$ of every extremity) and an ordinary genome $\Pi$, the double distance is $d_{BP}(\Delta,\Pi) = \min d_{BP}(\Delta,\Pi\oplus\Pi)$ over doubled genomes $\Pi\oplus\Pi$; it equals $2n - a(\Pi,\Delta) - \tfrac12 e(\Pi,\Delta)$, where $a(\Pi,\Delta)$ counts, over adjacencies $xy$ of $\Pi$, the adjacencies among $x_1y_1,x_1y_2,x_2y_1,x_2y_2$ in $\Delta$, and $e(\Pi,\Delta)$ counts, over telomeres $x$ of $\Pi$, the telomeres among $x_1,x_2$ in $\Delta$.
 
 **Theorem.** For mixed (and for circular) multichromosomal genomes:
@@ -10,7 +12,9 @@ For an all-duplicates genome $\Delta$ (two copies $x_1,x_2$ of every extremity) 
 3. **Guided halving.** Given $\Delta$ and an ordinary genome $\Pi$, a genome $M$ minimizing $d_{BP}(\Delta,M) + d_{BP}(M,\Pi)$ can be found in polynomial time.
 
 **Construction.** Build a graph $G$ on all $2n$ gene extremities plus one extra vertex $t_x$ per extremity $x$. An edge $xy$ between extremities gets weight equal to the number of input adjacencies supporting it (for the median: genomes $\Pi_i$ containing $xy$; for halving: adjacencies of $\Delta$ among $x_1y_1,\dots,x_2y_2$; for guided halving: both). An edge $x t_x$ gets weight half the number of input telomeres supporting $x$, and every pair $t_x t_y$ is joined by a weight-$0$ edge. A genome $M$ corresponds to the perfect matching using $xy$ and $t_xt_y$ for each adjacency $xy$ of $M$ and $xt_x$ for each telomere $x$, and every perfect matching defines a genome this way. Its weight satisfies
+
 $$w(M) = 3n - s(M)\ \text{(median, guided halving)},\qquad w(M) = 2n - d_{BP}(\Delta,M)\ \text{(halving)},$$
+
 so a maximum-weight perfect matching is an optimal genome.
 
 ## Expansion

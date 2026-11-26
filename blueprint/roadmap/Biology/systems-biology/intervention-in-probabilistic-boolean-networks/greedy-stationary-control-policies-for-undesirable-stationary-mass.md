@@ -8,7 +8,9 @@
 - *Conservative SSD (CSSD):* starting from $P_0 = P$, at iteration $k$ choose among undecided states the one-row perturbation of $P_{k-1}$ with the largest decrease of undesirable mass, apply it only if the mass decreases, and update $\pi$ and $Z$ exactly; stop when no perturbation decreases the mass.
 
 **Theorem.** If CSSD performs $K$ iterations producing $P_0, P_1, \dots, P_K$, then
+
 $$\pi_U(P_K) \le \pi_U(P_{K-1}) \le \cdots \le \pi_U(P_0) = \pi_U,$$
+
 so the derived policy never increases the undesirable stationary mass. MFPT and SSD carry no such guarantee, because their independently chosen one-row changes interact.
 
 ## Depends on

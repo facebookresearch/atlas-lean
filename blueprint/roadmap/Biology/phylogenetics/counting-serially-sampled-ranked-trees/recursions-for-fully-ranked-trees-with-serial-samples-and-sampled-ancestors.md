@@ -1,14 +1,21 @@
 # Recursions for fully ranked trees with serial samples and sampled ancestors
 
 **Definitions.** A **ranked $X$-tree** is a rooted binary phylogenetic tree on leaf labels $X$ with a linear order (ranking) of its interior nodes compatible with ancestry; for $|X| = n$ there are
+
 $$R(n) = \frac{n!\,(n-1)!}{2^{n-1}} = \prod_{k=2}^n\binom k2$$
+
 of them. A **fully ranked (FR) tree** also ranks the leaves: a surjection $h$ from all nodes to $\{1,\dots,l\}$, monotone along ancestry, injective on interior nodes, with leaves allowed to share a rank (a sampling time). Fix sampling epochs $1,\dots,m$ (oldest to youngest) with $n_i$ labelled individuals sampled at epoch $i$, and let $F(n_1,\dots,n_m)$ count FR trees with this pre-ranking. A **fully ranked tree with sampled ancestors (FRS)** allows a sampled individual to be a degree-two node (a direct ancestor of later samples); $S(n_1,\dots,n_m)$ counts these.
 
 **Theorem.** $F(n) = S(n) = R(n)$ and, for $m \ge 2$,
+
 $$F(n_1,\dots,n_m) = \sum_{i=1}^{n_m}\frac{R(n_m)}{R(i)}\,F(n_1,\dots,n_{m-2},n_{m-1}+i),$$
+
 $$S(n_1,\dots,n_m) = \sum_{i=1}^{n_m}\sum_{j=0}^{\min(i,n_{m-1})}\binom ij\binom{n_{m-1}}{j}\frac{R(n_m)}{R(i)}\,S(n_1,\dots,n_{m-2},n_{m-1}+i-j).$$
+
 With $A^j(\alpha) = F(n_1,\dots,n_j+\alpha)/R(\alpha)$ the first recursion becomes
+
 $$A^j(0) = R(n_j)\sum_{i=1}^{n_j}A^{j-1}(i), \qquad A^j(\alpha+1) = \frac{(n_j+\alpha)(n_j+\alpha+1)}{\alpha(\alpha+1)}A^j(\alpha) + \frac{R(n_j+\alpha+1)}{R(\alpha+1)}A^{j-1}(n_j+\alpha+1),$$
+
 so $F(n_1,\dots,n_m)$ is computed in $O(mn)$ arithmetic steps, $n = \sum_in_i$.
 
 ## Depends on

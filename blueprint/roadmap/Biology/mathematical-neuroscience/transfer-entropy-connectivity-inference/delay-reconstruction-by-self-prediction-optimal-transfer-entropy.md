@@ -1,10 +1,13 @@
 # Delay reconstruction by self-prediction-optimal transfer entropy
 
 Let $(X_t)$ and $(Y_t)$ be jointly stationary discrete-time random processes admitting finite-dimensional state-space (delay-embedding) representations $\mathbf{X}_t^{d_x}$ and $\mathbf{Y}_t^{d_y}$, the state of each process being a sufficient statistic for its own future. Suppose $X$ drives $Y$ with a single interaction delay $\delta > 0$, so that $Y_t$ depends on $X$ only through $\mathbf{X}_{t-\delta}^{d_x}$ (beyond its own past state $\mathbf{Y}_{t-1}^{d_y}$). For a delay parameter $u$, the **self-prediction-optimal transfer entropy** is the conditional mutual information
+
 $$\mathrm{TE}_{\mathrm{SPO}}(X \to Y, t, u) = I\big(Y_t \,;\, \mathbf{X}_{t-u}^{d_x} \,\big|\, \mathbf{Y}_{t-1}^{d_y}\big),$$
+
 in which the target's past state is always taken immediately before the predicted sample (lag one), whatever the source lag $u$.
 
 **Theorem.** $\mathrm{TE}_{\mathrm{SPO}}(X\to Y,t,u)$ is maximal at $u = \delta$; this remains true when there is additional coupling from $Y$ back to $X$. Hence the interaction delay is recovered as
+
 $$\hat\delta = \arg\max_u \mathrm{TE}_{\mathrm{SPO}}(X \to Y, t, u).$$
 
 Conditioning instead on the target state at the same lag as the source, $I(Y_t ; \mathbf{X}_{t-u} \mid \mathbf{Y}_{t-u})$, agrees with $\mathrm{TE}_{\mathrm{SPO}}$ only at $u=1$ and does not in general peak at the true delay, because it mixes information storage in $Y$ with transfer from $X$.

@@ -1,9 +1,13 @@
 # Product of evaluation algebras
 
 **Definition 3 (product operation).** Let $M$ and $N$ be evaluation algebras over the same signature $\Sigma$. Their product $M \ast\!\ast\!\ast N$ has, for each $f$ in $\Sigma$,
+
 $$f_{M \ast\ast\ast N}((m_1, n_1), \dots, (m_k, n_k)) = \big(f_M(m_1, \dots, m_k), \ f_N(n_1, \dots, n_k)\big),$$
+
 and the objective function
+
 $$h_{M \ast\ast\ast N}(X) = [\, (l, r) \mid l \in L, \ r \leftarrow h_N[\, y \mid (l', y) \leftarrow X, \ l' = l \,] \,], \qquad L = h_M[\, x \mid (x, y) \leftarrow X \,],$$
+
 where $l \in L$ ranges over $L$ as a set (duplicates ignored) and $\leftarrow$ over lists. In words: optimize the first components with $h_M$, and for each optimal first value apply $h_N$ to the second components of the candidates attaining it.
 
 **Theorem 1.** (1) For any algebras $M$ and $N$ and answer list $x$, $(\mathrm{id}_M \ast\!\ast\!\ast \mathrm{id}_N)(x)$ is a permutation of $x$. (2) If $h_M$ and $h_N$ minimize with respect to orders $\le_M$ and $\le_N$, then $h_{M \ast\ast\ast N}$ minimizes with respect to the lexicographic order $(\le_M, \le_N)$. (3) If moreover both $M$ and $N$ satisfy Bellman's principle, so does $M \ast\!\ast\!\ast N$.

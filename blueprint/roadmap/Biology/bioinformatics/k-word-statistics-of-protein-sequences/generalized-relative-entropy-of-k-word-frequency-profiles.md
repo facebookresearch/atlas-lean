@@ -1,11 +1,15 @@
 # Generalized relative entropy of k-word frequency profiles
 
 **k-word profile.** For a sequence $s$ of length $m$ over an alphabet $\Omega$ (20 amino acids), let $w_{k,1},\dots,w_{k,n}$ ($n = |\Omega|^k$) enumerate all words of length $k$, and let $c(w)$ count the overlapping occurrences of $w$ found by a sliding window at positions $1,\dots,m-k+1$. The **$k$-word frequency vector** is
+
 $$F^s_k = \big(f(w_{k,1}),\dots,f(w_{k,n})\big), \qquad f(w_{k,t}) = \frac{c(w_{k,t})}{m-k+1},$$
+
 a probability vector on $\Omega^k$.
 
 **Generalized relative entropy.** For sequences $X, Y$ with profiles $f^X, f^Y$,
+
 $$\mathrm{gre}_k(X,Y) = \sum_{t=1}^n f(w^X_{k,t})\,\log_2\frac{2f(w^X_{k,t})}{f(w^X_{k,t}) + f(w^Y_{k,t})},$$
+
 with the convention $0\log 0 = 0$.
 
 **Proposition.**

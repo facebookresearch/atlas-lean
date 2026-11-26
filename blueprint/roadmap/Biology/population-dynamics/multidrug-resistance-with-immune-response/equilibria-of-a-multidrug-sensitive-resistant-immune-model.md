@@ -10,9 +10,11 @@ $$\begin{aligned}
 where $\beta_R = (1-c)\beta_S$ with fitness cost $0 < c < 1$, $\eta$ is the immune killing rate, $\alpha_i$ the rate at which antibiotic $i$ induces resistance, $d_i$ its killing rate of sensitive bacteria, $k$ the immune recruitment rate and $\mu_i$ the drug uptake rate. The region $\Omega = \{0 \le s, r;\ 0 \le b \le s + r \le 1;\ 0 \le a_i \le 1\}$ is positively invariant.
 
 Set
+
 $$A = \frac{\beta_S - \sum_i (\alpha_i + d_i)}{\beta_S + \eta},\qquad B = \frac{\beta_R}{\beta_R + \eta},\qquad C = \frac{\sum_i \alpha_i}{\beta_R + \eta}.$$
 
 **Equilibria.** In $\Omega$ the system always has $E_0 = (0,0,0,1,\dots,1)$, $E_1 = (0,1,0,1,\dots,1)$ and the resistant-only equilibrium $E_2 = (0, B, B, 1,\dots,1)$. When $A > B$ there is also the coexistence equilibrium
+
 $$E_3 = \Big(\frac{A(A-B)}{A - B + C},\ \frac{AC}{A-B+C},\ A,\ 1,\dots,1\Big).$$
 
 **Stability.** $E_0$ and $E_1$ are unstable. If $A < B$, $E_2$ is locally asymptotically stable, and in fact globally asymptotically stable in $\Omega$. If $A > B$, $E_3$ is locally asymptotically stable, and $E_2$ is unstable; the stability regions of $E_2$ and $E_3$ are disjoint.

@@ -1,13 +1,17 @@
 # Recovery translation invariance
 
 Let $F[\Phi, t] \in [0, 1]$ be the fraction of circulating current at time $t \ge 0$ after a flash producing $\Phi$ photoisomerizations at $t = 0$. The family $\{F[\Phi, \cdot]\}$ obeys **recovery translation invariance (RTI)** on an intensity range $[\Phi_0, \Phi_{\max}]$ if there are a time $t_0$ and a function $h$ such that
+
 $$F[s\Phi_0, t] = F[\Phi_0, t - h(s)] \qquad \text{for all } s \ge 1 \text{ with } s\Phi_0 \le \Phi_{\max},\ t \ge t_0,$$
+
 together with complete eventual recovery ($F[\Phi, t] \to 1$ as $t \to \infty$) and $F \ge 0$. In words, scaling a saturating flash by $s$ shifts the recovery to the right by $h(s)$ without changing its shape.
 
 **Lemma.** If the family obeys RTI, then $h(s) = \tau \ln s$ for a constant $\tau$ with units of time.
 
 **Theorem.** A family of recovery traces obeys RTI if and only if
+
 $$F[\Phi, t] = H\big(\Phi\, e^{-t/\tau}\big), \qquad \Phi_0 \le \Phi \le \Phi_{\max},\ t \ge t_0,$$
+
 for a saturation function $H$ with $H(0) = 1$ and $H(x) \to 0$ as $x \to \infty$.
 
 ## Expansion

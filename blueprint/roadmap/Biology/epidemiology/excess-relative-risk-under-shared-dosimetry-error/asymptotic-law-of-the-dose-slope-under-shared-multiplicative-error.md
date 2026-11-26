@@ -4,12 +4,17 @@
 
 **Theorem.**
 1. If $\sigma_M^2 = 0$, $E(Z^2) < \infty$ and $\max_i Z_i = o_p(n^{1/2})$, then
+
 $$\hat b_n \approx_d b\,\epsilon_{SM} + N, \qquad N \sim \mathcal N\Big(0, \frac{\sigma^2 + \sigma_A^2}{n\operatorname{Var}(Z)}\Big),\; N \perp \epsilon_{SM}.$$
+
 2. If $\sigma_M^2 > 0$, $E(Z^4) < \infty$ and $\max_i Z_i^2 = o_p(n^{1/2})$, then
+
 $$\hat b_n \approx_d b\,\epsilon_{SM}N' + N, \qquad N' \sim \mathcal N\Big(1, \frac{E[Z^2(Z - EZ)^2]}{n\operatorname{Var}(Z)^2}\sigma_M^2\Big),$$
+
 with $N$ as above and $\epsilon_{SM}, N', N$ independent.
 
 **Inference rule ($bL+N$).** Approximate the law of the dose-effect estimate in an ERR model by $b_1L + N$, with $L$ lognormal, $EL = 1$, $N$ normal, $EN = 0$, and match $\operatorname{Var}(\hat b_1) = b_1^2\operatorname{Var}(L) + \operatorname{Var}(N)$ to the SUMA-corrected variance. The confidence limits $b_{1,l}, b_{1,u}$ solve
+
 $$\Pr(b_{1,l}L + N \ge \hat b_1) = \alpha/2, \qquad \Pr(b_{1,u}L + N \le \hat b_1) = \alpha/2.$$
 
 ## Depends on

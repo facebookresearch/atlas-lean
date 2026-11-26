@@ -7,8 +7,11 @@
 **Complexity.** Given the generalized suffix tree, $U_{s_1, s_2}$ can be computed in $O((m + n) \log \min\{m, n\} \log\log \min\{m, n\})$ time and $O(m + n)$ space, because each position is re-examined at most $O(\log \min\{m, n\})$ times and each re-examination uses a weighted-ancestor query.
 
 **Distance-like measure.** With $h_w^{s_1}$ the number of untied occurrences of $w$ in $s_1$ and $|s_1| = n$,
+
 $$UA(s_1, s_2) = \frac{1}{n} \sum_{w \in U_{s_1, s_2}} h_w^{s_1} \frac{|w|(|w| + 1)}{2},$$
+
 $$\overline{UA}(s_1, s_2) = \frac{\log_4 |s_2|}{UA(s_1, s_2)} - \frac{2 \log_4 |s_1|}{|s_1| + 1}, \qquad d_{UA}(s_1, s_2) = \frac{\overline{UA}(s_1, s_2) + \overline{UA}(s_2, s_1)}{2}.$$
+
 The correction term uses $UA(s_1, s_1) = (|s_1| + 1)/2$, so $\overline{UA}(s_1, s_1) = 0$ and $d_{UA}(s, s) = 0$; $d_{UA}$ is symmetric and grows as the sequences diverge. Inversions and complements are handled by matching $s_1$ against the concatenation of $s_2$ with its reverse and its complement.
 
 ## Depends on

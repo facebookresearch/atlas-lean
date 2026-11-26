@@ -7,7 +7,9 @@
 Since $I_{s_1, s_2}$ is a subset of the maximal common subwords, $|I_{s_1, s_2}| \le m + n$, and $I_{s_1, s_2}$ can be extracted from the generalized suffix tree of $s_1$ and $s_2$ in time and space linear in $m + n$.
 
 **Proposition 1.** The matching statistics $l_{s_1}(i)$ can be computed by combining all and only the irredundant common subwords of $s_1$ and $s_2$: superimposing, on every occurrence $k$ of every $w \in I_{s_1, s_2}$ in $s_1$, the score vector $l_w[j] = |w| - j + 1$, one has
+
 $$l_{s_1}(i) = \max\{ l_w[j] : w \in I_{s_1, s_2}, \ k + j = i, \ k \text{ an occurrence of } w \text{ in } s_1 \},$$
+
 and no irredundant subword can be omitted.
 
 ## Expansion

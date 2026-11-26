@@ -1,17 +1,23 @@
 # Kolmogorov–Smirnov test on Betti curves of a graph filtration
 
 Let $\mathcal X = (V, w)$ be a weighted network on $p$ nodes with distinct positive edge weights $w_{ij}$ (for brain networks, $w_{ij} = 1 - c_{ij}$ or $\sqrt{1 - c_{ij}}$ for a correlation $c_{ij}$). For $\epsilon \ge 0$ the **binary network** $\mathcal X_\epsilon$ keeps the edges with $w_{ij} > \epsilon$. With sorted weights $0 = w_{(0)} < w_{(1)} < \cdots < w_{(q)}$, $q \le (p^2 - p)/2$, the **graph filtration** is the nested sequence
+
 $$\mathcal X_0 \supset \mathcal X_{w_{(1)}} \supset \cdots \supset \mathcal X_{w_{(q)}},$$
+
 from the complete graph down to the bare node set. Let $\beta_0(\mathcal X_\epsilon)$ be the number of connected components and $\beta_1(\mathcal X_\epsilon)$ the number of independent cycles.
 
 **Monotonicity.** Along the graph filtration $\beta_0$ is nondecreasing and $\beta_1$ is nonincreasing in $\epsilon$, and at each level $\beta_1 = \beta_0 - p + q_\epsilon$, where $q_\epsilon$ is the number of edges of $\mathcal X_\epsilon$ (Euler characteristic of a graph). Both curves are step functions that change only at the edge weights, so $q + 1$ levels determine them.
 
 **KS distance.** For networks $\mathcal X^1, \mathcal X^2$ on the same nodes and $j \in \{0, 1\}$,
+
 $$D_{KS}(\mathcal X^1, \mathcal X^2) = \sup_{\epsilon \ge 0}\big|\beta_j(\mathcal X^1_\epsilon) - \beta_j(\mathcal X^2_\epsilon)\big|,$$
+
 which equals its discretization $D_q = \max_{1 \le i \le q}|\beta_j(\mathcal X^1_{\epsilon_i}) - \beta_j(\mathcal X^2_{\epsilon_i})|$ when the $\epsilon_i$ run through all sorted edge weights.
 
 **Null distribution.** Under the null hypothesis of no topological difference, the law of $D_q$ is computed exactly by combinatorial lattice-path counting (the two monotone step curves interleave like two empirical distribution functions), and asymptotically
+
 $$\lim_{q \to \infty}\mathbb P\Big(D_q / \sqrt{2q} \ge d\Big) = 2\sum_{i=1}^\infty (-1)^{i-1} e^{-2 i^2 d^2},$$
+
 giving $p \approx 2e^{-d_o^2} - 2e^{-8 d_o^2} + 2e^{-18 d_o^2} - \cdots$ for the observed normalized statistic $d_o$.
 
 ## Expansion

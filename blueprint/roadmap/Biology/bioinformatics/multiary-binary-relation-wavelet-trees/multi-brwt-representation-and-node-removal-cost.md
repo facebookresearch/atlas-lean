@@ -5,11 +5,15 @@
 **BRWT.** The binary relation wavelet tree stores at its root the index vector $I$ with $I_i = \bigvee_j A_{ij}$ (row-wise OR of all columns), deletes the all-zero rows, splits the remaining matrix column-wise into two submatrices passed to the two children, and recurses until a node holds a single column. Only the index vectors are stored; a matrix entry is recovered by descending the tree and translating row indices by rank queries on the index vectors.
 
 **Multi-BRWT.** The generalization allows any arity and any assignment of columns to children (a rooted tree whose $|L|$ leaves are the columns). With $\mathrm{Size}(I)$ the size in bits of a compressed bit vector (for instance $\mathrm{Size}(I) \approx \lceil \log_2 \binom{n}{m} \rceil$ for an RRR vector of length $n$ with $m$ set bits), the size of a tree $T$ with node set $N$ is
+
 $$\mathrm{Size}(T) = \sum_{i \in N} \mathrm{Size}(I_i),$$
+
 and the Multi-BRWT problem asks for $T^* = \arg\min_T \mathrm{Size}(T)$; restricted to binary trees with uncompressed index vectors it is NP-hard.
 
 **Node removal cost.** Suppose $\mathrm{Size}$ depends only on the length and the number of set bits of a vector, $\mathrm{Size}(I) = \mathrm{Size}(n, m)$. Removing an internal node $v$ (index vector of length $n_v$ with $m_v$ set bits) and reattaching its children $c$ (vectors of length $n_c$ with $m_c$ set bits) to the parent of $v$ replaces each child vector by one of length $n_v$ with $m_c$ set bits, so the change in total size is
+
 $$\mathrm{CostRem}(v) = \sum_{c \in \mathrm{Children}(v)} \mathrm{Size}(n_v, m_c) - \Big( \mathrm{Size}(n_v, m_v) + \sum_{c \in \mathrm{Children}(v)} \mathrm{Size}(n_c, m_c) \Big),$$
+
 and $v$ is removed when this cost is negative. A greedy construction first builds a binary tree by repeatedly matching the pair of (aggregated) columns with the largest intersection, then prunes internal nodes bottom-up with this criterion.
 
 ## Expansion

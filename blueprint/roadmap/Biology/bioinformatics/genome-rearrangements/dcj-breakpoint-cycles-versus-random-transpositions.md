@@ -3,7 +3,9 @@
 Use the mechanistic DCJ model of expected breakpoints after random DCJ operations: a genome is a perfect matching of $n$ adjacencies (observed, telomeric and fictional), evolving by uniformly random DCJs. The **breakpoint graph** of $G$ and $G_k$ is the union of their adjacencies, a disjoint union of alternating cycles; the **real** breakpoint graph uses the telomere correspondence inherited from the evolutionary process, and the **observed** one closes the paths of observed adjacencies with telomeric and fictional elements so as to maximize the number of cycles; the two cycle counts differ by $o(n)$.
 
 **Theorem.** Let $BCy_k$ be the number of cycles of the breakpoint graph between $G$ and $G_k$ obtained by $k$ random DCJs, and $Cy_k$ the number of cycles of a permutation of $n$ elements obtained from the identity by $k$ uniformly random transpositions. Then
+
 $$\mathbb E[BCy_k] = \mathbb E[Cy_k] + o(n),$$
+
 for the real and the observed breakpoint graph alike. More precisely $\mathbb E[BCy_k] \le \mathbb E[Cy_k] \le \mathbb E[BCy_k] + O(k/n)$ in the relevant range, and only $k = O(n \log n)$ is informative before saturation, so the error is $o(n)$.
 
 Combined with Berestycki and Durrett's comparison of $\mathbb E[Cy_k]$ with the expected number $\mathbb E[Co_k]$ of components after adding $k$ random edges to $n$ isolated vertices (equal up to a lower-order term), the exact Eriksen–Hultman formula for $\mathbb E[Cy_k]$ and random-graph tree counts both estimate DCJ cycle counts, hence DCJ distances, with error $o(n)$.

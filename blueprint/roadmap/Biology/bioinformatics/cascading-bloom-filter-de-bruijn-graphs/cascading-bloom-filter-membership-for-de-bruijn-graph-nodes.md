@@ -5,7 +5,9 @@ Let $T_0$ be the set of $k$-mers (nodes) of a de Bruijn graph, $|T_0| = N$, and 
 **Lemma (correctness).** For a queried $k$-mer $u$, let $i$ be the smallest index with $u \notin B_{i+1}$ ($i = 0$ if $u \notin B_1$). Then $u \in T_0$ if $i$ is odd and $u \notin T_0$ if $i$ is even. If the cascade is truncated after $t$ filters and $u$ passes all of them, membership is decided by an explicit lookup in $T_t$.
 
 **Memory.** If each filter uses $r$ bits per stored element and has false-positive rate $c^r$ with $c \approx 0.6185$ (optimal number of hash functions), and each node has on average six non-node extensions, the expected number of bits per $k$-mer for an infinite cascade is
+
 $$r + 6 r c^r + r c^r + 6 r c^{2r} + \cdots = \frac{(1 + 6c^r)\, r}{1 - c^r},$$
+
 minimized at $r \approx 5.464$, giving about $8.45$ bits per $k$-mer, independent of $k$. Allowing a different ratio $r_i$ per filter lowers the optimum to about $7.93$ bits (at $r_1 \approx 4.41$, $r_i \approx 1.44$ for $i > 1$).
 
 ## Depends on

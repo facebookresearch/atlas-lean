@@ -1,13 +1,17 @@
 # Quartet summary methods can return a tree not displayed by a level-1 network
 
 **Network multispecies coalescent.** In a phylogenetic network with a single $n$-cycle and hybridization parameter $\gamma$, the distribution of gene trees is the $(\gamma, 1-\gamma)$ mixture of the multispecies-coalescent distributions on the two displayed trees obtained by deleting one hybrid edge. For the four-taxon 4-cycle network with displayed quartet trees $AB|CD$ (weight $1-\gamma$, internal length $x$) and $AD|BC$ (weight $\gamma$, internal length $y$),
+
 $$P(AB|CD) = (1-\gamma)\big(1 - \tfrac23 e^{-x}\big) + \gamma\,\tfrac13 e^{-y},\quad P(AD|BC) = (1-\gamma)\,\tfrac13 e^{-x} + \gamma\big(1 - \tfrac23 e^{-y}\big),$$
+
 $$P(AC|BD) = (1-\gamma)\,\tfrac13 e^{-x} + \gamma\,\tfrac13 e^{-y},\qquad P(AB|CD) - P(AD|BC) = (1-\gamma)(1 - e^{-x}) - \gamma(1 - e^{-y}).$$
 
 **Expected quartet score.** A quartet summary method (ASTRAL) seeks the unrooted tree $T$ maximizing the number of gene-tree quartets it agrees with; with infinitely many error-free gene trees this is the expected score $A(T) = \sum_{q \in \mathcal{Q}(T)} P(q)$.
 
 **Theorem.** Let $N$ be the semidirected five-taxon network whose 5-cycle consists of a hybrid node with child $C$, a parent $g$ adjacent to leaf $B$ and a parent $j$ adjacent to leaf $D$, and the path $g \overset{e_4}{-} a \overset{e_3}{-} e \overset{e_2}{-} j$ through the attachment points $a$ of leaf $A$ and $e$ of leaf $E$. The hybrid edge from $g$ has inheritance probability $\gamma$ and the one from $j$ has $1-\gamma$, so the displayed trees are $T_1 = ((B,C),A,(D,E))$ and $T_2 = ((A,B),E,(C,D))$. Put $y_i = e^{-e_i}$. If
+
 $$(1 - y_2) > \frac{\gamma}{1-\gamma}\,(1 - y_3 y_4) \quad\text{and}\quad (1 - y_3) < \min\Big(\frac{\gamma}{2-\gamma}(1 - y_4),\ \frac{1-\gamma}{1+\gamma}(1 - y_2)\Big),$$
+
 then under the network multispecies coalescent the tree $S = (((A,E),B),C,D)$, which is not displayed by $N$, has strictly larger expected quartet score than both $T_1$ and $T_2$. By symmetry, the mirror conditions make $S' = (((A,E),D),C,B)$ beat both displayed trees. Five-cycle networks are not quartet-anomalous, so this happens even though every quartet's most probable gene tree is displayed by $N$; the result extends to any network containing a $k$-cycle with $k \ge 5$.
 
 ## Depends on

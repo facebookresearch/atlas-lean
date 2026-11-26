@@ -3,10 +3,13 @@
 Let $X$ be a finite set and $\binom{X}{2}$ its 2-subsets. A **height function** on $X$ is any map $h: \binom{X}{2} \to \mathbb N$.
 
 **Trees.** For a rooted tree $T$ with root $r$ and leaf set $X$, let $c_{ij}$ be the lowest common ancestor of leaves $i, j$, $d_T$ the path length and $l_T$ the length of a longest path from $r$. The height function of $T$ is
+
 $$h_T(i, j) = l_T - d_T(r, c_{ij}).$$
+
 A rooted triplet $ij|k$ is consistent with $T$ if and only if $h_T(i,j) < h_T(i,k)$ or $h_T(i,j) < h_T(j,k)$. Repeatedly deleting the maximum-weight edges of the complete graph on $X$ weighted by $h$ and recursing into components (HBUILD, analogous to BUILD) decides in polynomial time whether a tree with height function $h$ exists and reconstructs it.
 
 **Networks.** For a rooted network $N$ (a rooted acyclic digraph with leaves labelled by $X$), let $d(r, u)$ be the length of a longest directed path from the root to $u$, $l_N$ the length of a longest root-to-leaf path, and $C_{ij}$ the set of lowest common ancestors of $i$ and $j$ (common ancestors with no common ancestor below them). Define
+
 $$h_N(i, j) = \min\{\, l_N - d(r, c) : c \in C_{ij} \,\}.$$
 
 **Theorem 2.** For distinct leaves $i, j, k$ of $N$, if $h_N(i,j) < h_N(i,k)$ or $h_N(i,j) < h_N(j,k)$, then the triplet $ij|k$ is consistent with $N$ (some displayed paths realize $ij|k$). The converse fails: there is a network consistent with $ij|k$ with $h(i,j) = h(i,k) = 3$ and $h(j,k) = 2$.

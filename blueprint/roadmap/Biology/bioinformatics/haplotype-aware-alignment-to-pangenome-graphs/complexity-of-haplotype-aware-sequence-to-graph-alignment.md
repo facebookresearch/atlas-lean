@@ -9,7 +9,9 @@
 **Lemma 2 (algorithm).** Problems 1–3 can be solved in $O(|Q|\,|E|\,|H|)$ time.
 
 **Lemma 3 (conditional lower bound).** For every constant $\epsilon > 0$ there is no algorithm solving Problem 2 or Problem 3 in time
+
 $$O\big(|Q|^{1-\epsilon}|E||H| + |Q||E|^{1-\epsilon}|H| + |Q||E||H|^{1-\epsilon}\big)$$
+
 unless the Strong Exponential Time Hypothesis (SETH) is false.
 
 ## Depends on
@@ -20,8 +22,11 @@ unless the Strong Exponential Time Hypothesis (SETH) is false.
 ## Expansion
 
 The algorithm extends sequence-to-DAG alignment with a haplotype coordinate. Add a source $v_\epsilon$ with edges to all vertices; let $D(i,v,h)$ be the minimum cost of aligning the prefix $Q[1..i]$ to an alignment path ending at $(v,h)$, and $D''(i,v) = \min_{h \in \mathrm{haps}(v)} D(i,v,h)$. Then
+
 $$D(i,v,h) = \min\Big( D(i-1,v,h) + c_1,\ \min_{(u,v)\in E,\ h \in \mathrm{haps}(u)} \big\{ D(i,u,h) + c_1,\ D(i-1,u,h) + c_1\,\mathrm{EDIT}(\sigma(v), Q[i]) \big\},$$
+
 $$\qquad \min_{(u,v)\in E} \big\{ D''(i,u) + c_1 + c_2,\ D''(i-1,u) + c_1\,\mathrm{EDIT}(\sigma(v),Q[i]) + c_2 \big\} \Big),$$
+
 covering insertion, deletion, match or mismatch along the same haplotype, and the same moves with a haplotype switch at cost $c_2$; keeping $D''$ makes each edge cost $O(|H|)$ per query position. The lower bound reduces Orthogonal Vectors: the Backurs–Indyk gadgets encode one vector set as $n$ query strings and the other as $n$ equal-length haplotypes threaded through a layered DAG with three vertices per layer, so that a recombination-free path within edit distance $\beta_1 n$ of some query exists iff an orthogonal pair exists.
 
 ## Sources

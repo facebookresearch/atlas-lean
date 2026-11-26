@@ -10,7 +10,9 @@ Consider within-host models of acute infection with target cells $T$, infected c
 A model $\dot x = f(x,p)$, $y = g(x,p)$ is **globally structurally identifiable** if $g(x,p) = g(x,\hat p)$ for all $t$ implies $p = \hat p$, and locally so if this holds in a neighbourhood of $\hat p$. In the differential-algebra approach, eliminating unobserved states yields input–output equations whose coefficient vector $c(p)$ must determine $p$.
 
 **Proposition (Model 1).** From unlimited observations of $V(t)$, writing $V^{(r)}$ for the $r$-th derivative, the input–output equation is
+
 $$0 = V^{(3)}V - V^{(2)}V^{(1)} + \beta V^{(2)}V^2 + (c+\delta)V^{(2)}V - (c+\delta)\big(V^{(1)}\big)^2 + \beta(c+\delta)V^{(1)}V^2 + \beta c\delta V^3,$$
+
 with coefficients $\{\beta,\ c+\delta,\ c\delta\}$. Hence $\beta$ is globally identifiable, $c$ and $\delta$ are only locally identifiable (they can be swapped), and $\pi$ is not identifiable; with known initial conditions the model is globally identifiable.
 
 **Propositions (Models 2–4).**

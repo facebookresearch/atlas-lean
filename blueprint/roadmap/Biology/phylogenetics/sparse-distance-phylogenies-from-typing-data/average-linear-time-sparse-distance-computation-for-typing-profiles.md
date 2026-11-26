@@ -5,6 +5,7 @@ Let $P$ be a set of $d$ allelic typing profiles (for instance MLST or cgMLST all
 **Algorithm.** Concatenate the profiles into a string $s$ of length $md$, build its suffix array, LCP array and a constant-time range-minimum structure over LCP ($O(md)$ time and space). Split each profile into $k+1$ non-overlapping aligned blocks of length $L = \lfloor m/(k+1) \rfloor$; by the pigeonhole principle, two profiles at Hamming distance at most $k$ share at least one identical aligned block. Group suffixes starting at the same block index whose longest common prefix is at least $L$ (LCP clusters), and verify each candidate pair in $O(k)$ time with range-minimum queries on LCP that jump from mismatch to mismatch.
 
 **Theorem 1.** If the profile letters are i.i.d. uniform over $\Sigma$, the algorithm reports all pairs at Hamming distance at most $k$ in $O(md)$ average-case time and space provided
+
 $$k < \frac{(m - k - 1)\log\sigma}{\log(md)} .$$
 
 **Theorem 2.** Under the same model, with the profiles indexed by a suffix tree, all profiles within distance $k$ of a query profile are found in $O(m)$ average-case time under the same condition on $k$ (worst case $O(md + m\log md)$).

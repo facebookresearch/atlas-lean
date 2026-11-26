@@ -1,10 +1,13 @@
 # Constrained allele-specific copy-number factorization
 
 **Setting.** For $m$ segments (clusters of lengths $\ell_s$), $n$ clones (clone $1$ normal diploid) and $k$ samples, let $F^A = [f^A_{s,p}]$ and $F^B = [f^B_{s,p}]$ be the $m\times k$ allele-specific fractional copy-number matrices, $A = [a_{s,i}]$, $B = [b_{s,i}]$ non-negative integer $m\times n$ allele-specific copy-number matrices, and $U = [u_{i,p}]$ an $n\times k$ clone-proportion matrix with columns in the probability simplex. In exact form the **allele-specific copy-number factorization (ACF)** problem asks for $A, B, U$ with
+
 $$F^A = AU, \qquad F^B = BU.$$
 
 **Problem (D-CACF).** Given $F^A, F^B$, $n$, a maximum total copy number $c_{\max}$, a minimum clone proportion $u_{\min}$, and $\theta \in \{1,2\}$ ($\theta = 2$ after a whole-genome duplication), minimize
+
 $$D = \|F^A - AU\| + \|F^B - BU\|, \qquad \|F^A - AU\| = \sum_{s=1}^m\sum_{p=1}^k \ell_s\,\Big|f^A_{s,p} - \sum_{i=1}^n a_{s,i}u_{i,p}\Big|,$$
+
 subject to
 - $a_{s,i} + b_{s,i} \le c_{\max}$ for all $s, i$;
 - $u_{i,p} \ge u_{\min}$ or $u_{i,p} = 0$ for every tumour clone $i$ and sample $p$;

@@ -1,13 +1,17 @@
 # Standard loss count of an incomplete gene tree under taxon sampling
 
 Let $ST$ be a rooted binary species tree and $gt$ a rooted binary gene tree whose leaves are labelled by species, possibly with repeats, with leaf-species set $L(gt) \subseteq L(ST)$; $gt$ is **incomplete** if $L(gt) \ne L(ST)$. The **LCA mapping** is $M(v) = \mathrm{MRCA}_{ST}(c_{gt}(v))$, where $c_{gt}(v)$ is the set of species below $v$; an internal node $v$ is a **duplication** if $M(v) = M(v')$ for a child $v'$, and a **speciation** otherwise. Let $ST(gt)$ be the restriction of $ST$ to $L(gt)$ with degree-2 nodes suppressed, and for an internal node $u$ of $gt$ with children $l, r$ and a species tree $S$ set
+
 $$F(u, S) = \begin{cases} d(M(r), M(u)) + 1 & M(r) \ne M(u) = M(l),\\ d(M(l), M(u)) + 1 & M(l) \ne M(u) = M(r),\\ d(M(r), M(u)) + d(M(l), M(u)) & M(r) \ne M(u) \ne M(l),\\ 0 & M(r) = M(l) = M(u), \end{cases}$$
+
 where $d(s, s')$ is the number of internal nodes of $S$ strictly between $s$ and $s'$. The **standard loss count** is $L_{std}(gt, ST) = \sum_{u} F(u, ST(gt))$.
 
 A **completion** of $gt$ is a complete binary gene tree obtained by inserting every missing species (at least once, possibly several times). Let $L_{samp}(gt, ST)$ be the minimum of $L_{std}(t, ST)$ over completions $t$ of $gt$: the loss count when missing taxa are attributed to incomplete sampling.
 
 **Theorem 1.** For every such $gt$ and $ST$, the LCA mapping is a reconciliation minimizing the number of duplications, the number of losses and their sum when incompleteness is due to sampling, and
+
 $$L_{std}(gt, ST) = L_{samp}(gt, ST).$$
+
 Moreover some completion $t^*$ attains simultaneously the minimum number of duplications and of losses.
 
 ## Expansion

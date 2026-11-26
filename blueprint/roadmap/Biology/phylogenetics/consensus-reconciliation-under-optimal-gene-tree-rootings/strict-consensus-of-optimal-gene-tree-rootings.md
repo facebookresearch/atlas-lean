@@ -1,13 +1,17 @@
 # Strict consensus of optimal gene tree rootings
 
 Let $G_U$ be an unrooted binary gene tree with $n$ leaves, $S$ a rooted species tree, and fix duplication, transfer and loss costs. For a rooting $G_R$ of $G_U$ let $\mathrm{cost}(G_R, S)$ be the minimum DTL reconciliation cost, and let
+
 $$\mathrm{OptRoot}(G_U, S) = \arg\min_{G_R \in \mathrm{Root}(G_U)} \mathrm{cost}(G_R, S)$$
+
 be the set of optimal rootings ($G_U$ has $|E(G_U)|$ rootings). The **strict consensus** $SC$ of rooted trees on a common leaf set is the rooted tree whose clusters are exactly the clusters common to all of them. A **consensus reconciliation** consists of $SC$ for the trees in $\mathrm{OptRoot}(G_U, S)$ together with, for every internal node of $SC$, the distributions of its event type (speciation, duplication, transfer) and of its species-tree mapping over the optimal reconciliations of all optimal rootings.
 
 **Lemma 1.** Every internal node of $SC$ other than its root is binary. Hence each subtree of $SC$ rooted at a non-root internal node has the same topology in every optimal rooting, and the reconciliation is summarized exactly on these conserved subtrees.
 
 **Lemma 2.** If $G_U$ has $n$ leaves and $k$ distinct optimal rootings, then $SC$ has at most
+
 $$(n - 1) - \lfloor k/2 \rfloor$$
+
 internal nodes, and some placement of $k$ roots on $G_U$ attains this bound.
 
 Optimal rootings are **maximally clustered** when the bound is attained. The plateau property known for reconciliation models without transfers, which keeps all optimal roots together, need not hold once transfers are allowed (as shown for host-symbiont cophylogeny), so the size of $SC$ measures how dispersed the optimal roots are.

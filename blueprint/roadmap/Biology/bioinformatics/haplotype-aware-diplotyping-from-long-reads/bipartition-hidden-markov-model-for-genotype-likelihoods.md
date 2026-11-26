@@ -1,14 +1,19 @@
 # Bipartition hidden Markov model for genotype likelihoods
 
 **Generative model.** For a read bipartition $B = (B^1,B^2)$ of an alignment matrix $M$ and a diplotype $H = (H^1,H^2)$, sites are independent and the two haplotype alleles descend from an ancestral allele $Z_j$:
+
 $$P(H \mid B, M) = \prod_{j=1}^n \sum_{Z_j \in \Sigma_j} P(H^1_j \mid B^1, Z_j)\,P(H^2_j \mid B^2, Z_j)\,P(Z_j),$$
+
 $$P(H^k_j \mid B^k, Z_j) = \frac{P(H^k_j \mid Z_j)\prod_{i \in B^k:\,M_{i,j}\ne -} P(M_{i,j} \mid H^k_j)}{\sum_{Y_j\in\Sigma_j} P(Y_j\mid Z_j)\prod_{i\in B^k:\,M_{i,j}\ne -}P(M_{i,j}\mid Y_j)},$$
+
 with $P(H^k_j \mid Z_j)$ a substitution model (e.g. Jukes–Cantor) and $P(M_{i,j}\mid H^k_j)$ a read-error model. The genotyping problem is $\arg\max_{H^1_j,H^2_j} \sum_B P(H^1_j,H^2_j \mid B, M)$ at each site.
 
 **HMM.** Replace each vertex $B_j \in \mathcal B_j$ of the diploid path graph by states $(B_j, a_1, a_2) \in \mathcal B_j \times \Sigma_j \times \Sigma_j$, keep the silent bipartition states $\mathcal C_j$, and give each edge out of $\mathcal C_j$ (or start) into $(B_j,a_1,a_2)$ the probability $P(a_1,a_2) = \sum_{Z_j} P(a_1\mid Z_j)P(a_2 \mid Z_j)P(Z_j)$; all other edges have probability $1$. State $(B_j,a_1,a_2)$ emits the non-gap entries of column $j$, reads in $B^k_j$ being drawn from allele $a_k$.
 
 **Proposition (posterior state probabilities).** With forward and backward variables $\alpha_j, \beta_j$,
+
 $$P\big((B,a_1,a_2) \mid M\big) = \frac{\alpha_j(B,a_1,a_2)\,\beta_j(B,a_1,a_2)}{\sum_{B' \in \mathcal B(A_j)}\sum_{a'_1,a'_2 \in \Sigma_j} \alpha_j(B',a'_1,a'_2)\,\beta_j(B',a'_1,a'_2)},$$
+
 and the likelihood of a genotype at site $j$ is the sum of these posteriors over all bipartitions and all ordered allele pairs giving that unordered genotype.
 
 ## Depends on

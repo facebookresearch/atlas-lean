@@ -1,7 +1,9 @@
 # Median reconciliation and event support
 
 Let $\mathcal R$ be a finite set of reconciliations of the same gene tree $G$ and species tree $S$, each identified with its set $E(R)$ of events (two events are identified when they assign the same gene node to the same species node with the same event type and child placement). For $e \in \bigcup_R E(R)$ let the **support** $f(e)$ be the fraction of $R \in \mathcal R$ with $e \in E(R)$. Define the asymmetric and symmetric distances
+
 $$d_a(R_1, R_2) = |E(R_2) \setminus E(R_1)|, \qquad d_s(R_1, R_2) = |E(R_1) \oplus E(R_2)| .$$
+
 An **asymmetric (symmetric) median reconciliation** is an $R \in \mathcal R$ minimizing $\sum_{R' \in \mathcal R} d_a(R, R')$ (respectively $\sum_{R' \in \mathcal R} d_s(R, R')$).
 
 **Lemma 1.** An asymmetric median reconciliation is a reconciliation $R \in \mathcal R$ maximizing $\sum_{e \in E(R)} f(e)$, and a symmetric median reconciliation is one maximizing $\sum_{e \in E(R)} \big(f(e) - \tfrac12\big)$.

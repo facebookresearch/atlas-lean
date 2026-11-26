@@ -1,12 +1,17 @@
 # Incomplete canard explosion between type I and type II excitability
 
 **Setting.** A planar slow–fast neuron model with cubic critical manifold, written near its lower fold $F^-$ in the normal form
+
 $$x' = \varepsilon\big(c\,y - \sigma x - a + O(x^2,y^3,xy,\varepsilon y^2)\big), \qquad y' = y^2 - x + \beta y^3 + O(y^4),$$
+
 where $a$ is the current-like bifurcation parameter and $c$ the slope of the slow nullcline at the fold. For $\varepsilon = 0$ there is a cusp of equilibria at $c_{\mathrm{cusp}}$, and a saddle-node branch meets the $c$-axis at $c_{\mathrm{sn}}^- \in (0, c_{\mathrm{cusp}})$. The equilibrium equation near the fold is $-a + c y - y^2 + O(y^3) = 0$, so a saddle-node of equilibria occurs at
+
 $$a_{\mathrm{sn}}^+ = \frac{c^2}{4} + O(c^3).$$
 
 **Theorem.** Fix $0 < c < c_{\mathrm{sn}}^- < c_{\mathrm{cusp}}$ and $0 < \varepsilon \ll 1$. There is an unstable equilibrium on the middle branch bounded away from $F^-$, and there are parameter values
+
 $$0 < a_{\mathrm{snpo}}(\varepsilon) < a_\ell(\varepsilon) < a_s(\varepsilon) < a_c(\varepsilon) < a_h(\varepsilon) < a_{\mathrm{sn}}^+(\varepsilon),$$
+
 all tending to $0$ as $\varepsilon \to 0$ except $a_{\mathrm{sn}}^+$, such that as $a$ decreases:
 1. for $a > a_{\mathrm{sn}}^+$ a large stable relaxation cycle exists; at $a_{\mathrm{sn}}^+$ a saddle-node of equilibria creates a saddle $p_+$ and an unstable focus or node $p_-$ on the middle branch inside it;
 2. at $a_h$, $p_-$ changes stability in a subcritical singular Andronov–Hopf bifurcation, and for $a_c < a < a_h$ repelling small cycles surround the stable focus;

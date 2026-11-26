@@ -7,7 +7,9 @@ Let $G$ and $S$ be rooted binary gene and species trees, with gene leaves labell
 Define $M^*$ by $M^*(u) = M(u)$ if $\delta_M(u) = 0$; $M^*(r(G)) = r(S)$ if the root is a duplication; and otherwise, for a duplication $u$ with parent already mapped, $M^*(u)$ is the largest vertex $s$ of $S$ with $M(u) \le s < M^*(p(u))$.
 
 **Theorem.** A reconciliation $f$ has minimum duplication cost if and only if
+
 $$M \preceq f \preceq M^* ,$$
+
 so $M^*$ is the unique maximal duplication-optimal reconciliation and the duplication-optimal reconciliations form an interval of the reconciliation poset.
 
 **Enumeration.** The nearest-mapping-change operator $f \mapsto f[u]$ (moving $f(u)$ one step up, allowed when $f(u) < f(p(u))$) organizes all reconciliations into a tree rooted at $M$, and those with $\mathrm{gd}(f) \le \mathrm{gd}(M) + \varepsilon$ form a subtree; they can be listed in $O(|V(G)|\cdot|\Gamma_\varepsilon|)$ time plus preprocessing, where $\Gamma_\varepsilon$ is the set listed.

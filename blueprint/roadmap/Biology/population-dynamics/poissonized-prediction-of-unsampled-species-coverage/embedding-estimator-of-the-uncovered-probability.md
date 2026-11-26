@@ -5,7 +5,9 @@
 **Impossibility (fixed sample sizes).** For any predetermined sample size, a non-randomized algorithm based on a continuous one-to-one function of the sample can predict $\theta$ conditionally unbiasedly if and only if the urn consists of a known, equidistributed set of colours. Unbiased prediction of $\theta$ therefore requires a random sample size.
 
 **Embedding construction.** Conditionally on the first sample, keep drawing until $r \ge 1$ balls with colours outside $C$ have been observed, and attach the draws to the points of an independently simulated homogeneous Poisson process of rate $1$ on $[0, \infty)$. By Poisson thinning, the points carrying colours outside $C$ form a homogeneous Poisson process of rate $\theta$, independent of the others, so the arrival time $T$ of the $r$-th such point is $\mathrm{Gamma}(r, \theta)$:
+
 $$P(T \in dt \mid C) = \frac{\theta^r t^{r-1} e^{-\theta t}}{(r-1)!}\,dt, \qquad t > 0.$$
+
 Hence $(r-1)/T$ is an unbiased predictor of $\theta$ for $r \ge 2$, the uniformly minimum variance unbiased one based on the $r$ exponential spacings, with variance $\theta^2/(r-2)$ for $r \ge 3$; $\psi(r) - \log T$ is unbiased for $\log\theta$, with variance $\psi'(r)$, where $\psi$ is the digamma function ($\psi(1) = -\gamma_{\mathrm{Euler}}$); and for constants $0 \le a < b$ with $P(a \le \Gamma(r,1) \le b) = 1-\alpha$, the interval $[a/T, b/T]$ contains $\theta$ with exact probability $1 - \alpha$, conditionally on $C$. All predictors are strongly consistent as $r \to \infty$.
 
 ## Expansion

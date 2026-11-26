@@ -5,11 +5,15 @@
 **NNI.** Let $e$ be an interior edge whose four adjacent edges lead to subtrees with taxon sets $A,B,C,D$, with split $A \cup B \,|\, C \cup D$. A nearest-neighbour interchange swaps two subtrees across $e$, replacing that split by $A \cup D \,|\, B \cup C$ (or $A \cup C \,|\, B \cup D$); all other splits are unchanged, so the RF distance is $2$.
 
 **SPR.** Let the subtree with taxa $A$ hang from the end of a path of interior edges $e_1,\dots,e_{n-1}$ from which subtrees with taxa $B_1,\dots,B_n$ hang in order, and let $T_{SPR}$ prune $A$ and regraft it onto the edge leading to $B_n$. Only the splits of the path edges change, one new split $B_1 \cup \dots \cup B_{n-1} \,|\, A \cup B_n$ appears and one disappears, and
+
 $$d_{RF}(T, T_{SPR}) = 2(n-2).$$
+
 For $n = 3$ this is an NNI.
 
 **TBR.** Let $T_{TBR}$ be obtained by removing an interior edge $e$ and reconnecting the two components by a new edge joining the edge to $B_n$ on one side (path with subtrees $B_1,\dots,B_n$) and the edge to $C_m$ on the other (subtrees $C_1,\dots,C_m$), with $m \le n$ and $n > 2$. Then
+
 $$d_{RF}(T, T_{TBR}) = 2(n+m-4).$$
+
 For $m = 2$ the move is an SPR, and for $n = 3$, $m = 2$ an NNI.
 
 ## Expansion

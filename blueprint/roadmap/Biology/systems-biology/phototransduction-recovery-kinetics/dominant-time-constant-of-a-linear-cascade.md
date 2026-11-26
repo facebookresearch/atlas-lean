@@ -1,9 +1,11 @@
 # Dominant time constant of a linear cascade
 
 Consider a cascade of $n$ first-order low-pass stages, stage $i$ having impulse response $g_i(t) = C_i e^{-t/\tau_i}$ for $t \ge 0$, with distinct time constants $\tau_1 < \tau_2 < \cdots < \tau_n$. Its impulse response, the response $e^*(t) = E^*(t)/\Phi$ of the final enzymatic effector per unit input, is the convolution $e^* = g_1 * g_2 * \cdots * g_n$; with $a_i = 1/\tau_i$ and $C = C_1 \cdots C_n$,
+
 $$e^*(t) = C \sum_{i=1}^{n} \frac{e^{-a_i t}}{\prod_{j \ne i}(a_j - a_i)}, \qquad t \ge 0 .$$
 
 **Theorem.** At long times the stage with the longest time constant dominates: for every $0 < \delta \ll 1$ there is a time $T_\delta$ such that for $t > T_\delta$,
+
 $$e^*(t) = C' e^{-t/\tau_n}\,\big(1 + O(\delta)\big), \qquad C' = \frac{C}{\prod_{j < n}(a_j - a_n)} .$$
 
 ## Depends on

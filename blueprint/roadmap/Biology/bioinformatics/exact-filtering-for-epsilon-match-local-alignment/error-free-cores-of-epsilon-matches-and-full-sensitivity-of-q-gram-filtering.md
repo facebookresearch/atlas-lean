@@ -3,9 +3,13 @@
 **ε-matches.** A pairwise local alignment of length $n$ is a sequence of $n$ columns, each a match or an error (substitution, insertion or deletion); its error rate is the number of error columns divided by $n$. For $\varepsilon > 0$ and a minimal length $n_0$, an *ε-match* is a local alignment with error rate at most $\varepsilon$ and length $n \ge n_0$. Score matches $+1$ and errors $p = 1 - 1/\varepsilon$; an *ε-X-drop* is a run of consecutive columns with total score at most $X p$ (that is, a drop worth $X$ errors).
 
 **Seed length.** An ε-match of length $n$ has at most $\lfloor \varepsilon n \rfloor$ errors, hence at least $n - \lfloor\varepsilon n\rfloor$ match columns split into at most $\lfloor\varepsilon n\rfloor + 1$ error-free segments, so it contains an error-free segment of length at least
+
 $$l(n,\varepsilon) = \left\lceil \frac{n - \lfloor \varepsilon n\rfloor}{\lfloor \varepsilon n \rfloor + 1} \right\rceil .$$
+
 The function $n \mapsto l(n,\varepsilon)$ is sawtooth-shaped (not monotone), but its successive minima increase, so over all $n \ge n_0$ its minimum is
+
 $$s_{\min} = \min\big(l(n_0,\varepsilon),\ l(n_1,\varepsilon)\big),$$
+
 where $n_1$ is the smallest length greater than $n_0$ that allows one more error than $n_0$. An *ε-core* is such an error-free seed segment.
 
 **Lemma 1.** Every ε-match contains at least one ε-core.

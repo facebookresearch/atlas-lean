@@ -1,7 +1,9 @@
 # NP-hardness of linear breakpoint and DCJ median problems
 
 **Setting.** Genomes are sets of adjacencies between gene extremities on a gene set of size $n$, as in the multichromosomal model; the breakpoint distance is $d_{BP}(\Pi,\Gamma) = n - a(\Pi,\Gamma) - \tfrac12 e(\Pi,\Gamma)$ with $a$ the number of common adjacencies and $e$ the number of common telomeres. The breakpoint graph $BP(\Pi,\Gamma)$ has the gene extremities as vertices and one edge for each adjacency of $\Pi$ and of $\Gamma$; every component is a cycle or a path. With $c(\Pi,\Gamma)$ cycles and $p(\Pi,\Gamma)$ paths with an even number of edges, the double-cut-and-join distance is
+
 $$d_{DCJ}(\Pi,\Gamma) = n - c(\Pi,\Gamma) - \tfrac12\, p(\Pi,\Gamma).$$
+
 The median problem asks, for three genomes $\Pi_1,\Pi_2,\Pi_3$, for a genome $M$ minimizing $s(M) = \sum_i d(\Pi_i, M)$. For an all-duplicates genome $\Delta$, the double distance to an ordinary genome $\Pi$ is the minimum distance from $\Delta$ to a doubled genome $\Pi\oplus\Pi$; guided halving asks for $M$ minimizing $d(\Delta,M) + d(M,\Pi)$.
 
 **Theorem.**

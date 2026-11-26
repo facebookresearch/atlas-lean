@@ -3,7 +3,9 @@
 Let $A \in \{0,1\}^{n\times m}$ record the presence ($a_{i,j}=1$) or absence of mutation $j$ in cell $i$. A **$k$-Dollo phylogeny** for $A$ is a rooted tree whose nodes are labelled by vectors in $\{0,1\}^m$, with the all-zero root (for somatic mutations), whose $n$ leaves are labelled by the rows of $A$, and in which each mutation is gained ($0 \to 1$ on an edge) at most once and lost ($1 \to 0$) on at most $k$ edges. $A$ is a **$k$-Dollo phylogeny matrix** if such a tree exists. For $k = 0$ this is the infinite-sites (perfect phylogeny) model.
 
 A matrix $B \in \{0, \dots, k+1\}^{n \times m}$ is a **$k$-completion** of $A$ if $b_{i,j} = 1 \iff a_{i,j} = 1$ and $b_{i,j} \in \{0, 2, \dots, k+1\} \iff a_{i,j} = 0$; state $s \ge 2$ marks a cell that carries the $(s-1)$-th loss of mutation $j$. Writing $I^{(i)} = \{i, \dots, k+1\}$, $B$ is a **$k$-Dollo completion** if no two columns and three rows of $B$ form any of
+
 $$\begin{pmatrix} i_1 & 0\\ 0 & j_1\\ i_1' & j_1'\end{pmatrix},\quad \begin{pmatrix} i_1 & j_1''\\ 0 & j_2\\ i_1' & j_2\end{pmatrix},\quad \begin{pmatrix} i_2 & 0\\ i_1'' & j_1\\ i_2 & j_1'\end{pmatrix},\quad \begin{pmatrix} i_2 & j_1''\\ i_1'' & j_2\\ i_2 & j_2\end{pmatrix},$$
+
 with $i_1, i_1', j_1, j_1' \in I^{(1)}$, $i_2, j_2 \in I^{(2)}$, $i_1'' \in I^{(1)}\setminus\{i_2\}$ and $j_1'' \in I^{(1)} \setminus \{j_2\}$. There are $(k+1)^4 + 2k^2(k+1)^2 + k^4$ forbidden $3 \times 2$ submatrices.
 
 **Theorem.** $A$ is a $k$-Dollo phylogeny matrix if and only if it has a $k$-Dollo completion $B$.

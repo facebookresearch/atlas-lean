@@ -1,6 +1,7 @@
 # Hierarchical clustering of maximum parsimony reconciliations
 
 Because MPR space can be exponentially large and diverse, it is summarized by a clustering $\mathcal C = \{C_1, \dots, C_k\}$ of the MPRs, each cluster represented compactly as a **reconciliation subgraph** (a union of traversals of the reconciliation graph). With $\mu_i$ the average pairwise distance between MPRs of $C_i$ and $\sigma_i$ the average support of the events of $C_i$ (support computed within $C_i$), define
+
 $$\mathrm{WAD}(\mathcal C) = \frac{\sum_i |C_i|\,\mu_i}{\sum_i |C_i|}, \qquad \mathrm{WAS}(\mathcal C) = \frac{\sum_i |C_i|\,\sigma_i}{\sum_i |C_i|} .$$
 
 **Initialization.** Descend $L$ levels from the sources of the reconciliation graph, branching over every event choice; each level-$L$ partial traversal together with all nodes reachable from its leaves is an initial cluster. The smallest $L$ giving at least the desired number $N$ of clusters is used; at full depth the clusters are single MPRs.

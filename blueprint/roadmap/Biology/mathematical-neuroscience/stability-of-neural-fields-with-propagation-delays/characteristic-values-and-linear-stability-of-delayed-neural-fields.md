@@ -1,7 +1,9 @@
 # Characteristic values and linear stability of delayed neural fields
 
 **Model.** On an open bounded set $\Omega \subset \mathbb R^d$, $p$ neural populations have membrane potentials $V(r,t) \in \mathbb R^p$ obeying
+
 $$\partial_t V(r,t) = -L_0V(r,t) + \int_\Omega J(r,\bar r)\,S\big(V(\bar r, t - \tau(r,\bar r))\big)\,d\bar r + I^{\mathrm{ext}}(r,t),$$
+
 where $L_0 = \operatorname{diag}(l_1,\dots,l_p)$ with $l_i > 0$, $S(x) = (S(\sigma_i(x_i - h_i)))_i$ with a sigmoid $S:\mathbb R\to(0,1)$, $J \in L^2(\Omega^2,\mathbb R^{p\times p})$, and the delay matrix $\tau$ is continuous with maximum $\tau_m$ (e.g. $\tau_{ij}(r,\bar r) = c\,\|r - \bar r\|$). The phase space is $C([-\tau_m,0], L^2(\Omega,\mathbb R^p))$. Delayed and undelayed equations share the same stationary (persistent) states $V_f$. Linearizing at $V_f$ gives $\dot U = -L_0U + \int_\Omega J(r,\bar r)DS(V_f(\bar r))\,U(\bar r, t-\tau(r,\bar r))\,d\bar r$, with generator $\mathcal A$ and solution semigroup $(T(t))_{t\ge0}$.
 
 **Characteristic values.** For $\lambda\in\mathbb C$ let $J(\lambda)U(r) = \int_\Omega J(r,\bar r)DS(V_f(\bar r))e^{-\lambda\tau(r,\bar r)}U(\bar r)\,d\bar r$, a compact operator on $L^2$, and $\Delta(\lambda) = \lambda\,\mathrm{Id} + L_0 - J(\lambda)$. The characteristic values are the $\lambda$ for which $\Delta(\lambda)$ is not injective.

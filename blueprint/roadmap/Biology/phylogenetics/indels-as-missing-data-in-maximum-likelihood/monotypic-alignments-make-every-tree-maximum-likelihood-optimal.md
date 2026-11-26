@@ -1,7 +1,9 @@
 # Monotypic alignments make every tree maximum-likelihood optimal
 
 **Jukes–Cantor model trees.** A Jukes–Cantor (JC) model tree $(T,\theta)$ is a rooted binary tree $T$ on a taxon set $S$ with a substitution probability $p(e) \in (0, \tfrac34)$ on each edge; the root state is uniform on $\{A,C,G,T\}$, a change on edge $e$ occurs with probability $p(e)$ and goes to each of the other three states with equal probability, and sites evolve i.i.d. For an alignment $A$ and topology $T$, let
+
 $$\mathrm{ML}_{JC}(A, T) = \sup_\theta P(A \mid T, \theta),$$
+
 where gaps are treated as missing data (summed over all states). The supremum need not be attained because the parameter range is open.
 
 **Monotypic alignment.** An alignment of the sequences in $S$ is *monotypic* if every site contains exactly one nucleotide type among its non-gap entries (and no site is entirely gapped).

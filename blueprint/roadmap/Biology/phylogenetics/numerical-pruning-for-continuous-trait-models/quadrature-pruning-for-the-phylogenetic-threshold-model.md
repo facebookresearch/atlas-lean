@@ -1,8 +1,11 @@
 # Quadrature pruning for the phylogenetic threshold model
 
 **Partial likelihoods.** Let $T$ be a rooted binary tree with $n$ tips, branch lengths $t_i$, trait transition densities $f(x_i \mid x_j,\theta_i)$ from parent $j$ to child $i$, root density $f(x\mid\theta_r)$, and observation probabilities $\pi(z_i \mid x_i)$ at the tips. For a non-root node $i$ with parent $j$, the partial likelihood $F_i(x_j)$ of the data below $i$ given the parent's value satisfies
+
 $$F_i(x_j) = \int f(\tilde x\mid x_j,\theta_i)\,\pi(z_i\mid\tilde x)\,d\tilde x \ \ (\text{tip}),\qquad F_i(x_j) = \int f(\tilde x\mid x_j,\theta_i)\,F_u(\tilde x)F_v(\tilde x)\,d\tilde x\ \ (\text{children } u,v),$$
+
 and the likelihood is $L(T) = \int f(x\mid\theta_r)F_u(x)F_v(x)\,dx$ over the root's children. With the top-down recursion $G_r \equiv 1$, $G_i(x) = \int f(\tilde x\mid x,\theta_i)\,G_j(\tilde x)\,F_u(\tilde x)\,d\tilde x$ ($u$ the sibling of $i$, $f(\tilde x\mid x,\theta_i)$ the parent-given-child density), the marginal posterior at node $i$ with children $u,v$ is
+
 $$f(x_i\mid z_1,\dots,z_n) = \frac{G_i(x_i)\,F_u(x_i)\,F_v(x_i)\,f(x_i)}{L(T)}.$$
 
 **Threshold model.** The liability is Gaussian at the root, $\phi(x\mid\mu_r,\sigma_r^2)$, evolves by Brownian motion, $f(x_i\mid x_j) = \phi(x_i\mid x_j,\sigma^2 t_i)$, and each tip records $z_i = 1$ if $x_i > 0$, $z_i = 0$ if $x_i \le 0$, or missing. The marginal prior of node $i$ is $N(\mu_r, v_i)$ with $v_i = \sigma_r^2 + \sigma^2\sum_{j\in P_i} t_j$ over the root-to-$i$ path $P_i$. Truncate node $i$'s integrals to $[L_i,U_i]$ with $L_i = \Phi^{-1}\big(\tfrac{\epsilon}{2(n-1)}\mid\mu_r,v_i\big)$ and $U_i$ the symmetric upper quantile, and evaluate each integral by Simpson's rule on $N+1$ grid points $X_i[0..N]$, storing $F_i[k] \approx F_i(X_j[k])$.

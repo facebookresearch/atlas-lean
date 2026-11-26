@@ -1,11 +1,15 @@
 # Transitive suffix–prefix matches and left contexts
 
 Let $R$ be a set of reads over $\{A, C, G, T\}$ in which no read is a prefix or suffix of another. A **suffix–prefix match (SPM)** $\langle r, t, \ell\rangle$ with $r, t \in R$ and $1 \le \ell < \min(|r|, |t|)$ means that the length-$\ell$ suffix of $r$ equals the length-$\ell$ prefix of $t$. An SPM $\langle r, t, \ell''\rangle$ is **transitive** if there are SPMs $\langle r, s, \ell\rangle$ and $\langle s, t, \ell'\rangle$ with
+
 $$\ell + \ell' = |s| + \ell'' ;$$
+
 otherwise it is **irreducible**. For $1 \le \ell' < |s|$ the **left context** is $\mathrm{LC}(s, \ell') = s[1 \dots |s| - \ell']$.
 
 **Theorem.** An SPM $\langle r, t, \ell''\rangle$ is transitive if and only if there exist $s \in R$ and an irreducible SPM $\langle s, t, \ell'\rangle$ such that
+
 $$\ell' > \ell'', \qquad |r| - \ell'' \ge |s| - \ell', \qquad s[1 \dots |s| - \ell'] = r\big[|r| - \ell'' - (|s| - \ell') + 1 \dots |r| - \ell''\big],$$
+
 i.e. $\mathrm{LC}(s, \ell')$ is a suffix of $\mathrm{LC}(r, \ell'')$.
 
 **Corollary.** Among the SPMs with a fixed right read $t$, listed by decreasing match length, the first is irreducible, and each later one is transitive exactly when some stored left context of an earlier irreducible SPM is a suffix of its own left context.

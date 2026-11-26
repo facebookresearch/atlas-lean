@@ -13,6 +13,7 @@ A synchronous Boolean network on $n$ nodes updates $x_i(t+1) = f_i(x_1(t), \dots
 **Proposition 2.** Every CK of $A$ contains a set of distinguishing nodes of $A$ with respect to the network's original attractors.
 
 **Bounds.** Let $m$ be the number of input nodes and, after pinning them to their values in $A$, let $w^{(1)}$ be a minimal witness set for $A$ against the remaining original attractors and $w^{(i)}$, $i \ge 2$, minimal witness sets against the attractors newly created by successive rounds of pinning. Then
+
 $$m + |w^{(1)}| \;\le\; |\mathrm{CK}| \;\le\; m + |w^{(1)}| + \sum_{i \ge 2} |w^{(i)}| .$$
 
 ## Expansion

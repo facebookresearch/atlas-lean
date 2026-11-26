@@ -3,7 +3,9 @@
 Let $\tau$ be a set of rooted triplets on leaf set $L(\tau)$. The **triplet precedence digraph** $G_\tau$ has vertex set $\binom{L(\tau)}{2}$ and, for each $ij|k \in \tau$, the arcs $ij \to ik$ and $ij \to jk$. If $\tau$ is consistent with a tree $T$, then $G_\tau$ is acyclic, since a directed cycle would give $h_T(x_1, x_2) < h_T(x_2, x_3) < \dots < h_T(x_1, x_2)$. When $G_\tau$ is acyclic with longest path length $\ell$, its **height function** $h_{G_\tau}$ is obtained by giving the sinks the value $\ell + 1$, deleting them, giving the new sinks $\ell$, and so on.
 
 For an integer $s$, the integer program $\mathrm{IP}(\tau, s)$ asks for integer heights $h(i,j) \in \{1, \dots, s\}$ satisfying, for every $ij|k \in \tau$,
+
 $$h(i,j) < h(i,k), \qquad h(i,j) < h(j,k),$$
+
 the inequalities that a tree or network height function must satisfy for its consistent triplets.
 
 **Theorem 3.** $G_\tau$ is acyclic if and only if $\mathrm{IP}(\tau, s)$ is feasible for some integer $s$; in that case the minimum feasible $s$ is $\ell + 1$, where $\ell$ is the length of a longest path in $G_\tau$, and $h_{G_\tau}$ is feasible for $\mathrm{IP}(\tau, \ell + 1)$.

@@ -1,7 +1,9 @@
 # Injective matrix-product numbers for nucleotide sequences
 
 **Encoding.** A read of length $l$ over $\{A,C,G,T\}$ (possibly with masked positions $N$) is split into four binary strings $B^{(x)} = b_1\cdots b_l$, $x \in \{A,C,G,T\}$, with $b_j = 1$ iff position $j$ is nucleotide $x$. With
+
 $$M_0 = \begin{pmatrix}1 & 0\\ 1 & 1\end{pmatrix}, \qquad M_1 = \begin{pmatrix}1 & 1\\ 0 & 1\end{pmatrix} = M_0^{\mathsf T},$$
+
 a binary string $B$ is mapped to $M_B = M_{b_1}M_{b_2}\cdots M_{b_l}$, and to the number $\log\operatorname{tr}(WM_B)$ for a weight matrix $W$ whose four entries are $1, \sqrt2, \sqrt3, \sqrt5$. The read is represented by the quadruplet of these numbers over $x \in \{A,C,G,T\}$.
 
 **Proposition 1.** Distinct binary strings give distinct product matrices: $B \mapsto M_B$ is injective.

@@ -7,6 +7,7 @@ Let $G(V,E,\sigma,H)$ be a haplotype-aware pangenome DAG as in [Complexity of ha
 **Chain.** A chain is a sequence $S = (s_1,\dots,s_p)$ of pairs $s_j = (i_j, h_j)$ with $h_j \in \mathrm{haps}(M[i_j].v)$ and $M[i_j] \prec M[i_{j+1}]$; $r(S)$ counts the indices with $h_j \ne h_{j+1}$.
 
 **Problem 4.** For a penalty $\gamma \ge 0$, find a chain maximizing
+
 $$\sum_{j=1}^{p} \mathrm{weight}(M[i_j]) - \gamma\, r(S).$$
 
 **Lemma 6 (algorithm).** After an $O(|E||H|)$ preprocessing of the graph, Problem 4 can be solved in $O(|H| N \log(|H| N))$ time.

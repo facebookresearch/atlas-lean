@@ -1,10 +1,13 @@
 # Hutchinson–Wilf count of words consistent with a de Bruijn graph
 
 Let $G = (V, E)$ be the de Bruijn multigraph of a genome on $n$ vertices ($(k-1)$-mers), with adjacency matrix $A = (a_{uv})$, where $a_{uv} \ge 0$ is the multiplicity of the edge $u \to v$ and self-loops are allowed. Write $d^+(u)$ and $d^-(u)$ for out- and in-degrees counted with multiplicity. Because $G$ arises from a single string, either $d^+(u) = d^-(u)$ for all $u$, or there is a unique start $s$ with $d^-(s) = d^+(s) - 1$ and a unique end $t$ with $d^+(t) = d^-(t) - 1$. In the balanced case choose $t$ arbitrarily. Put
+
 $$r_u = \begin{cases} d^+(u) + 1, & u = t,\\ d^+(u), & u \ne t,\end{cases}$$
+
 and let $L$ be the $n \times n$ matrix with diagonal entries $r_u - a_{uu}$ and off-diagonal entries $-a_{uv}$.
 
 **Theorem.** The number of distinct words consistent with $G$ (that is, spelled by an Eulerian trail of $G$) that end at vertex $t$ is
+
 $$\mathcal{W}(G, t) = (\det L) \left\{\prod_{u \in V} (r_u - 1)!\right\} \left\{\prod_{(u,v) \in E} a_{uv}!\right\}^{-1}.$$
 
 For a circular, non-periodic genome, cyclic rotations ending at the $d^+(t)$ occurrences of $t$ represent one circular sequence, so the number of distinct circular genomes consistent with $G$ is $\mathcal{W}(G,t)/d^+(t)$. A genome is uniquely reconstructible from its $k$-mer multiset exactly when this count equals $1$.

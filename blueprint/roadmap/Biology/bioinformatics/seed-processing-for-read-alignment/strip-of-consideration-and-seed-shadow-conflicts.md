@@ -1,11 +1,15 @@
 # Strip of consideration and seed shadow conflicts
 
 **Strip of consideration (SoC).** Let $s_M$ be the match score and $p_O, p_E$ the gap open and extension penalties of an affine scoring scheme, and $|Q|$ the query length. The SoC width is
+
 $$\lambda = \frac{s_M |Q| - p_O}{p_E}.$$
+
 For a seed $(q, r, l)$ let $\delta = r - q$ be its diagonal. Two seeds are **spatially local** if $|\delta - \delta'| \le \lambda$; beyond this diagonal distance the gap penalty between them would exceed the best possible match score of the whole query. After sorting seeds by $\delta$, a two-pointer line sweep over windows of diagonal width $\lambda$ scores each window by the total seed length and keeps the non-overlapping best-scoring strips in a priority queue; the cost is dominated by the sort.
 
 **Shadows.** In the plane of reference $\times$ query coordinates, a seed $s = (q, r, l)$ casts the second- and fourth-quadrant shadows
+
 $$\sigma_{II} = [0, r + l] \times [q, |Q|], \qquad \sigma_{IV} = [r, |R|] \times [0, q + l].$$
+
 A seed lying entirely in a shadow of $s$ cannot appear together with $s$ in any alignment, since the two are not in the same order on query and reference. For seeds $s = (q, r, l)$ and $s' = (q', r', l')$:
 
 - $s'$ lies in $\sigma_{II}(s)$ if and only if $q \le q'$ and $r' + l' \le r + l$;

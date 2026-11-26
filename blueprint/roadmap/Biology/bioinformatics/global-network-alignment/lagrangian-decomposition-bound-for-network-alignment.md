@@ -1,13 +1,17 @@
 # Lagrangian decomposition bound for network alignment
 
 **Setting.** Network alignment of $G_1 = (V_1,E_1)$ and $G_2 = (V_2,E_2)$ with node scores $\sigma \ge 0$ and pair scores $\tau \ge 0$ is the maximum structural matching problem on the complete bipartite alignment graph. Split each structural variable into two directed copies $\vec y_{ijkl}$ and $\vec y_{klij}$ with weights $\vec\tau(i,j,k,l) = \vec\tau(k,l,i,j) = \tau(i,j,k,l)/2$, so that $\vec\tau(i,j,k,l) + \vec\tau(k,l,i,j) = \tau(i,j,k,l)$. The split program is
+
 $$\max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{(i,j)}\sum_{(k,l)} \vec\tau(i,j,k,l)\,\vec y_{ijkl}$$
+
 subject to $\sum_{(i,j)\in\delta(v)} x_{ij} \le 1$ for every vertex $v$, $\vec y_{ijkl} \le x_{ij}$, $\vec y_{ijkl} = \vec y_{klij}$, and all variables binary.
 
 **Theorem.**
 1. Feasible solutions of the split program are exactly the structural matchings of the alignment graph, with objective value equal to the structural score.
 2. Relaxing the coupling constraints $\vec y_{ijkl} = \vec y_{klij}$ with multipliers satisfying $\lambda_{ijkl} = -\lambda_{klij}$ gives the relaxed problem
+
 $$L(\lambda) = \max \sum_{(i,j)} \sigma(i,j)\,x_{ij} + \sum_{(i,j)}\sum_{(k,l)} \big(\vec\tau(i,j,k,l) + \lambda_{ijkl}\big)\,\vec y_{ijkl}$$
+
 over the remaining constraints. For every $\lambda$, $L(\lambda)$ is an upper bound on the optimal alignment score.
 3. $L(\lambda)$ can be computed in polynomial time by bipartite matchings: for each alignment edge $(i,j)$, its profit $p_{ij} = \sigma(i,j) + $ (the value of a maximum-weight bipartite matching on the edges $(k,l)$ with weights $\vec\tau(i,j,k,l) + \lambda_{ijkl}$, restricted to positive weights) is computed, and then a maximum-weight bipartite matching with weights $p_{ij}$ gives $L(\lambda)$.
 

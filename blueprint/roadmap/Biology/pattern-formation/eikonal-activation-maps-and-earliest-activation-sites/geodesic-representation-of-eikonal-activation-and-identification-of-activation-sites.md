@@ -1,17 +1,22 @@
 # Geodesic representation of eikonal activation and identification of activation sites
 
 **Model.** On a domain $\Omega \subset \mathbb R^d$ ($d \ge 2$, the myocardium) with conduction tensor $D \in C^1(\bar\Omega,\mathrm{Sym}^{d\times d})$, $\lambda_*I \preceq D(x) \preceq \lambda^*I$, and a set $E = \{(x_i,t_i)\}_{i=1}^N$ of earliest activation sites with times in $[T_{\min},T_{\max}]$, the activation map $\phi_E$ is the viscosity solution of
+
 $$\sqrt{D(x)\nabla\phi_E(x)\cdot\nabla\phi_E(x)} = 1 \quad (x \in \Omega\setminus\{x_1,\dots,x_N\}), \qquad \phi_E(x_i) = t_i.$$
 
 **Representation.** With the geodesic distance $\delta(x,y) = \inf\{L(\gamma) : \gamma(0) = x, \gamma(1) = y\}$, $L(\gamma) = \int_0^1\|\dot\gamma(t)\|_{D^{-1}(\gamma(t))}dt$ (Riemannian metric $\langle v,w\rangle_x = D^{-1}(x)v\cdot w$),
+
 $$\phi_E(x) = \min_{i}\big(t_i + \delta(x,x_i)\big),$$
+
 which requires the compatibility $t_i - t_j \le \delta(x_i,x_j)$ for all pairs. The map $(x,x_1,\dots,x_N,t_1,\dots,t_N) \mapsto \phi_E(x)$ is bounded and Lipschitz on the compact parameter set.
 
 **Theorem.**
 1. *(Existence.)* For any uniformly continuous objective $J$ on activation maps (e.g. least-squares mismatch with mapped activation times, or with a simulated ECG), $m_N = \min_E J(\phi_E)$ over $N$ sites is attained.
 2. *(Monotonicity in $N$.)* $m_N$ is non-increasing in $N$, and if $m_{N+1} = m_N$ for some $N$ then $m_{N+n} = m_N$ for all $n \ge 1$; for $N \le N_{\max}$ the overall minimum is attained.
 3. *(Gradient.)* Where geodesics are unique and smooth, with $w = \mathrm{Log}_x(y)$ the initial velocity of the geodesic from $x$ to $y$,
+
 $$\nabla_x\delta(x,y) = -\frac{D^{-1}(x)\,w}{\|w\|_{D^{-1}(x)}},$$
+
 so in the interior of the region of influence $R_i = \{x : \phi_E(x) = t_i + \delta(x,x_i)\}$ one has $\nabla_{x_i}\phi_E(x) = \nabla_{x_i}\delta(x_i,x)$ and $\partial_{t_i}\phi_E(x) = 1$.
 
 ## Expansion

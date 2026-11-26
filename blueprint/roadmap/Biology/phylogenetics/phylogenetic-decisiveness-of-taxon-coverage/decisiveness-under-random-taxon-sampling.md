@@ -5,11 +5,15 @@ Let $T$ be an unknown rooted binary phylogenetic tree on a set $X$ of $n$ taxa (
 **Theorem 2.**
 
 (i) For every rooted $T$ on $n$ leaves under UC (equivalently every unrooted $T$ on $n+1$ leaves under UC+1),
+
 $$\mathbb P(E_k(T)) \;\ge\; 1 - (n-2)\,(1 - p^3 q)^k .$$
+
 Consequently $\mathbb P(E_k(T)) \ge 1 - \varepsilon$ as soon as $k \ge \ln\!\big((n-2)/\varepsilon\big) \big/ \big(-\ln(1 - p^3 q)\big)$. For an unrooted tree on $n+1$ leaves under plain UC the same holds with $p^3$ replaced by $p^4$. The bound remains valid if $p(x) \ge p$ for all $x$.
 
 (ii) Conversely, there are (exponentially many) trees $T$ for which
+
 $$\mathbb P(E_k(T)) \;\le\; \big(1 - (1 - p^3 q)^k\big)^{\lfloor n/3 \rfloor},$$
+
 so for such trees $k$ must grow like $\ln(n/\varepsilon)/(-\ln(1-p^3 q))$ to reach probability $1 - \varepsilon$.
 
 ## Depends on

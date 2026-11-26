@@ -1,11 +1,15 @@
 # Sig score of a composite motif
 
 **Setting.** For a set $S$ of regulatory sequences, a non-degenerate motif $m$ (an exact word) has an occurrence count $X_m$ whose distribution under the genomic background is modelled as Poisson with mean $\lambda_m$ (the expected count). A degenerate or **composite** motif is a set $M = \{m_1, \dots, m_n\}$ of instantiations, with count $X_M = \sum_i X_{m_i}$. If $k_i$ occurrences of $m_i$ are observed and $k = \sum_i k_i$, the significance of $M$ is $\Pr\{M \mid S\} = \Pr\{X_M \ge k\}$ and its **Sig score** is
+
 $$\mathrm{Sig}(M) = -\log \Pr\{M \mid S\},$$
+
 in practice Bonferroni-corrected for the number of motifs tested.
 
 **Lemma.** For independent random variables $X, Y$ and thresholds $k_1, k_2$,
+
 $$\Pr\{X + Y \ge k_1 + k_2\} \ge \Pr\{X \ge k_1\}\,\Pr\{Y \ge k_2\};$$
+
 more generally, for independent $X_1, \dots, X_n$, $\Pr\{\sum_i X_i \ge \sum_i k_i\} \ge \prod_i \Pr\{X_i \ge k_i\}$.
 
 **Theorem.** If the instantiation counts are independent, then $\mathrm{Sig}(M) \le \sum_{i=1}^n \mathrm{Sig}(m_i)$; consequently, if $\mathrm{Sig}(M) = \sigma$ then some instantiation satisfies $\mathrm{Sig}(m_i) \ge \sigma/n$.

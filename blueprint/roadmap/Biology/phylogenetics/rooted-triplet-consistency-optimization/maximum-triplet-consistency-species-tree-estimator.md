@@ -4,13 +4,19 @@
 
 **Counting lemmas.** Each internal node of a rooted binary tree defines a subtree-bipartition $x = (X_1 | X_2)$ of the taxa below it, and every triplet maps to the unique node at which it splits two-versus-one.
 1. With $|X_1| = n_1$, $|X_2| = n_2$, the number of triplets mapped to $x$ is
+
 $$N_T(n_1, n_2) = \binom{n_1}{2} n_2 + \binom{n_2}{2} n_1 = \frac{n_1 n_2 (n_1 + n_2 - 2)}{2}.$$
+
 2. For subtree-bipartitions $x = (X_1|X_2)$ and $y = (Y_1|Y_2)$, the number of triplets mapped to both is
+
 $$\mathcal M(x, y) = N_T(|X_1\cap Y_1|, |X_2 \cap Y_2|) + N_T(|X_1 \cap Y_2|, |X_2 \cap Y_1|).$$
+
 The triplet consistency score of $x$ is $TC_{\mathcal G}(x) = \sum_y \mathcal M(x,y)$ over all subtree-bipartitions $y$ of the gene trees, computable in $O(n^2 k)$ time.
 
 **Dynamic program.** For a cluster $A$, $V(A) = 0$ if $|A| = 1$ and otherwise
+
 $$V(A) = \max_{(A'|A\setminus A') \in \mathcal{SBP}} \big\{V(A') + V(A \setminus A') + TC_{\mathcal G}(A'|A\setminus A')\big\},$$
+
 and $V(X)$ is the optimum; the total running time is $O(n^2 k\,|\mathcal{SBP}|^2)$ for an allowed set $\mathcal{SBP}$ of subtree-bipartitions.
 
 **Theorem (statistical consistency).** If the gene trees are true gene trees evolving independently within a species tree under the multispecies coalescent, then both the exact and the constrained CTC solutions converge in probability to the true species tree topology as $k \to \infty$.

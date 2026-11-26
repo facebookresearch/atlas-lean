@@ -1,7 +1,9 @@
 # Minimum values and diameter of cophenetic metrics
 
 For phylogenetic trees $T_1, T_2$ on $S = \{1,\dots,n\}$ with cophenetic vectors $\varphi(T_1), \varphi(T_2) \in \mathbb{R}^{n(n+1)/2}$, and $p \in \{0\} \cup [1, \infty)$, the **cophenetic metric** is
+
 $$d_{\varphi,p}(T_1,T_2) = \big\|\varphi(T_1) - \varphi(T_2)\big\|_p,$$
+
 where $\|\cdot\|_0$ counts nonzero entries; set $D_0 = d_{\varphi,0}$ and $D_p = d_{\varphi,p}^{\,p}$ for $p \ge 1$, so $D_p = \sum |\varphi_{T_1}(i,j) - \varphi_{T_2}(i,j)|^p$. Write $UT_n$ for unweighted trees (nested taxa allowed), $T_n$ for unweighted trees without nested taxa and $BT_n$ for the binary ones.
 
 1. On $UT_n$ ($n \ge 2$) the minimum nonzero value of $D_p$ is $1$, attained exactly when one tree is obtained from the other by contracting a pendant arc.

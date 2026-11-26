@@ -9,7 +9,9 @@
 **Complexity.** Minimizing the number of segmental duplications is NP-hard and cannot be approximated within $n^{1-\epsilon}$ for any $0 < \epsilon < 1$ ($n$ the number of syntenies); minimizing the full Dup + fLoss + pLoss cost is NP-hard.
 
 **Dynamic program on a fixed supertree.** Let $D_T(X,Y)$ (respectively $D_P(X,Y)$) be the minimum number of segmental losses turning $X$ (respectively a substring of $X$) into its subsequence $Y$, and $d(v, X)$ the minimum cost below node $v$ of the LCA-reconciled supertree when $v$ carries synteny $X$. Then $d(v,X) = 0$ at the leaf carrying $X$ and $+\infty$ at other leaves; at a speciation
+
 $$d(v,X) = \min_{X_l \subseteq X}\big(D_T(X,X_l) + d(v_l,X_l)\big) + \min_{X_r \subseteq X}\big(D_T(X,X_r) + d(v_r,X_r)\big);$$
+
 at a duplication the cost is $1$ plus the better of the two assignments in which one child receives the full copy (charged with $D_T$) and the other a duplicated substring (charged with $D_P$). Ignoring gene order, the minimum cost of the unordered problem is computable in $O(|V(\tilde T)|\,|\mathcal F|)$ time.
 
 ## Depends on

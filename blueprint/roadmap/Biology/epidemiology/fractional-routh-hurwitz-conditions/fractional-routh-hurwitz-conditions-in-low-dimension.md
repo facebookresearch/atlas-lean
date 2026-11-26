@@ -1,15 +1,21 @@
 # Fractional Routh–Hurwitz conditions in low dimension
 
 **Setting.** For a Caputo system $D^\alpha x = f(x)$ with $\alpha \in [0,1)$, an equilibrium is locally asymptotically stable if every eigenvalue $\lambda$ of the Jacobian at the equilibrium satisfies
+
 $$|\arg \lambda| > \frac{\alpha\pi}{2}. \tag{$\ast$}$$
+
 Let $P(\lambda) = \lambda^n + a_1\lambda^{n-1} + \cdots + a_n$ be the characteristic polynomial, with real coefficients. For $n = 3$ its discriminant is
+
 $$D(P) = 18a_1a_2a_3 + (a_1a_2)^2 - 4a_3a_1^3 - 4a_2^3 - 27a_3^2;$$
+
 $D(P) > 0$ means three distinct real roots and $D(P) < 0$ means one real root and a pair of non-real complex conjugate roots. For $\alpha = 1$, $(\ast)$ for all roots is equivalent to the Routh–Hurwitz conditions; for $\alpha \in [0,1)$ the Routh–Hurwitz conditions remain sufficient but are not necessary.
 
 **Proposition.** All roots of $P$ satisfy $(\ast)$ under the following conditions.
 1. $n = 1$: iff $a_1 > 0$.
 2. $n = 2$: iff either the Routh–Hurwitz conditions $a_1 > 0$, $a_2 > 0$ hold, or
+
 $$a_1 < 0,\qquad 4a_2 > a_1^2,\qquad \Big|\tan^{-1}\frac{\sqrt{4a_2 - a_1^2}}{a_1}\Big| > \frac{\alpha\pi}{2}.$$
+
 3. $n = 3$, $D(P) > 0$: iff the Routh–Hurwitz conditions $a_1 > 0$, $a_3 > 0$, $a_1a_2 > a_3$ hold.
 4. $n = 3$, $D(P) < 0$: if $a_1 \ge 0$, $a_2 \ge 0$, $a_3 > 0$ and $\alpha < 2/3$, then $(\ast)$ holds.
 5. $n = 3$, $D(P) < 0$: if $a_1 > 0$, $a_2 > 0$ and $a_1a_2 = a_3$, then $(\ast)$ holds for all $\alpha \in [0,1)$.

@@ -7,7 +7,9 @@ An **amplicon** $A$ is a multiset of reads sharing start and end positions $\mat
 **Forked read graph.** Replacing each $K_{p,q}$ clique by a new fork vertex with $p$ incoming and $q$ outgoing edges gives a $(2m+1)$-staged graph $H$ with $p + q$ instead of $pq$ edges per clique, edge demands $d(u\,v_{\mathrm{fork}}) = c(u)$, $d(v_{\mathrm{fork}}\,v) = c(v)$, $d = 0$ on source and sink edges, and the same $(s,t)$-paths.
 
 **Covering problem.** With at most $k$ variants, flows $g^i$ and indicators $f^i$:
+
 $$\min \sum_{i=1}^k \sum_{(s,u)} g^i_{su} \quad \text{s.t.} \quad \sum_{i} g^i_{uv} \ge d(uv), \quad \sum_{u} g^i_{uv} = \sum_{w} g^i_{vw}\ (v \ne s, t), \quad \sum_{u} f^i_{vu} \le 1, \quad f^i_{uv} \ge g^i_{uv}, \quad f^i_{uv} \in \{0,1\}, \ g^i_{uv} \in [0,1].$$
+
 The out-degree constraint on $f^i$ makes each commodity an unsplittable flow along a single simple $(s,t)$-path $P_i$, and variant $i$ has estimated frequency $\sum_{(s,u)} g^i_{su} \big/ \sum_{j}\sum_{(s,u)} g^j_{su}$.
 
 ## Expansion

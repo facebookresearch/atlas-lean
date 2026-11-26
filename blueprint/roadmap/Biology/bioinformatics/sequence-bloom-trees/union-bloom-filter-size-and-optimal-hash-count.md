@@ -5,10 +5,13 @@
 **Overlap model.** Let $S = \{S_1,\dots,S_r\}$ be $r$ sequencing experiments, each containing $n$ distinct $k$-mers, and suppose each $k$-mer of $S_i$ is absent from each earlier experiment $S_j$ ($j<i$) independently with probability $1-p$, where $p \in (0,1]$ is the overlap probability.
 
 **Lemma 1.** The expected number of distinct $k$-mers in the union $U = \bigcup_{i=1}^r S_i$ is
+
 $$\mathbb{E}[|U|] = \sum_{i=1}^{r} n(1-p)^{i-1} = \frac{n\,(1-(1-p)^r)}{p}.$$
 
 **Theorem 1.** For a union filter of $m$ bits holding $U$ with its expected number of elements, the number of hash functions minimizing the false-positive rate is
+
 $$h^* = \frac{m\ln 2}{n(1-(1-p)^r)/p} = \frac{p\ln 2}{(1-(1-p)^r)\,\mathrm{load}}, \qquad \mathrm{load} = n/m,$$
+
 and the resulting false-positive rate is $(1/2)^{h^*}$, which is at most $1/2$ whenever $h^* \ge 1$.
 
 ## Expansion

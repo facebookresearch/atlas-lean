@@ -5,6 +5,7 @@ A **1-labeled tree** on a label set $L$ with $|L| = n$ is a tree with $n$ nodes,
 Each edge $(u,v)$ induces the bipartition $P(e) = \{P_u, P_v\}$ of $L$ into labels closer to $u$ and labels closer to $v$; let $\mathcal{P}(T)$ be the set of these bipartitions and $\mathrm{RF}(S,T) = |\mathcal{P}(S) \,\triangle\, \mathcal{P}(T)|$.
 
 **Proposition.** For 1-labeled trees $S, T$ on the same label set,
+
 $$\tfrac12\, \mathrm{RF}(S,T) \ \le\ d_{\mathrm{gnni}}(S,T) \ <\ \mathrm{RF}(S,T).$$
 
 ## Depends on

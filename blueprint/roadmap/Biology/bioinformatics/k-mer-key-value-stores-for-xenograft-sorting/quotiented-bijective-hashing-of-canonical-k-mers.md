@@ -3,7 +3,9 @@
 Encode nucleotides as $A \mapsto 0$, $C \mapsto 1$, $G \mapsto 2$, $T \mapsto 3$, read a $k$-mer as a base-4 integer, and define its **canonical code** as the maximum of the codes of the $k$-mer and of its reverse complement. For odd $k$ no $k$-mer equals its reverse complement, so there are exactly $c(k) = 4^k/2$ canonical codes, all lying in $K = \{0, \dots, 4^k - 1\}$.
 
 **Lemma (affine bijection).** For a $2k$-bit offset $b$ and an odd $2k$-bit multiplier $a$, the map
+
 $$g_{a,b}(x) = \big[a \cdot (\mathrm{rot}_k(x) \oplus b)\big] \bmod 4^k,$$
+
 where $\mathrm{rot}_k$ cyclically rotates the $2k$-bit word by $k$ bits and $\oplus$ is bitwise exclusive or, is a bijection of $K$, with inverse $x = \mathrm{rot}_k\big([(a' y) \bmod 4^k] \oplus b\big)$, where $a a' \equiv 1 \pmod{4^k}$.
 
 **Quotienting.** With $p$ buckets and bucket function $f(x) = g(x) \bmod p$, the key is recoverable from its bucket index and the quotient $q(x) = \lfloor g(x)/p \rfloor$, since $g(x) = p\, q(x) + f(x)$ and $g$ is invertible. So a slot needs only $\lceil 2k - \log_2 p \rceil$ bits for the key, plus $\lceil \log_2(h+1) \rceil$ bits recording which of the $h$ hash functions placed it, plus the value bits.

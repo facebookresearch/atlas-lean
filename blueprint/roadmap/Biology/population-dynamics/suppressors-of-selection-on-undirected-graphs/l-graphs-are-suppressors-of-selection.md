@@ -1,7 +1,9 @@
 # ℓ-graphs are suppressors of selection
 
 **Setting.** Let $G$ be a connected undirected graph on $N$ vertices. In the birth–death Moran process each vertex holds a resident (fitness $1$) or a mutant (fitness $r > 0$); at each step a vertex is chosen to reproduce with probability proportional to fitness and its offspring replaces a uniformly chosen neighbour. One initial mutant is placed at a uniformly random vertex, and $\Phi_G(r)$ is the resulting probability of fixation. In the well-mixed population (the complete graph $K_N$),
+
 $$\Phi_0(r) = \frac{1 - r^{-1}}{1 - r^{-N}} .$$
+
 $G$ is an *amplifier of selection* if $\Phi_G(r) > \Phi_0(r)$ for all $r > 1$ and a *suppressor of selection* if $\Phi_G(r) < \Phi_0(r)$ for all $r > 1$ (the inequalities reverse for $r < 1$, and $\Phi_G(1) = 1/N$). Isothermal graphs, in which $T_i = \sum_{j \sim i} 1/d_j$ is constant, have $\Phi_G = \Phi_0$.
 
 **ℓ-graphs.** For $n \ge 2$, the graph $\ell_{2n+2}$ is obtained from the complete graph $K_{2n}$ by splitting its vertices into two halves $H_1,H_2$ of $n$ vertices and adding two vertices $u_1,u_2$, where $u_i$ is joined to every vertex of $H_i$ and $u_1$ is joined to $u_2$.

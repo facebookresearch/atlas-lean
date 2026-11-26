@@ -1,7 +1,9 @@
 # Optimally decomposable fragments and exact sparsification of gapped recursions
 
 Dynamic programmes for pseudoknotted structures (Rivas–Eddy class) tabulate optimal scores $W(F)$ of **ungapped fragments** $F = (i,j) = \{i,\dots,j\}$ and **1-gap fragments** $F = (i,j;k,l) = \{i,\dots,j\} \cup \{k,\dots,l\}$. Each recursion case has a **split type** $T$ (labels such as $12$, $1212$, $12G2$, $12G21$, $12G12$, $121G2$, describing how $F$ is cut into $F_1, F_2$) and maximizes $W(F_1) + W(F_2)$ over splits of that type; in base-pair maximization
+
 $$W(i,j) = \max\Big\{ W(i,j-1),\ \mathrm{bp}(i,j) + W(i+1,j-1),\ \max_{j'} W(i,j'-1) + W(j',j),\ \max_{j',k',l'} W(i,j'-1;k'+1,l'-1) + W(j',k';l',j) \Big\},$$
+
 with analogous cases for $W(i,j;k,l)$, giving $O(n^6)$ time and $O(n^4)$ space.
 
 **Definition.** $F$ is **optimally decomposable by type $T$** ($T$-OD) if some split $(F_1,F_2)$ of type $T$ satisfies $W(F_1) + W(F_2) \ge W(F)$; it is $\mathcal{T}$-OD for a set $\mathcal{T}$ of types if it is $T$-OD for some $T \in \mathcal{T}$.

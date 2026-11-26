@@ -3,15 +3,21 @@
 In paired-end sequencing, fragment (insert) lengths follow a Gaussian library distribution $\mathcal{L} \sim N(\lambda, \sigma^2)$. An insertion or deletion structural variant (ISV, DSV) of size $\delta$ at a site shifts the apparent length of every insert spanning the site by $\delta$ in one direction. Let $K$ be the number of inserts spanning a candidate site and $\mathcal{M}$ their mean apparent length.
 
 **Theorem (sampling probability).** Under the null hypothesis $h_0$ of no variant of size $\delta$, given $K = k$ spanning inserts, $\mathcal{M} \sim N(\lambda, \sigma^2/k)$, so
+
 $$P\big(\lambda - \delta \le \mathcal{M} \le \lambda + \delta \mid k\big) = \operatorname{erf}\!\Big(\frac{\delta\sqrt{k}}{\sigma\sqrt2}\Big)$$
+
 for the two-tailed test of ISV $\cup$ DSV, and
+
 $$P(\mathcal{M} \le \lambda + \delta \mid k) = P(\lambda - \delta \le \mathcal{M} \mid k) = \tfrac12\Big[1 + \operatorname{erf}\!\Big(\frac{\delta\sqrt{k}}{\sigma\sqrt2}\Big)\Big]$$
+
 for the one-tailed tests of each type separately.
 
 **Covering.** A single insert covers the site with a small Bernoulli probability determined by the genome length $G$, the read length, the insert length (at least a minimum admissible length $m$ that differs between insertions and deletions, since reads must flank the variant) and zygosity (homozygous variants are seen on both haplotypes, heterozygous on one). With $N$ inserts processed, $K$ is therefore asymptotically Poisson with a rate proportional to $N$ times this coverage probability, the Gaussian length distribution being integrated over admissible lengths.
 
 **Theorem (false positives).** If $C$ is the event that the sample mean falls in the confidence interval, then
+
 $$P(C) = \sum_{k \ge 1} P(K = k)\, P(C \mid k),$$
+
 and calling a variant whenever $\mathcal{M} \notin C$ has false-positive rate $\alpha = 1 - P(C)$. The **standard model** uses separate one-tailed intervals with type-specific $m$ for ISV and DSV; the **symmetric model** uses the two-tailed interval and treats them as opposites.
 
 ## Expansion
