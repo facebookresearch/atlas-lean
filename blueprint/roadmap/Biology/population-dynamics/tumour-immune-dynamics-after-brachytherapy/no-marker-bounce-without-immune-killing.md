@@ -1,9 +1,13 @@
 # No marker bounce without immune killing under decaying radiation
 
 Let a tumour of size $x(t)$ follow the radiation-only model
+
 $$\frac{dx}{dt} = \left(p_1 - s_1 e^{-\lambda t}\right) x, \qquad x(0) = x_0 > 0,$$
+
 with $p_1 > 0$, $s_1 > 0$ and $\lambda > 0$, and let the serum marker concentration $z(t)$ (PSA) be produced by the tumour at rate $p\,x$, released by radiation-killed cells at rate $s e^{-\lambda t} x$, and cleared at rate $u > 0$:
+
 $$\frac{dz}{dt} = \left(p + s e^{-\lambda t}\right) x - u z, \qquad z(0) = z_0,$$
+
 with $p, s \ge 0$ and $p + s > 0$. Call a **bounce** a strict local minimum of $z$ at some time $b > 0$ followed by a strict local maximum at a later time $a > b$ (a transient rise that resolves on its own). Then $z$ has no bounce: there is a time $\tau^\ast \in [0,\infty]$ such that every strict local maximum of $z$ in $(0,\infty)$ lies in $(0, \tau^\ast]$ and every strict local minimum lies in $[\tau^\ast, \infty)$. The possible shapes of $z$ are therefore monotone, fall-then-rise, rise-then-fall, or rise-fall-rise, but never fall-rise-fall.
 
 ## Depends on

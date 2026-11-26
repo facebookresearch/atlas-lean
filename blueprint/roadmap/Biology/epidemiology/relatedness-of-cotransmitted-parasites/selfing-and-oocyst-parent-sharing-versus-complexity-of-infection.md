@@ -5,7 +5,9 @@
 **Proposition.**
 1. The probability that an oocyst is selfed, and hence yields only genetic clones of one parental strain, is the Simpson index $\;\sigma(p) = \sum_{i=1}^n p_i^2$. With uniform proportions $\sigma = 1/n$; skewing the proportions raises it, since $\sigma(p) \ge 1/n$ with equality only at the uniform vector.
 2. With uniform proportions, two independently formed oocysts share at least one parental strain with probability
+
 $$q(n) = 1 - \frac1n\Bigl(\frac{n-1}{n}\Bigr)^{2} - \Bigl(1 - \frac1n\Bigr)\Bigl(\frac{n-2}{n}\Bigr)^{2} = \frac{4n^2 - 6n + 3}{n^3},$$
+
 which is strictly decreasing in $n$ and satisfies $q(n) = 4/n + O(n^{-2})$. Hence $q(2) = 7/8$, $q(3) = 7/9$, $q(4) = 43/64$, and $q(20) = 1483/8000 \approx 0.19$.
 3. A pair of oocysts sharing exactly one parental strain (the half-sibling configuration) requires three distinct parental strains and so is possible only when $n \ge 3$; a pair sharing no parental strain, giving unrelated cotransmitted parasites, requires four and so is possible only when $n \ge 4$.
 

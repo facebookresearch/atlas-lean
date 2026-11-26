@@ -3,7 +3,9 @@
 In the infinitely repeated donation game (cooperation costs $c > 0$ and gives the co-player $b > c$), let $p = (p_h)$ be a reactive-$n$ strategy, with $p_h$ the cooperation probability after the co-player's last $n$ moves $h$ (oldest first).
 
 **Reactive-2.** $p = (p_{CC}, p_{CD}, p_{DC}, p_{DD})$ is a partner (nice and a Nash equilibrium) if and only if
+
 $$p_{CC} = 1, \qquad \frac{p_{CD} + p_{DC}}{2} \le 1 - \frac{1}{2}\cdot\frac{c}{b}, \qquad p_{DD} \le 1 - \frac{c}{b}.$$
+
 The partners form a three-dimensional polyhedron. It suffices to test two deviations: strict alternation between $C$ and $D$ (second inequality) and ALLD (third). The timing of a single defection in memory does not matter; only the average of $p_{CD}$ and $p_{DC}$ is constrained.
 
 **Reactive-3.** $p$ is a partner if and only if $p_{CCC} = 1$ and

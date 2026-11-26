@@ -1,8 +1,11 @@
 # Partner strategies in the noisy alternating game
 
 Consider the strictly alternating donation game (benefit $b$, cost $c$, $b > c > 0$) in which each intended action is flipped with probability $\varepsilon > 0$. Memory-one partner strategies, i.e. Nash equilibria that are fully cooperative in the absence of errors, exist only if
+
 $$\varepsilon < \frac{1}{2}\left(1 - \frac{c}{b}\right),$$
+
 and they are exactly the strategies $q$ with
+
 $$q_{CC} = q_{DC} = 1, \qquad q_{CD} \le 1 - \frac{c}{(1-2\varepsilon)\,b}, \qquad q_{DD} = \frac{(1-2\varepsilon)\,(b + \varepsilon c\, q_{CD}) - c}{(1-2\varepsilon)\,(b + \varepsilon c)} .$$
 
 These conditions describe a line segment in strategy space with endpoints

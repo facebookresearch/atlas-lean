@@ -10,7 +10,9 @@ Call a strategy a **partner** if it is a Nash equilibrium against every strategy
 - a self-cooperative $\mathbf p \in \mathcal R_U$ is a partner **iff** $p^k_D \le 1 - c_k/b_k$ for every game $k$.
 
 For $m = 2$ the linked condition reads $p^1_{CC} = p^2_{CC} = 1$ together with the three weighted averages
+
 $$\frac{b_1 p^1_{DC} + b_2 p^2_{DC}}{b_1 + b_2} \le 1 - \frac{c_1}{b_1+b_2}, \quad \frac{b_1 p^1_{CD} + b_2 p^2_{CD}}{b_1+b_2} \le 1 - \frac{c_2}{b_1+b_2}, \quad \frac{b_1 p^1_{DD} + b_2 p^2_{DD}}{b_1+b_2} \le 1 - \frac{c_1+c_2}{b_1+b_2} .$$
+
 The unlinked conditions bind game by game, the linked conditions only on a benefit-weighted average, so a linked player may be more forgiving in one game by being less forgiving in another, and the set of cooperation-sustaining strategies is strictly larger.
 
 ## Expansion

@@ -3,6 +3,7 @@
 Split the population of the [partial-treatment model](competitive-exclusion-under-partial-treatment.md) into two equal demes. Every individual in one deme is treated whenever infected and nobody in the other deme is. Transmission occurs at rate $\kappa$ within a deme and at rate $\beta$ between demes, with $0 \le \beta \le \kappa$. With $w_u, r_u$ the proportions of the untreated deme infected with the sensitive and resistant strains, and $w_t, r_t$ the same for the treated deme,
 
 $$\dot w_u = \tfrac12\big(\kappa w_u + \beta (1-\epsilon) w_t\big)(1 - w_u - r_u) - g w_u, \qquad \dot w_t = \tfrac12\big(\beta w_u + \kappa (1-\epsilon) w_t\big)(1 - w_t - r_t) - g w_t,$$
+
 $$\dot r_u = \tfrac12 (1-c)\big(\kappa r_u + \beta r_t\big)(1 - w_u - r_u) - g r_u, \qquad \dot r_t = \tfrac12 (1-c)\big(\beta r_u + \kappa r_t\big)(1 - w_t - r_t) - g r_t.$$
 
 The next-generation method gives the strain reproductive numbers

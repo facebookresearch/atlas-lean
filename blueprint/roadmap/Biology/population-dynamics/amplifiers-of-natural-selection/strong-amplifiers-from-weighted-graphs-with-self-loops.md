@@ -1,6 +1,7 @@
 # Strong amplifiers from weighted graphs with self-loops
 
 **Theorem (Pavlogiannis–Tkadlec–Chatterjee–Nowak).** Fix $\varepsilon > 0$ and let $G_1, G_2, \dots$ be connected graphs with self-loops, $G_N$ having $N$ vertices and diameter at most $N^{1-\varepsilon}$. Then there is an explicit assignment of edge and self-loop weights to each $G_N$ such that the resulting weighted graphs form a strong amplifier for the birth–death Moran process under **both** uniform and temperature initialization (and hence under any mixture of the two): for every fixed $r > 1$,
+
 $$\rho(G_N, r, \mathrm U) \to 1 \quad\text{and}\quad \rho(G_N, r, \mathrm T) \to 1 \qquad (N \to \infty).$$
 
 Since an edge can be removed by giving it weight $0$, the result applies to sparse topologies such as stars, toroidal grids, sunflowers, wheels, concentric circles and trees.

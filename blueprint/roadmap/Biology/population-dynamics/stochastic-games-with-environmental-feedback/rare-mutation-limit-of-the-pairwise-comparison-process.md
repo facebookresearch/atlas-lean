@@ -1,10 +1,15 @@
 # Rare-mutation limit of the pairwise comparison process
 
 Let a population of $N \ge 2$ players use strategies from a finite set $P$, with a symmetric two-player payoff function $\pi(p, \tilde p)$ (the payoff to $p$ against $\tilde p$). In a population of $k$ mutants with strategy $p_M$ and $N - k$ residents with $p_R$, each player meets every other player once, so the average payoffs are
+
 $$\pi_R(k) = \frac{N-k-1}{N-1}\,\pi(p_R,p_R) + \frac{k}{N-1}\,\pi(p_R,p_M), \qquad \pi_M(k) = \frac{N-k}{N-1}\,\pi(p_M,p_R) + \frac{k-1}{N-1}\,\pi(p_M,p_M).$$
+
 In the **pairwise comparison process** with selection strength $\beta \ge 0$, a randomly chosen learner adopts the strategy of a randomly chosen role model with probability given by the Fermi function $(1 + e^{-\beta(\pi_{\text{model}} - \pi_{\text{learner}})})^{-1}$. The probability that a single mutant takes over a resident population is
+
 $$\rho(p_R, p_M) = \frac{1}{1 + \sum_{i=1}^{N-1} \prod_{k=1}^{i} \exp\!\big(-\beta\,(\pi_M(k) - \pi_R(k))\big)},$$
+
 which equals $1/N$ at $\beta = 0$. If mutations are so rare that each mutant fixes or is lost before the next arises, and a mutant adopts a strategy drawn uniformly from $P$, the sequence of resident strategies is a Markov chain on $P$ with transition probabilities $\rho(p, \tilde p)/|P|$ for $\tilde p \ne p$. For $\beta < \infty$ this chain is irreducible, its stationary distribution $w = (w_p)_{p \in P}$ is unique, and the long-run average payoff and cooperation rate of the population are
+
 $$\hat\pi = \sum_{p \in P} w_p\, \pi(p,p), \qquad \hat\gamma = \sum_{p \in P} w_p\, \gamma(p,p).$$
 
 ## Depends on

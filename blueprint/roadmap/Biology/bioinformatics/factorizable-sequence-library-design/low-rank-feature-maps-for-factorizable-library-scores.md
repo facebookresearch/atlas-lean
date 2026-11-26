@@ -1,7 +1,9 @@
 # Low-rank feature maps for factorizable library scores
 
 Let $\Sigma$ be a finite alphabet, $L_p + L_s = L$, $r = |\Sigma|^{\min(L_p, L_s)}$, and let $m \le r$ be a positive integer. For every score $f : \Sigma^L \to \mathbb R$ that is not identically zero there are feature maps $\varphi_p : \Sigma^{L_p} \to \mathbb R^{m'}$ and $\varphi_s : \Sigma^{L_s} \to \mathbb R^{m'}$ with
+
 $$\frac{\sum_{x \in \Sigma^{L_p}} \sum_{y \in \Sigma^{L_s}} \big(f(x \oplus y) - \varphi_p(x) \cdot \varphi_s(y)\big)^2}{\sum_{z \in \Sigma^L} f(z)^2} \le 1 - \frac{m}{r}$$
+
 if and only if $m' \ge m$. Thus $m'$-dimensional prefix and suffix features always capture at least a fraction $m'/r$ of the squared norm of any score, and no smaller dimension guarantees that fraction for all scores.
 
 ## Depends on

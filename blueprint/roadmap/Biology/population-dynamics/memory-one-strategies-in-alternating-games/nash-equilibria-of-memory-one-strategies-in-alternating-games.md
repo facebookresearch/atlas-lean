@@ -3,11 +3,16 @@
 In the infinitely repeated, strictly alternating donation game without errors (benefit $b$, cost $c$, $b > c > 0$), a memory-one strategy $q = (q_{CC}, q_{CD}, q_{DC}, q_{DD})$ is a Nash equilibrium if and only if it belongs to one of three classes.
 
 - **Partners** (fully cooperative against themselves, and Nash):
+
 $$q_{CC} = 1, \qquad q_{CD} \le 1 - \frac{c}{b-c}\,q_{DD}, \qquad q_{CD} \le 1 - \frac{c}{b}\,q_{DC}.$$
+
 If one of the two inequalities fails, $q$ can be invaded by ALLD or by Anti-Tit-for-Tat.
 - **Defectors** (mutual defection against themselves, and Nash):
+
 $$q_{DD} = 0, \qquad q_{DC} \le \frac{c}{b}\,(1 - q_{CD}), \qquad q_{DC} \le \frac{c}{b-c}\,(1 - q_{CC}).$$
+
 - **Equalizers** (strategies that fix the co-player's payoff whatever the co-player does):
+
 $$q_{CD} = \frac{b\,q_{CC} - c\,(1 + q_{DD})}{b - c}, \qquad q_{DC} = \frac{b\,q_{DD} + c\,(1 - q_{CC})}{b - c}.$$
 
 Partners and defectors each form a three-dimensional polyhedron. The partner polyhedron grows with $b/c$, never contains ALLC, always contains TFT and GRIM (with cooperation in the first round), and contains Win-Stay Lose-Shift $(1,0,0,1)$ and Firm-but-Fair $(1,0,1,1)$ when $b \ge 2c$. The defector polyhedron is never empty and always contains ALLD. The algebraic conditions coincide with those for the simultaneous repeated donation game, but the simultaneous game has a fourth class, the alternators, which cooperate in one round and defect in the next; such behavior cannot arise among memory-one players in the alternating game.

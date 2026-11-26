@@ -1,7 +1,9 @@
 # Entropy generality score of an expression program
 
 Let an expression program $k$ be used by tissue groups $g = 1, \dots, G$ with total usages $u_{k1}, \dots, u_{kG} \ge 0$, not all zero (usage of a program by a group is the aggregated weight that group's samples put on the program). Normalise to the distribution $q_{kg} = u_{kg} / \sum_{h} u_{kh}$ and define the **generality score** of the program as the Shannon entropy
+
 $$\mathcal G_k = -\sum_{g=1}^{G} q_{kg} \log q_{kg}, \qquad 0 \le \mathcal G_k \le \log G .$$
+
 Then $\mathcal G_k = 0$ exactly when one group accounts for all the usage of the program (a program specific to a single group of tissues), and $\mathcal G_k = \log G$ exactly when the program is used equally by every group (a maximally general program). Normalising before taking the entropy makes the score invariant to the overall abundance of the program, so a program used weakly but evenly scores as general, and groups that barely use the program contribute little. Groups are required: computing the same entropy over individual tissue samples instead counts redundant related samples separately and overstates generality whenever the compendium contains several similar tissues.
 
 ## Depends on

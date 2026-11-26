@@ -3,6 +3,7 @@
 **Setting.** A population of $N$ individuals occupies the vertices of a weighted directed graph $G$; $w(u,v)$ is the probability that an offspring of the individual at $u$ is placed at $v$ ($\sum_v w(u,v) = 1$). In the Moran birth-death process, at each step one individual is chosen to reproduce with probability proportional to fitness (residents $1$, mutants $r > 1$) and its offspring replaces the occupant of a vertex chosen by $w$. A single mutant is placed either uniformly at random (uniform initialization) or at vertex $v$ with probability equal to its temperature $t(v) = \frac1N\sum_u w(u,v)$ (temperature initialization). Let $\rho(G,r)$ be the resulting fixation probability, $T(G,r)$ the expected number of steps until the population is homogeneous (absorption time), and $\tau(G,r)$ the expected number of steps conditional on mutant fixation (fixation time).
 
 **Theorem.** For every graph $G$ on $N$ vertices and either initialization, the absorption time satisfies, as $N\to\infty$,
+
 $$T(G,r) \;\gtrsim\; \frac{\rho(G,r)}{r}\,N\log N .$$
 
 **Corollary.** For the complete graph (well-mixed population), $T$ and $\tau$ are both of order $N\log N$; for large $N$ the absorption time is about $\frac{r+1}{r}N\log N$ and the fixation time about $\frac{r+1}{r-1}N\log N$. Hence no amplifier ($\rho(G,r) \ge \rho(K_N,r)$), and no weak suppressor (fixation probability reduced by at most a constant factor), has asymptotically shorter absorption time than the well-mixed population. A family with asymptotically shorter absorption time must have $\rho(G,r)\to 0$.

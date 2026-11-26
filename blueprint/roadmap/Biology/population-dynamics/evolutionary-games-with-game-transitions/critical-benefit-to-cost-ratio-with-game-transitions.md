@@ -7,11 +7,15 @@
 **Result.** Under weak selection and $N \gg k$:
 
 - death–birth updating:
+
 $$\rho_C > \rho_D \iff \frac{b_1}{c} > k - \sum_{i=2}^{n} \xi_i\,\frac{\Delta b_{1i}}{c}, \qquad \xi_i = \frac{k-1}{2}\,u_i(1) - \frac{k+1}{2}\,u_i(2);$$
+
 - birth–death or pairwise-comparison updating:
+
 $$\rho_C > \rho_D \iff \sum_{i=2}^{n} \xi_i\,\frac{\Delta b_{1i}}{c} > 1, \qquad \xi_i = \frac{u_i(1) - u_i(2)}{2}.$$
 
 The coefficients $\xi_i$ depend only on the transition pattern, not on $b_i$ or $c$. For two states,
+
 $$u_2(s) = \frac{p_{12}(s)}{p_{12}(s) + p_{21}(s)} .$$
 
 **Special cases.**

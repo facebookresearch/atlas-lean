@@ -7,7 +7,9 @@ $$\dot S = -\beta \frac{S I}{N} - \alpha S + \gamma I, \qquad \dot I = \beta \fr
 Write $i = I/N \in [0, 1]$, so that $\dot i = q(i)$ with $q(i) = \beta i (1 - i) + \alpha (1 - i) - \gamma i$. If $\alpha > 0$ then:
 
 1. $q$ has exactly one zero in $[0, 1]$, the steady-state prevalence
+
 $$i^* = \frac{(\beta - \alpha - \gamma) + \sqrt{(\beta - \alpha - \gamma)^2 + 4 \alpha \beta}}{2 \beta} \quad (\beta > 0), \qquad i^* = \frac{\alpha}{\alpha + \gamma} \quad (\beta = 0),$$
+
 and $0 < i^* < 1$;
 2. every solution with $i(0) \in [0, 1]$ converges to $i^*$;
 3. $i^*$ increases strictly in $\beta$ and in $\alpha$, decreases strictly in $\gamma$, and $i^* \ge \alpha/(\alpha + \gamma)$.

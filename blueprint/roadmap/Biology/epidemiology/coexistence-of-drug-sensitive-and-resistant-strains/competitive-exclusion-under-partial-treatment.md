@@ -3,6 +3,7 @@
 Consider a well-mixed population in which a drug-sensitive (wild-type) and a drug-resistant strain spread by SIS dynamics with no co-infection or super-infection. Infected individuals transmit at rate $\kappa > 0$ and recover to susceptibility at rate $g > 0$. A fraction $f \in [0, 1]$ of individuals is treated whenever infected; treatment multiplies the transmission of the sensitive strain by $1 - \epsilon$ ($0 < \epsilon < 1$) and does not affect the resistant strain, which instead pays a transmission cost $c \in (0, 1)$. With $w_u, w_t, r_u, r_t$ the proportions of the population infected with the sensitive or resistant strain and untreated or treated,
 
 $$\dot w_u = \kappa\big(w_u + (1-\epsilon) w_t\big)\big((1-f) - w_u - r_u\big) - g w_u, \qquad \dot w_t = \kappa\big(w_u + (1-\epsilon) w_t\big)\big(f - w_t - r_t\big) - g w_t,$$
+
 $$\dot r_u = \kappa (1-c)(r_u + r_t)\big((1-f) - w_u - r_u\big) - g r_u, \qquad \dot r_t = \kappa (1-c)(r_u + r_t)\big(f - w_t - r_t\big) - g r_t.$$
 
 The strain-specific basic reproductive numbers are

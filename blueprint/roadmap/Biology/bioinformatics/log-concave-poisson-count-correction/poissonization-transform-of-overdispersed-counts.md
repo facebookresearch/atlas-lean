@@ -3,7 +3,9 @@
 Let counts follow the [Poisson log-concave compound model](poisson-log-concave-compound-model-for-read-counts.md) with fitted latent log-concave density $e^{\phi}$, and let $G_\phi$ be the cumulative distribution function of the continuous extension of the compound count distribution. Let $F_\mu$ be the cumulative distribution function of the continuous extension of the Poisson law with rate $\mu > 0$.
 
 **Definition.** The Poissonization transform of a count $x$ is
+
 $$T(x) = F_\mu^{-1}\big(G_\phi(x)\big),$$
+
 a probability integral transform that maps each count to the Poisson quantile of the same level. The target rate $\mu$ is a free parameter; it is set from the median of the fitted latent distribution.
 
 **Properties.** $T$ is nondecreasing, so it preserves the ranking of bases and all joint structure along the genome, and it matches the quantiles of the corrected counts to those of a Poisson distribution, so a downstream method built on a Poisson likelihood is effectively run under the compound log-concave model instead. Because $G_\phi$ has a much heavier upper tail than any Poisson law, $T$ compresses large counts strongly.

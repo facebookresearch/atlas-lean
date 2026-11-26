@@ -1,7 +1,9 @@
 # Population coverage of a peptide set at a hit threshold
 
 Let $V$ be a set of candidate vaccine peptides and let an individual be described by a diploid HLA genotype $g$, formed from a pair of haplotypes drawn from a population with known haplotype frequencies, so that homozygous and heterozygous loci are both accounted for. Say that a pair (peptide, HLA allele) is a **hit** for $g$ when the allele is carried by $g$ and the peptide is predicted to be immunogenically displayed by it, and let $H(V,g)$ be the number of distinct hits. For a nonnegative integer $n$, the **population coverage** of $V$ at threshold $n$ is the probability that an individual drawn from the population has at least $n$ hits,
+
 $$P_V(n) \;=\; \sum_{g} \Pr(g)\, \mathbf 1\{ H(V,g) \ge n \},$$
+
 and the insufficient-coverage curve is its complement one step up, $1 - P_V(n+1)$, the fraction of individuals with at most $n$ hits. Two properties follow at once. First, $P_V$ is non-increasing in $n$ with $P_V(0) = 1$, so coverage curves may be compared across vaccines at any threshold. Second, $P_V$ is monotone in the peptide set: $V \subseteq V'$ implies $H(V,g) \le H(V',g)$ for every $g$ and hence $P_V(n) \le P_{V'}(n)$ for every $n$, so augmenting a vaccine with extra peptides can never lower its predicted coverage. Averaging $P_V(n)$ over several populations with different haplotype frequency distributions gives the figure used for designs meant to serve all of them.
 
 ## Expansion

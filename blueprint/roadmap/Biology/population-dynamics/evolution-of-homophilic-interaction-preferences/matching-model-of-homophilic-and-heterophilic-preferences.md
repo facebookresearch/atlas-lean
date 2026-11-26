@@ -1,9 +1,13 @@
 # Matching model of homophilic and heterophilic preferences
 
 Let a haploid asexual population of size $N$ consist of individuals $i$ with an observable phenotype $G_i \in \{1, \dots, M\}$ and a heritable **preference** $p_i \in [0,1]$, the probability of seeking a partner of the individual's own phenotype. Phenotypes carry no intrinsic fitness; only the combination of the two partners' phenotypes pays. An interaction yields the **homophilic payoff** $a$ when $G_i = G_j$ and the **heterophilic payoff** $b$ when $G_i \ne G_j$, and non-interaction yields $0$. An encounter between $i$ and $j$ becomes an actual interaction only if both partners sought a partner of the type the other offers, so, with the two choices independent, the probability of a successful interaction is
+
 $$\Pr[\text{interact}] = \begin{cases} p_i\,p_j, & G_i = G_j, \\ (1 - p_i)(1 - p_j), & G_i \ne G_j. \end{cases}$$
+
 Writing $\delta_{ij} = \mathbf 1[G_i = G_j]$, the expected payoff of one encounter is
+
 $$\pi_{ij} = \delta_{ij}\, p_i p_j\, a + (1 - \delta_{ij})(1 - p_i)(1 - p_j)\, b ,$$
+
 and an individual's expected payoff is the average of $\pi_{ij}$ over the composition of the population. Three regimes follow from the payoffs alone: $a > b$ rewards homophilic interactions (synergy), $a < b$ rewards heterophilic ones (specialisation), and $a = b$ favours neither. Preferences and phenotypes then evolve together in a frequency-dependent Moran process in which fitness is an exponential function of the average payoff and offspring mutate their preference or phenotype with small probability.
 
 ## Depends on

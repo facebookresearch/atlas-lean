@@ -3,6 +3,7 @@
 In the infinitely repeated donation game (cost $c > 0$, benefit $b > c$), a **reactive-$n$ counting strategy** is $r = (r_n, r_{n-1}, \dots, r_0) \in [0,1]^{n+1}$, where $r_i$ is the probability of cooperating when the co-player cooperated $i$ times during the last $n$ rounds, irrespective of when. Counting strategies are the reactive-$n$ strategies whose entries depend only on the number of $C$'s in the co-player's $n$-history (for $n = 2$: $p_{CD} = p_{DC}$); a player still needs the exact sequence of the co-player's last $n$ moves in order to update the count.
 
 **Theorem.** A reactive-$n$ counting strategy $r$ is a partner (nice and a Nash equilibrium) if and only if
+
 $$r_n = 1 \qquad\text{and}\qquad r_{n-k} \le 1 - \frac{k}{n}\cdot\frac{c}{b} \quad \text{for } k \in \{1, 2, \dots, n\}.$$
 
 For every defection of the co-player in memory, the maximal admissible cooperation probability drops by $c/(nb)$: a partner's generosity decreases in proportion to the co-player's selfishness. The equilibrium property holds against all deviations, including strategies that do not merely count and strategies with memory longer than $n$. For $n = 1$ the theorem is the classical condition $p_C = 1$, $p_D \le 1 - c/b$ for reactive partners.

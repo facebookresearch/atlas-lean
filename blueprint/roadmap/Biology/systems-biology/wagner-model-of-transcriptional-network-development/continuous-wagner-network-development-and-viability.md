@@ -1,11 +1,15 @@
 # Continuous Wagner network development and viability
 
 **Model.** A network of $N$ transcription factors is an $N\times N$ real matrix $W = (w_{ij})$ with entries in $[-1,1]$, where $w_{ij}$ is the effect of the product of gene $j$ on the production of gene $i$ (positive for activation, negative for repression). An individual has initial expression vector $S(0)\in[-1,1]^N$ and develops by
+
 $$s_i(t+1) = f\Big(\sum_{j=1}^{N} w_{ij}\,s_j(t)\Big),\qquad f(x) = \frac{2}{1+e^{-a x}} - 1 = \tanh\!\Big(\frac{a x}{2}\Big),$$
+
 with gain $a > 0$; large $a$ recovers Wagner's discrete model with $f(x) = \operatorname{sgn}(x)$, while moderate $a$ (for example $a = 1.5$) gives graded expression levels.
 
 **Viability.** With the normalized squared distance $D(X,Y) = \sum_{i=1}^{N}(X_i-Y_i)^2/(4N) \in [0,1]$ on $[-1,1]^N$, let
+
 $$\varphi(S_t) = \frac{1}{\tau}\sum_{u=t-\tau}^{t} D\big(S(u),\bar S_t\big),$$
+
 where $\bar S_t$ is the mean of the last $\tau$ expression vectors. The individual is viable if $\varphi(S_t) < \sigma$ for some $t \le L_{\max}$; its final state is then an (approximate) fixed point $S^{*} = f(WS^{*})$, and the number of steps taken is the developmental path length. The defaults are $\tau = 10$, $\sigma = 10^{-4}$, $L_{\max} = 100$.
 
 **Diploid mating.** The offspring of networks $W$ and $W'$ has network $(W + W')/2$, the elementwise average.

@@ -1,15 +1,21 @@
 # Poisson log-concave compound model for read counts
 
 **Model.** Let $x_1,\dots,x_G$ be per-base read counts along a genome. Each base $i$ has a latent log-rate $\lambda_i \in \mathbb R$, drawn independently from a density proportional to $e^{\phi(\lambda)}$ with $\phi$ a concave function (a log-concave density), and
+
 $$x_i \mid \lambda_i \sim \mathrm{Poisson}\big(e^{\lambda_i}\big).$$
+
 The marginal probability of a count $x$ is
+
 $$P_\phi(x) = \frac{\displaystyle\int_{\mathbb R}\frac{e^{x\lambda}\,e^{-e^{\lambda}}}{x!}\,e^{\phi(\lambda)}\,d\lambda}{\displaystyle\int_{\mathbb R}e^{\phi(\lambda)}\,d\lambda}.$$
 
 **Estimation.** Replacing the integrals by sums over fixed quadrature points $\lambda_1 < \dots < \lambda_Q$ with values $\phi_q = \phi(\lambda_q)$, and letting $n_x$ be the number of bases with count $x$, the maximum-likelihood problem is
+
 $$\max_{\phi_1,\dots,\phi_Q}\ \sum_{x} n_x \log\sum_{q=1}^{Q}\frac{e^{x\lambda_q - e^{\lambda_q}}}{x!}\,e^{\phi_q} \;-\; \Big(\sum_x n_x\Big)\log\sum_{q=1}^{Q}e^{\phi_q}\quad\text{subject to } (\phi_q)\ \text{concave in } q ,$$
+
 where concavity means $\phi_{q+1}-\phi_q$ is nonincreasing (on an equally spaced grid). It is solved by accelerated proximal gradient ascent, the proximal step being projection onto concave sequences (concave regression).
 
 **Gradient.** The partial derivative with respect to $\phi_q$ is the expected number of bases whose latent log-rate is at grid point $q$ given their observed counts, minus the number predicted by the fitted prior alone:
+
 $$\frac{\partial \ell}{\partial\phi_q} = \sum_x n_x\,\frac{w_{xq}e^{\phi_q}}{\sum_{q'}w_{xq'}e^{\phi_{q'}}} - \Big(\sum_x n_x\Big)\frac{e^{\phi_q}}{\sum_{q'}e^{\phi_{q'}}},\qquad w_{xq} = \frac{e^{x\lambda_q - e^{\lambda_q}}}{x!}.$$
 
 ## Expansion

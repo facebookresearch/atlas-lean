@@ -22,7 +22,9 @@ Each bound is uniform in $N$, so no family lacking self-loops, or lacking edge w
 ## Expansion
 
 Proof of bound 1. Let the mutant start at $i$, all neighbours residents. Without a self-loop at $i$, the mutant's own reproduction never replaces itself, so in the embedded jump chain it reproduces at relative rate $r$ while it is replaced at relative rate $\sum_k w_{ki}/\sum_j w_{kj} = t_i$. The probability that it is replaced before reproducing even once is therefore $t_i / (t_i + r)$, and
+
 $$\rho(G, r, \mathrm T) \le \sum_i \frac{t_i}{N} \cdot \frac{r}{t_i + r} = \frac1N \sum_i g(t_i), \qquad g(t) = \frac{r t}{t + r}.$$
+
 Because $g$ is concave and the temperatures average to $1$, Jensen's inequality gives $\frac1N \sum_i g(t_i) \le g(1) = r/(r+1) = 1 - 1/(r+1)$. The other bounds follow the same early-extinction idea: for bounded degree, at least $N/c$ vertices are replaced at rate at least $1/c$, and a single mutant on such a "hot" vertex fixes with probability less than $rc/(1 + rc)$.
 
 ## Sources

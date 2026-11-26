@@ -12,7 +12,9 @@ p_{DC}q_{CC} & p_{DC}(1-q_{CC}) & (1-p_{DC})q_{CD} & (1-p_{DC})(1-q_{CD}) \\
 p_{DD}q_{DC} & p_{DD}(1-q_{DC}) & (1-p_{DD})q_{DD} & (1-p_{DD})(1-q_{DD})
 \end{pmatrix}:$$
 player 1 reacts to the previous pair, and player 2 then reacts to its own previous move and to player 1's new move. For a stationary distribution $v = v M_A$ with $v = (v_{CC}, v_{CD}, v_{DC}, v_{DD})$, the long-run payoffs are
+
 $$\pi_1 = (v_{CC} + v_{DC})\,b - (v_{CC} + v_{CD})\,c, \qquad \pi_2 = (v_{CC} + v_{CD})\,b - (v_{CC} + v_{DC})\,c .$$
+
 The stationary distribution is unique when both strategies are fully stochastic or $\varepsilon > 0$; otherwise the first moves must be specified.
 
 **Reduction of best responses.** Let $q$ be a memory-one strategy.

@@ -1,7 +1,9 @@
 # Reverse kernel trick for factorizable library scores
 
 Fix a finite alphabet $\Sigma$ and lengths $L_p + L_s = L$. For sets of prefixes $X \subseteq \Sigma^{L_p}$ and suffixes $Y \subseteq \Sigma^{L_s}$, the **factorizable library** $X \oplus Y = \{x \oplus y : x \in X, y \in Y\}$ consists of all concatenations, so it has $|X|\,|Y|$ members while only $|X| + |Y|$ segments are synthesised. Let $f : \Sigma^L \to \mathbb R$ score single sequences. If there are feature maps $\varphi_p : \Sigma^{L_p} \to V$ and $\varphi_s : \Sigma^{L_s} \to V$ into an inner-product space with $f(x \oplus y) = \langle \varphi_p(x), \varphi_s(y) \rangle$, then the total library score factorises as
+
 $$\sum_{x \in X} \sum_{y \in Y} f(x \oplus y) = \Big\langle \sum_{x \in X} \varphi_p(x),\ \sum_{y \in Y} \varphi_s(y) \Big\rangle .$$
+
 Maintaining the two running sums, a change of one prefix or one suffix updates the total score with one vector update and one inner product, instead of re-scoring the $\max(|X|, |Y|)$ affected library members.
 
 For a pairwise (Potts) score $f(z) = \sum_{k} h_k(z_k) + \sum_{k < l} J_{kl}(z_k, z_l)$, finite-dimensional features exist with dimension $L_s |\Sigma| + 2$: index coordinates by suffix positions $l$ and letters $b$, set $\varphi_p(x)_{(l,b)} = \sum_{k \le L_p} J_{k,L_p+l}(x_k, b)$ and $\varphi_s(y)_{(l,b)} = \mathbf 1[y_l = b]$, and add two coordinates carrying the prefix-only part $g_p(x)$ (paired with the constant $1$) and the suffix-only part $g_s(y)$ (paired with the constant $1$).

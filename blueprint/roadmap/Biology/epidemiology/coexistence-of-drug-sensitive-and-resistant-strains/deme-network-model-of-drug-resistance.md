@@ -3,6 +3,7 @@
 Generalize the [two-deme model](two-deme-reproductive-numbers-and-coexistence.md) to $M$ equal demes connected by a symmetric adjacency matrix $\Delta$ ($\Delta_{ij} = 1$ if infected individuals in deme $i$ can infect individuals in deme $j$; the graph is connected). Each deme is either treated ($T_i = 1$) or untreated ($T_i = 0$). With within-deme rate $\kappa$, between-deme rate $\beta \le \kappa$, recovery rate $g$, treatment efficacy $\epsilon$ against the sensitive strain and resistance cost $c$, the proportions $w_i, r_i$ of deme $i$ infected with the sensitive and resistant strains satisfy
 
 $$\dot w_i = \Big\kappa (1 - \epsilon T_i) w_i + \beta \sum_j \Delta_{ji} (1 - \epsilon T_j) w_j\Big - g w_i,$$
+
 $$\dot r_i = (1 - c)\Big\kappa r_i + \beta \sum_j \Delta_{ji} r_j\Big - g r_i.$$
 
 Linearizing at the infection-free state gives the strain reproductive numbers

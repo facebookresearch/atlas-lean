@@ -5,7 +5,9 @@
 Given an unbounded slowly growing function $\alpha$ with $1 < \alpha(N) \ll N$, let $\mathrm{SR}^\alpha_N$ have $n = \lfloor N/\alpha(N) \rfloor$ and $p_{\mathrm{in}} = p_{\mathrm{out}} = 1/\alpha(N)^2$.
 
 **Theorem 2 (Tkadlec–Pavlogiannis–Chatterjee–Nowak).** For every fixed $r > 1$, $\mathrm{fp}(\mathrm{SR}^\alpha_N, r) \to 1$ and
+
 $$T(\mathrm{SR}^\alpha_N) \le \log N \cdot \alpha(N)^5 .$$
+
 Consequently, for every increasing unbounded $\beta(N)$ there is a strong amplifier with $T(G_N) \le \log N \cdot \beta(N)$ (take $\alpha = \beta^{1/5}$); e.g. $\beta(N) = \log\log N$ gives timescale $\log N \cdot \log\log N$.
 
 Together with the lower bound for all strong amplifiers, this is a tight dichotomy: strong amplification always costs an unbounded factor over $\log N$, but any unbounded factor suffices.

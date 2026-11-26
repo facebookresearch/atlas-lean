@@ -3,10 +3,15 @@
 Two players interact for infinitely many rounds. In each round the environment is in state $s_1$ or $s_2$, and the players play a donation game in which cooperating ($C$) costs $c$ and gives the co-player a benefit $b_i$ that depends on the state, with $b_1 \ge b_2 > c$. A **transition vector** $q = (q^1_{CC}, q^1_{CD}, q^1_{DD};\ q^2_{CC}, q^2_{CD}, q^2_{DD}) \in [0,1]^6$ gives the probability $q^i_{a\tilde a}$ that the next round is in $s_1$, given the current state $s_i$ and the actions $a, \tilde a$ (symmetric: $q^i_{DC} = q^i_{CD}$). A **full-information memory-one strategy** is a vector $p = (p^i_{a\tilde a}) \in [0,1]^8$, the probability of cooperating in a round whose state is $s_i$ when the previous actions were $(a, \tilde a)$; a **no-information** strategy is one with $p^1_{a\tilde a} = p^2_{a\tilde a}$ for all $a, \tilde a$.
 
 For strategies $p$ (player 1) and $\tilde p$ (player 2), the round outcomes $\omega = (s_i, a, \tilde a)$ form a Markov chain on $8$ states with transition probabilities
+
 $$m_{\omega,\omega'} = x \cdot y \cdot \tilde y, \qquad x = \begin{cases} q^i_{a\tilde a} & s_{i'} = s_1 \\ 1 - q^i_{a\tilde a} & s_{i'} = s_2 \end{cases}, \quad y = \begin{cases} p^{i'}_{a\tilde a} & a' = C \\ 1 - p^{i'}_{a\tilde a} & a' = D \end{cases}, \quad \tilde y = \begin{cases} \tilde p^{i'}_{\tilde a a} & \tilde a' = C \\ 1 - \tilde p^{i'}_{\tilde a a} & \tilde a' = D \end{cases}$$
+
 for $\omega' = (s_{i'}, a', \tilde a')$. If implementation errors make all strategy entries lie in $(0,1)$ (a strategy $p$ with error rate $\varepsilon > 0$ is played as $(1-\varepsilon)p + \varepsilon(1-p)$) and $q \ne (1,1,1;0,0,0)$, the matrix $M = (m_{\omega,\omega'})$ has a unique stationary distribution $v$, and the undiscounted long-run payoff and cooperation rate are
+
 $$\pi(p, \tilde p) = b_1 (v^1_{CC} + v^1_{DC}) + b_2 (v^2_{CC} + v^2_{DC}) - c\,(v^1_{CC} + v^1_{CD} + v^2_{CC} + v^2_{CD}),$$
+
 $$\gamma(p,\tilde p) = \sum_{i=1}^{2} \Big( v^i_{CC} + \tfrac12 (v^i_{CD} + v^i_{DC}) \Big).$$
+
 With continuation probability $\delta < 1$ and first-round distribution $v_0$, the same formulas hold with the discounted occupation vector $v = (1-\delta)\, v_0 \sum_{t \ge 0} (\delta M)^t = (1-\delta)\, v_0 (I_8 - \delta M)^{-1}$.
 
 ## Depends on

@@ -10,7 +10,9 @@ A(S_j;S_i) ={}& a^{2(n-j)}(bc)^{j-i}d^{2i}
 + d(1-d)\,a^{2(n-j)}(bc)^{j-i}\,\frac{a_0^{\,i}-d^{2i}}{a_0-d^2},
 \end{aligned}$$
 and for $j \le i$ the same formula holds with $b$ and $c$ exchanged and $i$ and $j$ exchanged. Each quotient denotes the corresponding finite geometric sum, so the formula is defined for all parameter values. In particular, against a fully cooperative partner,
+
 $$A(S_j;S_0) = \frac{a-a^2}{a_0-a^2}\,a_0^{\,n} + a^{2n}\left[\frac{a_0-c}{a_0-bc}\Big(\frac{bc}{a^2}\Big)^{j} + \Big(\frac{c-bc}{a_0-bc}-\frac{a-a^2}{a_0-a^2}\Big)\Big(\frac{a_0}{a^2}\Big)^{j}\right],$$
+
 which does not depend on $d$.
 
 ## Expansion

@@ -1,9 +1,13 @@
 # Tumour burden under exponentially decaying radiation kill
 
 Let a tumour of size $x(t) > 0$ grow exponentially at net rate $p_1 > 0$ and be killed by a permanently implanted radioactive source whose dose rate decays exponentially with decay constant $\lambda > 0$ (for iodine-125, half-life $59.4$ days, so $\lambda = \ln 2 / 59.4\ \mathrm{day}^{-1}$). With radiation kill coefficient $s_1 \ge 0$ and no immune response, the tumour obeys
+
 $$\frac{dx}{dt} = \left(p_1 - s_1 e^{-\lambda t}\right) x, \qquad x(0) = x_0 > 0, \qquad t \ge 0 .$$
+
 Its unique solution is
+
 $$x(t) = x_0 \exp\!\left(p_1 t - \frac{s_1}{\lambda}\left(1 - e^{-\lambda t}\right)\right).$$
+
 Consequently:
 
 1. $\log x$ is convex on $[0,\infty)$, strictly convex when $s_1 > 0$, because $\frac{d^2}{dt^2}\log x = s_1 \lambda e^{-\lambda t} \ge 0$.

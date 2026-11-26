@@ -12,9 +12,12 @@ Then:
 
 1. The infection-free equilibrium is $(T, I, V) = (\lambda/d_T, 0, 0)$.
 2. An equilibrium with $I > 0$ exists if and only if $R_0 > 1$; it is
+
 $$T^* = \frac{d_I c}{\beta k} = \frac{\lambda}{d_T R_0}, \qquad I^* = \frac{\lambda}{d_I}\Big(1 - \frac{1}{R_0}\Big), \qquad V^* = \frac{k}{c} I^*.$$
+
 3. $R_0 = 1$ is a transcritical bifurcation: the infection-free equilibrium is locally asymptotically stable for $R_0 < 1$ and unstable for $R_0 > 1$, where the infected equilibrium takes over.
 4. If a treatment blocks a fraction $\varepsilon \in [0, 1]$ of new infections, $\beta \mapsto (1-\varepsilon)\beta$, the treated reproductive number is $(1-\varepsilon) R_0$, and the infection is driven toward clearance exactly when
+
 $$\varepsilon > 1 - \frac{1}{R_0}.$$
 
 ## Depends on

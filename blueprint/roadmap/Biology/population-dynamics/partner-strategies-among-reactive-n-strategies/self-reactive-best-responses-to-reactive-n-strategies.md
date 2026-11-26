@@ -12,7 +12,9 @@
 2. Against $p$ a best response can be found among the $2^{2^n}$ deterministic self-reactive-$n$ strategies.
 
 **Corollary (partner test).** A nice reactive-$n$ strategy $p$ is a partner if and only if $\pi_1(\tilde p, p) \le R$ for every deterministic self-reactive-$n$ strategy $\tilde p$. A deterministic self-reactive strategy ignores the co-player and produces an eventually periodic action sequence, so the test reduces to finitely many periodic sequences. In the donation game ($R = b - c$, $S = -c$, $T = b$, $P = 0$), a sequence of period $m$ containing $d$ defections earns $b$ times the sum of $p$'s cooperation probabilities over the $m$ histories it presents, minus $(m - d)\,c$, per period, so the test reads
+
 $$\frac{1}{m}\sum_{t=1}^{m} p_{h_t} \le 1 - \frac{d}{m}\cdot\frac{c}{b}$$
+
 for every periodic sequence, where $h_1, \dots, h_m$ are the $n$-histories it presents. For $n = 1$ this recovers the classical reactive partners $p_C = 1$, $p_D \le 1 - c/b$ (Generous Tit-for-Tat and its less generous variants).
 
 ## Expansion

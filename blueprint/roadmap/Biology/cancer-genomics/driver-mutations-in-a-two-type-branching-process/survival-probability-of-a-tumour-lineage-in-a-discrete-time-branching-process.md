@@ -1,7 +1,9 @@
 # Survival probability of a tumour lineage in a discrete-time branching process
 
 Model tumour growth as a discrete-time Galton–Watson process in which, at each time step, every cell independently either divides into two daughters with probability $(1+a)/2$ or dies with probability $(1-a)/2$, where $a \in (0,1)$ is the growth coefficient, the division probability minus the death probability per step. Started from a single cell, the lineage survives forever with probability
+
 $$P_{\mathrm{surv}} = \frac{2a}{1+a} \;\approx\; 2a \quad (a \ll 1),$$
+
 and goes extinct with probability $(1-a)/(1+a)$.
 
 In a two-type version in which a resident cell of growth coefficient $a$ produces, upon division, one daughter carrying an additional driver mutation with probability $u$, and mutant cells have their own growth coefficient $b \ge a$, the extra driver does **not** change the survival probability of the tumour as a whole whenever $u$ is small (and, under a density limit, whenever the carrying capacity $K$ is large): the first mutant typically appears when the tumour already holds about $1/u$ cells — or about $K$ cells when $K < 1/u$ — by which time extinction is no longer possible.

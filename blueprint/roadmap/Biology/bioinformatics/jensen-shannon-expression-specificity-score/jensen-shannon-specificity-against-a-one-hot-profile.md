@@ -1,7 +1,9 @@
 # Jensen–Shannon specificity against a one-hot expression profile
 
 Let gene $i$ have nonnegative mean expression $x_{i,1},\dots,x_{i,n}$ in $n$ groups, not all zero, and let $p=(p_1,\dots,p_n)$, $p_k=x_{i,k}/\sum_l x_{i,l}$, be its expression profile. For a group $j$ let $e_j$ be the one-hot profile ($e_{j,k}=1$ if $k=j$ and $0$ otherwise). With $M=\tfrac12(p+e_j)$, the Jensen–Shannon divergence in bits is
+
 $$\mathrm{JSD}(p,e_j)=\tfrac12\,\mathrm{KL}(p\,\|\,M)+\tfrac12\,\mathrm{KL}(e_j\,\|\,M)=1+\tfrac12\bigl[p_j\log_2p_j-(1+p_j)\log_2(1+p_j)\bigr],$$
+
 with $0\log_20=0$. Consequently:
 
 1. $\mathrm{JSD}(p,e_j)$ depends on $p$ only through the share $p_j$ of group $j$;

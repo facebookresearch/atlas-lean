@@ -3,7 +3,9 @@
 For a family $\{G_N\}$ of population structures, let $\mathrm{FT}(G_N, r)$ be the expected number of generations ($N$ steps each) of the birth–death Moran process until absorption, started from one mutant of fitness $r > 1$ at a uniformly random vertex, and let the *timescale* $T(G_N)$ be its order of growth in $N$ (dropping lower-order terms and constants depending only on $r$). For the complete graph $T(K_N) = \log N$ (absorption takes about $(1 + 1/r)\log N$ generations), and for the Star $T(S_N) = N \log N$.
 
 **Theorem 1 (Tkadlec–Pavlogiannis–Chatterjee–Nowak).** For every strong amplifier $\{G_N\}$ there is an increasing unbounded function $\beta(N)$ with
+
 $$T(G_N) \ge \log N \cdot \beta(N).$$
+
 Moreover one can take $\beta(N)$ of order $1/\mathrm{ep}(G_N, r)$, where $\mathrm{ep} = 1 - \mathrm{fp}$ is the extinction probability, which tends to $0$ for a strong amplifier. The same holds under temperature initialization.
 
 Thus no strong amplifier fixes on the logarithmic timescale of a well-mixed population.

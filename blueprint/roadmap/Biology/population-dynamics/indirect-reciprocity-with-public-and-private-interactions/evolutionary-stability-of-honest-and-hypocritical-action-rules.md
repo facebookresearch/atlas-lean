@@ -1,7 +1,9 @@
 # Evolutionary stability of honest and hypocritical action rules
 
 **Model.** In an infinitely large population, random pairs are formed of a donor and a recipient. The donor either cooperates (cost $c$ to the donor, benefit $b > c$ to the recipient) or defects (no cost, no benefit). Each interaction is public with probability $p$ and private with probability $1-p$; a public interaction is always observed, a private one with probability $q$, so an interaction is observed with probability
+
 $$\bar q = p + (1-p)\,q .$$
+
 Every player carries a binary reputation (good or bad) on which everyone agrees. An **action rule** is a four-letter word over $\{C, D\}$ giving the donor's move against a good recipient in public, a bad recipient in public, a good recipient in private, and a bad recipient in private; there are $16$ rules. When an interaction is observed, the donor's new reputation is set by a common **second-order social norm**, a map from (action, recipient's reputation, public or private) to {good, bad}; there are $256$ norms. Reputations equilibrate on a faster time scale than selection acts on action rules.
 
 **Theorem.** Across all $256$ norms:
