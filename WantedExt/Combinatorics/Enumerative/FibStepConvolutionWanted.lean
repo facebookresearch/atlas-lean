@@ -603,25 +603,6 @@ theorem_wanted two_mul_compProdSum_fib_trib_penta (n : ℕ)
       fibStep 5 n - fibStep 5 (n - 1) + fibStep 5 (n - 2) -
         fibStep 3 n - fibStep 3 (n - 2) + fibStep 2 (n - 1)
 
-/-- **A product identity for four consecutive Fibonacci step generating functions.** Let
-$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
-$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
-$F^{(k)}_n$. Then
-$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} F^{(m+3)} =
-X^m F^{(m)} F^{(m+2)} F^{(m+3)} - F^{(m+1)} F^{(m+3)} + F^{(m)} F^{(m+3)}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 31. -/
-theorem_wanted fibStepGF_quadruple_consecutive (m : ℕ)
-    (hm : 1 ≤ m) :
-    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
-        fibStepGF (m + 2) * fibStepGF (m + 3) =
-      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) *
-          fibStepGF (m + 3) -
-        fibStepGF (m + 1) * fibStepGF (m + 3) +
-        fibStepGF m * fibStepGF (m + 3)
-
 /-- **Four-fold convolution of the Fibonacci, tribonacci, tetranacci and pentanacci numbers.**
 Write $F_n$, $T_n$, $Q_n$ and $P_n$ for the Fibonacci $m$-step numbers $F^{(m)}_n$ with
 $m = 2, 3, 4, 5$ respectively. For every integer $n \ge 5$,
