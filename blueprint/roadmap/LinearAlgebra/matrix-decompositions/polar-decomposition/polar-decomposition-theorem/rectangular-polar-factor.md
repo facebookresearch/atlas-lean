@@ -12,7 +12,16 @@ $$P(G) = U_r V_r^{\mathsf T} = \sum_{i=1}^r u_i v_i^{\mathsf T}.$$
 
 In particular, $P(0) = 0$.
 
+The definition follows the rank-reduced (compact SVD) convention. For every $G$, $P(G)$ is the
+partial isometry $P$ of the canonical polar decomposition $G = P H$: the unique decomposition with
+$P$ a partial isometry, $H$ symmetric positive semidefinite and the row space of $P$ equal to the
+range of $H$, in which $H = (G^{\mathsf T} G)^{1/2}$. If $G$ has full rank $\min(m, n)$, $P(G)$ is
+semi-orthogonal ($P P^{\mathsf T} = I_m$ or $P^{\mathsf T} P = I_n$) and is the unique polar factor
+of $G$ with orthonormal columns (or, when $m < n$, the transpose of that of $G^{\mathsf T}$), a
+semi-orthogonal matrix nearest to $G$ in every unitarily invariant norm. If the rank of $G$ is less
+than $\min(m, n)$, $P(G)$ is not semi-orthogonal.
+
 ## Sources
 
-- N. Amsel, D. Persson, C. Musco and R. M. Gower, "The Polar Express: Optimal Matrix Sign Methods and Their Application to the Muon Algorithm", ICLR 2026, arXiv:2505.16932 (version 5), Section 1.1, equation (1), and the Notation paragraph at the end of Section 1 (polynomials of a matrix through its rank-reduced singular value decomposition).
-- N. J. Higham, Functions of Matrices: Theory and Computation, SIAM (2008), Chapter 8 (the polar decomposition).
+- N. Amsel, D. Persson, C. Musco and R. M. Gower, "The Polar Express: Optimal Matrix Sign Methods and Their Application to the Muon Algorithm", ICLR 2026, arXiv:2505.16932 (version 5), Section 1.1, equation (1), and the Notation paragraph at the end of Section 1 (polynomials of a matrix through its rank-reduced singular value decomposition); their description of the factor as the closest semi-orthogonal matrix characterizes this definition only at full rank.
+- N. J. Higham, Functions of Matrices: Theory and Computation, SIAM (2008), Chapter 8, Theorem 8.3 (the canonical polar decomposition) and Theorems 8.1 and 8.4 (the polar decomposition with orthonormal columns and its best-approximation property).
