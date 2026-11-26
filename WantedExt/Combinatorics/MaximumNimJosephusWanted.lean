@@ -341,16 +341,6 @@ public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k
      (hkx : ¬k ∣ x) :
     maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
 
-/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
-number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
-Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
-    (hj : 1 ≤ j) (hjk : j ≤ k) :
-    maximumNimGrundy (· / k) (k - j) = 0
-
 -- Lemma 4(ii) is proved as `maximumNim_not_dvd_mul_sub_of_ne` in
 -- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
 
@@ -426,15 +416,6 @@ public theorem_wanted maximumNimGrundy_mul_sub_eq_succ_iterate_F (k n t h i : �
         maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) ∧
       maximumNimGrundy (· / k) (Nat.iterate F (t + 1) (n * k - i)) =
         maximumNimGrundy (· / k) ((n - 1) * k - (n - h + i))
-
-/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
-$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
-number $x$ satisfies $x < x + 1 \le h_k(x)$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
-public theorem_wanted maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
-    x < x + 1 ∧ x + 1 ≤ maximumNimH k x
 
 /-- **Iterates of the Maximum Nim map $h_k$ tend to infinity.** Let $k \ge 2$ be a natural
 number and let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers.
