@@ -8,7 +8,7 @@ In a [PGPS](packet-by-packet-generalized-processor-sharing.md) node of total rat
 
 ## Expansion
 
-This page becomes ready once its proof is stated and checked: the source quotes the result from Parekh and Gallager (1993) without proof. The proof compares the order in which PGPS and GPS complete packets during a busy period, which is the same for both systems, and shows that a packet delayed by PGPS behind packets with later GPS finish times is delayed by at most one maximum-size packet.
+This page becomes ready once its proof is stated and checked: the source quotes the result from Parekh and Gallager (1993) without proof. The proof rests on the lemma that packets arriving later do not change the relative GPS departure order of the packets already present, and uses it to show that a packet sent by PGPS after packets with later GPS finish times is delayed by at most one maximum-size packet.
 
 ## Sources
 

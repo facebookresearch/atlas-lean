@@ -1,9 +1,9 @@
 # Response-time bound for adaptive mixed criticality
 
-For a [dual-criticality sporadic task system](dual-criticality-sporadic-task-systems.md) under adaptive mixed criticality with a fixed priority order, let $hp(i)$ be the tasks of higher priority than $\tau_i$, and $hpH(i)$ and $hpL(i)$ the HI- and LO-criticality tasks of priority at least that of $\tau_i$. Let $R_i^{\mathrm{LO}}$ be the least solution of
+For a [dual-criticality sporadic task system](dual-criticality-sporadic-task-systems.md) under adaptive mixed criticality with a fixed priority order, let $hp(i)$ be the tasks of higher priority than $\tau_i$, and $hpH(i)$ and $hpL(i)$ the HI- and LO-criticality tasks of higher priority than $\tau_i$. Let $R_i^{\mathrm{LO}}$ be the least solution of
 
 $$
-R_i^{\mathrm{LO}} = C_i + \sum_{j \in hp(i)} \left\lceil \frac{R_i^{\mathrm{LO}}}{T_j} \right\rceil C_j(\mathrm{LO})
+R_i^{\mathrm{LO}} = C_i(\mathrm{LO}) + \sum_{j \in hp(i)} \left\lceil \frac{R_i^{\mathrm{LO}}}{T_j} \right\rceil C_j(\mathrm{LO})
 $$
 
 and, for $L_i = \mathrm{HI}$, $R_i^*$ the least solution of
@@ -24,4 +24,4 @@ If $R_i^{\mathrm{LO}} \le D_i$ for every task and $R_i^* \le D_i$ for every HI-c
 
 ## Sources
 
-- S. K. Baruah, A. Burns and R. I. Davis, "Response-time analysis for mixed criticality systems", *Proceedings of the 32nd IEEE Real-Time Systems Symposium*, 2011; author version <https://www-users.cs.york.ac.uk/robdavis/papers/MC_RTSS2011.pdf>, Section IV.A (equations (4) and (5) for the stable modes and the discussion of exact analysis) and Section IV.B (sufficient analysis, method 1, equations (6)–(7)), the test known as AMC-rtb.
+- S. K. Baruah, A. Burns and R. I. Davis, "Response-time analysis for mixed criticality systems", *Proceedings of the 32nd IEEE Real-Time Systems Symposium*, 2011; author version <https://www-users.cs.york.ac.uk/robdavis/papers/MC_RTSS2011.pdf>, Section IV.A (equations (4) and (5) for the stable modes and the discussion of exact analysis) and Section IV.B (sufficient analysis, method 1, equations (6)–(7)), the test known as AMC-rtb. The source writes $C_i$ in equation (4) and defines $hpH(i)$, $hpL(i)$ with priority "higher than, or equal to" that of $\tau_i$; its worked values for Example 2 use $C_i(\mathrm{LO})$ in the LO mode and count $\tau_i$ once, which is the form stated here.
