@@ -58,4 +58,16 @@ example (k : ℕ) (hk : 1 ≤ k) :
   rw [h3, h4, h5] at h
   exact h
 
+-- At k = 2, n = 5 the three values are 13, 22 and 37, with defect 22^2 - 13 * 37 = 3 > 0.
+example : (22 : ℤ) ^ 10 ≤ 13 ^ 4 * 37 ^ 6 := by
+  have h := MetaMathlibExt.genLeonardo_pow_self_logConvex 2 (by decide) 5 (by decide)
+  have e54 : 5 - 1 = 4 := rfl
+  have e56 : 5 + 1 = 6 := rfl
+  have e25 : 2 * 5 = 10 := rfl
+  have e4 : MetaMathlibExt.genLeonardo ((2 : ℕ) : ℤ) 4 = 13 := by decide
+  have e5 : MetaMathlibExt.genLeonardo ((2 : ℕ) : ℤ) 5 = 22 := by decide
+  have e6 : MetaMathlibExt.genLeonardo ((2 : ℕ) : ℤ) 6 = 37 := by decide
+  rw [e25, e54, e56, e4, e5, e6] at h
+  exact h
+
 end MathlibExtTest.Combinatorics.Enumerative.GeneralizedLeonardoLogBehaviorGenLeonardoPowSelfLogConvex

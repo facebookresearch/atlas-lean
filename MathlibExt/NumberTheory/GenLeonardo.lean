@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Algebra.Group.Int.Defs
 public import Mathlib.Data.Int.Basic
-import Mathlib.Data.Nat.Fib.Basic
+public import Mathlib.Data.Nat.Fib.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
@@ -116,9 +116,11 @@ public theorem genLeonardoCompanion_one (k : ℤ) :
 
 end
 
-/-- The generalized Leonardo numbers shifted by `k` are `1 + k` times the Fibonacci numbers:
-`L_{k,n} + k = (1 + k) F_{n+1}`. -/
-private theorem genLeonardo_add_eq_mul_fib (k : ℤ) :
+/-- **Generalized Leonardo numbers as multiples of Fibonacci numbers.** For every integer $k$ and
+every natural number $n$, the generalized Leonardo numbers shifted by $k$ are $1 + k$ times the
+Fibonacci numbers: $L_{k,n} + k = (1 + k) F_{n+1}$, where $F_n$ is the $n$-th Fibonacci number
+(`Nat.fib n`). -/
+public theorem genLeonardo_add_eq_mul_fib (k : ℤ) :
     ∀ n : ℕ, genLeonardo k n + k = (1 + k) * Nat.fib (n + 1)
   | 0 => by simp [genLeonardo]
   | 1 => by simp [genLeonardo, Nat.fib_two]

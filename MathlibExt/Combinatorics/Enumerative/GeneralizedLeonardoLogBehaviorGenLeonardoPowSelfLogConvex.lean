@@ -60,23 +60,6 @@ private theorem genLeonardo_mono_succ (k : ℤ) (hk : 0 ≤ k) (n : ℕ) :
   have h := genLeonardo_nonneg k hk n
   linarith
 
-private theorem genLeonardo_add_eq_mul_fib (k : ℤ) :
-    ∀ n : ℕ, genLeonardo k n + k = (1 + k) * Nat.fib (n + 1)
-  | 0 => by simp [genLeonardo]
-  | 1 => by simp [genLeonardo, Nat.fib_two]
-  | n + 2 => by
-    have h0 := genLeonardo_add_eq_mul_fib k n
-    have h1 := genLeonardo_add_eq_mul_fib k (n + 1)
-    have hF : (Nat.fib (n + 3) : ℤ) = Nat.fib (n + 1) + Nat.fib (n + 2) := by
-      have h : Nat.fib (n + 1 + 2) = Nat.fib (n + 1) + Nat.fib (n + 1 + 1) := Nat.fib_add_two
-      have e1 : n + 1 + 2 = n + 3 := by omega
-      have e2 : n + 1 + 1 = n + 2 := by omega
-      rw [e1, e2] at h
-      exact_mod_cast h
-    have hrec : genLeonardo k (n + 2) = genLeonardo k (n + 1) + genLeonardo k n + k := rfl
-    rw [hrec, hF]
-    linear_combination h0 + h1
-
 private theorem L3 (K : ℤ) : genLeonardo K 3 = 2 * K + 3 := by
   have h2 : genLeonardo K 2 = 2 + K := rfl
   have h1 : genLeonardo K 1 = 1 := rfl
@@ -348,26 +331,6 @@ private theorem fib_key_ineq (m : ℕ) :
           mul_le_mul_of_nonneg_left ih1 (by norm_num)
       _ ≤ (((Nat.fib (m + 7) : ℤ) - 1)) * (((Nat.fib (m + 9) : ℤ) - 1)) := hR
 
-private theorem pow_add_mul_sub_le (A D : ℤ) (hA : 0 ≤ A) (hD : 0 ≤ D) (hAD : 0 ≤ A + D) :
-    ∀ n : ℕ, (A + D) ^ n * (A - n * D) ≤ A ^ (n + 1)
-  | 0 => by simp
-  | n + 1 => by
-    have hpow : (0:ℤ) ≤ (A + D) ^ n := pow_nonneg hAD n
-    have hstep : (A + D) * (A - ((n + 1 : ℕ) : ℤ) * D) ≤ A * (A - (n : ℤ) * D) := by
-      have heq : A * (A - (n : ℤ) * D) - (A + D) * (A - ((n + 1 : ℕ) : ℤ) * D)
-          = ((n + 1 : ℕ) : ℤ) * D ^ 2 := by push_cast; ring
-      have hnn : (0:ℤ) ≤ ((n + 1 : ℕ) : ℤ) * D ^ 2 :=
-        mul_nonneg (by positivity) (sq_nonneg D)
-      linarith
-    have ih := pow_add_mul_sub_le A D hA hD hAD n
-    calc (A + D) ^ (n + 1) * (A - ((n + 1 : ℕ) : ℤ) * D)
-        = (A + D) ^ n * ((A + D) * (A - ((n + 1 : ℕ) : ℤ) * D)) := by ring
-      _ ≤ (A + D) ^ n * (A * (A - (n : ℤ) * D)) :=
-          mul_le_mul_of_nonneg_left hstep hpow
-      _ = A * ((A + D) ^ n * (A - (n : ℤ) * D)) := by ring
-      _ ≤ A * (A ^ (n + 1)) := mul_le_mul_of_nonneg_left ih hA
-      _ = A ^ (n + 1 + 1) := by ring
-
 private theorem mul_pow_le_of_le {a c : ℤ} (ha0 : 0 ≤ a) (hc0 : 0 ≤ c) (hac : a ≤ c) (m : ℕ) :
     (a * c) ^ (m + 5) ≤ a ^ (m + 4) * c ^ (m + 6) := by
   have hnn : (0:ℤ) ≤ a ^ (m + 4) * c ^ (m + 5) := by positivity
@@ -489,7 +452,16 @@ private theorem case_n5plus (K : ℤ) (hK1 : 1 ≤ K) (m : ℕ) :
             mul_le_mul_of_nonneg_left hFib hK2
         _ ≤ A := hAle
     -- (A+D)^N ≤ 2 A^N
-    have hPowLe := pow_add_mul_sub_le A D hA0 hD0' hAD0 (m + 5)
+    -- Bernoulli's inequality at `A + D` and `-D`
+    have hPowLe : (A + D) ^ (m + 5) * (A - (((m + 5 : ℕ) : ℤ)) * D) ≤ A ^ (m + 5 + 1) := by
+      have h := pow_add_mul_le_add_pow (a := A + D) (b := -D) hAD0 (by linarith) (m + 5 + 1)
+      have e1 : A + D + -D = A := by ring
+      have e2 : m + 5 + 1 - 1 = m + 5 := by omega
+      rw [e1, e2] at h
+      calc (A + D) ^ (m + 5) * (A - (((m + 5 : ℕ) : ℤ)) * D)
+          = (A + D) ^ (m + 5 + 1) + ((m + 5 + 1 : ℕ) : ℤ) * (A + D) ^ (m + 5) * -D := by
+            push_cast; ring
+        _ ≤ A ^ (m + 5 + 1) := h
     have hA2 : A ≤ 2 * (A - (((m + 5 : ℕ) : ℤ)) * D) := by
       have h2 : 2 * ((((m + 5 : ℕ) : ℤ)) * D) ≤ A := by linarith [h2ND]
       linarith
