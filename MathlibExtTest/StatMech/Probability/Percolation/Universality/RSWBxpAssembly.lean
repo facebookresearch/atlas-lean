@@ -14,7 +14,9 @@ public import MathlibExt.Probability.Percolation.Universality.RSWBxpAssembly
 # Tests for `MathlibExt.Probability.Percolation.Universality.RSWBxpAssembly`
 
 * Crossing events are measurable (`measurableSet_horizontalCrossingEvent`).
-* Under `ℙ_{1/2}`, `dualConfig` crossings have the law of primal crossings.
+* Under `ℙ_{1/2}`, dual crossings have the law of primal crossings: the bottom–top crossing in
+  `dualConfig` of `[0, 2] × [0, 2]`, and the left–right crossing on the shifted dual lattice
+  (`dualHorizontalCrossingEvent`) of the non-square box `[0, 3] × [0, 2]`.
 * A Dirac measure is positively associated, so the hypothesis `PositivelyAssociated μ` is
   satisfiable; with it the square-root trick `rba_sqrt_square_seed` is instantiated on the
   degenerate box `[0, 0] × [0, 0]` (both crossings occur surely).
@@ -61,6 +63,11 @@ example : MeasurableSet (horizontalCrossingEvent 0 3 0 2) :=
 example : halfMeasure.real (dualVerticalCrossingEvent 0 2 0 2)
     = halfMeasure.real (verticalCrossingEvent 0 2 0 2) :=
   rba_dualVerticalCrossing_eq 0 2 0 2 (RSW.Box.measurableSet_verticalCrossingEvent 0 2 0 2)
+
+-- The shifted-dual left–right crossing of a non-square box has the law of the primal one.
+example : halfMeasure.real (dualHorizontalCrossingEvent 0 3 0 2)
+    = halfMeasure.real (horizontalCrossingEvent 0 3 0 2) :=
+  rba_dualHorizontalCrossing_eq 0 3 0 2 (RSW.Box.measurableSet_horizontalCrossingEvent 0 3 0 2)
 
 example (ω₀ : ConfigSpace (Sym2 (Site 2))) :
     1 - Real.sqrt (1 - 1) ≤ (Measure.dirac ω₀).real (horizontalCrossingEvent 0 0 0 0) :=
