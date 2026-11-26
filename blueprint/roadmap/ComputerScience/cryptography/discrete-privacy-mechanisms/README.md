@@ -11,6 +11,7 @@
 - [Every bit is one of two adjacent bits](rr-adj-cover.md)
 - [Randomized response is differentially private](is-dp-rr-mech.md)
 - [Randomized response with p = 1/2 is 0-differentially private](is-dp-rr-mech-half.md)
+- [Privacy of randomized response](randomized-response-privacy.md)
 
 ## Exponential mechanism
 
@@ -38,8 +39,15 @@
 - [An integer of absolute value at most one](nat-abs-le-one-of-abs-le.md)
 - [Two-sided geometric mechanism](geom-mech.md)
 - [The two-sided geometric mechanism is differentially private](is-dp-geom-mech.md)
+- [The discrete Laplace (two-sided geometric) distribution](discrete-laplace-distribution.md)
+- [Privacy and tails of the geometric mechanism](geometric-mechanism-privacy.md)
 
 ## Utility of the exponential mechanism
 
 - [Utility of the exponential mechanism](exp-mech-utility.md)
 - [Sharp utility bound for the exponential mechanism](exp-mech-utility-opt.md)
+
+## AboveThreshold and the sparse vector technique
+
+- [AboveThreshold and the sparse vector technique](above-threshold-algorithm.md)
+- [Privacy of AboveThreshold with discrete Laplace noise](above-threshold-privacy.md)
