@@ -111,3 +111,4 @@
 - [Feasible instances of WORD HOMOMORPHISM](word-homomorphism-feasible.md)
 - [WORD HOMOMORPHISM as a decision problem](word-homomorphism-dec.md)
 - [WORD HOMOMORPHISM is NP-complete](word-homomorphism-np-complete.md)
+- [SHORTEST COMMON SUPERSTRING is NP-complete](shortest-common-superstring-np-complete.md)

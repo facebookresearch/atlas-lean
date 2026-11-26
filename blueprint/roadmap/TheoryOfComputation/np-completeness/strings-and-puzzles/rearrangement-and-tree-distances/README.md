@@ -88,3 +88,5 @@
 - [Feasible instances of UNSIGNED TRANSLOCATION DISTANCE](unsigned-translocation-distance-feasible.md)
 - [UNSIGNED TRANSLOCATION DISTANCE as a decision problem](unsigned-translocation-distance-dec.md)
 - [UNSIGNED TRANSLOCATION DISTANCE is NP-complete](unsigned-translocation-distance-np-compl.md)
+- [Sorting-by-reversals instance](sorting-by-reversals-instance.md)
+- [Sorting by reversals as a decision problem](sorting-by-reversals-dec.md)
