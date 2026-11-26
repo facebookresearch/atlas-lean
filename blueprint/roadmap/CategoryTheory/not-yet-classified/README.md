@@ -1121,3 +1121,4 @@ Topics added since this subject's fields were last revised.
 - [Unit Insertion Naturality](unit-insertion-naturality/README.md)
 - [Unit Laws](unit-laws/README.md)
 - [Zero Object Replacement](zero-object-replacement/README.md)
+- [Enveloping Operad](enveloping-operad/README.md)
