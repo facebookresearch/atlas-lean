@@ -1,3 +1,3 @@
 # Preserves1
 
-Leroy form (1): source and target share exactly the same behaviors. Behaviors are those of the adapted model of this topic (homogeneous, with no silent divergence), not CompCert's.
+Let $S$ and $T$ be two operational semantics, each with its own transition relation and set of final configurations, over the same configuration type and the same label type, and let $s$ and $t$ be configurations, the source and the target. Preservation in Leroy's form (1) holds when the set of behaviors of $s$ under $S$ equals the set of behaviors of $t$ under $T$. Behaviors are those of the adapted model of this topic: termination or going wrong after a finite trace of labels, or reaction with an infinite trace, with every label observable and no silent divergence; CompCert's model instead relates different languages and includes silent divergence.
