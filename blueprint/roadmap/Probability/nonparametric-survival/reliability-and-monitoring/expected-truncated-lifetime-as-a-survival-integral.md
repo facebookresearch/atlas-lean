@@ -1,8 +1,12 @@
 # Expected truncated lifetime as a survival integral
 
-Let $L$ be a nonnegative random variable and $T > 0$. Then $E[\min(L, T)] = \int_0^T P(L > t)\,dt$, and $E[L] = \int_0^\infty P(L > t)\,dt$ in $[0, \infty]$.
+Let $L$ be an almost surely nonnegative real-valued random variable, and let $T\ge 0$ be a finite horizon. Then
 
-Proof. $\min(L, T) = \int_0^T \mathbf 1\{L > t\}\,dt$ pointwise; take expectations and exchange expectation and integral by Tonelli's theorem for the nonnegative integrand. Letting $T \to \infty$ with monotone convergence gives the second formula.
+$$E[\min(L,T)] = \int_0^T P(L>t)\,dt.$$
+
+The uncapped mean is $E[L]=\int_0^\infty P(L>t)\,dt$, where both sides are extended nonnegative integrals and may be infinite. No density assumption is needed.
+
+Proof. Almost surely, $\min(L,T)=\int_0^T \mathbf 1\{L>t\}\,dt$. Taking expectations and exchanging integrals by Tonelli's theorem gives the first formula. The same argument over $t>0$ gives the uncapped formula. The strict inequality in the survival event also applies when the law of $L$ has atoms.
 
 ## Sources
 
