@@ -13,9 +13,7 @@ $1 - \varepsilon$.
 ## Sources
 
 - Donald S. Ornstein and Benjamin Weiss, *Entropy and isomorphism theorems for actions of amenable groups*,
-  J. Anal. Math. 48 (1987), 1–141, DOI 10.1007/bf02790325. The integer box $[0,N)^d$ tiles
-  $\mathbb{Z}^d$ by translations in $N\mathbb{Z}^d$, so the tiling lemma applies with this single
-  tile shape.
+  J. Anal. Math. 48 (1987), 1–141, DOI 10.1007/bf02790325.
 - Oliver Knill, *Some Fundamental Theorems in Mathematics* (2023), §109 (Rokhlin-Kakutani approximation; the
   Ornstein–Weiss generalization to free $\mathbb{Z}^d$-actions), <https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf>.
 - Problem `ornstein_weiss_rokhlin` of the lean-eval benchmark.
