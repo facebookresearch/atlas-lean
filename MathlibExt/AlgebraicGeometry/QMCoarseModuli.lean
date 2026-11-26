@@ -36,10 +36,13 @@ public import MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve
 
 A coarse moduli scheme for fake elliptic curves is a scheme with a
 point assignment that is invariant under isomorphism, natural under
-pullback, bijective on geometric points, and universal among such
-assignments. Adding an extra level structure, a full level-`m` section,
-or both gives the variants with extra level, the fine moduli notion, and
-the notions with a twist action of a group on the fine moduli scheme.
+pullback and universal among such assignments, and that induces a
+bijection from isomorphism classes over each algebraically closed field
+to geometric points. Adding an extra level structure, a full level-`m`
+section, or both gives the variants with extra level, the fine moduli
+notion, where the bijection with isomorphism classes holds over every
+ring, and the notions with a twist action of a group on the fine moduli
+scheme.
 Each predicate is a structure of properties, with a characterization
 lemma restating it as the conjunction of its fields.
 
@@ -376,8 +379,11 @@ end FakeEllipticCurve
 
 variable {a b : ℚ}
 
-/-- A coarse moduli scheme for fake elliptic curves: iso-invariant,
-pullback-natural, bijective on geometric points, and universal. -/
+/-- A coarse moduli scheme for fake elliptic curves: the point assignment
+is invariant under isomorphism, natural under pullback and universal, and
+for each algebraically closed field `k` and each map `s : Spec k ⟶ Spec B`
+it induces a bijection from isomorphism classes of fake elliptic curves
+over `k` to points of `X` over `s`. -/
 structure IsCoarseModuli (Λ : Subring ℍ[ℚ, a, b]) (N : ℕ)
     {B : Type} [CommRing B] (X : Scheme.{0})
     (πX : X ⟶ Spec (CommRingCat.of B))
@@ -480,7 +486,13 @@ theorem isCoarseModuli_iff {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b])
     h.univ⟩,
     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩⟩
 
-/-- A coarse moduli scheme for fake elliptic curves with extra level. -/
+/-- A coarse moduli scheme for fake elliptic curves with an extra level
+structure: the point assignment is invariant under the isomorphisms of
+`WithExtraLevel.Iso`, which also match the extra level structures,
+natural under pullback and universal, and for each algebraically closed
+field `k` and each map `s : Spec k ⟶ Spec B` it induces a bijection from
+classes of such objects over `k` under these isomorphisms to points of
+`Y` over `s`. -/
 structure IsCoarseModuliT (Λ : Subring ℍ[ℚ, a, b]) (N ℓ : ℕ)
     {B : Type} [CommRing B] (Y : Scheme.{0})
     (πY : Y ⟶ Spec (CommRingCat.of B))
@@ -593,8 +605,11 @@ theorem isCoarseModuliT_iff {a b : ℚ} (Λ : Subring ℍ[ℚ, a, b])
     h.univ⟩,
     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2⟩⟩
 
-/-- A fine moduli scheme for full-level objects: points over every ring
-(not only geometric points) are bijective with full-level objects. -/
+/-- A fine moduli scheme for full-level objects: the point assignment is
+invariant under isomorphism and natural under pullback, and for every
+ring `S` and every map `s : Spec S ⟶ Spec B` it induces a bijection from
+isomorphism classes of full-level objects over `S` to points of `M` over
+`s`. -/
 structure IsFineModuli (Λ : Subring ℍ[ℚ, a, b]) (N m : ℕ)
     {B : Type} [CommRing B] (M : Scheme.{0})
     (πM : M ⟶ Spec (CommRingCat.of B))
@@ -732,7 +747,13 @@ theorem isLevelTwistAction_iff {a b : ℚ}
     h.label_surjective, h.label_injective⟩,
     fun h => ⟨h.1, h.2.1, h.2.2.1, h.2.2.2.1, h.2.2.2.2.1, h.2.2.2.2.2⟩⟩
 
-/-- A fine moduli scheme for full-level objects with extra level. -/
+/-- A fine moduli scheme for full-level objects with an extra level
+structure: the point assignment is invariant under the isomorphisms of
+`WithFullLevel.IsoTVia`, which also match the extra level structures, and
+natural under pullback, and for every ring `S` and every map
+`s : Spec S ⟶ Spec B` it induces a bijection from classes of full-level
+objects with an extra level structure under these isomorphisms to points
+of `Mℓ` over `s`. -/
 structure IsFineModuliT (Λ : Subring ℍ[ℚ, a, b]) (N n ℓ : ℕ)
     {B : Type u} [CommRing B] (Mℓ : Scheme.{u})
     (πMℓ : Mℓ ⟶ Spec (CommRingCat.of B))
