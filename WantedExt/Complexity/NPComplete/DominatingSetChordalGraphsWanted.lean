@@ -37,7 +37,7 @@ INSTANCE: a chordal graph `G = (V, E)`, that is, a graph in which every cycle of
 QUESTION: is there a dominating set of size `K` or less for `G`, i.e. a subset `V' ⊆ V` with
 `|V'| ≤ K` such that every vertex not in `V'` is joined to at least one member of `V'`?
 
-This is the restriction of DOMINATING SET ([GT2], `DominatingSetWanted`) to chordal graphs. The
+This is the restriction of DOMINATING SET ([GT2], `DominatingSetDefs`) to chordal graphs. The
 instance type, the graph and the question are the parent's (`DominatingSet.DominatingSetInstance`,
 `DominatingSet.Graph`, `DominatingSet.DominatingSetFeasible`); `WellFormed` is the parent's plus
 the restriction and Garey and Johnson's bounds `0 < K ≤ |V|`. Chordality is stated as in
