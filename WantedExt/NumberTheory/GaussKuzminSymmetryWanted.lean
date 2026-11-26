@@ -14,7 +14,6 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import MathlibExt.NumberTheory.GaussKuzminSymmetry
 public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
 public import MathlibExt.NumberTheory.GaussKuzminCharacterization
-public import MathlibExt.NumberTheory.GaussKuzminSymmetryDensityCfValueEqOfAppendSymmetric
 
 namespace MetaMathlibExt
 
