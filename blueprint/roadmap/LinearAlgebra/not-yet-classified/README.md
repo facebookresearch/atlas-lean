@@ -21,3 +21,4 @@ Topics added since this subject's fields were last revised.
 - [Sinkhorn Margins](sinkhorn-margins/README.md)
 - [Two Level](two-level/README.md)
 - [Exactness of dual maps](exact-dual-map-of-exact.md)
+- [Common eigenvector of commuting endomorphisms](exists-common-eigenvector-of-commute.md)
