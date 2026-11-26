@@ -10,6 +10,7 @@ Moreover $t$ is solvable exactly when $t$ reduces by β- and η-reductions to a 
 
 ## Depends on
 
+- [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [Head normal forms and solvable terms](head-normal-forms-and-solvable-terms.md)
 
 ## Proof depends on
@@ -20,7 +21,6 @@ Moreover $t$ is solvable exactly when $t$ reduces by β- and η-reductions to a 
 
 This page becomes ready once:
 
-- Untyped λ-terms up to α-equivalence with one-step β-reduction, β-conversion $\simeq_\beta$ and the Church–Rosser theorem (statement prerequisite; not yet stated as a page)
 - βη-conversion $\simeq_{\beta\eta}$ of untyped λ-terms and its Church–Rosser property (statement prerequisite; not yet stated as a page)
 
 ## Sources

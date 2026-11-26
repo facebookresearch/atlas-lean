@@ -14,7 +14,7 @@ the lengths of all reduction paths of a strongly normalizing term, which is fini
 
 This page becomes ready once:
 
-- Untyped λ-terms up to α-equivalence with one-step β-reduction, β-conversion $\simeq_\beta$ and the Church–Rosser theorem (statement prerequisite; not yet stated as a page)
+- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
 
 ## Sources
 

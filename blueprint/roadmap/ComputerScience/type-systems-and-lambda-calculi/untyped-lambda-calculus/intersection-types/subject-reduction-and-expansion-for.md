@@ -10,6 +10,7 @@ Let $\vdash$ be the typing judgment of [system D](intersection-type-system-d.md)
 
 ## Depends on
 
+- [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [The intersection type system D](intersection-type-system-d.md)
 - [The intersection type system DΩ](intersection-type-system-d-omega.md)
 
@@ -17,7 +18,7 @@ Let $\vdash$ be the typing judgment of [system D](intersection-type-system-d.md)
 
 This page becomes ready once:
 
-- Untyped λ-terms up to α-equivalence with one-step β-reduction, β-conversion $\simeq_\beta$ and the Church–Rosser theorem (statement prerequisite; not yet stated as a page)
+- One-step β-reduction of untyped λ-terms as a relation of its own, with its reflexive–transitive closure (statement prerequisite; not yet stated as a page)
 
 ## Sources
 

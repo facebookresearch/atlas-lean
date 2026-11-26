@@ -13,7 +13,7 @@ $x : a \to \forall b.\, (b \to b) \vdash x : a \to b \to b$ does not hold. The C
 
 This page becomes ready once:
 
-- Untyped λ-terms up to α-equivalence with one-step β-reduction (statement prerequisite; not yet stated as a page)
+- One-step β-reduction of untyped λ-terms as a relation of its own (statement prerequisite; not yet stated as a page)
 
 ## Sources
 

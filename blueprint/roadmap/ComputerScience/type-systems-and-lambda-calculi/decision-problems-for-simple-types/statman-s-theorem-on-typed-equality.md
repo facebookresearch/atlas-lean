@@ -1,7 +1,9 @@
 # Statman's theorem on equality of typed terms
 
-Deciding whether two Church-style simply typed λ-terms $M$ and $N$ of the same type are β-convertible is of non-elementary complexity: for every
-$r$, every decision procedure takes more than $\exp_r(n)$ steps on some inputs of size $n$, where $\exp_0(n) = n$ and $\exp_{k+1}(n) = 2^{\exp_k(n)}$.
+Deciding whether two Church-style simply typed λ-terms $M$ and $N$ of the same type are β-convertible is of non-elementary complexity, where
+$\exp_0(n) = n$ and $\exp_{k+1}(n) = 2^{\exp_k(n)}$: for every decision procedure and every fixed $r$ there are infinitely many $n$ for which some input of
+size $n$ takes the procedure more than $\exp_r(n)$ steps. Equivalently, no decision procedure runs within $\exp_r(n)$ steps on all inputs of size $n$ for all
+$n$, for any fixed $r$.
 
 Comparing normal forms decides the problem, since simply typed terms normalize; the theorem says the cost of normalization cannot be avoided.
 

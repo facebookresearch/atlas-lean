@@ -12,18 +12,13 @@ Then $X$ and $Y$ are recursively inseparable: no recursive set $A$ satisfies $X 
 
 ## Depends on
 
+- [Beta equivalence in the untyped term model](../../system-f/the-existing-untyped-beta-conversion-term-model/beta-eq.md)
 - [Head normal forms and solvable terms](head-normal-forms-and-solvable-terms.md)
 
 ## Proof depends on
 
 - [The second fixed point theorem](second-fixed-point-theorem.md)
 - [λ-definable functions are exactly the partial recursive functions](../../../../TheoryOfComputation/equivalence-of-models/counter-and-combinator-models/lambda-definable-functions-are-exactly-the.md)
-
-## Expansion
-
-This page becomes ready once:
-
-- Untyped λ-terms up to α-equivalence with one-step β-reduction, β-conversion $\simeq_\beta$ and the Church–Rosser theorem (statement prerequisite; not yet stated as a page)
 
 ## Sources
 
