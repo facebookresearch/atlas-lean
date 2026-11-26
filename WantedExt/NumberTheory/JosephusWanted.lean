@@ -14,6 +14,8 @@ Quintero-Contreras, "Analytical Study and Efficient
 Evaluation of the Josephus Function", *Journal of Integer
 Sequences* 27 (2024), Article 24.3.8
 (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Cruz/cruz4.html>).
+The statement `josephus_add_eq_of_le` is proved in
+`MathlibExt.NumberTheory.JosephusJosephusAddEqOfLe`.
 
 The statements use the existing Josephus survivor
 function `MetaMathlibExt.josephus` (`J_k(1) = 1`,
@@ -55,6 +57,7 @@ public import MathlibExt.NumberTheory.JosephusFixedSuccCases
 public import MathlibExt.NumberTheory.JosephusHighExtremal
 public import MathlibExt.NumberTheory.JosephusWrapAround
 public import MathlibExt.NumberTheory.JosephusExtremalTwoMulSub
+public import MathlibExt.NumberTheory.JosephusJosephusAddEqOfLe
 
 set_option autoImplicit false
 
@@ -73,19 +76,6 @@ theorem_wanted josephus_eq_self_iff (k np : ℕ) (hk : 2 ≤ k)
     (hnp : k - 1 ≤ np) :
     MetaMathlibExt.josephus k np = np ↔
       MetaMathlibExt.josephus k (np + 1) = k - 1
-
-/-- **Linear growth of the Josephus function before a wrap-around.** Let $k \ge 2$, $n \ge 1$
-and $m$ be natural numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If
-$p + km \le n + m$, then $J_k(n + m) = p + km$.
-
-Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
-"Analytical Study and Efficient Evaluation of the
-Josephus Function", Lemma 6. -/
-theorem_wanted josephus_add_eq_of_le (k n m : ℕ) (hk : 2 ≤ k)
-    (hn : 1 ≤ n)
-    (h : MetaMathlibExt.josephus k n + k * m ≤ n + m) :
-    MetaMathlibExt.josephus k (n + m) =
-      MetaMathlibExt.josephus k n + k * m
 
 /-- **The Josephus function at the first wrap-around.** Let $k \ge 2$, $n \ge 1$ and $m$ be
 natural numbers and let $J_k$ be the Josephus function. Suppose that $m$ is the least natural
