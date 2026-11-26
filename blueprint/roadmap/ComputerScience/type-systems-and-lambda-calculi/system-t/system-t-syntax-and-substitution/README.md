@@ -2,11 +2,7 @@
 
 ## System T
 
-- [System T types](ty.md)
-- [Natural number type of System T](nat.md)
-- [System T variables](var.md)
 - [System T terms](tm.md)
-- [System T renamings](ren.md)
 - [Parallel substitutions for System T](sub.md)
 
 ## Tm

@@ -41,17 +41,13 @@ namespace Cslib.Languages.LambdaCalculus.SystemT
 
 open scoped CslibStlc
 
-/-- **System T types.** The types of System T are the simple types over a single base type,
-the type of natural numbers (Girard-Lafont-Taylor §7.1.1, without the Booleans). -/
+-- The simple types `A ::= nat | A ⇒ A` over the single base type `nat`; see `Stlc.Ty`.
 abbrev Ty := Stlc.Ty Unit
 
-/-- **Natural number type of System T.** The type $\mathsf{nat}$ of natural numbers is the unique
-base type of System T. -/
+-- The base type `nat` of natural numbers, `Stlc.Ty.base ()`; see `Stlc.Ty`.
 abbrev Ty.nat : Ty := .base ()
 
-/-- **System T variables.** System T uses the typed de Bruijn variables of the simply typed
-$\lambda$-calculus over a single base type: a variable of type $A$ in a context $\Gamma$ is a
-position in the list $\Gamma$ at which $A$ occurs. -/
+-- The typed de Bruijn variables of the simply typed λ-calculus at these types; see `Stlc.Var`.
 abbrev Var := @Stlc.Var Unit
 
 /-- **System T terms.** Write $\mathsf{nat}$ for the type of natural numbers and $A \Rightarrow B$
@@ -74,9 +70,7 @@ inductive Tm : List Ty → Ty → Type where
   takes the value at `n` and then `n` to the value at the successor of `n`. -/
   | natRec {Γ : List Ty} {A : Ty} : Tm Γ A → Tm Γ (A ⇒ Ty.nat ⇒ A) → Tm Γ .nat → Tm Γ A
 
-/-- **System T renamings.** For contexts $\Gamma$ and $\Delta$, a renaming from $\Gamma$ to
-$\Delta$ is a map sending each variable of $\Gamma$ of type $A$, for every type $A$, to a variable
-of $\Delta$ of the same type $A$; it is the STLC notion of renaming at System T types. -/
+-- The renamings of the simply typed λ-calculus at these types; see `Stlc.Ren`.
 abbrev Ren (Γ Δ : List Ty) := Stlc.Ren Γ Δ
 
 /-- **Parallel substitutions for System T.** A substitution from a context $\Gamma$ to a context
@@ -130,8 +124,10 @@ def rename : {Γ Δ : List Ty} → Ren Γ Δ → {A : Ty} → Tm Γ A → Tm Δ 
   | _, _, ρ, _, .natRec u v t => .natRec (rename ρ u) (rename ρ v) (rename ρ t)
 
 /-- **Weakening of System T terms.** Weakening sends a term of type $A$ in context $\Gamma$ to the
-term of type $A$ in the context obtained by prepending a variable of type $B$ to $\Gamma$, by
-shifting each de Bruijn index up by one. -/
+term of type $A$ in the context obtained by prepending a variable of type $B$ to $\Gamma$. Each
+variable occurrence that refers to $\Gamma$ has its de Bruijn index shifted up by one; an
+occurrence bound inside the term keeps its index, since renaming lifts the shift under each
+$\lambda$-binder and the lift fixes the newest variable. -/
 def weaken {Γ : List Ty} {A B : Ty} (t : Tm Γ A) : Tm (B :: Γ) A := rename .succ t
 
 /-- **Renaming a variable.** Renaming a variable $x$ along $\rho$ gives the variable $\rho(x)$. -/

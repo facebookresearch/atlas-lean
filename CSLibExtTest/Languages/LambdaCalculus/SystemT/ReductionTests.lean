@@ -18,7 +18,9 @@ public import CSLibExt.Languages.LambdaCalculus.SystemT.Reduction
 * T3: the Ackermann term at `(2, 1)` and `(3, 0)` through `ackT_steps`, against Mathlib's `ack`.
 * T4: a step of an open term, transported by a closing substitution.
 * T5: numerals are normal.
-* T6: the recursor on a variable is normal: it fires only on `zero` and `succ`.
+* T6: with a normal base and step function, the recursor on a variable is normal: a variable
+  argument blocks both recursor conversions, which fire only on `zero` and `succ`, though
+  reduction inside the base or the step function still applies when they are not normal.
 * T7: reduction under a λ-abstraction, so the relation is full reduction.
 * T8: argument order of the recursor: the reduct passes the recursive result first; the reduct
   with the arguments swapped is not a step.
