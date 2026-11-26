@@ -14,6 +14,7 @@ Abelian varieties over fields and abelian schemes over general bases: duals and 
 - [Dual abelian scheme](dual-abelian-scheme.md)
 - [Polarization](polarization.md)
 - [Line bundles on abelian varieties](line-bundles-on-abelian-varieties.md)
+- [Poincaré's complete reducibility theorem](poincare-reducibility.md)
 - [Zarhin's trick](zarhin-trick.md)
 - [Zarhin's trick for abelian schemes](zarhin-trick-for-abelian-schemes.md)
 - [Néron model of an abelian variety](neron-model.md)
