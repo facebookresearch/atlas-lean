@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.ManifoldComponentModuleMaps
+public import MathlibExt.AlgebraicGeometry.ManifoldComponentModuleMapsNativeComponentModuleAssemblyIsIso
 
 /-!
 # Wanted finite component and native module assembly comparisons
@@ -16,7 +17,9 @@ public import MathlibExt.AlgebraicGeometry.ManifoldComponentModuleMaps
 The maps are the actual native component restrictions, pushforwards
 and adjunction-unit finite product. These supply component assembly
 for general compact manifolds while the pointed Higgs correspondence
-is stated on a connected nonempty manifold.
+is stated on a connected nonempty manifold. The native module assembly
+comparison `native_component_module_assembly_isIso` is proved in
+`MathlibExt.AlgebraicGeometry.ManifoldComponentModuleMapsNativeComponentModuleAssemblyIsIso`.
 -/
 
 open CategoryTheory TopologicalSpace
@@ -36,7 +39,3 @@ variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n)
   [CotangentSectionCalculus (n := n) (M := M)] [CotangentSheafCondition (n := n) (M := M)]
   [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
   [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
-
-/-- The same actual module is recovered from its actual native component restrictions. -/
-theorem_wanted native_component_module_assembly_isIso (P : FiniteComponentPartition (M := M))
-    (E : HolomorphicModules (n := n) (M := M)) : IsIso (componentAssemblyUnit (n := n) P E)
