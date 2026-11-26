@@ -92,9 +92,6 @@ instance : FunLike (IdAssignment V c) V ℕ where
 theorem toFun_eq_coe (ids : IdAssignment V c) : ids.toFun = ⇑ids :=
   rfl
 
-theorem coe_injective (ids : IdAssignment V c) : Function.Injective ids :=
-  ids.injective
-
 theorem coe_mem_Icc (ids : IdAssignment V c) (v : V) :
     ids v ∈ Set.Icc 1 (Fintype.card V ^ c) :=
   ids.mem_Icc v
@@ -193,7 +190,7 @@ radius-`k` ball. Let `G` and `G'` be simple graphs on the same finite set of nod
 the identifiers `ids`, `ids'` and the inputs `x`, `x'` agree at every node at distance at most
 `k` from `v` in `G`, and the neighbours of every node at distance less than `k` from `v` be the
 same in `G` and `G'`. Then `v` is in the same state after `k` rounds of any algorithm `A` in
-both executions. Edges between two nodes at distance exactly `k` are not constrained. -/
+both executions. Edges between two nodes at distance at least `k` from `v` are not constrained. -/
 theorem stateAfter_congr_ball (A : LocalAlgorithm I S M O) {G G' : SimpleGraph V}
     [DecidableRel G.Adj] [DecidableRel G'.Adj] {ids ids' : V → ℕ} {x x' : V → I} (k : ℕ)
     (v : V) (hadj : ∀ u, G.edist v u < k → ∀ w, G.Adj u w ↔ G'.Adj u w)

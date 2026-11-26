@@ -62,10 +62,10 @@ example (V : Type) [Fintype V] (ids : IdAssignment V 1) :
     simpa using ids.coe_mem_Icc
   let f : V → Finset.Icc 1 (Fintype.card V) := fun v => ⟨ids v, by simpa using hmem v⟩
   have hf : Function.Injective f := fun a b h =>
-    ids.coe_injective (congrArg Subtype.val h : ids a = ids b)
+    ids.injective (congrArg Subtype.val h : ids a = ids b)
   have hbij : Function.Bijective f :=
     (Fintype.bijective_iff_injective_and_card f).mpr ⟨hf, by simp⟩
-  refine ⟨fun v _ => hmem v, fun a _ b _ h => ids.coe_injective h, fun m hm => ?_⟩
+  refine ⟨fun v _ => hmem v, fun a _ b _ h => ids.injective h, fun m hm => ?_⟩
   obtain ⟨v, hv⟩ := hbij.2 ⟨m, by simpa using hm⟩
   exact ⟨v, trivial, congrArg Subtype.val hv⟩
 
