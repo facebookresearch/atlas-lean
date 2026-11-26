@@ -9,15 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.PopulationGenetics.Selection
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Protected polymorphism in the finite-niche Levene model
 
-The same allele frequency `p` enters every niche. Selection acts within each niche *before*
-the resulting frequencies are averaged with fixed weights `c`. At fixation of either
-homozygote the slope is the reciprocal of the weighted harmonic mean of that homozygote's
-viabilities.
+The same two-allele frequency vector `(p, 1 - p)` enters every niche. The model pools the
+post-selection frequencies of allele `0`, using `Selection.diploidSelect` or `Selection.select`
+within each niche and fixed weights `c` across niches. At fixation of either homozygote the
+slope is the reciprocal of the weighted harmonic mean of that homozygote's viabilities.
 
 Source: J. Felsenstein, *Theoretical Evolutionary Genetics* (December 2019), §IV.10,
 “The Levene Model: High Migration”, pp. 196–198, equations (IV-42)–(IV-46).
@@ -45,10 +47,11 @@ Exchanging the types reflects the frequency and reciprocates the relative viabil
 same boundary analysis applies at the other end. -/
 theorem_wanted protected_polymorphism {ι : Type*} [Fintype ι]
     (c : ι → ℝ) (hc : ∀ i, 0 < c i) (hc_sum : ∑ i, c i = 1) :
+    let freq (p : ℝ) := ![p, 1 - p]
     let diploid (w v : ι → ℝ) (p : ℝ) :=
-      ∑ i, c i * ((p ^ 2 * w i + p * (1 - p)) /
-        (p ^ 2 * w i + 2 * p * (1 - p) + (1 - p) ^ 2 * v i))
-    let haploid (a : ι → ℝ) (p : ℝ) := ∑ i, c i * (p * a i / (p * a i + (1 - p)))
+      ∑ i, c i * Selection.diploidSelect (freq p) ![![w i, 1], ![1, v i]] 0
+    let haploid (a : ι → ℝ) (p : ℝ) :=
+      ∑ i, c i * Selection.select (freq p) ![a i, 1] 0
     (∀ w v : ι → ℝ, (∀ i, 0 < w i) → (∀ i, 0 < v i) →
       let F := diploid w v
       let d₀ := ∑ i, c i / v i
