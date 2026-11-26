@@ -13,13 +13,19 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 
 /-!
-# Tests for `M₁₀₅ > 4`
+# Tests for `M₅ > 2` and `M₁₀₅ > 4`
 -/
 
 namespace MathlibExtTest.NumberTheory.MaynardVariationalBounds
 
 open Filter Topology MathlibExt.NumberTheory.GPYMaynard
 open WantedExt.NumberTheory.MaynardVariationalBounds
+
+example : 2 < maynardM 5 := two_lt_maynardM_five
+
+/-- Under the Elliott–Halberstam level `θ = 1`, five shifts suffice for the threshold `ρ = 1`. -/
+example : (1 : ℝ) < 1 * maynardM 5 / 2 := by
+  linarith [two_lt_maynardM_five]
 
 example : 4 < maynardM 105 := four_lt_maynardM_105
 
