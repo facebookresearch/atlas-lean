@@ -9,5 +9,4 @@ The *Zhegalkin basis* is $\{\oplus,\wedge,1\}$: binary exclusive or, binary conj
 
 ## Sources
 
-- Igor S. Sergeev, "A relation between additive and multiplicative complexity of Boolean functions", 2013.
-- Anastasiya Chistopolskaya, Vladimir V. Podolskii, "Parity Decision Tree Complexity is Greater Than Granularity", 2018.
+- Joan Boyar, René Peralta and Denis Pochuev, "On the multiplicative complexity of Boolean functions over the basis $(\wedge, \oplus, 1)$", Theoretical Computer Science 235(1), 2000, pp. 43–57.

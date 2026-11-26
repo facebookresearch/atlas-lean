@@ -8,5 +8,6 @@ A **generic RAM** over a data model is a program with natural-number control lab
 
 ## Sources
 
-- MIT–ULB CompGeom Group et al., "Undecidability of Tiling with a Tromino", arXiv:2509.07906, 2025.
+- Peter Bürgisser, Michael Clausen and M. Amin Shokrollahi, "Algebraic Complexity Theory", Springer, 1997.
+- Michael Ben-Or, "Lower Bounds for Algebraic Computation Trees", Proceedings of the 15th Annual ACM Symposium on Theory of Computing (STOC 1983), 1983.
 - Stephen A. Cook and Robert A. Reckhow, "Time Bounded Random Access Machines", Journal of Computer and System Sciences 7(4), 1973.

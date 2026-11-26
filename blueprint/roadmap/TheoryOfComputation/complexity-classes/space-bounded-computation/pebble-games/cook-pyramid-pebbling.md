@@ -13,4 +13,5 @@ The upper bound pebbles the two predecessors in turn. The lower bound is Cook's 
 ## Sources
 
 - Stephen A. Cook, "An Observation on Time-Storage Trade Off", Journal of Computer and System Sciences 9(3), 1974.
-- Jakob Nordström, "New Wine into Old Wineskins: A Survey of Some Pebbling Classics with Supplemental Results", manuscript, version of 19 November 2010, https://people.csail.mit.edu/jakobn/research/PebblingSurveyTMP.pdf (Theorem 4.8 and its proof, Observation 4.10).
+- Michael S. Paterson and Carl E. Hewitt, "Comparative Schematology", Record of the Project MAC Conference on Concurrent Systems and Parallel Computation, ACM, 1970, pp. 119–127.
+- Jakob Nordström, "Pebble Games, Proof Complexity, and Time-Space Trade-offs", Logical Methods in Computer Science 9(3):15, 2013.

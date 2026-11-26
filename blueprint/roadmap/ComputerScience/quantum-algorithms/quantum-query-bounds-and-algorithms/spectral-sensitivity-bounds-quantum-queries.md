@@ -20,7 +20,6 @@ Spectral sensitivity is a spectral adversary bound with $\Gamma$ the adjacency m
 
 - [Spectral and negative-weight adversaries and their hierarchy](../quantum-adversary-methods/spectral-and-negative-weight-adversary-hierarchy.md)
 - [Degree is at most the square of spectral sensitivity](../../../TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/degree-at-most-spectral-sensitivity-squared.md)
-- [Midrijanis: D(f) ≤ deg(f)·bs(f) ≤ 2 deg(f)³](../../../TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/midrijanis-degree-bound.md)
 - [Polynomial method for quantum query complexity](../quantum-query-lower-bounds/polynomial-method-for-quantum-query-complexity.md)
 - [Nisan–Szegedy: block sensitivity is at most quadratic in degree and approximate degree](../../../TheoryOfComputation/communication-complexity/sensitivity-certificates-and-degree/nisan-szegedy-bounds.md)
 

@@ -13,4 +13,3 @@ The last output $x_1\ast\cdots\ast x_N$ needs a tree of $N-1$ distinct binary ga
 ## Sources
 
 - Marc Snir, "Depth-Size Trade-offs for Parallel Prefix Computation", Journal of Algorithms 7(2), 185–201, 1986.
-- Igor S. Sergeev, "A Note on the Depth of Optimal Fanout-Bounded Prefix Circuits", 2025.

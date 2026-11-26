@@ -1,6 +1,6 @@
-# Monotone cyclic shift and permutation operators
+# Monotone cyclic shift operator
 
-Let $X=(x_0,\dots,x_{n-1})$ be $n$ Boolean vectors of length $q$ and let $\alpha:\{0,\dots,n-1\}\to\{0,1\}^m$ be an injective *control code* whose image is an antichain. A circuit with $nq+m$ inputs computes the *monotone cyclic shift operator* $S_{q,\alpha}$ if, for every $X$ and every $k$, on input $(X,\alpha(k))$ it outputs the cyclic shift of $X$ by $k$ blocks (block $x_i$ moved to position $i+k\bmod n$). Similarly, for an antichain code $\beta$ of the permutations of $\{0,\dots,n-1\}$, it computes the *monotone permutation operator* if on $(X,\beta(\pi))$ it outputs $X$ permuted by $\pi$. Monotone complexity counts binary AND/OR gates.
+Let $X=(x_0,\dots,x_{n-1})$ be $n$ Boolean vectors of length $q$ and let $\alpha:\{0,\dots,n-1\}\to\{0,1\}^m$ be an injective *control code* whose image is an antichain. A circuit with $nq+m$ inputs computes the *monotone cyclic shift operator* $S_{q,\alpha}$ if, for every $X$ and every $k$, on input $(X,\alpha(k))$ it outputs the cyclic shift of $X$ by $k$ blocks (block $x_i$ moved to position $i+k\bmod n$). Monotone complexity counts binary AND/OR gates.
 
 ## Depends on
 

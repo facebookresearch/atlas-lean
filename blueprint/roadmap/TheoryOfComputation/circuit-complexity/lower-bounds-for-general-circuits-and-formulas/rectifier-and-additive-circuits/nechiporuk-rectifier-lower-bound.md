@@ -15,4 +15,3 @@ Pippenger's threshold-edge argument: charge each one-entry $(i,j)$ to an edge on
 
 - E. I. Nechiporuk, "On the Topological Principles of Self-Correction", Problemy Kibernetiki, 1970.
 - Stasys Jukna, Igor Sergeev, "Complexity of Linear Boolean Operators", Foundations and Trends in Theoretical Computer Science, 2013.
-- Igor S. Sergeev, "On Relative OR-Complexity of Boolean Matrices and Their Complements", 2014.

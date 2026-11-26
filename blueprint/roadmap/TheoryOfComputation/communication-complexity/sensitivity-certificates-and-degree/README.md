@@ -13,6 +13,5 @@
 - [For monotone functions, sensitivity, block sensitivity and certificate complexity coincide](monotone-functions-s-bs-c-coincide.md)
 - [Degree is at most the square of spectral sensitivity](degree-at-most-spectral-sensitivity-squared.md)
 - [Query measures of threshold functions](query-measures-of-threshold-functions.md)
-- [Midrijanis: D(f) ≤ deg(f)·bs(f) ≤ 2 deg(f)³](midrijanis-degree-bound.md)
 - [The approximate degree of OR is Θ(√n)](approximate-degree-of-or.md)
-- [Polynomial bounds in terms of sensitivity: C ≤ 2s⁵ and D ≤ 2s⁶](certificate-and-decision-tree-bounds-in-sensitivity.md)
+- [Polynomial bounds in terms of sensitivity: bs ≤ 2s⁴ and C ≤ 2s⁵](certificate-and-decision-tree-bounds-in-sensitivity.md)
