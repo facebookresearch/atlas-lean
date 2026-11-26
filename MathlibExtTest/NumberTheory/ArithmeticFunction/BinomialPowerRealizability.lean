@@ -15,7 +15,8 @@ import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 
 Value tests for `binomialPowerSeq` at Apéry (`r = s = 2`), central
 Delannoy (`r = s = 1`), and Franel (`s = 0`) parameters, plus the
-`n = 0` endpoint, `r`/`s` ordering, and zero exponents.
+`n = 0` endpoint, `r`/`s` ordering, and zero exponents. We also test the
+prime-power congruence for binomial coefficients in four cases.
 -/
 
 namespace MetaMathlibExt
@@ -73,5 +74,50 @@ example : doldRealizable (fun n => ((binomialPowerSeq 2 2 n : ℕ) : ℤ)) :=
   binomial_power_sequence_dold_realizable 2 2 (by decide)
 
 #print axioms binomial_power_sequence_dold_realizable
+
+private theorem padicValNat_eq_of_pow_dvd {p n e : ℕ} (he : p ^ e ∣ n)
+    (hsucc : ¬ p ^ (e + 1) ∣ n) : padicValNat p n = e :=
+  Nat.padicValNat_def.trans (multiplicity_eq_of_dvd_of_not_dvd he hsucc)
+
+-- The larger valuation is that of n: the difference of the coefficients is 24.
+example : (Nat.choose 8 2 : ℤ) ≡ (Nat.choose 4 1 : ℤ) [ZMOD 8] := by
+  have h := choose_mul_prime_modEq_choose_div 8 2 1 (by decide) (by decide) (by decide) (by decide)
+  rw [padicValInt, ← Nat.padicValNat_def] at h
+  convert h using 1
+  change (8 : ℤ) = 2 ^ max (padicValNat 2 8) (padicValNat 2 6)
+  rw [show padicValNat 2 8 = 3 from padicValNat_eq_of_pow_dvd (by decide) (by decide),
+    show padicValNat 2 6 = 1 from padicValNat_eq_of_pow_dvd (by decide) (by decide)]
+  decide
+
+-- The larger valuation is that of n - l * p: the difference of the coefficients is 40.
+example : (Nat.choose 10 2 : ℤ) ≡ (Nat.choose 5 1 : ℤ) [ZMOD 8] := by
+  have h := choose_mul_prime_modEq_choose_div 10 2 1 (by decide) (by decide) (by decide) (by decide)
+  rw [padicValInt, ← Nat.padicValNat_def] at h
+  convert h using 1
+  change (8 : ℤ) = 2 ^ max (padicValNat 2 10) (padicValNat 2 8)
+  rw [show padicValNat 2 10 = 1 from padicValNat_eq_of_pow_dvd (by decide) (by decide),
+    show padicValNat 2 8 = 3 from padicValNat_eq_of_pow_dvd (by decide) (by decide)]
+  decide
+
+-- The gap is -9; both coefficients vanish because the lower indices exceed the upper indices.
+example : (Nat.choose 6 15 : ℤ) ≡ (Nat.choose 2 5 : ℤ) [ZMOD 9] := by
+  have h := choose_mul_prime_modEq_choose_div 6 3 5 (by decide) (by decide) (by decide) (by decide)
+  rw [padicValInt, ← Nat.padicValNat_def] at h
+  convert h using 1
+  change (9 : ℤ) = 3 ^ max (padicValNat 3 6) (padicValNat 3 9)
+  rw [show padicValNat 3 6 = 1 from padicValNat_eq_of_pow_dvd (by decide) (by decide),
+    show padicValNat 3 9 = 2 from padicValNat_eq_of_pow_dvd (by decide) (by decide)]
+  decide
+
+-- At l = 0 the valuations are equal and both coefficients are one.
+example : (Nat.choose 9 0 : ℤ) ≡ (Nat.choose 3 0 : ℤ) [ZMOD 9] := by
+  have h := choose_mul_prime_modEq_choose_div 9 3 0 (by decide) (by decide) (by decide) (by decide)
+  rw [padicValInt, ← Nat.padicValNat_def] at h
+  convert h using 1
+  change (9 : ℤ) = 3 ^ max (padicValNat 3 9) (padicValNat 3 9)
+  rw [show padicValNat 3 9 = 2 from padicValNat_eq_of_pow_dvd (by decide) (by decide)]
+  decide
+
+#print axioms choose_mul_prime_modEq_choose_div
 
 end MetaMathlibExt

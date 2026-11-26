@@ -14,6 +14,8 @@ public import Mathlib.Data.Int.ModEq
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSum
 public import MathlibExt.NumberTheory.GeneralizedSylvester
 public import MathlibExt.NumberTheory.MillinSeries
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
 
 /-!
 # Reciprocal sums of doubly exponential sequences
@@ -77,15 +79,6 @@ public theorem_wanted countable_not_type2IrrationalitySequence_floor_pow_two_pow
       Tendsto (fun n => (b n : ℝ) / ⌊α ^ 2 ^ (n + 1)⌋₊) atTop (𝓝 1) →
         ∀ q : ℚ, ¬HasSum (fun n => 1 / (b n : ℝ)) q}
 
-/-- **A vanishing gap stays zero.** Let $r > 0$ be a real number and let $(\varepsilon_n)$ be
-the gap sequence of its pseudo-greedy expansion. For every $n \ge 0$, if $\varepsilon_n = 0$,
-then $\varepsilon_{n+1} = 0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Lemma 3 (`integers-2026-A28-lem-3`). -/
-public theorem_wanted pseudoGreedyGap_succ_eq_zero {r : ℝ} (hr : 0 < r) {n : ℕ}
-    (h : pseudoGreedyGap r n = 0) : pseudoGreedyGap r (n + 1) = 0
-
 /-- **Structure of the pseudo-greedy expansion of a rational.** Let $p$ and $q$ be positive
 integers, let $r = p/q$, and let $(x_n)$, $(a_n)$ and $(\varepsilon_n)$ be the remainder
 sequence, the pseudo-greedy expansion and the gap sequence of $r$. Put
@@ -110,36 +103,6 @@ public theorem_wanted pseudoGreedyExpansion_rational_structure {p q : ℕ} (hp :
         d (n + 1) = d n * a n) ∧
       (fun n => (c n : ℝ)) =O[atTop] (fun n => (∏ k ∈ Finset.range n, (a k : ℝ)) / a n) ∧
       (fun n => (c n : ℝ)) =O[atTop] (fun n => (1.5 : ℝ) ^ n)
-
-/-- **Eventual vanishing of the pseudo-greedy gaps of a rational number.** Let $r$ be a positive
-rational number and let $(\varepsilon_n)_{n \ge 0}$ be the gap sequence of the pseudo-greedy
-expansion of $r$. Suppose that $\liminf_n \varepsilon_n \prod_{k<n} (1 - \varepsilon_k) \ge 0$,
-that is, for every $\delta > 0$ we have $\varepsilon_n \prod_{k<n} (1 - \varepsilon_k) \ge -\delta$
-for all sufficiently large $n$; or that $\varepsilon_n \ge 0$ for all sufficiently large $n$.
-Then $\varepsilon_n = 0$ for all sufficiently large $n$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Proposition 1 (`integers-2026-A28-prop-1`). -/
-public theorem_wanted eventually_pseudoGreedyGap_eq_zero {r : ℚ} (hr : 0 < r)
-    (h : (∀ δ : ℝ, 0 < δ → ∀ᶠ n in atTop,
-        -δ ≤ pseudoGreedyGap r n * ∏ k ∈ Finset.range n, (1 - pseudoGreedyGap r k)) ∨
-      ∀ᶠ n in atTop, 0 ≤ pseudoGreedyGap r n) :
-    ∀ᶠ n in atTop, pseudoGreedyGap r n = 0
-
-/-- **Tails that are pseudo-greedy expansions.** Let $(a_n)_{n \ge 0}$ be a sequence of positive
-integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges. Then there is a
-natural number $N$ such that, with $r = \sum_{k \ge 0} 1 / a_{N+k}$, the tail
-$(a_{N+n})_{n \ge 0}$ is the pseudo-greedy expansion of $r$, and the gap sequence of this
-expansion tends to $0$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 3 (`integers-2026-A28-cor-3`). -/
-public theorem_wanted exists_tail_eq_pseudoGreedyExpansion {a : ℕ → ℕ} (hpos : ∀ n, 0 < a n)
-    (hratio : Tendsto (fun n => (a n : ℝ) ^ 2 / a (n + 1)) atTop (𝓝 1))
-    (hsum : Summable fun n => 1 / (a n : ℝ)) :
-    ∃ N : ℕ,
-      (∀ n, (a (N + n) : ℤ) = pseudoGreedyExpansion (∑' k, 1 / (a (N + k) : ℝ)) n) ∧
-      Tendsto (pseudoGreedyGap (∑' k, 1 / (a (N + k) : ℝ))) atTop (𝓝 0)
 
 /-- **Erdős–Straus and Badea criterion for the Sylvester recurrence.** Let $(a_n)_{n \ge 0}$ be a
 sequence of positive integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges
