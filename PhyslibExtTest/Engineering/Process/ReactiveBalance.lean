@@ -91,16 +91,14 @@ example : HasDerivAt (fun t : ℝ => t * 2) 2 0 ∧ ¬ ((0 : ℝ) ≠ 0) := by
   · simp
 
 -- Constant density rho = rho_in = 2 with Qin = 3 and Qout = 1: the vessel
--- V(t) = 2t satisfies the mass balance, so
+-- V(t) = 2t satisfies the mass balance (2 * V)' = 2 * 3 - 2 * 1, so
 -- `volume_balance_of_const_density` gives the volume law V' = Qin - Qout.
 example : HasDerivAt (fun t : ℝ => 2 * t) (3 - 1) 0 := by
   have hV : HasDerivAt (fun t : ℝ => 2 * t) 2 0 :=
     ((hasDerivAt_id' (0 : ℝ)).const_mul 2).congr_deriv (mul_one 2)
-  have hmass : HasDerivAt (fun t : ℝ => (fun _ : ℝ => (2 : ℝ)) t * (2 * t))
-      (2 * 3 - 2 * 1) 0 :=
+  have hmass : HasDerivAt (fun t : ℝ => (2 : ℝ) * (2 * t)) (2 * 3 - 2 * 1) 0 :=
     (hV.const_mul 2).congr_deriv (by norm_num)
-  exact hV.congr_deriv
-    (volume_balance_of_const_density hV (by norm_num) rfl 3 1 hmass)
+  exact hV.congr_deriv (volume_balance_of_const_density hV (by norm_num) 3 1 hmass)
 
 -- Changing density breaks the naive volume law: rho(t) = 1 + t and
 -- V(t) = 1 - t keep the mass rho * V = 1 - t ^ 2 stationary at t = 0, so
@@ -122,7 +120,7 @@ example : HasDerivAt (fun t : ℝ => 1 - t) (1 / 1 * 0 - 0 - 1 * 1 / 1) 0 ∧
   have h := volume_deriv_eq hrho hnaive (by norm_num) 1 0 0 hmass
   norm_num at h
 
--- The recorded counterexample shape: rho(t) = 1 + t / 10 and V(t) = 10 - t
+-- A second counterexample: rho(t) = 1 + t / 10 and V(t) = 10 - t
 -- conserve mass at t = 0 with Qin = Qout = 1 (inflow density 1). At rho = 1,
 -- V = 10, rho' = 1/10, `volume_deriv_eq` gives V' = -1, not Qin - Qout = 0.
 example : HasDerivAt (fun t : ℝ => 10 - t) (1 / 1 * 1 - 1 - 10 * (1 / 10) / 1) 0 ∧

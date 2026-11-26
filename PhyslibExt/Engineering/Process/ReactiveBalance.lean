@@ -16,7 +16,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Reactive balances: stock and concentration forms
+# Reactive balances: stock, concentration and volume forms
 
 ## i. Overview
 
@@ -29,6 +29,15 @@ variable-volume contribution and does not vanish for constant
 concentration. Division into concentration form needs nonzero volume at
 the instant. Derivatives are hypotheses; no existence claim is made.
 
+The liquid mass balance relates to the volume balance in the same way.
+With supplied derivatives of the density `rho` and the volume `V`, nonzero
+density at the instant, and the mass balance
+`(rho * V)' = rho_in * Qin - rho * Qout` (inflow of density `rho_in`,
+outflow at the vessel density), the volume derivative is
+`V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`. Only under the
+constant-density closure `rho = rho_in = rho0` does this reduce to the
+volume law `V' = Qin - Qout`.
+
 ## ii. Key results
 
 - `ReactiveBalance.stock_iff_concentration`: the stock and concentration
@@ -39,8 +48,9 @@ the instant. Derivatives are hypotheses; no existence claim is made.
   specialization `V0 * c' i = G`.
 - `ReactiveBalance.volume_balance_of_const_density`: under the
   constant-density closure, the liquid mass balance gives the volume law
-  `V' = Qin - Qout`; without that closure the comparison identity keeps
-  the `-V * rho' / rho` term.
+  `V' = Qin - Qout`. Without that closure, `ReactiveBalance.volume_deriv_eq`
+  gives `V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`, which keeps the
+  factor `rho_in / rho` on `Qin` and the term `-V * rho' / rho`.
 
 ## iii. Table of contents
 
@@ -118,8 +128,11 @@ theorem closed_constant_volume {ι : Type*} {V0 : ℝ} {c : ℝ → ι → ℝ}
 
 /-! ## B. Mass versus volume balance -/
 
-/-- General comparison identity: solving the mass balance for `V'` gives
-`V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`, which shows why mass
+/-- **Volume derivative from the mass balance.** If `rho` and `V` have
+derivatives `rho'` and `V'` at the instant `t`, `rho t ≠ 0`, and the mass
+`rho * V` has derivative `rho_in * Qin - rho t * Qout` at `t` (inflow of
+density `rho_in`, outflow at the vessel density), then
+`V' = (rho_in / rho t) * Qin - Qout - V t * rho' / rho t`. This shows why mass
 conservation alone is insufficient for a volume law when the density
 changes. -/
 lemma volume_deriv_eq {rho V : ℝ → ℝ} {rho' V' t : ℝ}
@@ -133,24 +146,15 @@ lemma volume_deriv_eq {rho V : ℝ → ℝ} {rho' V' t : ℝ}
   field_simp
   linarith
 
-/-- **Volume balance under the constant-density closure.** If
-`rho = rho_in = rho0 > 0` is constant, the mass balance gives
-`V' = Qin - Qout`. -/
-theorem volume_balance_of_const_density {rho V : ℝ → ℝ} {V' t rho0 : ℝ}
-    (hV : HasDerivAt V V' t) (hrho0 : 0 < rho0)
-    (hrho : rho = fun _ => rho0) (Qin Qout : ℝ)
-    (hmass : HasDerivAt (fun t => rho t * V t)
-      (rho0 * Qin - rho0 * Qout) t) :
+/-- **Volume balance under the constant-density closure.** If `V` has
+derivative `V'` at the instant `t`, the density is a constant `rho0 > 0`
+equal to the inflow density, and the mass `rho0 * V` has derivative
+`rho0 * Qin - rho0 * Qout` at `t`, then `V' = Qin - Qout`. -/
+theorem volume_balance_of_const_density {V : ℝ → ℝ} {V' t rho0 : ℝ}
+    (hV : HasDerivAt V V' t) (hrho0 : 0 < rho0) (Qin Qout : ℝ)
+    (hmass : HasDerivAt (fun t => rho0 * V t) (rho0 * Qin - rho0 * Qout) t) :
     V' = Qin - Qout := by
-  have hrho0ne : rho0 ≠ 0 := ne_of_gt hrho0
-  have hfun : (fun t => rho t * V t) = (fun t => rho0 * V t) := by
-    funext x
-    simp [hrho]
-  have hmass' : HasDerivAt (fun t => rho0 * V t) (rho0 * Qin - rho0 * Qout) t :=
-    hfun ▸ hmass
-  have hmul := hV.const_mul rho0
-  have heq := hmass'.unique hmul
-  have h2 : rho0 * V' = rho0 * (Qin - Qout) := by linarith
-  exact mul_left_cancel₀ hrho0ne h2
+  have h := volume_deriv_eq (hasDerivAt_const t rho0) hV hrho0.ne' rho0 Qin Qout hmass
+  simpa [hrho0.ne'] using h
 
 end Engineering.Process.ReactiveBalance
