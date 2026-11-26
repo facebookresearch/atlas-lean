@@ -34,11 +34,12 @@ import Mathlib.Tactic.Ring
 
 The proportions of digits `1` and `2` in Cloitre's finite approximants tend to `2/3` and `1/3`.
 
-Evaluation of `finiteContFrac` from a starting value is the Möbius map of a product of
-`2 × 2` matrices. Its determinant and reversal-transpose identity give
-`finiteContFrac_add_inv_mul_den_sq`: for `[a₀; a₁, …, aₜ]` with `t` even and positive
-tail entries, adding `1 / (x * q ^ 2)` appends the fold `x, -aₜ, …, -a₁`, where `q` is
-the denominator in lowest terms.
+For a positive starting value and entries that are positive after the first, evaluation of
+`finiteContFrac` from that starting value is the Möbius map of a product of `2 × 2` matrices.
+Its determinant and reversal-transpose identity give `finiteContFrac_add_inv_mul_den_sq`: for
+`[a₀; a₁, …, aₜ]` with `t` even and positive tail entries, and for every integer `x ≥ 1`,
+adding `1 / (x * q ^ 2)` appends the fold `x, -aₜ, …, -a₁`, where `q` is the denominator in
+lowest terms.
 
 Source: Daniel J. Hoyt, *The Self-Describing Paperfolding Sequence in Continued Fractions*,
 Journal of Integer Sequences 29 (2026), Article 26.3.6, Lemma 13 and Theorem 17.
@@ -192,25 +193,6 @@ private theorem one_10 : (1 : Matrix (Fin 2) (Fin 2) ℤ) 1 0 = 0 :=
 private theorem one_11 : (1 : Matrix (Fin 2) (Fin 2) ℤ) 1 1 = 1 :=
   Matrix.one_apply_eq 1
 
--- Negating all entries negates the value.
-private theorem map_neg : ∀ (s : List ℤ), finiteContFrac (s.map (fun b => -b)) =
-    -finiteContFrac s := by
-  intro s; induction s with
-  | nil => simp [finiteContFrac]
-  | cons b s ih => simp [finiteContFrac_cons, ih, add_comm]
-
--- Positive entries give a positive value.
-private theorem contFrac_pos : ∀ (s : List ℤ), (∀ b ∈ s, 1 ≤ b) → s ≠ [] →
-    0 < finiteContFrac s := by
-  intro s; induction s with
-  | nil => intro hs hne; contradiction
-  | cons b s ih =>
-    intro hs hne
-    have hb : (0 : ℚ) < b := by exact_mod_cast (show 0 < b from hs b (by simp))
-    rcases eq_or_ne s [] with rfl | h
-    · simpa only [finiteContFrac_singleton] using hb
-    · exact add_pos hb (inv_pos.mpr (ih (fun c hc => hs c (List.mem_cons_of_mem _ hc)) h))
-
 -- Evaluation from a positive start with positive entries stays positive.
 private theorem cfEval_pos : ∀ (l : List ℤ) (y : ℚ), (∀ b ∈ l, 1 ≤ b) → 0 < y →
     0 < cfEval l y := by
@@ -240,34 +222,6 @@ private theorem matProd_nonneg : ∀ (l : List ℤ), (∀ b ∈ l, 1 ≤ b) →
     rw [cfMatProd_cons, mul_cfMat_00, mul_cfMat_01, mul_cfMat_10, mul_cfMat_11]
     exact ⟨add_nonneg (mul_nonneg hc h00) h10, add_nonneg (mul_nonneg hc h01) h11,
       h00, h01⟩
-
--- The first row is never all zero for positive lists.
-private theorem matProd_firstrow_ne : ∀ (l : List ℤ), (∀ b ∈ l, 1 ≤ b) →
-    cfMatProd l 0 0 ≠ 0 ∨ cfMatProd l 0 1 ≠ 0 := by
-  intro l; induction l with
-  | nil =>
-    intro ha
-    left
-    rw [cfMatProd_nil, one_00]
-    exact one_ne_zero
-  | cons c l' ih =>
-    intro ha
-    have ha' : ∀ b ∈ l', 1 ≤ b := fun b hb => ha b (List.mem_cons_of_mem _ hb)
-    obtain ⟨h00, h01, h10, h11⟩ := matProd_nonneg l' ha'
-    have hc : (1 : ℤ) ≤ c := ha c (by simp)
-    have hc0 : (0 : ℤ) < c := lt_of_lt_of_le zero_lt_one hc
-    rw [cfMatProd_cons, mul_cfMat_00, mul_cfMat_01]
-    rcases ih ha' with h | h
-    · left
-      have hpos : (0 : ℤ) < cfMatProd l' 0 0 := lt_of_le_of_ne h00 (Ne.symm h)
-      have : (0 : ℤ) < c * cfMatProd l' 0 0 + cfMatProd l' 1 0 :=
-        add_pos_of_pos_of_nonneg (mul_pos hc0 hpos) h10
-      exact ne_of_gt this
-    · right
-      have hpos : (0 : ℤ) < cfMatProd l' 0 1 := lt_of_le_of_ne h01 (Ne.symm h)
-      have : (0 : ℤ) < c * cfMatProd l' 0 1 + cfMatProd l' 1 1 :=
-        add_pos_of_pos_of_nonneg (mul_pos hc0 hpos) h11
-      exact ne_of_gt this
 
 -- The head entry is at least one for nonempty positive lists.
 private theorem matProd_head_ge_one : ∀ (l : List ℤ), (∀ b ∈ l, 1 ≤ b) → l ≠ [] →
@@ -463,7 +417,7 @@ public theorem finiteContFrac_add_inv_mul_den_sq (a₀ : ℤ) (a : List ℤ)
         List.mem_reverse.mp (by rw [hrev]; simp)
       have hc1 : (1 : ℚ) ≤ ((c : ℤ) : ℚ) := by exact_mod_cast ha c hca
       have hFrest : 0 < finiteContFrac (d :: rest) :=
-        contFrac_pos (d :: rest) (by
+        finiteContFrac_neg_block.pos (d :: rest) (by
           intro b hb
           have hmem : b ∈ a.reverse := by
             rw [hrev]; exact List.mem_cons_of_mem c hb
@@ -477,7 +431,8 @@ public theorem finiteContFrac_add_inv_mul_den_sq (a₀ : ℤ) (a : List ℤ)
     have hW : finiteContFrac ((x : ℤ) :: (a.map (fun b => -b)).reverse) =
         (x : ℚ) - ((cfMatProd a.reverse 1 0 : ℤ) : ℚ) /
           ((cfMatProd a.reverse 0 0 : ℤ) : ℚ) := by
-      rw [finiteContFrac_cons, ← List.map_reverse, map_neg, hU, sub_eq_add_neg]
+      rw [finiteContFrac_cons, ← List.map_reverse, finiteContFrac_neg_block.map_neg, hU,
+        sub_eq_add_neg]
       push_cast
       congr 1
       field_simp
