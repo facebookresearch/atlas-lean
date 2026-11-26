@@ -9,14 +9,13 @@ $q^+=q/(1+KR)$. For $N\ge0$ fresh-solvent stages with these same phase volumes a
 $q_N=q_0(1+KR)^{-N}$. For $q_0>0$ this gives the remaining fraction; for $q_0=0$ it gives zero solute without forming a ratio.
 
 A solute-free-carrier-flow model gives the same algebra when both concentrations and $R$ use that carrier basis. A solvent-to-total-feed
-mass ratio with varying output phase amounts does not in general give this formula. The cited source supplies liquid-liquid equilibrium
-and material-balance context; this fixed-volume linear model is an explicit specialization, not a general ternary-phase extraction law.
+mass ratio with varying output phase amounts does not in general give this formula. Harvey gives the corresponding one-step and
+repeated retention fractions; this fixed-volume linear model is an explicit specialization, not a general ternary-phase extraction law.
 Countercurrent extraction requires its own matched Kremser model and is outside this result.
 
-## Depends on
-
-## Proof depends on
+The iteration is over the amounts after each contact, with $q_0$ the initial amount. The inverse
+of $1+KR$ is raised to the natural-number stage count; at zero stages this factor is $1$.
 
 ## Sources
 
-- L. Lamm and L. Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, Section 1.3, the distribution coefficient of the solute, <https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.03%3A_Liquid-liquid_Extraction>.
+- David Harvey, *Analytical Chemistry 2.1*, Volume I, Chemistry LibreTexts, §7.7, "Liquid-Liquid Extractions," Eqs. (7.6) and (7.7), <https://chem.libretexts.org/Bookshelves/Analytical_Chemistry/Analytical_Chemistry_2.1_by_David_Harvey/Analytical_Chemistry_Volume_I_(Harvey)/07%3A_Obtaining_and_Preparing_Samples_for_Analysis/7.07%3A_Liquid-Liquid_Extractions>.
