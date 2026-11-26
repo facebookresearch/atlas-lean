@@ -184,9 +184,10 @@ private lemma randExp_sum_coords {ι κ : Type*} [Fintype ι] [Fintype κ]
 /-- The mean-square error of the vector sample mean under uniform sampling of `n` distinct
 labels, with possibly repeated vector values. The sum of squared coordinate errors is the
 squared Euclidean norm. With `N` labels, the population variance uses divisor `N`, and the
-finite population correction is `(N - n) / (n * (N - 1))`. The census, including `N = n = 1`,
-has zero error. This is Mishchenko–Khaled–Richtárik, arXiv:2006.05988v3, §7, Lemma 1,
-equation (22), second identity, with the census stated separately. -/
+factor multiplying it is `(N - n) / (n * (N - 1))`, the finite population correction
+`(N - n) / (N - 1)` divided by `n`. The census, including `N = n = 1`, has zero error. This is
+Mishchenko–Khaled–Richtárik, arXiv:2006.05988v3, §7, Lemma 1, equation (22), second identity,
+with the census stated separately. -/
 theorem randExp_sum_sq_sampleMean_sub_popMean {ι : Type*} [Fintype ι] {d : ℕ}
     (x : ι → Fin d → ℝ) {n : ℕ} (hn₁ : 1 ≤ n) (hnN : n ≤ Fintype.card ι) :
     randExp n (fun S => ∑ r, (sampleMean (fun i => x i r) S - popMean (fun i => x i r)) ^ 2) =
