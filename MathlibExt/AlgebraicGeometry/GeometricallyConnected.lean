@@ -36,10 +36,24 @@ public import Mathlib.AlgebraicGeometry.Geometrically.Connected
 import Mathlib.AlgebraicGeometry.PullbackCarrier
 
 /-!
-# Geometrically irreducible implies geometrically connected
+# Geometrically connected morphisms
 
-An irreducible space is connected, universally: the implication lifts to
-morphism properties via the universal quantifier over base change.
+Results on geometrically connected morphisms of schemes.
+
+## Main results
+
+- `AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected`: a
+  geometrically irreducible morphism is geometrically connected. An
+  irreducible space is connected, universally: the implication lifts to
+  morphism properties via the universal quantifier over base change.
+- `AlgebraicGeometry.GeometricallyConnected.connectedSpace_pullback`: an
+  instance saying that for a geometrically connected `f : X ⟶ Y`, a field `K`
+  and `k : Spec K ⟶ Y`, the geometric fiber `X ×[Y] Spec K` is a connected
+  space.
+- `AlgebraicGeometry.GeometricallyConnected.of_comp_of_surjective`: if
+  `f ≫ g` is geometrically connected and `f` is surjective, then `g` is
+  geometrically connected, since each geometric fiber of `g` is a continuous
+  surjective image of the corresponding fiber of `f ≫ g`.
 -/
 
 @[expose] public section
@@ -60,8 +74,10 @@ theorem AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected
   have : IrreducibleSpace X' := hg hI hS
   infer_instance
 
--- Every geometric fiber `X ×[Y] Spec K` of a geometrically connected
--- morphism is connected; as an instance, typeclass search supplies it.
+/-- Every geometric fiber of a geometrically connected morphism is connected:
+for a geometrically connected `f : X ⟶ Y`, a field `K` and `k : Spec K ⟶ Y`,
+the pullback `X ×[Y] Spec K` is a connected space. As an instance, it lets
+typeclass search supply the connectedness of these fibers. -/
 instance AlgebraicGeometry.GeometricallyConnected.connectedSpace_pullback
     {X Y : Scheme.{u}} (f : X ⟶ Y) [GeometricallyConnected f]
     (K : Type u) [Field K] (k : Spec (.of K) ⟶ Y) :
