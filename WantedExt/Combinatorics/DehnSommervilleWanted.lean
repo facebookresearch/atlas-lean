@@ -40,7 +40,7 @@ Stanley, *Combinatorics and Commutative Algebra*. Knill, *Some fundamental theor
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.SimplicialSphereShared
+public import MathlibExt.Combinatorics.SimplicialSphereShared
 public import Mathlib
 
 @[expose] public section
