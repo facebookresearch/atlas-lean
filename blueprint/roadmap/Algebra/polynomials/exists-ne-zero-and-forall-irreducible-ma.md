@@ -1,3 +1,0 @@
-# Irreducibility over the algebraic closure persists under generic specialization
-
-Let $R$ be an integral domain with fraction field $K$, let $\sigma$ be a finite set of variables, and let $F \in R[X_i : i \in \sigma]$. Suppose the image of $F$ in $\overline{K}[X_i : i \in \sigma]$ is irreducible, where $\overline{K}$ is an algebraic closure of $K$. Then there is $c \in R$ with $c \neq 0$ such that for every field $E$ and every ring homomorphism $\varphi : R \to E$ with $\varphi(c) \neq 0$, the polynomial $\varphi(F) \in E[X_i : i \in \sigma]$ obtained by applying $\varphi$ to the coefficients is irreducible.

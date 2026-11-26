@@ -1,5 +1,0 @@
-# Local shortening at a non-straight bend
-
-A polyline is a finite list of points $(p_1, \dots, p_n)$ of the Euclidean plane $\mathbb{R}^2$. Its length is $\sum_{i=1}^{n-1} \|p_i - p_{i+1}\|$ (zero for the empty and one-point polylines). For $F \subseteq \mathbb{R}^2$, the polyline is feasible in $F$ when every closed segment $[p_i, p_{i+1}]$ lies in $F$ and, for a one-point polyline, $p_1 \in F$; the empty polyline is feasible. Write $L_1 \mathbin{+\!\!+} L_2$ for concatenation.
-
-Let $F \subseteq \mathbb{R}^2$, let $l_1, l_2$ be polylines and $a, b, c \in \mathbb{R}^2$. Assume $l_1 \mathbin{+\!\!+} (a, b, c) \mathbin{+\!\!+} l_2$ is feasible in $F$, some neighborhood $U$ of $b$ has $U \cap F$ convex, and $b$ does not lie on the closed segment $[a, c]$. Then for every $\varepsilon > 0$ there are $a' \in [a, b]$ and $c' \in [b, c]$ with $\|a' - b\| < \varepsilon$ and $\|c' - b\| < \varepsilon$ such that $l_1 \mathbin{+\!\!+} (a, a', c', c) \mathbin{+\!\!+} l_2$ is feasible in $F$ and strictly shorter than $l_1 \mathbin{+\!\!+} (a, b, c) \mathbin{+\!\!+} l_2$.
