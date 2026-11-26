@@ -44,6 +44,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Analysis.Convex.Choquet
 
 @[expose] public section
 
@@ -78,7 +79,7 @@ statement, is category-(a) — already in Mathlib — and is not a candidate.)
 
 open MeasureTheory
 
-variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] [CompleteSpace X]
+variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
 /- **Choquet's representation theorem.** Every point `x` of a compact convex
 set `K` in a Banach space is the barycenter of a probability measure supported
@@ -93,33 +94,12 @@ Source: G. Choquet, *Existence et unicité des représentations intégrales au m
 extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956). Knill, *Some fundamental theorems
 in mathematics*, §88. Via leanprover/lean-eval@38361be, problem
 `choquet_representation_theorem`. -/
-public theorem_wanted choquet [MeasurableSpace X] [BorelSpace X]
+public theorem_wanted choquet [CompleteSpace X] [MeasurableSpace X] [BorelSpace X]
     (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
     {x : X} (hx : x ∈ K) :
     ∃ μ : Measure X, IsProbabilityMeasure μ ∧
       μ (K.extremePoints ℝ)ᶜ = 0 ∧
       x = ∫ y, y ∂μ
-
-/- **Bauer's uniqueness at extreme points.** If `x` is an extreme point of a
-compact convex set `K` and `μ` is a probability measure supported on `K`
-(`μ Kᶜ = 0`) with barycenter `x = ∫ y, y ∂μ`, then `μ` is the Dirac mass at
-`x`. (The support hypothesis is the weaker `μ Kᶜ = 0`, making this a
-strengthening of the textbook statement: uniqueness among all ambient Borel
-probability measures on `K`, not only those already supported on `ext K`.) -/
-/-- **Bauer's uniqueness theorem at extreme points.** Let $X$ be a real Banach space with its Borel
-σ-algebra, let $K \subseteq X$ be compact and convex, and let $x$ be an extreme point of $K$. If
-$\mu$ is a probability measure on $X$ with $\mu(X \setminus K) = 0$ whose barycenter
-$\int y \, d\mu(y)$ (a Bochner integral) equals $x$, then $\mu$ is the Dirac measure at $x$.
-
-Source: H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Arch. Math. 9 (1958),
-389–393; see also Phelps, *Lectures on Choquet's Theorem*. Knill, *Some fundamental theorems in
-mathematics*, §88. Via leanprover/lean-eval@38361be, problem `bauer_extreme_point_uniqueness`. -/
-public theorem_wanted bauer_unique [MeasurableSpace X] [BorelSpace X]
-    (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
-    {x : X} (hx : x ∈ K.extremePoints ℝ)
-    (μ : Measure X) [IsProbabilityMeasure μ]
-    (hμ : μ Kᶜ = 0) (hbar : x = ∫ y, y ∂μ) :
-    μ = Measure.dirac x
 
 end Analysis
 
