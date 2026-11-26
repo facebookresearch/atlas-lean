@@ -456,7 +456,9 @@ public theorem conductorExponentAt_one :
 /-- **Local L-factor.** The local `L`-factor of `χ` at `v`: for an unramified character the
 Euler factor `(1 - χ ϖ * N(v) ^ (-s))⁻¹` at the uniformizer
 `ϖ = NumberField.AdelicLevel.uniformizerUnit (𝓞 K) K v`, and `1` for a ramified
-character. -/
+character. This is the analytic `L`-factor at every `s` that is not a pole. At a pole, where
+`χ ϖ * N(v) ^ (-s) = 1` (for the trivial character, at `s = 0`), the formula takes Lean's
+`0⁻¹ = 0`, so `localLFactorAt` is `0` there instead of a pole. -/
 public def localLFactorAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s : ℂ) : ℂ := by
   classical exact
     if HasConductorExponentAt K v χ 0 then
@@ -493,7 +495,10 @@ variable [MeasurableSpace (v.adicCompletion K)] [BorelSpace (v.adicCompletion K)
 /-- **Local epsilon factor.** `ε` is the local epsilon factor of `χ` at `v` and `s`, for the
 additive character `ψ` and the additive Haar measure `μ`, when
 `ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)` for the local gamma factor `γ` (`IsLocalGammaFactor`, which
-includes Tate's convergence and character conditions). -/
+includes Tate's convergence and character conditions). The `L`-factors are the values of
+`localLFactorAt`, which are `0` at their poles; in the range of absolute convergence that
+`IsLocalGammaFactor` requires, neither of them has a pole, so this convention does not
+enter. -/
 public def IsLocalEpsilonFactorAt (μ : Measure (v.adicCompletion K))
     [μ.IsAddHaarMeasure] (ψ : AddChar (v.adicCompletion K) ℂ)
     (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s ε : ℂ) : Prop :=

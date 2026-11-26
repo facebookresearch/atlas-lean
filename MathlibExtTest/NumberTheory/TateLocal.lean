@@ -9,11 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.TateLocal
+public import Mathlib.NumberTheory.Padics.ProperSpace
 
 @[expose] public section
 
-open LanglandsTunnell.TateLocal IsDedekindDomain MeasureTheory
-open scoped NumberField
+open LanglandsTunnell.TateLocal IsDedekindDomain MeasureTheory Metric
+open scoped NumberField Pointwise ENNReal
 
 namespace TateLocalTest
 
@@ -80,9 +81,76 @@ example (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
         (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹ :=
   localLFactorAt_of_hasConductorExponentAt_zero K v hχ s
 
+/-- At a pole the `L`-factor takes the totalized value `0`: for the trivial character at
+`s = 0` the Euler factor is `(1 - 1)⁻¹`, and Lean's `0⁻¹` is `0`. -/
+example (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K)) :
+    localLFactorAt K v (1 : (v.adicCompletion K)ˣ →* ℂˣ) 0 = 0 := by
+  simp [localLFactorAt, hasConductorExponentAt_one_zero K v]
+
 /-- Modulus API on a concrete locally compact field. -/
 example : modulus (2 : ℝ) ≠ 0 ∧ modulus (1 : ℝ) = 1 :=
   ⟨modulus_ne_zero (by norm_num), modulus_one⟩
+
+/-- A unit of `ℤ_[p]` has modulus `1`: multiplication by it maps the closed unit ball, which is
+compact and open, onto itself. -/
+private theorem modulus_eq_one_of_norm_eq_one {p : ℕ} [Fact p.Prime] {u : ℚ_[p]}
+    (hu : ‖u‖ = 1) : modulus u = 1 := by
+  have hu0 : u ≠ 0 := by rintro rfl; simp at hu
+  rw [modulus_of_ne_zero hu0]
+  let _ : MeasurableSpace ℚ_[p] := borel ℚ_[p]
+  have : BorelSpace ℚ_[p] := ⟨rfl⟩
+  have hB : Units.mk0 u hu0 • closedBall (0 : ℚ_[p]) 1 = closedBall 0 1 := by
+    ext x
+    rw [Set.mem_smul_set_iff_inv_smul_mem, Units.smul_def, smul_eq_mul, mem_closedBall_zero_iff,
+      mem_closedBall_zero_iff, norm_mul, Units.val_inv_eq_inv_val, Units.val_mk0, norm_inv, hu,
+      inv_one, one_mul]
+  refine distribHaarChar_eq_of_measure_smul_eq_mul (μ := Measure.addHaar)
+    (s := closedBall (0 : ℚ_[p]) 1) ?_ ?_ ?_
+  · exact (IsUltrametricDist.isOpen_closedBall (0 : ℚ_[p]) one_ne_zero).measure_ne_zero _
+      (nonempty_closedBall.mpr zero_le_one)
+  · exact (isCompact_closedBall (0 : ℚ_[p]) 1).measure_lt_top.ne
+  · rw [hB, ENNReal.coe_one, one_mul]
+
+/-- The multiplicative Haar measure gives the units of `ℤ_[p]` and their translate by the
+uniformizer `p` equal, positive and finite mass. The additive Haar measure does not: it scales
+the translate by the modulus of `p`, which is `p⁻¹`. -/
+example (p : ℕ) [Fact p.Prime] [MeasurableSpace ℚ_[p]] [BorelSpace ℚ_[p]]
+    (μ : Measure ℚ_[p]) [μ.IsAddHaarMeasure] :
+    let ϖ : ℚ_[p]ˣ := Units.mk0 (p : ℚ_[p]) (by exact_mod_cast (Fact.out : p.Prime).ne_zero)
+    mulMeasure μ (ϖ • sphere (0 : ℚ_[p]) 1) = mulMeasure μ (sphere 0 1) ∧
+      0 < mulMeasure μ (sphere (0 : ℚ_[p]) 1) ∧ mulMeasure μ (sphere (0 : ℚ_[p]) 1) < ⊤ := by
+  intro ϖ
+  have hUo : IsOpen (sphere (0 : ℚ_[p]) 1) := IsUltrametricDist.isOpen_sphere _ one_ne_zero
+  have hUm : MeasurableSet (sphere (0 : ℚ_[p]) 1) := hUo.measurableSet
+  have hϖUm : MeasurableSet (ϖ • sphere (0 : ℚ_[p]) 1) := (hUo.smul ϖ).measurableSet
+  have hU0 : sphere (0 : ℚ_[p]) 1 ⊆ {0}ᶜ := fun x hx h0 => by simp_all
+  have hϖU0 : ϖ • sphere (0 : ℚ_[p]) 1 ⊆ {0}ᶜ := by
+    rintro _ ⟨y, hy, rfl⟩ h0
+    have : (ϖ : ℚ_[p]) * y = 0 := h0
+    rcases mul_eq_zero.mp this with h | h
+    · exact ϖ.ne_zero h
+    · simp_all
+  have hmass : mulMeasure μ (sphere (0 : ℚ_[p]) 1) = μ (sphere 0 1) := by
+    rw [mulMeasure, withDensity_apply _ hUm,
+      setLIntegral_congr_fun hUm (g := fun _ => 1) fun x hx => by
+        simp [modulus_eq_one_of_norm_eq_one (by simpa using hx)],
+      setLIntegral_const, one_mul, Measure.restrict_apply hUm, Set.inter_eq_left.mpr hU0]
+  have hmass' : mulMeasure μ (ϖ • sphere (0 : ℚ_[p]) 1) = μ (sphere 0 1) := by
+    rw [mulMeasure, withDensity_apply _ hϖUm,
+      setLIntegral_congr_fun hϖUm (g := fun _ => ((distribHaarChar ℚ_[p] ϖ : ℝ≥0∞))⁻¹) ?_,
+      setLIntegral_const, Measure.restrict_apply hϖUm, Set.inter_eq_left.mpr hϖU0,
+      ← distribHaarChar_mul μ ϖ, ← mul_assoc,
+      ENNReal.inv_mul_cancel (ENNReal.coe_ne_zero.mpr distribHaarChar_pos.ne') ENNReal.coe_ne_top,
+      one_mul]
+    rintro _ ⟨y, hy, rfl⟩
+    have hy1 : ‖y‖ = 1 := by simpa using hy
+    simp only [smul_eq_mul, modulus_mul, modulus_coe_units, modulus_eq_one_of_norm_eq_one hy1,
+      mul_one]
+  refine ⟨hmass'.trans hmass.symm, ?_, ?_⟩
+  · rw [hmass]
+    exact hUo.measure_pos μ ⟨1, by simp⟩
+  · rw [hmass]
+    exact (isCompact_sphere (0 : ℚ_[p]) 1).measure_lt_top
 
 /-- Lebesgue measure on `ℝ` is an additive Haar measure, so it has local zeta
 integrals. -/
