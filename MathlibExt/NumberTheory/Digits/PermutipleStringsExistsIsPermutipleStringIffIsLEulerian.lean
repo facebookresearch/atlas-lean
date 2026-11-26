@@ -9,16 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.Digits.PermutipleStrings
-import Mathlib.Data.List.Perm.Basic
+import MathlibExt.NumberTheory.Digits.PermutipleStringsExistsIsPermutipleStringOfHasEulerianCircuitFromZero
 import Mathlib.Data.Nat.Find
-import Mathlib.Data.Fintype.EquivFin
-import Mathlib.Tactic.LinearCombination
 
 /-!
 # The $L$-Eulerian criterion for permutiple strings
 
 The existence of a permutiple string with prescribed cycle-edge multiplicities is equivalent
-to the multi-image union being $L$-Eulerian.
+to the multi-image union being $L$-Eulerian. The converse direction builds an Eulerian circuit
+through zero and applies `exists_isPermutipleString_of_hasEulerianCircuitFromZero`.
 
 Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*, INTEGERS 25 (2025),
 Article A111 (arXiv:2505.11414).
@@ -201,91 +200,18 @@ private theorem run_walk (n b : ℕ) (hn : 1 < n) (hnb : n < b) {a c : ℕ}
     obtain ⟨ha, hb⟩ := isHoeySloaneStep_unique n b hnb.le hd ht
     exact ⟨ha, by simpa only [← hb] using ih hs⟩
 
-private theorem walk_run (n b : ℕ) (hn : 1 < n) (hnb : n < b) {a c : ℕ}
-    {s : List (ℕ × ℕ)} (h : EdgeWalk a (s.map (hoeySloaneTransition n b)) c)
-    (hedge : ∀ e ∈ s, IsMotherGraphEdge n b e.1 e.2) : IsHoeySloaneRun n b a s c := by
-  induction s generalizing a with
-  | nil => exact h
-  | cons e s ih =>
-    obtain ⟨rfl, hs⟩ := h
-    exact ⟨_, isHoeySloaneStep_hoeySloaneTransition n b hn hnb e
-      (hedge e List.mem_cons_self), ih hs (fun f hf => hedge f (List.mem_cons_of_mem e hf))⟩
-
-private theorem cycleUnion_projections (cs : Multiset (List ℕ)) :
-    (cycleUnion cs).map Prod.fst = (cycleUnion cs).map Prod.snd := by
-  induction cs using Multiset.induction_on with
-  | empty => simp [cycleUnion]
-  | @cons vs cs ih =>
-    have hv : (cycleEdges vs : Multiset (ℕ × ℕ)).map Prod.fst =
-        (cycleEdges vs : Multiset (ℕ × ℕ)).map Prod.snd := by
-      simp only [cycleEdges, Multiset.map_coe,
-        List.map_fst_zip (by simp : vs.length ≤ (vs.rotate 1).length),
-        List.map_snd_zip (by simp : (vs.rotate 1).length ≤ vs.length)]
-      exact Quot.sound (List.rotate_perm vs 1).symm
-    simpa only [cycleUnion, Multiset.cons_bind, Multiset.map_add, hv] using
-      congrArg ((cycleEdges vs : Multiset (ℕ × ℕ)).map Prod.snd + ·) ih
-
-private theorem exists_digit_permutation {m : ℕ} (f g : Fin m → ℕ)
-    (h : (List.ofFn f : Multiset ℕ) = (List.ofFn g : Multiset ℕ)) :
-    ∃ σ : Equiv.Perm (Fin m), ∀ j, f (σ j) = g j := by
-  classical
-  have hcard (c : ℕ) : Fintype.card {j // g j = c} = Fintype.card {j // f j = c} := by
-    have hc := congrArg (Multiset.countP (fun x => x = c)) h
-    simpa only [Multiset.coe_countP, List.countP_ofFn, decide_eq_true_eq,
-      Fintype.card_subtype] using hc.symm
-  let e (c : ℕ) : {j // g j = c} ≃ {j // f j = c} :=
-    Fintype.equivOfCardEq (hcard c)
-  exact ⟨Equiv.ofFiberEquiv e, Equiv.ofFiberEquiv_map e⟩
-
-private theorem run_value (n b : ℕ) {m : ℕ} (f : Fin m → ℕ × ℕ) {a c : ℕ}
-    (h : IsHoeySloaneRun n b a (List.ofFn f) c) :
-    (∑ j, (f j).1 * (b : ℤ) ^ (j : ℕ)) + (b : ℤ) ^ m * c =
-      n * (∑ j, (f j).2 * (b : ℤ) ^ (j : ℕ)) + a := by
-  induction m generalizing a with
-  | zero =>
-    have hac : a = c := by simpa only [List.ofFn_zero, IsHoeySloaneRun] using h
-    simp [hac]
-  | succ m ih =>
-    rw [List.ofFn_succ] at h
-    obtain ⟨d, hd, hs⟩ := h
-    have hi := ih (fun j => f j.succ) hs
-    simp only [Fin.sum_univ_succ, Fin.val_zero, pow_zero, mul_one, Fin.val_succ,
-      pow_succ, ← mul_assoc, ← Finset.sum_mul]
-    linear_combination (b : ℤ) * hi + hd.2.2.2
-
-private theorem string_of_run (n b : ℕ) {s : List (ℕ × ℕ)} (hne : s ≠ [])
-    (hrun : IsHoeySloaneRun n b 0 s 0)
-    (hedge : ∀ e ∈ s, IsMotherGraphEdge n b e.1 e.2)
-    (hproj : (s : Multiset (ℕ × ℕ)).map Prod.fst = (s : Multiset (ℕ × ℕ)).map Prod.snd) :
-    IsPermutipleString n b s := by
-  cases s with
-  | nil => exact (hne rfl).elim
-  | cons e s =>
-    let f : Fin (s.length + 1) → ℕ × ℕ := (e :: s).get
-    let d : Fin (s.length + 1) → ℕ := fun j => (f j).1
-    let g : Fin (s.length + 1) → ℕ := fun j => (f j).2
-    have hf : List.ofFn f = e :: s := List.ofFn_get _
-    have hdg : (List.ofFn d : Multiset ℕ) = (List.ofFn g : Multiset ℕ) := by
-      simpa only [← hf, Multiset.map_coe, List.map_ofFn, Function.comp_def] using hproj
-    obtain ⟨σ, hσ⟩ := exists_digit_permutation d g hdg
-    refine ⟨hrun, s.length, d, σ, ⟨?_, ?_⟩, ?_⟩
-    · intro j
-      exact (hedge (f j) (List.get_mem _ _)).1
-    · have hv := run_value n b f (by simpa only [hf] using hrun)
-      have hvalue : (∑ j, (d j : ℤ) * (b : ℤ) ^ (j : ℕ)) =
-          n * (∑ j, (d (σ j) : ℤ) * (b : ℤ) ^ (j : ℕ)) := by
-        simpa only [Nat.cast_zero, mul_zero, add_zero, hσ] using hv
-      exact_mod_cast hvalue
-    · rw [← hf]
-      apply congrArg List.ofFn
-      funext j
-      rw [hσ]
-
-private theorem cycleUnion_edges (n b : ℕ) (cs : Multiset (List ℕ))
-    (hcs : ∀ vs ∈ cs, IsMotherGraphCycle n b vs) {e : ℕ × ℕ}
-    (he : e ∈ cycleUnion cs) : IsMotherGraphEdge n b e.1 e.2 := by
-  obtain ⟨vs, hvs, he⟩ := Multiset.mem_bind.mp he
-  exact (hcs vs hvs).2.2 e he
+/-- A nonempty edge walk from `a` to `c` is a chain of adjacent edges whose last edge ends
+at `c`. -/
+private theorem walk_chain {a c : ℕ} (e : ℕ × ℕ) (w : List (ℕ × ℕ))
+    (h : EdgeWalk a (e :: w) c) :
+    (e :: w).IsChain (fun x y => x.2 = y.1) ∧ (e :: w).getLast?.map Prod.snd = some c := by
+  induction w generalizing a e with
+  | nil =>
+    have hc : e.2 = c := h.2
+    exact ⟨.singleton e, by simp [hc]⟩
+  | cons f w ih =>
+    obtain ⟨hchain, hlast⟩ := ih f h.2
+    exact ⟨.cons_cons h.2.1 hchain, by simpa [List.getLast?_cons_cons] using hlast⟩
 
 @[expose] public section
 
@@ -313,28 +239,11 @@ public theorem exists_isPermutipleString_iff_isLEulerian (n b : ℕ) (hn : 1 < n
     have hEuler := walk_isLEulerian hwalk (fun hempty => hne (List.eq_nil_of_map_eq_nil hempty))
     simpa only [← Multiset.map_coe, hs, multiImageUnion] using hEuler
   · intro h
-    classical
     obtain ⟨w, hne, hw, hwalk⟩ := euler_walk (multiImageUnion n b cs) h
-    let C := cycleUnion cs
-    have hp : w.Perm (C.toList.map (hoeySloaneTransition n b)) := by
-      apply Multiset.coe_eq_coe.mp
-      rw [← Multiset.map_coe, Multiset.coe_toList]
-      exact hw
-    have hlift := congrFun (congrFun (List.eq_map_comp_perm (hoeySloaneTransition n b)) w)
-      C.toList
-    obtain ⟨s, hws, hperm⟩ := hlift.mpr hp
-    have hs : (s : Multiset (ℕ × ℕ)) = cycleUnion cs := by
-      simpa only [Multiset.coe_toList, C] using (Multiset.coe_eq_coe.mpr hperm)
-    have hedge : ∀ e ∈ s, IsMotherGraphEdge n b e.1 e.2 := by
-      intro e he
-      exact cycleUnion_edges n b cs hcs (by simpa only [← hs, Multiset.mem_coe] using he)
-    refine ⟨s, hs, string_of_run n b ?_ (walk_run n b hn hnb ?_ hedge) hedge ?_⟩
-    · intro hnil
-      simp only [hnil, List.map_nil] at hws
-      exact hne hws
-    · simpa only [hws] using hwalk
-    · rw [hs]
-      exact cycleUnion_projections cs
+    obtain ⟨e, w, rfl⟩ := List.exists_cons_of_ne_nil hne
+    obtain ⟨hchain, hlast⟩ := walk_chain e w hwalk
+    exact exists_isPermutipleString_of_hasEulerianCircuitFromZero n b hn hnb cs hcs
+      ⟨e :: w, hne, hw, hchain, by simpa using hwalk.1.symm, hlast⟩
 
 end
 
