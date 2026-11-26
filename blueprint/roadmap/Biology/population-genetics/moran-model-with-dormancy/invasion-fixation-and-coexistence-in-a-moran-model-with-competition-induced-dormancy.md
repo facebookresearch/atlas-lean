@@ -1,11 +1,13 @@
 # Invasion, fixation and coexistence in a Moran model with competition-induced dormancy
 
 **Model.** A population of fixed size $N$ contains type-$1$ individuals (always active) and type-$2$ individuals, which are active ($2a$) or dormant ($2d$). With counts $(\ell, n, m)$ of types $1$, $2a$, $2d$, and parameters $s \in (0,1)$ (selective advantage of type $1$), $p \in (0,1)$ (probability that competitive pressure induces dormancy instead of death), $\sigma > 0$ (resuscitation rate) and $\kappa \ge 0$ (death rate of dormant individuals, replaced by the offspring of a uniformly chosen individual), the transitions are
+
 $$\begin{aligned}
 (\ell+1, n-1, m) &\ \text{at rate } \tfrac1N \ell n \tfrac{1+s}{2}(1-p), & (\ell-1, n+1, m) &\ \text{at rate } \tfrac1N \ell n\tfrac{1-s}{2},\\
 (\ell, n-1, m+1) &\ \text{at rate } \tfrac1N\big(\ell n\tfrac{1+s}{2} + n(n-1)\big)p, & (\ell, n+1, m-1) &\ \text{at rate } \sigma m + \kappa m \tfrac nN,\\
 (\ell+1, n, m-1) &\ \text{at rate } \kappa m \tfrac{\ell}{N}. &&
 \end{aligned}$$
+
 Let $T^i_0$ be the extinction time of type $i$ and $T^{co}_\beta$ the hitting time of a $\beta$-neighborhood of the interior (coexistence) equilibrium of the large-$N$ limit
 
 $$\dot x_1 = x_1\Big(x_{2a}\big(s - \tfrac{1+s}{2}p\big) + \kappa(1 - x_1 - x_{2a})\Big), \qquad \dot x_{2a} = -s x_1x_{2a} - p x_{2a}^2 + (1 - x_1 - x_{2a})(\kappa x_{2a} + \sigma).$$
