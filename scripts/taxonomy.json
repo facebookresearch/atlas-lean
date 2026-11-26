@@ -13461,6 +13461,7 @@
   "MathlibExt/NumberTheory/Recurrences/TribonacciSumOfSquares": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Sums of squares of Tribonacci and Tetranacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/WeightedFibonacciBinet": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/WeightedHigherFibSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Self-convolutions of m-step Fibonacci numbers"},
+  "MathlibExt/NumberTheory/ReciprocalSineSum": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/ReducedResidueAverage": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResidueLongestAP": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
   "MathlibExt/NumberTheory/ReducedResiduePrimeBound": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Arithmetic progressions in reduced residue systems"},
