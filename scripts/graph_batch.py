@@ -3,7 +3,7 @@
 `main` since the last batch (docs/BLUEPRINT.md, Graph-sync batches).
 
     python3 scripts/graph_batch.py make [--base REV] [--bodies FILE] [--body FILE]
-    python3 scripts/graph_batch.py verify [REV] [--bodies FILE]
+    python3 scripts/graph_batch.py verify [REV] [--bodies FILE] [--body FILE]
     python3 scripts/graph_batch.py base [REV]
 
 make runs on a clean checkout of `main` and commits the batch on top of it: one commit that changes only
@@ -21,14 +21,16 @@ last batch before it ended, and exactly what make writes: its taxonomy is main's
 for byte, and the scoped check (`sync_wiki.py declarations --check`) finds its wiki in step, with changes that are
 exactly what the sync writes, fresh article ids aside. Run it from an up-to-date checkout of `main`: it runs the sync of
 the commit the batch was made on, which must be one of main's own states; from a newer main, it also checks that the
-batch still merges into it cleanly and that the scoped check finds nothing the merge breaks.
+batch still merges into it cleanly and that the scoped check finds nothing the merge breaks. It then prints the
+description it recomputes, which the batch's reviewer reads instead of the pull request's (--body writes it too).
 
 base prints the last batch on REV (`HEAD` by default) and the commit the next batch starts from.
 
 make and verify read the descriptions of the pull requests merged since the base with `gh`, unless --bodies gives
-them as JSON ({"<number>": "<description>"}). A description is untrusted text: only its `Place:` lines are read
-(see parse_place), and each counts only for a module that the pull request's own merge changed, that no placement
-covers and that has no page outside that topic yet, under a field or subfield the taxonomy has.
+them as JSON (see read_bodies). A description is untrusted text: only its `Place:` lines are read (see place_lines,
+parse_place), none of a description edited after the merge, and each counts only for a module that the pull
+request's own merge changed, that no placement covers and that has no page outside that topic yet, under a field or
+subfield the taxonomy has.
 
 Run it with a Python that has Autoform installed, as sync_wiki.py.
 """
@@ -63,9 +65,11 @@ SUBJECT = "Sync the graph with the Lean merged up to "
 REPOSITORY = "facebookresearch/atlas-lean"
 MERGE = re.compile(r"Merge pull request #(\d+) from \S+")
 PLACE = re.compile(r"Place:[ \t]*(.*?)[ \t]*")
+# The opening of a fenced code block: at most three spaces, then a run of three or more backticks or tildes.
+FENCE = re.compile(r" {0,3}(`{3,}|~{3,})")
 PLACE_VALUE = re.compile(r"(?P<module>\S+)[ \t]+->[ \t]+(?P<to>\S+)(?:[ \t]+\|[ \t]+(?P<title>\S.*))?")
-# A placement line of scripts/taxonomy.json: two spaces, the module as a JSON string, then its entry.
-PLACEMENT_LINE = re.compile(r'  ("(?:[^"\\]|\\.)*"): (\{.*\})(,?)')
+# The first line of a placement entry of scripts/taxonomy.json: two spaces, then the module as a JSON string.
+PLACEMENT_START = re.compile(r'  "(?:[^"\\]|\\.)*": ')
 # A module of the five libraries, as scripts/taxonomy.json keys it: a path of Lean identifiers, without `.lean`.
 MODULE = re.compile(r"[A-Za-z0-9_]+(?:/[A-Za-z0-9_]+)+")
 TITLE_LIMIT = 160
@@ -202,15 +206,27 @@ def merged_pull_requests(base: str, head: str) -> list[tuple[int, str]]:
     return found
 
 
-def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, str]:
-    """The descriptions of the pull requests *merged*, read with `gh api graphql`, forty at a time; one whose merge
-    commit is not the one main has is left out."""
-    bodies: dict[int, str] = {}
+class Body(str):
+    """A merged pull request's description, and whether it was edited after the merge (*edited*): its `Place:` lines
+    are then left out, as no review of the merge saw them."""
+    edited: bool = False
+
+
+def body(text: str, edited: bool = False) -> Body:
+    value = Body(text)
+    value.edited = edited
+    return value
+
+
+def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, Body]:
+    """The descriptions of the pull requests *merged*, read with `gh api graphql`, forty at a time, each marked when it
+    was edited after the merge; one whose merge commit is not the one main has is left out."""
+    bodies: dict[int, Body] = {}
     owner, name = REPOSITORY.split("/")
     for start in range(0, len(merged), 40):
         chunk = merged[start:start + 40]
-        fields = " ".join(f"p{number}: pullRequest(number: {number}) {{ number body mergeCommit {{ oid }} }}"
-                          for number, _ in chunk)
+        fields = " ".join(f"p{number}: pullRequest(number: {number}) {{ number body mergedAt lastEditedAt "
+                          "mergeCommit { oid } }" for number, _ in chunk)
         query = f'query {{ repository(owner: "{owner}", name: "{name}") {{ {fields} }} }}'
         try:
             result = subprocess.run(["gh", "api", "graphql", "-f", f"query={query}"], capture_output=True, text=True)
@@ -223,37 +239,52 @@ def fetch_bodies(merged: list[tuple[int, str]]) -> dict[int, str]:
         for number, commit in chunk:
             pull = found.get(f"p{number}") or {}
             if (pull.get("mergeCommit") or {}).get("oid") == commit and isinstance(pull.get("body"), str):
-                bodies[number] = pull["body"]
+                edited, merged_at = pull.get("lastEditedAt"), pull.get("mergedAt")
+                bodies[number] = body(pull["body"], bool(edited and merged_at and edited > merged_at))
     return bodies
 
 
-def read_bodies(path: Path) -> dict[int, str]:
+def read_bodies(path: Path) -> dict[int, Body]:
+    """Descriptions given as JSON: {"<number>": "<description>"}, or {"<number>": {"body": "<description>", "edited":
+    true}} for one edited after the merge."""
     data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or not all(isinstance(value, str) for value in data.values()):
+    bodies = {}
+    for number, value in (data.items() if isinstance(data, dict) else []):
+        if isinstance(value, dict) and isinstance(value.get("body"), str):
+            bodies[int(number)] = body(value["body"], value.get("edited") is True)
+        elif isinstance(value, str):
+            bodies[int(number)] = body(value)
+        else:
+            raise BatchError(f"{path}: expected an object of pull request numbers and descriptions")
+    if not isinstance(data, dict):
         raise BatchError(f"{path}: expected an object of pull request numbers and descriptions")
-    return {int(number): body for number, body in data.items()}
+    return bodies
 
 
-def place_lines(body: str) -> list[str]:
-    """The values of a description's `Place:` lines, as written: lines of its own, outside code fences and HTML
-    comments, which the rendered description does not show as text."""
+def place_lines(text: str) -> list[str]:
+    """The values of a description's `Place:` lines, as written: lines of their own, indented by at most three
+    spaces, outside fenced code blocks and HTML comments, which the rendered description does not show as text. A
+    fence closes only on a run of its own character at least as long, with nothing after it; a line holding `<!--`
+    anywhere opens a comment that runs to the next `-->`."""
     found, fence, comment = [], None, False
-    for line in body.splitlines():
-        text = line.strip()
+    for line in text.splitlines():
         if comment:
-            comment = "-->" not in text
+            comment = "-->" not in line
             continue
         if fence:
-            if text.startswith(fence):
+            if (len(line) - len(line.lstrip(" ")) <= 3 and (closing := line.strip()) and set(closing) == {fence[0]}
+                    and len(closing) >= len(fence)):
                 fence = None
             continue
-        if text.startswith(("```", "~~~")):
-            fence = text[:3]
+        if match := FENCE.match(line):
+            fence = match.group(1)
             continue
-        if text.startswith("<!--"):
-            comment = "-->" not in text
+        if "<!--" in line:
+            comment = "-->" not in line[line.index("<!--") + 4:]
             continue
-        if match := PLACE.fullmatch(text):
+        if line[:4] == "    " or "\t" in line[:4]:
+            continue  # An indented code block, or a line too deep to be one of its own.
+        if match := PLACE.fullmatch(line.strip()):
             found.append(match.group(1))
     return found
 
@@ -405,8 +436,9 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     A placement never contradicts where a module's pages already are (see module_pages, in_topic): the sync moves no
     page, so a module with a page outside the topic it would get is noted and left as it is, for a graph pull request
     that moves its pages too; a proof's module, whose moved statement's page is already in that topic, is placed. A
-    changed module that gets no pages, in a folder that is no subject, is listed (PlacementPlan.subjectless). A module
-    that no
+    changed module that gets no pages, in a folder that is no subject, is listed (PlacementPlan.subjectless), and such
+    a module older than the base is never placed: the scoped sync would give pages only to its new declarations. A
+    `Place:` line of a description edited after the merge is left out, with a note (Body). A module that no
     longer exists at *head*, neither as a file nor as a folder, loses its own placement. Mathlib's entries
     (`Mathlib/...`) are not the project's modules and stay. *indexes* gives the Lean indexes of *base* and *head* (see
     lean_index), read otherwise."""
@@ -465,6 +497,9 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
         lines = place_lines(bodies[number])
         if not lines:
             continue
+        if getattr(bodies[number], "edited", False):
+            plan.notes.append(f"#{number}: its `Place:` lines are left out: its description was edited after the merge")
+            continue
         own = {module for path in changed_between(f"{commit}^1", commit) if (module := library_module(path))}
         for value in lines:
             try:
@@ -504,7 +539,11 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
             plan.notes.append(unsure[module])
     for module, item in sorted(chosen.items()):
         elsewhere = sorted(page for page in pages().get(module, ()) if not in_topic(page, item.to, item.title))
-        if elsewhere:
+        if module in old_modules and subject_of(module, taxonomy) is None:
+            plan.notes.append(f"`{module}` is left unplaced: it is older than the batch, in a folder with no subject, so "
+                              "the batch would give pages only to its new declarations; placing it is a graph pull "
+                              "request that also runs the sync over the whole project")
+        elif elsewhere:
             plan.notes.append(f"`{module}` is left unplaced: it already has pages outside the topic `{item.title}` of "
                               f"`{item.to}`, such as `{elsewhere[0]}`, which a placement would not move; placing it is "
                               "a graph pull request that moves them")
@@ -513,42 +552,67 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
     placed = {item.module for item in plan.added}
     plan.unplaced = [(module, subject_of(module, taxonomy)) for module in new if module not in placed]
     changed = {module for path in changed_between(base, head) if (module := library_module(path)) in modules}
-    plan.subjectless = sorted(module for module in changed - set(new) if placement_of(module, placements) is None
-                              and subject_of(module, taxonomy) is None)
+    plan.subjectless = sorted(module for module in changed - set(new) - placed
+                              if placement_of(module, placements) is None and subject_of(module, taxonomy) is None)
     plan.dropped = sorted(key for key in placements if key.split("/", 1)[0] in wiki.LIBRARIES
                           and key not in modules and key not in folders)
     return plan
+
+
+def placement_entries(lines: list[str]) -> list[tuple[str, list[str]]]:
+    """The entries of the lines of scripts/taxonomy.json's placements block, in order, each as its module and its
+    lines without the comma that ends the last of them: one line, as the file writes an entry, or several, as a hand
+    edit may leave one. ValueError if the lines are not such entries."""
+    entries, number = [], 0
+    while number < len(lines):
+        if not PLACEMENT_START.match(lines[number]):
+            raise ValueError(f"scripts/taxonomy.json: not a placement entry: {lines[number][:80]}")
+        for last in range(number, len(lines)):
+            if last > number and PLACEMENT_START.match(lines[last]):
+                raise ValueError(f"scripts/taxonomy.json: a placement entry does not end before the next one: "
+                                 f"{lines[number][:80]}")
+            chunk = lines[number:last + 1]
+            comma = chunk[-1].endswith(",")
+            text = "\n".join(chunk)[:-1] if comma else "\n".join(chunk)
+            try:
+                entry = json.loads("{" + text + "}")
+            except ValueError:
+                continue
+            if len(entry) == 1 and isinstance(next(iter(entry.values())), dict):
+                entries.append((next(iter(entry)), chunk[:-1] + [chunk[-1][:-1] if comma else chunk[-1]]))
+                number = last + 1
+                break
+        else:
+            raise ValueError(f"scripts/taxonomy.json: a placement entry does not end: {lines[number][:80]}")
+    return entries
 
 
 def edit_placements(text: str, added: dict[str, dict[str, str]], dropped: list[str]) -> str:
     """scripts/taxonomy.json's *text* with the placements *added* and without those *dropped*. Each added entry is one
     line, as the file writes it, right after the entry whose module comes last before its own in plain string order,
     or first if none does: its place depends on the entries, not on when it is added, as insert_rows places a links
-    file's rows. Every other line stays as it is. ValueError if the placements are not one entry per line."""
+    file's rows. A dropped entry loses all its lines, and every other line stays as it is, an entry over several lines
+    included. ValueError if the placements block cannot be read entry by entry (placement_entries)."""
     lines = text.split("\n")
     try:
         start = lines.index(' "placements": {')
         end = next(number for number in range(start + 1, len(lines)) if lines[number] in (" }", " },"))
     except (ValueError, StopIteration):
-        raise ValueError("scripts/taxonomy.json has no placements block of one entry per line") from None
-    entries = []
-    for line in lines[start + 1:end]:
-        match = PLACEMENT_LINE.fullmatch(line)
-        if not match:
-            raise ValueError(f"scripts/taxonomy.json: not a placement line: {line[:80]}")
-        entries.append((json.loads(match.group(1)), f"  {match.group(1)}: {match.group(2)}"))
+        raise ValueError("scripts/taxonomy.json has no placements block") from None
+    entries = placement_entries(lines[start + 1:end])
     keys = {key for key, _ in entries}
     if overlap := sorted(keys & set(added)):
         raise ValueError(f"already placed: {', '.join(overlap)}")
     if missing := sorted(set(dropped) - keys):
         raise ValueError(f"no such placement: {', '.join(missing)}")
-    kept = [(key, line) for key, line in entries if key not in set(dropped)]
+    kept = [(key, chunk) for key, chunk in entries if key not in set(dropped)]
     for key, spot in sorted(added.items()):
         line = f"  {json.dumps(key, ensure_ascii=False)}: {json.dumps(spot, ensure_ascii=False)}"
         at = max(((other, number) for number, (other, _) in enumerate(kept) if other < key), default=(None, -1))[1]
-        kept.insert(at + 1, (key, line))
-    body = [line + ("," if number < len(kept) - 1 else "") for number, (_, line) in enumerate(kept)]
-    edited = "\n".join(lines[:start + 1] + body + lines[end:])
+        kept.insert(at + 1, (key, [line]))
+    block = [line for number, (_, chunk) in enumerate(kept)
+             for line in chunk[:-1] + [chunk[-1] + ("," if number < len(kept) - 1 else "")]]
+    edited = "\n".join(lines[:start + 1] + block + lines[end:])
     before, after = json.loads(text), json.loads(edited)
     expected = {key: value for key, value in before["placements"].items() if key not in set(dropped)} | added
     if after["placements"] != expected or {**after, "placements": None} != {**before, "placements": None}:
@@ -720,16 +784,20 @@ def make(options) -> int:
 class Verdict:
     base: str
     through: str
-    report: dict
+    plan: PlacementPlan
+    # The report and the items for an editor of the sync as make runs it (run_sync, report_sections), when verify
+    # recomputes what the batch does; None otherwise.
+    made: tuple[dict, dict[str, list[str]]] | None = None
 
 
 def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | None = None,
-                  onto: str | None = None) -> Verdict:
+                  onto: str | None = None, recompute: bool = False) -> Verdict:
     """Check that *commit* is a batch on the first-parent history of the checkout's HEAD (batch_of), that it starts no
     later than where the last batch before it ended, and that it is exactly what make writes (see the module
     docstring); and, given a newer main *onto*, that it still merges cleanly into it, with one entry a module in the
     taxonomy, and that the scoped check finds nothing the merge breaks there, such as a second page for a declaration
-    or a link to one main no longer has; BatchError otherwise."""
+    or a link to one main no longer has; BatchError otherwise. With *recompute*, also run the sync as make does, on the
+    commit the batch was made on, for what the batch does (Verdict.made)."""
     head = commit_of("HEAD")
     found = batch_of(commit, head)
     if found is None:
@@ -745,7 +813,14 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
     expected = edit_placements(blob(through, TAXONOMY_PATH).decode("utf-8"), plan.entries(), plan.dropped)
     actual = (blob(commit, TAXONOMY_PATH) or b"").decode("utf-8")
     if expected != actual:
-        raise BatchError("the batch's scripts/taxonomy.json is not main's with the placement plan applied")
+        try:
+            want, have = json.loads(expected)["placements"], json.loads(actual)["placements"]
+            differ = sorted(key for key in want.keys() | have.keys() if want.get(key) != have.get(key))
+        except (ValueError, KeyError, TypeError):
+            differ = []
+        raise BatchError("the batch's scripts/taxonomy.json is not main's with the placement plan applied: "
+                         + (f"the entries of {', '.join(differ[:10])} differ" if differ else "its bytes differ")
+                         + ". If a merged pull request's description changed since make read it, make a new batch")
     taxonomy = git("rev-parse", f"{commit}:{TAXONOMY_PATH}").decode().strip()
     synthetic = synthetic_base(base, through, taxonomy)
     merged = None
@@ -779,12 +854,22 @@ def verify_commit(commit: str, bodies: dict[int, str], plan: PlacementPlan | Non
                 if onto_report.get("in_step") is not True:
                     raise BatchError(f"merged into {onto}, the batch breaks what the scoped check reads: make a new "
                                      "batch from a fresh main. Its output:\n" + output)
+            made = None
+            if recompute:
+                subprocess.run(["git", "-C", str(tree), "checkout", "-q", "--detach", through], check=True,
+                               capture_output=True)
+                (tree / TAXONOMY_PATH).write_bytes(git("cat-file", "blob", f"{commit}:{TAXONOMY_PATH}"))
+                made_path = Path(folder) / "made-report.json"
+                status, output = run_sync(tree, synthetic, made_path, check=False)
+                if status or not made_path.is_file():
+                    raise BatchError(f"running the sync as make does stopped (exit {status}). Its output:\n" + output)
+                made = (json.loads(made_path.read_text()), report_sections(output))
         finally:
             git("worktree", "remove", "--force", str(tree))
     print(f"{commit} is the batch from {base} up to {through}: its taxonomy is main's with the placement plan "
           "applied, and its wiki is in step, exactly what the sync writes."
           + (f" It merges cleanly into {onto}, and the scoped check finds nothing the merge breaks." if onto else ""))
-    return Verdict(base, through, report)
+    return Verdict(base, through, plan, made)
 
 
 def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dict,
@@ -795,8 +880,8 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
     modules: dict[str, int] = {}
     for key in missing:
         modules[report["new"][key]] = modules.get(report["new"][key], 0) + 1
-    written = report.get("written", [])
-    folders = sum(1 for path in written if path.startswith("blueprint/roadmap/") and path.endswith("README.md"))
+    folders = sum(1 for path in changed_between(head, commit)
+                  if path.startswith("blueprint/roadmap/") and path.endswith("/README.md"))
     digests = report.get("digests", {})
     recorded = sum(1 for value in digests.values() if value is not None)
     unrecorded = [page for page in report.get("changed", []) if page.split(" (", 1)[0] in digests]
@@ -857,7 +942,15 @@ def run_verify(options) -> int:
                          "up-to-date checkout of main")
     # From a newer main, the batch must still merge into it as it is.
     onto = head if head not in (commit, found[1]) and not is_ancestor(head, commit) else None
-    verify_commit(commit, bodies_for(*found, options.bodies), onto=onto)
+    verdict = verify_commit(commit, bodies_for(*found, options.bodies), onto=onto, recompute=True)
+    # What the reviewer reads: recomputed here, not taken from the pull request's description, which can be edited.
+    report, sections = verdict.made
+    text = describe(commit, verdict.base, verdict.through, verdict.plan, report, sections)
+    print("\nWhat the batch does, as verify recomputes it from main (read this, not the pull request's "
+          "description):\n")
+    print(text)
+    if options.body:
+        options.body.write_text(text, encoding="utf-8")
     return 0
 
 
@@ -884,6 +977,8 @@ def main(argv: list[str]) -> int:
     verifying = commands.add_parser("verify", help="check that a commit is exactly the batch make writes")
     verifying.add_argument("commit", nargs="?", default="HEAD", metavar="REV")
     verifying.add_argument("--bodies", type=Path, metavar="FILE", help="the pull requests' descriptions, as JSON")
+    verifying.add_argument("--body", type=Path, metavar="FILE",
+                           help="also write the description verify recomputes, outside the checkout")
     basing = commands.add_parser("base", help="print the last batch and where the next one starts")
     basing.add_argument("rev", nargs="?", default="HEAD", metavar="REV")
     options = parser.parse_args(argv)

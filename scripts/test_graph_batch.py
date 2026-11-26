@@ -50,6 +50,15 @@ class PlaceLines(unittest.TestCase):
                 "Algebra/rings\n")
         self.assertEqual(batch.place_lines(body), ["MathlibExt/A/B -> Algebra/groups",
                                                    "MathlibExt/A/G -> Algebra/rings"])
+        # A longer fence holds a shorter run; an indented code block; a comment opened in the middle of a line.
+        for hidden in ("````md\n```\nPlace: MathlibExt/A/B -> Algebra/groups\n```\n````\n",
+                       "Example:\n\n    Place: MathlibExt/A/C -> Algebra/groups\n",
+                       "Example:\n\n\tPlace: MathlibExt/A/C -> Algebra/groups\n",
+                       "text <!--\nPlace: MathlibExt/A/D -> Algebra/groups\n-->\n",
+                       "~~~~\n~~~ not a close\nPlace: MathlibExt/A/E -> Algebra/groups\n~~~~\n"):
+            with self.subTest(hidden=hidden):
+                self.assertEqual(batch.place_lines(hidden + "Place: MathlibExt/A/G -> Algebra/rings\n"),
+                                 ["MathlibExt/A/G -> Algebra/rings"])
 
     def test_a_module_a_field_and_maybe_a_topic(self) -> None:
         self.assertEqual(batch.parse_place("MathlibExt/Algebra/Rings -> Algebra/groups"),
@@ -127,7 +136,25 @@ class EditPlacements(unittest.TestCase):
         with self.assertRaises(ValueError):
             batch.edit_placements(TAXONOMY_TEXT.replace('  "MathlibExt/D"', '  "MathlibExt/D" '), {}, [])
 
-    def test_the_committed_taxonomy_is_one_entry_per_line(self) -> None:
+    def test_an_entry_over_several_lines_keeps_them(self) -> None:
+        text = TAXONOMY_TEXT.replace('  "MathlibExt/D": {"to": "Algebra/groups", "title": "D"},\n',
+                                     '  "MathlibExt/D": {\n    "to": "Algebra/groups",\n    "title": "D"\n  },\n')
+        spot = {"to": "Algebra/groups", "title": "E"}
+        self.assertEqual(batch.edit_placements(text, {}, []), text)
+        # After it, the new line; its own lines, comma included, stay as they are.
+        self.assertEqual(batch.edit_placements(text, {"MathlibExt/E": spot}, []), text.replace(
+            '"title": "D"\n  },\n', '"title": "D"\n  },\n  "MathlibExt/E": {"to": "Algebra/groups", "title": "E"},\n'))
+        # Dropped, it loses all its lines; as the last entry, it gains or loses only its comma.
+        self.assertEqual(batch.edit_placements(text, {}, ["MathlibExt/D"]), TAXONOMY_TEXT.replace(
+            '  "MathlibExt/D": {"to": "Algebra/groups", "title": "D"},\n', ""))
+        last = text.replace('  },\n  "MathlibExt/C": {"to": "Algebra/groups", "title": "C"}\n', '  }\n')
+        self.assertEqual(batch.edit_placements(text, {}, ["MathlibExt/C"]), last)
+        self.assertEqual(batch.edit_placements(last, {"MathlibExt/Z": spot}, []), last.replace(
+            '"title": "D"\n  }\n', '"title": "D"\n  },\n  "MathlibExt/Z": {"to": "Algebra/groups", "title": "E"}\n'))
+        with self.assertRaises(ValueError):
+            batch.edit_placements(text.replace('    "title": "D"\n  },\n', '    "title": "D"\n'), {}, [])
+
+    def test_the_committed_taxonomy_round_trips(self) -> None:
         text = (ROOT / "scripts" / "taxonomy.json").read_text(encoding="utf-8")
         self.assertEqual(batch.edit_placements(text, {}, []), text)
 
@@ -414,7 +441,8 @@ class Batches(unittest.TestCase):
         self.git("commit", "-q", "-a", "--amend", "-m", message)
         result = self.tool("verify")
         self.assertEqual(result.returncode, 1)
-        self.assertIn("not main's with the placement plan applied", result.stderr)
+        self.assertIn("not main's with the placement plan applied: the entries of MathlibExt/Algebra/Units differ",
+                      result.stderr)
         # A commit that changes a file a batch never changes is no batch.
         self.write("README.md", "Docs.\n")
         self.git("add", "README.md")
@@ -493,6 +521,26 @@ class Batches(unittest.TestCase):
         result = self.tool("verify", commit)
         self.assertEqual(result.returncode, 1, result.stdout)
         self.assertIn("the batch could not be checked: the scoped check stopped (exit 2)", result.stderr)
+
+    def test_verify_prints_what_the_reviewer_reads(self) -> None:
+        # A Lean pull request edits the docstring of a declaration that has a page, and adds one more declaration:
+        # the batch writes the new digest, so the page must be named for the reviewer to check.
+        self.merge(1, lambda: self.write("MathlibExt/Algebra/Groups.lean", LEAN["MathlibExt/Algebra/Groups.lean"]
+                                         .replace("divides the order of the group.", "divides the order of the finite "
+                                                  "group.").replace("end Ext", "/-- Cosets partition the group. -/\n"
+                                                                    "theorem cosets : True := trivial\n\nend Ext")))
+        made = self.description("--base", self.base)
+        commit = self.git("rev-parse", "HEAD")
+        written = self.root.parent / f"{self.root.name}-verify-body.md"
+        self.addCleanup(written.unlink, True)
+        result = self.tool("verify", commit, "--body", str(written))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("read this, not the pull request's description", result.stdout)
+        self.assertIn("### Pages to check", result.stdout)
+        self.assertIn("Ext.lagrange (Algebra/groups/group-basics/lagrange.md)", result.stdout)
+        self.assertIn("- 1 new pages, for declarations of 1 modules; 1 folder pages written or extended", result.stdout)
+        # What it writes is what make wrote, but for the sync's own items, which only make lists.
+        self.assertEqual(written.read_text(), made)
 
     def test_make_needs_a_clean_checkout_and_an_older_base(self) -> None:
         self.lean_only_merges()
@@ -706,9 +754,14 @@ class Batches(unittest.TestCase):
                 '  "MathlibExt/Algebra/Old": {"to": "Algebra/rings", "title": "Old topic"},\n', ""))
 
         self.merge(7, move_old)
-        # A module in a folder with no subject, and an older one there that gains a declaration.
+        # A module in a folder with no subject, and an older one there that gains a declaration and asks for a place,
+        # which would leave its older declaration with no page.
         self.merge(8, lambda: (self.module("MathlibExt/Nowhere/Thing.lean", ["thing"]),
-                               self.module("MathlibExt/Nowhere/Older.lean", ["older_one", "older_two"])))
+                               self.module("MathlibExt/Nowhere/Older.lean", ["older_one", "older_two"])),
+                   "Place: MathlibExt/Nowhere/Older -> Algebra/rings\n")
+        # A description edited after the merge: its lines are left out.
+        self.merge(9, lambda: self.module("MathlibExt/Algebra/Edited.lean", ["edited_one"]))
+        self.bodies["9"] = {"body": "Place: MathlibExt/Algebra/Edited -> Algebra/rings\n", "edited": True}
         text = self.description("--base", self.base)
         placements = self.placements()
         self.assertEqual({key: value for key, value in placements.items() if key not in TAXONOMY["placements"]}, {
@@ -730,6 +783,10 @@ class Batches(unittest.TestCase):
         self.assertIn("- `MathlibExt/Nowhere/Thing`: **no pages**, as its folder has no subject", text)
         self.assertIn("### Changed modules with no pages", text)
         self.assertIn("- `MathlibExt/Nowhere/Older`", text)
+        self.assertIn("`MathlibExt/Nowhere/Older` is left unplaced: it is older than the batch, in a folder with no "
+                      "subject", text)
+        self.assertIn("#9: its `Place:` lines are left out: its description was edited after the merge", text)
+        self.assertIn("- `MathlibExt/Algebra/Edited`: in `Algebra/not-yet-classified/`", text)
         self.assertIn("- `MathlibExt/Algebra/Rule1`: in `Algebra/not-yet-classified/`", text)
         result = self.tool("verify")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
