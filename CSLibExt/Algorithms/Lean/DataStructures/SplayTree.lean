@@ -37,8 +37,9 @@ ends at the root. The amortized `O(log n)` access lemma (the
 Sleator-Tarjan potential argument) for this definition is proved in
 `CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`.
 
-It also provides `splayMax` (splay the maximum key to the root), `delete`
-(splay, then replace a present key by the maximum of the left subtree),
+It also provides `splayMax` (splay the rightmost key to the root; it is the
+maximum key when the tree is `Ordered`), `delete` (splay, then replace a
+present key by the maximum of the left subtree),
 and `nipkowInsert` (the book's insert: splay, then rebuild around the new
 root), with the same functional-correctness guarantees (Nipkow, FDSA §21.1);
 their amortized bounds are in
@@ -876,7 +877,8 @@ public theorem contains_eq_true_iff {α : Type u} [LinearOrder α]
     exact root?_splay_of_mem hOrd h
 
 /--
-Splay the maximum key to the root (Nipkow's `splay_max`, FDSA §21.1).
+Splay the rightmost key to the root (Nipkow's `splay_max`, FDSA §21.1); when the
+tree is `Ordered`, the rightmost key is its maximum.
 The recursion descends two levels down the right spine per step; when the
 recursed subtree comes back empty, the single zig that carries its root
 up is applied instead. No ordering is needed: the operation only follows

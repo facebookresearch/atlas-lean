@@ -1064,11 +1064,13 @@ public theorem amortized_splayMax_le [LinearOrder α] (t : BinaryTree α)
 /-- **Amortized cost of `delete` is at most `5 log₂ n + 2`.** Deleting from an `n`-node
 search tree costs, in the amortized sense, at most `5 log₂ n + 2` in this file's
 rotation-based cost model (rotations, or 1 if none; `potential` sums `log₂` of
-subtree sizes): the splay contributes at most `3 log₂ n + 1` (access lemma), the
-`splayMax` on the left subtree at most `3 log₂ |l| + 1`, and the potential
-bookkeeping for replacing the root by the maximum of the left subtree costs at
-most `2 log₂ n` more. This is the repo's analogue of the FDSA/AFP `A_delete`
-bound, not FDSA's statement: AFP's `amor_delete` proves
+subtree sizes). In the main case (after the splay the key is at the root and its
+left subtree `l` is nonempty), the splay contributes at most `3 log₂ n + 1` (access
+lemma) and the `splayMax` on `l` at most `3 log₂ |l| + 1`; replacing the root by the
+maximum of `l` then changes the potential by `log₂ (n - 1) - log₂ n - log₂ |l|`,
+which is at most `-log₂ |l|`. The total is therefore at most
+`3 log₂ n + 2 log₂ |l| + 2 ≤ 5 log₂ n + 2`. This is the repo's analogue of the
+FDSA/AFP `A_delete` bound, not FDSA's statement: AFP's `amor_delete` proves
 `6 * log 2 (size1 t) + 2` in AFP's own time-function and potential model. -/
 public theorem amortized_delete_le [LinearOrder α] (x : α) (t : BinaryTree α)
     (hOrd : BinarySearchTree.Ordered t) :
