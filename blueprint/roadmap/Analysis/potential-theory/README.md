@@ -13,7 +13,7 @@ Harmonic and subharmonic functions in the plane and in R^n, the maximum principl
 - [A harmonic function vanishing on a set of positive measure is zero](eq-zero-of-harmonic-on-nhd-of-vanishing.md)
 - [Inverses of injective holomorphic maps are holomorphic](analytic-at-inv-fun-on.md)
 - [Harmonic functions composed with holomorphic maps are harmonic](comp-analytic-at.md)
-- [Harmonic functions on simply connected domains are real parts of holomorphic functions](exists-analytic-on-nhd-re-eq-of-is-simpl.md)
+- [Existence of a holomorphic function with prescribed harmonic real part](exists-analytic-on-nhd-re-eq-of-is-simpl.md)
 - [Harmonic functions on simply connected domains are real parts](exists-differentiable-on-re-eq-of-harmon.md)
 - [Nonnegative harmonic functions on the upper half-plane integrable along the imaginary axis vanish](eq-zero-of-harmonic-on-nhd-upper-half-pl.md)
 

@@ -62,3 +62,4 @@ stabilisation for nonlinear ones.
 - [Numerical analysis](numerical-analysis/README.md)
 - [Approximation theory](approximation-theory/README.md)
 - [Not yet classified](not-yet-classified/README.md)
+- [Differential calculus in normed spaces](calculus-in-normed-spaces/README.md)

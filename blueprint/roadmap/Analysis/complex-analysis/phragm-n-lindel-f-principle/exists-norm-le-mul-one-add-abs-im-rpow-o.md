@@ -1,7 +1,3 @@
 # Phragmén–Lindelöf principle in a vertical strip, polynomial form
 
-If `f` is differentiable on the strip `a < re z < b` and continuous on its
-closure, has double-exponential interior growth of rate `< π / (b - a)`,
-and satisfies `‖f z‖ ≤ M * (1 + |im z|) ^ α` on both boundary lines, then
-`‖f z‖ ≤ C * M * (1 + |im z|) ^ α` throughout the closed strip, for a
-constant `C > 0` depending only on `a`, `b` and `α`.
+For real $a < b$ and $\alpha \ge 0$ there is a constant $C > 0$, depending only on $a$, $b$ and $\alpha$, with the following property. Let $M \ge 0$ and let $f$ be differentiable on the strip $a < \operatorname{re} z < b$ and continuous on its closure, with double-exponential interior growth of rate below $\pi/(b - a)$: for some $c < \pi/(b - a)$ and some $B$, $\|f(z)\| \le \exp(B e^{c|\operatorname{im} z|})$ for $a < \operatorname{re} z < b$. If $\|f(z)\| \le M(1 + |\operatorname{im} z|)^\alpha$ on both boundary lines $\operatorname{re} z = a$ and $\operatorname{re} z = b$, then $\|f(z)\| \le C M (1 + |\operatorname{im} z|)^\alpha$ throughout the closed strip $a \le \operatorname{re} z \le b$.

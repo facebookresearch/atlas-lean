@@ -222,9 +222,10 @@ public theorem wirtinger_inequality (f f' : ℝ → ℝ)
   intro c hc_pos hc_lt_one
   exact wirtinger_scaled_integral_le f f' hf_deriv hf_deriv_cont h0 hpi hc_pos hc_lt_one
 
-/-- Wirtinger's inequality on a general interval `[a, b]`, in derivative-field
-form: a function `f` with derivative field `f'` within `[a, b]`, vanishing at the
-endpoints, satisfies `∫ₐᵇ f² ≤ ((b - a) / π)² ∫ₐᵇ (f')²`.
+/-- Wirtinger's inequality on a general interval `[a, b]` with `a < b`, in
+derivative-field form: a function `f` with derivative field `f'` within `[a, b]`,
+`f'` continuous on `[a, b]`, vanishing at the endpoints, satisfies
+`∫ₐᵇ f² ≤ ((b - a) / π)² ∫ₐᵇ (f')²`.
 
 Proof: rescale `[a, b]` to `[0, π]` and apply `wirtinger_inequality`. -/
 public theorem wirtinger_inequality_Icc {a b : ℝ} (hab : a < b) (f f' : ℝ → ℝ)

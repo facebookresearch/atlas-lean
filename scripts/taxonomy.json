@@ -10617,7 +10617,7 @@
   "MathlibExt/Analysis/Fourier/CircleProduct": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Fourier coefficients of products on the circle"},
   "MathlibExt/Analysis/Fourier/ExpCharacter": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Exponential characters"},
   "MathlibExt/Analysis/Fourier/PoissonSummation": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Poisson summation formula"},
-  "MathlibExt/Analysis/Fourier/SpectralConventions": {"to": "Analysis/harmonic-analysis/discrete-fourier-analysis", "title": "Two-dimensional discrete Fourier transform"},
+  "MathlibExt/Analysis/Fourier/SpectralConventions": {"to": "Analysis/harmonic-analysis/discrete-fourier-analysis", "title": "Normalization of the discrete Fourier transform"},
   "MathlibExt/Analysis/InnerProductSpace/HarmonicLinearCombination": {"to": "Analysis/potential-theory", "title": "Harmonic functions in the plane"},
   "MathlibExt/Analysis/InnerProductSpace/NumericalRange": {"to": "Analysis/operator-theory/spectral-theory", "title": "Numerical range"},
   "MathlibExt/Analysis/InnerProductSpace/SchurGramBound": {"to": "Analysis/operator-theory/bounded-operators", "title": "Schur multipliers"},
