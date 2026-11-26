@@ -12,15 +12,18 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliPoly
 public import MathlibExt.NumberTheory.Bernoulli.StirlingHarmonic
 public import MathlibExt.NumberTheory.Bernoulli.SumModPrime
+public import MathlibExt.NumberTheory.Bernoulli.SumPolyBernoulli
 public import MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.BernoulliStirlingHarmonicPrimeMulSumBernoulliDivModPrime
 
 /-
 Statements of the same source proved in modules this file imports:
 `MathlibExt.NumberTheory.Bernoulli.WeightedSum` (Corollary 2, equation (14)),
+`MathlibExt.NumberTheory.Bernoulli.SumPolyBernoulli` (Corollary 3),
 `MathlibExt.NumberTheory.Bernoulli.SumModPrime` (Corollary 4, equation (23),
 `sum_prime_mul_bernoulli_mod_prime`), and
 `MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime` (Corollary 4, equation (24)).
@@ -51,20 +54,6 @@ public theorem_wanted sum_bernoulli_harmonic_power_identity (n m : ℕ)
         ∑ j ∈ Finset.Icc 1 m, ((m - j : ℕ) : ℚ) ^ n / (j : ℚ)
 
 /--
-**Sums of Bernoulli numbers via poly-Bernoulli polynomials.** Let $B_j$ denote the Bernoulli
-numbers with $B_1 = -\tfrac12$, let $B_n^{(2)}$ denote the poly-Bernoulli numbers of order $2$,
-and let $B_n^{(2)}(x)$ denote the poly-Bernoulli polynomials of order $2$. For every natural
-number $n \ge 2$,
-$$\sum_{j=0}^{n} B_j = B_n^{(2)}(1) + B_n - B_n^{(2)} - 1.$$
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 3.
--/
-public theorem_wanted sum_bernoulli_eq_polyBernoulli (n : ℕ) (hn : 2 ≤ n) :
-    (∑ j ∈ Finset.range (n + 1), bernoulli j) =
-      polyBernoulliPoly n 2 1 + bernoulli n - polyBernoulli n 2 - 1
-
-/--
 **The congruence $\sum_{j=0}^{p} E_j(0) \equiv 3/2 \pmod p$.** Let $E_j(x)$ denote the Euler
 polynomials. For every odd prime $p$, the rational number $S = E_0(0) + E_1(0) + \dots + E_p(0)$
 has denominator not divisible by $p$, and its residue modulo $p$ (its numerator times the
@@ -82,24 +71,6 @@ public theorem_wanted sum_euler_eval_zero_mod_prime (p : ℕ)
     ¬p ∣ (∑ j ∈ Finset.range (p + 1), (eulerPoly j).eval 0).den ∧
       ratResidue p (∑ j ∈ Finset.range (p + 1), (eulerPoly j).eval 0) =
         ratResidue p (3 / 2)
-
-/--
-**The congruence $p\sum_{j=0}^{p} B_j/(p-j+1) \equiv -1 \pmod p$.** Let $B_j$ denote the
-Bernoulli numbers with $B_1 = -\tfrac12$. For every odd prime $p$, the rational number
-$$S = p \sum_{j=0}^{p} \frac{B_j}{p-j+1}$$
-has denominator not divisible by $p$, and its residue modulo $p$ (its numerator times the
-inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
-equation (26).
--/
-public theorem_wanted prime_mul_sum_bernoulli_div_mod_prime (p : ℕ)
-    (hp : p.Prime) (hp2 : p ≠ 2) :
-    ¬p ∣ ((p : ℚ) * ∑ j ∈ Finset.range (p + 1),
-      bernoulli j / ((p - j + 1 : ℕ) : ℚ)).den ∧
-      ratResidue p ((p : ℚ) * ∑ j ∈ Finset.range (p + 1),
-        bernoulli j / ((p - j + 1 : ℕ) : ℚ)) = ratResidue p (-1)
 
 end
 
