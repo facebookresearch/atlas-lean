@@ -51,6 +51,23 @@ rungs of Pearl's hierarchy: association, intervention, counterfactual.
 - [The probability of necessity under monotonicity](cf-prob-necessity.md)
 - [Pearl's formula for the probability of necessity](cf-prob-necessity-eq.md)
 
+## Cross-world counterfactuals in a binary model
+
+- [Binary structural causal model with shared noise](binary-scm.md)
+- [Interventions on a binary structural causal model](intervention.md)
+- [Noise law of a binary structural causal model](is-noise-law.md)
+- [Interventional law of a binary structural causal model](law-2.md)
+- [Value of the cause under an intervention](sol-x.md)
+- [Value of the effect under an intervention](sol-y.md)
+- [Probability of the cross-world event Y₁ = 1, Y₀ = 0](prob-y1-y0.md)
+- [Constant-response causal model](constant-response.md)
+- [Switching-response causal model](switching-response.md)
+- [The constant- and switching-response noise weights are probability laws](is-noise-law-constant-response-switching.md)
+- [The constant- and switching-response models have the same interventional laws](law-constant-response-eq-switching-respo.md)
+- [The constant-response model gives the cross-world event probability 0](prob-y1-y0-constant-response.md)
+- [The switching-response model gives the cross-world event probability 1/2](prob-y1-y0-switching-response.md)
+- [Cross-world counterfactuals are not identified by interventional laws](exists-same-law-ne-prob-y1-y0.md)
+
 ## Related topics
 
 - [Causal Bayesian networks](../causal-bayesian-networks/README.md): the truncated factorization,

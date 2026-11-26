@@ -1,0 +1,10 @@
+# Cartan subalgebra
+
+A Cartan subalgebra of a Lie algebra $L$ over a field is a Lie subalgebra $H$ that is nilpotent as a Lie algebra and equals its own normalizer $N_L(H) = \{x \in L : [x, H] \subseteq H\}$. Mathlib defines this more generally, for Lie algebras over a commutative ring. Let $R$ be a commutative ring, $L$ a Lie algebra over $R$ and $H$ a Lie subalgebra of $L$. Then $H$ is a *Cartan subalgebra* when two conditions hold. First, $H$ is nilpotent: its lower central series $H \supseteq [H, H] \supseteq [H, [H, H]] \supseteq \cdots$ reaches $0$ after finitely many steps. Second, $H$ is self-normalizing: the normalizer of $H$ in $L$, the set of $x \in L$ with $[x, y] \in H$ for all $y \in H$, is $H$ itself. It is $H$ that must be nilpotent, not the action of $H$ on all of $L$. The definition contains no splitting, finite-dimensionality, existence or conjugacy condition. Taking $R$ to be a field gives the familiar definition.
+
+## Sources
+
+- James E. Humphreys, Introduction to Lie Algebras and Representation Theory, Graduate Texts in Mathematics 9, Springer-Verlag, 1972.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for nilpotent Lie rings, which are the Lie rings that are nilpotent as Lie modules over themselves via the adjoint action: `LieRing.IsNilpotent`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Lie/Nilpotent.lean#L746-L749.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for nilpotent Lie modules, whose lower central series reaches zero after finitely many steps: `LieModule.IsNilpotent`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Lie/Nilpotent.lean#L257-L262.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for the normalizer of a Lie subalgebra: `LieSubalgebra.mem_normalizer_iff`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Lie/Normalizer.lean#L131-L134.
