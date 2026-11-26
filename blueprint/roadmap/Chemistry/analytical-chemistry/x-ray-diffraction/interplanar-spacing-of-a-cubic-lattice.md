@@ -8,8 +8,9 @@ planes spaced $a/2$, whereas adjacent occupied planes of $a\mathbb Z^3$ with tha
 are outside this result.
 
 The distance is a minimum over all pairs of real points from the two planes, attained by a
-pair displaced along the normal. Occupancy is a separate condition: a level $m$ is occupied
-exactly when $\gcd(|h|,|k|,|l|)$ divides $m$ in $\mathbb{Z}$.
+pair displaced along the normal. In fractional coordinates $(x/a,y/a,z/a)$, the plane $P_m$
+is the level $m$ of the linear form with coefficients $(h,k,l)$. Occupancy is a separate condition:
+a level $m$ is occupied exactly when $\gcd(|h|,|k|,|l|)$ divides $m$ in $\mathbb{Z}$.
 
 ## Sources
 
