@@ -13815,6 +13815,7 @@
   "MathlibExt/NumberTheory/Ramanujan/Part1Ch3Section8Example4BernoulliIntegral": {"to": "Analysis/sequences-and-series/power-series", "title": "Touchard polynomials and generalized Bell series"},
   "MathlibExt/NumberTheory/Ramanujan/Part1Ch3Section8Example4Integrable": {"to": "Analysis/sequences-and-series/power-series", "title": "Touchard polynomials and generalized Bell series"},
   "MathlibExt/NumberTheory/RamanujanBinomialSine": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
+  "MathlibExt/NumberTheory/RamanujanFiveDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Overpartitions with even parts distinct"},
   "MathlibExt/NumberTheory/RamanujanHarmonicIdentity": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Ramanujan's binomial–harmonic identity"},
   "MathlibExt/NumberTheory/RamanujanSum": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Ramanujan sums"},
   "MathlibExt/NumberTheory/RamanujanTauModNineteen": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},
