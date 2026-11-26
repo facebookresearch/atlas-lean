@@ -24,9 +24,10 @@ example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((8 : ℕ) : ℝ) 3 ((4 
   not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 3 4 8
     (by decide) (by decide) (by decide) (by decide) (by decide)
 
--- Start strictly inside the window: `I_4 ∪ {5, 8, 11}`.
-example : ¬ IsMSTDSet (realIntervalSet 4 ∪ realAPSet ((5 : ℕ) : ℝ) 2 ((3 : ℕ) : ℝ)) :=
-  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 4 2 3 5
+-- Start strictly inside the window `[6, 8]`, with disjoint cross-sum blocks:
+-- `I_5 ∪ {7, 12, 17}`.
+example : ¬ IsMSTDSet (realIntervalSet 5 ∪ realAPSet ((7 : ℕ) : ℝ) 2 ((5 : ℕ) : ℝ)) :=
+  not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two 5 2 5 7
     (by decide) (by decide) (by decide) (by decide) (by decide)
 
 end MathlibExtTest.Combinatorics.Additive.UnionTwoAPNotMSTD

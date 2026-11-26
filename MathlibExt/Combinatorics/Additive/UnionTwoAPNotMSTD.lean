@@ -74,16 +74,6 @@ private theorem image_latJ (m d x : ℕ) :
   · rintro ⟨j, hjmem, rfl⟩
     exact ⟨(x : ℤ) + (j : ℤ) * (d : ℤ), ⟨j, hjmem, rfl⟩, by push_cast; ring⟩
 
-private theorem image_add_intCast (s t : Finset ℤ) :
-    (s + t).image ((↑) : ℤ → ℝ) = s.image ((↑) : ℤ → ℝ) + t.image ((↑) : ℤ → ℝ) := by
-  ext z
-  simp only [Finset.mem_image, Finset.mem_add]
-  constructor
-  · rintro ⟨u, ⟨a, ha, b, hb, rfl⟩, rfl⟩
-    exact ⟨(a : ℝ), ⟨a, ha, rfl⟩, (b : ℝ), ⟨b, hb, rfl⟩, by push_cast; ring⟩
-  · rintro ⟨u, ⟨a, ha, rfl⟩, v, ⟨b, hb, rfl⟩, rfl⟩
-    exact ⟨a + b, ⟨a, ha, b, hb, rfl⟩, by push_cast; ring⟩
-
 private theorem image_sub_intCast (s t : Finset ℤ) :
     (s - t).image ((↑) : ℤ → ℝ) = s.image ((↑) : ℤ → ℝ) - t.image ((↑) : ℤ → ℝ) := by
   ext z
@@ -115,14 +105,6 @@ private theorem sum_subset (n m d x : ℕ) :
     refine Or.inr ⟨i + j, by omega, ?_⟩
     push_cast
     ring
-
-private theorem card_union_add_sdiff (s t : Finset ℤ) :
-    (s ∪ t).card = s.card + (t \ s).card := by
-  have e1 := Finset.card_union_add_card_inter s t
-  have e2 := Finset.card_sdiff (s := s) (t := t)
-  have h1 := Finset.card_le_card (Finset.inter_subset_left : s ∩ t ⊆ s)
-  have h2 := Finset.card_le_card (Finset.inter_subset_right : s ∩ t ⊆ t)
-  omega
 
 private theorem card_latC (n : ℕ) (hn : 3 ≤ n) : (latC n).card = 2 * n - 1 := by
   simp only [latC, Int.card_Icc]
@@ -297,7 +279,9 @@ private theorem card_add_le_card_sub (n m d x : ℕ) (hn : 3 ≤ n) (hd : 2 ≤ 
     ((latI n ∪ latJ m d x) + (latI n ∪ latJ m d x)).card
       ≤ ((latI n ∪ latJ m d x) - (latI n ∪ latJ m d x)).card := by
   have hsub := sum_subset n m d x
-  have hcardUE := card_union_add_sdiff (latC n) (latE n m d x)
+  have hcardUE : (latC n ∪ latE n m d x).card
+      = (latC n).card + (latE n m d x \ latC n).card := by
+    rw [Finset.union_comm, ← Finset.card_sdiff_add_card, add_comm]
   have hC := card_latC n hn
   have hK := card_latK_le m d x
   have himg := image_latG n m d x
@@ -372,7 +356,8 @@ public theorem not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two (n m d x : ℕ
   have hadd : ((latI n ∪ latJ m d x) + (latI n ∪ latJ m d x)).image ((↑) : ℤ → ℝ)
       = (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
         + (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ)) := by
-    rw [image_add_intCast, hA]
+    rw [← hA]
+    exact Finset.image_add (Int.castRingHom ℝ)
   have hsub : ((latI n ∪ latJ m d x) - (latI n ∪ latJ m d x)).image ((↑) : ℤ → ℝ)
       = (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
         - (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ)) := by
