@@ -35,6 +35,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.Recurrences.JacobsthalOffsetIntegral
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthal
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthalGeneratingFunction
+public import MathlibExt.NumberTheory.Recurrences.KJacobsthalIntegralCompanionKJacobsthalCatalan
 
 namespace MetaMathlibExt
 
@@ -235,27 +236,6 @@ Theorem 9 (`integers-2025-A74-thm-9`). -/
 public theorem_wanted two_mul_companionKJacobsthal (k : ℕ) (a b : ℤ) (n : ℕ) :
     2 * companionKJacobsthal k a b n =
       a * lucasV (kJacobsthalParams k) n + (2 * b - a * k) * lucasU (kJacobsthalParams k) n
-
-/-- **Catalan's identity for the companion $k$-Jacobsthal numbers.** Let $k$ be a natural number,
-$a, b$ integers, $\mathcal{J}_{k,m} = \mathcal{J}_{k,m}(a, b)$ the companion $k$-Jacobsthal numbers
-and $J_{k,m} = U_m(k, -2)$ the $k$-Jacobsthal numbers. For all natural numbers $r \le n$,
-$$
-\mathcal{J}_{k,n-r}\,\mathcal{J}_{k,n+r} - \mathcal{J}_{k,n}^2 =
-\bigl(a^2 (k^2 + 8) - (2b - ak)^2\bigr)\,(-2)^{n-r-2}\,J_{k,r}^2
-$$
-in $\mathbb{Q}$, where $(-2)^{n-r-2}$ is an integer power.
-
-With $\Delta_k = \sqrt{k^2 + 8}$, the first factor on the right equals
-$(2b - ak + a\Delta_k)(ak - 2b + a\Delta_k)$, the form in which the source states it.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Theorem 11 (`integers-2025-A74-thm-11`). -/
-public theorem_wanted companionKJacobsthal_catalan (k : ℕ) (a b : ℤ) (n r : ℕ) (hrn : r ≤ n) :
-    ((companionKJacobsthal k a b (n - r) * companionKJacobsthal k a b (n + r) -
-        companionKJacobsthal k a b n ^ 2 : ℤ) : ℚ) =
-      ((a ^ 2 * ((k : ℤ) ^ 2 + 8) - (2 * b - a * k) ^ 2 : ℤ) : ℚ) *
-        (-2 : ℚ) ^ ((n : ℤ) - r - 2) * (lucasU (kJacobsthalParams k) r : ℚ) ^ 2
 
 /-- **Integral representation of the companion $k$-Jacobsthal numbers.** Let $k$, $\ell$, $n$ be
 natural numbers and $a, b$ integers. Write $\mathcal{J}_{k,m} = \mathcal{J}_{k,m}(a, b)$ for the
