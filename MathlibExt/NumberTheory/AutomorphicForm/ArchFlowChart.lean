@@ -47,15 +47,15 @@ namespace AutomorphicForm
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- The three real archimedean flow directions: split torus, upper
-unipotent, and lower unipotent. -/
+/-- **Real archimedean flow directions.** The three directions of the real archimedean flows:
+the split torus `H`, the upper unipotent `E` and the lower unipotent `Fm`. -/
 inductive ArchDir where
   | H : ArchDir
   | E : ArchDir
   | Fm : ArchDir
 
-/-- The six complex archimedean flow directions: the three real directions
-and their multiples by `I`. -/
+/-- **Complex archimedean flow directions.** The six directions of the complex archimedean
+flows: the three real directions `H`, `E`, `Fm` and their multiples `iH`, `iE`, `iFm` by `I`. -/
 inductive ArchDirComplex where
   | H : ArchDirComplex
   | E : ArchDirComplex
@@ -64,7 +64,8 @@ inductive ArchDirComplex where
   | iE : ArchDirComplex
   | iFm : ArchDirComplex
 
-/-- The lower unipotent matrix `!![1, 0; x, 1]` in `GL (Fin 2) R`. -/
+/-- **Lower unipotent matrix.** The lower unipotent matrix `!![1, 0; x, 1]` in `GL (Fin 2) R`,
+with inverse `!![1, 0; -x, 1]`. -/
 def lowerUnipotentGL2 {R : Type*} [CommRing R] (x : R) : GL (Fin 2) R where
   val := !![1, 0; x, 1]
   inv := !![1, 0; -x, 1]
@@ -85,7 +86,8 @@ theorem lowerUnipotentGL2_add {R : Type*} [CommRing R] (x y : R) :
   ext i j; fin_cases i <;> fin_cases j <;>
     simp [lowerUnipotentGL2, Matrix.mul_apply, Fin.sum_univ_two, add_comm]
 
-/-- The real split torus element `!![exp t, 0; 0, exp (-t)]`. -/
+/-- **Real split torus element.** The split torus element `!![exp t, 0; 0, exp (-t)]` of
+`GL (Fin 2) ℝ`. -/
 def splitTorusGL2 (t : ℝ) : GL (Fin 2) ℝ where
   val := !![Real.exp t, 0; 0, Real.exp (-t)]
   inv := !![Real.exp (-t), 0; 0, Real.exp t]
@@ -105,7 +107,8 @@ theorem splitTorusGL2_add (s t : ℝ) :
     simp [splitTorusGL2, Matrix.mul_apply, Fin.sum_univ_two, Real.exp_add]
   ring
 
-/-- The complex split torus element `!![exp z, 0; 0, exp (-z)]`. -/
+/-- **Complex split torus element.** The split torus element `!![exp z, 0; 0, exp (-z)]` of
+`GL (Fin 2) ℂ`. -/
 def splitTorusGL2Complex (z : ℂ) : GL (Fin 2) ℂ where
   val := !![Complex.exp z, 0; 0, Complex.exp (-z)]
   inv := !![Complex.exp (-z), 0; 0, Complex.exp z]
@@ -125,29 +128,34 @@ theorem splitTorusGL2Complex_add (z z' : ℂ) :
     simp [splitTorusGL2Complex, Matrix.mul_apply, Fin.sum_univ_two, Complex.exp_add]
   ring
 
-/-- Inclusion of a real `2 × 2` matrix at a real infinite place into the
-adelic group. -/
+/-- **Inclusion at a real place.** The inclusion of `GL (Fin 2) ℝ` into the adelic group at a
+real infinite place `w`: the matrix sits at `w`, and every other component, at the other infinite
+places and at the finite adeles, is the identity. -/
 def archRealGLAt {w : InfinitePlace K} (hw : w.IsReal) :
     GL (Fin 2) ℝ →* AdelicGL2 (𝓞 K) K :=
   (adelicArchGLInclAt K w).comp
     (Matrix.GeneralLinearGroup.map
       (InfinitePlace.Completion.ringEquivRealOfIsReal hw).symm.toRingHom)
 
-/-- Inclusion of a complex `2 × 2` matrix at a complex infinite place into
-the adelic group. -/
+/-- **Inclusion at a complex place.** The inclusion of `GL (Fin 2) ℂ` into the adelic group at
+a complex infinite place `w`: the matrix sits at `w`, and every other component, at the other
+infinite places and at the finite adeles, is the identity. -/
 def archComplexGLAt {w : InfinitePlace K} (hw : w.IsComplex) :
     GL (Fin 2) ℂ →* AdelicGL2 (𝓞 K) K :=
   (adelicArchGLInclAt K w).comp
     (Matrix.GeneralLinearGroup.map
       (InfinitePlace.Completion.ringEquivComplexOfIsComplex hw).symm.toRingHom)
 
-/-- The real archimedean flow matrix in direction `d` at time `t`. -/
+/-- **Real archimedean flow matrix.** The real flow in direction `d` at time `t`:
+`splitTorusGL2 t` for `H`, `unipotentGL2 t` for `E` and `lowerUnipotentGL2 t` for `Fm`. -/
 def archFlowMatrix : ArchDir → ℝ → GL (Fin 2) ℝ
   | .H, t => splitTorusGL2 t
   | .E, t => unipotentGL2 t
   | .Fm, t => lowerUnipotentGL2 t
 
-/-- The complex archimedean flow matrix in direction `d` at time `t`. -/
+/-- **Complex archimedean flow matrix.** The complex flow in direction `d` at time `t`:
+`splitTorusGL2Complex t`, `unipotentGL2 t` and `lowerUnipotentGL2 t` for `H`, `E` and `Fm`, and
+the same matrices at `t * I` for `iH`, `iE` and `iFm`. -/
 def archFlowMatrixComplex : ArchDirComplex → ℝ → GL (Fin 2) ℂ
   | .H, t => splitTorusGL2Complex (t : ℂ)
   | .E, t => unipotentGL2 (t : ℂ)
@@ -186,12 +194,14 @@ theorem archFlowMatrixComplex_add (d : ArchDirComplex) (s t : ℝ) :
     rw [h]
     exact lowerUnipotentGL2_add _ _
 
-/-- The real archimedean flow at a real place, as an adelic element. -/
+/-- **Real archimedean flow at a real place.** The flow matrix `archFlowMatrix d t`, included
+at the real place `w` by `archRealGLAt`. -/
 def archFlowAt {w : InfinitePlace K} (hw : w.IsReal) (d : ArchDir) (t : ℝ) :
     AdelicGL2 (𝓞 K) K :=
   archRealGLAt K hw (archFlowMatrix d t)
 
-/-- The complex archimedean flow at a complex place, as an adelic element. -/
+/-- **Complex archimedean flow at a complex place.** The flow matrix
+`archFlowMatrixComplex d t`, included at the complex place `w` by `archComplexGLAt`. -/
 def archFlowAtComplex {w : InfinitePlace K} (hw : w.IsComplex) (d : ArchDirComplex)
     (t : ℝ) : AdelicGL2 (𝓞 K) K :=
   archComplexGLAt K hw (archFlowMatrixComplex d t)
@@ -261,8 +271,13 @@ private theorem conj_list_prod {G M : Type*} [Group G] [Group M] (φ : M →* G)
       _ = φ ((L.map Prod.snd).prod⁻¹ * p.2⁻¹ * a * (p.2 * (L.map Prod.snd).prod)) := by
           congr 1; group
 
-/-- A single-coordinate increment of an archimedean flow chart is the chart
-times the incremented flow conjugated by the tail product. -/
+/-- **Single-coordinate increment of an archimedean flow chart.** For a word `L₀` of real and
+complex flow letters, the chart at times `t` is the product, in word order, of the flows of the
+letters `L₀[i]` at the times `t i`. Adding `s` to the time of the letter `j` multiplies the chart
+on the right by `T⁻¹ * flow(s) * T`, included at the place `w` of `L₀[j]`. Here `flow(s)` is the
+flow matrix of `L₀[j]` at time `s`, and `T` is the product, in word order, of the flow matrices,
+at their times `t i`, of the letters strictly after `j` that sit at the same place `w`; the letters
+after `j` at other places do not enter `T`. -/
 public theorem flowChart_add_single_eq_mul_conj
     (L₀ : List ((Σ' w : InfinitePlace K, Σ' _ : w.IsReal, ArchDir) ⊕
           (Σ' w : InfinitePlace K, Σ' _ : w.IsComplex, ArchDirComplex)))
