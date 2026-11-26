@@ -17,9 +17,13 @@ import Mathlib.Tactic.Ring
 /-!
 # The hook length formula
 
-The hook length formula of Frame, Robinson and Thrall is Theorem 8.1 of Stanley,
-*Topics in Algebraic Combinatorics*, author's draft of 1 February 2013
+The hook length formula was proved by J. S. Frame, G. de B. Robinson and R. M. Thrall in
+*The hook graphs of the symmetric group*, Canad. J. Math. 6 (1954), 316–324. It is Theorem 8.1
+of Stanley, *Topics in Algebraic Combinatorics*, author's draft of 1 February 2013
 (https://math.mit.edu/~rstan/algcomb/algcomb.pdf).
+
+The proof follows C. Greene, A. Nijenhuis and H. S. Wilf, *A probabilistic proof of a formula
+for the number of Young tableaux of a given shape*, Adv. Math. 31 (1979), 104–109.
 
 For each Young diagram the tableau count times the product of the hook lengths is the factorial
 of the number of cells. From each cell the hook walk jumps uniformly to a cell strictly to its
