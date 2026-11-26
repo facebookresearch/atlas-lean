@@ -157,6 +157,10 @@ MAX_QUEUE_PAGES = 5  # of 100 entries
 MAX_MAIN_CHANGES = 3000
 MAX_LEFT_OUT = 5  # queued entries left out for a conflict whose alternatives are explored
 MAX_BLOB_BYTES = 8 << 20  # the largest Lean file in the libraries is about 0.4 MB
+# What a simulated merge downloads for git alone to merge, which preflight never reads: graph data files
+# that both sides change, such as a 9.3 MB scripts/wiki-sync.json or a links file, are larger than what it
+# parses. A bound on downloads: a blob the clone already has is merged whatever its size.
+MAX_MERGE_BLOB_BYTES = 64 << 20
 MAX_FILES_READ = 20000  # library files whose declarations one change set may need
 MAX_BLOBS_BYTES = 512 << 20
 # The libraries that CI's declaration-collision check imports together (scripts/list_v2_modules.sh).
@@ -1120,10 +1124,11 @@ class Git:
             for old, new, path in self.diff_raw(base, theirs, ()):
                 if path in ours_changes:
                     sides |= {old, new, *ours_changes[path]}
-        self.prefetch(attributes | sides)
-        unread = [oid for oid in attributes if not self.present(oid)]
+        self.prefetch(attributes)
+        unread = [oid for oid in attributes if not self.present(oid)]  # before the sides: their limit is larger
         if unread:
             raise Failure(f"{short(ours)} has a .gitattributes that preflight could not download ({unread[0]})")
+        self.prefetch(sides, MAX_MERGE_BLOB_BYTES)  # merged by git alone, never read here
         for _ in range(50):  # anything else a merge reads (renamed files): admitted by size, then merged again
             process = self.run(*guard, *prefix, "merge-tree", "--write-tree", "--name-only",
                                "--no-messages", "-z", ours, theirs, check=False)
@@ -1131,7 +1136,7 @@ class Git:
             if process.returncode in (0, 1) or not needed:
                 break
             before = set(self.admitted)
-            self.prefetch(needed)
+            self.prefetch(needed, MAX_MERGE_BLOB_BYTES)
             if not set(self.admitted) - before and self.size_oracle is not None:
                 break  # nothing more admitted: fail below
         if process.returncode not in (0, 1):
@@ -1217,11 +1222,12 @@ class Git:
                                "cat-file", "-e", oid], capture_output=True,
                               env=dict(self.env, GIT_NO_LAZY_FETCH="1")).returncode == 0
 
-    def prefetch(self, oids: set[str]) -> None:
+    def prefetch(self, oids: set[str], limit: int | None = None) -> None:
         """Download the missing blobs in one request instead of one request per blob. A pull request
         chooses these files: with `size_oracle` (the sizes GitHub reports, before anything is downloaded),
-        none over MAX_BLOB_BYTES is fetched and the distinct files of the run may not pass
-        MAX_BLOBS_BYTES."""
+        none over `limit` (MAX_BLOB_BYTES, or MAX_MERGE_BLOB_BYTES for what only git merges) is fetched
+        and the distinct files of the run may not pass MAX_BLOBS_BYTES."""
+        limit = MAX_BLOB_BYTES if limit is None else limit
         if not set(oids) - {ZERO_OID}:
             return
         wanted = sorted(set(oids) - {ZERO_OID})
@@ -1236,7 +1242,7 @@ class Git:
         if missing and self.size_oracle is not None:
             sizes = self.size_oracle(missing)
             # A size GitHub does not report is not downloaded either: what needs it then fails, closed.
-            missing = [oid for oid in missing if sizes.get(oid) is not None and sizes[oid] <= MAX_BLOB_BYTES]
+            missing = [oid for oid in missing if sizes.get(oid) is not None and sizes[oid] <= limit]
             planned = dict(self.admitted, **{oid: sizes[oid] for oid in missing})
             if sum(planned.values()) > MAX_BLOBS_BYTES:  # over every download of this run, reserved before it
                 raise Failure(f"the files to download would add up to {sum(planned.values())} bytes, more than the "
