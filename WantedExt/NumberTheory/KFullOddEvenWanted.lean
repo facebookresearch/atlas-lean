@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.NumberTheory.KFull
+public import MathlibExt.NumberTheory.KFullParity
 public import MathlibExt.NumberTheory.PowerFree
 public import MathlibExt.NumberTheory.PowerFreeParity
 
@@ -19,22 +20,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter Topology
-
-/-- **Odd-to-even ratio of $k$-full numbers.** Let $k \ge 2$. For a natural number $N$ let
-$K_o(N)$ and $K_e(N)$ be the numbers of odd and of even $k$-full numbers $n \le N$. Then
-$K_o(N)/K_e(N) \to 2 - 2^{1 - 1/k}$ as $N \to \infty$.
-
-The counts up to a real $x$ depend only on $\lfloor x \rfloor$, so this is the same as the limit
-as $x \to \infty$ through the reals.
-
-Source: Sunanta Srisopha and Teerapat Srichan, *The Odd/Even Dichotomy for the Set of
-Numbers That Are Both k-Full and l-Free*, INTEGERS 24 (2024), Article A106, Corollary 2
-(`integers-2024-A106-cor-2`). -/
-public theorem_wanted tendsto_card_odd_kFull_div_card_even_kFull {k : ℕ} (hk : 2 ≤ k) :
-    Tendsto (fun N : ℕ =>
-        ({n : ℕ | n ≤ N ∧ Nat.IsKFull k n ∧ Odd n}.ncard : ℝ) /
-          {n : ℕ | n ≤ N ∧ Nat.IsKFull k n ∧ Even n}.ncard)
-      atTop (𝓝 (2 - (2 : ℝ) ^ (1 - 1 / (k : ℝ))))
 
 /-- **Odd-to-even ratio of $k$-full, $l$-free numbers.** Let $2 \le k < l$. Call a natural number
 $n$ a $[k, l]$-integer if it is $k$-full and $l$-free, that is, $n \ge 1$ and every prime $p$

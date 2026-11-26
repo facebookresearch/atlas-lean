@@ -15,7 +15,7 @@ import Mathlib.Tactic.IntervalCases
 /-!
 # Multiplicative functions additive on sums of two positive triangular numbers
 
-Park's vanishing lemmas for nonzero values at 3 or 5 follow by evaluating small integers
+Park's vanishing lemmas when the value at 2 is zero follow by evaluating small integers
 as sums of admissible summands and as products of coprime factors.
 -/
 
@@ -82,6 +82,26 @@ private theorem small_values_of_two_eq_zero
   · exact sum_zero t6 t13 h6 h13
   · exact (hf.map_mul_of_coprime (show Nat.Coprime 4 5 by decide)).trans (by rw [h4, zero_mul])
   · exact h21
+
+/-- **Park's Lemma 5: vanishing from 2 to 21 when the values at 2, 3 and 5 are zero.** Let $f$
+be a multiplicative arithmetic function with values in $\mathbb{C}$ such that
+$f(a + b) = f(a) + f(b)$ whenever $a$ and $b$ are both sums of two positive triangular numbers.
+If $f(2) = f(3) = f(5) = 0$, then $f(n) = 0$ for every natural number $n$ with $2 \le n \le 21$.
+
+Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
+of Two Positive Triangular Numbers", Lemma 5. -/
+theorem multiplicative_additive_on_sum_two_triangular_zero_of_all_zero
+    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
+      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b)
+    (hf2 : f 2 = 0) (hf3 : f 3 = 0) (hf5 : f 5 = 0) :
+    ∀ n : ℕ, 2 ≤ n → n ≤ 21 → f n = 0 := by
+  intro n hlo hhi
+  rcases eq_or_ne n 3 with rfl | hn3
+  · exact hf3
+  rcases eq_or_ne n 5 with rfl | hn5
+  · exact hf5
+  exact (small_values_of_two_eq_zero f hf hadd hf2).2 n hlo hhi hn3 hn5
 
 /-- **Park's Lemma 3: vanishing from 4 to 21 when the value at 2 is zero and at 3 is not.** Let
 $f$ be a multiplicative arithmetic function with values in $\mathbb{C}$ such that
