@@ -18,10 +18,20 @@ import MathlibExt.NumberTheory.GeneralizedTau
 import MathlibExt.NumberTheory.ModularForms.QParamProduct
 
 /-!
-# Lu's one-term Eisenstein congruence
+# Lu's one-term and three-term Eisenstein congruences
 
 In the six weights with a one-dimensional cusp space, the coefficients of the Eisenstein
 series are congruent to those of the discriminant times a normalized Eisenstein series.
+In the six weights with a three-dimensional cusp space, the analogous congruence uses three
+powers of the discriminant and coefficients found by successive elimination.
+
+## References
+
+* Qing Lu, *Explicit Congruences for Modular Forms of Higher Weights*, Journal of Integer
+  Sequences 29 (2026), Article 26.5.1, pp. 1–12, Theorem 1 and Corollaries 5 and 7.
+* B. Datskovsky and P. Guerzhoy, *On Ramanujan congruences for modular forms of integral and
+  half-integral weights*, Proceedings of the American Mathematical Society 124 (1996),
+  pp. 2283–2291, proof of Theorem 1 (the integral form subtracted from the Eisenstein series).
 -/
 
 open PowerSeries
@@ -236,6 +246,391 @@ private lemma coefficient_congruence (k : ℕ) (hk : k ∈ ({12, 16, 18, 20, 22,
     coeff_map]
   exact hz ▸ coprime_den hd z
 
+-- Remove the coefficient of degree j using a series with leading term q^j.
+private def cancelCoeff (j : ℕ) (B : ℚ⟦X⟧) : ℚ⟦X⟧ →ₗ[ℚ] ℚ⟦X⟧ where
+  toFun A := A - coeff j A • B
+  map_add' A A' := by
+    simp only [map_add, add_smul]
+    abel
+  map_smul' a A := by
+    simp only [RingHom.id_apply, coeff_smul, smul_sub, smul_smul, smul_eq_mul]
+
+private lemma coeff_cancelCoeff (j n : ℕ) (B A : ℚ⟦X⟧) :
+    coeff n (cancelCoeff j B A) = coeff n A - coeff j A * coeff n B := by
+  change coeff n (A - coeff j A • B) = _
+  rw [map_sub, coeff_smul, smul_eq_mul]
+
+private lemma coeff_two_mul_rat (A B : ℚ⟦X⟧) :
+    coeff 2 (A * B) = coeff 0 A * coeff 2 B + coeff 1 A * coeff 1 B + coeff 2 A * coeff 0 B := by
+  have h : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
+  rw [coeff_mul, h]
+  simp [add_assoc]
+
+private abbrev deltaRat : ℚ⟦X⟧ := deltaZ.map (Int.castRingHom ℚ)
+
+private abbrev deltaUnit : ℚ⟦X⟧ := pentagonalSeries ℚ ^ 24
+
+private lemma deltaRat_eq_X_mul : deltaRat = X * deltaUnit := map_deltaZ ℚ
+
+private lemma deltaUnit_coeff_zero : coeff 0 deltaUnit = 1 := by
+  have hp : coeff 0 (pentagonalSeries ℚ) = 1 := by
+    rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
+    decide
+  rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp, one_pow]
+
+private lemma deltaUnit_coeff_one_two : coeff 1 deltaUnit = -24 ∧ coeff 2 deltaUnit = 252 := by
+  let P := pentagonalSeries ℚ
+  have hp₀ : coeff 0 P = 1 := by
+    dsimp [P]
+    rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
+    decide
+  have hp₁ : coeff 1 P = -1 := by
+    dsimp [P]
+    rw [show (1 : ℕ) = pentagonal 1 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
+    decide
+  have hp₂ : coeff 2 P = -1 := by
+    dsimp [P]
+    have h : (2 : ℕ) = pentagonal (-1) := by norm_num [pentagonal_def]
+    rw [h, coeff_pentagonalSeries_pentagonal]
+    decide
+  have hpow (m : ℕ) : coeff 1 (P ^ m) = -(m : ℚ) ∧
+      coeff 2 (P ^ m) = (m : ℚ) * ((m : ℚ) - 3) / 2 := by
+    induction m with
+    | zero => simp [coeff_one]
+    | succ m ih =>
+      have hm : coeff 0 (P ^ m) = 1 := by
+        rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp₀,
+          one_pow]
+      rw [pow_succ, coeff_one_mul, coeff_two_mul_rat, ← coeff_zero_eq_constantCoeff_apply P,
+        ← coeff_zero_eq_constantCoeff_apply (P ^ m), hm, hp₀, hp₁, hp₂, ih.1, ih.2]
+      push_cast
+      constructor <;> ring
+  have h24 := hpow 24
+  norm_num at h24
+  exact h24
+
+private def eisensteinRat (w : ℕ) : ℚ⟦X⟧ := (sigma w 0)⁻¹ • PowerSeries.mk (sigma w)
+
+private lemma coeff_eisensteinRat (w n : ℕ) :
+    coeff n (eisensteinRat w) = sigma w n / sigma w 0 := by
+  simp [eisensteinRat, smul_eq_mul, div_eq_mul_inv, mul_comm]
+
+private lemma sigma_prime {w p : ℕ} (hw : w ≠ 0) (hp : p.Prime) :
+    sigma w p = 1 + (p : ℚ) ^ (w - 1) := by
+  rw [sigma, ite_eq_right hw, ite_eq_right hp.ne_zero, ArithmeticFunction.sigma_apply, hp.divisors]
+  simp [Ne.symm hp.ne_one]
+
+private lemma sigma_one {w : ℕ} (hw : w ≠ 0) : sigma w 1 = 1 := by
+  simp [sigma, hw]
+
+private def basisRat (k i : ℕ) : ℚ⟦X⟧ := deltaRat ^ i * eisensteinRat (k - 12 * i)
+
+private lemma coeff_basisRat (k i n : ℕ) :
+    coeff n (basisRat k i) = if i ≤ n then
+      coeff (n - i) (deltaUnit ^ i * eisensteinRat (k - 12 * i)) else 0 := by
+  rw [basisRat, deltaRat_eq_X_mul, mul_pow, mul_assoc, coeff_X_pow_mul']
+
+private lemma coeff_basisRat_le (k i n : ℕ) (hn : n ≤ i)
+    (hc : sigma (k - 12 * i) 0 ≠ 0) : coeff n (basisRat k i) = if n = i then 1 else 0 := by
+  rcases hn.eq_or_lt with rfl | hn
+  · rw [coeff_basisRat, ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply,
+      map_mul, map_pow, ← coeff_zero_eq_constantCoeff_apply deltaUnit, deltaUnit_coeff_zero,
+      ← coeff_zero_eq_constantCoeff_apply (eisensteinRat _), coeff_eisensteinRat, div_self hc]
+    simp
+  · simp [coeff_basisRat, hn.ne, not_le.mpr hn]
+
+private lemma basisRat_first_coeffs {k : ℕ} (hk : 36 ≤ k)
+    (hs₁ : sigma (k - 12) 0 ≠ 0) (hs₂ : sigma (k - 24) 0 ≠ 0) :
+    coeff 2 (basisRat k 1) = 1 / sigma (k - 12) 0 - 24 ∧
+    coeff 3 (basisRat k 1) = 252 + (2 ^ (k - 13) - 23) / sigma (k - 12) 0 ∧
+    coeff 3 (basisRat k 2) = 1 / sigma (k - 24) 0 - 48 := by
+  have h₁ := deltaUnit_coeff_one_two.1
+  have h₂ := deltaUnit_coeff_one_two.2
+  have hw₁ : k - 12 ≠ 0 := by omega
+  have hw₂ : k - 24 ≠ 0 := by omega
+  have hE₁ : coeff 0 (eisensteinRat (k - 12)) = 1 := by simp [coeff_eisensteinRat, hs₁]
+  have hE₂ : coeff 0 (eisensteinRat (k - 24)) = 1 := by simp [coeff_eisensteinRat, hs₂]
+  have hD₂ : coeff 1 (deltaUnit ^ 2) = -48 := by
+    norm_num [coeff_one_pow, h₁, ← coeff_zero_eq_constantCoeff_apply, deltaUnit_coeff_zero]
+  have hD₀ : constantCoeff (deltaUnit ^ 2) = 1 := by
+    simp [← coeff_zero_eq_constantCoeff_apply deltaUnit, deltaUnit_coeff_zero]
+  constructor
+  · norm_num [coeff_basisRat, coeff_one_mul, ← coeff_zero_eq_constantCoeff_apply, h₁, hE₁,
+      deltaUnit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁]
+    ring
+  constructor
+  · norm_num [coeff_basisRat, coeff_two_mul_rat, h₁, h₂, hE₁, deltaUnit_coeff_zero,
+      coeff_eisensteinRat, sigma_one hw₁, sigma_prime hw₁ Nat.prime_two,
+      show k - 12 - 1 = k - 13 by omega]
+    ring
+  · norm_num [coeff_basisRat, coeff_one_mul, hD₂, hD₀, ← coeff_zero_eq_constantCoeff_apply
+      (eisensteinRat (k - 24)), hE₂, coeff_eisensteinRat, sigma_one hw₂]
+    ring
+
+private abbrev ratToComplex : ℚ →+* ℂ := Rat.castHom ℂ
+
+private lemma map_rat_smul (a : ℚ) (A : ℚ⟦X⟧) :
+    (a • A).map ratToComplex = (a : ℂ) • A.map ratToComplex := by
+  ext n
+  simp [smul_eq_mul]
+
+private lemma map_int_rat_complex (Z : ℤ⟦X⟧) :
+    (Z.map (Int.castRingHom ℚ)).map ratToComplex = Z.map (Int.castRingHom ℂ) := by
+  ext n
+  simp
+
+-- Use Δ-division to successively lower the order bound and weight. At the terminal weight the
+-- constant coefficient is injective, since the normalized form spans a one-dimensional space.
+private lemma qExpansion_eq_zero_of_order {w : ℤ} (H : ModularForm 𝒮ℒ w)
+    (hH : coeff 0 (qExpansion 1 H) = 1) (hr : Module.rank ℂ (ModularForm 𝒮ℒ w) = 1)
+    (d : ℕ) (F : ModularForm 𝒮ℒ (w + 12 * (d : ℤ)))
+    (h : (d : ℕ∞) < (qExpansion 1 F).order) : qExpansion 1 F = 0 := by
+  induction d with
+  | zero =>
+    have h₀ := PowerSeries.coeff_of_lt_order 0 ((Nat.cast_nonneg (0 : ℕ)).trans_lt h)
+    let F₀ := F.mcast (by simp : w + 12 * ((0 : ℕ) : ℤ) = w)
+    have hH₀ : H ≠ 0 := by
+      intro hh
+      simp [hh, qExpansion_zero] at hH
+    obtain ⟨a, ha⟩ := (finrank_eq_one_iff_of_ne_zero' H hH₀).mp
+      (Module.rank_eq_one_iff_finrank_eq_one.mp hr) F₀
+    have hq : qExpansion 1 F = a • qExpansion 1 H := by
+      have hq₀ := congrArg (fun f : ModularForm 𝒮ℒ w => qExpansion 1 f) ha.symm
+      change qExpansion 1 F = qExpansion 1 (a • ⇑H) at hq₀
+      exact hq₀.trans (ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL a H)
+    rw [hq, coeff_smul, hH, smul_eq_mul, mul_one] at h₀
+    rw [hq, h₀, zero_smul]
+  | succ d ih =>
+    have h₀ := PowerSeries.coeff_of_lt_order 0 ((Nat.cast_nonneg (d + 1)).trans_lt h)
+    let Q := (CuspForm.discriminantEquiv (F.toCuspForm h₀)).mcast
+      (by push_cast; ring : w + 12 * ((d + 1 : ℕ) : ℤ) - 12 = w + 12 * (d : ℤ))
+    have hq : qExpansion 1 F = qExpansion 1 discriminant * qExpansion 1 Q := by
+      simpa only [Q, ModularForm.qExpansion_mcast] using
+        qExpansion_eq_qExpansion_discriminant_mul F h₀
+    have hsucc : (↑(d + 1) : ℕ∞) < (qExpansion 1 Q).order + 1 := by
+      rw [hq, PowerSeries.order_mul, discriminant_qExpansion_order] at h
+      simpa only [add_comm (1 : ℕ∞)] using h
+    have ht : (d : ℕ∞) < (qExpansion 1 Q).order := by
+      rw [Nat.cast_add, Nat.cast_one] at hsucc
+      exact (ENat.add_lt_add_iff_right (by simp : (1 : ℕ∞) ≠ ⊤)).mp hsucc
+    rw [hq, ih Q ht, mul_zero]
+
+-- Keep the comparison on rational power series; these witnesses supply the modularity needed
+-- for the order argument without requiring any descent of complex scalars.
+private def IsRatExpansion (k : ℕ) (A : ℚ⟦X⟧) : Prop :=
+  ∃ F : ModularForm 𝒮ℒ k, qExpansion 1 F = A.map ratToComplex
+
+private lemma IsRatExpansion.sub_smul {k : ℕ} {A B : ℚ⟦X⟧}
+    (hA : IsRatExpansion k A) (hB : IsRatExpansion k B) (a : ℚ) :
+    IsRatExpansion k (A - a • B) := by
+  obtain ⟨F, hF⟩ := hA
+  obtain ⟨G, hG⟩ := hB
+  refine ⟨F - (a : ℂ) • G, ?_⟩
+  change qExpansion 1 (⇑F - ⇑((a : ℂ) • G)) = _
+  rw [ModularForm.qExpansion_sub one_pos one_mem_strictPeriods_SL F ((a : ℂ) • G), hF]
+  change A.map ratToComplex - qExpansion 1 ((a : ℂ) • ⇑G) = _
+  rw [ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL (a : ℂ) G,
+    hG, map_sub, map_rat_smul]
+
+private lemma IsRatExpansion.cancel {k j : ℕ} {A B : ℚ⟦X⟧}
+    (hA : IsRatExpansion k A) (hB : IsRatExpansion k B) :
+    IsRatExpansion k (cancelCoeff j B A) := hA.sub_smul hB (coeff j A)
+
+private lemma qExpansion_eisensteinRat {w : ℕ} (hw : 3 ≤ w) (he : Even w) :
+    qExpansion 1 (E hw) = (eisensteinRat w).map ratToComplex := by
+  ext n
+  rw [coeff_eisenstein hw he, coeff_map, coeff_eisensteinRat]
+  rfl
+
+private lemma isRatExpansion_sigma {k : ℕ} (hk : 3 ≤ k) (he : Even k) :
+    IsRatExpansion k (PowerSeries.mk (sigma k)) := by
+  let c := sigma k 0
+  have h : c • eisensteinRat k = PowerSeries.mk (sigma k) := by
+    rw [eisensteinRat, smul_smul, mul_inv_cancel₀ (sigma_zero_ne hk he), one_smul]
+  refine ⟨(c : ℂ) • E hk, ?_⟩
+  change qExpansion 1 ((c : ℂ) • ⇑(E hk)) = _
+  rw [ModularForm.qExpansion_smul one_pos one_mem_strictPeriods_SL,
+    qExpansion_eisensteinRat hk he, ← map_rat_smul, h]
+
+private lemma isRatExpansion_basis (k i : ℕ) (h : 12 * i ≤ k)
+    (F : ModularForm 𝒮ℒ ((k - 12 * i : ℕ) : ℤ))
+    (hF : qExpansion 1 F = (eisensteinRat (k - 12 * i)).map ratToComplex) :
+    IsRatExpansion k (basisRat k i) := by
+  refine ⟨ModularForm.mcast (by rw [Nat.cast_sub h, Nat.cast_mul]; norm_num; ring)
+    (((CuspForm.discriminant : ModularForm 𝒮ℒ 12).pow i).mul F), ?_⟩
+  simp only [ModularForm.qExpansion_mcast, ModularForm.qExpansion_mul one_pos
+    one_mem_strictPeriods_SL, ModularForm.qExpansion_pow one_pos one_mem_strictPeriods_SL,
+    hF, basisRat, map_mul, map_pow, map_int_rat_complex]
+  change (qExpansion 1 discriminant) ^ i * _ = _
+  rw [qExpansion_discriminant]
+
+-- The rationals that are integral at every prime dividing N.
+private def coprimeDenRing (N : ℕ) : Subring ℚ where
+  carrier := {a | a.den.Coprime N}
+  zero_mem' := by simp
+  one_mem' := by simp
+  add_mem' ha hb := (ha.mul_left hb).of_dvd_left (Rat.add_den_dvd _ _)
+  neg_mem' := by simp
+  mul_mem' ha hb := (ha.mul_left hb).of_dvd_left (Rat.mul_den_dvd _ _)
+
+private lemma coeff_mul_mem_coprimeDenRing {N : ℕ} {A B : ℚ⟦X⟧}
+    (hA : ∀ n, coeff n A ∈ coprimeDenRing N) (hB : ∀ n, coeff n B ∈ coprimeDenRing N)
+    (n : ℕ) : coeff n (A * B) ∈ coprimeDenRing N := by
+  rw [coeff_mul]
+  exact (coprimeDenRing N).sum_mem fun p _ => (coprimeDenRing N).mul_mem (hA p.1) (hB p.2)
+
+private lemma coeff_pow_mem_coprimeDenRing {N : ℕ} {A : ℚ⟦X⟧}
+    (hA : ∀ n, coeff n A ∈ coprimeDenRing N) (i n : ℕ) :
+    coeff n (A ^ i) ∈ coprimeDenRing N := by
+  induction i generalizing n with
+  | zero =>
+    rw [pow_zero, coeff_one]
+    split_ifs <;> simp
+  | succ i ih =>
+    rw [pow_succ]
+    exact coeff_mul_mem_coprimeDenRing ih hA n
+
+private lemma coeff_map_int_mem_coprimeDenRing (N : ℕ) (Z : ℤ⟦X⟧) (n : ℕ) :
+    coeff n (Z.map (Int.castRingHom ℚ)) ∈ coprimeDenRing N := by
+  simp [coprimeDenRing]
+
+private lemma coeff_cancelCoeff_mem_coprimeDenRing {N : ℕ} {A B : ℚ⟦X⟧}
+    (hA : ∀ n, coeff n A ∈ coprimeDenRing N) (hB : ∀ n, coeff n B ∈ coprimeDenRing N)
+    (j n : ℕ) : coeff n (cancelCoeff j B A) ∈ coprimeDenRing N := by
+  rw [coeff_cancelCoeff]
+  exact (coprimeDenRing N).sub_mem (hA n) ((coprimeDenRing N).mul_mem (hA j) (hB n))
+
+private lemma coeff_basisRat_mem_coprimeDenRing {N k i : ℕ}
+    (hc : sigma (k - 12 * i) 0 ≠ 0) (hd : (sigma (k - 12 * i) 0).num.natAbs.Coprime N)
+    (n : ℕ) : coeff n (basisRat k i) ∈ coprimeDenRing N := by
+  apply coeff_mul_mem_coprimeDenRing
+  · exact coeff_pow_mem_coprimeDenRing (coeff_map_int_mem_coprimeDenRing N deltaZ) i
+  intro m
+  by_cases hm : m = 0
+  · subst m
+    rw [coeff_eisensteinRat, div_self hc]
+    exact (coprimeDenRing N).one_mem
+  rw [coeff_eisensteinRat, div_eq_mul_inv]
+  apply (coprimeDenRing N).mul_mem
+  · by_cases hw : k - 12 * i = 0 <;> simp [sigma, hm, hw, coprimeDenRing]
+  · change ((sigma (k - 12 * i) 0)⁻¹).den.Coprime N
+    rwa [Rat.den_inv_of_ne_zero hc]
+
+private def cancelThree (k : ℕ) : ℚ⟦X⟧ →ₗ[ℚ] ℚ⟦X⟧ :=
+  (cancelCoeff 3 (basisRat k 3)).comp ((cancelCoeff 2 (basisRat k 2)).comp
+    (cancelCoeff 1 (basisRat k 1)))
+
+private lemma coeff_cancelThree_sigma {k : ℕ} (hk : 36 ≤ k)
+    (hs₁ : sigma (k - 12) 0 ≠ 0) (hs₂ : sigma (k - 24) 0 ≠ 0)
+    (n : ℕ) :
+    let γ₂ : ℚ := 2 ^ (k - 1) + 25 - 1 / sigma (k - 12) 0
+    let γ₃ : ℚ := 3 ^ (k - 1) + 2 ^ (k - 1) * 48 + 949 -
+      (2 ^ (k - 13) + 25) / sigma (k - 12) 0 - (2 ^ (k - 1) + 25) / sigma (k - 24) 0 +
+      1 / (sigma (k - 12) 0 * sigma (k - 24) 0)
+    coeff n (cancelThree k (PowerSeries.mk (sigma k))) =
+      sigma k n - (coeff n (basisRat k 1) + γ₂ * coeff n (basisRat k 2) +
+        γ₃ * coeff n (basisRat k 3)) := by
+  dsimp only
+  obtain ⟨hb₁₂, hb₁₃, hb₂₃⟩ := basisRat_first_coeffs hk hs₁ hs₂
+  have hk₀ : k ≠ 0 := by omega
+  simp only [cancelThree, LinearMap.comp_apply, coeff_cancelCoeff, coeff_mk, hb₁₂, hb₁₃, hb₂₃,
+    sigma_one hk₀, sigma_prime hk₀ Nat.prime_two, sigma_prime hk₀ Nat.prime_three, one_mul]
+  field_simp [hs₁, hs₂]
+  ring
+
+set_option maxHeartbeats 800000 in
+-- The six weight cases and the comparison of the three modular q-expansions need extra reduction.
+private lemma coefficient_congruence_three (k : ℕ)
+    (hk : k ∈ ({36, 40, 42, 44, 46, 50} : Finset ℕ)) (N : ℕ)
+    (hd : N ∣ (sigma k 0).num.natAbs)
+    (hcop : ∀ i, 1 ≤ i → i ≤ 3 → (sigma (k - 12 * i) 0).num.natAbs.Coprime N) (n : ℕ) :
+    (coeff n (cancelThree k (PowerSeries.mk (sigma k))) / N).den.Coprime N := by
+  let w := k - 36
+  have hw : w ∈ ({0, 4, 6, 8, 10, 14} : Finset ℕ) := by fin_cases hk <;> decide
+  have hk₃₆ : 36 ≤ k := by fin_cases hk <;> decide
+  have he : Even k := by fin_cases hk <;> decide
+  have he₁ : Even (k - 12) := by fin_cases hk <;> decide
+  have he₂ : Even (k - 24) := by fin_cases hk <;> decide
+  have hew : Even w := by fin_cases hk <;> decide
+  have hs (i : ℕ) (hi₁ : 1 ≤ i) (hi₃ : i ≤ 3) : sigma (k - 12 * i) 0 ≠ 0 := by
+    have hwt : k - 12 * i = 0 ∨ (3 ≤ k - 12 * i ∧ Even (k - 12 * i)) := by
+      interval_cases i <;> fin_cases hk <;> decide
+    rcases hwt with h | ⟨h, hev⟩
+    · simp [h, sigma]
+    · exact sigma_zero_ne h hev
+  have hr : Module.rank ℂ (ModularForm 𝒮ℒ (w : ℤ)) = 1 := by
+    rw [dimension_level_one w hew]
+    fin_cases hk <;> norm_num [w, Nat.ModEq]
+  obtain ⟨H, Z, hZ, hH, hσ⟩ := integral_eisenstein hw
+  have hH₀ : coeff 0 (qExpansion 1 H) = 1 := by simp [hH, hZ]
+  have hE₃ : qExpansion 1 H = (eisensteinRat w).map ratToComplex := by
+    have hs₃ : sigma w 0 ≠ 0 := hs 3 (by decide) (by decide)
+    ext j
+    rw [hH, coeff_map, coeff_map, coeff_eisensteinRat, hσ j,
+      mul_div_cancel_left₀ _ hs₃]
+    simp
+  obtain ⟨F₄, Z₄, hZ₄, hF₄, -⟩ := integral_eisenstein (w := 4) (by decide)
+  let L := (Z₄ ^ 9 * Z).map (Int.castRingHom ℚ)
+  have hL : IsRatExpansion k L := by
+    refine ⟨ModularForm.mcast (by dsimp [w]; omega) ((F₄.pow 9).mul H), ?_⟩
+    simp only [ModularForm.qExpansion_mcast, ModularForm.qExpansion_mul one_pos
+      one_mem_strictPeriods_SL, ModularForm.qExpansion_pow one_pos one_mem_strictPeriods_SL,
+      hF₄, hH, L, map_int_rat_complex, map_mul, map_pow]
+  have hL₀ : coeff 0 L = 1 := by
+    change coeff 0 ((Z₄ ^ 9 * Z).map (Int.castRingHom ℚ)) = 1
+    rw [coeff_map, coeff_zero_eq_constantCoeff_apply, map_mul, map_pow,
+      ← coeff_zero_eq_constantCoeff_apply Z, ← coeff_zero_eq_constantCoeff_apply Z₄, hZ, hZ₄]
+    simp
+  have hB₁ : IsRatExpansion k (basisRat k 1) :=
+    isRatExpansion_basis k 1 (by omega) (E (by omega)) (qExpansion_eisensteinRat (by omega) he₁)
+  have hB₂ : IsRatExpansion k (basisRat k 2) :=
+    isRatExpansion_basis k 2 (by omega) (E (by omega)) (qExpansion_eisensteinRat (by omega) he₂)
+  have hB₃ : IsRatExpansion k (basisRat k 3) := isRatExpansion_basis k 3 (by omega) H hE₃
+  let G := PowerSeries.mk (sigma k)
+  let A := G - sigma k 0 • L
+  have hA : IsRatExpansion k A := (isRatExpansion_sigma (by omega) he).sub_smul hL _
+  have hA₀ : coeff 0 A = 0 := by
+    change coeff 0 (G - sigma k 0 • L) = 0
+    rw [map_sub, coeff_smul, smul_eq_mul, hL₀, mul_one]
+    simp [G]
+  have htri (i j : ℕ) (hi : 1 ≤ i) (hi' : i ≤ 3) (hji : j ≤ i) :
+      coeff j (basisRat k i) = if j = i then 1 else 0 :=
+    coeff_basisRat_le k i j hji (hs i hi hi')
+  have hvanish (j : ℕ) (hj : j < 4) : coeff j (cancelThree k A) = 0 := by
+    interval_cases j <;> simp [cancelThree, coeff_cancelCoeff, hA₀, htri]
+  obtain ⟨F, hF⟩ : IsRatExpansion k (cancelThree k A) :=
+    ((hA.cancel (j := 1) hB₁).cancel (j := 2) hB₂).cancel (j := 3) hB₃
+  have hwt : (k : ℤ) = (w : ℤ) + 12 * ((3 : ℕ) : ℤ) := by dsimp [w]; omega
+  let F' := F.mcast hwt
+  have hF' : qExpansion 1 F' = (cancelThree k A).map ratToComplex := by
+    simpa only [F', ModularForm.qExpansion_mcast] using hF
+  have hOrder : (3 : ℕ∞) < (qExpansion 1 F').order := by
+    apply lt_of_lt_of_le (show (3 : ℕ∞) < (4 : ℕ∞) by decide)
+    apply PowerSeries.nat_le_order
+    intro j hj
+    simp only [hF', coeff_map, hvanish j hj, map_zero]
+  have hZero : cancelThree k A = 0 := by
+    apply (PowerSeries.map_eq_zero _ ratToComplex).mp
+    exact hF'.symm.trans (qExpansion_eq_zero_of_order H hH₀ hr 3 F' hOrder)
+  have hEq : cancelThree k G = sigma k 0 • cancelThree k L := by
+    apply sub_eq_zero.mp
+    simpa only [A, map_sub, LinearMap.map_smul] using hZero
+  have hLmem := coeff_map_int_mem_coprimeDenRing N (Z₄ ^ 9 * Z)
+  have hBmem (i : ℕ) (hi₁ : 1 ≤ i) (hi₃ : i ≤ 3) (j : ℕ) :
+      coeff j (basisRat k i) ∈ coprimeDenRing N :=
+    coeff_basisRat_mem_coprimeDenRing (hs i hi₁ hi₃) (hcop i hi₁ hi₃) j
+  have hT : coeff n (cancelThree k L) ∈ coprimeDenRing N :=
+    coeff_cancelCoeff_mem_coprimeDenRing
+      (coeff_cancelCoeff_mem_coprimeDenRing
+        (coeff_cancelCoeff_mem_coprimeDenRing hLmem (hBmem 1 (by decide) (by decide)) 1)
+        (hBmem 2 (by decide) (by decide)) 2) (hBmem 3 (by decide) (by decide)) 3 n
+  have hcN : sigma k 0 / N ∈ coprimeDenRing N := by
+    change (sigma k 0 / N).den.Coprime N
+    simpa using coprime_den hd 1
+  change coeff n (cancelThree k G) / N ∈ coprimeDenRing N
+  rw [hEq, coeff_smul, smul_eq_mul, mul_comm, mul_div_assoc]
+  exact (coprimeDenRing N).mul_mem hT hcN
+
 end
 end eisenstein_congr_delta_mul_eisenstein_dim_one
 
@@ -288,6 +683,84 @@ public theorem eisenstein_congr_delta_mul_eisenstein_dim_one (k : ℕ)
     change ((sigma k n - coeff n (Δ ^ 1 * PowerSeries.mk (sigma (k - 12 * 1))) /
       sigma (k - 12 * 1) 0) / N').den.Coprime N'
     simpa only [pow_one, mul_one, Δ, ← deltaZ_rat] using hall n
+  exact ⟨H, fun n _ => H n⟩
+
+/-- **Lu's three-term congruence for $G_k$.** Let $k \in \{36, 40, 42, 44, 46, 50\}$.
+For $w, n \in \mathbb{N}$ let $\sigma_{-1}(n)$ be $1$ if $n = 0$ and $0$ otherwise; for $w \ge 1$
+let $\sigma_{w-1}(0) = -B_w/(2w)$, where $B_w$ is the $w$-th Bernoulli number, and
+$\sigma_{w-1}(n) = \sum_{d \mid n} d^{w-1}$ for $n \ge 1$. In $\mathbb{Q}[[q]]$ let
+$G_w = \sum_{n \ge 0} \sigma_{w-1}(n) q^n$, let $E_w = G_w/\sigma_{w-1}(0)$ for even $w$, and let
+$\Delta = q \prod_{j \ge 1} (1 - q^j)^{24}$; for $i, n \in \mathbb{N}$ write $b_i(n)$ for the
+coefficient of $q^n$ in $\Delta^i E_{k-12i}$. Let $N_w = 1$ for $w \le 2$, let $N_w$ be the
+absolute value of the numerator of $\sigma_{w-1}(0)$ for $w \ge 3$, and let $N'_k$ be the largest
+divisor of $N_k$ that is coprime to $N_{k-12i}$ for every $1 \le i \le \lfloor k/12 \rfloor$. For
+rationals $x, y$ and a positive integer $N$, $x \equiv y \pmod{N}$ means that $(x - y)/N$ has
+denominator coprime to $N$. Let
+$\gamma_2 = 2^{k-1} + 25 - 1/\sigma_{k-13}(0)$ and
+$\gamma_3 = 3^{k-1} + 48 \cdot 2^{k-1} + 949 - (2^{k-13} + 25)/\sigma_{k-13}(0) -
+(2^{k-1} + 25)/\sigma_{k-25}(0) + 1/\bigl(\sigma_{k-13}(0)\,\sigma_{k-25}(0)\bigr)$. Then
+$\sigma_{k-1}(n) \equiv b_1(n) + \gamma_2 b_2(n) + \gamma_3 b_3(n) \pmod{N'_k}$ for every
+$n \ge 0$, that is,
+$G_k \equiv \Delta E_{k-12} + \gamma_2 \Delta^2 E_{k-24} + \gamma_3 \Delta^3 E_{k-36}
+\pmod{N'_k}$ coefficientwise; in particular the congruence holds for every $n \ge 1$.
+
+Source: Qing Lu, *Explicit Congruences for Modular Forms of Higher Weights*, Journal of
+Integer Sequences 29 (2026), Article 26.5.1, Corollary 7 (`jis-2026-26.5.1-cor-7`). -/
+public theorem eisenstein_congr_delta_mul_eisenstein_dim_three (k : ℕ)
+    (hk : k ∈ ({36, 40, 42, 44, 46, 50} : Finset ℕ)) :
+    let σ₀ : ℕ → ℕ → ℚ := fun w n => if w = 0 then (if n = 0 then 1 else 0)
+      else if n = 0 then -bernoulli w / (2 * w) else (ArithmeticFunction.sigma (w - 1) n : ℚ)
+    let Δ : ℚ⟦X⟧ := X * ∏' j : ℕ, (1 - X ^ (j + 1)) ^ 24
+    let b : ℕ → ℕ → ℚ := fun i n =>
+      coeff n (Δ ^ i * PowerSeries.mk (σ₀ (k - 12 * i))) / σ₀ (k - 12 * i) 0
+    let Nw : ℕ → ℕ := fun w => if w ≤ 2 then 1 else (σ₀ w 0).num.natAbs
+    let N' : ℕ := ((Nat.divisors (Nw k)).filter fun d =>
+      ∀ i ∈ Finset.Icc 1 (k / 12), Nat.Coprime d (Nw (k - 12 * i))).sup id
+    let γ₂ : ℚ := 2 ^ (k - 1) + 25 - 1 / σ₀ (k - 12) 0
+    let γ₃ : ℚ := 3 ^ (k - 1) + 2 ^ (k - 1) * 48 + 949 - (2 ^ (k - 13) + 25) / σ₀ (k - 12) 0 -
+      (2 ^ (k - 1) + 25) / σ₀ (k - 24) 0 + 1 / (σ₀ (k - 12) 0 * σ₀ (k - 24) 0)
+    (∀ n : ℕ, ((σ₀ k n - (b 1 n + γ₂ * b 2 n + γ₃ * b 3 n)) / N').den.Coprime N') ∧
+      ∀ n : ℕ, 1 ≤ n → ((σ₀ k n - (b 1 n + γ₂ * b 2 n + γ₃ * b 3 n)) / N').den.Coprime N' := by
+  intro σ₀ Δ b Nw N' γ₂ γ₃
+  have hk₃₆ : 36 ≤ k := by fin_cases hk <;> decide
+  have he : Even k := by fin_cases hk <;> decide
+  have hNk : Nw k = (sigma k 0).num.natAbs := ite_eq_right (by omega)
+  have hpos : Nw k ≠ 0 := by simpa [hNk] using sigma_zero_ne (by omega : 3 ≤ k) he
+  let s := (Nat.divisors (Nw k)).filter fun d =>
+    ∀ i ∈ Finset.Icc 1 (k / 12), Nat.Coprime d (Nw (k - 12 * i))
+  have hs : s.Nonempty := ⟨1, by simp [s, hpos]⟩
+  obtain ⟨d, hd, heq⟩ := Finset.sup_mem_of_nonempty (f := id) hs
+  obtain ⟨hdvd, hcop⟩ := Finset.mem_filter.mp hd
+  have hN' : d = N' := heq
+  have hdiv : N' ∣ (sigma k 0).num.natAbs := by
+    rw [← hN', ← hNk]
+    exact Nat.dvd_of_mem_divisors hdvd
+  have hC (i : ℕ) (hi₁ : 1 ≤ i) (hi₃ : i ≤ 3) :
+      (sigma (k - 12 * i) 0).num.natAbs.Coprime N' := by
+    have hi : i ∈ Finset.Icc 1 (k / 12) := Finset.mem_Icc.mpr ⟨hi₁, by omega⟩
+    have hwi : k - 12 * i = 0 ∨ 3 ≤ k - 12 * i := by
+      interval_cases i <;> fin_cases hk <;> decide
+    rcases hwi with hwi | hwi
+    · simp [hwi, sigma]
+    have hi' : Nw (k - 12 * i) = (sigma (k - 12 * i) 0).num.natAbs := ite_eq_right (by omega)
+    rw [← hN', ← hi']
+    exact (hcop i hi).symm
+  have hs₁ : sigma (k - 12) 0 ≠ 0 :=
+    sigma_zero_ne (by omega) (by fin_cases hk <;> decide)
+  have hs₂ : sigma (k - 24) 0 ≠ 0 :=
+    sigma_zero_ne (by omega) (by fin_cases hk <;> decide)
+  have hb (i n : ℕ) : b i n = coeff n (basisRat k i) := by
+    change coeff n (Δ ^ i * PowerSeries.mk (sigma (k - 12 * i))) / sigma (k - 12 * i) 0 = _
+    simp only [Δ, ← deltaZ_rat, basisRat, eisensteinRat, mul_smul_comm, coeff_smul, smul_eq_mul,
+      div_eq_mul_inv]
+    ring
+  have H (n : ℕ) : ((σ₀ k n - (b 1 n + γ₂ * b 2 n + γ₃ * b 3 n)) / N').den.Coprime N' := by
+    have hcoef : coeff n (cancelThree k (PowerSeries.mk (sigma k))) =
+        σ₀ k n - (b 1 n + γ₂ * b 2 n + γ₃ * b 3 n) := by
+      rw [hb, hb, hb]
+      exact coeff_cancelThree_sigma hk₃₆ hs₁ hs₂ n
+    rw [← hcoef]
+    exact coefficient_congruence_three k hk N' hdiv hC n
   exact ⟨H, fun n _ => H n⟩
 
 end MetaMathlibExt
