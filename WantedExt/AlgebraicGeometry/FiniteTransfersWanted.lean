@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.NisnevichTransferModels
 public import MathlibExt.AlgebraicGeometry.MotivicStandardSchemes
+public import MathlibExt.AlgebraicGeometry.FiniteTransfersMotivicNisnevichHasSheafification
 
 /-!
 # Wanted finite-transfer geometry, Nisnevich sheafification and standard motivic schemes
@@ -17,6 +18,8 @@ public import MathlibExt.AlgebraicGeometry.MotivicStandardSchemes
 Every support, local Tor module, generic length, residue degree, coordinate
 ring and source map is fixed in the public definitions. These requests
 construct the corresponding genuine geometry and category structures.
+The theorem `motivic_nisnevich_has_sheafification` is proved in
+`MathlibExt.AlgebraicGeometry.FiniteTransfersMotivicNisnevichHasSheafification`.
 No Tate representability or motivic operation theorem is assumed here.
 
 Sources: Mazza--Voevodsky--Weibel, Lectures 1--3 and 13;
@@ -71,10 +74,6 @@ def_wanted finite_correspondence_product_functor (k : Type) [Field k]
 def_wanted finite_transfer_representable_system (k : Type) [Field k]
     (D : CompositionSystem k) (G : GraphSystem k) [CorrespondenceLaws D G] [CorrespondenceAdditivity D G] :
   RepresentableSystem D G
-
-/-- Native ordinary Nisnevich module sheafification on the actual smooth scheme site. -/
-theorem_wanted motivic_nisnevich_has_sheafification (k : Type) [Field k] :
-  HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)
 
 /-- Extend the same native sheafification and its actual unit to every finite-transfer map. -/
 def_wanted finite_transfer_sheafification (k : Type) [Field k]
