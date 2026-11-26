@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresRigidit
 public import MathlibExt.NumberTheory.MultiplicativeAdditiveThreePairedSquares
 public import MathlibExt.NumberTheory.SixAndEightNonzeroSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditivePairedSquaresEqIdOfThreeOrFour
+public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditivePairedSquaresDichotomy
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresMultiplicativeAdditiveSixSquaresEqId
 
 namespace MetaMathlibExt
@@ -54,25 +55,6 @@ public theorem_wanted sum_nonzero_squares_iff_not_mem_exceptional (m n : ℕ) (h
           else if m = 5 then ({1, 2, 3, 4, 6, 7, 9, 10, 12, 15, 18, 33} : Set ℕ)
           else Set.Ico 1 m ∪
             {m + 1, m + 2, m + 4, m + 5, m + 7, m + 10, m + 13})
-
-/-- **Dichotomy for multiplicative functions additive on paired squares.** Let $k \ge 5$ and
-let $f$ be a complex-valued multiplicative function such that
-$$f\Big(\sum_{j=1}^{k} (x_j^2 + y_j^2)\Big) = \sum_{j=1}^{k} f(x_j^2 + y_j^2)$$
-for all positive integers $x_1, \dots, x_k, y_1, \dots, y_k$. Then either $f(n) = n$ for every
-positive integer $n$, or $f(n) = 0$ for every positive integer $n$ that is of the form $a^2 + b^2$
-with integers $a, b \ge 1$, or of the form $2k + t$ with $t \in \{0, 3, 6, 8, 9, 11, 12\}$, or
-satisfies $n \ge 2k + 14$.
-
-Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
-Squares*, INTEGERS 26 (2026), Article A121, Theorem 2 (`integers-2026-A121-thm-2`). -/
-public theorem_wanted multiplicative_additive_paired_squares_dichotomy
-    (k : ℕ) (hk : 5 ≤ k) (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ x y : Fin k → ℕ, (∀ j, 0 < x j) → (∀ j, 0 < y j) →
-      f (∑ j, (x j ^ 2 + y j ^ 2)) = ∑ j, f (x j ^ 2 + y j ^ 2)) :
-    (∀ n : ℕ, 0 < n → f n = n) ∨
-      ∀ n : ℕ, ((∃ a b : ℕ, 0 < a ∧ 0 < b ∧ n = a ^ 2 + b ^ 2) ∨
-          (∃ t ∈ ({0, 3, 6, 8, 9, 11, 12} : Finset ℕ), n = 2 * k + t) ∨ 2 * k + 14 ≤ n) →
-        f n = 0
 
 end
 
