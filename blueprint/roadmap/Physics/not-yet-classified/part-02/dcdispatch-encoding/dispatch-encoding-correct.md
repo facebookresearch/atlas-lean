@@ -1,0 +1,6 @@
+# Correctness of the LP encoding of DC dispatch
+
+A network has finitely many buses $v$, branches $e$ with tail and head buses and coefficients $b_e$, and generators $g$ located at buses. Let $A_{ve} = [\mathrm{tail}(e) = v] - [\mathrm{head}(e) = v]$, $L_b = A\,\mathrm{diag}(b)\,A^{\top}$, the DC branch flow $f(\theta) = \mathrm{diag}(b)\,A^{\top}\theta$, and $C_{vg} = 1$ if generator $g$ sits at bus $v$ and $0$ otherwise. Let $z = (p, \theta)$ and $M z \le q$ stand for the rows $-Cp + L_b\theta \le -d$, $Cp - L_b\theta \le d$, $\theta_r \le 0$, $-\theta_r \le 0$, $p \le p_{\max}$, $-p \le -p_{\min}$, $f(\theta) \le f_{\max}$, $-f(\theta) \le -f_{\min}$. The canonical LP has variables $x = (x^+, x^-) \ge 0$, constraints $M x^+ - M x^- \le q$ and objective vector $\ell$ equal to $-\mathrm{cost}$ on the generation entries of $x^+$, $\mathrm{cost}$ on those of $x^-$, and $0$ elsewhere. Encoding takes $z$ to $(\max(z, 0), \max(-z, 0))$; decoding takes $x$ to $x^+ - x^-$, split into generation and angles. Then:
+
+1. if $(p, \theta)$ is a feasible dispatch, its encoding is nonnegative and satisfies the LP constraints, it decodes back to $(p, \theta)$, and its objective value is $\ell \cdot x = -\mathrm{cost} \cdot p$;
+2. every $x \ge 0$ satisfying the LP constraints decodes to a feasible dispatch $(p, \theta)$ with $\ell \cdot x = -\mathrm{cost} \cdot p$.
