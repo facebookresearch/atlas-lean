@@ -12180,6 +12180,7 @@
   "MathlibExt/GroupTheory/AmenableGroup": {"to": "GroupTheory/geometric-group-theory", "title": "Amenable groups"},
   "MathlibExt/GroupTheory/AmenableLargeGrowthRateKourovka15Problem4": {"to": "GroupTheory/geometric-group-theory", "title": "Growth rates of amenable groups"},
   "MathlibExt/GroupTheory/ArtinGroup": {"to": "GroupTheory/presentations-and-decision-problems/braid-and-artin", "title": "Artin groups"},
+  "MathlibExt/GroupTheory/AutomorphismGroupOrderTotient": {"to": "GroupTheory/automorphisms/automorphism-groups", "title": "Orders of automorphism groups"},
   "MathlibExt/GroupTheory/AutomorphismGroupPrimePowerKourovka18Problem82": {"to": "GroupTheory/automorphisms/automorphism-groups", "title": "Orders of automorphism groups"},
   "MathlibExt/GroupTheory/AutomorphismOrbits": {"to": "GroupTheory/automorphisms/automorphism-groups", "title": "Groups with finitely many automorphism orbits"},
   "MathlibExt/GroupTheory/BaerSpeckerSubgroupDualFree": {"to": "GroupTheory/abelian-groups", "title": "Baer–Specker group"},
