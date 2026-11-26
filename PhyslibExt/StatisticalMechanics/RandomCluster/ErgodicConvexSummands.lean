@@ -129,7 +129,7 @@ lemma ergodic_eq_on_invariants_of_convexCombo {μ ν₁ ν₂ : Measure (ConfigS
 
 /-- If an ergodic probability measure is a convex combination `a • ν₁ + b • ν₂` with
 `a, b > 0` of probability measures, then `ν₁` and `ν₂` agree on every invariant event. -/
-theorem ergodic_summands_eq_on_invariants {μ ν₁ ν₂ : Measure (ConfigSpace E)} {a b : ℝ≥0∞}
+lemma ergodic_summands_eq_on_invariants {μ ν₁ ν₂ : Measure (ConfigSpace E)} {a b : ℝ≥0∞}
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν₁] [IsProbabilityMeasure ν₂]
     (hμ : IsErgodic (G := G) μ) (hconv : μ = a • ν₁ + b • ν₂) (ha : 0 < a) (hb : 0 < b)
     {s : Set (ConfigSpace E)} (hs : MeasurableSet s)
@@ -160,7 +160,7 @@ lemma ergodic_off_countable {φ : ℝ → Measure (ConfigSpace E)} {S : Set ℝ}
 /-- For a family `φ` of probability measures ergodic outside a set `S`, at every `p ∉ S`
 the two summands of any strictly positive convex decomposition of `φ p` agree on invariant
 events. -/
-theorem extreme_on_invariants_off_countable {φ : ℝ → Measure (ConfigSpace E)} {S : Set ℝ}
+lemma extreme_on_invariants_off_countable {φ : ℝ → Measure (ConfigSpace E)} {S : Set ℝ}
     (hpm : ∀ p, IsProbabilityMeasure (φ p))
     (herg : ∀ p ∉ S, IsErgodic (G := G) (φ p)) :
     ∀ p ∉ S, ∀ (ν₁ ν₂ : Measure (ConfigSpace E)) (a b : ℝ≥0∞),

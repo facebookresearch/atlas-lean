@@ -69,7 +69,7 @@ lemma boxConnEvent_subset_connected (d n : Nat)
 
 /-- For any probability measure on configurations of `ℤ^d`, the probability that `x` and `y` are
 connected inside the box is at most the probability that they are connected in `ℤ^d`. -/
-theorem measureReal_boxConnEvent_le_infiniteTwoPointReal
+lemma measureReal_boxConnEvent_le_infiniteTwoPointReal
     (d n : Nat)
     (mu : ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
     (x y : boxVerts d n) :

@@ -394,7 +394,7 @@ lemma shbK4_currentSum_empty_eq_seriesMass
         (fun A ↦ shbK4Boundary A = ∅) x hx
 
 /-- On a `K₄` subgraph the literal direct-path backbone weight equals the current-series weight. -/
-theorem shbK4_rhoSupport_eq_directRhoSeries
+lemma shbK4_rhoSupport_eq_directRhoSeries
     (E : Finset shbK4Edge) (h03 : shbK4Edge.e03 ∈ E)
     (x : ℝ) (hx : 0 ≤ x) :
     shb_rhoSupport (shbK4Graph E) x (fun _ ↦ 1) 0 3

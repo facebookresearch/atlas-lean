@@ -48,7 +48,7 @@ namespace Sharpness
 
 /-- The mean-field inequality `1 - M ≤ β M'` passes from finite volumes `M_n` (for all `b ≥ β`) to a
 pointwise limit `M` differentiable at `β`. -/
-theorem abml_meanfield_limit
+lemma abml_meanfield_limit
     (Mn : Nat → Real → Real) (M : Real → Real) (beta : Real)
     (_hbeta : 0 < beta)
     (hfinite : ∀ n b, beta ≤ b →

@@ -70,7 +70,7 @@ variable {d : ℕ}
 are translation invariant, they are ergodic provided they are extremal among
 translation-invariant measures (`hextW`, `hextF`), and the free limit is dominated by the
 wired one. -/
-theorem fk_q2_infiniteVolume_limits (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma fk_q2_infiniteVolume_limits (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hextW : ∀ (ν₁ ν₂ : Measure (ConfigSpace (Sym2 (Site d)))) (a b : ℝ≥0∞),
       IsTranslationInvariant (G := Multiplicative (Site d)) ν₁ →
         IsTranslationInvariant (G := Multiplicative (Site d)) ν₂ →

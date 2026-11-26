@@ -22,26 +22,27 @@ this completes the list of basic properties of the free and wired limits.
 
 ## i. Overview
 
-Ergodicity of the wired limit is taken from the wired ergodicity development and restated here; it
-implies that the two parts of any convex decomposition of the wired limit agree on
-translation-invariant events. Combining it with convergence of the finite-volume measures on
-increasing events, translation invariance of both limits, and the free-below-wired comparison gives
-the assembled list of properties. `feu_wiredIV_isErgodic` is proved unconditionally, under `d ≥ 1`
-and `0 < p < 1`. The two assembled statements are conditional: `fk_limits_properties_of_freeExtreme`
-takes `hextF`, that the free limit is extremal among translation-invariant probability measures, and
+Ergodicity of the wired limit, `cbk_wiredIV_isErgodic`, comes from the wired ergodicity
+development, unconditionally under `d ≥ 1` and `0 < p < 1`; it implies that the two parts of any
+convex decomposition of the wired limit agree on translation-invariant events. Combining it with
+convergence of the finite-volume measures on increasing events, translation invariance of both
+limits, and the free-below-wired comparison gives the assembled list of properties. The two
+assembled statements are conditional: `fk_limits_properties_of_freeExtreme` takes `hextF`, that the
+free limit is extremal among translation-invariant probability measures, and
 `feu_fk_limits_of_freeErg` takes `hFreeErg`, that the free limit is ergodic; both are used only for
 the ergodicity of the free limit.
 
 ## ii. Key results
 
-- `feu_wiredIV_isErgodic` : the wired `q = 2` limit is ergodic under translations.
+- `feu_wiredIV_extreme_on_invariants` : the two parts of a convex decomposition of the wired limit
+  agree on translation-invariant events.
 - `fk_limits_properties_of_freeExtreme` : convergence, translation invariance, ergodicity and the
   free-below-wired comparison for both limits, assuming `hextF`.
 - `feu_fk_limits_of_freeErg` : the same list, assuming `hFreeErg`.
 
 ## iii. Table of contents
 
-- A. Ergodicity of the wired limit
+- A. Convex decompositions of the wired limit
 - B. Assembled properties of the free and wired limits
 
 ## iv. References
@@ -65,15 +66,7 @@ open ConfigSpace
 
 variable {d : ℕ}
 
-/-! ## A. Ergodicity of the wired limit -/
-
-/-- For `d ≥ 1` and `0 < p < 1`, the wired `q = 2` infinite-volume measure is ergodic under
-translations of `ℤᵈ`. -/
-theorem feu_wiredIV_isErgodic (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1) :
-    IsErgodic (G := Multiplicative (Site d))
-      (wiredInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2)
-        : Measure (ConfigSpace (Sym2 (Site d)))) :=
-  cbk_wiredIV_isErgodic hd hp hp1
+/-! ## A. Convex decompositions of the wired limit -/
 
 lemma feu_wiredIV_extreme_on_invariants (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (ν₁ ν₂ : Measure (ConfigSpace (Sym2 (Site d)))) (a b : ℝ≥0∞)
@@ -85,14 +78,14 @@ lemma feu_wiredIV_extreme_on_invariants (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (h
     (hinv : ∀ g : Multiplicative (Site d),
       (shift g : ConfigSpace (Sym2 (Site d)) → ConfigSpace (Sym2 (Site d))) ⁻¹' s = s) :
     ν₁ s = ν₂ s :=
-  ergodic_summands_eq_on_invariants (feu_wiredIV_isErgodic hd hp hp1) hconv ha hb hs hinv
+  ergodic_summands_eq_on_invariants (cbk_wiredIV_isErgodic hd hp hp1) hconv ha hb hs hinv
 
 /-! ## B. Assembled properties of the free and wired limits -/
 
 /-- Basic properties of the `q = 2` free and wired limits: convergence on increasing box events,
 translation invariance, ergodicity, and free-below-wired. Conditional on `hextF`, that the free
 limit is extremal among translation-invariant probability measures. -/
-theorem fk_limits_properties_of_freeExtreme (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma fk_limits_properties_of_freeExtreme (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hextF : ∀ (ν₁ ν₂ : Measure (ConfigSpace (Sym2 (Site d)))) (a b : ℝ≥0∞),
       IsTranslationInvariant (G := Multiplicative (Site d)) ν₁ →
         IsTranslationInvariant (G := Multiplicative (Site d)) ν₂ →
@@ -136,13 +129,13 @@ theorem fk_limits_properties_of_freeExtreme (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (
   · exact flc_wiredIV_isTranslationInvariant hp hp1
   · exact fec_freeIV_isErgodic_of_extremePoint hp hp1
       (bdp_freeIV_isTranslationInvariant hp hp1) hextF
-  · exact feu_wiredIV_isErgodic hd hp hp1
+  · exact cbk_wiredIV_isErgodic hd hp hp1
   · intro N S hS
     exact (mvl_infiniteVolume_extremal N hp hp1 hS).2.2
 
 /-- The same properties of the `q = 2` free and wired limits, conditional on `hFreeErg`, that the
 free limit is ergodic. -/
-theorem feu_fk_limits_of_freeErg (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma feu_fk_limits_of_freeErg (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hFreeErg : IsErgodic (G := Multiplicative (Site d))
       (freeInfiniteVolume d hp hp1 (by norm_num : (0 : ℝ) < 2)
         : Measure (ConfigSpace (Sym2 (Site d))))) :
@@ -181,7 +174,7 @@ theorem feu_fk_limits_of_freeErg (d : ℕ) (hd : 1 ≤ d) {p : ℝ} (hp : 0 < p)
   · exact bdp_freeIV_isTranslationInvariant hp hp1
   · exact flc_wiredIV_isTranslationInvariant hp hp1
   · exact hFreeErg
-  · exact feu_wiredIV_isErgodic hd hp hp1
+  · exact cbk_wiredIV_isErgodic hd hp hp1
   · intro N S hS
     exact (mvl_infiniteVolume_extremal N hp hp1 hS).2.2
 

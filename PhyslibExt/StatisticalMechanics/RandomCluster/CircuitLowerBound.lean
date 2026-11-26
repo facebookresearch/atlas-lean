@@ -255,7 +255,7 @@ lemma cFE_pow_mul_agreeWeightSum_le {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq :
 
 /-- Conditionally on agreeing with `ψ` off `γ`, the probability that `γ` is all closed is at least
 `cFE(p, q)^{|γ|}`. -/
-theorem cFE_pow_le_condClosedOn {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma cFE_pow_le_condClosedOn {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) (ψ : ConfigSpace (Sym2 V)) :
     cFE p q ^ γ.card ≤ fkWeight G p q (closeAllOn γ ψ) / agreeWeightSum G p q γ ψ := by
   have hq0 : 0 < q := lt_of_lt_of_le one_pos hq
@@ -428,7 +428,7 @@ lemma closedMass_eq_indicator_sum (p q : ℝ) (γ : Finset (Sym2 V)) :
     rw [ite_eq_right hω, Set.indicator_of_notMem hnmem, zero_mul]
 
 /-- For `q ≥ 1`, the probability that every edge of `γ` is closed is at least `cFE(p, q)^{|γ|}`. -/
-theorem cFE_pow_le_closedEventMass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma cFE_pow_le_closedEventMass {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (γ : Finset (Sym2 V)) :
     cFE p q ^ γ.card
       ≤ ∑ ω, (closedEvent γ).indicator (fun _ => (1 : ℝ)) ω * fkProb G p q ω := by

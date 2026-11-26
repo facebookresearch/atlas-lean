@@ -57,7 +57,7 @@ variable {d : ℕ}
 
 /-- If `f` satisfies `(1/(q(1-q))) (1 - f(q)) ≤ f'(q)` on `(p̃_c, 1)` and `f(p̃_c) ≥ 0`, then
 `f(p(β)) ≥ (β - β̃_c)/β` for `β > β̃_c`. -/
-theorem bfp_integrate_perco_beta_named {J β : ℝ} (f : ℝ → ℝ) (hJ : 0 < J) (hd : 0 < d)
+lemma bfp_integrate_perco_beta_named {J β : ℝ} (f : ℝ → ℝ) (hJ : 0 < J) (hd : 0 < d)
     (htc1 : (tildePc d : ℝ) < 1) (hβ : betaTildeC d J < β)
     (hdiff : ∀ q ∈ Ico (tildePc d : ℝ) 1, DifferentiableAt ℝ f q)
     (hineq : ∀ q ∈ Ioo (tildePc d : ℝ) 1, (1 / (q * (1 - q))) * (1 - f q) ≤ deriv f q)

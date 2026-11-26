@@ -447,7 +447,7 @@ lemma sampled_grid_walks_intersect
 
 /-- A path from the left side to the right side and a path from the bottom to the top of the unit
 square, both inside the square, intersect. -/
-theorem unitSquare_paths_intersect
+lemma unitSquare_paths_intersect
     {hl hr vb vt : Fin 2 → ℝ}
     (gamma : Path hl hr) (eta : Path vb vt)
     (hgamma : Set.range gamma ⊆ {x | InUnitSquare x})
@@ -549,7 +549,7 @@ lemma normalizeRectangle_mem_unitSquare {a b c d : ℝ}
       linarith [hp.2.2.2]
 
 /-- A left-right path and a bottom-top path inside a nondegenerate closed rectangle intersect. -/
-theorem rectangle_paths_intersect
+lemma rectangle_paths_intersect
     {a b c d : ℝ} (hab : a < b) (hcd : c < d)
     {hl hr vb vt : Fin 2 → ℝ}
     (gamma : Path hl hr) (eta : Path vb vt)
@@ -637,7 +637,7 @@ lemma continuous_clampY (c d : ℝ) : Continuous (clampY c d) := by
 
 /-- A path from left of `a` to right of `b` staying in `c < y < d`, and a path from below `c` to
 above `d` staying in `a < x < b`, intersect. -/
-theorem strip_paths_intersect
+lemma strip_paths_intersect
     {a b c d : ℝ} (hab : a < b) (hcd : c < d)
     {hl hr vb vt : Fin 2 → ℝ}
     (gamma : Path hl hr) (eta : Path vb vt)

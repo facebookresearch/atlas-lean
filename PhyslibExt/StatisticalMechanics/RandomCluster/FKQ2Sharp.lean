@@ -144,7 +144,7 @@ lemma pointwise_di_fk_q2 {n : ℕ} (hn : 1 ≤ n) {p : ℝ} (hp : 0 < p) (hp1 : 
 
 /-- Integrated form at `q = 2`: if the hypotheses of the differential inequality hold on `[a,
 b]`, then `φ_a(A) ≤ exp(-(4 n c₀ κ / D)(b - a))`. -/
-theorem fk_q2_crossing_decay {n : ℕ} (hn : 1 ≤ n)
+lemma fk_q2_crossing_decay {n : ℕ} (hn : 1 ≤ n)
     (A : Set (ConfigSpace (Sym2 V)))
     (c₀ D κ : ℝ) (hc₀ : 0 < c₀) (hD : 0 < D) (hκ : 0 < κ)
     (a b : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1)
@@ -188,7 +188,7 @@ theorem fk_q2_crossing_decay {n : ℕ} (hn : 1 ≤ n)
 
 /-- Conditional vanishing of the `q = 2` percolation probability for `p ≤ p_c`, from the box
 covariance inputs `hFKcovFam` and the assumed step `hBridge` from crossing decay to `θ = 0`. -/
-theorem fkTheta_subcritical_eq_zero (d : ℕ)
+lemma fkTheta_subcritical_eq_zero (d : ℕ)
     (c₀ D κ : ℝ) (hc₀ : 0 < c₀) (hD : 0 < D) (hκ : 0 < κ)
     (a b : ℝ) (hab : a < b) (ha0 : 0 < a) (hb1 : b < 1)
     (Across : ∀ N : ℕ, Set (ConfigSpace (Sym2 (boxVerts d N))))

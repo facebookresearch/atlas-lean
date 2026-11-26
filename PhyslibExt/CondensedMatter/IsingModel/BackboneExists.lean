@@ -72,7 +72,7 @@ lemma bbe_backbone_path (m : Current V) {o x : V} (hox : o ≠ x)
 
 /-- **Backbone existence.** If `o` is joined to distinct sites `x` and `y` through the odd edges of
 `m`, there is a set `P` of odd edges of `m` whose boundary (odd-degree sites) is `{x, y}`. -/
-theorem bbe_backbone_exists (m : Current V) {o x y : V}
+lemma bbe_backbone_exists (m : Current V) {o x y : V}
     (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
     (hconnx : connP (oddEdges E m) o x) (hconny : connP (oddEdges E m) o y) :
     ∃ P ⊆ oddEdges E m, srcP P = ({x, y} : Finset V)
@@ -122,7 +122,7 @@ lemma bbe_backbone_toggle_disconnects (m : Current V) (P : Finset (Sym2 V))
 /-- Backbone existence together with its reflection identities: a set `P` of odd edges with boundary
 `{x, y}`, such that reflecting any sub-current `n ≤ m` along `P` changes its sources by `{x, y}` and
 preserves `w(n) w(m - n)`. -/
-theorem bbe_backbone_exists_toggle (G : SimpleGraph V) [DecidableRel G.Adj]
+lemma bbe_backbone_exists_toggle (G : SimpleGraph V) [DecidableRel G.Adj]
     (β : ℝ) (J : Sym2 V → ℝ) (m : Current V) {o x y : V}
     (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
     (hconnx : connP (oddEdges G.edgeFinset m) o x)

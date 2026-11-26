@@ -235,7 +235,7 @@ lemma shb_cutJoinMass_factor (β : ℝ) (J : Sym2 V → ℝ)
     (shb_summable_weight_cutRight G β J P)
 
 /-- The total weight mass factors along a cut. -/
-theorem shb_tsum_weight_cut_factor (β : ℝ) (J : Sym2 V → ℝ)
+lemma shb_tsum_weight_cut_factor (β : ℝ) (J : Sym2 V → ℝ)
     (P : G.edgeFinset → Prop) [DecidablePred P] :
     shb_fullWeightMass G β J =
       shb_cutLeftMass G β J P * shb_cutRightMass G β J P :=

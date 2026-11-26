@@ -421,7 +421,7 @@ lemma shb_normalizedExplorationRho_cons
 
 /-- Under `LocalDomainResummation` and the cut resummation identities, the normalized fiber mass
 equals the weight of the backbone exploration kernel. -/
-theorem shb_randomCurrent_rho_eq_weight
+lemma shb_randomCurrent_rho_eq_weight
     (β : ℝ) (J : Sym2 V → ℝ) (hβ : 0 ≤ β) (hJ : ∀ e, 0 ≤ J e)
     (hdom : shb_BackboneExplorationDomain.LocalDomainResummation β J)
     (fiberMass : shb_ExplorationFiberMass V)

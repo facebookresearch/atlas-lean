@@ -313,7 +313,7 @@ lemma scan_after_unitFlux_none
   simp [oddBit, unitFlux, hsub] at htrue
 
 /-- The unit flux on an active edge completes the program along the one-letter word. -/
-theorem program_complete_canonical_singleton_unitFlux
+lemma program_complete_canonical_singleton_unitFlux
     (d : shb_ExplorationDomain V) (e : d.graph.edgeFinset)
     (hactive : canonicalEdgeSegment d.graph e ∈ d.active) :
     BackboneTwoEdgeBondProgram.program.CompleteEvent d
@@ -1041,7 +1041,7 @@ lemma residualVacuum_suffix_twoUnit_covariance
 
 /-- Toggling the copy of `f` is a covariance between the full run and the active segment, and
 between the residual vacuum and the lifted residual run. -/
-theorem twoUnit_componentwise_covariance
+lemma twoUnit_componentwise_covariance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : scan.firstAdmissible
@@ -1066,7 +1066,7 @@ theorem twoUnit_componentwise_covariance
     residualVacuum_suffix_twoUnit_covariance d e f hne hactiveF⟩
 
 /-- The pair-event toggle on the two-unit flux. -/
-theorem twoUnit_pair_toggle
+lemma twoUnit_pair_toggle
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : scan.firstAdmissible
@@ -1126,7 +1126,7 @@ def TwoUnitComponentwiseEventTable
       suffix.Event d.graph (unitFlux d.graph e)))
 
 /-- The componentwise covariance is equivalent to the event truth table. -/
-theorem twoUnit_componentwise_covariance_iff_eventTable
+lemma twoUnit_componentwise_covariance_iff_eventTable
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active) :
     (BondwiseRunToggleCovariance
@@ -1146,7 +1146,7 @@ theorem twoUnit_componentwise_covariance_iff_eventTable
   rfl
 
 /-- The pair-event toggle, given the event truth table. -/
-theorem twoUnit_pair_toggle_of_eventTable
+lemma twoUnit_pair_toggle_of_eventTable
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset) (hne : e ≠ f)
     (hs : canonicalEdgeSegment d.graph e ∈ d.active)
     (htable : TwoUnitComponentwiseEventTable d e f hne hs)

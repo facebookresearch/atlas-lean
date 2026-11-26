@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RandomCluster
 public import PhyslibExt.StatisticalMechanics.RandomCluster.RussoDerivative
@@ -95,6 +96,10 @@ noncomputable def fkMeanW (pf : Sym2 V → ℝ) (q : ℝ) (g : ConfigSpace (Sym2
 noncomputable def fkCovW (pf : Sym2 V → ℝ) (q : ℝ)
     (f g : ConfigSpace (Sym2 V) → ℝ) : ℝ :=
   fkMeanW G pf q (fun ω => f ω * g ω) - fkMeanW G pf q f * fkMeanW G pf q g
+
+/-- The real-valued state `𝟙[e open]` of the edge `e`. -/
+noncomputable def coordR (e : Sym2 V) (ω : ConfigSpace (Sym2 V)) : ℝ :=
+  if ω e then (1 : ℝ) else 0
 
 omit [DecidableEq V] in
 lemma edgeProductW_pos {pf : Sym2 V → ℝ} (hpf : ∀ e, 0 < pf e) (hpf1 : ∀ e, pf e < 1)

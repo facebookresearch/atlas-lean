@@ -176,7 +176,7 @@ lemma shb_backboneSet_nonempty_iff_of_supported
 
 /-- For a current supported in `H ≤ G`, the support-lex selected backbone in `G` is the image of
 the one selected in `H`. -/
-theorem shb_backboneSelectSupport_mapLe
+lemma shb_backboneSelectSupport_mapLe
     {H G : SimpleGraph V} [DecidableRel H.Adj] [DecidableRel G.Adj]
     (hHG : H ≤ G) (n : Current V) (hSupp : shb_CurrentSupportedOn H n)
     (x y : V) :
@@ -329,7 +329,7 @@ lemma shb_currentSum_eq_sum_backboneNumSupport
   exact tsum_congr (fun m => shb_support_indicator_eq_sum G β J hxy m)
 
 /-- The sum rule P1: the two-point function is the sum of the backbone weights of all paths. -/
-theorem shb_P1_support
+lemma shb_P1_support
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (β : ℝ) (J : Sym2 V → ℝ) (hβ : 0 ≤ β)
     (hJ : ∀ e, 0 ≤ J e) {x y : V} (hxy : x ≠ y) :

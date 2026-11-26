@@ -227,7 +227,7 @@ noncomputable def fkOpenCountGeProb (p q : ℝ) (s : ℝ) : ℝ :=
 
 /-- For `q ≥ 1`, the number of open edges is at most `(p + ε) |E|` with probability at least
 `ε`. -/
-theorem den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {ε : ℝ} (hε : 0 < ε) (hεa : ε ≤ 1 - p)
     (hEpos : 0 < (G.edgeFinset.card : ℝ)) :
     ε ≤ fkOpenCountLeProb G p q ((p + ε) * (G.edgeFinset.card : ℝ)) := by
@@ -249,7 +249,7 @@ theorem den_openCount_upper_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq
 
 /-- For `q ≥ 1`, the number of open edges is at least `(p / (p + q (1 - p)) - ε) |E|` with
 probability at least `ε`. -/
-theorem den_openCount_lower_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
+lemma den_openCount_lower_deviation {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     {ε : ℝ} (hε : 0 < ε) (hεb : ε ≤ p / (p + q * (1 - p)))
     (hEpos : 0 < (G.edgeFinset.card : ℝ)) :
     ε ≤ fkOpenCountGeProb G p q

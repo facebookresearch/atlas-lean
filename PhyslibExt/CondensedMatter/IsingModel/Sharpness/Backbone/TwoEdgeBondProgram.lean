@@ -475,7 +475,7 @@ lemma complete_singleton_pair_false
   simp at hsecond
 
 /-- A current completes the two-edge program along at most one word. -/
-theorem program_complete_functional
+lemma program_complete_functional
     (d : shb_ExplorationDomain V) (m : d.graph.edgeFinset -> Nat)
     (word word' : List (shb_ExplorationSegment V))
     (hword : program.CompleteEvent d word m)
@@ -1068,7 +1068,7 @@ lemma fin3_reverse_fiber_iff :
 
 /-- On the three-vertex path, the path current lies in a two-segment fiber exactly when the scan
 order and the edge orientations agree. -/
-theorem fin3_twoSegment_fiber_iff_orientation_and_scan :
+lemma fin3_twoSegment_fiber_iff_orientation_and_scan :
     ((selectorSpec (V := Fin 3)).toPartialSelector.Fiber fin3PathDomain
           [canonicalEdgeSegment fin3PathGraph fin3LeftEdge,
             canonicalEdgeSegment fin3PathGraph fin3RightEdge]
@@ -1089,14 +1089,14 @@ theorem fin3_twoSegment_fiber_iff_orientation_and_scan :
 /-! ## F. Realization and toggles -/
 
 /-- The two-edge program realizes its selector specification. -/
-theorem program_realizes_selectorSpec :
+lemma program_realizes_selectorSpec :
     ProgramRealizes (program (V := V))
       (selectorSpec (V := V)).toPartialSelector := by
   exact ⟨selectorSpec (V := V), fun _ _ _ => Iff.rfl⟩
 
 /-- A coordinate certificate for the two-edge selector exists iff the canonical bondwise toggle
 exists. -/
-theorem selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
+lemma selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V)) (hs : s ∈ d.active) :
@@ -1111,7 +1111,7 @@ theorem selectorSpec_nonempty_canonicalCertificate_iff_toggleExists
     beta J d s ss hs
 
 /-- The canonical bondwise toggle exists, given the componentwise toggle hypothesis `h`. -/
-theorem selectorSpec_canonicalToggleExists_of_componentwise
+lemma selectorSpec_canonicalToggleExists_of_componentwise
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
     (ss : List (shb_ExplorationSegment V)) (hs : s ∈ d.active)

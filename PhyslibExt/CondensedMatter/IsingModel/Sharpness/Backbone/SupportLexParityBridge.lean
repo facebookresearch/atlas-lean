@@ -102,7 +102,7 @@ private lemma shb_sinh_eq_cosh_mul_tanh (x : ℝ) :
   field_simp
 
 /-- A parity-grouped current-series mass is `cosh^|E|` times the parity polynomial at `tanh`. -/
-theorem shb_paritySeriesMass_eq_cosh_mul_polynomial
+lemma shb_paritySeriesMass_eq_cosh_mul_polynomial
     {E : Type*} [Fintype E] [DecidableEq E]
     (P : Finset E → Prop) [DecidablePred P] (x : ℝ) :
     shbParitySeriesMass P x =

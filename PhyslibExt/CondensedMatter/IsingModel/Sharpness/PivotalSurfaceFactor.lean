@@ -152,7 +152,7 @@ lemma pivotal_surface_event_eq_withinConn {n : ℕ} {S : Finset (Site d)}
 
 /-- For a boundary edge `xy` of `S ∋ 0` with `S ⊆ Λ_{n-1}`:
 `P(xy pivotal for 0 ↔ ∂Λ_n, surface S) = P(0 ↔ x in S) · P(surface S)`. -/
-theorem pivotal_surface_factor (p : ℝ≥0) (hp : p ≤ 1)
+lemma pivotal_surface_factor (p : ℝ≥0) (hp : p ≤ 1)
     {n : ℕ} {S : Finset (Site d)} (h0S : origin d ∈ S)
     (hSinner : (S : Set (Site d)) ⊆ box d (n - 1)) (hn : 1 ≤ n)
     {e : Site d × Site d} (he : e ∈ boundaryEdges d S) :

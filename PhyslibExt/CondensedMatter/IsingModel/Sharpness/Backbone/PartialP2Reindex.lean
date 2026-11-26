@@ -143,7 +143,7 @@ lemma rawSourcePairFiberMass_eq_labeled
 
 /-- Toggling a set of copies with sources `C` that transports the pair predicates identifies the
 source-pair masses with sources `A` and `A ∆ C`. -/
-theorem rawSourcePairFiberMass_eq_of_labeledToggle
+lemma rawSourcePairFiberMass_eq_of_labeledToggle
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A C : Finset V)
     (P : Finset (FluxEdgeCopy.Copy G m))
@@ -355,7 +355,7 @@ lemma zero_not_contributes_of_source_ne_empty
 
 /-- Given the two reindexings, the chain rule for an active segment is equivalent to the equality of
 the two pair-mass sums. -/
-theorem clearedP2_iff_pairMass_tsum_eq
+lemma clearedP2_iff_pairMass_tsum_eq
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -390,7 +390,7 @@ theorem clearedP2_iff_pairMass_tsum_eq
 
 /-- The chain rule for an active segment, conditional on the reindexings `left_reindex`,
 `right_reindex` and a contributing toggle with `path_sources` and `transport`. -/
-theorem actualMass_active_of_contributingToggle
+lemma actualMass_active_of_contributingToggle
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)
@@ -432,7 +432,7 @@ theorem actualMass_active_of_contributingToggle
 
 /-- The chain rule for an active segment, conditional on the reindexings and a toggle supported in a
 cut that determines both events. -/
-theorem actualMass_active_of_contributingDeterminedToggle
+lemma actualMass_active_of_contributingDeterminedToggle
     (S : shb_PartialCurrentDynamicSelector (V := V))
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)

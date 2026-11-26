@@ -128,7 +128,7 @@ lemma numClustersBC_le_add_target_diffSet
 
 /-- The score `o(ω) + 2 k_C(ω)` is at most `o(η) + 2 k_C(η)` plus the Hamming distance from `ω` to
 `η`. -/
-theorem bcScore_le_add_configHammingCount
+lemma bcScore_le_add_configHammingCount
     (C : SimpleGraph V) [DecidableRel C.Adj]
     (omega eta : ConfigSpace (Sym2 V)) :
     openCount G omega + 2 * numClustersBC G C omega <=

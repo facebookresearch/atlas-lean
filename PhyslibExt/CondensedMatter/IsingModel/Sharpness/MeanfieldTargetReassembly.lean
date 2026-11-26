@@ -223,7 +223,7 @@ lemma mtr_boundary_le_closedPivotal_surface
 
 /-- Mean-field reassembly: if `p_e ≤ β c_e` on `D` and `m ≤ φ_D(S)` for every possible surface
 `S ∋ o`, then `m (1 - P(o ↔ B)) ≤ β ∑_{e ∈ D} c_e P(e closed pivotal for o ↔ B)`. -/
-theorem mtr_meanfield_reassembly
+lemma mtr_meanfield_reassembly
     (p c : Sym2 W -> Real) (hp : ∀ e, 0 <= p e ∧ p e <= 1)
     (D : Finset (Sym2 W)) (beta m : Real) (hbeta : 0 <= beta)
     (hc : ∀ e ∈ D, 0 <= c e)

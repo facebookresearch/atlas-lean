@@ -60,14 +60,13 @@ open StatMech.Percolation
 
 @[simp] lemma abbl_abbEdgeEquiv_symm_mk {U W : Type*}
     (sigma : U ≃ W) (a b : W) :
-    (abbEdgeEquiv sigma).symm s(a, b) = s(sigma.symm a, sigma.symm b) := by
-  apply (abbEdgeEquiv sigma).injective
-  simp [abbEdgeEquiv_mk]
+    (StatMech.Lattice.sym2Congr sigma).symm s(a, b) = s(sigma.symm a, sigma.symm b) := by
+  apply (StatMech.Lattice.sym2Congr sigma).injective
+  simp [StatMech.Lattice.sym2Congr_mk]
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : SimpleGraph V) [DecidableRel G.Adj]
 
--- the `calc` over the product of edge and site weights is slow to elaborate
 lemma abbl_residual_le_exp (J : Sym2 V → Real) (o : V)
     (beta h : Real) (hJ : ∀ e ∈ G.edgeFinset, 0 ≤ J e)
     (hbeta : 0 ≤ beta) (hh : 0 ≤ h) (k : Nat)
@@ -361,7 +360,7 @@ lemma abbl_residual_prob_le {d n : Nat} (hn : 0 < n)
 
 /-- The box magnetizations with ghost target and with boundary target differ by at most
 `e^{-h(n+1)}`. -/
-theorem abbl_abfaMag_le_abbMag_le {d n : Nat} (hn : 0 < n)
+lemma abbl_abfaMag_le_abbMag_le {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h) :
     abfaMag (sctBoxGraph d n) (abbCoupling d n)
         (sctBoxOrigin d n) beta h ≤ abbMag d n beta h ∧
@@ -588,7 +587,7 @@ lemma abbl_tendsto_boundaryError_zero (h : Real) (hh : 0 < h) :
 /-- For `h > 0`, the boundary-target box magnetization converges to the infinite-volume
 magnetization
 `abigMag(β, h)` of `ℤ^d` with a ghost. -/
-theorem abbl_tendsto_abbMag_shifted (d : Nat) (beta h : Real)
+lemma abbl_tendsto_abbMag_shifted (d : Nat) (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 < h) :
     Tendsto (fun n ↦ abbMag d (n + 1) beta h) atTop
       (nhds (abigMag (hypercubicLattice d) (abblLatticeCoupling d)

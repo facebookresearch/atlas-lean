@@ -400,7 +400,7 @@ noncomputable def rawPairFiberMass (beta : Real) (J : Sym2 V -> Real)
       rawSplitWeight G beta J m K else 0
 
 /-- The pair masses summed over `m` factor as a product of two current sums. -/
-theorem rawPairFiberMass_tsum_eq_mul
+lemma rawPairFiberMass_tsum_eq_mul
     (beta : Real) (J : Sym2 V -> Real)
     (Q R : (G.edgeFinset -> Nat) -> Prop)
     [DecidablePred Q] [DecidablePred R] :
@@ -566,7 +566,7 @@ lemma rawFiberMass_eq_labeledFiberMass
 
 /-- The switching identity for split currents: toggling a set of copies with sources `C` that
 transports `Q` to `R` identifies the masses with sources `A` and `A ∆ C`. -/
-theorem rawFiberMass_eq_of_labeledToggle
+lemma rawFiberMass_eq_of_labeledToggle
     (beta : Real) (J : Sym2 V -> Real)
     (m : G.edgeFinset -> Nat) (A C : Finset V)
     (P : Finset (FluxEdgeCopy.Copy G m))

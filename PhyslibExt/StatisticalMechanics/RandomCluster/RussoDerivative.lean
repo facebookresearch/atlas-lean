@@ -345,7 +345,7 @@ noncomputable def fkProbOf (p q : ℝ) (A : Set (ConfigSpace (Sym2 V))) : ℝ :=
 
 /-- For `0 < p < 1` and `0 < q`, the derivative in `p` of `φ_{p,q}(A)` is
 `(∑ₑ Cov(1_A, ω(e))) / (p (1 - p))`. -/
-theorem hasDerivAt_fkProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
+lemma hasDerivAt_fkProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1) {q : ℝ} (hq : 0 < q)
     (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun p => fkProbOf G p q A)
       ((∑ e ∈ G.edgeFinset, fkCov G p q (A.indicator (fun _ => (1 : ℝ))) (coord e))

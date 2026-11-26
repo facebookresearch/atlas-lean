@@ -252,7 +252,7 @@ theorem hasDerivAt_bcMean {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
   field_simp
 
 /-- Russo's formula: the `p`-derivative of `P(A)` is `(p(1 - p))⁻¹ ∑_{e ∈ E(G)} Cov(𝟙_A, ω_e)`. -/
-theorem hasDerivAt_bcProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma hasDerivAt_bcProbOf {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {q : ℝ} (hq : 0 < q) (A : Set (ConfigSpace (Sym2 V))) :
     HasDerivAt (fun p => bcProbOf G C p q A)
       ((∑ e ∈ G.edgeFinset,

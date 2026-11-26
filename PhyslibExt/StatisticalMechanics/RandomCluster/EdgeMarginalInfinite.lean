@@ -107,7 +107,7 @@ private lemma emi_one_le_gap_of_le_ne {z : ConfigSpace E × ConfigSpace E}
 
 /-- Two mass functions on finite edge configurations with a monotone coupling and equal edge
 marginals are equal. -/
-theorem mass_eq_of_monotoneCoupling_of_edgeMarg_eq
+lemma mass_eq_of_monotoneCoupling_of_edgeMarg_eq
     {P : ConfigSpace E × ConfigSpace E → ℝ} {μ ν : ConfigSpace E → ℝ}
     (hP : IsMonotoneCouplingFun P μ ν)
     (hmarg : ∀ e, edgeMargProb μ e = edgeMargProb ν e) : μ = ν := by
@@ -174,7 +174,7 @@ variable {E : Type*} [DecidableEq E]
 
 /-- If `μ` is stochastically dominated by `ν` and every edge is open with the same probability under
 both, then `μ = ν`. -/
-theorem infiniteMeasure_eq_of_edgeMarg_eq
+lemma infiniteMeasure_eq_of_edgeMarg_eq
     (μ ν : Measure (ConfigSpace E)) [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     (hdom : μ ≼ ν)
     (hmarg : ∀ e : E, μ.real {ω | ω e = true} = ν.real {ω | ω e = true}) :

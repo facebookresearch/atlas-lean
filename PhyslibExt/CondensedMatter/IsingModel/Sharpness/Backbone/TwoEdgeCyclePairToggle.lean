@@ -164,7 +164,7 @@ lemma activeSegmentFiber_congr_bits
 
 /-- A current completing the exhaustive two-edge run has the parity pattern of the two-unit flux on
 the path. -/
-theorem complete_pair_bits_eq_twoUnit
+lemma complete_pair_bits_eq_twoUnit
     (p : domain.graph.edgeFinset → Nat)
     (hcomplete :
       (BackboneTwoEdgeExhaustiveProgram.program (V := Fin 6)).CompleteEvent
@@ -840,7 +840,7 @@ lemma residualVacuum_of_zero_bits
 
 /-- On the path-plus-triangle domain, toggling `suffixCopy` maps the full-run and residual-vacuum
 pair event to the active-segment and lifted-residual pair event, given `hfirst` and `hpath`. -/
-theorem exhaustive_cycle_pair_toggle
+lemma exhaustive_cycle_pair_toggle
     (hfirst : BackboneTwoEdgeBondProgram.scan.firstAdmissible
       (fun _ b => fluxBitConfig domain.graph oddBit
         (twoUnitFlux domain.graph headEdge suffixEdge) b)
@@ -887,7 +887,7 @@ theorem exhaustive_cycle_pair_toggle
       residualVacuum_of_zero_bits (univ \ T) hzero⟩
 
 /-- A set of copies toggling the pair events exists, given `hfirst` and `hpath`. -/
-theorem exhaustive_cycle_pair_toggle_exists
+lemma exhaustive_cycle_pair_toggle_exists
     (hfirst : BackboneTwoEdgeBondProgram.scan.firstAdmissible
       (fun _ b => fluxBitConfig domain.graph oddBit
         (twoUnitFlux domain.graph headEdge suffixEdge) b)

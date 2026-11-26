@@ -220,7 +220,7 @@ lemma clusterAdaptiveInsideEdges_projection (roots : Finset V)
       fun h => hy ((clusterExploredVertex_projection_iff G roots rho y).1 h)⟩
 
 /-- The adaptive projection is idempotent. -/
-theorem clusterAdaptiveProjection_idem (roots : Finset V)
+lemma clusterAdaptiveProjection_idem (roots : Finset V)
     (rho : ConfigSpace (Sym2 V)) :
     clusterAdaptiveProjection G roots
         (clusterAdaptiveProjection G roots rho) =
@@ -325,7 +325,7 @@ lemma clusterAdaptiveInsideEdges_eq_of_agreesOff (roots : Finset V)
 
 /-- For a projected configuration `ψ`, the configurations projecting to `ψ` are exactly those
 agreeing with `ψ` off its inside edges. -/
-theorem clusterAdaptiveProjection_filter_eq_condFibre (roots : Finset V)
+lemma clusterAdaptiveProjection_filter_eq_condFibre (roots : Finset V)
     (psi : ConfigSpace (Sym2 V))
     (hpsi : clusterAdaptiveProjection G roots psi = psi) :
     Finset.univ.filter

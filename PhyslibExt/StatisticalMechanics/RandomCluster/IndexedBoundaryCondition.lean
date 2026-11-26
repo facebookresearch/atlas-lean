@@ -150,7 +150,7 @@ def indexedNumClustersBC (ends : E -> Sym2 V)
   Nat.card (indexedOpenGraph ends omega ⊔ C).ConnectedComponent
 
 /-- For wirings `C ≤ C'`, `k_C(a) + k_{C'}(b) ≤ k_C(a ⊓ b) + k_{C'}(a ⊔ b)`. -/
-theorem indexedMixed_supermodular_bc
+lemma indexedMixed_supermodular_bc
     (ends : E -> Sym2 V)
     (C C' : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel C'.Adj]
     (hCC' : C <= C') (a b : E -> Bool) :
@@ -314,7 +314,7 @@ def indexedBcEventMass (ends : E -> Sym2 V)
 
 /-- For `C ≤ C'` and `q ≥ 1`, an increasing event is at least as likely with wiring `C'` as with
 `C`. -/
-theorem indexedBcEventMass_mono_bc
+lemma indexedBcEventMass_mono_bc
     (ends : E -> Sym2 V)
     (C C' : SimpleGraph V) [DecidableRel C.Adj] [DecidableRel C'.Adj]
     (hCC' : C <= C') {p q : Real}

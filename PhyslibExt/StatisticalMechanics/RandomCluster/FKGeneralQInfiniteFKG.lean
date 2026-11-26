@@ -116,7 +116,7 @@ lemma fkgq_freeFiniteMeasure_fkg
 
 /-- FKG inequality for the free infinite-volume measure on `ℤ^d`, `q ≥ 1`, for increasing
 events of the box `Λ_N`. -/
-theorem fkgq_freeInfiniteVolume_fkg
+lemma fkgq_freeInfiniteVolume_fkg
     (N : Nat) {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)
     {S₁ S₂ : Set (ConfigSpace (Sym2 (boxVerts d N)))}
     (hS₁ : IsIncreasing S₁) (hS₂ : IsIncreasing S₂) :

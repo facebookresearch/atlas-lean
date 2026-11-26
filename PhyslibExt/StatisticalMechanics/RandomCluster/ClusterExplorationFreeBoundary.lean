@@ -170,7 +170,7 @@ lemma clusterExploration_inducedWiring_eq_bot
 
 /-- Given the root clusters, the conditional law on the unexplored pair edges is the free
 random-cluster measure on the induced unexplored graph. -/
-theorem clusterExploration_condBcProb_eq_free
+lemma clusterExploration_condBcProb_eq_free
     (rho : ConfigSpace (Sym2 V)) (roots : Finset V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (omega : ConfigSpace
@@ -215,7 +215,7 @@ theorem clusterExploration_condBcProb_eq_free
 
 /-- Given the root clusters, the conditional probability of an event of the unexplored region equals
 its free random-cluster probability on the induced graph. -/
-theorem clusterExploration_condBcProb_innerEvent_eq_free
+lemma clusterExploration_condBcProb_innerEvent_eq_free
     (rho : ConfigSpace (Sym2 V)) (roots : Finset V) {p q : Real}
     (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)
     (A : Set (ConfigSpace

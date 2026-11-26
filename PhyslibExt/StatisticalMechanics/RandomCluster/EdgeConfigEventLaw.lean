@@ -63,14 +63,14 @@ def ecz_closeOff (omega : ConfigSpace (Sym2 V)) : ecz_ClosedOff G :=
     change (if _ : e ∈ G.edgeFinset then omega e else false) = false
     rw [dite_eq_right he]⟩
 
-@[simp] theorem ecz_closeOff_apply_edge
+@[simp] lemma ecz_closeOff_apply_edge
     (omega : ConfigSpace (Sym2 V)) {e : Sym2 V}
     (he : e ∈ G.edgeFinset) :
     (ecz_closeOff G omega).1 e = omega e := by
   change (if _ : e ∈ G.edgeFinset then omega e else false) = omega e
   rw [dite_eq_left he]
 
-@[simp] theorem ecz_closeOff_val (omega : ecz_ClosedOff G) :
+@[simp] lemma ecz_closeOff_val (omega : ecz_ClosedOff G) :
     ecz_closeOff G omega.1 = omega := by
   apply Subtype.ext
   funext e
@@ -211,7 +211,7 @@ lemma ecz_eventWeight_factorization (p q : Real)
 
 /-- The FK probability of an event determined by the edges of `G` is its closed-off weight divided
 by the edge partition function. -/
-theorem fkProb_closeOff_preimage_eq (p q : Real) (A : Set (ecz_ClosedOff G)) :
+lemma fkProb_closeOff_preimage_eq (p q : Real) (A : Set (ecz_ClosedOff G)) :
     (∑ omega : ConfigSpace (Sym2 V),
         (ecz_closeOff G ⁻¹' A).indicator (fun _ => (1 : Real)) omega *
           fkProb G p q omega) =

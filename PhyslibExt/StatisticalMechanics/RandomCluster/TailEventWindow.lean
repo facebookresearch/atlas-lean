@@ -149,7 +149,7 @@ abbrev FKIsTailEvent (d : ℕ)
 
 /-- For `d ≥ 1` and a translation-invariant finite measure, every measurable translation-invariant
 edge event is almost surely equal to a tail event. -/
-theorem fk_invariant_event_ae_tail (hd : 1 ≤ d)
+lemma fk_invariant_event_ae_tail (hd : 1 ≤ d)
     {mu : Measure (ConfigSpace (Sym2 (Site d)))} [IsFiniteMeasure mu]
     (hmu : IsTranslationInvariant (G := Multiplicative (Site d)) mu) :
     ∀ s : Set (ConfigSpace (Sym2 (Site d))), MeasurableSet s →

@@ -343,7 +343,7 @@ lemma freeFiniteBox_marginal_eq_wiringMixture {N m : ℕ}
     (cbk_adjMatch _) hp hp1 (zero_lt_one.trans_le hq) A
 /-- The marginal on the box of radius `N` of the free measure on a larger box is a mixture of
 boundary-condition measures whose wirings lie below the boundary clique. -/
-theorem freeFiniteBox_marginal_specification {N m : ℕ}
+lemma freeFiniteBox_marginal_specification {N m : ℕ}
     (hNm : N < m) {p q : ℝ}
     (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) : by
     classical
@@ -396,7 +396,7 @@ theorem freeFiniteBox_marginal_specification {N m : ℕ}
 
 /-- For `q ≥ 1`, the free infinite-volume random-cluster measure on `ℤ^d` satisfies the FK-DLR
 property. -/
-theorem freeInfiniteVolume_isFKDLR {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma freeInfiniteVolume_isFKDLR {p q : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hq : 1 ≤ q) :
     IsFKDLR d p q
       (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq)) := by

@@ -59,7 +59,7 @@ theorem theta_ge_betaForm_of_two_le {d : ℕ} {J beta : ℝ}
     (pc_nontrivial_of_two_le hd).2 hbeta
 
 /-- The mean-field lower bound for `d ≥ 2` and `β ≥ β̃_c` (at `β = β̃_c` the bound is `0`). -/
-theorem theta_ge_betaForm_of_two_le_closed {d : ℕ} {J beta : ℝ}
+lemma theta_ge_betaForm_of_two_le_closed {d : ℕ} {J beta : ℝ}
     (hd : 2 ≤ d) (hJ : 0 < J) (hbeta : betaTildeC d J ≤ beta) :
     theta d (pBeta J beta).toNNReal (pBeta_toNNReal_le_one J beta) ≥
       (beta - betaTildeC d J) / beta := by

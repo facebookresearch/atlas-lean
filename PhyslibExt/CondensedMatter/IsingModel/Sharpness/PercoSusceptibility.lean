@@ -252,7 +252,7 @@ noncomputable def shk_restrictedSusceptibility (p : ℝ≥0) (hp : p ≤ 1)
 
 /-- If `φ_p(S) < 1` for some `S ∋ 0`, every restricted susceptibility satisfies
 `χ_Λ(0) ≤ |S| / (1 - φ_p(S))`. -/
-theorem shk_restrictedSusceptibility_le (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_restrictedSusceptibility_le (p : ℝ≥0) (hp : p ≤ 1)
     (S Lam : Finset (Site d)) (h0S : origin d ∈ S) (h0Lam : origin d ∈ Lam)
     (hphi : phi d p hp S < 1) :
     shk_restrictedSusceptibility p hp Lam (origin d) ≤
@@ -377,7 +377,7 @@ lemma bondParam_mono : Monotone bondParam := by
   linarith
 
 /-- Below `β̃_c^{perc}` some finite `S ∋ 0` has `φ_β(S) < 1`. -/
-theorem exists_phiBeta_witness_of_lt_tildeBetaCPerco {beta : ℝ}
+lemma exists_phiBeta_witness_of_lt_tildeBetaCPerco {beta : ℝ}
     (hbeta : beta < tildeBetaCPerco d) :
     ∃ S : Finset (Site d), origin d ∈ S ∧ phiBeta d beta S < 1 := by
   unfold tildeBetaCPerco at hbeta
@@ -484,7 +484,7 @@ lemma shk_twoPoint_partialSum_le (p : ℝ≥0) (hp : p ≤ 1)
         (mem_boxFinset.mpr (origin_mem_box' n)) hphi
 
 /-- If `φ_p(S) < 1` for some `S ∋ 0`, the two-point function `x ↦ P_p(0 ↔ x)` is summable. -/
-theorem shk_twoPoint_summable_of_phi_lt_one (p : ℝ≥0) (hp : p ≤ 1)
+lemma shk_twoPoint_summable_of_phi_lt_one (p : ℝ≥0) (hp : p ≤ 1)
     (S : Finset (Site d)) (h0S : origin d ∈ S)
     (hphi : phi d p hp S < 1) :
     Summable (shk_twoPointProb (d := d) p hp) := by

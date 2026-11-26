@@ -572,7 +572,6 @@ noncomputable def CompleteBondwiseSelectorSpec.toAsymmetricCertificate
   right_normal_form := right_normal_form
   bondwise_toggle := bondwise_toggle
 
--- the `change` and labeled-split unfolding in this proof needs extra elaboration time
 /-- For the canonical run specifications, a pair toggle forces the path to have sources
 `stepToggleSource`. -/
 lemma CompleteBondwiseSelectorSpec.path_sources_of_canonical_toggle
@@ -1017,7 +1016,7 @@ noncomputable def
     (R.canonicalToggleExists_of_componentwise beta J d s ss hs h)
 
 /-- A canonical asymmetric certificate exists iff a canonical pair toggle exists. -/
-theorem CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExists
+lemma CompleteBondwiseSelectorSpec.nonempty_canonicalCertificate_iff_toggleExists
     {P : BondwiseSegmentProgram V} (R : CompleteBondwiseSelectorSpec P)
     (beta : Real) (J : Sym2 V -> Real)
     (d : shb_ExplorationDomain V) (s : shb_ExplorationSegment V)

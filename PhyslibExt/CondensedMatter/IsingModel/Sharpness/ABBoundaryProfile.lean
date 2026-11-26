@@ -97,7 +97,7 @@ lemma abbMag_differentiableAt_joint (d n : Nat) (beta h : Real) :
 
 /-- The mean-field inequality `1 - M ≤ β ∂_β M` for the box magnetization, if `φ(S) ≥ 1` for every
 possible surface `S`. -/
-theorem abbMag_meanfield (d n : Nat) (beta h : Real)
+lemma abbMag_meanfield (d n : Nat) (beta h : Real)
     (hbeta : 0 <= beta) (hh : 0 <= h)
     (hphi : ∀ S : Finset (Option (sctBox d n)),
       some (sctBoxOrigin d n) ∈ S ->
@@ -118,7 +118,7 @@ theorem abbMag_meanfield (d n : Nat) (beta h : Real)
 
 /-- The Aizenman–Barsky envelope inequality `∂_β M ≤ J₀ U ∂_h M` for the box magnetization, if every
 site reaches the target with probability at most `U` and row sums are at most `J₀`. -/
-theorem abbMag_aizenmanBarsky_le_envelope
+lemma abbMag_aizenmanBarsky_le_envelope
     (d n : Nat) (beta h J0 U : Real)
     (hrow : ∀ x, abcrIncidentCoupling (sctBoxGraph d n)
       (abbCoupling d n) x <= J0)

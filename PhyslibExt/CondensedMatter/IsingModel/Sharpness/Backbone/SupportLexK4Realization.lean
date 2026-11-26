@@ -10,6 +10,7 @@ module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexParityBridge
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Backbone.SupportLexSelector
+import Mathlib.Algebra.BigOperators.Ring.Nat
 
 /-!
 # Realizing the `K₄` parity model by the literal backbone selector
@@ -508,7 +509,7 @@ lemma shbK4_selectsDirect03_iff_realized_minimal
 
 /-- The support-lex selector returns `p` exactly when `p` is a backbone and no backbone has a
 smaller vertex sequence. -/
-theorem shb_backboneSelectSupport_eq_some_iff
+lemma shb_backboneSelectSupport_eq_some_iff
     {V : Type*} [Fintype V] [DecidableEq V] [LinearOrder V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (n : Current V) (x y : V) (p : G.Path x y) :
@@ -552,7 +553,7 @@ theorem shb_backboneSelectSupport_eq_some_iff
 
 /-- A current on `shbK4Graph E` has sources `{0, 3}` and support-lex selected backbone the direct
 edge exactly when its odd support selects the direct edge in the parity model. -/
-theorem shbK4_source_selector_fiber_iff
+lemma shbK4_source_selector_fiber_iff
     (E : Finset shbK4Edge) (h03 : shbK4Edge.e03 ∈ E)
     (n : Current (Fin 4)) :
     (sources (shbK4Graph E) n = {(0 : Fin 4), 3} ∧

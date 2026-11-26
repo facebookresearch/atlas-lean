@@ -1142,7 +1142,7 @@ lemma hasFiniteEnergyMerge_of_singleOpen
       rwa [← forceOpenFinset_insert e F] at htrans
 
 /-- For `q ≥ 1`, the wired infinite-volume random-cluster measure has finite-energy merging. -/
-theorem wiredInfiniteVolume_hasFiniteEnergyMerge
+lemma wiredInfiniteVolume_hasFiniteEnergyMerge
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     StatMech.Percolation.HasFiniteEnergyMerge (d := d)
       (wiredInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _) := by
@@ -1153,7 +1153,7 @@ theorem wiredInfiniteVolume_hasFiniteEnergyMerge
     (fun e => wiredInfinite_setOpen_absolutelyContinuous (d := d) hp hp1 hq e)
 
 /-- For `q ≥ 1`, the free infinite-volume random-cluster measure has finite-energy merging. -/
-theorem freeInfiniteVolume_hasFiniteEnergyMerge
+lemma freeInfiniteVolume_hasFiniteEnergyMerge
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q) :
     StatMech.Percolation.HasFiniteEnergyMerge (d := d)
       (freeInfiniteVolume d hp hp1 (zero_lt_one.trans_le hq) : Measure _) := by

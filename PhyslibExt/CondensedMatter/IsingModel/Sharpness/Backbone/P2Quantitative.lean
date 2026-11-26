@@ -166,7 +166,7 @@ lemma shb_weight_removePath_factor (beta : Real) (J : Sym2 V -> Real)
 
 /-- For a backbone path of a current with sources `{x, y}`, the remaining current is sourceless and
 the weight factors along the path. -/
-theorem shb_P2_current_factor (beta : Real) (J : Sym2 V -> Real)
+lemma shb_P2_current_factor (beta : Real) (J : Sym2 V -> Real)
     {n : Current V} {x y : V} (p : IsBackbonePath G n x y) (hxy : Not (x = y))
     (hsrc : sources G n = {x, y}) :
     sources G (removeWalk n p.1) = ∅ ∧

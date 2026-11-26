@@ -260,7 +260,7 @@ lemma ivd_wiredMeanOpenCount_ge_avg (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 
 
 /-- Under the free `q = 2` box measure, the open-edge count is at most `(a + ε) |E|` with
 probability at least `ε`, where `a` is the average free edge density. -/
-theorem free_openCount_le_avgDensity_add_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma free_openCount_le_avgDensity_add_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {ε : ℝ} (hε : 0 < ε) (hεa : ε ≤ 1 - ivd_freeAvgDensity d n p)
     (hEpos : 0 < ((boxGraph d n).edgeFinset.card : ℝ)) :
     ε ≤ fkOpenCountLeProb (boxGraph d n) p 2
@@ -282,7 +282,7 @@ theorem free_openCount_le_avgDensity_add_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p
 
 /-- Under the wired `q = 2` box measure, the open-edge count is at least `(b - ε) |E|` with
 probability at least `ε`, where `b` is the average wired edge density. -/
-theorem wired_openCount_ge_avgDensity_sub_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma wired_openCount_ge_avgDensity_sub_prob_ge (n : ℕ) {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     {ε : ℝ} (hε : 0 < ε) (hεb : ε ≤ ivd_wiredAvgDensity d n p)
     (hEpos : 0 < ((boxGraph d n).edgeFinset.card : ℝ)) :
     ε ≤ ivd_wiredOpenCountGeProb d n p

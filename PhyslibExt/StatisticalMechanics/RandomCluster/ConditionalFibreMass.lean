@@ -48,7 +48,7 @@ noncomputable section
 
 /-- The boundary-conditioned mass of `A` inside the fibre of `ψ` off `F` is the fibre mass times the
 conditional probability of `A`. -/
-theorem condBcProb_event_fibre_eq_mass_mul_cond
+lemma condBcProb_event_fibre_eq_mass_mul_cond
     {V : Type*} [Fintype V] [DecidableEq V]
     (G C : SimpleGraph V) [DecidableRel G.Adj] [DecidableRel C.Adj]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 0 < q)

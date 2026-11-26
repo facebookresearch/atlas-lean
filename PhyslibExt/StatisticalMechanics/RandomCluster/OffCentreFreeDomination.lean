@@ -84,7 +84,7 @@ instance : DecidablePred (falseBoundary : Vout -> Prop) :=
 /-- For `q ≥ 1` and any outside configuration `ψ`, the free measure on the larger graph conditioned
 on `ψ` gives an increasing inner event at least its free probability on the box. See also
 `bdp_condBcProb_innerRestrict_ge` (FreeTranslationInvariance), the boundary-condition form. -/
-theorem ocd_condFreeProb_innerRestrict_ge
+lemma ocd_condFreeProb_innerRestrict_ge
     (hiota : Function.Injective iota)
     (hadj : ocd_AdjMatch Gin Gout iota)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)

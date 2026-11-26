@@ -56,7 +56,7 @@ namespace Sharpness
 /-- Forward characteristic bound: under the finite-volume inequality `∂_β M_n ≤ J C_n ∂_h M_n` with
 `C_n ≤ M` monotone and `M_n → M`, for every `ε > 0` and small `t ≥ 0`,
 `M(β + t, h) ≤ M(β, h + J (M(β, h) + ε) t)`. -/
-theorem abfc_forward_characteristic_physical_envelope
+lemma abfc_forward_characteristic_physical_envelope
     (Mn Cn : Nat → Real → Real → Real) (M : Real → Real → Real)
     (J beta h : Real)
     (hJ : 0 ≤ J) (hbeta : 0 ≤ beta) (hh : 0 < h) (hM : 0 ≤ M beta h)
@@ -196,7 +196,7 @@ theorem abfc_forward_characteristic_physical_envelope
 /-- The forward characteristic bound for the infinite-graph magnetization `abigMag`, obtained from
 an
 exhaustion by finite windows; conditional on `hrow` and `hInfiniteTarget`. -/
-theorem abfc_abig_forward_characteristic_of_exhaustion
+lemma abfc_abig_forward_characteristic_of_exhaustion
     {V : Type*} [Countable V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (J : Sym2 V → Real) (o : V) (J0 beta h : Real)

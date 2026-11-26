@@ -51,7 +51,7 @@ noncomputable section
 
 /-- If the conditioned boundary-clique measure, read on extensions of the outside configuration,
 equals `μ` pointwise, then every inner event has conditioned probability equal to its `μ`-mass. -/
-theorem ocd_condBcProb_innerEvent_eq_of_pointwise
+lemma ocd_condBcProb_innerEvent_eq_of_pointwise
     {Vin Vout : Type*}
     [Fintype Vin] [DecidableEq Vin]
     [Fintype Vout] [DecidableEq Vout]

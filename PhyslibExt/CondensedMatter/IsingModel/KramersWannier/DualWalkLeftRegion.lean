@@ -108,7 +108,7 @@ lemma closedDualWalkParity_to_boundsRegion [Nonempty V] (hG : Gp.Preconnected)
 
 /-- On a preconnected primal graph, closed dual walks bound regions if and only if their pullbacks
 meet every primal cycle an even number of times. -/
-theorem dualWalkBoundsRegion_iff_closedDualWalkParity [Nonempty V] (hG : Gp.Preconnected)
+lemma dualWalkBoundsRegion_iff_closedDualWalkParity [Nonempty V] (hG : Gp.Preconnected)
     (ψ : Sym2 V ≃ Sym2 V)
     (hsymm : ∀ e ∈ Gd.edgeFinset, ψ.symm e ∈ Gp.edgeFinset) :
     DualWalkBoundsRegion Gp Gd ψ ↔ ClosedDualWalkParity Gp Gd ψ :=
@@ -160,7 +160,7 @@ def LatticeDualWalkHasBdEdgeRegion (Gd : SimpleGraph (Site 2)) [DecidableRel Gd.
 
 /-- On `ℤ²`, closed walks of `Gd` bound regions, conditional on `LatticeDualWalkHasBdEdgeRegion Gd`.
 -/
-theorem dualWalkBoundsRegion_lattice_of_bdEdgeMatch
+lemma dualWalkBoundsRegion_lattice_of_bdEdgeMatch
     {Gd : SimpleGraph (Site 2)} [DecidableRel Gd.Adj]
     (hbridge : LatticeDualWalkHasBdEdgeRegion Gd) :
     DualWalkBoundsRegion (hypercubicLattice 2) Gd crossEdge := by

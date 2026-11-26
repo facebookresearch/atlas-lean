@@ -52,7 +52,7 @@ noncomputable section
 
 /-- For `q ≥ 1` and any walk `w` from `x` to `y`, the two-point connection probability is at least
 `c^{length w}`, where `c` is the finite-energy constant. -/
-theorem cFE_pow_walk_length_le_twoPoint
+lemma cFE_pow_walk_length_le_twoPoint
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 <= q)

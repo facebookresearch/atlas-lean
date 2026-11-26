@@ -166,7 +166,7 @@ lemma frpEdgeParam_smul (K : FiniteRangeKernel d) (beta : ℝ)
   rw [frpEdgeCoupling_smul]
 
 /-- The finite-range percolation measure is translation invariant. -/
-theorem frpMeasure_translationInvariant (K : FiniteRangeKernel d) (beta : ℝ) :
+lemma frpMeasure_translationInvariant (K : FiniteRangeKernel d) (beta : ℝ) :
     IsTranslationInvariant (G := Multiplicative (Site d)) (frpMeasure K beta) := by
   intro g
   refine ⟨measurable_shift g, ?_⟩
@@ -329,7 +329,7 @@ noncomputable def frpFirstExitSupport (K : FiniteRangeKernel d)
 
 /-- First-exit BK bound (van den Berg–Kesten): for `u ∈ S` and `B` disjoint from `S`,
 `P(u ↔ B in Λ) ≤ ∑_{(x,y)} p_{xy} P(u ↔ x in S) P(y ↔ B in Λ)` over boundary pairs of `S`. -/
-theorem frp_bk_criterion (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frp_bk_criterion (K : FiniteRangeKernel d) (beta : ℝ)
     (Lam S : Finset (Site d)) (u : Site d) (B : Set (Site d))
     (huS : u ∈ S) (hBS : ∀ z ∈ B, z ∉ S) :
     (frpMeasure K beta).real
@@ -404,7 +404,7 @@ noncomputable def frpPhi (K : FiniteRangeKernel d) (beta : ℝ)
         (connEvent (frpGraph K) (S : Set (Site d)) (0 : Site d) {q.1})
 
 /-- The one-arm event `{0 ↔ ℤ^d \ Λ_{n-1}}` in `frpGraph K`. -/
-def frpCrossingEvent (K : FiniteRangeKernel d) (n : ℕ) :
+noncomputable def frpCrossingEvent (K : FiniteRangeKernel d) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   connEvent (frpGraph K) Set.univ (0 : Site d) (box d (n - 1))ᶜ
 
@@ -665,7 +665,7 @@ lemma mem_frpShiftedBox (y z : Site d) (n : ℕ) :
     · simp
 
 /-- The one-arm event `{y ↔ ℤ^d \ Λ_{n-1}}` from the site `y`. -/
-def frpCrossingEventFrom (K : FiniteRangeKernel d) (y : Site d) (n : ℕ) :
+noncomputable def frpCrossingEventFrom (K : FiniteRangeKernel d) (y : Site d) (n : ℕ) :
     Set (ConfigSpace (Sym2 (Site d))) :=
   connEvent (frpGraph K) Set.univ y (box d (n - 1))ᶜ
 
@@ -891,7 +891,7 @@ lemma frp_subcritical_geometric (K : FiniteRangeKernel d) (beta : ℝ)
 
 /-- **Subcritical exponential decay** (Duminil-Copin–Tassion 2016) for finite-range percolation: if
 `φ_β(S) < 1` for some `S ∋ 0` inside `Λ_{L-R}`, then `P_β(0 ↔ ∂Λ_n) ≤ C e^{-cn}`. -/
-theorem frp_subcritical_decay (K : FiniteRangeKernel d) (beta : ℝ)
+lemma frp_subcritical_decay (K : FiniteRangeKernel d) (beta : ℝ)
     (S : Finset (Site d)) (h0S : (0 : Site d) ∈ S)
     (hphi : frpPhi K beta S < 1)
     (L : ℕ) (hL : 1 ≤ L) (hRL : K.range ≤ L)

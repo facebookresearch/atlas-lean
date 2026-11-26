@@ -198,7 +198,7 @@ lemma plc_freeCentredShiftDecay_one {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
 
 /-- The wired `q = 2` infinite-volume measure is translation invariant, assuming that for every
 translation and every finite edge set the wired centred-shift identity `hdecay` holds. -/
-theorem plc_wiredIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma plc_wiredIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hdecay : ∀ (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))),
       ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
         s = t.image (edgeIncl d N)
@@ -212,7 +212,7 @@ theorem plc_wiredIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 
 
 /-- The free `q = 2` infinite-volume measure is translation invariant, assuming that for every
 translation and every finite edge set the free centred-shift identity `hdecay` holds. -/
-theorem plc_freeIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
+lemma plc_freeIV_isTranslationInvariant_of_decay {p : ℝ} (hp : 0 < p) (hp1 : p < 1)
     (hdecay : ∀ (g : Multiplicative (Site d)) (s : Finset (Sym2 (Site d))),
       ∃ (N : ℕ) (t t' : Finset (Sym2 (boxVerts d N))),
         s = t.image (edgeIncl d N)

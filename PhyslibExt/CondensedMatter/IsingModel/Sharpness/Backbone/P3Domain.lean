@@ -104,7 +104,7 @@ lemma shb_P3DomainResummation_of_support
   exact (div_le_div_iff₀ hZG hZH).1 hP3
 
 /-- P3 for the support-ordered backbone weight is equivalent to the resummation inequality. -/
-theorem shb_P3_support_iff_domainResummation
+lemma shb_P3_support_iff_domainResummation
     (H G : SimpleGraph V) [DecidableRel H.Adj] [DecidableRel G.Adj]
     (hHG : H ≤ G) (β : ℝ) (J : Sym2 V → ℝ) {x y : V}
     (p : H.Path x y) :

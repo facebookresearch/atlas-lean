@@ -217,37 +217,27 @@ lemma abb_probV_section_const_eq_induce {W : Type*} [DecidableEq W]
   rw [abb_preimage_connEvent_induce G T o x] at ht
   simpa only using ht.symm
 
-/-- The bijection of unordered pairs induced by a bijection of vertices (`sym2Congr`). -/
-noncomputable def abbEdgeEquiv {V U : Type*} (sigma : V ≃ U) :
-    Sym2 V ≃ Sym2 U :=
-  StatMech.Lattice.sym2Congr sigma
-
-@[simp] lemma abbEdgeEquiv_mk {V U : Type*} (sigma : V ≃ U)
-    (x y : V) :
-    abbEdgeEquiv sigma s(x, y) = s(sigma x, sigma y) := by
-  simp [abbEdgeEquiv, StatMech.Lattice.sym2Congr_mk]
-
 lemma abb_openSub_adj_relabel {V U : Type*}
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (omega : ConfigSpace (Sym2 U)) (x y : V) :
-    (openSub G (cfgEquiv (abbEdgeEquiv sigma) omega)).Adj x y ↔
+    (openSub G (cfgEquiv (StatMech.Lattice.sym2Congr sigma) omega)).Adj x y ↔
       (openSub H omega).Adj (sigma x) (sigma y) := by
-  simp only [openSub, cfgEquiv_apply, abbEdgeEquiv_mk]
+  simp only [openSub, cfgEquiv_apply, StatMech.Lattice.sym2Congr_mk]
   exact and_congr (hG x y) Iff.rfl
 
 lemma abb_connWithin_univ_relabel {V U : Type*}
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (omega : ConfigSpace (Sym2 U)) (x y : V) :
-    ConnWithin G (cfgEquiv (abbEdgeEquiv sigma) omega) Set.univ
+    ConnWithin G (cfgEquiv (StatMech.Lattice.sym2Congr sigma) omega) Set.univ
         ⟨x, Set.mem_univ _⟩ ⟨y, Set.mem_univ _⟩ ↔
       ConnWithin H omega Set.univ
         ⟨sigma x, Set.mem_univ _⟩ ⟨sigma y, Set.mem_univ _⟩ := by
   constructor
   · intro hconn
     let f :
-        ((openSub G (cfgEquiv (abbEdgeEquiv sigma) omega)).induce
+        ((openSub G (cfgEquiv (StatMech.Lattice.sym2Congr sigma) omega)).induce
           Set.univ) →g
         ((openSub H omega).induce Set.univ) :=
       { toFun := fun z ↦ ⟨sigma z, Set.mem_univ _⟩
@@ -257,7 +247,7 @@ lemma abb_connWithin_univ_relabel {V U : Type*}
   · intro hconn
     let f :
         ((openSub H omega).induce Set.univ) →g
-        ((openSub G (cfgEquiv (abbEdgeEquiv sigma) omega)).induce
+        ((openSub G (cfgEquiv (StatMech.Lattice.sym2Congr sigma) omega)).induce
           Set.univ) :=
       { toFun := fun z ↦ ⟨sigma.symm z, Set.mem_univ _⟩
         map_rel' := fun {a b} hab ↦ by
@@ -276,11 +266,11 @@ lemma abb_preimage_connEvent_relabel {V U : Type*}
     (G : SimpleGraph V) (H : SimpleGraph U) (sigma : V ≃ U)
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (o x : V) :
-    (cfgEquiv (abbEdgeEquiv sigma)) ⁻¹'
+    (cfgEquiv (StatMech.Lattice.sym2Congr sigma)) ⁻¹'
         connEvent G Set.univ o {x} =
       connEvent H Set.univ (sigma o) {sigma x} := by
   ext omega
-  change ConnToSet G (cfgEquiv (abbEdgeEquiv sigma) omega)
+  change ConnToSet G (cfgEquiv (StatMech.Lattice.sym2Congr sigma) omega)
       Set.univ o {x} ↔ ConnToSet H omega Set.univ (sigma o) {sigma x}
   constructor
   · rintro ⟨_, y, _, hy, hconn⟩
@@ -300,10 +290,10 @@ lemma abb_probV_connEvent_relabel {V U : Type*}
     (hG : ∀ x y, G.Adj x y ↔ H.Adj (sigma x) (sigma y))
     (p : Sym2 V → Real) (o x : V) :
     probV p (connEvent G Set.univ o {x}) =
-      probV (fun e : Sym2 U ↦ p ((abbEdgeEquiv sigma).symm e))
+      probV (fun e : Sym2 U ↦ p ((StatMech.Lattice.sym2Congr sigma).symm e))
         (connEvent H Set.univ (sigma o) {sigma x}) := by
   rw [← abb_preimage_connEvent_relabel G H sigma hG o x]
-  exact abfs_probV_transfer (abbEdgeEquiv sigma) p _
+  exact abfs_probV_transfer (StatMech.Lattice.sym2Congr sigma) p _
 
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
@@ -532,7 +522,7 @@ lemma abb_surface_conn_prob_eq_site {d n : Nat}
   let p := abfaParams (sctBoxGraph d n) (abbCoupling d n) beta h
   let qS : Sym2 S → Real := fun e ↦ p (Sym2.map Subtype.val e)
   let qT : Sym2 T → Real := fun e ↦
-    qS ((abbEdgeEquiv (abbSurfaceEquiv hocc)).symm e)
+    qS ((StatMech.Lattice.sym2Congr (abbSurfaceEquiv hocc)).symm e)
   let r : Real := pBeta 1 beta
   have hJ : ∀ e ∈ (sctBoxGraph d n).edgeFinset,
       0 ≤ abbCoupling d n e := by
@@ -548,11 +538,11 @@ lemma abb_surface_conn_prob_eq_site {d n : Nat}
   have hqT_edge (a b : T) (hab : GT.Adj a b) : qT s(a, b) = r := by
     have habBox : (sctBoxGraph d n).Adj (a : sctBox d n)
         (b : sctBox d n) := hab
-    have hinv : (abbEdgeEquiv (abbSurfaceEquiv hocc)).symm s(a, b) =
+    have hinv : (StatMech.Lattice.sym2Congr (abbSurfaceEquiv hocc)).symm s(a, b) =
         s((abbSurfaceEquiv hocc).symm a,
           (abbSurfaceEquiv hocc).symm b) := by
-      apply (abbEdgeEquiv (abbSurfaceEquiv hocc)).injective
-      simp [abbEdgeEquiv_mk]
+      apply (StatMech.Lattice.sym2Congr (abbSurfaceEquiv hocc)).injective
+      simp [StatMech.Lattice.sym2Congr_mk]
     simp only [qT, qS, p, r]
     rw [hinv, Sym2.map_mk, abbSurfaceEquiv_symm_apply,
       abbSurfaceEquiv_symm_apply]
@@ -593,7 +583,6 @@ lemma abb_surface_conn_prob_eq_site {d n : Nat}
           (abbSiteSurfaceEquiv_adj S) (fun _ : Sym2 T ↦ r)
           (abbSurfaceEquiv hocc o) (abbSurfaceEquiv hocc x))
 
--- transporting the measure along the surface equivalence is slow to elaborate
 lemma abb_connWithinProb_eq_probV_induce {d : Nat}
     (p : NNReal) (hp : p ≤ 1) (T : Finset (Site d)) (x : Site d)
     (ho : origin d ∈ T) (hx : x ∈ T) :
@@ -867,7 +856,7 @@ lemma image_abbPhysicalBoundaryPairs {d n : Nat}
 
 /-- For a possible surface `S ∋ o`, the box `φ(S)` equals the percolation `φ_p` of its site set,
 with `p = 1 - e^{-β}`. -/
-theorem abbPhi_eq_phi {d n : Nat} (hn : 0 < n)
+lemma abbPhi_eq_phi {d n : Nat} (hn : 0 < n)
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -975,7 +964,7 @@ lemma abbPhi_differentiableAt_beta (d n : Nat)
   · simp [he]
 
 /-- `φ(S) ≥ 1` for every possible surface `S ∋ o`, when `p̃_c ≤ p(β)`. -/
-theorem abbPhi_ge_one_of_tildePc_le {d n : Nat} (hn : 0 < n)
+lemma abbPhi_ge_one_of_tildePc_le {d n : Nat} (hn : 0 < n)
     {S : Finset (Option (sctBox d n))}
     (hocc : (mpiSurfaceEvent (withGhost (sctBoxGraph d n))
       (abbTarget d n) S).Nonempty)
@@ -1011,7 +1000,7 @@ theorem abbPhi_ge_one_of_tildePc_le {d n : Nat} (hn : 0 < n)
 /-! ## E. The mean-field inequality -/
 
 /-- The mean-field inequality `1 - M ≤ β ∂_β M` for the box magnetization when `p(β) > p̃_c`. -/
-theorem abbMag_meanfield_of_gt_tildePc {d n : Nat} (hn : 0 < n)
+lemma abbMag_meanfield_of_gt_tildePc {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h)
     (hgt : tildePc d < bondParam beta) :
     1 - abbMag d n beta h ≤
@@ -1021,7 +1010,7 @@ theorem abbMag_meanfield_of_gt_tildePc {d n : Nat} (hn : 0 < n)
   exact abbPhi_ge_one_of_gt_tildePc hn hocc ho beta h hbeta hh hgt
 
 /-- The mean-field inequality `1 - M ≤ β ∂_β M` for the box magnetization when `p(β) ≥ p̃_c`. -/
-theorem abbMag_meanfield_of_tildePc_le {d n : Nat} (hn : 0 < n)
+lemma abbMag_meanfield_of_tildePc_le {d n : Nat} (hn : 0 < n)
     (beta h : Real) (hbeta : 0 ≤ beta) (hh : 0 ≤ h)
     (hge : tildePc d ≤ bondParam beta) :
     1 - abbMag d n beta h ≤

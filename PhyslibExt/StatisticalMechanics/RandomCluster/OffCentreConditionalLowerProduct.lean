@@ -58,7 +58,7 @@ variable {Vin Vout : Type*}
 
 /-- For `q ≥ 1`, the free mass of an increasing inner event times the boundary-clique mass of an
 event depending only on outside edges is at most the boundary-clique mass of their intersection. -/
-theorem ocd_freeMass_mul_outsideMass_le_inter
+lemma ocd_freeMass_mul_outsideMass_le_inter
     (Gin : SimpleGraph Vin) [DecidableRel Gin.Adj]
     (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
     (ιV : Vin → Vout) (bdryOut : Vout → Prop) [DecidablePred bdryOut]
@@ -89,7 +89,7 @@ theorem ocd_freeMass_mul_outsideMass_le_inter
 
 /-- For `q ≥ 1`, the free mass of an increasing inner event times the free mass on the larger
 graph of an event depending only on outside edges is at most the free mass of their intersection. -/
-theorem ocd_freeMass_mul_freeOutsideMass_le_inter
+lemma ocd_freeMass_mul_freeOutsideMass_le_inter
     (Gin : SimpleGraph Vin) [DecidableRel Gin.Adj]
     (Gout : SimpleGraph Vout) [DecidableRel Gout.Adj]
     (ιV : Vin → Vout)

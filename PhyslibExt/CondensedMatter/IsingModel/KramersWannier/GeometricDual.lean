@@ -202,7 +202,7 @@ lemma kwg_dualGraph_isLink_iff (P : PlanarZ2Subgraph) (e : kwg_Edge P)
     (kwg_dualGraph P).IsLink e x y ↔ kwg_dualEnds P e = s(x, y) := Iff.rfl
 
 /-- `P` has exactly one unbounded face. -/
-theorem kwg_unique_outerFace (P : PlanarZ2Subgraph) :
+lemma kwg_unique_outerFace (P : PlanarZ2Subgraph) :
     ∃! C : kwg_Face P, C.supp.Infinite :=
   jfc_whb_unique_infinite_component P
 
@@ -849,7 +849,7 @@ lemma kwg_exists_colour_of_evenOnCycles {V : Type*} [Fintype V] [DecidableEq V]
         simp [hD, hdis]
 
 /-- Every even set of dual edges is the cut set of a spin configuration of `P`. -/
-theorem kwg_dualEven_exists_primalCut (P : PlanarZ2Subgraph)
+lemma kwg_dualEven_exists_primalCut (P : PlanarZ2Subgraph)
     (F : Finset (kwg_Edge P)) (hev : kwg_IsEven (kwg_dualEnds P) F) :
     ∃ c : ConfigSpace P.V, kwg_cutSet (kwg_primalEnds P) c = F := by
   classical
@@ -925,7 +925,7 @@ lemma kwg_componentIncident_isEven (P : PlanarZ2Subgraph) (C : kwg_Face P) : by
   exact kwg_componentBoundaryGraph_even P C x
 
 /-- The cut set of every spin configuration of `P` is an even set of dual edges. -/
-theorem kwg_primalCut_isEven (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
+lemma kwg_primalCut_isEven (P : PlanarZ2Subgraph) (c : ConfigSpace P.V) :
     kwg_IsEven (kwg_dualEnds P) (kwg_cutSet (kwg_primalEnds P) c) := by
   classical
   intro C
@@ -1221,7 +1221,7 @@ def kwg_GeometricCutCycleDuality (P : PlanarZ2Subgraph) : Prop := by
 
 /-- **Cut–cycle duality** for finite planar subgraphs of `ℤ²`: even sets of dual edges are exactly
 primal cut sets. -/
-theorem kwg_geometricCutCycleDuality (P : PlanarZ2Subgraph) :
+lemma kwg_geometricCutCycleDuality (P : PlanarZ2Subgraph) :
     kwg_GeometricCutCycleDuality P := by
   intro F
   constructor
@@ -1239,7 +1239,7 @@ def kwg_ColourSidesConnected {V : Type*} (G : SimpleGraph V) (c : V → Bool) : 
 set_option linter.unusedDecidableInType false in
 /-- If both colour classes of `c` are connected, every nonempty cut set inside `cut(c)` equals
 `cut(c)` (minimal cuts). -/
-theorem kwg_cutEdges_eq_of_nonempty_subset_of_colourSidesConnected
+lemma kwg_cutEdges_eq_of_nonempty_subset_of_colourSidesConnected
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (c d : V → Bool)
     (hcconn : kwg_ColourSidesConnected G c)
@@ -1963,7 +1963,7 @@ lemma kwg_cutEvenMatching_of_duality (P : PlanarZ2Subgraph) (t mult : ℝ)
     norm_num
 
 /-- The cut/even matching for `P` with factor `2^{#components of P}`. -/
-theorem kwg_geometricCutEvenMatching (P : PlanarZ2Subgraph) (t : ℝ) :
+lemma kwg_geometricCutEvenMatching (P : PlanarZ2Subgraph) (t : ℝ) :
     kwg_GeometricCutEvenMatching P t
       ((2 : ℝ) ^ Nat.card P.G.ConnectedComponent) := by
   classical
@@ -1983,7 +1983,7 @@ theorem kwg_geometricCutEvenMatching (P : PlanarZ2Subgraph) (t : ℝ) :
   norm_num
 
 /-- The cut/even matching for connected `P` with factor `2`. -/
-theorem kwg_geometricCutEvenMatching_of_connected (P : PlanarZ2Subgraph)
+lemma kwg_geometricCutEvenMatching_of_connected (P : PlanarZ2Subgraph)
     (hconn : P.G.Connected) (t : ℝ) : kwg_GeometricCutEvenMatching P t 2 := by
   classical
   let : Nonempty P.V := hconn.nonempty
@@ -2046,7 +2046,7 @@ lemma kwg_dualContourMatching_of_cutMatching (P : PlanarZ2Subgraph)
   field_simp
 
 /-- Kramers–Wannier duality conditional on the cut/even matching with factor `2`. -/
-theorem kwg_isingZ_duality_of_cutMatching (P : PlanarZ2Subgraph)
+lemma kwg_isingZ_duality_of_cutMatching (P : PlanarZ2Subgraph)
     (β βstar : ℝ) (htemp : Real.tanh βstar = Real.exp (-2 * β))
     (hmatch : kwg_GeometricCutEvenMatching P (Real.exp (-2 * β)) 2) : by
     letI : Fintype P.V := Fintype.ofFinite P.V

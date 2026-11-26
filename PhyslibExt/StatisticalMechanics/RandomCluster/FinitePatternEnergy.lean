@@ -269,7 +269,7 @@ noncomputable def setPattern (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
   fun e => if he : e ∈ I then eta ⟨e, he⟩ else psi e
 
 omit [Fintype V] in
-@[simp] theorem setPattern_of_mem {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
+@[simp] lemma setPattern_of_mem {I : Finset (Sym2 V)} (eta : ConfigSpace ↥I)
     {e : Sym2 V} (he : e ∈ I) (psi : ConfigSpace (Sym2 V)) :
     setPattern I eta psi e = eta ⟨e, he⟩ := by
   simp [setPattern, he]
@@ -795,7 +795,7 @@ lemma condFkProb_cross_outside
 
 /-- Finite energy for the free measure: for an event `B` depending only on edges off `I`, `cFE ^
 |I| P(B) ≤ P(pattern η on I, B)`. -/
-theorem cFE_pow_mul_event_le_pattern_inter
+lemma cFE_pow_mul_event_le_pattern_inter
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
     (B : Set (ConfigSpace (Sym2 V))) (hB : DependsOnOutside I B) :
@@ -822,7 +822,7 @@ theorem cFE_pow_mul_event_le_pattern_inter
 
 /-- Finite energy with boundary wiring `C`: for an event `B` depending only on edges off `I`,
 `cFE ^ |I| P(B) ≤ P(pattern η on I, B)`. -/
-theorem cFE_pow_mul_bcEvent_le_pattern_inter
+lemma cFE_pow_mul_bcEvent_le_pattern_inter
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)
@@ -853,7 +853,7 @@ theorem cFE_pow_mul_bcEvent_le_pattern_inter
 /-- Finite-energy modification bound: replacing the edges of `I` by the pattern `η` changes
 event probabilities by at most a factor `cFE ^ |I|`, `cFE ^ |I| P(setPattern I η ⁻¹' A) ≤
 P(A)`. -/
-theorem cFE_pow_mul_bcPreimage_le_event
+lemma cFE_pow_mul_bcPreimage_le_event
     (C : SimpleGraph V) [DecidableRel C.Adj]
     {p q : ℝ} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)
     (I : Finset (Sym2 V)) (eta : ConfigSpace ↥I)

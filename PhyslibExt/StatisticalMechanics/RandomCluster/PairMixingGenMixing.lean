@@ -130,10 +130,9 @@ lemma fmu_real_inter_shift_eq_cross_sum [Countable E]
 
 /-! ## B. From pair mixing to general mixing -/
 
--- the expansion of every cylinder indicator into multi-edge terms is elaborated in one proof
 /-- If `mu` is mixing on multi-edge open events, it is mixing on every finite family of measurable
 cylinder events. -/
-theorem fmu_genMixing_of_pairMixing [Countable E]
+lemma fmu_genMixing_of_pairMixing [Countable E]
     [IsProbabilityMeasure mu]
     (hmix : fmu_PairMixing (G := G) mu) :
     fmu_GenMixing (G := G) mu := by

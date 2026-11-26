@@ -82,7 +82,7 @@ noncomputable def abmgTargetPhi (J : Sym2 V -> Real) (o : V)
 
 /-- Mean-field inequality with a target set: if `m ≤ φ(S)` for every possible surface `S ∋ o`, then
 `m (1 - M_B) ≤ β ∂_β M_B`. -/
-theorem abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
+lemma abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
     (B : Set (Option V)) (beta h m : Real)
     (hJ : ∀ e ∈ G.edgeFinset, 0 <= J e)
     (hbeta : 0 <= beta) (hh : 0 <= h)
@@ -129,7 +129,7 @@ theorem abmg_meanfield_target_finite (J : Sym2 V -> Real) (o : V)
 
 /-- Mean-field inequality for the magnetization: if `m ≤ φ(S)` for every possible surface `S ∋ o`,
 then `m (1 - M) ≤ β ∂_β M`, where `M` is the probability that `o` reaches the ghost. -/
-theorem abmg_meanfield_finite (J : Sym2 V -> Real) (o : V)
+lemma abmg_meanfield_finite (J : Sym2 V -> Real) (o : V)
     (beta h m : Real) (hJ : ∀ e ∈ G.edgeFinset, 0 <= J e)
     (hbeta : 0 <= beta) (hh : 0 <= h)
     (hm : ∀ S : Finset (Option V), some o ∈ S ->

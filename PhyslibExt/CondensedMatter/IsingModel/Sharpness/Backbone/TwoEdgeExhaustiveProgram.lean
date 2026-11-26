@@ -421,7 +421,7 @@ lemma residualVacuum_suffix_twoUnit_covariance
 
 /-- On a two-unit flux, toggling the copy of the second edge is a componentwise covariance for the
 exhaustive program. -/
-theorem twoUnit_componentwise_covariance
+lemma twoUnit_componentwise_covariance
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : BackboneTwoEdgeBondProgram.scan.firstAdmissible
@@ -449,7 +449,7 @@ theorem twoUnit_componentwise_covariance
     residualVacuum_suffix_twoUnit_covariance d e f hne hactiveF⟩
 
 /-- The pair-event toggle on two-unit fluxes for the exhaustive program. -/
-theorem twoUnit_pair_toggle
+lemma twoUnit_pair_toggle
     (d : shb_ExplorationDomain V) (e f : d.graph.edgeFinset)
     (hne : e ≠ f)
     (hfirst : BackboneTwoEdgeBondProgram.scan.firstAdmissible

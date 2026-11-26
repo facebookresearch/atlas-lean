@@ -144,7 +144,7 @@ set_option linter.unusedFintypeInType false in
 -- The instance binder is kept so that existing callers and the statement are unchanged.
 /-- Self-consistent susceptibility bound: if every connection `u ↔ x` leaving `S` decomposes through
 the first exit edge (`hincl`), then `χ ≤ |S| + φ(S) χ`, by the BK inequality. -/
-theorem susceptibility_self_consistent_bk
+lemma susceptibility_self_consistent_bk
     [Fintype V] [DecidableEq V] {p : ℝ≥0} (hp : p ≤ 1) (G : SimpleGraph V)
     (Lam S : Finset V) (hSΛ : S ⊆ Lam) (u : V) {κ : Type*} (bnd : Finset κ)
     (bp : κ → V × V)

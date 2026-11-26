@@ -108,7 +108,7 @@ lemma dow_bridge_iff_crossEdge_mem_iff_shared_mem {a : Site 2}
 
 /-- `rpc_CrossEdgeOddIffOnWalk Vc` iff the boundary edges of the inside region of `Vc` are exactly
 the edges of `Vc`. -/
-theorem dow_bridge_iff_bdEdge_shared_mem {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) :
+lemma dow_bridge_iff_bdEdge_shared_mem {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a) :
     rpc_CrossEdgeOddIffOnWalk Vc ↔
       (∀ {u v : Site 2}, (hypercubicLattice 2).Adj u v →
         (bdEdge (jec_leftRegion Vc) s(u, v) ↔ s(u, v) ∈ Vc.edges)) := by
@@ -122,7 +122,7 @@ theorem dow_bridge_iff_bdEdge_shared_mem {a : Site 2} (Vc : (hypercubicLattice 2
 
 /-- `rpc_CrossEdgeOddIffOnWalk Vc` iff `jbw_hard_gap Vc` and every boundary edge of the inside is an
 edge of `Vc`. -/
-theorem dow_bridge_iff_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+lemma dow_bridge_iff_hardGap_and_reverse {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     (_hnd : Vc.edges.Nodup) :
     rpc_CrossEdgeOddIffOnWalk Vc ↔
       (jbw_hard_gap Vc ∧

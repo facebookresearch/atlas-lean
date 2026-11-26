@@ -89,7 +89,7 @@ lemma sas_lt_betaTildeC_iff {J β : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d <
 for `d > 0`, `J > 0` and `p_c(d) < 1`, `p̃_c = p_c`, `β > β̃_c ↔ p(β) > p̃_c`, the one-arm
 probability decays exponentially when `p(β) ∈ tildePcSet d`, and `θ(p(β)) ≥ (β - β̃_c)/β` for
 `β > β̃_c`. -/
-theorem sas_sharpness_betaForm {J : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d < 1) :
+lemma sas_sharpness_betaForm {J : ℝ} (hJ : 0 < J) (hd : 0 < d) (hpc : pc d < 1) :
     tildePc d = pc d
       ∧ (∀ β : ℝ, (betaTildeC d J < β ↔ (tildePc d : ℝ) < pBeta J β))
       ∧ (∀ β : ℝ, (pBeta J β).toNNReal ∈ tildePcSet d →

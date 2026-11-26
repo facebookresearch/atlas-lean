@@ -224,7 +224,7 @@ lemma hnw_gap_exactlyOne (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
 open Classical in
 /-- Inclusion–exclusion identity: summed over `M`, the gap equals the none-connected mass minus
 twice the all-connected mass. Conditional on `hcoh`. -/
-theorem hnw_inclusion_exclusion_decomp (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
+lemma hnw_inclusion_exclusion_decomp (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
     (hnd : ∀ m ∈ M, ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V)
     (hm : ∀ m ∈ M, Sharpness.sources G m = A)
     {o x y : V} (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
@@ -284,7 +284,7 @@ lemma hnw_closure_of_hdom (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V
 open Classical in
 /-- **Three-point inequality** (GHS type) for split masses, conditional on `hcoh` and `hdom`:
 `∑ mass(A ∆ {x,y}) + ∑ mass(A ∆ {o,y}) + ∑ mass(A ∆ {o,x}) ≤ ∑ mass(A)` over `M`. -/
-theorem hnw_ghs_distinct_site_of_hdom (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
+lemma hnw_ghs_distinct_site_of_hdom (β : ℝ) (J : Sym2 V → ℝ) (M : Finset (Current V))
     (hnd : ∀ m ∈ M, ∀ e ∈ G.edgeFinset, ¬ e.IsDiag) (A : Finset V)
     (hm : ∀ m ∈ M, Sharpness.sources G m = A)
     {o x y : V} (hox : o ≠ x) (hoy : o ≠ y) (hxy : x ≠ y)
@@ -351,7 +351,7 @@ lemma hnw_addBackbone_sources (m : Current V) (P : Finset (Sym2 V)) (hP : P ⊆ 
       Sharpness.sources_add, hnw_sources_indicator G P hP]
 
 /-- Weight of the current `m + 1_P`: `w(m) ∏_{e ∈ P} βJ_e / (m_e + 1)`. -/
-theorem hnw_addBackbone_weight (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
+lemma hnw_addBackbone_weight (β : ℝ) (J : Sym2 V → ℝ) (m : Current V)
     (P : Finset (Sym2 V)) :
     Sharpness.weight G β J (fun e => m e + (if e ∈ P then 1 else 0))
       = Sharpness.weight G β J m

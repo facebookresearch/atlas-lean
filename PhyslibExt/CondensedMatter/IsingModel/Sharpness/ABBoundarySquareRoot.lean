@@ -14,12 +14,13 @@ public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.PercoSusceptibilit
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.TildePcBetaForm
 public import PhyslibExt.StatisticalMechanics.RandomCluster.PcUpperViaFK
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.PlanarTopology
+import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # The mean-field lower bound `M(β̃_c, h) ≥ c √h`
 
 At and above the critical point `β̃_c` of bond percolation on `ℤ^d`, the magnetization with a ghost
-field satisfies `M(β, h) ≥ c √h` for small `h > 0`: the critical exponent `δ` is at most `2`.
+field satisfies `M(β, h) ≥ c √h` for small `h > 0`: the critical exponent `δ` is at least `2`.
 
 ## i. Overview
 
@@ -117,7 +118,7 @@ lemma abbs_latticeCoupling_window_row {d : Nat} (S : Finset (Site d))
 
 /-- The forward characteristic bound `M(β + t, h) ≤ M(β, h + 2d (M(β, h) + ε) t)` for small `t ≥ 0`,
 on `ℤ^d` with unit couplings. -/
-theorem abbs_forward_characteristic {d : Nat} (beta h : Real)
+lemma abbs_forward_characteristic {d : Nat} (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 < h) :
     ∀ epsilon, 0 < epsilon → ∃ delta > 0,
       ∀ t ∈ Icc (0 : Real) delta,
@@ -209,7 +210,7 @@ lemma abbs_infinite_integratingFactor_antitone {d : Nat}
       beta h hbeta hh.le hcrit hb₁ hb₂ hb₁₂
 
 /-- For `p̃_c ≤ 1 - e^{-β}` and `h > 0`: `1 - M(β, h) ≤ 2dβ M(β, h) ∂_h M(β, h)`. -/
-theorem abbs_infinite_field_meanfield {d : Nat} (beta h : Real)
+lemma abbs_infinite_field_meanfield {d : Nat} (beta h : Real)
     (hbeta : 0 ≤ beta) (hh : 0 < h)
     (hcrit : tildePc d ≤ bondParam beta) :
     1 - abigMag (hypercubicLattice d) (abblLatticeCoupling d)
@@ -409,7 +410,7 @@ lemma abbs_field_sq_lower_bound_pos (K : Real) (hK : 0 < K)
 
 /-- If `m ≥ 0` is nondecreasing and `1 - m ≤ K m m'` on `h > 0`, then `m(h) ≥ c √h` for
 `0 < h ≤ K/4`. -/
-theorem abbs_field_sqrt_lower_bound_pos (K : Real) (hK : 0 < K)
+lemma abbs_field_sqrt_lower_bound_pos (K : Real) (hK : 0 < K)
     (m : Real → Real)
     (hdiff : ∀ h ∈ Ioi (0 : Real), DifferentiableAt Real m h)
     (hmono : ∀ h ∈ Ioi (0 : Real), 0 ≤ deriv m h)
@@ -442,7 +443,7 @@ theorem abbs_field_sqrt_lower_bound_pos (K : Real) (hK : 0 < K)
 /-! ## E. The square-root lower bound -/
 
 /-- For `p̃_c ≤ 1 - e^{-β}`: `M(β, h) ≥ c √h` for `0 < h ≤ 2dβ/4`. -/
-theorem abbs_perco_meanfield_sqrt {d : Nat} (hd : 0 < d)
+lemma abbs_perco_meanfield_sqrt {d : Nat} (hd : 0 < d)
     (beta : Real) (hbeta : 0 < beta)
     (hcrit : tildePc d ≤ bondParam beta) :
     ∃ c > 0, ∀ h ∈ Ioc (0 : Real) (beta * (2 * d : Real) / 4),
@@ -488,7 +489,7 @@ theorem abbs_perco_meanfield_sqrt {d : Nat} (hd : 0 < d)
       abbs_infinite_field_meanfield beta h hbeta.le hh hcrit
 
 /-- At `β = β̃_c`, assuming `p̃_c < 1`: `M(β̃_c, h) ≥ c √h` for small `h > 0`. -/
-theorem abbs_perco_meanfield_sqrt_critical {d : Nat} (hd : 0 < d)
+lemma abbs_perco_meanfield_sqrt_critical {d : Nat} (hd : 0 < d)
     (htc1 : (tildePc d : Real) < 1) :
     ∃ c > 0, ∀ h ∈ Ioc (0 : Real)
         (betaTildeC d 1 * (2 * d : Real) / 4),
@@ -503,7 +504,7 @@ theorem abbs_perco_meanfield_sqrt_critical {d : Nat} (hd : 0 < d)
       pBeta_betaTildeC one_pos htc1]
   exact abbs_perco_meanfield_sqrt hd (betaTildeC d 1) hbeta hparam.ge
 
-/-- **Mean-field bound `δ ≤ 2`** (Aizenman–Barsky 1987) for bond percolation on `ℤ^d`, `d ≥ 2`:
+/-- **Mean-field bound `δ ≥ 2`** (Aizenman–Barsky 1987) for bond percolation on `ℤ^d`, `d ≥ 2`:
 `M(β̃_c, h) ≥ c √h` for `0 < h ≤ 2d β̃_c/4`. Unconditional. -/
 theorem abigMag_critical_ge_sqrt {d : Nat} (hd : 2 ≤ d) :
     ∃ c > 0, ∀ h ∈ Ioc (0 : Real)

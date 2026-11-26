@@ -324,7 +324,7 @@ noncomputable def rpc_crossEdge (u v : Site 2) : Sym2 (Site 2) := by
 
 /-- A lattice edge `uv` is a boundary edge of the inside region of `Vc` iff `Vc` traverses
 `rpc_crossEdge u v` an odd number of times. -/
-theorem rpc_crossFlip {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+lemma rpc_crossFlip {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {u v : Site 2} (hadj : (hypercubicLattice 2).Adj u v) :
     bdEdge (jec_leftRegion Vc) s(u, v) ↔ Odd (Vc.edges.count (rpc_crossEdge u v)) := by
   have hadj' := hadj
@@ -374,7 +374,7 @@ lemma rpc_leftRegion_bdEdge_iff {a : Site 2} (Vc : (hypercubicLattice 2).Walk a 
   exact hbridge hadj
 
 /-- The edge from `(0, 1)` to `(1, 1)` is a boundary edge of the inside of the unit-square loop. -/
-theorem rpc_unitSquare_flip :
+lemma rpc_unitSquare_flip :
     bdEdge (jec_leftRegion wwit_unitSquareLoop) s((![0, 1] : Site 2), (![1, 1] : Site 2)) := by
   rw [bdEdge_mk, jec_mem_leftRegion, jec_mem_leftRegion]
   have hodd : ¬ Even (jec_rayCount (![1, 1] : Site 2) wwit_unitSquareLoop) :=

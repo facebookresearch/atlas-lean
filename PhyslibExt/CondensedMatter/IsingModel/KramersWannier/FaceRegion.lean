@@ -23,7 +23,7 @@ public import PhyslibExt.CondensedMatter.IsingModel.KramersWannier.DualWalkToPri
 /-!
 # Face-region form of the inside of a closed lattice walk
 
-The inside of a closed walk of `ℤ²` as a set of faces (unit squares), and the theorem that the
+The inside of a closed walk of `ℤ²` as a set of faces (unit squares), and the lemma that the
 edges of a walk without repeated edges are exactly the primal edges separating inside from
 outside faces.
 
@@ -136,7 +136,7 @@ lemma fwr_faceCutFlip_aux_h {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
 
 /-- Adjacent faces lie on different sides of `Vc` iff `Vc` traverses their shared primal edge an odd
 number of times. -/
-theorem fwr_faceCutFlip {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
+lemma fwr_faceCutFlip {a : Site 2} (Vc : (hypercubicLattice 2).Walk a a)
     {c d : Site 2} (hcd : (hypercubicLattice 2).Adj c d) :
     (fwr_faceInside Vc c ↔ ¬ fwr_faceInside Vc d)
       ↔ Odd (Vc.edges.count (sharedPrimalEdge c d)) := by
@@ -256,7 +256,7 @@ def fwr_PrimalWalkBoundsFaceRegion : Prop :=
       (s(u, v) ∈ Vc.edges ↔ s(u, v) ∈ jed_cutSet (fwr_faceInside Vc))
 
 /-- Every closed lattice walk without repeated edges bounds its face region. -/
-theorem fwr_primalWalkBoundsFaceRegion : fwr_PrimalWalkBoundsFaceRegion := by
+lemma fwr_primalWalkBoundsFaceRegion : fwr_PrimalWalkBoundsFaceRegion := by
   intro a Vc hnd u v huv
   exact fwr_primalWalkBoundsFaceRegion_of_nodup Vc hnd huv
 

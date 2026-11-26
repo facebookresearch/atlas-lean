@@ -57,7 +57,7 @@ variable {iota : Vin → Vout}
 
 /-- For `q ≥ 1`, the free random-cluster measure on an outer graph gives the pull-back of a
 decreasing event of an embedded inner graph at most the inner free measure of that event. -/
-theorem fkProb_free_nested_decreasing_le
+lemma fkProb_free_nested_decreasing_le
     (hiota : Function.Injective iota)
     (hadjm : ocd_AdjMatch Gin Gout iota)
     {p q : Real} (hp : 0 < p) (hp1 : p < 1) (hq : 1 ≤ q)

@@ -238,7 +238,7 @@ lemma indicator_eq_sum_cyl (C : Set (ConfigSpace E)) (S : Finset E)
 
 /-- The indicator of an event depending on a finite edge set is a finite signed combination of
 indicators of increasing events. -/
-theorem indicator_signedIncreasingCombo_of_dependsOn
+lemma indicator_signedIncreasingCombo_of_dependsOn
     (C : Set (ConfigSpace E)) (S : Finset E)
     (hC : DependsOn (C.indicator (1 : ConfigSpace E → ℝ)) (S : Set E)) :
     SignedIncreasingCombo (C.indicator (1 : ConfigSpace E → ℝ)) := by
