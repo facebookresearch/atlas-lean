@@ -18,6 +18,12 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 
 The general reduction lemma bounds the token surplus of a reduced position when a move
 produces a nonreduced option.
+
+## References
+
+* Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
+  Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, pp. 1–25. Theorem 4 (Section 3.2) gives the
+  NIRB criterion, and Lemma 4 (Section 3.5) gives the General Reduction Lemma.
 -/
 
 namespace MetaMathlibExt
