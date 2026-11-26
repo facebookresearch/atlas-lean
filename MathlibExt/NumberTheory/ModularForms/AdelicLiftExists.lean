@@ -31,6 +31,7 @@ module
 
 public import MathlibExt.NumberTheory.ModularForms.AdelicLift
 import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
+import Mathlib.NumberTheory.Padics.HeightOneSpectrum
 import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 /-!
@@ -170,22 +171,19 @@ private theorem exists_mapGL_eq_of_integral {γ : GL (Fin 2) ℚ}
   rw [← hAmap, Matrix.map_apply]
   rfl
 
-private theorem prime_natCast (p : ℕ) [hp : Fact p.Prime] : Prime (p : 𝓞 ℚ) := by
-  rw [← MulEquiv.prime_iff Rat.ringOfIntegersEquiv]
-  simpa using Nat.prime_iff_prime_int.mp hp.out
+/-- The finite place of `𝓞 ℚ` at a rational prime `p`, as Mathlib's `primesEquiv` gives it. -/
+private abbrev primePlace (p : ℕ) [hp : Fact p.Prime] : HeightOneSpectrum (𝓞 ℚ) :=
+  Rat.HeightOneSpectrum.primesEquiv.symm ⟨p, hp.out⟩
 
-/-- The finite place of `𝓞 ℚ` at a rational prime `p`. -/
-private def primePlace (p : ℕ) [hp : Fact p.Prime] : HeightOneSpectrum (𝓞 ℚ) where
-  asIdeal := Ideal.span {(p : 𝓞 ℚ)}
-  isPrime := (Ideal.span_singleton_prime (prime_natCast p).ne_zero).mpr (prime_natCast p)
-  ne_bot := by rw [Ne, Ideal.span_singleton_eq_bot]; exact (prime_natCast p).ne_zero
+private theorem asIdeal_primePlace (p : ℕ) [Fact p.Prime] :
+    (primePlace p).asIdeal = Ideal.span {(p : 𝓞 ℚ)} := by
+  change Ideal.map (Rat.IsIntegralClosure.intEquiv (𝓞 ℚ)).symm (Ideal.span {((p : ℕ) : ℤ)}) = _
+  rw [Ideal.map_span, Set.image_singleton, map_natCast]
 
 private theorem intValuation_primePlace_le_iff (p : ℕ) [Fact p.Prime] (n : ℤ) (k : ℕ) :
     (primePlace p).intValuation (n : 𝓞 ℚ) ≤ WithZero.exp (-(k : ℤ)) ↔ (p : ℤ) ^ k ∣ n := by
-  rw [intValuation_le_pow_iff_dvd]
-  change Ideal.span {(p : 𝓞 ℚ)} ^ k ∣ _ ↔ _
-  rw [Ideal.span_singleton_pow, Ideal.span_singleton_dvd_span_singleton_iff_dvd,
-    ← map_dvd_iff Rat.ringOfIntegersEquiv]
+  rw [intValuation_le_pow_iff_dvd, asIdeal_primePlace, Ideal.span_singleton_pow,
+    Ideal.span_singleton_dvd_span_singleton_iff_dvd, ← map_dvd_iff Rat.ringOfIntegersEquiv]
   simp
 
 private theorem factorization_le_count {M : ℕ} (hM : M ≠ 0) (p : ℕ) [Fact p.Prime] :
@@ -196,6 +194,7 @@ private theorem factorization_le_count {M : ℕ} (hM : M ≠ 0) (p : ℕ) [Fact 
     (primePlace p).associates_irreducible).mp ?_
   rw [← Associates.mk_pow]
   refine Associates.mk_dvd_mk.mpr ?_
+  rw [asIdeal_primePlace]
   change Ideal.span {(p : 𝓞 ℚ)} ^ _ ∣ Ideal.span {(M : 𝓞 ℚ)}
   rw [Ideal.span_singleton_pow, Ideal.span_singleton_dvd_span_singleton_iff_dvd]
   exact_mod_cast map_dvd (Nat.castRingHom (𝓞 ℚ)) (Nat.ordProj_dvd M p)
