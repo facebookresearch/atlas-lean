@@ -13382,6 +13382,7 @@
   "MathlibExt/NumberTheory/LurothBorelBernstein": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConsecutiveDigitsIntegral": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConsecutiveDigitsLeVolumeLurothDigitsGe": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
+  "MathlibExt/NumberTheory/LurothConsecutiveDigitsVolumeLurothCylinder": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothConvergent": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LurothDiophantineApproximation": {"to": "NumberTheory/continued-fractions-expansions", "title": "Lüroth series"},
   "MathlibExt/NumberTheory/LucasnomialSum": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
