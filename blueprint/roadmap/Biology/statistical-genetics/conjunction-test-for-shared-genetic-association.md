@@ -1,11 +1,15 @@
 # Conjunction test for shared genetic association
 
 For one SNP tested for association with two traits, let $p_1, p_2$ be the two p-values and consider the **conjunction null** $H_0 = H_{01} \cup H_{02}$ (at least one trait is not associated), whose rejection asserts that the SNP is associated with both traits. The conjunction p-value
+
 $$P_{\mathrm{conj}} = \max(p_1, p_2)$$
+
 gives a valid level-$\alpha$ test: if each $p_i$ is super-uniform under its own null ($P(p_i \le \alpha) \le \alpha$ when $H_{0i}$ holds), then $P(P_{\mathrm{conj}} \le \alpha) \le \alpha$ under every configuration in $H_0$, with no assumption on the dependence between $p_1$ and $p_2$. Because it must be calibrated for the worst configuration in the composite null (one null true, the other alternative arbitrarily strong), it is conservative when both nulls hold.
 
 A less conservative variant uses the estimated fraction of false nulls among $n$ tests of trait $i$, from Storey's estimator at tuning parameter $\lambda \in [0,1)$:
+
 $$\hat\pi_i(\lambda) = 1 - \frac{\#\{j : p_i^{(j)} > \lambda\}}{(1 - \lambda)\, n}.$$
+
 If null p-values are uniform, $E[\hat\pi_i(\lambda)] \le \pi_i$, the true fraction of non-null tests, so the estimate is conservative.
 
 ## Expansion

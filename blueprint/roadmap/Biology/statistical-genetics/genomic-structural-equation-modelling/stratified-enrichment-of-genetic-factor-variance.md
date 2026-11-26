@@ -5,7 +5,9 @@ Let a genomic SEM factor model with loadings $\Lambda$ be fitted to the genome-w
 **Procedure.** Fix $\Lambda$ at its genome-wide estimate and re-estimate, within annotation $A$, only the factor variances $\phi_{f,A}$ and the residual genetic variances $\theta_{t,A}$, scaled to be comparable to the genome-wide estimates $\phi_f$ and $\theta_t$.
 
 **Enrichment.** The enrichment of factor $f$ in $A$ is the ratio of ratios
+
 $$E_{f,A} = \frac{\phi_{f,A}/\phi_f}{M_A/M},$$
+
 and the residual enrichment of trait $t$ is defined in the same way from $\theta_{t,A}$. The null value is $1$; $E_{f,A} > 1$ means the annotation carries a share of the factor's genetic variance larger than its share of SNPs.
 
 ## Depends on

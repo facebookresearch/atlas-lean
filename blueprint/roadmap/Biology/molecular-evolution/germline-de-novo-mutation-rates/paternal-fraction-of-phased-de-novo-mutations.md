@@ -3,7 +3,9 @@
 **Model.** For proband $i$, the numbers of de novo mutations of paternal and maternal origin are independent, $X_{P,i} \sim \operatorname{Poisson}(\lambda_{P,i})$ and $X_{M,i} \sim \operatorname{Poisson}(\lambda_{M,i})$. Each mutation is phased (assigned a parent of origin) independently with the same probability $p_i$, regardless of its origin; let $Y_{P,i}$ and $Y_{M,i}$ be the phased paternal and maternal counts.
 
 **Proposition.** $Y_{P,i}$ and $Y_{M,i}$ are independent Poisson variables with means $p_i\lambda_{P,i}$ and $p_i\lambda_{M,i}$, and conditionally on $Y_{P,i} + Y_{M,i} = n$,
+
 $$Y_{P,i} \sim \operatorname{Binomial}(n, r_i), \qquad r_i = \frac{\lambda_{P,i}}{\lambda_{P,i} + \lambda_{M,i}},$$
+
 which does not depend on the phasing probability $p_i$.
 
 **Consequence.** The expected paternal share $r_i$ of all de novo mutations, and its dependence on covariates such as paternal age, can be estimated by binomial regression of phased counts $(Y_{P,i}, Y_{M,i})$, without knowing the phasing rates. Applied to 719 trios with similar parental ages, this regression found no significant effect of paternal age on $r_i$ (logit or identity link), so the male-to-female ratio of de novo mutations is already high for young parents.

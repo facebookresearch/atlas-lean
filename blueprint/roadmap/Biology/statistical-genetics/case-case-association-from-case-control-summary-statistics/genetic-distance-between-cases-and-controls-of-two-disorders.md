@@ -5,11 +5,17 @@ Let disorders $A$ and $B$ have lifetime prevalences $K_A, K_B$, observed-scale S
 **Group offsets.** Relative to the population mean, the standardized allele-frequency offsets of the four groups are $(1-K_A)\beta_A$ for cases of $A$ ($A1$), $-K_A\beta_A$ for controls of $A$ ($A0$), and $(1-K_B)\beta_B$, $-K_B\beta_B$ for $B1$, $B0$.
 
 **Distances.** The average normalized squared allele-frequency difference at causal SNPs, $F_{ST,\mathrm{causal}}$, between two groups is the variance of the difference of their offsets:
+
 $$F_{A1A0} \approx \frac{h^2_{oA}}{m}, \qquad F_{B1B0} \approx \frac{h^2_{oB}}{m},$$
+
 $$F_{A1B1} \approx \frac{h^2_{oA}(1-K_A)^2 - 2c_{AB}(1-K_A)(1-K_B) + h^2_{oB}(1-K_B)^2}{m},$$
+
 $$F_{A1B0} \approx \frac{h^2_{oA}(1-K_A)^2 + 2c_{AB}(1-K_A)K_B + h^2_{oB}K_B^2}{m},$$
+
 $$F_{A0B1} \approx \frac{h^2_{oA}K_A^2 + 2c_{AB}K_A(1-K_B) + h^2_{oB}(1-K_B)^2}{m},$$
+
 $$F_{A0B0} \approx \frac{h^2_{oA}K_A^2 - 2c_{AB}K_AK_B + h^2_{oB}K_B^2}{m}.$$
+
 The quantities $\sqrt{m\,F}$ do not depend on $m$ and are Euclidean distances among the four groups in a plane, in which $r_g$ is the cosine of the angle between the segments from the population mean to $A1$ and to $B1$.
 
 ## Depends on

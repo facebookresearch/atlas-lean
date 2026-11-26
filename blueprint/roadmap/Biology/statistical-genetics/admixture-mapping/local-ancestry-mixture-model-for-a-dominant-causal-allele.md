@@ -3,11 +3,17 @@
 **Model.** Individuals of a two-way admixed population have $k \in \{0, 1, 2\}$ copies of ancestry from source $E$ at a locus (and $2 - k$ from source $A$). A biallelic causal variant has allele $H$ at frequency $P_E$ on $E$-ancestry haplotypes and $P_A$ on $A$-ancestry haplotypes, and each haplotype carries $H$ independently given its ancestry. The phenotype $Y$ is normal with mean $\mu_H$ and standard deviation $\sigma_H$ in carriers of at least one $H$ allele (dominance) and with mean $\mu_L$ and standard deviation $\sigma_L$ in non-carriers.
 
 **Proposition.** Given local ancestry $k$, the carrier probability is
+
 $$c_k(P_E, P_A) = 1 - (1 - P_E)^{k}(1 - P_A)^{2-k},$$
+
 and $Y$ has the two-component normal mixture density
+
 $$g_k(y) = c_k\,\varphi(y; \mu_H, \sigma_H) + (1 - c_k)\,\varphi(y; \mu_L, \sigma_L).$$
+
 For independent individuals with observed $(k_n, y_n)$ the likelihood of the six parameters $(P_E, P_A, \mu_H, \sigma_H, \mu_L, \sigma_L)$ is $\prod_n g_{k_n}(y_n)$. In particular
+
 $$\mathbb E[Y \mid k = 2] - \mathbb E[Y \mid k = 0] = \bigl(1 - P_A)^2 - (1 - P_E)^2\bigr,$$
+
 so a large ancestry effect together with clean separation of the three ancestry classes forces $P_E - P_A$ to be large. Profiling the likelihood over a grid of $P_A$ (or $P_E$) with the other parameters maximized gives marginal likelihood curves and hence bounds on the causal allele's frequencies in the source populations.
 
 **Use.** Applied to neutrophil counts in African Americans, local ancestry at chromosome 1q23 implied that the allele raising neutrophil count has frequency below $4.9\%$ in Africans and above $95.2\%$ in Europeans, a differentiation above $91.9\%$; only a handful of known SNPs in the admixture peak are that differentiated, which prioritized the Duffy-null variant.

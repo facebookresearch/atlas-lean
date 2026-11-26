@@ -3,6 +3,7 @@
 In the multiallelic model of a CRISPR drive with $n$ guide RNAs, the locus carries the drive $D$, the wild type $S_0 = W$, cost-free partially or fully resistant alleles $S_1, \dots, S_n$ and costly resistant alleles $R_1, \dots, R_n$ (the index counts the destroyed target sites; only $S_n$ and $R_n$ are fully resistant). Genotype $AB$ has viability $f_{AB} > 0$ and produces allele $C$ with probability $p_{AB,C}$; fully resistant heterozygotes segregate normally, $p_{DS_n,S_n} = p_{DR_n,R_n} = \tfrac12$. Dynamics are the deterministic random-mating gamete-production model of Noble et al.
 
 **Theorem (evolutionary stability).** The resident equilibrium in which every individual is $DD$ is stable against invasion by every non-drive allele if and only if
+
 $$\max_{A \in \{S_0, \dots, S_n, R_1, \dots, R_n\}} 2\, p_{DA,A}\, f_{DA} < f_{DD}.$$
 
 **Corollary (instability with cost-free full resistance).** If the fully resistant cost-free allele $S_n$ is produced at a positive rate and $f_{DS_n} \ge f_{DD}$ (for example, when the drive is costly and $S_n$ is functionally wild type, so that $f_{DS_n} = f_{DW} > f_{DD}$), then $2 p_{DS_n,S_n} f_{DS_n} = f_{DS_n} \ge f_{DD}$ and the drive cannot be evolutionarily stable: such an allele invades whenever the strict inequality holds.

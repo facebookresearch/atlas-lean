@@ -3,12 +3,17 @@
 Let $e_g = (e_{g1}, \dots, e_{gN})$ be the expression of gene $g$ in $N$ individuals, standardized to mean $0$ and variance $1$. Partition the genome into short blocks; for a pair of individuals $s, t$ let $\gamma_{g,st} \in \{0, \tfrac12, 1\}$ be the **local IBD** at the block containing gene $g$ (0, 1 or 2 haplotypes shared identical by descent, divided by 2), and let $\theta_{st} \in [0, 1]$ be the **genome-wide IBD**, the average of local IBD over all blocks, with $\theta_{ss} = \gamma_{g,ss} = 1$. Write $\Theta = (\theta_{st})$ and $\Gamma_g = (\gamma_{g,st})$.
 
 **Single-component model.** $e_g \sim \mathcal{N}(0, V_g)$ with
+
 $$V_g = h_g^2\, \Theta + (1 - h_g^2)\, I_N,$$
+
 and the narrow-sense heritability $h_g^2$ is fitted by maximum likelihood.
 
 **Cis–trans model.** Variation from regulatory variants near the gene is tracked by local IBD and the rest by genome-wide IBD:
+
 $$V_g = h_{g,\mathrm{cis}}^2\, \Gamma_g + h_{g,\mathrm{trans}}^2\, \Theta + \bigl(1 - h_{g,\mathrm{cis}}^2 - h_{g,\mathrm{trans}}^2\bigr) I_N,$$
+
 fitted by maximum likelihood (equivalently, fitting $h_g^2 = h_{g,\mathrm{cis}}^2 + h_{g,\mathrm{trans}}^2$ and $h_{g,\mathrm{cis}}^2$). Averaging over genes gives $h^2_{\mathrm{cis}}$ and $h^2_{\mathrm{trans}}$, and the **cis proportion** of heritable expression variation is
+
 $$\pi_{\mathrm{cis}} = \frac{h_{\mathrm{cis}}^2}{h_{\mathrm{cis}}^2 + h_{\mathrm{trans}}^2}.$$
 
 The two components are separable because, among relatives, local IBD at a given locus varies around the genome-wide value: for example, sibling pairs share $0$, $1$ or $2$ haplotypes at a locus with probabilities $\tfrac14, \tfrac12, \tfrac14$ while their genome-wide IBD is close to $\tfrac12$.

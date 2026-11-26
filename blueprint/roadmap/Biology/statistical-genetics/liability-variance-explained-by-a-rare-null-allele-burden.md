@@ -1,9 +1,13 @@
 # Liability variance explained by a rare null-allele burden
 
 Let a gene carry rare alleles whose total population frequency is $f$, and suppose a fraction $\alpha \in (0, 1]$ of them are **null** (function-destroying) and the rest harmless, so the summed null-allele frequency is $q = \alpha f$. Model disease by a liability threshold: liability $\ell = \beta G + \varepsilon$, where $G \in \{0, 1, 2\}$ counts null alleles (Hardy–Weinberg proportions), $\beta$ is the effect of one null allele in standard-deviation units, $\varepsilon$ is an independent normal residual, and disease occurs when $\ell$ exceeds the threshold $T$ set by the prevalence $\kappa$. Then the fraction of liability variance explained by the burden is
+
 $$V = \frac{2q(1 - q)\beta^2}{2q(1 - q)\beta^2 + \sigma_\varepsilon^2} \approx 2q(1-q)\beta^2 \quad (\text{liability variance normalized to } 1),$$
+
 and the share of the heritability $h^2$ it accounts for is $V / h^2$. Given $\kappa$ and $\alpha$, the parameters $q$ and $\beta$ are fitted from the carrier counts in cases and controls: for rare alleles the carrier frequency in controls estimates the population frequency, and the case carrier frequency satisfies
+
 $$P(\text{case} \mid \text{carrier}) = 1 - \Phi\bigl(T - \beta\bigr), \qquad P(\text{case}) = \kappa = 1 - \Phi(T),$$
+
 to first order in $q$, with residual variance close to $1$.
 
 **T1 burden test.** Collapse, within a gene, all qualifying variants (for example nonsynonymous, deleterious-predicted or disruptive) with sample minor allele frequency below $1\%$, and compare the number of carriers in cases and controls, with significance from phenotype permutations stratified by ancestry.

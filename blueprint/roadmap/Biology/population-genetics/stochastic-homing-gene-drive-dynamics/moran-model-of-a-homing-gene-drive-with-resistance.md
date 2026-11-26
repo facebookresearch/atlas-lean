@@ -3,12 +3,19 @@
 Consider a population of $N$ diploid individuals at one locus with three allele classes: wild type $W$, CRISPR homing drive $D$ and drive-resistant $R$. The six unordered genotypes $\alpha \in \{WW, WD, WR, DD, DR, RR\}$ have reproductive rates $f_\alpha > 0$ and counts $N_\alpha$ with $\sum_\alpha N_\alpha = N$. Let $P \in [0,1]$ be the homing efficiency. One time step consists of three events.
 
 1. **Mating.** Two parents are drawn without replacement, each with probability proportional to reproductive rate: genotype $\alpha$ is drawn with probability
+
 $$\frac{f_\alpha N_\alpha}{\sum_\beta f_\beta N_\beta}.$$
+
 2. **Offspring.** Gametes are produced with probabilities $q_\alpha^A$ (genotype $\alpha$ transmits allele $A$):
+
 $$q_{WW}^W = q_{DD}^D = q_{RR}^R = 1, \quad q_{WD}^D = \frac{1+P}{2}, \quad q_{WD}^R = \frac{1-P}{2},$$
+
 $$q_{WR}^W = q_{WR}^R = q_{DR}^D = q_{DR}^R = \tfrac12,$$
+
 and all other $q_\alpha^A = 0$. For parents $\alpha, \beta$ the offspring genotype $\gamma = \gamma_1\gamma_2$ has probability
+
 $$q_{\alpha\beta}^{\gamma} = \frac{q_\alpha^{\gamma_1} q_\beta^{\gamma_2} + q_\alpha^{\gamma_2} q_\beta^{\gamma_1}}{1 + \delta_{\gamma_1\gamma_2}},$$
+
 with $\delta$ the Kronecker delta.
 3. **Death.** One individual chosen uniformly at random dies, keeping the population size at $N$.
 

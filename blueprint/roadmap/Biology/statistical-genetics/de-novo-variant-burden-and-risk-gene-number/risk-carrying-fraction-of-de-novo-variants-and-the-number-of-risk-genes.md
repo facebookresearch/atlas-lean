@@ -1,8 +1,11 @@
 # Risk-carrying fraction of de novo variants and the number of risk genes
 
 **Excess-rate model.** Let $M_1$ be the mean number of de novo damaging variants per case proband and $M_2$ the mean per control, measured in the same callable region. Assume each case variant is either a background variant, arising at the control rate, or a risk-carrying variant that contributes to the case's phenotype, and that controls carry only background variants. Then the expected fraction of case variants that carry risk is
+
 $$E = \frac{M_1 - M_2}{M_1}.$$
+
 For Tourette disorder (674 non-multiplex probands with 199 damaging de novo variants in consensus regions; 1,153 controls with 258),
+
 $$E = \frac{199/674 - 258/1153}{199/674} \approx 0.242 .$$
 
 **Recurrence estimator of the number of risk genes.** Suppose $G$ genes carry risk, chosen with probability proportional to their per-gene mutation probability (which accounts for gene size and sequence composition). Among $n$ observed case variants, a fraction $E$ is allocated to the risk genes and the remainder is treated as non-risk background variants. For each $G$ in a range, simulate this process many times and record how often the simulated recurrence pattern (the numbers of genes hit two, three, ... times) agrees with the observed one; the maximum-likelihood estimate $\hat G$ is the value maximizing this agreement frequency. With $n = 282$ confirmed variants, $6$ genes hit twice and $2$ genes hit three times, the estimate was $\hat G = 483$.

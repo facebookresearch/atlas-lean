@@ -1,7 +1,9 @@
 # PhyC branch-length null for phenotype-associated convergent mutations
 
 Let a rooted phylogeny with branch set $\mathcal B$ and branch lengths $\ell_b > 0$ be reconstructed for clonal isolates, with an ancestral reconstruction that labels each branch as leading to a phenotype-positive (for example drug-resistant) or phenotype-negative isolate set, $\mathcal B = \mathcal B_R \sqcup \mathcal B_S$. For a target (a nucleotide site, a gene or an intergenic region) the ancestral reconstruction places independent mutation events on branches; suppose $x$ of them fall on resistant branches and $y$ on sensitive branches. The **phylogenetic convergence (PhyC) test** compares $x$ with its distribution under the null model in which the $n = x + y$ events are redistributed over the tree independently, each landing on branch $b$ with probability $\ell_b / L$, $L = \sum_b \ell_b$. Under this null the number $X$ of events on resistant branches is
+
 $$X \sim \mathrm{Binomial}\!\left(n,\; \frac{L_R}{L}\right), \qquad L_R = \sum_{b \in \mathcal B_R} \ell_b,$$
+
 and the one-sided p-value is $\mathbb P(X \ge x)$. Targets with small p-values are inferred to be under positive selection associated with the phenotype.
 
 ## Expansion

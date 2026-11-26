@@ -1,7 +1,9 @@
 # LT-FH association statistic
 
 Let $g_1, \dots, g_N$ be genotypes at a test SNP and $\hat\epsilon_1, \dots, \hat\epsilon_N$ the [posterior mean genetic liabilities](posterior-mean-genetic-liability.md) of the $N$ genotyped individuals. The LT-FH statistic is
+
 $$T_{\mathrm{LT\text{-}FH}} = N\, r^2(g, \hat\epsilon),$$
+
 where $r^2$ is the squared sample correlation, compared with a $\chi^2_1$ distribution. Treating $\hat\epsilon$ as a continuous phenotype, this generalizes the Armitage trend test (which is $N r^2(g, z)$ for the case indicator $z$) and is equivalent to the score test for regression of $\hat\epsilon$ on $g$. Covariates such as principal components can be included, or the mixed-model method BOLT-LMM can be applied to $\hat\epsilon$.
 
 **Reduction to case-control GWAS.** If no family history is observed, $\hat\epsilon_i = a + b z_i$ with $b = h^2\varphi(T)\big(\tfrac1K + \tfrac1{1-K}\big) > 0$, and since $r^2$ is invariant under affine maps with nonzero slope, $T_{\mathrm{LT\text{-}FH}} = N r^2(g, z)$ equals the Armitage trend statistic.

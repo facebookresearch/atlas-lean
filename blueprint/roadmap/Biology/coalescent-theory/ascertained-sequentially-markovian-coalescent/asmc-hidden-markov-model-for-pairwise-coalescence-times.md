@@ -5,7 +5,9 @@ Fix two haploid genomes (the *distinguished* pair), $n - 2$ further *undistingui
 - **Hidden state** at a site: the interval containing the pair's time to most recent common ancestor (TMRCA) $\tau$.
 - **Initial distribution and transitions**: the stationary law of the pairwise TMRCA and the transition probabilities between intervals given by the conditional Simonsen–Churchill (CSC) Markov approximation of the coalescent with recombination, which stays accurate for widely spaced markers.
 - **Emission**: at a site where the distinguished pair carries $d \in \{0, 1, 2\}$ derived alleles and the undistinguished samples carry $u \in \{0, \dots, n-2\}$, the emission probability is
+
 $$P(\mathrm{obs} \mid d + u) \times P(d, u \mid \tau),$$
+
 where $P(d, u \mid \tau)$ is the conditioned sample frequency spectrum (CSFS) given the pair's TMRCA and $P(\mathrm{obs} \mid j)$ is the probability that a site with $j$ derived alleles in the sample is ascertained, estimated as the ratio of the empirical allele frequency spectrum of the data to the frequency spectrum expected under neutrality for the given demography.
 
 Posterior TMRCA distributions are computed by the forward–backward algorithm. Under the CSC transition matrix $T$, each forward update $\alpha'_i = \sum_{k=1}^{s} \alpha_k T_{k,i}$ can be written as a linear combination of three terms that are each updated recursively in $O(1)$, so a forward or backward pass costs $O(sm)$ for $m$ observed sites instead of $O(s^2 m)$.

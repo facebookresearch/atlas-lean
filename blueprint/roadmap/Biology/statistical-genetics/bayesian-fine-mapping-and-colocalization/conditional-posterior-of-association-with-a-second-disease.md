@@ -1,12 +1,17 @@
 # Conditional posterior of association with a second disease
 
 For one SNP and two diseases consider the four hypotheses $H_0$ (associated with neither), $H_1$ (disease 1 only), $H_2$ (disease 2 only) and $H_{12}$ (both), with prior probabilities $\pi_0, \pi_1, \pi_2, \pi_{12} > 0$ summing to $1$. Let $\phi_k > 0$ be the Bayes factor for association versus no association with disease $k$ computed from disease $k$'s data alone (for example, [Wakefield's approximate Bayes factor](wakefield-abf.md) from the SNP's $p$-value and allele frequency). If the two case–control data sets are independent (no shared controls), the Bayes factors of the four hypotheses against $H_0$ are $1, \phi_1, \phi_2, \phi_1 \phi_2$, so
+
 $$\mathrm{PP}_h = \frac{\pi_h\, \mathrm{BF}_h}{\pi_0 + \pi_1 \phi_1 + \pi_2 \phi_2 + \pi_{12} \phi_1 \phi_2}, \qquad h \in \{0, 1, 2, 12\}.$$
 
 **Proposition.** The posterior probability of association with disease 2 given association with disease 1 is
+
 $$\mathrm{PP}_{2 \mid 1} = \frac{\mathrm{PP}_{12}}{\mathrm{PP}_1 + \mathrm{PP}_{12}} = \frac{\pi_{12}\, \phi_2}{\pi_1 + \pi_{12}\, \phi_2},$$
+
 which does not depend on $\phi_1$, is strictly increasing in $\phi_2$, and exceeds a level $\tau \in (0,1)$ iff
+
 $$\phi_2 > \frac{\tau}{1 - \tau} \cdot \frac{\pi_1}{\pi_{12}} .$$
+
 With $\pi_1 = \pi_2 = 10^{-4}$ and $\pi_{12} = 10^{-5}$, convincing evidence $\mathrm{PP}_{2|1} > 0.9$ requires $\phi_2 > 90$, whatever the strength of the disease-1 signal.
 
 ## Depends on

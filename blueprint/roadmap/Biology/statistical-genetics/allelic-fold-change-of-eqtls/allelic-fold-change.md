@@ -1,9 +1,13 @@
 # Allelic fold change
 
 Let a cis-regulatory variant have reference allele $\mathrm{ref}$ and alternative allele $\mathrm{alt}$, and suppose each haplotype contributes additively to the total expression of the gene in a diploid cell: a reference haplotype contributes $c > 0$ and an alternative haplotype contributes $kc$, with $k > 0$. Then the expected expression of an individual with $g \in \{0,1,2\}$ alternative alleles is
+
 $$e(g) = (2 - g)\,c + g\,k\,c,$$
+
 so that $e(0) = 2c$, $e(1) = (1 + k)c$ and $e(2) = 2kc$. The **allelic fold change** of the eQTL is
+
 $$\mathrm{aFC} = \log_2 k = \log_2 \frac{e(2)}{e(0)}.$$
+
 In a heterozygote the ratio of expected alternative-allele to reference-allele expression is $kc/c = k$, so the same parameter can be estimated from allele-specific expression.
 
 ## Expansion

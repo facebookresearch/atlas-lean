@@ -1,10 +1,13 @@
 # Initial relative fitness from an allele-frequency trajectory
 
 **Model.** In an asexual population let a lineage carrying a focal mutation have Malthusian fitness exceeding the population mean by a constant $s$ while it is rare enough not to move the mean. Then its frequency $f(t)$ obeys the logistic equation $\dot f = s f(1-f)$, so the logit is linear in time:
+
 $$\ln\frac{f(t)}{1-f(t)} = \ln\frac{f(t_1)}{1-f(t_1)} + s\,(t - t_1).$$
 
 **Estimator.** Given frequencies at two times $t_1 < t_2$ with $0 < f(t_1), f(t_2) < 1$,
+
 $$s_{\mathrm{up}} = \frac{1}{t_2 - t_1}\left(\ln\frac{f(t_2)}{1-f(t_2)} - \ln\frac{f(t_1)}{1-f(t_1)}\right),$$
+
 with time measured in generations. Taking $t_1$ as the first time the mutation is detected and $t_2$ as the first subsequent time its frequency exceeds a fixed level (for example $0.1$) gives the initial relative fitness.
 
 **Interpretation.** $s_{\mathrm{up}}$ estimates the fitness of the whole genetic background carrying the mutation relative to the current population mean, not the mutation's own effect: a neutral mutation arising on a background $3\%$ fitter than average and a mutation conferring $3\%$ on a neutral background give the same value. Because the mean fitness rises as other lineages sweep, $s_{\mathrm{up}}$ is only a local, early-time quantity.

@@ -1,10 +1,13 @@
 # IBD score of a founder population
 
 Let a group be represented by $n \ge 2$ diploid individuals, giving $2n$ phased haplotypes labeled by $(k, h)$ with individual $k \in \{1, \dots, n\}$ and haplotype $h \in \{1, 2\}$. For an unordered pair of haplotypes from **different** individuals, let $L$ denote the total genetic length of the identity-by-descent segments they share whose individual lengths lie in a window $[\ell_{\min}, \ell_{\max}]$ (Nakatsuka et al. use $3$–$20$ cM: the lower bound removes short, unreliable or very old segments, the upper bound removes segments from recent relatedness). The **IBD score** of the group is
+
 $$\mathrm{IBD}_n = \frac{\sum_{\text{between-individual haplotype pairs}} L}{\binom{2n}{2} - n}.$$
 
 **Proposition.** (i) The denominator counts exactly the between-individual haplotype pairs:
+
 $$\binom{2n}{2} - n = 2n(n - 1) = 4\binom{n}{2}.$$
+
 (ii) If the $2n$ haplotypes are exchangeable (for example, a random sample from a group without internal structure, after removal of close relatives), so that every between-individual pair has the same expected windowed IBD length $\lambda$, then $\mathbb{E}[\mathrm{IBD}_n] = \lambda$ for every $n \ge 2$. Thus the score is an unbiased, sample-size-free estimate of the expected windowed IBD sharing between two random haplotypes from distinct members of the group, and ratios of scores between groups (for example, relative to Finns) compare founder-event strengths.
 
 ## Expansion

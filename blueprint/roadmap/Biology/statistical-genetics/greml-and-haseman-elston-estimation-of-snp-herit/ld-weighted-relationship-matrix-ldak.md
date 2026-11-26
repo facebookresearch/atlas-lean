@@ -1,7 +1,9 @@
 # LD-weighted genetic relationship matrix (LDAK)
 
 Let $x_{ik} \in \{0,1,2\}$ be the genotype of individual $i$ at SNP $k = 1, \dots, m$, with allele frequency $p_k \in (0,1)$. Given nonnegative SNP weights $w_k$, not all zero, the LD-adjusted kinship matrix is
+
 $$K_{ij} = \frac{1}{\sum_{k} w_k}\sum_{k=1}^{m} w_k\,\frac{(x_{ik} - 2p_k)(x_{jk} - 2p_k)}{2p_k(1-p_k)},$$
+
 and it replaces the unweighted [genetic relationship matrix](grm.md) (the case $w_k \equiv 1$) in the GREML model $y \sim \mathcal N(X\beta, \sigma_g^2 K + \sigma_e^2 I)$. In LDAK the weights are computed from local linkage disequilibrium so that a SNP's weight is inversely related to how strongly it is correlated with nearby SNPs: SNPs in high-LD regions, which redundantly tag the same causal variation, are down-weighted, and SNPs in low-LD regions are up-weighted, so that every genomic region contributes in proportion to its tagged variation rather than to its number of SNPs. The standardization by $2p_k(1-p_k)$ corresponds to effect sizes whose variance scales as $[2p_k(1-p_k)]^{-1}$ (the "$\alpha = -1$" model).
 
 ## Depends on

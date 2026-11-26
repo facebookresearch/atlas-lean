@@ -1,7 +1,9 @@
 # Density of recent coalescence statistic
 
 **Definition.** Fix a time threshold $T$ (in generations) and a sample of haplotype pairs $\mathcal P$. For a pair $(a,b)$ and a genomic site $x$, let $q_{ab}(x) = P(t_{ab}(x) \le T \mid \text{data})$ be the posterior probability, from a coalescent hidden Markov model of the pair's TMRCA along the genome, that the pair coalesced within the last $T$ generations at $x$ (the IBD quality score of a detected segment covering $x$; $0$ if no segment covers $x$). The density of recent coalescence is
+
 $$\mathrm{DRC}_T(x) = \frac{1}{|\mathcal P|}\sum_{(a,b)\in\mathcal P} q_{ab}(x),$$
+
 an estimate of the probability that a random pair coalesced at $x$ within the last $T$ generations, usually averaged over short windows (for example $0.05$ cM).
 
 **Null law and test.** For $n$ samples from a population of recent effective size $N \gg n$ evolving neutrally, $\mathrm{DRC}_T$ is approximately Gamma distributed. Fitting a Gamma law to windows in putatively neutral regions gives approximate one-sided p-values; an excess of recent coalescence in a window is evidence of recent positive selection, which shortens genealogies around the selected allele.

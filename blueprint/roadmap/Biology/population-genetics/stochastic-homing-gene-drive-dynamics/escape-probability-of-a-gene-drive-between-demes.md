@@ -1,9 +1,13 @@
 # Escape probability of a self-limiting gene drive between demes
 
 Consider $n$ demes of $N$ diploid individuals each, running the [homing-drive Moran model](moran-model-of-a-homing-gene-drive-with-resistance.md) within demes. At each step a migration event (one uniformly chosen individual moves to a uniformly chosen other deme) occurs with probability $m$, and otherwise a reproduction event occurs in a deme chosen with probability proportional to the square of its total fitness. The drive is released as $i \ll N$ drive homozygotes in one deme. Let $E$ be the event that the drive allele reaches frequency $10\%$ in some other deme. Let $e_{i,j}$ be the probability that the drive escapes early stochastic loss when started from $i$ drive homozygotes and $j$ drive heterozygotes, $T$ the (essentially deterministic) time until the drive is lost from the release deme once it has escaped early loss, and $P_t^{\alpha}$ the frequency of genotype $\alpha$ in the release deme at step $t$. Treating invasion attempts at different steps as independent,
+
 $$\mathbb P(E) \approx e_{i,0}\left(1 - \prod_{t=1}^{T}\Big(1 - m\, e_{1,0}\, \mathbb E P_t^{DD} - m\, e_{0,1}\big(\mathbb E P_t^{WD} + \mathbb E P_t^{DR}\big)\Big)\right).$$
+
 If $\phi^\alpha$ denotes the time average of $\mathbb E P_t^\alpha$ over $[0,T]$ and $m = \mathcal O(1/T)$, then
+
 $$\mathbb P(E) \approx e_{i,0}\Big(1 - \exp\big(-mT\,[\,e_{1,0}\phi^{DD} + e_{0,1}(\phi^{WD} + \phi^{DR})\,]\big)\Big),$$
+
 which is of order $1$. Thus a drive that is self-limiting in a single deme still escapes with substantial probability once the expected number of migrants during its lifetime is of order one.
 
 ## Depends on

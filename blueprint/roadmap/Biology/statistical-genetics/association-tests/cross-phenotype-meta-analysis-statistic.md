@@ -1,6 +1,7 @@
 # Cross-phenotype meta-analysis (CPMA) statistic
 
 Let one SNP have association $p$-values $p_1, \dots, p_n \in (0, 1]$ for $n$ phenotypes, assumed independent across phenotypes. Put $x_k = -\ln p_k$ and $S = \sum_{k=1}^{n} x_k$. Under the null hypothesis that the SNP has no association beyond those already known, the $p_k$ are i.i.d. uniform, so the $x_k$ are i.i.d. exponential with rate $\lambda = 1$. Model the $x_k$ as i.i.d. $\mathrm{Exp}(\lambda)$ with log-likelihood $\ell(\lambda) = n \ln \lambda - \lambda S$. The maximum-likelihood rate is $\hat\lambda = n / S$, and the **CPMA statistic** is the likelihood-ratio statistic for $H_0: \lambda = 1$,
+
 $$\mathrm{CPMA} = 2\bigl[\ell(\hat\lambda) - \ell(1)\bigr] = 2\Bigl[n \ln \frac{n}{S} - n + S\Bigr].$$
 
 **Proposition.** Under $H_0$, $\mathrm{CPMA} \to \chi^2_1$ in distribution as $n \to \infty$. A value of $\hat\lambda < 1$ (slower decay of $-\ln p$, i.e. an excess of small $p$-values) indicates association with several, though not necessarily all, of the phenotypes.

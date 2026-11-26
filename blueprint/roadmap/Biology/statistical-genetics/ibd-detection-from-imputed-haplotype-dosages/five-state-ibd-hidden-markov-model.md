@@ -1,9 +1,13 @@
 # Five-state IBD hidden Markov model with phase switching
 
 Let individuals 1 and 2 have phased haplotypes $(1A, 1B)$ and $(2A, 2B)$ along one chromosome with biallelic markers $l = 1, \dots, L$ at genetic positions (in Morgans) with gaps $r_l$ between $l$ and $l+1$. The hidden state at each marker is $s \in \{0, 1, 2, 3, 4\}$: $s = 0$ is **non-IBD**, and $s = 1, 2, 3, 4$ mean that exactly one haplotype pair, $1A/2A$, $1A/2B$, $1B/2A$ or $1B/2B$ respectively, is identical by descent. The transition matrix between consecutive markers is
+
 $$A_{l \to l+1} = \exp(Q\, r_l),$$
+
 where the rate matrix $Q$ has off-diagonal entries
+
 $$Q_{0j} = \mathrm{IBDin}, \quad Q_{j0} = \mathrm{IBDout}, \quad Q_{jj'} = \mathrm{IBDswitch} \qquad (j \ne j' \in \{1,2,3,4\}),$$
+
 and diagonal $Q_{ii} = -\sum_{j \ne i} Q_{ij}$, so rows sum to zero. Thus IBD segments start at rate $\mathrm{IBDin}$ per Morgan into each pair, end at rate $\mathrm{IBDout}$, and $\mathrm{IBDswitch}$ moves between IBD pairs to model phase switch errors. Given [emission likelihoods](haploid-dosage-emission-likelihoods.md) $P(D_l \mid s)$, the forward–backward algorithm gives posterior probabilities $P(s_l = 0 \mid D)$; an IBD segment is called on each maximal run of markers where $P(s_l = 0 \mid D)$ stays below a threshold and whose genetic length exceeds a minimum cutoff, followed by merging of long segments separated by short gaps and filtering of segments with low marker density.
 
 ## Depends on

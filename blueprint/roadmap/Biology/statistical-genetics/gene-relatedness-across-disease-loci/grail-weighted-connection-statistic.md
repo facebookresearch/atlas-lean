@@ -1,11 +1,17 @@
 # GRAIL weighted connection statistic and its Poisson–gamma null
 
 Let a genome contain $N$ genes ranked, for each gene $g$, by a similarity score to $g$ (in GRAIL, the correlation of averaged inverse-document-frequency-weighted word vectors from abstracts that reference the genes). Let $N_{\mathrm{SEED}}$ disease regions be given, seed region $s$ containing $n_s$ genes. For a candidate gene $g$ in a query region and each seed region $s$ sharing no gene with that query region, let $R_{g,s}$ be the best (smallest) similarity rank to $g$ among the genes of $s$, and define
+
 $$p_{g,s} = 1 - \Big(1 - \frac{R_{g,s}}{N}\Big)^{n_s},$$
+
 which is approximately uniform on $(0,1)$ when the genes of $s$ are unrelated to $g$. Fix a threshold $p_f$ ($0.1$ in GRAIL); region $s$ is connected to $g$ when $p_{g,s} < p_f$, and then carries weight
+
 $$w_{g,s} = -\log\frac{p_{g,s}}{p_f} \ge 0 .$$
+
 The weighted count is $c_g = \sum_{s \text{ connected}} w_{g,s}$. Under the null, the number of connected regions $n_{\mathrm{hit}}$ is approximately Poisson with mean $\mu = N_{\mathrm{SEED}}\,p_f$, and given $n_{\mathrm{hit}} = k$ the weights are independent standard exponentials, so $c_g$ is $\mathrm{Gamma}(k, 1)$. Hence
+
 $$\mathbb P(C \ge c_g) \approx \sum_{k \ge 1} e^{-\mu}\frac{\mu^k}{k!}\; e^{-c_g}\sum_{j=0}^{k-1}\frac{c_g^j}{j!}$$
+
 for $c_g > 0$, using the closed form of the gamma upper tail for integer shape. The p-value of the gene, $p_g$, is this tail probability; a query region with $n_q$ genes receives the p-value $1 - (1 - \min_g p_g)^{n_q}$ of its best gene, which is reported as the region's candidate.
 
 ## Expansion

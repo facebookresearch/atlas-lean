@@ -1,10 +1,13 @@
 # Poisson–inverse-Gaussian marginal of gene PTV counts
 
 For a gene with neutral expectation $\nu = N U > 0$ (sample size $N$ chromosomes times PTV mutation rate $U$), model the observed PTV count as $n \mid s \sim \mathrm{Poisson}(\nu / s)$, the [balance mean](balance-mean.md), and give the heterozygous selection coefficient an inverse Gaussian prior with mean $\alpha > 0$ and shape $\beta > 0$:
+
 $$p(s; \alpha, \beta) = \sqrt{\frac{\beta}{2\pi s^3}} \exp\!\Big(-\frac{\beta (s - \alpha)^2}{2 \alpha^2 s}\Big), \qquad s > 0 .$$
 
 **Proposition.** For every integer $n \ge 0$, the marginal probability of $n$ is
+
 $$P(n \mid \alpha, \beta; \nu) = \int_0^\infty \frac{e^{-\nu/s} (\nu/s)^n}{n!}\, p(s; \alpha, \beta)\, ds = \frac{1}{n!}\, e^{\beta/\alpha} \sqrt{\frac{2\beta}{\pi \alpha}} \Big(\frac{\nu}{\alpha}\Big)^{n} \Big(\frac{\beta}{\beta + 2\nu}\Big)^{\frac{2n+1}{4}} K_{n + \frac12}\!\Big(\frac{\sqrt{\beta(\beta + 2\nu)}}{\alpha}\Big),$$
+
 where $K_\rho$ is the modified Bessel function of the second kind. The posterior density of $s$ given $n$ is $P(n \mid s; \nu)\, p(s; \alpha, \beta) / P(n \mid \alpha, \beta; \nu)$.
 
 Across genes $i = 1, \dots, G$ with counts $n_i$ and expectations $\nu_i$, Cassa et al. fit $(\alpha, \beta)$ by maximizing $\sum_i \log P(n_i \mid \alpha, \beta; \nu_i)$, separately within terciles of $U$, and report each gene's posterior mean of $s_{\mathrm{het}}$.

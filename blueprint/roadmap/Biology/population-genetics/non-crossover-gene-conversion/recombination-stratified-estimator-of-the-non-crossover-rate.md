@@ -5,7 +5,9 @@
 **Naive estimator.** From pedigree transmissions, if $n$ of $m$ heterozygous (informative) sites are observed to be converted, then $\hat R = n/m$, unbiased provided the informative sites are a random sample of the genome with respect to recombination rate.
 
 **Stratified estimator.** Genotyping arrays over-represent regions of high recombination, where conversion is more frequent, so partition the genome into bins $b = 1,\dots,B$ of recombination rate, with $n_b$ converted sites out of $m_b$ informative sites in bin $b$ and $w_b$ the fraction of the autosomal genome in bin $b$ ($\sum_b w_b = 1$). Then
+
 $$\hat R = \sum_{b=1}^{B} w_b\,\frac{n_b}{m_b},$$
+
 which is consistent for $R$ under the weaker assumption that informative sites are representative within each bin. Confidence intervals come from a block bootstrap over large genomic blocks, which preserves the correlation between nearby sites.
 
 ## Expansion

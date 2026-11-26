@@ -1,11 +1,17 @@
 # Thresholded-GRM model for joint SNP and pedigree heritability
 
 Let a sample of $n$ individuals, possibly including close relatives, have phenotype vector $y \in \mathbb R^n$, fixed-effect design $X$ and a [genetic relationship matrix](grm.md) $A$ computed from genome-wide SNPs. For a relatedness threshold $t > 0$ define the thresholded matrix
+
 $$A^{(t)}_{ij} = \begin{cases} A_{ij} & \text{if } A_{ij} \ge t, \\ 0 & \text{otherwise}, \end{cases}$$
+
 which retains only pairs of close relatives (diagonal entries, being close to $1$, are retained). The two-component variance model is
+
 $$y \sim \mathcal N\big(X\beta,\; \sigma_g^2 A + \sigma_t^2 A^{(t)} + \sigma_e^2 I\big),$$
+
 fitted by restricted maximum likelihood. With $V_P = \sigma_g^2 + \sigma_t^2 + \sigma_e^2$, the quantities
+
 $$h^2_{\mathrm{SNP}} = \frac{\sigma_g^2}{V_P}, \qquad h^2_{\mathrm{IBS}>t} = \frac{\sigma_t^2}{V_P}, \qquad h^2 \approx h^2_{\mathrm{SNP}} + h^2_{\mathrm{IBS}>t}$$
+
 estimate the variance tagged by the SNPs, the additional variance captured only through close relatives, and the total narrow-sense heritability.
 
 ## Depends on

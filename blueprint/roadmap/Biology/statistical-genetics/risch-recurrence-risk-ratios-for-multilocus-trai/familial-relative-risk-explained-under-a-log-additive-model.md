@@ -1,8 +1,11 @@
 # Familial relative risk explained under a log-additive model
 
 Let a disease have overall familial relative risk $\lambda > 1$ for first-degree relatives. Let independent loci $i = 1, \dots, m$ have risk-allele frequency $p_i$ and per-allele log odds ratio $\beta_i$, acting multiplicatively on risk (log-additive model), with estimates $\hat\beta_i$ of standard error $\tau_i$. Each locus contributes a familial relative risk $\lambda_i$ with
+
 $$\ln \lambda_i \approx p_i (1 - p_i)\, \beta_i^2,$$
+
 and the proportion of the familial risk explained by the loci is estimated by
+
 $$\lambda_g = \frac{\sum_{i=1}^{m} p_i (1 - p_i)\bigl(\hat\beta_i^2 - \tau_i^2\bigr)}{\ln \lambda}.$$
 
 ## Depends on

@@ -1,11 +1,17 @@
 # Admixture-constrained likelihood-ratio test for selection
 
 At one SNP, let $A$ present-day populations have allele frequencies $p_{\mathrm{mod}} \in [0,1]^A$ and $B$ ancient source populations have frequencies $p_{\mathrm{anc}} \in [0,1]^B$. Suppose the present-day populations are modeled as mixtures of the sources with known proportions, $p_{\mathrm{mod}} = C p_{\mathrm{anc}}$, where $C$ is an $A \times B$ matrix with nonnegative rows summing to $1$. With data $D_j$ for population $j$ and the [read-count allele-frequency log-likelihood](allele-frequency-likelihood-from-read-counts-and-genotypes.md) $\ell(p_j; D_j)$, the joint log-likelihood of $\bar p = (p_{\mathrm{anc}}, p_{\mathrm{mod}})$ is
+
 $$\ell(\bar p; \bar D) = \sum_{j=1}^{A+B} \ell(p_j; D_j).$$
+
 The test of
+
 $$H_0: p_{\mathrm{mod}} = C p_{\mathrm{anc}} \qquad \text{versus} \qquad H_1: p_{\mathrm{mod}} \text{ unconstrained}$$
+
 uses the statistic
+
 $$\Lambda = 2\Big(\sup_{H_1} \ell(\bar p; \bar D) - \sup_{H_0} \ell(\bar p; \bar D)\Big),$$
+
 referred to a $\chi^2_A$ distribution. Genome-wide inflation from unmodeled ancestry or extra drift is removed by genomic control: every $\Lambda$ is divided by a constant $\lambda$ chosen so that the median of the corrected statistics matches the median of $\chi^2_A$. Large corrected statistics indicate present-day frequencies that cannot be explained by mixing the ancient sources, a signature of selection since admixture.
 
 ## Depends on

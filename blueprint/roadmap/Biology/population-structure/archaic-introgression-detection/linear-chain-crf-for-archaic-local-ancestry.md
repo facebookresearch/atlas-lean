@@ -1,7 +1,9 @@
 # Linear-chain conditional random field for archaic local ancestry
 
 Let $x$ be the observed data along a phased haplotype of a test population (its alleles at SNPs $1, \dots, n$, a reference panel assumed free of archaic ancestry, an archaic genome, ancestral states and genetic distances $d_i$ between SNPs $i - 1$ and $i$), and let $y = (y_1, \dots, y_n) \in \{0, 1\}^n$ be the unobserved labels, $y_i = 1$ meaning that the allele at SNP $i$ was inherited from archaic gene flow. A **linear-chain conditional random field** models
+
 $$p_\lambda(y \mid x) = \frac{1}{Z_\lambda(x)} \exp\Bigl(\sum_{i=1}^{n} \sum_k \lambda_k\, e_k(y_i, x, i) + \sum_{i=2}^{n} \mu\, h(y_{i-1}, y_i, d_i)\Bigr),$$
+
 with $Z_\lambda(x)$ the sum of the exponential over all $2^n$ label sequences. The **emission features** $e_k$ used for Neanderthal ancestry are:
 
 - indicators of single-SNP allele patterns: the test haplotype carries the derived allele, every reference-panel haplotype carries the ancestral allele and the archaic genome carries a derived allele (evidence for archaic ancestry, positive weight); or the derived allele of the test haplotype is polymorphic in the reference panel but absent from the archaic genome (evidence against);

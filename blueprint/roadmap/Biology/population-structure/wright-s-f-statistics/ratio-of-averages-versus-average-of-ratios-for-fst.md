@@ -1,7 +1,9 @@
 # Ratio of averages versus average of ratios for genome-wide $F_{ST}$
 
 Let SNPs $s = 1, \dots, L$ be independent, each with a single-SNP $F_{ST}$ written as a ratio $\hat F_s = N_s / D_s$ of a numerator and a positive denominator (for example Hudson's), with $\mathbb E[N_s] = \nu$ and $\mathbb E[D_s] = \delta > 0$ the same for all $s$ and finite second moments. Two genome-wide summaries are in use:
+
 $$\hat F_{\mathrm{RoA}} = \frac{\sum_{s=1}^L N_s}{\sum_{s=1}^L D_s}, \qquad \hat F_{\mathrm{AoR}} = \frac{1}{L}\sum_{s=1}^L \frac{N_s}{D_s}.$$
+
 As $L \to \infty$, $\hat F_{\mathrm{RoA}} \to \nu/\delta$ almost surely, so the ratio of averages is consistent for the population parameter $\nu/\delta$ whenever $N_s$ and $D_s$ are unbiased for the between-population and total variance components. The average of ratios converges instead to $\mathbb E[N_s/D_s]$, which in general differs from $\nu/\delta$. In particular, a population-private rare variant with frequencies $p_1 = \varepsilon$, $p_2 = 0$ has Hudson numerator $\varepsilon^2$ and denominator $\varepsilon$, hence single-SNP value $\varepsilon \to 0$; adding many such SNPs drives $\hat F_{\mathrm{AoR}}$ toward zero while barely moving $\hat F_{\mathrm{RoA}}$.
 
 ## Depends on

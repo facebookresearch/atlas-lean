@@ -1,9 +1,13 @@
 # Mutation-rate ratio from segregating-site counts
 
 Let a sample of $n$ genomes share one genealogy at each position, and consider two classes of mutational events acting independently on the same genealogies under the infinite-sites model: class 1 with rate $\mu_1$ per target unit over $L_1$ target units, class 2 with rate $\mu_2$ per unit over $L_2$ units (for example single-nucleotide substitutions, with targets single sites, and adjacent multi-nucleotide substitutions, with targets dinucleotides). Let $S_1, S_2$ be the numbers of segregating sites of each class. If the expected total branch length $E[L_{\mathrm{tree}}]$ is the same for both classes, then
+
 $$E[S_c] = \mu_c L_c\, E[L_{\mathrm{tree}}] \quad (c = 1, 2), \qquad \text{hence} \qquad \frac{E[S_2]}{E[S_1]} = \frac{\mu_2 L_2}{\mu_1 L_1},$$
+
 and the moment estimator
+
 $$\hat\mu_2 = \mu_1 \cdot \frac{S_2 / L_2}{S_1 / L_1}$$
+
 converts a known per-site rate of one class into the rate of the other. The genealogy, effective population size and sample size cancel; only the class-specific target sizes and the counts are needed.
 
 ## Depends on

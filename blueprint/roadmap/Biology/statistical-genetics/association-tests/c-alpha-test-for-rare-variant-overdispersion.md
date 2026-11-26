@@ -1,14 +1,19 @@
 # C-alpha test for rare-variant overdispersion
 
 **Setting.** A case-control study is sequenced over a target region (a gene or exon set) containing $m$ distinct rare variants. Variant $i$ is observed $n_i \ge 1$ times in total, $y_i$ of them in cases. Let $p_0 \in (0,1)$ be the probability that a copy falls in a case when the variant is unrelated to phenotype (for equal numbers of case and control chromosomes, $p_0 = 1/2$). Assume the counts of different variants are independent and
+
 $$y_i \mid n_i \sim \operatorname{Binomial}(n_i, p_i).$$
 
 **Hypotheses.** $H_0$: $p_i = p_0$ for all $i$. The alternative is that the $p_i$ are drawn from a mixture: some variants are risk alleles ($p_i > p_0$), some neutral ($p_i = p_0$) and some protective ($p_i < p_0$). Any such mixture inflates the variance of $y_i$ above the binomial value.
 
 **Statistic.** Let $m(n)$ be the number of variants observed exactly $n$ times and $f(u \mid n, p_0) = \binom nu p_0^u(1-p_0)^{n-u}$. Define
+
 $$T = \sum_{i=1}^{m}\Bigl[(y_i - n_i p_0)^2 - n_i p_0(1-p_0)\Bigr],$$
+
 $$c = \sum_{n} m(n) \sum_{u=0}^{n}\Bigl[(u - n p_0)^2 - n p_0(1-p_0)\Bigr]^2 f(u \mid n, p_0),$$
+
 $$Z = T/\sqrt c .$$
+
 Under $H_0$, $\mathbb E[T] = 0$ and $\operatorname{Var}(T) = c$ exactly, and $Z$ is referred to a one-sided standard normal (or to its permutation distribution): $H_0$ is rejected for large $Z$.
 
 **Score-test property.** If $p_i = p_0 + \varepsilon_i$ with independent mean-zero random effects of variance $\tau$, then the derivative at $\tau = 0$ of the marginal log-likelihood is proportional to $T$, so C-alpha is the score test for $\tau = 0$ (Neyman and Scott's $C(\alpha)$ test for binomial overdispersion).

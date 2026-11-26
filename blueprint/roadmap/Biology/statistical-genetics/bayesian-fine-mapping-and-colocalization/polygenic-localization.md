@@ -3,7 +3,9 @@
 Let $\beta_1,\dots,\beta_m$ be the standardized causal effects of $m$ common SNPs, not all zero, and fix $p \in (0,1]$.
 
 **Oracle localization size.** Let $s_1,\dots,s_m$ order the SNPs so that $\beta_{s_1}^2 \ge \beta_{s_2}^2 \ge \dots \ge \beta_{s_m}^2$. Define
+
 $$M_p^* = \min\Bigl\{k : \sum_{j=1}^{k}\beta_{s_j}^2 \Big/ \sum_{i=1}^{m}\beta_i^2 \ge p\Bigr\},$$
+
 the size of the smallest set of SNPs causally explaining a fraction $p$ of the common-SNP heritability.
 
 **Localization under an estimated ranking.** For any ranking $s'_1,\dots,s'_m$ of the SNPs define $M_p$ in the same way with $s'$ in place of $s$. Then $M_p \ge M_p^*$ for every ranking, with equality for the oracle ranking.

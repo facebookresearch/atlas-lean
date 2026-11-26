@@ -1,14 +1,21 @@
 # Global epistasis from widespread epistasis
 
 Write a genotype–fitness map on $\ell$ biallelic loci $x_i \in \{-1, +1\}$ in its Fourier (Walsh) expansion
+
 $$y = \bar y + \sum_i f_i x_i + \sum_{i>j} f_{ij} x_i x_j + \sum_{i>j>k} f_{ijk} x_i x_j x_k + \dots, \qquad (2)$$
+
 with symmetric coefficients, where $\bar y$ is the average fitness over all genotypes. The fitness effect of the mutation $x_i = -1 \to +1$ on a background of fitness $y$ can be written exactly as
+
 $$s_i = 2 f_i (1 - \tilde v_i) - 2 \tilde v_i (y - \bar y) + \tilde\epsilon_i, \qquad (3)$$
+
 $$\tilde v_i = \frac{\big(\sum_{j \ne i} f_{ij}^2 + \sum_{j>k \ne i} f_{ijk}^2 + \dots\big) - \big(\sum_{j \ne i} f_j f_{ij} + \sum_{j>k \ne i} f_{jk} f_{ijk} + \dots\big)}{\sum_{j \ne i} (f_j - f_{ij})^2 + \sum_{j>k \ne i} (f_{jk} - f_{ijk})^2 + \dots}, \qquad (4)$$
+
 where $\tilde\epsilon_i$ is a genotype-dependent term with mean zero across genotypes; the numerator of $\tilde v_i$ is proportional to the covariance of fitness effect and background fitness and the denominator to the variance of background fitness.
 
 **Widespread-epistasis (WE) limit.** If locus $i$ has many independent nonzero epistatic terms and the additive effects of its partners are not much larger than the epistatic terms, then $\tilde\epsilon_i$ is approximately normal with variance proportional to $\tilde v_i(1 - \tilde v_i)$ and $\tilde v_i > 0$ typically, so fitness effects decline linearly with background fitness: diminishing returns for beneficial and increasing costs for deleterious mutations. Including both a mutation and its reversion,
+
 $$s_i = -2 v_i (y - \bar y) + 2\sqrt{v_i(1 - v_i)}\, \eta_i, \qquad v_i = \frac{V_i}{V} = \frac{f_i^2 + \sum_{j \ne i} f_{ij}^2 + \dots}{\sum_k f_k^2 + \sum_{k>l} f_{kl}^2 + \dots}, \qquad (5),(6)$$
+
 with $\eta_i$ normal of mean zero and variance $V$, the total variance of fitness across genotypes. The **variance fraction** $v_i$ is half the negative slope and also sets the residual scatter; for two loci the slope of the summed effect is governed by $v_{ij} = v_i + v_j - 2e_{ij}$, with $e_{ij}$ the epistasis between them of all orders.
 
 ## Depends on

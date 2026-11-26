@@ -1,7 +1,9 @@
 # Allele-frequency likelihood from read counts and hard genotype calls
 
 At one biallelic SNP, consider a population with reference-allele frequency $p \in [0,1]$ under Hardy–Weinberg proportions. Suppose $N$ individuals have hard diploid genotype calls carrying $X$ reference alleles among $2N$ chromosomes, and $M$ further individuals have only sequence reads, individual $i$ showing $R_i$ reference reads out of $T_i$ reads. Let $\varepsilon \in (0, 1/2)$ be a per-read error probability and $B(k, n, q) = \binom{n}{k} q^k (1-q)^{n-k}$. Treating individuals and reads as independent given genotypes, the likelihood of $p$ is
+
 $$L(p; D) = B(X, 2N, p)\prod_{i=N+1}^{N+M}\Big\{p^2 B(R_i, T_i, 1-\varepsilon) + 2p(1-p) B(R_i, T_i, \tfrac12) + (1-p)^2 B(R_i, T_i, \varepsilon)\Big\}.$$
+
 The maximum-likelihood frequency $\hat p = \arg\max_p L(p; D)$ is used as the population frequency estimate, and the log-likelihood $\ell(p; D) = \log L(p; D)$ is the building block of frequency-based tests.
 
 ## Expansion

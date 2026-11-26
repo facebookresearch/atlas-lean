@@ -3,10 +3,13 @@
 **Setting.** A parent-offspring trio of a diploid species is sequenced, and a pipeline reports $n$ candidate de novo mutations (DNMs) in the offspring. Let $\mathrm{FDR}$ be the fraction of candidates that are false positives, $\mathrm{CG}$ the callable genome (the number of haploid sites at which a DNM would have been detectable after all site and individual filters), and $\mathrm{FNR}$ the fraction of true DNMs at callable sites that the remaining candidate filters miss.
 
 **Estimator.** Assuming the per-site mutation rate is the same at callable and non-callable sites, the per-site per-generation mutation rate is estimated by
+
 $$\hat\mu = \frac{n\,(1 - \mathrm{FDR})}{2 \cdot \mathrm{CG} \cdot (1 - \mathrm{FNR})}.$$
 
 **Estimating the false-negative rate from an allelic-balance filter.** If candidates are required to have an allelic balance (alternate read fraction) inside an interval, a true DNM is missed whenever a true heterozygote's allelic balance falls outside it. Inherited sites that must be heterozygous in the offspring (one parent homozygous reference, the other homozygous alternate) give
+
 $$\widehat{\mathrm{FNR}} = \frac{\#\{\text{true heterozygous sites outside the allelic-balance interval}\}}{\#\{\text{true heterozygous sites}\}}.$$
+
 Alternatively, the denominator can be computed site by site as $\sum_s \pi_s$, where $\pi_s$ is the probability that a DNM at site $s$ would pass all filters given the depths there, which merges $\mathrm{CG}$ and $1 - \mathrm{FNR}$ into one term.
 
 ## Expansion

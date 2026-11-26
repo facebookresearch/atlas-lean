@@ -3,7 +3,9 @@
 Suppose two distinct point mutations (alleles $1$ and $2$) produce the same beneficial phenotype, each arising at rate $\mu$ per genome per generation in a population of effective size $N_e$, and let $\theta = 2N_e\mu$ be the population-scaled rate per allele, so the total population-scaled beneficial supply is $\Theta = 2\theta$. After the beneficial phenotype has swept to fixation:
 
 1. **Number of origins.** The partition of a sample of $n$ beneficial sequences by mutational origin follows Ewens' sampling formula with parameter $\Theta$; in particular the probability that all $n$ sampled beneficial sequences descend from a single origin (a hard sweep in the sample) is
+
 $$\prod_{i=1}^{n-1} \frac{i}{i + \Theta} = \frac{\Gamma(n)\,\Gamma(1 + \Theta)}{\Gamma(n + \Theta)} .$$
+
 2. **Allele frequency.** The frequency $X$ of allele $1$ among beneficial copies is $\mathrm{Beta}(\theta, \theta)$ distributed.
 
 If in population $i$ ($i = 1, \dots, P$) a sample of $n_i$ beneficial sequences contains $k_i$ copies of allele $1$, with $k_i \mid X_i \sim \mathrm{Binomial}(n_i, X_i)$ independently, the likelihood is the product of beta-binomial probabilities

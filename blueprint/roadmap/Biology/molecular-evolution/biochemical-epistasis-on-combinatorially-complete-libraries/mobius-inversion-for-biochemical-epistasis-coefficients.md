@@ -1,11 +1,15 @@
 # Möbius inversion for biochemical epistasis coefficients
 
 Fix $L$ mutations and identify a genotype with the subset $s \subseteq [L] = \{1, \dots, L\}$ of mutations it carries. Let $y(s)$ be a phenotype on all $2^L$ genotypes, for example $y(s) = -\log_{10} K_{D,s}$, which is proportional to a binding free energy so that non-interacting mutations add. The **biochemical (local) epistasis model of order $K$** is
+
 $$y(s) = \beta_\emptyset + \sum_{\substack{c \subseteq s \\ 1 \le |c| \le K}} \beta_c ,$$
+
 i.e. $y(s) = \beta_0 + \sum_{i=1}^K \sum_{c \in C_i} \beta_c x_{c,s}$ with $C_i$ the $i$-subsets of $[L]$ and $x_{c,s} = \mathbf 1[c \subseteq s]$; $\beta_{\{j\}}$ is the effect of mutation $j$ on the ancestral background and $\beta_c$, $|c| \ge 2$, an interaction coefficient.
 
 **Theorem.** For $K = L$ the model fits every function $y$ exactly, with unique coefficients
+
 $$\beta_c = \sum_{b \subseteq c} (-1)^{|c| - |b|}\, y(b), \qquad c \subseteq [L].$$
+
 In particular $\beta_{\{i,j\}} = y(\{i,j\}) - y(\{i\}) - y(\{j\}) + y(\emptyset)$, the usual pairwise epistasis on the ancestral background. A model of order $K < L$ is exact iff $\beta_c = 0$ for all $|c| > K$, with $\beta_c$ given by the same formula.
 
 ## Expansion

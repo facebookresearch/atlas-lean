@@ -1,7 +1,9 @@
 # Regeneration process for evolutionary innovation
 
 A new function requires a target sequence that is $k$ mutational steps away from a starting sequence; the intermediate steps are neutral and only the final product is favoured by selection. In the **regeneration process**, the starting sequence is produced from the wild type at rate $w$ (by gene duplication or recombination), each step towards the target occurs at rate $u$, and each intermediate is destroyed by an inactivating mutation at rate $v$, returning it to the wild-type pool. Let $x_0$ be the frequency of the wild type and $x_i$ ($i \ge 1$) the frequency of sequences that have made $i$ steps towards the target. Ignoring the (rare) target class, the neutral steady state is
+
 $$x_0 = \frac{v}{v + w}, \qquad x_i = \frac{w}{u}\,\frac{v}{v + w} \left(\frac{u}{v + u}\right)^{i}, \quad i \ge 1.$$
+
 In particular $x_i$ decays geometrically in $i$ with ratio $u/(u+v)$, so the expected time for the population to produce the target grows exponentially in the number of required steps $k$, but not in the gene length $L$: the starting condition is regenerated continually and failed searches are discarded, so only polynomially many searches in $L$ are needed, whereas a single unregenerated random-walk search in the $4^L$-sequence space takes time exponential in $L$.
 
 Example: with $w = 10^{-7}$, $u = 10^{-9}$ and $v = 10^{-7}$ per cell division, $x_{10} \approx 5 \times 10^{-19}$, so cells ten steps from the target are present in a planetary bacterial population of order $10^{30}$ cells.

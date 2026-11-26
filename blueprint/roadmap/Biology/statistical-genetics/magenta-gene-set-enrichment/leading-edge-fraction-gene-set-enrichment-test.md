@@ -1,9 +1,13 @@
 # Leading-edge fraction test for gene-set enrichment
 
 Let every gene $g$ in the genome have a [corrected gene p-value](best-snp-gene-score-with-confounder-regression.md) $p_g$, and fix a cutoff $c$ equal to a chosen percentile of all gene p-values (MAGENTA uses the 95th percentile of gene scores, that is, the 5% most significant genes). For a gene set $\mathcal S$, first drop genes without SNPs and, among genes of $\mathcal S$ whose best SNP is the same SNP, keep only the gene with the most significant score; call the remaining set $\mathcal S'$ with $|\mathcal S'| = s$. The **leading-edge fraction** is
+
 $$\phi(\mathcal S') = \frac{1}{s}\,\big|\{g \in \mathcal S' : p_g < c\}\big|.$$
+
 Under the null that the gene-score ranks of the set are randomly distributed, $\phi(\mathcal S')$ is compared with the leading-edge fractions of $B$ random gene sets $\mathcal R_1, \dots, \mathcal R_B$ of the same effective size $s$, drawn from the whole genome and pruned in the same way, and the enrichment p-value is
+
 $$p_{\mathcal S} = \frac{1}{B}\,\big|\{b : \phi(\mathcal R_b) \ge \phi(\mathcal S')\}\big|.$$
+
 Multiple gene sets are corrected by Bonferroni.
 
 ## Depends on

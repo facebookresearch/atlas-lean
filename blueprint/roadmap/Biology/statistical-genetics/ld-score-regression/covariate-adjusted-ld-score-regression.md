@@ -1,11 +1,15 @@
 # Covariate-adjusted LD score regression (cov-LDSC)
 
 **Standard LDSC.** Let $x_1, \dots, x_N \in \mathbb{R}^M$ be standardized genotype vectors of $N$ individuals at $M$ SNPs and model phenotypes $y_i = x_i \beta + \epsilon_i$ with $\epsilon_1, \dots, \epsilon_N \overset{\mathrm{iid}}{\sim} N(0, \sigma_e^2)$ and random effects $\beta \in \mathbb{R}^M$ of mean zero and $\mathrm{var}(\beta_j) = h_g^2/M$. With $\chi_j^2 \approx (X_j^{\mathsf T} Y)^2/N$ the association statistic of SNP $j$, where $X_j = (x_{1j}, \dots, x_{Nj})^{\mathsf T}$ and $Y = (y_1, \dots, y_N)^{\mathsf T}$,
+
 $$E[\chi_j^2] \approx 1 + Na + \frac{N h_g^2}{M}\, \ell(j), \qquad \ell(j) = \sum_k R_{jk}^2, \qquad (1)$$
+
 where $a$ captures population structure and other confounding and $R_{jk}$ is the population correlation between SNPs $j$ and $k$. $h_g^2$ is estimated by weighted regression of $\chi_j^2$ on $\ell(j)$ with a block jackknife.
 
 **Covariate adjustment.** Let $C$ be an $N \times K$ matrix of column-centred covariates with rows $c_i$ (for example genotype principal components) and $y_i = x_i\beta + c_i \beta_{\mathrm{cov}} + \epsilon_i$. Multiplying by $P = I - C(C^{\mathsf T} C)^{-1} C^{\mathsf T}$ gives
+
 $$\tilde Y = \tilde X \beta + \tilde\epsilon, \qquad \tilde Y = PY,\ \tilde X = PX,\ \tilde\epsilon = P\epsilon, \qquad (2)$$
+
 and Eq. (1) holds with both the association statistics and the LD scores computed from the covariate-adjusted genotypes $\tilde X$. cov-LDSC therefore computes **covariate-adjusted in-sample LD scores** from $\tilde X$ (or a random subsample of individuals) instead of taking LD scores from an external reference panel.
 
 ## Depends on

@@ -3,6 +3,7 @@
 Let two ancestral populations $P_0, P_1$ have allele frequencies $p_{s,0}, p_{s,1} \in (0,1)$ at biallelic SNPs $s = 1, \dots, N$. An admixed diploid individual $i$ draws a global ancestry proportion $\theta_i$ from a distribution with mean $\theta \in (0,1)$. Given $\theta_i$, its maternal and paternal local ancestries $\gamma_{i,s,M}, \gamma_{i,s,P} \in \{0,1\}$ (number of copies from $P_1$) are independent $\mathrm{Ber}(\theta_i)$, and each haplotype carries the allele $g_{i,s,M} = \gamma_{i,s,M} Z_{i,s,1} + (1 - \gamma_{i,s,M}) Z_{i,s,0}$ with independent $Z_{i,s,k} \sim \mathrm{Ber}(p_{s,k})$ (similarly for $P$). Put $g_{i,s} = g_{i,s,M} + g_{i,s,P}$ and $\gamma_{i,s} = \gamma_{i,s,M} + \gamma_{i,s,P}$. Then (the variance formula holding exactly when $\theta_i \equiv \theta$, and approximately otherwise)
 
 $$\mu_{g,s} = \mathbb{E}[g_{i,s}] = 2\big(\theta p_{s,1} + (1 - \theta) p_{s,0}\big),$$
+
 $$\sigma_{g,s}^2 = 2\Big[\theta(1-\theta)(p_{s,1} - p_{s,0})^2 + \theta p_{s,1}(1 - p_{s,1}) + (1-\theta) p_{s,0}(1 - p_{s,0})\Big],$$
 
 and local ancestry has mean $\mu_\gamma = 2\theta$ and variance $\sigma_\gamma^2 \approx 2\theta(1-\theta)$ (exact when $\theta_i \equiv \theta$; in practice $\sigma_\gamma^2$ is estimated empirically). Let the standardized phenotype follow the additive model

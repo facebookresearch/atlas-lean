@@ -1,7 +1,9 @@
 # Connectedness fitness landscape model
 
 In the **connectedness (CN) model** each locus $i$ of $\ell$ loci takes part in a fraction $\mu_i \in [0,1]$ of independent "pathways", and all loci in a pathway interact epistatically, so a set of loci $i, j, k, \dots$ interacts with probability proportional to $\mu_i \mu_j \mu_k \cdots$ (the chance that they share a pathway). The [variance fraction](global-epistasis-from-widespread-epistasis.md) of locus $i$ is
+
 $$v_i = \frac{\mu_i}{1 + \mu_i} \quad (\ell \text{ large}), \qquad v_i = \frac{\mu_i}{\bar\mu\, \ell} \quad (\ell \text{ small}),$$
+
 with $\bar\mu$ the mean of $\mu$ over loci, so the distribution of $\mu$ across loci determines the distribution of variance fractions, which is invariant during adaptation.
 
 Properties:
