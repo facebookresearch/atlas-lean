@@ -36,6 +36,11 @@ Consequently parameter sets with equal $(\gamma_A,\gamma_B,\gamma_\epsilon,\rho)
 - [Stationary standardized linkage disequilibrium $\sigma_d^2$](sigma-dsq.md)
 - [Ohta–Kimura standardized disequilibrium $\sigma_d^2$](sigma-dsq-eq.md)
 
+## Proof depends on
+
+- [Ohta–Kimura standardized disequilibrium $\sigma_d^2$](sigma-dsq-eq.md)
+- [Stationary standardized linkage disequilibrium $\sigma_d^2$](sigma-dsq.md)
+
 ## Expansion
 
 The exponential weight is chosen because it turns weighted moments into derivatives of the generating function $H(x,y,z,t)=\langle e^{-(xf_{Ab}+yf_{aB}+zf_{AB})/f_0}\rangle$ evaluated at $(x,y,z)=(1,1,2)$; the shift by $2$ in $z$ reflects that $f_{AB}$ enters both $f_A$ and $f_B$. Applying Ito's formula to the linearized dynamics gives a first-order PDE for $H$. A perturbation series $H=1+\sum\theta^if_0^jH_{ij}$ gives the product of single-locus generating functions $\log[1+x(1-e^{-\gamma_A\tau})/\gamma_A]$ at order $\theta$. At order $\theta^2f_0$ the linkage terms solve along the characteristic curve $\psi$. The weight removes the divergence of the neutral branching process, which is why the neutral spectrum looks deleterious with $\gamma^*=1$. Since $D^k$ is dominated by $f_{AB}^k$ at frequency scale $f_0$, the numerator is of order $\theta^2f_0^{k+1}$ and the denominator of order $\theta^2f_0^2$, hence the power $f_0^{k-1}$.

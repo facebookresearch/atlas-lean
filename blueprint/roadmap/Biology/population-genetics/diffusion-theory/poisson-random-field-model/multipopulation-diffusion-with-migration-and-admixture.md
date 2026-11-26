@@ -21,9 +21,13 @@ For $P = 1$ and constant parameters, the stationary solution is the one-populati
 
 - [Sawyer–Hartl Poisson random field density](prf-density.md)
 
+## Proof depends on
+
+Its proof is the diffusion limit of the per-generation moments and linearity of expectation, as the Expansion describes.
+
 ## Expansion
 
-Conditional on the current frequencies, the next generation's frequencies in different populations are independent binomial draws after migration. So each coordinate gets drift variance $x_i(1-x_i)/(2N_i)$ per generation and mean change $s_i x_i(1-x_i) + \sum_j m_{i\leftarrow j}(x_j - x_i)$. Rescaling time by $2N_{\mathrm{ref}}$ gives the Kolmogorov forward equation above. Because sites are independent under infinitely many sites, $\phi$ is the intensity of a Poisson random field and obeys the same linear equation. A mutation source near $x = 0$ supplies new sites.
+Conditional on the current frequencies, the next generation's frequencies in different populations are independent binomial draws after migration. So each coordinate gets drift variance $x_i(1-x_i)/(2N_i)$ per generation and mean change $s_i x_i(1-x_i) + \sum_j m_{i\leftarrow j}(x_j - x_i)$. Rescaling time by $2N_{\mathrm{ref}}$ gives the Kolmogorov forward equation above for the frequency density of a single site. The density $\phi$ of derived mutations is the expected number of sites per unit frequency volume; since each site follows the same forward equation and expectation is linear, $\phi$ obeys the same linear equation, with a mutation source near $x = 0$ supplying new sites. This needs no independence between sites: infinitely many sites only rules out a site mutating twice, and sites on a nonrecombining segment still share one genealogy. Only under the additional assumption that sites are unlinked (independent genealogies) is $\phi$ the intensity of a Poisson random field, with independent Poisson counts per frequency class; for linked sites the counts are dependent and a likelihood built from that product is composite.
 
 ## Sources
 

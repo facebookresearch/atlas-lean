@@ -2,9 +2,11 @@
 
 Let a genome segment $[0, L)$ carry a tree sequence: marginal trees $T_1, \dots, T_K$ on the same set of sample nodes, where $T_k$ covers the half-open interval $[a_{k-1}, a_k)$. Each sample node $v$ carries a weight $w(v) \in \mathbb{R}^d$, with total weight $w_{\mathrm{total}} = \sum_v w(v)$. For a node $u$ of $T_k$ let $x_k(u)$ be the total weight of the samples descending from $u$, and let $\beta_k(u)$ be the length (in time) of the branch from $u$ to its parent in $T_k$. A **summary function** is any $f : \mathbb{R}^d \to \mathbb{R}$; it is **strict** if $f(0) = f(w_{\mathrm{total}}) = 0$.
 
-**Site statistic.** At a site $j$, let $\bar x_j(a) = \sum_{v : g_j(v) = a} w(v)$ be the weight of the samples carrying allele $a$. Then
+**Site statistic.** Mutations sit at positions (sites) $s \in [0, L)$, real numbers rather than integers. At a site $s$ with genotypes $g_s(v)$, let $\bar x_s(a) = \sum_{v : g_s(v) = a} w(v)$ be the weight of the samples carrying allele $a$. For a window $[i, j)$ with $0 \le i < j \le L$, sum over the mutated sites that fall in the window and normalize by its span:
 
-$$\mathrm{Site}(f, w)_j = \sum_a f(\bar x_j(a)), \qquad \mathrm{Site}(f, w)_{[i, j)} = \frac{1}{j - i} \sum_{k=i}^{j-1} \mathrm{Site}(f, w)_k .$$
+$$\mathrm{Site}(f, w)_s = \sum_a f(\bar x_s(a)), \qquad \mathrm{Site}(f, w)_{[i, j)} = \frac{1}{j - i} \sum_{s \in S \cap [i, j)} \mathrm{Site}(f, w)_s ,$$
+
+where $S$ is the (finite) set of sites carrying a mutation. Under the infinite-sites model below, $S$ is a set of random points of $[0, L)$, so the window sum runs over observed mutation positions, not over integer positions.
 
 **Branch statistic.** For the tree $T_k$,
 
@@ -20,11 +22,15 @@ $$\mathrm{Branch}(f, w)_{[i, j)} = \frac{1}{\mu}\, \mathbb{E}\!\left[ \mathrm{Si
 
 where the expectation holds the genealogies on $[i, j)$ fixed and averages over mutations.
 
-**Example.** With $d = 1$, unit weights on $n$ samples and $f(x) = x(n - x)/(n(n-1))$, the site statistic is nucleotide diversity and the branch statistic is the mean pairwise path length (twice the mean time to the most recent common ancestor of a random pair), so expected diversity equals $\mu$ times mean pairwise branch distance.
+**Example.** With $d = 1$, unit weights on $n$ samples and $f(x) = x(n - x)/(n(n-1))$, the site statistic is nucleotide diversity per unit length and the branch statistic is the mean pairwise path length in the trees, so expected diversity equals $\mu$ times the mean pairwise branch distance. When all samples are contemporary (sampled at the same time), the path length between two samples is twice their time to the most recent common ancestor, and the branch statistic is twice the mean pairwise TMRCA; with samples taken at different times the two differ.
 
 ## Depends on
 
 - [Coalescence records encode a sequence of local trees exactly](../two-locus-coalescent/tree-sequence-encoding-represents-local-trees-ex.md)
+
+## Proof depends on
+
+- [Poisson process](../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
 
 ## Expansion
 

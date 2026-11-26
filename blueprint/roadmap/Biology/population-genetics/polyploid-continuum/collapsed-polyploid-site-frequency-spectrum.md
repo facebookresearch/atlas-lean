@@ -19,6 +19,11 @@ with $\mathbb E[d_1,d_2]=0$ outside $0\le d_2\le nk_2$. Collapsing several subge
 - [Subgenome diffusion for a polyploid with homoeologous exchange](polyploid-subgenome-diffusion-with-homoeologous-exchange.md)
 - [Expected site frequency spectrum under the Poisson random field](../diffusion-theory/poisson-random-field-model/expected-sfs.md)
 
+## Proof depends on
+
+- [Vandermonde's identity](../../../Combinatorics/binomial-coefficients/binomial-sums/vandermonde-identity.md)
+- [Expected site frequency spectrum under the Poisson random field](../diffusion-theory/poisson-random-field-model/expected-sfs.md)
+
 ## Expansion
 
 Item 1 is the definition of the collapse together with the independence of binomial sampling within subgenomes given $(x_1,x_2)$: summing the product of two binomial probabilities over $d_1+d_2=d$ is the law of their sum. Item 2 is Vandermonde's identity, $\sum_{d_1}\binom{a}{d_1}\binom{b}{d-d_1}=\binom{a+b}{d}$, applied with a common success probability $x$. Item 3 is direct substitution. Collapsing loses identifiability: in simulations, parameters of the polyploid's own history (bottleneck size, formation time, exchange rate) were estimated precisely from the one-dimensional collapsed spectrum, but parental population sizes before formation were unstable or unbounded.

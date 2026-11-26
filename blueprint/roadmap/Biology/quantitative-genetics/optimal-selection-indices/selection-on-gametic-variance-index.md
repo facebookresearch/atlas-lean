@@ -29,6 +29,11 @@ Ranking candidates by $I_5$ instead of $\hat A$ therefore favours parents that p
 - [Hazel's selection index](hazel-selection-index.md)
 - [The Bulmer effect: selection reduces additive variance](../mendelian-segregation-and-the-infinitesimal-mode/bulmer-effect.md)
 
+## Proof depends on
+
+- [Standard normal CDF](../../../Probability/central-limit-theorems/berry-esseen-theorem/kolmogorov-distance/normal-cdf.md)
+- [Standard Gaussian density function](../../../Probability/distributions/continuous/multivariate-normal-distribution/gaussian-density/std-gaussian-pdfreal.md)
+
 ## Expansion
 
 Offspring GEBV equals the average of two parental gametic values, so the within-family variance is the sum of the two parents' gametic variances and the SD is $\sqrt{\sigma_{\hat g}^2 + \sigma_{\hat g,\mathrm{mate}}^2}$, not their sum. The chain rule gives $\partial P/\partial \hat A = \varphi(\cdot)\cdot \tfrac{1}{\sigma}\cdot\tfrac12$ and $\partial P / \partial \sigma = \varphi(\cdot)\,(\tau_p - \bar{\hat A}_{\mathrm{off}})/\sigma^2$; evaluated at population values and divided by $z_p/(2\sigma)$, this is $I_7$. The first-order Taylor expansion of $\sqrt{s^2 + 1/4}$ at $s = 1/2$ has slope $s/\sqrt{s^2 + 1/4} = 1/\sqrt 2$, which turns the weight $2x_p$ on $\sigma_{\widehat{MS}}$ into $\sqrt{2}\,x_p$ on $\sigma_{\hat g}$. In simulations based on dairy cattle parameters, $I_5$ was among the best of ten indices and raised the probability of breeding a top-0.1% genotype by about 36% in a population at Bulmer equilibrium.

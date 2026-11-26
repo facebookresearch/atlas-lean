@@ -25,6 +25,11 @@ As in the no-admixture case, each conditional is read off the joint density: the
 - [STRUCTURE no-admixture model and its Gibbs sampler](structure-no-admixture-gibbs-sampler.md)
 - [Admixture log-likelihood](../admixture-model-and-the-frappe-em-algorithm/admixture-log-lik.md)
 
+## Proof depends on
+
+- [Dirichlet–multinomial conjugacy](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/with-density-prod-pow-dirichlet-measure.md)
+- [STRUCTURE no-admixture model and its Gibbs sampler](structure-no-admixture-gibbs-sampler.md)
+
 ## Sources
 
 - J. K. Pritchard, M. Stephens and P. Donnelly, "Inference of population structure using multilocus genotype data", *Genetics* 155 (2000), 945–959, <https://doi.org/10.1093/genetics/155.2.945> (PMC1461096). The admixture model and its Gibbs algorithm; no equation numbers are cited because only the abstract was available.

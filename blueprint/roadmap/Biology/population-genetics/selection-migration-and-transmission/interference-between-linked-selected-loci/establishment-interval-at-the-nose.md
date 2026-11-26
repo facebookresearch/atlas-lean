@@ -19,6 +19,11 @@ below the mean occur with appreciable probability, values well above it almost n
 
 - [Successional and concurrent regimes of beneficial mutations in an asexual population](successional-and-concurrent-mutation-regimes.md)
 
+## Proof depends on
+
+- [Successional and concurrent regimes of beneficial mutations in an asexual population](successional-and-concurrent-mutation-regimes.md)
+- [Euler's gamma integral](../../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/lintegral-rpow-mul-exp-neg-mul-ioi.md)
+
 ## Expansion
 
 The feeding class $n_{q-1}(t)$ grows deterministically at rate $(q-1)s$ and throws off mutants at rate

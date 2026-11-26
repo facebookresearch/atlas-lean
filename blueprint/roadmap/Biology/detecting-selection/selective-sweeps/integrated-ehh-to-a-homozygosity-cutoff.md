@@ -24,8 +24,11 @@ by a gap of size $g$ between $20$ and $200$ kb is multiplied by $20/g$.
 
 ## Depends on
 
-- [EHH in the star-genealogy sweep model](sweep-ehh.md)
-- [One-sided integrated haplotype homozygosity](ihh.md)
+Its statement uses only the notions recalled above.
+
+## Proof depends on
+
+It is a definition; nothing is proved.
 
 ## Expansion
 
@@ -33,8 +36,12 @@ A selected allele that rose rapidly in frequency carries haplotype homozygosity 
 site than a neutral allele of the same frequency, so the area under its EHH decay curve is larger. Cutting
 the integral off at a positive homozygosity level keeps it finite on real data, where EHH is known only on a
 finite marker set and decays to a small positive value rather than to $0$; the trapezoidal interpolation is
-what the finite marker spacing permits. The factor two between this two-sided area and the one-sided
-integral of the star-genealogy model cancels in the log ratio that defines the integrated haplotype score.
+what the finite marker spacing permits. The left and right areas are summed as observed: the two decay
+curves of a sample need not be mirror images, and the left and right areas can differ by different amounts
+for the ancestral and the derived core allele, so the empirical two-sided value is in general not twice a
+one-sided area. Only for a pair of curves that are symmetric about the core site and integrated with the
+same conventions, as in the [star-genealogy model](sweep-ehh.md), is the two-sided area twice the
+[one-sided integral](ihh.md), as for the [two-sided star-genealogy iHH](ihh-two-sided.md).
 
 ## Sources
 

@@ -18,11 +18,15 @@ $$T^m = T_0^m + (T_\chi^m)^\top T_C .$$
 
 $$\delta_c = \Big[\prod_{j=1}^{c-1}(1-\rho_j)\Big]\rho_c \ (c \le L), \qquad \delta_K = \prod_{j=1}^L (1-\rho_j),$$
 
-one has $\delta T^m = \delta$ for every $m$: the chain is stationary and $\delta_c$ is the expected genome proportion in HBD class $c$. Hence the realized inbreeding with respect to ancestors up to layer $c$ is $1 - \prod_{j=1}^c(1-\rho_j)$, so the $\rho_c$ keep the interpretation of inbreeding coefficients, unlike in the earlier multiple-rate (MixKR) model. For $L = 1$ the model is the 1R model.
+one has $\delta T^m = \delta$ for every $m$: the chain is stationary, so at every marker the probability of HBD class $c$ is $\delta_c$, and $\delta_c$ is the expected fraction of markers in class $c$. Hence the **expected** inbreeding with respect to ancestors up to layer $c$, the expected fraction of markers in classes $1, \dots, c$, is $\sum_{i \le c}\delta_i = 1 - \prod_{j=1}^c(1-\rho_j)$, so the $\rho_c$ keep the interpretation of inbreeding coefficients, unlike in the earlier multiple-rate (MixKR) model. The **realized** fraction of a given genome in those classes is a random variable (at a single marker it is $0$ or $1$); it is estimated from the local state posteriors, as the average over markers of the posterior probability of classes $1, \dots, c$. For $L = 1$ the model is the 1R model.
 
 ## Depends on
 
 - [Single-class homozygous-by-descent hidden Markov model (1R model)](single-class-hbd-hidden-markov-model.md)
+
+## Proof depends on
+
+None beyond multiplying out $\delta T^m$ with the telescoping identity $\sum_{i=1}^c \chi_i^m = 1 - e^{-R_cd_m}$, as the Expansion describes.
 
 ## Expansion
 

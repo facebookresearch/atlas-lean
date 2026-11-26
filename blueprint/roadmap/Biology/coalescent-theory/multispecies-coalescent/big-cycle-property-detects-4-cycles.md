@@ -17,6 +17,11 @@ Let $N^+$ be a metric rooted level-1 network on $X$ under the network multispeci
 
 - [Quartet concordance factors depend only on the unrooted quartet network](quartet-concordance-factors-depend-only-on-the-unrooted-quartet-network.md)
 
+## Proof depends on
+
+- [Quartet concordance factors depend only on the unrooted quartet network](quartet-concordance-factors-depend-only-on-the-unrooted-quartet-network.md)
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
+
 ## Expansion
 
 Contracting $2_1$- and $2_3$-cycles leaves concordance factors unchanged, and $2_2$-, $3_1$- and 4-cycles act through explicit mixtures with weights $\gamma^2$, $(1-\gamma)^2$, $2\gamma(1-\gamma)$ or $\gamma$, $1-\gamma$ of the concordance factors of the networks obtained by deleting one hybrid edge. Without a $3_2$-cycle or a 4-cycle these mixtures stay on the treelike segments of the simplex, giving part 2. A 4-cycle mixes two incompatible displayed quartet trees, which for generic parameters separates all three entries, while a $3_2$-cycle never produces three distinct entries; together with part 2 this gives parts 3 and 4.

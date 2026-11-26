@@ -12,6 +12,10 @@ $$\kappa_0 = (1 - \phi_1)(1 - \phi_2), \qquad \kappa_2 = \phi_1 \phi_2. \tag{9}$
 
 - [Every kinship coefficient is realized by half cousins with an inbred founder](half-cousin-kinship-with-inbred-founder.md)
 
+## Proof depends on
+
+- [Every kinship coefficient is realized by half cousins with an inbred founder](half-cousin-kinship-with-inbred-founder.md)
+
 ## Expansion
 
 Equation (9): the paternal alleles of $a$ and $b$ are random alleles of the two fathers, IBD with probability $\phi_1$, independently of the maternal pair. Then $\phi_1 + \phi_2 = U$ and $\phi_1\phi_2 = \kappa_2$, so $\phi_1, \phi_2$ are the roots of $\phi^2 - U\phi + \kappa_2 = 0$; the discriminant $U^2 - 4\kappa_2$ equals $\kappa_1^2 - 4\kappa_0\kappa_2$, which is nonnegative exactly when $\kappa$ is admissible. Edge cases: $\phi_j = 1$ uses separation $0$ with inbreeding $1$, and $\kappa_2 = 0$ gives $m = \infty$, which collapses to ordinary half cousins on the maternal side; $\kappa = (1, 0, 0)$ is any pair of noninbred founders. This replaces Karigl's construction, which needed up to four infinite pedigree parts (Section 5.2).

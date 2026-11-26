@@ -20,6 +20,10 @@ the covariance of $e$ solving $e=We+\varepsilon$ with $\varepsilon\sim\mathrm{MV
 
 - [Multitrait Bayesian regression with Gaussian, spike–slab and kernel priors](multitrait-bayesian-regression-with-gaussian-and-spike-slab-priors.md)
 
+## Proof depends on
+
+None beyond the quadratic-form computation and the unique $LDL^\top$ factorization of a symmetric positive definite matrix (Mathlib's `LDL` decomposition), as the Expansion describes.
+
 ## Expansion
 
 - Factor analytic: $x^\top\Omega x=\|W^\top x\|^2+\sum_k\psi_{kk}x_k^2\ge0$, with equality forcing $x=0$ when every $\psi_{kk}>0$.

@@ -21,6 +21,11 @@ In particular, however large the reference panel, the target typically has only 
 - [Kingman's coalescent](../coalescents/merger-rate-dirac-zero.md)
 - [The Li–Stephens copying model](../../population-structure/li-stephens-haplotype-copying-model/hmm.md)
 
+## Proof depends on
+
+- [Clade probability](../multispecies-coalescent/random-joining-is-clade.md)
+- [Kingman's coalescent](../coalescents/merger-rate-dirac-zero.md)
+
 ## Expansion
 
 The event $\{U = u\}$ for a given set $A$ of $u$ reference leaves happens in two stages: the $u + 1$ lineages of $A$ and the target coalesce among themselves before meeting the other $n - u$ (probability $q_{u+1, n-u}$ among $n + 1$ lineages), and within that group the $u$ lineages of $A$ coalesce before meeting the target (probability $q_{u, 1} = 2/(u(u+1))$ among $u + 1$ lineages). Multiplying by the $\binom{n}{u}$ choices of $A$,

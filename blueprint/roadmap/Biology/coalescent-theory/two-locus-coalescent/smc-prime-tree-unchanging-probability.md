@@ -35,6 +35,10 @@ $0$.
 - [Pairwise sequentially Markov coalescents SMC and SMC′](sequentially-markov-coalescent-smc-smc-pairwise.md)
 - [Two-locus ancestral process for $n$ sequences](two-locus-ancestral-process-for-n-sequences.md)
 
+## Proof depends on
+
+- [Pairwise sequentially Markov coalescents SMC and SMC′](sequentially-markov-coalescent-smc-smc-pairwise.md)
+
 ## Expansion
 
 Under the SMC' a recombination cuts a lineage at time $t$ on branch $b$ and the floating lineage

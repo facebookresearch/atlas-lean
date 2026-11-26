@@ -18,11 +18,20 @@ with mean $f_{Ab}f_{aB}$. Averaging over the weighted single-locus spectra gives
 
 $$\sigma_d^1(f_0)=0,\qquad \sigma_d^2(f_0)=\frac1{2NR},\qquad \sigma_d^4(f_0)=\frac{6+6NRf_0^2}{(2NR)^3}.$$
 
-The first two moments agree with the clonal-recombinant regime $f_0^{-1}\ll NR\ll f_0^{-2}$, and the fourth moment separates them. The ratio $\eta(f_0)=\sigma_d^4/[3(\sigma_d^2)^2]$ decays like $(NR)^{-2}$ in the clonal-recombinant regime and like $f_0^2/(NR)$ in quasi-linkage equilibrium.
+The first two moments agree with the clonal-recombinant regime $f_0^{-1}\ll NR\ll f_0^{-2}$, and the fourth moment separates them. The ratio $\eta(f_0)=\sigma_d^4(f_0)/[3\sigma_d^2(f_0)]$, where the superscripts index the moments $k=4$ and $k=2$ rather than powers, decays like $(NR)^{-2}$ in the clonal-recombinant regime and like $f_0^2/(NR)$ in quasi-linkage equilibrium.
 
 ## Depends on
 
 - [Frequency-resolved linkage disequilibrium $\sigma_d^k(f_0)$ and its rare-mutation scaling collapse](frequency-weighted-ld-sigma-d-k-rare-mutation-scaling.md)
+
+## Proof depends on
+
+- [Mean of the gamma law](../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/integral-id-gamma-measure.md)
+- [Variance of the gamma law](../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/variance-id-gamma-measure.md)
+- [Gamma integrals](../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/integral-pow-mul-exp-neg-mul-gamma-measu.md)
+
+## Related topics
+
 - [Stationary standardized linkage disequilibrium $\sigma_d^2$](sigma-dsq.md)
 
 ## Expansion

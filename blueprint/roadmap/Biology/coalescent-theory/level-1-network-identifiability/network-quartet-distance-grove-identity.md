@@ -20,6 +20,14 @@ Fix $x, y, z, w$. If $\rho_{xy}(Q_{xyzw}) = 0$, no displayed tree separates $x, 
 
 ## Depends on
 
+- [Gene tree displaying a quartet split](../multispecies-coalescent/displays-split.md)
+- [Buneman split index and split weights of a tree metric](../../phylogenetics/neighbor-joining/buneman-split-index-and-split-weights-of-a-tree.md)
+
+## Proof depends on
+
+- [Gene tree displaying a quartet split](../multispecies-coalescent/displays-split.md)
+- [Split decomposition of a tree metric](../../phylogenetics/neighbor-joining/dist-eq-sum-darts.md)
+
 ## Sources
 
 - E. S. Allman, H. Baños and J. A. Rhodes, "NANUQ: a method for inferring species networks from gene trees under the coalescent model", *Algorithms for Molecular Biology* 14 (2019), 24, <https://doi.org/10.1186/s13015-019-0159-2> (PMC6896299). Theorem 17 (tree case, from earlier work), Definitions 18, 20 and 22, Lemmas 19 and 21, Theorem 23, Corollaries 16 and 24.

@@ -23,6 +23,11 @@ where $\tilde p_W$ and $\tilde p_S$ are the cycle harmonic means of $\pi_i$ and 
 - [Inbreeding, variance and eigenvalue effective population sizes](effective-population-size-definitions.md)
 - [Structured coalescent at a neutral site linked to a cyclically fluctuating balanced polymorphism](../../coalescent-theory/structured-coalescent/structured-coalescent-linked-to-cyclic-balanced-polymorphism.md)
 
+## Proof depends on
+
+- [The geometric series of a real ratio r with |r| < 1 sums to 1/(1 − r)](../../../Analysis/sequences-and-series/convergence/limits-of-specific-sequences-and-partial-sums/geometric-series-convergence.md)
+- [Structured coalescent at a neutral site linked to a cyclically fluctuating balanced polymorphism](../../coalescent-theory/structured-coalescent/structured-coalescent-linked-to-cyclic-balanced-polymorphism.md)
+
 ## Expansion
 
 Writing $\tau-\tau'=cG+j$ with $0\le j<G$, periodicity gives $\Delta_{(i+\tau-\tau')\bmod G}=\Delta_{(i+j)\bmod G}$, and $\sum_{c\ge0}e^{-rGc}=1/(1-e^{-rG})$. This proves the closed form for $S_i$. For the limit, expand $e^{-rj}=1-rj+O(r^2)$ and $1-e^{-rG}=rG+O(r^2)$. The zero-order term of the numerator is $\sum_j\Delta_{i+j}=0$, so

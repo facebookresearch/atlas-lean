@@ -23,6 +23,11 @@ paths from $\mathrm{LSA}(Y)$ to the taxa of $Y$.
 - [Hard and soft anomalous networks under the network multispecies coalescent](anomalous-networks-under-correlated-inheritance.md)
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
 
+## Proof depends on
+
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
+- [Quartet concordance factors depend only on the unrooted quartet network](quartet-concordance-factors-depend-only-on-the-unrooted-quartet-network.md)
+
 ## Expansion
 
 The proof is by induction on the number $n$ of hybrid nodes below the lowest stable ancestor, after

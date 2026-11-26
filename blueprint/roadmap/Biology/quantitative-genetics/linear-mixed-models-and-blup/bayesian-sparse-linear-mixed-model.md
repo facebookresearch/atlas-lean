@@ -18,7 +18,7 @@ Setting $\pi = 0$ (no sparse effects) gives the LMM/ridge regression (BLUP); set
 
 $$\mathrm{PVE} = \frac{V(X\tilde\beta + u)}{V(X\tilde\beta + u) + \tau^{-1}}, \qquad \mathrm{PGE} = \frac{V(X\tilde\beta)}{V(X\tilde\beta + u)},$$
 
-the proportion of phenotypic variance explained by all genetic terms and the proportion of genetic variance explained by the sparse effects. Priors are placed through the approximations
+called the proportion of phenotypic variance explained by all genetic terms and the proportion of genetic variance explained by the sparse effects. $\mathrm{PVE} \in [0, 1)$ for $\tau > 0$, but $\mathrm{PGE}$ is defined only when $V(X\tilde\beta + u) > 0$ and is not a share on every draw: $X\tilde\beta$ and $u$ can be negatively correlated across individuals, and for a nonconstant $a = X\tilde\beta$ and $u = -a/2$ one gets $\mathrm{PGE} = V(a)/V(a/2) = 4$. It lies in $[0, 1]$ when, for example, the sample covariance of $X\tilde\beta$ and $u$ is nonnegative. Priors are placed through the approximations
 
 $$h = \frac{p\pi s_a\sigma_a^2 + s_b\sigma_b^2}{p\pi s_a\sigma_a^2 + s_b\sigma_b^2 + 1}, \qquad \rho = \frac{p\pi s_a\sigma_a^2}{p\pi s_a\sigma_a^2 + s_b\sigma_b^2},$$
 
@@ -27,6 +27,10 @@ where $s_a = (np)^{-1}\sum_{i,j}x_{ij}^2$ is the average genotype variance and $
 ## Depends on
 
 - [BLUP as a conditional law](cond-distrib-mixed-model.md)
+
+## Proof depends on
+
+- [Linear images of multivariate Gaussians](../../../Probability/distributions/continuous/gaussian-conditioning/map-to-euclidean-lin-multivariate-gaussi.md)
 
 ## Expansion
 

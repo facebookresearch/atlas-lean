@@ -35,6 +35,11 @@ the nose and selection in the bulk.
 - [Establishment interval at the nose of the fitness distribution](establishment-interval-at-the-nose.md)
 - [Clonal interference](clonal-interference.md)
 
+## Proof depends on
+
+- [Steady-state lead of the fitness distribution under beneficial mutation-selection balance](steady-state-lead-of-the-fitness-distribution.md)
+- [Establishment interval at the nose of the fitness distribution](establishment-interval-at-the-nose.md)
+
 ## Expansion
 
 Once the class at lead $qs$ establishes, the situation repeats with the nose advanced by one mutation and

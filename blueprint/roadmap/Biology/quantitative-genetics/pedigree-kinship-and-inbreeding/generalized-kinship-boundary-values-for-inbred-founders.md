@@ -15,6 +15,11 @@ With $f_a = f_b = 0$ these reduce to the outbred values $\tfrac14, \tfrac18, \tf
 - [Inbreeding coefficient under gene dropping](inbreeding.md)
 - [Kinship coefficient by Malécot's recursion](kinship.md)
 
+## Proof depends on
+
+- [Inbreeding coefficient under gene dropping](inbreeding.md)
+- [Kinship coefficient by Malécot's recursion](kinship.md)
+
 ## Expansion
 
 Condition on the event $A$ that founder $a$ is autozygous, of probability $f_a$. Three alleles sampled with replacement from $a$ are IBD with probability $1$ on $A$, and with probability $\tfrac14$ off $A$ (all three draws hit the same one of two non-IBD alleles), giving $f_a + \tfrac14(1 - f_a) = \tfrac14(1 + 3f_a)$. The other values follow the same way; $\phi_{aa,bb}$ factors because distinct founders are independent and each factor is $\phi_{aa} = \tfrac12(1 + f_a)$ (Section 3.1).

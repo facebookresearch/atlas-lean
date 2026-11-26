@@ -24,6 +24,10 @@ Expanding $D^k$ and $f_A(1-f_A)f_B(1-f_B)$ as polynomials in the haplotype frequ
 
 - [Frequency-resolved linkage disequilibrium $\sigma_d^k(f_0)$ and its rare-mutation scaling collapse](frequency-weighted-ld-sigma-d-k-rare-mutation-scaling.md)
 
+## Proof depends on
+
+- [Power series of the exponential function](../../../Analysis/special-functions/elementary-transcendental-functions/real-exponential-power-series.md)
+
 ## Expansion
 
 The identity follows from the power series:

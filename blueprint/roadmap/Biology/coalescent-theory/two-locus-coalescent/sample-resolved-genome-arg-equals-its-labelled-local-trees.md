@@ -19,6 +19,10 @@ The hypotheses matter. Without (3), only the sample-resolved restriction of $G$ 
 - [Genome ARGs: interval-annotated inheritance graphs and their local trees](genome-arg-interval-annotated-inheritance-graph.md)
 - [Coalescence records encode a sequence of local trees exactly](tree-sequence-encoding-represents-local-trees-ex.md)
 
+## Proof depends on
+
+- [Genome ARGs: interval-annotated inheritance graphs and their local trees](genome-arg-interval-annotated-inheritance-graph.md)
+
 ## Expansion
 
 Fix $x$. If $(c,p,I)\in E$ and $x\in I$, then by (3) some sample's pastward trace at $x$ reaches $c$. By (1) the edge it then follows from $c$ is $(c,p,I)$, so $\pi^x_c=p$, and $x\in I_{cp}$. If a trace stops at $c$ because $\pi^x_c$ was already set, then $c$ was reached before and the same argument applies. Conversely, every assignment $\pi^x_c=p\ne0$ is made from an edge $(c,p,I)$ with $x\in I$, so $I_{cp}\subseteq I$. Together $I_{cp}=I$ for each edge, and by (2) the pairs index the edges, which proves $\widehat E=E$.

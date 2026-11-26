@@ -6,20 +6,28 @@ $$M[d_1, \dots, d_P] = \int_0^1 \!\cdots\! \int_0^1 \prod_{i=1}^P \binom{n_i}{d_
 
 For $P = 1$ this is the [expected site frequency spectrum](expected-sfs.md) of the Poisson random field.
 
-Let $S[d_1, \dots, d_P]$ be the observed joint spectrum and $\Theta$ the demographic parameters on which $M$ depends. If polymorphisms are unlinked, the entries of $S$ are independent Poisson variables with means $M$, so
+Let $S[d_1, \dots, d_P]$ be the observed joint spectrum and $\Theta$ the demographic parameters on which $M$ depends. Let
 
-$$L(\Theta \mid S) = \prod_{i=1}^P \prod_{d_i = 0}^{n_i} \frac{e^{-M[d_1,\dots,d_P]}\, M[d_1,\dots,d_P]^{S[d_1,\dots,d_P]}}{S[d_1,\dots,d_P]!} ,$$
+$$\mathcal D \subseteq \{0, \dots, n_1\} \times \cdots \times \{0, \dots, n_P\}$$
 
-a product of $\prod_i (n_i + 1)$ Poisson factors (entries that cannot be observed, such as the all-zero and all-$n$ corners, are masked in practice). With linked sites, $L$ is a composite likelihood: still useful for point estimation, but variances must come from simulation or resampling.
+be the set of observable cells: the full grid of joint counts with the masked cells removed (in practice at least the all-zero corner $(0, \dots, 0)$ and the all-derived corner $(n_1, \dots, n_P)$). If polymorphisms are unlinked, the entries $S[d]$, $d \in \mathcal D$, are independent Poisson variables with means $M[d]$, so
+
+$$L(\Theta \mid S) = \prod_{(d_1, \dots, d_P) \in \mathcal D} \frac{e^{-M[d_1,\dots,d_P]}\, M[d_1,\dots,d_P]^{S[d_1,\dots,d_P]}}{S[d_1,\dots,d_P]!} ,$$
+
+one Poisson factor per spectrum entry, $|\mathcal D|$ factors in all, at most $\prod_i (n_i + 1)$. For two populations each sampled twice the grid has $9$ cells before masking. With linked sites, $L$ is a composite likelihood: still useful for point estimation, but variances must come from simulation or resampling.
 
 ## Depends on
 
 - [Expected site frequency spectrum under the Poisson random field](expected-sfs.md)
 - [Multi-population diffusion for the joint allele-frequency density](multipopulation-diffusion-with-migration-and-admixture.md)
 
+## Proof depends on
+
+Its proof is binomial sampling given the population frequencies and the colouring theorem for Poisson random fields, as the Expansion describes.
+
 ## Expansion
 
-Given population frequencies $x_i$, the $n_i$ sampled copies in population $i$ are independent Bernoulli($x_i$) draws, independent across populations, which gives the product of binomial probabilities. Integrating against the Poisson intensity $\phi$ thins the Poisson random field of sites into independent Poisson counts per spectrum cell (Poisson colouring theorem), giving the product likelihood.
+Given population frequencies $x_i$, the $n_i$ sampled copies in population $i$ are independent Bernoulli($x_i$) draws, independent across populations, which gives the product of binomial probabilities. Integrating against the Poisson intensity $\phi$ thins the Poisson random field of unlinked sites into independent Poisson counts, one per cell $d$ of the grid (Poisson colouring theorem), and restricting to the cells of $\mathcal D$ gives the product likelihood.
 
 ## Sources
 

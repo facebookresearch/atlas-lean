@@ -23,6 +23,10 @@ So ensemble epistasis requires both mutations to act differently on the two inac
 - [Boltzmann-averaged free energy of a conformational ensemble](boltzmann-averaged-free-energy-of-a-conformational-ensemble.md)
 - [Reciprocal sign epistasis, multiple peaks and the small-face limitation](epistasis-and-landscape-structure.md)
 
+## Proof depends on
+
+- [Boltzmann-averaged free energy of a conformational ensemble](boltzmann-averaged-free-energy-of-a-conformational-ensemble.md)
+
 ## Expansion
 
 Substituting $\Delta G_{\mathrm{obs}} = G_i - \langle G_{j,k}\rangle$ into $\varepsilon$, the $G_i$ parts form a double difference of an additive function and cancel, giving equation (16). By shift equivariance, $\langle G_{j,k}\rangle = G_k + h(G_j - G_k)$ with $h(u) = -RT\ln(1 + e^{-u/RT})$, and the $G_k$ parts cancel too, leaving

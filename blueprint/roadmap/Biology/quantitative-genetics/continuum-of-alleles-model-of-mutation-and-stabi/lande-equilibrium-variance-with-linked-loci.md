@@ -24,6 +24,12 @@ So the expressed genetic variance does not depend on the recombination fractions
 - [Mutational variance](mut-var.md)
 - [Equilibrium of the continuum-of-alleles model](stationary-law-of-the-continuum-of-alleles-model.md)
 
+## Proof depends on
+
+- [Gaussian stabilizing fitness](fitness.md)
+- [Mutational variance](mut-var.md)
+- [Equilibrium of the continuum-of-alleles model](stationary-law-of-the-continuum-of-alleles-model.md)
+
 ## Expansion
 
 Gaussian selection on a normal phenotype keeps the zygotic distribution of allelic effects multivariate normal and shrinks its covariance by a rank-one update. Recombination reshuffles the between-locus covariances without touching the per-locus sums that make up expressed variance. Mutation adds $\mu_i m_i^2$ to each diagonal entry. At equilibrium, the variance selection removes from the expressed component, about $B_i^2/(\omega^2 + \sigma_e^2 + \sigma_g^2)$ at locus $i$, must equal the mutational input $\mu_i m_i^2$. This balance involves only the expressed quantities, so it holds whatever the linkage map; recombination only moves variance between the expressed and hidden parts.

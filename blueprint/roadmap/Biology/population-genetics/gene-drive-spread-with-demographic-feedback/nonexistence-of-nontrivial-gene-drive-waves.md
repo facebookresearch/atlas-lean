@@ -11,6 +11,12 @@ then every travelling wave is trivial; consequently $n(t, x) = N(x - ct)$ is a F
 ## Depends on
 
 - [Reaction–diffusion model of a gene drive with demographic feedback](gene-drive-reaction-diffusion-model.md)
+- [Traveling front of the Fisher–KPP equation](../../../Analysis/ordinary-differential-equations/is-front.md)
+
+## Proof depends on
+
+- [Reaction–diffusion model of a gene drive with demographic feedback](gene-drive-reaction-diffusion-model.md)
+- [Every Fisher–KPP front speed is at least the minimal speed](../../pattern-formation/fisher-kpp-travelling-waves/two-mul-sqrt-le-of-is-front.md)
 
 ## Expansion
 

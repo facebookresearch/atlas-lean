@@ -20,6 +20,10 @@ Elementary properties used for epistasis:
 
 The frequencies are coupled: lowering $G_j$ lowers $f_i$ even when $G_i$ is unchanged.
 
+## Depends on
+
+- [Boltzmann probability of a state](../../../../Chemistry/chemical-thermodynamics/canonical-ensemble-of-a-finite-system/boltzmann-prob.md)
+
 ## Expansion
 
 $\ln K_{\mathrm{obs}}$ puts the multiplicative equilibrium constant on an additive free-energy scale: $-RT\ln$ of the numerator is $G_i$, and of the denominator is $\langle G_{j,k}\rangle$. Property 1 is immediate from factoring $e^{-a/RT}$ out of the sum; property 2 bounds the sum between its largest term and $|X|$ times it; property 3 is direct differentiation. On this scale mutational effects would add if each conformation's energy shifted additively and the ensemble did not reweight, which is what makes the scale the natural one for measuring epistasis.

@@ -10,7 +10,12 @@ $$c \le -2\sqrt{1 - 2s}.$$
 
 ## Depends on
 
-- [Nonexistence of nontrivial gene-drive travelling waves](nonexistence-of-nontrivial-gene-drive-waves.md)
+- [Reaction–diffusion model of a gene drive with demographic feedback](gene-drive-reaction-diffusion-model.md)
+
+## Proof depends on
+
+- [Reaction–diffusion model of a gene drive with demographic feedback](gene-drive-reaction-diffusion-model.md)
+- [Every Fisher–KPP front speed is at least the minimal speed](../../pattern-formation/fisher-kpp-travelling-waves/two-mul-sqrt-le-of-is-front.md)
 
 ## Expansion
 

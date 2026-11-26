@@ -17,6 +17,12 @@ For $Z \subseteq X$, the lowest stable ancestor $\mathrm{LSA}(Z)$ is the lowest 
 ## Depends on
 
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
+
+## Proof depends on
+
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
+- [Probability of quartet split 02|13 on the balanced tree](gene-tree-prob-balanced-split-02.md)
+
 ## Expansion
 
 If fewer than four lineages reach the LSA, a coalescence below it has already fixed the unrooted gene-tree topology; if four lineages reach it, exchangeability of lineages under the coalescent makes all labelings of each rooted shape equally likely whatever happens above, which proves part 1. Part 2 is proved by induction on the number of cycles in $Q^{-}_{abcd}$: conditioning on the number of lineages entering each cycle's hybrid node and on which parent each lineage follows expresses the concordance factors as mixtures, with coefficients built from $\gamma$, of the concordance factors of networks with fewer cycles, and these mixtures depend only on the unrooted structure. Part 3 is the tree base case.

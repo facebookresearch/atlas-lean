@@ -16,16 +16,20 @@ and the estimators are
 
 $$\hat\theta = \frac{a}{a + b + c}, \qquad \hat F = 1 - \frac{c}{a + b + c}, \qquad \hat f = 1 - \frac{c}{b + c}.$$
 
-Under the replicate-population model, $a$, $b$ and $c$ are unbiased for the [variance components](weir-cockerham-variance-components.md) $\sigma_a^2$, $\sigma_b^2$, $\sigma_c^2$. For several alleles or loci, the components are summed before the ratio is taken, $\hat\theta = \sum a / \sum (a + b + c)$ (a ratio of sums, not a mean of per-locus ratios).
+Under the replicate-population model, $a$, $b$ and $c$ are unbiased for the [variance components](weir-cockerham-variance-components.md) $\sigma_a^2$, $\sigma_b^2$, $\sigma_c^2$; like those components (and $\sigma_b^2$ in particular), they can be negative. For several alleles or loci, the components are summed before the ratio is taken, $\hat\theta = \sum a / \sum (a + b + c)$ (a ratio of sums, not a mean of per-locus ratios).
 
 ## Depends on
 
 - [Weir–Cockerham variance components of allele frequencies](weir-cockerham-variance-components.md)
 - [Wright's hierarchical F-statistics identity](hierarchical-f-statistics.md)
 
+## Proof depends on
+
+None beyond the expected mean squares of the nested analysis of variance and linearity of expectation, as the Expansion describes.
+
 ## Expansion
 
-The statistics are analysis-of-variance mean squares for the indicator data (between populations, between individuals within populations, within individuals), with coefficients chosen so that their expectations are linear in $\sigma_a^2, \sigma_b^2, \sigma_c^2$; solving the resulting linear system gives $a$, $b$, $c$. The constant $n_c$ is the usual unbalanced-ANOVA correction and equals $\bar n$ when all $n_i$ are equal. Because $\hat\theta$ is a ratio of unbiased estimators it is not itself unbiased, but it accounts for both the number of sampled populations and the sample sizes, which distinguishes it from plug-in estimates of $F_{ST}$; it can be negative when the between-population mean square is small.
+The analysis-of-variance mean squares of the indicator data (between populations, between individuals within populations, within individuals) have expectations linear in $\sigma_a^2, \sigma_b^2, \sigma_c^2$; equating each mean square to its expectation and solving the resulting linear system gives the estimated components $a$, $b$, $c$, which are linear combinations of the mean squares rather than mean squares themselves. The constant $n_c$ is the usual unbalanced-ANOVA correction and equals $\bar n$ when all $n_i$ are equal. Because $\hat\theta$ is a ratio of unbiased estimators it is not itself unbiased, but it accounts for both the number of sampled populations and the sample sizes, which distinguishes it from plug-in estimates of $F_{ST}$; it can be negative when the between-population mean square is small.
 
 ## Sources
 

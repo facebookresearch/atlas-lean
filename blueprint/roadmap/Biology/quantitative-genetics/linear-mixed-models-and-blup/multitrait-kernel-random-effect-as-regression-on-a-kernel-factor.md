@@ -10,6 +10,10 @@ where $\operatorname{vec}$ stacks columns. Hence a multitrait random effect with
 
 - [Multitrait Bayesian regression with Gaussian, spike–slab and kernel priors](multitrait-bayesian-regression-with-gaussian-and-spike-slab-priors.md)
 
+## Proof depends on
+
+None beyond the covariance of $\operatorname{vec}(XB)$ and the mixed-product rule for Kronecker products, as the Expansion describes.
+
 ## Expansion
 
 - Since the rows of $B$ are independent with covariance $\Omega$, $\operatorname{Cov}(B_{jk},B_{j'k'})=[j=j']\,\Omega_{kk'}$, that is $\operatorname{Cov}(\operatorname{vec}B)=\Omega\otimes I_r$.

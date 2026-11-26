@@ -29,7 +29,12 @@ $$\tilde p\approx\frac{2g(\varrho-1)}{2g(\varrho-1)+(\varrho+1)(\varrho^{g/2}-\v
 ## Depends on
 
 - [Coalescent in an allelic background with a given frequency path](../site-frequency-spectrum-under-variable-populatio/coalescent-in-an-allelic-background-with-a-given.md)
+
+## Proof depends on
+
 - [First-step equations for mean coalescence time](first-step-equations.md)
+- [Coalescent in an allelic background with a given frequency path](../site-frequency-spectrum-under-variable-populatio/coalescent-in-an-allelic-background-with-a-given.md)
+- [Moment generating function of the exponential distribution](../../../Probability/random-walks/gumbel-limit-of-the-maximal-segment-score/mgf-id-exp-measure.md)
 
 ## Expansion
 

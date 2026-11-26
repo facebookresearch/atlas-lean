@@ -33,7 +33,10 @@ as the formulation with a $4 \times 3$ square root of $\Sigma$, while avoiding a
 ## Depends on
 
 - [Generator of the two-locus Wright–Fisher diffusion](../../coalescent-theory/two-locus-coalescent/two-locus-generator.md)
-- [Hidden Markov likelihood for allele-frequency time series](hmm-likelihood-for-allele-frequency-time-series.md)
+
+## Proof depends on
+
+- [Generator of the two-locus Wright–Fisher diffusion](../../coalescent-theory/two-locus-coalescent/two-locus-generator.md)
 
 ## Expansion
 

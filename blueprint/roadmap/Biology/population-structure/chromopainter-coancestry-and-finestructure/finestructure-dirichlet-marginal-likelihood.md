@@ -14,6 +14,11 @@ Consequently the posterior probability of a partition depends only on $c$, the p
 
 - [fineSTRUCTURE likelihood of a coancestry matrix](finestructure-coancestry-likelihood.md)
 
+## Proof depends on
+
+- [The Dirichlet integral](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/lintegral-dirichlet-density.md)
+- [Dirichlet–multinomial conjugacy](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/with-density-prod-pow-dirichlet-measure.md)
+
 ## Expansion
 
 For each recipient population $a$ the likelihood factor is $\prod_b \theta_{ab}^{X_{ab}/c}$ times the constant $\prod_b (n_b - \delta_{ab})^{-X_{ab}/c}$. Against the Dirichlet density $\Gamma(\sum_b\beta_{ab})\prod_b\theta_{ab}^{\beta_{ab}-1}/\prod_b\Gamma(\beta_{ab})$ the integral over the simplex is the Dirichlet normalizing constant evaluated at $\beta_{ab} + X_{ab}/c$; the exponents need not be integers. In the paper the prior parameters combine a shared variance term, an excess of within-population copying and a uniform split of the remaining chunks, with gamma hyperpriors on these parameters.

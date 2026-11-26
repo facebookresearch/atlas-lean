@@ -4,14 +4,18 @@ Members $a, b$ of a pedigree are half cousins with separation $m$ and founder in
 
 $$\phi_{ab} = \frac{1 + f}{2^{m+1}}. \tag{7}$$
 
-**Theorem** (Theorem 2 of the source). Every $\phi \in [0, 1]$ is the kinship coefficient of some half-cousin relationship with inbred founder. For $\phi \in (0,1)$ one may take $m = \lfloor \log_2(1/\phi) \rfloor$ and $f = 2^{m+1}\phi - 1$; $\phi = 1$ uses $(m, f) = (0, 1)$ and $\phi = 0$ uses $m = \infty$. The pair $(m, f)$ is unique except when $\phi = 2^{-k}$ with $k \ge 1$, where $(k-1, 0)$ and $(k, 1)$ both work.
+**Theorem** (Theorem 2 of the source). Every $\phi \in [0, 1]$ is the kinship coefficient of some half-cousin relationship with inbred founder. For $\phi \in (0,1)$ one may take $m = \lfloor \log_2(1/\phi) \rfloor$ and $f = 2^{m+1}\phi - 1$; $\phi = 1$ uses $(m, f) = (0, 1)$ and $\phi = 0$ uses $m = \infty$ with the founder coefficient $f$ arbitrary, since unrelated individuals have kinship $0$ whatever $f$ is (so $(\infty, 0)$ and $(\infty, 1)$ both work). For $\phi > 0$ the pair $(m, f)$ is unique except when $\phi = 2^{-k}$ with $k \ge 1$, where $(k-1, 0)$ and $(k, 1)$ both work.
 
 **Stationary inbreeding** (Proposition 5). For each $m \in \mathbb N_0$ the map $f \mapsto (1 + f)/2^{m+1}$ has a unique fixed point $f^* \in (0, 1]$, namely $f^* = 1/(2^{m+1} - 1)$; half cousins of separation $m$ whose founder has inbreeding $f^*$ have kinship $f^*$, so a child of theirs again has inbreeding $f^*$. For $m = 2$ (half siblings) $f^* = 1/7$.
 
 ## Depends on
 
-- [Wright's path formula for kinship](kinship-eq-sum-paths.md)
+- [Kinship coefficient by Malécot's recursion](kinship.md)
 - [Inbreeding coefficient under gene dropping](inbreeding.md)
+
+## Proof depends on
+
+- [Wright's path formula for kinship](kinship-eq-sum-paths.md)
 
 ## Expansion
 

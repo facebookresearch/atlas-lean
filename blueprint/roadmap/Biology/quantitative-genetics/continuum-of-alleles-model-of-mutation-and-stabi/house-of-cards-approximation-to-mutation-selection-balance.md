@@ -11,6 +11,11 @@ independent of the distribution of mutational effects. This contrasts with the G
 - [Gaussian stabilizing fitness](fitness.md)
 - [Lande's equilibrium genetic variance under mutation and stabilizing selection with linked loci](lande-equilibrium-variance-with-linked-loci.md)
 
+## Proof depends on
+
+- [Gaussian stabilizing fitness](fitness.md)
+- [The frequency $U/s$ is an equilibrium](../../population-genetics/mutation-selection-balance/diploid-step-mult-fixed.md)
+
 ## Expansion
 
 With the population mean at the optimum, a rare allele that shifts the genotypic value by $a$ lowers heterozygote fitness by $s \approx a^2/(2V_s)$. At mutation–selection balance such alleles have frequency about $\mu/s = 2\mu V_s/a^2$. A diploid locus with a rare variant of effect $a$ at frequency $p$ contributes about $2pa^2$ to the additive variance, which gives $2 \cdot (2\mu V_s/a^2) \cdot a^2 = 4\mu V_s$ per locus. The effect size cancels, so summing over $n$ loci gives $4n\mu V_s$.

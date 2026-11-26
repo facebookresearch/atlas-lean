@@ -24,6 +24,10 @@ because increasing $s$ shortens the fixation time while raising the establishmen
 - [Establishment interval at the nose of the fitness distribution](establishment-interval-at-the-nose.md)
 - [Successional and concurrent regimes of beneficial mutations in an asexual population](successional-and-concurrent-mutation-regimes.md)
 
+## Proof depends on
+
+- [Establishment interval at the nose of the fitness distribution](establishment-interval-at-the-nose.md)
+
 ## Expansion
 
 Just after the class at lead $qs$ establishes, its size is $1/(qs)$, the class one step behind is larger

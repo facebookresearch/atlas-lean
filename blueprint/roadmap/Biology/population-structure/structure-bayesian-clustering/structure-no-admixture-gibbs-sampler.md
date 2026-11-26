@@ -26,6 +26,10 @@ The joint density factorizes as $\prod_i \tfrac1K \prod_{l,a} p_{z^{(i)} l x_l^{
 
 - [Hardy–Weinberg proportions](../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
+## Proof depends on
+
+- [Dirichlet–multinomial conjugacy](../../../Probability/distributions/continuous/dirichlet-distribution/dirichlet-law/with-density-prod-pow-dirichlet-measure.md)
+
 ## Sources
 
 - J. K. Pritchard, M. Stephens and P. Donnelly, "Inference of population structure using multilocus genotype data", *Genetics* 155 (2000), 945–959, <https://doi.org/10.1093/genetics/155.2.945> (PMC1461096). The no-admixture model and its two-step Gibbs algorithm; no equation numbers are cited here because only the abstract was available.

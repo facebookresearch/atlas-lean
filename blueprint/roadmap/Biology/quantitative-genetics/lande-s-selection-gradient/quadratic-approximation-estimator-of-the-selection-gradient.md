@@ -14,6 +14,10 @@ Standard errors come from a block bootstrap over linkage-disequilibrium blocks, 
 
 - [Composite likelihood for the selection gradient from SNP likelihoods](composite-likelihood-for-the-selection-gradient-from-snp-likelihoods.md)
 
+## Proof depends on
+
+- [Composite likelihood for the selection gradient from SNP likelihoods](composite-likelihood-for-the-selection-gradient-from-snp-likelihoods.md)
+
 ## Expansion
 
 The approximated objective is a quadratic form in $\omega$ with Hessian $2A$; setting its gradient $2A\omega + \sum_i b_i \beta^{(i)}$ to zero gives $\hat\omega$, and negative definiteness of $A$ makes the stationary point the maximum. The closed form makes the estimate cheap enough to bootstrap. The sign in front of the bracket follows from this derivation; the estimator corresponds to the paper's Equation A7.

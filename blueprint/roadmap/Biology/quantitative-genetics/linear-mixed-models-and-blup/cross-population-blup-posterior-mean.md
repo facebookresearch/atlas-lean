@@ -22,6 +22,10 @@ With $D = \operatorname{diag}(\sigma_\varepsilon^2, \sigma_\xi^2) \otimes I_p$ o
 
 - [BLUP is the conditional expectation](cond-exp-mixed-model.md)
 
+## Proof depends on
+
+None beyond the Gaussian posterior of a linear model with a Gaussian prior and the push-through identity, as the Expansion describes.
+
 ## Sources
 
 - M. Cai, J. Xiao, S. Zhang et al., "A unified framework for cross-population trait prediction by leveraging the genetic correlation of polygenic traits", *American Journal of Human Genetics* 108 (2021), <https://doi.org/10.1016/j.ajhg.2021.03.002> (PMC8059341). Equations 1 and 2; Appendix A, equations A2 and A3.

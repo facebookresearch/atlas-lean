@@ -12,18 +12,22 @@ Let $\mathcal{N}^+$ be a level-1 rooted binary metric network containing a $2$-c
 parallel hybrid edges, with edge probabilities $h_1, h_2$ and inheritance parameters
 $\gamma_1, \gamma_2 = 1 - \gamma_1$. Under the network multispecies coalescent, every quartet concordance
 factor of $\mathcal{N}^+$ is unchanged when that $2$-cycle is replaced by a single edge with edge
-probability $\ell \in (0,1)$ determined by
+probability $\ell \in (0,1]$ determined by
 
 $$1 - \ell = \gamma_1^2(1 - h_1) + (1-\gamma_1)^2(1 - h_2).$$
 
-Since the right-hand side sweeps all of $(0,1)$ as the $2$-cycle parameters vary, a topological level-1
+Zero hybrid-edge lengths are allowed: $h_1 = h_2 = 1$ gives $\ell = 1$, a replacement edge of length $0$. Since $\ell$ sweeps all of $(0,1]$ as the $2$-cycle parameters vary, a topological level-1
 network carrying a $2$-cycle cannot be distinguished from the network obtained by replacing that cycle
 with an edge.
 
 ## Depends on
 
 - [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
-- [Quartet concordance factors do not depend on the root of a network](quartet-cfs-independent-of-the-root.md)
+- [Quartet concordance factors depend only on the unrooted quartet network](quartet-concordance-factors-depend-only-on-the-unrooted-quartet-network.md)
+
+## Proof depends on
+
+- [A degree-2 sub-blob can be replaced by a single edge without changing quartet CFs](two-sub-blob-replacement-preserves-quartet-cfs.md)
 
 ## Expansion
 
@@ -32,7 +36,7 @@ parent edges, which under independent inheritance happens with probability $2\ga
 take the same parent edge and fail to coalesce along it, with probability
 $\gamma_1^2 h_1 + (1-\gamma_1)^2 h_2$. Adding these gives the displayed identity for $\ell$. Nothing else
 about the cycle enters any quartet concordance factor, so the replacement is invisible in the data, and
-the identity realizes every value of $\ell$ in $(0,1)$.
+the identity realizes every value of $\ell$ in $(0,1]$, including $\ell = 1$ when both hybrid edges have length $0$.
 
 ## Sources
 

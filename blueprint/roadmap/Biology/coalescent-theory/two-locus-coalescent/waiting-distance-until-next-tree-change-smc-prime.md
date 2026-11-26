@@ -23,6 +23,12 @@ recombination process.
 - [Probability that a recombination leaves the local tree unchanged under the SMC'](smc-prime-tree-unchanging-probability.md)
 - [Pairwise sequentially Markov coalescents SMC and SMC′](sequentially-markov-coalescent-smc-smc-pairwise.md)
 
+## Proof depends on
+
+- [Probability that a recombination leaves the local tree unchanged under the SMC'](smc-prime-tree-unchanging-probability.md)
+- [Thinning](../../../Probability/point-processes/poisson-processes/thinning-2.md)
+- [Arrival times of exponential interarrivals are Erlang](../../../Probability/point-processes/poisson-processes/has-law-arrival-time.md)
+
 ## Expansion
 
 Recombination breakpoints along the genome form a Poisson process of intensity

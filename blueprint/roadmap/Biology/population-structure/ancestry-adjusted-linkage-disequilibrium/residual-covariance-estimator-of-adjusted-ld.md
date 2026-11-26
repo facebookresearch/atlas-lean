@@ -20,6 +20,11 @@ where $H_{st} = \operatorname{diag}\big(\operatorname{Cov}(G_{1s}, G_{1t}), \dot
 
 - [Ancestry-adjusted linkage disequilibrium in structured populations](ancestry-adjusted-ld-measure.md)
 
+## Proof depends on
+
+- [Ancestry-adjusted linkage disequilibrium in structured populations](ancestry-adjusted-ld-measure.md)
+- [L² weak law of large numbers](../../../Probability/laws-of-large-numbers/l2-weak-law-of-large-numbers/l2-weak-law.md)
+
 ## Expansion
 
 Since $\mathbb{E}[G \mid Q] = 2 Q F$ lies in the column space of $Q$, the residual $(I - P) G$ removes the structured mean exactly, so its columns have mean zero and the cross-product $G_{\cdot s}^{\top}(I - P)G_{\cdot t} = (G_{\cdot s} - 2\Pi_{\cdot s})^{\top} (I - P) (G_{\cdot t} - 2\Pi_{\cdot t})$ has expectation $\operatorname{tr}((I - P) H_{st})$ by independence across individuals. The factor $n - k$ is the residual degrees of freedom (Bessel-type correction), which makes the estimator unbiased for the sample LD when individuals share LD. Pruning or clumping SNPs with $r^2_{\mathrm{adj}}$ in place of pooled $r^2$ avoids discarding unlinked SNPs whose correlation is created purely by ancestry differences.

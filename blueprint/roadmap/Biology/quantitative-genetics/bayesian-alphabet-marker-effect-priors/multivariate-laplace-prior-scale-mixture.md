@@ -16,6 +16,11 @@ The density has contours $\beta^\top\Sigma^{-1}\beta = \text{const}$ (elliptical
 
 - [BayesA and BayesB marker-effect priors](bayes-a-and-bayes-b-priors.md)
 
+## Proof depends on
+
+- [Euler's gamma integral](../../../Probability/distributions/continuous/gamma-distribution/gamma-moments/lintegral-rpow-mul-exp-neg-mul-ioi.md)
+- [Multivariate Gaussian density function](../../../Probability/distributions/continuous/multivariate-normal-distribution/gaussian-density/multivariate-gaussian-pdfreal.md)
+
 ## Expansion
 
 With $q = \beta^\top\Sigma^{-1}\beta$, the mixture density is proportional to $\int_0^\infty (v^2)^{-1/2}\exp\!\big(-q/(2v^2) - v^2/8\big)\,dv^2$, and the identity $\int_0^\infty x^{-1/2}e^{-a/x - bx}\,dx = \sqrt{\pi/b}\,e^{-2\sqrt{ab}}$ with $a = q/2$, $b = 1/8$ gives a multiple of $e^{-\sqrt q/2}$. The constant follows from $\int_{\mathbb{R}^T} e^{-|z|/2}dz = \frac{2\pi^{T/2}}{\Gamma(T/2)}\Gamma(T)\,2^T$ and $\Gamma(1+T) = T\,\Gamma(T)$. The variance is $\mathbb{E}[v^2]\,\Sigma$ with $\mathbb{E}[v^2] = 8\cdot\frac{T+1}{2}$.

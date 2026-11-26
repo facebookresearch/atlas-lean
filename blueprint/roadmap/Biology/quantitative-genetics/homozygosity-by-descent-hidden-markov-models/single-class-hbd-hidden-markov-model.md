@@ -16,6 +16,10 @@ $$P[A_{mi}A_{mj} \mid S_m = 1] = \begin{cases} p_{mi} & i = j,\\ 0 & i \ne j,\en
 
 **Properties.** The stationary distribution of the chain is $(\rho, 1-\rho)$, so $\rho$ is the expected proportion of the genome HBD (the genomic inbreeding coefficient). HBD segments without a coancestry change have exponential length with mean $1/R$; the number of consecutive HBD segments in a run is geometric with parameter $1-\rho$, so IBD tracts have mean length $1/\{R(1-\rho)\}$. The likelihood is computed by the forward algorithm and maximized numerically in $(R,\rho)$.
 
+## Depends on
+
+- [Hardy–Weinberg proportions](../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+
 ## Expansion
 
 Write the transition matrix as $e^{-Rd}I + (1-e^{-Rd})\mathbf 1\pi^\top$ with $\pi = (\rho, 1-\rho)^\top$; then $\pi^\top P = e^{-Rd}\pi^\top + (1-e^{-Rd})\pi^\top = \pi^\top$. A run of HBD markers ends only at a coancestry change followed by a non-HBD draw, which gives the geometric number of segments and the tract mean $\sum_{k\ge1}k(1-\rho)\rho^{k-1}/R = 1/\{R(1-\rho)\}$.
