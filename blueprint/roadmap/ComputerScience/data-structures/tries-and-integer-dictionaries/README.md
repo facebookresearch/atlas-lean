@@ -9,3 +9,5 @@ Prefix- and bit-indexed structures: tries, radix (Patricia) tries, suffix arrays
 - [Van Emde Boas tree](van-emde-boas-tree/README.md)
 - [X-fast trie](x-fast-trie/README.md)
 - [Y-fast trie](y-fast-trie/README.md)
+- [Fusion Trees](fusion-trees/README.md)
+- [Recursive van Emde Boas Trees](recursive-van-emde-boas-trees/README.md)

@@ -19,3 +19,6 @@ Quantum foundations studies what quantum mechanics rules out and allows at the l
 - [Classical and entangled values of the CHSH game](classical-and-entangled-values-of-the-chsh-game.md)
 
 - [Exact universality of CNOT and single-qubit gates](exact-universality-of-cnot-and-single-qubit-gates.md)
+- [Pauli Groups, Pauli Twirls and Clifford Observables](pauli-groups-and-clifford-observables/README.md)
+- [Rigidity of Nonlocal Strategies: Linearity and Pauli Tests](rigidity-of-nonlocal-strategies/README.md)
+- [States and Measurements on Operator Algebras](states-and-measurements-on-operator-algebras/README.md)

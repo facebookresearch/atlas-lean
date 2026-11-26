@@ -14,6 +14,9 @@ Optimization problems solved by tabulated recurrences: knapsack variants, subset
 - [Zero-one knapsack problem](zero-one-knapsack-problem/README.md)
 
 - [Backward induction for deterministic finite-horizon control](deterministic-finite-horizon-dynamic-programming.md)
+- [Dynamic Programming over Tree Decompositions](tree-decomposition-dynamic-programming/README.md)
+- [Exact Exponential and Parameterized Algorithms](exact-exponential-and-fpt-algorithms/README.md)
+- [The Knuth-Yao Quadrangle-Inequality Speedup](knuth-yao-quadrangle-inequality-speedup/README.md)
 
 ## Related topics
 

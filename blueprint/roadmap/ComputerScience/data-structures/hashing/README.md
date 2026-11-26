@@ -10,3 +10,4 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Perfect hashing](perfect-hashing/README.md)
 - [Universal hashing](universal-hashing/README.md)
 - [Hashing analysis](hashing-analysis/README.md)
+- [Constructing FKS Perfect Hash Tables](fks-table-construction/README.md)

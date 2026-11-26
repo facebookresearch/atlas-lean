@@ -1,0 +1,15 @@
+# Regret in the experts setting
+
+- [Causal online algorithm in the experts setting](causal-online-experts-algorithm.md)
+- [Exp3 with uniform mixing: weak regret $(e-1)\gamma G_{\max} + K \ln K/\gamma$](exp3-gamma-weak-regret.md)
+- [Block learner: running a full-information algorithm on block-averaged losses](block-full-information-learner.md)
+- [Deterministic experts algorithms suffer loss T while the best expert has floor(T/N)](deterministic-experts-lower-bound.md)
+- [No online algorithm competes with the best action sequence](dynamic-regret-lower-bound.md)
+- [Greedy (follow-the-leader) loss bound with N experts](greedy-follow-the-leader-loss-bound.md)
+- [Multiplicative weights (polynomial weights) algorithm](polynomial-weights-algorithm.md)
+- [Randomized greedy loss bound $\ln N + (1 + \ln N) L_{\min}$](randomized-greedy-logarithmic-loss-bound.md)
+- [Short-horizon lower bound: expected loss T/2 with a perfect expert when 2^T <= N](short-horizon-experts-lower-bound.md)
+- [Every experts algorithm has expected regret at least $\sqrt{T}/(2e)$ against fair coin losses](two-experts-sqrt-t-lower-bound.md)
+- [Block-exploration reduction from bandit feedback to full information: regret $O(T^{2/3} N^{1/3} \ln N)$](bandit-block-exploration-reduction.md)
+- [Regret of multiplicative weights: $\eta \sum |\ell| + \ln n/\eta$ and $2\sqrt{T \ln n}$ at every horizon](multiplicative-weights-regret-bound.md)
+- [General $\Omega(\sqrt{T \ln N})$ lower bound on expected external regret](sqrt-t-log-n-experts-lower-bound.md)

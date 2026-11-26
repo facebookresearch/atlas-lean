@@ -9,6 +9,7 @@ Random graph models such as Erdős–Rényi, random regular and random k-out gra
 - [Graph limits](graph-limits/README.md)
 - [Random regular graphs](random-regular-graphs/README.md)
 - [Threshold for triangles](threshold-for-triangles/README.md)
+- [Planted Clique](planted-clique/README.md)
 
 ## Related topics
 

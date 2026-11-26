@@ -13,3 +13,4 @@ Lamport one-time signatures, Schnorr identification and Sigma protocols, and zer
 - [Protocol analysis](protocol-analysis/README.md)
 - [Interactive arguments and arguments of knowledge](zero-knowledge-and-arguments/README.md)
 - [Secure multiparty computation](secure-multiparty-computation/README.md)
+- [Sigma Protocols under Language Reductions](sigma-protocol-language-reductions/README.md)

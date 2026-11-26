@@ -8,3 +8,5 @@ Time and space hierarchy theorems and diagonalization against time-bounded machi
 - [Space hierarchy theorem](space-hierarchy-theorem/README.md)
 - [Time hierarchy theorem](time-hierarchy-theorem/README.md)
 - [Nondeterministic time hierarchy](nondet-time-hierarchy.md)
+- [Learning algorithms from natural proofs](learning-algorithms-from-natural-proofs/README.md)
+- [Learning versus pseudorandomness](learning-versus-pseudorandomness/README.md)

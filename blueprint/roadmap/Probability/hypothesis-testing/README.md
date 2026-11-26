@@ -50,3 +50,5 @@ Meta-analysis combines evidence from several studies and measures how much their
 
 - [Meta-analysis](meta-analysis/README.md)
 - [Large-deviation bound for the biased empirical MMD](measure-real-abs-mmd-biased-sub-mmd-gt-l.md)
+- [Collision Statistics of IID Samples](collision-statistics-of-iid-samples/README.md)
+- [Robust Hypothesis Selection](robust-hypothesis-selection/README.md)

@@ -20,3 +20,4 @@ Relational algebra, functional dependencies, normal forms and lossless decomposi
 - [Ranked retrieval](ranking-and-retrieval-evaluation/README.md)
 - [Stream processing](stream-processing/README.md)
 - [Concurrency control and recovery](concurrency-control-and-recovery/README.md)
+- [SQL Semantics with Nulls, Bags and Errors](sql-semantics-with-nulls-and-errors/README.md)

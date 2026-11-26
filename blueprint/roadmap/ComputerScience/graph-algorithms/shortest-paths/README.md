@@ -11,6 +11,8 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 - [Shortest paths in directed acyclic graphs](shortest-paths-in-directed-acyclic-graphs/README.md)
 
 - [Slack and the critical path of a project network](slack-and-the-critical-path.md)
+- [Dijkstra's Algorithm and Priority-Queue Costs](dijkstra-priority-queue-costs/README.md)
+- [Negative Triangles and the (min,+) Product](negative-triangle-reductions/README.md)
 
 ## Related topics
 

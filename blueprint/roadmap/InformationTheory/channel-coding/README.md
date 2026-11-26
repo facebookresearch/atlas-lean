@@ -22,3 +22,4 @@ rate below the mutual information.
 - [Polar transform: channel combining/splitting conservation](polar-transform-channel-combining-splitting-conservation.md)
 
 - [Scalar Gaussian channel](scalar-gaussian-channel/README.md)
+- [Nearest-codeword decoding](nearest-codeword-decoding/README.md)

@@ -18,3 +18,8 @@ Codes that detect or correct transmission errors, including linear codes, Hammin
 - [Local decoding of the Hadamard code](hadamard-code-local-decoding.md)
 
 - [Bit-serial CRC and framing](bit-serial-crc-and-framing/README.md)
+- [Asymptotic bounds and existence of linear codes](asymptotic-bounds-and-linear-code-existence/README.md)
+- [Explicit and graph-based codes](explicit-and-graph-based-codes/README.md)
+- [Interleaved codes and proximity gaps](interleaved-codes-and-proximity-gaps/README.md)
+- [Line-parity codes](line-parity-codes/README.md)
+- [Reed-Muller codes and local decoding](reed-muller-codes-and-local-decoding/README.md)
