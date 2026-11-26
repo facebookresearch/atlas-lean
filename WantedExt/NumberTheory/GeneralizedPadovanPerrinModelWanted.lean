@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
 public import MathlibExt.NumberTheory.PadovanPerrinShiftWindow
 public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModelKPadovanPerrinEqSumRoots
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModelPadovanPerrinFundamentalEqShift
 
 namespace MetaMathlibExt
 
@@ -257,28 +258,6 @@ public theorem_wanted padovanPerrin_solSpace_eq_span_fundamental [CommRing R] (k
     (padovanPerrinRecurrence k₁ k₂ p s).solSpace =
       Submodule.span R
         (Set.range fun j : Fin (s + p) => padovanPerrinFundamental k₁ k₂ p s ((j : ℕ) + 1))
-
-/-- **Shift property of the generalized Padovan–Perrin fundamental system.** Let $R$ be a
-commutative ring, $k_1, k_2 \in R$, and let $p, s, j$ be natural numbers with $p \ge 1$ and
-$p + 1 \le j \le s + p - 1$. Write $v^{(\ell)}$ for the $\ell$-th sequence of the Fibonacci
-fundamental system of the $([k]; p; s)$-Padovan–Perrin recurrence. Then
-$v^{(j)}_n = v^{(s+p)}_{n+s+p-j}$ for every $n \ge 0$, and
-$v^{(j)}_n = k_1 v^{(s+p)}_{n-j+p} + k_2 v^{(s+p)}_{n-j}$ for every $n \ge j$.
-
-The paper's second clause, $v^{(j)}_n = k_2 v^{(s+p)}_{n+j}$ for $1 \le j \le p$, is omitted: it
-fails for $k_1 = k_2 = 1$, $p = 1$, $s = 2$, $j = 1$, $n = 0$, where $v^{(1)}_0 = 1$ but
-$v^{(3)}_1 = 0$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 2 (`integers-2024-A49-prop-2`). -/
-public theorem_wanted padovanPerrinFundamental_eq_shift [CommRing R] (k₁ k₂ : R) (p s j : ℕ)
-    (hp : 0 < p) (hpj : p + 1 ≤ j) (hjs : j ≤ s + p - 1) :
-    (∀ n, padovanPerrinFundamental k₁ k₂ p s j n =
-        padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j)) ∧
-      ∀ n, j ≤ n → padovanPerrinFundamental k₁ k₂ p s j n =
-        k₁ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j + p) +
-          k₂ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j)
 
 /-- **Combinatorial expression of the Padovan–Perrin sequences.** Let $R$ be a commutative ring,
 let $k_1, k_2 \in R$, let $p, s$ be positive integers, and let $v \colon \mathbb{N} \to R$ satisfy
