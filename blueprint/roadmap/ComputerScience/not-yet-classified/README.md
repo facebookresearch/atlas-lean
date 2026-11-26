@@ -61,6 +61,7 @@ Topics added since this subject's fields were last revised.
 - [Probability Ranking](probability-ranking/README.md)
 - [Query Oracle](query-oracle/README.md)
 - [Randomized Smoothing](randomized-smoothing/README.md)
+- [Read Credits](read-credits/README.md)
 - [Recall At](recall-at/README.md)
 - [Simulated Annealing](simulated-annealing/README.md)
 - [Soundness](soundness/README.md)
