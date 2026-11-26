@@ -24,6 +24,15 @@ nombre de classes des corps quadratiques imaginaires*. The proof applies Goldfel
 modular form that Gross and Zagier showed to have an $L$-function vanishing to order at least $3$
 at $s = 1$.
 
+## Expansion
+
+A good expansion has pages for Goldfeld's theorem, which turns a suitable modular form whose
+$L$-function vanishes to order at least $3$ at $s = 1$ into an effective lower bound for $h(D)$ in
+terms of $\vartheta(|D|) \log |D|$ (Goldfeld 1976; Oesterlé §3 gives a simplified proof); for the Gross–Zagier theorem (Theorem 8.1) and the modular form it
+provides, whose $L$-function vanishes to order at least $3$ at $s = 1$ (Oesterlé §4); and for the
+computation of the admissible constant $C = 7000$, which §5.1 defers to Oesterlé's announced
+article. Each page states its result precisely, with the locators below.
+
 ## Depends on
 
 - [Gauss class number of a discriminant](kronecker-s-class-number-sums/gauss-class-number.md)

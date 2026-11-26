@@ -7,6 +7,15 @@ $\omega(D) - 1 \le v_2(h(D))$, where $v_2(h(D))$ is the largest integer $k$ with
 The source deduces it from genus theory: the subgroup of elements of order dividing $2$ in the
 class group $\mathrm{cl}(D)$, whose order is $h(D)$, has exactly $2^{\omega(D) - 1}$ elements.
 
+## Expansion
+
+A good expansion has pages for the form class group $C(D)$ of primitive positive definite forms of
+discriminant $D$ under composition, a finite abelian group of order $h(D)$; for the count
+$|C(D)[2]| = 2^{\omega(D) - 1}$ of its elements of order dividing $2$ when $D$ is fundamental, from
+the number of assigned characters (Cox, Proposition 3.11) and genus theory (Cox, Theorem 6.1); and
+for Lagrange's theorem in $C(D)$, which turns that count into the divisibility. Each page states its
+result precisely, with its locator in Cox.
+
 ## Depends on
 
 - [Gauss class number of a discriminant](kronecker-s-class-number-sums/gauss-class-number.md)

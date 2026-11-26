@@ -2,6 +2,7 @@
 
 For every positive integer $n$, Euler's totient satisfies $\varphi(n) \ge \sqrt{n/2}$.
 
+In the form $n \le 2\varphi(n)^2$ it holds for every natural number $n$, trivially at $n = 0$.
 Equality holds for $n = 2$. The bound is stronger than the
 [square-root lower bound](../../linear-recurrences/lucas-sequences-primitive-divisors/large-zsigmondy-primes/sqrt-div-two-le-totient.md)
 $\varphi(n) \ge \sqrt{n}/2$.
