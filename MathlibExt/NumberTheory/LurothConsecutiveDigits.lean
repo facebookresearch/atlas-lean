@@ -33,6 +33,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.LurothConsecutiveDigitsVolumeLurothCylinder
 
 /-!
 # Upper bound for a Lüroth digit superlevel set
@@ -53,23 +54,6 @@ namespace MetaMathlibExt
 namespace volume_lurothDigits_ge_le
 
 private abbrev unitInterval := Set.Ioc (0 : ℝ) 1
-private noncomputable abbrev μ : Measure ℝ := volume.restrict unitInterval
-
-private theorem prob_univ : μ Set.univ = 1 := by
-  simp [μ, unitInterval]
-
-private theorem measurable_digit : Measurable lurothDigit := by
-  unfold lurothDigit
-  fun_prop
-
-private theorem measurable_map : Measurable lurothMap := by
-  unfold lurothMap
-  have hd : Measurable fun x => (lurothDigit x : ℝ) :=
-    (measurable_of_countable ((↑) : ℕ → ℝ)).comp measurable_digit
-  fun_prop
-
-private theorem measurable_seq (n : ℕ) : Measurable fun x => lurothDigitSeq x n :=
-  measurable_digit.comp (measurable_map.iterate n)
 
 private theorem digit_gt_one {y : ℝ} (hy : y ∈ Set.Ioc 0 1) : 1 < lurothDigit y :=
   Nat.lt_add_one_iff.mpr <| (Nat.one_le_floor_iff _).2 <|
@@ -93,180 +77,12 @@ private theorem digit_ge_two {x : ℝ} (hx : x ∈ unitInterval) (k : ℕ) :
     2 ≤ lurothDigitSeq x k :=
   digit_gt_one (mapsTo.iterate k hx)
 
--- The branch with digit n + 2 is mapped affinely onto the entire unit interval.
-private def slope (n : ℕ) : ℝ := (n + 2) * (n + 1)
-
-private def affine (n : ℕ) (x : ℝ) : ℝ := slope n * x - (n + 1)
-
-private theorem branch_iff (n : ℕ) (x : ℝ) :
-    affine n x ∈ unitInterval ↔ x ∈ unitInterval ∧ lurothDigit x = n + 2 := by
-  let q : ℝ := n + 1
-  have hq : 1 ≤ q := by simp [q]
-  have hpos : 0 < q := by linarith
-  have hsucc : 0 < q + 1 := by positivity
-  have hlo : 0 < affine n x ↔ 1 < (q + 1) * x := by
-    have : affine n x = q * ((q + 1) * x - 1) := by unfold affine slope q; ring
-    rw [this, mul_pos_iff_of_pos_left hpos, sub_pos]
-  have hhi : affine n x ≤ 1 ↔ q * x ≤ 1 := by
-    have : affine n x - 1 = (q + 1) * (q * x - 1) := by unfold affine slope q; ring
-    rw [← sub_nonpos, this, ← mul_zero (q + 1), mul_le_mul_iff_right₀ hsucc, sub_nonpos]
-  rw [Set.mem_Ioc, hlo, hhi]
-  have hd (hx : 0 < x) : lurothDigit x = n + 2 ↔ q * x ≤ 1 ∧ 1 < (q + 1) * x := by
-    simp only [lurothDigit, Nat.succ.injEq, Nat.floor_eq_iff (by positivity : 0 ≤ 1 / x),
-      Nat.cast_add, Nat.cast_one, le_div_iff₀ hx, div_lt_iff₀ hx, q]
-  constructor
-  · rintro ⟨hl, hu⟩
-    have hx : 0 < x := pos_of_mul_pos_right (by linarith : 0 < (q + 1) * x) hsucc.le
-    exact ⟨⟨hx, le_trans (le_mul_of_one_le_left hx.le hq) hu⟩, (hd hx).2 ⟨hu, hl⟩⟩
-  · rintro ⟨hx, h⟩
-    exact ((hd hx.1).1 h).symm
-
-private theorem affine_eq_map {n : ℕ} {x : ℝ} (h : lurothDigit x = n + 2) :
-    affine n x = lurothMap x := by
-  simp [affine, slope, lurothMap, h]
-  ring
-
-private theorem volume_affine (n : ℕ) (t : Set ℝ) :
-    volume (affine n ⁻¹' t) = ENNReal.ofReal (slope n)⁻¹ * volume t := by
-  have hp : 0 < slope n := by unfold slope; positivity
-  change volume ((slope n * ·) ⁻¹' ((· + -((n : ℝ) + 1)) ⁻¹' t)) = _
-  rw [Real.volume_preimage_mul_left hp.ne', abs_of_pos (inv_pos.mpr hp),
-    measure_preimage_add_right]
-
--- Disintegrate over the first digit. The distribution of the remaining orbit on each
--- branch is a constant multiple of the same restricted Lebesgue measure.
-private theorem branch_sum (D : Set ℕ) (t : Set ℝ) (ht : MeasurableSet t) :
-    μ (lurothDigit ⁻¹' D ∩ lurothMap ⁻¹' t) =
-      (∑' n : {n : ℕ // n + 2 ∈ D}, ENNReal.ofReal (slope n)⁻¹) * μ t := by
-  let B (n : {n : ℕ // n + 2 ∈ D}) := affine n ⁻¹' (t ∩ unitInterval)
-  have hB (n) (x : ℝ) : x ∈ B n ↔
-      x ∈ unitInterval ∧ lurothDigit x = n.val + 2 ∧ lurothMap x ∈ t := by
-    change (affine n x ∈ t ∧ affine n x ∈ unitInterval) ↔ _
-    rw [branch_iff]
-    constructor
-    · rintro ⟨htx, hx, hd⟩
-      exact ⟨hx, hd, affine_eq_map hd ▸ htx⟩
-    · rintro ⟨hx, hd, htx⟩
-      exact ⟨affine_eq_map hd ▸ htx, hx, hd⟩
-  have hdisj : Pairwise (Function.onFun Disjoint B) := by
-    intro i j hij
-    apply Set.disjoint_left.2
-    intro x hi hj
-    have hi_eq := ((hB i x).1 hi).2.1
-    have hj_eq := ((hB j x).1 hj).2.1
-    exact hij (Subtype.ext (Nat.add_right_cancel (hi_eq.symm.trans hj_eq)))
-  have hm (n) : MeasurableSet (B n) := by
-    apply (ht.inter measurableSet_Ioc).preimage
-    unfold affine
-    fun_prop
-  rw [Measure.restrict_apply' measurableSet_Ioc]
-  have heq : (lurothDigit ⁻¹' D ∩ lurothMap ⁻¹' t) ∩ unitInterval = ⋃ n, B n := by
-    ext x
-    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_iUnion, hB]
-    constructor
-    · rintro ⟨⟨hd, htx⟩, hx⟩
-      have h : 1 ≤ ⌊1 / x⌋₊ :=
-        (Nat.one_le_floor_iff _).2 ((le_div_iff₀ hx.1).2 (by simpa using hx.2))
-      have he : lurothDigit x = (lurothDigit x - 2) + 2 := by unfold lurothDigit; omega
-      exact ⟨⟨_, he ▸ hd⟩, hx, he, htx⟩
-    · rintro ⟨n, hx, hd, htx⟩
-      exact ⟨⟨hd ▸ n.property, htx⟩, hx⟩
-  rw [heq, measure_iUnion hdisj hm, ← ENNReal.tsum_mul_right]
-  congr 1
-  funext n
-  exact (volume_affine n _).trans (by rw [Measure.restrict_apply' measurableSet_Ioc])
-
-private theorem first_tail (D : Set ℕ) (t : Set ℝ) (ht : MeasurableSet t) :
-    μ (lurothDigit ⁻¹' D ∩ lurothMap ⁻¹' t) = μ (lurothDigit ⁻¹' D) * μ t := by
-  have h := branch_sum D Set.univ MeasurableSet.univ
-  simp only [Set.preimage_univ, Set.inter_univ, prob_univ, mul_one] at h
-  rw [branch_sum D t ht, h]
-
-private theorem single_marginal (d : ℕ) :
-    μ (lurothDigit ⁻¹' {d}) = ENNReal.ofReal (1 / ((d : ℝ) * ((d : ℝ) - 1))) := by
-  have h := branch_sum {d} Set.univ MeasurableSet.univ
-  simp only [Set.preimage_univ, Set.inter_univ, prob_univ, mul_one] at h
-  rw [h]
-  by_cases hd : 2 ≤ d
-  · obtain ⟨k, rfl⟩ : ∃ k, d = k + 2 := ⟨d - 2, by omega⟩
-    rw [tsum_eq_single (⟨k, by simp⟩ : {n : ℕ // n + 2 ∈ ({k + 2} : Set ℕ)})
-      (fun n hn => by
-        have hprop := n.property
-        simp only [Set.mem_singleton_iff] at hprop
-        exact absurd (Subtype.ext (Nat.add_right_cancel hprop)) hn)]
-    change ENNReal.ofReal (slope k)⁻¹ = _
-    have hslope : slope k = ((k : ℝ) + 2) * ((k : ℝ) + 1) := by simp [slope]
-    have e : (k : ℝ) + 2 - 1 = (k : ℝ) + 1 := by ring
-    rw [hslope]
-    congr 1
-    push_cast
-    rw [e, one_div]
-  · have hd2 : d < 2 := by omega
-    have : IsEmpty {n : ℕ // n + 2 ∈ ({d} : Set ℕ)} :=
-      ⟨fun n => by
-        have hprop := n.property
-        simp only [Set.mem_singleton_iff] at hprop
-        omega⟩
-    rw [tsum_empty]
-    rcases (by omega : d = 0 ∨ d = 1) with rfl | rfl <;> simp
-
-private theorem shift (x : ℝ) (k : ℕ) :
-    lurothDigitSeq x (k + 1) = lurothDigitSeq (lurothMap x) k := by
-  unfold lurothDigitSeq
-  have hks : k + 1 = k.succ := rfl
-  rw [hks, Function.iterate_succ_apply]
-
-private theorem cylinder {n : ℕ} (c : Fin n → ℕ) :
-    μ {x | ∀ j : Fin n, lurothDigitSeq x j = c j} =
-      ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1))) := by
-  induction n with
-  | zero =>
-    have huniv : {x : ℝ | ∀ j : Fin 0, lurothDigitSeq x j = c j} = Set.univ :=
-      Set.eq_univ_of_forall fun x j => Fin.elim0 j
-    rw [huniv, prob_univ]
-    exact (Fin.prod_univ_zero _).symm
-  | succ n ih =>
-    have ht : MeasurableSet {x : ℝ | ∀ j : Fin n, lurothDigitSeq x j = c j.succ} := by
-      have hset : {x : ℝ | ∀ j : Fin n, lurothDigitSeq x j = c j.succ} =
-          ⋂ (j : Fin n), (fun x => lurothDigitSeq x j) ⁻¹' {c j.succ} := by
-        ext x
-        simp
-      rw [hset]
-      exact MeasurableSet.iInter fun j => (measurable_seq j) (.of_discrete)
-    have heq : {x : ℝ | ∀ j : Fin (n + 1), lurothDigitSeq x j = c j} =
-        lurothDigit ⁻¹' {c 0} ∩
-          lurothMap ⁻¹' {x | ∀ j : Fin n, lurothDigitSeq x j = c j.succ} := by
-      ext x
-      simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_preimage,
-        Set.mem_singleton_iff, Fin.forall_fin_succ]
-      constructor
-      · rintro ⟨h0, hs⟩
-        refine ⟨h0, fun j => ?_⟩
-        have hjs := hs j
-        rw [Fin.val_succ] at hjs
-        rwa [← shift x j.val]
-      · rintro ⟨h0, hs⟩
-        refine ⟨h0, fun j => ?_⟩
-        have hjs := hs j
-        rw [← shift x j.val] at hjs
-        rwa [Fin.val_succ]
-    rw [heq, first_tail _ _ ht, single_marginal]
-    have ih' : μ {x : ℝ | ∀ j : Fin n, lurothDigitSeq x j = c j.succ} =
-        ∏ (j : Fin n), ENNReal.ofReal (1 / ((c j.succ : ℝ) * ((c j.succ : ℝ) - 1))) :=
-      ih _
-    rw [ih', Fin.prod_univ_succ]
-private theorem cylinder_volume {n : ℕ} (c : Fin n → ℕ) :
-    volume {x ∈ unitInterval | ∀ j : Fin n, lurothDigitSeq x j = c j} =
-      ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1))) := by
-  have heq : {x ∈ unitInterval | ∀ j : Fin n, lurothDigitSeq x j = c j} =
-      {x : ℝ | ∀ j : Fin n, lurothDigitSeq x j = c j} ∩ unitInterval := by
-    ext x
-    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, unitInterval, Set.mem_Ioc]
-    tauto
-  rw [heq, ← Measure.restrict_apply' measurableSet_Ioc]
-  exact cylinder c
+-- The digit sequence is measurable by the imported joint law of the digits, which also gives
+-- the cylinder masses through `volume_lurothCylinder`.
 private theorem cylinder_measurable {n : ℕ} (c : Fin n → ℕ) :
     MeasurableSet {x ∈ unitInterval | ∀ j : Fin n, lurothDigitSeq x j = c j} := by
+  obtain ⟨_, _, _, hmp⟩ :=
+    volume_lurothConsecutiveDigits_zero_one_integral.measurePreserving_digitSeq
   have hset : {x ∈ unitInterval | ∀ j : Fin n, lurothDigitSeq x j = c j} =
       (⋂ j : Fin n, (fun x => lurothDigitSeq x j) ⁻¹' {c j}) ∩ unitInterval := by
     ext x
@@ -274,7 +90,8 @@ private theorem cylinder_measurable {n : ℕ} (c : Fin n → ℕ) :
       Set.mem_singleton_iff, unitInterval, Set.mem_Ioc]
     tauto
   rw [hset]
-  exact (MeasurableSet.iInter fun j : Fin n => (measurable_seq _) (.of_discrete)).inter
+  exact (MeasurableSet.iInter fun j : Fin n =>
+    ((measurable_pi_apply (j : ℕ)).comp hmp.measurable) (measurableSet_singleton _)).inter
     measurableSet_Ioc
 private theorem oneD_integral (a : ℕ) (ha : 2 ≤ a) :
     ∫ x in Set.Ioc (a : ℝ) ((a : ℝ) + 1), (1 : ℝ) / x ^ 2 =
@@ -313,59 +130,11 @@ private theorem oneD_integrable (a : ℕ) (ha : 2 ≤ a) :
   exact (hcont.integrableOn_compact hcomp).mono_set Set.Ioc_subset_Icc_self
 private theorem oneD_nonneg (x : ℝ) : 0 ≤ (1 : ℝ) / x ^ 2 := by
   positivity
-private theorem prod_integral {m : ℕ} (s : Fin m → Set ℝ) (hs : ∀ i, MeasurableSet (s i))
-    (g : Fin m → ℝ → ℝ) :
+private theorem prod_integral {m : ℕ} (s : Fin m → Set ℝ) (g : Fin m → ℝ → ℝ) :
     ∫ x : Fin m → ℝ in Set.pi Set.univ s, (∏ i, g i (x i)) =
       ∏ i, ∫ x in s i, g i x := by
-  have hmeas : MeasurableSet (Set.pi Set.univ s) :=
-    MeasurableSet.pi Set.countable_univ (fun i _ => hs i)
-  have h1 : ∫ x : Fin m → ℝ in Set.pi Set.univ s, (∏ i, g i (x i)) =
-      ∫ x : Fin m → ℝ, (Set.pi Set.univ s).indicator (fun x => ∏ i, g i (x i)) x := by
-    rw [integral_indicator hmeas]
-  have h2 : ∀ i, ∫ x in s i, g i x = ∫ x, (s i).indicator (g i) x := by
-    intro i
-    rw [integral_indicator (hs i)]
-  rw [h1]
-  simp_rw [h2]
-  have hfun : (Set.pi Set.univ s).indicator (fun x : Fin m → ℝ => ∏ i, g i (x i)) =
-      (fun x : Fin m → ℝ => ∏ i, (s i).indicator (g i) (x i)) := by
-    funext x
-    by_cases hx : x ∈ Set.pi Set.univ s
-    · simp only [Set.indicator_of_mem hx]
-      congr 1
-      funext i
-      have hi : x i ∈ s i := hx i (Set.mem_univ i)
-      simp [Set.indicator_of_mem hi]
-    · simp only [Set.indicator_of_notMem hx]
-      have hex : ∃ i, x i ∉ s i := by
-        simpa [Set.mem_pi] using hx
-      obtain ⟨i, hi⟩ := hex
-      rw [Finset.prod_eq_zero (Finset.mem_univ i)]
-      simp [Set.indicator_of_notMem hi]
-  rw [hfun]
-  exact integral_fintype_prod_volume_eq_prod (fun i => (s i).indicator (g i))
-private theorem bochner_to_lintegral {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    {s : Set α} (hs : MeasurableSet s) {f : α → ℝ} (hint : IntegrableOn f s μ)
-    (hpos : ∀ x ∈ s, 0 ≤ f x) :
-    ENNReal.ofReal (∫ x in s, f x ∂μ) = ∫⁻ x in s, ENNReal.ofReal (f x) ∂μ := by
-  have h1 : ∫ x in s, f x ∂μ = ∫ x, s.indicator f x ∂μ := (integral_indicator hs).symm
-  have h2 : ∫⁻ x in s, ENNReal.ofReal (f x) ∂μ =
-      ∫⁻ x, s.indicator (fun x => ENNReal.ofReal (f x)) x ∂μ :=
-    (lintegral_indicator hs _).symm
-  rw [h1, h2]
-  have hfun : s.indicator (fun x => ENNReal.ofReal (f x)) =
-      fun x => ENNReal.ofReal (s.indicator f x) := by
-    funext x
-    by_cases hx : x ∈ s
-    · simp [Set.indicator_of_mem hx]
-    · simp [Set.indicator_of_notMem hx]
-  rw [hfun]
-  apply ofReal_integral_eq_lintegral_ofReal
-  · exact (integrable_indicator_iff hs).mpr hint
-  · filter_upwards with x
-    by_cases hx : x ∈ s
-    · simp [Set.indicator_of_mem hx, hpos x hx]
-    · simp [Set.indicator_of_notMem hx]
+  rw [volume_pi, Measure.restrict_pi_pi]
+  exact integral_fintype_prod_eq_prod g
 private def cube {m : ℕ} (a : Fin m → ℕ) : Set (Fin m → ℝ) :=
   Set.pi Set.univ (fun i => Set.Ioc (a i : ℝ) ((a i : ℝ) + 1))
 private theorem cube_measurable {m : ℕ} (a : Fin m → ℕ) : MeasurableSet (cube a) :=
@@ -412,38 +181,9 @@ private theorem cube_subset {m : ℕ} (F : (Fin m → ℝ) → ℝ)
   exact hmono haRmem hxmem hle
 private theorem cube_integrable {m : ℕ} (a : Fin m → ℕ) (ha : ∀ i, 2 ≤ a i) :
     IntegrableOn (fun x : Fin m → ℝ => ∏ i, (1 : ℝ) / x i ^ 2) (cube a) volume := by
-  have hs : ∀ i, MeasurableSet (Set.Ioc (a i : ℝ) ((a i : ℝ) + 1)) := fun _ =>
-    measurableSet_Ioc
-  have hint1 : ∀ i, IntegrableOn (fun x : ℝ => (1 : ℝ) / x ^ 2)
-      (Set.Ioc (a i : ℝ) ((a i : ℝ) + 1)) volume := fun i => oneD_integrable (a i) (ha i)
-  have hInt1 : ∀ i, Integrable
-      ((Set.Ioc (a i : ℝ) ((a i : ℝ) + 1)).indicator (fun x : ℝ => (1 : ℝ) / x ^ 2))
-      volume := fun i => (integrable_indicator_iff (hs i)).mpr (hint1 i)
-  have hProd : Integrable
-      (fun x : Fin m → ℝ => ∏ i, (Set.Ioc (a i : ℝ) ((a i : ℝ) + 1)).indicator
-        (fun x : ℝ => (1 : ℝ) / x ^ 2) (x i)) volume :=
-    Integrable.fintype_prod hInt1
-  have hfun : (fun x : Fin m → ℝ => ∏ i, (Set.Ioc (a i : ℝ) ((a i : ℝ) + 1)).indicator
-        (fun x : ℝ => (1 : ℝ) / x ^ 2) (x i)) =
-      (cube a).indicator (fun x : Fin m → ℝ => ∏ i, (1 : ℝ) / x i ^ 2) := by
-    funext x
-    by_cases hx : x ∈ cube a
-    · simp only [Set.indicator_of_mem hx]
-      congr 1
-      funext i
-      have hi : x i ∈ Set.Ioc (a i : ℝ) ((a i : ℝ) + 1) := by
-        simp only [cube, Set.mem_pi, Set.mem_univ, forall_true_left] at hx
-        exact hx i
-      simp [Set.indicator_of_mem hi]
-    · simp only [Set.indicator_of_notMem hx]
-      have hex : ∃ i, x i ∉ Set.Ioc (a i : ℝ) ((a i : ℝ) + 1) := by
-        simp only [cube, Set.mem_pi, Set.mem_univ, forall_true_left] at hx
-        simpa using hx
-      obtain ⟨i, hi⟩ := hex
-      rw [Finset.prod_eq_zero (Finset.mem_univ i)]
-      simp [Set.indicator_of_notMem hi]
-  rw [hfun] at hProd
-  exact (integrable_indicator_iff (cube_measurable a)).mp hProd
+  rw [IntegrableOn, cube, volume_pi, Measure.restrict_pi_pi]
+  exact Integrable.fintype_prod (f := fun _ x => (1 : ℝ) / x ^ 2)
+    fun i => oneD_integrable (a i) (ha i)
 private theorem cube_nonneg {m : ℕ} (x : Fin m → ℝ) :
     0 ≤ ∏ i, (1 : ℝ) / x i ^ 2 :=
   Finset.prod_nonneg fun i _ => oneD_nonneg (x i)
@@ -451,7 +191,7 @@ private theorem cube_integral {m : ℕ} (a : Fin m → ℕ) (ha : ∀ i, 2 ≤ a
     ∫ x : Fin m → ℝ in cube a, ∏ i, (1 : ℝ) / x i ^ 2 =
       ∏ i, 1 / ((a i : ℝ) * ((a i : ℝ) + 1)) := by
   have h := prod_integral (fun i => Set.Ioc (a i : ℝ) ((a i : ℝ) + 1))
-    (fun _ => measurableSet_Ioc) (fun _ x => (1 : ℝ) / x ^ 2)
+    (fun _ x => (1 : ℝ) / x ^ 2)
   simp only [cube] at h ⊢
   rw [h]
   congr 1
@@ -460,8 +200,8 @@ private theorem cube_integral {m : ℕ} (a : Fin m → ℕ) (ha : ∀ i, 2 ≤ a
 private theorem cube_lintegral {m : ℕ} (a : Fin m → ℕ) (ha : ∀ i, 2 ≤ a i) :
     ∫⁻ x : Fin m → ℝ in cube a, ENNReal.ofReal (∏ i, (1 : ℝ) / x i ^ 2) =
       ∏ i, ENNReal.ofReal (1 / ((a i : ℝ) * ((a i : ℝ) + 1))) := by
-  have hConv := bochner_to_lintegral (cube_measurable a) (cube_integrable a ha)
-    (fun x _ => cube_nonneg x)
+  have hConv := ofReal_integral_eq_lintegral_ofReal (cube_integrable a ha)
+    (ae_restrict_of_forall_mem (cube_measurable a) fun x _ => cube_nonneg x)
   rw [cube_integral a ha] at hConv
   have hpos : ∀ i ∈ Finset.univ, 0 ≤ (1 : ℝ) / ((a i : ℝ) * ((a i : ℝ) + 1)) := by
     intro i _
@@ -584,7 +324,7 @@ public theorem volume_lurothDigits_ge_le {m : ℕ} (F : (Fin m → ℝ) → ℝ)
     intro s
     have hEq : volume (cylSet s.val) =
         ∏ i, ENNReal.ofReal (1 / ((s.val i : ℝ) * ((s.val i : ℝ) - 1))) :=
-      cylinder_volume s.val
+      volume_lurothCylinder s.val
     rw [hEq]
     exact cube_compare s.val s.property.1
   calc volume {x ∈ Set.Ioc (0 : ℝ) 1 | y ≤ F (fun i => (lurothDigitSeq x i : ℝ))} =
