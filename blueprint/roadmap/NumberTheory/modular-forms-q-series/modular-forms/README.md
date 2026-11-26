@@ -4,6 +4,7 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 
 - [Congruences between Eisenstein series and cusp forms](congruences-between-eisenstein-series-and-cusp-f/README.md)
 - [Hecke operators](hecke-operators/README.md)
+- [Hecke eigenforms and newforms for Γ₁(N)](hecke-eigenforms-and-newforms-for-gamma1-n.md)
 - [Modular functions](modular-functions/README.md)
 - [Modular group and congruence subgroups](modular-group-and-congruence-subgroups/README.md)
 - [Ramanujan tau function](ramanujan-tau-function/README.md)
