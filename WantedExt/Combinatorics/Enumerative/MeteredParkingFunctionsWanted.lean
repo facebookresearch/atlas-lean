@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Enumerative.LongMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.MeteredParkingLowerBound
 public import MathlibExt.Combinatorics.Enumerative.OneMeteredParkingFunctions
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+public import MathlibExt.Combinatorics.Enumerative.TwoMeteredParkingFunctions
 
 namespace MetaMathlibExt
 
@@ -60,15 +61,6 @@ public theorem_wanted meteredOutcome_displacement_le {m n t : ℕ} (f : Fin m �
         s ≤ (f i : ℕ) + t) ∧
       ((meteredOutcome t n (List.ofFn fun i => (f i : ℕ)))[(i : ℕ)]? = some none →
         n ≤ (f i : ℕ) + t)
-
-/-- **Metered parking functions with two cars.** For every natural number $t \ge 1$ and every
-natural number $n$, the number of $t$-metered $(2, n)$-parking functions is
-$\mathrm{mpf}_{2,n}(t) = \max(n^2 - 1, 0)$, that is, $n^2 - 1$ for $n \ge 1$ and $0$ for $n = 0$.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Corollary 2 (`integers-2025-A73-cor-2`). -/
-public theorem_wanted meteredParkingCount_two {t : ℕ} (ht : 1 ≤ t) (n : ℕ) :
-    meteredParkingCount t 2 n = n ^ 2 - 1
 
 /-- **Lucky cars of 1-metered parking are the lace starts.** Let $0 < m \le n$ and let
 $\alpha = (a_1, \dots, a_m)$, with each $a_i \in \{1, \dots, n\}$, be any sequence of preferred
