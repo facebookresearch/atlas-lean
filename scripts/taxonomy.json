@@ -1521,6 +1521,7 @@
   "CSLibExt/Computability/Distributed/SelfStabilization": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Local distributed algorithms"},
   "CSLibExt/Computability/Distributed/TestAndSetConsensus": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus from test-and-set"},
   "CSLibExt/Computability/Distributed/TokenRing": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Dijkstra's self-stabilizing token ring"},
+  "CSLibExt/Computability/Distributed/TokenRingConvergence": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Local distributed algorithms"},
   "CSLibExt/Computability/Distributed/TwoPhaseCommit": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Two-phase commit"},
   "CSLibExt/Computability/Distributed/VectorClock": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Vector clocks"},
   "CSLibExt/Computability/Distributed/WindowIndistinguishability": {"to": "ComputerScience/parallel-algorithms", "title": "Locality lower bounds for ring coloring"},
