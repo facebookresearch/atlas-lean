@@ -17,7 +17,7 @@ import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Order.Fin.Tuple
 
 /-!
-# `M₁₀₅ > 4`
+# Lower bounds for Maynard's variational quantity `M_k`
 
 Maynard's Proposition 4.3(2) (J. Maynard, *Small gaps between primes*, Ann. of Math. 181 (2015),
 383-413; numbering of arXiv:1311.4600v3): the variational quantity
@@ -27,7 +27,11 @@ class containing an a.e.-equivalent, with the same `I_k` and `J_k^{(m)}`, of eac
 Riemann-integrable profiles; the two suprema agree because `I_k` and every `J_k^{(m)}` are
 continuous for the `L²` norm on the simplex and Riemann-integrable profiles are dense there.
 
-## Proof
+For Proposition 4.3(1), `two_lt_maynardM_five` uses Maynard's polynomial (8.16) itself.
+Integrating its square and the squares of its coordinate marginals by factorial moments
+of the simplex gives the exact ratio `1417255/708216` in (8.17).
+
+## Proof of `M₁₀₅ > 4`
 
 Maynard (Section 8, display (8.15)) takes for `F` a polynomial in `∑ tᵢ` and `∑ tᵢ²`, a linear
 combination of the `42` monomials `(1 - ∑ tᵢ)ᵇ (∑ tᵢ²)ᶜ` with `b + 2c ≤ 11` whose coefficients come
@@ -569,5 +573,357 @@ theorem four_lt_maynardM_105 : 4 < maynardM 105 := by
     rw [lt_div_iff₀ hIpos]
     linarith
   exact lt_of_lt_of_le hratio (le_csSup (bddAbove_maynardRatio 104) ⟨truncFn M, hprof, rfl⟩)
+
+
+/-- The open simplex used in the Dirichlet integral. -/
+private def openSimplex (n : ℕ) : Set (Fin n → ℝ) :=
+  {x | (∀ i, 0 < x i) ∧ ∑ i, x i < 1}
+
+/-- The simplex slack `1 - ∑ xᵢ`. -/
+private noncomputable def slack {n : ℕ} (x : Fin n → ℝ) : ℝ := 1 - ∑ i, x i
+
+/-- The second power sum `∑ xᵢ²`. -/
+private noncomputable def sumSq {n : ℕ} (x : Fin n → ℝ) : ℝ := ∑ i, x i ^ 2
+
+/-- A monomial in the coordinates and the slack, extended by zero off the open simplex. -/
+private noncomputable def simplexMonomial {n : ℕ} (a : Fin n → ℕ) (b : ℕ) : (Fin n → ℝ) → ℝ :=
+  (openSimplex n).indicator fun x => (∏ i, x i ^ a i) * slack x ^ b
+
+/-- The Dirichlet integral with integer parameters is the factorial moment of a monomial. -/
+private theorem simplexMonomial_integral {n : ℕ} (a : Fin n → ℕ) (b : ℕ) :
+    Integrable (simplexMonomial a b) ∧
+      ∫ x, simplexMonomial a b x =
+        (∏ i, ((a i).factorial : ℝ)) * b.factorial / ((∑ i, a i) + b + n).factorial := by
+  let α : Fin (n + 1) → ℝ := Fin.snoc (fun i : Fin n => (a i : ℝ) + 1) ((b : ℝ) + 1)
+  have hα (i : Fin (n + 1)) : 0 < α i := by
+    refine Fin.lastCases ?_ (fun j => ?_) i <;>
+      simp only [α, Fin.snoc_last, Fin.snoc_castSucc] <;> positivity
+  have hrepr (x : Fin n → ℝ) : simplexMonomial a b x = (dirichletDensity α x).toReal := by
+    by_cases hx : x ∈ openSimplex n
+    · have hx' : (∀ i, 0 < x i) ∧ ∑ i, x i < 1 := hx
+      rw [simplexMonomial, indicator_of_mem hx, dirichletDensity, ite_eq_left hx',
+        ENNReal.toReal_ofReal]
+      · simp only [α, Fin.snoc_castSucc, Fin.snoc_last, add_sub_cancel_right, Real.rpow_natCast,
+          slack]
+      · have hs : 0 ≤ 1 - ∑ i, x i := sub_nonneg.mpr hx'.2.le
+        exact mul_nonneg (Finset.prod_nonneg fun i _ => Real.rpow_nonneg (hx'.1 i).le _)
+          (Real.rpow_nonneg hs _)
+    · have hx' : ¬((∀ i, 0 < x i) ∧ ∑ i, x i < 1) := hx
+      rw [simplexMonomial, indicator_of_notMem hx, dirichletDensity, ite_eq_right hx',
+        ENNReal.toReal_zero]
+  have hmass := lintegral_dirichletDensity hα
+  have hmeas : AEMeasurable (dirichletDensity α) volume :=
+    (measurable_dirichletDensity α).aemeasurable
+  have hfin : ∀ᵐ x ∂volume, dirichletDensity α x < ∞ := by
+    refine ae_of_all _ fun x => ?_
+    unfold dirichletDensity
+    split_ifs <;> simp
+  have hsum : ∑ i, α i = (((∑ i, a i) + b + n : ℕ) : ℝ) + 1 := by
+    rw [Fin.sum_univ_castSucc]
+    simp only [α, Fin.snoc_castSucc, Fin.snoc_last, Finset.sum_add_distrib, Finset.sum_const,
+      Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, mul_one, Nat.cast_add, Nat.cast_sum]
+    ring
+  rw [show simplexMonomial a b = fun x => (dirichletDensity α x).toReal from funext hrepr]
+  refine ⟨integrable_toReal_of_lintegral_ne_top hmeas (by rw [hmass]; exact ENNReal.ofReal_ne_top),
+    ?_⟩
+  rw [integral_toReal hmeas hfin, hmass,
+    ENNReal.toReal_ofReal (multiBeta_pos hα (Nat.succ_ne_zero n)).le,
+    multiBeta, hsum, Fin.prod_univ_castSucc]
+  simp only [α, Fin.snoc_castSucc, Fin.snoc_last, Real.Gamma_nat_eq_factorial]
+
+
+/-- Moment integrands for powers of the slack and second power sum. -/
+private noncomputable def simplexMoment {n : ℕ} (b p : ℕ) : (Fin n → ℝ) → ℝ :=
+  (openSimplex n).indicator fun x => slack x ^ b * sumSq x ^ p
+
+private theorem sum_single_exponent {n : ℕ} (i : Fin n) (e : ℕ) :
+    ∑ j, Pi.single i e j = e := by
+  simp [Pi.single_apply, Finset.sum_ite_eq']
+
+private theorem prod_single_pow {n : ℕ} (x : Fin n → ℝ) (i : Fin n) (e : ℕ) :
+    ∏ j, x j ^ Pi.single i e j = x i ^ e := by
+  simp_rw [Pi.single_apply, apply_ite, pow_zero]
+  simp [Finset.prod_ite_eq']
+
+private theorem prod_single_factorial {n : ℕ} (i : Fin n) (e : ℕ) :
+    ∏ j, (((Pi.single i e : Fin n → ℕ) j).factorial : ℝ) = e.factorial := by
+  simp_rw [Pi.single_apply, apply_ite, Nat.factorial_zero, Nat.cast_one]
+  simp [Finset.prod_ite_eq']
+
+private theorem prod_pair_factorial {n : ℕ} {i j : Fin n} (h : i ≠ j) :
+    ∏ k, (((Pi.single i 2 + Pi.single j 2 : Fin n → ℕ) k).factorial : ℝ) = 4 := by
+  let a (i : Fin n) : Fin n → ℕ := Pi.single i 2
+  change (∏ k, ((a i k + a j k).factorial : ℝ)) = 4
+  have he (k : Fin n) : ((a i k + a j k).factorial : ℝ) =
+      (a i k).factorial * (a j k).factorial := by
+    by_cases hk : k = i
+    · subst k
+      simp [a, h]
+    · simp [a, Pi.single_apply, hk]
+  simp_rw [he, Finset.prod_mul_distrib, a, prod_single_factorial]
+  norm_num [Nat.factorial]
+
+/-- The factorial coefficients for `1`, `∑ xᵢ²`, and `(∑ xᵢ²)²` respectively.
+The last coefficient counts the diagonal and off-diagonal terms of the square. -/
+private def momentCoeff (n p : ℕ) : ℕ :=
+  match p with
+  | 0 => 1
+  | 1 => 2 * n
+  | _ => n * (20 + 4 * n)
+
+/-- The first three moments of the second power sum, with an arbitrary slack exponent. -/
+private theorem simplexMoment_integral (n b p : ℕ) (hp : p ≤ 2) :
+    Integrable (simplexMoment (n := n) b p) ∧
+      ∫ x, simplexMoment (n := n) b p x =
+        (momentCoeff n p : ℝ) * b.factorial / (n + b + 2 * p).factorial := by
+  obtain rfl | rfl | rfl : p = 0 ∨ p = 1 ∨ p = 2 := by omega
+  · have he : simplexMoment (n := n) b 0 = simplexMonomial (fun _ => 0) b := by
+      simp [simplexMoment, simplexMonomial]
+    rw [he]
+    simpa [momentCoeff, add_comm b n] using simplexMonomial_integral (fun _ : Fin n => 0) b
+  · let a (i : Fin n) : Fin n → ℕ := Pi.single i 2
+    have he : simplexMoment (n := n) b 1 = fun x => ∑ i, simplexMonomial (a i) b x := by
+      funext x
+      by_cases hx : x ∈ openSimplex n
+      · simp only [simplexMoment, simplexMonomial, indicator_of_mem hx, pow_one, a,
+          prod_single_pow, sumSq, Finset.mul_sum]
+        exact Finset.sum_congr rfl fun i _ => mul_comm _ _
+      · simp [simplexMoment, simplexMonomial, indicator_of_notMem hx]
+    rw [he]
+    have hi (i : Fin n) := (simplexMonomial_integral (a i) b).1
+    refine ⟨integrable_finsetSum _ (fun i _ => hi i), ?_⟩
+    rw [integral_finsetSum _ fun i _ => hi i]
+    simp_rw [(simplexMonomial_integral _ b).2, a, sum_single_exponent, prod_single_factorial]
+    have hn : 2 + b + n = n + b + 2 := by omega
+    simp only [hn, show (2 : ℕ).factorial = 2 by decide, momentCoeff, Nat.cast_mul,
+      Nat.cast_ofNat, mul_one, Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    ring
+  · let a (i j : Fin n) : Fin n → ℕ := Pi.single i 2 + Pi.single j 2
+    have he : simplexMoment (n := n) b 2 = fun x => ∑ i, ∑ j, simplexMonomial (a i j) b x := by
+      funext x
+      by_cases hx : x ∈ openSimplex n
+      · simp only [simplexMoment, simplexMonomial, indicator_of_mem hx, sumSq, pow_two,
+          Finset.sum_mul, Finset.mul_sum]
+        refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+        rw [show (∏ k, x k ^ a i j k) = x i ^ 2 * x j ^ 2 by
+          simp only [a, Pi.add_apply, pow_add, Finset.prod_mul_distrib, prod_single_pow]]
+        ring
+      · simp [simplexMoment, simplexMonomial, indicator_of_notMem hx]
+    rw [he]
+    have hi (i j : Fin n) := (simplexMonomial_integral (a i j) b).1
+    have hj (i : Fin n) : Integrable fun x => ∑ j, simplexMonomial (a i j) b x :=
+      integrable_finsetSum _ fun j _ => hi i j
+    refine ⟨integrable_finsetSum _ (fun i _ => hj i), ?_⟩
+    rw [integral_finsetSum _ fun i _ => hj i]
+    have hm (i j : Fin n) : ∫ x, simplexMonomial (a i j) b x =
+        (4 + if j = i then 20 else 0) * b.factorial / (n + b + 4).factorial := by
+      rw [(simplexMonomial_integral _ _).2]
+      have hs : ∑ k, a i j k = 4 := by
+        simp [a, Finset.sum_add_distrib]
+      rw [hs, show 4 + b + n = n + b + 4 by omega]
+      congr 2
+      by_cases hij : j = i
+      · subst j
+        change (∏ k, (((Pi.single i 2 + Pi.single i 2 : Fin n → ℕ) k).factorial : ℝ)) = _
+        rw [← Pi.single_add]
+        norm_num [prod_single_factorial, Nat.factorial]
+      · change (∏ k, (((Pi.single i 2 + Pi.single j 2 : Fin n → ℕ) k).factorial : ℝ)) = _
+        rw [prod_pair_factorial (Ne.symm hij), ite_eq_right hij, add_zero]
+    simp_rw [integral_finsetSum _ fun j _ => hi _ j, hm, ← Finset.sum_div, ← Finset.sum_mul]
+    simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte,
+      Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, momentCoeff,
+      Nat.cast_mul, Nat.cast_add, Nat.cast_ofNat]
+    ring
+
+/-- A polynomial affine in the second power sum, represented by its terms
+`(coefficient, slack degree, second-power-sum degree)`. -/
+private noncomputable def slackPolynomial {m : ℕ} (terms : Fin m → ℝ × ℕ × Fin 2)
+    (w q : ℝ) : ℝ :=
+  ∑ i, (terms i).1 * w ^ (terms i).2.1 * q ^ ((terms i).2.2 : ℕ)
+
+/-- The evaluated moment, as a factorial quotient. -/
+private noncomputable def momentValue (n b p : ℕ) : ℝ :=
+  (momentCoeff n p : ℝ) * b.factorial / (n + b + 2 * p).factorial
+
+/-- Squaring and integrating a polynomial uses the moments of the pairwise products of its terms. -/
+private theorem integral_sq_slackPolynomial (n : ℕ) {m : ℕ} (terms : Fin m → ℝ × ℕ × Fin 2) :
+    (∫ x, ((openSimplex n).indicator (fun x => slackPolynomial terms (slack x) (sumSq x)) x) ^ 2) =
+      ∑ i, ∑ j, (terms i).1 * (terms j).1 *
+        momentValue n ((terms i).2.1 + (terms j).2.1) ((terms i).2.2.val + (terms j).2.2.val) := by
+  let f (i j : Fin m) : (Fin n → ℝ) → ℝ := fun x => (terms i).1 * (terms j).1 *
+    simplexMoment ((terms i).2.1 + (terms j).2.1) ((terms i).2.2.val + (terms j).2.2.val) x
+  have hmoment (i j : Fin m) := simplexMoment_integral n ((terms i).2.1 + (terms j).2.1)
+    ((terms i).2.2.val + (terms j).2.2.val) (by
+      have hi := (terms i).2.2.isLt
+      have hj := (terms j).2.2.isLt
+      omega)
+  have hfi (i j : Fin m) : Integrable (f i j) := (hmoment i j).1.const_mul _
+  have hf (i : Fin m) : Integrable fun x => ∑ j, f i j x :=
+    integrable_finsetSum _ fun j _ => hfi i j
+  have he (x : Fin n → ℝ) :
+      ((openSimplex n).indicator (fun x => slackPolynomial terms (slack x) (sumSq x)) x) ^ 2 =
+        ∑ i, ∑ j, f i j x := by
+    by_cases hx : x ∈ openSimplex n
+    · simp only [slackPolynomial, indicator_of_mem hx, pow_two, Finset.sum_mul, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
+      simp only [f, simplexMoment, indicator_of_mem hx, pow_add]
+      ring
+    · simp [f, simplexMoment, indicator_of_notMem hx]
+  simp_rw [he, integral_finsetSum _ fun i _ => hf i, integral_finsetSum _ fun j _ => hfi _ j]
+  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by
+    simp only [f, integral_const_mul, (hmoment i j).2, momentValue]
+
+/-- Maynard's polynomial (8.16) in the slack `w = 1 - P₁` and second power sum `q = P₂`. -/
+private noncomputable def fivePolynomial (w q : ℝ) : ℝ :=
+  w * q + (7 / 10) * w ^ 2 + q / 14 - (3 / 14) * w
+
+/-- Maynard's polynomial extended by zero off the open simplex. -/
+private noncomputable def fiveProfile {n : ℕ} : (Fin n → ℝ) → ℝ :=
+  (openSimplex n).indicator fun x => fivePolynomial (slack x) (sumSq x)
+
+/-- The polynomial obtained by integrating one coordinate of Maynard's polynomial. -/
+private noncomputable def fiveMarginalPolynomial (w q : ℝ) : ℝ :=
+  (w ^ 2 / 2 + w / 14) * q + w ^ 4 / 12 + (9 / 35) * w ^ 3 - (3 / 28) * w ^ 2
+
+/-- The marginal profile, zero where the remaining coordinates are outside the open simplex. -/
+private noncomputable def fiveMarginal {n : ℕ} : (Fin n → ℝ) → ℝ :=
+  (openSimplex n).indicator fun x => fiveMarginalPolynomial (slack x) (sumSq x)
+
+private theorem integral_fivePolynomial (w q : ℝ) :
+    (∫ t in (0 : ℝ)..w, fivePolynomial (w - t) (q + t ^ 2)) = fiveMarginalPolynomial w q := by
+  have he (t : ℝ) : fivePolynomial (w - t) (q + t ^ 2) =
+      -t ^ 3 + (w + 7 / 10 + 1 / 14) * t ^ 2 + (-q - 7 / 5 * w + 3 / 14) * t +
+        fivePolynomial w q := by
+    unfold fivePolynomial
+    ring
+  simp_rw [he]
+  have hi {f : ℝ → ℝ} (hf : Continuous f) : IntervalIntegrable f volume 0 w :=
+    hf.intervalIntegrable _ _
+  repeat rw [intervalIntegral.integral_add (hi (by fun_prop)) (hi (by fun_prop))]
+  rw [intervalIntegral.integral_const_mul (-q - 7 / 5 * w + 3 / 14) (fun t : ℝ => t)]
+  simp only [intervalIntegral.integral_neg, intervalIntegral.integral_const_mul, integral_pow,
+    integral_id, intervalIntegral.integral_const, smul_eq_mul, fivePolynomial,
+    fiveMarginalPolynomial]
+  ring
+
+private theorem openSimplex_insertNth {n : ℕ} (m : Fin (n + 1)) (t : ℝ) (y : Fin n → ℝ) :
+    Fin.insertNth m t y ∈ openSimplex (n + 1) ↔ t ∈ Ioo 0 (slack y) ∧ y ∈ openSimplex n := by
+  simp only [openSimplex, mem_ofPred_eq, Fin.forall_iff_succAbove m, Fin.insertNth_apply_same,
+    Fin.insertNth_apply_succAbove, Fin.sum_univ_succAbove _ m, slack, mem_Ioo]
+  constructor
+  · rintro ⟨⟨ht, hy⟩, hsum⟩
+    exact ⟨⟨ht, by linarith⟩, hy, by linarith⟩
+  · rintro ⟨⟨ht, hsum⟩, hy, _⟩
+    exact ⟨⟨ht, hy⟩, by linarith⟩
+
+private theorem integral_fiveProfile_insertNth {n : ℕ} (m : Fin (n + 1)) (y : Fin n → ℝ) :
+    (∫ t in (0 : ℝ)..1, fiveProfile (Fin.insertNth m t y)) = fiveMarginal y := by
+  by_cases hy : y ∈ openSimplex n
+  · have hy' : (∀ i, 0 < y i) ∧ ∑ i, y i < 1 := hy
+    have hw₀ : 0 ≤ slack y := sub_nonneg.mpr hy'.2.le
+    have hw₁ : slack y ≤ 1 := sub_le_self _ (Finset.sum_nonneg fun i _ => (hy'.1 i).le)
+    let P (t : ℝ) := fivePolynomial (slack y - t) (sumSq y + t ^ 2)
+    have he (t : ℝ) : fiveProfile (Fin.insertNth m t y) = (Ioo 0 (slack y)).indicator P t := by
+      by_cases ht : t ∈ Ioo 0 (slack y)
+      · rw [fiveProfile, indicator_of_mem ((openSimplex_insertNth m t y).mpr ⟨ht, hy⟩),
+          indicator_of_mem ht]
+        simp only [P, slack, sumSq, Fin.sum_univ_succAbove _ m, Fin.insertNth_apply_same,
+          Fin.insertNth_apply_succAbove]
+        congr 1 <;> ring
+      · rw [fiveProfile, indicator_of_notMem (fun h => ht ((openSimplex_insertNth m t y).mp h).1),
+          indicator_of_notMem ht]
+    have hs : Function.support (fun t => fiveProfile (Fin.insertNth m t y)) ⊆ Ioc (0 : ℝ) 1 := by
+      intro t ht
+      by_contra ht'
+      apply ht
+      change fiveProfile (Fin.insertNth m t y) = 0
+      rw [he, indicator_of_notMem]
+      exact fun h => ht' ⟨h.1, h.2.le.trans hw₁⟩
+    rw [intervalIntegral.integral_eq_integral_of_support_subset hs]
+    simp_rw [he]
+    rw [integral_indicator measurableSet_Ioo, ← integral_Ioc_eq_integral_Ioo,
+      ← intervalIntegral.integral_of_le hw₀, fiveMarginal, indicator_of_mem hy]
+    exact integral_fivePolynomial (slack y) (sumSq y)
+  · have he (t : ℝ) : fiveProfile (Fin.insertNth m t y) = 0 := by
+      rw [fiveProfile, indicator_of_notMem (fun h => hy ((openSimplex_insertNth m t y).mp h).2)]
+    simp [he, fiveMarginal, indicator_of_notMem hy]
+
+private theorem setIntegral_openSimplex_sq {n : ℕ} (P : (Fin n → ℝ) → ℝ) :
+    ∫ x in Icc (0 : Fin n → ℝ) 1, ((openSimplex n).indicator P x) ^ 2 =
+      ∫ x, ((openSimplex n).indicator P x) ^ 2 := by
+  refine setIntegral_eq_integral_of_forall_compl_eq_zero fun x hx => ?_
+  rw [indicator_of_notMem (fun h => hx (mem_Icc_of_simplex h)), zero_pow (by decide)]
+
+private theorem maynardI_fiveProfile : maynardI 5 fiveProfile = 29509 / 1222452000 := by
+  let terms : Fin 4 → ℝ × ℕ × Fin 2 := ![(1, 1, 1), (7 / 10, 2, 0), (1 / 14, 0, 1), (-3 / 14, 1, 0)]
+  have hp (w q : ℝ) : fivePolynomial w q = slackPolynomial terms w q := by
+    norm_num [fivePolynomial, slackPolynomial, terms, Fin.sum_univ_succ]
+    ring
+  change (∫ x in Icc (0 : Fin 5 → ℝ) 1, fiveProfile x ^ 2) = _
+  rw [fiveProfile, setIntegral_openSimplex_sq]
+  simp_rw [hp]
+  rw [integral_sq_slackPolynomial]
+  norm_num [terms, Fin.sum_univ_succ, momentValue, momentCoeff, Nat.factorial]
+
+private theorem maynardJ_fiveProfile (m : Fin 5) :
+    maynardJ 5 m fiveProfile = 40493 / 4191264000 := by
+  have hline (x : Fin 5 → ℝ) :
+      ∫ t, fiveProfile (Function.update x m t) ∂μ₁ = fiveMarginal (Fin.removeNth m x) := by
+    simpa only [Fin.insertNth_removeNth, intervalIntegral_eq_μ₁] using
+      integral_fiveProfile_insertNth m (Fin.removeNth m x)
+  rw [maynardJ_eq (n := 4)]
+  simp_rw [hline]
+  have hm : Measurable (fiveMarginal (n := 4)) := by
+    refine Measurable.indicator ?_ (measurableSet_cornerSimplex _)
+    unfold fiveMarginalPolynomial slack sumSq
+    fun_prop
+  rw [integral_comp_removeNth m (K := fun y => fiveMarginal y ^ 2)
+    (hm.pow_const 2).aestronglyMeasurable, ← restrict_Icc_eq_pi, fiveMarginal,
+    setIntegral_openSimplex_sq]
+  let terms : Fin 5 → ℝ × ℕ × Fin 2 :=
+    ![(1 / 2, 2, 1), (1 / 14, 1, 1), (1 / 12, 4, 0), (9 / 35, 3, 0), (-3 / 28, 2, 0)]
+  have hp (w q : ℝ) : fiveMarginalPolynomial w q = slackPolynomial terms w q := by
+    norm_num [fiveMarginalPolynomial, slackPolynomial, terms, Fin.sum_univ_succ]
+    ring
+  simp_rw [hp]
+  rw [integral_sq_slackPolynomial]
+  norm_num [terms, Fin.sum_univ_succ, momentValue, momentCoeff, Nat.factorial]
+
+private theorem isMaynardProfile_fiveProfile : IsMaynardProfile 5 fiveProfile := by
+  have hc : Continuous (fun x : Fin 5 → ℝ => fivePolynomial (slack x) (sumSq x)) := by
+    unfold fivePolynomial slack sumSq
+    fun_prop
+  refine ⟨hc.measurable.indicator (measurableSet_cornerSimplex _), ?_, ?_, ?_, ?_⟩
+  · have hcompact : IsCompact (Icc (0 : Fin 5 → ℝ) 1) := isCompact_Icc
+    obtain ⟨C, hC⟩ := hcompact.exists_bound_of_continuousOn hc.continuousOn
+    refine ⟨max C 0, fun x => ?_⟩
+    by_cases hx : x ∈ openSimplex 5
+    · rw [fiveProfile, indicator_of_mem hx, ← Real.norm_eq_abs]
+      exact (hC x (mem_Icc_of_simplex hx)).trans (le_max_left _ _)
+    · rw [fiveProfile, indicator_of_notMem hx, abs_zero]
+      exact le_max_right _ _
+  · intro x hx
+    rw [fiveProfile, indicator_of_notMem]
+    intro h
+    have hs : (∀ i, 0 < x i) ∧ ∑ i, x i < 1 := h
+    exact hx ⟨fun i => (hs.1 i).le, hs.2.le⟩
+  · rw [maynardI_fiveProfile]
+    norm_num
+  · intro m
+    rw [maynardJ_fiveProfile]
+    norm_num
+
+/-- **`M₅ > 2`.** Maynard's variational quantity for `k = 5` exceeds `2` (Maynard, *Small gaps
+between primes*, arXiv:1311.4600v3, Proposition 4.3(1)). -/
+theorem two_lt_maynardM_five : 2 < maynardM 5 := by
+  have hratio : maynardRatio 5 fiveProfile = 1417255 / 708216 := by
+    change (∑ m : Fin 5, maynardJ 5 m fiveProfile) / maynardI 5 fiveProfile = _
+    simp only [maynardI_fiveProfile, maynardJ_fiveProfile, Finset.sum_const,
+      Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    norm_num
+  have hM : maynardRatio 5 fiveProfile ≤ maynardM 5 :=
+    le_csSup (bddAbove_maynardRatio 4) ⟨fiveProfile, isMaynardProfile_fiveProfile, rfl⟩
+  rw [hratio] at hM
+  exact lt_of_lt_of_le (by norm_num) hM
 
 end WantedExt.NumberTheory.MaynardVariationalBounds

@@ -30,8 +30,8 @@ unordered pair (a two-element `Finset`) of lineages that merges. After a merger 
 lineage takes the smaller label of the pair and the remaining lineages keep their relative
 order (`mergeBlocks`, `blocksAfter`, `blocksOf`).
 `partitionsOf` decodes a history into its sequence of ancestral partitions of the sample (the
-ranked labeled history proper); the tests check by kernel evaluation that this decoding is
-injective for `n ≤ 5`, but injectivity for general `n` is not proved here. Then
+ranked labeled history proper); this decoding is injective for every `n`
+(`partitionsOf_injective` below). Then
 
 * there are `∏_{k=2}^n C(k, 2) = n! (n - 1)! / 2^{n-1}` ranked labeled histories;
 * under random joining every ranked labeled history has probability
@@ -43,6 +43,8 @@ injective for `n ≤ 5`, but injectivity for general `n` is not proved here. The
 * `blocksAfter`, `blocksOf`, `partitionsOf`: the sequence of ancestral partitions of a history.
 * `card_rankedHistory`, `card_rankedHistory_mul_two_pow`: the count
   `∏_{k=2}^n C(k, 2)` and `#histories * 2^{n-1} = n! (n - 1)!`.
+* `partitionsOf_injective`: the decoding from ranked histories to partition sequences is
+  injective.
 * `randomJoining`: the random-joining law (independent uniform pairs at each step).
 * `randomJoining_singleton`: each history has probability `2^{n-1} / (n! (n - 1)!)`.
 * `pairSeparateProb n k = (k - 1) (n + 1) / ((n - 1) (k + 1))`, the probability that a given
@@ -233,5 +235,515 @@ theorem sum_pairSeparateProb_div_choose {n : ℕ} (hn : 2 ≤ n) :
     _ = 1 := by
       field_simp [hn1, hn2]
       ring
+
+private theorem pairMin_getD_eq (x y : ℕ) : ({x, y} : Finset ℕ).min.getD 0 = min x y := by
+  rw [Finset.min_insert, Finset.min_singleton, ← WithTop.coe_min]
+  rfl
+
+private theorem pairMax_getD_eq (x y : ℕ) : ({x, y} : Finset ℕ).max.getD 0 = max x y := by
+  rw [Finset.max_insert, Finset.max_singleton, ← WithBot.coe_max]
+  rfl
+
+private theorem pairMin_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.min.getD 0 ∈ s := by
+  obtain ⟨x, y, _, rfl⟩ := Finset.card_eq_two.mp hs
+  rw [pairMin_getD_eq]
+  rcases le_total x y with h | h
+  · rw [min_eq_left h]
+    exact Finset.mem_insert_self x {y}
+  · rw [min_eq_right h]
+    exact Finset.mem_insert_of_mem (Finset.mem_singleton_self y)
+
+private theorem pairMax_getD_mem (s : Finset ℕ) (hs : s.card = 2) : s.max.getD 0 ∈ s := by
+  obtain ⟨x, y, _, rfl⟩ := Finset.card_eq_two.mp hs
+  rw [pairMax_getD_eq]
+  rcases le_total x y with h | h
+  · rw [max_eq_right h]
+    exact Finset.mem_insert_of_mem (Finset.mem_singleton_self y)
+  · rw [max_eq_left h]
+    exact Finset.mem_insert_self x {y}
+
+private theorem pairMin_lt_pairMax (s : Finset ℕ) (hs : s.card = 2) :
+    s.min.getD 0 < s.max.getD 0 := by
+  obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp hs
+  rw [pairMin_getD_eq, pairMax_getD_eq]
+  rcases lt_or_gt_of_ne hxy with h | h
+  · rw [min_eq_left (le_of_lt h), max_eq_right (le_of_lt h)]
+    exact h
+  · rw [min_eq_right (le_of_lt h), max_eq_left (le_of_lt h)]
+    exact h
+
+private theorem pair_eq_min_max (s : Finset ℕ) (hs : s.card = 2) :
+    s = {s.min.getD 0, s.max.getD 0} := by
+  obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp hs
+  rw [pairMin_getD_eq, pairMax_getD_eq]
+  rcases le_total x y with h | h
+  · rw [min_eq_left h, max_eq_right h]
+  · rw [min_eq_right h, max_eq_left h]
+    exact Finset.pair_comm x y
+
+private theorem blocksAfter_zero {n : ℕ} (h : RankedHistory n) :
+    blocksAfter h 0 = (List.finRange n).map fun j => ({j} : Finset (Fin n)) := by
+  simp [blocksAfter]
+
+private theorem blocksAfter_step {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t < n - 1) :
+    blocksAfter h (t + 1) =
+      let s : Finset ℕ := (h ⟨t, ht⟩).1.map Fin.valEmbedding
+      mergeBlocks (blocksAfter h t) (s.min.getD 0) (s.max.getD 0) := by
+  unfold blocksAfter
+  have htake : (List.finRange (n - 1)).take (t + 1) =
+      (List.finRange (n - 1)).take t ++ [⟨t, ht⟩] := by
+    rw [List.take_add_one]
+    have hlen : (List.finRange (n - 1)).length = n - 1 := List.length_finRange
+    have hmem : t < (List.finRange (n - 1)).length := by omega
+    rw [List.getElem?_eq_getElem hmem]
+    have hget : (List.finRange (n - 1))[t] = (⟨t, ht⟩ : Fin (n - 1)) := by
+      rw [List.getElem_finRange]
+      ext
+      simp
+    rw [hget]
+    simp
+  rw [htake, List.foldl_append]
+  simp
+
+private theorem mapPair_card {k : ℕ} (p : LineagePair k) :
+    (p.1.map Fin.valEmbedding).card = 2 := by
+  rw [Finset.card_map, p.2]
+
+private theorem mapPair_mem_lt {k : ℕ} (p : LineagePair k) (a : ℕ)
+    (ha : a ∈ p.1.map Fin.valEmbedding) : a < k := by
+  obtain ⟨j, _, rfl⟩ := Finset.mem_map.mp ha
+  exact j.isLt
+
+private theorem length_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (hb : b < bs.length) : (mergeBlocks bs a b).length = bs.length - 1 := by
+  unfold mergeBlocks
+  rw [List.length_eraseIdx, List.length_set]
+  simp [hb]
+
+private theorem length_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1) :
+    (blocksAfter h t).length = n - t := by
+  induction t with
+  | zero =>
+    rw [blocksAfter_zero, List.length_map, List.length_finRange, Nat.sub_zero]
+  | succ t ih =>
+    have ht' : t ≤ n - 1 := by omega
+    have hlt : t < n - 1 := by omega
+    rw [blocksAfter_step h t hlt]
+    have hcard : ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).card = 2 :=
+      mapPair_card (h ⟨t, hlt⟩)
+    have hb : ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 < (blocksAfter h t).length := by
+      rw [ih ht']
+      have hmem := pairMax_getD_mem _ hcard
+      have hlt' := mapPair_mem_lt (h ⟨t, hlt⟩) _ hmem
+      simpa using hlt'
+    rw [length_mergeBlocks _ _ _ hb, ih ht']
+    omega
+
+private theorem mergeBlocks_eq {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) :
+    mergeBlocks bs a b = (bs.set a (bs[a] ∪ bs[b])).eraseIdx b := by
+  unfold mergeBlocks
+  simp only [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem ha,
+    List.getElem?_eq_getElem hb, Option.getD_some]
+
+private theorem mem_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
+    (x : Finset (Fin n)) :
+    x ∈ mergeBlocks bs a b ↔ x = bs[a] ∪ bs[b] ∨ (x ∈ bs ∧ x ≠ bs[a] ∧ x ≠ bs[b]) := by
+  rw [mergeBlocks_eq bs a b ha hb]
+  constructor
+  · intro hx
+    obtain ⟨i, hi, hne, hix⟩ := List.mem_eraseIdx_iff_getElem.mp hx
+    rw [List.length_set] at hi
+    have hi' : i < (bs.set a (bs[a] ∪ bs[b])).length := by rwa [List.length_set]
+    have hset := List.getElem_set hi'
+    rw [hset] at hix
+    by_cases hai : a = i
+    · left
+      rw [ite_eq_left hai] at hix
+      exact hix.symm
+    · right
+      rw [ite_eq_right hai] at hix
+      refine ⟨?_, ?_, ?_⟩
+      · have hmem := List.getElem_mem hi
+        rwa [hix] at hmem
+      · intro hcon
+        have heq : bs[i] = bs[a] := hix.trans hcon
+        have hij := (List.Nodup.getElem_inj_iff (l := bs) hnodup (hi := hi) (hj := ha)).mp heq
+        exact hai hij.symm
+      · intro hcon
+        have heq : bs[i] = bs[b] := hix.trans hcon
+        have hij := (List.Nodup.getElem_inj_iff (l := bs) hnodup (hi := hi) (hj := hb)).mp heq
+        exact hne hij
+  · rintro (rfl | ⟨hmem, hne1, hne2⟩)
+    · rw [List.mem_eraseIdx_iff_getElem]
+      have ha' : a < (bs.set a (bs[a] ∪ bs[b])).length := by
+        rwa [List.length_set]
+      refine ⟨a, ha', hab, ?_⟩
+      rw [List.getElem_set ha']
+      simp
+    · obtain ⟨j, hj, hjx⟩ := List.mem_iff_getElem.mp hmem
+      have hja : j ≠ a := by
+        rintro rfl
+        exact hne1 hjx.symm
+      have hjb : j ≠ b := by
+        rintro rfl
+        exact hne2 hjx.symm
+      rw [List.mem_eraseIdx_iff_getElem]
+      have hj' : j < (bs.set a (bs[a] ∪ bs[b])).length := by
+        rwa [List.length_set]
+      refine ⟨j, hj', hjb, ?_⟩
+      rw [List.getElem_set hj']
+      simp [Ne.symm hja, hjx]
+
+private theorem union_merge_not_mem {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
+    (hnonempty : ∀ x ∈ bs, x.Nonempty)
+    (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
+    bs[a] ∪ bs[b] ∉ bs := by
+  intro hcon
+  have hB1mem : bs[a] ∈ bs := List.getElem_mem ha
+  have hB2mem : bs[b] ∈ bs := List.getElem_mem hb
+  have hB1ne : bs[b] ≠ bs[a] := by
+    intro hcon2
+    have hij := (List.Nodup.getElem_inj_iff (l := bs) hnodup (hi := hb) (hj := ha)).mp hcon2
+    exact hab hij.symm
+  have hBne : bs[a] ∪ bs[b] ≠ bs[a] := by
+    intro hcon2
+    obtain ⟨z, hz⟩ := hnonempty _ hB2mem
+    have hzB1 : z ∈ bs[a] := by
+      have hzU : z ∈ bs[a] ∪ bs[b] := Finset.mem_union_right _ hz
+      rwa [hcon2] at hzU
+    have hdisj2 := hdisj _ hB2mem _ hB1mem hB1ne
+    exact (Finset.disjoint_left.mp hdisj2 hz) hzB1
+  have hdisjU := hdisj _ hcon _ hB1mem hBne
+  obtain ⟨w, hw⟩ := hnonempty _ hB1mem
+  have hwU : w ∈ bs[a] ∪ bs[b] := Finset.mem_union_left _ hw
+  exact (Finset.disjoint_left.mp hdisjU hwU) hw
+
+private theorem nodup_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
+    (hnonempty : ∀ x ∈ bs, x.Nonempty)
+    (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
+    (mergeBlocks bs a b).Nodup := by
+  have hBnew := union_merge_not_mem bs a b ha hb hab hnodup hnonempty hdisj
+  rw [mergeBlocks_eq bs a b ha hb]
+  have hset : (bs.set a (bs[a] ∪ bs[b])).Nodup := List.Nodup.set hnodup hBnew
+  exact List.Nodup.eraseIdx b hset
+
+private theorem nonempty_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
+    (hnonempty : ∀ x ∈ bs, x.Nonempty) :
+    ∀ x ∈ mergeBlocks bs a b, x.Nonempty := by
+  intro x hx
+  rw [mem_mergeBlocks bs a b ha hb hab hnodup] at hx
+  rcases hx with rfl | ⟨hmem, _, _⟩
+  · obtain ⟨w, hw⟩ := hnonempty _ (List.getElem_mem ha)
+    exact ⟨w, Finset.mem_union_left _ hw⟩
+  · exact hnonempty _ hmem
+
+private theorem disjoint_mergeBlocks {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
+    (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
+    ∀ x ∈ mergeBlocks bs a b, ∀ y ∈ mergeBlocks bs a b, x ≠ y → Disjoint x y := by
+  intro x hx y hy hxy
+  rw [mem_mergeBlocks bs a b ha hb hab hnodup] at hx hy
+  rcases hx with rfl | ⟨hxmem, hx1, hx2⟩
+  · rcases hy with rfl | ⟨hymem, hy1, hy2⟩
+    · exact absurd rfl hxy
+    · rw [disjoint_union_left]
+      exact ⟨hdisj _ (List.getElem_mem ha) _ hymem (Ne.symm hy1),
+        hdisj _ (List.getElem_mem hb) _ hymem (Ne.symm hy2)⟩
+  · rcases hy with rfl | ⟨hymem, hy1, hy2⟩
+    · rw [disjoint_union_right]
+      exact ⟨hdisj _ hxmem _ (List.getElem_mem ha) hx1,
+        hdisj _ hxmem _ (List.getElem_mem hb) hx2⟩
+    · exact hdisj _ hxmem _ hymem hxy
+
+private theorem nodup_initBlocks (n : ℕ) :
+    ((List.finRange n).map fun j => ({j} : Finset (Fin n))).Nodup := by
+  apply List.Nodup.map _ (List.nodup_finRange n)
+  intro a b hab
+  exact Finset.singleton_inj.mp hab
+
+private theorem nonempty_initBlocks (n : ℕ) :
+    ∀ x ∈ (List.finRange n).map (fun j => ({j} : Finset (Fin n))), x.Nonempty := by
+  intro x hx
+  obtain ⟨j, _, rfl⟩ := List.mem_map.mp hx
+  exact Finset.singleton_nonempty j
+
+private theorem disjoint_initBlocks (n : ℕ) :
+    ∀ x ∈ (List.finRange n).map (fun j => ({j} : Finset (Fin n))),
+    ∀ y ∈ (List.finRange n).map (fun j => ({j} : Finset (Fin n))),
+    x ≠ y → Disjoint x y := by
+  intro x hx y hy hxy
+  obtain ⟨j1, _, rfl⟩ := List.mem_map.mp hx
+  obtain ⟨j2, _, rfl⟩ := List.mem_map.mp hy
+  have hne : j1 ≠ j2 := by
+    rintro rfl
+    exact hxy rfl
+  exact Finset.disjoint_singleton.mpr hne
+
+private theorem invar_blocksAfter {n : ℕ} (h : RankedHistory n) (t : ℕ) (ht : t ≤ n - 1) :
+    (blocksAfter h t).Nodup ∧
+    (∀ x ∈ blocksAfter h t, x.Nonempty) ∧
+    (∀ x ∈ blocksAfter h t, ∀ y ∈ blocksAfter h t, x ≠ y → Disjoint x y) := by
+  induction t with
+  | zero =>
+    rw [blocksAfter_zero]
+    exact ⟨nodup_initBlocks n, nonempty_initBlocks n, disjoint_initBlocks n⟩
+  | succ t ih =>
+    have ht' : t ≤ n - 1 := by omega
+    have hlt : t < n - 1 := by omega
+    obtain ⟨ihNodup, ihNonempty, ihDisj⟩ := ih ht'
+    have hcard : ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).card = 2 :=
+      mapPair_card (h ⟨t, hlt⟩)
+    have hamin := pairMin_getD_mem _ hcard
+    have hbmax := pairMax_getD_mem _ hcard
+    have hlt_min := mapPair_mem_lt (h ⟨t, hlt⟩) _ hamin
+    have hlt_max := mapPair_mem_lt (h ⟨t, hlt⟩) _ hbmax
+    have ha : ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 < (blocksAfter h t).length := by
+      rw [length_blocksAfter h t ht']
+      simpa using hlt_min
+    have hb : ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 < (blocksAfter h t).length := by
+      rw [length_blocksAfter h t ht']
+      simpa using hlt_max
+    have hab : ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 ≠
+        ((h ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 :=
+      ne_of_lt (pairMin_lt_pairMax _ hcard)
+    rw [blocksAfter_step h t hlt]
+    exact ⟨nodup_mergeBlocks _ _ _ ha hb hab ihNodup ihNonempty ihDisj,
+      nonempty_mergeBlocks _ _ _ ha hb hab ihNodup ihNonempty,
+      disjoint_mergeBlocks _ _ _ ha hb hab ihNodup ihDisj⟩
+
+private theorem partitionsOf_toFinset_eq {n : ℕ} (h1 h2 : RankedHistory n)
+    (heq : partitionsOf h1 = partitionsOf h2) (t : ℕ) (ht : t < n) :
+    (blocksAfter h1 t).toFinset = (blocksAfter h2 t).toFinset := by
+  have hcongr : (partitionsOf h1)[t]? = (partitionsOf h2)[t]? := by rw [heq]
+  simp only [partitionsOf, blocksOf, List.getElem?_map, List.getElem?_range ht,
+    Option.map_some] at hcongr
+  exact Option.some_inj.mp hcongr
+
+private theorem sdiff_toFinset_merge {n : ℕ} (bs : List (Finset (Fin n))) (a b : ℕ)
+    (ha : a < bs.length) (hb : b < bs.length) (hab : a ≠ b) (hnodup : bs.Nodup)
+    (hnonempty : ∀ x ∈ bs, x.Nonempty)
+    (hdisj : ∀ x ∈ bs, ∀ y ∈ bs, x ≠ y → Disjoint x y) :
+    bs.toFinset \ (mergeBlocks bs a b).toFinset = {bs[a], bs[b]} := by
+  have hBnew := union_merge_not_mem bs a b ha hb hab hnodup hnonempty hdisj
+  have hBne1 : bs[a] ∪ bs[b] ≠ bs[a] := by
+    intro h
+    have hmem := List.getElem_mem ha
+    rw [← h] at hmem
+    exact hBnew hmem
+  have hBne2 : bs[a] ∪ bs[b] ≠ bs[b] := by
+    intro h
+    have hmem := List.getElem_mem hb
+    rw [← h] at hmem
+    exact hBnew hmem
+  ext x
+  simp only [Finset.mem_sdiff, List.mem_toFinset,
+    mem_mergeBlocks bs a b ha hb hab hnodup,
+    Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hmem, hnot⟩
+    by_cases h1 : x = bs[a]
+    · exact Or.inl h1
+    · by_cases h2 : x = bs[b]
+      · exact Or.inr h2
+      · exact absurd (Or.inr ⟨hmem, h1, h2⟩) hnot
+  · rintro (rfl | rfl)
+    · exact ⟨List.getElem_mem ha, fun h => h.elim (hBne1 ·.symm) (fun h2 => h2.2.1 rfl)⟩
+    · exact ⟨List.getElem_mem hb, fun h => h.elim (hBne2 ·.symm) (fun h2 => h2.2.2 rfl)⟩
+
+private theorem indexPair_eq_of_blockPair_eq {n : ℕ} (bs : List (Finset (Fin n)))
+    (a1 b1 a2 b2 : ℕ)
+    (ha1 : a1 < bs.length) (hb1 : b1 < bs.length)
+    (ha2 : a2 < bs.length) (hb2 : b2 < bs.length)
+    (hnodup : bs.Nodup)
+    (hpair : ({bs[a1], bs[b1]} : Finset (Finset (Fin n))) = {bs[a2], bs[b2]}) :
+    ({a1, b1} : Finset ℕ) = {a2, b2} := by
+  have inj {i j : ℕ} (hi : i < bs.length) (hj : j < bs.length) (h : bs[i] = bs[j]) : i = j :=
+    (List.Nodup.getElem_inj_iff (l := bs) hnodup (hi := hi) (hj := hj)).mp h
+  have mem2 {B : Finset (Fin n)} (h : B ∈ ({bs[a1], bs[b1]} : Finset _)) :
+      B = bs[a2] ∨ B = bs[b2] := by
+    rw [hpair, Finset.mem_insert, Finset.mem_singleton] at h
+    exact h
+  have mem1 {B : Finset (Fin n)} (h : B ∈ ({bs[a2], bs[b2]} : Finset _)) :
+      B = bs[a1] ∨ B = bs[b1] := by
+    rw [← hpair, Finset.mem_insert, Finset.mem_singleton] at h
+    exact h
+  have h1 : a1 = a2 ∨ a1 = b2 := by
+    rcases mem2 (Finset.mem_insert_self _ _) with h | h
+    · exact Or.inl (inj ha1 ha2 h)
+    · exact Or.inr (inj ha1 hb2 h)
+  have h2 : b1 = a2 ∨ b1 = b2 := by
+    have hmem : bs[b1] ∈ ({bs[a1], bs[b1]} : Finset _) :=
+      Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
+    rcases mem2 hmem with h | h
+    · exact Or.inl (inj hb1 ha2 h)
+    · exact Or.inr (inj hb1 hb2 h)
+  have h3 : a2 = a1 ∨ a2 = b1 := by
+    rcases mem1 (Finset.mem_insert_self _ _) with h | h
+    · exact Or.inl (inj ha2 ha1 h)
+    · exact Or.inr (inj ha2 hb1 h)
+  have h4 : b2 = a1 ∨ b2 = b1 := by
+    have hmem : bs[b2] ∈ ({bs[a2], bs[b2]} : Finset _) :=
+      Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
+    rcases mem1 hmem with h | h
+    · exact Or.inl (inj hb2 ha1 h)
+    · exact Or.inr (inj hb2 hb1 h)
+  ext c
+  simp only [Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro (rfl | rfl)
+    · rcases h1 with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    · rcases h2 with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+  · rintro (rfl | rfl)
+    · rcases h3 with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    · rcases h4 with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+
+private theorem stepRecover {n : ℕ} (h1 h2 : RankedHistory n) (t : ℕ) (hlt : t < n - 1)
+    (hbs : blocksAfter h1 t = blocksAfter h2 t)
+    (hpart : (blocksAfter h1 (t + 1)).toFinset = (blocksAfter h2 (t + 1)).toFinset) :
+    h1 ⟨t, hlt⟩ = h2 ⟨t, hlt⟩ := by
+  have ht : t ≤ n - 1 := le_of_lt hlt
+  obtain ⟨hnodup1, hnonempty1, hdisj1⟩ := invar_blocksAfter h1 t ht
+  obtain ⟨hnodup2, hnonempty2, hdisj2⟩ := invar_blocksAfter h2 t ht
+  have hcard1 : ((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).card = 2 :=
+    mapPair_card (h1 ⟨t, hlt⟩)
+  have hcard2 : ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).card = 2 :=
+    mapPair_card (h2 ⟨t, hlt⟩)
+  have ha1 : ((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 < (blocksAfter h1 t).length := by
+    rw [length_blocksAfter h1 t ht]
+    have hmem := pairMin_getD_mem _ hcard1
+    have hlt' := mapPair_mem_lt (h1 ⟨t, hlt⟩) _ hmem
+    simpa using hlt'
+  have hb1 : ((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 < (blocksAfter h1 t).length := by
+    rw [length_blocksAfter h1 t ht]
+    have hmem := pairMax_getD_mem _ hcard1
+    have hlt' := mapPair_mem_lt (h1 ⟨t, hlt⟩) _ hmem
+    simpa using hlt'
+  have hab1 : ((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 ≠
+      ((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 :=
+    ne_of_lt (pairMin_lt_pairMax _ hcard1)
+  have ha2 : ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 < (blocksAfter h1 t).length := by
+    rw [hbs, length_blocksAfter h2 t ht]
+    have hmem := pairMin_getD_mem _ hcard2
+    have hlt' := mapPair_mem_lt (h2 ⟨t, hlt⟩) _ hmem
+    simpa using hlt'
+  have hb2 : ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 < (blocksAfter h1 t).length := by
+    rw [hbs, length_blocksAfter h2 t ht]
+    have hmem := pairMax_getD_mem _ hcard2
+    have hlt' := mapPair_mem_lt (h2 ⟨t, hlt⟩) _ hmem
+    simpa using hlt'
+  have ha2' : ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 < (blocksAfter h2 t).length := by
+    rw [length_blocksAfter h2 t ht]
+    have hmem := pairMin_getD_mem _ hcard2
+    have hlt' := mapPair_mem_lt (h2 ⟨t, hlt⟩) _ hmem
+    simpa using hlt'
+  have hb2' : ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 < (blocksAfter h2 t).length := by
+    rw [length_blocksAfter h2 t ht]
+    have hmem := pairMax_getD_mem _ hcard2
+    have hlt' := mapPair_mem_lt (h2 ⟨t, hlt⟩) _ hmem
+    simpa using hlt'
+  have hab2 : ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0 ≠
+      ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0 :=
+    ne_of_lt (pairMin_lt_pairMax _ hcard2)
+  have estep1 : blocksAfter h1 (t + 1) =
+      mergeBlocks (blocksAfter h1 t)
+        (((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0)
+        (((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0) :=
+    blocksAfter_step h1 t hlt
+  have estep2 : blocksAfter h2 (t + 1) =
+      mergeBlocks (blocksAfter h2 t)
+        (((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0)
+        (((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0) :=
+    blocksAfter_step h2 t hlt
+  have hsd1 : (blocksAfter h1 t).toFinset \ (blocksAfter h1 (t + 1)).toFinset =
+      {(blocksAfter h1 t)[((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0],
+       (blocksAfter h1 t)[((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0]} := by
+    rw [estep1]
+    exact sdiff_toFinset_merge _ _ _ ha1 hb1 hab1 hnodup1 hnonempty1 hdisj1
+  have hsd2 : (blocksAfter h2 t).toFinset \ (blocksAfter h2 (t + 1)).toFinset =
+      {(blocksAfter h2 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0],
+       (blocksAfter h2 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0]} := by
+    rw [estep2]
+    exact sdiff_toFinset_merge _ _ _ ha2' hb2' hab2 hnodup2 hnonempty2 hdisj2
+  have hPeq : (blocksAfter h1 t).toFinset = (blocksAfter h2 t).toFinset := by rw [hbs]
+  have hpair : ({(blocksAfter h1 t)[((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0],
+      (blocksAfter h1 t)[((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0]} : Finset _) =
+      {(blocksAfter h1 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0],
+       (blocksAfter h1 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0]} := by
+    have h1' := hsd1
+    rw [hPeq, hpart] at h1'
+    have hcon := h1'.symm.trans hsd2
+    have ea : (blocksAfter h2 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0] =
+        (blocksAfter h1 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0] :=
+      List.getElem_of_eq hbs.symm _
+    have eb : (blocksAfter h2 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0] =
+        (blocksAfter h1 t)[((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0] :=
+      List.getElem_of_eq hbs.symm _
+    rw [ea, eb] at hcon
+    exact hcon
+  have hidx : ({((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0,
+      ((h1 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0} : Finset ℕ) =
+      {((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).min.getD 0,
+       ((h2 ⟨t, hlt⟩).1.map Fin.valEmbedding).max.getD 0} :=
+    indexPair_eq_of_blockPair_eq _ _ _ _ _ ha1 hb1 ha2 hb2 hnodup1 hpair
+  have hs1 := pair_eq_min_max _ hcard1
+  have hs2 := pair_eq_min_max _ hcard2
+  have hmap : (h1 ⟨t, hlt⟩).1.map Fin.valEmbedding = (h2 ⟨t, hlt⟩).1.map Fin.valEmbedding := by
+    rw [hs1, hs2, hidx]
+  exact Subtype.ext (Finset.map_injective _ hmap)
+
+private theorem blocksAfter_eq_of_partitions {n : ℕ} (h1 h2 : RankedHistory n)
+    (heq : partitionsOf h1 = partitionsOf h2) (t : ℕ) (ht : t ≤ n - 1) :
+    blocksAfter h1 t = blocksAfter h2 t ∧
+    ∀ (j : Fin (n - 1)), (j.val : ℕ) < t → h1 j = h2 j := by
+  induction t with
+  | zero =>
+    constructor
+    · rw [blocksAfter_zero, blocksAfter_zero]
+    · intro j hj
+      exact absurd hj (Nat.not_lt_zero _)
+  | succ t ih =>
+    have ht' : t ≤ n - 1 := by omega
+    have hlt : t < n - 1 := by omega
+    obtain ⟨ihBs, ihH⟩ := ih ht'
+    have ht1 : t + 1 < n := by omega
+    have hpart : (blocksAfter h1 (t + 1)).toFinset = (blocksAfter h2 (t + 1)).toFinset :=
+      partitionsOf_toFinset_eq h1 h2 heq (t + 1) ht1
+    have hstep : h1 ⟨t, hlt⟩ = h2 ⟨t, hlt⟩ := stepRecover h1 h2 t hlt ihBs hpart
+    have hbsSucc : blocksAfter h1 (t + 1) = blocksAfter h2 (t + 1) := by
+      rw [blocksAfter_step h1 t hlt, blocksAfter_step h2 t hlt, ihBs, hstep]
+    constructor
+    · exact hbsSucc
+    · intro j hj
+      by_cases hjt : (j.val : ℕ) < t
+      · exact ihH j hjt
+      · have hjeq : j.val = t := by omega
+        have hjfin : j = ⟨t, hlt⟩ := Fin.ext hjeq
+        rw [hjfin]
+        exact hstep
+
+/-- **The ancestral partitions determine the ranked labeled history.** For every sample size
+`n`, `partitionsOf` is injective: two ranked labeled histories with the same sequence of
+ancestral partitions are equal. At each step the blocks of a partition that are missing from
+the next one are exactly the two blocks that merged, so equal partition sequences give equal
+merged pairs at every step. -/
+theorem partitionsOf_injective {n : ℕ} :
+    Function.Injective (partitionsOf : RankedHistory n → List (Finset (Finset (Fin n)))) := by
+  intro h1 h2 heq
+  have hall := (blocksAfter_eq_of_partitions h1 h2 heq (n - 1) (le_refl _)).2
+  funext i
+  exact hall i i.isLt
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent
