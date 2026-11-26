@@ -26,7 +26,7 @@ The product term $\{nR(\hat\gamma_\ell)R(\hat\alpha_\ell)\}^{1/2}$ is the double
 
 ## Expansion
 
-Write $\hat\theta - \theta_0 = n^{-1}\sum_i \psi_0(W_i) + $ remainder. The leading term is handled by the Berry–Esseen bound. The remainder splits per fold into two linear terms, controlled by mean-square continuity and by $R(\hat\gamma_\ell)$, $R(\hat\alpha_\ell)$ (cross-fitting makes them conditionally mean zero given $I_\ell^c$), and one bilinear term $\mathbb E[(\hat\alpha_\ell - \alpha_0^{\min})(\gamma_0 - \hat\gamma_\ell)]$, bounded by Cauchy–Schwarz by $\{R(\hat\gamma_\ell)R(\hat\alpha_\ell)\}^{1/2}$; Markov's inequality converts these into the probability-$1-\epsilon$ statement.
+Write $\hat\theta - \theta_0 = n^{-1}\sum_i \psi_0(W_i) + \mathrm{remainder}$. The leading term is handled by the Berry–Esseen bound. The remainder splits per fold into two linear terms, controlled by mean-square continuity and by $R(\hat\gamma_\ell)$, $R(\hat\alpha_\ell)$ (cross-fitting makes them conditionally mean zero given $I_\ell^c$), and one bilinear term $\mathbb E[(\hat\alpha_\ell - \alpha_0^{\min})(\gamma_0 - \hat\gamma_\ell)]$, bounded by Cauchy–Schwarz by $\{R(\hat\gamma_\ell)R(\hat\alpha_\ell)\}^{1/2}$; Markov's inequality converts these into the probability-$1-\epsilon$ statement.
 
 ## Sources
 

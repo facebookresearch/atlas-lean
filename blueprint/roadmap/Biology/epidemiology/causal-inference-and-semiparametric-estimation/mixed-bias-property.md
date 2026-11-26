@@ -30,7 +30,7 @@ Example: for $O = (DY, D, Z)$ with $Y$ missing at random given $Z$ and observed 
 
 ## Expansion
 
-Equation (2) says the first-order Taylor remainder of $\chi$ is exactly a bilinear form in the errors of $a$ and $b$, so by Cauchy–Schwarz it is bounded by the product of their $L_2$ errors. Taking $\eta' $ that changes only $a$ (or only $b$) makes the right side of (2) vanish, which yields the moment equations for $a$ and $b$ and, by linearity, the representation (3)–(4).
+Equation (2) says the first-order Taylor remainder of $\chi$ is exactly a bilinear form in the errors of $a$ and $b$, so by Cauchy–Schwarz it is bounded by the product of their $L_2$ errors. Taking $\eta'$ that changes only $a$ (or only $b$) makes the right side of (2) vanish, which yields the moment equations for $a$ and $b$ and, by linearity, the representation (3)–(4).
 
 ## Sources
 
