@@ -964,6 +964,7 @@
 "AmbidextrousSofaWanted.gibbs_lower": "a0e4ec32fdf2461a",
 "AmbidextrousSofaWanted.hammersley_upper": "9aad7f257e1cbe67",
 "AmbidextrousSofaWanted.romik_lower": "c0b00df89c648efc",
+"AnalyticOnNhd.log_norm_le_circleAverage_log_norm": "6186dee0efd016a1",
 "ArithmeticFunction.IsCompletelyMultiplicative": "4c1508493ae37734",
 "ArithmeticFunction.IsCompletelyMultiplicative.isMultiplicative": "7bf1f6f39e143c8c",
 "ArithmeticFunction.IsCompletelyMultiplicative.map_mul": "68106b79e903fe67",
