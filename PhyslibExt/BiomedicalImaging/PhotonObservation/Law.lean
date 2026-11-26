@@ -56,14 +56,12 @@ namespace PhyslibExt.BiomedicalImaging.PhotonObservation
 
 /-! ## A. Rate identification. -/
 
-/-- **Photon attenuation rate identification.** For any ray index type
-`ι`, a finite cell type `κ`, positive source intensities `I0 j > 0` and a
-real attenuation matrix `A`, the transmitted rates `I0 j * exp (-(A *ᵥ x) j)`
-agree at two attenuation vectors `x`, `x'` in every ray if and only if
-`A *ᵥ x = A *ᵥ x'`. Positive intensity in each ray matters: a ray
-with `I0 j = 0` carries no information about `(A *ᵥ x) j`. In the CT
-reading `A` holds nonnegative path lengths and `x` nonnegative attenuation
-coefficients; the equivalence holds for all real `A`, `x`, `x'`. This is
+/-- **Photon attenuation rate identification.** For a finite ray set
+`ι`, positive source intensities `I0 j > 0` and a real attenuation
+matrix `A`, the transmitted rates `I0 j * exp (-(A *ᵥ x) j)` agree at
+two attenuation vectors `x`, `x'` in every ray if and only if
+`A *ᵥ x = A *ᵥ x'`. Positive intensity in each ray is essential: a ray
+with `I0 j = 0` carries no information about `(A *ᵥ x) j`. This is
 the rate-level core of the independent-Poisson photon law; the law
 itself is obtained from it with Poisson rate injectivity. -/
 lemma photon_rate_agree_iff {ι κ : Type*} [Fintype κ]
@@ -84,40 +82,31 @@ lemma photon_rate_agree_iff {ι κ : Type*} [Fintype κ]
 /-! ## B. Law identification. -/
 
 /-- The transmitted Poisson rate in ray `j`: source intensity times
-the attenuation factor, as a nonnegative real. The exponential factor is positive, so `toNNReal`
-truncates nothing: as a real number the rate is `I0 j * exp (-(A *ᵥ x) j)`, and it is `0` when
-`I0 j = 0`. -/
+the attenuation factor, as a nonnegative real. -/
 noncomputable def transmittedRate {ι κ : Type*} [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
     (x : κ → ℝ) (j : ι) : ℝ≥0 :=
   I0 j * (Real.exp (-(A *ᵥ x) j)).toNNReal
 
-/-- The independent-Poisson photon count law at attenuation `x`: the product over rays of the
-Poisson laws with the rates `transmittedRate I0 A x j`. The independence of the counts in
-different rays is an assumption of the model, built into the product. -/
+/-- The independent-Poisson photon count law at attenuation `x`. -/
 noncomputable def photonLaw {ι κ : Type*} [Fintype ι] [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
     (x : κ → ℝ) : MeasureTheory.Measure (ι → ℕ) :=
   MeasureTheory.Measure.pi fun j => ProbabilityTheory.poissonMeasure (transmittedRate I0 A x j)
 
-/-- The photon law unfolded: the product over rays of the Poisson laws
-with the transmitted rates. -/
+/-- The photon law unfolded: the product of its Poisson rates. -/
 lemma photonLaw_eq {ι κ : Type*} [Fintype ι] [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
     (x : κ → ℝ) :
     photonLaw I0 A x = MeasureTheory.Measure.pi
       fun j => ProbabilityTheory.poissonMeasure (transmittedRate I0 A x j) := rfl
 
-/-- The transmitted rate as a real number. The conversion to `ℝ≥0` truncates nothing, since the
-exponential is positive. -/
+/-- The transmitted rate as a real number. -/
 lemma transmittedRate_coe {ι κ : Type*} [Fintype κ] (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ)
     (x : κ → ℝ) (j : ι) :
     ((transmittedRate I0 A x j : ℝ≥0) : ℝ) =
       (I0 j : ℝ) * Real.exp (-(A *ᵥ x) j) := by
   simp [transmittedRate, Real.coe_toNNReal _ (Real.exp_nonneg _)]
 
-/-- **Photon law identification.** With positive source intensities
-`I0 j > 0`, the independent-Poisson count laws at `x` and `x'` agree if
-and only if `A *ᵥ x = A *ᵥ x'`. With `I0 j = 0` the count of ray `j` is `0` almost surely,
-whatever `(A *ᵥ x) j` is. In the CT reading `A` holds nonnegative path lengths and `x`
-nonnegative attenuation coefficients; the equivalence holds for all real `A`, `x`, `x'`. -/
+/-- **Photon law identification.** The independent-Poisson count laws
+at `x` and `x'` agree if and only if `A *ᵥ x = A *ᵥ x'`. -/
 lemma photon_law_agree_iff {ι κ : Type*} [Fintype ι] [Fintype κ]
     {I0 : ι → ℝ≥0} (hI0 : ∀ j, 0 < I0 j) {A : Matrix ι κ ℝ} {x x' : κ → ℝ} :
     photonLaw I0 A x = photonLaw I0 A x' ↔ A *ᵥ x = A *ᵥ x' := by
