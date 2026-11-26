@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
 public import MathlibExt.Combinatorics.Coding.PolakSchrijver
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction
 public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound
 
 /-!
@@ -19,12 +20,12 @@ public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwen
 
 These are private unproved requests, not proofs or conjectures about newly open results.
 The actual modular code and capacity model comes from `CycleGraphCode`. The paper-specific
-integer profiles below perform only the displayed arithmetic; they do not supply independent
-sets or prove that a profile comes from a valid tuple. The profile type `BPZProfile`, its
-product `BPZProfile.star`, `bpzProfileSquareIter` and the twenty-one-cycle profiles `bpzC21Pi1`
-and `bpzC21Pi1024` are defined in
-`MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound`, where the
-twenty-one-cycle lower bound `bpz2026CycleTwentyOneLowerBound` is proved.
+integer profiles below perform only arithmetic, using `BPZProfile`, `BPZProfile.star` and
+`bpzProfileSquareIter`, which are now defined in
+`MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction`; they do
+not supply independent sets or prove that a profile comes from a valid tuple. The
+twenty-one-cycle lower bound `bpz2026CycleTwentyOneLowerBound` is proved in
+`MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound`.
 
 Source: Optimization Problems, constant 9a, pinned at
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`; Gao arXiv:2607.27869;
@@ -418,15 +419,6 @@ code for the $19$-cycle and has exactly $\max(c, 0)$ elements.
 Source: BPZ, arXiv:2607.29681, nineteen-cycle construction in dimension 16384. -/
 theorem_wanted bpz2026CycleNineteenConstruction :
   ∃ A : Finset (Fin 16384 → ZMod 19), IsCycleCode 19 A ∧ A.card = bpzC19Pi4096.code.toNat
-
-/-- **Buys–Polak–Zuiddam code for the 21-cycle in length 4096.** Let $c$ be the code coordinate
-of BPZ's final twenty-one-cycle profile after ten squarings, and let $M = \max(c, 0)$. There is
-a finite set of words of length $4096$ over $\mathbb{Z}/21\mathbb{Z}$ that is an independent
-code for the $21$-cycle and has exactly $M$ elements.
-
-Source: BPZ, arXiv:2607.29681, twenty-one-cycle construction in dimension 4096. -/
-theorem_wanted bpz2026CycleTwentyOneConstruction :
-  ∃ A : Finset (Fin 4096 → ZMod 21), IsCycleCode 21 A ∧ A.card = bpzC21Pi1024.code.toNat
 
 /-- **Buys–Polak–Zuiddam code for the 23-cycle in length 2048.** Let $c$ be the code coordinate
 of BPZ's final twenty-three-cycle profile after nine squarings, and let $M = \max(c, 0)$. There
