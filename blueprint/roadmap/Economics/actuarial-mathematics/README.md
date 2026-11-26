@@ -11,3 +11,6 @@ Mathematics of insurance and pensions: life tables and survival functions, life 
 - [Moment identities of the Bühlmann model in a finite latent mixture](moments-of-the-buhlmann-model-in-a-finite-mixture.md)
 - [Limit of the Bühlmann credibility factor](limit-of-the-buhlmann-credibility-factor.md)
 - [Chain-ladder completion of a run-off triangle](chain-ladder-completion.md)
+- [Chain-ladder forecast under Mack's conditional-mean assumptions](mack-chain-ladder-conditional-forecast.md)
+- [Mack's estimator of the mean squared error of prediction of the chain-ladder reserve](mack-msep-estimator.md)
+- [Deductible, limit and coinsurance as a capped call spread](deductible-limit-and-coinsurance-layer.md)
