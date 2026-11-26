@@ -51,4 +51,23 @@ example (n : ℕ) (h : IsUnitarySZumkeller n)
     omega
   omega
 
+-- The paper's example `140` is unitary s-Zumkeller with least unitary divisor four: its proper
+-- unitary divisors split as `{5, 35}` and `{1, 4, 7, 20, 28}`, each with square sum `1250`.
+example : 2 ^ 2 < (Nat.unitaryDivisors 140).card := by
+  have h140 : IsUnitarySZumkeller 140 := ⟨{5, 35}, by decide, by decide, by decide, by decide⟩
+  have hq : IsLeast {d | d ∈ Nat.unitaryDivisors 140 ∧ 1 < d} 4 := by
+    constructor
+    · show 4 ∈ Nat.unitaryDivisors 140 ∧ 1 < 4
+      constructor
+      · rw [Nat.mem_unitaryDivisors]
+        refine ⟨by decide, by decide, by decide⟩
+      · norm_num
+    · intro b hb
+      simp only [Set.mem_ofPred_eq] at hb
+      have hub : Nat.unitaryDivisors 140 = {1, 4, 5, 7, 20, 28, 35, 140} := by decide
+      rw [hub] at hb
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hb
+      omega
+  exact (card_unitaryDivisors_of_isUnitarySZumkeller 140 4 h140 hq).2.2 rfl
+
 end MathlibExtTest.NumberTheory.SZumkellerCardUnitaryDivisorsOfIsUnitarySZumkeller

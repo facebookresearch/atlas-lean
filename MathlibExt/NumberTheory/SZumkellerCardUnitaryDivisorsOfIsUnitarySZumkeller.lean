@@ -214,6 +214,9 @@ private theorem prod_le_smallPrimes_prod (m : ℕ) : m ≤ 6 → ∀ (S : Finset
       intro j _
       positivity
 
+-- The construction `unitaryFromSubset` and the proofs below that it inverts the prime-factor
+-- set of a unitary divisor adapt the proof of `MetaMathlibExt.card_unitaryDivisors` in
+-- `MathlibExt/NumberTheory/UnitaryDivisorCount.lean`.
 /-- The unitary divisor assembled from the prime powers indexed by a set. -/
 private def unitaryFromSubset (n : ℕ) (s : Finset ℕ) : ℕ :=
   (n.factorization.filter (· ∈ s)).prod (· ^ ·)
