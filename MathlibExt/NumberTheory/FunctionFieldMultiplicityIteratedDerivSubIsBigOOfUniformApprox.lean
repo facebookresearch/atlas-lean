@@ -13,8 +13,7 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
-import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.MeasureTheory.Integral.CircleIntegral
+import Mathlib.Analysis.Complex.Liouville
 
 /-!
 # Derivatives at `z = 1` of uniform approximations
@@ -65,19 +64,7 @@ public theorem iteratedDeriv_sub_isBigO_of_uniform_approx
     rw [hρdef]
     exact lt_of_le_of_lt (min_le_left _ _) (by linarith)
   have hρε : ρ ≤ ε := by rw [hρdef]; exact min_le_right _ _
-  have hρne : ρ ≠ 0 := ne_of_gt hρ0
   have h1mem : (1 : ℂ) ∈ Metric.ball (1 : ℂ) r := Metric.mem_ball_self hr
-  have hscal : (2 * Real.pi * Complex.I / (k.factorial : ℂ)) ≠ 0 := by
-    apply div_ne_zero _ (by exact_mod_cast Nat.factorial_ne_zero k)
-    exact mul_ne_zero (mul_ne_zero (by norm_num) (by exact_mod_cast Real.pi_pos.ne'))
-      Complex.I_ne_zero
-  have hscalnorm : ‖(2 * Real.pi * Complex.I / (k.factorial : ℂ))⁻¹‖
-      = (k.factorial : ℝ) / (2 * Real.pi) := by
-    have h2pi : ‖(2 * Real.pi * Complex.I : ℂ)‖ = 2 * Real.pi := by
-      simp [Complex.norm_I, abs_of_pos Real.pi_pos]
-    rw [norm_inv, norm_div, h2pi]
-    simp only [norm_natCast]
-    rw [inv_div]
   have key : ∀ n : ℕ, 1 ≤ n → ‖iteratedDeriv k (G n) 1 -
       iteratedDeriv k (fun z => f z * (n : ℂ) ^ (z - 1)) 1‖
       ≤ (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ε - 1) := by
@@ -103,21 +90,8 @@ public theorem iteratedDeriv_sub_isBigO_of_uniform_approx
         = iteratedDeriv k (fun z => G n z - f z * (n : ℂ) ^ (z - 1)) 1 :=
       (iteratedDeriv_fun_sub hGcd hfcd).symm
     rw [hsplit]
-    have hdiff : DifferentiableOn ℂ (fun z : ℂ => G n z - f z * (n : ℂ) ^ (z - 1))
-        (Metric.closedBall 1 ρ) :=
-      hsub.differentiableOn.mono (Metric.closedBall_subset_ball hρr)
-    have hcauchy : (∮ z in C(1, ρ), (1 / (z - 1) ^ (k + 1)) •
-        (G n z - f z * (n : ℂ) ^ (z - 1)))
-        = (2 * Real.pi * Complex.I / (k.factorial : ℂ)) •
-          iteratedDeriv k (fun z : ℂ => G n z - f z * (n : ℂ) ^ (z - 1)) 1 :=
-      DifferentiableOn.circleIntegral_one_div_sub_center_pow_smul hρ0 k hdiff
-    have hD : iteratedDeriv k (fun z : ℂ => G n z - f z * (n : ℂ) ^ (z - 1)) 1
-        = (2 * Real.pi * Complex.I / (k.factorial : ℂ))⁻¹ • ∮ z in C(1, ρ),
-          (1 / (z - 1) ^ (k + 1)) • (G n z - f z * (n : ℂ) ^ (z - 1)) := by
-      rw [hcauchy, smul_smul, inv_mul_cancel₀ hscal, one_smul]
-    have hM : ∀ z ∈ Metric.sphere (1 : ℂ) ρ,
-        ‖(1 / (z - 1) ^ (k + 1)) • (G n z - f z * (n : ℂ) ^ (z - 1))‖
-          ≤ (ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1)) := by
+    have hb : ∀ z ∈ Metric.sphere (1 : ℂ) ρ,
+        ‖G n z - f z * (n : ℂ) ^ (z - 1)‖ ≤ |C| * (n : ℝ) ^ (ρ - 1) := by
       intro z hz
       have hdist : dist z 1 = ρ := Metric.mem_sphere.mp hz
       have hnorm : ‖z - 1‖ = ρ := by rw [← dist_eq_norm]; exact hdist
@@ -131,62 +105,22 @@ public theorem iteratedDeriv_sub_isBigO_of_uniform_approx
         linarith
       have hexp : (n : ℝ) ^ (z.re - 2) ≤ (n : ℝ) ^ (ρ - 1) :=
         Real.rpow_le_rpow_of_exponent_le hnn (by linarith)
-      have hbound : ‖G n z - f z * (n : ℂ) ^ (z - 1)‖ ≤ |C| * (n : ℝ) ^ (ρ - 1) :=
-        calc ‖G n z - f z * (n : ℂ) ^ (z - 1)‖ ≤ C * (n : ℝ) ^ (z.re - 2) := hle
+      calc ‖G n z - f z * (n : ℂ) ^ (z - 1)‖ ≤ C * (n : ℝ) ^ (z.re - 2) := hle
           _ ≤ |C| * (n : ℝ) ^ (z.re - 2) :=
             mul_le_mul_of_nonneg_right (le_abs_self C)
               (Real.rpow_nonneg (Nat.cast_nonneg n) _)
           _ ≤ |C| * (n : ℝ) ^ (ρ - 1) :=
             mul_le_mul_of_nonneg_left hexp (abs_nonneg C)
-      have hker : ‖(1 : ℂ) / (z - 1) ^ (k + 1)‖ = (ρ ^ (k + 1))⁻¹ := by
-        rw [norm_div, norm_one, norm_pow, hnorm, one_div]
-      rw [norm_smul, hker]
-      exact mul_le_mul_of_nonneg_left hbound
-        (inv_nonneg.mpr (pow_nonneg hρ0.le _))
-    have hJ : ‖∮ z in C(1, ρ), (1 / (z - 1) ^ (k + 1)) •
-        (G n z - f z * (n : ℂ) ^ (z - 1))‖
-        ≤ 2 * Real.pi * ρ * ((ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1))) :=
-      circleIntegral.norm_integral_le_of_norm_le_const hρ0.le hM
-    have hJle : (k.factorial : ℝ) / (2 * Real.pi) * ‖∮ z in C(1, ρ),
-        (1 / (z - 1) ^ (k + 1)) • (G n z - f z * (n : ℂ) ^ (z - 1))‖
-        ≤ (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ρ - 1) := by
-      have hnonneg : (0 : ℝ) ≤ (k.factorial : ℝ) / (2 * Real.pi) :=
-        div_nonneg (Nat.cast_nonneg _) (le_of_lt (mul_pos zero_lt_two Real.pi_pos))
-      have hρk : ρ * (ρ ^ (k + 1))⁻¹ = (ρ ^ k)⁻¹ := by
-        have h1 : ρ ^ (k + 1) = ρ * ρ ^ k := pow_succ' ρ k
-        rw [h1, mul_inv, ← mul_assoc, mul_inv_cancel₀ hρne, one_mul]
-      have hcancel : ∀ X : ℝ, (k.factorial : ℝ) / (2 * Real.pi) * (2 * Real.pi * X)
-          = (k.factorial : ℝ) * X := by
-        intro X
-        field_simp
-      have halg : (k.factorial : ℝ) / (2 * Real.pi) *
-          (2 * Real.pi * ρ * ((ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1))))
-          = (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ρ - 1) := by
-        calc (k.factorial : ℝ) / (2 * Real.pi) *
-            (2 * Real.pi * ρ * ((ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1))))
-            = (k.factorial : ℝ) / (2 * Real.pi) *
-              (2 * Real.pi * (ρ * ((ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1))))) := by
-              ring
-          _ = (k.factorial : ℝ) * (ρ * ((ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1)))) :=
-            hcancel _
-          _ = (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ρ - 1) := by
-            rw [← hρk]; ring
-      calc (k.factorial : ℝ) / (2 * Real.pi) * ‖∮ z in C(1, ρ),
-          (1 / (z - 1) ^ (k + 1)) • (G n z - f z * (n : ℂ) ^ (z - 1))‖
-          ≤ (k.factorial : ℝ) / (2 * Real.pi) *
-            (2 * Real.pi * ρ * ((ρ ^ (k + 1))⁻¹ * (|C| * (n : ℝ) ^ (ρ - 1)))) :=
-            mul_le_mul_of_nonneg_left hJ hnonneg
-        _ = (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ρ - 1) := halg
+    have hd := hsub.differentiableOn.diffContOnCl_ball (Metric.closedBall_subset_ball hρr)
+    have hderiv := Complex.norm_iteratedDeriv_le_of_forall_mem_sphere_norm_le k hρ0 hd hb
     have hexp2 : (n : ℝ) ^ (ρ - 1) ≤ (n : ℝ) ^ (ε - 1) :=
       Real.rpow_le_rpow_of_exponent_le hnn (by linarith)
     have hnonneg2 : (0 : ℝ) ≤ (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| :=
       mul_nonneg (mul_nonneg (Nat.cast_nonneg _)
         (inv_nonneg.mpr (pow_nonneg hρ0.le _))) (abs_nonneg _)
     calc ‖iteratedDeriv k (fun z : ℂ => G n z - f z * (n : ℂ) ^ (z - 1)) 1‖
-        = (k.factorial : ℝ) / (2 * Real.pi) * ‖∮ z in C(1, ρ),
-          (1 / (z - 1) ^ (k + 1)) • (G n z - f z * (n : ℂ) ^ (z - 1))‖ := by
-          rw [hD, norm_smul, hscalnorm]
-      _ ≤ (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ρ - 1) := hJle
+        ≤ (k.factorial : ℝ) * (|C| * (n : ℝ) ^ (ρ - 1)) / ρ ^ k := hderiv
+      _ = (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ρ - 1) := by ring
       _ ≤ (k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C| * (n : ℝ) ^ (ε - 1) :=
         mul_le_mul_of_nonneg_left hexp2 hnonneg2
   refine Asymptotics.IsBigO.of_bound ((k.factorial : ℝ) * (ρ ^ k)⁻¹ * |C|)
