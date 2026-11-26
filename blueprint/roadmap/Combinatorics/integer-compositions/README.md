@@ -5,6 +5,7 @@ Ordered sums of positive integers: compositions with restricted, palindromic, co
 - [Arndt compositions](arndt-compositions/README.md)
 - [Colored compositions, Dyck paths and polygon dissections](colored-compositions-dyck-paths-and-polygon-diss/README.md)
 - [Compositions avoiding parts 2, 3 and 4](compositions-avoiding-parts-2-3-and-4/README.md)
+- [Compositions into odd parts](compositions-into-odd-parts/README.md)
 - [Compositions with an odd number of parts](compositions-with-an-odd-number-of-parts/README.md)
 - [Compositions with parts 1, 2 and 3](compositions-with-parts-1-2-and-3/README.md)
 - [Even and odd compositions](even-and-odd-compositions/README.md)
