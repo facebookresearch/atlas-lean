@@ -14,9 +14,9 @@ public import MathlibExt.NumberTheory.Height.LehmerConstant
 # Lehmer constant public-API and boundary checks
 
 Exact-statement exercises for the integer Mahler measure, its values on
-linear factors, multiplicativity, and the proved elementary bounds
-`1 ≤ L ≤ 2` for Lehmer's constant together with the equivalence between
-`L = 1` and Lehmer's question.
+linear factors, multiplicativity, the certified bound for Lehmer's polynomial,
+and the proved elementary bounds `1 ≤ L ≤ 2` for Lehmer's constant together
+with the equivalence between `L = 1` and Lehmer's question.
 -/
 
 @[expose] public section
@@ -70,6 +70,10 @@ example {f : Polynomial ℤ} (h1 : 1 < intMahlerMeasure f)
 answer. -/
 example : lehmerConstant = 1 ↔ LehmerQuestion :=
   lehmerConstant_eq_one_iff
+
+/-- Exact rational upper bound for the Mahler measure of Lehmer's polynomial. -/
+example : intMahlerMeasure lehmerPolynomial ≤ 1176281 / 1000000 :=
+  intMahlerMeasure_lehmerPolynomial_le
 
 /-- The constant polynomial `1` is reciprocal. -/
 example : IsReciprocal (1 : Polynomial ℤ) :=
