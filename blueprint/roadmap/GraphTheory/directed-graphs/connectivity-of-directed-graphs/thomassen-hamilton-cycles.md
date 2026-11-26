@@ -1,0 +1,3 @@
+# Thomassen's conjecture on edge-disjoint Hamilton cycles in tournaments
+
+A tournament on $\{0,\dots,n-1\}$ is an irreflexive arc relation with exactly one arc between any two distinct vertices; a vertex set $S$ induces a strongly $k$-connected subtournament when $|S| > k$ and the subtournament on $S$ remains strongly connected after deleting any fewer than $k$ vertices. Thomassen's conjecture states that for every $k \in \mathbb{N}$ there is $f(k)$ such that every tournament $T$ on $\{0, \dots, n-1\}$ that is strongly $f(k)$-connected has $k$ Hamilton cycles, given by cyclic orderings $c_1, \dots, c_k$ of the vertices, no two of which share an arc.

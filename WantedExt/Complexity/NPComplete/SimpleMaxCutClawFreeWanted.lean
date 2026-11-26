@@ -26,7 +26,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxCutWanted
+public import CSLibExt.Complexity.NPComplete.MaxCutDefs
 
 @[expose] public section
 
@@ -45,7 +45,7 @@ NP-complete for "graphs that are the complement of a bipartite graph"; such a gr
 (its vertex set is the union of two cliques, so any three vertices include two adjacent ones),
 and the 2022 revision of Johnson's table lists the claw-free entry as NP-complete with this
 reference. The instance, the simple-edge-list conditions and the question are those of MAXIMUM
-CUT (`MaxCutWanted`, whose question counts edges), reused as in `MaxCutSplitGraphsWanted`; the
+CUT (`MaxCutDefs`, whose question counts edges), reused as in `MaxCutSplitGraphsWanted`; the
 restriction adds claw-freeness of `Cslib.Complexity.Karp.edgeGraph` and `0 < K` to `WellFormed`.
 
 Claw-freeness is the repository's predicate `SimpleGraph.IsClawFree` (from
