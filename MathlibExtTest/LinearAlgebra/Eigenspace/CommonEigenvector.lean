@@ -58,3 +58,11 @@ example {K : Type*} [Field K] : ¬ ∃ v : Fin 2 → K, v ≠ 0 ∧ ∀ i : Fin 
   · rcases h1 with rfl | h1
     · simpa using h0
     · exact h1
+
+/-- The theorem needs a nonzero space: it does not apply to the zero space `Fin 0 → K`,
+which is finite-dimensional but not `Nontrivial`. -/
+example {K : Type*} [Field K] [IsAlgClosed K] (T : Unit → Module.End K (Fin 0 → K)) : T = T := by
+  fail_if_success
+    have := Module.End.exists_forall_apply_eq_smul_of_pairwise_commute T
+      (fun i j h => (h (Subsingleton.elim i j)).elim)
+  rfl
