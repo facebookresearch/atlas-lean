@@ -14,8 +14,8 @@ import Mathlib.Tactic.NormNum
 /-!
 # Monotone-chain correctness fixtures
 
-The fixtures use real coordinates, check the exact returned vertex order, and specialize the
-correctness theorem to describe both the extreme points and the closed region by coordinates.
+The fixtures use real coordinates, check the exact returned vertex order and absence of repeats,
+and specialize the correctness theorem to describe the extreme points and the closed region.
 The square includes a collinear boundary point and an interior point, neither of which is extreme.
 -/
 
@@ -36,7 +36,7 @@ private noncomputable abbrev triangle : List (ℝ × ℝ) := [O, N, E]
 
 private noncomputable abbrev square : List (ℝ × ℝ) := [O, N, M, I, E, NE]
 
-example : (convexHull triangle).ret = [O, E, N] ∧
+example : (convexHull triangle).ret = [O, E, N] ∧ (convexHull triangle).ret.Nodup ∧
     {x | x ∈ ([O, E, N] : List (ℝ × ℝ))} =
       (_root_.convexHull ℝ {x | x ∈ triangle}).extremePoints ℝ ∧
     _root_.convexHull ℝ {x | x ∈ triangle} = {x | 0 ≤ x.1 ∧ 0 ≤ x.2 ∧ x.1 + x.2 ≤ 2} := by
@@ -48,9 +48,9 @@ example : (convexHull triangle).ret = [O, E, N] ∧
   have hret : (convexHull triangle).ret = [O, E, N] := by
     norm_num [triangle, convexHull, lowerHull, upperHull, chainScan, popNonLeft, cross,
       ret_bind, ret_pure, Prod.fst_sub, Prod.snd_sub]
-  obtain ⟨_, hvertices, hregion⟩ := convexHull_correct triangle hs hn
+  obtain ⟨_, hnodup, hvertices, hregion⟩ := convexHull_correct triangle hs hn
   rw [hret] at hvertices hregion
-  refine ⟨hret, hvertices, hregion.symm.trans ?_⟩
+  refine ⟨hret, hnodup, hvertices, hregion.symm.trans ?_⟩
   ext x
   simp only [mem_ofPred_eq, List.take_succ_cons, List.take_zero, List.cons_append,
     List.nil_append, List.isChain_cons_cons, List.isChain_singleton, and_true, cross,
@@ -58,7 +58,7 @@ example : (convexHull triangle).ret = [O, E, N] ∧
   constructor <;> intro h <;> obtain ⟨h₁, h₂, h₃⟩ := h <;>
     exact ⟨by linarith, by linarith, by linarith⟩
 
-example : (convexHull square).ret = [O, E, NE, N] ∧
+example : (convexHull square).ret = [O, E, NE, N] ∧ (convexHull square).ret.Nodup ∧
     {x | x ∈ ([O, E, NE, N] : List (ℝ × ℝ))} =
       (_root_.convexHull ℝ {x | x ∈ square}).extremePoints ℝ ∧
     _root_.convexHull ℝ {x | x ∈ square} = {x | 0 ≤ x.1 ∧ x.1 ≤ 2 ∧ 0 ≤ x.2 ∧ x.2 ≤ 2} := by
@@ -70,9 +70,9 @@ example : (convexHull square).ret = [O, E, NE, N] ∧
   have hret : (convexHull square).ret = [O, E, NE, N] := by
     norm_num [square, convexHull, lowerHull, upperHull, chainScan, popNonLeft, cross,
       ret_bind, ret_pure, Prod.fst_sub, Prod.snd_sub]
-  obtain ⟨_, hvertices, hregion⟩ := convexHull_correct square hs hn
+  obtain ⟨_, hnodup, hvertices, hregion⟩ := convexHull_correct square hs hn
   rw [hret] at hvertices hregion
-  refine ⟨hret, hvertices, hregion.symm.trans ?_⟩
+  refine ⟨hret, hnodup, hvertices, hregion.symm.trans ?_⟩
   ext x
   simp only [mem_ofPred_eq, List.take_succ_cons, List.take_zero, List.cons_append,
     List.nil_append, List.isChain_cons_cons, List.isChain_singleton, and_true, cross,

@@ -221,22 +221,118 @@ private theorem vertex_extreme {vs : List Point} (hlen : 3 ≤ vs.length)
   rw [hax₀, hcx₀] at heq
   exact sub_eq_zero.mp (by simpa using heq)
 
+/-- Two collinear outgoing edges of opposite lexicographic direction cannot have a point
+weakly left of the first and strictly left of the second. -/
+private theorem opposite_edges {p q r x : Point} (hq : toLex p < toLex q) (hr : toLex r < toLex p)
+    (hcol : orient p q r = 0) (hleft : 0 ≤ orient p q x) (hstrict : 0 < orient p r x) : False := by
+  have incompatible {a b : ℝ} (ha : 0 < a) (hb : b < 0)
+      (he : a * orient p r x = b * orient p q x) : False :=
+    (not_lt_of_ge (mul_nonpos_of_nonpos_of_nonneg hb.le hleft)) (he ▸ mul_pos ha hstrict)
+  rw [Prod.Lex.toLex_lt_toLex] at hq hr
+  rcases hq with hqx | ⟨hqx, hqy⟩ <;> rcases hr with hrx | ⟨hrx, hry⟩
+  · apply incompatible (sub_pos.mpr hqx) (sub_neg.mpr hrx)
+    simp only [orient, cross, Prod.fst_sub, Prod.snd_sub] at hcol ⊢
+    linear_combination -(x.1 - p.1) * hcol
+  · have h := mul_neg_of_pos_of_neg (sub_pos.mpr hqx) (sub_neg.mpr hry)
+    simp only [orient, cross, Prod.fst_sub, Prod.snd_sub, hrx, sub_self, zero_mul, sub_zero]
+      at hcol
+    linarith
+  · have h := mul_neg_of_neg_of_pos (sub_neg.mpr hrx) (sub_pos.mpr hqy)
+    simp only [orient, cross, Prod.fst_sub, Prod.snd_sub, ← hqx, sub_self, zero_mul, zero_sub]
+      at hcol
+    linarith
+  · apply incompatible (sub_pos.mpr hqy) (sub_neg.mpr hry)
+    simp only [orient, cross, Prod.fst_sub, Prod.snd_sub] at hcol ⊢
+    linear_combination -(x.2 - p.2) * hcol
+
+/-- The chains are individually strict in opposite orders. A vertex shared with the trimmed
+upper chain would have two outgoing edges of opposite lexicographic direction. Their supporting
+inequalities force collinearity, which is incompatible with the strict upper turn there. -/
+private theorem output_nodup (ps : List Point) (hs : ps.Pairwise fun a b => toLex a < toLex b) :
+    (convexHull ps).ret.Nodup := by
+  let L := (lowerHull ps).ret
+  let U := (upperHull ps).ret
+  change (L ++ U.tail.dropLast).Nodup
+  have hLsub := lowerHull_sublist ps hs
+  have hUsub := upperHull_sublist ps hs
+  have hL : L.Pairwise (fun a b => toLex a < toLex b) := hs.sublist hLsub
+  have hU : U.Pairwise (fun a b => toLex b < toLex a) :=
+    (List.pairwise_reverse.mpr hs).sublist hUsub
+  have hUn : U.Nodup := by
+    apply hU.imp
+    intro a b h e
+    exact (ne_of_lt h) (congrArg toLex e.symm)
+  rw [List.nodup_append]
+  refine ⟨hL.imp (fun h e => (ne_of_lt h) (congrArg toLex e)),
+    hUn.sublist ((List.dropLast_sublist U.tail).trans (List.tail_sublist U)), ?_⟩
+  intro p hpL _ hpU he
+  subst he
+  have hpTail : p ∈ U.tail := List.mem_of_mem_dropLast hpU
+  have hnotLast : some p ≠ L.getLast? := by
+    intro e
+    have hhead : U.head? = some p :=
+      (upperHull_head? ps hs).trans ((lowerHull_getLast? ps hs).symm.trans e.symm)
+    rcases U with _ | ⟨a, rest⟩
+    · simp at hhead
+    · change some a = some p at hhead
+      rcases Option.some.inj hhead with rfl
+      exact (List.nodup_cons.mp hUn).1 hpTail
+  -- The shared vertex has a successor in the lower chain and is internal to the upper chain.
+  have hpDrop := List.mem_dropLast_of_mem_of_ne_getLast? hpL hnotLast
+  obtain ⟨i, hi, ei⟩ := List.mem_iff_getElem.mp hpDrop
+  obtain ⟨j, hj, ej⟩ := List.mem_iff_getElem.mp hpU
+  have hi' : i + 1 < L.length := by
+    simp only [List.length_dropLast] at hi
+    omega
+  have hj' : j + 2 < U.length := by
+    simp only [List.length_dropLast, List.length_tail] at hj
+    omega
+  simp only [List.getElem_dropLast] at ei ej
+  simp only [List.getElem_tail] at ej
+  let q := L[i + 1]
+  let r := U[j + 2]
+  have hq : toLex p < toLex q := by
+    simpa only [ei] using List.pairwise_iff_getElem.mp hL i (i + 1) (by omega) hi' (by omega)
+  have hr : toLex r < toLex p := by
+    simpa only [ej] using List.pairwise_iff_getElem.mp hU (j + 1) (j + 2) (by omega) hj' (by omega)
+  have hLower {s : Point} (hm : s ∈ ps) : 0 ≤ orient p q s := by
+    have hchain : L.IsChain (fun a b => 0 ≤ orient a b s) := lowerHull_left_of_edges ps hs hm
+    simpa only [ei] using List.isChain_iff_getElem.mp hchain i hi'
+  have hUpper {s : Point} (hm : s ∈ ps) : 0 ≤ orient p r s := by
+    have hchain : U.IsChain (fun a b => 0 ≤ orient a b s) := upperHull_left_of_edges ps hs hm
+    simpa only [ej] using List.isChain_iff_getElem.mp hchain (j + 1) hj'
+  have hqr := hLower (List.mem_reverse.mp (hUsub.subset (List.getElem_mem hj')))
+  have hrq := hUpper (hLsub.subset (List.getElem_mem hi'))
+  have hsum : orient p q r + orient p r q = 0 := by
+    simp only [orient, cross, Prod.fst_sub, Prod.snd_sub]
+    ring
+  have hcol : orient p q r = 0 := by linarith
+  have hturn : 0 < orient U[j] p r := by
+    have hturn₀ : 0 < orient U[j] U[j + 1] r := upperHull_turn_left ps hs j hj'
+    simpa only [ej] using hturn₀
+  have hcyclic : orient p r U[j] = orient U[j] p r := by
+    simp only [orient, cross, Prod.fst_sub, Prod.snd_sub]
+    ring
+  exact opposite_edges hq hr hcol
+    (hLower (List.mem_reverse.mp (hUsub.subset (List.getElem_mem (by omega : j < U.length)))))
+    (hcyclic ▸ hturn)
+
 /-- **The computed convex hull equals the convex hull.** For a list of real plane points strictly
 increasing in lexicographic order and containing a noncollinear triple, Andrew's monotone-chain
-algorithm returns at least three vertices. Their set is exactly the set of extreme points of the
-Mathlib convex hull of the input. The closed region, the intersection of the left closed
-half-planes of successive directed edges including the last-to-first edge, is exactly that hull.
-The edge inequalities are non-strict, so the region includes its boundary. -/
+algorithm returns at least three vertices, with no repetitions. Their set is exactly the set of
+extreme points of the Mathlib convex hull of the input. The closed region, the intersection of the
+left closed half-planes of successive directed edges including the last-to-first edge, is exactly
+that hull. The edge inequalities are non-strict, so the region includes its boundary. -/
 public theorem convexHull_correct (ps : List (ℝ × ℝ))
     (hs : ps.Pairwise fun a b => toLex a < toLex b)
     (hncol : ∃ a ∈ ps, ∃ b ∈ ps, ∃ c ∈ ps, cross (b - a) (c - a) ≠ 0) :
     let vs := (convexHull ps).ret
-    3 ≤ vs.length ∧
+    3 ≤ vs.length ∧ vs.Nodup ∧
       {x | x ∈ vs} = (_root_.convexHull ℝ {x | x ∈ ps}).extremePoints ℝ ∧
       {x | (vs ++ vs.take 1).IsChain fun a b => 0 ≤ cross (b - a) (x - a)} =
         _root_.convexHull ℝ {x | x ∈ ps} := by
   let vs := (convexHull ps).ret
-  change 3 ≤ vs.length ∧
+  change 3 ≤ vs.length ∧ vs.Nodup ∧
     pointSet vs = (_root_.convexHull ℝ (pointSet ps)).extremePoints ℝ ∧
     region vs = _root_.convexHull ℝ (pointSet ps)
   have hp := input_length hncol
@@ -249,7 +345,7 @@ public theorem convexHull_correct (ps : List (ℝ × ℝ))
   have hVI := convexHull_mono (𝕜 := ℝ) hverts
   have heq := hRV.antisymm (hVI.trans hIR)
   have hreg := (hRV.trans hVI).antisymm hIR
-  refine ⟨hlen, ?_, hreg⟩
+  refine ⟨hlen, output_nodup ps hs, ?_, hreg⟩
   rw [← hreg]
   apply Subset.antisymm
   · exact fun _ hv => vertex_extreme hlen ht hv (hinput (hverts hv))

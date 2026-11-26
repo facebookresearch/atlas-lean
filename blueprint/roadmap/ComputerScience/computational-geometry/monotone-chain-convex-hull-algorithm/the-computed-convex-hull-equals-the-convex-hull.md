@@ -2,8 +2,8 @@
 
 Let $P$ be a list of real plane points in strictly increasing lexicographic order, containing
 three noncollinear points. Andrew's monotone chain algorithm builds the lower and upper chains
-by keeping only strict left turns. Its output $V$ has at least three vertices, and the set of its
-vertices is exactly the set of extreme points of the convex hull $\operatorname{conv}(P)$.
+by keeping only strict left turns. Its output list $V$ has at least three vertices and lists each
+extreme point of the convex hull $\operatorname{conv}(P)$ exactly once, with no other points.
 
 For each consecutive pair $a,b$ in $V$, including the last-to-first edge, take the closed
 half-plane defined by $(b-a)\times(x-a)\ge 0$, where $\times$ is the planar cross product.
