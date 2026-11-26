@@ -22,6 +22,7 @@ The theorem `one_div_f1_cube_f5_two_dissection` separates the even and odd power
 `1 / (f₁³ f₅)`, with denominators cleared. Theta addition at moduli five and ten gives a
 relation for the fourth power of `f₅ / f₁` and a two-term expansion for that quotient.
 Inverting the argument of Dedekind eta gives the second relation needed to simplify the odd part.
+The same relation gives `f2_cube_f5_sq_quotient_identity` over integer power series.
 -/
 
 open PowerSeries
@@ -454,5 +455,28 @@ public theorem one_div_f1_cube_f5_two_dissection :
   have rhs := ((represents_sub (main.mul (f 20)) (negTerm.mul ((f 20).pow 3))).add
     (posTerm.mul ((f 20).pow 2))).add ((quad.mul (f 10)).mul ((f 40).pow 2))
   exact lhs.eq_of_eval rhs (fun _ ↦ one_div_f1_cube_f5_two_dissection.analytic_dissection)
+
+open one_div_f1_cube_f5_two_dissection one_div_f1_pow_four_eight_twelve_two_dissection in
+/-- **A level-10 Euler-product identity.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring of
+integer power series in $q$. Then
+$f_2^5 f_5^2 = f_1^5 f_5 f_{10} + 5q f_1^2 f_2 f_{10}^4$.
+
+Dividing both sides by $f_1^5 f_2^2 f_{10}^2$ gives the form in the source,
+$f_2^3 f_5^2/(f_1^5 f_{10}^2) = f_5/(f_2^2 f_{10}) + 5q f_{10}^2/(f_1^3 f_2)$.
+
+Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
+Repetitions*, INTEGERS 25 (2025), Article A17, Lemma 5, eq. (17)
+(`integers-2025-A17-lem-5`). -/
+public theorem f2_cube_f5_sq_quotient_identity :
+    𝔣 2 ^ 5 * 𝔣 5 ^ 2 = 𝔣 1 ^ 5 * 𝔣 5 * 𝔣 10 + 5 * X * 𝔣 1 ^ 2 * 𝔣 2 * 𝔣 10 ^ 4 := by
+  have h5 : Represents 5 (fun _ ↦ 5) := by simpa using represents_const 5
+  have f (k : ℕ) (hk : k ≠ 0 := by decide) := represents_euler k hk
+  have lhs := ((f 2).pow 5).mul ((f 5).pow 2)
+  have first := (((f 1).pow 5).mul (f 5)).mul (f 10)
+  have linear := (h5.mul represents_X).mul ((f 1).pow 2)
+  have second := (linear.mul (f 2)).mul ((f 10).pow 4)
+  refine lhs.eq_of_eval (first.add second) ?_
+  intro q hq h
+  exact (mul_comm (E q 2 ^ 5) (E q 5 ^ 2)).trans (dual_level_five hq h)
 
 end MetaMathlibExt
