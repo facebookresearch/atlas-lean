@@ -11902,6 +11902,7 @@
   "MathlibExt/FieldTheory/RealPartialFractions": {"to": "Algebra/polynomials", "title": "Partial fraction decomposition"},
   "MathlibExt/FieldTheory/SepClosedTensorSplit": {"to": "FieldTheory/extensions-and-closure", "title": "Separable extensions over separably closed fields"},
   "MathlibExt/FieldTheory/SeparableAdjoinRoot": {"to": "FieldTheory/extensions-and-closure", "title": "Finite separable extensions as simple extensions"},
+  "MathlibExt/FieldTheory/SolvableByRadicals": {"to": "FieldTheory/galois-theory", "title": "Solvability by radicals"},
   "MathlibExt/FieldTheory/Tsen": {"to": "FieldTheory/extensions-and-closure", "title": "Tsen's theorem"},
   "MathlibExt/GameTheory/AffineCongestionGame": {"to": "GameTheory/noncooperative-games", "title": "Atomic congestion games with affine delays"},
   "MathlibExt/GameTheory/BlackwellApproachability": {"to": "GameTheory/noncooperative-games", "title": "Blackwell approachability"},
