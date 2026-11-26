@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -753,13 +754,6 @@ theorem not_isDeficientFkPerfect_prod_primes
     have h31 : (3 * ∏ p ∈ s, p) % 2 = 1 :=
       Nat.odd_iff.mp ((by decide : Odd 3).mul hn)
     omega
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
 
 private theorem sigma_two_prime_pow (p a : ℕ) (hp : p.Prime) :
     (∑ e ∈ (p ^ a).divisors, e ^ 2) = ∑ i ∈ Finset.range (a + 1), p ^ (i * 2) := by
