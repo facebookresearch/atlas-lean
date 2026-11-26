@@ -33,3 +33,13 @@ example (n : ℕ) : Nat.fib (n + 1) = ∑ i ∈ Finset.range (n / 2 + 1), (n - i
 example : fibonacciP 2 7 = 6 := by
   rw [fibonacciP_succ_eq_sum_choose 2 6 (by decide)]
   decide
+
+-- At the last initial index the sum includes the zero term C(1, 2).
+example : superLeonardoP 2 1 (fun i => (i : ℝ) + 1) 2 = 3 := by
+  rw [superLeonardoP_one_succ_eq_sum_choose 2 (by decide)]
+  norm_num [Finset.sum_range_succ, Nat.choose]
+
+-- At n = 6 the last summand is nonzero: C(7, 1) + C(5, 2) + C(3, 3) = 18.
+example : superLeonardoP 2 1 (fun i => (i : ℝ) + 1) 6 = 18 := by
+  rw [superLeonardoP_one_succ_eq_sum_choose 2 (by decide)]
+  norm_num [Finset.sum_range_succ, Nat.choose]
