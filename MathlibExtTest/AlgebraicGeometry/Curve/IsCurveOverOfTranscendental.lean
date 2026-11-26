@@ -12,6 +12,7 @@ public import MathlibExt.AlgebraicGeometry.Curve.IsCurveOverOfTranscendental
 import Mathlib.FieldTheory.RatFunc.IntermediateField
 import Mathlib.RingTheory.Kaehler.Basic
 import MathlibExt.AlgebraicGeometry.Curve.RatFuncPrincipalDivisors
+import MathlibExt.RingTheory.Kaehler.Transcendental
 
 /-! # Tests for curve function fields obtained from a transcendental element -/
 
@@ -73,6 +74,64 @@ example (K : Type*) [Field K] [PerfectField K] : IsCurveOver K (RatFunc K) := by
     rw [htop]
     exact Module.finite_of_finrank_eq_succ IntermediateField.finrank_top
   exact isCurveOver_of_transcendental_of_perfectField RatFunc.transcendental_X hfd
+
+-- The instance makes the `IsCurveOver` API available for `RatFunc K`.
+example (K : Type*) [Field K] : IsCurveOver K (RatFunc K) := inferInstance
+
+example (K : Type*) [Field K] : HasPrincipalDivisors K (RatFunc K) := inferInstance
+
+example (K : Type*) [Field K] (v : Place K (RatFunc K)) : Module.Finite K v.ResidueField :=
+  inferInstance
+
+-- A perfect base field and a generator that is not separating: over a perfect field of
+-- characteristic `p`, take `x = X ^ p` in `RatFunc K`. Then `RatFunc K` is finite over `K⟮x⟯`,
+-- and the perfect-field version applies.
+example (p : ℕ) [hp : Fact p.Prime] (K : Type*) [Field K] [PerfectField K] [CharP K p] :
+    IsCurveOver K (RatFunc K) := by
+  set E := IntermediateField.adjoin K ({RatFunc.X ^ p} : Set (RatFunc K))
+  have hint : IsIntegral E (RatFunc.X : RatFunc K) := by
+    refine ⟨Polynomial.X ^ p - Polynomial.C
+      ⟨RatFunc.X ^ p, IntermediateField.mem_adjoin_simple_self K _⟩,
+      Polynomial.monic_X_pow_sub_C _ hp.out.ne_zero, ?_⟩
+    simp
+  have hfd : FiniteDimensional E (RatFunc K) := by
+    have := IntermediateField.adjoin.finiteDimensional hint
+    rw [RatFunc.IntermediateField.adjoin_X E] at this
+    exact (IntermediateField.topEquiv (F := E) (E := RatFunc K)).toLinearEquiv.finiteDimensional
+  exact isCurveOver_of_transcendental_of_perfectField
+    (RatFunc.transcendental_X.pow hp.out.pos) hfd
+
+-- ... while `RatFunc K` is not separable over `K⟮X ^ p⟯`, so `isCurveOver_of_transcendental` does
+-- not apply to this generator: `D (X ^ p) = p • X ^ (p - 1) • D X = 0` would span the Kähler
+-- differentials, but `D X ≠ 0`.
+example (p : ℕ) [hp : Fact p.Prime] (K : Type*) [Field K] [CharP K p] :
+    ¬ Algebra.IsSeparable (IntermediateField.adjoin K ({RatFunc.X ^ p} : Set (RatFunc K)))
+      (RatFunc K) := by
+  intro hsep
+  have htop := KaehlerDifferential.span_D_eq_top_of_transcendental K (RatFunc.X ^ p)
+    (RatFunc.transcendental_X.pow hp.out.pos)
+  rw [Derivation.leibniz_pow, ← Nat.cast_smul_eq_nsmul (RatFunc K), CharP.cast_eq_zero,
+    zero_smul, Set.singleton_zero, Submodule.span_zero] at htop
+  have hsepX : Algebra.IsSeparable (IntermediateField.adjoin K ({RatFunc.X} : Set (RatFunc K)))
+      (RatFunc K) := by
+    rw [RatFunc.adjoin_X]
+    exact Algebra.IsSeparable.of_equiv_equiv IntermediateField.topEquiv.symm.toRingEquiv
+      (RingEquiv.refl (RatFunc K)) (RingHom.ext fun _ => rfl)
+  refine KaehlerDifferential.D_ne_zero_of_transcendental K (RatFunc.X : RatFunc K)
+    RatFunc.transcendental_X ?_
+  have hmem : KaehlerDifferential.D K (RatFunc K) RatFunc.X ∈
+      (⊤ : Submodule (RatFunc K) Ω[RatFunc K⁄K]) := Submodule.mem_top
+  rw [← htop] at hmem
+  exact (Submodule.mem_bot (RatFunc K)).mp hmem
+
+-- The `RatFunc K`-algebra structure from a separating transcendental element, used the way
+-- `isCurveOver_of_transcendental` and the genus theorem use it.
+example {K F : Type*} [Field K] [Field F] [Algebra K F] {x : F} (htr : Transcendental K x)
+    (hfd : FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F)
+    (hsep : Algebra.IsSeparable (IntermediateField.adjoin K ({x} : Set F)) F) :
+    HasPrincipalDivisors K F := by
+  obtain ⟨_, _, _, _⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
+  exact hasPrincipalDivisors_of_finiteDimensional_of_isSeparable K F
 
 -- Consumer of `Place.finite_residueField_restrict`: in any finite extension `E` of `RatFunc K`,
 -- separable or not, every residue field is finite over `K`.
