@@ -2,7 +2,7 @@
 
 Some sequence $x_0, x_1, \dots$ of reals in $(0, 1)$ has $A_k = o(k)$: for every $\varepsilon > 0$ there is $K$ with $A_k \le \varepsilon k$ for all $k \ge K$, where for a sequence $x_0, x_1, \dots$ of reals and a natural number $k$, $A_k = \limsup_{n \to \infty} \bigl|\sum_{j < n} e(k x_j)\bigr|$, a value in $[0, \infty]$, where $e(t) = e^{2\pi i t}$.
 
-This resolves [Erdős Problem 987, second question (exponential sums of a sequence)](conjecture.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Alexeev, Putterman, Sawhney, Sellke and Valiant (2026), cited under Sources.
+This resolves [Erdős Problem 987, second question (exponential sums of a sequence)](conjecture.md), the statement recorded as a proposition, in the affirmative; the resolution is reported by Alexeev, Putterman, Sawhney, Sellke and Valiant (2026), cited under Sources: the proof, a sequence with $A_k \ll (k \log k)^{1/2}$, was produced by an AI model, and the authors verified and reported it, as their paper and the database record.
 
 ## Sources
 

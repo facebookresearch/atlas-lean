@@ -4,9 +4,10 @@ It is not the case that the sieve bound holds at some level $C > 1$, where for a
 
 Problem 784 as printed takes $A \subseteq [1, x]$; then $A = \{1\}$ leaves no integer, so the problem intends $1 \notin A$, and the statement here takes $A \subseteq \{2, \dots, x\}$.
 
-This refutes [Erdős Problem 784 for reciprocal sums above one](sieve-lower-bound-large-reciprocal-sum.md), the statement recorded as a proposition; the refutation is due to Weingartner (2025), cited under Sources.
+This refutes [Erdős Problem 784 for reciprocal sums above one](sieve-lower-bound-large-reciprocal-sum.md), the statement recorded as a proposition; the refutation is due to Ruzsa (1982), who showed that for fixed $C > 1$ the least number of survivors is $x^{e^{1-C} + o(1)}$, below $\kappa x/(\log x)^c$ for every $c, \kappa > 0$; Weingartner (2025) sharpened this to $\asymp x^{e^{1-C}}/\log x$. Both are cited under Sources.
 
 ## Sources
 
 - T. F. Bloom, Erdős Problems, Problem #784, https://www.erdosproblems.com/784.
+- I. Z. Ruzsa, On the small sieve. II. Sifting by composite numbers, J. Number Theory (1982), 260–268.
 - A. Weingartner, The Schinzel–Szekeres function, Res. Number Theory (2025), Paper No. 63.

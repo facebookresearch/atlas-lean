@@ -4,7 +4,7 @@ Some strictly increasing sequence $n_0 < n_1 < \cdots$ of positive integers has 
 
 This is the original representability formulation of Erdős's paper (the definition preceding (20)): $m$ counts when $m/n_k$ cannot be written with any earlier denominator. Problem 1000 as printed in the database tests instead that the reduced denominator does not equal any earlier $n_j$, which counts more $m$: with an earlier denominator $6$ and $n_k = 10$, the fraction $5/10$ counts under that test ($2 \ne 6$) but not here ($1/2 = 3/6$). A zero average for the smaller count does not give one for the larger, so this statement does not settle the printed version.
 
-This resolves [Erdős Problem 1000 in the original representability formulation (averages of new-denominator fraction counts)](new-fraction-average-tends-to-zero.md), the statement recorded as a proposition, in the affirmative; the resolution is the one recorded in Erdős Problems, Problem #1000.
+This resolves [Erdős Problem 1000 in the original representability formulation (averages of new-denominator fraction counts)](new-fraction-average-tends-to-zero.md), the statement recorded as a proposition, in the affirmative; the resolution, recorded in Erdős Problems, Problem #1000, is due to J. A. Haight (PhD thesis).
 
 ## Sources
 

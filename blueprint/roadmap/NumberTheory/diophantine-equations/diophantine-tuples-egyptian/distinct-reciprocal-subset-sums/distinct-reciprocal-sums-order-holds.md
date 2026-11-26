@@ -6,7 +6,7 @@ $$c\, \frac{N}{\log N} \prod_{j=3}^{k} \log_j N \le R(N) \le C\, \frac{N}{\log N
 
 where $\log_j$ is the $j$-fold iterated natural logarithm and $R(N)$ is the largest size of a set $A \subseteq \{1, \dots, N\}$ such that the sums $\sum_{n \in S} 1/n$ over the subsets $S \subseteq A$ are pairwise distinct.
 
-This resolves [Erdős Problem 321 (largest sets with distinct reciprocal subset sums)](distinct-reciprocal-sums-order.md), the statement recorded as a proposition, in the affirmative; the resolution is the one recorded in Erdős Problems, Problem #321.
+This resolves [Erdős Problem 321 (largest sets with distinct reciprocal subset sums)](distinct-reciprocal-sums-order.md), the statement recorded as a proposition, in the affirmative; the resolution, recorded in Erdős Problems, Problem #321, is an AI-generated, unrefereed upper bound (prompted by Young, Zhu and Luo) together with a lower bound implicit in the work of Bettin, Grenié, Molteni and Sanna.
 
 ## Sources
 
