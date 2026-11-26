@@ -7,10 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.ClassicalComplexCoefficientMaps
-public import MathlibExt.AlgebraicGeometry.NativeIdentityComplexesStack
-public import MathlibExt.AlgebraicGeometry.DerivedNativeComplexTruncation
 
 /-!
 # The classical coefficient family unit
@@ -39,8 +36,6 @@ open MathlibExt.AlgebraicGeometry.DerivedOrdinaryComplexModels
 open MathlibExt.AlgebraicGeometry.DerivedClassicalComplexComparisonModels
 open MathlibExt.AlgebraicGeometry.EtaleComplexesPullbackCoherence
 open MathlibExt.AlgebraicGeometry.ClassicalComplexCoefficientMaps
-open MathlibExt.AlgebraicGeometry.NativeIdentityComplexesStack
-open MathlibExt.AlgebraicGeometry.DerivedNativeComplexTruncation
 open MathlibExt.AlgebraicGeometry.SimplicialAlgebraGeometry
 open MathlibExt.AlgebraicGeometry.SimplicialDerivedModels
 open scoped Simplicial
