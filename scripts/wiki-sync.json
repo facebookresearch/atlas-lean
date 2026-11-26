@@ -91223,6 +91223,7 @@
 "MetaMathlibExt.isEquilibriousWord_iff_deletion_iterate_prepend": "b4b88b4ac5f9b86d",
 "MetaMathlibExt.isEquilibriousWord_reverse": "4098faaf12271d0f",
 "MetaMathlibExt.isEquivalent_card_primeFactors_three_mod_four": "9c65c2aa46922067",
+"MetaMathlibExt.isEquivalent_card_primeFactors_three_mod_four.exists_tendsto_sum_of_prime_mod_four": "134fe171d15a1b41",
 "MetaMathlibExt.isEquivalent_subcollectionCount_div_rpow_deltaStar": "62c22fb1721978ba",
 "MetaMathlibExt.isEquivalent_sum_of_LSeries_eq_div_cpow": "9e7a24bbb98b34d1",
 "MetaMathlibExt.isEssentialCRSet_iff_exists_decreasing_sequence": "3d09f816de0ba169",
