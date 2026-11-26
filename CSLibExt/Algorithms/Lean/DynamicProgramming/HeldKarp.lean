@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Cslib.Algorithms.Lean.TimeM
 public import CSLibExt.Algorithms.Lean.Approximation.MetricTSP
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Algebra.Order.Monoid.WithTop
@@ -44,15 +45,15 @@ type, whereas here costs are directed and the subproblems visit a subset of the 
 level by level in `|A|`, so that the entries for `A \ {v}` are stored before those for `A`.
 Its cost is a pair. The first component counts steps: one for each base entry, one for each
 candidate `u` examined in a minimum (a table read, an addition and a comparison) and one for each
-closing candidate. The second counts the table entries stored. Set operations, table reads and
-writes and the enumeration of the sets are not charged; with sets stored as bit masks, as in
-Eppstein's notes, each takes constant time. For `n` cities there are at most `n² 2ⁿ` steps and
-`n 2ⁿ` entries.
+closing candidate. The second counts the table entries stored. Set operations, table writes and
+the enumeration of the sets are not charged separately; with sets stored as bit masks, as in
+Eppstein's notes, each takes constant time when `n` is at most the machine word size. For `n`
+cities there are at most `n² 2ⁿ` steps and `n 2ⁿ` entries.
 
 ## References
 
 * M. Held and R. M. Karp, *A dynamic programming approach to sequencing problems*, J. SIAM 10
-  (1962).
+  (1962), doi:10.1137/0110015.
 * D. Eppstein, *Exact TSP algorithm*, lecture notes, CS 163/265 Graph Algorithms, UC Irvine.
 -/
 
@@ -147,14 +148,14 @@ def fillTable (d : α → α → R) (s : α) (others : List α) :
 
 /-- **Held–Karp algorithm.** Let $d$ be a cost function on the cities with values in a linearly
 ordered additive commutative monoid $R$, let $s$ be the start city and let `others` be a list of
-other cities. For $k = 1, 2, \dots$ up to the length of `others`, for each sublist $A$ of `others`
-of length $k$ and each $v \in A$, the algorithm stores in a table, under the set of cities of $A$
-and $v$, the value $T(A, v) = d(s, v)$ if $A = [v]$, and otherwise the minimum over the cities
-$u$ of $A$ other than $v$ of $T(A \setminus \{v\}, u) + d(u, v)$, read from the table. It returns
-the minimum over the cities $v$ of `others` of $T(\mathit{others}, v) + d(v, s)$, in
-$R \cup \{\top\}$. Its cost is a pair: the number of steps, one for each base entry, one for each
-candidate $u$ examined in a minimum and one for each closing candidate $v$; and the number of
-table entries stored. -/
+distinct cities other than $s$. For $k = 1, 2, \dots$ up to the length of `others`, for each
+sublist $A$ of `others` of length $k$ and each $v \in A$, the algorithm stores in a table, under
+the set of cities of $A$ and $v$, the value $T(A, v) = d(s, v)$ if $A = [v]$, and otherwise the
+minimum over the cities $u$ of $A$ other than $v$ of $T(A \setminus \{v\}, u) + d(u, v)$, read
+from the table. It returns the minimum over the cities $v$ of `others` of
+$T(\mathit{others}, v) + d(v, s)$, in $R \cup \{\top\}$. Its cost is a pair: the number of
+steps, one for each base entry, one for each candidate $u$ examined in a minimum and one for each
+closing candidate $v$; and the number of table entries stored. -/
 def solve (d : α → α → R) (s : α) (others : List α) : TimeM (ℕ × ℕ) (WithTop R) :=
   (fillTable d s others others.length).bind fun t =>
     minSteps (fun v => t others.toFinset v + (d v s : WithTop R)) others
