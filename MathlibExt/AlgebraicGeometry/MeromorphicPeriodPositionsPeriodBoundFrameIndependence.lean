@@ -552,7 +552,8 @@ private theorem period_positive_value (p : ℕ) [Fact p.Prime] {E : MixedField p
 
 end Transport
 
-/-- Closed representation-lattice bounds retain the same all-frame invariance. -/
+/-- For a fixed completed comparison, replacing either integral frame preserves the
+representation-lattice Plücker bound. -/
 public theorem periodBound_frame_independence
     (p : ℕ) [Fact p.Prime] {E : MixedField p} (K : CoefficientData p E)
     (R : AffineRealization p) (I : IntegerPresentation p K)
