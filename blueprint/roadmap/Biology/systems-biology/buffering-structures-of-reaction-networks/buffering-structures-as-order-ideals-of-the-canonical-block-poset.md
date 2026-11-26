@@ -3,11 +3,15 @@
 **Setting.** A reaction network $\mathcal N=(\mathbf M,\mathbf E)$ with species $\mathbf M$, reactions $\mathbf E$ and stoichiometric matrix $S$ has dynamics $\dot x=S\,r(x)$, where each rate $r_\rho$ depends on exactly its input species. The symbolic reactivity matrix $R\in\mathbb R(r_{\rho m})^{|\mathbf E|\times|\mathbf M|}$ has an independent indeterminate $r_{\rho m}$ where $X_m$ is an input of $\rho$ and $0$ elsewhere; assume the nondegeneracy condition $\det(SR)\not\equiv0$ (conservation laws absorbed). Let $C$ be a Gale dual of $S$, so $[\,R\mid C\,]$ is a square LM-matrix.
 
 A subnetwork $\gamma=(\mathbf M',\mathbf E')$ is output-complete if every reaction with an input species in $\mathbf M'$ lies in $\mathbf E'$. Its influence index is
+
 $$\lambda(\gamma)=|\mathbf E'|-|\mathbf M'|-\kappa(\mathbf E'),\qquad \kappa(\mathbf E')=|\mathbf E'|-\operatorname{rank}S[\mathbf M,\mathbf E'],$$
+
 and $\gamma$ is a buffering structure if it is output-complete with $\lambda(\gamma)=0$. By the law of localization, perturbing a reaction inside a buffering structure changes steady-state concentrations and fluxes only inside it.
 
 **Theorem.** Under nondegeneracy, $\lambda(\gamma)\ge0$ for every output-complete $\gamma$. Let $\mathcal P$ be the poset of CCF blocks of $[\,R\mid C\,]$, each block carrying a species set $\mathbf M_a$ and reaction set $M_a$. Then
+
 $$J\ \longmapsto\ \gamma_J=\Big(\bigcup_{M_a\in J}\mathbf M_a,\ \bigcup_{M_a\in J}M_a\Big)$$
+
 is an isomorphism from the lattice of order ideals of $(\mathcal P,\preceq)$ onto the buffering structures ordered by inclusion. Hence buffering structures form a distributive lattice closed under union and intersection, and the species set of a buffering structure is determined by its reactions.
 
 **Corollaries.** (i) $\det(SR)$ is reducible in $\mathbb R[r_{\rho m}]$ iff $\mathcal N$ has a buffering structure with $\emptyset\ne\mathbf M'\subsetneq\mathbf M$. (ii) Let the influence graph be the CCF directed graph with edges reversed. Perturbing reaction $\rho$ changes the steady-state concentration of $X_m$ iff the influence graph has a directed path from the block containing $\rho$ to the block containing $X_m$.

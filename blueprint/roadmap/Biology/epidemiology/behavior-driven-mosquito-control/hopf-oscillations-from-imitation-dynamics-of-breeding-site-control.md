@@ -7,14 +7,18 @@ $$\begin{aligned}
 \dot w &= k\,w(1-w)\big(-r_c + r_d\,m\,A_v\big),
 \end{aligned}$$
 where control lowers the aquatic carrying capacity from $K_{v_{\max}}$ to $K_{v_{\min}}$, $r_c$ is the perceived cost of control and $r_d m A_v$ the perceived risk of not controlling, which grows with mosquito abundance (imitation dynamics with rate $k$). Let
+
 $$N = \frac{\nu_L\, r b}{(\nu_L + \mu_L)\mu_A}, \qquad \alpha = \frac{m\nu_L}{\mu_A}.$$
 
 **Theorem.**
 1. *(Boundary equilibria.)* $E_{01} = (0,0,0)$ and $E_{02} = (0,0,1)$ are mosquito-free; for $N > 1$ there are mosquito-positive states $E_{03}$ (no control, $L_v^* = K_{v_{\max}}(1 - 1/N)$, $A_v^* = \frac{\nu_L}{\mu_A}L_v^*$) and $E_{04}$ (full control, the same with $K_{v_{\min}}$). $E_{01}$ is locally asymptotically stable iff $N < 1$, $E_{02}$ is always unstable, $E_{03}$ is stable iff $r_c/r_d > \alpha K_{v_{\max}}(1 - 1/N)$, and $E_{04}$ is stable iff $r_c/r_d < \alpha K_{v_{\min}}(1 - 1/N)$.
 2. *(Partial engagement.)* An interior equilibrium
+
 $$E_{05} = \left(\frac{\mu_A r_c}{r_d m \nu_L},\ \frac{r_c}{r_d m},\ \frac{K_{v_{\max}} - \frac{\mu_A r_c}{r_d m\nu_L(1 - 1/N)}}{K_{v_{\max}} - K_{v_{\min}}}\right)$$
+
 exists iff $N > 1$ and $\alpha K_{v_{\min}}(1 - 1/N) \le r_c/r_d \le \alpha K_{v_{\max}}(1 - 1/N)$.
 3. *(Stability and Hopf bifurcation.)* The Routh–Hurwitz quantity $a_2a_1 - a_0$ at $E_{05}$ is a quadratic $f(x) = x^2 - Bx + C$ in $x = r_c/r_d$. If $B^2 < 4C$, $E_{05}$ is stable on its whole existence interval; if $B^2 \ge 4C$ it is stable except between the roots $x_1 \le x_2$ of $f$, and for $B^2 > 4C$ a Hopf bifurcation occurs at
+
 $$\frac{r_c}{r_d} = \alpha\,\frac{K_{v_{\max}} + K_{v_{\min}}}{2}\Big(1 - \frac1N\Big) \pm \frac{\sqrt{B^2 - 4C}}{2}.$$
 
 So sustained mosquito–behavior oscillations can arise from the feedback alone, without seasonal forcing.

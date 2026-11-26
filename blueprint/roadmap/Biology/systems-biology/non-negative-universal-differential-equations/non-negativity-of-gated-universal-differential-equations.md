@@ -1,7 +1,9 @@
 # Non-negativity of gated universal differential equations
 
 **Setting.** A universal differential equation (UDE) augments a mechanistic ODE with a trainable universal approximator: $\dot x=f(x,t,\theta_M)+U(\cdot,\theta_U)$ on $\mathbb{R}^{n}$, where $f$ encodes known mechanisms and $U$ (for example a feed-forward neural network) models unknown processes. A plain UDE need not keep concentrations or population sizes non-negative even when $f$ does. A *non-negative UDE* (nUDE) gates the learned term state-wise:
+
 $$\dot x=f(x,t,\theta_M)+N(x)\odot U(\cdot,\theta_U),$$
+
 where $\odot$ is the entrywise product, $U$ and $N:\mathbb{R}^n\to\mathbb{R}^n$ are Lipschitz continuous, and $N_i(x)\to0$ as $x_i\to0$ for each $i$ (for instance $N(x)=x$).
 
 **Theorem.** Let $f$ be Lipschitz continuous and leave the non-negative orthant invariant in the sense that $f_i(x,t)\ge0$ whenever $x\ge0$ and $x_i=0$, for every $i$. Then for every non-negative initial condition $x(t_0)\ge0$ the nUDE solution with the same $f$ satisfies $x_i(t)\ge0$ for all $t\ge t_0$ in its interval of existence, for every choice of network parameters $\theta_U$.

@@ -1,16 +1,23 @@
 # Permanence of pulsed Lotka-Volterra competition
 
 **Single species.** For $a,b>0$, $\tau>0$ and $h>-1$, the pulsed logistic equation
+
 $$\frac{dx}{dt}=x(a-bx)\ (t\ne k\tau),\qquad x(k\tau^+)=(1+h)x(k\tau^-)$$
+
 has a unique globally asymptotically stable positive $\tau$-periodic solution $x^*$ when $a\tau+\ln(1+h)>0$, and every positive solution tends to $0$ when $a\tau+\ln(1+h)<0$. Along $x^*$,
+
 $$\int_0^\tau (a-bx^*(t))\,dt=-\ln(1+h),\qquad \int_0^\tau x^*(t)\,dt=\frac{a\tau+\ln(1+h)}{b}.$$
 
 **Two competitors.** For sensitive and resistant cell types $x_s,x_r$ treated every $\tau$ with survival factors $1+h_s,1+h_r$ (with $h_s,h_r>-1$),
+
 $$\dot x_s=x_s(a_s-b_{ss}x_s-b_{sr}x_r),\qquad \dot x_r=x_r(a_r-b_{rs}x_s-b_{rr}x_r),\qquad x_i(k\tau^+)=(1+h_i)x_i(k\tau^-),$$
+
 with all $a_i,b_{ij}>0$. Write $g_i=a_i\tau+\ln(1+h_i)$ for the net growth of species $i$ over one period at low density.
 
 **Theorem.** If $g_s>0$, $g_r>0$ and
+
 $$g_s>g_r\,\frac{b_{sr}}{b_{rr}},\qquad g_r>g_s\,\frac{b_{rs}}{b_{ss}},$$
+
 then the pulsed competition system is robustly permanent.
 
 ## Depends on

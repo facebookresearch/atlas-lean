@@ -10,7 +10,9 @@ where $\beta = \beta(h, T)$ depends on humidity and temperature, $\rho$ is the r
 
 **Theorem.**
 1. Since ascospore production is quadratic in $I$ near the disease-free state, only conidia enter the basic reproduction number:
+
 $$\mathcal R_0 = \frac{\beta\,\psi\,\eta\,\gamma\,[\delta\kappa + (1 - \delta)]}{(\gamma + \mu)(\mu_P + \rho)(\mu + \rho)} .$$
+
 2. Let $a$ and $b$ be the center-manifold bifurcation coefficients at $\mathcal R_0 = 1$ (transmission parameter $\beta_0 = \beta_0^*$). The model undergoes a backward bifurcation at $\mathcal R_0 = 1$ when $a > 0$, $b > 0$ and the mating-efficiency parameter exceeds an explicit threshold, $\lambda > \lambda^{\mathrm{crit}}$. Then a stable endemic equilibrium coexists with the stable disease-free equilibrium for $\mathcal R_0 < 1$.
 
 ## Expansion

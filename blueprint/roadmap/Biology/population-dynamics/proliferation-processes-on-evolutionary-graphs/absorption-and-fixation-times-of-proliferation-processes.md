@@ -1,6 +1,7 @@
 # Absorption and fixation times of proliferation processes on graphs
 
 **Setting.** A population of $N$ individuals occupies the vertices of a connected undirected graph $G=(V,E)$; mutants have relative fitness $r>0$. At each step a vertex $v$ is chosen with probability proportional to fitness ($r$ for a mutant, $1$ for a resident). In the **Moran process** a uniformly chosen neighbour of $v$ receives a copy of $v$'s type. In a **proliferation process** with parameter $p\in(0,1]$, residents still replace one random neighbour, but a mutant at $v$ proliferates: under *Bernoulli proliferation* all $d(v)$ neighbours become mutants with probability $p$ (and nothing happens otherwise); under *binomial proliferation* each neighbour independently becomes a mutant with probability $p$. Let $\Phi_1(r)$ be the mean fixation probability of a single mutant placed at a uniform vertex, $\tau_1$ the mean absorption time (until fixation or extinction) and $T_1$ the mean fixation time (conditioned on fixation), with superscripts $M$, $B$, $b$ for Moran, Bernoulli and binomial dynamics. The absorption and fixation time ratios are
+
 $$\rho^\beta(r,p)=\frac{\tau_1^M(r)}{\tau_1^\beta(r,p)},\qquad P^\beta(r,p)=\frac{T_1^M(r)}{T_1^\beta(r,p)},\qquad \beta\in\{B,b\}.$$
 
 **Theorem 2.1 (critical proliferation).** For every graph and fitness $r>0$ there are unique critical values $p_c^B(r)$, $p_c^b(r)$ with $\Phi_1^B(r,p_c^B)=\Phi_1^M(r)$ and $\Phi_1^b(r,p_c^b)=\Phi_1^M(r)$; proliferation is advantageous for fixation above them and disadvantageous below.

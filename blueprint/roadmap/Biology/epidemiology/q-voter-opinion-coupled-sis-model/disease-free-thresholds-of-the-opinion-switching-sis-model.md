@@ -3,8 +3,11 @@
 **Opinion dynamics.** In the $q$-voter model a fraction $x$ holds opinion $A$ and $1-x$ holds $B$, and $x'=px(1-x)\big(x^{q-1}-(1-x)^{q-1}\big)$. For $q>1$ the polarized states $x=0,1$ are asymptotically stable ($f'=-p$) and the balanced state $x=\frac12$ is unstable ($f'(\frac12)=p(q-1)/2^{q-1}$): the initial majority wins.
 
 **Coupled model.** With susceptible and infectious fractions $S_a,S_b,I_a,I_b$ (summing to $1$), transmission rate $\beta$, reduced infectivity $\alpha\in[0,1]$ of opinion-$B$ infectives, susceptibility factor $\delta$ of $B$-susceptibles, recovery $\gamma$ and a $2$-voter persuasion rate $\tilde p$,
+
 $$S_a'=-\beta S_a(I_a+\alpha I_b)+\gamma I_a+\tilde pS_aS_b(S_a-S_b),\qquad S_b'=-\beta\delta S_b(I_a+\alpha I_b)+\gamma I_b+\tilde pS_aS_b(S_b-S_a),$$
+
 $$I_a'=\beta\delta S_b(I_a+\alpha I_b)-\gamma I_a,\qquad I_b'=\beta S_a(I_a+\alpha I_b)-\gamma I_b .$$
+
 Infection switches the opinion (an infected $A$-susceptible becomes an infectious $B$ and vice versa), modelling reassessment of behaviour upon infection. Recovered individuals keep their opinion.
 
 **Disease-free equilibria** (for $\delta=1$, in rescaled time with $R=\beta/\gamma$ and persuasion rate $p$).

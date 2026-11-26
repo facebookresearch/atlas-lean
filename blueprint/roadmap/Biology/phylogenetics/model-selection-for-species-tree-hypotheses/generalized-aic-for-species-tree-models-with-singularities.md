@@ -1,7 +1,9 @@
 # Generalized AIC for species-tree models with singularities
 
 **Setting.** Data $\mathcal Z_n$ are $n$ i.i.d. observations from a regular full model with parameter space $\Theta$ (for example multinomial counts), and a candidate submodel has a closed parameter space $\Theta_0\subseteq\Theta$ that may contain boundary points or singularities. After centring and rescaling by the Fisher information at the true parameter $\theta_0$, the sample mean $\bar z_n$ is asymptotically $\mathcal N(\mu_0,I)$ on the image $\mathcal M$ of $\Theta$, the submodel becomes a set $\mathcal M_0$ whose local geometry near $\mu_0$ is a cone, and the maximum-likelihood estimate corresponds asymptotically to the Euclidean projection $\hat\mu_n$ of $\bar z_n$ onto $\mathcal M_0$. The **generalized AIC** is
+
 $$\mathrm{AICg}=-2\log L(\hat\theta_n\mid\mathcal Z_n)+2\,\mathbb E_0\bigl[(\bar z_n-\mu_0)^{\mathsf T}(\hat\mu_n-\mu_0)\bigr].$$
+
 For three species under the multispecies coalescent, the rooted gene-tree triplet frequencies $\mathbf p=(p_1,p_2,p_3)$ lie in the open simplex $\Delta^2$; model $T1$ (a fixed species-tree topology) has $\Theta_0=\{p_1\ge p_2=p_3\}$, a segment with a boundary at the star-tree centroid, and model $T3$ (any of the three topologies) is the union of three such segments, with a singularity at the centroid.
 
 **Theorem 3.1.** Under the paper's regularity assumptions (holding for all models above), $\mathbb E_0[\mathrm{AICg}]-\Delta_n(\Theta_0,\theta_0)\to0$ at every $\theta_0\in\Theta_0$, including boundary points and singularities, where $\Delta_n$ is the expected Kullback-Leibler discrepancy targeted by AIC. The usual AIC, with penalty $2\dim\Theta_0$, does not have this property at singular points.

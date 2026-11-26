@@ -3,7 +3,9 @@
 **Model.** Let $x_t$, $y_t$, $z_t$ be adult females, males and supermales at the start of generation $t$. Each generation has an egg stage, in which females produce $c$ offspring that survive the egg stage, fathered by males or supermales in proportion to their numbers, $f_y(y,z) = y/(y+z)$ and $f_z(y,z) = z/(y+z)$, and a maturity stage, in which juveniles survive with density-dependent probability $\rho(cx)$, a fraction $\alpha \in (0,1)$ of surviving offspring of ordinary males become females, all offspring of supermales become males, and $\mu \ge 0$ supermales are released. The survival function satisfies $0 \le \rho \le 1$, $\rho$ decreasing, $\rho(0) = 1$, $\rho(w) \to 0$ as $w \to \infty$. With adult mortalities $m_x, m_y, m_z \in (0,1)$,
 
 $$x_{t+1} = (1-m_x)x_t + \alpha c\rho(cx_t)f_y(y_t,z_t)x_t,$$
+
 $$y_{t+1} = (1-m_y)y_t + (1-\alpha)c\rho(cx_t)f_y(y_t,z_t)x_t + c\rho(cx_t)f_z(y_t,z_t)x_t,$$
+
 $$z_{t+1} = (1-m_z)z_t + \mu.$$
 
 **Theorem 4.1.** The extinction equilibrium $(0, 0, \mu/m_z)$ always exists.

@@ -1,7 +1,9 @@
 # Predation cross-covariance in chemical Langevin predator–prey models
 
 **Setting.** Prey density $N$ and predator density $P$ on $D=(0,\infty)^2$ change through demographic events $k$ with intensities $f_k(x)$ and stoichiometric jumps $\nu_k\in\mathbb R^2$, in a system of size $\Omega$. The diffusion (chemical Langevin) approximation has drift and covariance
+
 $$b(x)=\sum_kf_k(x)\nu_k,\qquad a(x)=\frac1\Omega\sum_kf_k(x)\,\nu_k\nu_k^{\mathsf T},$$
+
 so the drift sees only first stoichiometric moments while the covariance sees second moments. Predation has Holling type II intensity $f_{\rm pred}(x)=\frac{mNP}{1+N}$ and conversion efficiency $e\in(0,1]$.
 
 **Proposition 5.1 (structural cross-covariance).** The predation contribution to the off-diagonal covariance is

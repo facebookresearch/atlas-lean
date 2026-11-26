@@ -1,11 +1,15 @@
 # Singular traveling fronts of the diffusive SIRS model
 
 **Model.** With total population normalized to $1$, diffusion of infected individuals only, and time and space rescaled by the recovery rate and diffusivity,
+
 $$S_t = -\mathcal R_0SI + \delta R, \qquad I_t = \mathcal R_0SI - I + I_{xx}, \qquad R_t = I - \delta R,$$
+
 where $\mathcal R_0 > 1$ and $0 < \delta \ll 1$ is the ratio of the immunity-loss rate to the recovery rate. The homogeneous equilibria are the disease-free state $(1,0,0)$ and the endemic state $\big(\tfrac1{\mathcal R_0}, \tfrac{\delta}{1+\delta}\tfrac{\mathcal R_0 - 1}{\mathcal R_0}, \tfrac{1}{1+\delta}\tfrac{\mathcal R_0-1}{\mathcal R_0}\big)$.
 
 **Traveling-wave reduction.** With $\xi = -(x - ct)$, $J = dI/d\hat\xi$ and the conserved quantity $c(S + I + R) + J = c$, fronts solve the singularly perturbed system in non-standard form
+
 $$\frac{dS}{d\xi} = \frac1c\Big[\delta(1 - S - I) - \mathcal R_0SI - \frac\delta cJ\Big], \qquad \frac{dI}{d\xi} = -J, \qquad \frac{dJ}{d\xi} = cJ + \mathcal R_0SI - I.$$
+
 For $\delta = 0$ (layer problem) the critical manifold is $\mathcal C_0 = \{I = J = 0\}$, and $\Gamma(S,I,J) = -\frac{c}{\mathcal R_0}\log S + c(S + I) + J$ is a constant of motion; on $\mathcal C_0$ the slow flow in $\zeta = \delta\xi$ is $dS/d\zeta = (1 - S)/c$.
 
 **Results.**

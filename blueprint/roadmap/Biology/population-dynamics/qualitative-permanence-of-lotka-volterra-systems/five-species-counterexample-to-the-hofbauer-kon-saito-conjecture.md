@@ -1,6 +1,7 @@
 # Five-species counterexample to the Hofbauer-Kon-Saito conjecture
 
 **Theorem.** Let
+
 $$A = \begin{pmatrix} -1 & 1 & 2 & 0 & 0 \\ -2 & -2 & 0 & 12 & 0 \\ -1 & 0 & -1 & 0 & 0 \\ 0 & 0 & 0 & -1 & -24 \\ 0 & 12 & 0 & 0 & -1 \end{pmatrix}, \qquad r = (1, 3, 3, 1, -2).$$
 
 1. $a_{ii} < 0$ for all $i$, and $A$ satisfies the [cycle conditions (C1) and (C2)](hofbauer-kon-saito-cycle-conditions-for-qualitative-permanence.md).

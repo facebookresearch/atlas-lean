@@ -5,12 +5,15 @@
 **Lemma (single vertex) and Corollary 3.** For any vertex $v$, the number of characters for which $v$ induces monophyly is $c\,(c-1)^{n-|L(v)|}$. The vertices inducing monophyly for a fixed character form an antichain.
 
 **Theorem 4 (general formula).** With $\mathcal A$ the set of nonempty antichains of $T$,
+
 $$m_N(T,c)=\sum_{A\in\mathcal A}(-1)^{|A|+1}\,(c)_{|A|}\,(c-|A|)^{\,n-s(A)},$$
+
 with the convention $(c-|A|)^0=1$; the relevant number $m(T,c)$ is the same sum over antichains of internal vertices.
 
 **Theorem 7 and Theorem 13 (tree shapes).** For the caterpillar $T^{cat}_n$ ($n\ge2$, $c\ge2$), $m(T^{cat}_n,c)=\sum_{j=0}^{n-2}c\,(c-1)^j$, and $fm(T^{cat}_n,c)=c$ independently of $n$ (Corollary 10). For the fully balanced tree of height $h$, $m_N$ and $fm$ are explicit finite sums over antichain-count coefficients, and $fm(T^{fb}_h,c)=fm_N(T^{fb}_{h-1},c)$ (Proposition 15).
 
 **Theorem 19 (binary characters).** If $T=(T_1,T_2)$ is rooted binary with $n\ge2$ leaves and maximal pendant subtrees of sizes $n_1\ge n_2$, then $m(T,2)=2n-4$ if $n_2>1$ and $2n-2$ if $n_2=1$, and $m_N(T,2)=4n-4$. Consequently (Propositions 20 and 21),
+
 $$\mathbb E_{\mathrm{unif}}[m(T_n,2)]=2n-3+\frac{3}{2n-3},\qquad \mathbb E_{\mathrm{Yule}}[m(T_n,2)]=2n-4+2\prod_{i=3}^{n-1}\frac{i-1}{i}.$$
 
 ## Expansion

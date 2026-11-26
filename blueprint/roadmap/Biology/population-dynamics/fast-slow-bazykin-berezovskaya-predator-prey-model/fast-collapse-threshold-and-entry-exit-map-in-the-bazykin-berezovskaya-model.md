@@ -1,7 +1,9 @@
 # Fast collapse threshold and entry–exit map in the Bazykin–Berezovskaya model
 
 **Model.** Prey (resource) $u\in[0,1]$ and predator (production) $v\ge0$ evolve by
+
 $$\dot u=-uv+\varepsilon\,u(u-l)(1-u),\qquad \dot v=-\gamma v(m-u),$$
+
 with Allee threshold $0<l<1$, predator break-even prey level $m>0$, conversion ratio $\gamma>0$ and $0<\varepsilon\ll1$: predation is fast, prey growth slow. The critical manifold is the prey axis $\mathcal C_0=\{v=0\}$, attracting where $u<m$ and repelling where $u>m$.
 
 **Fast subsystem ($\varepsilon=0$).** $\dot u=-uv$, $\dot v=-\gamma v(m-u)$, the susceptible–infected part of an SIR model with $m^{-1}$ playing the role of $R_0$.
@@ -10,7 +12,9 @@ with Allee threshold $0<l<1$, predator break-even prey level $m>0$, conversion r
 - (Proposition 3) Assume $m>l$ and start $\mathcal O(1)$ away from $\mathcal C_0$. Then the fast predation phase drives the prey below the Allee threshold, $u_\infty\le l$, if and only if $v_0\ge\alpha(u_0)$, where $\alpha(u)=\gamma\big(m\log(u/l)-u+l\big)$ is the level curve of $\Gamma$ through $(l,0)$. If $m<(l-1)/\log l$, $\alpha$ is positive exactly on $(l,\tilde u)$ with $\tilde u\in(m,1)$ its unique zero there; if $m>(l-1)/\log l$, $\alpha>0$ exactly for $u_0>l$.
 
 **Entry–exit relation.** For $l<m<1$, an orbit that lands on $\mathcal C_0$ at $u_\infty\in(l,m)$ drifts slowly toward $u=1$, crosses into the repelling part, and leaves $\mathcal C_0$ at the exit point $u_E\in(m,1)$ determined to leading order by
+
 $$l(1-m)\log\frac{1-u_E}{1-u_\infty}+m(l-1)\log\frac{u_E}{u_\infty}+(m-l)\log\frac{u_E-l}{u_\infty-l}=0,$$
+
 the vanishing of the accumulated fast eigenvalue $\int_0^{\tau_E}-\gamma(m-u(\tau))\,d\tau$ along the slow flow. As $u_\infty\to l^+$, $u_E\to1^-$.
 
 ## Expansion

@@ -5,7 +5,9 @@
 **Robustness.** Two systems are *qualitatively equivalent* on regions $\mathbb U,\mathbb V$ if a homeomorphism $\mathbb U\to\mathbb V$ maps trajectories onto trajectories preserving time direction. A system $\dot{\mathbf y}=\mathbf f(\mathbf y)$ is *robust* (structurally stable) on a compact set $\mathbb K$ if every $C^1$ perturbation $\dot{\mathbf z}=\mathbf f(\mathbf z)+\mathbf F(\mathbf z;\mu)$ with $\mathbf F(\cdot;0)=0$ is qualitatively equivalent to it on $\mathbb K$ for all small $\mu>0$.
 
 **Quasi-chemical map (Definition in Section 4).** Given $\dot y_i=f_i(\mathbf y)$ of degree $n$, a vector $\mathbf T\in\mathbb R^N_{>0}$ and a parameter $\mu>0$, set
+
 $$\frac{dx_i}{dt}=q_i\Big(\mathbf x-\frac{\mathbf T}{\mu}\Big)+\frac{\mu}{T_i}\,x_i\Big[f_i\Big(\mathbf x-\frac{\mathbf T}{\mu}\Big)-q_i\Big(\mathbf x-\frac{\mathbf T}{\mu}\Big)\Big],$$
+
 where the $q_i$ are polynomials of degree at most $n$ that are chemical for all small $\mu$; the right-hand side is a chemical vector field of degree $n+1$. The choice $q_i\equiv0$ gives $\dot x_i=\frac{\mu}{T_i}x_i f_i(\mathbf x-\mathbf T/\mu)$.
 
 **Theorem 4.1.** If $\dot{\mathbf y}=\mathbf f(\mathbf y)$ is robust in a compact $\mathbb K\subset\mathbb R^N$, then for every sufficiently small $\mu>0$ the quasi-chemical system on $\mathbb K+\mathbf T/\mu\subset\mathbb R^N_{\ge0}$ is qualitatively equivalent to the original system on $\mathbb K$.

@@ -3,9 +3,11 @@
 In the [heterogeneous-susceptibility SEIR model](final-size-under-heterogeneous-susceptibility.md), let the susceptibility be gamma distributed with shape $p > 0$ and mean $1$, so $\mathrm{Var}(x) = 1/p$, and let $S(t) = \Phi_0(\bar s(t))$ be the total susceptible fraction, $S_\infty = \lim_{t\to\infty}S(t)$.
 
 **Independent infectiousness.** Here $\mathcal R_0 = \beta/\gamma$ and $S^{-1/p} + \mathcal R_0(S + E + I)$ is conserved, so
+
 $$S_\infty^{-1/p} + \frac{\mathcal R_0}{p}S_\infty = 1 + \frac{\mathcal R_0}{p}.$$
 
 **Correlated infectiousness** ($c(x) = \beta x$). Here $\mathcal R_0 = (1 + 1/p)\beta/\gamma$ and
+
 $$\frac{p+1}{\mathcal R_0}S_\infty^{-1/p} + S_\infty^{1 + 1/p} = 1 + \frac{p+1}{\mathcal R_0}.$$
 
 **Theorem.** Let $\mathcal R_0 > 1$.

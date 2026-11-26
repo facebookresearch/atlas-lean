@@ -1,7 +1,9 @@
 # Bounded states theorem for the maximum parsimony distance
 
 **Setting.** For unrooted binary phylogenetic trees $T_1, T_2$ on a taxon set $X$ and a character $\chi : X \to C$, let $\ell(T, \chi)$ be the parsimony score (minimum number of state changes on $T$ over extensions of $\chi$). The *maximum parsimony distance* is
+
 $$d_{\mathrm{MP}}(T_1, T_2) = \max_\chi \bigl|\ell(T_1, \chi) - \ell(T_2, \chi)\bigr| .$$
+
 A character is *convex* on $T$ if $\ell(T, \chi) = |\chi(X)| - 1$, i.e. each state class induces a connected subtree; the maximum is always attained by a character convex on one of the trees (an *optimal convex character*).
 
 **Theorem.**

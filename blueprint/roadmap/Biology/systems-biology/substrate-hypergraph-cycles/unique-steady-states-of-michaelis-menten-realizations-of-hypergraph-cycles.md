@@ -1,7 +1,9 @@
 # Unique steady states of Michaelis-Menten realizations of substrate hypergraph cycles
 
 **Setting.** A *substrate hypergraph* $\mathcal H=(\mathcal S,\mathcal R)$ has a finite set $\mathcal S$ of substrates and a finite set $\mathcal R$ of composite reactions $\rho:t_\rho\to h_\rho$, where the tail $t_\rho$ and head $h_\rho$ are nonnegative integer combinations of substrates. $\mathcal H$ is a **cycle** if it is strongly connected and every substrate is produced by exactly one reaction and consumed by exactly one reaction, each time with coefficient one; equivalently, its dual (reactions as nodes, substrates as edges from producer to consumer) is a strongly connected ordinary directed graph. An *enzyme assignment* $\sigma:\mathcal R\to\{0,1,\dots,m\}$ attaches to each reaction an enzyme $E_{\sigma(\rho)}$, possibly shared with other reactions, or none ($\sigma(\rho)=0$). The **Henri-Michaelis-Menten (HMM) realization** replaces each reaction by the mass-action module
+
 $$E_{\sigma(\rho)}+t_\rho\ \underset{k_\rho^-}{\overset{k_\rho^+}{\rightleftarrows}}\ C_\rho\ \xrightarrow{\ k_\rho\ }\ E_{\sigma(\rho)}+h_\rho$$
+
 with an intermediate complex $C_\rho$ and positive rate constants (enzyme-free reactions omit $E$). A stoichiometric compatibility class is *positive* if it contains a strictly positive point; its state vector $u$ collects substrates, free enzymes and intermediates, with mass-action vector field $f$.
 
 **Theorem 1.1 (main theorem).** Let $\mathcal H$ be a finite substrate hypergraph cycle. For every enzyme assignment and all positive rate constants:

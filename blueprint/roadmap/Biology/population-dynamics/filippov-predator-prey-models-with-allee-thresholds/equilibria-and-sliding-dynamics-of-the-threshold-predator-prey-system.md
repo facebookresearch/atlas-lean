@@ -20,6 +20,7 @@ and switching boundaries $\Sigma_{(i,j)}$ between adjacent regions. The candidat
 **Proposition 1 (sliding).** No switching line has an attracting sliding segment; sliding is only of escaping type, on
 
 $$\Sigma_{e,(1,2)} = \{N = N_a,\ P_a < P < \tfrac ra(1 - \tfrac{N_a}{K})\},\quad \Sigma_{e,(2,3)} = \{\tfrac{m}{ab} < N < N_a,\ P = P_a\},$$
+
 $$\Sigma_{e,(3,4)} = \{N = N_a,\ 0 < P < P_a,\ N_a < K\},\quad \Sigma_{e,(4,1)} = \{N > \max(N_a, \tfrac{m}{ab}),\ P = P_a\}$$
 
 (each set taken where it is non-empty).

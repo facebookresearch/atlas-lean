@@ -3,11 +3,15 @@
 **Setting.** Consider a mass-action reaction network with $n$ species, stoichiometric matrix $\Gamma$ of rank $s<n$ (so $n-s$ conserved totals), ODE $\dot c=\Gamma r(k,c)$ and reaction-diffusion system $\partial_t c=\Gamma r(k,c)+D\Delta c$ on a bounded domain $\Omega\subset\mathbb{R}^d$, $d\in\{1,2,3\}$, with Neumann boundary conditions and $D=\operatorname{diag}(d_1,\dots,d_n)$, $d_i>0$. Let $\bar c>0$ be a steady state, $J=J(\bar c)$ the Jacobian (rank $s$), and $A(\mu)=J-\mu D$. The homogeneous state is linearly unstable in the PDE if some $A_\ell=J-\mu_\ell D$ has an eigenvalue with positive real part, where $0=\mu_0<\mu_1\le\mu_2\le\cdots$ are the Neumann eigenvalues of $-\Delta$ on $\Omega$.
 
 **Determinant structure (Lemma 3.1).** $\det A(\mu)=\det D\cdot\det(JD^{-1}-\mu I_n)$, i.e. up to the positive constant $\det D$ it is the characteristic polynomial of $JD^{-1}$; it is not identically zero, and with the $n-s$ conservation laws
+
 $$\det A(\mu)=\det D\;\mu^{n-s}\big(a_0\mu^s+a_1\mu^{s-1}+\cdots+a_{s-1}\mu+a_s\big).$$
+
 If $\operatorname{sign}\det A(\mu)=(-1)^{n+1}$ then $A(\mu)$ has an odd number (at least one) of positive real eigenvalues (Corollary 3.3).
 
 **Theorem 3.4.** Suppose
+
 $$\operatorname{sign}(a_0)=(-1)^n,\qquad \operatorname{sign}(a_s)=(-1)^{n+1},$$
+
 and let $\bar\mu>0$ be the smallest positive root of $\det A(\mu)=0$. If $\Omega$ is simply connected and
 - $d=1$ (interval): $|\Omega|>\pi/\sqrt{\bar\mu}$;
 - $d=2$: $|\Omega|>p_{1,1}^2\,\pi/\bar\mu$, with $p_{1,1}\approx1.8412$ the first positive zero of $J_1'$;

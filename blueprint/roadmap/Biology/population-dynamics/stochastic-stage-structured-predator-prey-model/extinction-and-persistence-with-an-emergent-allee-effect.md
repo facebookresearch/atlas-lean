@@ -3,6 +3,7 @@
 **Model.** Juvenile prey $x$, adult prey $y$ and predators $z$ satisfy the Itô system
 
 $$dx = \bigl(\beta y - \varphi(x)x - \mu_x x\bigr)dt - \sigma_x x\,dB_x, \qquad dy = \bigl(\varphi(x)x - \mu_y y - yz\bigr)dt - \sigma_y y\,dB_y,$$
+
 $$dz = z(\alpha y - \mu_z)\,dt - \sigma_z z\,dB_z ,$$
 
 with birth rate $\beta$, maturation function $\varphi$ (for persistence results $\varphi(x) = \kappa/(1+x)$, which saturates maturation and produces an emergent Allee effect), mortalities $\mu_x, \mu_y, \mu_z$, conversion $\alpha$, and independent Brownian motions with intensities $\sigma_x,\sigma_y,\sigma_z$.

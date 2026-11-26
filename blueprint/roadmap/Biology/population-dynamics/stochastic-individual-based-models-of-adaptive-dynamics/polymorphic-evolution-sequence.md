@@ -5,9 +5,13 @@
 **Coexistence.** Two traits $x, y$ coexist if and only if $f(x,y) > 0$ and $f(y,x) > 0$, or $f(x,y)=f(y,x)=0$.
 
 **Theorem (Champagnat–Méléard).** Suppose that for every set of coexisting traits the Lotka–Volterra system started with an invading mutant converges to a unique stable equilibrium $\bar n^*$. Let $x_1,\dots,x_d$ coexist, let $\nu^K_0 \to \sum_i \bar n_{x_i}(\mathbf{x})\,\delta_{x_i}$ almost surely, and let the mutation probability $u_K$ satisfy
+
 $$e^{-VK} \ll u_K \ll \frac{1}{K \ln K} \qquad \text{for all } V>0 .$$
+
 Then $(\nu^K_{t/(K u_K)})_{t \ge 0}$ converges in finite-dimensional distributions to the pure-jump measure-valued process $\Lambda$, the *polymorphic evolution sequence*, with $\Lambda_0 = \sum_{x \in \mathbf{x}} \bar n_x(\mathbf{x})\delta_x$, which jumps from $\sum_{x \in \mathbf{x}} \bar n_x(\mathbf{x})\delta_x$ to $\sum_{x \in \mathbf{x}\cup\{y\}} \bar n^*_x(\mathbf{x}\cup\{y\})\delta_x$ at rate
+
 $$\sum_{x \in \mathbf{x}} p(x)\, b(x)\, \bar n_x(\mathbf{x})\, \frac{[f(y,\mathbf{x})]_+}{b(y)}\, m(x,dy).$$
+
 When only monomorphic states are visited this reduces to the trait substitution sequence.
 
 ## Depends on

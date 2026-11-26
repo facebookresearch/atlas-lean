@@ -3,7 +3,9 @@
 **Setting.** The $(\gamma,\nu)$-EpiSLFV process on $\mathbb R^d$ with recovery rate $\gamma$ and event measure $\nu(dr,du)=\delta_{\mathcal R}(dr)\,\mu(du)$: every infection event has the same radius $\mathcal R>0$ and its impact $u\in(0,1]$ is drawn from a finite measure $\mu$. Its reproduction number is $\mathrm R_0=\gamma^{-1}V_{\mathcal R}\int_0^1u\,\mu(du)$, where $V_{\mathcal R}$ is the volume of a ball of radius $\mathcal R$.
 
 **Theorem.** There is a constant $\mathrm R_0^{\max}(d)\ge 1$ depending only on the dimension such that for all $\gamma,\mathcal R>0$, every finite $\mu$ and every endemic initial condition (healthy density bounded away from $1$ almost everywhere), if
+
 $$\mathrm R_0(\gamma,\delta_{\mathcal R}\mu)>\mathrm R_0^{\max}(d),$$
+
 then the EpiSLFV process does not go extinct: the expected infected mass on compact sets of positive volume does not tend to $0$.
 
 **Dual statement.** Under the same condition the ancestral process of infected lineages started from one lineage at the origin survives forever with positive probability.

@@ -1,11 +1,15 @@
 # Law of large numbers for multistage Michaelis–Menten kinetics
 
 **Model.** A substrate $S$ binds an enzyme $E$ and is converted to a product $P$ through a cascade of $r$ intermediate complexes,
+
 $$S+E \rightleftharpoons C_1 \rightleftharpoons C_2 \rightleftharpoons\cdots\rightleftharpoons C_r \to E + P,$$
+
 with forward rates $\kappa_i$, backward rates $\kappa_{-i}$ and catalytic rate $\kappa_P$. The copy numbers form a continuous-time Markov chain (written as jump SDEs driven by Poisson random measures) with mass-action propensities; the total enzyme $M = X_E+\sum_iX_{C,i}$ is conserved and of order one. Under a multiscale scaling with parameter $n$, substrate and product are abundant (rescaled as $Z_S^{(n)}, Z_P^{(n)}$) while enzyme and complexes are rare and fast; $\Gamma_n$ denotes the occupation measure of the fast enzyme states.
 
 **Theorem.** If $Z_V^{(n)}(0) = (Z_S^{(n)}(0), Z_P^{(n)}(0)) \to Z_V(0)\in\mathbb{R}^2_{>0}$ deterministically, then $(\Gamma_n, Z_V^{(n)})$ converges in probability to $(\pi_{Z_S}\otimes\mathrm{Leb},\, Z_V)$, where $\pi_{z}$ is the stationary distribution of the fast enzyme subsystem when the substrate level is frozen at $z$, and $Z_V=(Z_S,Z_P)$ solves
+
 $$\dot Z_S = -h(Z_S), \qquad \dot Z_P = h(Z_S), \qquad h(y) = \frac{M\,c_3\,y}{c_1y + c_2},$$
+
 for positive constants $c_1, c_2, c_3$ determined by the rate constants of the cascade (for $r=1$ this is the classical Michaelis–Menten rate $M\kappa_P y/(y + (\kappa_{-1}+\kappa_P)/\kappa_1)$).
 
 ## Expansion

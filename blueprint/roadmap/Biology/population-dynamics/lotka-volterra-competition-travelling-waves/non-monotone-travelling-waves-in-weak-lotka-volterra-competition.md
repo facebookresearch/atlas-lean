@@ -1,9 +1,13 @@
 # Non-monotone travelling waves in weak Lotka–Volterra competition
 
 **Setting.** Consider the competition–diffusion system
+
 $$u_t=u_{xx}+u(1-u-cv),\qquad v_t=dv_{xx}+v(a-bu-v),\qquad d,a,b,c>0,$$
+
 in the strict weak-competition regime $b<a<1/c$, where the coexistence equilibrium is
+
 $$(u^*,v^*)=\Big(\frac{1-ac}{1-bc},\ \frac{a-b}{1-bc}\Big)\in(0,\infty)^2 .$$
+
 A travelling wave $(u,v)(\xi)$, $\xi=x+st$, solves $u''-su'+u(1-u-cv)=0$, $dv''-sv'+v(a-bu-v)=0$ with $(u,v)(-\infty)=(0,0)$ and $(u,v)(+\infty)=(u^*,v^*)$. Let $s^*=\max\{2,2\sqrt{ad}\}$.
 
 **Proposition 1.1 (Tang–Fife; minimal speed).** For every $d>0$ and $a,b,c$ with $b<a<1/c$, a travelling wave exists if and only if $s\ge s^*$ (Theorem A.1 rules out $0<s<s^*$).

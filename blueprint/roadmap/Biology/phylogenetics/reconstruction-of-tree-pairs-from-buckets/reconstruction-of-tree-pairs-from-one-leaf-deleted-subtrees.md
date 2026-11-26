@@ -1,7 +1,9 @@
 # Reconstruction of a pair of phylogenetic trees from its $(n-1)$-bucket
 
 **Setting.** A rooted phylogenetic tree on $n$ leaves is *labelled* when its leaves are bijectively labelled by a taxon set $X$ ($|X| = n$) and *unlabelled* otherwise. For $Y \subseteq X$ the subtree $T|_Y$ is the minimal connected subgraph containing the leaves in $Y$, with vertices of in- and out-degree $1$ suppressed (for unlabelled trees, take all $k$-leaf such subgraphs). The *$k$-multideck* $M_k(T)$ is the multiset of all $k$-leaf subtrees of $T$, and the *$k$-bucket* of a pair is the multiset union
+
 $$B_k(\{T_1, T_2\}) = M_k(T_1) \uplus M_k(T_2).$$
+
 The unordered pair $\{T_1, T_2\}$ is *recoverable from its $k$-bucket* if $B_k(\{T_1,T_2\}) = B_k(\{T_3,T_4\})$ implies $\{T_1,T_2\} = \{T_3,T_4\}$. The *root balance* of a rooted binary tree is the number of leaves of the smaller of the two subtrees hanging from the root.
 
 **Theorem (monotonicity).** For $j \le k$, $B_j(\{T_1,T_2\})$ is determined by $B_k(\{T_1,T_2\})$.

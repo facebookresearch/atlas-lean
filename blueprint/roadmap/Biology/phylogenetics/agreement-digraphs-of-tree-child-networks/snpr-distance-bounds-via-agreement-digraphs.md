@@ -1,10 +1,13 @@
 # SNPR distance bounds via agreement digraphs
 
 **Definitions.** Let $\mathcal N,\mathcal N'$ be rooted binary tree-child networks on $X$ with root $\rho$ (every non-leaf vertex has a child that is a tree vertex or leaf). A collection $\mathcal D=\{D_\rho,D_1,\dots,D_k\}$ of leaf-labelled acyclic digraphs is a phylogenetic digraph of $\mathcal N$ if the leaf sets of its elements partition $X$, only $D_\rho$ contains $\rho$ (as an isolated vertex or the unique source, of out-degree one), and $\mathcal D$ has an embedding in $\mathcal N$. Growing the embedded pieces along edges of $\mathcal N$ gives an extension $\mathcal R$ of $\mathcal D$ in $\mathcal N$. The cut size $c_{\mathcal D}$ is the number of edges of $\mathcal N$ not in an extension; it does not depend on the extension chosen. $\mathcal D$ is an agreement digraph of $\mathcal N$ and $\mathcal N'$ if it is a phylogenetic digraph of both, and an agreement tree-child digraph if, in addition, it is tree-child. Let
+
 $$m_{\rm tc}(\mathcal N,\mathcal N')=\min_{\mathcal D}\big(c_{\mathcal D}+c'_{\mathcal D}\big)$$
+
 over agreement tree-child digraphs. An SNPR operation on a network either deletes or adds a reticulation edge, or prunes a subnetwork and regrafts it elsewhere. Let $d_{\rm tc}(\mathcal N,\mathcal N')$ be the minimum total weight of a sequence of SNPR operations transforming $\mathcal N$ into $\mathcal N'$ through tree-child networks, where adding or deleting a reticulation edge costs $1$ and a prune-and-regraft costs $2$.
 
 **Theorem.** For binary tree-child networks $\mathcal N,\mathcal N'$ on $X$,
+
 $$\tfrac12\,m_{\rm tc}(\mathcal N,\mathcal N')\ \le\ d_{\rm tc}(\mathcal N,\mathcal N')\ \le\ m_{\rm tc}(\mathcal N,\mathcal N').$$
 
 When $\mathcal N,\mathcal N'$ are trees, agreement digraphs are agreement forests and $c_{\mathcal D}=c'_{\mathcal D}$ equals the number of non-root components, so the bounds relate to the classical characterization of the rSPR distance by maximum agreement forests.

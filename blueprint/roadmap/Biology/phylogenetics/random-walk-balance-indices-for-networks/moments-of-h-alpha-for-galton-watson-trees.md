@@ -4,7 +4,9 @@
 
 **Theorem.**
 1. $\mathbb E[H_\alpha(T)] < \infty$ if and only if $\kappa_\alpha := \mathbb E\bigl[\xi^{1-\alpha} \mathbf 1_{\{\xi \ne 0\}}\bigr] < 1$, and then
+
 $$\mathbb E[H_\alpha(T)] = \frac{1}{1 - 2^{1-\alpha}} \cdot \frac{\mathbb E\bigl[(1 - \xi^{1-\alpha})\mathbf 1_{\{\xi \ne 0\}}\bigr]}{1 - \kappa_\alpha}.$$
+
 2. $\mathrm{Var}(H_\alpha(T)) < \infty$ if and only if $\kappa_\alpha < 1$ and $\mathbb E\bigl[\xi^{2(1-\alpha)}\mathbf 1_{\{\xi \ne 0\}}\bigr] < \infty$.
 3. For every integer $m \ge 1$, $\mathbb E[H_\alpha(T)^m] < \infty$ if and only if $\kappa_\alpha < 1$ and $\mathbb E\bigl[\xi^{(1-\alpha)m}\mathbf 1_{\{\xi \ne 0\}}\bigr] < \infty$.
 

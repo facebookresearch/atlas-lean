@@ -1,9 +1,13 @@
 # Spectral-radius criteria for metacommunity coexistence
 
 **Setting.** On a compact habitat $\Omega$, two species compete for empty sites:
+
 $$\partial_tu=-\tau(x)u+(1-u-v)\int_\Omega c(x,y)u(t,y)\,dy,\qquad \partial_tv=-\sigma(x)v+(1-u-v)\int_\Omega\gamma(x,y)v(t,y)\,dy,$$
+
 with continuous positive extinction rates $\tau,\sigma$ and colonization kernels $c,\gamma$, and $u_0+v_0\le1$. Define the first-generation operators and the occupancy scaling on $L^\infty(\Omega,\mathbb R_+)$:
+
 $$\mathcal T_u g(x)=\int_\Omega\frac{c(x,y)g(y)}{\tau(y)}dy,\qquad \mathcal T_vg(x)=\int_\Omega\frac{\gamma(x,y)g(y)}{\sigma(y)}dy,\qquad \mathcal S_pg(x)=(1-p(x))g(x),$$
+
 and let $r(\cdot)$ denote spectral radius. If $r(\mathcal T_u)>1$, species $u$ alone has a unique positive equilibrium $\bar u$ that attracts every nonzero initial condition (the single-species threshold theorem, Theorem 2.6, from Delmas–Dronnier–Zitt); similarly $\bar v$.
 
 **Theorems 2.7–2.9 and Proposition 2.10.**

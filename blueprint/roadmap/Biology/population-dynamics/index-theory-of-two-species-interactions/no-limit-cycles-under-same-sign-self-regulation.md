@@ -7,7 +7,9 @@
 ## Expansion
 
 Use the Dulac function $B(x,y)=1/(xy)$. Then
+
 $$\frac{\partial}{\partial x}\Big(\frac{xf}{xy}\Big)+\frac{\partial}{\partial y}\Big(\frac{yg}{xy}\Big)=\frac{1}{y}\frac{\partial f}{\partial x}+\frac{1}{x}\frac{\partial g}{\partial y},$$
+
 which has one sign in the open quadrant and does not vanish identically on any open set under the hypothesis, so the Bendixson-Dulac criterion forbids closed orbits there. Thus purely competitive self-regulation, or purely positive self-density-dependence in both species, cannot generate oscillations whatever the (possibly density-dependent, mutualistic or parasitic) interspecific terms; sustained mutualistic cycles require at least one species whose own density effect changes sign, or opposite-sign self-effects in the two species.
 
 ## Sources

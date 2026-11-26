@@ -1,7 +1,9 @@
 # Height metaconcept for tree balance and the maximal B1 index
 
 **Setting.** Let $T$ be a rooted tree with $n$ leaves, root $\rho$ and inner vertices $\mathring V(T)$; for a vertex $v$, $T_v$ is the pending subtree rooted at $v$ and $h(T_v)$ its height (the number of edges on a longest path from $v$ to a leaf below it). The **height sequence** $\mathcal H(T)$ lists the heights $h(T_v)$, $v\in\mathring V(T)$, in increasing order (it has $n-1$ entries when $T$ is binary). For a function $f:\mathbb N_{\ge1}\to\mathbb R$, the **height metaconcept** is
+
 $$\Phi^{\mathcal H}_f(T)=\sum_{v\in\mathring V(T)} f\bigl(h(T_v)\bigr),$$
+
 which satisfies the recursion $\Phi^{\mathcal H}_f(T)=\sum_{i=1}^k\Phi^{\mathcal H}_f(T_i)+f(\max_i h_i+1)$ for $T=(T_1,\dots,T_k)$ with subtree heights $h_i$ (Proposition 3.24). Shao and Sokal's **$B_1$ index** is $B_1(T)=\sum_{v\in\mathring V(T)\setminus\{\rho\}}1/h(T_v)$. The *greedy-from-the-bottom tree* $T^{gfb}_n$ is the binary tree obtained by starting from $n$ single vertices and repeatedly joining two trees of minimal leaf number; write $n=2^{h_n}+p_n$ with $h_n=\lfloor\log_2 n\rfloor$ and $0\le p_n<2^{h_n}$. An imbalance index is a function minimized exactly by the most balanced trees and maximized by the caterpillar $T^{cat}_n$.
 
 **Theorem 3.2.** $\Phi^{\mathcal H}_f$ is an imbalance index on rooted trees whenever $f$ is strictly increasing and *1-positive* ($f(x)>0$ for all $x\ge1$), and a binary imbalance index whenever $f$ is strictly increasing. For strictly increasing 1-positive $f$ the caterpillar is the unique maximizer over all rooted trees, with value $\sum_{i=1}^{n-1}f(i)$ (Theorem 3.4, Corollary 3.20).

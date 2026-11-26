@@ -5,7 +5,9 @@
 The *OLA distance* $d_{\mathrm{OLA}}(T,T')$ between two trees in $\widehat{\mathcal{RBT}}_n$ is the Hamming distance between their OLA codes.
 
 **Statement.** Let $n\ge4$, let $T\in\widehat{\mathcal{RBT}}_n$ be fixed and let $T'$ be obtained from $T$ by a nearest-neighbor interchange (NNI) move chosen uniformly at random among the NNI moves of $T$. Then
+
 $$\mathbb E\bigl[d_{\mathrm{OLA}}(T,T')\bigr]\le 4 .$$
+
 In the worst case, however, a single NNI move can change $n-2$ of the $n-1$ entries, the maximum possible since $a_1=0$ for every tree; so $d_{\mathrm{OLA}}$ is not within a constant factor of the NNI distance. For subtree prune and regraft (SPR) moves it is conjectured that $\mathbb E[d_{\mathrm{OLA}}(T,T')]=O(\mathrm{height}(T))$.
 
 ## Depends on
@@ -15,7 +17,9 @@ In the worst case, however, a single NNI move can change $n-2$ of the $n-1$ entr
 ## Expansion
 
 An NNI move contracts an internal edge between nodes with canonical labels $-j$ and $-k$ (with $-k$ above) and re-expands it in one of the two other ways. If after the move the upper node still carries label $-k$, only the entry $a_j$ changes, so the distance is exactly $1$. If the labels swap, the changed entries are $a_j$, $a_k$, or entries $a_\ell=-k$ of leaves attached just above the modified edge, so $d_{\mathrm{OLA}}(T,T')\le 1+c_k$, where $c_k$ is the number of entries of the code of $T$ equal to $-k$. A tree with $n$ leaves has $2n-4$ NNI neighbours and at most four of them have upper node $-k$, while $\sum_k c_k\le n-1$. Hence
+
 $$\mathbb E\bigl[d_{\mathrm{OLA}}(T,T')\bigr]\le 1+\frac{4}{2n-4}\sum_k c_k\le 1+\frac{4n-4}{2n-4}\le 4\quad (n\ge4).$$
+
 The worst case is a caterpillar-like tree in which swapping the two lowest internal labels changes the recorded sibling of every later leaf.
 
 ## Sources

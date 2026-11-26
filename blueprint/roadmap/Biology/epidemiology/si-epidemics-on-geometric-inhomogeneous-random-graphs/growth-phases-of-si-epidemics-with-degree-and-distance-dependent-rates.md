@@ -1,6 +1,7 @@
 # Growth phases of SI epidemics with degree- and distance-dependent rates
 
 **Network.** A GIRG with parameters $\tau>2$, $\alpha>1$ and dimension $d\ge1$: vertices form a unit-intensity Poisson process on a volume-$n$ torus (or box) in $\mathbb R^d$, each vertex gets an i.i.d. weight $W_v$ with power-law tail of exponent $\tau$ (so degrees have power-law exponent $\tau$), and $u,v$ are joined independently with probability
+
 $$p_{uv}=c\,\min\Big\{\frac{W_uW_v}{\|u-v\|^d},1\Big\}^{\alpha}.$$
 
 **Epidemic.** An SI process starts from one vertex; across an edge $\{u,v\}$ infection passes at rate $(W_uW_v)^{-\mu}\|u-v\|^{-\zeta}$ with $\mu,\zeta\ge0$ (busy hubs and long links transmit more slowly). Let $I(t)$ be the number of vertices infected by time $t$.

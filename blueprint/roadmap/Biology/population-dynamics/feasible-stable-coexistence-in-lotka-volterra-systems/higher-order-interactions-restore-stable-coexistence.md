@@ -1,6 +1,7 @@
 # Higher-order interactions restore stable coexistence
 
 **Higher-order Lotka-Volterra systems.** Allow interactions among several species at once:
+
 $$\dot x_i=x_i\Big(r_i+\sum_jS^1_{ij}x_j+\sum_{j,k}S^2_{ijk}x_jx_k+\dots+\sum_{j_1,\dots,j_{d-1}}S^{d-1}_{ij_1\cdots j_{d-1}}x_{j_1}\cdots x_{j_{d-1}}\Big).$$
 
 **Theorem (stabilization).** For any $n\ge1$ and **arbitrary** growth rates $r\in\mathbb R^n$ and pairwise coefficients $S^1\in\mathbb R^{n\times n}$, there are third- and fourth-order tensors $S^2,S^3$ such that the resulting system has a feasible asymptotically stable equilibrium at $\mathbf 1=(1,\dots,1)$. Hence every pairwise sign obstruction ("impossible ecology") disappears once higher-order interactions are allowed.

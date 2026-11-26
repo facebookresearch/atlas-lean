@@ -18,7 +18,9 @@ with all parameters positive. The physically meaningful states form $D=\{(P,Q):0
 4. $D$ lies in the basin of attraction of $(P^*,Q^*)$.
 
 The Jacobian at $(P^*,Q^*)$ has two distinct negative eigenvalues $-\lambda$ and $-\mu$ with $0<\lambda<\mu$, so trajectories first approach a slow manifold and then slide along it. When $k_1=k_2$ and $k_{-1}=k_{-2}$,
+
 $$\lambda=k_1(R_0-P^*-Q^*),\qquad\mu=\lambda+k_1(L_0+X_0-P^*-Q^*),$$
+
 and the slow and fast manifolds are the lines $P+Q=P^*+Q^*$ and $Q^*P-P^*Q=0$. When binding is much faster than unbinding ($k_1R_0\gg k_{-1}$, $k_2R_0\gg k_{-2}$), receptors fill quickly and the subsequent competition is slow, which is the regime used to fit viability measurements over time and to derive $IC_{50}(t)$ curves.
 
 ## Expansion

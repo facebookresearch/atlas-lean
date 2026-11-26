@@ -6,7 +6,9 @@
 1. Every linear RAD model with $m$ states reduces to polynomial input–output relations involving derivatives of order at most $4(m-1)$ in the output.
 2. The identifiable parameter combinations of a linear spatially homogeneous model (the ODE obtained without advection and diffusion) form a subset of the identifiable combinations of every corresponding spatially heterogeneous model with linear advection and/or diffusion and general unknown initial conditions. Adding spatial structure never loses identifiability.
 3. *(Example: cell-cycle model.)* For cells in two phases, $r_t = D_1 r_{xx} - k_1 r + 2k_2 g$ and $g_t = D_2 g_{xx} + k_1 r - k_2 g$, observed only through $n = r + g$, the input–output equation is
+
 $$0 = -k_1 k_2\, n + (k_1 + k_2)\, n_t + n_{tt} - (D_2 k_1 + D_1 k_2)\, n_{xx} - (D_1 + D_2)\, n_{xxt} + D_1 D_2\, n_{xxxx},$$
+
 so $k_1 k_2$, $k_1 + k_2$, $D_2 k_1 + D_1 k_2$, $D_1 + D_2$ and $D_1 D_2$ are identifiable, and hence all four parameters are locally identifiable, whereas without diffusion only $k_1 k_2$ and $k_1 + k_2$ are.
 
 ## Expansion

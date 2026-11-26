@@ -9,7 +9,9 @@
 Two parameters $(h_i,\theta_i)$, $(\hat h_i,\hat\theta_i)$ of node $i$ are adjacent if either $\theta_i=\hat\theta_i$ and exactly one component $h_i^j$ differs at exactly one input (logic adjacency), or $h_i=\hat h_i$ and $\theta_i,\hat\theta_i$ differ by swapping two consecutive values $k,k+1$ on which $h_i^k=h_i^{k+1}$ (order adjacency). The resulting factor graphs $\mathrm{PG}(i)$ combine into the *DSGRN parameter graph* $\mathrm{PG}=\prod_i\mathrm{PG}(i)$ (Cartesian product of graphs). Its size and shape depend only on in- and out-degrees, not on $\delta$.
 
 **Multilevel dynamics.** For $p=(h,\theta)$ the state space is $\mathcal{D}=\prod_i\{0,1,\dots,m_i\}$. For an edge $(i,j)$ set $\mu_i^j(d_i)=1$ if $d_i\ge\theta_i(j)$ and $0$ otherwise, and let $B_i^j(d)=\mu_i^j(d_i)$ if $\delta(i,j)=1$ and $\neg\mu_i^j(d_i)$ if $\delta(i,j)=-1$. The multilevel update is
+
 $$g_i(d)=\big|\{\,j\in\mathrm{T}(i): h_i^j(B^i(d))=1\,\}\big|\in\{0,\dots,m_i\},$$
+
 and the *nearest neighbor asynchronous update* $\mathcal{G}:\mathcal{D}\rightrightarrows\mathcal{D}$ sets $\mathcal{G}(d)=\{d\}$ if $g(d)=d$, and otherwise moves one coordinate $i$ by one step $\pm1$ toward $g_i(d)$.
 
 **Boolean parameters.** A monotone Boolean model $f$ for $RN$ corresponds to the $\prod_i m_i!$ parameter nodes with $h_i^j=\tilde h_i$ for all $j$, where $\tilde h_i$ is the increasing version of $f_i$ after composing with the edge signs; these form the *DSGRN Boolean parameter graph*, a proper subgraph of $\mathrm{PG}$.

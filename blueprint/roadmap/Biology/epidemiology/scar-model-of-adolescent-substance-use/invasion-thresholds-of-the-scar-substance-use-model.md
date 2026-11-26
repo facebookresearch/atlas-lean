@@ -3,7 +3,9 @@
 **Model.** A school population is split into susceptible $S$, casual users $C$, addicted (problematic) users $A$ and resistant students $R$, $N = S + C + A + R$. Students enter at rate $\mu N$ (a fraction $\rho$ directly resistant) and leave at rate $\mu$; problematic users drop out at rate $\delta$, a fraction $\phi$ re-entering as susceptible. All social interactions use standard incidence:
 
 $$\dot S = \mu(1-\rho)N - \frac{\beta_{CS}CS + \beta_{AS}AS + \beta_{RS}RS - \beta_{RC}RC}{N} - \mu S + \phi\delta A,$$
+
 $$\dot C = \frac{\beta_{CS}CS + \beta_{AS}AS - \beta_{RC}RC - \beta_{AC}AC + \beta_{RA}AR}{N} - \mu C,$$
+
 $$\dot A = \frac{\beta_{AC}AC - \beta_{RA}AR}{N} - (\mu + \delta)A, \qquad \dot R = \mu\rho N + \frac{\beta_{RS}RS}{N} - \mu R .$$
 
 Solutions stay non-negative with $\dot N = -(1-\phi)\delta A \le 0$. In scaled fractions $(x,y,z,w) = (S,C,A,R)/N$:

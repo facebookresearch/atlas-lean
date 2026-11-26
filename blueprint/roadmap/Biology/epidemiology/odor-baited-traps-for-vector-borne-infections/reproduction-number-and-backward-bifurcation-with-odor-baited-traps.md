@@ -3,6 +3,7 @@
 **Model.** Hosts $(S_H, I_H, R_H)$ and mosquitoes $(S_M, I_M)$ interact while $L$ odor-baited traps compete with hosts for mosquito visits; $A$ denotes the total attractiveness of hosts and traps (host attractiveness $\alpha$ each), $b\rho$ the trap capture-and-kill rate:
 
 $$S_H' = \Lambda_H - dS_H - \beta_H\alpha\frac{I_M}{A}S_H + \delta R_H, \qquad I_H' = \beta_H\alpha\frac{I_M}{A}S_H - (d + \gamma + \xi)I_H, \qquad R_H' = \gamma I_H - (\delta + d)R_H,$$
+
 $$S_M' = \Lambda_M - \mu S_M - \beta_M\frac{I_H}{A}S_M - b\rho S_M\frac{L}{A}, \qquad I_M' = \beta_M\frac{I_H}{A}S_M - \mu I_M - b\rho I_M\frac{L}{A},$$
 
 with recovery $\gamma$, disease mortality $\xi$, waning immunity $\delta$, and trap-free equilibria $\bar N_H = \Lambda_H/d$, $\bar N_M = \Lambda_M/\mu$. The region $\{S_H + I_H + R_H \le \bar N_H,\ S_M + I_M \le \bar N_M\}$ is positively invariant and attracting.

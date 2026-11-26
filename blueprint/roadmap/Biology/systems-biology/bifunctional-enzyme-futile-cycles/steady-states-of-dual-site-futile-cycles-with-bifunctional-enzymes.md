@@ -1,8 +1,11 @@
 # Steady states of dual-site futile cycles with bifunctional enzymes
 
 **Model.** A substrate is phosphorylated in two steps by a kinase $E$ and dephosphorylated by bifunctional compounds $\mathcal E_1, \mathcal E_2 \in \{C_1, C_2\}$:
+
 $$S_0 + E \rightleftarrows C_1 \to S_1 + E, \qquad S_1 + E \rightleftarrows C_2 \to S_2 + E,$$
+
 $$S_1 + \mathcal E_1 \rightleftarrows C_4 \to S_0 + \mathcal E_1, \qquad S_2 + \mathcal E_2 \rightleftarrows C_3 \to S_1 + \mathcal E_2,$$
+
 under mass action, with conserved totals $T_e$ (enzyme) and $T_s$ (substrate). The four networks are denoted $(E,E,\mathcal E_2,\mathcal E_1)$. Write $k_i^*$ for the effective constants built from the rate constants of step $i$ (an absolute concentration robustness, ACR, value has the form $k_i/k_j^*$).
 
 **Theorem.**

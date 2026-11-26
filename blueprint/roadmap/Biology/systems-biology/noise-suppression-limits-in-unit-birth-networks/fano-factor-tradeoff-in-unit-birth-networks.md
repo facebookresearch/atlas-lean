@@ -1,7 +1,9 @@
 # Fano-factor tradeoff in unit-birth networks
 
 **Model.** A continuous-time Markov chain $X$ on $\mathbb Z_{\ge0}^N$, $N\ge2$, with generator
+
 $$(L\varphi)(x)=\sum_{i=1}^Nf_i(x_{-i})\big(\varphi(x+e_i)-\varphi(x)\big)+\sum_{i=1}^N\frac{x_i}{\tau_i}\big(\varphi(x-e_i)-\varphi(x)\big):$$
+
 component $i$ is produced one molecule at a time at a rate $f_i\ge0$ that may depend on all other components but not on $x_i$ itself, and degraded linearly with lifetime $\tau_i>0$. Noise is measured by the Fano factor $F_{X_i}=\operatorname{Var}_\pi X_i/\mathbb E_\pi X_i$ under the stationary law $\pi$ (Poisson baseline $1$). Write $\mu_i=\mathbb E_\pi f_i(X_{-i})$.
 
 **Theorem.** Under standing hypotheses (irreducibility and a stationary law, finite second moments, positive mean birth rates, and at most linear growth of the total jump rate):
@@ -10,7 +12,9 @@ component $i$ is produced one molecule at a time at a rate $f_i\ge0$ that may de
 3. $\sum_i\dot I_{X_i}=0$.
 
 Consequently, for **any** network topology and rate functions,
+
 $$\sum_{i=1}^N\frac{F_{X_i}-1}{\tau_i}\ \ge\ 0,$$
+
 so uniform sub-Poissonian suppression is impossible: if $F_{X_k}<1$ for some $k$, then $F_{X_j}>1$ for some $j\ne k$. The hypotheses hold whenever $f_i\ge\varepsilon>0$ for all $i$ and $\sum_if_i(x_{-i})\le A+B\|x\|_1$ with $B<1/\tau_{\max}$.
 
 **Theorem (signed monotonicity).** If there is a sign vector $\sigma\in\{\pm1\}^N$ such that each $f_i$ is monotone for the order $\preceq_\sigma$ (equivalently, when each dependence is monotone, every cycle of the undirected signed interaction graph has positive parity, i.e. the network is structurally balanced), then $\operatorname{Cov}_\pi(f_i(X_{-i}),X_i)\ge0$ and $F_{X_i}\ge1$ for every $i$: no component at all can be sub-Poissonian.

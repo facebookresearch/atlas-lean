@@ -5,7 +5,9 @@
 **Theorem 3.1 (law of large numbers).** As $N\to\infty$, $\mu^N$ converges in law in the Skorokhod space of probability-measure-valued paths to the unique solution $\mu$ of a measure-valued equation, equivalently of an age-structured transport PDE with renewal boundary condition driven by the force of infection $\mathfrak F(t)=\int\lambda(a,\theta)\mu_t(da,d\theta)$ (Proposition 4.1, Corollary 4.2).
 
 **Theorem 3.3 (endemic equilibrium).** There is a unique $\mathfrak S_*\in L^1(\nu)$, positive $\nu$-a.e., solving $\mathfrak S_*(\theta)=\int_\Theta K(\tilde\theta,\theta)\mathfrak S_*(\tilde\theta)\nu(d\tilde\theta)$ with $\int\lambda(a,\theta)\mathfrak S_*(\theta)\,da\,\nu(d\theta)=1$. An endemic equilibrium exists when
+
 $$\int_\Theta\frac{\mathfrak S_*(\theta)}{\gamma_*(\theta)}\,\nu(d\theta)<1,$$
+
 with endemic infected proportion $I_*=\mathfrak F_*\int_\Theta T_I(\theta)\mathfrak S_*(\theta)\nu(d\theta)$, $\mathfrak F_*$ the equilibrium force of infection. If moreover $\gamma(a,\cdot)\ge a^{-1}\int_0^a\gamma(s,\cdot)ds$ for all $a$ (susceptibility at least its running mean), the endemic equilibrium is unique, and when the integral exceeds $1$ the only equilibrium is disease-free.
 
 ## Expansion

@@ -3,11 +3,14 @@
 **Setting.** A noisy system $X$ (a Markov process with generator $\mathcal L_{e,\theta}$ depending on environmental parameters $e$ and physiological parameters $\theta$) starts in its invariant distribution $\bar p_{e_0,\theta_0}$. At time $0$ the environment changes $e_0 \to e_1$; at an independent random reaction time $\tau \sim \mathrm{Exp}(\lambda)$ the system adapts $\theta_0 \to \theta_1$. A success function $S$ measures performance; $\bar S_{e,\theta}$ is its mean under $\bar p_{e,\theta}$, so $\mathbb E S(X(0)) = \bar S_{e_0,\theta_0}$ and $\mathbb E S(X(t)) \to \bar S_{e_1,\theta_1}$.
 
 **Definition.** With $\bar S^\tau_{e_1,\theta_0} = \mathbb E\, S(X(\tau))$, the success at the moment of adaptation, the *resilience through adaptation* is
+
 $$R_\tau = \frac{\bar S_{e_1,\theta_1} - \bar S^\tau_{e_1,\theta_0}}{\bar S_{e_0,\theta_0} - \bar S^\tau_{e_1,\theta_0}} .$$
 
 **Properties.**
 1. $R_\tau$ depends only on ensemble averages. Since $\tau$ is exponential and independent of the paths of the pre-adaptation process $X_{e_1,\theta_0}$ started from $\bar p_{e_0,\theta_0}$,
+
 $$\bar S^\tau_{e_1,\theta_0} = \lambda \int_0^\infty e^{-\lambda t}\, \mathbb E_{\bar p_{e_0,\theta_0}}\bigl[S(X_{e_1,\theta_0}(t))\bigr] dt = \lambda\, \bigl\langle \bar p_{e_0,\theta_0},\ (\lambda - \mathcal L_{e_1,\theta_0})^{-1} S \bigr\rangle,$$
+
 a resolvent of the perturbed generator.
 2. For a stressful disturbance ($\bar S_{e_0,\theta_0} > \bar S^\tau_{e_1,\theta_0}$): $R_\tau < 0$ only if the adaptation itself is detrimental; $0 < R_\tau < 1$ is the fraction of the disturbance-induced loss recovered by adapting; $R_\tau > 1$ means long-run success after adaptation exceeds the original.
 3. $R_\tau$ replaces the classical recovery ratio $R = (\bar S_{e_1,\theta_1} - \min_t \mathbb E S(X(t)))/(\bar S_{e_0,\theta_0} - \min_t \mathbb E S(X(t)))$, whose worst-case term is not an ensemble average; the two differ in general but can be close.

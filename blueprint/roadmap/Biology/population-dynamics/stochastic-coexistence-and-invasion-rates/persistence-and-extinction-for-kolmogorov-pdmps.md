@@ -1,11 +1,15 @@
 # Persistence and extinction for Kolmogorov piecewise deterministic Markov processes
 
 **Model.** Species densities $X\in\mathbb R^n_+$ follow, between switches of a finite-state environment $r(t)\in\{1,\dots,n_0\}$,
+
 $$\frac{dX_i}{dt}=X_i\,f_i(X,r(t)),\qquad i=1,\dots,n,$$
+
 where the environment jumps from $k$ to $l$ at the state-dependent rate $q_{kl}(X)$, bounded, continuous and irreducible. This is a Kolmogorov piecewise deterministic Markov process (PDMP): environmental noise acts through random switching between deterministic regimes rather than through white noise. Assume locally Lipschitz $f_i$, a Lyapunov-type function $F(x,k)$ controlling growth with bounded ratios $F(x,k)/F(x,l)\le M_F$, so the process does not explode and returns to compact sets.
 
 **Invasion rates.** For an ergodic invariant probability measure $\mu$ of $(X,r)$ supported on the boundary $\partial\mathbb R^n_+\times\{1,\dots,n_0\}$, the invasion rate (external Lyapunov exponent) of species $i$ is
+
 $$\lambda_i(\mu)=\sum_k\int f_i(x,k)\,\mu(dx,k),$$
+
 the long-run per-capita growth rate of a rare species $i$ when the community is distributed as $\mu$.
 
 **Theorem (persistence).** If for every $\mu$ in the convex hull of boundary ergodic measures $\max_i\lambda_i(\mu)>0$, then the process is stochastically persistent in probability and almost surely: for every $\varepsilon>0$ there is $\delta>0$ with $\liminf_t\mathbb P(X_i(t)\ge\delta\ \forall i)>1-\varepsilon$, and the empirical occupation measures eventually put mass at least $1-\varepsilon$ away from the boundary. The proof gives a Lyapunov inequality $\mathbb E V^\theta(X(n^*T^*),r(n^*T^*))\le\kappa V^\theta(x,k)+\tilde K$ with $\kappa<1$. If moreover a point reachable from everywhere satisfies a Hörmander-type bracket condition, there is a unique invariant probability measure on the interior and convergence to it in total variation is exponentially fast.

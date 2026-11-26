@@ -1,13 +1,17 @@
 # Hopf exclusion for the mass-action dual futile cycle
 
 **Network.** The sequential and distributive dual futile cycle (two-site phosphorylation by a kinase $E$ and dephosphorylation by a phosphatase $F$) is
+
 $$A+E\rightleftharpoons U\to B+E\rightleftharpoons V\to C+E,\qquad C+F\rightleftharpoons X\to B+F\rightleftharpoons Y\to A+F,$$
+
 with substrates $A,B,C$, enzymes $E,F$ and intermediates $U,V,X,Y$; there are three conservation laws (total substrate, total kinase, total phosphatase). Assume each reaction rate is a positive function of its reactant concentrations with positive partial derivatives. At a positive steady state the Jacobian, restricted to a stoichiometric compatibility class, is a $6\times6$ matrix $G_{\mathrm{red}}$ whose entries are built from 16 positive symbols (the partial derivatives of the rates).
 
 **Theorem (parameter-rich kinetics admit Hopf bifurcations).** There are choices of the 16 partial-derivative symbols, for instance all equal to $1$ except $b_{10}=0.01$, $e_4=4\cdot10^4$ and $v_6$ varying in $[5,4\cdot10^4]$, along which $\det G_{\mathrm{red}}<0$ throughout but one real eigenvalue stays positive while a complex pair crosses from the left to the right half-plane. Hence purely imaginary eigenvalues occur at some intermediate $v_6^*$. For parameter-rich kinetics (Michaelis-Menten, generalized mass action) every such symbol choice is realizable at a steady state, so these systems have the capacity for Hopf bifurcation, and by global Hopf theory they have non-stationary periodic orbits for some parameters.
 
 **Theorem (mass action excludes Hopf).** Under mass-action kinetics the symbols are constrained at positive steady states by two equalities,
+
 $$\frac{u_3}{u_2+u_3}\,\frac{b_4}{b_{10}}=\frac{y_{12}}{y_{11}+y_{12}}\,\frac{e_4}{e_1}$$
+
 and an analogous relation for the second phosphorylation step (necessary and sufficient for realizability). Under these constraints $G_{\mathrm{red}}$ never has a pair of non-zero purely imaginary eigenvalues, so the mass-action dual futile cycle has no capacity for Hopf bifurcation at any positive steady state.
 
 ## Expansion

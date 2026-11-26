@@ -3,7 +3,9 @@
 **Model.** Host classes $k \in \mathcal{K}$ ($|\mathcal{K}| = p$) have constant size, normalized to $1$. In class $k$ let $S_k, I_k, D_k$ be the proportions susceptible, singly infected and coinfected, with birth-death rate $r_k$, clearance rate $\gamma_k$, transmission rate $\beta_k$ and coinfection factor $\sigma_k > 0$. Class $k$ contacts class $s$ with probability $q_{ks}$, $\sum_s q_{ks} = 1$, and the contact matrix $Q = (q_{ks})$ is irreducible. With force of infection $\Theta_k = \sum_s q_{ks}(I_s + D_s)$,
 
 $$\dot S_k = r_k(1 - S_k) - \beta_k S_k\Theta_k + \gamma_k(I_k + D_k),$$
+
 $$\dot I_k = \beta_k S_k \Theta_k - \sigma_k\beta_k I_k\Theta_k - (\gamma_k + r_k)I_k,$$
+
 $$\dot D_k = \sigma_k\beta_k I_k \Theta_k - (r_k + \gamma_k)D_k .$$
 
 The total prevalence $T_k = I_k + D_k = 1 - S_k$ obeys a closed multi-group SIS system.

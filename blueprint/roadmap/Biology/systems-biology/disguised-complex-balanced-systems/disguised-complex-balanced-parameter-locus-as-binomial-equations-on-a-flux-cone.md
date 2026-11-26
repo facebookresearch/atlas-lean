@@ -5,13 +5,17 @@
 **Reduction.** A complex-balanced realization can always be taken on the source vertices: there is a dynamically equal complex-balanced system iff there is one on the complete graph $G^{com}_{V_s}$ with vertex set contained in $V_s$ and the same complexes.
 
 **Flux cone.** Let
+
 $$\mathcal{C}^{dCB}_{(G,y)} = \big\{\nu \in \mathbb{R}^E_{\ge 0} : \exists\,\bar\nu \in \mathbb{R}^{E^{com}}_{\ge 0} \text{ with } I_{E^{com}}\bar\nu = 0 \text{ and } \Gamma_\nu = \Gamma_{\bar\nu}\big\},$$
+
 the polyhedral cone of flux vectors on $G$ that produce the same source-wise net reaction vectors as some vertex-balanced flux $\bar\nu$ on the complete graph.
 
 **Theorem.**
 1. $\mathcal{K}^{dCB}_{(G,y)} = \{k \in \mathbb{R}^E_{>0} : \exists\, x \in \mathbb{R}^n_{>0},\ v_k(x) \in \mathcal{C}^{dCB}_{(G,y)}\}$, and the same holds with the cone replaced by its positive part.
 2. (Elimination of concentrations.) With $\mathcal{P} = (\mathcal{C}^{dCB}_{(G,y)})_{>0} \cap \Delta$ (the positive part of the cone intersected with the simplex) and the monomial dependency subspace $\mathcal{D} = \ker\begin{pmatrix} Y_sI_{E,s} \\ \mathbf{1}^\top \end{pmatrix}$,
+
 $$\mathcal{K}^{dCB}_{(G,y)} = \{k \in \mathbb{R}^E_{>0} : \exists\, \nu \in \mathcal{P} \text{ such that } \nu^z = k^z \text{ for all } z \in \mathcal{D}\}.$$
+
 So the locus is the image of a polytope under finitely many binomial equations, with no concentration variables left.
 
 ## Depends on

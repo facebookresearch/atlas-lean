@@ -8,12 +8,18 @@
 **Statement.**
 
 1. $C_d(\lambda)$ survives ($\psi_d < 1$) if and only if
+
 $$\frac{d^2}{d-1}\ln\Big(\frac{\lambda + d}{d}\Big) < \lambda.$$
+
 For $d = 2$ this reads $4\ln(1 + \lambda/2) < \lambda$, and then
+
 $$\psi_2 = \min\Big\{1, \frac{\ln(\lambda+1)}{\lambda + \ln(\lambda+1) - 4\ln(1 + \lambda/2)}\Big\};$$
+
 for $d = 3$ it reads $\tfrac92\ln(1 + \lambda/3) < \lambda$, and $\psi_3$ is the explicit root of a quadratic. The critical rate $\lambda_d = \inf\{\lambda : C_d(\lambda) \text{ survives}\}$ decreases in $d$ toward $2$.
 2. $C_\ast(\lambda)$ survives if and only if $\lambda > 2$; then $\psi_\ast$ is the smallest nonnegative solution $s$ of $\ln\big(1 + \lambda(1-s)\big) = \lambda s(1-s)$. For $\lambda \le 2$,
+
 $$\mathbb{E}[\tau_\ast] = \frac1\lambda\int_0^\lambda \frac{x^2}{\lambda\ln(1+x) - x(\lambda - x)}\,dx .$$
+
 3. In the subcritical regime $4\ln(1+\lambda/2) > \lambda$, $C_2(\lambda)$ has mean extinction time $\mathbb{E}[\tau_2] = \beta^{-1}\ln\big(\alpha/(\alpha - \beta)\big)$ with $\alpha = \ln(\lambda+1)/\lambda$ and $\beta = 1 - \lambda^{-1}\ln\big((\lambda+2)^4/(16(\lambda+1))\big)$, and $\mathbb{E}[\tau_2] = \infty$ at criticality.
 
 ## Depends on

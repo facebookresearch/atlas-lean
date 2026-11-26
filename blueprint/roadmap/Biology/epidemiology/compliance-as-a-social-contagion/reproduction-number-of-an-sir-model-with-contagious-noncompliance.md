@@ -9,7 +9,9 @@ $$\begin{aligned}
 Noncompliance spreads by contact at rate $\mu$ and is abandoned at rate $\nu$; recruits ($b$) are noncompliant with probability $\xi$; $\delta$ is the death rate.
 
 **Theorem.** At a disease-free state with susceptible densities $(s, s^*)$, the next-generation matrix has rank one and
+
 $$\mathscr R_0(s, s^*) = \frac{\beta}{\gamma + \delta}\left( s\Bigl[(1-\alpha)^2 + \frac{\alpha(1-\alpha)\mu s^*}{\gamma + \delta + \nu + \mu s^*}\Bigr] + s^*\Bigl[1 - \frac{\alpha \nu}{\gamma + \delta + \nu + \mu s^*}\Bigr]\right).$$
+
 For $\xi = 0$ the disease-free equilibria are $x_1 = (b/\delta, 0, 0, 0, 0, 0)$ and, when $b/\delta > (\delta + \nu)/\mu$, $x_2$ with $s = (\delta + \nu)/\mu$, $s^* = b/\delta - (\delta+\nu)/\mu$ (a noncompliance-endemic, disease-free state). If $b/\delta < (\delta + \nu)/\mu$, $x_1$ is locally asymptotically stable when $\mathscr R_0(b/\delta, 0) < 1$ and unstable when $> 1$; if $b/\delta > (\delta+\nu)/\mu$ the analogous statement holds for $x_2$ with $\mathscr R_0(s, s^*)$. With multiplicative white noise on $\beta$ and $\mu$, the stochastic system has a unique global nonnegative solution, and exponential mean-square stability of the disease-free state holds under a noise-corrected threshold $\mathscr R_0^\sigma < 1$ together with $\frac{b}{\delta} + \frac{\sigma_\mu^2}{2\mu}\bigl(\frac{b}{\delta}\bigr)^2 < \frac{\nu + \delta}{\mu}$.
 
 ## Expansion

@@ -5,6 +5,7 @@ Consider a stochastic reaction network on species $S_1,\dots,S_N$ with $M$ react
 Let $\lambda(t) \in \mathbb{C}^N$, $\lambda_S(t), \lambda_0(t) \in \mathbb{C}$ solve the linear stochastic differential equations driven by independent Brownian motions $W^1, W^2$:
 
 $$d\lambda = (\mathcal{M}_1 \lambda + \mathcal{M}_2)\,dt + \mathcal{N}_1 \lambda\, dW^1_t + \mathcal{N}_2 \lambda\, dW^2_t,$$
+
 $$d\lambda_S = a_S(\lambda_1 - \lambda_2)\, dW^1_t + \mathrm{i}\, a_S (\lambda_1 + \lambda_2)\, dW^2_t, \qquad d\lambda_0 = a_0 \lambda_1 \lambda_2\, dt,$$
 
 with $\lambda_S(0) = \lambda_0(0) = 0$, where $a_S = \sqrt{2a_0}/2$, $(\mathcal{M}_1)_{ij} = \sum_{m : y_m = e_i} a_m (y'_{m,j} - y_{m,j})$ and $(\mathcal{M}_2)_i = \sum_{m : y_m = 0} a_m (y'_{m,i} - y_{m,i})$ encode the first- and zero-order reactions (mean-field linear dynamics), and $\mathcal{N}_1 = \operatorname{diag}(a_S, -a_S, 0,\dots)$, $\mathcal{N}_2 = \operatorname{diag}(\mathrm{i} a_S, \mathrm{i} a_S, 0, \dots)$ act only on the two reactants.

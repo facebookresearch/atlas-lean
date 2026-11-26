@@ -1,9 +1,13 @@
 # Global dynamics of predator-mediated apparent competition
 
 **Setting.** Two prey species that do not compete directly, a native prey $u$ and an invasive prey $v$, share a predator $w$:
+
 $$\dot u=u\Bigl(1-\frac u{K_1}\Bigr)-wf_1(u),\qquad \dot v=v\Bigl(1-\frac v{K_2}\Bigr)-wf_2(v),\qquad \dot w=w\bigl(\beta_1f_1(u)+\beta_2f_2(v)-\theta\bigr),$$
+
 with positive initial data, carrying capacities $K_i>0$, conversion efficiencies $\beta_i>0$ and predator mortality $\theta>0$. The functional responses are Holling type I, $f_i(s)=\alpha_is$, or Holling type II, $f_i(s)=\gamma_is/(1+\gamma_ih_is)$. Let $L_i=\beta_if_i(K_i)$, the predator's growth rate on prey $i$ at carrying capacity, $L=L_1+L_2$, and for type I
+
 $$\theta_0=\max\Bigl\{\Bigl(1-\frac{\alpha_1}{\alpha_2}\Bigr)L_1,\ \Bigl(1-\frac{\alpha_2}{\alpha_1}\Bigr)L_2\Bigr\}\in[0,L),$$
+
 with $\theta_0=0$ iff $\alpha_1=\alpha_2$. Equilibria include the predator-free state $E_{uv}=(K_1,K_2,0)$, the semi-coexistence states $P_1=\bigl(\theta/(\alpha_1\beta_1),0,(L_1-\theta)/(\alpha_1L_1)\bigr)$ (prey $v$ excluded) and $P_2$ (prey $u$ excluded), and a coexistence state $P_*$.
 
 **Theorem 2.1 (Holling type I).**

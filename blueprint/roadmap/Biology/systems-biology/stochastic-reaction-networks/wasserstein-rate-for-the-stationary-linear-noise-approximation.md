@@ -1,11 +1,15 @@
 # Wasserstein rate for the stationary linear noise approximation
 
 **Setting.** A stochastic chemical reaction network with $n$ species, stoichiometry matrix $S$ and volume $\Omega$ is a continuous-time Markov chain $\mathbf X_\Omega(t)$ on $\Omega^{-1}$-scaled lattices, with propensities $\Omega\bar\lambda_i(\mathbf X_\Omega/\Omega)$ for densities $\bar\lambda_i$ that are $C^2$ with bounded derivatives on the state space $\mathcal X\subseteq\mathbb R^n_{\ge0}$, and with stoichiometry spanning $\mathbb R^n$ (the standing assumptions of Section 2). The reaction rate equation is $\dot{\mathbf v}=F(\mathbf v)=S\bar{\boldsymbol\lambda}(\mathbf v)$. At an interior equilibrium $\mathbf v^*$ with Hurwitz Jacobian $J=\partial F(\mathbf v^*)/\partial\mathbf v$, the linear noise approximation (LNA) is the Ornstein–Uhlenbeck process $d\mathbf Y=J\mathbf Y\,dt+S\operatorname{diag}\sqrt{\bar{\boldsymbol\lambda}(\mathbf v^*)}\,d\mathbf W$, whose stationary law is $\mathbf Y^\infty\sim\mathcal N(0,P^\infty)$ with
+
 $$JP^\infty+P^\infty J^{\mathsf T}=-S\operatorname{diag}\big(\bar{\boldsymbol\lambda}(\mathbf v^*)\big)S^{\mathsf T}.$$
+
 Let $\tilde{\mathbf X}^\infty_\Omega=\sqrt\Omega\,(\mathbf X^\infty_\Omega/\Omega-\mathbf v^*)$ be the centered, rescaled stationary state, and $\mathcal W_1$ the 1-Wasserstein distance.
 
 **Theorem 3.1.** Suppose the propensities are bounded by a polynomial of degree $\kappa$, the stationary distribution is unique with finite moment of order $\kappa+1$ for all large $\Omega$, and the first and second stationary moments of $\tilde{\mathbf X}^\infty_\Omega$ are bounded uniformly in $\Omega$. Then there are $C,\Omega_0'$ such that for $\Omega\ge\Omega_0'$
+
 $$\mathcal W_1\big(\tilde{\mathbf X}^\infty_\Omega,\mathbf Y^\infty\big)\le C\,\frac{\ln\Omega}{\sqrt\Omega}.$$
+
 In particular $\tilde{\mathbf X}^\infty_\Omega\Rightarrow\mathcal N(0,P^\infty)$, and $\mathbf X^\infty_\Omega/\Omega\to\mathbf v^*$ in $\mathcal W_1$ at rate $O(\ln\Omega/\Omega)$ (Corollary 3.1).
 
 **Checkable sufficient conditions.**

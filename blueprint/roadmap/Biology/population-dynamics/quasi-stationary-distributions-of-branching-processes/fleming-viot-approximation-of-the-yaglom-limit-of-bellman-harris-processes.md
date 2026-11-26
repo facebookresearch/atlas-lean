@@ -8,6 +8,7 @@
 1. the killed process has a unique QSD $\nu_{\mathrm{QSD}}$ with $\nu_{\mathrm{QSD}}(V)<\infty$, and there are $c,\gamma>0$ with $\|\mathbb P_{\pi_0}(\eta_t\in\cdot\mid\tau>t)-\nu_{\mathrm{QSD}}\|_{\mathrm{TV}}\le c\,\pi_0(V)e^{-\gamma t}$ for every initial law with $\pi_0(V)<\infty$;
 2. $\nu_{\mathrm{QSD}}=\nu_Y$, with decay rate the Malthusian parameter $\lambda_0$;
 3. there is $d>0$ independent of $N$ such that for every bounded measurable $\varphi$ and every $N\ge2$,
+
 $$\mathbb E\bigl|\mathcal X^N(\varphi)-\nu_Y(\varphi)\bigr|\le\frac{d}{N^{\varpi}}\|\varphi\|_\infty,\qquad \varpi=\frac{\gamma}{2(\|\kappa\|_\infty+\gamma)}\in\bigl(0,\tfrac12\bigr).$$
 
 **Corollary 3.8.** The Malthusian parameter is the mean killing rate under the Yaglom limit: $\lambda_0=\nu_Y(\kappa)=p_0\int_0^\infty\mu(a)\,\nu_Y^{(1)}(da)$, where $\nu_Y^{(1)}$ is the restriction of $\nu_Y$ to single-individual configurations $\{\delta_a:a\ge0\}$, viewed as a measure on ages.

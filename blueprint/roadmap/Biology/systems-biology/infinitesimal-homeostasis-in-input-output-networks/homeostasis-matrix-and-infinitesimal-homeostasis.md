@@ -1,7 +1,9 @@
 # Infinitesimal homeostasis and the homeostasis matrix
 
 **Setting.** An *input-output network* $\mathcal G$ is a directed graph with a distinguished input node $\iota$, output node $o$ and regulatory nodes $\rho=(\rho_1,\dots,\rho_n)$. An *admissible system* is a smooth family
+
 $$\dot x_\iota=f_\iota(x_\iota,x_\rho,x_o,\mathcal I),\qquad \dot x_\rho=f_\rho(x_\iota,x_\rho,x_o),\qquad \dot x_o=f_o(x_\iota,x_\rho,x_o),$$
+
 in which each $f_k$ depends only on $x_k$ and the variables of nodes with an arrow into $k$, and the external input parameter $\mathcal I\in\mathbb R$ enters only the input equation. Suppose $X^*(\mathcal I)$ is a family of linearly stable equilibria; the *input-output function* is $x_o(\mathcal I)$, the output coordinate of $X^*(\mathcal I)$. The system exhibits **infinitesimal homeostasis** at $\mathcal I_0$ if $x_o'(\mathcal I_0)=0$. Let $J$ be the $(n+2)\times(n+2)$ Jacobian of the system at $X^*$; the **homeostasis matrix** $H$ is the $(n+1)\times(n+1)$ matrix obtained from $J$ by deleting its first row (the $\iota$ equation) and last column (the $x_o$ derivatives).
 
 **Theorem 2.3 (determinant formula).** $x_o'(\mathcal I)=\pm f_{\iota,\mathcal I}\,\det(H)/\det(J)$. Hence, generically ($f_{\iota,\mathcal I}\ne0$), infinitesimal homeostasis occurs at $\mathcal I_0$ if and only if $\det H=0$ there.

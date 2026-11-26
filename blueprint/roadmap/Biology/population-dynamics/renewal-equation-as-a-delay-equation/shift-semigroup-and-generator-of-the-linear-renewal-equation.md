@@ -1,11 +1,15 @@
 # Shift semigroup and generator of the linear renewal equation
 
 **Setting.** In a constant environment, an individual survives to age $a$ with probability $\mathcal F(a)$ and gives birth at rate $\beta(a)$; the reproduction kernel $k(a)=\beta(a)\mathcal F(a)\ge0$ is nontrivial with compact support $[0,a_{\max}]$. The population birth rate $b$ satisfies the renewal equation
+
 $$b(t)=\int_0^{a_{\max}}k(a)\,b(t-a)\,da,\qquad t>0,$$
+
 with a prescribed history $b(\theta)=\phi(\theta)$ for $\theta\in[-a_{\max},0]$, $\phi\in X=L^1[-a_{\max},0]$. Writing $b=k*b+f$ on $t>0$ with the forcing $f$ from the history, the generation expansion $b=\sum_{n\ge0}k^{*n}*f$ gives a unique solution.
 
 **Theorem (shift semigroup).** The history-to-history maps $T(t)\phi=b_t$, with $b_t(\theta)=b(t+\theta)$, form a strongly continuous semigroup of bounded linear operators on $X$. Its generator is
+
 $$A\phi=\phi',\qquad D(A)=\Big\{\phi\in AC[-a_{\max},0]:\ \phi(0)=\int_0^{a_{\max}}k(\alpha)\,\phi(-\alpha)\,d\alpha\Big\}.$$
+
 The rule of the renewal equation enters only through the domain, as a compatibility condition, not through the action of $A$.
 
 **Spectrum (Euler-Lotka).** $\lambda\in\mathbb{C}$ is an eigenvalue of $A$, with eigenfunction $\theta\mapsto e^{\lambda\theta}$, exactly when $\bar k(\lambda)=\int_0^{a_{\max}}k(a)e^{-\lambda a}da=1$. Because $\bar k$ is strictly decreasing on $\mathbb{R}$ from $+\infty$ to $0$, there is a unique real root $r$, the Malthusian parameter, with $\operatorname{sign}(r)=\operatorname{sign}(R_0-1)$ for $R_0=\bar k(0)=\int\beta\mathcal F$; and there is $\varepsilon>0$ with $\operatorname{Re}\lambda\le r-\varepsilon$ for every other root.

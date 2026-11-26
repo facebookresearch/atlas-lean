@@ -8,10 +8,15 @@
 Assume $b, d, \gamma$ continuous and nonnegative, $b \le \overline{b}$, $\gamma \le \overline{\gamma}$, a Lyapunov-type moment bound on $d^{\eta}$ under $m$, and $\sup_K \mathbb{E}[\langle Z^K_0, 1\rangle^p] + \sup_K \mathbb{E}[\langle Z^K_0, d^\eta\rangle] < \infty$ for some $p > 2$.
 
 **Theorem.** If $Z^K_0 \to \xi_0$ in probability, then $Z^K \to \xi$ in probability in $\mathbb{D}([0,T], M_F(\mathbb{R}_+))$, where $\xi$ is the unique continuous deterministic solution with $\sup_t \langle \xi_t, 1\rangle < \infty$ of
+
 $$\langle \xi_t, \varphi\rangle = \langle \xi_0, \varphi\rangle + \int_0^t\!\!\int \big(b(x) - d(x) - C\langle\xi_s,1\rangle\big)\varphi(x)\,\xi_s(dx)\,ds + \int_0^t\!\!\int \gamma(x)\!\int (\varphi(z) - \varphi(x))\,m(x,z)\,dz\,\xi_s(dx)\,ds$$
+
 $$\qquad + \int_0^t\!\!\iint (\varphi(x) - \varphi(y))\,\frac{\tau\,\mathbf{1}\{x > y\}}{\beta + \mu\langle\xi_s,1\rangle}\,\xi_s(dy)\,\xi_s(dx)\,ds$$
+
 for bounded $\varphi$. The total mass $\lambda_t = \langle \xi_t, 1\rangle$ satisfies $\inf_{[0,T]}\lambda_t > 0$ and $\sup_t \lambda_t \le \max(\overline{b}/C, \lambda_0)$. If $\xi_0$ has a density, so does $\xi_t$, solving
+
 $$\partial_t \xi_t(x) = \Big(r(x) - C\!\int \xi_t\Big)\xi_t(x) + \int \big[\gamma(y)\xi_t(y)m(y,x) - \gamma(x)\xi_t(x)m(x,y)\big]dy + \frac{\tau\,\xi_t(x)}{\beta + \mu\int\xi_t}\int \operatorname{sgn}(x - y)\,\xi_t(y)\,dy,$$
+
 with $r = b - d$; positivity, continuity and boundedness of $\xi_0$ propagate to $\xi_t$.
 
 ## Depends on

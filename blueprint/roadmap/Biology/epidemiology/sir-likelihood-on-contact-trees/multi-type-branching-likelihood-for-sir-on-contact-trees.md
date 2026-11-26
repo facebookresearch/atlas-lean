@@ -4,9 +4,13 @@
 
 **Theorem.**
 1. *(Unobserved clades.)* For fixed degree $k$, the probability $E_i(t)$ that a type-$i$ individual leaves no sampled descendants over time $t$ satisfies, with $E_i(0) = 1$ and $E_{k+1} \equiv 0$,
+
 $$\frac{dE_i}{dt} = \mu - \bigl(\gamma + (k-i)\beta\bigr)E_i + (k-i)\beta\, E_0 E_{i+1} .$$
+
 2. *(Observed lineages.)* The density $D^i_j(t)$ that a type-$i$ lineage is observed as type $j$ satisfies
+
 $$\frac{dD^i_j}{dt} = -\bigl(\gamma + (k-i)\beta\bigr)D^i_j + (k-i)\beta\, E_0 D^{i+1}_j + (k-i)\beta\, E_{i+1} D^0_j ,$$
+
 and analogous equations hold for random degree with degree-averaged newborn quantities $\widehat E_0 = \sum_\ell w_\ell E_{0,\ell}$, $\widehat D^0_j = \sum_\ell w_\ell D^{(0,\ell)}_j$.
 3. *(Likelihood.)* Conditioned on at least one observation and on the root time, the likelihood of a sampled tree is a sum over the root degree (weights $w_k$) and root state (weights given by the equilibrium type distribution $\pi_{i \mid k}$, normalised by $1 - E_{(i_0,k)}$) of products of $D$-terms along edges and branching factors $(k - i_m)\beta\,[D^{(i_m+1,k)}_{A}\widehat D^0_{B} + D^{(i_m+1,k)}_{B}\widehat D^0_{A}]$ at each transmission node, with daughters $A, B$.
 4. *(Type equilibrium.)* The expected numbers of individuals of each type solve a linear ODE whose dominant eigenvalue has a positive spectral gap, so type frequencies converge to an equilibrium $\pi$; the equilibrium mean number of remaining susceptible contacts satisfies $S_\pi(k) \to k - 1$ as $k \to \infty$ and $\mathbb E[S_\pi] \approx \mathbb E[K] - 1$.

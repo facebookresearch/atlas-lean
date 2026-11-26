@@ -9,7 +9,9 @@
 
 1. (Pairwise marginals.) For distinct $i, j$, if the split-coupled pair and the MSC marginal pair $(X^{(i)}_{\mathrm{MSC}}, X^{(j)}_{\mathrm{MSC}})$ are nonexplosive and start from the same joint law, then $(X^{(i)}_{\mathrm{MSC}}, X^{(j)}_{\mathrm{MSC}}) \overset{d}{=} (X^{(i)}_{\mathrm{SC}}, X^{(j)}_{\mathrm{SC}})$. Every pair inside one MSC simulation is distributed as a split-coupled pair.
 2. (Pairwise variance.) For a parameterized family $X^\theta$ started at a common fixed state, and parameters with $\|\alpha_\varepsilon - \beta_\varepsilon\| \le C_0\varepsilon$, under the hypotheses of the split-coupling variance bound (with constants uniform in $\varepsilon$),
+
 $$\mathbb{E}\Big[\sup_{t \le T}\big(f(X^{\alpha_\varepsilon}_{\mathrm{MSC}}(t)) - f(X^{\beta_\varepsilon}_{\mathrm{MSC}}(t))\big)^2\Big] \le C_T\,\varepsilon .$$
+
 3. (Contrasts.) For $J \ge 2$ parameters within distance $C_0\varepsilon$ of each other and coefficients with $\sum_r c_r = 0$, the finite-difference numerator $N_\varepsilon(T) = \sum_{r=1}^J c_r f(X^{\theta_r^\varepsilon}_{\mathrm{MSC}}(T))$ satisfies $\mathbb{E}[N_\varepsilon(T)^2] = O(\varepsilon)$ and $\operatorname{Var} N_\varepsilon(T) = O(\varepsilon)$.
 
 So a single MSC run gives all paths needed by central, higher-order or mixed-partial finite-difference schemes, while each pair keeps the $O(\varepsilon)$ variance of split coupling (independent sampling gives $O(1)$).

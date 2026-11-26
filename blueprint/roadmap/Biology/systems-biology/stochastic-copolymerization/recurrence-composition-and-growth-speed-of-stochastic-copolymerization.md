@@ -1,15 +1,19 @@
 # Recurrence, composition and growth speed of stochastic copolymerization
 
 **Setting.** A polymer is a finite word over monomer types $\mathcal M=\{M_1,\dots,M_d\}$, the empty word being the root. The **copolymerization process** is the continuous-time Markov chain $X(t)$ on the tree of words in which a monomer $M_i$ attaches to the end of the current polymer at rate $k_i^+>0$, independently of the polymer, and the last monomer detaches at rate $k_i^->0$ if it is of type $M_i$. Let $|X(t)|$ be the polymer length, $\sigma_i(t)$ the fraction of type-$i$ monomers in $X(t)$, and
+
 $$\alpha=\sum_{i=1}^d\frac{k_i^+}{k_i^-}.$$
 
 **Theorem 3.1 (recurrence criterion).** $X$ is positive recurrent if $\alpha<1$, null recurrent if $\alpha=1$, and transient if $\alpha>1$.
 
 **Theorem 4.1 (limiting composition).** If $\alpha>1$, then for each $i$, almost surely,
+
 $$\lim_{t\to\infty}\sigma_i(t)=\bar\sigma_i=\frac{k_i^+}{m+k_i^-},$$
+
 where $m>0$ is the unique solution of $\sum_{r=1}^d k_r^+/(m+k_r^-)=1$.
 
 **Theorem 5.1 (growth velocity).** If $\alpha>1$, then almost surely
+
 $$v=\lim_{t\to\infty}\frac{|X(t)|}{t}=\sum_{r=1}^dk_r^+-\sum_{r=1}^dk_r^-\,\bar\sigma_r\in(0,\infty).$$
 
 ## Expansion

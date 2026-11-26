@@ -1,8 +1,11 @@
 # Uniqueness of positive steady states on a two-patch interval
 
 **Problem.** On $[-L^-,L^+]$ with $L^\pm>0$, find $u>0$ with
+
 $$0=d^-u_{xx}+f^-(u)\ \ (x\in(-L^-,0)),\qquad 0=d^+u_{xx}+f^+(u)\ \ (x\in(0,L^+)),$$
+
 $$u(0-)=u(0+),\qquad d^-u_x(0-)=d^+u_x(0+),\qquad u_x(-L^-)=u_x(L^+)=0,$$
+
 with diffusion rates $d^\pm>0$.
 
 **Standing assumptions (SA).** $f^\pm$ are $C^1$ on $[0,\infty)$ and $C^2$ on $(0,\infty)$, $f^\pm(0)=0<(f^\pm)'(0)$, and there are carrying capacities $K^-<K^+$ with $f^\pm>0$ on $(0,K^\pm)$ and $f^\pm<0$ on $(K^\pm,\infty)$. Let $F^\pm(u)=\frac1{d^\pm}\int_0^uf^\pm(s)\,ds$ be the potentials of the Hamiltonians $H^\pm(u,v)=\frac12v^2+F^\pm(u)$.

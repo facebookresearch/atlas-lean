@@ -1,7 +1,9 @@
 # RAF phase transitions under heterogeneous random catalysis
 
 **Setting.** In Kauffman's polymer model over an alphabet of size $\kappa\ge2$, the molecule set $X_n$ consists of all strings of length at most $n$, and the forward reactions $R_n^+$ are ligations of two strings into their concatenation (with the reverse cleavages). The food set $F=X_t$ is all strings of length at most a fixed $t$. A catalytic reaction system is **RAF** (reflexively autocatalytic and food-generated) if it contains a nonempty set of reactions each catalysed by some molecule produced from $F$ by that set, every reactant being likewise producible. In the **weighted random catalysis model**, each molecule $x$ carries an i.i.d. activity $W_x\in(0,\infty)$; given the weights, the indicators that $x$ catalyses $r$ are independent with
+
 $$\mathbb P(I_{x,r}=1\mid W)=1-\exp\{-\lambda_nW_xK_n(x,r)\},$$
+
 for an intensity $\lambda_n\ge0$ and a compatibility kernel $K_n\ge0$. The **weighted catalytic mass** of a reaction is $M_n(r)=\sum_{x\in X_n}K_n(x,r)W_x$, and $\mathcal B_t$ is the set of forward reactions whose reactants all lie in $F$.
 
 **Theorem 1 (weighted catalytic mass criterion).** For arbitrary i.i.d. positive finite weights:

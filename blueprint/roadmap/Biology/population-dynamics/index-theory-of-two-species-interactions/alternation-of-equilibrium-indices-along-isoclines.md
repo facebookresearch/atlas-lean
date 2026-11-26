@@ -1,7 +1,9 @@
 # Alternation of equilibrium indices along isoclines
 
 **Setting.** Two species with densities $x,y\ge0$ follow the Kolmogorov system
+
 $$\dot x=x\,f(x,y),\qquad \dot y=y\,g(x,y)$$
+
 on $\mathbb{R}_+^2$, where the per capita growth rates $f,g$ need not have fixed interaction signs (the sign of $\partial f/\partial y$ or $\partial g/\partial x$ may switch from mutualistic to parasitic with density). Let $\Gamma_f=\{f=0\}$ and $\Gamma_g=\{g=0\}$ be the nontrivial isoclines in $\mathbb{R}_+^2$. Hypotheses: (H1) each of $\Gamma_f,\Gamma_g$ is a single nonempty continuous curve; (H2) $f$ (resp. $g$) has strict constant sign on each side of $\Gamma_f$ (resp. $\Gamma_g$) and changes sign across it; (H3) no more than two isoclines meet at a point (so $(0,0)\notin\Gamma_f\cup\Gamma_g$); (H4) isoclines cross transversally at equilibria, with no tangencies and no coincident arcs.
 
 **Theorem.** Under (H1)-(H4) with $f,g$ continuous, the equilibria in the open quadrant $\{x>0,y>0\}$ (the points of $\Gamma_f\cap\Gamma_g$), taken in order along either isocline, alternate between Poincare index $+1$ and index $-1$. The alternation extends to equilibria on the coordinate axes other than the origin.

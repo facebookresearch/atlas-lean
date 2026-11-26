@@ -3,10 +3,13 @@
 **Setting.** A two-type continuous-time Markov branching process starts from one type-0 cell. Type-0 cells divide at rate $a$ and die at rate $d$; at each division one offspring is a type-1 (driver) mutant with probability $v$, and independently each type-0 cell mutates to type 1 at rate $\mu$. Type-1 cells divide at rate $a+b$ ($b>0$) and die at rate $d$. Write $\lambda_0=a(1-v)-d-\mu>0$ and $\lambda_1=a+b-d$, so $\lambda_1>\lambda_0$, and $q_0=1-(d+\mu)/(a(1-v))$ for the survival probability of the type-0 population. Let $\Omega_0^\infty$ be the event that the type-0 population survives, $Y=\lim_{t\to\infty}e^{-\lambda_0 t}Z_0(t)$ (exponential with rate $q_0$ on survival), and $W=\lim_{t\to\infty}e^{-\lambda_1 t}Z_1(t)$. Under the infinite-sites assumption the **driver site frequency spectrum** $S_j(t)$ is the number of driver clones (descendant trees of a type-1 cell born to a type-0 parent) of size $j$ at time $t$; $\tau_n$ is the first time the total population reaches $n$.
 
 **Theorem 1 (small-frequency law of large numbers).** With $P_j(s)$ the probability that a single type-1 cell has $j$ descendants after time $s$, for every fixed $j\ge 1$, conditionally on $\Omega_0^\infty$,
+
 $$e^{-\lambda_0 t}S_j(t)\to(av+\mu)\,Y\int_0^\infty e^{-\lambda_0 s}P_j(s)\,ds\quad\text{a.s. and in } L^2,$$
+
 and $n^{-\lambda_0/\lambda_1}S_j(\tau_n)\to(av+\mu)\,Y W^{-\lambda_0/\lambda_1}\int_0^\infty e^{-\lambda_0 s}P_j(s)\,ds$ almost surely. The limiting profile decays like $j^{-(1+\lambda_0/\lambda_1)}$ as $j\to\infty$.
 
 **Theorem 2 (cutoff).** Let $j_k^-(t)=\min\{j:S_j(t)\le k\}$ and $j_k^+(t)=\max\{j:S_j(t)\ge k\}$. Almost surely on $\Omega_0^\infty$, both the $\liminf$ and the $\limsup$ as $t\to\infty$ (respectively $n\to\infty$) satisfy
+
 $$\lim_{k\to\infty}\frac{\log j_k^\pm(t)}{t}=\frac{\lambda_0\lambda_1}{\lambda_0+\lambda_1},\qquad \lim_{k\to\infty}\frac{\log j_k^\pm(\tau_n)}{\log n}=\frac{\lambda_0}{\lambda_0+\lambda_1}.$$
 
 **Proposition 5 (trichotomy at the cutoff).** Let $j(t)$ be non-decreasing and $\gamma=\lambda_0\lambda_1/(\lambda_0+\lambda_1)$.

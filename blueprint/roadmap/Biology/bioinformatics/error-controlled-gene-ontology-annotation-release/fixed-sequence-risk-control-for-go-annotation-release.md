@@ -1,13 +1,17 @@
 # Fixed-sequence risk control for hierarchy-aware GO annotation release
 
 **Release problem.** A predictor gives a score $s_{ig}$ for each gene $i$ and Gene Ontology (GO) term $g$. A release policy $\pi$ gives each gene a released set $S_i(\pi)$; a global threshold uses $S_i(\lambda)=\{g:s_{ig}\ge\lambda\}$. Let $A_i^{\mathrm{TP}}$ be the reference annotations of gene $i$ closed upward under the GO hierarchy (true-path closure; scores are not propagated). The **gene-level false discovery proportion** is
+
 $$L_i(S_i)=1-\frac{|S_i\cap A_i^{\mathrm{TP}}|}{|S_i|}\quad(|S_i|>0),\qquad L_i(\emptyset)=0,$$
+
 so every gene has equal weight and abstention costs nothing. For a fixed panel split into ranking, certification and evaluation folds, the risk of a policy is the mean FDP over the non-ranking pool $\mathcal P$ of size $N$, $R(\pi)=\frac1N\sum_{i\in\mathcal P}L_i(\pi)$, with target $\alpha$.
 
 **Nested candidate paths.** Using only ranking-fold labels and frozen inputs, build a sequence of policies whose released sets only grow. GoCo-M inserts partial admissions within tied-score blocks: genes sharing module evidence get identical scores, and genes are admitted in an order learned from source reliability. GoCo-N orders individual calls by their predicted probability of being unsupported. Certification computes each candidate's mean FDP $\hat R_k$ and standard deviation $\hat s_k$ on the $m$ certification genes, sets $p_k=\Phi\big((\hat R_k-\alpha)/(\max(\hat s_k,10^{-6})/\sqrt m)\big)$, tests candidates in their fixed order, stops at the first $p_k>\delta$, and releases the preceding policy $\hat\pi$ (abstaining if the first fails).
 
 **Proposition (conditional fixed-sequence risk control).** Let $k^*$ be the first candidate on the path with $R(\pi_{k^*})>\alpha$. Suppose $m\to\infty$, $N-m\to\infty$, $m/N\to f\in[0,1)$, and the pool variance of the losses of $\pi_{k^*}$ stays bounded away from zero. Then, conditional on the ranking fold,
+
 $$\limsup\ \Pr\{R(\hat\pi)>\alpha\mid\mathcal T\}\le\Phi\big(z_\delta/\sqrt{1-f}\big)\le\delta,\qquad z_\delta=\Phi^{-1}(\delta),\ \delta\in(0,\tfrac12],$$
+
 with equality in the second inequality only when $\delta=\frac12$ or $f=0$. The bound holds for any ranking-fold-measurable ordering within blocks. Replacing the normal test by Hoeffding's bound gives finite-sample control on the same path.
 
 ## Expansion

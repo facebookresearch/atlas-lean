@@ -1,6 +1,7 @@
 # Boundary reproduction number of a critical siphon
 
 **Setting.** A chemical reaction network $(\mathcal S,\mathcal R)$ with species $X_1,\dots,X_n$ evolves by $\dot{\mathbf x}=\mathbf f(\mathbf x)$ under kinetics satisfying the standard positivity and monotonicity assumptions. A set $\mathcal X\subseteq\mathcal S$ is a *siphon* if every reaction producing a species of $\mathcal X$ also consumes a species of $\mathcal X$; its complement $\mathcal Y$ is the antisiphon. The siphon is *critical* if no nonnegative conservation vector is supported inside $\mathcal X$. Order coordinates as $\mathbf x=(\tilde{\mathbf x},\tilde{\mathbf y})$ with $\tilde{\mathbf x}$ the siphon species, so the face $\{\tilde{\mathbf x}=0\}$ is forward invariant and contains the $\mathcal X$-free boundary steady states $\mathbf x^*=(\mathbf 0,\tilde{\mathbf y}^*)$. Split the siphon dynamics as $\dot{\tilde{\mathbf x}}=\mathcal F(\tilde{\mathbf x},\tilde{\mathbf y})-\mathcal V(\tilde{\mathbf x},\tilde{\mathbf y})$ with $\mathcal F\ge0$ (production of siphon species, the analogue of new infections), let $F=\partial_{\tilde{\mathbf x}}\mathcal F(\mathbf x^*)$ and $V=\partial_{\tilde{\mathbf x}}\mathcal V(\mathbf x^*)$, and define the *boundary reproduction number*
+
 $$\mathscr R_{\mathbf x^*}=\rho(FV^{-1}).$$
 
 **Theorem 1.** Let $\mathcal X$ be a critical siphon, $\mathbf x^*$ an $\mathcal X$-free boundary steady state and $F,V$ from an admissible splitting.

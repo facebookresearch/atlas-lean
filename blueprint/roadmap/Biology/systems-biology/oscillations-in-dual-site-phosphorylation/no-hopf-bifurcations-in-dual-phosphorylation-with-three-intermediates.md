@@ -1,8 +1,11 @@
 # No Hopf bifurcations in dual phosphorylation networks with three intermediates
 
 **Setting.** In the full distributive and sequential dual-site phosphorylation network, a kinase $K$ phosphorylates $S_0\to S_1\to S_2$ and a phosphatase $F$ dephosphorylates $S_2\to S_1\to S_0$, each step proceeding through an enzyme–substrate intermediate ($KS_0, KS_1, FS_2, FS_1$) via a motif $E+S\rightleftharpoons ES\to E+S'$. Removing some intermediates gives mixed mechanisms in which a step occurs directly ($E+S\to E+S'$). Up to the symmetry exchanging kinase and phosphatase, the networks with exactly three intermediates are
+
 $$\mathcal{G}_1:\quad S_0+K\rightleftharpoons KS_0\to S_1+K\rightleftharpoons KS_1\to S_2+K, \qquad S_2+F\rightleftharpoons FS_2\to S_1+F\to S_0+F,$$
+
 $$\mathcal{G}_2:\quad S_0+K\rightleftharpoons KS_0\to S_1+K\rightleftharpoons KS_1\to S_2+K, \qquad S_2+F\to S_1+F\rightleftharpoons FS_1\to S_0+F,$$
+
 with mass-action kinetics.
 
 **Theorem.** Neither $\mathcal{G}_1$ nor $\mathcal{G}_2$, nor any network obtained from them by making some or all reversible reactions irreversible, admits a Hopf bifurcation, for any choice of positive rate constants and total amounts.

@@ -11,10 +11,13 @@ $$\begin{aligned}
 with recruitment $\Lambda$, natural death $\mu$, transmission from exposed ($\beta_1$) and infected ($\beta_2$) individuals, progression $\delta$, quarantine $\gamma$, recovery $\alpha$ from quarantine and return $\rho$ of quarantined individuals to the susceptible class.
 
 **Theorem (well-posedness).** For positive initial data the system has a unique global solution $\psi = (S,E,I,Q,R)$ on $\mathcal{U} = (0,T)\times\Omega$ that stays positive and bounded, with
+
 $$\psi_i \in W^{1,2}(0,T;L^2(\Omega)) \cap L^2(0,T;H^2(\Omega)) \cap L^\infty(0,T;H^1(\Omega)) \cap L^\infty(\mathcal{U}).$$
 
 **Theorem (NSFD scheme).** On a uniform grid with time step $k$, space step $h$ and $r = k/h^2$ fixed, discretize each equation with nonlocal approximations of the nonlinear and loss terms (evaluating losses at the new time level) and replace the time step by the denominator function
+
 $$\phi_\ell(k) = k\Big(1 - 4\lambda_\ell\frac{k}{h^2} - k\mu - g_\ell(k)\Big)^{-1}, \qquad g_S = k(\beta_1E^n_{j,l} + \beta_2I^n_{j,l}),\ g_E = k\delta,\ g_I = k\gamma,\ g_Q = k(\alpha + \rho),\ g_R = 0.$$
+
 Under the step restrictions $|k\mu + g_\ell(k)| < |1 - 4r\lambda_\ell|$, the scheme is consistent of order $1$ in time and $2$ in space, and its explicit update writes each new value as a nonnegative combination of old values and positive sources, so positivity and boundedness are preserved, which standard explicit schemes can violate.
 
 ## Depends on

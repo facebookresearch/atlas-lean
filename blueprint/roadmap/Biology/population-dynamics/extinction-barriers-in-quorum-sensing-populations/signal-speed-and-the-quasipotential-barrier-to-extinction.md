@@ -1,7 +1,9 @@
 # Signal speed and the quasipotential barrier to extinction
 
 **Model.** Cell density $x$ and signal density $w$ change in steps of $1/N$ through four channels: division at total rate $Nx\,b(w)$ with a Hill-type increasing $b$, death at rate $Nx\,d(x)$ (including the production cost $c$ and crowding), signal production at rate $Nr\alpha x$ and signal removal at rate $Nr\kappa w$, where $r>0$ scales both signal channels. As $N\to\infty$ the density process converges on compact time intervals to the mean-field system (Kurtz's law of large numbers, Theorem 1)
+
 $$\dot x=x\big[b(w)-d(x)\big],\qquad \dot w=r\big[\alpha x-\kappa w\big].$$
+
 Write $\bar w(x)=\alpha x/\kappa$, $\bar b(x)=b(\bar w(x))$ and $\bar F(x)=x[\bar b(x)-d(x)]$ for the slaved drift.
 
 **Proposition 2 (r-independence of the deterministic picture).** Every equilibrium $(x_{\rm eq},w_{\rm eq})$ satisfies $w_{\rm eq}=\bar w(x_{\rm eq})$ and $\bar F(x_{\rm eq})=0$, independently of $r$. If $x_{\rm eq}>0$, the Jacobian satisfies $\det J_r=-r\kappa\bar F'(x_{\rm eq})$ and $\operatorname{tr}J_r=-x_{\rm eq}d'(x_{\rm eq})-r\kappa<0$, so for every $r$ the equilibrium is a saddle if $\bar F'(x_{\rm eq})>0$ and asymptotically stable if $\bar F'(x_{\rm eq})<0$. The extinction state $(0,0)$ has eigenvalues $b_0-d_0-c$ and $-r\kappa$, so it is stable for every $r$ when $b_0<d_0+c$.

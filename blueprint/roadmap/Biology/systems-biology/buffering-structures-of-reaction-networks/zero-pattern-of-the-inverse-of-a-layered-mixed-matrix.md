@@ -7,7 +7,9 @@
 **Theorem (Murota).** If $L$ is LM-irreducible then every entry of $L^{-1}$ is nonzero; and if $L$ has a nonempty symbolic part, $\det L$ is an irreducible polynomial iff $L$ is essentially LM-irreducible.
 
 **Theorem (inverse of a CCF).** If $\bar L$ is a nonsingular LM-matrix in CCF with blocks $M_1,\dots,M_p$, then for all $a,b$:
+
 $$\bar L^{-1}[M_a,M_b]\ \text{is fully dense if } M_a\preceq M_b,\qquad \bar L^{-1}[M_a,M_b]=\mathbf 0\ \text{otherwise}.$$
+
 So the zero pattern of $\bar L^{-1}$ is read off from reachability in the CCF directed graph.
 
 **Linearly transformed generic matrices.** If $T$ is $n\times m$ sparse generic, $S\in\mathbb K^{m\times n}$ has rank $m\le n$ and $Q$ is a Gale dual of $S$ (columns spanning $\ker S$), then $\det(ST)=c\,\det[\,T\mid Q\,]$ for a constant $c\ne0$, so $\det(ST)$ factors exactly as the LM-matrix $[T\mid Q]$ does.

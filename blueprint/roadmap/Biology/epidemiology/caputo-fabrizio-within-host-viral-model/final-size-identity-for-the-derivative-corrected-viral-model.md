@@ -3,6 +3,7 @@
 **Model.** Target cells $H$, infected cells $I$, virions $V$ and removed cells $D$ obey a target-cell-limited model with Caputo-Fabrizio derivatives of order $\mathfrak{a} \in (0,1)$, infection rate $b$, infected-cell death rate $d$, virion production $p$ and clearance $m$:
 
 $${}^{CF}D^{\mathfrak a}H = -bVH + bV_0H_0e^{-\frac{\mathfrak a}{1-\mathfrak a}t}, \qquad {}^{CF}D^{\mathfrak a}I = bVH - dI - (bV_0H_0 - dI_0)e^{-\frac{\mathfrak a}{1-\mathfrak a}t},$$
+
 $${}^{CF}D^{\mathfrak a}V = pI - mV - (pI_0 - mV_0)e^{-\frac{\mathfrak a}{1-\mathfrak a}t}, \qquad {}^{CF}D^{\mathfrak a}D = dI - dI_0e^{-\frac{\mathfrak a}{1-\mathfrak a}t}.$$
 
 The exponential corrections make the right-hand sides vanish at $t = 0$, as the Caputo-Fabrizio derivative requires. Applying the Caputo-Fabrizio integral turns each equation into an implicit ODE mixing instantaneous and derivative terms, e.g. $\dot H = -b\bigl[(1-\mathfrak a)\tfrac{d}{dt}(VH) + \mathfrak a\,VH\bigr]$; the parameter $\mathfrak a$ blends the classical model ($\mathfrak a = 1$) with derivative corrections.

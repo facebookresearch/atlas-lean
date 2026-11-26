@@ -3,13 +3,19 @@
 A **galled tree** is a rooted binary phylogenetic network in which every vertex lies in at most one reticulation cycle; the cycles are **galls**, each with a top vertex $r$ and a hybrid vertex $a_r$. It is **time-consistent** (equivalently normal) if each gall's top is separated from its hybrid by at least two arcs on both paths, and **simplex** if the subtree below every hybrid vertex is a single leaf. Write $\tilde E_{n,g}$, $E_{n,g}$, $E^1_{n,g}$ for the numbers of unlabeled (non-plane) general, time-consistent and simplex time-consistent galled trees with $n$ leaves and $g$ galls, and $\tilde e_{n,g}$, $e_{n,g}$, $e^1_{n,g}$ for leaf-labeled counts. Let $\rho\approx0.40270$ and $\gamma\approx1.13003$ be the Otter constants governing the Wedderburn-Etherington numbers of unlabeled binary trees.
 
 **Theorem (fixed number of galls, unlabeled).** For $g\ge1$, the generating function $\mathcal E^1_g(t)=\sum_n E^1_{n,g}t^n$ satisfies, as $t\to\rho^-$,
+
 $$\mathcal E^1_g(t)\sim\frac{(4g-3)!!\,\rho^g}{(2g)!\,\gamma^{4g-1}\,(1-t/\rho)^{2g-1/2}},$$
+
 and by singularity analysis, as $n\to\infty$,
+
 $$E^1_{n,g}\,\rho^{-g}\sim E_{n,g}\sim\tilde E_{n,g}\sim\frac{2^{2g-1}}{(2g)!\,\gamma^{4g-1}\sqrt\pi}\,n^{2g-3/2}\rho^{-n}.$$
+
 So for fixed $g$ general and time-consistent galled trees are asymptotically equinumerous, while the simplex restriction costs a constant factor $\rho^{g}$.
 
 **Leaf-labeled, fixed number of reticulations $k\ge1$.**
+
 $$e^1_{n,k}\frac{(2k)!}{k!}\sim e_{n,k}\frac{(2k)!}{2^kk!}\sim\tilde e_{n,k}\frac{(2k)!}{2^kk!}\sim\frac{2^{k-1}\sqrt2}{k!}\,n^{n+2k-1}\Big(\frac2e\Big)^n,$$
+
 the last expression being the common asymptotic count of general, tree-child, normal and galled networks with $k$ reticulations.
 
 **Unrestricted number of galls.** All classes follow $\frac{\delta}{2\sqrt\pi}n^{-3/2}\alpha^{-n}$ (unlabeled) or $\frac{\delta}{\sqrt2}n^{n-1}(\alpha^{-1}/e)^n$ (labeled), with different exponential rates: unlabeled $(\delta,\alpha)\approx(0.1966,0.1165)$ general, $(0.2762,0.2073)$ time-consistent, $(0.3846,0.2344)$ simplex time-consistent; labeled $(0.1894,0.1250)$, $(0.2548,0.2383)$ and $\big((9-\sqrt3)\sqrt{3(9+\sqrt3)}/117,\ (3+\sqrt3)/18\big)\approx(0.3525,0.2629)$.

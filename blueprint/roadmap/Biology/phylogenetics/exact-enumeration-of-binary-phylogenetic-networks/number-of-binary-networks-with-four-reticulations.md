@@ -3,12 +3,17 @@
 A **rooted binary phylogenetic network** on $[n]$ is a rooted acyclic digraph without parallel arcs whose root has out-degree 2, whose $n$ leaves (out-degree 0) are labelled bijectively by $[n]$, and whose other vertices are tree vertices (in-degree 1, out-degree 2) or reticulations (in-degree 2, out-degree 1). With $k$ reticulations such a network has $2n+3k-1$ arcs. Let $\mathcal P_{n,k}$ be the set of these networks with $k$ reticulations (no further class restriction such as tree-child or normal).
 
 **Building blocks.** The number of rooted binary forests on $[n]$ with $k$ trees is
+
 $$|\mathcal F_{n,k}|=\frac{(2n-k-1)!}{2^{n-k}(n-k)!(k-1)!},$$
+
 so there are $t_n=(2n-3)!!$ binary trees. Deleting all reticulation arcs splits a network into **tree components**; contracting each component gives its **component graph**, a small DAG recording how reticulations connect components.
 
 **Theorem.** For $n\ge 2$,
+
 $$|\mathcal P_{n,4}|=\frac{(2n-4)!}{189\,(n-2)!\,2^{n-1}}\,Q_9(n)-\frac{1}{3}(n+1)!\,2^{n-4}\big(32n^5+558n^4+3901n^3+13523n^2+23008n+15264\big),$$
+
 $$Q_9(n)=504n^9+10836n^8+91414n^7+362607n^6+568813n^5-326256n^4-1950557n^3-1378566n^2+440523n+367416,$$
+
 and $|\mathcal P_{1,4}|=109$. The first values are $3881,\ 113424,\ 3212190,\ 92486235,\ 2759501745$ for $n=2,\dots,6$.
 
 ## Expansion

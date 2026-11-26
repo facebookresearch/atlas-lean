@@ -1,7 +1,9 @@
 # The H-alpha balance index of a phylogenetic network
 
 **Definition.** Let $G$ be a finite rooted phylogenetic network with leaf set $\mathcal L_G$, and let $p_\ell$ be the probability that the simple random walk started at the root, moving at each step to a uniformly chosen child, ends at leaf $\ell$. For $\alpha > 0$, $\alpha \ne 1$,
+
 $$H_\alpha(G) = \frac{1}{1 - 2^{1-\alpha}} \sum_{\ell \in \mathcal L_G} p_\ell\bigl(1 - p_\ell^{\alpha - 1}\bigr) = \frac{1 - \sum_{\ell} p_\ell^\alpha}{1 - 2^{1-\alpha}},$$
+
 and $H_1(G) = \lim_{\alpha \to 1} H_\alpha(G) = -\sum_\ell p_\ell \log_2 p_\ell = B_2(G)$. Also $H_0 = |\mathcal L_G| - 1$ and $H_2$ is twice the Gini–Simpson index of $(p_\ell)$.
 
 **Theorem.**

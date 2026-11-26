@@ -10,6 +10,7 @@ $$\begin{aligned}
 Here $\varphi_G,\varphi_A$ are forest seeding rates into grass and ash, $\mu$ is non-fire forest mortality (forest reverting to grass), $\beta_G,\beta_F$ are fire-spread rates, $q$ is the fire quenching rate, $\gamma$ the ash-to-grass recovery rate, and $\Phi_G,\Phi_F\ge0$ are smooth nondecreasing sigmoidal flammability functions of grass cover (spontaneous ignitions). All rates are positive.
 
 **Grassland subsystem.** On $F=0$, eliminating $A=1-G-B$ gives $\dot G=\gamma(1-G-B)-\Phi_G(G)G-\beta_GBG$, $\dot B=\Phi_G(G)G+\beta_GGB-qB$; the simplex $\{G,B\ge0,\ G+B\le1\}$ is forward invariant, and steady states solve
+
 $$\Phi_G(\bar G)=(1-\bar G)\frac{\gamma q}{\gamma+q}\Big(\frac1{\bar G}-\frac{\beta_G}{q}\Big).$$
 
 **Results.**
@@ -17,6 +18,7 @@ $$\Phi_G(\bar G)=(1-\bar G)\frac{\gamma q}{\gamma+q}\Big(\frac1{\bar G}-\frac{\b
 1. For all positive $\gamma,q,\beta_G$ there is a unique grass-burning-ash (GBA) steady state, and $\bar G<q/\beta_G$.
 2. The GBA steady state is linearly stable to perturbations within $\{F=0\}$ for all parameter values.
 3. It is stable to invasion by forest exactly when
+
 $$\beta_F\bar B+\Phi_F(\bar G)+\mu>\varphi_G\bar G+\varphi_A\bar A .$$
 
 ## Expansion

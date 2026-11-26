@@ -7,7 +7,9 @@
 **Theorem 2.2.** If $X_{ij}\sim\mathrm{NegBin}(r_j,p_i)$ independently, with $\Pr(X_{ij}=x)=\frac{\Gamma(x+r_j)}{\Gamma(r_j)\Gamma(x+1)}(1-p_i)^xp_i^{r_j}$, then $(X_{i1},\dots,X_{iK})\mid n_i\sim\mathrm{DM}(n_i,\mathbf r)$; the sample-specific $p_i$ drops out.
 
 **DM residual.** Fix a global composition $\boldsymbol\pi$ and concentration $\alpha_0$. The row-level contrast $\Delta_i=\log\Pr_{\mathrm{DM}(n_i,\alpha_0X_i/n_i)}(X_i)-\log\Pr_{\mathrm{DM}(n_i,\alpha_0\boldsymbol\pi)}(X_i)$ splits as $\Delta_i=\sum_jc_{ij}$ with
+
 $$c_{ij}=\sum_{m=0}^{X_{ij}-1}\log\frac{\alpha_0X_{ij}/n_i+m}{\alpha_0\pi_j+m},\qquad d_{ij}=\operatorname{sgn}(X_{ij}-n_i\pi_j)\sqrt{|c_{ij}|}.$$
+
 Zero counts give $c_{ij}=0$, so the transform preserves sparsity.
 
 **Properties.**

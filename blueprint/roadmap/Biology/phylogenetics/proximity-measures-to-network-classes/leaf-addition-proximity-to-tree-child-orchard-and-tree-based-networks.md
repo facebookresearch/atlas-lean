@@ -4,11 +4,15 @@
 
 **Theorem.**
 1. $L_{\mathcal{TC}}(N)$ is computable in $O(|N|)$ time. If $r \le 1$ then $L_{\mathcal{TC}}(N) = 0$, and otherwise
+
 $$L_{\mathcal{TC}}(N) \le \left\lfloor \tfrac{3}{2} r - \tfrac{1}{2} \right\rfloor ,$$
+
 and this bound is attained.
 2. $L_{\mathcal{O}r}(N) = 0$ if $N$ is a tree and otherwise $L_{\mathcal{O}r}(N) \le r - 1$, which is sharp. Deciding whether $L_{\mathcal{O}r}(N) \le k$ is NP-complete, so computing $L_{\mathcal{O}r}$ is NP-hard.
 3. $L_{\mathcal{TB}}(N)$ is computable in $O(|N|)$ time, and for $r \ge 1$
+
 $$L_{\mathcal{TB}}(N) \le \left\lfloor \tfrac{r-1}{2} \right\rfloor ,$$
+
 which is tight.
 
 ## Expansion

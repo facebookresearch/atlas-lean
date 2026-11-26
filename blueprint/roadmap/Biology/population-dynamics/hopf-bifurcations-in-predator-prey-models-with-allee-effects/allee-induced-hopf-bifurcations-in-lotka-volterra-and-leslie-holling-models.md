@@ -1,9 +1,13 @@
 # Allee-induced Hopf bifurcations in Lotka-Volterra and Leslie-Holling models
 
 **Weak Allee effect with logistic prey.** Consider
+
 $$\dot x=\frac{x^2}{x+M}\Big(1-\frac xK\Big)-xy,\qquad \dot y=-pKy+xy,$$
+
 with Allee parameter $M>0$ (per-capita prey growth $x/(x+M)$ vanishes at low density but stays positive), carrying capacity $K$ and predator starvation rate $pK$, $0<p<1$. The coexistence equilibrium is $E_0=\big(Kp,\frac{Kp(1-p)}{M+Kp}\big)$, and its Jacobian is traceless at
+
 $$M_0=\frac{Kp^2}{1-2p},\qquad 0<p<\tfrac12,$$
+
 with $\frac{d\operatorname{Re}\lambda}{dM}\big|_{M_0}=\frac{(1-2p)^3}{2Kp(1-p)^2}>0$ and frequency $\omega=\sqrt{Kp(1-2p)}$. Without the Allee effect ($M=0$) $E_0$ is stable, and for large $K$ the Allee term destabilizes it.
 
 **Theorem.** For every $p\in(0,\frac12)$, $p\ne\frac14$, the system undergoes a Hopf bifurcation at $(E_0,M_0)$: supercritical (stable cycle) for $p>\frac14$ and subcritical for $p<\frac14$. At $p=\frac14$ the first Lyapunov coefficient vanishes, and for every $K>0$ except two exceptional values a codimension-two Bautin (generalized Hopf) bifurcation occurs, where stable and unstable cycles coexist and collide.

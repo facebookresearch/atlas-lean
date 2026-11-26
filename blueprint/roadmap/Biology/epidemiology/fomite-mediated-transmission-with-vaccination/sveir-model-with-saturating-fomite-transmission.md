@@ -13,13 +13,19 @@ $$\begin{aligned}
 with the Hill-type dose-response $g(C,\kappa)=C^n/(C^n+\kappa^n)$, $n\in\mathbb N$ (Holling type II for $n=1$, type III for $n\ge2$). All parameters are positive, $p\in(0,1)$, and vaccinated hosts are less susceptible: $\beta_2\le\beta_1$, $\alpha_2\le\alpha_1$. Recovered hosts ($\dot R=\gamma I-\mu R+p\eta V$) decouple.
 
 **Invariant region.** The set
+
 $$\Omega=\Bigl\{(S,E,I,V,C)\in\mathbb R^5_+:\ S>0,\ S+E+I+V\le\frac\Lambda\mu,\ C\le\frac{\varphi\Lambda}{\omega\mu}\Bigr\}$$
+
 is positively invariant and globally attracting, and the system is point dissipative on $\Omega$.
 
 **Disease-free equilibrium and reproduction numbers.** The unique disease-free equilibrium is $E_0=(S_0,0,0,V_0,0)$ with
+
 $$S_0=\frac{\Lambda(\mu+\eta)}{\mu(\mu+\eta)+\sigma(\mu+p\eta)},\qquad V_0=\frac{\Lambda\sigma}{\mu(\mu+\eta)+\sigma(\mu+p\eta)}.$$
+
 The control reproduction number is $\mathcal R_c=\mathcal R_c^{\rm dir}+\delta_{1n}\mathcal R_c^{\rm env}$, where
+
 $$\mathcal R_c^{\rm dir}=\frac{\xi(\beta_1S_0+\beta_2V_0)}{(\xi+\mu)(\mu+\gamma+d)},\qquad\mathcal R_c^{\rm env}=\frac{\xi\varphi(\alpha_1S_0+\alpha_2V_0)}{\kappa\omega(\xi+\mu)(\mu+\gamma+d)},$$
+
 and $\delta_{1n}$ is the Kronecker delta. Because $g'(0)=0$ for $n\ge2$, environmental transmission enters the invasion threshold only for the Holling type II response. Without vaccination, $\mathcal R_0=\dfrac{\xi\Lambda}{\mu(\xi+\mu)(\gamma+d+\mu)}\Bigl(\beta_1+\delta_{1n}\dfrac{\alpha_1\varphi}{\kappa\omega}\Bigr)$.
 
 **Local stability.** If $\mathcal R_c<1$ then $E_0$ is locally asymptotically stable; if $\mathcal R_c>1$ it is unstable.

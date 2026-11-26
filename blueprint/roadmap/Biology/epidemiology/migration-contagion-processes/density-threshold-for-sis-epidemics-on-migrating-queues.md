@@ -5,11 +5,15 @@
 **Theorem (phase transition in the density).** Assume the propagation-of-chaos ansatz.
 1. There is $\eta_c = \eta_c(\alpha, \beta, \mu) \in [0, \infty]$ such that: $\partial_p g(0,\eta) \le 1$ iff $p = 0$ is the only fixed point iff $\eta \le \eta_c$; and $\partial_p g(0,\eta) > 1$ iff there are exactly two fixed points $0$ and $p^* > 0$ iff $\eta > \eta_c$.
 2. The threshold is finite and positive:
+
 $$\frac{\beta}{2\mu + 5\beta} \;\le\; \eta_c \;\le\; \frac{1}{\kappa}\,\frac{\beta}{\mu + \beta}, \qquad \kappa = \frac{2\alpha\mu}{2(\mu+\beta)(\alpha + 2\mu + \beta) - \alpha\beta}.$$
+
 3. The epidemic survives if $\eta > \eta_c$ and goes strongly extinct if $\eta \le \eta_c$. Likewise, for fixed other parameters there are thresholds $\alpha_c$ and $\beta_c$ with survival iff $\alpha > \alpha_c$ (respectively $\beta < \beta_c$).
 
 **Averaged-infection-rate variant (AIR).** If each susceptible in a station is infected at a constant rate (the network averaged infection pressure) instead of $\alpha Y$, the station is a product-form Jackson network. Under the corresponding ansatz there is again a threshold $\eta_c^{(a)}$ with weak extinction for $\eta \le \eta_c^{(a)}$ and survival above it, and in the surviving stationary regime the numbers $\widetilde X$ of susceptible and $\widetilde Y$ of infected customers in a station are independent Poisson variables with
+
 $$\mathbb{E}\widetilde X = \frac{\beta}{\alpha}, \qquad \mathbb{E}\widetilde Y = \eta - \frac{\beta}{\alpha},$$
+
 so the susceptible fraction is $\beta/(\eta\alpha)$ and the departure rate per station is $\eta\mu$.
 
 ## Depends on

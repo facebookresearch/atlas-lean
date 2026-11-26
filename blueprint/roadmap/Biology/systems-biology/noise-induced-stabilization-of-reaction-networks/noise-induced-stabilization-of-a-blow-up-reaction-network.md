@@ -1,10 +1,15 @@
 # Noise-induced stabilization of a blow-up reaction network
 
 **Setting.** Consider two species $S_1,S_2$ and the reaction network
+
 $$3S_1+2S_2\to5S_1+S_2,\qquad 2S_1+3S_2\to S_1+5S_2,\qquad 4S_1\to\emptyset,\qquad 4S_2\to\emptyset,\qquad \emptyset\to S_1+S_2,$$
+
 all with rate constant $1$. Under **stochastic mass-action kinetics** the molecule counts $X(t)=(X_1(t),X_2(t))\in\mathbb N^2$ form a continuous-time Markov chain with jump rates
+
 $$q(x,x+2e_1-e_2)=x_1^{(3)}x_2^{(2)},\quad q(x,x-e_1+2e_2)=x_1^{(2)}x_2^{(3)},\quad q(x,x-4e_j)=x_j^{(4)},\quad q(x,x+e_1+e_2)=1,$$
+
 where $y^{(p)}=y!/(y-p)!$ for $y\ge p$ and $0$ otherwise. Under **deterministic mass-action kinetics** the concentrations satisfy
+
 $$\dot x_1=2x_1^3x_2^2-x_1^2x_2^3-4x_1^4+1,\qquad \dot x_2=-x_1^3x_2^2+2x_1^2x_2^3-4x_2^4+1 .$$
 
 **Deterministic blow-up (Remark).** On the diagonal $x_1=x_2=f$ the ODE reduces to $\dot f=f^5-4f^4+1$, so every trajectory started at $(x,x)$ with $x>4$ diverges in finite time, while staying arbitrarily far from the boundary $\{x_1=0\}\cup\{x_2=0\}$ of the state space. Other choices of rate constants give the same behaviour along a ray $x_2=\beta x_1$.

@@ -3,13 +3,19 @@
 **Time-scale notation.** On a time scale $\mathbb T$ let $\sigma(t)=\inf\{s\in\mathbb T:s>t\}$, $\mu(t)=\sigma(t)-t$ (graininess), $f^\sigma=f\circ\sigma$, and $f^\Delta$ the delta derivative. A function $p$ is regressive if $1+\mu p\ne0$; then $e_p(\cdot,t_0)$ is the unique solution of $y^\Delta=p\,y$, $y(t_0)=1$, and $p\oplus q=p+q+\mu pq$, $\ominus p=-p/(1+\mu p)$.
 
 **Model.** With rd-continuous rates $b,c:\mathbb T\to\mathbb R_0^+$ and $x(t_0)=x_0>0$, $y(t_0)=y_0>0$, $z(t_0)=z_0\ge0$,
+
 $$x^\Delta=-\frac{b\,x^\sigma y}{x+y},\qquad y^\Delta=\frac{b\,x^\sigma y}{x+y}-c\,y^\sigma,\qquad z^\Delta=c\,y^\sigma .$$
+
 On $\mathbb T=\mathbb R$ this is the SIR model with standard incidence restricted to the active population $x+y$; the shifted terms make each discrete step implicit in the outflow.
 
 **Theorem (explicit solution).** If $f,g$ below are regressive, the unique solution is
+
 $$x(t)=e_{\ominus g}(t,t_0)\,x_0,\qquad y(t)=e_{\ominus(f\oplus g)}(t,t_0)\,y_0,\qquad z(t)=N-e_{\ominus g}(t,t_0)\big[x_0+e_{\ominus f}(t,t_0)\,y_0\big],$$
+
 where $N=x_0+y_0+z_0$, $\kappa=y_0/x_0$ and
+
 $$f(t)=\frac{(c-b)(t)}{1+b(t)\mu(t)},\qquad g(t)=\frac{b(t)\,\kappa}{e_f(t,t_0)+\kappa}.$$
+
 For $x_0,y_0>0$, $z_0\ge0$ the solution is nonnegative and $x+y+z\equiv N$.
 
 **Long-time behaviour** ($\mathbb T$ unbounded above).

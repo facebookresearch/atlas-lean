@@ -4,6 +4,7 @@
 
 - *subtree reduction:* a pendant subtree common to all trees is replaced by a single taxon;
 - *chain reduction:* a common $m$-chain with $m>r$ is truncated to $r$ of its taxa in every tree, where
+
 $$r=\min\{\max\{k,3\},\ t+1\} .$$
 
 **Statement.**

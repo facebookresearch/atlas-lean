@@ -6,7 +6,9 @@ u_t = d_1 u_{xx} - a_1 u_x + u\big(r - u - m\,\chi_{(x_1,L]}\,w\big), & x\in(0,L
 w_t = d_2 w_{xx} - a_2 w_x + h - q w - p u w, & x\in(x_1,L),
 \end{cases}$$
 with zero-flux (Danckwerts) conditions $d_1u_x - a_1u = 0$ at $x=0$, $d_2w_x - a_2w=0$ at $x=x_1$, and $u_x = w_x = 0$ at $x=L$. Here $m$ is the toxicant effect on growth, $h$ the toxicant input, $q$ its decay and $p$ its uptake by the population. The system has a unique toxicant-only steady state $(0,\tilde w)$. Define, for $0<a_1<\sqrt{4d_1r}$,
+
 $$L^{*} = 2d_1\,\frac{\pi - \arctan\big(\sqrt{4d_1r-a_1^2}/a_1\big)}{\sqrt{4d_1r-a_1^2}},$$
+
 and $L_1^{*}<L^{*}$ the critical domain length of the toxicant-free logistic problem.
 
 **Theorem.**

@@ -9,7 +9,9 @@
 **Theorem.** Let the network be noncompetitive and entirely execution bounded, with finitely many static states reachable. Then
 1. the network defines a finite irreducible Abelian network $\mathcal{N}$ (processors at the source complexes, a generalized toppling network on the graph of complexes) that halts on all inputs; its production matrix is $P_{ij} = \Gamma^p_{ij}/\Gamma^r_{jj}$ when $\Gamma^p_{ij} > 0$ and $0$ otherwise, independent of the recurrent state, where $\Gamma^r, \Gamma^p$ are the reactant and product stoichiometry matrices;
 2. the recurrent states of the CRN sandpile chain are the recurrent states $\operatorname{Rec}\mathcal{N}$ of the Abelian network, and the critical group acts on them simply transitively, so
+
 $$\#\operatorname{Rec}\mathcal{N} = \#\operatorname{Crit}\mathcal{N}, \qquad \operatorname{Crit}\mathcal{N} \cong \mathbb{Z}^{\mathcal{A}}/(I - P)K,$$
+
 with $K$ the total kernel lattice of $\mathcal{N}$. In general only a fraction of the static states are recurrent.
 
 ## Depends on

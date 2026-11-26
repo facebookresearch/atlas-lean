@@ -5,9 +5,13 @@
 **Statement.**
 
 1. The law of $N$ is
+
 $$\mathbb{P}(N = n) = \frac{1}{\lambda + 1}\Big(\frac{\lambda}{\lambda+1}\Big)^{n}\, \Phi\Big(\frac{\lambda}{\lambda+1}, 1, n+1\Big), \qquad n \ge 0,$$
+
 where $\Phi(z, s, a) = \sum_{j \ge 0} z^j/(j + a)^s$ is the Lerch transcendent; its generating function is
+
 $$\mathbb{E}\big(s^N\big) = \frac{\ln\big(1 + \lambda(1-s)\big)}{\lambda(1-s)}, \qquad \mathbb{E}(N) = \frac{\lambda}{2}.$$
+
 2. (No dispersal.) If the survivors stay in the same colony, the colony size is the continuous-time Markov chain with rates $q_{i,i+1} = \lambda$ and $q_{i,j} = 1/i$ for $0 \le j < i$, started at 1. This chain hits $0$ almost surely for every $\lambda > 0$: a single colony under uniform catastrophes always dies out.
 
 ## Expansion

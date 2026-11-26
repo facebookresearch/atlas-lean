@@ -1,12 +1,15 @@
 # Thermodynamic uncertainty relation for perturbed gradient flow systems
 
 **Setting.** Let $\mathcal H = (V, E)$ be a finite oriented hypergraph with divergence $\mathrm{div}: \mathbb R^E \to \mathbb R^V$ and gradient $\mathrm{grad} = -\mathrm{div}^*$, let $\mathcal X$ be the space of positive measures on $V$, and let $\mathcal E: \mathcal X \to \mathbb R$ be a driving functional. A dissipation function $\Psi^*(x, f)$ on forces, with Legendre dual $\Psi(x, j)$ on fluxes, is strictly convex, superlinear, even and vanishes only at $0$ in its second argument. The *perturbed gradient flow* is
+
 $$\dot x = -\mathrm{div}\,j, \qquad j = D_f\Psi^*(x, f_x), \qquad f_x = \mathrm{grad}\big[-D_x\mathcal E(x)\big] + f^{\mathrm{ex}}_x,$$
+
 with a perturbation force field $f^{\mathrm{ex}}$. The dissipation rate is $\sigma(x, j) = \Psi(x, j) + \Psi^*(x, f_x) = \langle j, D_j\Psi(x, j)\rangle$, and the Hessian $g^{\mathcal J}_{x,j} = D^2_j\Psi(x, j)$ is a Riemannian metric on flux space. The relative precision of the flux is $\mathcal P_x(j) = j^T[\mathrm{Cov}_x(j)]^{-1}j$ with the flux covariance given by $[\mathrm{Cov}_x(j)]^{-1} = \frac12 D^2_j\Psi(x, j)$, so $\mathcal P_x(j) = \frac12\|j\|^2_{g^{\mathcal J}_{x,j}}$.
 
 **Integral representation.** $\sigma(x, j) = \int_0^1 \|j\|^2_{g^{\mathcal J}_{x,\tau j}}\,d\tau$.
 
 **Lemma (thermodynamic uncertainty relation).** If $\|j\|_{g^{\mathcal J}_{x,\tau j}} \ge \|j\|_{g^{\mathcal J}_{x,j}}$ for all $\tau \in [0,1]$, then
+
 $$\tfrac12\sigma(x, j) \ge \mathcal P_x(j).$$
 
 **Chemical reaction networks.** For a reversible mass-action network with stoichiometric matrix $-\mathrm{div}$, energy $\mathcal E(x) = \sum_i x_i\log(x_i/x_i^*) - x_i + x_i^*$ and cosh-type dissipation with frequency $\omega_r(x)$ per reaction, one has $\|j\|_{g^{\mathcal J}_{x,\tau j}} = \sum_r 2j_r^2/\sqrt{(\tau j_r)^2 + 4\omega_r^2}$, which is nonincreasing in $\tau$, so the condition holds and the uncertainty relation applies to all such networks (and more generally to cosh-type gradient flow systems).

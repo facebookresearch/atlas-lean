@@ -3,10 +3,13 @@
 **Setting.** In the quasi-neutral chemostat with mass-mortality events, let $W_t$ be the limiting frequency jump-diffusion of type 1 on the manifold $\Gamma$ of ecological equilibria, with absorption times $\tau_i=\inf\{t:W_t=i\}$ and fixation probability $\theta(w)=\mathbb P(\tau_1<\tau_0\mid W_0=w)$. Assume catastrophes are indiscriminate: the survival vector is $\mathbf U=(1,1)U^*$ with $U^*$ supported on $[a,1]$, $a>0$ (assumption H1). Let $\kappa$ be the catastrophe rate, $\nu=\beta_i/\mu_i$ the common lifetime reproductive success and $\mathcal E_\Gamma=(F\circ R^*)^{-1}(1/\nu)$.
 
 **Theorem 10.** If $\beta_1=\beta$ and $\beta_2=\beta+\varepsilon$ ($\varepsilon$ of either sign), then uniformly in $w\in[0,1]$
+
 $$\theta(w)=w+\varepsilon\,w(1-w)\left[\frac{1}{2\beta}-\frac{\kappa\nu\mathcal E_\Gamma}{2\beta^3}\,\mathbb E\log\frac{1}{U^*}\right]+o(\varepsilon).$$
 
 **Risk-dominant speed (Section 9.1).** Type $\beta$ is favored over $\beta+\varepsilon$ (a rare invader of one type replaces the other more easily than conversely, $\theta(w)\ge1-\theta(1-w)$ for small $w$) for small $\varepsilon>0$ iff $\beta^2\ge\nu\mathcal E_\Gamma\kappa\,\mathbb E\log(1/U^*)$, and for small $\varepsilon<0$ iff the reverse inequality holds. Hence
+
 $$\beta^*=\sqrt{\nu\,\mathcal E_\Gamma\,\kappa\,\mathbb E\log(1/U^*)}$$
+
 is evolutionarily attractive, increasing in the frequency and severity of catastrophes.
 
 ## Depends on

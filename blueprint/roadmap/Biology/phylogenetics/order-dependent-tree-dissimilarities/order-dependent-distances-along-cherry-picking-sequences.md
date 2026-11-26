@@ -7,8 +7,11 @@
 **Statement.**
 
 1. If $S$ is a common cherry-picking sequence for $T$ and $T'$ and $\sigma$ is the ordering it induces, then
+
 $$d^\sigma_{\mathrm{OLA}}(T, T') = d^\sigma_{\mathrm{HOP}}(T, T') = d^\sigma_{\mathrm{P2V}}(T, T') = wt(S).$$
+
 2. Writing $d^{\mathrm{CPS}}_\Theta(T, T')$ for the minimum of $d^\sigma_\Theta(T, T')$ over orderings induced by common cherry-picking sequences, for $\Theta \in \{\mathrm{OLA}, \mathrm{HOP}, \mathrm{P2V}\}$,
+
 $$d^{\mathrm{CPS}}_{\mathrm{OLA}}(T, T') = d^{\mathrm{CPS}}_{\mathrm{HOP}}(T, T') = d^{\mathrm{CPS}}_{\mathrm{P2V}}(T, T') = h_t(T, T').$$
 
 In general $d^{\mathrm{CPS}}_\Theta$ can exceed the unrestricted minimum $d^*_\Theta$.

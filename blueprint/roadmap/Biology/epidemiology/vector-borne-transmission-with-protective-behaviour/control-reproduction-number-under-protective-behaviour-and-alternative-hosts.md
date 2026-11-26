@@ -1,8 +1,11 @@
 # Control reproduction number under protective behaviour and alternative hosts
 
 **Model.** A Ross–Macdonald-type vector–host model with $H$ humans, $M$ mosquitoes and $L$ alternative (non-human) hosts, $l = L/H$ and $\rho = M/H$. A fraction $p$ of humans adopts protective behaviour, which multiplies their exposure to bites by $q\in[0,1]$; mosquitoes keep a fixed biting rate, so bites are redistributed over available hosts with weight $c(p,q)+l$, where $c(p,q) = 1-p(1-q)$. Humans recover at rate $\gamma$, mosquitoes die at rate $\mu$, and $\beta_{H\leftarrow M}$, $\beta_{M\leftarrow H}$ are the transmission rates per bite. The basic reproduction number without protection is
+
 $$R_0 = \frac{1}{1+l}\sqrt{\frac{\beta_{H\leftarrow M}\beta_{M\leftarrow H}}{\gamma\mu}\,\rho},$$
+
 and the next-generation matrix of the linearisation at the disease-free equilibrium gives the control reproduction number
+
 $$R_c(p,q) = R_0\,\frac{1+l}{c(p,q)+l}\,\sqrt{1-p(1-q^2)} .$$
 
 **Theorem.** Let $p\in(0,1)$ and $q\in[0,1)$.

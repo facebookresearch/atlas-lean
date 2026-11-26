@@ -5,13 +5,17 @@
 A state permutation $G$ acts by $T\mapsto GTG^{-1}$; this always yields an isomorphic SSN (same attractors, periods and basin sizes). $G$ is *admissible* for a BN if $GTG^{-1}=M'S'$ for a structure $S'$ that is a relabeled copy of $S$ (same wiring up to node relabeling and input ordering). For a structure $S$, let $\mathcal{A}(S)$ be the set of state permutations that send every BN with structure $S$ to a BN on one common relabeled copy $S'$.
 
 **Generators.** A *node-flip* $F_b$, $b\in\{0,1\}^N$, maps $|x\rangle\mapsto|x\oplus b\rangle$; a *node-label permutation* $P_\pi$, $\pi\in\mathbb{S}_N$, permutes coordinates. They generate the hyperoctahedral group
+
 $$G_{F,P}=\mathcal{B}_N=(\mathbb{Z}_2)^N\rtimes\mathbb{S}_N,\qquad |G_{F,P}|=2^N N!,$$
+
 the symmetry group of the $N$-cube of states.
 
 **Theorem.**
 1. (Admissibility, Theorem 2.) For every structure $S$ and logic matrix $M$, and every $G=F_bP_\pi\in G_{F,P}$, one has $GTG^{-1}=M'S'$ with $S'=P_{\hat\pi}SP_\pi^{-1}$ the relabeled structure and $M'=\bigotimes_i M_i'$, $M_i'=F_{b_i}M_{\pi^{-1}(i)}F_{\hat b_i'}$, where $\hat b_i'$ is the input flip vector of node $i$ in $S'$. Hence $G_{F,P}\subseteq\mathcal{A}(S)$ for all $S$.
 2. (Completeness, Theorem 3.) For the directed ring ($N$ nodes, node $i$ reads only node $i-1$ cyclically), $\mathcal{A}(S)=G_{F,P}$. Consequently
+
 $$\bigcap_{S}\mathcal{A}(S)=G_{F,P},$$
+
 the intersection over all structures on $N$ nodes: the state permutations admissible for every BN are exactly compositions of node-flips and node-label permutations.
 
 More generally $\mathcal{A}(S)=G_{F,P}$ whenever no two nodes read the same set of nodes and all nodes read the same number $K$ of distinct nodes, so $G_{F,P}$ is the complete symmetry group of every random-topology ensemble with fixed in-degree $K<N$. It fails for the structure in which every node reads every node including itself, where every state permutation is admissible.

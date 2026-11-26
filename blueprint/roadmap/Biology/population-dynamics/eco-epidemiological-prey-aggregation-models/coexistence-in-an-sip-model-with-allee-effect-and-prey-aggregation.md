@@ -11,9 +11,13 @@ with all parameters positive, a strong Allee threshold $0 < L < K$, and an aggre
 **Theorem.**
 1. Solutions with nonnegative initial data remain nonnegative, and if $d_0 > d_2$ and $d_1 > d_3$, solutions with positive initial data are uniformly bounded.
 2. A coexistence equilibrium $E^* = (S^*, I^*, P^*)$ satisfies
+
 $$I^* = \frac{a_2 - d_2 (S^*)^r}{d_3}, \qquad P^* = \frac{e_0 S^* - a_1}{d_1},$$
+
 so both are positive exactly when
+
 $$S_2 := \frac{a_1}{e_0} \;<\; S^* \;<\; S_3 := \Big(\frac{a_2}{d_2}\Big)^{1/r},$$
+
 with $S^*$ a root of the remaining prey equation in this window. The number of such roots depends on the Allee threshold $L$.
 3. Varying the Allee threshold $L$, the predator-free equilibrium undergoes a transcritical bifurcation and the coexistence equilibrium undergoes Hopf and saddle-node bifurcations (at the Routh–Hurwitz boundary $\Omega_1\Omega_2 = \Omega_3$, respectively $\Omega_3 = 0$, of its characteristic polynomial $\lambda^3 + \Omega_1\lambda^2 + \Omega_2\lambda + \Omega_3$).
 4. For parameter sets with a stable coexistence state, decreasing the aggregation exponent below a critical $r^* \in (0,1)$ drives the infected prey extinct, $I(t) \to 0$.

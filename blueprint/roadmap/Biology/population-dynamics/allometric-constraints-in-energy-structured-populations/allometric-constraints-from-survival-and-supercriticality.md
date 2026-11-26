@@ -1,7 +1,9 @@
 # Allometric constraints from survival and supercriticality
 
 In the [energy-structured individual-based model](energy-structured-individual-based-model-and-its-generation-process.md), take allometric (power-law) rates
+
 $$\tilde b(x) = C_\beta x^\beta,\quad d(x) = C_\delta x^\delta,\quad \ell(x) = C_\alpha x^\alpha,\quad \psi(x) = C_\gamma x^\gamma,$$
+
 with $\beta, \delta \in \mathbb R$ and $C_\beta, C_\delta, C_\alpha, C_\gamma, \alpha, \gamma > 0$. Require Assumptions 1 and 2 (biologically relevant paths for every $x_0$) and Assumption 3 (supercriticality for every $x_0$).
 
 **Theorem (case $0 < \alpha \le 1$).** Then necessarily $\gamma = \alpha$, $\delta = \alpha - 1$, $C_\gamma > C_\alpha$, and either

@@ -1,6 +1,7 @@
 # Fast turnover metabolites lie on the slow manifold
 
 In the [scaled kinetic flux profiling model](scaled-kinetic-flux-profiling-model-and-steady-state-identifiability.md) $\dot{\bar{\mathbf X}} = \mathbf K(\mathbf B - \mathbf I)\bar{\mathbf X} + \mathbf K\boldsymbol\alpha$, $\bar{\mathbf X}(0) = \mathbf 1$, suppose one metabolite turns over much faster than all others, $k_n \gg k_i$ for all $i \neq n$. The slow manifold is obtained by setting $\dot{\bar x}_n = 0$:
+
 $$\bar x_n = \alpha_n + \sum_{j \neq n}\beta_{nj}\bar x_j.$$
 
 **Theorem.** If $X_n$ is not the target of any labeled input edge in $\mathcal E_{\mathcal L}$, then the initial condition $\bar{\mathbf X}(0) = \mathbf 1$ lies on the slow manifold.

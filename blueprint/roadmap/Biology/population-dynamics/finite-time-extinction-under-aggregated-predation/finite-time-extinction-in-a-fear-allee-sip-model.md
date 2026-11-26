@@ -9,9 +9,13 @@ $$\begin{aligned}
 with positive parameters, fear factors $1/(1 + k_i P)$ on prey birth and transmission, an Allee threshold $L$ ($L > 0$ strong, $L < 0$ weak), and aggregation exponent $0 < r < 1$ in the predation term $d_0 S^r P$ (herd defence: only prey on the herd boundary are exposed).
 
 **Theorem.** Solutions with nonnegative data stay nonnegative, and if $d_0 \ge d_2$ and $d_1 \ge d_3$ they are uniformly bounded. Suppose $0 < r < 1$ and on $[0, t_{ext})$
+
 $$0 < S(t) < L, \qquad S(t) + I(t) \le K, \qquad P(t) \ge \underline P > 0 .$$
+
 Then $S$ reaches $0$ in finite time, and
+
 $$t_{ext} \le \frac{S(0)^{1-r}}{(1 - r)\, d_0\, \underline P}.$$
+
 The bound decreases with stronger predator pressure ($\underline P$, $d_0$) and with stronger aggregation (smaller $r$ when $S(0) < 1$). Extinction of $S$ then triggers a cascade collapse of the infectious prey and the predators.
 
 ## Expansion

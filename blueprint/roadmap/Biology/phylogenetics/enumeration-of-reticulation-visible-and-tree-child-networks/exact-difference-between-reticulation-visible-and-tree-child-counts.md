@@ -8,8 +8,11 @@ $$\Delta_k(\ell) := RV_{\ell,k} - TC_{\ell,k} \ge 0 .$$
 
 1. For $k=0,1$ the classes coincide: a network with exactly one reticulation is reticulation-visible if and only if it is tree-child, so $\Delta_0(\ell)=\Delta_1(\ell)=0$ for all $\ell\ge 2$.
 2. For all $\ell\ge 3$,
+
 $$\Delta_2(\ell) = \bigl(4\ell^3+3\ell^2-\ell-1\bigr)(2\ell-3)!! - (4\ell+1)\,2^{\ell-1}\,\ell! .$$
+
 3. For all $\ell\ge 4$,
+
 $$\Delta_3(\ell) = \frac{24\ell^5+50\ell^4-49\ell^3-80\ell^2+16\ell+12}{3}\,(2\ell-3)!! - \bigl(24\ell^3+8\ell^2-27\ell-22\bigr)\,2^{\ell-2}\,\ell! .$$
 
 For example $TC_{3,2}=42$ and $\Delta_2(3)=81$, $TC_{4,3}=2544$ and $\Delta_3(4)=17916$.

@@ -19,7 +19,9 @@ dz&=-\theta z\,dt+\delta\,dB(t).
 \end{aligned}$$
 
 **Well-posedness.** For every initial value in $\mathbb R_+^4\times\mathbb R$ the system has a unique global solution almost surely, and it remains in the invariant set
+
 $$\Gamma=\Bigl\{(S,V,E,I,z)\in\mathbb R_+^4\times\mathbb R:\ S+V+E+I\le\frac\Pi m,\ S\le S^0\Bigr\},$$
+
 where $S^0$ is the susceptible level at the disease-free equilibrium.
 
 The stationary law of $z$ is $\mathcal N(0,\delta^2/(2\theta))$, so $\mathbb E[e^{z}]=e^{\delta^2/(4\theta)}$ under stationarity: noise in $\ln\beta$ raises the mean transmission rate above $\bar\beta$.

@@ -1,10 +1,13 @@
 # Order n log n mixing of the noisy SIS chain
 
 **Model.** On a graph $G_n=(V_n,E_n)$ with $n$ vertices and maximum degree $\Delta^{(n)}_{\max}$, a configuration $\sigma\in\{0,1\}^{V_n}$ marks infected vertices. For $x\in V_n$ let $n_{I,\sigma}(x)$ be its number of infected neighbours and
+
 $$p(\sigma,x)=a+\lambda\,n_{I,\sigma}(x),\qquad a,\lambda,\kappa>0,\quad a+\lambda\Delta^{(n)}_{\max}<1 .$$
+
 At each discrete step a uniform vertex $x$ is chosen: if susceptible it becomes infected with probability $p(\sigma,x)$ ($a$ is the external infection probability), and if infected it recovers with probability $\kappa$. Because $a>0$ the chain is irreducible with a unique stationary law $\mu^{(n)}_{a,\lambda,\kappa}$; $t^{(n)}_{\rm mix}(\epsilon)$ is its total-variation mixing time.
 
 **Upper bound.** If there is $\gamma\in(0,1)$, independent of $n$, with $|p(\sigma,x)-\kappa|\ge\gamma$ for all $\sigma,x$ and $\lambda\Delta^{(n)}_{\max}<\gamma$, then for every $\epsilon\in(0,1)$ and large $n$,
+
 $$t^{(n)}_{\rm mix}(\epsilon)\le\frac{n}{\gamma-\lambda\Delta^{(n)}_{\max}}\big(\log n+\log(1/\epsilon)\big).$$
 
 **Lower bound.** If the chain is attractive, $a+\lambda\Delta^{(n)}_{\max}\le1-\kappa$, then $t^{(n)}_{\rm mix}(\epsilon)\ge(1-o(1))\,n\log n$.

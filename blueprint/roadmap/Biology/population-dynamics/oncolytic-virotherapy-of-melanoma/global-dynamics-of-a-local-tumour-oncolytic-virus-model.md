@@ -1,7 +1,9 @@
 # Global dynamics of a local tumour–oncolytic virus model
 
 **Model.** At the primary tumour site, normalised densities of uninfected tumour cells $x$ and virus-infected tumour cells $y$ satisfy
+
 $$\dot x = x(1-x-y) - \frac{\theta xy}{\alpha+y}, \qquad \dot y = r y(1-x-y) + \frac{\theta xy}{\alpha+y} - \gamma y,$$
+
 with logistic growth sharing a common carrying capacity, saturating infection with maximal rate $\theta>0$ and half-saturation $\alpha>0$, growth rate $r>0$ of infected cells and virus-induced death rate $\gamma>0$ of infected cells.
 
 **Theorem.** The system has no closed orbits in $\mathbb{R}^2_+$, and:

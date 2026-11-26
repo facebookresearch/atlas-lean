@@ -1,7 +1,9 @@
 # Global stability of Michaelis-Menten interaction networks
 
 **Setting.** For $n\ge2$ species with concentrations $x_i\ge0$, consider
+
 $$\dot x_i=-d_ix_i+f_i(x),\qquad f_i(x)=b_i+\sum_{j\ne i}h_{ij}(x_j),\qquad i=1,\dots,n,$$
+
 with decay rates $d_i>0$, constant inputs $b_i\ge0$, and each interaction $h_{ij}$ either identically zero or of Michaelis-Menten form, activating $h_{ij}(s)=a_{ij}\,s/(k_{ij}+s)$ or inhibiting $h_{ij}(s)=a_{ij}\,k_{ij}/(k_{ij}+s)$, with $a_{ij},k_{ij}>0$. Draw an edge $j\to i$ when $h_{ij}\not\equiv0$. The hypotheses are: (A1) *no idle node*, each $i$ has $b_i>0$ or an incoming edge; (A2) the graph is strongly connected (which implies (A1)); (A3) *non-degeneracy*, some interaction is inhibitory or some $b_i>0$. On $(0,\infty)^n$ use Thompson's logarithmic metric $\rho(x,z)=\max_i|\log x_i-\log z_i|$.
 
 **Lemma 1 (logarithmic contraction).** Each Michaelis-Menten function satisfies $s|h'(s)|/h(s)=1-h(s)/a\in(0,1)$ for $s>0$; hence $|\log h(s)-\log h(\sigma)|<|\log s-\log\sigma|$ for $s\ne\sigma$. Under (A1), $|\log(f_i(x)/f_i(z))|<\rho(x,z)$ for all positive $x\ne z$ (Corollary 1).

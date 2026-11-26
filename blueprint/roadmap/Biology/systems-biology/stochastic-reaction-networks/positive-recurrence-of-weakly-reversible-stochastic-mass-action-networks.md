@@ -1,7 +1,9 @@
 # Positive recurrence of weakly reversible stochastic mass-action networks
 
 **Setting.** A finite reaction network has complexes $y\in\mathbb Z^d_{\ge0}$ and reactions $y\to y'$. Under stochastic mass-action kinetics the molecule counts $X(t)\in\mathbb Z^d_{\ge0}$ form a continuous-time Markov chain in which reaction $y\to y'$ fires at rate
+
 $$\lambda_{y\to y'}(x)=\kappa_{y\to y'}\prod_{i=1}^d\frac{x_i!}{(x_i-y_i)!}\,\mathbf 1\{x\ge y\},\qquad\kappa_{y\to y'}>0,$$
+
 and moves the state by $y'-y$. Let $X$ be the minimal chain. The network is *weakly reversible* if every reaction $y\to y'$ lies on a directed cycle of reactions, i.e. there is a directed path of complexes from $y'$ back to $y$.
 
 **Theorem 3.1.** If the network is weakly reversible and every rate constant is positive, then the minimal chain is non-explosive from every initial population, every communicating class is closed, and the chain restricted to each communicating class is positive recurrent; in particular each class carries a unique stationary distribution.

@@ -1,7 +1,9 @@
 # Synchrony as normalized Frechet variance
 
 **Definition.** Let $(M,d)$ be a compact metric space of individual states (cell-cycle phases, developmental stages, positions) with at least two points, and let $\pi\in\mathcal P(M)$ be the distribution of a population over $M$. The generalized (Frechet) variance and the synchrony of $\pi$ are
+
 $$\operatorname{Var}(\pi)=\inf_{\alpha\in M}\int_Md(x,\alpha)^2\,d\pi(x)=\inf_{\alpha\in M}W_2(\pi,\delta_\alpha)^2,\qquad F(\pi)=1-\frac{\operatorname{Var}(\pi)^{1/2}}{\nu},\quad \nu=\sup_{\pi'\in\mathcal P(M)}\operatorname{Var}(\pi')^{1/2},$$
+
 where $W_2$ is the Wasserstein-2 distance; $1-F(\pi)$ is the asynchrony.
 
 **Properties.**

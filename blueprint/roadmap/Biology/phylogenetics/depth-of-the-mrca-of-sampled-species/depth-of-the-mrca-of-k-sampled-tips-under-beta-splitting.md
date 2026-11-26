@@ -5,11 +5,14 @@
 **Theorem (exact probability that the MRCA is the root).** For $2 \le k \le n$:
 - if $\beta = -1$: $\mathbb{P}(D_{n,k} = 0) = H_{k-1}/H_{n-1}$, which tends to $0$ for fixed $k$ but to $\alpha$ when $k \sim n^\alpha$, $0 < \alpha \le 1$;
 - if $\beta \ne -1$:
+
 $$\mathbb{P}(D_{n,k} = 0) = 1 - \frac{2(\beta+1)\cdots(\beta+k)}{k!\binom nk}\cdot\frac{\binom{n+2\beta+1}{n-k} - \binom{n+\beta}{n-k}}{\binom{n+2\beta+1}{n} - 2\binom{n+\beta}{n}}.$$
 
 **Theorem (limit laws for fixed $k \ge 2$).** As $n \to \infty$:
 1. for $\beta > -1$, $D_{n,k}$ converges in distribution to a geometric variable, $\mathbb{P}(G_k = r) = (1-q)q^r$, $r \ge 0$, with
+
 $$q = q(\beta,k) = \frac{(\beta+2)\cdots(\beta+k)}{(2\beta+3)\cdots(2\beta+k+1)} = \frac{2\Gamma(2\beta+2)\Gamma(\beta+k+1)}{\Gamma(\beta+1)\Gamma(2\beta+k+2)};$$
+
 2. for $\beta = -1$, $H_{k-1}D_{n,k}/\log n \to \operatorname{Exp}(1)$;
 3. for $\beta = -3/2$, $D_{n,k}/\sqrt{n} \to D_k$, the law determined by the moments $\mathbb{E}D_k^m = \dfrac{m!\,C_{k-1}4^{1-k}k!\sqrt{\pi}}{\Gamma(k + (m-1)/2)}$, with $C_{k-1}$ the Catalan number.
 

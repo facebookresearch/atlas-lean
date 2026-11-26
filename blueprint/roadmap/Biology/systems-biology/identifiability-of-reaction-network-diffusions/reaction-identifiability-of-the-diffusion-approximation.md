@@ -8,10 +8,14 @@ so its law is determined by the drift and diffusion matrix. $\mathcal{N}$ is *re
 
 **Theorem.** Let $\mathcal{N}$ and $\mathcal{N}'$ share species, with $\mathcal{R} \ne \mathcal{R}'$.
 1. $\mathcal{N}$ is reaction-identifiable w.r.t. its SDE iff, for every source complex $y$, the generalized reaction vectors
+
 $$\bigl\{\bigl(y'-y,\ (y'-y)(y'-y)^{\top}\bigr) : y \to y' \in \mathcal{R}\bigr\}$$
+
 are linearly independent.
 2. $\mathcal{N}$ and $\mathcal{N}'$ are unconfoundable iff they have different source complexes, or the same source complexes and for every source $y$ the open cones
+
 $$\operatorname{Cone}_{\mathcal{R}}(y) = \Bigl\{\sum_{y\to y'\in\mathcal{R}}\alpha_{y\to y'}\bigl(y'-y,(y'-y)(y'-y)^{\top}\bigr) : \alpha > 0\Bigr\}$$
+
 and $\operatorname{Cone}_{\mathcal{R}'}(y)$ are disjoint.
 
 **Linear conjugacy.** Two networks have linearly conjugate SDEs for some rate constants iff there is $G = DP$ ($D$ positive diagonal, $P$ a permutation) relating their source complexes and generalized cones accordingly.

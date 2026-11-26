@@ -6,13 +6,18 @@
 
 **Corollaries (single species, random carrying capacity $K_t$ i.i.d., $\bar K = \mathbb{E}K_1$).** Let $X_\infty$ denote the stationary population.
 1. *Beverton–Holt*, $X_{t+1} = \frac{mK_t}{K_t + (m-1)X_t}X_t$, $m > 1$: $\mathbb{E}\ln(K_1 + (m-1)X_\infty) = \mathbb{E}\ln(mK_1)$, hence
+
 $$\frac{e^{\mathbb{E}\ln(mK_1)} - \bar K}{m-1} \;<\; \mathbb{E}X_\infty \;<\; \bar K,$$
+
 the upper bound being the Cushing–Henson inequality (noise is detrimental); the lower bound is positive when $m > \mathbb{E}K_1/(\mathbb{E}\sqrt{K_1})^2$.
 2. *Ricker*, $X_{t+1} = X_te^{r(1 - X_t/K_t)}$, $r > 1$: $\mathbb{E}X_\infty = 1/\mathbb{E}(1/K_1) < \bar K$, so noise in the carrying capacity always lowers the mean. If instead only the growth rate is random, $X_{t+1} = X_te^{r_t(1 - X_t/K)}$ with $\mathbb{E}r_1 \in (1,2)$, then $\mathbb{E}X_\infty = K$: the mean is unchanged.
 
 **Theorem (small noise).** Let $\mathbf{e}_t = \bar{\mathbf e} + \rho\,\xi_t$ with $\xi_t$ i.i.d. in a compact convex set, and suppose the deterministic map has a globally attracting interior fixed point $\bar{\mathbf N}$. For small $\rho$, occupation measures converge a.s. to an invariant measure concentrated near $\bar{\mathbf N}$. For one species and one random coefficient, with $\partial F_1$ evaluated at $\bar N_1$,
+
 $$\mathbb{E}\bar N_1^\rho = \bar N_1 + b_1\Big(\frac{\partial^2 F_1}{\partial x_1^2}\tilde A_1 + \frac{\partial^2 F_1}{\partial \xi_1^2}\mathbb{E}\xi_1^2\Big)\rho^2 + O(\rho^3),$$
+
 $$b_1 = \Big(1 - \frac{\partial F_1}{\partial x_1}\Big)^{-1}, \qquad \tilde A_1 = \Big(1 - \Big(\frac{\partial F_1}{\partial x_1}\Big)^2\Big)^{-1}\Big(\frac{\partial F_1}{\partial\xi_1}\Big)^2\mathbb{E}\xi_1^2,$$
+
 so the sign of the $\rho^2$ correction, and hence whether noise raises or lowers the mean population, depends on the model and on which parameter fluctuates.
 
 ## Depends on

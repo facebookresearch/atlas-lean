@@ -3,8 +3,11 @@
 **Setting.** A galled tree is a rooted binary phylogenetic network in which every reticulation lies in its own cycle (gall), and the cycles are vertex-disjoint; it is *time-consistent* if the network can be drawn with node times so that the two parents of each reticulation are contemporaneous. Let $E_{n,g}$ be the number of unlabeled time-consistent galled trees with $n$ leaves and $g$ galls, and $e_{n,g}$ the number with $n$ labelled leaves. The unlabeled rooted binary trees (the case $g=0$) are counted by $U(t) = t + \frac12[U(t)^2 + U(t^2)]$, with $U_n \sim \frac{\gamma}{2\sqrt\pi}n^{-3/2}\rho^{-n}$ for Otter's constants $\gamma\approx1.13000$ and $\rho\approx0.4027$.
 
 **Theorem.** For each fixed $g\ge 1$, as $n\to\infty$,
+
 $$E_{n,g} \sim \frac{2^{2g-1}}{(2g)!\,\gamma^{4g-1}\sqrt\pi}\,n^{2g-\frac32}\rho^{-n},$$
+
 $$e_{n,g} \sim \frac{2^{2g-1}}{(2g)!\sqrt\pi}\,n^{2g-\frac32}\,2^{n}\,n! \sim \frac{2^{2g-1}\sqrt2}{(2g)!}\Big(\frac2e\Big)^{n}n^{n+2g-1}.$$
+
 The generating functions for fixed $g$ follow from a symbolic-method specification of galled trees in terms of trees and galls, and the unlabeled ones agree with those obtained earlier by a direct decomposition.
 
 ## Expansion

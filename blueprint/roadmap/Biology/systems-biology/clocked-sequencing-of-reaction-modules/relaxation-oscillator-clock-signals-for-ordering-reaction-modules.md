@@ -3,8 +3,11 @@
 **Problem.** A reaction module $\mathcal M_j$ is a mass-action network whose stable equilibrium encodes a computation (for example $S_1\to S_1+S_2$, $S_3\to S_3+S_2$, $S_2\to\emptyset$ computes $s_2^*=s_1^*+s_3^*$; $S_2\to S_1+S_2$, $S_1\to\emptyset$ computes $s_1^*=s_2^*$; alternating them implements the increment $s_1\leftarrow s_1+1$). Executing modules in order requires **symmetrical clock signals** $V_1,\dots,V_m$: species oscillating with a common period $T$ split into $m$ equal segments, with only $V_j$ appreciably positive in segment $j$. Each reaction of $\mathcal M_j$ is catalyzed by $V_j$, so it runs only in its segment.
 
 **Oscillator.** A relaxation oscillator with truncated-subtraction readout,
+
 $$\epsilon_1\dot x=\eta_1(\varphi(x)-y)x,\qquad \dot y=\eta_1(x-\ell)y,$$
+
 $$\epsilon_1\epsilon_2\dot u=\eta_1\big(\epsilon_1(p-u)-uv\big),\qquad \epsilon_1\epsilon_2\dot v=\eta_1\big(\epsilon_1(x-v)-uv\big),$$
+
 with cubic critical manifold $\varphi(x)=-x^3+bx^2+cx+d$ and $0<\epsilon_1,\epsilon_2\ll1$, produces square-wave-like $u,v$ that switch with the jumps of $x$ (the uv pair computes truncated differences, so one is near zero while the other is high). It is realizable by mass action and oscillates when $b>0$, $c<0$, $-3c<b^2<-4c$, $d$ exceeds an explicit threshold $d_0$, and the nullcline parameter $\ell$ lies between the fold points $x_m<\ell<x_M$. During the low phase $|v_j|<\frac{x_m}{p-x_m}\epsilon_1=O(\epsilon_1)$.
 
 **Theorem (duty ratio is unbounded).** The ratio $T_1/T_2$ of time spent on the two slow branches decreases in $\ell$ and is approximated by an explicit integral ratio $R(b,c,d)$; at the boundary $c=-b^2/4$, $d\downarrow d_0$, a regularized version satisfies $\lim_{\alpha,\beta\to0}R(b,\alpha,\beta)=\infty$ for every $b>0$ whenever $\beta/\alpha\not\to0$. Hence the duty ratio can be tuned over the range needed to split the period into $m$ segments, giving clock signals for regulating an arbitrary number of modules.

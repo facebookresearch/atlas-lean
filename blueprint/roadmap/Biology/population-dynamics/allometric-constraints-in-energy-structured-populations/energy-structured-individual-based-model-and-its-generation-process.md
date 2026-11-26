@@ -7,7 +7,9 @@
 - *death* at rate $d(\xi)$, with $\tilde b, d$ positive and continuous.
 
 A path is *biologically relevant* if death occurs before the energy reaches $0$ or $+\infty$, that is, $T_d < \infty$. Let
+
 $$K_{x_0,R}f(\xi_0) = \int_0^{t_{\max}(\xi_0,R)} b_{x_0}(A_{\xi_0,R}(u))\,e^{-\int_0^u (b_{x_0}+d)(A_{\xi_0,R}(\tau))\,d\tau} f\big(A_{\xi_0,R}(u) - x_0\big)\,du,$$
+
 where $A_{\xi_0,R}$ is the deterministic flow; $K_{x_0,R}\mathbf 1(\xi_0)$ is the probability that the next jump is a birth.
 
 - **Assumption 1** (energy avoids $0$): $\int_0^{x_0} \frac{d}{\ell}(x)\,dx = +\infty$ for all $x_0 > 0$.

@@ -1,9 +1,13 @@
 # Nondegenerate reaction networks have generically finite, nonsingular steady states
 
 **Setting.** A reaction network with $n$ species and $m$ reactions under power-law (generalized mass-action) kinetics has stoichiometric matrix $N \in \mathbb{R}^{n\times m}$, kinetic exponent matrix $M \in \mathbb{R}^{n \times m}$ and rate constants $\kappa \in \mathbb{R}^m_{>0}$, so $\dot x = N(\kappa \circ x^M)$ with $x^M = (x^{M_{\cdot 1}}, \dots, x^{M_{\cdot m}})$. The rows of $L \in \mathbb{R}^{d\times n}$ span the left kernel of $N$ (conservation laws $Lx = b$). Positive steady states with total amounts $b$ are the positive zeros $\mathbb{V}_{>0}(F_{\kappa,b})$ of
+
 $$F_{\kappa,b}(x) = \begin{pmatrix} N(\kappa\circ x^M) \\ Lx - b\end{pmatrix}.$$
+
 The network is *nondegenerate* if some $F_{\kappa,b}$ has a positive zero with nonsingular Jacobian; equivalently $\ker N \cap \mathbb{R}^m_{>0} \ne \varnothing$ and
+
 $$\operatorname{rk}\begin{bmatrix} N\operatorname{diag}(w)M^\top\operatorname{diag}(h) \\ L \end{bmatrix} = n \quad\text{for some } (w,h) \in \ker N \times (\mathbb{C}^*)^n .$$
+
 Let $Z_{cc} = \{(\kappa, b) : \mathbb{V}_{>0}(F_{\kappa,b}) \ne \varnothing\}$.
 
 **Theorem A (dichotomy).** Assume $\ker N \cap \mathbb{R}^m_{>0} \ne \varnothing$.

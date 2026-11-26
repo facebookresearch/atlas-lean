@@ -3,9 +3,13 @@
 **Setting.** Let $\mathcal P_{\ell,k}$ be the set of all binary phylogenetic networks with $\ell$ labeled leaves and $k$ reticulations (root of out-degree $1$, tree nodes of in/out-degree $1/2$, reticulations of in/out-degree $2/1$), and let $TC_{\ell,k}\subseteq RV_{\ell,k}\subseteq \mathcal P_{\ell,k}$ be the tree-child and reticulation-visible networks, with $\Delta_k(\ell)=|RV_{\ell,k}|-|TC_{\ell,k}|$. A *violation* is a non-leaf vertex all of whose children are reticulations (a reticulation whose child is a reticulation, or a tree node with two reticulation children); a network is tree-child if and only if it has no violation.
 
 **Statement.** For every fixed $k\ge 2$, as $\ell\to\infty$,
+
 $$|\mathcal P_{\ell,k}|-TC_{\ell,k} = 4(k-1)\,\ell\,TC_{\ell,k-1}\bigl(1+O(\ell^{-1/2})\bigr),\qquad \Delta_k(\ell) = 2(k-1)\,\ell\,TC_{\ell,k-1}\bigl(1+O(\ell^{-1/2})\bigr),$$
+
 and consequently
+
 $$\frac{|\mathcal P_{\ell,k}|-TC_{\ell,k}}{TC_{\ell,k}}\sim\frac{2k(k-1)}{\ell},\qquad \frac{\Delta_k(\ell)}{TC_{\ell,k}}\sim\frac{k(k-1)}{\ell} .$$
+
 In particular all three counts share the leading asymptotics $TC_{\ell,k}\sim RV_{\ell,k}\sim \frac{2^{k-1}\sqrt2}{k!}\left(\frac{2}{e}\right)^{\ell}\ell^{\ell+2k-1}$. If, moreover, $\Delta_k(\ell)=A_k(\ell)(2\ell-3)!!-B_k(\ell)2^{\ell-k+1}\ell!$ for polynomials $A_k,B_k$ and all large $\ell$, then $\deg A_k=2k-1$, the leading coefficient of $A_k$ is $2^k/(k-2)!$, and $\deg B_k\le 2k-3$.
 
 ## Depends on

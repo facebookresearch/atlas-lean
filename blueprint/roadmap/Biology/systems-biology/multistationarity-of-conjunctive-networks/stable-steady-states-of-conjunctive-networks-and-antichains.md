@@ -1,7 +1,9 @@
 # Stable steady states of conjunctive networks and antichains
 
 **Model.** For $N$ variables, input sets $I_i\subseteq\{1,\dots,N\}$, threshold $\theta\in(0,1)$ and Hill coefficient $n$,
+
 $$\frac{dx_i}{dt}=\prod_{k\in I_i}\frac{x_k^n}{\theta^n+x_k^n}-x_i,\qquad i=1,\dots,N .$$
+
 The wiring diagram has an edge $k\to i$ for each $k\in I_i$. Its strongly connected components $G_1,\dots,G_r$ are partially ordered by reachability.
 
 **Theorems** (for large but finite $n$).

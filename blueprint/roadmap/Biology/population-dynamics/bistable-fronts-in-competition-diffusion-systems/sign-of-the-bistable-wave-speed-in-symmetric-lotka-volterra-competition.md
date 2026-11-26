@@ -1,15 +1,21 @@
 # Sign of the bistable wave speed in symmetric Lotka-Volterra competition
 
 **Model.** Two species with identical demography and symmetric competition intensity $k$, differing only in diffusion rate, after scaling:
+
 $$u_t=u_{xx}+u(1-u-kv),\qquad v_t=dv_{xx}+v(1-v-ku).$$
+
 Under **strong competition**, $k>1$, both single-species states $(1,0)$ and $(0,1)$ are stable and coexistence is unstable (bistability). A monotone travelling front $(u,v)=(U,V)(x-ct)$ solves
+
 $$U''+cU'+U(1-U-kV)=0,\qquad dV''+cV'+V(1-V-kU)=0,$$
+
 with $(U,V)(-\infty)=(1,0)$, $(U,V)(+\infty)=(0,1)$, $U'<0<V'$. The sign of $c$ decides invasion: $c<0$ means $v$ advances and $u$ is locally excluded.
 
 **Theorem (existence, uniqueness, smoothness).** For every $k>1$, $d>0$ there is a unique speed $c_{k,d}$ admitting a monotone front; the profile is unique up to translation, $C^\infty$, with $0<U,V<1$, and $-2\sqrt d<c_{k,d}<2$. The map $(k,d)\mapsto c_{k,d}$ is $C^\infty$ on $(1,\infty)\times(0,\infty)$, and the normalized front depends smoothly on $(k,d)$.
 
 **Theorem ("unity is not strength").** For every $k>1$ and $d>0$,
+
 $$\operatorname{sign}c_{k,d}=\operatorname{sign}(1-d):$$
+
 the front moves so as to enlarge the territory of the **faster-diffusing** species, and $c_{k,d}=0$ iff $d=1$.
 
 ## Depends on

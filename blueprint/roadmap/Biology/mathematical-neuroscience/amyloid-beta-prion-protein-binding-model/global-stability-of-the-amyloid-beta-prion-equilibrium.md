@@ -3,6 +3,7 @@
 **Model.** Soluble $A\beta$ oligomers $u$, cellular prion protein $PrP^C$ $p$, the $A\beta$-$PrP^C$ complex $b$ and insoluble plaques $A$ satisfy
 
 $$\dot A = \alpha u^n - \mu A, \qquad \dot u = \lambda_u - \gamma_u u - \tau up + \sigma b - \alpha n u^n - \rho uA,$$
+
 $$\dot p = \lambda_p - \gamma_p p - \tau up + \sigma b, \qquad \dot b = \tau up - (\sigma + \delta)b,$$
 
 with production rates $\lambda_u,\lambda_p$, degradation rates $\gamma_u,\gamma_p,\delta$, binding/unbinding rates $\tau,\sigma$, plaque formation from $n$ oligomers at rate $\alpha$, plaque-driven oligomer loss $\rho$ and plaque clearance $\mu$. All parameters are positive and states lie in $\mathbb{R}^4_+$.

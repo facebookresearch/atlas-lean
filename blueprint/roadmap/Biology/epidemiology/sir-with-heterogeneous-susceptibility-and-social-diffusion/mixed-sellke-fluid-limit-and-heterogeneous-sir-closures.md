@@ -3,7 +3,9 @@
 **Individual-based model.** In a population of size $N$, each initially susceptible individual $j$ carries an i.i.d. susceptibility $\Lambda_j\sim\mu$ on $[0,\infty)$ with finite mean, and a Sellke resistance threshold $Q_j\mid\Lambda_j\sim\mathrm{Exp}(\Lambda_j)$. It stays susceptible while the cumulative infection pressure $A_N(t)=\tau\int_0^t\iota_N(u)\,du$ is below $Q_j$ ($\iota_N$ the infected fraction, $\tau$ the transmission rate). Infectious periods are i.i.d. $\mathrm{Exp}(\gamma)$. Let $G(a)=\mathbb E[e^{-a\Lambda}]$ be the Laplace transform of the susceptibility law, the probability of escaping infection pressure $a$.
 
 **Theorem (fluid limit).** If the initial fractions converge to $(s_0,\iota_0,r_0)$ with $s_0,\iota_0>0$, then for every $T$, $\sup_{t\le T}\|(s_N,\iota_N,r_N,A_N)-(s,\iota,r,A)\|\to0$ in probability, where
+
 $$\dot A=\tau\big[1-r_0-s_0G(A)\big]-\gamma A,\quad A(0)=0,\qquad s=s_0G(A),\quad r=r_0+\tfrac\gamma\tau A,\quad \iota=1-s-r .$$
+
 Equivalently $\dot s=-\tau\,\bar\lambda(A)\,s\,\iota$ with **effective susceptibility** $\bar\lambda(a)=-G'(a)/G(a)$, the mean of $\Lambda$ among those who escaped pressure $a$.
 
 **Proposition (selection identity).** If $\mathbb E\Lambda^2<\infty$, then $\bar\lambda'(a)=-\operatorname{Var}_a(\Lambda)\le0$, the variance under the exponentially tilted law $\mu_a(d\lambda)\propto e^{-a\lambda}\mu(d\lambda)$. So the most susceptible are infected first, and effective susceptibility falls strictly for non-degenerate heterogeneity.

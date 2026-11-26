@@ -7,7 +7,9 @@ Let $(G,\kappa)$ be a mass-action system with species $X_1,\dots,X_n$ and ODEs $
 **Sufficient conditions that are not necessary.** ACR in $X_i$ holds if (1) $x_i-\alpha\in I$ for some $\alpha>0$; or (2) $x_i-\alpha\in I:(x_1\cdots x_n)^\infty$ (saturation); or (3) some $g\in I\cap\mathbb R[x_i]$ has a unique positive root. Examples show none of these is necessary, so membership tests in $I$ or its saturation are incomplete deciders.
 
 **Positive-restriction ideal.** For rational $\kappa\in\mathbb Q^r_{>0}$ set
+
 $$J(G,\kappa)=\big\langle f_\kappa(x)_1,\dots,f_\kappa(x)_n,\ x_1z_1^2-1,\dots,x_nz_n^2-1\big\rangle\subseteq\mathbb Q[x,z].$$
+
 The projection $(x;z)\mapsto x$ is a $2^n$-to-1 surjection $V_{\mathbb R}(J)\to V_{>0}(I)$ (a real Rabinowitsch trick).
 
 **Theorem (rational ACR and the real radical).** For $\kappa\in\mathbb Q^r_{>0}$ and $\alpha\in\mathbb Q_{>0}$, ACR in $X_i$ with value $\alpha$ $\iff$ $x_i-\alpha$ vanishes on $V_{>0}(I)$ $\iff$ $x_i-\alpha\in\sqrt[\mathbb R]{J(G,\kappa)}$.

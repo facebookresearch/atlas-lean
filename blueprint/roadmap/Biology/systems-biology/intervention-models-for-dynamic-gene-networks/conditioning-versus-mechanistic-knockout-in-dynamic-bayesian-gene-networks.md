@@ -1,7 +1,9 @@
 # Conditioning versus mechanistic knockout in dynamic Bayesian gene networks
 
 **Setting.** Expression levels $X_{ik}$ of genes $i=1,\dots,N$ at times $t_1<\dots<t_K$ follow a *mechanistic* model if
+
 $$X_{ik} = F_{ik}\big(X_{1,[1,k-1]},\dots,X_{N,[1,k-1]};\,U_{ik}\big), \qquad 2\le k\le K,$$
+
 with independent noises $U_{ik}$, independent of the initial expressions; dynamic Bayesian networks are mechanistic. A knockout of gene $1$ can be predicted in two ways: the *conditional* model $X^{\mathrm{cond}}$ conditions the fitted law on $X_{1k}=0$ for all $k$, while the *mechanistic* model $X^{\mathrm{meca}}$ replaces $F_{1k}$ by $0$ and propagates the change through the other $F_{ik}$. Let $G'$ be the static gene network with gene $1$ and its edges removed; a connected component $\mathcal{C}$ of $G'$ is *downstream* of gene $1$ if no edge goes from any $j\in\mathcal{C}$ to gene $1$, and *upstream* if no edge goes from gene $1$ to $\mathcal{C}$ (by acyclicity, every component is one or the other).
 
 **Theorem.**

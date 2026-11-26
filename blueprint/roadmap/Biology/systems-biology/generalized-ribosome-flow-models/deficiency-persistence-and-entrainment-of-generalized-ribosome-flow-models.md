@@ -1,9 +1,13 @@
 # Deficiency, persistence and periodic entrainment of generalized ribosome flow models
 
 **Model.** A compartmental graph $D = (Q, A)$ has compartments $q_1, \dots, q_m$ with capacities $c_i$ and directed transitions $(q_i, q_j) \in A$ on an arbitrary network (the classical ribosome flow model is a path, the ribosome flow model on a ring a cycle). Its kinetic representation is the chemical reaction network with species $N_i$ (occupied sites) and $S_i$ (free sites) and one reaction per transition,
+
 $$N_i + S_j \xrightarrow{\ \mathcal{K}_{ij}\ } N_j + S_i,$$
+
 with a nonnegative, possibly time-varying rate function $\mathcal{K}_{ij}(n, s, t)$. Since $n_i + s_i = c_i$ is conserved, the dynamics reduces to
+
 $$\dot n_i = \sum_{j \in \mathcal{D}_i}\mathcal{K}_{ji}(n, c - n, t) - \sum_{j \in \mathcal{R}_i}\mathcal{K}_{ij}(n, c - n, t),$$
+
 summing over donors $\mathcal{D}_i$ and receivers $\mathcal{R}_i$ of $q_i$. Let $|D|$ be the undirected graph of $D$ with parallel edges merged.
 
 **Theorem.**
@@ -13,7 +17,6 @@ summing over donors $\mathcal{D}_i$ and receivers $\mathcal{R}_i$ of $q_i$. Let 
 4. *(Input-to-state stability.)* Mass-conservative systems in this class, with rates driven by external inputs, are uniformly input-to-state stable with respect to the corresponding input-value set; for strongly connected structures, an entropy-like logarithmic function is a Lyapunov function.
 
 ## Depends on
-
 
 ## Expansion
 

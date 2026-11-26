@@ -5,14 +5,19 @@
 **Definition.** The input-output function is $\mathcal{I}\mapsto x_o(\mathcal{I})$. It exhibits *infinitesimal homeostasis* at $\mathcal{I}_0$ if $x_o'(\mathcal{I}_0)=0$, and *perfect homeostasis* (perfect adaptation) if $x_o'\equiv 0$.
 
 **Homeostasis matrix.** Let $J$ be the $(n+2)\times(n+2)$ Jacobian of $F$ at the equilibrium and let $H$ be the $(n+1)\times(n+1)$ matrix obtained by deleting the first row (the $\iota$ equation) and the last column (the $x_o$ derivatives) of $J$:
+
 $$H=\begin{pmatrix} f_{\rho,x_\iota} & f_{\rho,x_\rho}\\ f_{o,x_\iota} & f_{o,x_\rho}\end{pmatrix}.$$
 
 **Statement.** At an asymptotically stable equilibrium,
+
 $$x_o'(\mathcal{I}) = \pm\frac{f_{\iota,\mathcal{I}}}{\det J}\,\det H,$$
+
 so $\mathcal{I}_0$ is a point of infinitesimal homeostasis if and only if $\det H=0$ there.
 
 **Factorization into homeostasis blocks.** If $\mathcal{G}$ is a core network (every node is downstream of $\iota$ and upstream of $o$), then $\det H$ is not the zero polynomial in the entries $f_{\ell,x_j}$, and by Frobenius-König theory there are permutation matrices bringing $H$ to block upper-triangular form with irreducible diagonal blocks, giving a unique factorization
+
 $$\det H=\det B_1\cdots\det B_m .$$
+
 Generically (one input parameter), infinitesimal homeostasis occurs through exactly one block: $\det B_\eta=0$ and $\det B_\chi\neq 0$ for $\chi\neq\eta$. Each block determines a *homeostasis subnetwork* $\mathcal{K}_\eta\subseteq\mathcal{G}$, and the blocks split into appendage and structural types (see the classification article).
 
 ## Depends on

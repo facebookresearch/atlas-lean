@@ -5,7 +5,9 @@
 **Theorem.**
 1. The region $\Omega = \{\mathbf x \in \mathbb R^{11}_+ : \sum_i x_i \le \Lambda/\min\{\mu_1, \mu_2, \mu_3\}\}$ is positively invariant and globally attracting.
 2. The control reproduction number is
+
 $$\mathcal R_c = \max\{\mathcal R_c^{(1,2)}, \mathcal R_c^{(3)}\}, \qquad \mathcal R_c^{(3)} = \frac{\beta_{33} S_3^0}{\xi_3},$$
+
 where $\mathcal R_c^{(1,2)}$ is the spectral radius of the $2 \times 2$ next-generation block coupling infants and children, given in closed form in terms of $A_{11}/\xi_1$, $A_{22}/\xi_2$, $A_{12}$, $A_{21}$ and the maturation rate $\eta_1$.
 3. If $\mathcal R_c < 1$ the DFE is locally asymptotically stable; if $\mathcal R_c > 1$ the system is uniformly persistent.
 

@@ -5,7 +5,9 @@ Let $\mathcal T=\{T_1,\dots,T_k\}$ be rooted phylogenetic trees on a common labe
 **Algorithm.** Fix a leaf order $\sigma$. Insert leaves $l_1,l_2,\dots$ in order into all trees simultaneously; when the parent of $l_j$ in $T^j=T|_{\{l_0,\dots,l_j\}}$ is binary the attachment point is forced, and when it is a multifurcation the algorithm chooses, among the admissible attachment points inside the partial resolution of that multifurcation, one that agrees with the attachment used by the other trees whenever possible (Lemma 5 of the source characterizes exactly which placements produce a valid resolution). The result is a set $\mathcal T'$ of binary resolutions, computed in $O(kn\cdot m\log m)$ time where $m$ is the largest multifurcation size.
 
 **Theorem.** Let $\sigma^*$ minimize the corrected OLA distance $\hat d_\sigma$ of the trees resolved by the algorithm, and let $\mathcal T^*$ be binary resolutions of $\mathcal T$ minimizing $|\mathrm{MAAF}(\mathcal T^*)|$. Then
+
 $$\hat d_{\sigma^*}(\mathcal T)=|\mathrm{MAAF}(\mathcal T^*)|-1=m(\mathcal T).$$
+
 So, given an optimal leaf order, the algorithm resolves multifurcations optimally for the reticulation number.
 
 ## Depends on

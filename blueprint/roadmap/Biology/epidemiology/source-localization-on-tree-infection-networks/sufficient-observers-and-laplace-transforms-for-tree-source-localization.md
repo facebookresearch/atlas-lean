@@ -9,7 +9,9 @@
 **Theorem (sufficient observers).** If $R$ is a star arrangement and $s\in\bigcup_{r\in R}r$, then $(\tau_o)_{o\in\partial R}$ is a sufficient statistic for $s$: the other observers carry no further information about the source.
 
 **Theorem (Laplace transform).** For $v\in V\setminus\mathcal O$ and $t\in[0,\infty)^{\mathcal O}$, with $\mathcal O(e\mid v)=\{o\in\mathcal O:e\in[v,o]\}$,
+
 $$\varphi_v(t):=\mathbb E\big(e^{-\langle t,\tau\rangle}\mid s=v\big)=\prod_{e\in E}\varphi_e\Big(\sum_{o\in\mathcal O(e\mid v)}t_o\Big).$$
+
 The source is identifiable when the laws of $\tau$ under different candidate sources differ, which can be checked by comparing these transforms. Conditioning on one observed time uses $\mathbb E\big(e^{-\sum_ic_i\tau_i}\mid\sum_i\tau_i=t\big)=(\mathcal L_{c_1}f_1*\dots*\mathcal L_{c_k}f_k)(t)/(f_1*\dots*f_k)(t)$ for independent delays with densities $f_i$ and exponentially tilted densities $\mathcal L_cf(x)=e^{-cx}f(x)$.
 
 ## Depends on

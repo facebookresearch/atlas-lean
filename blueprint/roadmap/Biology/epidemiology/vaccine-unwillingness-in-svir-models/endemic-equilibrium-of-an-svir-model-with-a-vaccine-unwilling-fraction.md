@@ -7,18 +7,26 @@ $$\begin{aligned}
 \dot S_W&=\mu W-(\phi+\mu)S_W-\beta S_W\hat I, & \hat I&=I+\eta I_V,
 \end{aligned}$$
 where vaccination (rate $\phi$) acts only on willing susceptibles, and the imperfect vaccine multiplies infection risk by $\sigma\le1$ and infectiousness by $\eta\le1$ and speeds recovery by $\alpha\ge1$. Let
+
 $$\mathcal R_0=\frac{\beta}{\gamma+\mu},\qquad \xi=\frac{\sigma\eta}{\alpha},\qquad \epsilon=\frac{\mu}{\gamma+\mu}\ll1,\qquad \theta=\frac{\phi}{\gamma+\mu},$$
+
 and work in the endemic scaling (time $\mu t$, with $I=\epsilon Y$, $\eta I_V=\epsilon X$, $\mathcal R_0\hat I=\epsilon Z$, $\theta S_W=\epsilon P$), with the simplifying assumption $\alpha\sigma=1$ in the stability argument.
 
 **Statement.**
 
 1. The vaccine reproduction number is
+
 $$\mathcal R_v=\mathcal R_0\Bigl[1-\frac{W}{1-\epsilon\theta^{-1}}+\frac{\xi W}{(1-\epsilon\theta^{-1})(1-\epsilon a)}\Bigr]\ \sim\ \mathcal R_0\,(U+\xi W)\qquad(\epsilon\to0),\quad a=1-\alpha^{-1},$$
+
 and the disease-free equilibrium is asymptotically stable if and only if $\mathcal R_v<1$.
 2. There is a unique, asymptotically stable endemic equilibrium if and only if $\mathcal R_v>1$. To leading order in $\epsilon$ it is
+
 $$P=W,\qquad Z=\frac{\mathcal R_v-1}{\sigma+(1-\sigma)\mathcal R_0 S},\qquad V=\frac{W}{1+\sigma Z},\qquad Y=SZ,\qquad X=\xi VZ,$$
+
 where $S$ is the unique root in $0\le S\le U/\mathcal R_v$ of
+
 $$(U-S)\bigl[\sigma+(1-\sigma)\mathcal R_0S\bigr]=(\mathcal R_v-1)\,S ,$$
+
 and the equilibrium rate of new infections is $1-S-V$.
 3. Neither $\mathcal R_v$ nor the endemic state depends on the vaccination rate $\theta$ at leading order, so the effect of unwillingness cannot be reproduced by applying a reduced vaccination rate to all susceptibles.
 

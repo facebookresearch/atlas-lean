@@ -1,15 +1,21 @@
 # Hopf threshold for the degree of partial cooperation
 
 **Model.** Prey $u\ge0$ and predator $v\ge0$ interact through
+
 $$\frac{du}{dt}=\frac{r_0u^N}{1+Kv}-au^2-du-puv,\qquad \frac{dv}{dt}=quv-mv,$$
+
 with birth rate $r_0$, fear level $K$ (predator presence suppresses prey reproduction), intraspecific competition $a$, prey death rate $d$, linear predation rate $p$, conversion $q$ and predator death rate $m$, all positive. The exponent $N\in[1,2)$, the *degree of partial cooperation*, makes per capita reproduction grow with density as $u^{N-1}$ but more slowly than full cooperation ($N=2$), which would destroy boundedness; $N=1$ is the classical fear model. After rescaling (prey by $m/q$, time by the factor $1+Kv$), the system becomes
+
 $$\dot u=a_0u^N-(a_1u^2+a_2u+a_3uv)(1+v),\qquad \dot v=v(u-1)(1+v),$$
+
 with positive constants $a_0,a_1,a_2,a_3$ built from the original parameters.
 
 **Equilibria.** $(0,0)$ is always locally stable for $N>1$ (a demographic Allee effect, since $a_0u^{N-1}\to0$ as $u\to0$). Axial equilibria $(u,0)$ solve $a_0u^{N-1}=a_1u+a_2$, a concave curve against a line, so there are at most two, $\alpha<\beta$. The interior equilibrium is $(1,\bar v)$, where $\bar v>0$ solves $a_0=(a_1+a_2+a_3\bar v)(1+\bar v)$.
 
 **Theorem.** At $(1,\bar v)$ the Jacobian has positive determinant $(a_1+a_2+a_3+2a_3\bar v)\,\bar v(1+\bar v)$ and trace $Na_0-(1+\bar v)(2a_1+a_2+a_3\bar v)$. Hence the interior equilibrium is locally stable for
+
 $$N<N_H:=1+\frac{a_1}{a_1+a_2+a_3\bar v},$$
+
 unstable for $N>N_H$, and a Hopf bifurcation occurs exactly at $N=N_H$.
 
 ## Expansion

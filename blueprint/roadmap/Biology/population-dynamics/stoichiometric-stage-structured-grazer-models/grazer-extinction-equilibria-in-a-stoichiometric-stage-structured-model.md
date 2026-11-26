@@ -11,10 +11,14 @@ with Holling type II ingestion $f_i(x) = c_i x/(a_i + x)$, stoichiometric co-lim
 **Theorem.**
 1. The set $\Omega = \{0 \le x \le \min\{K, P/q\},\ J, A \ge 0,\ qx + \theta_j J + \theta_a A < P\}$ is positively invariant.
 2. The grazer-free equilibrium $E_1 = (K, 0, 0)$ is locally asymptotically stable if $K < P/q$ and
+
 $$e_j h_a(P/K) f_j(K)\bigl(e_a h_j(P/K) f_a(K) - \delta_a\bigr) < \delta_j \delta_a,$$
+
 and unstable if $K > P/q$ or the reverse strict inequality holds.
 3. The phosphorus-limited grazer-free equilibrium $E_2 = (P/q, 0, 0)$ is locally asymptotically stable if $K > P/q$ and
+
 $$e_j h_a(q) f_j(P/q)\bigl(e_a h_j(q) f_a(P/q) - \delta_a\bigr) < \delta_j \delta_a,$$
+
 and unstable if $K < P/q$ or the reverse strict inequality holds.
 
 ## Expansion

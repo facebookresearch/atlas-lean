@@ -1,7 +1,9 @@
 # Velocity consensus on time-varying directed interaction networks
 
 **Setting.** A group of $n$ animals $a_1,\dots,a_n$ has velocities $v_i(t)\in\mathbb R^m$. Each individual adjusts its velocity towards those of its current neighbours $N(t,a_i)$ (for example its nearest topological neighbours), which define a time-varying directed interaction graph $\mathbb G(t)$ on $\{a_1,\dots,a_n\}$. A **velocity coordination system** is
+
 $$\dot v_i(t)=-\sum_{a_j\in N(t,a_i)}g_{ij}\bigl(\|v_i-v_j\|\bigr)\frac{v_i-v_j}{\|v_i-v_j\|},\qquad g_{ij}(0)=0,\quad g_{ij}(r)>0\ (r>0).$$
+
 For each directed edge let $\ell_{ij}=\int_0^\infty\mathbf 1\{(a_i,a_j)\text{ active at }t\}\,dt$ be its total active time; the **$\infty$-adjoint graph** $\mathbb G_\infty$ keeps exactly the edges with $\ell_{ij}=\infty$. $\mathbb G(t)$ is a *stationary time-varying network* if every edge of $\mathbb G_\infty$ has active intervals whose lengths do not shrink to $0$ and inactive gaps whose lengths stay bounded. A strongly connected component of a directed graph is *independent* if no directed path enters it from outside; *consensus* means $v_i(t)-v_j(t)\to0$ for all $i,j$.
 
 **Theorem 5.2 and Corollaries 5.3-5.4 (non-expanding hull).** The convex hull $\Xi(t)$ of the velocity set $\{v_1(t),\dots,v_n(t)\}$ is non-increasing: $\Xi(t+\delta t)\subseteq\Xi(t)$ for all $t\ge0$, $\delta t>0$. Hence the system is Lyapunov stable and $\Xi(\infty)=\lim_{t\to\infty}\Xi(t)$ exists.

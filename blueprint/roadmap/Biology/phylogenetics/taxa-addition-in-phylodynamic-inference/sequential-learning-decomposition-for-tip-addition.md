@@ -5,10 +5,14 @@
 **Theorem.**
 1. *(Standard learning.)* $(\mathcal F_n)$ is a filtration, and for any square-integrable permutation-invariant $K$, $\mathrm{Var}(K \mid \mathcal F_n) \ge \mathbb E[\mathrm{Var}(K \mid \mathcal F_{n+1}) \mid \mathcal F_n]$ a.s.; more generally, for $K$ valued in a separable (pseudo)metric space, the conditional Fréchet variance $\inf_s \mathbb E[d^2(K, s) \mid \mathcal F_n]$ is a supermartingale.
 2. *(Sequential decomposition.)* If $K_\infty$, $K_\infty - K_n$ and $K_\infty - K_{n+1}$ are square integrable, then a.s.
+
 $$\begin{aligned}0 \le\ & \mathrm{Var}(K_n \mid \mathcal F_n) - \mathbb E[\mathrm{Var}(K_{n+1} \mid \mathcal F_{n+1}) \mid \mathcal F_n] + \mathrm{Var}(K_\infty - K_n \mid \mathcal F_n) - \mathbb E[\mathrm{Var}(K_\infty - K_{n+1} \mid \mathcal F_{n+1}) \mid \mathcal F_n]\\ &+ 2\bigl(\mathrm{Cov}(K_n, K_\infty - K_n \mid \mathcal F_n) - \mathbb E[\mathrm{Cov}(K_{n+1}, K_\infty - K_{n+1} \mid \mathcal F_{n+1}) \mid \mathcal F_n]\bigr),\end{aligned}$$
+
 so the change in posterior variance of the moving target $K_n$ is offset by the change in uncertainty about its gap to the full-genealogy target; variance about $K_n$ itself can increase when the estimand changes structurally with $n$.
 3. *(Event conditioning.)* For an event $E$ with $\mathbb P(E) > 0$, $V_k = \mathrm{Var}(K \mid \mathcal F_k)$ and $Z_k = \mathbb P(E \mid \mathcal F_k)$,
+
 $$\mathbb E[V_n - V_{n+1} \mid E] = \mathbb E[V_n - V_{n+1}] + \frac{\mathrm{Cov}(V_n, Z_n) - \mathrm{Cov}(V_{n+1}, Z_{n+1})}{\mathbb P(E)},$$
+
 so expected variance reduction can fail conditionally on informative events.
 4. *(Irreducible oracle gap.)* Let $(K_n)$ be a scalar absorbing monotone sequential estimand (it stops changing after a random absorption time $\tau$) with $K_\infty - K_n$ of constant sign. If absorption is uncertain given all data, $0 < \mathbb P(\tau < \infty \mid \mathcal F_{f(\mathcal G)}) < 1$ on a set of positive probability, and the data alone do not separate the two cases in the conditional mean of $K_{f(\mathcal G)}$, then $\mathbb E\bigl[\mathrm{Var}(\mathbb E[K_\infty \mid \mathcal F'_{f(\mathcal G)}] \mid \mathcal F_{f(\mathcal G)})\bigr] > 0$, where $\mathcal F'$ is the oracle filtration that also reveals $\tau$: the analyst carries strictly positive excess uncertainty relative to the oracle.
 

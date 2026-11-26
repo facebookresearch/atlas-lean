@@ -1,11 +1,15 @@
 # Levins model with time-varying colonization and extinction
 
 **Setting.** The fraction $p(t)$ of occupied habitat patches satisfies the nonautonomous Levins equation
+
 $$p' = c(t)\,p(1-p) - e(t)\,p,$$
+
 where the colonization rate $c$ and extinction rate $e$ are bounded, continuous and positive, with $c(t)\ge c_*>0$. Let $\mathcal{D}(t) = e(t)-c(t)$, $\Phi(t,s) = \exp\!\big(\int_s^t\mathcal{D}(r)\,dr\big)$, and let $\Sigma(\mathcal{D}) = [\beta^-(\mathcal{D}),\beta^+(\mathcal{D})]$ be the exponential dichotomy spectrum of the scalar linear equation $x' = \mathcal{D}(t)x$ on $[0,\infty)$ (for constant rates it is the single point $e-c$).
 
 **Theorem.** For $p(0)>0$,
+
 $$p(t) = \frac{1}{\Phi(t,0)\,p(0)^{-1} + \int_0^t\Phi(t,s)\,c(s)\,ds},$$
+
 and:
 
 1. If $\beta^+(\mathcal{D})<0$ (colonization uniformly dominates extinction), then $p(t) = \big(\int_0^t\Phi(t,s)c(s)\,ds + o(1)\big)^{-1}$ with an exponentially decaying error, so all solutions converge to a unique bounded positive solution that is independent of the initial condition.

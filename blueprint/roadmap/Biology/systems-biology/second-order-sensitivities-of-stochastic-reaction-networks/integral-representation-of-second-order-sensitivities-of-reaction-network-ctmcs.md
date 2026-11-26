@@ -1,6 +1,7 @@
 # Integral representation of second-order parameter sensitivities of stochastic reaction networks
 
 **Setting.** A stochastic reaction network with $M$ reactions of stoichiometric vectors $\zeta_1, \dots, \zeta_M \in \mathbb{Z}^N$ and propensities $\lambda_k(x,\theta)$ is a continuous-time Markov chain $X_\theta(t)$ on $\mathbb{N}^N$ with generator $\mathbb{A}_\theta g(x) = \sum_k\lambda_k(x,\theta)\,\Delta_{\zeta_k}g(x)$, where $\Delta_\zeta g(x) = g(x+\zeta) - g(x)$. For an output $f$ let $\Psi_\theta(x,f,t) = \mathbb{E}_x[f(X_\theta(t))]$, and define the first- and second-order sensitivities
+
 $$S^{(i)}_\theta(x,f,t) = \frac{\partial\Psi_\theta(x,f,t)}{\partial\theta_i}, \qquad S^{(i,j)}_\theta(x,f,t) = \frac{\partial^2\Psi_\theta(x,f,t)}{\partial\theta_i\,\partial\theta_j}.$$
 
 **Theorem.** Assume the propensities satisfy growth and regularity conditions at $\theta$ allowing Dynkin's formula and twice differentiability in $(\theta_i, \theta_j)$, and that $f$ has polynomial growth. Then for every initial state $x_0$ and $T > 0$, $S^{(i,j)}_\theta(x_0,f,T)$ exists and equals $\mathbb{E}_{x_0}[s^{(i,j)}_\theta(f,T)]$ with

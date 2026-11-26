@@ -10,6 +10,7 @@
 3. the diagonal is positive with $F_{0,0} = 2$, $F_{i,i} = F_{i-1,i-1} \pm 1$ for $0 < i < 2n-3$ ($-1$ at a sampling event, $+1$ at a coalescent event), and $F_{2n-3,2n-3} = 1$;
 4. the subdiagonal is $F_{i,i-1} = F_{i-1,i-1} - 1$ for $1 \le i \le 2n-3$;
 5. every remaining entry ($2 \le i \le 2n-3$, $1 \le j \le i-2$) is pinned by its three neighbors:
+
 $$F_{i,j-1} + F_{i-1,j} - F_{i-1,j-1} - 1 \;\le\; F_{i,j} \;\le\; F_{i,j-1} + F_{i-1,j} - F_{i-1,j-1}.$$
 
 **Corollary (diagonals).** Any sequence $f_0 = 2$, $f_i = f_{i-1} \pm 1$, $f_i \le 2n - i - 2$ ($0 \le i \le N \le 2n-3$) of positive integers is the initial diagonal of some such F-matrix; every partial matrix satisfying the constraints extends row by row to a valid F-matrix.

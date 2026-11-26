@@ -1,7 +1,9 @@
 # Branch-length polynomial is a complete invariant of branching trees
 
 **Definition.** Let $B$ be a rooted tree with positive branch lengths. Define $P(v,x,y)=x$ at each leaf $v$, and at an internal vertex $v$ with children $v_1,\dots,v_k$ joined by edges of lengths $w_1,\dots,w_k$,
+
 $$P(v,x,y)=\prod_{i=1}^k\big(w_iy+P(v_i,x,y)\big).$$
+
 $P(B,x,y)$ is the polynomial at the root. For unlabeled rooted trees $T$ (all $w_i=1$), $P(T,x,y)=L(T,x+y,y)-y$, where $L$ is the tree-distinguishing polynomial of Liu. Two trees with branch lengths are *isomorphic* if their underlying unlabeled rooted trees are isomorphic by a map preserving every branch length. A *branching tree* is a rooted tree with branch lengths having no vertex of degree two other than possibly the root; it is *proper* if the root has degree greater than one.
 
 **Theorem 1.** Two unlabeled rooted trees $T_1,T_2$ are isomorphic if and only if $P(T_1,x,y)=P(T_2,x,y)$.
@@ -9,6 +11,7 @@ $P(B,x,y)$ is the polynomial at the root. For unlabeled rooted trees $T$ (all $w
 **Theorem 2.** Isomorphic trees with branch lengths have identical polynomials.
 
 **Theorem 3 (principal-subtree expansion).** A principal subtree $S$ of $B$ (one containing the root) is obtained by pruning a set of pairwise incomparable edges $e_1,\dots,e_\beta$. Assign it the monomial $q(S)=w\,x^\alpha y^\beta$, where $\alpha$ is the number of leaves of $B$ kept in $S$ and $w$ is the product of the lengths of $e_1,\dots,e_\beta$. Then
+
 $$P(B,x,y)=\sum_{S\in\mathcal S(B)}q(S).$$
 
 **Theorem 4.** Two branching trees $B_1,B_2$ are isomorphic if and only if $P(B_1,x,y)=P(B_2,x,y)$.

@@ -1,7 +1,9 @@
 # Codimension-three Bogdanov–Takens bifurcation in a harvested predator–prey model with group defense
 
 **Model.** After rescaling, prey $x$ and predators $y$ obey
+
 $$\dot x = x\Big(1 - \frac{x}{K}\Big) - y\,p(x) - h, \qquad \dot y = y\big(-d + p(x)\big), \qquad p(x) = \frac{x^2}{a x^2 + b x + 1},$$
+
 with carrying capacity $K$, constant prey harvesting $h > 0$, predator death rate $d$, and a generalized Holling type III response with $a > 0$, $b^2 < 4a$ (so $p > 0$ for $x > 0$). For $b < 0$, $p$ is non-monotone: predation efficiency declines at high prey density (group defense), which allows two coexistence equilibria $E_3$, $E_4$.
 
 **Theorem.**
@@ -13,7 +15,6 @@ with carrying capacity $K$, constant prey harvesting $h > 0$, predator death rat
 6. *(Hopf.)* The weak focus $E_3$ has multiplicity at most two for $h > 0$, so at most two small limit cycles bifurcate from it, and it can be a codimension-$2$ generalized Hopf (Bautin) point.
 
 ## Depends on
-
 
 ## Expansion
 

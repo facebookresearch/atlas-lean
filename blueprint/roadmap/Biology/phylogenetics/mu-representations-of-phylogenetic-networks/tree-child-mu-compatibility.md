@@ -9,6 +9,7 @@ Let $\mathcal N$ be a rooted phylogenetic network on $[n]$ without elementary pa
 2. $M$ has a coordinatewise maximum $\mu_\rho$;
 3. each $P_i(M)$ is a chain $\delta_i=\mu_i^1<\mu_i^2<\dots<\mu_i^{m_i}$; write $\rho_i=\mu_i^{m_i}$;
 4. for each $i$ and $j=2,\dots,m_i$ there is a non-empty $B_i^j\subseteq\{k: i\prec_M k\}$ with
+
 $$\mu_i^j-\mu_i^{j-1}=\sum_{k\in B_i^j}\rho_k .$$
 
 **Theorem.** A finite set $M\subseteq\mathbb N^n$ is the μ-representation of a tree-child phylogenetic network on $[n]$ without elementary paths if and only if $M$ is tree-child μ-compatible. The network is then unique up to isomorphism; it is the reconstruction digraph on vertex set $M$ with arcs $\mu_i^j\to\mu_i^{j-1}$ along each chain and bridge arcs $\mu_i^j\to\rho_k$ for $k\in B_i^j$, leaves labelled $\delta_i\mapsto i$.

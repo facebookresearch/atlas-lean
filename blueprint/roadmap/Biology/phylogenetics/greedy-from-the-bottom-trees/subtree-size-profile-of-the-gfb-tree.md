@@ -5,6 +5,7 @@
 **Lemma (complete = GFB).** $T_n^{gfb}=T_n^c$ for all $n\ge1$. Writing $T_n^{gfb}=(T_a,T_b)$ with $n_a\ge n_b$ and $\ell_n=\lfloor\log n\rfloor$, one has $n_b=2^{\ell_n-1}$ if $n\le3\cdot2^{\ell_n-1}$, and $n_a=2^{\ell_n}$ otherwise.
 
 **Theorem (subtree sizes, Section 4.3).** Let $a_n(i)$ be the number of pending subtrees of $T_n^{gfb}$ with $i$ leaves and $k_i=\lceil\log i\rceil$. Then
+
 $$a_n(i)=\begin{cases}\lfloor n/i\rfloor & i=2^{k_i}\text{ and }\big(n\bmod i=0\text{ or }n\bmod i\ge2^{k_i-1}\big),\\ \lfloor n/i\rfloor-1 & i=2^{k_i}\text{ and }0<n\bmod i<2^{k_i-1},\\ 1 & i\ne2^{k_i}\text{ and }(n-i)\bmod 2^{k_i-1}=0,\\ 0 & i\ne2^{k_i}\text{ and }(n-i)\bmod2^{k_i-1}>0.\end{cases}$$
 
 **Corollary (minimum values).** For $c>-2$, $\pi_c(T_n^{gfb})=\prod_{i=2}^n(i+c)^{a_n(i)}$; this gives closed forms for the minimum $\widehat s$-shape statistic ($c=-1$, OEIS A132862) and the minimum $Q$-shape statistic ($c=0$).

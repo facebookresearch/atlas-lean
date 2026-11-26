@@ -5,7 +5,9 @@
 **Facts.** A tree-child network with $n$ leaves has at most $n-1$ reticulations. An embedding uses at most one of the two reticulation arcs into each reticulation, so a network with $k$ reticulations has $|T(\mathcal N)|\le 2^k$.
 
 **Theorem.** For every binary tree-child network $\mathcal N$ with $n\ge2$ leaves,
+
 $$|T(\mathcal N)|\le 2^{n-1}-1,$$
+
 and the bound is attained for every $n\ge2$. If $|T(\mathcal N)|=2^{n-1}-1$, then $\mathcal N$ has $n-1$ reticulations and exactly one tree in $T(\mathcal N)$ is displayed twice; this tree is the one obtained from $\mathcal N$ by repeatedly replacing a reticulated cherry with a cherry (deleting the reticulation arc not from the cherry partner) until a tree remains.
 
 ## Expansion

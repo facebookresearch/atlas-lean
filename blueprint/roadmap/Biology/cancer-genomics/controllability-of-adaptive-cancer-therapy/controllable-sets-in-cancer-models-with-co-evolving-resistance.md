@@ -1,7 +1,9 @@
 # Controllable sets in cancer models with co-evolving resistance
 
 **Model.** Tumour size $n$ and mean drug-resistance trait $u$ evolve under a piecewise-constant drug dose $\alpha(t)\in A=[a_-,a_+]\subset[0,a_M]$ (bounded by the maximal tolerable dose):
+
 $$\dot u=\varepsilon\,k(n)\,\partial_u\big(b(u,\alpha)-c(u)n\big),\qquad \dot n=n\big(b(u,\alpha)-c(u)n\big).$$
+
 Here $b$ is a smooth trait- and dose-dependent growth rate, $c(u)$ a trait-dependent competition coefficient, $\varepsilon=\mu\sigma^2/2$ a small evolutionary rate (mutation fraction times mutational variance, canonical-equation scaling), and $k(n)$ a $C^1$ rate function vanishing only at extinction ($k^{-1}(0)=\{0\}$, $k'(0)>0$). For each constant dose the equilibria $(x,a)$ form a set $\mathcal P_A$ of trait-size pairs where selection vanishes, partitioned by the sign of $a_\star'(u)$ into stable nodes, saddles and isolated non-hyperbolic points. The input range is **hyperbolic** if all equilibria of the extreme vector fields $a_\pm$ are hyperbolic. A set $K$ is **controllable** if every point of $K$ can be steered to every other point of $K$ by some admissible dose schedule.
 
 **Theorem (controllable sets).** Let $A$ be hyperbolic and $\varepsilon>0$ sufficiently small. For each connected component of feasible equilibria:

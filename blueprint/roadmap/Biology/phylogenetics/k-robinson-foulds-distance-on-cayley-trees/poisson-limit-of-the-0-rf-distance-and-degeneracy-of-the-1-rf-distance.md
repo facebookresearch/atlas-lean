@@ -1,13 +1,17 @@
 # Poisson limit of the 0-RF distance and degeneracy of the 1-RF distance
 
 A *Cayley tree on $[n]$* is a tree with vertex set $[n] = \{1, \dots, n\}$; there are $n^{n-2}$ of them. For $k \in \{0, \dots, n-2\}$, the *$k$-local split* of a tree $T$ at edge $e = \{u, v\}$ is the pair $A \mid B$, where $A$ (resp. $B$) is the set of vertices of $T \setminus e$ within distance $k$ of $u$ (resp. $v$). The *$k$-RF distance* is
+
 $$d_{k\text{-RF}}(T, T') = 2(n-1) - 2S_k(T, T'),$$
+
 where $S_k(T, T')$ is the number of $k$-local splits shared by $T$ and $T'$; it is a metric. A $0$-local split is an edge, and an $(n-2)$-local split is an ordinary split (bipartition obtained by deleting an edge). Throughout, $\mathcal T, \mathcal T'$ are independent uniform random Cayley trees on $[n]$.
 
 **Lemma (forest extensions).** The number of Cayley trees on $[n]$ containing a given spanning forest with $m$ trees of sizes $q_1, \dots, q_m$ is $q_1 \cdots q_m\,n^{m-2}$. Hence a fixed set of $j$ pairwise disjoint pairs from $[n]$ are all edges of a uniform Cayley tree with probability exactly $(2/n)^j$.
 
 **Theorem (0-RF).** Let $S'_n = S_0(\mathcal T, \mathcal T')$ be the number of edges shared by $\mathcal T$ and $\mathcal T'$. Then $\mathbb E(S'_n) = 2(n-1)/n$, $\mathrm{Var}(S'_n) \sim 2$, and the total variation distance between $S'_n$ and a Poisson variable with mean $2$ is $O(1/n)$. Consequently
+
 $$(n - 1) - \tfrac12 d_{0\text{-RF}}(\mathcal T, \mathcal T') = S'_n \xrightarrow{d} \mathrm{Poisson}(2).$$
+
 The same Poisson$(2)$ limit holds for the number of edges of a fixed or random Cayley tree that appear among $n-1$ pairs chosen uniformly at random without replacement.
 
 **Theorem (1-RF).** The expected number of $1$-local splits shared by $\mathcal T$ and $\mathcal T'$ is $O(1/n)$. Hence $d_{1\text{-RF}}(\mathcal T, \mathcal T')$ converges in distribution to the constant $2n - 2$, the maximum possible value.

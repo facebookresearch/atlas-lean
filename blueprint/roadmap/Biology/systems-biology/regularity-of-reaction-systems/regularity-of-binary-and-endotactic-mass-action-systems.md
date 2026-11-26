@@ -3,7 +3,9 @@
 **Setting.** A reaction network $\mathcal R$ on $d$ species is a finite set of reactions $y\to y'$ between complexes $y,y'\in\mathbb Z^d_{\ge0}$, with propensities $\lambda_{y\to y'}$. The *stochastic reaction system* is the continuous-time Markov chain on $\mathbb N^d$ jumping by $y'-y$ at rate $\lambda_{y\to y'}(x)$; the *deterministic reaction system* is the ODE $\dot x=\sum\lambda_{y\to y'}(x)(y'-y)$ on $\mathbb R^d_{\ge0}$. A reaction system is **regular** if the Markov chain is non-explosive (finitely many jumps in finite time almost surely), respectively if every ODE solution exists for all $t\ge0$. The *molecularity* of $y\to y'$ is $\|y\|_1$; a network is *bimolecular* (second order under mass action) if all molecularities are at most $2$, and *binary* if moreover every product $y'$ has $\|y'\|_1\le2$. For $u\in\mathbb R^d_{>0}$ let $\mathcal R_{u,+}=\{y\to y':u\cdot y'>u\cdot y\}$ be the reactions increasing along $u$.
 
 **Theorems 3.2 and 3.3 (linear growth along a direction).** If for some $u\in\mathbb R^d_{>0}$
+
 $$\sup_{y\to y'\in\mathcal R_{u,+}}\ \sup_{x\ne0}\ \frac{\lambda_{y\to y'}(x)}{\|x\|_1}<\infty,$$
+
 then the stochastic system is regular (with $x\in\mathbb N^d$), and likewise the deterministic system (with $x\in\mathbb R^d_{\ge0}$). In particular the system is regular if $\mathcal R_{u,+}=\emptyset$ for some positive $u$.
 
 **Theorem 4.1 (second-order mass-action systems).** (a) Every binary mass-action system is regular. (b) Every second-order $\mathbf 1$-endotactic mass-action system is regular; in particular every second-order lower-endotactic, and every second-order endotactic, mass-action system is regular.

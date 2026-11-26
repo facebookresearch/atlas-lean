@@ -3,8 +3,11 @@
 **Setting.** Fix a structure $S$ of a synchronous Boolean network on $N$ nodes with in-degrees $K_i$ and automorphism group $\mathrm{Aut}(S)$ (node-label permutations mapping $S$ onto itself, possibly reordering input links). Let $\mathcal{M}$ be the set of logic matrices on $S$, so $|\mathcal{M}|=\prod_i 2^{2^{K_i}}$, and let the expanded ensemble $\mathcal{E}$ consist of all pairs $(M,S')$ with $S'$ a relabeled copy of $S$, so $|\mathcal{E}|=\frac{N!}{|\mathrm{Aut}(S)|}|\mathcal{M}|$. The hyperoctahedral group $G_{F,P}=(\mathbb{Z}_2)^N\rtimes\mathbb{S}_N$ of node-flips and node-label permutations acts on $\mathcal{E}$; members of one orbit have isomorphic state-space networks.
 
 **Statement.** The number of orbits is
+
 $$|\mathcal{E}/G_{F,P}|=\frac{1}{2^N|\mathrm{Aut}(S)|}\sum_{\pi\in\mathrm{Aut}(S)}\ \sum_{b\in\{0,1\}^N}\big|\mathcal{M}^{F_bP_\pi}\big|,$$
+
 where $\mathcal{M}^{g}$ is the set of logic matrices fixed by $g$. For $g=F_bP_\pi$, $g$ moves each input state of node $j$ to an input state of node $\pi(j)$, complementing the output if $\pi(j)$ is flipped; the input states of all nodes thus fall into $C(g)$ cycles. Call a cycle odd if the output is complemented an odd number of times around it. Then
+
 $$\big|\mathcal{M}^{g}\big|=\begin{cases}2^{C(g)} & \text{if every cycle is even},\\ 0 & \text{otherwise}.\end{cases}$$
 
 **Example.** For the directed ring with $N=3$ ($K_i=1$, $|\mathcal{M}|=64$, $|\mathrm{Aut}(S)|=3$, $|\mathcal{E}|=128$) the count gives $5$ orbits: $n=0,1,2$ non-constant functions, and $n=3$ with an even or odd number of negations, of sizes $16,48,48,8,8$. These five classes have pairwise non-isomorphic state-space networks.

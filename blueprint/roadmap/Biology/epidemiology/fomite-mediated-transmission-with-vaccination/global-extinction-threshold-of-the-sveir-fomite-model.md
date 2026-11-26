@@ -3,7 +3,9 @@
 Consider the [SVEIR model with saturating fomite transmission](sveir-model-with-saturating-fomite-transmission.md) with the Holling type II dose-response $g(C,\kappa)=C/(C+\kappa)$ ($n=1$).
 
 **Theorem.** Let
+
 $$\mathcal J_c=\frac\Lambda\mu\,\frac{\xi}{(\xi+\mu)(\gamma+d+\mu)}\Bigl(\frac{\varphi\alpha_1}{\kappa\omega}+\beta_1\Bigr).$$
+
 If $\mathcal J_c\le1$, the disease-free equilibrium $E_0$ is globally asymptotically stable in $\bar\Omega$. Since $S_0+V_0<\Lambda/\mu$, one has $\mathcal R_c<\mathcal J_c$, so $\mathcal J_c$ is a conservative sufficient condition for elimination.
 
 **Corollary (no vaccination).** For the reduced model without vaccination, with disease-free equilibrium $(\Lambda/\mu,0,0,0)$, the disease-free equilibrium is globally asymptotically stable in $\bar\Omega$ if and only if $\mathcal R_0\le1$, and unstable if $\mathcal R_0>1$; here $\mathcal J_c$ and $\mathcal R_0$ coincide.

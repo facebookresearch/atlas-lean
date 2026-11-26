@@ -1,7 +1,9 @@
 # Two-phase ageing model with competition
 
 **Setting.** A wild population is split into a first ageing phase (density $N_1$) and a second, post-transition phase (density $N_2$). Phase-1 individuals reproduce at rate $b>0$, phase-2 individuals at rate $\tilde b\ge 0$, and all newborns enter phase 1. Phase-1 individuals pass into phase 2 at rate $k+\eta_1N_1+\eta_2N_2$ (a baseline transition rate $k>0$ accelerated by competition) and die from competition at rate $c_1N_1+c_2N_2$; phase-2 individuals die at rate $d+\tilde c_1N_1+\tilde c_2N_2$ with $d>0$. All competition coefficients $\eta_i,c_i,\tilde c_i$ are nonnegative. With constant rates this is the planar system
+
 $$\begin{aligned}\dot N_1&=bN_1+\tilde bN_2-\bigl(k+(\eta_1+c_1)N_1+(\eta_2+c_2)N_2\bigr)N_1,\\ \dot N_2&=\bigl(k+\eta_1N_1+\eta_2N_2\bigr)N_1-\bigl(d+\tilde c_1N_1+\tilde c_2N_2\bigr)N_2,\end{aligned}$$
+
 on $\mathbb R_{\ge0}^2$. Write $c_1^{\mathrm{tot}}=\eta_1+c_1$. The quantity $R=b/k+\tilde b/d$ is the expected offspring number of a newborn in the absence of competition (time $1/k$ in phase 1, then time $1/d$ in phase 2, the transition being certain).
 
 **Theorem 3.1 (no periodic orbits).** The system has no periodic orbit lying entirely in $\mathbb R_{\ge0}^2$.

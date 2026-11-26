@@ -3,7 +3,9 @@
 **Setting.** On $X_m=\{0,\tfrac1m,\dots,1\}$ with Łukasiewicz operations $\neg x=1-x$ and $x\odot y=\max\{0,x+y-1\}$, a $\odot$-$\neg$ network is a map $F=(f_1,\dots,f_n):X_m^n\to X_m^n$ whose coordinates are truncated products $f_i=\bigodot_{j\in A_i}x_j^{p_{ij}}\odot\bigodot_{j\in B_i}\neg(x_j)^{q_{ij}}\odot\frac{c_i}m$ with $A_i\cap B_i=\emptyset$. Steady states are fixed points $F(x)=x$.
 
 **Theorem 32 (max-linear form).** Every nonzero coordinate function can be written uniquely as $f_i(x)=\max\{0,\ell_i(x)\}$ with
+
 $$\ell_i(x)=\sum_{j\in A_i}p_{ij}x_j-\sum_{j\in B_i}q_{ij}x_j+\frac{c_i}m-\sum_{j\in A_i}p_{ij},$$
+
 where $p_{ij},q_{ij}\in\{1,\dots,c_i\}$.
 
 **Corollary 37.** Let $L'\in\mathbb Z^{n\times n}$ be the matrix of coefficients of the linear parts $\ell'_i(x)=\sum_{A_i}p_{ij}x_j-\sum_{B_i}q_{ij}x_j$. If $\det(L'-I_n)\ne0$, there is at most one fixed point with all coordinates nonzero. More generally (Theorem 36), for each set $I$ of coordinates whose functions contain a $\odot$ operation, invertibility of the corresponding matrix $M_I$ (diagonal entries $\ell_{ii}-1$, off-diagonal $\ell_{ij}$) gives at most one fixed point in the region $\mathcal R_I$ attached to $I$.

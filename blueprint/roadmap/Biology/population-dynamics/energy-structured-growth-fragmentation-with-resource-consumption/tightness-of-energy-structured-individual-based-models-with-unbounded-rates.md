@@ -11,7 +11,9 @@
 - (H4) $\sup_K\mathbb E\,\langle\mu^K_0,1+\mathrm{Id}+\omega\rangle^p<\infty$ for some $p>1$.
 
 **Theorem.** Under (H0)–(H4), for every $T\ge0$ the sequence $(\mu^K_t,R^K_t)_{t\le T}$ is tight in $\mathbb D([0,T],\mathcal M_\omega\times[0,R_{\max}])$. Every accumulation point is continuous and satisfies $R^*_t=R^*_0+\int_0^t\rho(R^*_s,\mu^*_s)\,ds$ and, for test functions $\varphi_t(x)$ dominated by $\omega$,
+
 $$\langle\mu^*_t,\varphi_t\rangle=\langle\mu^*_0,\varphi_0\rangle+\int_0^t\!\!\int\Big(\partial_s\varphi_s+g(x,R^*_s)\partial_x\varphi_s+b(x)\big(\varphi_s(x_0)+\varphi_s(x-x_0)-\varphi_s(x)\big)-d(x)\varphi_s(x)\Big)\mu^*_s(dx)\,ds,$$
+
 the weak form of a growth–fragmentation PDE coupled to the resource.
 
 **Well-posedness.** Under the same structural assumptions the stochastic process itself is almost surely defined for all times: there is no explosion of the number of jumps, and $\mathbb E\sup_{t\le T}(E_t+N_t+\Omega_t)<\infty$ for total energy $E_t$, population size $N_t$ and total weight $\Omega_t=\langle\mu_t,\omega\rangle$.

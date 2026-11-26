@@ -7,7 +7,9 @@ A **semidirected network** keeps the direction of hybrid edges but forgets the r
 **Theorem (encoding).** If $N_1,N_2$ are binary orchard $\mathcal L$-networks, then $N_1\cong N_2$ if and only if $\mu(N_1)=\mu(N_2)$. Moreover, an explicit algorithm that repeatedly detects and reduces cherries directly on a μ-representation terminates on every orchard representation $\boldsymbol\mu$ and reconstructs an orchard network $N$ with $\mu(N)=\boldsymbol\mu$; applied to $\mu(N)$ for arbitrary $N$, it decides whether $N$ is orchard (it gets stuck with no cherry before reaching a trivial forest iff $N$ is not orchard).
 
 **Theorem (distance).** For a fixed taxon set $\mathcal L$, the edge-based μ-dissimilarity
+
 $$d_\mu(N_1,N_2)=\left|\mu(N_1)\,\triangle\,\mu(N_2)\right|$$
+
 (symmetric difference of multisets) is a metric on binary orchard $\mathcal L$-networks and is computable in polynomial time.
 
 ## Depends on

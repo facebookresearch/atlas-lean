@@ -3,6 +3,7 @@
 **Setting.** Let $\mathcal{P}_{\ell,k}$ be the set of rooted binary phylogenetic networks with $\ell$ labelled leaves and $k$ reticulation vertices (in-degree $2$, out-degree $1$), with no parallel edges and no further structural restriction (not necessarily tree-child, normal or of bounded level). For $k=1$, $|\mathcal{P}_{\ell,1}| = \ell\,(2\ell)!/(2^{\ell}\ell!) - 2^{\ell-1}\ell!$.
 
 **Theorem (three-term asymptotics).** Uniformly for $1 \le k = o(\sqrt{\ell})$,
+
 $$|\mathcal{P}_{\ell,k}| = \binom{\ell}{k}\sqrt{2}\, e^{-\ell}\,(2\ell)^{\ell+k-1}\Big(1 - \frac{\sqrt{\pi}\,k}{2\sqrt{\ell}} + \frac{62k^2-74k+11}{24\,\ell} + O\Big(\frac{k^3}{\ell^{3/2}} + \frac{k^4}{\ell^2}\Big)\Big).$$
 
 **Theorem (rarity of symmetry).** For every fixed $k \ge 2$, the probability that a uniformly random network in $\mathcal{P}_{\ell,k}$ has a nontrivial leaf-fixing automorphism group is $\frac{k(k-1)}{4\ell^3}\big(1+O(\ell^{-1/2})\big)$. Automorphism groups of such networks are $2$-groups.

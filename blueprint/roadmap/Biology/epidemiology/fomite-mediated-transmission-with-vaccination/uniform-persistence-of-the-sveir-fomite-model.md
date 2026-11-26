@@ -5,7 +5,9 @@ Consider the [SVEIR model with saturating fomite transmission](sveir-model-with-
 **Lemma.** The largest positively invariant subset of $\partial X_0$ is the disease-free face $\Sigma=\{E=I=C=0\}$. If $\mathcal R_c>1$, then $E_0$ is a weak repeller for $X_0$: $\limsup_{t\to\infty}d(\Phi_t(x_0),E_0)>0$ for every $x_0\in X_0$.
 
 **Theorem.** If $\mathcal R_c>1$, the system is uniformly persistent: there is $\delta>0$ such that every solution with $E(0)+I(0)+C(0)>0$ satisfies
+
 $$\liminf_{t\to\infty}S(t),\ \liminf_{t\to\infty}E(t),\ \liminf_{t\to\infty}I(t),\ \liminf_{t\to\infty}V(t),\ \liminf_{t\to\infty}C(t)\ \ge\delta.$$
+
 Moreover, the system has at least one endemic equilibrium.
 
 For $n\ge2$ the threshold $\mathcal R_c=\mathcal R_c^{\rm dir}$ involves only direct transmission, so persistence above threshold is driven by contact transmission, while fomites still shape the endemic dynamics.

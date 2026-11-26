@@ -1,7 +1,9 @@
 # Impulsive Goodwin model with a releasable hormone pool
 
 **Setting.** The impulsive Goodwin oscillator models pulsatile endocrine feedback in a three-hormone axis (for example GnRH, LH and testosterone). A releasable pool of the hypothalamic hormone, of size $x_r\ge0$, is replenished and degraded between pulses, $\dot x_r=-a_rx_r+v$ with $a_r,v>0$. Downstream, a linear cascade
+
 $$\dot x_1=-a_1x_1,\qquad \dot x_2=-a_2x_2+g_1x_1,\qquad \dot x_3=-a_3x_3+g_2x_2,\qquad y=x_3,$$
+
 with $a_i,g_i>0$, gives the feedback output $y$. Pulses occur at times $t_{k+1}=t_k+\Phi(y(t_k))$ with a continuous, nondecreasing *frequency modulation* $\Phi:\mathbb R_+\to(0,\infty)$ (higher output delays the next pulse). At $t_k$ an amount $\lambda_k=F(x_r(t_k^-),y(t_k^-))$ leaves the pool and enters the first compartment: $x_r\mapsto x_r-\lambda_k$, $x_1\mapsto x_1+\beta\lambda_k$ ($\beta>0$), other states unchanged. The *amplitude modulation* $F:\mathbb R_+^2\to\mathbb R_+$ is admissible if $0<F(\xi,\theta)\le\xi$ for $\xi>0$ and $F(0,\theta)=0$ (one cannot release more than is available). A **1-cycle** is a periodic solution with exactly one pulse per period; write $y^*$, $\lambda^*$ and $T^*$ for its output at pulse times, released dose and period.
 
 **Theorem 1 (existence, uniqueness and monotonicity of the 1-cycle).** If $\Phi$ is continuous, positive and nondecreasing and $F$ is continuous and admissible, the system has at least one positive 1-cycle. If moreover $F$ is continuously differentiable with $0<\partial_\xi F\le1$ and $\partial_\theta F\le0$, the positive 1-cycle is unique, and as functions of the pool parameters:

@@ -1,6 +1,7 @@
 # GFB trees minimize concave subtree-size indices
 
 **Setting.** Let $\mathcal{BT}^*_n$ be the set of rooted binary tree shapes with $n$ leaves. For an internal vertex $v$ of $T$ let $n_v$ be the number of leaves below $v$, and let $\mathring V(T)$ be the set of internal vertices. The *GFB tree* $T_n^{gfb}$ starts from a forest of $n$ single vertices and repeatedly joins two of the smallest remaining trees until one tree is left. The *caterpillar* $T_n^{cat}$ has exactly one cherry. For $f:\mathbb R_{\ge2}\to\mathbb R$ define
+
 $$\Phi_f(T)=\sum_{v\in\mathring V(T)} f(n_v),\qquad \pi_c(T)=\prod_{v\in\mathring V(T)}(n_v+c).$$
 
 **Theorem (minimum, Section 4.1).** For $n\ge2$ and $f$ strictly increasing and strictly concave, $T_n^{gfb}$ is the unique tree in $\mathcal{BT}^*_n$ minimizing $\Phi_f$.

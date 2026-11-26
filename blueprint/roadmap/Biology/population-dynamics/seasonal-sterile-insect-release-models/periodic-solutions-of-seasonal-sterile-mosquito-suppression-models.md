@@ -1,8 +1,11 @@
 # Periodic solutions of seasonal sterile-mosquito suppression models
 
 **Model.** The wild mosquito density $w(t) \ge 0$ satisfies
+
 $$w' = w\Bigl(\frac{a(t)\, w}{w + g(t)} - \mu(t) - \xi(t)\bigl(w + g(t)\bigr)\Bigr),$$
+
 where $a, \mu, \xi > 0$ are smooth and $T$-periodic (seasonal birth, death and density-dependent mortality), and the sterile population is released periodically: $g(t) = g_0$ on $[iT, iT + \bar T)$ and $g(t) = 0$ on $[iT + \bar T, (i+1)T)$. The factor $w/(w+g)$ is the probability that a wild female mates with a wild male. Let
+
 $$I_1 = -\int_0^{\bar T} \xi(t) g_0\, dt - \int_0^T \mu(t)\, dt + \int_{\bar T}^T a(t)\, dt .$$
 
 **Theorem.** Solutions exist globally, and $\limsup_t w(t) \le \max_t a(t)/\xi(t)$.

@@ -9,7 +9,9 @@ $$\begin{aligned}
 with birth and density-dependent death parameters $\nu>\mu$, carrying capacity $K$, direct and environmental transmission rates $\beta, \beta_e$, disease mortality $\gamma$, hunting rate $\alpha_1<\nu-\mu$, prion shedding $\xi$, prion decay $\epsilon$ and decontamination rate $\alpha_2$. The disease-free equilibrium has $S_2^{*} = K\big(1-\frac{\alpha_1}{\nu-\mu}\big)$, $I=U=0$.
 
 **Proposition.** With $a = \gamma + \frac{\nu\alpha_1}{\nu-\mu}$ and $d = \epsilon+\alpha_2$, the next-generation matrix at the disease-free equilibrium gives
+
 $$R_0 = R_{\mathrm{dir}} + R_{\mathrm{env}} = \frac{\beta}{a} + \frac{\beta_e\,\xi\,S_2^{*}}{a\,d}.$$
+
 The disease-free equilibrium is locally asymptotically stable for $R_0<1$ and unstable for $R_0>1$; at $R_0=1$ an endemic equilibrium branches off in a forward (supercritical) transcritical bifurcation, so no backward bifurcation occurs. For the stochastic version with multiplicative noise and a reflecting boundary at $S=0$, invasion of the disease-free state is instead governed by the sign of the top Lyapunov exponent of the linearised infection dynamics.
 
 ## Expansion

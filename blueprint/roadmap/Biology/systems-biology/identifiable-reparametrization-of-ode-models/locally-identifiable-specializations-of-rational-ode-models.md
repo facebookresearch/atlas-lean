@@ -1,7 +1,9 @@
 # Locally identifiable specializations of rational ODE models
 
 **Setting.** Consider a rational ODE model with parameters $\bar\alpha$, states $\bar x$, inputs $\bar u$ and outputs $\bar y$,
+
 $$\Sigma(\bar\alpha):\qquad \bar x'=\bar f(\bar x,\bar\alpha,\bar u),\qquad \bar y=\bar g(\bar x,\bar\alpha,\bar u),$$
+
 with $\bar f,\bar g$ rational. Its **input-output (IO) equations** generate the elimination ideal of the model's differential ideal in the differential polynomial ring in $\bar y,\bar u$. The **field of IO-identifiable functions** is the smallest field $k$ with $\mathbb Q\subseteq k\subseteq\mathbb Q(\bar\alpha)$ over which these IO relations are defined; $h\in\mathbb Q(\bar\alpha)$ is IO-identifiable if $h\in k$ and locally IO-identifiable if $h$ is algebraic over $k$. Non-identifiability (for example only $a,c,d$ identifiable in the Lotka-Volterra model $x_1'=ax_1-bx_1x_2$, $x_2'=-cx_2+dx_1x_2$, $y=x_1$, whose IO equation is $yy''-y'^2-dy^2y'+cyy'+ady^3-acy^2=0$) prevents meaningful parameter estimation.
 
 **Theorem.** For every such model there is a tuple $\widetilde\alpha$, of the same length as $\bar\alpha$, with entries algebraic over $\mathbb Q(\bar\alpha)$, such that
