@@ -1,0 +1,3 @@
+# Instances of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH RELEASE DATES, WEIGHTED COMPLETION TIME
+
+An instance of TWO-MACHINE UNIT-TIME MULTI-PURPOSE JOB SHOP WITH RELEASE DATES, WEIGHTED COMPLETION TIME is a pair of a multi-purpose machine job-shop instance $(m, J, K)$, with $m$ the number of machines, $J$ the list of jobs, each a list of operations given as pairs of a processing time and a list of eligible machines, and $K$ the bound on the total weighted completion time, and a list of pairs $(r_j, w_j)$ of natural numbers, the release date and the weight of job $j$, read by position. That there is exactly one pair per job is a condition of a well-formed instance.
