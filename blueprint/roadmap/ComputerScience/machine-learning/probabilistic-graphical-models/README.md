@@ -7,6 +7,7 @@ Bayesian networks and their Markov properties, structure scores and Markov equiv
 - [Conditional random fields](conditional-random-fields/README.md)
 - [Kalman filter](kalman-filter/README.md)
 - [Markov equivalence and Bayesian network scores](markov-equivalence-and-bayesian-network-scores/README.md)
+- [Natural direct and indirect effects](natural-direct-and-indirect-effects/README.md)
 - [Bayesian networks](bayesian-networks/README.md)
 - [Causal Bayesian networks](causal-bayesian-networks/README.md)
 - [Structural causal models and counterfactuals](structural-causal-models-and-counterfactuals/README.md)

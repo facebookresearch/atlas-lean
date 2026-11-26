@@ -46,7 +46,6 @@ Topics added since this subject's fields were last revised.
 - [Local Convex Shortening](local-convex-shortening/README.md)
 - [Lossless Codec](lossless-codec/README.md)
 - [Markov Random Field](markov-random-field/README.md)
-- [Mediation Formula](mediation-formula/README.md)
 - [Minkowski CObs](minkowski-cobs/README.md)
 - [Misra Gries](misra-gries/README.md)
 - [Moralization](moralization/README.md)

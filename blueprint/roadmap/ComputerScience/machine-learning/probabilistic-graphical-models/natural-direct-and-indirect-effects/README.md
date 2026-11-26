@@ -1,4 +1,4 @@
-# Mediation Formula
+# Natural direct and indirect effects
 
 ## Nested counterfactuals and natural effects
 
