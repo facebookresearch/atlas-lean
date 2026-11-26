@@ -11,3 +11,4 @@ complement of its Julia set, answered in the negative by Kiwi.
 - [Points accessible from the complement of a Julia set](is-accessible.md)
 - [Milnor’s question on accessibility of Cremer critical points](cremer-critical-point-accessible.md)
 - [The critical point of a quadratic polynomial with a Cremer fixed point is not accessible](cremer-critical-point-accessible-refuted.md)
+- [Multiplier $e^{2\pi i\alpha}$ of the fixed point](multiplier.md)

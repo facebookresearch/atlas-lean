@@ -21,3 +21,5 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [ALC syntax, semantics and reasoning tasks](alc-syntax-semantics-and-reasoning-tasks.md)
 
 - [Action model logic](action-model-logic.md)
+- [Sahlqvist correspondence](sahlqvist-correspondence.md)
+- [Van Benthem's characterization theorem](van-benthem-characterisation.md)
