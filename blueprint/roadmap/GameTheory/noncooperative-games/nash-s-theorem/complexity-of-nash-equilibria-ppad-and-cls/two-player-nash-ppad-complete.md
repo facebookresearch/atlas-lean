@@ -1,6 +1,6 @@
 # Computing a Nash equilibrium of a two-player game is PPAD-complete
 
-The class PPAD consists of total search problems polynomial-time reducible to End-of-Line: given Boolean circuits $S, P$ on $\{0,1\}^k$ with $P(0^k) = 0^k \ne S(0^k)$, find a vertex $x \ne 0^k$ that is a source or sink of the directed graph with arcs $x \to S(x)$ whenever $P(S(x)) = x$. Computing an $\varepsilon$-approximate Nash equilibrium of a game with three or more players, for $\varepsilon = 2^{-\mathrm{poly}}$, is PPAD-complete (exact equilibria may be irrational, and the exact problem is FIXP-complete), and computing a Nash equilibrium of a two-player (bimatrix) game is PPAD-complete. Moreover, for two-player games it is PPAD-hard to compute an $\varepsilon$-approximate Nash equilibrium for $\varepsilon = 1/\mathrm{poly}(n)$, so no fully polynomial-time approximation scheme exists unless PPAD $\subseteq$ P.
+The class PPAD consists of total search problems polynomial-time reducible to End-of-Line: given Boolean circuits $S, P$ on $\{0,1\}^k$ with $P(0^k) = 0^k \ne S(0^k)$, find a vertex $x$ with $P(S(x)) \neq x$ (a sink, possibly $0^k$) or with $x \neq 0^k$ and $S(P(x)) \neq x$ (a source other than $0^k$) of the directed graph with arcs $x \to S(x)$ whenever $P(S(x)) = x$; such a vertex always exists. Computing an $\varepsilon$-approximate Nash equilibrium of a game with three or more players, for $\varepsilon = 2^{-\mathrm{poly}}$, is PPAD-complete (exact equilibria may be irrational, and the exact problem is FIXP-complete), and computing a Nash equilibrium of a two-player (bimatrix) game is PPAD-complete. Moreover, for two-player games it is PPAD-hard to compute an $\varepsilon$-approximate Nash equilibrium for $\varepsilon = 1/\mathrm{poly}(n)$, so no fully polynomial-time approximation scheme exists unless PPAD $\subseteq$ P.
 
 ## Proof sketch
 
@@ -11,6 +11,7 @@ Reduce End-of-Line to finding a Brouwer fixed point of a piecewise-linear functi
 - [Mixed Nash equilibrium](../is-mixed-nash.md)
 - [Nash equilibrium of a bimatrix game](../../bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
 - [Search problems: FNP, FP and TFNP](../../../../TheoryOfComputation/complexity-classes/total-search-problems/search-problems-fnp-fp-and-tfnp.md)
+- [END-OF-THE-LINE is total](../../../../TheoryOfComputation/completeness-other-classes/ppad-and-the-end-of-the-line-problem/exists-solution.md)
 
 ## Proof depends on
 

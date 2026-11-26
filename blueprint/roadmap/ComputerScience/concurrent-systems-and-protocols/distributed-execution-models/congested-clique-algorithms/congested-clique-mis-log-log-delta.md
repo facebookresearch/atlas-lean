@@ -1,10 +1,16 @@
-# Maximal independent set in O(log log Delta) rounds of the congested clique
+# Maximal independent set in O(log Delta log log Delta / sqrt(log n) + log log Delta) rounds of the congested clique
 
-In the congested clique, a maximal independent set of an $n$-vertex input graph of maximum degree $\Delta$ can be computed by a randomized algorithm in $\tilde O(\log\log \Delta)$ rounds with high probability.
+In the congested clique, a maximal independent set of an $n$-vertex input graph of maximum degree $\Delta$ can be computed by a randomized algorithm in
+
+$$
+O\!\left(\frac{\log\Delta \cdot \log\log\Delta}{\sqrt{\log n}} + \log\log\Delta\right)
+$$
+
+rounds with high probability. In particular, for low-degree graphs with $\Delta \le 2^{O(\sqrt{\log n})}$ the bound is $O(\log\log \Delta)$ rounds, and for general $\Delta$ it is $\tilde O(\sqrt{\log \Delta})$.
 
 ## Proof sketch
 
-Simulate the desire-level MIS dynamics of Ghaffari's LOCAL algorithm in compressed form: since the relevant random choices for $O(\sqrt{\log \Delta})$-length phases involve sparse subgraphs, each phase can gather the needed neighbourhoods at a few processors using Lenzen routing and simulate many LOCAL rounds locally. Each phase reduces the effective degree from $\Delta$ to about $\Delta^{\epsilon}$, so $O(\log\log \Delta)$ phases suffice, and the residual graph of small size is solved at one processor.
+Start from a sparsified variant of Ghaffari's beeping-based LOCAL MIS algorithm, whose $O(\log \Delta)$ rounds are grouped into phases of $\Theta(\sqrt{\log n})$ rounds each; within a phase, every node's random decisions depend only on a sampled subgraph of small degree. Each phase is simulated in $O(\log\log\Delta)$ rounds of the congested clique: nodes learn their sampled multi-hop neighbourhoods by repeated graph exponentiation using Lenzen routing, and then simulate the phase locally. This gives $O(\log\Delta \cdot \log\log\Delta/\sqrt{\log n})$ rounds when $\log\log\Delta = \Theta(\log\log n)$; in the complementary low-degree case a simpler variant of the same simulation takes $O(\log\log\Delta)$ rounds. With high probability the remaining graph has $O(n)$ edges, so it is collected at one node and solved in $O(1)$ further rounds.
 
 ## Depends on
 
@@ -17,4 +23,4 @@ Simulate the desire-level MIS dynamics of Ghaffari's LOCAL algorithm in compress
 
 ## Sources
 
-- M. Ghaffari, "Distributed MIS via All-to-All Communication", PODC 2017.
+- M. Ghaffari, "Distributed MIS via All-to-All Communication", PODC 2017, Theorem 1.1, Section 2.4 and Lemma 2.15.

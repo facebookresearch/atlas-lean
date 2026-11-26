@@ -12,7 +12,7 @@ Simulate the randomized greedy MIS process (processing vertices in a uniformly r
 
 ## Proof depends on
 
-- [Maximal independent set in O(log log Delta) rounds of the congested clique](../../concurrent-systems-and-protocols/distributed-execution-models/congested-clique-algorithms/congested-clique-mis-log-log-delta.md)
+- [Maximal independent set in O(log Delta log log Delta / sqrt(log n) + log log Delta) rounds of the congested clique](../../concurrent-systems-and-protocols/distributed-execution-models/congested-clique-algorithms/congested-clique-mis-log-log-delta.md)
 
 ## Sources
 

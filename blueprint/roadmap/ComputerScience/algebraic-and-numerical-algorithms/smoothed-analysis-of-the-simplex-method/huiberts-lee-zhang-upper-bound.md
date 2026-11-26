@@ -10,7 +10,7 @@ $$
 
 improving the dependence on the noise level from $\sigma^{-2}$ to $\sigma^{-3/2}$ in this small-noise range.
 
-**Algorithmic reduction.** The smoothed complexity $\mathrm{SC}$ of the shadow vertex simplex algorithm satisfies $S(n, d, \sigma)/4 \le \mathrm{SC} \le 2\, S\big(n + d, d, \min(\sigma, 1/\sqrt{d\log d}, 1/\sqrt{d\log n})\big) + 4$. Scaling the constraints down to bring the effective noise into the range of the shadow bound costs an additive term independent of $\sigma$, and the resulting simplex method takes
+**Algorithmic reduction.** The smoothed complexity $\mathrm{SC}$ of the shadow vertex simplex algorithm satisfies $S(n, d, \sigma)/4 \le \mathrm{SC} \le 2\, S\big(n + d, d, \min(\sigma, 1/(\sqrt{d}\,\log d), 1/\sqrt{d\log n})\big) + 4$. Scaling the constraints down to bring the effective noise into the range of the shadow bound costs an additive term independent of $\sigma$, and the resulting simplex method takes
 
 $$
 O\!\left(\sigma^{-3/2} d^{13/4} \log^{5/4} n + d^{19/4} \log^2 n\right)

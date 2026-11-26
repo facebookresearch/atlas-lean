@@ -8,4 +8,4 @@
 - [Matrix multiplication in O(n^(1 - 2/omega)) rounds of the congested clique](congested-clique-matrix-multiplication.md)
 - [Minimum spanning trees in O(1) rounds of the congested clique, deterministically](congested-clique-mst-constant-rounds.md)
 - [Triangle detection in the congested clique in sublinear rounds](congested-clique-triangle-detection.md)
-- [Maximal independent set in O(log log Delta) rounds of the congested clique](congested-clique-mis-log-log-delta.md)
+- [Maximal independent set in O(log Delta log log Delta / sqrt(log n) + log log Delta) rounds of the congested clique](congested-clique-mis-log-log-delta.md)
