@@ -1,4 +1,4 @@
-# The decision problem MINIMUM K-CONNECTED SUBGRAPH for fixed K ≥ 2
+# The decision problem MINIMUM K-CONNECTED SUBGRAPH for a fixed K
 
 For a fixed natural number $K$, MINIMUM K-CONNECTED SUBGRAPH with the connectivity fixed to $K$
 as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the

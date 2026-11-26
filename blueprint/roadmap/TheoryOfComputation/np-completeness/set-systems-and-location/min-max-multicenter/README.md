@@ -1,8 +1,8 @@
 # Min-max multicenter
 
-- [Well-formed MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 is instances](well-formed.md)
-- [The decision problem MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 is](min-max-multicenter-unit-planar-degree-t.md)
-- [MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 is is NP-complete](min-max-multicenter-unit-planar-degree-t-2.md)
+- [Well-formed MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 instances](well-formed.md)
+- [The decision problem MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3](min-max-multicenter-unit-planar-degree-t.md)
+- [MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 is NP-complete](min-max-multicenter-unit-planar-degree-t-2.md)
 - [Instances of MIN-MAX MULTICENTER](min-max-multicenter-instance.md)
 - [Graph](graph.md)
 - [Edge Length](edge-length.md)

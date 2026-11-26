@@ -1,4 +1,4 @@
-# Fixed Bound Dec
+# The decision problem MAXIMUM LENGTH-BOUNDED EDGE-DISJOINT PATHS with a fixed length bound
 
 For a fixed natural number $K$, MAXIMUM LENGTH-BOUNDED EDGE-DISJOINT PATHS with the bound fixed
 to $K$ as a decision problem on bitstrings: a bitstring is accepted exactly when it decodes,

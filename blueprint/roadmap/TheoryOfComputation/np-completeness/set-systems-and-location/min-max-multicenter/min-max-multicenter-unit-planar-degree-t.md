@@ -1,4 +1,4 @@
-# The decision problem MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 is
+# The decision problem MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3
 
 MIN-MAX MULTICENTER with unit weights and lengths on planar graphs of maximum degree 3 as a
 decision problem on bitstrings: a bitstring is accepted exactly when it decodes, under the

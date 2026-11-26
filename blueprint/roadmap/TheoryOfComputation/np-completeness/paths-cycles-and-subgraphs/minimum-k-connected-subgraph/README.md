@@ -1,8 +1,8 @@
 # Minimum k-connected subgraph
 
-- [Instances of MINIMUM K-CONNECTED SUBGRAPH for fixed K ≥ 2](minimum-kconnected-subgraph-fixed-kinsta.md)
+- [Instances of MINIMUM K-CONNECTED SUBGRAPH for a fixed K](minimum-kconnected-subgraph-fixed-kinsta.md)
 - [With K](with-k.md)
-- [The decision problem MINIMUM K-CONNECTED SUBGRAPH for fixed K ≥ 2](minimum-kconnected-subgraph-fixed-kdec.md)
+- [The decision problem MINIMUM K-CONNECTED SUBGRAPH for a fixed K](minimum-kconnected-subgraph-fixed-kdec.md)
 - [MINIMUM K-CONNECTED SUBGRAPH for fixed K ≥ 2 is NP-complete](minimum-kconnected-subgraph-fixed-k-np-c.md)
 - [Instances of MINIMUM K-CONNECTED SUBGRAPH](minimum-kconnected-subgraph-instance.md)
 - [Graph](graph.md)

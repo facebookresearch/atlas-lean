@@ -1,4 +1,4 @@
-# Feasible MULTIPURPOSE-MACHINE PARALLEL SCHEDULING WITH OUT-TREE PRECEDENCE AND UNIT TIMES TO MINIMIZE instances
+# Feasible MULTIPURPOSE-MACHINE PARALLEL SCHEDULING WITH OUT-TREE PRECEDENCE AND UNIT TIMES TO MINIMIZE MAXIMUM LATENESS instances
 
 An instance is feasible when some multipurpose-machine schedule (start times $\sigma$ and
 machine assignment $a$ that form a valid schedule of the operations) obeys the precedence arcs,

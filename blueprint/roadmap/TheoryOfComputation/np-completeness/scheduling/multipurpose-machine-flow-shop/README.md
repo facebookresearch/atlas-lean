@@ -1,8 +1,8 @@
 # Multipurpose-machine flow shop
 
 - [Instances of MPM FLOW SHOP, IN-TREE, RELEASE DATES (FMPM|intree; r_i; p_ij = 1|C_max)](multipurpose-flow-shop-in-tree-release-m.md)
-- [Job](job.md)
-- [Stage](stage.md)
+- [Jobs of an instance of MPM FLOW SHOP, IN-TREE, RELEASE DATES (FMPM|intree; r_i; p_ij = 1|C_max)](job.md)
+- [Stages of an instance of MPM FLOW SHOP, IN-TREE, RELEASE DATES (FMPM|intree; r_i; p_ij = 1|C_max)](stage.md)
 - [Release Date](release-date.md)
 - [Immediate Successor](immediate-successor.md)
 - [Well-formed MPM FLOW SHOP, IN-TREE, RELEASE DATES (FMPM|intree; r_i; p_ij = 1|C_max) instances](well-formed-2.md)
@@ -10,8 +10,8 @@
 - [The decision problem MPM FLOW SHOP, IN-TREE, RELEASE DATES (FMPM|intree; r_i; p_ij = 1|C_max)](multipurpose-flow-shop-in-tree-release-m-3.md)
 - [MPM FLOW SHOP, IN-TREE, RELEASE DATES (FMPM|intree; r_i; p_ij = 1|C_max) is NP-complete](multipurpose-flow-shop-in-tree-release-m-4.md)
 - [Instances of MPM FLOW SHOP, OUT-TREE, MAXIMUM LATENESS (FMPM|outtree; p_ij = 1|L_max)](multipurpose-flow-shop-out-tree-lateness.md)
-- [Job](job-2.md)
-- [Stage](stage-2.md)
+- [Jobs of an instance of MPM FLOW SHOP, OUT-TREE, MAXIMUM LATENESS (FMPM|outtree; p_ij = 1|L_max)](job-2.md)
+- [Stages of an instance of MPM FLOW SHOP, OUT-TREE, MAXIMUM LATENESS (FMPM|outtree; p_ij = 1|L_max)](stage-2.md)
 - [Due Date](due-date.md)
 - [Bound](bound.md)
 - [Immediate Predecessor](immediate-predecessor.md)
