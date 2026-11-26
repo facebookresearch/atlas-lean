@@ -14,21 +14,20 @@ import Mathlib.Tactic.NormNum
 
 set_option autoImplicit false
 
-open scoped BigOperators
+open scoped BigOperators Matrix
 
 namespace Cslib.MachineLearning.IndividualFairness
 
 open MathlibExt.Probability.FiniteTransport
-
-@[expose] public section
+open MathlibExt.Probability.MarkovMixing (tvDist)
 
 /-- The discrete two-point task metric on `Fin 2`: distance `0` on the
 diagonal and `1` off the diagonal. -/
-def d2 : Fin 2 → Fin 2 → ℝ := fun x y => if x = y then 0 else 1
+private def d2 : Fin 2 → Fin 2 → ℝ := fun x y => if x = y then 0 else 1
 
 /-- The constant fair-coin classifier on `Fin 2` is individually fair for
 the discrete metric. -/
-theorem t2_const_fair :
+private theorem t2_const_fair :
     IsLipschitzFair d2 (fun _ _ : Fin 2 => (1 / 2 : ℝ)) := by
   refine isLipschitzFair_const ?_ _ ?_
   · intro x y
@@ -39,7 +38,7 @@ theorem t2_const_fair :
 
 /-- The `0` point mass on `Fin 2`, as a probability-distribution subtype
 element. -/
-def delta0D : {p : Fin 2 → ℝ // IsDist p} :=
+private def delta0D : {p : Fin 2 → ℝ // IsDist p} :=
   ⟨fun i => if i = 0 then (1 : ℝ) else 0, by
     refine ⟨?_, ?_⟩
     · intro i
@@ -48,7 +47,7 @@ def delta0D : {p : Fin 2 → ℝ // IsDist p} :=
 
 /-- The `1` point mass on `Fin 2`, as a probability-distribution subtype
 element. -/
-def delta1D : {p : Fin 2 → ℝ // IsDist p} :=
+private def delta1D : {p : Fin 2 → ℝ // IsDist p} :=
   ⟨fun i => if i = 0 then (0 : ℝ) else 1, by
     refine ⟨?_, ?_⟩
     · intro i
@@ -57,12 +56,12 @@ def delta1D : {p : Fin 2 → ℝ // IsDist p} :=
 
 /-- T4: the induced distribution of the constant fair-coin classifier is
 the fair coin, and is a probability distribution. -/
-theorem t4_inducedDist_const :
-    inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
-        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+private theorem t4_vecMul_const :
+    (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        ᵥ* Matrix.of (fun _ _ : Fin 2 => (1 / 2 : ℝ))
       = (fun _ : Fin 2 => (1 / 2 : ℝ))
-    ∧ IsDist (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
-        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)) := by
+    ∧ IsDist ((fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        ᵥ* Matrix.of (fun _ _ : Fin 2 => (1 / 2 : ℝ))) := by
   have hS : IsDist (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
     refine ⟨?_, ?_⟩
     · intro i
@@ -72,60 +71,57 @@ theorem t4_inducedDist_const :
     intro _
     refine ⟨fun _ => by norm_num, ?_⟩
     norm_num [Fin.sum_univ_two]
-  refine ⟨?_, inducedDist_isDist hS hrows⟩
+  refine ⟨?_, isDist_vecMul hS hrows⟩
   funext o
-  simp [inducedDist]
+  simp [Matrix.vecMul_apply_eq_sum]
 
 /-- T5: the classifier-level earthmover bound, applied to the constant
 fair-coin classifier and the two point masses. -/
-theorem t5_classifier_earthmover :
-    MathlibExt.Probability.MarkovMixing.tvDist (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
-        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0))
-      (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
-        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1))
+private theorem t5_classifier_earthmover :
+    tvDist ((fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        ᵥ* Matrix.of (fun _ _ : Fin 2 => (1 / 2 : ℝ)))
+      ((fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1)
+        ᵥ* Matrix.of (fun _ _ : Fin 2 => (1 / 2 : ℝ)))
     ≤ earthmover d2 delta0D delta1D := by
-  exact tvDist_inducedDist_le_earthmover t2_const_fair delta0D.2 delta1D.2
+  exact tvDist_vecMul_le_earthmover t2_const_fair delta0D.2 delta1D.2
 
 /-- The deterministic identity classifier on `Fin 2`: individual `x`
 receives outcome `x` with probability `1`. -/
-def idClassifier : Fin 2 → Fin 2 → ℝ := fun x o => if o = x then 1 else 0
+private def idClassifier : Fin 2 → Fin 2 → ℝ := fun x o => if o = x then 1 else 0
 
 /-- T6: the identity classifier is individually fair for the discrete
 metric, and for the two opposite point masses both sides of the
 earthmover bound are independently computed to be `1` (the induced
 distributions are the point masses themselves, the unique coupling
 has cost `1`). Neither value is obtained from
-`tvDist_inducedDist_le_earthmover`. -/
-theorem t6_identity_values :
+`tvDist_vecMul_le_earthmover`. -/
+private theorem t6_identity_values :
     IsLipschitzFair d2 idClassifier
-    ∧ MathlibExt.Probability.MarkovMixing.tvDist
-        (inducedDist idClassifier
-          (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0))
-        (inducedDist idClassifier
-          (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1)) = 1
+    ∧ tvDist
+        ((fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) ᵥ* Matrix.of idClassifier)
+        ((fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) ᵥ* Matrix.of idClassifier) = 1
     ∧ earthmover d2 delta0D delta1D = 1 := by
   have hrows : ∀ x : Fin 2, IsDist (idClassifier x) := by
     intro x
     fin_cases x <;>
       refine ⟨fun o => by fin_cases o <;> norm_num [idClassifier], ?_⟩ <;>
       norm_num [idClassifier, Fin.sum_univ_two]
-  have hind0 : inducedDist idClassifier
-      (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) =
+  have hind0 : (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) ᵥ* Matrix.of idClassifier =
       (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
     funext o
-    fin_cases o <;> norm_num [inducedDist, idClassifier, Fin.sum_univ_two]
-  have hind1 : inducedDist idClassifier
-      (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) =
+    fin_cases o <;>
+      norm_num [Matrix.vecMul_apply_eq_sum, idClassifier, Fin.sum_univ_two]
+  have hind1 : (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) ᵥ* Matrix.of idClassifier =
       (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) := by
     funext o
-    fin_cases o <;> norm_num [inducedDist, idClassifier, Fin.sum_univ_two]
+    fin_cases o <;>
+      norm_num [Matrix.vecMul_apply_eq_sum, idClassifier, Fin.sum_univ_two]
   refine ⟨⟨hrows, ?_⟩, ?_, ?_⟩
   · intro x y
     fin_cases x <;> fin_cases y <;>
-      norm_num [idClassifier, d2,
-        MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
+      norm_num [idClassifier, d2, tvDist, Fin.sum_univ_two]
   · rw [hind0, hind1]
-    norm_num [MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
+    norm_num [tvDist, Fin.sum_univ_two]
   · have hcost : ∀ π : {π // IsCoupling delta0D.1 delta1D.1 π},
         transportCost d2 π.1 = 1 := by
       intro π
@@ -154,7 +150,5 @@ theorem t6_identity_values :
       funext hcost
     rw [hfun]
     exact ciInf_const
-
-end
 
 end Cslib.MachineLearning.IndividualFairness

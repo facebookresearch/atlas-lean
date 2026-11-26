@@ -32,11 +32,18 @@ Correspondence with the paper:
   distance `D` taken to be total variation distance
   (`MathlibExt.Probability.MarkovMixing.tvDist`); in particular every
   classifier row must be a probability distribution.
+* `isLipschitzFair_convexCombo` is the convexity of the set of
+  Lipschitz classifiers behind the paper's linear program (Figure 1 and
+  Lemma 2.1); the linear-programming formulation itself is not
+  formalized here.
+* The outcome distribution of a classifier `M` on a population `S` is
+  the vector-matrix product `S ᵥ* Matrix.of M` (Mathlib's
+  `Matrix.vecMul`), with entries `∑ x, S x * M x o`.
 * `earthmover` (`MathlibExt.Probability.FiniteTransport.earthmover`, on
   probability-distribution subtypes) is the paper's earthmover distance:
   the infimum of transport costs over all couplings (`IsCoupling`,
   `transportCost`).
-* `tvDist_inducedDist_le_earthmover` is the per-classifier form of the
+* `tvDist_vecMul_le_earthmover` is the per-classifier form of the
   paper's earthmover bound: for one Lipschitz-fair classifier, the total
   variation distance between the induced outcome distributions on two
   populations (its statistical-parity gap in the sense of
@@ -55,13 +62,13 @@ they are probability distributions), and `bias_le_earthmover`
 bounds that score gap by the earthmover value for `1`-Lipschitz
 scores. It is neither the fixed-classifier statistical-parity gap of
 Definition 3.1 (a total variation distance between induced outcome
-distributions, bounded in `tvDist_inducedDist_le_earthmover`) nor the
+distributions, bounded in `tvDist_vecMul_le_earthmover`) nor the
 worst-case `bias_{D, d}` of Definition 3.2.
 -/
 
 set_option autoImplicit false
 
-open scoped BigOperators
+open scoped BigOperators Matrix
 
 namespace Cslib.MachineLearning.IndividualFairness
 
@@ -70,30 +77,35 @@ namespace Cslib.MachineLearning.IndividualFairness
 noncomputable section
 
 open MathlibExt.Probability.FiniteTransport
+open MathlibExt.Probability.MarkovMixing (tvDist)
 
-/-- Individual fairness as a Lipschitz condition: every classifier row
-is a probability distribution, and the total variation distance
-between the outcome distributions of any two individuals is at most
-their task-metric distance. -/
+/-- **Individual fairness as a Lipschitz condition.** For a task metric `d : V → V → ℝ`
+(any real-valued function) and a randomized classifier `M : V → O → ℝ` with finitely many
+outcomes, `IsLipschitzFair d M` holds when every row `M x` is a probability distribution
+on the outcomes (nonnegative entries summing to `1`) and the total variation distance
+between the outcome distributions of any two individuals is at most their task-metric
+distance: `tvDist (M x) (M y) ≤ d x y` for all `x, y`. -/
 def IsLipschitzFair {V O : Type*} [Fintype O] (d : V → V → ℝ)
     (M : V → O → ℝ) : Prop :=
   (∀ x, IsDist (M x)) ∧
-    ∀ x y, MathlibExt.Probability.MarkovMixing.tvDist (M x) (M y) ≤ d x y
+    ∀ x y, tvDist (M x) (M y) ≤ d x y
 
-/-- Constant classifiers, giving every individual the same outcome
-distribution, are individually fair for any nonnegative task metric. -/
+/-- **Constant classifiers are individually fair.** For a task metric `d` with
+`0 ≤ d x y` for all `x, y` and a probability distribution `r` on the outcomes
+(nonnegative entries summing to `1`), the classifier giving every individual the outcome
+distribution `r` is individually fair. -/
 theorem isLipschitzFair_const {V O : Type*} [Fintype O] {d : V → V → ℝ}
     (hd : ∀ x y, 0 ≤ d x y) (r : O → ℝ) (hr : IsDist r) :
     IsLipschitzFair d (fun _ => r) := by
   refine ⟨fun _ => hr, ?_⟩
   intro x y
-  show MathlibExt.Probability.MarkovMixing.tvDist r r ≤ d x y
+  change tvDist r r ≤ d x y
   rw [MathlibExt.Probability.MarkovMixing.tvDist_self]
   exact hd x y
 
-/-- Fairness implies per-outcome closeness: for a fair classifier with
-distribution rows, each outcome probability differs by at most the
-task-metric distance. -/
+/-- **Fair classifiers are close outcome by outcome.** For an individually fair
+classifier `M` (every row a probability distribution and `tvDist (M x) (M y) ≤ d x y`),
+the probabilities of each outcome `o` satisfy `|M x o - M y o| ≤ d x y`. -/
 theorem abs_outcome_sub_le_of_fair {V O : Type*} [Fintype O]
     {d : V → V → ℝ} {M : V → O → ℝ} (hM : IsLipschitzFair d M)
     (x y : V) (o : O) :
@@ -105,7 +117,9 @@ theorem abs_outcome_sub_le_of_fair {V O : Type*} [Fintype O]
   rw [Finset.sum_singleton, Finset.sum_singleton] at h
   exact h.trans (hM.2 x y)
 
-/-- Convex combinations (mixtures) of individually fair classifiers are
+/-- **Lipschitz randomized classifiers form a convex set.** For individually fair
+classifiers `M` and `M'` for the same task metric `d` and a weight `a` with
+`0 ≤ a ≤ 1`, the mixture with outcome probabilities `a * M x o + (1 - a) * M' x o` is
 individually fair. -/
 theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
     {d : V → V → ℝ} {M M' : V → O → ℝ} (hM : IsLipschitzFair d M)
@@ -122,10 +136,10 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
       hMsum']
     ring
   intro x y
-  show MathlibExt.Probability.MarkovMixing.tvDist (fun o => a * M x o + (1 - a) * M' x o)
+  change tvDist (fun o => a * M x o + (1 - a) * M' x o)
       (fun o => a * M y o + (1 - a) * M' y o) ≤ d x y
-  unfold MathlibExt.Probability.MarkovMixing.tvDist
-  show (1 / 2 : ℝ) * ∑ o, |(a * M x o + (1 - a) * M' x o)
+  unfold tvDist
+  change (1 / 2 : ℝ) * ∑ o, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)| ≤ d x y
   have hpt : ∀ o : O, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)|
@@ -146,9 +160,9 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
       ≤ ∑ o, (a * |M x o - M y o| + (1 - a) * |M' x o - M' y o|) :=
     Finset.sum_le_sum (fun o _ => hpt o)
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum] at hsum
-  have h1 : MathlibExt.Probability.MarkovMixing.tvDist (M x) (M y) ≤ d x y := hM.2 x y
-  have h2 : MathlibExt.Probability.MarkovMixing.tvDist (M' x) (M' y) ≤ d x y := hM'.2 x y
-  unfold MathlibExt.Probability.MarkovMixing.tvDist at h1 h2
+  have h1 : tvDist (M x) (M y) ≤ d x y := hM.2 x y
+  have h2 : tvDist (M' x) (M' y) ≤ d x y := hM'.2 x y
+  unfold tvDist at h1 h2
   have hmul : (1 / 2 : ℝ) * (∑ o, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)|)
       ≤ (1 / 2) * (a * ∑ o, |M x o - M y o|
@@ -173,37 +187,38 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
     _ ≤ a * d x y + (1 - a) * d x y := add_le_add hle1 hle2
     _ = d x y := hfin
 
-/-- Classifier-level transport bound: for an individually fair
-classifier and every coupling, the total variation distance between
-the induced outcome vectors is at most that coupling's transport
-cost. The pushforwards are probability distributions when `S` and
-`T` are, the case of `tvDist_inducedDist_le_earthmover`. -/
-theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
+/-- **Classifier-level transport bound.** Let `M` be an individually fair classifier,
+`S T : V → ℝ` weight vectors on a finite set of individuals, not necessarily probability
+distributions, and `π` a coupling of them (nonnegative entries, row sums `S`, column sums
+`T`). Then the total variation distance between the outcome vectors `S ᵥ* Matrix.of M`
+and `T ᵥ* Matrix.of M`, with entries `∑ x, S x * M x o` and `∑ x, T x * M x o`, is at
+most `transportCost d π`. -/
+theorem tvDist_vecMul_le_transportCost {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     {π : V → V → ℝ} (hM : IsLipschitzFair d M) (hπ : IsCoupling S T π) :
-    MathlibExt.Probability.MarkovMixing.tvDist (inducedDist M S) (inducedDist M T) ≤ transportCost d π := by
+    tvDist (S ᵥ* Matrix.of M) (T ᵥ* Matrix.of M) ≤ transportCost d π := by
   obtain ⟨hπ_nonneg, hπ_row, hπ_col⟩ := hπ
-  have hdiff : ∀ o : O, inducedDist M S o - inducedDist M T o
+  have hdiff : ∀ o : O, (S ᵥ* Matrix.of M) o - (T ᵥ* Matrix.of M) o
       = ∑ x, ∑ y, π x y * (M x o - M y o) := by
     intro o
-    have hS : inducedDist M S o = ∑ x, ∑ y, π x y * M x o := by
-      unfold inducedDist
+    have hS : (S ᵥ* Matrix.of M) o = ∑ x, ∑ y, π x y * M x o := by
+      rw [Matrix.vecMul_apply_eq_sum]
       refine Finset.sum_congr rfl fun x _ => ?_
-      show S x * M x o = ∑ y, π x y * M x o
+      change S x * M x o = ∑ y, π x y * M x o
       rw [← hπ_row x, Finset.sum_mul]
-    have hT : inducedDist M T o = ∑ x, ∑ y, π x y * M y o := by
-      unfold inducedDist
-      calc (∑ y, T y * M y o)
+    have hT : (T ᵥ* Matrix.of M) o = ∑ x, ∑ y, π x y * M y o := by
+      rw [Matrix.vecMul_apply_eq_sum]
+      calc (∑ y, T y * Matrix.of M y o)
           = ∑ y, ∑ x, π x y * M y o := by
             refine Finset.sum_congr rfl fun y _ => ?_
-            show T y * M y o = ∑ x, π x y * M y o
+            change T y * M y o = ∑ x, π x y * M y o
             rw [← hπ_col y, Finset.sum_mul]
         _ = ∑ x, ∑ y, π x y * M y o := Finset.sum_comm
     rw [hS, hT, ← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun x _ => ?_
     rw [← Finset.sum_sub_distrib]
     refine Finset.sum_congr rfl fun y _ => (mul_sub ..).symm
-  have hpt : ∀ o : O, |inducedDist M S o - inducedDist M T o|
+  have hpt : ∀ o : O, |(S ᵥ* Matrix.of M) o - (T ᵥ* Matrix.of M) o|
       ≤ ∑ x, ∑ y, π x y * |M x o - M y o| := by
     intro o
     rw [hdiff o]
@@ -212,7 +227,7 @@ theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
     refine (Finset.abs_sum_le_sum_abs _ _).trans ?_
     refine Finset.sum_le_sum fun y _ => ?_
     rw [abs_mul, abs_of_nonneg (hπ_nonneg x y)]
-  have hsum : (∑ o, |inducedDist M S o - inducedDist M T o|)
+  have hsum : (∑ o, |(S ᵥ* Matrix.of M) o - (T ᵥ* Matrix.of M) o|)
       ≤ ∑ o, ∑ x, ∑ y, π x y * |M x o - M y o| :=
     Finset.sum_le_sum fun o _ => hpt o
   have hswap : (∑ o, ∑ x, ∑ y, π x y * |M x o - M y o|)
@@ -222,8 +237,8 @@ theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
   have hfactor : ∀ x y : V, (∑ o, π x y * |M x o - M y o|)
       = π x y * ∑ o, |M x o - M y o| :=
     fun x y => (Finset.mul_sum ..).symm
-  unfold MathlibExt.Probability.MarkovMixing.tvDist transportCost
-  calc (1 / 2) * ∑ o, |inducedDist M S o - inducedDist M T o|
+  unfold tvDist transportCost
+  calc (1 / 2) * ∑ o, |(S ᵥ* Matrix.of M) o - (T ᵥ* Matrix.of M) o|
       ≤ (1 / 2) * ∑ o, ∑ x, ∑ y, π x y * |M x o - M y o| :=
         mul_le_mul_of_nonneg_left hsum (by norm_num)
     _ = ∑ x, ∑ y, π x y * ((1 / 2) * ∑ o, |M x o - M y o|) := by
@@ -237,16 +252,17 @@ theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
         refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
         exact mul_le_mul_of_nonneg_left (hM.2 x y) (hπ_nonneg x y)
 
-/-- **Classifier-level earthmover bound.** For an individually fair
-classifier and probability distributions `S` and `T` on individuals,
-the total variation distance between the induced outcome
-distributions is at most their earthmover value. -/
-theorem tvDist_inducedDist_le_earthmover {V O : Type*} [Fintype V]
+/-- **Classifier-level earthmover bound.** For an individually fair classifier `M` and
+probability distributions `S` and `T` on a finite set of individuals (nonnegative entries
+summing to `1`), the total variation distance between the induced outcome distributions
+`S ᵥ* Matrix.of M` and `T ᵥ* Matrix.of M`, with entries `∑ x, S x * M x o` and
+`∑ x, T x * M x o`, is at most the earthmover value of `S` and `T` for the task
+metric `d`. -/
+theorem tvDist_vecMul_le_earthmover {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     (hM : IsLipschitzFair d M) (hS : IsDist S) (hT : IsDist T) :
-    MathlibExt.Probability.MarkovMixing.tvDist (inducedDist M S)
-        (inducedDist M T) ≤ earthmover d ⟨S, hS⟩ ⟨T, hT⟩ :=
-  le_earthmover (fun _π hπ => tvDist_inducedDist_le_transportCost hM hπ)
+    tvDist (S ᵥ* Matrix.of M) (T ᵥ* Matrix.of M) ≤ earthmover d ⟨S, hS⟩ ⟨T, hT⟩ :=
+  le_earthmover (fun _π hπ => tvDist_vecMul_le_transportCost hM hπ)
 
 end
 
