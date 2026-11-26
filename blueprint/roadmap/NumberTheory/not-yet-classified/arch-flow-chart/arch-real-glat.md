@@ -1,4 +1,5 @@
-# Arch Real GLAt
+# Inclusion at a real place
 
-Inclusion of a real `2 × 2` matrix at a real infinite place into the
-adelic group.
+The inclusion of `GL (Fin 2) ℝ` into the adelic group at a
+real infinite place `w`: the matrix sits at `w`, and every other component, at the other infinite
+places and at the finite adeles, is the identity.

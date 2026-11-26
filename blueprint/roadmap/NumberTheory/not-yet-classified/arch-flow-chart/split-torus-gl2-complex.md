@@ -1,3 +1,4 @@
-# Split Torus GL2 Complex
+# Complex split torus element
 
-The complex split torus element `!![exp z, 0; 0, exp (-z)]`.
+The split torus element `!![exp z, 0; 0, exp (-z)]` of
+`GL (Fin 2) ℂ`.

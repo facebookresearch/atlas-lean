@@ -1,4 +1,4 @@
-# Arch Dir
+# Real archimedean flow directions
 
-The three real archimedean flow directions: split torus, upper
-unipotent, and lower unipotent.
+The three directions of the real archimedean flows:
+the split torus `H`, the upper unipotent `E` and the lower unipotent `Fm`.

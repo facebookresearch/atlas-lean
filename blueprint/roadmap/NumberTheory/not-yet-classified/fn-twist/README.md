@@ -2,4 +2,4 @@
 
 ## Archimedean Inclusion
 
-- [Adelic Arch GLIncl At commute](adelic-arch-glincl-at-commute.md)
+- [Inclusions at distinct infinite places commute](adelic-arch-glincl-at-commute.md)

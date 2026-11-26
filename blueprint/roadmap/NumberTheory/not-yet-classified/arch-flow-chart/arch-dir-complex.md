@@ -1,4 +1,4 @@
-# Arch Dir Complex
+# Complex archimedean flow directions
 
-The six complex archimedean flow directions: the three real directions
-and their multiples by `I`.
+The six directions of the complex archimedean
+flows: the three real directions `H`, `E`, `Fm` and their multiples `iH`, `iE`, `iFm` by `I`.

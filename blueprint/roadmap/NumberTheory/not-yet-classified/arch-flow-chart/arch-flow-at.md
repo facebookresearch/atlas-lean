@@ -1,3 +1,4 @@
-# Arch Flow At
+# Real archimedean flow at a real place
 
-The real archimedean flow at a real place, as an adelic element.
+The flow matrix `archFlowMatrix d t`, included
+at the real place `w` by `archRealGLAt`.

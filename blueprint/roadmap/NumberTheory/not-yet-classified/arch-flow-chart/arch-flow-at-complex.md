@@ -1,3 +1,4 @@
-# Arch Flow At Complex
+# Complex archimedean flow at a complex place
 
-The complex archimedean flow at a complex place, as an adelic element.
+The flow matrix
+`archFlowMatrixComplex d t`, included at the complex place `w` by `archComplexGLAt`.
