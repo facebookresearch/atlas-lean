@@ -19,11 +19,12 @@ public import MathlibExt.Combinatorics.Additive.ThickBhSets
 # Constructing thick `B_h`-sets
 
 Statements from Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer
-Sequences 27 (2024), Article 24.1.2 (arXiv:2308.12406): the generalized Bose construction of
-`B_h`-sets in cyclic groups (the generalized Singer construction is in
+Sequences 27 (2024), Article 24.1.2 (arXiv:2308.12406): the generalized Bose and Singer
+constructions of `B_h`-sets in cyclic groups (both proved in
 `MathlibExt.Combinatorics.Additive.ThickBhSets`), sufficient conditions for two such sets to be
-affinely equivalent, the prime-gap results the paper quotes, and the resulting bounds on
-`R_h(n)` and `R_h⁻¹(k)`.
+affinely equivalent (proved in `MathlibExt.Combinatorics.Additive.SingerSet` and
+`MathlibExt.Combinatorics.Additive.BoseSet`), the prime-gap results the paper quotes, and the
+resulting bounds on `R_h(n)` and `R_h⁻¹(k)`.
 
 The paper fixes the generator `θ` to be a root of a Conway polynomial; the statements here
 are made for every generator `θ` of `K^×`, which is what the paper's proofs use. Residues
@@ -102,21 +103,6 @@ public theorem bhMinLength_one {h : ℕ} (hh : 0 < h) : bhMinLength h 1 = 1 := b
   rintro ⟨A, hA, -, hcard⟩
   have : A = ∅ := by simpa using hA
   simp [this] at hcard
-
-/-- **Bose's construction of $B_h$-sets.** Let $h \ge 2$, let $F$ be a finite field with $q$
-elements, let $K$ be a field extension of $F$ of degree $h$, let $\theta$ be a generator of the
-multiplicative group $K^\times$, and let $b$ be a natural number such that $\theta^b$ has degree
-$h$ over $F$. Then the generalized Bose set $\mathrm{Bose}_h(q, b)$, a subset of
-$\mathbb{Z}/(q^h - 1)\mathbb{Z}$, is a $B_h$-set with exactly $q$ elements.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Theorem 3 (first sentence) (`jis-2024-24.1.2-thm-3`). -/
-public theorem_wanted isBhSet_boseSet {F K : Type*} [Field F] [Fintype F] [Field K]
-    [Fintype K] [Algebra F K] {h : ℕ} (hh : 2 ≤ h) (hK : Module.finrank F K = h) {θ : K}
-    (hθ : orderOf θ = Fintype.card K - 1) {b : ℕ}
-    (hb : (minpoly F (θ ^ b)).natDegree = h) :
-    AdditiveCombinatorics.IsBhSet (boseSet F h θ b) h ∧
-      (boseSet F h θ b).ncard = Fintype.card F
 
 /-- **Unconditional bounds for $R_h(n)$ and $R_h^{-1}(k)$.** Let $h \ge 2$. Write $R_h(n)$ for the
 largest size of a $B_h$-set contained in $\{1, \dots, n\}$, with $R_h(0) = 0$, and $R_h^{-1}(k)$

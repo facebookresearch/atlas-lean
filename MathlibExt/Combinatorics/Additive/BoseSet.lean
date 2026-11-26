@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Combinatorics.Additive.SingerSet
+public import MathlibExt.Combinatorics.Additive.ThickBhSets
 import Mathlib.FieldTheory.Finite.GaloisField
 
 /-!
@@ -21,22 +21,6 @@ sets to differ by an affine change of exponents.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generalized Bose set.** Let $F$ be a finite field with $q$ elements, $K$ a field extension
-of $F$, $h$ and $b$ natural numbers and $\theta \in K$. The generalized Bose set
-$\mathrm{Bose}_h(q, b)$ is the set of residues $a \in \mathbb{Z}/(q^h - 1)\mathbb{Z}$ such that
-$\theta^a = \theta^b + v$ for some $v \in F$, where $\theta^a$ is computed with the least
-nonnegative representative of $a$ (for $h = 0$ the modulus is $0$, $a$ ranges over $\mathbb{Z}$
-and $\theta^a$ means $\theta^{|a|}$).
-
-In the paper $K$ has degree $h$ over $F$ and $\theta$ generates $K^\times$; the definition does
-not need these assumptions.
-
-Source: Kevin O'Bryant, *Constructing Thick `B_h`-Sets*, Journal of Integer Sequences 27
-(2024), Article 24.1.2, Definition 1. -/
-public def boseSet (F : Type*) {K : Type*} [Field F] [Fintype F] [Field K] [Algebra F K]
-    (h : ℕ) (θ : K) (b : ℕ) : Set (ZMod (Fintype.card F ^ h - 1)) :=
-  {a | ∃ v : F, θ ^ a.val = θ ^ b + algebraMap F K v}
 
 /-- **Membership in a Bose set.** Let $F$ be a finite field with $q$ elements, let $K$ be a field
 extension of $F$, let $\theta \in K$, and let $h$ and $b$ be natural numbers. A residue
