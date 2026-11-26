@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.ArithmeticFunction.CoprimalityDensityIndependentSet
 public import MathlibExt.NumberTheory.ArithmeticFunction.CoprimalityIndicatorMultiplicativity
 public import MathlibExt.NumberTheory.ArithmeticFunction.TothPairwiseNonCoprimeTuples
 
@@ -59,25 +60,6 @@ public theorem_wanted coprimality_graph_count_asymp {k : ℕ} (hk : 2 ≤ k)
           (coprimalityIndicator E n : ℝ)) - coprimalityDensity E * (N : ℝ) ^ k|
         ≤ C * (N : ℝ) ^ (k - 1) *
           Real.log N ^ (univ.sup fun i : Fin k => (E.filter fun e => e.1 = i ∨ e.2 = i).card)
-
-/-- **Hu's independent-set formula for the coprimality density.** Let $k$ be a natural number, let
-$E$ be a set of pairs $(a, b)$ with $1 \le a < b \le k$, let $G$ be the graph on $\{1, \dots, k\}$
-with edge set $E$, and let $A_G$ be its coprimality density. For $0 \le m \le k$, let $i_m(G)$ be
-the number of independent sets of $G$ of size $m$, that is, of sets $S \subseteq \{1, \dots, k\}$
-with $|S| = m$ such that no edge of $E$ has both endpoints in $S$. Then
-$$A_G = \prod_p \sum_{m=0}^{k} \frac{i_m(G)}{p^m} \left(1 - \frac{1}{p}\right)^{k-m},$$
-the product running over all primes $p$.
-
-Source: László Tóth, *On the Asymptotic Density of k-tuples of Positive
-Integers with Pairwise Non-Coprime Components*, Journal of Integer Sequences 27
-(2024), Article 24.8.5, Theorem 1 (`jis-2024-24.8.5-thm-1`). -/
-public theorem_wanted coprimalityDensity_eq_independent_set_product {k : ℕ}
-    (E : Finset (Fin k × Fin k)) (hE : ∀ e ∈ E, e.1 < e.2) :
-    coprimalityDensity E =
-      ∏' p : Nat.Primes, ∑ m ∈ range (k + 1),
-        ((univ.filter fun S : Finset (Fin k) =>
-            S.card = m ∧ ∀ e ∈ E, ¬ (e.1 ∈ S ∧ e.2 ∈ S)).card : ℝ) /
-          ((p : ℕ) : ℝ) ^ m * (1 - 1 / ((p : ℕ) : ℝ)) ^ (k - m)
 
 /-- **Inclusion–exclusion for at least $r$ coprime pairs.** Let $k \ge 2$ and $r \ge 1$, and let
 $n = (n_1, \dots, n_k)$ be a tuple of natural numbers (zero allowed). Let $\beta'_r(n)$ be $1$ if
