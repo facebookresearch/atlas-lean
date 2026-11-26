@@ -49,8 +49,10 @@ public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.Pullbacks
 public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.Topology.KrullDimension
-public import MathlibExt.AlgebraicGeometry.BundleTrace
+public import MathlibExt.AlgebraicGeometry.CanonicalPolarizationData
+public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import MathlibExt.AlgebraicGeometry.ProjSpace
+public import MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLawEndDegree
 public import MathlibExt.AlgebraicGeometry.SchemeHomOver
@@ -74,20 +76,24 @@ Very ampleness is `Scheme.Modules.ClosedImmersionBySections`: some
 presentation of the sheaf by global sections maps the scheme to
 projective space over the base by a closed immersion.
 
-The tensor product of sheaves of modules is
-`SchemeModulesTensor.moduleTensor`, the sheafified tensor product of the
-underlying presheaves of modules, and the dual of a sheaf of modules is
-its Hom sheaf `BundleTrace.homSheaf` into the structure sheaf. These
-agree up to canonical isomorphism with the monoidal operations of the
-source, and the conditions below use them only up to local isomorphism
-(`LocIsoOnBase`).
+Invertibility is `CoherentCurveLinearSeries.IsLineBundle`. Canonical
+polarisations, local isomorphism over the base and the rank of global
+sections on geometric fibres are those of `QMCanonicalPol`
+(`CanonicalPolarizationData`, `LocIsoOnBase`, `geomFibreH0Finrank`), and
+the tensor cube is built with `SchemeModulesTensor.moduleTensor`. Points
+are pushed forward and reindexed with `CerednikDrinfeld.QM.mapPt`,
+`pushPt` and `compPt`, and tangent vectors are those of
+`CerednikDrinfeld.QM.IsTangentVector`.
 -/
 
 @[expose] public noncomputable section
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
-open MathlibExt.AlgebraicGeometry.BundleTrace (homSheaf)
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle)
+open MathlibExt.AlgebraicGeometry.QMCanonicalPol
+  (CanonicalPolarizationData LocIsoOnBase geomFibreH0Finrank)
 open MathlibExt.AlgebraicGeometry.SchemeModulesTensor (moduleTensor)
+open CerednikDrinfeld.QM (compPt IsTangentVector mapPt pushPt tangentBase tangentScale)
 
 open scoped Quaternion
 
@@ -96,26 +102,6 @@ universe u
 namespace AlgebraicGeometry
 
 variable {R : Type u} [CommRing R]
-
-/-- Push a point forward along a morphism over the base. -/
-def mapPt {A A' : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    {f' : A' ⟶ Spec (CommRingCat.of R)} (φ : A ⟶ A') (hφ : φ ≫ f' = f)
-    {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of R)}
-    (P : SchemeHomOver t f) : SchemeHomOver t f' :=
-  P ≫ Over.homMk φ hφ
-
-@[simp]
-theorem mapPt_left {A A' : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    {f' : A' ⟶ Spec (CommRingCat.of R)} (φ : A ⟶ A') (hφ : φ ≫ f' = f)
-    {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of R)}
-    (P : SchemeHomOver t f) : (mapPt φ hφ P).left = P.left ≫ φ := rfl
-
-/-- Reindex a point along a morphism of test schemes. -/
-def compPt {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    {T T' : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of R)}
-    {t' : T' ⟶ Spec (CommRingCat.of R)} (ψ : T' ⟶ T) (hψ : ψ ≫ t = t')
-    (P : SchemeHomOver t f) : SchemeHomOver t' f :=
-  Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ P
 
 /-- View a point as a point over a different, equal, base morphism. -/
 def toPt {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
@@ -158,13 +144,6 @@ theorem RelativeGroupLaw.mul_left_congr {A : Scheme.{u}}
   have hy' : y₁ = y₂ := Over.OverMorphism.ext hy
   subst hx'; subst hy'; rfl
 
-/-- Push a point forward along an endomorphism over the base. -/
-abbrev pushPt {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    (φ : A ⟶ A) (hφ : φ ≫ f = f) {T : Scheme.{u}}
-    {t : T ⟶ Spec (CommRingCat.of R)} (P : SchemeHomOver t f) :
-    SchemeHomOver t f :=
-  mapPt φ hφ P
-
 namespace RelativeGroupLaw
 
 /-- Finite linear combinations of points with natural coefficients. -/
@@ -190,13 +169,6 @@ structure AbelianSchemePropertyBundle {A : Scheme.{u}}
   hasGroupLaw : Nonempty (RelativeGroupLaw R f)
 
 namespace Scheme.Modules
-
-/-- A sheaf of modules is invertible if it is locally isomorphic to the
-structure sheaf. -/
-structure IsInvertible {X : Scheme.{u}} (M : X.Modules) : Prop where
-  /-- Every point has a neighbourhood trivialising the sheaf. -/
-  exists_trivialization : ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
-    Nonempty ((pullback U.ι).obj M ≅ SheafOfModules.unit U.toScheme.ringCatSheaf)
 
 section ProjPresentation
 
@@ -254,187 +226,6 @@ end ProjPresentation
 
 end Scheme.Modules
 
-/-- Two sheaves of modules are locally isomorphic over the base. -/
-def LocIsoOnBase {S' : Type u} [CommRing S'] {X : Scheme.{u}}
-    (g : X ⟶ Spec (CommRingCat.of S')) (M M' : X.Modules) : Prop :=
-  ∀ s : ↥(Spec (CommRingCat.of S')), ∃ U : (Spec (CommRingCat.of S')).Opens,
-    s ∈ U ∧ Nonempty ((Scheme.Modules.pullback (g ⁻¹ᵁ U).ι).obj M ≅
-      (Scheme.Modules.pullback (g ⁻¹ᵁ U).ι).obj M')
-
-namespace Polarisation
-
-variable {S : Type u} [CommRing S] {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S))
-  (L : RelativeGroupLaw S f)
-
-/-- The inversion morphism `A ⟶ A` of a relative group law: the inverse of
-the tautological point `𝟙 A`. -/
-def negMor : A ⟶ A :=
-  (L.inv f (𝟙 (Over.mk f))).left
-
-/-- The addition morphism `A ×_S A ⟶ A` of a relative group law: the
-product of the two projections. -/
-def addMor : pullback f f ⟶ A :=
-  (L.mul (pullback.fst f f ≫ f)
-    (Over.homMk (U := Over.mk (pullback.fst f f ≫ f)) (V := Over.mk f)
-      (pullback.fst f f) rfl)
-    (Over.homMk (U := Over.mk (pullback.fst f f ≫ f)) (V := Over.mk f)
-      (pullback.snd f f) pullback.condition.symm)).left
-
-/-- A sheaf of modules is symmetric if its pullback along the inversion is
-locally isomorphic to it over the base. -/
-def IsSymmetric (𝓛 : A.Modules) : Prop :=
-  LocIsoOnBase f ((Scheme.Modules.pullback (negMor f L)).obj 𝓛) 𝓛
-
-/-- The Mumford bundle `m^* 𝓛 ⊗ (p₁^* 𝓛^∨ ⊗ p₂^* 𝓛^∨)` on `A ×_S A`, where
-`m` is the addition, `p₁` and `p₂` are the projections, and `𝓛^∨` is the
-Hom sheaf from `𝓛` to the structure sheaf. -/
-def mumfordBundle (𝓛 : A.Modules) : (pullback f f).Modules :=
-  moduleTensor _ ((Scheme.Modules.pullback (addMor f L)).obj 𝓛)
-    (moduleTensor _
-      ((Scheme.Modules.pullback (pullback.fst f f)).obj
-        (homSheaf A 𝓛 (SheafOfModules.unit A.ringCatSheaf)))
-      ((Scheme.Modules.pullback (pullback.snd f f)).obj
-        (homSheaf A 𝓛 (SheafOfModules.unit A.ringCatSheaf))))
-
-/-- The slice `A ×_S T ⟶ A ×_S A`, `(a, s) ↦ (a, x s)`, of a point `x` of
-`A` over `T`. -/
-def sliceAt {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of S)} (x : SchemeHomOver t f) :
-    pullback f t ⟶ pullback f f :=
-  pullback.lift (pullback.fst f t) (pullback.snd f t ≫ x.left) (by
-    have hx : x.left ≫ f = t := Over.w x
-    rw [Category.assoc, hx]
-    exact pullback.condition)
-
-/-- The kernel of the Mumford map of `𝓛` is trivial: a point over an affine
-base at whose slice the Mumford bundle is locally trivial over the base is
-the identity. -/
-def KernelTrivial (𝓛 : A.Modules) : Prop :=
-  ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶ Spec (CommRingCat.of S))
-    (x : SchemeHomOver t f),
-    LocIsoOnBase (pullback.snd f t)
-        ((Scheme.Modules.pullback (sliceAt f x)).obj (mumfordBundle f L 𝓛))
-        (SheafOfModules.unit (pullback f t).ringCatSheaf) →
-      x = L.one t
-
-/-- The kernel of the Mumford map of `𝓛` is the two-torsion: the Mumford
-bundle is locally trivial over the base at the slice of a point over an
-affine base exactly when the point is two-torsion. -/
-def KernelIsTwoTorsion (𝓛 : A.Modules) : Prop :=
-  ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶ Spec (CommRingCat.of S))
-    (x : SchemeHomOver t f),
-    LocIsoOnBase (pullback.snd f t)
-        ((Scheme.Modules.pullback (sliceAt f x)).obj (mumfordBundle f L 𝓛))
-        (SheafOfModules.unit (pullback f t).ringCatSheaf) ↔
-      L.mul t x x = L.one t
-
-/-- Rosati compatibility of an action `ι` with an involution `star`: for each
-`b`, the pullbacks of the Mumford bundle along `1 × ι b` and `ι (star b) × 1`
-are locally isomorphic over the base. -/
-def RosatiCompatible (𝓛 : A.Modules) {I : Type*} (ι : I → (A ⟶ A))
-    (hι : ∀ b, ι b ≫ f = f) (star : I → I) : Prop :=
-  ∀ b : I,
-    LocIsoOnBase (pullback.fst f f ≫ f)
-      ((Scheme.Modules.pullback
-          (pullback.lift (pullback.fst f f) (pullback.snd f f ≫ ι b)
-            (by rw [Category.assoc, hι]; exact pullback.condition))).obj
-        (mumfordBundle f L 𝓛))
-      ((Scheme.Modules.pullback
-          (pullback.lift (pullback.fst f f ≫ ι (star b)) (pullback.snd f f)
-            (by rw [Category.assoc, hι]; exact pullback.condition))).obj
-        (mumfordBundle f L 𝓛))
-
-end Polarisation
-
-/-- The finrank of the global sections of a sheaf on a geometric fibre. -/
-noncomputable def Scheme.Modules.geomFibreH0Finrank {S : Type u} [CommRing S]
-    {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S)) (M : A.Modules)
-    (k : Type u) [Field k] (sk : S →+* k) : ℕ :=
-  letI : Algebra k Γ(Limits.pullback f (Spec.map (CommRingCat.ofHom sk)), ⊤) :=
-    ((Scheme.ΓSpecIso (.of k)).inv ≫
-      (Limits.pullback.snd f (Spec.map (CommRingCat.ofHom sk))).appLE ⊤ ⊤ le_top).hom.toAlgebra
-  letI : Module k
-      Γ((Scheme.Modules.pullback
-        (Limits.pullback.fst f (Spec.map (CommRingCat.ofHom sk)))).obj M, ⊤) :=
-    Module.compHom _ (algebraMap k
-      Γ(Limits.pullback f (Spec.map (CommRingCat.ofHom sk)), ⊤))
-  Module.finrank k
-    Γ((Scheme.Modules.pullback
-      (Limits.pullback.fst f (Spec.map (CommRingCat.ofHom sk)))).obj M, ⊤)
-
-variable {S : Type u} [CommRing S]
-
-/-- The geometric point of `Spec S` at a map to a field. -/
-def geomPoint (k : Type u) [Field k] (sk : S →+* k) :
-    Spec (CommRingCat.of k) ⟶ Spec (CommRingCat.of S) :=
-  Spec.map (CommRingCat.ofHom sk)
-
-/-- The dual-number thickening of a geometric point. -/
-def tangentBase (k : Type u) [Field k] (sk : S →+* k) :
-    Spec (CommRingCat.of (DualNumber k)) ⟶ Spec (CommRingCat.of S) :=
-  Spec.map (CommRingCat.ofHom ((algebraMap k (DualNumber k)).comp sk))
-
-/-- The zero section of the dual-number thickening. -/
-def tangentZero (k : Type u) [Field k] :
-    Spec (CommRingCat.of k) ⟶ Spec (CommRingCat.of (DualNumber k)) :=
-  Spec.map (CommRingCat.ofHom (TrivSqZeroExt.fstHom k k k).toRingHom)
-
-/-- Scaling the dual-number coordinate. -/
-def tangentScale (k : Type u) [Field k] (c : k) :
-    Spec (CommRingCat.of (DualNumber k)) ⟶ Spec (CommRingCat.of (DualNumber k)) :=
-  Spec.map (CommRingCat.ofHom
-    (TrivSqZeroExt.map (R' := k) (c • (LinearMap.id : k →ₗ[k] k))).toRingHom)
-
-/-- A point over dual numbers is a tangent vector if it reduces to the
-identity point. -/
-def IsTangentVector {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of S)}
-    (L : RelativeGroupLaw S f) (k : Type u) [Field k] (sk : S →+* k)
-    (P : SchemeHomOver (tangentBase k sk) f) : Prop :=
-  tangentZero k ≫ P.left = (L.one (geomPoint k sk)).left
-
-/-- Canonical polarisation data for an action `act` with involution `star`
-on a relative group law `L`: an invertible sheaf `𝓛` that is symmetric,
-whose Mumford kernel is the two-torsion, such that after a faithfully flat
-base change `S → S'`, for every group law `L'` on the base change
-compatible with `L`, the pullback of `𝓛` is locally isomorphic over the
-base to `𝓛₀ ⊗ [-1]^* 𝓛₀` for an invertible `𝓛₀` with trivial Mumford
-kernel, which has positive geometric fibre rank, and which is Rosati
-compatible with `act` and `star`. -/
-def IsCanonicalPolData {A : Scheme.{u}} (f : A ⟶ Spec (CommRingCat.of S))
-    (L : RelativeGroupLaw S f) {I : Type*} (act : I → (A ⟶ A))
-    (act_over : ∀ x : I, act x ≫ f = f) (star : I → I) (𝓛 : A.Modules) :
-    Prop :=
-  Scheme.Modules.IsInvertible 𝓛 ∧ Polarisation.IsSymmetric f L 𝓛 ∧
-  Polarisation.KernelIsTwoTorsion f L 𝓛 ∧
-  (∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
-    Module.FaithfullyFlat S S' ∧
-    ∀ (L' : RelativeGroupLaw S'
-      (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))),
-      (∀ (T : Scheme.{u}) (t' : T ⟶ Spec (CommRingCat.of S'))
-        (P Q : SchemeHomOver t'
-          (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))),
-          (L'.mul t' P Q).left ≫
-              pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))) =
-            (L.mul (t' ≫ Spec.map (CommRingCat.ofHom (algebraMap S S')))
-              (pullPt (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
-                pullback.condition P)
-              (pullPt (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
-                pullback.condition Q)).left) →
-      ∃ 𝓛₀ : (pullback f (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
-        Scheme.Modules.IsInvertible 𝓛₀ ∧
-        Polarisation.KernelTrivial
-          (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S')))) L' 𝓛₀ ∧
-        LocIsoOnBase (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
-          ((Scheme.Modules.pullback
-            (pullback.fst f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))).obj 𝓛)
-          (moduleTensor _ 𝓛₀
-            ((Scheme.Modules.pullback
-              (Polarisation.negMor
-                (pullback.snd f (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
-                L')).obj 𝓛₀))) ∧
-  (∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
-    0 < Scheme.Modules.geomFibreH0Finrank f 𝓛 k sk) ∧
-  Polarisation.RosatiCompatible f L 𝓛 act act_over star
-
 /-- A polarised abelian scheme of dimension `g`, polarisation degree
 parameter `d` and level `n` over `S`. -/
 structure PolarisedAbelianScheme (g d n : ℕ) (S : Type u) [CommRing S] :
@@ -478,14 +269,14 @@ structure PolarisedAbelianScheme (g d n : ℕ) (S : Type u) [CommRing S] :
   /-- The polarisation sheaf. -/
   pol : A.Modules
   /-- The polarisation sheaf is invertible. -/
-  pol_isInvertible : Scheme.Modules.IsInvertible pol
+  pol_isInvertible : IsLineBundle pol
   /-- The polarisation sheaf is very ample relative to the base: some
   presentation of it by global sections maps `A` to projective space over
   `S` by a closed immersion. -/
   pol_veryAmple : Scheme.Modules.ClosedImmersionBySections pol f
   /-- The polarisation has geometric fibre rank `d`. -/
   pol_finrank : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
-    Scheme.Modules.geomFibreH0Finrank f pol k sk = d
+    geomFibreH0Finrank f pol k sk = d
 
 namespace PolarisedAbelianScheme
 
@@ -573,7 +364,7 @@ structure QMStructure (Λ : Submodule ℤ ℍ[ℚ, a, b]) (star : ↥Λ → ↥�
   `polE ⊗ polE ⊗ polE` of a canonical polarisation `polE` for the
   action. -/
   pol_canonical : ∃ polE : X.A.Modules,
-    IsCanonicalPolData X.f X.L act act_over star polE ∧
+    CanonicalPolarizationData X.L act act_over star polE ∧
     LocIsoOnBase X.f X.pol (moduleTensor X.A polE (moduleTensor X.A polE polE))
 
 namespace QMStructure

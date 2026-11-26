@@ -16,7 +16,10 @@ public import MathlibExt.AlgebraicGeometry.PolarisedAbelianScheme
 
 @[expose] public section
 
-open CategoryTheory AlgebraicGeometry
+open CategoryTheory AlgebraicGeometry Polynomial
+open MathlibExt.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+  (IsLineBundle isLineBundle_structureModule structureModule)
 open MathlibExt.AlgebraicGeometry.SchemeModulesTensor (moduleTensor)
 
 open scoped Quaternion
@@ -39,33 +42,28 @@ theorem exactSource {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]}
     QMStructure.IsPullback (χ.comp φ) t t'' :=
   QMStructure.IsPullback.trans φ χ h h'
 
-/-- Invertibility of a polarisation sheaf unpacks to local
-trivialisations. -/
-example {X : Scheme.{u}} (𝓛 : X.Modules)
-    (h : Scheme.Modules.IsInvertible 𝓛) (x : X) :
-    ∃ U : X.Opens, x ∈ U ∧
-      Nonempty ((Scheme.Modules.pullback U.ι).obj 𝓛 ≅
-        SheafOfModules.unit U.toScheme.ringCatSheaf) :=
-  h.exists_trivialization x
-
-/-- A canonical polarisation is symmetric, its Mumford kernel is the
-two-torsion, and it is Rosati compatible with the action. -/
-example {S : Type u} [CommRing S] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of S)}
-    {L : RelativeGroupLaw S f} {I : Type} {act : I → (A ⟶ A)}
-    {act_over : ∀ x : I, act x ≫ f = f} {star : I → I} {𝓛 : A.Modules}
-    (h : IsCanonicalPolData f L act act_over star 𝓛) :
-    Polarisation.IsSymmetric f L 𝓛 ∧ Polarisation.KernelIsTwoTorsion f L 𝓛 ∧
-      Polarisation.RosatiCompatible f L 𝓛 act act_over star :=
-  ⟨h.2.1, h.2.2.1, h.2.2.2.2.2⟩
-
 /-- The polarisation of a quaternion multiplication structure is locally
 the cube of a canonical polarisation. -/
 example {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {star : ↥Λ → ↥Λ}
     {β : Fin (2 * 2) → ↥Λ} {d m : ℕ} {S : Type u} [CommRing S]
     {X : PolarisedAbelianScheme 2 d m S} (s : QMStructure Λ star β X) :
-    ∃ polE : X.A.Modules, IsCanonicalPolData X.f X.L s.act s.act_over star polE ∧
-      LocIsoOnBase X.f X.pol (moduleTensor X.A polE (moduleTensor X.A polE polE)) :=
+    ∃ polE : X.A.Modules,
+      QMCanonicalPol.CanonicalPolarizationData X.L s.act s.act_over star polE ∧
+      QMCanonicalPol.LocIsoOnBase X.f X.pol
+        (moduleTensor X.A polE (moduleTensor X.A polE polE)) :=
   s.pol_canonical
+
+/-- The canonical polarisation of a quaternion multiplication structure is
+symmetric, its Mumford kernel is the two-torsion, and it is Rosati
+compatible with the action. -/
+example {a b : ℚ} {Λ : Submodule ℤ ℍ[ℚ, a, b]} {star : ↥Λ → ↥Λ}
+    {β : Fin (2 * 2) → ↥Λ} {d m : ℕ} {S : Type u} [CommRing S]
+    {X : PolarisedAbelianScheme 2 d m S} (s : QMStructure Λ star β X) :
+    ∃ polE : X.A.Modules, QMCanonicalPol.IsSymmetric X.L polE ∧
+      QMCanonicalPol.KernelIsTwoTorsion X.L polE ∧
+      QMCanonicalPol.RosatiCompatible X.L polE s.act s.act_over star := by
+  obtain ⟨polE, h, -⟩ := s.pol_canonical
+  exact ⟨polE, h.isSymmetric, h.kernelIsTwoTorsion, h.rosatiCompatible⟩
 
 /-- The polarisation of a polarised abelian scheme is very ample: some
 presentation of it by global sections maps the scheme to projective space
@@ -73,5 +71,29 @@ by a closed immersion. -/
 example {g d n : ℕ} {S : Type u} [CommRing S] (X : PolarisedAbelianScheme g d n S) :
     ∃ (N : ℕ) (𝔓 : X.pol.ProjPresentation X.f N), IsClosedImmersion 𝔓.toProj :=
   X.pol_veryAmple
+
+/-- A sheaf that is very ample relative to `f` makes `f` proper: `f` factors
+through a closed immersion into projective space over the base. -/
+private theorem isProper_of_closedImmersionBySections {R : Type u} [CommRing R]
+    {X : Scheme.{u}} {M : X.Modules} {f : X ⟶ Spec (CommRingCat.of R)}
+    (h : M.ClosedImmersionBySections f) : IsProper f := by
+  obtain ⟨N, 𝔓, h𝔓⟩ := h
+  rw [← 𝔓.toProj_π]
+  infer_instance
+
+/-- An invertible sheaf need not be very ample: the structure sheaf of the
+affine line over a field is invertible, but the affine line is not proper
+over the field, so no presentation by global sections maps it to
+projective space by a closed immersion. -/
+example (K : Type u) [Field K] :
+    IsLineBundle (structureModule (Spec (CommRingCat.of K[X]))) ∧
+      ¬ (structureModule (Spec (CommRingCat.of K[X]))).ClosedImmersionBySections
+        (Spec.map (CommRingCat.ofHom (algebraMap K K[X]))) := by
+  refine ⟨isLineBundle_structureModule _, fun h => ?_⟩
+  have hfin : IsFinite (Spec.map (CommRingCat.ofHom (algebraMap K K[X]))) :=
+    IsFinite.iff_isProper_and_isAffineHom.mpr
+      ⟨isProper_of_closedImmersionBySections h, inferInstance⟩
+  rw [IsFinite.SpecMap_iff] at hfin
+  exact Polynomial.not_finite (RingHom.finite_algebraMap.mp hfin)
 
 end AlgebraicGeometry.PolarisedAbelianScheme.QMStructure
