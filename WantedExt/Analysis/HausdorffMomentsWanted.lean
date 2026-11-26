@@ -10,6 +10,9 @@ LICENSE file in the root directory of this source tree.
 # The Hausdorff–Hildebrandt–Schoenberg moment theorem, The Hausdorff positivity
 (complete-monotonicity) criterion
 
+The positivity criterion and the shared definitions live in
+`MathlibExt/Analysis/HausdorffMoments.lean`, which this module re-exports.
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
