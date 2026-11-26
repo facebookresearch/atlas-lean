@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Constructions
 public import MathlibExt.Combinatorics.Additive.SidonIdeal
+public import MathlibExt.Combinatorics.Additive.SidonIdealNotSidonBlockSubsetIUnionIsSidon
 
 /-!
 # The Sidon ideal (Nowik)
@@ -93,18 +94,6 @@ Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
 Proposition 1 (`integers-2025-A91-prop-1`). -/
 public theorem_wanted exists_isSidon_not_mem_almostThinIdeal :
     ∃ A : Set ℕ, A.IsSidon ∧ A ∉ generatedIdeal IsAlmostThinSet
-
-/-- **A block not covered by few Sidon sets.** Let $n \ge 1$ and $C \ge 1$ be natural
-numbers, and put $M = C \cdot 2^n + 1$ and $K = (n - 1)\binom{n}{2} + 1$. Then the block
-$\mathrm{Block}(n, C, M, K) = \{M l + C \cdot 2^k : 0 \le k < n,\ 1 \le l \le K\}$ is not
-contained in the union of any $n - 1$ Sidon subsets of $\mathbb{N}$.
-
-Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
-Lemma 3 (`integers-2025-A91-lem-3`). -/
-public theorem_wanted not_sidonBlock_subset_iUnion_isSidon {n C : ℕ} (hn : 0 < n)
-    (hC : 0 < C) :
-    ¬ ∃ S : Fin (n - 1) → Set ℕ, (∀ j, (S j).IsSidon) ∧
-      sidonBlock n C (C * 2 ^ n + 1) ((n - 1) * n.choose 2 + 1) ⊆ ⋃ j, S j
 
 /-- **A set in the van der Waerden, lacunary and difference-set ideals outside the Sidon ideal.**
 There is a set $A \subseteq \mathbb{N}$ that belongs to the van der Waerden ideal, is contained in
