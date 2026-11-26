@@ -6,6 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`openai/math` at revision `3344da59991ed94f9ba711217b29c1d760badfa6`.
+
+* `lean/ComparatorChallenges/DirectCrouzeix.lean`: the statement of `uniform_sharpness`
+  and the definitions inlined in its hypothesis.
+* `lean/OAI/Analysis/DirectCrouzeix/Sharpness.lean`: the matrix-entry estimate,
+  two-dimensional shift witness, and sharpness proof.
+
+Licensed under the Apache License, Version 2.0; see `lean/LICENSE` at that revision.
+Authors: OpenAI (project attribution in lean/formalization.yaml).
+The cited files and accompanying notices name no copyright holder or individual authors.
+-/
+
 module
 
 import Mathlib.Tactic.Linarith
