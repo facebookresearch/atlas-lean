@@ -11353,6 +11353,7 @@
   "MathlibExt/Combinatorics/Fundamentals/SpecialSequences": {"to": "Combinatorics/elementary-enumeration", "title": "Special counting sequences"},
   "MathlibExt/Combinatorics/GDifferenceBases": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
   "MathlibExt/Combinatorics/GDifferenceBasesGroupDiffBasisNumberLeHundredSqrt": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
+  "MathlibExt/Combinatorics/GDifferenceBasesTendstoGroupDiffBasisNumberEvenOdd": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "Difference bases"},
   "MathlibExt/Combinatorics/GaleRyser": {"to": "Combinatorics/designs-latin-squares", "title": "Gale–Ryser theorem"},
   "MathlibExt/Combinatorics/GeneralizedBellPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Generalized Bell polynomials"},
   "MathlibExt/Combinatorics/Graph/ArcNetworkLaplacian": {"to": "GraphTheory/algebraic-graph-theory", "title": "Graph Laplacians and Cheeger's inequality"},
