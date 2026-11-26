@@ -1,6 +1,6 @@
 # The LL(1) predictive parser
 
-Let $g$ be a context-free grammar with terminal alphabet $T$, nonterminals $N$ and start symbol $S$; a sentential form is a word $\alpha$ over $T \cup N$, and $\alpha \Rightarrow^* w$ means that $\alpha$ derives the terminal word $w \in T^*$. Let $M[A, \cdot]$ be the LL(1) table entry, defined through FIRST and FOLLOW sets.
+Let $g$ be a context-free grammar with terminal alphabet $T$, nonterminals $N$ and start symbol $S$; a sentential form is a word $\alpha$ over $T \cup N$, and $\alpha \Rightarrow^* w$ means that $\alpha$ derives the terminal word $w \in T^*$. The terminal alphabet $T$ has decidable equality, which the parser uses to match a terminal on the stack against the next input letter. The table entry for a nonterminal $A$ and a lookahead $b$ (a letter, or the end of input) is some production $A \to \alpha$ of $g$ with $b \in \mathrm{FIRST}(\alpha)$, or with $\alpha \Rightarrow^* \varepsilon$ and $b \in \mathrm{FOLLOW}(A)$ (for the end of input: with $\alpha \Rightarrow^* \varepsilon$), chosen by classical choice when one exists, and empty otherwise. Because FIRST, FOLLOW and nullability are stated through derivability, and the entry is picked by choice, the definition below is a semantic recurrence, not an executable parser.
 
 The predictive parser $\mathrm{parse}(k, \gamma, w) \in \{\mathrm{true}, \mathrm{false}\}$, for a step budget $k \in \mathbb{N}$, a stack $\gamma$ (a sentential form, top first) and a remaining input $w \in T^*$, is defined by recursion on $k$:
 

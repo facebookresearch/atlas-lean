@@ -1,7 +1,8 @@
 # WEIGHTED RADIUS, radius K or greater, for trees is NP-complete
 
+The graph of an instance is the [simple graph of its vertex count and edge list](../../graph-coloring-and-partitioning/graph-3-coloring/part-01/edge-graph.md).
+
 - [Weighted radius-at-least instances](weighted-radius-instance.md)
-- [Graph of a weighted radius-at-least instance](graph.md)
 - [Edge lengths from a list of lengths](edge-length.md)
 - [Length of a walk under edge lengths](walk-length.md)
 - [Well-formed weighted radius-at-least instances](well-formed.md)
