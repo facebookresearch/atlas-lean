@@ -13005,6 +13005,7 @@
   "MathlibExt/NumberTheory/Digits/MinBasePalindromeMinPalindromicBaseEqPred": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/NegTwoCubeDvd": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/NegativeBaseDigitSquareCongruence": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Happy numbers"},
+  "MathlibExt/NumberTheory/Digits/NegativeBaseHappyNumbersIsNegBaseHappyNegTwoIff": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Happy numbers"},
   "MathlibExt/NumberTheory/Digits/NineDvdExponent": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/OneCOneTwoPow": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/OrdinaryMomentRecurrence": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Irwin series"},

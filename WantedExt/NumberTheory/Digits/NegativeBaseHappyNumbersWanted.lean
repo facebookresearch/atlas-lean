@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Iterate
 public import MathlibExt.NumberTheory.Digits.NegativeBaseDigitSquareCongruence
+public import MathlibExt.NumberTheory.Digits.NegativeBaseHappyNumbersIsNegBaseHappyNegTwoIff
 
 /-!
 # Negative base happy numbers
@@ -23,9 +24,10 @@ Fibonacci Quarterly 62 (2024), no. 2, 125–129.
 
 For `b ≤ -2` every integer `a` has a unique expansion `a = ∑_{i=0}^n a_i b^i` with digits
 `0 ≤ a_i ≤ |b| - 1`, and `S_{2,b}(a) = ∑ a_i²`. An integer `a` is `b`-happy if `S_{2,b}^k(a) = 1`
-for some `k ≥ 1`. `U_{2,b}` is the set of positive integers lying on a cycle of `S_{2,b}`, and a
-finite set `T` is `(2, b)`-good if for each `u ∈ U_{2,b}` there are `n, k ≥ 1` with
-`S_{2,b}^k(t + n) = u` for all `t ∈ T`.
+for some `k ≥ 1`; this predicate `IsNegBaseHappy` and the theorem `isNegBaseHappy_neg_two_iff` are
+in `MathlibExt.NumberTheory.Digits.NegativeBaseHappyNumbersIsNegBaseHappyNegTwoIff`. `U_{2,b}` is
+the set of positive integers lying on a cycle of `S_{2,b}`, and a finite set `T` is `(2, b)`-good
+if for each `u ∈ U_{2,b}` there are `n, k ≥ 1` with `S_{2,b}^k(t + n) = u` for all `t ∈ T`.
 -/
 
 namespace MetaMathlibExt
@@ -69,16 +71,6 @@ theorem negBaseSqDigitSum_samples :
       negBaseSqDigitSum (-4) 5 = 11 := by
   decide
 
-/-- **Happy integers in a negative base.** Let $b$ be an integer and let $S_{2,b}$ be the
-base-$b$ digit-square sum, which for $b \le -2$ sends an integer to the sum of the squares of its
-base-$b$ digits. An integer $a$ is $b$-happy if $S_{2,b}^k(a) = 1$ for some $k \ge 1$, where
-$S_{2,b}^k$ denotes the $k$-th iterate of $S_{2,b}$.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def IsNegBaseHappy (b a : ℤ) : Prop :=
-  ∃ k : ℕ, 0 < k ∧ (negBaseSqDigitSum b)^[k] a = 1
-
 /-- **$1$ is happy in every negative base.** For every integer $b \le -2$, the integer $1$ is
 $b$-happy.
 
@@ -96,17 +88,6 @@ Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbe
 Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
 theorem one_mem_negBaseSqDigitCycles {b : ℤ} (hb : b ≤ -2) : (1 : ℤ) ∈ negBaseSqDigitCycles b :=
   ⟨one_pos, isNegBaseHappy_one hb⟩
-
-/-- **Happy numbers in base $-2$.** There is an integer $n$ such that $n + 3i$ is $(-2)$-happy for
-every natural number $i$, and an integer $a$ is $(-2)$-happy if and only if $a \equiv 1 \pmod 3$.
-
-This is part (1) of the Grundman–Harris theorem.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Theorem 1.1. -/
-public theorem_wanted isNegBaseHappy_neg_two_iff :
-    (∃ n : ℤ, ∀ i : ℕ, IsNegBaseHappy (-2) (n + 3 * i)) ∧
-      ∀ a : ℤ, IsNegBaseHappy (-2) a ↔ a ≡ 1 [ZMOD 3]
 
 /-- **Happy numbers in base $-3$.** There is an integer $n$ such that $n + 2i$ is $(-3)$-happy for
 every natural number $i$, and an integer $a$ is $(-3)$-happy if and only if $a \equiv 1 \pmod 2$.
