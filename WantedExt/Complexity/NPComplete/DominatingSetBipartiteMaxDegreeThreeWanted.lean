@@ -29,7 +29,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ QUESTION: is there a dominating set of size `K` or less for `G`, i.e. a subset `
 
 This is DOMINATING SET on the ISGCI class `gc_941`, bipartite ∩ maximum degree 3. The instance,
 its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.DominatingSetWanted` ([GT2]: a simple graph on `Fin n` given by
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs` ([GT2]: a simple graph on `Fin n` given by
 an edge list, and the bound `K`). The restriction adds `0 < K ≤ |V|` ([GT2]'s instance class)
 and the class: bipartiteness as Mathlib's `SimpleGraph.IsBipartite` and the degree bound as
 Mathlib's `SimpleGraph.degree`.
