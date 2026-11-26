@@ -16,13 +16,14 @@ import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.Harmonic.ShiftedChoose
 
 /-!
 # Asymptotics of hyperharmonic numbers
 
 The closed form splits a hyperharmonic number into a binomial coefficient and a difference of
-harmonic numbers. For fixed order, the rising factorial in the binomial coefficient gives the
-power of the index, and the Euler–Mascheroni limit gives the logarithmic factor.
+harmonic numbers. For fixed order, the shifted binomial coefficient gives the power of the index
+and its factorial normalization, and the Euler–Mascheroni limit gives the logarithmic factor.
 
 ## References
 
@@ -110,29 +111,6 @@ private theorem hyperharmonic_succ_eq_choose_mul (r n : ℕ) :
       simpa only [Nat.succ_eq_add_one, Nat.add_right_comm n 1 r, ← Nat.add_assoc] using
         (choose_mul_harmonic_step (n + r + 1) r).symm
 
-private theorem natCast_add_isEquivalent (c : ℝ) :
-    (fun n : ℕ ↦ (n : ℝ) + c) ~[atTop] fun n : ℕ ↦ (n : ℝ) := by
-  apply IsEquivalent.refl.add_const_of_norm_tendsto_atTop
-  exact tendsto_natCast_atTop_atTop.congr fun n : ℕ ↦ (Real.norm_of_nonneg (Nat.cast_nonneg n)).symm
-
-private theorem ascFactorial_isEquivalent (r : ℕ) :
-    (fun n : ℕ ↦ ((n + 1).ascFactorial r : ℝ)) ~[atTop] fun n : ℕ ↦ (n : ℝ) ^ r := by
-  induction r with
-  | zero =>
-    simpa only [Nat.ascFactorial_zero, Nat.cast_one, pow_zero] using
-      (IsEquivalent.refl (u := fun _ : ℕ ↦ (1 : ℝ)) (l := atTop))
-  | succ r ih =>
-    simpa only [Pi.mul_def, Nat.ascFactorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one,
-      add_assoc, pow_succ'] using (natCast_add_isEquivalent (1 + (r : ℝ))).mul ih
-
-private theorem add_choose_isEquivalent (r : ℕ) :
-    (fun n : ℕ ↦ ((n + r).choose r : ℝ)) ~[atTop] fun n : ℕ ↦ (n : ℝ) ^ r / (r.factorial : ℝ) := by
-  have h := (ascFactorial_isEquivalent r).div
-    (IsEquivalent.refl (u := fun _ : ℕ ↦ (r.factorial : ℝ)) (l := atTop))
-  have hfac : (r.factorial : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr r.factorial_ne_zero
-  simpa only [Pi.div_def, Nat.ascFactorial_eq_factorial_mul_choose, Nat.cast_mul,
-    mul_comm (r.factorial : ℝ), mul_div_cancel_right₀ _ hfac] using h
-
 private theorem shifted_harmonic_sub_isEquivalent (r : ℕ) :
     (fun n : ℕ ↦ (harmonic (n + r) : ℝ) - harmonic r) ~[atTop] fun n : ℕ ↦ Real.log n := by
   have hshift : Tendsto (fun n : ℕ ↦ Real.log (↑(n + r)) - Real.log n) atTop (𝓝 0) := by
@@ -161,6 +139,6 @@ public theorem hyperharmonic_isEquivalent (r : ℕ) (hr : 1 ≤ r) :
   obtain ⟨r, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hr)
   simpa only [Nat.succ_eq_add_one, Nat.add_sub_cancel, hyperharmonic_succ_eq_choose_mul,
     Rat.cast_mul, Rat.cast_natCast, Rat.cast_sub, Pi.mul_def, div_mul_eq_mul_div] using
-    (add_choose_isEquivalent r).mul (shifted_harmonic_sub_isEquivalent r)
+    (isEquivalent_add_choose r).mul (shifted_harmonic_sub_isEquivalent r)
 
 end MetaMathlibExt

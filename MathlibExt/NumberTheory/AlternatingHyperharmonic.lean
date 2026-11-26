@@ -11,9 +11,10 @@ module
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.PSeries
-import Mathlib.Analysis.SpecialFunctions.Choose
+import Mathlib.Data.Nat.Choose.Basic
 import MathlibExt.Analysis.Series.StolzCesaro
 import MathlibExt.Analysis.SpecialFunctions.Log.AlternatingHarmonic
+import MathlibExt.NumberTheory.Harmonic.ShiftedChoose
 
 /-!
 # Type II alternating hyperharmonic numbers
@@ -196,14 +197,6 @@ private theorem iterated_limit {b : ℕ → ℝ} {L : ℝ} (hb : Tendsto b atTop
     ext n
     simp [signedIteratedPartialSum_succ, sum_Icc_succ_top, step]
 
-private theorem shifted_choose (d : ℕ) :
-    (fun n : ℕ => ((n + d).choose d : ℝ)) ~[atTop] fun n => (n : ℝ) ^ d / d.factorial := by
-  have shift : (fun n : ℕ => (n : ℝ)) ~[atTop] (fun n => ((n + d : ℕ) : ℝ)) := by
-    apply isEquivalent_of_tendsto_one
-    simpa [Pi.div_def] using tendsto_natCast_div_add_atTop (d : ℝ)
-  exact ((isEquivalent_choose d).comp_tendsto (tendsto_add_atTop_nat d)).trans
-    ((shift.symm.pow d).div (IsEquivalent.refl (u := fun _ => (d.factorial : ℝ))))
-
 end alternatingHyperharmonic_typeII_isEquivalent
 
 open alternatingHyperharmonic_typeII_isEquivalent in
@@ -224,7 +217,7 @@ public theorem alternatingHyperharmonic_typeII_isEquivalent {r p : ℕ} (hr : 1 
   simp only [Nat.add_one_sub_one]
   have h := (isEquivalent_const_iff_tendsto (zeta_pos hp).ne').2
     (iterated_limit (harmonic_limit hp) d)
-  have hprod := h.mul (shifted_choose d)
+  have hprod := h.mul (isEquivalent_add_choose d)
   refine (hprod.congr_left (.of_forall fun n => ?_)).congr_right (.of_forall fun n => ?_)
   · exact div_mul_cancel₀ _ (by exact_mod_cast (Nat.choose_pos (Nat.le_add_left d n)).ne')
   · dsimp [Function.const]

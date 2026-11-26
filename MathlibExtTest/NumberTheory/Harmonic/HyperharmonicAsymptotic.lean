@@ -9,11 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.Harmonic.HyperharmonicAsymptotic
+import MathlibExt.NumberTheory.Harmonic.ShiftedChoose
 import Mathlib.Tactic.NormNum
 
 /-! # Tests for the asymptotics of hyperharmonic numbers -/
 
 open Asymptotics Filter MetaMathlibExt
+
+-- The shared estimate has the quadratic normalization at degree two.
+example :
+    (fun n : ℕ ↦ ((n + 2).choose 2 : ℝ)) ~[atTop] fun n : ℕ ↦ (n : ℝ) ^ 2 / 2 := by
+  simpa [Nat.factorial] using isEquivalent_add_choose 2
 
 -- The recursion gives zero at index zero and a nontrivial value at order three.
 example : hyperharmonic 3 0 = 0 := by simp [hyperharmonic_succ]
