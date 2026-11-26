@@ -8,4 +8,4 @@ with both integrands interval integrable on $[0, T]$, and $\big|\int_0^t (s(u) -
 
 $$\|x(t) - y(t)\| \le \|x_0 - y_0\| + \|b\|\,Q.$$
 
-This is the bounded-primitive estimate for the linear part $A = 0$, where the exponential factor is $1$; the initial mismatch is kept.
+This is the case $A = 0$ of the corresponding estimate for systems $x' = Ax + s(t)\,b + c(t)$ and $y' = Ay + d(t)\,b + c(t)$ with a linear operator $A$, whose bound is $e^{\|A\| T}\big(\|x_0 - y_0\| + \|b\|\,Q\big)$; here the factor $e^{\|A\| T}$ is $1$, and the initial mismatch is kept.

@@ -32,8 +32,11 @@ Deriving the mechanics equation itself is out of scope.
 namespace ControlTheory
 
 /-- The first-order right-hand side of the mass equation at
-velocity `v` under net force `F`: the pair `(v, M⁻¹ *ᵥ F)` of
-velocity and acceleration, where `M⁻¹ = 0` for a singular `M`. -/
+velocity `v` under net force `F`: the pair `(v, M⁻¹ *ᵥ F)`, where
+`M⁻¹ = 0` for a singular `M`. When `M` is invertible, the second
+component is the acceleration solving the mass equation
+(`eq_firstOrderRhs_iff`); for a singular `M` it is `0` and need not
+solve it. -/
 noncomputable def firstOrderRhs {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℝ) (F v : n → ℝ) : (n → ℝ) × (n → ℝ) :=
   (v, M⁻¹ *ᵥ F)

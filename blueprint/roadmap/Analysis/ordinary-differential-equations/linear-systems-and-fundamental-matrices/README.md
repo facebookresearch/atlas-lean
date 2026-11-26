@@ -50,6 +50,7 @@
 - [Trace–determinant classification of a planar linearization](linear-type-2.md)
 - [Linear stability means the stable node or stable focus class](is-linearly-stable-iff-linear-type.md)
 - [Saddles, unstable nodes and unstable foci are linearly unstable](is-linearly-unstable-of-linear-type.md)
+
 ## Constant-input scalar relaxation
 
 - [Solution of the constant-input relaxation equation](amount.md)
