@@ -1,0 +1,3 @@
+# Bootstrap validity for grid Kaplan–Meier with fixed data
+
+Fix strictly increasing grid times $t_j$ and encode an observation $(T, \delta)$ by the indicators of a death at $t_j$ and of being at risk at $t_j$; for a vector $\theta$ of such coordinates let $\mathrm{KM}(\theta)_j = \prod_{l\le j}(1 - \theta(\text{death}, l)/\theta(\text{risk}, l))$. Let fixed data have all observed times on the grid and $Z$ have projections $\langle Z, s\rangle \sim N(0, v(s))$. If the plug-in variances of the encoded data converge to $v(s)$ with the Lindeberg condition in every direction and the encoded means converge to $\theta$ with positive at-risk coordinates, then conditionally on the data $\sqrt n(\hat S^*_n - \hat S_n) \Rightarrow D\mathrm{KM}(\theta)Z$.
