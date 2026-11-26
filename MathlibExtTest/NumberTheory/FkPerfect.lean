@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.FkPerfect
+import Mathlib.Tactic.NormNum
 
 /-! # Tests for `MathlibExt.NumberTheory.FkPerfect` -/
 
@@ -37,5 +38,37 @@ example (l d : ℕ) : ¬ KLDeficientPerfectWith 1 l (2 ^ 0) d := by
   intro h
   have h2 := (klDeficientPerfectWith_one_prime_pow_iff 2 0 l d Nat.prime_two).mp h
   exact absurd h2.2.2.2 (by decide)
+
+-- `18 = 2 ^ 1 * 3 ^ 2` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 18 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    3 1 2 (by decide) (by decide)
+
+-- `2500 = 2 ^ 2 * 5 ^ 4` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 2500 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    5 2 4 (by decide) (by decide)
+
+-- `8 = 2 ^ 3 * 11 ^ 0` is not near `F`-perfect.
+example : ¬ MathlibExt.NumberTheory.FkPerfectWanted.IsNearFPerfect 8 := by
+  simpa using MathlibExt.NumberTheory.FkPerfectWanted.not_isNearFPerfect_two_pow_mul_prime_pow
+    11 3 0 (by decide) (by decide)
+
+-- `18` is `[1, 1]`-near-perfect, and twice a power of `5` is never `[1, ℓ]`-near-perfect.
+example : IsKLNearPerfect 1 1 18 :=
+  (isKLNearPerfect_one_two_mul_prime_pow 3 2 1 (by decide) (by decide) (by decide)).1
+
+example (a l : ℕ) (hl : 1 ≤ l) : ¬ IsKLNearPerfect 1 l (2 * 5 ^ a) := by
+  intro h
+  have heq :=
+    (isKLNearPerfect_one_two_mul_prime_pow 5 a l (by decide) (by decide) hl).2 h
+  have hpow : (5 : ℕ) ^ a = 9 := by omega
+  cases a with
+  | zero => norm_num at hpow
+  | succ a =>
+    have hdiv : 5 ∣ (9 : ℕ) := by
+      rw [← hpow]
+      exact dvd_pow_self 5 (by omega)
+    norm_num at hdiv
 
 end MathlibExtTest.NumberTheory.FkPerfect

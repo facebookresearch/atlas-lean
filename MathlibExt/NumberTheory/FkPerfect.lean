@@ -9,17 +9,35 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Data.Nat.ModEq
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
+import Mathlib.NumberTheory.Divisors
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Linarith
 
-/-! # Prime powers that are `[1,ℓ]`-deficient-perfect with a given divisor
+/-! # Near and deficient `F_k`-perfect numbers
 
-The prime power `p ^ a` is `[1,ℓ]`-deficient-perfect with divisor `d` if and only if
-`p = 2`, `ℓ = 1`, `d = 1` and `a ≥ 1` (`klDeficientPerfectWith_one_prime_pow_iff`).
-This is the `k = 1` part of Theorem 5 of Flora Jeba S, Anirban Roy, Pankaj Jyoti
-Mahanta, and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient `F_k`-Perfect
-Numbers".
+Results from Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta, and Manjil P. Saikia,
+"On Near `F_k`-Perfect and Deficient `F_k`-Perfect Numbers", *INTEGERS* 25 (2025),
+Article A86 (<https://math.colgate.edu/~integers/z86/z86.pdf>).
+
+## Main statements
+
+* `klDeficientPerfectWith_one_prime_pow_iff`: the prime power `p ^ a` is
+  `[1,ℓ]`-deficient-perfect with divisor `d` if and only if `p = 2`, `ℓ = 1`, `d = 1` and
+  `a ≥ 1`. This is the `k = 1` part of Theorem 5.
+* `isKLNearPerfect_one_two_mul_prime_pow`: `18` is `[1,1]`-near-perfect, and for an odd prime
+  `p` and `1 ≤ ℓ`, the only `[1,ℓ]`-near-perfect number of the form `2 * p ^ a` is `18`
+  (Theorem 14, part 1).
+* `not_isNearFPerfect_two_pow_mul_prime_pow`: for a prime `p` and even `b`, the number
+  `2 ^ a * p ^ b` is not near `F`-perfect: no proper divisor `d` satisfies
+  `σ₂(n) = n ^ 2 + d ^ 2 + 3 * n` (Theorem 15). Prime powers are excluded by reducing the
+  divisor-sum equation modulo `p ^ 2`. For odd `p` with both exponents positive, the four
+  divisors `1`, `n / 2`, `n / p` and `n` force `n < 3 * p ^ 2`, leaving only `n = 2 * p ^ 2`,
+  which is excluded by squeezing `d` between consecutive squares.
 -/
 
 set_option autoImplicit false
@@ -121,5 +139,456 @@ theorem klDeficientPerfectWith_one_prime_pow_iff
       simp only [pow_one, one_mul]
       rw [hsigma, Finset.sum_range_succ]
       omega
+
+/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
+$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
+divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
+def IsKLNearPerfect (k l n : ℕ) : Prop :=
+  ∃ d, KLNearPerfectWith k l n d
+
+private theorem divisor_sum_two_mul_prime_pow (p a : ℕ) (hp : p.Prime) (hpo : Odd p) :
+    (∑ e ∈ (2 * p ^ a).divisors, e ^ 1) =
+      3 * ∑ i ∈ Finset.range (a + 1), p ^ i := by
+  have htwo : ArithmeticFunction.sigma 1 2 = 3 := by
+    simp [ArithmeticFunction.sigma_apply, Nat.prime_two.divisors]
+  rw [← ArithmeticFunction.sigma_apply,
+    ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime
+      ((Nat.coprime_two_left.mpr hpo).pow_right a), htwo,
+    ArithmeticFunction.sigma_apply_prime_pow hp]
+  simp only [Nat.mul_one]
+
+private theorem sum_three_pow_identity (a : ℕ) :
+    2 * (∑ i ∈ Finset.range (a + 1), (3 : ℕ) ^ i) + 1 = 3 * 3 ^ a := by
+  simpa [pow_succ, Nat.mul_comm] using geom_sum_mul_add (2 : ℕ) (a + 1)
+
+private theorem nearPerfect_two_mul_prime_pow_eq (p a l d : ℕ)
+    (hp : p.Prime) (hpo : Odd p) (hl : 1 ≤ l)
+    (h : KLNearPerfectWith 1 l (2 * p ^ a) d) : 2 * p ^ a = 18 := by
+  rcases h with ⟨hd, hlt, hsum⟩
+  rw [divisor_sum_two_mul_prime_pow p a hp hpo] at hsum
+  simp only [pow_one] at hsum
+  have ha : a ≠ 0 := by
+    intro ha
+    subst a
+    simp only [pow_zero, mul_one] at hd hlt hsum
+    have hd1 : d = 1 :=
+      (Nat.dvd_prime Nat.prime_two).mp hd |>.resolve_right (Nat.ne_of_lt hlt)
+    have hs : 3 = 2 + d + l * 2 := by
+      simpa only [Nat.zero_add, Finset.sum_range_one, pow_zero, mul_one] using hsum
+    omega
+  have hgeom : (∑ i ∈ Finset.range (a + 1), p ^ i) ≡ 1 [MOD p] := by
+    rw [Finset.sum_range_succ', pow_zero]
+    have htail : p ∣ ∑ i ∈ Finset.range a, p ^ (i + 1) := by
+      apply Finset.dvd_sum
+      intro i _
+      exact dvd_pow_self p (by omega)
+    simpa only [zero_add] using
+      (Nat.modEq_zero_iff_dvd.mpr htail).add (Nat.ModEq.refl 1)
+  have hn0 : 2 * p ^ a ≡ 0 [MOD p] := Nat.modEq_zero_iff_dvd.mpr
+    (dvd_mul_of_dvd_right (dvd_pow_self p ha) 2)
+  have hmod : 3 ≡ d [MOD p] := by
+    have hleft := hgeom.mul_left 3
+    rw [hsum] at hleft
+    have hright : 2 * p ^ a + d + l * (2 * p ^ a) ≡ d [MOD p] := by
+      simpa only [zero_add, mul_zero, add_zero] using
+        (hn0.add (Nat.ModEq.refl d)).add (hn0.mul_left l)
+    exact hleft.symm.trans hright
+  have hpd : p ∣ d := by
+    by_contra hnd
+    have hd2 : d ∣ 2 := (hp.coprime_pow_of_not_dvd hnd).dvd_of_dvd_mul_right hd
+    rcases (Nat.dvd_prime Nat.prime_two).mp hd2 with rfl | rfl
+    · have he : p ∣ 2 := Nat.modEq_zero_iff_dvd.mp
+        ((Nat.ModEq.refl 1).add_iff_left.mp (by simpa using hmod))
+      exact (hp.coprime_iff_not_dvd.mp (Nat.coprime_two_left.mpr hpo).symm) he
+    · have he : p ∣ 1 := Nat.modEq_zero_iff_dvd.mp
+        ((Nat.ModEq.refl 2).add_iff_right.mp (by simpa using hmod))
+      exact hp.not_dvd_one he
+  have hp3 : p = 3 := (Nat.dvd_prime (by decide : Nat.Prime 3)).mp
+    (Nat.modEq_zero_iff_dvd.mp (hmod.trans (Nat.modEq_zero_iff_dvd.mpr hpd)))
+    |>.resolve_left hp.ne_one
+  subst p
+  have hqpos : 0 < (3 : ℕ) ^ a := pow_pos (by decide) a
+  have hidentity : 2 * (∑ i ∈ Finset.range (a + 1), (3 : ℕ) ^ i) + 1 =
+      3 * 3 ^ a := sum_three_pow_identity a
+  have hl1 : l = 1 := by
+    by_contra hne
+    have hlarge : 2 * (2 * 3 ^ a) ≤ l * (2 * 3 ^ a) :=
+      Nat.mul_le_mul_right _ (by omega)
+    nlinarith
+  subst l
+  have hq : 3 ^ a = 2 * d + 3 := by nlinarith
+  have hd6 : d ∣ 6 := by
+    have htwo : 2 * 3 ^ a = 4 * d + 6 := by omega
+    have hdiv : d ∣ 4 * d + 6 := by simpa only [htwo] using hd
+    exact (Nat.dvd_add_iff_right (dvd_mul_left d 4)).mpr hdiv
+  have hdle : d ≤ 6 := Nat.le_of_dvd (by decide) hd6
+  have hale : a ≤ 2 := by
+    by_contra hna
+    have hpow : (3 : ℕ) ^ 3 ≤ 3 ^ a := Nat.pow_le_pow_right (by decide) (by omega)
+    norm_num at hpow
+    omega
+  interval_cases a
+  · exact (ha rfl).elim
+  · have hd0 : d = 0 := by
+      simp only [pow_one] at hq
+      omega
+    subst d
+    norm_num at hd
+  · rfl
+
+/-- **The only $[1,\ell]$-near-perfect number of the form $2p^a$ is $18$.** For natural numbers
+$\ell$ and $n$, say that $n$ is $[1,\ell]$-near-perfect when some divisor $d$ of $n$ with $d < n$
+satisfies $\sigma(n) = n + d + \ell n$, where $\sigma(n)$ is the sum of the divisors of $n$. Then
+$18$ is $[1,1]$-near-perfect, and for every odd prime $p$ and all natural numbers $a$ and
+$\ell \ge 1$, if $2p^a$ is $[1,\ell]$-near-perfect then $2p^a = 18$.
+
+The divisor for $18$ is $d = 3$. This is part 1 of Theorem 14 of the source.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 14. -/
+theorem isKLNearPerfect_one_two_mul_prime_pow
+    (p a l : ℕ) (hp : p.Prime) (hpo : Odd p) (hl : 1 ≤ l) :
+    IsKLNearPerfect 1 1 18 ∧
+      (IsKLNearPerfect 1 l (2 * p ^ a) → 2 * p ^ a = 18)
+    := by
+  refine ⟨?_, ?_⟩
+  · refine ⟨3, ?_⟩
+    unfold KLNearPerfectWith
+    decide
+  · rintro ⟨d, hd⟩
+    exact nearPerfect_two_mul_prime_pow_eq p a l d hp hpo hl hd
+
+/-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
+$[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
+satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
+of the squares of the divisors of $n$. -/
+def IsNearFPerfect (n : ℕ) : Prop :=
+  IsKLNearPerfect 2 3 n
+
+private theorem geom_sum_peel (p n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1), p ^ (i * 2))
+      = p ^ 2 * (∑ i ∈ Finset.range n, p ^ (i * 2)) + 1 := by
+  rw [Finset.sum_range_succ']
+  simp only [Nat.zero_mul, pow_zero]
+  rw [Finset.mul_sum]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i _
+  have hexp : (i + 1) * 2 = i * 2 + 2 := by ring
+  rw [hexp, pow_add]
+  exact mul_comm _ _
+
+private theorem not_isNearFPerfect_prime_pow (p m : ℕ) (hp : p.Prime) :
+    ¬ IsNearFPerfect (p ^ m) := by
+  rintro ⟨d, hdvd, hlt, hsum⟩
+  obtain ⟨t, htm_le, rfl⟩ := (Nat.dvd_prime_pow hp).mp hdvd
+  have htm : t < m :=
+    lt_of_le_of_ne htm_le fun h => by rw [h] at hlt; exact lt_irrefl _ hlt
+  have hm1 : 1 ≤ m := by omega
+  have hsigma : (∑ e ∈ (p ^ m).divisors, e ^ 2)
+      = ∑ i ∈ Finset.range (m + 1), p ^ (i * 2) := by
+    rw [← ArithmeticFunction.sigma_apply, ArithmeticFunction.sigma_apply_prime_pow hp]
+  rw [hsigma, Finset.sum_range_succ, ← pow_mul p m 2, ← pow_mul p t 2] at hsum
+  have hbase : (∑ i ∈ Finset.range m, p ^ (i * 2)) = p ^ (t * 2) + 3 * p ^ m := by
+    omega
+  obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
+  rw [geom_sum_peel] at hbase
+  by_cases ht : t = 0
+  · subst ht
+    simp only [Nat.zero_mul, pow_zero] at hbase
+    have hpeq : p ^ 2 * (∑ i ∈ Finset.range m', p ^ (i * 2)) = 3 * p ^ (m' + 1) := by
+      omega
+    by_cases hm' : m' = 0
+    · subst hm'
+      simp only [Finset.range_zero, Finset.sum_empty, mul_zero, zero_add,
+        pow_one] at hpeq
+      have hp0 := hp.ne_zero
+      omega
+    · have hm'1 : 1 ≤ m' := Nat.one_le_iff_ne_zero.mpr hm'
+      have hcancel : (∑ i ∈ Finset.range m', p ^ (i * 2)) = 3 * p ^ (m' - 1) := by
+        have h2 : p ^ (m' + 1) = p ^ 2 * p ^ (m' - 1) := by
+          rw [← pow_add]
+          congr 1
+          omega
+        rw [h2] at hpeq
+        have h3 : p ^ 2 * (∑ i ∈ Finset.range m', p ^ (i * 2))
+            = p ^ 2 * (3 * p ^ (m' - 1)) := by rw [hpeq]; ring
+        exact Nat.mul_left_cancel (pow_pos hp.pos 2) h3
+      by_cases hm'1eq : m' = 1
+      · subst hm'1eq
+        simp at hcancel
+      · have hm'2 : 2 ≤ m' := by omega
+        obtain ⟨m'', rfl⟩ : ∃ m'', m' = m'' + 1 := ⟨m' - 1, by omega⟩
+        rw [geom_sum_peel] at hcancel
+        simp only [Nat.add_sub_cancel] at hcancel
+        have hdvd : p ∣ 3 * p ^ m'' :=
+          dvd_mul_of_dvd_right (dvd_pow_self p (by omega)) 3
+        have hR : 3 * p ^ m'' ≡ 0 [MOD p] := Nat.modEq_zero_iff_dvd.mpr hdvd
+        have hL : p ^ 2 * (∑ i ∈ Finset.range m'', p ^ (i * 2)) + 1 ≡ 1 [MOD p] := by
+          have e : p ^ 2 * (∑ i ∈ Finset.range m'', p ^ (i * 2)) + 1
+              = 1 + p * (p * (∑ i ∈ Finset.range m'', p ^ (i * 2))) := by ring
+          rw [e]
+          exact (Nat.modEq_zero_iff_dvd.mpr (dvd_mul_right p _)).add_left 1
+        rw [hcancel] at hL
+        exact hp.not_dvd_one (Nat.modEq_zero_iff_dvd.mp (hL.symm.trans hR))
+  · have ht1 : 1 ≤ t := Nat.one_le_iff_ne_zero.mpr ht
+    have hm'1 : 1 ≤ m' := by omega
+    have hR0 : p ^ (t * 2) + 3 * p ^ (m' + 1) ≡ 0 [MOD p ^ 2] := by
+      apply Nat.modEq_zero_iff_dvd.mpr
+      have e1 : p ^ (t * 2) = p ^ 2 * p ^ (t * 2 - 2) := by
+        rw [← pow_add]
+        congr 1
+        omega
+      have e2 : p ^ (m' + 1) = p ^ 2 * p ^ (m' + 1 - 2) := by
+        rw [← pow_add]
+        congr 1
+        omega
+      have e3 : 3 * p ^ (m' + 1) = p ^ 2 * (3 * p ^ (m' + 1 - 2)) := by
+        rw [e2]; ring
+      rw [e1, e3, ← mul_add]
+      exact dvd_mul_right _ _
+    have hL1 : p ^ 2 * (∑ i ∈ Finset.range m', p ^ (i * 2)) + 1 ≡ 1 [MOD p ^ 2] := by
+      have e : p ^ 2 * (∑ i ∈ Finset.range m', p ^ (i * 2)) + 1
+          = 1 + p ^ 2 * (∑ i ∈ Finset.range m', p ^ (i * 2)) := by ring
+      rw [e]
+      exact (Nat.modEq_zero_iff_dvd.mpr (dvd_mul_right _ _)).add_left 1
+    rw [hbase] at hL1
+    have hcontra : (1 : ℕ) ≡ 0 [MOD p ^ 2] := hL1.symm.trans hR0
+    have hle : p ^ 2 ≤ 1 :=
+      Nat.le_of_dvd (by decide) (Nat.modEq_zero_iff_dvd.mp hcontra)
+    have hge : 4 ≤ p ^ 2 := by
+      have h := Nat.pow_le_pow_left hp.two_le 2
+      norm_num at h
+      exact h
+    omega
+
+/-- **No near $F$-perfect number of the form $2^a p^b$ with $b$ even.** For every prime $p$ and
+all natural numbers $a$ and $b$ with $b$ even, the number $n = 2^a p^b$ is not near $F$-perfect:
+there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where
+$\sigma_2(n)$ is the sum of the squares of the divisors of $n$.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 15. -/
+theorem not_isNearFPerfect_two_pow_mul_prime_pow
+    (p a b : ℕ) (hp : p.Prime) (hb : Even b) :
+    ¬ IsNearFPerfect (2 ^ a * p ^ b) := by
+  rintro ⟨d, hdvd, hlt, hsum⟩
+  by_cases ha : a = 0
+  · subst ha
+    simp only [pow_zero, one_mul] at hdvd hlt hsum
+    exact not_isNearFPerfect_prime_pow p b hp ⟨d, hdvd, hlt, hsum⟩
+  by_cases hb0 : b = 0
+  · subst hb0
+    simp only [pow_zero, mul_one] at hdvd hlt hsum
+    exact not_isNearFPerfect_prime_pow 2 a Nat.prime_two ⟨d, hdvd, hlt, hsum⟩
+  rcases hp.eq_two_or_odd with rfl | hmod
+  · rw [← pow_add] at hdvd hlt hsum
+    exact not_isNearFPerfect_prime_pow 2 (a + b) Nat.prime_two ⟨d, hdvd, hlt, hsum⟩
+  · have hpo : Odd p := Nat.odd_iff.mpr hmod
+    have ha1 : 1 ≤ a := Nat.one_le_iff_ne_zero.mpr ha
+    have hb2 : 2 ≤ b := by
+      obtain ⟨r, hr⟩ := hb
+      omega
+    obtain ⟨a', rfl⟩ : ∃ a', a = a' + 1 := ⟨a - 1, by omega⟩
+    obtain ⟨b', rfl⟩ : ∃ b', b = b' + 2 := ⟨b - 2, by omega⟩
+    have hne2 : p ≠ 2 := by
+      rintro rfl
+      omega
+    have hp2le := hp.two_le
+    have hp3 : 3 ≤ p := by omega
+    have hpp := hp.pos
+    set n := 2 ^ (a' + 1) * p ^ (b' + 2) with hn
+    have hnpos : 0 < n := by
+      rw [hn]
+      positivity
+    have hn0 : n ≠ 0 := ne_of_gt hnpos
+    have h2a : 2 ≤ 2 ^ (a' + 1) := by
+      have h := pow_le_pow_right₀ (show (1 : ℕ) ≤ 2 by decide) (show 1 ≤ a' + 1 by omega)
+      simpa using h
+    have hp2_ge : 9 ≤ p ^ 2 := by
+      simpa using Nat.pow_le_pow_left hp3 2
+    have h1 : p ^ 2 ≤ p ^ (b' + 2) :=
+      pow_le_pow_right₀ (show (1 : ℕ) ≤ p by omega) (show 2 ≤ b' + 2 by omega)
+    have hpb : 9 ≤ p ^ (b' + 2) := le_trans hp2_ge h1
+    have hn18 : 18 ≤ n := by
+      rw [hn]
+      simpa using Nat.mul_le_mul h2a hpb
+    have h2dvd : 2 ∣ n := by
+      rw [hn]
+      exact dvd_mul_of_dvd_left (dvd_pow_self 2 (by omega)) _
+    have hpdvd : p ∣ n := by
+      rw [hn]
+      exact dvd_mul_of_dvd_right (dvd_pow_self p (by omega)) _
+    have hhalf : n / 2 * 2 = n := Nat.div_mul_cancel h2dvd
+    have hdivp : n / p * p = n := Nat.div_mul_cancel hpdvd
+    have hdvd_half : n / 2 ∣ n := ⟨2, hhalf.symm⟩
+    have hdvd_divp : n / p ∣ n := ⟨p, hdivp.symm⟩
+    have h1n : 1 < n := by omega
+    have hhalf_lt : n / 2 < n := Nat.div_lt_self hnpos (by decide)
+    have hdivp_lt : n / p < n := Nat.div_lt_self hnpos (show 1 < p by omega)
+    have h1_half : 1 < n / 2 := by omega
+    have hn_eq : n = p * (2 ^ (a' + 1) * p ^ (b' + 1)) := by
+      rw [hn]
+      have hexp : p ^ (b' + 2) = p * p ^ (b' + 1) := by
+        rw [show b' + 2 = 1 + (b' + 1) from by omega, pow_add, pow_one]
+      rw [hexp]
+      ring
+    have g2 : 3 ≤ p ^ (b' + 1) := by
+      have h := pow_le_pow_right₀ (show (1 : ℕ) ≤ p by omega) (show 1 ≤ b' + 1 by omega)
+      rw [pow_one] at h
+      omega
+    have hM6 : 6 ≤ 2 ^ (a' + 1) * p ^ (b' + 1) := by
+      simpa using Nat.mul_le_mul h2a g2
+    have hnp_eq : n / p = 2 ^ (a' + 1) * p ^ (b' + 1) := by
+      rw [hn_eq]
+      exact Nat.mul_div_cancel_left _ hp.pos
+    have h1_divp : 1 < n / p := by
+      rw [hnp_eq]
+      omega
+    have hne_half_divp : n / 2 ≠ n / p := by
+      intro h
+      rw [← h] at hdivp
+      have h2eq : (2 : ℕ) = p :=
+        Nat.mul_left_cancel (show 0 < n / 2 by omega) (by rw [hhalf, hdivp])
+      rw [← h2eq] at hpo
+      omega
+    have hsub : ({1, n / 2, n / p, n} : Finset ℕ) ⊆ n.divisors := by
+      intro x hx
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl | rfl | rfl
+      · exact Nat.mem_divisors.mpr ⟨one_dvd n, hn0⟩
+      · exact Nat.mem_divisors.mpr ⟨hdvd_half, hn0⟩
+      · exact Nat.mem_divisors.mpr ⟨hdvd_divp, hn0⟩
+      · exact Nat.mem_divisors.mpr ⟨dvd_rfl, hn0⟩
+    have g1 : (1 : ℕ) ∉ ({n / 2, n / p, n} : Finset ℕ) := by
+      simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+      exact ⟨ne_of_lt h1_half, ne_of_lt h1_divp, ne_of_lt h1n⟩
+    have g2' : n / 2 ∉ ({n / p, n} : Finset ℕ) := by
+      simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+      exact ⟨hne_half_divp, ne_of_lt hhalf_lt⟩
+    have g3 : n / p ∉ ({n} : Finset ℕ) := by
+      simp only [Finset.mem_singleton]
+      exact ne_of_lt hdivp_lt
+    have hle : (∑ e ∈ ({1, n / 2, n / p, n} : Finset ℕ), e ^ 2)
+        ≤ ∑ e ∈ n.divisors, e ^ 2 :=
+      Finset.sum_le_sum_of_subset_of_nonneg hsub (fun e _ _ => Nat.zero_le _)
+    simp only [Finset.sum_insert g1, Finset.sum_insert g2', Finset.sum_insert g3,
+      Finset.sum_singleton, one_pow] at hle
+    obtain ⟨m, hm⟩ := hdvd
+    have hd1 : 1 ≤ d := by
+      rcases Nat.eq_zero_or_pos d with rfl | hpos
+      · rw [zero_mul] at hm
+        exact absurd hm hn0
+      · exact hpos
+    have hm2 : 2 ≤ m := by
+      by_contra h
+      push Not at h
+      have h01 : m = 0 ∨ m = 1 := by omega
+      rcases h01 with rfl | rfl
+      · rw [mul_zero] at hm
+        exact hn0 hm
+      · rw [mul_one] at hm
+        omega
+    have h2d : d * 2 ≤ n := by
+      rw [hm]
+      exact Nat.mul_le_mul_left d hm2
+    have hd_half : d ≤ n / 2 := (Nat.le_div_iff_mul_le (by decide)).mpr h2d
+    have hd2sq : d ^ 2 ≤ (n / 2) ^ 2 := Nat.pow_le_pow_left hd_half 2
+    have hstep : 1 + (n / p) ^ 2 ≤ 3 * n := by omega
+    have hsq : (n / p) ^ 2 * p ^ 2 = n ^ 2 := by
+      have e : (n / p) ^ 2 * p ^ 2 = (n / p * p) ^ 2 := by ring
+      rw [e, hdivp]
+    have hmul : p ^ 2 + n ^ 2 ≤ 3 * n * p ^ 2 := by
+      have h := Nat.mul_le_mul_right (p ^ 2) hstep
+      have e : (1 + (n / p) ^ 2) * p ^ 2 = p ^ 2 + n ^ 2 := by
+        rw [add_mul, one_mul, hsq]
+      rw [e] at h
+      exact h
+    have hp2pos : 0 < p ^ 2 := pow_pos hp.pos 2
+    have hnlt : n < 3 * p ^ 2 := by
+      by_contra hcon
+      push Not at hcon
+      have hle2 : (3 * p ^ 2) * n ≤ n * n := Nat.mul_le_mul_right n hcon
+      have e1 : (3 * p ^ 2) * n = 3 * n * p ^ 2 := by ring
+      have e2 : n * n = n ^ 2 := by ring
+      rw [e1, e2] at hle2
+      omega
+    have hpb_le : p ^ (b' + 2) ≤ n := by
+      rw [hn]
+      exact Nat.le_mul_of_pos_left _ (by positivity)
+    have hplt3 : p ^ b' < 3 := by
+      have hexp : p ^ (b' + 2) = p ^ b' * p ^ 2 := pow_add p b' 2
+      rw [hexp] at hpb_le
+      have h2 : p ^ b' * p ^ 2 < 3 * p ^ 2 := lt_of_le_of_lt hpb_le hnlt
+      exact lt_of_mul_lt_mul_right h2 (Nat.zero_le _)
+    have hb'_eq : b' = 0 := by
+      by_contra h
+      have hc1 : 1 ≤ b' := Nat.one_le_iff_ne_zero.mpr h
+      have hpow := pow_le_pow_right₀ (show (1 : ℕ) ≤ p by omega) hc1
+      rw [pow_one] at hpow
+      omega
+    subst hb'_eq
+    have hn2 : n = 2 ^ (a' + 1) * p ^ 2 := by
+      rw [hn]
+    have halt3 : 2 ^ (a' + 1) < 3 := by
+      rw [hn2] at hnlt
+      exact lt_of_mul_lt_mul_right hnlt (Nat.zero_le _)
+    have ha'_eq : a' = 0 := by
+      by_contra h
+      have hc1 : 1 ≤ a' := Nat.one_le_iff_ne_zero.mpr h
+      have hpow := pow_le_pow_right₀ (show (1 : ℕ) ≤ 2 by decide) (show 2 ≤ a' + 1 by omega)
+      norm_num at hpow
+      omega
+    subst ha'_eq
+    have hnfinal : n = 2 * p ^ 2 := by
+      rw [hn]
+      norm_num
+    rw [hnfinal] at hsum
+    have hcop : Nat.Coprime 2 (p ^ 2) := (Nat.coprime_two_left.mpr hpo).pow_right 2
+    have hsigma : (∑ e ∈ (2 * p ^ 2).divisors, e ^ 2)
+        = (1 + 2 ^ 2) * ∑ i ∈ Finset.range (2 + 1), p ^ (i * 2) := by
+      have htwo : ArithmeticFunction.sigma 2 2 = 1 + 2 ^ 2 := by
+        simp [ArithmeticFunction.sigma_apply, Nat.prime_two.divisors]
+      rw [← ArithmeticFunction.sigma_apply,
+        ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime hcop,
+        htwo, ArithmeticFunction.sigma_apply_prime_pow hp]
+    have hS : (∑ i ∈ Finset.range (2 + 1), p ^ (i * 2)) = 1 + p ^ 2 + p ^ 4 := by
+      rw [show Finset.range (2 + 1) = ({0, 1, 2} : Finset ℕ) from by decide]
+      simp only [Finset.sum_insert (by decide : (0 : ℕ) ∉ ({1, 2} : Finset ℕ)),
+        Finset.sum_insert (by decide : (1 : ℕ) ∉ ({2} : Finset ℕ)), Finset.sum_singleton]
+      norm_num
+      ring
+    rw [hsigma, hS] at hsum
+    have heq : d ^ 2 + p ^ 2 = p ^ 4 + 5 := by
+      have e1 : (1 + 2 ^ 2) * (1 + p ^ 2 + p ^ 4) = 5 + 5 * p ^ 2 + 5 * p ^ 4 := by ring
+      have e2 : (2 * p ^ 2) ^ 2 = 4 * p ^ 4 := by ring
+      rw [e1, e2] at hsum
+      omega
+    have h5 : 5 < p ^ 2 := by omega
+    have hA : d ^ 2 < p ^ 4 := by omega
+    have hB : (p ^ 2 - 1) ^ 2 < d ^ 2 := by
+      have hexpand : (p ^ 2 - 1) * (p ^ 2 - 1) + 2 * p ^ 2 = p ^ 4 + 1 := by
+        have e : p ^ 4 = (p ^ 2) ^ 2 := by ring
+        obtain ⟨v, hv⟩ : ∃ v, p ^ 2 = v + 1 := ⟨p ^ 2 - 1, by omega⟩
+        rw [e, hv]
+        simp only [Nat.add_sub_cancel]
+        ring
+      rw [sq]
+      omega
+    have hdu : d < p ^ 2 := by
+      by_contra h
+      push Not at h
+      have hle := Nat.pow_le_pow_left h 2
+      have e : (p ^ 2) ^ 2 = p ^ 4 := by ring
+      rw [e] at hle
+      omega
+    have hud : p ^ 2 - 1 < d := by
+      by_contra h
+      push Not at h
+      have hle := Nat.pow_le_pow_left h 2
+      omega
+    omega
 
 end MathlibExt.NumberTheory.FkPerfectWanted
