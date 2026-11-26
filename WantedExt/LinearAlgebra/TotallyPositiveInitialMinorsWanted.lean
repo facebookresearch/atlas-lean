@@ -58,21 +58,6 @@ public theorem_wanted hasPositiveMinors_iff_initial_minors_pos {n : ℕ}
         0 < (A.submatrix (fun r : Fin k => (⟨i₀ + r, by omega⟩ : Fin n))
           (fun c : Fin k => (⟨j₀ + c, by omega⟩ : Fin n))).det
 
-/-- **Hankel determinants of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers, let
-$W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci numbers and put $\Delta = a^2 + pab - b^2$.
-For all natural numbers $r$ and $n$, the $(r+2) \times (r+2)$ Hankel matrix
-$H_{r,n} = (W^{(r)}_{p,n+i+j})_{0 \le i, j \le r+1}$ has determinant
-$\det H_{r,n} = (-1)^{n+1+\lfloor (r+3)/2 \rfloor} p^{nr+r^2} b^r \Delta$.
-
-Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
-Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
-Sequences 29 (2026), Article 26.2.5, Proposition 7, quoting Ait-Amrane et al.
-(`jis-2026-26.2.5-prop-7`). -/
-public theorem_wanted generalizedHyperFibonacci_hankel_det (p a b : ℤ) (r n : ℕ) :
-    (Matrix.of fun i j : Fin (r + 2) =>
-        generalizedHyperFibonacci p a b r (n + i + j)).det =
-      (-1) ^ (n + 1 + (r + 3) / 2) * p ^ (n * r + r ^ 2) * b ^ r * (a ^ 2 + p * a * b - b ^ 2)
-
 /-- **Eventual positivity of hyper-Fibonacci Toeplitz determinants.** Let $p, a, b$ be integers
 with $p \ge 1$, $a \ge 0$ and $b > 0$, and let $W^{(r)}_{p,n}$ denote the generalized
 hyper-Fibonacci numbers. For every natural number $m \ge 1$ there is a natural number $N$ such

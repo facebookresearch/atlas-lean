@@ -101,3 +101,28 @@ example : ¬ ∃ N : ℕ, ∀ n ≥ N, 0 < generalizedHyperFibonacci 1 0 0 1 n :
   have h := hN N le_rfl
   rw [generalizedHyperFibonacci_zero_zero] at h
   exact lt_irrefl 0 h
+
+example : (Matrix.of fun i j : Fin 2 =>
+    generalizedHyperFibonacci 0 3 (-2) 0 (1 + i + j)).det = -5 := by
+  rw [generalizedHyperFibonacci_hankel_det (p := 0) (a := 3) (b := -2) (r := 0) (n := 1)]
+  norm_num
+
+example : (Matrix.of fun i j : Fin 3 =>
+    generalizedHyperFibonacci (-2) (-1) (-3) 1 (2 + i + j)).det = 336 := by
+  rw [generalizedHyperFibonacci_hankel_det (p := -2) (a := -1) (b := -3) (r := 1) (n := 2)]
+  norm_num
+
+example : (Matrix.of fun i j : Fin 4 =>
+    generalizedHyperFibonacci (-1) 2 (-1) 2 (1 + i + j)).det = 5 := by
+  rw [generalizedHyperFibonacci_hankel_det (p := -1) (a := 2) (b := -1) (r := 2) (n := 1)]
+  norm_num
+
+example : (Matrix.of fun i j : Fin 3 =>
+    generalizedHyperFibonacci 0 (-2) 3 1 (1 + i + j)).det = 0 := by
+  rw [generalizedHyperFibonacci_hankel_det (p := 0) (a := -2) (b := 3) (r := 1) (n := 1)]
+  norm_num
+
+example : (Matrix.of fun i j : Fin 4 =>
+    generalizedHyperFibonacci (-2) (-1) 0 2 (0 + i + j)).det = 0 := by
+  rw [generalizedHyperFibonacci_hankel_det (p := -2) (a := -1) (b := 0) (r := 2) (n := 0)]
+  norm_num

@@ -8,8 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import MathlibExt.NumberTheory.Recurrences.GeneralizedHyperFibonacci
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Polynomial.Basis
+import Mathlib.Algebra.Polynomial.Monic
+import Mathlib.GroupTheory.Perm.Fin
+import Mathlib.LinearAlgebra.Matrix.Block
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -394,5 +399,445 @@ public theorem hyperPFibonacci_hyperPLucas_eventually_logConcave (p : ℤ) (hp :
   ⟨generalizedHyperFibonacci_eventually_logConcave p 0 1 hp le_rfl one_pos r hr,
     generalizedHyperFibonacci_eventually_logConcave p 2 p hp zero_le_two
       (lt_of_lt_of_le one_pos hp) r hr⟩
+
+namespace generalizedHyperFibonacci_hankel_det
+
+open hyperPFibonacci_hyperPLucas_eventually_logConcave
+open Polynomial Matrix Finset
+
+/-- The moment functional sends `X ^ k` to the `k`th entry of a sequence. -/
+private noncomputable def moment (u : ℕ → ℤ) : ℤ[X] →ₗ[ℤ] ℤ :=
+  (basisMonomials ℤ).constr ℤ u
+
+private theorem moment_monomial (u : ℕ → ℤ) (k : ℕ) (c : ℤ) :
+    moment u (monomial k c) = c * u k := by
+  have h : (X : ℤ[X]) ^ k = basisMonomials ℤ k := by
+    rw [coe_basisMonomials]
+    change X ^ k = monomial k 1
+    rw [← C_mul_X_pow_eq_monomial, map_one, one_mul]
+  rw [← C_mul_X_pow_eq_monomial, ← smul_eq_C_mul, h, map_smul]
+  exact congrArg (c * ·) ((basisMonomials ℤ).constr_basis ℤ u k)
+
+/-- Multiplying by `X - p` takes the weighted forward difference of the moments. -/
+private noncomputable def step (p : ℤ) : ℤ[X] := X - C p
+
+private theorem moment_step (p : ℤ) (u : ℕ → ℤ) (f : ℤ[X]) :
+    moment u (step p * f) = moment (fun k => u (k + 1) - p * u k) f := by
+  induction f using Polynomial.induction_on' with
+  | add f g hf hg => rw [mul_add, map_add, hf, hg, map_add]
+  | monomial k c =>
+    change moment u ((X - C p) * monomial k c) = _
+    rw [sub_mul, map_sub, ← monomial_one_one_eq_X, ← monomial_zero_left,
+      monomial_mul_monomial, monomial_mul_monomial]
+    simp only [moment_monomial, one_mul, zero_add, Nat.add_comm 1 k]
+    ring
+
+/-- The ordinary sequence satisfies the recurrence with characteristic polynomial `q`. -/
+private noncomputable def q (p : ℤ) : ℤ[X] := X ^ 2 - (C p * X + 1)
+
+private theorem moment_q (p : ℤ) (u : ℕ → ℤ) (f : ℤ[X]) :
+    moment u (q p * f) = moment (fun k => u (k + 2) - p * u (k + 1) - u k) f := by
+  induction f using Polynomial.induction_on' with
+  | add f g hf hg => rw [mul_add, map_add, hf, hg, map_add]
+  | monomial k c =>
+    have hq : q p = monomial 2 1 - (monomial 1 p + 1) := by
+      change X ^ 2 - (C p * X + 1) = _
+      simp [C_mul_X_pow_eq_monomial.symm]
+    rw [hq, sub_mul, add_mul, one_mul, map_sub, map_add,
+      monomial_mul_monomial, monomial_mul_monomial]
+    simp only [moment_monomial, one_mul, Nat.add_comm 2 k, Nat.add_comm 1 k]
+    ring
+
+private theorem moments_X (u : ℕ → ℤ) (i : ℕ) : moment u (X ^ i) = u i := by
+  have h : monomial i (1 : ℤ) = X ^ i := by rw [← C_mul_X_pow_eq_monomial, map_one, one_mul]
+  rw [← h, moment_monomial, one_mul]
+
+private theorem moment_hyper_step (p a b : ℤ) (r n : ℕ) (f : ℤ[X]) :
+    moment (fun k => generalizedHyperFibonacci p a b (r + 1) (n + k)) (step p * f) =
+      moment (fun k => generalizedHyperFibonacci p a b r (n + 1 + k)) f := by
+  rw [moment_step]
+  have h (k : ℕ) : generalizedHyperFibonacci p a b (r + 1) (n + (k + 1)) -
+      p * generalizedHyperFibonacci p a b (r + 1) (n + k) =
+      generalizedHyperFibonacci p a b r (n + 1 + k) := by
+    rw [← Nat.add_assoc, generalizedHyperFibonacci_succ_succ, add_sub_cancel_left,
+      Nat.add_right_comm n k 1]
+  simp only [h]
+
+private theorem moment_hyper_steps (p a b : ℤ) (i r n : ℕ) (f : ℤ[X]) :
+    moment (fun k => generalizedHyperFibonacci p a b (r + i) (n + k)) (step p ^ i * f) =
+      moment (fun k => generalizedHyperFibonacci p a b r (n + i + k)) f := by
+  induction i generalizing n with
+  | zero => simp
+  | succ i ih =>
+    rw [pow_succ', mul_assoc, ← Nat.add_assoc, moment_hyper_step, ih,
+      show n + 1 + i = n + (i + 1) by omega]
+
+private theorem order_one_gap (p a b : ℤ) (n : ℕ) :
+    generalizedPFibonacci p a b (n + 2) - generalizedHyperFibonacci p a b 1 n =
+      p ^ (n + 1) * b := by
+  induction n with
+  | zero =>
+    rw [(generalizedHyperFibonacci_zero_one p a b 1).1, W_succ_succ]
+    change p * b + a - a = p ^ 1 * b
+    ring
+  | succ n ih =>
+    rw [show n + 1 + 2 = n + 2 + 1 by omega, W_succ_succ p a b (n + 1),
+      generalizedHyperFibonacci_succ_succ]
+    change p * generalizedPFibonacci p a b (n + 2) + generalizedPFibonacci p a b (n + 1) -
+      (p * generalizedHyperFibonacci p a b 1 n + generalizedPFibonacci p a b (n + 1)) = _
+    rw [pow_succ]
+    linear_combination p * ih
+
+private theorem moment_hyper_zero_q (p a b : ℤ) (n : ℕ) (f : ℤ[X]) :
+    moment (fun k => generalizedHyperFibonacci p a b 0 (n + k)) (q p * f) = 0 := by
+  rw [moment_q]
+  have h : (fun k => generalizedHyperFibonacci p a b 0 (n + (k + 2)) -
+      p * generalizedHyperFibonacci p a b 0 (n + (k + 1)) -
+      generalizedHyperFibonacci p a b 0 (n + k)) = 0 := by
+    funext k
+    change generalizedPFibonacci p a b (n + (k + 2)) -
+      p * generalizedPFibonacci p a b (n + (k + 1)) - generalizedPFibonacci p a b (n + k) = 0
+    rw [← Nat.add_assoc, W_succ_succ, Nat.add_assoc]
+    ring
+  rw [h]
+  induction f using Polynomial.induction_on' with
+  | add f g hf hg => rw [map_add, hf, hg, add_zero]
+  | monomial k c => simp [moment_monomial]
+
+private theorem moment_hyper_one_q (p a b : ℤ) (n : ℕ) :
+    moment (fun k => generalizedHyperFibonacci p a b 1 (n + k)) (q p) = p ^ (n + 1) * b := by
+  rw [← mul_one (q p), moment_q, ← pow_zero (X : ℤ[X]), moments_X]
+  simp only [zero_add, generalizedHyperFibonacci_succ_succ p a b 0 (n + 1),
+    ← Nat.add_assoc n 1 1, add_sub_cancel_left]
+  exact order_one_gap p a b n
+
+/-- A degree-ordered monic basis has a unit lower triangular coefficient matrix. -/
+private theorem det_coeff {m : ℕ} (f : Fin m → ℤ[X])
+    (hf : ∀ i, (f i).Monic ∧ (f i).natDegree = i) :
+    (Matrix.of fun i j : Fin m => (f i).coeff j).det = 1 := by
+  have htri : (Matrix.of fun i j : Fin m => (f i).coeff j).IsLowerTriangular := by
+    intro i j hij
+    exact coeff_eq_zero_of_natDegree_lt (by rw [(hf i).2]; exact hij)
+  rw [det_of_isLowerTriangular _ htri]
+  have hd (i : Fin m) : (f i).coeff i = 1 := by
+    rw [← (hf i).2]
+    exact (hf i).1.coeff_natDegree
+  simp [hd]
+
+private theorem sum_monomials {m : ℕ} (f : ℤ[X]) (h : f.natDegree < m) :
+    f = ∑ i : Fin m, monomial i (f.coeff i) := by
+  rw [Fin.sum_univ_eq_sum_range (fun i => monomial i (f.coeff i))]
+  calc
+    f = ∑ i ∈ range (f.natDegree + 1), monomial i (f.coeff i) := by
+      simpa only [C_mul_X_pow_eq_monomial] using f.as_sum_range_C_mul_X_pow
+    _ = ∑ i ∈ range m, monomial i (f.coeff i) := by
+      apply sum_subset (range_mono (by omega))
+      intro i _ hi
+      rw [mem_range, not_lt] at hi
+      rw [coeff_eq_zero_of_natDegree_lt (by omega : f.natDegree < i), monomial_zero_right]
+
+/-- Changing either monomial basis to a degree-ordered monic basis preserves the Hankel
+determinant. -/
+private theorem det_moment_basis {m : ℕ} (u : ℕ → ℤ) (f g : Fin m → ℤ[X])
+    (hf : ∀ i, (f i).Monic ∧ (f i).natDegree = i)
+    (hg : ∀ i, (g i).Monic ∧ (g i).natDegree = i) :
+    (Matrix.of fun i j : Fin m => moment u (f i * g j)).det =
+      (Matrix.of fun i j : Fin m => u (i + j)).det := by
+  let F : Matrix (Fin m) (Fin m) ℤ := Matrix.of fun i j => (f i).coeff j
+  let G : Matrix (Fin m) (Fin m) ℤ := Matrix.of fun i j => (g i).coeff j
+  let M : Matrix (Fin m) (Fin m) ℤ := Matrix.of fun i j => u (i + j)
+  have hM : (Matrix.of fun i j : Fin m => moment u (f i * g j)) = F * (M * Gᵀ) := by
+    ext i j
+    change moment u (f i * g j) = (F * (M * Gᵀ)) i j
+    conv_lhs =>
+      rw [sum_monomials (f i) (by simpa only [(hf i).2] using i.isLt),
+        sum_monomials (g j) (by simpa only [(hg j).2] using j.isLt)]
+    simp only [Finset.sum_mul, Finset.mul_sum, map_sum, monomial_mul_monomial, moment_monomial,
+      Matrix.mul_apply, F, G, M, transpose_apply, of_apply]
+    rw [Finset.sum_comm]
+    exact sum_congr rfl fun k _ => sum_congr rfl fun l _ => by ring
+  rw [hM, det_mul, det_mul, det_transpose, det_coeff f hf, det_coeff g hg, one_mul, mul_one]
+
+private theorem q_low_degree (p : ℤ) : (C p * X + 1 : ℤ[X]).natDegree ≤ 1 := by
+  refine (natDegree_add_le _ _).trans (max_le ?_ (by simp))
+  have h : (C p * (X : ℤ[X])).natDegree ≤ (C p).natDegree + (X : ℤ[X]).natDegree :=
+    natDegree_mul_le
+  simpa using h
+
+private theorem q_monic (p : ℤ) : (q p).Monic := by
+  apply monic_X_pow_sub
+  exact lt_of_le_of_lt degree_le_natDegree (by exact_mod_cast (show _ < 2 from
+    lt_of_le_of_lt (q_low_degree p) (by decide)))
+
+private theorem q_degree (p : ℤ) : (q p).natDegree = 2 := by
+  change (X ^ 2 - (C p * X + 1)).natDegree = 2
+  rw [natDegree_sub_eq_left_of_natDegree_lt (by
+    simpa using lt_of_le_of_lt (q_low_degree p) (by decide : 1 < 2))]
+  simp
+
+/-- The last two row polynomials are `(X - p)^r` and `X * (X - p)^r`. -/
+private noncomputable def rowBasis (p : ℤ) (r i : ℕ) : ℤ[X] :=
+  if i ≤ r then step p ^ i else X * step p ^ r
+
+/-- The first two column polynomials are `1` and `X`; the rest are multiples of `q`. -/
+private noncomputable def colBasis (p : ℤ) : ℕ → ℤ[X]
+  | 0 => 1
+  | 1 => X
+  | j + 2 => step p ^ j * q p
+
+private theorem step_degree (p : ℤ) (i : ℕ) : (step p ^ i).natDegree = i := by
+  change ((X - C p) ^ i).natDegree = i
+  rw [(monic_X_sub_C p).natDegree_pow, natDegree_X_sub_C, mul_one]
+
+private theorem row_monic (p : ℤ) (r : ℕ) (i : Fin (r + 2)) :
+    (rowBasis p r i).Monic ∧ (rowBasis p r i).natDegree = i := by
+  have h (k : ℕ) : (step p ^ k).Monic := (monic_X_sub_C p).pow k
+  let f : ℤ[X] := if (i : ℕ) ≤ r then step p ^ (i : ℕ) else X * step p ^ r
+  change f.Monic ∧ f.natDegree = i
+  dsimp only [f]
+  by_cases hi : (i : ℕ) ≤ r
+  · rw [ite_eq_left hi, step_degree]
+    exact ⟨h _, rfl⟩
+  · rw [ite_eq_right hi, monic_X.natDegree_mul (h r), natDegree_X, step_degree]
+    exact ⟨monic_X.mul (h r), by have := i.isLt; omega⟩
+
+private theorem col_monic (p : ℤ) (j : ℕ) :
+    (colBasis p j).Monic ∧ (colBasis p j).natDegree = j := by
+  match j with
+  | 0 => exact ⟨monic_one, natDegree_one⟩
+  | 1 => exact ⟨monic_X, natDegree_X⟩
+  | j + 2 =>
+    have h : (step p ^ j).Monic := (monic_X_sub_C p).pow j
+    exact ⟨h.mul (q_monic p), by
+      change (step p ^ j * q p).natDegree = j + 2
+      rw [h.natDegree_mul (q_monic p), step_degree, q_degree]⟩
+
+/-- Reversing `m + 1` indices is reversal of the first `m`, followed by one rotation. -/
+private theorem revPerm_succ (m : ℕ) :
+    (Fin.revPerm : Equiv.Perm (Fin (m + 1))) = finRotate (m + 1) *
+      (finSumFinEquiv (m := m) (n := 1)).permCongr
+        (Fin.revPerm.sumCongr (1 : Equiv.Perm (Fin 1))) := by
+  apply Equiv.ext
+  intro i
+  obtain ⟨x, rfl⟩ := (finSumFinEquiv (m := m) (n := 1)).surjective i
+  cases x with
+  | inl j =>
+    rw [Equiv.Perm.mul_apply, Equiv.permCongr_apply, Equiv.symm_apply_apply]
+    change (Fin.castAdd 1 j).rev = finRotate (m + 1) (Fin.castAdd 1 j.rev)
+    have hj : Fin.castAdd 1 j.rev =
+        (⟨j.rev, Nat.lt_succ_of_lt j.rev.isLt⟩ : Fin (m + 1)) := Fin.ext rfl
+    rw [hj, finRotate_of_lt j.rev.isLt]
+    apply Fin.ext
+    simp only [Fin.val_rev, Fin.val_castAdd]
+    omega
+  | inr j =>
+    have hj : j = 0 := Subsingleton.elim _ _
+    subst j
+    rw [Equiv.Perm.mul_apply, Equiv.permCongr_apply, Equiv.symm_apply_apply]
+    change (Fin.last m).rev = finRotate (m + 1) (Fin.last m)
+    rw [finRotate_last, Fin.rev_last]
+
+private theorem sign_rev_succ (m : ℕ) :
+    (↑(Equiv.Perm.sign (Fin.revPerm : Equiv.Perm (Fin (m + 1)))) : ℤ) =
+      (-1) ^ m * ↑(Equiv.Perm.sign (Fin.revPerm : Equiv.Perm (Fin m))) := by
+  rw [revPerm_succ, Equiv.Perm.sign_mul, Equiv.Perm.sign_permCongr, Equiv.Perm.sign_sumCongr,
+    map_one, mul_one, sign_finRotate, Nat.add_sub_cancel, Units.val_mul, Units.val_pow_eq_pow_val]
+  rfl
+
+/-- In the Hankel determinant, column reversal and the shift of the Cassini term together
+give the parity prescribed by the formula. -/
+private theorem sign_rev_hankel (r : ℕ) :
+    (↑(Equiv.Perm.sign (Fin.revPerm : Equiv.Perm (Fin (r + 2)))) : ℤ) =
+      (-1) ^ (r + (r + 3) / 2) := by
+  have hpair (m : ℕ) :
+      (↑(Equiv.Perm.sign (Fin.revPerm : Equiv.Perm (Fin (m + 2)))) : ℤ) =
+        -↑(Equiv.Perm.sign (Fin.revPerm : Equiv.Perm (Fin m))) := by
+    rw [sign_rev_succ (m + 1), sign_rev_succ m, pow_succ]
+    rcases neg_one_pow_eq_or ℤ m with h | h <;> rw [h] <;> ring
+  have h0 : (Fin.revPerm : Equiv.Perm (Fin 0)) = 1 := Equiv.ext fun i => Fin.elim0 i
+  induction r using Nat.twoStepInduction with
+  | zero => rw [hpair 0, h0]; norm_num
+  | one => rw [hpair 1, sign_rev_succ 0, h0]; norm_num
+  | more r ih _ =>
+    rw [hpair (r + 2), ih, show (r + 2) + (r + 2 + 3) / 2 = r + (r + 3) / 2 + 3 by omega,
+      pow_add]
+    ring
+
+private theorem row_head (p : ℤ) (r : ℕ) (i : Fin r) :
+    rowBasis p r (Fin.castAdd 2 i) = step p ^ (i : ℕ) := by
+  change (if (i : ℕ) ≤ r then step p ^ (i : ℕ) else X * step p ^ r) = _
+  exact ite_eq_left i.isLt.le
+
+private theorem row_tail (p : ℤ) (r : ℕ) (i : Fin 2) :
+    rowBasis p r (Fin.natAdd r i) = X ^ (i : ℕ) * step p ^ r := by
+  change (if r + (i : ℕ) ≤ r then step p ^ (r + (i : ℕ)) else X * step p ^ r) = _
+  have hi := i.isLt
+  rcases (show (i : ℕ) = 0 ∨ (i : ℕ) = 1 by omega) with h | h
+  · simp [h]
+  · rw [h, ite_eq_right (by omega), pow_one]
+
+private theorem col_rev_head (p : ℤ) (r : ℕ) (j : Fin r) :
+    colBasis p (Fin.castAdd 2 j).rev = step p ^ (j.rev : ℕ) * q p := by
+  have h : ((Fin.castAdd 2 j).rev : ℕ) = (j.rev : ℕ) + 2 := by
+    simp only [Fin.val_rev, Fin.val_castAdd]
+    have := j.isLt
+    omega
+  rw [h]
+  delta colBasis
+  rfl
+
+private theorem col_rev_tail (p : ℤ) (r : ℕ) (j : Fin 2) :
+    colBasis p (Fin.natAdd r j).rev = X ^ (j.rev : ℕ) := by
+  have h : ((Fin.natAdd r j).rev : ℕ) = j.rev := by
+    simp only [Fin.val_rev, Fin.val_natAdd]
+    omega
+  rw [h]
+  have hj := j.rev.isLt
+  rcases (show (j.rev : ℕ) = 0 ∨ (j.rev : ℕ) = 1 by omega) with hh | hh
+  · rw [hh, pow_zero]
+    delta colBasis
+    rfl
+  · rw [hh, pow_one]
+    delta colBasis
+    rfl
+
+private theorem moment_hyper_all_steps (p a b : ℤ) (r n : ℕ) (f : ℤ[X]) :
+    moment (fun k => generalizedHyperFibonacci p a b r (n + k)) (step p ^ r * f) =
+      moment (fun k => generalizedHyperFibonacci p a b 0 (n + r + k)) f := by
+  simpa only [Nat.zero_add] using moment_hyper_steps p a b r 0 n f
+
+private theorem moment_at_least_order (p a b : ℤ) (r n i j : ℕ) (h : r ≤ i + j) :
+    moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      (step p ^ i * (step p ^ j * q p)) = 0 := by
+  have he : step p ^ (i + j) * q p = step p ^ r * (q p * step p ^ (i + j - r)) := by
+    rw [← mul_assoc, mul_comm (step p ^ r) (q p), mul_assoc, ← pow_add,
+      show r + (i + j - r) = i + j by omega, mul_comm (q p)]
+  rw [← mul_assoc, ← pow_add, he, moment_hyper_all_steps, moment_hyper_zero_q]
+
+private theorem moment_one_before_order (p a b : ℤ) (r n i j : ℕ) (h : i + j + 1 = r) :
+    moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      (step p ^ i * (step p ^ j * q p)) = p ^ (n + r) * b := by
+  rw [← mul_assoc, ← pow_add, ← h, Nat.add_comm (i + j) 1, moment_hyper_steps, moment_hyper_one_q,
+    show n + (i + j) + 1 = n + (1 + (i + j)) by omega]
+
+private theorem moment_bottom_left (p a b : ℤ) (r n i j : ℕ) :
+    moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      ((X ^ i * step p ^ r) * (step p ^ j * q p)) = 0 := by
+  have he : (X ^ i * step p ^ r) * (step p ^ j * q p) =
+      step p ^ r * (q p * (X ^ i * step p ^ j)) := by ac_rfl
+  rw [he, moment_hyper_all_steps, moment_hyper_zero_q]
+
+private theorem moment_bottom_right (p a b : ℤ) (r n i j : ℕ) :
+    moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      ((X ^ i * step p ^ r) * X ^ j) = generalizedPFibonacci p a b (n + r + (i + j)) := by
+  rw [mul_comm (X ^ i), mul_assoc, ← pow_add, moment_hyper_all_steps, moments_X]
+  rfl
+
+/-- Reverse the columns after the monic changes of basis. The left block is triangular;
+the last two rows see only the ordinary Fibonacci recurrence. -/
+private theorem det_reversed_basis (p a b : ℤ) (r n : ℕ) :
+    ((Matrix.of fun i j : Fin (r + 2) =>
+      moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+        (rowBasis p r i * colBasis p j)).submatrix id Fin.revPerm).det =
+      (p ^ (n + r) * b) ^ r * ((-1) ^ (n + r) * (b ^ 2 - a * (p * b + a))) := by
+  let M : Matrix (Fin (r + 2)) (Fin (r + 2)) ℤ := Matrix.of fun i j =>
+    moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      (rowBasis p r i * colBasis p j.rev)
+  change M.det = _
+  let e : Fin r ⊕ Fin 2 ≃ Fin (r + 2) := finSumFinEquiv
+  let A := M.submatrix (Fin.castAdd 2) (Fin.castAdd 2)
+  let B := M.submatrix (Fin.castAdd 2) (Fin.natAdd r)
+  let D : Matrix (Fin 2) (Fin 2) ℤ := Matrix.of fun i j =>
+    generalizedPFibonacci p a b (n + r + ((i : ℕ) + (j.rev : ℕ)))
+  have hM : M.submatrix e e = fromBlocks A B 0 D := by
+    ext i j
+    rcases i with i | i <;> rcases j with j | j
+    · rfl
+    · rfl
+    · change moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+        (rowBasis p r (Fin.natAdd r i) * colBasis p (Fin.castAdd 2 j).rev) = 0
+      rw [row_tail, col_rev_head, moment_bottom_left]
+    · change moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+        (rowBasis p r (Fin.natAdd r i) * colBasis p (Fin.natAdd r j).rev) = D i j
+      rw [row_tail, col_rev_tail, moment_bottom_right]
+      rfl
+  have hA (i j : Fin r) : A i j = moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      (step p ^ (i : ℕ) * (step p ^ (j.rev : ℕ) * q p)) := by
+    change moment (fun k => generalizedHyperFibonacci p a b r (n + k))
+      (rowBasis p r (Fin.castAdd 2 i) * colBasis p (Fin.castAdd 2 j).rev) = _
+    rw [row_head, col_rev_head]
+  have ht : A.IsUpperTriangular := by
+    intro i j h
+    rw [hA]
+    apply moment_at_least_order
+    have hi := i.isLt
+    have hj := j.isLt
+    change (j : ℕ) < (i : ℕ) at h
+    rw [Fin.val_rev]
+    omega
+  have hd (i : Fin r) : A i i = p ^ (n + r) * b := by
+    rw [hA]
+    apply moment_one_before_order
+    have hi := i.isLt
+    rw [Fin.val_rev]
+    omega
+  have hD : D.det = (-1) ^ (n + r) * (b ^ 2 - a * (p * b + a)) := by
+    rw [det_fin_two]
+    change generalizedPFibonacci p a b (n + r + 1) *
+        generalizedPFibonacci p a b (n + r + 1) - generalizedPFibonacci p a b (n + r + 0) *
+        generalizedPFibonacci p a b (n + r + 2) = _
+    rw [add_zero, ← pow_two, W_cassini]
+  rw [← det_submatrix_equiv_self e, hM, det_fromBlocks_zero₂₁, hD,
+    det_of_isUpperTriangular ht]
+  simp [hd]
+
+end generalizedHyperFibonacci_hankel_det
+
+open generalizedHyperFibonacci_hankel_det in
+/-- **Hankel determinants of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers, let
+$W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci numbers and put $\Delta = a^2 + pab - b^2$.
+For all natural numbers $r$ and $n$, the $(r+2) \times (r+2)$ Hankel matrix
+$H_{r,n} = (W^{(r)}_{p,n+i+j})_{0 \le i, j \le r+1}$ has determinant
+$\det H_{r,n} = (-1)^{n+1+\lfloor (r+3)/2 \rfloor} p^{nr+r^2} b^r \Delta$.
+
+Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
+Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
+Sequences 29 (2026), Article 26.2.5, Proposition 7, quoting Ait-Amrane et al.
+(`jis-2026-26.2.5-prop-7`). -/
+public theorem generalizedHyperFibonacci_hankel_det (p a b : ℤ) (r n : ℕ) :
+    (Matrix.of fun i j : Fin (r + 2) =>
+        generalizedHyperFibonacci p a b r (n + i + j)).det =
+      (-1) ^ (n + 1 + (r + 3) / 2) * p ^ (n * r + r ^ 2) * b ^ r * (a ^ 2 + p * a * b - b ^ 2) := by
+  let u (k : ℕ) := generalizedHyperFibonacci p a b r (n + k)
+  let M : Matrix (Fin (r + 2)) (Fin (r + 2)) ℤ := Matrix.of fun i j =>
+    moment u (rowBasis p r i * colBasis p j)
+  let R := M.submatrix id Fin.revPerm
+  have hInv : R.submatrix id Fin.revPerm = M := by
+    ext i j
+    change M i j.rev.rev = M i j
+    rw [Fin.rev_rev]
+  have hM := Matrix.det_permute' Fin.revPerm R
+  rw [hInv] at hM
+  change M.det = (↑(Equiv.Perm.sign (Fin.revPerm : Equiv.Perm (Fin (r + 2)))) : ℤ) * R.det at hM
+  have hR : R.det = (p ^ (n + r) * b) ^ r *
+      ((-1) ^ (n + r) * (b ^ 2 - a * (p * b + a))) := det_reversed_basis p a b r n
+  have hBasis : M.det = (Matrix.of fun i j : Fin (r + 2) =>
+      generalizedHyperFibonacci p a b r (n + i + j)).det := by
+    simpa only [u, Nat.add_assoc] using
+      det_moment_basis u (fun i => rowBasis p r i) (fun j => colBasis p j)
+        (row_monic p r) (fun j => col_monic p j)
+  rw [← hBasis, hM, hR, sign_rev_hankel, mul_pow, ← pow_mul,
+    show (n + r) * r = n * r + r ^ 2 by ring]
+  have hsign : (-1 : ℤ) ^ (r + (r + 3) / 2) * (-1) ^ (n + r) =
+      (-1) ^ (n + (r + 3) / 2) := by
+    rw [← pow_add, show r + (r + 3) / 2 + (n + r) = (n + (r + 3) / 2) + 2 * r by omega,
+      pow_add, pow_mul, neg_one_sq, one_pow, mul_one]
+  calc
+    _ = ((-1 : ℤ) ^ (r + (r + 3) / 2) * (-1) ^ (n + r)) *
+        (p ^ (n * r + r ^ 2) * b ^ r) * (b ^ 2 - a * (p * b + a)) := by ring
+    _ = _ := by
+      rw [hsign, show n + 1 + (r + 3) / 2 = (n + (r + 3) / 2) + 1 by omega, pow_succ]
+      ring
+
 
 end MetaMathlibExt
