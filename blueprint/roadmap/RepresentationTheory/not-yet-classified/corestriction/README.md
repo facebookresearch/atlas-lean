@@ -9,7 +9,6 @@
 
 ## Cor
 
-- [Finitely many cosets](fintype-quot.md)
 - [Corestriction of 1-cochains](cor.md)
 - [Corestriction of 2-cochains](cor-2.md)
 - [Corestriction of 2-cocycles](cor-cocycles.md)
