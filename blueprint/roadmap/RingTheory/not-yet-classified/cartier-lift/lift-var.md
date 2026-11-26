@@ -1,3 +1,3 @@
-# Lift Var
+# Lift variable
 
-The image of the variable `X b` in the lift ring.
+The class of the variable `X b` in the lift ring.

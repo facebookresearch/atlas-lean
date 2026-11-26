@@ -1,3 +1,4 @@
 # Homothety
 
-The scalar action of `b : B` on `M` through the Teichmüller lift.
+The action of `b : B` on `M` through its Teichmüller
+representative: `x ↦ [b] • x`.

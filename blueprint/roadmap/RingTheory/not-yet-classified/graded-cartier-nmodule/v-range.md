@@ -1,3 +1,4 @@
-# V Range
+# Image of Verschiebung
 
-The range of Verschiebung as a submodule.
+The image `V M` of Verschiebung, as a
+`WittVector p B`-submodule of `M`.

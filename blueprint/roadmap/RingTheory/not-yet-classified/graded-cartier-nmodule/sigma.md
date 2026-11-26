@@ -1,4 +1,4 @@
-# Sigma
+# Frobenius twist
 
-The Frobenius twist of `M`: the same additive group with the Witt
-action precomposed with Frobenius.
+The additive group of `M` with the action of
+`WittVector p B` precomposed with its Frobenius `σ`: `w` acts as `σ w`.

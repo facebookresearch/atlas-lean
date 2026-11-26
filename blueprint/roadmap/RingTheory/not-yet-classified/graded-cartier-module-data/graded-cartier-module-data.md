@@ -1,7 +1,13 @@
-# Graded Cartier Module Data
+# Graded Cartier module data
 
-Graded Cartier module data: a Witt-vector module with Frobenius,
-Verschiebung, and uniformizer operators and two complementary pieces.
-No field involves the coefficient map `j`: with the pieces it determines how
-the Teichmüller representatives of `Zp2 p` act (`teichmullerAct`), and base
-change carries it along (`IsBaseChangeAlong`).
+For a prime `p`, a commutative ring `B` and
+a ring map `j : Zp2 p →+* B`: a module `M` over `WittVector p B` with additive
+maps `F` (`frobenius`) and `V` (`verschiebung`), a `WittVector p B`-linear map
+`ϖ` (`varpi`) and submodules `piece 0` and `piece 1`, such that, writing `σ`
+for the Frobenius of `WittVector p B`, `F (w • x) = σ w • F x`,
+`w • V x = V (σ w • x)`, `V (w • F x) = WittVector.verschiebung w • x`,
+`F (V x) = p • x`, `ϖ (V x) = V (ϖ x)`, `ϖ (F x) = F (ϖ x)` and
+`ϖ (ϖ x) = p • x`; the two pieces are complementary, and `F`, `V` and `ϖ` each
+map `piece i` into `piece (i + 1)`. No field involves `j`: with the pieces it
+determines how the Teichmüller representatives of `Zp2 p` act
+(`teichmullerAct`), and base change carries it along (`IsBaseChangeAlong`).

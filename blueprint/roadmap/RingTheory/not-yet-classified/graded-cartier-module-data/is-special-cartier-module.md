@@ -1,4 +1,4 @@
-# Is Special Cartier Module
+# Special Cartier module
 
-A special Cartier module: one with a homogeneous `V`-basis that is
-`V`-adically complete.
+Graded Cartier module data that has a
+homogeneous `V`-basis and is `V`-adically complete.

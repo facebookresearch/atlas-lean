@@ -1,3 +1,5 @@
-# N Mk
+# Classes in the `N`-module
 
-The quotient map from pairs of elements of `M` to the `N`-module.
+The additive map sending `(m, m')`, a pair
+of elements of `M`, to the class of `(m, m')`, with `m'` read in the Frobenius
+twist.

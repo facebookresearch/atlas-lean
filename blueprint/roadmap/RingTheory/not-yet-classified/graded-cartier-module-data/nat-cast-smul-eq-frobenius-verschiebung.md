@@ -1,3 +1,3 @@
-# Nat Cast smul eq frobenius verschiebung
+# Multiplication by `p`
 
-Multiplication by `p` agrees with Frobenius after Verschiebung.
+`p • x = F (V x)`.

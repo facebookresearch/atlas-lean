@@ -1,3 +1,3 @@
-# Lie Quot
+# Lie quotient
 
-The Lie quotient `M / V M`.
+The quotient `M / V M`.

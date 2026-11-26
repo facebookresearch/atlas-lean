@@ -1,3 +1,5 @@
-# Inr Sigma
+# Inclusion of the Frobenius twist
 
-The inclusion of the Frobenius twist into the `N`-module.
+The `WittVector p B`-linear map from
+the Frobenius twist to the `N`-module sending `m'` to the class of
+`(0, m')`.

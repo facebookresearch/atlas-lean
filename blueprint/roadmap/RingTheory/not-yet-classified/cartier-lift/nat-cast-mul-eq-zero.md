@@ -1,4 +1,4 @@
-# Nat Cast mul eq zero
+# Multiplication by `p` is injective on the lift ring
 
-Multiplication by `p` is injective in the lift ring when it is
-injective on coefficients.
+If `p * r = 0`
+implies `r = 0` in `R`, then `p * x = 0` implies `x = 0` in the lift ring.

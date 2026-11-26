@@ -1,3 +1,5 @@
-# To Lie Quot
+# Projection to the Lie quotient
 
-The projection from the `N`-module to the Lie quotient.
+The `WittVector p B`-linear map from
+the `N`-module to `M / V M` sending the class of `(m, m')` to the class of
+`m`.

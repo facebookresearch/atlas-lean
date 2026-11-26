@@ -1,4 +1,4 @@
-# Zp2 nat Cast mul eq zero
+# Multiplication by `p` is injective on `Zp2 p`
 
-Multiplication by `p` is injective on the Witt vectors over the field
-with `p ^ 2` elements.
+In the Witt vectors
+over the field with `p ^ 2` elements, `p * r = 0` implies `r = 0`.

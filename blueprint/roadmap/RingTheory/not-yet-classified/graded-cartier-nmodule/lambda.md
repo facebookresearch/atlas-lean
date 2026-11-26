@@ -1,4 +1,5 @@
-# Lambda
+# The map `lambda`
 
-The map `lambda : NMod → M` given by `varpi` on the first factor and
-Verschiebung on the second.
+The `WittVector p B`-linear map from the `N`-module
+to `M` sending the class of `(m, m')` to `ϖ m + V m'` (`lambda_nMk`); it
+vanishes on the relations because `ϖ` commutes with `V`.

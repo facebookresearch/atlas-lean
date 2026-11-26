@@ -1,5 +1,6 @@
-# Lift Hom
+# Evaluation of the lift ring
 
-The homomorphism from the lift ring that is `j` on coefficients and
-sends every variable `X b` to `b`; the factorization `u * v = p` makes this
-evaluation vanish on the relation.
+For `j : R →+* B` and `u * v = p` in `B`,
+the ring map from the lift ring to `B` that is `j` on coefficients and sends
+every variable `X b` to `b`; the factorization makes this evaluation vanish on
+the relation.

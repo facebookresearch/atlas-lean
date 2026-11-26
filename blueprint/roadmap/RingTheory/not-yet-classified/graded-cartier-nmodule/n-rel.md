@@ -1,3 +1,4 @@
-# N Rel
+# Relation submodule
 
-The relation submodule of `M × Sigma`.
+The submodule of `M × Sigma` of the pairs
+`(V m, -ϖ m)`, the range of `nRelMap`.

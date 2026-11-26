@@ -1,4 +1,4 @@
-# Verschiebung injective
+# A homogeneous `V`-basis makes `V` injective
 
-Verschiebung is injective on a graded Cartier module with a homogeneous
-`V`-basis.
+If `D` has a homogeneous
+`V`-basis, then `V` is injective.

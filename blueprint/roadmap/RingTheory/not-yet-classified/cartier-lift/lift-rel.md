@@ -1,3 +1,4 @@
-# Lift Rel
+# Lift relation
 
-The defining relation of the lift ring: `X u * X v = p`.
+The polynomial `X u * X v - p` over `R` in the
+variables `X b`, `b : B`.

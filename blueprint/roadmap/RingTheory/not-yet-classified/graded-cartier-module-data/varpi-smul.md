@@ -1,4 +1,4 @@
-# Varpi smul
+# The uniformizer commutes with scalars
 
-The uniformizer is Witt-linear, hence commutes with scalar
-multiplication.
+`ϖ (w • x) = w • ϖ x`, as `ϖ`
+is `WittVector p B`-linear.

@@ -1,3 +1,4 @@
-# Has Structure Constants order zero
+# Structure constants at order zero
 
-Structure constants at order zero: the expansion is vacuous.
+The expansion of `ϖ (γ i)` to
+order `0` holds with `h = ϖ (γ i)`, the sum being empty.

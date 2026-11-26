@@ -1,5 +1,6 @@
-# Is Cartier LMap
+# Cartier `L`-map
 
-A Cartier `L`-map: a Frobenius-semilinear map to the `N`-module that
-sends Verschiebung to the uniformizer and lifts Frobenius through
-`lambda`.
+An additive map `L` from `M` to the `N`-module such
+that, for all `w` and `x`, `L (w • x) = σ w • L x` with `σ` the Frobenius of
+`WittVector p B`, `L (V x)` is the class of `(ϖ x, 0)`, and
+`lambda (L x) = F x`.
