@@ -1,6 +1,8 @@
 # QUADRATIC KNAPSACK is NP-complete
 
-The decision problem QUADRATIC KNAPSACK belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](quadratic-knapsack-dec.md) QUADRATIC KNAPSACK belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: CLIQUE is the instance with $Q$ the adjacency matrix of the graph, unit weights, capacity $k$ and bound $k(k - 1)$.
 
 ## Sources
 

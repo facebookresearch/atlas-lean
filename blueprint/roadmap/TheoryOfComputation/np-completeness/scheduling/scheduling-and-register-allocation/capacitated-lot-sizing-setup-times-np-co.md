@@ -1,6 +1,8 @@
 # CAPACITATED LOT SIZING WITH SETUP TIMES is NP-complete
 
-The decision problem CAPACITATED LOT SIZING WITH SETUP TIMES belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](capacitated-lot-sizing-setup-times-dec.md) CAPACITATED LOT SIZING WITH SETUP TIMES belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: BIN PACKING reduces to the instances with one period per bin, of capacity the bin size, and one item per piece, with setup time the piece size, processing time $0$ and demand $1$ in the last period; this restriction to setup and processing times that depend only on the item keeps the problem NP-hard.
 
 ## Sources
 

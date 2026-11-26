@@ -1,6 +1,8 @@
 # UNSPLITTABLE FLOW is NP-complete
 
-The decision problem UNSPLITTABLE FLOW belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](unsplittable-flow-dec.md) UNSPLITTABLE FLOW belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: with $K = 1$ the question is the single-source unsplittable flow problem itself, choosing one path for each demand so that the capacities are respected, which the cited work proves NP-hard.
 
 ## Sources
 

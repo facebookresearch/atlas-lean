@@ -1,6 +1,8 @@
 # MAXIMUM QUADRATIC ASSIGNMENT is NP-complete
 
-The decision problem MAXIMUM QUADRATIC ASSIGNMENT belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](maximum-quadratic-assignment-dec.md) MAXIMUM QUADRATIC ASSIGNMENT belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: with $A$ the adjacency matrix of a clique on $p$ vertices plus $n - p$ isolated vertices and $B$ the adjacency matrix of a graph $G$, the measure is at least $p(p - 1)$ exactly when $G$ has a clique on $p$ vertices (MAX DISPERSION).
 
 ## Sources
 

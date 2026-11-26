@@ -2,6 +2,8 @@
 
 For every natural number $m \ge 1$, the decision problem INTEGER m-DIMENSIONAL KNAPSACK belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
+Hardness comes from a special case: for $m = 1$ the problem is INTEGER KNAPSACK, and for every $m \ge 1$ that case embeds by adding $m - 1$ zero rows with right-hand side $0$, so the problem is NP-hard for each fixed $m$.
+
 ## Sources
 
 - P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem MAXIMUM INTEGER M-DIMENSIONAL KNAPSACK (decision version; "generalization of [MP10]").

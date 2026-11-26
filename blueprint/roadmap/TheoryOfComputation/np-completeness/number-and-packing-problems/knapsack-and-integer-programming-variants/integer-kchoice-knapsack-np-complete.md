@@ -1,6 +1,8 @@
 # INTEGER K-CHOICE KNAPSACK is NP-complete
 
-The decision problem INTEGER K-CHOICE KNAPSACK belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](integer-kchoice-knapsack-dec.md) INTEGER K-CHOICE KNAPSACK belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: for $k = 1$ the problem is INTEGER KNAPSACK.
 
 ## Sources
 

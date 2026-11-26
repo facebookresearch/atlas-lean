@@ -1,6 +1,8 @@
 # METRIC K-CENTER is NP-complete
 
-The decision problem METRIC K-CENTER belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](metric-kcenter-dec.md) METRIC K-CENTER belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: the shortest-path distances of a connected network with positive edge lengths form a metric, so the vertex $p$-center problem on such networks, which the cited work proves NP-hard, is a special case.
 
 ## Sources
 

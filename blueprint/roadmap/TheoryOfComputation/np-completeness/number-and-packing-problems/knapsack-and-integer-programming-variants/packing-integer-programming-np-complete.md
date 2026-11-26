@@ -1,6 +1,8 @@
 # PACKING INTEGER PROGRAMMING is NP-complete
 
-The decision problem PACKING INTEGER PROGRAMMING belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+The [decision problem](packing-integer-programming-dec.md) PACKING INTEGER PROGRAMMING belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+Hardness comes from a special case: with a $0/1$ constraint matrix, right-hand side $b = 1$ and objective $c = 1$ the problem is SET PACKING.
 
 ## Sources
 
