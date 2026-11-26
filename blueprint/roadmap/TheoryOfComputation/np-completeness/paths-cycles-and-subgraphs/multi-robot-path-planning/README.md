@@ -1,7 +1,6 @@
 # Multi-robot path planning
 
 - [Instances of MULTI-ROBOT PATH PLANNING with bounded makespan](multi-robot-path-planning-makespan-insta.md)
-- [Graph](graph.md)
 - [Num Robots](num-robots.md)
 - [Start](start.md)
 - [Goal](goal.md)

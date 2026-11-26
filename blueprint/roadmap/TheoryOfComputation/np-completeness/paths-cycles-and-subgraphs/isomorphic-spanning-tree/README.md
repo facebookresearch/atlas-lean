@@ -10,7 +10,6 @@
 - [The decision problem ISOMORPHIC SPANNING TREE for 3-stars](isomorphic-spanning-tree-three-star-dec.md)
 - [ISOMORPHIC SPANNING TREE for 3-stars is NP-complete](isomorphic-spanning-tree-three-star-np-c.md)
 - [Instances of ISOMORPHIC SPANNING TREE](isomorphic-spanning-tree-instance.md)
-- [Graph](graph.md)
 - [Tree Graph](tree-graph.md)
 - [Well-formed ISOMORPHIC SPANNING TREE instances](well-formed-3.md)
 - [Feasible ISOMORPHIC SPANNING TREE instances](isomorphic-spanning-tree-feasible.md)

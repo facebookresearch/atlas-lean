@@ -1,7 +1,6 @@
 # Maximum weight connected subgraph
 
 - [Instances of MAXIMUM WEIGHT CONNECTED SUBGRAPH](maximum-weight-connected-subgraph-instan.md)
-- [Graph](graph.md)
 - [Weight](weight.md)
 - [Bound](bound.md)
 - [Well-formed MAXIMUM WEIGHT CONNECTED SUBGRAPH instances](well-formed.md)

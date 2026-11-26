@@ -5,7 +5,6 @@
 - [The decision problem MINIMUM K-CONNECTED SUBGRAPH for a fixed K](minimum-kconnected-subgraph-fixed-kdec.md)
 - [MINIMUM K-CONNECTED SUBGRAPH for fixed K ≥ 2 is NP-complete](minimum-kconnected-subgraph-fixed-k-np-c.md)
 - [Instances of MINIMUM K-CONNECTED SUBGRAPH](minimum-kconnected-subgraph-instance.md)
-- [Graph](graph.md)
 - [Well-formed MINIMUM K-CONNECTED SUBGRAPH instances](well-formed.md)
 - [Feasible MINIMUM K-CONNECTED SUBGRAPH instances](minimum-kconnected-subgraph-feasible.md)
 - [The decision problem MINIMUM K-CONNECTED SUBGRAPH](minimum-kconnected-subgraph-dec.md)
