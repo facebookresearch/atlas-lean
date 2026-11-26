@@ -39,6 +39,9 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Additive.AP.Three.Defs
 public import Mathlib.Data.ZMod.Defs
+public import MathlibExt.Combinatorics.Additive.CapSetDimFour
+public import MathlibExt.Combinatorics.Additive.CapSetDimThree
+public import MathlibExt.Combinatorics.Additive.RothNumberNatValues
 
 @[expose] public section
 
@@ -54,22 +57,12 @@ The asymptotic cap-set constant is the open problem
 `OpenConjectures.Combinatorics.CapSetConstant`.
 -/
 
-/-- The largest cap in `F₃³` has `9` points.
+/-- **Largest cap set in dimension five.** Let $\mathbb{F}_3$ be the field with three elements.
+The largest subset of $\mathbb{F}_3^5$ containing no three-term arithmetic progression, that is,
+no elements $a, b, c$ of the subset with $a + c = 2b$ and $a \neq b$, has exactly $45$ elements.
 
-Source: exhaustive search; OEIS A090245; listed in leansolving/SqueezeBench
-`SqueezeBench/Problems/CapSet/README.md`. -/
-public theorem_wanted capSet_dim_three :
-    addRothNumber (Finset.univ : Finset (Fin 3 → ZMod 3)) = 9
-
-/-- The largest cap in `F₃⁴` has `20` points.
-
-Source: G. Pellegrino, *Sul massimo ordine delle calotte in S₄,₃*, Matematiche
-(Catania) 25 (1970), 149–157; OEIS A090245; listed in SqueezeBench
-`SqueezeBench/Problems/CapSet/README.md`. -/
-public theorem_wanted capSet_dim_four :
-    addRothNumber (Finset.univ : Finset (Fin 4 → ZMod 3)) = 20
-
-/-- The largest cap in `F₃⁵` has `45` points.
+Over $\mathbb{F}_3$ these subsets are exactly the caps: sets with no three distinct collinear
+points.
 
 Source: Y. Edel, S. Ferret, I. Landjev, and L. Storme, *The classification of
 the largest caps in AG(5,3)*, J. Combin. Theory Ser. A 99 (2002), 95–110;
@@ -77,19 +70,17 @@ OEIS A090245; listed in SqueezeBench `SqueezeBench/Problems/CapSet/README.md`. -
 public theorem_wanted capSet_dim_five :
     addRothNumber (Finset.univ : Finset (Fin 5 → ZMod 3)) = 45
 
-/-- The largest cap in `F₃⁶` has `112` points.
+/-- **Largest cap set in dimension six.** Let $\mathbb{F}_3$ be the field with three elements.
+The largest subset of $\mathbb{F}_3^6$ containing no three-term arithmetic progression, that is,
+no elements $a, b, c$ of the subset with $a + c = 2b$ and $a \neq b$, has exactly $112$ elements.
+
+Over $\mathbb{F}_3$ these subsets are exactly the caps: sets with no three distinct collinear
+points.
 
 Source: A. Potechin, *Maximal caps in AG(6,3)*, Des. Codes Cryptogr. 46
 (2008), 243–259; OEIS A090245; listed in SqueezeBench
 `SqueezeBench/Problems/CapSet/README.md`. -/
 public theorem_wanted capSet_dim_six :
     addRothNumber (Finset.univ : Finset (Fin 6 → ZMod 3)) = 112
-
-/-- Roth numbers `r₃(n)` for `5 ≤ n ≤ 14`: `4, 4, 4, 4, 5, 5, 6, 6, 7, 8`.
-
-Source: OEIS A003002; listed in SqueezeBench
-`SqueezeBench/Problems/Roth/README.md`. -/
-public theorem_wanted rothNumberNat_five_to_fourteen :
-    (List.range 10).map (fun i => rothNumberNat (i + 5)) = [4, 4, 4, 4, 5, 5, 6, 6, 7, 8]
 
 end MathlibExt.Combinatorics.Additive.ThreeAPFreeValuesWanted

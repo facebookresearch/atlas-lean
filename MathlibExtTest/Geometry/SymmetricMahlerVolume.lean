@@ -13,7 +13,7 @@ import MathlibExt.MeasureTheory.Measure.CoordinateCube
 import MathlibExt.MeasureTheory.Measure.CoordinateCrossPolytope
 
 open MeasureTheory MetaMathlibExt
-open scoped ENNReal
+open scoped ENNReal Pointwise
 
 example : IsHannerPolytope hannerUnitSegment := .unitSegment
 

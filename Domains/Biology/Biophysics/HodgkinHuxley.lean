@@ -55,16 +55,18 @@ with depolarization negative (`V_HH = -V`); the modern absolute potential is `V 
 
 ## Main results
 
-* `exists_isSolution`: **global existence**. From every initial state with `m, h, n ∈ [0, 1]`
-  (and any `V`) there is a solution on `[0, ∞)`, and it stays in a bounded box.
+* `exists_isSolution`: **global existence**. For valid parameters (`p.Valid`: `C > 0`,
+  `gNa, gK ≥ 0`, `gL > 0`), from every initial state with `m, h, n ∈ [0, 1]` (and any `V`) there
+  is a solution on `[0, ∞)`, and it stays in a bounded box.
 * `gate_mem_Icc`: for *any* voltage trace, gating variables starting in `[0, 1]` stay there
   (the voltage-clamp statement). `IsSolution.mem_box`, `IsSolution.bounded`: **boundedness**.
-  Every solution starting in a trapping box `[Vlo, Vhi] × [0, 1]³` (`IsTrapping`:
-  `Vlo ≤ min ENa EK`, `gL (Vlo - EL) < I`, `max ENa EK ≤ Vhi`, `I < gL (Vhi - EL)`) stays in
-  it; every `V₀` lies in such a box (`exists_isTrapping`).
-* `IsSolution.eq_of_eq`: forward uniqueness from initial data in the gating cube.
-* `field_eq_zero_iff`: **equilibrium classification**. The equilibria are the points
-  `(V, m∞(V), h∞(V), n∞(V))` with `ionic p V m∞(V) h∞(V) n∞(V) = I`.
+  For valid parameters, every solution starting in a trapping box `[Vlo, Vhi] × [0, 1]³`
+  (`IsTrapping`: `Vlo ≤ min ENa EK`, `gL (Vlo - EL) < I`, `max ENa EK ≤ Vhi`,
+  `I < gL (Vhi - EL)`) stays in it, and every `V₀` lies in such a box (`exists_isTrapping`).
+* `IsSolution.eq_of_eq`: for valid parameters, forward uniqueness from initial data in the gating
+  cube.
+* `field_eq_zero_iff`: **equilibrium classification**. For valid parameters, the equilibria are
+  the points `(V, m∞(V), h∞(V), n∞(V))` with `ionic p V m∞(V) h∞(V) n∞(V) = I`.
 * `field_squid_rest`: `rest = (0, m∞(0), h∞(0), n∞(0))` is an equilibrium of `squid`.
 * `hasFDerivAt_field`: the Jacobian `jac p x` at every point.
 * `isHurwitz_arrowhead`: an arrowhead matrix `[[a, b], [c, -diag k]]` with `k > 0`,
@@ -180,7 +182,8 @@ theorem hasDerivAt_vtrap {x : ℝ} (hx : x ≠ 0) :
 
 /-! ## B. Rate functions, gating kinetics, the vector field -/
 
-/-- Sodium activation opening rate `α_m(V) = 0.1 (25 - V) / (exp ((25 - V) / 10) - 1)`. -/
+/-- Sodium activation opening rate `α_m(V) = 0.1 (25 - V) / (exp ((25 - V) / 10) - 1)` for
+`V ≠ 25`; at `V = 25` it takes the limit value `1`. -/
 noncomputable def alphaM (V : ℝ) : ℝ := vtrap ((25 - V) / 10)
 /-- Sodium activation closing rate `β_m(V) = 4 exp (-V / 18)`. -/
 noncomputable def betaM (V : ℝ) : ℝ := 4 * exp (-V / 18)
@@ -188,12 +191,13 @@ noncomputable def betaM (V : ℝ) : ℝ := 4 * exp (-V / 18)
 noncomputable def alphaH (V : ℝ) : ℝ := 7 / 100 * exp (-V / 20)
 /-- Sodium inactivation rate `β_h(V) = 1 / (exp ((30 - V) / 10) + 1)`. -/
 noncomputable def betaH (V : ℝ) : ℝ := 1 / (exp ((30 - V) / 10) + 1)
-/-- Potassium activation opening rate `α_n(V) = 0.01 (10 - V) / (exp ((10 - V) / 10) - 1)`. -/
+/-- Potassium activation opening rate `α_n(V) = 0.01 (10 - V) / (exp ((10 - V) / 10) - 1)` for
+`V ≠ 10`; at `V = 10` it takes the limit value `0.1`. -/
 noncomputable def alphaN (V : ℝ) : ℝ := vtrap ((10 - V) / 10) / 10
 /-- Potassium activation closing rate `β_n(V) = 0.125 exp (-V / 80)`. -/
 noncomputable def betaN (V : ℝ) : ℝ := 1 / 8 * exp (-V / 80)
 
-/-- The six rates are positive. -/
+/-- The sodium activation opening rate is positive: `α_m(V) > 0` for every `V`. -/
 theorem alphaM_pos (V : ℝ) : 0 < alphaM V := vtrap_pos _
 theorem betaM_pos (V : ℝ) : 0 < betaM V := by unfold betaM; positivity
 theorem alphaH_pos (V : ℝ) : 0 < alphaH V := by unfold alphaH; positivity
@@ -202,7 +206,7 @@ theorem alphaN_pos (V : ℝ) : 0 < alphaN V := by
   unfold alphaN; have := vtrap_pos ((10 - V) / 10); positivity
 theorem betaN_pos (V : ℝ) : 0 < betaN V := by unfold betaN; positivity
 
-/-- The six rates are `C¹`. -/
+/-- The sodium activation opening rate `α_m` is `C¹` on `ℝ`, including at `V = 25`. -/
 theorem contDiff_alphaM : ContDiff ℝ 1 alphaM :=
   contDiff_vtrap.comp ((contDiff_const.sub contDiff_id).div_const _)
 theorem contDiff_betaM : ContDiff ℝ 1 betaM :=
@@ -221,17 +225,18 @@ theorem contDiff_betaN : ContDiff ℝ 1 betaN :=
 /-- First-order gating kinetics `y' = α(V) (1 - y) - β(V) y`. -/
 def gate (α β : ℝ → ℝ) (V y : ℝ) : ℝ := α V * (1 - y) - β V * y
 
-/-- Steady state `y∞(V) = α(V) / (α(V) + β(V))` of the gating kinetics `gate α β`. -/
+/-- Steady state `y∞(V) = α(V) / (α(V) + β(V))` of the gating kinetics `gate α β`. With the
+convention `x / 0 = 0`, it is `0` where `α(V) + β(V) = 0`. -/
 noncomputable def steady (α β : ℝ → ℝ) (V : ℝ) : ℝ := α V / (α V + β V)
 
-/-- The gating kinetics vanish exactly at the steady state. -/
+/-- For `α(V) > 0` and `β(V) > 0`, the gating kinetics vanish exactly at the steady state. -/
 theorem gate_eq_zero_iff {α β : ℝ → ℝ} {V y : ℝ} (hα : 0 < α V) (hβ : 0 < β V) :
     gate α β V y = 0 ↔ y = steady α β V := by
   unfold gate steady
   rw [eq_div_iff (by positivity)]
   constructor <;> intro h <;> linarith
 
-/-- Steady states lie in `(0, 1)`. -/
+/-- For `α(V) > 0` and `β(V) > 0`, the steady state lies in `(0, 1)`. -/
 theorem steady_mem_Ioo {α β : ℝ → ℝ} {V : ℝ} (hα : 0 < α V) (hβ : 0 < β V) :
     steady α β V ∈ Ioo 0 1 :=
   ⟨div_pos hα (by positivity), (div_lt_one (by positivity)).2 (by linarith)⟩
@@ -259,7 +264,8 @@ structure Params.Valid (p : Params) : Prop where
 def ionic (p : Params) (V m h n : ℝ) : ℝ :=
   p.gNa * m ^ 3 * h * (V - p.ENa) + p.gK * n ^ 4 * (V - p.EK) + p.gL * (V - p.EL)
 
-/-- The Hodgkin–Huxley vector field on `Fin 4 → ℝ`, coordinates `(V, m, h, n)`. -/
+/-- The Hodgkin–Huxley vector field on `Fin 4 → ℝ`, coordinates `(V, m, h, n)`. With the
+convention `x / 0 = 0`, the voltage component is `0` when `C = 0`. -/
 noncomputable def field (p : Params) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
   ![(p.I - ionic p (x 0) (x 1) (x 2) (x 3)) / p.C, gate alphaM betaM (x 0) (x 1),
     gate alphaH betaH (x 0) (x 2), gate alphaN betaN (x 0) (x 3)]
@@ -277,7 +283,8 @@ noncomputable def field (p : Params) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
 def IsSolution (p : Params) (x : ℝ → Fin 4 → ℝ) : Prop :=
   ∀ t, 0 ≤ t → HasDerivAt x (field p (x t)) t
 
-/-- The Hodgkin–Huxley field is `C¹`. -/
+/-- The Hodgkin–Huxley field is `C¹` for every parameter set. With the convention `x / 0 = 0`,
+its voltage component is `0` when `C = 0`. -/
 theorem contDiff_field (p : Params) : ContDiff ℝ 1 (field p) := by
   have h0 : ContDiff ℝ 1 fun x : Fin 4 → ℝ => x 0 := contDiff_pi.mp contDiff_id 0
   have h1 : ContDiff ℝ 1 fun x : Fin 4 → ℝ => x 1 := contDiff_pi.mp contDiff_id 1
@@ -330,12 +337,13 @@ theorem gate_mem_Icc {α β V y : ℝ → ℝ} (hα : ∀ v, 0 < α v) (hβ : �
   ⟨ge_of_boundary hy h0.1 (fun s _ hs => by simp [gate, hs, hα]) t ht,
     le_of_boundary hy h0.2 (fun s _ hs => by simp [gate, hs, hβ]) t ht⟩
 
-/-- The trapping region `[Vlo, Vhi] × [0, 1]³`. -/
+/-- The box `[Vlo, Vhi] × [0, 1]³`, empty when `Vlo > Vhi`. For valid parameters and a trapping
+interval `[Vlo, Vhi]` (`IsTrapping`), solutions starting in it stay in it. -/
 def box (Vlo Vhi : ℝ) : Set (Fin 4 → ℝ) :=
   {x | x 0 ∈ Icc Vlo Vhi ∧ x 1 ∈ Icc 0 1 ∧ x 2 ∈ Icc 0 1 ∧ x 3 ∈ Icc 0 1}
 
-/-- `[Vlo, Vhi]` traps the voltage: `Vlo ≤ min ENa EK`, `gL (Vlo - EL) < I`,
-`max ENa EK ≤ Vhi`, `I < gL (Vhi - EL)`. -/
+/-- The conditions under which `[Vlo, Vhi]` traps the voltage for valid parameters:
+`Vlo ≤ min ENa EK`, `gL (Vlo - EL) < I`, `max ENa EK ≤ Vhi`, `I < gL (Vhi - EL)`. -/
 structure IsTrapping (p : Params) (Vlo Vhi : ℝ) : Prop where
   lo_ENa : Vlo ≤ p.ENa
   lo_EK : Vlo ≤ p.EK
@@ -348,7 +356,7 @@ structure IsTrapping (p : Params) (Vlo Vhi : ℝ) : Prop where
 theorem IsTrapping.le {p : Params} {Vlo Vhi : ℝ} (h : IsTrapping p Vlo Vhi) : Vlo ≤ Vhi :=
   h.lo_ENa.trans h.hi_ENa
 
-/-- Every voltage lies in some trapping interval. -/
+/-- For valid parameters, every voltage lies in some trapping interval. -/
 theorem exists_isTrapping {p : Params} (hp : p.Valid) (V₀ : ℝ) :
     ∃ Vlo Vhi, IsTrapping p Vlo Vhi ∧ V₀ ∈ Icc Vlo Vhi := by
   have hg := hp.gL_pos
@@ -396,8 +404,8 @@ private theorem current_pos_lo {p : Params} (hp : p.Valid) {Vlo Vhi : ℝ}
   have := hT.lo_leak
   unfold ionic; linarith
 
-/-- **Boundedness.** A solution starting in a trapping box `[Vlo, Vhi] × [0, 1]³` stays in it
-for all `t ≥ 0`. -/
+/-- **Boundedness.** For valid parameters, a solution starting in a trapping box
+`[Vlo, Vhi] × [0, 1]³` stays in it for all `t ≥ 0`. -/
 theorem IsSolution.mem_box {p : Params} (hp : p.Valid) {Vlo Vhi : ℝ}
     (hT : IsTrapping p Vlo Vhi) {x : ℝ → Fin 4 → ℝ} (hx : IsSolution p x)
     (h0 : x 0 ∈ box Vlo Vhi) : ∀ t, 0 ≤ t → x t ∈ box Vlo Vhi := by
@@ -474,8 +482,8 @@ private theorem clamp_succ_eq {Vlo Vhi : ℝ} (x : Fin 4 → ℝ) (i : Fin 4) (h
   have hhi : hi Vhi i = 1 := by fin_cases i <;> simp_all [hi]
   rcases hc with rfl | rfl <;> simp [clamp, hlo, hhi, hx]
 
-/-- **Global existence in a trapping box.** For every initial state in a trapping box there is
-a solution on `[0, ∞)`, and it stays in the box. -/
+/-- **Global existence in a trapping box.** For valid parameters and every initial state in a
+trapping box there is a solution on `[0, ∞)`, and it stays in the box. -/
 theorem exists_isSolution_mem_box {p : Params} (hp : p.Valid) {Vlo Vhi : ℝ}
     (hT : IsTrapping p Vlo Vhi) {x₀ : Fin 4 → ℝ} (h0 : x₀ ∈ box Vlo Vhi) :
     ∃ x : ℝ → Fin 4 → ℝ, x 0 = x₀ ∧ IsSolution p x ∧ ∀ t, 0 ≤ t → x t ∈ box Vlo Vhi := by
@@ -524,8 +532,9 @@ theorem exists_isSolution_mem_box {p : Params} (hp : p.Valid) {Vlo Vhi : ℝ}
 /-- The gating cube: `m, h, n ∈ [0, 1]`, voltage unconstrained. -/
 def gatingRegion : Set (Fin 4 → ℝ) := {x | x 1 ∈ Icc 0 1 ∧ x 2 ∈ Icc 0 1 ∧ x 3 ∈ Icc 0 1}
 
-/-- **Global existence and boundedness.** From every initial state with `m, h, n ∈ [0, 1]`
-there is a solution on `[0, ∞)`; it stays in a bounded box `[Vlo, Vhi] × [0, 1]³`. -/
+/-- **Global existence and boundedness.** For valid parameters, from every initial state with
+`m, h, n ∈ [0, 1]` there is a solution on `[0, ∞)`; it stays in a bounded box
+`[Vlo, Vhi] × [0, 1]³` with `[Vlo, Vhi]` a trapping interval. -/
 theorem exists_isSolution {p : Params} (hp : p.Valid) {x₀ : Fin 4 → ℝ}
     (h0 : x₀ ∈ gatingRegion) :
     ∃ x : ℝ → Fin 4 → ℝ, x 0 = x₀ ∧ IsSolution p x ∧
@@ -534,15 +543,16 @@ theorem exists_isSolution {p : Params} (hp : p.Valid) {x₀ : Fin 4 → ℝ}
   obtain ⟨x, hx0, hx, hb⟩ := exists_isSolution_mem_box hp hT ⟨hV, h0⟩
   exact ⟨x, hx0, hx, Vlo, Vhi, hT, hb⟩
 
-/-- Every solution starting in the gating cube stays in a bounded box. -/
+/-- For valid parameters, every solution starting in the gating cube stays in a bounded box
+`[Vlo, Vhi] × [0, 1]³` with `[Vlo, Vhi]` a trapping interval. -/
 theorem IsSolution.bounded {p : Params} (hp : p.Valid) {x : ℝ → Fin 4 → ℝ}
     (hx : IsSolution p x) (h0 : x 0 ∈ gatingRegion) :
     ∃ Vlo Vhi, IsTrapping p Vlo Vhi ∧ ∀ t, 0 ≤ t → x t ∈ box Vlo Vhi := by
   obtain ⟨Vlo, Vhi, hT, hV⟩ := exists_isTrapping hp (x 0 0)
   exact ⟨Vlo, Vhi, hT, hx.mem_box hp hT ⟨hV, h0⟩⟩
 
-/-- **Uniqueness.** Two solutions with the same initial state in the gating cube agree for all
-`t ≥ 0`. -/
+/-- **Uniqueness.** For valid parameters, two solutions with the same initial state in the gating
+cube agree for all `t ≥ 0`. -/
 theorem IsSolution.eq_of_eq {p : Params} (hp : p.Valid) {x y : ℝ → Fin 4 → ℝ}
     (hx : IsSolution p x) (hy : IsSolution p y) (h0 : x 0 = y 0) (hg : x 0 ∈ gatingRegion) :
     ∀ t, 0 ≤ t → x t = y t := by
@@ -564,9 +574,9 @@ theorem IsSolution.eq_of_eq {p : Params} (hp : p.Valid) {x y : ℝ → Fin 4 →
 
 /-! ## E. Equilibria -/
 
-/-- **Equilibrium classification.** `x` is an equilibrium iff each gating variable sits at its
-steady state for the voltage `V = x 0` and the steady-state ionic current at `V` balances the
-applied current: `ionic p V m∞(V) h∞(V) n∞(V) = I`. -/
+/-- **Equilibrium classification.** For valid parameters, `x` is an equilibrium iff each gating
+variable sits at its steady state for the voltage `V = x 0` and the steady-state ionic current
+at `V` balances the applied current: `ionic p V m∞(V) h∞(V) n∞(V) = I`. -/
 theorem field_eq_zero_iff {p : Params} (hp : p.Valid) (x : Fin 4 → ℝ) :
     field p x = 0 ↔ x 1 = steady alphaM betaM (x 0) ∧ x 2 = steady alphaH betaH (x 0) ∧
       x 3 = steady alphaN betaN (x 0) ∧
@@ -589,7 +599,8 @@ theorem field_eq_zero_iff {p : Params} (hp : p.Valid) (x : Fin 4 → ℝ) :
 
 /-! ## F. Linearization -/
 
-/-- The Jacobian matrix of `field p` at `x`. -/
+/-- The Jacobian matrix of `field p` at `x`. With the convention `x / 0 = 0`, its first row is
+`0` when `C = 0`. -/
 noncomputable def jac (p : Params) (x : Fin 4 → ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
   !![-(p.gNa * x 1 ^ 3 * x 2 + p.gK * x 3 ^ 4 + p.gL) / p.C,
       -(3 * p.gNa * x 1 ^ 2 * x 2 * (x 0 - p.ENa)) / p.C,
@@ -665,7 +676,10 @@ private theorem re_inv_le {w : ℂ} {k : ℝ} (hk : 0 < k) (hw : k ≤ w.re) :
   rw [div_le_div_iff₀ hnpos hk]
   nlinarith
 
-/-- An arrowhead matrix with a stabilizing corner is Hurwitz. -/
+/-- An arrowhead matrix with a stabilizing corner is Hurwitz: if `k₁, k₂, k₃ > 0`, `b₁ c₁ ≥ 0`,
+`b₂ c₂ ≤ 0`, `b₃ c₃ ≤ 0` and `a + b₁ c₁ / k₁ < 0`, then every complex eigenvalue of
+`[[a, b₁, b₂, b₃], [c₁, -k₁, 0, 0], [c₂, 0, -k₂, 0], [c₃, 0, 0, -k₃]]` has negative real
+part. -/
 theorem isHurwitz_arrowhead {a b₁ b₂ b₃ c₁ c₂ c₃ k₁ k₂ k₃ : ℝ} (hk₁ : 0 < k₁) (hk₂ : 0 < k₂)
     (hk₃ : 0 < k₃) (h₁ : 0 ≤ b₁ * c₁) (h₂ : b₂ * c₂ ≤ 0) (h₃ : b₃ * c₃ ≤ 0)
     (ha : a + b₁ * c₁ / k₁ < 0) :
@@ -730,7 +744,8 @@ theorem isHurwitz_arrowhead {a b₁ b₂ b₃ c₁ c₂ c₃ k₁ k₂ k₃ : �
 
 /-! ## H. The squid giant axon: resting state and its stability -/
 
-/-- Rate values at the resting potential `V = 0`. -/
+/-- The sodium activation opening rate at the resting potential:
+`α_m(0) = (5 / 2) / (exp (5 / 2) - 1)`. -/
 theorem alphaM_zero : alphaM 0 = 5 / 2 / (exp (5 / 2) - 1) := by
   rw [alphaM, vtrap_of_ne (by norm_num)]; norm_num
 theorem betaM_zero : betaM 0 = 4 := by simp [betaM]
@@ -740,7 +755,8 @@ theorem alphaN_zero : alphaN 0 = 1 / (10 * (exp 1 - 1)) := by
   rw [alphaN, vtrap_of_ne (by norm_num)]; norm_num; ring
 theorem betaN_zero : betaN 0 = 1 / 8 := by simp [betaN]
 
-/-- Rate derivatives at the resting potential `V = 0`. -/
+/-- The derivative of the sodium activation opening rate at the resting potential:
+`α_m'(0) = (3 / 2 exp (5 / 2) + 1) / (10 (exp (5 / 2) - 1)²)`. -/
 theorem hasDerivAt_alphaM_zero :
     HasDerivAt alphaM ((3 / 2 * exp (5 / 2) + 1) / (10 * (exp (5 / 2) - 1) ^ 2)) 0 := by
   have hin : HasDerivAt (fun V : ℝ => (25 - V) / 10) (-1 / 10) 0 := by
@@ -823,7 +839,7 @@ theorem field_squid_rest : field squid rest = 0 := by
   simp only [ionic, squid, squidEL]
   ring
 
-/-- Resting gating values lie in `(0, 1)`. -/
+/-- The resting sodium activation `m∞(0)` lies in `(0, 1)`. -/
 theorem mRest_mem : mRest ∈ Ioo 0 1 := steady_mem_Ioo (alphaM_pos 0) (betaM_pos 0)
 theorem hRest_mem : hRest ∈ Ioo 0 1 := steady_mem_Ioo (alphaH_pos 0) (betaH_pos 0)
 theorem nRest_mem : nRest ∈ Ioo 0 1 := steady_mem_Ioo (alphaN_pos 0) (betaN_pos 0)
@@ -1162,7 +1178,8 @@ private theorem hasDerivAt_betaH (V : ℝ) :
   · simp only [betaH]; field_simp; ring
   · simp [betaH]
 
-/-- Derivative of a steady state: `y∞' = y∞ (1 - y∞) (α'/α - β'/β)`. -/
+/-- Derivative of a steady state: for rates differentiable at `V` with `α(V) > 0` and
+`β(V) > 0`, `y∞' = y∞ (1 - y∞) (α'/α - β'/β)` at `V`. -/
 theorem hasDerivAt_steady {α β : ℝ → ℝ} {a b V : ℝ} (hα : HasDerivAt α a V)
     (hβ : HasDerivAt β b V) (hα0 : 0 < α V) (hβ0 : 0 < β V) :
     HasDerivAt (steady α β) (steady α β V * (1 - steady α β V) * (a / α V - b / β V)) V := by
@@ -1307,8 +1324,8 @@ theorem strictMono_nInf : StrictMono nInf :=
 
 /-! ### I.5 The steady-state current and its derivative -/
 
-/-- The steady-state current `I∞(V) = ionic p V m∞(V) h∞(V) n∞(V)`; by `field_eq_zero_iff` the
-equilibria are the points over the zeros of `I∞ - I`. -/
+/-- The steady-state current `I∞(V) = ionic p V m∞(V) h∞(V) n∞(V)`; for valid parameters, by
+`field_eq_zero_iff`, the equilibria are the points over the zeros of `I∞ - I`. -/
 noncomputable def steadyCurrent (p : Params) (V : ℝ) : ℝ := ionic p V (mInf V) (hInf V) (nInf V)
 
 /-- The derivative of the steady-state current, with `y∞' = y∞ (1 - y∞) λ_y`. -/
@@ -2060,8 +2077,8 @@ private theorem cell_17 : ∀ V ∈ Icc (107 : ℝ) 115, 0 < steadyCurrentDeriv 
     (by norm_num) (by norm_num) (by norm_num) (fun V _ => lamM_le V)
     (fun V _ => one_div_eighty_le_lamN V) (by norm_num) (by norm_num)
 
-/-- **The squid steady-state current is strictly increasing on `[-12, 115]`**: its derivative
-is positive there (18 interval cells). -/
+/-- **The derivative of the squid steady-state current is positive on `[-12, 115]`** (18
+interval cells), so the current is strictly increasing there. -/
 theorem steadyCurrentDeriv_squid_pos {V : ℝ} (hV : V ∈ Icc (-12 : ℝ) 115) :
     0 < steadyCurrentDeriv squid V := by
   rcases le_or_gt V (-3) with h0 | h0
@@ -2129,8 +2146,8 @@ theorem squidEL_mem : squidEL ∈ Ioo (-12) 115 := by
   norm_num at hn4 hmh ⊢
   constructor <;> linarith
 
-/-- The squid steady-state current is negative for `V ≤ -12` (every current is outward-negative
-there: `V ≤ EK < EL < ENa`). -/
+/-- The squid steady-state current is negative for `V ≤ -12`: there `V ≤ EK < EL < ENa`, so the
+sodium and potassium currents are nonpositive and the leak current is negative. -/
 theorem steadyCurrent_squid_neg {V : ℝ} (hV : V ≤ -12) : steadyCurrent squid V < 0 := by
   have hm := mInf_mem_Ioo V
   have hh := hInf_mem_Ioo V

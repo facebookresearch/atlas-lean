@@ -23,7 +23,9 @@ namespace AbsoluteValue
 
 variable {R : Type*} [Semiring R]
 
-/-- The `c`-th power of an absolute value, for `0 < c ≤ 1`. -/
+/-- **Powers of an absolute value.** Let $R$ be a semiring, $v$ a real-valued absolute value
+on $R$ and $c$ a real number with $0 < c \le 1$. The $c$-th power of $v$ is the real-valued
+absolute value $x \mapsto v(x)^c$ on $R$. -/
 noncomputable def rpow (v : AbsoluteValue R ℝ) (c : ℝ) (hc₀ : 0 < c) (hc₁ : c ≤ 1) :
     AbsoluteValue R ℝ where
   toFun x := (v x) ^ c
@@ -41,7 +43,9 @@ noncomputable def rpow (v : AbsoluteValue R ℝ) (c : ℝ) (hc₀ : 0 < c) (hc�
         Real.rpow_add_le_add_rpow (AbsoluteValue.nonneg v x) (AbsoluteValue.nonneg v y)
           hc₀.le hc₁
 
-/-- Evaluation of `AbsoluteValue.rpow`. -/
+/-- **Values of a power of an absolute value.** Let $R$ be a semiring, $v$ a real-valued
+absolute value on $R$ and $c$ a real number with $0 < c \le 1$. The $c$-th power of $v$ takes
+the value $v(x)^c$ at every $x \in R$. -/
 @[simp]
 theorem rpow_apply (v : AbsoluteValue R ℝ) (c : ℝ) (hc₀ : 0 < c) (hc₁ : c ≤ 1) (x : R) :
     v.rpow c hc₀ hc₁ x = v x ^ c :=

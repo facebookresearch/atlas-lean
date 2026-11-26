@@ -37,14 +37,16 @@ public import Mathlib.NumberTheory.Modular
 public import Mathlib.NumberTheory.ModularForms.Bounds
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
+import MathlibExt.NumberTheory.ModularForms.FundamentalDomainExactVolume
+
 /-!
 # The Petersson pairing on cusp forms for `Γ₀(N)`
 
 The Petersson pairing of two cusp forms is the integral over the standard
 fundamental domain of the sum, over coset representatives of `Γ₀(N)` in
-`SL(2, ℤ)`, of the pointwise Petersson product of their translates. We
-record the finiteness of the hyperbolic volume of the fundamental domain
-(the dyadic band estimate) and prove additivity of the pairing in its
+`SL(2, ℤ)`, of the pointwise Petersson product of their translates. Using
+the finiteness of the hyperbolic volume of the fundamental domain
+(`ModularGroup.volume_fd_lt_top`), we prove additivity of the pairing in its
 first argument.
 -/
 
@@ -78,126 +80,6 @@ theorem petersson_def [NeZero N] (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k
   rfl
 
 end CuspForm
-
-namespace PeterssonPairingAux
-
-/-- A dyadic band in the upper half-plane. -/
-private def band (A a : ℝ) (n : ℕ) : Set ℍ :=
-  {z : ℍ | |z.re| ≤ A ∧ a * 2 ^ n ≤ z.im ∧ z.im ≤ a * 2 ^ (n + 1)}
-
-private theorem verticalStrip_subset_iUnion_band (A : ℝ) {a : ℝ} (ha : 0 < a) :
-    UpperHalfPlane.verticalStrip A a ⊆ ⋃ n : ℕ, band A a n := by
-  rintro z ⟨hre, him⟩
-  have hex : ∃ n : ℕ, z.im ≤ a * 2 ^ (n + 1) := by
-    obtain ⟨n, hn⟩ := pow_unbounded_of_one_lt (z.im / a) (one_lt_two (α := ℝ))
-    exact ⟨n, by
-      rw [div_lt_iff₀ ha] at hn
-      nlinarith [pow_pos (zero_lt_two (α := ℝ)) n, pow_succ (2 : ℝ) n]⟩
-  classical
-  refine Set.mem_iUnion.mpr ⟨Nat.find hex, ?_, ?_, Nat.find_spec hex⟩
-  · exact hre
-  rcases Nat.eq_zero_or_eq_succ_pred (Nat.find hex) with h0 | hsucc
-  · rw [h0]; simpa using him
-  · rw [hsucc]
-    have hlt := Nat.find_min hex (m := Nat.find hex - 1) (by omega)
-    rw [not_le] at hlt
-    exact le_of_lt hlt
-
-private def cbox (relo rehi imlo imhi : ℝ) : Set ℂ :=
-  Complex.measurableEquivRealProd ⁻¹' (Set.Icc relo rehi ×ˢ Set.Icc imlo imhi)
-
-private lemma mem_cbox {relo rehi imlo imhi : ℝ} {w : ℂ} :
-    w ∈ cbox relo rehi imlo imhi ↔
-      (relo ≤ w.re ∧ w.re ≤ rehi) ∧ imlo ≤ w.im ∧ w.im ≤ imhi := by
-  simp only [cbox, Set.mem_preimage, Complex.measurableEquivRealProd_apply, Set.mem_prod,
-    Set.mem_Icc]
-
-private lemma volume_cbox (relo rehi imlo imhi : ℝ) :
-    volume (cbox relo rehi imlo imhi) =
-      ENNReal.ofReal (rehi - relo) * ENNReal.ofReal (imhi - imlo) := by
-  rw [cbox, Complex.volume_preserving_equiv_real_prod.measure_preimage
-    ((measurableSet_Icc.prod measurableSet_Icc).nullMeasurableSet)]
-  rw [show (volume : Measure (ℝ × ℝ)) = (volume : Measure ℝ).prod volume from rfl,
-    Measure.prod_prod, Real.volume_Icc, Real.volume_Icc]
-
-private theorem volume_band_le {A a : ℝ} (hA : 0 ≤ A) (ha : 0 < a) (n : ℕ) :
-    volume (band A a n) ≤ ENNReal.ofReal (2 * A * (a⁻¹ * (1 / 2) ^ n)) := by
-  have h2n : (0 : ℝ) < a * 2 ^ n := by positivity
-  rw [UpperHalfPlane.volume_eq_lintegral]
-  have himg : (UpperHalfPlane.coe '' band A a n) ⊆
-      cbox (-A) A (a * 2 ^ n) (a * 2 ^ (n + 1)) := by
-    rintro w ⟨z, ⟨hre, him₁, him₂⟩, rfl⟩
-    rw [mem_cbox, UpperHalfPlane.coe_re, UpperHalfPlane.coe_im]
-    exact ⟨abs_le.mp hre, him₁, him₂⟩
-  refine le_trans (lintegral_mono_set himg) ?_
-  have hbound : ∀ w ∈ cbox (-A) A (a * 2 ^ n) (a * 2 ^ (n + 1)),
-      (((1 / ‖w.im‖₊) ^ 2 : ℝ≥0) : ℝ≥0∞) ≤ ENNReal.ofReal ((a * 2 ^ n)⁻¹ ^ 2) := by
-    intro w hw
-    obtain ⟨-, him₁, -⟩ := mem_cbox.mp hw
-    have hwim : (0 : ℝ) < w.im := lt_of_lt_of_le h2n him₁
-    rw [← ENNReal.ofReal_coe_nnreal]
-    refine ENNReal.ofReal_le_ofReal ?_
-    push_cast
-    rw [Real.norm_eq_abs, abs_of_pos hwim]
-    have h1 : (a * 2 ^ n)⁻¹ ^ 2 = (1 / (a * 2 ^ n)) ^ 2 := by rw [one_div]
-    rw [h1]
-    gcongr
-  refine le_trans (setLIntegral_mono measurable_const hbound) ?_
-  rw [setLIntegral_const, volume_cbox]
-  have harith₁ : A - -A = 2 * A := by ring
-  have harith₂ : a * 2 ^ (n + 1) - a * 2 ^ n = a * 2 ^ n := by ring
-  rw [harith₁, harith₂, ← ENNReal.ofReal_mul (by positivity),
-    ← ENNReal.ofReal_mul (by positivity)]
-  refine ENNReal.ofReal_le_ofReal (le_of_eq ?_)
-  rw [show (a * 2 ^ n)⁻¹ ^ 2 * (2 * A * (a * 2 ^ n)) =
-        2 * A * ((a * 2 ^ n)⁻¹ ^ 2 * (a * 2 ^ n)) by ring,
-    pow_two, mul_assoc ((a * 2 ^ n)⁻¹), inv_mul_cancel₀ h2n.ne', mul_one, mul_inv,
-    ← inv_pow]
-  norm_num
-
-private theorem volume_verticalStrip_lt_top (A : ℝ) {a : ℝ} (ha : 0 < a) :
-    volume (UpperHalfPlane.verticalStrip A a) < ⊤ := by
-  rcases le_or_gt 0 A with hA | hA
-  swap
-  · have hempty : UpperHalfPlane.verticalStrip A a = ∅ := by
-      ext z
-      simp only [Set.mem_empty_iff_false, iff_false]
-      intro hz
-      exact absurd hz.1 (not_le.mpr (lt_of_lt_of_le hA (abs_nonneg _)))
-    rw [hempty]
-    simp
-  calc volume (UpperHalfPlane.verticalStrip A a)
-      ≤ volume (⋃ n : ℕ, band A a n) :=
-        measure_mono (verticalStrip_subset_iUnion_band A ha)
-    _ ≤ ∑' n : ℕ, volume (band A a n) := measure_iUnion_le _
-    _ ≤ ∑' n : ℕ, ENNReal.ofReal (2 * A * (a⁻¹ * (1 / 2) ^ n)) :=
-        ENNReal.tsum_le_tsum fun n => volume_band_le hA ha n
-    _ = ∑' n : ℕ, ENNReal.ofReal (2 * A * a⁻¹) * ENNReal.ofReal ((1 / 2) ^ n) :=
-        tsum_congr fun n => by
-          rw [← ENNReal.ofReal_mul (by positivity)]
-          congr 1
-          ring
-    _ = ENNReal.ofReal (2 * A * a⁻¹) * ∑' n : ℕ, ENNReal.ofReal ((1 / 2) ^ n) :=
-        ENNReal.tsum_mul_left
-    _ = ENNReal.ofReal (2 * A * a⁻¹) * ∑' n : ℕ, ENNReal.ofReal (1 / 2) ^ n :=
-        congrArg _ (tsum_congr fun n => ENNReal.ofReal_pow (by norm_num) n)
-    _ = ENNReal.ofReal (2 * A * a⁻¹) * (1 - ENNReal.ofReal (1 / 2))⁻¹ := by
-        rw [ENNReal.tsum_geometric]
-    _ < ⊤ := by
-        refine ENNReal.mul_lt_top ENNReal.ofReal_lt_top ?_
-        rw [ENNReal.inv_lt_top, tsub_pos_iff_lt]
-        exact ENNReal.ofReal_lt_one.mpr (by norm_num)
-
-private theorem volume_fd_lt_top : volume ModularGroup.fd < ⊤ := by
-  have hsub : ModularGroup.fd ⊆ UpperHalfPlane.verticalStrip (1 / 2) (1 / 2) := by
-    intro z hz
-    refine ⟨hz.2, ?_⟩
-    have h3 := ModularGroup.three_le_four_mul_im_sq_of_mem_fd hz
-    nlinarith [z.im_pos]
-  exact lt_of_le_of_lt (measure_mono hsub)
-    (volume_verticalStrip_lt_top (1 / 2) (by norm_num))
-
-end PeterssonPairingAux
 
 namespace CuspForm
 
@@ -297,7 +179,7 @@ private theorem integrableOn_peterssonIntegrand [NeZero N]
     (f g : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
     IntegrableOn (peterssonIntegrand f g) ModularGroup.fd volume := by
   obtain ⟨C, hC⟩ := peterssonIntegrand_bounded f g
-  refine Measure.integrableOn_of_bounded (M := C) PeterssonPairingAux.volume_fd_lt_top.ne
+  refine Measure.integrableOn_of_bounded (M := C) ModularGroup.volume_fd_lt_top.ne
     (continuous_peterssonIntegrand f g).aestronglyMeasurable ?_
   exact Filter.Eventually.of_forall hC
 

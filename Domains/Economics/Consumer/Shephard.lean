@@ -83,8 +83,9 @@ theorem hasFDerivAt_expenditure_eq_hicksianDemand {ι : Type*} [Fintype ι]
   intro v
   rw [hderiv, Real.dotL_apply, dotProduct_comm]
 
-/-- Uniqueness of Hicksian demand under differentiability of expenditure: two
-Hicksian demands at `p₀` coincide when `e` is differentiable at `p₀`. -/
+/-- Uniqueness of Hicksian demand under differentiability of expenditure: if `e` is, near `p₀`,
+the greatest lower bound of the costs of reaching `ubar`, two Hicksian demands at `p₀` coincide
+when `e` is differentiable at `p₀`. -/
 theorem hicksianDemand_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
     {u : (ι → ℝ) → ℝ} {X : Set (ι → ℝ)} {ubar : ℝ} {e : (ι → ℝ) → ℝ}
     {p₀ h k : ι → ℝ} {e' : (ι → ℝ) →L[ℝ] ℝ}
@@ -185,8 +186,9 @@ theorem isHicksianDemand_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
       exact kmin y yX yu
   exact hicksianDemand_unique_of_hasFDerivAt he hX hu hcost kX ku kcost hdiff
 
-/-- Shephard's lemma in canonical gradient form: the derivative of
-`p ↦ expenditure u X p ubar` at `p₀` is `Real.dotL h`. -/
+/-- Shephard's lemma in canonical gradient form: if the costs of reaching `ubar` are bounded below
+for all prices near `p₀`, `h` is a Hicksian demand at `p₀`, and `p ↦ expenditure u X p ubar` has
+derivative `e'` at `p₀`, then `e' = Real.dotL h`, the linear map `v ↦ h ⬝ᵥ v`. -/
 theorem hasFDerivAt_expenditure_eq_dotL_of_isHicksianDemand {ι : Type*} [Fintype ι]
     {u : (ι → ℝ) → ℝ} {X : Set (ι → ℝ)} {ubar : ℝ} {p₀ h : ι → ℝ}
     {e' : (ι → ℝ) →L[ℝ] ℝ}

@@ -16,13 +16,13 @@ Computational Geometry 45 (2011), 425-448, doi:10.1007/s00454-010-9322-8.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Order.SymmDiff
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Combinatorics.RationalSimplicialHomologyShared
+public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ set `T` of triangles. The number of edges of `z'` is its volume (1-norm), the me
 Chen and Freedman's volume localization.
 
 Complexes are the repository's finite abstract simplicial complexes on the vertex set `ℕ`
-(`WantedExt.Combinatorics.RationalSimplicialHomologyShared`): finite families of finite sets
+(`MathlibExt.Combinatorics.RationalSimplicialHomologyShared`): finite families of finite sets
 closed under taking subsets (`IsSimplicialComplex`). The instance lists all faces of `K`, each
 a list of distinct vertices, every face listed once. The cycle `z` is a list of distinct edges
 of `K`.

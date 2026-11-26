@@ -1,7 +1,7 @@
 # Level count of D-nodes on level zero
 
-For every natural number $n$, the level count of
-D-nodes on level $0$ is $\lambda_0(n) = n \bmod 2$.
+For every natural number $n$,
+$\lambda_0(n) = n \bmod 2$. For $n \ge 2$, this counts the D-nodes at the root.
 
 ## Sources
 

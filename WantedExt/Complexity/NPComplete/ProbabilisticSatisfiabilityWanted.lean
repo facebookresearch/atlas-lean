@@ -20,7 +20,7 @@ and NP-completeness).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -45,9 +45,9 @@ Georgakopoulos, Kavvadias and Papadimitriou show that a satisfiable instance has
 supported on at most `m + 1` assignments, which gives membership in NP, and that the problem is
 NP-hard, even for clauses of at most two literals; SAT is the special case where every `pᵢ = 1`.
 
-Clauses are `Cslib.Logic.PL.CNFClause`s, lists of literals `(variable, polarity)`; the variables
-are `0, …, n - 1`, and an assignment `v : Fin n → Bool` is read on all variables by `extend`. A
-distribution is a nonnegative real function on assignments summing to `1`. A probability
+Clauses are `Cslib.Logic.LegacyPL.CNFClause`s, lists of literals `(variable, polarity)`; the
+variables are `0, …, n - 1`, and an assignment `v : Fin n → Bool` is read on all variables by
+`extend`. A distribution is a nonnegative real function on assignments summing to `1`. A probability
 `pᵢ = aᵢ / bᵢ` is given as two naturals with `bᵢ > 0` and `aᵢ ≤ bᵢ`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
@@ -63,7 +63,7 @@ reduction from every language in `NP`
 
 /-- An instance: the number `n` of variables, and the clauses `Cᵢ` with their probabilities
 `pᵢ = aᵢ / bᵢ`, given as `(aᵢ, bᵢ)`. -/
-abbrev ProbabilisticSatisfiabilityInstance := ℕ × List (Cslib.Logic.PL.CNFClause × (ℕ × ℕ))
+abbrev ProbabilisticSatisfiabilityInstance := ℕ × List (Cslib.Logic.LegacyPL.CNFClause × (ℕ × ℕ))
 
 /-- Well-formedness: every clause uses the variables `0, …, n - 1`, and every probability
 `aᵢ / bᵢ` has `bᵢ > 0` and lies in `[0, 1]`. -/
@@ -77,8 +77,8 @@ def extend {n : ℕ} (v : Fin n → Bool) : ℕ → Bool :=
 
 open Classical in
 /-- `P_π(C)`: the total probability of the assignments that satisfy the clause `C`. -/
-noncomputable def prob {n : ℕ} (π : (Fin n → Bool) → ℝ) (C : Cslib.Logic.PL.CNFClause) : ℝ :=
-  ∑ v ∈ Finset.univ.filter (fun v => Cslib.Logic.PL.CNFClause.Satisfies (extend v) C), π v
+noncomputable def prob {n : ℕ} (π : (Fin n → Bool) → ℝ) (C : Cslib.Logic.LegacyPL.CNFClause) : ℝ :=
+  ∑ v ∈ Finset.univ.filter (fun v => Cslib.Logic.LegacyPL.CNFClause.Satisfies (extend v) C), π v
 
 /-- Some probability distribution on the assignments gives every clause `Cᵢ` probability
 exactly `pᵢ`. -/

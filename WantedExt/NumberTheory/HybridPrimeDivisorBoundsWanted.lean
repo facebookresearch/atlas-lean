@@ -14,90 +14,18 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
+public import MathlibExt.NumberTheory.Cyclotomic.ComposedFactorization
+public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
+public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
+public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsHybridBoundPrimeDivisors
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Polynomial
-
-/-- If primes `ρ` and `p` satisfy `ρ ∣ x - 1` and `ρ ∣ Φ_p(x)` for a positive integer `x`,
-then `ρ = p`. Here `Φ_p` is Mathlib's `cyclotomic p ℤ`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 1 (`integers-2026-A95-lem-1`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval {ρ p : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) {x : ℤ} (hx : 0 < x) (h₁ : (ρ : ℤ) ∣ x - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : ρ = p
-
-/-- For a prime `p` and a positive integer `x`, `p ∣ x^p - 1` if and only if `p ∣ x - 1` and
-`p ∣ Φ_p(x)`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 2 (`integers-2026-A95-lem-2`). -/
-public theorem_wanted prime_dvd_pow_self_sub_one_iff {p : ℕ} (hp : p.Prime) {x : ℤ}
-    (hx : 0 < x) :
-    (p : ℤ) ∣ x ^ p - 1 ↔ (p : ℤ) ∣ x - 1 ∧ (p : ℤ) ∣ (cyclotomic p ℤ).eval x
-
-/-- If primes `ρ` and `p` satisfy `ρ ∣ y - 1` and `ρ ∣ Φ_p(y^{p^{a-1}})` for a positive integer
-`y` and some `a ≥ 1`, then `ρ = p`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 3 (`integers-2026-A95-lem-3`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval_pow {ρ p a : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) (ha : 0 < a) {y : ℤ} (hy : 0 < y) (h₁ : (ρ : ℤ) ∣ y - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval (y ^ p ^ (a - 1))) : ρ = p
-
-/-- For a prime `p`, `n = r p^a` with `r` coprime to `p`, and a positive integer `x`:
-`p ∣ x^n - 1` if and only if `p ∣ x^r - 1` and `p ∣ Φ_p(x^{r p^{i-1}})` for every
-`i ∈ {1, …, a}`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 4 (`integers-2026-A95-lem-4`). -/
-public theorem_wanted prime_dvd_pow_sub_one_iff_cyclotomic {p r a : ℕ} (hp : p.Prime)
-    (hr : r.Coprime p) {x : ℤ} (hx : 0 < x) :
-    (p : ℤ) ∣ x ^ (r * p ^ a) - 1 ↔
-      (p : ℤ) ∣ x ^ r - 1 ∧
-        ∀ i ∈ Finset.Icc 1 a, (p : ℤ) ∣ (cyclotomic p ℤ).eval (x ^ (r * p ^ (i - 1)))
-
-/-- For distinct primes `ρ ≠ p` and a positive integer `x`, `ρ ∣ Φ_p(x)` implies
-`ρ ≡ 1 (mod p)`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 1 (`integers-2026-A95-prop-1`). -/
-public theorem_wanted prime_modEq_one_of_dvd_cyclotomic_eval {ρ p : ℕ} (hρ : ρ.Prime)
-    (hp : p.Prime) (hne : ρ ≠ p) {x : ℤ} (hx : 0 < x)
-    (h : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : Nat.ModEq p ρ 1
-
-/-- The hybrid bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with distinct primes `p_i` (in any order),
-`x > 1`, and `ω_n = ω(x^n - 1)`. With `p_0 := 1`, let
-`Π^j = {ρ prime : ρ ≡ 1 (mod p_j), ρ ≢ 1 (mod p_s) for j < s ≤ m}` and `r_{i,j}` its `i`-th
-element (`Nat.nth`, `0`-indexed here). The source's
-`x ≥ min_{k_0 + ⋯ + k_m = ω_n} max_{0 ≤ t ≤ m} (1 + ∏_{j ≤ t} ∏_{i ≤ k_j} r_{i,j})^{T(t)}` with
-`T(t) = ∏_{s=1}^t p_s^{-a_s}` is stated equivalently, after raising to the power
-`∏_{s ≤ t} p_s^{a_s}`, as the existence of a composition `k` meeting every bound. The parts `k_j`
-range over `ℕ` (the source writes `k_i ∈ ℤ⁺`; with positive parts the claim fails for
-`n = 3`, `x = 2`, where `x^3 - 1 = 7` and `ω_n = 1` admits no positive composition into two
-parts). The source's factors are all primes, and since `Nat.nth` returns `0` past the end of
-a finite set, the statement requires every factor to be a genuine (positive) element of its
-prime class.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Theorem 1 (`integers-2026-A95-thm-1`). -/
-public theorem_wanted hybrid_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ)
-    (hp : ∀ i ∈ Finset.Icc 1 m, (p i).Prime) (hinj : Set.InjOn p (Finset.Icc 1 m))
-    (ha : ∀ i ∈ Finset.Icc 1 m, 0 < a i) {x : ℕ} (hx : 1 < x) :
-    ∃ k : ℕ → ℕ,
-      ∑ j ∈ Finset.range (m + 1), k j =
-          (x ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1).primeFactors.card ∧
-        (∀ j ≤ m, ∀ i < k j, 0 < Nat.nth (fun ρ => ρ.Prime ∧
-          (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
-            ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i) ∧
-        ∀ t ≤ m,
-          1 + ∏ j ∈ Finset.range (t + 1), ∏ i ∈ Finset.range (k j),
-              Nat.nth (fun ρ => ρ.Prime ∧ (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
-                ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i ≤
-            x ^ ∏ s ∈ Finset.Icc 1 t, p s ^ a s
 
 /-- The `p`-hybrid bound (Theorem 1 for prime `n = p`). For a prime `p`, `x > 1` and
 `ω_p = ω(x^p - 1)`, let `r_{i,0}` and `r_{j,1}` enumerate the primes `≢ 1` and `≡ 1 (mod p)`
@@ -118,33 +46,8 @@ public theorem_wanted prime_hybrid_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (hx 
             ∏ j ∈ Finset.range ((x ^ p - 1).primeFactors.card - k),
               Nat.nth (fun ρ => ρ.Prime ∧ Nat.ModEq p ρ 1) j ≤ x ^ p
 
-/-- The ramified bound for `n = 2^a`: with `ω_n = ω(x^n - 1)` and `s_i` the `i`-th prime,
-`x ≥ min((1 + 2n ∏_{i=1}^{ω_n} s_i)^{1/n}, (1 + ∏_{i=2}^{ω_n+1} s_i)^{1/n})`, stated
-equivalently after raising to the `n`-th power, with `s_i = Nat.nth Nat.Prime (i - 1)`. The
-source admits `x ∈ ℤ⁺`; here `x > 1`, since for `x = 1` the number `x^n - 1 = 0` has
-`ω = 0` in Mathlib and the bound would read `1 ≥ 2^{1/n}`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Theorem 3 (`integers-2026-A95-thm-3`). -/
-public theorem_wanted two_pow_ramified_bound {a x : ℕ} (ha : 0 < a) (hx : 1 < x) :
-    min (1 + 2 * 2 ^ a * ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime i)
-        (1 + ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime (i + 1)) ≤
-      x ^ 2 ^ a
-
-/-- The weaker form of `two_pow_ramified_bound` with factor `n` in place of `2n`: for
-`n = 2^a`, `x ≥ min((1 + n ∏_{i=1}^{ω_n} s_i)^{1/n}, (1 + ∏_{i=2}^{ω_n+1} s_i)^{1/n})`, stated
-after raising to the `n`-th power. The text layer prints `n = 2a`; the source's own discussion
-(`n = 4`, "extends to `n = 2^a`") reads `n = 2^a`. As in Theorem 3, `x > 1` replaces `x ∈ ℤ⁺`.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Corollary 1 (`integers-2026-A95-cor-1`). -/
-public theorem_wanted two_pow_trivial_ramified_bound {a x : ℕ} (ha : 0 < a) (hx : 1 < x) :
-    min (1 + 2 ^ a * ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime i)
-        (1 + ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime (i + 1)) ≤
-      x ^ 2 ^ a
-
-/-- For a positive integer `w`, `w < 16` if and only if the product of the first `w` primes is
-less than `16^w`.
+/-- **Primorials below powers of sixteen.** For every positive integer $w$, we have $w < 16$ if and
+only if the product $p_1 p_2 \cdots p_w$ of the first $w$ primes is less than $16^w$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 10 (`integers-2026-A95-prop-10`). -/
@@ -229,27 +132,13 @@ public theorem_wanted prime_ramified_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (h
         1 + p ^ 2 * R₀ (k - 1) * R₁ k ≤ x ^ p
       else (∀ i < k, 0 < r₀ i) ∧ 1 + R₀ k ≤ x ∧ 1 + p * R₀ k * R₁ k ≤ x ^ p)
 
-/-- For `n = ∏_{i=1}^m p_i^{a_i}` and `x_i = x^{∏_{r < i} p_r^{a_r}}`,
-`x^n - 1 = (x - 1) ∏_{i=1}^m ∏_{j=1}^{a_i} Φ_{p_i}(x_i^{p_i^{j-1}})` in `ℤ[x]`, with `Φ_p` Mathlib's
-`cyclotomic p ℤ`. The identity needs only that each `p_i` is prime (the source takes the prime
-factorization of `n`); `x_k` follows the definition in the arXiv version (arXiv:2412.00010),
-which the journal statement refers to as "`x_k` as above".
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 4 (`integers-2026-A95-prop-4`). -/
-public theorem_wanted X_pow_sub_one_eq_mul_prod_cyclotomic_comp (m : ℕ) (p a : ℕ → ℕ)
-    (hp : ∀ i ∈ Finset.Icc 1 m, (p i).Prime) :
-    (X ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1 : ℤ[X]) =
-      (X - 1) * ∏ i ∈ Finset.Icc 1 m, ∏ j ∈ Finset.Icc 1 (a i),
-        (cyclotomic (p i) ℤ).comp (X ^ ((∏ r ∈ Finset.Ico 1 i, p r ^ a r) * p i ^ (j - 1)))
-
-/-- Cohen's prime sieve for the line problem, quoted in the source. Membership `q ∈ 𝓛_n` (the
-arXiv version's definition) says: for finite fields `K ⊆ L` with `|K| = q` and `[L : K] = n`,
-and all nonzero `γ₁, γ₂ ∈ L` with `K(γ₁/γ₂) = L`, some `a ∈ K` makes `aγ₂ + γ₁` primitive. For
-distinct prime divisors `p_1, …, p_s` of `q^n - 1` (the finset `S`) with
-`δ = 1 - ∑ 1/p_i > 0`, `q > (n - 1)^2 2^{2(ω_n - s)} ((s - 1)/δ + 2)^2` implies `q ∈ 𝓛_n`. The
-source's hypothesis that `q` is a prime power is implied by the field `K` and is not restated
-(likewise in the other line-problem and primitive-sum statements below).
+/-- **Cohen's prime sieve for the line problem.** Let $q$ and $n$ be natural numbers, let $\omega$
+be the number of distinct prime factors of $q^n - 1$, and let $S$ be a set of $s$ prime factors of
+$q^n - 1$ with $\delta = 1 - \sum_{\rho \in S} 1/\rho > 0$. Suppose that
+$q > (n - 1)^2 \, 2^{2(\omega - s)} \left(\frac{s - 1}{\delta} + 2\right)^2$. Then for all finite
+fields $K$ and $L$ with $L$ an extension of $K$, $|K| = q$ and $[L : K] = n$, and all nonzero
+$\gamma_1, \gamma_2 \in L$ with $K(\gamma_1/\gamma_2) = L$, there is $a \in K$ such that
+$a\gamma_2 + \gamma_1$ generates the multiplicative group $L^\times$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 5 (`integers-2026-A95-prop-5`), quoting S. D. Cohen,
@@ -264,12 +153,19 @@ public theorem_wanted mem_lineProblem_of_prime_sieve {q n : ℕ} (S : Finset ℕ
     (h₂ : γ₂ ≠ 0) (hgen : IntermediateField.adjoin K {γ₁ / γ₂} = ⊤) :
     ∃ a : K, IsPrimitiveRoot (algebraMap K L a * γ₂ + γ₁) (Fintype.card L - 1)
 
-/-- Cohen's modified prime sieve for the line problem, quoted in the source (membership in
-`𝓛_n` as in `mem_lineProblem_of_prime_sieve`). Let `ω_n ≥ 2`, let `S` be `s` distinct prime
-factors of `q^n - 1`, `l ∉ S` another prime factor, `δ = 1 - ∑_{ρ ∈ S} 1/ρ`, and
-`k = Rad(q^n - 1)/(l ∏_{ρ ∈ S} ρ)`. If `δ > 1/(l φ(k))`, then
-`q > (n - 1)^2 ((2^{ω_n - s - 1} φ(k)(s - 1 + 2δ) + 1 - 1/l)/(φ(k)δ - 1/l) - 1)^2` implies
-`q ∈ 𝓛_n`.
+/-- **Cohen's modified prime sieve for the line problem.** Let $q$ and $n$ be natural numbers such
+that $q^n - 1$ has $\omega \ge 2$ distinct prime factors. Let $S$ be a set of $s$ prime factors of
+$q^n - 1$, let $l$ be a prime factor of $q^n - 1$ not in $S$, let $k$ be the product of the prime
+factors of $q^n - 1$ that are neither $l$ nor in $S$, and put
+$\delta = 1 - \sum_{\rho \in S} 1/\rho$. Suppose that $\delta > 1/(l\varphi(k))$, where $\varphi$ is
+Euler's totient function, and
+$$
+q > (n - 1)^2 \left(\frac{2^{\omega - s - 1} \varphi(k) (s - 1 + 2\delta) + 1 - 1/l}
+{\varphi(k)\delta - 1/l} - 1\right)^2.
+$$
+Then for all finite fields $K$ and $L$ with $L$ an extension of $K$, $|K| = q$ and $[L : K] = n$,
+and all nonzero $\gamma_1, \gamma_2 \in L$ with $K(\gamma_1/\gamma_2) = L$, there is $a \in K$
+such that $a\gamma_2 + \gamma_1$ generates the multiplicative group $L^\times$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 6 (`integers-2026-A95-prop-6`), quoting S. D. Cohen,
@@ -290,12 +186,19 @@ public theorem_wanted mem_lineProblem_of_modified_prime_sieve {q n : ℕ}
     (h₂ : γ₂ ≠ 0) (hgen : IntermediateField.adjoin K {γ₁ / γ₂} = ⊤) :
     ∃ a : K, IsPrimitiveRoot (algebraMap K L a * γ₂ + γ₁) (Fintype.card L - 1)
 
-/-- The general prime sieve of Bailey, Cohen, Sutherland and Trudgian for the line problem,
-quoted in the source (membership in `𝓛_n` as in `mem_lineProblem_of_prime_sieve`). Write
-`Rad(q^n - 1) = k ∏_{ρ ∈ S} ρ ∏_{l ∈ T} l` with disjoint sets `S` (`s` primes) and `T` (`r`
-primes) of prime factors, `δ = 1 - ∑_{ρ ∈ S} 1/ρ`, `ε = ∑_{l ∈ T} 1/l` and `μ = φ(k)/k` (the
-source's `m`). If `δμ > ε`, then
-`q > (n - 1)^2 ((2^{ω_n - s - r} μ(s - 1 + 2δ) - δμ + r - ε)/(δμ - ε))^2` implies `q ∈ 𝓛_n`.
+/-- **General prime sieve for the line problem.** Let $q$ and $n$ be natural numbers, let $\omega$
+be the number of distinct prime factors of $q^n - 1$, and let $S$ and $T$ be disjoint sets of prime
+factors of $q^n - 1$, with $s = |S|$ and $r = |T|$. Let $k$ be the product of the prime factors of
+$q^n - 1$ that lie in neither $S$ nor $T$, and put $\delta = 1 - \sum_{\rho \in S} 1/\rho$,
+$\varepsilon = \sum_{l \in T} 1/l$ and $\mu = \varphi(k)/k$, where $\varphi$ is Euler's totient
+function. Suppose that $\delta\mu > \varepsilon$ and
+$$
+q > (n - 1)^2 \left(\frac{2^{\omega - s - r} \mu (s - 1 + 2\delta) - \delta\mu + r -
+\varepsilon}{\delta\mu - \varepsilon}\right)^2.
+$$
+Then for all finite fields $K$ and $L$ with $L$ an extension of $K$, $|K| = q$ and $[L : K] = n$,
+and all nonzero $\gamma_1, \gamma_2 \in L$ with $K(\gamma_1/\gamma_2) = L$, there is $a \in K$
+such that $a\gamma_2 + \gamma_1$ generates the multiplicative group $L^\times$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 7 (`integers-2026-A95-prop-7`), quoting Bailey, Cohen, Sutherland and
@@ -324,10 +227,12 @@ public theorem_wanted mem_lineProblem_of_general_prime_sieve {q n : ℕ}
     (h₂ : γ₂ ≠ 0) (hgen : IntermediateField.adjoin K {γ₁ / γ₂} = ⊤) :
     ∃ a : K, IsPrimitiveRoot (algebraMap K L a * γ₂ + γ₁) (Fintype.card L - 1)
 
-/-- The line problem for `n = 5`: every prime power `q` outside the 647-element exceptional set
-`E_5` (largest element `62791`) lies in `𝓛_5` (membership as in
-`mem_lineProblem_of_prime_sieve`). The list is the appendix of the arXiv version
-(arXiv:2412.00010); its size and maximum agree with the journal statement.
+/-- **The line problem for quintic extensions.** Let $E_5$ be the set of $647$ prime powers listed
+in the appendix of arXiv:2412.00010, the smallest being $2$ and the largest $62791$. Let $q$ be a
+natural number not in $E_5$. Then for all finite fields $K$ and $L$ with $L$ an extension of $K$,
+$|K| = q$ and $[L : K] = 5$, and all nonzero $\gamma_1, \gamma_2 \in L$ with
+$K(\gamma_1/\gamma_2) = L$, there is $a \in K$ such that $a\gamma_2 + \gamma_1$ generates the
+multiplicative group $L^\times$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 8 (`integers-2026-A95-prop-8`). -/
@@ -381,12 +286,14 @@ public theorem_wanted mem_lineProblem_five {q : ℕ}
     (h₂ : γ₂ ≠ 0) (hgen : IntermediateField.adjoin K {γ₁ / γ₂} = ⊤) :
     ∃ a : K, IsPrimitiveRoot (algebraMap K L a * γ₂ + γ₁) (Fintype.card L - 1)
 
-/-- The Liao–Li–Pu criterion for primitive element sums, quoted in the source. Membership
-`q ∈ 𝓤_n` says the field with `q^n` elements has a primitive `α` with `α + α⁻¹` primitive. For a
-prime power `q` coprime to `n`, `q^{n/2} > 2^{2ω_n}` (stated as `16^{ω_n} < q^n`) implies
-`q ∈ 𝓤_n`. Here `q^n > 2` is added: for `q = 2`, `n = 1` the hypothesis reads `16^0 = 1 < 2`,
-but in `𝔽_2` the only primitive element is `1` and `1 + 1⁻¹ = 0`, so `2 ∉ 𝓤_1` (as the source's
-Proposition 11 also records).
+/-- **Liao–Li–Pu criterion for primitive element sums.** Let $q$ and $n$ be coprime natural numbers
+with $q^n > 2$, and let $\omega$ be the number of distinct prime factors of $q^n - 1$. If
+$16^\omega < q^n$, that is $q^{n/2} > 2^{2\omega}$, then every finite field $L$ with $q^n$ elements
+contains an element $\alpha$ such that both $\alpha$ and $\alpha + \alpha^{-1}$ generate the
+multiplicative group $L^\times$.
+
+The hypothesis $q^n > 2$ is added to the source's statement: for $q = 2$ and $n = 1$ the inequality
+$16^0 < 2$ holds, but the only generator of $\mathbb{F}_2^\times$ is $1$, and $1 + 1^{-1} = 0$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 9 (`integers-2026-A95-prop-9`), quoting Liao, Li and Pu,
@@ -397,9 +304,10 @@ public theorem_wanted mem_primitiveSum_of_sixteen_pow_lt {q n : ℕ} (hcop : q.C
     ∃ α : L, IsPrimitiveRoot α (Fintype.card L - 1) ∧
       IsPrimitiveRoot (α + α⁻¹) (Fintype.card L - 1)
 
-/-- Primitive element sums for `n = 1` (Cohen, Oliveira e Silva, Sutherland and Trudgian),
-quoted in the source: a prime power `q` lies in `𝓤_1` (membership as in
-`mem_primitiveSum_of_sixteen_pow_lt`) if and only if `q ∉ {2, 3, 4, 5, 7, 9, 13, 25, 121}`.
+/-- **Finite fields with a primitive element sum.** For every natural number $q$, we have
+$q \notin \{2, 3, 4, 5, 7, 9, 13, 25, 121\}$ if and only if every finite field $L$ with $q$
+elements contains an element $\alpha$ such that both $\alpha$ and $\alpha + \alpha^{-1}$ generate
+the multiplicative group $L^\times$.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 11 (`integers-2026-A95-prop-11`), quoting Cohen, Oliveira e Silva,
@@ -410,13 +318,17 @@ public theorem_wanted mem_primitiveSum_one_iff {q : ℕ} :
         ∃ α : L, IsPrimitiveRoot α (Fintype.card L - 1) ∧
           IsPrimitiveRoot (α + α⁻¹) (Fintype.card L - 1)
 
-/-- Primitive element sums away from 33 exceptional pairs: for a prime power `q` coprime to
-`n > 1`, if `(n, ω(q^n - 1))` is not in the 33-element set `𝓔_𝓤` then `q ∈ 𝓤_n` (membership as
-in `mem_primitiveSum_of_sixteen_pow_lt`). The list is the appendix of the arXiv version
-(arXiv:2412.00010); its size agrees with the journal statement. Added hypotheses: `n > 1` (the
-source's standing assumption; for `n = 1`, `q = 2` the pair `(1, 0)` is not exceptional but
-`2 ∉ 𝓤_1`) and `q` coprime to `n` (the source derives the result from the coprime criterion
-`mem_primitiveSum_of_sixteen_pow_lt`).
+/-- **Primitive element sums away from exceptional pairs.** Let $q$ and $n > 1$ be coprime natural
+numbers, and let $\omega$ be the number of distinct prime factors of $q^n - 1$. Suppose that the
+pair $(n, \omega)$ is none of the following $33$ pairs: $(2, w)$ for $1 \le w \le 11$; $(3, w)$ for
+$2 \le w \le 7$; $(4, w)$ for $w \in \{2, 3, 4, 5, 6, 7, 9\}$; $(5, 3)$ and $(5, 5)$; $(6, w)$ for
+$3 \le w \le 6$; $(8, 4)$ and $(8, 6)$; and $(12, 6)$. Then every finite field $L$ with $q^n$
+elements contains an element $\alpha$ such that both $\alpha$ and $\alpha + \alpha^{-1}$ generate
+the multiplicative group $L^\times$.
+
+The hypotheses $n > 1$ and $\gcd(q, n) = 1$ are added. For $n = 1$ and $q = 2$ the pair $(1, 0)$
+is not exceptional, yet $\mathbb{F}_2$ has no such $\alpha$; and the source derives the result from
+the Liao–Li–Pu criterion, which assumes coprimality.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 12 (`integers-2026-A95-prop-12`). -/
@@ -430,9 +342,13 @@ public theorem_wanted mem_primitiveSum_of_not_mem_exceptional {q n : ℕ} (hn : 
     ∃ α : L, IsPrimitiveRoot α (Fintype.card L - 1) ∧
       IsPrimitiveRoot (α + α⁻¹) (Fintype.card L - 1)
 
-/-- If a prime power `q` coprime to `n` is not in `𝓤_n` (membership as in
-`mem_primitiveSum_of_sixteen_pow_lt`), then `ω(q^n - 1) ≤ 15`. Coprimality is added: the source
-derives the bound from the coprime criterion `mem_primitiveSum_of_sixteen_pow_lt`.
+/-- **Fields without primitive element sums have few prime factors.** Let $q$ and $n$ be natural
+numbers with $\gcd(q, n) = 1$. If it is not the case that every finite field $L$ with $q^n$
+elements contains an element $\alpha$ such that both $\alpha$ and $\alpha + \alpha^{-1}$ generate
+the multiplicative group $L^\times$, then $q^n - 1$ has at most $15$ distinct prime factors.
+
+The hypothesis $\gcd(q, n) = 1$ is added: the source derives the bound from the Liao–Li–Pu
+criterion, which assumes it.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Corollary 2 (`integers-2026-A95-cor-2`). -/

@@ -948,7 +948,7 @@ private theorem measure_inter_of_naturalFiltration
     · -- the zero cylinder is a.e. the whole space
       have hC₀eq : {ω | ∀ i : {i // u i = 0}, B (u i) ω ∈ O i} =ᵐ[μ] Set.univ := by
         filter_upwards [hBM.start] with ω hω
-        exact eq_iff_iff.mpr ⟨fun _ => Set.mem_univ ω, fun _ i => by
+        exact ⟨fun _ => Set.mem_univ ω, fun _ i => by
           rw [i.2, hω]
           exact Set.mem_iInter.mp hX i⟩
       have h1 : A ∩ ({ω | ∀ i, B (u i) ω ∈ O i})
@@ -956,14 +956,13 @@ private theorem measure_inter_of_naturalFiltration
         filter_upwards [hC₀eq] with ω hω
         rw [hsplit]
         show (ω ∈ A ∧ ((∀ i : {i // 0 < u i}, B (u i) ω ∈ O i) ∧
-            (∀ i : {i // u i = 0}, B (u i) ω ∈ O i))) =
+            (∀ i : {i // u i = 0}, B (u i) ω ∈ O i))) ↔
           (ω ∈ A ∧ (∀ i : {i // 0 < u i}, B (u i) ω ∈ O i))
         rw [hω]
         simp only [Set.mem_univ, and_true]
       have h2 : {ω | ∀ i, B (u i) ω ∈ O i}
           =ᵐ[μ] {ω | ∀ i : {i // 0 < u i}, B (u i) ω ∈ O i} := by
         filter_upwards [hC₀eq] with ω hω
-        apply eq_iff_iff.mpr
         constructor
         · intro h i
           exact h i
@@ -977,7 +976,7 @@ private theorem measure_inter_of_naturalFiltration
     · -- the zero cylinder is a.e. empty, hence null
       have hC₀eq : {ω | ∀ i : {i // u i = 0}, B (u i) ω ∈ O i} =ᵐ[μ] ∅ := by
         filter_upwards [hBM.start] with ω hω
-        exact eq_iff_iff.mpr ⟨fun h =>
+        exact ⟨fun h =>
           absurd (Set.mem_iInter.mpr (fun i => by
             have h2 := h i
             rwa [i.2, hω] at h2)) hX, fun h => (Set.notMem_empty ω h).elim⟩

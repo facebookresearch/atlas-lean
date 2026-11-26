@@ -231,11 +231,10 @@ lemma highTempSwitch_recover_F
   tauto
 
 omit [Fintype V] in
+@[deprecated "Use `symmDiff_symmDiff_cancel_right`." (since := "2026-11-12")]
 lemma highTempSwitch_recover_H (H Q : Finset (Sym2 V)) :
-    (H ∆ Q) ∆ Q = H := by
-  ext a
-  simp only [Finset.mem_symmDiff]
-  tauto
+    (H ∆ Q) ∆ Q = H :=
+  symmDiff_symmDiff_cancel_right Q H
 
 /-- The switching as a map between the finite sets of valid inputs and outputs. -/
 noncomputable def highTempSwitchMap (S : Finset V) (o z : V)
@@ -322,9 +321,9 @@ lemma highTempSwitchMap_injective (S : Finset V) (o z : V)
   have hH : p.1.H = q.1.H := by
     calc
       p.1.H = (p.1.H ∆ dp.Q) ∆ dp.Q :=
-        (highTempSwitch_recover_H p.1.H dp.Q).symm
+        (symmDiff_symmDiff_cancel_right dp.Q p.1.H).symm
       _ = (q.1.H ∆ dq.Q) ∆ dq.Q := by rw [hA, hQ]
-      _ = q.1.H := highTempSwitch_recover_H q.1.H dq.Q
+      _ = q.1.H := symmDiff_symmDiff_cancel_right dq.Q q.1.H
   have hF : p.1.F = q.1.F := by
     calc
       p.1.F = insert s(dp.x, dp.y)

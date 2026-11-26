@@ -16,7 +16,7 @@ Information and Computation 178 (2002), 253-262, doi:10.1006/inco.2002.3173.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.GroupTheory.Solvable
 public import MathlibExt.Computability.BinaryNatEncoding

@@ -55,7 +55,8 @@ Gromov product satisfies the four-point inequality
 def IsDeltaHyperbolic (X : Type*) [PseudoMetricSpace X] (δ : ℝ) : Prop :=
   0 ≤ δ ∧ ∀ w x y z : X, min (gromovProduct w x y) (gromovProduct w y z) - δ ≤ gromovProduct w x z
 
-/-- A pseudometric space is Gromov-hyperbolic if it is `δ`-hyperbolic for some `δ`. -/
+/-- **Gromov-hyperbolic spaces.** A pseudometric space $X$ is Gromov-hyperbolic if there is a
+real number $\delta$ such that $X$ is $\delta$-hyperbolic. -/
 def IsGromovHyperbolic (X : Type*) [PseudoMetricSpace X] : Prop := ∃ δ : ℝ, IsDeltaHyperbolic X δ
 
 /-- The defining four-point inequality of a `δ`-hyperbolic space. -/
@@ -63,18 +64,21 @@ theorem IsDeltaHyperbolic.four_point {δ : ℝ} (h : IsDeltaHyperbolic X δ) (w 
     min (gromovProduct w x y) (gromovProduct w y z) - δ ≤ gromovProduct w x z :=
   h.2 w x y z
 
-/-- Enlarging the constant preserves `δ`-hyperbolicity. -/
+/-- **Hyperbolicity is monotone in the constant.** If a pseudometric space $X$ is
+$\delta$-hyperbolic and $\delta \le \delta'$, then $X$ is $\delta'$-hyperbolic. -/
 theorem IsDeltaHyperbolic.mono {δ δ' : ℝ} (h : IsDeltaHyperbolic X δ) (hδ : δ ≤ δ') :
     IsDeltaHyperbolic X δ' :=
   ⟨h.1.trans hδ, fun w x y z => by
     have := h.four_point w x y z
     linarith⟩
 
-/-- The hyperbolicity constant is nonnegative. -/
+/-- **The hyperbolicity constant is nonnegative.** If a pseudometric space $X$ is
+$\delta$-hyperbolic, then $\delta \ge 0$. -/
 theorem IsDeltaHyperbolic.nonneg {δ : ℝ} (h : IsDeltaHyperbolic X δ) : 0 ≤ δ :=
   h.1
 
-/-- A subsingleton space (in particular a single point) is `0`-hyperbolic: it is an `ℝ`-tree. -/
+/-- **A space with at most one point is $0$-hyperbolic.** Every pseudometric space $X$ with at
+most one point is $0$-hyperbolic. -/
 theorem isDeltaHyperbolic_zero_of_subsingleton [Subsingleton X] : IsDeltaHyperbolic X 0 := by
   refine ⟨le_refl 0, fun w x y z => ?_⟩
   rw [Subsingleton.elim x w, Subsingleton.elim y w, Subsingleton.elim z w, min_self, sub_zero]

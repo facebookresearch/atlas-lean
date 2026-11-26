@@ -22,7 +22,7 @@ Proceedings of the IEEE 77 (1989), 541-580, doi:10.1109/5.24143.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

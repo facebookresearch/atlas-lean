@@ -51,20 +51,21 @@ namespace EarthScience
 /-- Void ratio of a soil (or other two-phase solid/void) element:
 `e = Vv / Vs`, the void volume `Vv` divided by the solid volume `Vs`, both
 in the same volume unit, so `e` is dimensionless. Physically meaningful
-for `0 < Vs` and `0 ≤ Vv`; outside that range this is the same real
-formula by total division. -/
+for `0 < Vs` and `0 ≤ Vv`; with the convention `x / 0 = 0` it is `0` when
+`Vs = 0`. -/
 noncomputable def voidRatio (Vs Vv : ℝ) : ℝ :=
   Vv / Vs
 
 /-- Porosity of a soil (or other two-phase solid/void) element:
 `n = Vv / (Vs + Vv)`, the void fraction of the total volume `Vs + Vv`,
 with both volumes in the same unit, so `n` is dimensionless. Physically
-meaningful for `0 < Vs` and `0 ≤ Vv`; outside that range this is the same
-real formula by total division. -/
+meaningful for `0 < Vs` and `0 ≤ Vv`; with the convention `x / 0 = 0` it is
+`0` when `Vs + Vv = 0`. -/
 noncomputable def porosity (Vs Vv : ℝ) : ℝ :=
   Vv / (Vs + Vv)
 
-/-- Porosity is the normalized void ratio: `n = e / (1 + e)`. -/
+/-- For `0 < Vs` and `0 ≤ Vv`, porosity is the normalized void ratio:
+`n = e / (1 + e)`. -/
 theorem porosity_eq_voidRatio_div_one_add_voidRatio {Vs Vv : ℝ}
     (hVs : 0 < Vs) (hVv : 0 ≤ Vv) :
     porosity Vs Vv = voidRatio Vs Vv / (1 + voidRatio Vs Vv) := by
@@ -76,14 +77,14 @@ theorem porosity_eq_voidRatio_div_one_add_voidRatio {Vs Vv : ℝ}
   have hden : (1 : ℝ) + Vv / Vs ≠ 0 := ne_of_gt hpos
   field_simp
 
-/-- Porosity is nonnegative. -/
+/-- Porosity is nonnegative for `0 < Vs` and `0 ≤ Vv`. -/
 theorem porosity_nonneg {Vs Vv : ℝ} (hVs : 0 < Vs) (hVv : 0 ≤ Vv) :
     0 ≤ porosity Vs Vv := by
   unfold porosity
   exact div_nonneg hVv (le_of_lt (add_pos_of_pos_of_nonneg hVs hVv))
 
-/-- Porosity is strictly below one: the solid volume is positive, so voids
-never exhaust the total volume. -/
+/-- Porosity is strictly below one for `0 < Vs` and `0 ≤ Vv`: the solid
+volume is positive, so voids never exhaust the total volume. -/
 theorem porosity_lt_one {Vs Vv : ℝ} (hVs : 0 < Vs) (hVv : 0 ≤ Vv) :
     porosity Vs Vv < 1 := by
   unfold porosity

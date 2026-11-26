@@ -68,17 +68,29 @@ open scoped Topology ENNReal NNReal
 
 namespace ProbabilityTheory
 
-/-- The standardized partial sum `(Sₙ − np) / √(np(1 − p))` for a sequence
-of real random variables `X`, where `Sₙ = ∑_{k<n} Xₖ`. -/
+/-- **Standardized partial sums.** For a sequence $X_0, X_1, \dots$ of real-valued functions on a
+set $\Omega$, a real number $p$ and $n \in \mathbb{N}$, the standardized partial sum is the
+function $\omega \mapsto (S_n(\omega) - np)/\sqrt{np(1-p)}$ on $\Omega$, where
+$S_n = X_0 + \dots + X_{n-1}$.
+
+The square root of a negative number is taken to be $0$ and division by $0$ gives $0$; in
+particular the standardized partial sum is $0$ for $n = 0$. -/
 noncomputable def deMoivreLaplaceStandardized {Ω : Type*} (X : ℕ → Ω → ℝ)
     (p : ℝ) (n : ℕ) (ω : Ω) : ℝ :=
   ((∑ k ∈ Finset.range n, X k ω) - ↑n * p) / Real.sqrt (↑n * p * (1 - p))
 
-/-- The standardization map `x ↦ (x − p) / √(p(1 − p))`. -/
+/-- **Bernoulli standardization map.** For a real number $p$, the standardization map sends
+$x \in \mathbb{R}$ to $(x - p)/\sqrt{p(1-p)}$.
+
+The square root of a negative number is taken to be $0$ and division by $0$ gives $0$, so for
+$p \le 0$ or $p \ge 1$ the map is identically $0$. -/
 noncomputable def standardizedBernoulli (p : ℝ) (x : ℝ) : ℝ :=
   (x - p) / Real.sqrt (p * (1 - p))
 
-/-- A `{0, 1}`-valued random variable is integrable on a probability space. -/
+/-- **Almost surely $\{0, 1\}$-valued random variables are integrable.** Let $P$ be a probability
+measure on $\Omega$ and let $f : \Omega \to \mathbb{R}$ be almost everywhere measurable with
+$f(\omega) \in \{0, 1\}$ for $P$-almost every $\omega$. Then $f$ is integrable with respect to
+$P$. -/
 theorem integrable_of_ae_eq_zero_or_one {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] {f : Ω → ℝ}
     (hf : AEMeasurable f P) (h : ∀ᵐ ω ∂P, f ω = 0 ∨ f ω = 1) :
@@ -87,7 +99,9 @@ theorem integrable_of_ae_eq_zero_or_one {Ω : Type*} [MeasurableSpace Ω]
   filter_upwards [h] with ω hω
   rcases hω with hω | hω <;> simp [hω]
 
-/-- For a `{0, 1}`-valued random variable, `∫ f² = ∫ f`. -/
+/-- **Second moment of a $\{0, 1\}$-valued random variable.** Let $P$ be a probability measure on
+$\Omega$ and let $f : \Omega \to \mathbb{R}$ satisfy $f(\omega) \in \{0, 1\}$ for $P$-almost every
+$\omega$. Then $\int f^2 \, dP = \int f \, dP$. -/
 theorem integral_sq_eq_integral_of_ae_eq_zero_or_one {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] {f : Ω → ℝ}
     (h : ∀ᵐ ω ∂P, f ω = 0 ∨ f ω = 1) :
@@ -96,7 +110,11 @@ theorem integral_sq_eq_integral_of_ae_eq_zero_or_one {Ω : Type*} [MeasurableSpa
   filter_upwards [h] with ω hω
   rcases hω with hω | hω <;> simp [hω]
 
-/-- **De Moivre–Laplace limit theorem**, convergence-in-distribution form. -/
+/-- **De Moivre–Laplace limit theorem, convergence in distribution.** Let $X_0, X_1, \dots$ be
+independent, identically distributed real random variables on a probability space $(\Omega, P)$,
+each almost surely equal to $0$ or $1$, with mean $p$ for some $0 < p < 1$. Write
+$S_n = X_0 + \dots + X_{n-1}$. Then the standardized sums $(S_n - np)/\sqrt{np(1-p)}$ converge in
+distribution to the standard normal distribution $\mathcal{N}(0, 1)$ as $n \to \infty$. -/
 theorem deMoivreLaplace_tendstoInDistribution {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] (X : ℕ → Ω → ℝ) {p : ℝ}
     (hp0 : 0 < p) (hp1 : p < 1)
@@ -174,9 +192,12 @@ theorem deMoivreLaplace_tendstoInDistribution {Ω : Type*} [MeasurableSpace Ω]
     rw [hsqrt]
     field_simp [(Real.sqrt_ne_zero'.mpr hnpos), hσpos.ne']
 
-/-- **De Moivre–Laplace limit theorem**, the book's interval form:
-`P{a ≤ (Sₙ − np)/√(np(1 − p)) ≤ b}` tends to the standard normal mass of
-`[a, b]`. -/
+/-- **De Moivre–Laplace limit theorem, interval form.** Let $X_0, X_1, \dots$ be independent,
+identically distributed real random variables on a probability space $(\Omega, P)$, each almost
+surely equal to $0$ or $1$, with mean $p$ for some $0 < p < 1$. Write
+$S_n = X_0 + \dots + X_{n-1}$. Then for all real numbers $a \le b$, the probability
+$P\left(a \le (S_n - np)/\sqrt{np(1-p)} \le b\right)$ tends, as $n \to \infty$, to the mass that
+the standard normal distribution $\mathcal{N}(0, 1)$ gives to the interval $[a, b]$. -/
 theorem deMoivreLaplace_interval_probability {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] (X : ℕ → Ω → ℝ) {p : ℝ}
     (hp0 : 0 < p) (hp1 : p < 1)

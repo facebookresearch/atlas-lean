@@ -78,7 +78,7 @@ example : (Z₀ * Z₀ᵀ * (Z₀ * Z₀ᵀ + (0 : ℝ) • (1 : Matrix (Fin 2) 
     Z₀ *ᵥ ridgeEstimate Z₀ ![1, 1] 0 = ![1, 1] := by
   have hG : Z₀ * Z₀ᵀ + (0 : ℝ) • (1 : Matrix (Fin 2) (Fin 2) ℝ) = !![1, 1; 1, 1] := by
     ext i j
-    fin_cases i <;> fin_cases j <;> simp [Z₀, vecMul, dotProduct]
+    fin_cases i <;> fin_cases j <;> simp [Z₀, vecMul, dotProduct, -Matrix.transpose_of]
   have hR : Z₀ᵀ * Z₀ + (0 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ) = !![2] := by
     ext i j
     fin_cases i; fin_cases j

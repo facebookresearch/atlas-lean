@@ -104,7 +104,7 @@ private lemma mszGol_ode (lam : ℕ) (P : Polynomial ℝ) :
       map_add (Polynomial.monomial lam)]
     linear_combination hP + hQ
   · intro j a
-    rw [mszGol_monomial, msz_ode_monomial, Polynomial.coeff_monomial]
+    rw [mszGol_monomial, msz_ode_monomial, Polynomial.coeff_monomial_apply]
     by_cases hjl : j = lam
     · rw [hjl, sub_self, div_zero, zero_mul, Polynomial.C_0, zero_mul]
       simp

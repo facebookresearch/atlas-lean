@@ -1,0 +1,3 @@
+# UET-UCT SCHEDULING ON UNBOUNDEDLY MANY PROCESSORS WITH MAKESPAN AT MOST 6 as a decision problem
+
+The decision problem UET-UCT SCHEDULING ON UNBOUNDEDLY MANY PROCESSORS WITH MAKESPAN AT MOST 6 accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(m, p, A, d)$ (a natural number, a list of natural numbers, a list of pairs and a natural number), to an instance that is well-formed for UET-UCT SCHEDULING ON UNBOUNDEDLY MANY PROCESSORS WITH MAKESPAN AT MOST 6 and feasible for UET-UCT SCHEDULING. It rejects every bitstring that does not decode to such an instance.
