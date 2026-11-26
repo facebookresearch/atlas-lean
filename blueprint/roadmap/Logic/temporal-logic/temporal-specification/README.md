@@ -1,5 +1,6 @@
 # Temporal specification
 
+- [Kripke structures with initial states](kripke-structures-with-initial-states.md)
 - [Bisimulation preserves CTL* and simulation preserves ACTL*](bisimulation-preserves-ctl-and-simulation.md)
 - [First-order logic of order over infinite words](first-order-logic-of-order-over-infinite-words.md)
 - [Common knowledge cannot be attained without guaranteed communication](common-knowledge-cannot-be-attained-without.md)

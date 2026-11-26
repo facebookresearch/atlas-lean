@@ -6,15 +6,15 @@ $$\mathcal{S} = \{ G_{cs} : cs \text{ and } cs' \text{ are call sequences with }
 
 a finite set. Then the program is not [size-change terminating](size-change-graphs.md) if and only if $\mathcal{S}$ contains a graph $G : f \to f$ with $G = G ; G$ that has no edge of the form $x \xrightarrow{\downarrow} x$. This yields an algorithm: compute $\mathcal{S}$ by closing the graphs of the reachable calls under composition, then test each idempotent graph from a function to itself.
 
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- The infinite Ramsey theorem for pairs (proof prerequisite)
-
 ## Depends on
 
 - [Size-change graphs and size-change termination](size-change-graphs.md)
+
+## Proof depends on
+
+- [Infinite Ramsey theorem](../../../../Combinatorics/ramsey-theory/structural-ramsey/infinite-ramsey-theorem.md)
+- [Composition of size-change graphs is associative](composition-of-size-change-graphs-is-associative.md)
+- [Composed size-change graphs represent threads](composed-size-change-graphs-represent-threads.md)
 
 ## Sources
 

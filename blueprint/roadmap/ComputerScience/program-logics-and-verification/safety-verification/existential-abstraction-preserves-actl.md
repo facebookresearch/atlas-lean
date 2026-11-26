@@ -6,11 +6,9 @@ Let $M = (S, I, R, L)$ be a Kripke structure, $AP_\varphi$ the set of atomic pro
 
 - [Bisimulation preserves CTL* and simulation preserves ACTL*](../../../Logic/temporal-logic/temporal-specification/bisimulation-preserves-ctl-and-simulation.md)
 
-## Expansion
+## Depends on
 
-This page becomes ready once these prerequisites are stated:
-
-- Generic labelled Kripke structure carrier (statement prerequisite)
+- [Kripke structures with initial states](../../../Logic/temporal-logic/temporal-specification/kripke-structures-with-initial-states.md)
 
 ## Sources
 

@@ -6,12 +6,7 @@ Let $M$ be a finite Kripke structure with initial states, in which every state h
 
 - [Satisfaction of LTL formulas on ω-words](../../../Logic/temporal-logic/linear-temporal-logic/satisfies.md)
 - [Satisfiability of a CNF formula](../../../Logic/propositional-logic/conjunctive-normal-form/cnfsat.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- Kripke structures with initial states, a total transition relation and a labelling (statement prerequisite)
+- [Kripke structures with initial states](../../../Logic/temporal-logic/temporal-specification/kripke-structures-with-initial-states.md)
 
 ## Sources
 
