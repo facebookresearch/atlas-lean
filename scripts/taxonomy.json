@@ -1993,6 +1993,8 @@
   "CSLibExt/MachineLearning/Variational/MeanFieldFixedPoint": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Mean-field variational inference"},
   "CSLibExt/MachineLearning/WeightedMajority": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Weighted majority algorithm"},
   "CSLibExt/Scheduling/SingleMachine/CompletionTime": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Single-machine scheduling"},
+  "CSLibExt/Scheduling/SingleMachine/EarliestDueDate": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Earliest-due-date rule"},
+  "CSLibExt/Scheduling/SingleMachine/Lateness": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Single-machine scheduling"},
   "CSLibExt/Scheduling/SingleMachine/SmithRule": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Smith's rule for weighted completion time"},
   "Mathlib/Algebra/AddConstMap": {"to": "Algebra/algebraic-identities", "title": "Maps intertwining translations"},
   "Mathlib/Algebra/AffineMonoid": {"to": "GroupTheory/semigroups-and-monoids", "title": "Affine monoids"},
