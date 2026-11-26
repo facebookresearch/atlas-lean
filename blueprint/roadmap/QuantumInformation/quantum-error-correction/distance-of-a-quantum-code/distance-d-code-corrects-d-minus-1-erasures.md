@@ -22,9 +22,10 @@ sufficiency gives the recovery.
 
 - [Product of two Pauli operators](conj-transpose-pauli-mul-pauli.md)
 - [Sufficiency of the Knill–Laflamme conditions](../knill-laflamme-conditions/is-correctable-of-knill-laflamme.md)
+- [Correctable errors form a linear space](../knill-laflamme-conditions/is-correctable-of-forall-mem-span.md)
 
 ## Sources
 
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.3.2.
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 2.3, the paragraph on located errors.
-- M. Grassl, Th. Beth and T. Pellizzari, *Codes for the quantum erasure channel*, Phys. Rev. A 56 (1997), 33–38, arXiv:quant-ph/9610042, Section II.A.
+- M. Grassl, Th. Beth and T. Pellizzari, *Codes for the quantum erasure channel*, Phys. Rev. A 56 (1997), 33–38, arXiv:quant-ph/9610042, Section III.A of the journal article (the conditions on codes for the erasure channel; numbered differently in the arXiv version).

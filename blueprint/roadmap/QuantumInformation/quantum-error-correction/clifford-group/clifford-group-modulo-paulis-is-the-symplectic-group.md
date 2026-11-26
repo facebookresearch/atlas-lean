@@ -9,14 +9,16 @@ phases, $\{ e^{i\theta} P : P \in \mathcal{P}_n \}$. Hence
 
 $$\mathcal{C}_n / \big(U(1) \cdot \mathcal{P}_n\big) \;\cong\; \mathrm{Sp}(2n, \mathbb{F}_2).$$
 
-Up to phases, a Clifford circuit acts on Pauli operators as a binary symplectic matrix, which is why stabilizer
-circuits can be simulated by $2n \times 2n$ binary matrix arithmetic.
+Up to signs, a Clifford circuit acts on Pauli operators as a binary symplectic matrix. A classical simulation must
+track the signs as well: $I$ and $X$ induce the same binary matrix but give opposite deterministic outcomes when $Z$ is
+measured on $|0\rangle$.
 
 ## Expansion
 
 A good expansion adds a page for surjectivity: every symplectic matrix over $\mathbb{F}_2$ is $\sigma_U$ for some
-Clifford unitary $U$. Gottesman's thesis (Section 5.3) states that every automorphism of the Pauli group is induced by a
-Clifford unitary, citing other work, and Gottesman (2010) states the isomorphism without proof; a proof, for instance
+Clifford unitary $U$. Gottesman's thesis (Section 5.3) states that the automorphisms of the Pauli group
+are induced by Clifford unitaries, citing other work (this needs the automorphisms that fix the scalars pointwise: complex
+conjugation is an automorphism sending $iI$ to $-iI$, which no conjugation by a unitary does), and Gottesman (2010) states the isomorphism without proof; a proof, for instance
 from the generation of $\mathrm{Sp}(2n, \mathbb{F}_2)$ by symplectic transvections together with
 [conjugation by $H$, $S$ and CNOT](conjugation-of-pauli-operators-by-h-s-and-cnot.md), still has to be stated and
 checked. The kernel and the preservation of $\omega$ follow from the pages listed below.

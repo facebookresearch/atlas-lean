@@ -1,6 +1,6 @@
 # Fault tolerance and the threshold theorem
 
-Concatenating a code with itself multiplies distances, and in a fault-tolerant simulation each level of concatenation
+Concatenating a code with itself gives distance at least the product of the distances, and in a fault-tolerant simulation each level of concatenation
 maps an error rate $p$ to roughly $A p^{t+1}$. Below a threshold the failure probability then falls doubly exponentially
 in the number of levels: arbitrary quantum circuits can be simulated reliably with polylogarithmic overhead under local
 stochastic noise. The arithmetic of the recursion is the

@@ -8,9 +8,9 @@ such that
 
 $$\| U - e^{i\theta} V \| < \varepsilon$$
 
-in the operator norm. Global phases are ignored because they have no physical effect. The set of all single-qubit
-unitaries together with CNOT is universal even with $\varepsilon = 0$
-([exact universality](../../quantum-foundations/exact-universality-of-cnot-and-single-qubit-gates.md)).
+in the operator norm. Global phases are ignored because they have no physical effect. The infinite set of all
+single-qubit unitaries together with CNOT is not a gate set in this sense; it generates every unitary exactly, a separate
+statement ([exact universality](../../quantum-foundations/exact-universality-of-cnot-and-single-qubit-gates.md)).
 
 ## Depends on
 

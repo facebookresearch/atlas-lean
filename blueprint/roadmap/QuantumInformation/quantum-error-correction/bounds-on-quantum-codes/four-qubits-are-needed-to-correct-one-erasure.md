@@ -13,7 +13,15 @@ $k + 2(d - 1) \le n$ would allow $n = 3$, so it is not attained here.
 Proof (Grassl, Beth and Pellizzari): both codewords and their Hadamard transforms have only even-weight components, so a
 single bit flip is detected in both bases. Conversely, a code correcting one erasure that has a one-qubit factor in one
 code state has it in all (their Theorem 1); every two-dimensional subspace of two qubits contains a product state
-(Lemma 3), which excludes $n = 2$ (Theorem 4), and $n = 3$ reduces to $n = 2$ (Theorem 5).
+(Lemma 1), which excludes $n = 2$ (Theorem 2), and $n = 3$ reduces to $n = 2$ (Theorem 3); numbers as in the journal article.
+
+## Expansion
+
+The minimality proof uses two results that need their own pages: Grassl, Beth and Pellizzari's Theorem 1, that a code
+correcting one erasure in which one code state has a one-qubit tensor factor has it in every code state, so the code can be
+shortened by that qubit; and their Lemma 1, that every two-dimensional subspace of two qubits contains a product state
+(the determinant of $A + tB$ for $2 \times 2$ coefficient matrices $A, B$ has a root, or $B$ is singular). This page becomes
+ready once both are linked under Proof depends on.
 
 ## Depends on
 
@@ -31,4 +39,4 @@ code state has it in all (their Theorem 1); every two-dimensional subspace of tw
 
 ## Sources
 
-- M. Grassl, Th. Beth and T. Pellizzari, *Codes for the quantum erasure channel*, Phys. Rev. A 56 (1997), 33–38, arXiv:quant-ph/9610042, Section II.B (the four-qubit code) and Section II.C, Theorems 1, 4 and 5.
+- M. Grassl, Th. Beth and T. Pellizzari, *Codes for the quantum erasure channel*, Phys. Rev. A 56 (1997), 33–38, arXiv:quant-ph/9610042; in the journal article Section III.A (conditions), Section III.B (the four-qubit code) and Section III.C (minimality: Theorem 1, Lemma 1, Theorems 2 and 3); the arXiv version numbers these Lemma 3 and Theorems 4 and 5.

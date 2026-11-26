@@ -22,5 +22,5 @@ applies to faces, and products of $X$'s and of $Z$'s are independent of each oth
 
 ## Sources
 
-- A. Yu. Kitaev, *Fault-tolerant quantum computation by anyons*, Ann. Physics 303 (2003), 2–30, arXiv:quant-ph/9707021, Section 1 ("there are $m = 2k^2 - 2$ independent stabilizer operators ... $\dim L = 2^{n-m} = 4$").
+- A. Yu. Kitaev, *Fault-tolerant quantum computation by anyons*, Ann. Physics 303 (2003), 2–30, arXiv:quant-ph/9707021, Section 2 of the published article (Section 1 of the arXiv version) ("there are $m = 2k^2 - 2$ independent stabilizer operators ... $\dim L = 2^{n-m} = 4$").
 - E. Dennis, A. Kitaev, A. Landahl and J. Preskill, *Topological quantum memory*, J. Math. Phys. 43 (2002), 4452–4505, arXiv:quant-ph/0110143, Section III.A.

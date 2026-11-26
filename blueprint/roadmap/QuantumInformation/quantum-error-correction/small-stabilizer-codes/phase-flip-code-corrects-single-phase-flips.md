@@ -19,7 +19,10 @@ correctability for the phase-flip code with the same scalars.
 
 - [The three-qubit bit-flip code corrects any single bit flip](../bit-flip-and-shor-codes/is-correctable-bit-flip.md)
 - [Conjugation of Pauli operators by $H$, $S$ and CNOT](../clifford-group/conjugation-of-pauli-operators-by-h-s-and-cnot.md)
+- [Correctable errors form a linear space](../knill-laflamme-conditions/is-correctable-of-forall-mem-span.md)
+- [Necessity of the Knill–Laflamme conditions](../knill-laflamme-conditions/knill-laflamme-of-is-correctable.md)
 
 ## Sources
 
+- D. G. Cory, M. D. Price, W. Maas, E. Knill, R. Laflamme, W. H. Zurek, T. F. Havel and S. S. Somaroo, *Experimental quantum error correction*, Phys. Rev. Lett. 81 (1998), 2152–2155, arXiv:quant-ph/9802018, the description of the three-bit phase code: $\alpha|000\rangle + \beta|100\rangle$ is encoded as $\alpha|{+}{+}{+}\rangle + \beta|{-}{-}{-}\rangle$, the convention used here, and each single phase error maps the encoded state to an orthogonal subspace, which is detected and undone.
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Exercise 7.1(b) and Section 7.15.1.

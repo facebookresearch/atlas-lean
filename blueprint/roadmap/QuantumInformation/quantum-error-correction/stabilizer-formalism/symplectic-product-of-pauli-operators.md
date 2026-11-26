@@ -11,8 +11,9 @@ $XZ = -iY$ where both supports meet); every element of the $n$-qubit Pauli group
 $c \in \{\pm 1, \pm i\}$, so modulo phases the Pauli group is the vector space $\mathbb{F}_2^{2n}$ and products of
 Pauli operators correspond to sums of vectors.
 
-Preskill writes the same operator as $Z(\alpha) X(\beta)$ with the pair $(\alpha | \beta)$ listing the $Z$ part first,
-and his inner product $\alpha \cdot \beta' + \alpha' \cdot \beta$ is the same form.
+Writing the $Z$ part first, $Z^b X^a = (-1)^{a \cdot b} X^a Z^b$ is the same operator only up to sign: it is the same
+element of the Pauli group modulo phases, and the symplectic product does not depend on the order. Throughout, $(a, b)$
+names the operator $X^a Z^b$ itself; statements about other representatives hold up to phase.
 
 ## Depends on
 

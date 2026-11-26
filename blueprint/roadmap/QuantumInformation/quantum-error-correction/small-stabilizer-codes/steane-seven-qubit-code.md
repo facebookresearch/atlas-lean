@@ -21,8 +21,11 @@ $\bar Z |\bar x\rangle = (-1)^x |\bar x\rangle$, since $1111111$ is an odd-weigh
 - [The Hamming (7,4) code](../../../InformationTheory/error-correcting-codes/hamming-7-4-code/code.md)
 - [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
 - [CSS codeword](../css-codes/codeword.md)
+- [Logical Pauli operators of a stabilizer code](../stabilizer-formalism/logical-pauli-operators-of-a-stabilizer-code.md)
 
 ## Sources
 
+- D. Gottesman, *An introduction to quantum error correction and fault-tolerant quantum computation*, Proceedings of Symposia in Applied Mathematics 68 (2010), arXiv:0904.2557, Section 3.1, Table 3 (the stabilizer of the seven-qubit code; "it is a $[[7, 1, 3]]$ code").
+- A. M. Steane, *Multiple particle interference and quantum error correction*, Proc. R. Soc. Lond. A 452 (1996), 2551–2577, arXiv:quant-ph/9601029, Section 3.3 (the seven-qubit code from the even and odd subcodes of the $[7, 4, 3]$ Hamming code, correcting an arbitrary error on any one qubit).
 - J. Preskill, *Lecture Notes for Physics 229: Quantum Information and Computation*, Chapter 7 "Quantum Error Correction" (Caltech, 1998; https://www.preskill.caltech.edu/ph229/notes/chap7.pdf), Section 7.7, equations (7.90)–(7.94), and Section 7.9.4, equation (7.147).
 - D. Gottesman, *Stabilizer codes and quantum error correction*, PhD thesis, California Institute of Technology (1997), arXiv:quant-ph/9705052, Section 3.3, Table 3.4 and equations (3.20)–(3.21).

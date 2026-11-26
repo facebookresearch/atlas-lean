@@ -9,8 +9,8 @@ $$\sum_{j=0}^{t} 3^j \binom{n}{j} \;\le\; 2^{n-k}.$$
 The left side is $|\mathcal{E}_t|$: there are $\binom{n}{j}$ ways to choose $j$ affected qubits and $3^j$ choices of
 nontrivial factors. Proof: the errors in $\mathcal{E}_t$ satisfy the Knill–Laflamme conditions, since products of two of
 them have weight at most $2t < d$; nondegeneracy makes the $|\mathcal{E}_t| \cdot 2^k$ vectors $E |\bar\imath\rangle$
-linearly independent, and they lie in a space of dimension $2^n$. Unlike the classical Hamming bound it is proved only
-for nondegenerate codes. For $k = t = 1$ it reads $1 + 3n \le 2^{n-1}$, which first holds at $n = 5$, with equality.
+linearly independent, and they lie in a space of dimension $2^n$. This counting proof requires nondegeneracy; for degenerate codes
+see [the page on degenerate codes](degenerate-codes-and-the-quantum-hamming-bound.md). For $k = t = 1$ it reads $1 + 3n \le 2^{n-1}$, which first holds at $n = 5$, with equality.
 
 ## Depends on
 
@@ -26,6 +26,10 @@ for nondegenerate codes. For $k = t = 1$ it reads $1 + 3n \le 2^{n-1}$, which fi
 ## Background
 
 - [Hamming sphere-packing bound](../../../InformationTheory/error-correcting-codes/bounds-on-code-size/hamming-sphere-packing-bound.md)
+
+## Related topics
+
+- [Degenerate codes and the quantum Hamming bound](degenerate-codes-and-the-quantum-hamming-bound.md): what is known for degenerate codes.
 
 ## Sources
 
