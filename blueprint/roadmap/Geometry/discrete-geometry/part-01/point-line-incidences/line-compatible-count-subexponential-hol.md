@@ -4,7 +4,8 @@ There is a real constant $C$ such that
 for every natural number $n$, the number of line-compatible sequences for $n$, that is, of
 distinct multisets of the numbers $|\ell \cap P|$ over the distinct lines $\ell$ through two
 distinct points of an $n$-point set $P \subseteq \mathbb{R}^2$, each line counted once, is at
-most $e^{C \sqrt{n}}$. This answers Erdős Problem 733.
+most $e^{C \sqrt{n}}$. This answers Erdős Problem 733 with the sequence taken over all
+determined lines.
 
 ## Sources
 
