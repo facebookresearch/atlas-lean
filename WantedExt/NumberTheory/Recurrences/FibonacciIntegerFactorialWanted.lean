@@ -16,7 +16,7 @@ public import Mathlib.Data.Nat.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.Recurrences.FibonacciIntegerFactorial
-import Mathlib.Tactic.IntervalCases
+public import MathlibExt.NumberTheory.Recurrences.FibonacciPrimitivePart
 
 namespace MetaMathlibExt
 
@@ -45,112 +45,6 @@ F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Theorem 1
 public theorem_wanted factorial_mem_fibonacciIntegers_iff (n : ℕ) :
     (∃ u ∈ Subgroup.closure {u : ℚˣ | ∃ m : ℕ, 0 < m ∧ (u : ℚ) = Nat.fib m},
       (u : ℚ) = n.factorial) ↔ n ≤ 36
-
-/-- **Entry point in the Fibonacci sequence.** The entry point (rank of apparition) $z(k)$ of a
-natural number $k$ is the least $m > 0$ such that $k$ divides the Fibonacci number $F_m$, and
-$z(k) = 0$ if there is no such $m$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2. -/
-public noncomputable def fibEntryPoint (k : ℕ) : ℕ :=
-  sInf {m : ℕ | 0 < m ∧ k ∣ Nat.fib m}
-
-/-- **Fibonacci entry point of $2$.** The least $m > 0$ such that $2$ divides the Fibonacci number
-$F_m$ is $3$, that is, the Fibonacci entry point of $2$ is $z(2) = 3$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2 (`6 = 2 z(2)`). -/
-public theorem fibEntryPoint_two : fibEntryPoint 2 = 3 := by
-  apply le_antisymm
-  · exact Nat.sInf_le ⟨by norm_num, by decide⟩
-  · refine le_csInf ⟨3, by norm_num, by decide⟩ ?_
-    rintro m ⟨hm, hdvd⟩
-    by_contra h
-    interval_cases m <;> simp_all [Nat.fib_one, Nat.fib_two]
-
-/-- **Fibonacci entry point of $5$.** The least $m > 0$ such that $5$ divides the Fibonacci number
-$F_m$ is $5$, that is, the Fibonacci entry point of $5$ is $z(5) = 5$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2 (the exceptional index `m =
-5`). -/
-public theorem fibEntryPoint_five : fibEntryPoint 5 = 5 := by
-  apply le_antisymm
-  · exact Nat.sInf_le ⟨by norm_num, by decide⟩
-  · refine le_csInf ⟨5, by norm_num, by decide⟩ ?_
-    rintro m ⟨hm, hdvd⟩
-    by_contra h
-    interval_cases m <;> revert hdvd <;> decide
-
-/-- **Fibonacci cyclotomic values.** For a natural number $m$, $\Phi_m$ is the rational number
-$\prod_{d \mid m} F_{m/d}^{\mu(d)}$, where $d$ runs over the positive divisors of $m$, $F_k$ is the
-$k$-th Fibonacci number and $\mu$ is the Möbius function. For $m > 1$ this is the value
-$\Phi_m(\alpha, \beta)$ of the homogenized $m$-th cyclotomic polynomial at the roots
-$\alpha, \beta$ of $x^2 - x - 1$.
-
-At $m = 1$ the formula gives $1$, not $\Phi_1(\alpha, \beta) = \alpha - \beta = \sqrt{5}$, and
-$m = 0$ is treated as having no divisors, so $\Phi_0 = 1$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2. -/
-public noncomputable def fibCyclotomicValue (m : ℕ) : ℚ :=
-  ∏ d ∈ m.divisors, (Nat.fib (m / d) : ℚ) ^ (ArithmeticFunction.moebius d)
-
-/-- **Fibonacci cyclotomic value at $2$.** The Fibonacci cyclotomic value
-$\Phi_2 = \prod_{d \mid 2} F_{2/d}^{\mu(d)} = F_2 / F_1$, where $F_k$ is the $k$-th Fibonacci number
-and $\mu$ is the Möbius function, equals $1$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2, Equation (1). -/
-public theorem fibCyclotomicValue_two : fibCyclotomicValue 2 = 1 := by
-  have h : Nat.divisors 2 = {1, 2} := by decide
-  simp [fibCyclotomicValue, h, ArithmeticFunction.moebius_apply_prime Nat.prime_two]
-
-/-- **Primitive part of a Fibonacci number.** For a natural number $m$, the primitive part of the
-Fibonacci number $F_m$ is $\Psi_m = \prod_p p^{a_p}$, where the product runs over the primes $p$
-dividing $F_m$ whose Fibonacci entry point is $z(p) = m$, and $a_p$ is the exponent of $p$ in
-$F_m$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2. -/
-public noncomputable def fibPrimitivePart (m : ℕ) : ℕ :=
-  ∏ p ∈ (Nat.fib m).primeFactors with fibEntryPoint p = m, p ^ (Nat.fib m).factorization p
-
-/-- **Primitive part of $F_6$.** The primitive part of the Fibonacci number $F_6$ is $\Psi_6 = 1$:
-$F_6 = 8 = 2^3$ and the Fibonacci entry point of $2$ is $z(2) = 3 \ne 6$, so $F_6$ has no prime
-factor $p$ with $z(p) = 6$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2. -/
-public theorem fibPrimitivePart_six : fibPrimitivePart 6 = 1 := by
-  have h : (Nat.fib 6).primeFactors = {2} := by
-    rw [show Nat.fib 6 = 2 ^ 3 by decide, Nat.primeFactors_prime_pow (by norm_num) Nat.prime_two]
-  simp [fibPrimitivePart, h, fibEntryPoint_two]
-
-/-- **Prime factors of the primitive parts of the denominator indices.** Let $I$ and $J$ be finite
-multisets of natural numbers, every element of which is at least $3$ and different from $6$ and
-$12$, such that no element of $I$ equals an element of $J$ and
-$\prod_{a \in I} \Phi_a / \prod_{b \in J} \Phi_b$ is a natural number, where $\Phi_m$ is the
-$m$-th Fibonacci cyclotomic value. Let $\Psi_m$ be the primitive part of the Fibonacci number
-$F_m$ and $z(p)$ the Fibonacci entry point of $p$. Then there is a finite multiset $e$ of pairs
-$(p, k)$ of natural numbers such that the multiset of first coordinates of $e$ is the multiset of
-prime factors of $\prod_{b \in J} \Psi_b$, counted with multiplicity, and the multiset of the
-numbers $p^k z(p)$ for $(p, k) \in e$ is a sub-multiset of $I$.
-
-In other words, there is an injection from the prime factors $p_1, \dots, p_r$ of
-$\prod_{b \in J} \Psi_b$, counted with multiplicity, into $I$ that sends each $p_l$ to an element
-of the form $p_l^{k_l} z(p_l)$.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} =
-36!`*, INTEGERS 24 (2024), Article A72, Lemma 1 (`integers-2024-A72-lem-1`). -/
-public theorem_wanted exists_injection_primeFactors_fibPrimitivePart (I J : Multiset ℕ)
-    (hI : ∀ n ∈ I, 3 ≤ n ∧ n ≠ 6 ∧ n ≠ 12) (hJ : ∀ m ∈ J, 3 ≤ m ∧ m ≠ 6 ∧ m ≠ 12)
-    (hIJ : ∀ n ∈ I, ∀ m ∈ J, n ≠ m)
-    (hnat : ∃ N : ℕ, (I.map fibCyclotomicValue).prod / (J.map fibCyclotomicValue).prod = N) :
-    ∃ e : Multiset (ℕ × ℕ),
-      e.map Prod.fst = ((J.map fibPrimitivePart).prod.primeFactorsList : Multiset ℕ) ∧
-        e.map (fun pk => pk.1 ^ pk.2 * fibEntryPoint pk.1) ≤ I
 
 /-- **Bound on denominator indices of $p$-adic valuation one.** Let $n \ge 37$ and let $I$ and $J$
 be finite multisets of natural numbers, every element of which is at least $3$ and different from
