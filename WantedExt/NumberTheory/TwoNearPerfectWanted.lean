@@ -32,6 +32,7 @@ public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
 public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
 public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
+public import MathlibExt.NumberTheory.TwoNearPerfect
 
 namespace MetaMathlibExt
 
@@ -75,17 +76,6 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq {k p d₁ d₂ : ℕ
     (hd₁ : d₁ ∣ 2 ^ k * p ^ 2) (hd₂ : d₂ ∣ 2 ^ k * p ^ 2) (hne : d₁ ≠ d₂)
     (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + d₁ + d₂) :
     2 ^ k * p ^ 2 = 18 ∨ 2 ^ k * p ^ 2 = 36 ∨ 2 ^ k * p ^ 2 = 200
-
-/-- **Square values of the discriminant $2^{2k+2} + 2^{k+2} - 2^{a+2} - 7$.** Let $a$ and $k$ be
-natural numbers with $1 \le a \le k$. If $2^{2k+2} + 2^{k+2} - 2^{a+2} - 7$ is the square of an
-integer, then $k = a = 1$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 2
-(`integers-2024-A61-lem-2`). -/
-public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (hak : a ≤ k)
-    (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
-    k = 1 ∧ a = 1
 
 /-- **Strongly $2$-near perfect numbers of the form $2^k p$.** Let $p$ be an odd prime, let $k$
 be a natural number and let $n = 2^k p$. Suppose that $n$ is strongly $2$-near perfect, that is,
