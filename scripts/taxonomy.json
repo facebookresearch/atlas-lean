@@ -13205,6 +13205,7 @@
   "MathlibExt/NumberTheory/MahlerPopkenComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity/BinaryUpperBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MaynardVariationalBounds": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "GPY–Maynard sieve"},
+  "MathlibExt/NumberTheory/MaynardVariationalBoundsEventuallyLogSubLtMaynardM": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "GPY–Maynard sieve"},
   "MathlibExt/NumberTheory/MelhamGibonacci": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/MersenneEtaCondition": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
   "MathlibExt/NumberTheory/MersenneOmega": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
