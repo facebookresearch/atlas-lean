@@ -1,6 +1,8 @@
 # Byzantine generals problem
 
-A commander sends an order to the other generals, some of whom, possibly including the commander, are traitors; the loyal generals must agree (IC1), on the commander's order if it is loyal (IC2). The model on these pages is synchronous (lock-step rounds), with Byzantine failures (a traitor may send anything to anyone, differently to each recipient), on a complete network of reliable links on which a receiver knows the sender of every message, without signatures ("oral messages"). With at least three generals and two orders the problem is solvable with at most $m$ traitors exactly when there are more than $3m$ generals.
+A commander sends an order to the other generals, some of whom, possibly including the commander, are traitors; the loyal generals must agree (IC1), on the commander's order if it is loyal (IC2). The oral-message model uses synchronous rounds, arbitrary Byzantine failures, and a complete network of reliable links on which receivers know the sender, but no signatures. With at least three generals and two orders it is solvable with at most $m$ traitors exactly when there are more than $3m$ generals.
+
+The signed-message model instead uses ideal authentication. The agreement and validity result for its completed histories does not require that population bound.
 
 - [Oral-message protocol](oral-protocol.md)
 - [Local views determine states](states-eq-of-inbox-eq.md)
@@ -40,6 +42,28 @@ A commander sends an order to the other generals, some of whom, possibly includi
 - [Oral messages, run as a protocol, solve the Byzantine generals problem](solves-to-protocol.md)
 - [The oral messages algorithm as an oral-message protocol](to-protocol.md)
 - [Solvability of the Byzantine generals problem with oral messages](exists-solves-iff-three-mul-lt-card.md)
+- [Byzantine agreement with signed messages](byzantine-agreement-with-signed-messages.md)
+
+## Signed-message model
+
+- [Message](message.md)
+- [Phase](phase.md)
+- [Event](event.md)
+- [History](history.md)
+- [Initial](initial.md)
+- [Relay](relay.md)
+- [Proper](proper.md)
+- [May Forward](may-forward.md)
+- [Relay Target](relay-target.md)
+- [Accepts](accepts.md)
+- [Orders Before](orders-before.md)
+- [Orders](orders.md)
+- [Learns](learns.md)
+- [Follows SM](follows-sm.md)
+- [Choice](choice.md)
+- [Decision](decision-2.md)
+- [Orders eq](orders-eq.md)
+- [Orders eq singleton](orders-eq-singleton.md)
 
 ## Related topics
 
@@ -48,4 +72,4 @@ A commander sends an order to the other generals, some of whom, possibly includi
 
 ## Sources
 
-- L. Lamport, R. Shostak, M. Pease, *The Byzantine Generals Problem*, ACM Transactions on Programming Languages and Systems 4(3), July 1982, 382–401: Section 1 (the problem, IC1 and IC2, p. 384), Section 2 (impossibility with oral messages, pp. 384–386, footnote 1 on two generals), Section 3 (assumptions A1–A3, Algorithm OM(m), Lemma 1 and Theorem 1, pp. 387–390).
+- L. Lamport, R. Shostak, M. Pease, *The Byzantine Generals Problem*, ACM Transactions on Programming Languages and Systems 4(3), July 1982, 382–401: Section 1 (the problem, IC1 and IC2, p. 384), Section 2 (impossibility with oral messages, pp. 384–386, footnote 1 on two generals), Section 3 (assumptions A1–A3, Algorithm OM(m), Lemma 1 and Theorem 1, pp. 387–390), and Section 4 (the signed-messages algorithm and Theorem 2).

@@ -341,30 +341,8 @@ public theorem_wanted maximumNimGrundy_eq_F_of_not_dvd (k x : ℕ) (hk : 2 ≤ k
      (hkx : ¬k ∣ x) :
     maximumNimGrundy (· / k) x = maximumNimGrundy (· / k) ((k - 1) * x / k)
 
-/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
-number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
-Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
-public theorem_wanted maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
-    (hj : 1 ≤ j) (hjk : j ≤ k) :
-    maximumNimGrundy (· / k) (k - j) = 0
-
-/-- **A Maximum Nim non-divisibility lemma for $i \ne h$.** Let $k, n, t, h, i$ be natural numbers
-with $t \ge 1$, $h \ge 1$, $k = nt + h$ and $h \le n$. If $1 \le i \le n$ and $i \ne h$, then $k$
-does not divide $n(k - t) - i$.
-
-The hypotheses force $n \ge 1$, $t \le k$ and $i \le n(k - t)$, so both subtractions are ordinary
-differences of natural numbers.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 4(ii) (`integers-2024-G5-lem-4`). -/
-public theorem_wanted maximumNim_not_dvd_mul_sub_of_ne (k n t h i : ℕ)
-    (ht : 1 ≤ t) (hh : 1 ≤ h)
-    (hdecomp : k = n * t + h) (hhn : h ≤ n)
-    (hi : 1 ≤ i) (hin : i ≤ n) (hih : i ≠ h) :
-    ¬k ∣ n * (k - t) - i
+-- Lemma 4(ii) is proved as `maximumNim_not_dvd_mul_sub_of_ne` in
+-- `MathlibExt.Combinatorics.MaximumNimJosephus`, which this module publicly imports.
 
 /-- **Floor-rule Maximum Nim: Grundy reduction when $n = kt + u$.** Let $k$, $t$, $u$ and $n$ be
 natural numbers with $k \ge 2$, $t \ge 1$, $u \le k - 1$ and $n = kt + u$. Write $G(x)$ for the

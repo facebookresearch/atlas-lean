@@ -47,6 +47,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import MathlibExt.Combinatorics.Enumerative.DowlingExponentialGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTwoRuns
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
+public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBWord
 public import MathlibExt.Combinatorics.Enumerative.QRWhitneyNumbers
 public import MathlibExt.NumberTheory.QRDowlingPolynomial
 
@@ -108,15 +109,6 @@ public theorem_wanted isGreatest_flattenedStirling_runCount (n : ℕ) (hn : 1 �
         IsStirlingPermutation n w ∧ IsFlattenedWord w ∧ wordRunCount w = r}
       ⌈(2 * n : ℚ) / 3⌉₊
 
-/-- **Closed form for flattened Stirling permutations with two runs.** For every natural number
-$n \ge 1$, the number $|\mathrm{flat}_2(Q_{n+1})|$ of flattened Stirling permutations of order
-$n + 1$ with exactly two runs equals $3(2^n - 1) - 2n$.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Corollary 2. -/
-public theorem_wanted flattenedStirlingRunCount_two_closed (n : ℕ) (hn : 1 ≤ n) :
-    (flattenedStirlingRunCount (n + 1) 2 : ℤ) = 3 * (2 ^ n - 1) - 2 * n
-
 /-- **A binomial–Stirling formula for flattened Stirling permutations.** For every natural number
 $n$, the number of flattened Stirling permutations of order $n + 1$ is
 $$
@@ -145,21 +137,6 @@ public theorem_wanted dowling_eq_sum (n : ℕ) (hn : 1 ≤ n) :
     qrDowlingNumber (QRWhitney.whitneySecond 2 1 1) n =
       ((∑ i ∈ Finset.range (n + 1), n.choose i *
         ∑ k ∈ Finset.range (n - i + 1), 2 ^ (n - i - k) * Nat.stirlingSecond (n - i) k : ℕ) : ℂ)
-
-/-- **The word of a type $B$ set partition is a flattened Stirling permutation.** For every
-natural number $n$ and every type $B$ set partition $P$ of $[-n, n] = \{-n, \dots, n\}$, the word
-$\varphi(P) = w_1 w_2 \cdots w_{2(n+1)}$ of $P$ is a Stirling permutation of order $n + 1$ and is
-flattened.
-
-Source: arXiv:2306.13034, Proposition 3.6; the INTEGERS record is truncated after
-"let `π_i = N_i P_i` be as in", and the statement is completed from the arXiv text.
-
-Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
-Permutations*, INTEGERS 24 (2024), Article A104, Proposition 1. -/
-public theorem_wanted typeBFlattenedWord_mem_flattenedStirling {n : ℕ}
-    (P : Finpartition (Finset.Icc (-(n : ℤ)) n)) (hP : IsTypeBSetPartition P) :
-    IsStirlingPermutation (n + 1) (typeBFlattenedWord P) ∧
-      IsFlattenedWord (typeBFlattenedWord P)
 
 /-- **The map $\varphi$ is a bijection from type $B$ set partitions onto flattened Stirling
 permutations.** For a natural number $n$, let $\varphi$ be the map of Buck et al.

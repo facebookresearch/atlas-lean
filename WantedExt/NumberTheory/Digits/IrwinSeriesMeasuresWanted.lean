@@ -12,7 +12,10 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Analysis.Series.RiemannRearrangement
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasures
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesLeadingIntegral
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIrwinSumZeroLowerBounds
 
 namespace MetaMathlibExt
 
@@ -131,35 +134,6 @@ public theorem_wanted irwinSum_strictAnti_and_tendsto
     (d = 0 → StrictAnti (irwinSum b d)) ∧
     Tendsto (irwinSum b d) atTop (nhds ((b : ℝ) * Real.log b))
 
-/-- **Lower bounds for the Irwin sum without the digit.** Let $b > 2$ be a base and let $d$ be a
-nonzero digit, $0 < d < b$. Let $H^{(0)}$ be the Irwin sum of $1/n$ over the positive integers $n$
-whose base-$b$ expansion does not contain $d$. Then
-$b \log b - b \log(1 + 1/d) < H^{(0)}$ and $b \log(b/2) < H^{(0)}$.
-
-Source:
-Jean-François Burnol, *Measures for the Summation of Irwin Series*, INTEGERS 26
-(2026), Article A11, Proposition 2. -/
-public theorem_wanted irwinSum_zero_lowerBounds
-    (b d : ℕ) (hb : 2 < b) (hd : d < b) (hd0 : d ≠ 0) :
-    (b : ℝ) * Real.log b - (b : ℝ) * Real.log (1 + 1 / (d : ℝ)) <
-      irwinSum b d 0 ∧
-    (b : ℝ) * Real.log ((b : ℝ) / 2) < irwinSum b d 0
-
-/-- **Prefix reciprocal sums as integrals against the Irwin measure.** Let $b > 1$ and $d < b$
-be natural numbers, let $n > 0$ and $k$ be natural numbers, let $k(n)$ be the number of
-occurrences of the digit $d$ in the base-$b$ representation of $n$, and let $\mu_k$ be the Irwin
-measure of base $b$ and digit $d$ with index $k$. Then the family that assigns $1/m$ to each
-positive integer $m$ whose base-$b$ representation begins with that of $n$ and contains exactly
-$k(n) + k$ occurrences of $d$, and $0$ to every other natural number $m$, is summable with sum
-$\int_{[0,1)} \frac{1}{n + x}\, d\mu_k(x)$.
-
-Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
-INTEGERS 26 (2026), Article A11, Proposition 4. -/
-public theorem_wanted integral_eq_leadingReciprocal_hasSum
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (n k : ℕ) (hn : 0 < n) :
-    HasSum (leadingReciprocalTerm b d (digitCount b d n + k) n)
-      (∫ x in Set.Ico (0 : ℝ) 1, ((n : ℝ) + x)⁻¹ ∂irwinMeasure b d k hd)
-
 /-- **Prefix sums as alternating ordinary-moment series.** Let $b > 1$, let $d < b$ be a digit, let
 $n$ be a positive integer, let $k(n)$ be the number of occurrences of $d$ in the base-$b$
 expansion of $n$, and let $k \ge k(n)$. Write $u_{j;m} = \int_{[0,1)} x^m \, d\mu_j(x)$ for the
@@ -262,36 +236,6 @@ public theorem_wanted integral_irwinMeasure_zero
         ∑ a ∈ Finset.range b,
           if a = d then 0 else
             ∫ x in Set.Ico (0 : ℝ) 1, f (a + x) ∂irwinMeasure b d 0 hd
-
-/-- **Local structure of the Irwin measures on open intervals.** Let $b > 1$ and $d < b$ be
-natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and
-digit $d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least
-natural number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read
-most significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the
-number of occurrences of $d$ in $X$. Let $l' \ge l$ be a natural number, put $j' = j$ if $d > 0$
-and $j' = j + l' - l$ if $d = 0$, and let $U \subseteq (x, x + b^{-l'})$. Then for every natural
-number $k$: if $k < j'$ then $\mu_k(U) = 0$, and if $k \ge j'$ then, as real numbers,
-$\mu_k(U) = b^{-l'} \mu_{k-j'}(b^{l'} U - b^{l'} x)$, where $b^{l'} U - b^{l'} x$ is the image
-of $U$ under $y \mapsto b^{l'} y - b^{l'} x$.
-
-Source: Jean-François Burnol,
-*Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
-Lemma 2. -/
-public theorem_wanted irwinMeasure_open_local_mass
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ) (l : ℕ)
-    (hx : x ∈ Set.Ico (0 : ℝ) 1) (hdepth : HasBaseDepth b x l)
-    (X : List (Fin b)) (hXlen : X.length = l)
-    (hXval : normalizedStringValue b X = x) (j : ℕ)
-    (hj : j = X.count ⟨d, hd⟩) (l' : ℕ) (hll' : l ≤ l')
-    (U : Set ℝ)
-    (hU : U ⊆ Set.Ioo x (x + (b : ℝ) ^ (-(l' : ℤ)))) (k : ℕ) :
-    (k < (if 0 < d then j else j + l' - l) →
-      irwinMeasure b d k hd U = 0) ∧
-    ((if 0 < d then j else j + l' - l) ≤ k →
-      (irwinMeasure b d k hd U).toReal =
-        (b : ℝ) ^ (-(l' : ℤ)) *
-          (irwinMeasure b d (k - (if 0 < d then j else j + l' - l)) hd
-            (affineScaleSet b l' x U)).toReal)
 
 /-- **Local structure of the Irwin measures on half-open intervals.** Let $b > 1$ and $d < b$ be
 natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and

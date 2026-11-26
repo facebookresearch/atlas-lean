@@ -16,3 +16,4 @@ Algebraic models of concurrent processes: labelled transition systems and their 
 - [Weak bisimilarity and observation congruence in finite CCS](weak-bisimilarity-and-observation-congruence-in-2/README.md)
 - [Finite-state CCS agents](finite-state-ccs-agents/README.md)
 - [π-calculus](calculus/README.md)
+- [Process algebra laws](process-algebra-laws/README.md)

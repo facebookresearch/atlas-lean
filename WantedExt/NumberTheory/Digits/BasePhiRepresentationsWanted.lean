@@ -10,6 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
+public import MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
+public import MathlibExt.NumberTheory.Digits.BergmanWordFib
 public import MathlibExt.NumberTheory.Digits.FibMemLucasIntervals
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -64,24 +66,6 @@ public theorem_wanted knottExpansionCount_eq_of_recursion (N : ℕ) (hN : 2 ≤ 
       (Even (s k) → 2 * r k = (s k + 2) * r (k - 1)) ∧
       (Odd (s k) → 2 * r k = (s k + 3) * r (k - 1) - 2 * r (k - 2))) :
     (knottExpansionCount N : ℤ) = r n
-
-/-- **Bergman expansions of the Fibonacci numbers.** Let $n \ge 1$ and write $F_m$ for the $m$-th
-Fibonacci number, with $F_1 = F_2 = 1$. Let $S$ be a finite set of integers with no two
-consecutive elements (a Bergman expansion). If the base phi value of $S$ is $F_{2n}$, then
-$S = \{t + 4j : 0 \le j < n\}$ for some integer $t$. If the base phi value of $S$ is
-$F_{2n+1}$, then $S = \{t\} \cup \{t + 3 + 4j : 0 \le j < n\}$ for some integer $t$.
-
-Read from the highest to the lowest position, these are the digit words $(1000)^{n-1}1$ and
-$(1000)^{n-1}1001$; the position of the radix point is not determined.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Proposition 3.1
-(`fq-2024-dekking11102023-prop-3.1`). -/
-public theorem_wanted bergmanWord_fib (n : ℕ) (hn : 1 ≤ n) :
-    (∀ S : Finset ℤ, IsBergmanExpansion S → basePhiValue S = Nat.fib (2 * n) →
-      ∃ t : ℤ, S = (Finset.range n).image fun j : ℕ => 4 * (j : ℤ) + t) ∧
-    (∀ S : Finset ℤ, IsBergmanExpansion S → basePhiValue S = Nat.fib (2 * n + 1) →
-      ∃ t : ℤ, S = insert t ((Finset.range n).image fun j : ℕ => 4 * (j : ℤ) + 3 + t))
 
 /-- **Knott expansions of Fibonacci numbers.** Let $F_n$ be the Fibonacci numbers ($F_0 = 0$,
 $F_1 = 1$). For every $n \ge 1$, the number of Knott expansions of $F_n$ is $F_n$.
@@ -175,22 +159,6 @@ public theorem_wanted bergman_lowest_position_lucasInterval (N n : ℕ) {S : Fin
     (N ∈ Set.Icc (lucasNumber (2 * n)) (lucasNumber (2 * n + 1)) → -R = 2 * n) ∧
       (N ∈ Set.Icc (lucasNumber (2 * n + 1) + 1) (lucasNumber (2 * n + 2) - 1) →
         -R = 2 * n + 2)
-
-/-- **Bergman expansion of $L_{2n} + k$.** Let $n \ge 1$ and let $k$ be a natural number with
-$k \le L_{2n-1}$, where $L_m$ is the $m$-th Lucas number. Let $S$ and $T$ be finite sets of
-integers, each with no two consecutive elements (Bergman expansions), whose base phi values are
-$k$ and $L_{2n} + k$ respectively. Then $2n \notin S$, $-2n \notin S$, and
-$T = S \cup \{2n, -2n\}$.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Theorem 5.2 I,
-quoting F. M. Dekking, *How to add two numbers in base phi*
-(`fq-2024-dekking11102023-thm-5.2`). -/
-public theorem_wanted bergman_lucas_even_add (n k : ℕ) (hn : 1 ≤ n)
-    (hk : k ≤ lucasNumber (2 * n - 1)) {S T : Finset ℤ}
-    (hS : IsBergmanExpansion S) (hSk : basePhiValue S = k)
-    (hT : IsBergmanExpansion T) (hTN : basePhiValue T = (lucasNumber (2 * n) + k : ℕ)) :
-    (2 * n : ℤ) ∉ S ∧ -(2 * n : ℤ) ∉ S ∧ T = insert (2 * n : ℤ) (insert (-(2 * n : ℤ)) S)
 
 /-- **Recursive structure of Bergman expansions, odd Lucas case.** Let $n \ge 2$, let $k$ be a
 natural number, and write $L_m$ for the $m$-th Lucas number. Call a finite set of integers with no

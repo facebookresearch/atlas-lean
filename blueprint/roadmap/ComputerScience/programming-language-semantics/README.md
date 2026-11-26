@@ -21,3 +21,12 @@ Operational and denotational semantics of programming languages and correctness 
 - [PCF and computational adequacy](pcf-and-computational-adequacy/README.md)
 - [Read-cost semantics of the imperative language with arrays](read-cost-semantics-of-the-imperative-language-w/README.md)
 - [Models of the untyped lambda calculus](models-of-the-untyped-lambda-calculus/README.md)
+
+- [Lexing and parsing](lexing-and-parsing/README.md)
+- [Static analysis](static-analysis/README.md)
+- [Compiler correctness](compiler-correctness/README.md)
+- [Abstract machines and equivalence](abstract-machines-and-equivalence/README.md)
+- [Effects modules and logic programming](effects-modules-and-logic-programming/README.md)
+- [Domain theoretic models](domain-theoretic-models/README.md)
+- [Intermediate representations](intermediate-representations/README.md)
+- [Garbage collection](garbage-collection/README.md)
