@@ -111,21 +111,6 @@ public theorem_wanted one_metered_last_spot_n_card {m n : ℕ} (hm : 1 ≤ m) (h
         (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ))).getLast? = some (some (n - 1))).card =
       meteredParkingCount 1 (m - 1) n
 
-/-- **Lucas-type recursion for 1-metered parking functions.** Write $\mathrm{mpf}_{m,n}(1)$ for
-the number of $1$-metered $(m, n)$-parking functions. For every natural number $n$,
-$\mathrm{mpf}_{1,n}(1) = n$ and $\mathrm{mpf}_{0,n}(1) = 1$, and for every natural number $m$
-with $1 \le m \le n$,
-$$\mathrm{mpf}_{m+1,n}(1) = n \cdot \mathrm{mpf}_{m,n}(1) - \mathrm{mpf}_{m-1,n}(1),$$
-where the subtraction is taken in the integers.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Theorem 2 (`integers-2025-A73-thm-2`). -/
-public theorem_wanted meteredParkingCount_one_recursion (n : ℕ) :
-    meteredParkingCount 1 1 n = n ∧ meteredParkingCount 1 0 n = 1 ∧
-      ∀ m, 1 ≤ m → m ≤ n →
-        (meteredParkingCount 1 (m + 1) n : ℤ) =
-          n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n
-
 /-- **1-metered parking functions with as many cars as spots.** For every natural number
 $n > 2$, the number of $1$-metered $(n, n)$-parking functions is
 $$\mathrm{mpf}_{n,n}(1) = \sum_{k=0}^{n} (n-2)^{n-k} \binom{2n+1-k}{k}.$$
