@@ -19,7 +19,7 @@ universe u v
 variable (R : Type u) (A : Type v) [CommRing R] [CommRing A]
 
 /-- Consumer exercising the Cartier dual with its original binders. -/
-theorem cartierDual_exactSource [Bialgebra R A] [Module.Finite R A] [Module.Free R A]
+private theorem cartierDual_exactSource [Bialgebra R A] [Module.Finite R A] [Module.Free R A]
     (φ ψ : CartierDual R A) (a : A) :
     (φ * ψ) a = TensorProduct.dualDistrib R A A
       (CartierDual.toDual R A φ ⊗ₜ[R] CartierDual.toDual R A ψ) (Coalgebra.comul a) :=
