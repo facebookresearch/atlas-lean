@@ -1198,3 +1198,5 @@ Topics added since this subject's fields were last revised.
 - [Faltings Height](faltings-height/README.md)
 - [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
+- [Formal Group](formal-group/README.md)
+- [Formal Group Law](formal-group-law/README.md)
