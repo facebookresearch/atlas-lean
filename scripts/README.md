@@ -58,3 +58,23 @@ The inventory generator and optimizer use the pinned Lean tools, compile isolate
 candidates, and compare owned declarations before saving patches. They never apply
 those patches to library sources. Python regressions run in preflight; native
 optimization and its smoke test are explicit commands, not CI-wide import rewrites.
+
+## Linter checks
+
+`.github/workflows/linters.yml` (`mathlib linters`) reports Mathlib's linters on the code a pull
+request adds, so code already on `main` never shows up. It builds the changed Lean files of the
+five production libraries once (`scripts/lean_changes.py build --base <ref>`), then runs:
+
+- `scripts/check_syntax_linters.py`: the warnings of Mathlib's standard linter set, which
+  `lakefile.toml` turns on, on added lines, read from the build with `lake lint`;
+- `scripts/check_env_linters.py`: the findings of `#lint`'s environment linters (`runLinter`) on
+  the declarations the change adds. A declaration counts as added when the change adds the line
+  that declares it, below its docstring and attributes, and no declaration of that name is in
+  the changed files at the base, so documenting, tagging, editing or moving an existing
+  declaration does not report it;
+- `scripts/check_text_linters.py`: Mathlib's `lint-style` errors on added lines, and the module
+  names of added or renamed files.
+
+Each takes `--base <ref>` and exits 1 on a finding, 0 with `--report-only` (as CI runs them),
+and 2 when it cannot run. `scripts/linters_self_test.py` runs all three on a probe module;
+CI runs it when a pull request changes them.
