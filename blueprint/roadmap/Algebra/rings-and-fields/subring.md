@@ -1,0 +1,9 @@
+# Subrings not required to contain 1
+
+For rings that need not have an identity, as in Dummit and Foote, a subring of a ring $R$ is a subset $S$ that is a subgroup of the additive group of $R$ and is closed under multiplication: $ab \in S$ for all $a, b \in S$. Mathlib's non-unital subrings package exactly these subsets. Let $R$ be a ring whose multiplication need not be associative and which need not have an identity. A *non-unital subring* of $R$ is a subset $S$ that contains $0$ and is closed under addition, negation and multiplication, together with the proofs of these closure properties; forgetting the proofs gives back the subset. Here non-unital means that $1$ is not required to belong to $S$, not that $S$ contains no identity: a subring that contains $1$ also qualifies, while $2\mathbb{Z} \subseteq \mathbb{Z}$ is a non-unital subring that does not contain $1$. A subset that contains $0$ and is closed under addition and negation is exactly an additive subgroup, so the closure conditions are those of the familiar definition.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for non-unital subsemirings: subsets that contain $0$ and are closed under addition and multiplication: `NonUnitalSubsemiring`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/NonUnitalSubsemiring/Defs.lean#L125-L128.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for additive subgroups: `AddSubgroup`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Group/Subgroup/Defs.lean#L300-L304.
