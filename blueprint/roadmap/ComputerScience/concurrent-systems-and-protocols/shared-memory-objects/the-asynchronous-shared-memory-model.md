@@ -19,5 +19,5 @@ crash-stop failures.
 
 ## Sources
 
-- J. Aspnes, *Notes on Theory of Distributed Systems*, Yale University, 2020, <https://arxiv.org/abs/2001.04235>, the chapter "Model" of Part II (shared memory), sections on atomic registers and on fairness and crashes
+- J. Aspnes, [*Notes on Theory of Distributed Systems*](https://arxiv.org/abs/2001.04235v6), arXiv:2001.04235v6 (2026), Chapter 16, §16.1 (Atomic registers) and §16.3 (Fairness and crashes)
 - M. Herlihy, "Wait-free synchronization", *ACM Transactions on Programming Languages and Systems* 13(1):124–149, 1991

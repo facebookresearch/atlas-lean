@@ -1,4 +1,4 @@
-# Step
+# Shared-memory transition rules
 
 Valid scheduled transitions. The operation must be the one chosen by the running process;
 its reply determines that process's next local state, and the process halts if that state has

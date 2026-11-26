@@ -82,6 +82,16 @@ private theorem steadyReader : Step registers afterReaderRead (.operate true fal
     afterReaderRead :=
   .operate (s := (9 : Nat)) (resume := id) rfl rfl rfl rfl (fun _ _ => rfl) (fun _ _ => rfl)
 
+-- An empty schedule has exactly the initial configuration, including as its final state.
+example : FiniteExecution registers [] registers.initial [registers.initial] :=
+  LTS.Execution.refl _
+
+example (last : Configuration registers) (configurations : List (Configuration registers))
+    (run : FiniteExecution registers [] last configurations) :
+    last = registers.initial ∧ configurations = [registers.initial] := by
+  cases run
+  exact ⟨rfl, rfl⟩
+
 example : FiniteExecution registers
     [.operate false false (.swap 9), .operate false false .read, .operate true false .read]
     afterReaderRead [registers.initial, afterSwap, afterFinalRead, afterReaderRead] :=

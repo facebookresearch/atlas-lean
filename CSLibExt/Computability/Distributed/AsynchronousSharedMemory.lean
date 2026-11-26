@@ -13,11 +13,17 @@ public import Cslib.Foundations.Semantics.LTS.OmegaExecution
 /-!
 # The asynchronous shared-memory model
 
-This is the interleaving model of Aspnes, *Notes on Theory of Distributed Systems*,
-Chapter 16, §§16.1 and 16.3. Each atomic operation acts on a single shared object and
-returns a value to the process that issued it. A chosen schedule determines the order
-of steps; there is no clock and there are no simultaneous operations. A process halts
-as soon as it has no next operation. A crash is a separate event that does not access memory.
+This is the interleaving model for atomic shared objects. Each atomic operation acts on a
+single shared object and returns a value to the process that issued it. A chosen schedule
+determines the order of steps; there is no clock and there are no simultaneous operations.
+A process halts as soon as it has no next operation. A crash is a separate event that does not
+access memory.
+
+## References
+
+- James Aspnes, [*Notes on Theory of Distributed Systems*](https://arxiv.org/abs/2001.04235v6),
+  arXiv:2001.04235v6 (2026), Chapter 16, §16.1 (Atomic registers) and
+  §16.3 (Fairness and crashes).
 -/
 
 namespace Cslib.Distributed.AsynchronousSharedMemory
