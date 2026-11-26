@@ -12,3 +12,10 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Bistable reaction–diffusion with a Robin migration boundary](bistable-reaction-diffusion-with-robin-migration-boundary/README.md)
+- [Chemotactic search in shear flow](chemotactic-search-in-shear-flow/README.md)
+- [Chemotaxis-enhanced reaction rates](chemotaxis-enhanced-reaction-rates/README.md)
+- [Kinetic models of collective alignment](kinetic-models-of-collective-alignment/README.md)
+- [Kinetic models of swarming alignment](kinetic-models-of-swarming-alignment/README.md)
+- [Reaction enhancement by chemotaxis](reaction-enhancement-by-chemotaxis/README.md)
+- [Wavetrains of generalized predator–prey reaction–diffusion systems](wavetrains-of-generalized-predator-prey-reaction-diffusion/README.md)
