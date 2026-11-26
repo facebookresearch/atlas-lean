@@ -9398,6 +9398,7 @@
   "MathlibExt/AlgebraicGeometry/PullbackPoints": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/Sections": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/SeshadriConstant": {"to": "AlgebraicGeometry/birational-geometry", "title": "Seshadri constants of points in the plane"},
+  "MathlibExt/AlgebraicGeometry/SeshadriConstantSubmaximalUpperBoundWanted": {"to": "AlgebraicGeometry/birational-geometry", "title": "Seshadri constants of points in the plane"},
   "MathlibExt/AlgebraicGeometry/SmoothKrullDim": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Smooth morphisms"},
   "MathlibExt/AlgebraicGeometry/SmoothReduced": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Smooth morphisms"},
   "MathlibExt/AlgebraicGeometry/SmoothReducedSource": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Smooth morphisms"},
