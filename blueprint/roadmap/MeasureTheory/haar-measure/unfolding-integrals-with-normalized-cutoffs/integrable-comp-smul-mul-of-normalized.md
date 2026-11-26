@@ -1,0 +1,3 @@
+# Integrability of the unfolded kernel of a normalized cutoff
+
+Let a group $A$, with measurable inversion, act measurably on a measurable space $X$ (the action map $A \times X \to X$ is measurable), let $\tau$ be an s-finite measure on $A$ that is invariant under inversion, and let $\mu$ be an s-finite measure on $X$ preserved by every map $x \mapsto a \cdot x$. Let $g : X \to \mathbb{C}$ be measurable and $\mu$-integrable and $w : X \to [0,\infty)$ a measurable cutoff with $\int_A w(a \cdot x)\, d\tau(a) = 1$ whenever $g(x) \neq 0$. No invariance of $g$ is assumed. Then $(a, x) \mapsto g(a \cdot x)\, w(x)$ is integrable on $A \times X$ for $\tau \otimes \mu$.
