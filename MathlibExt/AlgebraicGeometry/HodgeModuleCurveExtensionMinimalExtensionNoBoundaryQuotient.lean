@@ -209,9 +209,12 @@ private theorem descend_constants
     simpa only [A, LinearMap.add_apply, LinearMap.smul_apply, one_apply_eq_self] using
       (hy ▸ hp)
 
-/-- For unipotent rational monodromy `(T - 1)^b = 0` with `b > 0`, the
-connection uses the logarithm truncated below degree `b`. A stable submodule
-agreeing with the minimal extension after inverting the actual parameter
+end MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension
+
+namespace WantedExt.AlgebraicGeometry.HodgeModuleCurveExtensionWanted
+
+/-- The constructed differential module has no nonzero boundary-supported
+quotient: a stable submodule agreeing after inverting the actual parameter
 is already the entire minimal extension. -/
 public theorem minimal_extension_no_boundary_quotient
     (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
@@ -263,29 +266,5 @@ public theorem minimal_extension_no_boundary_quotient
     lattice_le_of_constants V C r e P
       (descend_constants V C r e w H b (log_nilpotent V C r e w H b hb hT) P hstable N hall)
   exact le_antisymm hP (sInf_le ⟨hlattice, hstable⟩)
-
-end MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension
-
-namespace WantedExt.AlgebraicGeometry.HodgeModuleCurveExtensionWanted
-
-/-- The constructed differential module has no nonzero boundary-supported
-quotient: a stable submodule agreeing after inverting the actual parameter
-is already the entire minimal extension. -/
-public theorem minimal_extension_no_boundary_quotient
-    (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
-    (C : RationalComplexification V) (r : ℕ)
-    (e : C.complexSpace ≃ₗ[ℂ] EuclideanSpace ℂ (Fin r)) (w : ℤ)
-    (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)
-    (hT : (H.rationalDeck.toLinearMap - 1) ^ b = 0)
-    (P : Submodule LocalPowerSeries (Fin r → LocalMeromorphicSeries))
-    (hP : P ≤ minimalModule C e H b)
-    (hstable : ∀ v, v ∈ P → formalConnection C e H b v ∈ P)
-    (hgeneric : ∀ v, v ∈ minimalModule C e H b → ∃ n : ℕ,
-      (algebraMap LocalPowerSeries LocalMeromorphicSeries PowerSeries.X) ^ n • v ∈ P) :
-    P = minimalModule C e H b
-    := by
-  exact
-    MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension.minimal_extension_no_boundary_quotient
-      V C r e w H b hb hT P hP hstable hgeneric
 
 end WantedExt.AlgebraicGeometry.HodgeModuleCurveExtensionWanted

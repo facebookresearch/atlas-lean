@@ -31,6 +31,7 @@ open CategoryTheory
 open MathlibExt.Geometry.RationalHodgeStructures
 open MathlibExt.Geometry.LimitingHodgeStructures
 open MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension
+open WantedExt.AlgebraicGeometry.HodgeModuleCurveExtensionWanted
 
 example
     (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
