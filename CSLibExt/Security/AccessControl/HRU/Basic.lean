@@ -41,13 +41,15 @@ right can leak.
 
 ## Implementation notes
 
-The access matrix is a function on all pairs of names that is empty outside `S × O`, so a
-configuration of the paper is exactly one `Configuration`. The relations transcribe the paper's
-definitions. In particular a primitive operation whose precondition fails yields no
-configuration, so a command whose condition holds but one of whose operations cannot be executed
-has no successor (the paper's remark on the command `α(X, Y, Z)` just before Example 2), while a
-command whose condition fails leaves the configuration unchanged. Generic rights form an arbitrary
-type `R`, which the paper takes finite; these definitions do not use finiteness.
+Subjects and objects are names from a type `N`. The paper takes each created subject or object
+to be a new symbol, so its model is the case of an infinite type `N`; with a finite `N` creation
+can fail for lack of names. The access matrix is a function on all pairs of names that is empty
+outside `S × O`, so a configuration of the paper is exactly one `Configuration`. The relations
+transcribe the paper's definitions. In particular a primitive operation whose precondition fails
+yields no configuration, so a command whose condition holds but one of whose operations cannot
+be executed has no successor (the paper's remark on the command `α(X, Y, Z)` just before
+Example 2), while a command whose condition fails leaves the configuration unchanged. Generic
+rights form an arbitrary type `R`, which the paper takes finite; nothing below uses this.
 
 ## References
 
@@ -99,7 +101,8 @@ end PrimOp
 system with generic rights in `R` and names in `N`: a set `S` of subjects, a finite set `O ⊇ S`
 of objects, and an access matrix `P` giving the set `P[s, o]` of rights of each subject `s ∈ S`
 to each object `o ∈ O`. The matrix is a function on all pairs of names that is empty outside
-`S × O`. -/
+`S × O`. The paper takes each created subject or object to be a new symbol, so its model is the
+case of an infinite type `N`; with a finite `N` creation can fail for lack of names. -/
 @[ext]
 structure Configuration (R N : Type*) where
   /-- The set `S` of current subjects. -/
@@ -228,6 +231,7 @@ structure Command (R : Type*) where
   condition : List (R × Fin arity × Fin arity)
   /-- The body: the primitive operations `op₁, …, op_n`, in the order they run. -/
   body : List (PrimOp R (Fin arity))
+  deriving DecidableEq
 
 namespace Command
 
@@ -287,11 +291,13 @@ def Leaks (r : R) (Q : Configuration R N) : Prop :=
 
 /-- **Protection systems in the access-matrix model.** A protection system in the model of
 Harrison, Ruzzo and Ullman, with generic rights in a type `R`, is a finite set of commands; the
-paper takes the set of generic rights finite, which these definitions do not use. A configuration
-is a triple `(S, O, P)` of a set `S` of subjects, a finite set `O ⊇ S` of objects, both made of
-names from a type `N`, and an access matrix `P` assigning to each pair `(s, o) ∈ S × O` a set
-`P[s, o] ⊆ R` of rights. The matrix is recorded as a function on all pairs of names that is empty
-outside `S × O`, so each configuration of the paper is recorded in exactly one way.
+paper takes the set of generic rights finite, and nothing below uses it. A configuration is a
+triple `(S, O, P)` of a set `S` of subjects, a finite set `O ⊇ S` of objects, both made of names
+from a type `N`, and an access matrix `P` assigning to each pair `(s, o) ∈ S × O` a set
+`P[s, o] ⊆ R` of rights. The paper takes each created subject or object to be a new symbol, so its
+model is the case of an infinite type `N`; with a finite `N` creation can fail for lack of names.
+The matrix is recorded as a function on all pairs of names that is empty outside `S × O`, so each
+configuration of the paper is recorded in exactly one way.
 
 Each command `α(X₁, …, X_k)` has formal parameters, a condition that is a conjunction of tests
 `r ∈ P[X_i, X_j]`, and a body that is a sequence of primitive operations: enter `r` into

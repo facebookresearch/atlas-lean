@@ -247,11 +247,8 @@ abbrev conferRead : Command Right where
   condition := [(.own, (0 : Fin 3), (2 : Fin 3))]
   body := [(.enter .read 1 2 : PrimOp Right (Fin 3))]
 
-/-- Commands compared classically, to collect them in a finite set. -/
-noncomputable instance : DecidableEq (Command Right) := Classical.decEq _
-
 /-- The protection system with the commands `CREATE` and `CONFER_read`. -/
-noncomputable def files : ProtectionSystem Right := ⟨{create, conferRead}⟩
+def files : ProtectionSystem Right := ⟨{create, conferRead}⟩
 
 theorem create_mem : create ∈ files.commands := Finset.mem_insert_self _ _
 

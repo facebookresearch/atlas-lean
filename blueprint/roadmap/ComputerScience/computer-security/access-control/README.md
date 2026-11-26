@@ -1,9 +1,6 @@
 # Access control
 
 - [Protection systems in the access-matrix model](protection-systems-in-the-access-matrix-model.md)
-- [Safety is decidable for mono-operational protection systems](safety-is-decidable-for-mono-operational.md)
-- [Basic security theorem of Bell and LaPadula](basic-security-theorem-of-bell-and-lapadula.md)
-- [Safety is undecidable for protection systems](safety-is-undecidable-for-protection-systems.md)
 - [Primitive operations of the access-matrix model](prim-op.md)
 - [Substituting the operands of a primitive operation](map.md)
 - [Configurations of a protection system](configuration.md)
@@ -19,3 +16,6 @@
 - [A configuration leaks a right](leaks-2.md)
 - [A configuration that leaks a right is unsafe for it](unsafe-2.md)
 - [Unsafety propagates backwards along runs of commands](of-can-reach.md)
+- [Safety is decidable for mono-operational protection systems](safety-is-decidable-for-mono-operational.md)
+- [Basic security theorem of Bell and LaPadula](basic-security-theorem-of-bell-and-lapadula.md)
+- [Safety is undecidable for protection systems](safety-is-undecidable-for-protection-systems.md)
