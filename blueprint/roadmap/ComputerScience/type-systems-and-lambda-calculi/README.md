@@ -14,6 +14,7 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Normalization of the simply typed lambda calculus](normalization-of-the-simply-typed-lambda-calculu/README.md)
 - [Type checking for the simply typed lambda calculus](type-checking-for-the-simply-typed-lambda-calcul/README.md)
 - [Lambda calculus with references](lambda-calculus-with-references/README.md)
+- [Linear lambda calculus typing](linear-lambda-calculus-typing/README.md)
 - [Named and locally nameless terms](named-and-locally-nameless-terms/README.md)
 - [Syntax with binders](syntax-with-binders/README.md)
 
