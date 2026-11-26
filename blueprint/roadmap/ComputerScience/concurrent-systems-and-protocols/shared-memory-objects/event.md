@@ -1,3 +1,4 @@
 # Event
 
-One scheduled event: an atomic operation, a local halt, or a crash-stop event.
+One scheduled event: a running process performs its chosen atomic operation or crashes.
+Normal halting is part of entering a local state, not an event.

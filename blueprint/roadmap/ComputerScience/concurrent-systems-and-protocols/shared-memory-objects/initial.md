@@ -1,3 +1,3 @@
 # Initial
 
-The starting configuration, with every process running.
+The starting configuration. A process with no initial operation is already halted.

@@ -6,6 +6,8 @@ its local state determines both its next operation on a particular object and ho
 update its state on receiving the operation's reply. Each object has its own state and atomic
 operations, each of which takes the state of that object and returns a reply and a new state.
 The initial state of every process and object is specified.
+A process with no next operation is halted as soon as it enters that local state,
+including at initialization. Normal halting needs no additional scheduled event.
 
 The [configuration](configuration.md) collects all these states. A schedule picks one
 event at a time; the [transition rule](step.md) updates only the participating process

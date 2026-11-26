@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Basic.Finite.Defs
+public import Cslib.Foundations.Semantics.LTS.OmegaExecution
 
 /-!
 # The asynchronous shared-memory model
@@ -16,8 +16,8 @@ public import Mathlib.Basic.Finite.Defs
 This is the interleaving model of Aspnes, *Notes on Theory of Distributed Systems*,
 Chapter 16, §§16.1 and 16.3. Each atomic operation acts on a single shared object and
 returns a value to the process that issued it. A chosen schedule determines the order
-of steps; there is no clock and no simultaneous operation. Halting and crash-stop are
-distinct local events, neither of which accesses shared memory.
+of steps; there is no clock and there are no simultaneous operations. A process halts
+as soon as it has no next operation. A crash is a separate event that does not access memory.
 -/
 
 namespace Cslib.Distributed.AsynchronousSharedMemory
@@ -55,11 +55,20 @@ public structure Model where
   /-- The initial contents of each object. -/
   initialObject : (o : Object) → ObjectState o
   /-- A process selects one object, an operation, and how to continue with its reply.
-  Returning `none` means the process is ready to halt. -/
+  Returning `none` makes this a halting state. -/
   next : (p : Process) → LocalState p →
     Option (Σ o : Object, Σ op : Operation o, Reply o op → LocalState p)
   /-- An atomic operation produces a reply and the updated state of that object. -/
   apply : (o : Object) → (op : Operation o) → ObjectState o → Reply o op × ObjectState o
+
+/-- Classify a process's local state as halted when it has no next operation, and as running
+otherwise. This applies on initialization and on entry to a state after an operation, not on
+an additional turn of the schedule. -/
+@[expose] public def Model.localStatus (M : Model) (p : M.Process) (s : M.LocalState p) :
+    Status (M.LocalState p) :=
+  match M.next p s with
+  | none => .halted
+  | some _ => .running s
 
 /-- The vector of process states and the vector of shared object states at one point in a run. -/
 public structure Configuration (M : Model) where
@@ -68,36 +77,35 @@ public structure Configuration (M : Model) where
   /-- The state of every shared object. -/
   objectState : (o : M.Object) → M.ObjectState o
 
-/-- The starting configuration, with every process running. -/
+/-- The starting configuration. A process with no initial operation is already halted. -/
 @[expose] public def Model.initial (M : Model) : Configuration M where
-  processState p := .running (M.initialProcess p)
+  processState p := M.localStatus p (M.initialProcess p)
   objectState := M.initialObject
 
-/-- One scheduled event: an atomic operation, a local halt, or a crash-stop event. -/
+/-- One scheduled event: a running process performs its chosen atomic operation or crashes.
+Normal halting is part of entering a local state, not an event. -/
 public inductive Event (M : Model) where
   | operate (process : M.Process) (object : M.Object) (operation : M.Operation object)
-  | halt (process : M.Process)
   | crash (process : M.Process)
 
-/-- Valid scheduled transitions. The selected process alone can change local state.
-Only an atomic operation can change shared memory, and then only at its selected object. -/
+/-- Valid scheduled transitions. The operation must be the one chosen by the running process;
+its reply determines that process's next local state, and the process halts if that state has
+no next operation. An operation can change only the selected object's state and the selected
+process's status. A crash is possible only for a running process with a pending operation, and
+changes only its status to crashed, without touching any shared object. -/
 public inductive Step (M : Model) : Configuration M → Event M → Configuration M → Prop where
   | operate {before after : Configuration M} {p : M.Process} {o : M.Object}
       {s : M.LocalState p} {op : M.Operation o} {resume : M.Reply o op → M.LocalState p}
       (running : before.processState p = .running s)
       (command : M.next p s = some ⟨o, op, resume⟩)
-      (process : after.processState p = .running (resume (M.apply o op (before.objectState o)).1))
+      (process : after.processState p =
+        M.localStatus p (resume (M.apply o op (before.objectState o)).1))
       (object : after.objectState o = (M.apply o op (before.objectState o)).2)
       (otherProcesses : ∀ q, q ≠ p → after.processState q = before.processState q)
       (otherObjects : ∀ a, a ≠ o → after.objectState a = before.objectState a) :
       Step M before (.operate p o op) after
-  | halt {before after : Configuration M} {p : M.Process} {s : M.LocalState p}
-      (running : before.processState p = .running s) (done : M.next p s = none)
-      (process : after.processState p = .halted)
-      (otherProcesses : ∀ q, q ≠ p → after.processState q = before.processState q)
-      (objects : after.objectState = before.objectState) : Step M before (.halt p) after
   | crash {before after : Configuration M} {p : M.Process} {s : M.LocalState p}
-      (running : before.processState p = .running s)
+      (running : before.processState p = .running s) (pending : M.next p s ≠ none)
       (process : after.processState p = .crashed)
       (otherProcesses : ∀ q, q ≠ p → after.processState q = before.processState q)
       (objects : after.objectState = before.objectState) : Step M before (.crash p) after
@@ -109,21 +117,22 @@ public theorem Step.stopped_preserved {M : Model} {before after : Configuration 
     after.processState p = before.processState p := by
   cases step with
   | operate running _ _ _ other _ => exact other p (by rintro rfl; simp [running] at stopped)
-  | halt running _ _ other _ => exact other p (by rintro rfl; simp [running] at stopped)
-  | crash running _ other _ => exact other p (by rintro rfl; simp [running] at stopped)
+  | crash running _ _ other _ => exact other p (by rintro rfl; simp [running] at stopped)
 
-/-- A finite prefix of `n` scheduled events and `n + 1` configurations. -/
-public structure FiniteExecution (M : Model) (n : Nat) where
-  /-- The initial and successive configurations. -/
-  configuration : Fin (n + 1) → Configuration M
-  /-- The event between each consecutive pair of configurations. -/
-  event : Fin n → Event M
-  /-- The execution begins at the system's initial configuration. -/
-  initial : configuration 0 = M.initial
-  /-- Each event produces the next configuration by the one-step relation. -/
-  step : ∀ i, Step M (configuration i.castSucc) (event i) (configuration i.succ)
+/-- The labelled transition system whose states are shared-memory configurations and whose
+labels and transitions are the scheduled events and the one-step rules, respectively. -/
+@[expose] public def Model.lts (M : Model) : LTS (Configuration M) (Event M) where
+  Tr := Step M
 
-/-- An infinite sequence of scheduled events and their successive configurations. -/
+/-- A finite execution starts in the model's initial configuration and follows each event
+legally to the next configuration, ending at `last`. The configuration list has one more
+entry than the event list, including a single initial configuration in a zero-step execution. -/
+@[expose] public def FiniteExecution (M : Model) (events : List (Event M)) (last : Configuration M)
+    (configurations : List (Configuration M)) : Prop :=
+  M.lts.Execution M.initial events last configurations
+
+/-- An infinite execution starts in the model's initial configuration. Each scheduled event
+must be a valid transition from its preceding configuration to the next one. -/
 public structure InfiniteExecution (M : Model) where
   /-- The initial and successive configurations. -/
   configuration : Nat → Configuration M
@@ -131,11 +140,11 @@ public structure InfiniteExecution (M : Model) where
   event : Nat → Event M
   /-- The execution begins at the system's initial configuration. -/
   initial : configuration 0 = M.initial
-  /-- Each event produces the next configuration by the one-step relation. -/
-  step : ∀ i, Step M (configuration i) (event i) (configuration (i + 1))
+  /-- The configurations and events form an infinite execution of the model's transition system. -/
+  execution : M.lts.OmegaExecution configuration event
 
 /-- Fairness requires a process to perform atomic operations at arbitrarily late positions
-unless it has halted or crashed. The stopping events themselves are not atomic operations.
+unless it has halted or crashed. A crash itself is not an atomic operation.
 This constrains schedules; it does not assume that every execution is fair. -/
 @[expose] public def InfiniteExecution.Fair {M : Model} (run : InfiniteExecution M) : Prop :=
   ∀ p, (∃ i, (run.configuration i).processState p = .halted ∨
