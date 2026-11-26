@@ -1337,6 +1337,7 @@
   "CSLibExt/Complexity/BooleanFunctions/Poincare": {"to": "Combinatorics/boolean-functions", "title": "OSSS inequality for decision trees"},
   "CSLibExt/Complexity/KeyTheorems/NaturalProofs": {"to": "TheoryOfComputation/hierarchy-theorems-and-barriers", "title": "Natural proofs barrier"},
   "CSLibExt/Complexity/KeyTheorems/MajorityNotInAC0": {"to": "TheoryOfComputation/circuit-complexity", "title": "Lower bounds for AC0 circuits"},
+  "CSLibExt/Complexity/NPComplete/GraphColoringDefs": {"to": "TheoryOfComputation/np-completeness/graph-coloring-and-partitioning", "title": "Graph coloring (definitions)"},
   "CSLibExt/Computability/Automata/DA/EncodedDFA": {"to": "TheoryOfComputation/decision-procedures", "title": "Encoded finite automata"},
   "CSLibExt/Computability/Automata/DA/MathlibDFA": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Minimal deterministic automaton"},
   "CSLibExt/Computability/Automata/DA/MyhillNerodeBridge": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Myhill–Nerode theorem"},
