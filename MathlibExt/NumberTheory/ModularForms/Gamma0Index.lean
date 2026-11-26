@@ -12,10 +12,8 @@ Portions of this file are adapted from:
 `Definitions/Def_ModularCurve_ProjectiveLine.lean`,
 `Theorems/Thm_ModularCurve_Gamma0_index.lean`,
 `Theorems/Thm_ModularCurve_card_quotient_gamma0_eq_index.lean`,
-`Theorems/Thm_ModularCurve_card_projectiveLine_zmod.lean`,
-`P2M/Sol/S_ModularCurve_Gamma0_index.lean`,
-`P2M/Sol/S_ModularCurve_card_quotient_gamma0_eq_index.lean` and
-`P2M/Sol/S_ModularCurve_card_projectiveLine_zmod.lean`
+`P2M/Sol/S_ModularCurve_Gamma0_index.lean` and
+`P2M/Sol/S_ModularCurve_card_quotient_gamma0_eq_index.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -67,6 +65,8 @@ section Borel
 
 variable {R : Type*} [CommRing R]
 
+/-- **Borel subgroup of $\mathrm{SL}_2(R)$.** For a commutative ring $R$, the subgroup of
+$\mathrm{SL}_2(R)$ of upper-triangular matrices, those whose lower-left entry is zero. -/
 def borel (R : Type*) [CommRing R] : Subgroup (SpecialLinearGroup (Fin 2) R) where
   carrier := { M | M.1 1 0 = 0 }
   one_mem' := by simp
@@ -168,9 +168,9 @@ private theorem Gamma0_eq_comap_borel (N : ℕ) :
   · intro hA
     have hA' : (Int.castRingHom (ZMod N)).mapMatrix A.1 1 0 = 0 := hA; simpa using hA'
 
-
-
-/-- The index of `Gamma0 N` in `SL(2, Z)` equals the Dedekind psi value. -/
+/-- **Index of $\Gamma_0(N)$.** For every natural number $N \ne 0$, the index of the congruence
+subgroup $\Gamma_0(N)$ in $\mathrm{SL}_2(\mathbb{Z})$ is the Dedekind psi value $\psi(N)$, that is,
+$N \prod_{p \mid N} (1 + 1/p)$ with $p$ running over the prime divisors of $N$. -/
 theorem Gamma0_index (N : ℕ) [NeZero N] :
     (CongruenceSubgroup.Gamma0 N).index = ArithmeticFunction.dedekindPsi N := by
   have h1 : (CongruenceSubgroup.Gamma0 N).index = (borel (ZMod N)).index := by
@@ -183,8 +183,10 @@ theorem Gamma0_index (N : ℕ) [NeZero N] :
 end ModularCurve
 
 open scoped MatrixGroups in
-/-- The cardinality of the quotient of the modular group by the image of
-`Gamma0 N` equals the index of `Gamma0 N`. -/
+/-- **Cosets of $\Gamma_0(N)$ in the modular group.** For every natural number $N$, the
+cardinality of the quotient of the modular group `𝒮ℒ` (the image of $\mathrm{SL}_2(\mathbb{Z})$ in
+$\mathrm{GL}_2(\mathbb{R})$) by the image of $\Gamma_0(N)$ equals the index of $\Gamma_0(N)$ in
+$\mathrm{SL}_2(\mathbb{Z})$. -/
 theorem ModularCurve.card_quotient_gamma0_eq_index (N : ℕ) :
     Nat.card (𝒮ℒ ⧸ (Subgroup.map (Matrix.SpecialLinearGroup.mapGL ℝ)
       (CongruenceSubgroup.Gamma0 N)).subgroupOf 𝒮ℒ) =

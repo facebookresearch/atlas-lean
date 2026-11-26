@@ -47,7 +47,14 @@ example : (CongruenceSubgroup.Gamma0 6).index = 12 := by
   rw [hpsi] at h
   exact h
 
-/-- Boundary: without the level, the statement for `N = 0` is not asserted;
-the `NeZero` hypothesis in `Gamma0_index` is essential to the source. -/
-example : ArithmeticFunction.dedekindPsi 0 = 0 :=
-  ArithmeticFunction.dedekindPsi_zero
+/-- A level divisible by the square of a prime: `ψ(12) = ψ(2 ^ 2) * ψ(3) = 6 * 4 = 24`. -/
+example : (CongruenceSubgroup.Gamma0 12).index = 24 := by
+  have h := ModularCurve.Gamma0_index 12
+  have hpsi : ArithmeticFunction.dedekindPsi 12 = 24 := by
+    rw [show (12 : ℕ) = 2 ^ 2 * 3 by norm_num,
+      ArithmeticFunction.isMultiplicative_dedekindPsi.map_mul_of_coprime (by decide),
+      ArithmeticFunction.dedekindPsi_prime_pow (p := 2) (k := 2) Nat.prime_two (by norm_num),
+      ArithmeticFunction.dedekindPsi_prime (by decide)]
+    norm_num
+  rw [hpsi] at h
+  exact h
