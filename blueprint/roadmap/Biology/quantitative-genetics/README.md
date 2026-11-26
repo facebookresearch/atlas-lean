@@ -16,3 +16,4 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [ANOVA heritability from clonal replicates](anova-heritability-from-clonal-replicates/README.md)
