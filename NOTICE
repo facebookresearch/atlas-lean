@@ -413,3 +413,15 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+Projective model source notice
+------------------------------
+
+File:
+  MathlibExt/CategoryTheory/Presentable/OriginalDiagramCardinalScale.lean
+
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @toskua, Avocado
+-/
