@@ -1,0 +1,16 @@
+# Etale Space Presentations
+
+- [Fppf Sheaf](fppf-sheaf.md)
+- [Represented](represented.md)
+- [Scheme Relation](scheme-relation.md)
+- [Etale Equivalence Presentation](etale-equivalence-presentation.md)
+- [Is Equivalence Relation iff](is-equivalence-relation-iff.md)
+- [Is Equivalence Relation](is-equivalence-relation.md)
+- [Of Is Equivalence Relation](of-is-equivalence-relation.md)
+- [Quotient Sheaf](quotient-sheaf.md)
+- [Atlas](atlas.md)
+- [Relation Comparison](relation-comparison.md)
+- [Map Descent Data](map-descent-data.md)
+- [Descend](descend.md)
+- [Descent Hom Equiv](descent-hom-equiv.md)
+- [Descend Scheme Map](descend-scheme-map.md)
