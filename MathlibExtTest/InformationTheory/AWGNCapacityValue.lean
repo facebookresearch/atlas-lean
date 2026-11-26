@@ -58,6 +58,27 @@ example : measureMutualInformation (channelJoint (awgnKernel 1) (gaussianInput 1
   norm_num
   field_simp
 
+/-- At signal-to-noise ratio `3` the capacity is `1` bit, with no hypothesis. -/
+example (N : ℝ≥0) (hN : 0 < N) : awgnCapacity (3 * N) N = 1 := by
+  have hN' : (N : ℝ) ≠ 0 := ne_of_gt (NNReal.coe_pos.mpr hN)
+  have hlog : Real.log 2 ≠ 0 := ne_of_gt (Real.log_pos one_lt_two)
+  rw [awgnCapacity_eq_ofReal_log (by positivity) hN, ← ENNReal.ofReal_one]
+  congr 1
+  rw [show 1 + 3 * (N : ℝ) / N = 2 ^ 2 by field_simp; ring, Real.log_pow]
+  push_cast
+  field_simp
+
+/-- The converse on input laws, with no hypothesis: the antipodal law at `±2`, which is not
+Gaussian, carries at most `1 / 2` bit through the channel of noise variance `4`. -/
+example : measureMutualInformation (channelJoint (awgnKernel 4) (antipodalLaw (Real.sqrt 4))) ≤
+    ENNReal.ofReal (1 / 2) := by
+  refine (measureMutualInformation_channelJoint_le (by norm_num)
+    (antipodalLaw_mem_inputFeasible (by norm_num : (0 : ℝ) ≤ 4))).trans_eq ?_
+  have hlog : Real.log 2 ≠ 0 := ne_of_gt (Real.log_pos one_lt_two)
+  congr 1
+  norm_num
+  field_simp
+
 /-- The assembly hypotheses are jointly satisfiable with a nonempty feasible set at `P = 1`: for
 the useless channel `κ x = N(0, 1)` every input carries zero information. -/
 example : powerCapacity (Kernel.const ℝ (gaussianReal 0 1)) 1 = 0 := by

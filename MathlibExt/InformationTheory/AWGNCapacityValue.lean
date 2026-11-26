@@ -12,6 +12,7 @@ public import MathlibExt.InformationTheory.ConditionalEntropy
 public import MathlibExt.InformationTheory.GaussianChannelLogDet
 public import MathlibExt.InformationTheory.ScalarGaussianCoordinates
 public import MathlibExt.Probability.Distributions.GaussianConditioning
+import MathlibExt.InformationTheory.AWGNConverse
 
 /-!
 # Scalar AWGN variational capacity value
@@ -32,6 +33,9 @@ for any Markov kernel `κ` on `ℝ`; the assembly lemma, the zero-power value an
 lemmas hold for every such `κ`.
 
 Main results:
+* `awgnCapacity_eq_ofReal_log`: the capacity value for `P ≥ 0` and `N > 0`, with no further
+  hypothesis; its converse `measureMutualInformation_channelJoint_le` reads the all-law bound of
+  `MathlibExt.InformationTheory.AWGNConverse` on input laws.
 * `awgnCapacity_eq`: the capacity value, given the all-law converse and, for `P > 0`, Gaussian
   attainment as hypotheses over the channel; `awgnCapacity_eq_of_randomVariables` states both
   hypotheses for random variables `(X, X + Z)`.
@@ -49,9 +53,10 @@ which is not Gaussian for `P > 0`); violated premises: a negative budget gives c
 the formula at `P = -3N` gives `1 / 2`, and the noiseless channel `N = 0` has infinite capacity
 while the formula gives `0`.
 
-The all-law converse is not proved here. This is a variational formula: it is not an operational
-coding theorem and not a statement about bandlimited continuous-time channels (Shannon-Hartley in
-bits per second).
+The all-law converse is `measureMutualInformation_scalarAWGN_le` of
+`MathlibExt.InformationTheory.AWGNConverse`. This is a variational formula: it is not an
+operational coding theorem and not a statement about bandlimited continuous-time channels
+(Shannon-Hartley in bits per second).
 -/
 
 @[expose] public section
@@ -108,7 +113,7 @@ noncomputable def gaussianInput (P : ℝ) : ProbabilityMeasure ℝ :=
 /-- The antipodal two-point input law, `(δ_a + δ_{-a}) / 2`; not Gaussian when `a ≠ 0`. -/
 noncomputable def antipodalLaw (a : ℝ) : ProbabilityMeasure ℝ :=
   ⟨(2 : ℝ≥0∞)⁻¹ • (Measure.dirac a + Measure.dirac (-a)), ⟨by
-    rw [Measure.smul_apply, Measure.add_apply, measure_univ, measure_univ, smul_eq_mul,
+    rw [_root_.smul_apply, _root_.add_apply, measure_univ, measure_univ, smul_eq_mul,
       one_add_one_eq_two, ENNReal.inv_mul_cancel two_ne_zero ENNReal.ofNat_ne_top]⟩⟩
 
 /-! ### Abstract channel -/
@@ -240,7 +245,7 @@ value), the supremum of the mutual information over all admissible input laws is
 `ofReal (log (1 + P / N) / (2 log 2))`. At `P = 0` neither hypothesis is used. The noise premise
 `N > 0` is part of the statement but unused by the assembly, since it enters only through the
 converse (which fails for the noiseless channel, see `awgnCapacity_noiseless`). For the attainment
-discharged, see `awgnCapacity_eq_of_converse`. -/
+discharged, see `awgnCapacity_eq_of_converse`; for both, `awgnCapacity_eq_ofReal_log`. -/
 theorem awgnCapacity_eq {P : ℝ} {N : ℝ≥0} (hP : 0 ≤ P) (_hN : 0 < N)
     (hconv : ∀ p ∈ inputFeasible P, measureMutualInformation (channelJoint (awgnKernel N) p) ≤
       ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2)))
@@ -280,6 +285,28 @@ private theorem canonicalRealization (p : ProbabilityMeasure ℝ) (N : ℝ≥0) 
   rw [hfst] at h
   exact h
 
+/-- A bound stated for random variables `(X, X + Z)`, `Z ~ N(0, N)` independent of `X`, holds for
+the channel joint law of every admissible input law, read on its canonical realization. -/
+private theorem channelJoint_le_of_randomVariables {P : ℝ} {N : ℝ≥0} {v : ℝ≥0∞}
+    (hconv : ∀ (Ω : Type) [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
+      (X Z : Ω → ℝ), Measurable X → Measurable Z → IndepFun X Z μ →
+      μ.map Z = gaussianReal 0 N → scalarPowerBound μ X P →
+      measureMutualInformation
+          (⟨μ.map (fun ω => (X ω, X ω + Z ω)), inferInstance⟩ : ProbabilityMeasure (ℝ × ℝ)) ≤ v)
+    {p : ProbabilityMeasure ℝ} (hp : p ∈ inputFeasible P) :
+    measureMutualInformation (channelJoint (awgnKernel N) p) ≤ v := by
+  obtain ⟨hind, hfst, hsnd, hjoint⟩ := canonicalRealization p N
+  have hpow : scalarPowerBound ((p : Measure ℝ).prod (gaussianReal 0 N)) Prod.fst P := by
+    have hp' : (⟨((p : Measure ℝ).prod (gaussianReal 0 N)).map Prod.fst, inferInstance⟩ :
+        ProbabilityMeasure ℝ) ∈ inputFeasible P := by
+      have he : (⟨((p : Measure ℝ).prod (gaussianReal 0 N)).map Prod.fst, inferInstance⟩ :
+          ProbabilityMeasure ℝ) = p := ProbabilityMeasure.toMeasure_injective hfst
+      rw [he]
+      exact hp
+    exact (mem_inputFeasible_map_iff measurable_fst P).1 hp'
+  rw [← hjoint]
+  exact hconv (ℝ × ℝ) _ Prod.fst Prod.snd measurable_fst measurable_snd hind hsnd hpow
+
 /-- **Scalar AWGN variational capacity, random-variable interfaces.** The headline with the
 converse and the Gaussian attainment stated for random variables `(X, X + Z)`, `Z ~ N(0, N)`
 independent of `X`, the form in which the scalar converse and the one-dimensional Gaussian-input
@@ -298,22 +325,24 @@ theorem awgnCapacity_eq_of_randomVariables {P : ℝ} {N : ℝ≥0} (hP : 0 ≤ P
           (⟨μ.map (fun ω => (X ω, X ω + Z ω)), inferInstance⟩ : ProbabilityMeasure (ℝ × ℝ)) =
         ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2))) :
     awgnCapacity P N = ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2)) := by
-  refine awgnCapacity_eq hP hN (fun p hp => ?_) (fun hpos => ?_)
-  · obtain ⟨hind, hfst, hsnd, hjoint⟩ := canonicalRealization p N
-    have hpow : scalarPowerBound ((p : Measure ℝ).prod (gaussianReal 0 N)) Prod.fst P := by
-      have hp' : (⟨((p : Measure ℝ).prod (gaussianReal 0 N)).map Prod.fst, inferInstance⟩ :
-          ProbabilityMeasure ℝ) ∈ inputFeasible P := by
-        have he : (⟨((p : Measure ℝ).prod (gaussianReal 0 N)).map Prod.fst, inferInstance⟩ :
-            ProbabilityMeasure ℝ) = p := ProbabilityMeasure.toMeasure_injective hfst
-        rw [he]
-        exact hp
-      exact (mem_inputFeasible_map_iff measurable_fst P).1 hp'
-    rw [← hjoint]
-    exact hconv (ℝ × ℝ) _ Prod.fst Prod.snd measurable_fst measurable_snd hind hsnd hpow
-  · obtain ⟨hind, hfst, hsnd, hjoint⟩ :=
-      canonicalRealization (gaussianInput P) N
-    rw [← hjoint]
-    exact hgauss hpos (ℝ × ℝ) _ Prod.fst Prod.snd measurable_fst measurable_snd hind hfst hsnd
+  refine awgnCapacity_eq hP hN (fun p hp => channelJoint_le_of_randomVariables hconv hp)
+    (fun hpos => ?_)
+  obtain ⟨hind, hfst, hsnd, hjoint⟩ :=
+    canonicalRealization (gaussianInput P) N
+  rw [← hjoint]
+  exact hgauss hpos (ℝ × ℝ) _ Prod.fst Prod.snd measurable_fst measurable_snd hind hfst hsnd
+
+/-- **Scalar AWGN converse on input laws.** For noise variance `N > 0`, every input law `p` in the
+feasible set at budget `P` gives at most `ofReal (log (1 + P / N) / (2 log 2))` bits through the
+scalar AWGN channel: the all-law bound `measureMutualInformation_scalarAWGN_le` of
+`MathlibExt.InformationTheory.AWGNConverse`, read on the canonical realization of `p`. -/
+theorem measureMutualInformation_channelJoint_le {P : ℝ} {N : ℝ≥0} (hN : 0 < N)
+    {p : ProbabilityMeasure ℝ} (hp : p ∈ inputFeasible P) :
+    measureMutualInformation (channelJoint (awgnKernel N) p) ≤
+      ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2)) :=
+  channelJoint_le_of_randomVariables (fun _ _ _ _ _ _ hX hZ hind hZlaw hpow =>
+    AWGNConverse.measureMutualInformation_scalarAWGN_le hX hZ hind (NNReal.coe_pos.mpr hN) hZlaw
+      hpow) hp
 
 /-- **Gaussian attainment.** For `P ≥ 0` and `N > 0`, the centered Gaussian input of variance `P`
 through the scalar AWGN channel gives exactly `log (1 + P / N) / (2 log 2)` bits: the
@@ -364,6 +393,15 @@ theorem awgnCapacity_eq_of_converse {P : ℝ} {N : ℝ≥0} (hP : 0 ≤ P) (hN :
       ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2))) :
     awgnCapacity P N = ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2)) :=
   awgnCapacity_eq hP hN hconv fun _ => measureMutualInformation_channelJoint_gaussianInput hP hN
+
+/-- **Scalar AWGN variational capacity value.** For `P ≥ 0` and `N > 0`, the supremum of the
+mutual information over all admissible input laws is `ofReal (log (1 + P / N) / (2 log 2))` bits,
+with no further hypothesis: the converse is `measureMutualInformation_channelJoint_le`, and the
+centered Gaussian input of variance `P` attains the value
+(`measureMutualInformation_channelJoint_gaussianInput`). -/
+theorem awgnCapacity_eq_ofReal_log {P : ℝ} {N : ℝ≥0} (hP : 0 ≤ P) (hN : 0 < N) :
+    awgnCapacity P N = ENNReal.ofReal (Real.log (1 + P / N) / (2 * Real.log 2)) :=
+  awgnCapacity_eq_of_converse hP hN fun _ hp => measureMutualInformation_channelJoint_le hN hp
 
 /-- The capacity supremum is attained: under the headline hypotheses some admissible input law
 achieves it (the centered Gaussian for `P > 0`, the constant-zero law for `P = 0`). -/
