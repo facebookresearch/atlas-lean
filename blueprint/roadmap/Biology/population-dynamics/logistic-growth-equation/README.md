@@ -11,3 +11,4 @@
 - [Exact deterministic transit time](logistic-transit-time.md)
 - [Logistic transit time from $1/(2N)$ to $1 - 1/(2N)$](logistic-transit-time-two-n.md)
 - [Logistic solution is strictly increasing](strict-mono-logistic.md)
+- [Structural non-identifiability of logistic growth with harvesting](structural-non-identifiability-of-logistic-growth-with-harvesting.md)

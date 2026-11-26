@@ -20,3 +20,8 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Superspreading and negative-binomial offspring](superspreading-and-negative-binomial-offspring/README.md)
 
 - [Epidemics on networks](epidemics-on-networks/README.md)
+- [Kinetic crowd evacuation with contagion](kinetic-crowd-evacuation-with-contagion/README.md)
+- [Multi-strain co-colonization SIS model](multi-strain-co-colonization-sis-model/README.md)
+- [Multi-strain diffusive SIS model](multi-strain-diffusive-sis-model/README.md)
+- [Separable heterogeneity in Kermack–McKendrick models](separable-heterogeneity-in-kermack-mckendrick-models/README.md)
+- [SIR model on metric graphs](sir-model-on-metric-graphs/README.md)

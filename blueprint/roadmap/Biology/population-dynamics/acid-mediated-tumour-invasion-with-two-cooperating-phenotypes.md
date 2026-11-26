@@ -1,0 +1,28 @@
+# Acid-mediated tumour invasion with two cooperating phenotypes
+
+The **two-phenotype Gatenby–Gawlinski model** describes, on a one-dimensional tissue slice $x \in [0, 1]$ with zero-flux boundaries, the nondimensional densities of stroma $S$, acid-producing tumour cells $T_A$, matrix-degrading tumour cells $T_M$, lactic acid $L$ and extracellular matrix $M$:
+$$\begin{aligned}
+\partial_t S &= S(1 - S) - \delta S L, \\
+\partial_t T_A &= \rho_T T_A (1 - c_S S - T_A - c_{M,A} T_M) + \Delta_T\, \partial_x\big[(1 - M)\, \partial_x T_A\big], \\
+\partial_t T_M &= \rho_T T_M (1 - c_S S - c_{A,M} T_A - T_M) + \Delta_T\, \partial_x\big[(1 - M)\, \partial_x T_M\big], \\
+\partial_t L &= \rho_L (T_A - L) + \partial_x^2 L, \\
+\partial_t M &= -\kappa\, T_M M,
+\end{aligned}$$
+with positive parameters $\delta$ (acid toxicity to stroma), $\rho_T, \rho_L, \Delta_T, \kappa$, and competition coefficients $c_S > 1$ (stroma on tumour), $c_{M,A}, c_{A,M} \ge 0$ (between the phenotypes). Stroma is a biological barrier (it suppresses tumour growth and is removed only by acid, produced only by $T_A$). Matrix is a physical barrier (it blocks motility through the factor $1 - M$ and is removed only by $T_M$).
+
+**Homogeneous steady states.** Besides healthy tissue $\mathrm{SS0} = (1, 0, 0, 0, M^*)$ with arbitrary $M^*$, the relevant tumour states are
+- $\mathrm{SS1} = (0, 1, 0, 1, M^*)$: acid producers only, matrix intact;
+- $\mathrm{SS2} = (0, 0, 1, 0, 0)$: matrix degraders only;
+- $\mathrm{SS3} = \big(0,\ T_A^*,\ T_M^*,\ T_A^*,\ 0\big)$ with $T_A^* = \dfrac{1 - c_{M,A}}{1 - c_{M,A} c_{A,M}}$, $T_M^* = \dfrac{1 - c_{A,M}}{1 - c_{M,A} c_{A,M}}$: coexistence of both phenotypes with stroma and matrix eradicated.
+
+**Linear stability** (spatially homogeneous perturbations). Every state with $M^* > 0$ has a zero eigenvalue in the $M$ direction, since without $T_M$ any matrix level is stationary. At $\mathrm{SS1}$ the remaining eigenvalues are $1 - \delta$ (stroma), $\rho_T(1 - c_{A,M})$ (invasion by $T_M$), $-\rho_T$ and $-\rho_L$, so $\mathrm{SS1}$ is stable exactly when $\delta > 1$ and $c_{A,M} > 1$. At $\mathrm{SS3}$ the stroma eigenvalue is $1 - \delta T_A^*$, the matrix eigenvalue is $-\kappa T_M^* < 0$, and the $(T_A, T_M)$ block is the Lotka–Volterra competition Jacobian, stable exactly when $c_{A,M} < 1$ and $c_{M,A} < 1$; so $\mathrm{SS3}$ is stable when both competition coefficients are below one and $\delta T_A^* > 1$. $\mathrm{SS2}$ is unstable to stroma regrowth (eigenvalue $1$), and for the parameter ranges studied the mixed states with stroma are unstable. Hence an invading front can only connect healthy tissue to $\mathrm{SS1}$ or $\mathrm{SS3}$.
+
+## Depends on
+
+## Expansion
+
+Away from the front, $S$, $L$ and $M$ are slaved, and the tumour block reduces to two-species Lotka–Volterra competition with identical growth rates and carrying capacities. Weak mutual competition ($c_{A,M}, c_{M,A} < 1$) gives stable coexistence. $c_{A,M} > 1 > c_{M,A}$ lets acid producers exclude matrix degraders, and the reverse gives exclusion of acid producers. When both exceed one the coexistence state is a saddle whose stable manifold separates the exclusion basins, so the outcome depends on initial conditions and is structurally unstable along $c_{A,M} = c_{M,A}$. Biologically, neither phenotype invades alone. Without $T_M$ the front stalls once it reaches intact matrix, since without $T_M$ every matrix level is stationary (the zero eigenvalue). Without $T_A$ the stroma is never cleared and suppresses growth ($c_S > 1$). Sustained invasion at realistic speeds therefore needs the coexistence state $\mathrm{SS3}$ behind the front, or a transient $T_A$-dominated front.
+
+## Sources
+
+- M. A. R. Strobl, A. L. Krause, M. Damaghi, R. Gillies, A. R. A. Anderson and P. K. Maini, "Mix and match: phenotypic coexistence as a key facilitator of cancer invasion", Bulletin of Mathematical Biology 82 (2020), 15, Section 2 (Eqs. (1)–(12)), Section 3 (steady states SS0–SS6) and Appendix A2 (Table 2), <https://doi.org/10.1007/s11538-019-00675-0> (PMC6968991).

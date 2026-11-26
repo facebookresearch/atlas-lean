@@ -12,3 +12,10 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 
 - [Threshold for pulse initiation in excitable media](threshold-for-pulse-initiation-in-excitable-media.md)
 - [Well-posedness of the Turing reaction–diffusion system](well-posedness-of-the-turing-reaction-diffusion/README.md)
+- [Fisher–Stefan moving-boundary model](fisher-stefan-moving-boundary-model/README.md)
+- [Hyperbolic leader–follower swarm models](hyperbolic-leader-follower-swarm-models/README.md)
+- [Integrodifference Klausmeier vegetation model](integrodifference-klausmeier-vegetation-model/README.md)
+- [Mechanochemical models of pattern formation](mechanochemical-models-of-pattern-formation/README.md)
+- [Nonlocal taxis and its local limit](nonlocal-taxis-and-its-local-limit/README.md)
+- [Wave-pinning and local perturbation analysis](wave-pinning-and-local-perturbation-analysis/README.md)
+- [Unstable principal subsystems enable diffusion-driven instability](unstable-principal-subsystems-enable-turing-instability.md)
