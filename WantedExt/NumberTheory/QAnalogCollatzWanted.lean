@@ -14,6 +14,7 @@ public import MathlibExt.NumberTheory.QAnalogCollatz
 public import MathlibExt.NumberTheory.QCollatzConjugacy
 public import MathlibExt.NumberTheory.QCollatzParityFlip
 public import MathlibExt.NumberTheory.QCollatzPerturbation
+public import MathlibExt.NumberTheory.QAnalogCollatzQCollatzFixedPointsAndTwoCycle
 public import MathlibExt.NumberTheory.QAnalogCollatzQCollatzConjugateTwoAdicCollatz
 
 namespace MetaMathlibExt
@@ -65,20 +66,6 @@ public theorem_wanted qCollatzParityVector_quotient_bijection (A B : PowerSeries
     (hA : constantCoeff A ≠ 0) (hB : constantCoeff B ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
     ∃ e : (PowerSeries (ZMod 2) ⧸ Ideal.span {(X : PowerSeries (ZMod 2)) ^ n}) ≃ ZMod (2 ^ n),
       ∀ a, e (Ideal.Quotient.mk _ a) = PadicInt.toZModPow n (qCollatzParityVector A B a)
-
-/-- **Fixed points and the $2$-cycle of the $q$-Collatz map.** Let $A, B \in \mathbb{F}_2[[q]]$ be
-odd (constant term $1$) and let $T_{A,B}$ be the $q$-analog of the $3x+1$ map. For every
-$x \in \mathbb{F}_2[[q]]$, $T_{A,B}(x) = x$ holds exactly when $x = 0$ or $x = B/(A+q)$. Moreover,
-for every $x \in \mathbb{F}_2[[q]]$, $T_{A,B}(T_{A,B}(x)) = x$ and $T_{A,B}(x) \ne x$ hold together
-exactly when $x = B/(A+q^2)$ or $x = qB/(A+q^2)$.
-
-Source: Kenneth G. Monks, *On q-Analogs of the 3x+1 Dynamical System*, Journal of Integer
-Sequences 28 (2025), Article 25.6.8, Lemma 13 (`jis-2025-25.6.8-lem-13`). -/
-public theorem_wanted qCollatz_fixedPoints_and_twoCycle (A B : PowerSeries (ZMod 2))
-    (hA : constantCoeff A ≠ 0) (hB : constantCoeff B ≠ 0) :
-    (∀ x, qCollatz A B x = x ↔ x = 0 ∨ x = B * (A + X)⁻¹) ∧
-    ∀ x, (qCollatz A B (qCollatz A B x) = x ∧ qCollatz A B x ≠ x) ↔
-      x = B * (A + X ^ 2)⁻¹ ∨ x = X * (B * (A + X ^ 2)⁻¹)
 
 end
 
