@@ -8,21 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Analysis.Normed.Group.Ultra
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Padics.PadicNumbers
-public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-public import Mathlib.RingTheory.Binomial
-public import MathlibExt.NumberTheory.AlternatingChooseSums
-public import MathlibExt.NumberTheory.HigherOrderHarmonic
-public import MathlibExt.NumberTheory.WolstenholmeBinomialCongruence
-public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
-public import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Module.BigOperators
 import Mathlib.Algebra.Module.NatInt
-import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Analysis.Normed.Ring.Ultra
 import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Data.Nat.Choose.Factorization
 import Mathlib.Data.Nat.Choose.Sum
@@ -189,11 +182,6 @@ private theorem field_id {p : ℕ} [Fact p.Prime] (j q m : ℕ) (hm : 1 ≤ m)
   push_cast at hcast ⊢
   exact hcast
 
-private theorem norm_natCast_le_one {p : ℕ} [Fact p.Prime] (n : ℕ) :
-    ‖(n : ℚ_[p])‖ ≤ 1 := by
-  rw [← Int.cast_natCast]
-  exact Padic.norm_int_le_one _
-
 private theorem term_le {p : ℕ} [Fact p.Prime] {B : Type*} [NormedAddCommGroup B]
     [NormedSpace ℚ_[p] B] [IsUltrametricDist B] (j q m : ℕ) (a : ℕ → B)
     (t h : ℚ_[p]) (C : ℝ) (ht : ‖t‖ ≤ 1) (hm : 1 ≤ m) (hmp : m ≤ p)
@@ -244,7 +232,8 @@ private theorem term_le {p : ℕ} [Fact p.Prime] {B : Type*} [NormedAddCommGroup
     Nat.cast_ne_zero.mpr hK0_nat
   have hKpos : 0 < ‖((Nat.factorial (m - 1) * q.choose m : ℕ) : ℚ_[p])‖ :=
     norm_pos_iff.mpr hK0
-  have hb2_le : ‖((j - m).choose (q - m) : ℚ_[p])‖ ≤ 1 := norm_natCast_le_one _
+  have hb2_le : ‖((j - m).choose (q - m) : ℚ_[p])‖ ≤ 1 :=
+    IsUltrametricDist.norm_natCast_le_one ℚ_[p] _
   have hfid := field_id (p := p) j q m hm hmq hqj
   have hR_le : ‖(j.choose q : ℚ_[p]) * (m : ℚ_[p]) / (j.descFactorial m : ℚ_[p])‖ ≤
       1 / ‖((Nat.factorial (m - 1) * q.choose m : ℕ) : ℚ_[p])‖ := by
