@@ -47,3 +47,30 @@ example : metaAutomaticTwo (2 * 5) = false ∧ metaAutomaticTwo (2 * 5 + 1) = tr
   have h := metaAutomaticTwo_recover 5
   rw [hy, hx] at h
   simpa only [Bool.true_xor, Bool.not_true, Bool.not_false] using h
+
+-- The seed produces all four states, so the next iteration exercises every row.
+example : ∃ w : ℕ → ℕ,
+    [w 0, w 1, w 2, w 3] = [0, 1, 3, 2] ∧
+      [w 4, w 5, w 6, w 7] = [2, 3, 1, 0] ∧
+      [w 8, w 9, w 10, w 11] = [1, 0, 2, 3] ∧
+      [w 12, w 13, w 14, w 15] = [3, 2, 0, 1] := by
+  obtain ⟨w, hzero, hstep, _⟩ := metaAutomaticTwo_morphism_coding
+  have hrow (n : ℕ) :
+      [w (4 * n + 0), w (4 * n + 1), w (4 * n + 2), w (4 * n + 3)] =
+        [0, 1, 2, 3].map (fun r =>
+          ([[0, 1, 3, 2], [2, 3, 1, 0], [3, 2, 0, 1], [1, 0, 2, 3]].getD (w n) []).getD r 0) := by
+    simp only [List.map_cons, List.map_nil, hstep n 0 (by decide), hstep n 1 (by decide),
+      hstep n 2 (by decide), hstep n 3 (by decide)]
+  have hseed : [w 0, w 1, w 2, w 3] = [0, 1, 3, 2] := by simpa [hzero] using hrow 0
+  obtain ⟨_, h₁, h₂, h₃⟩ : w 0 = 0 ∧ w 1 = 1 ∧ w 2 = 3 ∧ w 3 = 2 := by
+    simpa only [List.cons.injEq, and_true] using hseed
+  exact ⟨w, hseed, by simpa [h₁] using hrow 1, by simpa [h₂] using hrow 2,
+    by simpa [h₃] using hrow 3⟩
+
+-- Outside the seed block, states 2 and 3 are coded to false and true, respectively.
+example : metaAutomaticTwo 4 = false ∧ metaAutomaticTwo 5 = true := by
+  obtain ⟨w, hzero, hstep, hcode⟩ := metaAutomaticTwo_morphism_coding
+  have h₁ : w 1 = 1 := by simpa [hzero] using hstep 0 1 (by decide)
+  have h₄ : w 4 = 2 := by simpa [h₁] using hstep 1 0 (by decide)
+  have h₅ : w 5 = 3 := by simpa [h₁] using hstep 1 1 (by decide)
+  exact ⟨by simpa [h₄] using hcode 4, by simpa [h₅] using hcode 5⟩
