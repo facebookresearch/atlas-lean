@@ -1,5 +1,7 @@
 # Estimating equations and misspecified models
 
+- [Godambe information inequality](godambe-inequality/README.md)
+- [Maximum likelihood under misspecification](misspecified-mle/README.md)
 - [The second-moment operator of a square-integrable score](covariance-operator-map-eq-integral-rank.md)
 - [Sandwich covariance with a rank-one meat](sandwich-covariance-integral-rank-one.md)
 - [Projection laws of the estimating-equation limit](has-law-inner-neg-inverse-apply-sandwich.md)
@@ -15,3 +17,6 @@
 - [The expected score vanishes at an interior maximum](integral-eq-zero-of-is-local-max.md)
 - [An interior maximum-likelihood estimate solves the likelihood equation](sum-eq-zero-of-is-mleon.md)
 - [The maximum-likelihood estimator solves the likelihood equation with probability tending to one](tendsto-measure-sum-ne-zero-of-is-mleon.md)
+- [Asymptotic normality of a consistent root of a cluster estimating equation](tendsto-in-distribution-sqrt-smul-sub-of.md)
+- [Normal limit of an asymptotically linear estimator (scalar)](tendsto-in-distribution-of-asymptoticall.md)
+- [Normal limit of an asymptotically linear estimator (vector)](tendsto-in-distribution-of-asymptoticall-2.md)

@@ -1,4 +1,4 @@
-# Misspecified MLE
+# Maximum likelihood under misspecification
 
 ## The pseudo-true value as the Kullback–Leibler projection
 

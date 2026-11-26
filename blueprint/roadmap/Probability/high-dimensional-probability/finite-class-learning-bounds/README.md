@@ -13,3 +13,6 @@
 - [Centred form of Massart's lemma](empirical-rademacher-le-massart-centered.md)
 - [Error indicator of a binary classifier](binary-error-indicator.md)
 - [The uniform-deviation event and the union bound event](set-of-lt-sup-deviation-subset.md)
+- [Sup Deviation](sup-deviation.md)
+- [Ghost-sample sup deviation](ghost-sup-deviation.md)
+- [Symmetrization lemma](measure-real-sup-deviation-gt-le-two-mul.md)

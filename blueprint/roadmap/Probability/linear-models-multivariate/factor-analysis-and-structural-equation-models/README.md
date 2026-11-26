@@ -1,5 +1,6 @@
 # Factor analysis and structural equation models
 
+- [Recursive structural equation models](structural-equation/README.md)
 - [Differential item functioning and group impact are logically independent](differential-item-functioning-versus-impact.md)
 - [Identification of a one-factor model from three indicators](identification-of-the-one-factor-model.md)
 - [Orthogonal rotations of factor loadings leave the covariance unchanged](rotation-indeterminacy-of-factor-loadings.md)

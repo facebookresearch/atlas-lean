@@ -1,4 +1,4 @@
-# Wald Envelope
+# Wald consistency with envelope conditions
 
 ## Wald's theorem: closed parameter sets in proper spaces
 

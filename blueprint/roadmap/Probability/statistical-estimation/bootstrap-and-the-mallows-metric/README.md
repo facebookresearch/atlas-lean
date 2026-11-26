@@ -2,6 +2,8 @@
 
 Efron's bootstrap estimates the sampling distribution of a statistic by recomputing it on samples drawn with replacement from the data. Bickel and Freedman (1981) proved that the bootstrap of the mean is asymptotically valid whenever the variance is finite. Their tool is the Mallows metric $d_p$, which is the Wasserstein distance $W_p$: the empirical law converges to the true law in $d_2$, and normalised sums contract $d_2$, so the bootstrap law of the normalised mean inherits the central limit theorem. The contraction lemmas hold in a separable Hilbert space. The bootstrap does not always work: for the sample maximum of uniform data, Bickel and Freedman's Counter-example 2 shows that the bootstrap law keeps an atom of mass about $0.63$ where the true limit law is continuous.
 
+- [Bootstrap validity for smooth statistics](bootstrap/README.md)
+- [Empirical laws for the bootstrap of the mean](bootstrap-mean-clt/README.md)
 - [Convolution of probability measures](conv.md)
 - [Convolution powers](conv-pow.md)
 - [Coupling of convolutions](is-coupling-conv.md)

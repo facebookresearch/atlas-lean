@@ -9,14 +9,11 @@ Topics added since this subject's fields were last revised.
 ## [Part 1 of 17](part-01/README.md)
 
 - [Aldous D](part-01/aldous-d/README.md)
-- [Bernoulli MLE](part-01/bernoulli-mle/README.md)
 
 ## [Part 2 of 17](part-02/README.md)
 
 - [Binary](part-02/binary/README.md)
 - [Binary Cost Adapter](part-02/binary-cost-adapter/README.md)
-- [Bootstrap](part-02/bootstrap/README.md)
-- [Bootstrap Mean CLT](part-02/bootstrap-mean-clt/README.md)
 - [Canonical](part-02/canonical/README.md)
 - [Common Covariance Likelihood](part-02/common-covariance-likelihood/README.md)
 - [Component Observations](part-02/component-observations/README.md)
@@ -33,7 +30,6 @@ Topics added since this subject's fields were last revised.
 - [De Groot](part-04/de-groot/README.md)
 - [Difference In Differences](part-04/difference-in-differences/README.md)
 - [Double Robustness](part-04/double-robustness/README.md)
-- [Estimating Equations](part-04/estimating-equations/README.md)
 
 ## [Part 5 of 17](part-05/README.md)
 
@@ -64,16 +60,11 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 7 of 17](part-07/README.md)
 
-- [Generalizability](part-07/generalizability/README.md)
-- [Generalizability Coefficients](part-07/generalizability-coefficients/README.md)
-- [Godambe Inequality](part-07/godambe-inequality/README.md)
 - [Graph Sampling](part-07/graph-sampling/README.md)
-- [Identifiability](part-07/identifiability/README.md)
 
 ## [Part 8 of 17](part-08/README.md)
 
 - [Identification](part-08/identification/README.md)
-- [Information Inequality Identification](part-08/information-inequality-identification/README.md)
 - [Item Information](part-08/item-information/README.md)
 - [Item Response](part-08/item-response/README.md)
 - [Item Score](part-08/item-score/README.md)
@@ -86,8 +77,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 10 of 17](part-10/README.md)
 
 - [Mc Leish CLT](part-10/mc-leish-clt/README.md)
-- [Misspecified MLE](part-10/misspecified-mle/README.md)
-- [MLEConsistency](part-10/mleconsistency/README.md)
 - [MNARCounterexample](part-10/mnarcounterexample/README.md)
 - [Multinomial Totals](part-10/multinomial-totals/README.md)
 - [No Regret Equilibrium](part-10/no-regret-equilibrium/README.md)
@@ -121,18 +110,13 @@ Topics added since this subject's fields were last revised.
 - [Shortfall Consequence](part-14/shortfall-consequence/README.md)
 - [Spatial Predictor](part-14/spatial-predictor/README.md)
 - [Standardization](part-14/standardization/README.md)
-- [Structural Equation](part-14/structural-equation/README.md)
-- [Symmetrization](part-14/symmetrization/README.md)
 - [System Lifetime](part-14/system-lifetime/README.md)
 - [System Survival](part-14/system-survival/README.md)
-- [Treatment Effect Nonidentification](part-14/treatment-effect-nonidentification/README.md)
 
 ## [Part 15 of 17](part-15/README.md)
 
-- [True Score](part-15/true-score/README.md)
 - [Value Of Information](part-15/value-of-information/README.md)
 - [Ville](part-15/ville/README.md)
-- [Wald Envelope](part-15/wald-envelope/README.md)
 
 ## [Part 16 of 17](part-16/README.md)
 

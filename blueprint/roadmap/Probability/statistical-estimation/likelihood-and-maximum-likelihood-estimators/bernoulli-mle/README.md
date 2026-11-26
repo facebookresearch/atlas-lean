@@ -1,4 +1,4 @@
-# Bernoulli MLE
+# Maximum likelihood for Bernoulli samples
 
 - [Bernoulli likelihood](bernoulli-likelihood.md)
 - [Sample Proportion](sample-proportion.md)

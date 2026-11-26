@@ -1,4 +1,4 @@
-# Structural Equation
+# Recursive structural equation models
 
 - [Nilpotency of DAG-supported coefficient matrices](pow-card-eq-zero-of-topological-order.md)
 - [Inverse of I - B for DAG-supported B](inv-one-sub-eq-sum-pow-of-topological-or.md)

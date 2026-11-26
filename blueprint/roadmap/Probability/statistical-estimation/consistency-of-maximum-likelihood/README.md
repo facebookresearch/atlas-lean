@@ -1,5 +1,7 @@
 # Consistency of maximum likelihood
 
+- [Identification from the information inequality](information-inequality-identification/README.md)
+- [Wald consistency with envelope conditions](wald-envelope/README.md)
 - [Difference of integrals as a Kullback–Leibler divergence](integral-sub-eq-to-real-kl-div.md)
 - [The information inequality](integral-le-of-llr.md)
 - [The strict information inequality](integral-lt-of-llr.md)
@@ -44,3 +46,6 @@
 - [Wald consistency on a compact set from local envelopes](ae-tendsto-of-is-mleon-of-has-local-enve.md)
 - [An envelope at infinity has small mean far out](exists-tail-envelope-lt.md)
 - [Consistency in probability of maximum likelihood on a closed parameter set](tendsto-in-measure-of-is-mleon-of-has-ta.md)
+- [Maximum likelihood estimator on a set](is-mleon.md)
+- [Identifiability on `K`](is-identified-on.md)
+- [Wald consistency of the MLE, almost surely](ae-tendsto-of-is-mleon.md)

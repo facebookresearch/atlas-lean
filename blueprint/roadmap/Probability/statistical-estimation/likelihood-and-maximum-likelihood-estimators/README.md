@@ -32,6 +32,7 @@
 
 ## Bernoulli likelihood is maximized at the sample proportion
 
+- [Maximum likelihood for Bernoulli samples](bernoulli-mle/README.md)
 - [The Bernoulli likelihood depends only on the number of successes](bernoulli-likelihood-eq-pow.md)
 - [Sample proportion of an all-success sample](sample-proportion-eq-one-of-all-true.md)
 - [Sample proportion of an all-failure sample](sample-proportion-eq-zero-of-all-false.md)

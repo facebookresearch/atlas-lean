@@ -1,4 +1,4 @@
-# Information Inequality Identification
+# Identification from the information inequality
 
 ## Models given by densities
 

@@ -1,5 +1,7 @@
 # Reliability and generalizability
 
+- [Dependability and generalizability coefficients](generalizability-coefficients/README.md)
+- [Error variances in generalizability theory](generalizability/README.md)
 - [Absolute error of a person in a crossed design](delta-p.md)
 - [Relative error of a person in a crossed design](delta-p-2.md)
 - [Error variances of a fixed person in a crossed design](variance-absolute-relative-errors-select.md)
@@ -19,3 +21,6 @@
 - [Variance of a composite under a one-factor model](variance-sum-of-one-factor.md)
 - [Coefficient omega with uncorrelated errors](coefficient-omega-eq-of-diagonal.md)
 - [Coefficient omega lies in the unit interval](coefficient-omega-mem-icc.md)
+- [Total variance splits into true-score and error variance](variance-eq-variance-cond-exp-add-varian.md)
+- [Coefficient alpha under tau-equivalence](coefficient-alpha-eq-variance-div-of-tau.md)
+- [Coefficient omega as a variance ratio](coefficient-omega-eq-variance-div-varian.md)
