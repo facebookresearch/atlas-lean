@@ -14108,6 +14108,7 @@
   "MathlibExt/Probability/Process/ContinuousOptionalStopping": {"to": "Probability/martingales", "title": "Optional stopping theorem"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/EqualRates": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
+  "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/StationaryPath": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
   "MathlibExt/Probability/Process/Girsanov": {"to": "Probability/stochastic-calculus", "title": "Girsanov's theorem"},
   "MathlibExt/Probability/Process/PoissonPointProcess": {"to": "Probability/point-processes", "title": "Poisson point processes"},
   "MathlibExt/Probability/Process/PoissonProcess": {"to": "Probability/point-processes", "title": "Poisson processes"},

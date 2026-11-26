@@ -14,4 +14,5 @@
 - [A-posteriori error bounds for approximate spectral exponentials of a reversible rate matrix](a-posteriori-error-bounds-for-spectral-approxima.md)
 - [Spectral formula for a reversible rate matrix](symmetrized-spectral-formula-for-p-t-exp-tq-of-a.md)
 ## Stationary processes
+- [Path law of a finite continuous-time Markov chain with a random start](ctmc-path-measure.md)
 - [A stationary initial law makes the chain a stationary process](stationary-initial-law-gives-a-stationary-process.md)
