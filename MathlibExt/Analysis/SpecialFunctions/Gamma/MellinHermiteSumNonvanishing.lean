@@ -60,7 +60,7 @@ private theorem eventually_sum_mul_ne_zero {ι α : Type*} (S : Finset ι) (d : 
 
 private theorem sum_ne_zero_of_nonneg_re {ι : Type*} (S : Finset ι) (v : ι → ℂ) (T₀ : ι) (hT₀ : T₀
   ∈ S)
-    (hre : ∀ T ∈ S, 0 ≤ (v T).re) (him : ∀ T ∈ S, (v T).im = 0) (h0 : 0 < (v T₀).re) :
+    (hre : ∀ T ∈ S, 0 ≤ (v T).re) (h0 : 0 < (v T₀).re) :
     ∑ T ∈ S, v T ≠ 0 := by
   intro h
   have hr : (∑ T ∈ S, v T).re = ∑ T ∈ S, (v T).re := by simp [Complex.re_sum]
@@ -133,7 +133,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
   intro σ₀
   classical
   set Adm := hermiteAdmissible m a₃ e
-
   obtain ⟨T₁, hT₁⟩ := hne
   have hT₁' := (Finset.mem_filter.1 hT₁).2
   set iS : ℕ := T₁.1.2 % 2 with hiS
@@ -152,26 +151,21 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     · simp only [hTS, Finset.mem_product, Finset.mem_range]; omega
     · simp only [hTS]; omega
     · simpa only [hTS] using hiSpar
-
   set d := hermiteCoeff m a with hd
   set G : (ℕ × ℕ) × (ℕ × ℕ) → ℝ → ℂ := fun T s =>
     Complex.Gammaℝ ((s : ℂ) + u₃ + (T.1.2 : ℂ)) * mellin (H T.2.1 ((e : ZMod 2) + (T.2.2 : ZMod
       2))) ((s : ℂ) + (T.2.2 : ℂ) - 1) with hG
-
   set κ : (ℕ × ℕ) × (ℕ × ℕ) → ℂ := fun T => if T.1.1 = 0 ∧ T.2.1 = 0 then ((a : ℂ) ^ 2) ^ ((T.1.2 -
     iS) / 2) else 0 with hκ
-
   have hpos : (0 : ℝ) < 2 * Real.pi * (a : ℝ) ^ 2 := by positivity
   set A : ℂ := 2 * (Real.pi : ℂ) * (a : ℂ) ^ 2 with hAdef
   have hA0 : A ≠ 0 := by
     simp only [hAdef]; exact mul_ne_zero (mul_ne_zero two_ne_zero (by exact_mod_cast
       Real.pi_ne_zero)) (pow_ne_zero _ (by exact_mod_cast ha))
-
   have hNZ : ∀ (j : ℕ) (b : ZMod 2), ∀ᶠ x : ℝ in atTop, mellin (H j b) (x : ℂ) ≠ 0 := by
     intro j b
     obtain ⟨R, hR⟩ := hA j b 1 one_pos
     filter_upwards [eventually_ge_atTop R] with x hx using (hR x hx).1
-
   have hAn : 0 < ‖A‖ := norm_pos_iff.2 hA0
   have hρ : ∀ (j : ℕ) (b : ZMod 2),
       Tendsto (fun x : ℝ => mellin (H j b) ((x : ℂ) + 2) / (((x : ℂ) / A) * mellin (H j b) (x :
@@ -200,7 +194,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
       field_simp
     rw [heq] at hbd'
     nlinarith
-
   have hθ : ∀ (j : ℕ) (b b' : ZMod 2),
       Tendsto (fun x : ℝ => mellin (H (j + 1) b') ((x : ℂ) - 1) / mellin (H j b) (x : ℂ)) atTop (𝓝
         0) := by
@@ -215,11 +208,9 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     have hM : 0 < ‖mellin (H j b) (x : ℂ)‖ := norm_pos_iff.2 hne0
     rw [dist_eq_norm, sub_zero, norm_div, div_lt_iff₀ hM]
     nlinarith
-
   have hΓ2 : ∀ z : ℂ, z ≠ 0 → Complex.Gammaℝ (z + 2) = z / (2 * (Real.pi : ℂ)) * Complex.Gammaℝ z
     := by
     intro z hz; rw [Complex.Gammaℝ_add_two hz]; ring
-
   set bS : ZMod 2 := (e : ZMod 2) + (lS : ZMod 2) with hbS
   have hshift : ∀ (f : ℝ → ℂ) (c : ℝ) (L : ℂ), Tendsto f atTop (𝓝 L) → Tendsto (fun s : ℝ => f (s +
     c)) atTop (𝓝 L) :=
@@ -227,14 +218,12 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
   have hshiftE : ∀ (P : ℝ → Prop) (c : ℝ), (∀ᶠ x : ℝ in atTop, P x) → ∀ᶠ s : ℝ in atTop, P (s + c)
     :=
     fun P c h => (tendsto_atTop_add_const_right _ c tendsto_id).eventually h
-
   set Mf : ℕ → ℕ → ℕ → ℝ → ℂ := fun p r j s =>
     mellin (H j (bS + (j : ZMod 2))) (((s + ((lS : ℝ) - 1 - 2 * p - 2 * r - j)) : ℝ) : ℂ) with hMf
   set Γf : ℕ → ℝ → ℂ := fun p s => Complex.Gammaℝ ((s : ℂ) + u₃ + (iS : ℂ) + 2 * (p : ℂ)) with hΓf
   set Rf : ℕ → ℕ → ℕ → ℝ → ℂ := fun p r j s => (Γf p s * Mf p r j s) / (Γf 0 s * Mf 0 0 0 s) with
     hRf
   set κf : ℕ → ℕ → ℕ → ℂ := fun p r j => if r = 0 ∧ j = 0 then ((a : ℂ) ^ 2) ^ p else 0 with hκf
-
   have hMf_ne : ∀ p r j : ℕ, ∀ᶠ s : ℝ in atTop, Mf p r j s ≠ 0 := by
     intro p r j
     simp only [hMf]
@@ -253,7 +242,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
       simp only [hΓf]
       exact Complex.Gammaℝ_ne_zero_of_re_pos hre
     exact ⟨hΓ, fun h => by rw [h, Complex.zero_re] at hre; exact lt_irrefl _ hre⟩
-
   have hC0 : Tendsto (Rf 0 0 0) atTop (𝓝 (κf 0 0 0)) := by
     have : κf 0 0 0 = 1 := by simp [hκf]
     rw [this]
@@ -261,7 +249,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     filter_upwards [hMf_ne 0 0 0, hΓf_ne 0] with s h1 h2
     have h3 : Γf 0 s * Mf 0 0 0 s ≠ 0 := mul_ne_zero h2.1 h1
     simp only [hRf, div_self h3]
-
   have hcst_j : ∀ p r j : ℕ, ((lS : ℝ) - 1 - 2 * p - 2 * r - ((j + 1 : ℕ) : ℝ)) = ((lS : ℝ) - 1 - 2
     * p - 2 * r - j) - 1 := by
     intro p r j; push_cast; ring
@@ -271,7 +258,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
   have hcst_p : ∀ p r j : ℕ, ((lS : ℝ) - 1 - 2 * ((p + 1 : ℕ) : ℝ) - 2 * r - j) = ((lS : ℝ) - 1 - 2
     * p - 2 * r - j) - 2 := by
     intro p r j; push_cast; ring
-
   have hTj : ∀ p r j : ℕ, Tendsto (fun s : ℝ => Mf p r (j + 1) s / Mf p r j s) atTop (𝓝 0) := by
     intro p r j
     have h := hshift _ ((lS : ℝ) - 1 - 2 * p - 2 * r - j) _ (hθ j (bS + (j : ZMod 2)) (bS + ((j + 1
@@ -280,7 +266,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     simp only [hMf, hcst_j]
     push_cast
     ring_nf
-
   have hAdiv : Tendsto (fun y : ℝ => A / (y : ℂ)) atTop (𝓝 0) := by
     rw [tendsto_zero_iff_norm_tendsto_zero]
     have : Tendsto (fun y : ℝ => ‖A‖ * y⁻¹) atTop (𝓝 0) := by
@@ -314,7 +299,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     simp only [hMf, hcst_p]
     push_cast
     ring_nf
-
   have hcdiv : ∀ C : ℂ, Tendsto (fun y : ℝ => C / (y : ℂ)) atTop (𝓝 0) := by
     intro C
     rw [tendsto_zero_iff_norm_tendsto_zero]
@@ -334,13 +318,11 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     field_simp
     push_cast
     ring
-
   have hTp : ∀ p r j : ℕ, Tendsto (fun s : ℝ => (Γf (p + 1) s / Γf p s) * (Mf (p + 1) r j s / Mf p
     r j s)) atTop (𝓝 ((a : ℂ) ^ 2)) := by
     intro p r j
     set c : ℝ := (lS : ℝ) - 1 - 2 * p - 2 * r - j with hc
     set b : ZMod 2 := bS + (j : ZMod 2) with hb
-
     have hmodel : Tendsto (fun s : ℝ => (a : ℂ) ^ 2 * ((((s : ℂ) + (u₃ + (iS : ℂ) + 2 * (p : ℂ))) /
       (((s + (c - 2) : ℝ)) : ℂ)) *
         (mellin (H j b) ((((s + (c - 2) : ℝ)) : ℂ) + 2) / (((((s + (c - 2) : ℝ)) : ℂ) / A) * mellin
@@ -364,9 +346,9 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
       simp only [hΓf]
       rw [harg, hΓ2 _ hz.2]
     have hMp1 : Mf (p + 1) r j s = mellin (H j b) (((s + (c - 2) : ℝ)) : ℂ) := by
-      simp only [hMf, hb, hc, hcst_p]; try (congr 1; push_cast; ring)
+      simp only [hMf, hb, hc, hcst_p]
     have hMp : Mf p r j s = mellin (H j b) ((((s + (c - 2) : ℝ)) : ℂ) + 2) := by
-      simp only [hMf, hb, hc]; try (congr 1; push_cast; ring)
+      simp only [hMf, hb, hc]; congr 1; push_cast; ring
     rw [hΓ, hMp1, hMp]
     have hπ : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
     have ha' : (a : ℂ) ≠ 0 := by exact_mod_cast ha
@@ -374,7 +356,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     simp only [hAdef]
     field_simp
     ring
-
   have hD_ne : ∀ᶠ s : ℝ in atTop, Γf 0 s * Mf 0 0 0 s ≠ 0 := by
     filter_upwards [hΓf_ne 0, hMf_ne 0 0 0] with s h1 h2 using mul_ne_zero h1.1 h2
   have hEj : ∀ p r j : ℕ, ∀ᶠ s : ℝ in atTop, Rf p r (j + 1) s = Rf p r j s * (Mf p r (j + 1) s / Mf
@@ -396,7 +377,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     have hΓ' := hΓ.1
     simp only [hRf]
     field_simp
-
   have hRj : ∀ j : ℕ, Tendsto (Rf 0 0 j) atTop (𝓝 (κf 0 0 j)) := by
     intro j
     induction j with
@@ -442,7 +422,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
   have hlim : ∀ T ∈ Adm, Tendsto (fun s : ℝ => G T s / G TS s) atTop (𝓝 (κ T)) := by
     intro T hT
     obtain ⟨-, hsum, hpar⟩ := Finset.mem_filter.1 hT
-
     have hpar' : T.1.2 % 2 = iS := by
       have h1 : ((T.1.2 : ℕ) : ZMod 2) = ((iS : ℕ) : ZMod 2) := by rw [hpar, hiSpar]
       have := (ZMod.natCast_eq_natCast_iff' T.1.2 iS 2).1 h1
@@ -453,7 +432,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     have hκT : κ T = κf p T.1.1 T.2.1 := by simp only [hκ, hκf, h2]
     rw [hκT]
     refine (hRp p T.1.1 T.2.1).congr' (Eventually.of_forall fun s => ?_)
-
     have hsheet : (e : ZMod 2) + ((T.2.2 : ℕ) : ZMod 2) = bS + ((T.2.1 : ℕ) : ZMod 2) := by
       have hc := congrArg (Nat.cast : ℕ → ZMod 2) hl
       push_cast at hc
@@ -468,22 +446,19 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     have hiC : ((T.1.2 : ℕ) : ℂ) = (iS : ℂ) + 2 * (p : ℂ) := by rw [hp]; push_cast; ring
     simp only [hG, hRf, hΓf, hMf, hTS, hbS] at *
     congr 1
-    ·
-      rw [hiC, hsheet]
+    · rw [hiC, hsheet]
       congr 1
       · congr 1; ring
       · congr 1
         push_cast
         rw [show ((T.2.2 : ℕ) : ℂ) = ((((T.2.2 : ℕ) : ℝ)) : ℂ) by norm_cast, hlR]
         push_cast; ring
-    ·
-      congr 1
+    · congr 1
       · congr 1; push_cast; ring
       · congr 1
         · simp
         · push_cast; ring
   have hL : ∑ T ∈ Adm, d T * κ T ≠ 0 := by
-
     have hterm : ∀ T ∈ Adm, d T * κ T =
         ((-1 : ℂ) ^ lS * (m.factorial : ℂ) * (a : ℂ) ^ lS) *
           (if T.1.1 = 0 ∧ T.2.1 = 0 then (1 / ((T.1.2.factorial : ℂ) * (T.2.2.factorial : ℂ))) else
@@ -493,7 +468,6 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
       simp only [hd, hκ, hermiteCoeff]
       split_ifs with h
       · obtain ⟨hr, hj⟩ := h
-
         have hpar' : T.1.2 % 2 = iS := by
           have h1 : ((T.1.2 : ℕ) : ZMod 2) = ((iS : ℕ) : ZMod 2) := by rw [hpar, hiSpar]
           have := (ZMod.natCast_eq_natCast_iff' T.1.2 iS 2).1 h1
@@ -514,9 +488,16 @@ public theorem exists_gt_and_hermiteSum_GammaR_mul_mellin_ne_zero_of_shift_ratio
     refine mul_ne_zero (mul_ne_zero (mul_ne_zero (pow_ne_zero _ (by norm_num)) (by exact_mod_cast
       (Nat.factorial_ne_zero m))) (pow_ne_zero _ (by exact_mod_cast ha))) ?_
     apply sum_ne_zero_of_nonneg_re Adm _ TS hTS_mem
-    · intro T _; split_ifs <;> simp <;> positivity
-    · intro T _; split_ifs <;> simp
-    · simp [hTS]; positivity
+    · intro T _
+      split_ifs
+      · simp only [one_div, mul_inv_rev, mul_re, inv_re, natCast_re, normSq_natCast,
+          div_self_mul_self', inv_im, natCast_im, neg_zero, zero_div, mul_zero, sub_zero]
+        positivity
+      · simp
+    · simp only [hTS, and_self, ↓reduceIte, one_div, mul_inv_rev, mul_re, inv_re, natCast_re,
+        normSq_natCast, div_self_mul_self', inv_im, natCast_im, neg_zero, zero_div, mul_zero,
+        sub_zero]
+      positivity
   have hev := eventually_sum_mul_ne_zero Adm d G atTop TS hG₀ κ hlim hL
   obtain ⟨s, hsσ, hs⟩ := ((eventually_gt_atTop σ₀).and hev).exists
   refine ⟨s, hsσ, ?_⟩
