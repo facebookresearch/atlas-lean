@@ -546,8 +546,9 @@ theorem isBayesEstimator_binaryCostRule {𝓧 : Type*} [MeasurableSpace 𝓧]
   exact ⟨harg.measurable, harg.isBayesEstimator hl⟩
 
 /-- **Truth-only shift.** For every Markov decision kernel, the real Bayes average of the
-original costs equals the Mathlib average risk of the shifted loss plus the constant
-`pi0 * C00 + pi1 * C11`; hence the shift does not change the minimizer. -/
+original costs equals the real part (`ENNReal.toReal`, which sends `∞` to `0`) of the Mathlib
+average risk of the shifted loss plus the constant `pi0 * C00 + pi1 * C11`. That the shift does
+not change the minimizer is a consequence this theorem does not state. -/
 theorem binaryCostAvgRisk_eq_toReal_avgRisk_add {𝓧 : Type*} [MeasurableSpace 𝓧]
     (P0 P1 : Measure 𝓧) [IsProbabilityMeasure P0] [IsProbabilityMeasure P1]
     (pi0 pi1 : ℝ) (hpi0 : 0 < pi0) (hpi1 : 0 < pi1)

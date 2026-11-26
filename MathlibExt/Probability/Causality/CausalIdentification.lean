@@ -509,8 +509,10 @@ variable {Ω β γ : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 noncomputable def observed (T : Set Ω) (Y₀ Y₁ : Ω → ℝ) : Ω → ℝ :=
   T.indicator Y₁ + Tᶜ.indicator Y₀
 
-/-- The propensity of the event `T` given `W = w`, `P(T ∩ {W = w}) / P(W = w)`. Meaningful for
-`P(W = w) > 0`; it is `0` (a junk value) when `P(W = w) = 0`. -/
+/-- The propensity of the event `T` given `W = w`, `P(T ∩ {W = w}) / P(W = w)`, a ratio of
+real-valued measures (`μ.real` is `0` on a set of infinite measure). It is the probability of
+`T` given `W = w` only when the fibre `{W = w}` is measurable with positive finite mass; it is
+`0` (a junk value) when `P(W = w) = 0`. -/
 noncomputable def propensity (μ : Measure Ω) (T : Set Ω) (W : Ω → β) (w : β) : ℝ :=
   μ.real (T ∩ W ⁻¹' {w}) / μ.real (W ⁻¹' {w})
 

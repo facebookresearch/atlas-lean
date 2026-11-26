@@ -34,12 +34,13 @@ Regret analysis is not included here.
 
 namespace MathlibExt.Probability.EXP3
 
-/-- EXP3 importance-weighted loss estimator. Arms are `Fin n`; `p` is the
-sampling distribution and `l` the loss vector. When arm `j` is sampled, the
-estimate for arm `i` is `l i / p i` if `j = i` and `0` otherwise. If
-`p i = 0`, the `j = i` value is `0` by Lean's convention `x / 0 = 0`; EXP3
-samples every arm with positive probability, and `lossEst_expectation`
-assumes `p i ≠ 0`. -/
+/-- EXP3 importance-weighted loss estimator. Arms are `Fin n`; `p` is a weight
+vector and `l` the loss vector. The definition takes arbitrary weights; the
+sampling reading needs `p` nonnegative and summing to `1`. When arm `j` is
+sampled, the estimate for arm `i` is `l i / p i` if `j = i` and `0` otherwise.
+If `p i = 0`, the `j = i` value is `0` by Lean's convention `x / 0 = 0`. That
+EXP3 samples every arm with positive probability is not part of this
+definition; `lossEst_expectation` assumes `p i ≠ 0`. -/
 noncomputable def lossEst {n : ℕ} (p l : Fin n → ℝ) (j i : Fin n) : ℝ :=
   if j = i then l i / p i else 0
 

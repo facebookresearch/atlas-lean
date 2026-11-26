@@ -100,7 +100,10 @@ noncomputable def completeCaseMean (μ : Measure Ω) (R : Set Ω) (Y : Ω → �
 
 /-- The **inverse-response-weighted mean** `E[1_R Y / π(X)]` of an outcome `Y` observed on the
 response event `R`, where `π(x) = P(R | X = x)` is the response probability given the
-always-observed discrete covariate `X` (Horvitz & Thompson 1952). An observed-data estimand
+always-observed discrete covariate `X` (Horvitz & Thompson 1952). Here `π` is the exact-fibre
+ratio `propensity μ R X` of real-valued measures, `0` on a set of infinite measure, so it is the
+response probability only on measurable fibres of positive finite mass; the integral is a
+Bochner integral, `0` for a non-integrable integrand. An observed-data estimand
 (`ipwMean_congr`). -/
 noncomputable def ipwMean {β : Type*} (μ : Measure Ω) (R : Set Ω) (X : Ω → β) (Y : Ω → ℝ) : ℝ :=
   ∫ ω, R.indicator (fun ω => Y ω / propensity μ R X (X ω)) ω ∂μ
