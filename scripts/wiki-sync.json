@@ -53422,6 +53422,7 @@
 "MathlibExt.Biology.PopulationGenetics.Coalescent.pairSeparateProb": "5b990c7304f8bac4",
 "MathlibExt.Biology.PopulationGenetics.Coalescent.pairShared": "d3902d9f8a5921c5",
 "MathlibExt.Biology.PopulationGenetics.Coalescent.partitionsOf": "45fdad21f03010fa",
+"MathlibExt.Biology.PopulationGenetics.Coalescent.partitionsOf_injective": "fb7f5d20486953b1",
 "MathlibExt.Biology.PopulationGenetics.Coalescent.pgf_of_hasCondDistrib_poisson": "ea21f00417fbb393",
 "MathlibExt.Biology.PopulationGenetics.Coalescent.pgf_segSites_kingmanMutationMeasure": "aef3d0ab26fec21e",
 "MathlibExt.Biology.PopulationGenetics.Coalescent.piMeasure": "637556469dc9bcfa",
