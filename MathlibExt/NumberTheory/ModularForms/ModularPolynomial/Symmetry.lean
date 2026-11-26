@@ -52,7 +52,9 @@ open Polynomial IntermediateField
 namespace ModularCurve
 
 /-- For a prime `ℓ`, there is modular polynomial data of level `ℓ` whose polynomial is
-irreducible over `ℚ(j)` and symmetric in its two variables. -/
+irreducible over `ℚ(j)` and symmetric in its two variables. These are parts (ii) and (iii) of
+Theorem 11.18 in D. A. Cox, *Primes of the Form x² + ny²* (3rd ed., 2022), for the modular
+equation `Φ_ℓ`. -/
 theorem exists_phiIrreducible_evalSymm (ℓ : ℕ) [hℓ : Fact (Nat.Prime ℓ)] :
     ∃ data : ModularPolynomialData ℓ, PhiIrreducible data ∧ EvalSymm data.Φ := by
   have : NeZero ((ℓ : ℕ) : ℚ) := ⟨Nat.cast_ne_zero.mpr hℓ.out.ne_zero⟩
@@ -88,15 +90,9 @@ theorem exists_modularPolynomialData_evalSymm (ℓ : ℕ) [Fact (Nat.Prime ℓ)]
 
 variable {N : ℕ} [NeZero N]
 
-private theorem aeval_jqN_toAdjoin (data : ModularPolynomialData N) :
-    Polynomial.aeval (jqN N) data.toAdjoin = 0 := by
-  rw [ModularPolynomialData.toAdjoin, Polynomial.aeval_def, Polynomial.eval₂_map,
-    algebraMap_comp_evalAtJGen]
-  exact data.eval_eq_zero
-
 private theorem isIntegral_jqN (data : ModularPolynomialData N) : IsIntegral ℚ⟮jq⟯ (jqN N) :=
   ⟨data.toAdjoin, data.toAdjoin_monic, by
-    rw [← Polynomial.aeval_def]; exact aeval_jqN_toAdjoin data⟩
+    rw [← Polynomial.aeval_def]; exact data.aeval_jqN_toAdjoin⟩
 
 private theorem natDegree_toAdjoin (data : ModularPolynomialData N) :
     data.toAdjoin.natDegree = ArithmeticFunction.dedekindPsi N := by
@@ -107,13 +103,8 @@ theorem finrank_adjoin_jqN_eq_of_prime (ℓ : ℕ) [hℓ : Fact (Nat.Prime ℓ)]
     Module.finrank ℚ⟮jq⟯ ℚ⟮jq⟯⟮jqN ℓ⟯ = ℓ + 1 := by
   obtain ⟨data, hirr, -⟩ := exists_phiIrreducible_evalSymm ℓ
   rw [IntermediateField.adjoin.finrank (isIntegral_jqN data),
-    ← (minpoly.eq_of_irreducible_of_monic hirr (aeval_jqN_toAdjoin data)
+    ← (minpoly.eq_of_irreducible_of_monic hirr data.aeval_jqN_toAdjoin
       data.toAdjoin_monic), natDegree_toAdjoin, ArithmeticFunction.dedekindPsi_prime hℓ.out]
-
-private theorem evalAtJGen_injective : Function.Injective evalAtJGen := by
-  have h : Function.Injective ((algebraMap ℚ⟮jq⟯ (LaurentSeries ℚ)) ∘ evalAtJGen) := by
-    rw [← RingHom.coe_comp, algebraMap_comp_evalAtJGen]; exact PhiGen.evalAtJ_injective
-  exact h.of_comp
 
 private theorem toAdjoin_eq_minpoly (p : ℕ) [hp : Fact p.Prime] (data : ModularPolynomialData p) :
     data.toAdjoin = minpoly ℚ⟮jq⟯ (jqN p) := by
@@ -122,7 +113,7 @@ private theorem toAdjoin_eq_minpoly (p : ℕ) [hp : Fact p.Prime] (data : Modula
     rw [← IntermediateField.adjoin.finrank hint]
     exact finrank_adjoin_jqN_eq_of_prime p
   refine Polynomial.eq_of_monic_of_dvd_of_natDegree_le (minpoly.monic hint) data.toAdjoin_monic
-    (minpoly.dvd _ _ (aeval_jqN_toAdjoin data)) ?_
+    (minpoly.dvd _ _ data.aeval_jqN_toAdjoin) ?_
   rw [hdeg, natDegree_toAdjoin, ArithmeticFunction.dedekindPsi_prime hp.out]
 
 /-- For a prime `p`, modular polynomial data of level `p` is unique. -/
@@ -137,7 +128,9 @@ theorem ModularPolynomialData.eq_of_prime (p : ℕ) [hp : Fact (Nat.Prime p)]
   rfl
 
 /-- For a prime `p`, the polynomial of any modular polynomial data of level `p` is
-symmetric: `Φ(x, y) = Φ(y, x)` for all rational Laurent series `x` and `y`. -/
+symmetric: `Φ(x, y) = Φ(y, x)` for all rational Laurent series `x` and `y`. This is the symmetry
+`Φ_p(X, Y) = Φ_p(Y, X)` of the modular equation, Theorem 11.18 (iii) in D. A. Cox, *Primes of the
+Form x² + ny²* (3rd ed., 2022). -/
 theorem ModularPolynomialData.evalSymm_of_prime (p : ℕ) [hp : Fact (Nat.Prime p)]
     (data : ModularPolynomialData p) : EvalSymm data.Φ := by
   obtain ⟨d, hd⟩ := exists_modularPolynomialData_evalSymm p

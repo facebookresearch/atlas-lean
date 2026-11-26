@@ -51,7 +51,7 @@ section CoeffEmbJq
 
 variable (K : Type*) [Field K] [Algebra ℚ K]
 
-private theorem coeff_coeffEmb_jq_neg_one : (coeffEmb K jq).coeff (-1 : ℤ) = 1 := by
+theorem coeff_coeffEmb_jq_neg_one : (coeffEmb K jq).coeff (-1 : ℤ) = 1 := by
   rw [coeffEmb_coeff, coeff_jq_neg_one, map_one]
 
 private theorem coeff_coeffEmb_jq_of_lt {k : ℤ} (hk : k < -1) : (coeffEmb K jq).coeff k = 0 := by
@@ -59,39 +59,35 @@ private theorem coeff_coeffEmb_jq_of_lt {k : ℤ} (hk : k < -1) : (coeffEmb K jq
 
 end CoeffEmbJq
 
-namespace TPoleOrderLE
-private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.mono
+private theorem _root_.ModularCurve.PoleOrderLE.mono
     {K : Type*} [Field K] {f : LaurentSeries K} {m n : ℕ}
-    (hf : TPoleOrderLE f m) (hmn : m ≤ n) : TPoleOrderLE f n :=
+    (hf : PoleOrderLE f m) (hmn : m ≤ n) : PoleOrderLE f n :=
   fun k hk => hf k (by omega)
 
-end TPoleOrderLE
-private theorem tPoleOrderLE_zero {K : Type*} [Field K] (n : ℕ) :
-    TPoleOrderLE (0 : LaurentSeries K) n :=
+private theorem poleOrderLE_zero {K : Type*} [Field K] (n : ℕ) :
+    PoleOrderLE (0 : LaurentSeries K) n :=
   fun _ _ => rfl
 
-private theorem tPoleOrderLE_one {K : Type*} [Field K] :
-    TPoleOrderLE (1 : LaurentSeries K) 0 := by
+private theorem poleOrderLE_one {K : Type*} [Field K] :
+    PoleOrderLE (1 : LaurentSeries K) 0 := by
   intro m hm
   rw [HahnSeries.coeff_one, ite_eq_right (by omega)]
 
-namespace TPoleOrderLE
-private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.neg
+private theorem _root_.ModularCurve.PoleOrderLE.neg
     {K : Type*} [Field K] {f : LaurentSeries K} {n : ℕ}
-    (hf : TPoleOrderLE f n) : TPoleOrderLE (-f) n := by
+    (hf : PoleOrderLE f n) : PoleOrderLE (-f) n := by
   intro m hm
   rw [HahnSeries.coeff_neg, hf m hm, neg_zero]
 
-end TPoleOrderLE
-private theorem TPoleOrderLE.add {K : Type*} [Field K] {f g : LaurentSeries K} {n : ℕ}
-    (hf : TPoleOrderLE f n) (hg : TPoleOrderLE g n) : TPoleOrderLE (f + g) n := by
+private theorem _root_.ModularCurve.PoleOrderLE.add
+    {K : Type*} [Field K] {f g : LaurentSeries K} {n : ℕ}
+    (hf : PoleOrderLE f n) (hg : PoleOrderLE g n) : PoleOrderLE (f + g) n := by
   intro m hm
   rw [HahnSeries.coeff_add, hf m hm, hg m hm, add_zero]
 
-namespace TPoleOrderLE
-private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.mul
+private theorem _root_.ModularCurve.PoleOrderLE.mul
     {K : Type*} [Field K] {f g : LaurentSeries K} {m n : ℕ}
-    (hf : TPoleOrderLE f m) (hg : TPoleOrderLE g n) : TPoleOrderLE (f * g) (m + n) := by
+    (hf : PoleOrderLE f m) (hg : PoleOrderLE g n) : PoleOrderLE (f * g) (m + n) := by
   intro k hk
   rw [HahnSeries.coeff_mul]
   refine Finset.sum_eq_zero fun ij hij => ?_
@@ -102,20 +98,16 @@ private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.mul
     push_cast at hk
     omega
 
-end TPoleOrderLE
-namespace TPoleOrderLE
-private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.qTwist
+private theorem _root_.ModularCurve.PoleOrderLE.qTwist
     {K : Type*} [Field K] {f : LaurentSeries K} {n : ℕ}
-    (hf : TPoleOrderLE f n) (u : Kˣ) : TPoleOrderLE (ModularCurve.qTwist u f) n := by
+    (hf : PoleOrderLE f n) (u : Kˣ) : PoleOrderLE (ModularCurve.qTwist u f) n := by
   intro m hm
   rw [qTwist_coeff, hf m hm, mul_zero]
 
-end TPoleOrderLE
-namespace TPoleOrderLE
-private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.qExpand
+private theorem _root_.ModularCurve.PoleOrderLE.qExpand
     {K : Type*} [Field K] {f : LaurentSeries K} {n : ℕ}
-    (hf : TPoleOrderLE f n) (N : ℕ) [NeZero N] :
-    TPoleOrderLE (ModularCurve.qExpand K N f) (N * n) := by
+    (hf : PoleOrderLE f n) (N : ℕ) [NeZero N] :
+    PoleOrderLE (ModularCurve.qExpand K N f) (N * n) := by
   intro m hm
   by_cases hdvd : (N : ℤ) ∣ m
   · obtain ⟨c, rfl⟩ := hdvd
@@ -125,12 +117,6 @@ private theorem _root_.ModularCurve.PhiGen.TPoleOrderLE.qExpand
     push_cast at hm
     nlinarith
   · exact qExpand_coeff_of_not_dvd N f hdvd
-
-end TPoleOrderLE
-private theorem tPoleOrderLE_of_jSimplePole {K : Type*} [Field K] (J : LaurentSeries K)
-    (hJ : JSimplePole J) : TPoleOrderLE J 1 := by
-  intro m hm
-  exact hJ m (by push_cast at hm; omega)
 
 private def conjPoleBound (ℓ : ℕ) : Fin (ℓ + 1) → ℕ :=
   fun i => if i = 0 then ℓ * ℓ else 1
@@ -147,36 +133,36 @@ private theorem sum_conjPoleBound (ℓ : ℕ) :
   simp only [conjPoleBound_succ]
   simp
 
-private theorem tPoleOrderLE_conj_zero {K : Type*} [Field K] {ℓ : ℕ}
+private theorem poleOrderLE_conj_zero {K : Type*} [Field K] {ℓ : ℕ}
     [hℓ : Fact (Nat.Prime ℓ)] {J : LaurentSeries K}
     {conj : Fin (ℓ + 1) → LaurentSeries K} (hconj0 : conj 0 = qExpand K (ℓ * ℓ) J)
-    (hJ : JSimplePole J) : TPoleOrderLE (conj 0) (ℓ * ℓ) := by
+    (hJ : PoleOrderLE J 1) : PoleOrderLE (conj 0) (ℓ * ℓ) := by
   rw [hconj0]
-  have h := (tPoleOrderLE_of_jSimplePole J hJ).qExpand (ℓ * ℓ)
+  have h := hJ.qExpand (ℓ * ℓ)
   simpa using h
 
-private theorem tPoleOrderLE_conj_succ {K : Type*} [Field K] {ℓ : ℕ} {ζ : Kˣ}
+private theorem poleOrderLE_conj_succ {K : Type*} [Field K] {ℓ : ℕ} {ζ : Kˣ}
     {J : LaurentSeries K} {conj : Fin (ℓ + 1) → LaurentSeries K}
     (hconjS : ∀ b : Fin ℓ, conj b.succ = ModularCurve.qTwist (ζ ^ (b : ℕ)) J)
-    (hJ : JSimplePole J) (b : Fin ℓ) : TPoleOrderLE (conj b.succ) 1 := by
+    (hJ : PoleOrderLE J 1) (b : Fin ℓ) : PoleOrderLE (conj b.succ) 1 := by
   rw [hconjS b]
-  exact (tPoleOrderLE_of_jSimplePole J hJ).qTwist _
+  exact hJ.qTwist _
 
-private theorem tPoleOrderLE_conj {K : Type*} [Field K] {ℓ : ℕ} [hℓ : Fact (Nat.Prime ℓ)]
+private theorem poleOrderLE_conj {K : Type*} [Field K] {ℓ : ℕ} [hℓ : Fact (Nat.Prime ℓ)]
     {ζ : Kˣ} {J : LaurentSeries K} {conj : Fin (ℓ + 1) → LaurentSeries K}
     (hconj0 : conj 0 = qExpand K (ℓ * ℓ) J)
     (hconjS : ∀ b : Fin ℓ, conj b.succ = ModularCurve.qTwist (ζ ^ (b : ℕ)) J)
-    (hJ : JSimplePole J) (i : Fin (ℓ + 1)) :
-    TPoleOrderLE (conj i) (conjPoleBound ℓ i) := by
+    (hJ : PoleOrderLE J 1) (i : Fin (ℓ + 1)) :
+    PoleOrderLE (conj i) (conjPoleBound ℓ i) := by
   rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨b, rfl⟩
   · rw [conjPoleBound_zero]
-    exact tPoleOrderLE_conj_zero hconj0 hJ
+    exact poleOrderLE_conj_zero hconj0 hJ
   · rw [conjPoleBound_succ]
-    exact tPoleOrderLE_conj_succ hconjS hJ b
+    exact poleOrderLE_conj_succ hconjS hJ b
 
-private theorem tPoleOrderLE_coeff_X_sub_C {K : Type*} [Field K] {a : LaurentSeries K}
-    {n : ℕ} (ha : TPoleOrderLE a n) (k : ℕ) :
-    TPoleOrderLE ((Polynomial.X - Polynomial.C a).coeff k) n := by
+private theorem poleOrderLE_coeff_X_sub_C {K : Type*} [Field K] {a : LaurentSeries K}
+    {n : ℕ} (ha : PoleOrderLE a n) (k : ℕ) :
+    PoleOrderLE ((Polynomial.X - Polynomial.C a).coeff k) n := by
   match k with
   | 0 =>
     simp only [Polynomial.coeff_sub, Polynomial.coeff_X_zero, Polynomial.coeff_C_zero,
@@ -185,28 +171,28 @@ private theorem tPoleOrderLE_coeff_X_sub_C {K : Type*} [Field K] {a : LaurentSer
   | 1 =>
     simp only [Polynomial.coeff_sub, Polynomial.coeff_X_one, Polynomial.coeff_C,
       ite_eq_right (one_ne_zero), sub_zero]
-    exact tPoleOrderLE_one.mono (Nat.zero_le _)
+    exact poleOrderLE_one.mono (Nat.zero_le _)
   | (k + 2) =>
     simp only [Polynomial.coeff_sub, Polynomial.coeff_X, Polynomial.coeff_C]
     rw [ite_eq_right (by omega), ite_eq_right (by omega), sub_zero]
-    exact tPoleOrderLE_zero _
+    exact poleOrderLE_zero _
 
 private theorem phiProd_def {K : Type*} [Field K] (ℓ : ℕ)
     (conj : Fin (ℓ + 1) → LaurentSeries K) :
     phiProd ℓ conj = ∏ i : Fin (ℓ + 1), (Polynomial.X - Polynomial.C (conj i)) := rfl
 
-private theorem tPoleOrderLE_prod {K : Type*} [Field K] {ι : Type*} (s : Finset ι)
-    (f : ι → LaurentSeries K) (n : ι → ℕ) (hf : ∀ i ∈ s, TPoleOrderLE (f i) (n i)) :
-    TPoleOrderLE (∏ i ∈ s, f i) (∑ i ∈ s, n i) := by
+private theorem poleOrderLE_prod {K : Type*} [Field K] {ι : Type*} (s : Finset ι)
+    (f : ι → LaurentSeries K) (n : ι → ℕ) (hf : ∀ i ∈ s, PoleOrderLE (f i) (n i)) :
+    PoleOrderLE (∏ i ∈ s, f i) (∑ i ∈ s, n i) := by
   induction s using Finset.cons_induction with
-  | empty => simpa using tPoleOrderLE_one
+  | empty => simpa using poleOrderLE_one
   | cons a s ha ih =>
     rw [Finset.prod_cons, Finset.sum_cons]
     exact (hf a (Finset.mem_cons_self a s)).mul
       (ih fun i hi => hf i (Finset.mem_cons_of_mem hi))
 
 private theorem coeff_mul_lead {K : Type*} [Field K] {f g : LaurentSeries K} {m n : ℕ}
-    (hf : TPoleOrderLE f m) (hg : TPoleOrderLE g n) :
+    (hf : PoleOrderLE f m) (hg : PoleOrderLE g n) :
     (f * g).coeff (-((m + n : ℕ) : ℤ)) = f.coeff (-(m : ℤ)) * g.coeff (-(n : ℤ)) := by
   rw [HahnSeries.coeff_mul]
   refine Finset.sum_eq_single ((-(m : ℤ), -(n : ℤ))) ?_ ?_
@@ -227,7 +213,7 @@ private theorem coeff_mul_lead {K : Type*} [Field K] {f g : LaurentSeries K} {m 
     · exact fun h0 => hne (by rw [h0, mul_zero])
 
 private theorem coeff_prod_lead {K : Type*} [Field K] {ι : Type*} (s : Finset ι)
-    (f : ι → LaurentSeries K) (n : ι → ℕ) (hf : ∀ i ∈ s, TPoleOrderLE (f i) (n i)) :
+    (f : ι → LaurentSeries K) (n : ι → ℕ) (hf : ∀ i ∈ s, PoleOrderLE (f i) (n i)) :
     (∏ i ∈ s, f i).coeff (-((∑ i ∈ s, n i : ℕ) : ℤ)) =
       ∏ i ∈ s, (f i).coeff (-(n i : ℤ)) := by
   induction s using Finset.cons_induction with
@@ -235,7 +221,7 @@ private theorem coeff_prod_lead {K : Type*} [Field K] {ι : Type*} (s : Finset �
   | cons a s ha ih =>
     rw [Finset.prod_cons, Finset.sum_cons, Finset.prod_cons,
       coeff_mul_lead (hf a (Finset.mem_cons_self a s))
-        (tPoleOrderLE_prod s f n fun i hi => hf i (Finset.mem_cons_of_mem hi)),
+        (poleOrderLE_prod s f n fun i hi => hf i (Finset.mem_cons_of_mem hi)),
       ih fun i hi => hf i (Finset.mem_cons_of_mem hi)]
 
 private theorem pow_sum_range_isPrimitiveRoot {K : Type*} [Field K] {ℓ : ℕ} (hℓ : Nat.Prime ℓ)
@@ -287,12 +273,12 @@ private theorem phiProd_coeff_zero_lead {K : Type*} [Field K] {ℓ : ℕ} [hℓ 
     {ζ : Kˣ} {J : LaurentSeries K} {conj : Fin (ℓ + 1) → LaurentSeries K}
     (hconj0 : conj 0 = qExpand K (ℓ * ℓ) J)
     (hconjS : ∀ b : Fin ℓ, conj b.succ = ModularCurve.qTwist (ζ ^ (b : ℕ)) J)
-    (hJ : JSimplePole J) (hζ : IsPrimitiveRoot (ζ : K) ℓ)
+    (hJ : PoleOrderLE J 1) (hζ : IsPrimitiveRoot (ζ : K) ℓ)
     (hJlead : J.coeff (-1 : ℤ) = 1) :
     ((phiProd ℓ conj).coeff 0).coeff (-((ℓ * ℓ + ℓ : ℕ) : ℤ)) = 1 := by
   rw [phiProd_coeff_zero_eq_prod_neg, ← sum_conjPoleBound ℓ,
     coeff_prod_lead Finset.univ _ (conjPoleBound ℓ)
-      (fun i _ => (tPoleOrderLE_conj hconj0 hconjS hJ i).neg),
+      (fun i _ => (poleOrderLE_conj hconj0 hconjS hJ i).neg),
     Fin.prod_univ_succ]
   have h0 : (-(conj 0)).coeff (-((conjPoleBound ℓ 0 : ℕ) : ℤ)) = -1 := by
     rw [HahnSeries.coeff_neg, conjPoleBound_zero, conj_zero_coeff_lead hconj0 hJlead]
@@ -307,84 +293,93 @@ private theorem phiProd_coeff_zero_lead {K : Type*} [Field K] {ℓ : ℕ} [hℓ 
     prod_inv_pow_isPrimitiveRoot hℓ.out hζ, ← pow_add, ← pow_succ']
   exact Even.neg_one_pow ⟨ℓ + 1, by ring⟩
 
-private theorem tPoleOrderLE_coeff_prod_X_sub_C_card {K : Type*} [Field K] {ι : Type*}
-    (s : Finset ι) (a : ι → LaurentSeries K) (ha : ∀ i ∈ s, TPoleOrderLE (a i) 1) :
-    ∀ k : ℕ, TPoleOrderLE ((∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))).coeff k)
+private theorem poleOrderLE_coeff_prod_X_sub_C_card {K : Type*} [Field K] {ι : Type*}
+    (s : Finset ι) (a : ι → LaurentSeries K) (ha : ∀ i ∈ s, PoleOrderLE (a i) 1) :
+    ∀ k : ℕ, PoleOrderLE ((∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))).coeff k)
       (s.card - k) := by
   induction s using Finset.cons_induction with
   | empty =>
     intro k
     rcases Nat.eq_zero_or_pos k with rfl | hk
-    · simpa using tPoleOrderLE_one
+    · simpa using poleOrderLE_one
     · rw [Finset.prod_empty, Polynomial.coeff_one, ite_eq_right (by omega)]
-      exact tPoleOrderLE_zero _
+      exact poleOrderLE_zero _
   | cons a₀ s ha₀ ih =>
     intro k
-    have hmem : ∀ i ∈ s, TPoleOrderLE (a i) 1 :=
+    have hmem : ∀ i ∈ s, PoleOrderLE (a i) 1 :=
       fun i hi => ha i (Finset.mem_cons_of_mem hi)
     rw [Finset.prod_cons, Finset.card_cons]
     match k with
     | 0 =>
       rw [Polynomial.mul_coeff_zero]
-      exact ((tPoleOrderLE_coeff_X_sub_C (ha a₀ (Finset.mem_cons_self a₀ s)) 0).mul
+      exact ((poleOrderLE_coeff_X_sub_C (ha a₀ (Finset.mem_cons_self a₀ s)) 0).mul
         (ih hmem 0)).mono (by omega)
     | (k + 1) =>
       rw [sub_mul, Polynomial.coeff_sub, Polynomial.coeff_X_mul, Polynomial.coeff_C_mul,
         sub_eq_add_neg]
-      refine TPoleOrderLE.add ?_ (TPoleOrderLE.neg ?_)
+      refine PoleOrderLE.add ?_ (PoleOrderLE.neg ?_)
       · exact (ih hmem k).mono (by omega)
       · by_cases hks : k + 1 ≤ s.card
         · exact ((ha a₀ (Finset.mem_cons_self a₀ s)).mul (ih hmem (k + 1))).mono
             (by omega)
         · rw [Polynomial.coeff_eq_zero_of_natDegree_lt, mul_zero]
-          · exact tPoleOrderLE_zero _
+          · exact poleOrderLE_zero _
           · rw [Polynomial.natDegree_prod_of_monic _ _
               (fun i _ => Polynomial.monic_X_sub_C (a i))]
             simp only [Polynomial.natDegree_X_sub_C, ← Finset.card_eq_sum_ones]
             omega
 
-private theorem tPoleOrderLE_phiProd_coeff_of_ne_zero {K : Type*} [Field K] {ℓ : ℕ}
+private theorem poleOrderLE_phiProd_coeff_of_ne_zero {K : Type*} [Field K] {ℓ : ℕ}
     [hℓ : Fact (Nat.Prime ℓ)] {ζ : Kˣ} {J : LaurentSeries K}
     {conj : Fin (ℓ + 1) → LaurentSeries K} (hconj0 : conj 0 = qExpand K (ℓ * ℓ) J)
     (hconjS : ∀ b : Fin ℓ, conj b.succ = ModularCurve.qTwist (ζ ^ (b : ℕ)) J)
-    (hJ : JSimplePole J) (k : ℕ) (hk : k ≠ 0) :
-    TPoleOrderLE ((phiProd ℓ conj).coeff k) (ℓ * ℓ + ℓ - 1) := by
+    (hJ : PoleOrderLE J 1) (k : ℕ) (hk : k ≠ 0) :
+    PoleOrderLE ((phiProd ℓ conj).coeff k) (ℓ * ℓ + ℓ - 1) := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk
   have hℓ2 : 2 ≤ ℓ := hℓ.out.two_le
   have hsq : 4 ≤ ℓ * ℓ := Nat.mul_le_mul hℓ2 hℓ2
   rw [phiProd_def, Fin.prod_univ_succ, sub_mul, Polynomial.coeff_sub,
     Polynomial.coeff_X_mul, Polynomial.coeff_C_mul, sub_eq_add_neg]
-  have hR : ∀ j : ℕ, TPoleOrderLE
+  have hR : ∀ j : ℕ, PoleOrderLE
       ((∏ b : Fin ℓ, (Polynomial.X - Polynomial.C (conj b.succ))).coeff j)
       (Finset.univ.card - j) :=
-    tPoleOrderLE_coeff_prod_X_sub_C_card Finset.univ _
-      (fun b _ => tPoleOrderLE_conj_succ hconjS hJ b)
+    poleOrderLE_coeff_prod_X_sub_C_card Finset.univ _
+      (fun b _ => poleOrderLE_conj_succ hconjS hJ b)
   rw [Finset.card_univ, Fintype.card_fin] at hR
-  refine TPoleOrderLE.add ?_ (TPoleOrderLE.neg ?_)
+  refine PoleOrderLE.add ?_ (PoleOrderLE.neg ?_)
   · exact (hR k).mono (by omega)
-  · exact ((tPoleOrderLE_conj_zero hconj0 hJ).mul (hR (k + 1))).mono (by omega)
+  · exact ((poleOrderLE_conj_zero hconj0 hJ).mul (hR (k + 1))).mono (by omega)
 
-private theorem jSimplePole_jqK_carrier {K : Type*} [Field K] [Algebra ℚ K] :
-    JSimplePole (coeffEmb K jq) :=
-  fun _ hm => coeff_coeffEmb_jq_of_lt K hm
+private theorem poleOrderLE_coeffEmb_jq {K : Type*} [Field K] [Algebra ℚ K] :
+    PoleOrderLE (coeffEmb K jq) 1 :=
+  fun _ hm => coeff_coeffEmb_jq_of_lt K (by exact_mod_cast hm)
 
 theorem phiProd_conj_coeff_zero_lead {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
     [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ) (hζ : IsPrimitiveRoot (ζ : K) ℓ) :
     ((phiProd ℓ (conj ℓ ζ)).coeff 0).coeff (-((ℓ * ℓ + ℓ : ℕ) : ℤ)) = 1 :=
   phiProd_coeff_zero_lead (conj_zero ℓ ζ) (conj_succ ℓ ζ)
-    (jSimplePole_jqK_carrier (K := K)) hζ (coeff_coeffEmb_jq_neg_one K)
+    (poleOrderLE_coeffEmb_jq (K := K)) hζ (coeff_coeffEmb_jq_neg_one K)
 
-private theorem tPoleOrderLE_phiProd_conj_of_ne_zero {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
+private theorem poleOrderLE_phiProd_conj_of_ne_zero {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
     [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ) (k : ℕ) (hk : k ≠ 0) :
-    TPoleOrderLE ((phiProd ℓ (conj ℓ ζ)).coeff k) (ℓ * ℓ + ℓ - 1) :=
-  tPoleOrderLE_phiProd_coeff_of_ne_zero (conj_zero ℓ ζ) (conj_succ ℓ ζ)
-    (jSimplePole_jqK_carrier (K := K)) k hk
+    PoleOrderLE ((phiProd ℓ (conj ℓ ζ)).coeff k) (ℓ * ℓ + ℓ - 1) :=
+  poleOrderLE_phiProd_coeff_of_ne_zero (conj_zero ℓ ζ) (conj_succ ℓ ζ)
+    (poleOrderLE_coeffEmb_jq (K := K)) k hk
 
 theorem phiProd_conj_coeff_eq_zero_of_le {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
     [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ) (k : ℕ) (hk : k ≠ 0) (m : ℕ)
     (hm : ℓ * ℓ + ℓ ≤ m) : ((phiProd ℓ (conj ℓ ζ)).coeff k).coeff (-(m : ℤ)) = 0 := by
   have hℓ2 : 2 ≤ ℓ := hℓ.out.two_le
-  exact tPoleOrderLE_phiProd_conj_of_ne_zero ℓ ζ k hk (-(m : ℤ)) (by omega)
+  exact poleOrderLE_phiProd_conj_of_ne_zero ℓ ζ k hk (-(m : ℤ)) (by omega)
+
+theorem poleOrderLE_phiProd_conj_coeff {K : Type*} [Field K] [Algebra ℚ K] (ℓ : ℕ)
+    [hℓ : Fact (Nat.Prime ℓ)] (ζ : Kˣ) (k : ℕ) :
+    PoleOrderLE ((phiProd ℓ (conj ℓ ζ)).coeff k) (ℓ * ℓ + ℓ) := by
+  rcases eq_or_ne k 0 with rfl | hk
+  · rw [phiProd_coeff_zero_eq_prod_neg, ← sum_conjPoleBound ℓ]
+    exact poleOrderLE_prod Finset.univ _ (conjPoleBound ℓ) fun i _ =>
+      (poleOrderLE_conj (conj_zero ℓ ζ) (conj_succ ℓ ζ) poleOrderLE_coeffEmb_jq i).neg
+  · exact (poleOrderLE_phiProd_conj_of_ne_zero ℓ ζ k hk).mono (Nat.sub_le _ _)
 
 end PhiGen
 end ModularCurve

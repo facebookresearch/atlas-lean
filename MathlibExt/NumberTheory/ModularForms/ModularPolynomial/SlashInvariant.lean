@@ -35,6 +35,7 @@ module
 
 public import MathlibExt.NumberTheory.ModularForms.ModularPolynomial.JExpansion
 public import MathlibExt.NumberTheory.ModularForms.ModularPolynomial.PhiGen
+public import MathlibExt.NumberTheory.ModularForms.LevelNAlgebra
 import Mathlib.NumberTheory.Cyclotomic.Basic
 import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 import Mathlib.NumberTheory.ModularForms.Discriminant
@@ -56,10 +57,6 @@ namespace ModularCurve
 namespace Realized
 
 variable {h : ℝ} {F : ℍ → ℂ} {c : ℕ → ℂ}
-
-private lemma norm_qParam_lt_one_of_pos (hh : 0 < h) (τ : ℍ) : ‖𝕢 h (τ : ℂ)‖ < 1 := by
-  rw [Periodic.norm_qParam, Real.exp_lt_one_iff, neg_mul, coe_im, neg_mul, neg_div, neg_lt_zero]
-  exact div_pos (by positivity [τ.im_pos]) hh
 
 private lemma hasSum_cuspFunction_punctured (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) {q : ℂ} (hq : ‖q‖ < 1)
@@ -108,7 +105,7 @@ private lemma hasSum_discFun (hh : 0 < h) (hF : ∀ τ : ℍ,
 private lemma apply_eq_discFun (hh : 0 < h) (hF : ∀ τ : ℍ,
     HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ))
     (τ : ℍ) : F τ = discFun h F c (𝕢 h (τ : ℂ)) :=
-  (hF τ).unique (hasSum_discFun hh hF (norm_qParam_lt_one_of_pos hh τ))
+  (hF τ).unique (hasSum_discFun hh hF (Periodic.norm_qParam_lt_one hh τ.im_pos))
 
 private lemma differentiableOn_discFun (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
@@ -130,9 +127,7 @@ private theorem mdifferentiable (hh : 0 < h)
   rw [UpperHalfPlane.mdifferentiable_iff]
   have h1 : DifferentiableOn ℂ (fun z : ℂ => discFun h F c (𝕢 h z)) {z : ℂ | 0 < z.im} := by
     intro z hz
-    have hzq : ‖𝕢 h z‖ < 1 := by
-      have := norm_qParam_lt_one_of_pos hh ⟨z, hz⟩
-      simpa using this
+    have hzq : ‖𝕢 h z‖ < 1 := Periodic.norm_qParam_lt_one hh hz
     exact (((differentiableOn_discFun hh hF).differentiableAt
       (Metric.isOpen_ball.mem_nhds (by simpa using hzq))).comp z
       ((Periodic.differentiable_qParam (h := h)) z)).differentiableWithinAt
@@ -151,24 +146,6 @@ private theorem isBoundedAtImInfty (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
     IsBoundedAtImInfty F :=
   (tendsto_atImInfty hh hF).isBigO_one ℝ
-
-private theorem periodic (hh : 0 < h)
-    (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ)) :
-    Periodic (F ∘ ofComplex) h := by
-  intro w
-  by_cases hw : 0 < w.im
-  · have hw' : 0 < (w + h).im := by simpa using hw
-    simp only [Function.comp_apply, apply_eq_discFun hh hF, ofComplex_apply_of_im_pos hw,
-      ofComplex_apply_of_im_pos hw']
-    congr 1
-    simp only [Periodic.qParam]
-    rw [show 2 * ↑Real.pi * Complex.I * (w + ↑h) / ↑h = 2 * ↑Real.pi * Complex.I * w /
-        ↑h + 2 * ↑Real.pi * Complex.I by
-      field_simp [(Complex.ofReal_ne_zero.mpr hh.ne')]]
-    rw [Complex.exp_add, Complex.exp_two_pi_mul_I, mul_one]
-  · push Not at hw
-    have hw' : (w + h).im ≤ 0 := by simpa using hw
-    simp only [Function.comp_apply, ofComplex_apply_eq_of_im_nonpos hw' hw]
 
 private theorem coeff_unique {d : ℕ → ℂ} (hh : 0 < h)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℕ => c m * 𝕢 h (τ : ℂ) ^ m) (F τ))
@@ -240,39 +217,6 @@ open Polynomial
 
 namespace ModularCurve
 
-private theorem poleOrderLE_iff_le_order {f : LaurentSeries ℚ} (hf : f ≠ 0) {n : ℕ} :
-    PoleOrderLE f n ↔ -(n : ℤ) ≤ f.order :=
-  (HahnSeries.le_order_iff_forall hf).symm
-
-private theorem exists_poleOrderLE (f : LaurentSeries ℚ) : ∃ n : ℕ, PoleOrderLE f n :=
-  ⟨(-f.order).toNat, fun _ hk => HahnSeries.coeff_eq_zero_of_lt_order (by omega)⟩
-
-private theorem poleOrderLE_aeval_jq (P : Polynomial ℚ) :
-    PoleOrderLE (Polynomial.aeval jq P) P.natDegree := by
-  intro k hk
-  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum]
-  refine Finset.sum_eq_zero fun i hi => ?_
-  have hile : i ≤ P.natDegree := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
-  rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-    coeff_jq_pow_of_lt (by omega), mul_zero]
-
-private theorem coeff_aeval_jq_neg (P : Polynomial ℚ) {m : ℕ} (hm : P.natDegree ≤ m) :
-    (Polynomial.aeval jq P).coeff (-(m : ℤ)) = P.coeff m := by
-  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-    Finset.sum_eq_single m]
-  · rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_self,
-      mul_one]
-  · intro i hi hin
-    have hilt : i < m :=
-      lt_of_le_of_ne (le_trans (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hm) hin
-    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-      coeff_jq_pow_of_lt (by omega), mul_zero]
-  · intro hm'
-    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
-      Polynomial.coeff_eq_zero_of_natDegree_lt
-        (by simp only [Finset.mem_range, not_lt] at hm'; omega),
-      zero_mul]
-
 private theorem poleOrderLE_sub_aeval_jq_succ {f : LaurentSeries ℚ} {n : ℕ}
     (hf : PoleOrderLE f (n + 1)) :
     PoleOrderLE
@@ -285,7 +229,7 @@ private theorem poleOrderLE_sub_aeval_jq_succ {f : LaurentSeries ℚ} {n : ℕ}
   · rw [heq, coeff_jq_pow_self, mul_one, sub_self]
   · rw [hf k hlt, coeff_jq_pow_of_lt hlt, mul_zero, sub_zero]
 
-private theorem exists_aeval_jq_sub_holomorphicAtInfty' (n : ℕ) :
+theorem exists_aeval_jq_sub_holomorphicAtInfty (n : ℕ) :
     ∀ f : LaurentSeries ℚ, PoleOrderLE f n →
       ∃ P : Polynomial ℚ, P.natDegree ≤ n ∧ PoleOrderLE (f - Polynomial.aeval jq P) 0 := by
   induction n with
@@ -305,11 +249,6 @@ private theorem exists_aeval_jq_sub_holomorphicAtInfty' (n : ℕ) :
 
 end ModularCurve
 
-open ModularCurve ModularCurve.PhiGen in
-theorem ModularCurve.exists_aeval_jq_sub_holomorphicAtInfty (n : ℕ) :
-    ∀ f : LaurentSeries ℚ, PoleOrderLE f n →
-      ∃ P : Polynomial ℚ, P.natDegree ≤ n ∧ PoleOrderLE (f - Polynomial.aeval jq P) 0 :=
-  ModularCurve.exists_aeval_jq_sub_holomorphicAtInfty' n
 
 noncomputable section
 
@@ -320,59 +259,46 @@ local notation "𝕢" => Function.Periodic.qParam
 
 namespace ModularCurve
 
-private def RealL (h : ℝ) (A : LaurentSeries ℂ) (F : ℍ → ℂ) : Prop :=
+def RealL (h : ℝ) (A : LaurentSeries ℂ) (F : ℍ → ℂ) : Prop :=
   ∀ τ : ℍ, HasSum (fun m : ℤ => A.coeff m * 𝕢 h (τ : ℂ) ^ m) (F τ)
 
 namespace RealL
 
 variable {h : ℝ} {A B : LaurentSeries ℂ} {F G : ℍ → ℂ}
 
-private lemma add (hA : RealL h A F) (hB : RealL h B G) : RealL h (A + B) (F + G) := fun τ => by
+lemma add (hA : RealL h A F) (hB : RealL h B G) : RealL h (A + B) (F + G) := fun τ => by
   simpa [add_mul] using (hA τ).add (hB τ)
 
-private lemma neg (hA : RealL h A F) : RealL h (-A) (-F) := fun τ => by
+lemma neg (hA : RealL h A F) : RealL h (-A) (-F) := fun τ => by
   simpa [neg_mul] using (hA τ).neg
 
-private lemma sub (hA : RealL h A F) (hB : RealL h B G) : RealL h (A - B) (F - G) := fun τ => by
+lemma sub (hA : RealL h A F) (hB : RealL h B G) : RealL h (A - B) (F - G) := fun τ => by
   simpa [sub_mul] using (hA τ).sub (hB τ)
 
-private lemma mul (hh : 0 < h) (hA : RealL h A F) (hB : RealL h B G) : RealL h (A * B) (F * G) :=
+lemma mul (hh : 0 < h) (hA : RealL h A F) (hB : RealL h B G) : RealL h (A * B) (F * G) :=
     fun τ =>
   hasSum_qParam_mul_laurent h hh A B F G hA hB τ
 
-private lemma single (h : ℝ) (a : ℂ) (n : ℤ) :
+lemma single (h : ℝ) (a : ℂ) (n : ℤ) :
     RealL h (HahnSeries.single n a) (fun τ => a * 𝕢 h (τ : ℂ) ^ n) := fun τ => by
   refine (hasSum_ite_eq n (a * 𝕢 h (τ : ℂ) ^ n)).congr_fun fun m => ?_
   by_cases hm : m = n
   · subst hm; simp
   · simp [HahnSeries.coeff_single_of_ne hm, hm]
 
-private lemma C (h : ℝ) (a : ℂ) : RealL h (HahnSeries.C a) (fun _ => a) := by
+lemma C (h : ℝ) (a : ℂ) : RealL h (HahnSeries.C a) (fun _ => a) := by
   simpa using single h a 0
 
-private lemma one (h : ℝ) : RealL h 1 1 := by
-  have h__af := C h 1
-  simp at h__af
-  exact h__af
-
-private lemma zero (h : ℝ) : RealL h 0 0 := fun τ => by simp [hasSum_zero]
-
-private lemma congr {A' : LaurentSeries ℂ} {F' : ℍ → ℂ} (hA : RealL h A F) (h1 : A = A') (h2 : ∀ τ,
+lemma congr {A' : LaurentSeries ℂ} {F' : ℍ → ℂ} (hA : RealL h A F) (h1 : A = A') (h2 : ∀ τ,
     F τ = F' τ) :
     RealL h A' F' := fun τ => by rw [← h1, ← h2]; exact hA τ
 
-private lemma prod (hh : 0 < h) {ι : Type} (s : Finset ι) {A : ι → LaurentSeries ℂ} {F : ι → ℍ → ℂ}
-    (hAF : ∀ i ∈ s, RealL h (A i) (F i)) : RealL h (∏ i ∈ s, A i) (fun τ => ∏ i ∈ s, F i τ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => (have h__af := one h; simp at h__af ⊢; exact h__af)
-  | insert a s ha ih =>
-    have h1 := (hAF a (Finset.mem_insert_self a s)).mul hh (ih fun i hi =>
-        hAF i (Finset.mem_insert_of_mem hi))
-    refine h1.congr (Finset.prod_insert ha).symm fun τ => ?_
-    simp [Finset.prod_insert ha]
+lemma one (h : ℝ) : RealL h 1 1 :=
+  (C h 1).congr (map_one _) fun _ => rfl
 
-private lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → LaurentSeries ℂ}
+lemma zero (h : ℝ) : RealL h 0 0 := fun τ => by simp [hasSum_zero]
+
+lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → LaurentSeries ℂ}
     {α : ι → ℍ → ℂ} (haα : ∀ i ∈ s, RealL h (a i) (α i)) (k : ℕ) :
     RealL h ((∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))).coeff k)
       (fun τ => (∏ i ∈ s, (Polynomial.X - Polynomial.C (α i τ))).coeff k) := by
@@ -381,10 +307,9 @@ private lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : �
   | empty =>
     simp only [Finset.prod_empty, Polynomial.coeff_one]
     by_cases hk : k = 0
-    · subst hk; (have h__af := one h; simp at h__af ⊢; exact h__af)
-    · have h__af := zero h
-      simp [hk] at h__af ⊢
-      exact h__af
+    · subst hk
+      exact (one h).congr (by simp) fun _ => by simp
+    · exact (zero h).congr (by simp [hk]) fun _ => by simp [hk]
   | insert b s hb ih =>
     have ih' := fun k => ih (fun i hi => haα i (Finset.mem_insert_of_mem hi)) k
     have hb' := haα b (Finset.mem_insert_self b s)
@@ -412,25 +337,23 @@ end RealL
 
 section JT
 
-private def jt (τ : ℍ) : ℂ := ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ
+def jqC : LaurentSeries ℂ := coeffMap (Rat.castHom ℂ) jq
 
-private abbrev castC : ℚ →+* ℂ := Rat.castHom ℂ
+lemma jqC_coeff (m : ℤ) : jqC.coeff m = ((jq.coeff m : ℚ) : ℂ) := rfl
 
-private def jqC : LaurentSeries ℂ := coeffMap castC jq
-
-private lemma jqC_coeff (m : ℤ) : jqC.coeff m = ((jq.coeff m : ℚ) : ℂ) := rfl
-
-private lemma realL_jqC : RealL 1 jqC jt := fun τ => ModularCurve.hasSum_jq_qParam τ
+lemma realL_jqC : RealL 1 jqC WLight.jFunction := fun τ => ModularCurve.hasSum_jq_qParam τ
 
 end JT
 
 section JOut
 
-private lemma jt_smul (γ : SL(2, ℤ)) (τ : ℍ) : jt (γ • τ) = jt τ :=
+private lemma jFunction_smul (γ : SL(2, ℤ)) (τ : ℍ) :
+    WLight.jFunction (γ • τ) = WLight.jFunction τ :=
   ModularCurve.E4_cube_div_discriminant_smul γ τ
 
 private lemma realL_aeval_jq (P : Polynomial ℚ) :
-    RealL 1 (coeffMap castC (Polynomial.aeval jq P)) (fun τ => (P.map castC).eval (jt τ)) := by
+    RealL 1 (coeffMap (Rat.castHom ℂ) (Polynomial.aeval jq P))
+      (fun τ => (P.map (Rat.castHom ℂ)).eval (WLight.jFunction τ)) := by
   induction P using Polynomial.induction_on with
   | C a =>
     refine (RealL.C 1 (a : ℂ)).congr ?_ fun τ => ?_
@@ -443,13 +366,14 @@ private lemma realL_aeval_jq (P : Polynomial ℚ) :
     · simp
   | monomial n a ih =>
     refine (ih.mul one_pos realL_jqC).congr ?_ fun τ => ?_
-    · rw [jqC, ← map_mul]
+    · unfold jqC
+      rw [← map_mul]
       congr 1
       symm
       rw [pow_succ, ← mul_assoc, map_mul, Polynomial.aeval_X]
     · simp [pow_succ, mul_assoc]
 
-private theorem mem_adjoin_jq_of_realL_invariant (f : LaurentSeries ℚ) (F : ℍ → ℂ)
+theorem mem_adjoin_jq_of_hasSum_of_slash_invariant (f : LaurentSeries ℚ) (F : ℍ → ℂ)
     (hF : ∀ τ : ℍ, HasSum (fun m : ℤ => ((f.coeff m : ℚ) : ℂ) * 𝕢 1 (τ : ℂ) ^ m) (F τ))
     (hinv : ∀ (γ : SL(2, ℤ)) (τ : ℍ), F (γ • τ) = F τ) : f ∈ Algebra.adjoin ℚ {jq} := by
   obtain ⟨n, hn⟩ : ∃ n : ℕ, PoleOrderLE f n := by
@@ -462,17 +386,18 @@ private theorem mem_adjoin_jq_of_realL_invariant (f : LaurentSeries ℚ) (F : �
   obtain ⟨P, -, he⟩ := ModularCurve.exists_aeval_jq_sub_holomorphicAtInfty n f hn
   set e : LaurentSeries ℚ := f - Polynomial.aeval jq P with he_def
   have he0 : ∀ m : ℤ, m < 0 → e.coeff m = 0 := fun m hm => he m (by simpa using hm)
-  have hfR : RealL 1 (coeffMap castC f) F := hF
-  have hE : RealL 1 (coeffMap castC e) (F - fun τ => (P.map castC).eval (jt τ)) := by
+  have hfR : RealL 1 (coeffMap (Rat.castHom ℂ) f) F := hF
+  have hE : RealL 1 (coeffMap (Rat.castHom ℂ) e)
+      (F - fun τ => (P.map (Rat.castHom ℂ)).eval (WLight.jFunction τ)) := by
     rw [he_def, map_sub]
     exact hfR.sub (realL_aeval_jq P)
   have hEinv : ∀ (γ : SL(2, ℤ)) (τ : ℍ),
-      (F - fun τ => (P.map castC).eval (jt τ)) (γ • τ) = (F - fun τ =>
-          (P.map castC).eval (jt τ)) τ := by
+      (F - fun τ => (P.map (Rat.castHom ℂ)).eval (WLight.jFunction τ)) (γ • τ) = (F - fun τ =>
+          (P.map (Rat.castHom ℂ)).eval (WLight.jFunction τ)) τ := by
     intro γ τ
-    simp only [Pi.sub_apply, hinv γ τ, jt_smul γ τ]
+    simp only [Pi.sub_apply, hinv γ τ, jFunction_smul γ τ]
   have hEN : ∀ τ : ℍ, HasSum (fun n : ℕ => ((e.coeff n : ℚ) : ℂ) * 𝕢 1 (τ : ℂ) ^ n)
-      ((F - fun τ => (P.map castC).eval (jt τ)) τ) := by
+      ((F - fun τ => (P.map (Rat.castHom ℂ)).eval (WLight.jFunction τ)) τ) := by
     intro τ
     have h := hE τ
     rw [← (Nat.cast_injective (R := ℤ)).hasSum_iff] at h
@@ -503,13 +428,5 @@ private theorem mem_adjoin_jq_of_realL_invariant (f : LaurentSeries ℚ) (F : �
 end JOut
 
 end ModularCurve
-
-theorem ModularCurve.mem_adjoin_jq_of_hasSum_of_slash_invariant (f : LaurentSeries ℚ)
-    (F : UpperHalfPlane → ℂ)
-    (hF : ∀ τ : UpperHalfPlane,
-      HasSum (fun m : ℤ => ((f.coeff m : ℚ) : ℂ) * Function.Periodic.qParam 1 (τ : ℂ) ^ m) (F τ))
-    (hinv : ∀ (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ) (τ : UpperHalfPlane), F (γ • τ) = F τ) :
-    f ∈ Algebra.adjoin ℚ {ModularCurve.jq} :=
-  ModularCurve.mem_adjoin_jq_of_realL_invariant f F hF hinv
 
 end

@@ -171,22 +171,10 @@ theorem evalAtJqN_one : evalAtJqN 1 = evalAtJ := by
 
 end EvalAtJqN
 
-section Symmetry
-
-@[simp]
-theorem aeval_toRingHom_X (x : LaurentSeries ℚ) :
-    (Polynomial.aeval (R := ℤ) x).toRingHom Polynomial.X = x := by
-  simp
-
-end Symmetry
-
-/-- A rational Laurent series has a pole of order at most `n`. -/
-def PoleOrderLE (f : LaurentSeries ℚ) (n : ℕ) : Prop :=
+/-- A Laurent series has a pole of order at most `n`: its coefficients of index below `-n`
+vanish. -/
+def PoleOrderLE {R : Type*} [Zero R] (f : LaurentSeries R) (n : ℕ) : Prop :=
   ∀ k : ℤ, k < -(n : ℤ) → f.coeff k = 0
-
-/-- Every prime level carries symmetric modular polynomial data. -/
-def ModularPolynomialFamily : Prop :=
-  ∀ (ℓ : ℕ) [NeZero ℓ], ℓ.Prime → ∃ data : ModularPolynomialData ℓ, EvalSymm data.Φ
 
 section Named
 
@@ -211,29 +199,6 @@ def evalAtJAdj : Polynomial ℤ →+* adjoinJq :=
   Polynomial.eval₂RingHom (Int.castRingHom adjoinJq) jAdj
 
 end AdjoinRing
-
-section SwapBivar
-
-/-- The inner variable of `ℤ[Y]` sent to the outer variable of `ℤ[Y][X]`. -/
-def swapInner : Polynomial ℤ →+* Polynomial (Polynomial ℤ) :=
-  (Polynomial.aeval (R := ℤ) (Polynomial.X : Polynomial (Polynomial ℤ))).toRingHom
-
-/-- The ring automorphism of `ℤ[Y][X]` exchanging the two variables. -/
-def swapBivar : Polynomial (Polynomial ℤ) →+* Polynomial (Polynomial ℤ) :=
-  Polynomial.eval₂RingHom swapInner (Polynomial.C Polynomial.X)
-
-@[simp]
-theorem swapBivar_X : swapBivar Polynomial.X = Polynomial.C Polynomial.X :=
-  Polynomial.eval₂_X _ _
-
-@[simp]
-theorem swapBivar_C_X : swapBivar (Polynomial.C Polynomial.X) = Polynomial.X := by
-  change Polynomial.eval₂ swapInner (Polynomial.C Polynomial.X) (Polynomial.C Polynomial.X)
-    = Polynomial.X
-  rw [Polynomial.eval₂_C]
-  exact Polynomial.aeval_X _
-
-end SwapBivar
 
 namespace PhiGen
 
@@ -321,25 +286,6 @@ theorem phiProd_eval_conj (conj : Fin (ℓ + 1) → LaurentSeries K) (i : Fin (�
 
 end Product
 
-section PoleDefs
-
-variable {K : Type*} [Field K]
-
-/-- A Laurent series has a pole of order at most `n`. -/
-def TPoleOrderLE (f : LaurentSeries K) (n : ℕ) : Prop :=
-  ∀ m : ℤ, m < -(n : ℤ) → f.coeff m = 0
-
-theorem tPoleOrderLE_iff_poleOrderLE (f : LaurentSeries ℚ) (n : ℕ) :
-    TPoleOrderLE f n ↔ PoleOrderLE f n :=
-  Iff.rfl
-
-variable (J : LaurentSeries K)
-
-/-- The Laurent series `J` has at most a simple pole. -/
-def JSimplePole : Prop := ∀ m : ℤ, m < -1 → J.coeff m = 0
-
-end PoleDefs
-
 /-- All coefficients of a rational Laurent series are integers. -/
 def IntCoeffs (f : LaurentSeries ℚ) : Prop :=
   ∀ m : ℤ, ∃ z : ℤ, f.coeff m = (z : ℚ)
@@ -357,21 +303,26 @@ end Descends
 
 end PhiGen
 
+theorem coeff_aeval_jq_neg (P : Polynomial ℚ) {m : ℕ} (hm : P.natDegree ≤ m) :
+    (Polynomial.aeval jq P).coeff (-(m : ℤ)) = P.coeff m := by
+  rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
+    Finset.sum_eq_single m]
+  · rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_self,
+      mul_one]
+  · intro i hi hin
+    have hilt : i < m :=
+      lt_of_le_of_ne (le_trans (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hm) hin
+    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
+      coeff_jq_pow_of_lt (by omega), mul_zero]
+  · intro hm'
+    rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul,
+      Polynomial.coeff_eq_zero_of_natDegree_lt
+        (by simp only [Finset.mem_range, not_lt] at hm'; omega),
+      zero_mul]
+
 theorem aeval_jq_eq_zero {p : Polynomial ℚ} (hp : Polynomial.aeval jq p = 0) : p = 0 := by
   by_contra hp0
-  set n := p.natDegree with hn
-  have hcoeff : (Polynomial.aeval jq p).coeff (-(n : ℤ)) = p.coeff n := by
-    rw [Polynomial.aeval_def, Polynomial.eval₂_eq_sum_range, HahnSeries.coeff_sum,
-      Finset.sum_eq_single n]
-    · rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_self,
-        mul_one]
-    · intro i hi hin
-      have hilt : i < n := lt_of_le_of_ne (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)) hin
-      rw [algebraMap_apply_eq_single, HahnSeries.coeff_single_zero_mul, coeff_jq_pow_of_lt,
-        mul_zero]
-      omega
-    · intro hn'
-      exact absurd (Finset.self_mem_range_succ n) hn'
+  have hcoeff := coeff_aeval_jq_neg p le_rfl
   rw [hp] at hcoeff
   simp only [HahnSeries.coeff_zero] at hcoeff
   exact hp0 (Polynomial.leadingCoeff_eq_zero.mp hcoeff.symm)

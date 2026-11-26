@@ -54,10 +54,6 @@ namespace CosetPoly
 
 open ModularForm
 
-@[scoped simp] private theorem mapGL_apply (g : SL(2, ℤ)) (i j : Fin 2) :
-    (mapGL ℝ g : GL (Fin 2) ℝ) i j = ((g i j : ℤ) : ℝ) := by
-  simp
-
 private theorem mapGL_mk_apply (A : Matrix (Fin 2) (Fin 2) ℤ) (h : A.det = 1) (i j : Fin 2) :
     ((mapGL ℝ (⟨A, h⟩ : SL(2, ℤ)) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) i j =
       ((A i j : ℤ) : ℝ) :=
@@ -81,7 +77,12 @@ private theorem heckeMatrix_mul_of_eq (g : SL(2, ℤ)) (j j' : ℕ) (e : ℤ)
     linear_combination hdet + (g 1 0) * he
   · ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [hp, Matrix.mul_apply, Fin.sum_univ_two, mapGL_mk_apply]
+      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
+        val_heckeUpperMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+        Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply, Matrix.cons_val',
+        Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply, Fin.sum_univ_two, one_mul,
+        Matrix.cons_val_one, mapGL_mk_apply, Int.cast_add, Int.cast_mul, Int.cast_natCast, mul_one,
+        mul_zero, add_zero, Fin.mk_one, zero_mul, zero_add, Int.cast_sub]
     all_goals first
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
@@ -96,7 +97,12 @@ private theorem heckeMatrix_mul_of_eq' (g : SL(2, ℤ)) (j : ℕ) (e : ℤ)
     linear_combination hdet - (g 1 1) * he
   · ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [hp, Matrix.mul_apply, Fin.sum_univ_two, mapGL_mk_apply]
+      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
+        val_heckeUpperMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+        Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply, Matrix.cons_val',
+        Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply, Fin.sum_univ_two, one_mul,
+        Matrix.cons_val_one, val_heckeDiagMatrix, mapGL_mk_apply, Int.cast_add, Int.cast_mul,
+        Int.cast_natCast, mul_zero, add_zero, Fin.mk_one, mul_one, zero_add, zero_mul]
     all_goals first
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
@@ -111,7 +117,12 @@ private theorem heckeDiagMatrix_mul_of_eq (g : SL(2, ℤ)) (j' : ℕ) (e : ℤ)
     linear_combination hdet - (g 0 0) * he
   · ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [hp, Matrix.mul_apply, Fin.sum_univ_two, mapGL_mk_apply]
+      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
+        val_heckeDiagMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+        Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply, Matrix.cons_val',
+        Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply, Fin.sum_univ_two,
+        Matrix.cons_val_one, zero_mul, add_zero, val_heckeUpperMatrix, mapGL_mk_apply, Int.cast_mul,
+        Int.cast_natCast, mul_one, Int.cast_sub, mul_zero, Fin.mk_one, one_mul, zero_add]
     all_goals first
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
@@ -125,7 +136,12 @@ private theorem heckeDiagMatrix_mul_of_eq' (g : SL(2, ℤ)) (e : ℤ) (he : g 1 
     linear_combination hdet + (g 0 1) * he
   · ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [hp, Matrix.mul_apply, Fin.sum_univ_two, mapGL_mk_apply]
+      simp only [Fin.zero_eta, Fin.isValue, Units.val_mul, ne_eq, hp, not_false_eq_true,
+        val_heckeDiagMatrix, mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+        Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply, Matrix.cons_val',
+        Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply, Fin.sum_univ_two,
+        Matrix.cons_val_one, zero_mul, add_zero, mapGL_mk_apply, Int.cast_mul, Int.cast_natCast,
+        mul_zero, Fin.mk_one, mul_one, zero_add, one_mul]
     all_goals first
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination this)
       | (have := congrArg (Int.cast : ℤ → ℝ) he; push_cast at this ⊢; linear_combination -this)
@@ -261,7 +277,7 @@ private theorem cosetPoly_eq_prod_onePoint (F : ℍ → ℂ) (τ : ℍ) :
 
 end reindex
 
-private theorem cosetPoly_smul' (ℓ : ℕ) (hℓ : ℓ.Prime) (F : ℍ → ℂ)
+theorem _root_.ModularCurve.cosetPoly_smul (ℓ : ℕ) (hℓ : ℓ.Prime) (F : ℍ → ℂ)
     (hF : ∀ (γ : SL(2, ℤ)) (τ : ℍ), F (γ • τ) = F τ) (γ : SL(2, ℤ)) (τ : ℍ) :
     (X - C (F (heckeDiagMatrix ℓ • γ • τ))) * ∏ b : Fin ℓ,
         (X - C (F (heckeUpperMatrix ℓ (b : ℕ) • γ • τ)))
@@ -278,17 +294,6 @@ private theorem cosetPoly_smul' (ℓ : ℕ) (hℓ : ℓ.Prime) (F : ℍ → ℂ)
 end CosetPoly
 
 end ModularCurve
-
-theorem ModularCurve.cosetPoly_smul (ℓ : ℕ) (hℓ : ℓ.Prime) (F : UpperHalfPlane → ℂ)
-    (hF : ∀ (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ) (τ : UpperHalfPlane), F (γ • τ) = F τ)
-    (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ) (τ : UpperHalfPlane) :
-    (Polynomial.X - Polynomial.C (F (ModularForm.heckeDiagMatrix ℓ • γ • τ))) *
-        ∏ b : Fin ℓ,
-            (Polynomial.X - Polynomial.C (F (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • γ • τ))) =
-      (Polynomial.X - Polynomial.C (F (ModularForm.heckeDiagMatrix ℓ • τ))) *
-        ∏ b : Fin ℓ,
-            (Polynomial.X - Polynomial.C (F (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ))) :=
-  ModularCurve.CosetPoly.cosetPoly_smul' ℓ hℓ F hF γ τ
 
 end
 
@@ -308,8 +313,8 @@ private theorem coe_heckeUpperMatrix_smul {p : ℕ} (hp : p ≠ 0) (j : ℕ) (τ
   rw [UpperHalfPlane.coe_smul_of_det_pos (ModularForm.det_heckeUpperMatrix_pos p j)]
   simp [UpperHalfPlane.num, UpperHalfPlane.denom, ModularForm.val_heckeUpperMatrix hp]
 
-private theorem hasSum_qParam_heckeMatrix_smul' (ℓ : ℕ) [NeZero ℓ] (b : ℕ) (A : LaurentSeries ℂ)
-    (F : ℍ → ℂ)
+theorem _root_.ModularCurve.hasSum_qParam_heckeMatrix_smul (ℓ : ℕ) [NeZero ℓ] (b : ℕ)
+    (A : LaurentSeries ℂ) (F : ℍ → ℂ)
     (hA : ∀ τ : ℍ, HasSum (fun m : ℤ => A.coeff m * 𝕢 1 (τ : ℂ) ^ m) (F τ)) (τ : ℍ) :
     HasSum (fun m : ℤ => (Complex.exp (2 * Real.pi * Complex.I * b * m /
         ℓ) * A.coeff m) * 𝕢 ℓ (τ : ℂ) ^ m)
@@ -342,15 +347,6 @@ end Realized
 
 end ModularCurve
 
-theorem ModularCurve.hasSum_qParam_heckeMatrix_smul (ℓ : ℕ) [NeZero ℓ] (b : ℕ)
-    (A : LaurentSeries ℂ) (F : UpperHalfPlane → ℂ)
-    (hA : ∀ τ : UpperHalfPlane,
-      HasSum (fun m : ℤ => A.coeff m * Function.Periodic.qParam 1 (τ : ℂ) ^ m) (F τ))
-    (τ : UpperHalfPlane) :
-    HasSum (fun m : ℤ => (Complex.exp (2 * Real.pi * Complex.I * b * m / ℓ) * A.coeff m) *
-        Function.Periodic.qParam ℓ (τ : ℂ) ^ m) (F (ModularForm.heckeUpperMatrix ℓ b • τ)) :=
-  ModularCurve.Realized.hasSum_qParam_heckeMatrix_smul' ℓ b A F hA τ
-
 end
 
 noncomputable section
@@ -364,8 +360,8 @@ namespace ModularCurve
 
 namespace Realized
 
-private theorem hasSum_qParam_heckeDiagMatrix_smul' (ℓ : ℕ) [NeZero ℓ] (A : LaurentSeries ℂ)
-    (F : ℍ → ℂ)
+theorem _root_.ModularCurve.hasSum_qParam_heckeDiagMatrix_smul (ℓ : ℕ) [NeZero ℓ]
+    (A : LaurentSeries ℂ) (F : ℍ → ℂ)
     (hA : ∀ τ : ℍ, HasSum (fun m : ℤ => A.coeff m * 𝕢 1 (τ : ℂ) ^ m) (F τ)) (τ : ℍ) :
     HasSum (fun m : ℤ => (ModularCurve.qExpand ℂ (ℓ * ℓ) A).coeff m * 𝕢 ℓ (τ : ℂ) ^ m)
       (F (ModularForm.heckeDiagMatrix ℓ • τ)) := by
@@ -394,14 +390,5 @@ private theorem hasSum_qParam_heckeDiagMatrix_smul' (ℓ : ℕ) [NeZero ℓ] (A 
 end Realized
 
 end ModularCurve
-
-theorem ModularCurve.hasSum_qParam_heckeDiagMatrix_smul (ℓ : ℕ) [NeZero ℓ] (A : LaurentSeries ℂ)
-    (F : UpperHalfPlane → ℂ)
-    (hA : ∀ τ : UpperHalfPlane,
-      HasSum (fun m : ℤ => A.coeff m * Function.Periodic.qParam 1 (τ : ℂ) ^ m) (F τ))
-    (τ : UpperHalfPlane) :
-    HasSum (fun m : ℤ => (ModularCurve.qExpand ℂ (ℓ * ℓ) A).coeff m *
-        Function.Periodic.qParam ℓ (τ : ℂ) ^ m) (F (ModularForm.heckeDiagMatrix ℓ • τ)) :=
-  ModularCurve.Realized.hasSum_qParam_heckeDiagMatrix_smul' ℓ A F hA τ
 
 end

@@ -69,48 +69,47 @@ private def etaPow : PowerSeries ℂ := ∏' n : ℕ, (1 - PowerSeries.X ^ (n + 
 
 private def gfun (q : ℂ) : ℂ := ∏' n : ℕ, (1 - q ^ (n + 1)) ^ 24
 
-private lemma multipliable_factor_pow :
-    Multipliable fun n : ℕ => ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24 :=
-  (PowerSeries.WithPiTopology.multipliable_one_sub_X_pow ℂ).pow 24
-
-private lemma coeff_mul_factor_eq {m n : ℕ} (hmn : m < n + 1) (Q : PowerSeries ℂ) :
-    PowerSeries.coeff m (Q * ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24) =
+private lemma coeff_mul_factor_eq {R : Type*} [CommRing R] {m n : ℕ} (hmn : m < n + 1)
+    (Q : PowerSeries R) :
+    PowerSeries.coeff m (Q * ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) =
       PowerSeries.coeff m Q := by
-  obtain ⟨R, hR⟩ : PowerSeries.X ^ (n + 1) ∣
-      ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24 - 1 := by
-    have h := sub_dvd_pow_sub_pow ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) 1 24
+  obtain ⟨S, hS⟩ : PowerSeries.X ^ (n + 1) ∣
+      ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24 - 1 := by
+    have h := sub_dvd_pow_sub_pow ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) 1 24
     rw [one_pow, sub_sub_cancel_left] at h
     exact neg_dvd.mp h
-  replace hR : ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24 =
-      1 + PowerSeries.X ^ (n + 1) * R := by
-    rw [← hR]; ring
-  rw [hR, mul_add, mul_one, map_add, ← mul_assoc, mul_comm Q, mul_assoc,
+  replace hS : ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24 =
+      1 + PowerSeries.X ^ (n + 1) * S := by
+    rw [← hS]; ring
+  rw [hS, mul_add, mul_one, map_add, ← mul_assoc, mul_comm Q, mul_assoc,
     PowerSeries.coeff_X_pow_mul', ite_eq_right (not_le.mpr hmn), add_zero]
 
-private lemma coeff_trunc_eq_coeff_etaPow (m : ℕ) {N : ℕ} (hN : m < N) :
+private lemma coeff_trunc_eq_coeff_tprod (R : Type*) [CommRing R] [TopologicalSpace R]
+    [IsTopologicalRing R] [T2Space R] (m : ℕ) {N : ℕ} (hN : m < N) :
     PowerSeries.coeff m (∏ n ∈ Finset.range N,
-        ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24) =
-      PowerSeries.coeff m etaPow := by
+        ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) =
+      PowerSeries.coeff m (∏' n : ℕ, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) := by
+  have hmul : Multipliable fun n : ℕ => ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24 :=
+    (PowerSeries.WithPiTopology.multipliable_one_sub_X_pow R).pow 24
   have hlim : Tendsto (fun N => PowerSeries.coeff m
-      (∏ n ∈ Finset.range N, ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24)) atTop
-      (𝓝 (PowerSeries.coeff m etaPow)) :=
-    ((PowerSeries.WithPiTopology.continuous_coeff ℂ m).tendsto _).comp
-      multipliable_factor_pow.hasProd.tendsto_prod_nat
-  have hconst : ∀ N', m < N' → ∀ N, N' ≤ N →
-      PowerSeries.coeff m (∏ n ∈ Finset.range N,
-          ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24) =
+      (∏ n ∈ Finset.range N, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24)) atTop
+      (𝓝 (PowerSeries.coeff m (∏' n : ℕ, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24))) :=
+    ((PowerSeries.WithPiTopology.continuous_coeff R m).tendsto _).comp hmul.hasProd.tendsto_prod_nat
+  have hconst : ∀ N', N ≤ N' →
       PowerSeries.coeff m (∏ n ∈ Finset.range N',
-          ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24) := by
-    intro N' hN' N hle
-    induction N, hle using Nat.le_induction with
+          ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) =
+      PowerSeries.coeff m (∏ n ∈ Finset.range N,
+          ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) := by
+    intro N' hle
+    induction N', hle using Nat.le_induction with
     | base => rfl
-    | succ N hle ih => rw [Finset.prod_range_succ, coeff_mul_factor_eq (by omega), ih]
-  have hev : (fun N => PowerSeries.coeff m
-      (∏ n ∈ Finset.range N, ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24)) =ᶠ[atTop]
+    | succ N' hle ih => rw [Finset.prod_range_succ, coeff_mul_factor_eq (by omega), ih]
+  have hev : (fun N' => PowerSeries.coeff m
+      (∏ n ∈ Finset.range N', ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24)) =ᶠ[atTop]
       fun _ => PowerSeries.coeff m
-        (∏ n ∈ Finset.range N, ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24) :=
-    eventually_atTop.mpr ⟨N, fun N'' h => hconst N hN N'' h⟩
-  exact (tendsto_nhds_unique (hlim.congr' hev) tendsto_const_nhds).symm
+        (∏ n ∈ Finset.range N, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) :=
+    eventually_atTop.mpr ⟨N, hconst⟩
+  exact tendsto_nhds_unique tendsto_const_nhds (hlim.congr' hev)
 
 open Polynomial in
 private lemma truncPoly_toPowerSeries (N : ℕ) :
@@ -118,17 +117,6 @@ private lemma truncPoly_toPowerSeries (N : ℕ) :
       ∏ n ∈ Finset.range N, ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24 := by
   rw [truncPoly, ← Polynomial.coeToPowerSeries.ringHom_apply, map_prod]
   simp [Polynomial.coeToPowerSeries.ringHom_apply, Polynomial.coe_pow, Polynomial.coe_X]
-
-open Polynomial in
-private lemma iterate_deriv_polynomial_eval (p : ℂ[X]) (m : ℕ) :
-    deriv^[m] (fun q : ℂ => p.eval q) = fun q => (derivative^[m] p).eval q := by
-  induction m generalizing p with
-  | zero => rfl
-  | succ m ih =>
-    rw [Function.iterate_succ', Function.comp_apply, ih, Function.iterate_succ',
-      Function.comp_apply]
-    funext q
-    exact Polynomial.deriv _
 
 open Polynomial in
 private lemma truncPoly_eval (N : ℕ) (q : ℂ) :
@@ -194,7 +182,7 @@ private lemma iteratedDeriv_gfun_zero (m : ℕ) :
     simp only
     rw [← Polynomial.coeff_zero_eq_eval_zero, Polynomial.coeff_iterate_derivative, zero_add,
       Nat.descFactorial_self, nsmul_eq_mul, ← Polynomial.coeff_coe, truncPoly_toPowerSeries,
-      coeff_trunc_eq_coeff_etaPow m (by omega)]
+      coeff_trunc_eq_coeff_tprod ℂ m (by omega), etaPow]
   rw [iteratedDeriv_eq_iterate]
   exact tendsto_nhds_unique hlim (tendsto_const_nhds.congr' hev.symm)
 
@@ -250,48 +238,6 @@ open scoped MatrixGroups PowerSeries.WithPiTopology
 local notation "𝕢" => Function.Periodic.qParam
 
 namespace ModularCurve
-
-private lemma coeff_mul_factor_eq' {R : Type*} [CommRing R] {m n : ℕ} (hmn : m < n + 1)
-    (Q : PowerSeries R) :
-    PowerSeries.coeff m (Q * ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) =
-      PowerSeries.coeff m Q := by
-  obtain ⟨S, hS⟩ : PowerSeries.X ^ (n + 1) ∣
-      ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24 - 1 := by
-    have h := sub_dvd_pow_sub_pow ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) 1 24
-    rw [one_pow, sub_sub_cancel_left] at h
-    exact neg_dvd.mp h
-  replace hS : ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24 =
-      1 + PowerSeries.X ^ (n + 1) * S := by
-    rw [← hS]; ring
-  rw [hS, mul_add, mul_one, map_add, ← mul_assoc, mul_comm Q, mul_assoc,
-    PowerSeries.coeff_X_pow_mul', ite_eq_right (not_le.mpr hmn), add_zero]
-
-private lemma coeff_trunc_eq_coeff_tprod (R : Type*) [CommRing R] [TopologicalSpace R]
-    [IsTopologicalRing R] [T2Space R] (m : ℕ) {N : ℕ} (hN : m < N) :
-    PowerSeries.coeff m (∏ n ∈ Finset.range N,
-        ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) =
-      PowerSeries.coeff m (∏' n : ℕ, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) := by
-  have hmul : Multipliable fun n : ℕ => ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24 :=
-    (PowerSeries.WithPiTopology.multipliable_one_sub_X_pow R).pow 24
-  have hlim : Tendsto (fun N => PowerSeries.coeff m
-      (∏ n ∈ Finset.range N, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24)) atTop
-      (𝓝 (PowerSeries.coeff m (∏' n : ℕ, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24))) :=
-    ((PowerSeries.WithPiTopology.continuous_coeff R m).tendsto _).comp hmul.hasProd.tendsto_prod_nat
-  have hconst : ∀ N', N ≤ N' →
-      PowerSeries.coeff m (∏ n ∈ Finset.range N',
-          ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) =
-      PowerSeries.coeff m (∏ n ∈ Finset.range N,
-          ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) := by
-    intro N' hle
-    induction N', hle using Nat.le_induction with
-    | base => rfl
-    | succ N' hle ih => rw [Finset.prod_range_succ, coeff_mul_factor_eq' (by omega), ih]
-  have hev : (fun N' => PowerSeries.coeff m
-      (∏ n ∈ Finset.range N', ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24)) =ᶠ[atTop]
-      fun _ => PowerSeries.coeff m
-        (∏ n ∈ Finset.range N, ((1 : PowerSeries R) - PowerSeries.X ^ (n + 1)) ^ 24) :=
-    eventually_atTop.mpr ⟨N, hconst⟩
-  exact tendsto_nhds_unique tendsto_const_nhds (hlim.congr' hev)
 
 private lemma tprod_eq_map_dedekindEtaUnit :
     (∏' n : ℕ, ((1 : PowerSeries ℂ) - PowerSeries.X ^ (n + 1)) ^ 24) =
@@ -624,7 +570,7 @@ private theorem hasSum_single_mul_coe_iff (k : ℤ) (P : PowerSeries ℂ) {q : �
         ite_eq_left hmk,
       zero_mul]
 
-private theorem hasSum_qParam_mul_laurent' (h : ℝ) (hh : 0 < h) (A B : LaurentSeries ℂ)
+theorem _root_.ModularCurve.hasSum_qParam_mul_laurent (h : ℝ) (hh : 0 < h) (A B : LaurentSeries ℂ)
     (F G : ℍ → ℂ)
     (hA : ∀ τ : ℍ, HasSum (fun m : ℤ => A.coeff m * 𝕢 h (τ : ℂ) ^ m) (F τ))
     (hB : ∀ τ : ℍ, HasSum (fun m : ℤ => B.coeff m * 𝕢 h (τ : ℂ) ^ m) (G τ)) (τ : ℍ) :
@@ -664,17 +610,6 @@ end Realized
 
 end ModularCurve
 
-theorem ModularCurve.hasSum_qParam_mul_laurent (h : ℝ) (hh : 0 < h) (A B : LaurentSeries ℂ)
-    (F G : UpperHalfPlane → ℂ)
-    (hA : ∀ τ : UpperHalfPlane,
-      HasSum (fun m : ℤ => A.coeff m * Function.Periodic.qParam h (τ : ℂ) ^ m) (F τ))
-    (hB : ∀ τ : UpperHalfPlane,
-      HasSum (fun m : ℤ => B.coeff m * Function.Periodic.qParam h (τ : ℂ) ^ m) (G τ))
-    (τ : UpperHalfPlane) :
-    HasSum (fun m : ℤ => (A * B).coeff m * Function.Periodic.qParam h (τ : ℂ) ^ m)
-      (F τ * G τ) :=
-  ModularCurve.Realized.hasSum_qParam_mul_laurent' h hh A B F G hA hB τ
-
 end
 
 noncomputable section
@@ -684,7 +619,7 @@ open scoped MatrixGroups ModularForm OnePoint
 
 namespace ModularCurve
 
-private theorem E4_cube_div_discriminant_smul' (γ : SL(2, ℤ)) (τ : ℍ) :
+theorem E4_cube_div_discriminant_smul (γ : SL(2, ℤ)) (τ : ℍ) :
     ModularForm.E₄ (γ • τ) ^ 3 / ModularForm.discriminant (γ • τ)
       = ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ := by
   have hγ : (mapGL ℝ γ : GL (Fin 2) ℝ) ∈ 𝒮ℒ := ⟨γ, rfl⟩
@@ -701,11 +636,5 @@ private theorem E4_cube_div_discriminant_smul' (γ : SL(2, ℤ)) (τ : ℍ) :
   rw [mul_div_mul_left _ _ (pow_ne_zero 12 hd)]
 
 end ModularCurve
-
-theorem ModularCurve.E4_cube_div_discriminant_smul (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ)
-    (τ : UpperHalfPlane) :
-    ModularForm.E₄ (γ • τ) ^ 3 / ModularForm.discriminant (γ • τ) =
-      ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ :=
-  ModularCurve.E4_cube_div_discriminant_smul' γ τ
 
 end

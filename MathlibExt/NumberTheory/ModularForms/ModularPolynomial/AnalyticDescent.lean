@@ -50,96 +50,6 @@ local notation "𝕢" => Function.Periodic.qParam
 
 namespace ModularCurve
 
-private def RealL (h : ℝ) (A : LaurentSeries ℂ) (F : ℍ → ℂ) : Prop :=
-  ∀ τ : ℍ, HasSum (fun m : ℤ => A.coeff m * 𝕢 h (τ : ℂ) ^ m) (F τ)
-
-namespace RealL
-
-variable {h : ℝ} {A B : LaurentSeries ℂ} {F G : ℍ → ℂ}
-
-private lemma add (hA : RealL h A F) (hB : RealL h B G) : RealL h (A + B) (F + G) := fun τ => by
-  simpa [add_mul] using (hA τ).add (hB τ)
-
-private lemma neg (hA : RealL h A F) : RealL h (-A) (-F) := fun τ => by
-  simpa [neg_mul] using (hA τ).neg
-
-private lemma sub (hA : RealL h A F) (hB : RealL h B G) : RealL h (A - B) (F - G) := fun τ => by
-  simpa [sub_mul] using (hA τ).sub (hB τ)
-
-private lemma mul (hh : 0 < h) (hA : RealL h A F) (hB : RealL h B G) : RealL h (A * B) (F * G) :=
-    fun τ =>
-  hasSum_qParam_mul_laurent h hh A B F G hA hB τ
-
-private lemma single (h : ℝ) (a : ℂ) (n : ℤ) :
-    RealL h (HahnSeries.single n a) (fun τ => a * 𝕢 h (τ : ℂ) ^ n) := fun τ => by
-  refine (hasSum_ite_eq n (a * 𝕢 h (τ : ℂ) ^ n)).congr_fun fun m => ?_
-  by_cases hm : m = n
-  · subst hm; simp
-  · simp [HahnSeries.coeff_single_of_ne hm, hm]
-
-private lemma C (h : ℝ) (a : ℂ) : RealL h (HahnSeries.C a) (fun _ => a) := by
-  simpa using single h a 0
-
-private lemma one (h : ℝ) : RealL h 1 1 := by
-  have h__af := C h 1
-  simp at h__af
-  exact h__af
-
-private lemma zero (h : ℝ) : RealL h 0 0 := fun τ => by simp [hasSum_zero]
-
-private lemma congr {A' : LaurentSeries ℂ} {F' : ℍ → ℂ} (hA : RealL h A F) (h1 : A = A') (h2 : ∀ τ,
-    F τ = F' τ) :
-    RealL h A' F' := fun τ => by rw [← h1, ← h2]; exact hA τ
-
-private lemma prod (hh : 0 < h) {ι : Type} (s : Finset ι) {A : ι → LaurentSeries ℂ} {F : ι → ℍ → ℂ}
-    (hAF : ∀ i ∈ s, RealL h (A i) (F i)) : RealL h (∏ i ∈ s, A i) (fun τ => ∏ i ∈ s, F i τ) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => (have h__af := one h; simp at h__af ⊢; exact h__af)
-  | insert a s ha ih =>
-    have h1 := (hAF a (Finset.mem_insert_self a s)).mul hh (ih fun i hi =>
-        hAF i (Finset.mem_insert_of_mem hi))
-    refine h1.congr (Finset.prod_insert ha).symm fun τ => ?_
-    simp [Finset.prod_insert ha]
-
-private lemma coeff_prod_X_sub_C (hh : 0 < h) {ι : Type} (s : Finset ι) {a : ι → LaurentSeries ℂ}
-    {α : ι → ℍ → ℂ} (haα : ∀ i ∈ s, RealL h (a i) (α i)) (k : ℕ) :
-    RealL h ((∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))).coeff k)
-      (fun τ => (∏ i ∈ s, (Polynomial.X - Polynomial.C (α i τ))).coeff k) := by
-  classical
-  induction s using Finset.induction_on generalizing k with
-  | empty =>
-    simp only [Finset.prod_empty, Polynomial.coeff_one]
-    by_cases hk : k = 0
-    · subst hk; (have h__af := one h; simp at h__af ⊢; exact h__af)
-    · have h__af := zero h
-      simp [hk] at h__af ⊢
-      exact h__af
-  | insert b s hb ih =>
-    have ih' := fun k => ih (fun i hi => haα i (Finset.mem_insert_of_mem hi)) k
-    have hb' := haα b (Finset.mem_insert_self b s)
-    have hA : (∏ i ∈ insert b s, (Polynomial.X - Polynomial.C (a i))) =
-        (∏ i ∈ s, (Polynomial.X - Polynomial.C (a i))) * (Polynomial.X - Polynomial.C (a b)) :=
-      (Finset.prod_insert hb).trans (mul_comm (G := Polynomial (LaurentSeries ℂ)) _ _)
-    have hfun : ∀ τ : ℍ, (∏ i ∈ insert b s, (Polynomial.X - Polynomial.C (α i τ))) =
-        (∏ i ∈ s, (Polynomial.X - Polynomial.C (α i τ))) * (Polynomial.X - Polynomial.C (α b τ)) :=
-      fun τ => (Finset.prod_insert hb).trans (mul_comm (G := Polynomial ℂ) _ _)
-    cases k with
-    | zero =>
-      refine ((ih' 0).mul hh hb').neg.congr ?_ fun τ => ?_
-      · rw [hA, Polynomial.mul_coeff_zero, Polynomial.coeff_sub, Polynomial.coeff_X_zero,
-          Polynomial.coeff_C_zero, zero_sub]
-        exact (mul_neg (α := LaurentSeries ℂ) _ _).symm
-      · simp only [hfun τ, Polynomial.mul_coeff_zero, Pi.neg_apply, Pi.mul_apply,
-          Polynomial.coeff_sub,
-          Polynomial.coeff_X_zero, Polynomial.coeff_C_zero, zero_sub, mul_neg]
-    | succ k =>
-      refine ((ih' k).sub ((ih' (k + 1)).mul hh hb')).congr ?_ fun τ => ?_
-      · rw [hA, Polynomial.coeff_mul_X_sub_C]
-      · simp only [hfun τ, Polynomial.coeff_mul_X_sub_C, Pi.sub_apply, Pi.mul_apply]
-
-end RealL
-
 section Sigma
 
 variable (ℓ : ℕ) [hℓ : Fact (Nat.Prime ℓ)]
@@ -171,26 +81,7 @@ private lemma sigma_zeta : sigma ℓ ζ hζ (ζ : CyclotomicField ℓ ℚ) = exp
   rw [Equiv.apply_symm_apply] at h
   exact h.symm
 
-omit hℓ in
-private lemma sigma_ratCast' (σ : CyclotomicField ℓ ℚ →+* ℂ) (q : ℚ) :
-    σ (q : CyclotomicField ℓ ℚ) = (q : ℂ) :=
-  map_ratCast σ q
-
 end Sigma
-
-section JT
-
-private def jt (τ : ℍ) : ℂ := ModularForm.E₄ τ ^ 3 / ModularForm.discriminant τ
-
-private abbrev castC : ℚ →+* ℂ := Rat.castHom ℂ
-
-private def jqC : LaurentSeries ℂ := coeffMap castC jq
-
-private lemma jqC_coeff (m : ℤ) : jqC.coeff m = ((jq.coeff m : ℚ) : ℂ) := rfl
-
-private lemma realL_jqC : RealL 1 jqC jt := fun τ => ModularCurve.hasSum_jq_qParam τ
-
-end JT
 
 section Translates
 
@@ -210,9 +101,9 @@ omit hℓ in
     rep ℓ b.succ = ModularForm.heckeUpperMatrix ℓ (b : ℕ) := by simp [rep]
 
 private lemma realL_conjC_zero : RealL ℓ (conjC ℓ ζ hζ 0) (fun τ =>
-    jt (ModularForm.heckeDiagMatrix ℓ • τ)) := by
+    WLight.jFunction (ModularForm.heckeDiagMatrix ℓ • τ)) := by
   intro τ
-  have h := ModularCurve.hasSum_qParam_heckeDiagMatrix_smul ℓ jqC jt realL_jqC τ
+  have h := ModularCurve.hasSum_qParam_heckeDiagMatrix_smul ℓ jqC WLight.jFunction realL_jqC τ
   have hconj : conjC ℓ ζ hζ 0 = qExpand ℂ (ℓ * ℓ) jqC := by
     rw [conjC, PhiGen.conj_zero, coeffMap_qExpand]
     congr 1
@@ -229,9 +120,10 @@ private lemma expRoot_pow_zpow (b : ℕ) (m : ℤ) :
   ring
 
 private lemma realL_conjC_succ (b : Fin ℓ) :
-    RealL ℓ (conjC ℓ ζ hζ b.succ) (fun τ => jt (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ)) := by
+    RealL ℓ (conjC ℓ ζ hζ b.succ)
+      (fun τ => WLight.jFunction (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ)) := by
   intro τ
-  have h := ModularCurve.hasSum_qParam_heckeMatrix_smul ℓ (b : ℕ) jqC jt realL_jqC τ
+  have h := ModularCurve.hasSum_qParam_heckeMatrix_smul ℓ (b : ℕ) jqC WLight.jFunction realL_jqC τ
   refine h.congr_fun fun m => ?_
   congr 1
   rw [conjC, PhiGen.conj_succ, coeffMap_coeff, qTwist_coeff, map_mul, Units.val_zpow_eq_zpow_val,
@@ -240,7 +132,7 @@ private lemma realL_conjC_succ (b : Fin ℓ) :
   simp [jqC_coeff, map_ratCast]
 
 private lemma realL_conjC (i : Fin (ℓ + 1)) : RealL ℓ (conjC ℓ ζ hζ i) (fun τ =>
-    jt (rep ℓ i • τ)) := by
+    WLight.jFunction (rep ℓ i • τ)) := by
   refine Fin.cases ?_ (fun b => ?_) i
   · simpa only [rep_zero] using realL_conjC_zero ℓ ζ hζ
   · simpa only [rep_succ] using realL_conjC_succ ℓ ζ hζ b
@@ -253,7 +145,8 @@ private lemma map_phiProd : (PhiGen.phiProd ℓ (PhiGen.conj ℓ ζ)).map (coeff
 
 private lemma realL_phiProd_coeff (k : ℕ) :
     RealL ℓ (((PhiGen.phiProd ℓ (PhiGen.conj ℓ ζ)).map (coeffMap (sigma ℓ ζ hζ))).coeff k)
-      (fun τ => (∏ i : Fin (ℓ + 1), (Polynomial.X - Polynomial.C (jt (rep ℓ i • τ)))).coeff k) := by
+      (fun τ => (∏ i : Fin (ℓ + 1),
+        (Polynomial.X - Polynomial.C (WLight.jFunction (rep ℓ i • τ)))).coeff k) := by
   rw [map_phiProd]
   exact RealL.coeff_prod_X_sub_C (by exact_mod_cast hℓ.out.pos) Finset.univ
     (fun i _ => realL_conjC ℓ ζ hζ i) k
@@ -279,13 +172,13 @@ private lemma realL_one_of_realL_qExpand (x : LaurentSeries ℂ) (F : ℍ → �
     rw [qExpand_coeff_of_not_dvd ℓ _ (fun ⟨n, hn⟩ => hm ⟨n, hn.symm⟩), zero_mul]
 
 private lemma coeffMap_sigma_coeffEmb (x : LaurentSeries ℚ) :
-    coeffMap (sigma ℓ ζ hζ) (coeffEmb (CyclotomicField ℓ ℚ) x) = coeffMap castC x := by
+    coeffMap (sigma ℓ ζ hζ) (coeffEmb (CyclotomicField ℓ ℚ) x) = coeffMap (Rat.castHom ℂ) x := by
   ext m
   rw [coeffMap_coeff, coeffEmb_coeff, coeffMap_coeff, eq_ratCast, map_ratCast]
   rfl
 
 include hζ in
-private theorem hasSum_coeff_of_phiGenDescends (c : ℕ → LaurentSeries ℚ)
+theorem _root_.ModularCurve.PhiGen.PhiGenDescends.hasSum_cosetPoly_coeff (c : ℕ → LaurentSeries ℚ)
     (hc : PhiGen.PhiGenDescends ℓ ζ c)
     (k : ℕ) (τ : ℍ) :
     HasSum (fun m : ℤ => (((c k).coeff m : ℚ) : ℂ) * 𝕢 1 (τ : ℂ) ^ m)
@@ -297,10 +190,11 @@ private theorem hasSum_coeff_of_phiGenDescends (c : ℕ → LaurentSeries ℚ)
   have h1 := realL_phiProd_coeff ℓ ζ hζ k
   rw [Polynomial.coeff_map, hc k, coeffMap_sigma_coeffEmb, coeffMap_qExpand] at h1
   have h2 := realL_one_of_realL_qExpand ℓ _ _ h1 τ
-  have hprod : (∏ i : Fin (ℓ + 1), (Polynomial.X - Polynomial.C (jt (rep ℓ i • τ)))) =
-      (Polynomial.X - Polynomial.C (jt (ModularForm.heckeDiagMatrix ℓ • τ))) *
-        ∏ b : Fin ℓ,
-            (Polynomial.X - Polynomial.C (jt (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ))) := by
+  have hprod :
+      (∏ i : Fin (ℓ + 1), (Polynomial.X - Polynomial.C (WLight.jFunction (rep ℓ i • τ)))) =
+        (Polynomial.X - Polynomial.C (WLight.jFunction (ModularForm.heckeDiagMatrix ℓ • τ))) *
+          ∏ b : Fin ℓ, (Polynomial.X - Polynomial.C
+            (WLight.jFunction (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ))) := by
     rw [Fin.prod_univ_succ]; simp only [rep_zero, rep_succ]
   rw [hprod] at h2
   exact h2
@@ -309,37 +203,7 @@ end Translates
 
 end ModularCurve
 
-theorem ModularCurve.PhiGen.PhiGenDescends.hasSum_cosetPoly_coeff (ℓ : ℕ)
-    [hℓ : Fact (Nat.Prime ℓ)] (ζ : (CyclotomicField ℓ ℚ)ˣ)
-    (hζ : IsPrimitiveRoot (ζ : CyclotomicField ℓ ℚ) ℓ) (c : ℕ → LaurentSeries ℚ)
-    (hc : ModularCurve.PhiGen.PhiGenDescends ℓ ζ c) (k : ℕ) (τ : UpperHalfPlane) :
-    HasSum (fun m : ℤ => (((c k).coeff m : ℚ) : ℂ) * Function.Periodic.qParam 1 (τ : ℂ) ^ m)
-      (((Polynomial.X - Polynomial.C (ModularForm.E₄ (ModularForm.heckeDiagMatrix ℓ • τ) ^ 3 /
-          ModularForm.discriminant (ModularForm.heckeDiagMatrix ℓ • τ))) *
-        ∏ b : Fin ℓ, (Polynomial.X - Polynomial.C
-          (ModularForm.E₄ (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ) ^ 3 /
-            ModularForm.discriminant (ModularForm.heckeUpperMatrix ℓ (b : ℕ) • τ)))).coeff k) :=
-  ModularCurve.hasSum_coeff_of_phiGenDescends ℓ ζ hζ c hc k τ
-
 end
-
-noncomputable section
-
-open UpperHalfPlane Complex Filter Topology Function Polynomial
-open scoped MatrixGroups
-
-local notation "𝕢" => Function.Periodic.qParam
-
-namespace ModularCurve
-
-section JT
-
-private lemma jt_smul (γ : SL(2, ℤ)) (τ : ℍ) : jt (γ • τ) = jt τ :=
-  ModularCurve.E4_cube_div_discriminant_smul γ τ
-
-end JT
-
-end ModularCurve
 
 open ModularCurve ModularCurve.PhiGen in
 theorem ModularCurve.PhiGen.mem_adjoin_jq_of_phiGenDescends (ℓ : ℕ) [hℓ : Fact (Nat.Prime ℓ)]
@@ -349,6 +213,7 @@ theorem ModularCurve.PhiGen.mem_adjoin_jq_of_phiGenDescends (ℓ : ℕ) [hℓ : 
   refine ModularCurve.mem_adjoin_jq_of_hasSum_of_slash_invariant (c k) _
     (ModularCurve.PhiGen.PhiGenDescends.hasSum_cosetPoly_coeff ℓ ζ hζ c hc k) fun γ τ => ?_
   exact congrArg (fun p : Polynomial ℂ => p.coeff k)
-    (ModularCurve.cosetPoly_smul ℓ hℓ.out ModularCurve.jt ModularCurve.jt_smul γ τ)
+    (ModularCurve.cosetPoly_smul ℓ hℓ.out WLight.jFunction
+      (fun γ τ => ModularCurve.E4_cube_div_discriminant_smul γ τ) γ τ)
 
 end

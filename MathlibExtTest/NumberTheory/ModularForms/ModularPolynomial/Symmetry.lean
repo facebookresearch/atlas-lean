@@ -45,3 +45,26 @@ example : Module.finrank ℚ⟮jq⟯ ℚ⟮jq⟯⟮jqN 2⟯ = 3 :=
 example (ℓ : ℕ) [Fact (Nat.Prime ℓ)] :
     ∃ data : ModularPolynomialData ℓ, PhiIrreducible data ∧ EvalSymm data.Φ :=
   exists_phiIrreducible_evalSymm ℓ
+
+/-- The pole bound holds over any coefficient field: after embedding its coefficients into `ℂ`,
+`j` still has at most a simple pole. -/
+example : PoleOrderLE (coeffEmb ℂ jq) 1 := fun k hk => by
+  rw [coeffEmb_coeff, coeff_jq_of_lt (by exact_mod_cast hk), map_zero]
+
+/-- The bound is sharp: `j` has a pole, so its pole order is not at most `0`. -/
+example : ¬ PoleOrderLE jq 0 := fun h => by
+  have h1 := h (-1) (by norm_num)
+  rw [coeff_jq_neg_one] at h1
+  exact one_ne_zero h1
+
+/-- The twist by a unit `u` multiplies the coefficient of `q ^ k` by `u ^ k`, for negative `k`
+too. -/
+example : (qTwist (Units.mk0 (2 : ℚ) two_ne_zero) jq).coeff (-1) = 1 / 2 := by
+  rw [qTwist_coeff, coeff_jq_neg_one, mul_one, zpow_neg_one, Units.val_inv_eq_inv_val,
+    Units.val_mk0, one_div]
+
+/-- The coset representatives are `!![ℓ, 0; 0, 1]` (index `0`) and `!![1, b; 0, ℓ]` (index
+`b + 1`); here `ℓ = 3` and `b = 1`. -/
+example : PhiGen.cosetA 3 0 = 3 ∧ PhiGen.cosetB 3 0 = 0 ∧
+    PhiGen.cosetA 3 2 = 1 ∧ PhiGen.cosetB 3 2 = 1 := by
+  decide
