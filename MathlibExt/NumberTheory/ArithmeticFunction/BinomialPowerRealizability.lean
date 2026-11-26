@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Nat.Factorial.BigOperators
@@ -1220,6 +1222,55 @@ private theorem choose_prime_pow_congr (p t n j : ℕ)
     have hC2 : Nat.choose (p ^ t * n) j = 0 :=
       Nat.choose_eq_zero_of_lt hltM
     rw [hC1, hC2]
+
+/-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
+$n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with
+$\lambda p \ne n$,
+
+$$\binom{n}{\lambda p} \equiv \binom{n/p}{\lambda} \pmod{p^e},$$
+
+where $e = \max(\nu_p(n), \nu_p(n - \lambda p))$ and $\nu_p$ is the $p$-adic valuation; the
+integer $n - \lambda p$ may be negative, and $\nu_p(n - \lambda p)$ is the valuation of its
+absolute value.
+
+Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
+Sequences 27 (2024), Article 24.3.3, Lemma 27 (`jis-2024-24.3.3-lem-27`). -/
+theorem choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Prime) (hpn : p ∣ n)
+    (hn : 0 < n) (hl : l * p ≠ n) :
+    (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
+      [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))] := by
+  by_cases h : n < l * p
+  · rw [Nat.choose_eq_zero_of_lt h, Nat.choose_eq_zero_of_lt ((Nat.div_lt_iff_lt_mul hp.pos).2 h)]
+  have hle : l * p ≤ n := (lt_of_le_of_ne (le_of_not_gt h) hl).le
+  have : Fact p.Prime := ⟨hp⟩
+  rw [← Nat.cast_mul, ← Nat.cast_sub hle, padicValInt.of_nat, ← Nat.cast_pow,
+    Int.natCast_modEq_iff, Nat.padicValNat_def]
+  have hv : 0 < multiplicity p n := one_le_multiplicity_of_dvd hn.ne' hpn
+  obtain ⟨t, ht⟩ := Nat.exists_eq_add_one_of_ne_zero
+    (hv.trans_le (le_max_left _ (multiplicity p (n - l * p)))).ne'
+  rw [ht]
+  have hmul (m : ℕ) : p ^ (t + 1) * m = p * (p ^ t * m) := by
+    rw [pow_succ', mul_assoc]
+  -- Factor the larger power out of either the top index or the gap between the indices.
+  rcases le_total (multiplicity p (n - l * p)) (multiplicity p n) with hval | hval
+  · have hdvd : p ^ (t + 1) ∣ n := by
+      rw [← ht, max_eq_left hval]
+      exact pow_multiplicity_dvd _ _
+    obtain ⟨m, hm⟩ := hdvd
+    have hdiv : n / p = p ^ t * m := by
+      rw [hm, hmul, Nat.mul_div_cancel_left _ hp.pos]
+    rw [hdiv, hm, mul_comm l p]
+    exact choose_prime_pow_congr p t m l
+  · have hdvd : p ^ (t + 1) ∣ n - l * p := by
+      rw [← ht, max_eq_right hval]
+      exact pow_multiplicity_dvd _ _
+    obtain ⟨m, hm⟩ := hdvd
+    have hsum : p ^ (t + 1) * m + p * l = n := by
+      rw [← hm, mul_comm p l, Nat.sub_add_cancel hle]
+    have hdiv : n / p = p ^ t * m + l := by
+      rw [← hsum, hmul, ← Nat.mul_add, Nat.mul_div_cancel_left _ hp.pos]
+    rw [hdiv, ← hsum, mul_comm l p]
+    exact choose_add_prime_pow_congr p t m l
 
 private theorem dvd_choose_of_not_dvd (p N K m : ℕ) [Fact (Nat.Prime p)]
     (hKN : K ≤ N) (hK0 : 0 < K) (hNdvd : p ^ m ∣ N) (hKndvd : ¬ p ∣ K) :

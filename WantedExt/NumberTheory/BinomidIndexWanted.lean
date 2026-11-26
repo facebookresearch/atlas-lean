@@ -18,8 +18,12 @@ public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
 public import MathlibExt.NumberTheory.BinomidAverage
 public import MathlibExt.NumberTheory.BinomidPartialSum
+public import MathlibExt.NumberTheory.BinomidPrimeDivisibility
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
+public import MathlibExt.NumberTheory.BinomidIndexAdd
+public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
+public import MathlibExt.NumberTheory.BinomidIndexApplyPeriodEqApplyZero
 
 namespace MetaMathlibExt
 
@@ -38,18 +42,6 @@ public theorem_wanted isLexMinimalExtensionOf_periodic_of_monotoneOn {m : ℕ}
     (hm : 0 < m) {e : ℕ → ℕ} (he : MonotoneOn e (Set.Iio m)) :
     IsLexMinimalExtensionOf (fun i => e (i % m)) m
 
-/-- **A lex-minimal extension periodic from its second entry is periodic.** Let
-$\eta = (e_1, e_2, \dots)$ be a lex-minimal extension and let $p \ge 1$. If $e_{i+p} = e_i$
-for every $i \ge 2$, then $e_{1+p} = e_1$, so the whole sequence $\eta$ is periodic with
-period $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 4
-(`integers-2024-A53-prop-4`). -/
-public theorem_wanted IsLexMinimalExtension.apply_period_eq_apply_zero {η : ℕ → ℕ}
-    (hη : IsLexMinimalExtension η) {p : ℕ} (hp : 0 < p)
-    (hper : ∀ i, 1 ≤ i → η (i + p) = η i) : η p = η 0
-
 /-- **Periodic binomid indices are lex-minimal extensions.** If an infinite binomid index
 $e = (e_1, e_2, \dots)$ is periodic, that is, there is $p \ge 1$ with $e_{i+p} = e_i$ for all
 $i$, then $e$ is a lex-minimal extension: it is the lex-minimal extension of
@@ -61,20 +53,6 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 5
 public theorem_wanted isLexMinimalExtension_of_periodic {η : ℕ → ℕ}
     (hη : IsBinomidIndex η) {p : ℕ} (hp : 0 < p) (hper : ∀ i, η (i + p) = η i) :
     IsLexMinimalExtension η
-
-/-- **Lex-minimal extensions are closed under addition.** If $\eta_1$ and $\eta_2$ are
-lex-minimal extensions, then their componentwise sum $\eta_1 + \eta_2$ is a lex-minimal
-extension.
-
-Since the zero sequence is also a lex-minimal extension, the set $L$ of lex-minimal extensions
-is a monoid under componentwise addition.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 1
-(`integers-2024-A53-cor-1`). -/
-public theorem_wanted IsLexMinimalExtension.add {η₁ η₂ : ℕ → ℕ}
-    (h₁ : IsLexMinimalExtension η₁) (h₂ : IsLexMinimalExtension η₂) :
-    IsLexMinimalExtension (η₁ + η₂)
 
 /-- **Distinct shifts of lex-minimal extensions meet only in zero.** Let $L$ be the set of
 lex-minimal extensions, and for a natural number $l$ let $\sigma^l$ be the right shift that
@@ -141,34 +119,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_nomid_eq_one {η : ℕ → 
     (hn : m < n) :
     ∃ k, 1 ≤ k ∧ k < n ∧
       generalizedBinomialCoefficient (fun i => p ^ η (i - 1)) k (n - k) = 1
-
-/-- **Nomid coefficients of binomid indices that are not lex-minimal extensions.** Let
-$\mu = (e_1, e_2, \dots)$ be a binomid index such that for no $m$ is $\mu$ the lex-minimal
-extension of its first $m$ entries, and let $p$ be a prime. Write $f_i = p^{e_i}$ for $i \ge 1$
-and let $[n, k]_f = \frac{f_n f_{n-1} \cdots f_{n-k+1}}{f_k f_{k-1} \cdots f_1}$ be the
-$f$-nomid coefficient. Then there are infinitely many natural numbers $n$ such that for every $k$
-with $1 \le k < n$ the coefficient $[n, k]_f$ is an integer multiple of $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 2
-(`integers-2024-A53-cor-2`). -/
-public theorem_wanted infinite_setOf_prime_dvd_nomid_of_not_isLexMinimalExtension
-    {μ : ℕ → ℕ} (hμ : IsBinomidIndex μ) (hlex : ¬ IsLexMinimalExtension μ) {p : ℕ}
-    (hp : p.Prime) :
-    {n : ℕ | ∀ k, 1 ≤ k → k < n → ∃ z : ℤ,
-      generalizedBinomialCoefficient (fun i => p ^ μ (i - 1)) k (n - k) = (p : ℚ) * z}.Infinite
-
-/-- **The upper average of a binomid index is the supremum of its averages.** Let $\eta$ be a
-binomid index, let $s_i$ be the sum of its first $i$ entries, let $A_{i,0}(\eta) = s_i / i$ for
-$i \ge 1$, and let $A_0(\eta) = \limsup_{i \to \infty} A_{i,0}(\eta)$ be its upper average.
-Then, in the extended real numbers, $A_0(\eta) = \sup_{i \ge 1} A_{i,0}(\eta)$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 2
-(`integers-2024-A53-lem-2`). -/
-public theorem_wanted IsBinomidIndex.binomidUpperAverage_eq_iSup {η : ℕ → ℕ}
-    (hη : IsBinomidIndex η) :
-    binomidUpperAverage η = ⨆ i : ℕ, ⨆ (_ : 1 ≤ i), ((binomidAverage η i : ℝ) : EReal)
 
 /-- **Lex-minimal extensions satisfy the Average Condition.** Every lex-minimal extension
 satisfies the Average Condition.
