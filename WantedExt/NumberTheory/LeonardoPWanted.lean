@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 /-
 # On generalized Leonardo `p`-numbers
 
-Statements from Kusrini, A. Putra, and K. Kuhapatanakul
+Statements from Kantaphon Kuhapatanakul and Pongpol Ruankong
 as presented in "On Generalized Leonardo `p`-Numbers",
 *Journal of Integer Sequences* 27 (2024), Article 24.4.6
 (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.tex>).
@@ -144,17 +144,6 @@ $H(m - a - b)$. -/
 def rMatrix (p : ℕ) (H : ℤ → ℤ) (m : ℕ) :
     Matrix (Fin (2 * p + 1)) (Fin (2 * p + 1)) ℤ :=
   Matrix.of fun a b => H ((m : ℤ) - a.val - b.val)
-
-/-- **Generalized Leonardo $p$-numbers in terms of Fibonacci $p$-numbers.** For all natural
-numbers $p$, $k$ and $n$ with $p \ge 1$ and $k \ge 1$, the generalized Leonardo $p$-number
-$\mathcal{L}_{p,k}(n)$ and the Fibonacci $p$-number $F_p(n+1)$ satisfy
-$\mathcal{L}_{p,k}(n) = (k+1)F_p(n+1) - k$.
-
-Source: "On Generalized Leonardo `p`-Numbers", Journal
-of Integer Sequences 27 (2024), Article 24.4.6, Theorem 2. -/
-theorem_wanted leonardoPK_eq (p k n : ℕ) (hp : 1 ≤ p)
-    (hk : 1 ≤ k) :
-    leonardoPK p k n = ((k : ℤ) + 1) * (MetaMathlibExt.fibonacciP p (n + 1) : ℤ) - (k : ℤ)
 
 /-- **Stride sums of the generalized Leonardo $p$-numbers.** Let $p \ge 1$ and $k \ge 1$ be
 natural numbers, and let $\mathcal{L}_{p,k}$ denote the generalized Leonardo $p$-numbers
