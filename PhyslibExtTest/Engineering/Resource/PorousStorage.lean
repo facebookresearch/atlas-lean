@@ -87,6 +87,15 @@ example : (2 : ℝ) * superficialFlux (2 * 3) 2 = 2 * 3 := by
 example : EarthScience.poreVelocity 3 (1 / 2) * (1 / 2) = 3 := by
   exact EarthScience.poreVelocity_mul (by norm_num)
 
+-- The imported conversion divides by the whole porosity, so it is not the
+-- velocity of one phase: at porosity and saturation `1/2` a unit phase flux
+-- gives `2`, while that phase fills only the bulk fraction `1/4` and so
+-- moves at `1 / (1/4) = 4`.
+example : EarthScience.poreVelocity 1 (1 / 2) = 2 ∧
+    phaseVolume (1 / 2) 1 (![1 / 2, 1 / 2] : Fin 2 → ℝ) 0 = 1 / 4 ∧
+    1 / phaseVolume (1 / 2) 1 (![1 / 2, 1 / 2] : Fin 2 → ℝ) 0 = 4 := by
+  refine ⟨?_, ?_, ?_⟩ <;> norm_num [EarthScience.poreVelocity, phaseVolume]
+
 -- The general flux law serves any flow `Q`, which the special case for
 -- flows written as `A * u` cannot match.
 example (Q A : ℝ) (hA : A ≠ 0) : A * superficialFlux Q A = Q := by

@@ -27,7 +27,12 @@ densities `rho`. The pore volume is `phi * V_bulk`, phase `i` occupies
 The superficial (Darcy) flux `u = Q / A` of a volumetric flow `Q` through
 bulk area `A` is defined here, with the volumetric-flow law `Q = A * u`
 for any flow and nonzero area; pore velocity itself is the imported
-`EarthScience.poreVelocity`, kept distinct from the superficial flux.
+`EarthScience.poreVelocity`, `v = u / phi`, kept distinct from the
+superficial flux. That conversion divides by the whole pore fraction
+`phi`: it gives the velocity of a fluid filling the pore space, or, from
+the total flux of all phases, their velocity averaged over the whole pore
+space; it is not the velocity of an individual phase, which occupies only
+the fraction `phi * S i` of the bulk volume.
 
 ## ii. Key results
 
@@ -42,7 +47,9 @@ for any flow and nonzero area; pore velocity itself is the imported
 - `PorousStorage.volumetricFlow_eq`: area times the superficial flux of
   any flow `Q` through a nonzero area recovers `Q`.
 - `EarthScience.poreVelocity_mul` (imported): pore velocity rescales the
-  superficial flux by the porosity.
+  superficial flux by the porosity. This is the velocity of a fluid filling
+  the pore space, or the whole-pore average velocity from the total flux,
+  not the velocity of an individual phase.
 
 ## iii. Table of contents
 
@@ -111,7 +118,9 @@ lemma sum_phaseVolume_eq {ι : Type*} [Fintype ι] {phi V_bulk : ℝ}
   simp only [← Finset.mul_sum, hS, mul_one]
 
 /-- Each admissible saturation is at most one: a nonnegative family
-summing to one has every term at most one. -/
+summing to one has every term at most one. Mathlib's bundled form,
+`StdSimplex.weights_apply_le_one`, takes finitely supported weights; this
+is the plain-function form the phase-volume bound uses. -/
 lemma saturation_le_one {ι : Type*} [Fintype ι] {S : ι → ℝ}
     (hS0 : ∀ i, 0 ≤ S i) (hS : ∑ i, S i = 1) (i : ι) :
     S i ≤ 1 := by
