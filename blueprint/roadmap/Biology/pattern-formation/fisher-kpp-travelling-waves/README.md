@@ -60,3 +60,5 @@
 - [A Fisher–KPP front is a heteroclinic orbit in the phase plane](tendsto-heteroclinic-of-is-front.md)
 - [A front of positive speed has negative derivative everywhere](deriv-neg-of-is-front.md)
 - [Fronts at or above the minimal speed lie in the open trapping triangle](mem-trapping-triangle-of-is-front.md)
+- [Absolute spectrum and the minimal speed of negative-diffusion logistic fronts](negative-diffusion-absolute-spectrum-minimal-speed.md)
+- [Smooth monotone travelling waves of a logistic equation with sign-changing aggregation diffusivity](negative-diffusion-logistic-travelling-waves.md)

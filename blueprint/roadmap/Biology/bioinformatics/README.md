@@ -24,3 +24,6 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
+- [Empirical Bayes batch-effect adjustment](empirical-bayes-batch-effect-adjustment/README.md)
+- [Graphical lasso for sparse inverse covariance estimation](graphical-lasso-sparse-inverse-covariance/README.md)
+- [Surrogate variable analysis](surrogate-variable-analysis/README.md)

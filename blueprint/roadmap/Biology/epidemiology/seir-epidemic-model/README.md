@@ -54,3 +54,4 @@
 - [For β ≥ 0, σ, γ > 0 and N ≠ 0, SEIR rate derivatives give R₀ = β / γ](r0-fderiv-eq.md)
 - [For σ, γ > 0 and β ≥ 0, F − V is Hurwitz exactly when β < γ](is-hurwitz-iff.md)
 - [For σ, γ > 0 and β ≥ 0, F − V has an eigenvalue with Re > 0 iff β > γ](exists-re-pos-iff.md)
+- [Herd immunity threshold under gamma-distributed susceptibility or connectivity](heterogeneous-susceptibility-herd-immunity-threshold.md)
