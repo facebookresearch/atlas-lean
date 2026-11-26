@@ -5,4 +5,4 @@ Fibonacci number $F_m$ is $4$, since $F_1=F_2=1$, $F_3=2$ and $F_4=3$.
 
 ## Sources
 
-- Mathlib, `Mathlib.Data.Nat.Fib.Basic` (`Nat.fib_one`, `Nat.fib_two` and `Nat.fib_add_two`).
+- Direct computation of $F_1$, $F_2$, $F_3$ and $F_4$.
