@@ -71,19 +71,6 @@ Sequences 27 (2024), Article 24.2.7, Theorem 9 (`jis-2024-24.2.7-thm-9`). -/
 public theorem_wanted treeDNodes_eq_dcDNodes_of_isDivideConquerTree (t : BinaryTree Unit)
     (ht : IsDivideConquerTree t) : treeDNodes t = dcDNodes t.numLeaves
 
-/-- **Midpoint identity for the divide-and-conquer D-node count.** Let $\delta$ be the
-divide-and-conquer D-node count. Let $k$ and $r$ be natural numbers with $0 < r < 2^k$, put
-$n = 2^k + r$, and let $\nu_2(r)$ be the position of the lowest nonzero binary digit of $r$,
-counted from $0$ (the exponent of the largest power of $2$ dividing $r$). Then
-$\delta(n) = \frac{\delta(n-1) + \delta(n+1)}{2} + 1 - \nu_2(r)$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Corollary 10 (`jis-2024-24.2.7-cor-10`). -/
-public theorem_wanted dcDNodes_eq_midpoint_add_one_sub_lowestBit (k r : ℕ) (hr0 : 0 < r)
-    (hr : r < 2 ^ k) :
-    (dcDNodes (2 ^ k + r) : ℚ) =
-      ((dcDNodes (2 ^ k + r - 1) : ℚ) + dcDNodes (2 ^ k + r + 1)) / 2 + 1 - padicValNat 2 r
-
 /-- **Level-sum formula for the divide-and-conquer D-node count.** Let $\delta$ be the
 divide-and-conquer D-node count. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$,
 let $\lambda_i(n)$ be the level-$i$ D-node count, and let $n_i$ be the binary digit of $n$ at
@@ -99,35 +86,6 @@ public theorem_wanted dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
       (dcDNodes n : ℤ) =
         ∑ i ∈ range (Nat.log 2 n),
           (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ))
-
-/-- **Hamming weight of the successor of an even number.** For a natural number $m$, write
-$s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary expansion).
-If $n$ is an even natural number (including $n = 0$), then $s_1(n + 1) = s_1(n) + 1$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 14 (`jis-2024-24.2.7-lem-14`). -/
-public theorem_wanted hammingWeight_succ_of_even (n : ℕ) (hn : Even n) :
-    (Nat.digits 2 (n + 1)).sum = (Nat.digits 2 n).sum + 1
-
-/-- **Hamming weight of the predecessor of an odd number.** For a natural number $m$, write
-$s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary expansion).
-If $n$ is an odd natural number, then $s_1(n - 1) = s_1(n) - 1$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 15 (`jis-2024-24.2.7-lem-15`). -/
-public theorem_wanted hammingWeight_pred_of_odd (n : ℕ) (hn : Odd n) :
-    (Nat.digits 2 (n - 1)).sum = (Nat.digits 2 n).sum - 1
-
-/-- **Hamming weight of a power of two minus an odd number.** For a natural number $m$, write
-$s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary expansion).
-Let $k$ and $r$ be natural numbers with $r$ odd and $2r < 2^k$, that is, $r < 2^{k-1}$. Then
-$s_1(2^k - r) = 1 + k - s_1(r)$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 16 (`jis-2024-24.2.7-lem-16`). -/
-public theorem_wanted hammingWeight_two_pow_sub_of_odd (k r : ℕ) (hodd : Odd r)
-    (hr : 2 * r < 2 ^ k) :
-    (Nat.digits 2 (2 ^ k - r)).sum = 1 + k - (Nat.digits 2 r).sum
 
 /-- **Level counts of D-nodes at consecutive integers.** Let $k$, $r$ and $i$ be natural numbers
 with $r$ odd, $r < 2^k$ and $0 < i < k$, and let $n = 2^k + r$. Then the level counts of
