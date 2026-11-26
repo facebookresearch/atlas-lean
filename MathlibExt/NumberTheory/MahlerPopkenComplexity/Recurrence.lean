@@ -107,17 +107,4 @@ theorem mahlerPopkenComplexity_eq_recursionValue_eventually
       mahlerPopkenComplexity m n = mahlerPopkenRecursionValue m n :=
   ⟨m + 1, fun _ hn ↦ mahlerPopkenComplexity_eq_recursionValue_of_lt hm hn⟩
 
-/-- **Recursion for the binary Mahler–Popken complexity.** For every natural number $n \ge 3$,
-the binary ($2$-ary) Mahler–Popken complexity $\lVert n \rVert_2$ equals the minimum of the sums
-$\lVert d \rVert_2 + \lVert n/d \rVert_2$ over the divisors $d$ of $n$ with $d \ne 1$ and
-$d \ne n$, and of the sums $\lVert \eta \rVert_2 + \lVert n - \eta \rVert_2$ over $0 < \eta < n$.
-This is the recursion (9) for $m = 2$.
-
-Source: John M. Campbell, "A Binary Version of the Mahler-Popken
-Complexity Function", Proposition 1. -/
-theorem mahlerPopkenComplexity_two_eq_recursionValue
-    (n : ℕ) (hn : 3 ≤ n) :
-    mahlerPopkenComplexity 2 n = mahlerPopkenRecursionValue 2 n :=
-  mahlerPopkenComplexity_eq_recursionValue_of_lt (by decide) hn
-
 end MathlibExt.NumberTheory.MahlerPopkenComplexityWanted

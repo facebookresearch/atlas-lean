@@ -32,7 +32,6 @@
 - [The $1$-ary complexity is the integer complexity](mahler-popken-complexity-one-eq.md)
 - [Right-hand side of the Mahler–Popken recursion](mahler-popken-recursion-value.md)
 - [The $m$-ary complexity eventually satisfies its recursion](mahler-popken-complexity-eq-recursion-va.md)
-- [Mahler–Popken recurrence above the largest leaf value](mahler-popken-complexity-eq-recursion-va-2.md)
 - [Recursion for the binary Mahler–Popken complexity](mahler-popken-complexity-two-eq-recursio.md)
 - [Logarithmic lower bound for the binary Mahler–Popken complexity](logb-two-le-mahler-popken-complexity-two.md)
 - [Upper bound for the binary Mahler–Popken complexity](mahler-popken-complexity-two-le-log-add.md)

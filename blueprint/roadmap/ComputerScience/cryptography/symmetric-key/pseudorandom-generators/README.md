@@ -35,5 +35,8 @@
 
 - [Computational pseudoentropy](computational-pseudoentropy.md)
 - [Pseudorandom generators exist if and only if one-way functions exist](pseudorandom-generators-exist-if-and-only-if.md)
+- [The generator of a keyed function at fixed points](prg-of-prf.md)
+- [The PRF distinguisher built from a PRG distinguisher](prg-of-prfreduction.md)
 - [Pseudorandom generators from pseudorandom functions](pseudorandom-generators-from-pseudorandom.md)
+- [Asymptotic PRG security from a PRF](prg-secure-prg-of-prf.md)
 - [Sequential and parallel composition of pseudorandom generators](sequential-and-parallel-composition-of.md)

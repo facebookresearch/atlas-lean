@@ -25,9 +25,6 @@ example (m : ℕ) (hm : 1 ≤ m) :
     mahlerPopkenComplexity m (m + 1) = mahlerPopkenRecursionValue m (m + 1) :=
   mahlerPopkenComplexity_eq_recursionValue_of_lt hm (Nat.lt_succ_self m)
 
-example : mahlerPopkenComplexity 2 3 = mahlerPopkenRecursionValue 2 3 :=
-  mahlerPopkenComplexity_two_eq_recursionValue 3 (hn := le_rfl)
-
 -- At the boundary n = m = 2, the optimal expression is a single leaf.
 example : mahlerPopkenComplexity 2 2 < mahlerPopkenRecursionValue 2 2 := by
   have hleaf : mahlerPopkenComplexity 2 2 ≤ 1 :=
