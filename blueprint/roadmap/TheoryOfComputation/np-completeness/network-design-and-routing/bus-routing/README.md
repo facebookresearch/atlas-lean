@@ -1,0 +1,15 @@
+# Bus routing
+
+- [Instances of BUS ROUTING](bus-routing-instance.md)
+- [The ROUTING WITH MUST PAIRS instance of a bus routing instance](to-must-pairs.md)
+- [Well-formed BUS ROUTING instances](well-formed.md)
+- [Pairs in the transitive closure of a path](in-path-closure.md)
+- [Closure weight of a path](closure-weight.md)
+- [Feasible BUS ROUTING instances](bus-routing-feasible.md)
+- [BUS ROUTING as a decision problem](bus-routing-dec.md)
+- [BUS ROUTING is NP-complete](bus-routing-np-complete.md)
+- [South and east arcs of a grid](is-grid-arc.md)
+- [Well-formed BUS ROUTING (minimization, grid) instances](well-formed-2.md)
+- [Feasible BUS ROUTING (minimization, grid) instances](bus-routing-min-grid-feasible.md)
+- [BUS ROUTING (minimization, grid) as a decision problem](bus-routing-min-grid-dec.md)
+- [BUS ROUTING (minimization, grid) is NP-complete](bus-routing-min-grid-np-complete.md)
