@@ -1,4 +1,4 @@
-# Ctx
+# Typing contexts
 
 Typing context mapping variables to types.
 

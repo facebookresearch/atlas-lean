@@ -1,4 +1,4 @@
-# Method Decl
+# Method declarations
 
 Method declaration: return, params, body.
 

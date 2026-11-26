@@ -1,24 +1,26 @@
 # Separating implication and safe backward preconditions
 
-## HAssertion
+## Separating implication
 
-- [Wand](wand.md)
-- [Star entails iff entails wand](star-entails-iff-entails-wand.md)
-- [Star wand elim](star-wand-elim.md)
+- [Separating implication](wand.md)
+- [Separating conjunction is left adjoint to separating implication](star-entails-iff-entails-wand.md)
+- [Elimination of separating implication](star-wand-elim.md)
 - [Separating implication from the empty heap](wand-emp.md)
-- [Wand mono](wand-mono.md)
+- [Monotonicity of separating implication](wand-mono.md)
 
-## IMP
+## The safe backward precondition
 
-- [Safe Pre](safe-pre.md)
+- [Safe backward precondition](safe-pre.md)
 
-## Safe Pre
+## Properties of safe preconditions
 
-- [Valid iff](valid-iff.md)
-- [Valid](valid.md)
-- [Mono](mono.md)
-- [Hand](hand.md)
-- [Skip](skip.md)
+- [Validity is entailment of the safe precondition](valid-iff.md)
+- [The safe precondition establishes validity](valid.md)
+- [Weakening a postcondition weakens its safe precondition](mono.md)
+- [Safe preconditions preserve conjunction](hand.md)
+- [Safe precondition of skip](skip.md)
 - [Safe precondition for the true postcondition](true-iff.md)
-- [Frame property of safe preconditions](frame.md)
-- [Frame property of safe preconditions with separating implication](frame-wand.md)
+
+## Related topics
+
+- [Frame rule](../separation-logic/frame.md): the frame property of safe preconditions, in its separating-conjunction and separating-implication forms.

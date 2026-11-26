@@ -124,7 +124,8 @@ private theorem branch_vc (b : BExp) (P R S : Assertion) :
         obtain ⟨hb, rfl⟩ := hst
         exact (tensorOrderIso_inr states states _ _).mpr (by simpa [hb] using h hs)
 
-/-- Diagram obligations coincide with source precondition entailment and verification conditions. -/
+/-- The diagram obligations of the compiled annotation `annotate c Q`, from the `P`-states to the
+`Q`-states, hold iff `P` entails `c.pre Q` and `c.vc Q` holds. -/
 theorem vc_annotate_iff (c : ACmd) (P Q : Assertion) :
     (annotate c Q).vc interpret {s | P s} {s | Q s} ↔ P.Entails (c.pre Q) ∧ c.vc Q := by
   induction c generalizing P Q with

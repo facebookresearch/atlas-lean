@@ -1,4 +1,4 @@
-# Class Table
+# Class tables
 
 Class table as a list of declarations.
 

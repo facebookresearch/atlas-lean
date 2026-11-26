@@ -1,4 +1,4 @@
-# MName
+# Method names
 
 Method names.
 

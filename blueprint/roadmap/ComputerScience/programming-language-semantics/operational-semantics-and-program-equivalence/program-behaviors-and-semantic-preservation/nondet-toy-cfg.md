@@ -1,3 +1,3 @@
-# Nondet Toy Cfg
+# Configurations of the toy semantics
 
 Configurations of the nondeterminism counterexample toy semantics.

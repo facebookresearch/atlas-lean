@@ -1,3 +1,3 @@
-# Ctx Equiv trans
+# Contextual equivalence is transitive
 
 Contextual equivalence is transitive.

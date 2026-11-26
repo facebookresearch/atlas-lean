@@ -1,4 +1,4 @@
-# Object
+# The root class
 
 The root class `Object` is the class name `0`. A raw class table is a list of declarations and can contain one named `0`; well-formed tables do not declare it.
 

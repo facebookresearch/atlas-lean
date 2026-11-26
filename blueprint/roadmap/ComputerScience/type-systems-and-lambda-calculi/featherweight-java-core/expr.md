@@ -1,4 +1,4 @@
-# Expr
+# Featherweight Java expressions
 
 Featherweight Java expressions.
 

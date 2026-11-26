@@ -1,4 +1,4 @@
-# Except F
+# Signature of exceptions
 
 Nullary raise operations: Section 2's `raise_e : 0` for each `e`.
 

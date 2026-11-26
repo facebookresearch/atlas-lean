@@ -1,4 +1,4 @@
-# Value
+# Values
 
 Values are fully evaluated new-expressions.
 

@@ -1,25 +1,25 @@
 # Free-model handlers: exceptions, state run laws, explicit nondeterminism
 
-## Free M
+## Signatures and free models
 
-- [Except F](except-f.md)
-- [Free Except](free-except.md)
+- [Signature of exceptions](except-f.md)
+- [Free model of exceptions](free-except.md)
 - [Signature of explicit nondeterminism](nondet-f.md)
-- [Free Nondet](free-nondet.md)
+- [Free model of nondeterminism](free-nondet.md)
 
-## Free Except
+## Exceptions
 
-- [Raise](raise.md)
+- [Raising an exception](raise.md)
 - [Exception handler](handle.md)
-- [Handle pure](handle-pure.md)
-- [Handle raise bind](handle-raise-bind.md)
+- [Handling a pure return](handle-pure.md)
+- [Handling a raised exception](handle-raise-bind.md)
 - [Uniqueness of the exception handler](handle-unique.md)
-- [Run](run.md)
-- [Run pure](run-pure.md)
-- [Run raise](run-raise.md)
-- [Run bind error](run-bind-error.md)
+- [Running an exception computation](run.md)
+- [Running a pure return](run-pure.md)
+- [Running a raise](run-raise.md)
+- [A first error short-circuits a bind](run-bind-error.md)
 
-## Free State
+## State
 
 - [Reading the state twice](run-get-get.md)
 - [Reading and writing back the state](run-get-set.md)
@@ -29,10 +29,10 @@
 - [Two writes in a row](run-set-set.md)
 - [Running set then set](run-set-set-pure.md)
 
-## Free Nondet
+## Explicit nondeterminism
 
-- [Fail](fail.md)
-- [Choice](choice.md)
+- [Failure](fail.md)
+- [Binary choice](choice.md)
 
 ## Sources
 

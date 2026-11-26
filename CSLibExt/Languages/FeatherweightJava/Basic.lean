@@ -150,7 +150,9 @@ def fields (ct : ClassTable) (C : CName) : Option (List (CName × FName)) :=
         | some cd => some (cd.fields ++ fs)
     (supers ct C).foldl step (some [])
 
-/-- First defining class upward (MB-CLASS/MB-SUPER). -/
+/-- The first method declaration named `m` found walking the superclass chain of `C` upward,
+skipping `Object` and undeclared classes; it returns the declaration, not the class declaring it
+(MB-CLASS/MB-SUPER). -/
 def lookupMethod (ct : ClassTable) (m : MName) (C : CName) :
     Option MethodDecl :=
   (supers ct C).findSome? fun D =>
@@ -230,7 +232,9 @@ def fieldValue : List (CName × FName) → Expr.Args → FName → Option Expr :
   | (_, f) :: tl, .cons v vs =>
     if f == g then some v else fieldValue tl vs g
 
-/-- Pair parameter names with argument values (helper for E-INVK). -/
+/-- Pair parameter names with argument expressions position by position, truncating to the
+shorter list; E-INVK checks that the arguments are values and that the lengths agree (helper for
+E-INVK). -/
 def zipArgs : List VName → Expr.Args → List (VName × Expr) :=
   fun xs args => match xs, args with
   | [], _ => []

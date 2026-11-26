@@ -154,7 +154,8 @@ theorem eq_of_steps_of_final {Config : Type u} {Label : Type v}
 
 end OpSem
 
-/-- IMP adapter with unit labels; steps are exactly `Cslib.IMP.Step`. -/
+/-- IMP adapter with unit labels; steps are exactly `Cslib.IMP.Step`, and a configuration is
+final iff its command is `skip`. -/
 def imp : OpSem Cslib.IMP.Config Unit where
   lts := { Tr := fun x _ y => Cslib.IMP.Step x y }
   Final := fun c => c.1 = Cslib.IMP.Cmd.skip

@@ -1,4 +1,4 @@
-# CName
+# Class names
 
 Class names.
 

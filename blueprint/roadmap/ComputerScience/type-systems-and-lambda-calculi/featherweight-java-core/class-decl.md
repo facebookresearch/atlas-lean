@@ -1,4 +1,4 @@
-# Class Decl
+# Class declarations
 
 Class declaration.
 

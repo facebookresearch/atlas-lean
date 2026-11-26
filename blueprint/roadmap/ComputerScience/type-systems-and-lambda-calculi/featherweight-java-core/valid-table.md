@@ -1,4 +1,4 @@
-# Valid Table
+# Valid class tables
 
 Valid class table: sanity plus every class ok.
 

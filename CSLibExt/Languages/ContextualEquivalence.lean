@@ -50,7 +50,9 @@ structure CtxAlgebra (J : Type u) where
   plug_comp : ∀ {j k l : J} (D : Ctx k l) (C : Ctx j k) (t : Tm j),
     plug (comp D C) t = plug D (plug C t)
 
-/-- Observations over a context algebra: programs, outcomes, and semantics. -/
+/-- Observations over a context algebra: program judgments, an outcome type, judgment-indexed
+labels, a semantics at each program judgment, and an outcome relation between terms and
+outcomes. -/
 structure CtxObs {J : Type u} (A : CtxAlgebra J) where
   /-- Program judgments. -/
   Prog : J → Prop

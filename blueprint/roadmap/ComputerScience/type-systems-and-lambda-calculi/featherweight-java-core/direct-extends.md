@@ -1,6 +1,6 @@
-# Direct Extends
+# Direct superclass relation
 
-Direct subclass edge.
+For a class table and class names $C$ and $D$, $C$ directly extends $D$ when some declaration in the table has name $C$ and superclass $D$. Every declaration counts, not only the first declaration named $C$, which class lookup finds: a table with the entries $C$ extends $D$ and then $C$ extends $E$ has both edges.
 
 ## Sources
 
