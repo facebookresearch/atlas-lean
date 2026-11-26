@@ -436,8 +436,7 @@ private theorem archMeasure_image_mul_pi (a : (w : InfinitePlace F) → w.Comple
         exact placeMeasure_image_mul w (ha w) (hB w)
     _ = (∏ w, ‖a w‖ₑ ^ w.mult) * ∏ w, placeMeasure F w (B w) := Finset.prod_mul_distrib
 
-scoped instance properSpace_completion₀ (w : InfinitePlace F) : ProperSpace (w.Completion) :=
-  AdelicBox.properSpace_completion F w
+attribute [scoped instance] AdelicBox.properSpace_completion
 
 omit [NumberField F] in
 private theorem placeMeasure_pos_closedBall (w : InfinitePlace F) :

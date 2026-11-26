@@ -637,7 +637,6 @@ private def archBall : Set 𝔸∞ := {a | ∀ w, ‖a w‖ ≤ 9}
 
 omit [NumberField F] in
 private theorem isCompact_archBall : IsCompact (archBall F) := by
-  have := fun w => AdelicBox.properSpace_completion F w
   have : archBall F = Set.pi Set.univ fun w : InfinitePlace F =>
       Metric.closedBall (0 : w.Completion) 9 := by
     ext a; exact ⟨fun h w _ => mem_closedBall_zero_iff.mpr (h w), fun h w =>
