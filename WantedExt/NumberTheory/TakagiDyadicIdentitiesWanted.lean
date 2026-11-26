@@ -71,19 +71,6 @@ Sequences 27 (2024), Article 24.2.7, Theorem 9 (`jis-2024-24.2.7-thm-9`). -/
 public theorem_wanted treeDNodes_eq_dcDNodes_of_isDivideConquerTree (t : BinaryTree Unit)
     (ht : IsDivideConquerTree t) : treeDNodes t = dcDNodes t.numLeaves
 
-/-- **Midpoint identity for the divide-and-conquer D-node count.** Let $\delta$ be the
-divide-and-conquer D-node count. Let $k$ and $r$ be natural numbers with $0 < r < 2^k$, put
-$n = 2^k + r$, and let $\nu_2(r)$ be the position of the lowest nonzero binary digit of $r$,
-counted from $0$ (the exponent of the largest power of $2$ dividing $r$). Then
-$\delta(n) = \frac{\delta(n-1) + \delta(n+1)}{2} + 1 - \nu_2(r)$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Corollary 10 (`jis-2024-24.2.7-cor-10`). -/
-public theorem_wanted dcDNodes_eq_midpoint_add_one_sub_lowestBit (k r : ℕ) (hr0 : 0 < r)
-    (hr : r < 2 ^ k) :
-    (dcDNodes (2 ^ k + r) : ℚ) =
-      ((dcDNodes (2 ^ k + r - 1) : ℚ) + dcDNodes (2 ^ k + r + 1)) / 2 + 1 - padicValNat 2 r
-
 /-- **Level-sum formula for the divide-and-conquer D-node count.** Let $\delta$ be the
 divide-and-conquer D-node count. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$,
 let $\lambda_i(n)$ be the level-$i$ D-node count, and let $n_i$ be the binary digit of $n$ at

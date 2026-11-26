@@ -9,13 +9,16 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.DeterminantalTangent
+public import MathlibExt.AlgebraicGeometry.DeterminantalTangentFinrankTangent
 
 /-!
 # Determinantal tangent and normal-dimension requests
 
 At a matrix of rank exactly `r`, the first-order rank equations say that
 the tangent matrix sends `ker A` into `im A`. This identifies the normal
-directions and gives the expected tangent dimension over any field.
+directions. The expected tangent dimension over any field
+(`finrank_tangent`) is proved in
+`MathlibExt.AlgebraicGeometry.DeterminantalTangentFinrankTangent`.
 
 References:
 * Harris, *Algebraic Geometry: A First Course*, Example 14.16 (tangent spaces
@@ -44,10 +47,5 @@ theorem_wanted mem_tangent_iff (A B : Matrix (Fin m) (Fin n) k)
     (fun ij ↦ B ij.1 ij.2) ∈ tangent r A ↔
       ∀ v : Fin n → k, (Matrix.toLin' A) v = 0 →
         (Matrix.toLin' B) v ∈ LinearMap.range (Matrix.toLin' A)
-
-/-- The rank-exactly-`r` stratum has the expected tangent dimension. -/
-theorem_wanted finrank_tangent (A : Matrix (Fin m) (Fin n) k)
-    (hA : Matrix.rank A = r) (hrm : r < m) (hrn : r < n) :
-    Module.finrank k (tangent r A) = r * (m + n - r)
 
 end WantedExt.AlgebraicGeometry.DeterminantalTangentWanted

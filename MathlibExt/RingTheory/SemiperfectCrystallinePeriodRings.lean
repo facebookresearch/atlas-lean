@@ -113,3 +113,45 @@ abbrev CompletedFrobenius (F : HullFrobenius (A := A)) :=
     F.hom F.completion_preserved
 
 end MathlibExt.RingTheory.SemiperfectCrystallinePeriodRings
+
+end
+
+namespace WantedExt.RingTheory.SemiperfectCrystallinePeriodRings
+
+open MathlibExt.RingTheory
+open SemiperfectWittPDEnvelopes SemiperfectCrystallinePeriodRings
+
+/-- The induced Frobenius of A_cris uses the original quotient projections. -/
+public noncomputable def completedWittPDFrobenius
+    (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [CharP R p]
+    (hR : IsSemiperfect p R) (A : UniversalEnvelope p R)
+    (F : HullFrobenius (A := A)) : CompletedFrobenius F := by
+  -- Semiperfectness pertains to the construction of the hull; here the hull is supplied.
+  let _ := hR
+  let I := completionIdeal p R A
+  let q (n : ℕ) : Acris p R A →+* A.algebra.ring ⧸ I ^ n :=
+    (AdicCompletionMaps.quotientMap I I F.hom F.completion_preserved n).comp
+      (finiteProjection p R A n)
+  have hproj {m n : ℕ} (hmn : m ≤ n) :
+      (Ideal.Quotient.factorPow I hmn).comp (finiteProjection p R A n) =
+        finiteProjection p R A m := by
+    apply RingHom.ext
+    intro x
+    obtain ⟨v, rfl⟩ := AdicCompletion.mk_surjective I A.algebra.ring x
+    change Ideal.Quotient.factorPow I hmn (AdicCompletion.evalₐ I n (AdicCompletion.mk I _ v)) =
+      AdicCompletion.evalₐ I m (AdicCompletion.mk I _ v)
+    rw [AdicCompletion.evalₐ_mk, AdicCompletion.evalₐ_mk]
+    change Ideal.Quotient.mk (I ^ m) (v.val n) = Ideal.Quotient.mk (I ^ m) (v.val m)
+    apply Ideal.Quotient.eq.mpr
+    have hv := SModEq.sub_mem.mp (v.property hmn).symm
+    change v.val n - v.val m ∈ (I ^ m) * ⊤ at hv
+    simpa only [Ideal.mul_top] using hv
+  have hq {m n : ℕ} (hmn : m ≤ n) :
+      (Ideal.Quotient.factorPow I hmn).comp (q n) = q m := by
+    dsimp only [q]
+    rw [← RingHom.comp_assoc, AdicCompletionMaps.quotientMap_factor I I _ _ hmn,
+      RingHom.comp_assoc, hproj hmn]
+  exact ⟨AdicCompletion.liftRingHom I q hq,
+    fun n => AdicCompletion.evalₐ_comp_liftRingHom I q hq n⟩
+
+end WantedExt.RingTheory.SemiperfectCrystallinePeriodRings
