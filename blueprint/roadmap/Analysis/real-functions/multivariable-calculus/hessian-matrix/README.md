@@ -1,5 +1,6 @@
 # Hessian matrix
 
+- [Quadratic growth of a potential along a stationary affine direction](affine-potential-minimum-bound.md)
 - [Hessian matrix](hessian-matrix.md)
 - [Entries of the Hessian matrix](hessian-matrix-apply.md)
 - [Hessian entries as second Fréchet derivatives](hessian-matrix-eq-fderiv-fderiv.md)
