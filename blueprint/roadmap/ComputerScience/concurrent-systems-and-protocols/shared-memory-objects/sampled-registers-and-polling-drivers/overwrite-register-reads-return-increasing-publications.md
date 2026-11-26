@@ -8,7 +8,7 @@ for every finite sequence of $\mathsf{Publish}$ and $\mathsf{Read}$ events:
 1. a successful read that returns $(n, v)$ returns exactly the value of the $n$-th publication;
 2. the publication numbers returned by successive successful reads are strictly increasing, so no publication is returned twice;
 3. every publication that no read returns either is still held in the register at the end of the sequence or was followed by a
-   later publication before any read.
+   later publication as its immediately following event, with no intervening read.
 
 After the $n$-th publication the next event that touches the register is either a read, which returns $(n, v)$ and empties the
 slot, or the $(n+1)$-th publication, which overwrites it; this gives all three claims by induction on the sequence.
