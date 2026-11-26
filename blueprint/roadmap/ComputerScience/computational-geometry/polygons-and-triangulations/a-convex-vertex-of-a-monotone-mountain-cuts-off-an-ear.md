@@ -1,0 +1,11 @@
+# A convex vertex of a monotone mountain cuts off an ear
+
+A *monotone mountain* is a simple polygon $P = p_0 p_1 \cdots p_{n-1}$ in which every vertical line meets at most two edges and the leftmost vertex $p_0$ and the rightmost vertex $p_{n-1}$ are joined by an edge, the *base*. Suppose $n \ge 4$, no two vertices have the same $x$-coordinate, and all vertices other than $p_0$ and $p_{n-1}$ lie strictly above the line through the base. Then some vertex $p_i$ with $0 < i < n - 1$ is *convex*, meaning that its interior angle is less than $\pi$ (for example the vertex farthest from the base), and for every such convex vertex the segment $p_{i-1} p_{i+1}$ is an interior diagonal of $P$.
+
+## Depends on
+
+- [Diagonals and triangulations of a simple polygon](diagonals-and-triangulations-of-a-simple-polygon.md)
+
+## Sources
+
+- J. Erickson, *Computational Topology*, lecture notes, University of Illinois, 2023, Chapter 1 (Simple polygons), <https://jeffe.cs.illinois.edu/teaching/comptop/2023/notes/01-simple-polygons.pdf>: Section 1.4, proof of the Diagonal Lemma: every monotone mountain has a convex vertex $p_i$ other than $p_0$ and $p_{n-1}$, and for any such vertex $p_{i-1} p_{i+1}$ is a diagonal

@@ -1,0 +1,9 @@
+# Connected components of a basic semialgebraic set
+
+Let $V \subseteq \mathbb{R}^n$ be the set of solutions of a system
+$$q_1(x) = \dots = q_m(x) = 0, \quad p_1(x) > 0, \dots, p_s(x) > 0, \quad p_{s+1}(x) \ge 0, \dots, p_h(x) \ge 0$$
+of real polynomials in $n$ variables, and let $d = \max\{2, \deg q_i, \deg p_j\}$. The number of equations $m$ is arbitrary. Then $V$ has at most $d(2d - 1)^{n + h - 1}$ connected components. Ben-Or derives this from the bound of Milnor and Thom for real algebraic varieties, introducing a new variable $y_j$ with $p_j = y_j^2$ for each non-strict inequality and shrinking the strict inequalities to $p_j \ge \varepsilon$.
+
+## Sources
+
+- M. Ben-Or, "Lower bounds for algebraic computation trees", *Proceedings of the 15th Annual ACM Symposium on Theory of Computing*, 1983, pp. 80–86, <https://doi.org/10.1145/800061.808735>: Section 3, Theorem 2 ($\beta_d(n, h) \le d(2d - 1)^{n + h - 1}$) and its proof from Milnor's theorem

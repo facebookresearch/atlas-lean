@@ -10,3 +10,4 @@ Sequences with forbidden alternations and the complexity of lower envelopes.
 - [Upper bound for Davenport–Schinzel sequences of order three](upper-bound-for-davenport-schinzel-sequences-of-order-three.md)
 - [Order-three Davenport–Schinzel sequences have length $\Theta(n\,\alpha(n))$](order-three-davenport-schinzel-sequences-have-length-theta-n-alpha-n.md)
 - [Computing a lower envelope by divide and conquer](computing-a-lower-envelope-by-divide-and-conquer.md)
+- [Inverse Ackermann function](inverse-ackermann-function.md)

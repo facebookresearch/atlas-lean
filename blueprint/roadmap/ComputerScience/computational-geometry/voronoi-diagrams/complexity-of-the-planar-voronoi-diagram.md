@@ -9,6 +9,7 @@ Let $P$ be a set of $n \ge 3$ sites in $\mathbb{R}^2$. Then $\mathrm{Vor}(P)$ ha
 ## Proof depends on
 
 - [Euler's formula for connected plane graphs](../../../GraphTheory/planar-graphs-and-minors/euler-s-formula-for-connected-plane-graphs.md)
+- [Edge and face bounds for planar graphs](../../../GraphTheory/planar-graphs-and-minors/edge-and-face-bounds-for-planar-graphs.md)
 
 ## Sources
 

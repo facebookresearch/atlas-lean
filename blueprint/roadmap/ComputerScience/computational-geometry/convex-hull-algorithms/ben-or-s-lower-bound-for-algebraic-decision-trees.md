@@ -6,13 +6,11 @@ For each $d \ge 1$ there is a constant $c_d > 0$ with the following property. Le
 
 - [Algebraic decision tree](algebraic-decision-tree.md)
 
-## Expansion
+## Proof depends on
 
-This page becomes ready once:
-
-- Proof prerequisite: the Milnor–Thom bound on the number of connected components of a real semi-algebraic set defined by polynomial sign conditions, which Ben-Or's argument applies to the sets of inputs reaching each leaf.
-- Source check: the original paper (M. Ben-Or, "Lower bounds for algebraic computation trees", 1983) has not been opened; the page follows the lecture notes cited below.
+- [Connected components of a basic semialgebraic set](connected-components-of-a-basic-semialgebraic-set.md)
 
 ## Sources
 
 - D. M. Mount, *CMSC 754: Computational Geometry*, lecture notes, University of Maryland, Spring 2020, <https://www.cs.umd.edu/class/spring2020/cmsc754/Lects/cmsc754-spring2020-lects.pdf>: Lecture 3, the theorem attributed to Ben-Or: height $\Omega((\log M) - N)$ for a $d$-th order algebraic decision tree deciding a set with $M$ connected components
+- M. Ben-Or, "Lower bounds for algebraic computation trees", *Proceedings of the 15th Annual ACM Symposium on Theory of Computing*, 1983, pp. 80–86, <https://doi.org/10.1145/800061.808735>: Section 5, Theorem 8 ($2^h \beta_d(n, h) \ge N$ for a $d$-th order decision tree of height $h$; hence $C_d(W) = \Omega(\log N - n)$ for fixed $d$)

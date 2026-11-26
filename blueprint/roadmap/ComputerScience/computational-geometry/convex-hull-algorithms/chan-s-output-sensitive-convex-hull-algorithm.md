@@ -11,6 +11,7 @@ Let $P$ be a set of $n \ge 3$ points of $\mathbb{R}^2$ with no three on a line, 
 - [Jarvis's march](jarvis-s-march.md)
 - [Tangents from an external point to a convex polygon](tangents-from-an-external-point-to-a-convex-polygon.md)
 - [The computed convex hull equals the convex hull](../monotone-chain-convex-hull-algorithm/the-computed-convex-hull-equals-the-convex-hull.md)
+- [Chan's conditional hull step](chan-s-conditional-hull-step.md)
 
 ## Sources
 

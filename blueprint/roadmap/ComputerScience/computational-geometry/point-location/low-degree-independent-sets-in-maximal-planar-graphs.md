@@ -9,6 +9,7 @@ Let $G$ be a maximal planar graph (every face of a plane drawing, the outer one 
 ## Proof depends on
 
 - [Euler's formula for connected plane graphs](../../../GraphTheory/planar-graphs-and-minors/euler-s-formula-for-connected-plane-graphs.md)
+- [Half of the vertices of a maximal planar graph have degree at most eight](../../../GraphTheory/planar-graphs-and-minors/half-of-the-vertices-of-a-maximal-planar-graph-have-degree-at-most.md)
 
 ## Sources
 

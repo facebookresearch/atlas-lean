@@ -1,0 +1,11 @@
+# Existence of constrained Delaunay triangulations
+
+Let $P \subset \mathbb{R}^2$ be a finite point set and $G = (P, E)$ a plane straight-line graph on $P$. A triangulation $T$ of $P$ *respects* $G$ if it contains every segment of $E$. A point $q \in P$ is *visible* from the interior of a triangle $\Delta$ if some segment from a point in the interior of $\Delta$ to $q$ meets no segment of $E$ (except possibly at $q$). A triangulation $T$ of $P$ that respects $G$ is a *constrained Delaunay triangulation* of $P$ with respect to $G$ if, for every triangle $\Delta$ of $T$, every point of $P$ strictly inside the circumcircle of $\Delta$ is invisible from the interior of $\Delta$. For every finite $P$ and every plane graph $G = (P, E)$ a constrained Delaunay triangulation exists.
+
+## Depends on
+
+- [Delaunay triangulation](delaunay-triangulation.md)
+
+## Sources
+
+- *Computational Geometry*, lecture notes, ETH Zürich, autumn 2013, Chapter 6 (Delaunay triangulations), <https://ti.inf.ethz.ch/ew/courses/CG13/lecture/Chapter%206.pdf>: Section 6.7, the definition of a constrained Delaunay triangulation (respecting $G$, visibility blocked by the segments of $E$) and Theorem 6.21
