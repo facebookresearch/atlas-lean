@@ -11,10 +11,7 @@ Portions of this file are adapted from:
 
 `Definitions/Def_AlgebraicGeometry_PolarisedAbelianScheme.lean`,
 `Definitions/Def_JacJ1Iface.lean`,
-`Definitions/Def_AlgebraicGeometry_RelativePicardFunctor.lean`,
 `Definitions/Def_AlgebraicGeometry_ModulesProjPresentation.lean`,
-`Definitions/Def_AlgebraicGeometry_PolarisationRosati.lean`,
-`Definitions/Def_CerednikDrinfeld_QMCanonicalPol.lean`,
 `Definitions/Def_CerednikDrinfeld_QMStructureOnPolarised.lean`,
 `Theorems/Thm_AlgebraicGeometry_PolarisedAbelianScheme_QMStructure_IsPullback_trans.lean`
 and
@@ -51,7 +48,7 @@ public import Mathlib.LinearAlgebra.Trace
 public import Mathlib.Topology.KrullDimension
 public import MathlibExt.AlgebraicGeometry.CanonicalPolarizationData
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
-public import MathlibExt.AlgebraicGeometry.ProjSpace
+public import MathlibExt.AlgebraicGeometry.ProjSpace.Basic
 public import MathlibExt.AlgebraicGeometry.QMFakeEllipticCurve
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLawEndDegree
@@ -64,11 +61,11 @@ public import MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 
 A polarised abelian scheme is an abelian scheme equipped with a very
 ample polarisation line bundle and a full level structure. A quaternion
-multiplication structure is an action of an order in a quaternion
-algebra by group endomorphisms, compatible with the level points, whose
-polarisation is locally the cube of a canonical polarisation for the
-action. Pullback of such a structure along a ring homomorphism is
-transitive.
+multiplication structure is an action of a `ℤ`-submodule of a quaternion
+algebra (no order condition is imposed) by group endomorphisms, compatible
+with the level points, whose polarisation is locally the cube of a canonical
+polarisation for the action. Pullback of such a structure along a ring
+homomorphism is transitive.
 
 ## Implementation notes
 
@@ -82,7 +79,8 @@ sections on geometric fibres are those of `QMCanonicalPol`
 (`CanonicalPolarizationData`, `LocIsoOnBase`, `geomFibreH0Finrank`), and
 the tensor cube is built with `SchemeModulesTensor.moduleTensor`. Points
 are pushed forward and reindexed with `CerednikDrinfeld.QM.mapPt`,
-`pushPt` and `compPt`, and tangent vectors are those of
+`pushPt` and `compPt`, and pulled back along a commutative square with
+`CerednikDrinfeld.QM.pullPt`; tangent vectors are those of
 `CerednikDrinfeld.QM.IsTangentVector`.
 -/
 
@@ -93,21 +91,14 @@ open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle)
 open MathlibExt.AlgebraicGeometry.QMCanonicalPol
   (CanonicalPolarizationData LocIsoOnBase geomFibreH0Finrank)
 open MathlibExt.AlgebraicGeometry.SchemeModulesTensor (moduleTensor)
-open CerednikDrinfeld.QM (compPt IsTangentVector mapPt pushPt tangentBase tangentScale)
 
 open scoped Quaternion
 
 universe u
 
-namespace AlgebraicGeometry
+namespace CerednikDrinfeld.QM
 
 variable {R : Type u} [CommRing R]
-
-/-- View a point as a point over a different, equal, base morphism. -/
-def toPt {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
-    {T : Scheme.{u}} {t u : T ⟶ Spec (CommRingCat.of R)}
-    (P : SchemeHomOver t f) (h : P.left ≫ f = u) : SchemeHomOver u f :=
-  Over.homMk P.left h
 
 /-- Pull a point back along a morphism of schemes over different bases:
 given `g : A' ⟶ A` with `g ≫ f = f' ≫ ψ`, a point of `A'` over `t'`
@@ -120,7 +111,7 @@ def pullPt {A A' : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     (P : SchemeHomOver t' f') : SchemeHomOver (t' ≫ ψ) f :=
   Over.homMk (P.left ≫ g) (by
     have hw : P.left ≫ f' = t' := Over.w P
-    show (P.left ≫ g) ≫ f = t' ≫ ψ
+    change (P.left ≫ g) ≫ f = t' ≫ ψ
     rw [Category.assoc, hg, ← Category.assoc, hw])
 
 @[simp]
@@ -130,6 +121,15 @@ theorem pullPt_left {A A' : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
     (g : A' ⟶ A) (hg : g ≫ f = f' ≫ ψ)
     {T : Scheme.{u}} {t' : T ⟶ Spec (CommRingCat.of S')}
     (P : SchemeHomOver t' f') : (pullPt g hg P).left = P.left ≫ g := rfl
+
+end CerednikDrinfeld.QM
+
+open CerednikDrinfeld.QM
+  (compPt IsTangentVector mapPt pullPt pullPt_left pushPt tangentBase tangentScale)
+
+namespace AlgebraicGeometry
+
+variable {R : Type u} [CommRing R]
 
 /-- The left morphism of a group-law multiplication depends only on the
 left morphisms of the factors. -/
@@ -156,7 +156,9 @@ def finComb {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
 
 end RelativeGroupLaw
 
-/-- The usual package of properties of an abelian scheme. -/
+/-- Smoothness and properness of `f : A ⟶ Spec R`, connectedness of every
+fibre of `f`, and the existence of a relative group law on `A` over
+`Spec R`. The group law need not be commutative. -/
 structure AbelianSchemePropertyBundle {A : Scheme.{u}}
     (f : A ⟶ Spec (CommRingCat.of R)) : Prop where
   /-- The structure morphism is smooth. -/
@@ -201,14 +203,7 @@ structure ProjPresentation (M : X.Modules) (f : X ⟶ Spec (.of R)) (N : ℕ) wh
     (toProj.app (Proj.basicOpen (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
         (MvPolynomial.X i))
       (Proj.awayToSection (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
-        (MvPolynomial.X i)
-        (HomogeneousLocalization.Away.mk
-          (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
-          ((MvPolynomial.mem_homogeneousSubmodule 1 _).mpr
-            (MvPolynomial.isHomogeneous_X R i)) 1 (MvPolynomial.X j)
-          (by
-            simpa using (MvPolynomial.mem_homogeneousSubmodule 1 _).mpr
-              (MvPolynomial.isHomogeneous_X R j))))) •
+        (MvPolynomial.X i) (ProjSpace.ratio R N i j))) •
         M.presheaf.map (homOfLE (le_top : toProj ⁻¹ᵁ
           Proj.basicOpen (MvPolynomial.homogeneousSubmodule (Fin (N + 1)) R)
             (MvPolynomial.X i) ≤ ⊤)).op (σ i) =
@@ -226,8 +221,12 @@ end ProjPresentation
 
 end Scheme.Modules
 
-/-- A polarised abelian scheme of dimension `g`, polarisation degree
-parameter `d` and level `n` over `S`. -/
+/-- A polarised abelian scheme over `S` with fibres of dimension `g` and a
+full level-`n` structure: `2 * g` sections of order dividing `n` that write
+every `n`-torsion point over an algebraically closed field in exactly one
+way as a combination with coefficients in `Fin n`. Its polarisation `pol`
+is an invertible, very ample sheaf whose global sections have dimension `d`
+on every geometric fibre. -/
 structure PolarisedAbelianScheme (g d n : ℕ) (S : Type u) [CommRing S] :
     Type (u + 1) where
   /-- The underlying scheme. -/
@@ -282,7 +281,10 @@ namespace PolarisedAbelianScheme
 
 variable {g d n : ℕ}
 
-/-- An isomorphism of polarised abelian schemes. -/
+/-- `u` and `u'` are isomorphic: some isomorphism `e : u.A ≅ u'.A` over
+`Spec S` carries the group law of `u` to that of `u'` and the level points
+of `u` to those of `u'`, and pulls `u'.pol` back to a sheaf that is locally
+isomorphic over the base to `u.pol`. -/
 def Iso {S : Type u} [CommRing S] (u u' : PolarisedAbelianScheme g d n S) :
     Prop :=
   ∃ (e : u.A ≅ u'.A) (he : e.hom ≫ u'.f = u.f),
@@ -297,7 +299,11 @@ def Iso {S : Type u} [CommRing S] (u u' : PolarisedAbelianScheme g d n S) :
           ((Scheme.Modules.pullback e.hom).obj u'.pol) ≅
           (Scheme.Modules.pullback (u.f ⁻¹ᵁ U).ι).obj u.pol))
 
-/-- Pullback of a polarised abelian scheme along a ring homomorphism. -/
+/-- `u'` is a pullback of `u` along `φ : S →+* S'`: some `gA : u'.A ⟶ u.A`
+forms a pullback square with the structure morphisms and `Spec φ`, carries
+products for the group law of `u'` to products for that of `u`, carries
+each level point of `u'` to the base change of the corresponding level
+point of `u`, and pulls `u.pol` back to a sheaf isomorphic to `u'.pol`. -/
 def IsPullback {S S' : Type u} [CommRing S] [CommRing S'] (φ : S →+* S')
     (u : PolarisedAbelianScheme g d n S) (u' : PolarisedAbelianScheme g d n S') :
     Prop :=
@@ -317,13 +323,15 @@ end PolarisedAbelianScheme
 variable {a b : ℚ}
 
 /-- A quaternion multiplication structure on a polarised abelian scheme:
-an action of the order `Λ` by group endomorphisms, with the trace
-identity on tangent spaces, a distinguished level point, and a
-polarisation that is locally the cube of a canonical polarisation. -/
+an action of a `ℤ`-submodule `Λ` of `ℍ[ℚ, a, b]` by group endomorphisms
+(no order condition is imposed on `Λ`; `act_one` and `act_mul` apply
+only when `1` and the product lie in `Λ`), with the trace identity on
+tangent spaces, a distinguished level point, and a polarisation that is
+locally the cube of a canonical polarisation. -/
 structure QMStructure (Λ : Submodule ℤ ℍ[ℚ, a, b]) (star : ↥Λ → ↥Λ)
     (β : Fin (2 * 2) → ↥Λ) {d m : ℕ} {S : Type u} [CommRing S]
     (X : PolarisedAbelianScheme 2 d m S) : Type (u + 1) where
-  /-- The action of the order. -/
+  /-- The action of `Λ`. -/
   act : ↥Λ → (X.A ⟶ X.A)
   /-- The action is over the base. -/
   act_over : ∀ x : ↥Λ, act x ≫ X.f = X.f
@@ -332,9 +340,9 @@ structure QMStructure (Λ : Submodule ℤ ℍ[ℚ, a, b]) (star : ↥Λ → ↥�
     (P Q : SchemeHomOver t X.f),
     pushPt (act x) (act_over x) (X.L.mul t P Q) =
       X.L.mul t (pushPt (act x) (act_over x) P) (pushPt (act x) (act_over x) Q)
-  /-- The element `1` acts as the identity. -/
+  /-- If `1` lies in `Λ`, it acts as the identity. -/
   act_one : ∀ h : (1 : ℍ[ℚ, a, b]) ∈ Λ, act ⟨1, h⟩ = 𝟙 X.A
-  /-- The action is multiplicative in the order. -/
+  /-- The action is multiplicative wherever the product lies in `Λ`. -/
   act_mul : ∀ (x y : ↥Λ) (h : (x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]) ∈ Λ),
     act ⟨(x : ℍ[ℚ, a, b]) * (y : ℍ[ℚ, a, b]), h⟩ = act y ≫ act x
   /-- The action is additive on points. -/
@@ -372,8 +380,10 @@ namespace QMStructure
 variable {Λ : Submodule ℤ ℍ[ℚ, a, b]} {star : ↥Λ → ↥Λ} {β : Fin (2 * 2) → ↥Λ}
   {d m : ℕ}
 
-/-- Pullback of a quaternion multiplication structure along a ring
-homomorphism. -/
+/-- `s'` is a pullback of `s` along `φ : S →+* S'`: some `gA : X'.A ⟶ X.A`
+satisfies the four conditions of `PolarisedAbelianScheme.IsPullback` for `X`
+and `X'`, intertwines the actions of `Λ`, and carries the distinguished
+point of `s'` to the base change of that of `s`. -/
 def IsPullback {S S' : Type u} [CommRing S] [CommRing S'] (φ : S →+* S')
     {X : PolarisedAbelianScheme 2 d m S} {X' : PolarisedAbelianScheme 2 d m S'}
     (s : QMStructure Λ star β X) (s' : QMStructure Λ star β X') : Prop :=

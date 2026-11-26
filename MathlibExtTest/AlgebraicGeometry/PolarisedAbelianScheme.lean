@@ -96,4 +96,24 @@ example (K : Type u) [Field K] :
   rw [IsFinite.SpecMap_iff] at hfin
   exact Polynomial.not_finite (RingHom.finite_algebraMap.mp hfin)
 
+/-- `Λ` need not be an order: the zero submodule, which does not contain `1`,
+gives a well-formed type of quaternion multiplication structures. -/
+example {d m : ℕ} {S : Type u} [CommRing S] (X : PolarisedAbelianScheme 2 d m S) :
+    Type (u + 1) :=
+  QMStructure (⊥ : Submodule ℤ ℍ[ℚ, 1, 1]) id (fun _ => 0) X
+
+/-- The zero submodule of `ℍ[ℚ, 1, 1]` does not contain `1`. -/
+example : (1 : ℍ[ℚ, 1, 1]) ∉ (⊥ : Submodule ℤ ℍ[ℚ, 1, 1]) := by
+  simp
+
+attribute [local instance] MvPolynomial.gradedAlgebra in
+/-- The ratio condition of a presentation is stated with `ProjSpace.ratio`, so
+`ProjSpace.ratio_self` rewrites it: at `j = i` it reduces to `σ i = σ i`. -/
+example {R : Type u} [CommRing R] {X : Scheme.{u}} {M : X.Modules}
+    {f : X ⟶ Spec (CommRingCat.of R)} {N : ℕ} (𝔓 : M.ProjPresentation f N)
+    (i : Fin (N + 1)) : True := by
+  have h := 𝔓.app_ratio_smul i i
+  rw [ProjSpace.ratio_self, map_one, map_one, one_smul] at h
+  trivial
+
 end AlgebraicGeometry.PolarisedAbelianScheme.QMStructure
