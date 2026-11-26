@@ -11,6 +11,7 @@ module
 public import CSLibExt.Computability.Complexity.QuantumGates.PauliBasisChange
 public import CSLibExt.Computability.Complexity.QuantumGates.GateAction
 public import MathlibExt.Quantum.PauliExpansion
+import CSLibExt.Computability.Complexity.QMA.BlockEigenbasis
 import Mathlib.LinearAlgebra.Matrix.Defs
 import Mathlib.LinearAlgebra.Matrix.ConjTranspose
 import Mathlib.LinearAlgebra.Matrix.Hermitian
@@ -32,9 +33,10 @@ For one Pauli label `(a, b)` addressed at injective positions `addr`, a
 circuit of per-qubit basis changes (`ωH`, and `S†` then `ωH` for `Y`
 letters), parity accumulation of the changed bits into a clean ancilla by
 CNOTs, an optional sign flip, and a swap of the answer into qubit `0`
-measures the embedded Pauli string: its acceptance probability on any
-state supported on a clean ancilla is
-`(sqNorm ψ - σ * ⟨ψ|P_emb|ψ⟩) / 2` for `σ = ±1`. The embedding
+measures the embedded Pauli string: its acceptance weight `acceptProb` on
+any state supported on a clean ancilla is
+`(sqNorm ψ - σ * ⟨ψ|P_emb|ψ⟩) / 2` for `σ = ±1`, which is the acceptance
+probability when `sqNorm ψ = 1`. The embedding
 `embedLocal` of a `k`-qubit operator at addressed qubits is defined here.
 It is the `k`-qubit form of the `gateMatrix` agreement convention that
 the two-local-term embedding `embedTerm` of the local-Hamiltonian
@@ -69,7 +71,6 @@ open Classical in
 /-- A `2^k × 2^k` operator on the addressed qubits, tensored with the
 identity elsewhere when `addr` is injective with values below `N` (the
 `gateMatrix` agreement convention, generalized to `k` qubits). -/
-
 noncomputable def embedLocal (N : ℕ) {k : ℕ} (addr : Fin k → ℕ)
     (A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) :
     Matrix (Fin (2 ^ N)) (Fin (2 ^ N)) ℂ :=
@@ -108,7 +109,8 @@ noncomputable def pauliEmb (N : ℕ) {k : ℕ} (addr : Fin k → ℕ) (a b : Fin
     Matrix (Fin (2 ^ N)) (Fin (2 ^ N)) ℂ :=
   embedLocal N addr (hermPauli a b)
 
-/-- The expectation `⟨ψ|P_emb|ψ⟩` (real, since `P_emb` is Hermitian). -/
+/-- The quadratic form `⟨ψ|P_emb|ψ⟩`, real since `P_emb` is Hermitian: the
+expectation of `P_emb` when `sqNorm ψ = 1`. -/
 noncomputable def pauliExpect {N k : ℕ} (addr : Fin k → ℕ) (a b : Fin k → ZMod 2)
     (ψ : Fin (2 ^ N) → ℂ) : ℝ :=
   (star ψ ⬝ᵥ (pauliEmb N addr a b *ᵥ ψ)).re
@@ -163,36 +165,6 @@ private theorem hermPauli_zero_zero {k : ℕ} :
     simp
   rw [hexp, pow_zero, one_smul]
   exact pauliXZ_zero_zero
-
-private theorem hermPauli_sq {k : ℕ} (a b : Fin k → ZMod 2) :
-    hermPauli a b * hermPauli a b = 1 := by
-  unfold hermPauli
-  set e := (∑ i, (a i).val * (b i).val) with he
-  rw [Matrix.smul_mul, Matrix.mul_smul, smul_smul,
-    MathlibExt.Quantum.PauliXZ.pauliXZ_mul]
-  have hadd : ∀ x : Fin k → ZMod 2, x + x = 0 := by
-    intro x
-    funext i
-    simp only [Pi.add_apply, Pi.zero_apply]
-    exact CharTwo.add_self_eq_zero (x i)
-  rw [hadd a, hadd b, pauliXZ_zero_zero, smul_smul]
-  have hba : b ⬝ᵥ a = (((∑ i, (a i).val * (b i).val) : ℕ) : ZMod 2) := by
-    unfold dotProduct
-    rw [Nat.cast_sum]
-    refine Finset.sum_congr rfl (fun i _ => ?_)
-    conv_lhs => rw [← ZMod.natCast_zmod_val (b i), ← ZMod.natCast_zmod_val (a i)]
-    rw [← Nat.cast_mul, mul_comm ((b i).val) ((a i).val)]
-  have hv : (b ⬝ᵥ a).val = e % 2 := by
-    rw [hba, ← he]
-    exact ZMod.val_natCast 2 e
-  have heven : Even (e + (b ⬝ᵥ a).val) := by
-    rw [hv, Nat.even_iff]
-    omega
-  have hI2 : Complex.I ^ 2 = -1 := by rw [pow_two, Complex.I_mul_I]
-  have hscalar : (Complex.I ^ e * Complex.I ^ e) * (-1 : ℂ) ^ (b ⬝ᵥ a).val = 1 := by
-    rw [← pow_add, ← two_mul, pow_mul, hI2, ← pow_add]
-    exact Even.neg_one_pow heven
-  rw [hscalar, one_smul]
 
 private def zmodToFinTwo (z : ZMod 2) : Fin 2 := ⟨z.val, ZMod.val_lt z⟩
 
@@ -343,7 +315,7 @@ private theorem pauliEmb_mul_self {N k : ℕ} {addr : Fin k → ℕ}
       simp only [hF]
       rw [ite_eq_left h1, ite_eq_left h2, hLx]
     simp only [hfib]
-    have hHH := hermPauli_sq a b
+    have hHH := hermPauli_mul_self a b
     have hmul : (∑ x, hermPauli a b (localBits addr s.val) x
           * hermPauli a b x (localBits addr t.val))
         = (1 : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ)
@@ -375,26 +347,11 @@ private theorem pauliEmb_mul_self {N k : ℕ} {addr : Fin k → ℕ}
     conv_rhs => rw [← Finset.sum_const_zero (s := (Finset.univ : Finset (Fin (2 ^ N))))]
     exact Finset.sum_congr rfl (fun u _ => hterm u)
 
-private theorem re_sum {ι : Type} [DecidableEq ι] (s : Finset ι) (f : ι → ℂ) :
-    (∑ i ∈ s, f i).re = ∑ i ∈ s, (f i).re := by
-  induction s using Finset.induction with
-  | empty => simp
-  | insert a t hnt ih =>
-    rw [Finset.sum_insert hnt, Finset.sum_insert hnt, Complex.add_re, ih]
-
-private theorem sqNorm_eq_dotProduct {N : ℕ} (φ : Fin (2 ^ N) → ℂ) :
-    sqNorm φ = (star φ ⬝ᵥ φ).re := by
-  unfold sqNorm dotProduct
-  rw [re_sum]
-  refine Finset.sum_congr rfl (fun s _ => ?_)
-  rw [starRingEnd_apply]
-  rfl
-
 private theorem sqNorm_mulVec_unitary {N : ℕ}
     {U : Matrix (Fin (2 ^ N)) (Fin (2 ^ N)) ℂ}
     (hU : star U * U = 1) (ψ : Fin (2 ^ N) → ℂ) :
     sqNorm (U *ᵥ ψ) = sqNorm ψ := by
-  rw [sqNorm_eq_dotProduct, sqNorm_eq_dotProduct]
+  rw [sqNorm_eq_re_star_dotProduct, sqNorm_eq_re_star_dotProduct]
   have hdot : star (U *ᵥ ψ) ⬝ᵥ (U *ᵥ ψ) = star ψ ⬝ᵥ ψ := by
     rw [Matrix.star_mulVec, ← Matrix.dotProduct_mulVec, Matrix.mulVec_mulVec,
       ← Matrix.star_eq_conjTranspose, hU, Matrix.one_mulVec]
@@ -407,18 +364,18 @@ private theorem star_dotProduct_re_symm {N : ℕ} (φ ψ : Fin (2 ^ N) → ℂ) 
 private theorem sqNorm_add {N : ℕ} (ψ φ : Fin (2 ^ N) → ℂ) :
     sqNorm (ψ + φ)
       = sqNorm ψ + sqNorm φ + ((star ψ ⬝ᵥ φ).re + (star ψ ⬝ᵥ φ).re) := by
-  rw [sqNorm_eq_dotProduct, star_add, add_dotProduct, dotProduct_add, dotProduct_add,
+  rw [sqNorm_eq_re_star_dotProduct, star_add, add_dotProduct, dotProduct_add, dotProduct_add,
     Complex.add_re, Complex.add_re, Complex.add_re,
-    ← sqNorm_eq_dotProduct ψ, ← sqNorm_eq_dotProduct φ,
+    ← sqNorm_eq_re_star_dotProduct ψ, ← sqNorm_eq_re_star_dotProduct φ,
     star_dotProduct_re_symm φ ψ]
   ring
 
 private theorem sqNorm_sub {N : ℕ} (ψ φ : Fin (2 ^ N) → ℂ) :
     sqNorm (ψ - φ)
       = sqNorm ψ + sqNorm φ - ((star ψ ⬝ᵥ φ).re + (star ψ ⬝ᵥ φ).re) := by
-  rw [sqNorm_eq_dotProduct, star_sub, sub_dotProduct, dotProduct_sub, dotProduct_sub,
+  rw [sqNorm_eq_re_star_dotProduct, star_sub, sub_dotProduct, dotProduct_sub, dotProduct_sub,
     Complex.sub_re, Complex.sub_re, Complex.sub_re,
-    ← sqNorm_eq_dotProduct ψ, ← sqNorm_eq_dotProduct φ,
+    ← sqNorm_eq_re_star_dotProduct ψ, ← sqNorm_eq_re_star_dotProduct φ,
     star_dotProduct_re_symm φ ψ]
   ring
 
@@ -458,7 +415,8 @@ theorem pauliEmb_zero_zero {N k : ℕ} {addr : Fin k → ℕ} :
         ite_eq_right (fun heq => hst (eq_of_agree h heq))]
     · rw [ite_eq_right h, Matrix.one_apply, ite_eq_right hst]
 
-/-- Pauli expectations are bounded by the squared norm. -/
+/-- The Pauli quadratic form is bounded by the squared norm:
+`|⟨ψ|P_emb|ψ⟩| ≤ sqNorm ψ`. -/
 theorem abs_pauliExpect_le {N k : ℕ} {addr : Fin k → ℕ}
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
     (a b : Fin k → ZMod 2) (ψ : Fin (2 ^ N) → ℂ) :
@@ -467,7 +425,6 @@ theorem abs_pauliExpect_le {N k : ℕ} {addr : Fin k → ℕ}
   have hsq := pauliEmb_mul_self haddr hlt a b
   have hstar : star (pauliEmb N addr a b) * pauliEmb N addr a b = 1 := by
     rw [Matrix.star_eq_conjTranspose, hH.eq, hsq]
-
   have hnorm := sqNorm_mulVec_unitary hstar ψ
   have hplus := sqNorm_add ψ (pauliEmb N addr a b *ᵥ ψ)
   have hminus := sqNorm_sub ψ (pauliEmb N addr a b *ᵥ ψ)
@@ -495,7 +452,8 @@ def parityGates (a b : ZMod 2) (q anc : ℕ) : List QGate :=
 
 /-- The per-label core: per-qubit basis changes and parity into `anc`,
 then `X` on `anc` iff the sign is negative. The ancilla is the spectator
-of every embedded gate. -/
+of every basis-change gate; the sign gate acts on the ancilla with qubit
+`0` as spectator. -/
 def perLabelCore {k : ℕ} (addr : Fin k → ℕ) (a b : Fin k → ZMod 2) (neg : Bool)
     (anc : ℕ) : List QGate :=
   (List.finRange k).flatMap (fun i =>
@@ -541,7 +499,7 @@ theorem perLabelCircuit_wellFormed {N k anc : ℕ} {addr : Fin k → ℕ}
       by_cases ha : a i = 1
       · simp only [ha, ite_true] at hg_basis
         by_cases hbb : b i = 1
-        · simp [hbb] at hg_basis
+        · simp only [hbb, ↓reduceIte, List.mem_cons, List.not_mem_nil, or_false] at hg_basis
           rcases hg_basis with rfl | rfl
           · exact embeddedGate_wellFormed _ sDagGate_unitary (hne i) (hlt i) hanc
           · exact embeddedGate_wellFormed _ omegaH_unitary (hne i) (hlt i) hanc
@@ -606,7 +564,6 @@ theorem acceptProb_outputSwap {N anc : ℕ} (hanc0 : 0 < anc) (hanc : anc < N)
       ∑ s : Fin (2 ^ N),
         if qBit anc s.val = 1 then (starRingEnd ℂ (φ s) * φ s).re else 0 := by
   have h0N : 0 < N := Nat.lt_trans hanc0 hanc
-  have hne1 : (0 : ℕ) ≠ anc := by omega
   have hne2 : anc ≠ 0 := by omega
   unfold acceptProb outputSwap
   simp only [applyCircuit, List.foldl_cons, List.foldl_nil]
@@ -621,19 +578,18 @@ theorem acceptProb_outputSwap {N anc : ℕ} (hanc0 : 0 < anc) (hanc : anc < N)
   have hinv : Function.Involutive e := by
     intro s
     apply fin_eq_of_qBit_eq
-    intro k
-    try intro hk
+    intro k _
     by_cases h0 : k = 0
     · subst h0
-      simp [he, qBit_setQBit_self, qBit_setQBit_of_ne, h0N, hanc, hne1, hne2]
+      simp [he, qBit_setQBit_self, qBit_setQBit_of_ne, h0N, hanc, hne2]
     · by_cases ha : k = anc
       · subst ha
-        simp [he, qBit_setQBit_self, qBit_setQBit_of_ne, h0N, hanc, hne1, hne2]
+        simp [he, qBit_setQBit_self, qBit_setQBit_of_ne, h0N, hanc, hne2]
       · simp [he, qBit_setQBit_of_ne, h0, ha]
   have hbij : Function.Bijective e := hinv.bijective
   have hq : ∀ s : Fin (2 ^ N), qBit anc (e s).val = qBit 0 s.val := by
     intro s
-    simp [he, qBit_setQBit_self, qBit_setQBit_of_ne, h0N, hanc, hne1, hne2]
+    simp [he, qBit_setQBit_self, qBit_setQBit_of_ne, hanc, hne2]
   apply Fintype.sum_bijective e hbij
     (fun s => if qBit 0 s.val = 1 then (starRingEnd ℂ (φ (e s)) * φ (e s)).re else 0)
     (fun s => if qBit anc s.val = 1 then (starRingEnd ℂ (φ s) * φ s).re else 0)
@@ -661,21 +617,45 @@ private noncomputable def ancCorr {N k : ℕ} (anc : ℕ) (addr : Fin k → ℕ)
     (φ : Fin (2 ^ N) → ℂ) : ℂ :=
   star φ ⬝ᵥ zAnc N anc (pauliEmb N addr a b *ᵥ φ)
 
+/-- Every `Fin 2` bit is `0` or `1`. -/
+private theorem fin2_dichot : ∀ b : Fin 2, b = 0 ∨ b = 1 := by decide
+
+/-- Every `ZMod 2` element is `0` or `1`. -/
+private theorem zmod2_dichot : ∀ γ : ZMod 2, γ = 0 ∨ γ = 1 := by decide
+
+private theorem zmod2_val_one : (1 : ZMod 2).val = 1 := by decide
+private theorem zmod2_one_add_one : (1 : ZMod 2) + 1 = 0 := by decide
+
+/-- A `Fin 2` value round-trips through `ZMod 2`. -/
+private theorem fin2_cast_val (b : Fin 2) :
+    (((b.val : ℕ) : ZMod 2).val) = b.val := by
+  rcases fin2_dichot b with rfl | rfl <;> decide
+
+/-- `(-1)`-powers multiply over `ZMod 2` sums. -/
+private theorem neg_one_pow_val_add (u v : ZMod 2) :
+    (-1 : ℂ) ^ ((u + v).val) = (-1 : ℂ) ^ (u.val) * (-1 : ℂ) ^ (v.val) := by
+  rcases zmod2_dichot u with rfl | rfl <;> rcases zmod2_dichot v with rfl | rfl
+  · simp
+  · simp [zmod2_val_one]
+  · simp [zmod2_val_one]
+  · simp [zmod2_val_one, zmod2_one_add_one]
+
+private theorem pauliComm_qBitCast_inj :
+    Function.Injective (fun d : Fin 2 => (d.val : ZMod 2)) := by
+  decide
+
 /-- Entries of the one-letter Pauli matrices. -/
 private theorem letterMat_apply (α β : ZMod 2) (y x : Fin 2) :
     letterMat α β y x =
       if (y.val : ZMod 2) = (x.val : ZMod 2) + α then
         Complex.I ^ (α.val * β.val) * (-1 : ℂ) ^ (β * (x.val : ZMod 2)).val
       else 0 := by
-  have h2 : ∀ γ : ZMod 2, γ = 0 ∨ γ = 1 := by decide
   have h10 : (1 : ZMod 2) ≠ 0 := by decide
   have h01 : (0 : ZMod 2) ≠ 1 := by decide
-  have c11 : (1 : ZMod 2) + 1 = 0 := by decide
   have v0 : (0 : ZMod 2).val = 0 := by decide
-  have v1 : (1 : ZMod 2).val = 1 := by decide
-  rcases h2 α with rfl | rfl <;> rcases h2 β with rfl | rfl <;>
+  rcases zmod2_dichot α with rfl | rfl <;> rcases zmod2_dichot β with rfl | rfl <;>
     fin_cases x <;> fin_cases y <;>
-    simp [letterMat, h10, h01, c11, v0, v1]
+    simp [letterMat, h10, h01, zmod2_one_add_one, v0, zmod2_val_one]
 
 /-- Reading the addressed bits after setting one addressed qubit. -/
 private theorem localBits_setQBit {N k : ℕ} {addr : Fin k → ℕ}
@@ -760,12 +740,14 @@ private theorem star_qAct_dotProduct {N q : ℕ} (hq : q < N)
     simp only [he, qBit_setQBit_self hq, setQBit_setQBit hq, setQBit_qBit]
   set E : Fin (2 ^ N) × Fin 2 ≃ Fin (2 ^ N) × Fin 2 := ⟨e, e, hinv, hinv⟩ with hE
   have hLHS : star (qAct N q A φ) ⬝ᵥ ψ
-      = ∑ p : Fin (2 ^ N) × Fin 2, star (A (qBit q p.1.val) p.2 * φ (setQBit N q p.2 p.1)) * ψ p.1 := by
+      = ∑ p : Fin (2 ^ N) × Fin 2,
+          star (A (qBit q p.1.val) p.2 * φ (setQBit N q p.2 p.1)) * ψ p.1 := by
     simp only [dotProduct, Pi.star_apply, qAct, star_sum, Finset.sum_mul]
     rw [← Fintype.sum_prod_type (fun p : Fin (2 ^ N) × Fin 2 =>
       star (A (qBit q p.1.val) p.2 * φ (setQBit N q p.2 p.1)) * ψ p.1)]
   have hRHS : star φ ⬝ᵥ qAct N q (star A) ψ
-      = ∑ p : Fin (2 ^ N) × Fin 2, star (φ p.1) * ((star A) (qBit q p.1.val) p.2 * ψ (setQBit N q p.2 p.1)) := by
+      = ∑ p : Fin (2 ^ N) × Fin 2,
+          star (φ p.1) * ((star A) (qBit q p.1.val) p.2 * ψ (setQBit N q p.2 p.1)) := by
     simp only [dotProduct, Pi.star_apply, qAct, Finset.mul_sum]
     rw [← Fintype.sum_prod_type (fun p : Fin (2 ^ N) × Fin 2 =>
       star (φ p.1) * ((star A) (qBit q p.1.val) p.2 * ψ (setQBit N q p.2 p.1)))]
@@ -847,17 +829,7 @@ private theorem pauliEmb_peel {N k : ℕ} {addr : Fin k → ℕ}
     pauliEmb N addr a b *ᵥ φ =
       qAct N (addr i) (letterMat (a i) (b i))
         (pauliEmb N addr (Function.update a i 0) (Function.update b i 0) *ᵥ φ) := by
-  have hAddSelf : ∀ x : ZMod 2, x + x = 0 := by decide
   have hSurj : ∀ c : ZMod 2, ∃ d : Fin 2, (d.val : ZMod 2) = c := by decide
-  have hInj : ∀ d e : Fin 2, (d.val : ZMod 2) = (e.val : ZMod 2) → d = e := by
-    decide
-  have hmod : ∀ u v : ZMod 2, (u + v).val % 2 = (u.val + v.val) % 2 := by
-    decide
-  have hPow2 : ∀ u v : ZMod 2,
-      (-1 : ℂ) ^ ((u + v).val) = (-1 : ℂ) ^ (u.val) * (-1 : ℂ) ^ (v.val) := by
-    intro u v
-    rw [← pow_add, neg_one_pow_eq_pow_mod_two ((u + v).val),
-      neg_one_pow_eq_pow_mod_two (u.val + v.val), hmod u v]
   funext s
   simp only [qAct, pauliEmb_mulVec_apply haddr hlt,
     localBits_setQBit haddr hlt, fiberIndex_setQBit haddr hlt]
@@ -871,14 +843,15 @@ private theorem pauliEmb_peel {N k : ℕ} {addr : Fin k → ℕ}
         (d.val : ZMod 2) + a i := by
       intro hcon
       have h2 : (d.val : ZMod 2) + a i + a i = (d.val : ZMod 2) := by
-        rw [add_assoc, hAddSelf (a i), add_zero]
+        rw [add_assoc, CharTwo.add_self_eq_zero (a i), add_zero]
       have hdc : (d.val : ZMod 2) = loc i + a i := by
         calc (d.val : ZMod 2)
             = (d.val : ZMod 2) + a i + a i := h2.symm
           _ = ((qBit (addr i) s.val).val : ZMod 2) + a i := by rw [← hcon]
           _ = loc i + a i := rfl
       have heq : d = d₀ :=
-        hInj d d₀ (by rw [hdc, hd₀cast])
+        pauliComm_qBitCast_inj
+          (show ((d.val : ℕ) : ZMod 2) = (d₀.val : ZMod 2) by rw [hdc, hd₀cast])
       exact hd heq
     rw [letterMat_apply, ite_eq_right hcon]
   rw [Finset.sum_eq_single_of_mem d₀ (Finset.mem_univ d₀)
@@ -886,15 +859,15 @@ private theorem pauliEmb_peel {N k : ℕ} {addr : Fin k → ℕ}
   have hloc_eq : loc i = ((qBit (addr i) s.val).val : ZMod 2) := rfl
   have hcond₀ : ((qBit (addr i) s.val).val : ZMod 2) =
       (d₀.val : ZMod 2) + a i := by
-    rw [hd₀cast, add_assoc, hAddSelf (a i), add_zero, hloc_eq]
+    rw [hd₀cast, add_assoc, CharTwo.add_self_eq_zero (a i), add_zero, hloc_eq]
   have hLetter : letterMat (a i) (b i) (qBit (addr i) s.val) d₀ =
       Complex.I ^ ((a i).val * (b i).val) *
         (-1 : ℂ) ^ ((b i) * (d₀.val : ZMod 2)).val := by
     rw [letterMat_apply, ite_eq_left hcond₀]
   have hside : loc = loc + a + a := by
     funext j
-    show loc j = (loc j + a j) + a j
-    rw [add_assoc, hAddSelf (a j), add_zero]
+    change loc j = (loc j + a j) + a j
+    rw [add_assoc, CharTwo.add_self_eq_zero (a j), add_zero]
   have hH : hermPauli a b loc (loc + a) =
       Complex.I ^ (∑ j, (a j).val * (b j).val) *
         (-1 : ℂ) ^ (dotProduct b (loc + a)).val := by
@@ -906,21 +879,21 @@ private theorem pauliEmb_peel {N k : ℕ} {addr : Fin k → ℕ}
     funext j
     by_cases hj : j = i
     · subst j
-      show Function.update loc i (d₀.val : ZMod 2) i + Function.update a i 0 i
+      change Function.update loc i (d₀.val : ZMod 2) i + Function.update a i 0 i
         = loc i + a i
       rw [Function.update_self _ _ _, Function.update_self _ _ _,
         add_zero, hd₀cast]
-    · show Function.update loc i (d₀.val : ZMod 2) j + Function.update a i 0 j
+    · change Function.update loc i (d₀.val : ZMod 2) j + Function.update a i 0 j
         = loc j + a j
       rw [Function.update_of_ne hj _ _, Function.update_of_ne hj _ _]
   have hside' : Function.update loc i (d₀.val : ZMod 2) =
       (Function.update loc i (d₀.val : ZMod 2) + Function.update a i 0) +
         Function.update a i 0 := by
     funext j
-    show Function.update loc i (d₀.val : ZMod 2) j =
+    change Function.update loc i (d₀.val : ZMod 2) j =
       (Function.update loc i (d₀.val : ZMod 2) j +
         Function.update a i 0 j) + Function.update a i 0 j
-    rw [add_assoc, hAddSelf (Function.update a i 0 j), add_zero]
+    rw [add_assoc, CharTwo.add_self_eq_zero (Function.update a i 0 j), add_zero]
   have hH' : hermPauli (Function.update a i 0) (Function.update b i 0)
       (Function.update loc i (d₀.val : ZMod 2))
       (Function.update loc i (d₀.val : ZMod 2) + Function.update a i 0) =
@@ -965,16 +938,16 @@ private theorem pauliEmb_peel {N k : ℕ} {addr : Fin k → ℕ}
     rw [Function.update_of_ne hj' _ _]
   have hDL : dotProduct b (loc + a) = b i * (loc + a) i +
       ∑ x ∈ Finset.univ.erase i, b x * (loc + a) x := by
-    show (∑ j, b j * (loc + a) j) = _
+    change (∑ j, b j * (loc + a) j) = _
     exact (Finset.add_sum_erase _ _ (Finset.mem_univ i)).symm
   have hDR : dotProduct (Function.update b i 0) (loc + a) =
       Function.update b i 0 i * (loc + a) i +
         ∑ x ∈ Finset.univ.erase i,
           Function.update b i 0 x * (loc + a) x := by
-    show (∑ j, Function.update b i 0 j * (loc + a) j) = _
+    change (∑ j, Function.update b i 0 j * (loc + a) j) = _
     exact (Finset.add_sum_erase _ _ (Finset.mem_univ i)).symm
   have hzi : (loc + a) i = (d₀.val : ZMod 2) := by
-    show loc i + a i = _
+    change loc i + a i = _
     exact hd₀cast.symm
   have hDot : dotProduct b (loc + a) =
       dotProduct (Function.update b i 0) (loc + a) +
@@ -986,7 +959,7 @@ private theorem pauliEmb_peel {N k : ℕ} {addr : Fin k → ℕ}
   have hPZ : (-1 : ℂ) ^ ((dotProduct b (loc + a)).val) =
       (-1 : ℂ) ^ ((dotProduct (Function.update b i 0) (loc + a)).val) *
         (-1 : ℂ) ^ ((b i * (d₀.val : ZMod 2)).val) := by
-    rw [hDot, hPow2]
+    rw [hDot, neg_one_pow_val_add]
   have hIW : Complex.I ^ (∑ j, (a j).val * (b j).val) =
       Complex.I ^ ((a i).val * (b i).val) *
         Complex.I ^ (∑ j, (Function.update a i 0 j).val *
@@ -1004,13 +977,10 @@ private theorem pauliEmb_qAct_comm {N k : ℕ} {addr : Fin k → ℕ}
     pauliEmb N addr a b *ᵥ (qAct N (addr i) A φ) =
       qAct N (addr i) A (pauliEmb N addr a b *ᵥ φ) := by
   funext s
-  have hcast_inj : Function.Injective (fun d : Fin 2 => (d.val : ZMod 2)) := by
-    decide
-  have hadd : ∀ z : ZMod 2, z + z = 0 := by decide
   have hqb : qBit (addr i) (fiberIndex addr s (localBits addr s.val + a)).val =
       qBit (addr i) s.val := by
-    apply hcast_inj
-    show ((qBit (addr i)
+    apply pauliComm_qBitCast_inj
+    change ((qBit (addr i)
       (fiberIndex addr s (localBits addr s.val + a)).val).val : ZMod 2) = _
     have hloc : localBits addr
         (fiberIndex addr s (localBits addr s.val + a)).val =
@@ -1028,10 +998,10 @@ private theorem pauliEmb_qAct_comm {N k : ℕ} {addr : Fin k → ℕ}
     have hcond1 : Function.update (localBits addr s.val) i c =
         (Function.update (localBits addr s.val) i c + a) + a := by
       ext j
-      simp only [Pi.add_apply, add_assoc, hadd, add_zero]
+      simp only [Pi.add_apply, add_assoc, CharTwo.add_self_eq_zero, add_zero]
     have hcond2 : localBits addr s.val = (localBits addr s.val + a) + a := by
       ext j
-      simp only [Pi.add_apply, add_assoc, hadd, add_zero]
+      simp only [Pi.add_apply, add_assoc, CharTwo.add_self_eq_zero, add_zero]
     simp only [hermPauli, Matrix.smul_apply, smul_eq_mul]
     congr 1
     rw [MathlibExt.Quantum.PauliXZ.pauliXZ_apply,
@@ -1054,8 +1024,8 @@ private theorem pauliEmb_qAct_comm {N k : ℕ} {addr : Fin k → ℕ}
     intro qq hqq
     by_cases hj : ∃ j, addr j = qq
     · obtain ⟨j, rfl⟩ := hj
-      apply hcast_inj
-      show ((qBit (addr j) (setQBit N (addr i) d
+      apply pauliComm_qBitCast_inj
+      change ((qBit (addr j) (setQBit N (addr i) d
         (fiberIndex addr s (localBits addr s.val + a))).val).val : ZMod 2) =
         ((qBit (addr j) (fiberIndex addr s
           (Function.update (localBits addr s.val) i (d.val : ZMod 2) + a)).val).val :
@@ -1105,10 +1075,6 @@ private theorem pauliEmb_qAct_comm {N k : ℕ} {addr : Fin k → ℕ}
   rw [hPt d, hH, hqb]
   ring
 
-private theorem pauliComm_qBitCast_inj :
-    Function.Injective (fun d : Fin 2 => (d.val : ZMod 2)) := by
-  decide
-
 private theorem pauliComm_cnot_qBit_off {N : ℕ} (c anc : ℕ) (u : Fin (2 ^ N))
     (qq : ℕ) (h : qq ≠ anc) :
     qBit qq (cnotIndex N c anc u).val = qBit qq u.val := by
@@ -1131,7 +1097,7 @@ private theorem pauliComm_qBit_fiber_trivial {N k : ℕ} {addr : Fin k → ℕ}
     qBit (addr i) (fiberIndex addr s (localBits addr s.val + a)).val =
       qBit (addr i) s.val := by
   apply pauliComm_qBitCast_inj
-  show ((qBit (addr i)
+  change ((qBit (addr i)
     (fiberIndex addr s (localBits addr s.val + a)).val).val : ZMod 2) = _
   have hloc : localBits addr
       (fiberIndex addr s (localBits addr s.val + a)).val =
@@ -1158,7 +1124,7 @@ private theorem pauliComm_cnot_fiber_point {N k anc : ℕ} {addr : Fin k → ℕ
   by_cases hj : ∃ j, addr j = qq
   · obtain ⟨j, rfl⟩ := hj
     apply pauliComm_qBitCast_inj
-    show ((qBit (addr j) (fiberIndex addr (cnotIndex N (addr i) anc s)
+    change ((qBit (addr j) (fiberIndex addr (cnotIndex N (addr i) anc s)
       (localBits addr s.val + a)).val).val : ZMod 2) =
       ((qBit (addr j) (cnotIndex N (addr i) anc
         (fiberIndex addr s (localBits addr s.val + a))).val).val : ZMod 2)
@@ -1237,35 +1203,36 @@ private theorem pauliEmb_cnot_comm {N k anc : ℕ} {addr : Fin k → ℕ}
   rw [pauliEmb_mulVec_apply haddr hlt]
   rw [pauliComm_cnot_localBits hne]
   rw [pauliComm_cnot_fiber_point haddr hlt hne i a b h0 s]
-/-- The ancilla-`1` probability from the tracked correlation. -/
+
+/-- Real part of a star-dot product as a sum. -/
+private theorem starDot_re_sum {N : ℕ} (φ ψ : Fin (2 ^ N) → ℂ) :
+    (star φ ⬝ᵥ ψ).re = ∑ s, (starRingEnd ℂ (φ s) * ψ s).re := by
+  change (∑ s, star φ s * ψ s).re = _
+  rw [Complex.re_sum]
+  apply Finset.sum_congr rfl
+  intro s _
+  rw [Pi.star_apply, ← starRingEnd_apply]
+
+/-- The ancilla-`1` weight from the tracked correlation. -/
 private theorem ancProb_eq_ancCorr {N k anc : ℕ} {addr : Fin k → ℕ}
     (φ : Fin (2 ^ N) → ℂ) :
     (∑ s : Fin (2 ^ N), if qBit anc s.val = 1 then
         (starRingEnd ℂ (φ s) * φ s).re else 0) =
       (sqNorm φ - (ancCorr anc addr 0 0 φ).re) / 2 := by
-  have dot_re : ∀ ψ : Fin (2 ^ N) → ℂ,
-      (star φ ⬝ᵥ ψ).re = ∑ s, (starRingEnd ℂ (φ s) * ψ s).re := by
-    intro ψ
-    show (∑ s, star φ s * ψ s).re = _
-    rw [Complex.re_sum]
-    apply Finset.sum_congr rfl
-    intro s _
-    rw [Pi.star_apply, ← starRingEnd_apply]
   set P1 := ∑ s : Fin (2 ^ N), if qBit anc s.val = 1 then
     (starRingEnd ℂ (φ s) * φ s).re else 0 with hP1
   set P0 := ∑ s : Fin (2 ^ N), if qBit anc s.val = 1 then (0 : ℝ) else
     (starRingEnd ℂ (φ s) * φ s).re with hP0
   have hSq : sqNorm φ = P0 + P1 := by
-    rw [sqNorm_eq_dotProduct, dot_re]
+    rw [sqNorm_eq_re_star_dotProduct, starDot_re_sum]
     rw [hP0, hP1, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro s _
     by_cases h : qBit anc s.val = 1 <;> simp [h]
   have hC : (ancCorr anc addr 0 0 φ).re = P0 - P1 := by
     have hP : pauliEmb N addr 0 0 = 1 := pauliEmb_zero_zero
-
     simp only [ancCorr, hP, Matrix.one_mulVec]
-    rw [dot_re]
+    rw [starDot_re_sum]
     rw [hP0, hP1, ← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro s _
@@ -1282,37 +1249,6 @@ private theorem ancProb_eq_ancCorr {N k anc : ℕ} {addr : Fin k → ℕ}
       simp only [one_mul, ite_eq_right h, sub_zero]
   rw [hSq, hC]
   ring
-/-- Real part of a star-dot product as a sum. -/
-private theorem starDot_re_sum {N : ℕ} (φ ψ : Fin (2 ^ N) → ℂ) :
-    (star φ ⬝ᵥ ψ).re = ∑ s, (starRingEnd ℂ (φ s) * ψ s).re := by
-  show (∑ s, star φ s * ψ s).re = _
-  rw [Complex.re_sum]
-  apply Finset.sum_congr rfl
-  intro s _
-  rw [Pi.star_apply, ← starRingEnd_apply]
-
-/-- Every `Fin 2` bit is `0` or `1`. -/
-private theorem fin2_dichot : ∀ b : Fin 2, b = 0 ∨ b = 1 := by decide
-
-/-- Every `ZMod 2` element is `0` or `1`. -/
-private theorem zmod2_dichot : ∀ γ : ZMod 2, γ = 0 ∨ γ = 1 := by decide
-
-private theorem zmod2_val_one : (1 : ZMod 2).val = 1 := by decide
-private theorem zmod2_one_add_one : (1 : ZMod 2) + 1 = 0 := by decide
-
-/-- A `Fin 2` value round-trips through `ZMod 2`. -/
-private theorem fin2_cast_val (b : Fin 2) :
-    (((b.val : ℕ) : ZMod 2).val) = b.val := by
-  rcases fin2_dichot b with rfl | rfl <;> decide
-
-/-- `(-1)`-powers multiply over `ZMod 2` sums. -/
-private theorem neg_one_pow_val_add (u v : ZMod 2) :
-    (-1 : ℂ) ^ ((u + v).val) = (-1 : ℂ) ^ (u.val) * (-1 : ℂ) ^ (v.val) := by
-  rcases zmod2_dichot u with rfl | rfl <;> rcases zmod2_dichot v with rfl | rfl
-  · simp
-  · simp [zmod2_val_one]
-  · simp [zmod2_val_one]
-  · simp [zmod2_val_one, zmod2_one_add_one]
 
 /-- On a clean ancilla the correlation is the plain expectation. -/
 private theorem ancCorr_clean {N k anc : ℕ} {addr : Fin k → ℕ}
@@ -1320,7 +1256,7 @@ private theorem ancCorr_clean {N k anc : ℕ} {addr : Fin k → ℕ}
     (hclean : ∀ s : Fin (2 ^ N), qBit anc s.val = 1 → ψ s = 0) :
     ancCorr anc addr a b ψ = star ψ ⬝ᵥ (pauliEmb N addr a b *ᵥ ψ) := by
   simp only [ancCorr]
-  show (∑ s, star ψ s * zAnc N anc (pauliEmb N addr a b *ᵥ ψ) s) =
+  change (∑ s, star ψ s * zAnc N anc (pauliEmb N addr a b *ᵥ ψ) s) =
     ∑ s, star ψ s * (pauliEmb N addr a b *ᵥ ψ) s
   apply Finset.sum_congr rfl
   intro s _
@@ -1334,7 +1270,7 @@ private theorem ancCorr_clean {N k anc : ℕ} {addr : Fin k → ℕ}
       simp [zAnc, h]
     rw [hz]
 
-/-- The sign `X` on the ancilla complements its `1`-probability. -/
+/-- The sign `X` on the ancilla complements its `1`-weight. -/
 private theorem ancProb_embeddedX {N anc : ℕ} (hanc0 : 0 < anc) (hanc : anc < N)
     (φ : Fin (2 ^ N) → ℂ) :
     (∑ s : Fin (2 ^ N), if qBit anc s.val = 1 then
@@ -1354,7 +1290,7 @@ private theorem ancProb_embeddedX {N anc : ℕ} (hanc0 : 0 < anc) (hanc : anc < 
   set P0 := ∑ s : Fin (2 ^ N), if qBit anc s.val = 1 then (0 : ℝ) else
     (starRingEnd ℂ (φ s) * φ s).re with hP0
   have hSq : sqNorm φ = P0 + P1 := by
-    rw [sqNorm_eq_dotProduct, starDot_re_sum]
+    rw [sqNorm_eq_re_star_dotProduct, starDot_re_sum]
     rw [hP0, hP1, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro s _
@@ -1380,7 +1316,7 @@ private theorem ancProb_embeddedX {N anc : ℕ} (hanc0 : 0 < anc) (hanc : anc < 
     rw [hre, hP0]
     apply Finset.sum_congr rfl
     intro t _
-    show (if qBit anc (flipBit N anc t).val = 1 then
+    change (if qBit anc (flipBit N anc t).val = 1 then
         (starRingEnd ℂ (φ (flipBit N anc (flipBit N anc t))) *
           φ (flipBit N anc (flipBit N anc t))).re else 0) =
       (if qBit anc t.val = 1 then (0 : ℝ) else (starRingEnd ℂ (φ t) * φ t).re)
@@ -1450,7 +1386,7 @@ private theorem ancCorr_cnot {N k anc : ℕ} {addr : Fin k → ℕ}
   have hdotsplit : ∀ M : Fin k → ZMod 2,
       (Function.update b i 1) ⬝ᵥ M = M i + b ⬝ᵥ M := by
     intro M
-    show (∑ j, Function.update b i 1 j * M j) = M i + ∑ j, b j * M j
+    change (∑ j, Function.update b i 1 j * M j) = M i + ∑ j, b j * M j
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i),
       ← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
     have herase : (∑ x ∈ Finset.univ.erase i, Function.update b i 1 x * M x) =
@@ -1474,7 +1410,7 @@ private theorem ancCorr_cnot {N k anc : ℕ} {addr : Fin k → ℕ}
     fun t => rfl
   simp only [ancCorr]
   rw [hgate_fun, pauliEmb_cnot_comm haddr hlt hne i a b h0 Φ]
-  show (∑ s, star (Φ (cnotIndex N (addr i) anc s)) *
+  change (∑ s, star (Φ (cnotIndex N (addr i) anc s)) *
       ((if qBit anc s.val = 1 then (-1 : ℂ) else 1) *
         (pauliEmb N addr a b *ᵥ Φ) (cnotIndex N (addr i) anc s))) =
     ∑ s, star (Φ s) *
@@ -1491,7 +1427,7 @@ private theorem ancCorr_cnot {N k anc : ℕ} {addr : Fin k → ℕ}
   rw [hre]
   apply Finset.sum_congr rfl
   intro t _
-  show (star (Φ (cnotIndex N (addr i) anc (cnotIndex N (addr i) anc t))) *
+  change (star (Φ (cnotIndex N (addr i) anc (cnotIndex N (addr i) anc t))) *
       ((if qBit anc (cnotIndex N (addr i) anc t).val = 1 then (-1 : ℂ) else 1) *
         (pauliEmb N addr a b *ᵥ Φ)
           (cnotIndex N (addr i) anc (cnotIndex N (addr i) anc t)))) =
@@ -1558,16 +1494,15 @@ private theorem ancCorr_qAct {N k anc : ℕ} {addr : Fin k → ℕ}
 /-- One full letter of the core updates the tracked label. -/
 private theorem ancCorr_letter {N k anc : ℕ} {addr : Fin k → ℕ}
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
-    (hanc0 : 0 < anc) (hanc : anc < N) (hne : ∀ i, addr i ≠ anc)
+    (hanc : anc < N) (hne : ∀ i, addr i ≠ anc)
     (a b a' b' : Fin k → ZMod 2) (i : Fin k) (h0 : a' i = 0 ∧ b' i = 0)
     (Φ : Fin (2 ^ N) → ℂ) :
     ancCorr anc addr a' b'
         (applyCircuit N (basisChangeGates (a i) (b i) (addr i) anc ++
           parityGates (a i) (b i) (addr i) anc) Φ) =
       ancCorr anc addr (Function.update a' i (a i)) (Function.update b' i (b i)) Φ := by
-  have hall : ∀ x : ZMod 2, x = 0 ∨ x = 1 := by decide
-  have ha := hall (a i)
-  have hb := hall (b i)
+  have ha := zmod2_dichot (a i)
+  have hb := zmod2_dichot (b i)
   rcases ha with hai0 | hai1
   · rcases hb with hbi0 | hbi1
     · -- (0,0): both lists empty
@@ -1577,7 +1512,7 @@ private theorem ancCorr_letter {N k anc : ℕ} {addr : Fin k → ℕ}
       have hpG : parityGates (0 : ZMod 2) 0 (addr i) anc = [] := by
         simp [parityGates]
       rw [hbG, hpG]
-      show ancCorr anc addr a' b' Φ = _
+      change ancCorr anc addr a' b' Φ = _
       have ha_upd : Function.update a' i (0 : ZMod 2) = a' := by
         funext j
         by_cases hj : j = i
@@ -1597,7 +1532,7 @@ private theorem ancCorr_letter {N k anc : ℕ} {addr : Fin k → ℕ}
           [controlledGate xGate (addr i) anc] := by
         simp [parityGates]
       rw [hbG, hpG]
-      show ancCorr anc addr a' b'
+      change ancCorr anc addr a' b'
         (applyGate N (controlledGate xGate (addr i) anc) Φ) = _
       rw [ancCorr_cnot haddr hlt hanc hne i a' b' h0 _]
       have ha_upd : Function.update a' i (0 : ZMod 2) = a' := by
@@ -1616,7 +1551,7 @@ private theorem ancCorr_letter {N k anc : ℕ} {addr : Fin k → ℕ}
           [controlledGate xGate (addr i) anc] := by
         simp [parityGates]
       rw [hbG, hpG]
-      show ancCorr anc addr a' b'
+      change ancCorr anc addr a' b'
         (applyGate N (controlledGate xGate (addr i) anc)
           (applyGate N (embeddedGate omegaH (addr i) anc) Φ)) = _
       have hwH : applyGate N (embeddedGate omegaH (addr i) anc) Φ =
@@ -1661,7 +1596,7 @@ private theorem ancCorr_letter {N k anc : ℕ} {addr : Fin k → ℕ}
           [controlledGate xGate (addr i) anc] := by
         simp [parityGates]
       rw [hbG, hpG]
-      show ancCorr anc addr a' b'
+      change ancCorr anc addr a' b'
         (applyGate N (controlledGate xGate (addr i) anc)
           (applyGate N (embeddedGate omegaH (addr i) anc)
             (applyGate N (embeddedGate sDagGate (addr i) anc) Φ))) = _
@@ -1708,7 +1643,7 @@ private theorem ancCorr_letter {N k anc : ℕ} {addr : Fin k → ℕ}
 installs exactly those letters into the tracked label. -/
 private theorem ancCorr_flatMap {N k anc : ℕ} {addr : Fin k → ℕ}
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
-    (hanc0 : 0 < anc) (hanc : anc < N) (hne : ∀ i, addr i ≠ anc)
+    (hanc : anc < N) (hne : ∀ i, addr i ≠ anc)
     (a b : Fin k → ZMod 2) :
     ∀ (l : List (Fin k)), l.Nodup →
       ∀ (a' b' : Fin k → ZMod 2), (∀ j ∈ l, a' j = 0 ∧ b' j = 0) →
@@ -1749,7 +1684,7 @@ private theorem ancCorr_flatMap {N k anc : ℕ} {addr : Fin k → ℕ}
     have h0AB : (fun j => if j ∈ l then a j else a' j) i = 0 ∧
         (fun j => if j ∈ l then b j else b' j) i = 0 := by
       simp [hinotl, hai, hbi]
-    have hfold := ancCorr_letter haddr hlt hanc0 hanc hne a b
+    have hfold := ancCorr_letter haddr hlt hanc hne a b
       (fun j => if j ∈ l then a j else a' j)
       (fun j => if j ∈ l then b j else b' j) i h0AB Φ
     rw [hfold]
@@ -1771,8 +1706,8 @@ private theorem ancCorr_flatMap {N k anc : ℕ} {addr : Fin k → ℕ}
         simp only [List.mem_cons, hji, false_or]
     rw [hA, hB]
 
-/-- Core identity: the probability that the answer ancilla reads `1`
-after the core. -/
+/-- Core identity: the weight of the answer ancilla reading `1` after the
+core, a probability when `sqNorm ψ = 1`. -/
 theorem ancProb_perLabelCore {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (neg : Bool)
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
@@ -1801,7 +1736,7 @@ theorem ancProb_perLabelCore {N k anc : ℕ} {addr : Fin k → ℕ}
     exact sqNorm_applyCircuit hgs ψ
   have hcorr : ancCorr anc addr 0 0 Φflat =
       star ψ ⬝ᵥ (pauliEmb N addr a b *ᵥ ψ) := by
-    have hfm := ancCorr_flatMap haddr hlt hanc0 hanc hne a b (List.finRange k)
+    have hfm := ancCorr_flatMap haddr hlt hanc hne a b (List.finRange k)
       (List.nodup_finRange k) 0 0 (fun _ _ => ⟨rfl, rfl⟩) ψ
     have ha : (fun j => if j ∈ List.finRange k then a j else (0 : Fin k → ZMod 2) j) = a := by
       funext j
@@ -1831,8 +1766,10 @@ theorem ancProb_perLabelCore {N k anc : ℕ} {addr : Fin k → ℕ}
     rw [hflat]
     ring
 
-/-- **Per-label expectation identity:** the circuit accepts with
-probability `(‖ψ‖² - σ ⟨P_emb⟩) / 2`. -/
+/-- **Per-label expectation identity:** on a state with a clean ancilla,
+the acceptance weight of the circuit is `(‖ψ‖² - σ ⟨ψ|P_emb|ψ⟩) / 2`. It is
+a probability only for a unit state, the case of
+`acceptProb_perLabelCircuit_signOne`. -/
 theorem acceptProb_perLabelCircuit {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (neg : Bool)
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
@@ -1846,8 +1783,8 @@ theorem acceptProb_perLabelCircuit {N k anc : ℕ} {addr : Fin k → ℕ}
   rw [acceptProb_outputSwap hanc0 hanc]
   exact ancProb_perLabelCore a b neg haddr hlt hanc0 hanc hne hclean
 
-/-- Normalized `signOne` form (with `signOne 0 = +1`), the shape consumed
-by the Pauli-test acceptance identity. -/
+/-- For a unit state, the acceptance probability in `signOne` form (with
+`signOne 0 = +1`), the shape consumed by the Pauli-test acceptance identity. -/
 theorem acceptProb_perLabelCircuit_signOne {N k anc : ℕ} {addr : Fin k → ℕ}
     (a b : Fin k → ZMod 2) (c : ℝ)
     (haddr : Function.Injective addr) (hlt : ∀ i, addr i < N)
@@ -1864,9 +1801,7 @@ theorem acceptProb_perLabelCircuit_signOne {N k anc : ℕ} {addr : Fin k → ℕ
     · simp only [signOne, ite_eq_right (not_le.mpr hc), ite_eq_left hc]
     · simp only [signOne, ite_eq_left (le_of_not_gt hc), ite_eq_right hc]
   rw [hs]
-  by_cases hc : c < 0 <;> simp [hc] at h ⊢
-  · exact h
-  · exact h
+  simpa only [decide_eq_true_eq] using h
 /-- Accept-iff-`σ · parity = -1` on computational-basis inputs, for
 `Z`-strings. -/
 theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k → ℕ}
@@ -1877,9 +1812,7 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
     acceptProb (applyCircuit N (perLabelCircuit addr 0 b neg anc) (Pi.single s 1)) =
       if (if neg then (-1 : ℝ) else 1) * (-1) ^ (b ⬝ᵥ localBits addr s.val).val = -1
         then 1 else 0 := by
-
   have h0N : 0 < N := Nat.lt_trans hanc0 hanc
-  have hne1 : (0 : ℕ) ≠ anc := by omega
   have hne2 : anc ≠ 0 := by omega
   have hbasis : ∀ i : Fin k, basisChangeGates 0 (b i) (addr i) anc = [] := by
     intro i
@@ -1908,8 +1841,7 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
     intro l s0 hl
     induction l generalizing s0 with
     | nil =>
-      simp [applyCircuit]
-      exact ⟨s0, rfl, fun q _ => rfl, by simp⟩
+      exact ⟨s0, by simp [applyCircuit], fun q _ => rfl, by simp⟩
     | cons i l ih =>
       simp only [List.flatMap_cons, applyCircuit_append] at ⊢
       have hhead : parityGates 0 (b i) (addr i) anc =
@@ -1937,32 +1869,7 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
         rw [hone] at ⊢
         have hi := (hl i List.mem_cons_self).1
         have hn := (hl i List.mem_cons_self).2
-        have hsingle : ∀ t0 : Fin (2 ^ N),
-            applyGate N (controlledGate xGate (addr i) anc)
-              (Pi.single t0 1) =
-            Pi.single (cnotIndex N (addr i) anc t0) 1 := by
-          intro t0
-          funext t
-          simp only [Pi.single_apply]
-          have hcnot_pull : applyGate N (controlledGate xGate (addr i) anc)
-              (Pi.single t0 1) t =
-              (Pi.single t0 1 : Fin (2 ^ N) → ℂ) (cnotIndex N (addr i) anc t) := by
-            apply applyGate_cnot <;> assumption
-          rw [hcnot_pull]
-          simp only [Pi.single_apply]
-          have hinv : ∀ u, cnotIndex N (addr i) anc
-              (cnotIndex N (addr i) anc u) = u := by
-            intro u
-            exact cnotIndex_cnotIndex hn u
-          by_cases h : t = cnotIndex N (addr i) anc t0
-          · simp [h, hinv]
-          · have hne : cnotIndex N (addr i) anc t ≠ t0 := by
-              intro hc
-              apply h
-              rw [← hc]
-              simp [hinv]
-            simp [h, hne]
-        rw [hsingle]
+        rw [applyGate_cnot_single hn hi hanc]
         obtain ⟨s1, hs1, hq1, hpar1⟩ :=
           ih (cnotIndex N (addr i) anc s0)
             (fun j hj => hl j (List.mem_cons_of_mem i hj))
@@ -1974,33 +1881,29 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
           by_cases h : qBit (addr i) s0.val = 1
           · simp [h, qBit_flipBit_of_ne hq]
           · simp [h]
-        · simp [hpar1]
+        · simp only [hpar1, List.map_cons, List.sum_cons]
           unfold cnotIndex localBits
           by_cases h : qBit (addr i) s0.val = 1
-          · have hbi : b i = 1 := by
-              have hall : ∀ x : ZMod 2, x ≠ 0 → x = 1 := by decide
-              exact hall _ hb
+          · have hbi : b i = 1 := (zmod2_dichot (b i)).resolve_left hb
             have hcast : ∀ x : Fin 2, (((x + 1).val : ℕ) : ZMod 2) =
                 ((x.val : ℕ) : ZMod 2) + 1 := by
               intro x; fin_cases x <;> decide
             have hself : qBit anc (flipBit N anc s0).val = qBit anc s0.val + 1 :=
               qBit_flipBit_self hanc s0
-            have hsum : (List.map (fun j => b j * ((qBit (addr j) (flipBit N anc s0).val).val : ZMod 2)) l).sum
-                = (List.map (fun j => b j * ((qBit (addr j) s0.val).val : ZMod 2)) l).sum := by
+            have hsum :
+                (List.map (fun j => b j * ((qBit (addr j) (flipBit N anc s0).val).val : ZMod 2))
+                  l).sum =
+                  (List.map (fun j => b j * ((qBit (addr j) s0.val).val : ZMod 2)) l).sum := by
               apply congrArg List.sum
               apply List.map_congr_left
               intro j hj
               have hne : addr j ≠ anc := (hl j (List.mem_cons_of_mem i hj)).2
               have hq := qBit_flipBit_of_ne hne s0
               simp [hq]
-            simp [h, hbi, hself, hcast, hsum, List.map_cons, List.sum_cons,
-              qBit_flipBit_self, ZMod.val_add, ZMod.val_mul,
-              Fin.is_lt, hi, hanc, hn]
+            simp [h, hbi, hself, hcast, hsum]
             ring
-          · have h0 : qBit (addr i) s0.val = 0 := by
-              have hall : ∀ x : Fin 2, x ≠ 1 → x = 0 := by decide
-              exact hall _ h
-            simp [h, h0, ZMod.val_add, ZMod.val_mul, Fin.is_lt, hi, hanc, hn, mul_zero]
+          · have h0 : qBit (addr i) s0.val = 0 := (fin2_dichot _).resolve_right h
+            simp [h0, mul_zero]
   obtain ⟨s1, hs1, hq1, hpar1⟩ := hcnot (List.finRange k) s
     (fun i _ => ⟨hlt i, hne i⟩)
   rw [hs1]
@@ -2011,22 +1914,7 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
     intro t0
     by_cases hn : neg = true
     · simp only [hn, ite_true, applyCircuit, List.foldl_cons, List.foldl_nil] at ⊢
-      funext t
-      simp only [Pi.single_apply]
-      have hx : applyGate N (embeddedGate xGate anc 0)
-          (Pi.single t0 1) t =
-          (Pi.single t0 1 : Fin (2 ^ N) → ℂ) (flipBit N anc t) := by
-        apply applyGate_embeddedGate_xGate <;> assumption
-      rw [hx]
-      simp only [Pi.single_apply]
-      by_cases h : t = flipBit N anc t0
-      · simp [h, flipBit_flipBit]
-      · have hne : flipBit N anc t ≠ t0 := by
-          intro hc
-          apply h
-          rw [← hc]
-          simp [flipBit_flipBit]
-        simp [h, hne]
+      exact applyGate_embeddedGate_xGate_single hne2 hanc h0N t0
     · simp [hn, applyCircuit] at ⊢
   rw [hsign]
   have hswap_acc : ∀ t0 : Fin (2 ^ N),
@@ -2087,12 +1975,11 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
         qBit anc s1.val = 0 := by
       have hself := qBit_flipBit_self hanc s1
       rw [hself]
-      have hall : ∀ x : Fin 2, x = 0 ∨ x = 1 := by decide
-      rcases hall (qBit anc s1.val) with h0 | h1
+      rcases fin2_dichot (qBit anc s1.val) with h0 | h1
       · simp [h0]
       · simp [h1]
     by_cases h : qBit anc s1.val = 0
-    · simp [h, hflip, hval] at ⊢
+    · simp [h, hflip] at ⊢
       have hpow : (-1 : ℝ) ^ (b ⬝ᵥ localBits addr s.val).val = 1 := by
         have : (b ⬝ᵥ localBits addr s.val).val = 0 := by
           have := congrArg Fin.val h
@@ -2100,12 +1987,9 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
           omega
         simp [this]
       simp [hpow]
-    · simp [h] at ⊢
-      have h1 : qBit anc s1.val = 1 := by
-        have hv := Fin.is_lt (qBit anc s1.val)
-        simp at hv
-        omega
-      simp [h1, hflip, hval] at ⊢
+    · simp at ⊢
+      have h1 : qBit anc s1.val = 1 := (fin2_dichot _).resolve_left h
+      simp [h1, hflip] at ⊢
       have hpow : (-1 : ℝ) ^ (b ⬝ᵥ localBits addr s.val).val = -1 := by
         have : (b ⬝ᵥ localBits addr s.val).val = 1 := by
           have := congrArg Fin.val h1
@@ -2114,9 +1998,9 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
         simp [this]
       simp [hpow]
       norm_num [hpow]
-  · simp only [hn, ite_false] at ⊢
+  · simp only [hn] at ⊢
     by_cases h : qBit anc s1.val = 1
-    · simp [h, hval] at ⊢
+    · simp [h] at ⊢
       have hpow : (-1 : ℝ) ^ (b ⬝ᵥ localBits addr s.val).val = -1 := by
         have : (b ⬝ᵥ localBits addr s.val).val = 1 := by
           have := congrArg Fin.val h
@@ -2125,11 +2009,8 @@ theorem acceptProb_perLabelCircuit_single_zString {N k anc : ℕ} {addr : Fin k 
         simp [this]
       simp [hpow]
     · simp [h] at ⊢
-      have h0 : qBit anc s1.val = 0 := by
-        have hv := Fin.is_lt (qBit anc s1.val)
-        simp at hv
-        omega
-      simp [h0, hval] at ⊢
+      have h0 : qBit anc s1.val = 0 := (fin2_dichot _).resolve_right h
+      simp at ⊢
       have hpow : (-1 : ℝ) ^ (b ⬝ᵥ localBits addr s.val).val = 1 := by
         have : (b ⬝ᵥ localBits addr s.val).val = 0 := by
           have := congrArg Fin.val h0
@@ -2164,22 +2045,28 @@ theorem perLabelCore_preserves_qBit {N k anc : ℕ} {addr : Fin k → ℕ}
       by_cases ha : a i = 1
       · simp only [ha, ite_true] at hg_basis
         by_cases hbb : b i = 1
-        · simp [hbb] at hg_basis
+        · simp only [hbb, ↓reduceIte, List.mem_cons, List.not_mem_nil, or_false] at hg_basis
           rcases hg_basis with rfl | rfl
           · unfold embeddedGate
-            by_cases h : addr i < anc <;> simp [h]
-            · exact ⟨Ne.symm (hq i), hqa⟩
-            · exact ⟨hqa, Ne.symm (hq i)⟩
+            by_cases h : addr i < anc
+            · rw [ite_eq_left h]
+              exact ⟨Ne.symm (hq i), hqa⟩
+            · rw [ite_eq_right h]
+              exact ⟨hqa, Ne.symm (hq i)⟩
           · unfold embeddedGate
-            by_cases h : addr i < anc <;> simp [h]
-            · exact ⟨Ne.symm (hq i), hqa⟩
-            · exact ⟨hqa, Ne.symm (hq i)⟩
+            by_cases h : addr i < anc
+            · rw [ite_eq_left h]
+              exact ⟨Ne.symm (hq i), hqa⟩
+            · rw [ite_eq_right h]
+              exact ⟨hqa, Ne.symm (hq i)⟩
         · simp only [hbb, ite_false, List.mem_singleton] at hg_basis
           rcases hg_basis with rfl
           unfold embeddedGate
-          by_cases h : addr i < anc <;> simp [h]
-          · exact ⟨Ne.symm (hq i), hqa⟩
-          · exact ⟨hqa, Ne.symm (hq i)⟩
+          by_cases h : addr i < anc
+          · rw [ite_eq_left h]
+            exact ⟨Ne.symm (hq i), hqa⟩
+          · rw [ite_eq_right h]
+            exact ⟨hqa, Ne.symm (hq i)⟩
       · simp [ha] at hg_basis
     · unfold parityGates at hg_parity
       by_cases h : a i = 0 ∧ b i = 0
@@ -2187,9 +2074,11 @@ theorem perLabelCore_preserves_qBit {N k anc : ℕ} {addr : Fin k → ℕ}
       · simp only [h, ite_false, List.mem_singleton] at hg_parity
         rcases hg_parity with rfl
         unfold controlledGate
-        by_cases hc : addr i < anc <;> simp [hc]
-        · exact ⟨Ne.symm (hq i), hqa⟩
-        · exact ⟨hqa, Ne.symm (hq i)⟩
+        by_cases hc : addr i < anc
+        · rw [ite_eq_left hc]
+          exact ⟨Ne.symm (hq i), hqa⟩
+        · rw [ite_eq_right hc]
+          exact ⟨hqa, Ne.symm (hq i)⟩
   have hflat_wf : ∀ g ∈ (List.finRange k).flatMap (fun i =>
       basisChangeGates (a i) (b i) (addr i) anc ++
         parityGates (a i) (b i) (addr i) anc),
@@ -2224,15 +2113,14 @@ theorem perLabelCore_preserves_qBit {N k anc : ℕ} {addr : Fin k → ℕ}
         apply applyGate_embeddedGate_xGate <;> assumption
       rw [hx]
       have h0ne : (0 : ℕ) ≠ anc := by omega
-      have hflip : qBit 0 (flipBit N anc s).val = qBit 0 s.val := by
-        apply qBit_flipBit_of_ne <;> assumption
+      have hflip : qBit 0 (flipBit N anc s).val = qBit 0 s.val :=
+        qBit_flipBit_of_ne h0ne s
       exact hψ1 _ (hflip ▸ hs)
     · have hang : q ≠ (embeddedGate xGate anc 0).1 ∧
         q ≠ (embeddedGate xGate anc 0).2.1 := by
         unfold embeddedGate
-        by_cases h : anc < 0 <;> simp [h]
-        · exact ⟨hqa, hq0⟩
-        · exact ⟨hq0, hqa⟩
+        rw [ite_eq_right (Nat.not_lt_zero anc)]
+        exact ⟨hq0, hqa⟩
       have hwf_sign : QGateWellFormed N (embeddedGate xGate anc 0) := by
         have h0N : 0 < N := Nat.lt_trans hanc0 hanc
         have hne0 : anc ≠ 0 := by omega
@@ -2240,8 +2128,8 @@ theorem perLabelCore_preserves_qBit {N k anc : ℕ} {addr : Fin k → ℕ}
       have h1 := hang.1
       have h2 := hang.2
       exact applyGate_eq_zero_of_qBit_ne hwf_sign h1 h2 v hψ1 s hs
-  · simp only [hn, ite_false] at ⊢
-    simp only [applyCircuit, List.foldl_cons, List.foldl_nil] at ⊢
+  · simp only [hn] at ⊢
+    simp only [applyCircuit] at ⊢
     exact hψ1 _ hs
 
 end Cslib.Complexity.Classes.QMA

@@ -67,18 +67,9 @@ private theorem acceptProb_piSingle_zero {N : ℕ} (s₀ : Fin (2 ^ N))
 private theorem pauliExpect_zero_label {N : ℕ} (ψ : Fin (2 ^ N) → ℂ) :
     pauliExpect (fun i : Fin 0 => i.elim0) 0 0 ψ = sqNorm ψ := by
   unfold pauliExpect
-  rw [pauliEmb_zero_zero]
-
-  rw [Matrix.one_mulVec]
+  rw [pauliEmb_zero_zero, Matrix.one_mulVec]
   unfold sqNorm dotProduct
-  have hre : ∀ (s : Finset (Fin (2 ^ N))) (f : Fin (2 ^ N) → ℂ),
-      (∑ i ∈ s, f i).re = ∑ i ∈ s, (f i).re := by
-    intro s f
-    induction s using Finset.induction with
-    | empty => simp only [Finset.sum_empty, Complex.zero_re]
-    | insert _ _ ha ih =>
-      rw [Finset.sum_insert ha, Finset.sum_insert ha, Complex.add_re, ih]
-  rw [hre]
+  rw [Complex.re_sum]
   apply Finset.sum_congr rfl
   intro s _
   rw [Pi.star_apply, starRingEnd_apply]
@@ -235,7 +226,6 @@ theorem perLabel_one_local_checks :
       (addr := (![2] : Fin 1 → ℕ)) (![1] : Fin 1 → ZMod 2) neg
       (by decide) (by decide) (by decide) (by decide)
       (4 : Fin (2 ^ 3)) (by decide)
-
   have hiff : (if (false : Bool) then (-1 : ℝ) else 1) = 1 := rfl
   have hift : (if (true : Bool) then (-1 : ℝ) else 1) = -1 := rfl
   refine ⟨?_, ?_, ?_⟩
@@ -268,7 +258,9 @@ theorem perLabel_one_local_checks :
     norm_num at h
     exact h
 
-/-- The main identity instantiated at `N = 4`, ancilla `2`, addresses `![3, 0]` with an `X` and a `Y` letter, with every side condition discharged by `decide` (psi remains universally quantified). -/
+/-- The main identity instantiated at `N = 4`, ancilla `2`, addresses
+`![3, 0]` with an `X` and a `Y` letter, with every side condition discharged
+by `decide` (psi remains universally quantified). -/
 theorem perLabel_orientation_instance
     (ψ : Fin (2 ^ 4) → ℂ)
     (hclean : ∀ s : Fin (2 ^ 4), qBit 2 s.val = 1 → ψ s = 0) :
@@ -308,28 +300,32 @@ theorem perLabel_signOne_instance :
       (Pi.single (0 : Fin (2 ^ 2)) (1 : ℂ) : Fin (2 ^ 2) → ℂ) = 1 := by
     have hdot : (![1] : Fin 1 → ZMod 2) ⬝ᵥ (![0] : Fin 1 → ZMod 2) = 0 := by decide
     have hoffset0 : (![0] : Fin 1 → ZMod 2) = ![0] + ![0] := by decide
-    have hlocal0 : localBits (![0] : Fin 1 → ℕ) (0 : Fin (2 ^ 2)) = ![0] := by decide
     have hlocal : localBits (![0] : Fin 1 → ℕ) (0 : Fin (2 ^ 2)).val = ![0] := by decide
     have hagree : (∀ q : ℕ, (∀ i, (![0] : Fin 1 → ℕ) i ≠ q) →
         qBit q ((0 : Fin (2 ^ 2)).val) = qBit q ((0 : Fin (2 ^ 2)).val)) :=
       fun q _h => rfl
-    have hexp0 : ∑ i : Fin 1, (((![0] : Fin 1 → ZMod 2) i).val * (((![1] : Fin 1 → ZMod 2)) i).val) = 0 := by decide
+    have hexp0 : ∑ i : Fin 1,
+        (((![0] : Fin 1 → ZMod 2) i).val * (((![1] : Fin 1 → ZMod 2)) i).val) = 0 := by
+      decide
     have hval : (0 : ZMod 2).val = 0 := by decide
     unfold pauliExpect dotProduct
     simp only [Pi.star_apply]
-    rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ 0) (fun s _ hs => by rw [Pi.single_eq_of_ne hs, star_zero, zero_mul])]
+    rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ 0)
+      (fun s _ hs => by rw [Pi.single_eq_of_ne hs, star_zero, zero_mul])]
     rw [Pi.single_eq_same, star_one, one_mul]
     simp only [Matrix.mulVec, dotProduct]
-    rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ 0) (fun t _ ht => by rw [Pi.single_eq_of_ne ht, mul_zero])]
+    rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ 0)
+      (fun t _ ht => by rw [Pi.single_eq_of_ne ht, mul_zero])]
     rw [Pi.single_eq_same, mul_one]
     unfold pauliEmb embedLocal
     rw [ite_eq_left hagree, hlocal]
     unfold MathlibExt.Quantum.PauliExpansion.hermPauli
     rw [Matrix.smul_apply, smul_eq_mul, hexp0, pow_zero, one_mul]
-    rw [MathlibExt.Quantum.PauliXZ.pauliXZ_apply, ite_eq_left hoffset0, hdot, hval, pow_zero]
+    rw [MathlibExt.Quantum.PauliXZ.pauliXZ_apply, ite_eq_left hoffset0, hdot, hval,
+      pow_zero]
     exact Complex.one_re
-
-  have hsign : MathlibExt.Quantum.PauliExpansion.signOne (-2 : ℝ) = -1 := by norm_num [MathlibExt.Quantum.PauliExpansion.signOne]
+  have hsign : MathlibExt.Quantum.PauliExpansion.signOne (-2 : ℝ) = -1 := by
+    norm_num [MathlibExt.Quantum.PauliExpansion.signOne]
   rw [hsign, hexp] at hmain
   norm_num at hmain
   have hd : decide ((-2 : ℝ) < 0) = true := by
@@ -346,7 +342,8 @@ theorem perLabel_clean_necessary :
         (perLabelCircuit (k := 0) (fun i => i.elim0) 0 0 false 1)
         (Pi.single 2 1)) = 1 ∧
       (sqNorm (Pi.single (2 : Fin (2 ^ 2)) (1 : ℂ)) -
-        pauliExpect (fun i : Fin 0 => i.elim0) 0 0 ((Pi.single (2 : Fin (2 ^ 2)) (1 : ℂ)) : Fin (2 ^ 2) → ℂ)) / 2 = 0 := by
+        pauliExpect (fun i : Fin 0 => i.elim0) 0 0
+          ((Pi.single (2 : Fin (2 ^ 2)) (1 : ℂ)) : Fin (2 ^ 2) → ℂ)) / 2 = 0 := by
   refine ⟨?_, ?_⟩
   · rw [perLabelCircuit_k0_false]
     have h := applyCircuit_outputSwap_single (N := 2) (anc := 1)
@@ -362,16 +359,52 @@ theorem perLabel_clean_necessary :
     rw [hexp, hsq]
     norm_num
 
+/-- Without `sqNorm ψ = 1` the identity gives an acceptance weight, not a
+probability: at `k = 0` with the negative sign, the state `2|00⟩` has weight
+`4`. -/
+theorem perLabel_unnormalized_weight :
+    acceptProb (applyCircuit 2
+        (perLabelCircuit (k := 0) (fun i => i.elim0) 0 0 true 1)
+        (Pi.single 0 2)) = 4 := by
+  have hclean : ∀ s : Fin (2 ^ 2), qBit 1 s.val = 1 →
+      (Pi.single (0 : Fin (2 ^ 2)) (2 : ℂ) : Fin (2 ^ 2) → ℂ) s = 0 := by
+    intro s hs
+    have hne : s ≠ 0 := by
+      rintro rfl
+      revert hs
+      decide
+    exact Pi.single_eq_of_ne hne _
+  have h := acceptProb_perLabelCircuit (N := 2) (k := 0) (anc := 1)
+    (addr := (fun i : Fin 0 => (i.elim0 : ℕ)))
+    (0 : Fin 0 → ZMod 2) (0 : Fin 0 → ZMod 2) true
+    (fun a _ _ => a.elim0) (fun i => i.elim0)
+    (by decide) (by decide) (fun i => i.elim0)
+    (ψ := (Pi.single (0 : Fin (2 ^ 2)) (2 : ℂ) : Fin (2 ^ 2) → ℂ)) hclean
+  have hsq : sqNorm (Pi.single (0 : Fin (2 ^ 2)) (2 : ℂ) : Fin (2 ^ 2) → ℂ) = 4 := by
+    unfold sqNorm
+    rw [Finset.sum_eq_single_of_mem 0 (Finset.mem_univ 0) (fun s _ hs => by
+      simp only [Pi.single_eq_of_ne hs, map_zero, zero_mul, Complex.zero_re])]
+    rw [Pi.single_eq_same]
+    norm_num
+  rw [pauliExpect_zero_label, hsq] at h
+  rw [h]
+  norm_num
+
 private theorem perLabelCircuit_dupXZ_gateList :
     perLabelCircuit ![0, 0] ![1, 0] ![0, 1] true 1
       = [embeddedGate omegaH 0 1, controlledGate xGate 0 1,
         controlledGate xGate 0 1, embeddedGate xGate 1 0, outputSwap 1] := by
   have hfr : List.finRange 2 = [0, 1] := by decide
-  have hb0 : basisChangeGates ((![1, 0] : Fin 2 → ZMod 2) 0) ((![0, 1] : Fin 2 → ZMod 2) 0) ((![0, 0] : Fin 2 → ℕ) 0) 1 = [embeddedGate omegaH 0 1] := rfl
-  have hp0 : parityGates ((![1, 0] : Fin 2 → ZMod 2) 0) ((![0, 1] : Fin 2 → ZMod 2) 0) ((![0, 0] : Fin 2 → ℕ) 0) 1 = [controlledGate xGate 0 1] := rfl
-  have hb1 : basisChangeGates ((![1, 0] : Fin 2 → ZMod 2) 1) ((![0, 1] : Fin 2 → ZMod 2) 1) ((![0, 0] : Fin 2 → ℕ) 1) 1 = [] := rfl
-  have hp1 : parityGates ((![1, 0] : Fin 2 → ZMod 2) 1) ((![0, 1] : Fin 2 → ZMod 2) 1) ((![0, 0] : Fin 2 → ℕ) 1) 1 = [controlledGate xGate 0 1] := rfl
-  simp only [perLabelCircuit, perLabelCore, hfr, List.flatMap_cons, List.flatMap_nil, hb0, hp0, hb1, hp1]
+  have hb0 : basisChangeGates ((![1, 0] : Fin 2 → ZMod 2) 0) ((![0, 1] : Fin 2 → ZMod 2) 0)
+      ((![0, 0] : Fin 2 → ℕ) 0) 1 = [embeddedGate omegaH 0 1] := rfl
+  have hp0 : parityGates ((![1, 0] : Fin 2 → ZMod 2) 0) ((![0, 1] : Fin 2 → ZMod 2) 0)
+      ((![0, 0] : Fin 2 → ℕ) 0) 1 = [controlledGate xGate 0 1] := rfl
+  have hb1 : basisChangeGates ((![1, 0] : Fin 2 → ZMod 2) 1) ((![0, 1] : Fin 2 → ZMod 2) 1)
+      ((![0, 0] : Fin 2 → ℕ) 1) 1 = [] := rfl
+  have hp1 : parityGates ((![1, 0] : Fin 2 → ZMod 2) 1) ((![0, 1] : Fin 2 → ZMod 2) 1)
+      ((![0, 0] : Fin 2 → ℕ) 1) 1 = [controlledGate xGate 0 1] := rfl
+  simp only [perLabelCircuit, perLabelCore, hfr, List.flatMap_cons, List.flatMap_nil, hb0, hp0,
+    hb1, hp1]
   rw [ite_eq_left True.intro]
   simp only [List.cons_append, List.nil_append, List.append_nil]
 
@@ -558,7 +591,12 @@ private theorem pauliExpect_dupXZ_eq_zero :
   rw [MathlibExt.Quantum.PauliXZ.pauliXZ_apply, ite_eq_right hcond]
   exact Complex.zero_re
 
-/-- Injectivity cannot be dropped: with duplicate addresses `![0, 0]`, an `X` letter and a `Z` letter on qubit `0`, and the ancilla clean, the circuit accepts the all-zero basis state with probability `1` where the identity would give `1/2`: the duplicated embedding of this label is the zero operator, so the expectation vanishes. Every other hypothesis of `acceptProb_perLabelCircuit` holds here (in range, ancilla unaddressed, clean ancilla). -/
+/-- Injectivity cannot be dropped: with duplicate addresses `![0, 0]`, an `X`
+letter and a `Z` letter on qubit `0`, and the ancilla clean, the circuit
+accepts the all-zero basis state with probability `1` where the identity would
+give `1/2`: the duplicated embedding of this label is the zero operator, so the
+expectation vanishes. Every other hypothesis of `acceptProb_perLabelCircuit`
+holds here (in range, ancilla unaddressed, clean ancilla). -/
 theorem perLabel_injective_necessary :
     acceptProb (applyCircuit 2 (perLabelCircuit ![0, 0] ![1, 0] ![0, 1] true 1)
         (Pi.single 0 1)) = 1 ∧
@@ -584,9 +622,9 @@ theorem perLabel_injective_necessary :
         intro h
         subst h
         exact hs (by decide : qBit 0 (3 : Fin (2 ^ 2)).val = 1)
-      show (if s = 1 then complexOfGRatMatrix omegaH 0 0 else if s = 3 then complexOfGRatMatrix omegaH 1 0 else 0) = 0
+      change (if s = 1 then complexOfGRatMatrix omegaH 0 0
+        else if s = 3 then complexOfGRatMatrix omegaH 1 0 else 0) = 0
       split_ifs <;> simp_all
-
     have hacc : acceptProb (applyCircuit 2 [embeddedGate omegaH 0 1,
         controlledGate xGate 0 1, controlledGate xGate 0 1,
         embeddedGate xGate 1 0, outputSwap 1]
