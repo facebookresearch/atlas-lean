@@ -14,6 +14,7 @@ public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
 public import MathlibExt.Combinatorics.Additive.FiniteFieldDifferenceBases
 public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
+public import MathlibExt.Combinatorics.GDifferenceBases
 
 namespace MetaMathlibExt
 
@@ -66,25 +67,6 @@ Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INT
 public theorem_wanted groupDiffBasisNumber_le_hundred_sqrt {K : Type*} [Field K] [Finite K]
     [DecidableEq K] :
     (groupDiffBasisNumber 1 K : ℝ) ≤ 100 * Real.sqrt (Nat.card K)
-
-open Classical in
-/-- **Difference bases of $\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}$.** Let $p$ be an odd prime.
-For a finite abelian group $G$, a set $A \subseteq G$ and $x \in G$, write $r_{A-A}(x)$ for the
-number of ordered pairs $(a, a') \in A \times A$ with $a - a' = x$, and let $\eta_1(G)$ be the
-least size of a set $A \subseteq G$ with $r_{A-A}(x) \ge 1$ for every $x \in G$. Then
-$\eta_1(\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}) / p^t \to 1$ as $t \to \infty$, that is,
-$\eta_1(\mathbb{F}_{p^t} \times \mathbb{F}_{p^t}) = (1 + o(1))\, p^t$, where $\mathbb{F}_{p^t}$
-is the field with $p^t$ elements.
-
-The restriction to odd $p$ is deliberate: for $p = 2$ the claim fails.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 8 (`integers-2025-A77-lem-8`). -/
-public theorem_wanted tendsto_groupDiffBasisNumber_galoisField_prod (p : ℕ) [Fact p.Prime]
-    (hp : p ≠ 2) :
-    Tendsto (fun t : ℕ =>
-        (groupDiffBasisNumber 1 (GaloisField p t × GaloisField p t) : ℝ) / (p : ℝ) ^ t)
-      atTop (𝓝 1)
 
 /-- **Even and odd limits for difference bases of $\mathbb{F}_p^n$.** Let $p$ be an odd prime and
 $g \ge 1$ an integer. For a finite abelian group $G$, a set $A \subseteq G$ and $x \in G$, write
