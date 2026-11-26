@@ -9,6 +9,8 @@
 - [Delange's series vanishes at zero](trollope-delange-series-zero.md)
 - [Trollope–Delange fluctuation](trollope-delange-fluctuation.md)
 - [Periodicity of the Trollope–Delange fluctuation](trollope-delange-fluctuation-add-one.md)
+- [Delange's series is bounded](series-bounded.md)
+- [The Trollope–Delange fluctuation is bounded](fluctuation-bdd-above.md)
 - [Trollope–Delange remainder](digit-sum-remainder.md)
 - [The Trollope–Delange remainder vanishes at zero](digit-sum-remainder-zero.md)
 - [Integral of the Trollope–Delange fluctuation](digit-sum-fluctuation-integral.md)
