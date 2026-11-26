@@ -1,0 +1,3 @@
+# ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS WITH SETS OF SIZE AT MOST THREE as a decision problem
+
+The decision problem ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS WITH SETS OF SIZE AT MOST THREE accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(m, C, J)$, to an instance that is [well-formed](../part-08/well-formed-3-2.md) and [feasible](ensemble-computation-non-disjoint-feasib.md) for ENSEMBLE COMPUTATION WITHOUT DISJOINTNESS, the sets of size at most three being part of [well-formedness](../part-08/well-formed-3-2.md). It rejects every bitstring that does not decode to such an instance.

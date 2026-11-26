@@ -1,0 +1,3 @@
+# DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES WITH TWO AGENTS as a decision problem
+
+The decision problem DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES WITH TWO AGENTS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quintuples (an outcome count, two agents' data, an objective table and a goal), to an instance that is [well-formed](../part-07/well-formed-2-2.md) and [feasible](deterministic-mechanism-design-dominant-2.md) for DETERMINISTIC MECHANISM DESIGN IN DOMINANT STRATEGIES; every instance has exactly two agents. It rejects every bitstring that does not decode to such an instance.
