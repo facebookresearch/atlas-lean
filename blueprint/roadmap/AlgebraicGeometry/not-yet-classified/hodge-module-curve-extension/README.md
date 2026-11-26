@@ -18,6 +18,7 @@
 - [Constant Coefficient](constant-coefficient.md)
 - [Specialization](specialization.md)
 - [Minimal extension good hodge filtration](minimal-extension-good-hodge-filtration.md)
+- [Minimal extension no boundary quotient](minimal-extension-no-boundary-quotient-2.md)
 - [Minimal extension no boundary quotient](minimal-extension-no-boundary-quotient.md)
 - [Deligne lattice hodge specialization](deligne-lattice-hodge-specialization.md)
 - [Minimal extension ic de Rham](minimal-extension-ic-de-rham.md)
