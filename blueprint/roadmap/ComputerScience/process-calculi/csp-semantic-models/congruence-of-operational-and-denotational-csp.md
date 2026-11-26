@@ -1,7 +1,9 @@
 # Congruence of the operational and denotational semantics of CSP
 
 For a closed CSP term $P$ let $\Phi_T(P) = \mathrm{traces}(P)$, $\Phi_F(P) = (\mathrm{traces}(P), \mathrm{failures}(P))$ and $\Phi_N(P) = (\mathrm{failures}_\bot(P), \mathrm{divergences}(P))$, computed in the [operational semantics of CSP](csp-operational-semantics.md) by the [extraction of traces, failures and divergences](traces-failures-and-divergences-of-a-process.md). Then for every CSP term $P$ and every substitution $\xi$ of closed terms for its free process identifiers,
+
 $$\Phi_T(\mathrm{subst}(P, \xi)) = S_T[\![P]\!]\xi^T \quad\text{and}\quad \Phi_F(\mathrm{subst}(P, \xi)) = S_F[\![P]\!]\xi^F,$$
+
 where $\xi^T$ and $\xi^F$ are the environments obtained by applying $\Phi_T$ and $\Phi_F$ to each component of $\xi$, and $S_T$, $S_F$ are the [denotational semantics](denotational-semantics-of-csp.md) over the [traces](the-traces-model.md) and [stable failures](the-stable-failures-model.md) models. The same equation holds for $\Phi_N$ and $S_N$ over the [failures-divergences model](the-failures-divergences-model.md) for finitely nondeterministic terms. In particular, for closed terms the operational and denotational semantics give the same value in each model.
 
 ## Depends on
