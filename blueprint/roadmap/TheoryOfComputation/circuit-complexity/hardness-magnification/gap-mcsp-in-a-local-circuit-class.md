@@ -1,6 +1,6 @@
 # Gap-MCSP is computable by local oracle circuits
 
-Whenever $n s_1 + 2 + 2n(n + 2) \le s_2$ at input length $N = 2^n$, a single oracle circuit with a fixed oracle (the anti-checker oracle) accepts the yes-instances and rejects the no-instances of $\mathrm{Gap\text{-}MCSP}[s_1, s_2]$, with at most $5000\, N s_2^5$ gates, at most $610\, N s_2^4 + 1$ oracle gates, oracle fan-in at most $5000\, s_2^5$, and at most $610\, s_2^4 + 1$ oracle gates on any path. Hence Gap-MCSP lies in $[N \mathrm{poly}(s), \mathrm{poly}(s), \mathrm{poly}(s)]\text{-}\mathrm{Circuit}[N \mathrm{poly}(s)]$, so lower-bound techniques that apply to such local circuits cannot prove the hypotheses of the magnification theorems (the locality barrier).
+For every constructive $s(n) \le 2^n / \mathrm{poly}(n)$ at input length $N = 2^n$, $\mathrm{Gap\text{-}MCSP}$ (with the gap of Oliveira, Pich and Santhanam 2019, Theorem 4) is computed by oracle circuits with one fixed oracle (the anti-checker oracle), $N \cdot \mathrm{poly}(s)$ gates, at most $N \cdot \mathrm{poly}(s)$ oracle gates, each of fan-in at most $\mathrm{poly}(s)$, and at most $\mathrm{poly}(s)$ oracle gates on any path (Oliveira, Pich and Santhanam 2019, as stated by Chen et al. 2020, Appendix A.2). Hence Gap-MCSP lies in $[N \mathrm{poly}(s), \mathrm{poly}(s), \mathrm{poly}(s)]\text{-}\mathrm{Circuit}[N \mathrm{poly}(s)]$, so lower-bound techniques that apply to such local circuits cannot prove the hypotheses of the magnification theorems (the locality barrier).
 
 ## Proof sketch
 
