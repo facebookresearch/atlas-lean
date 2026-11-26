@@ -17,6 +17,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientSumAsymptotic
 
 namespace MetaMathlibExt
 
@@ -118,28 +119,6 @@ public theorem_wanted squareSplitTotient_formula (φ : ArithmeticFunction ℤ)
         φ (p ^ (2 * b + 1)) = ((p : ℤ) - 1) * ((p : ℤ) ^ 2 - 1) * (p : ℤ) ^ (2 * b - 2)) ∧
     ∀ n ≠ 0, (φ n : ℚ) = (squareSplitU n).totient * (squareSplitV n : ℚ) ^ 2 *
       ∏ p ∈ (squareSplitV n).primeFactors, (1 - 1 / (p : ℚ) ^ 2)
-
-/-- **Average order of the square-splitting totient function.** Let $A(n)$ be the set of
-square-splitting divisors of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function
-with $\sum_{d \in A(n)} \varphi_\star(d) = n$ for every $n \ge 1$. Then the product
-$M = \prod_p \left(1 - \frac{1}{p^2} + \frac{(p-1)^2}{p^5}\right)$ converges absolutely, that is,
-$\sum_p \left|\frac{(p-1)^2}{p^5} - \frac{1}{p^2}\right| < \infty$, and for every
-$0 < \varepsilon < 1/2$,
-$$\sum_{1 \le n \le x} \varphi_\star(n) = \frac{M}{2}\,x^2 + O(x^{1+\varepsilon})
-\quad (x \to \infty).$$
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 8
-(`integers-2026-A56-thm-8`). -/
-public theorem_wanted squareSplitTotient_sum_asymptotic (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) :
-    Summable (fun p : Nat.Primes =>
-      |-(1 / ((p : ℕ) : ℝ) ^ 2) + (((p : ℕ) : ℝ) - 1) ^ 2 / ((p : ℕ) : ℝ) ^ 5|) ∧
-    ∀ ε : ℝ, 0 < ε → ε < 1 / 2 →
-      (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (φ n : ℝ) -
-        (∏' p : Nat.Primes,
-          (1 - 1 / ((p : ℕ) : ℝ) ^ 2 + (((p : ℕ) : ℝ) - 1) ^ 2 / ((p : ℕ) : ℝ) ^ 5)) / 2 * x ^ 2)
-        =O[atTop] fun x => x ^ (1 + ε)
 
 /-- **Dirichlet series of the square-splitting divisor function.** Let $\tau^\star(n) = |A(n)|$ be
 the number of elements of the square-splitting divisor set $A(n)$, and let
