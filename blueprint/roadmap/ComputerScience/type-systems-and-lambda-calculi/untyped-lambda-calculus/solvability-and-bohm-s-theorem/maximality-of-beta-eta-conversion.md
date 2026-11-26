@@ -16,6 +16,7 @@ normalizable terms.
 ## Proof depends on
 
 - [Böhm's theorem](bohm-s-theorem.md)
+- [Church–Rosser theorem for βη-reduction](../beta-reduction-and-confluence/church-rosser-theorem-for-beta-eta-reduction.md)
 
 ## Sources
 

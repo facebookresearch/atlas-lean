@@ -16,6 +16,7 @@ Consequently, for arbitrary terms $v$ and $v'$ there are terms $t_1, \dots, t_k$
 ## Proof depends on
 
 - [Böhm separation with applicators](bohm-separation-with-applicators.md)
+- [Church–Rosser theorem for βη-reduction](../beta-reduction-and-confluence/church-rosser-theorem-for-beta-eta-reduction.md)
 
 ## Sources
 

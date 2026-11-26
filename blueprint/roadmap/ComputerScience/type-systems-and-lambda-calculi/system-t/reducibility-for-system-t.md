@@ -11,8 +11,8 @@ $\mathrm{S}\, t$. Then, for every type $A$:
 Moreover $0$ is reducible; $\mathrm{S}\, t$ is reducible when $t$ is; $\lambda x.\, v$ is reducible when $v[u/x]$ is reducible for every reducible $u$; and the *recursor
 lemma* holds: if $u$, $v$ and $t$ are reducible, then $\mathrm{R}_A\, u\, v\, t$ is reducible. The recursor lemma is proved by induction on
 $\nu(u) + \nu(v) + \nu(t) + \ell(t)$, where $\nu$ is the maximal length of a reduction sequence and $\ell(t)$ the number of symbols in the normal form of $t$: the
-reduct $v\, w\, (\mathrm{R}_A\, u\, v\, w)$ of $\mathrm{R}_A\, u\, v\, (\mathrm{S}\, w)$ has $\ell(w) < \ell(t)$, and this is the one place where the induction is on the reducibility predicate
-itself. By induction on terms, every term with reducible terms substituted for its free variables is reducible.
+reduct $v\, w\, (\mathrm{R}_A\, u\, v\, w)$ of $\mathrm{R}_A\, u\, v\, (\mathrm{S}\, w)$ is handled by $\nu(w) = \nu(t)$ and $\ell(w) < \ell(t)$, so the induction hypothesis makes
+$\mathrm{R}_A\, u\, v\, w$ reducible, and then $v\, w\, (\mathrm{R}_A\, u\, v\, w)$ is reducible by the definition at arrow types. By induction on terms, every term with reducible terms substituted for its free variables is reducible.
 
 ## Depends on
 

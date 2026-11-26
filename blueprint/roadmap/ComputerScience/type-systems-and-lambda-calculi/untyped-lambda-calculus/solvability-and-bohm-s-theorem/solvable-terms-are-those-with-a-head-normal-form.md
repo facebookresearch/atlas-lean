@@ -18,6 +18,7 @@ Moreover $t$ is solvable exactly when $t$ reduces by β- and η-reductions to a 
 
 - [Solvable terms are the terms typable with a non-trivial intersection type](../intersection-types/solvable-terms-are-typable-in-d-omega.md)
 - [The standardization theorem](../beta-reduction-and-confluence/standardization-theorem.md)
+- [Church–Rosser theorem for βη-reduction](../beta-reduction-and-confluence/church-rosser-theorem-for-beta-eta-reduction.md)
 
 ## Sources
 

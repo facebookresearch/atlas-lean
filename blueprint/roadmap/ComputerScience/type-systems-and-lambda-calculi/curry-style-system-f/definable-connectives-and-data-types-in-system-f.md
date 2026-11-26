@@ -12,7 +12,8 @@ In [Church-style System F](../system-f/the-five-typing-rules-of-pure-system-f/ty
   $\mathrm{succ} = \lambda n.\, \Lambda \alpha.\, \lambda f\, x.\, f\, (n\, \alpha\, f\, x)$.
 
 These terms satisfy the typing rules and β-rules of the corresponding constructs up to $\twoheadrightarrow_\beta$ (η is not implemented: $\langle \pi_1(y), \pi_2(y) \rangle$ is normal). The
-function $n \mapsto n^n$ is defined by $\lambda n.\, n\, (\alpha \to \alpha)\, (n\, \alpha)$, a use of polymorphism that simple types do not allow.
+function $n \mapsto n^n$ is defined by $\lambda n{:}\omega.\, \Lambda \alpha.\, n\, (\alpha \to \alpha)\, (n\, \alpha)$ of type $\omega \to \omega$, a use of polymorphism that simple types do
+not allow (the notes print it without the type abstraction $\Lambda \alpha$).
 
 ## Depends on
 

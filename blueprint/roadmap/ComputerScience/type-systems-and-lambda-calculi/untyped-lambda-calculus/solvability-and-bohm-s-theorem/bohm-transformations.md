@@ -2,7 +2,8 @@
 
 A *Böhm transformation* is a map on untyped λ-terms obtained by composing finitely many elementary maps $B_{u} : t \mapsto t\, u$ and $B_{u,x} : t \mapsto t[u/x]$, for
 fixed terms $u$ and variables $x$. Every Böhm transformation $F$ is compatible with β- and with βη-conversion: $t =_\beta t'$ implies $F(t) =_\beta F(t')$, and likewise for
-$=_{\beta\eta}$. For every Böhm transformation $F$ there are terms $t_1, \dots, t_k$ with $F(t) = t\, t_1 \cdots t_k$ for every closed term $t$, and the $t_i$ may be taken closed.
+$=_{\beta\eta}$. For every Böhm transformation $F$ there are terms $t_1, \dots, t_k$ with $F(t) = t\, t_1 \cdots t_k$ for every closed term $t$; they are built from the terms
+$u$ of the elementary maps, so they are closed when all of those are.
 
 ## Depends on
 
