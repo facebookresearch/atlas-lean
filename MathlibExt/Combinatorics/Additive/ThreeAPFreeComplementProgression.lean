@@ -26,6 +26,18 @@ We refute Erdős Problem 199 using the sum of squares of the rational Hamel coor
 Its level sets are three-term progression-free, and along each progression it is a quadratic
 polynomial with rational coefficients. We enumerate the countably many possible polynomials
 and place parts of their level sets in separated intervals to meet every progression.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/ThreeAPFreeComplementProgressionErdosProblem199Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #199, https://www.erdosproblems.com/199 (status
+DISPROVED (LEAN)). UnsolvedMath record UM-30006761 (`EP-199`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Three-term progressions use Mathlib's `ThreeAPFree`. An infinite progression is one-sided, `a, a +
+d, a + 2d, …` with `d ≠ 0`; a two-sided progression contains a one-sided one, so this is the
+stronger refutation. Compared with the formal-conjectures statement `ErdosProblems/199.lean`
+(equivalent; no code imported).
 -/
 
 @[expose] public section
