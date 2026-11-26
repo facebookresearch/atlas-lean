@@ -18,6 +18,24 @@ import Mathlib.Tactic.Choose
 We refute the transversal interpretation of Erdős Problem 834. Following Li's set-pairs
 construction, we restrict to the edges through one vertex and remove that vertex before
 applying Bollobás's inequality. This bounds the degree by six.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/TransversalCriticalTripleSystemDegreeErdosProblem834Wanted.lean`:
+
+Source: T. F. Bloom, Erdős Problems, Problem #834, https://www.erdosproblems.com/834 (status
+SOLVED). UnsolvedMath record UM-30007054 (`EP-834`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Erdős and Lovász did not define `3`-critical. The page gives two definitions and records Li's
+resolution of both. This module states the transversal one: there is a set of `3` vertices meeting
+every edge, no such set of size `2`, and for every edge `e` a pair of vertices meeting every edge
+except `e` (`τ(H) = 3` and `τ(H - e) ≤ 2`; transversals of size at most `t` are used, which is
+equivalent once there are at least `t` vertices). Uniformity is MathlibExt's
+`SetFamily.IsUniform`; the transversal conditions are written out in the target. The vertex set is
+`Fin n`, and every vertex of it must have degree at least `7`. The chromatic reading is not
+stated: Li answers it with one explicit `9`-vertex hypergraph, a finite check. Compared with the
+formal-conjectures statement `ErdosProblems/834.lean` (equivalent to its part (i); no code
+imported).
 -/
 
 @[expose] public section
