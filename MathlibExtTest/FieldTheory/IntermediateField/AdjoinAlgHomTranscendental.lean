@@ -90,14 +90,32 @@ private theorem isAlgebraic_adjoin_x₀ :
     exact IntermediateField.mem_top
   exact isAlgebraic_algebraMap (⟨y, hy⟩ : IntermediateField.adjoin K ({x₀ K} : Set (F K)))
 
--- Boundary, with every hypothesis of the theorem proved: the algebra map it returns agrees
--- with `θ` at `1`, which lies in every admissible `G`, and sends the generator `X` to `X ^ 2`.
+-- The theorem, with every hypothesis proved.
+private theorem exists_sq_extension :
+    ∃ Θ : F K →ₐ[K] RatFunc K, ∀ x : F K, (x : RatFunc K) ∈ G K → Θ x = (x : RatFunc K) ^ 2 :=
+  IntermediateField.exists_algHom_adjoin_apply_eq_of_isAlgebraic_of_transcendental K (G K)
+    (one_mem_G K) (mul_mem_G K) (· ^ 2) (fun x _ y _ => mul_pow x y 2)
+    (sq_linearRelations K) (F K) rfl (x₀ K) (X_mem_G K)
+    ((transcendental_X (K := K)).pow two_pos) (isAlgebraic_adjoin_x₀ K)
+
+-- Boundary: the algebra map agrees with `θ` at `1`, which lies in every admissible `G`, and
+-- sends the generator `X` to `X ^ 2`.
 example : ∃ Θ : F K →ₐ[K] RatFunc K, Θ 1 = 1 ^ 2 ∧ Θ (x₀ K) = X ^ 2 := by
-  obtain ⟨Θ, hΘ⟩ :=
-    IntermediateField.exists_algHom_adjoin_apply_eq_of_isAlgebraic_of_transcendental K (G K)
-      (one_mem_G K) (mul_mem_G K) (· ^ 2) (fun x _ y _ => mul_pow x y 2)
-      (sq_linearRelations K) (F K) rfl (x₀ K) (X_mem_G K)
-      ((transcendental_X (K := K)).pow two_pos) (isAlgebraic_adjoin_x₀ K)
+  obtain ⟨Θ, hΘ⟩ := exists_sq_extension K
   exact ⟨Θ, hΘ 1 (one_mem_G K), hΘ (x₀ K) (X_mem_G K)⟩
+
+-- Off `G` the map need not agree with `θ`: when `2 ≠ 0` in `K`, it sends `1 + X ∉ G` to
+-- `1 + X ^ 2`, while `θ (1 + X) = (1 + X) ^ 2`.
+example (h2 : (2 : K) ≠ 0) :
+    ∃ Θ : F K →ₐ[K] RatFunc K, Θ (1 + x₀ K) = 1 + X ^ 2 ∧
+      Θ (1 + x₀ K) ≠ ((1 + x₀ K : F K) : RatFunc K) ^ 2 := by
+  obtain ⟨Θ, hΘ⟩ := exists_sq_extension K
+  have hΘ1X : Θ (1 + x₀ K) = 1 + X ^ 2 := by rw [map_add, map_one, hΘ (x₀ K) (X_mem_G K)]
+  refine ⟨Θ, hΘ1X, fun h => ?_⟩
+  have h' : (1 : RatFunc K) + X ^ 2 = (1 + X) ^ 2 := hΘ1X.symm.trans h
+  have h2X : (2 : RatFunc K) * X = 0 := by linear_combination -h'
+  rcases mul_eq_zero.mp h2X with h0 | h0
+  · exact h2 ((algebraMap K (RatFunc K)).injective (by rw [map_ofNat, h0, map_zero]))
+  · exact X_ne_zero h0
 
 end AdjoinAlgHomTranscendentalTest
