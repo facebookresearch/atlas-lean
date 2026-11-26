@@ -83,6 +83,67 @@ noncomputable section
 open UpperHalfPlane
 open scoped ModularForm MatrixGroups
 
+namespace ModularForm
+
+/-- If a coefficient sequence is an eigenvector of the coefficient Hecke operators of weight
+`k` (`T p` for primes `p ∤ N`, `U p` for primes `p ∣ N`) and its first coefficient vanishes,
+then all its coefficients of positive index vanish. -/
+public theorem eq_zero_of_coeffHecke_eigen_of_apply_one_eq_zero (k : ℤ) (N : ℕ)
+    (a c : ℕ → ℂ)
+    (hT : ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ n : ℕ, coeffHeckeT k p a n = c p * a n)
+    (hU : ∀ p : ℕ, p.Prime → p ∣ N → ∀ n : ℕ, coeffHeckeU p a n = c p * a n)
+    (h1 : a 1 = 0) : ∀ n : ℕ, n ≠ 0 → a n = 0 := by
+  intro n
+  induction n using Nat.strong_induction_on with
+  | _ n ih =>
+    intro hn
+    rcases Nat.lt_or_ge n 2 with hlt | hge
+    · obtain rfl : n = 1 := by omega
+      exact h1
+    · obtain ⟨p, hp, hpn⟩ := Nat.exists_prime_and_dvd (show n ≠ 1 by omega)
+      obtain ⟨m, rfl⟩ := hpn
+      have hm0 : m ≠ 0 := by rintro rfl; simp at hn
+      have hmpos : 0 < m := Nat.pos_of_ne_zero hm0
+      have hmlt : m < p * m := by nlinarith [hp.two_le]
+      have ham : a m = 0 := ih m hmlt hm0
+      by_cases hpN : p ∣ N
+      · have h := hU p hp hpN m
+        rw [coeffHeckeU_apply, ham, mul_zero, mul_comm m p] at h
+        exact h
+      · have h := hT p hp hpN m
+        rw [coeffHeckeT_apply, ham, mul_zero, mul_comm m p] at h
+        by_cases hpm : p ∣ m
+        · obtain ⟨q, rfl⟩ := hpm
+          have hq0 : q ≠ 0 := by rintro rfl; simp at hm0
+          have hqlt : q < p * (p * q) := by
+            have hqpos : 0 < q := Nat.pos_of_ne_zero hq0
+            nlinarith [hp.two_le]
+          have haq : a q = 0 := ih q hqlt hq0
+          rw [ite_eq_left (dvd_mul_right p q), Nat.mul_div_cancel_left q hp.pos, haq, mul_zero,
+            add_zero] at h
+          exact h
+        · rw [ite_eq_right hpm, add_zero] at h
+          exact h
+
+/-- If a coefficient sequence with first coefficient `1` is an eigenvector of the coefficient
+Hecke operators of weight `k` (`T p` for primes `p ∤ N`, `U p` for primes `p ∣ N`), then the
+eigenvalue at a prime `p` is its `p`-th coefficient. -/
+public theorem coeffHecke_eigenvalue_eq_apply_of_apply_one_eq_one (k : ℤ) (N : ℕ)
+    (a c : ℕ → ℂ)
+    (hT : ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ n : ℕ, coeffHeckeT k p a n = c p * a n)
+    (hU : ∀ p : ℕ, p.Prime → p ∣ N → ∀ n : ℕ, coeffHeckeU p a n = c p * a n)
+    (h1 : a 1 = 1) : ∀ p : ℕ, p.Prime → c p = a p := by
+  intro p hp
+  by_cases hpN : p ∣ N
+  · have h := hU p hp hpN 1
+    rw [coeffHeckeU_apply, one_mul, h1, mul_one] at h
+    exact h.symm
+  · have h := hT p hp hpN 1
+    rw [coeffHeckeT_apply, ite_eq_right hp.not_dvd_one, add_zero, one_mul, h1, mul_one] at h
+    exact h.symm
+
+end ModularForm
+
 namespace CuspForm
 
 /-- The constant `q`-expansion coefficient of a cusp form on `Γ₀(N)` vanishes. -/
@@ -123,71 +184,6 @@ public instance finiteDimensional_Gamma0 (N : ℕ) [NeZero N] (k : ℤ) :
   refine ModularForm.sturm_bound_Gamma0 N _ fun n hn => ?_
   have := congrFun hf ⟨n, Nat.lt_succ_of_le hn⟩
   exact this
-
-end CuspForm
-
-namespace ModularForm
-
-/-- If a coefficient sequence is an eigenvector of all coefficient Hecke operators
-(`T p` for `p ∤ N`, `U p` for `p ∣ N`) and its first coefficient vanishes, then all
-its coefficients of positive index vanish. -/
-public theorem eq_zero_of_coeffHecke_eigen_of_apply_one_eq_zero (k : ℤ) (N : ℕ)
-    (a c : ℕ → ℂ)
-    (hT : ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ n : ℕ, coeffHeckeT k p a n = c p * a n)
-    (hU : ∀ p : ℕ, p.Prime → p ∣ N → ∀ n : ℕ, coeffHeckeU p a n = c p * a n)
-    (h1 : a 1 = 0) : ∀ n : ℕ, n ≠ 0 → a n = 0 := by
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-    intro hn
-    rcases Nat.lt_or_ge n 2 with hlt | hge
-    · obtain rfl : n = 1 := by omega
-      exact h1
-    · obtain ⟨p, hp, hpn⟩ := Nat.exists_prime_and_dvd (show n ≠ 1 by omega)
-      obtain ⟨m, rfl⟩ := hpn
-      have hm0 : m ≠ 0 := by rintro rfl; simp at hn
-      have hmpos : 0 < m := Nat.pos_of_ne_zero hm0
-      have hmlt : m < p * m := by nlinarith [hp.two_le]
-      have ham : a m = 0 := ih m hmlt hm0
-      by_cases hpN : p ∣ N
-      · have h := hU p hp hpN m
-        rw [coeffHeckeU_apply, ham, mul_zero, mul_comm m p] at h
-        exact h
-      · have h := hT p hp hpN m
-        rw [coeffHeckeT_apply, ham, mul_zero, mul_comm m p] at h
-        by_cases hpm : p ∣ m
-        · obtain ⟨q, rfl⟩ := hpm
-          have hq0 : q ≠ 0 := by rintro rfl; simp at hm0
-          have hqlt : q < p * (p * q) := by
-            have hqpos : 0 < q := Nat.pos_of_ne_zero hq0
-            nlinarith [hp.two_le]
-          have haq : a q = 0 := ih q hqlt hq0
-          rw [ite_eq_left (dvd_mul_right p q), Nat.mul_div_cancel_left q hp.pos, haq, mul_zero,
-            add_zero] at h
-          exact h
-        · rw [ite_eq_right hpm, add_zero] at h
-          exact h
-
-/-- If a coefficient sequence with first coefficient `1` is an eigenvector of all
-coefficient Hecke operators, then the eigenvalue at a prime `p` is its `p`-th
-coefficient. -/
-public theorem coeffHecke_eigenvalue_eq_apply_of_apply_one_eq_one (k : ℤ) (N : ℕ)
-    (a c : ℕ → ℂ)
-    (hT : ∀ p : ℕ, p.Prime → ¬ p ∣ N → ∀ n : ℕ, coeffHeckeT k p a n = c p * a n)
-    (hU : ∀ p : ℕ, p.Prime → p ∣ N → ∀ n : ℕ, coeffHeckeU p a n = c p * a n)
-    (h1 : a 1 = 1) : ∀ p : ℕ, p.Prime → c p = a p := by
-  intro p hp
-  by_cases hpN : p ∣ N
-  · have h := hU p hp hpN 1
-    rw [coeffHeckeU_apply, one_mul, h1, mul_one] at h
-    exact h.symm
-  · have h := hT p hp hpN 1
-    rw [coeffHeckeT_apply, ite_eq_right hp.not_dvd_one, add_zero, one_mul, h1, mul_one] at h
-    exact h.symm
-
-end ModularForm
-
-namespace CuspForm
 
 open ModularForm ModularFormClass
 
@@ -441,7 +437,7 @@ private theorem op_commute (p q : ℕ) : Commute (op N p) (op N q) := by
 
 end Operators
 
-/-- A nonzero space `S_2(Γ₀(N))` of weight-two cusp forms on `Γ₀(N)` contains a
+/-- For `N ≠ 0`, a nonzero space `S_2(Γ₀(N))` of weight-two cusp forms on `Γ₀(N)` contains a
 normalized eigenform. -/
 public theorem exists_isNormalizedEigenform {N : ℕ} [NeZero N]
     (h : ∃ g : CuspForm (CongruenceSubgroup.Gamma0 N) 2, g ≠ 0) :
