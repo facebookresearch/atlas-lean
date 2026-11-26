@@ -286,32 +286,6 @@ public theorem_wanted restrictedCombination_bivariate_genFun_of_isWellBased
           PowerSeries.X * PowerSeries.C Polynomial.X) =
       1 + ∑ qi ∈ Q, PowerSeries.X ^ qi * PowerSeries.C Polynomial.X
 
-/-- **Restricted-overlap tilings.** Let $Q$ be a finite set of natural numbers and let $q$ be its
-largest element ($q = 0$ if $Q$ is empty). The $Q$-comb is a piece of length $q + 1$ whose cell
-$0$ and cells $j \in Q$ are teeth and whose other cells are gaps. A restricted-overlap tiling of an
-$n$-board (cells $0, \dots, n - 1$) with squares and $k$ $Q$-combs is recorded by the set $P$ of
-the start cells of its combs, with squares filling the cells that no tooth covers. The
-restricted-overlap tilings are the $k$-element sets $P$ of natural numbers $s$ with $s + q < n$
-(each comb fits on the board) such that $s \ne s' + j$ for all $s, s' \in P$ and all nonzero
-$j \in Q$ (no comb's leftmost cell is covered by a non-leftmost tooth of another comb).
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedOverlapTilings (Q : Finset ℕ) (n k : ℕ) : Finset (Finset ℕ) :=
-  (((Finset.range n).filter fun s => s + Q.sup id < n).powersetCard k).filter
-    fun P => ∀ s ∈ P, ∀ s' ∈ P, ∀ j ∈ Q, j ≠ 0 → s ≠ s' + j
-
-/-- **Number of restricted-overlap tilings.** For a finite set $Q$ of natural numbers and natural
-numbers $n$ and $k$, $B^Q_{n,k}$ is the number of restricted-overlap tilings of an $n$-board with
-squares and $k$ $Q$-combs.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedOverlapTilingCount (Q : Finset ℕ) (n k : ℕ) : ℕ :=
-  (restrictedOverlapTilings Q n k).card
-
 /-- **Two dominoes on a 4-board.** For $Q = \{1\}$ the $Q$-comb is a domino, and the number
 $B^{\{1\}}_{4,2}$ of restricted-overlap tilings of a $4$-board with squares and two $Q$-combs is
 $1$.
@@ -352,29 +326,6 @@ public theorem_wanted restrictedCombinationCount_eq_restrictedOverlapTilingCount
     restrictedCombinationCount Q n k = restrictedOverlapTilingCount Q (n + Q.sup id) k ∧
       restrictedCombinationTotal Q n = ∑ j ∈ Finset.range (n + Q.sup id + 1),
         restrictedOverlapTilingCount Q (n + Q.sup id) j
-
-/-- **Generating functions of restricted combinations and restricted-overlap tilings.** Let $Q$
-be a finite set of natural numbers and let $q$ be its largest element ($q = 0$ if $Q$ is empty).
-Write $S^Q_{n,k}$ for the number of $k$-subsets of $\{1, \dots, n\}$ in which no two elements
-differ by an element of $Q$, and $B^Q_{n,k}$ for the number of restricted-overlap tilings of an
-$n$-board with squares and $k$ $Q$-combs. In the ring $\mathbb{Z}[y][[x]]$ of power series in
-$x$ with coefficients in $\mathbb{Z}[y]$, let
-$g^Q(x, y) = \sum_{n \ge 0} \sum_{k=0}^{n} S^Q_{n,k} x^n y^k$ and
-$G(x, y) = \sum_{n \ge 0} \sum_{k=0}^{n} B^Q_{n,k} x^n y^k$. Then
-$$x^q g^Q(x, y) = G(x, y) - \sum_{n=0}^{q-1} x^n.$$
-
-This is the paper's formula $g^Q = \bigl(G - (1 - x^q)/(1 - x)\bigr)/x^q$ with the denominators
-cleared.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Corollary 7. -/
-public theorem_wanted restrictedCombination_genFun_eq_tiling_genFun (Q : Finset ℕ) :
-    PowerSeries.X ^ Q.sup id * PowerSeries.mk (fun n => ∑ k ∈ Finset.range (n + 1),
-        (restrictedCombinationCount Q n k : Polynomial ℤ) * Polynomial.X ^ k) =
-      PowerSeries.mk (fun n => ∑ k ∈ Finset.range (n + 1),
-        (restrictedOverlapTilingCount Q n k : Polynomial ℤ) * Polynomial.X ^ k) -
-        ∑ n ∈ Finset.range (Q.sup id), PowerSeries.X ^ n
 
 /-- **Metatiles with at most two combs.** Let $Q$ be a finite set of natural numbers and $q$ its
 largest element ($q = 0$ for $Q = \emptyset$). The set $Q$ has metatiles with at most two combs
