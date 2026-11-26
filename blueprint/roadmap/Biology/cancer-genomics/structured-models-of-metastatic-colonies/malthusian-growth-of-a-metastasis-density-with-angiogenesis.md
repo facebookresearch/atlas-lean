@@ -5,9 +5,11 @@
 $$\dot X=G(X),\qquad G(x,\theta)=\Big(ax\ln\frac{\theta}{x},\ cx-d\theta x^{2/3}\Big),$$
 
 restricted to the square $\Omega=(1,b)^2$, on whose boundary $\Gamma$ the field $G$ points inward and vanishes at the corner $(b,b)$. The density $\rho(t,x,\theta)$ of metastases satisfies the transport equation with a nonlocal birth boundary condition
+
 $$\begin{cases}\partial_t\rho+\operatorname{div}(G\rho)=0,& (x,\theta)\in\Omega,\\[2pt]
 -G\cdot\nu\,\rho(t,\sigma)=N(\sigma)\displaystyle\int_\Omega\beta(x,\theta)\rho(t,x,\theta)\,dx\,d\theta+f(t,\sigma),&\sigma\in\Gamma,\\[2pt]
 \rho(0,\cdot)=\rho^0,\end{cases}$$
+
 where $\beta$ is the emission rate of new metastases, $N$ the distribution of their birth sizes on $\Gamma$, and $f$ the emission by the primary tumor. Let $\Phi_\tau(\sigma)$ denote the flow of $G$ started at $\sigma\in\Gamma$.
 
 **Theorem.**

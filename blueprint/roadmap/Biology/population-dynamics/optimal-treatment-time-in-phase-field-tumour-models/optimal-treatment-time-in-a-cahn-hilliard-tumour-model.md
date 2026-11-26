@@ -1,10 +1,12 @@
 # Optimal treatment time in a Cahn–Hilliard tumour model
 
 **State equations.** In a bounded domain $\Omega \subset \mathbb{R}^3$ with $C^3$ boundary, let $\varphi \in [-1,1]$ be the tumour/healthy-tissue phase field ($\varphi = 1$ tumour, $\varphi = -1$ healthy), $\mu$ its chemical potential, $\sigma$ the nutrient concentration, and $u \in [0,1]$ the cytotoxic drug dose (the control). With interpolation $h(-1) = 0$, $h(1) = 1$, double-well potential $\Psi$, proliferation, apoptosis, consumption and supply rates $\mathcal{P}, \mathcal{A}, \mathcal{C}, \mathcal{B} \ge 0$, drug kill rate $\alpha > 0$ and vascular nutrient level $\sigma_S$,
+
 $$\begin{aligned}
 \partial_t\varphi &= \Delta\mu + (\mathcal{P}\sigma - \mathcal{A} - \alpha u)h(\varphi), \qquad \mu = A\Psi'(\varphi) - B\Delta\varphi,\\
 \partial_t\sigma &= \Delta\sigma - \mathcal{C}\sigma h(\varphi) + \mathcal{B}(\sigma_S - \sigma),
 \end{aligned}$$
+
 with homogeneous Neumann conditions for $\varphi, \mu, \sigma$ and initial data $\varphi_0, \sigma_0$.
 
 **Control problem with free treatment time.** For $r > 0$, weights $\beta_u, \beta_T > 0$, $\beta_Q, \beta_\Omega, \beta_S \ge 0$, targets $\varphi_Q, \varphi_\Omega$ and a treatment time $\tau \in [0,T]$, minimize

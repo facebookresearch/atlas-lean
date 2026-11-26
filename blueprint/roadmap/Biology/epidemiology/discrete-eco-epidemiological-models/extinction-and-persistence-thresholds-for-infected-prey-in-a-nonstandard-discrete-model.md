@@ -1,11 +1,13 @@
 # Extinction and persistence thresholds for infected prey in a nonstandard discrete model
 
 **Model.** Discretizing a nonautonomous predator–prey model with disease in the prey by Mickens' nonstandard finite-difference method gives, for susceptible prey $S_n$, infected prey $I_n$ and predators $P_n$,
+
 $$\begin{aligned}
 S_{n+1}-S_n &= \Lambda_n - \mu_nS_{n+1} - a_n f(S_{n+1},I_n,P_n)P_n - \beta_nS_{n+1}I_n,\\
 I_{n+1}-I_n &= \beta_nS_{n+1}I_n - \eta_n g(S_n,I_n,P_n)I_{n+1} - c_nI_{n+1},\\
 P_{n+1}-P_n &= (r_n - b_nP_{n+1})P_n + \gamma_na_n f(S_{n+1},I_n,P_n)P_n + \theta_n\eta_n g(S_n,I_n,P_n)I_{n+1},
 \end{aligned}$$
+
 with bounded non-negative coefficient sequences, $0 < \mu_n \le c_n$, $\Lambda_n, r_n, b_n$ bounded away from $0$, and general $C^1$ predation functional responses $f$ (on susceptible prey) and $g$ (on infected prey) that are non-increasing in $I$, with $f$ non-decreasing and $g$ non-increasing in $S$.
 
 **Thresholds.** Let $s^*_n$ solve the prey-only equation $s_{n+1} = (\Lambda_n + s_n)/(1+\mu_n)$, $y^*_n$ the predator-only logistic equation $y_{n+1} = (r_n+1)y_n/(1+b_ny_n)$, and $(x^*_n,z^*_n)$ the globally attracting solution of the disease-free predator–prey subsystem. For $\lambda \in \mathbb N$ define

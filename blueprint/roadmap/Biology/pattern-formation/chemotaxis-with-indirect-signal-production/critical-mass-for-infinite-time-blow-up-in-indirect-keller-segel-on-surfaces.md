@@ -1,11 +1,13 @@
 # Critical mass $8\pi$ for infinite-time blow-up in Keller–Segel with indirect signal production on surfaces
 
 Let $(\Sigma,g)$ be a closed connected Riemannian surface. Consider the parabolic–elliptic–ODE chemotaxis system with indirect signal production
+
 $$\begin{cases}
 \partial_tu=\Delta_gu-\operatorname{div}_g(u\nabla_gv),\\
 0=\Delta_gv-\overline w+w,\qquad \int_\Sigma v\,d\mu_g=0,\\
 \partial_tw=-w+u,
 \end{cases}$$
+
 with nonnegative $u_0\in C(\Sigma)$, $w_0\in C^1(\Sigma)$, where $\overline w$ is the spatial mean of $w$ and $M=\int_\Sigma u_0\,d\mu_g$ is the conserved cell mass.
 
 **Theorem.**

@@ -1,10 +1,12 @@
 # Acid-mediated tumour invasion model with chemotherapy
 
 **Model.** Let $u_1$, $u_2$ be the normal and tumour cell densities (scaled by their carrying capacities), $u_3$ the excess $\mathrm{H}^+$ ion concentration produced by glycolytic tumour cells, and $u_4$ the concentration of a cytotoxic drug infused at normalized rate $i(t) \ge 0$ (mean $1$ over a treatment cycle). In nondimensional form,
+
 $$\begin{aligned}
 u_1' &= u_1(1 - u_1 - \alpha_1u_2 - \delta_1u_3), &\qquad u_3' &= \beta_3(u_2 - u_3),\\
 u_2' &= \beta_2u_2(1 - u_2 - \alpha_2u_1 - \delta_2u_4), &\qquad u_4' &= \beta_4\big(i(t) - u_4 - \delta_4u_4u_2\big),
 \end{aligned}$$
+
 with logistic growth and Lotka–Volterra competition ($\alpha_1, \alpha_2$), acid kill of normal cells ($\delta_1$, tumour aggressiveness), drug kill of tumour cells ($\delta_2$, chemotherapy strength, the main control parameter), and drug consumption by tumour cells ($\delta_4$); all parameters are positive.
 
 **Theorem (well-posedness and positivity).** If $i \in C(\mathbb{R}_+, [0, i_M])$ and $\mathbf{u}(0) \in \mathbb{R}^4_+$, the system has a unique global solution with $\mathbf{u}(t) \in \mathbb{R}^4_+$ for all $t \ge 0$; the faces $\{u_1 = 0\}$ and $\{u_2 = 0\}$ are invariant.

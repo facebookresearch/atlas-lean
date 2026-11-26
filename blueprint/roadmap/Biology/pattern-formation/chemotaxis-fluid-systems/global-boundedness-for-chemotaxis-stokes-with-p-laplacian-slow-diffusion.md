@@ -1,11 +1,13 @@
 # Global boundedness for three-dimensional chemotaxis–Stokes with $p$-Laplacian slow diffusion
 
 Let $\Omega\subset\mathbb R^3$ be a bounded smooth domain. Consider bacteria of density $n$ consuming oxygen $c$ in an incompressible Stokes fluid with velocity $u$ and pressure $\pi$:
+
 $$\begin{cases}
 n_t+u\cdot\nabla n=\nabla\cdot\big(|\nabla n|^{p-2}\nabla n\big)-\chi\nabla\cdot(n\nabla c),\\
 c_t+u\cdot\nabla c-\Delta c=-cn,\\
 u_t+\nabla\pi=\Delta u+n\nabla\phi,\qquad\operatorname{div}u=0,
 \end{cases}\qquad x\in\Omega,\ t>0,$$
+
 with no-flux conditions $(|\nabla n|^{p-2}\nabla n-\chi n\nabla c)\cdot\nu=\partial_\nu c=0$ and $u=0$ on $\partial\Omega$. Here $\chi>0$ and $\phi$ is a gravitational potential. Assume $n_0\in L^\infty(\Omega)$ with $\nabla n_0^{1-1/p}\in L^p(\Omega)$, $c_0\in W^{2,r}(\Omega)$ and $u_0\in W^{2,r}(\Omega)\cap W^{1,r}_0(\Omega)$ with $\operatorname{div}u_0=0$ for all $r>1$, $\phi\in W^{1,\infty}(\Omega)$, and $n_0,c_0\ge0$.
 
 **Theorem.** For every $p>2$ the problem has a global bounded strong solution $(n,c,u,\pi)$, with no logistic damping and no smallness condition on the data. For every $\beta\in(\tfrac34,1)$ and $r>1$,

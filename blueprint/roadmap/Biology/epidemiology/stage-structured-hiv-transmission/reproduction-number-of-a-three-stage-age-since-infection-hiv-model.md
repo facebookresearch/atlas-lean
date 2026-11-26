@@ -1,12 +1,14 @@
 # Reproduction number of a three-stage age-since-infection HIV model
 
 **Model.** Susceptibles $S(t)$ are recruited at rate $\Lambda$ and die at rate $\mu$. Infected individuals pass through three successive HIV stages, $j=1$ (primary infection), $j=2$ (asymptomatic latency) and $j=3$ (AIDS), with densities $i_j(t,a)$ structured by the time $a$ spent in the current stage:
+
 $$\begin{cases}
 \dot S=\Lambda-\mu S-\dfrac SP\displaystyle\int_0^\infty\beta(a)\big(i_1+\varepsilon i_2+\delta i_3\big)(t,a)\,da,\\[4pt]
 i_1(t,0)=\dfrac SP\displaystyle\int_0^\infty\beta(a)\big(i_1+\varepsilon i_2+\delta i_3\big)(t,a)\,da,\quad (\partial_t+\partial_a)i_1=-(\gamma_1+d_1)i_1,\\[4pt]
 i_2(t,0)=\displaystyle\int_0^\infty\gamma_1i_1\,da,\quad(\partial_t+\partial_a)i_2=-(\gamma_2+d_2)i_2,\\[4pt]
 i_3(t,0)=\displaystyle\int_0^\infty\gamma_2i_2\,da,\quad(\partial_t+\partial_a)i_3=-d_3i_3,
 \end{cases}$$
+
 with frequency-dependent incidence through $P=S+\int(i_1+i_2+i_3)\,da$. Here $\beta(a)$ is stage-age-dependent infectivity, the factors $\varepsilon,\delta$ scale infectivity in stages 2 and 3, $\gamma_j(a)$ are progression rates, and $d_j\ge\mu$ are death rates; all are bounded, and $\beta,\gamma_j$ are Lipschitz and positive at arbitrarily large ages. Let $D_j(a)=\exp\!\big(-\int_0^a(\gamma_j+d_j)\big)$ for $j=1,2$ and $D_3(a)=\exp\!\big(-\int_0^ad_3\big)$, and set $\Omega_j=\int_0^\infty\beta D_j$ and $\Gamma_j=\int_0^\infty\gamma_jD_j$.
 
 **Theorem.** The model generates a unique strongly continuous, bounded dissipative and asymptotically smooth semiflow with a compact global attractor. With

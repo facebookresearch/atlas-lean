@@ -3,10 +3,12 @@
 **Setting.** Consider the [free-treatment-time control problem](optimal-treatment-time-in-a-cahn-hilliard-tumour-model.md) for the Cahn–Hilliard–nutrient tumour model, with relaxed objective $J_r(\varphi, u, \tau)$, admissible doses $\mathcal{U}_{\mathrm{ad}} = \{0 \le u \le 1\}$ and treatment time $\tau \in [0,T]$. Assume in addition $\varphi_Q \in H^1(0,T;L^2)$ and $\varphi_\Omega \in H^1(-r,T;L^2)$, and extend $\varphi(t) = \varphi_0$ for $t < 0$.
 
 **Adjoint system.** For a control $u$ with state $(\varphi, \mu, \sigma)$ and time $\tau_*$, there is a unique triplet $(p, q, r)$ with $p \in L^2(0,\tau_*;H^2) \cap C^0([0,\tau_*];L^2)$, $q \in L^2(0,\tau_*;L^2)$ and $r \in L^2(0,\tau_*;H^2) \cap H^1(0,\tau_*;L^2)$ solving, backward in time and weakly,
+
 $$\begin{aligned}
 -\partial_tp &= -B\Delta q + A\Psi''(\varphi)q - h'(\varphi)\big(\mathcal{C}\sigma r - (\mathcal{P}\sigma - \mathcal{A} - \alpha u)p\big) + \beta_Q(\varphi - \varphi_Q) + \tfrac{1}{2r}\chi_{(\tau_*-r,\tau_*)}\big(2\beta_\Omega(\varphi - \varphi_\Omega) + \beta_S\big),\\
 q &= \Delta p, \qquad -\partial_tr = \Delta r - \mathcal{B}r - \mathcal{C}h(\varphi)r + \mathcal{P}h(\varphi)p,
 \end{aligned}$$
+
 with homogeneous Neumann conditions and zero terminal data at $\tau_*$ (the signs follow from the weak form in the source).
 
 **Theorem (first-order necessary conditions).** Let $(u_*, \tau_*)$ be a minimizer with state $(\varphi_*, \mu_*, \sigma_*)$ and adjoint $(p, q, r)$. Then

@@ -1,11 +1,13 @@
 # Well-posedness and finite-time breakdown for Euler-alignment systems with diffusive chemotaxis
 
 **Model.** A population with density $\rho(x,t)$ and velocity $u(x,t)$ on $\mathbb R^n$ aligns velocities through a Cucker–Smale-type communication kernel and is attracted up the gradient of a self-produced diffusing chemical $f$:
+
 $$\begin{cases}
 \partial_t\rho+\nabla\cdot(\rho u)=0,\\[2pt]
 \partial_tu+(u\cdot\nabla)u=\displaystyle\int_{\mathbb R^n}\phi(|x-y|)\big(u(y,t)-u(x,t)\big)\rho(y,t)\,dy+\gamma\nabla f,\\[2pt]
 \partial_tf-\operatorname{tr}\big(a(x,t)\nabla^2f\big)+b\cdot\nabla f=\psi*\rho,
 \end{cases}$$
+
 with chemotactic strength $\gamma>0$ and $a=\sigma\sigma^{\mathsf T}$. Assume (H1) $\rho_0\in L^1_+\cap L^\infty$, $u_0\in W^{1,\infty}$, $f_0\in W^{1,\infty}$; (H2) a radial communication kernel given by a nonnegative $\phi\in W^{1,\infty}([0,\infty))$; (H3) a production kernel $\psi\in W^{1,\infty}$; (C1) $a$ and $b$ bounded and parabolically Hölder continuous; and (C2) $a$ uniformly elliptic.
 
 **Theorem.**

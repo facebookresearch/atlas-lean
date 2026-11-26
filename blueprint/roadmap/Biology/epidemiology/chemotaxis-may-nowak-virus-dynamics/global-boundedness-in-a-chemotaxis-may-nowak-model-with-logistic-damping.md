@@ -1,11 +1,13 @@
 # Global boundedness in a chemotaxis May–Nowak model with logistic damping
 
 Let $\Omega\subset\mathbb{R}^n$, $n\ge2$, be bounded and smooth, with homogeneous Neumann conditions, and consider
+
 $$\begin{cases}
 u_t=\Delta u-\chi\nabla\cdot(u\nabla v)+\kappa-u-uw-\mu\,\dfrac{u^{1+\alpha}}{\ln^k(u+e)},\\[1mm]
 \gamma v_t=\Delta v-v+uw,\\[1mm]
 w_t=\Delta w-w+v,
 \end{cases}$$
+
 where $u$ are uninfected cells, $v$ infected cells and $w$ free virus; $\chi\in\mathbb{R}$, $\mu>0$, $\alpha>0$, $k\in[0,1)$, $\gamma\in\{0,1\}$, and the source $\kappa\in C^1(\bar\Omega\times[0,\infty))$ is nonnegative with $\|\kappa\|_{L^\infty}\le\kappa_*$. The chemotactic term (attractive or repulsive, depending on the sign of $\chi$) couples cell motion to infected-cell density.
 
 **Theorem (parabolic case, $\gamma=1$).** For suitably regular nonnegative initial data, the system has a unique global classical solution, positive in $\bar\Omega\times(0,\infty)$, with

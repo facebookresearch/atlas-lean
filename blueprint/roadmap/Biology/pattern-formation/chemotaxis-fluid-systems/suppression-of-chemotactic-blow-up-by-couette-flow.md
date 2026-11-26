@@ -1,11 +1,13 @@
 # Suppression of chemotactic blow-up by a strong Couette flow in generalized Hillen–Painter models
 
 **Model.** On $\mathbb R^2$, a cell density $n$ with signal $c$ is advected by a Navier–Stokes perturbation $u$ of the Couette flow $(Ay,0)$ of amplitude $A$, with buoyancy forcing:
+
 $$\begin{cases}
 \partial_tn+Ay\,\partial_xn+u\cdot\nabla n-\Delta n=-\nabla\cdot\big[n(\kappa n+\mu)\nabla c\big],\\
 -\Delta c=n-\alpha c,\\
 \partial_tu+Ay\,\partial_xu+\binom{Au_2}{0}+u\cdot\nabla u-\Delta u+\nabla p=\binom0n,\qquad\nabla\cdot u=0.
 \end{cases}$$
+
 The sensitivity $n(\kappa n+\mu)$ generalizes the Hillen–Painter volume-filling model; $\kappa>0$ is the *supercritical* case, in which solutions without flow can blow up in finite time for any initial mass $M=\|n_{\rm in}\|_{L^1}$. Let $\omega=\operatorname{curl}u$.
 
 **Theorem.** Let $0<\epsilon<\tfrac12<m$, with $\epsilon>\tfrac13$ if $\alpha=0$. Let $u_{\rm in}\in H^2(\mathbb R^2)$ and $0\le n_{\rm in}\in L^1\cap L^\infty$, and assume $\|\omega_{\rm in}\|_{Y_{m,\epsilon}}+\|\langle D_x\rangle^{1/3}n_{\rm in}\|_{Y_{m,\epsilon}}<\infty$, where $Y_{m,\epsilon}$ weights $x$-frequencies by $\langle D_x\rangle^m\langle D_x^{-1}\rangle^\epsilon$. There is $C^*=C^*(\epsilon,m,\kappa,\mu,\alpha)$ such that if

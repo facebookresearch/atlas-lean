@@ -1,12 +1,14 @@
 # Equilibria and threshold stability of the delayed media SVIRS model
 
 **Model.** Susceptible $S$, vaccinated $V$, infected $I$ and recovered $R$ individuals evolve as
+
 $$\begin{aligned}
 S'&=\Lambda-\iota I\,e^{-mI(t-\tau)}S-(d_0+\varpi)S+\upsilon V+\vartheta R,\\
 V'&=\varpi S-\sigma_0\iota I\,e^{-mI(t-\tau)}V-(d_0+\upsilon)V,\\
 I'&=\iota I\,e^{-mI(t-\tau)}\big(S+\sigma_0V\big)-(d_0+\gamma_0+d)I,\\
 R'&=\frac{\gamma_0 I}{1+\alpha I}-(d_0+\vartheta)R,
 \end{aligned}$$
+
 with all parameters positive and $\sigma_0\in[0,1]$: recruitment $\Lambda$, transmission $\iota$, media intensity $m$ acting with information delay $\tau\ge 0$, vaccination rate $\varpi$, relative susceptibility $\sigma_0$ of vaccinees, vaccine waning $\upsilon$, immunity waning $\vartheta$, natural and disease death $d_0,d$, recovery $\gamma_0$ saturated by limited treatment capacity $\alpha$. Initial histories lie in $C([-\tau,0],\mathbb R_+^4)$.
 
 **Results.**

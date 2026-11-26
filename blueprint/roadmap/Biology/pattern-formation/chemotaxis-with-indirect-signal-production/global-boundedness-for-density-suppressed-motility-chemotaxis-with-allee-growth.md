@@ -1,11 +1,13 @@
 # Global boundedness for density-suppressed motility chemotaxis with indirect signal production and a strong Allee effect
 
 Let $\Omega\subset\mathbb R^d$, $d\ge2$, be a bounded domain with smooth boundary, and consider the chemotaxis–growth system with homogeneous Neumann boundary conditions
+
 $$\begin{aligned}
 u_t&=\Delta(\gamma(v)u)+\mu u(1-u^\theta)(u-A),\\
 v_t&=\Delta v-v+w^\beta,\\
 w_t&=-\delta w+u,
 \end{aligned}\qquad x\in\Omega,\ t>0,$$
+
 where $u$ is the cell density, $w$ an intermediate (non-diffusing) signal-producing species, $v$ the chemical signal, $\mu,\beta,\delta>0$, $\theta\ge1$ and the Allee threshold $A\in(0,1)$. Initial data satisfy $u_0\in C^0(\overline\Omega)$, $v_0,w_0\in C^1(\overline\Omega)$, $u_0,v_0,w_0\ge0$, $u_0\not\equiv0$. The motility satisfies
 
 - **(H1)** $\gamma\in C^3([0,\infty))$, $\gamma>0$, $\gamma'<0$ on $[0,\infty)$ and $\gamma(v)\to0$ as $v\to\infty$;

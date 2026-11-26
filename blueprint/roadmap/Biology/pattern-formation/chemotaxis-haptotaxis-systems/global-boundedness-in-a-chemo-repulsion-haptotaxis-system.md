@@ -1,11 +1,13 @@
 # Global boundedness in a chemo-repulsion–haptotaxis system
 
 Let $\Omega\subset\mathbb{R}^n$ ($n\ge2$) be bounded and smooth, $\chi,\xi\ge0$, $\tau\in\{0,1\}$, and consider
+
 $$\begin{cases}
 u_t=\Delta u+\chi\nabla\cdot(u\nabla v)-\xi\nabla\cdot(S(u)\nabla w), & x\in\Omega,\ t>0,\\
 \tau v_t=\Delta v-v+u,\\
 w_t=-vw,
 \end{cases}$$
+
 with no-flux boundary conditions $\partial_\nu u+\chi u\,\partial_\nu v-\xi S(u)\,\partial_\nu w=\partial_\nu v=0$. Here $u$ is the cell density, $v$ a signal produced by the cells that repels them (the sign $+\chi$), and $w$ a matrix degraded by the signal that attracts cells. The $C^2$ hapto-sensitivity satisfies, for some $\theta\in\mathbb{R}$,
 
 $$0=S(0)\le S(u)\le u(u+1)^{\theta-1}\qquad(u\ge0).$$

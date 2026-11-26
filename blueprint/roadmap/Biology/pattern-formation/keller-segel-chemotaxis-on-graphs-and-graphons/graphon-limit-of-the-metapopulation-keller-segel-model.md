@@ -1,10 +1,12 @@
 # Graphon limit of the metapopulation Keller–Segel model
 
 Let $I=[0,1]$, let $W$ be a measurable kernel on $I^2$ with finite row and column norms $M_x(|W|),M_y(|W|)<\infty$, and let $S(a,b)=e^{\chi a}/(e^{\chi a}+e^{\chi b})$. The **graphon Keller–Segel system** for $U=(n,c)$ is $\partial_tU=\mathcal F_W[U]$:
+
 $$\begin{aligned}
 \partial_tn(x)&=\eta_n\int_IW(x,y)\big(S(c(x),c(y))\,n(y)-\big(1-S(c(x),c(y))\big)n(x)\big)\,dy+f(n(x)),\\
 \partial_tc(x)&=\frac{\eta_c}2\int_IW(x,y)\big(c(y)-c(x)\big)\,dy+\alpha n(x)-\beta c(x).
 \end{aligned}$$
+
 On $N$ patches with weights $\mathsf w^{(N)}_{k\ell}$, the discrete model replaces $\int_I W(x,y)\,\cdot\,dy$ by $\frac1N\sum_\ell\mathsf w^{(N)}_{k\ell}(\cdot)$. Write $\Pi_N$ for the step reconstruction on the intervals $I_k=[(k-1)/N,k/N)$ and $W^{(N)}$ for the step kernel of the weights.
 
 **Theorem.**

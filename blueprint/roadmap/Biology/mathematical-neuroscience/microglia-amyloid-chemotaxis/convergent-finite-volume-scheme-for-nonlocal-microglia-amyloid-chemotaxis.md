@@ -1,10 +1,12 @@
 # Convergent finite-volume scheme for nonlocal microglia–amyloid chemotaxis with measure-valued vascular influx
 
 **Model.** In a bounded polygonal ($d=2$) or polyhedral ($d=3$) domain $\Omega$, an activated microglial density $u$ moves toward a soluble amyloid-$\beta$-associated signal $v$ by nonlocal sensing:
+
 $$\begin{cases}
 \partial_tu-D_u\Delta u+\chi\nabla\cdot\big(u\,\nabla\mathcal K_\sigma[v]\big)=\mathcal R_u(x,t,u,v),\\
 \partial_tv-D_v\Delta v=\mathcal R_v(x,t,u,v),
 \end{cases}\qquad \mathcal K_\sigma[v]\,(x)=\int_\Omega K_\sigma(x,y)v(y)\,dy .$$
+
 Here $\sigma>0$ is a fixed sensing length. The reactions model recruitment and saturating activation of microglia, their loss, signal production and decay, and microglia-mediated clearance of the signal; all parameters are nonnegative and the data are bounded. The signal enters through a vascular part $\Gamma_{\rm v}$ of the boundary, a union of boundary faces, as a nonnegative **Radon measure** flux $D_v\partial_\nu v=\mu$ on $\Gamma_{\rm v}\times(0,T)$. Elsewhere the boundary conditions are no-flux. For each $\sigma>0$, the regularity of the kernel makes $v\mapsto b_\sigma[v]=\nabla\mathcal K_\sigma[v]$ map finite signal mass to a bounded, spatially Lipschitz velocity field.
 
 **Scheme.** Use a fully implicit two-point finite-volume discretization with upwind chemotactic fluxes driven by a discrete nonlocal potential $K_{\sigma,\mathcal D}[v]$. The boundary source enters through its exact mass $\mu(F\times(t^k,t^{k+1}])$ on each boundary face–time cell.

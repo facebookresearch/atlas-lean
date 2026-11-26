@@ -1,10 +1,12 @@
 # Chemotactic instability threshold for Keller–Segel on a metapopulation graph
 
 Let $G$ be an undirected graph on patches $1,\dots,N$ with adjacency matrix $A$, degree matrix $D$ and graph Laplacian $L=(A-D)/N$, so $(Lv)_i=\frac1N\sum_jA_{ij}(v_j-v_i)$ and $L$ has eigenvalues $\lambda_0=0>\lambda_1\ge\dots\ge\lambda_{N-1}$ when $G$ is connected. Individuals on an edge $i\sim j$ move from $i$ to $j$ with Fermi probability $\mathbb P(i\to j)=e^{\chi c_j}/(e^{\chi c_i}+e^{\chi c_j})$, where $\chi\ge0$ is the chemotactic sensitivity. The **graph Keller–Segel model** is
+
 $$\begin{aligned}
 \dot n_i&=\frac{\eta_n}{N}\sum_jA_{ij}\big(n_j\mathbb P(j\to i)-n_i\mathbb P(i\to j)\big)+f(n_i),\\
 \dot c_i&=\frac{\eta_c}{N}\sum_jA_{ij}\frac{c_j-c_i}{2}+\alpha n_i-\beta c_i,
 \end{aligned}$$
+
 with $\eta_n,\eta_c,\alpha,\beta>0$ and $f(n)=nh(n)$. Assume an equilibrium $\bar n>0$ with $f(\bar n)=0$ and $f'(\bar n)<0$, and set $\bar c=\alpha\bar n/\beta$.
 
 **Proposition.** The uniform state $(n_i,c_i)\equiv(\bar n,\bar c)$ is linearly unstable to perturbations along the eigenvector of $\lambda_k<0$ exactly when $\chi>\chi_k^*$, where
