@@ -84,3 +84,38 @@ example : ∑' x : (ℕ × ℕ) × (ℕ × ℕ), (2 : ℂ) ^ (x.1.1 + x.1.2)
   simp [atom]
 
 end MetaMathlibExt.tsum_twoAdic_double_multisection
+
+namespace MetaMathlibExt
+
+private def atomFour (m : ℕ) : ℂ := if m = 4 then 1 else 0
+
+private theorem summable_atomFour (d : ℕ) (hd : 0 < d) (w : ℕ → ℂ) :
+    Summable fun x : ℕ × ℕ => w x.1 * atomFour ((2 * x.2 + d) * 2 ^ x.1) := by
+  refine summable_of_ne_finset_zero (s := (Finset.range 4).product (Finset.range 4)) ?_
+  rintro ⟨j, n⟩ hmem
+  have hne : (2 * n + d) * 2 ^ j ≠ 4 := by
+    intro h
+    apply hmem
+    have hj : j < 2 ^ j := Nat.lt_two_pow_self
+    have hpow : 2 ^ j ≤ (2 * n + d) * 2 ^ j := Nat.le_mul_of_pos_left _ (by omega)
+    have hn : 2 * n + d ≤ (2 * n + d) * 2 ^ j := Nat.le_mul_of_pos_right _ (by positivity)
+    exact Finset.mem_product.mpr ⟨Finset.mem_range.mpr (by omega), Finset.mem_range.mpr (by omega)⟩
+  simp [atomFour, hne]
+
+-- The unit mass at 4 uses valuation 2: one odd-family term and two even-family terms.
+example (q : ℂ) :
+    ∑' x : ℕ × ℕ, (q ^ x.1 * atomFour ((2 * x.2 + 1) * 2 ^ x.1)
+        - q ^ x.1 * (q - 1) * atomFour ((2 * x.2 + 2) * 2 ^ x.1)) = 1 := by
+  have ho := summable_atomFour 1 (by decide) (q ^ ·)
+  have he := summable_atomFour 2 (by decide) (fun j => q ^ j * (q - 1))
+  refine (tsum_twoAdic_parametric_multisection q atomFour ho he).trans ?_
+  rw [tsum_eq_single 3 (fun m hm => by simp [atomFour, show m + 1 ≠ 4 by omega])]
+  simp [atomFour]
+
+-- At q = 1 the even family vanishes, leaving only the unique odd-part factorization.
+example (b : ℕ → ℂ) (hb : Summable fun x : ℕ × ℕ => b ((2 * x.2 + 1) * 2 ^ x.1)) :
+    ∑' x : ℕ × ℕ, b ((2 * x.2 + 1) * 2 ^ x.1) = ∑' m : ℕ, b (m + 1) := by
+  simpa only [one_pow, one_mul, sub_self, zero_mul, sub_zero] using
+    tsum_twoAdic_parametric_multisection 1 b (by simpa only [one_pow, one_mul] using hb) (by simp)
+
+end MetaMathlibExt
