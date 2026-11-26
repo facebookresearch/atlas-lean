@@ -10,6 +10,7 @@ module
 public import CSLibExt.Languages.LambdaCalculus.Callcc.Basic
 public import CSLibExt.Languages.TypeSafety
 public import Cslib.Foundations.Relation.Defs
+import Cslib.Foundations.Relation.Preserves
 
 /-!
 # First-class continuations with callcc and abort: type safety
@@ -24,14 +25,15 @@ type-safety schema of `CSLibExt.Languages.TypeSafety`, taking a closed program a
 values as the final states, these give the multi-step safety statements, and the typing
 judgment satisfies the structural-typing interface. `callcc` has the type of Peirce's law, and
 the answer type is irrelevant for abort-free terms, which gives safety for abort-free programs at
-every type (Wright and Felleisen, Theorem 6.6).
+every type, with every term they reach, in particular the value they reach, typed at the type of
+the program (Wright and Felleisen, Theorem 6.6).
 
 ## References
 
 * A. K. Wright and M. Felleisen, *A Syntactic Approach to Type Soundness*, Information and
   Computation 115(1), 1994, §6: the claim in the proof of Main Lemma 6.1 (typing of the
   continuation), §6.4, Lemma 6.4, Main Lemma 6.5 and Theorem 6.6, with a single answer type.
-* T. G. Griffin, *A Formulae-as-Types Notion of Control*, POPL 1990, §3: callcc has the type of
+* T. G. Griffin, *A Formulae-as-Types Notion of Control*, POPL 1990, §5: callcc has the type of
   Peirce's law.
 -/
 
@@ -386,5 +388,18 @@ theorem final_or_step_abortFree {T : Ty} {e e' : Term} {A : Ty} (he : e.AbortFre
     (h : HasType T [] e A) (hr : Relation.ReflTransGen Step e e') :
     e'.Value ∨ ∃ e'', Step e' e'' := by
   exact final_or_step (T := A) (HasType.answer_irrelevant he h) hr
+
+/-- **Syntactic soundness for abort-free programs.** Let `T` be the answer type. Every term
+reachable in any number of steps from an abort-free closed term `e` of type `A` has type `A` at
+answer type `A`, and is a value or takes a step; in particular a value reached from `e` has type
+`A`. The reached terms are typed at answer type `A`, the type of the program, rather than at `T`,
+since the continuation that a `callcc` step passes aborts with a term of type `A`. This is Wright
+and Felleisen's Theorem 6.6 for every reachable term, with the answer typed as in its proof. -/
+theorem hasType_and_final_or_step_abortFree {T : Ty} {e e' : Term} {A : Ty} (he : e.AbortFree)
+    (h : HasType T [] e A) (hr : Relation.ReflTransGen Step e e') :
+    HasType A [] e' A ∧ (e'.Value ∨ ∃ e'', Step e' e'') := by
+  have hp : Relation.Preserves Step (HasType A [] · A) := fun _ _ hs he' => preservation he' hs
+  exact ⟨Relation.preserves_reflTransGen_iff.mpr hp hr (HasType.answer_irrelevant he h),
+    final_or_step_abortFree he h hr⟩
 
 end Cslib.Languages.LambdaCalculus.Callcc

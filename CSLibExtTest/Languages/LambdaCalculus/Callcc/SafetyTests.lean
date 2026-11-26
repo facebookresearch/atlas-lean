@@ -18,7 +18,10 @@ Wright and Felleisen's Figure 6 on a list containing `0` reaches `0` by a trace 
 multiplication step, with the product of a list without `0` as positive control; invoking a
 continuation discards the pending context; `abort` is typed at the answer type, and the
 unrestricted typing of `abort` is not preserved by a step; Griffin's `𝒞` is derivable at
-answer type `bot`; a stuck term is ill-typed; and the schema instances on a concrete program.
+answer type `bot`; a stuck term is ill-typed; and the schema instances on a concrete program,
+with syntactic soundness for the abort-free early-exit product typed at answer type `bot`: its
+result has the type `nat` of the program, and its first reduct has no type `nat` at answer type
+`bot`.
 The list of the early-exit product is a list of numbers in Lean, rendered as the recursion of
 Figure 6 unrolled into the program; there are no lists in the calculus. Tests that go through a
 statement of `Callcc.Safety` are proved by applying that statement; every other fact is proved
@@ -296,6 +299,64 @@ theorem product_safe {e' : Term} (hr : Relation.ReflTransGen Step (product [2, 3
 or steps. -/
 theorem product_result : (Term.num 0).Value ∨ ∃ e'', Step (.num 0) e'' :=
   final_or_step (product_typed _) product_early_exit_steps
+
+/-- **The early-exit product contains no abort.** For every list `xs`, the product program is
+abort-free. -/
+theorem product_abortFree (xs : List ℕ) : (product xs).AbortFree := by
+  show (unroll xs).AbortFree
+  induction xs with
+  | nil => trivial
+  | cons x xs ih =>
+    show True ∧ (True ∧ True) ∧ True ∧ (unroll xs).AbortFree
+    exact ⟨trivial, ⟨trivial, trivial⟩, trivial, ih⟩
+
+/-- **K-T9: the statement of syntactic soundness for abort-free programs.** For every answer type
+`T`, every term reachable from an abort-free closed term of type `A` has type `A` at answer type
+`A`, and is a value or takes a step. -/
+theorem hasType_and_final_or_step_abortFree_pin :
+    ∀ {T : Ty} {e e' : Term} {A : Ty}, e.AbortFree → HasType T [] e A →
+      Relation.ReflTransGen Step e e' → HasType A [] e' A ∧ (e'.Value ∨ ∃ e'', Step e' e'') :=
+  @hasType_and_final_or_step_abortFree
+
+/-- **The early-exit product is typed at answer type `bot`.** For every list `xs`, the product
+program has type `nat` at answer type `bot`. -/
+theorem product_typed_bot (xs : List ℕ) : HasType .bot [] (product xs) .nat :=
+  .callcc (B := .nat) (.lam (unroll_typed .bot xs))
+
+/-- **K-T9: the typed answer of an abort-free program.** Typed at answer type `bot`, the
+early-exit product of `[2, 3, 0, 5]` contains no `abort`; its result `0` has the type `nat` of
+the program, at answer type `nat`. -/
+theorem product_typed_answer : HasType .nat [] (.num 0) .nat :=
+  (hasType_and_final_or_step_abortFree (product_abortFree [2, 3, 0, 5]) (product_typed_bot _)
+    product_early_exit_steps).1
+
+/-- **K-T9: reached terms are typed at the program's type.** Typed at answer type `bot`, the
+early-exit product of `[2, 3, 0, 5]` takes a `callcc` step to a term with no type `nat` at
+answer type `bot`, since the continuation `λx. abort x` needs `x : bot`; so syntactic soundness
+types the reached terms at answer type `nat`, the type of the program, and not at `bot`. -/
+theorem product_step_not_typed_bot :
+    HasType .bot [] (product [2, 3, 0, 5]) .nat ∧
+      Step (product [2, 3, 0, 5]) (.app (.lam (unroll [2, 3, 0, 5])) topK) ∧
+      ¬ HasType .bot [] (.app (.lam (unroll [2, 3, 0, 5])) topK) .nat := by
+  refine ⟨product_typed_bot _, Step.callcc (E := []) trivial (.lam _), fun h => ?_⟩
+  cases h with
+  | app hf ha =>
+    cases ha with
+    | lam hb =>
+      cases hb with
+      | abort hx =>
+        cases hx with
+        | var hx =>
+          cases hx
+          cases hf with
+          | lam hu =>
+            cases hu with
+            | ifz _ ht _ =>
+              cases ht with
+              | app hk hn =>
+                cases hn
+                cases hk with
+                | var hk => cases hk
 
 /-- **K-T9: the structural-typing instance.** Substituting `2` for the variable of
 `x : nat ⊢ x * x : nat` through the interface gives `2 * 2 : nat`, and weakening by one variable

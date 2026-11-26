@@ -55,8 +55,8 @@ which lets the continuation built by `callcc` be an ordinary abstraction.
   evaluation contexts), Figure 6 (the early-exit product of a list), §6.2 (the typing of callcc
   and abort), §6.3 (typability preservation), §6.4 and Figure 7 (typing with answer types,
   here a single answer type), Main Lemma 6.5 and Theorem 6.6.
-* T. G. Griffin, *A Formulae-as-Types Notion of Control*, POPL 1990, §3: the classical reading
-  of callcc and abort.
+* T. G. Griffin, *A Formulae-as-Types Notion of Control*, POPL 1990: §3 (abort read as
+  ⊥-elimination, that is ex falso) and §5 (callcc has the type of Peirce's law).
 -/
 
 @[expose] public section

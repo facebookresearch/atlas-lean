@@ -17,9 +17,10 @@ the handler; an uncaught exception is final, a normal form and not a value; a ha
 nested handlers, where the inner handler catches first and its re-raise reaches the outer one;
 negative typing checks (the raised value must have the exception type, the handler must have
 the type of the body, a stuck term is ill-typed); progress fails without the uncaught-exception
-clause; the schema instances on a concrete term; and `raise` at exception type `bot` as ex
-falso. Tests that go through a statement of `Exceptions.Safety` are proved by applying that
-statement; every other fact is proved directly.
+clause; the schema instances on a concrete term, and syntactic soundness with the answers of a
+handled and an unhandled program typed at the type of the program; and `raise` at exception type
+`bot` as ex falso. Tests that go through a statement of `Exceptions.Safety` are proved by
+applying that statement; every other fact is proved directly.
 -/
 
 @[expose] public section
@@ -195,6 +196,21 @@ theorem tryMulRaise_safe {e' : Term} (hr : Relation.ReflTransGen Step tryMulRais
 steps. -/
 theorem tryMulRaise_result_final : Final (.num 3) ∨ ∃ e'', Step (.num 3) e'' :=
   final_or_step tryMulRaise_typed tryMulRaise_steps
+
+/-- **E-T9: the statement of syntactic soundness.** For every exception type `exn`, every term
+reachable from a closed term of type `A` has type `A` and is final or takes a step. -/
+theorem hasType_and_final_or_step_pin :
+    ∀ {exn : Ty} {e e' : Term} {A : Ty}, HasType exn [] e A → Relation.ReflTransGen Step e e' →
+      HasType exn [] e' A ∧ (Final e' ∨ ∃ e'', Step e' e'') :=
+  @hasType_and_final_or_step
+
+/-- **E-T9: typed answers through syntactic soundness.** At exception type `nat`, the handled
+program `try (2 * raise 3) with x. x` reaches `3`, and the unhandled program `2 * raise 3`
+reaches the uncaught exception `raise 3`; both answers have the type `nat` of their program. -/
+theorem typed_answers :
+    HasType .nat [] (.num 3) .nat ∧ HasType .nat [] (.raise (.num 3)) .nat :=
+  ⟨(hasType_and_final_or_step tryMulRaise_typed tryMulRaise_steps).1,
+    (hasType_and_final_or_step (A := .nat) (.mul .num (.raise .num)) uncaught_final.1).1⟩
 
 /-- **E-T9: the structural-typing instance.** Substituting `3` for the handler variable of
 `x : nat ⊢ x * x : nat` through the interface gives `3 * 3 : nat`, and weakening by one

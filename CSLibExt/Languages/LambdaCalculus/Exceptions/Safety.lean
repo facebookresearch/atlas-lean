@@ -10,6 +10,7 @@ module
 public import CSLibExt.Languages.LambdaCalculus.Exceptions.Basic
 public import CSLibExt.Languages.TypeSafety
 public import Cslib.Foundations.Relation.Defs
+import Cslib.Foundations.Relation.Preserves
 
 /-!
 # Exceptions with a fixed exception type: type safety
@@ -20,7 +21,9 @@ instantiation), the fact that final terms do not step, progress for closed terms
 well-typed term is final, that is a value or an uncaught exception, or it steps), and
 preservation for every context. With the type-safety schema of
 `CSLibExt.Languages.TypeSafety`, taking a closed term as the state, these give the multi-step
-safety statements, and the typing judgment satisfies the structural-typing interface.
+safety statements, and with preservation every term reached from a closed term of type `A`, in
+particular a final one, has type `A` (syntactic soundness). The typing judgment satisfies the
+structural-typing interface.
 
 ## References
 
@@ -312,6 +315,16 @@ theorem not_stuck {exn : Ty} {e e' : Term} {A : Ty} (h : HasType exn [] e A)
     (hr : Relation.ReflTransGen Step e e') : ¬ (¬ Final e' ∧ Relation.Normal Step e') := by
   exact TypeSafety.not_stuck_of_reflTransGen Step Final (fun e A => HasType exn [] e A)
     (fun he => progress he) (fun _ _ _ hs he => preservation he hs) h hr
+
+/-- **Syntactic soundness.** Let `exn` be the exception type. Every term reachable in any number
+of steps from a closed term of type `A` has type `A`, and is final or takes a step; in particular
+a final term it reaches, a value or an uncaught exception `raise v`, has type `A`. This is Wright
+and Felleisen's Theorem 5.10 for every reachable term, specialized to one anonymous exception. -/
+theorem hasType_and_final_or_step {exn : Ty} {e e' : Term} {A : Ty} (h : HasType exn [] e A)
+    (hr : Relation.ReflTransGen Step e e') :
+    HasType exn [] e' A ∧ (Final e' ∨ ∃ e'', Step e' e'') := by
+  have hp : Relation.Preserves Step (HasType exn [] · A) := fun _ _ hs he => preservation he hs
+  exact ⟨Relation.preserves_reflTransGen_iff.mpr hp hr h, final_or_step h hr⟩
 
 /-- **The calculus with exceptions has the structural properties.** For every exception type
 `exn`, the typing judgment satisfies `TypeSafety.StructuralTyping` when binding adds a new
