@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.TwoNearPerfect
 
 namespace MathlibExtTest.NumberTheory.TwoNearPerfect
@@ -35,5 +36,17 @@ example {i : ℕ} (hi : i ≤ 2) :
 example : ArithmeticFunction.sigma 1 9 ≠ 2 * 9 + 1 + 9 := by
   simpa using MetaMathlibExt.not_two_near_perfect_two_pow_mul_prime_sq_case_two
     (k := 0) (p := 3) (i := 0) (m := 2) Nat.prime_three (by decide) (by decide) (Or.inr rfl)
+
+-- At `a = k = 1` the discriminant is `9 = 3 ^ 2`, so the theorem applies.
+example : (1 : ℕ) = 1 ∧ (1 : ℕ) = 1 :=
+  MetaMathlibExt.eq_one_of_isSquare_discriminant (a := 1) (k := 1)
+    (ha := by decide) (hak := by decide) (hD := ⟨3, by norm_num⟩)
+
+-- At `a = 1` and `k = 2` the discriminant cannot be a square.
+example : ¬ IsSquare ((2 : ℤ) ^ (2 * 2 + 2) + 2 ^ (2 + 2) - 2 ^ (1 + 2) - 7) := by
+  intro h
+  have hka := MetaMathlibExt.eq_one_of_isSquare_discriminant (a := 1) (k := 2)
+    (ha := by decide) (hak := by decide) (hD := h)
+  norm_num at hka
 
 end MathlibExtTest.NumberTheory.TwoNearPerfect
