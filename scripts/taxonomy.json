@@ -10676,6 +10676,7 @@
   "MathlibExt/Combinatorics/ClusterFreeErdosKoRadoOWR1386Problem011": {"to": "Combinatorics/extremal-set-theory/intersecting-families", "title": "Erdős–Ko–Rado for d-cluster-free families"},
   "MathlibExt/Combinatorics/Coding/CycleCode": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
   "MathlibExt/Combinatorics/Coding/CycleShannonBounds": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
+  "MathlibExt/Combinatorics/Coding/CycleShannonBoundsLovasz1979UpperBound": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
   "MathlibExt/Combinatorics/Coding/EliasBassalygo": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
   "MathlibExt/Combinatorics/Coding/GilbertVarshamov": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
   "MathlibExt/Combinatorics/Coding/HammingSpherePacking": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
