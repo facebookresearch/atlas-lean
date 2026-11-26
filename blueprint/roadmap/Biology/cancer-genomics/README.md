@@ -15,3 +15,12 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
+- [Bourque distances for mutation trees](bourque-distances-for-mutation-trees/README.md)
+- [Clone tree integration across mutation types](clone-tree-integration-across-mutation-types/README.md)
+- [Diploid interval adjacency graphs](diploid-interval-adjacency-graphs/README.md)
+- [Dollo(k) tumor phylogenies](dollo-k-tumor-phylogenies/README.md)
+- [Dollo models of tumour phylogeny](dollo-models-of-tumour-phylogeny/README.md)
+- [Interval-adjacency graphs for cancer genome reconstruction](interval-adjacency-graphs-for-cancer-genome-reconstruction/README.md)
+- [Metastasis size distributions under treatment](metastasis-size-distributions-under-treatment/README.md)
+- [Multi-sample allele-specific copy-number deconvolution](multi-sample-allele-specific-copy-number-deconvolution/README.md)
+- [Unit-level permutation tests for recurrent copy-number aberrations](unit-level-permutation-tests-for-recurrent-copy-number-aberrations/README.md)
