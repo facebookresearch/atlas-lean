@@ -13196,6 +13196,7 @@
   "MathlibExt/NumberTheory/GiugaNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Giuga numbers"},
   "MathlibExt/NumberTheory/GobelBSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelNonIntegrality": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
+  "MathlibExt/NumberTheory/GobelNonIntegralityExistsUniqueGobelASequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelResidueExponentPeriod": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
   "MathlibExt/NumberTheory/GobelSequenceError": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Göbel sequences"},
