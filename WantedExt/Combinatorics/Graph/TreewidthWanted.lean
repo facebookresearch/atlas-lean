@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Graph.GraphMinor
+public import MathlibExt.Combinatorics.Graph.TreewidthMinor
 public import MathlibExt.Combinatorics.SimpleGraph.TreewidthDuality
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Prod
@@ -17,11 +17,10 @@ public import Mathlib.Combinatorics.SimpleGraph.Prod
 /-!
 # Tree-width: wanted theorems
 
-Central theorems on tree-width whose proofs are deferred: minor-monotonicity, the grid theorem
-of Robertson and Seymour, and the well-quasi-ordering of graphs of bounded tree-width (the bounded
-case of the graph minor theorem
-`MetaMathlibExt.graph_minor_theorem`). Graph minors are
-`MetaMathlibExt.IsMinor` on bundled finite graphs; tree-width is
+Central theorems on tree-width whose proofs are deferred: the grid theorem of Robertson and
+Seymour, and the well-quasi-ordering of graphs of bounded tree-width (the bounded case of the
+graph minor theorem `MetaMathlibExt.graph_minor_theorem`). Graph minors are
+`MetaMathlibExt.IsMinor` on bundled finite graphs. Tree-width is
 `SimpleGraph.HasTreewidthAtMost`.
 
 ## References
@@ -35,12 +34,6 @@ case of the graph minor theorem
 namespace MetaMathlibExt
 
 open SimpleGraph
-
-/-- **Tree-width does not increase under taking minors.** If `H` is a minor of the finite graph
-`G` and `G` has tree-width at most `k`, then so does `H` (Diestel, *Graph Theory*, 6th ed.,
-Lemma 12.4.1, from Lemmas 12.3.2 and 12.3.3). -/
-theorem_wanted IsMinor.hasTreewidthAtMost {H G : FinGraph} (h : IsMinor H G) {k : ℕ}
-    (hG : G.G.HasTreewidthAtMost k) : H.G.HasTreewidthAtMost k
 
 /-- **Grid theorem (Robertson–Seymour).** For every integer `r` there is an integer `k` such that
 every finite graph of tree-width greater than `k` has the `r × r` grid as a minor; the grid is the

@@ -15,6 +15,7 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
+public import MathlibExt.NumberTheory.FibonacciCompanionCompositionSum
 public import MathlibExt.NumberTheory.GibonacciCompositionSum
 public import MathlibExt.NumberTheory.GibonacciNumber
 public import MathlibExt.NumberTheory.LucasSequence
@@ -380,21 +381,6 @@ public theorem_wanted fib_lucas_add_eq_composition_sum (m n : ℕ) (hn : 1 ≤ n
           (-((lucasNumber m : ℂ) + rho) ^ 2 /
             ((lucasNumber (m + 2) : ℂ) + lucasNumber m + 2 * rho)) ^ (n - c.length) *
           ∏ j : Fin c.length, (rho * (c.blocksFun j : ℂ) + lucasNumber m))
-
-/-- **Companion composition-sum formula for $F_{n+3}$.** Let $F_k$ be the Fibonacci numbers. For
-every $n \ge 1$,
-$$\frac{5}{9} F_{n+3} = \left(-\frac{1}{3}\right)^n \sum \prod_{i=1}^{r} (5 c_i - 10),$$
-where the sum runs over all compositions $(c_1, \dots, c_r)$ of $n$ (tuples of positive integers
-with $c_1 + \dots + c_r = n$).
-
-This is the companion of identity (13) of the source: identity (30) with $m = 3$ and the square
-root $\lambda = -1$.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 5 (`integers-2025-A97-cor-5`). -/
-public theorem_wanted fib_add_three_companion_composition_sum (n : ℕ) (hn : 1 ≤ n) :
-    5 / 9 * (Nat.fib (n + 3) : ℚ) =
-      (-1 / 3) ^ n * ∑ c : Composition n, ∏ i : Fin c.length, (5 * (c.blocksFun i : ℚ) - 10)
 
 /-- **Gibonacci subsequences $G_{2n+m}$ as composition sums.** Let $y$ and $z$ be non-negative
 integers, not both zero, and let $(G_k)$ be the Gibonacci sequence with $G_0 = y$ and $G_1 = z$.
