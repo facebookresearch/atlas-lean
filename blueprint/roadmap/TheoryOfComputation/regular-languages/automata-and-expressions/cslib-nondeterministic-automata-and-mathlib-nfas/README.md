@@ -7,7 +7,6 @@
 - [Converting a set-valued-transition automaton and back](to-nfa-of-nfa.md)
 - [Converting a relation-valued-transition automaton and back](of-nfa-to-nfa.md)
 - [Runs of the set-valued-transition form of an automaton](to-nfa-eval-from.md)
-- [A relation-valued-transition automaton and its set-valued-transition form accept the same language](language-to-nfa.md)
 - [The two presentations of a nondeterministic automaton accept the same language](accepts-of-nfa.md)
 
 ## Automata with ε-moves
@@ -18,5 +17,4 @@
 - [Converting a relation-valued-transition automaton with empty moves and back](of-nfa-to-nfa-2.md)
 - [The two closures under empty moves agree](to-nfa-closure.md)
 - [Runs of the set-valued-transition form of an automaton with empty moves](mem-to-nfa-eval-from.md)
-- [An automaton with empty moves and its set-valued-transition form accept the same language](language-to-nfa-2.md)
 - [The two presentations of an automaton with empty moves accept the same language](accepts-of-nfa-2.md)

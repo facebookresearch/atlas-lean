@@ -4,4 +4,4 @@ The one-element monoid is aperiodic: its only element $x = 1$ satisfies $x^1 = x
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter XI, Proposition 4.22 (background); a direct consequence of the definition.
+- S. Eilenberg, *Automata, Languages, and Machines*, Vol. B, Academic Press, 1976, Chapter V, Example 3.3 (for finite monoids: the aperiodic monoids form a variety, which contains the trivial monoid); the statement here also applies to infinite monoids.

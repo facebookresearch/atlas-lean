@@ -1,6 +1,5 @@
 # The syntactic monoid is the transition monoid of the minimal DFA
 
-- [Equivalent states are those with the same continuation language](state-equivalent-iff-accepts-from-eq.md)
 - [Injective continuation languages give state separation](of-accepts-from-eq.md)
 - [Reindexing states keeps continuation languages](accepts-from-reindex.md)
 - [Reindexing states keeps state separation](state-separated-reindex.md)

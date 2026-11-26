@@ -3,7 +3,6 @@
 - [Pumping a word decomposition](pump.md)
 - [Pumping lengths of a language](is-pumping-length.md)
 - [A larger number is again a pumping length](mono.md)
-- [Pumping lengths are upward closed](is-pumping-length-iff-forall-ge.md)
 - [A strict bound on all word lengths is a pumping length](of-forall-length-lt.md)
 - [Zero is a pumping length only for the empty language](is-pumping-length-zero-iff.md)
 - [Pumped words lie in a language containing x y* z](mem-of-pumping-language-le.md)

@@ -4,4 +4,4 @@ The class of aperiodic finite monoids, those in which every element $x$ satisfie
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter XI, Proposition 4.22.
+- S. Eilenberg, *Automata, Languages, and Machines*, Vol. B, Academic Press, 1976, Chapter V, Example 3.3 (the finite aperiodic monoids form a variety of finite monoids).

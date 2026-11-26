@@ -4,4 +4,4 @@ A monoid is aperiodic when the powers of every element eventually stabilize: for
 
 ## Sources
 
-- J.-É. Pin, *Mathematical Foundations of Automata Theory*, version of 24 March 2025, Chapter VI, §2, Proposition 2.1 (powers of an element of a finite monoid). The definition here is stated for arbitrary monoids, a generalisation of the finite case.
+- S. Eilenberg, *Automata, Languages, and Machines*, Vol. B, Academic Press, 1976, Chapter V, Example 3.3 (the finite aperiodic monoids, those satisfying $x^{n+1} = x^n$); the definition here also applies to infinite monoids.
