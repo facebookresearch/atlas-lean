@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.EnhancedIndQuotientModels
 public import MathlibExt.AlgebraicGeometry.IndSheafBoundedTensorModels
+public import MathlibExt.AlgebraicGeometry.IndSheafDerivedSourceRequestsActualBoundedLocalizationSource
 
 /-!
 # Source constructions for actual derived and enhanced Ind primitives
@@ -66,10 +67,6 @@ theorem_wanted actual_tensor_cochain_source (k : Type) [Field k] (X : TopCat.{0}
 /-- The original Q carries every literal bounded Ind complex into bounded cohomology. -/
 theorem_wanted actual_bounded_cohomology_source (k : Type) [Field k] (X : TopCat.{0})
     [CompactSheafSource k X] : BoundedCohomologySource k X
-
-/-- The original bounded Q localizes the actual bounded cochain quasi-isomorphisms. -/
-theorem_wanted actual_bounded_localization_source (k : Type) [Field k] (X : TopCat.{0})
-    [CompactSheafSource k X] (R : BoundedCohomologySource k X) : BoundedLocalizationSource k X R
 
 /-- Native totals of two bounded Ind complexes are literally bounded. -/
 theorem_wanted actual_bounded_tensor_source (k : Type) [Field k] (X : TopCat.{0})
