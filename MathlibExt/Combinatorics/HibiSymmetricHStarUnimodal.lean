@@ -38,9 +38,11 @@ possible residues give the palindromic numerator `(1, 1, 2, 1, 2, 1, 1)`.
   Example 4.2 and the proof of Theorem 1.4 (the case `b = 3`, `k = 2`, `r = 0`).
 * B. Braun, R. Davis, and L. Solus, *Detecting the integer decomposition property and Ehrhart
   unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, equation (2)
-  (Payne's family in weight notation) and Theorem 2.2 (the fundamental-parallelepiped argument).
+  (Payne's family in weight notation) and Theorem 2.2 (the general weighted-simplex formula and
+  its proof by counting lattice points in the fundamental parallelepiped).
 * B. Braun, R. Davis, D. Hanely, M. Lane, and L. Solus, *The Integer Decomposition Property and
-  Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5 (the formula).
+  Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5 (restating
+  Braun–Davis–Solus, Theorem 2.2).
 -/
 
 namespace MathlibExt.Combinatorics
@@ -393,9 +395,11 @@ $1 + X + 2X^2 + X^3 + 2X^4 + X^5 + X^6$.
 
 Source: S. Payne, *Ehrhart series and lattice triangulations*, Discrete Comput. Geom. 40 (2008),
 365–376, Example 4.2 with $b = 3$, $k = 2$, $r = 0$ (the simplex and its numerator);
-Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60,
-Theorem 5 (the general weighted-simplex formula). -/
+Benjamin Braun, Robert Davis, and Liam Solus, *Detecting the integer decomposition property and
+Ehrhart unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018), 122–142, Theorem 2.2
+(the general formula and its fundamental-parallelepiped proof); restated by Benjamin Braun,
+Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer Decomposition Property and
+Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article A60, Theorem 5. -/
 public theorem hibiWeightedSimplex_hStar :
     PowerSeries.mk (fun n => (LatticePointEnumerator.latticeEnumerator 6
       (weightedSimplex ![1, 1, 1, 1, 1, 3]) n : ℤ)) * (1 - PowerSeries.X) ^ 7 =

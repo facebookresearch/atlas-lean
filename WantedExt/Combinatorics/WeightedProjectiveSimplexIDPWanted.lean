@@ -74,12 +74,14 @@ numbers, put $|q| = q_1 + \dots + q_n$ and define the weight statistic
 $w(q,b) = b - \sum_{i=1}^n \lfloor q_i b / (1 + |q|) \rfloor$. The $h^*$ formula of $q$ is the
 integer polynomial $\sum_{b=0}^{|q|} z^{w(q,b)}$.
 
-It is named a formula, not defined to be $h^*$; Theorem 5 relates it to the independently
-defined Ehrhart-series condition.
+The polynomial is defined separately from the Ehrhart-series condition. For positive weights,
+Theorem 2.2 of Braun, Davis, and Solus identifies it as the Ehrhart numerator.
 
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
+Source: Benjamin Braun, Robert Davis, and Liam Solus, *Detecting the integer decomposition
+property and Ehrhart unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018),
+122–142, Theorem 2.2; restated by Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and
+Liam Solus, *The Integer Decomposition Property and Weighted Projective Space Simplices*,
+INTEGERS 24 (2024), Article A60, Theorem 5. -/
 public noncomputable def hStarFormula (q : List ℕ) : Polynomial ℤ :=
   ∑ b ∈ Finset.range (q.sum + 1), Polynomial.X ^ weightStatistic q b
 
@@ -308,9 +310,11 @@ $$\Big(\sum_{t \ge 0} L(t) z^t\Big)(1 - z)^{n+1} = \sum_{b=0}^{q_1 + \cdots + q_
 where $w(q, b) = b - \sum_{i=1}^{n} \lfloor q_i b / (1 + q_1 + \cdots + q_n) \rfloor$ is the
 weight statistic.
 
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
+Source: Benjamin Braun, Robert Davis, and Liam Solus, *Detecting the integer decomposition
+property and Ehrhart unimodality in reflexive simplices*, Adv. in Appl. Math. 100 (2018),
+122–142, Theorem 2.2; restated by Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and
+Liam Solus, *The Integer Decomposition Property and Weighted Projective Space Simplices*,
+INTEGERS 24 (2024), Article A60, Theorem 5. -/
 public theorem_wanted weightedSimplex_hStar_formula (q : List ℕ) (hq : ∀ a ∈ q, 1 ≤ a) :
     IsHStarPolynomial (weightedSimplexList q) (hStarFormula q)
 
