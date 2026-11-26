@@ -13,11 +13,15 @@ convention in which the cyclotomic character has weight $1$, is $1$ for $g = \ta
 
 For $F = \mathbb{Q}_p$ there is one line, and it has weight $1$.
 
-A good expansion has pages for: Lubin–Tate formal groups over the ring of integers of $F$, the Galois action on
-their torsion points and its description through $r_F$ on the units; the $G_F$-equivariant Hodge–Tate decomposition
-of the Tate module of a $p$-divisible group over the ring of integers of $F$, due to Tate, applied to a Lubin–Tate
-group; and the descent from the Lubin–Tate character to the characters $\rho$ above, by twisting by characters of
-finite order on inertia and by conjugating by $\tau$.
+A good expansion has pages for: Lubin–Tate formal groups $G$ over the ring of integers $\mathcal{O}_F$ of $F$, with
+the action of $\mathcal{O}_F$ by endomorphisms, the Galois action on their torsion points and its description
+through $r_F$ on the units; Tate's $G_F$-equivariant Hodge–Tate sequence for a $p$-divisible group over
+$\mathcal{O}_F$, functorial in the $p$-divisible group, applied to a Lubin–Tate group: $\mathcal{O}_F$ acts on
+$\operatorname{Lie} G \otimes C_F(1)$ through the inclusion $\mathcal{O}_F \subset C_F$, which identifies this
+weight-$1$ part with the line indexed by the identity, while the lines indexed by $g \ne \mathrm{id}$ map
+isomorphically onto the quotient of weight $0$; and the passage from the Lubin–Tate character to the characters
+$\rho$ above, by characters of finite order on inertia and by conjugation by $\tau$, which moves the weight-$1$ line
+to $g = \tau^{-1}$.
 
 ## Depends on
 
@@ -28,10 +32,11 @@ finite order on inertia and by conjugating by $\tau$.
 
 ## Proof depends on
 
-- [Hodge–Tate sequence of a p-divisible group](../hodge-tate-sequence-of-p-divisible-groups.md), for the Hodge–Tate map of a Lubin–Tate group over the ring of integers of $C_F$
-- [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for $H^1(G_F, C_F(1)) = 0$, which splits the Hodge–Tate sequence $G_F$-equivariantly, and for $C_F(i)^{G_F} = 0$ when $i \ne 0$, which makes the weights well defined
+- [Hodge–Tate sequence of a p-divisible group](../hodge-tate-sequence-of-p-divisible-groups.md), for the exactness of the Hodge–Tate sequence of the Lubin–Tate group after base change to the ring of integers of $C_F$, without Galois action
+- [Tate–Sen theorem on the Galois cohomology of C(i)](../tate-sen-theorem.md), for $C_F(i)^{G_F} = 0$ when $i \ne 0$, which makes the weights well defined
 
-Its proof also uses the inputs listed in the expansion note.
+Its proof also uses the inputs listed in the expansion note, in particular Tate's $G_F$-equivariant and
+$\mathcal{O}_F$-equivariant Hodge–Tate sequence, which the page on the Hodge–Tate sequence of a $p$-divisible group does not state.
 
 ## Sources
 
@@ -45,4 +50,8 @@ Its proof also uses the inputs listed in the expansion note.
   normalization of the local Artin map)"; the arithmetic normalization is fixed on p. 32.
 - J.-P. Serre, *Abelian l-adic representations and elliptic curves*, 2nd edition, A. K. Peters (1998),
   Chapter III, Appendix, A.5, Theorem 2 and Lemma 2 in its proof, as cited by Conrad in the proof of
-  Proposition B.3.
+  Proposition B.3; not read here.
+- J. Tate, "p-divisible groups", in *Proceedings of a Conference on Local Fields* (Driebergen, 1966), Springer
+  (1967), for the Hodge–Tate decomposition of $p$-divisible groups over $\mathcal{O}_F$, as cited by Brinon and Conrad,
+  *CMI summer school notes on p-adic Hodge theory* (preliminary version), §7.2, p. 94 (reference [49], with
+  Theorem 7.2.8, Tate's theorem on homomorphisms of $p$-divisible groups); not read here.

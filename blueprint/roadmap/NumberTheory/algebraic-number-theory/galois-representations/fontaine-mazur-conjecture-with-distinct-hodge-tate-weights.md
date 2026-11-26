@@ -1,4 +1,4 @@
-# Pan's theorem: the Fontaine–Mazur conjecture for GL₂ over ℚ with distinct Hodge–Tate weights
+# Pan's theorem: the Fontaine–Mazur conjecture for GL₂ over ℚ for odd p and distinct Hodge–Tate weights
 
 This node is still to be broken down. Let $p$ be an odd prime, $\overline{\mathbb{Q}}_p$ an algebraic closure of
 $\mathbb{Q}_p$ and $\iota_p \colon \overline{\mathbb{Q}}_p \to \mathbb{C}$ an isomorphism; fix an embedding
