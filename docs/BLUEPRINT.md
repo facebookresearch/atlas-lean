@@ -769,7 +769,10 @@ file after them. On any other PR, the build's jobs are skipped and
 that PRs that change only Lean library files, `scripts/taxonomy.json` or
 `scripts/wiki-sync.json` do not wait about 50 minutes for the build, while the
 tests that read such files still run: some check the committed taxonomy as the
-wiki, the Mathlib layer's strict join and the Mathlib pages read it.
+wiki, the Mathlib layer's strict join and the Mathlib pages read it. A PR that
+changes only Lean library files those tests do not read, provenance and
+documentation skips them too: `scripts/ci_scope.py` lists the four Lean modules
+and the document the tests read besides the graph's data and their own code.
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
 than a failure, CI's `check the graph` checks the graph as committed,
 `Graph sync` checks every PR's declarations, and `main`'s daily build checks the
