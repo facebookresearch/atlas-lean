@@ -12,9 +12,9 @@ import MathlibExt.Combinatorics.AlephOmegaPartitionSumErdosProblem1219
 
 /-! # Tests for Shelah's partition relation -/
 
-namespace MathlibExt.Combinatorics.AlephOmegaPartitionSumErdosProblem1219Wanted.Test
+namespace MathlibExtTest.Combinatorics.AlephOmegaPartitionSumErdosProblem1219
 
-open Cardinal
+open Cardinal MathlibExt.Combinatorics.AlephOmegaPartitionSumErdosProblem1219Wanted
 
 private abbrev Summand (n : ℕ → ℕ) (i : ℕ) : Type := ((2 : Cardinal.{0}) ^ ℵ_ (n i)).out
 
@@ -50,4 +50,4 @@ example (n : ℕ → ℕ) (hn : StrictMono n)
     rw [hH, mk_nat] at hle
     exact (aleph0_lt_aleph.mpr Ordinal.omega0_pos).not_ge hle
 
-end MathlibExt.Combinatorics.AlephOmegaPartitionSumErdosProblem1219Wanted.Test
+end MathlibExtTest.Combinatorics.AlephOmegaPartitionSumErdosProblem1219
