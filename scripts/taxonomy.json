@@ -10366,6 +10366,7 @@
   "Domains/Chemistry/ProcessBalances/ProductionSequence": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Process material balances"},
   "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
   "Domains/Chemistry/ThermalBalances/FreezingTime": {"to": "Chemistry/chemical-kinetics", "title": "Thermal inactivation kinetics"},
+  "Domains/Chemistry/Transport/SerialTankResponse": {"to": "Chemistry/chemical-kinetics", "title": "Residence-time distributions"},
   "Domains/Chemistry/Transport/StirredTankStepResponse": {"to": "Chemistry/chemical-kinetics", "title": "Residence-time distributions"},
   "Domains/Economics/Accounting/BalancedNotCorrect": {"to": "Economics/financial-accounting", "title": "Limits of the trial balance"},
   "Domains/Economics/Accounting/CashConversionCycle": {"to": "Economics/financial-accounting", "title": "Cash conversion cycle"},
