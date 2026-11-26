@@ -1,4 +1,6 @@
-# Map Mul Equiv Equiv Of Eq
+# Subgroup transport to an identified image
 
-Transport a subgroup by a multiplicative equivalence and then identify
-its image with an equal target subgroup.
+Subgroup transport to an identified image.
+
+If e(H) = H′ for a subgroup H′ ≤ G′, compose H ≃* e(H) with this subgroup identification to
+obtain H ≃* H′.

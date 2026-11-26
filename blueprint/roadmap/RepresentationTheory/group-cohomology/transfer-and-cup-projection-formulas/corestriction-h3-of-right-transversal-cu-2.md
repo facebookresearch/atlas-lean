@@ -1,4 +1,6 @@
-# Corestriction H3 Of Right Transversal cup One Two
+# The one-by-two projection formula on cohomology classes
 
-Chosen-transversal H1 x H2 to H3 projection formula:
-`cor(res(x) cup y) = x cup cor(y)`.
+The one-by-two projection formula on cohomology classes.
+
+For x ∈ H¹(G,A) and y ∈ H²(H,B|H), cor_T(res(x) ∪ y) = x ∪ cor_T(y) in H³(G,A ⊗ B), with the
+specified restriction–tensor comparison.

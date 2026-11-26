@@ -13,11 +13,21 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldInvariantSkyscraperInverse
 public import Mathlib.CategoryTheory.Action.Limits
 public import Mathlib.CategoryTheory.Adjunction.Additive
 
-/-! # The same geometric stalk and invariant inverse sheaf
+/-!
+# Equivariant geometric stalk and invariant inverse sheaf
 
-The original field, chosen separable closure and both fixed common-universe functors
-are retained. The point/skyscraper transpose is restricted using the actual invariant
-cone. The unit and counit will retain their original germ and evaluation coordinates.
+Fix a field with separable closure and abelian coefficients in universe `max u w`. The
+ordinary stalk-skyscraper transpose identifies diagonal-invariant sheaf maps with Galois-
+equivariant stalk maps. Under the diagonal action of `g`, transposition uses the stalk action
+of `g⁻¹` and the coefficient action of `g`.
+
+The invariant cone gives a Hom correspondence between the geometric Galois stalk and the
+invariant inverse-sheaf functor. This is an additive adjunction, natural in the sheaf and
+discrete Galois coefficient.
+
+The unit maps a section to its geometric-germ function. The counit evaluates an equivariant
+section at the germ point. These values, the invariant projection maps, both triangle
+identities, and coefficient-lift coordinates are retained.
 -/
 @[expose] public section
 noncomputable section
@@ -28,13 +38,17 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- Compatibility with the original field instance name, using the canonical Hom addition. -/
+/-- Discrete field coefficient category is preadditive.
+
+The discrete Galois coefficient category has the canonical additive Hom structure. -/
 @[nolint defsWithUnderscore] -- preserve the original public compatibility name
 abbrev fieldDiscreteAbelianAction_preadditive :
     Preadditive (DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :=
   DiscreteAbelianAction.instPreadditive.{u, max u w} (G := Gal(Ω/k))
 
-/-- The SAME literal inverse maps are additive on every actual module Hom group. -/
+/-- Invariant inverse sheaf functor is additive.
+
+The inverse-sheaf construction preserves sums of coefficient morphisms. -/
 instance fieldInvariantSkyscraperInverseSheaf_additive :
     (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).Additive where
   map_add := by
@@ -49,7 +63,10 @@ instance fieldInvariantSkyscraperInverseSheaf_additive :
     intro z
     rfl
 
-/-- The ordinary transpose is the original point/skyscraper adjunction on the SAME groups. -/
+/-- Ordinary field stalk maps transpose to skyscraper maps.
+
+The point adjunction gives a bijection between additive stalk maps to the underlying
+coefficient and sheaf maps to its skyscraper. -/
 abbrev fieldStalkSkyscraperHomEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -59,7 +76,10 @@ abbrev fieldStalkSkyscraperHomEquiv
   (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafAdjunction.homEquiv
     Q ((fieldModuleAbAction.{u, w} k Ω M).V)
 
-/-- Transposition of the SAME diagonal is the actual inverse stalk action and module action. -/
+/-- Diagonal skyscraper action transposes with the inverse stalk action.
+
+Postcomposition by the diagonal skyscraper map for `g` transposes to precomposition by the
+stalk action of `g⁻¹`, followed by the coefficient action of `g`. -/
 theorem fieldStalkSkyscraperHomEquiv_symm_diagonal
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
@@ -107,7 +127,10 @@ theorem fieldStalkSkyscraperHomEquiv_symm_diagonal
     ((fieldModuleAbAction.{u, w} k Ω M).V)
     ((fieldModuleAbAction.{u, w} k Ω M).ρ g).asHom h
 
-/-- The exact ordinary stalk-arrow equivariance condition on the SAME source and target action. -/
+/-- Equivariance condition on an additive field stalk map.
+
+An additive map is equivariant when the stalk action of every `g` followed by the map equals
+the map followed by the coefficient action of `g`. -/
 def FieldEquivariantStalkAbHom
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
@@ -116,14 +139,20 @@ def FieldEquivariantStalkAbHom
   ∀ g : Gal(Ω/k), (fieldGaloisStalkMap.{u, w} k Ω g).app Q ≫ f =
     f ≫ ((fieldModuleAbAction.{u, w} k Ω M).ρ g).asHom
 
-/-- The exact invariant-cone condition, using the constructed inverse-index diagonal. -/
+/-- Invariance condition on a field skyscraper map.
+
+A skyscraper-valued sheaf map is invariant when postcomposition with every diagonal Galois
+action leaves it unchanged. -/
 def FieldInvariantSkyscraperHom
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (h : Q ⟶ fieldSkyscraper.{u, w} k Ω M) : Prop :=
   ∀ g : Gal(Ω/k), h ≫ fieldSkyscraperDiagonalMap.{u, w} k Ω M g = h
 
-/-- Equivariance of the original stalk arrow is exactly actual diagonal invariance. -/
+/-- Invariant skyscraper maps transpose to equivariant stalk maps.
+
+The ordinary point Hom correspondence identifies diagonal-invariant skyscraper maps with
+equivariant additive stalk maps. -/
 theorem fieldStalkSkyscraperHomEquiv_invariant_iff
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
@@ -162,7 +191,9 @@ theorem fieldStalkSkyscraperHomEquiv_invariant_iff
           ((congrArg (fun t => f ≫ t) hc).trans (Category.comp_id f)))))
 
 
-/-- Every actual module arrow has its SAME original additive stalk arrow. -/
+/-- Underlying additive map of an equivariant stalk morphism.
+
+Forget the Galois action on an equivariant stalk morphism to obtain its additive-group map. -/
 abbrev fieldEquivariantStalkUnderlyingMap
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -171,7 +202,10 @@ abbrev fieldEquivariantStalkUnderlyingMap
       (fieldModuleAbAction.{u, w} k Ω M).V :=
   (DiscreteAbelianAction.forget Gal(Ω/k)).map f
 
-/-- The module condition is the original stalk action, with no supplied equivariance data. -/
+/-- Underlying stalk map retains Galois equivariance.
+
+The underlying additive map commutes with each stalk action and the corresponding coefficient
+action. -/
 theorem fieldEquivariantStalkUnderlyingMap_comm
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -188,7 +222,10 @@ theorem fieldEquivariantStalkUnderlyingMap_comm
   have hc := (fieldModuleAbActionMap.{u, w} k Ω f).comm g
   exact (congrArg (fun a => a ≫ fieldEquivariantStalkUnderlyingMap.{u, w} k Ω f) ha.symm).trans hc
 
-/-- The original point adjoint of every actual module arrow is genuinely invariant. -/
+/-- Equivariant stalk transpose is diagonally invariant.
+
+The ordinary skyscraper transpose of an equivariant stalk morphism is invariant under the
+diagonal Galois action. -/
 theorem fieldEquivariantStalkTranspose_invariant
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -201,7 +238,10 @@ theorem fieldEquivariantStalkTranspose_invariant
   simpa only [Equiv.symm_apply_apply] using
     fieldEquivariantStalkUnderlyingMap_comm.{u, w} k Ω f g
 
-/-- The SAME original adjoint sections form an actual cone, derived from the module arrow. -/
+/-- Invariant cone of an equivariant stalk morphism.
+
+The diagonally invariant transpose defines a cone over the skyscraper invariant diagram, with
+vertex the source sheaf. -/
 def fieldEquivariantStalkHomCone
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -215,7 +255,10 @@ def fieldEquivariantStalkHomCone
       change _ = _ ≫ fieldSkyscraperDiagonalMap.{u, w} k Ω M g
       exact (fieldEquivariantStalkTranspose_invariant.{u, w} k Ω f g).symm }
 
-/-- The actual invariant limit gives the original sheaf arrow into the SAME literal R(M). -/
+/-- Equivariant stalk map gives an inverse sheaf map.
+
+Lift the invariant transpose cone through the skyscraper invariant limit to define a map to
+the invariant inverse sheaf. -/
 def fieldEquivariantStalkToInverse
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -224,7 +267,10 @@ def fieldEquivariantStalkToInverse
   (fieldInvariantSkyscraperSheafIsLimit.{u, w} k Ω M).lift
     (fieldEquivariantStalkHomCone.{u, w} k Ω f)
 
-/-- The factorization retains the SAME ordinary point/skyscraper adjoint. -/
+/-- Inverse sheaf map has its ordinary skyscraper transpose.
+
+Composing the inverse-sheaf map with the invariant cone projection gives the ordinary stalk-
+skyscraper transpose. -/
 theorem fieldEquivariantStalkToInverse_fac
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -235,7 +281,10 @@ theorem fieldEquivariantStalkToInverse_fac
         (fieldEquivariantStalkUnderlyingMap.{u, w} k Ω f) :=
   (fieldInvariantSkyscraperSheafIsLimit.{u, w} k Ω M).fac _ _
 
-/-- Every sheaf arrow into R(M) gives the original ordinary stalk arrow by the SAME inclusion. -/
+/-- Underlying stalk map of an inverse sheaf map.
+
+Compose the inverse-sheaf map with its skyscraper projection and apply the ordinary point Hom
+correspondence in reverse. -/
 abbrev fieldEquivariantStalkFromInversePlain
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -245,7 +294,9 @@ abbrev fieldEquivariantStalkFromInversePlain
   (fieldStalkSkyscraperHomEquiv.{u, w} k Ω Q M).symm
     (h ≫ (fieldInvariantSkyscraperSheafCone.{u, w} k Ω M).π.app (SingleObj.star Gal(Ω/k)))
 
-/-- The ordinary arrow obtained from the SAME invariant inclusion is actually equivariant. -/
+/-- Inverse sheaf transpose is equivariant.
+
+The underlying stalk transpose commutes with each Galois stalk and coefficient action. -/
 theorem fieldEquivariantStalkFromInversePlain_comm
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -262,8 +313,9 @@ theorem fieldEquivariantStalkFromInversePlain_comm
   change i ≫ fieldSkyscraperDiagonalMap.{u, w} k Ω M a = i at hi
   exact (Category.assoc h i _).trans (congrArg (fun t => h ≫ t) hi)
 
-/-- Package the same original equivariant additive stalk arrow
-with its stored integer structures. -/
+/-- Inverse sheaf map gives an equivariant stalk morphism.
+
+Bundle the underlying equivariant transpose as a morphism of discrete Galois coefficients. -/
 def fieldEquivariantStalkFromInverse
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -273,7 +325,9 @@ def fieldEquivariantStalkFromInverse
     ⟨(fieldEquivariantStalkFromInversePlain.{u, w} k Ω h).hom, fun g x => by
       exact congrArg (fun f => f x) (fieldEquivariantStalkFromInversePlain_comm.{u, w} k Ω h g)⟩
 
-/-- Forgetting retains exactly the original ordinary arrow. -/
+/-- Equivariant transpose retains its additive map.
+
+The underlying map of the bundled transpose is the ordinary inverse-sheaf transpose. -/
 theorem fieldEquivariantStalkFromInverse_underlying
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -282,7 +336,10 @@ theorem fieldEquivariantStalkFromInverse_underlying
         (fieldEquivariantStalkFromInverse.{u, w} k Ω h) =
       fieldEquivariantStalkFromInversePlain.{u, w} k Ω h := rfl
 
-/-- The actual invariant factorization followed by the original transpose is the original arrow. -/
+/-- Inverse transpose after forward transpose is the identity.
+
+Starting from an equivariant stalk morphism, passing to the inverse sheaf and back returns the
+same morphism. -/
 theorem fieldEquivariantStalkFromInverse_toInverse
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -294,7 +351,10 @@ theorem fieldEquivariantStalkFromInverse_toInverse
     (fieldEquivariantStalkToInverse_fac.{u, w} k Ω f)).trans
       ((fieldStalkSkyscraperHomEquiv.{u, w} k Ω Q M).symm_apply_apply _)
 
-/-- The actual limiting cone uniquely recovers every original sheaf arrow. -/
+/-- Forward transpose after inverse transpose is the identity.
+
+Starting from an inverse-sheaf map, passing to its stalk transpose and back returns the same
+sheaf map. -/
 theorem fieldEquivariantStalkToInverse_fromInverse
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -308,7 +368,10 @@ theorem fieldEquivariantStalkToInverse_fromInverse
     (fieldEquivariantStalkFromInverse.{u, w} k Ω h)).trans
       ((fieldStalkSkyscraperHomEquiv.{u, w} k Ω Q M).apply_symm_apply _)
 
-/-- The genuine restricted Hom equivalence belongs to the SAME actual T and R. -/
+/-- Equivariant stalk and inverse sheaf Hom correspondence.
+
+Equivariant maps from the geometric fiber to a coefficient are in bijection with maps from the
+sheaf to the invariant inverse sheaf. -/
 def fieldEquivariantStalkHomEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -320,7 +383,10 @@ def fieldEquivariantStalkHomEquiv
   right_inv := fieldEquivariantStalkToInverse_fromInverse.{u, w} k Ω
 
 
-/-- The inverse Hom map is natural for EVERY original sheaf arrow. -/
+/-- Inverse transpose is natural in the source sheaf.
+
+Precomposition by a sheaf morphism corresponds to precomposition by its geometric-stalk Galois
+morphism. -/
 theorem fieldEquivariantStalkFromInverse_naturality_left
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -337,7 +403,10 @@ theorem fieldEquivariantStalkFromInverse_naturality_left
     (Category.assoc τ h i)).trans
       (Φ.skyscraperSheafAdjunction.homEquiv_naturality_left_symm τ (h ≫ i))
 
-/-- The direct Hom map is natural for EVERY original equivariant module arrow. -/
+/-- Forward transpose is natural in the coefficient.
+
+Postcomposition by a coefficient map corresponds to postcomposition by its invariant inverse-
+sheaf map. -/
 theorem fieldEquivariantStalkToInverse_naturality_right
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -363,7 +432,10 @@ theorem fieldEquivariantStalkToInverse_naturality_right
         (fieldEquivariantStalkToInverse_fac.{u, w} k Ω f))))
   exact hl.trans hr.symm
 
-/-- The genuine Hom correspondence has both naturality laws on the fixed functors. -/
+/-- Natural Hom correspondence for the field stalk adjunction.
+
+The equivariant Hom bijection with its source and coefficient naturality gives the adjunction
+Hom data. -/
 def fieldEquivariantStalkAdjunctionCore :
     Adjunction.CoreHomEquiv (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
       (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω) where
@@ -371,13 +443,17 @@ def fieldEquivariantStalkAdjunctionCore :
   homEquiv_naturality_left_symm := fieldEquivariantStalkFromInverse_naturality_left.{u, w} k Ω
   homEquiv_naturality_right := fieldEquivariantStalkToInverse_naturality_right.{u, w} k Ω
 
-/-- The actual adjunction is constructed from that correspondence, not supplied as a premise. -/
+/-- Geometric Galois stalk is left adjoint to the invariant inverse sheaf.
+
+The natural equivariant Hom correspondence defines the field stalk/inverse-sheaf adjunction. -/
 def fieldEquivariantStalkAdjunction :
     fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⊣
       fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω :=
   Adjunction.mkOfHomEquiv (fieldEquivariantStalkAdjunctionCore.{u, w} k Ω)
 
-/-- Its Hom equivalence is exactly the original invariant-cone factorization family. -/
+/-- Field stalk adjunction has the constructed transpose correspondence.
+
+The adjunction Hom equivalence equals the invariant-cone transpose equivalence. -/
 theorem fieldEquivariantStalkAdjunction_homEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -386,12 +462,16 @@ theorem fieldEquivariantStalkAdjunction_homEquiv
   congrFun (congrFun (Adjunction.mkOfHomEquiv_homEquiv
     (fieldEquivariantStalkAdjunctionCore.{u, w} k Ω)) Q) M
 
-/-- Additivity of the SAME original stalk functor is derived from its actual adjunction. -/
+/-- Geometric Galois stalk functor is additive.
+
+The field stalk left adjoint preserves sums of sheaf maps. -/
 instance fieldGeometricStalkGaloisFunctor_additive :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).Additive :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).left_adjoint_additive
 
-/-- The required additive Hom equivalence is the stock additive upgrade of the SAME adjunction. -/
+/-- Additive field stalk Hom correspondence.
+
+The adjunction Hom correspondence is an additive equivalence of Hom groups. -/
 abbrev fieldEquivariantStalkHomAddEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -399,7 +479,9 @@ abbrev fieldEquivariantStalkHomAddEquiv
       (Q ⟶ (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M) :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).homAddEquiv Q M
 
-/-- The additive upgrade retains the SAME actual forward and inverse Hom maps. -/
+/-- Additive stalk correspondence has the same underlying bijection.
+
+Its underlying equivalence is the invariant-cone transpose correspondence. -/
 theorem fieldEquivariantStalkHomAddEquiv_toEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
@@ -407,21 +489,28 @@ theorem fieldEquivariantStalkHomAddEquiv_toEquiv
       fieldEquivariantStalkHomEquiv.{u, w} k Ω Q M :=
   fieldEquivariantStalkAdjunction_homEquiv.{u, w} k Ω Q M
 
-/-- The unit is the one belonging to the fixed constructed T and R. -/
+/-- Unit of the equivariant field stalk adjunction.
+
+The unit sends a sheaf to the invariant inverse sheaf of its geometric Galois stalk. -/
 abbrev fieldEquivariantStalkUnit :
     𝟭 (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) ⟶
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
         fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).unit
 
-/-- The counit is the one belonging to those SAME fixed functors. -/
+/-- Counit of the equivariant field stalk adjunction.
+
+The counit maps the Galois stalk of an invariant inverse sheaf back to its coefficient. -/
 abbrev fieldEquivariantStalkCounit :
     fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω ⋙
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⟶
         𝟭 (DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).counit
 
-/-- The actual unit is the original stock point unit after the SAME invariant inclusion. -/
+/-- Field stalk unit has the identity stalk transpose.
+
+The unit followed by the invariant skyscraper projection is the ordinary transpose of the
+identity geometric-stalk map. -/
 theorem fieldEquivariantStalkUnit_inclusion
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldEquivariantStalkUnit.{u, w} k Ω).app Q ≫
@@ -440,7 +529,10 @@ theorem fieldEquivariantStalkUnit_inclusion
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q)).π.app
         (SingleObj.star Gal(Ω/k))) hu).trans (fieldEquivariantStalkToInverse_fac.{u, w} k Ω _)
 
-/-- The actual counit is the original point counit on the SAME invariant inclusion. -/
+/-- Field stalk counit is projected point evaluation.
+
+Its underlying map is the stalk map of the invariant projection followed by the point-
+skyscraper counit. -/
 theorem fieldEquivariantStalkCounit_underlying
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (DiscreteAbelianAction.forget Gal(Ω/k)).map
@@ -465,7 +557,10 @@ theorem fieldEquivariantStalkCounit_underlying
       ((fieldModuleAbAction.{u, w} k Ω M).V) i))
 
 
-/-- Every actual Hom adjoint has the original point germ as its original section coordinate. -/
+/-- Equivariant transpose evaluates by a geometric germ.
+
+The inverse-sheaf section map followed by evaluation at a geometric point equals the germ map
+followed by the underlying equivariant stalk map. -/
 theorem fieldEquivariantStalkToInverse_germ_map
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -493,7 +588,10 @@ theorem fieldEquivariantStalkToInverse_germ_map
     (Φ.skyscraperPresheafHomEquiv_app_π b U (ULift.up z))
   exact hl.symm.trans (hc.trans hp)
 
-/-- The same Hom adjoint acts literally by the original module map on each original germ. -/
+/-- Value of an equivariant transpose on a section.
+
+At geometric fiber element `z`, the transposed section has value the equivariant map applied
+to the germ of that section at `z`. -/
 theorem fieldEquivariantStalkToInverse_germ_apply
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -507,7 +605,9 @@ theorem fieldEquivariantStalkToInverse_germ_apply
         U (ULift.up z) Q.obj c) :=
   congrArg (fun t => t c) (fieldEquivariantStalkToInverse_germ_map.{u, w} k Ω f U z)
 
-/-- The unit is the SAME original invariant Hom adjoint of the original identity arrow. -/
+/-- Field stalk unit is the transpose of the identity.
+
+The adjunction unit equals the inverse-sheaf transpose of the identity stalk morphism. -/
 theorem fieldEquivariantStalkUnit_toInverse_id
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldEquivariantStalkUnit.{u, w} k Ω).app Q =
@@ -516,7 +616,9 @@ theorem fieldEquivariantStalkUnit_toInverse_id
   ((fieldEquivariantStalkAdjunction.{u, w} k Ω).homEquiv_id Q).symm.trans
     (congrArg (fun e => e (𝟙 _)) (fieldEquivariantStalkAdjunction_homEquiv.{u, w} k Ω Q _))
 
-/-- The actual original unit component is c ↦ (z ↦ [U,z,c]). -/
+/-- Field stalk unit sends a section to its germ function.
+
+The unit section evaluated at `z` is the geometric germ of the given section at `z`. -/
 theorem fieldEquivariantStalkUnit_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -532,7 +634,10 @@ theorem fieldEquivariantStalkUnit_germ
       (fieldEquivariantStalkUnit_toInverse_id.{u, w} k Ω Q)
   exact hu.trans (fieldEquivariantStalkToInverse_germ_apply.{u, w} k Ω (𝟙 _) U z c)
 
-/-- The actual counit has the original invariant-function evaluation as its germ map. -/
+/-- Field stalk counit on germs is coefficient evaluation.
+
+The germ map followed by the underlying counit equals evaluation of the equivariant section at
+its fiber element. -/
 theorem fieldEquivariantStalkCounit_germ_map
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U) :
@@ -557,7 +662,9 @@ theorem fieldEquivariantStalkCounit_germ_map
       ((congrArg (fun t => t ≫ ε) hn).trans ((Category.assoc _ _ _).trans
         ((congrArg (fun t => i.hom.app (op U) ≫ t) hp).trans hi))))
 
-/-- The actual counit sends the original germ [U,z,h] to the literal value h(z). -/
+/-- Field stalk counit evaluates an equivariant section.
+
+The counit sends the germ of a section `h` at `z` to `h z`. -/
 theorem fieldEquivariantStalkCounit_germ
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k))
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -567,7 +674,9 @@ theorem fieldEquivariantStalkCounit_germ
         (ULift.up z) ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M).obj h) = h z :=
   congrArg (fun t => t h) (fieldEquivariantStalkCounit_germ_map.{u, w} k Ω M U z)
 
-/-- Every actual original sheaf map has the natural unit square on the SAME functors. -/
+/-- Field stalk unit is sheaf natural.
+
+The unit commutes with a sheaf morphism and the inverse-sheaf image of its stalk morphism. -/
 theorem fieldEquivariantStalkUnit_naturality
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (τ : Q ⟶ Q') :
     τ ≫ (fieldEquivariantStalkUnit.{u, w} k Ω).app Q' =
@@ -576,7 +685,10 @@ theorem fieldEquivariantStalkUnit_naturality
           ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map τ) :=
   (fieldEquivariantStalkUnit.{u, w} k Ω).naturality τ
 
-/-- Every actual original module map has the natural counit square on those SAME functors. -/
+/-- Field stalk counit is coefficient natural.
+
+The counit commutes with the stalk image of an inverse-sheaf coefficient map and the given
+coefficient map. -/
 theorem fieldEquivariantStalkCounit_naturality
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)} (t : M ⟶ N) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
@@ -585,7 +697,10 @@ theorem fieldEquivariantStalkCounit_naturality
     (fieldEquivariantStalkCounit.{u, w} k Ω).app M ≫ t :=
   (fieldEquivariantStalkCounit.{u, w} k Ω).naturality t
 
-/-- The first triangle belongs to the SAME actual T, R and original unit/counit. -/
+/-- Equivariant field stalk adjunction satisfies the left triangle.
+
+Apply the stalk functor to the unit and then the counit at the stalk coefficient; the
+composite is the identity. -/
 theorem fieldEquivariantStalk_left_triangle
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
@@ -594,7 +709,9 @@ theorem fieldEquivariantStalk_left_triangle
         ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q) = 𝟙 _ :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).left_triangle_components Q
 
-/-- The second triangle belongs to those SAME actual functors and original maps. -/
+/-- Equivariant field stalk adjunction satisfies the right triangle.
+
+The unit at the inverse sheaf followed by its image of the coefficient counit is the identity. -/
 theorem fieldEquivariantStalk_right_triangle
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (fieldEquivariantStalkUnit.{u, w} k Ω).app
@@ -604,7 +721,9 @@ theorem fieldEquivariantStalk_right_triangle
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).right_triangle_components M
 
 
-/-- The additive Hom equivalence is natural under every original sheaf map. -/
+/-- Additive stalk correspondence is natural in the sheaf.
+
+Precomposition by a sheaf map commutes with the additive Hom correspondence. -/
 theorem fieldEquivariantStalkHomAddEquiv_naturality_left
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -614,7 +733,9 @@ theorem fieldEquivariantStalkHomAddEquiv_naturality_left
       τ ≫ fieldEquivariantStalkHomAddEquiv.{u, w} k Ω Q M f :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).homEquiv_naturality_left τ f
 
-/-- The additive Hom equivalence is natural under every original module map. -/
+/-- Additive stalk correspondence is natural in coefficients.
+
+Postcomposition by a coefficient map commutes with the additive Hom correspondence. -/
 theorem fieldEquivariantStalkHomAddEquiv_naturality_right
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -624,7 +745,9 @@ theorem fieldEquivariantStalkHomAddEquiv_naturality_right
         (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).map t :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).homEquiv_naturality_right f t
 
-/-- Its inverse has the original sheaf-map naturality on the same actual stalks. -/
+/-- Inverse additive stalk correspondence is sheaf natural.
+
+The inverse correspondence commutes with sheaf precomposition and the induced stalk map. -/
 theorem fieldEquivariantStalkHomAddEquiv_symm_naturality_left
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -634,7 +757,10 @@ theorem fieldEquivariantStalkHomAddEquiv_symm_naturality_left
         (fieldEquivariantStalkHomAddEquiv.{u, w} k Ω Q M).symm h :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).homEquiv_naturality_left_symm τ h
 
-/-- Its inverse has the original module-map naturality on the same actual inverse sheaves. -/
+/-- Inverse additive stalk correspondence is coefficient natural.
+
+The inverse correspondence commutes with the inverse-sheaf coefficient map and coefficient
+postcomposition. -/
 theorem fieldEquivariantStalkHomAddEquiv_symm_naturality_right
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {M N : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)}
@@ -644,7 +770,10 @@ theorem fieldEquivariantStalkHomAddEquiv_symm_naturality_right
       (fieldEquivariantStalkHomAddEquiv.{u, w} k Ω Q M).symm h ≫ t :=
   (fieldEquivariantStalkAdjunction.{u, w} k Ω).homEquiv_naturality_right_symm h t
 
-/-- The first original-coefficient specialization keeps exactly ONE canonical lift. -/
+/-- Field stalk unit retains lifted coefficient germ values.
+
+For a sheaf in coefficient universe `w`, the unit evaluated on a lifted section is its common
+geometric germ. -/
 theorem fieldEquivariantStalkUnit_original_germ
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (U : (Spec (.of k)).Etale) (z : (fieldGeometricPoint k Ω).fiber.obj U)
@@ -659,7 +788,11 @@ theorem fieldEquivariantStalkUnit_original_germ
   fieldEquivariantStalkUnit_germ.{u, w} k Ω
     ((liftCoefficients.{u, w} (Spec (.of k))).obj F) U z (ULift.up c)
 
-/-- The complete fixed additive Hom family retains both inverse and all actual naturality laws. -/
+/-- Full additive and invariant field stalk Hom laws.
+
+The correspondence has the specified underlying bijection, inverse and additive laws,
+naturality in both directions, invariant-equivariant criterion, cone factorization, and
+geometric-germ values. -/
 def FieldEquivariantStalkHomLaws : Prop :=
   (∀ (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
       (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)),
@@ -729,7 +862,10 @@ def FieldEquivariantStalkHomLaws : Prop :=
       ((smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).toPresheafFiber
         U (ULift.up z) Q.obj c)
 
-/-- The SAME actual unit and counit retain every original coordinate, naturality and triangle. -/
+/-- Full field stalk unit and counit laws.
+
+The unit and counit are the adjunction maps, satisfy naturality and both triangles, and have
+the invariant projection, germ, evaluation, and lifted-section formulas. -/
 def FieldEquivariantStalkUnitCounitLaws : Prop :=
   (fieldEquivariantStalkUnit.{u, w} k Ω = (fieldEquivariantStalkAdjunction.{u, w} k Ω).unit) ∧
   (fieldEquivariantStalkCounit.{u, w} k Ω = (fieldEquivariantStalkAdjunction.{u, w} k Ω).counit) ∧
@@ -793,8 +929,10 @@ def FieldEquivariantStalkUnitCounitLaws : Prop :=
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).toPresheafFiber U
       (ULift.up z) ((liftCoefficients.{u, w} (Spec (.of k))).obj F).obj (ULift.up c)
 
-/-- The full actual equivariant stalk adjunction, additive Hom family
-and both original triangles. -/
+/-- Equivariant field stalk correspondence satisfies all adjunction laws.
+
+The constructed correspondence satisfies the complete additive Hom laws and unit/counit
+normalization, naturality, and triangle laws. -/
 theorem original_field_equivariant_stalk_adjunction :
     FieldEquivariantStalkHomLaws.{u, w} k Ω ∧
       FieldEquivariantStalkUnitCounitLaws.{u, w} k Ω := by

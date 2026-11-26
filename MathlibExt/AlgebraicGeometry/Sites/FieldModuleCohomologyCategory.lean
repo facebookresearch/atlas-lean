@@ -15,7 +15,25 @@ public import Mathlib.CategoryTheory.Preadditive.Injective.Preserves
 public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 public import Mathlib.Algebra.Homology.ShortComplex.Ab
 
-/-! # The actual field-module category for continuous cohomology -/
+/-!
+# Discrete Galois modules as a cohomology category
+
+Let k and Ω be fields in universe u, with Ω a separable closure of k,
+and G = Gal(Ω/k). The category D of discrete abelian groups with continuous
+G-action and coefficient universe c = max(u, w) is abelian and has enough
+injectives. The coefficients are abelian groups, regarded as ℤ-modules.
+
+The geometric stalk at Spec Ω → Spec k gives an equivalence from
+AddCommGrpCat c-valued étale sheaves on Spec k to D. The underlying-group
+functor U : D → AddCommGrpCat c identifies with taking the stalk of
+the inverse sheaf. It preserves finite limits, finite colimits and homology,
+and detects short exact sequences by injectivity, equality of image and
+kernel, and surjectivity of the underlying maps.
+
+The topological representation of a coefficient retains its underlying
+group and G-action. Its coinduction is C(G, M) with diagonal action,
+constant-function unit, and evaluation at the identity on underlying groups.
+-/
 
 @[expose] public section
 noncomputable section
@@ -38,7 +56,12 @@ instance fieldModule_totallyDisconnected : TotallyDisconnectedSpace Gal(Ω/k) :=
   infer_instance
 
 
-/-- The category of discrete `Gal(Ω/k)`-modules, with coefficients in universe `max u w`. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+FieldCohomologyModule k Ω is D, the category of discrete continuous
+G-modules. Its objects are abelian groups with continuous G-action;
+morphisms are equivariant additive maps. -/
 abbrev FieldCohomologyModule := DiscreteAbelianAction.{u, max u w} Gal(Ω/k)
 
 instance fieldModule_inverse_isEquivalence :
@@ -49,7 +72,11 @@ instance fieldModule_stalk_isEquivalence :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).IsEquivalence :=
   (fieldSheafGaloisEquivalence.{u, w} k Ω).isEquivalence_functor
 
-/-- Finite products are transported through the actual constructed inverse. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+The category D has finite products. They are the finite products of
+the underlying abelian groups with diagonal G-action and discrete topology. -/
 instance fieldModule_hasFiniteProducts : HasFiniteProducts (FieldCohomologyModule.{u, w} k Ω) where
   out n := by
     let : HasLimitsOfShape (Discrete (Fin n))
@@ -58,7 +85,12 @@ instance fieldModule_hasFiniteProducts : HasFiniteProducts (FieldCohomologyModul
     exact Adjunction.hasLimitsOfShape_of_equivalence
       (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω)
 
-/-- The original action category is abelian by the same actual sheaf equivalence. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+The category D is abelian. Its abelian structure is compatible with
+the equivalence between D and abelian sheaves on the small étale site
+of Spec k given by the geometric stalk and invariant-skyscraper inverse. -/
 @[instance_reducible]
 def fieldModuleAbelian : Abelian (FieldCohomologyModule.{u, w} k Ω) :=
   abelianOfEquivalence (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω)
@@ -67,14 +99,24 @@ def fieldModuleAbelian : Abelian (FieldCohomologyModule.{u, w} k Ω) :=
 instance fieldModule_abelian : Abelian (FieldCohomologyModule.{u, w} k Ω) :=
   fieldModuleAbelian.{u, w} k Ω
 
-/-- Enough injectives come from the actual common sheaf category through the same inverse. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+The category D has enough injectives: every discrete continuous
+G-module admits a monomorphism into an injective object of D. -/
 theorem fieldModuleEnoughInjectives : EnoughInjectives (FieldCohomologyModule.{u, w} k Ω) :=
   EnoughInjectives.of_equivalence (fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω)
 
 instance fieldModule_enoughInjectives : EnoughInjectives (FieldCohomologyModule.{u, w} k Ω) :=
   fieldModuleEnoughInjectives.{u, w} k Ω
 
-/-- The fixed counit identifies R followed by the original exact stalk with actual U. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+Let Φ : D → Sheaf(Spec k)_ét be the invariant-skyscraper inverse
+to the geometric-stalk Galois equivalence, with coefficients in universe c.
+Taking the stalk of Φ(M) at Spec Ω → Spec k is naturally isomorphic
+to the underlying-group functor U(M). -/
 def fieldModuleForgetIso :
     fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω ⋙
         smallEtaleCommonGeometricStalk.{u, w} (Spec.algebraMap k Ω) ≅
@@ -88,7 +130,12 @@ def fieldModuleForgetIso :
   rw [← U.map_comp, ← U.map_comp]
   exact congrArg U.map (E.counitIso.hom.naturality f)
 
-/-- Its forward map is exactly forgetting the SAME evaluation counit. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For M ∈ D, the forward stalk-to-underlying-group isomorphism is
+the underlying additive map of the Galois sheaf equivalence's counit
+E(Φ(M)) → M, where E is the geometric-stalk functor. -/
 theorem fieldModuleForgetIso_hom (M : FieldCohomologyModule.{u, w} k Ω) :
     (fieldModuleForgetIso.{u, w} k Ω).hom.app M =
       (DiscreteAbelianAction.forget Gal(Ω/k)).map
@@ -111,7 +158,12 @@ instance fieldModuleForget_preservesHomology :
     (DiscreteAbelianAction.forget.{u, max u w} Gal(Ω/k)).PreservesHomology := by
   infer_instance
 
-/-- Actual categorical short exactness is preserved and reflected by actual U. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+For a short complex S₁ → S₂ → S₃ in D, it is short exact if
+and only if the underlying abelian-group short complex is short exact.
+The forgetful functor U therefore preserves and reflects short exactness. -/
 theorem fieldModule_shortExact_iff_forget
     (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω)) :
     S.ShortExact ↔ (S.map (DiscreteAbelianAction.forget Gal(Ω/k))).ShortExact := by
@@ -124,7 +176,12 @@ theorem fieldModule_shortExact_iff_forget
       (Functor.reflects_exact_of_faithful U S hS.exact)
       (U.mono_of_mono_map hS.mono_f) (U.epi_of_epi_map hS.epi_g)
 
-/-- The complete literal criterion for every stored original pair of maps. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+A short complex with equivariant additive maps a : M₁ → M₂ and
+b : M₂ → M₃ is short exact in D exactly when the underlying a is
+injective, range(a) = ker(b), and the underlying b is surjective. -/
 theorem fieldModule_shortExact_iff_original_maps
     (S : ShortComplex (FieldCohomologyModule.{u, w} k Ω)) :
     S.ShortExact ↔
@@ -143,7 +200,16 @@ theorem fieldModule_shortExact_iff_original_maps
       ((AddCommGrpCat.mono_iff_injective _).mpr hf)
       ((AddCommGrpCat.epi_iff_surjective _).mpr hg)
 
-/-- All category, original coinduction and actual underlying-map laws together. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+This proposition collects D's abelian structure and enough injectives;
+the fully faithful realization as discrete topological ℤ-representations
+with unchanged group, action and morphism values; and coinduction
+C(G, M), with (g • φ)(x) = g • φ(g⁻¹x), postcomposition on maps,
+constant unit and evaluation at 1. It also records monicity of that unit,
+finite-limit, finite-colimit and homology preservation by U, the inverse-sheaf
+stalk counit formula, and both categorical and elementwise short-exactness criteria. -/
 def OriginalFieldModuleCohomologyCategoryLaws : Prop :=
   let D := FieldCohomologyModule.{u, w} k Ω
   let P := DiscreteAbelianAction.toTopRep.{u, max u w} (G := Gal(Ω/k))
@@ -188,7 +254,14 @@ def OriginalFieldModuleCohomologyCategoryLaws : Prop :=
     (DiscreteAbelianAction.homToAdd S.f).range = (DiscreteAbelianAction.homToAdd S.g).ker ∧
     Function.Surjective (DiscreteAbelianAction.homToAdd S.g)
 
-/-- The full actual field-module category source unit, with no structure certificates. -/
+/-- Let k and Ω be fields in universe u, with Ω a separable closure
+of k, and put G = Gal(Ω/k) and c = max(u, w). Let D be the category
+of discrete abelian groups in universe c with continuous G-action.
+The discrete continuous G-action category has all the stated
+abelian, injective, topological realization and coinduction properties.
+Its underlying-group functor is exact, identifies with the inverse-sheaf
+geometric stalk via the counit, and detects short exactness through
+injectivity, image–kernel equality and surjectivity. -/
 theorem original_field_module_cohomology_category :
     OriginalFieldModuleCohomologyCategoryLaws.{u, w} k Ω := by
   refine ⟨⟨fieldModuleAbelian.{u, w} k Ω⟩, fieldModuleEnoughInjectives.{u, w} k Ω,

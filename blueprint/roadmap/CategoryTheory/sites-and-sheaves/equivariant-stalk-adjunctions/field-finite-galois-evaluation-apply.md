@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation apply
+# Embedding evaluation has the inclusion value
 
-The stage equivalence evaluates on the literal original algebra inclusion.
+Embedding evaluation has the inclusion value.
+
+The underlying value of the evaluation equivalence is the equivariant function evaluated at
+the canonical inclusion.

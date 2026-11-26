@@ -14,18 +14,15 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDegreeThree
 
 /-!
-# Averaging contractions in degrees two and three
+# Explicit averaging boundaries in degrees two and three
 
-Let `G` be finite and suppose its order is a unit in a commutative
-coefficient ring.  Averaging the final variable of an inhomogeneous
-two-cocycle gives a one-cochain whose boundary is that cocycle.  Averaging
-the final variable of a three-cocycle with the opposite sign similarly
-gives a two-cochain boundary.
+Let R be a commutative ring, G a finite group, and A an R-linear representation in universe u.
+Suppose m=|G| is a unit. For a two-cocycle z, the one-cochain a_z(g)=m⁻¹Σ_t z(g,t) satisfies
+δa_z=z. For a three-cocycle z, the two-cochain b_z(g,h)=-m⁻¹Σ_t z(g,h,t) satisfies δb_z=z.
 
-These explicit contractions prove that H2 and H3 vanish for every finite
-group under the invertible-order hypothesis.  No cyclicity, field, or
-semisimplicity hypothesis is used, and no assertion is made when the group
-order is not invertible.
+These identities use the inhomogeneous differentials δa(g,h)=g•a(h)-a(gh)+a(g) and
+δb(g,h,i)=g•b(h,i)-b(gh,i)+b(g,hi)-b(g,h). The negative sign in the degree-three averaging is
+part of the formula. Thus both H²(G,A) and H³(G,A) are zero under the unit hypothesis.
 -/
 
 @[expose] public section
@@ -40,14 +37,19 @@ universe u
 
 variable {R G : Type u} [CommRing R] [Group G] [Fintype G]
 
-/-- Averaging the final variable of a degree-two cochain. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+For any two-cochain z:G×G→A, define a_z:G→A by a_z(g)=m⁻¹Σ_{t∈G}z(g,t). The averaging sign is
+positive and the coefficient lies in the same representation A. -/
 noncomputable def averageLastCochainTwo
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R))
     (z : G × G → A) : G → A := fun g =>
   (↑(hcard.unit⁻¹) : R) • ∑ t : G, z (g, t)
 
-/-- The averaged last-variable one-cochain has boundary equal to the
-original degree-two cocycle. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+For z∈Z²(G,A), let a_z(g)=m⁻¹Σ_t z(g,t). Then δa_z=z: for every g,h∈G,
+ρ(g)a_z(h)-a_z(gh)+a_z(g)=z(g,h). -/
 theorem d₁₂_averageLastCochainTwo
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R))
     (z : cocycles₂ A) :
@@ -104,15 +106,19 @@ theorem d₁₂_averageLastCochainTwo
         z (g, h)) = z (g, h)
       rw [Units.inv_mul, one_smul]
 
-/-- Averaging the final variable of a degree-three cochain, with the sign
-required by the inhomogeneous differential. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+For any three-cochain z:G×G×G→A, define b_z(g,h)=-m⁻¹Σ_{t∈G}z(g,h,t). The negative sign is the
+degree-three averaging convention for the inhomogeneous cochain differential. -/
 noncomputable def averageLastCochainThree
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R))
     (z : G × G × G → A) : G × G → A := fun p =>
   -((↑(hcard.unit⁻¹) : R) • ∑ t : G, z (p.1, p.2, t))
 
-/-- The signed averaged last-variable two-cochain has boundary equal to the
-original degree-three cocycle. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+For z∈Z³(G,A), put b_z(g,h)=-m⁻¹Σ_t z(g,h,t). Then δb_z=z: for all g,h,i∈G,
+ρ(g)b_z(h,i)-b_z(gh,i)+b_z(g,hi)-b_z(g,h)=z(g,h,i). -/
 theorem d₂₃_averageLastCochainThree
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R))
     (z : cocycles₃ A) :
@@ -174,8 +180,10 @@ theorem d₂₃_averageLastCochainThree
         z (g, h, i)) = z (g, h, i)
       rw [Units.inv_mul, one_smul]
 
-/-- Degree-two cohomology of a finite group vanishes when its order is a
-unit in the coefficient ring. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+The module H²(G,A) is subsingleton. Each class has a two-cocycle representative z, and z is the
+boundary of the averaged one-cochain g↦m⁻¹Σ_t z(g,t), so every class equals zero. -/
 theorem H2_subsingleton_of_card_isUnit
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R)) :
     Subsingleton (H2 A) := by
@@ -188,8 +196,10 @@ theorem H2_subsingleton_of_card_isUnit
           d₁₂_averageLastCochainTwo A hcard z⟩
   exact sub_eq_zero.mp (hzero (x - y))
 
-/-- Degree-three cohomology of a finite group vanishes when its order is a
-unit in the coefficient ring. -/
+/-- Let R be a commutative ring, G a finite group, and A an R-linear G-representation, in the given
+universe u. Assume m=|G| is a unit in R and write m⁻¹ for the coefficient of its inverse unit.
+The module H³(G,A) is subsingleton. Each three-cocycle z is the boundary of the two-cochain
+(g,h)↦-m⁻¹Σ_t z(g,h,t), so every degree-three class is zero. -/
 theorem H3_subsingleton_of_card_isUnit
     (A : Rep R G) (hcard : IsUnit (Fintype.card G : R)) :
     Subsingleton (H3 A) := by

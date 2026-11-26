@@ -12,11 +12,17 @@ module
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientCupProduct
 
 /-!
-# Associativity of the original native tensor cup
+# Associativity of tensor-valued continuous cup products
 
-The coefficient associator is the actual tensor linear equivalence on the
-original discrete carriers. Degree transport is the equality-induced morphism
-on the original native cycles and cohomology objects.
+Let R be a commutative ring with a topology, G a profinite group and
+A,B,C discrete topological R-representations. The coefficient associator
+identifies (A ⊗[R] B) ⊗[R] C with A ⊗[R] (B ⊗[R] C), preserving
+the diagonal G-action and discrete topology.
+
+For cocycles, and then for continuous cohomology classes, the products
+(x ∪ y) ∪ z and x ∪ (y ∪ z) agree after this coefficient associator
+and the identification (p+q)+r=p+(q+r).
+The scalar, group and coefficient universes are independent.
 -/
 
 @[expose] public section
@@ -28,7 +34,11 @@ universe u v w
 namespace ContinuousCohomology
 variable {R : Type u} [CommRing R] [TopologicalSpace R] {G : ProfiniteGrp.{v}}
 
-/-- The actual coefficient tensor associator as an equivariant continuous isomorphism. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B,C topological R-representations with discrete coefficient topologies.
+The tensor coefficients have their discrete diagonal G-actions.
+The coefficient associator is the continuous equivariant R-linear
+isomorphism (A ⊗ B) ⊗ C ≅ A ⊗ (B ⊗ C), with all tensors over R. -/
 def discreteTensorCoefficientAssociator
     (A B C : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology C] :
@@ -80,7 +90,11 @@ def discreteTensorCoefficientAssociator
     change TensorProduct.assoc R A B C ((TensorProduct.assoc R A B C).symm z) = z
     exact (TensorProduct.assoc R A B C).apply_symm_apply z
 
-/-- Forward coefficient associativity retains every original pure triple. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B,C topological R-representations with discrete coefficient topologies.
+The tensor coefficients have their discrete diagonal G-actions.
+The forward coefficient associator sends (a ⊗ b) ⊗ c to
+a ⊗ (b ⊗ c). -/
 theorem discreteTensorCoefficientAssociator_hom_tmul
     (A B C : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology C] (a : A) (b : B) (c : C) :
@@ -88,7 +102,11 @@ theorem discreteTensorCoefficientAssociator_hom_tmul
       a ⊗ₜ[R] (b ⊗ₜ[R] c) :=
   TensorProduct.assoc_tmul _ _ _
 
-/-- Inverse coefficient associativity retains every original pure triple. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B,C topological R-representations with discrete coefficient topologies.
+The tensor coefficients have their discrete diagonal G-actions.
+The inverse coefficient associator sends a ⊗ (b ⊗ c) to
+(a ⊗ b) ⊗ c. -/
 theorem discreteTensorCoefficientAssociator_inv_tmul
     (A B C : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology C] (a : A) (b : B) (c : C) :
@@ -150,8 +168,12 @@ private theorem nativeCycles_ext
   exact (homogeneousNativeModuleCyclesIso_tuple_value X n z t).trans
     ((h t).trans (homogeneousNativeModuleCyclesIso_tuple_value X n z' t).symm)
 
-/-- The original native cycle cup is associative under the actual coefficient associator
-and the explicit equality of the two total degrees. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B,C topological R-representations with discrete coefficient topologies.
+The tensor coefficients have their discrete diagonal G-actions.
+For degrees p,q,r ∈ ℕ and cocycles x,y,z in A,B,C, the two
+iterated cups agree after applying the coefficient associator to
+(x ∪ y) ∪ z and identifying its degree (p+q)+r with p+(q+r). -/
 theorem discreteContinuousCupCocycles_assoc
     (A B C : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology C]
@@ -223,8 +245,12 @@ private theorem nativePi_surjective
   exact (ModuleCat.epi_iff_surjective
     ((forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R)).map (π X n))).mp inferInstance
 
-/-- The original native H cup is associative after its actual coefficient H map
-and the explicit transport (p+q)+r=p+(q+r), in all nonnegative degrees. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B,C topological R-representations with discrete coefficient topologies.
+The tensor coefficients have their discrete diagonal G-actions.
+For x ∈ Hᵖ_cts(G,A), y ∈ Hᑫ_cts(G,B), and z ∈ Hʳ_cts(G,C),
+the coefficient associator and degree identification send
+(x ∪ y) ∪ z to x ∪ (y ∪ z). -/
 theorem discreteContinuousCup_assoc
     (A B C : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology C]

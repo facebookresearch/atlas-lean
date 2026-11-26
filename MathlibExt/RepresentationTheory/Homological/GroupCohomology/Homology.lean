@@ -12,10 +12,14 @@ module
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Basic
 
 /-!
-# Explicit boundaries in group cohomology
+# Explicit boundaries represent zero in group cohomology
 
-An inhomogeneous cocycle whose included cochain is an explicit differential
-from the preceding degree represents zero in group cohomology.
+Let k be a commutative ring, G any group, and A a k-linear representation in universe u. In the
+nonnegative inhomogeneous cochain complex K, a cocycle z in degree n+1 with included cochain
+equal to K.d_{n,n+1}(b) has zero cohomology class.
+
+The cocycle inclusion is injective, so z is the cycle factorization of this differential. The
+homology projection annihilates the differential, giving [z]=0 for every n≥0.
 -/
 
 @[expose] public section
@@ -32,7 +36,9 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- An explicit predecessor-degree boundary has zero cohomology class. -/
+/-- Let k be a commutative ring, G a group, A a k-linear representation in universe u, and K its
+inhomogeneous cochain complex. For n≥0, z∈Z^{n+1}(G,A), and b∈K^n, if the cocycle inclusion
+satisfies i_{n+1}(z)=K.d_{n,n+1}(b), then its class π_{n+1}(z) in H^{n+1}(G,A) equals zero. -/
 theorem π_eq_zero_of_boundary_succ
     (A : Rep k G) (n : ℕ) (z : cocycles A (n + 1))
     (b : (inhomogeneousCochains A).X n)

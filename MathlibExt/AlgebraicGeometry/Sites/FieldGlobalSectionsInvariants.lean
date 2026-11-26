@@ -10,6 +10,22 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleCoefficientSections
 public import Mathlib.CategoryTheory.Sites.GlobalSections
 public import Mathlib.CategoryTheory.Comma.Over.Basic
 
+/-!
+# Global sections of a field sheaf and Galois invariants
+
+Let k,Ω be fields of universe u with Ω a prescribed separable closure, G=Gal(Ω/k), and Φ the
+geometric stalk equivalence to discrete continuous G-actions on additive groups of height
+max(u,w). The geometric fiber over the identity étale object is a fixed singleton. Equivariant
+functions on that fiber identify with the invariant subgroup A^G by evaluation, with inverse
+the constant function.
+
+The global-section normalization and the sheaf-equivalence unit give Γ(Q) ≅ Φ(Q)^G. The
+forward value is the geometric germ of the terminal section; the inverse applies the inverse
+unit to a constant invariant function. This comparison is natural in sheaf and module maps. A
+sheaf of smaller coefficient size w uses one ULift^u, with an explicit down map in the
+inverse.
+-/
+
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -20,10 +36,13 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The source's actual original identity étale object. -/
+/-- For a field k, fieldIdentityEtale(k) is the étale object id_{Spec(k)} : Spec(k) → Spec(k). It
+is the terminal object used for global-section evaluation. -/
 abbrev fieldIdentityEtale : (Spec (.of k)).Etale := Scheme.Etale.mk (𝟙 (Spec (.of k)))
 
-/-- Its actual prescribed geometric point is the original spectrum algebra map. -/
+/-- Let Ω be a prescribed separable closure of k. The geometric fiber of fieldIdentityEtale(k)
+contains the point whose underlying map is Spec(Ω) → Spec(k). This is fieldTerminalFiberPoint,
+the point induced by the algebra map k → Ω. -/
 def fieldTerminalFiberPoint :
     (fieldGeometricPoint k Ω).fiber.obj (fieldIdentityEtale k) :=
   show Over.mk (Spec.algebraMap k Ω) ⟶ Over.mk (𝟙 (Spec (.of k))) from
@@ -41,7 +60,10 @@ theorem fieldTerminalFiberPoint_fixed (g : Gal(Ω/k)) :
     g • fieldTerminalFiberPoint k Ω = fieldTerminalFiberPoint k Ω :=
   Subsingleton.elim _ _
 
-/-- Evaluation at the SAME original terminal point, with the actual constant inverse. -/
+/-- For a field k, prescribed separable closure Ω, and discrete Galois module M of coefficient
+height max(u,w), evaluation at the terminal fiber point gives an additive equivalence between
+G-equivariant functions on that singleton and M^G. Its inverse sends an invariant vector m to
+the constant function with value m. -/
 def fieldTerminalFunctionsInvariantsEquiv (M : FieldCohomologyModule.{u, w} k Ω) :
     FieldEquivariantFunctions.{u, w} k Ω (fieldIdentityEtale k) M ≃+
       DiscreteAbelianAction.invariantsFunctor.obj M where
@@ -89,14 +111,20 @@ theorem fieldTerminalFunctionsInvariantsEquiv_naturality
   apply Subtype.ext
   rfl
 
-/-- The actual original global-sections normalization at the identity object. -/
+/-- Let k be a field of universe u. For additive-group sheaves of height max(u,w) on its small
+étale site, global sections are naturally isomorphic to evaluation at the identity étale
+object. This is the terminal-object global-section normalization. -/
 abbrev fieldGammaSectionsIso :
     Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ≅
       (sheafSections (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).obj
         (op (fieldIdentityEtale k)) :=
   Sheaf.ΓNatIsoSheafSections _ _ (identityEtaleIsTerminal (Spec (.of k)))
 
-/-- A component is exactly the fixed original unit followed by original-point evaluation. -/
+/-- Let k have prescribed separable closure Ω and Q be a small-étale additive-group sheaf of
+height max(u,w). The additive equivalence Γ(Q) ≃ Φ(Q)^G normalizes a global section to Q(id),
+applies the unit Q → E_G.inverse(Φ(Q)) of the field sheaf/Galois equivalence, and evaluates
+the resulting equivariant terminal-fiber function. Its inverse uses the constant invariant
+function and the inverse unit. -/
 def fieldGlobalSectionsInvariantsEquiv
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).obj Q ≃+
@@ -143,7 +171,10 @@ theorem fieldGlobalSectionsInvariantsEquiv_naturality
   rw [hg, hu]
   rfl
 
-/-- The ONE natural isomorphism for the SAME actual Γ, T and literal invariant functor. -/
+/-- For a field k and prescribed separable closure Ω, global sections on small-étale
+additive-group sheaves of height max(u,w) are naturally isomorphic to Φ followed by the Galois
+invariant-subgroup functor. The components are the normalized terminal-point evaluation
+equivalences, with their specified inverses. -/
 def fieldGlobalSectionsInvariantsIso :
     Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ≅
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙ DiscreteAbelianAction.invariantsFunctor :=
@@ -208,7 +239,11 @@ theorem fieldGlobalSectionsInvariantsIso_naturality
           ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map f) :=
   (fieldGlobalSectionsInvariantsIso.{u, w} k Ω).hom.naturality f
 
-/-- Every original coefficient section uses exactly one actual L.obj F. -/
+/-- Let F be a small-étale additive-group sheaf on Spec(k) with coefficient universe w, and Ω a
+prescribed separable closure. Its terminal section group F(id) is additively equivalent to
+Φ(LF)^G, where L is the single ULift^u coefficient functor to height max(u,w). The forward map
+lifts the section, normalizes to Γ(LF), and applies the invariant comparison; the inverse
+removes that lift. -/
 def originalFieldSectionsInvariantsEquiv
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}) :
     F.obj.obj (op (fieldIdentityEtale k)) ≃+
@@ -243,7 +278,9 @@ theorem originalFieldSectionsInvariantsEquiv_germ
   exact h0.trans (h1.trans h2)
 
 
-/-- The original native section and the actual common Γ normalization are tied by one lift. -/
+/-- For a sheaf F of coefficient universe w and c∈F(id), the section-to-invariant map equals the
+common-height Γ/invariant comparison applied to the global section corresponding to up(c)
+under Γ(LF) ≅ LF(id). Here L is ULift^u and Ω is the prescribed separable closure of k. -/
 theorem originalFieldSectionsInvariantsEquiv_normalization
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (c : F.obj.obj (op (fieldIdentityEtale k))) :
@@ -253,7 +290,10 @@ theorem originalFieldSectionsInvariantsEquiv_normalization
         ((fieldGammaSectionsIso.{u, w} k).inv.app
           ((liftCoefficients.{u, w} (Spec (.of k))).obj F) (ULift.up c)) := rfl
 
-/-- The original inverse removes exactly that lift after the SAME unit inverse. -/
+/-- Let k have prescribed separable closure Ω, F a small-étale sheaf of coefficient universe w,
+and m∈Φ(LF)^G. The inverse terminal-section comparison applies the inverse sheaf-equivalence
+unit at id to the constant terminal-fiber function m, obtaining an element of ULift^u(F(id)),
+and then takes down. -/
 theorem originalFieldSectionsInvariantsEquiv_inv
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (m : DiscreteAbelianAction.invariantsFunctor.obj
@@ -270,7 +310,9 @@ theorem originalFieldSectionsInvariantsEquiv_inv
   have h := fieldGlobalSectionsInvariantsIso_inv_section.{u, w} k Ω Q m
   exact congrArg (fun c : Q.obj.obj (op (fieldIdentityEtale k)) => c.down) h
 
-/-- Every original sheaf arrow induces its actual original invariant coefficient arrow. -/
+/-- For k,Ω with IsSepClosure k Ω, f : F → F′ a small-étale sheaf map of coefficient universe w,
+and c∈F(id), the section comparison satisfies e_{F′}(f_id(c))=Inv(Φ(Lf))(e_F(c)). The
+coefficient functor L is exactly ULift^u. -/
 theorem originalFieldSectionsInvariantsEquiv_naturality
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}}
     (f : F ⟶ F') (c : F.obj.obj (op (fieldIdentityEtale k))) :
@@ -295,7 +337,9 @@ theorem originalFieldSectionsInvariantsEquiv_naturality
       (ULift.up (f.hom.app (op (fieldIdentityEtale k)) c))) = _
   exact (congrArg ((fieldGlobalSectionsInvariantsIso.{u, w} k Ω).hom.app Q') h).trans hn
 
-/-- An invariant coefficient defines a genuine global section of the SAME original inverse sheaf. -/
+/-- Let M be a discrete continuous Galois module for a field k with prescribed separable closure
+Ω, and m∈M^G. The constant equivariant function on the terminal geometric fiber, with value m,
+corresponds to a global section of the inverse field sheaf/Galois equivalence applied to M. -/
 def fieldInvariantConstantGlobalSection (M : FieldCohomologyModule.{u, w} k Ω)
     (m : DiscreteAbelianAction.invariantsFunctor.obj M) :
     (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).obj
@@ -304,7 +348,10 @@ def fieldInvariantConstantGlobalSection (M : FieldCohomologyModule.{u, w} k Ω)
     ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M)
     ((fieldTerminalFunctionsInvariantsEquiv.{u, w} k Ω M).symm m)
 
-/-- The SAME original counit recovers every original invariant coefficient. -/
+/-- For a field k, prescribed separable closure Ω, discrete Galois module M, and m∈M^G, form its
+constant global section in the reconstructed sheaf. Applying the Γ/invariant comparison and
+then invariants of the sheaf-equivalence counit gives m. The specified counit recovers the
+coefficient. -/
 theorem fieldGlobalSectionsInvariants_counit_constant
     (M : FieldCohomologyModule.{u, w} k Ω)
     (m : DiscreteAbelianAction.invariantsFunctor.obj M) :
@@ -332,7 +379,14 @@ theorem fieldGlobalSectionsInvariants_counit_constant
   exact (congrArg (DiscreteAbelianAction.homToAdd
     ((fieldSheafGaloisEquivalence.{u, w} k Ω).counitIso.hom.app M)) hh).trans hc
 
-/-- The complete source unit fixes actual objects, both maps, and every original normalization. -/
+/-- Let k have prescribed separable closure Ω, Φ the Galois stalk functor, E_G the sheaf/Galois
+equivalence, and L the ULift^u coefficient functor. This structure asserts that invariants are
+exactly vectors fixed by every g and invariant maps retain their underlying additive values;
+the terminal point is Spec(Ω)→Spec(k) and is fixed; terminal-fiber evaluation and the constant
+function are inverse; Γ≅Φ⋙Inv has the prescribed germ forward map and inverse-unit map with
+both inverse identities; these comparisons are natural in sheaf and reconstructed-module maps;
+the smaller-coefficient formulas use one lift, the same germ, and inverse-unit followed by
+down; and the counit recovers each invariant constant coefficient. -/
 structure OriginalFieldGlobalSectionsInvariantsLaws : Prop where
   literal_invariants : ∀ (M : FieldCohomologyModule.{u, w} k Ω)
     (m : DiscreteAbelianAction.underlying M),
@@ -433,7 +487,12 @@ structure OriginalFieldGlobalSectionsInvariantsLaws : Prop where
         ((fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω).obj M)
         (fieldInvariantConstantGlobalSection.{u, w} k Ω M m)) = m
 
-/-- Original Γ is naturally the SAME geometric-module invariant subgroup, with all source maps. -/
+/-- For a field k and prescribed separable closure Ω, the natural identification Γ(Q) ≅ Φ(Q)^G
+takes a section to its terminal-point germ and has the inverse-unit map, with both inverse and
+naturality identities for every additive-group sheaf of height max(u,w). Its
+smaller-coefficient normalization uses one ULift^u, and its reconstructed invariant constant
+section is recovered by the equivalence counit. These are the fields of
+OriginalFieldGlobalSectionsInvariantsLaws. -/
 theorem original_field_global_sections_invariants :
     OriginalFieldGlobalSectionsInvariantsLaws.{u, w} k Ω where
   literal_invariants := DiscreteAbelianAction.mem_invariants

@@ -1,4 +1,8 @@
-# H1 ZMod Restrict Int Add Equiv map of hom
+# First-cohomology scalar comparison under group restriction
 
-The degree-one scalar-restriction equivalence is natural for an
-arbitrary group homomorphism and compatible coefficient map.
+Let n∈ℕ, G,H be groups, A a ZMod n-representation of H,
+B one of G, ψ:G→H a group homomorphism and
+t:Res_ψ(A)→B an equivariant coefficient map.
+Scalar restriction to ℤ keeps the coefficient values and group actions.
+The additive first-cohomology comparisons satisfy
+χ_B¹∘H¹(ψ,t)=H¹(ψ,Res(t))∘χ_A¹.

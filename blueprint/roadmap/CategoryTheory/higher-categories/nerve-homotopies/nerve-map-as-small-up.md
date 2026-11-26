@@ -1,5 +1,6 @@
-# Nerve Map As Small Up
+# The nerve map of canonical category transport
 
-The canonical ORIGINAL AsSmall up chart acts on every original
-simplex by the SAME object/Hom lifting functor. Both nerve carriers have
-the actual max of the independent object and Hom roles.
+The nerve map of canonical category transport.
+
+Apply AsSmall.up : A → AsSmall A to each composable chain. The resulting map of nerves uses
+the object and common morphism universe heights stated in the definition.

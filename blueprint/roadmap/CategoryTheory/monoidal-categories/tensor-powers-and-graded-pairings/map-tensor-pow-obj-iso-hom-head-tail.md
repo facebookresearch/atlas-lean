@@ -1,4 +1,6 @@
-# Map Tensor Pow Obj Iso hom head Tail
+# Strong monoidal power comparison respects head tail coordinates
 
-The strong-monoidal tensor-power comparison commutes with canonical
-head--tail decomposition.
+Strong monoidal power comparison respects head tail coordinates.
+
+The comparison for `n+2` commutes with source and target head-tail coordinates, the inverse
+tensor structure map, and the comparison of the tail power.

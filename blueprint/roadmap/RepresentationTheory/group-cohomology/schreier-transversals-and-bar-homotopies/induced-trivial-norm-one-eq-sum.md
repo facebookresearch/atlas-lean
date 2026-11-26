@@ -1,4 +1,6 @@
-# Induced Trivial Norm one eq sum
+# The norm of one in induced trivial coordinates
 
-The canonical norm map sends one to the sum of the induced basis
-vectors indexed by any right transversal.
+The norm of one in induced trivial coordinates.
+
+For any right transversal T, the canonical norm map sends 1 ∈ k to ∑ₜ IndV.mk(t,1) in the
+induced trivial representation.

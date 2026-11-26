@@ -14,7 +14,14 @@ public import Mathlib.CategoryTheory.Whiskering
 public import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 
 /-!
-# Naturality and coherence of fixed categorical comparison isomorphisms
+# Transport of categorical comparison identities
+
+Natural isomorphisms transfer identity and composition equations between compatible functor
+families. Coordinate isomorphisms also transfer morphism squares, inverse formulas, and
+equality presentations.
+
+These statements use arbitrary categories and the specified morphism and natural-isomorphism
+equations. They retain the directions of each comparison and its inverse.
 -/
 
 @[expose] public section
@@ -30,7 +37,10 @@ open CategoryTheory
 
 namespace CategoryTheory
 
-/-- A computed natural comparison transports an actual canonical identity square. -/
+/-- Compatible comparison transfers an identity equation.
+
+If a natural comparison intertwines two identity-index transformations, normalization of the
+first by an identity-functor isomorphism implies normalization of the second. -/
 theorem comparison_identity {A D : Type*} [Category A] [Category D]
     {F H : A ⥤ D} (c : F ≅ H) (L : A ⥤ A) (e : L ≅ 𝟭 A)
     (a : F ⟶ L ⋙ F) (b : H ⟶ L ⋙ H)
@@ -50,7 +60,10 @@ theorem comparison_identity {A D : Type*} [Category A] [Category D]
 
 -- V1/V2 abstract categorical associativity must be proved explicitly, not used as definitional
 -- equality.
-/-- Actual all-degree comparison squares transport the canonical composition square. -/
+/-- Compatible comparisons transfer composition equations.
+
+Three natural comparisons intertwining two successive maps and their composite transfer the
+stated functor-associator composition equation to the compared family. -/
 theorem comparison_composition
     {A B C D : Type*} [Category A] [Category B] [Category C] [Category D]
     {FA HA : A ⥤ D} {FB HB : B ⥤ D} {FC HC : C ⥤ D}
@@ -114,7 +127,9 @@ section
 open CategoryTheory
 
 namespace CategoryTheory
-/-- Compose actual same-target iso equalities before field-side dependent inference. -/
+/-- Equal isomorphisms give equal inverse composites.
+
+Replacing both isomorphisms by equal ones preserves their composite with the second inverse. -/
 theorem inverse_comp_iso_eq {C : Type*} [Category C] {X Y Z : C}
     (a a' : X ≅ Z) (b b' : Y ≅ Z) (ha : a = a') (hb : b = b') :
     a ≪≫ b.symm = a' ≪≫ b'.symm := by
@@ -133,14 +148,20 @@ open CategoryTheory CategoryTheory.Limits Opposite
 
 namespace CategoryTheory
 
-/-- A typed category cancellation lemma; no point/sheaf instances are baked into its proof. -/
+/-- An inverse coordinate cancels after a triple composite.
+
+A composite of three maps followed by an isomorphism inverse and then its forward map equals
+the three-map composite. -/
 theorem comp_three_iso_inv_hom {C : Type*} [Category C] {A B D E F : C}
     (a : A ⟶ B) (b : B ⟶ D) (c : D ⟶ F) (i : E ≅ F) :
     (a ≫ b ≫ c ≫ i.inv) ≫ i.hom = a ≫ b ≫ c := by
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
 
-/-- A native point over an isomorphism is recovered by the literal inverse map. -/
+/-- Functor image of an inverse recovers a transported point.
+
+If the functor image of an isomorphism sends `x` to `y`, the image of its inverse sends `y` to
+`x`. -/
 theorem Functor.map_iso_inv_point {C : Type*} [Category C] (F : C ⥤ Type u)
     {X Y : C} (i : X ≅ Y) (x : F.obj X) (y : F.obj Y) (h : F.map i.hom x = y) :
     F.map i.inv y = x := by
@@ -160,7 +181,9 @@ universe u w
 open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory
-/-- The proved original-model square identifies the literal old map after transport. -/
+/-- Coordinate square determines the conjugated morphism.
+
+A commutative square `a ≫ f.hom = e.hom ≫ b` gives `e.hom ≫ b ≫ f.inv = a`. -/
 theorem rankIso_transport_map_eq {C : Type*} [Category C] {X Y X' Y' : C}
     (e : X ≅ Y) (f : X' ≅ Y') (a : X ⟶ X') (b : Y ⟶ Y')
     (h : a ≫ f.hom = e.hom ≫ b) : e.hom ≫ b ≫ f.inv = a := by
@@ -176,7 +199,9 @@ universe u w
 open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory
-/-- Cancel the actual original-model comparison in an identity-evaluation square. -/
+/-- Inverse coordinate recovers a compatible morphism.
+
+If `e.hom ≫ b = a`, then `e.inv ≫ a = b`. -/
 theorem rankIso_inv_zero {C : Type*} [Category C] {X Y Z : C}
     (e : X ≅ Y) (a : X ⟶ Z) (b : Y ⟶ Z) (h : e.hom ≫ b = a) :
     e.inv ≫ a = b := by
@@ -192,7 +217,10 @@ universe u w
 open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory
-/-- The actual target zero naturality transports any proved source value square. -/
+/-- A point coordinate remains compatible after a functor map.
+
+A map into a source functor object agreeing with its comparison coordinate stays compatible
+after the functor image of a morphism. -/
 theorem postcompose_natural_zero {B D : Type*} [Category B] [Category D]
     (F I : B ⥤ D) (z : F ≅ I) {M N : B} (τ : M ⟶ N) {X : D}
     (g : X ⟶ F.obj M) (r : X ⟶ I.obj M) (h : g ≫ z.hom.app M = r) :
@@ -213,7 +241,10 @@ open CategoryTheory CategoryTheory.Limits
 namespace CategoryTheory
 
 
-/-- Compose the three proved value squares and cancel the actual invariant isomorphism. -/
+/-- Two normalized coordinate systems give the same morphism square.
+
+Compatible endpoint normalizations and two squares through a common target map give the
+conjugated comparison square. -/
 theorem normalized_conjugate_map {C : Type*} [Category C]
     {X Y A B V W I J : C}
     (e : X ≅ A) (f : Y ≅ B) (zX : X ≅ V) (zY : Y ≅ W)
@@ -233,7 +264,9 @@ theorem normalized_conjugate_map {C : Type*} [Category C]
     _ = (zX.hom ≫ g.hom) ≫ r := by rw [← Category.assoc, hc]
     _ = _ := by rw [Category.assoc, ← ha]; exact (Category.assoc _ _ _).symm
 
-/-- Cancel the same target comparison from a conjugated map equality. -/
+/-- Conjugated morphism satisfies its coordinate square.
+
+If `e.hom ≫ b ≫ f.inv = a`, then `a ≫ f.hom = e.hom ≫ b`. -/
 theorem conjugate_map_square {C : Type*} [Category C] {X Y A B : C}
     (e : X ≅ A) (f : Y ≅ B) (b : A ⟶ B) (a : X ⟶ Y)
     (h : e.hom ≫ b ≫ f.inv = a) : a ≫ f.hom = e.hom ≫ b := by
@@ -249,7 +282,10 @@ universe u w
 open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory
-/-- Actual wrapper equalities transport the already proved native resolution formula. -/
+/-- Isomorphism formulas transfer through stated equalities.
+
+Equal comparison isomorphisms and equal factors preserve the displayed forward-map
+factorization. -/
 theorem mapped_formula_equalities {C : Type*} [Category C] {X Y Z : C}
     (e e' : X ≅ Y) (a a' : X ≅ Z) (b b' : Y ≅ Z)
     (he : e = e') (ha : a = a') (hb : b = b') (h : e'.hom = a'.hom ≫ b'.inv) :
@@ -262,7 +298,10 @@ section
 
 namespace CategoryTheory
 
-/-- Actual equality of the two connector arrows transports a proved naturality square. -/
+/-- Morphism equality transports a commutative square.
+
+Replacing either side map by an equal map preserves the commutative square with the fixed
+other two maps. -/
 theorem connector_equality_transport {C : Type*} [Category C]
     {A B D E : C} (d d' : A ⟶ B) (e e' : D ⟶ E)
     (f : B ⟶ E) (g : A ⟶ D)

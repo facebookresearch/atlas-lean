@@ -1,4 +1,5 @@
-# Corestriction Cocycle Three Class
+# The class of a transferred three-cocycle
 
-The `H³` class of a transferred three-cocycle before descending through
-the source `H³` quotient.
+The class of a transferred three-cocycle.
+
+Transfer an H-three-cocycle and project the resulting G-three-cocycle to H³(G,A).

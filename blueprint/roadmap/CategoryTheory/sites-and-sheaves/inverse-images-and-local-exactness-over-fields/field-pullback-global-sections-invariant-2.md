@@ -1,3 +1,6 @@
-# Field Pullback Global Sections invariants
+# Field section pullback is invariant restriction followed by the stalk comparison
 
-The SAME Γ0 map is exactly original invariant restriction followed by the actual ξ.
+Let e be a compatible map of fields with prescribed closures, χ : Gal(Ψ/K) → Gal(Ω/k) its
+continuous restriction, and ξ_e : Res_χ Φ_k(Q) ≅ Φ_K(f^*Q) the stalk-module comparison. Under
+the two Γ/invariant isomorphisms, a section c pulls back to Inv(ξ_e)(ResInv_χ(e_k(c))). This
+equality is of invariant-subgroup elements.

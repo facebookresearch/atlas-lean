@@ -1,4 +1,6 @@
-# Map Tensor Pow Obj Iso succ
+# Strong monoidal power comparison at a successor
 
-At a successor tensor power, first apply the inverse tensor comparison and
-then the comparison in the preceding tensor power.
+Strong monoidal power comparison at a successor.
+
+The successor comparison is the inverse tensor structure map followed by the tensor of the
+preceding comparison and the identity last factor.

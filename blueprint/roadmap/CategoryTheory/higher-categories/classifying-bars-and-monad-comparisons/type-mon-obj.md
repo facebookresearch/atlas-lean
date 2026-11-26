@@ -1,4 +1,6 @@
-# Type Mon Obj
+# The cartesian monoid object associated to a monoid
 
-Cartesian monoid object from a monoid type, reused from pinned Mathlib's
-`MonTypeEquivalenceMon.inverse.obj (MonCat.of G)`.
+The cartesian monoid object associated to a monoid.
+
+For a monoid G, its internal monoid structure in the cartesian category of types has the usual
+unit and multiplication.

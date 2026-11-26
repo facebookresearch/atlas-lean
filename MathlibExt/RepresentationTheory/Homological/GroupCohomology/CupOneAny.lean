@@ -15,11 +15,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupPro
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Homology
 
 /-!
-# Target-normalized cups with left degree one
+# Cup products with a degree-one left factor
 
-This file packages the arbitrary cup with a degree-one left input and
-normalizes its output degree from `1 + q` to `q + 1`.  It also records joint
-group-and-coefficient naturality and the formula on cycle representatives.
+Let `G` be a group, `k` a commutative ring, and `A,B` representations. The cup product with
+left degree one is regarded as a map `H¹(G,A) ⊗ H^q(G,B) → H^{q+1}(G,A ⊗ B)` by the canonical
+homology isomorphism for `1 + q = q + 1`.
+
+A fixed class `x ∈ H¹(G,A)` and an equivariant pairing `μ : A ⊗ B → C` give the linear
+operator `y ↦ μ_*(x ∪ y)` from `H^q(G,B)` to `H^{q+1}(G,C)`. These products commute with group
+pullback and compatible coefficient maps. Their values on cycle representatives use the same
+canonical degree identification.
 -/
 
 @[expose] public section
@@ -36,8 +41,9 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- The arbitrary cup with left degree one, with its target degree
-normalized from `1 + q` to `q + 1`. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k` and `q : ℕ`, the morphism
+`H¹(G,A) ⊗ₖ H^q(G,B) → H^{q+1}(G,A ⊗ B)` is `cup G k A B 1 q` followed by the homology
+isomorphism of the inhomogeneous cochain complex induced by `1 + q = q + 1`. -/
 noncomputable def cupOneAny
     (A B : Rep k G) (q : ℕ) :
     groupCohomology A 1 ⊗ groupCohomology B q ⟶
@@ -46,8 +52,9 @@ noncomputable def cupOneAny
     ((inhomogeneousCochains (A ⊗ B)).homologyIsoOfEq
       (Nat.one_add q)).hom
 
-/-- Cup on the left by a fixed degree-one class, followed by an arbitrary
-coefficient pairing. -/
+/-- Let `A,B,C` be representations of a group `G` over a commutative ring `k`, `x ∈ H¹(G,A)`, and
+`μ : A ⊗ B → C` an equivariant morphism. For `q : ℕ`, `cupOneClassMap x μ q : H^q(G,B) →
+H^{q+1}(G,C)` sends `y` to `μ_*((cupOneAny A B q)(x ⊗ₜ[k] y))`. -/
 noncomputable def cupOneClassMap
     {A B C : Rep k G} (x : groupCohomology A 1)
     (mu : A ⊗ B ⟶ C) (q : ℕ) :
@@ -68,8 +75,10 @@ theorem cupOneClassMap_apply
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Joint group-and-coefficient naturality of the target-normalized
-`(1,q)` cup. -/
+/-- Let `k` be a commutative ring, `f : J →* G` a group homomorphism, `A,B : Rep k G`, and `A',B'
+: Rep k J`. Given `φ : Rep.res f A → A'` and `ψ : Rep.res f B → B'`, set `θ =
+(Rep.resTensorIso f A B).inv ≫ (φ ⊗ ψ)`. For every `q : ℕ`, `cupOneAny A B q ≫ map f θ (q + 1)
+= (map f φ 1 ⊗ map f ψ q) ≫ cupOneAny A' B' q`. -/
 theorem cupOneAny_naturality_of_hom
     {J : Type u} [Group J]
     {A B : Rep k G} {A' B' : Rep k J}
@@ -90,7 +99,10 @@ theorem cupOneAny_naturality_of_hom
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Coefficient naturality of the target-normalized `(1,q)` cup. -/
+/-- Let `G` be a group, `k` a commutative ring, and `φ : A → A'`, `ψ : B → B'` morphisms of
+representations. For every `q : ℕ`, `cupOneAny A B q ≫ map (id G) (φ ⊗ ψ) (q + 1) = (map (id
+G) φ 1 ⊗ map (id G) ψ q) ≫ cupOneAny A' B' q`, as maps from `H¹(G,A) ⊗ H^q(G,B)` to
+`H^{q+1}(G,A' ⊗ B')`. -/
 theorem cupOneAny_naturality
     {A B A' B' : Rep k G} (phi : A ⟶ A') (psi : B ⟶ B')
     (q : ℕ) :
@@ -110,8 +122,11 @@ theorem cupOneAny_naturality
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Simultaneous coefficient naturality of cup on the left by a fixed
-degree-one class. -/
+/-- Let `k` be a commutative ring and `G` a group. For representations `A,B,C,A',B',C'`, pairings
+`μ : A ⊗ B → C`, `μ' : A' ⊗ B' → C'`, and morphisms `φ : A → A'`, `ψ : B → B'`, `ω : C → C'`,
+assume `(φ ⊗ ψ) ≫ μ' = μ ≫ ω`. For `x ∈ H¹(G,A)` and `q : ℕ`, `cupOneClassMap x μ q ≫ ω_* =
+ψ_* ≫ cupOneClassMap (φ_*x) μ' q`, where the induced maps have degrees `q + 1`, `q`, and `1`,
+respectively. -/
 theorem cupOneClassMap_naturality
     {A B C A' B' C' : Rep k G}
     (x : groupCohomology A 1)
@@ -174,8 +189,10 @@ theorem cupOneClassMap_naturality
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Mapping the tensor-unit coefficient of a fixed left class through
-`phi` turns the left-unitor cup into the cup valued in `A' ⊗ B`. -/
+/-- Let `k` be a commutative ring, `G` a group, `U = 𝟙_ (Rep k G)` the tensor-unit representation,
+`x ∈ H¹(G,U)`, `B,A' : Rep k G`, and `φ : U → A'`. For `q : ℕ`, cupping with `x` via the left
+unitor `λ_B : U ⊗ B → B`, then mapping by `λ_B.inv ≫ (φ ⊗ 𝟙 B) : B → A' ⊗ B`, equals
+`cupOneClassMap (φ_*x) (𝟙 (A' ⊗ B)) q`. -/
 theorem cupOneClassMap_leftUnitor_naturality
     {A' B : Rep k G}
     (x : groupCohomology (𝟙_ (Rep k G)) 1)
@@ -196,7 +213,9 @@ theorem cupOneClassMap_leftUnitor_naturality
   exact h
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- In bidegree `(1,1)`, target normalization is the identity. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, `cupOneAny A B 1 = cup G
+k A B 1 1` as morphisms `H¹(G,A) ⊗ H¹(G,B) → H²(G,A ⊗ B)`. The canonical degree identification
+for `1 + 1 = 1 + 1` is the identity. -/
 theorem cupOneAny_one_eq (A B : Rep k G) :
     cupOneAny A B 1 = cup G k A B 1 1 := by
   unfold cupOneAny
@@ -207,7 +226,11 @@ theorem cupOneAny_one_eq (A B : Rep k G) :
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- Representative formula for the target-normalized `(1,q)` cup. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, `q : ℕ`, and `x,y`
+cycles of the inhomogeneous cochain complexes in degrees `1,q`, respectively. Then `cupOneAny
+A B q (π A 1 x ⊗ₜ[k] π B q y) = π (A ⊗ B) (q + 1) (e_Z ((inhomogeneousCupPairing G k A
+B).pairCycles 1 q (x ⊗ₜ[k] y)))`, where `e_Z` is the cycles isomorphism induced by `1 + q = q
++ 1`. -/
 theorem cupOneAny_π_apply
     (A B : Rep k G) (q : ℕ)
     (x : cocycles A 1) (y : cocycles B q) :

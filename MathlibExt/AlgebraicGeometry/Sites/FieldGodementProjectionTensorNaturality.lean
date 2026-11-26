@@ -11,7 +11,15 @@ module
 
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementTensorProjection
 
-/-! # Actual tensor-stalk naturality for field product projections -/
+/-!
+# Tensor stalk naturality for field Godement product projections
+
+Let k be a field and M,N coefficient families over its unique spectrum point. Tensor the two
+Godement-family product projections and apply the canonical geometric stalk.
+
+The result commutes with the source and target tensor-of-stalks comparisons. Thus the tensor
+sheaf projection corresponds exactly to tensoring the projected stalk maps.
+-/
 
 @[expose] public section
 noncomputable section
@@ -23,7 +31,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (k : Type u) [Field k]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual tensor stalk map is natural for the two original singleton product projections. -/
+/-- For a field k, families M,N, canonical stalk L, and product projections π_M,π_N, let t_F and
+t_P be the tensor-stalk comparisons for the family products and point skyscrapers. Then
+L(π_M⊗π_N)≫t_P=t_F≫(Lπ_M⊗_ℤ Lπ_N). This is the source-to-target square on the specified tensor
+sheaves. -/
 theorem fieldGodementProjectionTensor_naturality
     (M N : Spec (.of k) → AddCommGrpCat.{max u w}) :
     let X := Spec (.of k)

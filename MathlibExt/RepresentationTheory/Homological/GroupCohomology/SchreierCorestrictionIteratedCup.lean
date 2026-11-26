@@ -14,12 +14,17 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Iterat
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferCupOneAnyProjection
 
 /-!
-# Corestriction of positive iterated cups
+# Corestriction of mixed iterated cup products
 
-This file packages iterated cups whose initial entries are restrictions of
-ambient degree-one classes and whose final entry is a subgroup class.  The
-coefficient is normalized into the restriction of the ambient positive
-tensor power.
+Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `A` a representation. A family `x :
+Fin n → H¹(G,A)` and a final class `y ∈ H¹(H,Res A)` give an iterated cup of degree `n + 1` on
+`H`. Its first `n` factors are the restrictions of the ambient classes. The coefficients are
+identified either with `Res(A^{⊗(n+1)})` or with `Res P_n`, where `P₀=A` and `P_{n+1}=A ⊗
+P_n`.
+
+The tensor-power form has explicit one-factor and head-tail identities. If `H` has finite
+index, canonical corestriction of the right-associated form equals the ambient
+right-associated cup with the same initial classes and final factor `cor¹(y)`.
 -/
 
 @[expose] public section
@@ -37,8 +42,10 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable (H : Subgroup G) [H.FiniteIndex]
 
-/-- The normalized iterated cup of restricted ambient classes followed by
-one subgroup degree-one class. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, and `n : ℕ`. For `x : Fin
+n → H¹(G,A)` and `y ∈ H¹(H,Res A)`, `restrictedIteratedCupClassSuccLast H A n x y` is the
+iterated cup of the restricted `x`-classes followed by `y`, with degree `n + 1` and
+coefficient `Rep.res H.subtype (TensorPower.tensorPowObj A (n + 1))`. -/
 noncomputable def restrictedIteratedCupClassSuccLast
     (A : Rep k G) (n : ℕ)
     (x : Fin n → groupCohomology.H1 A)
@@ -51,8 +58,10 @@ noncomputable def restrictedIteratedCupClassSuccLast
 omit [H.FiniteIndex] in
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- In weight one, the normalized restricted iterated cup is restriction of
-the ambient weight-one coefficient applied to the subgroup class. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, and `y ∈ H¹(H,Res A)`.
+With no initial ambient factors, `restrictedIteratedCupClassSuccLast H A 0 (fun i => Fin.elim0
+i) y = (Res((TensorPower.tensorPowObjOneIso A).inv))_* y`. Thus the result is `y` transported
+to the coefficient `Res(A^{⊗1})`. -/
 theorem restrictedIteratedCupClassSuccLast_zero
     (A : Rep k G)
     (y : groupCohomology.H1 (Rep.res H.subtype A)) :
@@ -67,8 +76,10 @@ theorem restrictedIteratedCupClassSuccLast_zero
 omit [H.FiniteIndex] in
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- At successor weight, the normalized restricted iterated cup exposes the
-first restricted ambient class and the normalized mixed tail. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, `A : Rep k G`, `n : ℕ`, `x : Fin (n + 1)
+→ H¹(G,A)`, and `y ∈ H¹(H,Res A)`. Applying `(Rep.resTensorPowHeadTailIso H.subtype A n).hom`
+in degree `n + 2` to the mixed tensor-power cup equals `cupOneAny (Res A) (Res(A^{⊗(n+1)})) (n
++ 1) (res(x 0) ⊗ restrictedIteratedCupClassSuccLast H A n (fun i => x i.succ) y)`. -/
 theorem restrictedIteratedCupClassSuccLast_succ_headTail
     (A : Rep k G) (n : ℕ)
     (x : Fin (n + 1) → groupCohomology.H1 A)
@@ -87,7 +98,10 @@ theorem restrictedIteratedCupClassSuccLast_succ_headTail
     H.subtype A n x y
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Weight-one base case of the iterated-cup corestriction formula. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `y ∈
+H¹(H,Res A)`. Degree-one Schreier corestriction with coefficient `A^{⊗1}` sends
+`restrictedIteratedCupClassSuccLast H A 0 (fun i => Fin.elim0 i) y` to `iteratedCupClassSucc A
+0 ![corestrictionH1 A y]`, the one-factor ambient class in the same tensor-power coefficient. -/
 theorem schreierCorestriction_restrictedIteratedCupClassSuccLast_zero
     (A : Rep k G)
     (y : groupCohomology.H1 (Rep.res H.subtype A)) :
@@ -108,8 +122,10 @@ theorem schreierCorestriction_restrictedIteratedCupClassSuccLast_zero
   rw [hone] at hnat
   exact hnat.symm
 
-/-- Head-recursive mixed iterated cup over a subgroup.  Its coefficient is
-the restriction of the ambient right-associated positive tensor power. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G`, and `A : Rep k G`. Define `P₀=A` and
+`P_{n+1}=A ⊗ P_n`. For `x : Fin n → H¹(G,A)` and `y ∈ H¹(H,Res A)`, the mixed class lies in
+`H^{n+1}(H,Res P_n)`. It is `y` when `n=0`; its successor is the cup of `res(x 0)` with the
+mixed tail, followed by `Res A ⊗ Res P_n → Res(A ⊗ P_n)`. -/
 noncomputable def restrictedIteratedCupClassConsLast
     (A : Rep k G) :
     ∀ (n : ℕ) (_x : Fin n → groupCohomology.H1 A)
@@ -148,8 +164,10 @@ theorem restrictedIteratedCupClassConsLast_succ
   restrictedIteratedCupClassConsLastOfHom_succ H.subtype A n x y
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Canonical Schreier corestriction carries a mixed head-recursive cup to
-the ambient head-recursive cup ending in degree-one corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, `n : ℕ`, `x :
+Fin n → H¹(G,A)`, and `y ∈ H¹(H,Res A)`. For `P_n = TensorPower.tensorPowObjRightSucc A n`,
+`schreierCorestriction H P_n (n + 1) (restrictedIteratedCupClassConsLast H A n x y) =
+iteratedCupClassConsLast A n x (corestrictionH1 A y)` in `H^{n+1}(G,P_n)`. -/
 theorem schreierCorestriction_restrictedIteratedCupClassConsLast
     (A : Rep k G) :
     ∀ (n : ℕ) (x : Fin n → groupCohomology.H1 A)

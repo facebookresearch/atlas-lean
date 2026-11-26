@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal π
+# The arbitrary-degree transfer on a cycle class
 
-Arbitrary-degree representative formula for chosen-transversal
-corestriction.
+The arbitrary-degree transfer on a cycle class.
+
+Applying the transfer to the class of z ∈ Zⁿ(H,A|H) gives the class of the cycle obtained by
+applying the transfer cochain map to z.

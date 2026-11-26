@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Hom Add Equiv naturality left
+# Additive stalk correspondence is natural in the sheaf
 
-The additive Hom equivalence is natural under every original sheaf map.
+Additive stalk correspondence is natural in the sheaf.
+
+Precomposition by a sheaf map commutes with the additive Hom correspondence.

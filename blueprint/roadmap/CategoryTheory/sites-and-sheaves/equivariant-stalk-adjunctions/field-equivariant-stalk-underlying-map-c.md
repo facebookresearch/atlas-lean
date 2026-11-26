@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Underlying Map comm
+# Underlying stalk map retains Galois equivariance
 
-The module condition is the original stalk action, with no supplied equivariance data.
+Underlying stalk map retains Galois equivariance.
+
+The underlying additive map commutes with each stalk action and the corresponding coefficient
+action.

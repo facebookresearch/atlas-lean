@@ -1,3 +1,6 @@
-# Small Etale Derived Gamma Composition Hom
+# Composite delta-functor pullback of global sections
 
-Compose the actual normalized maps through the SAME exact LF composition comparison.
+For scheme morphisms f : X → Y and g : Y → Z in universe u
+and c = max(u, w), compose the delta-functor pullbacks for g and f,
+then identify f*g* with (g∘f)*. The result maps
+(RᑫΓ_Z) to (Q ↦ RᑫΓ_X((g∘f)*Q)).

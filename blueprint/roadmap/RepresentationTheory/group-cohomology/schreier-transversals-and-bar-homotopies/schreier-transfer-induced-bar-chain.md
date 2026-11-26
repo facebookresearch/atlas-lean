@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Chain
+# The universal Schreier transfer of bar complexes
 
-The literal chain map from the ambient bar complex to the induced
-subgroup bar complex which represents arbitrary Schreier transfer.
+The universal Schreier transfer of bar complexes.
+
+The degreewise universal components assemble into a chain map from the G-bar complex to the
+induced H-bar complex.

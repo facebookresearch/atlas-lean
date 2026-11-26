@@ -1,4 +1,6 @@
-# Product schreier Rep Scan
+# Representative scans through a subgroup tower
 
-The representative scan for a product transversal is the pair of the
-successive representative scans.
+Representative scans through a subgroup tower.
+
+For g : Fin n → G, the product-transversal scan at i is the product-coordinate pair formed by
+the S-scan of the T-factor tuple at i and the T-scan of g at i.

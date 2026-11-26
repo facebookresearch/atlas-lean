@@ -1,3 +1,7 @@
-# H1 ZMod Restrict Int Inv To Fun H1π
+# Return first-cohomology scalar map on cocycle classes
 
-Computation of the inverse degree-one comparison on a representative.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+For an integral one-cocycle z, the return class has value
+[z]↦[(χ_Z¹)⁻¹(z)].

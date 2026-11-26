@@ -1,3 +1,5 @@
-# Field Equivariant Stalk From Inverse underlying
+# Equivariant transpose retains its additive map
 
-Forgetting retains exactly the original ordinary arrow.
+Equivariant transpose retains its additive map.
+
+The underlying map of the bundled transpose is the ordinary inverse-sheaf transpose.

@@ -1,3 +1,6 @@
-# Field Derived Sections Continuous Cohomology Iso
+# Derived field sections as continuous geometric fiber cohomology
 
-Actual derived Gamma and the original continuous HG use the SAME common sheaf object.
+Derived field sections as continuous geometric fiber cohomology.
+
+The derived section-invariant coordinate followed by the inverse continuous-to-derived-
+invariant comparison gives a natural isomorphism for every degree.

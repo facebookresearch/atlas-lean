@@ -1,4 +1,7 @@
-# Small Etale Common Geometric Sheaf Fibers jointly Reflect Isomorphisms
+# Canonical geometric stalks detect étale sheaf isomorphisms
 
-The canonical common-universe geometric stalks jointly reflect actual
-sheaf isomorphisms, using the preceding original cover detector.
+For a scheme X in universe u and c = max(u, w), the stalk
+functors at its canonical common-universe geometric points jointly reflect
+isomorphisms of AddCommGrpCat c-valued étale sheaves.
+A sheaf morphism whose maps on all these stalks are isomorphisms
+is itself an isomorphism.

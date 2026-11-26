@@ -1,4 +1,6 @@
-# Ind Res Hom Equiv symm free Lift induced Bar Unit Cochain
+# The adjoint free lift evaluates to the prescribed cochain
 
-The adjoint of a subgroup free-lift evaluates the universal induction
-unit cochain as the original inhomogeneous cochain.
+The adjoint free lift evaluates to the prescribed cochain.
+
+For z : Hⁿ → A, the G-map adjoint to its H-bar free lift sends the universal induced-bar
+cochain at q to z(q).

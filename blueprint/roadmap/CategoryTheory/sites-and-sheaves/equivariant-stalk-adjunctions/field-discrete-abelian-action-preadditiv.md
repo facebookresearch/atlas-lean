@@ -1,3 +1,5 @@
-# Field Discrete Abelian Action preadditive
+# Discrete field coefficient category is preadditive
 
-Compatibility with the original field instance name, using the canonical Hom addition.
+Discrete field coefficient category is preadditive.
+
+The discrete Galois coefficient category has the canonical additive Hom structure.

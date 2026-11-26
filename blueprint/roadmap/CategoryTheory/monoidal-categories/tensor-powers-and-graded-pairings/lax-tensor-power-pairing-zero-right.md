@@ -1,4 +1,5 @@
-# Lax Tensor Power Pairing zero right
+# Lax power pairing satisfies the right unit equation
 
-The right unit law uses the lax unit map; weight `p + 0` reduces
-definitionally to `p`.
+Lax power pairing satisfies the right unit equation.
+
+Pairing the unit on the right gives the right unitor.

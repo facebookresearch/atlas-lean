@@ -13,10 +13,15 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementProductCollapse
 public import MathlibExt.CategoryTheory.Adjunction.ComparisonMonadIso
 
 /-!
-# The actual Godement monad at the prescribed field point
+# The field Godement monad at a prescribed separable-closure point
 
-The checked canonical closure point, stalk and skyscraper comparisons preserve
-the original unit and counit. They identify the actual one-point monads.
+Let k,Ω be fields of universe u with Ω a prescribed separable closure. On small-étale
+additive-group sheaves of height max(u,w), let T_can be the monad of the canonical geometric
+point over the unique spectrum point, and T_Ω the monad of Spec(Ω) → Spec(k).
+
+The canonical-to-prescribed stalk and skyscraper comparisons give T_can ≅ T_Ω, preserving
+units and multiplications. Composing with the field Godement product-collapse monad
+isomorphism identifies the full field Godement monad with T_Ω.
 -/
 
 @[expose] public section
@@ -30,20 +35,26 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The actual one canonical-point monad, stored on the original sheaf category. -/
+/-- For a field k, the canonical geometric point at the unique topological point of Spec(k) has a
+stalk–skyscraper adjunction. Its induced monad on additive-group small-étale sheaves of height
+max(u,w) is fieldCanonicalPointMonad. Its endofunctor is stalk followed by skyscraper. -/
 def fieldCanonicalPointMonad :
     Monad (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
   ((fieldGodementCanonicalPoint.{u, w} k).skyscraperSheafAdjunction
     (A := AddCommGrpCat.{max u w})).toMonad
 
-/-- The actual prescribed Ω point monad, stored on the same original sheaf category. -/
+/-- Let Ω be a prescribed separable closure of a field k. The geometric point Spec(Ω) → Spec(k)
+gives a stalk–skyscraper adjunction at coefficient height max(u,w). Its induced monad on the
+same sheaf category is fieldPrescribedPointMonad. -/
 def fieldPrescribedPointMonad :
     Monad (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :=
   ((smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafAdjunction
     (A := AddCommGrpCat.{max u w})).toMonad
 
-/-- The genuine point stalk/skyscraper comparisons give the actual canonical-to-prescribed
-endofunctor iso. -/
+/-- For a field k and prescribed separable closure Ω, the canonical-to-prescribed stalk and
+skyscraper comparisons give an isomorphism of their stalk–skyscraper endofunctors on
+small-étale additive-group sheaves. This is the adjunction endofunctor comparison
+fieldCanonicalPrescribedPointEndofunctorIso. -/
 def fieldCanonicalPrescribedPointEndofunctorIso :
     (fieldCanonicalPointMonad.{u, w} k).toFunctor ≅
         (fieldPrescribedPointMonad.{u, w} k Ω).toFunctor :=
@@ -52,8 +63,9 @@ def fieldCanonicalPrescribedPointEndofunctorIso :
     (fieldCanonicalSkyscraperIso.{u, w} k Ω default)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual endofunctor comparison preserves the original canonical and prescribed monad
-units. -/
+/-- Let T be the canonical point monad, S the prescribed Ω-point monad, and θ their endofunctor
+comparison. For a small-étale sheaf Q, η_T,Q≫θ_Q=η_S,Q. Thus the canonical and prescribed
+adjunction units correspond under the fixed comparison. -/
 theorem fieldCanonicalPrescribedPointEndofunctorIso_unit
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := fieldCanonicalPointMonad.{u, w} k
@@ -72,7 +84,9 @@ theorem fieldCanonicalPrescribedPointEndofunctorIso_unit
     (p.skyscraperSheafFunctor.map d) (s.hom.app (q.sheafFiber.obj Q))).symm.trans h
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine original evaluation counits make the actual point monad multiplications commute. -/
+/-- For a field k and prescribed separable closure Ω, let T,S be the canonical and prescribed
+point monads and θ their endofunctor isomorphism. Then μ_T,Q≫θ_Q=(T(θ_Q)≫θ_{S(Q)})≫μ_S,Q for
+every sheaf Q. The point counit comparisons give this multiplication compatibility. -/
 theorem fieldCanonicalPrescribedPointEndofunctorIso_mul
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := fieldCanonicalPointMonad.{u, w} k
@@ -90,15 +104,19 @@ theorem fieldCanonicalPrescribedPointEndofunctorIso_mul
     (fieldCanonicalSkyscraperIso.{u, w} k Ω default)
     (fun M => fieldCanonicalSkyscraperIso_counit.{u, w} k Ω default M) Q
 
-/-- The actual canonical point monad is isomorphic to the prescribed Ω point monad through its
-genuine adjunction comparisons. -/
+/-- Let k have prescribed separable closure Ω. The canonical-to-prescribed point endofunctor
+isomorphism, with its unit and multiplication equations, defines fieldCanonicalPointMonad(k) ≅
+fieldPrescribedPointMonad(k,Ω). -/
 def fieldCanonicalPrescribedPointMonadIso :
     fieldCanonicalPointMonad.{u, w} k ≅ fieldPrescribedPointMonad.{u, w} k Ω :=
   MonadIso.mk (fieldCanonicalPrescribedPointEndofunctorIso.{u, w} k Ω)
     (fieldCanonicalPrescribedPointEndofunctorIso_unit.{u, w} k Ω)
     (fieldCanonicalPrescribedPointEndofunctorIso_mul.{u, w} k Ω)
 
-/-- The original full Godement monad is isomorphic to the original prescribed-point monad. -/
+/-- For a field k and prescribed separable closure Ω, compose the Godement-to-canonical-point
+monad isomorphism with the canonical-to-prescribed point isomorphism. This gives
+smallEtaleGodementMonad(Spec k) ≅ fieldPrescribedPointMonad(k,Ω) on additive-group sheaves of
+height max(u,w). -/
 def fieldGodementPrescribedPointMonadIso :
     smallEtaleGodementMonad.{u, w} (Spec (.of k)) ≅
       fieldPrescribedPointMonad.{u, w} k Ω :=

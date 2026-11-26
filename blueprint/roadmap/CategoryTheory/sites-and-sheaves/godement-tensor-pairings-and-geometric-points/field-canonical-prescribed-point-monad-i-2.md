@@ -1,4 +1,5 @@
-# Field Canonical Prescribed Point Monad Iso
+# Canonical and prescribed field-point monads are isomorphic
 
-The actual canonical point monad is isomorphic to the prescribed Ω point monad through its
-genuine adjunction comparisons.
+Let k have prescribed separable closure Ω. The canonical-to-prescribed point endofunctor
+isomorphism, with its unit and multiplication equations, defines fieldCanonicalPointMonad(k) ≅
+fieldPrescribedPointMonad(k,Ω).

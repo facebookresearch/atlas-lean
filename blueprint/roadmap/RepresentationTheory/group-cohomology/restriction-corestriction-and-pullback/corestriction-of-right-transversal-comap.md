@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal comap Surjective
+# The chosen-transfer square for inflation along a surjection
 
-Pullback along a surjective homomorphism commutes with
-chosen-transversal corestriction in every cohomological degree.
+The chosen-transfer square for inflation along a surjection.
+
+In every degree n, transfer from H to G followed by pullback along π equals subgroup pullback
+to π⁻¹H followed by transfer with the pulled-back transversal to G′.

@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Counit naturality
+# Field stalk counit is coefficient natural
 
-Every actual original module map has the natural counit square on those SAME functors.
+Field stalk counit is coefficient natural.
+
+The counit commutes with the stalk image of an inverse-sheaf coefficient map and the given
+coefficient map.

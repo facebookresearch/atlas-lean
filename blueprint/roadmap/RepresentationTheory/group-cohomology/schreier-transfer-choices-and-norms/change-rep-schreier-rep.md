@@ -1,4 +1,6 @@
-# Change Rep schreier Rep
+# Representative matching commutes with right multiplication
 
-Changing representatives commutes with the right action on a
-transversal.
+Representative matching commutes with right multiplication.
+
+Matching the T-representative after multiplying by g gives the U-representative obtained by
+multiplying the matched starting representative by g.

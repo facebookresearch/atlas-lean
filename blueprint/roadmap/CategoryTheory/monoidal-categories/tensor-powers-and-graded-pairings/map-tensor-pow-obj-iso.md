@@ -1,4 +1,6 @@
-# Map Tensor Pow Obj Iso
+# Strong monoidal functor comparison on finite tensor powers
 
-The canonical comparison between the image of a finite tensor power under a
-strong monoidal functor and the finite tensor power of the image.
+Strong monoidal functor comparison on finite tensor powers.
+
+The inverse unit and tensor structure isomorphisms recursively compare `G(X^n)` with `(G
+X)^n`.

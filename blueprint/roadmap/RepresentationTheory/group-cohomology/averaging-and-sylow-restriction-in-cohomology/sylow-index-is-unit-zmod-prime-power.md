@@ -1,4 +1,5 @@
-# Sylow Index is Unit zmod prime Power
+# Sylow index is a unit modulo a prime power
 
-The index of a Sylow `p`-subgroup is a unit modulo every positive power
-of `p`.
+Let `G : Type` be a finite group, `p : ℕ` prime, `P : Sylow p G`, and `d : ℕ` with `0 < d`.
+Then `IsUnit (P.index : ZMod (p ^ d))`; equivalently, the subgroup index `[G:P]` is invertible
+modulo `p^d`, since `p` does not divide this index.

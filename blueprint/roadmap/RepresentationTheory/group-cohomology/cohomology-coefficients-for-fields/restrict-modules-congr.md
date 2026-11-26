@@ -1,5 +1,5 @@
-# Discrete-action pullback along equal monoid homomorphisms
+# Equal continuous monoid maps give identity-component restriction comparisons
 
-Equal continuous monoid homomorphisms `φ, φ' : H →ₜ* G` induce naturally
-isomorphic pullback functors on discrete continuous abelian actions.
-The comparison acts as the identity on each underlying coefficient group.
+For continuous monoid homomorphisms φ,φ′:H→G with φ=φ′, their restriction functors on discrete
+continuous abelian actions are naturally isomorphic. The coefficient groups and the additive
+component maps are identified by identity.

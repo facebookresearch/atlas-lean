@@ -1,3 +1,5 @@
-# Cyclic Character Class naturality
+# Pulling back a group character pulls back its cohomology class
 
-The cyclic-character class is natural under pullback of the group.
+Let G,J be groups in universe zero, f:J→G a homomorphism, and χ:G→Multiplicative(F₂) a
+character. The induced cohomology map with identity trivial-coefficient morphism sends
+[χ]∈H¹(G,F₂) to [χ∘f]∈H¹(J,F₂).

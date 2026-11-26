@@ -1,3 +1,5 @@
-# Field Galois Spec hom Equiv Alg Hom
+# The affine geometric lift coordinate is postcomposed by the Galois automorphism
 
-On an actual affine spectrum, the same geometric embedding is postcomposed by g.
+Let k,Ω be fields with a k-algebra structure, g∈Gal(Ω/k), and A a commutative k-algebra. For z
+: Spec(Ω) → Spec(A) over k, the algebra coordinate of Spec(g)≫z is g∘h_z : A → Ω. This
+identity does not require Ω to be a separable closure or A to be étale.

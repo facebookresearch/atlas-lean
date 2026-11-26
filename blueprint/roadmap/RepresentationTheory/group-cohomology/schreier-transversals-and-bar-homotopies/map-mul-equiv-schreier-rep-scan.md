@@ -1,4 +1,6 @@
-# Map Mul Equiv schreier Rep Scan
+# Transport of finite representative scans
 
-The full Schreier representative scan commutes with transport of a
-right transversal along a multiplicative equivalence.
+Transport of finite representative scans.
+
+Applying e to the starting representative and every coordinate of g : Fin n → G transports
+each step of the representative scan to its image in e(T).

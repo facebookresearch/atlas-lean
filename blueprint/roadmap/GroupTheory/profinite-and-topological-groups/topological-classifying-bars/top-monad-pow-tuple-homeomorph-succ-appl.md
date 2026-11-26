@@ -1,4 +1,6 @@
-# Top Monad Pow Tuple Homeomorph succ apply
+# The successor formula for topological power coordinates
 
-Successor computation: the new tensor-monad coordinate is appended to the
-head-first tuple.
+The successor formula for topological power coordinates.
+
+Read Tⁿ⁺¹(X) first through the level-n homeomorphism at TX. If the result is (t,(g,x)), its
+level-(n+1) coordinates are (Fin.snoc t g,x).

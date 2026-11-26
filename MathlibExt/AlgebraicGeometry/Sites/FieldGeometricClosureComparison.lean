@@ -17,7 +17,16 @@ public import Mathlib.AlgebraicGeometry.Morphisms.Flat
 public import Mathlib.CategoryTheory.Sites.Point.Category
 
 /-!
-# Comparison of all original geometric point fibers under a compatible closure embedding
+# Geometric field points under a compatible closure embedding
+
+Let k,Ω,Ψ be fields of universe u with k-algebra structures, and σ : Ω →ₐ[k] Ψ. Taking spectra
+gives Spec(Ψ) → Spec(Ω) over Spec(k). If Ω is a separable closure of k and Ψ is separably
+closed, composition with this map identifies the geometric fibers at every étale object over
+k.
+
+The resulting point isomorphism is directed from the Ψ-point to the Ω-point, while its fiber
+and common-height additive-group stalk isomorphisms run from Ω to Ψ. The same site objects and
+arrows are retained.
 -/
 
 @[expose] public section
@@ -38,11 +47,15 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (k Ω Ψ : Type u) [Field k] [Field Ω] [Field Ψ]
 variable [Algebra k Ω] [Algebra k Ψ]
 
-/-- The scheme morphism from Spec Ψ to Spec Ω induced by the algebra homomorphism σ. -/
+/-- Let k,Ω,Ψ be fields with k-algebra structures and σ : Ω →ₐ[k] Ψ. Define fieldClosureSpec(σ) :
+Spec(Ψ) → Spec(Ω) by taking the spectrum of σ's underlying ring homomorphism. Its direction is
+opposite to the field embedding. -/
 def fieldClosureSpec (σ : Ω →ₐ[k] Ψ) : Spec (.of Ψ) ⟶ Spec (.of Ω) :=
   Spec.map (CommRingCat.ofHom σ.toRingHom)
 
-/-- The original field embedding is flat and surjective on its actual spectra. -/
+/-- For fields k,Ω,Ψ with k-algebra structures and σ : Ω →ₐ[k] Ψ, the induced map Spec(Ψ) →
+Spec(Ω) is an epimorphism of schemes. This statement does not require either extension to be a
+separable closure. -/
 theorem fieldClosureSpec_epi (σ : Ω →ₐ[k] Ψ) : Epi (fieldClosureSpec k Ω Ψ σ) := by
   let : Algebra Ω Ψ := σ.toRingHom.toAlgebra
   have hff : σ.toRingHom.FaithfullyFlat := by
@@ -53,7 +66,9 @@ theorem fieldClosureSpec_epi (σ : Ω →ₐ[k] Ψ) : Epi (fieldClosureSpec k Ω
   let : Surjective (fieldClosureSpec k Ω Ψ σ) := h.2
   exact Flat.epi_of_flat_of_surjective _
 
-/-- The morphism over Spec k from the Ψ-valued point to the Ω-valued point induced by σ. -/
+/-- Let σ : Ω →ₐ[k] Ψ be a k-algebra map of fields. The spectrum map Spec(Ψ) → Spec(Ω), with its
+triangle to Spec(k), is a morphism from Spec(Ψ) → Spec(k) to Spec(Ω) → Spec(k) in the
+overcategory of schemes. -/
 def fieldClosureOverHom (σ : Ω →ₐ[k] Ψ) :
     Over.mk (Spec.algebraMap k Ψ) ⟶ Over.mk (Spec.algebraMap k Ω) :=
   Over.homMk (fieldClosureSpec k Ω Ψ σ) (by
@@ -67,7 +82,9 @@ def fieldClosureOverHom (σ : Ω →ₐ[k] Ψ) :
 variable [IsSepClosure k Ω] [IsSepClosed Ψ]
 attribute [local instance] IsSepClosure.sep_closed
 
-/-- This is the original point morphism, with the contravariant Point.Hom orientation. -/
+/-- Let Ω be a separable closure of k, Ψ a separably closed k-field, and σ : Ω →ₐ[k] Ψ. There is a
+point morphism p_Ψ → p_Ω on the small étale site of Spec(k). Its underlying fiber map p_Ω(U) →
+p_Ψ(U) composes a lift Spec(Ω) → U with Spec(σ) : Spec(Ψ) → Spec(Ω). -/
 def fieldClosurePointHom (σ : Ω →ₐ[k] Ψ) :
     Scheme.pointSmallEtale (Spec.algebraMap k Ψ) ⟶
       Scheme.pointSmallEtale (Spec.algebraMap k Ω) where
@@ -92,7 +109,9 @@ theorem fieldClosurePointHom_app_injective (σ : Ω →ₐ[k] Ψ)
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
 -- The retained v1 proof reached an implicit-transparency @Etale/Over type mismatch.
-/-- Every original point of every possibly nonaffine/infinite-component object lifts. -/
+/-- Let Ω be a separable closure of k, Ψ a separably closed k-field, and σ : Ω →ₐ[k] Ψ. For every
+étale U → Spec(k), the fiber map from Ω-valued lifts to Ψ-valued lifts induced by σ is
+surjective. The object U may be nonaffine or have infinitely many components. -/
 theorem fieldClosurePointHom_app_surjective (σ : Ω →ₐ[k] Ψ)
     (U : (Spec (.of k)).Etale) :
     Function.Surjective ((fieldClosurePointHom k Ω Ψ σ).hom.app U) := by
@@ -147,7 +166,9 @@ theorem fieldClosurePointHom_app_surjective (σ : Ω →ₐ[k] Ψ)
   change fieldClosureSpec k Ω Ψ σ ≫ (r0 ≫ j) = z0
   rw [← Category.assoc, hcomp, hy]
 
-/-- The literal original point-component map is an isomorphism on the full site. -/
+/-- Let Ω be a separable closure of k, Ψ a separably closed k-field, and σ : Ω →ₐ[k] Ψ. The maps
+p_Ω(U) → p_Ψ(U) obtained by composition with Spec(σ) are bijective at every étale U and form a
+natural fiber isomorphism p_Ω.fiber ≅ p_Ψ.fiber. -/
 def fieldClosureFiberIso (σ : Ω →ₐ[k] Ψ) :
     (Scheme.pointSmallEtale (Spec.algebraMap k Ω)).fiber ≅
       (Scheme.pointSmallEtale (Spec.algebraMap k Ψ)).fiber :=
@@ -157,7 +178,9 @@ def fieldClosureFiberIso (σ : Ω →ₐ[k] Ψ) :
       fieldClosurePointHom_app_surjective k Ω Ψ σ U⟩).toIso)
     (fun f => (fieldClosurePointHom k Ω Ψ σ).hom.naturality f)
 
-/-- The small étale point isomorphism induced by the relative separable closure embedding σ. -/
+/-- For Ω a separable closure of k, Ψ a separably closed k-field, and σ : Ω →ₐ[k] Ψ, the induced
+point morphism p_Ψ → p_Ω is an isomorphism. Its underlying forward fiber map is the Ω-to-Ψ
+lift map, and its inverse uses the inverse fiber isomorphism. -/
 def fieldClosurePointIso (σ : Ω →ₐ[k] Ψ) :
     Scheme.pointSmallEtale (Spec.algebraMap k Ψ) ≅
       Scheme.pointSmallEtale (Spec.algebraMap k Ω) where
@@ -170,7 +193,9 @@ def fieldClosurePointIso (σ : Ω →ₐ[k] Ψ) :
     apply GrothendieckTopology.Point.hom_ext
     exact (fieldClosureFiberIso k Ω Ψ σ).hom_inv_id
 
-/-- The same comparison lifts original point elements once to the common size. -/
+/-- Let Ω be a separable closure of k, Ψ a separably closed k-field, and σ : Ω →ₐ[k] Ψ. Lifting
+the two fiber functors by ULift^w gives an isomorphism p_Ψ^common ≅ p_Ω^common at height
+max(u,w). The underlying site objects and arrows are unchanged. -/
 def fieldClosureCommonPointIso (σ : Ω →ₐ[k] Ψ) :
     smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ψ) ≅
       smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω) where
@@ -183,7 +208,10 @@ def fieldClosureCommonPointIso (σ : Ω →ₐ[k] Ψ) :
     apply GrothendieckTopology.Point.hom_ext
     exact (Functor.isoWhiskerRight (fieldClosureFiberIso k Ω Ψ σ) uliftFunctor.{w, u}).hom_inv_id
 
-/-- One natural additive comparison on the SAME actual original/common stalks. -/
+/-- For Ω a separable closure of k, Ψ a separably closed k-field, and σ : Ω →ₐ[k] Ψ, the
+common-height point isomorphism gives a natural isomorphism S_Ω ≅ S_Ψ on additive-group
+small-étale sheaves of height max(u,w). These are the stalk functors at Spec(Ω) and Spec(Ψ),
+and the forward direction follows the Ω-to-Ψ fiber comparison. -/
 def fieldClosureCommonStalkIso (σ : Ω →ₐ[k] Ψ) :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).sheafFiber
         (A := AddCommGrpCat.{max u w}) ≅

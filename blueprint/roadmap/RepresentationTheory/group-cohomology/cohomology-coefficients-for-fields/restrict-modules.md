@@ -1,6 +1,6 @@
-# Pullback of discrete continuous abelian actions
+# A continuous monoid homomorphism pulls back discrete continuous abelian actions
 
-For a continuous monoid homomorphism `φ : H →ₜ* G`, pull back a discrete
-continuous abelian action of `G` to an action of `H` by `h • x = φ h • x`.
-The underlying coefficient group and additive maps are unchanged, and its
-universe is independent of the two monoid universes.
+For monoids G,H with topologies in independent universes and a continuous monoid homomorphism
+φ:H→G, restriction sends a discrete abelian G-action M to the H-action h•x=φ(h)•x. Its
+coefficient group may have a third independent universe, and all additive morphisms are
+retained.

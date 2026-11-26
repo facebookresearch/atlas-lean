@@ -1,3 +1,6 @@
-# Corestriction H3 Of Right Transversal cup Cocycle One Two
+# The cup projection formula on one- and two-cocycle representatives
 
-Representative-level chosen-transversal `(1,2)` projection formula.
+The cup projection formula on one- and two-cocycle representatives.
+
+The transferred degree-three class of res(x) ∪ y equals the class of x cupped with the
+transferred two-cocycle y, using the canonical restriction–tensor coefficient comparison.

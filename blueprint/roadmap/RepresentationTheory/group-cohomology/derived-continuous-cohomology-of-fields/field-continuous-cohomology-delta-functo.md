@@ -1,3 +1,6 @@
-# Field Continuous Cohomology Delta Functor
+# Continuous field cohomology forms a cohomological delta functor
 
-The actual coefficient LES packages the original HG functors as a delta functor.
+Continuous field cohomology forms a cohomological delta functor.
+
+The degree functors and continuous-coefficient connecting morphisms form a cohomological delta
+functor.

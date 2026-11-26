@@ -1,3 +1,6 @@
-# Field Finite Galois Module Invariants
+# Coefficient invariants of a finite Galois fixing subgroup
 
-The possibly infinite additive group fixed by the actual finite-field subgroup.
+Coefficient invariants of a finite Galois fixing subgroup.
+
+Take the additive subgroup of a discrete coefficient fixed by every automorphism fixing the
+finite Galois field.

@@ -1,10 +1,6 @@
-# Pow Tuple Gen
+# Tuple coordinates for an iterated cartesian tensor monad
 
-X-generalized head-first power reader.
+Tuple coordinates for an iterated cartesian tensor monad.
 
-`((monadPow (tensorMonad G) n).obj X)` is the left-nested product
-`G × (G × ... × X)`; this reads it as `(Fin n → G) × X` with `t 0` the
-outermost factor. Both defining equalities are `rfl`: `monadPow_succ` gives
-`(monadPow (n+1)).obj X = (monadPow n).obj (T.obj X)` and `T.obj X = G × X`
-in `Type`, so the successor step recurses at `T.obj X` and reassociates
-`(init, (last, x))` to `(snoc init last, x)`.
+For T(X) = G × X and n ≥ 0, this equivalence identifies Tⁿ(X) with (Fin n → G) × X. Coordinate
+0 is the outermost G-factor, and the second component is the terminal X-coordinate.

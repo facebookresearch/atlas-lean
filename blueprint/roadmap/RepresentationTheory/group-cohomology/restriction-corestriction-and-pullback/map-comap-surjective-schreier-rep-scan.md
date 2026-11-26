@@ -1,4 +1,6 @@
-# Map comap Surjective schreier Rep Scan
+# Complete representative scans commute with a surjection
 
-The complete representative scan commutes with a surjective
-homomorphism for the pulled-back transversal.
+Complete representative scans commute with a surjection.
+
+Projecting each step of a tuple scan in the lifted transversal gives the T-scan of the
+coordinatewise image tuple under π.

@@ -26,7 +26,27 @@ public import Mathlib.Topology.Algebra.Module.Equiv.Basic
 public import Mathlib.Topology.Algebra.Group.Basic
 public import Mathlib.Topology.Algebra.MulAction
 
-/-! # Exact sequences of the original continuous cochains -/
+/-!
+# Continuous coefficient cochains and long exact sequences
+
+For a ring k with a topology, independently sized profinite groups G,H,
+a continuous homomorphism φ:H→G and an equivariant coefficient map f,
+homogeneous cochains map by precomposing group coordinates with φ
+and applying f. These maps commute with differential, identity,
+composition and coefficient squares. Carrier lifts allow the corresponding
+maps between independently sized coefficient representations.
+
+For discrete continuous abelian coefficients, an injective first map,
+image–kernel equality and a surjective second map give a degreewise short
+exact sequence of homogeneous cochain complexes. Their continuous
+cohomology compares naturally with homology of those abelian complexes.
+The connecting map and all six-term windows
+Hⁿ(A)→Hⁿ(B)→Hⁿ(C)→Hⁿ⁺¹(A)→Hⁿ⁺¹(B)→Hⁿ⁺¹(C)
+are exact and natural in the original coefficient and group maps.
+Degree zero identifies with coefficient invariants by identity evaluation.
+Independent group and carrier worlds are retained, using a single
+coefficient lift where a common carrier presentation is needed.
+-/
 
 @[expose] public section
 noncomputable section
@@ -47,7 +67,11 @@ instance instULiftContinuousSMul {R : Type a} [TopologicalSpace R]
   (show Topology.IsInducing (ULift.down : ULift.{d, c} X → X) from ⟨rfl⟩).continuousSMul
     (f := id) continuous_id rfl
 
-/-- ONE coefficient lift, retaining the native group and the stored scalar modules. -/
+/-- Let k be a ring with a topology and G an abstract group.
+For any coefficient carrier universe c and lift height d, this
+functor takes a topological k-representation X of G to ULift^d(X),
+with inherited topology, scalar action and G-action.
+It sends a morphism f to ULift.up∘f∘ULift.down. -/
 def nativeTopRepULiftFunctor {k : Type a} [Ring k] [TopologicalSpace k]
     (G : Type b) [Group G] :
     TopRep.{c, a, b} k G ⥤ TopRep.{max c d, a, b} k G where
@@ -112,7 +136,11 @@ theorem nativeTopRepULiftFunctor_action_up
     ((nativeTopRepULiftFunctor.{a, b, c, d} (k := k) G).obj X).ρ g (ULift.up x) =
       ULift.up (X.ρ g x) := rfl
 
-/-- Lift the original intertwiner once on each coefficient carrier; both groups stay native. -/
+/-- Let k be a ring with a topology, G,H abstract groups in universes
+b,c, and X,Y topological k-representations with carriers max(b,e)
+and max(c,e). For φ:H→G and a continuous k-linear φ-intertwiner f:X→Y,
+lifting X by c and Y by b gives the morphism
+Res_φ(ULift^c X)→ULift^b Y with value up(x)↦up(f(x)). -/
 def nativeULiftGroupIntertwiner
     {k : Type a} [Ring k] [TopologicalSpace k]
     {G : Type b} [Group G] {H : Type c} [Group H]
@@ -139,7 +167,11 @@ theorem nativeULiftGroupIntertwiner_apply
     (nativeULiftGroupIntertwiner.{a, b, c, e} φ f).hom (ULift.up x) =
       ULift.up (f x) := rfl
 
-/-- Generic scalar packaging retains each module instance stored in the original representations. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+universes v,z, and X,Y coefficients with carriers max(v,w),max(z,w).
+For continuous φ:H→G, the coefficient-intertwiner space consists
+of continuous k-linear maps f:X→Y satisfying
+f(φ(h)•x)=h•f(x), with no equality of carrier universes required. -/
 abbrev nativeCoefficientIntertwiner
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -191,13 +223,20 @@ theorem homogeneousNestedCoefficientMap_apply
     _ = _ := congrArg f.hom
       (homogeneousFinContinuousLinearEquiv_apply.{u, v, w} _ _ _ _).symm
 
-/-- Apply the original continuous group map to every homogeneous tuple coordinate. -/
+/-- For independently sized profinite groups G,H and continuous
+φ:H→G, this continuous tuple map H^(n+1)→G^(n+1) applies φ
+to each ordered coordinate. -/
 def nativeHomogeneousTupleMap
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}} (φ : H →ₜ* G) (n : ℕ) :
     C(Fin (n + 1) → H, Fin (n + 1) → G) :=
   ⟨fun t i => φ (t i), continuous_pi fun i => φ.continuous.comp (continuous_apply i)⟩
 
-/-- The literal map on the EXISTING flat homogeneous cochains, with native group universes. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+The tuple-form homogeneous degree n map sends a cochain a to
+t↦f(a(φ(t₀),…,φ(t_n))). It is a morphism of topological k-modules. -/
 def nativeFlatGroupCoefficientTerm
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -244,7 +283,12 @@ theorem nativeFlatGroupCoefficientTerm_apply
     (nativeFlatGroupCoefficientTerm.{u, v, z, w} φ f n c).val t =
       f.hom (c.val (fun i => φ (t i))) := rfl
 
-/-- The original deletion differential commutes with these literal maps. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+The tuple-form maps commute with alternating deletion:
+d_Y∘map_n=map_(n+1)∘d_X. -/
 theorem nativeFlatGroupCoefficientTerm_comm
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -268,7 +312,12 @@ theorem nativeFlatGroupCoefficientTerm_comm
     (nativeFlatGroupCoefficientTerm_apply.{u, v, z, w} φ f n c
       (fun i => t (j.succAbove i)))
 
-/-- A map of the unchanged flat complexes on the original groups and coefficients. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+The degree maps t↦f(a(φ(t))) form the cochain map
+C_hom,tuple(G,X)→C_hom,tuple(H,Y) in all nonnegative degrees. -/
 def nativeFlatGroupCoefficientMap
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -287,7 +336,12 @@ def nativeFlatGroupCoefficientMap
     simpa only [flatHomogeneousComplex, CochainComplex.of_d] using
       nativeFlatGroupCoefficientTerm_comm φ f i
 
-/-- Transport the same literal flat map to the existing nested homogeneous complex. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+Transport through the tuple/nested comparisons gives the map
+C_hom(G,X)→C_hom(H,Y) of the nested invariant homogeneous complexes. -/
 def nativeGroupCoefficientCochainsMap
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -299,7 +353,13 @@ def nativeGroupCoefficientCochainsMap
     nativeFlatGroupCoefficientMap.{u, v, z, w} φ f ≫
       (homogeneousFlatComplexIso.{u, z, max v w} Y).inv
 
-/-- This is a map of the ORIGINAL continuous cohomology; it defines no new cohomology group. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+In degree n, the induced map is
+Hⁿ_cts(G,X)→Hⁿ_cts(H,Y), obtained by homology of the homogeneous
+group/coefficient cochain map. -/
 def nativeGroupCoefficientCohomologyMap
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -309,7 +369,12 @@ def nativeGroupCoefficientCohomologyMap
     continuousCohomology.{u, v, max z w} n X ⟶ continuousCohomology.{u, z, max v w} n Y :=
   HomologicalComplex.homologyMap (nativeGroupCoefficientCochainsMap.{u, v, z, w} φ f) n
 
-/-- Every transported map still has the literal original tuple values. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+In tuple coordinates, the nested degree n cochain map has value
+t↦f(a(φ(t₀),…,φ(t_n))). -/
 theorem nativeGroupCoefficientCochainsMap_apply
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -328,7 +393,10 @@ theorem nativeGroupCoefficientCochainsMap_apply
   rw [ContinuousLinearEquiv.apply_symm_apply]
   rfl
 
-/-- Finite-tuple evaluation in degree zero is the original one-coordinate evaluation. -/
+/-- Let k be a ring with a topology, G a profinite group and X a
+topological k-representation. For a nested degree-zero homogeneous
+cochain a and g∈G, its one-coordinate tuple comparison has value
+E₁(a)(g)=a(g). -/
 theorem homogeneousFinZero_apply
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} (X : TopRep.{max v w, u, v} k G)
@@ -349,7 +417,10 @@ theorem nativeGroupCoefficientCochainsMap_zero_value
     ((nativeGroupCoefficientCochainsMap_apply.{u, v, z, w} φ f 0 c (fun _ => h)).trans
       (congrArg f.hom (homogeneousFinZero_apply.{u, v, max z w} X c (φ h))))
 
-/-- Agreement with the actual stock cochain map whenever its group universes are typed. -/
+/-- For a ring k with a topology, profinite G,H in the same group
+universe v, and coefficients X,Y in max(v,w), the tuple-defined
+group/coefficient cochain map for (φ,f) equals the standard homogeneous
+cochain map with the same φ and f. -/
 theorem nativeGroupCoefficientCochainsMap_eq_stock
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G H : ProfiniteGrp.{v}} {X : TopRep.{max v w, u, v} k G}
@@ -380,7 +451,9 @@ theorem nativeGroupCoefficientCohomologyMap_eq_stock
   congrArg (fun q => HomologicalComplex.homologyMap q n)
     (nativeGroupCoefficientCochainsMap_eq_stock φ f)
 
-/-- The original identity group and coefficient maps give the actual identity cochain map. -/
+/-- For a ring k with a topology, profinite G and coefficient X,
+the homogeneous cochain map induced by id_G and id_X is the
+identity of C_hom(G,X). -/
 theorem nativeGroupCoefficientCochainsMap_id
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} (X : TopRep.{max v w, u, v} k G) :
@@ -389,7 +462,10 @@ theorem nativeGroupCoefficientCochainsMap_id
   (nativeGroupCoefficientCochainsMap_eq_stock.{u, v, w}
     (ContinuousMonoidHom.id G) (𝟙 X)).trans (cochainsMap_id X)
 
-/-- Native group universes are retained in both stages of the actual composite map. -/
+/-- Let k be a ring with a topology, G,H,K profinite groups in
+independent universes v,z,y, and common coefficient carrier
+max(v,z,y,w). For φ:H→G, ψ:K→H and compatible coefficient
+maps f,g, map_(φ∘ψ,g∘Res_ψ(f))=map_(ψ,g)∘map_(φ,f). -/
 theorem nativeGroupCoefficientCochainsMap_comp
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}} {K : ProfiniteGrp.{y}}
@@ -441,7 +517,12 @@ theorem nativeGroupCoefficientCohomologyMap_comp
     (nativeGroupCoefficientCochainsMap_comp.{u, v, z, y, w} φ ψ f g)).trans
       (HomologicalComplex.homologyMap_comp _ _ _)
 
-/-- Every original coefficient square gives the actual native-universe cochain square. -/
+/-- Let k be a ring with a topology, G,H profinite groups in universes
+v,z, and X₁,X₂ over G and Y₁,Y₂ over H topological k-representations
+with carrier c=max(v,z,w). Let φ:H→G be continuous, a:X₁→X₂,
+b:Y₁→Y₂, and φ-equivariant maps ψ₁,ψ₂ satisfy
+b∘ψ₁=ψ₂∘Res_φ(a). Their induced homogeneous cochain maps satisfy
+C(b)∘map_(φ,ψ₁)=map_(φ,ψ₂)∘C(a). -/
 theorem homogeneousGroupCoefficientSquare
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -479,7 +560,12 @@ theorem homogeneousGroupCoefficientSquare
   exact hL.trans ((congrArg b.hom hL').trans
     (hmid.trans ((congrArg ψ₂.hom hR').symm.trans hR.symm)))
 
-/-- The original coefficient diagram gives the SAME actual cohomology diagram. -/
+/-- Let k be a ring with a topology, G,H profinite groups in independent
+universes, four coefficient representations X₁,X₂,Y₁,Y₂ in a common
+carrier, and φ:H→G continuous. Given a:X₁→X₂, b:Y₁→Y₂ and
+φ-equivariant ψ₁,ψ₂ with b∘ψ₁=ψ₂∘Res_φ(a), their continuous
+cohomology maps satisfy
+Hⁿ(b)∘Hⁿ(φ,ψ₁)=Hⁿ(φ,ψ₂)∘Hⁿ(a). -/
 theorem homogeneousGroupCoefficientCohomologySquare
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -503,7 +589,11 @@ theorem homogeneousGroupCoefficientCohomologySquare
       ((homogeneousCochainsFunctor.{u, v, max z w} (k := k) (G := G)).map a)
       (nativeGroupCoefficientCochainsMap.{u, v, z, w} φ ψ₂) n))
 
-/-- The genuine nested-to-inhomogeneous comparison, for every scalar ring. -/
+/-- Let k be a ring with a topology, G a profinite group and A a
+discrete topological k-module with jointly continuous G-action.
+There is an additive equivalence from nested homogeneous degree n
+cochains to C(G^n,A), given by prefix-product inhomogenization
+and its inverse t↦t₀•h(t_i⁻¹t_(i+1)). -/
 def homogeneousNestedInhomogeneousAddEquiv
     {k : Type u} [Ring k] [TopologicalSpace k]
     (G : ProfiniteGrp.{v})
@@ -533,7 +623,10 @@ theorem homogeneousNestedInhomogeneousAddEquiv_map
   rw [homogeneousNestedCoefficientMap_apply]
   rfl
 
-/-- The original degree-zero normalization is identity evaluation on actual cycle classes. -/
+/-- For a ring k with a topology, profinite G and a topological
+k-representation X, the projection Z⁰(G,X)→H⁰_cts(G,X), followed
+by H⁰_cts(G,X)≅X^G, equals the degree-zero cycle-to-kernel
+identification followed by identity evaluation. -/
 theorem homogeneousZeroIso_projection
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} (X : TopRep.{max v w, u, v} k G) :
@@ -558,7 +651,9 @@ theorem homogeneousZeroIso_cycle_value
   simp only [ConcreteCategory.comp_apply, Iso.inv_hom_id_apply]
   rfl
 
-/-- The inverse normalization is the class of the original constant cocycle. -/
+/-- For a ring k with a topology, profinite G and coefficient X,
+the inverse isomorphism X^G→H⁰_cts(G,X) takes an invariant x
+to the class of its constant degree-zero homogeneous cycle. -/
 theorem homogeneousZeroIso_inverse_projection
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} (X : TopRep.{max v w, u, v} k G) :
@@ -575,7 +670,9 @@ theorem homogeneousZeroIso_inverse_constant
     (x : X.ρ.invariants) (g : G) :
     ((ContinuousCohomology.d₀kerIso X).symm x).val.val g = x.val := rfl
 
-/-- The actual zeroth-cycle comparison preserves the original kernel inclusion. -/
+/-- For a ring k with a topology, profinite G and coefficient X,
+the identification Z⁰(G,X)≅ker(d⁰) commutes with inclusion into
+the homogeneous degree-zero cochain term. -/
 theorem homogeneousZeroCocycles_projection
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} (X : TopRep.{max v w, u, v} k G) :
@@ -602,7 +699,12 @@ theorem homogeneousZeroIso_cycles_value
   change ((ContinuousCohomology.cocycles₀Iso X).hom c).val.val 1 = _
   exact congrArg (fun m => (m c).val 1) (homogeneousZeroCocycles_projection.{u, v, w} X)
 
-/-- Identity-evaluation normalization respects EVERY original native group/coefficient map. -/
+/-- Let k be a ring with a topology, G,H profinite groups in
+independent universes v,z, and coefficient representations X,Y with
+common carrier c=max(v,z,w). Let φ:H→G be continuous and
+f:Res_φ(X)→Y a continuous equivariant k-linear map.
+The degree-zero invariant identifications commute with (φ,f):
+zeroIso_Y∘H⁰(φ,f)=invariantsResMap(φ,f)∘zeroIso_X. -/
 theorem nativeGroupCoefficientZeroIso_naturality
     {k : Type u} [Ring k] [TopologicalSpace k]
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -631,13 +733,21 @@ theorem nativeGroupCoefficientZeroIso_naturality
         (congrArg f.hom (homogeneousZeroIso_cycles_value.{u, v, max z w} X c)).symm)))
 
 
-/-- Compatibility with the original profinite instance name, using the same canonical data. -/
+/-- For a profinite G in universe v, the category of discrete
+continuous G-actions on topological ℤ-modules with carrier universe w
+is preadditive. Morphism addition and zero are pointwise. -/
 @[nolint defsWithUnderscore] -- preserve the original public name
 abbrev discreteCoefficient_preadditive (G : ProfiniteGrp.{v}) :
     Preadditive (DiscreteContAction (TopModuleCat.{w} ℤ) G) :=
   CategoryTheory.DiscreteAbelianAction.instPreadditive.{v, w} (G := G)
 
-/-- Bundle the same original carrier and every original coefficient arrow. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The coefficient functor D_G→TopRep(ℤ,G) realizes the same
+underlying abelian group and jointly continuous action as a
+topological ℤ-representation. -/
 abbrev discreteCoefficientTopRepFunctor (G : ProfiniteGrp.{v}) :
     DiscreteContAction (TopModuleCat.{max v w} ℤ) G ⥤ TopRep.{max v w, 0, v} ℤ G where
   obj A := inhomogeneousOriginalTopRep.{0, v, w} G A
@@ -649,7 +759,12 @@ instance (G : ProfiniteGrp.{v}) :
     (discreteCoefficientTopRepFunctor.{v, w} G).Additive where
   map_add := by intros; apply TopRep.hom_ext; rfl
 
-/-- The original additive function underlying a coefficient arrow. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For a coefficient morphism f:A→B, its underlying coefficient
+homomorphism is the same equivariant additive map A→B. -/
 abbrev discreteCoefficientHom {G : ProfiniteGrp.{v}}
     {A B : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
     (f : A ⟶ B) :
@@ -661,7 +776,13 @@ abbrev discreteCoefficientHom {G : ProfiniteGrp.{v}}
     (a : inhomogeneousOriginalTopRep.{0, v, w} G A) :
     discreteCoefficientHom f a = f.hom.hom.hom.hom a := rfl
 
-/-- The actual discrete continuous coefficient lift used when group sizes differ. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For any lift height z, the coefficient lift functor replaces each
+carrier by ULift^z and inherits topology and G-action, giving
+coefficients in max(v,z,w). -/
 def discreteCoefficientULiftFunctor (G : ProfiniteGrp.{v}) :
     DiscreteContAction (TopModuleCat.{max v w} ℤ) G ⥤
       DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G where
@@ -718,7 +839,12 @@ instance (G : ProfiniteGrp.{v}) :
     intro x
     rfl
 
-/-- Literal original up-coordinate on every coefficient arrow. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The lifted coefficient morphism has value
+Lift(f)(ULift.up(x))=ULift.up(f(x)) for every x∈A. -/
 theorem discreteCoefficientULiftFunctor_map_up {G : ProfiniteGrp.{v}}
     {A B : DiscreteContAction (TopModuleCat.{max v w} ℤ) G} (f : A ⟶ B)
     (x : inhomogeneousOriginalTopRep.{0, v, w} G A) :
@@ -734,7 +860,9 @@ theorem discreteCoefficientULiftFunctor_map_down {G : ProfiniteGrp.{v}}
       ((discreteCoefficientULiftFunctor.{v, z, w} G).map f) x).down =
         discreteCoefficientHom.{v, w} f x.down := rfl
 
-/-- Forget topology and integer scalar data, retaining the original group. -/
+/-- The functor from topological ℤ-modules with carrier universe w
+to AddCommGrpCat w keeps the underlying additive group and additive
+map, forgetting its topology and scalar packaging. -/
 abbrev discreteCoefficientForget : TopModuleCat.{w} ℤ ⥤ AddCommGrpCat.{w} :=
   forget₂ (TopModuleCat.{w} ℤ) (ModuleCat.{w} ℤ) ⋙
     forget₂ (ModuleCat.{w} ℤ) AddCommGrpCat.{w}
@@ -742,7 +870,13 @@ abbrev discreteCoefficientForget : TopModuleCat.{w} ℤ ⥤ AddCommGrpCat.{w} :=
 instance : discreteCoefficientForget.{w}.Additive where
   map_add := by intros; rfl
 
-/-- The algebraic complex of the original homogeneous continuous cochains. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The additive functor C_G sends a coefficient A to its nonnegative
+homogeneous cochain complex after forgetting topology to abelian groups.
+It acts on coefficient maps by postcomposition. -/
 abbrev discreteCoefficientCochainFunctor (G : ProfiniteGrp.{v}) :
     DiscreteContAction (TopModuleCat.{max v w} ℤ) G ⥤ CochainComplex AddCommGrpCat.{max v w} ℕ :=
   discreteCoefficientTopRepFunctor.{v, w} G ⋙
@@ -754,7 +888,12 @@ instance (G : ProfiniteGrp.{v}) :
   unfold discreteCoefficientCochainFunctor
   infer_instance
 
-/-- The same actual cohomology group, with topology and scalar structure forgotten. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For n∈ℕ, the continuous cohomology functor Hⁿ_G takes values in
+abelian groups by forgetting the topology of continuous cohomology. -/
 abbrev discreteCoefficientCohomologyFunctor (G : ProfiniteGrp.{v}) (n : ℕ) :
     DiscreteContAction (TopModuleCat.{max v w} ℤ) G ⥤ AddCommGrpCat.{max v w} :=
   discreteCoefficientTopRepFunctor.{v, w} G ⋙
@@ -762,7 +901,12 @@ abbrev discreteCoefficientCohomologyFunctor (G : ProfiniteGrp.{v}) (n : ℕ) :
       HomologicalComplex.homologyFunctor (TopModuleCat.{max v w} ℤ)
         (ComplexShape.up ℕ) n ⋙ discreteCoefficientForget
 
-/-- The canonical homology comparison for the topology-forgetting functor. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The canonical comparison is Hⁿ_G(A)≅Hⁿ(C_G(A)), obtained by
+preservation of homogeneous homology under coefficient forgetting. -/
 def discreteCoefficientHomologyIso (G : ProfiniteGrp.{v})
     (A : DiscreteContAction (TopModuleCat.{max v w} ℤ) G)
     (n : ℕ) :
@@ -772,7 +916,12 @@ def discreteCoefficientHomologyIso (G : ProfiniteGrp.{v})
     n discreteCoefficientForget.{max v w}).app (TopRep.homogeneousCochains
       (inhomogeneousOriginalTopRep.{0, v, w} G A))).symm
 
-/-- Literal finite-tuple evaluation of the original coefficient cochain map. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For f:A→B and a homogeneous degree n cochain a, tuple coordinates
+of the induced coefficient map have value f(a(t)). -/
 theorem discreteCoefficient_flat_map_apply
     {G : ProfiniteGrp.{v}} {A B : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
     (f : A ⟶ B) (n : ℕ)
@@ -787,7 +936,13 @@ theorem discreteCoefficient_flat_map_apply
   exact homogeneousNestedCoefficientMap_apply
     ((discreteCoefficientTopRepFunctor.{v, w} G).map f) n c t
 
-/-- The full coefficient comparison with arbitrary continuous inhomogeneous cochains. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Degree n homogeneous cochains are additively equivalent to
+continuous inhomogeneous functions G^n→A, by the prefix/difference
+coordinate formulas. -/
 def discreteCoefficientInhomogeneousEquiv (G : ProfiniteGrp.{v})
     (A : DiscreteContAction (TopModuleCat.{max v w} ℤ) G)
     (n : ℕ) :
@@ -806,7 +961,12 @@ theorem discreteCoefficientInhomogeneousEquiv_map
       discreteCoefficientHom f (discreteCoefficientInhomogeneousEquiv.{v, w} G A n c t) := by
   exact homogeneousNestedInhomogeneousAddEquiv_map f n c t
 
-/-- An injective original coefficient map is injective on every actual cochain term. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+If the underlying coefficient map f:A→B is injective, then
+C_G(f)^n is injective for every n∈ℕ. -/
 theorem discreteCoefficientCochain_injective
     {G : ProfiniteGrp.{v}}
     {A B : DiscreteContAction (TopModuleCat.{max v w} ℤ) G} (f : A ⟶ B)
@@ -821,8 +981,12 @@ theorem discreteCoefficientCochain_injective
   exact (discreteCoefficientInhomogeneousEquiv_map f n x t).symm.trans
     (ht.trans (discreteCoefficientInhomogeneousEquiv_map f n y t))
 
-/-- Discreteness makes a genuine set-theoretic section continuous; no linear or
-equivariant section is required. The original inhomogeneous inverse restores equivariance. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+If the underlying coefficient map f:A→B is surjective, then
+C_G(f)^n is surjective for every n∈ℕ. -/
 theorem discreteCoefficientCochain_surjective
     {G : ProfiniteGrp.{v}}
     {A B : DiscreteContAction (TopModuleCat.{max v w} ℤ) G} (f : A ⟶ B)
@@ -848,7 +1012,13 @@ theorem discreteCoefficientCochain_surjective
       rw [AddEquiv.apply_symm_apply]
     _ = _ := Classical.choose_spec (hf _)
 
-/-- Every actual kernel cochain is the image of an original cochain. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For f:A→B and g:B→C with range(f)=ker(g), every degree n
+cochain a of B with C_G(g)(a)=0 has a degree n preimage b of A
+with C_G(f)(b)=a. -/
 theorem discreteCoefficientCochain_lift_kernel
     {G : ProfiniteGrp.{v}}
     {A B C : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
@@ -896,14 +1066,26 @@ theorem discreteCoefficientCochain_lift_kernel
     _ = discreteCoefficientHom f (h t) := by rw [AddEquiv.apply_symm_apply]
     _ = _ := hs _ (hval t)
 
-/-- The source condition is literal algebraic exactness of the original maps. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For a short complex S, the coefficient exactness predicate means:
+the first underlying additive map is injective, its image is the
+second map's kernel, and the second underlying map is surjective. -/
 def DiscreteCoefficientExact {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G)) : Prop :=
   Function.Injective (discreteCoefficientHom S.f) ∧
     (discreteCoefficientHom S.f).range = (discreteCoefficientHom S.g).ker ∧
       Function.Surjective (discreteCoefficientHom S.g)
 
-/-- Construct the original short complex from its literal range/kernel equation. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For f:A→B and g:B→C with range(f)=ker(g), this is the short
+complex A→B→C with those two coefficient maps.
+The range–kernel equality gives g∘f=0. -/
 def discreteCoefficientShortComplex {G : ProfiniteGrp.{v}}
     {A B C : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
     (f : A ⟶ B) (g : B ⟶ C)
@@ -930,8 +1112,14 @@ theorem discreteCoefficientShortComplex_exact {G : ProfiniteGrp.{v}}
     DiscreteCoefficientExact (discreteCoefficientShortComplex f g hfg) :=
   ⟨hf, hfg, hg⟩
 
-/-- Literal coefficient exactness gives a genuine short exact sequence of the
-original cochain complexes in the actual common abelian-group category. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+Applying homogeneous cochains yields a short exact sequence of
+nonnegative abelian-group cochain complexes, degreewise in every n. -/
 theorem discreteCoefficientCochain_shortExact {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) :
@@ -947,7 +1135,15 @@ theorem discreteCoefficientCochain_shortExact {G : ProfiniteGrp.{v}}
   · exact (AddCommGrpCat.epi_iff_surjective _).mpr
       (discreteCoefficientCochain_surjective S.g hS.2.2 n)
 
-/-- ONE actual common coefficient lift preserves all three original algebraic conditions. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+Lifting all coefficient carriers by any height z preserves the
+three underlying exactness conditions, so the lifted coefficient
+short complex is again exact. -/
 theorem discreteCoefficientULiftFunctor_exact {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact.{v, w} S) :
@@ -986,7 +1182,12 @@ instance (G : ProfiniteGrp.{v}) (n : ℕ) :
   unfold discreteCoefficientCohomologyFunctor
   infer_instance
 
-/-- The fixed homology comparison respects every original coefficient arrow. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For a coefficient map f:A→B, the continuous/cochain homology
+comparisons satisfy γ_B∘Hⁿ_G(f)=Hⁿ(C_G(f))∘γ_A. -/
 theorem discreteCoefficientHomologyIso_naturality
     {G : ProfiniteGrp.{v}}
     {A B : DiscreteContAction (TopModuleCat.{max v w} ℤ) G} (f : A ⟶ B) (n : ℕ) :
@@ -1015,7 +1216,15 @@ theorem discreteCoefficientHomologyIso_inv_naturality
 
 theorem discreteCoefficientUpRel (n : ℕ) : (ComplexShape.up ℕ).Rel n (n + 1) := rfl
 
-/-- The genuine connecting map on the existing continuous cohomology groups. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The canonical connecting map δ_n:Hⁿ_G(C)→Hⁿ⁺¹_G(A) is the
+cochain homology boundary transported through the continuous/cochain
+homology comparisons. -/
 def discreteCoefficientConnecting {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) (n : ℕ) :
@@ -1025,7 +1234,14 @@ def discreteCoefficientConnecting {G : ProfiniteGrp.{v}}
     (discreteCoefficientCochain_shortExact S hS).δ n (n + 1) (discreteCoefficientUpRel n) ≫
       (discreteCoefficientHomologyIso.{v, w} G S.X₁ (n + 1)).inv
 
-/-- Its normalization is the actual common-Ab homology connector. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+For the homology comparisons γ, the connecting map satisfies
+γ_A^(n+1)∘δ_n=δ_Cochain∘γ_C^n. -/
 theorem discreteCoefficientConnecting_comparison {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) (n : ℕ) :
@@ -1080,7 +1296,14 @@ theorem discreteCoefficient_connecting_comp {G : ProfiniteGrp.{v}}
       rw [discreteCoefficientHomologyIso_inv_naturality S.f (n + 1)]
     _ = 0 := by rw [hz]; simp
 
-/-- Exactness at every first-to-second coefficient cohomology map. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The cohomology sequence Hⁿ_G(A)→Hⁿ_G(B)→Hⁿ_G(C) is exact
+at Hⁿ_G(B): image of the first map equals kernel of the second. -/
 theorem discreteCoefficient_cohomology_exact₂ {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) (n : ℕ) :
@@ -1097,7 +1320,14 @@ theorem discreteCoefficient_cohomology_exact₂ {G : ProfiniteGrp.{v}}
   exact (ShortComplex.exact_iff_of_iso e).mpr
     ((discreteCoefficientCochain_shortExact S hS).homology_exact₂ n)
 
-/-- Exactness at every third-term cohomology, against the actual boundary. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The sequence Hⁿ_G(B)→Hⁿ_G(C)→Hⁿ⁺¹_G(A) is exact at
+Hⁿ_G(C), using the canonical connecting map as its second arrow. -/
 theorem discreteCoefficient_cohomology_exact₃ {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) (n : ℕ) :
@@ -1119,7 +1349,14 @@ theorem discreteCoefficient_cohomology_exact₃ {G : ProfiniteGrp.{v}}
     ((discreteCoefficientCochain_shortExact S hS).homology_exact₃
       n (n + 1) (discreteCoefficientUpRel n))
 
-/-- Exactness at every positive first-term cohomology, after the actual boundary. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The sequence Hⁿ_G(C)→Hⁿ⁺¹_G(A)→Hⁿ⁺¹_G(B) is exact
+at Hⁿ⁺¹_G(A), using the connecting map as its first arrow. -/
 theorem discreteCoefficient_cohomology_exact₁ {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) (n : ℕ) :
@@ -1142,7 +1379,14 @@ theorem discreteCoefficient_cohomology_exact₁ {G : ProfiniteGrp.{v}}
     ((discreteCoefficientCochain_shortExact S hS).homology_exact₁
       n (n + 1) (discreteCoefficientUpRel n))
 
-/-- The initial zero in the long exact sequence is justified by an actual monomorphism. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The degree-zero map H⁰_G(A)→H⁰_G(B) is a monomorphism of
+abelian groups. -/
 theorem discreteCoefficient_cohomology_mono_zero {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact S) :
@@ -1163,7 +1407,13 @@ theorem discreteCoefficient_cohomology_mono_zero {G : ProfiniteGrp.{v}}
     (discreteCoefficientHomologyIso_naturality S.f 0).symm
   exact ((MorphismProperty.monomorphisms AddCommGrpCat.{max v w}).arrow_mk_iso_iff e).mpr h
 
-/-- The degree-zero comparison is literally the existing identity-evaluation isomorphism. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The degree-zero continuous cohomology is naturally isomorphic to
+the underlying invariant group A^G, by identity evaluation of
+closed homogeneous cochains. -/
 def discreteCoefficientZeroIso (G : ProfiniteGrp.{v})
     (A : DiscreteContAction (TopModuleCat.{max v w} ℤ) G) :
     (discreteCoefficientCohomologyFunctor.{v, w} G 0).obj A ≅
@@ -1172,8 +1422,11 @@ def discreteCoefficientZeroIso (G : ProfiniteGrp.{v})
   discreteCoefficientForget.{max v w}.mapIso
     (ContinuousCohomology.zeroIso (inhomogeneousOriginalTopRep.{0, v, w} G A))
 
-/-- The original group and coefficient maps act on the same algebraic cochains.
-Both original group universes are retained; the coefficient rank is their common maximum. -/
+/-- Let G,H be profinite groups in universes v,z and c=max(v,z,w).
+Let A and B be discrete continuous abelian coefficients of G and H
+with carrier c, φ:H→G continuous, and f:Res_φ(A)→B an equivariant
+continuous ℤ-linear map. The induced abelian cochain map C_G(A)→C_H(B)
+sends a homogeneous function a to t↦f(a(φ(t))). -/
 def discreteCoefficientGroupCochainMap
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {A : DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G}
@@ -1218,20 +1471,40 @@ theorem discreteCoefficientHomologyIso_inv_group_naturality
     discreteCoefficientForget.{max v (max z w)}).hom.naturality
       (nativeGroupCoefficientCochainsMap.{0, v, z, w} φ f)).symm
 
-/-- A morphism of the ORIGINAL coefficient sequences. Its fields concern only
-the original arrows; cochain, cohomology and connecting-map squares are conclusions. -/
+/-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+This is the data of a morphism from S to T along φ: the three
+continuous ℤ-linear intertwiners τ_i and the two commuting
+coefficient-arrow squares. Exactness is not part of this datum. -/
 structure DiscreteCoefficientGroupHom
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G))
     (T : ShortComplex (DiscreteContAction (TopModuleCat.{max z (max v w)} ℤ) H))
     (φ : H →ₜ* G) where
-  /-- The map on the first terms, from `S.X₁` restricted along `φ` to `T.X₁`. -/
+  /-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+The first component is τ₁:Res_φ(S₁)→T₁, a continuous
+ℤ-linear φ-equivariant coefficient map in the common universe c. -/
   τ₁ : TopRep.res φ (inhomogeneousOriginalTopRep.{0, v, max z w} G S.X₁) ⟶
     inhomogeneousOriginalTopRep.{0, z, max v w} H T.X₁
-  /-- The map on the second terms, from `S.X₂` restricted along `φ` to `T.X₂`. -/
+  /-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+The middle component is τ₂:Res_φ(S₂)→T₂, a continuous
+ℤ-linear φ-equivariant coefficient map in the common universe c. -/
   τ₂ : TopRep.res φ (inhomogeneousOriginalTopRep.{0, v, max z w} G S.X₂) ⟶
     inhomogeneousOriginalTopRep.{0, z, max v w} H T.X₂
-  /-- The map on the third terms, from `S.X₃` restricted along `φ` to `T.X₃`. -/
+  /-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+The last component is τ₃:Res_φ(S₃)→T₃, a continuous
+ℤ-linear φ-equivariant coefficient map in the common universe c. -/
   τ₃ : TopRep.res φ (inhomogeneousOriginalTopRep.{0, v, max z w} G S.X₃) ⟶
     inhomogeneousOriginalTopRep.{0, z, max v w} H T.X₃
   comm₁₂ : τ₁ ≫ (discreteCoefficientTopRepFunctor.{z, max v w} H).map T.f =
@@ -1241,21 +1514,42 @@ structure DiscreteCoefficientGroupHom
     (TopRep.resFunctor (φ : H →* G)).map
       ((discreteCoefficientTopRepFunctor.{v, max z w} G).map S.g) ≫ τ₃
 
-/-- An original diagram BEFORE coefficient enlargement, on the native carriers. -/
+/-- Let G,H be profinite groups in universes v,z, with coefficient
+carriers c_G=max(v,w) and c_H=max(z,w). Let S,T be short complexes of
+discrete continuous abelian coefficients in those carriers and
+φ:H→G continuous.
+This diagram consists of three continuous ℤ-linear φ-intertwiners
+from the underlying terms of S to T, with pointwise coefficient-arrow
+commutation. The original two carrier universes are retained. -/
 structure DiscreteCoefficientNativeGroupHom
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (T : ShortComplex (DiscreteContAction (TopModuleCat.{max z w} ℤ) H))
     (φ : H →ₜ* G) where
-  /-- The `φ`-intertwiner on the first terms, from `S.X₁` to `T.X₁`. -/
+  /-- Let G,H be profinite groups in universes v,z, with coefficient
+carriers c_G=max(v,w) and c_H=max(z,w). Let S,T be short complexes of
+discrete continuous abelian coefficients in those carriers and
+φ:H→G continuous.
+The first component is the continuous ℤ-linear φ-intertwiner
+S₁→T₁ between carriers c_G and c_H. -/
   τ₁ : nativeCoefficientIntertwiner.{0, v, z, w}
     (inhomogeneousOriginalTopRep.{0, v, w} G S.X₁)
     (inhomogeneousOriginalTopRep.{0, z, w} H T.X₁) φ
-  /-- The `φ`-intertwiner on the second terms, from `S.X₂` to `T.X₂`. -/
+  /-- Let G,H be profinite groups in universes v,z, with coefficient
+carriers c_G=max(v,w) and c_H=max(z,w). Let S,T be short complexes of
+discrete continuous abelian coefficients in those carriers and
+φ:H→G continuous.
+The middle component is the continuous ℤ-linear φ-intertwiner
+S₂→T₂ between carriers c_G and c_H. -/
   τ₂ : nativeCoefficientIntertwiner.{0, v, z, w}
     (inhomogeneousOriginalTopRep.{0, v, w} G S.X₂)
     (inhomogeneousOriginalTopRep.{0, z, w} H T.X₂) φ
-  /-- The `φ`-intertwiner on the third terms, from `S.X₃` to `T.X₃`. -/
+  /-- Let G,H be profinite groups in universes v,z, with coefficient
+carriers c_G=max(v,w) and c_H=max(z,w). Let S,T be short complexes of
+discrete continuous abelian coefficients in those carriers and
+φ:H→G continuous.
+The last component is the continuous ℤ-linear φ-intertwiner
+S₃→T₃ between carriers c_G and c_H. -/
   τ₃ : nativeCoefficientIntertwiner.{0, v, z, w}
     (inhomogeneousOriginalTopRep.{0, v, w} G S.X₃)
     (inhomogeneousOriginalTopRep.{0, z, w} H T.X₃) φ
@@ -1264,7 +1558,13 @@ structure DiscreteCoefficientNativeGroupHom
   comm₂₃ (x : inhomogeneousOriginalTopRep.{0, v, w} G S.X₂) :
     discreteCoefficientHom.{z, w} T.g (τ₂ x) = τ₃ (discreteCoefficientHom.{v, w} S.g x)
 
-/-- The same native diagram becomes a genuine common-rank diagram by ONE lift per carrier. -/
+/-- Let G,H be profinite groups in universes v,z, with coefficient
+carriers c_G=max(v,w) and c_H=max(z,w). Let S,T be short complexes of
+discrete continuous abelian coefficients in those carriers and
+φ:H→G continuous.
+Lifting S by z and T by v gives a group/coefficient diagram in
+c=max(v,z,w). Each component has value up(x)↦up(τ_i(x)),
+and the two coefficient squares lift with it. -/
 @[nolint defsWithUnderscore] -- name recorded in the Bloch–Kato validation audit
 def discreteCoefficientNativeGroupHom_ulift
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
@@ -1284,7 +1584,12 @@ def discreteCoefficientNativeGroupHom_ulift
     (φ : H →* G) ((discreteCoefficientTopRepFunctor.{v, w} G).map S.g)
     ((discreteCoefficientTopRepFunctor.{z, w} H).map T.g) f.τ₂ f.τ₃ f.comm₂₃
 
-/-- The original coefficient diagram gives a real diagram of actual cochain complexes. -/
+/-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+The three coefficient maps induce the short-complex map
+C_G(S)→C_H(T), degreewise by their group/coefficient cochain maps. -/
 abbrev discreteCoefficientGroupSequenceMap
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {S : ShortComplex (DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G)}
@@ -1327,7 +1632,13 @@ abbrev discreteCoefficientGroupSequenceMap
           (nativeGroupCoefficientCochainsMap.{0, v, z, w} φ f.τ₃))))
 
 
-/-- Full simultaneous group/coefficient naturality of the SAME actual connecting maps. -/
+/-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+If S and T satisfy the three underlying exactness conditions,
+their connecting maps obey
+H^(n+1)(φ,τ₁)∘δ_S=δ_T∘Hⁿ(φ,τ₃). -/
 theorem discreteCoefficientConnecting_group_naturality
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {S : ShortComplex (DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G)}
@@ -1383,7 +1694,13 @@ theorem discreteCoefficientConnecting_group_naturality
   change (eS₃.hom ≫ δS ≫ eS₁.inv) ≫ a₁ = a₃ ≫ (eT₃.hom ≫ δT ≫ eT₁.inv)
   exact conjugatedBoundary_naturality eS₁ eS₃ eT₁ eT₃ a₁ a₃ b₁ b₃ δS δT h₁ h₃ hδ
 
-/-- Naturality for every morphism of the original literal coefficient sequences. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For a morphism α:S→T of two exact coefficient short complexes,
+H^(n+1)(α₁)∘δ_S=δ_T∘Hⁿ(α₃).
+The middle component's commutation is part of the sequence morphism. -/
 theorem discreteCoefficientConnecting_naturality
     {G : ProfiniteGrp.{v}}
     {S T : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G)}
@@ -1424,7 +1741,15 @@ theorem discreteCoefficientConnecting_naturality
     (discreteCoefficientHomologyIso_inv_naturality.{v, w} f.τ₁ (n + 1))
     (discreteCoefficientHomologyIso_naturality.{v, w} f.τ₃ n) hδ
 
-/-- The actual adjacent-degree sequence on the EXISTING continuous cohomology groups. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+This five-arrow window is
+Hⁿ(A)→Hⁿ(B)→Hⁿ(C)→Hⁿ⁺¹(A)→Hⁿ⁺¹(B)→Hⁿ⁺¹(C),
+with the canonical coefficient maps and central connecting arrow. -/
 abbrev discreteCoefficientLongSequence {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact.{v, w} S) (n : ℕ) :
@@ -1436,7 +1761,15 @@ abbrev discreteCoefficientLongSequence {G : ProfiniteGrp.{v}}
     ((discreteCoefficientCohomologyFunctor.{v, w} G (n + 1)).map S.f)
     ((discreteCoefficientCohomologyFunctor.{v, w} G (n + 1)).map S.g)
 
-/-- The SAME canonical homology comparisons identify all six terms and five arrows. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The six-group window is isomorphic to the corresponding homology
+sequence window of the short exact cochain sequence C_G(S).
+Its components are the continuous/cochain homology comparisons. -/
 def discreteCoefficientLongSequenceIso {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact.{v, w} S) (n : ℕ) :
@@ -1457,7 +1790,14 @@ def discreteCoefficientLongSequenceIso {G : ProfiniteGrp.{v}}
     (discreteCoefficientHomologyIso_naturality.{v, w} S.f (n + 1))
     (discreteCoefficientHomologyIso_naturality.{v, w} S.g (n + 1))
 
-/-- Exactness of every adjacent-degree segment of the full original sequence. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+For every n∈ℕ, the five-arrow continuous cohomology window is
+exact at each of its four interior groups. -/
 theorem discreteCoefficientLongSequence_exact {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact.{v, w} S) (n : ℕ) :
@@ -1468,16 +1808,34 @@ theorem discreteCoefficientLongSequence_exact {G : ProfiniteGrp.{v}}
         (discreteCoefficientCochain_shortExact.{v, w} S hS)
         n (n + 1) (discreteCoefficientUpRel n))
 
-/-- Original coefficient sequences with the literal underlying exactness condition. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The exact-sequence object property on coefficient short complexes
+is the underlying injectivity, image–kernel equality and surjectivity
+predicate. -/
 def discreteCoefficientExactProperty (G : ProfiniteGrp.{v}) :
     ObjectProperty (ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G)) :=
   DiscreteCoefficientExact.{v, w}
 
-/-- The full subcategory of exact original coefficient sequences. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The category of exact coefficient sequences is the full subcategory
+of coefficient short complexes satisfying the three exactness conditions.
+Its morphisms are three-term diagrams with both squares commuting. -/
 abbrev DiscreteCoefficientExactSequences (G : ProfiniteGrp.{v}) :=
   (discreteCoefficientExactProperty.{v, w} G).FullSubcategory
 
-/-- The complete sequence is functorial in EVERY original coefficient sequence morphism. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For fixed n, an exact coefficient sequence is sent to its six-group
+continuous cohomology window. A sequence morphism is sent to its
+three cohomology maps in degree n and again in degree n+1. -/
 def discreteCoefficientLongSequenceFunctor (G : ProfiniteGrp.{v}) (n : ℕ) :
     DiscreteCoefficientExactSequences.{v, w} G ⥤
       ComposableArrows AddCommGrpCat.{max v w} 5 where
@@ -1524,7 +1882,11 @@ def discreteCoefficientLongSequenceFunctor (G : ProfiniteGrp.{v}) (n : ℕ) :
     · exact (discreteCoefficientCohomologyFunctor.{v, w} G (n + 1)).map_comp f.hom.τ₂ g.hom.τ₂
     · exact (discreteCoefficientCohomologyFunctor.{v, w} G (n + 1)).map_comp f.hom.τ₃ g.hom.τ₃
 
-/-- Every original group/coefficient square commutes on the existing common cohomology. -/
+/-- Let G,H be profinite groups in universes v,z and discrete continuous
+abelian coefficients A₁,A₂ over G and B₁,B₂ over H have carrier
+c=max(v,z,w). For continuous φ:H→G, maps a:A₁→A₂, b:B₁→B₂
+and φ-intertwiners ψ₁,ψ₂ with b∘ψ₁=ψ₂∘a after restriction,
+the degree n discrete continuous cohomology square commutes. -/
 theorem discreteCoefficientGroupCohomologySquare
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {A₁ A₂ : DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G}
@@ -1557,7 +1919,11 @@ theorem discreteCoefficientGroupCohomologySquare
       (HomologicalComplex.homologyMap
         ((homogeneousCochainsFunctor.{0, z, max v w} (k := ℤ) (G := H)).map b') n)))
 
-/-- The common-model H0 square uses the same identity evaluation and original invariants map. -/
+/-- Let G,H be profinite groups in universes v,z and c=max(v,z,w).
+For discrete continuous abelian coefficients A over G and B over H,
+continuous φ:H→G and equivariant ℤ-linear f:Res_φ(A)→B,
+the degree-zero invariant comparisons satisfy
+zeroIso_B∘H⁰(φ,f)=invariantsResMap(φ,f)∘zeroIso_A. -/
 theorem discreteCoefficientGroupZeroIso_naturality
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {A : DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G}
@@ -1580,7 +1946,13 @@ theorem discreteCoefficientGroupZeroIso_naturality
     (h.trans (F.map_comp (ContinuousCohomology.zeroIso X).hom
       (TopRep.invariantsResMap (φ : H →* G) f)))
 
-/-- All six components and every square are the original native group/coefficient maps. -/
+/-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+For exact S,T, the group/coefficient cohomology maps define a
+morphism of their six-group windows, with degrees n and n+1 and
+connecting-map square included. -/
 def discreteCoefficientGroupLongSequenceMap
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {S : ShortComplex (DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G)}
@@ -1629,7 +2001,12 @@ def discreteCoefficientGroupLongSequenceMap
       (discreteCoefficientConnecting.{z, max v w} T hT n) (HT₁.map T.f) (HT₁.map T.g))
     a₀ a₁ a₂ a₃ a₄ a₅ w₀ w₁ w₂ w₃ w₄
 
-/-- The common coefficient enlargement retains the literal identity evaluation. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For a closed degree-zero homogeneous function a, the degree-zero
+invariant comparison sends its projected class to a(1). -/
 theorem discreteCoefficientZeroIso_cycle_value (G : ProfiniteGrp.{v})
     (A : DiscreteContAction (TopModuleCat.{max v w} ℤ) G)
     (c : ((TopRep.homogeneousCochains (inhomogeneousOriginalTopRep.{0, v, w} G A)).d
@@ -1643,7 +2020,13 @@ theorem discreteCoefficientZeroIso_cycle_value (G : ProfiniteGrp.{v})
   homogeneousZeroIso_cycle_value.{0, v, w}
     (inhomogeneousOriginalTopRep.{0, v, w} G A) c
 
-/-- The SAME inverse uses the class of the original constant cocycle. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+The inverse invariant comparison A^G→H⁰_G(A) sends an invariant
+a to its constant homogeneous zero-cycle and then projects that
+cycle to cohomology. -/
 theorem discreteCoefficientZeroIso_inverse_projection (G : ProfiniteGrp.{v})
     (A : DiscreteContAction (TopModuleCat.{max v w} ℤ) G) :
     (discreteCoefficientZeroIso.{v, w} G A).inv =
@@ -1660,7 +2043,13 @@ theorem discreteCoefficientZeroIso_inverse_projection (G : ProfiniteGrp.{v})
   exact (congrArg F.map (homogeneousZeroIso_inverse_projection.{0, v, w} X)).trans
     ((F.map_comp _ _).trans (congrArg (fun h => _ ≫ h) (F.map_comp _ _)))
 
-/-- Every component of the coefficient sequence functor is the ORIGINAL cohomology map. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For a morphism α:S→T of exact coefficient sequences, the six
+window components are Hⁿ(α₁),Hⁿ(α₂),Hⁿ(α₃), then
+Hⁿ⁺¹(α₁),Hⁿ⁺¹(α₂),Hⁿ⁺¹(α₃). -/
 theorem discreteCoefficientLongSequenceFunctor_components (G : ProfiniteGrp.{v}) (n : ℕ)
     {S T : DiscreteCoefficientExactSequences.{v, w} G} (f : S ⟶ T) :
     let m := (discreteCoefficientLongSequenceFunctor.{v, w} G n).map f
@@ -1672,7 +2061,19 @@ theorem discreteCoefficientLongSequenceFunctor_components (G : ProfiniteGrp.{v})
     m.app 5 = (discreteCoefficientCohomologyFunctor.{v, w} G (n + 1)).map f.hom.τ₃ :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- Full source laws for the SAME coefficient sequence, cohomology and boundary. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+This proposition records degreewise cochain short exactness,
+injectivity, kernel lifting and surjectivity; exactness of every
+six-term cohomology window; monicity of the initial degree-zero map;
+and the connecting/homology comparison.
+It also includes identity evaluation and constant-cycle inverse in
+degree zero, and identity, composition and all arrow-naturality
+laws of the sequence-window functor. -/
 def DiscreteCoefficientLongExactLaws {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact.{v, w} S) : Prop :=
@@ -1728,7 +2129,15 @@ def DiscreteCoefficientLongExactLaws {G : ProfiniteGrp.{v}}
       ((discreteCoefficientLongSequenceFunctor.{v, w} G n).map f).app i ≫
         ((discreteCoefficientLongSequenceFunctor.{v, w} G n).obj B).map (homOfLE h)
 
-/-- Literal coefficient exactness gives the cochain, cohomology, and functorial laws. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+Let S=(A→B→C) be a short complex whose underlying first map is injective,
+image equals the second map's kernel, and the second map is surjective.
+The coefficient exactness conditions give all stated cochain,
+continuous cohomology, degree-zero invariant and sequence-functor
+properties for S. -/
 private theorem discreteCoefficientLongExactLaws_of_exact {G : ProfiniteGrp.{v}}
     (S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G))
     (hS : DiscreteCoefficientExact.{v, w} S) :
@@ -1781,7 +2190,14 @@ private theorem discreteCoefficientLongExactLaws_of_exact {G : ProfiniteGrp.{v}}
   exact ⟨hCochain, hInjective, hKernel, hSurjective, hExact, hMono, hConnecting,
     hZero, hCycle, hInverse, hIdentity, hComposition, hNaturality⟩
 
-/-- The full coefficient theorem for arbitrary original equivariant additive f and g. -/
+/-- Let G be a profinite group in universe v and c=max(v,w).
+Let D_G be the category of abelian groups in c with discrete topology
+and jointly continuous G-action. Write C_G(A) for their homogeneous
+abelian-group cochain complex and Hⁿ_G(A) for continuous cohomology.
+For coefficient maps f:A→B and g:B→C with f injective,
+range(f)=ker(g) and g surjective on underlying groups, their induced
+short complex has the full cochain and continuous long exact
+sequence properties in every degree. -/
 theorem original_continuous_cochain_long_exact_sequence (G : ProfiniteGrp.{v})
     {A B C : DiscreteContAction (TopModuleCat.{max v w} ℤ) G}
     (f : A ⟶ B) (g : B ⟶ C)
@@ -1796,7 +2212,14 @@ theorem original_continuous_cochain_long_exact_sequence (G : ProfiniteGrp.{v})
     (discreteCoefficientShortComplex.{v, w} f g hfg)
     (discreteCoefficientShortComplex_exact.{v, w} f g hf hfg hg)
 
-/-- Every group/coefficient diagram gives the actual six components and ALL squares. -/
+/-- Let G,H be profinite groups in universes v,z, c=max(v,z,w),
+S,T short complexes of discrete continuous abelian coefficients in c,
+and φ:H→G continuous. Let τ₁,τ₂,τ₃ be continuous ℤ-linear
+φ-equivariant coefficient maps commuting with the two sequence arrows.
+For exact S,T, the six components of the group/coefficient window
+map are Hⁿ(φ,τ_i) and Hⁿ⁺¹(φ,τ_i), i=1,2,3.
+Every composite-arrow square between ordered window positions i≤j
+commutes. -/
 theorem original_continuous_cochain_group_coefficient_naturality
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {S : ShortComplex (DiscreteContAction (TopModuleCat.{max v (max z w)} ℤ) G)}
@@ -1823,8 +2246,15 @@ theorem original_continuous_cochain_group_coefficient_naturality
   intro m
   exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, fun _ _ h => m.naturality (homOfLE h)⟩
 
-/-- Original smaller coefficient diagrams enter the full sequence through exactly ONE lift.
-The exactness, cochain sequences and every square are derived, without size certificates. -/
+/-- Let G,H be profinite groups in universes v,z, with coefficient
+carriers c_G=max(v,w) and c_H=max(z,w). Let S,T be short complexes of
+discrete continuous abelian coefficients in those carriers and
+φ:H→G continuous.
+If the underlying coefficient sequences S,T are exact, lift each
+once to c=max(v,z,w). The lifted components have values
+up(x)↦up(τ_i(x)); both lifted cochain sequences are short exact;
+all their cohomology windows are exact; and the resulting window
+map commutes with every composite-arrow square at positions i≤j. -/
 theorem original_continuous_cochain_native_group_naturality
     {G : ProfiniteGrp.{v}} {H : ProfiniteGrp.{z}}
     {S : ShortComplex (DiscreteContAction (TopModuleCat.{max v w} ℤ) G)}

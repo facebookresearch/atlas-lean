@@ -14,16 +14,14 @@ public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoria
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Shapiro
 
 /-!
-# The finite-index coinduction counit
+# Coinduction counit for a finite-index subgroup
 
-For a finite-index subgroup `H ≤ G`, induction and coinduction are naturally
-isomorphic. This supplies the canonical coinduction/restriction counit
-
-`Coind_H^G (Res_H^G A) ⟶ A`.
-
-The explicit bar-resolution comparison in `SchreierShapiroComparison` proves
-that inverse Schreier Shapiro followed by this coefficient counit is the
-established `schreierCorestriction` map in every degree.
+Let k be a commutative ring, G a group and H≤G a finite-index subgroup.
+The finite-index induction/coinduction isomorphism gives the adjunction
+Coind_H^G ⊣ Res_H^G and its coefficient counit
+Coind_H^G(Res_H^G A)→A for a k-linear G-representation A.
+This is the coefficient map used after inverse Shapiro in the
+finite-index corestriction comparison.
 -/
 
 @[expose] public section
@@ -41,8 +39,10 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable (H : Subgroup G) [H.FiniteIndex]
 
-/-- The canonical finite-index coinduction/restriction counit on a
-`G`-representation. -/
+/-- For a commutative ring k, a group G, a finite-index subgroup H
+and a k-linear G-representation A, this is the counit
+Coind_H^G(Res_H^G A)→A of the finite-index coinduction/restriction
+adjunction. The scalar ring and group both have universe u. -/
 noncomputable def corestrictionCounit (A : Rep k G) :
     coind H.subtype (Rep.res H.subtype A) ⟶ A := by
   letI : DecidableRel (QuotientGroup.rightRel H) := Classical.decRel _

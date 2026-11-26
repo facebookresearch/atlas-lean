@@ -13,10 +13,16 @@ module
 public import MathlibExt.GroupTheory.SchreierTransversal
 
 /-!
-# Composition of Schreier transversals
+# Schreier decompositions in a subgroup tower
 
-Products of representatives in a subgroup tower give an actual right transversal.
-The representative scan and factor tuple agree with the two successive scans.
+Let H ≤ G and let K be a subgroup of H. If S is a right transversal for K in H and T a right
+transversal for H in G, the products st form a right transversal for the image of K in G.
+Decomposing stg first through T and then through S gives the same subgroup factor and
+representative as decomposing through this product transversal.
+
+For finite tuples, scan first through T to obtain H-valued factors, then scan those factors
+through S. The resulting representative pairs and K-valued factor tuple are precisely those of
+the product transversal.
 -/
 
 @[expose] public section
@@ -30,13 +36,18 @@ universe u
 
 variable {G : Type u} [Group G] {H : Subgroup G} {K : Subgroup H}
 
-/-- Product of one `K\H` representative and one `H\G` representative. -/
+/-- A representative product in a subgroup tower.
+
+For s ∈ S and t ∈ T, this map sends (s,t) to the ambient product st ∈ G, where S is a
+K-transversal in H and T an H-transversal in G. -/
 def productRep (S : K.RightTransversal) (T : H.RightTransversal)
     (p : ↥(S : Set H) × ↥(T : Set G)) : G :=
   ((p.1 : H) : G) * (p.2 : G)
 
-/-- Products of representatives from two successive right transversals are
-unique. -/
+/-- Uniqueness of pairs of product representatives.
+
+If st = s′t′ for s,s′ ∈ S and t,t′ ∈ T, then (s,t) = (s′,t′). Thus the representative product
+map S × T → G is injective. -/
 theorem productRep_injective (S : K.RightTransversal)
     (T : H.RightTransversal) : Function.Injective (productRep S T) := by
   intro p q hpq
@@ -48,18 +59,23 @@ theorem productRep_injective (S : K.RightTransversal)
     congrArg (fun r : H × ↥(T : Set G) => r.2) hpair
   exact Prod.ext hs ht
 
-/-- The set of products of representatives from two successive right
-transversals. -/
+/-- The set of product representatives.
+
+This is the subset of G consisting of all st with s ∈ S and t ∈ T. -/
 def productSet (S : K.RightTransversal) (T : H.RightTransversal) : Set G :=
   Set.range (productRep S T)
 
-/-- The product map identifies pairs of successive representatives with the
-product representative set. -/
+/-- Pair coordinates on the product representative set.
+
+The injective product map identifies S × T with its image {st | s ∈ S, t ∈ T} in G. -/
 noncomputable def productRepEquiv (S : K.RightTransversal)
     (T : H.RightTransversal) :
     ↥(S : Set H) × ↥(T : Set G) ≃ ↥(productSet S T : Set G) :=
   Equiv.ofInjective (productRep S T) (productRep_injective S T)
 
+/-- Ambient values of the product-set equivalence.
+
+The representative corresponding to (s,t) has ambient value st ∈ G. -/
 @[simp]
 theorem productRepEquiv_coe_apply (S : K.RightTransversal)
     (T : H.RightTransversal) (p : ↥(S : Set H) × ↥(T : Set G)) :
@@ -67,7 +83,11 @@ theorem productRepEquiv_coe_apply (S : K.RightTransversal)
       productRep S T p :=
   rfl
 
-/-- Decomposition of `G` through successive right transversals. -/
+/-- Decomposition through two successive transversals.
+
+This equivalence sends G to the product of the image of K in G and the product representative
+set. It decomposes first through T, then decomposes the H-factor through S; its inverse
+multiplies the two ambient components. -/
 noncomputable def productDecompositionEquiv (S : K.RightTransversal)
     (T : H.RightTransversal) :
     G ≃ (K.map H.subtype) × ↥(productSet S T : Set G) where
@@ -134,18 +154,25 @@ noncomputable def productDecompositionEquiv (S : K.RightTransversal)
         ((((k : K) : H) * (s : H) : H), t), Equiv.apply_symm_apply]
       rw [← S.2.equiv_symm_apply ((k, s)), Equiv.apply_symm_apply]
 
-/-- Product representatives form a right transversal for the image of `K`
-in `G`. -/
+/-- The product right transversal.
+
+The set of products st with s ∈ S and t ∈ T is a right transversal for K mapped into G along
+the subgroup inclusion H → G. -/
 noncomputable def product (S : K.RightTransversal)
     (T : H.RightTransversal) : (K.map H.subtype).RightTransversal :=
   ⟨productSet S T, (productDecompositionEquiv S T).symm.bijective⟩
 
-/-- Pair coordinates for the product transversal. -/
+/-- Pair coordinates on the product transversal.
+
+The product transversal for the image of K in G is equivalent to S × T by (s,t) ↦ st. -/
 noncomputable def productEquiv (S : K.RightTransversal)
     (T : H.RightTransversal) :
     ↥(S : Set H) × ↥(T : Set G) ≃ ↥((product S T : Set G)) :=
   productRepEquiv S T
 
+/-- Ambient values of product-transversal coordinates.
+
+Under the pair-coordinate equivalence, the element corresponding to (s,t) has value st in G. -/
 @[simp]
 theorem productEquiv_coe_apply (S : K.RightTransversal)
     (T : H.RightTransversal) (p : ↥(S : Set H) × ↥(T : Set G)) :
@@ -153,8 +180,10 @@ theorem productEquiv_coe_apply (S : K.RightTransversal)
       productRep S T p :=
   rfl
 
-/-- The direct Schreier decomposition for the product transversal is the
-successive Schreier decomposition through `T` and then `S`. -/
+/-- The two-step decomposition of a product representative.
+
+Write tg = ht′ using T, and then sh = ks′ using S. The product transversal decomposes stg with
+subgroup factor k mapped into G and representative s′t′. -/
 theorem product_schreierDecomposition (S : K.RightTransversal)
     (T : H.RightTransversal) (s : (S : Set H)) (t : (T : Set G))
     (g : G) :
@@ -196,8 +225,10 @@ theorem product_schreierDecomposition (S : K.RightTransversal)
       simp only [Subgroup.coe_mul]
       rw [mul_assoc, ← T.schreierFactor_mul_schreierRep, ← mul_assoc]
 
-/-- Product-transversal Schreier representatives are the products of the
-successive representatives. -/
+/-- The representative from two successive Schreier steps.
+
+Starting at st, the product-transversal representative after g is the product of
+r_S(s,a_T(t,g)) and r_T(t,g). -/
 theorem product_schreierRep (S : K.RightTransversal)
     (T : H.RightTransversal) (s : (S : Set H)) (t : (T : Set G))
     (g : G) :
@@ -209,8 +240,10 @@ theorem product_schreierRep (S : K.RightTransversal)
     (product_schreierDecomposition S T s t g)
   exact h
 
-/-- Product-transversal Schreier factors are the images of the inner
-successive factors. -/
+/-- The subgroup factor from two successive Schreier steps.
+
+Starting at st, the product-transversal factor after g is the image in G of a_S(s,a_T(t,g)) ∈
+K. -/
 theorem product_schreierFactor (S : K.RightTransversal)
     (T : H.RightTransversal) (s : (S : Set H)) (t : (T : Set G))
     (g : G) :
@@ -230,8 +263,10 @@ universe u
 
 variable {G : Type u} [Group G] {H : Subgroup G} {K : Subgroup H}
 
-/-- The representative scan for a product transversal is the pair of the
-successive representative scans. -/
+/-- Representative scans through a subgroup tower.
+
+For g : Fin n → G, the product-transversal scan at i is the product-coordinate pair formed by
+the S-scan of the T-factor tuple at i and the T-scan of g at i. -/
 theorem product_schreierRepScan {n : ℕ}
     (S : K.RightTransversal) (T : H.RightTransversal)
     (s : (S : Set H)) (t : (T : Set G)) (g : Fin n → G)
@@ -249,9 +284,10 @@ theorem product_schreierRepScan {n : ℕ}
         schreierRepScan_get_succ, schreierRepScan_get_succ]
       rfl
 
-/-- The factor tuple for a product transversal is obtained by applying the
-subgroup-image equivalence to the factor tuple from the two successive
-Schreier scans. -/
+/-- Factor tuples through a subgroup tower.
+
+The factor tuple of the product transversal is obtained by scanning the T-factor tuple through
+S and mapping each resulting K-element into the subgroup image in G. -/
 theorem product_schreierFactorTuple {n : ℕ}
     (S : K.RightTransversal) (T : H.RightTransversal)
     (s : (S : Set H)) (t : (T : Set G)) (g : Fin n → G) :

@@ -14,19 +14,15 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransfer
 
 /-!
-# Degree-two chosen-transversal group-cohomological transfer
+# Schreier transfer on binary cochains and degree-two classes
 
-For a finite-index subgroup `H ≤ G`, a chosen right transversal `T`, and a
-`G`-representation `A`, this file defines the standard degree-two
-inhomogeneous cochain transfer
+Let k be a commutative ring, A a G-representation, H ≤ G a finite-index subgroup and T a right
+transversal. For t₀ = t, write t₀g₁ = a₀t₁ and t₁g₂ = a₁t₂. The binary transfer is
+cor_T²(f)(g₁,g₂) = ∑ₜ ρ(t⁻¹)f(a₀,a₁).
 
-`cor²(f)(g₁,g₂) = Σ t, t⁻¹ · f(h(t,g₁), h(overline(tg₁),g₂))`.
-
-It proves compatibility with the degree-one differential, sends two-cocycles
-to two-cocycles and two-coboundaries to two-coboundaries, and descends to a
-degree-two cohomology map.  All statements retain the chosen transversal
-explicitly.  No independence of that choice, projection formula, norm-residue
-comparison, or Kummer-Steinberg vanishing is asserted.
+It commutes with the degree-one differential d¹b(g₁,g₂) = ρ(g₁)b(g₂) − b(g₁g₂) + b(g₁),
+preserves two-cocycles, and induces a linear map H²(H,A|H) → H²(G,A). On a represented class
+this map is computed by the transferred binary cocycle.
 -/
 
 @[expose] public section
@@ -44,12 +40,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for binary cochain transfer.
+
+The finite-index hypothesis gives a finite enumeration of T for the degree-two sum. -/
 noncomputable local instance corestrictionDegreeTwoRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Degree-two cochain transfer associated to a chosen finite right
-transversal. -/
+/-- The degree-two Schreier cochain transfer.
+
+For f : H × H → A and successive factors a₀,a₁ of t₀g₁ = a₀t₁ and t₁g₂ = a₁t₂, sum
+ρ(t₀⁻¹)f(a₀,a₁) over t₀ ∈ T. This is a k-linear map from binary H-cochains to binary
+G-cochains. -/
 noncomputable def corestrictionCochainTwo (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     (H × H → A) →ₗ[k] (G × G → A) where
@@ -65,6 +67,9 @@ noncomputable def corestrictionCochainTwo (A : Rep k G)
     simp only [Pi.smul_apply, map_smul, RingHom.id_apply]
     rw [Finset.smul_sum]
 
+/-- The binary representative formula for transfer.
+
+At (g₁,g₂), the transfer is ∑ₜ ρ(t⁻¹)f(a(t,g₁),a(r(t,g₁),g₂)). -/
 @[simp]
 theorem corestrictionCochainTwo_apply (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -76,8 +81,10 @@ theorem corestrictionCochainTwo_apply (A : Rep k G)
             T.schreierFactor (T.schreierRep t g₁) g₂)) :=
   rfl
 
-/-- A single summand in the compatibility of degree-two transfer with
-`d₁₂`. -/
+/-- An inverse-weighted degree-one differential term.
+
+For successive factors a₀,a₁, the weighted differential ρ(t⁻¹)d¹b(a₀,a₁) has the three terms
+with signs +,−,+: the updated leading action, the factor of g₁g₂, and the factor of g₁. -/
 theorem corestrictionCochainTwo_d₁₂_term (A : Rep k G)
     (T : H.RightTransversal) (b : H → A)
     (t : (T : Set G)) (g₁ g₂ : G) :
@@ -98,8 +105,10 @@ theorem corestrictionCochainTwo_d₁₂_term (A : Rep k G)
   rw [← Module.End.mul_apply, ← map_mul,
     T.inv_mul_schreierFactor t g₁]
 
-/-- Degree-one and degree-two chosen-transversal transfers commute with the
-inhomogeneous differential `d₁₂`. -/
+/-- Binary transfer commutes with the degree-one differential.
+
+For b : H → A, cor_T²(d¹b) = d¹(cor_T¹b), with the restricted H-action on the source and
+G-action on the target. -/
 theorem corestrictionCochainTwo_d₁₂ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] (b : H → A) :
     corestrictionCochainTwo A T
@@ -127,7 +136,10 @@ theorem corestrictionCochainTwo_d₁₂ (A : Rep k G)
   rw [Finset.sum_add_distrib, Finset.sum_sub_distrib]
   rw [sum_rho_mul_schreierRep_inv_factor]
 
-/-- Reindexing the leading sum in the transferred two-cocycle equation. -/
+/-- Reindexing a transfer sum with two remaining factors.
+
+The sum starting at r(t,g₁) on the remaining pair (g₂,g₃), weighted by ρ(g₁r(t,g₁)⁻¹), equals
+ρ(g₁) times the ordinary binary transfer sum on that pair. -/
 theorem sum_rho_mul_schreierRep_inv_twoFactor (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : H × H → A) (g₁ g₂ g₃ : G) :
@@ -171,7 +183,11 @@ theorem sum_rho_mul_schreierRep_inv_twoFactor (A : Rep k G)
               T.schreierFactor (T.schreierRep t g₂) g₃))) := by
       rw [map_sum]
 
-/-- A single summand of the transferred two-cocycle equation. -/
+/-- The two-cocycle identity on a Schreier scan.
+
+For an H-two-cocycle f and successive factors a₀,a₁,a₂, apply its identity f(a₀a₁,a₂) +
+f(a₀,a₁) = ρ(a₀)f(a₁,a₂) + f(a₀,a₁a₂) and then weight by ρ(t⁻¹). The leading action becomes
+ρ(g₁r(t,g₁)⁻¹). -/
 theorem corestrictionCochainTwo_cocycle_term (A : Rep k G)
     (T : H.RightTransversal)
     (f : groupCohomology.cocycles₂ (Rep.res (Subgroup.subtype H) A))
@@ -206,8 +222,10 @@ theorem corestrictionCochainTwo_cocycle_term (A : Rep k G)
   rw [← Module.End.mul_apply, ← map_mul,
     T.inv_mul_schreierFactor t g₁]
 
-/-- Degree-two chosen-transversal cochain transfer sends two-cocycles to
-two-cocycles. -/
+/-- Binary transfer preserves two-cocycles.
+
+An H-two-cocycle for A|H is sent by the chosen-transversal binary transfer to a G-two-cocycle
+for A. -/
 theorem corestrictionCochainTwo_mem_cocycles₂ (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
     (f : groupCohomology.cocycles₂ (Rep.res (Subgroup.subtype H) A)) :
@@ -239,7 +257,9 @@ theorem corestrictionCochainTwo_mem_cocycles₂ (A : Rep k G)
   rw [hterms, Finset.sum_add_distrib,
     sum_rho_mul_schreierRep_inv_twoFactor]
 
-/-- Degree-two cochain transfer restricted to two-cocycles. -/
+/-- The transfer map on two-cocycles.
+
+Restrict the k-linear binary transfer to obtain Z²(H,A|H) → Z²(G,A). -/
 noncomputable def corestrictionCocyclesTwo (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.cocycles₂ (Rep.res (Subgroup.subtype H) A) →ₗ[k]
@@ -260,6 +280,10 @@ noncomputable def corestrictionCocyclesTwo (A : Rep k G)
           (Rep.res (Subgroup.subtype H) A)) : H × H → A) = _
     exact map_smul (corestrictionCochainTwo A T) r (f : H × H → A)
 
+/-- The cochain underlying a transferred two-cocycle.
+
+The binary G-cochain underlying corestrictionCocyclesTwo A T f is corestrictionCochainTwo A T
+f. -/
 @[simp]
 theorem coe_corestrictionCocyclesTwo (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -268,15 +292,19 @@ theorem coe_corestrictionCocyclesTwo (A : Rep k G)
       corestrictionCochainTwo A T f :=
   rfl
 
-/-- The H² class of a transferred two-cocycle before descending through the
-source H² quotient. -/
+/-- The class of a transferred two-cocycle.
+
+Transfer an H-two-cocycle and project its resulting G-two-cocycle to H²(G,A). -/
 noncomputable def corestrictionCocycleTwoClass (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.cocycles₂ (Rep.res (Subgroup.subtype H) A) →ₗ[k]
       groupCohomology.H2 A :=
   (groupCohomology.H2π A).hom.comp (corestrictionCocyclesTwo A T)
 
-/-- Transferred two-cocycle classes annihilate source two-coboundaries. -/
+/-- Two-coboundaries vanish under the transferred class map.
+
+The kernel of Z²(H,A|H) → H²(H,A|H) is contained in the kernel of the chosen-transversal
+transferred class map to H²(G,A). -/
 theorem corestrictionCocycleTwoClass_ker (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     LinearMap.ker
@@ -296,8 +324,10 @@ theorem corestrictionCocycleTwoClass_ker (A : Rep k G)
   rw [← corestrictionCochainTwo_d₁₂]
   exact congrArg (corestrictionCochainTwo A T) hb
 
-/-- Degree-two cohomological transfer associated to a chosen finite right
-transversal.  Independence of the transversal is not asserted here. -/
+/-- The degree-two cohomology transfer of a right transversal.
+
+The binary transfer descends through the source coboundary quotient to a k-linear map
+H²(H,A|H) → H²(G,A). -/
 noncomputable def corestrictionH2OfRightTransversal (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex] :
     groupCohomology.H2 (Rep.res (Subgroup.subtype H) A) →ₗ[k]
@@ -314,8 +344,10 @@ noncomputable def corestrictionH2OfRightTransversal (A : Rep k G)
             inferInstance)
   q.comp e.symm.toLinearMap
 
-/-- The chosen-transversal H² transfer computes on a presented class by
-transferring its two-cocycle representative. -/
+/-- Degree-two transfer on a binary cocycle class.
+
+Applying the chosen H² transfer to the class of an H-two-cocycle gives the class of its
+transferred G-two-cocycle. -/
 @[simp]
 theorem corestrictionH2OfRightTransversal_H2π (A : Rep k G)
     (T : H.RightTransversal) [H.FiniteIndex]

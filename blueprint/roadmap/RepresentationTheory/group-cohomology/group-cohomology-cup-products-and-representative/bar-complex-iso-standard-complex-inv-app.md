@@ -1,5 +1,5 @@
-# Bar Complex iso Standard Complex inv apply single
+# Homogeneous simplex as a bar basis vector
 
-The standard-to-bar comparison sends a homogeneous basis simplex to the
-bar basis element indexed by its successive quotients, with its initial
-vertex as group-ring coefficient.
+For a group `G` and a commutative ring `k`, the degree-`n` standard-to-bar comparison sends
+`MonoidAlgebra.single u r`, for `u : Fin (n + 1) → G`, to the bar basis vector with tuple `i ↦
+(u i)⁻¹ * u (i + 1)` and group-ring coefficient `MonoidAlgebra.single (u 0) r`.

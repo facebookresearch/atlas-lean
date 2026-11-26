@@ -1,4 +1,7 @@
-# Field Etale Continuous Equiv
+# Field étale cohomology compares with continuous Galois cohomology
 
-The original small étale cohomology, through its canonical derived-Γ map,
-is identified with continuous cohomology of the same geometric fiber.
+Field étale cohomology compares with continuous Galois cohomology.
+
+For every common-universe sheaf `Q` and natural `q`, compose the canonical cohomology-to-
+derived-section equivalence with the derived-section continuous-cohomology isomorphism of its
+geometric fiber.

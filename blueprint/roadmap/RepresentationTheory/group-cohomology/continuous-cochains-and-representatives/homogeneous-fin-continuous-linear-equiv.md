@@ -1,3 +1,12 @@
-# Homogeneous Fin Continuous Linear Equiv lift
+# Invariant nested lift of an equivariant continuous tuple cochain
 
-Every original continuous homogeneous cochain has an actual invariant nested lift.
+Let k be a ring with a topology and G a topological group.
+Let X be a topological k-module with a G-representation by continuous
+k-linear maps, with carrier universe max(v,w), independently of the
+scalar universe u and group universe v.
+Write U₀(X)=X and U_(n+1)(X)=C(G,U_n(X)), with compact-open
+topologies and diagonal G-actions.
+Assume G is locally compact.
+For a continuous F : G^(q+1) → X satisfying
+F(g t₀,…,g t_q)=g • F(t₀,…,t_q), there is an invariant nested
+degree q homogeneous cochain whose evaluation on every tuple is F.

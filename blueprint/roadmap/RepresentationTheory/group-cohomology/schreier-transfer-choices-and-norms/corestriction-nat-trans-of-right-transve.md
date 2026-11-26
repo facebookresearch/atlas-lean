@@ -1,5 +1,6 @@
-# Corestriction Nat Trans Of Right Transversal
+# The transfer natural transformation in a cohomology degree
 
-In each degree, a chosen right transversal packages arbitrary
-corestriction as a natural transformation in the coefficient
-representation.
+The transfer natural transformation in a cohomology degree.
+
+For fixed T and n, the transfers define a natural transformation from Hⁿ(H,A|H) to Hⁿ(G,A) as
+A varies through G-representations.

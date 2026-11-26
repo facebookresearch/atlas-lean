@@ -1,5 +1,5 @@
-# Restriction H3 injective of is Unit index
+# Injectivity of degree-three restriction for invertible index
 
-Degree-three restriction to a finite-index subgroup is injective when
-the subgroup index is a unit in the coefficient ring.  A right transversal
-is supplied only to witness the left inverse up to the unit scalar.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` any
+right transversal. If `IsUnit (H.index : k)`, then restriction `map H.subtype (𝟙 _) 3 :
+H³(G,A) → H³(H,Rep.res H.subtype A)` is injective.

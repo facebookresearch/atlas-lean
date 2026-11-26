@@ -1,6 +1,6 @@
-# Bar Tuple Equiv
+# Tuple coordinates of the evaluated classifying bar
 
-Degreewise bar tuple equivalence.
+Tuple coordinates of the evaluated classifying bar.
 
-Drops the leading `PUnit` factor with `punitProd`, then reads the power with
-`powTupleEquiv` head-first.
+In degree n, the evaluated classifying-bar object is equivalent to Fin n → G after removing
+its two point factors.

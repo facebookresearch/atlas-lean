@@ -1,3 +1,5 @@
-# Rank Iso inv zero
+# Inverse coordinate recovers a compatible morphism
 
-Cancel the actual original-model comparison in an identity-evaluation square.
+Inverse coordinate recovers a compatible morphism.
+
+If `e.hom ≫ b = a`, then `e.inv ≫ a = b`.

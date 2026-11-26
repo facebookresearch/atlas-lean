@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Component
+# The universal transfer component into an induced bar degree
 
-Degree-`n` universal chain component representing chosen-transversal
-Schreier transfer into the induced subgroup bar object.
+The universal transfer component into an induced bar degree.
+
+In degree n, transfer the universal induced-bar cochain using T and extend from G-bar basis
+vectors. This gives a G-equivariant map B_G,ₙ → ind_H^G(B_H,ₙ).

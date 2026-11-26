@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Component comp adjoint Free Lift
+# Universal transfer followed by an adjoint coefficient map
 
-Precomposition by the universal induced-bar component is the arbitrary
-chosen-transversal Schreier transfer on every coefficient cochain.
+Universal transfer followed by an adjoint coefficient map.
+
+For z : Hⁿ → A, precomposing its adjoint H-bar free lift with the universal transfer component
+gives the G-bar free lift of cor_Tⁿ(z).

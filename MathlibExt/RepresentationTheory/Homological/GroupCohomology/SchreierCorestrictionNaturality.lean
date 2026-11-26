@@ -16,14 +16,14 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 /-!
 # Coefficient naturality of finite-index corestriction
 
-For a morphism of `G`-representations, mapping coefficients commutes with
-finite-index Schreier corestriction in degrees one and two.  The proof is
-first given on cochains and cocycle representatives for an arbitrary right
-transversal, then descended to the canonical cohomology maps and packaged as
-LinearMap squares.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `φ : A → B` a
+morphism of representations. Applying `φ` to the finite right-transversal cochain sum equals
+transferring the cochain with coefficients mapped by `φ`. This equality holds for arbitrary
+cochains and cocycles in degrees one and two.
 
-No field-theoretic, Kummer, norm-residue, or projection-formula claim is made
-here.
+The induced cohomology maps satisfy `φ_* ∘ cor_A^i = cor_B^i ∘ (Res φ)_*` for `i = 1,2`, both
+for a prescribed right transversal and for canonical corestriction. Here the two coefficient
+maps use the identity group homomorphisms on `G` and `H`, respectively.
 -/
 
 @[expose] public section
@@ -46,8 +46,10 @@ noncomputable local instance corestrictionNaturalityRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Mapping coefficients commutes with the chosen-transversal degree-one
-cochain transfer. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `φ : A → B` a morphism of
+representations, and `T` a right transversal. For every cochain `f : H → A`, `φ ∘
+corestrictionCochainOne A T f = corestrictionCochainOne B T (φ ∘ f)`. The transfer has value
+`∑ t∈T, ρ(t⁻¹) f(h_T(t,g))`, with `t g = h_T(t,g) r_T(t,g)`. -/
 theorem corestrictionCochainOne_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] (f : H → A) :
@@ -60,8 +62,10 @@ theorem corestrictionCochainOne_naturality
   intro t _
   exact Rep.hom_comm_apply φ (t : G)⁻¹ (f (T.schreierFactor t g))
 
-/-- Mapping coefficients commutes with the chosen-transversal degree-two
-cochain transfer. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `φ : A → B` a morphism of
+representations, and `T` a right transversal. For every cochain `z : H × H → A`, `φ ∘
+corestrictionCochainTwo A T z = corestrictionCochainTwo B T (φ ∘ z)`. The transfer sends
+`(g₁,g₂)` to `∑ t∈T, ρ(t⁻¹) z(h_T(t,g₁),h_T(r_T(t,g₁),g₂))`, using `t g=h_T(t,g)r_T(t,g)`. -/
 theorem corestrictionCochainTwo_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] (z : H × H → A) :
@@ -77,8 +81,10 @@ theorem corestrictionCochainTwo_naturality
     (z (T.schreierFactor t g₁,
       T.schreierFactor (T.schreierRep t g₁) g₂))
 
-/-- Representative-level coefficient naturality for chosen-transversal
-degree-one transfer. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `φ : A → B` a morphism of
+representations, and `T` a right transversal. For `f ∈ Z¹(H,Res A)`, `mapCocycles₁ (id G) φ
+(corestrictionCocyclesOne A T f) = corestrictionCocyclesOne B T (mapCocycles₁ (id H) (Res φ)
+f)`, with `Res φ=(Rep.resFunctor (Subgroup.subtype H)).map φ`. -/
 theorem mapCocycles₁_corestrictionCocyclesOne
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -95,8 +101,10 @@ theorem mapCocycles₁_corestrictionCocyclesOne
     corestrictionCochainOne B T (fun h => φ.hom (f h)) g
   exact congrFun (corestrictionCochainOne_naturality φ T f) g
 
-/-- Representative-level coefficient naturality for chosen-transversal
-degree-two transfer. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `φ : A → B` a morphism of
+representations, and `T` a right transversal. For `z ∈ Z²(H,Res A)`, `mapCocycles₂ (id G) φ
+(corestrictionCocyclesTwo A T z) = corestrictionCocyclesTwo B T (mapCocycles₂ (id H) (Res φ)
+z)`, with `Res φ` the restricted coefficient morphism. -/
 theorem mapCocycles₂_corestrictionCocyclesTwo
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -114,7 +122,10 @@ theorem mapCocycles₂_corestrictionCocyclesTwo
   exact congrFun
     (corestrictionCochainTwo_naturality φ T z) (g₁, g₂)
 
-/-- Coefficient naturality of chosen-transversal degree-one corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `φ : A → B` a morphism of
+representations, and `T` a right transversal. For `x ∈ H¹(H,Res A)`,
+`φ_*^1(corestrictionH1OfRightTransversal A T x) = corestrictionH1OfRightTransversal B T ((Res
+φ)_*^1 x)`. The induced coefficient maps are `map (id G) φ 1` and `map (id H) (Res φ) 1`. -/
 theorem corestrictionH1OfRightTransversal_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -158,7 +169,10 @@ theorem corestrictionH1OfRightTransversal_naturality
             ((Rep.resFunctor (Subgroup.subtype H)).map φ) f
           rw [hmap]
 
-/-- Coefficient naturality of chosen-transversal degree-two corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `φ : A → B` a morphism of
+representations, and `T` a right transversal. For `x ∈ H²(H,Res A)`,
+`φ_*^2(corestrictionH2OfRightTransversal A T x) = corestrictionH2OfRightTransversal B T ((Res
+φ)_*^2 x)`. The induced coefficient maps are `map (id G) φ 2` and `map (id H) (Res φ) 2`. -/
 theorem corestrictionH2OfRightTransversal_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -202,8 +216,10 @@ theorem corestrictionH2OfRightTransversal_naturality
             ((Rep.resFunctor (Subgroup.subtype H)).map φ) z
           rw [hmap]
 
-/-- Elementwise coefficient naturality of canonical degree-one
-corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `φ : A → B` a morphism
+of representations. For `x ∈ H¹(H,Res A)`, `map (id G) φ 1 (corestrictionH1 A x) =
+corestrictionH1 B (map (id H) (Res φ) 1 x)`, where `Res φ=(Rep.resFunctor (Subgroup.subtype
+H)).map φ`. -/
 theorem corestrictionH1_naturality_apply
     {A B : Rep k G} (φ : A ⟶ B) [H.FiniteIndex]
     (x : groupCohomology.H1 (Rep.res (Subgroup.subtype H) A)) :
@@ -216,8 +232,10 @@ theorem corestrictionH1_naturality_apply
     corestrictionH1_eq_of_rightTransversal B T]
   exact corestrictionH1OfRightTransversal_naturality φ T x
 
-/-- Elementwise coefficient naturality of canonical degree-two
-corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `φ : A → B` a morphism
+of representations. For `x ∈ H²(H,Res A)`, `map (id G) φ 2 (corestrictionH2 A x) =
+corestrictionH2 B (map (id H) (Res φ) 2 x)`, with `Res φ` the coefficient morphism restricted
+to `H`. -/
 theorem corestrictionH2_naturality_apply
     {A B : Rep k G} (φ : A ⟶ B) [H.FiniteIndex]
     (x : groupCohomology.H2 (Rep.res (Subgroup.subtype H) A)) :
@@ -230,8 +248,10 @@ theorem corestrictionH2_naturality_apply
     corestrictionH2_eq_of_rightTransversal B T]
   exact corestrictionH2OfRightTransversal_naturality φ T x
 
-/-- LinearMap square expressing coefficient naturality of canonical
-degree-one corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `φ : A → B` a morphism
+of representations. The linear maps `H¹(H,Res A) → H¹(G,B)` satisfy `φ_*^1 ∘ corestrictionH1 A
+= corestrictionH1 B ∘ (Res φ)_*^1`, where `φ_*^1=(map (id G) φ 1).hom` and `(Res φ)_*^1=(map
+(id H) (Res φ) 1).hom`. -/
 theorem corestrictionH1_naturality
     {A B : Rep k G} (φ : A ⟶ B) [H.FiniteIndex] :
     (groupCohomology.map (MonoidHom.id G) φ 1).hom.comp
@@ -243,8 +263,10 @@ theorem corestrictionH1_naturality
   intro x
   exact corestrictionH1_naturality_apply φ x
 
-/-- LinearMap square expressing coefficient naturality of canonical
-degree-two corestriction. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `φ : A → B` a morphism
+of representations. The linear maps `H²(H,Res A) → H²(G,B)` satisfy `φ_*^2 ∘ corestrictionH2 A
+= corestrictionH2 B ∘ (Res φ)_*^2`, where `φ_*^2=(map (id G) φ 2).hom` and `(Res φ)_*^2=(map
+(id H) (Res φ) 2).hom`. -/
 theorem corestrictionH2_naturality
     {A B : Rep k G} (φ : A ⟶ B) [H.FiniteIndex] :
     (groupCohomology.map (MonoidHom.id G) φ 2).hom.comp

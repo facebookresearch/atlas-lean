@@ -1,3 +1,6 @@
-# EBar Extra Degeneracy
+# An extra degeneracy of the augmented universal bar
 
-The evaluated genuine extra degeneracy on the universal bar.
+An extra degeneracy of the augmented universal bar.
+
+The regular-endpoint bar contraction gives extra degeneracy maps for EBar G augmented to the
+point. The construction applies to any topological monoid with continuous multiplication.

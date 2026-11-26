@@ -15,12 +15,16 @@ public import MathlibExt.RepresentationTheory.Homological.NormalizedBar.Basic
 public import MathlibExt.AlgebraicTopology.SimplicialObject.EilenbergZilber.ShuffleIndex
 
 /-!
-# Nonidentity group-bar tuples under shuffle interleaving
+# Nonidentity tuples under permutation interleaving
 
-The tuple interleaving used by the existing shuffle operator has no identity
-entry precisely when neither input tuple has an identity entry. This needs
-only a distinguished identity element and an actual permutation; the shared
-Eilenberg–Zilber shuffle predicate is reused.
+Let G be any type with distinguished element 1.
+For tuples a of length p, b of length q, and a permutation σ of p+q
+positions, interleaving is their concatenation precomposed by σ⁻¹.
+It has no identity entry exactly when neither input tuple has one.
+
+Thus an identity-containing input remains degenerate after every
+permutation interleaving, while two nonidentity tuples give a tuple
+in N_(p+q). No group operation is required.
 -/
 
 @[expose] public section
@@ -31,12 +35,16 @@ universe v
 
 variable {G : Type v} [One G]
 
-/-- The actual tuple interleaving in the group-bar shuffle formula. -/
+/-- For a type G with distinguished element 1, tuples a:G^p,b:G^q
+and permutation σ of p+q positions, interleave(a,b,σ) is the
+concatenation (a,b) evaluated at σ⁻¹(i) in output position i. -/
 def interleave {p q : ℕ} (a : Fin p → G) (b : Fin q → G)
     (σ : Equiv.Perm (Fin (p + q))) : Fin (p + q) → G :=
   Fin.addCases a b ∘ σ.symm
 
-/-- A permutation interleaving preserves and reflects nonidentity entries. -/
+/-- For a type G with distinguished element 1 and any permutation
+σ, interleave(a,b,σ) has no identity entries exactly when both a
+and b have no identity entries. -/
 theorem isNondegenerate_interleave_iff {p q : ℕ} (a : Fin p → G) (b : Fin q → G)
     (σ : Equiv.Perm (Fin (p + q))) :
     IsNondegenerate G (interleave a b σ) ↔
@@ -59,7 +67,9 @@ theorem isNondegenerate_interleave_iff {p q : ℕ} (a : Fin p → G) (b : Fin q 
     · intro j
       simpa using hb j
 
-/-- Every interleaving of a tuple containing identity is degenerate. -/
+/-- For a type G with distinguished element 1, if a has an
+identity entry, every permutation interleaving of a with any b
+also has an identity entry. -/
 theorem interleave_degenerate_left {p q : ℕ} (a : Fin p → G) (b : Fin q → G)
     (σ : Equiv.Perm (Fin (p + q))) (ha : ¬ IsNondegenerate G a) :
     ¬ IsNondegenerate G (interleave a b σ) :=
@@ -70,7 +80,9 @@ theorem interleave_degenerate_right {p q : ℕ} (a : Fin p → G) (b : Fin q →
     ¬ IsNondegenerate G (interleave a b σ) :=
   fun h => hb ((isNondegenerate_interleave_iff a b σ).mp h).2
 
-/-- The literal nonidentity tuple obtained by interleaving two normalized generators. -/
+/-- For a type G with distinguished element 1, two nonidentity
+tuples a∈N_p,b∈N_q and any permutation σ give the nonidentity
+tuple interleave(a,b,σ)∈N_(p+q). -/
 def interleaveTuple {p q : ℕ} (a : Tuple G p) (b : Tuple G q)
     (σ : Equiv.Perm (Fin (p + q))) : Tuple G (p + q) :=
   ⟨interleave a.val b.val σ,

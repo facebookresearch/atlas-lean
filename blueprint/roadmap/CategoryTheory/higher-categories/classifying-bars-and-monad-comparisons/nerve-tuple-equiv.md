@@ -1,8 +1,6 @@
-# Nerve Tuple Equiv
+# Tuple coordinates of the opposite-monoid nerve
 
-Degreewise nerve tuple equivalence.
+Tuple coordinates of the opposite-monoid nerve.
 
-Reads consecutive arrows with `unop`; rebuilds with `mkOfObjOfMapSucc` from
-segment data `op (t i)`. `t 0` is the first nerve arrow, matching the
-outermost tensor factor. The reader lives in the lightweight
-`MathlibExt.CategoryTheory.NerveSingleObj` module.
+A chain of n composable arrows in the one-object category of Gᵐᵒᵖ is equivalent to a tuple Fin
+n → G in arrow order.

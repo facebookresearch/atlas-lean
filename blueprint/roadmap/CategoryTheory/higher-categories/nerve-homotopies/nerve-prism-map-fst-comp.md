@@ -1,5 +1,6 @@
-# Nerve Prism Map fst comp
+# The nerve prism of a parameter-independent functor
 
-The nerve prism of the first projection followed by `F` is the
-first projection of simplicial sets followed by `nerveMap F`: the
-constant prism at `nerveMap F`.
+The nerve prism of a parameter-independent functor.
+
+For the first projection C × Fin 2 → C followed by F, the prism equals the first projection
+N(C) × Δ¹ → N(C) followed by N(F).

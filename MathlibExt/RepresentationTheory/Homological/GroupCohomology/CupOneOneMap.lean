@@ -14,12 +14,12 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupPro
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupProductLowDegree
 
 /-!
-# Coefficient naturality of the descended degree-`(1, 1)` cup product
+# Coefficient naturality of degree-one cohomology cups
 
-The representative-level naturality square for the degree-one cup product
-descends to group-cohomology classes.  Thus mapping a cup through the tensor
-of two equivariant coefficient morphisms agrees with cupping the two mapped
-`H¹` classes.
+For a group `G` and a commutative ring `k`, equivariant coefficient maps `f : A → A'` and `g :
+B → B'` carry the cup `H¹(G,A) × H¹(G,B) → H²(G,A ⊗ B)` to the cup with coefficients `A' ⊗
+B'`. Thus `(f ⊗ g)_*(x ∪ y) = f_*x ∪ g_*y`, with the group homomorphism equal to the identity
+of `G`.
 -/
 
 @[expose] public section
@@ -37,8 +37,9 @@ namespace groupCohomology
 variable {k G : Type u} [CommRing k] [Group G]
 variable {A B A' B' : Rep k G}
 
-/-- The descended degree-`(1, 1)` cup product is natural in both
-coefficient representations. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → A'`, `g : B → B'` morphisms of
+`k`-representations of `G`. For `x ∈ H¹(G,A)` and `y ∈ H¹(G,B)`, `map (id G) (f ⊗ g) 2
+(cupOneOne A B x y) = cupOneOne A' B' (map (id G) f 1 x) (map (id G) g 1 y)`. -/
 theorem map_cupOneOne
     (f : A ⟶ A') (g : B ⟶ B') (x : H1 A) (y : H1 B) :
     map (MonoidHom.id G) (f ⊗ₘ g) 2 (cupOneOne A B x y) =

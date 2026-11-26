@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Counit injective
+# Field stalk counit is injective
 
-The SAME constructed counit is injective on its actual original stalk carrier.
+Field stalk counit is injective.
+
+The underlying additive map of the equivariant stalk counit is injective.

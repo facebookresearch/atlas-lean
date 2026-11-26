@@ -1,3 +1,5 @@
-# Field Finite Galois Functions Map
+# Coefficient maps act on equivariant embedding functions
 
-The original additive module map postcomposes literal equivariant embedding functions.
+Coefficient maps act on equivariant embedding functions.
+
+Postcompose an equivariant embedding function with an equivariant coefficient map.

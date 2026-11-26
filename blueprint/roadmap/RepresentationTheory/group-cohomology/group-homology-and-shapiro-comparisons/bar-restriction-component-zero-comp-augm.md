@@ -1,3 +1,5 @@
-# Bar Restriction Component zero comp augmentation
+# Degree-zero augmentation of the subgroup bar inclusion
 
-The degree-zero literal bar restriction commutes with augmentation.
+Let `G` be a group, `k` a commutative ring, and `H ≤ G`. For the degree-zero bar inclusion
+`ι₀=barRestrictionComponent H 0`, `ι₀ ≫ Res_H(barAugmentationZero G) = barAugmentationZero H`.
+The augmentations send unit-coefficient degree-zero basis elements to `1 : k`.

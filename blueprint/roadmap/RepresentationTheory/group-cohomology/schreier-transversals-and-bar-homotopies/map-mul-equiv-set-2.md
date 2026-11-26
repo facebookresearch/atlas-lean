@@ -1,4 +1,6 @@
-# Map Mul Equiv Set
+# Image transversal set in a common universe
 
-The image set of a right transversal under a multiplicative
-equivalence.
+Image transversal set in a common universe.
+
+For e : G ≃* G′, this subset of G′ is {e(t) | t ∈ T}. The two groups here lie in the same
+stated universe.

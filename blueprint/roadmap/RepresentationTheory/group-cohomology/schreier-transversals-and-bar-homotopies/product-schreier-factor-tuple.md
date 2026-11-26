@@ -1,5 +1,6 @@
-# Product schreier Factor Tuple
+# Factor tuples through a subgroup tower
 
-The factor tuple for a product transversal is obtained by applying the
-subgroup-image equivalence to the factor tuple from the two successive
-Schreier scans.
+Factor tuples through a subgroup tower.
+
+The factor tuple of the product transversal is obtained by scanning the T-factor tuple through
+S and mapping each resulting K-element into the subgroup image in G.

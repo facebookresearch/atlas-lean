@@ -17,29 +17,16 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.AlexanderWhitney.Lin
 public import MathlibExt.CategoryTheory.Monoidal.PreservesColimits
 
 /-!
-# Arbitrary-degree group-cohomology cup products
+# Cup products in group cohomology
 
-The diagonal on the simplicial universal cover `EG` linearizes
-oplax-monoidally.  Composing it with the Alexander--Whitney chain map gives a
-diagonal on the standard resolution, hence on the isomorphic bar
-resolution.  The general linear-Yoneda cochain pairing then yields a
-Koszul-compatible arbitrary-degree pairing on inhomogeneous group cochains
-and a cup morphism on group cohomology.
+Let `G` be a group and `k` a commutative ring in the same universe. The simplicial universal
+cover of `BG` has homogeneous `n`-simplices `G^(n+1)`, with the diagonal left `G`-action. Its
+diagonal, followed by free `k`-linearization and the Alexander–Whitney map, gives a chain
+diagonal on the standard resolution and hence on the bar resolution.
 
-The existing explicit degree-`(1,1)` and degree-`(1,2)` cup APIs remain
-separate low-degree interfaces. Compatibility with the general construction
-requires an additional comparison theorem.
-
-## Main declarations
-
-* `groupCohomology.universalCoverDiagonal`
-* `groupCohomology.linearizedUniversalCoverDiagonal`
-* `groupCohomology.standardComplexDiagonal`
-* `groupCohomology.barComplexDiagonal`
-* `groupCohomology.barCochainCupPairing`
-* `groupCohomology.inhomogeneousCupPairing`
-* `groupCohomology.inhomogeneousCupPairing_apply`
-* `groupCohomology.cup`
+For `k`-representations `A` and `B`, this diagonal defines a graded pairing of inhomogeneous cochains with values in `A ⊗ B`. On cochains of degrees `p` and `q`, its value is
+`(x ∪ y)(g₁,…,g_{p+q}) = x(g₁,…,g_p) ⊗ (g₁⋯g_p)·y(g_{p+1},…,g_{p+q})`.
+The empty prefix product is `1`. Passing to cohomology gives `H^p(G,A) ⊗ H^q(G,B) → H^{p+q}(G,A ⊗ B)`.
 -/
 
 @[expose] public section
@@ -56,8 +43,9 @@ namespace groupCohomology
 
 variable (G : Type u) [Group G]
 
-/-- The simplicial diagonal of the universal cover of the group
-classifying space. -/
+/-- For a group `G`, the diagonal morphism `EG → EG ⊗ EG` of simplicial `G`-sets sends every
+homogeneous simplex `u : Fin (n + 1) → G` to `(u,u)`. The tensor product here is the Cartesian
+product with the diagonal `G`-action. -/
 def universalCoverDiagonal :
     classifyingSpaceUniversalCover G ⟶
       classifyingSpaceUniversalCover G ⊗ classifyingSpaceUniversalCover G where
@@ -71,14 +59,18 @@ def universalCoverDiagonal :
 
 variable (k : Type u) [CommRing k]
 
-/-- Postcomposition by the linearization functor on simplicial objects. -/
+/-- For a group `G` and a commutative ring `k`, postcomposition with `Rep.linearization k G` sends
+a simplicial `G`-set to a simplicial `k`-representation. In each degree it takes the free
+`k`-module on the set of simplices, with the induced `G`-action. -/
 noncomputable abbrev linearizationOnSimplicialObjects :
     SimplicialObject (Action (Type u) G) ⥤
       SimplicialObject (Rep k G) :=
   (Functor.whiskeringRight SimplexCategoryᵒᵖ _ _).obj
     (Rep.linearization k G)
 
-/-- The universal-cover diagonal after oplax-monoidal linearization. -/
+/-- For a group `G` and a commutative ring `k`, the morphism of simplicial representations `k[EG]
+→ k[EG] ⊗ k[EG]` is the composite of the free linearization of `EG → EG × EG` with the
+oplax-monoidal comparison `k[EG × EG] → k[EG] ⊗ k[EG]`. -/
 noncomputable def linearizedUniversalCoverDiagonal :
     classifyingSpaceUniversalCover G ⋙ Rep.linearization k G ⟶
       (classifyingSpaceUniversalCover G ⋙ Rep.linearization k G) ⊗
@@ -93,8 +85,9 @@ set_option backward.defeqAttrib.useBackward true
 set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.types false
 
-/-- The linearized universal-cover diagonal sends a basis simplex
-to the pure tensor of two copies of that simplex. -/
+/-- Let `G` be a group, `k` a commutative ring, `n : ℕ`, and `u : Fin (n + 1) → G`. The degree-`n`
+linearized diagonal sends the basis vector `MonoidAlgebra.single u 1` to `MonoidAlgebra.single
+u 1 ⊗ₜ[k] MonoidAlgebra.single u 1`. -/
 @[simp]
 theorem linearizedUniversalCoverDiagonal_app_apply_single
     (n : ℕ) (u : Fin (n + 1) → G) :
@@ -117,9 +110,9 @@ theorem linearizedUniversalCoverDiagonal_app_apply_single
   erw [Representation.LinearizeMonoidal.δ_apply_single]
   rfl
 
-/-- Degreewise form of
-`linearizedUniversalCoverDiagonal_app_apply_single` on the alternating-face
-complex. -/
+/-- Let `G` be a group, `k` a commutative ring, `n : ℕ`, and `u : Fin (n + 1) → G`. After applying
+the alternating-face-map complex functor to the linearized diagonal, its degree-`n` component
+sends `MonoidAlgebra.single u 1` to the pure tensor of two copies of that basis vector. -/
 @[simp]
 theorem alternatingFaceMapComplex_linearizedUniversalCoverDiagonal_f_apply_single
     (n : ℕ) (u : Fin (n + 1) → G) :
@@ -132,8 +125,9 @@ theorem alternatingFaceMapComplex_linearizedUniversalCoverDiagonal_f_apply_singl
       (MonoidAlgebra.single u 1) = _
   exact linearizedUniversalCoverDiagonal_app_apply_single G k n u
 
-/-- A front-face map on the linearized universal cover restricts a basis
-simplex along the front subinterval inclusion. -/
+/-- Let `G` be a group and `k` a commutative ring. For `p + q = n`, `u : Fin (n + 1) → G`, and `r
+: k`, the Alexander–Whitney front-face map sends `single u r` to `single (u ∘ frontInclusion p
+q n h) r`. Thus it retains the first `p + 1` vertices and preserves the coefficient `r`. -/
 @[simp]
 theorem linearizedUniversalCover_frontFace_apply_single
     {p q n : ℕ} (h : p + q = n) (u : Fin (n + 1) → G) (r : k) :
@@ -150,8 +144,9 @@ theorem linearizedUniversalCover_frontFace_apply_single
   rw [Representation.linearizeMap_single]
   rfl
 
-/-- A back-face map on the linearized universal cover restricts a basis
-simplex along the back subinterval inclusion. -/
+/-- Let `G` be a group and `k` a commutative ring. For `p + q = n`, `u : Fin (n + 1) → G`, and `r
+: k`, the Alexander–Whitney back-face map sends `single u r` to `single (u ∘ backInclusion p q
+n h) r`. Thus it retains the last `q + 1` vertices, starting at vertex `p`, and preserves `r`. -/
 @[simp]
 theorem linearizedUniversalCover_backFace_apply_single
     {p q n : ℕ} (h : p + q = n) (u : Fin (n + 1) → G) (r : k) :
@@ -170,7 +165,9 @@ theorem linearizedUniversalCover_backFace_apply_single
 
 end
 
-/-- The Alexander--Whitney diagonal on the standard group resolution. -/
+/-- For a group `G` and a commutative ring `k`, the chain map `Rep.standardComplex k G → tensorObj
+(Rep.standardComplex k G) (Rep.standardComplex k G)` is the composite of the alternating-face
+complex of the linearized universal-cover diagonal with the Alexander–Whitney chain map. -/
 noncomputable def standardComplexDiagonal :
     Rep.standardComplex k G ⟶
       HomologicalComplex.tensorObj
@@ -181,8 +178,10 @@ noncomputable def standardComplexDiagonal :
       (classifyingSpaceUniversalCover G ⋙ Rep.linearization k G)
       (classifyingSpaceUniversalCover G ⋙ Rep.linearization k G)
 
-/-- The Alexander--Whitney diagonal transported from the standard
-resolution to the bar resolution. -/
+/-- For a group `G` and a commutative ring `k`, let `e : Rep.barComplex k G ≅ Rep.standardComplex
+k G` be the standard comparison. The bar chain diagonal is `e.hom ≫ standardComplexDiagonal G
+k ≫ tensorHom e.inv e.inv`, with target the total tensor product of two copies of the bar
+complex. -/
 noncomputable def barComplexDiagonal :
     Rep.barComplex k G ⟶
       HomologicalComplex.tensorObj (Rep.barComplex k G) (Rep.barComplex k G) :=
@@ -193,9 +192,13 @@ noncomputable def barComplexDiagonal :
       (Rep.barComplex.isoStandardComplex k G).inv
 
 set_option backward.isDefEq.respectTransparency false in
-/-- After projection to a chosen bidegree, the bar diagonal is the
-corresponding front/back Alexander--Whitney split, with the two cochains
-transported from the bar resolution to the standard resolution. -/
+/-- Let `G` be a group, `k` a commutative ring, `μ : M ⊗ N → P` a morphism of `k`-representations,
+`n : ℕ`, and `s : Fin (n + 1)`. For bar cochains `φ : B_s → M` and `ψ : B_{n-s} → N`,
+composing the degree-`n` bar diagonal with the `(s,n-s)` pairing descriptor equals the
+following composite: transport `B_n` to the standard resolution, apply the linearized
+simplicial diagonal and its front/back faces of degrees `s` and `n-s`, apply the transported
+cochains `e.inv_s ≫ φ` and `e.inv_{n-s} ≫ ψ`, and then apply `μ`. Here `B` is the bar complex
+and `e : B ≅ Rep.standardComplex k G`. -/
 theorem barComplexDiagonal_comp_linearYonedaPairingDescOfEq
     {M N P : Rep k G} (mu : M ⊗ N ⟶ P)
     (n : ℕ) (s : Fin (n + 1))
@@ -225,8 +228,11 @@ theorem barComplexDiagonal_comp_linearYonedaPairingDescOfEq
   rw [AlgebraicTopology.AlexanderWhitney.alternatingComponent_comp_linearYonedaPairingDescOfEq]
 
 set_option backward.isDefEq.respectTransparency false in
-/-- At total degree `p + q`, the bar diagonal followed by a linear-Yoneda
-pairing descriptor is the corresponding front/back Alexander--Whitney split. -/
+/-- Let `G` be a group, `k` a commutative ring, and `μ : M ⊗ N → P` a morphism of representations.
+For `p,q : ℕ` and bar cochains `φ : B_p → M`, `ψ : B_q → N`, the composite `Δ_B,p+q ≫
+linearYonedaPairingDesc μ p q φ ψ` is the standard-resolution front/back Alexander–Whitney
+split followed by `(e.inv_p ≫ φ) ⊗ (e.inv_q ≫ ψ)` and `μ`. The input is first transported by
+`e.hom_{p+q}`, where `e : B ≅ Rep.standardComplex k G`. -/
 theorem barComplexDiagonal_comp_linearYonedaPairingDesc
     {M N P : Rep k G} (mu : M ⊗ N ⟶ P)
     (p q : ℕ)
@@ -262,8 +268,10 @@ open Rep Finsupp
 set_option backward.defeqAttrib.useBackward true
 set_option backward.isDefEq.respectTransparency false
 
-/-- The inhomogeneous-to-bar comparison evaluates a cochain on a bar basis
-element by applying its group-ring coefficient through equivariance. -/
+/-- Let `A` be a `k`-representation of a group `G`, with `k` commutative. For `n : ℕ`, an
+inhomogeneous cochain `φ : (Fin n → G) → A`, a tuple `f : Fin n → G`, `g : G`, and `r : k`,
+its equivariant bar cochain evaluates `single f (MonoidAlgebra.single g r)` to `r • A.ρ g (φ
+f)`. -/
 @[simp]
 theorem inhomogeneousCochainsIso_hom_apply_single_single
     (A : Rep k G) (n : ℕ) (phi : (inhomogeneousCochains A).X n)
@@ -275,8 +283,10 @@ theorem inhomogeneousCochainsIso_hom_apply_single_single
       (single f (MonoidAlgebra.single g r)) = _
   exact Representation.freeLift_single_single A.ρ f g r phi
 
-/-- The bar-to-standard comparison sends a bar basis element to the basis
-element indexed by its successive partial products. -/
+/-- For a group `G` and a commutative ring `k`, the degree-`n` bar-to-standard comparison sends
+`single f (MonoidAlgebra.single g r)` to `MonoidAlgebra.single (g • Fin.partialProd f) r`, for
+`f : Fin n → G`, `g : G`, and `r : k`. The homogeneous tuple is `(g, g f₀, g f₀ f₁, …)`, with
+products taken in the displayed order. -/
 @[simp]
 theorem barComplex_isoStandardComplex_hom_apply_single
     {n : ℕ} (f : Fin n → G) (g : G) (r : k) :
@@ -309,9 +319,9 @@ theorem barComplex_isoStandardComplex_hom_apply_single
   exact ((congrArg (fun z => (Representation.linearizeMap
       (Action.diagonalSuccIsoTensorTrivial G n).inv) z) key₂).trans key₁).trans (by simp)
 
-/-- The standard-to-bar comparison sends a homogeneous basis simplex to the
-bar basis element indexed by its successive quotients, with its initial
-vertex as group-ring coefficient. -/
+/-- For a group `G` and a commutative ring `k`, the degree-`n` standard-to-bar comparison sends
+`MonoidAlgebra.single u r`, for `u : Fin (n + 1) → G`, to the bar basis vector with tuple `i ↦
+(u i)⁻¹ * u (i + 1)` and group-ring coefficient `MonoidAlgebra.single (u 0) r`. -/
 @[simp]
 theorem barComplex_isoStandardComplex_inv_apply_single
     {n : ℕ} (u : Fin (n + 1) → G) (r : k) :
@@ -335,9 +345,10 @@ theorem barComplex_isoStandardComplex_inv_apply_single
   rw [barComplex_isoStandardComplex_hom_apply_single]
   rw [Fin.partialProd_left_inv]
 
-/-- Restricting a prefix-product homogeneous simplex to its front face and
-transporting back to the bar resolution recovers the initial inhomogeneous
-tuple with unit group-ring coefficient. -/
+/-- Let `G` be a group, `k` a commutative ring, `p,q : ℕ`, and `f : Fin (p + q) → G`. Apply the
+degree-`p` front face to `MonoidAlgebra.single (Fin.partialProd f) 1`, then transport from the
+standard to the bar complex. The result is `single (fun i => f (Fin.castAdd q i))
+(MonoidAlgebra.single 1 1)`: the initial `p` entries with unit group-ring coefficient. -/
 @[simp]
 theorem barComplex_frontFace_partialProd_apply_single
     (p q : ℕ) (f : Fin (p + q) → G) :
@@ -367,9 +378,11 @@ theorem barComplex_frontFace_partialProd_apply_single
     rw [h₁, h₂]
     exact Fin.partialProd_right_inv f (Fin.castAdd q i)
 
-/-- Restricting a prefix-product homogeneous simplex to its back face and
-transporting back to the bar resolution recovers the final inhomogeneous
-tuple, with the preceding prefix product as group-ring coefficient. -/
+/-- Let `G` be a group, `k` a commutative ring, `p,q : ℕ`, and `f : Fin (p + q) → G`. Apply the
+degree-`q` back face to `MonoidAlgebra.single (Fin.partialProd f) 1`, then transport to the
+bar complex. The result is the bar basis vector with final tuple `i ↦ f (Fin.natAdd p i)` and
+group-ring coefficient `single (Fin.partialProd f p) 1`, where the latter group element is the
+ordered product of the initial `p` entries. -/
 @[simp]
 theorem barComplex_backFace_partialProd_apply_single
     (p q : ℕ) (f : Fin (p + q) → G) :
@@ -412,8 +425,10 @@ theorem barComplex_backFace_partialProd_apply_single
 
 end
 
-/-- The arbitrary-degree cup pairing on linear-Yoneda cochains of the bar
-resolution. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the bar diagonal defines
+a graded pairing `Hom_G(B_p,A) ⊗ₖ Hom_G(B_q,B) → Hom_G(B_{p+q},A ⊗ B)`, where `B_n` denotes
+the degree-`n` bar-resolution term. The pairing satisfies `d(x ∪ y) = dx ∪ y + (-1)^p x ∪ dy`
+for `x` of degree `p`, using the canonical identifications of the resulting degree sums. -/
 noncomputable def barCochainCupPairing (A B : Rep k G) :
     HomologicalComplex.CochainGradedPairing
       ((Rep.barComplex k G).linearYonedaObj k A)
@@ -422,7 +437,10 @@ noncomputable def barCochainCupPairing (A B : Rep k G) :
   HomologicalComplex.linearYonedaCochainGradedPairing k (Rep k G)
     (barComplexDiagonal G k) (𝟙 (A ⊗ B))
 
-/-- Pure-tensor formula for the arbitrary-degree bar cup pairing. -/
+/-- Let `G` be a group, `k` a commutative ring, and `A,B` representations. For `p,q : ℕ` and
+equivariant bar cochains `φ : (Rep.barComplex k G).X p → A`, `ψ : (Rep.barComplex k G).X q →
+B`, the graded cup pairing sends `φ ⊗ₜ[k] ψ` to `barComplexDiagonal G k` in degree `p + q`
+followed by `linearYonedaPairingDesc (𝟙 (A ⊗ B)) p q φ ψ`. -/
 @[simp]
 theorem barCochainCupPairing_pair_tmul
     (A B : Rep k G) (p q : ℕ)
@@ -447,8 +465,11 @@ private lemma inhomogeneousCochainsIso_inv_apply_basis
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Evaluation of the arbitrary-degree bar cup on an unnormalized bar basis
-element, expressed through the diagonal and pairing descriptor. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`, and let `φ,ψ` be
+equivariant bar cochains of degrees `p,q : ℕ`. Transport their bar cup product to
+inhomogeneous cochains and evaluate it at `g : Fin (p + q) → G`. The result is `(Δ_{p+q} ≫
+linearYonedaPairingDesc (𝟙 (A ⊗ B)) p q φ ψ)` evaluated at `Finsupp.single g
+(MonoidAlgebra.single 1 1)`, where `Δ` is the bar chain diagonal. -/
 theorem barCochainCupPairing_apply_basis
     (A B : Rep k G) (p q : ℕ)
     (phi : (Rep.barComplex k G).X p ⟶ A)
@@ -467,8 +488,11 @@ theorem barCochainCupPairing_apply_basis
       HomologicalComplex.linearYonedaPairingDesc (Rep k G)
         (𝟙 (A ⊗ B)) p q phi psi) g
 
-/-- The arbitrary-degree cup pairing transported to inhomogeneous group
-cochains. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the cup pairing
+`C^p(G,A) ⊗ₖ C^q(G,B) → C^{p+q}(G,A ⊗ B)` is obtained by transporting both inputs to
+equivariant bar cochains, applying the bar cup pairing, and transporting the output back. It
+satisfies `d(x ∪ y) = dx ∪ y + (-1)^p x ∪ dy` for `x` of degree `p`, with the canonical
+degree-sum identifications. -/
 noncomputable def inhomogeneousCupPairing (A B : Rep k G) :
     HomologicalComplex.CochainGradedPairing
       (inhomogeneousCochains A)
@@ -493,8 +517,10 @@ private lemma moduleTensorHom_tmul
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Explicit arbitrary-degree inhomogeneous cup formula.  The right cochain
-is acted on by the product of the first `p` group elements. -/
+/-- Let `G` be a group, `k` a commutative ring, `A,B` representations, and `p,q : ℕ`. For
+inhomogeneous cochains `x : C^p(G,A)`, `y : C^q(G,B)`, and `g : Fin (p + q) → G`, the cup
+value is `x(g₁,…,g_p) ⊗ₜ[k] B.ρ(g₁⋯g_p)(y(g_{p+1},…,g_{p+q}))`. The prefix product uses the
+indicated order and equals `1` when `p = 0`. -/
 theorem inhomogeneousCupPairing_apply
     (A B : Rep k G) (p q : ℕ)
     (x : (inhomogeneousCochains A).X p)
@@ -525,7 +551,10 @@ theorem inhomogeneousCupPairing_apply
     inhomogeneousCochainsIso_hom_apply_single_single]
   simp
 
-/-- The arbitrary-degree cup product on group cohomology. -/
+/-- For a group `G`, a commutative ring `k`, representations `A,B`, and `p,q : ℕ`, the cup product
+is the `k`-linear morphism `H^p(G,A) ⊗ₖ H^q(G,B) → H^{p+q}(G,A ⊗ B)` induced on homology by
+the inhomogeneous cochain pairing. Its cochain formula is `x(g₁,…,g_p) ⊗
+(g₁⋯g_p)·y(g_{p+1},…,g_{p+q})`. -/
 noncomputable def cup (A B : Rep k G) (p q : ℕ) :
     groupCohomology A p ⊗ groupCohomology B q ⟶
       groupCohomology (A ⊗ B) (p + q) :=

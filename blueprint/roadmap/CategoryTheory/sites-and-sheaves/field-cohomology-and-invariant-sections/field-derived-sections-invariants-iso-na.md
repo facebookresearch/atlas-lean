@@ -1,3 +1,5 @@
-# Field Derived Sections Invariants Iso naturality
+# Derived section invariant comparison is sheaf natural
 
-Every actual source map has the SAME derived Gamma and mapped-invariant arrows.
+Derived section invariant comparison is sheaf natural.
+
+A sheaf map commutes with the comparison and the derived-invariant map of its geometric fiber.

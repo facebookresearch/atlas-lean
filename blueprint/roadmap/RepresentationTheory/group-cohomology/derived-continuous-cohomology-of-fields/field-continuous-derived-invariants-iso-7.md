@@ -1,4 +1,6 @@
-# Field Continuous Derived Invariants Iso group naturality
+# Degreewise comparison is natural in Galois group restriction
 
-Every degree uses this same comparison square, not a family of arbitrarily
-chosen degreewise isomorphisms.
+Degreewise comparison is natural in Galois group restriction.
+
+The continuous restriction map commutes with the degreewise comparisons to derived invariants,
+for independently ranked source and target fields.

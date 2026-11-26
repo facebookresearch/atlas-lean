@@ -1,4 +1,6 @@
-# Hom One Cochain inhomogeneous One Cocycle
+# Homogenization recovers the included cycle cochain
 
-Homogenizing the function extracted from a cycle recovers its included
-homogeneous cochain.  Only diagonal invariance is used here.
+Homogenization recovers the included cycle cochain.
+
+If the homogenization of the function c extracted from z is jointly continuous, then
+homOneCochain X c equals the homogeneous cochain obtained by including z into C¹.

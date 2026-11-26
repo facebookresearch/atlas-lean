@@ -1,3 +1,6 @@
-# Field Derived Sections Invariants Resolution Iso naturality
+# Resolution cohomology comparison respects resolution morphisms
 
-Every original bundled map of resolutions gives the SAME literal homology square.
+Resolution cohomology comparison respects resolution morphisms.
+
+A resolution morphism over a sheaf map commutes with the section-to-invariant cohomology
+coordinates.

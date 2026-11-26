@@ -1,4 +1,5 @@
-# Cyclic Sum Three nested Cup One One
+# The cyclic sum of a right-associated triple cup retains both coefficient actions
 
-Cyclic invariant of the landed right-associated triple cup
-representative.
+Let k be a commutative ring, G a finite abelian group, A,B,C k-linear representations in
+universe u, and g∈G. For x∈Z¹(G,A), y∈Z¹(G,B), z∈Z¹(G,C), the cyclic sum of x∪(y∪z) is
+Σ_hx(g)⊗ρ_{B⊗C}(g)(y(h)⊗ρ_C(h)z(g)) in A⊗(B⊗C).

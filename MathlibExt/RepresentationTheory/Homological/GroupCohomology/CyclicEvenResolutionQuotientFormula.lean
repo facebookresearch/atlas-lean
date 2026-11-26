@@ -14,20 +14,16 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CyclicEvenResolutionComparison
 
 /-!
-# Quotient formula for the explicit cyclic-even H2 comparison
+# Quotient representatives for the cyclic degree-two comparison
 
-The explicit short-complex comparison from inhomogeneous degree-two
-cochains to the cyclic even complex induces a map from ordinary H2 to the
-concrete quotient of `ker(ρ(g)-1)` by the representation norm.  On a class
-represented by a two-cocycle `z`, this map is represented by the explicit
-invariant `∑ h, z(h,g)`.
+Let k be a commutative ring, G a finite abelian group, A a k-linear representation in universe
+u, and g∈G. With N_G=Σ_{h∈G}ρ(h), the short complex A --N_G→ A --(ρ(g)-id)→ A has concrete
+homology ker(ρ(g)-id)/im(N_G).
 
-This gives the quotient-level representative formula needed to analyze
-Kummer cup classes.  It does not identify the map with Mathlib's separately
-constructed abstract projective-resolution isomorphism: that comparison
-requires extending the low-degree morphism to a full augmented resolution
-map and applying homotopy uniqueness.  Consequently no cyclic symbol
-surjectivity or Brauer-group theorem is asserted here.
+The comparison from inhomogeneous degree-two cohomology to this quotient sends a cocycle z to
+the class of ν_g(z)=Σ_{h∈G}z(h,g). The cycle map produces this g-fixed vector, and naturality of
+the homology projection gives the representative formula on H²(G,A). No generator hypothesis is
+needed to define this comparison.
 -/
 
 @[expose] public section
@@ -39,8 +35,10 @@ namespace groupCohomology
 universe u
 variable {k G : Type u} [CommRing k] [CommGroup G] [Fintype G]
 
-/-- Map from ordinary H2 to the concrete homology quotient of the cyclic
-even complex. -/
+/-- Let k be a commutative ring, G a finite abelian group, and A a k-linear G-representation, in the
+given universe u. For g∈G, put N_G=Σ_{h∈G}ρ(h) and Q_g(A)=ker(ρ(g)-id)/im(N_G). The comparison
+H²(G,A)→Q_g(A) is induced by the map from the degree-two inhomogeneous short complex to A --N_G→
+A --(ρ(g)-id)→ A, followed by its concrete homology quotient. -/
 noncomputable def cyclicEvenComparisonQuotientMap (A : Rep k G) (g : G) :
     H2 A ⟶
       (Rep.FiniteCyclicGroup.normHomCompSub A g).moduleCatLeftHomologyData.H :=
@@ -50,8 +48,10 @@ noncomputable def cyclicEvenComparisonQuotientMap (A : Rep k G) (g : G) :
       (shortComplexH2 A).moduleCatLeftHomologyData
       (Rep.FiniteCyclicGroup.normHomCompSub A g).moduleCatLeftHomologyData
 
-/-- On explicit cycles, the comparison's cycle map is the cyclic invariant
-`∑ h, z(h,g)`. -/
+/-- Let k be a commutative ring, G a finite abelian group, and A a k-linear G-representation, in the
+given universe u. For g∈G and a two-cocycle z∈Z²(G,A), the induced cycle map of the cyclic
+short-complex comparison sends z to ν_g(z)=Σ_{h∈G}z(h,g), viewed in ker(ρ(g)-id). Both source
+and target use their concrete coefficient-module cycle descriptions. -/
 theorem cyclesMap_cyclicEvenComparisonHom_apply
     (A : Rep k G) (g : G) (z : cocycles₂ A) :
     ShortComplex.cyclesMap'
@@ -63,8 +63,10 @@ theorem cyclesMap_cyclicEvenComparisonHom_apply
   rfl
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The quotient comparison sends the class of `z` to the quotient class of
-its explicit cyclic invariant. -/
+/-- Let k be a commutative ring, G a finite abelian group, and A a k-linear G-representation, in the
+given universe u. For g∈G and z∈Z²(G,A), let [z]∈H²(G,A) be its class and ν_g(z)=Σ_{h∈G}z(h,g)
+the g-fixed cyclic invariant. The quotient comparison sends [z] to [ν_g(z)] in
+ker(ρ(g)-id)/im(N_G), where N_G is the representation norm. -/
 theorem cyclicEvenComparisonQuotientMap_H2π
     (A : Rep k G) (g : G) (z : cocycles₂ A) :
     cyclicEvenComparisonQuotientMap A g (H2π A z) =

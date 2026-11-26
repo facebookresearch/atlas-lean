@@ -1,3 +1,6 @@
-# Field Stalk Skyscraper Hom Equiv
+# Ordinary field stalk maps transpose to skyscraper maps
 
-The ordinary transpose is the original point/skyscraper adjunction on the SAME groups.
+Ordinary field stalk maps transpose to skyscraper maps.
+
+The point adjunction gives a bijection between additive stalk maps to the underlying
+coefficient and sheaf maps to its skyscraper.

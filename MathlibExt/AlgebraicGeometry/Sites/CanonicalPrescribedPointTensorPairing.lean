@@ -12,7 +12,14 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.CanonicalPrescribedSkyscraperPairing
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementPrescribedPointMonad
 
-/-! # The actual prescribed field-point monad binary pairing -/
+/-!
+# Binary tensor pairing for a prescribed field point
+
+For the prescribed separable-closure point, combine the skyscraper tensor pairing with the
+inverse stalk-tensor coordinate to define a binary pairing on its point monad. The skyscraper
+pairing is natural in both additive coefficients, and the canonical-to-prescribed stalk
+comparison has the corresponding inverse tensor-coordinate identity.
+-/
 
 @[expose] public section
 noncomputable section
@@ -24,8 +31,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The actual prescribed Ω point monad has the binary pairing given by its original tensor
-counits. -/
+/-- Binary tensor pairing of the prescribed field point monad.
+
+Pair the two skyscrapers of stalk coefficients and apply the inverse stalk-tensor comparison
+to map `T F ⊗ T G` to `T(F ⊗ G)`. -/
 def fieldPrescribedPointTensorPairing
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleTensorSheaf.{u, w} (Spec (.of k))
@@ -40,8 +49,10 @@ def fieldPrescribedPointTensorPairing
     R.map (smallEtalePointTensorSheafStalkIso.{u, w} (Spec (.of k)) q F G).inv
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual prescribed-point skyscraper pairing is natural in its original additive coefficient
-maps. -/
+/-- Field skyscraper pairing is natural in both coefficients.
+
+The tensor of two skyscraper coefficient maps followed by the target pairing equals the source
+pairing followed by the skyscraper map of their integer tensor map. -/
 theorem fieldPointSkyscraperTensorPairing_naturality
     {M M' N N' : AddCommGrpCat.{max u w}} (f : M ⟶ M') (g : N ⟶ N') :
     let q := smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)
@@ -89,8 +100,10 @@ theorem fieldPointSkyscraperTensorPairing_naturality
   rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The real canonical-to-prescribed stalk comparison commutes with the inverse binary tensor stalk
-maps. -/
+/-- Inverse field stalk comparison commutes with inverse tensor coordinates.
+
+The inverse canonical stalk-tensor coordinate followed by the inverse stalk comparison equals
+tensoring the two inverse stalk comparisons followed by the prescribed inverse coordinate. -/
 theorem fieldCanonicalCommonStalkIso_tensor_inv_comm
     (F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let p := fieldGodementCanonicalPoint.{u, w} k

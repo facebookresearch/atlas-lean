@@ -15,16 +15,14 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDeg
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeThree
 
 /-!
-# Coefficient naturality of chosen-transversal degree-three transfer
+# Coefficient naturality of degree-three Schreier transfer
 
-For a morphism of `G`-representations, mapping coefficients commutes with
-the degree-three Schreier transfer attached to a fixed right transversal.
-The comparison is provided on cochains, cocycles, presented `H3` classes,
-and as bundled linear-map squares.
+For a finite-index H ≤ G, fixed right transversal T and G-equivariant linear map φ : A → B,
+the ternary transfer satisfies φ∘cor_T³(z) = cor_T³(φ∘z). The same square commutes on three-
+cocycles and on degree-three classes.
 
-The transversal remains explicit.  Independence of its choice and a
-canonical degree-three corestriction have not yet been constructed, so no
-canonical naturality, field-theoretic, Kummer, or Bloch--Kato claim is made.
+The identities are given both on individual cochains or represented classes and as equalities
+of the bundled linear maps. The coefficient map on H is the restriction of φ.
 -/
 
 @[expose] public section
@@ -42,12 +40,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for degree-three coefficient naturality.
+
+The finite-index hypothesis supplies a finite enumeration of T for comparing the ternary
+transfer sums under a coefficient map. -/
 noncomputable local instance corestrictionDegreeThreeNaturalityTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- Mapping coefficients commutes with the chosen-transversal degree-three
-cochain transfer. -/
+/-- Coefficient maps commute with ternary transfer.
+
+For a G-equivariant linear φ : A → B and ternary H-cochain z, postcomposition by φ commutes
+with cor_T³. -/
 theorem corestrictionCochainThree_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -66,8 +70,10 @@ theorem corestrictionCochainThree_naturality
       T.schreierFactor
         (T.schreierRep (T.schreierRep t g₁) g₂) g₃))
 
-/-- Bundled linear-map square for coefficient naturality on degree-three
-cochains. -/
+/-- The linear-map square for ternary coefficient naturality.
+
+The G-cochain coefficient map composed with the ternary transfer for A equals the transfer for
+B composed with the restricted H-cochain coefficient map. -/
 theorem corestrictionCochainThree_naturality_linearMap
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] :
@@ -85,8 +91,10 @@ theorem corestrictionCochainThree_naturality_linearMap
   funext p
   exact congrFun (corestrictionCochainThree_naturality φ T z) p
 
-/-- Representative-level coefficient naturality for chosen-transversal
-degree-three transfer. -/
+/-- Coefficient maps commute with transferred three-cocycles.
+
+Mapping a transferred H-three-cocycle by φ equals transferring its image under the restricted
+coefficient morphism. -/
 theorem mapCocycles₃_corestrictionCocyclesThree
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -103,8 +111,10 @@ theorem mapCocycles₃_corestrictionCocyclesThree
   exact congrFun
     (corestrictionCochainThree_naturality φ T z) (g₁, g₂, g₃)
 
-/-- Bundled linear-map square for coefficient naturality on transferred
-degree-three cocycles. -/
+/-- The linear-map square on three-cocycles.
+
+The map on G-three-cocycles induced by φ composed with transfer for A equals transfer for B
+composed with the induced map on H-three-cocycles. -/
 theorem corestrictionCocyclesThree_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] :
@@ -117,8 +127,10 @@ theorem corestrictionCocyclesThree_naturality
   intro z
   exact mapCocycles₃_corestrictionCocyclesThree φ T z
 
-/-- Naturality on a presented `H3` class: mapping after transfer agrees
-with transferring the mapped cocycle representative. -/
+/-- Coefficient naturality on a represented degree-three class.
+
+For a three-cocycle z, mapping the class of its transfer by φ gives the class of the transfer
+of the restricted coefficient image of z. -/
 theorem map_corestrictionH3OfRightTransversal_H3π
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -145,8 +157,10 @@ theorem map_corestrictionH3OfRightTransversal_H3π
       congrArg (H3π B)
         (mapCocycles₃_corestrictionCocyclesThree φ T z)
 
-/-- Elementwise coefficient naturality of chosen-transversal degree-three
-corestriction. -/
+/-- Coefficient naturality on an arbitrary degree-three class.
+
+For x ∈ H³(H,A|H), mapping its transferred class into H³(G,B) equals transferring its
+restricted coefficient image in H³(H,B|H). -/
 theorem corestrictionH3OfRightTransversal_naturality_apply
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex]
@@ -178,8 +192,10 @@ theorem corestrictionH3OfRightTransversal_naturality_apply
               (H3π (Rep.res (Subgroup.subtype H) A) z)) := by
           rw [H3π_comp_map_apply]
 
-/-- Bundled linear-map square for coefficient naturality of the
-chosen-transversal degree-three corestriction. -/
+/-- The linear-map square for degree-three cohomology.
+
+The degree-three G-coefficient map after the chosen transfer for A equals the chosen transfer
+for B after the degree-three restricted H-coefficient map. -/
 theorem corestrictionH3OfRightTransversal_naturality
     {A B : Rep k G} (φ : A ⟶ B)
     (T : H.RightTransversal) [H.FiniteIndex] :

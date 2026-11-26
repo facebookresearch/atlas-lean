@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation inverse restrict
+# Inverse embedding evaluation respects field refinement
 
-The SAME inverse-stage functions commute with EVERY actual field inclusion.
+Inverse embedding evaluation respects field refinement.
+
+Inverse evaluation after invariant inclusion equals pullback of the equivariant embedding
+function along restriction.

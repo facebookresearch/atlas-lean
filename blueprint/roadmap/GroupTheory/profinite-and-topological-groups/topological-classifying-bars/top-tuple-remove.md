@@ -1,3 +1,5 @@
-# Top Tuple Remove
+# Removal of a finite tuple coordinate
 
-Remove one coordinate from a head-first tuple.
+Removal of a finite tuple coordinate.
+
+For i : Fin (n+1), remove entry i from a tuple of length n+1 to obtain a tuple of length n.

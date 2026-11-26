@@ -1,4 +1,6 @@
-# Π surjective succ
+# Surjectivity of the positive-degree homology projection
 
-Every positive-degree continuous cohomology class has a homogeneous
-continuous cocycle representative.  No natural choice is asserted.
+Surjectivity of the positive-degree homology projection.
+
+For every n ≥ 0 and topological representation X, each class in continuous Hⁿ⁺¹(G,X) has a
+homogeneous continuous cycle representative.

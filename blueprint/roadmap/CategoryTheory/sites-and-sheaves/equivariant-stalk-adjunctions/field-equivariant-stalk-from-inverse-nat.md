@@ -1,3 +1,6 @@
-# Field Equivariant Stalk From Inverse naturality left
+# Inverse transpose is natural in the source sheaf
 
-The inverse Hom map is natural for EVERY original sheaf arrow.
+Inverse transpose is natural in the source sheaf.
+
+Precomposition by a sheaf morphism corresponds to precomposition by its geometric-stalk Galois
+morphism.

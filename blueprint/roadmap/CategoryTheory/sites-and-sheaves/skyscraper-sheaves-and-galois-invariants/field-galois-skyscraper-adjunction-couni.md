@@ -1,3 +1,5 @@
-# Field Galois Skyscraper Adjunction counit
+# The transported skyscraper counit is the geometric point counit
 
-The transported counit is the same original geometric-point evaluation counit.
+For a field k, prescribed separable closure Ω, and M∈AddCommGrpCat.{max(u,w)}, the counit of
+the forgetful-Galois/skyscraper-stalk adjunction at M equals the geometric stalk–skyscraper
+counit ε_M : x^*x_*M → M.

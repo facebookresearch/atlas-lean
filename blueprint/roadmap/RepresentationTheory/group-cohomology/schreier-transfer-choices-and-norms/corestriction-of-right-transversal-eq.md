@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal eq
+# Equality of arbitrary-degree transfers from different transversals
 
-Arbitrary-degree chosen-transversal corestriction is independent of the
-right transversal.
+Equality of arbitrary-degree transfers from different transversals.
+
+For all T,U and n, corestrictionOfRightTransversal A T n equals
+corestrictionOfRightTransversal A U n.

@@ -11,8 +11,13 @@ module
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientLongExact
 
 /-!
-The existing homogeneous identity-evaluation comparison is natural in the original coefficient
-arrows.
+# Naturality of identity evaluation in continuous degree-zero cohomology
+
+Let G be a profinite group and X,Y topological ℤ-representations, with
+coefficient carriers in max(v,w), where G has universe v.
+The canonical isomorphism H⁰_cts(G,X) ≅ X^G is given by evaluating a
+closed homogeneous degree-zero cochain at the identity.
+It is natural under continuous equivariant ℤ-linear coefficient maps.
 -/
 
 @[expose] public section
@@ -27,8 +32,11 @@ open CategoryTheory CategoryTheory.Limits
 
 
 
-/-- The existing identity-evaluation comparison is natural in every original
-coefficient map, on the same homogeneous cocycles and homology quotient. -/
+/-- For a profinite group G and a continuous equivariant ℤ-linear
+map f : X → Y between topological representations, the identity-evaluation
+isomorphisms satisfy
+zeroIso_Y ∘ H⁰_cts(G,f)=Inv_G(f) ∘ zeroIso_X.
+The coefficient topology need not be discrete. -/
 theorem homogeneousZeroIso_coefficient_naturality {G : ProfiniteGrp.{v}}
     {X Y : TopRep.{max v w, 0, v} ℤ G} (f : X ⟶ Y) :
     HomologicalComplex.homologyMap

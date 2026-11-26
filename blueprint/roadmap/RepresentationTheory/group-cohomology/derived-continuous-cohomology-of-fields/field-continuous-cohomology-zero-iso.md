@@ -1,3 +1,6 @@
-# Field Continuous Cohomology Zero Iso
+# Degree zero continuous field cohomology is invariants
 
-The original identity-evaluation zeroIso, with only topology/scalars forgotten.
+Degree zero continuous field cohomology is invariants.
+
+The degree-zero continuous-cohomology functor is naturally isomorphic to the field invariant
+functor.

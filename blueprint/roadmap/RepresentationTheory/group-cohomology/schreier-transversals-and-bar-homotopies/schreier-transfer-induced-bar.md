@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar
+# The universal Schreier map between projective resolutions
 
-The same transfer chain map, typed between the exact complexes carried
-by the ambient and induced bar projective resolutions.
+The universal Schreier map between projective resolutions.
+
+The chosen-transversal bar-complex map gives a chain map from the G-bar resolution to the
+projective resolution induced from the H-bar.

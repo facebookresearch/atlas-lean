@@ -1,3 +1,6 @@
-# Original Field Derived Sections Invariants Iso eq
+# Lifted sheaf comparison is evaluation of the common family
 
-The original comparison is literally evaluation of the same family at one L.obj F.
+Lifted sheaf comparison is evaluation of the common family.
+
+The lifted-sheaf isomorphism is the component of the common-universe derived section
+comparison at the lifted sheaf.

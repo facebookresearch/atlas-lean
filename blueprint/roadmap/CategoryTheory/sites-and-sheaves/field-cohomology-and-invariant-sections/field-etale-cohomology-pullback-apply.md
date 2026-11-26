@@ -1,3 +1,6 @@
-# Field Etale Cohomology Pullback apply
+# Field pullback value through derived section coordinates
 
-The field pullback is the literal canonical transport of the actual Γ pullback.
+Field pullback value through derived section coordinates.
+
+Compare the source class with derived sections, apply the derived field pullback, and apply
+the inverse target cohomology comparison.

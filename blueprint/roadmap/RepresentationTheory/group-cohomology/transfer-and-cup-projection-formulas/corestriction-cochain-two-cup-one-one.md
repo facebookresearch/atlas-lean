@@ -1,5 +1,6 @@
-# Corestriction Cochain Two cup one one
+# The one-by-one cochain projection identity with its boundary
 
-Cochain-level projection formula.  The transferred restricted cup is
-the cup with the transferred right factor minus the boundary of the explicit
-homotopy cochain.
+The one-by-one cochain projection identity with its boundary.
+
+For a G-one-cocycle x and H-one-cocycle y, cor_T²(x|H ∪ y) = x ∪ cor_T¹(y) −
+d¹(cupProjectionHomotopyOneOne A B T x y).

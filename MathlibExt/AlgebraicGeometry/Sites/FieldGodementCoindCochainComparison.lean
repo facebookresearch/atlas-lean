@@ -17,11 +17,18 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldTensorCoefficientRestricti
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGlobalSectionsInvariants
 
 /-!
-# Actual iterated point-to-coinduction comparison over the prescribed field point
+# Iterated Godement and coinduction comparisons over a field
 
-The original field Galois functor intertwines the actual prescribed point
-monad with the actual diagonal continuous coinduction monad. Its checked
-unit identity gives every original coface square on the iterated powers.
+Let k have prescribed separable closure Ω, Φ be its Galois stalk functor, T the field Godement
+monad, and S the diagonal continuous coinduction monad. The prescribed point comparison gives
+Φ(TF) ≅ S(ΦF) and preserves the unit.
+
+Iterating gives natural power isomorphisms and termwise coresolution isomorphisms compatible
+with every coface. The Γ/invariant comparison then identifies Godement sections with
+invariants of the coinduction coresolution, yielding an alternating cochain-complex
+isomorphism. The coinduction invariant complex is the continuous homogeneous
+coefficient complex, so the Godement sections complex computes those same cochains at height
+max(u,w).
 -/
 
 @[expose] public section
@@ -42,8 +49,10 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original field tensor-of-germs isomorphism is natural as an actual
-Galois-module arrow, with the same original coefficient tensor map. -/
+/-- Let k have prescribed separable closure Ω, Φ be its Galois stalk, and f : F → F′, g : G → G′
+sheaf maps. The Galois-module tensor comparison t satisfies
+Φ(f⊗g)≫t_{F′,G′}.hom=t_{F,G}.hom≫(Φf⊗Φg). The target tensor has the diagonal Galois action and
+the underlying integer tensor of coefficient groups. -/
 theorem fieldPointTensorGaloisIso_naturality
     {F F' G G' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : F ⟶ F') (g : G ⟶ G') :
@@ -69,8 +78,10 @@ theorem fieldPointTensorGaloisIso_naturality
   have h := fieldPointTensorTopRepIso_naturality.{u, w} k Ω f g
   exact congrArg (fun t => t.hom x) h
 
-/-- The original prescribed-point iterates, under the same original field Galois
-functor, are the actual iterates of diagonal continuous coinduction. -/
+/-- For a field k, prescribed separable closure Ω, prescribed point monad T_Ω, diagonal
+coinduction monad S, and Galois stalk Φ, there is an isomorphism Φ(T_Ω^nF) ≅ S^n(ΦF) for every
+n∈ℕ and small-étale sheaf F. It iterates the fixed point-to-coinduction endofunctor
+comparison. -/
 def fieldPrescribedPointCoindPowerIso (n : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := fieldPrescribedPointMonad.{u, w} k Ω
@@ -83,8 +94,8 @@ def fieldPrescribedPointCoindPowerIso (n : ℕ)
     (fieldPrescribedPointCoindFunctorIso.{u, w} k Ω) n F
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original coefficient morphism commutes with the actual iterated
-point-to-coinduction comparison. -/
+/-- Let k have prescribed separable closure Ω, f : F → G be a sheaf map, and e_n : Φ(T_Ω^n−) ≅
+S^nΦ the prescribed point power comparison. Then Φ(T_Ω^n f)≫e_n(G).hom=e_n(F).hom≫S^n(Φf). -/
 theorem fieldPrescribedPointCoindPowerIso_naturality (n : ℕ)
     {F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (f : F ⟶ G) :
     let T := fieldPrescribedPointMonad.{u, w} k Ω
@@ -100,8 +111,9 @@ theorem fieldPrescribedPointCoindPowerIso_naturality (n : ℕ)
     (fieldPrescribedPointCoindFunctorIso.{u, w} k Ω) n f
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine checked point unit yields every original source-ordered unit
-insertion square on the actual iterated point and coinduction powers. -/
+/-- For k,Ω with IsSepClosure k Ω, let e_n compare Φ(T_Ω^nF) with S^nΦF. For i∈Fin(n+1),
+Φ(etaAtPos(T_Ω,n,i,F))≫e_{n+1}(F).hom=e_n(F).hom≫etaAtPos(S,n,i,ΦF). The equality uses the
+same raw insertion position. -/
 theorem fieldPrescribedPointCoindPowerIso_etaAtPos (n : ℕ) (i : Fin (n + 1))
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := fieldPrescribedPointMonad.{u, w} k Ω
@@ -118,8 +130,10 @@ theorem fieldPrescribedPointCoindPowerIso_etaAtPos (n : ℕ) (i : Fin (n + 1))
     (fieldPrescribedPointCoindFunctorIso_unit.{u, w} k Ω) n i F
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same actual comparison preserves every original right-counted coface
-insertion used by the canonical monad coresolution. -/
+/-- Let k have prescribed separable closure Ω and e_n be the point-to-coinduction power
+comparison. For i∈Fin(n+1),
+Φ(barEtaAtPos(T_Ω,n,i,F))≫e_{n+1}.hom=e_n.hom≫barEtaAtPos(S,n,i,ΦF). Both bar insertions use
+the reversed finite position i.rev. -/
 theorem fieldPrescribedPointCoindPowerIso_barEtaAtPos (n : ℕ) (i : Fin (n + 1))
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := fieldPrescribedPointMonad.{u, w} k Ω
@@ -131,8 +145,10 @@ theorem fieldPrescribedPointCoindPowerIso_barEtaAtPos (n : ℕ) (i : Fin (n + 1)
         Monad.barEtaAtPos S n i (J.obj F) :=
   fieldPrescribedPointCoindPowerIso_etaAtPos.{u, w} k Ω n i.rev F
 
-/-- The genuine full Godement-to-prescribed-point comparison followed by the
-actual original point-to-coinduction comparison. -/
+/-- For a field k and prescribed separable closure Ω, compose the Godement-to-prescribed-point
+comparison with the point-to-coinduction comparison. This gives T_G⋙Φ ≅ Φ⋙S, where S is
+diagonal continuous coinduction on discrete Galois modules and Φ the geometric Galois stalk
+functor. -/
 def fieldGodementCoindFunctorIso :
     (smallEtaleGodementMonad.{u, w} (Spec (.of k))).toFunctor ⋙
         fieldGeometricStalkGaloisFunctor.{u, w} k Ω ≅
@@ -143,8 +159,9 @@ def fieldGodementCoindFunctorIso :
     fieldPrescribedPointCoindFunctorIso.{u, w} k Ω
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same actual composite carries the original Godement unit to the
-original diagonal coinduction unit at the prescribed field fiber. -/
+/-- Let k have prescribed separable closure Ω and c : Φ(T_GF) ≅ S(ΦF) be the Godement/coinduction
+endofunctor comparison. Then Φ(η_G,F)≫c_F.hom=η_S,ΦF. The target unit is the equivariant
+constant-function inclusion into diagonal coinduction. -/
 theorem fieldGodementCoindFunctorIso_unit
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))
@@ -162,8 +179,9 @@ theorem fieldGodementCoindFunctorIso_unit
   rw [← Category.assoc, ← J.map_comp, hu]
   exact fieldPrescribedPointCoindFunctorIso_unit.{u, w} k Ω F
 
-/-- Actual original Godement iterates at the prescribed field point are the
-actual original coinduction iterates of the same Galois fiber. -/
+/-- For a field k, prescribed separable closure Ω, Godement monad T_G, coinduction monad S, and
+Galois stalk Φ, there are isomorphisms Φ(T_G^nF) ≅ S^n(ΦF) for every n∈ℕ. They are obtained
+from the fixed cross-endofunctor isomorphism and retain the same coefficient object ΦF. -/
 def fieldGodementCoindPowerIso (n : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))
@@ -176,8 +194,8 @@ def fieldGodementCoindPowerIso (n : ℕ)
     (fieldGodementCoindFunctorIso.{u, w} k Ω) n F
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual full Godement/coinduction power comparison retains every
-original coefficient morphism under the same original field Galois functor. -/
+/-- Let k have prescribed separable closure Ω, f : F → G be a sheaf map, and e_n compare Φ(T_G^n−)
+with S^nΦ. Then Φ(T_G^n f)≫e_n(G).hom=e_n(F).hom≫S^n(Φf) for every n∈ℕ. -/
 theorem fieldGodementCoindPowerIso_naturality (n : ℕ)
     {F G : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}} (f : F ⟶ G) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))
@@ -190,8 +208,9 @@ theorem fieldGodementCoindPowerIso_naturality (n : ℕ)
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
     (fieldGodementCoindFunctorIso.{u, w} k Ω) n f
 
-/-- The successor comparison is the actual previous comparison at the
-Godement object followed by the same original base functor isomorphism. -/
+/-- For a field k with prescribed separable closure Ω, let T_G be Godement, S coinduction, c_F :
+Φ(T_GF) ≅ SΦF, and e_n the power comparison. Its successor satisfies
+e_{n+1}(F).hom=e_n(T_GF).hom≫S^n(c_F.hom). This is the specified recursive comparison map. -/
 theorem fieldGodementCoindPowerIso_succ_hom (n : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))
@@ -201,8 +220,9 @@ theorem fieldGodementCoindPowerIso_succ_hom (n : ℕ)
         (Monad.monadPow S n).map ((fieldGodementCoindFunctorIso.{u, w} k Ω).hom.app F) := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every actual original right-counted Godement coface insertion is carried
-to the corresponding original diagonal coinduction insertion. -/
+/-- Let k have prescribed separable closure Ω, Φ its Galois stalk, and e_n : Φ(T_G^nF) ≅ S^nΦF.
+For i∈Fin(n+1), Φ(barEtaAtPos(T_G,n,i,F))≫e_{n+1}.hom=e_n.hom≫barEtaAtPos(S,n,i,ΦF). The
+insertion uses the right-counted bar convention on both sides. -/
 theorem fieldGodementCoindPowerIso_barEtaAtPos (n : ℕ) (i : Fin (n + 1))
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let T := smallEtaleGodementMonad.{u, w} (Spec (.of k))
@@ -218,8 +238,10 @@ theorem fieldGodementCoindPowerIso_barEtaAtPos (n : ℕ) (i : Fin (n + 1))
     (fieldGodementCoindFunctorIso.{u, w} k Ω)
     (fieldGodementCoindFunctorIso_unit.{u, w} k Ω) n i.rev F
 
-/-- The actual canonical degree coordinates identify the original Godement
-coresolution under J with the actual original coinduction coresolution. -/
+/-- For a field k and prescribed separable closure Ω, the nth term of the Godement coresolution of
+F, after applying Φ, is isomorphic to the nth term of the monad coresolution of S at ΦF. The
+map uses the Godement degree chart to T_G^{n+1}F, the power comparison e_{n+1}, and the
+inverse coinduction degree chart. -/
 def fieldGodementCoindCoresolutionTermIso
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     let S := DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)
@@ -233,8 +255,9 @@ def fieldGodementCoindCoresolutionTermIso
         ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj F) n).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every actual original Godement coface commutes with the canonical
-prescribed-point/coinduction coresolution degree comparison. -/
+/-- Let k have prescribed separable closure Ω, c_n be the Godement/coinduction coresolution term
+charts, and i∈Fin(n+2). Then Φ(d_G^i)≫c_{n+1}.hom=c_n.hom≫d_S^i. The equality compares the
+same coface in the two degree-n and degree-(n+1) terms. -/
 theorem fieldGodementCoindCoresolutionTermIso_coface
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (n : ℕ) (i : Fin (n + 2)) :
@@ -264,8 +287,10 @@ theorem fieldGodementCoindCoresolutionTermIso_coface
   exact threeCoordinateSquares (J.map d) (J.map t) s z
     (a n) (a (n + 1)) (b n) (b (n + 1)) (c n) (c (n + 1)) ha hb hc
 
-/-- The actual prescribed-field degree isomorphisms with all original coface
-squares, on the same original Galois module objects. -/
+/-- For a field k, prescribed separable closure Ω, and sheaf F, the term isomorphisms
+Φ(Core_{T_G}F)_n ≅ Core_S(ΦF)_n for all n form a CofaceIso. Its coface equations are those of
+fieldGodementCoindCoresolutionTermIso_coface; this is the coface-compatible data used for
+alternating differentials. -/
 def fieldGodementCoindCofaceIso
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     CosimplicialCup.CofaceIso
@@ -276,8 +301,10 @@ def fieldGodementCoindCofaceIso
   app n := fieldGodementCoindCoresolutionTermIso.{u, w} k Ω F n
   coface n i := fieldGodementCoindCoresolutionTermIso_coface.{u, w} k Ω F n i
 
-/-- The actual Γ-to-invariants comparison and the original prescribed-field
-coface isomorphisms identify the same original Godement sections degrees. -/
+/-- Let k have prescribed separable closure Ω and F be a small-étale sheaf. Apply Γ≅Φ⋙Inv to each
+Godement coresolution term and combine it with the coinduction term CofaceIso. This gives a
+CofaceIso from the Godement sections cosimplicial object to Core_S(ΦF) followed by Galois
+invariants. -/
 def fieldGodementCoindSectionsCofaceIso
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     CosimplicialCup.CofaceIso (smallEtaleGodementSectionsCosimplicial.{u, w} (Spec (.of k)) F)
@@ -294,8 +321,10 @@ def fieldGodementCoindSectionsCofaceIso
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω)
     (fieldGodementCoindCofaceIso.{u, w} k Ω F)
 
-/-- The same actual original coface degree maps give a comparison of the
-original Godement sections complex with the actual coinduction invariants complex. -/
+/-- For a field k and prescribed separable closure Ω, the Godement sections complex of F is
+isomorphic to the alternating coface complex of Core_S(ΦF) followed by invariants. The map is
+the inverse Godement alternating-sections comparison followed by the alternating isomorphism
+of the sections CofaceIso. -/
 def fieldGodementCoindSectionsComplexIso
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleGodementSectionsComplex.{u, w} (Spec (.of k)) F ≅
@@ -307,8 +336,11 @@ def fieldGodementCoindSectionsComplexIso
     (fieldGodementCoindSectionsCofaceIso.{u, w} k Ω F).alternatingIso
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual canonical coinduction invariants complex is the algebraic
-complex of the same original continuous homogeneous cochains, at ranks `{0,u,w}`. -/
+/-- Let k have prescribed separable closure Ω and M be a discrete continuous Galois module of
+height max(u,w). The alternating complex of invariants of Core_S(M) is isomorphic to
+ContinuousCohomology.discreteCoefficientCochainFunctor(G)(M). This is the additive-group
+complex of continuous homogeneous coefficient cochains, obtained from the coinduction
+coresolution comparison and the invariants/forgetful functors. -/
 def fieldCoindInvariantCochainIso (M : FieldCohomologyModule.{u, w} k Ω) :
     AlternatingCofaceMapComplex.obj
         (Monad.coresolution (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M ⋙
@@ -327,8 +359,10 @@ def fieldCoindInvariantCochainIso (M : FieldCohomologyModule.{u, w} k Ω) :
   exact a ≪≫ (Q.mapHomologicalComplex (ComplexShape.up ℕ)).mapIso
     (DiscreteAbelianAction.coindCoresolutionComplexIso.{u, w} Gal(Ω/k) M)
 
-/-- The original Godement sections complex maps to the same original
-continuous coefficient complex through the actual prescribed field point. -/
+/-- For a field k, prescribed separable closure Ω, and small-étale additive-group sheaf F of
+height max(u,w), the Godement sections complex is isomorphic to the continuous homogeneous
+coefficient cochain complex of Gal(Ω/k) with coefficient ΦF. It composes the
+Godement/coinduction-invariants comparison with fieldCoindInvariantCochainIso. -/
 def fieldGodementOriginalContinuousCochainIso
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     smallEtaleGodementSectionsComplex.{u, w} (Spec (.of k)) F ≅

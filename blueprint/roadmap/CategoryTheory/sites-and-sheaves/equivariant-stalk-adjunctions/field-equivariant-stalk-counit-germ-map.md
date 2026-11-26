@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Counit germ map
+# Field stalk counit on germs is coefficient evaluation
 
-The actual counit has the original invariant-function evaluation as its germ map.
+Field stalk counit on germs is coefficient evaluation.
+
+The germ map followed by the underlying counit equals evaluation of the equivariant section at
+its fiber element.

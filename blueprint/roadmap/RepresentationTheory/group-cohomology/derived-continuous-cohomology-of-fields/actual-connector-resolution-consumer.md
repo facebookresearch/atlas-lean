@@ -1,4 +1,6 @@
-# Actual connector resolution consumer
+# Connecting comparison with arbitrary endpoint resolutions
 
-The original continuous degree-one connector maps to the ACTUAL mapped-horseshoe
-right-derived connector with arbitrary original endpoint resolutions.
+Connecting comparison with arbitrary endpoint resolutions.
+
+The continuous connecting map agrees through comparison with the right-derived invariant
+boundary defined using any injective resolutions of the sequence's endpoint objects.

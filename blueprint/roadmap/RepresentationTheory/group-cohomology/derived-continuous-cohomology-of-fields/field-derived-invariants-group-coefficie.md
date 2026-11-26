@@ -1,4 +1,6 @@
-# Field Derived Invariants Group Coefficient Map
+# Derived invariant map for group and coefficient change
 
-The actual derived group/coefficient map comes from the canonical group
-restriction and the literal original coefficient arrow.
+Derived invariant map for group and coefficient change.
+
+Compose derived group restriction with the derived-invariant map of the factored coefficient
+intertwiner.

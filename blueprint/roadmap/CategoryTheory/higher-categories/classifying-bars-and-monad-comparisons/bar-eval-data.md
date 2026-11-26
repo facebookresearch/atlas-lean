@@ -1,7 +1,6 @@
-# Bar Eval Data
+# The evaluated cartesian classifying-bar data
 
-Evaluated classifying-bar data.
+The evaluated cartesian classifying-bar data.
 
-`barData` at the point modules for `G`, evaluated at `a : Discrete PUnit`
-through the accepted `evalFunctor`. Degree `n` is definitionally
-`PUnit × ((monadPow (tensorMonad G) n).obj PUnit)`.
+Evaluate the two-sided bar for the tensor monad G × − and the trivial point actions at an
+object a of the discrete one-point index category. The result is simplicial data in types.

@@ -1,3 +1,6 @@
-# Tensor Pow Obj Three Right Iso hom
+# Forward triple coordinate is the inverse associator and two factor map
 
-Forward morphism of the right-associated tensor-cube comparison.
+Forward triple coordinate is the inverse associator and two factor map.
+
+Its forward map is the inverse associator followed by the inverse two-factor coordinate
+tensored with `𝟙 X`.

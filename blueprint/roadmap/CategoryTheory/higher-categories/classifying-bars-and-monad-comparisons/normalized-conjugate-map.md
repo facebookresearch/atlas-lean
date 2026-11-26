@@ -1,3 +1,6 @@
-# Normalized conjugate map
+# Two normalized coordinate systems give the same morphism square
 
-Compose the three proved value squares and cancel the actual invariant isomorphism.
+Two normalized coordinate systems give the same morphism square.
+
+Compatible endpoint normalizations and two squares through a common target map give the
+conjugated comparison square.

@@ -1,5 +1,6 @@
-# Corestriction Cochain One
+# The degree-one Schreier cochain transfer
 
-Degree-one cochain sum associated to a chosen finite right transversal.
-The input is a cochain for the restricted `H`-representation and the output
-is a cochain for `G`.
+The degree-one Schreier cochain transfer.
+
+For c : H → A, define cor_T(c)(g) = ∑ₜ ρ(t⁻¹)c(a(t,g)), where tg = a(t,g)r(t,g). This is a
+k-linear map from H-cochains to G-cochains.

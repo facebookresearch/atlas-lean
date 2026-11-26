@@ -1,3 +1,5 @@
-# Field Galois Skyscraper Coind Iso apply
+# A coinduction coordinate is the counit on the inverse Galois orbit
 
-Every original coinduction coordinate is the point counit on the same inverse Galois orbit.
+For a field k, prescribed separable closure Ω, additive group M, z∈Φ(x_*M), and g∈Gal(Ω/k),
+the skyscraper/coinduction comparison satisfies e_M(z)(g)=ε_M(g⁻¹·z). The G-action on z is its
+geometric stalk action, and the target function has trivial coefficient action.

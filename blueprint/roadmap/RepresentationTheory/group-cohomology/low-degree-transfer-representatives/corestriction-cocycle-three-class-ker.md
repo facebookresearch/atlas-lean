@@ -1,4 +1,6 @@
-# Corestriction Cocycle Three Class ker
+# Three-coboundaries vanish under the transferred class map
 
-Transferred three-cocycle classes annihilate source
-three-coboundaries.
+Three-coboundaries vanish under the transferred class map.
+
+The kernel of Z³(H,A|H) → H³(H,A|H) is contained in the kernel of the transferred class map to
+H³(G,A).

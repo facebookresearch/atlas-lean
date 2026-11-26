@@ -14,16 +14,15 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferDegreeThreeIndependence
 
 /-!
-# Canonical finite-index corestriction in degree three
+# Degree-three corestriction for finite-index subgroups
 
-The degree-three independence theorem for right-transversal Schreier transfer
-allows one right transversal to be chosen internally.  This file packages the
-resulting canonical finite-index `H³` map, identifies it with the map attached
-to every supplied right transversal, and records its cocycle representative
-formula.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `A` a
+representation. For a right transversal `T`, start at `r₀ = t ∈ T` and decompose `r_{i-1} g_i
+= h_i r_i` with `h_i ∈ H` and `r_i ∈ T`. The transfer of a three-cochain is `Tr_T z(g₁,g₂,g₃)
+= ∑ t∈T, ρ(t⁻¹) z(h₁,h₂,h₃)`.
 
-Coefficient naturality is provided in a downstream module.  No field,
-Kummer, norm-residue, or Bloch--Kato claim is made here.
+The induced map `H³(H,Res A) → H³(G,A)` is independent of the right transversal. Its value on
+any three-cocycle representative is the class of this finite sum.
 -/
 
 @[expose] public section
@@ -39,22 +38,31 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
-/-- Canonical degree-three corestriction for a finite-index subgroup. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, and `A : Rep k
+G`. The linear map `corestrictionH3 A : H³(H,Res A) →ₗ[k] H³(G,A)` is induced by
+right-transversal Schreier transfer. Its three-cochain formula is `∑ t∈T, ρ(t⁻¹) z(h₁,h₂,h₃)`,
+where `r₀=t` and `r_{i-1}g_i=h_i r_i` with `h_i∈H`, `r_i∈T`; the cohomology map is independent
+of `T`. -/
 noncomputable def corestrictionH3 (A : Rep k G) [H.FiniteIndex] :
     H3 (Rep.res (Subgroup.subtype H) A) →ₗ[k] H3 A :=
   corestrictionH3OfRightTransversal A
     (default : H.RightTransversal)
 
-/-- Canonical degree-three corestriction is computed by every chosen right
-transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` a finite-index subgroup, `A : Rep k G`,
+and `T` any right transversal for `H`. Then `corestrictionH3 A =
+corestrictionH3OfRightTransversal A T` as linear maps `H³(H,Res A) → H³(G,A)`, where the
+right-hand map is induced by the finite Schreier three-cochain sum. -/
 theorem corestrictionH3_eq_of_rightTransversal (A : Rep k G)
     [H.FiniteIndex] (T : H.RightTransversal) :
     corestrictionH3 A = corestrictionH3OfRightTransversal A T :=
   corestrictionH3OfRightTransversal_independent A
     (default : H.RightTransversal) T
 
-/-- Representative formula for canonical degree-three corestriction, using
-an arbitrary chosen right transversal. -/
+/-- Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, `A : Rep k G`, and `T` a
+right transversal. For `z ∈ Z³(H,Res A)`, `corestrictionH3 A (H3π (Res A) z) = H3π A
+(corestrictionCocyclesThree A T z)`. The transferred cocycle has value `∑ t∈T, ρ(t⁻¹)
+z(h₁,h₂,h₃)`, with `r₀=t` and successive decompositions `r_{i-1}g_i=h_i r_i`, `h_i∈H`,
+`r_i∈T`. -/
 @[simp]
 theorem corestrictionH3_H3π (A : Rep k G)
     [H.FiniteIndex] (T : H.RightTransversal)

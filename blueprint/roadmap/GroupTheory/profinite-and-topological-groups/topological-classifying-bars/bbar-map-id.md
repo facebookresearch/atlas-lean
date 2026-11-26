@@ -1,3 +1,5 @@
-# BBar Map id
+# The classifying-bar map of an identity homomorphism
 
-The identity continuous homomorphism induces the identity classifying-bar map.
+The classifying-bar map of an identity homomorphism.
+
+The continuous identity of G induces the identity of BBar G.

@@ -1,4 +1,5 @@
-# Field Godement Point Pairing characteristic
+# The point pairing has the point counit tensor characteristic
 
-The actual target point pairing has the original counit characteristic in the stored tensor
-objects.
+Let k be a field, M,N families, λ_p the canonical point pairing, t_P its stalk tensor
+comparison, and c_P the tensor of point counits. Then L(λ_p)≫ε_{M₀⊗N₀}=t_P≫c_P, with source
+L(P(M₀)⊗P(N₀)).

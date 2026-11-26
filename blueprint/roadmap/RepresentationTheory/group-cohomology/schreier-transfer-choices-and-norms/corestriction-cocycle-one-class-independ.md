@@ -1,4 +1,5 @@
-# Corestriction Cocycle One Class independent
+# The transferred degree-one class map is independent of the transversal
 
-The linear map from one-cocycles to target `H¹` is independent of the
-chosen finite right transversal.
+The transferred degree-one class map is independent of the transversal.
+
+The linear maps from H-one-cocycles to H¹(G,A) defined with T and U are equal.

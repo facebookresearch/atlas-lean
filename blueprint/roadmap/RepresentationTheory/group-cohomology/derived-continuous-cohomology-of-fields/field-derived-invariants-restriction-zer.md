@@ -1,3 +1,6 @@
-# Field Derived Invariants Restriction Zero
+# Degree zero restriction on derived invariants
 
-The genuine right-derived degree-zero group map is normalized by both augmentations.
+Degree zero restriction on derived invariants.
+
+Use the derived-zero invariant isomorphisms to transport invariant restriction to a map on
+degree-zero right-derived invariants.

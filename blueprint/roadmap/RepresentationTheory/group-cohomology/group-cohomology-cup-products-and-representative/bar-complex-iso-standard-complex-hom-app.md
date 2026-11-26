@@ -1,4 +1,6 @@
-# Bar Complex iso Standard Complex hom apply single
+# Bar basis vector as a homogeneous simplex
 
-The bar-to-standard comparison sends a bar basis element to the basis
-element indexed by its successive partial products.
+For a group `G` and a commutative ring `k`, the degree-`n` bar-to-standard comparison sends
+`single f (MonoidAlgebra.single g r)` to `MonoidAlgebra.single (g • Fin.partialProd f) r`, for
+`f : Fin n → G`, `g : G`, and `r : k`. The homogeneous tuple is `(g, g f₀, g f₀ f₁, …)`, with
+products taken in the displayed order.

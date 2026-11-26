@@ -1,3 +1,6 @@
-# Field Continuous Cohomology Functor is Zero injective
+# Injective field coefficients have zero positive continuous cohomology
 
-Every actual injective has zero positive original HG in the additive category.
+Injective field coefficients have zero positive continuous cohomology.
+
+For an injective coefficient object `I`, continuous cohomology in every degree `n + 1` is
+zero.

@@ -1,3 +1,5 @@
-# Small Etale Derived Gamma Identity Hom zero
+# Degree-zero identity of derived global-section pullback
 
-Its actual H0 component is identity, by original unit/terminal normalization.
+For a scheme X in universe u and c = max(u, w), the endomorphism
+formed from identity pullback and id_X* ≅ id has degree-zero component
+id_(R⁰Γ_X).

@@ -1,3 +1,6 @@
-# Field Finite Galois Evaluation inverse map
+# Inverse embedding evaluation is coefficient natural
 
-The actual inverse-stage functions are natural in EVERY module arrow.
+Inverse embedding evaluation is coefficient natural.
+
+The inverse evaluation commutes with coefficient maps and the corresponding postcomposition of
+equivariant functions.

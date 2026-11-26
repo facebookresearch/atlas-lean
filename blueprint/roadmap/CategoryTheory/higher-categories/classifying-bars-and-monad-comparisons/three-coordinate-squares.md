@@ -1,3 +1,6 @@
-# Three Coordinate Squares
+# Three compatible coordinate squares compose
 
-Three genuine coordinate squares compose through the same comparison isos.
+Three compatible coordinate squares compose.
+
+Two forward coordinate squares and a third square with reversed endpoint isomorphism give the
+commutative square for the composite coordinate isomorphism.

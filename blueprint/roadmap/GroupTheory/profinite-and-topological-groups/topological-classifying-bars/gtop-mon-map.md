@@ -1,3 +1,6 @@
-# GTop Mon Map
+# The internal monoid morphism of a continuous homomorphism
 
-A continuous monoid homomorphism as a morphism of bundled internal topological monoids.
+The internal monoid morphism of a continuous homomorphism.
+
+For continuous φ : G → H, bundle its topological map and monoid-operation preservation as a
+morphism GTopMon G → GTopMon H.

@@ -1,3 +1,5 @@
-# BBar Degree Homeomorph s
+# A classifying-bar degeneracy in tuple coordinates
 
-BBar degeneracies insert the monoid unit in head-first order.
+A classifying-bar degeneracy in tuple coordinates.
+
+The degeneracy at i inserts the monoid identity at tuple position i.

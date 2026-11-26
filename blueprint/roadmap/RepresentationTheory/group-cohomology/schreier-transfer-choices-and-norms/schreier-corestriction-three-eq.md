@@ -1,4 +1,6 @@
-# Schreier Corestriction three eq
+# The third degree of canonical corestriction
 
-The canonical arbitrary-degree map recovers canonical degree-three
-corestriction.
+The third degree of canonical corestriction.
+
+The underlying linear map of canonical Schreier corestriction in degree three equals
+corestrictionH3 A.

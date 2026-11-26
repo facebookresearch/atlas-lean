@@ -1,3 +1,6 @@
-# Comparison identity
+# Compatible comparison transfers an identity equation
 
-A computed natural comparison transports an actual canonical identity square.
+Compatible comparison transfers an identity equation.
+
+If a natural comparison intertwines two identity-index transformations, normalization of the
+first by an identity-functor isomorphism implies normalization of the second.

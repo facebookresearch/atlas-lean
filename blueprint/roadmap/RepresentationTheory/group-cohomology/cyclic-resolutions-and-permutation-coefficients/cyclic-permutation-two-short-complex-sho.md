@@ -1,4 +1,7 @@
-# Cyclic Permutation Two Short Complex short Exact
+# Short exact binary cyclic permutation coefficient sequence
 
-The mod-two cyclic permutation short complex is short exact in ordinary
-representations.
+Let G be a group, χ:G→Multiplicative(ZMod 2) a character,
+and A a ZMod 2-linear G-representation. The diagonal δ:A→Pχ(A)
+is constant inclusion and ε:Pχ(A)→A is summation of the two coordinates.
+The diagonal/augmentation short complex is short exact in
+the representation category.

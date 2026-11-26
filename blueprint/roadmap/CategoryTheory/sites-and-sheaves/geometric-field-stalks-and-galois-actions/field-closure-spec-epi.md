@@ -1,3 +1,5 @@
-# Field Closure Spec epi
+# The spectrum map of a field embedding is an epimorphism
 
-The original field embedding is flat and surjective on its actual spectra.
+For fields k,Ω,Ψ with k-algebra structures and σ : Ω →ₐ[k] Ψ, the induced map Spec(Ψ) →
+Spec(Ω) is an epimorphism of schemes. This statement does not require either extension to be a
+separable closure.

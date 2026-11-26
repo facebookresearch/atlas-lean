@@ -1,4 +1,6 @@
-# Inhomogeneous One Cocycle continuous
+# Continuity of the inhomogeneous evaluation
 
-The inhomogeneous function extracted from a continuous cycle is
-continuous.
+Continuity of the inhomogeneous evaluation.
+
+For a homogeneous continuous one-cycle z, the function g ↦ f(1,g), with f its included
+cochain, is continuous.

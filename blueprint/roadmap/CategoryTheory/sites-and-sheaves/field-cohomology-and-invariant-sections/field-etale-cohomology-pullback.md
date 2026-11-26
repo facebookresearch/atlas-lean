@@ -1,4 +1,6 @@
-# Field Etale Cohomology Pullback
+# Field change pullback on étale cohomology
 
-The original étale field pullback is induced by the canonical derived-Γ
-pullback, independently of the continuous-cohomology comparison square.
+Field change pullback on étale cohomology.
+
+A compatible field-and-closure map induces cohomology pullback by conjugating the derived-
+section pullback through the canonical cohomology comparisons.

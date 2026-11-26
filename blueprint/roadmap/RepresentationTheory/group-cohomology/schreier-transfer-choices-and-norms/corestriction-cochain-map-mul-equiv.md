@@ -1,4 +1,7 @@
-# Corestriction Cochain map Mul Equiv
+# The tuple transfer formula after group transport
 
-Arbitrary-degree cochain transfer commutes with transport by an
-ambient multiplicative equivalence.
+The tuple transfer formula after group transport.
+
+Pulling back the transfer for e(T) along e equals transferring with T after applying H ≃* e(H)
+to each subgroup tuple coordinate. The coefficients are the G′-representation restricted along
+e.

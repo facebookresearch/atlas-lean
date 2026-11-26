@@ -1,3 +1,6 @@
-# Field Original Rank Restriction Cochain Map
+# Continuous cochain restriction in the stated rank
 
-The SAME old original nested cochain map for the actual neutral field restriction.
+Continuous cochain restriction in the stated rank.
+
+The group homomorphism and canonical coefficient intertwiner give the homogeneous-cochain
+restriction map in the given rank coordinates.

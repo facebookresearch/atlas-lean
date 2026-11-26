@@ -1,4 +1,6 @@
-# Field Godement Coind Sections Coface Iso
+# Godement sections are coface-isomorphic to coinduction invariants
 
-The actual Γ-to-invariants comparison and the original prescribed-field
-coface isomorphisms identify the same original Godement sections degrees.
+Let k have prescribed separable closure Ω and F be a small-étale sheaf. Apply Γ≅Φ⋙Inv to each
+Godement coresolution term and combine it with the coinduction term CofaceIso. This gives a
+CofaceIso from the Godement sections cosimplicial object to Core_S(ΦF) followed by Galois
+invariants.

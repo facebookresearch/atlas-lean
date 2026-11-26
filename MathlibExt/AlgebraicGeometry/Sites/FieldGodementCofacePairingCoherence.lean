@@ -12,7 +12,18 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialObject.CofaceComparison
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleGodementCupProduct
 
-/-! # Original Godement cup clients of coface comparison transport -/
+/-!
+# Transporting Godement cup products through coface comparisons
+
+Let X be a scheme and F,G small-étale additive-group sheaves of height max(u,w). A
+coface-compatible comparison of each Godement sections cosimplicial object gives a map of
+alternating cochain complexes with the prescribed degree components.
+
+If three such comparisons intertwine the degreewise Godement tensor pairing with maps m_n :
+A_n⊗B_n → D_n, then the Godement cup agrees with the target front/back Alexander–Whitney
+pairing. If that target pairing is a cochain graded pairing, the equality descends to
+cohomology.
+-/
 
 @[expose] public section
 noncomputable section
@@ -27,8 +38,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 
 universe u w
 
-/-- The actual comparison from the original Godement sections complex, using the
-existing alternating-sections isomorphism and the literal coface map. -/
+/-- Let X be a scheme, F an additive-group small-étale sheaf of height max(u,w), A a cosimplicial
+additive-group object, and a a CofaceComparison from the Godement sections object to A. The
+Godement sections cochain complex maps to the alternating coface complex of A by the inverse
+alternating-sections isomorphism followed by a.alternatingMap. -/
 def smallEtaleGodementCofaceComparisonMap (X : Scheme.{u})
     (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     {A : CosimplicialObject AddCommGrpCat.{max u w}}
@@ -39,7 +52,9 @@ def smallEtaleGodementCofaceComparisonMap (X : Scheme.{u})
   (smallEtaleGodementAlternatingSectionsIso.{u, w} X F).inv ≫ a.alternatingMap
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every component is the given degree morphism on the original sections. -/
+/-- For a scheme X, sheaf F, and coface comparison a from its Godement sections cosimplicial
+object to A, the nth component of smallEtaleGodementCofaceComparisonMap equals a.app(n). This
+holds for every n∈ℕ. -/
 theorem smallEtaleGodementCofaceComparisonMap_f (X : Scheme.{u})
     (F : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     {A : CosimplicialObject AddCommGrpCat.{max u w}}
@@ -50,8 +65,10 @@ theorem smallEtaleGodementCofaceComparisonMap_f (X : Scheme.{u})
   exact Category.id_comp _
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original Godement cup is preserved by genuine coface and degree tensor
-comparisons. Its actual front/back maps are used on the same original sections. -/
+/-- Let X be a scheme, F,G sheaves, and a,b,c coface comparisons from their Godement sections and
+the tensor-sheaf sections to A,B,D. Suppose m_n : A_n⊗B_n → D_n satisfies
+(a_n⊗b_n)≫m_n=GodementPair_n≫c_n for every n. Then Cup_God,p,q≫c_{p+q}=(a_p⊗b_q)≫AW_m,p,q,
+where the target pairing uses the front and back inclusions into degree p+q. -/
 theorem smallEtaleGodementCochainCup_cofaceComparison (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     {A B D : CosimplicialObject AddCommGrpCat.{max u w}}
@@ -73,8 +90,10 @@ theorem smallEtaleGodementCochainCup_cofaceComparison (X : Scheme.{u})
     (smallEtaleGodementSectionsDegreePairing.{u, w} X F G) m hm p q (p + q) rfl).symm
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- On original pure cochains, the actual comparison gives exactly the target
-front and back values followed by the actual degree tensor pairing. -/
+/-- For a scheme X, coface comparisons a,b,c and degree maps m satisfying
+(a_n⊗b_n)≫m_n=GodementPair_n≫c_n, let x,y be source cochains of degrees p,q. Their Godement
+cup under c_{p+q} equals m_{p+q}(A(frontInclusion)(a_p x)⊗_ℤ B(backInclusion)(b_q y)). The
+front vertices are 0..p and the back vertices p..p+q. -/
 theorem smallEtaleGodementCochainCup_cofaceComparison_tmul (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     {A B D : CosimplicialObject AddCommGrpCat.{max u w}}
@@ -110,8 +129,11 @@ theorem smallEtaleGodementCochainCup_cofaceComparison_tmul (X : Scheme.{u})
   simpa only [TensorProduct.map_tmul, AddMonoidHom.coe_toIntLinearMap] using h
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The same actual comparison preserves the original native Godement homology
-cup. The target pairing enters through its literal AW component formula. -/
+/-- Let X be a scheme, F,G additive-group sheaves of height max(u,w), and a,b,c coface comparisons
+into A,B,D. Let m_n : A_n⊗B_n → D_n satisfy (a_n⊗b_n)≫m_n=GodementDegreePair_n≫c_n. If Q is a
+cochain graded pairing of the alternating complexes with Q.pair(p,q)=AW_m,p,q for all p,q,
+then H^p(a)⊗H^q(b) followed by Q.pairHomology equals the Godement cohomology cup followed by
+H^{p+q}(c). -/
 theorem smallEtaleGodementHomologyCup_cofaceComparison (X : Scheme.{u})
     (F G : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     {A B D : CosimplicialObject AddCommGrpCat.{max u w}}

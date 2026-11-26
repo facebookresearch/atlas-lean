@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal two eq
+# Agreement of general and degree-two cohomology transfers
 
-The former chosen-transversal `H²` transfer is the degree-two
-specialization of the arbitrary-degree cohomology transfer.
+Agreement of general and degree-two cohomology transfers.
+
+The underlying linear map of the general chosen-transversal transfer in degree two is
+corestrictionH2OfRightTransversal A T.

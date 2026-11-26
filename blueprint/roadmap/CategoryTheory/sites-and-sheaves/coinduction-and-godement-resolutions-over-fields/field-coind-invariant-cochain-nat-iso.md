@@ -1,3 +1,6 @@
-# Field Coind Invariant Cochain Nat Iso
+# Natural isomorphism from invariant coinduction to continuous cochains
 
-The same actual coefficient-complex comparison as a natural isomorphism.
+Natural isomorphism from invariant coinduction to continuous cochains.
+
+The coefficient-natural term comparisons assemble to a natural isomorphism of the two cochain-
+complex functors.

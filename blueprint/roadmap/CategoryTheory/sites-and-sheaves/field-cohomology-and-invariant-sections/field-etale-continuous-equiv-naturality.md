@@ -1,3 +1,6 @@
-# Field Etale Continuous Equiv naturality
+# Field cohomology comparison is natural in coefficients
 
-Every actual sheaf arrow is compared with its actual geometric-fiber coefficient arrow.
+Field cohomology comparison is natural in coefficients.
+
+A sheaf map's cohomology map commutes with the comparison and the induced continuous-
+cohomology map of its geometric fiber.

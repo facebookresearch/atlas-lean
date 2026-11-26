@@ -1,3 +1,6 @@
-# Field Original Rank Restriction Delta Hom
+# Group restriction delta morphism in the stated field rank
 
-The actual group restriction, transported between the SAME old original cochain models.
+Group restriction delta morphism in the stated field rank.
+
+For a continuous Galois-group homomorphism, conjugate the restriction map by the source and
+target rank comparisons to obtain a morphism of delta functors.

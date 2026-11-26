@@ -1,4 +1,6 @@
-# Field Continuous Derived Invariants Resolution Iso
+# Continuous cohomology in injective resolution invariant coordinates
 
-On every actual injective resolution the comparison uses the actual mapped
-cocomplex and its stock right-derived homology isomorphism.
+Continuous cohomology in injective resolution invariant coordinates.
+
+For any injective resolution, compare continuous cohomology with cohomology of its termwise
+invariant complex.

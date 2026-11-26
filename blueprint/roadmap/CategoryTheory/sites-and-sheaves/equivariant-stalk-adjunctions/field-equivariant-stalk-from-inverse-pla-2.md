@@ -1,3 +1,5 @@
-# Field Equivariant Stalk From Inverse Plain comm
+# Inverse sheaf transpose is equivariant
 
-The ordinary arrow obtained from the SAME invariant inclusion is actually equivariant.
+Inverse sheaf transpose is equivariant.
+
+The underlying stalk transpose commutes with each Galois stalk and coefficient action.

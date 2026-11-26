@@ -1,3 +1,5 @@
-# Native Homogeneous Tuple Map
+# Homogeneous tuple map of a continuous group homomorphism
 
-Apply the original continuous group map to every homogeneous tuple coordinate.
+For independently sized profinite groups G,H and continuous
+φ:H→G, this continuous tuple map H^(n+1)→G^(n+1) applies φ
+to each ordered coordinate.

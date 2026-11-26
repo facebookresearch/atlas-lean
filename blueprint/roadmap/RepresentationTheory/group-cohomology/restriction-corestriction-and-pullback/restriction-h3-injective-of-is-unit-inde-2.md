@@ -1,4 +1,5 @@
-# Restriction H3 injective of is Unit index canonical
+# Degree-three restriction is injective for invertible index
 
-Canonical degree-three restriction is injective when the subgroup index
-is a unit in the coefficient ring.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `A : Rep k G`. If
+`IsUnit (H.index : k)`, then `map H.subtype (𝟙 _) 3 : H³(G,A) → H³(H,Rep.res H.subtype A)` is
+injective.

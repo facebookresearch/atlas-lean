@@ -1,3 +1,5 @@
-# Field Original Coefficient Lift obj
+# Coefficient lifting gives the single lifted section group
 
-Every original coefficient value is retained through the literal single lift.
+Let k have universe u, F be a small-étale additive-group sheaf of coefficient universe w, and
+U an étale object over k. The coefficient-lifted sheaf has value
+AddCommGrpCat.of(ULift^u(F(U))) at U.

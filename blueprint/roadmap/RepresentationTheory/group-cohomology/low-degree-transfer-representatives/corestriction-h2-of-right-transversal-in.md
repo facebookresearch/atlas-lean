@@ -1,4 +1,5 @@
-# Corestriction H2 Of Right Transversal independent
+# The degree-two cohomology transfer is independent of the transversal
 
-Chosen-transversal degree-two cohomological transfer is independent of
-the finite right transversal.
+The degree-two cohomology transfer is independent of the transversal.
+
+For right transversals T and U, their induced linear maps H²(H,A|H) → H²(G,A) are equal.

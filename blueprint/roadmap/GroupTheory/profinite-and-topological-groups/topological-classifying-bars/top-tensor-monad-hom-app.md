@@ -1,3 +1,5 @@
-# Top Tensor Monad Hom app
+# Coordinates of the tensor-monad morphism
 
-Pointwise formula for the induced tensor-monad morphism.
+Coordinates of the tensor-monad morphism.
+
+At a topological space X, the tensor-monad morphism of φ sends (g,x) to (φ(g),x).

@@ -1,4 +1,6 @@
-# Tensor Pow Obj Head Tail Iso eq add Iso
+# Recursive and block split head tail coordinates agree
 
-The recursive and canonical additive presentations of head--tail
-decomposition agree.
+Recursive and block split head tail coordinates agree.
+
+The recursive head-tail isomorphism equals the one obtained from the block-splitting
+isomorphism.

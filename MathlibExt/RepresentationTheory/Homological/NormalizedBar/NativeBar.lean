@@ -9,12 +9,20 @@ public import MathlibExt.RepresentationTheory.Homological.NormalizedBar.Quotient
 public import Mathlib.Algebra.Homology.QuasiIso
 
 /-!
-# Comparison with the native inhomogeneous bar resolution
+# Normalized tuples and the inhomogeneous bar resolution
 
-The literal normalized model maps to and from the actual native bar
-complex through its native standard-complex isomorphism. The inverse
-basis calculation follows the existing calculation in the native
-d_comp_diagonalSuccIsoFree_inv_eq proof.
+Let k be a commutative ring and G a group, both in universe u.
+The inhomogeneous bar complex B identifies with the homogeneous
+standard complex C: a tuple g with group-ring coefficient r[h]
+has homogeneous vertices h times the ordered prefix products of g.
+
+Composing this comparison with normalization gives B→Q and Q→B,
+where Q is free on nonidentity tuples. The section is corrected by
+the Dold–Kan projector. These maps form a homotopy equivalence and
+give homology isomorphisms in all degrees.
+With the bar augmentation, Q is a projective resolution of k_triv.
+It is also the cokernel quotient by the inhomogeneous degeneracy
+subcomplex.
 -/
 
 @[expose] public section
@@ -30,7 +38,12 @@ universe u
 
 variable (k G : Type u) [CommRing k] [Group G]
 
-/-- Actual inverse of the native homogeneous/inhomogeneous basis isomorphism. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The inverse diagonal basis comparison sends a tuple symbol
+with coefficient r[h] to the homogeneous symbol whose vertices are
+h times (1,g₀,g₀g₁,…). -/
 theorem nativeDiagonalInverse_single (n : ℕ) (g : Fin n → G) (h : G) (r : k) :
     (Rep.diagonalSuccIsoFree k G n).inv.hom
       (Finsupp.single g (MonoidAlgebra.single h r)) =
@@ -56,7 +69,11 @@ theorem nativeDiagonalInverse_single (n : ℕ) (g : Fin n → G) (h : G) (r : k)
         congrArg (fun a : Fin (n + 1) → G =>
           (MonoidAlgebra.single a r : k[Fin (n + 1) → G])) hinv)
 
-/-- The native bar/standard complex comparison on the actual basis symbols. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The chain comparison B→C has degree n value
+r[h;g]↦r[h•prefix(g)] in homogeneous standard symbols. -/
 @[simp]
 theorem nativeBarToStandard_single (n : ℕ) (g : Fin n → G) (h : G) (r : k) :
     ((Rep.barComplex.isoStandardComplex k G).hom.f n).hom
@@ -64,8 +81,11 @@ theorem nativeBarToStandard_single (n : ℕ) (g : Fin n → G) (h : G) (r : k) :
         standardSymbol k G n (h • Fin.partialProd g) r :=
   nativeDiagonalInverse_single k G n g h r
 
-/-- The native bar-to-standard map and actual full tuple basis comparison
-are mutually inverse in each degree. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+Following B_n→C_n by the homogeneous/full-tuple basis isomorphism
+returns the identity of the full inhomogeneous degree B_n. -/
 @[simp, reassoc]
 theorem nativeBarToStandard_comp_basisIso (n : ℕ) :
     (Rep.barComplex.isoStandardComplex k G).hom.f n ≫ (basisIso k G n).hom =
@@ -79,11 +99,19 @@ theorem nativeBarToStandard_comp_basisIso (n : ℕ) :
   rw [nativeBarToStandard_single, basisIso_hom_single]
   simp [Fin.partialProd_right_inv, Fin.partialProd_zero]
 
-/-- Canonical quotient projection from the actual native bar complex. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The projection B→Q is B≅C followed by the standard
+normalization projection C→Q. -/
 def nativeProjection : Rep.barComplex k G ⟶ complex k G :=
   (Rep.barComplex.isoStandardComplex k G).hom ≫ projection k G
 
-/-- Canonical normalization-corrected chain section into the native bar complex. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The section Q→B is the normalization-corrected section Q→C
+followed by the inverse bar-to-standard chain comparison. -/
 def nativeInclusion : complex k G ⟶ Rep.barComplex k G :=
   inclusion k G ≫ (Rep.barComplex.isoStandardComplex k G).inv
 
@@ -149,18 +177,31 @@ theorem nativeProjection_f (n : ℕ) :
         e.hom.f n ≫ f) hp)
       (Eq.trans hassoc hid))
 
-/-- Normalization is a homotopy equivalence with the actual native bar complex. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The projection and corrected section give the homotopy equivalence
+Q≃B. The composite on Q is the identity. -/
 def homotopyEquivNativeBar : HomotopyEquiv (complex k G) (Rep.barComplex k G) :=
   (homotopyEquivStandard k G).trans
     (HomotopyEquiv.ofIso (Rep.barComplex.isoStandardComplex k G).symm)
 
-/-- The actual normalization homotopy equivalence induces the homology comparison. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+For every n∈ℕ, the normalization homotopy equivalence gives
+H_n(Q)≅H_n(B). -/
 def homologyIsoNativeBar (n : ℕ) :
     (complex k G).homology n ≅ (Rep.barComplex k G).homology n :=
   (homotopyEquivNativeBar k G).toHomologyIso n
 
-/-- The literal normalized model as an actual projective resolution,
-with the native augmentation composed with the corrected chain inclusion. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The normalized complex Q, whose degrees are projective free
+representations, becomes a projective resolution of k_triv.
+Its augmentation is the corrected section Q→B followed by the
+bar augmentation. -/
 def resolution : ProjectiveResolution (Rep.trivial k G k) where
   complex := complex k G
   projective n := complex_X_projective k G n
@@ -181,18 +222,30 @@ def resolution : ProjectiveResolution (Rep.trivial k G k) where
     change QuasiIso (f ≫ p)
     exact _root_.quasiIso_comp f p (hφ := hf) (hφ' := hp)
 
-/-- The actual degeneracy subcomplex in the native inhomogeneous presentation. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The inhomogeneous degeneracy subcomplex is the kernel of
+the chain projection B→Q. -/
 abbrev nativeDegeneracyComplex : ChainComplex (Rep k G) ℕ :=
   CategoryTheory.Limits.kernel (nativeProjection k G)
 
-/-- Its actual chain inclusion. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The degeneracy chain inclusion is the kernel inclusion
+ker(B→Q)→B. -/
 abbrev nativeDegeneracyInclusion : nativeDegeneracyComplex k G ⟶ Rep.barComplex k G :=
   CategoryTheory.Limits.kernel.ι (nativeProjection k G)
 
 instance nativeProjection_epi : Epi (nativeProjection k G) :=
   epi_of_epi_fac (nativeInclusion_comp_nativeProjection k G)
 
-/-- The native inhomogeneous degeneracy quotient is the literal normalized model. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+The cokernel of the degeneracy inclusion is canonically
+isomorphic to Q, with its quotient map factoring the projection B→Q. -/
 def nativeQuotientIso :
     CategoryTheory.Limits.cokernel (nativeDegeneracyInclusion k G) ≅ complex k G :=
   asIso (Abelian.factorThruCoimage (nativeProjection k G))
@@ -203,7 +256,11 @@ theorem nativeQuotientIso_factor :
         (nativeQuotientIso k G).hom = nativeProjection k G :=
   Abelian.coimage.fac (nativeProjection k G)
 
-/-- The native bar quotient kills exactly the source's degenerate-symbol span. -/
+/-- Let k and G have universe u, with k a commutative ring and G a group.
+Let B be the inhomogeneous bar complex, C the homogeneous standard
+complex and Q the normalized nonidentity-tuple complex.
+In degree n, the projection kills x exactly when x lies in
+the k[G]-span of tuple symbols with an identity entry. -/
 theorem nativeProjection_f_kernel_iff (n : ℕ) (x : (fullDegree k G n).V) :
     ((nativeProjection k G).f n).hom x = 0 ↔ x ∈ degenerateDegree k G n := by
   rw [nativeProjection_f]

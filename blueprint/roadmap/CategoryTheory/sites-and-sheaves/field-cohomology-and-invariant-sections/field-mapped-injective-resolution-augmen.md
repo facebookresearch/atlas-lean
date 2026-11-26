@@ -1,3 +1,6 @@
-# Field Mapped Injective Resolution augmentation
+# Mapped resolution has the mapped coaugmentation
 
-The single-object augmentation is the SAME actual single-map comparison and T(I.ι).
+Mapped resolution has the mapped coaugmentation.
+
+The coaugmentation is the inverse single-complex functor coordinate followed by the geometric-
+fiber image of the sheaf coaugmentation.

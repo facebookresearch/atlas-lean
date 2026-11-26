@@ -1,3 +1,6 @@
-# Comp three iso inv hom
+# An inverse coordinate cancels after a triple composite
 
-A typed category cancellation lemma; no point/sheaf instances are baked into its proof.
+An inverse coordinate cancels after a triple composite.
+
+A composite of three maps followed by an isomorphism inverse and then its forward map equals
+the three-map composite.

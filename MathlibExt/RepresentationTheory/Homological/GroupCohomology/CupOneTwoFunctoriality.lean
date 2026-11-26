@@ -15,10 +15,13 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOne
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDegreeThreeFunctoriality
 
 /-!
-# Functoriality of the degree-(1,2) cup product
+# Group and coefficient naturality of one-two cups
 
-The explicit and descended degree-`(1,2)` cup products commute with a group
-homomorphism and compatible coefficient morphisms.
+Let `f : G →* H` be a group homomorphism and `k` a commutative ring. For representations `A,B`
+of `H`, representations `A',B'` of `G`, and morphisms `φ : Rep.res f A → A'`, `ψ : Rep.res f B
+→ B'`, pullback and coefficient change preserve the formula `(x ∪ y)(g,h,j) = x(g) ⊗
+g·y(h,j)`. The resulting equality holds for cocycles of degrees `1,2` and for their classes in
+`H¹ × H² → H³`.
 -/
 
 @[expose] public section
@@ -36,7 +39,10 @@ namespace groupCohomology
 variable {k G H : Type u} [CommRing k] [Group G] [Group H]
 variable {A B : Rep k H} {A' B' : Rep k G}
 
-/-- Joint naturality of explicit `(1,2)` cup cocycles. -/
+/-- Let `k` be a commutative ring, `f : G →* H` a group homomorphism, `A,B : Rep k H`, and `A',B'
+: Rep k G`. For `φ : Rep.res f A → A'`, `ψ : Rep.res f B → B'`, `x ∈ Z¹(H,A)`, and `y ∈
+Z²(H,B)`, `mapCocycles₃ f (φ ⊗ ψ) (cupCocycleOneTwo A B x y) = cupCocycleOneTwo A' B'
+(mapCocycles₁ f φ x) (mapCocycles₂ f ψ y)`. -/
 theorem mapCocycles₃_cupCocycleOneTwo_of_hom
     (f : G →* H) (phi : Rep.res f A ⟶ A')
     (psi : Rep.res f B ⟶ B')
@@ -55,7 +61,10 @@ theorem mapCocycles₃_cupCocycleOneTwo_of_hom
   exact Rep.hom_comm_apply psi g _
 
 set_option backward.isDefEq.respectTransparency false in
-/-- Joint naturality of the descended `(1,2)` cup product. -/
+/-- Let `k` be a commutative ring, `f : G →* H` a group homomorphism, `A,B : Rep k H`, and `A',B'
+: Rep k G`. Given `φ : Rep.res f A → A'`, `ψ : Rep.res f B → B'`, and classes `x ∈ H¹(H,A)`,
+`y ∈ H²(H,B)`, `map f (φ ⊗ ψ) 3 (cupOneTwo A B x y) = cupOneTwo A' B' (map f φ 1 x) (map f ψ 2
+y)` in `H³(G,A' ⊗ B')`. -/
 theorem map_cupOneTwo_of_hom
     (f : G →* H) (phi : Rep.res f A ⟶ A')
     (psi : Rep.res f B ⟶ B')

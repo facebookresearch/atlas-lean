@@ -1,3 +1,5 @@
-# Original Field Continuous Derived Invariants Iso naturality
+# Lifted sheaf fiber comparison is natural
 
-Every original smaller-coefficient sheaf map uses the same ONE lifted arrow.
+Lifted sheaf fiber comparison is natural.
+
+The comparison commutes with the geometric-fiber map induced by a lifted sheaf morphism.

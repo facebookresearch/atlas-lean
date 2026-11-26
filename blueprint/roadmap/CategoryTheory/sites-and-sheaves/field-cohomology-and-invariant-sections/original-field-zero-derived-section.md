@@ -1,3 +1,6 @@
-# Original Field Zero Derived Section
+# Terminal section as a degree zero derived class
 
-A native original section is sent to its actual zero-derived Gamma class after one lift.
+Terminal section as a degree zero derived class.
+
+Lift the terminal section, use the inverse global-section coordinate, and apply the canonical
+map to zeroth derived sections.

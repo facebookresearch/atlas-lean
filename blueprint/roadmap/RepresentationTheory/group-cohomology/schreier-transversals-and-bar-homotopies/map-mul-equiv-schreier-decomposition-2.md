@@ -1,4 +1,7 @@
-# Map Mul Equiv schreier Decomposition
+# Schreier decomposition transport in a common universe
 
-The Schreier decomposition of a transported transversal is the
-transport of the original Schreier decomposition.
+Schreier decomposition transport in a common universe.
+
+For tg = a(t,g)r(t,g), the decomposition of e(t)e(g) in the transported transversal has factor
+e(a(t,g)) in e(H) and representative e(r(t,g)) in e(T). The two groups here lie in the same
+stated universe.

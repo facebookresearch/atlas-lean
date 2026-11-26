@@ -1,4 +1,6 @@
-# Rho cup Projection Homotopy One One
+# The tensor action on the one-by-one projection cochain
 
-Acting on the homotopy cochain reindexes through the Schreier
-permutation of the transversal.
+The tensor action on the one-by-one projection cochain.
+
+Applying g₁ to K¹(g₂) and reindexing by u = r(t,g₁) gives terms ρ_A(g₁u⁻¹)x(u) ⊗
+ρ_B(g₁u⁻¹)y(a(u,g₂)).

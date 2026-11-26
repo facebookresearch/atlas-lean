@@ -1,3 +1,6 @@
-# Restrict Hom
+# The homomorphism restricting Galois automorphisms
 
-The neutral group restriction is constructed from the original embeddings.
+The homomorphism restricting Galois automorphisms.
+
+A compatible field-extension embedding with Galois source L/K gives a group homomorphism
+Gal(L′/K′) → Gal(L/K) by restricting automorphisms.

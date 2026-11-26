@@ -15,11 +15,11 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOne
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.Functoriality
 
 /-!
-# Coefficient naturality of the degree-one cup product
+# Coefficient naturality of one-cocycle cups
 
-The cup of two degree-one cocycles commutes with equivariant coefficient
-maps.  This is the representative-level naturality square needed to
-transport explicit cup classes across coefficient isomorphisms.
+Let `G` be a group, `k` a commutative ring, and `f : A → A'`, `g : B → B'` equivariant
+coefficient maps. For one-cocycles `x,y`, applying `f ⊗ g` to the two-cocycle `(p,q) ↦ x(p) ⊗
+p·y(q)` gives the cup of `f ∘ x` and `g ∘ y`, with values in `A' ⊗ B'`.
 -/
 
 @[expose] public section
@@ -37,8 +37,10 @@ namespace groupCohomology
 variable {k G : Type u} [CommRing k] [Group G]
 variable {A B A' B' : Rep k G}
 
-/-- Mapping a cup cocycle through the tensor of two coefficient morphisms is
-the cup of the mapped one-cocycles. -/
+/-- Let `k` be a commutative ring, `G` a group, and `f : A → A'`, `g : B → B'` morphisms of
+representations. For `x ∈ Z¹(G,A)` and `y ∈ Z¹(G,B)`, `mapCocycles₂ (id G) (f ⊗ g)
+(cupCocycleOneOne A B x y) = cupCocycleOneOne A' B' (mapCocycles₁ (id G) f x) (mapCocycles₁
+(id G) g y)` in `Z²(G,A' ⊗ B')`. -/
 theorem mapCocycles₂_cupCocycleOneOne
     (f : A ⟶ A') (g : B ⟶ B')
     (x : cocycles₁ A) (y : cocycles₁ B) :

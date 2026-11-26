@@ -1,4 +1,6 @@
-# I Cocycles corestriction cycles Map
+# The cochain underlying a transferred arbitrary-degree cycle
 
-The transferred generic cycle has the arbitrary Schreier cochain as its
-underlying inhomogeneous cochain.
+The cochain underlying a transferred arbitrary-degree cycle.
+
+Including the transferred cycle into G-cochains gives the degree-n Schreier transfer of the
+included H-cycle cochain.

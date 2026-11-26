@@ -1,3 +1,7 @@
-# H3 ZMod Restrict Int To Fun
+# Integral third-cohomology class of a chosen representative
 
-Underlying degree-three scalar-restriction comparison.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The forward function on H³ sends x to the integral class of
+the scalar-restricted cocycle selected to represent x.

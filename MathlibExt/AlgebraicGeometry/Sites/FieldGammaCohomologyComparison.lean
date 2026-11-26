@@ -16,7 +16,18 @@ public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaComparison
 public import MathlibExt.AlgebraicGeometry.Sites.FieldDerivedSectionsInvariants
 
 /-!
-# The original normalized global-section pullback and its fixed cohomology comparison
+# Derived global sections, field pullback, and continuous cohomology
+
+For a field k, the right-derived global-section functors form a universal cohomological
+δ-functor. Compatible embeddings of field pairs induce a degree-zero global-section pullback
+through the inverse-image adjunction unit. Exactness of inverse image gives the target
+δ-functor, and source universality extends that map uniquely to every derived degree,
+commuting with the connecting morphisms.
+
+For a prescribed separable closure Ω of k, the fixed Γ/invariant comparison extends to a
+δ-functor isomorphism with derived Galois invariants of the geometric stalk. Composing with
+the continuous-cohomology comparison gives the all-degree continuous Galois cohomology
+δ-isomorphism. Coefficients have height max(u,w).
 -/
 
 @[expose] public section
@@ -33,7 +44,9 @@ open CategoryTheory CategoryTheory.Limits Opposite
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The existing actual Γ right-derived functors and their canonical connectors. -/
+/-- Let k be a field of universe u. The functors R^nΓ_k on small-étale additive-group sheaves of
+height max(u,w), with the canonical short-exact-sequence connecting maps, define a
+cohomological δ-functor to AddCommGrpCat of that height. -/
 abbrev fieldOriginalGammaDeltaFunctor (k : Type u) [Field k] :
     CohomologicalDeltaFunctor
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
@@ -52,13 +65,18 @@ variable (k Ω K Ψ : Type u) [Field k] [Field Ω] [Field K] [Field Ψ]
 variable [Algebra k Ω] [Algebra K Ψ] [IsSepClosure k Ω] [IsSepClosure K Ψ]
 attribute [local instance] IsSepClosure.sep_closed
 
-/-- Register only the proved additivity of this SAME actual inverse image. -/
+/-- For compatible field embeddings e : (k,Ω) → (K,Ψ), the small-étale inverse-image functor for
+Spec(e.base) : Spec(K) → Spec(k) is additive on additive-group sheaves of height max(u,w).
+This is the inverse-image functor used in the derived pullback construction. -/
 local instance fieldChangeInverseImage_additive (e : GaloisUnits.FieldMap k Ω K Ψ) :
     (smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e)).Additive :=
   smallEtaleInverseImage_additive.{u, w} (fieldOriginalPullback k Ω K Ψ e)
 
 
-/-- Exactness of the actual inverse image supplies the real target delta functor. -/
+/-- Let e be compatible embeddings of field pairs and f : Spec(K) → Spec(k) their base spectrum
+map. Precompose the right-derived global-section δ-functor of K by the exact inverse image
+f^*. Its degree-n functor is f^*⋙R^nΓ_K, and its connectors are those of the short exact
+sequence obtained by inverse image. -/
 def fieldInverseImageGammaDeltaFunctor (e : GaloisUnits.FieldMap k Ω K Ψ) :=
   CohomologicalDeltaFunctor.precompose
     (smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e))
@@ -66,8 +84,10 @@ def fieldInverseImageGammaDeltaFunctor (e : GaloisUnits.FieldMap k Ω K Ψ) :=
       (fieldOriginalPullback k Ω K Ψ e) S hS)
     (fieldOriginalGammaDeltaFunctor.{u, w} K)
 
-/-- Source universality extends the SAME actual adjunction-unit Γ map in every
-degree; neither target injectivity nor a supplied comparison is required. -/
+/-- For compatible field embeddings e with f : Spec(K) → Spec(k), the universal source δ-functor
+R^•Γ_k extends the unit-defined Γ pullback to a morphism R^•Γ_k → f^*⋙R^•Γ_K. Its degree-zero
+component is normalized by the canonical R^0Γ≅Γ isomorphisms and fieldPullbackGlobalSections.
+No target-injective-preservation hypothesis is used. -/
 def fieldDerivedPullbackDeltaHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
     fieldOriginalGammaDeltaFunctor.{u, w} k ⟶
       fieldInverseImageGammaDeltaFunctor.{u, w} k Ω K Ψ e :=
@@ -80,7 +100,9 @@ def fieldDerivedPullbackDeltaHom (e : GaloisUnits.FieldMap k Ω K Ψ) :
       (Sheaf.Γ (Spec (.of K)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf)
     (fieldPullbackGlobalSections.{u, w} k Ω K Ψ e)
 
-/-- Every map uses the literal existing right-derived Γ objects. -/
+/-- For compatible field embeddings e and n∈ℕ, take the nth component of
+fieldDerivedPullbackDeltaHom to obtain R^nΓ_k → f^*⋙R^nΓ_K. The objects are the canonical
+right-derived global-section objects on small-étale additive-group sheaves of height max(u,w). -/
 def fieldDerivedPullback (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ) :
     (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived n ⟶
       smallEtaleInverseImage.{u, w} (fieldOriginalPullback k Ω K Ψ e) ⋙
@@ -115,7 +137,10 @@ theorem fieldDerivedPullback_naturality (e : GaloisUnits.FieldMap k Ω K Ψ) (n 
 
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- The independent same Γ map respects all canonical right-derived connectors. -/
+/-- Let e be compatible field embeddings, S₁ → S₂ → S₃ a short exact small-étale sheaf sequence
+over k, and n∈ℕ. The derived pullback maps γ satisfy δ_k,n(S)≫γ_{n+1}(S₁)=γ_n(S₃)≫δ_K,n(f^*S).
+The equality is between maps R^nΓ_k(S₃) → R^{n+1}Γ_K(f^*S₁) and requires no separable-closure
+assumption on the field-pair data. -/
 theorem fieldDerivedPullback_connecting (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ)
     (S : ShortComplex.ShortExactSequences
       (Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})) :
@@ -126,7 +151,10 @@ theorem fieldDerivedPullback_connecting (e : GaloisUnits.FieldMap k Ω K Ψ) (n 
   DeltaFunctor.System.comm (fieldDerivedPullbackDeltaHom.{u, w} k Ω K Ψ e).hom n S
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- Source universality fixes every degree of this actual map from its original zero map. -/
+/-- For compatible field embeddings e, any δ-functor morphism g : R^•Γ_k → f^*⋙R^•Γ_K whose
+zero-degree component equals fieldDerivedPullback(e,0) is equal to
+fieldDerivedPullbackDeltaHom(e). Universality is required only of the source right-derived Γ
+δ-functor. -/
 theorem fieldDerivedPullback_unique (e : GaloisUnits.FieldMap k Ω K Ψ)
     (g : fieldOriginalGammaDeltaFunctor.{u, w} k ⟶
       fieldInverseImageGammaDeltaFunctor.{u, w} k Ω K Ψ e)
@@ -140,7 +168,10 @@ theorem fieldDerivedPullback_unique (e : GaloisUnits.FieldMap k Ω K Ψ)
     (fieldDerivedPullbackDeltaHom.{u, w} k Ω K Ψ e) hg
 
 omit [IsSepClosure k Ω] [IsSepClosure K Ψ] in
-/-- Each original coefficient morphism enters every actual ΓRD degree with ONE lift. -/
+/-- For compatible field embeddings e, n∈ℕ, and τ : F → F′ a small-étale sheaf map of coefficient
+universe w, let L be ULift^u. The degree-n map γ satisfies
+R^nΓ_k(Lτ)≫γ_n(LF′)=γ_n(LF)≫(f^*⋙R^nΓ_K)(Lτ). Thus each naturality square uses the same single
+coefficient lift. -/
 theorem fieldDerivedPullback_original_coefficient_naturality
     (e : GaloisUnits.FieldMap k Ω K Ψ) (n : ℕ)
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (τ : F ⟶ F') :
@@ -171,7 +202,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The SAME accepted cut3 family, now packaged with its genuine connector squares. -/
+/-- Let k have prescribed separable closure Ω and Φ its geometric Galois stalk functor. The
+canonical Γ≅Φ⋙Inv comparison gives an isomorphism of cohomological δ-functors R^•Γ_k ≅
+Φ⋙R^•Inv. Its components and connecting maps are those of the right-derived comparison, at
+additive-group coefficient height max(u,w). -/
 def fieldGammaInvariantsDeltaIso :
     fieldOriginalGammaDeltaFunctor.{u, w} k ≅
       CohomologicalDeltaFunctor.precompose (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
@@ -188,7 +222,10 @@ theorem fieldGammaInvariantsDeltaIso_hom_app (n : ℕ) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) n
 
-/-- The SAME accepted all-degree Γ/old-native-cohomology comparison is a delta isomorphism. -/
+/-- For a field k and prescribed separable closure Ω, R^•Γ_k on small-étale additive-group sheaves
+is isomorphic as a cohomological δ-functor to continuous cohomology of Gal(Ω/k) applied to the
+geometric stalk. The comparison composes the Γ/derived-invariants δ-isomorphism with the
+continuous-cohomology/derived-invariants comparison and preserves all connectors. -/
 def fieldGammaContinuousDeltaIso :
     fieldOriginalGammaDeltaFunctor.{u, w} k ≅
       CohomologicalDeltaFunctor.precompose (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)

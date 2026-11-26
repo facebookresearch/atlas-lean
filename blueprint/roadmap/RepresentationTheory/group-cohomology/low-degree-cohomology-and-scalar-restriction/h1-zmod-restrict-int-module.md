@@ -1,4 +1,7 @@
-# H1 ZMod Restrict Int Module
+# Transported scalar action on integral first cohomology
 
-Canonical `ZMod n`-module structure on integral H1, transported from
-the original H1 through the additive comparison.
+Let n∈ℕ, G be a group, A a ZMod n-representation and Res(A)
+its scalar restriction to ℤ. The coefficient group and G-action are
+unchanged, including n=0.
+The transported ZMod n-action on integral H¹ is
+r•y=χ₁(r•χ₁⁻¹(y)).

@@ -1,3 +1,5 @@
-# EBar Map id
+# The universal-bar map of an identity homomorphism
 
-The identity continuous homomorphism induces the identity universal-bar map.
+The universal-bar map of an identity homomorphism.
+
+The continuous identity of G induces the identity of EBar G.

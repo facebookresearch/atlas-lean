@@ -1,4 +1,6 @@
-# Field Derived Invariants Restriction Delta Hom
+# Universal extension of derived invariant restriction
 
-Universality constructs the canonical derived restriction for every original
-continuous group map. The target need not be universal; no injective preservation is used.
+Universal extension of derived invariant restriction.
+
+The normalized universal extension of invariant restriction defines a morphism of right-
+derived invariant delta functors.

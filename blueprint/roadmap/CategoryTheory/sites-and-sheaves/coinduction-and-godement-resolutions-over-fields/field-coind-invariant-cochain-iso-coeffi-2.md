@@ -1,3 +1,5 @@
-# Field Coind Invariant Cochain Iso coefficient naturality
+# Invariant coinduction complex comparison is natural
 
-The fixed original comparison is natural in every actual coefficient map.
+Invariant coinduction complex comparison is natural.
+
+The entire cochain comparison square commutes with every discrete Galois coefficient morphism.

@@ -1,4 +1,5 @@
-# Tensor Pow Obj Two Iso
+# Two factor tensor power is the binary tensor
 
-The canonical weight-two tensor power isomorphism, normalized as the
-tensor square of the original object.
+Two factor tensor power is the binary tensor.
+
+The block split and one-factor coordinates identify power two with `X ⊗ X`.

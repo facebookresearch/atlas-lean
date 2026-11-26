@@ -1,9 +1,7 @@
-# Gen Zero Fst
+# Tuple coordinates of the right point action
 
-Iterated right action drops the generalized head tuple entry.
+Tuple coordinates of the right point action.
 
-By induction on `n` generalizing `X`: the zero case is a subsingleton;
-the successor case exposes `Fin.snoc` on both sides (via
-`powTupleGen_succ_fst`), commutes `Fin.tail` past `Fin.snoc`, and closes
-the init components with the induction hypothesis and the last components
-with `genZeroSnd` at `T.obj X`.
+The degree-n iterated right action on PUnit × Tⁿ⁺¹(X) removes the outermost G-coordinate.
+Under the generalized tuple equivalence, its tuple component is the tail of the original
+tuple.

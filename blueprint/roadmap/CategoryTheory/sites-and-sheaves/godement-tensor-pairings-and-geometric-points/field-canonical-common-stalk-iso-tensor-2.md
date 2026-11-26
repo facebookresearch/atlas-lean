@@ -1,4 +1,6 @@
-# Field Canonical Common Stalk Iso tensor inv comm
+# Inverse field stalk comparison commutes with inverse tensor coordinates
 
-The real canonical-to-prescribed stalk comparison commutes with the inverse binary tensor stalk
-maps.
+Inverse field stalk comparison commutes with inverse tensor coordinates.
+
+The inverse canonical stalk-tensor coordinate followed by the inverse stalk comparison equals
+tensoring the two inverse stalk comparisons followed by the prescribed inverse coordinate.

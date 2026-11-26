@@ -1,5 +1,7 @@
-# Schreier Corestriction mul Equiv Of Eq hom
+# Group transport with an identified image subgroup
 
-Arbitrary-degree Schreier corestriction is natural under simultaneous
-ambient-group and coefficient transport when the image subgroup is supplied
-through a separately bundled equal presentation.
+Group transport with an identified image subgroup.
+
+If e(H) = H′, canonical corestriction for H′ commutes with transport by e and a coefficient
+morphism φ : e* A → B. The subgroup map and coefficient comparison use the specified equality
+e(H) = H′.

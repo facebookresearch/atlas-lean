@@ -1,5 +1,6 @@
-# Bar Resolution Linear Yoneda Iso
+# Linear-Yoneda comparison for the bar resolution
 
-The literal bar linear-Yoneda complex and the one carried by the bundled
-bar resolution differ only by the recorded equality of their chain
-complexes.
+For a group `G`, a commutative ring `k`, and `A : Rep k G`, the canonical equality
+`(Rep.barResolution k G).complex = Rep.barComplex k G` induces `barResolutionLinearYonedaIso A
+: (Rep.barComplex k G).linearYonedaObj k A ≅ (Rep.barResolution k G).complex.linearYonedaObj k
+A`.

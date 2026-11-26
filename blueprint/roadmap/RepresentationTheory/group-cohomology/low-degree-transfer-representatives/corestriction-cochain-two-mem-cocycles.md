@@ -1,4 +1,6 @@
-# Corestriction Cochain Two mem cocycles₂
+# Binary transfer preserves two-cocycles
 
-Degree-two chosen-transversal cochain transfer sends two-cocycles to
-two-cocycles.
+Binary transfer preserves two-cocycles.
+
+An H-two-cocycle for A|H is sent by the chosen-transversal binary transfer to a G-two-cocycle
+for A.

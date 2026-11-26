@@ -1,4 +1,6 @@
-# Nerve Prism Map nerve Cylinder Functor
+# The prism of a cylinder classifier
 
-The nerve prism of the cylinder functor of a natural
-transformation is its nerve homotopy map, by definition.
+The prism of a cylinder classifier.
+
+The one-dimensional nerve prism associated to the cylinder functor of α equals the nerve
+cylinder map of α.

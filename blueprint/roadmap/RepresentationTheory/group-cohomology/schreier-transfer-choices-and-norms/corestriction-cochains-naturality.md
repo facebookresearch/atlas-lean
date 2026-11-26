@@ -1,4 +1,6 @@
-# Corestriction Cochains naturality
+# The coefficient square for transfer cochain maps
 
-The arbitrary-degree chosen-transversal transfer is natural as a map of
-inhomogeneous cochain complexes.
+The coefficient square for transfer cochain maps.
+
+The transfer cochain map for A followed by the G-coefficient map of φ equals the restricted
+H-coefficient map of φ followed by the transfer cochain map for B.

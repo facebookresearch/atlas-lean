@@ -1,5 +1,5 @@
-# Pullback along the identity monoid homomorphism
+# Restriction along the identity has the identity-component natural comparison
 
-Pullback along the identity continuous monoid homomorphism is naturally
-isomorphic to the identity functor on discrete continuous abelian actions.
-Its components induce the identity additive maps on the coefficient groups.
+For a monoid G with a topology, pullback along id_G is naturally isomorphic to the identity
+functor on discrete continuous abelian G-actions. Each comparison component has the identity
+additive map on the coefficient group.

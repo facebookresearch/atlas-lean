@@ -1,4 +1,6 @@
-# Corestriction Cocycles Three H3π independent
+# Transferred three-cocycles have transversal-independent classes
 
-The `H³` classes of a transferred three-cocycle do not depend on the
-chosen finite right transversal.
+Transferred three-cocycles have transversal-independent classes.
+
+For any H-three-cocycle z, transferring with T or U gives G-three-cocycles with the same image
+in H³(G,A).

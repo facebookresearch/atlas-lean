@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Counit underlying
+# Field stalk counit is projected point evaluation
 
-The actual counit is the original point counit on the SAME invariant inclusion.
+Field stalk counit is projected point evaluation.
+
+Its underlying map is the stalk map of the invariant projection followed by the point-
+skyscraper counit.

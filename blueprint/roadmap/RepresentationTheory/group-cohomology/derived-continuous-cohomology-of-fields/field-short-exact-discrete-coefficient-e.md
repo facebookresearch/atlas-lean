@@ -1,3 +1,6 @@
-# Field Short Exact discrete Coefficient Exact
+# Short exact field coefficients satisfy the concrete exactness predicate
 
-Categorical short exactness gives the same literal original coefficient maps.
+Short exact field coefficients satisfy the concrete exactness predicate.
+
+A categorical short exact sequence of field coefficient modules has the underlying map
+exactness required by continuous-coefficient cohomology.

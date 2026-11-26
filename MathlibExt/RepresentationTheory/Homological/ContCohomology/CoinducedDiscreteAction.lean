@@ -16,25 +16,17 @@ import MathlibExt.RepresentationTheory.Continuous.FiniteQuotientFactorization
 import MathlibExt.Topology.ContinuousMap.CompactDiscrete
 
 /-!
-# Discreteness and joint continuity of compact-open coinduction
+# Discrete topology and joint action on coinduced coefficients
 
-For a compact group and a discrete coefficient representation, compact-open
-coinduction has discrete carrier topology.  For a compact totally
-disconnected group, joint continuity of the source action also gives joint
-continuity of the coinduced action.
+Let R be a ring with a topology, G a topological group and X a
+topological R-representation. If G is compact and X is discrete,
+the compact-open topology on C(G,X) is discrete.
 
-The continuity proof factors each continuous coefficient function through a
-finite open-normal quotient, then intersects its right-invariance subgroup
-with an open-normal subgroup fixing the finite range of the function.
-
-This file installs no global topology or continuity instance.  It makes no
-canonical-cokernel discreteness, coefficient-LES, Serre-sequence,
-dimension-shift, edge, VM2, or norm-residue claim.
-
-## Main declarations
-
-* `ContinuousCohomology.coinduced_discrete`
-* `ContinuousCohomology.coinduced_action_isContinuous`
+If G is also totally disconnected and the action G × X → X is
+jointly continuous, then the diagonal action on C(G,X),
+(g • F)(x) = g • F(g⁻¹x), is jointly continuous.
+The hypotheses concern the given scalar topology, coefficient topology
+and action, in independent universes.
 -/
 
 @[expose] public section
@@ -53,16 +45,26 @@ variable {k : Type u} {G : Type v}
 variable [Ring k] [TopologicalSpace k]
 variable [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-/-- Compact-open coinduction of a discrete coefficient over a compact group
-has discrete carrier topology. -/
+/-- Let R be a ring equipped with a topology and G a topological
+group. A coefficient X is a topological R-module with a G-representation
+by continuous R-linear maps. Scalar, group and carrier universes are independent.
+Write Coind(X) = C(G,X) with compact-open topology and diagonal action
+(g • F)(x) = g • F(g⁻¹x).
+For compact G and a discrete coefficient X, the compact-open
+coinduced carrier C(G,X) has discrete topology. -/
 theorem coinduced_discrete
     [CompactSpace G] (X : TopRep.{max v w, u, v} k G)
     [DiscreteTopology X] : DiscreteTopology X.coind₁ :=
   ContinuousMap.discreteTopology_of_compact_domain
 
-/-- Under the standard joint-action hypothesis, compact-open coinduction
-over a compact totally disconnected group again has jointly continuous
-action. -/
+/-- Let R be a ring equipped with a topology and G a topological
+group. A coefficient X is a topological R-module with a G-representation
+by continuous R-linear maps. Scalar, group and carrier universes are independent.
+Write Coind(X) = C(G,X) with compact-open topology and diagonal action
+(g • F)(x) = g • F(g⁻¹x).
+If G is compact and totally disconnected, X is discrete, and
+its G-action is jointly continuous, then the diagonal coinduced
+G-action on C(G,X) is jointly continuous. -/
 theorem coinduced_action_isContinuous
     [CompactSpace G] [TotallyDisconnectedSpace G]
     (X : TopRep.{max v w, u, v} k G) [DiscreteTopology X]

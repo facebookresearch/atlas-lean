@@ -1,4 +1,5 @@
-# H2 ZMod Restrict Int Add Equiv map
+# Coefficient naturality of the integral second-cohomology comparison
 
-Scalar restriction commutes with an equivariant coefficient map in
-degree two.
+For n∈ℕ, a group G and a morphism t:A→C of ZMod n-
+representations, the degree-two additive comparison satisfies
+χ_C²∘H²(t)=H²(Res(t))∘χ_A², including n=0.

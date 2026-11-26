@@ -1,3 +1,6 @@
-# Field Module Restriction Group Sequence
+# Group restriction map of coefficient short complexes
 
-The same literal restricted coefficient sequence before passing to cochains.
+Group restriction map of coefficient short complexes.
+
+The restriction functor gives the corresponding group-and-coefficient morphism from a short
+complex to its restricted short complex.

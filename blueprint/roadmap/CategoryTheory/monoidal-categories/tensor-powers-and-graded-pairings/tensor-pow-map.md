@@ -1,3 +1,6 @@
-# Tensor Pow Map
+# Morphisms act on every finite tensor factor
 
-Functorial map on finite powers by recursion via `⊗ₘ`.
+Morphisms act on every finite tensor factor.
+
+Define the power map recursively by the identity at zero and tensoring the preceding power map
+with `f` at a successor.

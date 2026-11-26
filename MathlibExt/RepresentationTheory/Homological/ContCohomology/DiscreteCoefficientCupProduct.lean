@@ -17,12 +17,22 @@ public import MathlibExt.RepresentationTheory.Homological.ContCohomology.Invaria
 public import MathlibExt.RepresentationTheory.Continuous.ContinuousActionBridge
 
 /-!
-# Continuous cochains with actual tensor coefficients
+# Tensor-valued cups on continuous homogeneous cochains
 
-The coefficient tensor is the algebraic tensor of the original discrete
-coefficient modules with its discrete topology and tensor group action.
-The scalar ring keeps its given topology. Homogeneous cup uses the original
-continuous invariant cochains and the shared middle coordinate.
+Let R be a commutative ring with a topology, G a profinite group and
+A,B discrete topological R-representations. The coefficient is A⊗[R]B
+with discrete topology and diagonal G-action. In degrees p,q, the cup is
+(f∪g)(t₀,…,t_(p+q)) =
+f(t₀,…,t_p) ⊗[R] g(t_p,…,t_(p+q)).
+The middle coordinate t_p occurs in both factors.
+
+Alternating deletion gives d(f∪g)=df∪g+(-1)^p f∪dg.
+Thus cycles cup to cycles, and cupping a boundary with a cycle gives
+a zero cohomology class in either variable. This earns the R-bilinear
+cup Hᵖ_cts(G,A) × Hᑫ_cts(G,B) → Hᵖ⁺ᑫ_cts(G,A⊗_dB).
+The nested and tuple-form cycle/homology comparisons preserve representatives,
+and the product is natural in both equivariant coefficient maps.
+Scalar, group and coefficient universes remain independent.
 -/
 
 @[expose] public section
@@ -39,15 +49,25 @@ namespace ContinuousCohomology
 variable {R : Type u} [CommRing R] [TopologicalSpace R]
 variable {G : ProfiniteGrp.{v}}
 
-/-- The front coordinates of the original homogeneous cup tuple. -/
+/-- For a profinite group G and degrees p,q, the front tuple map
+G^(p+q+1)→G^(p+1) sends t to (t₀,…,t_p).
+It selects the first p+1 vertices of the homogeneous cup. -/
 def homogeneousCupFront (p q : ℕ) (t : Fin (p + q + 1) → G) : Fin (p + 1) → G :=
   fun i => t ⟨i, by omega⟩
 
-/-- The back coordinates include the shared middle coordinate p. -/
+/-- For a profinite group G and degrees p,q, the back tuple map
+G^(p+q+1)→G^(q+1) sends t to (t_p,…,t_(p+q)).
+It shares vertex p with the front tuple. -/
 def homogeneousCupBack (p q : ℕ) (t : Fin (p + q + 1) → G) : Fin (q + 1) → G :=
   fun i => t ⟨p + i, by omega⟩
 
-/-- Actual invariant continuous homogeneous cochains pair by the tensor cup formula. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The degree-(p,q) homogeneous cup has value
+(f∪g)(t)=f(front(t))⊗[R]g(back(t)), giving a continuous equivariant
+tuple cochain in C_(A⊗_dB)^(p+q). -/
 def flatHomogeneousCup
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -78,7 +98,12 @@ def flatHomogeneousCup
       (f.val (homogeneousCupFront p q t))
       (g.val (homogeneousCupBack p q t))).symm
 
-/-- The homogeneous cup retains every original tuple value. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+On t∈G^(p+q+1), the cup value is
+f(t₀,…,t_p)⊗[R]g(t_p,…,t_(p+q)). -/
 theorem flatHomogeneousCup_apply
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -87,7 +112,12 @@ theorem flatHomogeneousCup_apply
     (flatHomogeneousCup A B p q f g).val t =
       f.val (homogeneousCupFront p q t) ⊗ₜ[R] g.val (homogeneousCupBack p q t) := rfl
 
-/-- The actual homogeneous tensor cup is linear in each original cochain. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The homogeneous cup is R-linear in each cochain variable:
+C_A^p →ₗ[R] C_B^q →ₗ[R] C_(A⊗_dB)^(p+q). -/
 def flatHomogeneousCupLinear
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -132,7 +162,12 @@ def flatHomogeneousCupLinear
         g.val (homogeneousCupBack p q t) = _
     exact TensorProduct.smul_tmul' _ _ _
 
-/-- The cochain-level tensor cup, on the same original module carriers. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The cochain cup induces the R-linear map from the algebraic tensor
+C_A^p⊗[R]C_B^q to C_(A⊗_dB)^(p+q), with value f⊗g↦f∪g. -/
 def flatHomogeneousCupTensorMap
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -258,7 +293,13 @@ private theorem splitCupDeletionSum
         rw [hf, hg]
 
 
-/-- The alternating deletion differential obeys the homogeneous bilinear cup Leibniz identity. -/
+/-- Let R be a commutative ring, M,N,P R-modules in independent
+universes, X any coordinate type and μ:M→ₗ[R]N→ₗ[R]P a bilinear map.
+For f:X^(p+1)→M and g:X^(q+1)→N, define
+(f⋆g)(t)=μ(f(t₀,…,t_p),g(t_p,…,t_(p+q))).
+With D the alternating coordinate-deletion operator,
+D(f⋆g)=(Df)⋆g+(-1)^p f⋆(Dg) on every (p+q+2)-tuple.
+No topology or equivariance is assumed for this identity. -/
 theorem homogeneousDeletionLeibniz
     {R : Type u} [CommRing R] {M : Type a} {N : Type b} {P : Type c}
     [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N]
@@ -342,8 +383,14 @@ theorem homogeneousDeletionLeibniz
         _ = L + T := by rw [hmid, add_zero]
 
 
-/-- The original homogeneous differential satisfies the tensor cup Leibniz formula
-in every pair of nonnegative degrees, including degree zero. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The homogeneous differential obeys
+d(f∪g)=df∪g+(-1)^p f∪dg.
+The two target total-degree expressions are identified by the natural
+addition equalities. -/
 theorem flatHomogeneousCup_leibniz
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -399,7 +446,13 @@ private theorem flatCup_cocycle
   rw [hf, hg, flatCup_zero_left, flatCup_zero_right] at h
   exact h.trans (by simp)
 
-/-- The underlying module complex of the original flat homogeneous cochains. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+Forgetting topology in the tuple-form homogeneous complex gives
+the nonnegative algebraic R-module complex C_X.
+Its degree n terms are equivariant continuous functions on G^(n+1). -/
 abbrev flatHomogeneousModuleComplex (X : TopRep.{max v w, u, v} R G) :
     CochainComplex (ModuleCat.{max v w} R) ℕ :=
   ((forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R)).mapHomologicalComplex
@@ -423,7 +476,13 @@ private theorem flatModuleCycles_closed
   rw [flatModuleComplex_d] at h
   exact h
 
-/-- The original cochain cup applied to the inclusions of both actual cycle modules. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For x∈Zᵖ(C_A) and y∈Zᑫ(C_B), this R-bilinear map takes their
+underlying homogeneous cup into C_(A⊗_dB)^(p+q).
+Its codomain here is the cochain term. -/
 def flatHomogeneousCycleCupCochain
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -432,7 +491,12 @@ def flatHomogeneousCycleCupCochain
   ((flatHomogeneousCupLinear A B p q).compl₂ ((flatHomogeneousModuleComplex B).iCycles q).hom).comp
     ((flatHomogeneousModuleComplex A).iCycles p).hom
 
-/-- The cup of two actual cycles is again a cycle for the original differential. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For cycles x,y in degrees p,q, their cup cochain is closed:
+d(x∪y)=0 in degree p+q+1. -/
 theorem flatHomogeneousCycleCupCochain_closed
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -453,7 +517,12 @@ private theorem liftCycles_value_i
   exact ConcreteCategory.congr_hom
     (K.liftCycles_i k (n + 1) ((ComplexShape.up ℕ).next_eq' rfl) hk) x
 
-/-- The continuous homogeneous cup lifted to the actual target cycles for a fixed left cycle. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+Fix a cycle x∈Zᵖ(C_A). Cupping with x gives the R-linear map
+Zᑫ(C_B)→Zᵖ⁺ᑫ(C_(A⊗_dB)), y↦x∪y. -/
 def flatHomogeneousCycleCupRight
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -466,7 +535,12 @@ def flatHomogeneousCycleCupRight
       ext y
       exact flatHomogeneousCycleCupCochain_closed A B p q x y)).hom
 
-/-- The cycle lift retains its original cochain cup after the actual cycle inclusion. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+Including the output cycle of the fixed-left cycle cup into its
+cochain term gives the underlying cochain x∪y. -/
 theorem flatHomogeneousCycleCupRight_iCycles
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -476,7 +550,12 @@ theorem flatHomogeneousCycleCupRight_iCycles
   exact liftCycles_value_i (flatHomogeneousModuleComplex (discreteTensorCoefficient A B)) (p + q)
     (ModuleCat.ofHom (flatHomogeneousCycleCupCochain A B p q x)) _ y
 
-/-- The bilinear cup on the actual cycles of the underlying flat module complex. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The closed homogeneous cup is R-bilinear on cycles:
+Zᵖ(C_A)→ₗ[R]Zᑫ(C_B)→ₗ[R]Zᵖ⁺ᑫ(C_(A⊗_dB)). -/
 def flatHomogeneousCycleCupLinear
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -521,7 +600,13 @@ private theorem flatHomogeneousCycleCupLinear_iCycles
       (flatHomogeneousCycleCupLinear A B p q x y) = flatHomogeneousCycleCupCochain A B p q x y :=
   flatHomogeneousCycleCupRight_iCycles A B p q x y
 
-/-- The class of the original cycle cup under the actual homology projection. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+Projecting the cycle cup to cohomology gives
+Zᵖ(C_A)→ₗ[R]Zᑫ(C_B)→ₗ[R]Hᵖ⁺ᑫ(C_(A⊗_dB)),
+with value (x,y)↦[x∪y]. -/
 def flatHomogeneousCycleCupClass
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -661,7 +746,13 @@ private theorem cycleCupHomology_boundary_right_general
   subst q
   exact cycleCupHomology_boundary_right A B p i x b
 
-/-- Every incoming left boundary has zero cup class, including degree zero. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+If x is a boundary cycle in degree p and y is a cycle in degree q,
+then [x∪y]=0. Boundaries are the images of the actual incoming
+differential in the degree p cochain short complex. -/
 theorem flatHomogeneousCycleCupClass_boundary_left
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -675,7 +766,13 @@ theorem flatHomogeneousCycleCupClass_boundary_left
     rw [hz]
     exact DFunLike.congr_fun (map_zero (flatHomogeneousCycleCupClass A B p q)) y
 
-/-- Every incoming right boundary has zero cup class, including degree zero. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+If x is a cycle in degree p and y a boundary cycle in degree q,
+then [x∪y]=0, including the degree-zero boundary convention of
+the nonnegative cochain complex. -/
 theorem flatHomogeneousCycleCupClass_boundary_right
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -700,7 +797,13 @@ private theorem descHomology_apply
     (S.descHomology k hk).hom (S.homologyπ z) = k.hom z := by
   exact ConcreteCategory.congr_hom (S.π_descHomology k hk) z
 
-/-- The actual flat module homology cup, with both boundary conditions proved internally. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The cycle cup descends to the R-bilinear map
+Hᵖ(C_A)→ₗ[R]Hᑫ(C_B)→ₗ[R]Hᵖ⁺ᑫ(C_(A⊗_dB)).
+Its construction uses vanishing on boundaries in both variables. -/
 def flatHomogeneousModuleCupLinear
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -752,7 +855,12 @@ def flatHomogeneousModuleCupLinear
           _ = r • left x z := by rw [map_smul]; rfl
           _ = _ := congrArg (r • ·) (right_pi x z).symm }
 
-/-- The flat homology cup preserves both original cycle projections. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For cycles x,y, the descended cup satisfies
+[ x ]∪[ y ]=[x∪y] under the cycle-to-cohomology projections. -/
 theorem flatHomogeneousModuleCupLinear_pi
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -780,7 +888,13 @@ theorem flatHomogeneousModuleCupLinear_pi
   exact (descHomology_apply T (ModuleCat.ofHom (left (S.homologyπ x))) hT y).trans
     (congrArg (fun f : T.cycles →ₗ[R] P => f y) hx)
 
-/-- The genuine native-to-flat homology comparison after forgetting only topology. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+The underlying R-module of Hᵖ_cts(G,X) is canonically isomorphic
+to Hᵖ(C_X), using the nested/tuple complex isomorphism and the
+topology-forgetting homology comparison. -/
 def homogeneousNativeModuleHomologyIso
     (X : TopRep.{max v w, u, v} R G) (p : ℕ) :
     (forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R)).obj
@@ -791,7 +905,12 @@ def homogeneousNativeModuleHomologyIso
     (((flatHomogeneousComplex X).sc p).mapHomologyIso
       (forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R))).symm
 
-/-- The genuine native-to-flat cycle comparison after forgetting only topology. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+The underlying R-module of the nested homogeneous cycle object
+Zᵖ_cts(G,X) is isomorphic to Zᵖ(C_X), preserving tuple values. -/
 def homogeneousNativeModuleCyclesIso
     (X : TopRep.{max v w, u, v} R G) (p : ℕ) :
     (forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R)).obj
@@ -802,7 +921,13 @@ def homogeneousNativeModuleCyclesIso
     (((flatHomogeneousComplex X).sc p).mapCyclesIso
       (forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R))).symm
 
-/-- Cup on the original native continuous cohomology of arbitrary discrete coefficients. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The algebraic cup transported through the homogeneous cohomology
+comparisons gives the R-bilinear continuous cup
+Hᵖ_cts(G,A)→ₗ[R]Hᑫ_cts(G,B)→ₗ[R]Hᵖ⁺ᑫ_cts(G,A⊗_dB). -/
 def discreteContinuousCup
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -813,7 +938,13 @@ def discreteContinuousCup
       (homogeneousNativeModuleHomologyIso B q).hom.hom).comp
         (homogeneousNativeModuleHomologyIso A p).hom.hom
 
-/-- The tensor cup on the original native cohomology carriers in all nonnegative degrees. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The continuous cup induces the R-linear map of underlying modules
+Hᵖ_cts(G,A)⊗[R]Hᑫ_cts(G,B)→Hᵖ⁺ᑫ_cts(G,A⊗_dB),
+sending a⊗b to a∪b. -/
 def discreteContinuousCupTensorMap
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -874,7 +1005,14 @@ private theorem forgetTopModule_pi_inverse
       rw [forgetTopModule_pi]
     _ = _ := by simp only [Category.assoc, Iso.hom_inv_id, Category.comp_id]
 
-/-- The native-to-flat comparison preserves the original homology projection. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+For the homogeneous cycle projection π, cycle comparison α_Z and
+homology comparison α_H, one has
+α_H∘U(π)=π_alg∘α_Z. Thus the comparisons commute with passage
+from cycles to cohomology. -/
 theorem homogeneousNativeModuleHomologyIso_pi
     (X : TopRep.{max v w, u, v} R G) (p : ℕ) :
     (forget₂ (TopModuleCat.{max v w} R) (ModuleCat.{max v w} R)).map (π X p) ≫
@@ -904,7 +1042,12 @@ theorem homogeneousNativeModuleHomologyIso_pi
   exact (Category.assoc _ _ _).symm.trans
     (h'.trans ((Category.assoc _ _ _).trans (k.trans (Category.assoc _ _ _).symm)))
 
-/-- The comparison preserves every original native cycle class value. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+For z∈Zᵖ_cts(G,X), the homology comparison sends π(z) to
+π_alg(α_Z(z)). -/
 theorem homogeneousNativeModuleHomologyIso_pi_value
     (X : TopRep.{max v w, u, v} R G) (p : ℕ) (z : cocycles X p) :
     (homogeneousNativeModuleHomologyIso X p).hom.hom (π X p z) =
@@ -928,7 +1071,13 @@ private theorem homogeneousNativeModuleHomologyIso_pi_inverse
       rw [← homogeneousNativeModuleHomologyIso_pi]
     _ = _ := by simp only [Category.assoc, Iso.hom_inv_id, Category.comp_id]
 
-/-- The cup of original native cocycles, transported through the genuine flat complex comparison. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The homogeneous tensor cup gives the R-bilinear homogeneous cycle map
+Zᵖ_cts(G,A)→ₗ[R]Zᑫ_cts(G,B)→ₗ[R]Zᵖ⁺ᑫ_cts(G,A⊗_dB),
+via the invariant tuple-cycle comparisons. -/
 def discreteContinuousCupCocycles
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ) :
@@ -939,7 +1088,12 @@ def discreteContinuousCupCocycles
       (homogeneousNativeModuleCyclesIso B q).hom.hom).comp
         (homogeneousNativeModuleCyclesIso A p).hom.hom
 
-/-- The native cup of two original cycle classes equals the original projection of their cup. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For homogeneous cycles x,y, the continuous cohomology cup satisfies
+cup(π(x),π(y))=π(cup_cycles(x,y)). -/
 theorem discreteContinuousCup_pi
     (A B : TopRep.{max v w, u, v} R G)
     [DiscreteTopology A] [DiscreteTopology B] (p q : ℕ)
@@ -957,7 +1111,14 @@ theorem discreteContinuousCup_pi
       ((homogeneousNativeModuleCyclesIso B q).hom.hom y))
 
 
-/-- The genuine native-to-flat cycle comparison preserves the original cycle inclusion. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+The cycle comparison α_Z:U(Zᵖ_cts(G,X))→Zᵖ(C_X) commutes
+with inclusion into cochain terms:
+i_alg∘α_Z=U(E_p)∘U(i_native),
+where E_p is the tuple-form degree comparison. -/
 theorem homogeneousNativeModuleCyclesIso_iCycles
     (X : TopRep.{max v w, u, v} R G) (p : ℕ) :
     (homogeneousNativeModuleCyclesIso X p).hom ≫
@@ -986,7 +1147,13 @@ theorem homogeneousNativeModuleCyclesIso_iCycles
     ((congrArg (fun k =>
       F.map (HomologicalComplex.cyclesMap (homogeneousFlatComplexIso X).hom p) ≫ k) hi).trans hn)
 
-/-- The cycle comparison preserves every original finite-tuple value. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+For a homogeneous cycle z and t∈G^(p+1), its algebraic cycle comparison
+has tuple value equal to nested evaluation of z's included cochain
+at t. -/
 theorem homogeneousNativeModuleCyclesIso_tuple_value
     (X : TopRep.{max v w, u, v} R G) (p : ℕ) (z : cocycles X p)
     (t : Fin (p + 1) → G) :
@@ -997,7 +1164,13 @@ theorem homogeneousNativeModuleCyclesIso_tuple_value
   exact (congrArg (fun c : flatHomogeneousCochains X p => c.val t) h).trans
     (homogeneousFlatComplexIso_hom_apply X p ((TopRep.homogeneousCochains X).iCycles p z) t)
 
-/-- The original native cycle cup is the tensor of the original front and back tuple values. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For homogeneous cycles x,y, evaluation of their cup on a tuple t is
+E_(p+q+1)(x∪y)(t)=E_(p+1)(x)(front(t))⊗[R]E_(q+1)(y)(back(t)).
+The middle coordinate is shared. -/
 theorem discreteContinuousCupCocycles_tuple_value
     (A B : TopRep.{max v w, u, v} R G) [DiscreteTopology A] [DiscreteTopology B]
     (p q : ℕ) (x : cocycles A p) (y : cocycles B q) (t : Fin (p + q + 1) → G) :
@@ -1032,7 +1205,13 @@ theorem discreteContinuousCupCocycles_tuple_value
       (homogeneousNativeModuleCyclesIso_tuple_value A p x (homogeneousCupFront p q t))
       (homogeneousNativeModuleCyclesIso_tuple_value B q y (homogeneousCupBack p q t))))))
 
-/-- The original cochain coefficient map acts on every tuple by its original coefficient morphism. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+For a continuous equivariant R-linear f:X→X′ over the identity
+group map, its homogeneous cochain map sends each tuple value c(t)
+to f(c(t)). -/
 theorem cochainsMap_id_tuple_value
     {A A' : TopRep.{max v w, u, v} R G} (f : A ⟶ A') (n : ℕ)
     (c : (TopRep.homogeneousCochains A).X n) (t : Fin (n + 1) → G) :
@@ -1044,7 +1223,12 @@ theorem cochainsMap_id_tuple_value
   exact resolutionFinUncurry_resolutionMap (ContinuousMonoidHom.id G)
     f (n + 1) c.val t
 
-/-- The original cycle coefficient map preserves the same literal finite-tuple formula. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and X a topological R-representation. Let U forget coefficient topology,
+and C_X be the algebraic complex of homogeneous tuple cochains.
+Scalar, group and carrier universes are independent.
+For an equivariant coefficient map f:X→X′, the induced cycle
+map has tuple value f of the original cycle's included tuple value. -/
 theorem cocyclesMap_id_tuple_value
     {A A' : TopRep.{max v w, u, v} R G} (f : A ⟶ A') (n : ℕ)
     (z : cocycles A n) (t : Fin (n + 1) → G) :
@@ -1073,7 +1257,13 @@ private theorem nativeCycles_ext
   exact (homogeneousNativeModuleCyclesIso_tuple_value X n z t).trans
     ((h t).trans (homogeneousNativeModuleCyclesIso_tuple_value X n z' t).symm)
 
-/-- The original native cycle cup is natural in both coefficient morphisms. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For continuous equivariant maps f:A→A′ and g:B→B′ between four
+discrete coefficients, the cycle cup obeys
+Z(f⊗g)(x∪y)=Z(f)(x)∪Z(g)(y). -/
 theorem discreteContinuousCupCocycles_naturality
     {A B A' B' : TopRep.{max v w, u, v} R G}
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology A'] [DiscreteTopology B']
@@ -1111,7 +1301,12 @@ private theorem coefficientH_pi
       π A' n (cocyclesMap (ContinuousMonoidHom.id G) f n z) := by
   exact ConcreteCategory.congr_hom (π_map (ContinuousMonoidHom.id G) f n) z
 
-/-- The original native cohomology cup commutes with both actual coefficient maps. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For continuous equivariant f:A→A′ and g:B→B′ between discrete
+coefficients, H^(p+q)(f⊗g)(a∪b)=Hᵖ(f)(a)∪Hᑫ(g)(b). -/
 theorem discreteContinuousCup_naturality
     {A B A' B' : TopRep.{max v w, u, v} R G}
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology A'] [DiscreteTopology B']
@@ -1151,7 +1346,12 @@ theorem discreteContinuousCup_naturality
     _ = _ := congrArg₂ (fun a b => discreteContinuousCup A' B' p q a b)
       (coefficientH_pi f p x).symm (coefficientH_pi g q y).symm
 
-/-- The tensor cup map evaluates every pure tensor by the original native cup. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+The continuous cup tensor map has pure value a⊗[R]b↦a∪b
+for a∈Hᵖ_cts(G,A) and b∈Hᑫ_cts(G,B). -/
 theorem discreteContinuousCupTensorMap_tmul
     (A B : TopRep.{max v w, u, v} R G) [DiscreteTopology A] [DiscreteTopology B]
     (p q : ℕ) (a : continuousCohomology p A) (b : continuousCohomology q B) :
@@ -1159,7 +1359,13 @@ theorem discreteContinuousCupTensorMap_tmul
       discreteContinuousCup A B p q a b := by
   exact TensorProduct.lift.tmul a b
 
-/-- The tensor native cohomology cup satisfies the actual coefficient-map square. -/
+/-- Let R be a commutative ring with a topology, G a profinite group,
+and A,B topological R-representations with discrete coefficient topologies.
+Write C_A^n for homogeneous tuple cochains, d for alternating deletion,
+and A⊗_d B for the discrete tensor coefficient with diagonal G-action.
+For discrete coefficient maps f:A→A′ and g:B→B′, the cup
+tensor maps satisfy
+cup′∘(Hᵖ(f)⊗Hᑫ(g))=Hᵖ⁺ᑫ(f⊗g)∘cup. -/
 theorem discreteContinuousCupTensorMap_naturality
     {A B A' B' : TopRep.{max v w, u, v} R G}
     [DiscreteTopology A] [DiscreteTopology B] [DiscreteTopology A'] [DiscreteTopology B']

@@ -16,14 +16,17 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDegreeThreeFunctoriality
 
 /-!
-# Transitivity of canonical degree-three corestriction
+# Transitivity of degree-three corestriction
 
-For a subgroup chain `K ≤ H ≤ G`, compatible product right transversals
-identify direct degree-three transfer with the composite transfer through
-`H`.  Transversal independence then gives transitivity of canonical `H³`
-corestriction.
+Let `G` be a group, `k` a commutative ring, `H ≤ G` finite index, and `K ≤ H` finite index.
+Put `J = K.map H.subtype ≤ G` and let `q : K ≃* J` identify `K` with this image. For right
+transversals `S` of `K` in `H` and `T` of `H` in `G`, the product transversal has
+representatives `s t`, with `s∈S` and `t∈T`.
 
-No field-theoretic, Kummer, norm-residue, or Bloch--Kato claim is made here.
+The degree-three cochain and cocycle transfer for this product equals transfer through `H`. On
+cohomology, `cor_J^G = cor_H^G ∘ cor_K^H ∘ q^*`, with the canonical comparison between
+restriction to `J` and iterated restriction to `K`. The identity holds for product-transversal
+maps and for canonical corestriction.
 -/
 
 @[expose] public section
@@ -48,8 +51,11 @@ noncomputable local instance corestrictionH3TransitivityMapFiniteIndex
     [K.FiniteIndex] [H.FiniteIndex] : (K.map H.subtype).FiniteIndex :=
   finiteIndex_map_subtype
 
-/-- Cochain-level transitivity for the compatible product right transversal
-in degree three. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype` and let `q : K ≃* J` be the injective-image equivalence.
+For right transversals `S` of `K` in `H`, `T` of `H` in `G`, and any `f : J × J × J → A`,
+`Tr_{S.product T}^A f = Tr_T^A(Tr_S^{Res_H A}(f ∘ q³))`. The product representatives are `s t`
+in that order. -/
 theorem corestrictionCochainThree_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -166,8 +172,11 @@ theorem corestrictionCochainThree_product (A : Rep k G)
       intro t _
       rw [map_sum]
 
-/-- Cocycle-level transitivity for compatible product right transversals in
-degree three. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Set `J=K.map H.subtype`, let `q : K ≃* J` be its image equivalence, and put
+`τ=(mapSubtypeResIso A).hom : q^*(Res_J A) → Res_K(Res_H A)`. For right transversals `S,T` of
+the two inclusions and `z ∈ Z³(J,Res_J A)`, `Tr^Z_{S.product T} z = Tr_T^Z(Tr_S^Z(mapCocycles₃
+q τ z))`, using coefficients `A` and `Res_H A` for the outer and inner transfers. -/
 theorem corestrictionCocyclesThree_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -191,8 +200,10 @@ theorem corestrictionCocyclesThree_product (A : Rep k G)
       (g₁, g₂, g₃)
   exact congrFun (corestrictionCochainThree_product A S T f) (g₁, g₂, g₃)
 
-/-- Chosen-transversal degree-three corestriction is transitive for
-compatible product transversals. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Put `J=K.map H.subtype`, let `q : K ≃* J`, and put `τ=(mapSubtypeResIso A).hom`.
+For right transversals `S` of `K` in `H`, `T` of `H` in `G`, and `x ∈ H³(J,Res_J A)`,
+`cor_{S.product T}^A x = cor_T^A(cor_S^{Res_H A}(map q τ 3 x))`. -/
 theorem corestrictionH3OfRightTransversal_product (A : Rep k G)
     (S : K.RightTransversal) (T : H.RightTransversal)
     [K.FiniteIndex] [H.FiniteIndex]
@@ -215,8 +226,10 @@ theorem corestrictionH3OfRightTransversal_product (A : Rep k G)
       exact congrArg (H3π A)
         (corestrictionCocyclesThree_product A S T f)
 
-/-- Canonical degree-three finite-index corestriction is transitive along a
-subgroup chain. -/
+/-- Let `k` be a commutative ring, `G` a group, `H ≤ G` finite index, `K ≤ H` finite index, and `A
+: Rep k G`. Set `J=K.map H.subtype`, let `q : K ≃* J` be the canonical image equivalence, and
+let `τ=(mapSubtypeResIso A).hom` compare `q^*(Res_J A)` with `Res_K(Res_H A)`. For `x ∈
+H³(J,Res_J A)`, `cor_J^G x = cor_H^G(cor_K^H(map q τ 3 x))`. -/
 theorem corestrictionH3_trans (A : Rep k G)
     [K.FiniteIndex] [H.FiniteIndex]
     (x : H3 (Rep.res (Subgroup.subtype (K.map H.subtype)) A)) :

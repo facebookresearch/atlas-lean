@@ -1,3 +1,5 @@
-# Field Prescribed Common Point Family conservative
+# The lifted prescribed-point family is conservative
 
-Common conservativity is derived from the actual original-sieve criterion.
+For a field k and prescribed separable closure Ω, the singleton common-height geometric-point
+family is conservative on the full small étale topology. The criterion is the lift of the same
+sieve-arrow covering condition.

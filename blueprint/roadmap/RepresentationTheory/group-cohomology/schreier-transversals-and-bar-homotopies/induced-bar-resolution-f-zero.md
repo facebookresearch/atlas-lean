@@ -1,4 +1,5 @@
-# Induced Bar Resolution π f zero
+# The degree-zero component of the induced resolution map
 
-In degree zero, the induced bar-resolution augmentation is the literal
-induction of the subgroup bar augmentation.
+The degree-zero component of the induced resolution map.
+
+The degree-zero augmentation of inducedBarResolution H equals the induced H-bar augmentation.

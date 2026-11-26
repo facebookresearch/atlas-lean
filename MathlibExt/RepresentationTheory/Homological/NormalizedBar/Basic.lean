@@ -16,16 +16,23 @@ public import Mathlib.LinearAlgebra.Finsupp.LSum
 public import Mathlib.LinearAlgebra.Finsupp.Supported
 
 /-!
-# Literal group-bar tuple modules and standard-basis comparison
+# Free group-bar tuples and homogeneous coordinates
 
-Normalized degree n is the free representation on tuples of length n
-whose entries are all nonidentity. The homogeneous standard presentation
-is identified with the full tuple presentation by the native diagonal
-action equivalence, followed by native finitely supported domain transport
-and currying. Coefficient and group universes are independent.
+Let k be a commutative ring in universe u and G a group in universe v.
+The full degree n representation is free over k[G] on G^n;
+the normalized degree is free on tuples with every entry different from 1.
+Their carriers have universe max(u,v).
 
-The raw tuple inclusion is a degree map. The chain inclusion constructed
-by normalization must additionally apply the native Dold–Kan projector.
+Homogeneous vertices a₀,…,a_n correspond to
+(g_i=a_i⁻¹a_(i+1), h=a₀). The inverse vertices are h times the
+ordered prefix products of g. This identifies the simplicial linearization
+of EG with full inhomogeneous tuple degrees.
+
+The degree projection kills exactly identity-containing tuples;
+its raw degree section includes the nonidentity tuples.
+The projection kernel is their degeneracy span over k[G].
+A chain section is obtained later by correcting the raw section with
+the Dold–Kan normalization projector.
 -/
 
 @[expose] public section
@@ -43,33 +50,59 @@ section Tuples
 
 variable (G : Type v) [One G]
 
-/-- A tuple with no identity entry. -/
+/-- For a type G with a distinguished element 1, a tuple g:G^n is
+nondegenerate when g_i≠1 for every coordinate i.
+The empty tuple is included. -/
 def IsNondegenerate {n : ℕ} (g : Fin n → G) : Prop := ∀ i, g i ≠ 1
 
-/-- The literal generator type of normalized degree n. -/
+/-- For a type G with distinguished element 1, N_n is the subtype
+of length n tuples whose every entry differs from 1. -/
 abbrev Tuple (n : ℕ) := {g : Fin n → G // IsNondegenerate G g}
 
 end Tuples
 
 variable (k : Type u) [CommRing k] (G : Type v) [Group G]
 
-/-- The literal normalized degree object, free over the group ring. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The normalized degree Q_n is the free k-linear G-representation
+on N_n, with the regular G-action on its k[G] coefficients. -/
 abbrev degree (n : ℕ) : Rep.{max u v} k G := Rep.free k G (Tuple G n)
 
-/-- The full unnormalized tuple degree object. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The full degree B_n is the free k-linear G-representation on
+all ordered tuples G^n. -/
 abbrev fullDegree (n : ℕ) : Rep.{max u v} k G := Rep.free k G (Fin n → G)
 
-/-- The actual simplicial linearization of the native universal cover EG. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+Linearizing the diagonal G-action on the universal cover EG
+gives the simplicial standard representation.
+In degree n its basis is the homogeneous vertex set G^(n+1). -/
 @[reducible]
 def standardSimplicial : SimplicialObject (Rep.{max u v} k G) :=
   classifyingSpaceUniversalCover G ⋙ Rep.linearization k G
 
-/-- Its alternating-face standard complex. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The alternating-face complex of the standard simplicial
+representation has boundary ∑_i(-1)^i times vertex deletion. -/
 abbrev standardComplex : ChainComplex (Rep.{max u v} k G) ℕ :=
   (AlgebraicTopology.alternatingFaceMapComplex _).obj (standardSimplicial k G)
 
-/-- The underlying tuple equivalence of the native diagonal action
-isomorphism, with the tuple coordinate first. -/
+/-- For a group G, the vertex-to-tuple equivalence sends
+(a₀,…,a_n) to ((a_i⁻¹a_(i+1))_i,a₀).
+Its inverse sends (g,h) to h times the ordered prefix-product
+vertices (1,g₀,g₀g₁,…). -/
 def tupleEquiv (n : ℕ) : (Fin (n + 1) → G) ≃ (Fin n → G) × G :=
   (((forget (Action (Type v) G)).mapIso
     (Action.diagonalSuccIsoTensorTrivial G n)).toEquiv).trans (Equiv.prodComm _ _)
@@ -87,8 +120,13 @@ theorem tupleEquiv_symm_apply (n : ℕ) (g : Fin n → G) (h : G) :
   change (Action.diagonalSuccIsoTensorTrivial G n).inv.hom (h, g) = _
   exact Action.diagonalSuccIsoTensorTrivial_inv_hom_apply h g
 
-/-- Native finitely supported basis transport followed by currying gives
-the full inhomogeneous group-ring tuple module. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The k-linear basis equivalence takes a homogeneous symbol
+r[a₀,…,a_n] to the tuple symbol indexed by
+(a_i⁻¹a_(i+1))_i with group-ring coefficient r[a₀]. -/
 def basisLinearEquiv (n : ℕ) :
     k[Fin (n + 1) → G] ≃ₗ[k] (Fin n → G) →₀ k[G] :=
   (MonoidAlgebra.coeffLinearEquiv k).trans
@@ -109,7 +147,12 @@ theorem basisLinearEquiv_symm_single_single (n : ℕ) (g : Fin n → G) (h : G) 
       MonoidAlgebra.single (h • Fin.partialProd g) r := by
   simp [basisLinearEquiv, Finsupp.domLCongr_symm, Finsupp.uncurry_single]
 
-/-- Homogeneous basis symbols in the actual simplicial standard degree. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The standard symbol r[a] is the basis vector at homogeneous
+vertices a∈G^(n+1) in the simplicial standard representation. -/
 @[reducible]
 def standardSymbol (n : ℕ) (a : Fin (n + 1) → G) (r : k) :
     ((standardSimplicial k G).obj (Opposite.op ⦋n⦌)).V :=
@@ -124,8 +167,13 @@ theorem standardSymbol_action (n : ℕ) (h : G) (a : Fin (n + 1) → G) (r : k) 
   exact MonoidAlgebra.mapDomainLinearMap_single (R := k) (S := k)
     (fun b : Fin (n + 1) → G => h • b) r a
 
-/-- The actual standard degree is isomorphic to the full tuple degree,
-with arbitrary independent coefficient and group universes. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The equivariant basis isomorphism from standard degree n to B_n
+uses the consecutive-quotient tuple and initial coefficient a₀.
+Its inverse has vertices h times the prefix products of g. -/
 def basisIso (n : ℕ) :
     (standardSimplicial k G).obj (Opposite.op ⦋n⦌) ≅ fullDegree k G n :=
   Rep.mkIso (Representation.linearizeOfMulActionIso k G (Fin (n + 1) → G)) ≪≫
@@ -150,13 +198,23 @@ theorem basisIso_inv_single_single (n : ℕ) (g : Fin n → G) (h : G) (r : k) :
       standardSymbol k G n (h • Fin.partialProd g) r :=
   basisLinearEquiv_symm_single_single k G n g h r
 
-/-- Projection deletes a tuple exactly when one of its entries is identity. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The degree projection B_n→Q_n retains coefficients at tuples
+with no identity entries and kills coefficients at all other tuples. -/
 def rawProjection (n : ℕ) : fullDegree k G n ⟶ degree k G n := by
   classical
   exact Rep.freeLift k G _ (fun g =>
     if h : IsNondegenerate G g then Finsupp.single ⟨g, h⟩ 1 else 0)
 
-/-- Raw inclusion of the literal nonidentity tuple generators. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The raw degree inclusion Q_n→B_n extends a nonidentity tuple
+symbol to the same full tuple symbol, with zero coefficients elsewhere. -/
 def rawInclusion (n : ℕ) : degree k G n ⟶ fullDegree k G n :=
   Rep.freeLift k G _ (fun g => Finsupp.single g.val 1)
 
@@ -203,8 +261,12 @@ theorem rawInclusion_comp_rawProjection (n : ℕ) :
   change πn (ιn z) = z
   exact (congrArg (fun q : (Fin n → G) →₀ k[G] => πn q) hι).trans hπ
 
-/-- The actual representation projection is the native restriction of
-finitely supported functions to the nonidentity tuple subtype. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The underlying linear projection B_n→Q_n is restriction of
+a finitely supported coefficient function to the subset N_n. -/
 theorem rawProjection_eq_lsubtypeDomain (n : ℕ) :
     (rawProjection k G n).hom.toLinearMap =
       Finsupp.lsubtypeDomain (R := k) (M := k[G]) {g : Fin n → G | IsNondegenerate G g} := by
@@ -249,11 +311,22 @@ theorem rawProjection_apply (n : ℕ) (f : (fullDegree k G n).V) (g : Tuple G n)
   rw [← Representation.IntertwiningMap.toLinearMap_apply, rawProjection_eq_lsubtypeDomain]
   rfl
 
-/-- The actual group-ring submodule spanned by degenerate tuple symbols. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The degeneracy submodule D_n⊂B_n consists of coefficient
+functions supported on tuples with an identity entry.
+It is a submodule over the possibly noncommutative group ring k[G]. -/
 def degenerateDegree (n : ℕ) : Submodule k[G] ((Fin n → G) →₀ k[G]) :=
   Finsupp.supported k[G] k[G] {g | ¬ IsNondegenerate G g}
 
-/-- Degenerate degree is exactly the span of tuples containing identity. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The degeneracy submodule is the k[G]-span of the basis symbols
+[g] with some g_i=1. -/
 theorem degenerateDegree_eq_span (n : ℕ) :
     degenerateDegree k G n =
       Submodule.span k[G] ((fun g : Fin n → G => Finsupp.single g (1 : k[G])) ''
@@ -262,7 +335,12 @@ theorem degenerateDegree_eq_span (n : ℕ) :
   simpa only [degenerateDegree, IsNondegenerate, not_forall, not_not] using
     (Finsupp.supported_eq_span_single (R := k[G]) {g : Fin n → G | ¬ IsNondegenerate G g})
 
-/-- Kernel membership is exactly membership in the literal degeneracy span. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+For f∈B_n, the degree projection is zero exactly when
+f belongs to the degeneracy submodule D_n. -/
 theorem rawProjection_eq_zero_iff (n : ℕ) (f : (fullDegree k G n).V) :
     (rawProjection k G n).hom f = 0 ↔ f ∈ degenerateDegree k G n := by
   change (rawProjection k G n).hom.toLinearMap f = 0 ↔ _
@@ -271,12 +349,22 @@ theorem rawProjection_eq_zero_iff (n : ℕ) (f : (fullDegree k G n).V) :
   rw [Finsupp.subtypeDomain_eq_zero_iff']
   simp only [degenerateDegree, Finsupp.mem_supported', Set.mem_ofPred_eq, not_not]
 
-/-- Tuple projection in the actual homogeneous standard presentation. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The standard-degree projection is the homogeneous/full tuple
+basis isomorphism followed by B_n→Q_n. -/
 def standardProjection (n : ℕ) :
     (standardSimplicial k G).obj (Opposite.op ⦋n⦌) ⟶ degree k G n :=
   (basisIso k G n).hom ≫ rawProjection k G n
 
-/-- Raw nonidentity generators in the homogeneous standard presentation. -/
+/-- Let k be a commutative ring in universe u and G a group in
+universe v. Write N_n for tuples G^n with no identity entry,
+B_n=⊕_(g∈G^n)k[G] for the full free representation, and
+Q_n=⊕_(g∈N_n)k[G] for the normalized degree, with finite support.
+The raw inclusion into standard degree n is Q_n→B_n followed
+by the inverse homogeneous basis isomorphism. -/
 def standardRawInclusion (n : ℕ) :
     degree k G n ⟶ (standardSimplicial k G).obj (Opposite.op ⦋n⦌) :=
   rawInclusion k G n ≫ (basisIso k G n).inv

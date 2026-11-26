@@ -1,4 +1,6 @@
-# Schreier Transfer Induced Bar Homotopy
+# A homotopy between universal transfers from different transversals
 
-Universal induced-bar transfers attached to two right transversals are
-chain homotopic, since they lift the same canonical norm map.
+A homotopy between universal transfers from different transversals.
+
+For T and U, their universal resolution maps lift the same induced trivial norm. Projective-
+resolution lift uniqueness supplies a chain homotopy between the maps.

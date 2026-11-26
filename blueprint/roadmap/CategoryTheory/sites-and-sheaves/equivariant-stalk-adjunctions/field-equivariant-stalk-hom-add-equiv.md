@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Hom Add Equiv
+# Additive field stalk Hom correspondence
 
-The required additive Hom equivalence is the stock additive upgrade of the SAME adjunction.
+Additive field stalk Hom correspondence.
+
+The adjunction Hom correspondence is an additive equivalence of Hom groups.

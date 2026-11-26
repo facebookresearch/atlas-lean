@@ -16,14 +16,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.SchreierTransferCupOneTwoProjection
 
 /-!
-# Canonical degree-three cup projection formula
+# The finite-index cup projection formula in degrees one and two
 
-Canonical finite-index degree-three corestriction satisfies the `(1,2)` cup
-projection formula `cor(res(x) cup y) = x cup cor(y)`.  This follows by
-specializing the chosen-transversal formula to the default transversal used
-by canonical corestriction.
+Let k be a commutative ring, G a group, H≤G a finite-index subgroup, and A,B k-linear
+G-representations in universe u. For x∈H¹(G,A) and y∈H²(H,Res_H B), the projection formula is
+cor³_{A⊗B}(i_{H,*}(res¹_H x∪y))=x∪cor²_B(y).
 
-No field-theoretic, Kummer, norm-residue, or Bloch--Kato claim is made here.
+Here i_H:Res_H A⊗Res_H B≅Res_H(A⊗B) is the tensor-restriction isomorphism. It transports the
+subgroup cup from tensor products of restricted coefficients to the restricted ambient tensor
+coefficient before corestriction. The degree-three and degree-two corestrictions are independent
+of the chosen right transversal.
 -/
 
 @[expose] public section
@@ -40,8 +42,10 @@ universe u
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Canonical finite-index `H¹ × H² → H³` cup projection formula:
-`cor(res(x) cup y) = x cup cor(y)`. -/
+/-- Let k be a commutative ring, G a group, H≤G a finite-index subgroup, and A,B k-linear
+G-representations in universe u. For x∈H¹(G,A), y∈H²(H,Res_H B), and i_H:Res_H A⊗Res_H
+B≅Res_H(A⊗B), one has cor³_{A⊗B}(i_{H,*}(res¹_H x∪y))=x∪cor²_B(y) in H³(G,A⊗_k B). The first cup
+is taken with the restricted coefficients, then transported by i_H. -/
 theorem corestrictionH3_cupOneTwo
     (A B : Rep k G) (H : Subgroup G) [H.FiniteIndex]
     (x : H1 A) (y : H2 (Rep.res (Subgroup.subtype H) B)) :

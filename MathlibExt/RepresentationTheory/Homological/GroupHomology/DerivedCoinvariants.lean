@@ -15,16 +15,18 @@ module
 public import Mathlib.RepresentationTheory.Homological.GroupHomology.Basic
 
 /-!
-# Derived coinvariants with trivial coefficients
+# Left-derived coinvariants of the trivial representation
 
-This file compares the left-derived coinvariants of the trivial representation
-with native group homology. Both sides are computed from Mathlib's same bar
-resolution. The only intervening comparison is the monoidal left unitor, which
-identifies `(k ⊗ P)_G` with `P_G` degreewise.
+For a commutative ring k and monoid G, tensoring on the left by k_triv
+before coinvariants is naturally isomorphic to coinvariants:
+(k_triv⊗A)_G≅A_G. The comparison is induced by the tensor left unitor
+and extends degreewise to any nonnegative chain complex of representations.
 
-The construction is object-level. It does not assert a natural isomorphism
-between the full derived coinvariants and group-homology functors, nor use a
-balance theorem for `Rep.Tor`.
+For a group G and ring k in universe u, with enough projectives in
+Rep.{u} k G, the bar resolution gives
+L_n((-)_G)(k_triv)≅H_n(G,k_triv).
+The intervening chain comparison is the same tensor-unit coinvariant
+isomorphism. All degrees n∈ℕ are included.
 -/
 
 @[expose] public section
@@ -42,16 +44,22 @@ namespace Rep
 
 variable (k : Type u) (G : Type v) [CommRing k] [Monoid G]
 
-/-- Tensoring on the left by the trivial representation before taking
-coinvariants is naturally isomorphic to taking coinvariants directly. -/
+/-- Let k be a commutative ring in universe u and G a monoid in
+universe v. Let k_triv be the trivial representation and (-)_G the
+coinvariant functor on k-linear G-representations.
+The natural isomorphism (k_triv⊗A)_G≅A_G is induced by
+the tensor left unitor k_triv⊗A→A. -/
 noncomputable def coinvariantsTensorTrivialNatIso :
     (coinvariantsTensor k G).obj (trivial k G k) ≅ coinvariantsFunctor k G :=
   Functor.isoWhiskerRight (MonoidalCategory.leftUnitorNatIso (Rep.{u} k G))
       (coinvariantsFunctor k G) ≪≫
     Functor.leftUnitor (coinvariantsFunctor k G)
 
-/-- The forward component of `coinvariantsTensorTrivialNatIso` is induced by
-the monoidal left unitor. -/
+/-- Let k be a commutative ring in universe u and G a monoid in
+universe v. Let k_triv be the trivial representation and (-)_G the
+coinvariant functor on k-linear G-representations.
+The forward component at A is the coinvariant map of the
+left unitor, sending the class of r⊗a to the class of r•a. -/
 @[simp]
 theorem coinvariantsTensorTrivialNatIso_hom_app (A : Rep.{u} k G) :
     (coinvariantsTensorTrivialNatIso k G).hom.app A =
@@ -64,8 +72,12 @@ namespace HomologicalComplex
 
 variable (k : Type u) (G : Type v) [CommRing k] [Monoid G]
 
-/-- Degreewise tensor-unit comparison between the coinvariant complexes of an
-arbitrary chain complex of representations. -/
+/-- Let k be a commutative ring in universe u and G a monoid in
+universe v. Let k_triv be the trivial representation and (-)_G the
+coinvariant functor on k-linear G-representations.
+For a nonnegative chain complex K of representations,
+the degreewise tensor-unit coinvariant maps give the chain isomorphism
+(k_triv⊗K)_G≅K_G. -/
 noncomputable def coinvariantsTensorTrivialIso
     (K : ChainComplex (Rep.{u} k G) ℕ) :
     (((Rep.coinvariantsTensor k G).obj
@@ -76,8 +88,11 @@ noncomputable def coinvariantsTensorTrivialIso
   (NatIso.mapHomologicalComplex (Rep.coinvariantsTensorTrivialNatIso k G)
     (ComplexShape.down ℕ)).app K
 
-/-- Each forward component of `coinvariantsTensorTrivialIso` is the
-coinvariant map of the monoidal left unitor. -/
+/-- Let k be a commutative ring in universe u and G a monoid in
+universe v. Let k_triv be the trivial representation and (-)_G the
+coinvariant functor on k-linear G-representations.
+In degree n, the forward chain component is the coinvariant
+map of k_triv⊗K_n→K_n, the left tensor unitor. -/
 @[simp]
 theorem coinvariantsTensorTrivialIso_hom_f
     (K : ChainComplex (Rep.{u} k G) ℕ) (n : ℕ) :
@@ -93,9 +108,9 @@ namespace groupHomology
 variable (k G : Type u) [CommRing k] [Group G]
   [EnoughProjectives (Rep.{u} k G)]
 
-/-- Native group homology with trivial coefficients, computed from Mathlib's
-bar resolution. This hides the classical decidable-equality choice required
-by `groupHomologyIso`. -/
+/-- For a commutative ring k and group G in universe u, the bar
+resolution P of k_triv computes the isomorphism
+H_n(G,k_triv)≅H_n((k_triv⊗P)_G) for every n∈ℕ. -/
 noncomputable def trivialBarResolutionIso (n : ℕ) :
     groupHomology (Rep.trivial k G k) n ≅
       ((Rep.barResolution k G).complex.coinvariantsTensorObj
@@ -103,13 +118,12 @@ noncomputable def trivialBarResolutionIso (n : ℕ) :
   classical
   exact groupHomologyIso (Rep.trivial k G k) n (Rep.barResolution k G)
 
-/-- The canonical object-level comparison from left-derived coinvariants of
-the trivial representation to native group homology.
-
-Both calculations use `Rep.barResolution k G`; the middle isomorphism is the
-degreewise tensor-unit comparison `coinvariantsTensorTrivialIso`. Mathlib's bar
-resolution currently requires the coefficient ring and group in the same
-universe, which is the only reason for the shared universe in this signature. -/
+/-- Let k,G have universe u, with k a commutative ring and G a group.
+Assume enough projectives in Rep.{u} k G. Write P for the bar resolution
+of the trivial representation k_triv and F=(-)_G for coinvariants.
+The object-level comparison is
+L_nF(k_triv)≅H_n(G,k_triv), through the bar resolution and
+the tensor-unit comparison of its coinvariant complexes. -/
 noncomputable def leftDerivedCoinvariantsTrivialIso (n : ℕ) :
     ((Rep.coinvariantsFunctor k G).leftDerived n).obj
         (Rep.trivial k G k) ≅
@@ -121,9 +135,13 @@ noncomputable def leftDerivedCoinvariantsTrivialIso (n : ℕ) :
           (Rep.barResolution k G).complex)).symm ≪≫
     (trivialBarResolutionIso k G n).symm
 
-/-- The forward derived-coinvariants comparison is exactly the common bar
-resolution comparison, followed by the inverse tensor-unit homology map and
-the inverse native group-homology comparison. -/
+/-- Let k,G have universe u, with k a commutative ring and G a group.
+Assume enough projectives in Rep.{u} k G. Write P for the bar resolution
+of the trivial representation k_triv and F=(-)_G for coinvariants.
+The forward comparison first maps L_nF(k_triv) to H_n(F(P)),
+then uses the inverse tensor-unit chain homology map to
+H_n((k_triv⊗P)_G), and finally the inverse bar-resolution group-homology
+comparison. -/
 theorem leftDerivedCoinvariantsTrivialIso_hom (n : ℕ) :
     (leftDerivedCoinvariantsTrivialIso k G n).hom =
       ((Rep.barResolution k G).isoLeftDerivedObj

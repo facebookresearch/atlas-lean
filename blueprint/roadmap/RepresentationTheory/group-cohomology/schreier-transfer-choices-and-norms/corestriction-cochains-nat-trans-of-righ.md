@@ -1,5 +1,6 @@
-# Corestriction Cochains Nat Trans Of Right Transversal
+# The transfer natural transformation on cochain complexes
 
-A chosen right transversal packages arbitrary Schreier transfer as a
-natural transformation from restricted-coefficient cochains to ambient
-cochains.
+The transfer natural transformation on cochain complexes.
+
+For a fixed finite right transversal T, the cochain maps are natural from restriction to H
+followed by H-cochains to the G-cochain functor.

@@ -15,21 +15,17 @@ public import MathlibExt.Algebra.Category.ModuleCat.Topology.Homology
 public import MathlibExt.Algebra.Category.ModuleCat.Topology.Zero
 
 /-!
-# Acyclicity of compact-open coinduced coefficients
+# Positive acyclicity of compact-open coinduction
 
-For a locally compact topological group, diagonal evaluation gives an extra
-degeneracy of the homogeneous resolution of a compact-open coinduced
-coefficient.  The resulting signed contraction makes every positive-degree
-continuous cohomology class a boundary.
+Let R be a ring with a topology, G a locally compact topological group,
+and X a topological R-representation of G. The coinduced coefficient
+C(G,X) has compact-open topology and diagonal action
+(g • F)(x) = g • F(g⁻¹x).
 
-This is a same-group acyclicity theorem.  It makes no claim about restricting
-a `G`-coinduced coefficient to a proper subgroup, continuous Shapiro,
-inflation--restriction, Hochschild--Serre, or coefficient long exact
-sequences.
-
-## Main declaration
-
-* `ContinuousCohomology.isZero_coind₁_succ`
+Diagonal evaluation supplies an extra degeneracy of its homogeneous
+resolution. The signed contraction makes Hⁿ_cts(G,Coind(X)) a zero
+object for every n > 0. The scalar, group and coefficient universes
+are independent, and X need not have discrete topology.
 -/
 
 @[expose] public section
@@ -253,8 +249,14 @@ private theorem continuousCohomology_eq_zero_coind_succ
   rw [← mul_smul, ← pow_add,
     (Even.add_self (n + 1)).neg_one_pow, one_smul]
 
-/-- Positive-degree continuous cohomology of the compact-open coinduced
-coefficient vanishes for a locally compact topological group. -/
+/-- Let R be a ring equipped with a topology and G a topological
+group. A coefficient X is a topological R-module with a G-representation
+by continuous R-linear maps. Scalar, group and carrier universes are independent.
+Write Coind(X) = C(G,X) with compact-open topology and diagonal action
+(g • F)(x) = g • F(g⁻¹x).
+If G is locally compact, then for every n ∈ ℕ the topological
+continuous cohomology module Hⁿ⁺¹_cts(G,Coind(X)) is a zero object.
+The coinduction and cohomology use this same group G. -/
 theorem isZero_coind₁_succ
     (X : TopRep.{max v w, u, v} k G) (n : ℕ) :
     Limits.IsZero (continuousCohomology (n + 1) X.coind₁) := by

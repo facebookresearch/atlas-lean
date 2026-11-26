@@ -1,4 +1,6 @@
-# Tensor Pow Obj Right Succ
+# Right associated positive tensor powers
 
-The nonempty right-associated tensor power.  The parameter `n`
-represents the positive weight `n + 1`.
+Right associated positive tensor powers.
+
+Start at `X` and recursively prepend `X` to obtain the right-associated power with `n+1`
+factors.

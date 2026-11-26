@@ -1,4 +1,11 @@
-# Res Tensor Pow head Tail coherence
+# Inverse power restriction through head–tail coordinates
 
-Restriction tensor-power comparison preserves canonical head--tail
-decomposition in every positive weight.
+Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
+For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
+with leading unit k, and R_n(A) for the right-associated power with
+R₀(A)=A and R_(n+1)(A)=A⊗R_n(A).
+Let σ_n:Res(L_n(A))≅L_n(Res(A)) be the canonical restriction
+comparison, and h_A,n:L_(n+1)(A)≅A⊗L_n(A) the head–tail split.
+The inverse σ_(n+1)⁻¹ is recovered by head–tail splitting,
+id⊗σ_n⁻¹, the tensor restriction isomorphism, and inverse Res(h_A,n).
+This is the inverse head–tail coherence equation.

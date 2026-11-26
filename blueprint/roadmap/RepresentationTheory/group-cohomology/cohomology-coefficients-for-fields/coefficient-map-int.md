@@ -1,3 +1,6 @@
-# Coefficient Map int
+# Integer linearity of the coefficient morphism
 
-Integer linearity is that of the actual stored continuous-linear arrow.
+Integer linearity of the coefficient morphism.
+
+For n ∈ ℤ and a source coefficient element x, the coefficient morphism satisfies f(n·x) =
+n·f(x).

@@ -1,3 +1,5 @@
-# Schreier Factor Tuple zero
+# The first subgroup factor of a tuple
 
-Zeroth tuple factor is the ordinary first Schreier factor.
+The first subgroup factor of a tuple.
+
+For a nonempty tuple g, its zeroth factor is a(t,g₀).

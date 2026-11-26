@@ -1,3 +1,4 @@
-# Cup one one apply
+# Alexander–Whitney cup on two degree-one classes
 
-The generalized cup computes as the existing `(1,1)` cup on classes.
+Let `A,B` be representations of a group `G` over a commutative ring `k`, `x ∈ H¹(G,A)`, and `y
+∈ H¹(G,B)`. Then `(cup G k A B 1 1)(x ⊗ₜ[k] y) = cupOneOne A B x y` in `H²(G,A ⊗ B)`.

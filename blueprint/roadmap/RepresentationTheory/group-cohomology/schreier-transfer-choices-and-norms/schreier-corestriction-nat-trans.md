@@ -1,4 +1,6 @@
-# Schreier Corestriction Nat Trans
+# Canonical corestriction as a coefficient natural transformation
 
-Canonical arbitrary-degree Schreier corestriction as a natural
-transformation in the coefficient representation.
+Canonical corestriction as a coefficient natural transformation.
+
+In degree n, the canonical maps are natural from the restricted H-cohomology functor to the
+G-cohomology functor on G-representations.

@@ -1,4 +1,6 @@
-# Schreier Factor Tuple tail
+# The subgroup factor tuple after the first coordinate
 
-The factor tuple of the tail after the first representative update is
-the tail of the original factor tuple.
+The subgroup factor tuple after the first coordinate.
+
+The factor tuple of the tail of g, started at r(t,g₀), is the tail of the factor tuple of g
+started at t.

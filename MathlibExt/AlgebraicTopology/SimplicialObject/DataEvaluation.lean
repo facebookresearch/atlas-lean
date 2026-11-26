@@ -15,12 +15,18 @@ module
 public import MathlibExt.AlgebraicTopology.SimplicialObject.ToSimplicial
 
 /-!
-# Evaluation of functor-valued simplicial data
+# Evaluation and reindexing of functor-valued simplicial data
 
-Objectwise evaluation of `Data (A ⥤ D)` at an indexing object `a : A`,
-functorial in `a` through degreewise whiskering and in `Data` morphisms
-through componentwise evaluation. The two directions are organized as the
-currying functor into `A ⥤ Data D` and the uncurrying functor back.
+Let A,D be arbitrary categories with independent object and morphism universes. A simplicial
+datum in A→D consists of functors X_n:A→D, natural face maps d_i:X_{n+1}→X_n for i=0,…,n+1 and
+degeneracies s_i:X_n→X_{n+1} for i=0,…,n, satisfying the simplicial identities. Evaluating at
+a∈A gives the corresponding datum in D; varying a and varying X gives the two functorial
+directions.
+
+Currying organizes these evaluations as A→Data(D). Uncurrying forms degree functors and natural
+faces and degeneracies from such an A-indexed family. Evaluation also commutes with the
+associated simplicial-object construction: the comparison is identity in every simplex and
+intertwines every simplex morphism.
 -/
 
 @[expose] public section
@@ -33,7 +39,11 @@ namespace CategoryTheory.SimplicialObject.Data
 
 variable {A : Type u₁} [Category.{v₁} A] {D : Type u₂} [Category.{v₂} D]
 
-/-- Objectwise evaluation of `Data (A ⥤ D)` at `a : A` into `Data D`. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a∈A, this evaluated datum has degree-n
+object X_n(a), face (d_i)_a and degeneracy (s_i)_a. Applying component evaluation to the
+natural-transformation identities gives all simplicial identities in D. -/
 def evalObj (a : A) (X : Data (A ⥤ D)) : Data D where
   obj n := (X.obj n).obj a
   δ i := (X.δ i).app a
@@ -68,7 +78,9 @@ theorem evalObj_σ (a : A) (X : Data (A ⥤ D)) {n : ℕ} (i : Fin (n + 1)) :
     (evalObj a X).σ i = (X.σ i).app a :=
   rfl
 
-/-- Evaluation of a morphism at `a`. -/
+/-- Let A,D be categories with independent object and morphism universes. For data X,Y in A→D, a
+morphism f:X→Y and a∈A, the evaluated data morphism has degree-n component
+(f_n)_a:X_n(a)→Y_n(a). It commutes with the evaluated faces and degeneracies. -/
 def evalHom (a : A) {X Y : Data (A ⥤ D)} (f : X ⟶ Y) :
     evalObj a X ⟶ evalObj a Y where
   app n := (f.app n).app a
@@ -96,7 +108,9 @@ theorem evalHom_comp {X Y Z : Data (A ⥤ D)} (a : A) (f : X ⟶ Y) (g : Y ⟶ Z
   intro n
   rfl
 
-/-- Evaluation functor at `a`. -/
+/-- Let A,D be categories with independent object and morphism universes. For a∈A, evaluation
+defines a functor Data(A→D)→Data(D), sending degree functor X_n to X_n(a) and data morphism f to
+components (f_n)_a. Identity and composition are preserved. -/
 def evalFunctor (a : A) : Data (A ⥤ D) ⥤ Data D where
   obj X := evalObj a X
   map f := evalHom a f
@@ -123,7 +137,11 @@ theorem evalFunctor_map_app (a : A) {X Y : Data (A ⥤ D)} (f : X ⟶ Y) (n : �
     ((evalFunctor a).map f).app n = (f.app n).app a :=
   rfl
 
-/-- Degreewise whiskering of `X.obj` on a morphism `f : a ⟶ b`. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a morphism f:a→b in A, the evaluated data
+at a map to the data at b by degree-n component X_n(f). Naturality of each face and degeneracy
+supplies the two kinds of simplicial commuting squares. -/
 def evalObjMap (X : Data (A ⥤ D)) {a b : A} (f : a ⟶ b) :
     evalObj a X ⟶ evalObj b X where
   app n := (X.obj n).map f
@@ -151,7 +169,11 @@ theorem evalObjMap_comp (X : Data (A ⥤ D)) {a b c : A} (f : a ⟶ b) (g : b �
   intro n
   simp
 
-/-- Curried object `A ⥤ Data D` attached to `X`. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. This functor A→Data(D) sends a to the
+evaluated datum X_n(a) and f:a→b to components X_n(f). It packages evaluation simultaneously in
+every simplicial degree. -/
 def curryObj (X : Data (A ⥤ D)) : A ⥤ Data D where
   obj a := evalObj a X
   map f := evalObjMap X f
@@ -174,7 +196,9 @@ theorem curryObj_map_app (X : Data (A ⥤ D)) {a b : A} (f : a ⟶ b) (n : ℕ) 
     ((curryObj X).map f).app n = (X.obj n).map f :=
   rfl
 
-/-- Curried map as natural transformation. -/
+/-- Let A,D be categories with independent object and morphism universes. For f:X→Y in Data(A→D),
+this transformation between the curried A→Data(D) functors has component at a and degree n equal
+to (f_n)_a. Its naturality in a is inherited from the degree-n natural transformation f_n. -/
 def curryMap {X Y : Data (A ⥤ D)} (f : X ⟶ Y) : curryObj X ⟶ curryObj Y where
   app a :=
     { app n := (f.app n).app a
@@ -194,7 +218,9 @@ theorem curryMap_app_app {X Y : Data (A ⥤ D)} (f : X ⟶ Y) (a : A) (n : ℕ) 
     ((curryMap f).app a).app n = (f.app n).app a :=
   rfl
 
-/-- Currying functor `Data (A ⥤ D) ⥤ (A ⥤ Data D)`. -/
+/-- Let A,D be categories with independent object and morphism universes. Currying is a functor
+Data(A→D)→(A→Data(D)). It sends X to the evaluated family a↦(X_n(a),d_i(a),s_i(a)) and each data
+morphism to its objectwise component natural transformation. -/
 def curryFunctor : Data (A ⥤ D) ⥤ (A ⥤ Data D) where
   obj X := curryObj X
   map f := curryMap f
@@ -225,7 +251,9 @@ theorem curryFunctor_map_app_app {X Y : Data (A ⥤ D)} (f : X ⟶ Y) (a : A) (n
     (((curryFunctor (A := A) (D := D)).map f).app a).app n = (f.app n).app a := by
   rfl
 
-/-- The functor `a ↦ (X.obj a).obj n` for `X : A ⥤ Data D`. -/
+/-- Let A,D be categories with independent object and morphism universes. For X:A→Data(D) and n∈ℕ,
+this functor A→D sends a to the degree-n object of X(a), and f:a→b to the degree-n component of
+the data morphism X(f). -/
 def uncurryObjObj (X : A ⥤ Data D) (n : ℕ) : A ⥤ D where
   obj a := (X.obj a).obj n
   map f := (X.map f).app n
@@ -252,7 +280,10 @@ theorem uncurryObjObj_map (X : A ⥤ Data D) {a b : A} (f : a ⟶ b) (n : ℕ) :
     (uncurryObjObj X n).map f = (X.map f).app n :=
   rfl
 
-/-- Face as a natural transformation `(X.obj _).obj (n+1) ⟶ (X.obj _).obj n`. -/
+/-- Let A,D be categories with independent object and morphism universes. For X:A→Data(D), n∈ℕ and
+i∈Fin(n+2), the degree-(n+1) functor maps to the degree-n functor by the natural transformation
+whose a-component is the ith face of X(a). The data morphism X(f) makes these components
+natural. -/
 def uncurryObjδ (X : A ⥤ Data D) {n : ℕ} (i : Fin (n + 2)) :
     uncurryObjObj X (n + 1) ⟶ uncurryObjObj X n where
   app a := (X.obj a).δ i
@@ -263,7 +294,9 @@ theorem uncurryObjδ_app (X : A ⥤ Data D) {n : ℕ} (i : Fin (n + 2)) (a : A) 
     (uncurryObjδ X i).app a = (X.obj a).δ i :=
   rfl
 
-/-- Degeneracy as a natural transformation. -/
+/-- Let A,D be categories with independent object and morphism universes. For X:A→Data(D), n∈ℕ and
+i∈Fin(n+1), the degree-n functor maps to degree n+1 with a-component the ith degeneracy of X(a).
+Compatibility of X(f) with degeneracies gives naturality. -/
 def uncurryObjσ (X : A ⥤ Data D) {n : ℕ} (i : Fin (n + 1)) :
     uncurryObjObj X n ⟶ uncurryObjObj X (n + 1) where
   app a := (X.obj a).σ i
@@ -274,7 +307,10 @@ theorem uncurryObjσ_app (X : A ⥤ Data D) {n : ℕ} (i : Fin (n + 1)) (a : A) 
     (uncurryObjσ X i).app a = (X.obj a).σ i :=
   rfl
 
-/-- Uncurried object: `Data (A ⥤ D)` assembled from `X : A ⥤ Data D`. -/
+/-- Let A,D be categories with independent object and morphism universes. For X:A→Data(D), this
+datum in A→D has degree functor a↦X(a)_n and face and degeneracy transformations obtained
+componentwise from X(a). The simplicial identities hold at every a and hence as natural
+transformations. -/
 def uncurryObj (X : A ⥤ Data D) : Data (A ⥤ D) where
   obj n := uncurryObjObj X n
   δ i := uncurryObjδ X i
@@ -339,7 +375,9 @@ theorem uncurryObj_σ_app (X : A ⥤ Data D) {n : ℕ} (i : Fin (n + 1)) (a : A)
     ((uncurryObj X).σ i).app a = (X.obj a).σ i :=
   rfl
 
-/-- Componentwise natural transformation for `uncurry`. -/
+/-- Let A,D be categories with independent object and morphism universes. For X,Y:A→Data(D), α:X→Y
+and n∈ℕ, this natural transformation between the degree-n functors has a-component (α_a)_n.
+Naturality follows from the naturality of α in the data category. -/
 def uncurryMapApp (X Y : A ⥤ Data D) (α : X ⟶ Y) (n : ℕ) :
     uncurryObjObj X n ⟶ uncurryObjObj Y n where
   app a := (α.app a).app n
@@ -356,7 +394,9 @@ theorem uncurryMapApp_app (X Y : A ⥤ Data D) (α : X ⟶ Y) (n : ℕ) (a : A) 
     (uncurryMapApp X Y α n).app a = (α.app a).app n :=
   rfl
 
-/-- Morphism part of uncurrying. -/
+/-- Let A,D be categories with independent object and morphism universes. For α:X→Y between
+A→Data(D) functors, the uncurried morphism in Data(A→D) has degree-n component a↦(α_a)_n. Each
+component respects faces and degeneracies because α_a is a data morphism. -/
 def uncurryMap {X Y : A ⥤ Data D} (α : X ⟶ Y) :
     uncurryObj X ⟶ uncurryObj Y where
   app n := uncurryMapApp X Y α n
@@ -393,7 +433,9 @@ theorem uncurryMap_comp {X Y Z : A ⥤ Data D} (α : X ⟶ Y) (β : Y ⟶ Z) :
   ext a
   rfl
 
-/-- Uncurrying functor `(A ⥤ Data D) ⥤ Data (A ⥤ D)`. -/
+/-- Let A,D be categories with independent object and morphism universes. This functor
+(A→Data(D))→Data(A→D) sends each family to its degreewise functors and natural face/degeneracy
+maps, and sends α to degreewise maps (α_a)_n. It preserves identities and composition. -/
 def uncurryFunctor : (A ⥤ Data D) ⥤ Data (A ⥤ D) where
   obj X := uncurryObj X
   map α := uncurryMap α
@@ -430,37 +472,43 @@ theorem uncurryFunctor_map_app_app {X Y : A ⥤ Data D} (α : X ⟶ Y) (n : ℕ)
     (((uncurryFunctor (A := A) (D := D)).map α).app n).app a = (α.app a).app n :=
   rfl
 
-/-- Evaluation commutes with promotion on arbitrary morphisms: for any
-`f : m ⟶ n` in `SimplexCategory`, the two routes agree.
-
-Specialization of the generic `toSimplicialObject_mapObj_map` to the
-evaluation functor; `mapObj ((evaluation A D).obj a) X` is definitionally
-`(evalFunctor a).obj X`. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a∈A and a simplex morphism f:[m]→[n],
+evaluating the map of the associated simplicial object along fᵒᵖ equals the map along fᵒᵖ of the
+associated evaluated datum. Both maps have source X_n(a) and target X_m(a). -/
 theorem evalToSimplicial_map_eq (X : Data (A ⥤ D)) (a : A)
     {m n : SimplexCategory} (f : m ⟶ n) :
     (X.toSimplicialObject ⋙ (evaluation A D).obj a).map f.op =
       (((evalFunctor a).obj X).toSimplicialObject).map f.op :=
   (toSimplicialObject_mapObj_map ((evaluation A D).obj a) X (f := f.op)).symm
 
-/-- Identity-component comparison between evaluation after promotion and
-promotion after evaluation.
-
-Evaluation component of the generic `toSimplicialFunctor_mapFunctorIso`;
-orientation `(X.toSimplicialObject ⋙ (evaluation A D).obj a) ≅
-(((evalFunctor a).obj X).toSimplicialObject)` is preserved. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a∈A, evaluating the associated simplicial
+object of X is naturally isomorphic to the simplicial object associated to its evaluated data at
+a. Every simplex component of this comparison is identity. -/
 noncomputable def evalToSimplicialIso (X : Data (A ⥤ D)) (a : A) :
     (X.toSimplicialObject ⋙ (evaluation A D).obj a) ≅
       (((evalFunctor a).obj X).toSimplicialObject) :=
   (toSimplicialFunctor_mapFunctorIso ((evaluation A D).obj a)).app X
 
-/-- Hom component of `evalToSimplicialIso` at an arbitrary simplex. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a∈A and Δ∈SimplexCategoryᵒᵖ, the forward
+component of the comparison between associated simplicial objects after evaluation is id on the
+common degree object X_{dim Δ}(a). -/
 @[simp]
 theorem evalToSimplicialIso_hom_app (X : Data (A ⥤ D)) (a : A)
     (Δ : SimplexCategoryᵒᵖ) :
     (evalToSimplicialIso X a).hom.app Δ = 𝟙 _ :=
   rfl
 
-/-- Inverse component of `evalToSimplicialIso` at an arbitrary simplex. -/
+/-- Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a∈A and Δ∈SimplexCategoryᵒᵖ, the inverse
+component of the evaluation/associated-simplicial-object comparison is the identity of X_{dim
+Δ}(a). -/
 @[simp]
 theorem evalToSimplicialIso_inv_app (X : Data (A ⥤ D)) (a : A)
     (Δ : SimplexCategoryᵒᵖ) :

@@ -14,11 +14,12 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupPro
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupProductDegreeTransport
 
 /-!
-# Associativity for target-normalized `(1,q)` cups
+# Associativity in degrees one, arbitrary degree, and one
 
-The target-normalized cup with left degree one is associative with a final
-arbitrary cup, after the coefficient associator.  The statement hides all
-arithmetic transport between `1 + q` and `q + 1`.
+Let `G` be a group, `k` a commutative ring, and `A,B,C` representations. For classes of
+degrees `1,q,1`, the cup with target degree written `q + 1` satisfies `α_*((x ∪ y) ∪ z) = x ∪
+(y ∪ z)` in `H^{q+2}(G,A ⊗ (B ⊗ C))`. Here `α : (A ⊗ B) ⊗ C → A ⊗ (B ⊗ C)` is the coefficient
+associator, and `cupOneAny` uses the canonical identification `1 + q = q + 1`.
 -/
 
 @[expose] public section
@@ -37,8 +38,10 @@ variable {k G : Type u} [CommRing k] [Group G]
 
 set_option backward.isDefEq.respectTransparency.types false in
 set_option backward.isDefEq.respectTransparency false in
-/-- A target-normalized `(1,q)` cup followed by a degree-one cup reassociates
-to the target-normalized cup against the right-hand `(q,1)` cup. -/
+/-- Let `A,B,C` be representations of a group `G` over a commutative ring `k`, `q : ℕ`, and `x ∈
+H¹(G,A)`, `y ∈ H^q(G,B)`, `z ∈ H¹(G,C)`. Applying the coefficient associator in degree `q + 2`
+to `cup_{q+1,1}(cupOneAny A B q (x ⊗ y) ⊗ z)` equals `cupOneAny A (B ⊗ C) (q + 1) (x ⊗
+cup_{q,1}(y ⊗ z))`. Both sides lie in `H^{q+2}(G,A ⊗ (B ⊗ C))`. -/
 theorem cupOneAny_assoc_right_one
     (A B C : Rep k G) (q : ℕ)
     (x : groupCohomology A 1) (y : groupCohomology B q)

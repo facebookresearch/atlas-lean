@@ -1,3 +1,6 @@
-# Original Field Derived Sections Invariants Iso naturality
+# Lifted coefficient derived section comparison is natural
 
-Every original coefficient arrow uses that SAME single L.map f.
+Lifted coefficient derived section comparison is natural.
+
+The comparison commutes with the lifted sheaf map and its geometric-fiber derived-invariant
+map.

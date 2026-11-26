@@ -1,4 +1,6 @@
-# Field Canonical Skyscraper Iso unit
+# Field skyscraper comparison respects the adjunction unit
 
-The original canonical point unit becomes the prescribed point unit through the actual
-skyscraper and stalk comparisons.
+Field skyscraper comparison respects the adjunction unit.
+
+The transported canonical unit followed by the skyscraper comparison equals the prescribed-
+point unit.

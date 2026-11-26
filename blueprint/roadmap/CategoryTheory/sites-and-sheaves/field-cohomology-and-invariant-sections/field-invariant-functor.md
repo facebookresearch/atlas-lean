@@ -1,3 +1,6 @@
-# Field Invariant Functor
+# Invariant functor of discrete field coefficients
 
-The functor of `Gal(Ω/k)`-invariants, from discrete `Gal(Ω/k)`-modules to abelian groups.
+Invariant functor of discrete field coefficients.
+
+Take `Gal(Ω/k)`-invariants of a discrete Galois coefficient, valued in additive groups of the
+common universe.

@@ -1,8 +1,7 @@
-# Eval To Simplicial map eq
+# Evaluation commutes with every map of the associated simplicial object
 
-Evaluation commutes with promotion on arbitrary morphisms: for any
-`f : m ⟶ n` in `SimplexCategory`, the two routes agree.
-
-Specialization of the generic `toSimplicialObject_mapObj_map` to the
-evaluation functor; `mapObj ((evaluation A D).obj a) X` is definitionally
-`(evalFunctor a).obj X`.
+Let A,D be categories with independent object and morphism universes. Let X be simplicial
+face-and-degeneracy data in the functor category A→D, with degree functors X_n, natural faces
+d_i:X_{n+1}→X_n and degeneracies s_i:X_n→X_{n+1}. For a∈A and a simplex morphism f:[m]→[n],
+evaluating the map of the associated simplicial object along fᵒᵖ equals the map along fᵒᵖ of the
+associated evaluated datum. Both maps have source X_n(a) and target X_m(a).

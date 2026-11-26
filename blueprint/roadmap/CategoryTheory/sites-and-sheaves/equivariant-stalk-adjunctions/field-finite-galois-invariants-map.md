@@ -1,3 +1,6 @@
-# Field Finite Galois Invariants Map
+# Coefficient maps preserve finite field invariants
 
-Every actual module arrow maps the SAME finite-field invariant groups.
+Coefficient maps preserve finite field invariants.
+
+An equivariant coefficient morphism restricts to an additive map of the fixing-subgroup
+invariant subgroups.

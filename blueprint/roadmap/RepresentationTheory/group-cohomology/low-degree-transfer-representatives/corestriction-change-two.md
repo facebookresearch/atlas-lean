@@ -1,4 +1,6 @@
-# Corestriction Change Two
+# The linear degree-two change-of-transversal cochain
 
-The explicit degree-two prism cochain comparing degree-three transfer
-cochains associated to `T` and `U`.
+The linear degree-two change-of-transversal cochain.
+
+For a ternary H-cochain z with coefficients in A, sum the three-term comparison summand with
+inverse weights ρ(t⁻¹) over T. This defines a k-linear map to binary G-cochains.

@@ -1,4 +1,6 @@
-# Corestriction Of Right Transversal mul Equiv apply
+# Elementwise group transport of a transferred class
 
-Elementwise arbitrary-degree transport of chosen-transversal
-corestriction along an ambient group equivalence.
+Elementwise group transport of a transferred class.
+
+For x ∈ Hⁿ(e(H),A|e(H)), pulling its transferred class back to G gives the T-transfer of its
+pullback to H, using the restricted coefficient representation.

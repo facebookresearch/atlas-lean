@@ -1,3 +1,6 @@
-# Field Derived Sections Invariants Iso
+# Derived field sections compare with derived invariants
 
-The SAME cut2 comparison and actual precomposition give the full all-degree field family.
+Derived field sections compare with derived invariants.
+
+The global-section invariant coordinate and exact geometric fiber give a natural isomorphism
+`R^qΓ ≅ T ⋙ R^q Inv` in every degree.

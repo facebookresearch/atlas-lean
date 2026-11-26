@@ -1,4 +1,6 @@
-# Corestriction Cochains product
+# The cochain-map factorization through a subgroup tower
 
-The arbitrary-degree product-transversal identity as an equality of
-inhomogeneous cochain maps.
+The cochain-map factorization through a subgroup tower.
+
+The transfer cochain map for the product transversal factors through the canonical K-to-image
+coefficient comparison, the S-transfer cochain map and the T-transfer cochain map.

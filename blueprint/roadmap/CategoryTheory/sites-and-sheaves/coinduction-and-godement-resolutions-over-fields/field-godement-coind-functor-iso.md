@@ -1,4 +1,6 @@
-# Field Godement Coind Functor Iso
+# The field Godement endofunctor intertwines with coinduction under the stalk
 
-The genuine full Godement-to-prescribed-point comparison followed by the
-actual original point-to-coinduction comparison.
+For a field k and prescribed separable closure Ω, compose the Godement-to-prescribed-point
+comparison with the point-to-coinduction comparison. This gives T_G⋙Φ ≅ Φ⋙S, where S is
+diagonal continuous coinduction on discrete Galois modules and Φ the geometric Galois stalk
+functor.

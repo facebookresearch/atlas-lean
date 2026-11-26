@@ -1,3 +1,6 @@
-# Field Equivariant Stalk Hom Add Equiv symm naturality right
+# Inverse additive stalk correspondence is coefficient natural
 
-Its inverse has the original module-map naturality on the same actual inverse sheaves.
+Inverse additive stalk correspondence is coefficient natural.
+
+The inverse correspondence commutes with the inverse-sheaf coefficient map and coefficient
+postcomposition.

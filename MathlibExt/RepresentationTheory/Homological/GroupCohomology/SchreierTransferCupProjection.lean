@@ -14,16 +14,16 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupOne
 public import MathlibExt.RepresentationTheory.Rep.ResTensor
 
 /-!
-# A chosen-transversal cup projection formula
+# The degree-one by degree-one cup projection formula
 
-This file develops the first cup-product projection formula for the explicit
-right-transversal transfer.  For a `G`-one-cocycle `x` and an
-`H`-one-cocycle `y`, the transfer of `res(x) ∪ y` differs from
-`x ∪ cor(y)` by the boundary of an explicit degree-one homotopy.
+Let A and B be G-representations over a commutative ring k, let H ≤ G have finite index and
+let T be a right transversal. For a G-one-cocycle x and an H-one-cocycle y, define K¹(g) = ∑ₜ
+ρ_A(t⁻¹)x(t) ⊗ ρ_B(t⁻¹)y(a(t,g)).
 
-The transversal remains an explicit parameter.  No independence of that
-choice, finite-etale comparison, norm-residue map, or Kummer-Steinberg
-vanishing is asserted.
+The cochain identity is cor_T²(x|H ∪ y) = x ∪ cor_T¹(y) − d¹K¹, with coefficient order A ⊗ B.
+Thus in degree two, cor_T(res(x) ∪ y) = x ∪ cor_T(y), after the canonical comparison A|H ⊗ B|H
+≅ (A ⊗ B)|H. The formula holds both for represented cocycle classes and for arbitrary H¹
+classes.
 -/
 
 @[expose] public section
@@ -42,12 +42,18 @@ universe u
 variable {k G : Type u} [CommRing k] [Group G]
 variable {H : Subgroup G}
 
+/-- Finite representatives for the one-by-one cup projection formula.
+
+The finite-index hypothesis gives a finite enumeration of T for the tensor-valued comparison
+sum. -/
 noncomputable local instance cupProjectionRightTransversalFintype
     (T : H.RightTransversal) [H.FiniteIndex] : Fintype (T : Set G) :=
   @Fintype.ofFinite (T : Set G) (T.2.finite_right)
 
-/-- The explicit one-cochain measuring the failure of the cup projection
-formula to hold strictly at cochain level. -/
+/-- The degree-one cochain measuring the cup projection difference.
+
+For arbitrary x : G → A and y : H → B, define K¹(g) = ∑ₜ ρ_A(t⁻¹)x(t) ⊗ ρ_B(t⁻¹)y(a(t,g)),
+with A first and B second in the tensor product. -/
 noncomputable def cupProjectionHomotopyOneOne
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A) (y : H → B) : G → (A ⊗ B : Rep k G) :=
@@ -55,6 +61,10 @@ noncomputable def cupProjectionHomotopyOneOne
     A.ρ (t : G)⁻¹ (x (t : G)) ⊗ₜ[k]
       B.ρ (t : G)⁻¹ (y (T.schreierFactor t g))
 
+/-- Values of the one-by-one projection cochain.
+
+At g, the projection cochain is the sum of the inverse-translated x(t) tensored with the
+inverse-translated y(a(t,g)). -/
 @[simp]
 theorem cupProjectionHomotopyOneOne_apply
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
@@ -65,8 +75,10 @@ theorem cupProjectionHomotopyOneOne_apply
           B.ρ (t : G)⁻¹ (y (T.schreierFactor t g)) :=
   rfl
 
-/-- The restriction cocycle identity rewritten along one Schreier
-decomposition. -/
+/-- The cocycle value of a Schreier factor.
+
+For a G-one-cocycle x and tg = a(t,g)u, the identity is ρ(t⁻¹)x(a(t,g)) = x(g) + ρ(t⁻¹)x(t) −
+ρ(gu⁻¹)x(u). -/
 theorem rho_inv_schreierFactor_cocycle (A : Rep k G)
     (T : H.RightTransversal) (x : groupCohomology.cocycles₁ A)
     (t : (T : Set G)) (g : G) :
@@ -109,8 +121,10 @@ private theorem tensor_rho_tmul (A B : Rep k G) (g : G)
   change TensorProduct.map (A.ρ g) (B.ρ g) (a ⊗ₜ[k] b) = _
   rw [TensorProduct.map_tmul]
 
-/-- Splitting the homotopy cochain at a product by the one-cocycle law for
-the subgroup input. -/
+/-- The product identity for the one-by-one projection cochain.
+
+If y is an H-one-cocycle, K¹(g₁g₂) is K¹(g₁) plus the sum with first tensor factor
+ρ_A(t⁻¹)x(t) and second factor ρ_B(g₁r(t,g₁)⁻¹)y(a(r(t,g₁),g₂)). -/
 theorem cupProjectionHomotopyOneOne_mul
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A)
@@ -140,8 +154,10 @@ theorem cupProjectionHomotopyOneOne_mul
       TensorProduct.tmul_add]
   rw [hterms, Finset.sum_add_distrib]
 
-/-- Acting on the homotopy cochain reindexes through the Schreier
-permutation of the transversal. -/
+/-- The tensor action on the one-by-one projection cochain.
+
+Applying g₁ to K¹(g₂) and reindexing by u = r(t,g₁) gives terms ρ_A(g₁u⁻¹)x(u) ⊗
+ρ_B(g₁u⁻¹)y(a(u,g₂)). -/
 theorem rho_cupProjectionHomotopyOneOne
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A) (y : H → B) (g₁ g₂ : G) :
@@ -174,8 +190,9 @@ theorem rho_cupProjectionHomotopyOneOne
             B.ρ (g₁ * (t : G)⁻¹)
               (y (T.schreierFactor t g₂))) |>.symm
 
-/-- The cup with the transferred right factor, written as the corresponding
-reindexed transversal sum. -/
+/-- The cup product with a transferred one-cochain.
+
+The value of x ∪ cor_T¹(y) at (g₁,g₂) is the sum of x(g₁) ⊗ ρ_B(g₁r(t,g₁)⁻¹)y(a(r(t,g₁),g₂)). -/
 theorem cupCochainOneOne_corestrictionCochainOne
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : G → A) (y : H → B) (g₁ g₂ : G) :
@@ -204,8 +221,11 @@ theorem cupCochainOneOne_corestrictionCochainOne
           x g₁ ⊗ₜ[k]
             B.ρ (g₁ * (t : G)⁻¹) (y (T.schreierFactor t g₂))) |>.symm
 
-/-- A single transferred restricted-cup summand, split into the projection
-term and the two homotopy terms. -/
+/-- The transferred one-by-one cup summand.
+
+For one-cocycles x and y, the inverse-weighted restricted cup summand equals the corresponding
+x(g₁) term plus the comparison term from x(t) minus the translated comparison term from
+x(r(t,g₁)). The second tensor factor is common to these three terms. -/
 theorem corestrictionCupOneOne_term
     (A B : Rep k G) (T : H.RightTransversal)
     (x : groupCohomology.cocycles₁ A)
@@ -244,9 +264,10 @@ theorem corestrictionCupOneOne_term
   rw [hB, rho_inv_schreierFactor_cocycle A T x t g₁,
     TensorProduct.sub_tmul, TensorProduct.add_tmul]
 
-/-- Cochain-level projection formula.  The transferred restricted cup is
-the cup with the transferred right factor minus the boundary of the explicit
-homotopy cochain. -/
+/-- The one-by-one cochain projection identity with its boundary.
+
+For a G-one-cocycle x and H-one-cocycle y, cor_T²(x|H ∪ y) = x ∪ cor_T¹(y) −
+d¹(cupProjectionHomotopyOneOne A B T x y). -/
 theorem corestrictionCochainTwo_cup_one_one
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : groupCohomology.cocycles₁ A)
@@ -302,8 +323,11 @@ theorem corestrictionCochainTwo_cup_one_one
   simp only [Pi.sub_apply, groupCohomology.d₁₂_hom_apply]
   abel
 
-/-- Representative-level H² projection formula for a restricted left
-one-cocycle and a subgroup one-cocycle. -/
+/-- The cup projection formula on one-cocycle representatives.
+
+The transferred degree-two class of the restricted cup of x and y equals the class of the cup
+of x with the transferred one-cocycle y. The source coefficients are identified by the
+canonical restriction–tensor isomorphism. -/
 theorem corestrictionH2OfRightTransversal_cupCocycleOneOne
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : groupCohomology.cocycles₁ A)
@@ -336,9 +360,10 @@ theorem corestrictionH2OfRightTransversal_cupCocycleOneOne
   rw [map_neg, corestrictionCochainTwo_cup_one_one]
   abel
 
-/-- Chosen-transversal H¹×H¹→H² projection formula:
-`cor(res(x) ∪ y) = x ∪ cor(y)`.  The coefficient comparison is the
-identity-on-carriers restriction/tensor isomorphism. -/
+/-- The one-by-one projection formula on cohomology classes.
+
+For x ∈ H¹(G,A) and y ∈ H¹(H,B|H), cor_T(res(x) ∪ y) = x ∪ cor_T(y) in H²(G,A ⊗ B), using the
+canonical restriction–tensor coefficient comparison. -/
 theorem corestrictionH2OfRightTransversal_cupOneOne
     (A B : Rep k G) (T : H.RightTransversal) [H.FiniteIndex]
     (x : groupCohomology.H1 A)

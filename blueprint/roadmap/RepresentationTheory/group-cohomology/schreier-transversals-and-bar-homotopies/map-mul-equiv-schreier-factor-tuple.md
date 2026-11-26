@@ -1,4 +1,6 @@
-# Map Mul Equiv schreier Factor Tuple
+# Transport of finite subgroup factor tuples
 
-The full Schreier factor tuple commutes with transport of a right
-transversal along a multiplicative equivalence.
+Transport of finite subgroup factor tuples.
+
+For a tuple g : Fin n → G, the factor tuple of its coordinatewise image under e is the
+coordinatewise image of the original factor tuple under H ≃* e(H).

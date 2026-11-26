@@ -1,3 +1,6 @@
-# Comp
+# Composition of compatible field-extension embeddings
 
-Compose the two actual field embeddings and their original scalar square.
+Composition of compatible field-extension embeddings.
+
+For e : (L/K) → (L′/K′) and f : (L′/K′) → (L″/K″), compose the base embeddings and the
+extension embeddings in that order. Their scalar squares compose.

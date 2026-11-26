@@ -1,4 +1,5 @@
-# Small Etale Gamma Delta Functor
+# Cohomological delta functor of small étale global sections
 
-The cohomological delta functor of right derived global sections on the
-small étale site, in the common coefficient universe.
+For a scheme X in universe u and c = max(u, w), this is the
+cohomological delta functor (RᑫΓ_X)_(q∈ℕ) on abelian étale sheaves with
+coefficients in c, equipped with the connecting maps of short exact sequences.

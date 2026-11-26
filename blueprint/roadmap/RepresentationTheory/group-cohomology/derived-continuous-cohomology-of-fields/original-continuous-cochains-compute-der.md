@@ -1,4 +1,6 @@
-# Original continuous cochains compute derived invariants
+# Continuous field cochains satisfy the full derived invariant laws
 
-The complete original all-degree comparison is constructed from actual effacement,
-actual original complexes and the actual mapped-horseshoe derived family.
+Continuous field cochains satisfy the full derived invariant laws.
+
+The continuous-cohomology comparison satisfies the complete coefficient, resolution,
+connecting, initial cokernel, group-map, single-lift, uniqueness, and lifted-sheaf laws.

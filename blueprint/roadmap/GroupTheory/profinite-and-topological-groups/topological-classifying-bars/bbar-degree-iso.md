@@ -1,3 +1,6 @@
-# BBar Degree Iso
+# The classifying-bar degree isomorphism in topological spaces
 
-Stable `TopCat` degree isomorphism for the topological classifying bar.
+The classifying-bar degree isomorphism in topological spaces.
+
+The degree-n object of BBar G is isomorphic in TopCat to the finite product space Gⁿ via its
+degree homeomorphism.

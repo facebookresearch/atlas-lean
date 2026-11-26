@@ -1,4 +1,5 @@
-# Cup Cochain One One d₀₁ left
+# Coboundary in the left cup factor
 
-Replacing the left one-cocycle by the coboundary of `a` changes the cup
-representative to the coboundary of `g ↦ a ⊗ y(g)`.
+Let `A,B` be representations of a group `G` over a commutative ring `k`, `a : A`, and `y ∈
+Z¹(G,B)`. With `d⁰a(g) = g·a - a` and `d¹t(g,h) = g·t(h) - t(gh) + t(g)`, the cochain equality
+is `(d⁰a) ∪ y = d¹(fun g => a ⊗ₜ[k] y(g))`.

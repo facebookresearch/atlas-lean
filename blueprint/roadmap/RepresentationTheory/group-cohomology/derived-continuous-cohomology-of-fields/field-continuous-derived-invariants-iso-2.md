@@ -1,3 +1,6 @@
-# Field Continuous Derived Invariants Iso zero
+# Derived invariant comparison has the degree zero normalization
 
-The fixed comparison agrees with the original zeroIso after the genuine RD0 normalization.
+Derived invariant comparison has the degree zero normalization.
+
+The forward comparison in degree zero followed by the derived-zero coordinate equals the
+continuous-cohomology invariant coordinate.

@@ -1,4 +1,6 @@
-# Lift Alg Hom
+# Lift of a finite étale algebra map through the closure embedding
 
-The inverse is an actual original algebra map, not a chosen equivalence
-between unrelated algebra models.
+Lift of a finite étale algebra map through the closure embedding.
+
+Restrict a map `A → Ψ` to the relative separable closure and apply the inverse closure
+equivalence to define a map `A → Ω`.

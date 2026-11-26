@@ -1,4 +1,6 @@
-# Field Prescribed Point Tensor Pairing
+# Binary tensor pairing of the prescribed field point monad
 
-The actual prescribed Ω point monad has the binary pairing given by its original tensor
-counits.
+Binary tensor pairing of the prescribed field point monad.
+
+Pair the two skyscrapers of stalk coefficients and apply the inverse stalk-tensor comparison
+to map `T F ⊗ T G` to `T(F ⊗ G)`.

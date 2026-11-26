@@ -1,4 +1,6 @@
-# Lax Tensor Power Pairing zero left
+# Lax power pairing satisfies the left unit equation
 
-The left unit law uses the lax unit map; no strong-monoidal unit
-identification is assumed.
+Lax power pairing satisfies the left unit equation.
+
+The unit in degree zero paired on the left gives the left unitor followed by the required
+`0+p` index transport.

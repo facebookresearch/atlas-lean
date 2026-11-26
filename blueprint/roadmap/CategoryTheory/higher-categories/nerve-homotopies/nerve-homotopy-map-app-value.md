@@ -1,4 +1,6 @@
-# Nerve Homotopy Map app value
+# Product-chain coordinates of the nerve cylinder
 
-Every original whole cylinder chain has its SAME classifying-functor, product and interval
- value.
+Product-chain coordinates of the nerve cylinder.
+
+In degree m, the cylinder sends a chain c and an interval simplex t to the image of the
+product chain c × t under the cylinder functor classified by α.

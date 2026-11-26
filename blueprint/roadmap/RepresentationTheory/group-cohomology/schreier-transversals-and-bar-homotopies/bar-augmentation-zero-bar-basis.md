@@ -1,3 +1,6 @@
-# Bar Augmentation Zero bar Basis
+# The augmentation of the empty-tuple bar generator
 
-The normalized degree-zero bar basis augments to one.
+The augmentation of the empty-tuple bar generator.
+
+The degree-zero bar basis vector indexed by the empty tuple maps to 1 ∈ k under
+barAugmentationZero.

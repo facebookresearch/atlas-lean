@@ -14,13 +14,17 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldModuleCohomologyCategory
 public import Mathlib.CategoryTheory.Sites.Point.Skyscraper
 
 /-!
-# The original field skyscraper and continuous coinduction
+# Geometric skyscrapers and continuous Galois coinduction
 
-The actual field-sheaf equivalence transports the prescribed geometric-point
-adjunction to the original forgetful Galois-module functor. Uniqueness of right
-adjoints identifies the original skyscraper fiber with continuous left-shift
-coinduction. The actual untwist recovers diagonal coinduction and sends the
-original point unit to the existing constant-function inclusion.
+Let k,Ω be fields of universe u with Ω a prescribed separable closure, G=Gal(Ω/k) with its
+Krull topology, and Φ the geometric stalk functor to discrete continuous G-actions on additive
+groups of height max(u,w). Transporting the geometric point adjunction identifies Φ∘x_* as the
+right adjoint of the forgetful G-action functor.
+
+It is naturally isomorphic to continuous functions G → M with left-shift action, by z ↦ (g ↦
+ε_M(g⁻¹·z)). For a sheaf Q with Galois stalk A, the coefficient untwist f(g) ↦ g·f(g)
+identifies Φ(x_*x^*Q) with diagonal coinduction of A. The point unit becomes the
+constant-function map a ↦ (g ↦ a), and evaluation at 1 is the geometric counit.
 -/
 
 @[expose] public section
@@ -108,8 +112,10 @@ attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual field equivalence transports the point skyscraper adjunction to original
-forgetting. -/
+/-- Let k,Ω be fields with IsSepClosure k Ω, G=Gal(Ω/k), and Φ the geometric Galois stalk
+equivalence at coefficient height max(u,w). The forgetful functor from discrete continuous
+G-actions to additive groups is left adjoint to M ↦ Φ(x_*M), where x_* is the prescribed
+geometric skyscraper functor. -/
 def fieldGaloisSkyscraperAdjunction :
     DiscreteAbelianAction.forget.{u, max u w} Gal(Ω/k) ⊣
       (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafFunctor
@@ -119,7 +125,9 @@ def fieldGaloisSkyscraperAdjunction :
       (A := AddCommGrpCat.{max u w}))).ofNatIsoLeft (fieldModuleForgetIso.{u, w} k Ω)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The transported counit is the same original geometric-point evaluation counit. -/
+/-- For a field k, prescribed separable closure Ω, and M∈AddCommGrpCat.{max(u,w)}, the counit of
+the forgetful-Galois/skyscraper-stalk adjunction at M equals the geometric stalk–skyscraper
+counit ε_M : x^*x_*M → M. -/
 theorem fieldGaloisSkyscraperAdjunction_counit (M : AddCommGrpCat.{max u w}) :
     (fieldGaloisSkyscraperAdjunction.{u, w} k Ω).counit.app M =
       ((smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafAdjunction
@@ -131,7 +139,9 @@ theorem fieldGaloisSkyscraperAdjunction_counit (M : AddCommGrpCat.{max u w}) :
     (fieldModuleForgetIso.{u, w} k Ω) (fieldModuleForgetIso_hom.{u, w} k Ω) M
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The transported unit is exactly the Galois fiber of the original point unit. -/
+/-- Let Q be an additive-group small-étale sheaf over a field k with prescribed separable closure
+Ω. At its Galois stalk A=Φ(Q), the transported adjunction unit equals Φ applied to the
+geometric point unit Q → x_*x^*Q. Its target is Φ(x_*x^*Q). -/
 theorem fieldGaloisSkyscraperAdjunction_unit
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldGaloisSkyscraperAdjunction.{u, w} k Ω).unit.app
@@ -146,7 +156,10 @@ theorem fieldGaloisSkyscraperAdjunction_unit
     (fieldModuleForgetIso.{u, w} k Ω) (fieldModuleForgetIso_hom.{u, w} k Ω) Q
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual field skyscraper fiber is naturally the original left-shift coinduction. -/
+/-- For k,Ω with IsSepClosure k Ω and G=Gal(Ω/k), there is a natural isomorphism M ↦ Φ(x_*M) ≅
+C(G,M) in discrete continuous G-actions. Here M is an additive group of height max(u,w) with
+trivial coefficient action and C(G,M) has left-shift action (h·f)(g)=f(h⁻¹g). The isomorphism
+is the right-adjoint comparison for the forgetful functor. -/
 def fieldGaloisSkyscraperCoindIso :
     (smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafFunctor
         (A := AddCommGrpCat.{max u w}) ⋙ fieldGeometricStalkGaloisFunctor.{u, w} k Ω ≅
@@ -155,7 +168,9 @@ def fieldGaloisSkyscraperCoindIso :
     (DiscreteAbelianAction.forgetCoindAdjunction.{u, w} Gal(Ω/k))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Identity evaluation after the comparison is the original point counit. -/
+/-- Let k have prescribed separable closure Ω, M an additive-group coefficient, and z∈Φ(x_*M).
+Under the left-shift coinduction comparison e_M, its function value at 1 satisfies
+e_M(z)(1)=ε_M(z), where ε_M is the geometric stalk–skyscraper counit. -/
 theorem fieldGaloisSkyscraperCoindIso_counit_apply (M : AddCommGrpCat.{max u w})
     (z : DiscreteAbelianAction.underlying
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj
@@ -177,7 +192,9 @@ theorem fieldGaloisSkyscraperCoindIso_counit_apply (M : AddCommGrpCat.{max u w})
     (hv.trans (congrArg (fun f => f.hom z) (fieldGaloisSkyscraperAdjunction_counit.{u, w} k Ω M)))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original coinduction coordinate is the point counit on the same inverse Galois orbit. -/
+/-- For a field k, prescribed separable closure Ω, additive group M, z∈Φ(x_*M), and g∈Gal(Ω/k),
+the skyscraper/coinduction comparison satisfies e_M(z)(g)=ε_M(g⁻¹·z). The G-action on z is its
+geometric stalk action, and the target function has trivial coefficient action. -/
 theorem fieldGaloisSkyscraperCoindIso_apply (M : AddCommGrpCat.{max u w})
     (z : DiscreteAbelianAction.underlying
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj
@@ -193,7 +210,9 @@ theorem fieldGaloisSkyscraperCoindIso_apply (M : AddCommGrpCat.{max u w})
     ((fieldGaloisSkyscraperCoindIso.{u, w} k Ω).hom.app M) z g
   exact h.symm.trans (fieldGaloisSkyscraperCoindIso_counit_apply.{u, w} k Ω M (g⁻¹ • z))
 
-/-- Every original additive coefficient arrow commutes with the same comparison. -/
+/-- Let k have prescribed separable closure Ω and f : M → N be an additive-group map of height
+max(u,w). The comparison e satisfies Φ(x_*f)≫e_N.hom=e_M.hom≫Coind(trivial(f)). This
+identifies the sheaf-induced map with postcomposition of continuous coinduced functions by f. -/
 theorem fieldGaloisSkyscraperCoindIso_naturality {M N : AddCommGrpCat.{max u w}} (f : M ⟶ N) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
         (((smallEtaleGeometricPointCommon.{u, w} (Spec.algebraMap k Ω)).skyscraperSheafFunctor
@@ -204,8 +223,10 @@ theorem fieldGaloisSkyscraperCoindIso_naturality {M N : AddCommGrpCat.{max u w}}
   (fieldGaloisSkyscraperCoindIso.{u, w} k Ω).hom.naturality f
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Untwist the actual original point skyscraper fiber to diagonal coinduction of its Galois
-fiber. -/
+/-- For a field k, prescribed separable closure Ω, and small-étale sheaf Q, write A=Φ(Q). The
+isomorphism Φ(x_*x^*Q) ≅ Coind(A) is the left-shift skyscraper comparison followed by the
+coefficient untwist f(g)↦g·f(g). The target has diagonal action (h·f)(g)=h·f(h⁻¹g), using the
+Galois action on A. -/
 def fieldGaloisPointCoindIso
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj
@@ -232,7 +253,9 @@ private theorem fieldGaloisPointCoindIsoHomModel
           ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q)).hom := rfl
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual original point unit becomes the existing constant coinduction inclusion. -/
+/-- Let k have prescribed separable closure Ω, Q a small-étale additive-group sheaf, A=Φ(Q), η=Φ(Q
+→ x_*x^*Q), and i : Φ(x_*x^*Q) ≅ Coind(A) the diagonal comparison. Then η≫i.hom=coindIota_A,
+the equivariant inclusion taking a∈A to the constant function g↦a. -/
 theorem fieldGaloisPointCoindIso_unit
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let A : FieldCohomologyModule.{u, w} k Ω := (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q
@@ -261,7 +284,9 @@ theorem fieldGaloisPointCoindIso_unit
   exact (congrArg (fun f : T ⟶ DiscreteAbelianAction.coind.{u, w}.obj A => η ≫ f) hi).trans h
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original point-unit vector has the same constant value at every Galois element. -/
+/-- For a field k, prescribed separable closure Ω, small-étale sheaf Q, a∈Φ(Q), and g∈Gal(Ω/k),
+the point-unit map followed by the diagonal coinduction comparison has value a at g. Thus its
+continuous function is constant with the given vector. -/
 theorem fieldGaloisPointCoindIso_unit_apply
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (a : DiscreteAbelianAction.underlying ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q))
@@ -280,7 +305,9 @@ theorem fieldGaloisPointCoindIso_unit_apply
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q) a g)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Identity evaluation of the actual diagonal comparison is the same original point counit. -/
+/-- Let k have prescribed separable closure Ω, Q be a small-étale additive-group sheaf, and
+z∈Φ(x_*x^*Q). The diagonal coinduction comparison satisfies i_Q(z)(1)=ε_{x^*Q}(z). The
+coefficient untwist leaves evaluation at the identity unchanged. -/
 theorem fieldGaloisPointCoindIso_eval_one
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (z : DiscreteAbelianAction.underlying

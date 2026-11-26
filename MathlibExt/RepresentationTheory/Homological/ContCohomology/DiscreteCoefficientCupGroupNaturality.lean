@@ -12,7 +12,21 @@ module
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientCupProduct
 public import MathlibExt.RepresentationTheory.Homological.ContCohomology.DiscreteCoefficientLongExact
 
-/-! # Original native tensor cups under genuine group and coefficient restriction -/
+/-!
+# Tensor cups under group restriction and coefficient maps
+
+Let R be a commutative ring with a topology, G and H profinite groups
+in independent universes v and w, and φ : H → G continuous.
+For discrete coefficients in c = max(v,w,r), equivariant R-linear maps
+f : Res_φ(A) → A′ and g : Res_φ(B) → B′ give the tensor coefficient
+map f ⊗ g.
+
+Restriction of homogeneous group coordinates along φ and the maps f,g
+commute with the tensor cup on cochains, cocycles and continuous cohomology.
+The coefficient order and degree p+q are preserved.
+The same formulas are also given when both groups have universe v
+and the coefficients have carrier max(v,r).
+-/
 
 @[expose] public section
 noncomputable section
@@ -31,7 +45,13 @@ variable {A' B' : TopRep.{max w (max v r), u, w} R H}
 variable [DiscreteTopology A] [DiscreteTopology B]
 variable [DiscreteTopology A'] [DiscreteTopology B']
 
-/-- The genuine binary tensor map under an actual group restriction, on original stored modules. -/
+/-- Let R be a commutative ring with a topology, G and H profinite
+groups in universes v and w, and all coefficient carriers in
+c = max(v,w,r). Let φ : H → G be continuous and
+f : Res_φ(A) → A′, g : Res_φ(B) → B′ continuous equivariant R-linear
+maps between discrete topological representations.
+The tensor coefficient morphism Res_φ(A ⊗[R] B) → A′ ⊗[R] B′
+has underlying map f ⊗ g and is equivariant for H's diagonal action. -/
 def discreteTensorGroupCoefficientHom (φ : H →ₜ* G)
     (f : TopRep.res φ.toMonoidHom A ⟶ A') (g : TopRep.res φ.toMonoidHom B ⟶ B') :
     TopRep.res φ.toMonoidHom (discreteTensorCoefficient.{u, v, max w r} A B) ⟶
@@ -40,7 +60,13 @@ def discreteTensorGroupCoefficientHom (φ : H →ₜ* G)
   letI : DiscreteTopology (TopRep.res φ.toMonoidHom B) := ‹DiscreteTopology B›
   exact discreteTensorCoefficientMap.{u, w, max v r} f g
 
-/-- The same genuine restricted tensor map has its original factorwise pure tensor value. -/
+/-- Let R be a commutative ring with a topology, G and H profinite
+groups in universes v and w, and all coefficient carriers in
+c = max(v,w,r). Let φ : H → G be continuous and
+f : Res_φ(A) → A′, g : Res_φ(B) → B′ continuous equivariant R-linear
+maps between discrete topological representations.
+On a pure tensor, the restricted coefficient morphism has value
+a ⊗ b ↦ f(a) ⊗ g(b). -/
 theorem discreteTensorGroupCoefficientHom_tmul (φ : H →ₜ* G)
     (f : TopRep.res φ.toMonoidHom A ⟶ A') (g : TopRep.res φ.toMonoidHom B ⟶ B') (a : A) (b : B) :
     (discreteTensorGroupCoefficientHom.{u, v, w, r} φ f g).hom (a ⊗ₜ[R] b) =
@@ -48,7 +74,16 @@ theorem discreteTensorGroupCoefficientHom_tmul (φ : H →ₜ* G)
   change TensorProduct.map f.hom.toLinearMap g.hom.toLinearMap (a ⊗ₜ[R] b) = _
   exact TensorProduct.map_tmul _ _ _ _
 
-/-- Literal homogeneous tensor cup commutes with every actual group and coefficient map. -/
+/-- Let R be a commutative ring with a topology, G and H profinite
+groups in universes v and w, and all coefficient carriers in
+c = max(v,w,r). Let φ : H → G be continuous and
+f : Res_φ(A) → A′, g : Res_φ(B) → B′ continuous equivariant R-linear
+maps between discrete topological representations.
+For homogeneous tuple cochains x of degree p and y of degree q,
+map_(φ,f⊗g)(x ∪ y) =
+map_(φ,f)(x) ∪ map_(φ,g)(y).
+Each map precomposes the group coordinates with φ and postcomposes
+the coefficient value. -/
 theorem flatHomogeneousCup_group_naturality (φ : H →ₜ* G)
     (f : TopRep.res φ.toMonoidHom A ⟶ A') (g : TopRep.res φ.toMonoidHom B ⟶ B')
     (p q : ℕ) (x : flatHomogeneousCochains.{u, v, max w r} A p)
@@ -103,7 +138,14 @@ private theorem nativeCycleTuple_ext
   exact (homogeneousNativeModuleCyclesIso_tuple_value.{u, v, r} X n x t).trans
     ((hv t).trans (homogeneousNativeModuleCyclesIso_tuple_value.{u, v, r} X n y t).symm)
 
-/-- Every original native cycle cup commutes with the actual group/coefficient map. -/
+/-- Let R be a commutative ring with a topology, G and H profinite
+groups in universes v and w, and all coefficient carriers in
+c = max(v,w,r). Let φ : H → G be continuous and
+f : Res_φ(A) → A′, g : Res_φ(B) → B′ continuous equivariant R-linear
+maps between discrete topological representations.
+For cocycles x,y in degrees p,q, the induced cycle maps satisfy
+map_(φ,f⊗g)(x ∪ y) =
+map_(φ,f)(x) ∪ map_(φ,g)(y) in degree p+q. -/
 theorem discreteContinuousCupCocycles_group_naturality (φ : H →ₜ* G)
     (f : TopRep.res φ.toMonoidHom A ⟶ A') (g : TopRep.res φ.toMonoidHom B ⟶ B')
     (p q : ℕ) (x : cocycles.{u, v, max w r} A p) (y : cocycles.{u, v, max w r} B q) :
@@ -151,8 +193,14 @@ private theorem nativeGroupH_pi (φ : H →ₜ* G)
     (HomologicalComplex.homologyπ_naturality
         (nativeGroupCoefficientCochainsMap.{u, v, w, r} φ f) n) x
 
-/-- Original native continuous cup is multiplicative under every actual group/coefficient map,
-with independent source and target group universes and all original cohomology degrees. -/
+/-- Let R be a commutative ring with a topology, G and H profinite
+groups in universes v and w, and all coefficient carriers in
+c = max(v,w,r). Let φ : H → G be continuous and
+f : Res_φ(A) → A′, g : Res_φ(B) → B′ continuous equivariant R-linear
+maps between discrete topological representations.
+For continuous cohomology classes x,y in degrees p,q,
+H^(p+q)(φ,f⊗g)(x ∪ y) =
+Hᵖ(φ,f)(x) ∪ Hᑫ(φ,g)(y). -/
 theorem discreteContinuousCup_group_naturality (φ : H →ₜ* G)
     (f : TopRep.res φ.toMonoidHom A ⟶ A') (g : TopRep.res φ.toMonoidHom B ⟶ B')
     (p q : ℕ) (a : continuousCohomology.{u, v, max w r} p A)
@@ -215,7 +263,12 @@ private theorem originalGroupCycles_tuple_value
     (resolutionFinUncurry_resolutionMap.{u, v, r} φ f (n + 1)
       (((TopRep.homogeneousCochains.{u, v, r} X).iCycles n x).val) t)
 
-/-- The genuine restricted cup cycle square on the same original stock rank. -/
+/-- Let R be a commutative ring with a topology, G₀,H₀ profinite
+groups in universe v, and the four discrete coefficient representations
+have carrier max(v,r). For continuous φ : H₀ → G₀ and equivariant
+f,g on the restricted factors, the cocycle cup satisfies
+map_(φ,f⊗g)(x ∪ y)=map_(φ,f)(x) ∪ map_(φ,g)(y) in degrees p,q,
+using the fixed-carrier cochain maps. -/
 theorem discreteContinuousCupCocycles_group_naturality_original_rank
     {G₀ H₀ : ProfiniteGrp.{v}}
     {X Y : TopRep.{max v r, u, v} R G₀} {X' Y' : TopRep.{max v r, u, v} R H₀}
@@ -246,8 +299,11 @@ theorem discreteContinuousCupCocycles_group_naturality_original_rank
   exact h₁.trans (h₂.trans (h₃.trans (h₄.trans
     (discreteContinuousCupCocycles_tuple_value.{u, v, r} X' Y' p q _ _ t).symm)))
 
-/-- The same actual group cup square on the original stock rank, for source and target
-profinite groups in their given shared universe. -/
+/-- Let R be a commutative ring with a topology, G₀,H₀ profinite
+groups in universe v, and discrete coefficients with carrier max(v,r).
+For continuous φ and equivariant restricted coefficient maps f,g,
+H^(p+q)(φ,f⊗g)(x ∪ y)=Hᵖ(φ,f)(x) ∪ Hᑫ(φ,g)(y),
+using the fixed-carrier continuous cohomology maps. -/
 theorem discreteContinuousCup_group_naturality_original_rank
     {G₀ H₀ : ProfiniteGrp.{v}}
     {X Y : TopRep.{max v r, u, v} R G₀} {X' Y' : TopRep.{max v r, u, v} R H₀}

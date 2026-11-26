@@ -1,4 +1,5 @@
-# Cup Cocycle One Two Class ker left
+# One-two cup classes vanish on left coboundaries
 
-The representative cup class annihilates the kernel of `H1π` in its
-left variable.
+For representations `A,B` of a group `G` over a commutative ring `k`, `ker (H1π A) ≤ ker
+(cupCocycleOneTwoClass A B)`. Thus any one-cocycle `x` with zero class in `H¹(G,A)` has `[x ∪
+y] = 0` in `H³(G,A ⊗ B)` for every two-cocycle `y ∈ Z²(G,B)`.

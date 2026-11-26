@@ -1,3 +1,6 @@
-# Field Finite Galois Section Evaluation symm point
+# Inverse finite Galois section at an embedding point
 
-The SAME inverse original section is evaluated using EVERY original fiber embedding.
+Inverse finite Galois section at an embedding point.
+
+At a geometric point corresponding to an embedding extended by `g`, the inverse section of a
+fixed coefficient has value `g • m`.

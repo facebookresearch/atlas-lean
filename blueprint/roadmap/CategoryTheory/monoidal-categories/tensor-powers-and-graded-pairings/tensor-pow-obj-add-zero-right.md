@@ -1,3 +1,5 @@
-# Tensor Pow Obj add zero right
+# Right zero block splitting is the inverse right unitor
 
-Right-unit coherence: `tensorPowObj_add X m 0` is the inverse right unitor.
+Right zero block splitting is the inverse right unitor.
+
+The forward split map for a zero right block is the inverse right unitor.

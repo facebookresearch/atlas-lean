@@ -15,7 +15,16 @@ public import Mathlib.RingTheory.Etale.Finite
 public import Mathlib.RingTheory.Unramified.Field
 
 /-!
-# Finite étale algebra maps into a relative separable closure
+# Finite étale maps through a prescribed separable closure
+
+Let `k` be a field, `Ω` a separable closure of `k`, and `Ψ` another field extension equipped
+with a `k`-algebra map `σ : Ω → Ψ`. The image of `σ` is the relative separable closure of `k`
+in `Ψ`.
+
+Every map from a finite étale `k`-algebra to `Ψ` lands in this relative closure and therefore
+lifts uniquely through `σ`. Postcomposition with `σ` gives a bijection between the maps into
+`Ω` and those into `Ψ`, natural in the finite étale algebra. The base, closure, target field,
+and finite-algebra carrier universes are independent.
 -/
 
 @[expose] public section
@@ -37,8 +46,10 @@ variable (Ψ : Type w) [Field Ψ] [Algebra k Ψ]
 
 attribute [local instance] IsSepClosure.sep_closed
 
-/-- The actual embedding identifies the source closure with the relative
-separable closure in the same possibly transcendental target. -/
+/-- Prescribed separable closure identifies with the relative closure.
+
+A `k`-algebra map `σ : Ω → Ψ` from a separable closure gives a `k`-algebra equivalence `Ω ≃
+separableClosure k Ψ`, with underlying map into `Ψ` equal to `σ`. -/
 def fixedSeparableClosureEquiv (σ : Ω →ₐ[k] Ψ) :
     Ω ≃ₐ[k] separableClosure k Ψ := by
   letI : Algebra.IsAlgebraic k Ω := Algebra.IsSeparable.isAlgebraic k Ω
@@ -49,12 +60,18 @@ def fixedSeparableClosureEquiv (σ : Ω →ₐ[k] Ψ) :
   let g : separableClosure k Ψ →ₐ[k] Ω := IsSepClosed.lift
   exact AlgEquiv.ofBijective f (Algebra.IsAlgebraic.algHom_bijective₂ f g).1
 
+/-- Relative closure equivalence retains the given field map.
+
+For `x : Ω`, include the image under the closure equivalence into `Ψ`; the resulting element
+is `σ x`. -/
 theorem fixedSeparableClosureEquiv_coe_apply (σ : Ω →ₐ[k] Ψ) (x : Ω) :
     ((fixedSeparableClosureEquiv k Ω Ψ σ x : separableClosure k Ψ) : Ψ) = σ x :=
   rfl
 
-/-- A map out of any actual finite étale algebra lands in the relative closure.
-Its prime kernel is used even when the original map is not injective. -/
+/-- Finite étale algebra maps land in the relative separable closure.
+
+For a finite étale `k`-algebra `A`, every value of a `k`-algebra map `A → Ψ` belongs to
+`separableClosure k Ψ`. -/
 theorem algHom_mem_separableClosure (A : FiniteEtale.{a} k) (f : A →ₐ[k] Ψ) (x : A) :
     f x ∈ separableClosure k Ψ := by
   let p : Ideal A := RingHom.ker f
@@ -71,14 +88,19 @@ theorem algHom_mem_separableClosure (A : FiniteEtale.{a} k) (f : A →ₐ[k] Ψ)
   change f x ∈ separableClosure k Ψ at hm
   exact hm
 
-/-- The inverse is an actual original algebra map, not a chosen equivalence
-between unrelated algebra models. -/
+/-- Lift of a finite étale algebra map through the closure embedding.
+
+Restrict a map `A → Ψ` to the relative separable closure and apply the inverse closure
+equivalence to define a map `A → Ω`. -/
 def liftAlgHom (σ : Ω →ₐ[k] Ψ) (A : FiniteEtale.{a} k) (f : A →ₐ[k] Ψ) :
     A →ₐ[k] Ω :=
   (fixedSeparableClosureEquiv k Ω Ψ σ).symm.toAlgHom.comp
     (f.codRestrict (separableClosure k Ψ).toSubalgebra
       (algHom_mem_separableClosure k Ψ A f))
 
+/-- Lifted finite étale map composes to the given map.
+
+Postcomposing `liftAlgHom σ A f` with `σ` gives `f : A → Ψ`. -/
 theorem liftAlgHom_spec (σ : Ω →ₐ[k] Ψ) (A : FiniteEtale.{a} k) (f : A →ₐ[k] Ψ) :
     σ.comp (liftAlgHom k Ω Ψ σ A f) = f := by
   ext x
@@ -88,8 +110,10 @@ theorem liftAlgHom_spec (σ : Ω →ₐ[k] Ψ) (A : FiniteEtale.{a} k) (f : A �
   exact (fixedSeparableClosureEquiv_coe_apply k Ω Ψ σ (E.symm y)).symm.trans
     (congrArg (fun z : separableClosure k Ψ => (z : Ψ)) (E.apply_symm_apply y))
 
-/-- Every original finite algebra Hom set has the literal postcomposition
-comparison, including noninjective product maps and the vacuous zero algebra. -/
+/-- Closure embedding gives a bijection of finite étale algebra maps.
+
+Postcomposition by `σ` is a bijection from `k`-algebra maps `A → Ω` to maps `A → Ψ`, with
+inverse the closure lift. -/
 def embeddingHomEquiv (σ : Ω →ₐ[k] Ψ) (A : FiniteEtale.{a} k) :
     (A →ₐ[k] Ω) ≃ (A →ₐ[k] Ψ) where
   toFun f := σ.comp f
@@ -101,9 +125,16 @@ def embeddingHomEquiv (σ : Ω →ₐ[k] Ψ) (A : FiniteEtale.{a} k) :
     exact congrArg (fun g : A →ₐ[k] Ψ => g x) (liftAlgHom_spec k Ω Ψ σ A (σ.comp f))
   right_inv f := liftAlgHom_spec k Ω Ψ σ A f
 
+/-- Forward map of the finite étale Hom bijection is postcomposition.
+
+The Hom bijection sends `f : A → Ω` to `σ.comp f`. -/
 @[simp] theorem embeddingHomEquiv_apply (σ : Ω →ₐ[k] Ψ) (A : FiniteEtale.{a} k)
     (f : A →ₐ[k] Ω) : embeddingHomEquiv k Ω Ψ σ A f = σ.comp f := rfl
 
+/-- Finite étale Hom bijection is natural by precomposition.
+
+For `f : A → B`, composing a map `B → Ω` with `f` before the Hom bijection equals precomposing
+its image `B → Ψ` with `f`. -/
 theorem embeddingHomEquiv_naturality (σ : Ω →ₐ[k] Ψ)
     (A B : FiniteEtale.{a} k) (f : A →ₐ[k] B) (g : B →ₐ[k] Ω) :
     embeddingHomEquiv k Ω Ψ σ A (g.comp f) =

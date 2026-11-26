@@ -22,7 +22,14 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
-/-- The actual section cycle of an original integral-generator resolution cocycle. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+Let I_Q be the chosen nonnegative injective resolution of Q and
+f : ℤ_X → I_Q^q satisfy d ∘ f = 0.
+Evaluation on the integral generator gives the global section
+α(f) ∈ Γ_X(I_Q^q). Its differential is zero, so this is the element
+of ker(Γ_X(d^q)) represented by α(f). -/
 def sectionsCycle (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X q)
     (hf : f ≫ (injectiveResolution Q).cocomplex.d q (q + 1) = 0) :
@@ -36,7 +43,13 @@ def sectionsCycle (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : 
   rw [ComplexShape.next_eq' _ (ComplexShape.up_mk _ _ rfl)]
   rw [← integralHomSections_naturality, hf, map_zero]
 
-/-- The same section-homology projection followed by the existing derived comparison. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+Let I_Q be the chosen nonnegative injective resolution of Q and
+f : ℤ_X → I_Q^q satisfy d ∘ f = 0.
+This is the class of α(f) in Hᑫ(Γ_X(I_Q)), transported to
+RᑫΓ_X(Q) by the canonical injective-resolution comparison. -/
 def cycleClass (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X q)
     (hf : f ≫ (injectiveResolution Q).cocomplex.d q (q + 1) = 0) :
@@ -46,7 +59,13 @@ def cycleClass (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ
   (R.isoRightDerivedObj (Γ.{u, w} X) q).inv
     ((K.sc q).homologyπ ((K.sc q).abCyclesIso.inv (sectionsCycle.{u, w} X Q q f hf)))
 
-/-- Evaluate the original comparison through the same size and lifted comparison. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+For ξ ∈ Hᑫ(X, Q), first change its Ext carrier from c to
+e = max(u + 1, w), apply the large Ext/derived-sections comparison,
+then lower the final coefficient lift. The result equals the
+comparison Hᑫ(X, Q) → RᑫΓ_X(Q). -/
 theorem originalComparison_apply
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (ξ : Sheaf.H.{max u w, max u w, u, u + 1} Q q) :
@@ -59,7 +78,14 @@ theorem originalComparison_apply
     (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) := largeExt.{u, w} X
   rfl
 
-/-- The lifted comparison sends a resolution representative to its actual section class. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+Let I_Q be the chosen nonnegative injective resolution of Q and
+f : ℤ_X → I_Q^q satisfy d ∘ f = 0.
+With Ext carrier e = max(u + 1, w), the large comparison sends
+the extension class of f to ULift.up of its derived global-section
+cycle class. The output lift has height u + 1. -/
 theorem largeComparison_extMk
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (q : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X q)
@@ -86,8 +112,14 @@ theorem largeComparison_extMk
   exact h.trans (by rfl)
 
 -- This retains the existing budget for the original representative predicate.
-/-- The comparison constructed through the same Hom/section isomorphism sends
-every original Ext representative, including zero, to its literal section class. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+Let I_Q be the chosen nonnegative injective resolution of Q and
+f : ℤ_X → I_Q^q satisfy d ∘ f = 0.
+The comparison Hᑫ(X, Q) ≃ RᑫΓ_X(Q) sends the extension class
+represented by f to cycleClass(f), the class of its integral-generator
+section cycle under the injective-resolution comparison. -/
 theorem originalComparison_extMk (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     (q : ℕ) (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X q)
     (hf : f ≫ (injectiveResolution Q).cocomplex.d q (q + 1) = 0) :
@@ -115,7 +147,14 @@ theorem originalComparison_extMk (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{
     (R.extMk.{max u w, max (u + 1) w, (max u w) + 1} f (q + 1) rfl hf)).trans
       (congrArg ULift.down hResult)
 
-/-- Positive cycle classes are the SAME existing three-term section presentation. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+For n ∈ ℕ, let f : ℤ_X → I_Q^(n+1) be closed, and let z be
+a cycle in the positive section short complex whose underlying section
+is α(f). Then the degree n + 1 class cycleClass(f) equals the
+positive-cycle class of z. The equality of the section representatives
+is an explicit hypothesis. -/
 theorem cycleClass_positive (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})
     (n : ℕ) (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
     (hf : f ≫ (injectiveResolution Q).cocomplex.d (n + 1) (n + 2) = 0)
@@ -136,7 +175,12 @@ theorem cycleClass_positive (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u
   rw [heq]
   exact congrArg (R.isoRightDerivedObj (Γ.{u, w} X) (n + 1)).inv hclass
 
-/-- Every original positive representative follows the same canonical Γ family. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+For a closed f : ℤ_X → I_Q^(n+1), the canonical additive equivalence
+Hⁿ⁺¹(X, Q) ≃ Rⁿ⁺¹Γ_X(Q) sends the Ext class of f to
+cycleClass(f). -/
 theorem canonicalEquiv_extMk_positive
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
@@ -159,8 +203,11 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
-/-- The genuine size/Hom/section comparison is exactly the SAME existing
-canonical positive family, by the original resolution representative equations. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and Q an
+AddCommGrpCat c-valued sheaf on its small étale site. Write ℤ_X for
+the constant integral sheaf and Γ_X for global sections.
+For every n ∈ ℕ, the size-aware comparison and the canonical
+long-exact-sequence comparison are equal in degree n + 1. -/
 theorem originalComparison_positive
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     originalComparison.{u, w} X Q (n + 1) =
@@ -186,8 +233,13 @@ namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The mapped section/differential/retraction has exactly the original
-integral-generator value; no comparison or connecting-square premise is used. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and S a short
+exact sequence of coefficient sheaves with injective horseshoe resolutions
+I₁, I₂, I₃ and degreewise section s_q and retraction r_(q+1).
+If a section cycle x of Γ_X(I₃)^q has underlying value α(f) for
+f : ℤ_X → I₃^q, the section connecting representative is
+Γ_X(r_(q+1)) Γ_X(d₂^q) Γ_X(s_q)(x)
+= α(r_(q+1) ∘ d₂^q ∘ s_q ∘ f). -/
 theorem mappedConnectingRepresentative_sections
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}))
     (hS : S.ShortExact) (H : Functor.RightDerived.HorseshoeData S hS) (q : ℕ)
@@ -225,8 +277,12 @@ namespace AlgebraicGeometry.Scheme.DerivedSections.OriginalGammaBridge
 variable (X : Scheme.{u})
 
 set_option backward.isDefEq.respectTransparency false in
-/-- On every original integral-generator cycle, the SAME canonical Γ connector
-is the actual section/differential/retraction class in its chosen endpoint resolutions. -/
+/-- Let X be a scheme in universe u, c = max(u, w), and S a short
+exact sequence of coefficient sheaves. Choose the injective horseshoe with
+the selected endpoint resolutions of S₁ and S₃. For a closed
+f : ℤ_X → I₃^q, the derived connecting map sends cycleClass(f) to
+cycleClass(r_(q+1) ∘ d₂^q ∘ s_q ∘ f) in degree q + 1.
+The representative has this order and no additional sign. -/
 theorem canonicalConnecting_cycleClass
     (S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}))
     (hS : S.ShortExact) (q : ℕ)

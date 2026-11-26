@@ -12,7 +12,18 @@ public import MathlibExt.AlgebraicGeometry.Sites.FieldGodementCoindCoaugmentatio
 public import MathlibExt.AlgebraicGeometry.Sites.FieldModuleCohomologyCategory
 public import Mathlib.Algebra.Homology.QuasiIso
 
-/-! The actual field coinduction complex has its canonical augmented quasi-isomorphism. -/
+/-!
+# Canonical coinduction complexes and geometric fibers
+
+The coinduction monad on discrete `Gal(Ω/k)`-modules gives a coaugmented cosimplicial object.
+Its alternating coface complex is the canonical coinduction complex, with a cochain map from
+the coefficient in degree zero.
+
+Applying the field geometric-stalk functor to the Godement complex identifies it with this
+coinduction complex. The comparison has the coinduction term maps as components and respects
+coaugmentation. For geometric-fiber coefficients, the canonical coaugmentation is a quasi-
+isomorphism.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -39,14 +50,20 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The same original canonical alternating coinduction complex in the actual field action category. -/
+/-- Canonical coinduction cochain complex.
+
+Take the alternating coface complex of the coinduction-monad coresolution of a discrete Galois
+module. -/
 def fieldCoindCanonicalComplex
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     CochainComplex (DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) ℕ :=
   AlternatingCofaceMapComplex.obj
     (Monad.coresolution (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M)
 
-/-- The original augmented monad unit is closed in the canonical complex. -/
+/-- Coinduction coaugmentation is a degree zero cocycle.
+
+The augmented monad unit at the zero simplex followed by the first coinduction differential is
+zero. -/
 theorem fieldCoindCanonicalCoaugmentation_closed
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (Monad.coresolutionAugmented (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M).hom.app
@@ -54,7 +71,10 @@ theorem fieldCoindCanonicalCoaugmentation_closed
   actualCosimplicialCoaugmentation_closed
     (Monad.coresolutionAugmented (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M)
 
-/-- The literal canonical monad coaugmentation on the same original field coefficient. -/
+/-- Coinduction cochain coaugmentation.
+
+The augmented cosimplicial unit gives a cochain map from the coefficient module concentrated
+in degree zero to its canonical coinduction complex. -/
 def fieldCoindCanonicalCoaugmentation
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (CochainComplex.single₀ (DiscreteAbelianAction.{u, max u w} Gal(Ω/k))).obj M ⟶
@@ -63,14 +83,20 @@ def fieldCoindCanonicalCoaugmentation
     ⟨(Monad.coresolutionAugmented (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M).hom.app
       (SimplexCategory.mk 0), fieldCoindCanonicalCoaugmentation_closed.{u, w} k Ω M⟩
 
-/-- Its degree-zero component retains the actual augmented monad unit. -/
+/-- Degree zero coinduction coaugmentation is the augmented unit.
+
+The coaugmentation's degree-zero component is the augmented monad-coresolution map at the zero
+simplex. -/
 theorem fieldCoindCanonicalCoaugmentation_f_zero
     (M : DiscreteAbelianAction.{u, max u w} Gal(Ω/k)) :
     (fieldCoindCanonicalCoaugmentation.{u, w} k Ω M).f 0 =
       (Monad.coresolutionAugmented (DiscreteAbelianAction.coindMonad.{u, w} Gal(Ω/k)) M).hom.app
         (SimplexCategory.mk 0) := CochainComplex.fromSingle₀Equiv_symm_apply_f_zero _ _
 
-/-- The actual original mapped Godement complex identifies with the same canonical coinduction complex. -/
+/-- Geometric fiber of the Godement complex is canonical coinduction.
+
+The field geometric-stalk Galois functor sends the Godement cochain complex to a complex
+isomorphic to canonical coinduction of the geometric fiber. -/
 def fieldGodementCoindCanonicalComplexIso
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
@@ -86,7 +112,10 @@ def fieldGodementCoindCanonicalComplexIso
   e.symm ≪≫ (fieldGodementCoindCofaceIso.{u, w} k Ω F).alternatingIso
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- Every original canonical complex component retains its actual prescribed coinduction term map. -/
+/-- Godement coinduction comparison has the term comparison components.
+
+In every degree, the forward complex comparison is the corresponding Godement-to-coinduction
+coresolution term map. -/
 theorem fieldGodementCoindCanonicalComplexIso_hom_f
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     (fieldGodementCoindCanonicalComplexIso.{u, w} k Ω F).hom.f n =
@@ -96,7 +125,10 @@ theorem fieldGodementCoindCanonicalComplexIso_hom_f
   exact Category.id_comp _
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The SAME original mapped Godement comparison commutes with the actual coaugmentations. -/
+/-- Godement coinduction comparison respects coaugmentation.
+
+After the single-complex functor coordinate, the image of the Godement coaugmentation followed
+by comparison equals the canonical coinduction coaugmentation. -/
 theorem fieldGodementCoindCanonicalComplexIso_coaugmentation
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (HomologicalComplex.singleMapHomologicalComplex (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
@@ -145,8 +177,10 @@ theorem fieldGodementCoindCanonicalComplexIso_coaugmentation
       (fieldGodementCoindCoresolutionTermIso_coaugmentation.{u, w} k Ω F))
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The genuine mapped Godement quasi-isomorphism makes the canonical coinduction
-coaugmentation a quasi-isomorphism for every original geometric coefficient. -/
+/-- Geometric fiber coinduction coaugmentation is a quasi isomorphism.
+
+For the geometric fiber of a field sheaf, the canonical coinduction coaugmentation is a quasi-
+isomorphism. -/
 theorem fieldCoindCanonicalCoaugmentation_quasiIso_geometric
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     QuasiIso (fieldCoindCanonicalCoaugmentation.{u, w} k Ω

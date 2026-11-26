@@ -1,5 +1,5 @@
-# Res Tensor Pow Map Succ id eq tensor Pow Map
+# Coefficient power map without a change of acting group
 
-Along the identity group homomorphism, the positive tensor-power
-restriction map is the ordinary tensor-power map of the coefficient
-morphism.
+For a commutative ring k, G-representations A,B and φ:A→B,
+the power map with group map id_G equals the ordinary categorical
+tensor-power map T_(n+1)(φ).

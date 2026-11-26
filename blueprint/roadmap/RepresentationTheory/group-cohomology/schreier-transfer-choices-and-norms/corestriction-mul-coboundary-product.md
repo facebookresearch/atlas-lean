@@ -1,3 +1,5 @@
-# Corestriction mul Coboundary product
+# Transfer of a multiplicative coboundary
 
-Multiplicative cochain form of `cor(d d) = d(N d)`.
+Transfer of a multiplicative coboundary.
+
+For tg = a(t,g)r(t,g), the product ∏ₜ t⁻¹·((a(t,g)·d)/d) equals (g·N_T(d))/N_T(d).

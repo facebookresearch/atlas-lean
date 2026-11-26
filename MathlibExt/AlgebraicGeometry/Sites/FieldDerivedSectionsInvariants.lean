@@ -11,7 +11,21 @@ module
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.Precomposition
 public import MathlibExt.AlgebraicGeometry.Sites.FieldGlobalSectionsInvariants
 
-/-! # Actual derived Gamma and invariants under the fixed field equivalence -/
+/-!
+# Derived sections and invariant resolution coordinates
+
+For a field with prescribed separable closure, the geometric-stalk Galois equivalence
+identifies global sections with invariants. With coefficient universe `max u w`, this gives
+`R^qΓ ≅ T ⋙ R^q Inv` for every natural degree.
+
+A sheaf injective resolution maps to an injective resolution of its geometric fiber. The
+comparison has the specified cochain and coaugmentation maps, factors through resolution
+cohomology, and commutes with all resolution morphisms and changes of resolution.
+
+In degree zero the invariant coordinate is the geometric germ of the terminal section.
+Coefficient sheaves from universe `w` are lifted to the common universe with the same section
+and morphism values.
+-/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
@@ -91,17 +105,26 @@ end DerivedComparisonProofs
 attribute [local instance] IsSepClosure.sep_closed
 variable (k Ω : Type u) [Field k] [Field Ω] [Algebra k Ω] [IsSepClosure k Ω]
 
-/-- The functor of `Gal(Ω/k)`-invariants, from discrete `Gal(Ω/k)`-modules to abelian groups. -/
+/-- Invariant functor of discrete field coefficients.
+
+Take `Gal(Ω/k)`-invariants of a discrete Galois coefficient, valued in additive groups of the
+common universe. -/
 abbrev fieldInvariantFunctor : FieldCohomologyModule.{u, w} k Ω ⥤ AddCommGrpCat.{max u w} :=
   DiscreteAbelianAction.invariantsFunctor
 
+/-- Field invariants preserve addition of coefficient maps.
+
+The invariant functor is additive. -/
 instance fieldInvariantFunctor_additive : (fieldInvariantFunctor.{u, w} k Ω).Additive where
   map_add {_ _} f g := by
     ext m
     apply Subtype.ext
     rfl
 
-/-- The SAME original inverse, Gamma and equivalence counit give invariant left exactness. -/
+/-- Sections of the inverse sheaf are coefficient invariants.
+
+The invariant inverse-sheaf functor followed by global sections is naturally isomorphic to the
+field invariant functor. -/
 def fieldInverseGammaInvariantsIso :
     fieldInvariantSkyscraperInverseSheaf.{u, w} k Ω ⋙
       Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w} ≅
@@ -113,21 +136,33 @@ def fieldInverseGammaInvariantsIso :
     Functor.isoWhiskerRight (fieldSheafGaloisEquivalence.{u, w} k Ω).counitIso
       (fieldInvariantFunctor.{u, w} k Ω) ≪≫ Functor.leftUnitor (fieldInvariantFunctor.{u, w} k Ω)
 
+/-- Field invariant functor is a right adjoint.
+
+The invariant functor is right adjoint through its section and inverse-sheaf description. -/
 instance fieldInvariantFunctor_isRightAdjoint :
     (fieldInvariantFunctor.{u, w} k Ω).IsRightAdjoint :=
   Functor.isRightAdjoint_of_iso (fieldInverseGammaInvariantsIso.{u, w} k Ω)
 
+/-- Field invariant functor is left exact.
+
+Field invariants preserve finite limits. -/
 instance fieldInvariantFunctor_preservesFiniteLimits :
     PreservesFiniteLimits (fieldInvariantFunctor.{u, w} k Ω) := by infer_instance
 
-/-- The actual mapped injective resolution retains its actual augmentation and quasi-isomorphism. -/
+/-- Geometric fiber of a sheaf injective resolution.
+
+Apply the geometric-stalk Galois functor to an injective resolution to obtain an injective
+resolution of the geometric fiber. -/
 abbrev fieldMappedInjectiveResolution
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
     InjectiveResolution ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).obj Q) :=
   (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolution I
 
-/-- The SAME cut2 comparison and actual precomposition give the full all-degree field family. -/
+/-- Derived field sections compare with derived invariants.
+
+The global-section invariant coordinate and exact geometric fiber give a natural isomorphism
+`R^qΓ ≅ T ⋙ R^q Inv` in every degree. -/
 def fieldDerivedSectionsInvariantsIso (q : ℕ) :
     (Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q ≅
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
@@ -135,7 +170,9 @@ def fieldDerivedSectionsInvariantsIso (q : ℕ) :
   Functor.rightDerivedPrecompIsoOfIso (fieldGeometricStalkGaloisFunctor.{u, w} k Ω)
     (fieldInvariantFunctor.{u, w} k Ω) (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q
 
-/-- Every actual source map has the SAME derived Gamma and mapped-invariant arrows. -/
+/-- Derived section invariant comparison is sheaf natural.
+
+A sheaf map commutes with the comparison and the derived-invariant map of its geometric fiber. -/
 theorem fieldDerivedSectionsInvariantsIso_naturality (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : Q ⟶ Q') :
@@ -147,7 +184,11 @@ theorem fieldDerivedSectionsInvariantsIso_naturality (q : ℕ)
   (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.naturality f
 
 
-/-- The comparison keeps the actual homology of the SAME termwise cut2 map on ANY resolution. -/
+/-- Resolution formula for the derived section comparison.
+
+The forward comparison is the source resolution coordinate, the homology map of the section-
+invariant transformation, the mapped-resolution coordinate, and the inverse target resolution
+coordinate. -/
 theorem fieldDerivedSectionsInvariantsIso_resolution_formula (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -188,7 +229,10 @@ theorem fieldDerivedSectionsInvariantsIso_resolution_formula (q : ℕ)
     (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
-/-- The full family preserves the SAME canonical map into degree-zero derived objects. -/
+/-- Derived section comparison respects the canonical zero degree map.
+
+The canonical map from sections to their zeroth derived functor commutes with the section-
+invariant transformation and the zeroth derived-invariant map. -/
 theorem fieldDerivedSectionsInvariantsIso_toRightDerivedZero
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     let C := Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}
@@ -216,7 +260,10 @@ theorem fieldDerivedSectionsInvariantsIso_toRightDerivedZero
     (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q
 
-/-- In degree zero this is exactly the previously fixed original section/invariant map. -/
+/-- Derived section comparison has the underived zero coordinate.
+
+In degree zero, the comparison followed by the derived-zero invariant coordinate equals the
+derived-zero section coordinate followed by the global-section invariant isomorphism. -/
 theorem fieldDerivedSectionsInvariantsIso_zero
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}) :
     (fieldDerivedSectionsInvariantsIso.{u, w} k Ω 0).hom.app Q ≫
@@ -232,7 +279,10 @@ theorem fieldDerivedSectionsInvariantsIso_zero
     (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q
 
-/-- Actual Gamma-resolution homology is identified with the SAME mapped-invariant homology. -/
+/-- Section and invariant resolution cohomology comparison.
+
+For any sheaf injective resolution, compare cohomology of its sections with invariant
+cohomology of the mapped geometric-fiber resolution. -/
 def fieldDerivedSectionsInvariantsResolutionIso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :=
@@ -240,7 +290,10 @@ def fieldDerivedSectionsInvariantsResolutionIso (q : ℕ)
     (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (fieldInvariantFunctor.{u, w} k Ω)
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
-/-- Every original bundled map of resolutions gives the SAME literal homology square. -/
+/-- Resolution cohomology comparison respects resolution morphisms.
+
+A resolution morphism over a sheaf map commutes with the section-to-invariant cohomology
+coordinates. -/
 theorem fieldDerivedSectionsInvariantsResolutionIso_naturality (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
@@ -282,7 +335,10 @@ theorem fieldDerivedSectionsInvariantsResolutionIso_naturality (q : ℕ)
     (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q φ
 
-/-- EVERY canonical comparison of original resolution choices preserves the fixed map. -/
+/-- Resolution cohomology comparison respects changes of resolution.
+
+The section and invariant comparison squares commute with the canonical cohomology
+isomorphisms between two injective resolutions. -/
 theorem fieldDerivedSectionsInvariantsResolutionIso_comparison (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I J : InjectiveResolution Q) :
@@ -323,7 +379,10 @@ theorem fieldDerivedSectionsInvariantsResolutionIso_comparison (q : ℕ)
     (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I J
 
-/-- The field family agrees with the actual arbitrary-resolution isomorphism. -/
+/-- Derived comparison factors through resolution cohomology.
+
+The forward derived comparison is the source resolution isomorphism, the section-to-invariant
+resolution isomorphism, and the inverse mapped-resolution isomorphism. -/
 theorem fieldDerivedSectionsInvariantsIso_resolution_iso (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -361,7 +420,10 @@ theorem fieldDerivedSectionsInvariantsIso_resolution_iso (q : ℕ)
     (P := Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) q I
 
-/-- The actual mapped cocomplex is literally the original cocomplex mapped along T. -/
+/-- Mapped resolution has the geometric fiber cocomplex.
+
+Its underlying cochain complex is the termwise image of the sheaf resolution under the
+geometric-stalk Galois functor. -/
 theorem fieldMappedInjectiveResolution_cocomplex
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -369,7 +431,10 @@ theorem fieldMappedInjectiveResolution_cocomplex
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
         (ComplexShape.up ℕ)).obj I.cocomplex := rfl
 
-/-- The single-object augmentation is the SAME actual single-map comparison and T(I.ι). -/
+/-- Mapped resolution has the mapped coaugmentation.
+
+The coaugmentation is the inverse single-complex functor coordinate followed by the geometric-
+fiber image of the sheaf coaugmentation. -/
 theorem fieldMappedInjectiveResolution_augmentation
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -379,21 +444,28 @@ theorem fieldMappedInjectiveResolution_augmentation
         ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
           (ComplexShape.up ℕ)).map I.ι := rfl
 
-/-- Injectivity is proved on each actual mapped term, using the accepted equivalence. -/
+/-- Mapped resolution terms are injective.
+
+Every term of the mapped geometric-fiber resolution is injective. -/
 theorem fieldMappedInjectiveResolution_injective
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) (n : ℕ) :
     Injective ((fieldMappedInjectiveResolution.{u, w} k Ω I).cocomplex.X n) :=
   (fieldMappedInjectiveResolution.{u, w} k Ω I).injective n
 
-/-- The actual augmentation is genuinely a quasi-isomorphism. -/
+/-- Mapped resolution coaugmentation is a quasi isomorphism.
+
+The mapped coaugmentation is a quasi-isomorphism. -/
 theorem fieldMappedInjectiveResolution_quasiIso
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
     QuasiIso (fieldMappedInjectiveResolution.{u, w} k Ω I).ι :=
   (fieldMappedInjectiveResolution.{u, w} k Ω I).quasiIso
 
-/-- Its literal zero component is the original T-map of the original augmentation. -/
+/-- Mapped resolution coaugmentation retains its degree zero map.
+
+Its degree-zero component is the geometric-stalk Galois image of the sheaf resolution's
+degree-zero coaugmentation. -/
 theorem fieldMappedInjectiveResolution_zero
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) :
@@ -401,7 +473,10 @@ theorem fieldMappedInjectiveResolution_zero
       (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map (I.ι.f 0) :=
   Functor.mapInjectiveResolution_iota_zero (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) I
 
-/-- Every actual source-resolution map is literally mapped by the SAME T. -/
+/-- Mapped resolution morphism is the termwise fiber map.
+
+The underlying cochain map of a mapped resolution morphism is the termwise geometric-fiber
+image of the given resolution morphism. -/
 theorem fieldMappedInjectiveResolutionHom_hom
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
@@ -410,7 +485,10 @@ theorem fieldMappedInjectiveResolutionHom_hom
       ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
         (ComplexShape.up ℕ)).map φ.hom := rfl
 
-/-- The mapped morphism commutes with the actual full single-object augmentations. -/
+/-- Mapped resolution morphism respects coaugmentation.
+
+The mapped morphism commutes with the mapped coaugmentations and the single-complex map of the
+geometric-fiber coefficient morphism. -/
 theorem fieldMappedInjectiveResolutionHom_augmentation
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
@@ -422,7 +500,10 @@ theorem fieldMappedInjectiveResolutionHom_augmentation
           (fieldMappedInjectiveResolution.{u, w} k Ω J).ι :=
   ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolutionHom φ).ι_comp_hom
 
-/-- The actual zero-derived class has exactly its prescribed original section germ. -/
+/-- Zero derived section comparison is the terminal geometric germ.
+
+After the derived-zero invariant coordinate, a degree-zero section class has underlying value
+the germ of its terminal section at the prescribed geometric point. -/
 theorem fieldDerivedSectionsInvariantsIso_zero_germ
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (x : ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology
@@ -442,7 +523,9 @@ theorem fieldDerivedSectionsInvariantsIso_zero_germ
       ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology
         AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf.hom.app Q x))
 
-/-- Every original coefficient-w sheaf enters the SAME comparison via exactly one L.obj F. -/
+/-- Derived section comparison on lifted coefficient sheaves.
+
+Evaluate the common-universe comparison at a sheaf lifted from coefficient universe `w`. -/
 def originalFieldDerivedSectionsInvariantsIso (q : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}) :
     ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q).obj
@@ -453,7 +536,10 @@ def originalFieldDerivedSectionsInvariantsIso (q : ℕ)
   (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).app
     ((liftCoefficients.{u, w} (Spec (.of k))).obj F)
 
-/-- Every original coefficient arrow uses that SAME single L.map f. -/
+/-- Lifted coefficient derived section comparison is natural.
+
+The comparison commutes with the lifted sheaf map and its geometric-fiber derived-invariant
+map. -/
 theorem originalFieldDerivedSectionsInvariantsIso_naturality (q : ℕ)
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F') :
     ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q).map
@@ -466,7 +552,10 @@ theorem originalFieldDerivedSectionsInvariantsIso_naturality (q : ℕ)
   fieldDerivedSectionsInvariantsIso_naturality.{u, w} k Ω q
     ((liftCoefficients.{u, w} (Spec (.of k))).map f)
 
-/-- A native original section is sent to its actual zero-derived Gamma class after one lift. -/
+/-- Terminal section as a degree zero derived class.
+
+Lift the terminal section, use the inverse global-section coordinate, and apply the canonical
+map to zeroth derived sections. -/
 def originalFieldZeroDerivedSection
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (c : F.obj.obj (op (fieldIdentityEtale k))) :
@@ -477,7 +566,10 @@ def originalFieldZeroDerivedSection
       ((fieldGammaSectionsIso.{u, w} k).inv.app
         ((liftCoefficients.{u, w} (Spec (.of k))).obj F) (ULift.up c))
 
-/-- The original section normalization is exactly the previously accepted invariant coefficient. -/
+/-- Lifted terminal section comparison gives the invariant section value.
+
+The compared derived-zero section, normalized to invariants, equals the terminal-section
+invariant equivalence applied to the given section. -/
 theorem originalFieldDerivedSectionsInvariantsIso_zero_section
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (c : F.obj.obj (op (fieldIdentityEtale k))) :
@@ -495,7 +587,10 @@ theorem originalFieldDerivedSectionsInvariantsIso_zero_section
       (fieldGlobalSectionsInvariantsIso.{u, w} k Ω) Q) x
   exact h.trans (originalFieldSectionsInvariantsEquiv_normalization.{u, w} k Ω F c).symm
 
-/-- The normalized original class has the literal original chosen-point germ, with one lift. -/
+/-- Lifted terminal section comparison gives its geometric germ.
+
+The underlying compared invariant element is the common geometric germ of the lifted terminal
+section. -/
 theorem originalFieldDerivedSectionsInvariantsIso_zero_germ
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (c : F.obj.obj (op (fieldIdentityEtale k))) :
@@ -511,7 +606,10 @@ theorem originalFieldDerivedSectionsInvariantsIso_zero_germ
     (originalFieldDerivedSectionsInvariantsIso_zero_section.{u, w} k Ω F c)).trans
       (originalFieldSectionsInvariantsEquiv_germ.{u, w} k Ω F c)
 
-/-- The original comparison is literally evaluation of the same family at one L.obj F. -/
+/-- Lifted sheaf comparison is evaluation of the common family.
+
+The lifted-sheaf isomorphism is the component of the common-universe derived section
+comparison at the lifted sheaf. -/
 theorem originalFieldDerivedSectionsInvariantsIso_eq (q : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}) :
     originalFieldDerivedSectionsInvariantsIso.{u, w} k Ω q F =
@@ -519,22 +617,41 @@ theorem originalFieldDerivedSectionsInvariantsIso_eq (q : ℕ)
         ((liftCoefficients.{u, w} (Spec (.of k))).obj F) := rfl
 
 
-/-- The full original source unit fixes the actual family, all resolutions/maps and both
-common and original degree-zero section/germ normalizations. -/
+/-- Full resolution and section laws of the derived comparison.
+
+These laws record left exact invariants, the natural comparison and inverse identities, mapped
+resolutions and their maps, resolution formulas and choices, zero coordinates, and lifted-
+section values. -/
 structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
+/-- Derived section law fixes left exact invariants.
+
+The invariant functor preserves finite limits. -/
   invariant_left_exact : PreservesFiniteLimits (fieldInvariantFunctor.{u, w} k Ω)
+/-- Derived section law supplies every degree comparison.
+
+For every natural degree there is the natural isomorphism from derived sections to derived
+invariants of the geometric fiber. -/
   actual_natural_family : ∀ q : ℕ,
     Nonempty ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q ≅
       fieldGeometricStalkGaloisFunctor.{u, w} k Ω ⋙
         (fieldInvariantFunctor.{u, w} k Ω).rightDerived q)
+/-- Derived section law gives the forward inverse identity.
+
+For every degree and sheaf, forward comparison followed by inverse comparison is the identity. -/
   family_hom_inv : ∀ (q : ℕ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}),
     (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.app Q ≫
       (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).inv.app Q = 𝟙 _
+/-- Derived section law gives the inverse forward identity.
+
+For every degree and sheaf, inverse comparison followed by forward comparison is the identity. -/
   family_inv_hom : ∀ (q : ℕ)
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}),
     (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).inv.app Q ≫
       (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.app Q = 𝟙 _
+/-- Derived section law retains all sheaf map squares.
+
+The comparison commutes with every sheaf map and its geometric-fiber derived-invariant map. -/
   all_original_sheaf_maps : ∀ (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (f : Q ⟶ Q'),
@@ -543,11 +660,19 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
         (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).hom.app Q ≫
           ((fieldInvariantFunctor.{u, w} k Ω).rightDerived q).map
             ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map f)
+/-- Derived section law fixes the mapped resolution complex.
+
+The mapped resolution's cocomplex is the termwise geometric-fiber image of the given sheaf
+cocomplex. -/
   actual_mapped_cocomplex : ∀ {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q),
     (fieldMappedInjectiveResolution.{u, w} k Ω I).cocomplex =
           ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
             (ComplexShape.up ℕ)).obj I.cocomplex
+/-- Derived section law fixes the single coaugmentation coordinate.
+
+The mapped coaugmentation is the inverse single-complex coordinate followed by the mapped
+sheaf coaugmentation. -/
   actual_single_augmentation : ∀
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q),
@@ -556,23 +681,39 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
             (fieldGeometricStalkGaloisFunctor.{u, w} k Ω) (ComplexShape.up ℕ) 0).inv.app Q ≫
             ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
               (ComplexShape.up ℕ)).map I.ι
+/-- Derived section law gives injective mapped terms.
+
+Each term of every mapped resolution is injective. -/
   actual_injective_terms : ∀ {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q) (n : ℕ),
     Injective ((fieldMappedInjectiveResolution.{u, w} k Ω I).cocomplex.X n)
+/-- Derived section law gives the mapped quasi isomorphism.
+
+Each mapped resolution coaugmentation is a quasi-isomorphism. -/
   actual_quasi_iso : ∀ {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q),
     QuasiIso (fieldMappedInjectiveResolution.{u, w} k Ω I).ι
+/-- Derived section law fixes the zero coaugmentation map.
+
+The mapped coaugmentation in degree zero is the fiber image of the given degree-zero map. -/
   literal_zero_augmentation : ∀
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q),
     (fieldMappedInjectiveResolution.{u, w} k Ω I).ι.f 0 =
           (fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map (I.ι.f 0)
+/-- Derived section law fixes every mapped resolution morphism.
+
+Every mapped resolution morphism has the termwise image cochain map. -/
   actual_resolution_map : ∀ {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
     (φ : InjectiveResolution.Hom I J f),
     ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapInjectiveResolutionHom φ).hom =
           ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).mapHomologicalComplex
             (ComplexShape.up ℕ)).map φ.hom
+/-- Derived section law gives every coaugmentation square.
+
+Each mapped resolution morphism commutes with its coaugmentations and the mapped coefficient
+arrow. -/
   actual_augmentation_square : ∀
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
@@ -582,6 +723,10 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
           (HomologicalComplex.single (FieldCohomologyModule.{u, w} k Ω) (ComplexShape.up ℕ) 0).map
             ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map f) ≫
               (fieldMappedInjectiveResolution.{u, w} k Ω J).ι
+/-- Derived section law retains every resolution factorization.
+
+For every resolution and degree, the forward derived comparison factors through its section
+and invariant cohomology coordinates. -/
   every_resolution_formula : ∀ (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I : InjectiveResolution Q),
@@ -612,6 +757,9 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
     (e.hom.app Q : (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q)) =
       (a.hom ≫ b.hom ≫ c.inv :
         (P.rightDerived q).obj Q ⟶ (G.rightDerived q).obj (T.obj Q))
+/-- Derived section law retains every resolution map square.
+
+Every resolution morphism commutes with the section-to-invariant cohomology comparison. -/
   every_resolution_map_square : ∀ (q : ℕ)
     {Q Q' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     {f : Q ⟶ Q'} {I : InjectiveResolution Q} {J : InjectiveResolution Q'}
@@ -646,6 +794,9 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
         H.obj K₀ ⟶ H.obj K₁') =
       (eI.hom ≫ H.map ((G.mapHomologicalComplex (ComplexShape.up ℕ)).map
         (T.mapInjectiveResolutionHom φ).hom) : H.obj K₀ ⟶ H.obj K₁')
+/-- Derived section law retains every resolution choice square.
+
+The comparison commutes with the canonical cohomology isomorphisms of any pair of resolutions. -/
   every_canonical_choice_square : ∀ (q : ℕ)
     {Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}}
     (I J : InjectiveResolution Q),
@@ -679,6 +830,10 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
     let b : H.obj K₁ ≅ H.obj K₁' := InjectiveResolution.cohomologyComparisonIso I' J' G q
     (a.hom ≫ eJ.hom : H.obj K₀ ⟶ H.obj K₁') =
       (eI.hom ≫ b.hom : H.obj K₀ ⟶ H.obj K₁')
+/-- Derived section law fixes the zero degree identification.
+
+The zeroth derived comparison agrees with the underived section-invariant coordinate through
+the derived-zero isomorphisms. -/
   same_zero_identification : ∀
     (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}),
     (fieldDerivedSectionsInvariantsIso.{u, w} k Ω 0).hom.app Q ≫
@@ -687,6 +842,10 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
           (Sheaf.Γ (Spec (.of k)).smallEtaleTopology
             AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf.hom.app Q ≫
             (fieldGlobalSectionsInvariantsIso.{u, w} k Ω).hom.app Q
+/-- Derived section law fixes the common terminal germ.
+
+The normalized zero-degree comparison has underlying value the common geometric germ of its
+terminal section. -/
   common_original_germ : ∀ (Q : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w})
     (x : ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology
    AddCommGrpCat.{max u w}).rightDerived 0).obj Q),
@@ -698,11 +857,17 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
               ((fieldGammaSectionsIso.{u, w} k).hom.app Q
                 ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology
                   AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf.hom.app Q x))
+/-- Derived section law identifies each lifted sheaf component.
+
+The lifted-sheaf comparison is the common natural family's component at that sheaf. -/
   one_original_object : ∀ (q : ℕ)
     (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}),
     originalFieldDerivedSectionsInvariantsIso.{u, w} k Ω q F =
           (fieldDerivedSectionsInvariantsIso.{u, w} k Ω q).app
             ((liftCoefficients.{u, w} (Spec (.of k))).obj F)
+/-- Derived section law retains all lifted coefficient maps.
+
+The lifted-sheaf comparison commutes with every coefficient sheaf morphism. -/
   all_original_coefficient_maps : ∀ (q : ℕ)
     {F F' : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w}} (f : F ⟶ F'),
     ((Sheaf.Γ (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q).map
@@ -712,6 +877,10 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
           ((fieldInvariantFunctor.{u, w} k Ω).rightDerived q).map
             ((fieldGeometricStalkGaloisFunctor.{u, w} k Ω).map
               ((liftCoefficients.{u, w} (Spec (.of k))).map f))
+/-- Derived section law normalizes lifted terminal sections.
+
+The normalized invariant value of a lifted degree-zero section is its section-invariant
+equivalence value. -/
   original_section_normalization : ∀ (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (c : F.obj.obj (op (fieldIdentityEtale k))),
     (fieldInvariantFunctor.{u, w} k Ω).rightDerivedZeroIsoSelf.hom.app
@@ -720,6 +889,9 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
           ((originalFieldDerivedSectionsInvariantsIso.{u, w} k Ω 0 F).hom
             (originalFieldZeroDerivedSection.{u, w} k F c)) =
           originalFieldSectionsInvariantsEquiv.{u, w} k Ω F c
+/-- Derived section law retains lifted section germs.
+
+The underlying invariant value is the common geometric germ of the lifted terminal section. -/
   original_section_germ : ∀ (F : Sheaf (Spec (.of k)).smallEtaleTopology AddCommGrpCat.{w})
     (c : F.obj.obj (op (fieldIdentityEtale k))),
     ((fieldInvariantFunctor.{u, w} k Ω).rightDerivedZeroIsoSelf.hom.app
@@ -731,8 +903,10 @@ structure OriginalFieldDerivedSectionsInvariantsLaws : Prop where
             (fieldIdentityEtale k) (ULift.up (fieldTerminalFiberPoint k Ω))
               ((liftCoefficients.{u, w} (Spec (.of k))).obj F).obj (ULift.up c)
 
-/-- The fixed equivalence identifies actual derived Gamma and derived invariants in EVERY
-source degree, with every actual resolution and the SAME original section/germ law. -/
+/-- Derived field sections satisfy their full invariant comparison laws.
+
+The comparison satisfies all naturality, inverse, mapped-resolution, coaugmentation,
+resolution-choice, and terminal-section normalization laws. -/
 theorem original_field_derived_sections_invariants :
     OriginalFieldDerivedSectionsInvariantsLaws.{u, w} k Ω where
   invariant_left_exact := fieldInvariantFunctor_preservesFiniteLimits.{u, w} k Ω

@@ -1,9 +1,6 @@
-# Bar Tuple middle face
+# An interior bar face multiplies adjacent coordinates
 
-Bar-side middle-face tuple formula.
+An interior bar face multiplies adjacent coordinates.
 
-`barTuple` of an interior face multiplies the two adjacent entries:
-unfold the face to `barMuAtPos` (`barFaceApp_of_middle`), read both sides
-through the generalized reader, and apply `genMuFst`. The public
-`barMuAtPos` wrapper counts from the right-module end, so `k.rev` restores
-the head-first tuple position `k`. No induction here.
+For k : Fin n and face index i = k+1, the face of a degree-(n+1) bar element contracts tuple
+entries k and k+1 by their product in that order.

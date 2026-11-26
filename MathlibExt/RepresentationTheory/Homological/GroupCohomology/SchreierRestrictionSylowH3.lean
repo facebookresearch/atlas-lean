@@ -17,13 +17,10 @@ public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.Schrei
 /-!
 # Degree-three restriction to Sylow subgroups
 
-For a finite group and coefficients over `ZMod (p ^ d)` with positive `d`,
-restriction to a Sylow `p`-subgroup is injective on `H³`.  The proof chooses
-a right transversal internally and uses the chosen-transversal degree-three
-restriction/corestriction index formula.
-
-No canonical degree-three corestriction, non-prime-power modulus statement,
-Kummer generation theorem, or Bloch--Kato claim is made here.
+Let `G : Type` be a finite group, `p` a prime, `d : ℕ` positive, and `P` a Sylow `p`-subgroup.
+For any `ZMod (p^d)`-representation `A`, restriction is injective on `H³(G,A)` and detects
+both zero classes and equality. The restriction–corestriction composite multiplies by `[G:P]`,
+which is a unit in `ZMod (p^d)`.
 -/
 
 @[expose] public section
@@ -39,8 +36,9 @@ namespace groupCohomology
 variable {G : Type} [Group G] [Finite G]
 variable {p d : ℕ} [Fact p.Prime]
 
-/-- Restriction to a Sylow subgroup is injective on `H³` with coefficients
-over a positive prime-power `ZMod`. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. Restriction `res_P³ : H³(G,A) → H³(P,Rep.res (Subgroup.subtype P) A)`
+along the subgroup inclusion with the identity coefficient morphism is injective. -/
 theorem restrictionH3_injective_sylow_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d) :
     Function.Injective
@@ -50,8 +48,9 @@ theorem restrictionH3_injective_sylow_primePower
     (default : (P : Subgroup G).RightTransversal)
     (sylowIndex_isUnit_zmod_primePower P hd)
 
-/-- A degree-three class is zero exactly when its restriction to a Sylow
-subgroup is zero. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x ∈ H³(G,A)`, `res_P³(x) = 0 ↔ x = 0`, where restriction uses the
+subgroup inclusion `P → G` and the identity coefficient map. -/
 theorem restrictionH3_sylow_eq_zero_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (x : H3 A) :
@@ -63,8 +62,9 @@ theorem restrictionH3_sylow_eq_zero_iff_primePower
   · rintro rfl
     exact map_zero _
 
-/-- Two degree-three classes are equal exactly when their restrictions to a
-Sylow subgroup are equal. -/
+/-- Let `G : Type` be a finite group, `p` prime, `d : ℕ` with `0 < d`, `P : Sylow p G`, and `A :
+Rep (ZMod (p ^ d)) G`. For `x,y ∈ H³(G,A)`, `res_P³(x) = res_P³(y) ↔ x = y`, where restriction
+is induced by the subgroup inclusion with unchanged coefficients. -/
 theorem restrictionH3_sylow_eq_iff_primePower
     (A : Rep (ZMod (p ^ d)) G) (P : Sylow p G) (hd : 0 < d)
     (x y : H3 A) :

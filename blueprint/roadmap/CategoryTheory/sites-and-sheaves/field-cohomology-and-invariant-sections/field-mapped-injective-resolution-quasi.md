@@ -1,3 +1,5 @@
-# Field Mapped Injective Resolution quasi Iso
+# Mapped resolution coaugmentation is a quasi isomorphism
 
-The actual augmentation is genuinely a quasi-isomorphism.
+Mapped resolution coaugmentation is a quasi isomorphism.
+
+The mapped coaugmentation is a quasi-isomorphism.

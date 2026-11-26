@@ -1,4 +1,7 @@
-# Exists open Normal Subgroup right invariant fin
+# One normal subgroup giving finite-power right invariance
 
-A continuous map on a finite power is invariant under coordinatewise
-right multiplication by one open normal subgroup.
+One normal subgroup giving finite-power right invariance.
+
+For continuous c : (Fin n → G) → D, with G compact and totally disconnected and D discretely
+uniform, there exists an open normal subgroup H such that c(x·h) = c(x) whenever every
+coordinate hᵢ lies in H.

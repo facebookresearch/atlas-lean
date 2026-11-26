@@ -1,3 +1,6 @@
-# Field Finite Galois Section Evaluation inverse restrict
+# Inverse finite Galois section evaluation respects restriction
 
-The actual inverse-section square commutes for EVERY original field inclusion.
+Inverse finite Galois section evaluation respects restriction.
+
+The inverse section for an included invariant coefficient is the restriction of its earlier
+finite-stage inverse section.

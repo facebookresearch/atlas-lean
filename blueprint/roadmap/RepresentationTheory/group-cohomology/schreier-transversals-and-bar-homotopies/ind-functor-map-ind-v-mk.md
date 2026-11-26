@@ -1,4 +1,6 @@
-# Ind Functor map ind V mk
+# Coordinates of an induced representation morphism
 
-Induction of a coefficient morphism acts on canonical induced classes
-by applying that morphism to the coefficient.
+Coordinates of an induced representation morphism.
+
+For f : A → B between H-representations, its induced map sends the coinvariant generator
+IndV.mk(g,a) to IndV.mk(g,f(a)).

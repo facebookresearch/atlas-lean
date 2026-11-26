@@ -16,18 +16,15 @@ public import MathlibExt.CategoryTheory.Monoidal.PreservesColimits
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.CupProductNaturality
 
 /-!
-# Arbitrary-degree cup/connector compatibility in group cohomology
+# Connecting morphisms and group-cohomology cups
 
-The arbitrary-degree Alexander--Whitney cup product satisfies both
-one-sided compatibility laws with connecting morphisms.  A connector in the
-right input contributes the Koszul sign `(-1)^p`; a connector in the left
-input contributes no sign.  Exactness after tensoring is retained as an
-explicit hypothesis.
+Let `G` be a group, `k` a commutative ring, and `S : 0 → S₁ → S₂ → S₃ → 0` a short exact
+sequence of representations. If `A ⊗ S` is short exact, the right connecting map satisfies `x
+∪ δ_S(y) = (-1)^p δ_{A⊗S}(x ∪ y)` for `x ∈ H^p(G,A)` and `y ∈ H^q(G,S₃)`. If `S ⊗ B` is short
+exact, the left law is `δ_S(x) ∪ y = δ_{S⊗B}(x ∪ y)` for `x ∈ H^p(G,S₃)` and `y ∈ H^q(G,B)`.
 
-## Main declarations
-
-* `groupCohomology.cup_delta_right`
-* `groupCohomology.cup_delta_left`
+Both identities use the canonical homology identifications of `p + (q + 1)` or `(p + 1) + q`
+with `p + q + 1`.
 -/
 
 @[expose] public section
@@ -44,8 +41,11 @@ namespace groupCohomology
 
 variable {k G : Type u} [CommRing k] [Group G]
 
-/-- Cupping with a connecting class in the right coefficient variable
-commutes with the target connector with Koszul sign `(-1)^p`. -/
+/-- Let `k` be a commutative ring, `G` a group, `A : Rep k G`, and `S : 0 → S₁ → S₂ → S₃ → 0`
+short exact. Assume `A ⊗ S` is short exact. For `p,q : ℕ`, `(𝟙 ⊗ δ_S^q) ≫ cup_{p,q+1} ≫ e =
+(-1)^p • (cup_{p,q} ≫ δ_{A⊗S}^{p+q})` as maps `H^p(G,A) ⊗ H^q(G,S₃) → H^{p+q+1}(G,A ⊗ S₁)`.
+Here the first cup has coefficients `A,S₁`, the second `A,S₃`, and `e` identifies `p + (q +
+1)` with `p + q + 1`. -/
 theorem cup_delta_right
     (A : Rep k G) (S : ShortComplex (Rep k G))
     (hS : S.ShortExact)
@@ -72,8 +72,11 @@ theorem cup_delta_right
     simpa using inhomogeneousCupPairing_naturality
       (f := 𝟙 A) (g := S.g) i j
 
-/-- Cupping with a connecting class in the left coefficient variable
-commutes with the target connector without an additional sign. -/
+/-- Let `k` be a commutative ring, `G` a group, `B : Rep k G`, and `S : 0 → S₁ → S₂ → S₃ → 0`
+short exact. Assume `S ⊗ B` is short exact. For `p,q : ℕ`, `(δ_S^p ⊗ 𝟙) ≫ cup_{p+1,q} ≫ e =
+cup_{p,q} ≫ δ_{S⊗B}^{p+q}` as maps `H^p(G,S₃) ⊗ H^q(G,B) → H^{p+q+1}(G,S₁ ⊗ B)`. The cups have
+coefficients `S₁,B` and `S₃,B`, respectively, and `e` identifies `(p + 1) + q` with `p + q +
+1`. -/
 theorem cup_delta_left
     (B : Rep k G) (S : ShortComplex (Rep k G))
     (hS : S.ShortExact)

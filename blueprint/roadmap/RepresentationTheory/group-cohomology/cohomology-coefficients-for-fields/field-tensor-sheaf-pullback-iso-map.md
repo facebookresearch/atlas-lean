@@ -1,3 +1,10 @@
-# Field Tensor Sheaf Pullback Iso map
+# Target stalk of the field tensor pullback morphism
 
-The actual target geometric-fiber functor recovers the same constructed field tensor map.
+Let Ω/k and Ψ₀/K₀ be separable closures of fields in universe u,
+c = max(u, r), and e a compatible pair of base and closure embeddings.
+Put f = Spec(e.base), L = f*, φ = res_e : Gal(Ψ₀/K₀) → Gal(Ω/k),
+and Res the coefficient restriction along φ. Let E and E′ denote the
+source and target geometric-stalk Galois functors.
+Applying E′ to the forward sheaf tensor pullback isomorphism gives
+the forward map E′L(F ⊗ H) → E′(LF ⊗ LH) of the Galois tensor
+pullback isomorphism.

@@ -1,4 +1,7 @@
-# Original Field Derived Sections Invariants Laws
+# Full resolution and section laws of the derived comparison
 
-The full original source unit fixes the actual family, all resolutions/maps and both
-common and original degree-zero section/germ normalizations.
+Full resolution and section laws of the derived comparison.
+
+These laws record left exact invariants, the natural comparison and inverse identities, mapped
+resolutions and their maps, resolution formulas and choices, zero coordinates, and lifted-
+section values.

@@ -1,3 +1,5 @@
-# Field Prescribed Geometric Point Family
+# The singleton prescribed geometric-point family
 
-A singleton family containing the prescribed original point.
+For a field k and prescribed separable closure Ω, define the family of points of the small
+étale topology to be the singleton indexed by Unit whose point is Spec(Ω) → Spec(k). Its fiber
+universe is u.

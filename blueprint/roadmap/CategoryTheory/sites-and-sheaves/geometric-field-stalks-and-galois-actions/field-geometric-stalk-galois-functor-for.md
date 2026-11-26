@@ -1,3 +1,5 @@
-# Field Geometric Stalk Galois Functor forget
+# Forgetting the Galois stalk action returns the geometric stalk functor
 
-Forgetting returns exactly the SAME original stalk functor and maps.
+For a field k and prescribed separable closure Ω, the Galois stalk functor followed by
+DiscreteAbelianAction.forget equals the common additive-group geometric stalk functor. The
+equality retains both the underlying stalk objects and all sheaf-induced maps.

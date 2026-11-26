@@ -1,4 +1,7 @@
-# Field Continuous Derived Invariants Iso native group naturality
+# Comparison for group maps with individually lifted coefficients
 
-An original diagram in the two native coefficient ranks enters the common
-rank through exactly one of the existing coefficient-lift functors per carrier.
+Comparison for group maps with individually lifted coefficients.
+
+Lift each source and target coefficient once to the common height. The lifted intertwiner
+sends a lifted element to the lift of its given value, and the group-and-coefficient
+comparison square holds in every degree.

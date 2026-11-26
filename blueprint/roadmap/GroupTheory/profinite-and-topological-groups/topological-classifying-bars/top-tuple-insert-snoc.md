@@ -1,3 +1,6 @@
-# Top Tuple Insert snoc
+# Unit insertion before an appended coordinate
 
-Inserting below the final coordinate commutes with tuple snoc.
+Unit insertion before an appended coordinate.
+
+Inserting 1 into Fin.snoc t g at the inherited index i equals appending g after inserting 1
+into t at i.

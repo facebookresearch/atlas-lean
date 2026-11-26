@@ -1,3 +1,6 @@
-# Top Point Right Action assoc
+# The associativity law of the right topological point action
 
-Associativity law for the terminal right action.
+The associativity law of the right topological point action.
+
+Acting on the point by the product of two monoid elements agrees with acting successively,
+with the cartesian associator included.

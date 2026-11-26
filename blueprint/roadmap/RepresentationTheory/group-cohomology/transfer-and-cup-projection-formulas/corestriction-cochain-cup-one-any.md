@@ -1,5 +1,6 @@
-# Corestriction Cochain cup one any
+# The uniform cochain cup projection identity with its boundary
 
-Cochain-level arbitrary `(1,q)` projection formula.  Transfer of the
-restricted cup is the cup with the transferred right factor minus the
-boundary of the uniform projection homotopy.
+The uniform cochain cup projection identity with its boundary.
+
+For a G-one-cocycle x and an H-q-cocycle y, cor_Tᵠ⁺¹(x|H ∪ y) = x ∪ cor_Tᵠ(y) −
+dᵠ(cupProjectionHomotopyOneAny A B T q x y), for every q ≥ 0.

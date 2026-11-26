@@ -16,7 +16,20 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleInverseImageExactness
 public import MathlibExt.CategoryTheory.Abelian.RightDerived.DeltaFunctor
 
 /-!
-# All-degree pullback of the actual right-derived global-section functors
+# Pullback of derived global sections
+
+Let f : X → Y be a scheme morphism in universe u and c = max(u, w).
+Global sections of AddCommGrpCat c-valued étale sheaves have right derived
+functors RᑫΓ_X and RᑫΓ_Y. Exact inverse image f* lets the canonical
+degree-zero pullback extend uniquely to a morphism of cohomological
+delta functors.
+
+Its degree q component is
+RᑫΓ_Y(Q) → RᑫΓ_X(f*Q).
+These maps commute with connecting homomorphisms, with identity maps after
+the inverse-image identity comparison, and with composition after the
+iterated/direct inverse-image comparison. All degrees q ∈ ℕ are included;
+the coefficient universe w is independent of u.
 -/
 
 @[expose] public section
@@ -33,8 +46,9 @@ open CategoryTheory CategoryTheory.Limits
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- The cohomological delta functor of right derived global sections on the
-small étale site, in the common coefficient universe. -/
+/-- For a scheme X in universe u and c = max(u, w), this is the
+cohomological delta functor (RᑫΓ_X)_(q∈ℕ) on abelian étale sheaves with
+coefficients in c, equipped with the connecting maps of short exact sequences. -/
 abbrev smallEtaleGammaDeltaFunctor (X : Scheme.{u}) :=
   Functor.rightDerivedDeltaFunctor
     (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w})
@@ -54,7 +68,11 @@ theorem smallEtaleDerivedInputShortExact {X Y : Scheme.{u}} (f : X ⟶ Y)
     (S.map (smallEtaleInverseImage.{u, w} f)).ShortExact :=
   smallEtaleInverseImage_shortExact.{u, w} f S hS
 
-/-- The actual unit-defined Γ map has its unique all-degree source-universal extension. -/
+/-- For f : X → Y a scheme morphism in universe u and c = max(u, w),
+the degree-zero global-section pullback extends to the morphism of
+cohomological delta functors
+(RᑫΓ_Y) → (Q ↦ RᑫΓ_X(f*Q)).
+The target uses the short exact sequences preserved by f*. -/
 def smallEtaleDerivedGammaPullbackDeltaHom {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleGammaDeltaFunctor.{u, w} Y ⟶
       CohomologicalDeltaFunctor.precompose (smallEtaleInverseImage.{u, w} f)
@@ -69,7 +87,10 @@ def smallEtaleDerivedGammaPullbackDeltaHom {X Y : Scheme.{u}} (f : X ⟶ Y) :
       (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf)
     (smallEtalePullbackGlobalSections.{u, w} f)
 
-/-- The map in degree q from derived global sections on Y to those on X after inverse image. -/
+/-- For f : X → Y a scheme morphism in universe u, c = max(u, w),
+and q ∈ ℕ, this is the natural additive map
+RᑫΓ_Y(Q) → RᑫΓ_X(f*Q) for abelian étale sheaves Q on Y.
+It is the degree q part of the normalized delta-functor pullback. -/
 def smallEtaleDerivedGammaPullback {X Y : Scheme.{u}} (f : X ⟶ Y) (q : ℕ) :
     (Sheaf.Γ Y.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived q ⟶
       smallEtaleInverseImage.{u, w} f ⋙
@@ -92,7 +113,9 @@ theorem smallEtaleDerivedGammaPullback_zero {X Y : Scheme.{u}} (f : X ⟶ Y) :
       (Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerivedZeroIsoSelf)
     (smallEtalePullbackGlobalSections.{u, w} f)
 
-/-- The identity comparison is formed from the SAME actual LF mate and exact identity input. -/
+/-- For a scheme X in universe u and c = max(u, w), combine the
+delta-functor pullback for id_X with the comparison id_X* ≅ id.
+This gives the endomorphism of (RᑫΓ_X) on coefficient sheaves over X. -/
 def smallEtaleDerivedGammaIdentityHom (X : Scheme.{u}) :
     smallEtaleGammaDeltaFunctor.{u, w} X ⟶ smallEtaleGammaDeltaFunctor.{u, w} X :=
   smallEtaleDerivedGammaPullbackDeltaHom.{u, w} (𝟙 X) ≫
@@ -115,7 +138,9 @@ def smallEtaleDerivedGammaIdentityHom (X : Scheme.{u}) :
     CohomologicalDeltaFunctor.precomposeIdentityIso_hom_app]
   rfl
 
-/-- Its actual H0 component is identity, by original unit/terminal normalization. -/
+/-- For a scheme X in universe u and c = max(u, w), the endomorphism
+formed from identity pullback and id_X* ≅ id has degree-zero component
+id_(R⁰Γ_X). -/
 theorem smallEtaleDerivedGammaIdentityHom_zero (X : Scheme.{u}) :
     CohomologicalDeltaFunctor.Hom.app (smallEtaleDerivedGammaIdentityHom.{u, w} X) 0 =
       𝟙 ((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived 0) := by
@@ -146,7 +171,9 @@ theorem smallEtaleDerivedGammaIdentityHom_eq (X : Scheme.{u}) :
     (smallEtaleGammaDeltaFunctor_universal.{u, w} X) (smallEtaleGammaDeltaFunctor.{u, w} X)
     (smallEtaleDerivedGammaIdentityHom.{u, w} X) (𝟙 _) (smallEtaleDerivedGammaIdentityHom_zero.{u, w} X)
 
-/-- The actual canonical identity comparison commutes in EVERY original ΓRD degree. -/
+/-- For a scheme X in universe u, c = max(u, w), and q ∈ ℕ,
+pullback along id_X followed by RᑫΓ_X of id_X*Q ≅ Q is
+id_(RᑫΓ_X(Q)). This is the identity law in every nonnegative degree. -/
 theorem smallEtaleDerivedGammaPullback_id (X : Scheme.{u}) (q : ℕ) :
     smallEtaleDerivedGammaPullback.{u, w} (𝟙 X) q ≫
       Functor.whiskerRight (smallEtaleInverseImageIdIso.{u, w} X).hom
@@ -179,7 +206,10 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 local instance smallEtaleCompositionInverseImage_additive {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleInverseImage.{u, w} f).Additive := smallEtaleInverseImage_additive.{u, w} f
 
-/-- Compose the actual normalized maps through the SAME exact LF composition comparison. -/
+/-- For scheme morphisms f : X → Y and g : Y → Z in universe u
+and c = max(u, w), compose the delta-functor pullbacks for g and f,
+then identify f*g* with (g∘f)*. The result maps
+(RᑫΓ_Z) to (Q ↦ RᑫΓ_X((g∘f)*Q)). -/
 def smallEtaleDerivedGammaCompositionHom {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     smallEtaleGammaDeltaFunctor.{u, w} Z ⟶
       CohomologicalDeltaFunctor.precompose (smallEtaleInverseImage.{u, w} (f ≫ g))
@@ -212,7 +242,10 @@ def smallEtaleDerivedGammaCompositionHom {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g :
   simp only [smallEtaleDerivedGammaCompositionHom, CohomologicalDeltaFunctor.Hom.comp_app]
   rfl
 
-/-- Its actual H0 map is the SAME original composite Γ/unit map. -/
+/-- For f : X → Y and g : Y → Z in universe u and c = max(u, w),
+the degree-zero composite delta-functor map, under R⁰Γ ≅ Γ,
+is the global-section pullback Γ_Z(Q) → Γ_X((g∘f)*Q).
+The inverse-image composition comparison is included in this equality. -/
 theorem smallEtaleDerivedGammaCompositionHom_zero
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) :
     CohomologicalDeltaFunctor.Hom.app (smallEtaleDerivedGammaCompositionHom.{u, w} f g) 0 ≫
@@ -277,7 +310,12 @@ theorem smallEtaleDerivedGammaCompositionHom_eq
   exact (smallEtaleDerivedGammaCompositionHom_zero.{u, w} f g).trans
     (smallEtaleDerivedGammaPullback_zero.{u, w} (f ≫ g)).symm
 
-/-- The canonical composition square holds in EVERY actual ΓRD degree and on every sheaf. -/
+/-- For f : X → Y, g : Y → Z in universe u, c = max(u, w), and q ∈ ℕ,
+let a_f and a_g be the derived global-section pullbacks and
+c_fg : f*g*Q ≅ (g∘f)*Q the inverse-image composition comparison.
+Then a_(g∘f)(Q) =
+RᑫΓ_X(c_fg) ∘ a_f(g*Q) ∘ a_g(Q).
+Thus the map order is pullback along g followed by pullback along f. -/
 theorem smallEtaleDerivedGammaPullback_comp
     {X Y Z : Scheme.{u}} (f : X ⟶ Y) (g : Y ⟶ Z) (q : ℕ) :
     smallEtaleDerivedGammaPullback.{u, w} g q ≫

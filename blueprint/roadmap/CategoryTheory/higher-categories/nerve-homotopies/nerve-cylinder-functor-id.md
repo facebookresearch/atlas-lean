@@ -1,4 +1,6 @@
-# Nerve Cylinder Functor id
+# The cylinder classifier of an identity transformation
 
-The cylinder functor of the identity natural transformation is
-the first projection followed by the functor.
+The cylinder classifier of an identity transformation.
+
+For the identity transformation of F : A → B, the cylinder functor is the first projection A ×
+Fin 2 → A followed by F, at the stated independent category universes.

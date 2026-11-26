@@ -1,3 +1,5 @@
-# Field Equivariant Stalk Hom Add Equiv naturality right
+# Additive stalk correspondence is natural in coefficients
 
-The additive Hom equivalence is natural under every original module map.
+Additive stalk correspondence is natural in coefficients.
+
+Postcomposition by a coefficient map commutes with the additive Hom correspondence.

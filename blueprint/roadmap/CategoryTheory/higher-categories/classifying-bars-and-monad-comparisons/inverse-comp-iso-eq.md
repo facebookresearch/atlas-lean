@@ -1,3 +1,5 @@
-# Inverse comp iso eq
+# Equal isomorphisms give equal inverse composites
 
-Compose actual same-target iso equalities before field-side dependent inference.
+Equal isomorphisms give equal inverse composites.
+
+Replacing both isomorphisms by equal ones preserves their composite with the second inverse.

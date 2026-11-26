@@ -12,14 +12,12 @@ module
 public import MathlibExt.RepresentationTheory.Homological.GroupCohomology.LowDegreeThree
 
 /-!
-# The representative-level degree-(1,2) group-cohomology cup product
+# Cup products of one- and two-cocycles
 
-For a one-cocycle `x` and a two-cocycle `y`, this file constructs the
-inhomogeneous three-cocycle
-
-`(x ∪ y)(g,h,j) = x(g) ⊗ g · y(h,j)`.
-
-No descent through cohomology quotients is asserted in this file.
+Let `G` be a group and `k` a commutative ring in the same universe, and let `A,B` be
+`k`-representations of `G`. The inhomogeneous formula `(x ∪ y)(g,h,j) = x(g) ⊗ g·y(h,j)` gives
+a bilinear map `Z¹(G,A) × Z²(G,B) → Z³(G,A ⊗ B)`. Composing with the projection of
+three-cocycles gives a bilinear map to `H³(G,A ⊗ B)` on these chosen representatives.
 -/
 
 @[expose] public section
@@ -37,7 +35,9 @@ namespace groupCohomology
 variable {k G : Type u} [CommRing k] [Group G]
 variable (A B : Rep k G)
 
-/-- Inhomogeneous degree-`(1,2)` cup cochain. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, functions `x : G → A`
+and `y : G × G → B` determine the three-cochain `cupCochainOneTwo A B x y`, with value
+`(g,h,j) ↦ x(g) ⊗ₜ[k] B.ρ g (y(h,j))`. -/
 def cupCochainOneTwo (x : G → A) (y : G × G → B) :
     G × G × G → (A ⊗ B : Rep k G) :=
   fun p => x p.1 ⊗ₜ[k] B.ρ p.1 (y (p.2.1, p.2.2))
@@ -49,8 +49,9 @@ theorem cupCochainOneTwo_apply (x : G → A) (y : G × G → B)
       x g ⊗ₜ[k] B.ρ g (y (h, j)) :=
   rfl
 
-/-- The cup cochain of a one-cocycle and a two-cocycle is a
-three-cocycle. -/
+/-- Let `A,B` be representations of a group `G` over a commutative ring `k`. If `x ∈ Z¹(G,A)` and
+`y ∈ Z²(G,B)`, then `z(g,h,j) = x(g) ⊗ₜ[k] g·y(h,j)` belongs to `Z³(G,A ⊗ B)`. Its
+inhomogeneous differential is `g·z(h,i,j) - z(gh,i,j) + z(g,hi,j) - z(g,h,ij) + z(g,h,i) = 0`. -/
 theorem cupCochainOneTwo_mem_cocycles₃
     (x : cocycles₁ A) (y : cocycles₂ B) :
     cupCochainOneTwo A B x y ∈ cocycles₃ (A ⊗ B) := by
@@ -81,8 +82,9 @@ theorem cupCochainOneTwo_mem_cocycles₃
       (fun q => -(x g ⊗ₜ[k] B.ρ g q)) hy
     _ = 0 := by simp
 
-/-- Representative-level `(1,2)` cup product, linear in both cocycle
-variables. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the `k`-bilinear map
+`Z¹(G,A) →ₗ[k] Z²(G,B) →ₗ[k] Z³(G,A ⊗ B)` sends `(x,y)` to the cocycle `(g,h,j) ↦ x(g) ⊗ₜ[k]
+g·y(h,j)`. -/
 def cupCocycleOneTwo :
     cocycles₁ A →ₗ[k] cocycles₂ B →ₗ[k] cocycles₃ (A ⊗ B) where
   toFun x :=
@@ -119,7 +121,9 @@ theorem cupCocycleOneTwo_apply
       x g ⊗ₜ[k] B.ρ g (y (h, j)) :=
   rfl
 
-/-- Third cohomology class of chosen `(1,2)` cocycle representatives. -/
+/-- For representations `A,B` of a group `G` over a commutative ring `k`, the bilinear map
+`Z¹(G,A) →ₗ[k] Z²(G,B) →ₗ[k] H³(G,A ⊗ B)` sends `(x,y)` to `H3π (A ⊗ B) (cupCocycleOneTwo A B
+x y)`, the class of `(g,h,j) ↦ x(g) ⊗ₜ[k] g·y(h,j)`. -/
 def cupCocycleOneTwoClass :
     cocycles₁ A →ₗ[k] cocycles₂ B →ₗ[k] H3 (A ⊗ B) where
   toFun x := (H3π (A ⊗ B)).hom.comp (cupCocycleOneTwo A B x)
