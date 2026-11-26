@@ -1,16 +1,10 @@
 # Quantum soundness of the two-player linearity test
 
-In the two-player linearity test over $\mathbb{F}_2^n$ the referee sends Alice a pair of points $(u, v)$ and Bob one of $u$, $v$ or $u + v$ (uniform $u, v$), expects Alice's answers $(a_u, a_v)$, accepts if Bob's answer matches the corresponding value $a_u$, $a_v$ or $a_u \oplus a_v$. Let a tensor strategy on a state $\psi$ use projective measurements, with Bob's projector for answer $b \in \{0, 1\}$ on question $w$ written $B^w_b$. If it passes with probability at least $1 - \varepsilon$, then there is a measurement $\{Q_s\}_{s \in \mathbb{F}_2^n}$ on Bob's space such that
-
-$$
-\mathop{\mathbb{E}}_{w} \sum_{b \in \{0, 1\}} \Big\| \Big(1 \otimes \big(B^w_b - \textstyle\sum_{s : \langle s, w \rangle = b} Q_s\big)\Big)\psi \Big\|^2 \le C\varepsilon
-$$
-
-for an absolute constant $C$, with $w$ uniform in $\mathbb{F}_2^n$: Bob's answers are approximately obtained by measuring $s$ once and answering $\langle s, w \rangle$.
+In the two-player linearity test of Natarajan and Vidick (Figure 1) over $\mathbb{F}_2^n$, the referee sends Alice a pair of uniformly random points $(a, b)$ and Bob a question $c \in \{a, b, a + b\}$ together with a uniformly random dummy string $c'$, expects Alice's answers $(x_a, x_b)$ and Bob's answer $y$, and checks consistency with $x_a$, $x_b$, or $x_a \oplus x_b$. If a strategy passes with probability at least $1 - \varepsilon$, then Alice's observables $A(a) = A^0_a - A^1_a$, after Naimark dilation to a state $\psi'$, satisfy $\mathbb{E}_{a,b}\langle \psi', A(a)A(b)A(a+b)\psi'\rangle = 1 - O(\sqrt{\varepsilon})$, and there are observables $\tilde A(a)$ with $\tilde A(a)\tilde A(b) = \tilde A(a+b)$ for all $a, b \in \mathbb{F}_2^n$ and $\mathbb{E}_a \|(A(a) - \tilde A(a))\psi'\|^2 = O(\sqrt{\varepsilon})$ (Natarajan and Vidick, Theorems 10 and 11).
 
 ## Proof sketch
 
-Consistency with Bob makes Alice's measurements on $u$, $v$, $u+v$ approximately commute and multiply as characters; averaging the induced unitary representation over the group (a quantum version of BLR via Gowers–Hatami) yields an exact representation close to the strategy.
+Consistency with Bob makes Alice's observables on $a$, $b$, and $a+b$ approximately commute and satisfy $\mathbb{E}_{a,b}\langle \psi', A(a)A(b)A(a+b)\psi'\rangle = 1 - O(\sqrt{\varepsilon})$ (Theorem 11); applying the Gowers–Hatami stability theorem for approximate representations of $\mathbb{F}_2^n$ rounds $A$ to an exact representation $\tilde A$ at averaged squared state-dependent distance $O(\sqrt{\varepsilon})$ (Theorem 10).
 
 ## Depends on
 
@@ -19,4 +13,4 @@ Consistency with Bob makes Alice's measurements on $u$, $v$, $u+v$ approximately
 
 ## Sources
 
-- A. Natarajan and T. Vidick, "A Quantum Linearity Test for Robustly Verifying Entanglement", STOC 2017.
+- A. Natarajan and T. Vidick, "A Quantum Linearity Test for Robustly Verifying Entanglement", STOC 2017 (arXiv:1610.03574), Figure 1 and Theorems 10 and 11.

@@ -4,7 +4,7 @@ For every integer $k \ge 1$ there is a load-balancing game on uniformly related 
 
 ## Proof sketch
 
-In the optimum each job of weight $2^t$ has its own machine of tier $t - 1$, a load of $2$. In the bad equilibrium each machine of tier $t$ holds $t$ jobs of weight $2^t$, a load of $t$, so the single machine of tier $k$ has load $k$. A job on tier $t$ moving to a machine of tier $j$ would see load $j + 2^{t-j} > t$ if $j < t$, at least $j + 1 > t$ if $j > t$ and $t + 1$ if $j = t$, so no job gains. The price of anarchy is at least $k/2$, and $m < e \cdot k!$ gives $k = \Omega(\log m / \log\log m)$.
+In the optimum each job of weight $2^t$ has its own machine of tier $t - 1$, a load of $2$. In the bad equilibrium each machine of tier $t$ holds $t$ jobs of weight $2^t$, a load of $t$, so the single machine of tier $k$ has load $k$. A job on tier $t$ moving to a machine of tier $j$ would see load $j + 2^{t-j} > t$ if $j < t$, more than $j \ge t + 1$ if $j > t$ and $t + 1$ if $j = t$, so no job gains. The price of anarchy is at least $k/2$, and $m < e \cdot k!$ gives $k = \Omega(\log m / \log\log m)$.
 
 ## Depends on
 
