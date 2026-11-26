@@ -50,7 +50,7 @@ versions.
 
 The graph has vertices `0, …, n - 1` and is given by its list of weighted edges `(u, v, w)`:
 distinct undirected edges without loops or repeated pairs, as in
-`WantedExt.Complexity.NPComplete.DominatingSetWanted`. A color assignment is a list giving each
+`CSLibExt.Complexity.NPComplete.DominatingSetDefs`. A color assignment is a list giving each
 vertex a color below `k`, as in `WantedExt.Complexity.NPComplete.MaxKCutWanted`.
 
 Encoding: the instance is decoded from a bitstring with the repository's

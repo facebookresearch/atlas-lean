@@ -23,7 +23,8 @@ at `l < 2` never enter the definitions.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductClassification
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductFourEight
+public import MathlibExt.Combinatorics.Additive.VanDerWaerdenSumProductThree
 public import MathlibExt.Combinatorics.Additive.VanDerWaerdenTransformationSums
 
 namespace MetaMathlibExt
@@ -41,27 +42,6 @@ to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Theorem 2
 public theorem_wanted not_isMVanishingFamily_sumAddMulProd_of_ne {n : ℕ} (hn : 1 < n)
     (c : ZMod n) (hc0 : c ≠ 0) (hc1 : c ≠ 1) (hcm1 : c ≠ -1) {m : ℕ} (hm : 0 < m) :
     ¬ IsMVanishingFamily m (sumAddMulProdFamily c)
-
-/-- **The sum-plus-product family is vanishing over $\mathbb{Z}/3\mathbb{Z}$.** Let $F_1$ be the
-family over $\mathbb{Z}/3\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to
-$\sum_i b_i + \prod_i b_i$. Then $F_1$ is vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 1
-(`integers-2026-A25-lem-1`). -/
-public theorem_wanted isVanishingFamily_sumAddMulProd_one_three :
-    IsVanishingFamily (sumAddMulProdFamily (1 : ZMod 3))
-
-/-- **The sum-plus-product family is vanishing over $\mathbb{Z}/4\mathbb{Z}$ and
-$\mathbb{Z}/8\mathbb{Z}$.** Let $n \in \{4, 8\}$ and let $F_1$ be the family over
-$\mathbb{Z}/n\mathbb{Z}$ sending a block $(b_1, \dots, b_l)$ to $\sum_i b_i + \prod_i b_i$. Then
-$F_1$ is vanishing.
-
-Source: Arie Bialostocki and Vladyslav Oles, *On Generalizing the Van Der Waerden Theorem
-to Some Symmetric Functions*, INTEGERS 26 (2026), Article A25, Lemma 2
-(`integers-2026-A25-lem-2`). -/
-public theorem_wanted isVanishingFamily_sumAddMulProd_one_four_eight {n : ℕ}
-    (hn : n = 4 ∨ n = 8) : IsVanishingFamily (sumAddMulProdFamily (1 : ZMod n))
 
 /-- **$F_{\pm 1}$ over $\mathbb{Z}/6$ is not $m$-vanishing for $m > 1$.** For every $m > 1$,
 neither of the sum-plus-product families $F_{-1}$ and $F_1$ over $\mathbb{Z}/6$, where
