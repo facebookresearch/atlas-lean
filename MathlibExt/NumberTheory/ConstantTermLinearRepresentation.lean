@@ -207,8 +207,6 @@ public theorem laurentCartier_pow_mul_single_eq_sum {r p : ℕ} (hp : p.Prime)
       omega
     omega
 
--- Keep the two proofs of origin membership inline in the matrix indices.
-set_option backward.proofsInPublic true in
 -- If a positive dilation is in the box, the undilated point is also in the box.
 private theorem gammaZero_mem_box_of_nsmul_mem {r m q : ℕ} (hq : q ≠ 0) {x : Fin r → ℤ}
     (hx : q • x ∈ Fintype.piFinset fun _ : Fin r => Finset.Icc (-(m : ℤ)) m) :
@@ -279,6 +277,8 @@ private theorem exists_gammaZero_pow_eq_single_of_one_lt {R : Type*} [Semiring R
       simp [z]
   simp only [heq]
 
+-- Keep the two proofs of origin membership inline in the matrix indices.
+set_option backward.proofsInPublic true in
 /-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
 $r, m \ge 0$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$, and let
 $\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p\mathbb{Z}$ whose $(i, j)$ entry is $1$
@@ -297,6 +297,7 @@ public theorem exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r m : �
 
 -- The semiring argument also covers `a = 0`; the statement retains the source's hypothesis.
 set_option linter.unusedVariables false in
+set_option backward.proofsInPublic true in
 /-- **Powers of $\tilde\gamma(0)$ modulo $p^a$ stabilize at a matrix unit.** Let $p$ be a prime,
 let $a \ge 1$, $r$ and $m$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$,
 and let $\tilde\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p^a\mathbb{Z}$ whose
