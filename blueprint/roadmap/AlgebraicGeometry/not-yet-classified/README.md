@@ -1200,6 +1200,7 @@ Topics added since this subject's fields were last revised.
 - [Javanpeykar Belyi](javanpeykar-belyi/README.md)
 - [Canonical Polarization Data](canonical-polarization-data/README.md)
 - [Drinfeld Upper Half Plane](drinfeld-upper-half-plane/README.md)
+- [Modular Model Conductor](modular-model-conductor/README.md)
 - [Bruhat Tits Tree](bruhat-tits-tree/README.md)
 - [Lattice Base Change](lattice-base-change/README.md)
 - [Lattice Galois](lattice-galois/README.md)
