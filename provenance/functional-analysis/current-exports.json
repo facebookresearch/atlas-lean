@@ -67,7 +67,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Matrix/HermitianPseudoInverse.lean",
-      "exported_sha256": "cc5abfbd7957f47cd879f75dede2b45e9c4d901ea20a82a2bc5f5f12d35b168f",
+      "exported_sha256": "5978adda2da78d18cf94a0ae88e2bdda8247b1448150029d373444afd646dfac",
       "original_sha256": "8835b06755f384e0523b15cd229a928f18fc96f6bc5df433c2632355ff255852",
       "ledger": "provenance/functional-analysis/residual-analysis/files-01.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -292,7 +292,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Matrix/HermitianPseudoInverseUnique.lean",
-      "exported_sha256": "26708c11eafd0772784fafb349bb732f2347b06d548f26a413d16e71e1260ea1",
+      "exported_sha256": "cf58f86848d2df758de5b40ee4b05edae6f0f28ed0ed9b5da1f58d7ce1500b32",
       "original_sha256": "3cd80fb730b710e1b594aac884ef5f2127165484dfc14685f7c87af1ddc849f7",
       "ledger": "provenance/functional-analysis/residual-analysis/files-03.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
@@ -355,7 +355,7 @@
     },
     {
       "path": "MathlibExt/Analysis/Complex/AnalyticL2/BergmanProjection.lean",
-      "exported_sha256": "7e022b016fdf260fc5970bf652fae76d3983b94b5665e9810ba4be6a1b9a9649",
+      "exported_sha256": "5c7bf792d5259794ba52c9f904ac5fa210ab4818735b8a1b280f234d7b065383",
       "original_sha256": "bcc5bdccebaf0d0c92883143ba0046aef50eb14c9b1777c92dfd90c6092fc4f6",
       "ledger": "provenance/functional-analysis/residual-analysis/files-04.jsonl",
       "snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",

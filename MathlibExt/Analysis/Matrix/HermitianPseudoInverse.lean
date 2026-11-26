@@ -31,6 +31,14 @@ the support, and all four Moore–Penrose equations hold. Singular matrices,
 zero matrices and an empty finite index type retain the same definitions.
 Conjugate transpose, matrix multiplication and Euclidean coordinate structures
 are the stated real-or-complex ones.
+
+## References
+
+The four equations are those of Theorem 1 in R. Penrose, “A generalized inverse for matrices”,
+*Mathematical Proceedings of the Cambridge Philosophical Society* 51(3) (1955), 406–413. The
+theorem gives existence and uniqueness for arbitrary complex matrices; the construction here is
+its Hermitian square real-or-complex specialization, with the spectral reciprocal set to zero on
+the zero eigenspace.
 -/
 
 @[expose] public section

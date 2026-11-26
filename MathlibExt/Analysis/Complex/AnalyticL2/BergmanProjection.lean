@@ -28,6 +28,16 @@ The Bergman projection is the continuous complex-linear orthogonal
 projection from that same L2 Hilbert space onto that same submodule.
 The domain may be empty or unbounded; no bounded-domain, probability-measure
 or finite-area hypothesis is introduced.
+
+## References
+
+The classical Bergman-space construction originates in S. Bergman, *The Kernel Function and
+Conformal Mapping*, Mathematical Surveys 5, American Mathematical Society, 1950. For the
+formulation used here, see J. B. Conway, *A Course in Functional Analysis*, second edition,
+Graduate Texts in Mathematics 96, Springer, 1990: Chapter I §1, Definition 1.10, Corollary 1.12
+and Proposition 1.13 describe the analytic L² subspace, its bounded point evaluations, and its
+closedness and completeness. Chapter I §2, Theorem 2.7, supplies the closed-subspace orthogonal
+projection. The domain here is any open subset of `ℂ`, including empty or unbounded sets.
 -/
 
 @[expose] public section

@@ -21,6 +21,13 @@ equals its computed spectral pseudoinverse when `AXA=A`, `XAX=X`, and both
 `AX` and `XA` are Hermitian. These are the four Moore–Penrose equations.
 No invertibility or nonzero-eigenvalue assumption is imposed. Zero and
 empty-index matrices are included, with the same total spectral reciprocal.
+
+## References
+
+Uniqueness under the four equations is Theorem 1 in R. Penrose, “A generalized inverse for
+matrices”, *Mathematical Proceedings of the Cambridge Philosophical Society* 51(3) (1955),
+406–413. Here the input is a Hermitian square matrix over `ℝ` or `ℂ`, and its unique generalized
+inverse is the computed spectral reciprocal.
 -/
 
 @[expose] public section
