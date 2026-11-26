@@ -13674,6 +13674,7 @@
 "Cslib.Algorithms.Lean.Geometry.stripScan": "160c410d30a1d54e",
 "Cslib.Algorithms.Lean.Geometry.stripScan_lower": "8af11613a16aeaff",
 "Cslib.Algorithms.Lean.Geometry.stripScan_time_le": "12b618cc5ae8f3f9",
+"Cslib.Algorithms.Lean.Geometry.triangle_mem_iff_edge_signs": "56a90f78f52de8e4",
 "Cslib.Algorithms.Lean.Geometry.upperHull": "b00416eb562f40c7",
 "Cslib.Algorithms.Lean.Geometry.upperHull_eq": "00476daedfabc211",
 "Cslib.Algorithms.Lean.Geometry.upperHull_getLast?": "b9d930195687429f",
