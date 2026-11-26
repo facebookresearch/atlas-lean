@@ -39,6 +39,7 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.ResidualModularity
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.Supersingular
 public import MathlibExt.RingTheory.Valuation.TameCharacter
 import Mathlib.Algebra.Algebra.ZMod
 import Mathlib.Algebra.CharP.Lemmas
@@ -50,26 +51,31 @@ import Mathlib.LinearAlgebra.Matrix.Basis
 import Mathlib.RingTheory.PrincipalIdealDomain
 import Mathlib.RingTheory.TensorProduct.Free
 import MathlibExt.AlgebraicGeometry.EllipticCurve.TorsionCardinality
+import MathlibExt.RingTheory.Valuation.ResidueChar
 import MathlibExt.RingTheory.Valuation.ResidueField
 
 /-!
 # Tame inertia on the residual representation at a supersingular prime
 
 Let `W` be an integral Weierstrass curve with good reduction at an odd prime `p`, supersingular
-in the sense that the inner coefficients of its `p`-division polynomial are divisible by `p`.
-At a valuation subring `P` of `AlgebraicClosure ℚ` over `p`, every nonzero `p`-torsion point has
-`x`-coordinate of valuation `v(p) ^ (-2 / (p ^ 2 - 1))`, and the reduction of `x / (y π)` with
+in the sense that the inner coefficients of its `p`-division polynomial are divisible by `p`;
+this is supersingularity of the reduction of `W` over `AlgebraicClosure (ZMod p)`. At a valuation
+subring `P` of `AlgebraicClosure ℚ` over `p`, every nonzero `p`-torsion point has `x`-coordinate
+of valuation `v(p) ^ (-2 / (p ^ 2 - 1))`, and the reduction of `x / (y π)` with
 `π ^ (p ^ 2 - 1) = p` is an additive functional on the `p`-torsion on which inertia acts through
 the tame character. Consequently the residual representation, after any extension of scalars to
-a finite field, has an inertia eigenvector with eigencharacter the tame character or its `p`-th
-power.
+a finite field, has a nonzero vector on which inertia acts through the tame character.
 
 ## Main results
 
+* `WeierstrassCurve.isSupersingular_map_iff_coeff_prePsi_dvd`: the divisibility condition is
+  supersingular reduction.
 * `WeierstrassCurve.valuation_torsion_of_coeff_prePsi_dvd`: valuations of `p`-torsion
   coordinates.
+* `WeierstrassCurve.exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular`: the inertia
+  eigenvector, with eigencharacter the tame character.
 * `WeierstrassCurve.exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersingular`:
-  the inertia eigenvector.
+  the same eigenvector, with eigencharacter the tame character or its `p`-th power.
 -/
 
 -- The point API needs decidable equality on `AlgebraicClosure ℚ`. Take it from classical
@@ -77,9 +83,6 @@ power.
 attribute [local instance] Classical.decEq
 
 @[expose] public section
-
-open Polynomial
-
 
 open Polynomial
 
@@ -146,7 +149,6 @@ private theorem _root_.Valuation.newton_one_slope (c : ℕ → K) (N : ℕ) (x :
       exact hM i (lt_of_le_of_ne (Nat.lt_succ_iff.mp hi.1) hi.2)
     rw [hroot, map_zero, hterm] at hsum
     exact mul_ne_zero hN0 (pow_ne_zero N (ne_of_gt (lt_trans zero_lt_one hx))) hsum.symm
-
 
 private theorem _root_.Valuation.sq_eq_cube_of_weierstrass {a₁ a₂ a₃ a₄ a₆ x y : K}
     (ha₁ : v a₁ ≤ 1) (ha₂ : v a₂ ≤ 1) (ha₃ : v a₃ ≤ 1) (ha₄ : v a₄ ≤ 1) (ha₆ : v a₆ ≤ 1)
@@ -238,57 +240,18 @@ private theorem _root_.Valuation.sq_eq_cube_of_weierstrass {a₁ a₂ a₃ a₄ 
     rw [hlhs] at this
     exact hgt.ne this
 
-
-private theorem _root_.Valuation.coeff_prod_X_sub_C_of_one_lt (s : Multiset K) (hs : ∀ r ∈ s, 1 < v
-  r) :
-    1 ≤ v (((s.map fun r => X - C r).prod).coeff 0) ∧
-      ∀ k, 0 < k → v (((s.map fun r => X - C r).prod).coeff k) <
-        v (((s.map fun r => X - C r).prod).coeff 0) := by
-  induction s using Multiset.induction_on with
-  | empty =>
-    refine ⟨by simp, fun k hk => ?_⟩
-    rw [Multiset.map_zero, Multiset.prod_zero, coeff_one, coeff_one, ite_eq_right (Nat.ne_of_gt hk),
-      ite_eq_left rfl, map_zero, map_one]
-    exact zero_lt_one
-  | cons r t ih =>
-    obtain ⟨ih0, ihk⟩ := ih fun r' hr' => hs r' (Multiset.mem_cons_of_mem hr')
-    have hr : 1 < v r := hs r (Multiset.mem_cons_self r t)
-    rw [Multiset.map_cons, Multiset.prod_cons]
-    set h := (t.map fun r => X - C r).prod with hh
-    have hv0 : v (((X - C r) * h).coeff 0) = v r * v (h.coeff 0) := by
-      rw [mul_coeff_zero, coeff_sub, coeff_X_zero, coeff_C_zero, zero_sub, neg_mul, map_neg,
-        map_mul]
-    have hpos : 0 < v (h.coeff 0) := lt_of_lt_of_le zero_lt_one ih0
-    refine ⟨?_, fun k hk => ?_⟩
-    · rw [hv0]
-      exact one_le_mul hr.le ih0
-    · obtain ⟨k, rfl⟩ : ∃ j, k = j + 1 := ⟨k - 1, by omega⟩
-      rw [coeff_X_sub_C_mul, hv0]
-      have hb1 : v (h.coeff k) < v r * v (h.coeff 0) := by
-        have hle : v (h.coeff k) ≤ v (h.coeff 0) := by
-          rcases Nat.eq_zero_or_pos k with rfl | hk'
-          · exact le_rfl
-          · exact (ihk k hk').le
-        exact lt_of_le_of_lt hle (lt_mul_of_one_lt_left hpos hr)
-      have hb2 : v (r * h.coeff (k + 1)) < v r * v (h.coeff 0) := by
-        rw [map_mul]
-        exact mul_lt_mul_of_pos_left (ihk (k + 1) (Nat.succ_pos k)) (lt_trans zero_lt_one hr)
-      exact lt_of_le_of_lt (map_sub v _ _) (max_lt hb1 hb2)
-
 end Valuation
 
 namespace ValuationSubring
 
 variable {L : Type*} [Field L] (A : ValuationSubring L)
 
-private theorem _root_.ValuationSubring.valuation_intCast_le_one (c : ℤ) : A.valuation (c : L) ≤ 1
-  :=
+private theorem _root_.ValuationSubring.valuation_intCast_le_one (c : ℤ) :
+    A.valuation (c : L) ≤ 1 :=
   (A.valuation_le_one_iff _).mpr (intCast_mem A c)
 
-
-private theorem _root_.ValuationSubring.valuation_intCast_lt_one_of_dvd {p : ℕ} (hA :
-  A.LiesOverPrime p) {c : ℤ}
-    (h : (p : ℤ) ∣ c) : A.valuation (c : L) < 1 := by
+private theorem _root_.ValuationSubring.valuation_intCast_lt_one_of_dvd {p : ℕ}
+    (hA : A.LiesOverPrime p) {c : ℤ} (h : (p : ℤ) ∣ c) : A.valuation (c : L) < 1 := by
   obtain ⟨k, rfl⟩ := h
   have hp : A.valuation (p : L) < 1 := A.mem_nonunits_iff.mp hA
   rw [Int.cast_mul, Int.cast_natCast, map_mul]
@@ -296,9 +259,8 @@ private theorem _root_.ValuationSubring.valuation_intCast_lt_one_of_dvd {p : ℕ
       mul_le_mul_right (A.valuation_intCast_le_one k) _
     _ < 1 := by rwa [mul_one]
 
-
-private theorem _root_.ValuationSubring.valuation_intCast_lt_one_iff {p : ℕ} (hp : p.Prime) (hA :
-  A.LiesOverPrime p) (c : ℤ) :
+private theorem _root_.ValuationSubring.valuation_intCast_lt_one_iff {p : ℕ} (hp : p.Prime)
+    (hA : A.LiesOverPrime p) (c : ℤ) :
     A.valuation (c : L) < 1 ↔ (p : ℤ) ∣ c := by
   refine ⟨fun hc => ?_, A.valuation_intCast_lt_one_of_dvd hA⟩
   by_contra hndvd
@@ -320,17 +282,15 @@ private theorem _root_.ValuationSubring.valuation_intCast_lt_one_iff {p : ℕ} (
   rw [hab, Int.cast_one, map_one] at h1
   exact lt_irrefl _ h1
 
-
-private theorem _root_.ValuationSubring.valuation_intCast_eq_one_iff {p : ℕ} (hp : p.Prime) (hA :
-  A.LiesOverPrime p) (c : ℤ) :
+private theorem _root_.ValuationSubring.valuation_intCast_eq_one_iff {p : ℕ} (hp : p.Prime)
+    (hA : A.LiesOverPrime p) (c : ℤ) :
     A.valuation (c : L) = 1 ↔ ¬ (p : ℤ) ∣ c := by
   rw [← A.valuation_intCast_lt_one_iff hp hA c, not_lt]
   exact ⟨fun h => h.ge, fun h => le_antisymm (A.valuation_intCast_le_one c) h⟩
 
-
-private theorem _root_.ValuationSubring.intCast_residueField_eq_zero_iff {p : ℕ} (hp : p.Prime) (hA
-  : A.LiesOverPrime p)
-    (c : ℤ) : ((c : ℤ) : IsLocalRing.ResidueField A) = 0 ↔ (p : ℤ) ∣ c := by
+private theorem _root_.ValuationSubring.intCast_residueField_eq_zero_iff {p : ℕ} (hp : p.Prime)
+    (hA : A.LiesOverPrime p) (c : ℤ) :
+    ((c : ℤ) : IsLocalRing.ResidueField A) = 0 ↔ (p : ℤ) ∣ c := by
   rw [← map_intCast (IsLocalRing.residue A) c, IsLocalRing.residue_eq_zero_iff,
     ← coe_mem_nonunits_iff, mem_nonunits_iff]
   exact A.valuation_intCast_lt_one_iff hp hA c
@@ -348,13 +308,11 @@ private theorem _root_.WeierstrassCurve.natDegree_prePsi_le_of_odd {n : ℕ} (hn
     (W.preΨ' n).natDegree ≤ (n ^ 2 - 1) / 2 := by
   simpa only [ite_eq_right (Nat.not_even_iff_odd.mpr hn)] using W.natDegree_preΨ'_le n
 
-
 private theorem _root_.WeierstrassCurve.coeff_prePsi_of_odd {n : ℕ} (hn : Odd n) :
     (W.preΨ' n).coeff ((n ^ 2 - 1) / 2) = n := by
   simpa only [ite_eq_right (Nat.not_even_iff_odd.mpr hn)] using W.coeff_preΨ' n
 
 end N1
-
 
 private theorem Affine.exists_nonsingular_of_isAlgClosed {F : Type*} [Field F] [IsAlgClosed F]
     (W : Affine F) (hΔ : W.Δ ≠ 0) (x : F) : ∃ y, W.Nonsingular x y := by
@@ -394,7 +352,6 @@ private lemma _root_.WeierstrassCurve.baseChange_a :
     ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).a₆ = (W.a₆ : AlgebraicClosure ℚ) := by
   simp [WeierstrassCurve.baseChange]
 
-
 private theorem _root_.WeierstrassCurve.intBaseChange_discr_ne_zero (hΔ : W.Δ ≠ 0) :
     ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).Δ ≠ 0 := by
   simpa [WeierstrassCurve.baseChange, map_Δ] using hΔ
@@ -409,10 +366,8 @@ private lemma one_lt_of_pow_mul_eq_one {Γ₀ : Type*} [LinearOrderedCommGroupWi
       _ < 1 := hb
   exact this.ne h
 
-private theorem _root_.WeierstrassCurve.exists_coeff_prePsi_not_dvd (hp2 : p ≠ 2) (hA :
-  A.LiesOverPrime p)
-    (hres : IsAlgClosed (IsLocalRing.ResidueField A))
-    (hΔres : (W.map (Int.castRingHom (IsLocalRing.ResidueField A))).Δ ≠ 0)
+private theorem _root_.WeierstrassCurve.exists_coeff_prePsi_not_dvd {F : Type} [Field F]
+    [IsAlgClosed F] [CharP F p] (hp2 : p ≠ 2) (hΔ : (W.map (Int.castRingHom F)).Δ ≠ 0)
     (hPsi : ∀ {F : Type} [Field F] [DecidableEq F] (W : WeierstrassCurve F) [W.IsElliptic]
       {n : ℕ}, Odd n → ∀ {x y : F} (h : W.toAffine.Nonsingular x y),
       n • Point.some x y h = 0 ↔ (W.preΨ' n).eval x = 0)
@@ -422,38 +377,36 @@ private theorem _root_.WeierstrassCurve.exists_coeff_prePsi_not_dvd (hp2 : p ≠
   classical
   by_contra hall
   push Not at hall
-  have := hres
   have hp : p.Prime := Fact.out
   have hodd : Odd p := hp.odd_of_ne_two hp2
-  set Wt := W.map (Int.castRingHom (IsLocalRing.ResidueField A)) with hWt
-  have : Wt.IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔres⟩
+  set Wt := W.map (Int.castRingHom F) with hWt
+  have : Wt.IsElliptic := ⟨isUnit_iff_ne_zero.mpr hΔ⟩
   have hzero : Wt.preΨ' p = 0 := by
     rw [hWt, map_preΨ']
     ext i
     rw [coeff_map, coeff_zero, eq_intCast]
     by_cases hi : i ≤ (p ^ 2 - 1) / 2
-    · exact (A.intCast_residueField_eq_zero_iff hp hA _).mpr (hall i hi)
+    · exact (CharP.intCast_eq_zero_iff F p _).mpr (hall i hi)
     · rw [coeff_eq_zero_of_natDegree_lt
         (lt_of_le_of_lt (W.natDegree_prePsi_le_of_odd hodd) (not_le.mp hi)), Int.cast_zero]
-  have h2 : (2 : IsLocalRing.ResidueField A) ≠ 0 := by
-    have := (not_congr (A.intCast_residueField_eq_zero_iff hp hA 2)).mpr (not_dvd_two hp2)
+  have h2 : (2 : F) ≠ 0 := by
+    have := (not_congr (CharP.intCast_eq_zero_iff F p 2)).mpr (not_dvd_two hp2)
     exact_mod_cast this
-  have h4 : (4 : IsLocalRing.ResidueField A) ≠ 0 := by
+  have h4 : (4 : F) ≠ 0 := by
     have := mul_ne_zero h2 h2
     norm_num at this
     exact this
   obtain ⟨x₀, hx₀⟩ := IsAlgClosed.exists_root Wt.Ψ₂Sq (by
     rw [degree_eq_natDegree (Wt.Ψ₂Sq_ne_zero h4), Wt.natDegree_Ψ₂Sq h4]; decide)
-  obtain ⟨y₀, hP⟩ := Affine.exists_nonsingular_of_isAlgClosed Wt.toAffine hΔres x₀
+  obtain ⟨y₀, hP⟩ := Affine.exists_nonsingular_of_isAlgClosed Wt.toAffine hΔ x₀
   have h2P : 2 • Point.some x₀ y₀ hP = 0 := (hTwo Wt hP).mpr hx₀.eq_zero
   have hpP : p • Point.some x₀ y₀ hP = 0 := (hPsi Wt hodd hP).mpr (by rw [hzero, eval_zero])
   obtain ⟨k, hk⟩ := hodd
   rw [hk, add_smul, one_smul, mul_comm, mul_smul, h2P, smul_zero, zero_add] at hpP
   exact Point.some_ne_zero hP hpP
 
-
-private theorem _root_.WeierstrassCurve.valuation_of_nsmul_eq_zero_of_coeff_prePsi_dvd (hp2 : p ≠
-  2) (hA : A.LiesOverPrime p)
+private theorem _root_.WeierstrassCurve.valuation_of_nsmul_eq_zero_of_coeff_prePsi_dvd
+    (hp2 : p ≠ 2) (hA : A.LiesOverPrime p)
     (hres : IsAlgClosed (IsLocalRing.ResidueField A))
     (hΔres : (W.map (Int.castRingHom (IsLocalRing.ResidueField A))).Δ ≠ 0)
     (hPsi : ∀ {F : Type} [Field F] [DecidableEq F] (W : WeierstrassCurve F) [W.IsElliptic]
@@ -476,7 +429,8 @@ private theorem _root_.WeierstrassCurve.valuation_of_nsmul_eq_zero_of_coeff_preP
   have hEΔ := W.intBaseChange_discr_ne_zero hΔ0
   have : ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).IsElliptic :=
     ⟨isUnit_iff_ne_zero.mpr hEΔ⟩
-  obtain ⟨i, hiN, hi⟩ := W.exists_coeff_prePsi_not_dvd A hp2 hA hres hΔres hPsi hTwo
+  have := ValuationSubring.charP_residueField_of_liesOverPrime A p hA
+  obtain ⟨i, hiN, hi⟩ := W.exists_coeff_prePsi_not_dvd hp2 hΔres hPsi hTwo
   have hi0 : i = 0 := by
     by_contra hne
     rcases lt_or_eq_of_le hiN with hlt | rfl
@@ -514,12 +468,9 @@ private theorem _root_.WeierstrassCurve.valuation_of_nsmul_eq_zero_of_coeff_preP
     (A.valuation_intCast_le_one _) (A.valuation_intCast_le_one _) (A.valuation_intCast_le_one _)
     (A.valuation_intCast_le_one _) hx heq
 
-
 end Setting
 
 end WeierstrassCurve
-
-
 
 namespace SupersingularInertiaAux
 
@@ -555,10 +506,6 @@ private theorem nsmul_some_eq_zero_iff_eval_prePsi {F : Type*} [Field F] [Decida
   rw [h1, WeierstrassCurve.Ψ_ofNat, ite_eq_right (Nat.not_even_iff_odd.mpr hn), mul_one,
     evalEval_C]
 
-end SupersingularInertiaAux
-
-namespace SupersingularInertiaAux
-
 private theorem map_residueField_discr_ne_zero_of_isGoodPrimeFor (W : WeierstrassCurve ℤ)
     {ℓ : ℕ} (hℓ : ℓ.Prime) (hgood : W.IsGoodPrimeFor ℓ)
     (A : ValuationSubring (AlgebraicClosure ℚ)) (hA : A.LiesOverPrime ℓ) :
@@ -591,7 +538,73 @@ theorem WeierstrassCurve.valuation_torsion_of_coeff_prePsi_dvd (W : WeierstrassC
     (fun W' _ _ hn _ _ h' => SupersingularInertiaAux.nsmul_some_eq_zero_iff_eval_prePsi W' hn h')
     (fun W' _ _ h' => SupersingularInertiaAux.two_smul_some_eq_zero_iff W' h') hss h hP
 
+/-- Good reduction at `p` makes the reduction of an integral Weierstrass curve elliptic over every
+field of characteristic `p`. -/
+theorem WeierstrassCurve.IsGoodPrimeFor.isElliptic_map {W : WeierstrassCurve ℤ} {p : ℕ}
+    (hgood : W.IsGoodPrimeFor p) (F : Type*) [Field F] [CharP F p] :
+    (W.map (Int.castRingHom F)).IsElliptic :=
+  ⟨isUnit_iff_ne_zero.mpr (by
+    rw [WeierstrassCurve.map_Δ, eq_intCast, Ne, CharP.intCast_eq_zero_iff F p]
+    exact hgood)⟩
 
+open WeierstrassCurve.Affine in
+/-- Let `p` be an odd prime and let `W` be an integral Weierstrass curve whose reduction over
+`AlgebraicClosure (ZMod p)` is elliptic. The reduction is supersingular exactly when the inner
+coefficients of the `p`-division polynomial `preΨ' p`, those of degree strictly between `0` and
+`(p ^ 2 - 1) / 2`, are divisible by `p`. -/
+theorem WeierstrassCurve.isSupersingular_map_iff_coeff_prePsi_dvd (W : WeierstrassCurve ℤ)
+    (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2)
+    [(W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).IsElliptic] :
+    (W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).toAffine.IsSupersingular ↔
+      ∀ i, 1 ≤ i → i < (p ^ 2 - 1) / 2 → (p : ℤ) ∣ (W.preΨ' p).coeff i := by
+  have hp : p.Prime := Fact.out
+  have hodd : Odd p := hp.odd_of_ne_two hp2
+  have hΔ : (W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).Δ ≠ 0 :=
+    (W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).isUnit_Δ.ne_zero
+  have hmap : (W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).preΨ' p =
+      (W.preΨ' p).map (Int.castRingHom (AlgebraicClosure (ZMod p))) :=
+    map_preΨ' ..
+  constructor
+  · intro hsup i hi hiN
+    by_contra hndvd
+    have hci : ((W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).preΨ' p).coeff i ≠ 0 := by
+      rw [hmap, coeff_map, eq_intCast, Ne, CharP.intCast_eq_zero_iff (AlgebraicClosure (ZMod p)) p]
+      exact hndvd
+    have hdeg : ((W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).preΨ' p).degree ≠ 0 :=
+      (lt_of_lt_of_le (by exact_mod_cast hi) (le_degree_of_ne_zero hci)).ne'
+    obtain ⟨x, hx⟩ := IsAlgClosed.exists_root _ hdeg
+    obtain ⟨y, h⟩ := Affine.exists_nonsingular_of_isAlgClosed _ hΔ x
+    exact Point.some_ne_zero h (hsup _
+      ((SupersingularInertiaAux.nsmul_some_eq_zero_iff_eval_prePsi _ hodd h).mpr hx.eq_zero))
+  · intro hss P hP
+    obtain ⟨i, hiN, hi⟩ := W.exists_coeff_prePsi_not_dvd (F := AlgebraicClosure (ZMod p)) hp2 hΔ
+      (fun W' _ _ hn _ _ h' => SupersingularInertiaAux.nsmul_some_eq_zero_iff_eval_prePsi W' hn h')
+      (fun W' _ _ h' => SupersingularInertiaAux.two_smul_some_eq_zero_iff W' h')
+    have hi0 : i = 0 := by
+      by_contra hne
+      rcases lt_or_eq_of_le hiN with hlt | rfl
+      · exact hi (hss i (Nat.one_le_iff_ne_zero.mpr hne) hlt)
+      · exact hi (by rw [W.coeff_prePsi_of_odd hodd])
+    subst hi0
+    have hconst : (W.map (Int.castRingHom (AlgebraicClosure (ZMod p)))).preΨ' p =
+        C (((W.preΨ' p).coeff 0 : ℤ) : AlgebraicClosure (ZMod p)) := by
+      rw [hmap]
+      ext j
+      rw [coeff_map, eq_intCast]
+      rcases Nat.eq_zero_or_pos j with rfl | hj
+      · rw [coeff_C_zero]
+      · rw [coeff_C_of_ne_zero hj.ne', CharP.intCast_eq_zero_iff (AlgebraicClosure (ZMod p)) p]
+        rcases lt_trichotomy j ((p ^ 2 - 1) / 2) with hlt | rfl | hgt
+        · exact hss j hj hlt
+        · rw [W.coeff_prePsi_of_odd hodd]
+        · rw [coeff_eq_zero_of_natDegree_lt
+            (lt_of_le_of_lt (W.natDegree_prePsi_le_of_odd hodd) hgt)]
+          exact dvd_zero _
+    rcases P with _ | ⟨x, y, h⟩
+    · rfl
+    · have h0 := (SupersingularInertiaAux.nsmul_some_eq_zero_iff_eval_prePsi _ hodd h).mp hP
+      rw [hconst, eval_C, CharP.intCast_eq_zero_iff (AlgebraicClosure (ZMod p)) p] at h0
+      exact absurd h0 hi
 
 open Matrix
 
@@ -616,9 +629,6 @@ private lemma bnd_sub {a b : K} {c : Γ} (ha : v a * c ≤ 1) (hb : v b * c ≤ 
     v (a - b) * c ≤ 1 := by
   rw [sub_eq_add_neg]
   exact bnd_add v ha (by rwa [Valuation.map_neg])
-
-private lemma bnd_neg {a : K} {c : Γ} (ha : v a * c ≤ 1) : v (-a) * c ≤ 1 := by
-  rwa [Valuation.map_neg]
 
 private lemma bnd_weaken {a : K} {c d : Γ} (ha : v a * c ≤ 1) (hd : d ≤ 1) :
     v a * (c * d) ≤ 1 := by
@@ -817,35 +827,15 @@ end groupLaw
 
 section eigen
 
-private theorem exists_cast_eq_of_pow_eq_self {p : ℕ} [Fact p.Prime] {E : Type*} [Field E] [CharP E
-  p]
-    (r : E) (hr : r ^ p = r) : ∃ c : ZMod p, ZMod.castHom (dvd_refl p) E c = r := by
-  classical
-  have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
-  set f : E[X] := X ^ p - X with hf
-  have hf0 : f ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hp1
-  have hdeg : f.natDegree = p := Polynomial.natDegree_X_pow_sub_X hp1
-  have hroot : ∀ y : E, y ∈ f.roots.toFinset ↔ y ^ p = y := by
-    intro y
-    rw [Multiset.mem_toFinset, mem_roots hf0, IsRoot, eval_sub, eval_pow, eval_X, sub_eq_zero]
-  let S : Finset E := Finset.univ.image (ZMod.castHom (dvd_refl p) E)
-  have hS : S ⊆ f.roots.toFinset := by
-    intro y hy
-    obtain ⟨c, -, rfl⟩ := Finset.mem_image.1 hy
-    rw [hroot, ← map_pow, ZMod.pow_card]
-  have hcardS : S.card = p := by
-    rw [Finset.card_image_of_injective _ (ZMod.castHom_injective E), Finset.card_univ, ZMod.card]
-  have hcardR : f.roots.toFinset.card ≤ p :=
-    (Multiset.toFinset_card_le _).trans (hdeg ▸ Polynomial.card_roots' f)
-  have hEq : S = f.roots.toFinset := Finset.eq_of_subset_of_card_le hS (by omega)
-  have hr' : r ∈ f.roots.toFinset := (hroot r).2 hr
-  rw [← hEq] at hr'
-  obtain ⟨c, -, hc⟩ := Finset.mem_image.1 hr'
-  exact ⟨c, hc⟩
+private theorem exists_cast_eq_of_pow_eq_self {p : ℕ} [Fact p.Prime] {E : Type*} [Field E]
+    [CharP E p] (r : E) (hr : r ^ p = r) : ∃ c : ZMod p, ZMod.castHom (dvd_refl p) E c = r := by
+  have hr' : r ∈ (ZMod.castHom (m := p) dvd_rfl E).fieldRange := by
+    rw [ZMod.fieldRange_castHom_eq_bot p]
+    exact (Subfield.mem_bot_iff_pow_eq_self E p).mpr hr
+  exact RingHom.mem_fieldRange.mp hr'
 
 private theorem mulVec_eq_smul_of_additive_eigenfunctional {p : ℕ} [Fact p.Prime] {E : Type*}
-  [Field E]
-    [CharP E p] {V : Type*} [AddCommGroup V] [Module (ZMod p) V]
+    [Field E] [CharP E p] {V : Type*} [AddCommGroup V] [Module (ZMod p) V]
     (x : Module.Basis (Fin 2) (ZMod p) V) (g : V →ₗ[ZMod p] V) (φ : V →+ E)
     (hφs : ∀ (c : ZMod p) (w : V), φ (c • w) = ZMod.castHom (dvd_refl p) E c * φ w)
     (hφi : ∀ w, φ w = 0 → w = 0) (θ : E) (hθ : ∀ w, φ (g w) = θ * φ w) :
@@ -911,9 +901,8 @@ end eigen
 
 section transport
 
-private theorem transport_eigenvector {p : ℕ} [Fact p.Prime] {k : Type*} [Field k] (ι : ZMod p →+*
-  k)
-    (R : ResidualGaloisRep (ZMod p))
+private theorem transport_eigenvector {p : ℕ} [Fact p.Prime] {k : Type*} [Field k]
+    (ι : ZMod p →+* k) (R : ResidualGaloisRep (ZMod p))
     (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* GL (Fin 2) k)
     (b : Module.Basis (Fin 2) k (R.baseChangeAlong ι).V)
     (hρ : ∀ σ, (ρ σ).val = LinearMap.toMatrix b b ((R.baseChangeAlong ι).ρ σ))
@@ -1190,27 +1179,9 @@ private noncomputable def phiHom : Submodule.torsionBy ℤ (E⁄K).Point p →+ 
   map_zero' := phi_zero W p A π
   map_add' := phi_add W p hp2 hgood hss A hA π hπ
 
-private lemma phiHom_apply (Q : Submodule.torsionBy ℤ (E⁄K).Point p) :
-    phiHom W p hp2 hgood hss A hA π hπ Q = phi W p A π Q := rfl
-
 end curve
 
 end SSInertia
-
-
-namespace SupersingularInertiaAux
-
-private theorem residueField_charP_of_liesOverPrime {L : Type*} [Field L]
-    (A : ValuationSubring L) {ℓ : ℕ} (hℓ : ℓ.Prime) (hA : A.LiesOverPrime ℓ) :
-    CharP (IsLocalRing.ResidueField A) ℓ := by
-  refine (CharP.charP_iff_prime_eq_zero hℓ).mpr ?_
-  rw [← map_natCast (IsLocalRing.residue A), IsLocalRing.residue_eq_zero_iff,
-    ← ValuationSubring.coe_mem_nonunits_iff]
-  have : (((ℓ : ℕ) : A) : L) = (ℓ : L) := by simp
-  rw [this]
-  exact hA
-
-end SupersingularInertiaAux
 
 namespace WeierstrassCurve
 
@@ -1221,8 +1192,8 @@ open scoped WeierstrassCurve.Affine
 matrix form `ρ` of the residual representation at `p` after extension of scalars to a finite field
 `k` has, after a suitable embedding of `k` into the residue field of a valuation subring `P` over
 `p`, a nonzero vector on which inertia at `P` acts through the tame character attached to a root
-`π` of `π ^ (p ^ 2 - 1) = p`, or through its `p`-th power. -/
-theorem exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersingular
+`π` of `π ^ (p ^ 2 - 1) = p`. -/
+theorem exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular
     (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) {k : Type*} [Field k] [Finite k]
     (ι : ZMod p →+* k) (hgood : W.IsGoodPrimeFor p)
     (hss : ∀ i, 1 ≤ i → i < (p ^ 2 - 1) / 2 → (p : ℤ) ∣ (W.preΨ' p).coeff i)
@@ -1241,14 +1212,10 @@ theorem exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersin
     (π : AlgebraicClosure ℚ) (hπ : π ^ (p ^ 2 - 1) = p) :
     ∃ ψk : k →+* IsLocalRing.ResidueField P,
       ∃ v : Fin 2 → IsLocalRing.ResidueField P, v ≠ 0 ∧
-        ((∀ σ ∈ P.inertiaSubgroupIn ℚ,
-            (Matrix.GeneralLinearGroup.map ψk (ρ σ)).val.mulVec v = P.tameCharacter π σ • v) ∨
-          (∀ σ ∈ P.inertiaSubgroupIn ℚ,
-            (Matrix.GeneralLinearGroup.map ψk (ρ σ)).val.mulVec v = P.tameCharacter π σ ^ p • v))
-              := by
-  have hp : p.Prime := Fact.out
+        ∀ σ ∈ P.inertiaSubgroupIn ℚ,
+          (Matrix.GeneralLinearGroup.map ψk (ρ σ)).val.mulVec v = P.tameCharacter π σ • v := by
   have : CharP (IsLocalRing.ResidueField P) p :=
-    SupersingularInertiaAux.residueField_charP_of_liesOverPrime P hp hP
+    ValuationSubring.charP_residueField_of_liesOverPrime P p hP
   have : IsAlgClosed (IsLocalRing.ResidueField P) := ValuationSubring.isAlgClosed_residueField P
   let algk : Algebra (ZMod p) k := ι.toAlgebra
   let algE : Algebra (ZMod p) (IsLocalRing.ResidueField P) := ZMod.algebra _ p
@@ -1279,7 +1246,40 @@ theorem exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersin
     mulVec_eq_smul_of_additive_eigenfunctional xB (R.ρ σ) φ hφs hφi _ (hθ σ hσ)
   have hvec0 : vec ≠ 0 := (heig 1 (Subgroup.one_mem _)).1
   obtain ⟨C, hC0, hC⟩ := transport_eigenvector ι R ρ b hρ ψk xB vec hvec0
-  refine ⟨ψk, C *ᵥ vec, hC0, Or.inl fun σ hσ => ?_⟩
+  refine ⟨ψk, C *ᵥ vec, hC0, fun σ hσ => ?_⟩
   rw [hC σ, hψι, (heig σ hσ).2, Matrix.mulVec_smul]
+
+/-- For an integral Weierstrass curve with good supersingular reduction at an odd prime `p`, any
+matrix form `ρ` of the residual representation at `p` after extension of scalars to a finite field
+`k` has, after a suitable embedding of `k` into the residue field of a valuation subring `P` over
+`p`, a nonzero vector on which inertia at `P` acts through the tame character attached to a root
+`π` of `π ^ (p ^ 2 - 1) = p`, or through its `p`-th power. -/
+theorem exists_inertia_eigenvector_tameCharacter_residualGaloisRepOf_of_supersingular
+    (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) {k : Type*} [Field k] [Finite k]
+    (ι : ZMod p →+* k) (hgood : W.IsGoodPrimeFor p)
+    (hss : ∀ i, 1 ≤ i → i < (p ^ 2 - 1) / 2 → (p : ℤ) ∣ (W.preΨ' p).coeff i)
+    (hcard : Nat.card (Submodule.torsionBy ℤ
+      ((W.map (Int.castRingHom ℚ))⁄(AlgebraicClosure ℚ)).Point p) = p ^ 2)
+    (hker : GaloisFactorsThroughFiniteLevel
+      (WeierstrassCurve.Affine.Point.galoisRepModuleEnd (K := AlgebraicClosure ℚ) ℚ
+        (W.map (Int.castRingHom ℚ)) p))
+    (ρ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* GL (Fin 2) k)
+    (b : Module.Basis (Fin 2) k
+      (((W.map (Int.castRingHom ℚ)).residualGaloisRepOf p hcard hker).baseChangeAlong ι).V)
+    (hρ : ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, (ρ σ).val =
+      LinearMap.toMatrix b b
+        ((((W.map (Int.castRingHom ℚ)).residualGaloisRepOf p hcard hker).baseChangeAlong ι).ρ σ))
+    (P : ValuationSubring (AlgebraicClosure ℚ)) (hP : P.LiesOverPrime p)
+    (π : AlgebraicClosure ℚ) (hπ : π ^ (p ^ 2 - 1) = p) :
+    ∃ ψk : k →+* IsLocalRing.ResidueField P,
+      ∃ v : Fin 2 → IsLocalRing.ResidueField P, v ≠ 0 ∧
+        ((∀ σ ∈ P.inertiaSubgroupIn ℚ,
+            (Matrix.GeneralLinearGroup.map ψk (ρ σ)).val.mulVec v = P.tameCharacter π σ • v) ∨
+          (∀ σ ∈ P.inertiaSubgroupIn ℚ,
+            (Matrix.GeneralLinearGroup.map ψk (ρ σ)).val.mulVec v =
+              P.tameCharacter π σ ^ p • v)) := by
+  obtain ⟨ψk, v, hv, h⟩ := exists_inertia_mulVec_eq_tameCharacter_smul_of_supersingular W p hp2 ι
+    hgood hss hcard hker ρ b hρ P hP π hπ
+  exact ⟨ψk, v, hv, Or.inl h⟩
 
 end WeierstrassCurve

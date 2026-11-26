@@ -33,7 +33,6 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
 import MathlibExt.NumberTheory.Padics.DecompositionSubgroup
@@ -41,10 +40,10 @@ import MathlibExt.NumberTheory.Padics.DecompositionSubgroup
 /-!
 # The tame character of a valuation subring
 
-For a valuation subring `P` of `AlgebraicClosure ℚ`, an element `π` and a Galois automorphism
-`σ`, the tame character `P.tameCharacter π σ` is the residue of `σ π / π` when this ratio lies in
-`P` (and `0` otherwise). On the inertia subgroup it does not depend on `π` up to units of `P`, and
-every unit of `P` has trivial tame character.
+For a valuation subring `P` of a field `L`, an element `π` and a `K`-algebra automorphism `σ` of
+`L`, the tame character `P.tameCharacter π σ` is the residue of `σ π / π` when this ratio lies in
+`P` (and `0` otherwise). When `L` is algebraic over `K`, on the inertia subgroup it does not depend
+on `π` up to units of `P`, and every unit of `P` has trivial tame character.
 -/
 
 @[expose] public section
@@ -53,62 +52,56 @@ open scoped Pointwise
 
 namespace ValuationSubring
 
+variable {K L : Type*} [Field K] [Field L] [Algebra K L]
+
 /-- The tame character attached to `π`: the residue of `σ π / π` in the residue field of `P`
 when `σ π / π ∈ P`, and `0` otherwise. -/
-noncomputable def tameCharacter (P : ValuationSubring (AlgebraicClosure ℚ))
-    (π : AlgebraicClosure ℚ) (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+noncomputable def tameCharacter (P : ValuationSubring L) (π : L) (σ : L ≃ₐ[K] L) :
     IsLocalRing.ResidueField P := by
   classical
   exact if h : σ π / π ∈ P then IsLocalRing.residue P ⟨σ π / π, h⟩ else 0
 
-variable (P : ValuationSubring (AlgebraicClosure ℚ))
+variable (P : ValuationSubring L)
 
-theorem tameCharacter_of_mem (π : AlgebraicClosure ℚ)
-    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (h : σ π / π ∈ P) :
+theorem tameCharacter_of_mem (π : L) (σ : L ≃ₐ[K] L) (h : σ π / π ∈ P) :
     P.tameCharacter π σ = IsLocalRing.residue P ⟨σ π / π, h⟩ := by
   unfold ValuationSubring.tameCharacter
   simp [h]
 
-private theorem apply_mem_of_mem_decompositionSubgroup'
-    {σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ}
-    (hσ : σ ∈ P.decompositionSubgroup ℚ) {x : AlgebraicClosure ℚ} (hx : x ∈ P) : σ x ∈ P := by
+private theorem apply_mem_of_mem_decompositionSubgroup' {σ : L ≃ₐ[K] L}
+    (hσ : σ ∈ P.decompositionSubgroup K) {x : L} (hx : x ∈ P) : σ x ∈ P := by
   have h : σ • P = P := MulAction.mem_stabilizer_iff.mp hσ
-  have hmem : σ • x ∈
-      ((σ • P : ValuationSubring (AlgebraicClosure ℚ)) : Set (AlgebraicClosure ℚ)) := by
+  have hmem : σ • x ∈ ((σ • P : ValuationSubring L) : Set L) := by
     rw [coe_pointwise_smul]
     exact Set.smul_mem_smul_set hx
   rw [h] at hmem
   exact hmem
 
-private theorem mem_decompositionSubgroup_of_mem_inertiaSubgroupIn
-    {σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ}
-    (hσ : σ ∈ P.inertiaSubgroupIn ℚ) : σ ∈ P.decompositionSubgroup ℚ := by
+private theorem mem_decompositionSubgroup_of_mem_inertiaSubgroupIn {σ : L ≃ₐ[K] L}
+    (hσ : σ ∈ P.inertiaSubgroupIn K) : σ ∈ P.decompositionSubgroup K := by
   obtain ⟨σ', _, rfl⟩ := Subgroup.mem_map.mp hσ
   exact σ'.2
 
-private theorem residue_apply_eq_of_mem_inertiaSubgroupIn
-    {σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ}
-    (hσ : σ ∈ P.inertiaSubgroupIn ℚ) {x : AlgebraicClosure ℚ} (hx : x ∈ P)
-    (hσx : σ x ∈ P) :
+private theorem residue_apply_eq_of_mem_inertiaSubgroupIn {σ : L ≃ₐ[K] L}
+    (hσ : σ ∈ P.inertiaSubgroupIn K) {x : L} (hx : x ∈ P) (hσx : σ x ∈ P) :
     IsLocalRing.residue P ⟨σ x, hσx⟩ = IsLocalRing.residue P ⟨x, hx⟩ := by
   obtain ⟨σ', hσ', rfl⟩ := Subgroup.mem_map.mp hσ
-  have hker : MulSemiringAction.toRingAut (P.decompositionSubgroup ℚ)
+  have hker : MulSemiringAction.toRingAut (P.decompositionSubgroup K)
       (IsLocalRing.ResidueField P) σ' = 1 :=
     (MonoidHom.mem_ker).mp hσ'
-  have h1 : (MulSemiringAction.toRingAut (P.decompositionSubgroup ℚ)
+  have h1 : (MulSemiringAction.toRingAut (P.decompositionSubgroup K)
       (IsLocalRing.ResidueField P) σ') (IsLocalRing.residue P ⟨x, hx⟩) =
       IsLocalRing.residue P ⟨x, hx⟩ := by
     rw [hker]
     rfl
   have h2 : IsLocalRing.residue P (σ' • (⟨x, hx⟩ : P)) = IsLocalRing.residue P ⟨x, hx⟩ := h1
   have hact : (σ' • (⟨x, hx⟩ : P) : P) =
-      ⟨(P.decompositionSubgroup ℚ).subtype σ' x, hσx⟩ := Subtype.ext rfl
+      ⟨(P.decompositionSubgroup K).subtype σ' x, hσx⟩ := Subtype.ext rfl
   rw [hact] at h2
   exact h2
 
-private theorem apply_div_mem_of_mem_decompositionSubgroup
-    {σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ}
-    (hσ : σ ∈ P.decompositionSubgroup ℚ) {x : AlgebraicClosure ℚ} (hx : x ≠ 0) :
+private theorem apply_div_mem_of_mem_decompositionSubgroup [Algebra.IsAlgebraic K L]
+    {σ : L ≃ₐ[K] L} (hσ : σ ∈ P.decompositionSubgroup K) {x : L} (hx : x ≠ 0) :
     σ x / x ∈ P ∧ x / σ x ∈ P := by
   have hv := P.valuation_map_eq_of_mem_decompositionSubgroup hσ x
   have hx' : P.valuation x ≠ 0 := (Valuation.ne_zero_iff _).mpr hx
@@ -117,13 +110,13 @@ private theorem apply_div_mem_of_mem_decompositionSubgroup
   · rw [map_div₀, hv, div_self hx']
   · rw [map_div₀, hv, div_self hx']
 
-/-- On the inertia subgroup, the tame character does not change when `π` is replaced by `π'`
-with `π' / π` a unit of `P`. -/
-theorem tameCharacter_eq_of_div_mem_of_div_mem (π π' : AlgebraicClosure ℚ) (hπ : π ≠ 0)
+/-- If `L` is algebraic over `K`, then on the inertia subgroup the tame character does not change
+when `π` is replaced by `π'` with `π' / π` a unit of `P`. -/
+theorem tameCharacter_eq_of_div_mem_of_div_mem [Algebra.IsAlgebraic K L] (π π' : L) (hπ : π ≠ 0)
     (hπ' : π' ≠ 0) (hu : π' / π ∈ P) (hu' : π / π' ∈ P)
-    {σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ} (hσ : σ ∈ P.inertiaSubgroupIn ℚ) :
+    {σ : L ≃ₐ[K] L} (hσ : σ ∈ P.inertiaSubgroupIn K) :
     P.tameCharacter π' σ = P.tameCharacter π σ := by
-  have hσD : σ ∈ P.decompositionSubgroup ℚ :=
+  have hσD : σ ∈ P.decompositionSubgroup K :=
     mem_decompositionSubgroup_of_mem_inertiaSubgroupIn P hσ
   have hσπ : σ π / π ∈ P := (apply_div_mem_of_mem_decompositionSubgroup P hσD hπ).1
   have hσu : σ (π' / π) ∈ P := apply_mem_of_mem_decompositionSubgroup' P hσD hu
@@ -145,23 +138,22 @@ theorem tameCharacter_eq_of_div_mem_of_div_mem (π π' : AlgebraicClosure ℚ) (
     rw [div_mul_div_comm, mul_comm π' π, div_self (mul_ne_zero hπ hπ')])
   rw [hone, map_one, one_mul]
 
-private theorem tameCharacter_one (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
-    P.tameCharacter 1 σ = 1 := by
+private theorem tameCharacter_one (σ : L ≃ₐ[K] L) : P.tameCharacter 1 σ = 1 := by
   have h : σ 1 / 1 ∈ P := by rw [map_one, div_one]; exact one_mem P
   rw [tameCharacter_of_mem P 1 σ h]
   have h1 : (⟨σ 1 / 1, h⟩ : ↥P) = 1 := Subtype.ext (by simp)
   rw [h1, map_one]
 
-/-- For `σ` in the inertia subgroup, every nonzero `z` satisfies `σ z = a * z` for a unit `a`
-of `P` whose residue is the tame character of `z`, and units of `P` have trivial tame
-character. -/
+/-- If `L` is algebraic over `K` and `σ` lies in the inertia subgroup, every nonzero `z` satisfies
+`σ z = a * z` for a unit `a` of `P` whose residue is the tame character of `z`, and units of `P`
+have trivial tame character. -/
 theorem exists_units_mul_eq_and_residue_eq_tameCharacter_of_mem_inertiaSubgroupIn
-    {σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ} (hσ : σ ∈ P.inertiaSubgroupIn ℚ) :
-    (∀ z : AlgebraicClosure ℚ, z ≠ 0 →
-      ∃ a : (↥P)ˣ, ((a : ↥P) : AlgebraicClosure ℚ) * z = σ z ∧
+    [Algebra.IsAlgebraic K L] {σ : L ≃ₐ[K] L} (hσ : σ ∈ P.inertiaSubgroupIn K) :
+    (∀ z : L, z ≠ 0 →
+      ∃ a : (↥P)ˣ, ((a : ↥P) : L) * z = σ z ∧
         IsLocalRing.residue (↥P) (a : ↥P) = P.tameCharacter z σ) ∧
-    ∀ u : (↥P)ˣ, P.tameCharacter ((u : ↥P) : AlgebraicClosure ℚ) σ = 1 := by
-  have hd : σ ∈ P.decompositionSubgroup ℚ :=
+    ∀ u : (↥P)ˣ, P.tameCharacter ((u : ↥P) : L) σ = 1 := by
+  have hd : σ ∈ P.decompositionSubgroup K :=
     mem_decompositionSubgroup_of_mem_inertiaSubgroupIn P hσ
   refine ⟨fun z hz => ?_, fun u => ?_⟩
   · have hσz : σ z ≠ 0 := (map_ne_zero σ).mpr hz
@@ -182,14 +174,13 @@ theorem exists_units_mul_eq_and_residue_eq_tameCharacter_of_mem_inertiaSubgroupI
     · change σ z / z * z = σ z
       exact div_mul_cancel₀ (σ z) hz
     · rw [tameCharacter_of_mem P z σ hmem]
-  · have hvu : P.valuation ((u : ↥P) : AlgebraicClosure ℚ) = 1 := P.valuation_unit u
-    have hu0 : ((u : ↥P) : AlgebraicClosure ℚ) ≠ 0 :=
+  · have hvu : P.valuation ((u : ↥P) : L) = 1 := P.valuation_unit u
+    have hu0 : ((u : ↥P) : L) ≠ 0 :=
       (Valuation.ne_zero_iff _).mp (by rw [hvu]; exact one_ne_zero)
-    have hu : ((u : ↥P) : AlgebraicClosure ℚ) / 1 ∈ P := by rw [div_one]; exact (u : ↥P).2
-    have hu' : 1 / ((u : ↥P) : AlgebraicClosure ℚ) ∈ P :=
+    have hu : ((u : ↥P) : L) / 1 ∈ P := by rw [div_one]; exact (u : ↥P).2
+    have hu' : 1 / ((u : ↥P) : L) ∈ P :=
       (P.valuation_le_one_iff _).mp (by rw [map_div₀, map_one, hvu, div_one])
-    rw [tameCharacter_eq_of_div_mem_of_div_mem P 1 ((u : ↥P) : AlgebraicClosure ℚ) one_ne_zero
-      hu0 hu hu' hσ]
+    rw [tameCharacter_eq_of_div_mem_of_div_mem P 1 ((u : ↥P) : L) one_ne_zero hu0 hu hu' hσ]
     exact tameCharacter_one P σ
 
 end ValuationSubring
