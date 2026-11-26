@@ -8,6 +8,6 @@ The abstract-interpretation view of program analysis: an analysis lattice relate
 - [Sound and complete abstractions are optimal](sound-and-complete-abstractions-are-optimal.md)
 - [Sound and complete abstractions transfer least fixed points](sound-and-complete-abstractions-transfer-least-fix.md)
 - [Difference-bound matrices and octagons](difference-bound-matrices-and-octagons.md)
-- [Emptiness of difference-bound matrices and octagons](emptiness-of-difference-bound-matrices-and-octago.md)
+- [Emptiness of octagons](emptiness-of-octagons.md)
 - [Shortest-path closure is a normal form for difference-bound matrices](shortest-path-closure-is-a-normal-form-for-differ.md)
 - [Strong closure is a normal form for octagons](strong-closure-is-a-normal-form-for-octagons.md)
