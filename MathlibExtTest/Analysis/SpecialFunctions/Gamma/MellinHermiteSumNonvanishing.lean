@@ -76,6 +76,18 @@ example (a : ℚ) (u₃ : ℂ) (H : ℕ → ZMod 2 → ℝ → ℂ) (s : ℝ) :
     Finset.sum_singleton]
   simp [hermiteCoeff]
 
+/-- At `m = 1` (with `e = a₃ = 0`) the admissible indices are `((0, 0), (1, 0))` and
+`((0, 0), (0, 1))`, with coefficients `-1` and `-a`; the second term reads `H 0 1` at `s`. -/
+example (a : ℚ) (u₃ : ℂ) (H : ℕ → ZMod 2 → ℝ → ℂ) (s : ℝ) :
+    hermiteGammaMellinSum 1 a u₃ 0 0 H s =
+      -(Complex.Gammaℝ ((s : ℂ) + u₃) * mellin (H 1 0) ((s : ℂ) - 1)) -
+        (a : ℂ) * (Complex.Gammaℝ ((s : ℂ) + u₃) * mellin (H 0 1) (s : ℂ)) := by
+  rw [hermiteGammaMellinSum,
+    show hermiteAdmissible 1 0 0 = {((0, 0), (1, 0)), ((0, 0), (0, 1))} by decide,
+    Finset.sum_pair (by decide)]
+  simp [hermiteCoeff]
+  ring
+
 /-- Boundary consumer at `σ₀ = 0`: there is a shift `s > 0` with the same
 nonvanishing sum. -/
 example (m : ℕ) (a : ℚ) (ha : a ≠ 0) (u₃ : ℂ) (a₃ : ZMod 2) (e : ℤ)
