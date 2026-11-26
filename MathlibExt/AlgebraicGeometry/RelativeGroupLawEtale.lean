@@ -389,16 +389,12 @@ private theorem specMap_surjective_of_sqZero {R' S' : CommRingCat.{u}} (φ : R' 
     (hsurj : Function.Surjective φ) (hker : RingHom.ker φ.hom ^ 2 = ⊥) :
     Function.Surjective (Spec.map φ) := by
   intro p
-  have := p.isPrime
-  have hkerp : RingHom.ker φ.hom ≤ p.asIdeal := fun x hx =>
-    p.isPrime.mem_of_pow_mem 2 (by
-      have h2 : x ^ 2 ∈ RingHom.ker φ.hom ^ 2 := Ideal.pow_mem_pow hx 2
-      rw [hker, Ideal.mem_bot] at h2
-      exact h2 ▸ p.asIdeal.zero_mem)
-  refine ⟨⟨p.asIdeal.map φ.hom, Ideal.map_isPrime_of_surjective hsurj hkerp⟩,
-    PrimeSpectrum.ext ?_⟩
-  change Ideal.comap φ.hom (Ideal.map φ.hom p.asIdeal) = p.asIdeal
-  exact (Ideal.comap_map_of_surjective φ.hom hsurj p.asIdeal).trans (sup_eq_left.mpr hkerp)
+  have hkerp : RingHom.ker φ.hom ≤ p.asIdeal :=
+    Ideal.IsPrime.le_of_pow_le (hP := p.isPrime) (n := 2) (hker ▸ bot_le)
+  obtain ⟨q, hq⟩ : p ∈ Set.range (PrimeSpectrum.comap φ.hom) := by
+    rw [range_comap_of_surjective _ φ.hom hsurj]
+    exact hkerp
+  exact ⟨q, (Spec.map_apply φ q).trans hq⟩
 
 private theorem range_subset_of_isKer (G : RelativeGroupLaw R f)
     {R' S' : CommRingCat.{u}} (φ : R' ⟶ S')
@@ -677,21 +673,14 @@ private theorem range_truncMul_subset :
   set 𝔐 := RingHom.ker εε.toRingHom
   rintro _ ⟨p, rfl⟩
   set P := (Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk (𝔐 ^ 2)))) p with hPdef
-  have h𝔐P : 𝔐 ≤ P.asIdeal := by
-    intro x hx
-    refine P.isPrime.mem_of_pow_mem 2 ?_
-    have hx2 : Ideal.Quotient.mk (𝔐 ^ 2) (x ^ 2) = 0 :=
-      Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.pow_mem_pow hx 2)
-    change Ideal.Quotient.mk (𝔐 ^ 2) (x ^ 2) ∈ p.asIdeal
-    rw [hx2]
-    exact p.asIdeal.zero_mem
-  have := P.isPrime
-  let q : PrimeSpectrum R := ⟨P.asIdeal.map εε.toRingHom,
-    Ideal.map_isPrime_of_surjective (augAug_surjective G B₁ ι hιf hιe) h𝔐P⟩
-  have hqP : (Spec.map (CommRingCat.ofHom εε.toRingHom)) q = P := PrimeSpectrum.ext <| by
-    change Ideal.comap εε.toRingHom (P.asIdeal.map εε.toRingHom) = P.asIdeal
-    exact (Ideal.comap_map_of_surjective _
-      (augAug_surjective G B₁ ι hιf hιe) P.asIdeal).trans (sup_eq_left.mpr h𝔐P)
+  have h𝔐P : 𝔐 ≤ P.asIdeal := Ideal.IsPrime.le_of_pow_le (hP := P.isPrime) (n := 2)
+    fun x hx => by
+      change Ideal.Quotient.mk (𝔐 ^ 2) x ∈ p.asIdeal
+      rw [Ideal.Quotient.eq_zero_iff_mem.mpr hx]
+      exact p.asIdeal.zero_mem
+  obtain ⟨q, hqP⟩ : P ∈ Set.range (PrimeSpectrum.comap εε.toRingHom) := by
+    rw [range_comap_of_surjective _ εε.toRingHom (augAug_surjective G B₁ ι hιf hιe)]
+    exact h𝔐P
   refine hιe ⟨q, ?_⟩
   change G.unitSection q = universalMul G B₁ ι hιf P
   rw [← hqP, ← universalMul_aug G B₁ ι hιf hιe]
