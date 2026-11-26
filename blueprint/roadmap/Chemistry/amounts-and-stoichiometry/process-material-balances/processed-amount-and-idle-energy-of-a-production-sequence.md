@@ -9,13 +9,10 @@ $$Q(T) - Q(0) = \sum_{k=1}^m r_k\,(t_k - t_{k-1}),$$
 by the fundamental theorem of calculus on each interval and telescoping; for instance rate $2$ on $[0, 1]$ and rate $5$ on
 $[1, 3]$ give $12$. If nonnegative good and scrap amounts $G, S$, on the same material and time basis, satisfy
 $G + S = Q(T) - Q(0)$, each is at most the processed amount. If the power drawn $P$ is integrable on $[0, T]$ with
-$P \ge P_{\mathrm{idle}} \ge 0$ on the intervals with $r_k = 0$ and $P \ge 0$ elsewhere, the energy satisfies
-$\int_0^T P\,dt \ge P_{\mathrm{idle}}$ times the total idle time, even when nothing is produced. Constitutive models of machining,
-forming or additive processes, and tool life, are outside this result.
-
-## Depends on
-
-## Proof depends on
+$P \ge P_{\mathrm{idle}} \ge 0$ on each open interval $(t_{k-1}, t_k)$ with $r_k = 0$ and $P \ge 0$ on each open interval with
+$r_k > 0$, the energy satisfies $\int_0^T P\,dt \ge P_{\mathrm{idle}}$ times the total idle time, even when nothing is produced.
+No power inequality is needed at the finitely many partition points, since the values there do not affect the integral.
+Constitutive models of machining, forming or additive processes, and tool life, are outside this result.
 
 ## Sources
 
