@@ -950,7 +950,7 @@ sources only, with no Lean build, and takes a few minutes. It only reports for
 now: the check's step cannot fail the job, which is not a required check. The
 verdict, the command that fixes it and whether the PR's wiki changes are only
 the sync's go to the job summary and the `graph-sync` artifact. A PR that
-changes no graph file but links files, and a merge group, are held only to the
+changes Lean and no graph file but links files, and a merge group, are held only to the
 check's errors: the links and markers their Lean leaves behind, which the
 summary lists alone. With none, the job says that the next graph-sync batch
 writes their pages, asks for no sync, and lists the pages whose declaration's

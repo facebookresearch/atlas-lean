@@ -1168,11 +1168,11 @@ class GraphSyncWorkflowTests(unittest.TestCase):
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
     def run_check(self, status: int, report: str | None = None, extra: str = "", fix_fetch: str = "refs/heads/main",
-                  changed: str | None = None, event: str = "pull_request"):
+                  changed: str | None = None, event: str = "pull_request", lean: bool = True):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
-        and exits with *status*, in a repository whose HEAD changes the files *changed* names, beside a Lean file and
-        a README, from the commit BASE names; with a git that fails when *changed* is None. Returns the result, the
-        job summary and the arguments uv got."""
+        and exits with *status*, in a repository whose HEAD changes the files *changed* names, beside a README and,
+        when *lean*, a Lean file, from the commit BASE names; with a git that fails when *changed* is None. Returns the
+        result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
@@ -1187,7 +1187,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             git("init", "-q", "-b", "main")
             git("commit", "-q", "--allow-empty", "-m", "base")
             base = git("rev-parse", "HEAD")
-            for path in ["MathlibExt/Algebra/Changed.lean", "README.md", *changed.split()]:
+            for path in [*(["MathlibExt/Algebra/Changed.lean"] if lean else []), "README.md", *changed.split()]:
                 (root / path).parent.mkdir(parents=True, exist_ok=True)
                 (root / path).write_text("changed\n")
             git("add", "-A")
@@ -1289,12 +1289,13 @@ class GraphSyncWorkflowTests(unittest.TestCase):
                 self.assertNotIn("In step: no", summary)
                 self.assertNotIn("error: a link", summary)
                 self.assertNotIn("merge-base", summary)
-        # A graph pull request, which changes other graph files (the links' defaults or a page count), or a change git
-        # cannot read, is held to the sync.
-        for changed in ("blueprint/links/Algebra.jsonl scripts/taxonomy.json", "blueprint/links/_defaults.json",
-                        "blueprint/roadmap/Algebra/fresh.md", None):
-            with self.subTest(changed=changed):
-                result, summary, _ = self.run_check(1, pages, changed=changed)
+        # A graph pull request, which changes other graph files (the links' defaults or a page count) or links files
+        # with no Lean, or a change git cannot read, is held to the sync.
+        for changed, lean in (("blueprint/links/Algebra.jsonl scripts/taxonomy.json", True),
+                              ("blueprint/links/_defaults.json", True), ("blueprint/roadmap/Algebra/fresh.md", True),
+                              ("blueprint/links/Algebra.jsonl", False), (None, True)):
+            with self.subTest(changed=changed, lean=lean):
+                result, summary, _ = self.run_check(1, pages, changed=changed, lean=lean)
                 self.assertEqual(result.returncode, 1)
                 self.assertIn("::warning title=Graph sync::The graph is not in step", result.stdout)
                 self.assertIn('--base "$(git merge-base FETCH_HEAD HEAD)"', summary)

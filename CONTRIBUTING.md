@@ -186,9 +186,11 @@ A pull request changes the Lean or the graph:
 A **graph-sync batch** is the pull request `scripts/graph_batch.py` makes on
 a fresh `main`, one at a time, every one or two hours: a maintainer,
 or an agent a maintainer runs, makes it, and someone else reviews it. When no
-batch has merged for several hours, any maintainer may make one. The site is
-built once a day, so it is at most about one batch behind the Lean. Pull
-requests opened before this rule may land with the graph files they carry.
+batch has merged for several hours, any maintainer may make one. So `main`'s
+graph trails its Lean by about one batch, plus the batch's review and queue
+time; the site, built from `main` once a day, can trail `main` by up to a day
+more. Pull requests opened before this rule may land with the graph files they
+carry.
 
 Why: of the 379 pull requests merged into `main` from 24 November 18:22 to
 25 November 17:04 UTC,

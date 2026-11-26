@@ -83,7 +83,7 @@ jobs:
       # The verdicts come first: whether the pull request is in step, with the
       # command that fixes it, and whether its wiki changes are only what that
       # command writes. They go to the job summary and the graph-sync artifact.
-      # A Lean pull request, which changes no graph file but links files, and a
+      # A Lean pull request, which changes Lean and no graph file but links files, and a
       # merge group are held only to the check's errors: their missing pages are
       # the next graph-sync batch's (docs/BLUEPRINT.md, Maintaining articles).
       - name: Check that the graph is in step with the Lean
@@ -120,14 +120,16 @@ jobs:
           else
             failed=no
           fi
-          # A graph pull request changes graph files other than links files; when git cannot say, the change is
-          # held to the sync, as one.
+          # A Lean pull request changes Lean, and among the graph files at most links files; any other change,
+          # links files alone included, and one git cannot read, is held to the sync, as a graph pull request.
           graph=yes
           if [[ "${EVENT:-}" == merge_group ]]; then
             graph=no
           elif changed="$(git diff --name-only --no-renames "$BASE" HEAD -- blueprint scripts/taxonomy.json \
-                            scripts/wiki-sync.json scripts/card-moves.jsonl scripts/mathgraph-map.jsonl)"; then
-            if [[ -z "$changed" ]] || ! grep -qvE '^blueprint/links/[^/]+[.]jsonl$' <<< "$changed"; then
+                            scripts/wiki-sync.json scripts/card-moves.jsonl scripts/mathgraph-map.jsonl)" \
+               && lean="$(git diff --name-only --no-renames "$BASE" HEAD -- '*.lean')"; then
+            if [[ -n "$lean" ]] \
+               && { [[ -z "$changed" ]] || ! grep -qvE '^blueprint/links/[^/]+[.]jsonl$' <<< "$changed"; }; then
               graph=no
             fi
           fi
