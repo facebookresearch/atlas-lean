@@ -19,6 +19,7 @@ public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomialComp
 public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
+public import MathlibExt.Algebra.LocallyIntegerPolynomialCircuitCoeffDen
 
 /-!
 # Locally integer polynomial functions
@@ -65,22 +66,6 @@ Article A41, Corollary 1 (`integers-2025-A41-cor-1`). -/
 public theorem_wanted lip_restrict_injective {U V : Set ℤ} (hU : U.Infinite) (hUV : U ⊆ V)
     {f g : V → ℤ} (hf : f ∈ lipSubring V) (hg : g ∈ lipSubring V)
     (h : f ∘ Set.inclusion hUV = g ∘ Set.inclusion hUV) : f = g
-
-/-- **Denominator of the top coefficient on a circuit.** Let $f : \mathbb{Z} \to \mathbb{Z}$, and
-for a finite set $Y \subseteq \mathbb{Z}$ write $f_Y \in \mathbb{Q}[x]$ for the interpolation
-polynomial of $f$ on $Y$. Let $X \subseteq \mathbb{Z}$ be a finite circuit for $f$: $f_X$ does not
-have integer coefficients, but $f_{X \setminus \{a\}}$ has integer coefficients for every
-$a \in X$. Let $c$ be the coefficient of $x^{|X|-1}$ in $f_X$ and let $q \ge 1$ be the denominator
-of $c$ in lowest terms. Then $q \ne 1$, so $c$ is not an integer, and $q$ divides $a - b$ for all
-$a, b \in X$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 7 (`integers-2025-A41-lem-7`), with the circuit definition preceding it. -/
-public theorem_wanted circuit_coeff_den (f : ℤ → ℤ) (X : Finset ℤ)
-    (hX : interpolationPoly X f ∉ Polynomial.lifts (Int.castRingHom ℚ))
-    (hmin : ∀ a ∈ X, interpolationPoly (X.erase a) f ∈ Polynomial.lifts (Int.castRingHom ℚ)) :
-    ((interpolationPoly X f).coeff (X.card - 1)).den ≠ 1 ∧
-      ∀ a ∈ X, ∀ b ∈ X, (((interpolationPoly X f).coeff (X.card - 1)).den : ℤ) ∣ a - b
 
 /-- **Intersection of two arithmetic progressions of natural numbers.** Let $a_1, a_2, d_1, d_2$
 be natural numbers with $d_1, d_2 > 0$, where $\mathbb{N} = \{0, 1, 2, \dots\}$, and let
