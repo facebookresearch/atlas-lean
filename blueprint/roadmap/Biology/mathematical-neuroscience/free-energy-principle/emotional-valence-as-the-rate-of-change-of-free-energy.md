@@ -1,6 +1,6 @@
 # Emotional valence as the rate of change of free energy
 
-**Variational free energy.** An agent with generative model $m$ receives sensory data $y$ caused by hidden states $\vartheta$, and holds a recognition density $q(\vartheta \mid \mu)$ with sufficient statistics $\mu$. The Kullback–Leibler divergence from $q$ to the true posterior decomposes as
+**Variational free energy.** An agent with generative model $m$ receives sensory data $y$ caused by hidden states $\vartheta$, and holds a recognition density $q(\vartheta \mid \mu)$ with sufficient statistics $\mu$. With positive finite evidence $p(y \mid m)$ and $F(y, \mu)$ the [variational free energy](variational-free-energy-bound-on-surprise.md) of $q$, the Kullback–Leibler divergence from $q$ to the true posterior decomposes as
 
 $$D_{\mathrm{KL}}\big[q(\vartheta \mid \mu)\,\|\,p(\vartheta \mid y, m)\big] = F(y, \mu) + \ln p(y \mid m) \qquad \text{(Eq. 1)},$$
 
@@ -31,6 +31,10 @@ $$\mathrm{valence}_i(t) = -\frac{dF_i}{dt}.$$
 | changes sign $- \to +$ | | disappointment | negative |
 
 **Proposition (transitions).** Along any twice-differentiable free-energy trajectory, a passage from a negative emotion to a positive one must pass through relief, and from a positive to a negative one through disappointment, while transitions within the negative (fear, unhappiness) or the positive (hope, happiness) emotions are possible in both directions.
+
+## Depends on
+
+- [Variational free energy as an upper bound on surprise](variational-free-energy-bound-on-surprise.md)
 
 ## Expansion
 

@@ -1,0 +1,28 @@
+# Compartmental models, interventions and reproduction numbers
+
+Deterministic transmission models with age, stage, quarantine, masks, vaccination or within-host structure, their reproduction numbers and final sizes, and the effect of interventions.
+
+- [Age-structured SEIR with social contact matrices](age-structured-seir-with-social-contact-matrices/README.md)
+- [Age-structured transmission and contact matrices](age-structured-transmission-and-contact-matrices/README.md)
+- [Case isolation and contact tracing](case-isolation-and-contact-tracing/README.md)
+- [Compartmental model with a super-spreader class](compartmental-model-with-a-super-spreader-class/README.md)
+- [Contact-tracing quarantine model with asymptomatic carriers](contact-tracing-quarantine-model-with-asymptomatic-carriers/README.md)
+- [Environmental transmission models](environmental-transmission-models/README.md)
+- [Evolutionary epidemiology of pathogen life-history traits](evolutionary-epidemiology-of-pathogen-life-history-traits/README.md)
+- [Final size of age-of-infection epidemics](final-size-of-age-of-infection-epidemics/README.md)
+- [Final size relation for general stage durations](final-size-relation-for-general-stage-durations/README.md)
+- [Free-living inoculum transmission models](free-living-inoculum-transmission-models/README.md)
+- [Mask-structured epidemic models](mask-structured-epidemic-models/README.md)
+- [Proportional reduction of transmission by face masks](proportional-reduction-of-transmission-by-face-masks/README.md)
+- [Quarantine, isolation and face-mask models](quarantine-isolation-and-face-mask-models/README.md)
+- [SEIR model with quarantine of contacts and asymptomatic infection](seir-with-quarantine-and-asymptomatic-infection/README.md)
+- [SEIR model with a time-varying reproduction number](seir-with-time-varying-reproduction-number/README.md)
+- [SEPIA model with presymptomatic transmission](sepia-model-with-presymptomatic-transmission/README.md)
+- [SEQIR model with precaution and lockdown](seqir-model-with-precaution-and-lockdown/README.md)
+- [SIR model with disease-blocking vaccination](sir-model-with-disease-blocking-vaccination/README.md)
+- [Social distancing games](social-distancing-games/README.md)
+- [Target-cell-limited model with an eclipse phase](target-cell-limited-model-with-eclipse-phase/README.md)
+- [θ-SEIHRD model with undetected infections](theta-seihrd-model-with-undetected-infections/README.md)
+- [Transmission by symptom status](transmission-by-symptom-status/README.md)
+- [Type and target reproduction numbers](type-and-target-reproduction-numbers/README.md)
+- [Within host viral dynamics](within-host-viral-dynamics/README.md)

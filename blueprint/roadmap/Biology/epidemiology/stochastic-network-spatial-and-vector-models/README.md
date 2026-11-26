@@ -1,0 +1,26 @@
+# Stochastic, network, spatial, airborne and vector-borne transmission
+
+Branching, chain-binomial and point-process outbreaks, epidemics on networks and simplicial complexes, households, mobility and spatial spread, airborne infection risk, vector-borne and sexually transmitted infections.
+
+- [Bond-percolation epidemics on configuration networks](bond-percolation-epidemics-on-configuration-networks/README.md)
+- [Climate-driven vector abundance and transmission](climate-driven-vector-abundance/README.md)
+- [Clustered vaccination on contact networks](clustered-vaccination-on-contact-networks/README.md)
+- [Cofactor interactions between sexually transmitted infections](cofactor-interactions-between-sexually-transmitted-infections/README.md)
+- [Edge-based SIR dynamics on configuration-model networks](edge-based-sir-dynamics-on-configuration-model-networks/README.md)
+- [Global air-travel metapopulation model](global-air-travel-metapopulation-model/README.md)
+- [Gravity models of human mobility](gravity-models-of-human-mobility/README.md)
+- [Higher-order contagion on simplicial complexes](higher-order-contagion-on-simplicial-complexes/README.md)
+- [Household reproduction number](household-reproduction-number/README.md)
+- [Outbreak risk from imported cases](outbreak-risk-from-imported-cases/README.md)
+- [Partial likelihood for spatial epidemic invasion](partial-likelihood-for-spatial-epidemic-invasion/README.md)
+- [Probability of a minor outbreak](probability-of-a-minor-outbreak/README.md)
+- [Quanta emission and airborne infection risk](quanta-emission-and-airborne-infection-risk/README.md)
+- [Radiation model of commuting fluxes](radiation-model-of-commuting-fluxes/README.md)
+- [Reed–Frost chain-binomial model](reed-frost-chain-binomial-model/README.md)
+- [Ross–Macdonald malaria model](ross-macdonald-malaria-model/README.md)
+- [Self-exciting point-process epidemic models](self-exciting-point-process-epidemic-models/README.md)
+- [Simplicial contagion model](simplicial-contagion-model/README.md)
+- [Spatial transmission kernels](spatial-transmission-kernels/README.md)
+- [Thermal performance curves of vector traits](thermal-performance-curves-of-vector-traits/README.md)
+- [Viral-load-dependent transmission](viral-load-dependent-transmission/README.md)
+- [Wells–Riley airborne infection model](wells-riley-airborne-infection-model/README.md)

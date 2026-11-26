@@ -32,8 +32,7 @@ with a single friction coefficient $\gamma > 0$.
 The area term keeps cells near a preferred size (bulk elasticity in the plane), the perimeter
 term models contractility of the cortical actomyosin ring, and the junction term models adhesion
 (negative tension) or contraction (positive tension) along each cell–cell contact. Expanding
-$\frac{\tilde\Gamma}{2}(P_i - P_i^0)^2 = \frac{\tilde\Gamma}{2}P_i^2 - \tilde\Gamma P_i^0 P_i +
-\frac{\tilde\Gamma}{2}(P_i^0)^2$ shows the equivalence with the preferred-perimeter form: the
+$\frac{\tilde\Gamma}{2}(P_i - P_i^0)^2 = \frac{\tilde\Gamma}{2}P_i^2 - \tilde\Gamma P_i^0 P_i + \frac{\tilde\Gamma}{2}(P_i^0)^2$ shows the equivalence with the preferred-perimeter form: the
 linear term is a uniform line tension and the constant does not change forces. The area formula is
 the discrete Green (shoelace) formula. Quasi-static versions minimize $E_{\mathrm{VM}}$ directly;
 the overdamped equation neglects inertia, which is small at cellular scales. Cell rearrangements

@@ -1,0 +1,28 @@
+# Epidemic inference and surveillance
+
+Estimation from epidemic data: reproduction numbers and intervention effects, offspring dispersion, contact surveys, genomic transmission trees, growth curves and identifiability, seasonality, disease mapping, outbreak detection and forecast scoring.
+
+- [Age-structured social contact matrices](age-structured-social-contact-matrices/README.md)
+- [Bayesian spatio-temporal disease mapping](bayesian-spatio-temporal-disease-mapping/README.md)
+- [Case and instantaneous reproduction numbers](case-and-instantaneous-reproduction-numbers/README.md)
+- [Cross-sectional Ct-value inference of epidemic trajectories](cross-sectional-ct-value-inference/README.md)
+- [Distributed lag non-linear models](distributed-lag-non-linear-models/README.md)
+- [Estimation of the negative binomial dispersion parameter](estimation-of-negative-binomial-dispersion/README.md)
+- [Outbreak reconstruction from genomic and epidemiological data](genomic-outbreak-reconstruction/README.md)
+- [Genomic reconstruction of transmission trees](genomic-reconstruction-of-transmission-trees/README.md)
+- [Harmonic seasonal regression](harmonic-seasonal-regression/README.md)
+- [Identifiability of early epidemic parameters](identifiability-of-early-epidemic-parameters/README.md)
+- [Instantaneous reproduction number estimation](instantaneous-reproduction-number-estimation/README.md)
+- [Joint estimation of complexity of infection and allele frequencies](joint-estimation-of-complexity-of-infection-and-allele-frequencies/README.md)
+- [Log-linear intervention effects on the reproduction number](log-linear-intervention-effects-on-the-reproduction-number/README.md)
+- [Observation error in epidemic curve fitting](observation-error-in-epidemic-curve-fitting/README.md)
+- [Offspring overdispersion from cluster sizes](offspring-overdispersion-from-cluster-sizes/README.md)
+- [Parasite clearance half-life](parasite-clearance-half-life/README.md)
+- [Phenomenological epidemic growth models](phenomenological-epidemic-growth-models/README.md)
+- [Probabilistic forecast scoring](probabilistic-forecast-scoring/README.md)
+- [Renewal model of intervention effects](renewal-model-of-intervention-effects/README.md)
+- [SIR model with change points in the spreading rate](sir-model-with-change-points-in-the-spreading-rate/README.md)
+- [Statistical outbreak detection](statistical-outbreak-detection/README.md)
+- [Synthetic age-structured contact matrices](synthetic-age-structured-contact-matrices/README.md)
+- [Transmission-tree inference with unsampled cases](transmission-tree-inference-with-unsampled-cases/README.md)
+- [Wallinga–Teunis case reproduction number estimation](wallinga-teunis-case-reproduction-number-estimation/README.md)

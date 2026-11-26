@@ -899,3 +899,6 @@
 {"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
 {"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
 {"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
+{"page": "Biology/systems-biology/extended-permanence-conjecture", "to": "Biology/systems-biology/chemical-reaction-network-theory/extended-permanence-conjecture", "article_id": "af_d152cb29bc1fa174079db1d3"}
+{"page": "Biology/systems-biology/nondegeneracy-conjecture-for-reaction-networks", "to": "Biology/systems-biology/chemical-reaction-network-theory/nondegeneracy-conjecture-for-reaction-networks", "article_id": "af_c806199de2b80379c3e73294"}
+{"page": "Biology/systems-biology/maximal-multistationarity-of-multisite-phosphorylation", "to": "Biology/systems-biology/chemical-reaction-network-theory/maximal-multistationarity-of-multisite-phosphorylation", "article_id": "af_04d75e56464722e250800e0d"}

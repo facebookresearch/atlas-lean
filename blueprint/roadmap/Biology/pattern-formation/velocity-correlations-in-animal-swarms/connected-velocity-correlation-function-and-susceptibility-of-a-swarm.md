@@ -8,8 +8,7 @@ global rotation and the best-fitting global dilatation). The dimensionless fluct
 $$\delta\hat{\boldsymbol\varphi}_i = \frac{\delta\mathbf v_i}
 {\sqrt{\frac{1}{N}\sum_{k=1}^{N} \delta\mathbf v_k \cdot \delta\mathbf v_k}} ,$$
 
-so that $\frac1N\sum_i |\delta\hat{\boldsymbol\varphi}_i|^2 = 1$. With $r_{ij} = |\mathbf r_i -
-\mathbf r_j|$ and a radial binning function $\delta(r - r_{ij})$ equal to $1$ when $r_{ij}$ falls in
+so that $\frac1N\sum_i |\delta\hat{\boldsymbol\varphi}_i|^2 = 1$. With $r_{ij} = |\mathbf r_i - \mathbf r_j|$ and a radial binning function $\delta(r - r_{ij})$ equal to $1$ when $r_{ij}$ falls in
 the bin of width $dr$ around $r$ and $0$ otherwise, the connected correlation function is
 
 $$C(r) = \frac{\sum_{i \ne j} \delta\hat{\boldsymbol\varphi}_i \cdot \delta\hat{\boldsymbol\varphi}_j\,

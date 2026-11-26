@@ -15,6 +15,10 @@ $$\mathrm{OEF}_{\max} \;=\; 1 - (1 + k\beta)^{-\alpha} \;=\; 1 - \Bigl(1 + \frac
 
 - [Renkin–Crone extraction with plasma protein binding](../../pharmacokinetics/blood-brain-barrier-transport-kinetics/renkin-crone-extraction-with-plasma-protein-binding.md)
 
+## Proof depends on
+
+- [Moment generating function of the gamma distribution](../../../Probability/distributions/continuous/gamma-distribution/gamma-mgf/mgf-gamma-measure-of-lt.md)
+
 ## Expansion
 
 Item 1 is Jensen's inequality, $\mathbb{E}\,Q(\tau) \le Q(\mathbb{E}\tau)$ for concave $Q$: splitting flow between fast and slow paths loses more extraction on the fast path than it gains on the slow one. Item 2 uses the gamma Laplace transform $\int h(\tau)e^{-k\tau}d\tau = (1 + k\beta)^{-\alpha}$, with $\alpha = \mu^2/\sigma^2$ and $\beta = \sigma^2/\mu$. For item 3, put $x = k\mu > 0$, so that $(1 + k\beta)^{-\alpha} = (1 + x/\alpha)^{-\alpha}$; the function $\alpha \mapsto (1 + x/\alpha)^{\alpha}$ is strictly increasing with limit $e^x$, and $\alpha$ decreases as $\sigma$ increases. The full model replaces Crone–Renkin by a steady-state capillary equation that includes haemoglobin binding and nonzero tissue oxygen tension; $Q$ then still depends only on $k\tau$, and $k = 118\ \mathrm{s}^{-1}$ was calibrated to a resting $\mathrm{OEF}_{\max}$ of $0.3$ in rat cortex. The predicted extraction varies greatly at fixed blood flow and volume, depending on $\sigma$, which makes capillary flow homogenization a mechanism for raising oxygen extraction during activation without additional flow.

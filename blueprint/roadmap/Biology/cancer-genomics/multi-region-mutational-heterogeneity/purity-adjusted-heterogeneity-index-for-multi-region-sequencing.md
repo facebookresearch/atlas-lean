@@ -1,8 +1,7 @@
 # Purity-adjusted heterogeneity index for multi-region sequencing
 
 Let $g$ mutated genes be sequenced in $b \ge 2$ samples of one tumour. In sample $j$, gene $i$ has
-$x_{ij}$ variant reads out of coverage $n_{ij}$, modelled as $X_{ij} \sim \mathrm{Bin}(n_{ij},
-\mathrm{VAF}_{ij})$, with maximum-likelihood estimate $\widehat{\mathrm{VAF}}_{ij} = x_{ij}/n_{ij}$.
+$x_{ij}$ variant reads out of coverage $n_{ij}$, modelled as $X_{ij} \sim \mathrm{Bin}(n_{ij}, \mathrm{VAF}_{ij})$, with maximum-likelihood estimate $\widehat{\mathrm{VAF}}_{ij} = x_{ij}/n_{ij}$.
 The one-sided upper 95% confidence limit is the largest allele frequency still compatible with
 seeing so few reads,
 

@@ -13,9 +13,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Six-variable repressilator](six-variable-repressilator/README.md)
 - [Stochastic mass action, metabolic control and flux balance](stochastic-mass-action-metabolic-control-and-flu/README.md)
 
-- [Extended Permanence Conjecture](extended-permanence-conjecture.md)
-- [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
-- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
 
 - [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
@@ -30,10 +27,4 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
-- [Approximate Bayesian model selection](approximate-bayesian-model-selection/README.md)
-- [Asynchronous Boolean network dynamics](asynchronous-boolean-network-dynamics/README.md)
-- [Cooperative lipid gating of ion channels](cooperative-lipid-gating-of-ion-channels/README.md)
-- [Flux balance analysis](flux-balance-analysis/README.md)
-- [Multivalent protein phase separation](multivalent-protein-phase-separation/README.md)
-- [Occupation measures of transcriptional processes](occupation-measures-of-transcriptional-processes/README.md)
-- [Random circuit perturbation](random-circuit-perturbation/README.md)
+- [Metabolic networks, molecular biophysics and model selection](metabolism-biophysics-and-model-selection/README.md)

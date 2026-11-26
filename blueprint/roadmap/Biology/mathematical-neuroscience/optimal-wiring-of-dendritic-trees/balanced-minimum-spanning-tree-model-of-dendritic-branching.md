@@ -14,9 +14,13 @@ the wiring cost of the new segment plus $\mathrm{bf}$ times the path length from
 
 So $\mathrm{bf}$ trades total wiring (minimal at $\mathrm{bf} = 0$) against conduction distance to the root (minimal for large $\mathrm{bf}$).
 
+## Proof depends on
+
+- [Prim's tree is a minimum spanning tree](../../../ComputerScience/approximation-algorithms/double-tree-approximation-for-metric-tsp/prim-tree-is-minimum-spanning-tree.md)
+
 ## Expansion
 
-(1): with $\mathrm{bf} = 0$ the selected pair minimizes $\|p - v\|$ over unconnected $p$ and connected $v$, which is exactly Prim's rule, and Prim's algorithm returns a minimum spanning tree by the cut property. (2) is the triangle inequality applied along the path. (3): while every connected node is joined to $r$, $\mathrm{PL}(v) = \|v - r\|$; for $v \neq r$ the general-position hypothesis gives a uniform gap $\eta = \min_{p \ne v} (\|p - v\| + \|v - r\| - \|p - r\|) > 0$ over the finite set. With $D = \max_{p, v} \|p - v\|$,
+(1): with $\mathrm{bf} = 0$ the selected pair minimizes $\|p - v\|$ over unconnected $p$ and connected $v$, which is exactly Prim's rule started at $r$. Numbering the points of $\{r\} \cup P$ and taking the costs $d(u, v) = \tfrac12\|u - v\|$ makes the edge weight $d(u, v) + d(v, u) = \|u - v\|$ of [Prim's tree is a minimum spanning tree](../../../ComputerScience/approximation-algorithms/double-tree-approximation-for-metric-tsp/prim-tree-is-minimum-spanning-tree.md) exactly the Euclidean edge length, so that result gives minimality of total cable length. (2) is the triangle inequality applied along the path. (3): while every connected node is joined to $r$, $\mathrm{PL}(v) = \|v - r\|$; for $v \neq r$ the general-position hypothesis gives a uniform gap $\eta = \min_{p \ne v} (\|p - v\| + \|v - r\| - \|p - r\|) > 0$ over the finite set. With $D = \max_{p, v} \|p - v\|$,
 
 $$c(p, v) - c(p, r) = (1 + \mathrm{bf})(\|p - v\| - \|p - r\|) + \mathrm{bf}\,\|v - r\| \ge \mathrm{bf}\,\eta - D,$$
 

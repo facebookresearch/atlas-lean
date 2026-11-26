@@ -1,10 +1,12 @@
 # Variational free energy as an upper bound on surprise
 
-**Setting.** A generative model $m$ specifies a joint density $p(y, u \mid m) = p(y \mid u, m)\, p(u \mid m)$ of sensory data $y$ and hidden causes $u$ (hidden and causal states at all levels of a hierarchy). The model evidence is $p(y \mid m) = \int p(y, u \mid m)\, du$ and the **surprise** of the data is $-\ln p(y \mid m)$. For any probability density $q(u)$ (the recognition or ensemble density) define the **variational free energy**
+**Setting.** A generative model $m$ specifies a joint density $p(y, u \mid m) = p(y \mid u, m)\, p(u \mid m)$ of sensory data $y$ and hidden causes $u$ (hidden and causal states at all levels of a hierarchy). The model evidence is $p(y \mid m) = \int p(y, u \mid m)\, du$ and the **surprise** of the data is $-\ln p(y \mid m)$. Assume the evidence is positive and finite, $0 < p(y \mid m) < \infty$, so that the posterior $p(u \mid y, m) = p(y, u \mid m)/p(y \mid m)$ is a probability density. For a probability density $q(u)$ (the recognition or ensemble density) with $q \ll p(\cdot \mid y, m)$ define the **variational free energy** by the log-ratio integral
 
-$$F(q, y) = U - S, \qquad U = -\big\langle \ln p(y \mid u, m) + \ln p(u \mid m) \big\rangle_q, \qquad S = -\langle \ln q(u) \rangle_q .$$
+$$F(q, y) = \int q(u)\, \ln \frac{q(u)}{p(y, u \mid m)}\, du \in (-\infty, +\infty] .$$
 
-**Theorem.** For every $q$ with $q \ll p(\cdot \mid y, m)$,
+When the energy $U = -\langle \ln p(y \mid u, m) + \ln p(u \mid m) \rangle_q$ and the entropy $S = -\langle \ln q(u) \rangle_q$ are both finite, $F(q, y) = U - S$; without that assumption $U - S$ can be $\infty - \infty$, while the log-ratio integral is still defined.
+
+**Theorem.** For every probability density $q$ with $q \ll p(\cdot \mid y, m)$,
 
 $$F(q, y) = -\ln p(y \mid m) + D_{\mathrm{KL}}\big(q(u) \,\|\, p(u \mid y, m)\big) \ \ge\ -\ln p(y \mid m),$$
 
@@ -12,7 +14,7 @@ with equality if and only if $q(u) = p(u \mid y, m)$ almost everywhere. Hence mi
 
 ## Expansion
 
-Write $p(y, u \mid m) = p(u \mid y, m)\, p(y \mid m)$ inside $U$: then $U - S = \langle \ln q(u) - \ln p(u \mid y, m)\rangle_q - \ln p(y \mid m)$, which is the stated identity. Nonnegativity of the Kullback–Leibler divergence (Gibbs' inequality, a consequence of Jensen's inequality) gives the bound and its equality case. The same quantity is the negative of the evidence lower bound used in variational inference. In hierarchical models of perception, the gradient of $F$ for Gaussian likelihoods and priors is a sum of precision-weighted prediction errors, $\varepsilon^{(i)} = v^{(i)} - g(x^{(i+1)}, v^{(i+1)})$, between the causes at one level and their predictions from the level above; minimizing $F$ then amounts to message passing in which predictions descend and prediction errors ascend the hierarchy, which is the computational reading of predictive coding in cortex.
+Write $p(y, u \mid m) = p(u \mid y, m)\, p(y \mid m)$ inside the logarithm: the integrand becomes $q \ln (q/p(u \mid y, m)) - q \ln p(y \mid m)$, and the second term integrates to the finite constant $-\ln p(y \mid m)$ because $q$ is a probability density and the evidence is positive and finite. The first term integrates to the Kullback–Leibler divergence, which is well defined in $[0, \infty]$ for $q \ll p(\cdot \mid y, m)$; this is the stated identity. Nonnegativity of the divergence (Gibbs' inequality, a consequence of Jensen's inequality) gives the bound and its equality case. The finiteness caveat on $U - S$ is real: with evidence $1$ and prior, posterior and $q$ all equal to the density $1/(u (\ln u)^2)$ on $[e, \infty)$, the divergence is $0$ but $U = S = +\infty$. The same quantity is the negative of the evidence lower bound used in variational inference. In hierarchical models of perception, the gradient of $F$ for Gaussian likelihoods and priors is a sum of precision-weighted prediction errors, $\varepsilon^{(i)} = v^{(i)} - g(x^{(i+1)}, v^{(i+1)})$, between the causes at one level and their predictions from the level above; minimizing $F$ then amounts to message passing in which predictions descend and prediction errors ascend the hierarchy, which is the computational reading of predictive coding in cortex.
 
 ## Sources
 

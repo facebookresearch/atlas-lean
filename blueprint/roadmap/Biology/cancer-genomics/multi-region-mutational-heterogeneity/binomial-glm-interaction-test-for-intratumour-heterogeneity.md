@@ -30,8 +30,7 @@ sample together, which is absorbed by $\beta_j$; a clonal tumour sampled at diff
 therefore fits the main-effects model. Only a gene whose frequency moves differently from the
 others, a mutation private to one region or subclonal in some regions, requires $\gamma_{ij} \ne 0$.
 The interaction terms form a saturated model with $gb$ parameters, so the test compares the
-additive model's deviance with zero, and its degrees of freedom are $gb - (g + b - 1) =
-(g-1)(b-1)$. Overdispersion from library preparation is handled with a quasibinomial family and a
+additive model's deviance with zero, and its degrees of freedom are $gb - (g + b - 1) = (g-1)(b-1)$. Overdispersion from library preparation is handled with a quasibinomial family and a
 fixed dispersion.
 
 ## Sources
