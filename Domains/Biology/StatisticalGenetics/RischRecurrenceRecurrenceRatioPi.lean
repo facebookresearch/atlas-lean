@@ -6,41 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# Risch's recurrence-risk ratios under a multiplicative multilocus model
-
-For a binary trait with prevalence `K` and relatives of type `R` (sibs, parent–offspring,
-second-degree relatives, …), the recurrence risk `K_R` is the probability that a relative of an
-affected individual is affected, and Risch's recurrence-risk ratio is `λ_R = K_R / K`. At one
-locus with penetrance `f`, `K K_R - K² = 2φ_R V_A + Δ_R V_D`, the covariance between relatives
-of the penetrance, so `λ_R - 1 = (2φ_R V_A + Δ_R V_D) / K²`; with no dominance variance,
-`λ_R - 1` halves with each degree of relationship (Risch 1990). That one-locus covariance is
-proved on main as `MathlibExt.Biology.StatisticalGenetics.CovarianceRelatives.LocusModel.relCov_eq`
-in `Domains.Biology.StatisticalGenetics.CovarianceRelatives`.
-
-The multilocus part: under a multiplicative model (penetrance the product of locus
-penetrances, genotypes of a relative pair independent across loci) `λ_R` is the product of the
-locus ratios `λ_{R,i}` (derived from the definitions; recorded here, still to be proved), and
-when every locus halves `λ - 1` from first- to second-degree relatives, the product decreases
-faster: `λ_1 - 1` is at least twice `λ_2 - 1`, strictly so when two loci contribute (the
-abstract's "for a multiplicative (epistasis) model, `λ_R - 1` decreases more rapidly"). That
-decrease is proved as
-`WantedExt.Biology.StatisticalGenetics.RischRecurrenceWanted.prod_sub_one_ge_two_mul` in
-`Domains.Biology.StatisticalGenetics.RischRecurrenceProdSubOneGeTwoMul`. Risch's linkage-power
-analysis is not formalized.
-
-Sources: N. Risch, "Linkage strategies for genetically complex traits. I. Multilocus models",
-Am. J. Hum. Genet. 46 (1990) 222–228 (abstract; the body formulas are restated from the
-definitions).
--/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Pi
-public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Pi
-public import Domains.Biology.StatisticalGenetics.RischRecurrenceProdSubOneGeTwoMul
+
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+
+/-!
+# Risch's recurrence-risk ratios under a multiplicative multilocus model
+
+This module defines prevalence, pair-affected probability, recurrence-risk ratio and
+relative-pair laws, and proves that the multilocus recurrence-risk ratio is the product
+of the locus ratios under multiplicative penetrance and independence across loci.
+
+Source: N. Risch, "Linkage strategies for genetically complex traits. I. Multilocus models",
+Am. J. Hum. Genet. 46 (1990) 222–228.
+-/
 
 @[expose] public section
 
@@ -77,12 +61,33 @@ law `∏ᵢ π i (gᵢ)`, pair law `∏ᵢ J i (gᵢ) (hᵢ)` (loci independent)
 `∏ᵢ f i (gᵢ)` has `λ_R = ∏ᵢ λ_{R,i}`.
 
 Source: Risch (1990). -/
-public theorem_wanted recurrenceRatio_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
+public theorem recurrenceRatio_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
     {G : ι → Type*} [∀ i, Fintype (G i)] (π : ∀ i, G i → ℝ) (J : ∀ i, G i → G i → ℝ)
     (f : ∀ i, G i → ℝ) (hJ : ∀ i, IsPairLaw (π i) (J i))
     (hf : ∀ i g, 0 ≤ f i g ∧ f i g ≤ 1) (hK : ∀ i, 0 < prevalence (π i) (f i)) :
     recurrenceRatio (fun g : ∀ i, G i => ∏ i, π i (g i))
         (fun g h : ∀ i, G i => ∏ i, J i (g i) (h i)) (fun g => ∏ i, f i (g i)) =
-      ∏ i, recurrenceRatio (π i) (J i) (f i)
+      ∏ i, recurrenceRatio (π i) (J i) (f i) := by
+  classical
+  have hw : ∀ i g, 0 ≤ π i g * f i g :=
+    fun i g => mul_nonneg ((hJ i).1 g) (hf i g).1
+  have hex : ∀ i, ∃ g, 0 < π i g * f i g := by
+    intro i
+    obtain ⟨g, _, hg⟩ :=
+      (Finset.sum_pos_iff_of_nonneg (fun g _ => hw i g)).mp (hK i)
+    exact ⟨g, hg⟩
+  choose g hg using hex
+  have hKpi : 0 < prevalence (fun g : ∀ i, G i => ∏ i, π i (g i))
+      (fun g => ∏ i, f i (g i)) := by
+    unfold prevalence
+    simp only [← Finset.prod_mul_distrib]
+    exact Finset.sum_pos'
+      (fun x _ => Finset.prod_nonneg fun i _ => hw i (x i))
+      ⟨g, Finset.mem_univ _, Finset.prod_pos fun i _ => hg i⟩
+  unfold recurrenceRatio
+  apply (div_eq_iff (pow_ne_zero 2 hKpi.ne')).2
+  simp only [prevalence, pairAffected, Finset.prod_div_distrib,
+    Finset.prod_pow, Fintype.prod_sum, Finset.prod_mul_distrib]
+  exact (div_mul_cancel₀ _ (pow_ne_zero 2 hKpi.ne')).symm
 
 end WantedExt.Biology.StatisticalGenetics.RischRecurrenceWanted
