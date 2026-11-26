@@ -1,3 +1,3 @@
 # Exact interior load of a quadratic load on the bar
 
-The exact consistent load of the interior node of the two-cell bar under $Q(x/L)^2$ is $\int_0^LQ(x/L)^2\varphi(x/L)\,dx$.
+Consider a fixed-fixed bar of length $L$ and axial rigidity $EA$, discretized by the two-cell partition $\{0, \tfrac12, 1\}$ of $[0, 1]$ pulled back by $x/L$, with interior hat function $\varphi$ ($\varphi(0) = \varphi(1) = 0$, $\varphi(\tfrac12) = 1$, piecewise linear). Under the quadratic load $Q(x/L)^2$, the exact consistent load of the interior node is $\int_0^LQ(x/L)^2\varphi(x/L)\,dx$.
