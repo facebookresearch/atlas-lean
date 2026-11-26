@@ -4,12 +4,18 @@
 
 **Theorem.**
 1. Without simultaneous events, the total number $A_r(n)$ of labeled histories over all at-most-$r$-furcating labeled topologies on $n$ leaves satisfies $A_r(1) = 1$ and
+
 $$A_r(n) = \sum_{i=2}^{\min\{n, r\}} \binom{n}{i} A_r(n + 1 - i), \qquad n \ge 2 .$$
+
 2. Without simultaneous events, a fixed labeled topology $T$ with $n \ge 2$ leaves has
+
 $$N(T) = \frac{w(T)!}{\prod_{v \in V^0(T)} w(v)}$$
+
 labeled histories, where $V^0(T)$ is the set of internal nodes and $w(v)$ is the number of internal nodes in the subtree rooted at $v$ (including $v$).
 3. With simultaneous events, the total number $S_r(n)$ satisfies $S_r(1) = 1$ and, for $n \ge 2$,
+
 $$S_r(n) = \sum_{\substack{(x_2, \dots, x_r):\ 2 \le \sum_j j x_j \le n}} \frac{n!}{\bigl[\prod_{j=2}^r (j!)^{x_j} x_j!\bigr]\,\bigl(n - \sum_j j x_j\bigr)!}\; S_r\Bigl(n - \sum_{j=2}^r (j-1) x_j\Bigr),$$
+
 where $x_j$ is the number of simultaneous $j$-mergers in the most recent event.
 
 ## Depends on

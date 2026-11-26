@@ -3,7 +3,9 @@
 **Setting.** A haploid population has type-0 (small) and type-1 (large) individuals. Each generation has a resource budget $R>0$; placing a type-0 offspring in the next generation costs $\vartheta\in(0,1)$ units and a type-1 offspring costs $1$. If the current proportion of type 0 is $x$, offspring are created one at a time, each independently of type $0$ with probability $\rho_R(x)$ and of type 1 otherwise (for example $\rho_R(x)=s_R(x)(1-\beta_{1,R})+(1-s_R(x))\beta_{0,R}$ with frequency-dependent selection $s_R$ and parent-independent mutation probabilities $\beta_{i,R}$), until the accumulated cost first reaches or exceeds $R$. The next generation consists of the offspring created so far, so the population size $M^R_n$ is random. Let $X^R_n$ be the proportion of type 0 in generation $n$.
 
 **Theorem 2.1 (diffusion limit).** Let $\rho:[0,1]\to\mathbb R$ be Lipschitz continuous. Suppose $X^R_0\to x_0\in[0,1]$ in probability and $R(\rho_R(x)-x)\to\rho(x)$ uniformly in $x\in[0,1]$ as $R\to\infty$. Then $(X^R_{\lfloor Rt\rfloor})_{t\ge0}$ converges in distribution to the solution of
+
 $$dX_t=\bigl(-(1-\vartheta)X_t(1-X_t)+\rho(X_t)\bigr)\,dt+\sqrt{X_t(1-X_t)\bigl(1-(1-\vartheta)X_t\bigr)}\,dB_t,\qquad X_0=x_0,$$
+
 with $B$ a standard Brownian motion.
 
 **Theorem 2.2 (model variant).** In the variant in which reproduction stops at the last offspring that still fits in the budget (so the cost never exceeds $R$), the same scaling gives the limit $dX_t=\rho(X_t)\,dt+\sqrt{X_t(1-X_t)(1-(1-\vartheta)X_t)}\,dB_t$, without the $-(1-\vartheta)X_t(1-X_t)$ drift.

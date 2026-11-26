@@ -1,15 +1,20 @@
 # Replicator dynamics of trait frequencies in a large metapopulation
 
 **Setting.** A metapopulation has $K$ demes of $N$ individuals with a heritable trait in $\mathbb{R}^d$. Each deme follows a Moran process with selection; mutation and migration are rare enough that each deme is monomorphic except during brief fixation events. Let $\alpha(y,x)$ be the probability that a single individual of trait $y$ fixes in a deme of residents with trait $x$. On the slow time scale, a deme with trait $x$ switches to trait $y$ at rate
+
 $$N\theta(x)\,\alpha(y,x)\,Q(x,dy) \;+\; N^2\lambda(x,y)\,\alpha(y,x)\,\mu_t(dy),$$
+
 the first term from mutation (rate $\theta$, kernel $Q$) and the second from migrants drawn from the current metapopulation trait distribution $\mu_t$ with migration rate $\lambda$.
 
 **Theorem.**
 
 1. (*Propagation of chaos.*) As $K\to\infty$, the empirical trait distribution converges to a deterministic measure-valued solution of a nonlinear (McKean–Vlasov) equation, and in a homogeneous metapopulation with i.i.d. initial traits, finitely many tagged demes become independent copies of a time-inhomogeneous pure-jump Markov process driven by the limiting distribution.
 2. (*Replicator dynamics.*) Without mutation, if the metapopulation is homogeneous and initially carries finitely many traits $x^1,\dots,x^n$ with mean weights $\bar w^i_t$, then
+
 $$\frac{d\bar w^i_t}{dt} = \bar w^i_t \sum_{j=1}^n a_{ij}\,\bar w^j_t, \qquad a_{ij} = G(x^i,x^j),$$
+
 $$G(y,x) = N^2\big(\lambda(x,y)\,\alpha(y,x) - \lambda(y,x)\,\alpha(x,y)\big),$$
+
 a conservative replicator equation with antisymmetric payoff matrix ($a_{ji}=-a_{ij}$).
 3. (*Invasion.*) If $\bar w^{i^\star}_0>0$ and $a_{i^\star j}>0$ for all $j\ne i^\star$, then $\bar w^{i^\star}_t\to1$: trait $x^{i^\star}$ takes over the metapopulation.
 

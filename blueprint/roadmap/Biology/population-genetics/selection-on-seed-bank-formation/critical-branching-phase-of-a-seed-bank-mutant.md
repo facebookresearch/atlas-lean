@@ -1,16 +1,23 @@
 # Critical branching phase of a seed-bank mutant
 
 **Model.** In a Wright–Fisher population of $N$ annual plants, each wild-type plant contributes $\mathrm{Poisson}(M)$ seeds to the pool that germinates next generation, while each mature mutant plant of generation $t-i$ contributes $\mathrm{Poisson}(Mb_i)$ seeds to that pool, $i=0,\dots,K$, where
+
 $$\sum_{i=0}^K b_i=1,\qquad b_0>0,\qquad B:=\sum_{i=1}^K i\,b_i$$
+
 ($B$ is the mean germination time). The next generation is $N$ seeds sampled from the pool. While mutants are rare, the mutant family is approximated by a multitype branching process $\mathbf Z(t)=(Z_0(t),\dots,Z_K(t))$, where $Z_0$ counts mature mutants and $Z_i$ ($i\ge1$) counts mutant seeds that will germinate $i$ generations later.
 
 **Theorem.** Started from one mature mutant, $\mathbf Z$ is critical and
+
 $$\lim_{t\to\infty}t\,\mathbb P_{\mathbf e_0}(\mathbf Z(t)\neq0)=2(B+1).$$
+
 Conditional on survival, the number of mature mutants is asymptotically exponential:
+
 $$\lim_{t\to\infty}\mathbb P_{\mathbf e_0}\!\Big(\tfrac{Z_0(t)}{t}\ge y\ \Big|\ \mathbf Z(t)\ne0\Big)=e^{-2y(B+1)^2},\qquad y\ge0 .$$
 
 **Correspondence with a neutral allele.** For $B\ge0$ and small $y$, the frequency reached by the seed-bank mutant at the end of the branching phase that corresponds to frequency $y$ of a neutral allele without seed bank is
+
 $$\psi_B(y)=\frac{1}{2(B+1)^2}\log\frac{B+1}{B+e^{-2y}},$$
+
 which is strictly increasing in $y$ and strictly decreasing in $B$, with $\psi_0(y)=y$.
 
 ## Expansion

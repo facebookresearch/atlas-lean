@@ -3,8 +3,11 @@
 Let $(N_t)$ be a linear birth-death process started from one individual, with birth rate $\lambda$ and death rate $\mu<\lambda$, and net growth rate $r=\lambda-\mu$. At each birth the child acquires a Poisson$(\nu)$ number of new mutations. Run the process to time $T$, condition on $N_T\ge n$, and sample $n$ individuals uniformly. Let $R^k_{n,T}$ be the number of birth events whose child has exactly $k$ descendants in the sample, $R^{\ge2}_{n,T}=\sum_{k\ge2}R^k_{n,T}$, and let $M^k_{n,T}$, $M^{\ge2}_{n,T}$ be the corresponding numbers of mutations (the site frequency spectrum); given the $R$'s, the $M^k_{n,T}$ are independent Poisson$(\nu R^k_{n,T})$.
 
 1. If $ne^{-rT_n}\to 0$, then for every fixed $k\ge 2$
+
 $$\frac{R^k_{n,T_n}}{n}\xrightarrow{P}\frac{\lambda}{r\,k(k-1)},\qquad \frac{M^k_{n,T_n}}{n}\xrightarrow{P}\frac{\lambda\nu}{r\,k(k-1)}.$$
+
 2. If $n^{3/2}(\log n)\,e^{-rT_n}\to 0$, then
+
 $$\frac{1}{\sqrt n}\Big(R^{\ge2}_{n,T_n}-\frac{n\lambda}{r}\Big)\Rightarrow\mathcal N\Big(0,\frac{\lambda^2}{r^2}\Big),\qquad \frac{1}{\sqrt n}\Big(M^{\ge2}_{n,T_n}-\frac{n\lambda\nu}{r}\Big)\Rightarrow\mathcal N\Big(0,\frac{\lambda^2\nu^2}{r^2}+\frac{\lambda\nu}{r}\Big).$$
 
 Compared with mutations at constant rate along branches, where the total length of branches supporting $k$ leaves is asymptotically $n/(r\,k(k-1))$, mutations tied to birth events keep the $1/(k(k-1))$ shape of the spectrum but scale it by the birth rate $\lambda$, even though the intensity of birth events observed along an ancestral lineage is time-inhomogeneous.

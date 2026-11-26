@@ -3,13 +3,19 @@
 **Setting.** The Wright–Fisher seed-bank model with germination-delay distribution $\mathbf b=(b_0,\dots,b_K)$, $b_0>0$, mean delay $B=\sum_i ib_i$, and population size $N$. Let $\mathbf x^N(t)$ be the vector of mutant frequencies among mature plants of the last $K+1$ generations, with time measured in units of $N$ generations.
 
 **Diffusion limit (Theorem 2.3).** If $\mathbf x^N(0)\to\mathbf x(0)$ on the diagonal $\Gamma=\{x_0=\dots=x_K\}$, then $\mathbf x^N$ converges in distribution to a diffusion that stays on $\Gamma$, whose common coordinate satisfies
+
 $$dx_0=\tfrac12\,x_0(1-x_0)\,\partial^2_{x_0}\Phi_0(\mathbf x)\,dt+\frac{\sqrt{x_0(1-x_0)}}{B(1-x_0)+1}\,dW_0 ,$$
+
 where $\Phi$ is the projection along the deterministic flow onto $\Gamma$ and $W_0$ is a Brownian motion. The drift is positive, and the noise is damped by the factor $1/(B(1-x_0)+1)$.
 
 **Fixation bound (Theorem 2.5).** Let $T_a=\inf\{t:x_0(t)=a\}$ and
+
 $$\Psi(B,y)=1-e^{-B\psi_B(y)}+\psi_B(y)\,e^{-B\psi_B(y)},\qquad \psi_B(y)=\frac{1}{2(B+1)^2}\log\frac{B+1}{B+e^{-2y}} .$$
+
 For $y\in(0,1)$, $B\mapsto\Psi(B,y)$ is strictly decreasing, with $\Psi(B,y)\to y$ as $B\to0$ and $\Psi(B,y)\to0$ as $B\to\infty$; and for every $K$ and admissible $\mathbf b$,
+
 $$\mathbb P\big(T_1<T_0\ \big|\ x_0(0)=\psi_B(y)\big)\le\Psi(B,y).$$
+
 Since a neutral allele without seed bank started at frequency $y$ fixes with probability $y$, a mutation conferring a seed bank fixes less often than a neutral one in a constant environment.
 
 ## Depends on

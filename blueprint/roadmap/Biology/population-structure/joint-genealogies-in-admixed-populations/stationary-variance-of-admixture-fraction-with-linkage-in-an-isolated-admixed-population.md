@@ -7,7 +7,9 @@
 **Theorem (stationarity).** If after some generation the population has constant size $N$ and constant source contributions $s_1, s_2$, then $M_\tau(\boldsymbol\lambda) \to M(\boldsymbol\lambda)$ as $\tau \to \infty$ for every $n$ and $\boldsymbol\lambda$, and the admixture fraction $H^{(\tau)}_{S_1}$ of a random individual converges in distribution. Under isolation ($s_1 = s_2 = 0$ after foundation) the limit retains the founding contributions; under ongoing gene flow ($s_1 + s_2 > 0$) earlier contributions are progressively erased and absorption times converge to an a.s. finite limit.
 
 **Proposition (isolation with a rigid chromosome segment).** Let the admixed population be isolated since foundation with founding contribution $s_1(0)$, and let a short segment recombine exactly once per generation with probability $\rho_0$ (crossover position uniform). With $I = (N+1)\rho_0$,
+
 $$\mathbb{E}H_{S_1} = s_1(0), \qquad \operatorname{Var} H_{S_1} = s_1(0)\big(1 - s_1(0)\big)\,f(I), \qquad f(I) = \frac{(1+2I)\log(1+2I) - 2I}{2I^2}.$$
+
 $f$ decreases strictly from $f(0^+) = 1$ (no recombination: each replicate fixes one ancestry, a Bernoulli variance) to $0$, with $f(I) \sim \log I / I$ as $I \to \infty$, recovering the unlinked large-population limit.
 
 ## Depends on

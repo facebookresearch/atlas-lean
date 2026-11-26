@@ -3,11 +3,15 @@
 **Model.** Fix $\beta > 0$ and $\gamma \in (0,1)$. A population of $K = \lfloor N^\gamma \rfloor$ individuals carries real fitnesses. Each generation every individual produces $m_N = N/K$ offspring whose fitness is the parent's plus an i.i.d. increment with law $F_X$; then $K$ offspring are sampled to form the next generation, with probability proportional to the Gibbs weight $e^{\beta_N x}$, $\beta_N = \beta \log N / c_N$, where $c_N = \inf\{x : 1 - F_X(x) \ge 1/N\}$. Assume exponential tails: $\log(1 - F_X(x c_N))/\log N \to -x$ for $x \ge 0$ (the case $\rho = 1$), with a comparable or lighter left tail.
 
 **Log-profile dynamics.** If the rescaled configuration has a limiting log-profile $g^t$ (about $N^{g^t(x)}\,dx$ individuals near $x c_N$), then $g^{t+1} = s_{\sigma_t} \circ r(g^t)$, where with $\pi(x) = x$ for $x \ge 0$ and $-\infty$ otherwise,
+
 $$r(g)(x) = \pi\Bigl(\sup_z \bigl(1 - \gamma + g(z) + h(x - z)\bigr)\Bigr), \qquad s_\sigma(g)(x) = \pi\bigl(g(x) + \beta (x - \sigma)_-\bigr),$$
+
 $h(y) = -y$ for $y \ge 0$, and $\sigma_t = \inf\{\sigma : \sup_z s_\sigma(r(g^t))(z) \le \gamma\}$.
 
 **Theorem.** This system has a unique travelling wave $G$ with speed $\nu(\gamma, \beta)$. Let $k = \lfloor 1/\beta \rfloor$ if $1/\beta \notin \mathbb N$ and $k = 1/\beta - 1$ otherwise, and
+
 $$\gamma_c(\beta) = \frac{k\,(2 - (k+1)\beta)}{(k+1)(2 - k\beta)} .$$
+
 - *Selection of the luckiest* ($\gamma < \gamma_c$): $\nu = \dfrac{2\gamma}{k\,(2 - (k+1)\beta)}$, increasing in $\gamma$; at the wave, every survivor is strictly fewer than the offspring produced at its fitness, i.e. $r(G)(x) > g^1(x)$ on the support.
 - *Selection of the fittest* ($\gamma \ge \gamma_c$): $\nu = 1 - \gamma$, decreasing in $\gamma$; the top of the wave survives selection intact on $[-\chi + 1 - \gamma, 1 - \gamma]$, where $\chi = \gamma - \sum_{j=1}^{k} (1 - j\beta)(1 - \gamma) > 0$.
 

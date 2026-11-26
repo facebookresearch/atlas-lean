@@ -4,10 +4,14 @@
 
 **Theorem.**
 1. The coalescent tree of a Poisson-sampled Feller diffusion is a coalescent point process (CPP) with node-height distribution function
+
 $$F_H(\tau) = \frac{e^{\delta \tau} - 1}{e^{\delta\tau} - 1 + \gamma_\nu}, \qquad \delta = |\alpha|, \quad \gamma_\nu = \frac{|\alpha|}{\max(\nu, \nu - \alpha)},$$
+
 the same algebraic form as for a Bernoulli-sampled birth–death process.
 2. *(Uniform samples as mixtures.)* Let $\Pi^{(\alpha)}_k$ be the law of the coalescent tree of $k$ individuals sampled uniformly from $X(t)$, and $\Gamma^{(\alpha)}_{\nu,k}$ the law of the Poisson-sampled tree conditioned on $k$ tips. Then
+
 $$\Pi^{(\alpha)}_k = \int_0^\infty \Gamma^{(\alpha)}_{\nu,k}\, \mu_k(d\nu), \qquad \mu_k(d\nu) = \frac{k\,v^{k-1}}{(1+v)^{k+1}}\, dv, \quad v = 2\nu\,\beta(t; |\alpha|),$$
+
 with $\beta$ an explicit time-scale function of the diffusion.
 3. *(Super/sub-critical duality.)* A Poisson-sampled super-critical diffusion with $\nu > \alpha > 0$ has the same distribution of coalescent times as the Poisson-sampled sub-critical diffusion with parameter $-\alpha$ and sampling rate $\nu - \alpha$, and conversely every sub-critical $(\alpha < 0, \nu)$ corresponds to the super-critical $(-\alpha, \nu - \alpha)$; if $\alpha > \nu > 0$ no sub-critical counterpart exists.
 

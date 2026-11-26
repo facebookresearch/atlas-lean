@@ -1,7 +1,9 @@
 # Dirichlet limit of within-host sequence-type frequencies
 
 Work in the [host-structured virus model](marginal-type-frequencies-of-a-host-structured-virus-population.md) under its assumptions (A1) to (A3), with $\lambda_N/\gamma_N \to \theta > 0$. Pick a host $\tilde m$ uniformly at random and let
+
 $$W^N(T) = \frac1N \sum_{n=1}^N \delta_{X^N_{\tilde m, n}(T)} \in \mathcal M_1([K]^L)$$
+
 be the sequence-type frequencies of all virions in that host. For $\psi = (\psi_\ell)_{\ell \in [L]} \in (\mathcal M_1([K]))^L$ write $\psi^\otimes = \psi_1 \otimes \cdots \otimes \psi_L$ for the product measure on $[K]^L$.
 
 **Theorem.**

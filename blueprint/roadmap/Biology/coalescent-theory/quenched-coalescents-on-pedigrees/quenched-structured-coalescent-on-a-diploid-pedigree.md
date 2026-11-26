@@ -7,6 +7,7 @@
 **Theorem.** Under the paper's assumptions on initial sampling, continuity and comparability of deme sizes, rarity of large reproduction and migration events, convergence of migration probabilities, integrability of $\Phi$, and absence of total migrations:
 1. (annealed) $\overline\chi^{N,n}$ converges in distribution in $\mathcal{D}(\mathbb{R}_+, \mathcal{E}_n(V))$ to a $(\Phi, \kappa, \mu)$-$n$-coalescent;
 2. (quenched) the conditional law of $\overline\chi^{N,n}$ given the pedigree converges weakly in distribution to the conditional law of the $\Psi$-driven $(\kappa,\mu)$-$n$-coalescent given $\Psi$:
+
 $$\mathbb{P}\big(\overline\chi^{N,n} \in \cdot \mid \mathcal{A}_N\big) \Longrightarrow \mathbb{P}\big(\chi^n \in \cdot \mid \Psi\big).$$
 
 So the pedigree is remembered in the limit exactly through the times and sizes of its large reproduction and migration events; ordinary generations average out.

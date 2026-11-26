@@ -1,7 +1,9 @@
 # Step-size conditions for stability of fitness peaks under the breeder's equation
 
 **System.** For a domain $D\subseteq\mathbb R^n$, $f\in C^1(D)$ with $\nabla f$ locally Lipschitz, and symmetric positive semidefinite matrices $P_k$,
+
 $$x_{k+1}=x_k+P_k\nabla f(x_k),\qquad k=0,1,2,\dots$$
+
 With $P_k=G_k$ (the additive genetic covariance matrix) and $f=\ln\bar W$ (log mean fitness) this is Lande's multivariate breeder's equation. Write $\lambda_1(P)\le\dots\le\lambda_n(P)$ for the eigenvalues.
 
 **Hypotheses.** (H1) $f$ has an isolated local maximum at $\bar x$; (H2) $\bar x$ is an isolated critical point; (H3) $\sum_k\lambda_1(P_k)=\infty$. Let $r_0,L,\Lambda>0$ be such that $\overline B_{r_0}(\bar x)\subset D$, $\nabla f$ is $L$-Lipschitz on that ball and $\lambda_n(P_k)\le\Lambda$ for all $k$. Step conditions: (S1) $L\Lambda\le2$; (S2) $L\Lambda\le2-\eta$ for some $\eta\in(0,2]$.

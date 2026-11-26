@@ -7,7 +7,9 @@
 **Theorem 15.** $(\mathcal{MT}_N\cup\{\emptyset\},\le)$ is a lattice.
 
 **Theorem 16 (degrees).** For $T_{N,K}$ with F-matrix $F$, the number of shapes obtainable by one collapse is
+
 $$\deg^+(T_{N,K})=1+\sum_{e=2}^{K}\mathbf 1\big(F_{e,1:e-1}=F_{e+1,1:e-1}\big),$$
+
 and the number of shapes that collapse onto it in one step is $\deg^-(T_{N,K})=\sum_{i=1}^K\big((l_i+1)2^{k_i}-k_i-3+\mathbf 1(l_i=0)\big)$, where node $i$ has $l_i$ leaf children and $k_i$ internal children.
 
 **Theorem 17.** The maximum backward degree in $\mathcal{MT}_N$ is attained by the shape $\ddot T_N$ with $\lfloor (N-2)/2\rfloor+1$ internal nodes: a root carrying $\lfloor (N-2)/2\rfloor$ cherries and $2+(N\bmod 2)$ leaves. Its backward degree is $(3+(N\bmod2))\,2^{\lfloor N/2\rfloor}-\lfloor N/2\rfloor-3$, and it also maximizes the total degree (Theorem 18).

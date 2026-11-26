@@ -3,10 +3,15 @@
 **Setting.** A rooted binary species tree on $k$ species has minimum internal branch length $T_{\min}$ in coalescent units. Gene trees $\mathcal G = \{G_1, \dots, G_n\}$ are sampled independently under the multispecies coalescent (one lineage per species). $\mathcal G$ is a *bipartition cover* if every bipartition (split) of the species tree is a split of at least one $G_j$. Let $g_{a,j}(T)$ be the probability that $a$ lineages in Kingman's coalescent have coalesced to $j$ lineages after time $T$.
 
 **Theorem (balanced bound).** Define random variables $W_\ell$ recursively by $W_1 \equiv 1$ and, for $\ell \ge 2$,
+
 $$\mathbb P(W_\ell = j) = \sum_{a \ge 1} \sum_{b \ge 1} \mathbb P(W_{\lfloor \ell/2 \rfloor} = a)\, \mathbb P(W_{\lceil \ell/2 \rceil} = b)\, g_{a+b,j}(T_{\min}),$$
+
 the number of lineages leaving the root branch of a balanced $\ell$-taxon tree whose branches all have length $T_{\min}$. Put $w_\ell = \mathbb P(W_\ell = 1)$. For a target confidence $q \in (0,1)$, if
+
 $$n \ge M_b(k, T_{\min}) := \inf\Bigl\{ n \in \mathbb N : \sum_{\ell=2}^{k-2} (1 - w_\ell)^n \le 1 - q \Bigr\},$$
+
 then $\mathcal G$ is a bipartition cover with probability at least $q$, for every topology of the species tree. In particular it suffices that
+
 $$n \ge \frac{\log\bigl(\tfrac{k-3}{1-q}\bigr)}{-\log\bigl(1 - w_{k-2}\bigr)} .$$
 
 ## Depends on

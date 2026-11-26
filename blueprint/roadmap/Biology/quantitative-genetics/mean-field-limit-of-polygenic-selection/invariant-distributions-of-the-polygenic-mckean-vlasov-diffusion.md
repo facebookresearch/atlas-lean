@@ -1,9 +1,13 @@
 # Invariant distributions of the polygenic McKean–Vlasov diffusion
 
 **Setting.** Let $f$ solve the locus-level McKean–Vlasov diffusion
+
 $$df_t = \bar s(\mathcal L(f_t))\, f_t(1 - f_t)\, dt + \bigl(\theta^{(+)}(1 - f_t) - \theta^{(-)} f_t\bigr) dt + \sqrt{f_t(1 - f_t)}\, dB_t$$
+
 on $[0,1]$, with $\theta^{(\pm)} > 0$ and $\bar s$ Lipschitz on probability measures. For $y \in \mathbb R$ let
+
 $$\Pi_y(dx) = C_y\, x^{2\theta^{(+)} - 1} (1 - x)^{2\theta^{(-)} - 1} e^{2xy}\, dx,$$
+
 the stationary law of the classical Wright–Fisher diffusion with constant selection $y$, and $\chi(y) = \bar s(\Pi_y)$.
 
 **Theorem.**

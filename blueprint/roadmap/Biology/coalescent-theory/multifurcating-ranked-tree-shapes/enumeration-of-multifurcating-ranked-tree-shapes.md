@@ -7,13 +7,17 @@
 Let $K_0(t)$ and $K_1(t)$ count the internal nodes that are parents of zero, respectively exactly one, internal node.
 
 **Proposition 2.** For a fixed valid $t$ the number of compatible $l$ is $\binom{N-2K_0(t)-K_1(t)+K-1}{K-1}$, so
+
 $$G(N,K)=\sum_{t}\binom{N-2K_0(t)-K_1(t)+K-1}{K-1},$$
+
 summing over $t\in\mathbb N^K$ with $t_1=0$, $t_i\in\{1,\dots,i-1\}$.
 
 **Corollary 6.** The number of valid length-$K$ vectors $t$ with $K_0(t)=k_0$ is the Eulerian number $E(K-1,k_0)$. The number of attainable pairs $(k_0,k_1)$ is $\lfloor (K-1)^2/4\rfloor+1$ (Corollary 4).
 
 **Theorem 7.** With $A_K(k_0,k_1)$ the number of valid $t$ with $K_0(t)=k_0$, $K_1(t)=k_1$ (computed by the recursion of Proposition 5),
+
 $$G(N,K)=\binom{N-2}{K-1}+\binom{N-K+1}{K-1}+\sum_{k_0=2}^{K-2}\ \sum_{k_1=\max\{0,K-2k_0+1\}}^{K-1-k_0}A_K(k_0,k_1)\binom{N-2k_0-k_1+K-1}{K-1}.$$
+
 Known boundary values are $G(N,1)=1$, $G(N,2)=N-2$, and $G(N,N-1)$ equals the Euler zigzag numbers counting binary ranked tree shapes.
 
 ## Expansion

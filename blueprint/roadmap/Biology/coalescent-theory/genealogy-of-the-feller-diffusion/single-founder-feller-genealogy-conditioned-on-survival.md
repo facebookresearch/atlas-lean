@@ -16,12 +16,19 @@ Consider a Feller diffusion on $[0,t]$ whose population at time $t$ descends fro
 
 1. The final population is exponential: $f_{X(t)\mid T_1=t}(x)=\beta(t)^{-1}e^{-x/\beta(t)}$, $x>0$.
 2. The number of ancestors is geometric:
+
 $$\mathbb P(A_\infty(s)=k\mid T_1=t,X(t)>0)=\frac{\beta(s)}{\beta(t)}\Bigl(1-\frac{\beta(s)}{\beta(t)}\Bigr)^{k-1},\qquad k\ge1.$$
+
 3. The $k$-th coalescent time has density
+
 $$f_{T_k\mid T_1=t,X(t)>0}(s)=\tfrac12(k-1)\frac{\mu(s)\beta(s)}{\beta(t)}\Bigl(1-\frac{\beta(s)}{\beta(t)}\Bigr)^{k-2},\qquad k\ge2.$$
+
 4. For a sample of size $n$,
+
 $$\mathbb P(A_n(s)=k\mid T_1=t)=\sum_{l\ge k}\binom lk\frac{n!}{l_{(n)}}\binom{n-1}{k-1}\frac{\beta(s)}{\beta(t)}\Bigl(1-\frac{\beta(s)}{\beta(t)}\Bigr)^{l-1},$$
+
 and the time $T_2^{(n)}$ to the sample's most recent common ancestor satisfies
+
 $$\mathbb P(T_2^{(n)}<s\mid T_1=t)=\frac{\beta(s)}{\beta(t)}\,{}_2F_1\Bigl(2,1;n+1;1-\frac{\beta(s)}{\beta(t)}\Bigr),\qquad0\le s\le t.$$
 
 ## Depends on

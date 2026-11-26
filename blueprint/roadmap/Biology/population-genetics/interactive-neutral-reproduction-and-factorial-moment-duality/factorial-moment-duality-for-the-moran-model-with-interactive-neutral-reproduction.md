@@ -10,17 +10,25 @@
 The number $X^{(N)}_t$ of unfit individuals is a birth–death chain on $\{0,\dots,N\}$ jumping $n\to n+1$ at rate $\frac r2(N-n)\frac nN+\frac\kappa2(N-n)\frac nN\frac{N-n}N+(N-n)u\nu_1$ and $n\to n-1$ at rate $\frac r2n\frac{N-n}N+\frac\kappa2n(\frac{N-n}N)^2+nu\nu_0+\sum_m s_mn(1-(\frac nN)^m)$.
 
 **Dual chain.** Let $p^n_{mj}$ be the probability that $m$ draws with replacement from $[N]$ hit exactly $j$ distinct elements outside $[n]$. $Z^{(N)}$ is the chain on $\{0,\dots,N\}\cup\{\Delta\}$ with
+
 $$n\to n+j\ (j\ge2)\ \text{at rate}\ n\sum_{m\ge j}s_mp^n_{mj},\qquad n\to n+1\ \text{at rate}\ \tfrac\kappa N\tbinom n2\tfrac{N-n}N+n\sum_m s_mp^n_{m1},$$
+
 $$n\to n-1\ \text{at rate}\ \tfrac1N\tbinom n2\big(r+\kappa\tfrac{N-(n-1)}N\big)+u\nu_1n,\qquad n\to\Delta\ \text{at rate}\ u\nu_0n .$$
 
 **Theorem (factorial moment duality).** For all $t\ge0$, $n\in\{0,\dots,N\}\cup\{\Delta\}$ and $i\in\{0,\dots,N\}$, with falling factorials $x^{\underline n}$ and the convention $i^{\underline\Delta}=0$,
+
 $$\mathbb E\Big[\frac{(X^{(N)}_t)^{\underline n}}{N^{\underline n}}\ \Big|\ X^{(N)}_0=i\Big]=\mathbb E\Big[\frac{i^{\underline{Z^{(N)}_t}}}{N^{\underline{Z^{(N)}_t}}}\ \Big|\ Z^{(N)}_0=n\Big].$$
+
 The left side is the probability that $n$ individuals sampled without replacement at time $t$ are all unfit.
 
 **Diffusion limit and moment duality.** If $Nu\to\theta$, $Ns_m\to\sigma_m$ with $\sum_m m\sigma_m<\infty$, then $X^{(N)}_{Nt}/N$ converges to the solution of
+
 $$dX_t=\Big(-\sum_{m\ge1}\sigma_mX_t(1-X_t^m)+\theta\nu_1(1-X_t)-\theta\nu_0X_t\Big)dt+\sqrt{X_t(1-X_t)\big(r+\kappa(1-X_t)\big)}\,dB_t,$$
+
 $Z^{(N)}_{Nt}$ converges to the chain $Z$ with $n\to n+m$ at rate $\sigma_mn$ ($m\ge2$), $n\to n+1$ at rate $\kappa\binom n2+\sigma_1n$, $n\to n-1$ at rate $(r+\kappa)\binom n2+\theta\nu_1n$, $n\to\Delta$ at rate $\theta\nu_0n$, and
+
 $$\mathbb E[X_t^n\mid X_0=x]=\mathbb E[x^{Z_t}\mid Z_0=n].$$
+
 With $r=1-\kappa$ and no selection or mutation this is the dual of $dX=\sqrt{X(1-X)(1-\kappa X)}\,dB$, a birth–death process with pairwise branching and pairwise coalescence.
 
 ## Depends on

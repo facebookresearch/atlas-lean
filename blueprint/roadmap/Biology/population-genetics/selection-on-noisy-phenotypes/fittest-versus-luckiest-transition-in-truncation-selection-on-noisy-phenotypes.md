@@ -3,12 +3,17 @@
 **Model.** An asexual population has $N$ juveniles per generation, of which the $K = N^{\gamma}$ with the largest *phenotypes* survive ($\gamma \in (0,1)$ measures reproductive skew), and each survivor has $N^{1-\gamma}$ children. A child of a parent with genotype $g$ has genotype $g + X$ and phenotype $g + X + Y$, with independent Laplace noises: $X$ has density $\propto e^{-|x|}$ and $Y$ has density $\propto e^{-\mu|y|}$, so $\mu > 0$ is the ratio of genotypic to phenotypic noise scale. Only genotypes are inherited.
 
 **Log-scaled dynamics.** Describe the population by a profile $g_n$, meaning about $N^{g_n(y)}dy$ individuals have genotype in $[y\log N, (y+dy)\log N]$, and let $\pi(h) = h$ for $h \ge 0$ and $-\infty$ otherwise. As $N \to \infty$ the generation map becomes
+
 $$p_{n+1}(z) = \pi\Big(1 - \gamma + \sup_y\big(g_n(y) - \min(1,\mu)(z - y)_+\big)\Big),\qquad s_{n+1} = \sup\{z : p_{n+1}(z) \ge \gamma\},$$
+
 $$g_{n+1}(x) = \pi\Big(1 - \gamma + \sup_y\big(g_n(y) - |x - y|\big) - \mu\,(s_{n+1} - x)_+\Big),$$
+
 where $p_{n+1}$ is the log-profile of children's phenotypes and $s_{n+1}$ the log-scaled selection threshold. Concavity of $g_0$ propagates to all $g_n$ and $p_n$.
 
 **Theorem.** Let $\gamma \in (0,1)$, $\mu > 0$, $\mu \ne 1$, and $k = \lfloor 1/\mu\rfloor$. The dynamics has a traveling wave $g_n(x) = g(x - nv)$, concave with compact support and unique up to translation, with speed
+
 $$v(\gamma,\mu) = \begin{cases} \dfrac{2\gamma}{k\big(2 - (k+1)\mu\big)}, & \gamma < \gamma_c(\mu),\\[2mm] 1 - \gamma, & \gamma > \gamma_c(\mu),\end{cases}\qquad \gamma_c(\mu) = \frac{k}{k+1}\Big(1 - \frac{\mu}{2 - k\mu}\Big).$$
+
 So $\gamma \mapsto v$ increases on $(0, \gamma_c]$ and decreases on $[\gamma_c, 1)$: selection stronger than $\gamma_c$ (smaller $\gamma$) slows adaptation. For $\gamma < \gamma_c$ the wave is fully pulled, with piecewise-linear profile of slopes $g'(x) = j\mu - 1$ on $(-jv, -(j-1)v)$, and survivors' genotypes are strictly fewer than children's at every genotype (selection of the luckiest: the leading edge is made of lucky phenotypic draws). For $\gamma > \gamma_c$ the wave is semipulled, the survivors' and children's genotype profiles coincide near the leading edge (selection of the fittest), and ancestral lineages settle at a fixed distance behind the front.
 
 ## Depends on

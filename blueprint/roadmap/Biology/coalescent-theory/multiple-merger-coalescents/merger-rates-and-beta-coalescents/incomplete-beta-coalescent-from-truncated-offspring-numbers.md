@@ -8,7 +8,9 @@ where $f(k),g(k)\to f_\infty=g_\infty>0$ and $m_N=\mathbb E[X^N]\to m_\infty>1$.
 
 1. If $\psi(N)/N\to 0$, the limit is Kingman's coalescent restricted to $[n]$.
 2. If $\psi(N)/N\to K\in(0,\infty)$, the limit is the $\Lambda$-coalescent without Kingman component whose measure is the **incomplete Beta** law
+
 $$\Lambda(dx)=\frac{\mathbf 1_{\{0<x\le K/(m_\infty+K)\}}}{B\big(\tfrac{K}{m_\infty+K};2-\alpha,\alpha\big)}\,x^{1-\alpha}(1-x)^{\alpha-1}\,dx,\qquad B(p;a,b)=\int_0^p t^{a-1}(1-t)^{b-1}dt,$$
+
 so no single family can exceed the fraction $K/(m_\infty+K)$ of a generation.
 3. If $\psi(N)/N\to\infty$, the limit is the complete Beta$(2-\alpha,\alpha)$-coalescent.
 

@@ -5,7 +5,9 @@
 **Theorem.**
 1. *(Update.)* $\mathcal L(X_{t_0} \mid \mathbf Y_0) = \Pi_{\alpha + \sum_k n_{0,k}\delta_{y^*_k}}$; more generally, if the predictive law is $\sum_{\mathbf m \in \mathbf M} w_{\mathbf m}\Pi_{\alpha + \sum_k m_k \delta_{y^*_k}}$, then after observing $\mathbf Y_j$ it is a mixture over $\mathbf M + \mathbf n_j$ with weights proportional to $w_{\mathbf m}$ times the Dirichlet-process marginal likelihood of $\mathbf n_j$ given $\mathbf m$.
 2. *(Propagation.)* If $\mathcal L(X_{t_{j-1}} \mid \mathbf Y_{0:j-1}) = \sum_{\mathbf m \in \mathbf M} w_{\mathbf m}\Pi_{\alpha + \sum_k m_k\delta_{y^*_k}}$ with $\mathbf M$ finite, then
+
 $$\mathcal L(X_{t_j} \mid \mathbf Y_{0:j-1}) = \sum_{\mathbf n \in L(\mathbf M)} \tilde w_{\mathbf n}\, \Pi_{\alpha + \sum_k n_k \delta_{y^*_k}}, \qquad \tilde w_{\mathbf n} = \sum_{\mathbf m \in \mathbf M,\ \mathbf n \le \mathbf m} w_{\mathbf m}\, p_{\mathbf m, \mathbf n}(t_j - t_{j-1}),$$
+
 where $L(\mathbf M) = \{\mathbf n : \mathbf n \le \mathbf m \text{ for some } \mathbf m \in \mathbf M\}$ and $p_{\mathbf m,\mathbf n}(s)$ are transition probabilities of a pure-death process on multiplicity vectors.
 3. *(Filtering and smoothing.)* For every $t$, $\mathcal L(X_t \mid \mathbf Y_{0:T})$ is a finite mixture $\sum_{\mathbf m \in \mathbf M} w_{\mathbf m}\Pi_{\alpha + \sum_k m_k \delta_{y^*_k}}$; the smoothing law combines the past filter and the future (backward) information through explicit double sums over past and future mixture indices.
 

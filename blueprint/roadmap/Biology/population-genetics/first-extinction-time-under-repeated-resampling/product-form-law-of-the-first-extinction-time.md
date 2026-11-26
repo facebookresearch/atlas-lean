@@ -3,10 +3,13 @@
 **Process.** A distribution $p(t)=(p_1(t),\dots,p_M(t))$ is updated by drawing $N$ samples and setting $p_i(t+1)=n_i(t)/N$. Given $p(t)$, the increment $\Delta p_i$ has mean $0$ and variance $p_i(1-p_i)/N$. Let $\tau_i$ be the time state $i$ is lost and $\tau_{\min}=\min_i\tau_i$.
 
 **Single-state law.** Treating $p_i$ as the zero-drift square-root (Feller) diffusion $dp_i=\sqrt{p_i/N}\,dW_i$, the probability that state $i$ is extinct by time $\tau$ is
+
 $$F_i(\tau)=\exp\Big(-\frac{2Np_i(0)}{\tau}\Big).$$
 
 **First-extinction law.** Treating the states as independent,
+
 $$\mathbb P(\tau_{\min}>\tau)=\prod_{i=1}^M\Big(1-e^{-2Np_i(0)/\tau}\Big),\qquad \langle\tau_{\min}\rangle=\int_0^\infty\prod_{i=1}^M\Big(1-e^{-2Np_i(0)/\tau}\Big)d\tau=2N\int_0^\infty\prod_{i=1}^M\big(1-e^{-xp_i(0)}\big)\frac{dx}{x^2}.$$
+
 So $\langle\tau_{\min}\rangle$ is proportional to $N$ for fixed initial frequencies, and the paper proves that this mean coincides exactly with the Wright–Fisher mean time to the first loss of an allele obtained by Baxter et al. through inclusion–exclusion over subsets of states, while costing $O(M)$ to evaluate.
 
 ## Depends on

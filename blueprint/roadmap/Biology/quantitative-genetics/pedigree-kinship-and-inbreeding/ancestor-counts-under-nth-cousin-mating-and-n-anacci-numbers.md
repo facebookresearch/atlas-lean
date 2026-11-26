@@ -1,11 +1,15 @@
 # Ancestor counts under nth-cousin mating and n-anacci numbers
 
 **Model.** In a large biparental population with equal sex ratio, every mating is between $n$th cousins ($n\ge0$; $n=0$ is sibling mating), so each mating pair shares one ancestral pair $g=n+1$ generations earlier. Let $A_t$ be the number of distinct genealogical ancestors of an individual $t$ generations back (Lachance's model). Then
+
 $$A_t=\begin{cases}2^t,&0\le t\le g,\\ 2A_{t-1}-A_{t-g},&t\ge g+1,\end{cases}$$
+
 since each new generation doubles the ancestors except that the pairs shared by cousin matings $g$ generations earlier are counted only once.
 
 **Proposition 1 ($n$-anacci form).** For $g\ge2$ the sequence also satisfies $A_t=2^t$ for $0\le t\le g$ and
+
 $$A_t=\sum_{i=1}^{g-1}A_{t-i}+2,\qquad t\ge g+1,$$
+
 an inhomogeneous $n$-anacci recurrence with $n=g-1$.
 
 **Corollary 2.** For second-cousin mating ($g=3$), $A_t=2f_{t+2}-2$ for $t\ge1$, where $f$ is the Fibonacci sequence ($f_0=0$, $f_1=1$).

@@ -15,11 +15,17 @@ Consider a Feller diffusion on $[0,t]$ descended from a single founder at time $
 **Theorem.**
 
 1. The ancestor count is a shifted Poisson variable: for $k\ge1$,
+
 $$\mathbb P(A_\infty(s)=k\mid T_1=t,X(t)=x)=\frac{(x\,\eta(s,t))^{k-1}}{(k-1)!}e^{-x\,\eta(s,t)}.$$
+
 2. The coalescent times have marginal densities, for $t>s>0$ and $k\ge2$,
+
 $$f_{T_k\mid T_1=t,X(t)=x}(s)=\frac{(x\,\eta(s,t))^{k-2}}{(k-2)!}\,\frac{x\mu_s}{2\beta_s}\,e^{-x\,\eta(s,t)}.$$
+
 3. For an i.i.d. sample of size $n$, with $n_{[k]}$ and $n_{(k)}$ the falling and rising factorials and ${}_1F_1$ Kummer's function,
+
 $$\mathbb P(A_n(s)=k\mid T_1=t,X(t)=x)=\frac{n_{[k]}}{n_{(k)}(k-1)!}(x\,\eta(s,t))^{k-1}e^{-x\,\eta(s,t)}\,{}_1F_1(k+1,k+n,x\,\eta(s,t)),\qquad1\le k\le n.$$
+
 4. Letting the founder recede ($t\to\infty$), $A_\infty(s)$ converges weakly to $1+\operatorname{Poisson}(x/\beta_s)$, and the analogous limit holds for the sample count with $\eta(s,t)$ replaced by $1/\beta_s$. Under an improper uniform prior on $T_1$ instead, the posterior of $A_\infty(s)$ given $X(T_1)=x$ is exactly $\operatorname{Poisson}(x/\beta_s)$.
 
 Since $\beta(\cdot;|\alpha|)$ appears, the genealogy given the current size depends on $\alpha$ only through $|\alpha|$: sub- and supercritical diffusions with the same $|\alpha|$ have the same conditioned genealogy.

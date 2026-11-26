@@ -1,16 +1,20 @@
 # Coalescent limits of supercritical sampling with heavy-tailed potential offspring
 
 **Model (Schweinsberg's supercritical sampling).** A haploid panmictic population of constant size $N$ evolves in discrete, non-overlapping generations. In each generation the $N$ current individuals independently produce i.i.d. numbers $X_1, \dots, X_N$ of *potential offspring*, with $S_N = X_1 + \cdots + X_N$. If $S_N \ge N$, then $N$ of the potential offspring are sampled uniformly without replacement to form the next generation (the case $S_N < N$ has probability tending to $0$ when $\mathbb{E}X_1 > 1$). Let $c_N$ be the probability that two given gene copies of the same generation derive from the same parent, and let $\xi^{n,N}$ be the ancestral process of a sample of $n$ gene copies, valued in partitions of $[n]$. Assume $\mathbb{E}X_1 > 1$ and, for fixed $\alpha, C > 0$,
+
 $$\lim_{x \to \infty} x^{\alpha}\, \mathbb{P}(X_1 \ge x) = C .$$
 
 **Theorem.** $\{\xi^{n,N}(\lfloor t / c_N \rfloor);\, t \ge 0\}$ converges in finite-dimensional distributions to
 1. the Kingman coalescent if $\alpha \ge 2$;
 2. the Beta$(2-\alpha, \alpha)$-coalescent, the $\Lambda$-coalescent with $\Lambda(dx) = B(2-\alpha,\alpha)^{-1} x^{1-\alpha}(1-x)^{\alpha-1}\,dx$ on $(0,1]$, if $1 \le \alpha < 2$;
 3. the Poisson–Dirichlet$(\alpha, 0)$-coalescent, a $\Xi$-coalescent with simultaneous multiple mergers, if $0 < \alpha < 1$; from $b$ blocks, a given collision of $r$ groups of sizes $k_1, \dots, k_r \ge 2$ with $s = b - \sum_i k_i$ untouched blocks has probability
+
 $$p_{b;k_1,\dots,k_r;s} = \frac{\alpha^{r+s-1}(r+s-1)!}{(b-1)!} \prod_{i=1}^{r} (k_i - \alpha)_{k_i},$$
+
 where $(x)_m = x(x-1)\cdots(x-m+1)$ (in this case the time scale is discrete, $c_N$ stays bounded away from $0$).
 
 The coalescence probability has the asymptotics
+
 $$\frac{1}{c_N} \asymp \begin{cases} 1, & 0 < \alpha < 1,\\ \log N, & \alpha = 1,\\ N^{\alpha-1}, & 1 < \alpha < 2,\\ N/\log N, & \alpha = 2,\\ N, & \alpha > 2, \end{cases} \qquad c_N \sim N\, \mathbb{E}\!\left[\frac{(X_1)_2}{S_N^2}\, \mathbf{1}\{S_N \ge N\}\right].$$
 
 ## Depends on

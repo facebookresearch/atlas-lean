@@ -7,12 +7,17 @@ $$\begin{aligned}
 (\ell+1, n, m-1) &\ \text{at rate } \kappa m \tfrac{\ell}{N}. &&
 \end{aligned}$$
 Let $T^i_0$ be the extinction time of type $i$ and $T^{co}_\beta$ the hitting time of a $\beta$-neighborhood of the interior (coexistence) equilibrium of the large-$N$ limit
+
 $$\dot x_1 = x_1\Big(x_{2a}\big(s - \tfrac{1+s}{2}p\big) + \kappa(1 - x_1 - x_{2a})\Big), \qquad \dot x_{2a} = -s x_1x_{2a} - p x_{2a}^2 + (1 - x_1 - x_{2a})(\kappa x_{2a} + \sigma).$$
 
 **Critical parameters.** With $D = p(1+s) - 2s$, let
+
 $$\tilde\kappa = \frac{-2D\sigma - \sqrt{4D^2\sigma^2 - 4(2D - 4p)\sigma D^2}}{4D - 8p}, \qquad \kappa' = \frac{\sigma}{s}\Big(\frac{1+s}{2}p - s\Big),$$
+
 and let $q_{2a}$ be the extinction probability of the branching approximation started from one active type-$2$ individual, the smallest solution with $q_{2a}, q_{2d} \in [0,1]$ of
+
 $$q_{2a} = \tfrac{1+s}{2}(1-p) + \tfrac{1-s}{2}q_{2a}^2 + p\tfrac{1+s}{2}q_{2d}, \qquad q_{2d} = \tfrac{\sigma}{\sigma+\kappa}q_{2a} + \tfrac{\kappa}{\sigma+\kappa}.$$
+
 The type-$2$ monomorphic equilibrium has $\bar x_{2a} = \frac{\kappa - \sigma + \sqrt{(\kappa-\sigma)^2 + 4\sigma(p+\kappa)}}{2(p+\kappa)}$.
 
 **Theorem.** Assume $p \ne \frac{2s}{1+s}$, $\kappa \notin \{\tilde\kappa, \kappa'\}$, and start from one active mutant, $(N-1, 1, 0)$. For all sufficiently small $\beta > 0$, $\lim_N \mathbb{P}(T^2_0 < T^1_0 \wedge T^{co}_\beta) = q_{2a}$, and on that event $T^2_0/\log N \to 0$ in probability. On the complementary event (asymptotic probability $1 - q_{2a}$):

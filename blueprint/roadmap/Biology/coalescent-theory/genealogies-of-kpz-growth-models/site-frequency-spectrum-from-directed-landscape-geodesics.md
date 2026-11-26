@@ -3,9 +3,11 @@
 **Model.** The directed landscape $\mathcal L:\{(x,s;y,t)\in\mathbb R^4: s<t\}\to\mathbb R$ is the conjectured universal scaling limit of KPZ-class growth; it is a directed metric satisfying the composition law $\mathcal L(x,r;y,t)=\max_z\big(\mathcal L(x,r;z,s)+\mathcal L(z,s;y,t)\big)$, is stationary, and is invariant in law when space is scaled by $\rho^2$ and time by $\rho^3$. Almost surely every point $(x,s)$ has a (left-most) infinite upward geodesic $g_{(x,s)}$, and any two such geodesics eventually coalesce. Reading time upward as "backwards", the geodesics from sampled points form a genealogical tree: a spacetime point is **ancestral to** a sampled point if it lies on that point's geodesic. For a finite sample $A$ let $Anc_k(A)$ be the set of spacetime points ancestral to exactly $k$ points of $A$, and $l(B)=\int \#\{y:(y,t)\in B\}\,dt$ its total branch length. Under a constant mutation rate, $l(Anc_k(A))$ is proportional to the expected number of mutations carried by exactly $k$ of the sampled individuals, i.e. the $k$-th entry of the site frequency spectrum.
 
 **Theorem (sampling at the expanding front).** Let $\widetilde U_n$ be $n$ i.i.d. uniform points in $[0,n]\times\{0\}$. There is $C_1\in(0,\infty)$ such that for every fixed $k\ge1$, as $n\to\infty$,
+
 $$\frac{l\big(Anc_k(\widetilde U_n)\big)}{n}\ \longrightarrow\ C_1\,\frac{\Gamma(k+1/2)}{k!}\qquad\text{in probability.}$$
 
 **Theorem (sampling from the bulk).** Let $U_n$ be $n$ i.i.d. uniform points in the box $[0,n^{2/5}]\times[0,n^{3/5}]$ (shape chosen to respect the $2\!:\!3$ scaling). There is $C_2\in(0,\infty)$ such that for every fixed $k\ge1$,
+
 $$\frac{l\big(Anc_k(U_n)\big)}{n}\ \longrightarrow\ C_2\,\frac{\Gamma(k-2/5)}{k!}\qquad\text{in probability.}$$
 
 Since $\Gamma(k+1/2)/k!\sim k^{-1/2}$ and $\Gamma(k-2/5)/k!\sim k^{-7/5}$, the spectrum decays like $k^{-1/2}$ for front sampling and $k^{-7/5}$ for bulk sampling, confirming non-rigorous predictions for spatially growing populations; by contrast Kingman's coalescent gives $k^{-1}$ and supercritical birth-death trees give $k^{-2}$.

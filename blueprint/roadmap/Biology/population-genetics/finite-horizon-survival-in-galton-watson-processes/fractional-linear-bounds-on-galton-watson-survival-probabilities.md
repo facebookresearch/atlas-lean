@@ -1,10 +1,13 @@
 # Fractional-linear bounds on Galton–Watson survival probabilities
 
 **Setting.** Let $\varphi$ be the offspring probability generating function of a supercritical Galton–Watson process, with mean $m=\varphi'(1)>1$ and ultimate extinction probability $P_\infty\in(0,1)$, the smallest root of $\varphi(x)=x$. Let $P^{(n)}=\varphi^{(n)}(0)$ be the probability of extinction by generation $n$, $S^{(n)}=1-P^{(n)}$ the probability of survival to generation $n$, $S_\infty=1-P_\infty$, and
+
 $$\gamma=\varphi'(P_\infty)\in(0,1),$$
+
 the geometric rate at which $P^{(n)}\uparrow P_\infty$. A fractional linear pgf $\varphi_{FL}(x;\pi,\rho)$ has iterates in closed form; there is a unique one with $\varphi_{FL}(P_\infty)=P_\infty$ and $\varphi_{FL}'(P_\infty)=\gamma$, whose iterates are $\varphi_{FL}^{(n)}(0)=\frac{P_\infty(1-\gamma^n)}{1-\gamma^nP_\infty}$.
 
 **Basic result (proposition of Section 3.1).** If $\varphi_{FL}(x)\le\varphi(x)$ for all $x\in[0,P_\infty]$, then for every $n$
+
 $$\frac{P_\infty(1-\gamma^n)}{1-\gamma^nP_\infty}\le P^{(n)}\le P_\infty,\qquad\text{equivalently}\qquad S_\infty\le S^{(n)}\le\frac{S_\infty}{1-\gamma^n(1-S_\infty)}.$$
 
 **Comparison theorems (Section 4).**
