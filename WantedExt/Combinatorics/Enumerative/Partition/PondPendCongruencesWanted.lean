@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
 public import Mathlib.Data.Nat.ModEq
+public import MathlibExt.Combinatorics.Enumerative.Partition.PondPendCongruencesQEulerProductPowPrimePowCongruence
 
 /-!
 # Congruences for POND and PEND partitions
@@ -286,18 +287,6 @@ public theorem_wanted f3_cube_div_f1_sub :
     𝔣 2 ^ 2 * 𝔣 3 ^ 3 * 𝔣 4 * 𝔣 12
       - X * 𝔣 1 * 𝔣 2 ^ 2 * 𝔣 12 ^ 4 =
       𝔣 1 * 𝔣 4 ^ 4 * 𝔣 6 ^ 2
-
-/-- **Prime-power congruence for powers of Euler products.** Let $p$ be a prime, let
-$j, k, m \ge 1$ be natural numbers, and let $f_m = \prod_{i \ge 1} (1 - q^{mi})$. Then for every
-natural number $n$, the coefficient of $q^n$ in $f_m^{p^j k}$ is congruent modulo $p^j$ to the
-coefficient of $q^n$ in $f_{pm}^{p^{j-1} k}$.
-
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Lemma 16
-(`jis-2024-24.4.7-lem-16`). -/
-public theorem_wanted qEulerProduct_pow_prime_pow_congruence (p j k m : ℕ) (hp : p.Prime)
-    (hj : 1 ≤ j) (hk : 1 ≤ k) (hm : 1 ≤ m) (n : ℕ) :
-    coeff n (𝔣 m ^ (p ^ j * k)) ≡ coeff n (𝔣 (p * m) ^ (p ^ (j - 1) * k)) [ZMOD (p : ℤ) ^ j]
 
 /-- **Generating function for POND partitions.** Let $\mathrm{pond}(n)$ be the number of POND
 partitions of $n$, and let $f_k = \prod_{m \ge 1} (1 - q^{km})$. Then, as integer power series
