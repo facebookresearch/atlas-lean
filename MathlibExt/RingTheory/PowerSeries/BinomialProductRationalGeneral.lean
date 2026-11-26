@@ -15,12 +15,14 @@ import Mathlib.RingTheory.PowerSeries.Trunc
 import Mathlib.Tactic.Ring
 
 /-!
-# Binomial products of arbitrary rational power series
+# Binomial products of rational power series
 
-`MetaMathlibExt.binomialProduct_rational_general` gives a split denominator and a strict
-numerator degree bound for the binomial product. The forward shift acts on binomial convolution
-by the product rule, so the recurrence for the convolution has the pairwise sums of the input
-parameters as roots. Padding with zero parameters accounts for the polynomial parts.
+`MetaMathlibExt.binomialProduct_rational` treats inputs whose numerator degrees are strictly
+smaller than the lengths of their root lists, allowing repeated or zero roots.
+`MetaMathlibExt.binomialProduct_rational_general` pads the root lists with zeros to handle
+arbitrary numerator degrees. The forward shift acts on binomial convolution by the product
+rule, so the recurrence for the convolution has the pairwise sums of the input parameters as
+roots.
 -/
 
 namespace MetaMathlibExt
@@ -128,9 +130,28 @@ private theorem recurrence_tail (l : List K) (f : PowerSeries K) (N : ℕ) :
     rw [h, ih]
     simp [denominator, mul_assoc, Nat.add_right_comm N 1, Nat.add_assoc]
 
-private theorem proper_numerator {m n : ℕ} (α : Fin m → K) (β : Fin n → K)
-    (R S : Polynomial K) (A B : PowerSeries K) (hR : R.degree < m) (hS : S.degree < n)
-    (hA : A * ∏ i, (1 - C (α i) * X) = R) (hB : B * ∏ j, (1 - C (β j) * X) = S) :
+end binomialProduct_rational_general
+
+open binomialProduct_rational_general in
+/-- **Binomial products of proper rational series.** Let $K$ be a field of characteristic $0$, let
+$\alpha_1, \dots, \alpha_m, \beta_1, \dots, \beta_n \in K$, not necessarily distinct or nonzero,
+and let $R$, $S$ be polynomials over $K$ with $\deg R < m$ and $\deg S < n$. If $A$, $B$ are power
+series over $K$ with $A(x) \prod_{i=1}^m (1 - \alpha_i x) = R(x)$ and
+$B(x) \prod_{j=1}^n (1 - \beta_j x) = S(x)$, then there is a polynomial $T$ over $K$ with
+$\deg T < mn$ such that
+
+$$(A \odot B)(x) \prod_{i=1}^m \prod_{j=1}^n \bigl(1 - (\alpha_i + \beta_j) x\bigr) = T(x),$$
+
+where $\odot$ is the binomial product.
+
+Here $\deg 0 = -\infty$, so $T = 0$ when $mn = 0$.
+
+Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
+Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 6 (`jis-2024-24.1.3-thm-6`). -/
+public theorem binomialProduct_rational {K : Type*} [Field K] [CharZero K] (m n : ℕ)
+    (α : Fin m → K) (β : Fin n → K) (R S : Polynomial K) (hR : R.degree < m) (hS : S.degree < n)
+    (A B : PowerSeries K) (hA : A * ∏ i, (1 - C (α i) * X) = (R : PowerSeries K))
+    (hB : B * ∏ j, (1 - C (β j) * X) = (S : PowerSeries K)) :
     ∃ T : Polynomial K, T.degree < (m * n : ℕ) ∧
       binomialProduct A B * ∏ i, ∏ j, (1 - C (α i + β j) * X) = (T : PowerSeries K) := by
   let as := List.ofFn α
@@ -167,15 +188,11 @@ private theorem proper_numerator {m n : ℕ} (α : Fin m → K) (β : Fin n → 
   · obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le' (Nat.le_of_not_gt hk)
     exact congrFun htail j
 
-private theorem prod_padded {M : Type*} [CommMonoid M] (u : ℕ) {m : ℕ} (α : Fin m → K)
-    (f : K → M) :
+private theorem prod_padded {K M : Type*} [Field K] [CommMonoid M] (u : ℕ) {m : ℕ}
+    (α : Fin m → K) (f : K → M) :
     (∏ i, f (Fin.append (fun _ : Fin u ↦ 0) α i)) = f 0 ^ u * ∏ i, f (α i) := by
   rw [Fin.prod_univ_add]
   simp
-
-end binomialProduct_rational_general
-
-open binomialProduct_rational_general
 
 set_option linter.unusedVariables false in
 /-- **Binomial products of arbitrary rational series.** Let $K$ be a field of characteristic $0$,
@@ -211,7 +228,8 @@ public theorem binomialProduct_rational_general {K : Type*} [Field K] [CharZero 
   have bound (P : Polynomial K) (d : ℕ) : P.degree < ↑((P.natDegree + 1 - d) + d) := by
     have h : P.natDegree < (P.natDegree + 1 - d) + d := by omega
     exact Polynomial.degree_le_natDegree.trans_lt (WithBot.coe_lt_coe.mpr h)
-  obtain ⟨T, hd, hT⟩ := proper_numerator α' β' R S A B (bound R m) (bound S n)
+  obtain ⟨T, hd, hT⟩ := binomialProduct_rational (u + m) (v + n) α' β' R S
+    (bound R m) (bound S n) A B
     (by simpa only [α', prod_padded u α (fun a ↦ 1 - C a * X), map_zero, zero_mul, sub_zero,
       one_pow, one_mul] using hA)
     (by simpa only [β', prod_padded v β (fun b ↦ 1 - C b * X), map_zero, zero_mul, sub_zero,
