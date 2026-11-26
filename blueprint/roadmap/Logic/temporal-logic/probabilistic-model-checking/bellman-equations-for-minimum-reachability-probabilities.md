@@ -9,6 +9,7 @@ with the [qualitative sets](qualitative-reachability-by-graph-analysis.md) $S^0_
 ## Depends on
 
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Proof depends on
 

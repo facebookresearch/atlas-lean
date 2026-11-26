@@ -8,5 +8,5 @@ Let $\Sigma$ be a finite set of primitive actions and $B$ a finite set of primit
 
 ## Sources
 
-- E. Cohen, D. Kozen and F. Smith, *The Complexity of Kleene Algebra with Tests*, technical report, Cornell University, 1996, <https://www.cs.cornell.edu/~kozen/Papers/ckat.pdf>, Section 3, Theorem 4 (attributed to Kozen and Smith, *CSL 1996*).
-- D. Kozen, "On Hoare logic and Kleene algebra with tests", *ACM Transactions on Computational Logic* 1(1), 2000, author copy <https://www.cs.cornell.edu/~kozen/Papers/Hoare.pdf>, Section 2 (completeness for relational models).
+- D. Kozen, "On Hoare logic and Kleene algebra with tests", *ACM Transactions on Computational Logic* 1(1), 2000, author copy <https://www.cs.cornell.edu/~kozen/Papers/Hoare.pdf>, Section 2.3 (the regular sets of guarded strings form the free KAT; completeness for relational models, after Kozen and Smith, *CSL 1996*) and Section 4 (guarded strings, their product and the standard interpretation $G$).
+- E. Cohen, D. Kozen and F. Smith, *The Complexity of Kleene Algebra with Tests*, technical report, Cornell University, 1996, <https://www.cs.cornell.edu/~kozen/Papers/ckat.pdf>, Section 3, Theorem 4.

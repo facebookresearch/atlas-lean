@@ -4,12 +4,13 @@ Let $M$ be a finite [Markov decision process](markov-decision-processes-and-adve
 
 - $S^0_{\max} = S \setminus R$, where $R$ is the least set containing $T$ and every state with some action leading into $R$;
 - $S^0_{\min} = S \setminus R$, where $R$ is the least set containing $T$ and every state all of whose actions can lead into $R$;
-- $S^1_{\min}$ is the greatest subset $R$ of $S \setminus S^0_{\min}$ such that no state of $R$ has an action that can leave $R$;
+- $S^1_{\min}$ is the greatest subset $R$ of $S \setminus S^0_{\min}$ such that no state of $R \setminus T$ has an action that can leave $R$ (states of $T$ may have any actions, since a path that starts in $T$ has already reached it);
 - $S^1_{\max}$ is the greatest set $R'$ such that $R'$ equals the least set $R$ containing $T$ and every state with an action all of whose successors lie in $R'$ and at least one of which lies in $R$.
 
 ## Depends on
 
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Sources
 

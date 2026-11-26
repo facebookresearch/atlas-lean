@@ -22,4 +22,4 @@ In particular $\mathrm{wp}(S, T)$ is the weakest precondition guaranteeing prope
 
 ## Sources
 
-- E. W. Dijkstra, "Guarded commands, nondeterminacy and formal derivation of programs", *Communications of the ACM* 18(8):453–457, 1975; author's manuscript EWD418, <https://www.cs.utexas.edu/~EWD/ewd04xx/EWD418.PDF>, Sections 3.1–3.3.
+- E. W. Dijkstra, "Guarded commands, nondeterminacy and formal derivation of programs", *Communications of the ACM* 18(8):453–457, 1975; author's manuscript EWD472, <https://www.cs.utexas.edu/~EWD/ewd04xx/EWD472.PDF>, Sections 3.1–3.3.

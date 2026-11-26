@@ -18,4 +18,4 @@ Image-finiteness is needed for infinite traces: the futures of a state can be in
 
 ## Sources
 
-- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2), 1995; author version of October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Section 3.3, the definition of backward simulations, Lemma 3.15 and Theorem 3.17.
+- N. Lynch and F. Vaandrager, "Forward and backward simulations, Part I: Untimed systems", *Information and Computation* 121(2):214–233, 1995; author version of the journal paper, October 31, 1994, <https://groups.csail.mit.edu/tds/papers/Lynch/IC95.pdf>, Section 3.3, the definition of backward simulations, Lemma 3.15 and Theorem 3.17.

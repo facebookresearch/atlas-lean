@@ -8,6 +8,10 @@ An *adversary* is a function $\sigma$ from finite paths to distributions on acti
 
 - [Discrete-time Markov chains](discrete-time-markov-chains.md)
 
+## Related topics
+
+- [Markov decision process](../../../ComputerScience/heuristic-search-and-planning/value-iteration/mdp.md)
+
 ## Sources
 
 - V. Forejt, M. Kwiatkowska, G. Norman and D. Parker, "Automated verification techniques for probabilistic systems", *Formal Methods for Eternal Networked Software Systems (SFM 2011)*, LNCS 6659, Springer, 2011, author copy <https://www.prismmodelchecker.org/papers/sfm11.pdf>, Section 3, Definitions 4, 7, 8 and 10 and the discussion of quotient chains after Definition 11.

@@ -9,6 +9,7 @@ where $c$ is an atomic proposition, ${\bowtie} \in \{\le, <, \ge, >\}$, $p \in [
 ## Depends on
 
 - [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
+- [Discrete-time Markov chains](discrete-time-markov-chains.md)
 
 ## Sources
 

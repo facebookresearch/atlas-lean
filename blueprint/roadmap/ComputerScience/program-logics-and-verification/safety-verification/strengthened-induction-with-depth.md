@@ -15,6 +15,10 @@ Then the system is $P$-safe. Without the restriction to loop-free paths in the s
 
 - [Induction over loop-free paths decides safety](induction-over-loop-free-paths-decides-safety.md)
 
+## Related topics
+
+- [Safety by inductive invariants](safety-by-inductive-invariants.md)
+
 ## Sources
 
 - M. Sheeran, S. Singh and G. Stålmarck, "Checking safety properties using induction and a SAT-solver", *Formal Methods in Computer-Aided Design (FMCAD 2000)*, LNCS 1954, Springer, 2000, pp. 108–125, Section 3, Algorithm 4 and the discussion of strengthened induction with depth after it.

@@ -10,4 +10,3 @@ Separation algebras, precise predicates and local actions, and the soundness and
 - [The best local action of a specification](best-local-action.md)
 - [Abstract separation logic](abstract-separation-logic-rules.md)
 - [Soundness of abstract separation logic](soundness-of-abstract-separation-logic.md)
-- [Completeness of abstract separation logic](completeness-of-abstract-separation-logic.md)

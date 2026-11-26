@@ -13,7 +13,8 @@ This page becomes ready once these prerequisites are stated:
 
 - [Lexicographic-linear ranking functions](lexicographic-linear-ranking-functions.md)
 - [The class coNP](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/co-np.md)
+- [Linear-constraint loops](linear-constraint-loops.md)
 
 ## Sources
 
-- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", arXiv:1208.4041v4, 2025, <https://arxiv.org/abs/1208.4041v4>, Section 5.2 (hardness) and Theorem 5.23 (membership in coNP); Theorem 5.14 (polynomial-time special cases).
+- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", *Journal of the ACM* 61(4), Article 26, 2014, <https://doi.org/10.1145/2629488>, numbered as in the journal version (the revised arXiv:1208.4041v4, <https://arxiv.org/abs/1208.4041v4>, keeps this numbering and adds Lemma 5.31), Section 5.2 (hardness) and Theorem 5.23 (membership in coNP); Theorem 5.14 (polynomial-time special cases).

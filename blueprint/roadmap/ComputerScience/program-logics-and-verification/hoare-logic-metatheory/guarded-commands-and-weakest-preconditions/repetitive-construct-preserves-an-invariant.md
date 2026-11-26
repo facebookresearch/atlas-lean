@@ -12,4 +12,4 @@ holds in every state. Thus an invariant of the guarded lists holds on terminatio
 
 ## Sources
 
-- E. W. Dijkstra, "Guarded commands, nondeterminacy and formal derivation of programs", *Communications of the ACM* 18(8):453–457, 1975; author's manuscript EWD418, <https://www.cs.utexas.edu/~EWD/ewd04xx/EWD418.PDF>, Section 3.3, Theorem 4.
+- E. W. Dijkstra, "Guarded commands, nondeterminacy and formal derivation of programs", *Communications of the ACM* 18(8):453–457, 1975; author's manuscript EWD472, <https://www.cs.utexas.edu/~EWD/ewd04xx/EWD472.PDF>, Section 3.3, Theorem 4.

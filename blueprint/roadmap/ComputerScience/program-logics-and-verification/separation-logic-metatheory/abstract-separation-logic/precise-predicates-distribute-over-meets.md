@@ -10,7 +10,8 @@ The empty family is excluded because $\bigcap \emptyset = \Sigma$ and $\Sigma \a
 ## Depends on
 
 - [Precise predicates](precise-predicates.md)
+- [Separation algebras](separation-algebras.md)
 
 ## Sources
 
-- C. Calcagno, P. W. O'Hearn and H. Yang, "Local action and abstract separation logic", *Proceedings of the 22nd Annual IEEE Symposium on Logic in Computer Science (LICS 2007)*, IEEE, 2007; extended version of April 13, 2007, <http://www0.cs.ucl.ac.uk/staff/p.ohearn/papers/asl-long.pdf>, Section 2, Lemma 4 and the remark after it, stated there for all families $X$.
+- C. Calcagno, P. W. O'Hearn and H. Yang, "Local action and abstract separation logic", *Proceedings of the 22nd Annual IEEE Symposium on Logic in Computer Science (LICS 2007)*, IEEE, 2007, pp. 366–378, <https://doi.org/10.1109/LICS.2007.30>, author copy <https://www.cs.ox.ac.uk/people/hongseok.yang/paper/asl-short.pdf>, Section 2, Lemma 4 (stated for nonempty families) and the remark after it.

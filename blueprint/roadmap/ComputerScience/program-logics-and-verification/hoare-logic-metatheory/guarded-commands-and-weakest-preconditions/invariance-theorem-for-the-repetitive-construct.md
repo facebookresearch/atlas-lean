@@ -11,6 +11,11 @@ Then $P \Rightarrow \mathrm{wp}(DO, P \wedge \neg BB)$ holds in every state. Her
 
 - [Weakest preconditions of guarded commands](weakest-preconditions-of-guarded-commands.md)
 
+## Related topics
+
+- [Rule for the alternative construct](rule-for-the-alternative-construct.md)
+- [The alternative construct decreases a variant](alternative-construct-decreases-a-variant.md)
+
 ## Sources
 
-- E. W. Dijkstra, "Guarded commands, nondeterminacy and formal derivation of programs", *Communications of the ACM* 18(8):453–457, 1975; author's manuscript EWD418, <https://www.cs.utexas.edu/~EWD/ewd04xx/EWD418.PDF>, Section 3.3, Theorem 3.
+- E. W. Dijkstra, "Guarded commands, nondeterminacy and formal derivation of programs", *Communications of the ACM* 18(8):453–457, 1975; author's manuscript EWD472, <https://www.cs.utexas.edu/~EWD/ewd04xx/EWD472.PDF>, Section 3.3, Theorem 3.

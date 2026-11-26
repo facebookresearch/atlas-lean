@@ -12,6 +12,7 @@ This page becomes ready once these prerequisites are stated:
 
 - [PCTL](pctl.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Proof depends on
 

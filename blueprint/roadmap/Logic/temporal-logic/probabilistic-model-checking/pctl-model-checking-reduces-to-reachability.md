@@ -10,6 +10,7 @@ Let $M$ be a finite [Markov decision process](markov-decision-processes-and-adve
 
 - [PCTL](pctl.md)
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Sources
 

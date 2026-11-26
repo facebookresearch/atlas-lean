@@ -4,6 +4,8 @@ Deciding whether a CTL* state formula is true in a given state of a finite Kripk
 
 ## Depends on
 
+- [State formulas of CTL$^{\ast}$](../ctl/ctl-state-and-path-formulas/state-formula.md)
+- [Satisfaction of CTL$^{\ast}$ state formulas](../ctl/ctl-state-and-path-formulas/state-sat.md)
 - [Polynomial space for decision problems](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/pspace.md)
 
 ## Proof depends on
