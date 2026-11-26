@@ -9,13 +9,17 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicFrameModels
+public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication
 
 /-!
 # Wanted native holomorphic-kernel, cotangent and Higgs constructions
 
 All ordinary support requests concern the fixed public section formulas.
-The theorem `holomorphic_bar_multiplication` is proved in
+The holomorphic coefficient sheaf condition
+`holomorphic_coefficient_sheaf_condition` is proved in
+`MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicCoefficientSheafCondition`,
+and `holomorphic_bar_multiplication` is proved in
 `MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModulesHolomorphicBarMultiplication`.
 Integrability produces new holomorphic frames and the actual O-linear
 Higgs map; it does not declare the original smooth frames holomorphic.
@@ -35,10 +39,6 @@ open scoped Manifold ContDiff
 
 variable {n : ℕ} {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
   {r : ℕ}
-
-/-- The actual holomorphic scalar ring has the ordinary local sheaf condition. -/
-theorem_wanted holomorphic_coefficient_sheaf_condition [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
-  MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves.SheafCondition (Coordinates n) M
 
 /-- Actual holomorphic tangent covectors satisfy ordinary local multiplication and restriction calculus. -/
 theorem_wanted holomorphic_cotangent_section_calculus [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] :
