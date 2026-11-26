@@ -33,10 +33,13 @@ public import Mathlib.MeasureTheory.Measure.Haar.DistribChar
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
+public import Mathlib.Topology.Algebra.Nonarchimedean.TotallyDisconnected
 public import Mathlib.Topology.Algebra.Valued.LocallyCompact
 public import Mathlib.Topology.Clopen
 public import Mathlib.Topology.Compactness.Compact
+public import MathlibExt.NumberTheory.NumberField.AdelicFourier
 public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
+public import MathlibExt.NumberTheory.NumberField.HigherUnits
 
 @[expose] public section
 
@@ -45,15 +48,15 @@ noncomputable section
 open MeasureTheory IsDedekindDomain
 open scoped NNReal ENNReal NumberField
 
-namespace TateLocal
+namespace LanglandsTunnell.TateLocal
 
 section Modulus
 
 variable {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
   [LocallyCompactSpace K]
 
-/-- The modulus character of a locally compact field: the factor by which
-multiplication by `a` scales Haar measure. -/
+/-- **Modulus of a locally compact field.** The factor by which multiplication by `a`
+scales Haar measure, and `0` at `a = 0`. -/
 public def modulus (a : K) : ℝ≥0 := by
   classical exact if h : a = 0 then 0 else distribHaarChar K (Units.mk0 a h)
 
@@ -96,9 +99,10 @@ section TestFunctions
 
 variable {K : Type*} [TopologicalSpace K]
 
-/-- A Schwartz--Bruhat test function: a locally constant function of compact
-support. On a general topological space this is the locally constant,
-compactly supported part of the classical Schwartz--Bruhat space. -/
+/-- **Schwartz--Bruhat test function.** A locally constant function of compact support. On a
+totally disconnected space, such as a nonarchimedean local field, these are the
+Schwartz--Bruhat functions; on a general topological space they are only the locally constant
+part of the classical Schwartz--Bruhat space (on `ℝ`, only `0`). -/
 public def IsSchwartzBruhat (f : K → ℂ) : Prop :=
   IsLocallyConstant f ∧ HasCompactSupport f
 
@@ -128,7 +132,7 @@ public theorem IsSchwartzBruhat.indicator_const {U : Set K} (hU : IsClopen U)
   · exact HasCompactSupport.intro' hUc hU.isClosed fun x hx =>
       Set.indicator_of_notMem hx _
 
-/-- The Schwartz--Bruhat test space of a topological space, as a complex
+/-- **Schwartz--Bruhat test space.** The test functions of a topological space, as a complex
 submodule of all complex-valued functions. -/
 public abbrev testSpace (X : Type*) [TopologicalSpace X] :
     Submodule ℂ (X → ℂ) where
@@ -193,8 +197,13 @@ section Fourier
 
 variable {K : Type*} [Field K] [MeasurableSpace K]
 
-/-- The local Fourier transform of `f` with respect to an additive character
-`ψ` and a measure `μ`, evaluated at `y`. -/
+/-- **Local Fourier transform.** `tateFourier ψ μ f y = ∫ x, f x * ψ (x * y) ∂μ`, in Tate's
+convention: the kernel `ψ (x * y)`, with a plus sign, and no normalizing constant.
+`NumberField.AdelicFourier.fourierIntegral` uses the kernel `ψ (-(x * y))`, so
+`tateFourier ψ μ f y = fourierIntegral ψ μ f (-y)` (`tateFourier_eq_fourierIntegral_neg`).
+For any additive character and measure this is a Bochner integral, `0` where the integrand
+is not integrable; it is Tate's Fourier transform for a continuous nontrivial `ψ` and an
+additive Haar measure `μ`. -/
 public def tateFourier (ψ : AddChar K ℂ) (μ : Measure K) (f : K → ℂ) (y : K) :
     ℂ :=
   ∫ x, f x * ψ (x * y) ∂μ
@@ -204,13 +213,21 @@ public theorem tateFourier_zero_fun (ψ : AddChar K ℂ) (μ : Measure K) :
   funext y
   simp [tateFourier]
 
+public theorem tateFourier_eq_fourierIntegral_neg (ψ : AddChar K ℂ) (μ : Measure K)
+    (f : K → ℂ) (y : K) :
+    tateFourier ψ μ f y = NumberField.AdelicFourier.fourierIntegral ψ μ f (-y) := by
+  simp only [tateFourier, NumberField.AdelicFourier.fourierIntegral, mul_neg, neg_neg]
+  congr 1 with x
+  exact mul_comm _ _
+
 end Fourier
 
 section Characters
 
 variable {K : Type*} [Field K]
 
-/-- Extension by zero of a multiplicative character of `Kˣ` to all of `K`. -/
+/-- **Extension by zero of a character.** A multiplicative character of `Kˣ`, extended to `K`
+by `0` at `0`. -/
 public def charExt (χ : Kˣ →* ℂˣ) (x : K) : ℂ := by
   classical exact if h : x = 0 then 0 else (χ (Units.mk0 x h) : ℂ)
 
@@ -238,13 +255,16 @@ section Zeta
 variable {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
   [LocallyCompactSpace K] [MeasurableSpace K]
 
-/-- The multiplicative Haar measure `μ(dx) / modulus x` attached to an
-additive Haar measure `μ`, as a measure on `K` carried by `{0}ᶜ`. -/
+/-- **Multiplicative Haar measure.** The measure `μ(dx) / modulus x` attached to an additive
+Haar measure `μ`, as a measure on `K` carried by `{0}ᶜ`. -/
 public def mulMeasure [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] :
     Measure K :=
   (μ.restrict {0}ᶜ).withDensity fun x => ((modulus x : ℝ≥0∞))⁻¹
 
-/-- The local zeta integral `Z(f, χ, s)` for the additive Haar measure `μ`. -/
+/-- **Local zeta integral.** `Z(f, χ, s) = ∫ f(x) χ(x) modulus(x) ^ s d×x` for the
+multiplicative Haar measure of the additive Haar measure `μ`. This is a Bochner integral: it
+is Tate's zeta integral where the integrand is integrable (see `IsLocalZetaAdmissible`), and
+`0` elsewhere, not the value of Tate's meromorphic continuation. -/
 public def localZeta [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
     (f : K → ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) : ℂ :=
   ∫ x, f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s ∂(mulMeasure μ)
@@ -254,70 +274,83 @@ public theorem localZeta_zero_fun [BorelSpace K] (μ : Measure K) [μ.IsAddHaarM
     localZeta μ (0 : K → ℂ) χ s = 0 := by
   simp [localZeta]
 
-/-- `γ` is a local gamma factor of `χ` at `s`, for the additive character `ψ`
-and the additive Haar measure `μ`: Tate's local functional equation
-`Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with `f̂ = tateFourier ψ μ f`, holds for
-every Schwartz--Bruhat test function `f`. The zeta integrals are Lebesgue
-integrals, so this is the gamma factor where they converge (for a unitary `χ`,
-when `0 < re s < 1`). By `IsLocalGammaFactor.eq_div` it does not depend on
-the test function. -/
-public def IsLocalGammaFactor [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
-    (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ : ℂ) : Prop :=
-  ∀ f ∈ testSpace K,
+/-- **Admissible data for Tate's local zeta integrals.** The convergence and character
+conditions of Tate's local functional equation: `K` is totally disconnected, so that the
+locally constant test functions are its Schwartz--Bruhat functions; `ψ` is a continuous
+nontrivial additive character; `χ` is a continuous character of `Kˣ`; and for every test
+function `f` the integrands of `Z(f, χ, s)` and `Z(f̂, χ⁻¹, 1 - s)`, with
+`f̂ = tateFourier ψ μ f`, are integrable for the multiplicative Haar measure, so both zeta
+integrals converge absolutely. For a unitary `χ` these integrals converge when
+`0 < re s < 1`. Outside the range of absolute convergence Tate's zeta integrals and gamma
+factor are defined by meromorphic continuation, which this API does not cover; there the
+Bochner integrals can be `0` although the integrals diverge, as for the trivial `χ` at
+`s = 0` and the indicator of the valuation ring. -/
+public structure IsLocalZetaAdmissible [BorelSpace K] [TotallyDisconnectedSpace K]
+    (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) :
+    Prop where
+  continuous_addChar : Continuous ψ
+  addChar_ne_one : ψ ≠ 1
+  continuous_char : Continuous χ
+  integrable_zeta : ∀ f ∈ testSpace K,
+    Integrable (fun x => f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s) (mulMeasure μ)
+  integrable_zeta_fourier : ∀ f ∈ testSpace K,
+    Integrable
+      (fun x => tateFourier ψ μ f x * charExt χ⁻¹ x * ((modulus x : ℝ) : ℂ) ^ (1 - s))
+      (mulMeasure μ)
+
+/-- **Local gamma factor.** `γ` is the local gamma factor of `χ` at `s`, for the additive
+character `ψ` and the additive Haar measure `μ`: the data are admissible
+(`IsLocalZetaAdmissible`: continuous characters, `ψ` nontrivial, and both zeta integrals
+absolutely convergent for every test function), and Tate's local functional equation
+`Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with `f̂ = tateFourier ψ μ f`, holds for every test
+function `f`. By `IsLocalGammaFactor.eq_div` it does not depend on the test function. Values
+of `s` outside the range of absolute convergence, where the gamma factor is defined by
+meromorphic continuation, are outside its scope. -/
+public structure IsLocalGammaFactor [BorelSpace K] [TotallyDisconnectedSpace K]
+    (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ : ℂ) :
+    Prop extends IsLocalZetaAdmissible μ ψ χ s where
+  functional_equation : ∀ f ∈ testSpace K,
     localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) = γ * localZeta μ f χ s
 
-/-- A local gamma factor is the ratio of the zeta integrals of any test
-function whose zeta integral does not vanish, so it does not depend on the
-test function. -/
-public theorem IsLocalGammaFactor.eq_div [BorelSpace K] {μ : Measure K}
-    [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s γ : ℂ} {f : K → ℂ}
-    (h : IsLocalGammaFactor μ ψ χ s γ) (hf : f ∈ testSpace K)
+/-- **The local gamma factor is a zeta ratio.** A local gamma factor is the ratio of the zeta
+integrals of any test function whose zeta integral does not vanish, so it does not depend on
+the test function. -/
+public theorem IsLocalGammaFactor.eq_div [BorelSpace K] [TotallyDisconnectedSpace K]
+    {μ : Measure K} [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s γ : ℂ}
+    {f : K → ℂ} (h : IsLocalGammaFactor μ ψ χ s γ) (hf : f ∈ testSpace K)
     (hZ : localZeta μ f χ s ≠ 0) :
     γ = localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) / localZeta μ f χ s := by
-  rw [h f hf, mul_div_cancel_right₀ _ hZ]
+  rw [h.functional_equation f hf, mul_div_cancel_right₀ _ hZ]
 
-/-- Two local gamma factors agree as soon as one test function has a nonzero
-zeta integral. -/
-public theorem IsLocalGammaFactor.unique [BorelSpace K] {μ : Measure K}
-    [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s γ γ' : ℂ} {f : K → ℂ}
-    (h : IsLocalGammaFactor μ ψ χ s γ) (h' : IsLocalGammaFactor μ ψ χ s γ')
+/-- **Uniqueness of local gamma factors.** Two local gamma factors agree as soon as one test
+function has a nonzero zeta integral. -/
+public theorem IsLocalGammaFactor.unique [BorelSpace K] [TotallyDisconnectedSpace K]
+    {μ : Measure K} [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s γ γ' : ℂ}
+    {f : K → ℂ} (h : IsLocalGammaFactor μ ψ χ s γ) (h' : IsLocalGammaFactor μ ψ χ s γ')
     (hf : f ∈ testSpace K) (hZ : localZeta μ f χ s ≠ 0) : γ = γ' := by
   rw [h.eq_div hf hZ, h'.eq_div hf hZ]
 
-/-- From the symmetric form of the local functional equation,
-`Z(f̂, χ⁻¹, 1 - s) * Z(g, χ, s) = Z(ĝ, χ⁻¹, 1 - s) * Z(f, χ, s)` for all test
-functions `f` and `g`, the ratio of the zeta integrals of a test function `f`
-with `Z(f, χ, s) ≠ 0` is a local gamma factor. -/
-public theorem isLocalGammaFactor_div_of_mul_comm [BorelSpace K] {μ : Measure K}
-    [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s : ℂ} {f : K → ℂ}
+/-- **Local gamma factor from the symmetric functional equation.** For admissible data, if
+`Z(f̂, χ⁻¹, 1 - s) * Z(g, χ, s) = Z(ĝ, χ⁻¹, 1 - s) * Z(f, χ, s)` for all test functions `f`
+and `g`, then the ratio of the zeta integrals of a test function `f` with `Z(f, χ, s) ≠ 0` is
+the local gamma factor. -/
+public theorem isLocalGammaFactor_div_of_mul_comm [BorelSpace K] [TotallyDisconnectedSpace K]
+    {μ : Measure K} [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s : ℂ}
+    {f : K → ℂ} (hadm : IsLocalZetaAdmissible μ ψ χ s)
     (hsymm : ∀ f ∈ testSpace K, ∀ g ∈ testSpace K,
       localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) * localZeta μ g χ s =
         localZeta μ (tateFourier ψ μ g) χ⁻¹ (1 - s) * localZeta μ f χ s)
     (hf : f ∈ testSpace K) (hZ : localZeta μ f χ s ≠ 0) :
     IsLocalGammaFactor μ ψ χ s
-      (localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) / localZeta μ f χ s) := by
-  intro g hg
-  rw [div_mul_eq_mul_div, hsymm f hf g hg, mul_div_cancel_right₀ _ hZ]
+      (localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) / localZeta μ f χ s) :=
+  ⟨hadm, fun g hg => by
+    rw [div_mul_eq_mul_div, hsymm f hf g hg, mul_div_cancel_right₀ _ hZ]⟩
 
 end Zeta
 
 section Place
 
 variable (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
-
-/-- The `n`-th higher unit group of the completion at `v`: units congruent
-to `1` modulo the `n`-th power of the maximal ideal (all valuation-one units
-when `n = 0`). -/
-public def higherUnitsAt (n : ℕ) : Set (v.adicCompletion K)ˣ :=
-  {u | Valued.v (u : v.adicCompletion K) = 1 ∧
-    (n = 0 ∨ Valued.v ((u : v.adicCompletion K) - 1) ≤
-      WithZero.exp (-(n : ℤ)))}
-
-public theorem mem_higherUnitsAt_iff {n : ℕ} {u : (v.adicCompletion K)ˣ} :
-    u ∈ higherUnitsAt K v n ↔ Valued.v (u : v.adicCompletion K) = 1 ∧
-      (n = 0 ∨ Valued.v ((u : v.adicCompletion K) - 1) ≤
-        WithZero.exp (-(n : ℤ))) :=
-  Iff.rfl
 
 public theorem mem_higherUnitsAt_zero_iff {u : (v.adicCompletion K)ˣ} :
     u ∈ higherUnitsAt K v 0 ↔ Valued.v (u : v.adicCompletion K) = 1 := by
@@ -343,8 +376,8 @@ public theorem higherUnitsAt_antitone : Antitone (higherUnitsAt K v) := by
     · omega
     · exact hle.trans (WithZero.exp_le_exp.mpr (by omega))
 
-/-- `χ` has conductor exponent `c` at `v` when `c` is the least level whose
-higher unit group lies in the kernel of `χ`. -/
+/-- **Conductor exponent.** `χ` has conductor exponent `c` at `v` when `c` is the least level
+whose higher unit group lies in the kernel of `χ`. -/
 public def HasConductorExponentAt (χ : (v.adicCompletion K)ˣ →* ℂˣ)
     (c : ℕ) : Prop :=
   (∀ u ∈ higherUnitsAt K v c, χ u = 1) ∧
@@ -383,9 +416,11 @@ public theorem not_hasConductorExponentAt_one_succ (c : ℕ) :
   obtain ⟨u, -, hne⟩ := hmin c (Nat.lt_succ_self c)
   exact hne rfl
 
-/-- The conductor exponent of `χ` at `v`: the `c` with
-`HasConductorExponentAt K v χ c`, or `⊤` when there is none, that is, when no
-higher unit group lies in the kernel of `χ`. -/
+/-- **Extended conductor exponent.** The conductor exponent of `χ` at `v`, in `ℕ∞`. A finite
+value `c` means `HasConductorExponentAt K v χ c` (`conductorExponentAt_eq_coe_iff`), that is,
+`χ` has the actual finite conductor `𝔭ᵥ ^ c`; `⊤` means that no higher unit group lies in the
+kernel of `χ`, so `χ` has no finite conductor (`conductorExponentAt_eq_top_iff`). A continuous
+`χ` is trivial on some higher unit group, so its exponent is finite. -/
 public def conductorExponentAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) : ℕ∞ :=
   ⨅ (c : ℕ) (_ : HasConductorExponentAt K v χ c), (c : ℕ∞)
 
@@ -418,8 +453,10 @@ public theorem conductorExponentAt_one :
   conductorExponentAt_eq_of_hasConductorExponentAt K v
     (hasConductorExponentAt_one_zero K v)
 
-/-- The local `L`-factor at `v`: the usual Euler factor for an unramified
-character, and `1` for a ramified character. -/
+/-- **Local L-factor.** The local `L`-factor of `χ` at `v`: for an unramified character the
+Euler factor `(1 - χ ϖ * N(v) ^ (-s))⁻¹` at the uniformizer
+`ϖ = NumberField.AdelicLevel.uniformizerUnit (𝓞 K) K v`, and `1` for a ramified
+character. -/
 public def localLFactorAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s : ℂ) : ℂ := by
   classical exact
     if HasConductorExponentAt K v χ 0 then
@@ -453,17 +490,18 @@ section Epsilon
 variable [MeasurableSpace (v.adicCompletion K)] [BorelSpace (v.adicCompletion K)]
   [LocallyCompactSpace (v.adicCompletion K)]
 
-/-- `ε` is a local epsilon factor of `χ` at `v` and `s`, for the additive
-character `ψ` and the additive Haar measure `μ`, when
-`ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)` for a local gamma factor `γ`. -/
+/-- **Local epsilon factor.** `ε` is the local epsilon factor of `χ` at `v` and `s`, for the
+additive character `ψ` and the additive Haar measure `μ`, when
+`ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)` for the local gamma factor `γ` (`IsLocalGammaFactor`, which
+includes Tate's convergence and character conditions). -/
 public def IsLocalEpsilonFactorAt (μ : Measure (v.adicCompletion K))
     [μ.IsAddHaarMeasure] (ψ : AddChar (v.adicCompletion K) ℂ)
     (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s ε : ℂ) : Prop :=
   ∃ γ, IsLocalGammaFactor μ ψ χ s γ ∧
     ε = γ * localLFactorAt K v χ s / localLFactorAt K v χ⁻¹ (1 - s)
 
-/-- Two local epsilon factors agree as soon as one test function has a
-nonzero zeta integral. -/
+/-- **Uniqueness of local epsilon factors.** Two local epsilon factors agree as soon as one
+test function has a nonzero zeta integral. -/
 public theorem IsLocalEpsilonFactorAt.unique {μ : Measure (v.adicCompletion K)}
     [μ.IsAddHaarMeasure] {ψ : AddChar (v.adicCompletion K) ℂ}
     {χ : (v.adicCompletion K)ˣ →* ℂˣ} {s ε ε' : ℂ} {f : v.adicCompletion K → ℂ}
@@ -475,8 +513,8 @@ public theorem IsLocalEpsilonFactorAt.unique {μ : Measure (v.adicCompletion K)}
   obtain ⟨γ', hγ', rfl⟩ := h'
   rw [hγ.unique hγ' hf hZ]
 
-/-- For a ramified character both `L`-factors are `1`, so the local epsilon
-factors are exactly the local gamma factors. -/
+/-- **Local epsilon factors of ramified characters.** For a ramified character both
+`L`-factors are `1`, so the local epsilon factors are exactly the local gamma factors. -/
 public theorem isLocalEpsilonFactorAt_iff_of_not_hasConductorExponentAt_zero
     (μ : Measure (v.adicCompletion K)) [μ.IsAddHaarMeasure]
     (ψ : AddChar (v.adicCompletion K) ℂ) {χ : (v.adicCompletion K)ˣ →* ℂˣ}
@@ -496,6 +534,6 @@ end Epsilon
 
 end Place
 
-end TateLocal
+end LanglandsTunnell.TateLocal
 
 end

@@ -12,7 +12,7 @@ public import MathlibExt.NumberTheory.TateLocal
 
 @[expose] public section
 
-open TateLocal IsDedekindDomain MeasureTheory
+open LanglandsTunnell.TateLocal IsDedekindDomain MeasureTheory
 open scoped NumberField
 
 namespace TateLocalTest
@@ -89,35 +89,70 @@ integrals. -/
 example (χ : ℝˣ →* ℂˣ) (s : ℂ) : localZeta (volume : Measure ℝ) 0 χ s = 0 :=
   localZeta_zero_fun _ χ s
 
-/-- The zeta integrals and the gamma factors reject a measure that is not an
-additive Haar measure, such as the zero measure. -/
+/-- The zeta integrals reject a measure that is not an additive Haar measure,
+such as the zero measure. -/
 example : True := by
   fail_if_success have := localZeta (0 : Measure ℝ) 0 (1 : ℝˣ →* ℂˣ) 0
-  fail_if_success have := IsLocalGammaFactor (0 : Measure ℝ) 1 (1 : ℝˣ →* ℂˣ) 0 0
   trivial
+
+/-- The gamma factors at a finite place reject the zero measure. -/
+example (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
+    [MeasurableSpace (v.adicCompletion K)] [BorelSpace (v.adicCompletion K)]
+    [LocallyCompactSpace (v.adicCompletion K)] : True := by
+  fail_if_success
+    have := IsLocalGammaFactor (0 : Measure (v.adicCompletion K)) 1
+      (1 : (v.adicCompletion K)ˣ →* ℂˣ) 0 0
+  trivial
+
+/-- The gamma factors are not defined over `ℝ`, which is not totally disconnected:
+its locally constant test space is zero, so the functional equation would hold for
+every `γ`. -/
+example : True := by
+  fail_if_success have := IsLocalGammaFactor (volume : Measure ℝ) 1 (1 : ℝˣ →* ℂˣ) 0 0
+  trivial
+
+/-- Admissible data exclude the trivial additive character. -/
+example {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
+    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K]
+    [TotallyDisconnectedSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] (χ : Kˣ →* ℂˣ)
+    (s : ℂ) (h : IsLocalZetaAdmissible μ (1 : AddChar K ℂ) χ s) : False :=
+  h.addChar_ne_one rfl
+
+/-- Admissible data make the zeta integrand of every test function integrable. -/
+example {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
+    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K]
+    [TotallyDisconnectedSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ)
+    (χ : Kˣ →* ℂˣ) (s γ : ℂ) (h : IsLocalGammaFactor μ ψ χ s γ) (f : K → ℂ)
+    (hf : f ∈ testSpace K) :
+    Integrable (fun x => f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s) (mulMeasure μ) ∧
+      Continuous χ :=
+  ⟨h.integrable_zeta f hf, h.continuous_char⟩
 
 /-- Two local gamma factors agree once one test function has a nonzero zeta
 integral. -/
 example {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
-    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K] (μ : Measure K)
-    [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ γ' : ℂ) (f : K → ℂ)
+    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K]
+    [TotallyDisconnectedSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ)
+    (χ : Kˣ →* ℂˣ) (s γ γ' : ℂ) (f : K → ℂ)
     (hf : f ∈ testSpace K) (hZ : localZeta μ f χ s ≠ 0)
     (h : IsLocalGammaFactor μ ψ χ s γ) (h' : IsLocalGammaFactor μ ψ χ s γ') :
     γ = γ' :=
   h.unique h' hf hZ
 
-/-- Under the symmetric local functional equation, every local gamma factor is
-the zeta ratio of a test function with nonzero zeta integral. -/
+/-- For admissible data under the symmetric local functional equation, every
+local gamma factor is the zeta ratio of a test function with nonzero zeta
+integral. -/
 example {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
-    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K] (μ : Measure K)
-    [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ : ℂ) (f : K → ℂ)
+    [LocallyCompactSpace K] [MeasurableSpace K] [BorelSpace K]
+    [TotallyDisconnectedSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] (ψ : AddChar K ℂ)
+    (χ : Kˣ →* ℂˣ) (s γ : ℂ) (f : K → ℂ) (hadm : IsLocalZetaAdmissible μ ψ χ s)
     (hsymm : ∀ f ∈ testSpace K, ∀ g ∈ testSpace K,
       localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) * localZeta μ g χ s =
         localZeta μ (tateFourier ψ μ g) χ⁻¹ (1 - s) * localZeta μ f χ s)
     (hf : f ∈ testSpace K) (hZ : localZeta μ f χ s ≠ 0)
     (h : IsLocalGammaFactor μ ψ χ s γ) :
     γ = localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) / localZeta μ f χ s :=
-  h.unique (isLocalGammaFactor_div_of_mul_comm hsymm hf hZ) hf hZ
+  h.unique (isLocalGammaFactor_div_of_mul_comm hadm hsymm hf hZ) hf hZ
 
 /-- For a ramified character the local epsilon factors are the local gamma
 factors. -/
