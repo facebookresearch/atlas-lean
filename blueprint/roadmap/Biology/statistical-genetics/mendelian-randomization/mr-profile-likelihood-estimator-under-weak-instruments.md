@@ -17,9 +17,11 @@ $\|\gamma\|_2^2 = O(1)$. Define the average instrument strength $\kappa = \frac1
 **Theorem (consistency).** If $p/(n^2 \|\gamma\|_2^4) \to 0$ (equivalently $1/(p\kappa^2) \to 0$), then $\hat\beta \xrightarrow{p} \beta_0$.
 
 **Theorem (asymptotic normality).** If in addition either $p \to \infty$ and $\|\gamma\|_3/\|\gamma\|_2 \to 0$, or $\kappa \to \infty$, then
+
 $$\frac{V_2}{\sqrt{V_1}}(\hat\beta - \beta_0) \xrightarrow{d} N(0,1), \quad
 V_1 = \sum_{j=1}^p \frac{\gamma_j^2 \sigma_{Yj}^2 + \Gamma_j^2 \sigma_{Xj}^2 + \sigma_{Xj}^2\sigma_{Yj}^2}{(\sigma_{Xj}^2\beta_0^2 + \sigma_{Yj}^2)^2}, \quad
 V_2 = \sum_{j=1}^p \frac{\gamma_j^2 \sigma_{Yj}^2 + \Gamma_j^2 \sigma_{Xj}^2}{(\sigma_{Xj}^2\beta_0^2 + \sigma_{Yj}^2)^2}.$$
+
 Since $V_1 = V_2 + \Theta(p)$ and $V_2 = \Theta(p\kappa)$, the profile likelihood is information unbiased iff $\kappa \to \infty$.
 
 By contrast the [IVW estimator](ivw.md) satisfies $\hat\beta_{\mathrm{IVW}} \approx \beta_0 / (1 + 1/\kappa)$, so it is biased toward zero unless $\kappa \to \infty$.
