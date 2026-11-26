@@ -27,8 +27,10 @@ public import Mathlib.Tactic.NormNum
     it buffered after round 1.
   - For `k = N = 3`, every run fails the stopping rule after round 2 and halts after the last
     round, returning all three objects.
+* The source's form of the stopping rule, over all objects seen, agrees on the example.
 * With no lists (`m = 0`) nothing is ever read, so the stopping rule never holds for `k = 1`:
-  the hypothesis `1 ≤ m` of `thresholdAlgorithm_correct` is needed for termination.
+  the hypothesis `1 ≤ m` of `thresholdAlgorithm_correct` is needed for termination. The number
+  of objects is still `N`.
 -/
 
 @[expose] public section
@@ -72,6 +74,7 @@ noncomputable def D : GradedLists (Fin 3) 3 2 where
     intro i p q hpq
     fin_cases i <;> fin_cases p <;> fin_cases q <;>
       simp_all [grades, lists, Fin.le_def, Fin.rev] <;> norm_num
+  nonempty_equiv_fin := ⟨Equiv.refl _⟩
 
 /-- The sum of the two grades. -/
 def t : (Fin 2 → ℝ) → ℝ := fun x => x 0 + x 1
@@ -104,7 +107,7 @@ theorem seen_three : D.seen 3 = Finset.univ := by
   fin_cases x <;> simp [mem_seen, D, lists]
 
 /-- After round 1 the buffer holds `0` or `2`, of aggregate grade `1`, below the threshold `2`. -/
-theorem not_haltsAt_zero (r : D.ThresholdRun t 1) : ¬ r.HaltsAt 0 := by
+theorem not_stoppingRuleHolds_zero (r : D.ThresholdRun t 1) : ¬ r.StoppingRuleHolds 0 := by
   have hsub : r.buf 1 ⊆ {0, 2} := seen_one ▸ (r.isTopKAmong_seen 1).1
   have hempty : (r.buf 1).filter (fun x => D.threshold t 0 ≤ D.aggregate t x) = ∅ := by
     refine Finset.filter_false_of_mem fun x hx => ?_
@@ -113,10 +116,11 @@ theorem not_haltsAt_zero (r : D.ThresholdRun t 1) : ¬ r.HaltsAt 0 := by
     · rw [Finset.mem_singleton] at hx
       subst hx
       norm_num [threshold_zero, aggregate_eq]
-  simp [ThresholdRun.HaltsAt, hempty]
+  simp [ThresholdRun.StoppingRuleHolds, hempty]
 
 /-- After round 2 every run buffers the object `1` alone and satisfies the stopping rule. -/
-theorem buf_two_and_haltsAt_one (r : D.ThresholdRun t 1) : r.buf 2 = {1} ∧ r.HaltsAt 1 := by
+theorem buf_two_and_stoppingRuleHolds_one (r : D.ThresholdRun t 1) :
+    r.buf 2 = {1} ∧ r.StoppingRuleHolds 1 := by
   obtain ⟨-, hc, hd⟩ := r.isTopKAmong_seen 2
   rw [seen_two, Finset.card_univ, Fintype.card_fin] at hc
   obtain ⟨y, hy⟩ := Finset.card_eq_one.1 (by simpa using hc)
@@ -129,7 +133,7 @@ theorem buf_two_and_haltsAt_one (r : D.ThresholdRun t 1) : r.buf 2 = {1} ∧ r.H
     · norm_num [aggregate_eq] at this
   subst hy1
   refine ⟨hy, ?_⟩
-  simp only [ThresholdRun.HaltsAt, Fin.val_one, Nat.reduceAdd, hy]
+  simp only [ThresholdRun.StoppingRuleHolds, Fin.val_one, Nat.reduceAdd, hy]
   rw [Finset.filter_true_of_mem fun x hx => by
     rw [Finset.mem_singleton.1 hx, threshold_one, aggregate_eq]; norm_num]
   simp
@@ -137,28 +141,37 @@ theorem buf_two_and_haltsAt_one (r : D.ThresholdRun t 1) : r.buf 2 = {1} ∧ r.H
 /-- So every run halts after round 2 and returns `{1}`, the top-1 answer. -/
 example (r : D.ThresholdRun t 1) : IsTopK (D.aggregate t) 1 {1} := by
   have h := (thresholdAlgorithm_correct D t_monotoneOn (by norm_num) (by norm_num) (by norm_num)
-    r).2.2.2 1 (buf_two_and_haltsAt_one r).2
-  simpa [(buf_two_and_haltsAt_one r).1] using h
+    r).2.2.2.2 1 (buf_two_and_stoppingRuleHolds_one r).2
+  simpa [(buf_two_and_stoppingRuleHolds_one r).1] using h
+
+/-- The source's form of the stopping rule, over all objects seen: after round 2 the objects seen
+are all three, and only object `1` reaches the threshold `5/4`. -/
+example (r : D.ThresholdRun t 1) : r.StoppingRuleHolds 1 := by
+  rw [ThresholdRun.stoppingRuleHolds_iff_seen]
+  simp only [Fin.val_one, Nat.reduceAdd, seen_two, threshold_one]
+  rw [show (Finset.univ.filter fun x : Fin 3 => (5 / 4 : ℝ) ≤ D.aggregate t x) = {1} by
+    ext x; fin_cases x <;> norm_num [aggregate_eq]]
+  simp
 
 /-- For `k = N = 3` the buffer after round 2 holds all objects, but object `0` (aggregate grade
 `1`) is below the threshold `5/4`, so the stopping rule fails. -/
-example (r : D.ThresholdRun t 3) : ¬ r.HaltsAt 1 := by
+example (r : D.ThresholdRun t 3) : ¬ r.StoppingRuleHolds 1 := by
   obtain ⟨hs, hc, -⟩ := r.isTopKAmong_seen 2
   rw [seen_two, Finset.card_univ, Fintype.card_fin] at hc
   have hall : r.buf 2 = Finset.univ :=
     Finset.eq_univ_of_card _ (by simpa using hc)
-  simp only [ThresholdRun.HaltsAt, Fin.val_one, Nat.reduceAdd, hall, threshold_one]
+  simp only [ThresholdRun.StoppingRuleHolds, Fin.val_one, Nat.reduceAdd, hall, threshold_one]
   rw [show (Finset.univ.filter fun x : Fin 3 => (5 / 4 : ℝ) ≤ D.aggregate t x) = {1} by
     ext x; fin_cases x <;> norm_num [aggregate_eq]]
   simp
 
 /-- After the last round every run with `k = 3` halts and returns all three objects. -/
-example (r : D.ThresholdRun t 3) : r.HaltsAt 2 ∧ r.buf 3 = Finset.univ := by
+example (r : D.ThresholdRun t 3) : r.StoppingRuleHolds 2 ∧ r.buf 3 = Finset.univ := by
   obtain ⟨-, hc, -⟩ := r.isTopKAmong_seen 3
   rw [seen_three, Finset.card_univ, Fintype.card_fin] at hc
   have hall : r.buf 3 = Finset.univ := Finset.eq_univ_of_card _ (by simpa using hc)
   refine ⟨?_, hall⟩
-  simp only [ThresholdRun.HaltsAt, Fin.val_two, Nat.reduceAdd, hall, threshold_two]
+  simp only [ThresholdRun.StoppingRuleHolds, Fin.val_two, Nat.reduceAdd, hall, threshold_two]
   rw [Finset.filter_true_of_mem fun x _ => by fin_cases x <;> norm_num [aggregate_eq]]
   simp
 
@@ -173,17 +186,24 @@ def D₀ : GradedLists (Fin 1) 1 0 where
   grade_mem_Icc := fun i => Fin.elim0 i
   list := Fin.elim0
   antitone_grade := fun i => Fin.elim0 i
+  nonempty_equiv_fin := ⟨Equiv.refl _⟩
 
 /-- With no lists nothing is read, so the buffer stays empty and the stopping rule never holds
 for `k = 1`, whatever the aggregation function. -/
-example (t₀ : (Fin 0 → ℝ) → ℝ) (r : D₀.ThresholdRun t₀ 1) (p : Fin 1) : ¬ r.HaltsAt p := by
+example (t₀ : (Fin 0 → ℝ) → ℝ) (r : D₀.ThresholdRun t₀ 1) (p : Fin 1) :
+    ¬ r.StoppingRuleHolds p := by
   have hseen : D₀.seen ((p : ℕ) + 1) = ∅ := by
     ext x
     simp [mem_seen]
   have hbuf : r.buf ((p : ℕ) + 1) = ∅ :=
     Finset.subset_empty.1 (hseen ▸ (r.isTopKAmong_seen _).1)
-  unfold ThresholdRun.HaltsAt
+  unfold ThresholdRun.StoppingRuleHolds
   rw [hbuf]
   simp
+
+/-- Even with no lists, the number of objects is `N`: there is no database of five objects
+declared to have one. -/
+example : IsEmpty (GradedLists (Fin 5) 1 0) :=
+  ⟨fun D => D.nonempty_equiv_fin.elim fun e => by simpa using Fintype.card_congr e⟩
 
 end Cslib.Databases.ThresholdAlgorithmTests

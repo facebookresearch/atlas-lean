@@ -38,20 +38,26 @@ keeps `k` objects of highest aggregate grade among the old buffer and the object
 of them if there are fewer than `k`, resolving ties arbitrarily (`IsTopKAmong`). Every choice of
 ties gives a run, and runs exist (the `Nonempty` instance). After round `p + 1` the threshold is `t`
 applied to the grades at position `p` of the lists, the last grades read (`GradedLists.threshold`),
-and the run may halt once its buffer holds `k` objects of aggregate grade at least the threshold
-(`GradedLists.ThresholdRun.HaltsAt`). TA halts at the first such round and returns its buffer.
+and the stopping rule holds once the buffer holds `k` objects of aggregate grade at least the
+threshold (`GradedLists.ThresholdRun.StoppingRuleHolds`). TA halts at the first such round and
+returns its buffer. The source states the rule for all objects seen, not only the buffered ones: at
+least `k` objects seen have aggregate grade at least the threshold. The two forms agree
+(`GradedLists.ThresholdRun.stoppingRuleHolds_iff_seen`); with the buffered form, every decision of
+the algorithm depends only on its buffer and the round.
 
 ## Main results
 
 * `GradedLists.ThresholdRun.isTopKAmong_seen`: after every round the buffer holds `k` objects of
   highest aggregate grade among all objects read so far (`GradedLists.seen`), or all of them.
 * `GradedLists.ThresholdRun.card_buf_le`: the buffer never holds more than `k` objects.
-* `GradedLists.ThresholdRun.exists_haltsAt`: when `t` is monotone on `[0, 1]^m`, `m ≥ 1` and
-  `1 ≤ k ≤ N`, the stopping rule holds after some round `p + 1 ≤ N`.
-* `GradedLists.ThresholdRun.isTopK_of_haltsAt`: when `t` is monotone on `[0, 1]^m`, the buffer
-  is a top-`k` answer after every round at which the stopping rule holds, in particular after
-  the first.
-* `thresholdAlgorithm_correct` gathers these four facts.
+* `GradedLists.ThresholdRun.stoppingRuleHolds_iff_seen`: the stopping rule holds exactly when at
+  least `k` objects seen have aggregate grade at least the threshold, the source's form of it.
+* `GradedLists.ThresholdRun.exists_stoppingRuleHolds`: when `t` is monotone on `[0, 1]^m`,
+  `m ≥ 1` and `1 ≤ k ≤ N`, the stopping rule holds after some round `p + 1 ≤ N`.
+* `GradedLists.ThresholdRun.isTopK_of_stoppingRuleHolds`: when `t` is monotone on `[0, 1]^m`,
+  the buffer is a top-`k` answer after every round at which the stopping rule holds, in
+  particular after the first.
+* `thresholdAlgorithm_correct` gathers these five facts.
 
 ## References
 
@@ -156,7 +162,8 @@ theorem exists_isTopKAmong (f : α → β) (k : ℕ) (S : Finset α) : ∃ B, Is
 end TopK
 
 /-- **Graded sorted lists.** A database of $N$ objects of a type $\alpha$ with $m$ attributes,
-presented as $m$ sorted lists. Each object $x$ has a grade $x_i \in [0, 1]$ under each attribute
+presented as $m$ sorted lists. The type $\alpha$ has exactly $N$ elements; when $m \ge 1$ this
+also follows from the lists. Each object $x$ has a grade $x_i \in [0, 1]$ under each attribute
 $i$. The list of attribute $i$ holds every object exactly once, as a bijection from the
 positions $0, \ldots, N - 1$ to the objects, and its grades are nonincreasing along the
 positions; objects with equal grades may appear in any order. Sorted access reads a list
@@ -170,6 +177,8 @@ structure GradedLists (α : Type*) (N m : ℕ) where
   list : Fin m → Fin N ≃ α
   /-- Each list is in nonincreasing order of grade. -/
   antitone_grade : ∀ i, Antitone fun p => grade i (list i p)
+  /-- There are exactly `N` objects, even when there is no list. -/
+  nonempty_equiv_fin : Nonempty (Fin N ≃ α)
 
 namespace GradedLists
 
@@ -288,10 +297,14 @@ instance : Nonempty (D.ThresholdRun t k) := by
 /-- **Stopping rule of the threshold algorithm.** For a run of the threshold algorithm with
 buffers $B_0, B_1, \ldots$ and a position $p$, the stopping rule holds after round $p + 1$ when
 the buffer $B_{p+1}$ holds at least $k$ objects whose aggregate grade is at least the threshold
-$t(\underline{x}_1, \ldots, \underline{x}_m)$, where $\underline{x}_i$ is the grade at position
-$p$ of list $i$. The algorithm halts at the first round at which the stopping rule holds and
-returns its buffer. -/
-def HaltsAt (r : D.ThresholdRun t k) (p : Fin N) : Prop :=
+$\tau = t(\underline{x}_1, \ldots, \underline{x}_m)$, where $\underline{x}_i$ is the grade at
+position $p$ of list $i$. Fagin, Lotem and Naor state the rule for all objects seen: at least $k$
+of the objects seen in the first $p + 1$ rounds have aggregate grade at least $\tau$. Since the
+buffer $B_{p+1}$ is a top-$k$ choice among those objects, the two forms hold for the same rounds;
+with the buffered form, every decision of the algorithm depends only on its buffer and the round.
+The algorithm halts at the first round at which the stopping rule holds and returns its buffer;
+the rule may go on holding after that round. -/
+def StoppingRuleHolds (r : D.ThresholdRun t k) (p : Fin N) : Prop :=
   k ≤ ((r.buf ((p : ℕ) + 1)).filter fun x => D.threshold t p ≤ D.aggregate t x).card
 
 -- After `d` rounds the buffer is a top-`k` choice among all objects read so far.
@@ -305,14 +318,42 @@ theorem isTopKAmong_seen (r : D.ThresholdRun t k) (d : ℕ) :
 theorem card_buf_le (r : D.ThresholdRun t k) (d : ℕ) : (r.buf d).card ≤ k :=
   (r.isTopKAmong_seen d).card_le
 
+-- The stopping rule in the source's form: at least `k` objects seen in the first `p + 1` rounds
+-- have aggregate grade at least the threshold. It agrees with the buffered form, as the buffer is a
+-- top-`k` choice among the objects seen.
+theorem stoppingRuleHolds_iff_seen (r : D.ThresholdRun t k) (p : Fin N) :
+    r.StoppingRuleHolds p ↔
+      k ≤ ((D.seen ((p : ℕ) + 1)).filter fun x => D.threshold t p ≤ D.aggregate t x).card := by
+  obtain ⟨hsub, hc, hdom⟩ := r.isTopKAmong_seen ((p : ℕ) + 1)
+  unfold StoppingRuleHolds
+  refine ⟨fun h => h.trans (Finset.card_le_card (Finset.filter_subset_filter _ hsub)), fun h => ?_⟩
+  have hS := h.trans (Finset.card_filter_le (D.seen ((p : ℕ) + 1))
+    fun x => D.threshold t p ≤ D.aggregate t x)
+  have hB : (r.buf ((p : ℕ) + 1)).card = k := by omega
+  by_cases hall : ∀ y ∈ r.buf ((p : ℕ) + 1), D.threshold t p ≤ D.aggregate t y
+  · rw [Finset.filter_true_of_mem hall, hB]
+  push Not at hall
+  obtain ⟨y, hyB, hy⟩ := hall
+  -- Every object seen with aggregate grade at least the threshold is buffered, and is not `y`.
+  have hsubB : (D.seen ((p : ℕ) + 1)).filter (fun x => D.threshold t p ≤ D.aggregate t x) ⊆
+      (r.buf ((p : ℕ) + 1)).erase y := by
+    intro x hx
+    rw [Finset.mem_filter] at hx
+    refine Finset.mem_erase.2 ⟨fun hxy => absurd hx.2 (not_le.2 (hxy ▸ hy)), ?_⟩
+    by_contra hxB
+    exact absurd hx.2 (not_le.2 ((hdom y hyB x hx.1 hxB).trans_lt hy))
+  have := Finset.card_le_card hsubB
+  rw [Finset.card_erase_of_mem hyB] at this
+  omega
+
 -- The buffer is a top-`k` answer after every round at which the stopping rule holds.
-theorem isTopK_of_haltsAt (ht : MonotoneOn t (Set.Icc 0 1)) (r : D.ThresholdRun t k)
-    {p : Fin N} (hp : r.HaltsAt p) : IsTopK (D.aggregate t) k (r.buf ((p : ℕ) + 1)) := by
+theorem isTopK_of_stoppingRuleHolds (ht : MonotoneOn t (Set.Icc 0 1)) (r : D.ThresholdRun t k)
+    {p : Fin N} (hp : r.StoppingRuleHolds p) : IsTopK (D.aggregate t) k (r.buf ((p : ℕ) + 1)) := by
   obtain ⟨-, -, hdom⟩ := r.isTopKAmong_seen ((p : ℕ) + 1)
   have hcard := r.card_buf_le ((p : ℕ) + 1)
   have hfilt := Finset.card_filter_le (r.buf ((p : ℕ) + 1))
     fun x => D.threshold t p ≤ D.aggregate t x
-  unfold HaltsAt at hp
+  unfold StoppingRuleHolds at hp
   have hall := Finset.filter_card_eq (p := fun x => D.threshold t p ≤ D.aggregate t x)
     (s := r.buf ((p : ℕ) + 1)) (by omega)
   refine ⟨by omega, fun y hy z hz => ?_⟩
@@ -322,8 +363,8 @@ theorem isTopK_of_haltsAt (ht : MonotoneOn t (Set.Icc 0 1)) (r : D.ThresholdRun 
 
 -- With at least one list and `1 ≤ k ≤ N`, the stopping rule holds after some round `p + 1 ≤ N`; at
 -- the latest after round `N`.
-theorem exists_haltsAt (ht : MonotoneOn t (Set.Icc 0 1)) (hm : 0 < m) (hk : 0 < k)
-    (hkN : k ≤ N) (r : D.ThresholdRun t k) : ∃ p, r.HaltsAt p := by
+theorem exists_stoppingRuleHolds (ht : MonotoneOn t (Set.Icc 0 1)) (hm : 0 < m) (hk : 0 < k)
+    (hkN : k ≤ N) (r : D.ThresholdRun t k) : ∃ p, r.StoppingRuleHolds p := by
   have hN : 0 < N := hk.trans_le hkN
   let p : Fin N := ⟨N - 1, by omega⟩
   have hp : (p : ℕ) + 1 = N := by simp only [p]; omega
@@ -338,7 +379,7 @@ theorem exists_haltsAt (ht : MonotoneOn t (Set.Icc 0 1)) (hm : 0 < m) (hk : 0 < 
     rwa [Finset.card_image_of_injective _ (D.list _).injective, Finset.card_univ,
       Fintype.card_fin] at this
   have hbk : (r.buf ((p : ℕ) + 1)).card = k := by omega
-  unfold HaltsAt
+  unfold StoppingRuleHolds
   rw [Finset.filter_true_of_mem fun x _ => D.threshold_le_aggregate_of_last ht hp x, hbk]
 
 end ThresholdRun
@@ -354,19 +395,24 @@ run of the threshold algorithm, whatever its resolution of ties, has these prope
    for the aggregate grade among the objects seen in those rounds: $k$ of them of highest
    aggregate grade, or all of them if fewer than $k$ have been seen.
 2. Its buffer never holds more than $k$ objects, however large $N$ is.
-3. The stopping rule (at least $k$ buffered objects have aggregate grade at least the threshold
-   $\tau = t(\underline{x}_1, \ldots, \underline{x}_m)$ of the last grades read) holds after some
-   round $p + 1 \le N$.
-4. After every round at which the stopping rule holds, in particular the first, at which the
+3. The stopping rule after a round (at least $k$ buffered objects have aggregate grade at least
+   the threshold $\tau = t(\underline{x}_1, \ldots, \underline{x}_m)$ of the last grades read)
+   holds exactly when at least $k$ of the objects seen so far have aggregate grade at least
+   $\tau$, the form in which Fagin, Lotem and Naor state it.
+4. The stopping rule holds after some round $p + 1 \le N$.
+5. After every round at which the stopping rule holds, in particular the first, at which the
    algorithm halts, the buffer is a top-$k$ answer: it holds exactly $k$ objects, each of
    aggregate grade at least that of every object outside the buffer. -/
 theorem thresholdAlgorithm_correct {N m k : ℕ} [DecidableEq α] (D : GradedLists α N m)
     {t : (Fin m → ℝ) → ℝ} (ht : MonotoneOn t (Set.Icc 0 1)) (hm : 0 < m) (hk : 0 < k)
     (hkN : k ≤ N) (r : D.ThresholdRun t k) :
     (∀ d, IsTopKAmong (D.aggregate t) k (D.seen d) (r.buf d)) ∧
-      (∀ d, (r.buf d).card ≤ k) ∧ (∃ p, r.HaltsAt p) ∧
-      ∀ p, r.HaltsAt p → IsTopK (D.aggregate t) k (r.buf ((p : ℕ) + 1)) :=
-  ⟨r.isTopKAmong_seen, r.card_buf_le, r.exists_haltsAt ht hm hk hkN,
-    fun _ hp => r.isTopK_of_haltsAt ht hp⟩
+      (∀ d, (r.buf d).card ≤ k) ∧
+      (∀ p, r.StoppingRuleHolds p ↔
+        k ≤ ((D.seen ((p : ℕ) + 1)).filter fun x => D.threshold t p ≤ D.aggregate t x).card) ∧
+      (∃ p, r.StoppingRuleHolds p) ∧
+      ∀ p, r.StoppingRuleHolds p → IsTopK (D.aggregate t) k (r.buf ((p : ℕ) + 1)) :=
+  ⟨r.isTopKAmong_seen, r.card_buf_le, r.stoppingRuleHolds_iff_seen,
+    r.exists_stoppingRuleHolds ht hm hk hkN, fun _ hp => r.isTopK_of_stoppingRuleHolds ht hp⟩
 
 end Cslib.Databases
