@@ -23,3 +23,4 @@
 - [Gaussian integral as a lower Lebesgue integral](lintegral-exp-neg-mul-sq.md)
 - [Normalizing integral of Student's t density](lintegral-one-add-sq-div-rpow-neg.md)
 - [Student's $t$ law](student-tmeasure.md)
+- [Paired t interval for normal differences](paired-t-interval-for-normal-differences.md)

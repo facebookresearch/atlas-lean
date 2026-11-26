@@ -9,9 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.NumberTheory.Real.Irrational
+public import MathlibExt.NumberTheory.ContinuedFractions.PartialQuotientBound
 
 namespace MetaMathlibExt
 
@@ -50,25 +49,6 @@ public theorem_wanted kFibonacci_repdigit_index_lt (k : ℕ) (hk : 3 ≤ k) (F :
     {a ℓ m n : ℕ} (hm : 3 ≤ m) (hmn : m ≤ n) (hℓ : 2 ≤ ℓ) (ha : 1 ≤ a) (ha9 : a ≤ 9)
     (hkn : k + 2 ≤ n) (hsol : 9 * (F n * F m) = a * (10 ^ ℓ - 1)) :
     (n : ℝ) < 1.64e29 * (k : ℝ) ^ 8 * Real.log k ^ 5
-
-/-- **Partial-quotient lower bound for rational approximation.** Let $\gamma$ be an irrational real
-number with continued fraction $[a_0; a_1, a_2, \dots]$, so that $a_0 = \lfloor \gamma \rfloor$,
-and let $q_0 = 1, q_1, q_2, \dots$ be the denominators of its convergents. Let $M \ge 1$ and
-$N \ge 0$ be integers with $q_N \le M < q_{N+1}$, and let $A$ be a real number with $a_i \le A$
-for $0 \le i \le N + 1$. Then $|x \gamma - y| > 1/((A + 2) x)$ for all integers $x, y$ with
-$0 < x < M$.
-
-Taking $A = \max(a_0, \dots, a_{N+1})$ gives the strongest bound.
-
-Source: Safia Seffah, Salah Eddine Rihane, and Alain Togbé, *On an Equation
-Involving Repdigits and Products of Two k-Fibonacci Numbers*, INTEGERS 25 (2025),
-Article A55, Lemma 2 (`integers-2025-A55-lem-2`). -/
-public theorem_wanted one_div_partialQuotient_bound_mul_lt_abs_mul_sub {γ : ℝ}
-    (hγ : Irrational γ) {M N : ℕ} (hM : 0 < M) (hNM : (GenContFract.of γ).dens N ≤ M)
-    (hMN : (M : ℝ) < (GenContFract.of γ).dens (N + 1)) {aL : ℝ} (ha0 : (⌊γ⌋ : ℝ) ≤ aL)
-    (ha : ∀ j ≤ N, ∀ b : ℝ, (GenContFract.of γ).partDens.get? j = some b → b ≤ aL)
-    {x y : ℤ} (hx : 0 < x) (hxM : x < M) :
-    1 / ((aL + 2) * x) < |x * γ - y|
 
 end
 

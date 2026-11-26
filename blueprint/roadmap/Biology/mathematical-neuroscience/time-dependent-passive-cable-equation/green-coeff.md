@@ -11,4 +11,4 @@ coefficients of a unit point charge at `x₀` on the sealed cable `[0, L]`: the 
 coefficient is `0` when `L = 0`, and for every `L` it is even and `2L`-periodic in `x₀`
 ([even](green-coeff-neg-source.md), [periodic](green-coeff-add-two-mul-source.md)), so a source
 outside `[0, L]` has the coefficients of its image inside. The coefficients are bounded by `2 / |L|`
-([bound](abs-green-coeff-le.md)); for `L ≠ 0` the series `∑_n |g_n|` diverges.
+([bound](abs-green-coeff-le.md)).

@@ -14,9 +14,11 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
+public import MathlibExt.NumberTheory.NegRFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
 public import MathlibExt.NumberTheory.RFibonacciPolynomialSum
 public import MathlibExt.NumberTheory.RLucasPolynomial
+public import MathlibExt.NumberTheory.RLucasPolynomialAlternatingSum
 
 namespace MetaMathlibExt
 
@@ -528,29 +530,6 @@ public theorem_wanted sum_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : 
               m ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
         / (1 - m * x - m ^ (r + 1) * y) - 1
 
-/-- **Alternating sum of $r$-Lucas polynomials.** Let $K$ be a field, let $r \ge 1$ and $s$ be
-natural numbers, let $x, y \in K$ with $1 + x + (-1)^r y \ne 0$, and write $V_j$ for the
-$r$-Lucas polynomial of type $s$, $V_j = V^{(r,s)}_j(x, y)$. Then for every natural number
-$n \ge r - 1$,
-$$
-\sum_{j=1}^{n} (-1)^j V_j =
-\frac{1 - (-1)^r s y + (-1)^n V_{n+1} + (-1)^r y \sum_{j=1}^{r} (-1)^{n-r+j} V_{n-r+j}}
-{1 + x + (-1)^r y} - 1.
-$$
-
-For $n < r - 1$ the right side involves $V$ at negative indices.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Corollary 5 (`integers-2025-A38-cor-5`). -/
-public theorem_wanted sum_neg_one_pow_mul_rLucasPolynomial {K : Type*} [Field K] {r n : ℕ}
-    (hr : 1 ≤ r) (hn : r ≤ n + 1) (s : ℕ) (x y : K) (hP : 1 + x + (-1) ^ r * y ≠ 0) :
-    ∑ j ∈ Finset.Icc 1 n, (-1) ^ j * rLucasPolynomial r s x y j
-      = (1 - (-1) ^ r * s * y + (-1) ^ n * rLucasPolynomial r s x y (n + 1)
-          + (-1) ^ r * y * ∑ j ∈ Finset.Icc 1 r,
-              (-1) ^ (n + j - r) * rLucasPolynomial r s x y (n + j - r))
-        / (1 + x + (-1) ^ r * y) - 1
-
 /-- **Companion sequence of the $(-r)$-Fibonacci polynomials.** Let $A$ be a commutative ring,
 $r$ a natural number, $x \in A$ and $y$ a unit of $A$. The companion sequence
 $V^{(-r)}_n(x, y) \in A$, $n \ge 0$, is defined by $V^{(-r)}_0 = r + 1$ and, if $r \ge 1$, by
@@ -623,23 +602,6 @@ public theorem negRLucas_succ_of_le {A : Type*} [CommRing A] {r n : ℕ} (x : A)
       = ↑y⁻¹ * negRLucas r x y (n - r + 1) - ↑y⁻¹ * x * negRLucas r x y (n - r) := by
   rw [negRLucas]
   simp [show r ≠ 0 by omega, show ¬n + 1 < r by omega, show n + 1 ≠ r by omega]
-
-/-- **Explicit sum for the (-r)-Fibonacci polynomials.** Let $A$ be a commutative ring,
-$r \ge 2$, $x \in A$ and $y$ a unit of $A$, and write $U_n = U^{(-r)}_n(x, y)$. For every
-$n \ge 0$,
-$$U_{n+1} = \sum_{k=0}^{\lfloor n/r \rfloor} \binom{k}{n - rk} y^{-k} (-x)^{n-rk},$$
-where $\binom{a}{b} = 0$ for $b > a$, so the terms with $(r+1) k < n$ vanish.
-
-The paper states $n \ge 1$ and $x$ a unit; the identity holds for $n = 0$ and every $x$.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 6 (`integers-2025-A38-thm-6`). -/
-public theorem_wanted negRFibonacci_succ_eq_sum {A : Type*} [CommRing A] {r : ℕ}
-    (hr : 2 ≤ r) (x : A) (y : Aˣ) (n : ℕ) :
-    negRFibonacci r x y (n + 1)
-      = ∑ k ∈ Finset.range (n / r + 1),
-          ((k.choose (n - r * k) : ℕ) : A) * (↑y⁻¹ : A) ^ k * (-x) ^ (n - r * k)
 
 /-- **The companion sequence in terms of the $(-r)$-Fibonacci polynomials.** Let $A$ be a
 commutative ring, $r \ge 2$ a natural number, $x \in A$ and $y$ a unit of $A$, and let

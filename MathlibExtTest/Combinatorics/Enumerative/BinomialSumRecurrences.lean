@@ -63,6 +63,46 @@ example (n : ℕ) (hn : 4 < n) :
     interval_cases n <;> decide
   exact linearRecurrence_of_finite_window x A a 2 3 4 hA (by decide) ha n (by omega)
 
+-- For `α = 2`, `γ = 1` and `p = 1`, the selected class changes with `n` modulo 3.
+private def shiftingStepSum (n : ℕ) : ℤ :=
+  ∑ m ∈ (Finset.range (2 * n + 1)).filter (fun m => m % 3 = (1 * n + 1) % 3),
+    ((2 * n).choose m : ℤ)
+
+-- Check the order-two recurrence with a negative coefficient only on `2 ≤ n ≤ 10`.
+-- The conclusion includes indices strictly beyond this window.
+example (n : ℕ) (hn : 2 ≤ n) :
+    shiftingStepSum n = 5 * shiftingStepSum (n - 1) - 4 * shiftingStepSum (n - 2) := by
+  let δ : ℕ → ℤ := fun i ↦ if i = 1 then 5 else -4
+  have hsum (j : ℕ) :
+      (∑ i ∈ Finset.Icc 1 2, δ i * shiftingStepSum (j - i)) =
+        5 * shiftingStepSum (j - 1) - 4 * shiftingStepSum (j - 2) := by
+    rw [show Finset.Icc 1 2 = {1, 2} by decide]
+    simp [δ, Finset.sum_insert, sub_eq_add_neg, neg_mul]
+  refine (binomialStepSum_recurrence_of_window 2 3 1 1 2 (by decide) (by decide) (by decide)
+    (by decide) δ ?_ n hn).trans (hsum n)
+  intro j hj hcut
+  change shiftingStepSum j = ∑ i ∈ Finset.Icc 1 2, δ i * shiftingStepSum (j - i)
+  rw [hsum]
+  interval_cases j <;> decide
+
+-- At order zero, a zero window starting at `0` is the entire hypothesis, regardless of `δ`.
+example (δ : ℕ → ℤ) (hz : ∀ j ≤ 8, shiftingStepSum j = 0) (n : ℕ) : shiftingStepSum n = 0 := by
+  have h := binomialStepSum_recurrence_of_window 2 3 1 1 0 (by decide) (by decide) (by decide)
+    (by decide) δ (fun j _ hj ↦ by simpa [shiftingStepSum] using hz j hj) n (Nat.zero_le _)
+  simpa [shiftingStepSum] using h
+
+-- Starting one row down gives a nonzero odd-residue sum at time zero. The selected
+-- parity alternates, and the four checks at times 1 through 4 imply the formula for all n ≥ 1.
+example (n : ℕ) (hn : 1 ≤ n) :
+    let c : ℕ → ℤ := fun j =>
+      ∑ m ∈ (Finset.range (2 * j + 1 + 1)).filter (fun m => m % 2 = (3 * j + 1) % 2),
+        ((2 * j + 1).choose m : ℤ)
+    c n = 4 * c (n - 1) := by
+  intro c
+  have h := shiftedBinomialStepSum_recurrence_of_window 2 1 2 3 1 1 (by decide) (by decide)
+    (by decide) (by decide) (fun _ ↦ 4) (by intro j hj hcut; interval_cases j <;> decide) n hn
+  simpa [c] using h
+
 open PowerSeries
 
 local notation "Xq" => (X : PowerSeries ℚ)

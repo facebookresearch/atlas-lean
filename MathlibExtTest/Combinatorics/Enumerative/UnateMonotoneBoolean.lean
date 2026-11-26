@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Set.Card
 import MathlibExt.Combinatorics.Enumerative.UnateMonotoneBoolean
 
 open MetaMathlibExt
@@ -116,3 +117,98 @@ example (n : ℕ) :
         - boolFunClassCount IsBoolFunVarPermEquiv (fun _ : (Fin n → Bool) → Bool => True) := by
   simpa using
     boolFunClassCount_varPerm_nondegenerate_eq_sub (fun _ _ => True) (fun _ _ _ _ => Iff.rfl) n
+
+namespace MetaMathlibExt.boolFunClassCount_varPerm_unate_le
+
+-- At arity zero or one, every permutation class is a singleton.
+private theorem classCount_subsingleton {n : ℕ} [Subsingleton (Fin n)]
+    (P : ((Fin n → Bool) → Bool) → Prop) :
+    boolFunClassCount IsBoolFunVarPermEquiv P = Nat.card {f // P f} := by
+  have hsingle (f) (hf : P f) : {g | P g ∧ IsBoolFunVarPermEquiv f g} = {f} := by
+    ext g
+    constructor
+    · rintro ⟨_, σ, hσ⟩
+      simpa [Subsingleton.elim σ 1] using funext hσ
+    · rintro (rfl : g = f)
+      exact ⟨hf, isBoolFunVarPermEquiv_refl _⟩
+  have hclasses : {S | ∃ f, P f ∧ S = {g | P g ∧ IsBoolFunVarPermEquiv f g}} =
+      singleton '' {f | P f} := by
+    ext S
+    exact exists_congr fun f => and_congr_right fun hf => by rw [hsingle f hf, eq_comm]
+  exact (congrArg Set.ncard hclasses).trans (Set.ncard_image_of_injective _ Set.singleton_injective)
+
+-- At arity zero, both constant functions contribute to the sum.
+example : boolFunClassCount (n := 0) IsBoolFunVarPermEquiv (fun _ => True) = 2 := by
+  rw [boolFunClassCount_varPerm_eq_sum_nondegenerate (fun _ _ => True)
+    (fun _ _ _ _ => Iff.rfl) 0, Finset.sum_range_one, classCount_subsingleton]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable the sum has separate zero- and one-variable contributions, even when
+-- restricting to functions that vanish at the all-false input.
+example :
+    boolFunClassCount (n := 1) IsBoolFunVarPermEquiv (fun f => f (fun _ => false) = false) =
+      boolFunClassCount (n := 0) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ f (fun _ => false) = false) +
+      boolFunClassCount (n := 1) IsBoolFunVarPermEquiv
+        (fun f => IsNondegenerateBoolFun f ∧ f (fun _ => false) = false) := by
+  rw [boolFunClassCount_varPerm_eq_sum_nondegenerate (fun _ f => f (fun _ => false) = false)
+    (fun _ _ _ _ => Iff.rfl) 1, Finset.sum_range_succ, Finset.sum_range_one]
+
+-- At arity zero, both constants contribute non-degenerate classes and the factor is one.
+example : boolFunClassCount (n := 0) IsBoolFunVarPermEquiv
+    (fun f => IsNondegenerateBoolFun f ∧ IsUnateBoolFun f) = 2 := by
+  rw [classCount_subsingleton]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn IsUnateBoolFun
+    IsBoolFunIncreasingIn IsBoolFunDecreasingIn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable the bound for balanced functions is sharp:
+-- the identity is monotone, and both the identity and its negation are unate.
+example : boolFunClassCount (n := 1) IsBoolFunVarPermEquiv
+    (fun f => IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2) = 2 := by
+  apply Nat.le_antisymm
+  · have h := (boolFunClassCount_varPerm_unate_le 1).2.2.2
+    refine h.trans ?_
+    rw [classCount_subsingleton]
+    rw [Nat.card_eq_fintype_card]
+    decide
+  · rw [classCount_subsingleton]
+    let literal (b : Bool) : {f : (Fin 1 → Bool) → Bool //
+        IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2} :=
+      ⟨fun x => xor (x 0) b, by
+        unfold IsUnateBoolFun IsBoolFunIncreasingIn IsBoolFunDecreasingIn
+        cases b <;> decide⟩
+    calc
+      2 = Nat.card Bool := by simp [Nat.card_eq_fintype_card]
+      _ ≤ _ := Nat.card_le_card_of_injective literal fun b c h => by
+        simpa [literal] using congrArg (fun f => f.val (fun _ => false)) h
+
+-- Flipping either one of the two inputs of AND gives distinct functions in the same class.
+example :
+    let f := fun x : Fin 2 → Bool => (!x 0) && x 1
+    let g := fun x : Fin 2 → Bool => x 0 && (!x 1)
+    f ≠ g ∧ IsBoolFunVarPermEquiv f g := by
+  dsimp only
+  constructor
+  · decide
+  · exact ⟨Equiv.swap 0 1, by decide⟩
+
+end MetaMathlibExt.boolFunClassCount_varPerm_unate_le
+
+-- With no variables, both constant functions are non-degenerate.
+example :
+    Nat.card {f : (Fin 0 → Bool) → Bool // IsNondegenerateBoolFun f ∧ IsUnateBoolFun f} = 2 := by
+  rw [(card_unate_boolFun_relations 0).1, pow_zero, one_mul]
+  unfold IsNondegenerateBoolFun IsBoolFunNondegenerateOn
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- On one variable, the identity is the only balanced monotone function.
+example : Nat.card {f : (Fin 1 → Bool) → Bool //
+    IsUnateBoolFun f ∧ 2 * boolFunWeight f = 2 ^ 1} ≤ 2 := by
+  refine (card_unate_boolFun_relations 1).2.2.2.trans ?_
+  rw [Nat.card_eq_fintype_card]
+  decide

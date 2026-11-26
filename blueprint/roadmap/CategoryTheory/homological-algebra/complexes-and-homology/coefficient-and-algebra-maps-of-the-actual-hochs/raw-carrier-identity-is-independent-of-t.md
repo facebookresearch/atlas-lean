@@ -1,0 +1,3 @@
+# Raw-carrier identity is independent of the canonical lift...
+
+Raw-carrier identity is independent of the canonical lift height.
