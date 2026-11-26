@@ -242,29 +242,6 @@ end CaseI
 
 namespace MayAssume
 
-theorem coprime {a b c : ℤ} {n : ℕ} (H : a ^ n + b ^ n = c ^ n) (hprod : a * b * c ≠ 0) :
-    letI d := ({a, b, c} : Finset ℤ).gcd id
-    (a / d) ^ n + (b / d) ^ n = (c / d) ^ n ∧
-      ({a / d, b / d, c / d} : Finset ℤ).gcd id = 1 ∧ a / d * (b / d) * (c / d) ≠ 0 := by
-  have ha : a ≠ 0 := by grind
-  let s : Finset ℤ := {a, b, c}
-  set d : ℤ := s.gcd id
-  have hadiv : d ∣ a := gcd_dvd (by grind)
-  have hbdiv : d ∣ b := gcd_dvd (by grind)
-  have hcdiv : d ∣ c := gcd_dvd (by grind)
-  have hdzero : d ≠ 0 := fun hdzero ↦ by grind [Finset.gcd_eq_zero_iff.1 hdzero a (by grind)]
-  have hdp : d ^ n ≠ 0 := fun hdn => hdzero (eq_zero_of_pow_eq_zero hdn)
-  refine ⟨?_, ?_, fun habs => ?_⟩
-  · obtain ⟨na, hna⟩ := hadiv; obtain ⟨nb, hnb⟩ := hbdiv; obtain ⟨nc, hnc⟩ := hcdiv
-    rwa [← mul_left_inj' hdp, add_mul, ← mul_pow, ← mul_pow, ← mul_pow, hna, hnb, hnc,
-      Int.mul_ediv_cancel_left _ hdzero, Int.mul_ediv_cancel_left _ hdzero,
-      Int.mul_ediv_cancel_left _ hdzero, mul_comm, ← hna, mul_comm, ← hnb, mul_comm, ← hnc]
-  · simpa [gcd_eq_gcd_image, d] using
-      Finset.gcd_div_id_eq_one (show a ∈ ({a, b, c} : Finset ℤ) by simp) ha
-  · simp only [mul_eq_zero] at habs
-    rcases habs with ((Ha | Hb) | Hc) <;>
-    grind [Int.eq_zero_of_ediv_eq_zero]
-
 theorem p_dvd_c_of_ab_of_anegc {p : ℕ} {a b c : ℤ} (hpri : p.Prime)
     (hp : p ≠ 3) (h : a ^ p + b ^ p = c ^ p) (hab : a ≡ b [ZMOD p])
     (hbc : b ≡ -c [ZMOD p]) : ↑p ∣ c := by
@@ -1072,11 +1049,12 @@ def SlightlyEasier : Prop :=
     a ^ p + b ^ p ≠ c ^ p
 
 def Statement : Prop :=
-  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p → ¬↑p ∣ a * b * c →
+  ∀ ⦃a b c : ℤ⦄ {p : ℕ} [Fact p.Prime], IsRegularPrime p →
+    ({a, b, c} : Finset ℤ).gcd id = 1 → ¬↑p ∣ a * b * c →
     a ^ p + b ^ p ≠ c ^ p
 
 theorem may_assume : SlightlyEasier → Statement := by
-  intro Heasy a b c p hpri hreg hI H
+  intro Heasy a b c p hpri hreg hgcd hI H
   have hodd : p ≠ 2 := by
     rintro rfl
     refine hI <| Dvd.dvd.mul_left ?_ _
@@ -1096,20 +1074,7 @@ theorem may_assume : SlightlyEasier → Statement := by
         (fun ha ↦ hprod <| by simp [ha]) (fun hb ↦ hprod <| by simp [hb])
         (fun hc ↦ hprod <| by simp [hc]) H
     · exact Nat.not_prime_mul one_lt_two.ne' one_lt_two.ne' hpri.out
-  let d := ({a, b, c} : Finset ℤ).gcd id
-  have hdiv : ¬↑p ∣ a / d * (b / d) * (c / d) := by
-    contrapose! hI with hdiv
-    have hadiv : d ∣ a := gcd_dvd (by simp)
-    have hbdiv : d ∣ b := gcd_dvd (by simp)
-    have hcdiv : d ∣ c := gcd_dvd (by simp)
-    rw [← Int.ediv_mul_cancel hadiv, ← Int.ediv_mul_cancel hbdiv, ← Int.ediv_mul_cancel hcdiv]
-    have heq : a / d * d * (b / d * d) * (c / d * d) =
-        a / d * (b / d) * (c / d) * (d * d * d) := by ring
-    rw [heq]
-    exact hdiv.mul_right _
-  rcases MayAssume.coprime H hprod with ⟨Hxyz, hunit, hprodxyx⟩
-  obtain ⟨_, _, _, H1, H2, H3, _, H5⟩ :=
-    MayAssume.a_not_cong_b hpri.out hp5 hprodxyx Hxyz hunit hdiv
+  obtain ⟨_, _, _, H1, H2, H3, _, H5⟩ := MayAssume.a_not_cong_b hpri.out hp5 hprod H hgcd hI
   exact Heasy hreg hp5 H2 H3 H5 H1
 
 end CaseI
@@ -1573,64 +1538,6 @@ variable {k : Type*} [Field k] (hp : Nat.Prime p)
 
 open Module Finset
 open CyclotomicIntegers (zeta)
-
-private lemma Pi.update_eq_sub_add_single {ι M : Type*} [DecidableEq ι] [AddCommGroup M]
-    (f : ι → M) (i : ι) (m : M) :
-    Function.update f i m = f - Pi.single i (f i) + Pi.single i m := by
-  ext j
-  by_cases h : j = i
-  · subst h; simp
-  · simp [Function.update_of_ne h, Pi.single_eq_of_ne h]
-
-namespace LinearIndependent
-open Finsupp in
-private lemma FltRegular.LinearIndependent.update {ι R M : Type*} [DecidableEq ι] [CommRing R]
-    [AddCommGroup M] [Module R M]
-    {f : ι → M} (hf : LinearIndependent R f) (i : ι) (m : M)
-    (hg : ∃ r ∈ nonZeroDivisors R, ∃ l : ι →₀ R,
-      l i ∈ nonZeroDivisors R ∧ r • m = linearCombination R f l) :
-    LinearIndependent R (Function.update f i m) := by
-  rw [linearIndependent_iff] at hf ⊢
-  obtain ⟨r, hr, l, hl, hg⟩ := hg
-  intros l' hl'
-  apply_fun (r • ·) at hl'
-  simp_rw [Pi.update_eq_sub_add_single, ← bilinearCombination_apply _ (S := R), map_add, map_sub,
-    bilinearCombination_apply, LinearMap.add_apply, LinearMap.sub_apply,
-    linearCombination_single_index, smul_add, smul_sub, smul_zero, smul_comm r (l' i) m,
-    hg, ← LinearMap.map_smul, smul_smul, ← linearCombination_single, ← map_sub, ← map_add] at hl'
-  replace hl' : ∀ j, (r * l' j - (single i (r * l' i)) j) + l' i * l j = 0 :=
-    fun j ↦ DFunLike.congr_fun (hf _ hl') j
-  grind [mem_nonZeroDivisors_iff]
-
-end LinearIndependent
-private theorem Algebra.norm_zpow {K' L' : Type*} [Field K'] [Field L'] [Algebra K' L']
-    [Module.Finite K' L'] (x : L') (n : ℤ) :
-    _root_.Algebra.norm K' (x ^ n) = _root_.Algebra.norm K' x ^ n :=
-  map_zpow' _ (fun y ↦ _root_.Algebra.norm_inv y) x n
-
-private lemma IsPrimitiveRoot.coe_coe_iff {F : Type*} [Field F] [NumberField F]
-    {ν : (𝓞 F)ˣ} {n : ℕ} : IsPrimitiveRoot (ν : F) n ↔ IsPrimitiveRoot ν n :=
-  Iff.trans
-    (_root_.IsPrimitiveRoot.map_iff_of_injective (f := algebraMap (𝓞 F) F)
-      (ζ := (ν : 𝓞 F)) (NumberField.RingOfIntegers.coe_injective))
-    _root_.IsPrimitiveRoot.coe_units_iff
-
-set_option backward.isDefEq.respectTransparency false in
-
-private lemma NumberField.Units.finrank_eq (F : Type*) [Field F] [NumberField F] :
-    finrank ℤ (Additive (𝓞 F)ˣ) = _root_.NumberField.Units.rank F := by
-  have h : AddSubgroup.toIntSubmodule
-      (Subgroup.toAddSubgroup (_root_.NumberField.Units.torsion F)) ≤
-      Submodule.torsion ℤ (Additive (𝓞 F)ˣ) := by
-    intro x hx
-    replace hx : IsOfFinOrder (Additive.toMul x) := hx
-    obtain ⟨n, hn, hxn⟩ := isOfFinOrder_iff_pow_eq_one.mp hx
-    refine ⟨⟨(n : ℤ), mem_nonZeroDivisors_of_ne_zero (Int.natCast_ne_zero.mpr hn.ne')⟩, ?_⟩
-    show (n : ℤ) • x = 0
-    rw [natCast_zsmul]
-    exact Additive.toMul.injective (by simpa using hxn)
-  rw [← _root_.NumberField.Units.rank_modTorsion F]
-  exact (congr_arg Cardinal.toNat (rank_quotient_eq_of_le_torsion h)).symm
 
 section thm91
 variable (G : Type*) [AddCommGroup G]
@@ -2585,16 +2492,6 @@ open Polynomial IsCyclotomicExtension.Rat
 
 open scoped nonZeroDivisors
 
-lemma associated_zeta_sub_one_pow_prime' [IsCyclotomicExtension {p} ℚ K] :
-    Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) (p : 𝓞 K) := by
-  have hζ' : IsPrimitiveRoot ζ (p ^ (0 + 1)) := by rwa [zero_add, pow_one]
-  haveI : IsCyclotomicExtension {p ^ (0 + 1)} ℚ K := by rwa [zero_add, pow_one]
-  have h := IsCyclotomicExtension.Rat.map_eq_span_zeta_sub_one_pow p 0 hζ'
-  rw [IsCyclotomicExtension.Rat.finrank (p ^ (0 + 1)) K,
-    Nat.totient_prime_pow_succ hpri.out, pow_zero, one_mul, Ideal.map_span,
-    Set.image_singleton, algebraMap_int_eq, map_natCast, Ideal.span_singleton_pow] at h
-  exact Ideal.span_singleton_eq_span_singleton.mp h.symm
-
 include hcong hp in
 lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     C ((hζ.toInteger - 1 : 𝓞 K) ^ p) ∣
@@ -2603,7 +2500,7 @@ lemma zeta_sub_one_pow_dvd_poly [IsCyclotomicExtension {p} ℚ K] :
     sub_self, map_one, zero_add]
   refine dvd_C_mul_X_sub_one_pow_add_one hpri.out hp _ _ dvd_rfl ?_
   have hassoc : Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) p :=
-    associated_zeta_sub_one_pow_prime' hζ
+    IsCyclotomicExtension.Rat.associated_zeta_sub_one_pow_prime _ hζ
   convert mul_dvd_mul_right hassoc.dvd _
   rw [← pow_succ, tsub_add_cancel_of_le (Nat.Prime.one_lt hpri.out).le]
 
@@ -2771,23 +2668,6 @@ theorem map_poly_eq_prod {L : Type*} [Field L] [Algebra K L] (α : L)
   refine Finset.prod_congr rfl fun i _ ↦ ?_
   rw [Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C]
   congr 1
-
-lemma isIntegralClosure_of_isScalarTower (R A K L B) [CommRing R] [CommRing A] [CommRing K]
-    [CommRing L] [CommRing B] [Algebra R K] [Algebra A K] [Algebra R L] [Algebra B L]
-    [Algebra A L] [Algebra R A] [IsScalarTower R A K] [IsScalarTower R A L]
-    [IsIntegralClosure A R K] [IsIntegralClosure B R L] :
-    IsIntegralClosure B A L where
-  algebraMap_injective := IsIntegralClosure.algebraMap_injective B R L
-  isIntegral_iff := fun {x} ↦ by
-    refine Iff.trans ?_ (IsIntegralClosure.isIntegral_iff (R := R) (A := B) (B := L))
-    have := (IsIntegralClosure.isIntegral_algebra R (A := A) K)
-    exact ⟨isIntegral_trans x, IsIntegral.tower_top⟩
-
-scoped instance {K L} [Field K] [Field L] [Algebra K L] :
-    IsIntegralClosure (𝓞 L) (𝓞 K) L := isIntegralClosure_of_isScalarTower ℤ _ K _ _
-
-scoped instance {K L} [Field K] [Field L] [Algebra K L] :
-    IsScalarTower (𝓞 K) (𝓞 L) L := IsScalarTower.of_algebraMap_eq (fun _ ↦ rfl)
 
 include hu in
 lemma minpoly_polyRoot'' {L : Type*} [Field L] [Algebra K L] (α : L)
@@ -2966,23 +2846,6 @@ section Feeders
 variable {K : Type*} {p : ℕ} [hpri : Fact p.Prime] [Field K] [CharZero K]
 variable {ζ : K} (hζ : IsPrimitiveRoot ζ p)
 
-theorem associated_zeta_sub_one_pow_prime [IsCyclotomicExtension {p} ℚ K]
-    (hζ : IsPrimitiveRoot ζ p) :
-    Associated ((hζ.toInteger - 1 : 𝓞 K) ^ (p - 1)) (p : 𝓞 K) := by
-  letI := IsCyclotomicExtension.numberField {p} ℚ K
-  haveI : IsCyclotomicExtension {p ^ (0 + 1)} ℚ K := by
-    simpa using (inferInstance : IsCyclotomicExtension {p} ℚ K)
-  have hζ' : IsPrimitiveRoot ζ (p ^ (0 + 1)) := by simpa using hζ
-  have key := IsCyclotomicExtension.Rat.map_eq_span_zeta_sub_one_pow p 0 hζ'
-  have hrank : Module.finrank ℚ K = p - 1 := by
-    rw [IsCyclotomicExtension.finrank K
-      (Polynomial.cyclotomic.irreducible_rat (NeZero.pos p)),
-      Nat.totient_prime hpri.out]
-  have htoInt : hζ'.toInteger = hζ.toInteger := rfl
-  rw [hrank, htoInt, Ideal.map_span, Set.image_singleton, map_natCast,
-    Ideal.span_singleton_pow] at key
-  exact (Ideal.span_singleton_eq_span_singleton.mp key.symm)
-
 lemma quotient_zeta_sub_one_comp_aut [IsCyclotomicExtension {p} ℚ K] (σ : 𝓞 K →+* 𝓞 K) :
     (Ideal.Quotient.mk (Ideal.span {(hζ.toInteger : 𝓞 K) - 1})).comp σ = Ideal.Quotient.mk _ := by
   letI := IsCyclotomicExtension.numberField {p} ℚ K
@@ -3051,7 +2914,7 @@ theorem zeta_sub_one_pow_dvd_norm_sub_pow [NumberField K]
     (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (Algebra.norm ℤ (1 + p • x) : 𝓞 K) - 1 + p • x := by
   obtain ⟨r, hr⟩ := Algebra.norm_one_add_smul (p : ℤ) x
   obtain ⟨s, hs⟩ := zeta_sub_one_dvd_trace_sub_smul hζ x
-  obtain ⟨t, ht⟩ := (associated_zeta_sub_one_pow_prime hζ).dvd
+  obtain ⟨t, ht⟩ := (IsCyclotomicExtension.Rat.associated_zeta_sub_one_pow_prime _ hζ).dvd
   rw [sub_eq_iff_eq_add] at hs
   simp only [zsmul_eq_mul, Int.cast_natCast] at hr
   simp only [nsmul_eq_mul, hr, Int.cast_add, Int.cast_one, Int.cast_mul, hs, NeZero.pos p,
@@ -3120,7 +2983,9 @@ theorem eq_pow_prime_of_unit_of_congruent (u : (𝓞 K)ˣ)
       replace h := Int.cast_dvd_cast (α := 𝓞 K) _ _ h
       simp only [Int.cast_natCast, ← dvd_iff_dvd_of_dvd_sub hn] at h
       refine hζ'.zeta_sub_one_prime'.not_unit ((isUnit_pow_iff ?_).mp
-        (isUnit_of_dvd_unit ((associated_zeta_sub_one_pow_prime hζ').dvd.trans h) u.isUnit))
+        (isUnit_of_dvd_unit
+          ((IsCyclotomicExtension.Rat.associated_zeta_sub_one_pow_prime _ hζ').dvd.trans h)
+          u.isUnit))
       simpa only [ne_eq, tsub_eq_zero_iff_le, not_le] using hpri.out.one_lt
     replace hn' := Int.cast_dvd_cast (α := 𝓞 K) _ _ hn'
     simp only [Int.cast_natCast, Int.cast_sub, Int.cast_pow, Int.cast_one] at hn'
@@ -3184,43 +3049,11 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
 
-open UniqueFactorizationMonoid in
-
-theorem pow_dvd_pow_iff_dvd {α : Type*} [CommMonoidWithZero α] [IsCancelMulZero α]
-    [NormalizationMonoid α] [UniqueFactorizationMonoid α] {n : ℕ} (hn : n ≠ 0) {a b : α} :
-    a ^ n ∣ b ^ n ↔ a ∣ b := by
-  refine ⟨fun h ↦ ?_, fun h ↦ pow_dvd_pow_of_dvd h n⟩
-  by_cases hb : b = 0
-  · simp [hb]
-  by_cases ha : a = 0
-  · rw [ha, zero_pow hn, zero_dvd_iff, pow_eq_zero_iff hn] at h
-    exact absurd h hb
-  classical
-  rw [dvd_iff_normalizedFactors_le_normalizedFactors ha hb]
-  rw [dvd_iff_normalizedFactors_le_normalizedFactors (pow_ne_zero n ha) (pow_ne_zero n hb),
-    normalizedFactors_pow, normalizedFactors_pow] at h
-  rw [Multiset.le_iff_count] at h ⊢
-  intro q
-  have := h q
-  simp only [Multiset.count_nsmul] at this
-  exact Nat.le_of_mul_le_mul_left this (Nat.pos_of_ne_zero hn)
-
 theorem eq_one_mod_one_sub_IS {A : Type*} [CommRing A] {t : A} :
     algebraMap A (A ⧸ Ideal.span ({t - 1} : Set A)) t = 1 := by
   rw [← map_one <| algebraMap A <| A ⧸ Ideal.span ({t - 1} : Set A), ← sub_eq_zero, ← map_sub,
     Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem]
   exact Ideal.subset_span (Set.mem_singleton _)
-
-lemma isCoprime_of_not_zeta_sub_one_dvd {K : Type} {p : ℕ} [NeZero p] [Field K]
-    [NumberField K] [hpri : Fact p.Prime] [IsCyclotomicExtension {p} ℚ K] {ζ : K}
-    (hζ : IsPrimitiveRoot ζ p) {x : 𝓞 K}
-    (hx : ¬ hζ.toInteger - 1 ∣ x) : IsCoprime (p : 𝓞 K) x := by
-  rwa [← Ideal.isCoprime_span_singleton_iff, ← Ideal.span_singleton_eq_span_singleton.mpr
-    (associated_zeta_sub_one_pow_prime hζ), ← Ideal.span_singleton_pow,
-    IsCoprime.pow_left_iff (by have := hpri.out.one_lt; omega), Ideal.isCoprime_iff_gcd,
-    (Ideal.prime_span_singleton_iff.mpr
-      hζ.zeta_sub_one_prime').irreducible.gcd_eq_one_iff, Ideal.dvd_span_singleton,
-    Ideal.mem_span_singleton]
 
 namespace CaseII
 
@@ -3433,7 +3266,7 @@ include hζ m hy e in
 lemma m_dvd_z : 𝔪 ∣ 𝔷 := by
   rw [← one_mul 𝔷, ← gcd_m_p_pow_eq_one hζ hy (x := x) (m := m)]
   apply dvd_gcd_mul_of_dvd_mul
-  rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero,
+  rw [← UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero,
     ← span_pow_add_pow_eq hζ e, Ideal.dvd_span_singleton]
   exact add_mem (Ideal.pow_mem_pow (Ideal.mem_sup_left (Ideal.mem_span_singleton_self x)) p)
     (Ideal.pow_mem_pow (Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)) p)
@@ -3539,7 +3372,7 @@ lemma p_pow_dvd_c_eta_zero : 𝔭 ^ (m * p) ∣ 𝔠 η₀ := by
   rw [pow_mul]
 
 lemma p_pow_dvd_a_eta_zero : 𝔭 ^ m ∣ 𝔞 η₀ := by
-  rw [← pow_dvd_pow_iff_dvd hpri.out.ne_zero,
+  rw [← UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero,
     root_div_zeta_sub_one_dvd_gcd_spec, ← pow_mul]
   exact p_pow_dvd_c_eta_zero hp hζ e hy
 
@@ -3559,7 +3392,7 @@ lemma not_p_div_a_zero : ¬ 𝔭 ∣ 𝔞₀ := by
   rw [a_eta_zero_dvd_p_pow_spec, root_div_zeta_sub_one_dvd_gcd_spec] at this
   have := this.trans (Finset.dvd_prod_of_mem 𝔠 (Finset.mem_attach _ η₀))
   rw [prod_c, mul_pow, mul_pow, mul_comm, mul_dvd_mul_iff_right,
-    pow_dvd_pow_iff_dvd hpri.out.ne_zero] at this
+    UniqueFactorizationMonoid.pow_dvd_pow_iff_dvd hpri.out.ne_zero] at this
   · apply hz
     rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton, z_div_m_spec hζ e hy]
     exact this.trans (dvd_mul_left _ _)
@@ -3583,7 +3416,8 @@ include hp in
 lemma exists_solution'_aux {ε₁ ε₂ : (𝓞 K)ˣ} (hx : ¬ π ∣ x)
     (h : (p : 𝓞 K) ∣ ε₁ * x ^ p + ε₂ * y ^ p) :
     ∃ a : 𝓞 K, ↑p ∣ ↑(ε₁ / ε₂) - a ^ p := by
-  obtain ⟨a, b, e⟩ : IsCoprime ↑p x := isCoprime_of_not_zeta_sub_one_dvd hζ hx
+  obtain ⟨a, b, e⟩ : IsCoprime ↑p x :=
+    IsCyclotomicExtension.Rat.isCoprime_of_not_zeta_sub_one_dvd _ hζ hx
   have : (p : 𝓞 K) ∣ b * x - 1 := by
     use -a
     rw [← e]
@@ -3789,12 +3623,12 @@ lemma exists_solution' :
     apply eq_pow_prime_of_unit_of_congruent hp hreg
     have : p - 1 ≤ m * p := (Nat.sub_le _ _).trans
       ((le_of_eq (one_mul _).symm).trans (Nat.mul_le_mul_right p (one_le_m hp hζ e hy hz)))
-    obtain ⟨u, hu⟩ := (associated_zeta_sub_one_pow_prime hζ).symm
+    obtain ⟨u, hu⟩ := (IsCyclotomicExtension.Rat.associated_zeta_sub_one_pow_prime _ hζ).symm
     rw [mul_pow, ← pow_mul, mul_comm (ε₃ : 𝓞 K), mul_assoc, ← Nat.sub_add_cancel this,
       add_comm _ (p - 1), pow_add, mul_assoc] at e'
     apply_fun Ideal.Quotient.mk (Ideal.span <| singleton (p : 𝓞 K)) at e'
     rw [map_mul, (Ideal.Quotient.eq_zero_iff_dvd _ _).mpr
-      (associated_zeta_sub_one_pow_prime hζ).symm.dvd, zero_mul,
+      (IsCyclotomicExtension.Rat.associated_zeta_sub_one_pow_prime _ hζ).symm.dvd, zero_mul,
       Ideal.Quotient.eq_zero_iff_dvd] at e'
     obtain ⟨a, ha⟩ := exists_solution'_aux hp hζ hx' e'
     obtain ⟨b, hb⟩ := exists_dvd_pow_sub_Int_pow hp a
@@ -3894,26 +3728,6 @@ lemma not_exists_solution' :
 end InductionStepInterface
 open scoped FltRegularPort.Internal.FltRegular.CyclotomicIntegers FltRegularPort.Internal.FltRegular FltRegularPort.Internal.FltRegular.KummersLemma FltRegularPort.Internal.FltRegular.CaseII
 
-private lemma zeta_sub_one_dvd_intCast_iff {K : Type} {p : ℕ} [hpri : Fact p.Prime] [Field K]
-    [NumberField K] [IsCyclotomicExtension {p} ℚ K] {ζ : K} (hζ : IsPrimitiveRoot ζ p) (n : ℤ) :
-    hζ.toInteger - 1 ∣ (n : 𝓞 K) ↔ (p : ℤ) ∣ n := by
-  have hK : IsCyclotomicExtension {p ^ (0 + 1)} ℚ K := by rwa [zero_add, pow_one]
-  have hζ1 : IsPrimitiveRoot ζ (p ^ (0 + 1)) := by rwa [zero_add, pow_one]
-  have htoInt : hζ1.toInteger = hζ.toInteger := Subtype.ext rfl
-  constructor
-  · intro h
-    have hle := IsCyclotomicExtension.Rat.liesOver_span_zeta_sub_one p 0 hζ1
-    have hmem : n ∈ Ideal.span {(p : ℤ)} := by
-      rw [hle.over, Ideal.under_def, Ideal.mem_comap, algebraMap_int_eq, Ideal.mem_span_singleton]
-      simpa [htoInt] using h
-    rwa [Ideal.mem_span_singleton] at hmem
-  · intro h
-    have hp' : hζ.toInteger - 1 ∣ (p : 𝓞 K) := by
-      have := IsCyclotomicExtension.Rat.p_mem_span_zeta_sub_one p 0 hζ1
-      rw [Ideal.mem_span_singleton, htoInt] at this
-      exact this
-    exact hp'.trans (by simpa using map_dvd (Int.castRingHom (𝓞 K)) h)
-
 set_option backward.isDefEq.respectTransparency false in
 
 lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRegularPrime p)
@@ -3922,7 +3736,8 @@ lemma not_exists_Int_solution {p : ℕ} [hpri : Fact (Nat.Prime p)] (hreg : IsRe
   haveI := CyclotomicField.isCyclotomicExtension p ℚ
   obtain ⟨ζ, hζ⟩ := IsCyclotomicExtension.exists_isPrimitiveRoot
     ℚ (B := (CyclotomicField p ℚ)) (Set.mem_singleton p) hpri.1.ne_zero
-  have := fun n ↦ zeta_sub_one_dvd_intCast_iff (K := CyclotomicField p ℚ) hζ n
+  have := fun n : ℤ ↦
+    IsCyclotomicExtension.Rat.zeta_sub_one_dvd_intCast_iff' (K := CyclotomicField p ℚ) (n := n) p hζ
   simp_rw [← this]
   rintro ⟨x, y, z, hy, hz, hz', e⟩
   refine not_exists_solution' (K := CyclotomicField p ℚ) hodd hζ ?_
@@ -3958,10 +3773,11 @@ open Int Finset
 namespace FltRegular
 
 theorem caseI {a b c : ℤ} {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p)
-    (caseI : ¬↑p ∣ a * b * c) : a ^ p + b ^ p ≠ c ^ p :=
+    (hgcd : ({a, b, c} : Finset ℤ).gcd id = 1) (caseI : ¬↑p ∣ a * b * c) :
+    a ^ p + b ^ p ≠ c ^ p :=
   CaseI.may_assume
     (fun _ _ _ _ _ hreg' hp5 hgcd hab hI => caseI_easier hreg' hp5 hgcd hab hI)
-    hreg caseI
+    hreg hgcd caseI
 
 theorem caseII {a b c : ℤ} {p : ℕ} [hpri : Fact p.Prime] (hreg : IsRegularPrime p)
     (hodd : p ≠ 2) (hprod : a * b * c ≠ 0)
@@ -3995,13 +3811,10 @@ open FltRegular in
 theorem flt_regular_port {p : ℕ} [Fact p.Prime] (hreg : IsRegularPrime p) (hodd : p ≠ 2) :
     FermatLastTheoremFor p := by
   apply fermatLastTheoremFor_iff_int.mpr
-  intro a b c ha hb hc e
-  have hprod := mul_ne_zero (mul_ne_zero ha hb) hc
-  obtain ⟨e', hgcd, hprod'⟩ := MayAssume.coprime e hprod
-  let d := ({a, b, c} : Finset ℤ).gcd id
-  by_cases case : ↑p ∣ (a / d) * (b / d) * (c / d)
-  · exact caseII hreg hodd hprod' hgcd case e'
-  · exact caseI hreg case e'
+  refine fermatLastTheoremWith_of_fermatLastTheoremWith_coprime fun a b c ha hb hc hgcd => ?_
+  by_cases case : ↑p ∣ a * b * c
+  · exact caseII hreg hodd (mul_ne_zero (mul_ne_zero ha hb) hc) hgcd case
+  · exact caseI hreg hgcd case
 
 end Port_FLT_Deep_CaseSplit_lean
 open scoped FltRegularPort.Internal.FltRegular.CyclotomicIntegers FltRegularPort.Internal.FltRegular FltRegularPort.Internal.FltRegular.KummersLemma FltRegularPort.Internal.FltRegular.CaseII
@@ -4016,9 +3829,10 @@ end Internal
 end FltRegularPort
 
 open scoped NumberField in
-/-- **Fermat's Last Theorem for a regular prime**, in the form with the
-canonical cyclotomic field `CyclotomicField p ℚ`: if `p` is coprime to the
-class number of that field and `p ≠ 2`, then `FermatLastTheoremFor p`. -/
+/-- **Fermat's Last Theorem for a regular prime.** Let `p` be an odd prime that is
+coprime to the class number of the canonical `p`-th cyclotomic field
+`CyclotomicField p ℚ`. Then `FermatLastTheoremFor p`: there are no positive integers
+`a`, `b`, `c` with `a ^ p + b ^ p = c ^ p`. -/
 public theorem flt_regular {p : ℕ} [Fact p.Prime]
     (hreg : p.Coprime (Fintype.card (ClassGroup (𝓞 (CyclotomicField p ℚ)))))
     (hodd : p ≠ 2) : FermatLastTheoremFor p :=
