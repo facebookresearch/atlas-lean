@@ -3,6 +3,7 @@
 ## Graphical Models
 
 - [Q Factor](q-factor.md)
+- [The causal effect of an intervention in a Bayesian network](do-marginal.md)
 
 ## Bayes Net
 
