@@ -1,3 +1,6 @@
-# Hom ext
+# Linear maps determine finite projective morphisms
 
-Extensionality via underlying linear maps.
+Linear maps determine finite projective morphisms.
+
+Two morphisms between finite projective module objects are equal if their underlying
+`R`-linear maps are equal.

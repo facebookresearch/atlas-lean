@@ -1,3 +1,6 @@
-# Bimodule Tensor Composite Functor map pure
+# Composite coefficient tensor map on pure triples
 
-The composite-coefficient tensor acts on the original module factor in every pure triple.
+Composite coefficient tensor map on pure triples.
+
+For a module morphism `g : M ⟶ N`, tensoring by `F ⊗_S E` sends `[[f ⊗ e] ⊗ m]` to `[[f ⊗ e] ⊗
+g m]`.

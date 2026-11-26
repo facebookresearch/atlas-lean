@@ -1,3 +1,6 @@
-# Coefficient Coordinates mk
+# Integer tensor coordinate preserves pure representatives
 
-The earned coordinate map is the identity on actual pure representatives.
+Integer tensor coordinate preserves pure representatives.
+
+The forward map of `coefficientCoordinates R M N` sends the class `TensorProduct.Balanced.mk ℤ
+R M N m n` to `coefficientMk R M N m n`.

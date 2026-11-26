@@ -1,3 +1,7 @@
-# Ext Functor
+# Ext as the right-derived right-module Hom functor
 
-ExtS(B,-) is the native right-derived Hom functor, with its right R-action.
+Ext as the right-derived right-module Hom functor.
+
+Assuming injective resolutions in `ModuleCat.{v} Sᵐᵒᵖ`, right derive the coefficient Hom
+functor in degree `n`. The result sends a right `S`-module `C` to `Ext^n_(Sᵐᵒᵖ)(B, C)` with
+its right `R`-action.

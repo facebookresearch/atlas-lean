@@ -16,12 +16,22 @@ public import Mathlib.CategoryTheory.Limits.Types.Filtered
 public import Mathlib.LinearAlgebra.Span.Defs
 
 /-!
-# Directed submodule unions as categorical colimits
+# A directed submodule supremum is its categorical union colimit
 
-The supremum submodule is the colimit of the directed system of inclusions.
-Its universal linear map comes from the filtered-colimit universal property
-on types and the stage inclusions. Scalar, carrier and index universes are
-independent.
+Let R be a ring, M an R-module and I a nonempty directed preorder.
+For a monotone family S_i⊆M, the inclusions S_i→S_j, i≤j, form
+a module diagram. Its supremum ⨆_i S_i is the directed union
+and is the colimit in the carrier world of M.
+
+A compatible family of linear maps out of the stages extends uniquely
+to the supremum, retaining its value on every represented stage
+element. The colimit also holds after forgetting the module structure.
+The scalar, carrier and index worlds u,v,w are independent, and
+the index world need not be bounded by the carrier world.
+
+A linear map f:M→N with f(S_i)⊆T_i induces the corresponding
+map on the suprema. When both families are monotone, its stage
+maps form a diagram morphism and commute with the colimit legs.
 -/
 
 @[expose] public section
@@ -36,7 +46,10 @@ namespace ModuleCat.DirectedSubmoduleColimit
 variable {R : Type u} [Ring R] {M : Type v} [AddCommGroup M] [Module R M]
   {ι : Type w} [Preorder ι]
 
-/-- The categorical directed-family diagram uses the actual submodule inclusions. -/
+/-- For a ring R, an R-module M and a monotone family
+S:I→Submodule_R(M) on a preorder I, the diagram sends i to S_i
+and i≤j to the submodule inclusion S_i→S_j.
+Its objects have the carrier world v of M. -/
 def diagram (S : ι → Submodule R M) (hS : Monotone S) : ι ⥤ ModuleCat.{v} R where
   obj i := ModuleCat.of R (S i)
   map f := ModuleCat.ofHom (Submodule.inclusion (hS (leOfHom f)))
@@ -49,7 +62,9 @@ def diagram (S : ι → Submodule R M) (hS : Monotone S) : ι ⥤ ModuleCat.{v} 
     ext x
     rfl
 
-/-- Every stage maps into the actual native supremum inside the original carrier. -/
+/-- For a monotone submodule family S_i⊆M, the inclusions
+S_i→⨆_j S_j give a cocone on its module diagram.
+Each map is the inclusion into the supremum inside M. -/
 def cocone (S : ι → Submodule R M) (hS : Monotone S) : Cocone (diagram S hS) where
   pt := ModuleCat.of R ↥(⨆ i, S i : Submodule R M)
   ι :=
@@ -59,7 +74,9 @@ def cocone (S : ι → Submodule R M) (hS : Monotone S) : Cocone (diagram S hS) 
         ext x
         rfl }
 
-/-- The cocone map is literally inclusion on underlying values. -/
+/-- For a monotone submodule family S_i⊆M and x∈S_i,
+the cocone leg to ⨆_j S_j has underlying value x in M.
+Only its submodule-membership proof changes. -/
 lemma inclusion_val (S : ι → Submodule R M) (hS : Monotone S) (i : ι) (x : S i) :
     (((cocone S hS).ι.app i).hom x).val = x.val := rfl
 
@@ -67,7 +84,11 @@ section Directed
 
 variable [Nonempty ι] [IsDirectedOrder ι]
 
-/-- Native filtered types certify the actual union point, even for a larger index universe. -/
+/-- For a monotone family S_i⊆M on a nonempty directed
+preorder I, the supremum cocone is colimiting after forgetting
+to the underlying carrier types.
+Every element of the supremum is represented at some stage,
+even when the index world exceeds the carrier world. -/
 def typesIsColimit (S : ι → Submodule R M) (hS : Monotone S) :
     IsColimit ((forget (ModuleCat.{v} R)).mapCocone (cocone S hS)) := by
   refine Types.FilteredColimit.isColimitOf'
@@ -85,19 +106,29 @@ def typesIsColimit (S : ι → Submodule R M) (hS : Monotone S) :
     exact ⟨i, 𝟙 i, congrArg
       (fun z => ((diagram S hS ⋙ forget (ModuleCat.{v} R)).map (𝟙 i)) z) he⟩
 
-/-- The universal function is the native type-colimit descent, not a new chosen engine. -/
+/-- For a monotone family S_i⊆M on a nonempty directed
+preorder and a module cocone s, the universal function
+⨆_i S_i→s.pt sends a stage representative x∈S_i to s_i(x).
+Compatibility of the cocone makes this value independent
+of the chosen stage. -/
 def descFunction (S : ι → Submodule R M) (hS : Monotone S)
     (s : Cocone (diagram S hS)) : ↥(⨆ i, S i : Submodule R M) → s.pt :=
   (typesIsColimit S hS).desc ((forget (ModuleCat.{v} R)).mapCocone s)
 
-/-- Native descent evaluates to the original cocone map on every stage. -/
+/-- For a monotone directed nonempty submodule family S_i,
+a cocone s and x∈S_i, the universal union function satisfies
+desc(inclusion_i(x))=s_i(x).
+It retains each prescribed stage value. -/
 lemma descFunction_inclusion (S : ι → Submodule R M) (hS : Monotone S)
     (s : Cocone (diagram S hS)) (i : ι) (x : S i) :
     descFunction S hS s (Submodule.inclusion (le_iSup S i) x) = (s.ι.app i).hom x :=
   congrArg (fun f => f x) ((typesIsColimit S hS).fac
     ((forget (ModuleCat.{v} R)).mapCocone s) i)
 
-/-- Actual common stages and their linear cocone maps make native descent linear. -/
+/-- For a monotone family S_i⊆M over a nonempty directed
+preorder and an R-linear cocone s, the universal map
+⨆_i S_i→s.pt is R-linear.
+Common upper stages preserve sums and scalar multiples. -/
 def descLinear (S : ι → Submodule R M) (hS : Monotone S)
     (s : Cocone (diagram S hS)) : ↥(⨆ i, S i : Submodule R M) →ₗ[R] s.pt where
   toFun := descFunction S hS s
@@ -131,7 +162,10 @@ def descLinear (S : ι → Submodule R M) (hS : Monotone S)
       _ = r • descFunction S hS s (k xi) :=
         congrArg (fun y => r • y) (descFunction_inclusion S hS s i xi).symm
 
-/-- The native supremum cocone has the actual module-category universal property. -/
+/-- For a ring R and a monotone submodule family S_i⊆M
+on a nonempty directed preorder, the inclusion cocone with
+point ⨆_i S_i is a colimit in ModuleCat^v(R).
+Its universal map is the linear descent of the stage maps. -/
 def isColimit (S : ι → Submodule R M) (hS : Monotone S) : IsColimit (cocone S hS) where
   desc s := ModuleCat.ofHom (descLinear S hS s)
   fac s i := by
@@ -148,7 +182,11 @@ def isColimit (S : ι → Submodule R M) (hS : Monotone S) : IsColimit (cocone S
     have h := congrArg (fun f : ModuleCat.of R (S i) ⟶ s.pt => f.hom xi) (hm i)
     exact h.trans (descFunction_inclusion S hS s i xi).symm
 
-/-- This particular diagram has a colimit without a universal category-size premise. -/
+/-- For a monotone submodule family S_i⊆M on a nonempty
+directed preorder I, the inclusion diagram has a colimit,
+namely its supremum submodule inside M.
+This is existence for that diagram, with independent scalar,
+index and carrier worlds. -/
 instance hasColimit (S : ι → Submodule R M) (hS : Monotone S) :
     HasColimit (diagram S hS) := ⟨_, isColimit S hS⟩
 
@@ -156,24 +194,36 @@ section Coefficients
 
 variable {N : Type v} [AddCommGroup N] [Module R N]
 
-/-- Coefficient maps restrict to stages by their actual membership preservation. -/
+/-- For submodule families S_i⊆M,T_i⊆N and an R-linear
+map f:M→N with f(S_i)⊆T_i, restriction gives S_i→ₗ[R]T_i.
+Its underlying function is f on each stage element. -/
 def stageMap (S : ι → Submodule R M) (T : ι → Submodule R N)
     (f : M →ₗ[R] N) (hf : ∀ i x, x ∈ S i → f x ∈ T i) (i : ι) : S i →ₗ[R] T i :=
   (f.domRestrict (S i)).codRestrict (T i) (fun x => hf i x.val x.property)
 
-/-- The induced union map is the original coefficient map on every value. -/
+/-- For a monotone directed nonempty family S_i⊆M,
+an arbitrary family T_i⊆N and an R-linear map f with
+f(S_i)⊆T_i, there is an R-linear map
+⨆_i S_i→⨆_i T_i with underlying value f(x).
+The target family need not be assumed monotone for this map. -/
 def iSupMap (S : ι → Submodule R M) (hS : Monotone S) (T : ι → Submodule R N)
     (f : M →ₗ[R] N) (hf : ∀ i x, x ∈ S i → f x ∈ T i) : ↥(⨆ i, S i : Submodule R M) →ₗ[R] ↥(⨆ i, T i : Submodule R N) :=
   (f.domRestrict (⨆ i, S i : Submodule R M)).codRestrict (⨆ i, T i : Submodule R N) (fun x => by
     obtain ⟨i, hx⟩ := (Submodule.mem_iSup_of_directed S hS.directed_le).mp x.property
     exact Submodule.mem_iSup_of_mem i (hf i x.val hx))
 
-/-- No coefficient-map value changes in the union construction. -/
+/-- For a stage-preserving R-linear map f:M→N, the induced
+map ⨆_i S_i→⨆_i T_i sends an element represented by x∈M
+to the element represented by f(x)∈N.
+The source family is monotone on a nonempty directed preorder. -/
 lemma iSupMap_val (S : ι → Submodule R M) (hS : Monotone S) (T : ι → Submodule R N)
     (f : M →ₗ[R] N) (hf : ∀ i x, x ∈ S i → f x ∈ T i) (x : ↥(⨆ i, S i : Submodule R M)) :
     (iSupMap S hS T f hf x).val = f x.val := rfl
 
-/-- The actual restricted coefficient maps commute with all index inclusions. -/
+/-- For monotone submodule families S_i⊆M,T_i⊆N and
+an R-linear f with f(S_i)⊆T_i, its restrictions S_i→T_i
+commute with every inclusion i≤j.
+They define a natural transformation of the two module diagrams. -/
 def coefficientDiagramMap (S : ι → Submodule R M) (hS : Monotone S)
     (T : ι → Submodule R N) (hT : Monotone T) (f : M →ₗ[R] N)
     (hf : ∀ i x, x ∈ S i → f x ∈ T i) : diagram S hS ⟶ diagram T hT where
@@ -183,7 +233,10 @@ def coefficientDiagramMap (S : ι → Submodule R M) (hS : Monotone S)
     ext x
     rfl
 
-/-- Coefficient and index maps give the actual union-cocone square. -/
+/-- For monotone directed nonempty families S_i,T_i and
+an R-linear map f preserving each stage, the square
+S_i→⨆S and T_i→⨆T commutes with f|_(S_i) and the
+induced supremum map. Both paths have underlying value f(x). -/
 lemma inclusion_coefficient (S : ι → Submodule R M) (hS : Monotone S)
     (T : ι → Submodule R N) (hT : Monotone T) (f : M →ₗ[R] N)
     (hf : ∀ i x, x ∈ S i → f x ∈ T i) (i : ι) :
@@ -193,7 +246,10 @@ lemma inclusion_coefficient (S : ι → Submodule R M) (hS : Monotone S)
   ext x
   rfl
 
-/-- Universal descent is precisely the actual coefficient map on the union. -/
+/-- For monotone directed nonempty submodule families
+S_i⊆M,T_i⊆N and a stage-preserving R-linear f, universal
+descent of the T-cocone precomposed with the restricted
+stage maps equals the induced map ⨆S→⨆T. -/
 lemma desc_coefficient (S : ι → Submodule R M) (hS : Monotone S)
     (T : ι → Submodule R N) (hT : Monotone T) (f : M →ₗ[R] N)
     (hf : ∀ i x, x ∈ S i → f x ∈ T i) :

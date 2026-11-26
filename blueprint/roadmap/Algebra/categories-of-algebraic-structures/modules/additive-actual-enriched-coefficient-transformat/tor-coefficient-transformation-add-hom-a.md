@@ -1,3 +1,6 @@
-# Tor Coefficient Transformation Add Hom apply
+# Value of the additive Tor-transformation assignment
 
-The native additive package keeps the actual derived coefficient morphism.
+Value of the additive Tor-transformation assignment.
+
+For `f` in the compatible coefficient-map subgroup, the degree-`n` additive assignment returns
+the Tor transformation induced by `f.val` and `f.property`.

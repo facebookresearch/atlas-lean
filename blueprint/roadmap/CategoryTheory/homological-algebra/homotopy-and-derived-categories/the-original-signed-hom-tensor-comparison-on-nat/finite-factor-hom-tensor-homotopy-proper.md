@@ -1,4 +1,6 @@
-# Finite Factor Hom Tensor Homotopy Property
+# Underlying third homotopy input has bounded finite projective terms
 
-Only the original third complex bounds and finite categorical-projective
-terms qualify the homotopy-category restriction.
+Underlying third homotopy input has bounded finite projective terms.
+
+A homotopy triple satisfies this property if its third underlying cochain complex has integer
+lower and upper vanishing bounds and each term is finite and categorically projective.

@@ -1,3 +1,5 @@
-# Assoc Source Obj
+# Left-associated right-module return tensor object
 
-Bundle the original left parentheses with their computed right action.
+Left-associated right-module return tensor object.
+
+Bundle `(A ⊗_R P) ⊗_S Q` as a right `R`-module, with the outer right action induced from `Q`.

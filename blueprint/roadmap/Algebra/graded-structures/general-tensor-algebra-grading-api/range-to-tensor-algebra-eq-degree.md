@@ -1,3 +1,5 @@
-# Range to Tensor Algebra eq degree
+# The tensor-power embedding has exactly the homogeneous degree as range
 
-Range of `TensorPower.toTensorAlgebra` is exactly the degree-`n` submodule.
+Let R be a commutative semiring, M an R-module, and n∈ℕ. The R-linear range of
+TensorPower.toTensorAlgebra : M^{⊗n} → T_R(M) equals degree_n(T_R(M)). Thus every homogeneous
+degree-n element comes from the nth tensor power.

@@ -14,12 +14,15 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Finiteness
 public import Mathlib.RingTheory.Finiteness.Defs
 
 /-!
-# Finite generation of noncommutative bimodule tensors
+# Finite generation of balanced bimodule tensors
 
-Finite left S generators of an S–R bimodule and finite left R generators
-of a module give finite left S generators of their balanced tensor.
-Both acting semirings may be noncommutative. Scalar balance moves an R
-coefficient to the right action on the first factor.
+Let R,S be semirings, E an additive group with commuting left-S and right-R module actions,
+and M an additive-group left R-module. If sets s⊆E and t⊆M span over S and R respectively,
+their ordered pure tensor pairs span E⊗_R M over S.
+
+Consequently, finiteness of E over S and M over R implies finiteness of their balanced tensor
+over S. The tensor has ground scalar ring ℤ, and the acting semirings and module carriers may
+occupy independent universes.
 -/
 
 @[expose] public section
@@ -38,7 +41,10 @@ variable (R : Type uR) (S : Type uS) (E : Type uE) (M : Type uM)
   [Semiring R] [Semiring S] [AddCommGroup E] [AddCommGroup M]
   [Module S E] [Module Rᵐᵒᵖ E] [SMulCommClass S Rᵐᵒᵖ E] [Module R M]
 
-/-- Ordered pure pairs of spanning sets span the whole original bimodule tensor over S. -/
+/-- Let R,S be semirings, E an additive-group left-S/right-R bimodule with commuting actions, and
+M an additive-group left R-module. If span_S(s)=E and span_R(t)=M, then span_S{[e,m] | e∈s,
+m∈t}=E⊗_R M. The left S-action is on the E factor and the tensor is balanced over R with
+ground ring ℤ. -/
 theorem span_pure_eq_top (s : Set E) (t : Set M)
     (hs : Submodule.span S s = ⊤) (ht : Submodule.span R t = ⊤) :
     letI := leftModule ℤ R S E M
@@ -87,7 +93,10 @@ theorem span_pure_eq_top (s : Set E) (t : Set M)
   rw [ht]
   trivial
 
-/-- A finite left S bimodule tensored with a finite left R module is finite over S. -/
+/-- For semirings R,S, an additive-group bimodule E with commuting left-S/right-R actions, and an
+additive-group left R-module M, assume E is finite over S and M finite over R. Then E⊗_R M is
+finite over S. A finite generating family is given by pure pairs of generators, with
+independent ring and module universes. -/
 theorem finite_left [Module.Finite S E] [Module.Finite R M] :
     letI := leftModule ℤ R S E M
     Module.Finite S (Balanced ℤ R E M) := by

@@ -13,6 +13,21 @@ module
 
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairingAssociativity
 
+/-!
+# Ordered mixed cup–cap associativity
+
+Let R be commutative and all coefficient modules lie in universe u. The ordered mixed identity
+compares (a∪b)⌢_l z with b⌢₂(a⌢₁u(z)). For cochain degrees p,q and output chain degree r, its
+input degrees are (p+q)+r and p+(q+r). The ordinary module braiding exchanges the two cochain
+factors before the associator; no degree-dependent braiding multiplier is inserted into this
+identity.
+
+Compatible input and output maps on terms, cycles and homology carry a termwise ordered identity
+to homology. For linear Hom cochains, the required termwise identity follows from a specified
+diagram of the cup diagonal, two ordered cap diagonals and their coefficient actions. The
+comparison maps and their full degree transports remain part of the statements.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -28,7 +43,12 @@ namespace HomologicalComplex.CochainChainGradedPairing
 
 variable (R : Type u) [CommRing R]
 
-/-- Ordered cup--cap associativity on cycles descends to homology. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. Let
+P₁₂:K₁,K₂→K₁₂ be a cochain graded product and P_l:K₁₂,L→M_l, P₁:K₁,L→M₁, P₂:K₂,M₁→M_r mixed
+pairings. For p,q,r put n=(p+q)+r, n′=p+(q+r), and choose u_Z:Z_nL→Z_{n′}L, u_H:H_nL→H_{n′}L
+with π_n≫u_H=u_Z≫π_{n′}, and c:H_rM_l→H_rM_r. If c([P_l^Z(P₁₂^Z(x,y),z)])=[P₂^Z(y,P₁^Z(x,u_Zz))]
+on cycles, then c((a∪b)⌢_l t)=b⌢₂(a⌢₁u_H(t)) on homology. The tensor-map expression uses
+ordinary braiding of the cochain factors and the associator. -/
 private theorem pairHomology_associativity_ordered
     {K₁ K₂ K₁₂ : CochainComplex (ModuleCat.{u} R) ℕ}
     {L M₁ Mₗ Mᵣ : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -92,8 +112,18 @@ private theorem pairHomology_associativity_ordered
   exact ConcreteCategory.congr_hom hcycles
     ((x₀ ⊗ₜ[R] y₀) ⊗ₜ[R] z₀)
 
-/-- An ordered underlying cup--cap identity, with explicit input and output
-comparisons, descends to homology. -/
+/-- Let R be commutative in universe u. Let K₁,K₂,K₁₂ be nonnegative cochain complexes and
+L,M₁,M_l,M_r nonnegative chain complexes of R-modules with carriers in u. Let P₁₂ pair K₁,K₂
+into K₁₂, and let P_l:K₁₂,L→M_l, P₁:K₁,L→M₁ and P₂:K₂,M₁→M_r be mixed graded pairings. For
+p,q,r∈ℕ put n=(p+q)+r and n′=p+(q+r).
+
+Choose maps u_X:L_n→L_{n′}, u_Z:Z_nL→Z_{n′}L, u_H:H_nL→H_{n′}L and c_X:(M_l)_r→(M_r)_r,
+c_Z:Z_rM_l→Z_rM_r, c_H:H_rM_l→H_rM_r. Assume u_Z≫i_{L,n′}=i_{L,n}≫u_X, π_{L,n}≫u_H=u_Z≫π_{L,n′},
+c_Z≫i_{M_r,r}=i_{M_l,r}≫c_X and π_{M_l,r}≫c_H=c_Z≫π_{M_r,r}.
+
+If c_X(P_l(P₁₂(x,y),z))=P₂(y,P₁(x,u_Xz)) on terms of degrees p,q,n, with the ordinary module
+braiding exchanging x,y before reassociation, then c_H((a∪_{12}b)⌢_l t)=b⌢₂(a⌢₁u_H(t)) on
+classes. The conclusion uses that same ordinary braiding and associator. -/
 public theorem pairHomology_associativity_ordered_of_pair
     {K₁ K₂ K₁₂ : CochainComplex (ModuleCat.{u} R) ℕ}
     {L M₁ Mₗ Mᵣ : ChainComplex (ModuleCat.{u} R) ℕ}
@@ -201,13 +231,20 @@ namespace HomologicalComplex
 
 variable (R : Type u) [CommRing R]
 
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u.
+Nonnegative R-module chain complexes carry the monoidal tensor complex with differential
+d(x_p⊗y_q)=dx_p⊗y_q+(-1)^p x_p⊗dy_q. The canonical module tensor associator induces its chain
+associator, supplying the monoidal structure for the ordered mixed pairing diagrams. -/
 noncomputable local instance orderedAssociativityMonoidalCategory :
     MonoidalCategory (ChainComplex (ModuleCat.{u} R) ℕ) :=
   HomologicalComplex.monoidalCategory (ModuleCat.{u} R) (ComplexShape.down ℕ)
 
-/-- An ordered component diagram gives mixed Linear-Hom cup--cap associativity.
-The cochain factors, rather than the chain diagonal, are braided so that the
-first cochain can act before the second. -/
+/-- Let R be commutative in universe u, with all coefficient modules and complex terms in u. Let
+Δ₁₂:K₁₂→K₁⊗K₂ and μ₁₂:A₁⊗A₂→A₁₂ define the Hom cup product. Let Δ_l:L→K₁₂⊗J_l, Δ₁:L→K₁⊗J₁ and
+Δ₂:M₁→K₂⊗J₂, with actions ρ_l,ρ₁,ρ₂ into M_l,M₁,M_r. For p,q,r choose u:L_{(p+q)+r}→L_{p+(q+r)}
+and c:M_l,r→M_r,r. If Δ_l≫D_l(φ∪ψ)≫c=u≫Δ₁≫D₁(φ)≫Δ₂≫D₂(ψ) for every φ:K₁,p→A₁ and ψ:K₂,q→A₂, then
+c((φ∪ψ)⌢_l x)=ψ⌢₂(φ⌢₁u(x)). The stated tensor identity braids the two cochain factors by the
+ordinary module braiding before reassociating them. -/
 public theorem linearHomCochainChainPair_associativity_ordered_of_diagrams
     {K₁ K₂ K₁₂ L Jₗ J₁ M₁ J₂ Mₗ Mᵣ :
       ChainComplex (ModuleCat.{u} R) ℕ}

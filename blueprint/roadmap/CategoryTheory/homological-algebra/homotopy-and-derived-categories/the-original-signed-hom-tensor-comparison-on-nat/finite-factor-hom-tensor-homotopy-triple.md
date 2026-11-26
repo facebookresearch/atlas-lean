@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Homotopy Triples
+# Full subcategory of homotopy triples with a bounded finite factor
 
-The native full subcategory retains every original homotopy map class.
+Full subcategory of homotopy triples with a bounded finite factor.
+
+Restrict the homotopy triple category by the bounded finite-projective property on the third
+underlying cochain complex.

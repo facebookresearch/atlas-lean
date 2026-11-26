@@ -20,14 +20,26 @@ public import MathlibExt.CategoryTheory.Functor.ComparisonTransport
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.TransportComparison
 
 /-!
-# Enlarged-source Tor with independent input carriers
+# Source-derived Tor with independent module and coefficient worlds
 
-Left derivation takes place in Gamma, followed by precomposition with the
-input category, which need not have enough projectives. Coefficient and
-height comparisons use mapped resolutions and exact postcomposition.
-Zero-augmentation squares and identity, inverse and composition triangles
-are expressed after a common third working lift, with distinct input
-categories retained.
+Let R,S be rings and B an (R,S)-bimodule, with commuting left R- and
+right S-actions. For a right R-module X in world a and B in world b,
+put Γ_z=max(r,a,b,z). The functor T_(n,z)(X,B) is the nth left derived
+functor of −⊗_R ULift^Γ_z B in ModuleCat^Γ_z(Rᵒᵖ), evaluated at
+ULift^Γ_z X. Derivation is in the right R-module source X.
+
+Thus source resolutions are taken in a world containing R, while the
+original source and coefficient worlds remain independent. The target
+is ModuleCat^Γ_z(Sᵒᵖ); no bound on the ring world of S is imposed.
+Degree zero identifies naturally with the lifted balanced tensor.
+
+Bimodule maps act additively on these tensor and Tor functors and
+preserve identities and composition. Their height comparisons commute
+with coefficient maps and the degree-zero augmentation.
+Two heights are compared after lifting both outputs to a common third
+height, with identity, inverse and composition laws. Comparison with
+Tor formed in the unlifted common world v separately requires R to be
+small in v; this condition is imposed only on that source-world comparison.
 -/
 
 @[expose] public section
@@ -46,7 +58,10 @@ instance largeTensorFunctorAt_additive.{z, r, s, a, b} (R : Type r) (S : Type s)
     (largeTensorFunctorAt.{z, r, s, a, b} R S B).Additive :=
   tensorFunctor_additive R S (ULift.{max r a b z} B)
 
-/-- The actual native Tor functor is derived in the sufficient carrier universe. -/
+/-- For rings R,S and an (R,S)-bimodule B, the functor
+T_(n,z):ModuleCat^a(Rᵒᵖ)→ModuleCat^Γ_z(Sᵒᵖ) is left derivation
+of −⊗_R ULift^Γ_z B at the lifted source ULift^Γ_z X,
+where Γ_z=max(r,a,b,z). The target ring world s is independent. -/
 def torFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -55,21 +70,30 @@ def torFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
   exact ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ ⋙
     torFunctor R S (ULift.{max r a b z} B) n
 
-/-- The original right module supplies an actual lifted input to native Tor. -/
+/-- For a right R-module X in world a and an (R,S)-bimodule B,
+T_(n,z)(X,B) is the nth derived balanced tensor evaluated at
+ULift^Γ_z X, with Γ_z=max(r,a,b,z).
+It is a right S-module in carrier world Γ_z. -/
 abbrev torObjAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) (X : ModuleCat.{a} Rᵐᵒᵖ) :
     ModuleCat.{max r a b z} Sᵐᵒᵖ :=
   (torFunctorAt.{z, r, s, a, b} R S B n).obj X
 
-/-- Original input maps use the native derived functor after native input lifting. -/
+/-- For a right R-linear map f:X→Y and an (R,S)-bimodule B,
+lifting f to Γ_z and applying the nth derived tensor functor
+gives T_(n,z)(X,B)→T_(n,z)(Y,B).
+Derivation takes place in ModuleCat^Γ_z(Rᵒᵖ), Γ_z=max(r,a,b,z). -/
 def torMapAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) {X Y : ModuleCat.{a} Rᵐᵒᵖ} (f : X ⟶ Y) :
     torObjAt.{z, r, s, a, b} R S B n X ⟶ torObjAt.{z, r, s, a, b} R S B n Y :=
   (torFunctorAt.{z, r, s, a, b} R S B n).map f
 
-/-- Native right exactness identifies degree zero with the actual lifted balanced tensor. -/
+/-- For rings R,S and an (R,S)-bimodule B, right exactness
+gives the natural isomorphism
+T_(0,z)(X,B)≅ULift^Γ_z X⊗_R ULift^Γ_z B.
+The source world a is arbitrary and Γ_z=max(r,a,b,z). -/
 def torZeroIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -79,7 +103,10 @@ def torZeroIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
   exact Functor.isoWhiskerLeft (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ)
     (torZeroIso R S (ULift.{max r a b z} B))
 
-/-- The zero map is the original native augmentation map at the actual lifted input. -/
+/-- For a right R-module X and an (R,S)-bimodule B,
+the forward T_(0,z)(X,B)→ULift^Γ_z X⊗_R ULift^Γ_z B map
+is the canonical degree-zero derived-to-self augmentation
+evaluated at ULift^Γ_z X in the sufficient source category. -/
 theorem torZeroIsoAt_hom_app.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (X : ModuleCat.{a} Rᵐᵒᵖ) :
@@ -88,7 +115,11 @@ theorem torZeroIsoAt_hom_app.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] 
       (tensorFunctor R S (ULift.{max r a b z} B)).fromLeftDerivedZero.app
         ((ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ).obj X) := rfl
 
-/-- Any actual resolution of the lifted original input computes this same native Tor. -/
+/-- For an (R,S)-bimodule B, a right R-module X and a
+projective resolution P of ULift^Γ_z X in ModuleCat^Γ_z(Rᵒᵖ),
+there is an isomorphism
+T_(n,z)(X,B)≅H_n(P⊗_R ULift^Γ_z B).
+The tensor is applied termwise and Γ_z=max(r,a,b,z). -/
 def torResolutionIsoAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) (X : ModuleCat.{a} Rᵐᵒᵖ)
@@ -108,7 +139,10 @@ variable (B' : Type bGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   (f : B →ₗ[R] B')
   (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- The original coefficient map is lifted by native up-f-down, retaining R-linearity. -/
+/-- For left R-modules B,B′ in world b and an R-linear map
+f:B→B′, its height-Γ_z lift sends up(y) to up(f(y)).
+It is the R-linear map ULift^Γ_z B→ULift^Γ_z B′,
+where Γ_z=max(r,a,b,z). -/
 def liftedCoefficientMapAt.{z, r, a, b} (R : Type r) [Ring R] (B : Type b) [AddCommGroup B] [Module R B]
     (B' : Type b) [AddCommGroup B'] [Module R B']
     (f : B →ₗ[R] B') :
@@ -116,7 +150,10 @@ def liftedCoefficientMapAt.{z, r, a, b} (R : Type r) [Ring R] (B : Type b) [AddC
   (ULift.moduleEquiv : ULift.{max r a b z} B' ≃ₗ[R] B').symm.toLinearMap.comp
     (f.comp (ULift.moduleEquiv : ULift.{max r a b z} B ≃ₗ[R] B).toLinearMap)
 
-/-- The actual lifted coefficient map keeps the given right S-action. -/
+/-- For an R-linear map f:B→B′ satisfying
+f(s•y)=s•f(y) for s∈Sᵒᵖ, its height-Γ_z lift satisfies the
+same Sᵒᵖ-equivariance equation.
+The coefficient carriers are lifted by up and down. -/
 theorem liftedCoefficientMapAt_outer.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     (B' : Type b) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ B']
@@ -127,7 +164,10 @@ theorem liftedCoefficientMapAt_outer.{z, r, s, a, b} (R : Type r) (S : Type s) [
       s • liftedCoefficientMapAt.{z, r, a, b} R B B' f x :=
   congrArg ULift.up (hf s x.down)
 
-/-- The actual coefficient transformation before restricting the original input category. -/
+/-- For rings R,S and a bimodule map f:B→B′, applying the
+lifted coefficient map gives a natural transformation
+−⊗_R ULift^Γ_z B→−⊗_R ULift^Γ_z B′
+on right R-modules already in world Γ_z=max(r,a,b,z). -/
 def largeTensorCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -142,7 +182,10 @@ def largeTensorCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Typ
     (liftedCoefficientMapAt.{z, r, a, b} R B B' f)
     (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B B' f hf)
 
-/-- Derive the same actual coefficient transformation in the sufficient source category. -/
+/-- For an (R,S)-bimodule map f:B→B′ and n≥0, deriving the
+common-height tensor transformation gives
+L_n(−⊗_R ULift^Γ_z B)→L_n(−⊗_R ULift^Γ_z B′)
+in the sufficient right R-module source category. -/
 def largeTorCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -154,7 +197,10 @@ def largeTorCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s
       torFunctor R S (ULift.{max r a b z} B') n :=
   NatTrans.leftDerived (largeTensorCoefficientTransformationAt.{z, r, s, a, b} R S B B' f hf) n
 
-/-- Coefficient morphisms act on the working tensor functor. -/
+/-- For rings R,S and a bimodule map f:B→B′, the natural
+coefficient transformation on source world a sends
+ULift^Γ_z X⊗_R ULift^Γ_z B to ULift^Γ_z X⊗_R ULift^Γ_z B′.
+It fixes the source factor and lifts f on the coefficient factor. -/
 def tensorCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -170,7 +216,10 @@ def tensorCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s) 
       (liftedCoefficientMapAt.{z, r, a, b} R B B' f)
       (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B B' f hf))
 
-/-- The coefficient transformation changes the original coefficient on each pure tensor. -/
+/-- For a bimodule map f:B→B′, the chosen-height tensor
+transformation has pure value
+[up(x)⊗up(y)]↦[up(x)⊗up(f(y))].
+The source is a right R-module and the outputs are right S-modules. -/
 theorem tensorCoefficientTransformationAt_mk.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -196,7 +245,10 @@ theorem tensorCoefficientTransformationAt_mk.{z, r, s, a, b} (R : Type r) (S : T
     ((ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ).obj X)
     (ULift.up x) (ULift.up y)
 
-/-- The coefficient Tor map is derived only in the sufficient source universe. -/
+/-- For an (R,S)-bimodule map f:B→B′ and n≥0, the derived
+coefficient transformation gives
+T_(n,z)(X,B)→T_(n,z)(X,B′), naturally in the right R-module X.
+It is derived in Γ_z before precomposing with source lifting. -/
 def torCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -212,7 +264,10 @@ def torCoefficientTransformationAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ri
       (liftedCoefficientMapAt.{z, r, a, b} R B B' f)
       (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B B' f hf) n)
 
-/-- Native resolution computation retains the actual original coefficient morphism. -/
+/-- For a bimodule map f:B→B′ and a projective resolution P
+of ULift^Γ_z X, the coefficient map on T_(n,z) is conjugate
+to H_n(P⊗_R ULift^Γ_z f) through the two resolution comparisons.
+It fixes P and applies the lifted coefficient map termwise. -/
 theorem torCoefficientTransformationAt_resolution.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -239,7 +294,11 @@ theorem torCoefficientTransformationAt_resolution.{z, r, s, a, b} (R : Type r) (
     (liftedCoefficientMapAt.{z, r, a, b} R B B' f)
     (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B B' f hf) n P
 
-/-- Degree-zero identification is natural in every original coefficient map. -/
+/-- For a bimodule map f:B→B′, the degree-zero isomorphisms
+T_(0,z)(−,B)≅Tensor_z(−,B) commute with the coefficient
+transformations. Taking Tor's degree-zero map then the tensor
+comparison equals taking that comparison then the tensor
+coefficient map. -/
 theorem torZeroIsoAt_naturality_coefficient.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -258,7 +317,9 @@ theorem torZeroIsoAt_naturality_coefficient.{z, r, s, a, b} (R : Type r) (S : Ty
       (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B B' f hf))
   exact congrArg (Functor.whiskerLeft (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ)) h
 
-/-- Original lifted coefficient maps preserve zero without requiring commutative scalars. -/
+/-- For left R-modules B,B′, the height-Γ_z lift of the
+zero R-linear map is zero.
+Its value on every lifted coefficient is the lifted zero. -/
 theorem liftedCoefficientMapAt_zero.{z, r, a, b} (R : Type r) [Ring R] (B : Type b) [AddCommGroup B] [Module R B]
     (B' : Type b) [AddCommGroup B'] [Module R B'] :
     liftedCoefficientMapAt.{z, r, a, b} R B B' (0 : B →ₗ[R] B') = 0 := by
@@ -266,7 +327,9 @@ theorem liftedCoefficientMapAt_zero.{z, r, a, b} (R : Type r) [Ring R] (B : Type
   intro x
   rfl
 
-/-- The up-f-down construction is additive on the original coefficient maps. -/
+/-- For R-linear maps f,g:B→B′, their lifted maps satisfy
+lift(f+g)=lift(f)+lift(g) on ULift^Γ_z B.
+This is additivity over arbitrary, possibly noncommutative R. -/
 theorem liftedCoefficientMapAt_add.{z, r, a, b} (R : Type r) [Ring R] (B : Type b) [AddCommGroup B] [Module R B]
     (B' : Type b) [AddCommGroup B'] [Module R B']
     (f : B →ₗ[R] B') (g : B →ₗ[R] B') :
@@ -276,7 +339,9 @@ theorem liftedCoefficientMapAt_add.{z, r, a, b} (R : Type r) [Ring R] (B : Type 
   intro x
   rfl
 
-/-- The working tensor transformation is zero on the zero original coefficient morphism. -/
+/-- For (R,S)-bimodules B,B′, the coefficient transformation
+associated with the zero bimodule map is the zero natural
+transformation of the chosen-height tensor functors. -/
 theorem tensorCoefficientTransformationAt_zero.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -288,7 +353,9 @@ theorem tensorCoefficientTransformationAt_zero.{z, r, s, a, b} (R : Type r) (S :
   simp only [liftedCoefficientMapAt_zero, tensorCoefficientTransformation_zero]
   rfl
 
-/-- Working tensor coefficient maps retain original addition. -/
+/-- For bimodule maps f,g:B→B′, the chosen-height tensor
+transformations satisfy Tensor(f+g)=Tensor(f)+Tensor(g).
+Their common right R-module source is lifted to Γ_z. -/
 theorem tensorCoefficientTransformationAt_add.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -332,7 +399,9 @@ theorem tensorCoefficientTransformationAt_add.{z, r, s, a, b} (R : Type r) (S : 
   exact (TensorProduct.Balanced.mk ℤ R (ULift.{max r a b z} X)
     (ULift.{max r a b z} B') (ULift.up x)).map_add _ _
 
-/-- Native Tor is additive on the zero original coefficient morphism. -/
+/-- For (R,S)-bimodules B,B′ and n≥0, the Tor coefficient
+transformation of the zero map is zero in every source module.
+This is an equality of natural transformations of T_(n,z). -/
 theorem torCoefficientTransformationAt_zero.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -344,7 +413,10 @@ theorem torCoefficientTransformationAt_zero.{z, r, s, a, b} (R : Type r) (S : Ty
   simp only [liftedCoefficientMapAt_zero, torCoefficientTransformation_zero]
   rfl
 
-/-- Native derived coefficient maps retain original addition and hence integer actions. -/
+/-- For bimodule maps f,g:B→B′ and n≥0, the derived
+coefficient transformations satisfy
+Tor_(n,z)(f+g)=Tor_(n,z)(f)+Tor_(n,z)(g).
+The assertion is additive and preserves the noncommutative ring scope. -/
 theorem torCoefficientTransformationAt_add.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -384,7 +456,10 @@ theorem torCoefficientTransformationAt_add.{z, r, s, a, b} (R : Type r) (S : Typ
       ((ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ).obj X)
   simpa only [liftedCoefficientMapAt_add, NatTrans.app_add] using hX
 
-/-- Package all legitimate additive scalar laws on actual original coefficient maps. -/
+/-- For (R,S)-bimodules B,B′ and n≥0, sending a bimodule map
+to its Tor coefficient transformation is a homomorphism of
+additive groups. It preserves zero, sums and integer multiples
+of R-linear right S-equivariant coefficient maps. -/
 def torCoefficientAddHomAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -402,14 +477,18 @@ end Coefficients
 
 section CoefficientIdentityComposition
 
-/-- Native lifting retains the original identity coefficient morphism. -/
+/-- For a left R-module B, the lift of id_B to ULift^Γ_z B
+is the identity R-linear map.
+It sends up(y) to the same up(y). -/
 theorem liftedCoefficientMapAt_id.{z, r, a, b} (R : Type r) [Ring R] (B : Type b) [AddCommGroup B] [Module R B] :
     liftedCoefficientMapAt.{z, r, a, b} R B B LinearMap.id = LinearMap.id := by
   apply LinearMap.ext
   intro x
   rfl
 
-/-- Original identity coefficients give the actual tensor identity at every raw input. -/
+/-- For an (R,S)-bimodule B, the tensor coefficient
+transformation of id_B is id on Tensor_z(−,B).
+It fixes both factors of every lifted balanced class. -/
 theorem tensorCoefficientTransformationAt_id.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -419,7 +498,9 @@ theorem tensorCoefficientTransformationAt_id.{z, r, s, a, b} (R : Type r) (S : T
   simp only [liftedCoefficientMapAt_id, tensorCoefficientTransformation_id]
   rfl
 
-/-- Original identity coefficients give the same native Tor identity in every degree. -/
+/-- For an (R,S)-bimodule B and n≥0, the coefficient
+transformation of id_B is id on T_(n,z)(−,B).
+This holds after derivation in the sufficient source world. -/
 theorem torCoefficientTransformationAt_id.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -436,7 +517,9 @@ variable (B' B'' : Type bGlobal) [AddCommGroup B'] [AddCommGroup B'']
   (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
   (hg : ∀ (sGlobal : Sᵐᵒᵖ) (x : B'), g (sGlobal • x) = sGlobal • g x)
 
-/-- Native up-f-down maps compose on the actual original coefficient carriers. -/
+/-- For R-linear maps f:B→B′ and g:B′→B″, the lifted maps
+satisfy lift(g∘f)=lift(g)∘lift(f).
+All coefficient carriers use the same chosen height Γ_z. -/
 theorem liftedCoefficientMapAt_comp.{z, r, a, b} (R : Type r) [Ring R] (B : Type b) [AddCommGroup B] [Module R B]
     (B' : Type b) [AddCommGroup B'] [Module R B']
     (B'' : Type b) [AddCommGroup B''] [Module R B'']
@@ -448,7 +531,10 @@ theorem liftedCoefficientMapAt_comp.{z, r, a, b} (R : Type r) [Ring R] (B : Type
   intro x
   rfl
 
-/-- Original coefficient composition is retained on the actual lifted tensor functor. -/
+/-- For bimodule maps f:B→B′ and g:B′→B″, applying the
+tensor transformation for f and then g equals that for g∘f:
+Tensor(g)∘Tensor(f)=Tensor(g∘f).
+The right R-module source and balanced factor order are fixed. -/
 theorem tensorCoefficientTransformationAt_comp.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -476,7 +562,9 @@ theorem tensorCoefficientTransformationAt_comp.{z, r, s, a, b} (R : Type r) (S :
       (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B' B'' g hg))
   exact h
 
-/-- Original coefficient composition is retained by native Tor in every degree. -/
+/-- For bimodule maps f:B→B′ and g:B′→B″, the derived maps
+satisfy Tor_(n,z)(g)∘Tor_(n,z)(f)=Tor_(n,z)(g∘f)
+for every n≥0, naturally in the source right R-module. -/
 theorem torCoefficientTransformationAt_comp.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -512,7 +600,10 @@ variable (B' : Type bGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   [SMulCommClass R Sᵐᵒᵖ B'] (f : B →ₗ[R] B')
   (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- The actual underived height square is natural in the original coefficient map. -/
+/-- For a bimodule map f:B→B′ and Γ_z≤Γ′=max(r,a,b,z,t),
+the square comparing higher-height tensor after input lifting
+with lifted lower-height tensor commutes with f.
+Both paths lift the source and apply f to the coefficient. -/
 theorem tensorHeightIsoAt_natural_coefficient.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -574,7 +665,10 @@ end CoefficientHeight
 
 section ParameterFunctors
 
-/-- The actual coefficient functor keeps the raw coefficient world and the enlarged output. -/
+/-- For rings R,S, the category of (R,S)-bimodules in world b
+maps to functors ModuleCat^a(Rᵒᵖ)→ModuleCat^Γ_z(Sᵒᵖ)
+by B↦Tensor_z(−,B). Its morphisms are the lifted coefficient
+tensor transformations. -/
 def tensorCoefficientFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S] :
     coefficientCategory.{r, s, b} R S ⥤
       (ModuleCat.{a} Rᵐᵒᵖ ⥤ ModuleCat.{max r a b z} Sᵐᵒᵖ) :=
@@ -586,7 +680,10 @@ def tensorCoefficientFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R
       (ModuleCat.{max r a b z} Rᵐᵒᵖ) (ModuleCat.{max r a b z} Sᵐᵒᵖ)).obj
         (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ)
 
-/-- Derive the actual tensor family in Gamma before restricting its original input. -/
+/-- For rings R,S and n≥0, the category of (R,S)-bimodules
+in world b maps to functors from right R-modules in world a
+to right S-modules in world Γ_z by B↦T_(n,z)(−,B).
+Coefficient morphisms act by the derived transformations. -/
 def torCoefficientFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S] (n : ℕ) :
     coefficientCategory.{r, s, b} R S ⥤
       (ModuleCat.{a} Rᵐᵒᵖ ⥤ ModuleCat.{max r a b z} Sᵐᵒᵖ) :=
@@ -596,13 +693,19 @@ def torCoefficientFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [
       (ModuleCat.{max r a b z} Rᵐᵒᵖ) (ModuleCat.{max r a b z} Sᵐᵒᵖ)).obj
         (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ)
 
-/-- Flipping the native parameter functor supplies both-variable tensor naturality. -/
+/-- For rings R,S, the chosen-height tensor is a bifunctor
+in right R-modules in world a and (R,S)-bimodules in world b,
+with values in ModuleCat^Γ_z(Sᵒᵖ).
+Its two morphism actions are input maps and coefficient maps. -/
 def tensorBifunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S] :
     ModuleCat.{a} Rᵐᵒᵖ ⥤
       (coefficientCategory.{r, s, b} R S ⥤ ModuleCat.{max r a b z} Sᵐᵒᵖ) :=
   (tensorCoefficientFunctorAt.{z, r, s, a, b} R S).flip
 
-/-- The genuine derived parameter functor supplies both-variable Tor naturality. -/
+/-- For rings R,S and n≥0, T_(n,z) is a bifunctor in the
+right R-module source and the (R,S)-bimodule coefficient.
+The independent source and coefficient worlds are a,b, and
+the output carrier world is Γ_z=max(r,a,b,z). -/
 def torBifunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S] (n : ℕ) :
     ModuleCat.{a} Rᵐᵒᵖ ⥤
       (coefficientCategory.{r, s, b} R S ⥤ ModuleCat.{max r a b z} Sᵐᵒᵖ) :=
@@ -612,7 +715,12 @@ end ParameterFunctors
 
 section Heights
 
-/-- The sufficient source lift has projective preservation; the target needs only exactness. -/
+/-- For rings R,S and an (R,S)-bimodule B, put
+Γ_z=max(r,a,b,z), Γ′=max(r,a,b,z,t).
+There is a natural isomorphism from the lift to Γ′ of
+L_n(−⊗_R ULift^Γ_z B) to
+L_n(−⊗_R ULift^Γ′ B) after source lifting Γ_z→Γ′.
+Source lifting preserves projectives because Γ_z contains R. -/
 def largeTorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -631,7 +739,10 @@ def largeTorHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [R
     (tensorHeightIsoAt.{t, z, r, s, a, b} R S B) n
 
 
-/-- The original input is flattened only after native Tor derivation in sufficient worlds. -/
+/-- For rings R,S and an (R,S)-bimodule B, the output lift
+of T_(n,z):ModuleCat^a(Rᵒᵖ)→ModuleCat^Γ_z(Sᵒᵖ)
+is naturally isomorphic to T_(n,max(z,t)) at Γ′.
+The source remains the original carrier category in world a. -/
 def torHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -648,7 +759,9 @@ def torHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S
     (ModuleCat.uliftFunctorCompIso.{max r a b z, max r a b z t, a} Rᵐᵒᵖ)
 
 
-/-- The same actual input and coefficient flattening give the underived height comparison. -/
+/-- For rings R,S and an (R,S)-bimodule B, lifting the
+output of Tensor_z to Γ′=max(r,a,b,z,t) gives the natural
+isomorphism with Tensor_(max(z,t)) on the same source world a. -/
 def tensorHeightFacadeIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -665,7 +778,11 @@ def tensorHeightFacadeIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R
     (ModuleCat.uliftFunctorCompIso.{max r a b z, max r a b z t, a} Rᵐᵒᵖ)
 
 
-/-- The facade component is the actual sufficient-world comparison followed by input flattening. -/
+/-- For a right R-module X and an (R,S)-bimodule B, the
+forward Tor height component is the sufficient-world derived
+comparison at ULift^Γ_z X followed by the higher derived
+functor applied to ULift^Γ′(ULift^Γ_z X)→ULift^Γ′X.
+This flattening retains the underlying source coefficient. -/
 theorem torHeightIsoAt_hom_app.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -688,7 +805,11 @@ theorem torHeightIsoAt_hom_app.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Rin
     X
 
 
-/-- The tensor facade uses the same input flattening after the inverse tensor square. -/
+/-- For a right R-module X and an (R,S)-bimodule B, the
+forward independent-source tensor height map first uses the
+inverse common-height tensor comparison, then flattens
+ULift^Γ′(ULift^Γ_z X) to ULift^Γ′X.
+The output is the higher lifted-factor balanced tensor. -/
 theorem tensorHeightFacadeIsoAt_hom_app.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -711,7 +832,11 @@ theorem tensorHeightFacadeIsoAt_hom_app.{t, z, r, s, a, b} (R : Type r) (S : Typ
     X
 
 
-/-- The facade height comparison has the original pure value after native input flattening. -/
+/-- For a right R-module X and an (R,S)-bimodule B, the
+height map Γ_z→Γ′ sends
+up([up_Γ_z(x)⊗up_Γ_z(y)]) to
+[up_Γ′(x)⊗up_Γ′(y)].
+The left side is the lift of the lower-height whole output. -/
 theorem tensorHeightFacadeIsoAt_hom_mk.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -741,7 +866,11 @@ theorem tensorHeightFacadeIsoAt_hom_mk.{t, z, r, s, a, b} (R : Type r) (S : Type
     (ULift.up (ULift.up x)) (ULift.up y)
   exact hInv'.trans hMap
 
-/-- All three comparison legs retain the actual degree-zero augmentation. -/
+/-- For an (R,S)-bimodule B, the common-height derived
+comparison in degree zero, followed by the higher tensor
+augmentation and the forward tensor height comparison, equals
+the lift of the lower tensor augmentation.
+The source is the sufficient category at Γ_z and Γ′=max(r,a,b,z,t). -/
 theorem largeTorHeightIsoAt_hom_augmentation.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -766,7 +895,11 @@ theorem largeTorHeightIsoAt_hom_augmentation.{t, z, r, s, a, b} (R : Type r) (S 
   simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
 
-/-- The original-input universe comparison preserves the actual Tor-to-tensor augmentation. -/
+/-- For rings R,S and an (R,S)-bimodule B, let h_Tor and
+h_Tensor be the independent-source height comparisons.
+The degree-zero maps satisfy
+θ_Γ′∘h_Tor=h_Tensor∘ULift(θ_Γ_z),
+where θ identifies Tor_0 with the chosen-height balanced tensor. -/
 theorem torHeightIsoAt_hom_zero.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -799,7 +932,10 @@ theorem torHeightIsoAt_hom_zero.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ri
   exact h.symm
 
 
-/-- Every original coefficient morphism commutes with all three derived height legs. -/
+/-- For a bimodule map f:B→B′, the natural isomorphism
+between lifted lower-height derived tensor and higher-height
+derived tensor after source lifting commutes with the
+coefficient Tor maps in every degree n≥0. -/
 theorem largeTorHeightIsoAt_natural_coefficient.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -832,7 +968,10 @@ theorem largeTorHeightIsoAt_natural_coefficient.{t, z, r, s, a, b} (R : Type r) 
     (tensorHeightIsoAt_natural_coefficient R S B B' f hf) n
 
 
-/-- Actual original coefficient maps commute with the whole-input Tor height comparison. -/
+/-- For a bimodule map f:B→B′, raising the output height of
+T_(n,z) and then applying the higher coefficient transformation
+equals applying the lower coefficient transformation and then
+raising the output height. The source carrier world a is fixed. -/
 theorem torHeightIsoAt_natural_coefficient.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -894,8 +1033,11 @@ local instance originalOppositeSmall (R : Type rGlobal) [Small.{vGlobal} R] :
 variable (C : Type vGlobal) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
   [SMulCommClass R Sᵐᵒᵖ C] [Small.{vGlobal} R]
 
-/-- Compare the original common-world native Tor only when that source really contains R.
-No smallness or projective-resolution premise is imposed on the outer S-category. -/
+/-- For rings R,S and an (R,S)-bimodule C with source and
+coefficient carriers in world v, assume R is small in v.
+Then lifting the output of Tor formed in ModuleCat^v(Rᵒᵖ)
+gives a natural isomorphism to T_(n,z), computed in
+Γ=max(r,v,z). No smallness condition is imposed on S. -/
 def torOriginalLiftIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (C : Type v) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
     [SMulCommClass R Sᵐᵒᵖ C] [Small.{v} R] (n : ℕ) :
@@ -912,7 +1054,10 @@ def torOriginalLiftIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S
     (tensorOriginalLiftIsoAt.{z, r, s, v} R S C) n
 
 
-/-- The sufficient original-world comparison agrees with the actual degree-zero tensor map. -/
+/-- For an (R,S)-bimodule C in world v, assume R is small in v.
+In degree zero, the unlifted-to-sufficient Tor comparison,
+the chosen-height Tor-to-tensor map and the output tensor
+comparison compose to the lift of the unlifted Tor-to-tensor map. -/
 theorem torOriginalLiftIsoAt_hom_zero.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (C : Type v) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
     [SMulCommClass R Sᵐᵒᵖ C] [Small.{v} R] :
@@ -944,7 +1089,10 @@ end SufficientOriginalWorld
 
 section CommonHeightCoherence
 
-/-- Two actual working heights are compared in their explicitly common third height. -/
+/-- For rings R,S and an (R,S)-bimodule B, two height parameters
+z,t give a natural isomorphism between T_(n,z) and T_(n,t)
+after both outputs are lifted to Ω=max(r,a,b,z,t,u).
+Their original source category in world a is the same. -/
 def torCommonHeightIsoAt.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -955,7 +1103,10 @@ def torCommonHeightIsoAt.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R
   torHeightIsoAt.{max t u, z, r, s, a, b} R S B n ≪≫
     (torHeightIsoAt.{max z u, t, r, s, a, b} R S B n).symm
 
-/-- The common-height tensor comparison uses the same actual input and coefficient lifts. -/
+/-- For rings R,S and an (R,S)-bimodule B, the underived
+tensor outputs at z,t become naturally isomorphic after
+lifting each whole output to Ω=max(r,a,b,z,t,u).
+The comparison retains the source and coefficient factors. -/
 def tensorCommonHeightIsoAt.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -966,7 +1117,9 @@ def tensorCommonHeightIsoAt.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Rin
   tensorHeightFacadeIsoAt.{max t u, z, r, s, a, b} R S B ≪≫
     (tensorHeightFacadeIsoAt.{max z u, t, r, s, a, b} R S B).symm
 
-/-- Equal working heights give the identity using their actual common lift maps. -/
+/-- For an (R,S)-bimodule B and n≥0, the common-output
+comparison of T_(n,z) with itself is the identity.
+Both sides are lifted to Ω=max(r,a,b,z,u). -/
 theorem torCommonHeightIsoAt_refl.{u, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -975,7 +1128,10 @@ theorem torCommonHeightIsoAt_refl.{u, z, r, s, a, b} (R : Type r) (S : Type s) [
   simp only [torCommonHeightIsoAt, Iso.trans_hom, Iso.symm_hom,
     Iso.hom_inv_id, Iso.refl_hom]
 
-/-- Reversing the common-height Tor comparison gives its actual inverse. -/
+/-- For an (R,S)-bimodule B and two heights z,t, the
+comparison T_(n,z)→T_(n,t) after common output lifting
+has the reversed comparison as inverse.
+Both functors are viewed in Ω=max(r,a,b,z,t,u). -/
 theorem torCommonHeightIsoAt_symm.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -984,7 +1140,10 @@ theorem torCommonHeightIsoAt_symm.{u, t, z, r, s, a, b} (R : Type r) (S : Type s
   apply Iso.ext
   simp only [torCommonHeightIsoAt, Iso.trans_inv, Iso.trans_hom, Iso.symm_hom, Iso.symm_inv]
 
-/-- Three working heights compose through the same earned maps to one common universe. -/
+/-- For an (R,S)-bimodule B and three heights z,t,u,
+the comparison z→t followed by t→u equals z→u after
+all outputs are lifted to Ω=max(r,a,b,z,t,u).
+This is an equality of natural isomorphisms in every degree n≥0. -/
 theorem torCommonHeightIsoAt_trans.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -995,7 +1154,9 @@ theorem torCommonHeightIsoAt_trans.{u, t, z, r, s, a, b} (R : Type r) (S : Type 
   simp only [torCommonHeightIsoAt, Iso.trans_hom, Iso.symm_hom,
     Category.assoc, Iso.inv_hom_id_assoc]
 
-/-- The original tensor comparison has the same equal-height identity. -/
+/-- For an (R,S)-bimodule B, comparing Tensor_z with itself
+after lifting its whole output to Ω=max(r,a,b,z,u) gives
+the identity natural isomorphism. -/
 theorem tensorCommonHeightIsoAt_refl.{u, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -1004,7 +1165,9 @@ theorem tensorCommonHeightIsoAt_refl.{u, z, r, s, a, b} (R : Type r) (S : Type s
   simp only [tensorCommonHeightIsoAt, Iso.trans_hom, Iso.symm_hom,
     Iso.hom_inv_id, Iso.refl_hom]
 
-/-- Reversing tensor working heights gives the same actual inverse. -/
+/-- For an (R,S)-bimodule B, the comparison of Tensor_z with
+Tensor_t after their common whole-output lift is inverse to
+the comparison in the reverse direction. -/
 theorem tensorCommonHeightIsoAt_symm.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -1013,7 +1176,10 @@ theorem tensorCommonHeightIsoAt_symm.{u, t, z, r, s, a, b} (R : Type r) (S : Typ
   apply Iso.ext
   simp only [tensorCommonHeightIsoAt, Iso.trans_inv, Iso.trans_hom, Iso.symm_hom, Iso.symm_inv]
 
-/-- The tensor triangles commute on all three heights in their explicit common universe. -/
+/-- For an (R,S)-bimodule B and three heights z,t,u, the
+underived tensor comparison z→t followed by t→u equals
+z→u in Ω=max(r,a,b,z,t,u).
+The identity of the original balanced factors is preserved. -/
 theorem tensorCommonHeightIsoAt_trans.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :
@@ -1024,7 +1190,10 @@ theorem tensorCommonHeightIsoAt_trans.{u, t, z, r, s, a, b} (R : Type r) (S : Ty
   simp only [tensorCommonHeightIsoAt, Iso.trans_hom, Iso.symm_hom,
     Category.assoc, Iso.inv_hom_id_assoc]
 
-/-- Common-height Tor triangles retain the actual degree-zero tensor endpoints. -/
+/-- For an (R,S)-bimodule B and two heights z,t, the
+common-output Tor comparison in degree zero commutes with
+the two Tor-to-tensor maps and the common-output tensor
+comparison. All four functors have output world Ω=max(r,a,b,z,t,u). -/
 theorem torCommonHeightIsoAt_hom_zero.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] :

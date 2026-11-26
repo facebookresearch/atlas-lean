@@ -1,3 +1,6 @@
-# Small Etale Direct Image Comp Iso hom app hom app
+# Direct image composition comparison on sections
 
-The same canonical direct-image composition has its original restriction component.
+Direct image composition comparison on sections.
+
+The forward composition comparison at an étale object is restriction of the sheaf along the
+base-change composition isomorphism.

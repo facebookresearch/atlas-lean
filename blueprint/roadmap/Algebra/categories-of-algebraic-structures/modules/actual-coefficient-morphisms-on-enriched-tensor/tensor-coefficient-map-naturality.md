@@ -1,3 +1,6 @@
-# Tensor Coefficient Map naturality
+# Bimodule coefficient tensor map is natural in the right module
 
-Actual first-factor and coefficient morphisms commute on the original quotient.
+Bimodule coefficient tensor map is natural in the right module.
+
+A right-module map on the first tensor factor commutes with the coefficient map on the second
+factor, giving the naturality square for `A ⊗_R f`.

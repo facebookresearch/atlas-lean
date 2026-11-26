@@ -1,3 +1,6 @@
-# Small Etale Base Change Terminal Iso comp inv
+# Inverse terminal base change comparison factors through composition
 
-The corresponding inverse restriction is the SAME original two-stage arrow.
+Inverse terminal base change comparison factors through composition.
+
+The inverse terminal comparison for `f ≫ g`, followed by base-change composition, equals the
+two inverse terminal comparisons with the second transported by base change along `f`.

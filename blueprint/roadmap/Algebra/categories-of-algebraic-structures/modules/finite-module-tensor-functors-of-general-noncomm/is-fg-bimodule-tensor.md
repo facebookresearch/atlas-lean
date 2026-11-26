@@ -1,3 +1,6 @@
-# Is FG bimodule Tensor
+# Finite coefficient and finite input give finite tensor output
 
-Original tensor output is finite over S when its coefficient and input are finite.
+Finite coefficient and finite input give finite tensor output.
+
+Let `E` be an `S`-left, `R`-right bimodule, finite over `S`. If the left `R`-module `N` is
+finitely generated, then `E ⊗_R N` is finitely generated over `S`.

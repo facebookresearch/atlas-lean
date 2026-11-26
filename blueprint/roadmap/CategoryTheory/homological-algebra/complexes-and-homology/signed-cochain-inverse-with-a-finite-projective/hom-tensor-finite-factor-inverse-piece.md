@@ -1,4 +1,7 @@
-# Hom Tensor Finite Factor Inverse Piece
+# One factor-degree piece of the Hom–tensor inverse
 
-The original cochain tensor factor is recovered with its actual full-product
-inverse and inserted through the original sum-total coprojection.
+One factor-degree piece of the Hom–tensor inverse.
+
+Project a target degree-`n` cochain to factor degree `b`, apply the inverse signed coefficient
+equivalence, and include the result in source total cell `(n - b, b)`. Finite projectivity of
+the factor terms supplies the coefficient equivalence.

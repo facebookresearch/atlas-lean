@@ -1,3 +1,5 @@
-# Monad Pow Op Iso
+# The unopped opposite-comonad power is naturally the monad power
 
-The natural comparison uses the actual native power functors and explicit object equalities.
+Let T be a monad on C and n ∈ ℕ. The object equalities ((T.op)^n(op X)).unop=T^n(X) give a
+natural isomorphism between the unopped opposite-comonad power functor and monadPow T n. Its
+components are the canonical isomorphisms of those equalities.

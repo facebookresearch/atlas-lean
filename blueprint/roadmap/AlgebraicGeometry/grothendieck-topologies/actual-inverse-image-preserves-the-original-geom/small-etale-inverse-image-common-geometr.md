@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Common Geometric Stalk Iso
+# Inverse image preserves common universe geometric stalks
 
-Actual inverse image has the original image-point stalk in the same common universe.
+Inverse image preserves common universe geometric stalks.
+
+The canonical inverse-image functor followed by the common stalk at `x` is naturally
+isomorphic to the common stalk at `x ≫ f`.

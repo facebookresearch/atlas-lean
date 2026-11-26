@@ -1,3 +1,6 @@
-# Bifunctor map mk
+# Right-variable map in the integer-valued tensor bifunctor
 
-The actual map in the right-module variable, on pure balanced representatives.
+Right-variable map in the integer-valued tensor bifunctor.
+
+For `f : M ⟶ M'` of right `R`-modules, the corresponding component at `N` sends the pure
+balanced class `[m ⊗ n]` to `[f m ⊗ n]`.

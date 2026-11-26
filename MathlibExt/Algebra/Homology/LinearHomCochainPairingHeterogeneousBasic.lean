@@ -9,10 +9,19 @@ public import MathlibExt.Algebra.Homology.CochainGradedPairingHomologyHeterogene
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairing
 
 /-!
-# Heterogeneous linear-Hom cochain comparison infrastructure
+# Units and comparison maps for Hom cohomology pairings
 
-Equality transport, explicit counit/unit cochains, comparison morphisms, and
-comparison-aware descent of cochain pairing laws to homology.
+Work over a commutative ring R with nonnegative complexes of R-modules and
+coefficient modules in carrier universe u. For a chain map ε : K → R[0]
+and an R-linear coefficient map e : R → A, the cochain e ∘ ε₀ is a cocycle
+in Hom_R(K; A)^0 and defines a map R → Z⁰(Hom_R(K; A)).
+
+Associativity and unit identities for graded cochain pairings descend to
+cohomology through specified comparison maps on terms, cycles, and cohomology.
+These maps must commute with the cycle inclusions and cycle-to-cohomology
+projections. Given these two compatibility equations, a cochain associativity
+or unit equation implies the corresponding cohomology equation, including
+comparisons between distinct output complexes.
 -/
 
 @[expose] public section
@@ -32,14 +41,18 @@ namespace HomologicalComplex
 
 variable (R : Type u) [CommRing R]
 
-/-- Equality transport between cycle objects of a cochain complex. -/
+/-- For a commutative ring R, a nonnegative cochain complex K of R-modules,
+and equal degrees p = q, this is the canonical isomorphism Zᵖ(K) ≅ Zᑫ(K).
+It transports cycles along the given identification of degrees. -/
 noncomputable def cochainCyclesIsoOfEq
     (K : CochainComplex (ModuleCat.{u} R) ℕ) {p q : ℕ} (h : p = q) :
     K.cycles p ≅ K.cycles q := by
   subst q
   exact Iso.refl _
 
-/-- Equality transport between homology objects of a cochain complex. -/
+/-- For a commutative ring R, a nonnegative cochain complex K of R-modules,
+and equal degrees p = q, this is the canonical isomorphism Hᵖ(K) ≅ Hᑫ(K).
+It transports cohomology classes along the given identification of degrees. -/
 noncomputable def cochainHomologyIsoOfEq
     (K : CochainComplex (ModuleCat.{u} R) ℕ) {p q : ℕ} (h : p = q) :
     K.homology p ≅ K.homology q := by
@@ -100,8 +113,11 @@ theorem cochainHomologyπ_comp_cochainHomologyMapOfEq
     rw [cochainHomologyπ_comp_cochainHomologyIsoOfEq_hom]
   exact (Category.assoc _ _ _).symm
 
-/-- A degree-zero linear-Hom cochain built from an explicitly supplied chain
-counit and coefficient unit.  No `ComonObj` instance is required. -/
+/-- Let R be a commutative ring, K a nonnegative chain complex of
+R-modules, ε : K → R[0] a chain map, A an R-module, and e : R → A
+an R-linear map. The resulting degree-zero Hom cochain is
+K₀ → R → A, namely e ∘ ε₀ after identifying the degree-zero term of
+the tensor unit R[0] with R. -/
 noncomputable def linearHomCochainUnitOfCounit
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (ε : K ⟶ 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
@@ -135,7 +151,11 @@ theorem linearHomCochainUnitOfCounit_d
   rw [← Category.assoc, hd]
   simp
 
-/-- The linear map selecting the explicit degree-zero unit cochain. -/
+/-- Let R be a commutative ring, K a nonnegative chain complex of
+R-modules, ε : K → R[0] a chain map, A an R-module, and e : R → A
+an R-linear map. This map R → Hom_R(K₀, A) sends r to
+r • (e ∘ ε₀), using the identification R[0]₀ ≅ R.
+In particular, it sends 1 to the cochain determined by ε and e. -/
 noncomputable def linearHomCochainUnitOfCounitHom
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (ε : K ⟶ 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
@@ -160,7 +180,10 @@ theorem linearHomCochainUnitOfCounitHom_d
   rw [linearHomCochainUnitOfCounit_d]
   exact smul_zero r
 
-/-- The explicit counit/unit cochain, lifted canonically to the cycle object. -/
+/-- Let R be a commutative ring, K a nonnegative chain complex of
+R-modules, ε : K → R[0] a chain map, A an R-module, and e : R → A
+an R-linear map. The cochain e ∘ ε₀ is closed because ε₀ ∘ d_K = 0.
+This is the map R → Z⁰(Hom_R(K; A)) sending 1 to that cocycle. -/
 noncomputable def linearHomCochainUnitOfCounitCycles
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (ε : K ⟶ 𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
@@ -188,9 +211,15 @@ namespace HomologicalComplex.CochainGradedPairing
 
 variable (R : Type u) [CommRing R]
 
-/-- A heterogeneous equality of the underlying cochain pair maps descends to
-the folded associativity theorem once the chosen comparison is supplied on
-cochains, cycles, and homology. -/
+/-- Let R be a commutative ring and let P₁₂, Pₗ, P₂₃, Pᵣ be graded
+pairings of nonnegative cochain complexes of R-modules, with left output L
+and right output R′ in degrees (p + q) + r and p + (q + r).
+Suppose comparison maps c_X, c_Z, c_H between these output terms, cycles,
+and cohomology satisfy i_R′ ∘ c_Z = c_X ∘ i_L and
+c_H ∘ π_L = π_R′ ∘ c_Z. If
+c_X ∘ Pₗ ∘ (P₁₂ ⊗ id) = Pᵣ ∘ (id ⊗ P₂₃) ∘ α on cochains, then
+the identical associativity equation holds on cohomology with c_H and
+the associator of the cohomology modules. -/
 theorem pairHomology_associativity_of_pair
     {K₁ K₂ K₃ K₁₂ K₂₃ L R' : CochainComplex (ModuleCat.{u} R) ℕ}
     (P₁₂ : CochainGradedPairing K₁ K₂ K₁₂)
@@ -250,7 +279,13 @@ theorem pairHomology_associativity_of_pair
   rw [← MonoidalCategory.associator_naturality_assoc]
   rw [hpair]
 
-/-- Pair-level left-unitality descends through an explicit comparison. -/
+/-- Let R be a commutative ring, P a graded pairing of nonnegative
+cochain complexes U and K into L, q ∈ ℕ, and u : R → Z⁰(U) a chosen
+cocycle map. Suppose c_X : L_(0+q) → K_q, c_Z : Z⁰⁺ᑫ(L) → Zᑫ(K),
+and c_H : H⁰⁺ᑫ(L) → Hᑫ(K) satisfy i_K ∘ c_Z = c_X ∘ i_L and
+c_H ∘ π_L = π_K ∘ c_Z. If pairing with i_U ∘ u followed by c_X
+equals the left tensor unitor on K_q, then pairing with the class π_U ∘ u
+followed by c_H equals the left tensor unitor on Hᑫ(K). -/
 theorem pairHomology_left_unit_of_pair
     {U K L : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing U K L) (q : ℕ)
@@ -293,7 +328,13 @@ theorem pairHomology_left_unit_of_pair
     exact MonoidalCategory.leftUnitor_naturality (K.iCycles q)
   slice_lhs 1 3 => rw [hcycles]
 
-/-- Pair-level right-unitality descends through an explicit comparison. -/
+/-- Let R be a commutative ring, P a graded pairing of nonnegative
+cochain complexes K and U into L, p ∈ ℕ, and u : R → Z⁰(U) a chosen
+cocycle map. Suppose c_X : L_(p+0) → K_p, c_Z : Zᵖ⁺⁰(L) → Zᵖ(K),
+and c_H : Hᵖ⁺⁰(L) → Hᵖ(K) satisfy i_K ∘ c_Z = c_X ∘ i_L and
+c_H ∘ π_L = π_K ∘ c_Z. If pairing on the right with i_U ∘ u followed
+by c_X equals the right tensor unitor on K_p, then pairing on the right
+with π_U ∘ u followed by c_H equals the right tensor unitor on Hᵖ(K). -/
 theorem pairHomology_right_unit_of_pair
     {K U L : CochainComplex (ModuleCat.{u} R) ℕ}
     (P : CochainGradedPairing K U L) (p : ℕ)

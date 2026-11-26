@@ -1,3 +1,6 @@
-# Equivalence
+# Left-module Morita equivalence from two bimodule contractions
 
-The source's actual left-module tensor equivalence, without normalized inputs.
+Left-module Morita equivalence from two bimodule contractions.
+
+Bimodule equivalences `P ⊗_S Q ≅ R` and `Q ⊗_R P ≅ S` construct `ModuleCat R ≌ ModuleCat S`.
+Its forward functor tensors by `Q`, and its inverse tensors by `P`.

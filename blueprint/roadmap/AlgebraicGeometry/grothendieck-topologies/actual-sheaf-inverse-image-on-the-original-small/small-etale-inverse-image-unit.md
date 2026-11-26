@@ -1,3 +1,5 @@
-# Small Etale Inverse Image Unit
+# Unit of small étale inverse image and direct image
 
-The actual natural unit on all original common-universe sheaves.
+Unit of small étale inverse image and direct image.
+
+The adjunction gives the natural map `Q → f_*f^*Q` on sheaves over `Y`.

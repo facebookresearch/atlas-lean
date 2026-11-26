@@ -1,3 +1,6 @@
-# Group Right Tensor Adjunction
+# Balanced tensor with fixed left factor has an additive Hom right adjoint
 
-Both first-variable adjunction maps are the existing original group maps.
+Balanced tensor with fixed left factor has an additive Hom right adjoint.
+
+For a fixed left `R`-module `B`, the functor `- ⊗_R B` from right modules to additive groups
+is left adjoint to `rightHomGroupFunctor R B`.

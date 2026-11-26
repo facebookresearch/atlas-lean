@@ -1,4 +1,6 @@
-# Small Etale Inverse Image obj
+# Inverse image sheaf as the sheafified affine left extension
 
-This is exactly the sheafification of the proved affine Lan of the actual
-restriction of the original sheaf.
+Inverse image sheaf as the sheafified affine left extension.
+
+The inverse image of `Q` is the sheafification on `X` of the affine presheaf left extension of
+its affine restriction.

@@ -1,4 +1,6 @@
-# Intrinsic Ambient Left Operator scalar
+# The intrinsic V operator is its ambient tensor inclusion
 
-The actual V multiplication operator is native multiplication by its
-ambient tensor inclusion.
+For x∈V, the intrinsic V-multiplication operator
+on ambient Tor equals multiplication by
+(x⊗1_W)⊗1_B in G=(V⊗K W)⊗K B.
+This is an equality before any flatness comparison.

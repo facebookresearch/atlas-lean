@@ -1,4 +1,6 @@
-# Hom Tensor Finite Factor Inverse Piece forward
+# Matching inverse piece recovers a source summand tensor
 
-Every original tensor summand in its supported degree is recovered whole,
-including all infinitely many original source Hom coordinates.
+Matching inverse piece recovers a source summand tensor.
+
+For `a + b = n`, applying the forward comparison to any tensor in cell `(a, b)` and then the
+inverse piece for degree `b` returns its source-total inclusion.

@@ -1,3 +1,6 @@
-# Functor linear
+# Power-torsion functor is linear over the scalar ring
 
-The scalar action on morphisms is retained by the native restriction.
+Power-torsion functor is linear over the scalar ring.
+
+For an ideal `I`, the power-torsion functor preserves `R`-scalar multiplication of module
+morphisms.

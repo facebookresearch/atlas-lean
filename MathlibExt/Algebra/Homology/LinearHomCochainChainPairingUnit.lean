@@ -14,6 +14,18 @@ module
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairingHeterogeneous
 public import MathlibExt.Algebra.Homology.LinearHomCochainChainPairing
 
+/-!
+# Unit diagrams for degree-lowering linear Hom pairings
+
+Let R be commutative and all coefficient modules lie in universe u. The Hom cochain–chain
+descriptor is the heterogeneous Hom-pairing descriptor when the second cochain is the identity
+of its chain term. This identifies its degree-zero specialization with the tensor unit action.
+
+Let Δ:K→K_u⊗K and ε:K_u→𝟙 be chain maps satisfying Δ≫(ε⊗id_K)≫λ_K=id_K. For e:𝟙→U and actions
+ρ_q:U⊗K_q→K_q with (e⊗id)≫ρ_q=λ_{K_q}, the cochain induced by ε,e acts as a left unit in every
+q∈ℕ. The formula includes the identification K_q≅K_{0+q}.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -33,12 +45,18 @@ open LinearHomCochainPairingHeterogeneous
 
 variable (R : Type u) [CommRing R]
 
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+Nonnegative R-module chain complexes carry the monoidal total tensor product, with scalar
+single-complex unit and differential d(x_p⊗y_q)=dx_p⊗y_q+(-1)^p x_p⊗dy_q. Its canonical left
+unitor is the chain map used in the unit-diagram condition. -/
 noncomputable local instance linearHomCochainChainUnitMonoidalCategory :
     MonoidalCategory (ChainComplex (ModuleCat.{u} R) ℕ) :=
   HomologicalComplex.monoidalCategory (ModuleCat.{u} R) (ComplexShape.down ℕ)
 
-/-- The cochain-chain descriptor agrees with the heterogeneous pairing descriptor
-when the second cochain is the identity. -/
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+For K₁,K₂,L, A, ρ_q:A⊗K₂,q→L_q and φ:K₁,p→A, the cochain–chain descriptor (K₁⊗K₂)_{p+q}→L_q
+equals the heterogeneous Hom pairing descriptor formed from coefficient map ρ_q, cochains φ and
+id_{K₂,q}. Both select the same (p,q) summand and act there by (φ⊗id)≫ρ_q. -/
 lemma linearHomCochainChainPairDesc_eq_linearHomPairingDesc
     {K₁ K₂ L : ChainComplex (ModuleCat.{u} R) ℕ}
     {A : ModuleCat.{u} R} [HasTensor K₁ K₂]
@@ -56,8 +74,11 @@ lemma linearHomCochainChainPairDesc_eq_linearHomPairingDesc
     simp
   · simp [hi]
 
-/-- A compatible chain counit and coefficient action make the induced
-linear-Hom cochain-chain pairing left-unital in every natural degree. -/
+/-- Let R be commutative in universe u, with all modules and nonnegative chain-complex terms in u.
+Let Δ:K→K_u⊗K, ε:K_u→𝟙 satisfy Δ≫(ε⊗id_K)≫λ_K=id_K, and let e:𝟙→U with actions ρ_q:U⊗K_q→K_q
+satisfy (e⊗id_{K_q})≫ρ_q=λ_{K_q}. The canonical map η:𝟙→Hom_R((K_u)_0,U) induced by ε and e is a
+left unit for the degree-(0,q) cap pairing: (η⊗id_{K_q}) followed by K_q≅K_{0+q} and
+κ_{Δ,ρ}^{0,q} equals λ_{K_q}, for every q∈ℕ. -/
 theorem linearHomCochainChainPair_left_unit_of_diagrams
     {Kᵤ K : ChainComplex (ModuleCat.{u} R) ℕ}
     {U : ModuleCat.{u} R}

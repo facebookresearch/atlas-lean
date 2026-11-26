@@ -1,3 +1,6 @@
-# Tensor Adjoin Base Equiv symm tmul
+# The inverse adjoined coefficient equivalence inserts the B-unit
 
-The original inverse coefficient map inserts the actual B unit.
+For the adjoining equivalence
+(A⊗K B)⊗_B X≃A⊗K X, the inverse sends
+a⊗x to (a⊗1_B)⊗x.
+The K- and B-actions on X are compatible.

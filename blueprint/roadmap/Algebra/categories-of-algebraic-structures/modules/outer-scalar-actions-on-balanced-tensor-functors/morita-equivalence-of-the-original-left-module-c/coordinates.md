@@ -1,3 +1,6 @@
-# Coordinates
+# Left return composite in composite-coefficient coordinates
 
-The actual composite-to-raw module comparison, preserving original factors.
+Left return composite in composite-coefficient coordinates.
+
+The balanced tensor associator gives an isomorphism from `P ⊗_S (Q ⊗_R X)` to `(P ⊗_S Q) ⊗_R
+X`, with the induced left `R`-module structures.

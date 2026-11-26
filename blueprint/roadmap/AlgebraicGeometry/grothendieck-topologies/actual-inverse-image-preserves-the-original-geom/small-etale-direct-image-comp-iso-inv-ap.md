@@ -1,3 +1,6 @@
-# Small Etale Direct Image Comp Iso inv app hom app
+# Inverse direct image composition comparison on sections
 
-The inverse of the accepted DI composition comparison is restriction along BaseComp.inv.
+Inverse direct image composition comparison on sections.
+
+The inverse direct-image composition component acts by restriction along the inverse base-
+change composition isomorphism.

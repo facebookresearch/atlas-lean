@@ -1,6 +1,6 @@
 # Canonical coefficient tensor and normalization comparison
 
-- [Diagram Functor](diagram-functor.md)
-- [Normalized Diagram Functor](normalized-diagram-functor.md)
-- [Normalization Nat Iso](normalization-nat-iso.md)
-- [Normalization Nat Iso hom app](normalization-nat-iso-hom-app.md)
+- [The simplicial tensor-coefficient functor](diagram-functor.md)
+- [Normalized chains of the simplicial coefficient tensor](normalized-diagram-functor.md)
+- [Tensor coefficients commute naturally with Moore normalization](normalization-nat-iso.md)
+- [The forward normalization comparison uses inclusion and Moore projection](normalization-nat-iso-hom-app.md)

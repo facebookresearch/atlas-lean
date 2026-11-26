@@ -1,3 +1,6 @@
-# Group Left Tensor Hom Equiv apply
+# Forward left-variable tensor–Hom equivalence on elements
 
-The actual native hom-set equivalence evaluates the original pure tensor function.
+Forward left-variable tensor–Hom equivalence on elements.
+
+The morphism corresponding to an additive tensor map `f`, evaluated first at `b` and then at
+`a`, gives `f([a ⊗ b])`.

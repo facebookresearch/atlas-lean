@@ -1,3 +1,6 @@
-# Is Zero hom Cochain Complex Homology Functor Single
+# Single-object Hom cohomology vanishes away from its degree
 
-`H^n(Hom(single_j R, -))` vanishes for `n ≠ j`.
+Single-object Hom cohomology vanishes away from its degree.
+
+For `n ≠ j`, the degree-`n` cohomology coefficient functor of Hom cochains from the single
+object `A[j]` is zero.

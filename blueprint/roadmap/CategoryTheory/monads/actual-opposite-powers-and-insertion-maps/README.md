@@ -1,9 +1,9 @@
 # Actual opposite powers and insertion maps
 
-- [Monad Pow op obj](monad-pow-op-obj.md)
-- [Monad Pow op naturality](monad-pow-op-naturality.md)
-- [Monad Pow Op Iso](monad-pow-op-iso.md)
-- [Epsilon At Pos op](epsilon-at-pos-op.md)
-- [Delta At Pos op](delta-at-pos-op.md)
-- [Cobar Epsilon At Pos op](cobar-epsilon-at-pos-op.md)
-- [Cobar Delta At Pos op](cobar-delta-at-pos-op.md)
+- [Opposite comonad powers have the monad power objects after unop](monad-pow-op-obj.md)
+- [The opposite power object equality is natural](monad-pow-op-naturality.md)
+- [The unopped opposite-comonad power is naturally the monad power](monad-pow-op-iso.md)
+- [Reversed counit insertion becomes unit insertion](epsilon-at-pos-op.md)
+- [Reversed comultiplication insertion becomes multiplication insertion](delta-at-pos-op.md)
+- [Source-ordered cobar counits become bar unit insertions](cobar-epsilon-at-pos-op.md)
+- [Source-ordered cobar comultiplications become bar multiplications](cobar-delta-at-pos-op.md)

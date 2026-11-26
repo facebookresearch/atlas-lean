@@ -15,12 +15,19 @@ public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.CochainProduc
 public import MathlibExt.Algebra.Homology.CochainComplex.TensorHom.TensorFiniteDecomposition
 
 /-!
-# Signed cochain inverses with finite-projective tensor factors
+# Inverting Hom–tensor coordinates with a bounded finite projective factor
 
-Each U-degree is recovered from tensor-cell projections, the integer-product
-and coefficient isomorphism, and the sum-total coprojection. The first Hom
-source and Hom target are arbitrary. Bounds on U make the sum finite.
-The inverse laws preserve generators, coordinates and source-degree signs.
+Let `R : Type u` be a commutative ring and `P`, `J`, and `U` integer cochain complexes in
+`ModuleCat.{v} R`. The comparison `Hom_R(P,J) ⊗_R U → Hom_R(P,J ⊗_R U)` sends a tensor from
+degrees `(a, b)` to the source-degree-`s` coordinate with sign `(-1)^(s*b)`.
+
+When every `U^b` is finite and categorically projective, project the target Hom coordinates to
+the tensor cells of `U`-degree `b`, invert the signed coefficient and integer-product
+comparison, and include the resulting element in the source cell `(n - b, b)`.
+
+Summing these inverse pieces over `b ∈ [L, N]` gives a two-sided inverse in degree `n` if
+`U^b` is zero below `L` and above `N`. The Hom source `P` and target `J` are unrestricted, and
+the scalar and carrier universes are independent.
 -/
 
 @[expose] public section
@@ -44,7 +51,10 @@ local instance (K L : CochainComplex (ModuleCat.{v} R) ℤ) :
   intro n
   infer_instance
 
-/-- The actual full product of projected original Hom coordinates at U-degree b. -/
+/-- Projection of a tensor-valued Hom cochain to one factor degree.
+
+For a degree-`n` cochain `z : Hom_R(P, J ⊗ U)`, project its degree-`s` value to the cell
+`J^(s+n-b) ⊗ U^b`. These maps form an integer-indexed family of linear maps from `P^s`. -/
 def homTensorFiniteFactorProjected (n b : ℤ) :
     Cochain P (complexAt R J U) n →ₗ[R]
       ∀ s : ℤ, P.X s →ₗ[R] J.X (s + (n - b)) ⊗[R] U.X b :=
@@ -57,15 +67,21 @@ def homTensorFiniteFactorProjected (n b : ℤ) :
 
 omit [∀ b : ℤ, CategoryTheory.Projective (U.X b)]
   [∀ b : ℤ, Module.Finite R (U.X b)] in
-/-- The projections use the original cochain evaluation and actual total cell. -/
+/-- Coordinate formula for one factor-degree Hom projection.
+
+At source degree `s`, the projected family is the component `z_(s,s+n)` followed by the
+tensor-cell projection onto `J^(s+n-b) ⊗ U^b`. -/
 theorem homTensorFiniteFactorProjected_apply (n b : ℤ)
     (z : Cochain P (complexAt R J U) n) (s : ℤ) :
     homTensorFiniteFactorProjected R P J U n b z s =
       (tensorCellProjection R J U (s + (n - b)) b (s + n)).hom.comp
         (z.v s (s + n) rfl).hom := rfl
 
-/-- The exact original forward map on an arbitrary tensor in a single U-degree.
-Its signs are precisely the signs of the earned cochain coefficient Iso. -/
+/-- Hom–tensor comparison on an arbitrary finite-factor summand tensor.
+
+For `a + b = n` and any `t ∈ Hom_R(P,J)^a ⊗ U^b`, include `t` in the source total and apply
+the Hom–tensor comparison. At source degree `s`, its value is the tensor-cell inclusion of the
+signed coefficient-coordinate equivalence applied to `t` at `s` and evaluated on `x : P^s`. -/
 theorem homTensorDegree_ι_finiteFactor_v
     (n a b : ℤ) (hab : a + b = n) (t : Cochain P J a ⊗[R] U.X b)
     (s q : ℤ) (hsq : s + n = q) (x : P.X s) :
@@ -113,8 +129,11 @@ theorem homTensorDegree_ι_finiteFactor_v
     exact (map_zsmul iT.hom _ _).symm
   exact congrArg (fun h : Cochain P J a ⊗[R] U.X b →ₗ[R] T.X q => h t) h
 
-/-- Projection of the same arbitrary original tensor summand recovers exactly
-the earned signed full-product comparison, before applying its inverse. -/
+/-- Projection recovers the matching signed coefficient coordinates.
+
+Apply the degree-`n` comparison to the source cell `(n - b, b)` and project to factor degree
+`b`. The result is `cochainTensorFiniteFactorEquiv` of the cell tensor, as a full integer
+family of linear maps. -/
 theorem homTensorFiniteFactorProjected_forward
     (n b : ℤ) (t : Cochain P J (n - b) ⊗[R] U.X b) :
     homTensorFiniteFactorProjected R P J U n b
@@ -138,7 +157,10 @@ theorem homTensorFiniteFactorProjected_forward
         f.hom ((cochainTensorFiniteFactorEquiv R P J (n - b) b (U.X b) t s) x)) hi
   exact hv
 
-/-- A different original U-degree is killed by the original total projection. -/
+/-- Projection of a different factor degree vanishes.
+
+For a tensor in source cell `(a, b)` with `a + b = n`, the forward Hom–tensor comparison has
+zero projected family in factor degree `k` whenever `k ≠ b`. -/
 theorem homTensorFiniteFactorProjected_forward_eq_zero
     (n a b k : ℤ) (hab : a + b = n) (hkb : k ≠ b)
     (t : Cochain P J a ⊗[R] U.X b) :
@@ -163,8 +185,11 @@ theorem homTensorFiniteFactorProjected_forward_eq_zero
         f.hom ((cochainTensorFiniteFactorEquiv R P J a b (U.X b) t s) x)) hi
   exact hv
 
-/-- The original cochain tensor factor is recovered with its actual full-product
-inverse and inserted through the original sum-total coprojection. -/
+/-- One factor-degree piece of the Hom–tensor inverse.
+
+Project a target degree-`n` cochain to factor degree `b`, apply the inverse signed coefficient
+equivalence, and include the result in source total cell `(n - b, b)`. Finite projectivity of
+the factor terms supplies the coefficient equivalence. -/
 def homTensorFiniteFactorInversePiece (n b : ℤ) :
     Cochain P (complexAt R J U) n →ₗ[R]
       (complexAt R (linearComplex R P J) U).X n :=
@@ -173,14 +198,19 @@ def homTensorFiniteFactorInversePiece (n b : ℤ) :
       ((cochainTensorFiniteFactorEquiv R P J (n - b) b (U.X b)).symm.toLinearMap.comp
         (homTensorFiniteFactorProjected R P J U n b))
 
-/-- The original finite interval of U-degrees supplies the degree inverse. -/
+/-- Finite sum of factor-degree inverse pieces.
+
+For integer bounds `L` and `N`, sum the inverse pieces in factor degrees `b ∈ Finset.Icc L N`
+to define a linear map from target degree-`n` Hom cochains to the source Hom–tensor total. -/
 def homTensorFiniteFactorInverseDegree (L N n : ℤ) :
     Cochain P (complexAt R J U) n →ₗ[R]
       (complexAt R (linearComplex R P J) U).X n :=
   ∑ b ∈ Finset.Icc L N, homTensorFiniteFactorInversePiece R P J U n b
 
-/-- Every original tensor summand in its supported degree is recovered whole,
-including all infinitely many original source Hom coordinates. -/
+/-- Matching inverse piece recovers a source summand tensor.
+
+For `a + b = n`, applying the forward comparison to any tensor in cell `(a, b)` and then the
+inverse piece for degree `b` returns its source-total inclusion. -/
 theorem homTensorFiniteFactorInversePiece_forward
     (n a b : ℤ) (hab : a + b = n) (t : Cochain P J a ⊗[R] U.X b) :
     homTensorFiniteFactorInversePiece R P J U n b
@@ -202,7 +232,10 @@ theorem homTensorFiniteFactorInversePiece_forward
                 (by change n - b + b = n; omega)).hom t)))) = _
   rw [homTensorFiniteFactorProjected_forward, LinearEquiv.symm_apply_apply]
 
-/-- The same actual inverse piece vanishes on every different U summand. -/
+/-- Nonmatching inverse piece vanishes on a source summand.
+
+For a source cell `(a, b)`, the inverse piece in factor degree `k ≠ b` sends its forward image
+to zero. -/
 theorem homTensorFiniteFactorInversePiece_forward_eq_zero
     (n a b k : ℤ) (hab : a + b = n) (hkb : k ≠ b)
     (t : Cochain P J a ⊗[R] U.X b) :
@@ -224,8 +257,11 @@ theorem homTensorFiniteFactorInversePiece_forward_eq_zero
     (ModuleCat.tensorBifunctorAt R) (.up ℤ) (n - k) k n
       (by change n - k + k = n; omega)).hom.map_zero
 
-/-- The degree inverse is a left inverse on the entire native sum total.
-Off the original finite U interval, the actual source cell is zero. -/
+/-- Bounded-factor inverse sum is a left inverse.
+
+If every factor term `U^b` is zero for `b < L` and for `N < b`, the finite inverse sum
+followed after the degree-`n` comparison is the identity on the source Hom–tensor total
+degree. -/
 theorem homTensorFiniteFactorInverseDegree_leftInverse (L N n : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))
     (hUhi : ∀ b : ℤ, N < b → IsZero (U.X b)) :
@@ -282,8 +318,11 @@ theorem homTensorFiniteFactorInverseDegree_leftInverse (L N n : ℤ)
   simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_ofHom,
     ModuleCat.hom_id, LinearMap.id_apply] using hv
 
-/-- The same original inverse piece recovers the original projected coordinate
-followed by its original coprojection at every source degree. -/
+/-- Forward image of one inverse piece is cell projection and reinclusion.
+
+For a target cochain `z`, applying its factor-degree-`b` inverse piece and then the forward
+comparison, at source degree `s`, gives the tensor-cell projection of `z_(s,s+n)(x)` onto
+`J^(s+n-b) ⊗ U^b` followed by reinclusion. -/
 theorem homTensorDegree_finiteFactorInversePiece_v (n b s : ℤ)
     (z : Cochain P (complexAt R J U) n) (x : P.X s) :
     (((homTensorDegree R P J U n).hom
@@ -302,8 +341,10 @@ theorem homTensorDegree_finiteFactorInversePiece_v (n b s : ℤ)
     homTensorFiniteFactorProjected_apply]
   rfl
 
-/-- The finite original U sum recovers the entire original full-product Hom
-cochain. No bound or projectivity of its first source is used. -/
+/-- Bounded-factor inverse sum is a right inverse.
+
+If `U` is zero below `L` and above `N`, the degree-`n` comparison applied after the finite
+inverse sum is the identity on `Hom_R(P, J ⊗ U)^n`. -/
 theorem homTensorFiniteFactorInverseDegree_rightInverse (L N n : ℤ)
     (hUlo : ∀ b : ℤ, b < L → IsZero (U.X b))
     (hUhi : ∀ b : ℤ, N < b → IsZero (U.X b)) :

@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Comp Iso unit
+# Composition comparison is compatible with the adjunction unit
 
-The composition comparison commutes with the same actual adjunction units.
+Composition comparison is compatible with the adjunction unit.
+
+The successive adjunction unit followed by the direct-image composition comparison equals the
+composite unit followed by direct image of the inverse inverse-image comparison.

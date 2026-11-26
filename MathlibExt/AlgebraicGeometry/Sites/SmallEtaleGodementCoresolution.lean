@@ -17,11 +17,16 @@ public import Mathlib.Algebra.Homology.Single
 public import Mathlib.CategoryTheory.Functor.ReflectsIso.Exact
 
 /-!
-# Small étale Godement coresolutions
+# The coaugmented Godement coresolution
 
-The point-family adjunction constructs the coaugmented cosimplicial
-Godement object. Its terms are skyscraper products and are acyclic for
-positive right-derived global sections.
+The Godement monad `T` gives an augmented cosimplicial sheaf with degree-`n` term `T^(n+1)Q`.
+Every such term is a product of canonical geometric skyscrapers and is acyclic for positive
+derived global sections.
+
+The associated cochain complex has the alternating coface differential. After the canonical
+stalk-degree coordinate, it is `∑ i = 0,…,n+1, (-1)^i` times insertion of the monad unit at
+position `i`. The unit map from `Q` gives a coaugmentation from `Q[0]`, exact in degree zero
+and in every positive degree, hence a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -120,19 +125,27 @@ private theorem coresolutionMappedDifferential.{vC, uC, vD, uD}
       ((congrArg L.map (Monad.coresolutionObjIso_coface T Q i)).trans
         (L.map_comp (e n).hom (Monad.barEtaAtPos T (n + 1) i Q))))
 
-/-- The genuine coaugmented Godement cosimplicial object on the original sheaf category. -/
+/-- Augmented cosimplicial Godement sheaf.
+
+Use the Godement monad to form the augmented cosimplicial coresolution of `Q`. -/
 def smallEtaleGodementAugmentedCoresolution (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     CosimplicialObject.Augmented (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
   Monad.coresolutionAugmented (smallEtaleGodementMonad.{u, w} X) Q
 
-/-- The underlying actual Godement cosimplicial object. -/
+/-- Cosimplicial Godement sheaf.
+
+The monad coresolution has objects the successive positive powers of the Godement monad on
+`Q`. -/
 def smallEtaleGodementCoresolution (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     CosimplicialObject (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
   Monad.coresolution (smallEtaleGodementMonad.{u, w} X) Q
 
-/-- Every actual Godement degree is the original skyscraper product of an iterated stalk family. -/
+/-- Godement term is a skyscraper product of stalks.
+
+The degree-`n` cosimplicial term is isomorphic to the skyscraper product of the stalk family
+of `T^n Q`. -/
 def smallEtaleGodementCoresolutionTermIso (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     (smallEtaleGodementCoresolution.{u, w} X Q).obj (SimplexCategory.mk n) ≅
@@ -142,14 +155,18 @@ def smallEtaleGodementCoresolutionTermIso (X : Scheme.{u})
   Monad.coresolutionObjIso (smallEtaleGodementMonad.{u, w} X) Q n ≪≫
     eqToIso (Monad.monadPow_succ_obj_eq (smallEtaleGodementMonad.{u, w} X) n Q)
 
-/-- The degree-zero coaugmentation is the same original geometric-germ Godement unit. -/
+/-- Cosimplicial coaugmentation in degree zero is the unit.
+
+The augmentation map at the zero simplex is the Godement unit on `Q`. -/
 theorem smallEtaleGodementAugmentedCoresolution_unit (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleGodementAugmentedCoresolution.{u, w} X Q).hom.app (SimplexCategory.mk 0) =
       (smallEtaleGodementUnit.{u, w} X).app Q := by
   exact Monad.coresolutionAugmented_hom_zero (smallEtaleGodementMonad.{u, w} X) Q
 
-/-- Every positive right-derived global-section object of every actual degree term is zero. -/
+/-- Every Godement term is acyclic for positive derived sections.
+
+For every cosimplicial degree `n` and natural `i`, `R^(i+1)Γ` of that Godement term is zero. -/
 theorem smallEtaleGodementCoresolutionTerm_derivedSections_succ_isZero (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n i : ℕ) :
     IsZero (((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived (i + 1)).obj
@@ -160,14 +177,19 @@ theorem smallEtaleGodementCoresolutionTerm_derivedSections_succ_isZero (X : Sche
   exact IsZero.of_iso (smallEtaleGodementDerivedSections_succ_isZero.{u, w} X M i)
     ((Γ.rightDerived (i + 1)).mapIso (smallEtaleGodementCoresolutionTermIso.{u, w} X Q n))
 
-/-- The actual alternating-coface Godement cochain complex on the original sheaf category. -/
+/-- Godement cochains with alternating coface differential.
+
+Apply the alternating coface-map complex construction to the cosimplicial Godement
+coresolution. -/
 def smallEtaleGodementCochainComplex (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     CochainComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) ℕ :=
   (alternatingCofaceMapComplex _).obj (smallEtaleGodementCoresolution.{u, w} X Q)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original Godement unit is closed for the actual first alternating differential. -/
+/-- Godement unit lands in degree zero cocycles.
+
+The unit `Q → C⁰` followed by the first Godement differential `C⁰ → C¹` is zero. -/
 theorem smallEtaleGodementUnit_d_zero (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleGodementUnit.{u, w} X).app Q ≫
@@ -179,21 +201,27 @@ theorem smallEtaleGodementUnit_d_zero (X : Scheme.{u})
   change S.hom.app (SimplexCategory.mk 0) ≫ AlternatingCofaceMapComplex.objD S.right 0 = 0
   exact cosimplicialCoaugmentation_closed S
 
-/-- The original unit supplies the actual cochain coaugmentation from the original sheaf. -/
+/-- Cochain coaugmentation from the sheaf in degree zero.
+
+The Godement unit, with its vanishing first differential, defines a cochain map `Q[0] → C*`. -/
 def smallEtaleGodementCochainCoaugmentation (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (CochainComplex.single₀ _).obj Q ⟶ smallEtaleGodementCochainComplex.{u, w} X Q :=
   (CochainComplex.fromSingle₀Equiv (smallEtaleGodementCochainComplex.{u, w} X Q) Q).symm
     ⟨(smallEtaleGodementUnit.{u, w} X).app Q, smallEtaleGodementUnit_d_zero.{u, w} X Q⟩
 
-/-- The degree-zero cochain map is the literal original Godement unit. -/
+/-- Degree zero cochain coaugmentation is the Godement unit.
+
+The degree-zero component of the coaugmentation is the unit map on `Q`. -/
 theorem smallEtaleGodementCochainCoaugmentation_f_zero (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleGodementCochainCoaugmentation.{u, w} X Q).f 0 =
       (smallEtaleGodementUnit.{u, w} X).app Q :=
   CochainComplex.fromSingle₀Equiv_symm_apply_f_zero _ _
 
-/-- Actual stalk-family degree coordinates are the same canonical monad-power coordinates. -/
+/-- Stalk family coordinate of a Godement cochain term.
+
+The stalk family of cochain degree `n` is isomorphic to the stalk family of `T^(n+1)Q`. -/
 def smallEtaleGodementStalkDegreeIso (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     (smallEtaleGodementStalks.{u, w} X).obj
@@ -204,8 +232,10 @@ def smallEtaleGodementStalkDegreeIso (X : Scheme.{u})
     (Monad.coresolutionObjIso (smallEtaleGodementMonad.{u, w} X) Q n)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The actual stalk differential is the alternating original unit insertion in degree
-coordinates. -/
+/-- Godement differential in stalk coordinates is the alternating unit insertion sum.
+
+In the stalk-degree coordinates, the differential from `n` to `n+1` is the sum over `Fin
+(n+2)` of `(-1)^i` times the stalk map of the monad unit inserted at position `i`. -/
 theorem smallEtaleGodementStalkDegreeIso_d (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     (smallEtaleGodementStalks.{u, w} X).map
@@ -271,14 +301,18 @@ private theorem godementStalks_reflectExact (X : Scheme.{u})
     (piEquivalenceFunctorDiscreteCompEvaluationIso AddCommGrpCat.{max u w} x)
   exact ShortComplex.exact_of_iso e hEV
 
-/-- The actual Godement cochain complex is exact in every positive degree. -/
+/-- Godement cochain complex is exact in every positive degree.
+
+For every natural `n`, the Godement cochain complex is exact at degree `n + 1`. -/
 theorem smallEtaleGodementCochainComplex_exactAt_succ (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
     (smallEtaleGodementCochainComplex.{u, w} X Q).ExactAt (n + 1) :=
   godementStalks_reflectExact.{u, w} X _ (godementStalkShortComplexExact.{u, w} X Q n)
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The original unit and first Godement differential form the actual exact augmentation row. -/
+/-- Godement coaugmentation is exact at its degree zero term.
+
+The short complex `Q → C⁰ → C¹` formed by the unit and first Godement differential is exact. -/
 theorem smallEtaleGodementCochainCoaugmentation_exact (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (ShortComplex.mk ((smallEtaleGodementUnit.{u, w} X).app Q)
@@ -334,7 +368,9 @@ private theorem cochainCoaugmentation_quasiIsoAt_zero.{vC, uC}
   infer_instance
 
 set_option backward.isDefEq.respectTransparency.types false in
-/-- The literal original unit coaugmentation is a quasi-isomorphism. -/
+/-- Godement coaugmentation is a quasi isomorphism.
+
+The cochain map from `Q[0]` to its Godement cochain complex is a quasi-isomorphism. -/
 theorem smallEtaleGodementCochainCoaugmentation_quasiIso (X : Scheme.{u})
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     QuasiIso (smallEtaleGodementCochainCoaugmentation.{u, w} X Q) := by

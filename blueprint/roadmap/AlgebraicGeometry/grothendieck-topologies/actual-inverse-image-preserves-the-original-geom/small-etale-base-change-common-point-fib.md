@@ -1,4 +1,6 @@
-# Small Etale Base Change Common Point Fiber Iso
+# Lifted geometric fiber comparison after base change
 
-The original geometric point's common-universe fiber after base change
-is the same original image point's lifted fiber.
+Lifted geometric fiber comparison after base change.
+
+Lift the geometric fiber comparison to obtain a natural isomorphism from base change followed
+by the common point's fiber to the common fiber of `x ≫ f`.

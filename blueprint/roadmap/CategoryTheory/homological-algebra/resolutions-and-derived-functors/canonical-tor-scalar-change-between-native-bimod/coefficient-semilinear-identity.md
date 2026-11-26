@@ -1,3 +1,5 @@
-# Coefficient Semilinear Identity
+# The identity coefficient is enveloping-semilinear for identity endpoints
 
-The original coefficient identity is semilinear for the earned native enveloping identity.
+For an (R,S)-bimodule B, id_B is semilinear over the
+enveloping map induced by id_R,id_S.
+It is the coefficient identity used in ring-change coherence.

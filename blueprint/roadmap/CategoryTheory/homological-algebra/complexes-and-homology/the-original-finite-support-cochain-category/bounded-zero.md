@@ -1,3 +1,4 @@
-# Bounded zero
+# The zero cochain complex is bounded
 
-The original zero cochain has literal support in `[0,0]`.
+If C has zero morphisms and a zero object, its zero integer cochain complex is bounded. Every
+term is zero, so the interval [0,0] is a support witness.

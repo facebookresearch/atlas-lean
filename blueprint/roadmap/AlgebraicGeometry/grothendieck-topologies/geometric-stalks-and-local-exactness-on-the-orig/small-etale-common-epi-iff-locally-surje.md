@@ -1,4 +1,6 @@
-# Small Etale Common epi iff locally Surjective
+# Local surjectivity characterizes sheaf epimorphisms
 
-The last-map epimorphism is equivalent to the original local lift
-condition, without any common-universe W-equals-local-bijective premise.
+Local surjectivity characterizes sheaf epimorphisms.
+
+A morphism of common-universe small étale abelian sheaves is epi if and only if its presheaf
+section maps are locally surjective.

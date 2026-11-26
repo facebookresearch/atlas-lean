@@ -1,3 +1,7 @@
-# The comparison preserves the canonical augmentation and the...
+# Universe comparison respects the degree-zero Tor augmentation
 
-The comparison preserves the canonical augmentation and the actual original tensor.
+Universe comparison respects the degree-zero Tor augmentation.
+
+Under the source resolution and projective-lift assumptions, the degree-zero Tor comparison
+followed by the larger-universe zero-Tor and tensor coordinates equals the lifted source
+degree-zero augmentation.

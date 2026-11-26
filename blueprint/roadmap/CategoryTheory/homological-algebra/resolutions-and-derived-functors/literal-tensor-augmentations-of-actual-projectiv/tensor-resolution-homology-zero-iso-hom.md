@@ -1,4 +1,6 @@
-# Ι tensor Resolution Homology Zero Iso hom
+# Zeroth tensor homology coordinate evaluates the two augmentations
 
-The canonical native degree-zero comparison carries the original total
-quotient class to the tensor of the two original augmentation maps.
+Zeroth tensor homology coordinate evaluates the two augmentations.
+
+The `(0, 0)` summand inclusion, followed by the zeroth homology class map and the homology-
+zero comparison, equals `P.π.f 0 ⊗ₘ Q.π.f 0`.

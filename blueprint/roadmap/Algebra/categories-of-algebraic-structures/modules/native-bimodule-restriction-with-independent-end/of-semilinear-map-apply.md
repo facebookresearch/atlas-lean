@@ -1,3 +1,5 @@
-# Of Semilinear Map apply
+# The semilinear map formed from endpoint equations keeps the additive value
 
-The map constructed from the original endpoint equations keeps the original function.
+For an additive map f satisfying the left and right
+endpoint semilinearity equations, the resulting
+enveloping-semilinear map sends x to f(x).

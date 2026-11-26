@@ -1,3 +1,5 @@
-# Coefficient Tor Zero Iso hom
+# The degree-zero coefficient comparison is the tensor augmentation
 
-Its forward map is the original native augmentation, rather than aGlobal supplied comparison.
+The forward Tor_0^R(−,B)→(−)⊗_R B map is the
+canonical degree-zero derived-to-self augmentation of the
+coefficient tensor functor, in the chosen source category.

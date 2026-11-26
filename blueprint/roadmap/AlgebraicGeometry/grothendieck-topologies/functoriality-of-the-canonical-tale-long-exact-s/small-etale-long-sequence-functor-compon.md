@@ -1,3 +1,5 @@
-# Small Etale Long Sequence Functor components
+# Cohomology window functor has the displayed component maps
 
-The stock sequence morphism has those same literal six components.
+Cohomology window functor has the displayed component maps.
+
+Every morphism image under the window functor satisfies its six cohomology component formulas.

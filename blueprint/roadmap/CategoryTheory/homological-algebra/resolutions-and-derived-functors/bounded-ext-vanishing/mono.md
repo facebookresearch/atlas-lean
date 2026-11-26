@@ -1,3 +1,5 @@
-# Mono
+# Ext vanishing persists when the bound decreases
 
-Vanishing below a bound implies vanishing below every smaller bound.
+Ext vanishing persists when the bound decreases.
+
+If `Ext(X,Y)` vanishes below `n` and `m ≤ n`, then it vanishes below `m`.

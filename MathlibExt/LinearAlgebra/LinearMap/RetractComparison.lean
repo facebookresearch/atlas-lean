@@ -14,11 +14,14 @@ module
 public import Mathlib.Algebra.Module.LinearMap.Basic
 
 /-!
-# Bijectivity of an actual comparison through a retraction
+# Bijectivity through compatible linear retractions
 
-Two commuting squares and actual retraction identities transport bijectivity
-of a linear comparison. This elementary provider is shared by the original
-Hom/tensor and product/tensor coefficient comparisons.
+Let R be a semiring and α : D → C, β : E → F R-linear maps. Suppose D and C retract from E and
+F through i_D,r_D and i_C,r_C, and βi_D=i_Cα and αr_D=r_Cβ.
+
+If β is bijective, then α is bijective. The two commuting squares and the retraction
+identities give injectivity and surjectivity separately, without equality of the carrier
+universes.
 -/
 
 @[expose] public section
@@ -32,8 +35,10 @@ variable {R : Type uR} [Semiring R]
   [AddCommMonoid D] [Module R D] [AddCommMonoid E] [Module R E]
   [AddCommMonoid C] [Module R C] [AddCommMonoid F] [Module R F]
 
-/-- The comparison is a retract of the second comparison, via its actual
-commuting maps and their native retraction equations. -/
+/-- Let R be a semiring and D,E,C,F R-modules with additive commutative monoid carriers in
+independent universes. Let α : D →ₗ[R] C, β : E →ₗ[R] F, and retractions r_Di_D=id_D,
+r_Ci_C=id_C. If βi_D=i_Cα, αr_D=r_Cβ, and β is bijective, then α is bijective. Both
+commuting-square equations and both retraction identities are hypotheses. -/
 theorem comparison_bijective_of_retract
     (α : D →ₗ[R] C) (β : E →ₗ[R] F)
     (iD : D →ₗ[R] E) (rD : E →ₗ[R] D)

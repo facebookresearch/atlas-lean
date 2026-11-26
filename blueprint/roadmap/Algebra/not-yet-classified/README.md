@@ -45,6 +45,7 @@ Topics added since this subject's fields were last revised.
 - [Homotopy](homotopy/README.md)
 - [Homotopy Cofiber](homotopy-cofiber/README.md)
 - [Integer Exact Sequence](integer-exact-sequence/README.md)
+- [Linear Hom Cochain Integer Grading](linear-hom-cochain-integer-grading/README.md)
 - [Localization Colimits](localization-colimits/README.md)
 - [Localization Unit](localization-unit/README.md)
 - [Localization Unit Iso](localization-unit-iso/README.md)
@@ -96,3 +97,4 @@ Topics added since this subject's fields were last revised.
 - [Affine Recurrence Convergence](affine-recurrence-convergence/README.md)
 - [Sum Range Drop](sum-range-drop/README.md)
 - [Two Sided](is-two-sided.md)
+- [A quasi-isomorphism between degreewise projective complexes remains a quasi-isomorphism under linear Hom](linear-hom-cochain-complex-functor-map-q.md)

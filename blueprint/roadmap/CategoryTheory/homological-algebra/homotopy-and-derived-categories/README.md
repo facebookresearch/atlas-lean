@@ -28,5 +28,5 @@ Chain homotopies, mapping cones and cylinders, the homotopy category of complexe
 - [Homotopy cofiber projection](snd-x-eq-xiso-biprod.md)
 - [Homotopy cofiber quasi-isomorphism for short exact chain complexes](quasi-iso-desc-short-complex-up.md)
 - [Mapping-cone composition and short-complex quotients](mapping-cone-comp-triangle-mor-comp-desc.md)
-- [Linear Hom Cochain Pairing Homotopy](linear-hom-cochain-graded-pairing-pair-h-2.md)
-- [Homotopy naturality of linear-Hom cochain pairings](linear-hom-cochain-graded-pairing-pair-h.md)
+- [Homotopy invariance of Hom cohomology pairings](linear-hom-cochain-graded-pairing-pair-h-2.md)
+- [Homotopy naturality of Hom cohomology pairings](linear-hom-cochain-graded-pairing-pair-h.md)

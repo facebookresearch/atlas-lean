@@ -13,19 +13,21 @@ public import Mathlib.Algebra.Homology.BifunctorAssociator
 public import MathlibExt.Algebra.Homology.LinearYonedaCochainPairing
 
 /-!
-# Associativity of heterogeneous linear-Yoneda cochain pairings
+# Associativity of linear Yoneda cochain pairings
 
-This file proves a comparison-aware associativity theorem for
-linear-Yoneda cochain pairings in an arbitrary linear monoidal category.
-The four coefficient pairings and four chain diagonals may have different
-intermediate and output objects; explicit comparison morphisms and their
-associativity diagrams are retained in the statement.
+Let R be a commutative ring in universe v and C a preadditive R-linear
+monoidal category, with objects in universe u and morphisms in universe v.
+Tensoring is additive and R-linear in each variable. Nonnegative chain
+complexes in C give Hom cochain complexes of R-modules. All tensor products
+of chain complexes appearing in the associativity diagrams are assumed to exist.
 
-## Main declarations
-
-* `HomologicalComplex.linearYonedaPairingDesc_assoc`
-* `HomologicalComplex.linearYonedaCochainComparison`
-* `HomologicalComplex.linearYonedaCochainPair_associativity_of_diagrams`
+Four chain diagonals and four coefficient pairings can have distinct
+intermediate and output objects. The comparisons c : Kᵣ → Kₗ and
+a : Mₗ → Mᵣ act on Hom cochains by φ ↦ a ∘ φ ∘ c.
+If α ∘ (Δ₁₂ ⊗ id) ∘ Δₗ ∘ c = (id ⊗ Δ₂₃) ∘ Δᵣ and
+a ∘ μₗ ∘ (μ₁₂ ⊗ id) = μᵣ ∘ (id ⊗ μ₂₃) ∘ α, the two ternary
+Hom pairings agree after this comparison and the degree identification
+(p + q) + r = p + (q + r).
 -/
 
 @[expose] public section
@@ -66,8 +68,16 @@ private lemma linearYonedaCoefficientPairing_assoc
   rw [← hmu]
   rw [MonoidalCategory.tensorHom_comp_whiskerRight_assoc]
 
-/-- Associativity of linear-Yoneda pairing descriptors under an explicit
-coefficient associativity diagram. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let
+K₁, K₂, K₃ be nonnegative chain complexes for which both binary and both
+parenthesized ternary tensor products exist. Suppose
+μ₁₂ : M₁ ⊗ M₂ → M₁₂, μₗ : M₁₂ ⊗ M₃ → Mₗ,
+μ₂₃ : M₂ ⊗ M₃ → M₂₃, μᵣ : M₁ ⊗ M₂₃ → Mᵣ and a : Mₗ → Mᵣ satisfy
+a ∘ μₗ ∘ (μ₁₂ ⊗ id) = μᵣ ∘ (id ⊗ μ₂₃) ∘ α.
+For cochains of degrees p, q, r and a common n = (p + q) + r = p + (q + r),
+the left-associated tensor descriptor followed by a equals the right-associated
+descriptor precomposed with the chain tensor associator in degree n. -/
 theorem linearYonedaPairingDesc_assoc
     {K₁ K₂ K₃ : ChainComplex C ℕ}
     [HasTensor K₁ K₂] [HasTensor K₂ K₃]
@@ -199,8 +209,11 @@ theorem linearYonedaPairingDesc_assoc
         ιTensorObj_comp_linearYonedaPairingDescOfEq_assoc]
       simp [hi, hij]
 
-/-- Contravariant source and covariant coefficient comparison on
-linear-Yoneda cochain complexes. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, a chain map
+f : K → L between nonnegative complexes and a coefficient map a : M → N
+induce Hom_C(L; M) → Hom_C(K; N). In degree n, this cochain map sends
+φ : L_n → M to a ∘ φ ∘ f_n. -/
 noncomputable def linearYonedaCochainComparison
     {K L : ChainComplex C ℕ} {M N : C}
     (f : K ⟶ L) (a : M ⟶ N) :
@@ -223,9 +236,18 @@ theorem linearYonedaCochainComparison_f_apply
   rfl
 
 
-/-- A chain-level associativity diagram and a coefficient associativity
-diagram induce associativity of the corresponding heterogeneous
-linear-Yoneda cochain pairings. -/
+/-- In a preadditive R-linear monoidal category C over a commutative ring
+R, with tensor product additive and R-linear in each variable, let the
+nonnegative complexes Kᵢ carry diagonals
+Δ₁₂ : K₁₂ → K₁ ⊗ K₂, Δₗ : Kₗ → K₁₂ ⊗ K₃,
+Δ₂₃ : K₂₃ → K₂ ⊗ K₃, and Δᵣ : Kᵣ → K₁ ⊗ K₂₃.
+Assume that these tensor products and both parenthesized tensors of K₁, K₂, K₃
+exist. Let c : Kᵣ → Kₗ and coefficient maps μ₁₂, μₗ, μ₂₃, μᵣ, a : Mₗ → Mᵣ
+satisfy α ∘ (Δ₁₂ ⊗ id) ∘ Δₗ ∘ c = (id ⊗ Δ₂₃) ∘ Δᵣ and
+a ∘ μₗ ∘ (μ₁₂ ⊗ id) = μᵣ ∘ (id ⊗ μ₂₃) ∘ α.
+Then the left-associated degree (p + q) + r Hom pairing followed by
+φ ↦ a ∘ φ ∘ c and the degree identification equals the right-associated
+degree p + (q + r) pairing, with the associator on its three input Hom modules. -/
 theorem linearYonedaCochainPair_associativity_of_diagrams
     {K₁ K₂ K₃ K₁₂ K₂₃ Kₗ Kᵣ : ChainComplex C ℕ}
     [HasTensor K₁ K₂] [HasTensor K₁₂ K₃]

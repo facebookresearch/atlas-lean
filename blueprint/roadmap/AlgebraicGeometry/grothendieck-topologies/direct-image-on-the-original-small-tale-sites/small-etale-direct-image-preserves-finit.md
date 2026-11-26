@@ -1,4 +1,6 @@
-# Small Etale Direct Image preserves Finite Limits
+# Small étale direct image is left exact
 
-The actual direct image is left exact: forgetful functors create sheaf
-limits and the literal presheaf precomposition preserves finite limits.
+Small étale direct image is left exact.
+
+Direct image of abelian sheaves preserves finite limits, including kernels and finite
+products.

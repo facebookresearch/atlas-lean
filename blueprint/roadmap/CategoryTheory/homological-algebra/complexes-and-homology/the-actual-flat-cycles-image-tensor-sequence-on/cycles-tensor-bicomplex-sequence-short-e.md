@@ -1,4 +1,6 @@
-# Cycles Tensor Bicomplex Sequence short Exact of Q terms
+# Pairwise outgoing-image Tor vanishing gives tensor bicomplex exactness
 
-The raw tensor sequence is exact when the image Tor₁ value vanishes at
-each actual coefficient term of this fixed Q.
+Pairwise outgoing-image Tor vanishing gives tensor bicomplex exactness.
+
+If `Tor¹_R(im(P.d i (i-1)), Q.X j)` is zero for every pair of integer indices `i` and `j`, the
+cycles tensor bicomplex sequence is short exact.

@@ -1,3 +1,5 @@
-# Native Tensor Functor Iso inv smul pairing
+# The inverse tensor comparison retains the outer scalar action
 
-The inverse comparison returns the same original outer action and pure factors.
+For an (R,S)-bimodule B, the inverse tensor-presentation
+comparison preserves t•[x⊗y] for t∈Sᵒᵖ.
+It identifies the same right S-module action on the balanced quotient.

@@ -18,15 +18,26 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.HorseshoeBoundaryCho
 public import MathlibExt.CategoryTheory.Abelian.LeftDerived.BoundaryIsomorphism
 
 /-!
-# Actual original-sequence boundaries for enlarged-source Tor
+# Long exact Tor windows for independently sized right-module sequences
 
-Each original sequence is lifted by the actual exact native functor. The
-connector and five-arrow window are the existing native derived maps, with
-no flatness, tensor-exactness or desired-LES input. Sequence/coefficient
-naturality, height transport and the actual tensor endpoint use the native
-mapped horseshoe laws and the separately owned prospective source-precomposition
-characteristics. The revision-specific scoped Native checks are recorded in the integration plan;
-current hosted PR build and review remain separate requirements.
+Let R,S be rings, B an (R,S)-bimodule and
+Q₁→Q₂→Q₃ a short exact sequence of right R-modules in world a.
+At Γ_z=max(r,a,b,z), exact source lifting gives a short exact
+sequence in the category where source-derived Tor is computed.
+
+For n≥0 the five-arrow window is
+Tor_(n+1)(Q₁,B)→Tor_(n+1)(Q₂,B)→Tor_(n+1)(Q₃,B)
+→δ_n Tor_n(Q₁,B)→Tor_n(Q₂,B)→Tor_n(Q₃,B).
+It is exact in right S-modules at height Γ_z.
+The boundary and entire window are natural in sequence morphisms
+and in R-linear right S-equivariant coefficient maps.
+
+Increasing the height preserves all six objects and all five maps.
+The degree-one boundary followed by Tor_0≅tensor gives the
+boundary Tor_1(Q₃,B)→Q₁⊗_R B in the lifted tensor model.
+Two heights are compared in one common output height.
+An unlifted common-world comparison additionally assumes R small
+in that source world; no smallness condition is imposed on S.
 -/
 
 @[expose] public section
@@ -38,13 +49,20 @@ variable (R : Type rGlobal) (S : Type sGlobal) [Ring R] [Ring S]
   (B : Type bGlobal) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
   [SMulCommClass R Sᵐᵒᵖ B]
 
-/-- Exact native input lifting keeps the original short exact sequence. -/
+/-- For a short complex Q of right R-modules in world a,
+lifting its three objects and two maps to
+Γ_z=max(r,a,b,z) gives the corresponding short complex
+in ModuleCat^Γ_z(Rᵒᵖ).
+Exactness and the short exact property are preserved by this lift. -/
 abbrev liftedShortComplexAt.{z, r, a, b} (R : Type r) [Ring R]
     (Q : ShortComplex (ModuleCat.{a} Rᵐᵒᵖ)) :
     ShortComplex (ModuleCat.{max r a b z} Rᵐᵒᵖ) :=
   Q.map (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ)
 
-/-- The boundary is the canonical native boundary in the honest source universe. -/
+/-- For an (R,S)-bimodule B, a short exact sequence
+Q₁→Q₂→Q₃ of right R-modules and n≥0, the connecting map is
+δ_n:Tor_(n+1,z)(Q₃,B)→Tor_(n,z)(Q₁,B).
+It is formed after exact source lifting to Γ_z=max(r,a,b,z). -/
 def torDeltaAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -56,7 +74,11 @@ def torDeltaAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (liftedShortComplexAt.{z, r, a, b} R Q)
     (hQ.map_of_exact (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ))
 
-/-- The exact window uses the same actual lifted sequence and native horseshoe. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the degree-n window consists of the three
+Tor_(n+1,z)(Q_i,B) terms, the connecting map δ_n, and the
+three Tor_(n,z)(Q_i,B) terms in that order.
+All six objects are right S-modules in world Γ_z. -/
 def torLongSequenceAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -67,7 +89,10 @@ def torLongSequenceAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S
     (liftedShortComplexAt.{z, r, a, b} R Q)
     (hQ.map_of_exact (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ))
 
-/-- Native exactness proves this window, without assuming tensor exactness. -/
+/-- For rings R,S, an (R,S)-bimodule B and a short exact
+right R-module sequence Q, the five-arrow window across
+degrees n+1 and n is exact for every n≥0.
+The only sequence exactness premise is the short exact property of Q. -/
 theorem torLongSequenceAt_exact.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -79,7 +104,10 @@ theorem torLongSequenceAt_exact.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring 
     (liftedShortComplexAt.{z, r, a, b} R Q)
     (hQ.map_of_exact (ModuleCat.uliftFunctor.{max r a b z, a} Rᵐᵒᵖ))
 
-/-- The actual native lifted boundary is natural in every original sequence morphism. -/
+/-- For a morphism φ:Q→Q′ of short exact right R-module
+sequences, the boundaries satisfy
+δ_(Q′,n)∘Tor_(n+1,z)(φ₃)=Tor_(n,z)(φ₁)∘δ_(Q,n).
+The coefficient is a fixed (R,S)-bimodule B. -/
 theorem torDeltaAt_natural_sequence.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -94,7 +122,10 @@ theorem torDeltaAt_natural_sequence.{z, r, s, a, b} (R : Type r) (S : Type s) [R
     (Q'.map U) (Q.map U) (U.mapShortComplex.map φ)
     (hQ'.map_of_exact U) (hQ.map_of_exact U)
 
-/-- Every actual sequence morphism maps the whole original five-arrow Tor window. -/
+/-- For an (R,S)-bimodule B and a map φ:Q→Q′ of short exact
+right R-module sequences, the six component Tor maps give a
+morphism between their five-arrow windows.
+The central square is the naturality of δ_n. -/
 def torLongSequenceMapAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -127,12 +158,18 @@ def torLongSequenceMapAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Rin
       (torFunctorAt.{z, r, s, a, b} R S B n).map φ.τ₂ ≫ (torFunctorAt.{z, r, s, a, b} R S B n).map Q'.g
     rw [← Functor.map_comp, ← Functor.map_comp, φ.comm₂₃]
 
-/-- The native category of actual original short exact sequences. -/
+/-- For a ring R and source world a, the objects are short
+exact short complexes in ModuleCat^a(Rᵒᵖ), with morphisms
+the commuting maps of their three terms.
+This is the source category for the long exact Tor-window functor. -/
 abbrev torShortExactCategoryAt :=
   (show ObjectProperty (ShortComplex (ModuleCat.{aGlobal} Rᵐᵒᵖ)) from
     fun Q => Q.ShortExact).FullSubcategory
 
-/-- The native exact Tor window is functorial in the actual original sequence. -/
+/-- For rings R,S, an (R,S)-bimodule B and n≥0, assigning
+the five-arrow Tor window to a short exact right R-module
+sequence is a functor into ComposableArrows(ModuleCat^Γ_z(Sᵒᵖ),5).
+The source sequences retain their carrier world a. -/
 def torLongSequenceFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ) :
@@ -178,7 +215,9 @@ def torLongSequenceFunctorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] 
         (torFunctorAt.{z, r, s, a, b} R S B n).map φ.hom.τ₃ ≫ (torFunctorAt.{z, r, s, a, b} R S B n).map ψ.hom.τ₃
       exact (torFunctorAt.{z, r, s, a, b} R S B _).map_comp _ _
 
-/-- The original public window-map constructor preserves identity by the actual sequence functor. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the window morphism induced by id_Q is the
+identity on its chosen-height degree-n Tor window. -/
 theorem torLongSequenceMapAt_id.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -187,7 +226,10 @@ theorem torLongSequenceMapAt_id.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring 
       𝟙 (torLongSequenceAt.{z, r, s, a, b} R S B n Q hQ) :=
   (torLongSequenceFunctorAt R S B n).map_id ⟨Q, hQ⟩
 
-/-- Public original sequence-window maps compose by the native functor composition law. -/
+/-- For composable morphisms φ:Q→Q′ and ψ:Q′→Q″ of short
+exact right R-module sequences, the window map of ψ∘φ is
+the window map of φ followed by that of ψ.
+The fixed coefficient is an (R,S)-bimodule B. -/
 theorem torLongSequenceMapAt_comp.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -207,7 +249,10 @@ variable (B' : Type bGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   [SMulCommClass R Sᵐᵒᵖ B'] (f : B →ₗ[R] B')
   (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- Actual coefficient morphisms commute with the retained native connecting map. -/
+/-- For an (R,S)-bimodule map f:B→B′ and a short exact
+right R-module sequence Q, the coefficient maps commute with
+δ_n from Q₃ in degree n+1 to Q₁ in degree n.
+Equivariance of f means R-linearity and right S-linearity. -/
 theorem torDeltaAt_natural_coefficient.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -228,7 +273,10 @@ theorem torDeltaAt_natural_coefficient.{z, r, s, a, b} (R : Type r) (S : Type s)
       (liftedCoefficientMapAt_outer.{z, r, s, a, b} R S B B' f hf))
     n (Q.map U) (hQ.map_of_exact U)
 
-/-- Coefficients map the actual whole long-exact window, not aGlobal supplied LES certificate. -/
+/-- For a bimodule map f:B→B′, a short exact right R-module
+sequence Q and n≥0, the six coefficient Tor transformations
+give a morphism from the B-window to the B′-window.
+They preserve its central connecting map and all sequence maps. -/
 def torLongSequenceCoefficientMapAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -250,7 +298,9 @@ def torLongSequenceCoefficientMapAt.{z, r, s, a, b} (R : Type r) (S : Type s) [R
   · exact β.naturality Q.g
 
 
-/-- The public coefficient-window constructor sends the original identity map to identity. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, id_B induces the identity morphism of the
+chosen-height Tor window in every degree n≥0. -/
 theorem torLongSequenceCoefficientMapAt_id.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -287,7 +337,10 @@ variable (B'' : Type bGlobal) [AddCommGroup B''] [Module R B''] [Module Sᵐᵒ�
   [SMulCommClass R Sᵐᵒᵖ B''] (g : B' →ₗ[R] B'')
   (hg : ∀ (sGlobal : Sᵐᵒᵖ) (x : B'), g (sGlobal • x) = sGlobal • g x)
 
-/-- Public coefficient-window maps compose in the order of the original bimodule maps. -/
+/-- For bimodule maps f:B→B′ and g:B′→B″, the window
+morphism for g∘f equals the morphism for f followed by that
+for g, on every short exact right R-module sequence Q.
+All six Tor terms retain this composition order. -/
 theorem torLongSequenceCoefficientMapAt_comp.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -342,7 +395,11 @@ theorem torLongSequenceCoefficientMapAt_comp.{z, r, s, a, b} (R : Type r) (S : T
     exact congrArg (fun α => α.app Q.X₃)
       (torCoefficientTransformationAt_comp R S B B' B'' f g hf hg (n))
 
-/-- Original sequence morphisms and coefficient morphisms commute on the entire window. -/
+/-- For a short exact sequence morphism φ:Q→Q′ and a
+bimodule map f:B→B′, changing the sequence and then the
+coefficient gives the same window morphism as changing the
+coefficient and then the sequence.
+The assertion includes the connecting-map square. -/
 theorem torLongSequenceMapAt_coefficient_interchange.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -392,7 +449,11 @@ end Coefficients
 
 section HeightComparison
 
-/-- Canonical source and target comparison legs transport the actual sufficient-world boundary. -/
+/-- For a short exact right R-module sequence Q already in
+world Γ_z and an (R,S)-bimodule B, the height comparisons
+Γ_z→Γ′=max(r,a,b,z,t) satisfy
+δ_(UQ,n)^Γ′∘η_(n+1)(Q₃)=η_n(Q₁)∘U_S(δ_(Q,n)^Γ_z).
+Here U is source lifting and U_S is output lifting. -/
 theorem largeTorHeightIsoAt_hom_LDdelta.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -417,7 +478,10 @@ theorem largeTorHeightIsoAt_hom_LDdelta.{t, z, r, s, a, b} (R : Type r) (S : Typ
     (tensorHeightIsoAt.{t, z, r, s, a, b} R S B) n Q hQ
 
 
-/-- Flattening the actual lifted original sequence gives the facade boundary square. -/
+/-- For a short exact right R-module sequence Q in world a,
+an (R,S)-bimodule B and n≥0, the height maps Γ_z→Γ′ satisfy
+δ_n^Γ′∘η_(n+1)(Q₃)=η_n(Q₁)∘U_S(δ_n^Γ_z).
+The original source sequence is the same on both sides. -/
 theorem torHeightIsoAt_hom_delta.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -457,7 +521,11 @@ theorem torHeightIsoAt_hom_delta.{t, z, r, s, a, b} (R : Type r) (S : Type s) [R
       ((Category.assoc β₃ dDouble f₁).symm.trans
         ((congrArg (fun f => f ≫ f₁) hFirst).trans (Category.assoc (V.map dLow) β₁ f₁))))
 
-/-- All six height comparisons identify the original five-arrow Tor windows. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, lifting its height-Γ_z Tor window to Γ′ gives
+an isomorphism with the window constructed at Γ′.
+Its six components are the Tor height comparisons in degrees
+n+1 and n. -/
 def torLongSequenceHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -475,7 +543,11 @@ def torLongSequenceHeightIsoAt.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Rin
   · exact β.hom.naturality Q.f
   · exact β.hom.naturality Q.g
 
-/-- The actual connecting map ending in the original lifted tensor object. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the boundary
+Tor_(1,z)(Q₃,B)→Tensor_z(Q₁,B)
+is δ_0 followed by the canonical Tor_0-to-tensor isomorphism.
+It lands in the balanced product of the lifted Q₁ and B carriers. -/
 def torBoundaryToTensorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -484,7 +556,10 @@ def torBoundaryToTensorAt.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ri
       tensorObjAt.{z, r, s, a, b} R S B Q.X₁ :=
   torDeltaAt.{z, r, s, a, b} R S B 0 Q hQ ≫ (torZeroIsoAt R S B).hom.app Q.X₁
 
-/-- Every original coefficient morphism preserves the actual boundary followed by tensor augmentation. -/
+/-- For a bimodule map f:B→B′ and a short exact right
+R-module sequence Q, the degree-one Tor coefficient map
+commutes with the boundary into Tensor_z(Q₁,−).
+The target square uses the underived coefficient tensor map. -/
 theorem torBoundaryToTensorAt_natural_coefficient.{z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -511,7 +586,11 @@ theorem torBoundaryToTensorAt_natural_coefficient.{z, r, s, a, b} (R : Type r) (
       rw [Category.assoc, hZero]
     _ = _ := (Category.assoc _ _ _).symm
 
-/-- The tensor endpoint retains the same actual universe-comparison map. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, raising Γ_z to Γ′ commutes with the boundary
+Tor_1(Q₃,B)→Tensor(Q₁,B).
+The source comparison is the Tor height map and the target
+comparison is the independent-source tensor height map. -/
 theorem torBoundaryToTensorAt_height.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -542,7 +621,11 @@ section CommonHeight
 
 universe uGlobal
 
-/-- Two original Tor windows are compared through their actual common third universe. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the windows at heights z,t become isomorphic after
+both outputs are lifted to Ω=max(r,a,b,z,t,u).
+All six objects and the connecting map are compared at this
+same output height. -/
 def torLongSequenceCommonHeightIsoAt.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B] (n : ℕ)
@@ -554,7 +637,10 @@ def torLongSequenceCommonHeightIsoAt.{u, t, z, r, s, a, b} (R : Type r) (S : Typ
   torLongSequenceHeightIsoAt.{max t u, z, r, s, a, b} R S B n Q hQ ≪≫
     (torLongSequenceHeightIsoAt.{max z u, t, r, s, a, b} R S B n Q hQ).symm
 
-/-- The entire native long-exact window has the same actual common-height identity. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the common-output comparison of the z-window with
+itself is the identity.
+The shared output height is Ω=max(r,a,b,z,u). -/
 theorem torLongSequenceCommonHeightIsoAt_refl.{u, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -565,7 +651,10 @@ theorem torLongSequenceCommonHeightIsoAt_refl.{u, z, r, s, a, b} (R : Type r) (S
   simp only [torLongSequenceCommonHeightIsoAt, Iso.trans_hom, Iso.symm_hom,
     Iso.hom_inv_id, Iso.refl_hom]
 
-/-- Reversal uses the same actual inverse long-exact-window comparison. -/
+/-- For an (R,S)-bimodule B and a short exact right R-module
+sequence Q, the height-z to height-t window comparison has
+the reversed window comparison as inverse.
+Both are formed after the same common output lift. -/
 theorem torLongSequenceCommonHeightIsoAt_symm.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -575,7 +664,10 @@ theorem torLongSequenceCommonHeightIsoAt_symm.{u, t, z, r, s, a, b} (R : Type r)
   apply Iso.ext
   simp only [torLongSequenceCommonHeightIsoAt, Iso.trans_inv, Iso.trans_hom, Iso.symm_hom, Iso.symm_inv]
 
-/-- Three actual comparison windows compose in their explicitly common source/output world. -/
+/-- For an (R,S)-bimodule B, a short exact right R-module
+sequence Q and heights z,t,u, the z→t window comparison
+followed by t→u equals z→u at Ω=max(r,a,b,z,t,u).
+The identity holds on the entire five-arrow window. -/
 theorem torLongSequenceCommonHeightIsoAt_trans.{u, t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -597,7 +689,11 @@ variable (B' : Type bGlobal) [AddCommGroup B'] [Module R B'] [Module Sᵐᵒᵖ 
   [SMulCommClass R Sᵐᵒᵖ B'] (f : B →ₗ[R] B')
   (hf : ∀ (sGlobal : Sᵐᵒᵖ) (x : B), f (sGlobal • x) = sGlobal • f x)
 
-/-- Every actual coefficient-window map commutes with the earned whole-window height comparison. -/
+/-- For a bimodule map f:B→B′ and a short exact right
+R-module sequence Q, the window height isomorphisms commute
+with the six coefficient maps.
+This is a naturality square from the lifted lower-height
+B-window to the higher-height B′-window. -/
 theorem torLongSequenceHeightIsoAt_natural_coefficient.{t, z, r, s, a, b} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (B : Type b) [AddCommGroup B] [Module R B] [Module Sᵐᵒᵖ B]
     [SMulCommClass R Sᵐᵒᵖ B]
@@ -682,7 +778,11 @@ local instance originalLongExactOppositeSmall (R : Type rGlobal) [Small.{vGlobal
 variable (C : Type vGlobal) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
   [SMulCommClass R Sᵐᵒᵖ C] [Small.{vGlobal} R]
 
-/-- The sufficient original-world comparison carries the retained native Tor boundary. -/
+/-- For an (R,S)-bimodule C and a short exact sequence Q
+in a common carrier world v, assume R is small in v.
+The comparison from unlifted Tor to height max(r,v,z)
+commutes with the connecting maps in degrees n+1 and n.
+No smallness premise is imposed on the outer ring S. -/
 theorem torOriginalLiftIsoAt_hom_delta.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (C : Type v) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
     [SMulCommClass R Sᵐᵒᵖ C] [Small.{v} R] (n : ℕ)
@@ -703,7 +803,11 @@ theorem torOriginalLiftIsoAt_hom_delta.{z, r, s, v} (R : Type r) (S : Type s) [R
     (tensorOriginalLiftIsoAt.{z, r, s, v} R S C) n Q hQ
 
 
-/-- The full native original-world exact window has this actual enlarged-source comparison. -/
+/-- For an (R,S)-bimodule C and a short exact right R-module
+sequence Q in world v with R small in v, lifting the output
+of its unlifted Tor window gives an isomorphism with the
+window at height max(r,v,z).
+Its components are the unlifted-to-sufficient Tor comparisons. -/
 def torOriginalLongSequenceLiftIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (C : Type v) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
     [SMulCommClass R Sᵐᵒᵖ C] [Small.{v} R] (n : ℕ)
@@ -721,7 +825,11 @@ def torOriginalLongSequenceLiftIsoAt.{z, r, s, v} (R : Type r) (S : Type s) [Rin
   · exact β.hom.naturality Q.f
   · exact β.hom.naturality Q.g
 
-/-- The original sufficient-world Tor boundary retains the original tensor endpoint. -/
+/-- For an (R,S)-bimodule C and a short exact sequence Q
+in world v with R small in v, the degree-one Tor comparison,
+the higher tensor-valued boundary and the whole-output
+tensor comparison compose to the lift of the unlifted
+Tor_1-to-tensor boundary. -/
 theorem torOriginalBoundaryToTensorAt.{z, r, s, v} (R : Type r) (S : Type s) [Ring R] [Ring S]
     (C : Type v) [AddCommGroup C] [Module R C] [Module Sᵐᵒᵖ C]
     [SMulCommClass R Sᵐᵒᵖ C] [Small.{v} R]

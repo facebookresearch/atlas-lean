@@ -1,3 +1,5 @@
-# Bimodule Tensor Coefficient Component mk
+# Finite tensor coefficient map on pure classes
 
-The coefficient map retains both ordered pure factors, applying only the given bimodule map.
+Finite tensor coefficient map on pure classes.
+
+The component induced by a compatible coefficient map `f` sends `[e ⊗ m]` to `[f e ⊗ m]`.

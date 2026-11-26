@@ -1,3 +1,5 @@
-# Bimodule Tensor Cochain map mk
+# Tensoring a cochain map preserves the bimodule factor
 
-An actual original cochain map preserves the coefficient in every pure tensor component.
+For rings R,S, a commuting left-S/right-R bimodule E, and a cochain map f : K → L, the jth
+tensor component sends [e,x] ∈ E⊗_R K^j to [e,f^j(x)] ∈ E⊗_R L^j. The left S-action remains on
+the coefficient E.

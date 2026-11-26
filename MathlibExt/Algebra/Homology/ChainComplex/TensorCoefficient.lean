@@ -14,12 +14,15 @@ public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.RingTheory.Flat.Basic
 
 /-!
-# Tensor coefficients on a chain complex of modules
+# Tensor coefficients on a connective chain complex
 
-Tensoring a short exact sequence of coefficients with a chain complex whose
-terms are flat gives a degreewise short exact sequence. The coefficient module
-occurs first in each tensor product. The ring, coefficient and chain-term
-universes are independent.
+Let R be a commutative ring and K a chain complex of R-modules indexed by ℕ. Varying the
+coefficient module M gives a functor M ↦ M⊗_R K, with M in the first tensor factor and
+differential id_M⊗d_K. Chain maps in K give natural transformations in M.
+
+If every K_n is flat, a short exact coefficient sequence remains short exact after tensoring
+with K degreewise. The ring universe u, term universe v, and coefficient universe t are
+independent; the tensor complex has carrier universe max(v,t).
 -/
 
 @[expose] public section
@@ -35,7 +38,10 @@ namespace ChainComplex.TensorCoefficient
 
 variable (R : Type u) [CommRing R] (K : ChainComplex (ModuleCat.{v} R) ℕ)
 
-/-- The actual coefficient complex, keeping the original first tensor factor. -/
+/-- Let R : Type u be a commutative ring and K a chain complex in ModuleCat.{v} R indexed by ℕ.
+Define a functor ModuleCat.{t} R → ChainComplex(ModuleCat.{max(v,t)} R,ℕ) by M ↦ M⊗_R K. Its
+degree-n object is M⊗_R K_n, its differential is id_M⊗d_K, and a coefficient map acts on the
+first factor. No flatness is needed to define the functor. -/
 def functor : ModuleCat.{t} R ⥤ ChainComplex (ModuleCat.{max v t} R) ℕ where
   obj M := (((ModuleCat.tensorBifunctorAt.{u, t, v} R).obj M).mapHomologicalComplex
     (ComplexShape.down ℕ)).obj K
@@ -61,14 +67,18 @@ instance functor_additive : (functor.{u, v, t} R K).Additive where
     simp only [TensorProduct.map_tmul, LinearMap.add_apply, LinearMap.id_apply,
       TensorProduct.add_tmul]
 
-/-- Coefficient maps act on the actual first factor in every chain degree. -/
+/-- For a commutative ring R, an ℕ-indexed chain complex K of R-modules, a coefficient morphism f
+: M → N, and n ∈ ℕ, the induced degree-n chain map sends m⊗x to f(m)⊗x. The coefficient and
+chain-term carrier universes are independent. -/
 theorem map_tmul {M N : ModuleCat.{t} R} (f : M ⟶ N) (n : ℕ)
     (m : M) (x : K.X n) :
     (((functor R K).map f).f n).hom (m ⊗ₜ[R] x) = f.hom m ⊗ₜ[R] x := by
   change TensorProduct.map f.hom LinearMap.id (m ⊗ₜ[R] x) = _
   rw [TensorProduct.map_tmul, LinearMap.id_apply]
 
-/-- The actual differential keeps the original coefficient unchanged. -/
+/-- Let R be a commutative ring, K an ℕ-indexed chain complex of R-modules, and M a coefficient
+module. For i,j ∈ ℕ, the differential of M⊗_R K sends m⊗x to m⊗d_{i,j}(x). This holds for all
+index pairs, including the zero differentials outside the chain shape. -/
 theorem differential_tmul (M : ModuleCat.{t} R) (i j : ℕ)
     (m : M) (x : K.X i) :
     (((functor R K).obj M).d i j).hom (m ⊗ₜ[R] x) =
@@ -78,7 +88,10 @@ theorem differential_tmul (M : ModuleCat.{t} R) (i j : ℕ)
 
 variable {K} {L : ChainComplex (ModuleCat.{v} R) ℕ}
 
-/-- A genuine chain map induces a natural transformation in arbitrary coefficients. -/
+/-- Let R be a commutative ring and f : K → L a map of ℕ-indexed chain complexes in ModuleCat.{v}
+R. For coefficient modules of universe t, the maps id_M⊗f give a natural transformation from M
+↦ M⊗K to M ↦ M⊗L. Its degree-n component is id_M⊗f_n, and naturality is in every R-linear
+coefficient map. -/
 def map (f : K ⟶ L) : functor.{u, v, t} R K ⟶ functor R L where
   app M := (((ModuleCat.tensorBifunctorAt.{u, t, v} R).obj M).mapHomologicalComplex
     (ComplexShape.down ℕ)).map f
@@ -109,7 +122,10 @@ theorem map_comp {T : ChainComplex (ModuleCat.{v} R) ℕ}
   exact CategoryTheory.Functor.map_comp
     (((ModuleCat.tensorBifunctorAt.{u, t, v} R).obj M).mapHomologicalComplex (ComplexShape.down ℕ)) f g
 
-/-- A genuine chain isomorphism induces the natural isomorphism on the same coefficients. -/
+/-- For a commutative ring R and a chain isomorphism e : K ≅ L of ℕ-indexed R-module complexes,
+tensoring its forward and inverse maps with id_M gives a natural isomorphism of the
+coefficient functors M ↦ M⊗K and M ↦ M⊗L. Coefficient modules may have a carrier universe
+independent of the complex terms. -/
 def mapIso (e : K ≅ L) : functor.{u, v, t} R K ≅ functor R L where
   hom := map R e.hom
   inv := map R e.inv
@@ -118,7 +134,10 @@ def mapIso (e : K ≅ L) : functor.{u, v, t} R K ≅ functor R L where
 
 variable (K)
 
-/-- Flatness of the actual second-factor terms earns degreewise coefficient exactness. -/
+/-- Let R be a commutative ring, K an ℕ-indexed R-module chain complex, and S a short exact
+coefficient sequence S₁ → S₂ → S₃. If K_n is flat over R for every n, then S₁⊗K → S₂⊗K → S₃⊗K
+is a short exact sequence of complexes. Flatness is imposed on the second-factor terms K_n;
+the coefficients need not be flat. -/
 theorem shortExact (hK : ∀ n, Module.Flat R (K.X n))
     (S : ShortComplex (ModuleCat.{t} R)) (hS : S.ShortExact) :
     (S.map (functor R K)).ShortExact := by

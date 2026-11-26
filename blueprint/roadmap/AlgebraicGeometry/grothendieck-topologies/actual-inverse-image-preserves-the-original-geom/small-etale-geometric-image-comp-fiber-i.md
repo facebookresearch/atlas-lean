@@ -1,3 +1,6 @@
-# Small Etale Geometric Image Comp Fiber Iso
+# Successive geometric images have the composite fiber
 
-The canonical original comparison of iterated and single image geometric points.
+Successive geometric images have the composite fiber.
+
+The geometric fibers at `(x ≫ f) ≫ g` and `x ≫ (f ≫ g)` are naturally isomorphic through
+scheme-composition associativity.

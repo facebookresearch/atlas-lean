@@ -1,8 +1,8 @@
 # Lifting original vectors into a possibly nonunital algebra
 
-- [Unitization Lift](unitization-lift.md)
-- [Unitization Lift ι](unitization-lift-2.md)
-- [Unitization Lift fst](unitization-lift-fst.md)
-- [Lift](lift.md)
-- [Lift apply](lift-apply.md)
-- [Lift ι](lift-2.md)
+- [Tensor algebra lift to a nonunital target's unitization](unitization-lift.md)
+- [Unitization lift on tensor generators](unitization-lift-2.md)
+- [Scalar component of the unitization lift](unitization-lift-fst.md)
+- [Nonunital tensor lift of a linear map](lift.md)
+- [Value of the nonunital tensor lift](lift-apply.md)
+- [Nonunital tensor lift on degree-one generators](lift-2.md)

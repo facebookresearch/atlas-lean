@@ -1,3 +1,6 @@
-# Original small etale long exact sequence
+# Exact cohomology windows with an initial injection
 
-The complete all-degree sequence, including its initial zero term.
+Exact cohomology windows with an initial injection.
+
+Every adjacent-degree window of a short exact sheaf sequence is exact, and its first degree-
+zero map is injective.

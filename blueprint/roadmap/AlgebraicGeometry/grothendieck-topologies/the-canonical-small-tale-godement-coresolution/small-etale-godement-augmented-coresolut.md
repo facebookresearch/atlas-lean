@@ -1,3 +1,5 @@
-# Small Etale Godement Augmented Coresolution
+# Augmented cosimplicial Godement sheaf
 
-The genuine coaugmented Godement cosimplicial object on the original sheaf category.
+Augmented cosimplicial Godement sheaf.
+
+Use the Godement monad to form the augmented cosimplicial coresolution of `Q`.

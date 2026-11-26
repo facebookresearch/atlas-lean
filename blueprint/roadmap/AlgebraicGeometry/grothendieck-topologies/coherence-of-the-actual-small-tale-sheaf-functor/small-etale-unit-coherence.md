@@ -1,3 +1,6 @@
-# Small Etale Unit Coherence
+# Left and right identity coherence of both sheaf images
 
-Both identity coherence laws hold for both actual sheaf functors.
+Left and right identity coherence of both sheaf images.
+
+The four conditions identify direct- and inverse-image composition with either scheme identity
+with the corresponding whiskered identity comparisons and functor unitors.

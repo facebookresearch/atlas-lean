@@ -1,4 +1,6 @@
-# Derived Sequence Hom
+# Morphisms of derived section windows
 
-The morphism between windows of derived global sections induced by a morphism
-of short exact sequences.
+Morphisms of derived section windows.
+
+A morphism of short exact sheaf sequences induces a morphism of their six-term derived-section
+windows by the derived maps on its three components in each degree.

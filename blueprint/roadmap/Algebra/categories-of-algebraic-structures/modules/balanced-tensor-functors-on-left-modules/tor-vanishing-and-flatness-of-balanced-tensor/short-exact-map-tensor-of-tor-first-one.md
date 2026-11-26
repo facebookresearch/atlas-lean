@@ -1,4 +1,6 @@
-# Short Exact map tensor of tor First one
+# Flat quotient makes each tensor image sequence short exact
 
-Tensoring an original right-module short exact sequence stays short exact
-when its quotient is Tor₁-flat; the other two modules need no flatness premise.
+Flat quotient makes each tensor image sequence short exact.
+
+A short exact sequence of right modules remains short exact after tensoring with any left
+module `B` if the quotient has zero `Tor¹` against every left module.

@@ -1,3 +1,5 @@
-# Algebra Map Inv inclusion
+# Augmentation vanishes after the nonunital inclusion
 
-The actual included tensor has zero scalar augmentation.
+For a commutative semiring R, an R-module V with additive
+commutative monoid structure, and x ∈ NonUnitalTensorAlgebra R V,
+its image in T_R(V) has augmentation zero.

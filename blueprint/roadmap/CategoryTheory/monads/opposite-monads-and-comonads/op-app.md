@@ -1,3 +1,4 @@
-# Op ε app
+# The opposite comonad counit is the reversed monad unit
 
-The opposite counit is the actual native unit with its direction reversed.
+For a monad T on C and X ∈ Cᵒᵖ, the counit of T.op at X equals (η_{X.unop})^op. Its direction
+is T.op(X) → X.

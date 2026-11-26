@@ -1,3 +1,6 @@
-# FGModule Derived
+# Localization of bounded finite-module cochains
 
-Localize the original bounded finite-module category at its ambient quasi-isomorphisms.
+Localization of bounded finite-module cochains.
+
+For a ring `R`, localize `Bounded (FGModuleCat R)` at the morphisms that become quasi-
+isomorphisms in the ambient module cochain category. This defines `FGModuleDerived R`.

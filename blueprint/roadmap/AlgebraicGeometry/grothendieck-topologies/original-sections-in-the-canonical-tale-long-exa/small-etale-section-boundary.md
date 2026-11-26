@@ -1,3 +1,6 @@
-# Small Etale Section Boundary
+# Boundary of a global section in degree one cohomology
 
-The boundary of an actual original global section, using the same δ of S.
+Boundary of a global section in degree one cohomology.
+
+Use the inverse degree-zero section equivalence followed by the connecting map to send
+sections of the quotient sheaf to `H¹` of the kernel sheaf.

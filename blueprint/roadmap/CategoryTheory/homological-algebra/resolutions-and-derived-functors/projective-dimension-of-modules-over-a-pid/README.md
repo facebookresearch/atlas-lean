@@ -1,6 +1,6 @@
 # Projective dimension of modules over a PID
 
-- [Has Projective Dimension LE one of is Principal Ideal Ring](has-projective-dimension-le-one-of-is-pr.md)
-- [Subsingleton ext of two le of is Principal Ideal Ring](subsingleton-ext-of-two-le-of-is-princip.md)
-- [Is Zero ext of two le of is Principal Ideal Ring](is-zero-ext-of-two-le-of-is-principal-id.md)
-- [Ext eq zero of two le of is Principal Ideal Ring](ext-eq-zero-of-two-le-of-is-principal-id.md)
+- [Every module over a representable principal ideal domain has projective dimension at most one](has-projective-dimension-le-one-of-is-pr.md)
+- [Higher Ext groups over a principal ideal domain are subsingleton](subsingleton-ext-of-two-le-of-is-princip.md)
+- [Higher Ext additive-group objects over a principal ideal domain are zero](is-zero-ext-of-two-le-of-is-principal-id.md)
+- [Every higher Ext class over a principal ideal domain equals zero](ext-eq-zero-of-two-le-of-is-principal-id.md)

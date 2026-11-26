@@ -1,4 +1,6 @@
-# Tensor Adjoin Right Coefficient Alg Equiv
+# The right coefficient algebra equivalence is product-algebra linear
 
-The original right coefficient equivalence is linear over the actual
-product algebra through its original coefficient map.
+For compatible commutative K-algebras A,B,W, the
+right-adjoining cancellation is an algebra equivalence
+over A⊗K B, with target A⊗K W acted on through its
+coefficient map from A⊗K B.

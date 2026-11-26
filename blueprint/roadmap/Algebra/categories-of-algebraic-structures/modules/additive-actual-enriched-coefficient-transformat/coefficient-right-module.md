@@ -1,3 +1,6 @@
-# Coefficient Right Module
+# Right S action of a tensor-product-ring coefficient object
 
-Restrict the same stored action along the native right tensor inclusion.
+Right S action of a tensor-product-ring coefficient object.
+
+For a coefficient object `X`, restrict scalars along the right inclusion of `Sᵐᵒᵖ` in `R ⊗[ℤ]
+Sᵐᵒᵖ` to obtain its right `S`-module structure.

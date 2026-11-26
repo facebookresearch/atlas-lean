@@ -1,4 +1,6 @@
-# Small Etale Identity Coherence
+# Identity comparison naturality and adjunction conditions
 
-The literal identity data, naturality, and unit/counit equations of the
-same actual sheaf functors. This is an output property, with no supplied data.
+Identity comparison naturality and adjunction conditions.
+
+These conditions state the identity isomorphisms for both sheaf images, their naturality, the
+mate equality, and compatibility with the identity adjunction unit and counit.

@@ -1,3 +1,6 @@
-# Group Pure
+# Pure element of the group-valued balanced tensor
 
-The original pure balanced class, in the existing two-variable group object.
+Pure element of the group-valued balanced tensor.
+
+For a right module `A`, a left module `B`, and elements `a` and `b`, `groupPure R A B a b` is
+the integer-ground balanced class `[a ⊗ b]`.

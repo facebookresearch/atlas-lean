@@ -1,4 +1,6 @@
-# Tensor Integer Product Finite Factor Iso
+# Left finite-projective tensor factor gives an integer-product isomorphism
 
-The original integer-product Iso has exactly the native original product
-comparison as its hom, including all original coordinate projections.
+Left finite-projective tensor factor gives an integer-product isomorphism.
+
+Bundle the bijective canonical product comparison as an isomorphism in `ModuleCat.{v} R` from
+`U ⊗_R (∏ i : ℤ, N i)` to `∏ i : ℤ, U ⊗_R N i`.

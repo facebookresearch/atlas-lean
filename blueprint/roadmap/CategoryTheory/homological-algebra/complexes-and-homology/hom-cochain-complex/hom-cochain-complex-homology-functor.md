@@ -1,3 +1,6 @@
-# Hom Cochain Complex Homology Functor
+# Hom cochain cohomology as a coefficient functor
 
-Functor `G ↦ H^n(Hom(K, G))` for a fixed chain complex `K`.
+Hom cochain cohomology as a coefficient functor.
+
+For a chain complex `K` and natural degree `n`, take the degree-`n` cohomology of its Hom
+cochain complex to define a functor `C ⥤ AddCommGrpCat` in the coefficient object.

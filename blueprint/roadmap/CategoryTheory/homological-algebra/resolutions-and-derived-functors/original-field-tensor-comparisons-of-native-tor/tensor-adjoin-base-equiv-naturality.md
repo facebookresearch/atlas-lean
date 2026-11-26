@@ -1,4 +1,5 @@
-# Tensor Adjoin Base Equiv naturality
+# Adjoining cancellation is natural in B-linear coefficient maps
 
-The original tensor coefficient equivalence preserves every actual
-B-linear coefficient map through the actual scalar extension.
+For a B-linear map f:X→Y with compatible K-actions,
+the adjoining comparisons commute with scalar extension of f
+and id_A⊗f. Both routes send (a⊗b)⊗x to a⊗f(b•x).

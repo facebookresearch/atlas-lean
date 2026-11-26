@@ -1,4 +1,6 @@
-# Hom Transformation
+# Right coefficient morphism gives contravariant Hom precomposition
 
-Precomposition by h is natural on the actual right-R-linear Hom groups.
-The outer integer action is earned from the original additive structures.
+Right coefficient morphism gives contravariant Hom precomposition.
+
+A right `R`-linear map `h : M → M'` induces a natural transformation from the Hom functor with
+domain coefficient `M'` to the Hom functor with domain coefficient `M`, by precomposition.

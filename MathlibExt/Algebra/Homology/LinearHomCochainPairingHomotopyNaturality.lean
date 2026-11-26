@@ -8,10 +8,16 @@ module
 public import MathlibExt.Algebra.Homology.LinearHomCochainPairingHomotopy
 
 /-!
-# Homotopy naturality of linear-Hom cochain pairings
+# Homotopy naturality of module Hom cohomology pairings
 
-A chain-level coproduct square commuting up to homotopy induces a commuting
-square for the associated linear-Hom pairings on cohomology.
+Let R be a commutative ring and Kᵢ, Lᵢ nonnegative chain complexes of
+R-modules in universe u. Fix Δ_K : K₃ → K₁ ⊗ K₂,
+Δ_L : L₃ → L₁ ⊗ L₂ and a coefficient pairing μ : M ⊗[R] N → P.
+For chain maps fᵢ : Lᵢ → Kᵢ, a homotopy
+Δ_K ∘ f₃ ∼ (f₁ ⊗ f₂) ∘ Δ_L makes the induced cohomology pairing square
+commute. Hom cohomology is contravariant in each chain complex, so the
+vertical maps go from the K-cohomology groups to the L-cohomology groups.
+Both indicated tensor products of chain complexes are required to exist.
 -/
 
 @[expose] public section
@@ -26,8 +32,14 @@ universe u
 
 namespace HomologicalComplex
 
-/-- Naturality of the linear-Hom cohomology pairing when the chain-level
-coproduct square commutes up to homotopy. -/
+/-- Let R be a commutative ring, Kᵢ and Lᵢ nonnegative chain complexes of
+R-modules, and fᵢ : Lᵢ → Kᵢ chain maps. Suppose K₁ ⊗ K₂ and L₁ ⊗ L₂
+exist, and the diagonals Δ_K : K₃ → K₁ ⊗ K₂ and
+Δ_L : L₃ → L₁ ⊗ L₂ satisfy a homotopy
+Δ_K ∘ f₃ ∼ (f₁ ⊗ f₂) ∘ Δ_L. For any R-linear coefficient pairing
+μ : M ⊗[R] N → P and p, q ∈ ℕ, the cohomology pairings satisfy
+pair_L ∘ (Hᵖ(f₁*) ⊗ Hᑫ(f₂*)) = Hᵖ⁺ᑫ(f₃*) ∘ pair_K,
+where each fᵢ* is precomposition on Hom cochains. -/
 theorem linearHomCochainGradedPairing_pairHomology_naturality_of_homotopy
     (R : Type u) [CommRing R]
     {K₁ K₂ K₃ : ChainComplex (ModuleCat.{u} R) ℕ} [HasTensor K₁ K₂]

@@ -1,3 +1,5 @@
-# Coefficient Tor Zero Iso
+# Degree-zero coefficient Tor is the balanced tensor functor
 
-The existing native tensor adjunction identifies the native coefficient Tor family in zero.
+For an (R,S)-bimodule B and a common-world right
+R-module category with projective resolutions, right exactness
+gives Tor_0^R(−,B)≅(−)⊗_R B naturally in the source.

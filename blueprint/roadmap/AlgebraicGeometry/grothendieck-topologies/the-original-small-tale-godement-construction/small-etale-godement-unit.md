@@ -1,3 +1,5 @@
-# Small Etale Godement Unit
+# Natural map from a sheaf to its stalk skyscraper product
 
-The canonical Godement unit is the actual unit of the constructed point-family adjunction.
+Natural map from a sheaf to its stalk skyscraper product.
+
+The unit of the stalk-family adjunction gives `Q → Godement(Q)` naturally in the sheaf.

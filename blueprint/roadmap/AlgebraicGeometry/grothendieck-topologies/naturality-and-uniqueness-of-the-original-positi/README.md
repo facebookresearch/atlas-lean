@@ -1,4 +1,4 @@
 # Naturality and uniqueness of the original positive étale comparison
 
-- [Positive Ext Packet](positive-ext-packet.md)
-- [Naturality and uniqueness of positive étale Ext comparisons](positive-ext-original-map-naturality.md)
+- [Cocycle and representative conditions for positive étale comparisons](positive-ext-packet.md)
+- [Positive étale Ext comparisons are natural and uniquely determined](positive-ext-original-map-naturality.md)

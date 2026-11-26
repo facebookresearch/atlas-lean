@@ -1,3 +1,5 @@
-# Ι
+# The inclusion of bounded cochains into all cochains
 
-The canonical inclusion retains the original cochain object and map.
+For a category C with zero morphisms, the canonical functor Bounded C → CochainComplex C ℤ
+sends a bounded object to its underlying cochain complex and a morphism to its underlying
+cochain map.

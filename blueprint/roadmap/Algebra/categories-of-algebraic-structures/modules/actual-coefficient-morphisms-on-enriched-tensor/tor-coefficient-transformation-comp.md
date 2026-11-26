@@ -1,3 +1,5 @@
-# Tor Coefficient Transformation comp
+# Derived coefficient Tor transformations preserve composition
 
-The native derived composition law applies to the earned coefficient maps.
+Derived coefficient Tor transformations preserve composition.
+
+The degree-`n` Tor transformations of `f` and `g` compose to the transformation of `g.comp f`.

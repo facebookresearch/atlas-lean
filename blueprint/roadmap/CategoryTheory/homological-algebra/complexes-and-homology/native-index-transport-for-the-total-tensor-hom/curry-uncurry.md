@@ -1,3 +1,6 @@
-# Curry uncurry
+# Signed currying after signed uncurrying is the identity
 
-Currying after uncurrying fixes every original nested full-product Hom cochain.
+Signed currying after signed uncurrying is the identity.
+
+For every integer degree `n`, `curryCochain R P Q I n (uncurryCochain R P Q I n g) = g` on
+full nested Hom cochains.

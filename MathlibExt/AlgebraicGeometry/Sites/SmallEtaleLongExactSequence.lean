@@ -11,11 +11,11 @@ module
 public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleConnectingMaps
 
 /-!
-# Long exact sequences on small étale sites
+# Long exact cohomology windows on small étale sites
 
-Adjacent-degree windows use cohomology maps and extension-class connecting
-maps. The initial monomorphism supplies the leading zero term in degree
-zero.
+For a short exact sequence of abelian sheaves in coefficient universe `max u w`, the
+cohomology maps and connecting map give the six-term exact window from degree `n` to degree `n
++ 1`. The first degree-zero cohomology map is injective.
 -/
 
 @[expose] public section
@@ -28,18 +28,25 @@ namespace AlgebraicGeometry.Scheme.DerivedSections
 variable {X : Scheme.{u}}
   {S : ShortComplex (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})}
 
-/-- The same canonical five arrows in every pair of adjacent degrees. -/
+/-- Six term small étale cohomology window.
+
+For a short exact sheaf sequence, form its three cohomology objects in degree `n`, the
+connecting map, and its three objects in degree `n + 1`. -/
 def smallEtaleLongSequence (hS : S.ShortExact) (n : ℕ) :
     ComposableArrows AddCommGrpCat.{max u w} 5 :=
   Sheaf.H.longSequence hS n (n + 1) rfl
 
-/-- Exactness at all three kinds of places in each adjacent-degree window. -/
+/-- Small étale cohomology windows are exact.
+
+The six-term window of every short exact sheaf sequence is exact in every natural degree. -/
 theorem smallEtaleLongSequence_exact (hS : S.ShortExact) (n : ℕ) :
     (smallEtaleLongSequence hS n).Exact :=
   Sheaf.H.longSequence_exact hS n (n + 1) rfl
 
-/-- The degree-zero map is injective, by the actual integral-sheaf Hom functor
-and the original sequence's first monomorphism. -/
+/-- Initial degree zero cohomology map is injective.
+
+For a short exact sheaf sequence, the degree-zero cohomology map of its first arrow is
+injective. -/
 theorem smallEtaleLongSequence_initial_injective (hS : S.ShortExact) :
     Function.Injective (Sheaf.H.map S.f 0) := by
   let := hS.mono_f
@@ -47,7 +54,10 @@ theorem smallEtaleLongSequence_initial_injective (hS : S.ShortExact) :
 
 
 
-/-- The complete all-degree sequence, including its initial zero term. -/
+/-- Exact cohomology windows with an initial injection.
+
+Every adjacent-degree window of a short exact sheaf sequence is exact, and its first degree-
+zero map is injective. -/
 theorem original_small_etale_long_exact_sequence (hS : S.ShortExact) :
     (∀ n, (smallEtaleLongSequence hS n).Exact) ∧
       Function.Injective (Sheaf.H.map S.f 0) := by

@@ -15,11 +15,14 @@ public import MathlibExt.CategoryTheory.Monad.Bar
 public import MathlibExt.CategoryTheory.Comonad.Cobar
 
 /-!
-# Opposite powers and insertion maps
+# Powers and insertion maps under monad–comonad duality
 
-The opposite comonad of a monad has the same iterated functor after unop.
-The natural comparison transports counit and comultiplication insertions
-to unit and multiplication insertions, preserving their source ordering.
+Let T be a monad on C and G=T.op the opposite comonad. After unop, each power G^n has the same
+object values as T^n, and these equalities give a natural power isomorphism.
+
+Under this comparison, reversed counit insertions become unit insertions and reversed
+comultiplication insertions become multiplication insertions. The same formulas hold for the
+reversed-position cobar and bar conventions.
 -/
 
 @[expose] public section
@@ -34,7 +37,8 @@ namespace CategoryTheory.Monad
 
 variable {C : Type u} [Category.{v} C]
 
-/-- The actual opposite-comonad power has the native monad-power object after unop. -/
+/-- Let T be a monad on C, n ∈ ℕ, and X ∈ C. The object (T.op)^n(op X), after unop, equals T^n(X).
+The powers are the comonadPow and monadPow constructions, including the identity at n=0. -/
 theorem monadPow_op_obj (T : Monad C) (n : ℕ) (X : C) :
     ((Comonad.comonadPow (Monad.op T) n).obj (Opposite.op X)).unop = (monadPow T n).obj X := by
   induction n generalizing X with
@@ -44,7 +48,9 @@ theorem monadPow_op_obj (T : Monad C) (n : ℕ) (X : C) :
         (monadPow T n).obj (T.obj X)
       exact ih (T.obj X)
 
-/-- The object equality intertwines the actual iterated maps. -/
+/-- For a monad T on C, n ∈ ℕ, and f : X → Y, the unop of the opposite-comonad power map f.op
+followed by the object-equality map at Y equals the equality map at X followed by T^n(f). This
+identifies both iterated maps in their monad-power coordinates. -/
 theorem monadPow_op_naturality (T : Monad C) (n : ℕ) {X Y : C} (f : X ⟶ Y) :
     ((Comonad.comonadPow (Monad.op T) n).map f.op).unop ≫
         eqToHom (monadPow_op_obj T n Y) =
@@ -56,13 +62,17 @@ theorem monadPow_op_naturality (T : Monad C) (n : ℕ) {X Y : C} (f : X ⟶ Y) :
   | succ n ih =>
       exact ih (T.map f)
 
-/-- The natural comparison uses the actual native power functors and explicit object equalities. -/
+/-- Let T be a monad on C and n ∈ ℕ. The object equalities ((T.op)^n(op X)).unop=T^n(X) give a
+natural isomorphism between the unopped opposite-comonad power functor and monadPow T n. Its
+components are the canonical isomorphisms of those equalities. -/
 def monadPowOpIso (T : Monad C) (n : ℕ) :
     (Comonad.comonadPow (Monad.op T) n).unop ≅ monadPow T n :=
   NatIso.ofComponents (fun X ↦ eqToIso (monadPow_op_obj T n X))
     (fun {_ _} f ↦ monadPow_op_naturality T n f)
 
-/-- Opposite counit insertion is the actual native unit insertion in these coordinates. -/
+/-- Let T be a monad on C, e_n the forward map of its opposite-power comparison at X, n ∈ ℕ, i ∈
+Fin(n+1), and X ∈ C. The unop of the counit insertion at position i followed by e_{n+1} equals
+e_n followed by etaAtPos(T,n,i,X). The equality preserves the raw insertion position. -/
 theorem epsilonAtPos_op (T : Monad C) (n : ℕ) (i : Fin (n + 1)) (X : C) :
     (Comonad.epsilonAtPos (Monad.op T) n i (Opposite.op X)).unop ≫
         (monadPowOpIso T (n + 1)).hom.app X =
@@ -82,7 +92,9 @@ theorem epsilonAtPos_op (T : Monad C) (n : ℕ) (i : Fin (n + 1)) (X : C) :
       | succ i =>
           exact ih i (T.obj X)
 
-/-- Opposite comultiplication insertion is the actual native multiplication insertion. -/
+/-- For a monad T on C, n ∈ ℕ, i ∈ Fin n, and X ∈ C, let e_n be the forward map of the
+opposite-power isomorphism at X. The unop of deltaAtPos(T.op,n,i,op X) followed by e_n equals
+e_{n+1} followed by muAtPos(T,n,i,X). Both maps reduce n+1 monad factors to n. -/
 theorem deltaAtPos_op (T : Monad C) (n : ℕ) (i : Fin n) (X : C) :
     (Comonad.deltaAtPos (Monad.op T) n i (Opposite.op X)).unop ≫
         (monadPowOpIso T n).hom.app X =
@@ -100,14 +112,19 @@ theorem deltaAtPos_op (T : Monad C) (n : ℕ) (i : Fin n) (X : C) :
       | succ i =>
           exact ih i (T.obj X)
 
-/-- The same public reversed positions identify source-ordered cofaces. -/
+/-- Let T be a monad on C, n ∈ ℕ, i ∈ Fin(n+1), and X ∈ C. Under the opposite-power isomorphisms
+e, the unop of cobarEpsilonAtPos(T.op,n,i,op X) satisfies
+ε_i.unop≫e_{n+1}=e_n≫barEtaAtPos(T,n,i,X). Both conventions use the reversed finite insertion
+position. -/
 theorem cobarEpsilonAtPos_op (T : Monad C) (n : ℕ) (i : Fin (n + 1)) (X : C) :
     (Comonad.cobarEpsilonAtPos (Monad.op T) n i (Opposite.op X)).unop ≫
         (monadPowOpIso T (n + 1)).hom.app X =
       (monadPowOpIso T n).hom.app X ≫ barEtaAtPos T n i X := by
   exact epsilonAtPos_op T n i.rev X
 
-/-- The same public reversed positions identify source-ordered codegeneracies. -/
+/-- For a monad T on C, n ∈ ℕ, i ∈ Fin n, and X ∈ C, the unop of cobarDeltaAtPos(T.op,n,i,op X)
+satisfies δ_i.unop≫e_n=e_{n+1}≫barMuAtPos(T,n,i,X). The isomorphisms e are the opposite-power
+comparisons, and both insertions use the same reversed finite position. -/
 theorem cobarDeltaAtPos_op (T : Monad C) (n : ℕ) (i : Fin n) (X : C) :
     (Comonad.cobarDeltaAtPos (Monad.op T) n i (Opposite.op X)).unop ≫
         (monadPowOpIso T n).hom.app X =

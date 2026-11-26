@@ -1,3 +1,6 @@
-# Actual original coefficient maps commute with the...
+# Independent-source Tor height transport is coefficient-natural
 
-Actual original coefficient maps commute with the whole-input Tor height comparison.
+For a bimodule map f:B→B′, raising the output height of
+T_(n,z) and then applying the higher coefficient transformation
+equals applying the lower coefficient transformation and then
+raising the output height. The source carrier world a is fixed.

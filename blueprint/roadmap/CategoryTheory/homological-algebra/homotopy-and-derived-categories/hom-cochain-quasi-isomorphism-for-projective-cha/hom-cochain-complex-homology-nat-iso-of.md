@@ -1,3 +1,6 @@
-# Hom Cochain Complex Homology Nat Iso Of Projective Quasi Iso
+# Projective-chain quasi-isomorphism gives natural Hom cohomology isomorphisms
 
-Nat iso `Hⁿ(Hom(L,-)) ≅ Hⁿ(Hom(K,-))` from a projective quasi-iso.
+Projective-chain quasi-isomorphism gives natural Hom cohomology isomorphisms.
+
+For a termwise projective-chain quasi-isomorphism `f : K ⟶ L`, the degree-`n` coefficient
+functors `H^n Hom(L,-)` and `H^n Hom(K,-)` are naturally isomorphic.

@@ -1,8 +1,8 @@
 # The actual additive-group tensor–Hom adjunction maps
 
-- [Group Curry](group-curry.md)
-- [Group Uncurry](group-uncurry.md)
-- [Group Uncurry mk](group-uncurry-mk.md)
-- [Group Curry mk](group-curry-mk.md)
-- [Group Hom ext](group-hom-ext.md)
-- [Group Tensor Hom Equiv](group-tensor-hom-equiv.md)
+- [Currying an additive balanced tensor map in the right-module variable](group-curry.md)
+- [Uncurrying a right-linear map to an additive Hom group](group-uncurry.md)
+- [Right-variable uncurrying on pure balanced classes](group-uncurry-mk.md)
+- [Right-variable currying evaluates on pure balanced classes](group-curry-mk.md)
+- [Pure balanced classes determine an additive tensor map](group-hom-ext.md)
+- [Additive equivalence for right-variable balanced tensor currying](group-tensor-hom-equiv.md)

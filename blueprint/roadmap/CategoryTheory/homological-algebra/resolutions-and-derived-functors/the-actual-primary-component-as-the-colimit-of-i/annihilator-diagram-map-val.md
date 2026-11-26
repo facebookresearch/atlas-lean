@@ -1,3 +1,6 @@
-# Annihilator Diagram Map val
+# Power-annihilator diagram map retains the coefficient map's values
 
-Stage coefficient maps retain the actual original linear map value.
+Power-annihilator diagram map retains the coefficient map's values.
+
+At index `n`, the diagram map induced by `f` sends `x : Ann_M(I^n)` to an element with
+underlying value `f(x.val)`.

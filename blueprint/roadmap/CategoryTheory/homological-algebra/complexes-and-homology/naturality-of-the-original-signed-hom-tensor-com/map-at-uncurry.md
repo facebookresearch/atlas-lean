@@ -1,3 +1,6 @@
-# Map At uncurry
+# Uncurried cochain tensor bifunctor has the two-factor tensor map
 
-The native uncurried tensor functor retains the original simultaneous map.
+Uncurried cochain tensor bifunctor has the two-factor tensor map.
+
+The map of the uncurried tensor bifunctor on a pair of cochain morphisms `(f, g)` equals
+`mapAt R f g`.

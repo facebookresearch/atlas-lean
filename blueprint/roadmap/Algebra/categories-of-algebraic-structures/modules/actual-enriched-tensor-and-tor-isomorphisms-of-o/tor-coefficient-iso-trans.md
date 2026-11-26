@@ -1,3 +1,6 @@
-# Tor Coefficient Iso trans
+# Tor coefficient isomorphisms preserve equivalence composition
 
-Actual original coefficient equivalence composition is preserved on native Tor.
+Tor coefficient isomorphisms preserve equivalence composition.
+
+The degree-`n` Tor isomorphism for `e`, followed by that for `e'`, equals the Tor isomorphism
+for the composite coefficient equivalence `e.trans e'`.

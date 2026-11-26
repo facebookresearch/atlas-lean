@@ -1,3 +1,5 @@
-# Is Admissible Exact of splitting
+# Every split short complex is admissible in an exact category
 
-Any split short complex is admissible exact for the ambient exact structure.
+Let D be preadditive with a zero object, binary biproducts, and a chosen ExactCategory
+structure. If a short complex S of D admits a splitting s, then IsAdmissibleExact S. Thus
+split sequences belong to every such exact structure.

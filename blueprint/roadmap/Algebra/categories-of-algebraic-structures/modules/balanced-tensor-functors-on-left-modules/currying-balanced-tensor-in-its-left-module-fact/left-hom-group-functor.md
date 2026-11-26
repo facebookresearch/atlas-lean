@@ -1,3 +1,7 @@
-# Left Hom Group Functor
+# Additive Hom from a right module as a left-module-valued functor
 
-The original Hom objects and postcomposition maps form the actual right adjoint.
+Additive Hom from a right module as a left-module-valued functor.
+
+For a fixed right `R`-module `A`, the functor from additive groups to left `R`-modules takes
+`I` to `Hom_ℤ(A, I)` with domain-precomposition action and sends target maps to
+postcomposition.

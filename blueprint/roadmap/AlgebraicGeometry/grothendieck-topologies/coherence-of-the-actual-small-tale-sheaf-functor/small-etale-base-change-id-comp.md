@@ -1,4 +1,6 @@
-# Small Etale Base Change id comp
+# Base change composition with a left identity has its unitor
 
-The inverse of the left identity base-change comparison is the
-same actual identity comparison on the resulting original étale object.
+Base change composition with a left identity has its unitor.
+
+The inverse identified-composite comparison for `𝟙 ≫ f` is the whiskered base-change identity
+comparison followed by the appropriate functor unitor.

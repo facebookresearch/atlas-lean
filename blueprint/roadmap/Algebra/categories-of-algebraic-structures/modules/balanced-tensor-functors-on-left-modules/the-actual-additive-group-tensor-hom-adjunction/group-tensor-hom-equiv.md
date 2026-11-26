@@ -1,3 +1,6 @@
-# Group Tensor Hom Equiv
+# Additive equivalence for right-variable balanced tensor currying
 
-The actual currying and uncurrying are inverse on the original tensor-Hom objects.
+Additive equivalence for right-variable balanced tensor currying.
+
+Currying and uncurrying give an additive equivalence between additive maps `M ⊗_R N → I` and
+`Rᵐᵒᵖ`-linear maps `M → Hom_ℤ(N, I)`, with the Hom action defined by domain precomposition.

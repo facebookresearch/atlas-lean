@@ -14,11 +14,24 @@ module
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.RightActions
 
 /-!
-# Noncommutative balanced tensor associators
+# Reassociation of noncommutative balanced tensors
 
-The associator maps use the balanced quotient and its universal lift twice.
-The middle factor has commuting left and right actions. Outer actions give
-the nested balancing structures, retaining the ground module structures.
+Let k be a commutative ring and S, R semirings. Give additive commutative
+groups M, N, P k-module structures, a right S-action on M, left S- and
+right R-actions on N, and a left R-action on P. The two actions on N
+commute with each other and with k. All scalar and module universes are
+independent.
+
+The k-linear associator
+(M ⊗_S N) ⊗_R P ≅ M ⊗_S (N ⊗_R P)
+sends [(m ⊗ n) ⊗ p] to [m ⊗ (n ⊗ p)], with inverse moving the
+parentheses to the left. The inner right R-action is induced from N,
+and the inner left S-action is induced from N.
+
+Reassociation is natural in k-linear maps preserving the indicated S- and
+R-actions. It also preserves a left action on M commuting with k and S,
+and a right action on P commuting with k and R, whenever those outer
+actions are supplied.
 -/
 
 @[expose] public section
@@ -40,19 +53,37 @@ variable (k : Type u) (S : Type vS) (R : Type vR)
   [SMulCommClass S k N] [SMulCommClass Rᵐᵒᵖ k N]
   [SMulCommClass S Rᵐᵒᵖ N]
 
-/-- The literal left-parenthesized quotient with its earned inner right action. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+The left-parenthesized balanced quotient is (M ⊗_S N) ⊗_R P.
+The inner quotient carries the right R-action induced from N,
+so its pure classes satisfy [m ⊗ n] r = [m ⊗ n r]. -/
 abbrev assocSource :=
   @Balanced k R (Balanced k S M N) P
     inferInstance inferInstance inferInstance inferInstance
     inferInstance inferInstance (rightModule k S R M N) inferInstance
 
-/-- The literal right-parenthesized quotient, retaining its original ground module. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+The right-parenthesized balanced quotient is M ⊗_S (N ⊗_R P).
+The inner quotient carries the left S-action induced from N,
+so s [n ⊗ p] = [s n ⊗ p]. -/
 abbrev assocTarget :=
   @Balanced k S M (Balanced k R N P)
     inferInstance inferInstance inferInstance inferInstance
     inferInstance inferInstance inferInstance (leftModule k R S N P)
 
-/-- Move parentheses to the right by the actual balanced universal maps. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+This is the k-linear reassociation map
+(M ⊗_S N) ⊗_R P → M ⊗_S (N ⊗_R P),
+sending [(m ⊗ n) ⊗ p] to [m ⊗ (n ⊗ p)]. -/
 def assocHom : assocSource k S R M N P →ₗ[k] assocTarget k S R M N P := by
   letI := rightModule k S R M N
   letI := leftModule k R S N P
@@ -94,7 +125,13 @@ def assocHom : assocSource k S R M N P →ₗ[k] assocTarget k S R M N P := by
   change G p (rightAction k S R M N (op r) x) = G (r • p) x
   exact congrArg (fun l : X →ₗ[k] T => l x) e
 
-/-- The forward map preserves the original ordered triple of pure factors. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+On an ordered pure triple, the forward reassociation has value
+assocHom([(m ⊗ n) ⊗ p]) = [m ⊗ (n ⊗ p)].
+The induced right R- and left S-actions are used on the inner quotients. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem assocHom_mk_mk (m : M) (n : N) (p : P) :
     letI := rightModule k S R M N
@@ -106,7 +143,12 @@ theorem assocHom_mk_mk (m : M) (n : N) (p : P) :
   let := leftModule k R S N P
   rfl
 
-/-- Move parentheses to the left through the same original balancing relations. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+This is the k-linear map M ⊗_S (N ⊗_R P) → (M ⊗_S N) ⊗_R P
+sending [m ⊗ (n ⊗ p)] to [(m ⊗ n) ⊗ p]. -/
 def assocInv : assocTarget k S R M N P →ₗ[k] assocSource k S R M N P := by
   letI := rightModule k S R M N
   letI := leftModule k R S N P
@@ -152,7 +194,13 @@ def assocInv : assocTarget k S R M N P →ₗ[k] assocSource k S R M N P := by
   change G (op s • m) y = G m (leftAction k R S N P s y)
   exact congrArg (fun l : Y →ₗ[k] T => l y) e
 
-/-- The inverse returns the same ordered pure factors to the left parentheses. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+On an ordered pure triple, the inverse reassociation has value
+assocInv([m ⊗ (n ⊗ p)]) = [(m ⊗ n) ⊗ p].
+Both inner quotients carry the actions induced from N. -/
 @[simp, nolint simpNF] -- stated with Balanced.mk for rw; Balanced.mk_apply simplifies LHS
 theorem assocInv_mk_mk (m : M) (n : N) (p : P) :
     letI := rightModule k S R M N
@@ -164,7 +212,12 @@ theorem assocInv_mk_mk (m : M) (n : N) (p : P) :
   let := leftModule k R S N P
   rfl
 
-/-- The actual inverse followed by the forward map is the identity. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+The inverse reassociation followed by the forward reassociation is
+the identity of M ⊗_S (N ⊗_R P). -/
 theorem assocHom_comp_assocInv :
     (assocHom k S R M N P).comp (assocInv k S R M N P) = LinearMap.id := by
   let := rightModule k S R M N
@@ -186,7 +239,12 @@ theorem assocHom_comp_assocInv :
     mk k S M Y m y
   exact congrArg (fun l => l y) e
 
-/-- The forward map followed by the actual inverse is the identity. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+The forward reassociation followed by the inverse reassociation is
+the identity of (M ⊗_S N) ⊗_R P. -/
 theorem assocInv_comp_assocHom :
     (assocInv k S R M N P).comp (assocHom k S R M N P) = LinearMap.id := by
   let := rightModule k S R M N
@@ -208,7 +266,14 @@ theorem assocInv_comp_assocHom :
     mk k R X P x p
   exact congrArg (fun l => l x) e
 
-/-- The earned associator of the literal noncommutative balanced quotients. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+This is the k-linear isomorphism
+(M ⊗_S N) ⊗_R P ≅ M ⊗_S (N ⊗_R P).
+It preserves the order of the three pure factors and has the two
+reassociation maps as its forward and inverse maps. -/
 def assoc : assocSource k S R M N P ≃ₗ[k] assocTarget k S R M N P :=
   LinearEquiv.ofLinearMap (assocHom k S R M N P) (assocInv k S R M N P)
     (assocHom_comp_assocInv k S R M N P) (assocInv_comp_assocHom k S R M N P)
@@ -258,7 +323,15 @@ variable {k S R M N P}
   (gR : ∀ (t : Rᵐᵒᵖ) (n : N), g (t • n) = t • g n)
   (hR : ∀ (r : R) (p : P), h (r • p) = r • h p)
 
-/-- The actual triple coefficient map on the left parentheses, with earned inner equivariance. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+Let M′, N′, P′ have the same action structures, and let k-linear maps
+f : M → M′, g : N → N′, h : P → P′ preserve respectively the right S-action,
+both the left S- and right R-actions, and the left R-action.
+The induced map on left-parenthesized tensors sends
+[(m ⊗ n) ⊗ p] to [(f(m) ⊗ g(n)) ⊗ h(p)]. -/
 def mapAssocSource : assocSource k S R M N P →ₗ[k] assocSource k S R M' N' P' := by
   letI := rightModule k S R M N
   letI := rightModule k S R M' N'
@@ -273,7 +346,15 @@ def mapAssocSource : assocSource k S R M N P →ₗ[k] assocSource k S R M' N' P
       (map_rightAction f g fS gS gR (op r))
   exact map l h hl hR
 
-/-- The same original coefficient maps on the right parentheses. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+Let M′, N′, P′ have the same action structures, and let k-linear maps
+f : M → M′, g : N → N′, h : P → P′ preserve respectively the right S-action,
+both actions on N, and the left R-action on P.
+The induced map on right-parenthesized tensors sends
+[m ⊗ (n ⊗ p)] to [f(m) ⊗ (g(n) ⊗ h(p))]. -/
 def mapAssocTarget : assocTarget k S R M N P →ₗ[k] assocTarget k S R M' N' P' := by
   letI := leftModule k R S N P
   letI := leftModule k R S N' P'
@@ -311,7 +392,15 @@ theorem mapAssocTarget_mk_mk (m : M) (n : N) (p : P) :
   let := leftModule k R S N' P'
   simp only [mapAssocTarget, map_mk]
 
-/-- Reassociation is natural in all three actual equivariant coefficient maps. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+For k-linear f : M → M′, g : N → N′, h : P → P′ preserving the right S-,
+left S- and right R-, and left R-actions respectively, with the same
+structures on the target modules, the reassociation square commutes:
+assocHom′ ∘ map_left(f, g, h) =
+map_right(f, g, h) ∘ assocHom. -/
 theorem assocHom_naturality :
     (assocHom k S R M' N' P').comp (mapAssocSource f g h fS gS gR hR) =
       (mapAssocTarget f g h fS gS gR hR).comp (assocHom k S R M N P) := by
@@ -361,7 +450,13 @@ variable (Q : Type vQ) [Semiring Q] [Module Q M]
   [SMulCommClass Q k M] [SMulCommClass Q Sᵐᵒᵖ M]
 
 set_option linter.unusedSectionVars false in
-/-- The earned actions on opposite factors of a balanced quotient commute. -/
+/-- Let k be a commutative ring, S, R, Q semirings, and M, N
+additive commutative groups with k-module structures. Give M commuting
+left Q- and right S-actions, each Q-action commuting with k; give N
+commuting left S- and right R-actions, both commuting with k.
+On M ⊗_S N, the induced left Q-action on M and right R-action on N
+commute: leftAction(q) ∘ rightAction(t) =
+rightAction(t) ∘ leftAction(q) for q ∈ Q and t ∈ Rᵐᵒᵖ. -/
 @[nolint unusedArguments] -- omitting it would shrink `leftRightSMulCommClass` for all users
 theorem left_rightAction_comm (q : Q) (t : Rᵐᵒᵖ) :
     (leftAction k S Q M N q).comp (rightAction k S R M N t) =
@@ -370,7 +465,12 @@ theorem left_rightAction_comm (q : Q) (t : Rᵐᵒᵖ) :
   intro m n
   simp only [LinearMap.comp_apply, leftAction_mk, rightAction_mk]
 
-/-- Both computed outer modules form a genuine commuting-action dictionary. -/
+/-- Let k be a commutative ring, S, R, Q semirings, and M, N
+additive commutative groups with k-module structures. Suppose the left
+Q-action on M commutes with k and its right S-action, and the left S-
+and right R-actions on N commute with each other and with k.
+The induced actions on M ⊗_S N form a commuting left Q- and right R-module
+structure: q • (t • x) = t • (q • x) for all q, t and x. -/
 theorem leftRightSMulCommClass :
     letI := leftModule k S Q M N
     letI := rightModule k S R M N
@@ -433,7 +533,13 @@ private theorem assocHom_leftAction (q : Q) :
     leftAction k S Q M Y q (assocHom k S R M N P (mk k R X P x p))
   exact congrArg (fun l => l x) e
 
-/-- Reassociation is linear for the actual twice-computed left outer action. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+Suppose also that a semiring Q acts on M on the left, commuting with
+k and the right S-action. The induced Q-actions on both parenthesized
+balanced quotients satisfy assoc(q • x) = q • assoc(x). -/
 theorem assoc_left_smul (q : Q) (x : assocSource k S R M N P) :
     letI := rightModule k S R M N
     letI := leftModule k R S N P
@@ -500,7 +606,13 @@ private theorem assocHom_rightAction (t : Tᵐᵒᵖ) :
     rightAction k S T M Y t (assocHom k S R M N P (mk k R X P x p))
   exact congrArg (fun l => l x) e
 
-/-- The original right outer action is also preserved by the earned associator. -/
+/-- Let k be a commutative ring and S, R semirings. Let M, N, P be
+additive commutative groups with k-module structures, where M is a right
+S-module, N is a left S-module and right R-module, and P is a left R-module.
+The left S- and right R-actions on N commute with each other and with k.
+Suppose also that a semiring T acts on P on the right, commuting with
+k and the left R-action. The induced right T-actions on both parenthesized
+balanced quotients satisfy assoc(t • x) = t • assoc(x) for t ∈ Tᵐᵒᵖ. -/
 theorem assoc_right_smul (t : Tᵐᵒᵖ) (x : assocSource k S R M N P) :
     letI := rightModule k S R M N
     letI := leftModule k R S N P

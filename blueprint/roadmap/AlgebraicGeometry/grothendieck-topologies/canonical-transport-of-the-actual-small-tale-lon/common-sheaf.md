@@ -1,3 +1,6 @@
-# Common Sheaf
+# Abelian sheaves in the common coefficient universe
 
-Abelian sheaves on the small étale site of X with values in the common universe.
+Abelian sheaves in the common coefficient universe.
+
+For `X : Scheme.{u}`, these are sheaves on `X.smallEtaleTopology` with values in additive
+groups of universe `max u w`.

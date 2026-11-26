@@ -1,3 +1,7 @@
-# Small Etale Common Stalk Right Comp app π
+# Composite right adjoint stalk comparison on skyscraper coordinates
 
-Both actual κ composition routes have the same original product coordinates.
+Composite right adjoint stalk comparison on skyscraper coordinates.
+
+After the image-associativity mate, the two successive stalk right comparisons agree at every
+skyscraper coordinate with the composite stalk right comparison followed by the inverse
+direct-image composition comparison.

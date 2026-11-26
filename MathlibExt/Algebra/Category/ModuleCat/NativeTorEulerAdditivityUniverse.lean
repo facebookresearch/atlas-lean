@@ -14,17 +14,20 @@ public import MathlibExt.RingTheory.Length.ExactEulerChain
 public import MathlibExt.CategoryTheory.Monoidal.Tor.FiniteEuler
 
 /-!
-# Finite Euler additivity for the original native Tor
+# Finite-cutoff Euler relations for Tor lengths
 
-Actual ranges in the canonical native Tor long exact sequence give the
-consecutive length relations. Their finite alternating sums telescope, with
-the genuine zero boundary at the cutoff. The sum uses the literal original
-native objects, arbitrary ring and module universes, and either coefficient.
-The explicitly named raw cutoff sum uses `ENat.toNat`, so infinite lengths
-contribute zero. It is a computational expression, not a finite Euler
-characteristic without finiteness data. The guarded `torEulerCharacteristic`
-remains the canonical finite Euler characteristic. All additivity results
-retain explicit finite-length and eventual-vanishing hypotheses.
+Let R be a commutative ring in universe u and modules lie in W=max(u,v). Define
+χ_n(M,N)=∑_{q<n}(-1)^q nat(ℓ_R(Tor_q^R(M,N))), with nat(∞)=0. This cutoff sum is defined for
+arbitrary modules; finite lengths below a cutoff and vanishing from it onward make it the finite
+Tor Euler characteristic and make the cutoff independent.
+
+For a short exact sequence 0→A→B→C→0, let δ_j:Tor_{j+1}(M,C)→Tor_j(M,A) and r_j=nat(ℓ_R(image
+δ_j)). Finite lengths give ℓ(Tor_{j+1}(M,A))−ℓ(Tor_{j+1}(M,B))+ℓ(Tor_{j+1}(M,C))=r_{j+1}+r_j,
+and the degree-zero relation is r_0. The alternating sum telescopes. If Tor_n(M,C)=0 and all
+three families have finite lengths below n, then χ_n(M,B)=χ_n(M,A)+χ_n(M,C). Independent
+finite-length/eventual-zero cutoffs and Tor symmetry give the corresponding formulas with
+separate cutoffs and in the first variable. The lift height v is independent of the ring
+universe.
 -/
 
 @[expose] public section
@@ -39,22 +42,27 @@ namespace ModuleCat.UniverseTensor
 universe u v
 variable (R : Type u) [CommRing R]
 
-/-- The raw cutoff sum of naturalized native Tor lengths.
-
-Infinite `ENat` lengths contribute zero through `ENat.toNat`. Use
-`CategoryTheory.torEulerCharacteristic` with `FiniteTorData` for a guarded
-finite Euler characteristic. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For M,N and n∈ℕ, define χ_n(M,N)=∑_{q<n}(-1)^q nat(ℓ_R(Tor_q^R(M,N))) in ℤ. Here
+nat sends a finite extended-natural length to its natural value and sends ∞ to zero. The
+definition is a cutoff expression for arbitrary M,N; finite Tor data additionally require finite
+lengths below the cutoff and zero Tor modules at and above it. -/
 def rawNativeTorEulerSum (M N : ModuleCat.{max u v} R) (cutoff : ℕ) : ℤ :=
   ∑ q ∈ Finset.range cutoff, (-1 : ℤ) ^ q *
     (Module.length R (((Tor (ModuleCat.{max u v} R) q).obj M).obj N)).toNat
 
-/-- A zero cutoff is the genuine empty native Euler sum. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For any M,N, χ_0(M,N)=0, where χ_n is the alternating sum of naturalized Tor
+lengths for q<n. The zero cutoff contains no degrees. -/
 @[simp]
 theorem rawNativeTorEulerSum_zero (M N : ModuleCat.{max u v} R) :
     rawNativeTorEulerSum R M N 0 = 0 := by
   simp [rawNativeTorEulerSum]
 
-/-- Valid eventual-zero cutoffs give the same literal native Euler sum. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For M,N and n,n′∈ℕ, assume Tor_q^R(M,N)=0 for all q≥n and also for all q≥n′. Then
+χ_n(M,N)=χ_{n′}(M,N). Every added degree between the cutoffs has zero length; no finite-length
+assumption is needed for this equality of raw sums. -/
 theorem rawNativeTorEulerSum_eq_of_vanishing (M N : ModuleCat.{max u v} R)
     (n n' : ℕ)
     (hn : ∀ q, n ≤ q → IsZero (((Tor (ModuleCat.{max u v} R) q).obj M).obj N))
@@ -69,7 +77,10 @@ theorem rawNativeTorEulerSum_eq_of_vanishing (M N : ModuleCat.{max u v} R)
   rw [Module.length_eq_zero_iff.mpr (ModuleCat.isZero_iff_subsingleton.mp hz)]
   simp
 
-/-- Canonical native symmetry preserves the literal cutoff sum. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For M,N and n∈ℕ, the canonical Tor symmetry gives χ_n(M,N)=χ_n(N,M). Each
+isomorphism Tor_q^R(M,N)≅Tor_q^R(N,M) preserves the extended-natural length before
+naturalization, so the equality holds even when some lengths are infinite. -/
 theorem rawNativeTorEulerSum_symm (M N : ModuleCat.{max u v} R) (n : ℕ) :
     rawNativeTorEulerSum R M N n = rawNativeTorEulerSum R N M n := by
   unfold rawNativeTorEulerSum
@@ -86,7 +97,8 @@ private theorem exactShortComplex_length_toNat
     (ShortComplex.ShortExact.moduleCat_exact_iff_function_exact S).mp hS
   exact Module.exactPair_length_toNat R S.f.hom S.g.hom h h₂
 
-/-- Three consecutive range-length identities eliminate the two internal ranges. -/
+/-- Let l₁,l₂,l₃,r₀,r₁,r₂,r₃ be natural numbers satisfying l₁=r₀+r₁, l₂=r₁+r₂ and l₃=r₂+r₃. Then
+l₁−l₂+l₃=r₀+r₃ in ℤ. The two internal range terms cancel, leaving the two outside ranges. -/
 private theorem threeRangeLengths_euler
     {l₁ l₂ l₃ r₀ r₁ r₂ r₃ : ℕ}
     (h₁ : l₁ = r₀ + r₁) (h₂ : l₂ = r₁ + r₂) (h₃ : l₃ = r₂ + r₃) :
@@ -162,7 +174,11 @@ local notation "moduleLengthAt" =>
 local notation "mapRangeLengthAt" =>
   (fun {X Y : ModuleCat.{max u v} R} (f : X ⟶ Y) => Module.length R f.hom.range)
 
-/-- Positive native degrees satisfy the actual adjacent-boundary range relation. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. Let M be a coefficient module and 0→A→B→C→0 a short exact sequence. For j∈ℕ
+assume Tor_{j+1}(M,A), Tor_{j+1}(M,B) and Tor_{j+1}(M,C) have finite length. With l_i their
+natural lengths and δ_i:Tor_{i+1}(M,C)→Tor_i(M,A), one has l_A−l_B+l_C=nat(ℓ_R(image
+δ_{j+1}))+nat(ℓ_R(image δ_j)) in ℤ. -/
 theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (j : ℕ)
     (h₁ : moduleLengthAt (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).obj S.X₁) ≠ ⊤)
@@ -195,7 +211,11 @@ theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
     (mapRangeLengthAt δ₁).toNat + (mapRangeLengthAt δ₀).toNat
   exact leftDerived_middleThreeLengths R F S hS j hX₁ hX₂ hX₃
 
-/-- The actual degree-zero quotient endpoint leaves only the first boundary range. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. Let M be a coefficient module and 0→A→B→C→0 short exact. Assume Tor_0(M,A) and
+Tor_0(M,B) have finite length. Then nat(ℓ Tor_0(M,A))−nat(ℓ Tor_0(M,B))+nat(ℓ
+Tor_0(M,C))=nat(ℓ_R(image δ_0)), where δ_0:Tor_1(M,C)→Tor_0(M,A). The last Tor_0 map is epic,
+which supplies the quotient endpoint. -/
 theorem nativeTor_length_relation_zero (M : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact)
     (h₁ : Module.length R (((Tor (ModuleCat.{max u v} R) 0).obj M).obj S.X₁) ≠ ⊤)
@@ -221,7 +241,11 @@ theorem nativeTor_length_relation_zero (M : ModuleCat.{max u v} R)
     rw [LinearMap.range_eq_top.mpr hsurj, Module.length_top]
   omega
 
-/-- A real short exact sequence and a genuine zero native boundary give Euler additivity. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For a coefficient M, short exact 0→A→B→C→0 and n∈ℕ, suppose Tor_q(M,A),
+Tor_q(M,B) and Tor_q(M,C) have finite length for every q<n, and Tor_n(M,C)=0. Then
+χ_n(M,B)=χ_n(M,A)+χ_n(M,C). For n>0 the last connecting range vanishes because its source is the
+stated zero cutoff term. -/
 theorem rawNativeTorEulerSum_shortExactSecond (M : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (n : ℕ)
     (h₁ : ∀ q < n,
@@ -261,7 +285,10 @@ theorem rawNativeTorEulerSum_shortExactSecond (M : ModuleCat.{max u v} R)
     unfold rawNativeTorEulerSum
     omega
 
-/-- Honest finite native lengths and eventual zero modules permit independent valid cutoffs. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For M and short exact 0→A→B→C→0, choose cutoffs n_A,n_B,n_C. Assume each family
+Tor_q(M,T), T=A,B,C, has finite length for q<n_T and is zero for q≥n_T. Then
+χ_{n_B}(M,B)=χ_{n_A}(M,A)+χ_{n_C}(M,C). The three cutoffs may be different. -/
 theorem rawNativeTorEulerSum_shortExactSecond_of_finite (M : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (n₁ n₂ n₃ : ℕ)
     (h₁ : ∀ q < n₁,
@@ -300,7 +327,10 @@ theorem rawNativeTorEulerSum_shortExactSecond_of_finite (M : ModuleCat.{max u v}
   rw [← e₁, ← e₂, ← e₃] at h
   exact h
 
-/-- Canonical native symmetry gives the same real short-exact additivity in the first variable. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For a coefficient N, short exact 0→A→B→C→0 and n∈ℕ, assume Tor_q(A,N), Tor_q(B,N)
+and Tor_q(C,N) have finite length for every q<n, and Tor_n(C,N)=0. Then
+χ_n(B,N)=χ_n(A,N)+χ_n(C,N), using the canonical symmetry with the second-variable Tor sequence. -/
 theorem rawNativeTorEulerSum_shortExactFirst (N : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (n : ℕ)
     (h₁ : ∀ q < n,
@@ -321,7 +351,11 @@ theorem rawNativeTorEulerSum_shortExactFirst (N : ModuleCat.{max u v} R)
     rawNativeTorEulerSum_symm R N S.X₃ n] at h
   exact h
 
-/-- Actual first-variable finite-length and eventual-zero data allow distinct valid cutoffs. -/
+/-- Let R be a commutative ring in universe u, with all modules in W=max(u,v) for an independent
+lift height v. For N and short exact 0→A→B→C→0, choose cutoffs n_A,n_B,n_C such that Tor_q(T,N)
+has finite length below n_T and is zero from n_T onward for T=A,B,C. Then
+χ_{n_B}(B,N)=χ_{n_A}(A,N)+χ_{n_C}(C,N). The formula allows independent cutoffs for the three
+families. -/
 theorem rawNativeTorEulerSum_shortExactFirst_of_finite (N : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (n₁ n₂ n₃ : ℕ)
     (h₁ : ∀ q < n₁,
@@ -353,7 +387,10 @@ namespace CategoryTheory
 universe u
 variable (R : Type u) [CommRing R]
 
-/-- At the original universe, the existing finite Tor API is the same literal sum. -/
+/-- Let R be commutative in universe u and M,N R-modules in u. Given finite Tor data with cutoff n,
+finite lengths of Tor_q^R(M,N) for q<n and vanishing for q≥n, the finite Tor Euler
+characteristic equals χ_n(M,N), the raw alternating sum of naturalized Tor lengths at additional
+lift height zero. All terms in this guarded sum are finite. -/
 theorem torEulerCharacteristic_eq_rawNativeTorEulerSum {M N : ModuleCat.{u} R}
     (h : FiniteTorData R M N) :
     torEulerCharacteristic R h =

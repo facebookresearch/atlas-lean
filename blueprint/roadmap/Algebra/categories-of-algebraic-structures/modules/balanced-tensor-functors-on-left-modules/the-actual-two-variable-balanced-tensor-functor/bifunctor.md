@@ -1,3 +1,6 @@
-# Bifunctor
+# Balanced tensor as a bifunctor to integer modules
 
-The original balanced tensor, covariant in both the right and left module.
+Balanced tensor as a bifunctor to integer modules.
+
+For a ring `R`, the functor `ModuleCat Rᵐᵒᵖ ⥤ ModuleCat R ⥤ ModuleCat ℤ` takes `(M, N)` to the
+integer-ground balanced tensor quotient. It is covariant in both module variables.

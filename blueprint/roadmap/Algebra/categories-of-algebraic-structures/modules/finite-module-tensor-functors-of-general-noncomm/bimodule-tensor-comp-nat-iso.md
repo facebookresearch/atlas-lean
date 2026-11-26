@@ -1,3 +1,6 @@
-# Bimodule Tensor Comp Nat Iso
+# Tensor by a composite coefficient equals successive tensoring naturally
 
-The whole original module functors compose through the earned actual tensor associator.
+Tensor by a composite coefficient equals successive tensoring naturally.
+
+The associator gives a natural isomorphism from tensoring by `F ⊗_S E` to the composite of
+tensoring first by `E` and then by `F`.

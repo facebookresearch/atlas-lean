@@ -1,4 +1,7 @@
-# Tensor Resolution Augmentation naturality
+# Tensor-resolution augmentations commute with resolution morphisms
 
-Simultaneous actual resolution maps commute with the literal tensor
-augmentation and the tensor of their actual coefficient maps.
+Tensor-resolution augmentations commute with resolution morphisms.
+
+For resolution morphisms `f` over `a : M ⟶ M'` and `g` over `b : N ⟶ N'`, their tensor complex
+map followed by the target augmentation equals the source augmentation followed by the single-
+complex map of `a ⊗ₘ b`.

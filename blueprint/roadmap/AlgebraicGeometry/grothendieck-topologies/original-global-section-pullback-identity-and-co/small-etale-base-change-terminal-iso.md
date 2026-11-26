@@ -1,3 +1,5 @@
-# Small Etale Base Change Terminal Iso
+# Base change of the terminal étale object is terminal
 
-The actual original terminal étale object is preserved by every base change.
+Base change of the terminal étale object is terminal.
+
+For `f : X → Y`, the base change of `Y → Y` is canonically isomorphic to `X → X`.

@@ -22,23 +22,33 @@ public import Mathlib.Algebra.Homology.ShortComplex.Linear
 public import Mathlib.Algebra.Module.TransferInstance
 
 /-!
-# Original field tensor comparisons of native Tor
+# Tensor-adjoining comparisons and support actions on ambient Tor
 
-The actual scalar extension of an original coefficient is compared with
-its original field tensor, with the canonical product-algebra action and
-naturality for arbitrary original coefficient maps.
+Over a commutative base K, adjoining a K-algebra A to a B-module X
+identifies (A⊗K B)⊗_B X with A⊗K X. The product algebra acts by
+(a⊗b)•(a′⊗x)=(aa′)⊗(b•x), and the comparison is product-linear.
+If A is flat over K, the inclusion B→A⊗K B is flat and the
+corresponding adjoining Tor cancellation holds.
 
-For original algebra coefficients V and W, two flat adjoining reductions
-compare the standard ambient `(A ⊗[K] B) ⊗[K] C` with the ordered native
-`Tor_B(V,W)`. The intrinsic graph ambient `(V ⊗[K] W) ⊗[K] B` reaches the
-same ordered native Tor through its actual graph evaluations and two further
-adjoining reductions. Both chains retain V and W multiplication.
+For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, the standard ambient
+D=(A⊗K B)⊗K C has right coefficient A⊗K W first and
+left coefficient V⊗K C second. If A,C are K-flat, its Tor,
+restricted to B, identifies with ordered Tor_B(V,W).
 
-The genuine commuting native coefficient operators supply the actual support
-action of `T = V ⊗[B] W`. Stock additive transport makes both comparisons
-T-linear and agrees with the endomorphism-valued support representation.
-The field-only comparison derives every adjoining flatness from K and keeps
-the original ring universes and an arbitrary common module universe.
+For maps a:B→V,b:B→W, the intrinsic ambient
+G=(V⊗K W)⊗K B has the graph-right coefficient first and
+graph-left coefficient second. If V,W are K-flat, its Tor
+reaches the same middle-ring Tor through tensor rearrangement
+and adjoining cancellation.
+
+Multiplication in V and W gives commuting operators on middle Tor
+and a genuine action of T=V⊗_B W. Both ambient comparisons preserve
+these operators and are T-linear for the transported actions.
+Over a field K, the adjoining flatness conditions hold automatically,
+giving the standard-to-intrinsic T-linear equivalence.
+All ring worlds are independent; each module carrier uses an
+arbitrary common height containing its rings and coefficients.
 -/
 
 @[expose] public section
@@ -88,16 +98,22 @@ variable (K : Type u) (A : Type v) (B : Type w)
   (X : Type (max u v w t)) [AddCommGroup X] [Module K X] [Module B X]
   [IsScalarTower K B X]
 
-/-- The original B operator on the field tensor is its actual canonical
-scalar extension, as an A-linear endomorphism. -/
+/-- For commutative K-algebras A,B and a B-module X with
+compatible K-action, b∈B acts on A⊗K X by
+a⊗x↦a⊗(b•x). This defines a K-algebra map
+B→End_A(A⊗K X). -/
 def tensorAdjoinCoefficientEndMap : B →ₐ[K] Module.End A (A ⊗[K] X) :=
   (Module.End.baseChangeHom K A X).comp (Algebra.lsmul K K X)
 
-/-- The canonical original right coefficient action after field tensoring. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+the tensor A⊗K X has B-action b•(a⊗x)=a⊗(b•x).
+It is induced by the A-linear coefficient endomorphism representation. -/
 abbrev tensorAdjoinRightModule : Module B (A ⊗[K] X) :=
   Module.compHom (A ⊗[K] X) (tensorAdjoinCoefficientEndMap.{u,v,w,t} K A B X).toRingHom
 
-/-- The original coefficient restriction remains compatible with K. -/
+/-- For the B-action on A⊗K X over commutative K-algebras,
+restriction along K→B agrees with the tensor's ground K-action.
+Thus K,B and A⊗K X form the scalar tower K→B. -/
 theorem tensorAdjoinRightModule_isScalarTower :
     letI : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
     IsScalarTower K B (A ⊗[K] X) := by
@@ -108,7 +124,9 @@ theorem tensorAdjoinRightModule_isScalarTower :
   rw [(tensorAdjoinCoefficientEndMap.{u,v,w,t} K A B X).commutes]
   rfl
 
-/-- The original A and extended B operators commute by actual A-linearity. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+the action of A on the first factor of A⊗K X commutes
+with the extended B-action on the coefficient X. -/
 theorem tensorAdjoinRightModule_smulCommClass :
     letI : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
     SMulCommClass A B (A ⊗[K] X) := by
@@ -118,8 +136,10 @@ theorem tensorAdjoinRightModule_smulCommClass :
     tensorAdjoinCoefficientEndMap.{u,v,w,t} K A B X b (a • z)
   exact ((tensorAdjoinCoefficientEndMap.{u,v,w,t} K A B X b).map_smul a z).symm
 
-/-- The actual tensor coefficient carries the existing canonical product
-algebra action, derived from its commuting original factor actions. -/
+/-- For commutative K-algebras A,B and a B-module X with
+compatible K-action, A⊗K X is a module over A⊗K B.
+Its two factor actions are the A-action on the first tensor
+factor and the B-action on X, in a common carrier height. -/
 def tensorAdjoinCoefficientModule : ModuleCat.{max u v w t} (A ⊗[K] B) := by
   let : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
   let : IsScalarTower K B (A ⊗[K] X) := tensorAdjoinRightModule_isScalarTower.{u,v,w,t} K A B X
@@ -127,7 +147,10 @@ def tensorAdjoinCoefficientModule : ModuleCat.{max u v w t} (A ⊗[K] B) := by
   let : Module (A ⊗[K] B) (A ⊗[K] X) := TensorProduct.Algebra.module
   exact ModuleCat.of (A ⊗[K] B) (A ⊗[K] X)
 
-/-- The canonical product scalar acts by the actual two original factors. -/
+/-- For the product action on A⊗K X,
+(a⊗b)•(a′⊗x)=(a*a′)⊗(b•x).
+Here K,A,B are commutative rings and the K- and B-actions
+on X form a compatible scalar tower. -/
 theorem tensorAdjoinCoefficientModule_smul_tmul (a a' : A) (b : B) (x : X) :
     letI : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
     letI : IsScalarTower K B (A ⊗[K] X) := tensorAdjoinRightModule_isScalarTower.{u,v,w,t} K A B X
@@ -143,8 +166,10 @@ theorem tensorAdjoinCoefficientModule_smul_tmul (a a' : A) (b : B) (x : X) :
   rw [LinearMap.baseChange_tmul, TensorProduct.smul_tmul']
   rfl
 
-/-- The original underlying coefficient equivalence is stock tensor
-commutation, actual right-algebra commutation and scalar cancellation. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+there is a K-linear equivalence
+(A⊗K B)⊗_B X≃A⊗K X, using the right inclusion of B.
+Its forward value is (a⊗b)⊗x↦a⊗(b•x). -/
 def tensorAdjoinBaseEquiv :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     (A ⊗[K] B) ⊗[B] X ≃ₗ[K] A ⊗[K] X := by
@@ -155,14 +180,19 @@ def tensorAdjoinBaseEquiv :
         (TensorProduct.AlgebraTensorModule.cancelBaseChange K B B X A)).restrictScalars K).trans
     (TensorProduct.comm K X A)
 
-/-- The original forward coefficient map retains both actual tensor factors. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+the cancellation sends (a⊗b)⊗x to a⊗(b•x).
+The coefficient B-action is retained in its original order. -/
 theorem tensorAdjoinBaseEquiv_tmul (a : A) (b : B) (x : X) :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     tensorAdjoinBaseEquiv.{u,v,w,t} K A B X ((a ⊗ₜ[K] b) ⊗ₜ[B] x) = a ⊗ₜ[K] (b • x) := by
   let : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
   rfl
 
-/-- The original inverse coefficient map inserts the actual B unit. -/
+/-- For the adjoining equivalence
+(A⊗K B)⊗_B X≃A⊗K X, the inverse sends
+a⊗x to (a⊗1_B)⊗x.
+The K- and B-actions on X are compatible. -/
 theorem tensorAdjoinBaseEquiv_symm_tmul (a : A) (x : X) :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     (tensorAdjoinBaseEquiv.{u,v,w,t} K A B X).symm (a ⊗ₜ[K] x) = (a ⊗ₜ[K] (1 : B)) ⊗ₜ[B] x := by
@@ -171,8 +201,10 @@ theorem tensorAdjoinBaseEquiv_symm_tmul (a : A) (x : X) :
   rw [LinearEquiv.apply_symm_apply, tensorAdjoinBaseEquiv_tmul.{u,v,w,t}]
   rw [one_smul]
 
-/-- The original scalar-extension coefficient isomorphism is linear for
-the actual canonical product-algebra action. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+the cancellation (A⊗K B)⊗_B X≃A⊗K X is linear over
+A⊗K B for the product action
+(a⊗b)•(a′⊗x)=(aa′)⊗(b•x). -/
 def tensorAdjoinCoefficientEquiv :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     letI : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
@@ -205,8 +237,10 @@ def tensorAdjoinCoefficientEquiv :
           tensorAdjoinCoefficientModule_smul_tmul.{u,v,w,t}]
         rw [mul_smul]
 
-/-- The actual product-linear coefficient isomorphism has the original
-forward pure-tensor formula. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+the product-linear comparison sends
+(a⊗b)⊗x to a⊗(b•x).
+Its values are those of the underlying K-linear cancellation. -/
 theorem tensorAdjoinCoefficientEquiv_tmul (a : A) (b : B) (x : X) :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     letI : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
@@ -216,7 +250,9 @@ theorem tensorAdjoinCoefficientEquiv_tmul (a : A) (b : B) (x : X) :
     tensorAdjoinCoefficientEquiv.{u,v,w,t} K A B X ((a ⊗ₜ[K] b) ⊗ₜ[B] x) = a ⊗ₜ[K] (b • x) := by
   exact tensorAdjoinBaseEquiv_tmul.{u,v,w,t} K A B X a b x
 
-/-- The actual product-linear inverse inserts the original B unit. -/
+/-- For the A⊗K B-linear coefficient equivalence, the inverse
+has value a⊗x↦(a⊗1_B)⊗x.
+The source and target retain the compatible B- and K-actions on X. -/
 theorem tensorAdjoinCoefficientEquiv_symm_tmul (a : A) (x : X) :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     letI : Module B (A ⊗[K] X) := tensorAdjoinRightModule.{u,v,w,t} K A B X
@@ -229,8 +265,9 @@ theorem tensorAdjoinCoefficientEquiv_symm_tmul (a : A) (x : X) :
 variable {Y : Type (max u v w t)} [AddCommGroup Y] [Module K Y] [Module B Y]
   [IsScalarTower K B Y]
 
-/-- The original tensor coefficient equivalence preserves every actual
-B-linear coefficient map through the actual scalar extension. -/
+/-- For a B-linear map f:X→Y with compatible K-actions,
+the adjoining comparisons commute with scalar extension of f
+and id_A⊗f. Both routes send (a⊗b)⊗x to a⊗f(b•x). -/
 theorem tensorAdjoinBaseEquiv_naturality (f : X →ₗ[B] Y) :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     (tensorAdjoinBaseEquiv.{u,v,w,t} K A B Y).toLinearMap ∘ₗ
@@ -255,8 +292,10 @@ theorem tensorAdjoinBaseEquiv_naturality (f : X →ₗ[B] Y) :
       change a ⊗ₜ[K] (b • f x) = a ⊗ₜ[K] f (b • x)
       rw [f.map_smul]
 
-/-- The original product-linear coefficient equivalence on the actual
-existing scalar-extension module object. -/
+/-- For commutative K-algebras A,B and a compatible B-module X,
+the scalar-extension module along B→A⊗K B is isomorphic
+to A⊗K X with its product-algebra action.
+The isomorphism is the product-linear cancellation. -/
 def tensorAdjoinCoefficientIso :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     ((ModuleCat.extendScalars.{w,max v w,max u v w t} (algebraMap B (A ⊗[K] B))).obj
@@ -268,8 +307,9 @@ def tensorAdjoinCoefficientIso :
   letI : Module (A ⊗[K] B) (A ⊗[K] X) := TensorProduct.Algebra.module
   exact (tensorAdjoinCoefficientEquiv.{u,v,w,t} K A B X).toModuleIso
 
-/-- The actual include-right adjoining map is flat when its original
-adjoining factor is flat over K. Over a field this is derived automatically. -/
+/-- For commutative K-algebras A,B, if A is flat over K,
+then the ring inclusion B→A⊗K B is flat.
+Over a field K this adjoining-factor flatness is automatic. -/
 theorem tensorAdjoin_flat [Module.Flat K A] :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
     Module.Flat B (A ⊗[K] B) := by
@@ -277,8 +317,11 @@ theorem tensorAdjoin_flat [Module.Flat K A] :
   rw [← RingHom.flat_algebraMap_iff]
   exact Algebra.TensorProduct.graphProjection_flat (R := K) (A := B) (B := A)
 
-/-- One genuine original flat adjoining Tor comparison, using the proved
-actual coefficient isomorphism and the existing native cancellation. -/
+/-- For commutative K-algebras A,B with A K-flat, a compatible
+B-module X and an (A⊗K B)-module N, there is a B-module isomorphism
+Res_B Tor_q^(A⊗K B)(N,A⊗K X)≅Tor_q^B(Res_B N,X).
+The coefficient order N,X and the arbitrary common carrier
+height are retained. -/
 def tensorAdjoinNativeTorIso [Module.Flat K A]
     (N : ModuleCat.{max u v w t} (A ⊗[K] B)) (q : ℕ) :
     letI : Algebra B (A ⊗[K] B) := Algebra.TensorProduct.rightAlgebra
@@ -330,25 +373,33 @@ variable (K₀ : Type k) (B₀ : Type b) (C₀ : Type c) (V₀ : Type d)
   [Algebra K₀ B₀] [Algebra K₀ C₀] [Algebra K₀ V₀]
   [Algebra B₀ V₀] [IsScalarTower K₀ B₀ V₀]
 
-/-- The actual left adjoining algebra coefficient equivalence uses only
-original tensor commutation and scalar cancellation. -/
+/-- For compatible commutative K-algebras B,C,V with B→V,
+there is a K-algebra equivalence
+(B⊗K C)⊗_B V≃V⊗K C.
+It moves the B-factor onto V and retains the C-factor. -/
 def tensorAdjoinLeftBaseAlgEquiv :
     ((B₀ ⊗[K₀] C₀) ⊗[B₀] V₀) ≃ₐ[K₀] V₀ ⊗[K₀] C₀ :=
   ((Algebra.TensorProduct.comm B₀ (B₀ ⊗[K₀] C₀) V₀).restrictScalars K₀).trans
     ((Algebra.TensorProduct.cancelBaseChange K₀ B₀ V₀ V₀ C₀).restrictScalars K₀)
 
-/-- The actual left adjoining coefficient map keeps the original B map. -/
+/-- For the adjoining equivalence (B⊗K C)⊗_B V≃V⊗K C,
+the value of (b⊗c)⊗v is (b•v)⊗c.
+The B→V algebra structure is compatible with K. -/
 theorem tensorAdjoinLeftBaseAlgEquiv_tmul (b₀ : B₀) (c₀ : C₀) (v₀ : V₀) :
     tensorAdjoinLeftBaseAlgEquiv.{k,b,c,d} K₀ B₀ C₀ V₀
         ((b₀ ⊗ₜ[K₀] c₀) ⊗ₜ[B₀] v₀) = (b₀ • v₀) ⊗ₜ[K₀] c₀ := by
   rfl
 
-/-- The original ambient algebra maps to its actual left coefficient. -/
+/-- For compatible commutative K-algebras B,C,V with B→V,
+the coefficient map B⊗K C→V⊗K C applies the B→V map
+to the first tensor factor and fixes C. -/
 def tensorAdjoinLeftCoefficientMap : B₀ ⊗[K₀] C₀ →ₐ[K₀] V₀ ⊗[K₀] C₀ :=
   Algebra.TensorProduct.map (IsScalarTower.toAlgHom K₀ B₀ V₀) (AlgHom.id K₀ C₀)
 
-/-- The left adjoining equivalence is linear over the actual ambient
-product algebra, with its genuine coefficient-map scalar action. -/
+/-- For compatible commutative K-algebras B,C,V, the
+equivalence (B⊗K C)⊗_B V≃V⊗K C is an algebra equivalence
+over B⊗K C when the target acts through the coefficient map
+B⊗K C→V⊗K C. -/
 def tensorAdjoinLeftCoefficientAlgEquiv :
     letI : Algebra (B₀ ⊗[K₀] C₀) (V₀ ⊗[K₀] C₀) :=
       (tensorAdjoinLeftCoefficientMap.{k,b,c,d} K₀ B₀ C₀ V₀).toRingHom.toAlgebra
@@ -366,8 +417,10 @@ def tensorAdjoinLeftCoefficientAlgEquiv :
     rw [Algebra.smul_def, mul_one]
     rfl
 
-/-- The actual left adjoining coefficient iso on the native scalar-extension
-object retains its original coefficient ring and its common carrier lift. -/
+/-- For compatible commutative K-algebras B,C,V, scalar
+extension of the lifted B-module V to B⊗K C is isomorphic
+to the lift of V⊗K C as a product-algebra module.
+Both objects use a common height containing all ring worlds. -/
 def tensorAdjoinLeftCoefficientIso :
     letI : Algebra (B₀ ⊗[K₀] C₀) (V₀ ⊗[K₀] C₀) :=
       (tensorAdjoinLeftCoefficientMap.{k,b,c,d} K₀ B₀ C₀ V₀).toRingHom.toAlgebra
@@ -401,8 +454,10 @@ variable (K₂ : Type rk) (A₂ : Type ra) (B₂ : Type rb) (W₂ : Type rx)
   [Algebra K₂ A₂] [Algebra K₂ B₂] [Algebra K₂ W₂]
   [Algebra B₂ W₂] [IsScalarTower K₂ B₂ W₂]
 
-/-- The original right adjoining coefficient algebra uses the canonical
-B-linear commutation and original scalar cancellation. -/
+/-- For compatible commutative K-algebras A,B,W with B→W,
+there is a K-algebra equivalence
+(A⊗K B)⊗_B W≃A⊗K W,
+where B acts through the right tensor inclusion. -/
 def tensorAdjoinRightBaseAlgEquiv :
     letI : Algebra B₂ (A₂ ⊗[K₂] B₂) := Algebra.TensorProduct.rightAlgebra
     (A₂ ⊗[K₂] B₂) ⊗[B₂] W₂ ≃ₐ[K₂] A₂ ⊗[K₂] W₂ := by
@@ -413,7 +468,9 @@ def tensorAdjoinRightBaseAlgEquiv :
     (((Algebra.TensorProduct.cancelBaseChange K₂ B₂ W₂ W₂ A₂).restrictScalars K₂).trans
       (Algebra.TensorProduct.comm K₂ W₂ A₂))
 
-/-- The right adjoining map retains the original B multiplication. -/
+/-- For the equivalence (A⊗K B)⊗_B W≃A⊗K W,
+the value of (a⊗b)⊗w is a⊗(b•w).
+The B→W algebra structure is compatible with K. -/
 theorem tensorAdjoinRightBaseAlgEquiv_tmul (a : A₂) (b : B₂) (w : W₂) :
     letI : Algebra B₂ (A₂ ⊗[K₂] B₂) := Algebra.TensorProduct.rightAlgebra
     tensorAdjoinRightBaseAlgEquiv K₂ A₂ B₂ W₂ ((a ⊗ₜ[K₂] b) ⊗ₜ[B₂] w) =
@@ -421,12 +478,16 @@ theorem tensorAdjoinRightBaseAlgEquiv_tmul (a : A₂) (b : B₂) (w : W₂) :
   let : Algebra B₂ (A₂ ⊗[K₂] B₂) := Algebra.TensorProduct.rightAlgebra
   rfl
 
-/-- The actual original product algebra maps to its right coefficient. -/
+/-- For compatible commutative K-algebras A,B,W with B→W,
+the coefficient map A⊗K B→A⊗K W fixes A and applies
+the B→W map to the second factor. -/
 def tensorAdjoinRightCoefficientMap : A₂ ⊗[K₂] B₂ →ₐ[K₂] A₂ ⊗[K₂] W₂ :=
   Algebra.TensorProduct.map (AlgHom.id K₂ A₂) (IsScalarTower.toAlgHom K₂ B₂ W₂)
 
-/-- The original right coefficient equivalence is linear over the actual
-product algebra through its original coefficient map. -/
+/-- For compatible commutative K-algebras A,B,W, the
+right-adjoining cancellation is an algebra equivalence
+over A⊗K B, with target A⊗K W acted on through its
+coefficient map from A⊗K B. -/
 def tensorAdjoinRightCoefficientAlgEquiv :
     letI : Algebra B₂ (A₂ ⊗[K₂] B₂) := Algebra.TensorProduct.rightAlgebra
     letI : Algebra (A₂ ⊗[K₂] B₂) (A₂ ⊗[K₂] W₂) :=
@@ -445,8 +506,10 @@ def tensorAdjoinRightCoefficientAlgEquiv :
     rw [tensorAdjoinRightBaseAlgEquiv_tmul, Algebra.smul_def, mul_one]
     rfl
 
-/-- The right adjoining iso on the native scalar-extension object keeps
-its original ring coefficient and common carrier lift. -/
+/-- For compatible commutative K-algebras A,B,W, scalar
+extension of the lifted B-module W to A⊗K B is isomorphic
+to the lift of A⊗K W with its product-algebra action.
+The common carrier height contains all ring worlds. -/
 def tensorAdjoinRightCoefficientIso :
     letI : Algebra B₂ (A₂ ⊗[K₂] B₂) := Algebra.TensorProduct.rightAlgebra
     letI : Algebra (A₂ ⊗[K₂] B₂) (A₂ ⊗[K₂] W₂) :=
@@ -471,8 +534,9 @@ def tensorAdjoinRightCoefficientIso :
 
 end RightCoefficientAlgebra
 
-/-- An original algebra coefficient in a common module universe is the
-canonical restriction of its actual ring module and canonical carrier lift. -/
+/-- For a map f:R→S of commutative rings, the ring coefficient
+is ULift^Γ S regarded as an R-module through f,
+where Γ=max(r,s,m). Its underlying S-action is multiplication. -/
 abbrev originalRingCoefficient.{rr,ss,mm} (R₃ : Type rr) (S₃ : Type ss)
     [CommRing R₃] [CommRing S₃] (f : R₃ →+* S₃) : ModuleCat.{max rr ss mm} R₃ :=
   (restrictScalars.{max rr ss mm,rr,ss} f).obj
@@ -484,8 +548,10 @@ universe nr nm
 
 variable (R₇ : Type nr) [CommRing R₇]
 
-/-- Original coefficient multiplication is mapped into endomorphisms
-of the actual native Tor object, preserving its real algebra structure. -/
+/-- For R-modules N,X over a commutative ring R, the map
+End_R(N)→End_R(Tor_q^R(N,X)), f↦Tor_q(f,id_X),
+is an R-algebra homomorphism.
+All modules use a common carrier height containing R. -/
 def nativeTorFirstEndAlgHom (N X : ModuleCat.{max nr nm} R₇) (q : ℕ) :
     Module.End R₇ N →ₐ[R₇] Module.End R₇ (((Tor (ModuleCat.{max nr nm} R₇) q).obj N).obj X) := by
   let F : ModuleCat.{max nr nm} R₇ ⥤ ModuleCat.{max nr nm} R₇ :=
@@ -514,16 +580,19 @@ def nativeTorFirstEndAlgHom (N X : ModuleCat.{max nr nm} R₇) (q : ℕ) :
     rw [F.map_id] at hs
     exact congrArg ModuleCat.Hom.hom hs
 
-/-- The original first native Tor coefficient operator is its literal
-native functor map. -/
+/-- For R-modules N,X and f∈End_R(N), the first-coefficient
+endomorphism on Tor_q^R(N,X) is exactly Tor_q(f,id_X),
+the map of the first Tor variable. -/
 theorem nativeTorFirstEndAlgHom_apply (N X : ModuleCat.{max nr nm} R₇) (q : ℕ)
     (f : Module.End R₇ N) :
     nativeTorFirstEndAlgHom R₇ N X q f =
       (((Tor (ModuleCat.{max nr nm} R₇) q).map (ModuleCat.ofHom f)).app X).hom := by
   rfl
 
-/-- The original resolved coefficient operator is transported through
-actual native symmetry, retaining the genuine signed total flip. -/
+/-- For R-modules N,X over a commutative ring R, the map
+End_R(X)→End_R(Tor_q^R(N,X)), g↦Tor_q(id_N,g),
+is an R-algebra homomorphism.
+The second coefficient is the resolved Tor variable. -/
 def nativeTorSecondEndAlgHom (N X : ModuleCat.{max nr nm} R₇) (q : ℕ) :
     Module.End R₇ X →ₐ[R₇] Module.End R₇ (((Tor (ModuleCat.{max nr nm} R₇) q).obj N).obj X) := by
   let T := Tor (ModuleCat.{max nr nm} R₇) q
@@ -579,16 +648,18 @@ def nativeTorSecondEndAlgHom (N X : ModuleCat.{max nr nm} R₇) (q : ℕ) :
     rw [hC] at h
     exact h
 
-/-- Earned both-variable native symmetry naturality equips the literal
-original resolved-variable native Tor map with its genuine algebra laws. -/
+/-- For R-modules N,X and g∈End_R(X), the resolved-variable
+endomorphism on Tor_q^R(N,X) equals Tor_q(id_N,g).
+The coefficient order N,X is unchanged. -/
 theorem nativeTorSecondEndAlgHom_apply (N X : ModuleCat.{max nr nm} R₇) (q : ℕ)
     (f : Module.End R₇ X) :
     nativeTorSecondEndAlgHom R₇ N X q f =
       (((Tor (ModuleCat.{max nr nm} R₇) q).obj N).map (ModuleCat.ofHom f)).hom := by
   rfl
 
-/-- The two actual original native Tor coefficient operators commute
-by the actual native bifunctor's naturality square. -/
+/-- For f∈End_R(N), g∈End_R(X) over a commutative ring R,
+the endomorphisms Tor_q(f,id) and Tor_q(id,g) commute
+on Tor_q^R(N,X). This is the bifunctor naturality square. -/
 theorem nativeTorEndOperators_commute (N X : ModuleCat.{max nr nm} R₇) (q : ℕ)
     (f : Module.End R₇ N) (g : Module.End R₇ X) :
     Commute (nativeTorFirstEndAlgHom R₇ N X q f) (nativeTorSecondEndAlgHom R₇ N X q g) := by
@@ -611,20 +682,27 @@ universe sr sv sw st
 variable (R₈ : Type sr) (V₈ : Type sv) (W₈ : Type sw)
   [CommRing R₈] [CommRing V₈] [CommRing W₈] [Algebra R₈ V₈] [Algebra R₈ W₈]
 
-/-- The original coefficient multiplication on its canonical carrier lift. -/
+/-- For a commutative R-algebra V, multiplication gives
+V→ₐ[R]End_R(ULift^Γ V), v↦(up(x)↦up(v*x)),
+with Γ=max(r,v,t). -/
 def originalLiftedMulEnd.{mr,mv,mt} (R₉ : Type mr) (V₉ : Type mv)
     [CommRing R₉] [CommRing V₉] [Algebra R₉ V₉] :
     V₉ →ₐ[R₉] Module.End R₉ (ULift.{max mr mv mt} V₉) :=
   Algebra.lsmul R₉ R₉ (ULift.{max mr mv mt} V₉)
 
-/-- Original lifted multiplication has the actual ring multiplication value. -/
+/-- For a commutative R-algebra V, the endomorphism of
+ULift^Γ V associated with v sends up(v′) to up(v*v′).
+The multiplication order is the displayed v followed by v′. -/
 theorem originalLiftedMulEnd_apply.{mr,mv,mt} (R₉ : Type mr) (V₉ : Type mv)
     [CommRing R₉] [CommRing V₉] [Algebra R₉ V₉] (v v' : V₉) :
     originalLiftedMulEnd.{mr,mv,mt} R₉ V₉ v (ULift.up v') = ULift.up (v * v') := by
   rfl
 
-/-- This is the actual original native middle-ring Tor of the two
-original ring coefficients in their common carrier universe. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+M_q is the Tor object of the lifted ring coefficients V first
+and W second, both restricted to R by their algebra maps. -/
 abbrev originalMiddleTor (q : ℕ) : ModuleCat.{max sr sv sw st} R₈ := by
   letI : MonoidalCategoryStruct (ModuleCat.{max sr sv sw st} R₈) :=
     tensorStructure.{sr,max sr sv sw st}
@@ -636,7 +714,11 @@ abbrev originalMiddleTor (q : ℕ) : ModuleCat.{max sr sv sw st} R₈ := by
     (ModuleCat.of R₈ (ULift.{max sr sv sw st} V₈))).obj
       (ModuleCat.of R₈ (ULift.{max sr sv sw st} W₈))
 
-/-- Original V multiplication acts on the actual first native Tor coefficient. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The R-algebra map V→End_R(M_q) sends v to
+Tor_q(mul_v,id_W), using multiplication on the lifted V-module. -/
 def originalMiddleTorLeftEndMap (q : ℕ) :
     V₈ →ₐ[R₈] Module.End R₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
   (nativeTorFirstEndAlgHom.{sr,max sr sv sw st} R₈
@@ -644,7 +726,11 @@ def originalMiddleTorLeftEndMap (q : ℕ) :
     (ModuleCat.of R₈ (ULift.{max sr sv sw st} W₈)) q).comp
       (originalLiftedMulEnd.{sr,sv,max sw st} R₈ V₈)
 
-/-- Original W multiplication acts on the actual resolved native Tor coefficient. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The R-algebra map W→End_R(M_q) sends w to
+Tor_q(id_V,mul_w), using multiplication on the lifted W-module. -/
 def originalMiddleTorRightEndMap (q : ℕ) :
     W₈ →ₐ[R₈] Module.End R₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
   (nativeTorSecondEndAlgHom.{sr,max sr sv sw st} R₈
@@ -652,17 +738,29 @@ def originalMiddleTorRightEndMap (q : ℕ) :
     (ModuleCat.of R₈ (ULift.{max sr sv sw st} W₈)) q).comp
       (originalLiftedMulEnd.{sr,sw,max sv st} R₈ W₈)
 
-/-- The original left factor representation of native Tor. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The multiplication representation on the first Tor coefficient
+makes M_q a V-module. Its scalar v acts by Tor_q(mul_v,id). -/
 abbrev originalMiddleTorLeftModule (q : ℕ) :
     Module V₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
   Module.compHom _ (originalMiddleTorLeftEndMap.{sr,sv,sw,st} R₈ V₈ W₈ q).toRingHom
 
-/-- The original right factor representation of native Tor. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The multiplication representation on the resolved coefficient
+makes M_q a W-module, with w acting by Tor_q(id,mul_w). -/
 abbrev originalMiddleTorRightModule (q : ℕ) :
     Module W₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
   Module.compHom _ (originalMiddleTorRightEndMap.{sr,sv,sw,st} R₈ V₈ W₈ q).toRingHom
 
-/-- The actual V action retains the original middle-ring scalars. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The induced V-action forms the scalar tower R→V acting on M_q.
+Restriction along R→V agrees with the canonical R-module action. -/
 theorem originalMiddleTorLeftTower (q : ℕ) :
     letI : Module V₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
       originalMiddleTorLeftModule.{sr,sv,sw,st} R₈ V₈ W₈ q
@@ -675,7 +773,11 @@ theorem originalMiddleTorLeftTower (q : ℕ) :
   rw [(originalMiddleTorLeftEndMap.{sr,sv,sw,st} R₈ V₈ W₈ q).commutes]
   rfl
 
-/-- The actual W action retains the same original middle-ring scalars. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The induced W-action forms the scalar tower R→W acting on M_q.
+Restriction along R→W agrees with the same R-module action. -/
 theorem originalMiddleTorRightTower (q : ℕ) :
     letI : Module W₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
       originalMiddleTorRightModule.{sr,sv,sw,st} R₈ V₈ W₈ q
@@ -688,7 +790,11 @@ theorem originalMiddleTorRightTower (q : ℕ) :
   rw [(originalMiddleTorRightEndMap.{sr,sv,sw,st} R₈ V₈ W₈ q).commutes]
   rfl
 
-/-- The original two support-algebra actions commute on actual native Tor. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The V- and W-module actions on M_q commute.
+They are induced by endomorphisms in the two different Tor variables. -/
 theorem originalMiddleTorFactorsCommute (q : ℕ) :
     letI : Module V₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
       originalMiddleTorLeftModule.{sr,sv,sw,st} R₈ V₈ W₈ q
@@ -707,8 +813,11 @@ theorem originalMiddleTorFactorsCommute (q : ℕ) :
     (originalLiftedMulEnd.{sr,sw,max sv st} R₈ W₈ w)
   exact congrArg (fun f : Module.End R₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) => f z) h.eq
 
-/-- The real T = V ⊗[R] W acts on the original native middle-ring Tor,
-using the stock balanced product representation of its two derived actions. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The commuting compatible factor actions define a module
+structure of T=V⊗_R W on M_q. -/
 abbrev originalMiddleTorTensorModule (q : ℕ) :
     Module (V₈ ⊗[R₈] W₈) (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) := by
   letI : Module V₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
@@ -723,8 +832,12 @@ abbrev originalMiddleTorTensorModule (q : ℕ) :
     originalMiddleTorFactorsCommute.{sr,sv,sw,st} R₈ V₈ W₈ q
   exact TensorProduct.Algebra.module
 
-/-- A real pure support tensor acts by the actual original two native
-coefficient multiplication operators. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+For v∈V,w∈W and z∈M_q,
+(v⊗w)•z=L_v(R_w(z)), where L and R are the two
+Tor coefficient multiplication representations. -/
 theorem originalMiddleTorTensorModule_tmul (q : ℕ) (v : V₈) (w : W₈)
     (z : originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :
     letI : Module (V₈ ⊗[R₈] W₈) (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
@@ -734,8 +847,11 @@ theorem originalMiddleTorTensorModule_tmul (q : ℕ) (v : V₈) (w : W₈)
         (originalMiddleTorRightEndMap.{sr,sv,sw,st} R₈ V₈ W₈ q w z) := by
   rfl
 
-/-- The actual balanced support representation as an algebra map into
-endomorphisms of the original native middle-ring Tor. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+The balanced support action gives the R-algebra map
+T=V⊗_R W→End_R(M_q). -/
 def originalMiddleTorTensorEndMap (q : ℕ) :
     V₈ ⊗[R₈] W₈ →ₐ[R₈] Module.End R₈ (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
   Algebra.TensorProduct.lift
@@ -747,8 +863,11 @@ def originalMiddleTorTensorEndMap (q : ℕ) :
       (originalLiftedMulEnd.{sr,sv,max sw st} R₈ V₈ v)
       (originalLiftedMulEnd.{sr,sw,max sv st} R₈ W₈ w))
 
-/-- The endomorphism-valued balanced support map is precisely the real
-canonical tensor-product module action. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+For t∈T and z∈M_q, the support representation ρ_T satisfies
+ρ_T(t)(z)=t•z for the constructed T-module structure. -/
 theorem originalMiddleTorTensorEndMap_apply (q : ℕ) (t : V₈ ⊗[R₈] W₈)
     (z : originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :
     letI : Module (V₈ ⊗[R₈] W₈) (originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :=
@@ -760,8 +879,11 @@ theorem originalMiddleTorTensorEndMap_apply (q : ℕ) (t : V₈ ⊗[R₈] W₈)
   | tmul v w => rfl
   | add t₁ t₂ h₁ h₂ => simp only [_root_.map_add, LinearMap.add_apply, add_smul, h₁, h₂]
 
-/-- Every pure balanced support operator is the literal product of the
-original two native Tor factor operators. -/
+/-- For a commutative ring R and commutative R-algebras V,W,
+let M_q=Tor_q^R(V,W), using both coefficient lifts at
+Γ=max(r,v,w,t).
+For a pure t=v⊗w, the support endomorphism is
+ρ_T(v⊗w)(z)=L_v(R_w(z)). -/
 theorem originalMiddleTorTensorEndMap_tmul (q : ℕ) (v : V₈) (w : W₈)
     (z : originalMiddleTor.{sr,sv,sw,st} R₈ V₈ W₈ q) :
     originalMiddleTorTensorEndMap.{sr,sv,sw,st} R₈ V₈ W₈ q (v ⊗ₜ[R₈] w) z =
@@ -780,8 +902,10 @@ variable (K₁₀ : Type ck) (B₁₀ : Type cb) (C₁₀ : Type cc) (V₁₀ : 
   [Algebra K₁₀ B₁₀] [Algebra K₁₀ C₁₀] [Algebra K₁₀ V₁₀]
   [Algebra B₁₀ V₁₀] [IsScalarTower K₁₀ B₁₀ V₁₀]
 
-/-- The actual left adjoining coefficient iso preserves original
-coefficient multiplication, with both real scalar-extension and tensor maps. -/
+/-- For compatible K-algebras B,C,V and v∈V, the left
+coefficient isomorphism intertwines scalar extension of mul_v
+with multiplication by v⊗1_C on the lifted V⊗K C coefficient.
+The target product-ring action is induced from B⊗K C. -/
 theorem tensorAdjoinLeftCoefficientIso_mul_hom_naturality (v : V₁₀) :
     letI : Algebra (B₁₀ ⊗[K₁₀] C₁₀) (V₁₀ ⊗[K₁₀] C₁₀) :=
       (tensorAdjoinLeftCoefficientMap K₁₀ B₁₀ C₁₀ V₁₀).toRingHom.toAlgebra
@@ -818,8 +942,9 @@ variable (K₁₁ : Type dk) (A₁₁ : Type da) (B₁₁ : Type db) (W₁₁ : 
   [Algebra K₁₁ A₁₁] [Algebra K₁₁ B₁₁] [Algebra K₁₁ W₁₁]
   [Algebra B₁₁ W₁₁] [IsScalarTower K₁₁ B₁₁ W₁₁]
 
-/-- The actual right adjoining coefficient iso preserves original
-coefficient multiplication, retaining both original algebra actions. -/
+/-- For compatible K-algebras A,B,W and w∈W, the right
+coefficient isomorphism intertwines scalar extension of mul_w
+with multiplication by 1_A⊗w on the lifted A⊗K W coefficient. -/
 theorem tensorAdjoinRightCoefficientIso_mul_hom_naturality (w : W₁₁) :
     letI : Algebra B₁₁ (A₁₁ ⊗[K₁₁] B₁₁) := Algebra.TensorProduct.rightAlgebra
     letI : Algebra (A₁₁ ⊗[K₁₁] B₁₁) (A₁₁ ⊗[K₁₁] W₁₁) :=
@@ -849,15 +974,18 @@ theorem tensorAdjoinRightCoefficientIso_mul_hom_naturality (w : W₁₁) :
 
 end ActualRightCoefficientMultiplication
 
-/-- Actual coefficient-ring multiplication with its original scalar map;
-the native carrier and native scalar action are retained. -/
+/-- For a commutative-ring map f:R→Q and d∈Q,
+multiplication by d is an R-linear endomorphism of the
+lifted Q-module restricted along f. -/
 def originalRingCoefficientMul.{pr,pq,pm} (R₁₂ : Type pr) (Q₁₂ : Type pq)
     [CommRing R₁₂] [CommRing Q₁₂] (f : R₁₂ →+* Q₁₂) (d : Q₁₂) :
     Module.End R₁₂ (originalRingCoefficient.{pr,pq,pm} R₁₂ Q₁₂ f) := by
   letI : Algebra R₁₂ Q₁₂ := f.toAlgebra
   exact originalLiftedMulEnd.{pr,pq,pm} R₁₂ Q₁₂ d
 
-/-- The actual original coefficient operator is literal ring multiplication. -/
+/-- For a commutative-ring map f:R→Q, the coefficient
+endomorphism for d has value up(x)↦up(d*x).
+The carrier is the chosen common lift of Q. -/
 theorem originalRingCoefficientMul_apply.{pr,pq,pm} (R₁₂ : Type pr) (Q₁₂ : Type pq)
     [CommRing R₁₂] [CommRing Q₁₂] (f : R₁₂ →+* Q₁₂) (d x : Q₁₂) :
     originalRingCoefficientMul.{pr,pq,pm} R₁₂ Q₁₂ f d (ULift.up x) = ULift.up (d * x) := by
@@ -872,8 +1000,10 @@ variable (K₅ : Type ik) (B₅ : Type ib) (V₅ : Type iv) (W₅ : Type iw)
   [Algebra K₅ B₅] [Algebra K₅ V₅] [Algebra K₅ W₅]
   (aV : B₅ →ₐ[K₅] V₅) (aW : B₅ →ₐ[K₅] W₅)
 
-/-- The original intrinsic graph ambient is rearranged only by the
-canonical algebra associators and original tensor commutation. -/
+/-- For commutative K-algebras B,V,W, tensor associativity
+and commutation give
+(V⊗K W)⊗K B≃ₐ[K](V⊗K B)⊗K W.
+No map B→V or B→W is needed for this rearrangement. -/
 def intrinsicToStandardAmbientEquiv :
     (V₅ ⊗[K₅] W₅) ⊗[K₅] B₅ ≃ₐ[K₅] (V₅ ⊗[K₅] B₅) ⊗[K₅] W₅ :=
   (Algebra.TensorProduct.assoc K₅ K₅ K₅ V₅ W₅ B₅).trans
@@ -881,19 +1011,25 @@ def intrinsicToStandardAmbientEquiv :
       (Algebra.TensorProduct.comm K₅ W₅ B₅)).trans
         (Algebra.TensorProduct.assoc K₅ K₅ K₅ V₅ B₅ W₅).symm)
 
-/-- The intrinsic rearrangement keeps all three original factors. -/
+/-- The triple-algebra rearrangement sends
+(v⊗w)⊗b to (v⊗b)⊗w.
+Here B,V,W are commutative K-algebras. -/
 theorem intrinsicToStandardAmbientEquiv_tmul (v : V₅) (w : W₅) (b : B₅) :
     intrinsicToStandardAmbientEquiv K₅ B₅ V₅ W₅ ((v ⊗ₜ[K₅] w) ⊗ₜ[K₅] b) =
       (v ⊗ₜ[K₅] b) ⊗ₜ[K₅] w := by
   rfl
 
-/-- The original first graph evaluation uses the actual B map to V. -/
+/-- For a K-algebra map a:B→V, evaluation of the middle
+B-factor in V gives (V⊗K W)⊗K B→V⊗K W.
+It multiplies the V-factor by a of the middle coefficient. -/
 def intrinsicGraphLeftEvaluation :
     (V₅ ⊗[K₅] W₅) ⊗[K₅] B₅ →ₐ[K₅] V₅ ⊗[K₅] W₅ :=
   Algebra.TensorProduct.etaleGraphEvaluation
     (Algebra.TensorProduct.includeLeft.comp aV)
 
-/-- The original second graph evaluation uses the actual B map to W. -/
+/-- For a K-algebra map b:B→W, evaluation of the middle
+B-factor in W gives (V⊗K W)⊗K B→V⊗K W.
+It multiplies the W-factor by b of the middle coefficient. -/
 def intrinsicGraphRightEvaluation :
     (V₅ ⊗[K₅] W₅) ⊗[K₅] B₅ →ₐ[K₅] V₅ ⊗[K₅] W₅ :=
   Algebra.TensorProduct.etaleGraphEvaluation
@@ -901,8 +1037,10 @@ def intrinsicGraphRightEvaluation :
 
 end ActualIntrinsicAlgebras
 
-/-- Conjugation of a genuine module endomorphism preserves its original
-linear comparison map. This is the stock endomorphism conjugation. -/
+/-- For an R-linear equivalence e:M≃N and f∈End_R(N)
+over a commutative ring R, conjugation satisfies
+e∘(e⁻¹ f e)=f∘e.
+The source and target carrier worlds may be independent. -/
 theorem originalConjugateEnd_naturality.{cr,cm,cn} (R₁₃ : Type cr) [CommRing R₁₃]
     {M₁₃ : Type cm} {N₁₃ : Type cn} [AddCommGroup M₁₃] [AddCommGroup N₁₃]
     [Module R₁₃ M₁₃] [Module R₁₃ N₁₃] (e : M₁₃ ≃ₗ[R₁₃] N₁₃) (f : Module.End R₁₃ N₁₃) :
@@ -924,34 +1062,46 @@ variable (K₁ : Type ku) (A₁ : Type au) (B₁ : Type bu) (C₁ : Type cu)
   [Algebra K₁ V₁] [Algebra K₁ W₁]
   (iV : A₁ ⊗[K₁] B₁ →ₐ[K₁] V₁) (iW : B₁ ⊗[K₁] C₁ →ₐ[K₁] W₁)
 
-/-- The original middle-factor map on the first support algebra. -/
+/-- For i_V:A⊗K B→V between commutative K-algebras,
+the induced B→V map sends b to i_V(1_A⊗b).
+It is the restriction of the left support coefficient map. -/
 def originalMiddleLeftMap : B₁ →ₐ[K₁] V₁ :=
   iV.comp Algebra.TensorProduct.includeRight
 
-/-- The original middle-factor map on the second support algebra. -/
+/-- For i_W:B⊗K C→W between commutative K-algebras,
+the induced B→W map sends b to i_W(b⊗1_C).
+It is the restriction of the right support coefficient map. -/
 def originalMiddleRightMap : B₁ →ₐ[K₁] W₁ :=
   iW.comp Algebra.TensorProduct.includeLeft
 
-/-- The actual standard triple ambient maps to its first support coefficient. -/
+/-- For i_V:A⊗K B→V, the map
+(A⊗K B)⊗K C→V⊗K C applies i_V to the first factor and fixes C.
+Its pure value is (a⊗b)⊗c↦i_V(a⊗b)⊗c. -/
 def originalAmbientLeftMap :
     (A₁ ⊗[K₁] B₁) ⊗[K₁] C₁ →ₐ[K₁] V₁ ⊗[K₁] C₁ :=
   Algebra.TensorProduct.map iV (AlgHom.id K₁ C₁)
 
-/-- The actual standard triple ambient maps to its second support coefficient. -/
+/-- For i_W:B⊗K C→W, the map
+(A⊗K B)⊗K C→A⊗K W reassociates the three factors and applies
+i_W to B⊗C. Its pure value is a⊗i_W(b⊗c). -/
 def originalAmbientRightMap :
     (A₁ ⊗[K₁] B₁) ⊗[K₁] C₁ →ₐ[K₁] A₁ ⊗[K₁] W₁ :=
   (Algebra.TensorProduct.map (AlgHom.id K₁ A₁) iW).comp
     (Algebra.TensorProduct.assoc K₁ K₁ K₁ A₁ B₁ C₁).toAlgHom
 
-/-- Restricting the second original coefficient keeps its actual B support map. -/
+/-- For a∈A,b∈B, the right ambient evaluation satisfies
+((a⊗b)⊗1_C)↦a⊗i_W(b⊗1_C).
+Thus include-left restriction retains the induced B→W map. -/
 theorem originalAmbientRightMap_includeLeft (a : A₁) (b : B₁) :
     originalAmbientRightMap K₁ A₁ B₁ C₁ W₁ iW
       ((a ⊗ₜ[K₁] b) ⊗ₜ[K₁] (1 : C₁)) =
         a ⊗ₜ[K₁] originalMiddleRightMap K₁ B₁ C₁ W₁ iW b := by
   rfl
 
-/-- The actual extended first coefficient, including its common carrier-universe
-lift, is the original standard triple coefficient with its original scalar map. -/
+/-- For i_V:A⊗K B→V, extending the lifted V-module from
+A⊗K B to D=(A⊗K B)⊗K C gives the lifted coefficient V⊗K C.
+The D-action is the left ambient evaluation, and the carrier
+height is max(k,a,b,c,v,m). -/
 def originalAmbientLeftCoefficientIso :
     letI : Algebra (A₁ ⊗[K₁] B₁) V₁ := iV.toRingHom.toAlgebra
     letI : Algebra ((A₁ ⊗[K₁] B₁) ⊗[K₁] C₁) (V₁ ⊗[K₁] C₁) :=
@@ -968,8 +1118,10 @@ def originalAmbientLeftCoefficientIso :
   exact tensorAdjoinLeftCoefficientIso.{ku,max au bu,cu,vu,mu}
     K₁ (A₁ ⊗[K₁] B₁) C₁ V₁
 
-/-- The actual first standard ambient inclusion restricts the original
-second support coefficient through precisely its original middle map. -/
+/-- The composite of include-left A⊗K B→D with the right
+ambient evaluation equals id_A⊗β, where
+β:B→W is b↦i_W(b⊗1_C).
+This is an equality of K-algebra maps. -/
 theorem originalAmbientRightMap_comp_includeLeft :
     (originalAmbientRightMap K₁ A₁ B₁ C₁ W₁ iW).comp Algebra.TensorProduct.includeLeft =
       Algebra.TensorProduct.map (AlgHom.id K₁ A₁)
@@ -980,8 +1132,11 @@ theorem originalAmbientRightMap_comp_includeLeft :
   | tmul a b => rfl
   | add x y hx hy => simp only [_root_.map_add, hx, hy]
 
-/-- The actual original standard ambient native Tor, restricted along
-its two genuine original middle-ring inclusions. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+The object M_std,q is Tor_q^D of the right coefficient A⊗K W
+first and the left coefficient V⊗K C second, restricted to B.
+Both coefficients are lifted to Γ=max(k,a,b,c,v,w,m). -/
 abbrev originalStandardAmbientTorModule (q : ℕ) : ModuleCat.{max ku au bu cu vu wu mu} B₁ := by
   letI : Algebra B₁ (A₁ ⊗[K₁] B₁) := Algebra.TensorProduct.rightAlgebra
   letI : MonoidalCategoryStruct (ModuleCat.{max ku au bu cu vu wu mu} ((A₁ ⊗[K₁] B₁) ⊗[K₁] C₁)) :=
@@ -1002,8 +1157,10 @@ abbrev originalStandardAmbientTorModule (q : ℕ) : ModuleCat.{max ku au bu cu v
       (originalAmbientLeftMap K₁ A₁ B₁ C₁ V₁ iV).toRingHom
   exact H.obj (H₀.obj (((Tor (ModuleCat.{max ku au bu cu vu wu mu} S) q).obj NS).obj LS))
 
-/-- Literal original V multiplication on the resolved standard coefficient
-induces this actual original native Tor endomorphism. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Multiplication by v on V⊗K C induces a B-linear endomorphism
+L_std,v of M_std,q. It acts on the second ambient Tor coefficient. -/
 def originalStandardAmbientLeftOperator (q : ℕ) (v : V₁) :
     Module.End B₁ (originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu}
       K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) := by
@@ -1031,8 +1188,10 @@ def originalStandardAmbientLeftOperator (q : ℕ) (v : V₁) :
       (v ⊗ₜ[K₁] (1 : C₁)))
   exact (H.map (H₀.map (((Tor (ModuleCat.{max ku au bu cu vu wu mu} S) q).obj NS).map m))).hom
 
-/-- Literal original W multiplication on the standard coefficient
-induces this actual original native Tor endomorphism. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Multiplication by w on A⊗K W induces a B-linear endomorphism
+R_std,w of M_std,q. It acts on the first ambient Tor coefficient. -/
 def originalStandardAmbientRightOperator (q : ℕ) (w : W₁) :
     Module.End B₁ (originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu}
       K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) := by
@@ -1060,9 +1219,12 @@ def originalStandardAmbientRightOperator (q : ℕ) (w : W₁) :
       ((1 : A₁) ⊗ₜ[K₁] w))
   exact (H.map (H₀.map (((Tor (ModuleCat.{max ku au bu cu vu wu mu} S) q).map m).app LS))).hom
 
-/-- Both genuine standard field adjoining cancellations, retaining the
-actual standard triple ambient and original support maps, reduce its native
-Tor to the original ordered middle-ring Tor in every degree. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+There is a B-module isomorphism
+φ_std:M_std,q≅Tor_q^B(V,W), using the B-actions induced by i_V,i_W.
+The coefficient order V,W is retained in the target. -/
 def originalStandardAmbientTorIso [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) :
     letI : Algebra B₁ (A₁ ⊗[K₁] B₁) := Algebra.TensorProduct.rightAlgebra
     letI : MonoidalCategoryStruct (ModuleCat.{max ku au bu cu vu wu mu} B₁) :=
@@ -1175,8 +1337,12 @@ def originalStandardAmbientTorIso [Module.Flat K₁ A₁] [Module.Flat K₁ C₁
       B₁ S₀ VR WB q ≪≫
     ((Tor (ModuleCat.{max ku au bu cu vu wu mu} B₁) q).mapIso eV).app WB
 
-/-- Both actual standard adjoining cancellations preserve original V
-multiplication, including the genuine change of native Tor orientation. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For v∈V, the comparison satisfies
+φ_std(L_std,v(z))=L_middle,v(φ_std(z)).
+The middle operator acts on the first Tor coefficient V. -/
 theorem originalStandardAmbientTorIso_left_mul [Module.Flat K₁ A₁] [Module.Flat K₁ C₁]
     (q : ℕ) (v : V₁)
     (z : originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) :
@@ -1346,8 +1512,12 @@ theorem originalStandardAmbientTorIso_left_mul [Module.Flat K₁ A₁] [Module.F
   change E.hom.hom ((H.map μ₀).hom z) = μ₆.hom (E.hom.hom z)
   exact congrArg (fun k : H.obj (H₀.obj (L.obj LS)) ⟶ (TB.obj VB).obj WB => k.hom z) h
 
-/-- Both actual standard adjoining cancellations preserve original W
-multiplication through the same genuine native Tor comparison. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For w∈W, the comparison satisfies
+φ_std(R_std,w(z))=R_middle,w(φ_std(z)).
+The middle operator acts on the resolved coefficient W. -/
 theorem originalStandardAmbientTorIso_right_mul [Module.Flat K₁ A₁] [Module.Flat K₁ C₁]
     (q : ℕ) (w : W₁)
     (z : originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) :
@@ -1529,8 +1699,12 @@ theorem originalStandardAmbientTorIso_right_mul [Module.Flat K₁ A₁] [Module.
   change E.hom.hom ((H.map μ₀).hom z) = μ₆.hom (E.hom.hom z)
   exact congrArg (fun k : H.obj (H₀.obj (L.obj LS)) ⟶ (TB.obj VB).obj WB => k.hom z) h
 
-/-- The real original support algebra acts through the actual
-comparison and its already derived native support representation. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For T=V⊗_B W, the map T→End_B(M_std,q) is
+ρ_std(t)=φ_std⁻¹ ρ_middle(t) φ_std.
+It preserves the support-algebra action in every Tor degree. -/
 def originalStandardAmbientTensorEndMap [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
@@ -1540,8 +1714,12 @@ def originalStandardAmbientTensorEndMap [Module.Flat K₁ A₁] [Module.Flat K�
   let E : (originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) ≅ (originalMiddleTor.{bu,vu,wu,max ku au cu mu} B₁ V₁ W₁ q) := originalStandardAmbientTorIso.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q
   exact (E.symm.toLinearEquiv.conjAlgEquiv B₁).toAlgHom.comp (originalMiddleTorTensorEndMap.{bu,vu,wu,max ku au cu mu} B₁ V₁ W₁ q)
 
-/-- The derived ambient support operator uses the literal original
-forward and inverse comparison maps. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For t∈T and z∈M_std,q,
+ρ_std(t)(z)=φ_std⁻¹(ρ_middle(t)(φ_std(z))).
+The forward and inverse comparisons are the canonical adjoining maps. -/
 theorem originalStandardAmbientTensorEndMap_apply [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) (t :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
@@ -1552,9 +1730,12 @@ theorem originalStandardAmbientTensorEndMap_apply [Module.Flat K₁ A₁] [Modul
       (originalMiddleTorTensorEndMap.{bu,vu,wu,max ku au cu mu} B₁ V₁ W₁ q t ((originalStandardAmbientTorIso.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q).hom z)) := by
   rfl
 
-/-- The real balanced original support action on this actual ambient
-native Tor. Its factor operators are the literal original multiplication
-maps proved compatible with the original native comparison above. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+The action t•z=φ_std⁻¹(t•φ_std(z)) makes M_std,q
+a module over T=V⊗_B W. Its factors are the two coefficient
+multiplication operators. -/
 abbrev originalStandardAmbientTensorModule [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
@@ -1565,8 +1746,12 @@ abbrev originalStandardAmbientTensorModule [Module.Flat K₁ A₁] [Module.Flat 
   let E : (originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) ≅ (originalMiddleTor.{bu,vu,wu,max ku au cu mu} B₁ V₁ W₁ q) := originalStandardAmbientTorIso.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q
   exact E.toLinearEquiv.toAddEquiv.module (V₁ ⊗[B₁] W₁)
 
-/-- The actual original ambient comparison is linear over the real
-support algebra T = V ⊗[B] W, retaining every original native Tor degree. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+The comparison M_std,q≃Tor_q^B(V,W) is T-linear,
+where T=V⊗_B W acts by the commuting coefficient operators
+on middle Tor and their transported action on ambient Tor. -/
 def originalStandardAmbientTensorTorEquiv [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
@@ -1579,15 +1764,22 @@ def originalStandardAmbientTensorTorEquiv [Module.Flat K₁ A₁] [Module.Flat K
   let E : (originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) ≅ (originalMiddleTor.{bu,vu,wu,max ku au cu mu} B₁ V₁ W₁ q) := originalStandardAmbientTorIso.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q
   exact E.toLinearEquiv.toAddEquiv.linearEquiv (V₁ ⊗[B₁] W₁)
 
-/-- The tensor-linear upgrade has exactly the original comparison map. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For z∈M_std,q, the T-linear equivalence has value φ_std(z).
+Its underlying map is the canonical B-linear adjoining comparison. -/
 theorem originalStandardAmbientTensorTorEquiv_apply [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) (z : originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
     (originalStandardAmbientTensorTorEquiv.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) z = (originalStandardAmbientTorIso.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q).hom z := by
   rfl
 
-/-- The inverse tensor-linear upgrade has exactly the original inverse
-comparison map, with all original carrier coordinates retained. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For z∈Tor_q^B(V,W), the inverse T-linear equivalence
+has value φ_std⁻¹(z), the canonical inverse B-linear comparison. -/
 theorem originalStandardAmbientTensorTorEquiv_symm_apply [Module.Flat K₁ A₁] [Module.Flat K₁ C₁] (q : ℕ) (z :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
@@ -1596,8 +1788,12 @@ theorem originalStandardAmbientTensorTorEquiv_symm_apply [Module.Flat K₁ A₁]
     letI : Algebra B₁ W₁ := (originalMiddleRightMap K₁ B₁ C₁ W₁ iW).toRingHom.toAlgebra
     (originalStandardAmbientTensorTorEquiv.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q).symm z = (originalStandardAmbientTorIso.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q).inv z := by
   rfl
-/-- Every pure original support tensor acts by the two genuine original
-coefficient multiplication operators on the original ambient native Tor. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For v∈V,w∈W, the T-module action satisfies
+(v⊗w)•z=L_std,v(R_std,w(z)).
+The displayed order is the actual coefficient-operator composition. -/
 theorem originalStandardAmbientTensorModule_tmul [Module.Flat K₁ A₁] [Module.Flat K₁ C₁]
     (q : ℕ) (v : V₁) (w : W₁) (z : originalStandardAmbientTorModule.{ku,au,bu,cu,vu,wu,mu} K₁ A₁ B₁ C₁ V₁ W₁ iV iW q) :
     letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
@@ -1620,8 +1816,11 @@ theorem originalStandardAmbientTensorModule_tmul [Module.Flat K₁ A₁] [Module
     (hright.trans he.symm)
 
 
-/-- The original balanced endomorphism representation is exactly the
-actual transported T action on standard ambient native Tor. -/
+/-- For commutative K-algebras A,B,C,V,W and maps
+i_V:A⊗K B→V, i_W:B⊗K C→W, put D=(A⊗K B)⊗K C.
+Assume A,C flat over K.
+For t∈T, the endomorphism representation satisfies
+ρ_std(t)(z)=t•z for the transported balanced T-module structure. -/
 theorem originalStandardAmbientTensorEndMap_smul [Module.Flat K₁ A₁] [Module.Flat K₁ C₁]
     (q : ℕ) (t :
       letI : Algebra B₁ V₁ := (originalMiddleLeftMap K₁ A₁ B₁ V₁ iV).toRingHom.toAlgebra
@@ -1659,16 +1858,26 @@ variable (K₆ : Type jk) (B₆ : Type jb) (V₆ : Type jv) (W₆ : Type jw)
   [Algebra K₆ B₆] [Algebra K₆ V₆] [Algebra K₆ W₆]
   (a : B₆ →ₐ[K₆] V₆) (b : B₆ →ₐ[K₆] W₆)
 
-/-- The first intrinsic support map after the actual ambient rearrangement. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The standard left support map V⊗K B→V has value
+v⊗c↦v*a(c). It is induced by id_V and a. -/
 def intrinsicStandardLeftSupport : V₆ ⊗[K₆] B₆ →ₐ[K₆] V₆ :=
   Algebra.TensorProduct.etaleGraphEvaluation a
 
-/-- The second intrinsic support map after the actual ambient rearrangement. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The standard right support map B⊗K W→W has value
+c⊗w↦b(c)*w. It is induced by b and id_W. -/
 def intrinsicStandardRightSupport : B₆ ⊗[K₆] W₆ →ₐ[K₆] W₆ :=
   (Algebra.TensorProduct.etaleGraphEvaluation b).comp
     (Algebra.TensorProduct.comm K₆ B₆ W₆).toAlgHom
 
-/-- The first graph evaluation is literally the rearranged original coefficient map. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The intrinsic left graph map G→V⊗K W is the standard
+left ambient map composed with
+G≃(V⊗K B)⊗K W. -/
 theorem intrinsicGraphLeftEvaluation_comp_rearrangement :
     intrinsicGraphLeftEvaluation K₆ B₆ V₆ W₆ a =
       (originalAmbientLeftMap K₆ V₆ B₆ W₆ V₆
@@ -1686,7 +1895,10 @@ theorem intrinsicGraphLeftEvaluation_comp_rearrangement :
         (v * a b₀) ⊗ₜ[K₆] w
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
 
-/-- The second graph evaluation is literally the rearranged original coefficient map. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The intrinsic right graph map G→V⊗K W is the standard
+right ambient map composed with the same triple rearrangement. -/
 theorem intrinsicGraphRightEvaluation_comp_rearrangement :
     intrinsicGraphRightEvaluation K₆ B₆ V₆ W₆ b =
       (originalAmbientRightMap K₆ V₆ B₆ W₆ W₆
@@ -1704,7 +1916,11 @@ theorem intrinsicGraphRightEvaluation_comp_rearrangement :
         v ⊗ₜ[K₆] (w * b b₀)
       rw [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
 
-/-- The intrinsic rearrangement preserves the actual middle-ring inclusion. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The rearrangement sends the B-scalar inclusion
+1_(V⊗W)⊗c to (1_V⊗c)⊗1_W.
+Thus restriction to B is unchanged by the ambient algebra isomorphism. -/
 theorem intrinsicToStandardAmbientEquiv_comp_includeRight :
     (intrinsicToStandardAmbientEquiv K₆ B₆ V₆ W₆).toAlgHom.comp
         (Algebra.TensorProduct.includeRight (R := K₆) (A := V₆ ⊗[K₆] W₆) (B := B₆)) =
@@ -1716,22 +1932,31 @@ theorem intrinsicToStandardAmbientEquiv_comp_includeRight :
       ((1 : V₆) ⊗ₜ[K₆] b₀) ⊗ₜ[K₆] (1 : W₆)
   rfl
 
-/-- The original first B support map is retained after both intrinsic cancellations. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Restricting the standard left support V⊗K B→V to B
+through 1_V⊗− recovers a exactly. -/
 theorem intrinsicStandardMiddleLeftMap :
     originalMiddleLeftMap K₆ V₆ B₆ V₆ (intrinsicStandardLeftSupport K₆ B₆ V₆ a) = a := by
   ext b₀
   change (1 : V₆) * a b₀ = a b₀
   exact one_mul _
 
-/-- The original second B support map is retained after both intrinsic cancellations. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Restricting the standard right support B⊗K W→W to B
+through −⊗1_W recovers b exactly. -/
 theorem intrinsicStandardMiddleRightMap :
     originalMiddleRightMap K₆ B₆ W₆ W₆ (intrinsicStandardRightSupport K₆ B₆ W₆ b) = b := by
   ext b₀
   change (1 : W₆) * b b₀ = b b₀
   exact one_mul _
 
-/-- The actual original intrinsic native graph Tor is restricted
-along its actual original B inclusion. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The object M_intr,q is Tor_q^G of the graph-right coefficient
+first and graph-left coefficient second, both carried by V⊗K W,
+then restricted to B. Its height is max(k,b,v,w,t). -/
 abbrev originalIntrinsicAmbientTorModule (q : ℕ) : ModuleCat.{max jk jb jv jw jt} B₆ := by
   letI : Algebra B₆ ((V₆ ⊗[K₆] W₆) ⊗[K₆] B₆) := Algebra.TensorProduct.rightAlgebra
   letI : MonoidalCategoryStruct (ModuleCat.{max jk jb jv jw jt} ((V₆ ⊗[K₆] W₆) ⊗[K₆] B₆)) :=
@@ -1749,8 +1974,11 @@ abbrev originalIntrinsicAmbientTorModule (q : ℕ) : ModuleCat.{max jk jb jv jw 
     _ _ (intrinsicGraphLeftEvaluation K₆ B₆ V₆ W₆ a).toRingHom
   exact HG.obj (((Tor (ModuleCat.{max jk jb jv jw jt} G) q).obj NG).obj LG)
 
-/-- Original V multiplication on the first intrinsic graph coefficient
-induces this literal original native Tor endomorphism. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Multiplication by v⊗1_W on the left graph coefficient gives
+the B-linear endomorphism L_intr,v of M_intr,q.
+It preserves the graph coefficient action. -/
 def originalIntrinsicAmbientLeftOperator (q : ℕ) (v : V₆) :
     Module.End B₆ (originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) := by
   letI : Algebra B₆ ((V₆ ⊗[K₆] W₆) ⊗[K₆] B₆) := Algebra.TensorProduct.rightAlgebra
@@ -1772,8 +2000,10 @@ def originalIntrinsicAmbientLeftOperator (q : ℕ) (v : V₆) :
       (intrinsicGraphLeftEvaluation K₆ B₆ V₆ W₆ a).toRingHom (v ⊗ₜ[K₆] (1 : W₆)))
   exact (HG.map (((Tor (ModuleCat.{max jk jb jv jw jt} G) q).obj NG).map μ)).hom
 
-/-- Original W multiplication on the second intrinsic graph coefficient
-induces this literal original native Tor endomorphism. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Multiplication by 1_V⊗w on the right graph coefficient gives
+the B-linear endomorphism R_intr,w of M_intr,q. -/
 def originalIntrinsicAmbientRightOperator (q : ℕ) (w : W₆) :
     Module.End B₆ (originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) := by
   letI : Algebra B₆ ((V₆ ⊗[K₆] W₆) ⊗[K₆] B₆) := Algebra.TensorProduct.rightAlgebra
@@ -1795,9 +2025,11 @@ def originalIntrinsicAmbientRightOperator (q : ℕ) (w : W₆) :
       (intrinsicGraphRightEvaluation K₆ B₆ V₆ W₆ b).toRingHom ((1 : V₆) ⊗ₜ[K₆] w))
   exact (HG.map (((Tor (ModuleCat.{max jk jb jv jw jt} G) q).map μ).app LG)).hom
 
-/-- The actual intrinsic graph Tor is compared with the actual rearranged
-standard ambient, keeping the original three rings, both graph evaluations,
-and the original common coefficient universe. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The ambient algebra rearrangement gives the B-module
+isomorphism from M_intr,q to the standard ambient Tor with
+A=V,C=W and the multiplication support maps determined by a,b. -/
 def originalIntrinsicStandardTorIso (q : ℕ) :
     originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q ≅
       originalStandardAmbientTorModule.{jk,jv,jb,jw,jv,jw,jt} K₆ V₆ B₆ W₆ V₆ W₆
@@ -1891,8 +2123,10 @@ def originalIntrinsicStandardTorIso (q : ℕ) :
   exact HG.mapIso changeAmbient ≪≫ rho
 
 
-/-- The actual intrinsic graph rearrangement preserves original V
-multiplication on the genuine resolved coefficient in every native degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The rearrangement Tor isomorphism intertwines L_intr,v
+with the standard left support multiplication operator for every v∈V. -/
 theorem originalIntrinsicStandardTorIso_left_mul (q : ℕ) (v : V₆)
     (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
     (originalIntrinsicStandardTorIso.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q).hom
@@ -2073,8 +2307,10 @@ theorem originalIntrinsicStandardTorIso_left_mul (q : ℕ) (v : V₆)
   exact congrArg (fun k : HG.obj ((TG.obj NG).obj LG) ⟶ H.obj (H₀.obj (L.obj LS)) => k.hom z) h
 
 
-/-- The actual intrinsic graph rearrangement preserves original W
-multiplication on the genuine original coefficient in every native degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+The rearrangement Tor isomorphism intertwines R_intr,w
+with the standard right support multiplication operator for every w∈W. -/
 theorem originalIntrinsicStandardTorIso_right_mul (q : ℕ) (w : W₆)
     (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
     (originalIntrinsicStandardTorIso.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q).hom
@@ -2254,9 +2490,13 @@ theorem originalIntrinsicStandardTorIso_right_mul (q : ℕ) (w : W₆)
   change E.hom.hom ((HG.map μ₀).hom z) = μB.hom (E.hom.hom z)
   exact congrArg (fun k : HG.obj ((TG.obj NG).obj LG) ⟶ H.obj (H₀.obj (L.obj LS)) => k.hom z) h
 
-/-- Both genuine intrinsic adjoining cancellations retain the original
-intrinsic graph ambient and both actual graph evaluations, and reach the
-same original ordered middle-ring native Tor in every degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+There is a B-module isomorphism
+φ_intr:M_intr,q≅Tor_q^B(V,W).
+It uses the triple rearrangement and the two adjoining reductions,
+with middle actions induced by a,b. -/
 def originalIntrinsicAmbientTorIso [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
@@ -2287,9 +2527,11 @@ def originalIntrinsicAmbientTorIso [Module.Flat K₆ V₆] [Module.Flat K₆ W�
     originalStandardAmbientTorIso.{jk,jv,jb,jw,jv,jw,jt} K₆ V₆ B₆ W₆ V₆ W₆ iV iW q ≪≫
       (TB.mapIso eV).app WB₀ ≪≫ (TB.obj VB).mapIso eW
 
-/-- The full original intrinsic comparison preserves actual V
-multiplication through the rearrangement, both flat adjoining reductions,
-and the original coefficient maps, in every native degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For v∈V, the comparison satisfies
+φ_intr(L_intr,v(z))=L_middle,v(φ_intr(z)). -/
 theorem originalIntrinsicAmbientTorIso_left_mul [Module.Flat K₆ V₆] [Module.Flat K₆ W₆]
     (q : ℕ) (v : V₆)
     (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
@@ -2376,9 +2618,11 @@ theorem originalIntrinsicAmbientTorIso_left_mul [Module.Flat K₆ V₆] [Module.
   change E.hom.hom (μG.hom z) = μT.hom (E.hom.hom z)
   exact congrArg (fun k : XG ⟶ (TB.obj VB).obj WB => k.hom z) h
 
-/-- The full original intrinsic comparison preserves actual W
-multiplication through the rearrangement, both flat adjoining reductions,
-and the original coefficient maps, in every native degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For w∈W, the comparison satisfies
+φ_intr(R_intr,w(z))=R_middle,w(φ_intr(z)). -/
 theorem originalIntrinsicAmbientTorIso_right_mul [Module.Flat K₆ V₆] [Module.Flat K₆ W₆]
     (q : ℕ) (w : W₆)
     (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
@@ -2465,8 +2709,12 @@ theorem originalIntrinsicAmbientTorIso_right_mul [Module.Flat K₆ V₆] [Module
   change E.hom.hom (μG.hom z) = μT.hom (E.hom.hom z)
   exact congrArg (fun k : XG ⟶ (TB.obj VB).obj WB => k.hom z) h
 
-/-- The real original support algebra acts through the actual
-comparison and its already derived native support representation. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+The B-algebra map T→End_B(M_intr,q) is
+ρ_intr(t)=φ_intr⁻¹ ρ_middle(t) φ_intr.
+The middle support action is the commuting V,W coefficient action. -/
 def originalIntrinsicAmbientTensorEndMap [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
@@ -2476,8 +2724,11 @@ def originalIntrinsicAmbientTensorEndMap [Module.Flat K₆ V₆] [Module.Flat K�
   let E : (originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) ≅ (originalMiddleTor.{jb,jv,jw,max jk jt} B₆ V₆ W₆ q) := originalIntrinsicAmbientTorIso.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q
   exact (E.symm.toLinearEquiv.conjAlgEquiv B₆).toAlgHom.comp (originalMiddleTorTensorEndMap.{jb,jv,jw,max jk jt} B₆ V₆ W₆ q)
 
-/-- The derived ambient support operator uses the literal original
-forward and inverse comparison maps. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For t∈T and z∈M_intr,q,
+ρ_intr(t)(z)=φ_intr⁻¹(ρ_middle(t)(φ_intr(z))). -/
 theorem originalIntrinsicAmbientTensorEndMap_apply [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) (t :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
@@ -2488,9 +2739,13 @@ theorem originalIntrinsicAmbientTensorEndMap_apply [Module.Flat K₆ V₆] [Modu
       (originalMiddleTorTensorEndMap.{jb,jv,jw,max jk jt} B₆ V₆ W₆ q t ((originalIntrinsicAmbientTorIso.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q).hom z)) := by
   rfl
 
-/-- The actual intrinsic support action and comparison are constructed
-together from the earned native comparison and the stock additive transport.
-The action is derived from the genuine commuting middle-ring Tor operators. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+The comparison φ_intr determines a T-module structure on
+M_intr,q and a T-linear equivalence to Tor_q^B(V,W).
+The action is t•z=φ_intr⁻¹(t•φ_intr(z)); both structures
+are constructed from the same comparison. -/
 def originalIntrinsicAmbientTensorTorData [Module.Flat K₆ V₆] [Module.Flat K₆ W₆]
     (q : ℕ) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
@@ -2513,9 +2768,12 @@ def originalIntrinsicAmbientTensorTorData [Module.Flat K₆ V₆] [Module.Flat K
       (originalMiddleTor.{jb,jv,jw,max jk jt} B₆ V₆ W₆ q) := E.toLinearEquiv.toAddEquiv
   exact ⟨e.module (V₆ ⊗[B₆] W₆), e.linearEquiv (V₆ ⊗[B₆] W₆)⟩
 
-/-- The real balanced original support action on this actual ambient
-native Tor. Its factor operators are the literal original multiplication
-maps proved compatible with the original native comparison above. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+The support algebra T acts on M_intr,q through the module
+structure transported by φ_intr. It retains the coefficient
+multiplication operators in V and W. -/
 abbrev originalIntrinsicAmbientTensorModule [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
@@ -2525,8 +2783,12 @@ abbrev originalIntrinsicAmbientTensorModule [Module.Flat K₆ V₆] [Module.Flat
   exact (originalIntrinsicAmbientTensorTorData.{jk,jb,jv,jw,jt}
     K₆ B₆ V₆ W₆ a b q).1
 
-/-- The actual original ambient comparison is linear over the real
-support algebra T = V ⊗[B] W, retaining every original native Tor degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+The comparison φ_intr gives
+M_intr,q≃ₗ[T]Tor_q^B(V,W), with the transported support action
+on the source and the coefficient support action on the target. -/
 def originalIntrinsicAmbientTensorTorEquiv [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
@@ -2538,15 +2800,22 @@ def originalIntrinsicAmbientTensorTorEquiv [Module.Flat K₆ V₆] [Module.Flat 
   exact (originalIntrinsicAmbientTensorTorData.{jk,jb,jv,jw,jt}
     K₆ B₆ V₆ W₆ a b q).2
 
-/-- The tensor-linear upgrade has exactly the original comparison map. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For z∈M_intr,q, the T-linear equivalence has value φ_intr(z).
+Its underlying map is the canonical B-linear ambient comparison. -/
 theorem originalIntrinsicAmbientTensorTorEquiv_apply [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
     (originalIntrinsicAmbientTensorTorEquiv.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) z = (originalIntrinsicAmbientTorIso.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q).hom z := by
   rfl
 
-/-- The inverse tensor-linear upgrade has exactly the original inverse
-comparison map, with all original carrier coordinates retained. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For z∈Tor_q^B(V,W), the inverse T-linear equivalence
+has value φ_intr⁻¹(z). -/
 theorem originalIntrinsicAmbientTensorTorEquiv_symm_apply [Module.Flat K₆ V₆] [Module.Flat K₆ W₆] (q : ℕ) (z :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
@@ -2555,8 +2824,11 @@ theorem originalIntrinsicAmbientTensorTorEquiv_symm_apply [Module.Flat K₆ V₆
     letI : Algebra B₆ W₆ := b.toRingHom.toAlgebra
     (originalIntrinsicAmbientTensorTorEquiv.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q).symm z = (originalIntrinsicAmbientTorIso.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q).inv z := by
   rfl
-/-- Every pure original support tensor acts by the two genuine original
-coefficient multiplication operators on the original ambient native Tor. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For v∈V,w∈W, the T-module action is
+(v⊗w)•z=L_intr,v(R_intr,w(z)). -/
 theorem originalIntrinsicAmbientTensorModule_tmul [Module.Flat K₆ V₆] [Module.Flat K₆ W₆]
     (q : ℕ) (v : V₆) (w : W₆) (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
     letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
@@ -2579,8 +2851,11 @@ theorem originalIntrinsicAmbientTensorModule_tmul [Module.Flat K₆ V₆] [Modul
     (hright.trans he.symm)
 
 
-/-- Pure intrinsic support tensors act through the genuine original
-coefficient multiplication maps in the endomorphism-valued representation. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For a pure support tensor, the endomorphism representation
+satisfies ρ_intr(v⊗w)(z)=L_intr,v(R_intr,w(z)). -/
 theorem originalIntrinsicAmbientTensorEndMap_tmul [Module.Flat K₆ V₆] [Module.Flat K₆ W₆]
     (q : ℕ) (v : V₆) (w : W₆)
     (z : originalIntrinsicAmbientTorModule.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q) :
@@ -2606,8 +2881,11 @@ theorem originalIntrinsicAmbientTensorEndMap_tmul [Module.Flat K₆ V₆] [Modul
       (originalIntrinsicAmbientRightOperator.{jk,jb,jv,jw,jt} K₆ B₆ V₆ W₆ a b q w z))
     (hvw.trans ht.symm)
 
-/-- The intrinsic balanced endomorphism representation is exactly the
-actual stock-transported support action in every original native Tor degree. -/
+/-- For commutative K-algebras B,V,W and maps a:B→V,b:B→W,
+put G=(V⊗K W)⊗K B and T=V⊗B W.
+Assume V,W flat over K.
+For every t∈T and z∈M_intr,q,
+ρ_intr(t)(z)=t•z for the constructed support module. -/
 theorem originalIntrinsicAmbientTensorEndMap_smul [Module.Flat K₆ V₆] [Module.Flat K₆ W₆]
     (q : ℕ) (t :
       letI : Algebra B₆ V₆ := a.toRingHom.toAlgebra
@@ -2643,12 +2921,12 @@ variable (Kf : Type fku) (Af : Type fau) (Bf : Type fbu) (Cf : Type fcu)
   [Algebra Kf Af] [Algebra Kf Bf] [Algebra Kf Cf] [Algebra Kf Vf] [Algebra Kf Wf]
   (iV : Af ⊗[Kf] Bf →ₐ[Kf] Vf) (iW : Bf ⊗[Kf] Cf →ₐ[Kf] Wf)
 
-/-- Over any original field, standard and intrinsic ambient native Tor
-are equivalent over the actual support algebra V ⊗[B] W, by their earned
-comparisons with the same ordered Tor_B(V,W). All four adjoining factors
-are flat over the original field; no B-flatness or finiteness is assumed.
-The common module universe remains arbitrary and includes the actual
-standard and intrinsic ambient ring universes. -/
+/-- For a field K and commutative K-algebras A,B,C,V,W with
+maps i_V:A⊗K B→V,i_W:B⊗K C→W, the standard ambient Tor is
+T-linearly equivalent to intrinsic graph Tor, T=V⊗_B W.
+The map is φ_intr⁻¹∘φ_std, retaining their common ordered
+Tor_B(V,W) comparison. All four adjoining factors are K-flat,
+and the common height max(k,a,b,c,v,w,m) is arbitrary. -/
 def fieldTensorAmbientTorEquiv (q : ℕ) :
     letI : Algebra Bf Vf := (originalMiddleLeftMap Kf Af Bf Vf iV).toRingHom.toAlgebra
     letI : Algebra Bf Wf := (originalMiddleRightMap Kf Bf Cf Wf iW).toRingHom.toAlgebra

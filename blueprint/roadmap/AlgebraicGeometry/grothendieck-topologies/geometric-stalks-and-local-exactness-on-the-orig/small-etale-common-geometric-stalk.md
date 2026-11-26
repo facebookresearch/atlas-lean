@@ -1,4 +1,6 @@
-# Small Etale Common Geometric Stalk
+# Geometric stalk functor for common universe coefficients
 
-The actual stock filtered colimit over the original geometric
-neighborhoods, retaining the original scheme and coefficient universes.
+Geometric stalk functor for common universe coefficients.
+
+For `Spec Ω → X` with `Ω` separably closed in universe `u`, take the sheaf-fiber functor of
+its common-universe geometric point.

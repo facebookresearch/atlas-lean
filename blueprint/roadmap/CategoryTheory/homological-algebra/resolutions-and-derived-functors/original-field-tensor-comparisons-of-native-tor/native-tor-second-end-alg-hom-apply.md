@@ -1,4 +1,5 @@
-# Native Tor Second End Alg Hom apply
+# The second Tor endomorphism is the bifunctor map on its resolved coefficient
 
-Earned both-variable native symmetry naturality equips the literal
-original resolved-variable native Tor map with its genuine algebra laws.
+For R-modules N,X and g∈End_R(X), the resolved-variable
+endomorphism on Tor_q^R(N,X) equals Tor_q(id_N,g).
+The coefficient order N,X is unchanged.

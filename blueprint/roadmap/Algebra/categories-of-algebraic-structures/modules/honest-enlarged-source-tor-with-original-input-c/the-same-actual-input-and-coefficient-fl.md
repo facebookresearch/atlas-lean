@@ -1,3 +1,5 @@
-# The same actual input and coefficient flattening give the...
+# Increasing underived tensor height preserves the independent source category
 
-The same actual input and coefficient flattening give the underived height comparison.
+For rings R,S and an (R,S)-bimodule B, lifting the
+output of Tensor_z to Γ′=max(r,a,b,z,t) gives the natural
+isomorphism with Tensor_(max(z,t)) on the same source world a.

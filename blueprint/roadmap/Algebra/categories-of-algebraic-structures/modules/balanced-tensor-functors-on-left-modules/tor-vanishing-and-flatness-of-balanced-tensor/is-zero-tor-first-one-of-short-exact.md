@@ -1,4 +1,7 @@
-# Is Zero tor First one of short Exact
+# Flat middle and quotient modules give a flat kernel
 
-A kernel of a surjection between Tor₁-flat right modules is Tor₁-flat,
-using the genuine Tor₂ → Tor₁ → Tor₁ segment of the native derived sequence.
+Flat middle and quotient modules give a flat kernel.
+
+In a short exact sequence of right modules, suppose the middle and quotient modules have zero
+`Tor¹` against every left module. Then the kernel has zero `Tor¹` against each left module
+`B`.

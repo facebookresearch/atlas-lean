@@ -1,3 +1,5 @@
-# Bimodule Tensor Unit Iso mk
+# Finite-module regular unitor on pure classes
 
-The regular unitor applies the original R action to every actual ordered pure class.
+Finite-module regular unitor on pure classes.
+
+The forward map of the regular coefficient unitor sends `[r ⊗ m]` to `r • m`.

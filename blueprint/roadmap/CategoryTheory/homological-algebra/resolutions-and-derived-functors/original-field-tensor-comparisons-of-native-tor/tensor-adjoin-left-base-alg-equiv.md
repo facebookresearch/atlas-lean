@@ -1,4 +1,6 @@
-# Tensor Adjoin Left Base Alg Equiv
+# Left algebra adjoining identifies the scalar-extended coefficient algebra
 
-The actual left adjoining algebra coefficient equivalence uses only
-original tensor commutation and scalar cancellation.
+For compatible commutative K-algebras B,C,V with B→V,
+there is a K-algebra equivalence
+(B⊗K C)⊗_B V≃V⊗K C.
+It moves the B-factor onto V and retains the C-factor.

@@ -1,3 +1,6 @@
-# Is Zero hom Cochain Complex Homology Functor of single₀
+# Homotopy degree-zero single complex has vanishing positive Hom cohomology
 
-`Hⁿ(Hom(K, -))` is zero for `n ≠ 0` when `K ≃ single₀ R`.
+Homotopy degree-zero single complex has vanishing positive Hom cohomology.
+
+If `K` is homotopy equivalent to `A[0]`, its degree-`n` Hom cochain cohomology coefficient
+functor is zero whenever `n ≠ 0`.

@@ -1,3 +1,6 @@
-# Tensor Transformation
+# Right coefficient morphism gives an integer-valued tensor transformation
 
-The actual transformation h⊗N, natural in every left R-module N.
+Right coefficient morphism gives an integer-valued tensor transformation.
+
+A right `R`-linear coefficient map `h : M → M'` induces a natural transformation between the
+balanced tensor functors with coefficients `M` and `M'`, valued in integer modules.

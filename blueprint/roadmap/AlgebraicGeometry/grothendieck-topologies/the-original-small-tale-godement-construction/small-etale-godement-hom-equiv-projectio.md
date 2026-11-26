@@ -1,3 +1,6 @@
-# Small Etale Godement Hom Equiv projection
+# Stalk skyscraper correspondence at a product coordinate
 
-Every product projection is exactly the original point adjunction map.
+Stalk skyscraper correspondence at a product coordinate.
+
+Project the associated sheaf map to the skyscraper at `x`; the result is the individual stalk-
+skyscraper adjunction map of the family component at `x`.

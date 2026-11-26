@@ -1,3 +1,6 @@
-# Sequence Comparison Nat Iso
+# Window comparison is natural in short exact sequences
 
-The natural comparison between the small étale and derived global sections sequence functors.
+Window comparison is natural in short exact sequences.
+
+The cohomology-to-derived section isomorphisms give a natural isomorphism between the two six-
+term window functors.

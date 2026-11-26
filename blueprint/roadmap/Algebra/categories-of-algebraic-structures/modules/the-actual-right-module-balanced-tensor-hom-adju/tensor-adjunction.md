@@ -1,3 +1,5 @@
-# Tensor Adjunction
+# Right-module bimodule tensor is left adjoint to coefficient Hom
 
-The actual underived tensor–Hom adjunction, with no comparison input.
+Right-module bimodule tensor is left adjoint to coefficient Hom.
+
+The natural additive tensor–Hom equivalence gives `tensorFunctor R S B ⊣ homFunctor R S B`.

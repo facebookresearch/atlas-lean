@@ -15,12 +15,18 @@ public import Mathlib.CategoryTheory.Sites.Pullback
 public import Mathlib.CategoryTheory.Adjunction.Additive
 
 /-!
-# Sheaf inverse image on small étale sites
+# Inverse image of abelian sheaves on small étale sites
 
-Sheafifying the affine presheaf left extension on the source scheme and
-transporting through affine étale restriction on the target gives inverse
-image. Its right adjoint is the site direct image.
-Milne, *Lectures on Étale Cohomology*, §8, p. 60.
+Let `f : X → Y` be a scheme morphism and use additive-group coefficients in universe `max u
+w`. Restriction from the small étale site of `Y` to its affine étale basis is an equivalence
+of sheaf categories. Apply the affine base-change left extension and sheafify on `X` to
+construct `f^*`.
+
+Its right adjoint is direct image `f_*`. The additive Hom correspondence, unit, counit, and
+both triangle identities are defined with these functors. The correspondence also applies to
+coefficient sheaves lifted from universe `w`.
+
+See Milne, Lectures on Étale Cohomology, §8, p. 60.
 -/
 
 @[expose] public section
@@ -31,7 +37,10 @@ universe u w
 
 namespace AlgebraicGeometry.Scheme.DerivedSections
 
-/-- Continuity of the actual affine basis followed by arbitrary base change. -/
+/-- Affine étale base change is continuous.
+
+Base change from the affine étale site of `Y` to the small étale site of `X` is continuous for
+any scheme morphism `f : X → Y`. -/
 instance smallEtaleAffineBaseChangeIsContinuous {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleAffineBaseChange f).IsContinuous
       (Scheme.AffineEtale.topology Y) X.smallEtaleTopology := by
@@ -40,29 +49,37 @@ instance smallEtaleAffineBaseChangeIsContinuous {X Y : Scheme.{u}} (f : X ⟶ Y)
   exact Functor.isContinuous_comp (Scheme.AffineEtale.Spec Y) (smallEtaleBaseChange f)
     (Scheme.AffineEtale.topology Y) Y.smallEtaleTopology X.smallEtaleTopology
 
-/-- Actual restriction of common-universe sheaves to the original affine basis. -/
+/-- Restriction of abelian sheaves to the affine étale basis.
+
+Restrict common-universe abelian sheaves on `Y` along the affine étale basis functor. -/
 def smallEtaleAffineRestriction (Y : Scheme.{u}) :
     Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w} ⥤
       Sheaf (Scheme.AffineEtale.topology Y) AddCommGrpCat.{max u w} :=
   (Scheme.AffineEtale.Spec Y).sheafPushforwardContinuous AddCommGrpCat.{max u w}
     (Scheme.AffineEtale.topology Y) Y.smallEtaleTopology
 
-/-- The original affine basis gives a genuine restriction equivalence,
-using its stock hypercover density in the scheme universe. -/
+/-- Affine étale restriction is an equivalence.
+
+Restriction to the affine étale basis is an equivalence of the corresponding abelian-sheaf
+categories. -/
 instance smallEtaleAffineRestrictionIsEquivalence (Y : Scheme.{u}) :
     (smallEtaleAffineRestriction.{u, w} Y).IsEquivalence :=
   Functor.isEquivalence_of_isOneHypercoverDense.{u}
     (Scheme.AffineEtale.Spec Y) (Scheme.AffineEtale.topology Y)
     Y.smallEtaleTopology AddCommGrpCat.{max u w}
 
-/-- The fixed actual affine restriction equivalence, constructed internally. -/
+/-- Equivalence between full and affine étale sheaf categories.
+
+Bundle affine étale restriction and its inverse as a categorical equivalence. -/
 def smallEtaleAffineRestrictionEquivalence (Y : Scheme.{u}) :
     Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w} ≌
       Sheaf (Scheme.AffineEtale.topology Y) AddCommGrpCat.{max u w} :=
   (smallEtaleAffineRestriction.{u, w} Y).asEquivalence
 
-/-- Sheafify the proved affine presheaf left Kan extension on the original
-small étale site of the source scheme. -/
+/-- Sheaf pullback from the affine étale basis.
+
+Apply left extension along affine base change and sheafification to obtain a functor from
+affine étale sheaves on `Y` to small étale sheaves on `X`. -/
 def smallEtaleAffineSheafPullback {X Y : Scheme.{u}} (f : X ⟶ Y) :
     Sheaf (Scheme.AffineEtale.topology Y) AddCommGrpCat.{max u w} ⥤
       Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w} :=
@@ -70,7 +87,10 @@ def smallEtaleAffineSheafPullback {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleAffineBaseChange f) AddCommGrpCat.{max u w}
     (Scheme.AffineEtale.topology Y) X.smallEtaleTopology
 
-/-- The affine construction has the actual affine direct image as right adjoint. -/
+/-- Affine sheaf pullback is left adjoint to affine direct image.
+
+The affine sheaf pullback construction is left adjoint to continuous sheaf pushforward along
+affine base change. -/
 def smallEtaleAffineSheafAdjunction {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleAffineSheafPullback.{u, w} f ⊣
       (smallEtaleAffineBaseChange f).sheafPushforwardContinuous AddCommGrpCat.{max u w}
@@ -79,16 +99,20 @@ def smallEtaleAffineSheafAdjunction {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleAffineBaseChange f) AddCommGrpCat.{max u w}
     (Scheme.AffineEtale.topology Y) X.smallEtaleTopology
 
-/-- The actual original-site inverse-image functor, with the same affine Lan
-and the fixed original affine restriction equivalence. -/
+/-- Inverse image through affine restriction and sheafification.
+
+Compose affine étale restriction on `Y` with affine sheaf pullback to define `f^*` on common-
+universe abelian sheaves. -/
 def smallEtaleInverseImage {X Y : Scheme.{u}} (f : X ⟶ Y) :
     Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w} ⥤
       Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w} :=
   (smallEtaleAffineRestrictionEquivalence.{u, w} Y).functor ⋙
     smallEtaleAffineSheafPullback.{u, w} f
 
-/-- This is exactly the sheafification of the proved affine Lan of the actual
-restriction of the original sheaf. -/
+/-- Inverse image sheaf as the sheafified affine left extension.
+
+The inverse image of `Q` is the sheafification on `X` of the affine presheaf left extension of
+its affine restriction. -/
 theorem smallEtaleInverseImage_obj {X Y : Scheme.{u}} (f : X ⟶ Y)
     (Q : Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleInverseImage.{u, w} f).obj Q =
@@ -97,8 +121,10 @@ theorem smallEtaleInverseImage_obj {X Y : Scheme.{u}} (f : X ⟶ Y)
           (((smallEtaleAffineRestriction.{u, w} Y).obj Q).obj)) := by
   rfl
 
-/-- Literal direct image followed by genuine affine restriction is the
-pushforward belonging to that same affine-base-change functor. -/
+/-- Direct image restriction agrees with affine pushforward.
+
+Direct image on the full small étale site followed by affine restriction is naturally
+isomorphic to continuous pushforward along affine base change. -/
 def smallEtaleDirectImageAffineRestrictionIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleDirectImage.{u, max u w} f ⋙ smallEtaleAffineRestriction.{u, w} Y ≅
       (smallEtaleAffineBaseChange f).sheafPushforwardContinuous AddCommGrpCat.{max u w}
@@ -109,8 +135,10 @@ def smallEtaleDirectImageAffineRestrictionIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleBaseChange f) AddCommGrpCat.{max u w}
     (Scheme.AffineEtale.topology Y) Y.smallEtaleTopology X.smallEtaleTopology
 
-/-- The transported right adjoint identifies with the same literal original
-direct-image functor, using the actual affine restriction equivalence. -/
+/-- The affine construction right adjoint is direct image.
+
+Affine pushforward followed by inverse affine restriction is naturally isomorphic to the full-
+site direct-image functor. -/
 def smallEtaleInverseImageRightAdjointIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleAffineBaseChange f).sheafPushforwardContinuous AddCommGrpCat.{max u w}
         (Scheme.AffineEtale.topology Y) X.smallEtaleTopology ⋙
@@ -125,21 +153,29 @@ def smallEtaleInverseImageRightAdjointIso {X Y : Scheme.{u}} (f : X ⟶ Y) :
       (smallEtaleAffineRestrictionEquivalence.{u, w} Y).unitIso.symm ≪≫
     Functor.rightUnitor (smallEtaleDirectImage.{u, max u w} f)
 
-/-- The actual inverse image is left adjoint to the preceding literal direct image. -/
+/-- Small étale inverse image is left adjoint to direct image.
+
+The affine construction and restriction equivalence give `f^* ⊣ f_*` on abelian sheaves with
+common-universe coefficients. -/
 def smallEtaleInverseImageAdjunction {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleInverseImage.{u, w} f ⊣ smallEtaleDirectImage.{u, max u w} f :=
   ((smallEtaleAffineRestrictionEquivalence.{u, w} Y).toAdjunction.comp
       (smallEtaleAffineSheafAdjunction.{u, w} f)).ofNatIsoRight
     (smallEtaleInverseImageRightAdjointIso.{u, w} f)
 
-/-- Additivity follows from the proved additivity of the same right adjoint. -/
+/-- Small étale inverse image is additive.
+
+Inverse image preserves sums of abelian-sheaf morphisms. -/
 theorem smallEtaleInverseImage_additive {X Y : Scheme.{u}} (f : X ⟶ Y) :
     (smallEtaleInverseImage.{u, w} f).Additive := by
   let : (smallEtaleDirectImage.{u, max u w} f).Additive :=
     smallEtaleDirectImage_additive.{u, max u w} f
   exact (smallEtaleInverseImageAdjunction.{u, w} f).left_adjoint_additive
 
-/-- The natural additive Hom equivalence for every actual common-universe sheaf. -/
+/-- Additive correspondence for the inverse image adjunction.
+
+There is an additive equivalence between sheaf maps `f^*Q → R` on `X` and sheaf maps `Q →
+f_*R` on `Y`. -/
 def smallEtaleInverseImageHomAddEquiv {X Y : Scheme.{u}} (f : X ⟶ Y)
     (Q : Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w})
     (R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
@@ -148,19 +184,26 @@ def smallEtaleInverseImageHomAddEquiv {X Y : Scheme.{u}} (f : X ⟶ Y)
   let : (smallEtaleInverseImage.{u, w} f).Additive := smallEtaleInverseImage_additive.{u, w} f
   exact (smallEtaleInverseImageAdjunction.{u, w} f).homAddEquiv Q R
 
-/-- The actual natural unit on all original common-universe sheaves. -/
+/-- Unit of small étale inverse image and direct image.
+
+The adjunction gives the natural map `Q → f_*f^*Q` on sheaves over `Y`. -/
 def smallEtaleInverseImageUnit {X Y : Scheme.{u}} (f : X ⟶ Y) :
     𝟭 (Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w}) ⟶
       smallEtaleInverseImage.{u, w} f ⋙ smallEtaleDirectImage.{u, max u w} f :=
   (smallEtaleInverseImageAdjunction.{u, w} f).unit
 
-/-- The actual natural counit on all original common-universe sheaves. -/
+/-- Counit of small étale inverse image and direct image.
+
+The adjunction gives the natural map `f^*f_*R → R` on sheaves over `X`. -/
 def smallEtaleInverseImageCounit {X Y : Scheme.{u}} (f : X ⟶ Y) :
     smallEtaleDirectImage.{u, max u w} f ⋙ smallEtaleInverseImage.{u, w} f ⟶
       𝟭 (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
   (smallEtaleInverseImageAdjunction.{u, w} f).counit
 
-/-- The left triangle identity for every actual original common-universe sheaf. -/
+/-- Inverse image unit and counit satisfy the left triangle.
+
+Apply inverse image to the unit at `Q` and then the counit at `f^*Q`; the composite is the
+identity. -/
 theorem smallEtaleInverseImage_left_triangle {X Y : Scheme.{u}} (f : X ⟶ Y)
     (Q : Sheaf Y.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleInverseImage.{u, w} f).map ((smallEtaleInverseImageUnit.{u, w} f).app Q) ≫
@@ -168,7 +211,9 @@ theorem smallEtaleInverseImage_left_triangle {X Y : Scheme.{u}} (f : X ⟶ Y)
       𝟙 ((smallEtaleInverseImage.{u, w} f).obj Q) := by
   exact (smallEtaleInverseImageAdjunction.{u, w} f).left_triangle_components Q
 
-/-- The right triangle identity for every actual original common-universe sheaf. -/
+/-- Inverse image unit and counit satisfy the right triangle.
+
+The unit at `f_*R`, followed by direct image of the counit at `R`, is the identity on `f_*R`. -/
 theorem smallEtaleInverseImage_right_triangle {X Y : Scheme.{u}} (f : X ⟶ Y)
     (R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
     (smallEtaleInverseImageUnit.{u, w} f).app ((smallEtaleDirectImage.{u, max u w} f).obj R) ≫
@@ -176,8 +221,10 @@ theorem smallEtaleInverseImage_right_triangle {X Y : Scheme.{u}} (f : X ⟶ Y)
       𝟙 ((smallEtaleDirectImage.{u, max u w} f).obj R) := by
   exact (smallEtaleInverseImageAdjunction.{u, w} f).right_triangle_components R
 
-/-- The construction applies to the canonical lift of every original smaller
-coefficient sheaf, with no exactness assertion about that lift. -/
+/-- Inverse image adjunction for lifted source coefficients.
+
+For a sheaf in coefficient universe `w`, lift it to `max u w` and apply the additive
+adjunction correspondence with a target sheaf on `X`. -/
 def smallEtaleInverseImageLiftHomAddEquiv {X Y : Scheme.{u}} (f : X ⟶ Y)
     (Q : Sheaf Y.smallEtaleTopology AddCommGrpCat.{w})
     (R : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :
@@ -185,9 +232,11 @@ def smallEtaleInverseImageLiftHomAddEquiv {X Y : Scheme.{u}} (f : X ⟶ Y)
       ((liftCoefficients.{u, w} Y).obj Q ⟶ (smallEtaleDirectImage.{u, max u w} f).obj R) :=
   smallEtaleInverseImageHomAddEquiv.{u, w} f ((liftCoefficients.{u, w} Y).obj Q) R
 
-/-- One fixed actual inverse-image construction has its literal associated
-sheaf values and the additive adjunction to the same original direct image,
-including both triangles and every original smaller-sheaf lift. -/
+/-- Inverse image construction and adjunction identities.
+
+Inverse image is additive, has the affine-left-extension sheafification formula, is left
+adjoint to direct image with additive Hom correspondences, and satisfies both triangle
+identities, including the correspondence for lifted source coefficients. -/
 theorem original_small_etale_inverse_image_adjunction
     {X Y : Scheme.{u}} (f : X ⟶ Y) :
     let L := smallEtaleInverseImage.{u, w} f

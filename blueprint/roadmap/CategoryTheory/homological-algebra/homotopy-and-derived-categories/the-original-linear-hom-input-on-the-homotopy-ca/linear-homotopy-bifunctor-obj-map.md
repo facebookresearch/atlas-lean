@@ -1,3 +1,6 @@
-# Linear Homotopy Bifunctor obj map
+# Target map of the homotopy Hom bifunctor
 
-Each original second-variable map retains its actual postcomposition class.
+Target map of the homotopy Hom bifunctor.
+
+For fixed homotopy source `P` and target cochain map `g : L ⟶ L'`, the target map is the
+quotient image of `linearComplexMap R (𝟙 P.as) g`.

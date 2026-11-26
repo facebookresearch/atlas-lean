@@ -1,3 +1,5 @@
-# Small Etale Inverse Image Comp To
+# Inverse image composition for an identified scheme composite
 
-The same actual inverse-image comparison with an explicitly named composite.
+Inverse image composition for an identified scheme composite.
+
+For `fg = f ≫ g`, the adjunction comparison gives `g^* ⋙ f^* ≅ fg^*`.

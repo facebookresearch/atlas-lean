@@ -1,3 +1,5 @@
-# Of Actions right Module
+# The constructed bimodule retains its specified right action
 
-The second native restriction recovers the actual given right module dictionary.
+For the enveloping module built from specified commuting
+actions on M, restricting to Sᵒᵖ recovers the given
+right S-module structure on M.

@@ -14,11 +14,16 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.HomCoordinates
 
 /-!
-# The actual additive-group tensor–Hom adjunction maps
+# Additive tensor–Hom currying for right modules
 
-The existing coefficient adjunction is used at the integer opposite ring.
-Canonical double-opposite integer modules, the actual additive-map lifts,
-and the earned coordinate maps give currying on the original balanced tensor and native additive Hom groups.
+Let `R` be an associative ring, `M` a right `R`-module, `N` a left `R`-module, and `I` an
+additive commutative group. The group of additive maps `N → I` carries a right `R`-action by
+`(h r)(n) = h(r n)`.
+
+An additive map `M ⊗_R N → I` therefore curries to an `Rᵐᵒᵖ`-linear map `M → Hom_ℤ(N, I)`,
+with `m ↦ (n ↦ f([m ⊗ n]))`. Uncurrying gives the inverse, and these maps form an additive
+equivalence. The tensor and target carriers share universe `v`, independently of the ring
+universe.
 -/
 
 @[expose] public section
@@ -33,7 +38,11 @@ universe u v
 
 variable (R : Type u) [Ring R]
 
-/-- Currying on the original tensor bifunctor and native additive Hom group. -/
+/-- Currying an additive balanced tensor map in the right-module variable.
+
+For `f : M ⊗_R N ⟶ I` in additive groups, currying gives an `Rᵐᵒᵖ`-linear map from `M` to
+additive maps `N → I`. The right action on this Hom group is precomposition with the left
+`R`-action on `N`. -/
 def groupCurry (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     (f : ((groupBifunctor R).obj M).obj N ⟶ I) :
     letI := ChainComplex.homGroupModule R N I
@@ -73,7 +82,10 @@ def groupCurry (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R) (I : AddComm
   exact (homCoordinates R N I).toLinearMap.comp
     ((ModuleCat.BalancedTensorRight.tensorHomEquiv R ℤᵐᵒᵖ N M C) a).hom
 
-/-- Uncurrying uses the original coefficient adjunction and the same coordinate map. -/
+/-- Uncurrying a right-linear map to an additive Hom group.
+
+An `Rᵐᵒᵖ`-linear map `g : M → Hom_ℤ(N, I)` descends to an additive map `M ⊗_R N → I` by
+evaluation on the two factors. -/
 def groupUncurry (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     (g : letI := ChainComplex.homGroupModule R N I
       M →ₗ[Rᵐᵒᵖ] ((forget₂ (ModuleCat R) AddCommGrpCat).obj N ⟶ I)) :
@@ -98,7 +110,10 @@ def groupUncurry (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R) (I : AddCo
     (forget₂ (ModuleCat.{v} ℤᵐᵒᵖᵐᵒᵖ) AddCommGrpCat.{v}).map
       ((ModuleCat.BalancedTensorRight.tensorHomEquiv R ℤᵐᵒᵖ N M C).symm a)
 
-/-- The actual uncurrying map has the original function evaluation on each pure tensor. -/
+/-- Right-variable uncurrying on pure balanced classes.
+
+For `m : M` and `n : N`, the uncurried map of `g` satisfies `groupUncurry g [m ⊗ n] = (g
+m)(n)`. -/
 theorem groupUncurry_mk (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v})
     (g : letI := ChainComplex.homGroupModule R N I
@@ -137,7 +152,10 @@ theorem groupUncurry_mk (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R)
   change (homCoordinates R N I).symm (g m) n = _
   exact homCoordinates_symm_apply R N I (g m) n
 
-/-- Currying uses the original function on the original pure tensor class. -/
+/-- Right-variable currying evaluates on pure balanced classes.
+
+For an additive balanced tensor map `f`, the curried value at `m` evaluated at `n` is `f([m ⊗
+n])`. -/
 theorem groupCurry_mk (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) (f : ((groupBifunctor R).obj M).obj N ⟶ I) (m : M) (n : N) :
     letI : Module ℤ N := Module.compHom N (algebraMap ℤ R)
@@ -200,7 +218,10 @@ theorem groupCurry_mk (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R)
   rw [homCoordinates_apply, ModuleCat.BalancedTensorRight.tensorHomEquiv_apply]
   exact hav
 
-/-- Original tensor representatives determine additive-group morphisms of the tensor object. -/
+/-- Pure balanced classes determine an additive tensor map.
+
+Two additive maps from `M ⊗_R N` to `I` are equal if they agree on `[m ⊗ n]` for all `m` and
+`n`. -/
 theorem groupHom_ext (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R) (I : AddCommGrpCat.{v})
     {f g : ((groupBifunctor R).obj M).obj N ⟶ I}
     (h : letI : Module ℤ N := Module.compHom N (algebraMap ℤ R)
@@ -212,7 +233,10 @@ theorem groupHom_ext (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R) (I : A
   exact TensorProduct.Balanced.addHom_ext ℤ R M N
     (f := f.hom) (g := g.hom) h
 
-/-- The actual currying and uncurrying are inverse on the original tensor-Hom objects. -/
+/-- Additive equivalence for right-variable balanced tensor currying.
+
+Currying and uncurrying give an additive equivalence between additive maps `M ⊗_R N → I` and
+`Rᵐᵒᵖ`-linear maps `M → Hom_ℤ(N, I)`, with the Hom action defined by domain precomposition. -/
 def groupTensorHomEquiv (M : ModuleCat.{v} Rᵐᵒᵖ) (N : ModuleCat.{v} R)
     (I : AddCommGrpCat.{v}) :
     letI := ChainComplex.homGroupModule R N I

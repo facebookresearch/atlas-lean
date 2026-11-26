@@ -1,4 +1,6 @@
-# Small Etale Affine Sheaf Pullback
+# Sheaf pullback from the affine étale basis
 
-Sheafify the proved affine presheaf left Kan extension on the original
-small étale site of the source scheme.
+Sheaf pullback from the affine étale basis.
+
+Apply left extension along affine base change and sheafification to obtain a functor from
+affine étale sheaves on `Y` to small étale sheaves on `X`.

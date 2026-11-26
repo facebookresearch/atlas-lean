@@ -1,3 +1,6 @@
-# Tensor Projective Resolution complex
+# Underlying complex of the tensor-product projective resolution
 
-The constructed resolution retains the literal original tensor total.
+Underlying complex of the tensor-product projective resolution.
+
+The complex of `tensorProjectiveResolution R P Q hTor` is the direct-sum tensor total of
+`P.complex` and `Q.complex`.

@@ -1,6 +1,12 @@
-# Naturality and uniqueness of positive étale Ext comparisons
+# Positive étale Ext comparisons are natural and uniquely determined
 
-For abelian sheaves on the small étale site of `X`, one comparison between
-positive Ext groups and derived global sections is natural in every sheaf map.
-Among comparison families with the specified cycle-class and Ext-representative
-formulas, it is unique. The positive degree is `n + 1`.
+For any scheme `X`, there are cocycle-to-Ext maps `p(Q,n)` and additive
+comparison isomorphisms `e(Q,n)` from Ext of the integral sheaf into an
+abelian sheaf `Q` to right derived global sections in every degree `n + 1`.
+They satisfy the surjectivity, boundary-kernel, cocycle-class and closed
+Ext-representative conditions. For every sheaf map `τ : Q → Q′` and Ext
+class `α`, the comparison obeys
+`e(Q′,n)(H.map τ (n+1) α) = (Γ.rightDerived (n+1)).map τ (e(Q,n) α)`.
+Any other pair satisfying the same representative conditions has the same
+family `e` of comparison isomorphisms. Coefficients lie in `max u w`;
+no condition on the scheme beyond being a scheme is required.

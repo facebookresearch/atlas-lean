@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Image Comp Iso
+# Successive lifted images are isomorphic to the composite point
 
-Canonical comparison of the iterated and single original image geometric points.
+Successive lifted images are isomorphic to the composite point.
+
+The fiber associativity comparison gives an isomorphism between the common geometric points of
+the two image-composition parentheses.

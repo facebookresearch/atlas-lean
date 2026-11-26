@@ -1,3 +1,6 @@
-# Hom Iso hom f
+# Forward component of the full tensor–Hom isomorphism
 
-The forward component is exactly the earned signed currying.
+Forward component of the full tensor–Hom isomorphism.
+
+In integer degree `n`, the forward map of the tensor–Hom isomorphism is the additive map
+underlying `cochainEquiv R P Q I n`.

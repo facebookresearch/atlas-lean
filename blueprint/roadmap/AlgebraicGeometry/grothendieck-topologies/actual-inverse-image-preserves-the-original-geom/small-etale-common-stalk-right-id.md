@@ -1,3 +1,6 @@
-# Small Etale Common Stalk Right Id
+# Right adjoint stalk comparisons respect identity
 
-The actual right-adjoint identity diagram for the same κ.
+Right adjoint stalk comparisons respect identity.
+
+The point-identity mate followed by the identity stalk right comparison equals the inverse
+skyscraper unitor followed by the whiskered inverse direct-image identity comparison.

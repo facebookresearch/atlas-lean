@@ -1,4 +1,5 @@
-# Native Tor First End Alg Hom apply
+# The first Tor endomorphism is the bifunctor map on its coefficient
 
-The original first native Tor coefficient operator is its literal
-native functor map.
+For R-modules N,X and f∈End_R(N), the first-coefficient
+endomorphism on Tor_q^R(N,X) is exactly Tor_q(f,id_X),
+the map of the first Tor variable.

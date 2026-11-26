@@ -1,3 +1,5 @@
-# Native Tensor Functor Iso hom pairing
+# The tensor-presentation comparison fixes each pure class
 
-The native coefficient provider comparison retains the original pure class.
+For an (R,S)-bimodule B and a right R-module A,
+the tensor-functor comparison sends [x⊗y] to the same
+balanced class [x⊗y].

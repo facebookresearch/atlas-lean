@@ -1,3 +1,6 @@
-# Ulift Functor Self Iso hom app apply
+# Forward contained-lift comparison lowers a module element
 
-The forward comparison is the actual native coordinate lowering map.
+Forward contained-lift comparison lowers a module element.
+
+At a module `M : ModuleCat.{max ℓ v} R`, the forward comparison sends `x : ULift.{ℓ} M` to
+`x.down`.

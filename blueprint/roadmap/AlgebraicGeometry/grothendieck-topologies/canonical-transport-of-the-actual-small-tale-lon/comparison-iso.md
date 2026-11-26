@@ -1,3 +1,6 @@
-# Comparison Iso
+# Cohomology comparison as an additive group isomorphism
 
-The canonical isomorphism from small étale cohomology to derived global sections.
+Cohomology comparison as an additive group isomorphism.
+
+Bundle the canonical additive equivalence `H^q(X,Q) ≃+ R^qΓ(Q)` as an isomorphism in the
+additive-group category.

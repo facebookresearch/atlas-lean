@@ -1,4 +1,6 @@
-# Tensor Resolution Homology Iso
+# Tensor of projective resolutions computes Tor
 
-Total homology of the actual tensor of two projective resolutions is
-the original native Tor of the original resolved modules.
+Tensor of projective resolutions computes Tor.
+
+For natural `n`, the degree-`n` homology of the direct-sum tensor total of `P.complex` and
+`Q.complex` is isomorphic to `Tor_n^R(M, N)` in `ModuleCat.{max u v} R`.

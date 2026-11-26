@@ -15,10 +15,24 @@ public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.MoritaLeft
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Contraction
 
 /-!
-# Normalization of Morita contraction maps
+# Normalization of two bimodule contractions
 
-The ratio of two invertible bimodule contractions defines an automorphism.
-It constructs the normalized equations on the balanced quotient objects.
+Let R and S be rings, P an R–S bimodule and Q an S–R bimodule with
+commuting actions, in independent carrier universes. Consider the
+integer-ground balanced tensor products. Suppose u : P ⊗_S Q ≅ R
+is right R-linear, and w : Q ⊗_R P ≅ S is right S-linear and left
+S-equivariant. There are two isomorphisms from I = P ⊗_S (Q ⊗_R P) to P:
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]).
+
+The discrepancy D = ρ ∘ λ⁻¹ induces the right R-linear automorphism
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ of R. Its value c = α(1) is a unit.
+If u is also left R-equivariant, c is central and D(p) = c p.
+The normalized contraction U = c u then satisfies
+p w([q ⊗ p′]) = U([p ⊗ q]) p′ and
+q U([p ⊗ q′]) = w([q ⊗ p]) q′.
+Thus the two compatibility equations are consequences of the given
+bimodule equivalences, rather than additional normalization hypotheses.
 -/
 
 @[expose] public section
@@ -37,14 +51,29 @@ variable (R : Type r) (S : Type s) [Ring R] [Ring S]
   [Module R P] [Module Sᵐᵒᵖ P] [SMulCommClass R Sᵐᵒᵖ P]
   [Module S Q] [Module Rᵐᵒᵖ Q] [SMulCommClass S Rᵐᵒᵖ Q]
 
-/-- The original right-parenthesized P–Q–P tensor. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+This is the right-parenthesized balanced carrier
+I = P ⊗_S (Q ⊗_R P), formed over the integer ground ring.
+The inner left S-action is induced from Q. -/
 abbrev normalizationSource := assocTarget ℤ S R P Q P
 
-/-- The original R action on the first P earns the source's left module. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+The left R-module structure on I = P ⊗_S (Q ⊗_R P) is induced
+from the first factor P:
+r [p ⊗ (q ⊗ p′)] = [r p ⊗ (q ⊗ p′)]. -/
 abbrev normalizationLeftModule : Module R (normalizationSource R S P Q) :=
   leftReturnModule ℤ R S P Q P
 
-/-- The original right S action on the last P earns the source's right module. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+The right S-module structure on I = P ⊗_S (Q ⊗_R P) is induced
+from the last factor P:
+[p ⊗ (q ⊗ p′)] s = [p ⊗ (q ⊗ p′ s)]. -/
 abbrev normalizationRightModule : Module Sᵐᵒᵖ (normalizationSource R S P Q) := by
   letI := leftModule ℤ R S Q P
   letI := rightModule ℤ R S Q P
@@ -53,12 +82,21 @@ abbrev normalizationRightModule : Module Sᵐᵒᵖ (normalizationSource R S P Q
   letI := leftRightSMulCommClass ℤ R S Q P S
   exact rightModule ℤ S S P (TensorProduct.Balanced ℤ R Q P)
 
-/-- Its original ordered pure class. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+For p, p′ ∈ P and q ∈ Q, this is the pure class
+[p ⊗ (q ⊗ p′)] in I = P ⊗_S (Q ⊗_R P). -/
 def normalizationMk (p : P) (q : Q) (p' : P) : normalizationSource R S P Q := by
   letI := leftModule ℤ R S Q P
   exact mk ℤ S P (TensorProduct.Balanced ℤ R Q P) p (mk ℤ R Q P q p')
 
-/-- The actual right action on the triple is the original action on its last P. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+For t ∈ Sᵐᵒᵖ, the induced right action on I satisfies
+t • [p ⊗ (q ⊗ p′)] = [p ⊗ (q ⊗ (t • p′))].
+Only the final P factor receives the scalar. -/
 theorem normalizationRightModule_mk (t : Sᵐᵒᵖ) (p : P) (q : Q) (p' : P) :
     (normalizationRightModule R S P Q).smul t (normalizationMk R S P Q p q p') =
       normalizationMk R S P Q p q (t • p') := by
@@ -75,7 +113,12 @@ theorem normalizationRightModule_mk (t : Sᵐᵒᵖ) (p : P) (q : Q) (p' : P) :
   rfl
 
 omit [SMulCommClass R Sᵐᵒᵖ P] in
-/-- Original ordered pure classes determine an additive map on this actual tensor. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Two additive maps I = P ⊗_S (Q ⊗_R P) → C into an additive
+commutative monoid are equal if they agree on all
+[p ⊗ (q ⊗ p′)] with p, p′ ∈ P and q ∈ Q. -/
 theorem normalizationHom_ext {C : Type c} [AddCommMonoid C]
     {f g : normalizationSource R S P Q →+ C}
     (h : ∀ (p : P) (q : Q) (p' : P),
@@ -101,7 +144,13 @@ variable
     ∀ (r : R) (b : TensorProduct.Balanced ℤ S P Q), u (r • b) = r * u b)
 
 include u in
-/-- The first actual contraction: associate left, apply u, then the left unitor. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+The left contraction λ : P ⊗_S (Q ⊗_R P) ≅ₗ[ℤ] P first
+reassociates to (P ⊗_S Q) ⊗_R P and contracts with u.
+Its pure value is λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′. -/
 def sourceToPLeft : normalizationSource R S P Q ≃ₗ[ℤ] P :=
   leftReturnRaw ℤ R S P Q P u
 
@@ -112,13 +161,25 @@ theorem sourceToPLeft_mk (p : P) (q : Q) (p' : P) :
   leftReturnRaw_mk ℤ R S P Q P u p q p'
 
 include hu in
-/-- The first original contraction is R-linear for the computed source module. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+If u is also left R-equivariant, the left contraction λ preserves
+the induced left R-action on I = P ⊗_S (Q ⊗_R P):
+λ(r • x) = r • λ(x). -/
 theorem sourceToPLeft_smul (r : R) (x : normalizationSource R S P Q) :
     letI := normalizationLeftModule R S P Q
     sourceToPLeft R S P Q u (r • x) = r • sourceToPLeft R S P Q u x :=
   (leftReturn ℤ R S P Q P u hu).map_smul r x
 
-/-- The original u contraction also preserves the actual last-factor right action. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be a right R-linear equivalence.
+The left contraction λ : I = P ⊗_S (Q ⊗_R P) → P preserves
+the right S-action induced from the final P factor:
+λ(x s) = λ(x) s. This uses the commuting R- and S-actions on P. -/
 theorem sourceToPLeft_right (t : Sᵐᵒᵖ) (x : normalizationSource R S P Q) :
     sourceToPLeft R S P Q u ((normalizationRightModule R S P Q).smul t x) =
       t • sourceToPLeft R S P Q u x := by
@@ -145,7 +206,14 @@ variable
     ∀ (s : S) (b : TensorProduct.Balanced ℤ R Q P), w (s • b) = s * w b)
 
 include w hw in
-/-- The second actual contraction: apply w inside, then the original right unitor. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let w : Q ⊗_R P ≅ S be a right S-linear equivalence satisfying
+w(s • b) = s w(b) for its outer left S-action.
+The right contraction ρ : P ⊗_S (Q ⊗_R P) ≅ₗ[ℤ] P applies
+w to the inner Q–P tensor and then the right tensor unitor.
+Its pure value is ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]). -/
 def sourceToPRight : normalizationSource R S P Q ≃ₗ[ℤ] P := by
   let B := TensorProduct.Balanced ℤ R Q P
   let dB : Module ℤ B := inferInstance
@@ -173,7 +241,14 @@ theorem sourceToPRight_mk (p : P) (q : Q) (p' : P) :
     op (w (mk ℤ R Q P q p')) • p
   exact rightContraction_mk S P B e he p (mk ℤ R Q P q p')
 
-/-- The second original contraction is also R-linear, by the original outer commutation. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let w : Q ⊗_R P ≅ S be a right S-linear equivalence satisfying
+w(s • b) = s w(b) for its outer left S-action.
+The right contraction ρ preserves the left R-action on
+I = P ⊗_S (Q ⊗_R P) induced from the first P factor:
+ρ(r • x) = r • ρ(x). -/
 theorem sourceToPRight_smul (r : R) (x : normalizationSource R S P Q) :
     letI := normalizationLeftModule R S P Q
     sourceToPRight R S P Q w hw (r • x) = r • sourceToPRight R S P Q w hw x := by
@@ -186,7 +261,14 @@ theorem sourceToPRight_smul (r : R) (x : normalizationSource R S P Q) :
   let e : B ≃ₗ[ℤ] S := w.toAddEquiv.toIntLinearEquiv (modM := dB)
   exact rightContraction_left_smul S P B e (fun s b => hw s b) R r x
 
-/-- The original w contraction preserves the same last-factor S action. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let w : Q ⊗_R P ≅ S be a right S-linear equivalence satisfying
+w(s • b) = s w(b) for its outer left S-action.
+The right contraction ρ preserves the right S-action on
+I = P ⊗_S (Q ⊗_R P) induced from the final P factor:
+ρ(x s) = ρ(x) s. -/
 theorem sourceToPRight_right (t : Sᵐᵒᵖ) (x : normalizationSource R S P Q) :
     sourceToPRight R S P Q w hw ((normalizationRightModule R S P Q).smul t x) =
       t • sourceToPRight R S P Q w hw x := by
@@ -210,18 +292,42 @@ theorem sourceToPRight_right (t : Sᵐᵒᵖ) (x : normalizationSource R S P Q) 
   exact DFunLike.congr_fun h x
 
 include u w hw in
-/-- The actual ratio of the two invertible maps; normalization is not an input. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+This is the integer-linear automorphism D : P ≅ₗ[ℤ] P comparing
+the two invertible contractions. -/
 def contractionDifference : P ≃ₗ[ℤ] P :=
   (sourceToPLeft R S P Q u).symm.trans (sourceToPRight R S P Q w hw)
 
-/-- This actual automorphism is precisely the difference between the two contractions. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+For every x in the triple tensor source, D(λ(x)) = ρ(x). -/
 theorem contractionDifference_apply_left (x : normalizationSource R S P Q) :
     contractionDifference R S P Q u w hw (sourceToPLeft R S P Q u x) =
       sourceToPRight R S P Q w hw x := by
   rw [contractionDifference, LinearEquiv.trans_apply, LinearEquiv.symm_apply_apply]
 
 include u hu w hw in
-/-- The same actual difference automorphism is R-linear. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The discrepancy D is a left R-linear equivalence P ≅ₗ[R] P. -/
 def contractionDifferenceLeft : P ≃ₗ[R] P := by
   letI := normalizationLeftModule R S P Q
   let A := leftReturn ℤ R S P Q P u hu
@@ -234,7 +340,16 @@ theorem contractionDifferenceLeft_apply (p : P) :
     contractionDifferenceLeft R S P Q u hu w hw p =
       contractionDifference R S P Q u w hw p := rfl
 
-/-- The actual difference automorphism preserves the original S action as well. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The discrepancy preserves the right S-action:
+D(p s) = D(p) s for p ∈ P and s ∈ S. -/
 theorem contractionDifference_right (t : Sᵐᵒᵖ) (p : P) :
     contractionDifference R S P Q u w hw (t • p) =
       t • contractionDifference R S P Q u w hw p := by
@@ -250,7 +365,16 @@ theorem contractionDifference_right (t : Sᵐᵒᵖ) (p : P) :
   rw [hInv, sourceToPRight_right]
 
 include u w hw in
-/-- Apply the actual difference automorphism to the first factor of P⊗_S Q. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+This integer-linear equivalence of P ⊗_S Q is D ⊗ id_Q.
+It sends [p ⊗ q] to [D(p) ⊗ q], using D's right S-equivariance. -/
 def differenceTensor : TensorProduct.Balanced ℤ S P Q ≃ₗ[ℤ]
     TensorProduct.Balanced ℤ S P Q :=
   congr (contractionDifference R S P Q u w hw) (LinearEquiv.refl ℤ Q)
@@ -272,7 +396,17 @@ theorem differenceTensor_mk (p : P) (q : Q) :
   exact congr_mk (k := ℤ) (R := S) (M := P) (N := Q) (M' := P) (N' := Q)
     E (LinearEquiv.refl ℤ Q) hf hg p q
 
-/-- The actual tensor difference keeps the original right R action on Q. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The automorphism D ⊗ id_Q of P ⊗_S Q commutes with the right
+R-action induced from Q:
+(D ⊗ id_Q)(x r) = (D ⊗ id_Q)(x) r. -/
 theorem differenceTensor_right (t : Rᵐᵒᵖ) (x : TensorProduct.Balanced ℤ S P Q) :
     letI := rightModule ℤ S R P Q
     differenceTensor R S P Q u w hw (t • x) = t • differenceTensor R S P Q u w hw x := by
@@ -290,7 +424,16 @@ theorem differenceTensor_right (t : Rᵐᵒᵖ) (x : TensorProduct.Balanced ℤ 
   exact DFunLike.congr_fun h x
 
 include hu in
-/-- It preserves the original left R action through the earned R-linearity of the difference. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The automorphism D ⊗ id_Q of P ⊗_S Q commutes with the left
+R-action induced from P:
+(D ⊗ id_Q)(r x) = r (D ⊗ id_Q)(x). -/
 theorem differenceTensor_left (r : R) (x : TensorProduct.Balanced ℤ S P Q) :
     letI := leftModule ℤ S R P Q
     differenceTensor R S P Q u w hw (r • x) = r • differenceTensor R S P Q u w hw x := by
@@ -310,7 +453,16 @@ theorem differenceTensor_left (r : R) (x : TensorProduct.Balanced ℤ S P Q) :
   exact DFunLike.congr_fun h x
 
 include u w hw in
-/-- The same actual tensor difference with its earned right R linearity. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The tensor discrepancy D ⊗ id_Q is a right R-linear equivalence
+of P ⊗_S Q, with right action on Q. -/
 def differenceTensorRight :
     letI := rightModule ℤ S R P Q
     TensorProduct.Balanced ℤ S P Q ≃ₗ[Rᵐᵒᵖ] TensorProduct.Balanced ℤ S P Q := by
@@ -319,12 +471,29 @@ def differenceTensorRight :
     (fun t x => differenceTensor_right R S P Q u w hw t x)
 
 include u w hw in
-/-- Transport the actual tensor difference through the given u, on R itself. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The automorphism of the regular right R-module R is
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹. It transports the tensor discrepancy
+through the given right R-linear contraction u. -/
 def ringDifference : R ≃ₗ[Rᵐᵒᵖ] R :=
   u.symm.trans ((differenceTensorRight R S P Q u w hw).trans u)
 
 include hu in
-/-- The transported automorphism retains the actual left R action as well. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The transported map α also preserves the left R-action:
+α(r x) = r α(x) for r, x ∈ R. -/
 theorem ringDifference_left (r x : R) :
     ringDifference R S P Q u w hw (r * x) = r * ringDifference R S P Q u w hw x := by
   let := leftModule ℤ S R P Q
@@ -336,7 +505,15 @@ theorem ringDifference_left (r x : R) :
     r * u (differenceTensor R S P Q u w hw (u.symm x))
   rw [hi, differenceTensor_left R S P Q u hu w hw, hu]
 
-/-- Right R linearity gives left multiplication by the automorphism’s value at 1. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+Right R-linearity gives α(x) = c x for every x ∈ R.
+The multiplier is on the left, even when R is noncommutative. -/
 theorem ringDifference_apply (x : R) :
     ringDifference R S P Q u w hw x = ringDifference R S P Q u w hw 1 * x := by
   have h := (ringDifference R S P Q u w hw).map_smul (op x) (1 : R)
@@ -345,14 +522,29 @@ theorem ringDifference_apply (x : R) :
   simpa only [one_mul] using h
 
 include hu in
-/-- The actual automorphism's scalar is central, by its two genuine module laws. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The multiplier c commutes with every r ∈ R:
+c r = r c. Its centrality follows from the two R-module laws. -/
 theorem ringDifference_commutes (r : R) :
     ringDifference R S P Q u w hw 1 * r = r * ringDifference R S P Q u w hw 1 := by
   have h := ringDifference_left R S P Q u hu w hw r 1
   rw [mul_one, ringDifference_apply] at h
   exact h
 
-/-- The central scalar is an actual unit, with the inverse obtained from the actual inverse map. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The multiplier c is a unit of R. Its inverse is α⁻¹(1), so both
+c α⁻¹(1) = 1 and α⁻¹(1) c = 1 hold. -/
 def normalizationUnit : Rˣ where
   val := ringDifference R S P Q u w hw 1
   inv := (ringDifference R S P Q u w hw).symm 1
@@ -369,12 +561,28 @@ def normalizationUnit : Rˣ where
     exact h.symm.trans ((ringDifference R S P Q u w hw).symm_apply_apply 1)
 
 include hu in
-/-- The constructed unit is central, without a supplied normalization equation. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The resulting normalization unit is central in R:
+c r = r c for every r ∈ R. -/
 theorem normalizationUnit_commutes (r : R) :
     (normalizationUnit R S P Q u w hw : R) * r = r * (normalizationUnit R S P Q u w hw : R) :=
   ringDifference_commutes R S P Q u hu w hw r
 
-/-- The actual transported map on R retains the first-factor tensor value. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+For α = u ∘ (D ⊗ id_Q) ∘ u⁻¹, the pure contraction values satisfy
+α(u([p ⊗ q])) = u([D(p) ⊗ q]). -/
 theorem ringDifference_u_mk (p : P) (q : Q) :
     ringDifference R S P Q u w hw (u (mk ℤ S P Q p q)) =
       u (mk ℤ S P Q (contractionDifference R S P Q u w hw p) q) := by
@@ -383,7 +591,15 @@ theorem ringDifference_u_mk (p : P) (q : Q) :
   rw [LinearEquiv.symm_apply_apply, differenceTensor_mk]
 
 include w hw in
-/-- The given invertible Q–P contraction makes tensoring P-maps with Q faithful. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let w : Q ⊗_R P ≅ S be a right S-linear equivalence satisfying
+w(s • b) = s w(b) for its outer left S-action.
+For right S-linear maps f, g : P → P, if
+[f(p) ⊗ q] = [g(p) ⊗ q] in P ⊗_S Q for every p and q,
+then f = g. The inverse Q–P contraction permits detection of these
+maps after tensoring on the right by Q. -/
 theorem tensor_detects_right_maps (f g : P →ₗ[Sᵐᵒᵖ] P)
     (h : ∀ (p : P) (q : Q), mk ℤ S P Q (f p) q = mk ℤ S P Q (g p) q) : f = g := by
   let B := sourceToPRight R S P Q w hw
@@ -411,13 +627,29 @@ theorem tensor_detects_right_maps (f g : P →ₗ[Sᵐᵒᵖ] P)
   exact hh
 
 include u w hw in
-/-- The same actual difference with its earned right S linearity. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+The maps λ, ρ : P ⊗_S (Q ⊗_R P) ≅ P have values
+λ([p ⊗ (q ⊗ p′)]) = u([p ⊗ q]) p′ and
+ρ([p ⊗ (q ⊗ p′)]) = p w([q ⊗ p′]); put D = ρ ∘ λ⁻¹.
+The discrepancy D is a right S-linear equivalence P ≅ₗ[Sᵐᵒᵖ] P,
+with the same underlying map ρ ∘ λ⁻¹. -/
 def contractionDifferenceRight : P ≃ₗ[Sᵐᵒᵖ] P :=
   (contractionDifference R S P Q u w hw).toAddEquiv.toLinearEquiv
     (fun t p => contractionDifference_right R S P Q u w hw t p)
 
 include hu in
-/-- The computed difference is multiplication by the actual central unit. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The discrepancy on P is multiplication by the central unit c:
+D(p) = c • p for every p ∈ P. -/
 theorem contractionDifference_eq_smul (p : P) :
     contractionDifference R S P Q u w hw p = (normalizationUnit R S P Q u w hw : R) • p := by
   let f := (contractionDifferenceRight R S P Q u w hw).toLinearMap
@@ -436,7 +668,16 @@ theorem contractionDifference_eq_smul (p : P) :
   exact LinearMap.congr_fun h p
 
 include u w hw in
-/-- Adjust the actual u by its constructed central unit, with the actual inverse retained. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R be right R-linear and w : Q ⊗_R P ≅ S
+be right S-linear and left S-equivariant.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The normalized right R-linear equivalence U : P ⊗_S Q ≅ R
+is U(x) = c u(x). Its inverse is obtained from u⁻¹ and
+left multiplication by c⁻¹. -/
 def normalizedContraction :
     letI := leftModule ℤ S R P Q
     letI := rightModule ℤ S R P Q
@@ -452,7 +693,15 @@ theorem normalizedContraction_apply (x : TensorProduct.Balanced ℤ S P Q) :
       (normalizationUnit R S P Q u w hw : R) * u x := rfl
 
 include hu in
-/-- The adjusted contraction remains a genuine R-bimodule isomorphism. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Put D = ρ ∘ λ⁻¹ for the left and right triple contractions,
+α = u ∘ (D ⊗ id_Q) ∘ u⁻¹ : R ≅ R, and c = α(1).
+The normalized contraction U(x) = c u(x) preserves the left
+R-action as well: U(r • x) = r U(x). It is therefore an
+R-bimodule equivalence. -/
 theorem normalizedContraction_left (r : R) (x : TensorProduct.Balanced ℤ S P Q) :
     letI := leftModule ℤ S R P Q
     letI := rightModule ℤ S R P Q
@@ -464,7 +713,14 @@ theorem normalizedContraction_left (r : R) (x : TensorProduct.Balanced ℤ S P Q
     ← mul_assoc, normalizationUnit_commutes R S P Q u hu w hw r, mul_assoc]
 
 include hu in
-/-- The normalized p equation follows from the actual difference of the two contractions. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Let U be the contraction u multiplied on the left by the normalization
+unit determined by the discrepancy of the triple contractions.
+For p, p′ ∈ P and q ∈ Q, the first normalized equation is
+p w([q ⊗ p′]) = U([p ⊗ q]) p′. -/
 theorem normalized_p (p : P) (q : Q) (p' : P) :
     op (w (mk ℤ R Q P q p')) • p =
       normalizedContraction R S P Q u w hw (mk ℤ S P Q p q) • p' := by
@@ -475,7 +731,14 @@ theorem normalized_p (p : P) (q : Q) (p' : P) :
   exact h.symm
 
 include w in
-/-- The actual inverse contraction also detects maps after tensoring on the left by P. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let w : Q ⊗_R P ≅ S be a right S-linear equivalence.
+For left S-linear maps f, g : Q → Q, if
+[p ⊗ f(q)] = [p ⊗ g(q)] in P ⊗_S Q for every p and q,
+then f = g. No left-equivariance condition on w is needed for this
+map-detection statement. -/
 theorem tensor_detects_left_maps (f g : Q →ₗ[S] Q)
     (h : ∀ (p : P) (q : Q), mk ℤ S P Q p (f q) = mk ℤ S P Q p (g q)) : f = g := by
   let A := sourceToPLeft S R Q P w
@@ -498,7 +761,14 @@ theorem tensor_detects_left_maps (f g : Q →ₗ[S] Q)
   exact hh
 
 include hu in
-/-- The second normalized equation is earned by the actual faithful tensor operation. -/
+/-- Let R and S be rings, P an R–S bimodule and Q an S–R bimodule,
+with additive commutative group structures and commuting left/right actions.
+All scalar and carrier universes are independent.
+Let u : P ⊗_S Q ≅ R and w : Q ⊗_R P ≅ S be bimodule equivalences.
+Let U be the contraction u multiplied on the left by the normalization
+unit determined by the discrepancy of the triple contractions.
+For p ∈ P and q, q′ ∈ Q, the second normalized equation is
+q U([p ⊗ q′]) = w([q ⊗ p]) q′. -/
 theorem normalized_q (p : P) (q q' : Q) :
     op (normalizedContraction R S P Q u w hw (mk ℤ S P Q p q')) • q =
       w (mk ℤ R Q P q p) • q' := by

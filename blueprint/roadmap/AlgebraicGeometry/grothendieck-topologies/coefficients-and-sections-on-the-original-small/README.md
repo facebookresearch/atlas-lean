@@ -1,9 +1,9 @@
 # Coefficients and sections on the original small étale site
 
-- [Lift Coefficients](lift-coefficients.md)
-- [Integral Sheaf](integral-sheaf.md)
-- [Integral Hom Terminal](integral-hom-terminal.md)
-- [Integral Hom Sections](integral-hom-sections.md)
-- [Integral Hom Sections naturality](integral-hom-sections-naturality.md)
-- [Original Sections](original-sections.md)
-- [Original site coefficient sections](original-site-coefficient-sections.md)
+- [Lifting coefficients of small étale sheaves](lift-coefficients.md)
+- [Constant integral sheaf on a small étale site](integral-sheaf.md)
+- [Integral sheaf morphisms and terminal sections](integral-hom-terminal.md)
+- [Integral sheaf morphisms and global sections](integral-hom-sections.md)
+- [Naturality of integral Hom and global sections](integral-hom-sections-naturality.md)
+- [Sections of a coefficient-lifted étale sheaf](original-sections.md)
+- [Integral Hom and coefficient-lifted sections with their natural maps](original-site-coefficient-sections.md)

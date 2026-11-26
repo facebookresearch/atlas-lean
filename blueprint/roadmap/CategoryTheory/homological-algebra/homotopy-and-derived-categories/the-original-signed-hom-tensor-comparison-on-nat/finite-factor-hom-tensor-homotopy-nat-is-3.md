@@ -1,3 +1,6 @@
-# Finite Factor Hom Tensor Homotopy Nat Iso hom app
+# Component of the restricted homotopy isomorphism is the signed map's class
 
-Every forward component is the quotient of the literal original map.
+Component of the restricted homotopy isomorphism is the signed map's class.
+
+The forward component at a restricted triple is the quotient class of the signed cochain
+comparison on its three underlying complexes.

@@ -12,7 +12,15 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.TorBalancedUniverse
 
 /-!
-# Positive Tor for flat coefficients in arbitrary module universes
+# Positive-degree Tor vanishing for flat coefficients
+
+Let R be a commutative ring in universe u and M,N R-modules in W=max(u,v). If M is flat,
+tensoring a projective resolution of N with M preserves its exactness in positive degrees, so
+Tor_{q+1}^R(M,N)=0 for every q∈ℕ.
+
+The canonical Tor symmetry gives the same vanishing when N is flat and M is arbitrary. The
+coefficient lift height v is independent of the ring universe, and neither statement requires
+projectivity of the other module.
 -/
 
 @[expose] public section
@@ -27,8 +35,10 @@ universe u v
 
 variable (R : Type u) [CommRing R]
 
-/-- Every positive native Tor degree vanishes for a flat first coefficient,
-with the module universe independent of the original ring universe. -/
+/-- Let R be a commutative ring in universe u, with coefficient modules in W=max(u,v) for an
+independent lift height v. For R-modules M,N in W and q∈ℕ, assume M is flat over R. Then
+Tor_{q+1}^R(M,N) is zero. The tensor functor M⊗_R(-) preserves exactness of a projective
+resolution of N in all positive degrees. -/
 theorem nativeTor_isZero_succ_of_flat_left
     (M N : ModuleCat.{max u v} R) [Module.Flat R M] (q : ℕ) :
     IsZero (((Tor (ModuleCat.{max u v} R) (q + 1)).obj M).obj N) := by
@@ -50,8 +60,10 @@ theorem nativeTor_isZero_succ_of_flat_left
   rw [ShortComplex.ShortExact.moduleCat_exact_iff_function_exact] at hQ ⊢
   exact Module.Flat.lTensor_exact M hQ
 
-/-- Canonical native Tor symmetry gives positive-degree vanishing when the
-resolved coefficient is flat, in the same independent module universe. -/
+/-- Let R be a commutative ring in universe u, with coefficient modules in W=max(u,v) for an
+independent lift height v. For R-modules M,N in W and q∈ℕ, assume N is flat over R. Then
+Tor_{q+1}^R(M,N) is zero, by the canonical symmetry with Tor_{q+1}^R(N,M) and
+flat-first-coefficient vanishing. -/
 theorem nativeTor_isZero_succ_of_flat_right
     (M N : ModuleCat.{max u v} R) [Module.Flat R N] (q : ℕ) :
     IsZero (((Tor (ModuleCat.{max u v} R) (q + 1)).obj M).obj N) :=

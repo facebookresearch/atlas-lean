@@ -1,3 +1,6 @@
-# Cycles Tensor Sequence short Exact of Q terms
+# Pairwise outgoing-image Tor vanishing gives total tensor exactness
 
-Exact diagonal sums totalize this fixed-Q pointwise exact tensor sequence.
+Pairwise outgoing-image Tor vanishing gives total tensor exactness.
+
+Under vanishing of `Tor¹` between each outgoing image of `P` and each term of `Q`, the direct-
+sum total cycles tensor sequence is short exact.

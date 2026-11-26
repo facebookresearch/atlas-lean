@@ -1,4 +1,4 @@
 # Naturality of the canonical original native Tor symmetry
 
-- [Native Tor Symmetry hom naturality](native-tor-symmetry-hom-naturality.md)
-- [Native Tor Symmetry inv naturality](native-tor-symmetry-inv-naturality.md)
+- [Forward Tor symmetry is natural in both module variables](native-tor-symmetry-hom-naturality.md)
+- [Inverse Tor symmetry is natural in both module variables](native-tor-symmetry-inv-naturality.md)

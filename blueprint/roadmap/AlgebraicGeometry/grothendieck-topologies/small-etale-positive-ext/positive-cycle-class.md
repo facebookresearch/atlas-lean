@@ -1,3 +1,6 @@
-# Positive Cycle Class
+# Derived section class of a positive resolution cycle
 
-The literal sections-homology class followed by the canonical derived-object comparison.
+Derived section class of a positive resolution cycle.
+
+Project a section cycle in degree `n + 1` to resolution cohomology and apply the inverse
+resolution-to-derived coordinate to obtain its right-derived global-section class.

@@ -15,12 +15,15 @@ public import Mathlib.RingTheory.TensorProduct.Maps
 public import Mathlib.RingTheory.RingHom.Flat
 
 /-!
-# Flat projections of graphs
+# Flat graph projections and local algebra maps
 
-The second-factor tensor graph projection is a base change of the flat
-coefficient algebra and remains flat at prime localizations. The localized
-projection and graph evaluation compose to the localized algebra map.
-Rings and primes have independent universes.
+Let `R`, `A`, and `B` be commutative rings with `R`-algebra structures on `A` and `B`, in
+independent universes. For an algebra map `f : A → B`, the graph evaluation `e : B ⊗_R A → B`
+sends `b ⊗ a` to `b * f(a)`. The second inclusion `j : A → B ⊗_R A` satisfies `e ∘ j = f`.
+
+If `B` is flat over `R`, then `j` is flat by base change. For a prime ideal `p` of `B`, it
+induces a flat local map `A_(f⁻¹p) → (B ⊗_R A)_(e⁻¹p)`. Composing this projection with
+localized graph evaluation gives the localized map of `f`.
 -/
 
 @[expose] public section
@@ -37,8 +40,10 @@ namespace Algebra.TensorProduct
 variable {R : Type u} {A : Type v} {B : Type w}
   [CommRing R] [CommRing A] [CommRing B] [Algebra R A] [Algebra R B]
 
-/-- The actual second tensor inclusion is flat when the original
-coefficient algebra is flat over the base. -/
+/-- Second tensor inclusion is flat after flat scalar base change.
+
+If `B` is flat over `R`, the ring homomorphism `A → B ⊗_R A` given by the second tensor
+inclusion is flat. -/
 theorem graphProjection_flat [Module.Flat R B] :
     (includeRight (R := R) (A := B) (B := A)).toRingHom.Flat := by
   let := rightAlgebra (R := R) (A := B) (B := A)
@@ -49,8 +54,10 @@ theorem graphProjection_flat [Module.Flat R B] :
   rw [RingHom.flat_algebraMap_iff]
   exact h
 
-/-- The original graph prime pulls back along its second projection to
-the original inverse-image prime of the original algebra map. -/
+/-- Graph projection pulls back the graph ideal along the algebra map.
+
+For any ideal `p` of `B`, the inverse image of `e⁻¹(p)` under the second inclusion `A → B ⊗_R
+A` is `f⁻¹(p)`, where `e(b ⊗ a) = b * f(a)`. -/
 theorem graphProjectionPrime_comap (f : A →ₐ[R] B) (p : Ideal B) :
     (p.comap (etaleGraphEvaluation f).toRingHom).comap
       (includeRight (R := R) (A := B) (B := A)).toRingHom =
@@ -61,7 +68,10 @@ theorem graphProjectionPrime_comap (f : A →ₐ[R] B) (p : Ideal B) :
   change (1 : B) * f a = f a
   exact one_mul _
 
-/-- The actual localized projection of the original graph. -/
+/-- Local graph projection at an inverse image prime.
+
+For a prime ideal `p` of `B`, localize the second tensor inclusion to define `A_(f⁻¹p) → (B
+⊗_R A)_(e⁻¹p)`, using its prime inverse-image identity. -/
 def graphProjectionLocalRingHom (f : A →ₐ[R] B) (p : Ideal B) [p.IsPrime] :
     Localization.AtPrime (p.comap f.toRingHom) →+*
       Localization.AtPrime (p.comap (etaleGraphEvaluation f).toRingHom) :=
@@ -70,8 +80,10 @@ def graphProjectionLocalRingHom (f : A →ₐ[R] B) (p : Ideal B) [p.IsPrime] :
     (includeRight (R := R) (A := B) (B := A)).toRingHom
     (graphProjectionPrime_comap f p).symm
 
-/-- The actual localized graph projection is flat, with no flatness
-assumption on a graph/support intersection quotient. -/
+/-- Localized graph projection is flat.
+
+If `B` is flat over `R`, the local graph projection `A_(f⁻¹p) → (B ⊗_R A)_(e⁻¹p)` is flat for
+every prime `p` of `B`. -/
 theorem graphProjectionLocalRingHom_flat [Module.Flat R B]
     (f : A →ₐ[R] B) (p : Ideal B) [p.IsPrime] :
     (graphProjectionLocalRingHom f p).Flat :=
@@ -79,8 +91,10 @@ theorem graphProjectionLocalRingHom_flat [Module.Flat R B]
     (p.comap (etaleGraphEvaluation f).toRingHom) (p.comap f.toRingHom)
       (graphProjectionPrime_comap f p).symm
 
-/-- The same original local maps compose to the canonical original
-localized algebra map, so coefficient restriction has its actual action. -/
+/-- Localized graph evaluation and projection recover the local algebra map.
+
+The local graph projection followed by localized evaluation `e` equals the localization of `f
+: A → B` at `f⁻¹(p)` and `p`. -/
 theorem graphProjectionLocalRingHom_comp_evaluation
     (f : A →ₐ[R] B) (p : Ideal B) [p.IsPrime] :
     (Localization.localRingHom

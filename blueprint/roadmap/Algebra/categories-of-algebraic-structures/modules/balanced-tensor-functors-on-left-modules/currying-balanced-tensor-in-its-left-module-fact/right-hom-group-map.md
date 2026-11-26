@@ -1,3 +1,6 @@
-# Right Hom Group Map
+# Right-linear postcomposition on additive Hom groups
 
-Original-domain group Hom postcomposition with its existing Rᵐᵒᵖ action.
+Right-linear postcomposition on additive Hom groups.
+
+A target-group morphism `g : I ⟶ I'` gives an `Rᵐᵒᵖ`-linear map `Hom_ℤ(B, I) → Hom_ℤ(B, I')`
+by postcomposition, for fixed left module `B`.

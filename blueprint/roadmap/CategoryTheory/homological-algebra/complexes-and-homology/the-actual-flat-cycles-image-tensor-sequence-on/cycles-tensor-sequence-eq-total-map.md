@@ -1,3 +1,6 @@
-# Cycles Tensor Sequence eq total map
+# Cycles tensor sequence is the totalized bicomplex short complex
 
-The total sequence is the native total image of the actual raw sequence.
+Cycles tensor sequence is the totalized bicomplex short complex.
+
+The short complex of tensor totals equals the image of `cyclesTensorBicomplexSequence R P Q`
+under the integer total-complex functor.

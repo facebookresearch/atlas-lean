@@ -1,4 +1,6 @@
-# Native Tor Symmetry inv naturality
+# Inverse Tor symmetry is natural in both module variables
 
-The actual inverse original native symmetry keeps the same two
-module maps in every original degree.
+Inverse Tor symmetry is natural in both module variables.
+
+For the same module maps, `Tor_q(g, f)` followed by the inverse symmetry at `(M₂, N₂)` equals
+the inverse symmetry at `(M₁, N₁)` followed by `Tor_q(f, g)`.

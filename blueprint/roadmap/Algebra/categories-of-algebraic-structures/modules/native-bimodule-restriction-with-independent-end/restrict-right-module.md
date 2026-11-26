@@ -1,3 +1,5 @@
-# Restrict right Module
+# Bimodule restriction agrees with right scalar restriction
 
-The actual right endpoint restriction is independently along `ψ.op`.
+For an E_(R′,S′)-module B′, its right S-action after
+enveloping restriction is t•x=ψᵒᵖ(t)•x.
+This is its right endpoint module restricted along ψᵒᵖ.

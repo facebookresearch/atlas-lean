@@ -1,3 +1,4 @@
-# Quotient Hom Of Annihilator mk
+# The quotient Hom map evaluates by scalar multiplication
 
-The descended map is actual scalar multiplication on representatives.
+For a commutative ring R, ideal I, R-module M, and m annihilated by I, the descended map
+satisfies quotientHomOfAnnihilator(I,M,m)([r])=r·m for every r∈R.

@@ -1,3 +1,4 @@
-# Op Functor
+# Taking opposite comonads defines a contravariant functor
 
-Opposite native comonads and actual reversed structure morphisms form a functor.
+For a category C, taking opposite comonads and reversing their morphisms defines a functor
+(Comonad C)ᵒᵖ → Monad(Cᵒᵖ). The object and morphism universes of C remain arbitrary.

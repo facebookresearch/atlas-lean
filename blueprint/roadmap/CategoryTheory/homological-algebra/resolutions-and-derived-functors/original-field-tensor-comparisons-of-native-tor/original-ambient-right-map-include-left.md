@@ -1,3 +1,5 @@
-# Original Ambient Right Map include Left
+# The right ambient coefficient restricts through the middle B-map
 
-Restricting the second original coefficient keeps its actual B support map.
+For a∈A,b∈B, the right ambient evaluation satisfies
+((a⊗b)⊗1_C)↦a⊗i_W(b⊗1_C).
+Thus include-left restriction retains the induced B→W map.

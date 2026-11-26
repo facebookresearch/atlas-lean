@@ -1,3 +1,5 @@
-# Hom Tensor Co Chain Right Functor
+# Triple-input functor for tensor followed by Hom
 
-The actual original target functor H(P,T(J,U)).
+Triple-input functor for tensor followed by Hom.
+
+The right functor takes `(P, J, U)` to `Hom_R(P,J ⊗_R U)` with the same input variance.

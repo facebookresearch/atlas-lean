@@ -1,3 +1,6 @@
-# Small Etale Common Geometric Point Comap Sheaf Fiber Iso
+# Lifted comap identification on sheaf fibers
 
-The same point comparison induces the comparison of actual abelian-sheaf stalks.
+Lifted comap identification on sheaf fibers.
+
+The common comap-point isomorphism identifies its sheaf-fiber functor with the common
+geometric stalk at `x ≫ f`.

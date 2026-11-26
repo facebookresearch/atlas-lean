@@ -1,3 +1,6 @@
-# Hom Tensor Homotopy Right Functor map original
+# Tensor-then-Hom map on a cochain representative
 
-Every original target map retains its exact pre/postcomposition class.
+Tensor-then-Hom map on a cochain representative.
+
+On the quotient of a cochain triple morphism, the right homotopy functor is the quotient class
+of `linearComplexMap R f.1.1.unop (mapAt R f.1.2 f.2)`.

@@ -1,3 +1,5 @@
-# Tor Zero Iso
+# Degree-zero right-module Tor is the tensor functor
 
-The actual tensor adjunction gives the native S-linear degree-zero identification.
+Degree-zero right-module Tor is the tensor functor.
+
+The degree-zero left-derived tensor functor is naturally isomorphic to `tensorFunctor R S B`.

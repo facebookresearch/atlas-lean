@@ -1,3 +1,6 @@
-# Bimodule Tensor preserves Finite Limits of tor First one
+# Right Tor-one vanishing makes bimodule tensor preserve finite limits
 
-Canonical right-module Tor₁ vanishing gives finite limit preservation of this same tensor.
+Right Tor-one vanishing makes bimodule tensor preserve finite limits.
+
+If `Tor¹_R(E, N)` vanishes for every left `R`-module `N`, then the left-module-valued functor
+`E ⊗_R -` preserves finite limits.

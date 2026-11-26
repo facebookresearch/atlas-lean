@@ -1,3 +1,6 @@
-# Small Etale Inverse Image Congr
+# Equal scheme maps have equal inverse image coordinates
 
-Equality of original morphisms transports the same constructed inverse image.
+Equal scheme maps have equal inverse image coordinates.
+
+An equality of scheme morphisms gives the natural equality isomorphism between their inverse-
+image functors.

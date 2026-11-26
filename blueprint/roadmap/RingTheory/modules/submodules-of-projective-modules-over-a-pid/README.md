@@ -2,8 +2,8 @@
 
 ## Free
 
-- [Submodule of is Principal Ideal Ring](submodule-of-is-principal-ideal-ring.md)
+- [Submodules of arbitrary free modules over a principal ideal domain](submodule-of-is-principal-ideal-ring.md)
 
 ## Projective
 
-- [Submodule of is Principal Ideal Ring](submodule-of-is-principal-ideal-ring-2.md)
+- [Submodules of projective modules over a principal ideal domain](submodule-of-is-principal-ideal-ring-2.md)

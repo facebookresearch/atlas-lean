@@ -1,7 +1,7 @@
-# Linear Hom Cochain Homology Comparison Module Cat naturality chain
+# Chain naturality of the module Hom comparison
 
-The instance-stable comparison is contravariantly natural in the
-chain complex.  This is the `ModuleCat`-specialized alias of
-`linearHomCochainHomologyComparison_naturality_chain` with
-`ModuleCat.instLinear` fixed, so it applies at `ℤ` with no local
-linear instance.
+Let R be a commutative ring, f : K → L a map of nonnegative chain
+complexes of R-modules, M an R-module, and n ∈ ℕ. The degree n comparisons
+satisfy α_K ∘ Hⁿ(Hom_R(f; M)) = precompose(H_n(f)) ∘ α_L.
+Here Hom_R(f; M) goes from Hom_R(L; M) to Hom_R(K; M), and the two maps
+send [φ] to [x] ↦ φ(f_n(x)).

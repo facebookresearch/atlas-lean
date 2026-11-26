@@ -1,3 +1,7 @@
-# Tor Ring Change Semilinear Map
+# The Tor ring-change map is semilinear over the outer ring map
 
-The same canonical morphism, read as semilinear for the original two outer rings.
+For coefficient map f along φ,ψ and source map
+g:A→Res_(φᵒᵖ)(A′), the underlying Tor map is
+ψᵒᵖ-semilinear from the right S-module Tor_n^R(A,B) to
+the right S′-module Tor_n^(R′)(A′,B′).
+Projective resolutions are available in both source categories.

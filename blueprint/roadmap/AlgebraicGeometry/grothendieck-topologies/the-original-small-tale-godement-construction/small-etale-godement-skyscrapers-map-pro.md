@@ -1,3 +1,6 @@
-# Small Etale Godement Skyscrapers map projection
+# Skyscraper product map at a point coordinate
 
-Every original product map has the literal skyscraper component at each point.
+Skyscraper product map at a point coordinate.
+
+The product map induced by a coefficient-family morphism, followed by projection at `x`,
+equals projection at `x` followed by the skyscraper map of the family component.

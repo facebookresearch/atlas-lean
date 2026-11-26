@@ -15,17 +15,17 @@ public import MathlibExt.Algebra.Homology.LinearHomCochainHomologyComparison
 public import MathlibExt.Algebra.Homology.LinearHomCochainEvaluation
 
 /-!
-# The Hom-cochain comparison in `ModuleCat`
+# Evaluation of Hom cohomology on chain homology
 
-This file identifies the generic canonical Hom-cochain comparison with the
-closed-monoidal evaluation pairing when the ambient abelian linear category is
-`ModuleCat`.  It introduces no second comparison map: the
-`ModuleCat`-specialized API below is the generic comparison with the linear
-structure fixed to `ModuleCat.instLinear`, so that its statement does not
-depend on instance synthesis for `Linear R (ModuleCat R)` at the use site.
-Over `ℤ` such synthesis selects `Linear.preadditiveIntLinear` instead, and
-the resulting generic term does not compose with the `ModuleCat` evaluation
-API; the specialized API does, for every `R`.
+Let R be a commutative ring, K a nonnegative chain complex of R-modules, and M
+an R-module, with the coefficient ring and module carriers in the universe u.
+The cochain complex Hom_R(K; M) has degree n term Hom_R(K_n, M) and
+differential φ ↦ φ ∘ d_K. A cocycle therefore induces a map from H_n(K) to M.
+
+The comparison α_n : Hⁿ(Hom_R(K; M)) → Hom_R(H_n(K), M) is R-linear.
+Its evaluation on a homology class is α_n([φ])([x]) = φ(x). It is natural
+contravariantly in K and covariantly in M. When every term and every homology
+module of K is projective over R, α_n is an isomorphism for every n.
 -/
 
 @[expose] public section
@@ -44,16 +44,19 @@ namespace HomologicalComplex
 
 variable (R : Type u) [CommRing R]
 
-/-- The monoidal structure on chain complexes of `R`-modules used in this
-file, installed locally so that tensor notation refers to the total-complex
-tensor product. -/
+/-- For a commutative ring R, the category of nonnegative chain complexes of
+R-modules carries the total tensor product. Its degree n term is the finite
+sum of K_p ⊗[R] L_q over p + q = n, with differential
+d(x ⊗ y) = d_K(x) ⊗ y + (-1)^p x ⊗ d_L(y) for x of degree p. -/
 noncomputable local instance linearHomComparisonChainMonoidalCategory :
     MonoidalCategory (ChainComplex (ModuleCat.{u} R) ℕ) :=
   HomologicalComplex.monoidalCategory (ModuleCat.{u} R) (ComplexShape.down ℕ)
 
-/-- In `ModuleCat`, uncurrying the generic canonical Hom-cochain comparison
-is the homology evaluation pairing, with the braiding that exchanges homology
-and cohomology inputs. -/
+/-- Let R be a commutative ring, K a nonnegative chain complex of R-modules,
+M an R-module, and n a nonnegative integer. Uncurrying the comparison
+Hⁿ(Hom_R(K; M)) → Hom_R(H_n(K), M) gives evaluation after interchanging
+H_n(K) and Hⁿ(Hom_R(K; M)): on [x] ⊗ [φ] its value is φ(x).
+The interchange is the module tensor braiding, with no degree-dependent sign. -/
 @[simp]
 public theorem linearHomCochainHomologyComparison_uncurry
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -106,24 +109,23 @@ public theorem linearHomCochainHomologyComparison_uncurry
   with_unfolding_all
     exact (linearHomCochainEvaluationHomology_π_apply R K M n φ x).symm
 
-/-! ## The instance-stable `ModuleCat` comparison
+/-!
+# Naturality and projective comparison
 
-The definitions in this section are the generic comparison and its
-projective isomorphism, specialized to `ModuleCat` with the linear
-structure fixed explicitly to `ModuleCat.instLinear`, together with
-the corresponding characteristic factorization and naturality
-theorems.  They are definitionally the generic maps and equations at
-that instance; fixing the instance in the statements makes every use
-elaborate to the same term, independently of instance synthesis at
-the use site. -/
+The module Hom_R(H_n(K), M) has pointwise addition and R-scalar multiplication.
+The comparison from Hom cohomology to this module sends a cocycle class to
+its induced map on homology. It commutes with postcomposition by a coefficient
+map M → N and precomposition by the homology map of a chain map K → L.
 
-/-- The canonical comparison from linear Hom-cochain cohomology to the
-linear dual of homology, in `ModuleCat` with the canonical linear
-structure `ModuleCat.instLinear` fixed.  Unlike the generic comparison
-written directly at `ModuleCat R`, this term does not depend on instance
-synthesis for `Linear R (ModuleCat R)` (which over `ℤ` selects
-`Linear.preadditiveIntLinear`), so it composes with the `ModuleCat`
-evaluation pairing for every `R`, including `ℤ`. -/
+If all terms K_i and all homology modules H_i(K) are projective over R, this
+comparison is invertible. The coefficient module M remains arbitrary.
+-/
+
+/-- For a commutative ring R, a nonnegative chain complex K of R-modules, an
+R-module M, and n ∈ ℕ, this is the R-linear comparison
+α_n : Hⁿ(Hom_R(K; M)) → Hom_R(H_n(K), M).
+A cocycle φ : K_n → M vanishes on boundaries and induces
+α_n([φ])([x]) = φ(x) for a cycle x ∈ K_n. -/
 public noncomputable def linearHomCochainHomologyComparisonModuleCat
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
     (M : ModuleCat.{u} R) (n : ℕ) :
@@ -133,10 +135,11 @@ public noncomputable def linearHomCochainHomologyComparisonModuleCat
   @linearHomCochainHomologyComparison R _ (ModuleCat.{u} R) _ _
     ModuleCat.instLinear K M n
 
-/-- The instance-stable comparison factors through cycles.  This is the
-`ModuleCat`-specialized alias of
-`linearHomCochainHomologyπ_comp_comparison` with `ModuleCat.instLinear`
-fixed, so it applies at `ℤ` with no local linear instance. -/
+/-- Let R be a commutative ring, K a nonnegative chain complex of R-modules,
+M an R-module, and n ∈ ℕ. The composite of the projection
+Zⁿ(Hom_R(K; M)) → Hⁿ(Hom_R(K; M)) with α_n equals the map obtained by
+restricting each cocycle φ to Z_n(K) and factoring through H_n(K).
+Thus the comparison has value [x] ↦ φ(x) already on cocycle representatives. -/
 @[reassoc (attr := simp)]
 public theorem linearHomCochainHomologyComparisonModuleCat_homologyπ_comp
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -150,11 +153,10 @@ public theorem linearHomCochainHomologyComparisonModuleCat_homologyπ_comp
   exact @linearHomCochainHomologyπ_comp_comparison
     R _ (ModuleCat.{u} R) _ _ ModuleCat.instLinear K M n
 
-/-- The instance-stable comparison is covariantly natural in the
-coefficient object.  This is the `ModuleCat`-specialized alias of
-`linearHomCochainHomologyComparison_naturality_coefficient` with
-`ModuleCat.instLinear` fixed, so it applies at `ℤ` with no local
-linear instance. -/
+/-- Let R be a commutative ring, K a nonnegative chain complex of R-modules,
+n ∈ ℕ, and a : M → N an R-linear coefficient map. Writing α_M and α_N for
+the comparisons in degree n, α_N ∘ Hⁿ(Hom_R(K; a)) =
+postcompose(a) ∘ α_M. Both maps send [φ] to the homology map [x] ↦ a(φ(x)). -/
 @[reassoc]
 public theorem
     linearHomCochainHomologyComparisonModuleCat_naturality_coefficient
@@ -170,11 +172,11 @@ public theorem
   exact @linearHomCochainHomologyComparison_naturality_coefficient
     R _ (ModuleCat.{u} R) _ _ ModuleCat.instLinear K M N a n
 
-/-- The instance-stable comparison is contravariantly natural in the
-chain complex.  This is the `ModuleCat`-specialized alias of
-`linearHomCochainHomologyComparison_naturality_chain` with
-`ModuleCat.instLinear` fixed, so it applies at `ℤ` with no local
-linear instance. -/
+/-- Let R be a commutative ring, f : K → L a map of nonnegative chain
+complexes of R-modules, M an R-module, and n ∈ ℕ. The degree n comparisons
+satisfy α_K ∘ Hⁿ(Hom_R(f; M)) = precompose(H_n(f)) ∘ α_L.
+Here Hom_R(f; M) goes from Hom_R(L; M) to Hom_R(K; M), and the two maps
+send [φ] to [x] ↦ φ(f_n(x)). -/
 @[reassoc]
 public theorem linearHomCochainHomologyComparisonModuleCat_naturality_chain
     {K L : ChainComplex (ModuleCat.{u} R) ℕ} (f : K ⟶ L)
@@ -191,9 +193,10 @@ public theorem linearHomCochainHomologyComparisonModuleCat_naturality_chain
   exact @linearHomCochainHomologyComparison_naturality_chain
     R _ (ModuleCat.{u} R) _ _ ModuleCat.instLinear K L f M n
 
-/-- In `ModuleCat`, uncurrying the instance-stable canonical Hom-cochain
-comparison is the homology evaluation pairing, with the braiding that
-exchanges homology and cohomology inputs. -/
+/-- For a commutative ring R, a nonnegative chain complex K of R-modules,
+an R-module M, and n ∈ ℕ, uncurrying the module comparison α_n gives
+H_n(K) ⊗[R] Hⁿ(Hom_R(K; M)) → M. This map is the tensor braiding followed
+by cohomology–homology evaluation; it sends [x] ⊗ [φ] to φ(x). -/
 @[simp]
 public theorem linearHomCochainHomologyComparisonModuleCat_uncurry
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -206,9 +209,10 @@ public theorem linearHomCochainHomologyComparisonModuleCat_uncurry
         linearHomCochainEvaluationHomology R K M n :=
   linearHomCochainHomologyComparison_uncurry R K M n
 
-/-- If a chain complex of `R`-modules and all its homology objects are
-projective, the instance-stable canonical comparison from linear
-Hom-cochain cohomology to the linear dual of homology is an isomorphism. -/
+/-- Let R be a commutative ring and K a nonnegative chain complex of
+R-modules. If K_i and H_i(K) are projective over R for every i ∈ ℕ, then,
+for every R-module M and every n ∈ ℕ, the comparison
+Hⁿ(Hom_R(K; M)) → Hom_R(H_n(K), M) is an isomorphism. -/
 public theorem
     linearHomCochainHomologyComparisonModuleCat_isIso_of_projective_terms_and_homology
     (K : ChainComplex (ModuleCat.{u} R) ℕ)
@@ -220,9 +224,11 @@ public theorem
     R _ (ModuleCat.{u} R) _ _ ModuleCat.instLinear K M n
     inferInstance inferInstance
 
-/-- The universal-coefficient isomorphism in `ModuleCat` for a complex
-whose terms and homology objects are projective, whose forward map is
-the instance-stable canonical Hom-cochain comparison. -/
+/-- Let R be a commutative ring and K a nonnegative chain complex of
+R-modules with all K_i and all H_i(K) projective over R. For any R-module M
+and n ∈ ℕ, this is the isomorphism
+Hⁿ(Hom_R(K; M)) ≅ Hom_R(H_n(K), M).
+Its forward map sends the class of a cocycle φ to the map [x] ↦ φ(x). -/
 public noncomputable def
     linearHomCochainHomologyIsoOfProjectiveTermsAndHomologyModuleCat
     (K : ChainComplex (ModuleCat.{u} R) ℕ)

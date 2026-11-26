@@ -1,3 +1,6 @@
-# Bimodule Tensor Morita Derived Equivalence
+# Morita equivalence of bounded finite-module localizations
 
-The canonical localization descends both original tensors and both original return families.
+Morita equivalence of bounded finite-module localizations.
+
+The two invertible bimodule contractions give an equivalence `FGModuleDerived R ≌
+FGModuleDerived S`, with the forward and inverse localized tensor functors.

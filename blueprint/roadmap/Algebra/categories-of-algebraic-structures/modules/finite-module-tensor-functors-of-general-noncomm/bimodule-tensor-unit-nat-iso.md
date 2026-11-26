@@ -1,3 +1,6 @@
-# Bimodule Tensor Unit Nat Iso
+# Regular coefficient tensor is naturally the finite-module identity
 
-The whole original regular-bimodule tensor functor is naturally the identity.
+Regular coefficient tensor is naturally the finite-module identity.
+
+The regular unitor gives a natural isomorphism from `FGModuleCat.bimoduleTensor R` to the
+identity functor on `FGModuleCat R`.

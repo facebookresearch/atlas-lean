@@ -12,6 +12,16 @@ public import MathlibExt.AlgebraicGeometry.Sites.SmallEtaleSectionsClassMap
 
 /-!
 # Naturality and uniqueness of positive étale comparisons
+
+For a scheme `X` and an abelian sheaf `Q` on its small étale site, the
+positive Ext groups from the integral sheaf are compared with the positive
+right derived functors of global sections. Coefficients lie in the universe
+`max u w`, where the scheme universe `u` and the coefficient parameter `w`
+are independent, and the positive degree is always `n + 1`.
+
+The comparison is specified on cocycles and on representatives in an
+injective resolution. These equations imply naturality in every coefficient
+sheaf map, and determine the family of comparison isomorphisms uniquely.
 -/
 @[expose] public section
 noncomputable section
@@ -33,7 +43,17 @@ private theorem original_ext_representative
     (X := integralSheaf.{u, w} X)
     (α : Abelian.Ext.{max u w} (integralSheaf.{u, w} X) Q (n + 1)) (n + 2) rfl
 
-/-- The complete positive cycle and representative equations for one comparison family. -/
+/-- Let `X` be a scheme, and for each abelian sheaf `Q` on its small étale
+site and each `n : ℕ`, let `p(Q,n)` map the cocycles of the global-sections
+complex of an injective resolution in degree `n + 1` to the corresponding
+Ext group. Let `e(Q,n)` be an additive isomorphism from that Ext group to
+right derived global sections in the same degree. The comparison conditions
+are: `p(Q,n)` is surjective; its kernel is the image of the boundary map into
+cocycles; applying `e(Q,n)` gives the canonical cocycle class; and every
+closed map from the integral sheaf into resolution degree `n + 1` has a
+cocycle representative whose section value and Ext class are those of that
+map. These conditions hold for all `Q` and `n`, with coefficients in
+universe `max u w`. -/
 def positiveExtPacket
     (p : ∀ (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ),
       (positiveShort.{u, w} X Q n).g.hom.ker →+
@@ -169,10 +189,16 @@ private theorem representativeComparison_unique
 
 end GenericComparisons
 
-/-- For abelian sheaves on the small étale site of `X`, one comparison between
-positive Ext groups and derived global sections is natural in every sheaf map.
-Among comparison families with the specified cycle-class and Ext-representative
-formulas, it is unique. The positive degree is `n + 1`. -/
+/-- For any scheme `X`, there are cocycle-to-Ext maps `p(Q,n)` and additive
+comparison isomorphisms `e(Q,n)` from Ext of the integral sheaf into an
+abelian sheaf `Q` to right derived global sections in every degree `n + 1`.
+They satisfy the surjectivity, boundary-kernel, cocycle-class and closed
+Ext-representative conditions. For every sheaf map `τ : Q → Q′` and Ext
+class `α`, the comparison obeys
+`e(Q′,n)(H.map τ (n+1) α) = (Γ.rightDerived (n+1)).map τ (e(Q,n) α)`.
+Any other pair satisfying the same representative conditions has the same
+family `e` of comparison isomorphisms. Coefficients lie in `max u w`;
+no condition on the scheme beyond being a scheme is required. -/
 theorem positive_ext_original_map_naturality :
     let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
     letI : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X

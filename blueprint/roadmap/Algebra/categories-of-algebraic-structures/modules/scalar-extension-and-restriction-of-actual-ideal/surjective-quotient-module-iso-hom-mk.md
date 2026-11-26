@@ -1,3 +1,5 @@
-# Surjective Quotient Module Iso hom mk
+# The kernel-quotient presentation has the scalar-map value
 
-The quotient presentation sends the original class of `r` to the actual scalar-map value.
+For a surjective commutative-ring map f:R→P,
+the forward module presentation R/ker(f)→Res_f(P)
+sends [r] to f(r).

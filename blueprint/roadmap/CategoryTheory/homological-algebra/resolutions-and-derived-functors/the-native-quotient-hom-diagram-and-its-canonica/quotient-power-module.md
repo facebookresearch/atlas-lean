@@ -1,3 +1,6 @@
-# Quotient Power Module
+# Quotient module by an ideal power
 
-The actual native R/I^n object, in its valid common module world.
+Quotient module by an ideal power.
+
+For natural `n`, `quotientPowerModule I n` is the `R`-module `R / I^n`, bundled in
+`ModuleCat.{u} R`.

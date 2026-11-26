@@ -1,4 +1,6 @@
-# Native Tor length symm
+# Module length of Tor is symmetric in its two inputs
 
-The actual native Tor terms have equal lengths in the two original
-Serre intersection orientations.
+Module length of Tor is symmetric in its two inputs.
+
+For every natural `q`, `Module.length R (Tor_q^R(M, N)) = Module.length R (Tor_q^R(N, M))`.
+The equality follows from the linear equivalence induced by Tor symmetry.

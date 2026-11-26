@@ -1,3 +1,6 @@
-# Tor Coefficient Transformation zero
+# Zero coefficient induces the zero Tor transformation
 
-Native derivation sends the actual zero tensor transformation to zero.
+Zero coefficient induces the zero Tor transformation.
+
+Assuming projective resolutions for right `R`-modules, the degree-`n` derived coefficient
+transformation induced by the zero map is zero.

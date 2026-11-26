@@ -1,3 +1,6 @@
-# Small Etale Godement Cohomology Add Equiv
+# Godement section cohomology computes small étale cohomology
 
-The original étale cohomology group is computed by the genuine Godement resolution.
+Godement section cohomology computes small étale cohomology.
+
+Compose the cohomology-to-derived section comparison with the Godement acyclic-resolution
+isomorphism to identify `H^n(X,Q)` with the section-complex cohomology.

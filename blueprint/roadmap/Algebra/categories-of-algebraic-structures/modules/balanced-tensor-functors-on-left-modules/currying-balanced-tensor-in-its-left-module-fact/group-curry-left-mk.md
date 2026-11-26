@@ -1,3 +1,6 @@
-# Group Curry Left mk
+# Left-variable currying evaluates on pure tensor classes
 
-Its actual evaluation is the original coefficient-first pure tensor value.
+Left-variable currying evaluates on pure tensor classes.
+
+For `a : A` and `b : B`, the map obtained by left-variable currying satisfies `(groupCurryLeft
+f b)(a) = f([a ⊗ b])`.

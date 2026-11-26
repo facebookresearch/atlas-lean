@@ -1,4 +1,6 @@
-# Finite Factor Hom Tensor Homotopy Nat Iso
+# Natural Hom–tensor isomorphism in the bounded finite-factor homotopy subcategory
 
-The finite-C native homotopy natural Iso is the restricted original
-unrestricted signed comparison class.
+Natural Hom–tensor isomorphism in the bounded finite-factor homotopy subcategory.
+
+The signed Hom–tensor natural transformation restricts to a natural isomorphism on homotopy
+triples whose third underlying cochain complex is bounded with finite projective terms.

@@ -2,11 +2,11 @@
 
 ## Exact Functor
 
-- [Has Projective Dimension LE map](has-projective-dimension-le-map.md)
-- [Has Projective Dimension LT map](has-projective-dimension-lt-map.md)
+- [Exact additive projective-preserving module functors retain non-strict dimension bounds](has-projective-dimension-le-map.md)
+- [Exact additive projective-preserving module functors retain strict dimension bounds](has-projective-dimension-lt-map.md)
 
 ## Additive Equivalence
 
-- [Has Projective Dimension LT equivalence iff](has-projective-dimension-lt-equivalence.md)
-- [Has Projective Dimension LE equivalence iff](has-projective-dimension-le-equivalence.md)
-- [Projective Dimension equivalence](projective-dimension-equivalence.md)
+- [Additive module equivalences preserve and reflect strict projective-dimension bounds](has-projective-dimension-lt-equivalence.md)
+- [Additive module equivalences preserve and reflect non-strict projective bounds](has-projective-dimension-le-equivalence.md)
+- [Numeric projective dimension is invariant under additive module equivalence](projective-dimension-equivalence.md)

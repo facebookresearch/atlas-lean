@@ -22,12 +22,18 @@ public import MathlibExt.Algebra.Homology.LinearYonedaCochainPairing
 public import MathlibExt.Algebra.Homology.LinearYonedaCochainPairingAssociativity
 
 /-!
-# Graded pairings on linear Hom-cochains
+# Pairings of module Hom cochains
 
-A chain map into a tensor product and a bilinear pairing of coefficient
-modules induce a graded pairing on linear Hom-cochains. The descriptor,
-degreewise map, and Leibniz law specialize the linear-Yoneda construction.
-The module unit and associativity theorems use this same pairing.
+Let R be a commutative ring, K₁, K₂, K₃ nonnegative chain complexes of
+R-modules, and M, N, P coefficient modules, all with carriers in universe u.
+A chain map Δ : K₃ → K₁ ⊗ K₂ and an R-linear map μ : M ⊗[R] N → P induce
+Hom_R(K₁; M)^p ⊗[R] Hom_R(K₂; N)^q → Hom_R(K₃; P)^(p+q).
+
+For cochains φ and ψ, the resulting map is Δ_(p+q) followed by the tensor
+descriptor which equals μ ∘ (φ ⊗ ψ) on the (p, q) summand and is zero on
+the other summands. The cochain differential is φ ↦ φ ∘ d_K, and the
+pairing satisfies d(φ ∪ ψ) = dφ ∪ ψ + (-1)^p φ ∪ dψ.
+The indicated total tensor product K₁ ⊗ K₂ is assumed to exist.
 -/
 
 open CategoryTheory MonoidalCategory Opposite
@@ -122,8 +128,12 @@ private lemma XIsoOfEq_comp_linearHomPairingDesc
   subst n
   rfl
 
-/-- Degreewise pairing of linear Hom-cochains induced by a chain map into a tensor
-product and a pairing of coefficient modules. -/
+/-- Let R be a commutative ring, K₁, K₂, K₃ nonnegative chain complexes of
+R-modules with K₁ ⊗ K₂ defined, Δ : K₃ → K₁ ⊗ K₂ a chain map, and
+μ : M ⊗[R] N → P an R-linear coefficient pairing. For p, q ∈ ℕ, this is
+the R-linear map Hom_R(K₁,p, M) ⊗[R] Hom_R(K₂,q, N) →
+Hom_R(K₃,p+q, P). It sends φ ⊗ ψ to Δ_(p+q) followed by the descriptor
+μ ∘ (φ ⊗ ψ) on the (p, q) summand and zero on every other summand. -/
 @[expose]
 public noncomputable def linearHomCochainPair
     (Δ : K₃ ⟶ tensorObj K₁ K₂) (μ : M ⊗ N ⟶ P) (p q : ℕ) :
@@ -751,8 +761,11 @@ public theorem linearHomCochainPair_assoc (p q r : ℕ) :
       (MonObj.mul (X := A)) (MonObj.mul (X := A))
       (MonObj.mul (X := A)) (MonObj.mul (X := A)) (𝟙 A) hΔ hμ p q r
 
-/-- The linear-Hom pairing descriptor is supported only in its specified
-bidegree, with the expected tensor pairing there. -/
+/-- For nonnegative chain complexes K₁, K₂ of modules over a commutative
+ring R with a total tensor product, let φ : K₁,p → M, ψ : K₂,q → N and
+μ : M ⊗[R] N → P be R-linear maps. On a summand K₁,i ⊗[R] K₂,j with
+i + j = p + q, the pairing descriptor is μ ∘ (φ ⊗ ψ) when i = p
+(and hence j = q), using the degree identifications, and is zero otherwise. -/
 @[reassoc]
 public lemma ιTensorObj_comp_linearHomPairingDesc
     {K₁ K₂ : ChainComplex (ModuleCat.{u} R) ℕ} [HasTensor K₁ K₂]
@@ -777,8 +790,12 @@ public lemma ιTensorObj_comp_linearHomPairingDesc
     simp
   · simp [hi]
 
-/-- Postcomposing a pairing descriptor with left-unitor coefficients is the
-same as using the postcomposition as its second input. -/
+/-- Let R be a commutative ring, K₁, K₂ nonnegative chain complexes with
+a total tensor product, φ : K₁,p → R and f : K₂,q → N R-linear maps.
+The descriptor formed from φ and the identity of K₂,q using the left
+tensor unitor, followed by f, equals the descriptor formed from φ and f
+using the left unitor of N. This equality expresses postcomposition
+naturality of scalar multiplication on the selected (p, q) summand. -/
 public theorem linearHomPairingDesc_leftUnitor_comp
     {K₁ K₂ : ChainComplex (ModuleCat.{u} R) ℕ}
     {N : ModuleCat.{u} R} [K₁.HasTensor K₂]

@@ -1,5 +1,5 @@
 # The actual full integer tensor–Hom total-cochain isomorphism
 
-- [Hom Iso](hom-iso.md)
-- [Hom Iso hom f](hom-iso-hom-f.md)
-- [Hom Iso inv f](hom-iso-inv-f.md)
+- [Full tensor-total Hom complex is isomorphic to nested Hom](hom-iso.md)
+- [Forward component of the full tensor–Hom isomorphism](hom-iso-hom-f.md)
+- [Inverse component of the full tensor–Hom isomorphism](hom-iso-inv-f.md)
