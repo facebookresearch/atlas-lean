@@ -49,7 +49,7 @@ open RatFunc
 variable (K : Type*) [Field K]
 
 -- A concrete instance in `K⟮X⟯`: `G` is the powers of `X`, whose span `K[X]` is not a field,
--- `θ` is squaring, which is multiplicative but not additive, and `x₀ = X`.
+-- `θ` is squaring, which is multiplicative but need not be additive, and `x₀ = X`.
 private noncomputable abbrev G : Set (RatFunc K) := Set.range ((X : RatFunc K) ^ ·)
 
 private noncomputable abbrev F : IntermediateField K (RatFunc K) := IntermediateField.adjoin K (G K)
