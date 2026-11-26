@@ -12510,6 +12510,7 @@
   "MathlibExt/LinearAlgebra/LeftExact": {"to": "LinearAlgebra/linear-maps-and-duality", "title": "Exactness and the Hom functor"},
   "MathlibExt/LinearAlgebra/Lidskii": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Lidskii's eigenvalue inequality"},
   "MathlibExt/LinearAlgebra/LinearMapInvariants": {"to": "LinearAlgebra/linear-maps-and-duality", "title": "Similarity invariants of linear maps"},
+  "MathlibExt/LinearAlgebra/Matrix/Bernstein": {"to": "Analysis/approximation-theory", "title": "Bernstein bounds for polynomial matrices"},
   "MathlibExt/LinearAlgebra/Matrix/AdjMatrixPowWalk": {"to": "GraphTheory/algebraic-graph-theory", "title": "Walks and powers of the adjacency matrix"},
   "MathlibExt/LinearAlgebra/Matrix/ArakiLiebThirring": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Araki–Lieb–Thirring inequality"},
   "MathlibExt/LinearAlgebra/Matrix/ArakiLiebThirringGeOne": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Araki–Lieb–Thirring inequality"},
