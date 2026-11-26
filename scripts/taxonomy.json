@@ -9230,6 +9230,7 @@
   "MathlibExt/Algebra/DeepPowerSumCongruences/Moebius": {"to": "Algebra/polynomials", "title": "Deep power-sum congruences"},
   "MathlibExt/Algebra/DeepPowerSumCongruences/PEquivClass": {"to": "Algebra/polynomials", "title": "Deep power-sum congruences"},
   "MathlibExt/Algebra/DeepPowerSumCongruences/PartitionProduct": {"to": "Algebra/polynomials", "title": "Deep power-sum congruences"},
+  "MathlibExt/Algebra/DeepPowerSumCongruences/PowerSumExp": {"to": "Algebra/polynomials", "title": "Deep power-sum congruences"},
   "MathlibExt/Algebra/Etale/AlgHomCount": {"to": "RingTheory/algebras-and-differentials", "title": "Algebra homomorphisms into an algebraically closed field"},
   "MathlibExt/Algebra/Etale/Localization": {"to": "RingTheory/algebras-and-differentials", "title": "Localizations of smooth and étale algebras"},
   "MathlibExt/Algebra/Group/Indicator": {"to": "Algebra/algebraic-identities", "title": "Indicator functions"},
