@@ -11,6 +11,7 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.CategoryTheory.DGRelativeCYCospanGluing
 public import WantedExt.AlgebraicGeometry.DGInductionDiagramFoundationsWanted
 public import WantedExt.AlgebraicGeometry.RelativeCalabiYauFoundationsWanted
+public import MathlibExt.AlgebraicGeometry.DGRelativeCYDiagramLedgerRelativeCyBarCounitSquare
 
 /-!
 # Wanted normalized relative CY cospan integration and composition
@@ -49,11 +50,6 @@ open MathlibExt.CategoryTheory.CosimplicialDGMappingModels
 open MathlibExt.Algebra.Homology.DGCategoryTraceModels
 
 universe u
-
-/-- The bar-counit square commutes by the fixed native induction units and actual bar maps. -/
-theorem_wanted relative_cy_bar_counit_square (k : Type u) [Field k] (P : Cospan (k := k))
-    (S : NegativeTraceSystem k) (n : ℤ) (D : ModuleData P S n) (K : InductionData D) :
-  BarCounitSquare D K
 
 /-- Source Theorem 6.1: the single computed total bar-counit cofiber compares quasi-isomorphically to Z. -/
 def_wanted dg_morita_bar_counit_pushout (k : Type u) [Field k] (R : DGFrameSystem k)
