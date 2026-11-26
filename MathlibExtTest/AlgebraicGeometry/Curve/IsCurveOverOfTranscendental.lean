@@ -130,8 +130,20 @@ example {K F : Type*} [Field K] [Field F] [Algebra K F] {x : F} (htr : Transcend
     (hfd : FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F)
     (hsep : Algebra.IsSeparable (IntermediateField.adjoin K ({x} : Set F)) F) :
     HasPrincipalDivisors K F := by
-  obtain ⟨_, _, _, _⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
+  obtain ⟨_, _, _, _, -, -⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
   exact hasPrincipalDivisors_of_finiteDimensional_of_isSeparable K F
+
+-- The structure is the one of `X ↦ x`: it sends `X` to `x`, hence every polynomial expression in
+-- `X` to the same expression in `x`, and `F` has the same degree over it as over `K⟮x⟯`.
+example {K F : Type*} [Field K] [Field F] [Algebra K F] {x : F} (htr : Transcendental K x)
+    (hfd : FiniteDimensional (IntermediateField.adjoin K ({x} : Set F)) F)
+    (hsep : Algebra.IsSeparable (IntermediateField.adjoin K ({x} : Set F)) F) :
+    ∃ _ : Algebra (RatFunc K) F, IsScalarTower K (RatFunc K) F ∧
+      algebraMap (RatFunc K) F (RatFunc.X ^ 2 + 1) = x ^ 2 + 1 ∧
+      Module.finrank (RatFunc K) F =
+        Module.finrank (IntermediateField.adjoin K ({x} : Set F)) F := by
+  obtain ⟨_, hT, -, -, hX, hdeg⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
+  exact ⟨_, hT, by rw [map_add, map_pow, map_one, hX], hdeg.symm⟩
 
 -- Consumer of `Place.finite_residueField_restrict`: in any finite extension `E` of `RatFunc K`,
 -- separable or not, every residue field is finite over `K`.

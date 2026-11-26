@@ -17,9 +17,10 @@ example : collatzAccelerated 0 = 0 ∧ collatzAccelerated 3 = 5 ∧ collatzAccel
   ⟨rfl, rfl, rfl⟩
 
 -- The compatible semiprimes `71 · 1609` and `349 · 491` give a positive solution of
--- `D(C(n)) = C(D(n))`: both sides are `840`, and the solution is odd.
+-- `D(C(n)) = C(D(n))`: both sides are `840`, and the solution is odd and composite.
 example : arithmeticDerivative (collatzAccelerated (71 * 1609)) =
-      collatzAccelerated (arithmeticDerivative (71 * 1609)) ∧ Odd (71 * 1609) := by
+      collatzAccelerated (arithmeticDerivative (71 * 1609)) ∧
+      Odd (71 * 1609) ∧ 1 < 71 * 1609 ∧ ¬ Nat.Prime (71 * 1609) := by
   have h : arithmeticDerivative (collatzAccelerated (71 * 1609)) =
       collatzAccelerated (arithmeticDerivative (71 * 1609)) := by
     rw [show collatzAccelerated (71 * 1609) = 349 * 491 from rfl, arithmeticDerivative_mul,
@@ -28,7 +29,13 @@ example : arithmeticDerivative (collatzAccelerated (71 * 1609)) =
       arithmeticDerivative_prime (by norm_num : Nat.Prime 71),
       arithmeticDerivative_prime (by norm_num : Nat.Prime 1609)]
     rfl
-  exact ⟨h, odd_of_arithmeticDerivative_collatz_comm _ (by norm_num) h⟩
+  exact ⟨h, odd_of_arithmeticDerivative_collatz_comm _ (by norm_num) h,
+    composite_of_arithmeticDerivative_collatz_comm _ (by norm_num) h⟩
+
+-- One is not a solution: the theorem rules it out.
+example : arithmeticDerivative (collatzAccelerated 1) ≠
+    collatzAccelerated (arithmeticDerivative 1) := fun h =>
+  (Nat.lt_irrefl 1) (composite_of_arithmeticDerivative_collatz_comm 1 (by decide) h).1
 
 -- The positivity hypothesis is needed: `n = 0` solves the equation but is even.
 example : arithmeticDerivative (collatzAccelerated 0) =

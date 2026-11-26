@@ -18,6 +18,7 @@ Portions of this file are adapted from:
 `Theorems/Thm_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional.lean`,
 `P2M/Sol/S_AlgebraicCurve_finite_setOf_ord_ne_zero_of_finiteDimensional.lean`,
 `P2M/Sol/S_AlgebraicCurve_kaehlerRankOne_of_transcendental.lean`,
+`Theorems/Thm_AlgebraicCurve_instIsCurveOverRatFunc.lean`,
 `Theorems/Thm_AlgebraicCurve_isCurveOver_of_transcendental.lean`,
 `P2M/Sol/S_AlgebraicCurve_isCurveOver_of_transcendental.lean`,
 `Theorems/Thm_AlgebraicCurve_exists_separating_transcendental_of_perfectField.lean`,
@@ -44,12 +45,12 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.FieldTheory.Perfect
+public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import MathlibExt.AlgebraicGeometry.Curve.DivisorPushPull
 public import MathlibExt.AlgebraicGeometry.Curve.IsCurveOver
 import Mathlib.FieldTheory.Galois.Basic
 import Mathlib.FieldTheory.PrimitiveElement
-import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.FieldTheory.SeparablyGenerated
 import Mathlib.FieldTheory.SplittingField.Construction
 import Mathlib.RingTheory.AlgebraicIndependent.AlgebraicClosure
@@ -455,14 +456,16 @@ instance instIsCurveOverRatFunc {K : Type*} [Field K] : IsCurveOver K (RatFunc K
   exact isCurveOver_of_ratFunc
 
 /-- **Function fields as finite separable extensions of the rational function field.** If
-`x : F` is transcendental over `K` and `F` is finite and separable over `K(x)`, then the
-isomorphism `RatFunc K ≃ K(x)` makes `F` a finite separable `RatFunc K`-algebra, compatibly with
-`K`. -/
+`x : F` is transcendental over `K` and `F` is finite and separable over `K(x)`, then `F` has a
+`RatFunc K`-algebra structure, compatible with `K`, that sends `X` to `x`, over which `F` is
+finite and separable, of the same degree as over `K(x)`. -/
 theorem exists_ratFunc_algebra_of_transcendental {K F : Type*} [Field K] [Field F] [Algebra K F]
     {x : F} (htr : Transcendental K x) (hfd : FiniteDimensional K⟮x⟯ F)
     (hsep : Algebra.IsSeparable K⟮x⟯ F) :
     ∃ _ : Algebra (RatFunc K) F, IsScalarTower K (RatFunc K) F ∧
-      FiniteDimensional (RatFunc K) F ∧ Algebra.IsSeparable (RatFunc K) F := by
+      FiniteDimensional (RatFunc K) F ∧ Algebra.IsSeparable (RatFunc K) F ∧
+      algebraMap (RatFunc K) F RatFunc.X = x ∧
+      Module.finrank K⟮x⟯ F = Module.finrank (RatFunc K) F := by
   let e : RatFunc K ≃ₐ[K] K⟮x⟯ := RatFunc.algEquivOfTranscendental x htr
   let : Algebra (RatFunc K) F := ((algebraMap K⟮x⟯ F).comp e.toAlgHom.toRingHom).toAlgebra
   have hsq : RingHom.comp (algebraMap (RatFunc K) F) (e.symm.toRingEquiv : K⟮x⟯ →+* RatFunc K)
@@ -471,7 +474,9 @@ theorem exists_ratFunc_algebra_of_transcendental {K F : Type*} [Field K] [Field 
     change algebraMap K⟮x⟯ F (e (e.symm a)) = algebraMap K⟮x⟯ F a
     rw [e.apply_symm_apply]
   refine ⟨this, ?_, Module.Finite.of_equiv_equiv e.symm.toRingEquiv (RingEquiv.refl F) hsq,
-    Algebra.IsSeparable.of_equiv_equiv e.symm.toRingEquiv (RingEquiv.refl F) hsq⟩
+    Algebra.IsSeparable.of_equiv_equiv e.symm.toRingEquiv (RingEquiv.refl F) hsq,
+    RatFunc.algEquivOfTranscendental_X x htr,
+    Algebra.finrank_eq_of_equiv_equiv e.symm.toRingEquiv (RingEquiv.refl F) hsq⟩
   exact IsScalarTower.of_algebraMap_eq fun a => by
     change algebraMap K F a = algebraMap K⟮x⟯ F (e (algebraMap K (RatFunc K) a))
     rw [e.commutes, ← IsScalarTower.algebraMap_apply]
@@ -482,7 +487,7 @@ function field of a curve over `K`. -/
 theorem isCurveOver_of_transcendental {K F : Type*} [Field K] [Field F] [Algebra K F]
     {x : F} (htr : Transcendental K x) (hfd : FiniteDimensional K⟮x⟯ F)
     (hsep : Algebra.IsSeparable K⟮x⟯ F) : IsCurveOver K F := by
-  obtain ⟨_, _, _, _⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
+  obtain ⟨_, _, _, _, -, -⟩ := exists_ratFunc_algebra_of_transcendental htr hfd hsep
   exact isCurveOver_of_ratFunc
 
 open scoped IntermediateField.algebraAdjoinAdjoin in
