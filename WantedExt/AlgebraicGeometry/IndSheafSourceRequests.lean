@@ -9,14 +9,18 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.IndSheafPushforwardModels
+public import MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualCompactPushforwardSource
 
 /-!
 # Source requests for the prescribed compact-support ind-sheaf construction
 
 Only structural ordinary sheaf/Ind proofs are requested here. The
 categories, compact support, continuous pushforward and compact-Yoneda
-Kan extension are already fixed in the public source. These requests do
-not assume enhanced reconstruction or mixed-Hodge admissibility.
+Kan extension are already fixed in the public source. The compact
+pushforward source `actual_compact_pushforward_source` is proved in
+`MathlibExt.AlgebraicGeometry.IndSheafSourceRequestsActualCompactPushforwardSource`.
+These requests do not assume enhanced reconstruction or mixed-Hodge
+admissibility.
 
 Source: D'Agnolo--Kashiwara1311.2374v2, Sections2.2/3.2/3.3;
 Kashiwara--Schapira, Ind-sheaves.
@@ -37,10 +41,6 @@ compactly supported. Their ind-objects (with small filtered index categories) fo
 abelian category, Kashiwara--Schapira, Categories and Sheaves, Theorem 8.6.5(i). -/
 def_wanted actual_compact_sheaf_source (k : Type) [Field k] (X : TopCat.{0}) :
   CompactSheafSource k X
-
-/-- Continuous image of actual compact support gives compact proper-image generators. -/
-theorem_wanted actual_compact_pushforward_source (k : Type) [Field k]
-    (X Y : TopCat.{0}) [T2Space Y] (f : X ⟶ Y) : CompactPushforwardSource k f
 
 /-- Extend the same actual compact generator functor by the native left Kan construction. -/
 theorem_wanted actual_ind_proper_image_source (k : Type) [Field k]
