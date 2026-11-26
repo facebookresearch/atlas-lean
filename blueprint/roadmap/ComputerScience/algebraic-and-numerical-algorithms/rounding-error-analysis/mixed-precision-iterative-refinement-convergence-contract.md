@@ -3,11 +3,13 @@
 Let $A$ be nonsingular, $x^* = A^{-1}b$, and fix a vector norm with its induced matrix norm. Consider iterates
 $x_{i+1} = x_i + \hat d_i + g_i$, where the exact residual is $r_i = b - Ax_i$, the computed residual $\hat r_i$ satisfies
 $\lVert \hat r_i - r_i \rVert \le \rho$, the computed correction satisfies $\lVert \hat d_i - A^{-1}\hat r_i \rVert \le \phi \lVert A^{-1} \hat r_i \rVert$
-with $\phi < 1$, and the update rounding satisfies $\lVert g_i \rVert \le \gamma$. Then the errors $e_i = x_i - x^*$ satisfy
-$\lVert e_{i+1} \rVert \le \phi \lVert e_i \rVert + (1 + \phi)\lVert A^{-1} \rVert \rho + \gamma$, hence
-$\limsup_i \lVert e_i \rVert \le ((1 + \phi)\lVert A^{-1} \rVert \rho + \gamma)/(1 - \phi)$, approached geometrically; the iterates need not
-converge to a single point. Carson and Higham prove the corresponding componentwise recursion and limiting accuracy for iterative
-refinement with LU factorization in one precision, residuals in another and the working precision, as a separate page.
+with $0 \le \phi < 1$, and the update rounding satisfies $\lVert g_i \rVert \le \gamma$. Then the errors $e_i = x_i - x^*$ satisfy
+$\lVert e_{i+1} \rVert \le \phi \lVert e_i \rVert + B$, where $B = (1 + \phi)\lVert A^{-1} \rVert \rho + \gamma$.
+For $L = B/(1-\phi)$, the finite bound is $\lVert e_i \rVert \le L + \phi^i(\lVert e_0 \rVert-L)$, hence
+$\limsup_i \lVert e_i \rVert \le L$. It is the upper bound that tends to $L$ geometrically; the iterates need not
+converge to a single point. The same argument applies to a continuous linear equivalence between real normed spaces,
+with the operator norm of its inverse. Carson and Higham prove related componentwise results for iterative
+refinement with LU factorization in one precision, residuals in another and the working precision.
 
 ## Proof
 
