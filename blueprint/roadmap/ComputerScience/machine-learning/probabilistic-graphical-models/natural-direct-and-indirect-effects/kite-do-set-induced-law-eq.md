@@ -1,4 +1,5 @@
-# Kite do Set induced Law eq
+# The two kites agree under every surgery
 
-Hence the same law under every surgery, including none (`FiniteSCM.inducedLaw_doSet`): the
-observational law and all 81 regimes of the prep packet's exact check agree.
+The kite models with the monotone and with the anti-monotone coupling of `W` have the same law under
+every surgery `do(X_S = w_S)`, for every set `S` of nodes and every assignment `w`, including the
+empty surgery, which leaves the observational law.

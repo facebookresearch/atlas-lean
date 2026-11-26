@@ -1,8 +1,10 @@
-# The mediation formula without covariates
+# Identification of the NDE without covariates
 
-**The mediation formula without covariates** (P01, eq. (17); P14, eq. (16); the card's
-formula): `NDE = ∑_z [E(Y | x, z) - E(Y | x*, z)] P(z | x*)`, under H1-H4 with `W = ∅`
-(unconditional independences, written with the trivial covariate `fun _ => ()`) and
-positivity. The positivity of the planned roadmap node (`P(X = x) > 0` for both values and
-`P(Z = z, X = x) > 0` for both values whenever `P(z | x) > 0` for one) implies `hposX` and
-`hposZ`.
+**The mediation formula without covariates** (P01, eq. (17); P14, eq. (16)). Let the treatment `X`
+(node `t`) and the mediator `Z` (node `m`) be distinct nodes, `Y` an outcome node read through a
+real function `g` and `x`, `x*` two treatment values. Assume H1-H4 with no covariates, for `x'` in
+`{x, x*}` and every mediator value `z`: `Y_{x'z} ⫫ X`, `Y_{x'z} ⫫ Z | X`, `Z_{x*} ⫫ X` and
+`Y_{x'z} ⫫ Z_{x*}` under the noise law; and positivity: `P(X = x*) > 0`, and `P(X = x*, Z = z) > 0`
+implies `P(X = x, Z = z) > 0`. Then
+
+`NDE(x, x*; Y) = ∑_z [E(g(Y) | X = x, Z = z) - E(g(Y) | X = x*, Z = z)] P(Z = z | X = x*)`.

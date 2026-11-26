@@ -1,3 +1,3 @@
-# Te eq nie sub nde
+# Total effect as NIE minus the reverse NDE
 
 P01, Theorem 3, eq. (22): `TE(x, x*; Y) = NIE(x, x*; Y) - NDE(x*, x; Y)`.

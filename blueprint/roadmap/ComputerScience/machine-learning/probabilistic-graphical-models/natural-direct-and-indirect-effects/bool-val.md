@@ -1,3 +1,3 @@
-# Bool Val
+# Indicator of a Boolean
 
-The numeric readout of a Boolean outcome.
+The numeric readout of a Boolean outcome: `1` for true and `0` for false.

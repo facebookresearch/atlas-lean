@@ -1,3 +1,5 @@
-# Noise Prob
+# Probability under the noise law
 
-Probability of an event of the noise under independent noise laws `μ`.
+`P(E) = ∑_{u ∈ E} ∏_k μ_k(u_k)`: the probability of an event `E` of the noise under independent
+noise laws `μ_k`, the sum running over the noise values in `E` whose every coordinate lies in the
+support of its law.

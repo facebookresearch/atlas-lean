@@ -22,7 +22,6 @@ Bayesian networks and their Markov properties, structure scores and Markov equiv
 - [Soundness of the ID algorithm](soundness-of-the-id-algorithm.md)
 - [Induced width of an ordering](induced-width-of-an-ordering.md)
 - [Instrumental inequality and Balke-Pearl bounds](instrumental-inequality-and-balke-pearl-bounds.md)
-- [Natural direct/indirect effects and the mediation formula](natural-direct-indirect-effects-and-the-mediation-formula.md)
 - [Relative-frequency PCFG estimates are tight](relative-frequency-pcfg-estimates-are-tight.md)
 - [Probabilities of causation and their bounds](probabilities-of-causation-and-their-bounds.md)
 - [Bucket elimination over a commutative semiring](bucket-elimination-over-a-commutative-semiring.md)

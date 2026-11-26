@@ -1,3 +1,3 @@
-# Noise Cond Expect
+# Conditional expectation under the noise law
 
-`E(F | E)` under the noise law (`0` when `P(E) = 0`, Lean's total division).
+`E(F | E) = E(F 1_E) / P(E)` under independent noise laws, read as `0` when `P(E) = 0`.

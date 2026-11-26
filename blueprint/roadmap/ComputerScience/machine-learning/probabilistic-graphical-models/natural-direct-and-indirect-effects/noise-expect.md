@@ -1,4 +1,5 @@
-# Noise Expect
+# Expectation under the noise law
 
-Expectation of a real function of the noise under independent noise laws `μ`; the sum
-runs over the product of the supports, as in `FiniteSCM.inducedLaw`.
+`E(F) = ∑_u (∏_k μ_k(u_k)) F(u)`: the expectation of a real function `F` of the noise under
+independent noise laws `μ_k`, the sum running over the noise values whose every coordinate lies in
+the support of its law.
