@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.NumberTheory.DivisorApproximantPrimeCounting
+public import MathlibExt.NumberTheory.PrimeCountingFromDivisors
 
 /-!
 # Smooth approximants of divisor functions and `π(n)` (statements)
@@ -49,17 +50,6 @@ public theorem_wanted abs_exp_approx_sub_dvd_indicator_le (A : ℕ → ℕ → �
     (k n : ℕ) (hk : 1 ≤ k) (hkn : k ≤ n) :
     |Real.exp (-(n * k * A k n * Real.sin (n * Real.pi / k) ^ 2)) - (if k ∣ n then 1 else 0)| ≤
       Real.exp (-(n * k : ℝ))
-
-/-- **Prime counting from the exact divisor count.** For every natural number $n \ge 2$,
-$$\sum_{m=2}^{n} e^{-m(\tau(m) - 2)} - \pi(n) < \frac{1}{e^3(e - 1)},$$
-where $\tau(m)$ is the number of positive divisors of $m$ and $\pi(n)$ is the number of primes at
-most $n$.
-
-Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 3 (`integers-2026-A46-lem-3`). -/
-public theorem_wanted primeCountingApprox_sub_lt (n : ℕ) (hn : 2 ≤ n) :
-    ∑ m ∈ Icc 2 n, Real.exp (-(m * ((m.divisors.card : ℝ) - 2))) - Nat.primeCounting n <
-      1 / (Real.exp 3 * (Real.exp 1 - 1))
 
 /-- **Sine lower bound at non-divisors.** For all positive integers $k$ and $n$ with $k \nmid n$,
 $$\frac{\pi^2 k^2}{2} \sin^2\frac{n\pi}{k} \ge 1.$$

@@ -15,10 +15,12 @@ public import MathlibExt.NumberTheory.Beatty.ComplBetween
 public import MathlibExt.NumberTheory.Beatty.CountIncrement
 public import MathlibExt.NumberTheory.Beatty.FloorFiber
 public import MathlibExt.NumberTheory.Beatty.FloorFiberIndicator
+public import MathlibExt.NumberTheory.Beatty.FloorFiberSets
 public import MathlibExt.NumberTheory.Beatty.FloorSubTwoIdentity
 public import MathlibExt.NumberTheory.Beatty.FloorTwoSubIdentity
 public import MathlibExt.NumberTheory.Beatty.SelfBetween
 public import MathlibExt.NumberTheory.Beatty.SelfBetweenIncrement
+public import MathlibExt.NumberTheory.BeattyDecompositionBeattyFloorFiberCardEqOrEqSucc
 
 /-! # Decomposition of Beatty and complementary sequences (Polanco)
 
@@ -71,39 +73,6 @@ public theorem_wanted beatty_card_compl_between_isBeatty {α β : ℝ} (hirr : I
     ∃ r : ℝ, 0 < r ∧ r < 1 ∧ ∀ n : ℤ, 0 < n →
       ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
         beattySeq r n
-
-/-- **Multiplicities of the values of $\lfloor n\alpha\rfloor$ for $1/(k + 1) < \alpha < 1/k$.**
-Let $k$ be a positive integer and let $\alpha$ be a real number with
-$1/(k + 1) < \alpha < 1/k$. Then every non-negative integer $t$ equals $\lfloor n\alpha\rfloor$
-for exactly $k$ or exactly $k + 1$ positive integers $n$, there are infinitely many $t$ for which
-it is exactly $k$, and there are infinitely many $t$ for which it is exactly $k + 1$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Lemma 1 (`integers-2025-A104-lem-1`). -/
-public theorem_wanted beatty_floor_fiber_card_eq_or_eq_succ {α : ℝ} {k : ℕ}
-    (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
-    (∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k ∨
-        {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1) ∧
-      {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k}.Infinite ∧
-      {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1}.Infinite
-
-/-- **The values of $\lfloor n\alpha\rfloor$ of each multiplicity form Beatty sets.** Let $k$ be a
-positive integer and let $\alpha$ be an irrational number with $1/(k + 1) < \alpha < 1/k$. Then
-there are real numbers $\gamma > 0$ and $\delta > 0$ such that the positive integers $t$ that
-equal $\lfloor n\alpha\rfloor$ for exactly $k + 1$ positive integers $n$ are exactly the numbers
-$\lfloor m\gamma\rfloor$ for positive integers $m$, and the positive integers $t$ that equal
-$\lfloor n\alpha\rfloor$ for exactly $k$ positive integers $n$ are exactly the numbers
-$\lfloor m\delta\rfloor$ for positive integers $m$.
-
-Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
-INTEGERS 25 (2025), Article A104, Corollary 1 (`integers-2025-A104-cor-1`). -/
-public theorem_wanted beatty_floor_fiber_card_sets_isBeatty {α : ℝ} {k : ℕ}
-    (hirr : Irrational α) (h1 : 1 / ((k : ℝ) + 1) < α) (h2 : α < 1 / (k : ℝ)) :
-    ∃ γ δ : ℝ, 0 < γ ∧ 0 < δ ∧
-      {t : ℤ | 0 < t ∧ {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1} =
-        {beattySeq γ m | m > 0} ∧
-      {t : ℤ | 0 < t ∧ {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k} =
-        {beattySeq δ m | m > 0}
 
 /-- **Multiplicities of Polanco's skipping sequence.** Let $k \ge 1$ be an integer, let
 $\alpha$ be an irrational real number with $(2k - 1)/k < \alpha < (2k + 1)/(k + 1)$, and let
