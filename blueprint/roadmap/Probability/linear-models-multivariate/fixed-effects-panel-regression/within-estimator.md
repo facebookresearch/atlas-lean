@@ -4,7 +4,7 @@ For clusters $i$ with real $T \times k$ regressor matrices $X_i$, responses $y_i
 
 $$\hat\beta_N = \Big(\sum_{i<N}\ddot X_i^\top\ddot X_i\Big)^{-1}\sum_{i<N}\ddot X_i^\top\ddot y_i,$$
 
-where $\ddot{\ }$ denotes demeaning over the cluster's periods and the inverse is the matrix inverse (zero when singular). Matrix inverses are taken as $0$ for singular matrices.
+where $\ddot{\ }$ denotes demeaning over the cluster's periods and the inverse is the matrix inverse, taken to be $0$ for a singular matrix.
 
 ## Sources
 

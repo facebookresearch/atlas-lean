@@ -4,4 +4,4 @@ For $n \in \mathbb{N}$, $\mu_0 \in \mathbb{R}$, $v \ge 0$ and a cutoff $c \in \m
 
 $$\{x \in \mathbb{R}^n : z(x) > c\},$$
 
-where $z(x) = \sqrt n\,(\bar x - \mu_0)/\sqrt v$ is the known-variance z statistic.
+where $z(x) = \sqrt n\,(\bar x - \mu_0)/\sqrt v$, with $\bar x = \frac1n\sum_{i=1}^n x_i$ and the convention $a/0 = 0$, is the known-variance z statistic.

@@ -52,8 +52,9 @@ private theorem smul_inv_smul_eq {m : Type*} {σ : ℝ} (hσ : 0 < σ) (e : m �
   rw [smul_smul, mul_inv_cancel₀ hσ.ne', one_smul]
 
 /-- The hypothesis matrix `H = Bᵀ Cᵀ (C (Xᵀ X)⁻¹ Cᵀ)⁻¹ C B` of the linear hypothesis `C β = c`,
-where `B = (Xᵀ X)⁻¹ Xᵀ` is the OLS matrix. Under `C β = c` the numerator of the `F` statistic is
-the quadratic form `εᵀ H ε`. -/
+where `B = (Xᵀ X)⁻¹ Xᵀ` is the OLS matrix. If `Xᵀ X` is invertible, `y = X β + ε` and `C β = c`,
+then `β̂ = B y` satisfies `(C β̂ - c)ᵀ (C (Xᵀ X)⁻¹ Cᵀ)⁻¹ (C β̂ - c) = εᵀ H ε`, which is `r` times
+the numerator of the `F` statistic. -/
 noncomputable def hypothesisMatrix {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k]
     [DecidableEq k] [Fintype r] [DecidableEq r]
     (X : Matrix m k ℝ) (C : Matrix r k ℝ) : Matrix m m ℝ :=

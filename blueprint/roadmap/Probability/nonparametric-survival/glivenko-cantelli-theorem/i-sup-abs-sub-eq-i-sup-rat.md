@@ -1,4 +1,4 @@
-# Suprema of right-continuous deviations are attained on the rationals
+# Suprema of right-continuous deviations can be taken over the rationals
 
 Let $f, g : \mathbb{R} \to \mathbb{R}$ be right-continuous at every point, with $|f(x) - g(x)| \le C$ for all $x$ and some constant $C$. Then
 

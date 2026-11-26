@@ -4,4 +4,4 @@ Let $\Omega$ be a finite nonempty set, $p, q : \Omega \to [0, \infty)$ with $\su
 
 ## Sources
 
-- J. Neyman and E. S. Pearson (1933), DOI `10.1098/rsta.1933.0009`; E. L. Lehmann and J. P. Romano, *Testing Statistical Hypotheses*, 3rd ed., Theorem 3.2.1 (i)–(ii).
+- J. Neyman and E. S. Pearson (1933), DOI 10.1098/rsta.1933.0009; E. L. Lehmann and J. P. Romano, *Testing Statistical Hypotheses*, 3rd ed., Theorem 3.2.1 (i)–(ii).

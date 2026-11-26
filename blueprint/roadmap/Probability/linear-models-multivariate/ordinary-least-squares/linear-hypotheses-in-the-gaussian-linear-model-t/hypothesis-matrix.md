@@ -4,4 +4,4 @@ Let $X$ be a real $m \times k$ design matrix and $C$ a real $r \times k$ matrix 
 
 $$H_C = B^\top C^\top\big(C(X^\top X)^{-1}C^\top\big)^{-1} C B,$$
 
-with matrix inverses (the zero matrix when singular). Under $C\beta = c$ the numerator of the $F$ statistic is $\varepsilon^\top H_C\varepsilon$. Matrix inverses are taken as $0$ for singular matrices.
+with matrix inverses (the zero matrix when singular). If $X^\top X$ is invertible, $y = X\beta + \varepsilon$ and $C\beta = c$, then $\hat\beta = By$ satisfies $(C\hat\beta - c)^\top\big(C(X^\top X)^{-1}C^\top\big)^{-1}(C\hat\beta - c) = \varepsilon^\top H_C\varepsilon$, which is $r$ times the numerator of the $F$ statistic.
