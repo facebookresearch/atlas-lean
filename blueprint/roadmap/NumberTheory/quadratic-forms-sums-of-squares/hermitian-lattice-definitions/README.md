@@ -17,3 +17,4 @@
 - [Normalized Count](normalized-count.md)
 - [Local Density](local-density.md)
 - [Completed Dual Quotient](completed-dual-quotient.md)
+- [Mass and local factor evaluations](mass-and-local-factors.md)
