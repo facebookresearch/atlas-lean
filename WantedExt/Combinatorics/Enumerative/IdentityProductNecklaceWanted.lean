@@ -190,7 +190,8 @@ that is, raising to the $q$-th power rotates the coordinates one step.
 Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
 Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 28, with `Φ` as defined in
 Section 9 of the arXiv text (`jis-2026-26.4.6-lem-28`). -/
-public theorem_wanted normalBasisMap_bijective_frobenius (n : ℕ)
+public theorem_wanted normalBasisMap_bijective_frobenius (F K : Type*)
+    [Field F] [Fintype F] [Field K] [Fintype K] [Algebra F K] (n : ℕ)
     (hn : Module.finrank F K = n) (β : K)
     (hβ : LinearIndependent F (fun i : Fin n => β ^ (Fintype.card F ^ (i : ℕ)))) :
     Function.Bijective (fun a : Fin n → F => ∑ i, a i • β ^ (Fintype.card F ^ (i : ℕ))) ∧
