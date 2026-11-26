@@ -1,0 +1,3 @@
+# Thomassen's tournament partition problem
+
+A tournament on $\{0,\dots,n-1\}$ is an irreflexive arc relation with exactly one arc between any two distinct vertices; a vertex set $S$ induces a strongly $k$-connected subtournament when $|S| > k$ and the subtournament on $S$ remains strongly connected after deleting any fewer than $k$ vertices. Thomassen's problem asks whether for every $t \ge 1$ and all positive integers $k_1, \dots, k_t$ there is $g$ such that every strongly $g$-connected tournament on $\{0, \dots, n-1\}$ has a partition $V_1, \dots, V_t$ of its vertex set in which each $V_i$ induces a strongly $k_i$-connected subtournament.
