@@ -13,7 +13,6 @@ Topics added since this subject's fields were last revised.
 - [Period Map Hecke](period-map-hecke/README.md)
 - [Projective Northcott](projective-northcott/README.md)
 - [Ribbon Component Group](ribbon-component-group/README.md)
-- [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)
 - [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
 - [Higher Units](higher-units-at.md)
-- [Fowler's bound on imaginary quadratic order discriminants](sqrt-abs-discriminant-le-of-gauss-class.md)
+- [Degree of a singular modulus](finrank-adjoin-j-function-eq-gauss-class.md)
