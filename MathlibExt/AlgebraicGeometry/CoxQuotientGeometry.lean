@@ -88,8 +88,12 @@ instance (σ : F.Face) : IsOpenImmersion (chartLift R σ) := by
     infer_instance
   exact IsOpenImmersion.of_comp _ (coxOpen R).ι
 
-/-- The localization dictionary of the Cox open, built from Mathlib's identification
-of the localization at an element with its basic open. -/
+/-- The localization charts of the Cox open $U = \bigcup_\sigma D(x^{\hat\sigma})$ in
+$\operatorname{Spec} S$, for the Cox ring $S$ and
+$x^{\hat\sigma} = \prod_{\rho \notin \sigma} x_\rho$. For every face $\sigma$ of the fan, the
+chart is the open immersion $\operatorname{Spec} S_{x^{\hat\sigma}} \to U$ whose composite with
+the inclusion of $U$ is induced by the localization $S \to S_{x^{\hat\sigma}}$; its image is the
+basic open $D(x^{\hat\sigma})$. These charts cover $U$. -/
 def localCover : LocalCover R where
   map σ := Over.homMk (chartLift R σ) (by
     change chartLift R σ ≫ (coxOpen R).ι ≫ Spec.map (CommRingCat.ofHom (algebraMap ℂ (CoxRing R))) =

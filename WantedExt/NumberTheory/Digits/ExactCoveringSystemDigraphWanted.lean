@@ -15,6 +15,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphTypeTwo
 public import MathlibExt.NumberTheory.Digits.NegTwoCubeDvd
 public import MathlibExt.NumberTheory.Digits.NineDvdExponent
+public import MathlibExt.NumberTheory.Digits.PositiveTwoCubeDvd
 public import MathlibExt.NumberTheory.Digits.ThreePowCubeBound
 
 /-!
@@ -44,19 +45,6 @@ Conventions used below, following Section 1 of the paper:
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Translation isomorphism of exact covering system digraphs.** Let $r \in \mathbb{N}$, let
-$d_1, \dots, d_r$, $a_1, \dots, a_r$ and $k$ be integers, and put $a_i' = a_i - (d_i - 1)k$.
-Then the map $x \mapsto x + k$ is a digraph isomorphism from
-$G(d_1 n + a_1, \dots, d_r n + a_r)$ onto $G(d_1 n + a_1', \dots, d_r n + a_r')$.
-
-The paper's exact-covering hypothesis on the rules is not needed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 1
-(`integers-2026-A107-thm-1`). -/
-theorem_wanted ecsdAdj_shift_relIso {r : ℕ} (d a : Fin r → ℤ) (k : ℤ) :
-    ∃ e : ecsdAdj d a ≃r ecsdAdj d (fun i => a i - (d i - 1) * k), ∀ n, e n = n + k
 
 /-- **Normal form of the ECSDs $G(2n + a_1, 2n + a_2)$.** For all integers $a_1, a_2$ with
 $a_1 - a_2$ odd, the exact covering system digraph $G(2n + a_1, 2n + a_2)$, with an edge
@@ -389,18 +377,6 @@ theorem_wanted negabinary_two_digits_complete_iff (a₁ a₂ : ℤ) (h : |a₁ -
         z = ∑ j ∈ Finset.range (k + 1), b j * (-2) ^ j) ↔
       (∃ m : ℕ, |a₁ - a₂| = 3 ^ m) ∧ ¬ 3 ∣ a₁ ∧ ¬ 3 ∣ a₂ ∧
         max |a₁| |a₂| ≤ 2 * |a₁ - a₂| - 1
-
-/-- **Divisibility of $2^{3n} + 1$ from $2^n + 1$.** For every natural number $n$, if $3n$
-divides $2^n + 1$, then $9n$ divides $2^{3n} + 1$.
-
-Equivalently, if $3$ divides $2^n + 1$ and $n$ divides $(2^n + 1)/3$, then $3n$ divides
-$(2^{3n} + 1)/3$. For $n = 0$ the hypothesis fails, so positivity is not assumed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Lemma 1
-(`integers-2026-A107-lem-1`). -/
-theorem_wanted three_mul_dvd_two_pow_add_one_cube (n : ℕ) (h : 3 * n ∣ 2 ^ n + 1) :
-    9 * n ∣ 2 ^ (3 * n) + 1
 
 /-- **Single-component degree-2 ECSDs up to isomorphism.** Let $d_1, d_2 \in \{2, -2\}$ and let
 $a_1, a_2$ be integers with $a_1 - a_2$ odd. If the exact covering system digraph

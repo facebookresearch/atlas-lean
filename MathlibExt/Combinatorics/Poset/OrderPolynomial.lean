@@ -35,7 +35,7 @@ which is how Section 3.15.3 phrases them. Main results:
 * `exists_orderPolynomial`: `Ω_P` is a polynomial of degree `p` with leading coefficient
   `e(P)/p!`.
 
-The reciprocity theorem is recorded in `WantedExt.Combinatorics.Poset.OrderPolynomialWanted`.
+The reciprocity theorem is proved in `MathlibExt.Combinatorics.Poset.OrderPolynomialReciprocity`.
 -/
 
 @[expose] public section

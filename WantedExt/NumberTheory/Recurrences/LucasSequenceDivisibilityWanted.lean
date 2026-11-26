@@ -14,7 +14,11 @@ import Mathlib.Tactic.NormNum.Prime
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PrimitiveDivisor
+public import MathlibExt.NumberTheory.Recurrences.LucasDiscriminantGcd
+public import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceFirstKind
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceModThree
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceNegation
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
@@ -60,29 +64,6 @@ INTEGERS 25 (2025), Article A107, Proposition 2.3 (iii), (iv)
 public theorem_wanted lucasU_dvd_and_lucasV_dvd_of_dvd
     (L : LucasSequenceParams) (m n : ℕ) (h : m ∣ n) :
     lucasU L m ∣ lucasU L n ∧ (Odd (n / m) → lucasV L m ∣ lucasV L n)
-
-/-- **$P$ divides $U_{2n}$, and $V_n$ for odd $n$.** Let $P$ and $Q$ be integers with $Q \ne 0$,
-and let $U$ and $V$ be the Lucas sequences $U(P, Q)$ and $V(P, Q)$. Then $P \mid U_{2n}$ for every
-natural number $n$, and $P \mid V_n$ for every odd natural number $n$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Proposition 2.3 (v), (vi)
-(`integers-2025-A107-prop-2-3`). -/
-public theorem_wanted p_dvd_lucasU_two_mul_and_lucasV_of_odd
-    (L : LucasSequenceParams) :
-    (∀ n : ℕ, L.p ∣ lucasU L (2 * n)) ∧ ∀ n : ℕ, Odd n → L.p ∣ lucasV L n
-
-/-- **Lucas sequences under negation of the first parameter.** For integers $P$ and $Q \ne 0$ and
-every natural number $n$, the Lucas sequences $U$ and $V$ satisfy
-$U_n(-P, Q) = (-1)^{n+1} U_n(P, Q)$ and $V_n(-P, Q) = (-1)^n V_n(P, Q)$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Proposition 2.3 (vii), (viii)
-(`integers-2025-A107-prop-2-3`). -/
-public theorem_wanted lucasU_lucasV_neg_p
-    (L : LucasSequenceParams) (n : ℕ) :
-    lucasU ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ (n + 1) * lucasU L n ∧
-      lucasV ⟨-L.p, L.q, L.q_ne_zero⟩ n = (-1) ^ n * lucasV L n
 
 /-- **Shift congruence for the Lucas recurrence.** Let $U = U(P, Q)$ be the Lucas sequence with
 integer parameters $P$ and $Q \ne 0$, and let $(W_n)_{n \ge 0}$ be a sequence of integers with
@@ -145,30 +126,6 @@ public theorem_wanted lucasU_mod_two
         (∀ n, 2 ∣ lucasU L n ↔ 2 ∣ n) ∧ 2 ∣ L.p ^ 2 - 4 * L.q) ∧
       (Odd L.p → Odd L.q → ∀ n, 2 ∣ lucasU L n ↔ 3 ∣ n)
 
-/-- **Lucas sequences modulo 3.** Let $U = U(P, Q)$ be the Lucas sequence with integer parameters
-$P$ and $Q \ne 0$, let $D = P^2 - 4Q$, and suppose $3 \nmid \gcd(P, Q)$. Then $U$ is periodic
-modulo $3$ from index $1$ on: there is $k > 0$ with $U_{n+k} \equiv U_n \pmod 3$ for every
-$n \ge 1$. If $3 \mid Q$, then $3 \nmid U_n$ for every $n \ge 1$. If $3 \mid P$, then for every
-$n \ge 0$, $3 \mid U_n$ if and only if $2 \mid n$. If $3 \nmid P$ and $Q \equiv -1 \pmod 3$,
-then for every $n \ge 0$, $3 \mid U_n$ if and only if $4 \mid n$. If $3 \nmid P$ and
-$Q \equiv 1 \pmod 3$, then for every $n \ge 0$, $3 \mid U_n$ if and only if $3 \mid n$; moreover
-$3 \mid D$.
-
-The periodicity need not start at $n = 0$: for $P = 1$ and $Q = 3$, $U$ is $0, 1, 1, 1, \dots$
-modulo $3$. The source's values $\rho(3) = 2, 4, 3$ of the rank of apparition are the least
-positive indices these equivalences give.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Lemma 2.8 (`integers-2025-A107-lem-2-8`). -/
-public theorem_wanted lucasU_mod_three
-    (L : LucasSequenceParams) (h3 : ¬ 3 ∣ Int.gcd L.p L.q) :
-    (∃ k : ℕ, 0 < k ∧ ∀ n, 1 ≤ n → lucasU L (n + k) ≡ lucasU L n [ZMOD 3]) ∧
-      (3 ∣ L.q → ∀ n, 1 ≤ n → ¬ 3 ∣ lucasU L n) ∧
-      (3 ∣ L.p → ∀ n, 3 ∣ lucasU L n ↔ 2 ∣ n) ∧
-      (¬ 3 ∣ L.p → L.q ≡ -1 [ZMOD 3] → ∀ n, 3 ∣ lucasU L n ↔ 4 ∣ n) ∧
-      (¬ 3 ∣ L.p → L.q ≡ 1 [ZMOD 3] →
-        (∀ n, 3 ∣ lucasU L n ↔ 3 ∣ n) ∧ 3 ∣ L.p ^ 2 - 4 * L.q)
-
 /-- **Growth and positivity of Lucas sequences with positive discriminant.** Let $P, Q$ be
 integers with $P \neq 0$, $Q \neq 0$ and $D = P^2 - 4Q > 0$, and let $U = U(P, Q)$ and
 $V = V(P, Q)$ be the Lucas sequences. Then $|U_n| < |U_{n+1}|$ for every $n \ge 2$ and
@@ -197,17 +154,6 @@ public theorem_wanted not_lucasU_dvd_lucasU_of_lt
     (L : LucasSequenceParams) (hP : L.p ≠ 0) (hD : 0 < L.p ^ 2 - 4 * L.q)
     (n : ℕ) (hn : 3 ≤ n) (k : ℕ) (hk0 : 0 < k) (hkn : k < n) :
     ¬ lucasU L n ∣ lucasU L k
-
-/-- **Common divisors of $P$ and the discriminant.** Let $P$ and $Q$ be coprime integers and let
-$D = P^2 - 4Q$. Then $\gcd(P, D)$ divides $4$, and $\gcd(P, D') = 1$ for every odd integer $D'$
-dividing $D$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Lemma 4.9 (`integers-2025-A107-lem-4-9`). -/
-public theorem_wanted gcd_p_discr_dvd_four
-    (P Q : ℤ) (hcop : Int.gcd P Q = 1) :
-    (Int.gcd P (P ^ 2 - 4 * Q) : ℤ) ∣ 4 ∧
-      ∀ D' : ℤ, Odd D' → D' ∣ P ^ 2 - 4 * Q → Int.gcd P D' = 1
 
 /-- **Parity of $U_m$ and $U_{2m}/P$ and their coprimality to $D$.** Let $P$ and $Q$ be coprime
 integers with $P \ne 0$ and $Q \ne 0$, let $U_n$ be the Lucas sequence $U(P, Q)$, and let

@@ -9,3 +9,6 @@ Partial, strict and total orders, dense linear orders, monotone maps and sequenc
 - [Equivalence relation](equivalence-relation.md)
 - [Partially ordered set](partial-order.md)
 - [Zorn's lemma](zorns-lemma.md)
+- [Well-founded induction](well-founded-induction.md)
+- [Every nonempty set of natural numbers has a least element](well-ordering-naturals.md)
+- [Least upper bound of a subset](supremum.md)

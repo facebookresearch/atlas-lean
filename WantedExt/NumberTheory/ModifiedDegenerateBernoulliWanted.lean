@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulli
-public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliThreeTerm
+public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliMiki
 public import Mathlib.RingTheory.Binomial
 
 /-!
@@ -55,55 +55,6 @@ public theorem_wanted modifiedDegenerateBernoulli_symmetric_identity (m n : ℕ)
         Ring.choose ((n : ℂ) - ∑ j, r j) (k i) * modifiedDegenerateBernoulli lam (k i) (1 - x i) *
           ∏ j ∈ univ.erase i, Ring.choose (r j) (k j) *
             modifiedDegenerateBernoulli lam (k j) (x j - x i + if i < j then 1 else 0)
-
-/-- **Three-term identity for modified degenerate Bernoulli polynomials.** Let $n \ge 1$, let
-$\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, write
-$\mathfrak{B}_{k,\lambda}(x)$ for the modified degenerate Bernoulli polynomials, and for complex
-numbers $s, t, x, y$ put
-$\mathfrak{D}_{s,t,\lambda}(x, y) = \sum_{k=0}^{n} (-1)^k \binom{s}{k} \binom{t}{n-k}
-\mathfrak{B}_{n-k,\lambda}(x) \mathfrak{B}_{k,\lambda}(y)$, where
-$\binom{w}{k} = w(w-1) \cdots (w-k+1)/k!$ is the binomial coefficient with a complex upper
-argument. If $r, s, t, x, y, z$ are complex numbers with $r + s + t = n$ and $x + y + z = 1$, then
-$r\, \mathfrak{D}_{s,t,\lambda}(x, y) + s\, \mathfrak{D}_{t,r,\lambda}(y, z) +
-t\, \mathfrak{D}_{r,s,\lambda}(z, x) = 0$.
-
-Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
-Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Corollary 2, equation
-(sunpanD) (`jis-2024-24.5.4-cor-2`). -/
-public theorem_wanted modifiedDegenerateBernoulli_three_term (n : ℕ) (hn : 1 ≤ n) (lam : ℂ)
-    (hlam : lam ≠ 0) (hlam1 : lam ≠ -1) (r s t x y z : ℂ) (hrst : r + s + t = n)
-    (hxyz : x + y + z = 1) :
-    let D : ℂ → ℂ → ℂ → ℂ → ℂ := fun s t x y =>
-      ∑ k ∈ range (n + 1), (-1) ^ k * Ring.choose s k * Ring.choose t (n - k) *
-        modifiedDegenerateBernoulli lam (n - k) x * modifiedDegenerateBernoulli lam k y
-    r * D s t x y + s * D t r y z + t * D r s z x = 0
-
-/-- **Miki-type identity for modified degenerate Bernoulli numbers.** Let $n \ge 4$, let $\lambda$
-be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, write
-$\mathfrak{B}_{k,\lambda} = \mathfrak{B}_{k,\lambda}(0)$ for the value at $0$ of the modified
-degenerate Bernoulli polynomial $\mathfrak{B}_{k,\lambda}(x)$, and let $H_n = \sum_{k=1}^{n} 1/k$
-be the $n$-th harmonic number. Then
-
-$$
-\sum_{k=1}^{n-1} \frac{\mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda}}{k} -
-\sum_{k=1}^{n-1} \binom{n}{k} \frac{\mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda}}{k} =
-\frac{\lambda}{\log(1+\lambda)}\, H_n\, \mathfrak{B}_{n,\lambda} +
-\frac{n}{2}\, \mathfrak{B}_{n-1,\lambda},
-$$
-
-where $\log$ is the principal branch.
-
-Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
-Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Corollary 2, equation
-(mikiD) (`jis-2024-24.5.4-cor-2`). -/
-public theorem_wanted modifiedDegenerateBernoulli_miki (n : ℕ) (hn : 4 ≤ n) (lam : ℂ)
-    (hlam : lam ≠ 0) (hlam1 : lam ≠ -1) :
-    ∑ k ∈ Icc 1 (n - 1), modifiedDegenerateBernoulli lam k 0 / k *
-        modifiedDegenerateBernoulli lam (n - k) 0 -
-      ∑ k ∈ Icc 1 (n - 1), (n.choose k : ℂ) * modifiedDegenerateBernoulli lam k 0 / k *
-        modifiedDegenerateBernoulli lam (n - k) 0 =
-      lam / Complex.log (1 + lam) * (harmonic n : ℂ) * modifiedDegenerateBernoulli lam n 0 +
-        n / 2 * modifiedDegenerateBernoulli lam (n - 1) 0
 
 /-- **A convolution lemma for modified degenerate Bernoulli polynomials.** Let $m \ge 2$, let
 $\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, let $s_1, \ldots, s_m$ be

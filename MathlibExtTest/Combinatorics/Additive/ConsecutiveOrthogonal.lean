@@ -26,6 +26,20 @@ example : ¬ ∃ s t : Fin 3, s ≤ t ∧ ∀ i : Fin 2,
     ∑ j ∈ Finset.Icc s t, (if j.val % 2 = i.val then (1 : ZMod 2) else 0) = 0 := by
   decide
 
+/-- At the threshold for one set, a set containing both endpoints forces the full block. -/
+example : ∃ s t : ℕ, 1 ≤ s ∧ s < t ∧ t ≤ 2 ∧ Even (Finset.Icc s t ∩ Finset.range 4).card := by
+  obtain ⟨s, t, hs, hst, ht, hev⟩ := exists_consecutive_even_inter (a := 1) (m := 2) le_rfl
+    (fun _ => Finset.range 4)
+  refine ⟨s, t, hs, hst.lt_of_ne ?_, ht, hev 0⟩
+  rintro rfl
+  have hsX : s ∈ Finset.range 4 := Finset.mem_range.mpr (by omega)
+  simpa [Finset.singleton_inter_of_mem hsX] using hev 0
+
+/-- With two alternating sets, three positions do not suffice. -/
+example : ¬ ∃ s t : Fin 4, 1 ≤ s.val ∧ s ≤ t ∧
+    ∀ i : Fin 2, Even (Finset.Icc s.val t.val ∩ ![{1, 3}, {2}] i).card := by
+  decide
+
 /-- With no rows, the theorem still gives a nonzero vector in dimension one. -/
 example : ∃ w : Fin 1 → ZMod 2, w ≠ 0 :=
   (exists_ne_zero_orthogonal (a := 0) (m := 1) (by decide) Fin.elim0).imp fun _ hw => hw.1
