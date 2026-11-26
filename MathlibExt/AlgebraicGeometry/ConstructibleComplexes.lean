@@ -33,9 +33,11 @@ is performed on presheaves and then sheafified (Mathlib's
 field need not already satisfy the sheaf condition. Inverse image and scalar
 extension are exact, so their derived functors need no hypothesis.
 
-The constructions below are complete. The closure and preservation properties
-of constructibility are requested in
-`WantedExt/AlgebraicGeometry/ConstructibleComplexesWanted.lean`.
+The constructions below are complete. The preservation of constructibility
+under scalar extension (`constructible_scalarExtension`) is proved in
+`MathlibExt.AlgebraicGeometry.ConstructibleComplexesConstructibleScalarExtension`;
+the other closure and preservation properties of constructibility are
+requested in `WantedExt/AlgebraicGeometry/ConstructibleComplexesWanted.lean`.
 
 ## References
 
