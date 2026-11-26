@@ -2,7 +2,8 @@
 
 Let Iterative Bayesian Stepwise Selection (IBSS) be the cyclic algorithm that, at each inner step
 $l = 1, \dots, L$, updates $q_l \leftarrow \operatorname{SER}(X, \bar r_l; \sigma^2, \sigma_{0l}^2)$
-using the current expected residuals $\bar r_l = y - X \sum_{l' \ne l} \bar b_{l'}$.
+using the current expected residuals $\bar r_l = y - X \sum_{l' \ne l} \bar b_{l'}$, started from factors
+with finite second moments and finite divergence from their SER priors.
 Then IBSS is a coordinate-ascent algorithm for maximizing the ELBO $F(q_1, \dots, q_L; \sigma^2, \sigma_0^2)$
 over the factored variational family $q = \prod_{l=1}^L q_l$, and equivalently a coordinate-descent
 algorithm for minimizing $D_{\mathrm{KL}}(q \,\|\, p_{\mathrm{post}})$ where $p_{\mathrm{post}}$
@@ -10,6 +11,7 @@ is the exact SuSiE posterior. In particular, $F$ is non-decreasing at every IBSS
 
 ## Depends on
 
+- [Sum of Single Effects (SuSiE) model and factored variational family](sum-of-single-effects-model.md)
 - [IBSS coordinate-ascent update reduces to single-effect regression](ibss-coordinate-ascent-ser-update.md)
 
 ## Expansion

@@ -9,6 +9,7 @@ equal posterior inclusion probabilities in every single-effect component.
 
 ## Depends on
 
+- [Sum of Single Effects (SuSiE) model and factored variational family](sum-of-single-effects-model.md)
 - [IBSS coordinate-ascent update reduces to single-effect regression](ibss-coordinate-ascent-ser-update.md)
 
 ## Expansion

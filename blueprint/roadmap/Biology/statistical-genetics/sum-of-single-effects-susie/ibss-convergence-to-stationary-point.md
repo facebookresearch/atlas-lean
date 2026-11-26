@@ -9,7 +9,12 @@ of the ELBO $F$.
 
 ## Depends on
 
+- [Sum of Single Effects (SuSiE) model and factored variational family](sum-of-single-effects-model.md)
 - [ELBO monotonicity and KL minimization of IBSS](ibss-elbo-monotonicity-and-kl-minimization.md)
+
+## Proof depends on
+
+- [IBSS coordinate-ascent update reduces to single-effect regression](ibss-coordinate-ascent-ser-update.md)
 
 ## Expansion
 

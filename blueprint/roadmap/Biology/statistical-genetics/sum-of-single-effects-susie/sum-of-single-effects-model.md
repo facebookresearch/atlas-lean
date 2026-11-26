@@ -13,24 +13,25 @@ where the components $(b_1, \dots, b_L)$ are independent with
 
 $$b_l = \gamma_l \beta_l, \qquad \gamma_l \sim \operatorname{Multinomial}(1, \pi), \qquad \beta_l \sim \mathcal{N}(0, \sigma_{0l}^2).$$
 
-Each $b_l$ has at most one nonzero coordinate and follows a single-effect regression (SER) prior.
+Each $b_l$ has at most one nonzero coordinate; its law $g_l$ is the single-effect regression (SER) prior
+with variance $\sigma_{0l}^2$.
 
 The **SuSiE variational family** consists of distributions on $(b_1, \dots, b_L)$ that factor across
 effects,
 
 $$q(b_1, \dots, b_L) = \prod_{l=1}^L q_l(b_l),$$
 
-without requiring factorization across coordinates within each $q_l$. Its evidence lower bound (ELBO) is
+without requiring factorization across coordinates within each $q_l$. For factors $q_l$ on $\mathbb{R}^p$ with
+finite second moments, the evidence lower bound (ELBO) is
 
-$$F(q_1, \dots, q_L; \sigma^2, \sigma_0^2) = \mathbb{E}_q[\log p(y, b_1, \dots, b_L \mid X, \sigma^2, \sigma_0^2)] - \mathbb{E}_q[\log q(b_1, \dots, b_L)].$$
+$$F(q_1, \dots, q_L; \sigma^2, \sigma_0^2) = \mathbb{E}_q\bigl[\log p(y \mid X, b_1, \dots, b_L, \sigma^2)\bigr] - \sum_{l=1}^L D_{\mathrm{KL}}(q_l \,\|\, g_l) \in [-\infty, \infty),$$
+
+which equals $\mathbb{E}_q[\log p(y, b_1, \dots, b_L \mid X, \sigma^2, \sigma_0^2)] - \mathbb{E}_q[\log q(b_1, \dots, b_L)]$
+whenever $q$ has a density with respect to the prior, and is $-\infty$ when some $q_l$ has infinite divergence
+from $g_l$.
 
 A **level-$\rho$ credible set** for the multiple regression model is a subset $S \subseteq \{1, \dots, p\}$
 having posterior probability at least $\rho$ of containing at least one variable with nonzero regression coefficient.
-
-## Depends on
-
-- [Posterior inclusion probabilities under single-effect regression](../bayesian-fine-mapping-and-colocalization/ser-posterior-eq-pip.md)
-- [Credible set](../bayesian-fine-mapping-and-colocalization/is-credible-set.md)
 
 ## Sources
 
