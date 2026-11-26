@@ -1,6 +1,6 @@
 # The closest pair is a Delaunay edge
 
-Let $P$ be a set of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line, and let $p, q \in P$ be a closest pair. Then $pq$ is an edge of every Delaunay triangulation of $P$: the circle with diameter $pq$ contains no other point of $P$, since such a point would be closer to $p$ or to $q$ than they are to each other, so $pq$ has an empty circle through its endpoints.
+Let $P$ be a set of $n \ge 3$ points in $\mathbb{R}^2$, not all on one line and no four on a common circle, and let $p, q \in P$ be a closest pair. Then $pq$ is an edge of the Delaunay triangulation of $P$: the circle with diameter $pq$ contains no other point of $P$, since such a point would be closer to $p$ or to $q$ than they are to each other, so $pq$ has an empty circle through its endpoints.
 
 ## Depends on
 

@@ -10,4 +10,4 @@ Randomized incremental algorithms for linear programming in fixed dimension and 
 - [Smallest enclosing disk in expected linear time](smallest-enclosing-disk-in-expected-linear-time.md)
 - [The optimum changes with probability at most d/i](the-optimum-changes-with-probability-at-most-d-over-i.md)
 - [Violator space](violator-space.md)
-- [Clarkson's algorithm for violator spaces](clarkson-s-algorithm-for-violator-spaces.md)
+- [A Seidel-type algorithm for violator spaces](a-seidel-type-algorithm-for-violator-spaces.md)

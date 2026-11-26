@@ -12,4 +12,4 @@ Let $(x, R)$ be a finite range space with $n = |x| \ge 1$ points and VC dimensio
 
 ## Sources
 
-- S. Har-Peled, *Geometric Approximation Algorithms*, revised online chapter "On complexity, sampling, ε-nets and ε-samples" (Chapter 7), <https://sarielhp.org/book/chapters/vc_dim.pdf>: Lemma 7.3.10 and its proof ("a naive proof of the ε-net theorem"; the lemma is stated for ε-samples but proved, as titled, for ε-nets)
+- S. Har-Peled, *Geometric Approximation Algorithms*, revised online chapter "On complexity, sampling, ε-nets and ε-samples" (Chapter 7), <https://sarielhp.org/book/chapters/vc_dim.pdf>: Lemma 7.3.10 and its proof, which this page follows with Sauer's lemma (Lemma 7.2.2) for an explicit sample size ("a naive proof of the ε-net theorem"; the lemma is stated for ε-samples but proved, as titled, for ε-nets)

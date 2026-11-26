@@ -1,6 +1,6 @@
 # Number of vertices of the trapezoidal map of crossing segments
 
-The trapezoidal map of $r$ segments in general position with $k$ pairwise crossings has exactly $6r + 3k + 4$ vertices, counting the four corners of the bounding square ($6r + 3k$ without them), and the number of trapezoids with tail is proportional to the number of vertices.
+The trapezoidal map of $r$ segments in general position with $k$ pairwise crossings has at most $6r + 3k + 4$ vertices, counting the four corners of the bounding square ($6r + 3k$ without them), with equality when no two segments share an endpoint (a shared endpoint gives $3$ vertices instead of $6$), and the number of trapezoids with tail is proportional to the number of vertices.
 
 ## Depends on
 

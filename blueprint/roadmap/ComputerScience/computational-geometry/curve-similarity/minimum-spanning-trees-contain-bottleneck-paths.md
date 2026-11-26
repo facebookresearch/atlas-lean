@@ -1,6 +1,6 @@
 # Minimum spanning trees contain bottleneck paths
 
-Let $G$ be a connected graph with $n$ vertices, $m$ edges and pairwise distinct edge weights $\omega$. The *bottleneck* of a path is the largest weight of an edge on it, and a *bottleneck path* between vertices $s$ and $t$ is a path from $s$ to $t$ whose bottleneck is minimal. If $T$ is the minimum spanning tree of $G$, the unique path from $s$ to $t$ in $T$ is a bottleneck path. Consequently a bottleneck path can be computed in $O(n + m)$ expected time, by a randomized linear-time minimum spanning tree algorithm followed by a tree traversal.
+Let $G$ be a connected graph with $n$ vertices, $m$ edges and real edge weights $\omega$, not necessarily distinct. The *bottleneck* of a path is the largest weight of an edge on it, and a *bottleneck path* between vertices $s$ and $t$ is a path from $s$ to $t$ whose bottleneck is minimal. If $T$ is a minimum spanning tree of $G$, the unique path from $s$ to $t$ in $T$ is a bottleneck path: if its heaviest edge $e$ were heavier than the bottleneck of some path from $s$ to $t$, that path would have an edge $f$ joining the two components of $T - e$ with $\omega(f) < \omega(e)$, and $T - e + f$ would be a lighter spanning tree. Consequently a bottleneck path can be computed in $O(m \log n)$ time, by Kruskal's algorithm followed by a tree traversal.
 
 ## Informally uses
 

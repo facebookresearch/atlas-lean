@@ -1,6 +1,6 @@
 # Order-three Davenport–Schinzel sequences have length $\Theta(n\,\alpha(n))$
 
-Let $\alpha$ be the [inverse Ackermann function](inverse-ackermann-function.md). There are constants $c_1, c_2 > 0$ such that the maximum length $\lambda_3(n)$ of an order-three Davenport–Schinzel sequence over $n$ symbols satisfies $c_1\, n\, \alpha(n) \le \lambda_3(n) \le c_2\, n\, \alpha(n)$ for all $n \ge 1$ (Hart and Sharir). A finer form is $\lambda_3(n) = 2n\alpha(n) \pm O(n\sqrt{\alpha(n)})$, and the lower bound is realized geometrically: some $n$ segments in the plane have a lower envelope with $n\alpha(n) - O(n)$ pieces.
+Let $\alpha$ be the [inverse Ackermann function](inverse-ackermann-function.md). There are constants $c_1, c_2 > 0$ such that the maximum length $\lambda_3(n)$ of an order-three Davenport–Schinzel sequence over $n$ symbols satisfies $c_1\, n\, \alpha(n) \le \lambda_3(n) \le c_2\, n\, \alpha(n)$ for all $n \ge 1$ (Hart and Sharir).
 
 ## Depends on
 
