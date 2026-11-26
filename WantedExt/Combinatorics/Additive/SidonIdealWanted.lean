@@ -19,6 +19,7 @@ public import MathlibExt.Combinatorics.Additive.SidonIdeal
 public import MathlibExt.Combinatorics.Additive.SidonIdealExistsIsSidonNotMemAlmostThinIdeal
 public import MathlibExt.Combinatorics.Additive.SidonIdealExistsMemVanDerWaerdenLacunaryDFinNotMemSidonIdeal
 public import MathlibExt.Combinatorics.Additive.SidonIdealSidonIdealIsFSigma
+public import MathlibExt.Combinatorics.Additive.SidonIdealNotSidonBlockSubsetIUnionIsSidon
 
 /-!
 # The Sidon ideal (Nowik)
@@ -76,18 +77,6 @@ Sidon sequence*, J. Number Theory 68 (1998). -/
 public theorem_wanted exists_isSidon_card_gt_rpow_sqrt_two_sub_one :
     ∃ A : Set ℕ, A.IsSidon ∧ ∀ ε : ℝ, 0 < ε →
       ∀ᶠ n : ℕ in atTop, (n : ℝ) ^ (Real.sqrt 2 - 1 - ε) < (A ∩ Set.Icc 1 n).ncard
-
-/-- **A block not covered by few Sidon sets.** Let $n \ge 1$ and $C \ge 1$ be natural
-numbers, and put $M = C \cdot 2^n + 1$ and $K = (n - 1)\binom{n}{2} + 1$. Then the block
-$\mathrm{Block}(n, C, M, K) = \{M l + C \cdot 2^k : 0 \le k < n,\ 1 \le l \le K\}$ is not
-contained in the union of any $n - 1$ Sidon subsets of $\mathbb{N}$.
-
-Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
-Lemma 3 (`integers-2025-A91-lem-3`). -/
-public theorem_wanted not_sidonBlock_subset_iUnion_isSidon {n C : ℕ} (hn : 0 < n)
-    (hC : 0 < C) :
-    ¬ ∃ S : Fin (n - 1) → Set ℕ, (∀ j, (S j).IsSidon) ∧
-      sidonBlock n C (C * 2 ^ n + 1) ((n - 1) * n.choose 2 + 1) ⊆ ⋃ j, S j
 
 end
 
