@@ -9502,6 +9502,7 @@
   "MathlibExt/Analysis/Calculus/SupNormEpsDerivPlusIntegral": {"to": "Analysis/function-spaces", "title": "Sup-norm bounds by derivatives on an interval"},
   "MathlibExt/Analysis/Calculus/SupNormSqLeHalfH1Norm": {"to": "Analysis/function-spaces", "title": "Sup-norm bounds by derivatives on an interval"},
   "MathlibExt/Analysis/Calculus/TangentSpaceLevelSet": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Tangent spaces of level sets"},
+  "MathlibExt/Analysis/Calculus/TaylorCoefficientComposition": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Multiple zeta values"},
   "MathlibExt/Analysis/Calculus/TaylorLittleoRemainder": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Taylor's theorem in several variables"},
   "MathlibExt/Analysis/Calculus/UniformLimitDerivative": {"to": "Analysis/real-functions/differential-calculus", "title": "Interchange of limits and derivatives"},
   "MathlibExt/Analysis/Calculus/UniformlyContinuousIntegrableTendstoZero": {"to": "Analysis/real-functions/integration", "title": "Uniformly continuous integrable functions vanish at infinity"},
