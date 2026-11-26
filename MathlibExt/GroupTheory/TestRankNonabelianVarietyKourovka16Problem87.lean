@@ -112,6 +112,10 @@ private theorem satisfies_iff {G : Type*} [Group G] :
     · obtain rfl : w = _ := hw
       simpa using he (φ (of 0)) (φ (of 1))
 
+private theorem commGroup_satisfies (G : Type*) [CommGroup G] : SatisfiesLaws laws G :=
+  satisfies_iff.2 ⟨fun _ _ _ => Commute.all .., fun _ _ => by
+    rw [(Commute.all ..).commutator_eq, one_pow]⟩
+
 private theorem quotient_satisfies (W : Set (FreeGroup ℕ)) (r : ℕ) :
     SatisfiesLaws W (RelativelyFreeGroup W r) := by
   intro w hw φ
@@ -141,10 +145,7 @@ private def exponents (r : ℕ) : Free r →* Multiplicative (Fin r → ℤ) :=
   let e := FreeGroup.lift (fun i : Fin r => Multiplicative.ofAdd (Pi.single i (1 : ℤ)))
   QuotientGroup.lift _ e (Subgroup.normalClosure_le_normal (by
     rintro _ ⟨w, hw, φ, rfl⟩
-    have h : SatisfiesLaws laws (Multiplicative (Fin r → ℤ)) :=
-      satisfies_iff.2 ⟨fun _ _ _ => Commute.all .., fun _ _ => by
-        rw [(Commute.all ..).commutator_eq, one_pow]⟩
-    exact h w hw (e.comp φ)))
+    exact commGroup_satisfies (Multiplicative (Fin r → ℤ)) w hw (e.comp φ)))
 
 private theorem exponents_gen {r : ℕ} (i : Fin r) :
     (exponents r (gen i)).toAdd = Pi.single i 1 := by
@@ -220,6 +221,12 @@ private theorem dihedral_satisfies : SatisfiesLaws laws (DihedralGroup 4) := by
   simp only [Commute, SemiconjBy]
   decide
 
+private theorem dihedral_not_abelian : ¬ ∀ a b : DihedralGroup 4, a * b = b * a := by
+  intro h
+  have hne : DihedralGroup.r (1 : ZMod 4) * DihedralGroup.sr 0 ≠
+      DihedralGroup.sr 0 * DihedralGroup.r 1 := by decide
+  exact hne (h _ _)
+
 /-- **Negative answer to Timoshenko's test rank question, part (a).** There is a set $W$ of laws
 in the free group $F_\mathbb{N}$ on countably many generators such that for every $r \ge 1$ the
 free $r$-generator group $G_r$ of the variety defined by $W$ has test rank $r$, but the variety is
@@ -240,9 +247,32 @@ https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-ma
 -/
 theorem testRankVarietyAbelian_refuted : ¬ testRankVarietyAbelian := by
   intro h
-  have hc := h laws (fun r _ => free_hasTestRank r) (DihedralGroup 4) dihedral_satisfies
-  have hne : DihedralGroup.r (1 : ZMod 4) * DihedralGroup.sr 0 ≠
-      DihedralGroup.sr 0 * DihedralGroup.r 1 := by decide
-  exact hne (hc _ _)
+  exact dihedral_not_abelian (h laws (fun r _ => free_hasTestRank r) (DihedralGroup 4)
+    dihedral_satisfies)
+
+/--
+Resolved false: the same variety (`[[x, y], z] = 1`, `[x, y]^p = 1`, `p` prime) is not periodic
+since it contains `ℤ`, its free groups of every rank `r ≥ 1` have test rank `r` (Kinyon-Urban,
+Proposition 3.9), and it is not the variety of all abelian groups since it contains the non-abelian
+group `UT₃(𝔽_p)`. The Kourovka Notebook (21st issue) answers 16.87(b) "No" (AI solution confirmed by
+E. I. Timoshenko). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I.
+Timoshenko); resolution: M. Kinyon and J. Urban (with Codex gpt-6-astra), Results on problems from
+the Kourovka Notebook, preprint, version 4 (19 September 2026), Section 3.23 (Problem 16.87): the
+variety M_p defined by [[x, y], z] = 1 and [x, y]^p = 1 (p prime) is nonabelian (it contains
+UT_3(F_p)) and nonperiodic (it contains Z), and Proposition 3.9 shows that its free group of rank r
+has test rank r for every r ≥ 1; the Kourovka Notebook (21st issue) marks 16.87 solved (a), b) No,
+it is not true in both cases; AI solution confirmed by E. I. Timoshenko),
+https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf.
+-/
+theorem testRankNonperiodicVarietyAllAbelian_refuted : ¬ testRankNonperiodicVarietyAllAbelian := by
+  intro h
+  apply dihedral_not_abelian
+  refine (h laws (fun r _ => free_hasTestRank r) ?_ (DihedralGroup 4)).mp dihedral_satisfies
+  rintro ⟨n, hn, hpow⟩
+  have hzero := congrArg Multiplicative.toAdd
+    (hpow (Multiplicative ℤ) (commGroup_satisfies _) (Multiplicative.ofAdd 1))
+  simp only [toAdd_pow, toAdd_ofAdd, nsmul_eq_mul, mul_one, toAdd_one] at hzero
+  omega
 
 end MathlibExt.GroupTheory.TestRankNonabelianVarietyKourovka16Problem87Wanted
