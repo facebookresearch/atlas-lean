@@ -43,6 +43,18 @@ example (B : Type) [CommRing B] [Subsingleton B] (f : A.algebra.ring →+* B)
     finiteEvaluation f 0 (Subsingleton.elim _ _)
       (hullToAcris p R A x) = f x := finiteEvaluation_hull f 0 _ x
 
+example (hR : IsSemiperfect p R) (F : HullFrobenius (A := A))
+    (n : ℕ) (x : Acris p R A) :
+    finiteProjection p R A n
+        ((WantedExt.RingTheory.SemiperfectCrystallinePeriodRings.completedWittPDFrobenius
+          (p := p) (R := R) (hR := hR) (A := A) (F := F)).hom x) =
+      MathlibExt.RingTheory.AdicCompletionMaps.quotientMap
+        (completionIdeal p R A) (completionIdeal p R A) F.hom F.completion_preserved n
+        (finiteProjection p R A n x) :=
+  RingHom.congr_fun
+    ((WantedExt.RingTheory.SemiperfectCrystallinePeriodRings.completedWittPDFrobenius
+      p R hR A F).projection n) x
+
 #print axioms MathlibExt.RingTheory.SemiperfectWittPDEnvelopes.reduction
 #print axioms MathlibExt.RingTheory.SemiperfectWittPDEnvelopes.padicScalars
 #print axioms MathlibExt.RingTheory.SemiperfectWittPDEnvelopes.UniversalEnvelope.to_unique
