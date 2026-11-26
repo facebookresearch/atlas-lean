@@ -12769,6 +12769,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/MultiplicativeAdditiveOnSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/MultiplicativeTriangularAdditive": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveFivePow": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveSevenPow": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/NonagonalAdditiveUniquenessMultiplicativeNonagonalAdditiveThreePow": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/OddPerfectHBCAdmissible": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/OddPerfectMinFac": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
