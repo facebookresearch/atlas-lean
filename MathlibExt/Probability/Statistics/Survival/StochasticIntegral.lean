@@ -595,10 +595,10 @@ noncomputable def kaplanMeierRemainder (N Y : ℕ → Ω → ℝ) (α : ℕ → 
   kaplanMeierProcess N Y (k - 1) ω / prodIntegral α k * if Y k ω = 0 then 1 else 0
 
 /-- **Martingale representation of the Kaplan–Meier estimator** (pathwise, from Duhamel's
-equation): with `S = 𝒫(1 - dα)` and `M = N - ∫ Y dα`,
-`Ŝ/S - 1 = -∫ Ŝ₋ / S · Y⁻¹ dM + ∫ Ŝ₋ / S · 1{Y = 0} dα`, where the increment from `k` to
-`k + 1` of the first integral has integrand `Ŝ_k / S_{k+1} · Y_{k+1}⁻¹` and `Y_{k+1}⁻¹` is the total
-inverse, `0` when `Y_{k+1} = 0` (zero risk).
+equation): if no increment `α (k + 1) - α k` equals `1`, then with `S = 𝒫(1 - dα)` and
+`M = N - ∫ Y dα`, `Ŝ/S - 1 = -∫ Ŝ₋ / S · Y⁻¹ dM + ∫ Ŝ₋ / S · 1{Y = 0} dα`, where the
+increment from `k` to `k + 1` of the first integral has integrand `Ŝ_k / S_{k+1} · Y_{k+1}⁻¹`
+and `Y_{k+1}⁻¹` is the total inverse, `0` when `Y_{k+1} = 0` (zero risk).
 The second term is the vanishing-risk remainder; it is `0` while the risk set is non-empty. -/
 theorem kaplanMeierProcess_div_sub_one (N Y : ℕ → Ω → ℝ) {α : ℕ → ℝ}
     (hα : ∀ k, α (k + 1) - α k ≠ 1) (n : ℕ) (ω : Ω) :
