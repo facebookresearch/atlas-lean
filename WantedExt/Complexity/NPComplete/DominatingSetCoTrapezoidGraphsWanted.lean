@@ -26,7 +26,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Basic.Real.Basic
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ lines are `y = 1` and `y = 0` in `ℝ × ℝ`; vertex `v` gets the trapezoid wit
 `convexHull`) of its four corners (`trapezoid`), and two distinct vertices are adjacent exactly
 when their trapezoids meet (`IsTrapezoidGraph`). The complement of `G` is Mathlib's `Gᶜ`.
 
-This is the restriction of DOMINATING SET ([GT2], `DominatingSetWanted`) to co-trapezoid graphs.
+This is the restriction of DOMINATING SET ([GT2], `DominatingSetDefs`) to co-trapezoid graphs.
 The instance type, the graph and the question are the parent's
 (`DominatingSet.DominatingSetInstance`, `DominatingSet.Graph`,
 `DominatingSet.DominatingSetFeasible`); `WellFormed` is the parent's plus the restriction and

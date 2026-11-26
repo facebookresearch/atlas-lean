@@ -68,21 +68,6 @@ public theorem_wanted exists_reverse_symmetric_density_ne_gaussKuzmin (N : ℕ) 
         ∫ x in cfCylinder a, f x = ∫ x in cfCylinder a.reverse, f x) ∧
       ∃ x ∈ Set.Icc (0 : ℝ) 1, f x ≠ 1 / (log 2 * (1 + x))
 
-/-- **Explicit Gauss–Kuzmin mass of a string.** Let $a$ be a string of $n$ positive integers, let
-$p$, $q'$ and $q$ be the upper-right, lower-left and lower-right entries of its convergent matrix
-$C(a)$, and let $\overleftarrow{a}$ be the reverse of $a$. Then the Gauss–Kuzmin masses satisfy
-$P_{GK}(a) = P_{GK}(\overleftarrow{a})$ and
-$P_{GK}(a) = \left|\log_2\left(1 + \frac{(-1)^n}{(p + q)(q' + q)}\right)\right|$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 2.5 (`integers-2025-A89-lem-2-5`), equation (2.13). -/
-public theorem_wanted gaussKuzminMass_eq_abs_logb (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) :
-    gaussKuzminMass a = gaussKuzminMass a.reverse ∧
-      gaussKuzminMass a = |logb 2 (1 + (-1) ^ a.length / (((convergentMatrix a 0 1 : ℝ) +
-          (convergentMatrix a 1 1 : ℝ)) * ((convergentMatrix a 1 0 : ℝ) +
-          (convergentMatrix a 1 1 : ℝ))))|
-
 /-- **Reversal symmetry from agreement with the Gauss–Kuzmin measure.** Let $\mu$ be a probability
 measure on $\mathbb{R}$ and let $N \ge 1$. For a string $a$ of positive integers write $I(a)$ for
 its fundamental interval, $P_{GK}(a)$ for its Gauss–Kuzmin measure and $a^{\mathrm{rev}}$ for its
