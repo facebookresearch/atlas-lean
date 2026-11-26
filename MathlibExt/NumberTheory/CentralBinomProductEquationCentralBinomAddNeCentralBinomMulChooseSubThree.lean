@@ -8,24 +8,19 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Data.Nat.Prime.Defs
-public import MathlibExt.NumberTheory.CentralBinomProductEquationLeTen
-public import MathlibExt.NumberTheory.CentralBinomProductEquationOne
-public import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
-public import MathlibExt.NumberTheory.CentralBinomProductEquationSubOne
-public import MathlibExt.NumberTheory.CentralBinomProductInequality
+public import Mathlib.Data.Nat.Choose.Central
+import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
 
 import Mathlib.Tactic.Ring
 
 /-!
 # Solvability of `C(2k, k) = C(2a, a) C(x + 2b, b)`
 
-Statements from Meaghan Allen, *Solvability of
-$binom{2k}{k} = binom{2a}{a}binom{x+2b}{b}$*, INTEGERS 26 (2026), Article A26
-(arXiv 2406.10404). Throughout, `k = a + b` is substituted, `C(2k, k)` is
-`Nat.centralBinom`, and the prime-factor lemmas quoted from Hanson, Shanta-Shorey and
-Nair-Shorey are stated for `∏_{i<m} (n + i) = n (n+1) ⋯ (n+m-1)`.
+The case `x = a - 3` of Meaghan Allen, *Solvability of
+$\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*, INTEGERS 26 (2026), Article A26
+(arXiv 2406.10404), with `k = a + b` substituted and `C(2k, k)` written as
+`Nat.centralBinom`. The proof compares both sides with binomial recurrences in `b`, and
+handles the remaining small values of `b` with the small-case theorem.
 -/
 
 namespace MetaMathlibExt
