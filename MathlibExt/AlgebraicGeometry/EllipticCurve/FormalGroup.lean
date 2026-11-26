@@ -463,7 +463,6 @@ theorem kwB_Rc {σ : Type*} {a b : MvPowerSeries σ R}
   simp only [fgGenW]
   exact hfix.symm
 
-set_option maxRecDepth 100000 in
 open Classical in
 theorem obl1 {σ : Type*} {a b : MvPowerSeries σ R}
     (ha : MvPowerSeries.constantCoeff a = 0) (hb : MvPowerSeries.constantCoeff b = 0) (hne : a ≠ b)

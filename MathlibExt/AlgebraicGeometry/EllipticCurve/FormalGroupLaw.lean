@@ -40,8 +40,6 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 
 set_option autoImplicit false
 
-set_option maxHeartbeats 800000
-
 noncomputable section
 
 open PowerSeries
