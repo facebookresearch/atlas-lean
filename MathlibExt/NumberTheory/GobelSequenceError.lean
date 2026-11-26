@@ -220,6 +220,44 @@ private theorem polynomial_mul_geometric (R : ℝ) :
 end gobelSequence_error_isBigO
 
 open gobelSequence_error_isBigO in
+/-- **The logarithmic identity behind the Göbel error.** Let $k, l \ge 2$ be natural numbers, let
+$g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C > 0$ be a real number such that the real
+numbers $C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$. Then for every natural
+number $n \ge 1$ for which the two series below converge,
+
+$$\sum_{m=1}^{\infty} \frac{\log(m + n)}{k^m} - \sum_{m=1}^{\infty} \frac{1}{k^m}
+\log\Bigl(1 + \frac{m + n - 1}{g_{k,l}(m + n - 1)^{k-1}}\Bigr) =
+k^n \bigl(\log C_{k,l}(n) - \log C\bigr).$$
+
+Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
+Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
+Article 24.8.1, proof of Theorem 11 (`jis-2024-24.8.1-thm-11`). -/
+public theorem gobelSequence_log_series_sub_correction_series {k l n : ℕ} {C : ℝ}
+    (hk : 2 ≤ k) (hl : 2 ≤ l)
+    (hC : Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
+      atTop (𝓝 C))
+    (hC₀ : 0 < C) (hn : 1 ≤ n)
+    (ha : Summable (fun m : ℕ => Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1)))
+    (hb : Summable (fun m : ℕ => Real.log (1 + ((m + n : ℕ) : ℝ) /
+      (gobelSequence k l (m + n) : ℝ) ^ (k - 1)) / (k : ℝ) ^ (m + 1))) :
+    (∑' m : ℕ, Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1)) -
+        (∑' m : ℕ, Real.log (1 + ((m + n : ℕ) : ℝ) /
+          (gobelSequence k l (m + n) : ℝ) ^ (k - 1)) / (k : ℝ) ^ (m + 1)) =
+      (k : ℝ) ^ n * (Real.log ((gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n)) -
+        Real.log C) := by
+  have hlog : (fun m : ℕ => Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1)) = logTerm k n := by
+    funext m
+    simp only [logTerm, weight, div_eq_inv_mul]
+  have hcorr : (fun m : ℕ => Real.log (1 + ((m + n : ℕ) : ℝ) /
+      (gobelSequence k l (m + n) : ℝ) ^ (k - 1)) / (k : ℝ) ^ (m + 1)) =
+      fun m => weight k m * correction k l (m + n) := by
+    funext m
+    simp only [weight, correction, div_eq_inv_mul]
+  rw [hlog] at ha ⊢
+  rw [hcorr] at hb ⊢
+  exact sum_log_difference hk hl hC hC₀ hn ha hb
+
+open gobelSequence_error_isBigO in
 -- The geometric estimate works for all real exponents, so the source hypothesis is unused.
 set_option linter.unusedVariables false in
 /-- **The Göbel error term decays faster than every power of $n$.** Let $k, l \ge 2$ be natural
