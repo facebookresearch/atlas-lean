@@ -10,41 +10,52 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Normed.Module.Basic
-public import Mathlib.Analysis.Normed.Operator.Basic
-public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.Topology.Algebra.Module.Multilinear.Basic
 
 @[expose] public section
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook75Wanted
 
 /-- **Scottish Book Problem 75 (Mazur), general Banach-space form.** The claim that for every real
-Banach space $E$, every set $R \subseteq E$, every continuous bilinear form $B$ on $E$, every
-continuous linear functional $L$ on $E$, every constant $c \in \mathbb{R}$ and every real
-$\alpha \ne 0$ the following holds for the continuous polynomial
-$W(x) = B(x, x) + L(x) + c$ of degree at most two: if for some $\varepsilon > 0$ the values
+Banach space $E$, every set $R \subseteq E$, every continuous polynomial $W : E \to \mathbb{R}$
+and every real $\alpha \ne 0$ the following holds: if for some $\varepsilon > 0$ the values
 $|W(x)|$ are bounded on the open $\varepsilon$-neighbourhood of $R$, that is, for the $x \in E$
 with $\operatorname{dist}(x, r) < \varepsilon$ for some $r \in R$, then for some $\delta > 0$
 the values $|W(x)|$ are bounded on the open $\delta$-neighbourhood of the scaled set
 $\alpha R = \{\alpha r : r \in R\}$.
 
-The linear and constant terms are essential: for a homogeneous quadratic $W(x) = B(x, x)$ the
-identity $W(\alpha x) = \alpha^2 W(x)$ transports any such bound to the scaled set, so that case
-is trivial, whereas Pestov's counterexample is inhomogeneous. -/
+A continuous polynomial of degree at most $n$ is given as a finite sum of diagonals of continuous
+multilinear forms, $W(x) = \sum_{j=0}^{n} P_j(x, \dots, x)$ with $P_j$ a continuous $j$-linear
+form on $E$, the $j = 0$ term being the constant term. Over $\mathbb{R}$ every continuous
+polynomial has this form, by polarization, and every such sum is a continuous polynomial, so the
+claim covers every finite degree.
+
+The claim holds for every homogeneous $W$ of degree $d$, since the identity
+$W(\alpha x) = \alpha^d W(x)$ transports a bound on the $\varepsilon$-neighbourhood of $R$ to the
+$|\alpha| \varepsilon$-neighbourhood of $\alpha R$; Pestov's counterexample is an inhomogeneous
+polynomial of degree two.
+
+Source: S. Mazur, Problem 75 of the Scottish Book (1935), in Ulam's translation as quoted by
+V. Pestov, "Two 1935 questions of Mazur about polynomials in Banach spaces: a counter-example",
+1997, arXiv:funct-an/9705002, Section 1. -/
 def ScottishBookProblem75Claim : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
-    (R : Set E) (B : E →L[ℝ] E →L[ℝ] ℝ) (L : E →L[ℝ] ℝ) (c α : ℝ), α ≠ 0 →
+    (R : Set E) (n : ℕ)
+    (P : (j : Fin (n + 1)) →
+      ContinuousMultilinearMap ℝ (fun _ : Fin (j : ℕ) => E) ℝ)
+    (α : ℝ), α ≠ 0 →
     (∃ ε : ℝ, 0 < ε ∧ ∃ C : ℝ,
-      ∀ x : E, (∃ r ∈ R, dist x r < ε) → |B x x + L x + c| ≤ C) →
+      ∀ x : E, (∃ r ∈ R, dist x r < ε) → |∑ j, P j (fun _ => x)| ≤ C) →
     ∃ δ : ℝ, 0 < δ ∧ ∃ C : ℝ,
-      ∀ x : E, (∃ r ∈ R, dist x (α • r) < δ) → |B x x + L x + c| ≤ C
+      ∀ x : E, (∃ r ∈ R, dist x (α • r) < δ) → |∑ j, P j (fun _ => x)| ≤ C
 
 /--
 **Mazur's Scottish Book Problem 75 fails in general Banach spaces.** The Scottish Book Problem 75
-claim is false: there are a real Banach space $E$, a set $R \subseteq E$, a continuous bilinear
-form $B$ on $E$, a continuous linear functional $L$ on $E$, a constant $c \in \mathbb{R}$ and a
-real $\alpha \ne 0$ such that, for $W(x) = B(x, x) + L(x) + c$, the values $|W(x)|$ are bounded
-on some open $\varepsilon$-neighbourhood of $R$ with $\varepsilon > 0$ but unbounded on every
-open $\delta$-neighbourhood of $\alpha R = \{\alpha r : r \in R\}$ with $\delta > 0$.
+claim is false: there are a real Banach space $E$, a set $R \subseteq E$, a continuous polynomial
+$W(x) = \sum_{j=0}^{n} P_j(x, \dots, x)$ on $E$, with $P_j$ a continuous $j$-linear form, and a
+real $\alpha \ne 0$ such that the values $|W(x)|$ are bounded on some open
+$\varepsilon$-neighbourhood of $R$ with $\varepsilon > 0$ but unbounded on every open
+$\delta$-neighbourhood of $\alpha R = \{\alpha r : r \in R\}$ with $\delta > 0$.
 
 Source: S. Mazur, Problem 75 of the Scottish Book; refuted by
 V. Pestov, whose counterexample to Problem 55 is a continuous
