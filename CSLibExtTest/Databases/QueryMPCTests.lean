@@ -106,4 +106,64 @@ example (A : Protocol 1 3 Bool Unit) (s : Fin 1 → Bits) (ω : Bool) (r : ℕ)
     (v : Fin 1 → View 1 3) : roundLoad (A.mail ω (.distributed s) r v) = 0 := by
   simp [roundLoad, Protocol.mail]
 
+-- On this example domain p ≤ M and both relation words are nonempty. This is a chosen
+-- encoding/regime, not a restriction attributed to BKS. Each word is a unary relation's
+-- membership bitmap; the query asks whether its first element belongs to both relations.
+private def bitDomain (p : ℕ+) (n : Fin 2 → ℕ) : Prop :=
+  0 < n 0 ∧ 0 < n 1 ∧ (p : ℕ) ≤ n 0 + n 1
+
+private def memberBit (s : Bits) : Bool := s.head? == some true
+
+private def intersectionAtFirst (D : Database 2) : Finset Unit :=
+  if memberBit (D 0) && memberBit (D 1) then {()} else ∅
+
+private def twoSenders (p : ℕ+) : Protocol p 2 Bool Unit where
+  send _ _ _ _ := []
+  inject _ _ d dst := if dst = 0 then [memberBit d] else []
+  report _ w v := if w = 0 then match v.history with
+    | [] => ∅
+    | m :: _ => intersectionAtFirst m.source
+    else ∅
+
+private theorem twoSenders_ok (p : ℕ+) (D : Database 2) (L : ℕ) (hL : 2 ≤ L) (ω : Bool) :
+    (twoSenders p).output ω (.separate D) L 1 = some (intersectionAtFirst D) := by
+  let I : Start p 2 := .separate D
+  let m := (twoSenders p).mail ω I 0 I.initial
+  have fit : roundLoad m ≤ L := by
+    rw [roundLoad_le_iff]; intro w
+    by_cases hw : w = 0 <;> simp [m, I, Protocol.mail, twoSenders, hw, hL]
+  have ran : (twoSenders p).run ω I L 1 =
+      some (fun w => {(I.initial w) with history := [m w]}) :=
+    (Protocol.run_succ_eq_some_iff _ _ _ _ 0 _).2 ⟨_, rfl, fit, rfl⟩
+  rw [Protocol.output, ran]; apply congrArg some; ext a
+  have onlyCollector (S : Finset Unit) : (∃ w : Fin p, a ∈ if w = 0 then S else ∅) ↔ a ∈ S := by
+    constructor
+    · rintro ⟨w, hw⟩; split at hw <;> simp_all
+    · intro ha; exact ⟨0, by simpa using ha⟩
+  simpa +contextual [m, I, Protocol.mail, Start.initial, twoSenders, intersectionAtFirst,
+    memberBit] using onlyCollector (intersectionAtFirst D)
+
+-- The protocol communicates two actual bits under the ε=0 reporting predicate, not just
+-- on a finite trace: C=2 fits them throughout the domain, even for unbounded p and M.
+example (μ : Measure Bool) [IsProbabilityMeasure μ] :
+    Computes μ .separate bitDomain (fun _ _ => 0) (fun _ => True) intersectionAtFirst
+      (fun p _ _ => twoSenders p) 1 0 := by
+  refine ⟨by constructor <;> norm_num, 2, by norm_num, ?_⟩
+  intro p n hn; refine ⟨by constructor <;> norm_num, ?_⟩; intro s x _; cases s
+  have size : (p : ℕ) ≤ inputBits x.words := by
+    simpa [inputBits, Payload.words, Fin.sum_univ_two] using hn.2.2
+  have cap : 2 ≤ receiveCap 2 0 (inputBits x.words) p := by
+    apply (le_receiveCap_iff (by norm_num) ..).2
+    have hp : (0 : ℝ) < (p : ℕ) := by exact_mod_cast p.pos
+    have hm : (p : ℝ) ≤ inputBits x.words := by exact_mod_cast size
+    simp only [sub_zero, Real.rpow_one, Nat.cast_ofNat]; apply (le_div_iff₀ hp).2; linarith
+  simp [Schedule.place, twoSenders_ok p x.words _ cap]
+  have allBits : ({false, true} : Set Bool) = Set.univ := by ext b; cases b <;> simp
+  rw [allBits, measure_univ]
+
+example : ¬ bitDomain 3 (fun _ => 1) := by unfold bitDomain; decide
+example (p : ℕ+) : bitDomain p (fun _ => p) := ⟨p.pos, p.pos, Nat.le_add_right ..⟩
+example : intersectionAtFirst ![[true], [true]] = {()} ∧
+    intersectionAtFirst ![[true], [false]] = ∅ := by decide
+
 end Cslib.Databases.QueryMPCTests

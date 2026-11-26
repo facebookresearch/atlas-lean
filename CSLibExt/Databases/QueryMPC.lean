@@ -234,21 +234,22 @@ theorem Protocol.separate_zero_cap (A : Protocol p k Ω α) (D : Database k) (ω
       exact congrArg₂ Inbox.mk (funext a) (funext b)
     simp [hm, ih prev w, List.replicate_succ]
 
-/-- In the raw-position model the count, relation lengths and schedule are public. Fix one
-family indexed by these parameters, one law for the common seed and a reporting query. A
-single positive constant works for every positive count, every shape, every schedule and
-every valid payload of that shape. With exponent in $[0,1]$ and failure tolerance in $[0,1)$,
-the measurable event of finishing within the delivery cap with exactly the query answer as
-the union of local reports must have probability at least $1-\eta$ on each such input. -/
+/-- Fix the admissible public worker counts and relation lengths, and a failure tolerance for
+these pairs, before choosing a protocol family. The space exponent lies in $[0,1]$. One positive
+cap constant works throughout the specified domain. On each admissible pair the tolerance lies
+in $[0,1)$; on every schedule and valid payload there, the measurable event of completion with
+exactly the query answer as the union of reports has probability at least one minus that tolerance
+under the common seed law. Constant tolerance is the special case of a constant function. -/
 def Computes [DecidableEq α] [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (mode : Convention) (valid : Database k → Prop) (query : Database k → Finset α)
+    (mode : Convention) (admissible : ℕ+ → (Fin k → ℕ) → Prop) (η : ℕ+ → (Fin k → ℕ) → ℝ)
+    (valid : Database k → Prop) (query : Database k → Finset α)
     (A : (p : ℕ+) → (n : Fin k → ℕ) → Schedule p n mode → Protocol p k Ω α)
-    (R : ℕ) (ε η : ℝ) : Prop :=
-  ε ∈ Set.Icc 0 1 ∧ η ∈ Set.Ico 0 1 ∧ ∃ C : ℝ, 0 < C ∧
-    ∀ (p : ℕ+) (n : Fin k → ℕ) (s : Schedule p n mode) (x : Payload n), valid x.words →
+    (R : ℕ) (ε : ℝ) : Prop :=
+  ε ∈ Set.Icc 0 1 ∧ ∃ C : ℝ, 0 < C ∧ ∀ (p : ℕ+) (n : Fin k → ℕ), admissible p n →
+    η p n ∈ Set.Ico 0 1 ∧ ∀ (s : Schedule p n mode) (x : Payload n), valid x.words →
       let ok := {ω | (A p n s).output ω (s.place x) (receiveCap C ε (inputBits x.words) p) R =
         some (query x.words)}
-      MeasurableSet ok ∧ ENNReal.ofReal (1 - η) ≤ μ ok
+      MeasurableSet ok ∧ ENNReal.ofReal (1 - η p n) ≤ μ ok
 
 section Gather
 
@@ -305,11 +306,11 @@ seed law, one round at space exponent one suffices with zero failure. A designat
 gathers the shards and inverts the public wiring, or receives complete relation words, then
 reports the answer. Its receive cap is the input bit length. -/
 theorem computes_one_round_full_load [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (mode : Convention) (valid : Database k → Prop) (q : Database k → Finset α) :
-    ∃ A, Computes μ mode valid q A 1 1 0 := by
-  refine ⟨gather q, by constructor <;> norm_num, by constructor <;> norm_num,
-    1, zero_lt_one, ?_⟩
-  intro p n s x _
+    (mode : Convention) (admissible : ℕ+ → (Fin k → ℕ) → Prop)
+    (valid : Database k → Prop) (q : Database k → Finset α) :
+    ∃ A, Computes μ mode admissible (fun _ _ => 0) valid q A 1 1 := by
+  refine ⟨gather q, by constructor <;> norm_num, 1, zero_lt_one, ?_⟩
+  intro p n _; refine ⟨by constructor <;> norm_num, ?_⟩; intro s x _
   simp [receiveCap, gather_ok q p s x]
 
 end Gather
