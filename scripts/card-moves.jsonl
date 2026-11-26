@@ -894,3 +894,11 @@
 {"statement": "af_026d277ff28ebea7686b7042", "page": "ComputerScience/databases/conjunctive-queries/cq-minimization-and-ucq-containment", "replaced_by": "af_669b54b81713869bd82035f7"}
 {"statement": "af_4429c9b6f4e77d138bd30ab8", "page": "ComputerScience/databases/datalog/datalog-queries-are-monotone-and-homomorphism-preserved-cq-i", "replaced_by": "af_4142dd4fe89343ef0e3e6106"}
 {"statement": "af_54ac9ab2b32b994356a9af05", "page": "ComputerScience/databases/dependencies-and-the-chase/multivalued-and-join-dependencies-4nf", "replaced_by": "af_9417f073614d64580e452b26"}
+{"page": "NumberTheory/not-yet-classified/sqrt-abs-discriminant-le-of-gauss-class", "to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms/sqrt-abs-discriminant-le-of-gauss-class", "article_id": "af_e2bae719474c68cd5d23dc1c"}
+{"page": "NumberTheory/not-yet-classified/rank-eq-one-of-simple-zero-l-series", "to": "NumberTheory/arithmetic-geometry/rank-eq-one-of-simple-zero-l-series", "article_id": "af_abf98fc4e071fc24225210b4"}
+{"folder": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing", "article_id": "af_ee46fa236c1809f919c09422"}
+{"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/cassels-tate-pairing", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/cassels-tate-pairing", "article_id": "af_16ad33e0fae74766f1934edc"}
+{"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-points-top-rep", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-points-top-rep", "article_id": "af_43a8413d60720aa677c01690"}
+{"page": "AlgebraicGeometry/not-yet-classified/cassels-tate-pairing/elliptic-tate-shafarevich", "to": "NumberTheory/arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich", "article_id": "af_29b9d1c45f039d9e01131982"}
+{"page": "Probability/stochastic-calculus/blumenthal-zero-one-law/gaussian-real-ioi-zero", "to": "Probability/distributions/continuous/gaussian-real-ioi-zero", "article_id": "af_a7cf73e1726dc09baac90a88"}
+{"statement": "af_a151da47d041132e76b05670", "page": "Biology/epidemiology/epidemics-on-networks/spectral-radius-and-die-out-of-sis-epidemics", "replaced_by": "af_f94a233790a941a5f344136d"}
