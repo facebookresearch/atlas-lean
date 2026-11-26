@@ -11,20 +11,34 @@ module
 public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Probability.MarkovMixing
+public import CSLibExt.InformationRetrieval.PageRank
 
 /-!
 # Calibrated language models must hallucinate (finite core)
 
 Finite core of Kalai and Vempala, *Calibrated Language Models Must
-Hallucinate*: coarsenings, calibration, the level-set and adaptive
-miscalibration measures, Lemma 2, and Theorem 1 for finitely
-supported mixtures. The Corollary 1 statement contract lives in
-`WantedExt`; this module carries only its vocabulary (pushforward,
-facts, hallucinations, monofact rate, sparsity, regularity).
+Hallucinate*, arXiv:2311.14648v3: coarsening and calibration
+(Definition 1), the level-set miscalibration `Mis_∞` (Eq. (2)), the
+adaptive partition and the miscalibration `Mis_b` (Definition 2),
+Lemma 2 and Theorem 1. Lemma 2 and Theorem 1 are proved in the finite
+setting: a finite set of factoids, as in the source, and a finite
+mixture `∑ i, w i • p i` in place of the source's prior `ν`. The module
+provides only the vocabulary used to state Corollary 1: pushforward,
+facts, hallucinations, observed factoids (Eq. (4)), the monofact rate
+(Eq. (5)), sparsity (Assumption 1) and regularity (Definitions 3 and 4),
+for a finite set of documents and a finite mixture of document
+distributions.
 
-Scope restriction relative to the source: the document set and all
-mixtures are finite here, and `0 < δ`, `1 ≤ b`, `1 ≤ n` replace the
-source's boundary conventions.
+`Mis_b(g, p) = 0` implies that `g` is calibrated to `p`
+(`isCalibratedTo_of_mis_eq_zero`), but the converse, which the source
+states for every `b`, fails. A bin of the adaptive partition can contain
+points where `g` takes different values, and coarsening `p` over such a
+bin cannot return `g`. For example, `p = g = (1/2, 1/2, 0)` is
+calibrated to itself; with `b = 2` the threshold is `t₁ = 1/2`, so the
+closed first bin `[0, t₁]` is all of `Y` and `Mis₂(p, p) = 1/3`, while
+`Mis_∞(p, p) = 0` (`isCalibratedTo_iff_misInf_eq_zero`). Since
+`1/b ≤ min_{y ∈ supp g} g(y)` here, the same example also contradicts
+the source's remark that `Mis_b = Mis_∞` for such `b`.
 -/
 
 @[expose] public section
@@ -34,10 +48,7 @@ namespace MachineLearning
 namespace CalibratedHallucination
 
 open MathlibExt.Probability.MarkovMixing (tvDist)
-
-/-- A probability vector on a finite type: nonnegative, summing to 1. -/
-def IsProbVec {α : Type*} [Fintype α] (D : α → ℝ) : Prop :=
-  (∀ a, 0 ≤ D a) ∧ ∑ a, D a = 1
+open Cslib.InformationRetrieval.PageRank (IsProbVec)
 
 section Coarsening
 
@@ -86,8 +97,8 @@ theorem sum_coarsen (P : Finpartition (Finset.univ : Finset Y)) (D : Y → ℝ) 
     rw [hpart y hy]
   rw [havg, Finset.sum_const, nsmul_eq_mul, mul_comm, div_mul_cancel₀ _ hcard]
 
-theorem isCalibratedTo_iff_misInf_eq_zero {g p : Y → ℝ}
-    (hp : IsProbVec p) (hg : IsProbVec g) :
+/-- `g` is calibrated to `p` exactly when `Mis_∞(g, p) = 0`. -/
+theorem isCalibratedTo_iff_misInf_eq_zero {g p : Y → ℝ} :
     IsCalibratedTo g p ↔ misInf g p = 0 := by
   classical
   constructor
@@ -203,55 +214,19 @@ theorem isCalibratedTo_iff_misInf_eq_zero {g p : Y → ℝ}
     rw [hfin]
     exact MathlibExt.Probability.MarkovMixing.tvDist_self g
   · intro h0
-    have hmass : ∑ y, coarsen (levelPartition g) p y = ∑ y, g y := by
-      rw [sum_coarsen, hp.2, hg.2]
-    have htv0 : tvDist (coarsen (levelPartition g) p) g = 0 := h0
-    have hle : ∀ y, coarsen (levelPartition g) p y ≤ g y := by
-      intro y
-      have hsub : coarsen (levelPartition g) p y - g y
-          = ∑ z ∈ ({y} : Finset Y),
-            (coarsen (levelPartition g) p z - g z) :=
-        (Finset.sum_singleton _ _).symm
-      have htot : ∑ z ∈ Finset.univ,
-          (coarsen (levelPartition g) p z - g z) = 0 := by
-        rw [Finset.sum_sub_distrib, hmass, sub_self]
-      have hsplit := Finset.sum_sdiff (s₁ := ({y} : Finset Y))
-        (s₂ := Finset.univ)
-        (f := fun z => coarsen (levelPartition g) p z - g z)
-        (Finset.subset_univ ({y} : Finset Y))
-      have hU : ∑ z ∈ ({y} : Finset Y),
-          (coarsen (levelPartition g) p z - g z)
-          ≤ ∑ z ∈ ({y} : Finset Y),
-            |coarsen (levelPartition g) p z - g z| :=
-        Finset.sum_le_sum (fun z _ => le_abs_self _)
-      have hUc : -(∑ z ∈ Finset.univ \ {y},
-          (coarsen (levelPartition g) p z - g z))
-          ≤ ∑ z ∈ Finset.univ \ {y},
-            |coarsen (levelPartition g) p z - g z| := by
-        have h1 : ∑ z ∈ Finset.univ \ {y},
-            (-(coarsen (levelPartition g) p z - g z))
-            ≤ ∑ z ∈ Finset.univ \ {y},
-              |coarsen (levelPartition g) p z - g z| :=
-          Finset.sum_le_sum (fun z _ => neg_le_abs _)
-        rw [Finset.sum_neg_distrib] at h1
-        exact h1
-      have habs := Finset.sum_sdiff (s₁ := ({y} : Finset Y))
-        (s₂ := Finset.univ)
-        (f := fun z => |coarsen (levelPartition g) p z - g z|)
-        (Finset.subset_univ ({y} : Finset Y))
-      have htv : tvDist (coarsen (levelPartition g) p) g
-          = (1 / 2 : ℝ) * ∑ z,
-            |coarsen (levelPartition g) p z - g z| := rfl
-      have hle1 : coarsen (levelPartition g) p y - g y
-          ≤ tvDist (coarsen (levelPartition g) p) g := by
-        rw [hsub, htv]
-        linarith [hU, hUc, hsplit, habs, htot]
-      rw [htv0] at hle1
-      exact sub_nonpos.mp hle1
+    have hsum : ∑ y, |coarsen (levelPartition g) p y - g y| = 0 := by
+      have htv : (1 / 2 : ℝ)
+          * ∑ y, |coarsen (levelPartition g) p y - g y| = 0 := h0
+      rcases mul_eq_zero.mp htv with h' | h'
+      · norm_num at h'
+      · exact h'
+    have hall := (Finset.sum_eq_zero_iff_of_nonneg
+      (fun y _ => abs_nonneg _)).mp hsum
     have h01 : ∀ y, coarsen (levelPartition g) p y = g y := by
-      have h := (Finset.sum_eq_sum_iff_of_le (fun y _ => hle y)).mp hmass
       intro y
-      exact h y (Finset.mem_univ y)
+      have hy0 := hall y (Finset.mem_univ y)
+      rw [abs_eq_zero, sub_eq_zero] at hy0
+      exact hy0
     exact ⟨levelPartition g, (funext h01).symm⟩
 
 end Coarsening
@@ -361,7 +336,8 @@ theorem binIndex_spec {g : Y → ℝ} (hg : IsProbVec g) {b : ℕ}
   have hle' : binIndex g b y ≤ binIndex g b y - 1 := csInf_le hbelow hmem'
   omega
 
-/-- Eq. (6): `q(U) − g(U) ≤ ‖q − g‖_TV` when the total masses agree. -/
+/-- Eq. (6): `q(U) − g(U) ≤ ‖q − g‖_TV` when the total masses agree.
+Only the two total masses need to be equal; neither needs to be `1`. -/
 theorem sub_le_tvDist_of_sum_eq {q g : Y → ℝ} (h : ∑ y, q y = ∑ y, g y)
     (U : Finset Y) :
     ∑ y ∈ U, q y - ∑ y ∈ U, g y ≤ tvDist q g := by
@@ -408,6 +384,10 @@ noncomputable def adaptivePartition (g : Y → ℝ) (b : ℕ) :
 noncomputable def mis (b : ℕ) (g p : Y → ℝ) : ℝ :=
   tvDist (coarsen (adaptivePartition g b) p) g
 
+/-- If `Mis_b(g, p) = 0`, then `g` is calibrated to `p`. The converse
+fails: a bin of the adaptive partition can contain points where `g`
+takes different values, and coarsening `p` over such a bin cannot
+return `g`. -/
 theorem isCalibratedTo_of_mis_eq_zero {b : ℕ} {g p : Y → ℝ}
     (h : mis b g p = 0) : IsCalibratedTo g p := by
   have hsum : ∑ y, |coarsen (adaptivePartition g b) p y - g y| = 0 := by
@@ -723,44 +703,47 @@ theorem expect_posPart_mass_sub_coarsen_le {ι : Type*} [Fintype ι]
           (Finset.image_nonempty.mpr hS) := by
         rw [← Finset.sum_mul, hcardU]
 
-/-- Theorem 1, literal max form; `F` is a function of `p`. -/
+/-- Theorem 1 for a finite mixture `∑ i, w i • p i` and a fixed
+partition `P`, with the source's maxima over `U = Y \ O` written as
+`Finset.max'`. Each component `i` has its own fact set `F i`, and the
+source's hypothesis `O ⊆ F` is not needed. -/
 theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (hw : IsProbVec w) (p : ι → Y → ℝ)
     (hp : ∀ i, IsProbVec (p i))
-    (O : Finset Y) (F : (Y → ℝ) → Finset Y) (hOF : ∀ i, O ⊆ F (p i))
+    (O : Finset Y) (F : ι → Finset Y)
     (g : Y → ℝ) (hg : IsProbVec g) (P : Finpartition (Finset.univ : Finset Y))
     (hU : (Finset.univ \ O).Nonempty) :
     ∑ i, w i * max (∑ y ∈ Finset.univ \ O, p i y - tvDist (coarsen P (p i)) g
-                      - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+                      - ∑ y ∈ Finset.univ \ F i, g y) 0
       ≤ ((Finset.univ \ O).image
-            (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+            (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU)
         + O.card * ((Finset.univ \ O).image (fun y => ∑ i, w i * p i y)).max'
           (Finset.image_nonempty.mpr hU) := by
   have hM1_nonneg : 0 ≤ ((Finset.univ \ O).image
-      (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+      (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
       (Finset.image_nonempty.mpr hU) := by
     have hmem := Finset.max'_mem ((Finset.univ \ O).image
-      (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i))
+      (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i))
       (Finset.image_nonempty.mpr hU)
     obtain ⟨y₀, -, hy₀'⟩ := Finset.mem_image.mp hmem
-    have hy₀'' : (∑ i ∈ Finset.univ.filter (fun i => y₀ ∈ F (p i)), w i)
+    have hy₀'' : (∑ i ∈ Finset.univ.filter (fun i => y₀ ∈ F i), w i)
         = ((Finset.univ \ O).image
-          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU) := hy₀'
     rw [← hy₀'']
     apply Finset.sum_nonneg
     intro i _
     exact hw.1 i
   have hPr_le : ∀ y ∈ Finset.univ \ O,
-      (∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)
+      (∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)
         ≤ ((Finset.univ \ O).image
-          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU) := by
     intro y hy
     exact Finset.le_max' _ _
       (Finset.mem_image_of_mem
-        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i) hy)
+        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i) hy)
   have hmass : ∀ i, ∑ y, coarsen P (p i) y = ∑ y, g y := by
     intro i
     rw [sum_coarsen, (hp i).2, hg.2]
@@ -770,42 +753,40 @@ theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
     intro i
     exact sub_le_tvDist_of_sum_eq (hmass i) _
   have hsplitG : ∀ i, (∑ y ∈ Finset.univ \ O, g y)
-      = (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y)
-        + (∑ y ∈ (Finset.univ \ O) \ F (p i), g y) := by
+      = (∑ y ∈ (Finset.univ \ O) ∩ F i, g y)
+        + (∑ y ∈ (Finset.univ \ O) \ F i, g y) := by
     intro i
-    have h := Finset.sum_sdiff (s₁ := (Finset.univ \ O) ∩ F (p i))
+    have h := Finset.sum_sdiff (s₁ := (Finset.univ \ O) ∩ F i)
       (s₂ := Finset.univ \ O) (f := g) (Finset.inter_subset_left)
-    have heq : (Finset.univ \ O) \ ((Finset.univ \ O) ∩ F (p i))
-        = (Finset.univ \ O) \ F (p i) := by
+    have heq : (Finset.univ \ O) \ ((Finset.univ \ O) ∩ F i)
+        = (Finset.univ \ O) \ F i := by
       ext z
       simp only [Finset.mem_sdiff, Finset.mem_inter, not_and]
       tauto
     rw [heq, add_comm] at h
     exact h.symm
-  have hsubG : ∀ i, (∑ y ∈ (Finset.univ \ O) \ F (p i), g y)
-      ≤ ∑ y ∈ Finset.univ \ F (p i), g y := by
+  have hsubG : ∀ i, (∑ y ∈ (Finset.univ \ O) \ F i, g y)
+      ≤ ∑ y ∈ Finset.univ \ F i, g y := by
     intro i
-    have hid : (Finset.univ \ O) \ F (p i)
-        = Finset.univ \ F (p i) := by
-      ext z
-      simp only [Finset.mem_sdiff, Finset.mem_univ, true_and]
-      exact ⟨fun h => h.2, fun h => ⟨fun hz => h (hOF i hz), h⟩⟩
-    rw [hid]
+    refine Finset.sum_le_sum_of_subset_of_nonneg ?_ (fun y _ _ => hg.1 y)
+    intro z hz
+    rw [Finset.mem_sdiff] at hz ⊢
+    exact ⟨Finset.mem_univ z, hz.2⟩
   have hGA : ∀ i, (∑ y ∈ Finset.univ \ O, p i y
-      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y)
+      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y)
       ≤ ((∑ y ∈ Finset.univ \ O, p i y
         - ∑ y ∈ Finset.univ \ O, coarsen P (p i) y)
-        + (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y)) := by
+        + (∑ y ∈ (Finset.univ \ O) ∩ F i, g y)) := by
     intro i
     have h1 := hEq6 i
     have h2 := hsplitG i
     have h3 := hsubG i
     linarith [h1, h2, h3]
   have hmaxI : ∀ i, max (∑ y ∈ Finset.univ \ O, p i y
-      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0
       ≤ max ((∑ y ∈ Finset.univ \ O, p i y
         - ∑ y ∈ Finset.univ \ O, coarsen P (p i) y)) 0
-        + (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y) := by
+        + (∑ y ∈ (Finset.univ \ O) ∩ F i, g y) := by
     intro i
     apply max_le_iff.mpr
     constructor
@@ -815,16 +796,16 @@ theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
             - ∑ y ∈ Finset.univ \ O, coarsen P (p i) y)) 0 :=
           le_max_left _ _
       linarith [hGA i, hle]
-    · have hB0 : (0 : ℝ) ≤ ∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y := by
+    · have hB0 : (0 : ℝ) ≤ ∑ y ∈ (Finset.univ \ O) ∩ F i, g y := by
         apply Finset.sum_nonneg
         intro y _
         exact hg.1 y
       exact le_trans (le_max_right _ _) (le_add_of_nonneg_right hB0)
   have hcomb : ∀ i, w i * max (∑ y ∈ Finset.univ \ O, p i y
-      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0
       ≤ w i * max ((∑ y ∈ Finset.univ \ O, p i y
         - ∑ y ∈ Finset.univ \ O, coarsen P (p i) y)) 0
-        + w i * (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y) := by
+        + w i * (∑ y ∈ (Finset.univ \ O) ∩ F i, g y) := by
     intro i
     rw [← mul_add]
     exact mul_le_mul_of_nonneg_left (hmaxI i) (hw.1 i)
@@ -834,30 +815,30 @@ theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
   have hL2 := expect_posPart_mass_sub_coarsen_le w hw p hp P
     (Finset.univ \ O) hU
   rw [hUU] at hL2
-  have hE : (∑ i, w i * (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y))
+  have hE : (∑ i, w i * (∑ y ∈ (Finset.univ \ O) ∩ F i, g y))
       ≤ ((Finset.univ \ O).image
-        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
         (Finset.image_nonempty.mpr hU) := by
-    have hinter : ∀ i, (Finset.univ \ O) ∩ F (p i)
-        = (Finset.univ \ O).filter (fun y => y ∈ F (p i)) := by
+    have hinter : ∀ i, (Finset.univ \ O) ∩ F i
+        = (Finset.univ \ O).filter (fun y => y ∈ F i) := by
       intro i
       ext z
       simp only [Finset.mem_inter, Finset.mem_filter]
-    have hswap : (∑ i, w i * (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y))
+    have hswap : (∑ i, w i * (∑ y ∈ (Finset.univ \ O) ∩ F i, g y))
         = ∑ y ∈ (Finset.univ \ O),
-          g y * (∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i) := by
-      have h1 : ∀ i ∈ Finset.univ, w i * (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y)
+          g y * (∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i) := by
+      have h1 : ∀ i ∈ Finset.univ, w i * (∑ y ∈ (Finset.univ \ O) ∩ F i, g y)
           = ∑ y ∈ (Finset.univ \ O),
-            w i * (if y ∈ F (p i) then g y else 0) := by
+            w i * (if y ∈ F i then g y else 0) := by
         intro i _
         rw [hinter i, Finset.sum_filter, Finset.mul_sum]
       rw [Finset.sum_congr rfl h1, Finset.sum_comm]
       apply Finset.sum_congr rfl
       intro y _
-      have h2 : ∀ i ∈ Finset.univ, w i * (if y ∈ F (p i) then g y else 0)
-          = g y * (if y ∈ F (p i) then w i else 0) := by
+      have h2 : ∀ i ∈ Finset.univ, w i * (if y ∈ F i then g y else 0)
+          = g y * (if y ∈ F i then w i else 0) := by
         intro i _
-        by_cases hh : y ∈ F (p i) <;> simp [hh, mul_comm]
+        by_cases hh : y ∈ F i <;> simp [hh, mul_comm]
       rw [Finset.sum_congr rfl h2, ← Finset.mul_sum, Finset.sum_filter]
     rw [hswap]
     have hUg1 : (∑ y ∈ Finset.univ \ O, g y) ≤ 1 := by
@@ -867,43 +848,43 @@ theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
       rw [hg.2] at hle
       exact hle
     calc ∑ y ∈ (Finset.univ \ O),
-          g y * (∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)
+          g y * (∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)
         ≤ ∑ y ∈ (Finset.univ \ O), g y * (((Finset.univ \ O).image
-          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU)) := by
           apply Finset.sum_le_sum
           intro y hy
           exact mul_le_mul_of_nonneg_left (hPr_le y hy) (hg.1 y)
       _ = (∑ y ∈ Finset.univ \ O, g y) * (((Finset.univ \ O).image
-          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU)) :=
           (Finset.sum_mul _ _ _).symm
       _ ≤ 1 * (((Finset.univ \ O).image
-          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU)) :=
           mul_le_mul_of_nonneg_right hUg1 hM1_nonneg
       _ = ((Finset.univ \ O).image
-          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+          (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
           (Finset.image_nonempty.mpr hU) :=
           one_mul _
   calc ∑ i, w i * max (∑ y ∈ Finset.univ \ O, p i y
-      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0
       ≤ ∑ i, (w i * max ((∑ y ∈ Finset.univ \ O, p i y
         - ∑ y ∈ Finset.univ \ O, coarsen P (p i) y)) 0
-        + w i * (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y)) :=
+        + w i * (∑ y ∈ (Finset.univ \ O) ∩ F i, g y)) :=
         Finset.sum_le_sum (fun i _ => hcomb i)
     _ = (∑ i, w i * max ((∑ y ∈ Finset.univ \ O, p i y
         - ∑ y ∈ Finset.univ \ O, coarsen P (p i) y)) 0)
-        + (∑ i, w i * (∑ y ∈ (Finset.univ \ O) ∩ F (p i), g y)) :=
+        + (∑ i, w i * (∑ y ∈ (Finset.univ \ O) ∩ F i, g y)) :=
         Finset.sum_add_distrib
     _ ≤ ((O.card : ℝ) * ((Finset.univ \ O).image
         (fun y => ∑ i, w i * p i y)).max' (Finset.image_nonempty.mpr hU))
         + (((Finset.univ \ O).image
-        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
         (Finset.image_nonempty.mpr hU)) :=
         add_le_add hL2 hE
     _ = ((Finset.univ \ O).image
-        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
         (Finset.image_nonempty.mpr hU)
         + O.card * ((Finset.univ \ O).image
           (fun y => ∑ i, w i * p i y)).max'
@@ -914,19 +895,19 @@ theorem expect_hallucination_gap_le {ι : Type*} [Fintype ι]
 theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
     (w : ι → ℝ) (hw : IsProbVec w) (p : ι → Y → ℝ)
     (hp : ∀ i, IsProbVec (p i))
-    (O : Finset Y) (F : (Y → ℝ) → Finset Y) (hOF : ∀ i, O ⊆ F (p i))
+    (O : Finset Y) (F : ι → Finset Y)
     (g : Y → ℝ) (hg : IsProbVec g) (P : Finpartition (Finset.univ : Finset Y))
     (α β : ℝ) (hα0 : 0 ≤ α) (hβ0 : 0 ≤ β)
     (hα : ∀ y ∈ Finset.univ \ O,
-      ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i ≤ α)
+      ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i ≤ α)
     (hβ : ∀ y ∈ Finset.univ \ O, ∑ i, w i * p i y ≤ β) :
     ∑ i, w i * max (∑ y ∈ Finset.univ \ O, p i y - tvDist (coarsen P (p i)) g
-                      - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+                      - ∑ y ∈ Finset.univ \ F i, g y) 0
       ≤ α + O.card * β := by
   by_cases hU : (Finset.univ \ O).Nonempty
-  · have hmain := expect_hallucination_gap_le w hw p hp O F hOF g hg P hU
+  · have hmain := expect_hallucination_gap_le w hw p hp O F g hg P hU
     have hM1 : ((Finset.univ \ O).image
-        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
         (Finset.image_nonempty.mpr hU) ≤ α := by
       rw [Finset.max'_le_iff]
       intro v hv
@@ -942,7 +923,7 @@ theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
       rw [← hyv]
       exact hβ y hyU
     have hle : ((Finset.univ \ O).image
-        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F (p i)), w i)).max'
+        (fun y => ∑ i ∈ Finset.univ.filter (fun i => y ∈ F i), w i)).max'
         (Finset.image_nonempty.mpr hU)
         + O.card * ((Finset.univ \ O).image
           (fun y => ∑ i, w i * p i y)).max'
@@ -961,20 +942,20 @@ theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
         intro y _
         exact abs_nonneg _
     have hper : ∀ i, w i * max (∑ y ∈ Finset.univ \ O, p i y
-        - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+        - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0
         = 0 := by
       intro i
-      have hgsum0 : (0 : ℝ) ≤ ∑ y ∈ Finset.univ \ F (p i), g y := by
+      have hgsum0 : (0 : ℝ) ≤ ∑ y ∈ Finset.univ \ F i, g y := by
         apply Finset.sum_nonneg
         intro y _
         exact hg.1 y
       rw [hUe, Finset.sum_empty]
       have hle : (0 : ℝ) - tvDist (coarsen P (p i)) g
-          - ∑ y ∈ Finset.univ \ F (p i), g y ≤ 0 := by
+          - ∑ y ∈ Finset.univ \ F i, g y ≤ 0 := by
         linarith [htv0 i, hgsum0]
       rw [max_eq_right hle, mul_zero]
     have hLHS : (∑ i, w i * max (∑ y ∈ Finset.univ \ O, p i y
-        - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0)
+        - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0)
         = 0 := by
       rw [Finset.sum_congr rfl (fun i _ => hper i)]
       exact Finset.sum_const_zero
@@ -983,11 +964,11 @@ theorem expect_hallucination_gap_le_of_bounds {ι : Type*} [Fintype ι]
 
 /-- Boundary case of Theorem 1: if everything is observed, the gap is 0. -/
 theorem expect_hallucination_gap_eq_zero_of_eq_univ {ι : Type*} [Fintype ι]
-    (w : ι → ℝ) (p : ι → Y → ℝ) (F : (Y → ℝ) → Finset Y)
+    (w : ι → ℝ) (p : ι → Y → ℝ) (F : ι → Finset Y)
     (g : Y → ℝ) (hg : IsProbVec g) (P : Finpartition (Finset.univ : Finset Y)) :
     ∑ i, w i * max (∑ y ∈ Finset.univ \ Finset.univ, p i y
                       - tvDist (coarsen P (p i)) g
-                      - ∑ y ∈ Finset.univ \ F (p i), g y) 0 = 0 := by
+                      - ∑ y ∈ Finset.univ \ F i, g y) 0 = 0 := by
   have htv0 : ∀ i, (0 : ℝ) ≤ tvDist (coarsen P (p i)) g := by
     intro i
     change (0 : ℝ) ≤ (1 / 2 : ℝ) * ∑ y, |coarsen P (p i) y - g y|
@@ -998,20 +979,20 @@ theorem expect_hallucination_gap_eq_zero_of_eq_univ {ι : Type*} [Fintype ι]
       exact abs_nonneg _
   have hU : (Finset.univ \ Finset.univ : Finset Y) = ∅ := by simp
   have hper : ∀ i, w i * max (∑ y ∈ Finset.univ \ Finset.univ, p i y
-      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0
+      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0
       = 0 := by
     intro i
-    have hgsum0 : (0 : ℝ) ≤ ∑ y ∈ Finset.univ \ F (p i), g y := by
+    have hgsum0 : (0 : ℝ) ≤ ∑ y ∈ Finset.univ \ F i, g y := by
       apply Finset.sum_nonneg
       intro y _
       exact hg.1 y
     rw [hU, Finset.sum_empty]
     have hle : (0 : ℝ) - tvDist (coarsen P (p i)) g
-        - ∑ y ∈ Finset.univ \ F (p i), g y ≤ 0 := by
+        - ∑ y ∈ Finset.univ \ F i, g y ≤ 0 := by
       linarith [htv0 i, hgsum0]
     rw [max_eq_right hle, mul_zero]
   calc (∑ i, w i * max (∑ y ∈ Finset.univ \ Finset.univ, p i y
-      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F (p i), g y) 0)
+      - tvDist (coarsen P (p i)) g - ∑ y ∈ Finset.univ \ F i, g y) 0)
       = ∑ i ∈ Finset.univ, (0 : ℝ) :=
         Finset.sum_congr rfl (fun i _ => hper i)
     _ = 0 := Finset.sum_const_zero

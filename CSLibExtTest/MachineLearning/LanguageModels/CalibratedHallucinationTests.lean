@@ -16,7 +16,10 @@ import CSLibExt.MachineLearning.LanguageModels.CalibratedHallucination
 Closed-instance checks for Kalai and Vempala, *Calibrated Language
 Models Must Hallucinate*: the canonical two-point prior, boundary
 cases, adaptive faithfulness, the two false source remarks,
-regularity worlds, the divided-form bridges, and the axiom audit.
+regularity worlds, the divided-form bridges, the monofact rate,
+instances of `binIndex_spec`, Lemma 2 and the bound form of Theorem 1
+(including a weight-zero component whose facts miss the observed
+set), the unnormalized `Mis_∞` characterization, and the axiom audit.
 -/
 
 namespace Cslib
@@ -24,6 +27,7 @@ namespace MachineLearning
 namespace CalibratedHallucination
 
 open MathlibExt.Probability.MarkovMixing (tvDist)
+open Cslib.InformationRetrieval.PageRank (IsProbVec)
 
 section Helpers
 
@@ -240,11 +244,6 @@ private theorem t1F_p2 : t1F t1p2 = ({0, 2} : Finset (Fin 3)) := by
       show (1 : Fin 3) ≠ 2 by decide]
   · simp [t1F, t1O, t1p2_2, show (2 : Fin 3) ≠ 0 by decide]
 
-private theorem t1hOF : ∀ i, t1O ⊆ t1F (t1p i) := by
-  intro i
-  show t1O ⊆ Finset.univ.filter (fun y => t1p i y ≠ 0) ∪ t1O
-  exact Finset.subset_union_right
-
 private theorem t1hU : (Finset.univ \ t1O).Nonempty := by
   rw [t1U]
   exact ⟨1, by simp⟩
@@ -410,7 +409,7 @@ example : (∑ i, t1w i * max (∑ y ∈ Finset.univ \ t1O, t1p i y
         + t1O.card * ((Finset.univ \ t1O).image
           (fun y => ∑ i, t1w i * t1p i y)).max'
           (Finset.image_nonempty.mpr t1hU)) :=
-  expect_hallucination_gap_le t1w t1w_prob t1p t1p_prob t1O t1F t1hOF t1g
+  expect_hallucination_gap_le t1w t1w_prob t1p t1p_prob t1O (fun i => t1F (t1p i)) t1g
     t1g_prob ⊤ t1hU
 
 noncomputable def t1d0 : Fin 3 → ℝ := fun y => if y = 0 then 1 else 0
@@ -639,7 +638,7 @@ private theorem t6cal : IsCalibratedTo t1p1 t1p1 :=
   ⟨⊥, by funext y; exact (coarsen_bot_eq t1p1 y).symm⟩
 
 private theorem t6misInf : misInf t1p1 t1p1 = 0 :=
-  (isCalibratedTo_iff_misInf_eq_zero t1p1_prob t1p1_prob).mp t6cal
+  isCalibratedTo_iff_misInf_eq_zero.mp t6cal
 
 -- T6: `mis 2` is `1/3` on the constant-bin world.
 example : mis 2 t1p1 t1p1 = 1 / 3 := t6mis
@@ -1298,6 +1297,124 @@ example : ¬ HasRegularProbabilities id 0 t7nw t7nD 1 :=
   mt (hasRegularProbabilities_iff id 0 t7nw t7nD 1).mp t7nnegDiv
 
 end T8
+
+section T10
+
+-- T10: with one bin, `binIndex_spec` puts every point in bin `0`.
+example (y : Fin 2) : binIndex t2g 1 y = 0 :=
+  Nat.lt_one_iff.mp (binIndex_spec t2g_prob le_rfl y).1
+
+-- T10: `binIndex_spec` at `(1/4, 3/4)` with `b = 5`: the point `1` is not in
+-- the first bin, so its index is below `5` and its lower threshold is below `3/4`.
+example : binIndex t2g 5 1 < 5 ∧ binThreshold t2g 5 (binIndex t2g 5 1) < 3 / 4 := by
+  have hspec := binIndex_spec t2g_prob (b := 5) (by norm_num) 1
+  have hpos : 0 < binIndex t2g 5 1 := by
+    have h := t3idx1ne
+    rw [t3idx0] at h
+    exact Nat.pos_of_ne_zero h
+  refine ⟨hspec.1, ?_⟩
+  have h := hspec.2.2 hpos
+  rwa [t2g1] at h
+
+private theorem t10B0 : (∑ i, t1w i * t1p i 0) = 1 / 2 := by
+  rw [Fin.sum_univ_two, t1w0, t1w1, t1p_0, t1p_1, t1p1_0, t1p2_0]
+  norm_num
+
+-- T10: Lemma 2 on the two-point prior with `S = {0}` and the top partition:
+-- the left side is `1/6`.
+private theorem t10L2lhs : (∑ i, t1w i * max (∑ y ∈ ({0} : Finset (Fin 3)), t1p i y
+    - ∑ y ∈ ({0} : Finset (Fin 3)), coarsen ⊤ (t1p i) y) 0) = 1 / 6 := by
+  rw [Fin.sum_univ_two, t1w0, t1w1, t1p_0, t1p_1, t1coarsen_top_p1, t1coarsen_top_p2]
+  simp only [Finset.sum_singleton, t1p1_0, t1p2_0, t1g_y]
+  rw [max_eq_left (by norm_num)]
+  norm_num
+
+-- T10: the right side is `|Y \ S| * max_{y ∈ S} E[p y] = 2 * (1/2) = 1`.
+private theorem t10L2rhs : (((Finset.univ \ ({0} : Finset (Fin 3))).card : ℝ) *
+    (({0} : Finset (Fin 3)).image (fun y => ∑ i, t1w i * t1p i y)).max'
+      (Finset.image_nonempty.mpr (Finset.singleton_nonempty 0))) = 1 := by
+  have hc : (Finset.univ \ ({0} : Finset (Fin 3))).card = 2 := by decide
+  have hm : (({0} : Finset (Fin 3)).image (fun y => ∑ i, t1w i * t1p i y)).max'
+      (Finset.image_nonempty.mpr (Finset.singleton_nonempty 0)) = 1 / 2 := by
+    rw [Finset.max'_eq_iff]
+    constructor
+    · rw [Finset.mem_image]
+      exact ⟨0, Finset.mem_singleton_self 0, t10B0⟩
+    · intro b hb
+      rw [Finset.mem_image] at hb
+      obtain ⟨y, hy, rfl⟩ := hb
+      rw [Finset.mem_singleton] at hy
+      subst hy
+      exact le_of_eq t10B0
+  rw [hc, hm]
+  norm_num
+
+-- T10: Lemma 2 itself on that instance gives `1/6 ≤ 1`.
+example : (1 / 6 : ℝ) ≤ 1 := by
+  have h := expect_posPart_mass_sub_coarsen_le t1w t1w_prob t1p t1p_prob ⊤
+    ({0} : Finset (Fin 3)) (Finset.singleton_nonempty 0)
+  rwa [t10L2lhs, t10L2rhs] at h
+
+noncomputable def t10w : Fin 2 → ℝ := fun i => if i = 0 then 1 else 0
+
+def t10F : Fin 2 → Finset (Fin 3) := fun i => if i = 0 then {0, 1} else {2}
+
+private theorem t10w0 : t10w 0 = 1 := by simp [t10w]
+
+private theorem t10w1 : t10w 1 = 0 := by simp [t10w]
+
+private theorem t10w_prob : IsProbVec t10w := by
+  constructor
+  · intro i
+    rcases tri2 i with rfl | rfl
+    · rw [t10w0]; norm_num
+    · rw [t10w1]
+  · rw [Fin.sum_univ_two, t10w0, t10w1]
+    norm_num
+
+-- T10: the weight-zero component's facts `{2}` miss the observed set `{0}`.
+example : ¬ t1O ⊆ t10F 1 := by decide
+
+-- T10: the bound form of Theorem 1 still applies to that mixture, with
+-- per-component facts `t10F`, `α = 1` and `β = 1/2`.
+example : (∑ i, t10w i * max (∑ y ∈ Finset.univ \ t1O, t1p i y
+      - tvDist (coarsen ⊤ (t1p i)) t1g - ∑ y ∈ Finset.univ \ t10F i, t1g y) 0)
+    ≤ 1 + t1O.card * (1 / 2) := by
+  refine expect_hallucination_gap_le_of_bounds t10w t10w_prob t1p t1p_prob t1O t10F t1g
+    t1g_prob ⊤ 1 (1 / 2) zero_le_one (by norm_num) ?_ ?_
+  · intro y _
+    calc ∑ i ∈ Finset.univ.filter (fun i => y ∈ t10F i), t10w i
+        ≤ ∑ i, t10w i :=
+          Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+            (fun i _ _ => t10w_prob.1 i)
+      _ = 1 := t10w_prob.2
+  · intro y hy
+    rw [t1U] at hy
+    rw [Fin.sum_univ_two, t10w0, t10w1, t1p_0, t1p_1]
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl
+    · rw [t1p1_1, t1p2_1]; norm_num
+    · rw [t1p1_2, t1p2_2]; norm_num
+
+private def t10x : Fin 4 → Fin 4 := ![1, 1, 2, 0]
+
+-- T10: Eq. (5) on the sample `(1, 1, 2, 0)` with `⊥ = 0`: only the fact `2`
+-- occurs exactly once (`1` occurs twice, and `⊥` does not count), so the
+-- monofact rate is `1/4`.
+example : monofactRate (id : Fin 4 → Fin 4) 0 t10x = 1 / 4 := by
+  have hc : (Finset.univ.filter (fun y : Fin 4 => y ≠ 0 ∧
+      (Finset.univ.filter (fun k : Fin 4 => id (t10x k) = y)).card = 1)).card = 1 := by
+    decide
+  unfold monofactRate
+  rw [hc]
+  norm_num
+
+-- T10: the `Mis_∞` characterization needs no normalization (here the mass is `2`).
+example : misInf (fun y => 2 * t2g y) (fun y => 2 * t2g y) = 0 :=
+  isCalibratedTo_iff_misInf_eq_zero.mp
+    ⟨⊥, by funext y; exact (coarsen_bot_eq (fun y => 2 * t2g y) y).symm⟩
+
+end T10
 
 section T9
 
