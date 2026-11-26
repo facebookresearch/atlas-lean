@@ -22,7 +22,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import WantedExt.Complexity.NPComplete.DominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
 
 @[expose] public section
 
@@ -36,7 +36,7 @@ a clique and an independent set, and a positive integer `K ≤ |V|`.
 QUESTION: is there a dominating set of size `K` or less for `G`, i.e. a subset `V' ⊆ V` with
 `|V'| ≤ K` such that every vertex not in `V'` is joined to at least one member of `V'`?
 
-This is the restriction of DOMINATING SET ([GT2], `DominatingSetWanted`) to split graphs. The
+This is the restriction of DOMINATING SET ([GT2], `DominatingSetDefs`) to split graphs. The
 instance type, the graph and the question are the parent's (`DominatingSet.DominatingSetInstance`,
 `DominatingSet.Graph`, `DominatingSet.DominatingSetFeasible`); `WellFormed` is the parent's plus
 the restriction and Garey and Johnson's bounds `0 < K ≤ |V|`. The clique and the independent

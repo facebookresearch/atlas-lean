@@ -1,0 +1,10 @@
+# Cartesian product of two sets in Zermelo–Fraenkel set theory
+
+For sets $A$ and $B$, the cartesian product $A \times B$ is the set of all ordered pairs $(a, b) = \{\{a\}, \{a, b\}\}$ with $a \in A$ and $b \in B$; it exists because each such pair belongs to $\mathcal{P}(\mathcal{P}(A \cup B))$, so the product can be separated from that set. Mathlib carries out this construction in its model of Zermelo–Fraenkel set theory. Mathlib's ZF sets form a model of set theory inside Lean, in a fixed universe, and its ordered pair of $x$ and $y$ is the Kuratowski pair $\{\{x\}, \{x, y\}\}$. For ZF sets $x$ and $y$, Mathlib's product of $x$ and $y$ is obtained by separation from the power set of the power set of $x \cup y$: it consists of the members $z$ of $\mathcal{P}(\mathcal{P}(x \cup y))$ with $z = (a, b)$ for some $a \in x$ and $b \in y$. Thus $z$ belongs to the product if and only if $z = (a, b)$ for some $a \in x$ and $b \in y$. If $x$ or $y$ is empty, the product is empty. This is a set-theoretic construction, distinct from Lean's product type of two types, and it gives the familiar definition.
+
+## Sources
+
+- Herbert B. Enderton, Elements of Set Theory, Academic Press, 1977.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for Kuratowski ordered pairs of ZF sets: `ZFSet.pair`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/SetTheory/ZFC/Basic.lean#L655-L657.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for sets of pairs separated from the power set of the power set: `ZFSet.pairSep`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/SetTheory/ZFC/Basic.lean#L662-L670.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for membership in the product: `ZFSet.mem_prod`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/SetTheory/ZFC/Basic.lean#L692-L694.

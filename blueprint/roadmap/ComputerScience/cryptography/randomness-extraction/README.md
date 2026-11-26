@@ -4,3 +4,4 @@
 - [Guessing probability, min-entropy and collision probability](guessing-probability-min-entropy-and-collision.md)
 - [Leftover hash lemma](leftover-hash-lemma.md)
 - [Leftover hash lemma with side information](leftover-hash-lemma-with-side-information.md)
+- [Fuzzy Extractors and Secure Sketches](fuzzy-extractors/README.md)

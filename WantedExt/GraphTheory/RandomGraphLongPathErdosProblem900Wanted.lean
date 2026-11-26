@@ -36,7 +36,8 @@ of this problem.
 
 open Classical in
 /-- The proportion of the graphs on `Fin n` with exactly `m` edges (the uniform model `G(n, m)`)
-that contain a path of length at least `x`. -/
+that contain a path of length at least `x`. For `m > n.choose 2` there is no such graph, and the
+value `0` is a convention (division by zero). -/
 noncomputable def longPathProportion (n m : ℕ) (x : ℝ) : ℝ :=
   ((Finset.univ.filter fun G : SimpleGraph (Fin n) => G.edgeFinset.card = m ∧
       ∃ (u v : Fin n) (p : G.Walk u v), p.IsPath ∧ x ≤ p.length).card : ℝ) /
