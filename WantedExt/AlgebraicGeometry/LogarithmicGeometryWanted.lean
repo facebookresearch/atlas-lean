@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.LogStructures
 public import MathlibExt.AlgebraicGeometry.LogarithmicGeometryAssociatedLogUnitCondition
+public import MathlibExt.AlgebraicGeometry.LogarithmicGeometryFineCharacteristic
 
 /-!
 # Shared log-association and characteristic contracts
@@ -22,7 +23,9 @@ The associated prelog is a fixed sheaf pushout; its log unit condition
 `associated_log_unit_condition`, which chooses no new log carrier, is now
 proved in `MathlibExt.AlgebraicGeometry.LogarithmicGeometryAssociatedLogUnitCondition`.
 The characteristic comparison is fixed on
-the actual quotient map, and fine/fs conclusions use genuine local charts.
+the actual quotient map, and fs conclusions use genuine local charts. The fine
+conclusion `fine_characteristic` is now proved in
+`MathlibExt.AlgebraicGeometry.LogarithmicGeometryFineCharacteristic`.
 
 Sources: Kato, *Logarithmic structures of Fontaine--Illusie*, §1;
 Nakayama--Ogus, *Relative rounding in toric and logarithmic geometry*,
@@ -54,13 +57,6 @@ public def_wanted characteristic_fiber_comparison
     {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
     (O : RingSheaf J) (L : LogStructure J O) (p : J.Point.{max u v}) :
     CharacteristicFiberComparison J L p
-
-/-- Local fine charts give fine sharp characteristic monoids at site points. -/
-public theorem_wanted fine_characteristic
-    {C : Type u} [Category.{v} C] (J : GrothendieckTopology C)
-    (O : RingSheaf J) (L : LogStructure J O) (fine : HasFineCharts J L)
-    (p : J.Point.{max u v}) :
-    IsFineMonoid (characteristicAt J L p) ∧ IsSharpMonoid (characteristicAt J L p)
 
 /-- Local fs charts give fine saturated sharp characteristic monoids. -/
 public theorem_wanted fs_characteristic
