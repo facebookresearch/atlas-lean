@@ -3,6 +3,7 @@
 The framework of game-based security proofs: adaptive oracle algorithms, averaging lemmas for games and their success probabilities, and the semantic security and indistinguishability of public-key encryption, with the reductions between them.
 
 - [Asymptotic security](asymptotic-security/README.md)
+- [Fair-bit sampling with a running-time tail](fair-bit-sampling-with-a-running-time-tail/README.md)
 - [Games and advantages](games-and-advantages/README.md)
 - [Generic security games](generic-security-games/README.md)
 - [Generic-group lower bounds](generic-group-lower-bounds/README.md)
