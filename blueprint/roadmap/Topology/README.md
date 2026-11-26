@@ -45,5 +45,6 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Spaces of continuous functions](function-spaces/README.md)
 - [Uniform spaces](uniform-spaces/README.md)
 - [Simplicial homotopy theory](simplicial-homotopy-theory/README.md)
+- [Model categories and homotopical algebra](homotopical-algebra/README.md)
 - [Metric spaces](metric-spaces/README.md)
 - [Ordered topological spaces](ordered-topological-spaces/README.md)
