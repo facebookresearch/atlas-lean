@@ -8,6 +8,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Kleene algebra with tests](kleene-algebra-with-tests/README.md)
 - [Safe backward rules for heap IMP](safe-backward-rules-for-heap-imp/README.md)
 - [Separation logic](separation-logic/README.md)
+- [Total preconditions as least fixed points](total-preconditions-as-least-fixed-points/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)
 - [Interactive device state machines](interactive-device-state-machines.md)
 - [Decidable interface correctness criterion](decidable-interface-correctness-criterion.md)

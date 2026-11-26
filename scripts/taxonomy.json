@@ -1694,6 +1694,7 @@
   "CSLibExt/Languages/CCS/Recursion": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/StaticOperators": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/IMP/BigStep": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
+  "CSLibExt/Languages/IMP/TotalPrecondition": {"to": "ComputerScience/program-logics-and-verification", "title": "Total preconditions as least fixed points"},
   "CSLibExt/Languages/IMP/Denotational": {"to": "ComputerScience/programming-language-semantics", "title": "Denotational semantics of IMP"},
   "CSLibExt/Languages/IMP/Equivalence": {"to": "ComputerScience/programming-language-semantics", "title": "Operational semantics of IMP"},
   "CSLibExt/Languages/IMP/Heap": {"to": "ComputerScience/programming-language-semantics", "title": "Heap semantics of IMP"},
