@@ -31,7 +31,8 @@ example : ∃ x : ZMod 63, IsUnit x ∧ jacobiSym x.val 63 = -1 ∧
   norm_num
 
 -- When `n = p'` is prime, `n / p' = 1` and every unit modulo `p'` lifts to itself.
-example : ∃ x : ZMod 7, IsUnit x ∧ ZMod.castHom (dvd_refl 7) (ZMod 7) x = 3 := by
-  obtain ⟨x, ⟨hu, -⟩, h7⟩ := units_prime_subset_image_jacobi_eq_legendre 7 7 (by decide)
+example : ∃ x : ZMod 7, IsUnit x ∧ jacobiSym x.val 7 = jacobiSym x.val 7 ∧
+    ZMod.castHom (dvd_refl 7) (ZMod 7) x = 3 := by
+  obtain ⟨x, ⟨hu, hJ⟩, h7⟩ := units_prime_subset_image_jacobi_eq_legendre 7 7 (by decide)
     (by norm_num) (dvd_refl 7) (by decide) 3 (by decide)
-  exact ⟨x, hu, h7⟩
+  exact ⟨x, hu, hJ, h7⟩

@@ -21,8 +21,8 @@ modulus, `(x/n) = (x/n') (x/p') = (1/n') (x/p') = (x/p')`. So `x` lies in the se
 units whose Jacobi symbols modulo `n` and modulo `p'` agree, and it reduces to `z` modulo `p'`.
 
 This is Lemma 29 of Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants
-Related to the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7
-(arXiv:2111.14477).
+Related to the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7. The
+arXiv preprint (arXiv:2111.14477) numbers its results differently.
 -/
 
 namespace MetaMathlibExt
