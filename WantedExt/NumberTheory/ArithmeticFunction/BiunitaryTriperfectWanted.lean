@@ -17,6 +17,8 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryFortyOne
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfect
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectNotFiveDvdOfFactorizationTwoEqFour
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectExistsPrimeGeFiveDvdSigmaBiunitaryPrimePow
+public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryTriperfectEq2160OfFactorizationTwoEqFour
 
 /-!
 # Biunitary triperfect numbers divisible by `27`
@@ -108,20 +110,6 @@ public theorem_wanted sigmaBiunitary_two_pow_cases (e s δ : ℕ) (hδ : δ ≤ 
           (q = 2 ^ (s - 1) - 1 ∨ q = 2 ^ s + 1 ∨ (5 < q ∧ q ^ 2 ≤ 2 ^ s - 3)) ∧
             ((q = 2 ^ (s - 1) - 1 ∨ q = 2 ^ s + 1) → 4 ∣ s ∧ δ = 1))
 
-/-- **Prime factors at least $5$ of biunitary divisor sums of prime powers.** For every prime $p$
-and every integer $g \ge 2$ with $(p, g) \ne (2, 4)$, the biunitary divisor sum $\sigma^{**}(p^g)$
-has a prime factor $q \ge 5$.
-
-The excluded case is a genuine exception: $\sigma^{**}(2^4) = 1 + 2 + 8 + 16 = 27 = 3^3$. It is
-not in the printed statement; the paper's proof applies Lemma 2.4 to $p^u + 1$ with
-$g = 2u - 1 - \varepsilon$, and $(p, u) = (2, 3)$ is that lemma's exception.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 8 (I) (`jis-2025-25.4.5-lem-8`). -/
-public theorem_wanted exists_prime_ge_five_dvd_sigmaBiunitary_prime_pow (p g : ℕ)
-    (hp : p.Prime) (hg : 2 ≤ g) (hexc : ¬ (p = 2 ∧ g = 4)) :
-    ∃ q, q.Prime ∧ q ∣ sigmaBiunitary (p ^ g) ∧ 5 ≤ q
-
 /-- **Prime factors at least $7$ of biunitary divisor sums of odd prime powers.** For every odd
 prime $p$ and every integer $g \ge 4$, the biunitary divisor sum $\sigma^{**}(p^g)$ has a prime
 factor $q \ge 7$.
@@ -186,17 +174,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 13 (`jis-2025-25.4
 public theorem_wanted not_seven_le_and_factorization_three_eq_four (N : ℕ) (hN : 0 < N)
     (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3) :
     ¬ (7 ≤ N.factorization 2 ∧ N.factorization 3 = 4)
-
-/-- **Biunitary triperfect numbers exactly divisible by $2^4$ and by $3^3$ or $3^4$.** Let $N$ be
-a biunitary triperfect number, that is, a positive integer with $\sigma^{**}(N) = 3N$, where
-$\sigma^{**}$ is the biunitary divisor sum. If the exact power of $2$ dividing $N$ is $2^4$ and the
-exact power of $3$ dividing $N$ is $3^3$ or $3^4$, then $N = 2160$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 14 (`jis-2025-25.4.5-lem-14`). -/
-public theorem_wanted eq_2160_of_factorization_two_eq_four (N : ℕ) (hN : 0 < N)
-    (hσ : sigmaBiunitary N = 3 * N) (hf : 3 ≤ N.factorization 3)
-    (he : N.factorization 2 = 4) (hf4 : N.factorization 3 ≤ 4) : N = 2160
 
 end
 
