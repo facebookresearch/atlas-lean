@@ -9,12 +9,21 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`src/HOL/Data_Structures/Set2_Join_RBT.thy` (Isabelle/HOL, `HOL-Data_Structures`):
+`src/HOL/Data_Structures/Set2_Join_RBT.thy`, `src/HOL/Data_Structures/RBT.thy` and
+`src/HOL/Data_Structures/RBT_Set.thy` (Isabelle/HOL, `HOL-Data_Structures`):
 Copyright (c) 1986-2026, University of Cambridge, Technische Universitaet Muenchen,
 and contributors. All rights reserved.
 Licensed under the 3-clause BSD license in Isabelle's `COPYRIGHT` file
 (https://github.com/isabelle-prover/mirror-isabelle/blob/master/COPYRIGHT).
 Authors: Tobias Nipkow
+
+`thys/Joinable_BST_Work_Bounds/StronglyJoinableRBT.thy` (Archive of Formal Proofs, entry
+`Joinable_BST_Work_Bounds`, https://www.isa-afp.org/entries/Joinable_BST_Work_Bounds.html):
+Copyright (c) 2004, Gerwin Klein, Tobias Nipkow, Lawrence C. Paulson
+Copyright (c) 2004, contributing authors (see author notice in individual files)
+All rights reserved.
+Licensed under the BSD License of the Archive of Formal Proofs (https://isa-afp.org/LICENSE).
+Authors: Marco Haucke
 -/
 
 module
@@ -39,11 +48,21 @@ proved.
 ## Provenance
 
 `Set2_Join_RBT.thy` in Isabelle/HOL's bundled `HOL-Data_Structures`
-library (the `Set2_Join` interpretation for red–black trees), with
-`baliL` / `baliR` from book Chapter 8. The equal-height case
-repaints the root black (`paint Black`); this is the book's Figure 10.4
-version, not the stored-black-height variant in
-`StronglyJoinableRBT.thy` (see `StronglyJoinableRBT`).
+library (the `Set2_Join` interpretation for red–black trees: `joinL` /
+`joinR` / `rbtJoin` and most lemmas about them), built on that library's
+red–black trees (book Chapter 8): `Color`, `RNode` / `BNode` (Isabelle
+`R` / `B`), `baliL` / `baliR` and `paint` from `RBT.thy`, and `col`
+(Isabelle `color`), `bheight`, `invc`, `invc2`, `invh` and the invariant
+and `inorder` lemmas for `baliL` / `baliR` from `RBT_Set.thy`. In the
+docstrings below, names cited as Isabelle lemmas are from these three
+theories. This is the book's Figure 10.4 join, whose result always has a
+black root (`paint Black` after a spine descent, a black node for equal
+black heights), not the stored-black-height variant of AFP
+`StronglyJoinableRBT.thy` (see `StronglyJoinableRBT`). That AFP theory
+supplies the defining equations of `invc2` and the statements, restated
+here for these trees, of `col_joinL` / `col_joinR` and of the node-count
+lemmas `tsize_baliL` / `tsize_baliR` / `tsize_joinL` / `tsize_joinR` /
+`tsize_rbtJoin`.
 -/
 
 @[expose] public section
@@ -1659,7 +1678,8 @@ public theorem bheight_joinR (l : Tree α Color) (x : α) (r : Tree α Color)
     (hinvh_l : invh l) (hinvh_r : invh r) (hbh : bheight r ≤ bheight l) :
     bheight (joinR l x r) = bheight l := (invh_bheight_joinR l x r hinvh_l hinvh_r hbh).2
 
-/-- Root color of `joinL` (Isabelle `col_joinL`). -/
+/-- Root color of `joinL` (analogue, for these trees, of AFP
+`StronglyJoinableRBT.thy`'s `col_joinL`). -/
 public theorem col_joinL (l : Tree α Color) (x : α) (r : Tree α Color)
     (hlt : bheight l < bheight r) (hcol : col r = .Red) :
     col (joinL l x r) = .Red := by
@@ -1678,7 +1698,8 @@ public theorem col_joinL (l : Tree α Color) (x : α) (r : Tree α Color)
         simp only [reduceCtorEq, ite_false]
         exact col_RNode _ _ _
 
-/-- Root color of `joinR` (Isabelle `col_joinR`). -/
+/-- Root color of `joinR` (analogue, for these trees, of AFP
+`StronglyJoinableRBT.thy`'s `col_joinR`). -/
 public theorem col_joinR (l : Tree α Color) (x : α) (r : Tree α Color)
     (hlt : bheight r < bheight l) (hcol : col l = .Red) :
     col (joinR l x r) = .Red := by
@@ -1739,12 +1760,14 @@ public theorem inorder_baliR (l : Tree α Color) (a : α) (r : Tree α Color) :
     inorder (baliR l a r) = inorder l ++ a :: inorder r := by
   fun_cases baliR l a r <;> simp [inorder, RNode, BNode, List.append_assoc]
 
-/-- Node count for `baliL` (Isabelle `size_baliL`). -/
+/-- Node count for `baliL` (analogue, for these trees, of AFP
+`StronglyJoinableRBT.thy`'s `size_baliL`). -/
 public theorem tsize_baliL (l : Tree α Color) (a : α) (r : Tree α Color) :
     tsize (baliL l a r) = tsize l + tsize r + 1 := by
   fun_cases baliL l a r <;> simp [tsize, RNode, BNode] <;> omega
 
-/-- Node count for `baliR` (Isabelle `size_baliR`). -/
+/-- Node count for `baliR` (analogue, for these trees, of AFP
+`StronglyJoinableRBT.thy`'s `size_baliR`). -/
 public theorem tsize_baliR (l : Tree α Color) (a : α) (r : Tree α Color) :
     tsize (baliR l a r) = tsize l + tsize r + 1 := by
   fun_cases baliR l a r <;> simp [tsize, RNode, BNode] <;> omega
@@ -1815,7 +1838,8 @@ public theorem inorder_rbtJoin (l : Tree α Color) (x : α) (r : Tree α Color) 
     · rw [ite_eq_right h2]
       simp [inorder, BNode]
 
-/-- Node count for `joinL` (Isabelle `size_joinL`). -/
+/-- Node count for `joinL` (analogue, for these trees, of AFP
+`StronglyJoinableRBT.thy`'s `size_joinL`). -/
 public theorem tsize_joinL (l : Tree α Color) (x : α) (r : Tree α Color) :
     tsize (joinL l x r) = tsize l + tsize r + 1 := by
   induction r generalizing l with
@@ -1840,7 +1864,8 @@ public theorem tsize_joinL (l : Tree α Color) (x : α) (r : Tree α Color) :
         simp [tsize]
         omega
 
-/-- Node count for `joinR` (Isabelle `size_joinR`). -/
+/-- Node count for `joinR` (analogue, for these trees, of AFP
+`StronglyJoinableRBT.thy`'s `size_joinR`). -/
 public theorem tsize_joinR (l : Tree α Color) (x : α) (r : Tree α Color) :
     tsize (joinR l x r) = tsize l + tsize r + 1 := by
   induction l generalizing r with
@@ -1865,7 +1890,8 @@ public theorem tsize_joinR (l : Tree α Color) (x : α) (r : Tree α Color) :
         simp [tsize]
         omega
 
-/-- Node count for `join` (Isabelle `join_size`). -/
+/-- Node count for `join` (analogue, for these trees and this `join`, of AFP
+`StronglyJoinableRBT.thy`'s `join_size`). -/
 public theorem tsize_rbtJoin (l : Tree α Color) (x : α) (r : Tree α Color) :
     tsize (rbtJoin l x r) = tsize l + tsize r + 1 := by
   simp only [rbtJoin]

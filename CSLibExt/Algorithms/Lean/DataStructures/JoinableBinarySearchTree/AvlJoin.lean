@@ -16,6 +16,20 @@ Copyright (c) 2004, contributing authors (see author notice in individual files)
 All rights reserved.
 Licensed under the BSD License of the Archive of Formal Proofs (https://isa-afp.org/LICENSE).
 Authors: Marco Haucke
+
+`src/HOL/Data_Structures/AVL_Set_Code.thy` (Isabelle/HOL, `HOL-Data_Structures`):
+Copyright (c) 1986-2026, University of Cambridge, Technische Universitaet Muenchen,
+and contributors. All rights reserved.
+Licensed under the 3-clause BSD license in Isabelle's `COPYRIGHT` file
+(https://github.com/isabelle-prover/mirror-isabelle/blob/master/COPYRIGHT).
+Authors: Tobias Nipkow, Daniel Stüwe
+
+`src/HOL/Data_Structures/AVL_Set.thy` (Isabelle/HOL, `HOL-Data_Structures`):
+Copyright (c) 1986-2026, University of Cambridge, Technische Universitaet Muenchen,
+and contributors. All rights reserved.
+Licensed under the 3-clause BSD license in Isabelle's `COPYRIGHT` file
+(https://github.com/isabelle-prover/mirror-isabelle/blob/master/COPYRIGHT).
+Authors: Tobias Nipkow
 -/
 
 module
@@ -36,8 +50,14 @@ generic framework.
 
 ## Provenance
 
-Book Chapter 9 (AVL trees) and the equations of
-`StronglyJoinableAVL.thy` in the AFP entry `Joinable_BST_Work_Bounds`.
+The AVL prerequisites (the AVL trees of book Chapter 9) follow Isabelle/HOL's
+bundled `HOL-Data_Structures` library: `ht` / `node` / `balL` / `balR` follow
+`AVL_Set_Code.thy`, and `avl`, `ht_height`, `height_node` and `balL_avl` /
+`balR_avl` (Isabelle `avl_balL` / `avl_balR`) follow `AVL_Set.thy`.
+`avlJoinR` / `avlJoinL` / `avlJoin`, the `set` / `bst` lemmas for `balL` /
+`balR` and the `join` lemmas follow `StronglyJoinableAVL.thy` in the AFP
+entry `Joinable_BST_Work_Bounds`. In the docstrings below, names cited as
+Isabelle lemmas are from that AFP theory, except `ht_height` (`AVL_Set.thy`).
 -/
 
 @[expose] public section

@@ -31,11 +31,17 @@ private def t1 : Tree Nat Nat :=
 /-- An AVL tree with keys `{5, 7}` (stored heights correct). -/
 private def t2 : Tree Nat Nat :=
   Tree.Node Tree.Leaf (5, 2) (Tree.Node Tree.Leaf (7, 1) Tree.Leaf)
+/-- An AVL tree of height 3 with keys `{1, 2, 3, 4}` and a right child of
+height 2 (the `ta3` of `StronglyJoinableTests`). -/
+private def t3 : Tree Nat Nat :=
+  Tree.Node (Tree.Node Tree.Leaf (1, 1) Tree.Leaf) (2, 3)
+    (Tree.Node (Tree.Node Tree.Leaf (3, 1) Tree.Leaf) (4, 2) Tree.Leaf)
 
 private theorem bst_t1 : bst t1 := by simp [bst, set_tree, t1]
 private theorem bst_t2 : bst t2 := by simp [bst, set_tree, t2]
 private theorem avl_t1 : avl t1 := by simp [avl, height, t1]
 private theorem avl_t2 : avl t2 := by simp [avl, height, t2]
+private theorem avl_t3 : avl t3 := by simp [avl, height, t3]
 
 -- `node` / `ht` / `height` computations.
 example : ht t1 = 2 := by decide
@@ -57,9 +63,16 @@ example : balR (Tree.Leaf : Tree Nat Nat) 4 t2 =
 example : avlJoin t1 4 t2 = Tree.Node t1 (4, 3) t2 := by decide
 example : height (avlJoin t1 4 t2) = 3 := by decide
 example : ht (avlJoin t1 4 t2) = 3 := by decide
--- `avlJoinR` descends the heavy spine (`ht Leaf ≤ ht t2 + 1`, then `balR`).
-example : avlJoinR (Tree.Node t1 (9, 3) Tree.Leaf) 10 t2 =
-    Tree.Node t1 (9, 4) (Tree.Node Tree.Leaf (10, 3) t2) := by decide
+-- `avlJoinR` on an AVL input meeting its precondition (`ht t3 = 3 > ht Leaf + 1`)
+-- descends the right spine: the call at key 2 recurses (its right child has
+-- `ht` 2 > 1), the call at key 4 stops (`ht Leaf ≤ 1`) and attaches
+-- `node Leaf 5 Leaf` with `balR`, and neither `balR` rotates. The result is AVL.
+example : avlJoinR t3 5 Tree.Leaf =
+    Tree.Node (Tree.Node Tree.Leaf (1, 1) Tree.Leaf) (2, 3)
+      (Tree.Node (Tree.Node Tree.Leaf (3, 1) Tree.Leaf) (4, 2)
+        (Tree.Node Tree.Leaf (5, 1) Tree.Leaf)) := by decide
+example : avl (avlJoinR t3 5 Tree.Leaf) :=
+  (avlJoinR_height t3 5 Tree.Leaf avl_t3 trivial (by decide)).1
 
 -- The `avlJoin` theorems on concrete trees.
 example : set_tree (avlJoin t1 4 t2) = set_tree t1 ∪ {4} ∪ set_tree t2 :=
