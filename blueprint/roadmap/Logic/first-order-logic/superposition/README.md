@@ -7,6 +7,7 @@ The superposition calculus for first-order clauses with equality, combining orde
 - [Redundancy and fair runs for superposition](redundancy-and-fair-runs-for-superposition.md)
 - [Candidate interpretation for superposition](candidate-interpretation-for-superposition.md)
 - [Candidate rewrite systems are convergent](candidate-rewrite-systems-are-convergent.md)
+- [Lifting lemmas for superposition](lifting-lemmas-for-superposition.md)
 - [Model construction for superposition](superposition-model-construction.md)
 - [Term-generated models of ground instances](term-generated-models-of-ground-instances.md)
 - [Refutational completeness of superposition, static view](static-refutational-completeness-of-superposition.md)

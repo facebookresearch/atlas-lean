@@ -1,8 +1,8 @@
 # Refutational completeness of superposition, static view
 
-Let $N$ be a set of clauses that is [saturated up to redundancy](redundancy-and-fair-runs-for-superposition.md) with respect to the [superposition calculus](superposition-calculus.md). Then $N$ has a model if and only if $N$ does not contain the empty clause.
+Let $N$ be a set of clauses over a signature with at least one constant symbol, as in the superposition calculus, that is [saturated up to redundancy](redundancy-and-fair-runs-for-superposition.md) with respect to the [superposition calculus](superposition-calculus.md). Then $N$ has a model if and only if $N$ does not contain the empty clause.
 
-**Proof.** If $\bot \notin N$, then $T_\Sigma(\emptyset)/R_\infty$ is a model of $G_\Sigma(N)$ by the model construction theorem, and it is term-generated, hence a model of $N$.
+**Proof.** If $\bot \notin N$, then $T_\Sigma(\emptyset)/R_\infty$ is a model of $G_\Sigma(N)$ by the model construction theorem, and it is term-generated, hence a model of $N$. The constant is needed: $\{x \not\approx x\}$ over a signature with only a unary function symbol is saturated, since its only inference, equality resolution, gives the empty clause, which is redundant because it follows from the empty set of ground instances; yet $\{x \not\approx x\}$ has no model.
 
 ## Depends on
 

@@ -5,7 +5,7 @@ Let $\mathcal A$ be a $\Sigma$-algebra with universe $U_{\mathcal A}$, interpret
 1. $\succ_{\mathcal A}$ is stable under substitutions.
 2. If $f_{\mathcal A}$ is monotone for every function symbol $f$, then $\succ_{\mathcal A}$ is compatible with $\Sigma$-operations, and $\succ_{\mathcal A}$ is a [reduction ordering](reduction-ordering.md).
 
-Polynomial orderings, which interpret symbols over $\{n \in \mathbb N \mid n \ge 1\}$ by polynomials with natural coefficients in which every argument occurs, are an instance.
+Polynomial orderings, which interpret symbols over $\{n \in \mathbb N \mid n \ge 1\}$ by polynomials with natural coefficients in which a nullary symbol is interpreted by a natural number at least $1$ and every argument of an $n$-ary symbol, $n \ge 1$, occurs with a nonzero coefficient in some monomial, are an instance.
 
 ## Depends on
 

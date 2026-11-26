@@ -1,8 +1,8 @@
 # Refutational completeness of ordered resolution with selection
 
-Let $\succ$ be an atom ordering and $\mathrm{sel}$ a selection function as in [ordered resolution with selection](ordered-resolution-with-selection.md), and let $N$ be a set of clauses without equality that is saturated, $\mathrm{Res}^\succ_{\mathrm{sel}}(N) \subseteq N$. Then $N$ is unsatisfiable if and only if the empty clause $\bot$ belongs to $N$.
+Let $\succ$ be an atom ordering and $\mathrm{sel}$ a selection function as in [ordered resolution with selection](ordered-resolution-with-selection.md), and let $N$ be a set of clauses without equality, over a signature with at least one constant symbol, that is saturated, $\mathrm{Res}^\succ_{\mathrm{sel}}(N) \subseteq N$. Then $N$ is unsatisfiable if and only if the empty clause $\bot$ belongs to $N$.
 
-**Proof sketch.** On ground clauses, build a candidate Herbrand interpretation by induction over the clause ordering, as for unrestricted resolution, except that clauses with selected literals are never productive; a minimal counterexample would yield an inference whose conclusion is a smaller counterexample. Lift to general clauses with the lifting lemma for resolution adapted to the ordering and selection conditions (Lemma 3.40 of the cited notes, for ground instances whose selected literals correspond to those of the premises), and with a selection function on ground instances that selects the instances of the selected literals, under which the set of ground instances of a saturated set is saturated (Corollary 3.41).
+**Proof sketch.** On ground clauses, build a candidate Herbrand interpretation by induction over the clause ordering, as for unrestricted resolution, except that clauses with selected literals are never productive; a minimal counterexample would yield an inference whose conclusion is a smaller counterexample. Lift to general clauses: for a selection function on ground instances that selects, in each ground instance, the instances of the literals selected in a fixed clause of $N$ it comes from, the set $G_\Sigma(N)$ of ground instances is again saturated, so it has a Herbrand model, which is a model of $N$. Without a constant symbol $G_\Sigma(N)$ could be empty.
 
 ## Depends on
 
@@ -11,7 +11,7 @@ Let $\succ$ be an atom ordering and $\mathrm{sel}$ a selection function as in [o
 ## Proof depends on
 
 - [Herbrand models suffice for clause sets](herbrand-models-suffice-for-clause-sets.md)
-- [Lifting lemma for first-order resolution](lifting-lemma-for-first-order-resolution.md)
+- [Ground instances of a saturated clause set are saturated](ground-instances-of-saturated-clause-sets-are-saturated.md)
 
 ## Sources
 

@@ -8,7 +8,7 @@ To decide a ground conjunction $u_1 \approx v_1 \wedge \dots \wedge u_n \approx 
 - **Collapse:** $E, R \cup \{t[c]_p \to c', c \to c''\} \vdash E, R \cup \{t[c'']_p \to c', c \to c''\}$ if $p \ne \varepsilon$;
 - **Deduce:** $E, R \cup \{t \to c, t \to c'\} \vdash E \cup \{c \approx c'\}, R \cup \{t \to c\}$.
 
-**Theorem.** Let $E_0$ be a finite set of C-equations, $R_0$ a finite set of D-equations oriented from left to right, and $\succ$ a total ordering on the constants. Then the inference system terminates in a final state $(E_m, R_m)$ with $E_m = \emptyset$, $R_m$ terminating and confluent, and $\approx_{E_0 \cup R_0}\ =\ \approx_{R_m}$. Flattening preserves $\approx$ between terms over the original symbols, so normalizing the $s_i$ and $t_i$ with $R_m$ decides the input conjunction, which gives a completion-based proof that [congruence closure decides conjunctions of ground equalities](congruence-closure-decides-conjunctions-of.md).
+**Theorem.** Let $E_0$ be a finite set of C-equations, $R_0$ a finite set of D-equations oriented from left to right, and $\succ$ a total ordering on the constants. Then the inference system terminates in a final state $(E_m, R_m)$ with $E_m = \emptyset$, $R_m$ terminating and confluent, and $\approx_{E_0 \cup R_0}\ =\ \approx_{R_m}$. Flattening preserves $\approx$ between terms over the original symbols, so normalizing the $s_i$ and $t_i$ with $R_m$ decides the input conjunction, which gives a completion-based proof that congruence closure decides conjunctions of ground equalities.
 
 ## Depends on
 

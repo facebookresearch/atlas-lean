@@ -10,4 +10,6 @@
 - [Lifting lemma for first-order resolution](lifting-lemma-for-first-order-resolution.md)
 - [Refutational completeness of first-order resolution](refutational-completeness-of-first-order-resolution.md)
 - [Ordered resolution with selection](ordered-resolution-with-selection.md)
+- [Lifting lemma for ordered resolution with selection](lifting-lemma-for-ordered-resolution-with-selection.md)
+- [Ground instances of a saturated clause set are saturated](ground-instances-of-saturated-clause-sets-are-saturated.md)
 - [Refutational completeness of ordered resolution with selection](refutational-completeness-of-ordered-resolution.md)

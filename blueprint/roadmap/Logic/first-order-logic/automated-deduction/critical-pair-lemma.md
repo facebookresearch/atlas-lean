@@ -5,6 +5,7 @@ A term rewriting system $R$ is locally confluent if and only if all its critical
 ## Depends on
 
 - [Critical pairs of a term rewriting system](critical-pairs-of-a-term-rewriting-system.md)
+- [Confluence of a relation](../term-rewriting/confluence-of-a-relation.md)
 
 ## Proof depends on
 

@@ -1,11 +1,12 @@
 # ALC satisfiability with respect to general TBoxes is EXPTIME-complete
 
-The problem of deciding whether an ALC concept is satisfiable with respect to a TBox, in the sense of [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md), where the TBox is an arbitrary finite set of general concept inclusions $C \sqsubseteq D$, is complete for [EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md), deterministic exponential time, under polynomial-time many-one reductions. The same holds for general terminological axioms $C \doteq D$, which are pairs of inclusions; a TBox has the same models as the single axiom $\hat C \doteq \top$, where $\hat C$ is the conjunction of the concepts $\neg C \sqcup D$ over its inclusions.
+The problem of deciding whether an ALC concept is satisfiable with respect to a TBox, in the sense of [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md), where the TBox is an arbitrary finite set of general concept inclusions $C \sqsubseteq D$, is complete for [EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md), deterministic exponential time, under [polynomial-time many-one reductions](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md). The same holds for general terminological axioms $C \doteq D$, which are pairs of inclusions; a TBox has the same models as the single axiom $\hat C \doteq \top$, where $\hat C$ is the conjunction of the concepts $\neg C \sqcup D$ over its inclusions.
 
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
 - [The class EXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/exp.md)
+- [Polynomial-time many-one reduction](../../../TheoryOfComputation/np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 
 ## Expansion
 

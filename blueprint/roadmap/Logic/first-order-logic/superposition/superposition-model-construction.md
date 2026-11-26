@@ -16,6 +16,7 @@ Let $N$ be a set of clauses that is [saturated up to redundancy](redundancy-and-
 ## Proof depends on
 
 - [Candidate rewrite systems are convergent](candidate-rewrite-systems-are-convergent.md)
+- [Lifting lemmas for superposition](lifting-lemmas-for-superposition.md)
 
 ## Sources
 
