@@ -36,25 +36,31 @@ public import Mathlib.CategoryTheory.Yoneda
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.Localization.Away.Basic
+public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor
 public import MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum
 
 /-!
 # Charts of the formal upper half plane
 
 The functors of this file go from commutative `𝒪`-algebras to types: they are functors
-`CommAlgCat 𝒪 ⥤ Type`. Maps between them are natural transformations, corepresentability is
-`Functor.CorepresentableBy`, and an action of a group `Γ` on such a functor `F` is a monoid hom
-`Γ →* Aut F`.
+`CommAlgCat 𝒪 ⥤ Type`, maps between them are natural transformations, and corepresentability is
+`Functor.CorepresentableBy`.
 
 * `chartV 𝒪 q`: the vertex chart, the points `ζ` with `ζ ^ q - ζ` a unit.
 * `chartE 𝒪 π q`: the edge chart, the pairs `(ξ, η)` with `ξ * η = π` and with `ξ ^ (q - 1) - 1`
   and `η ^ (q - 1) - 1` units.
+* `vertexToEdge`: the transition `ζ ↦ (ζ, π ζ⁻¹)` from the unit vertex chart `chartVUnit 𝒪 q` to
+  the edge chart, defined on the algebras in which `π` is nilpotent and natural among them
+  (`vertexToEdge_natural`).
 * `chartVRing R q` and `chartERing R π q`: localizations of polynomial rings that corepresent the
   two charts; `chartVRing.corepIso` and `chartERing.corepIso` are the natural isomorphisms from
   the functors of algebra maps out of these rings.
-* `OmegaNrObj`, `frobTwist` and `OmegaNr.IsTwistedAct`: pairs of an `Onr`-point and a Deligne
-  datum of `MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum`, and the action of `GL₂(K)` on
-  them twisted by Frobenius.
+* `OmegaNrObj` and `OmegaNr.IsTwistedAct`: pairs of an `Onr`-point and a Deligne datum of
+  `MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum`, and the relation saying that `x'` is
+  obtained from `x` by `g ∈ GL₂(K)`: the point is twisted by `frobTwist` (from
+  `MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor`) with exponent `-vdet g`,
+  and the datum is pulled back along `g⁻¹`. The automorphism `Fr` and the hom `vdet` are supplied
+  data, and this module does not prove that the relation is a group action.
 -/
 
 @[expose] public section
@@ -474,10 +480,6 @@ variable (vdet : Matrix.GeneralLinearGroup (Fin 2) K →* Multiplicative ℤ)
 
 abbrev OmegaNrObj (B : Type) [CommRing B] [Algebra 𝒪 B] : Type :=
   (Onr →ₐ[𝒪] B) × OmegaObj (K := K) π B
-
-noncomputable def frobTwist (n : ℤ) {B : Type} [CommRing B] [Algebra 𝒪 B] (ψ : Onr →ₐ[𝒪] B) : Onr
-  →ₐ[𝒪] B :=
-  ψ.comp ((Fr ^ n : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr)
 
 def OmegaNr.IsTwistedAct (B : Type) [CommRing B] [Algebra 𝒪 B] (g : Matrix.GeneralLinearGroup (Fin
   2) K)
