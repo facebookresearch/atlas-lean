@@ -47,6 +47,8 @@ rule function $f(x) = \lfloor x/k \rfloor$.
   $x - f(x) - 1$ with $\lfloor (k-1)x/k \rfloor$.
 * `MetaMathlibExt.maximumNimGrundy_div_eq_of_dvd`: for $k \ge 2$ and the rule function
   $f(y) = \lfloor y/k \rfloor$, every positive multiple $x$ of $k$ has Grundy number $x/k$.
+* `MetaMathlibExt.maximumNimGrundy_sub_eq_zero`: for $k \ge 2$ and the same rule, every pile below
+  $k$ has Grundy number zero.
 
 ## Proof outline
 
@@ -344,6 +346,23 @@ theorem maximumNimGrundy_div_eq_of_dvd (k x : ℕ) (hk : 2 ≤ k)
       Nat.add_sub_cancel]
   rw [Finset.eq_of_subset_of_card_le hsub (by rw [hcard, Finset.card_range])]
   exact ⟨Finset.notMem_range_self, fun n hn => Finset.mem_range.mpr hn⟩
+
+-- The hypothesis `2 ≤ k` matches the source statement; the bounds on `j` suffice for the proof.
+set_option linter.unusedVariables false in
+/-- **Floor-rule Maximum Nim: positions below k have Grundy number zero.** For every natural
+number $k \ge 2$ and every natural number $j$ with $1 \le j \le k$, a pile of $k - j$ stones has
+Grundy number $0$ in Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 3(iii) (`integers-2024-G5-lem-3`). -/
+public theorem maximumNimGrundy_sub_eq_zero (k j : ℕ) (hk : 2 ≤ k)
+    (hj : 1 ≤ j) (hjk : j ≤ k) :
+    maximumNimGrundy (· / k) (k - j) = 0 := by
+  have hdiv : (k - j) / k = 0 := Nat.div_eq_of_lt (by omega)
+  have hempty : (Finset.Icc 1 (min ((k - j) / k) (k - j))).attach = ∅ := by
+    simp [hdiv]
+  rw [maximumNimGrundy_eq, maximumNimMex_eq_iff, hempty, Finset.image_empty]
+  simp
 
 /-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
 numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
