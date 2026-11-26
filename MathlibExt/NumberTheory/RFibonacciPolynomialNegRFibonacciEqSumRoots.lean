@@ -8,16 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Order.Interval.Finset.Nat
-public import Mathlib.Data.Nat.Fib.Basic
-public import Mathlib.RingTheory.PowerSeries.Basic
-public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
-public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
-public import MathlibExt.NumberTheory.RFibonacciPolynomial
-public import MathlibExt.NumberTheory.RFibonacciPolynomialSum
-public import MathlibExt.NumberTheory.RLucasPolynomial
-public import MathlibExt.NumberTheory.RLucasPolynomialAlternatingSum
-import Mathlib.LinearAlgebra.Lagrange
+public import Mathlib.LinearAlgebra.Lagrange
+public import MathlibExt.NumberTheory.NegRFibonacciPolynomial
 import Mathlib.Tactic.LinearCombination
 
 /-!

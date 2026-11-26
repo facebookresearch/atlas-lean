@@ -30,4 +30,12 @@ example : MetaMathlibExt.negRFibonacci 2 (0 : ℚ) 1 4 = 0 := by
     (by simp [Fin.prod_univ_succ]; ring) 3
   convert h using 1; norm_num [Fin.sum_univ_succ]
 
+-- With `r = 2`, `x = 6/7` and `y = 1/7` the characteristic polynomial `X^3 - 7X + 6` has roots
+-- `-3, 1, 2`, so `x y⁻¹ = 6` contributes to every denominator; at `n = 3` the formula gives `-6`.
+example : MetaMathlibExt.negRFibonacci 2 (6 / 7 : ℚ) (Units.mk0 (1 / 7) (by norm_num)) 4 = -6 := by
+  have h := MetaMathlibExt.negRFibonacci_eq_sum_roots (K := ℚ) (r := 2)
+    (by decide) (6 / 7) (Units.mk0 (1 / 7) (by norm_num)) ![-3, 1, 2] (by decide)
+    (by apply Polynomial.funext; intro t; simp [Fin.prod_univ_succ]; ring) 3
+  rw [h]; norm_num [Fin.sum_univ_succ]
+
 end MathlibExtTest.NumberTheory.RFibonacciPolynomialNegRFibonacciEqSumRoots
