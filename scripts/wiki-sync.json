@@ -351,6 +351,7 @@
 "Algebra.exists_algHom_adjoin_of_linearRelations": "250a87b4fa559e0a",
 "Algebra.exists_algHom_adjoin_of_primeSubfield": "4ce86ae9c4965b73",
 "Algebra.exists_algHom_forall_ne_zero": "7e936d742a2b10ad",
+"Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential": "baaf534a9415ccfd",
 "Algebra.exists_inner_of_separabilityElement": "f1a7eb2a6df3b6c5",
 "Algebra.isPushout_of_forall_existsUnique_algHom_comp_eq": "f143791317a97144",
 "Algebra.isReduced_of_traceForm_nondegenerate": "b6a94ab4d9f506eb",
