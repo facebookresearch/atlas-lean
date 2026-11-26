@@ -16,8 +16,9 @@ import Mathlib.Topology.Sheaves.LocalPredicate
 Smoothness of native bundle sections is a local predicate. The presheaf of
 these sections satisfies the ordinary sheaf condition.
 
-Source: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
-alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11.
+Background: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
+alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11. That theorem motivates the
+Kähler Higgs correspondence this lemma serves; it is not the source of this lemma.
 -/
 
 open CategoryTheory TopologicalSpace

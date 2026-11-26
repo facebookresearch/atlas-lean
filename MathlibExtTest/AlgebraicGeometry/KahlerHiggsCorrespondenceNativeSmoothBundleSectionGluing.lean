@@ -16,8 +16,9 @@ import Mathlib.Topology.Sheaves.SheafCondition.UniqueGluing
 The native gluing theorem gives a unique smooth section for each compatible
 family of smooth sections on an open cover.
 
-Source: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
-alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11.
+Background: Carlos Simpson, *The Hodge filtration on nonabelian cohomology*,
+alg-geom/9604005v1, section 2 and Theorem 2.3, pp. 7--11. That theorem motivates the
+Kähler Higgs correspondence this lemma serves; it is not the source of this lemma.
 -/
 
 open CategoryTheory Opposite TopologicalSpace
