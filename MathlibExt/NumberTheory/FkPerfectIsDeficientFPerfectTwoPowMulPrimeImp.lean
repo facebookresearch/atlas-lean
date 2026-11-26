@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -32,13 +33,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
 
 private theorem geom_sum_four (e : ℕ) :
     (∑ i ∈ Finset.range (e + 1), 2 ^ (i * 2)) % 4 = 1 := by
