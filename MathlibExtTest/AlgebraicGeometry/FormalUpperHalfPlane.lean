@@ -178,3 +178,83 @@ example : (vertexToEdge (5 : ℤ) le_rfl (CommAlgCat.of ℤ (ZMod 25)) isNilpote
   rw [Units.inv_eq_of_mul_eq_one_right (u := twoUnitPoint25.2.2.unit) (a := 13)
     (by rw [IsUnit.unit_spec]; decide), map_ofNat]
   decide
+
+-- For `1 ≤ q` the unit condition of the unit vertex chart is automatic: the inclusion into the
+-- vertex chart is an isomorphism, and its inverse keeps the coordinate. Over `ℤ/9ℤ` with `q = 2`,
+-- the vertex chart point `ζ = 2` (`2 ^ 2 - 2 = 2` is a unit) is the unit vertex chart point
+-- `twoUnitPoint9` above.
+example : IsIso (chartVUnitIncl ℤ 2) := isIso_chartVUnitIncl ℤ (by norm_num)
+
+private def twoPoint9 : (chartV ℤ 2).obj (CommAlgCat.of ℤ (ZMod 9)) :=
+  ⟨2, IsUnit.of_mul_eq_one 5 (by decide)⟩
+
+example : haveI := isIso_chartVUnitIncl ℤ (q := 2) (by norm_num)
+    ((inv (chartVUnitIncl ℤ 2)).app (CommAlgCat.of ℤ (ZMod 9)) twoPoint9).1 = 2 := by
+  have := isIso_chartVUnitIncl ℤ (q := 2) (by norm_num)
+  exact congrArg Subtype.val (ConcreteCategory.congr_hom
+    (Iso.inv_hom_id_app (asIso (chartVUnitIncl ℤ 2)) (CommAlgCat.of ℤ (ZMod 9))) twoPoint9)
+
+example : (⟨twoPoint9.1, twoPoint9.2, isUnit_of_isUnit_pow_sub (by norm_num) twoPoint9.2⟩ :
+    (chartVUnit ℤ 2).obj (CommAlgCat.of ℤ (ZMod 9))) = twoUnitPoint9 :=
+  rfl
+
+-- Level `n`: for `𝒪 = ℤ`, `π = 3` and `n = 1`, `truncRing ℤ 3 1` is `ℤ ⧸ (3 ^ 2)`, where `3` is
+-- not zero but `3 ^ 2` is.
+example : (3 : truncRing ℤ 3 1) ≠ 0 := by
+  intro h
+  have h' := Ideal.Quotient.eq_zero_iff_mem.mp h
+  rw [Ideal.mem_span_singleton] at h'
+  norm_num at h'
+
+example : (3 : truncRing ℤ 3 1) ^ 2 = 0 := by
+  rw [← map_ofNat (Ideal.Quotient.mk _) 3, ← map_pow, Ideal.Quotient.eq_zero_iff_mem]
+  exact Ideal.subset_span (by norm_num)
+
+-- `3` is nilpotent in every `ℤ`-algebra whose structure map factors through `truncRing ℤ 3 1`: in
+-- the truncation itself and in the level-`1` vertex chart ring. So the transition applies to
+-- algebras over the truncation.
+example : IsNilpotent (algebraMap ℤ (truncRing ℤ 3 1) 3) :=
+  isNilpotent_algebraMap_of_isScalarTower ℤ 3 1 (truncRing ℤ 3 1)
+
+example : IsNilpotent (algebraMap ℤ (chartVRingMod ℤ 3 2 1) 3) :=
+  isNilpotent_algebraMap_of_isScalarTower ℤ 3 1 (chartVRingMod ℤ 3 2 1)
+
+example : (chartVUnit ℤ 2).obj (CommAlgCat.of ℤ (truncRing ℤ 3 1)) →
+    (chartE ℤ 3 2).obj (CommAlgCat.of ℤ (truncRing ℤ 3 1)) :=
+  vertexToEdge (3 : ℤ) le_rfl _ (isNilpotent_algebraMap_of_isScalarTower ℤ 3 1 _)
+
+-- The level-`1` edge chart ring corepresents the edge chart over `truncRing ℤ 3 1` for the image
+-- of `3`, which is nilpotent in it.
+example : coyoneda.obj (op (CommAlgCat.of (truncRing ℤ 3 1) (chartERingMod ℤ 3 2 1))) ≅
+    chartE (truncRing ℤ 3 1) (Ideal.Quotient.mk _ 3) 2 :=
+  chartERing.corepIso _ _ _
+
+example : IsNilpotent (algebraMap (truncRing ℤ 3 1) (chartERingMod ℤ 3 2 1)
+    (Ideal.Quotient.mk _ 3)) :=
+  (isNilpotent_algebraMap_of_isScalarTower ℤ 3 1 (truncRing ℤ 3 1)).map _
+
+-- The special fibre of the vertex chart has no points in the prime field: in `ZMod 3`,
+-- `ζ ^ 3 - ζ` is never a unit.
+example (ζ : ZMod 3) : ¬IsUnit (ζ ^ 3 - ζ) := by
+  rw [isUnit_pow_sub_iff_forall_ne_cast 3 (ZMod 3) ζ, not_forall]
+  exact ⟨ζ, fun h => h (ZMod.cast_id 3 ζ).symm⟩
+
+section TwistedAct
+
+variable {𝒪 : Type} [CommRing 𝒪] {K : Type} [Field K] [Algebra 𝒪 K] (π : 𝒪)
+  (Onr : Type) [CommRing Onr] [Algebra 𝒪 Onr] (Fr : Onr ≃ₐ[𝒪] Onr)
+  (vdet : Matrix.GeneralLinearGroup (Fin 2) K →* Multiplicative ℤ)
+  (B : Type) [CommRing B] [Algebra 𝒪 B] (x x' : OmegaNrObj (K := K) π Onr B)
+
+-- The Frobenius-twisted relation fixes both parts: when `vdet g` is the generator `1`, the algebra
+-- map is twisted by `Fr ^ (-1)` and the Deligne datum is pulled back along `g⁻¹`.
+example (g : Matrix.GeneralLinearGroup (Fin 2) K) (hg : vdet g = Multiplicative.ofAdd 1)
+    (h : OmegaNr.IsTwistedAct π Onr Fr vdet B g x x') :
+    x'.1 = frobTwist Onr Fr (-1) x.1 ∧ DeligneDatum.IsPullback (K := K) (π := π) B g⁻¹ x.2 x'.2 :=
+  ⟨by rw [h.1, hg, toAdd_ofAdd], h.2⟩
+
+-- For `g = 1` the algebra map does not change.
+example (h : OmegaNr.IsTwistedAct π Onr Fr vdet B 1 x x') : x'.1 = x.1 := by
+  rw [h.1, map_one, toAdd_one, neg_zero, frobTwist_zero]
+
+end TwistedAct

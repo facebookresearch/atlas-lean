@@ -12,7 +12,6 @@ Portions of this file are adapted from:
 `Definitions/Def_CerednikDrinfeld_FormalUpperHalfPlaneChartRings.lean`,
 `Definitions/Def_CerednikDrinfeld_FormalUpperHalfPlaneCharts.lean`,
 `Definitions/Def_CerednikDrinfeld_FormalUpperHalfPlaneDatum.lean`
-and `Definitions/Def_LatticeTreeOrbital.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -33,6 +32,7 @@ module
 public import Mathlib.Algebra.Category.CommAlgCat.Basic
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.CategoryTheory.Yoneda
+public import Mathlib.FieldTheory.Finite.Basic
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 public import Mathlib.RingTheory.Localization.Away.Basic
@@ -49,12 +49,23 @@ The functors of this file go from commutative `𝒪`-algebras to types: they are
 * `chartV 𝒪 q`: the vertex chart, the points `ζ` with `ζ ^ q - ζ` a unit.
 * `chartE 𝒪 π q`: the edge chart, the pairs `(ξ, η)` with `ξ * η = π` and with `ξ ^ (q - 1) - 1`
   and `η ^ (q - 1) - 1` units.
-* `vertexToEdge`: the transition `ζ ↦ (ζ, π ζ⁻¹)` from the unit vertex chart `chartVUnit 𝒪 q` to
-  the edge chart, defined on the algebras in which `π` is nilpotent and natural among them
-  (`vertexToEdge_natural`).
-* `chartVRing R q` and `chartERing R π q`: localizations of polynomial rings that corepresent the
-  two charts; `chartVRing.corepIso` and `chartERing.corepIso` are the natural isomorphisms from
-  the functors of algebra maps out of these rings.
+* `chartVUnit 𝒪 q`: the points `ζ` of the vertex chart that are units. For `1 ≤ q` this is no
+  extra condition, and the inclusion `chartVUnitIncl` into `chartV 𝒪 q` is an isomorphism
+  (`isIso_chartVUnitIncl`).
+* `vertexToEdge`: for `2 ≤ q`, the transition `ζ ↦ (ζ, π ζ⁻¹)` from the unit vertex chart
+  `chartVUnit 𝒪 q` to the edge chart, defined on the algebras in which `π` is nilpotent and
+  natural among them (`vertexToEdge_natural`).
+* `chartVRing R q`, the localization of `R[X]` at `X ^ q - X`, and `chartERing R π q`, the
+  localization of `MvPolynomial (Fin 2) R ⧸ (X 0 * X 1 - C π)` at the image of
+  `(X 0 ^ (q - 1) - 1) * (X 1 ^ (q - 1) - 1)`, corepresent the two charts;
+  `chartVRing.corepIso` and `chartERing.corepIso` are the natural isomorphisms from the
+  functors of algebra maps out of these rings.
+* `truncRing 𝒪 π n`, the quotient `𝒪 ⧸ (π ^ (n + 1))`, and the chart rings `chartVRingMod` and
+  `chartERingMod` over it. The image of `π` is nilpotent in every `𝒪`-algebra whose structure map
+  factors through `truncRing 𝒪 π n` (`isNilpotent_algebraMap_of_isScalarTower`).
+* `padicChartV r` and `padicChartE r`: the two charts over `ℤ_[r]` for `q = r` and `π = r`. In a
+  field of characteristic `r`, `ζ ^ r - ζ` is a unit exactly when `ζ` is not the image of an
+  element of `ZMod r` (`isUnit_pow_sub_iff_forall_ne_cast`).
 * `OmegaNrObj` and `OmegaNr.IsTwistedAct`: pairs of an `Onr`-point and a Deligne datum of
   `MathlibExt.AlgebraicGeometry.FormalOmega.DeligneDatum`, and the relation saying that `x'` is
   obtained from `x` by `g ∈ GL₂(K)`: the point is twisted by `frobTwist` (from
@@ -74,9 +85,15 @@ section NatTrans
 
 variable {𝒪 : Type} [CommRing 𝒪]
 
+/-- **Isomorphism on the nilpotent locus.** A natural transformation `η : F ⟶ G` of functors
+`CommAlgCat 𝒪 ⥤ Type` is an isomorphism on the nilpotent locus of `π : 𝒪` when `η.app B` is
+bijective for every commutative `𝒪`-algebra `B` in which the image of `π` is nilpotent. -/
 def IsIsoOnNilp (π : 𝒪) {F G : CommAlgCat.{0} 𝒪 ⥤ Type} (η : F ⟶ G) : Prop :=
   ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) → Function.Bijective (η.app B)
 
+/-- **Monomorphism on the nilpotent locus.** A natural transformation `η : F ⟶ G` of functors
+`CommAlgCat 𝒪 ⥤ Type` is a monomorphism on the nilpotent locus of `π : 𝒪` when `η.app B` is
+injective for every commutative `𝒪`-algebra `B` in which the image of `π` is nilpotent. -/
 def IsMonoOnNilp (π : 𝒪) {F G : CommAlgCat.{0} 𝒪 ⥤ Type} (η : F ⟶ G) : Prop :=
   ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) → Function.Injective (η.app B)
 
@@ -86,15 +103,21 @@ section Charts
 
 variable (𝒪 : Type) [CommRing 𝒪]
 
+/-- **Vertex chart.** The functor `CommAlgCat 𝒪 ⥤ Type` that sends a commutative `𝒪`-algebra `B`
+to the set of `ζ : B` such that `ζ ^ q - ζ` is a unit; an algebra map `f` acts by `ζ ↦ f ζ`. -/
 def chartV (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
   obj B := { ζ : B // IsUnit (ζ ^ q - ζ) }
   map f := TypeCat.ofHom fun x => ⟨f.hom x.1, by
     have h := x.2.map f.hom
     rwa [map_sub, map_pow] at h⟩
 
+/-- **Edge chart.** The functor `CommAlgCat 𝒪 ⥤ Type` that sends a commutative `𝒪`-algebra `B`
+to the set of pairs `(ξ, η) : B × B` such that `ξ * η` is the image of `π` and `ξ ^ (q - 1) - 1`
+and `η ^ (q - 1) - 1` are units, where `q - 1` is truncated subtraction in `ℕ`; an algebra map
+`f` acts by `(ξ, η) ↦ (f ξ, f η)`. -/
 def chartE (π : 𝒪) (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
-  obj B := { p : B × B // p.1 * p.2 = algebraMap 𝒪 B π ∧ IsUnit (p.1 ^ (q - 1) - 1) ∧ IsUnit (p.2 ^
-    (q - 1) - 1) }
+  obj B := { p : B × B // p.1 * p.2 = algebraMap 𝒪 B π ∧
+    IsUnit (p.1 ^ (q - 1) - 1) ∧ IsUnit (p.2 ^ (q - 1) - 1) }
   map f := TypeCat.ofHom fun x => ⟨(f.hom x.1.1, f.hom x.1.2), by
     obtain ⟨h₁, h₂, h₃⟩ := x.2
     refine ⟨?_, ?_, ?_⟩
@@ -104,6 +127,9 @@ def chartE (π : 𝒪) (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
     · have h := h₃.map f.hom
       rwa [map_sub, map_pow, map_one] at h⟩
 
+/-- **Unit vertex chart.** The functor `CommAlgCat 𝒪 ⥤ Type` that sends a commutative
+`𝒪`-algebra `B` to the set of `ζ : B` such that both `ζ ^ q - ζ` and `ζ` are units; an algebra
+map `f` acts by `ζ ↦ f ζ`. -/
 def chartVUnit (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
   obj B := { ζ : B // IsUnit (ζ ^ q - ζ) ∧ IsUnit ζ }
   map f := TypeCat.ofHom fun x => ⟨f.hom x.1, by
@@ -112,14 +138,15 @@ def chartVUnit (q : ℕ) : CommAlgCat.{0} 𝒪 ⥤ Type where
     have h := h₁.map f.hom
     rwa [map_sub, map_pow] at h⟩
 
+/-- **Inclusion of the unit vertex chart.** The natural transformation from `chartVUnit 𝒪 q` to
+`chartV 𝒪 q` that keeps `ζ` and forgets that it is a unit. -/
 def chartVUnitIncl (q : ℕ) : chartVUnit 𝒪 q ⟶ chartV 𝒪 q where
   app _ := TypeCat.ofHom fun x => ⟨x.1, x.2.1⟩
 
 variable {𝒪}
 
-theorem isUnit_pow_pred_sub_one_of_isUnit_pow_sub {B : Type} [CommRing B] {q : ℕ} (hq : 1 ≤ q) {ζ :
-  B}
-    (h : IsUnit (ζ ^ q - ζ)) : IsUnit (ζ ^ (q - 1) - 1) := by
+theorem isUnit_pow_pred_sub_one_of_isUnit_pow_sub {B : Type} [CommRing B] {q : ℕ} (hq : 1 ≤ q)
+    {ζ : B} (h : IsUnit (ζ ^ q - ζ)) : IsUnit (ζ ^ (q - 1) - 1) := by
   have hpow : ζ ^ q = ζ ^ (q - 1) * ζ := by
     rw [← pow_succ, Nat.sub_add_cancel hq]
   have hfac : ζ ^ q - ζ = ζ * (ζ ^ (q - 1) - 1) := by
@@ -127,15 +154,31 @@ theorem isUnit_pow_pred_sub_one_of_isUnit_pow_sub {B : Type} [CommRing B] {q : �
   rw [hfac] at h
   exact isUnit_of_mul_isUnit_right h
 
-theorem isUnit_pow_succ_sub_one_of_isNilpotent {B : Type} [CommRing B] {a : B} (ha : IsNilpotent a)
-  (b : B) (n : ℕ) :
-    IsUnit ((a * b) ^ (n + 1) - 1) := by
-  have hab : IsNilpotent (a * b) := Commute.isNilpotent_mul_right (Commute.all a b) ha
-  have hpow : IsNilpotent ((a * b) ^ (n + 1)) := by
-    obtain ⟨m, hm⟩ := hab
-    exact ⟨m, by rw [← pow_mul, Nat.mul_comm (n + 1) m, pow_mul, hm, zero_pow (Nat.succ_ne_zero n)]⟩
-  exact hpow.isUnit_sub_one
+theorem isUnit_of_isUnit_pow_sub {B : Type} [CommRing B] {q : ℕ} (hq : 1 ≤ q) {ζ : B}
+    (h : IsUnit (ζ ^ q - ζ)) : IsUnit ζ := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_add_of_le' hq
+  rw [pow_succ, ← sub_one_mul] at h
+  exact isUnit_of_mul_isUnit_right h
 
+variable (𝒪) in
+/-- **The unit vertex chart is the vertex chart.** For `1 ≤ q`, the inclusion
+`chartVUnitIncl 𝒪 q : chartVUnit 𝒪 q ⟶ chartV 𝒪 q` is an isomorphism: when `ζ ^ q - ζ` is a unit,
+so is `ζ`, because `ζ ^ q - ζ = (ζ ^ (q - 1) - 1) * ζ`. -/
+theorem isIso_chartVUnitIncl {q : ℕ} (hq : 1 ≤ q) : CategoryTheory.IsIso (chartVUnitIncl 𝒪 q) := by
+  have (B : CommAlgCat.{0} 𝒪) : CategoryTheory.IsIso ((chartVUnitIncl 𝒪 q).app B) :=
+    (CategoryTheory.isIso_iff_bijective _).mpr
+      ⟨fun x y h => Subtype.ext (congrArg Subtype.val h :),
+        fun y => ⟨⟨y.1, y.2, isUnit_of_isUnit_pow_sub hq y.2⟩, rfl⟩⟩
+  exact CategoryTheory.NatIso.isIso_of_isIso_app _
+
+theorem isUnit_pow_succ_sub_one_of_isNilpotent {B : Type} [CommRing B] {a : B} (ha : IsNilpotent a)
+    (b : B) (n : ℕ) : IsUnit ((a * b) ^ (n + 1) - 1) :=
+  ((Commute.all a b).isNilpotent_mul_right ha).pow_succ n |>.isUnit_sub_one
+
+/-- **Transition from the vertex chart to the edge chart.** For `2 ≤ q` and a commutative
+`𝒪`-algebra `B` in which the image of `π` is nilpotent, the map that sends a point `ζ` of the unit
+vertex chart `chartVUnit 𝒪 q` over `B` to the point `(ζ, π ζ⁻¹)` of the edge chart
+`chartE 𝒪 π q`. -/
 noncomputable def vertexToEdge (π : 𝒪) {q : ℕ} (hq : 2 ≤ q) (B : CommAlgCat.{0} 𝒪)
     (hB : IsNilpotent (algebraMap 𝒪 B π)) (x : (chartVUnit 𝒪 q).obj B) : (chartE 𝒪 π q).obj B :=
   ⟨(x.1, algebraMap 𝒪 B π * ↑(x.2.2.unit⁻¹)), by
@@ -148,6 +191,9 @@ noncomputable def vertexToEdge (π : 𝒪) {q : ℕ} (hq : 2 ≤ q) (B : CommAlg
       rw [hn]
       exact isUnit_pow_succ_sub_one_of_isNilpotent hB _ n⟩
 
+/-- **Naturality of the vertex-to-edge transition.** For `2 ≤ q` and an algebra map `f : B ⟶ B'`
+between commutative `𝒪`-algebras in which the image of `π` is nilpotent, `vertexToEdge` commutes
+with the maps that `f` induces on the unit vertex chart and on the edge chart. -/
 theorem vertexToEdge_natural (π : 𝒪) {q : ℕ} (hq : 2 ≤ q) {B B' : CommAlgCat.{0} 𝒪}
     (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (f : B ⟶ B')
     (x : (chartVUnit 𝒪 q).obj B) :
@@ -171,13 +217,24 @@ section PadicInstance
 
 variable (r : ℕ) [Fact r.Prime]
 
+/-- **The `r`-adic vertex chart.** The vertex chart `chartV ℤ_[r] r` over the `r`-adic integers,
+with exponent `q = r`. -/
 noncomputable abbrev padicChartV : CommAlgCat.{0} ℤ_[r] ⥤ Type := chartV ℤ_[r] r
 
+/-- **The `r`-adic edge chart.** The edge chart `chartE ℤ_[r] r r` over the `r`-adic integers,
+with `π = r` and exponent `q = r`. -/
 noncomputable abbrev padicChartE : CommAlgCat.{0} ℤ_[r] ⥤ Type := chartE ℤ_[r] (r : ℤ_[r]) r
 
-def SpecialFibreVertexChartShape : Prop :=
-  ∀ (𝔽 : Type) [Field 𝔽] [Algebra ℤ_[r] 𝔽] [CharP 𝔽 r] (ζ : 𝔽),
-    IsUnit (ζ ^ r - ζ) ↔ ∀ a : ZMod r, (ζ : 𝔽) ≠ (a.cast : 𝔽)
+/-- **Special fibre of the vertex chart.** Let `r` be a prime and `𝔽` a field of characteristic
+`r`. For `ζ : 𝔽`, the element `ζ ^ r - ζ` is a unit exactly when `ζ` differs from the image of
+every element of `ZMod r`, that is, when `ζ` is not in the prime field of `𝔽`. This is the
+condition that defines the points of `padicChartV r` over such a field. -/
+theorem isUnit_pow_sub_iff_forall_ne_cast (𝔽 : Type) [Field 𝔽] [CharP 𝔽 r] (ζ : 𝔽) :
+    IsUnit (ζ ^ r - ζ) ↔ ∀ a : ZMod r, (ζ : 𝔽) ≠ (a.cast : 𝔽) := by
+  rw [isUnit_iff_ne_zero, sub_ne_zero, Ne, ← Subfield.mem_bot_iff_pow_eq_self 𝔽 r,
+    ← ZMod.fieldRange_castHom_eq_bot r]
+  simp only [RingHom.mem_fieldRange, ZMod.castHom_apply, not_exists]
+  exact forall_congr' fun a => ne_comm
 
 end PadicInstance
 
@@ -197,6 +254,8 @@ variable (R : Type) [CommRing R]
 
 abbrev vertexDiscr (q : ℕ) : R[X] := X ^ q - X
 
+/-- **Vertex chart ring.** The localization of the polynomial ring `R[X]` away from `X ^ q - X`;
+it corepresents the vertex chart `chartV R q` (`chartVRing.corepIso`). -/
 abbrev chartVRing (q : ℕ) : Type := Localization.Away (vertexDiscr R q)
 
 namespace chartVRing
@@ -205,8 +264,8 @@ variable (q : ℕ)
 
 def ζ : chartVRing R q := algebraMap R[X] (chartVRing R q) X
 
-theorem algebraMap_vertexDiscr : algebraMap R[X] (chartVRing R q) (vertexDiscr R q) = ζ R q ^ q - ζ
-  R q := by
+theorem algebraMap_vertexDiscr :
+    algebraMap R[X] (chartVRing R q) (vertexDiscr R q) = ζ R q ^ q - ζ R q := by
   change algebraMap R[X] (chartVRing R q) (X ^ q - X) = _
   rw [map_sub, map_pow]; rfl
 
@@ -219,8 +278,8 @@ def point : (chartV R q).obj (CommAlgCat.of R (chartVRing R q)) := ⟨ζ R q, is
 variable {R q}
 
 theorem isUnit_aeval_of_mem_powers {B : CommAlgCat.{0} R} (x : (chartV R q).obj B)
-    (y : Submonoid.powers (vertexDiscr R q)) : IsUnit (Polynomial.aeval (R := R) x.1 (y : R[X])) :=
-      by
+    (y : Submonoid.powers (vertexDiscr R q)) :
+    IsUnit (Polynomial.aeval (R := R) x.1 (y : R[X])) := by
   obtain ⟨_, n, rfl⟩ := y
   rw [map_pow]
   refine IsUnit.pow n ?_
@@ -231,9 +290,8 @@ theorem isUnit_aeval_of_mem_powers {B : CommAlgCat.{0} R} (x : (chartV R q).obj 
   rw [this]; exact x.2
 
 def lift {B : CommAlgCat.{0} R} (x : (chartV R q).obj B) : chartVRing R q →ₐ[R] B :=
-  IsLocalization.liftAlgHom (M := Submonoid.powers (vertexDiscr R q)) (f := Polynomial.aeval (R :=
-    R) x.1)
-    (isUnit_aeval_of_mem_powers x)
+  IsLocalization.liftAlgHom (M := Submonoid.powers (vertexDiscr R q))
+    (f := Polynomial.aeval (R := R) x.1) (isUnit_aeval_of_mem_powers x)
 
 @[simp] theorem lift_ζ {B : CommAlgCat.{0} R} (x : (chartV R q).obj B) : lift x (ζ R q) = x.1 := by
   rw [lift, IsLocalization.liftAlgHom_apply, ζ, IsLocalization.lift_eq]
@@ -264,6 +322,9 @@ def corepresentableBy : (chartV R q).CorepresentableBy (CommAlgCat.of R (chartVR
   homEquiv_comp g f := by exact corepEquiv_natural g f.hom
 
 variable (R q) in
+/-- **The vertex chart ring corepresents the vertex chart.** The natural isomorphism from the
+functor of `R`-algebra maps out of `chartVRing R q` to the vertex chart `chartV R q`; it sends an
+algebra map `φ` to the point `φ ζ`, where `ζ` is the image of `X`. -/
 def corepIso :
     CategoryTheory.coyoneda.obj (Opposite.op (CommAlgCat.of R (chartVRing R q))) ≅ chartV R q :=
   (corepresentableBy R q).toIso
@@ -277,8 +338,8 @@ theorem corepIso_inv_app (B : CommAlgCat.{0} R) (x : (chartV R q).obj B) :
 
 end chartVRing
 
-abbrev edgeRel (π : R) : MvPolynomial (Fin 2) R := MvPolynomial.X 0 * MvPolynomial.X 1 -
-  MvPolynomial.C π
+abbrev edgeRel (π : R) : MvPolynomial (Fin 2) R :=
+  MvPolynomial.X 0 * MvPolynomial.X 1 - MvPolynomial.C π
 
 def edgeQuot (π : R) : Type := MvPolynomial (Fin 2) R ⧸ Ideal.span {edgeRel R π}
 
@@ -299,6 +360,10 @@ abbrev edgeDiscr (q : ℕ) : MvPolynomial (Fin 2) R :=
 
 def edgeQuot.discr (π : R) (q : ℕ) : edgeQuot R π := edgeQuot.mk R π (edgeDiscr R q)
 
+/-- **Edge chart ring.** The localization of the quotient
+`MvPolynomial (Fin 2) R ⧸ (X 0 * X 1 - C π)` away from the image of
+`(X 0 ^ (q - 1) - 1) * (X 1 ^ (q - 1) - 1)`, where `q - 1` is truncated subtraction in `ℕ`; it
+corepresents the edge chart `chartE R π q` (`chartERing.corepIso`). -/
 abbrev chartERing (π : R) (q : ℕ) : Type := Localization.Away (edgeQuot.discr R π q)
 
 namespace chartERing
@@ -316,8 +381,8 @@ theorem ofPoly_edgeRel : ofPoly R π q (edgeRel R π) = 0 := by
   rw [ofPoly, AlgHom.comp_apply, edgeQuot.mk_edgeRel, map_zero]
 
 theorem ξ_mul_η : ξ R π q * η R π q = algebraMap R (chartERing R π q) π := by
-  have hC : ofPoly R π q (MvPolynomial.C π) = algebraMap R (chartERing R π q) π := (ofPoly R π
-    q).commutes π
+  have hC : ofPoly R π q (MvPolynomial.C π) = algebraMap R (chartERing R π q) π :=
+    (ofPoly R π q).commutes π
   have h2 : ofPoly R π q (edgeRel R π) = ξ R π q * η R π q - algebraMap R (chartERing R π q) π := by
     change ofPoly R π q (MvPolynomial.X 0 * MvPolynomial.X 1 - MvPolynomial.C π) = _
     rw [map_sub (ofPoly R π q), map_mul (ofPoly R π q), hC]; rfl
@@ -326,9 +391,8 @@ theorem ξ_mul_η : ξ R π q * η R π q = algebraMap R (chartERing R π q) π 
 theorem ofPoly_edgeDiscr :
     ofPoly R π q (edgeDiscr R q) = (ξ R π q ^ (q - 1) - 1) * (η R π q ^ (q - 1) - 1) := by
   change ofPoly R π q ((MvPolynomial.X 0 ^ (q - 1) - 1) * (MvPolynomial.X 1 ^ (q - 1) - 1)) = _
-  rw [map_mul (ofPoly R π q), map_sub (ofPoly R π q), map_sub (ofPoly R π q), map_pow (ofPoly R π
-    q),
-    map_pow (ofPoly R π q), map_one]; rfl
+  rw [map_mul (ofPoly R π q), map_sub (ofPoly R π q), map_sub (ofPoly R π q),
+    map_pow (ofPoly R π q), map_pow (ofPoly R π q), map_one]; rfl
 
 theorem isUnit_discr : IsUnit ((ξ R π q ^ (q - 1) - 1) * (η R π q ^ (q - 1) - 1)) := by
   rw [← ofPoly_edgeDiscr]
@@ -374,8 +438,7 @@ theorem isUnit_evalQuot_of_mem_powers {B : CommAlgCat.{0} R} (x : (chartE R π q
   rw [edgeQuot.discr, evalQuot_mk]
   change IsUnit (evalPoly x ((MvPolynomial.X 0 ^ (q - 1) - 1) * (MvPolynomial.X 1 ^ (q - 1) - 1)))
   rw [map_mul (evalPoly x), map_sub (evalPoly x), map_sub (evalPoly x), map_pow (evalPoly x),
-    map_pow (evalPoly x),
-    map_one, evalPoly_X_zero, evalPoly_X_one]
+    map_pow (evalPoly x), map_one, evalPoly_X_zero, evalPoly_X_one]
   exact x.2.2.1.mul x.2.2.2
 
 def lift {B : CommAlgCat.{0} R} (x : (chartE R π q).obj B) : chartERing R π q →ₐ[R] B :=
@@ -426,6 +489,9 @@ def corepresentableBy :
   homEquiv_comp g f := by exact corepEquiv_natural g f.hom
 
 variable (R π q) in
+/-- **The edge chart ring corepresents the edge chart.** The natural isomorphism from the functor
+of `R`-algebra maps out of `chartERing R π q` to the edge chart `chartE R π q`; it sends an algebra
+map `φ` to the point `(φ ξ, φ η)`, where `ξ` and `η` are the images of `X 0` and `X 1`. -/
 def corepIso :
     CategoryTheory.coyoneda.obj (Opposite.op (CommAlgCat.of R (chartERing R π q))) ≅
       chartE R π q :=
@@ -444,21 +510,28 @@ section Level
 
 variable (𝒪 : Type) [CommRing 𝒪] (π : 𝒪) (q n : ℕ)
 
+/-- **Truncation at level `n`.** The quotient ring `𝒪 ⧸ (π ^ (n + 1))`. -/
 abbrev truncRing : Type := 𝒪 ⧸ Ideal.span {π ^ (n + 1)}
 
+/-- **Vertex chart ring at level `n`.** The vertex chart ring `chartVRing` over the truncation
+`truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`. -/
 abbrev chartVRingMod : Type := chartVRing (truncRing 𝒪 π n) q
 
+/-- **Edge chart ring at level `n`.** The edge chart ring `chartERing` over the truncation
+`truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`, for the image of `π` there. -/
 abbrev chartERingMod : Type :=
   chartERing (truncRing 𝒪 π n) (Ideal.Quotient.mk (Ideal.span {π ^ (n + 1)}) π) q
 
+/-- **`π` is nilpotent at level `n`.** If the structure map of a commutative `𝒪`-algebra `B`
+factors through `truncRing 𝒪 π n = 𝒪 ⧸ (π ^ (n + 1))`, then the image of `π` in `B` is
+nilpotent: its `(n + 1)`-st power is zero. -/
 theorem isNilpotent_algebraMap_of_isScalarTower (B : Type) [CommRing B] [Algebra 𝒪 B]
-    [Algebra (truncRing 𝒪 π n) B] [IsScalarTower 𝒪 (truncRing 𝒪 π n) B] : IsNilpotent (algebraMap 𝒪
-      B π) := by
+    [Algebra (truncRing 𝒪 π n) B] [IsScalarTower 𝒪 (truncRing 𝒪 π n) B] :
+    IsNilpotent (algebraMap 𝒪 B π) := by
   refine ⟨n + 1, ?_⟩
   rw [← map_pow, IsScalarTower.algebraMap_apply 𝒪 (truncRing 𝒪 π n) B,
-    Ideal.Quotient.algebraMap_eq, Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.subset_span
-      (Set.mem_singleton _)),
-    map_zero]
+    Ideal.Quotient.algebraMap_eq,
+    Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.subset_span (Set.mem_singleton _)), map_zero]
 
 end Level
 
@@ -478,12 +551,18 @@ variable {𝒪 : Type} [CommRing 𝒪] {K : Type} [Field K] [Algebra 𝒪 K] (π
 variable (Onr : Type) [CommRing Onr] [Algebra 𝒪 Onr] (Fr : Onr ≃ₐ[𝒪] Onr)
 variable (vdet : Matrix.GeneralLinearGroup (Fin 2) K →* Multiplicative ℤ)
 
+/-- **Pairs of an `Onr`-point and a Deligne datum.** For a commutative `𝒪`-algebra `B`, the pairs
+of an `𝒪`-algebra map `Onr →ₐ[𝒪] B` and a Deligne datum over `B` (`OmegaObj`). -/
 abbrev OmegaNrObj (B : Type) [CommRing B] [Algebra 𝒪 B] : Type :=
   (Onr →ₐ[𝒪] B) × OmegaObj (K := K) π B
 
-def OmegaNr.IsTwistedAct (B : Type) [CommRing B] [Algebra 𝒪 B] (g : Matrix.GeneralLinearGroup (Fin
-  2) K)
-    (x x' : OmegaNrObj (K := K) π Onr B) : Prop :=
+/-- **The Frobenius-twisted relation.** For `g ∈ GL₂(K)`, the relation that holds between pairs
+`x` and `x'` when the algebra map `x'.1` is `x.1` twisted by `frobTwist` with exponent `-vdet g`
+and the Deligne datum `x'.2` is the pullback of `x.2` along `g⁻¹` (`DeligneDatum.IsPullback`).
+The automorphism `Fr` of `Onr` and the homomorphism `vdet : GL₂(K) →* Multiplicative ℤ` are
+arbitrary inputs. -/
+def OmegaNr.IsTwistedAct (B : Type) [CommRing B] [Algebra 𝒪 B]
+    (g : Matrix.GeneralLinearGroup (Fin 2) K) (x x' : OmegaNrObj (K := K) π Onr B) : Prop :=
   x'.1 = frobTwist Onr Fr (- Multiplicative.toAdd (vdet g)) x.1 ∧
     DeligneDatum.IsPullback (K := K) (π := π) B g⁻¹ x.2 x'.2
 
