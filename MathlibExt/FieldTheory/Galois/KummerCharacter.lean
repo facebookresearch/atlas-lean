@@ -90,15 +90,16 @@ public theorem exists_kummerExp (x : (↥F)ˣ) (σ : ↥F.fixingSubgroup) :
   hζ.eq_pow_of_pow_eq_one (div_kummerRoot_pow_eq_one p F x σ)
 
 include hζ in
-/-- The Kummer exponent: the exponent of the Galois ratio as an element
-of `ZMod p`. It is additive in `σ` when `ζ ∈ F` (see `kummerChar`); for
-general `F` it only satisfies the twisted law `kummerExp_mul`. -/
+/-- The Kummer exponent, defined for every intermediate field `F`: the
+element `i` of `ZMod p` with `σ (kummerRoot p F x) = ζ ^ i * kummerRoot p F x`.
+It is additive in `σ` when `ζ ∈ F` (see `kummerChar`); for general `F` it
+satisfies only the twisted law `kummerExp_mul`. -/
 public def kummerExp (x : (↥F)ˣ) (σ : ↥F.fixingSubgroup) : ZMod p :=
   (Classical.choose (exists_kummerExp p ζ hζ F x σ) : ℕ)
 
 include hζ in
-/-- The Galois action on a Kummer root is multiplication by the
-corresponding power of `ζ`. -/
+/-- For every intermediate field `F`, the Galois action on a Kummer root
+is multiplication by `ζ` raised to the Kummer exponent. -/
 public theorem kummerExp_spec (x : (↥F)ˣ) (σ : ↥F.fixingSubgroup) :
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (kummerRoot p F x) =
       ζ ^ (kummerExp p ζ hζ F x σ).val * kummerRoot p F x := by
@@ -107,8 +108,10 @@ public theorem kummerExp_spec (x : (↥F)ˣ) (σ : ↥F.fixingSubgroup) :
     div_mul_cancel₀ _ (kummerRoot_ne_zero p F x)]
 
 include hζ in
-/-- The twisted composition law of the Kummer exponent: if `σ` sends `ζ`
-to `ζ ^ k`, then `kummerExp (σ * τ) = kummerExp σ + k * kummerExp τ`. -/
+/-- The twisted composition law of the Kummer exponent, for every
+intermediate field `F`: if `σ` sends `ζ` to `ζ ^ k`, then
+`kummerExp (σ * τ) = kummerExp σ + k * kummerExp τ`. Additivity is the
+case `k = 1`, which holds when `ζ ∈ F`. -/
 public theorem kummerExp_mul (x : (↥F)ˣ) (σ τ : ↥F.fixingSubgroup) {k : ℕ}
     (hk : (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) ζ = ζ ^ k) :
     kummerExp p ζ hζ F x (σ * τ) =
@@ -125,9 +128,9 @@ public theorem kummerExp_mul (x : (↥F)ˣ) (σ τ : ↥F.fixingSubgroup) {k : �
   rw [← h', add_comm]
 
 include hζ in
-/-- The Kummer character of `x`: when `ζ ∈ F`, every element of the
-fixing subgroup of `F` fixes `ζ`, so the Kummer exponent is a
-homomorphism to `Multiplicative (ZMod p)`. -/
+/-- The Kummer character of `x`, defined only when `ζ ∈ F`: every element
+of the fixing subgroup of `F` then fixes `ζ`, so the Kummer exponent is a
+homomorphism from the fixing subgroup to `Multiplicative (ZMod p)`. -/
 public def kummerChar (hζF : ζ ∈ F) (x : (↥F)ˣ) :
     ↥F.fixingSubgroup →* Multiplicative (ZMod p) :=
   MonoidHom.mk' (fun σ => Multiplicative.ofAdd (kummerExp p ζ hζ F x σ))
@@ -137,7 +140,8 @@ public def kummerChar (hζF : ζ ∈ F) (x : (↥F)ˣ) :
         exact (IntermediateField.mem_fixingSubgroup_iff _ _).1 σ.2 ζ hζF
       rw [kummerExp_mul p ζ hζ F x σ τ hσζ, Nat.cast_one, one_mul, ofAdd_add]
 
-/-- The Kummer character is the Kummer exponent. -/
+/-- For `F` containing `ζ`, the Kummer character takes the value of the
+Kummer exponent. -/
 @[simp]
 public theorem kummerChar_apply (hζF : ζ ∈ F) (x : (↥F)ˣ)
     (σ : ↥F.fixingSubgroup) :
@@ -145,8 +149,8 @@ public theorem kummerChar_apply (hζF : ζ ∈ F) (x : (↥F)ˣ)
       Multiplicative.ofAdd (kummerExp p ζ hζ F x σ) :=
   rfl
 
-/-- The Galois action on a Kummer root is multiplication by the power of
-`ζ` that the Kummer character records. -/
+/-- For `F` containing `ζ`, the Galois action on a Kummer root is
+multiplication by the power of `ζ` that the Kummer character records. -/
 public theorem kummerChar_spec (hζF : ζ ∈ F) (x : (↥F)ˣ)
     (σ : ↥F.fixingSubgroup) :
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (kummerRoot p F x) =
