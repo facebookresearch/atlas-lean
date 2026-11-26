@@ -157,7 +157,8 @@ the [graph](docs/BLUEPRINT.md#graph-rules). It lists the article ids (`af_…`)
 of the pages the pull request proves, fixes or extends, such as the ready tasks
 it takes, and adds `new` when it adds declarations that get pages under
 [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
-`Graph: none` only when the pull request changes nothing the graph shows.
+`Graph: none` only when the pull request changes nothing the graph shows, and
+`Graph: batch` on a graph-sync batch.
 
 - **A new declaration gets its page in the same pull request.** Run the sync
   scoped to the pull request ([Maintaining
@@ -365,6 +366,12 @@ and they need no code owner's approval unless GitHub requires one; Codex still
 reviews them. Any other code-owned file the pull request changes, the sync's
 own code included, still needs a code owner's approval. Any other wiki change,
 a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
+A graph-sync batch, which `scripts/graph_batch.py verify` shows to be exactly
+what the tools write for what `main` merged
+([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)), needs no issue,
+or a code owner's approval unless GitHub requires one; Codex still reviews it,
+and its reviewer runs `verify` on its exact head from an up-to-date checkout of
+`main`, never from the batch's own branch.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`); a pull request whose only wiki changes are the sync's, as
@@ -483,7 +490,17 @@ its PR checks; a fork PR may also need a maintainer to approve the workflow run.
 `scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
 checks their pull-request and merge-group triggers, filters and concurrency
 groups, and that each required check comes from exactly one job, with no
-job-level `if` or `strategy`.
+job-level `strategy` and no job-level `if` but the one that skips `build` on
+some PRs. CI's `decide which checks to run` job (`scripts/ci_scope.py`) skips
+`build` on a PR whose every changed path is graph data (`blueprint/`,
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
+`scripts/mathgraph-map.jsonl`) or documentation (Markdown outside `scripts/`
+and `.github/`, and `.agents/` and `.claude/`), and a skipped required check
+counts as passed. On a PR whose every changed path is graph data, documentation,
+a Lean file of the nine libraries or under `provenance/`, `repository integrity`
+skips the nine tool test suites of `scripts/test_scripts.sh`, whose tests read
+only scripts, workflows and the pins (`ATLAS_TOOL_TESTS`). Merge groups and
+pushes to `main` always run every required check, and all of its tests.
 
 The other checks are advisory. Codex does not run on merge groups, but a formal
 Codex change request can cancel the PR's CI run while it is still queued or
@@ -501,7 +518,8 @@ map, the card move ledger, the tooling that builds and checks the site, the
 toolchain pins, a path where the build writes or fetches its outputs, Git
 attributes, or a file named like an Autoform output marker; PRs that change
 only Lean library files, `scripts/taxonomy.json` or `scripts/wiki-sync.json`
-run only its unit tests, in a few minutes
+run only its unit tests, in a few minutes, and PRs that change only Lean library
+files those tests do not read, provenance and documentation run neither
 ([GitHub Actions and publication](docs/BLUEPRINT.md#github-actions-and-publication)).
 With write access, `gh workflow run blueprint-pages.yml --ref <branch>` builds
 and checks a branch on demand; only `main` publishes.
