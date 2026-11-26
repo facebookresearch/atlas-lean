@@ -2,6 +2,7 @@
 
 Topics added since this subject's fields were last revised.
 
+- [Center Star](center-star/README.md)
 - [Chao Lower Bound](chao-lower-bound/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Kappa](cohen-kappa/README.md)
@@ -10,13 +11,16 @@ Topics added since this subject's fields were last revised.
 - [General Markov Identifiability](general-markov-identifiability/README.md)
 - [Good Turing](good-turing/README.md)
 - [Injectivity Criterion](injectivity-criterion/README.md)
+- [LCAReconciliation](lcareconciliation/README.md)
 - [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
+- [QGram](qgram/README.md)
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
 - [Siphon Persistence](siphon-persistence/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [Species Reaction Graph](species-reaction-graph/README.md)
+- [Split Decomposition](split-decomposition/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [Toric Dynamical Systems](toric-dynamical-systems/README.md)
 - [Toric Steady States](toric-steady-states/README.md)
