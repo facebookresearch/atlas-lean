@@ -1,0 +1,15 @@
+# Original Coherent First Joint Split
+
+- [Original Coefficient](original-coefficient.md)
+- [Middle](middle.md)
+- [Positive](positive.md)
+- [Left Coefficient](left-coefficient.md)
+- [Right Coefficient](right-coefficient.md)
+- [Left flags](left-flags.md)
+- [Right flags](right-flags.md)
+- [Composition Map](composition-map.md)
+- [Coefficient union](coefficient-union.md)
+- [Left Arrow](left-arrow.md)
+- [Right Arrow](right-arrow.md)
+- [Left Bead](left-bead.md)
+- [Right Bead](right-bead.md)

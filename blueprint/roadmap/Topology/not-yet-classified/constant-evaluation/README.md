@@ -1,0 +1,16 @@
+# Constant Evaluation
+
+- [Constant](constant.md)
+- [Evaluation](evaluation.md)
+- [Adjunction](adjunction.md)
+- [Adjunction hom Equiv](adjunction-hom-equiv.md)
+- [Adjunction hom Equiv symm app](adjunction-hom-equiv-symm-app.md)
+- [Constant Tensor Iso](constant-tensor-iso.md)
+- [Lift](lift.md)
+- [Lift projection](lift-projection.md)
+- [Iso](iso.md)
+- [Iso hom](iso-hom.md)
+- [Iso inv projection](iso-inv-projection.md)
+- [Iso source](iso-source.md)
+- [Iso target](iso-target.md)
+- [Nat Iso](nat-iso.md)

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 -- Author: @toskua
 module
 
+import all Mathlib.CategoryTheory.Localization.Predicate
 public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.CategoryTheory.Comma.Arrow
 public import Mathlib.CategoryTheory.Discrete.Basic
