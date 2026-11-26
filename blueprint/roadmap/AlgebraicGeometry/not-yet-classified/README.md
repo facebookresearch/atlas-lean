@@ -1195,8 +1195,3 @@ Topics added since this subject's fields were last revised.
 - [Cup](cup/README.md)
 - [Iter Cech](iter-cech/README.md)
 - [Drinfeld Basis Torsion](drinfeld-basis-torsion/README.md)
-- [`L`-map](is-lmap.md)
-- [Graded piece of the Cartier module](graded-piece.md)
-- [Graded Cartier module data of a formal `O_D`-module](to-graded-cartier-module-data.md)
-- [Critical Index Chart](critical-index-chart/README.md)
-- [Graded Module Data](graded-module-data/README.md)
