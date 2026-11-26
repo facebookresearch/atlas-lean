@@ -40,4 +40,15 @@ example : weightedTardyJobsDec
   rw [decide_eq_true_eq]
   exact ⟨[0], by decide, by decide⟩
 
+-- `[false, false]` is not a canonical encoding, but it decodes to the instance `([], 2)`, whose
+-- canonical encoding is `[false, false, true]`, and it is accepted.
+example : BitstringEncoding.bitEncode (([], 2) : WeightedTardyJobsInstance) =
+    [false, false, true] := by decide
+
+example : weightedTardyJobsDec [false, false] = true := by
+  classical
+  change decide (WeightedTardyJobsFeasible ([], 2)) = true
+  rw [decide_eq_true_eq]
+  exact ⟨[], by decide, by decide⟩
+
 end MetaMathlibExt.Complexity.NPComplete.WeightedTardyJobs

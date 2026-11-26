@@ -78,6 +78,24 @@ example : mkCheck (bitEncode (([(1, 3)], [1, 1], 6) : MultipleKnapsackInstance))
 -- An undecodable instance is rejected whatever the certificate.
 example : mkCheck [true] [] = false := by decide
 
+-- Missing certificate bits count as false: `[true]` is read as the mask `[true, false]`.
+example : mkCheck (bitEncode (([(1, 2), (1, 0)], [1], 2) : MultipleKnapsackInstance))
+    [true] = true := by decide
+
+-- Bits after the last mask are ignored: for one item and one knapsack, `[true]` and
+-- `[true, true]` both pass.
+example : mkCheck (bitEncode (([(1, 2)], [1], 2) : MultipleKnapsackInstance)) [true] = true := by
+  decide
+
+example : mkCheck (bitEncode (([(1, 2)], [1], 2) : MultipleKnapsackInstance))
+    [true, true] = true := by decide
+
+-- The standalone loop does not need lists of equal lengths: with one flag, the masks have one
+-- bit and the weight `5` at position `1` is never selected; with two flags it is.
+example : loopCheck [1, 5] [2] 2 [1] [true, true] [true] = true := by decide
+
+example : loopCheck [1, 5] [2] 2 [1] [true, true] [true, true] = false := by decide
+
 example : multipleKnapsackDec
     (bitEncode (([(2, 3), (1, 1)], [2, 1], 4) : MultipleKnapsackInstance)) = true :=
   (multipleKnapsackDec_iff_check _).2 ⟨[true, false, false, true], by decide, by decide⟩
@@ -85,3 +103,16 @@ example : multipleKnapsackDec
 example : multipleKnapsackDec [true] = false := by
   have hd : bitDecode (α := MultipleKnapsackInstance) [true] = none := by decide
   simp [multipleKnapsackDec, hd]
+
+/-! ### Noncanonical inputs -/
+
+-- The capacity field `[false]` is not canonical; the decoder reads it as `2`, so the bitstring
+-- decodes to `([], [2], 0)` and is accepted, although it is not the canonical encoding.
+example : delimit [] ++ delimit (delimit [false]) ≠
+    bitEncode (([], [2], 0) : MultipleKnapsackInstance) := by decide
+
+example : multipleKnapsackDec (delimit [] ++ delimit (delimit [false])) = true := by
+  classical
+  change decide (MultipleKnapsackFeasible ([], [2], 0)) = true
+  rw [decide_eq_true_eq]
+  exact ⟨[], rfl, by decide, by decide, by decide⟩

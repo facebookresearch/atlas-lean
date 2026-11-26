@@ -26,7 +26,12 @@ ordering.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
-bitstrings decoding to malformed instances, are no-instances.
+bitstrings decoding to malformed instances, are no-instances. The decoder accepts more than the
+canonical encodings `bitEncode i` of instances: Mathlib's binary decoder of natural numbers reads
+every bit list, so a correctly framed bitstring with a natural-number field ending in a false bit,
+which the encoder never produces, still decodes, and is a yes-instance exactly when the instance
+it decodes to is feasible. For example, `[false, false]` decodes to the instance `([], 2)` and is
+accepted, although the canonical encoding of `([], 2)` is `[false, false, true]`.
 
 NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in
@@ -35,11 +40,17 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 
 The proof establishes membership using a polynomial-time schedule verifier and
-hardness by a reduction from binary PARTITION.
+hardness by a reduction from binary PARTITION. The reduction is Karp's KNAPSACK ∝ SEQUENCING
+construction (processing times equal to penalties, `T_i = P_i = a_i`, and a common deadline
+`D_i = b`) applied to the doubled PARTITION instance: a list `a` becomes the jobs
+`(2 a_i, ∑ a, 2 a_i)` with bound `K = ∑ a`, so the knapsack target `b = ∑ a` is half the total
+processing time.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability* (1979), WEIGHTED NUMBER OF TARDY
-JOBS (1||sum w_j U_j).
+JOBS (1||sum w_j U_j); R. M. Karp, "Reducibility among combinatorial problems", in
+*Complexity of Computer Computations* (1972), 85–103: JOB SEQUENCING (problem 19, p. 95) and
+KNAPSACK ∝ SEQUENCING (p. 100).
 -/
 
 namespace MetaMathlibExt.Complexity.NPComplete.WeightedTardyJobs
@@ -85,7 +96,10 @@ open Classical in
 decision problem that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical
 bitstring encoding of weighted tardy jobs instances, to a feasible instance, that is, an instance
 having an ordering of its jobs whose weighted number of tardy jobs is at most its bound. A
-bitstring that decodes to no instance is rejected. -/
+bitstring that decodes to no instance is rejected. The decoder also reads bitstrings that the
+encoder never produces: every bit list decodes to a natural number, so a correctly framed
+bitstring with a natural-number field ending in a false bit decodes too, and is accepted exactly
+when the instance it decodes to is feasible. -/
 noncomputable def weightedTardyJobsDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode

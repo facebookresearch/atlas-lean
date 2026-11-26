@@ -27,7 +27,12 @@ value at least the target.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
-bitstrings decoding to malformed instances, are no-instances.
+bitstrings decoding to malformed instances, are no-instances. The decoder accepts more than the
+canonical encodings `bitEncode i` of instances: Mathlib's binary decoder of natural numbers reads
+every bit list, so a correctly framed bitstring with a natural-number field ending in a false bit,
+which the encoder never produces, still decodes (for example, the field `[false]` is read as `2`,
+whose canonical encoding is `[false, true]`). Such a bitstring is a yes-instance exactly when the
+instance it decodes to is feasible; `multipleKnapsackDec_bitEncode` covers canonical encodings.
 
 NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in
@@ -44,9 +49,10 @@ This module holds the definitions and the pure combinatorics of the proof:
   multiple-knapsack instance with items `(a, a)`, one knapsack of capacity `t` and target `t`
   is feasible; `reduceFromSubsetSum_correct` lifts this to bit strings.
 * `multipleKnapsackDec_iff_check`: the certificate checked by the verifier machine is a list of
-  one mask per knapsack, `k` bits each for `k` items; an item counts as packed when one of the
-  masks selects it. Overlapping masks are harmless: assigning each item to the first knapsack
-  that selects it only lowers the knapsack loads.
+  one mask per knapsack, `k` bits each for `k` items (missing bits count as false, and bits after
+  the last mask are ignored); an item counts as packed when one of the masks selects it.
+  Overlapping masks are harmless: assigning each item to the first knapsack that selects it only
+  lowers the knapsack loads.
 
 The machines are in `MultipleKnapsackHardness` and `MultipleKnapsackVerify`, and the theorem in
 `MultipleKnapsackComplete`.
@@ -84,7 +90,10 @@ def MultipleKnapsackFeasible
 open Classical in
 /-- **MULTIPLE KNAPSACK as a decision problem.** The decision problem MULTIPLE KNAPSACK accepts a
 bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a feasible
-multiple-knapsack instance. Bitstrings that do not decode are rejected. -/
+multiple-knapsack instance. Bitstrings that do not decode are rejected. The decoder also reads
+bitstrings that the encoder never produces: every bit list decodes to a natural number, so a
+correctly framed bitstring with a natural-number field ending in a false bit decodes too, and is
+accepted exactly when the instance it decodes to is feasible. -/
 noncomputable def multipleKnapsackDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -268,6 +277,10 @@ remaining capacities, the unread certificate and the unused flags $u$ of the ite
 capacity $c$ in turn, the next $|u|$ certificate bits form the mask of that knapsack, whose
 selected weights must sum to at most $c$, and the selected items are no longer unused. After
 the last knapsack, the values of the items that are not unused must sum to at least $V$.
+When fewer than $|u|$ certificate bits remain, the missing bits count as false, and the bits left
+after the mask of the last knapsack are ignored. The lists $u$, $w$ and $v$ need not have equal
+lengths: weights and values at positions $j \ge |u|$ are never selected, and a position
+$j < |u|$ past the end of $w$ or $v$ adds nothing to the corresponding sum.
 
 Source: original to this formalization. -/
 def loopCheck (ws vs : List ℕ) (V : ℕ) : List ℕ → List Bool → List Bool → Bool
@@ -278,9 +291,9 @@ def loopCheck (ws vs : List ℕ) (V : ℕ) : List ℕ → List Bool → List Boo
 /-- **The MULTIPLE KNAPSACK certificate check.** For bit strings $x$ and $w$, the check rejects
 when $x$ does not decode. Otherwise $x$ decodes to items with weights $w_j$ and values $v_j$
 ($j < k$), capacities $c_0, \dots, c_{m-1}$ and a target $V$, and $w$ is read as $m$ masks of
-$k$ bits each (missing bits false): the check accepts when every mask selects weights summing to
-at most its knapsack's capacity and the items selected by some mask have total value at least
-$V$.
+$k$ bits each (missing bits false, bits after the first $mk$ ignored): the check accepts when
+every mask selects weights summing to at most its knapsack's capacity and the items selected by
+some mask have total value at least $V$.
 
 Source: original to this formalization. -/
 def mkCheck (x w : List Bool) : Bool :=
@@ -545,11 +558,8 @@ theorem multipleKnapsackDec_iff_check (x : List Bool) :
     obtain ⟨items, caps, V⟩ := i
     have hk : items.length ≤ x.length :=
       Cslib.Complexity.PolynomialEncoding.decoded_fst_list_length_le hd
-    have hm : caps.length ≤ x.length := by
-      obtain ⟨p, r, rfl, -, hr⟩ := Cslib.Complexity.PolynomialEncoding.decoded_pair_parts hd
-      have := Cslib.Complexity.PolynomialEncoding.decoded_fst_list_length_le hr
-      simp only [List.length_append, length_delimit]
-      omega
+    have hm : caps.length ≤ x.length :=
+      Cslib.Complexity.PolynomialEncoding.decoded_middle_list_length_le hd
     simp only [multipleKnapsackDec, mkCheck, hd, decide_eq_true_eq]
     constructor
     · intro h
