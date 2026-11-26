@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InverseColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
 public import MathlibExt.NumberTheory.RepetendTable.OrderCount
 public import MathlibExt.NumberTheory.RepetendTable.OrderSix
@@ -45,6 +46,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.repetend_column_eq_column_of_mul_modEq_one` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InverseColumns`.
 
 `MetaMathlibExt.even_card_small_bases_orderOf` is proved in
 `MathlibExt.NumberTheory.RepetendTable.InversePairs`.
@@ -176,20 +180,6 @@ Article A26, Lemma 6 (`integers-2025-A26-lem-6`). -/
 public theorem_wanted repetend_digit_pow_mul_eq_of_mul_modEq_one (n b L x j j' : ℕ) (hL : 0 < L)
     (hb : orderOf (b : ZMod n) = L) (hj : Nat.Coprime j L) (hjj : j * j' ≡ 1 [MOD L]) :
     (b ^ (x * j) % n) ^ (j' + 1) / n % (b ^ (x * j) % n) = (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-
-/-- **Columns $j$ and $j^{-1}$ of a repetend table match.** Let $n$ and $L \ge 1$ be natural
-numbers, and consider the repetend table of $1/n$ whose rows are the natural numbers $1 \le b < n$
-coprime to $n$ of multiplicative order $L$ modulo $n$, and whose column $j$ holds the digits
-$\lfloor b^{j+1}/n \rfloor \bmod b$. If $j$ and $j'$ are natural numbers with $j$ coprime to $L$,
-$j^2 \not\equiv 1 \pmod L$ and $jj' \equiv 1 \pmod L$, then columns $j$ and $j'$ are equal as
-multisets.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Theorem 2 (`integers-2025-A26-thm-2`). -/
-public theorem_wanted repetend_column_eq_column_of_mul_modEq_one (n L j j' : ℕ) (hL : 0 < L)
-    (hj : Nat.Coprime j L) (hjsq : ¬ j ^ 2 ≡ 1 [MOD L]) (hjj : j * j' ≡ 1 [MOD L]) :
-    let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
-    (B.val.map fun b => b ^ (j + 1) / n % b) = B.val.map fun b => b ^ (j' + 1) / n % b
 
 /-- **Units modulo $L$ whose square is not $1$.** Let $L \ge 1$, let $e$ be the exponent of $2$
 in $L$ and let $f$ be the number of distinct odd prime factors of $L$. Then the number of
