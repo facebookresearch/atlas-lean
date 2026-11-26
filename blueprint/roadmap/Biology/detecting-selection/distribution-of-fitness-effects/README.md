@@ -37,3 +37,5 @@
 
 - [Monotonicity of the deleterious F-based rate model](nearly-neutral-theory-substitution-rate-decrease.md)
 - [Gamma-DFE power law for the F-based substitution rate](gamma-dfe-power-law-dependence-of-substitution-r.md)
+- [Gamma-DFE power law for the nonsynonymous-to-synonymous diversity ratio](gamma-dfe-power-law-for-the-nonsynonymous-diversity-ratio.md)
+- [Gamma-plus-lethal DFE and the among-species ratio of N_e](gamma-plus-lethal-dfe-and-the-among-species-ratio-of-ne.md)

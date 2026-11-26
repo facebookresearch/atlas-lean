@@ -14,3 +14,5 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Tajima's D](tajima-s-d/README.md)
 
 - [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)
+- [Derived-allele accumulation ratio](derived-allele-accumulation-ratio/README.md)
+- [Polygenic adaptation from GWAS allele frequencies](polygenic-adaptation-from-gwas-allele-frequencies/README.md)

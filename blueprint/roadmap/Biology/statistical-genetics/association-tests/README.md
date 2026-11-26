@@ -12,3 +12,7 @@ Probability.
 - [Genomic control](genomic-control/README.md)
 - [SKAT variance-component test](skat-variance-component-test/README.md)
 - [Testing Hardy–Weinberg equilibrium](testing-hardy-weinberg-equilibrium/README.md)
+- [Correlation form of single-SNP regression tests](correlation-form-of-single-snp-regression-tests.md)
+- [Invariance of GLM association tests under block-triangular reparametrization of the design](invariance-of-glm-tests-under-block-triangular-reparametrization.md)
+- [Logistic mixed-model score test with multiple variance components](logistic-mixed-model-score-test-with-multiple-variance-components.md)
+- [Robust three-degree-of-freedom association test for an X-chromosomal SNP](x-chromosome-three-degree-of-freedom-association-test.md)

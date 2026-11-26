@@ -16,3 +16,9 @@ The genetics of continuously varying traits: decomposition of genetic variance, 
 - [Pedigree kinship and inbreeding](pedigree-kinship-and-inbreeding/README.md)
 
 - [Optimal selection indices](optimal-selection-indices/README.md)
+- [Additive variance under allele-frequency distributions](additive-variance-under-allele-frequency-distributions/README.md)
+- [Polyploid haplotype reconstruction](polyploid-haplotype-reconstruction/README.md)
+- [Random-effect QTL mapping in autopolyploids](random-effect-qtl-mapping-in-autopolyploids/README.md)
+- [RKHS genomic regression](rkhs-genomic-regression/README.md)
+- [Variance of actual relationship](variance-of-actual-relationship/README.md)
+- [Haplotype-dosage QTL model and IBD relationships for polyploid diallel populations](haplotype-dosage-qtl-model-for-polyploid-diallel-populations.md)

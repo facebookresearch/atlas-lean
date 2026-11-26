@@ -43,3 +43,14 @@
 ## Potential outcomes and the local average treatment effect
 
 See [potential outcomes and the local average treatment effect](../../../Probability/nonparametric-survival/potential-outcomes-and-causal-identification/README.md#potential-outcomes-and-the-local-average-treatment-effect) in Probability.
+- [Adjusted Cochran's Q for pleiotropy in multivariable Mendelian randomization](adjusted-cochran-q-for-pleiotropy-in-multivariable-mr.md)
+- [Conditional instrument strength in multivariable Mendelian randomization](conditional-instrument-strength-in-multivariable-mr.md)
+- [Exact-weight IVW estimator and the generalized Cochran's Q beyond the NOME assumption](exact-weight-ivw-and-generalized-cochran-q.md)
+- [Generalized inverse-variance-weighted estimator for correlated instruments](generalized-ivw-estimator-for-correlated-instruments.md)
+- [Measurement-error sensitivity of the Steiger direction](measurement-error-sensitivity-of-the-steiger-direction.md)
+- [MR Steiger test of causal direction](mr-steiger-test-of-causal-direction.md)
+- [Multivariable Mendelian randomization: summary-data likelihood and direct effects](multivariable-mr-summary-data-likelihood-and-direct-effects.md)
+- [Regression dilution of MR-Egger and the $I^2_{GX}$ statistic](regression-dilution-of-mr-egger-and-the-i2-gx-statistic.md)
+- [Sample-overlap bias in two-sample Mendelian randomization](sample-overlap-bias-in-two-sample-mendelian-randomization.md)
+- [SIMEX correction of the MR-Egger slope](simex-correction-of-mr-egger.md)
+- [Summarized-data allele score estimator](summarized-data-allele-score-estimator.md)

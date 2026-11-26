@@ -29,3 +29,5 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 ## Related topics
 
 - [Chi-square law of Gaussian projection residuals](../../Probability/linear-models-multivariate/chi-square-law-of-gaussian-projection-residuals/README.md): the chi-square law of whitened projection residuals, which motivates qpAdm-style tests of admixture models.
+- [Heterozygosity of admixed populations](heterozygosity-of-admixed-populations/README.md)
+- [Sex-biased admixture on the X chromosome](sex-biased-admixture-on-the-x-chromosome/README.md)

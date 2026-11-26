@@ -20,3 +20,4 @@
 
 - [Canonical probability space for the skyline model](skyline-pi-measure.md)
 - [Coordinate projections form a skyline model](of-pi.md)
+- [Skygrid multilocus coalescent model](skygrid-multilocus-coalescent-model.md)

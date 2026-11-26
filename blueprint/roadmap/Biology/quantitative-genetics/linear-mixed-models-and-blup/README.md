@@ -30,3 +30,7 @@ See [Henderson's mixed-model equations](../../../Probability/linear-models-multi
 ## Related topics
 
 - [Random-intercept models and the design effect](../../../Probability/linear-models-multivariate/random-intercept-models-and-the-design-effect/README.md): random-intercept and crossed random-intercept designs of a linear mixed model, the intraclass correlation and the design effect.
+- [Additive-and-dominance genomic BLUP (DGBLUP)](additive-and-dominance-genomic-blup.md)
+- [Eigen-rotation of genomic kernel models](eigen-rotation-of-genomic-kernel-models.md)
+- [Factor-loading regression on environmental covariates for prediction in new environments](factor-loading-regression-on-environmental-covariates.md)
+- [Pseudo-expectation Gauss–Seidel solver for SNP-BLUP](pseudo-expectation-gauss-seidel-solver-for-snp-blup.md)
