@@ -32,15 +32,17 @@ public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeGalois
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Fixed vertices and orbital counts on the lattice tree
+# Fixed vertices and orbital counts on the lattice graph
 
 For `g ∈ GL₂(K)`, `LT.LatticeTree.fixedVertexSet g` is the set of vertices fixed by `g` and
 `LT.LatticeTree.unitOrbitalCount R g` its cardinality (as `Nat.card`); both are conjugation
-invariant, and scalars fix every vertex. For `M ∈ GL₂(R)` the fixed neighbours of the standard
-vertex are the eigenlines of `M` modulo `ϖ` (`dvd_of_isFixedVertex_interLattice`). The twisted
-versions for `(δ, σ)` with `σ` an integral automorphism of order two or three are contained in the
-fixed vertices of the norm of `δ`, which gives equality of twisted and untwisted counts when both
-fixed sets are singletons.
+invariant, and scalars fix every vertex. Let `M ∈ GL₂(R)`, let `ϖ` be prime and not divide both
+`c` and `d`, and write `(x, y) = M (c, d)ᵀ`. If `M` fixes the vertex of
+`LT.LatticeTree.interLattice R K ϖ c d`, then `ϖ ∣ d x - c y` (`dvd_of_isFixedVertex_interLattice`);
+if `(x, y) ≡ λ (c, d)` modulo `ϖ` for a unit `λ`, then `M` maps that lattice onto itself. For `σ`
+an integral automorphism of order two or three, the vertices fixed by the twisted action of
+`(δ, σ)` are fixed by the norm of `δ`, so the twisted count is `1` when the norm has at most one
+fixed vertex and some vertex is twisted-fixed.
 -/
 
 @[expose] public section
@@ -187,13 +189,6 @@ theorem mulVecPair_mul (M N : Matrix (Fin 2) (Fin 2) R) (c d : R) (i : Fin 2) :
   · exact h1
 
 omit [IsFractionRing R K] in
-theorem map_coe_apply (M : Matrix.GeneralLinearGroup (Fin 2) R) (i j : Fin 2) :
-    ((Matrix.GeneralLinearGroup.map (algebraMap R K) M :
-        Matrix.GeneralLinearGroup (Fin 2) K) : Matrix (Fin 2) (Fin 2) K) i j =
-      algebraMap R K ((M : Matrix (Fin 2) (Fin 2) R) i j) :=
-  Matrix.GeneralLinearGroup.map_apply (algebraMap R K) i j M
-
-omit [IsFractionRing R K] in
 theorem latticeMap_map_interLattice_le (M : Matrix.GeneralLinearGroup (Fin 2) R)
     (ϖ c d : R) :
     latticeMap (Matrix.GeneralLinearGroup.map (algebraMap R K) M)
@@ -209,7 +204,7 @@ theorem latticeMap_map_interLattice_le (M : Matrix.GeneralLinearGroup (Fin 2) R)
     intro i
     rw [mulVecLinR_apply]
     simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
-    rw [map_coe_apply, map_coe_apply]
+    rw [Matrix.GeneralLinearGroup.map_apply, Matrix.GeneralLinearGroup.map_apply]
   refine ⟨fun i => ?_, algebraMap R K ((M : Matrix (Fin 2) (Fin 2) R).det) * t,
     IsLocalization.isInteger_mul ⟨_, rfl⟩ ht, ?_⟩
   · rw [hcoord i]
@@ -226,8 +221,8 @@ theorem latticeMap_map_interLattice_le (M : Matrix.GeneralLinearGroup (Fin 2) R)
           algebraMap R K ((M : Matrix (Fin 2) (Fin 2) R) 1 0)) * hweq
 
 omit [IsFractionRing R K] in
-/-- A matrix `M ∈ GL₂(R)` maps the neighbour through `(c, d)` to the neighbour through `M (c,
-d)ᵀ`. -/
+/-- A matrix `M ∈ GL₂(R)` maps `interLattice R K ϖ c d` onto `interLattice R K ϖ x y`, where
+`(x, y) = M (c, d)ᵀ`. -/
 theorem latticeMap_map_interLattice (M : Matrix.GeneralLinearGroup (Fin 2) R)
     (ϖ c d : R) :
     latticeMap (Matrix.GeneralLinearGroup.map (algebraMap R K) M)
@@ -265,7 +260,7 @@ section Dichotomy
 variable [IsFractionRing R K]
 
 omit [IsFractionRing R K] in
-/-- The neighbour through `(c, d)` depends only on `(c, d)` modulo `ϖ`. -/
+/-- `interLattice R K ϖ c d` depends only on `(c, d)` modulo `ϖ`. -/
 theorem interLattice_congr {ϖ c d c' d' : R} (hc : ϖ ∣ c - c') (hd : ϖ ∣ d - d') :
     interLattice R K ϖ c d = interLattice R K ϖ c' d' := by
   have key : ∀ {a b a' b' : R}, ϖ ∣ a - a' → ϖ ∣ b - b' →
@@ -276,7 +271,7 @@ theorem interLattice_congr {ϖ c d c' d' : R} (hc : ϖ ∣ c - c') (hd : ϖ ∣ 
     refine ⟨hv, w - algebraMap R K y * algebraMap R K r0 +
         algebraMap R K x * algebraMap R K r1,
       IsLocalization.isInteger_add
-        (isInteger_sub hw (IsLocalization.isInteger_mul ⟨y, rfl⟩ ⟨r0, rfl⟩))
+        (IsLocalization.isInteger_sub hw (IsLocalization.isInteger_mul ⟨y, rfl⟩ ⟨r0, rfl⟩))
         (IsLocalization.isInteger_mul ⟨x, rfl⟩ ⟨r1, rfl⟩), ?_⟩
     have ha' : algebraMap R K a' =
         algebraMap R K a - algebraMap R K ϖ * algebraMap R K x := by
@@ -292,7 +287,7 @@ theorem interLattice_congr {ϖ c d c' d' : R} (hc : ϖ ∣ c - c') (hd : ϖ ∣ 
   exact le_antisymm (key hc hd) (key (dvd_sub_comm.mp hc) (dvd_sub_comm.mp hd))
 
 omit [IsFractionRing R K] in
-/-- The neighbour through `(c, d)` depends only on the residue line, not the scaling. -/
+/-- `interLattice R K ϖ c d` does not change when `(c, d)` is multiplied by a unit. -/
 theorem interLattice_unit_mul (ϖ : R) (u : Rˣ) (c d : R) :
     interLattice R K ϖ ((u : R) * c) ((u : R) * d) = interLattice R K ϖ c d := by
   have hu : algebraMap R K ((u⁻¹ : Rˣ) : R) * algebraMap R K (u : R) = 1 := by
@@ -323,8 +318,8 @@ theorem interLattice_unit_mul (ϖ : R) (u : Rˣ) (c d : R) :
       _ = algebraMap R K ϖ * (algebraMap R K (u : R) * w) := by rw [hweq]; ring
 
 omit [IsFractionRing R K] in
-/-- If `(c, d)` is an eigenvector of `M` modulo `ϖ`, then `M` fixes the neighbour through `(c,
-d)`. -/
+/-- If `M (c, d)ᵀ ≡ λ (c, d)` modulo `ϖ` for a unit `λ`, then `M` maps `interLattice R K ϖ c d`
+onto itself. -/
 theorem latticeMap_map_interLattice_eq_self (M : Matrix.GeneralLinearGroup (Fin 2) R)
     {ϖ c d : R} (lam : Rˣ)
     (h0 : ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 - (lam : R) * c)
@@ -351,41 +346,18 @@ variable [IsFractionRing R K]
 
 omit [Algebra R K] [IsFractionRing R K] in
 /-- If `a b = ϖ²` for a prime `ϖ`, then `a` or `b` is a unit, or `a` is associated to `ϖ`. -/
-theorem isUnit_or_isUnit_or_associated_of_mul_eq_sq [IsDomain R] {ϖ a b : R}
+private theorem isUnit_or_isUnit_or_associated_of_mul_eq_sq [IsDomain R] {ϖ a b : R}
     (hϖ : Prime ϖ) (h : a * b = ϖ * ϖ) :
     IsUnit a ∨ IsUnit b ∨ ∃ u : R, IsUnit u ∧ a = ϖ * u := by
-  have hne : ϖ ≠ 0 := hϖ.ne_zero
-  rcases hϖ.2.2 a b ⟨ϖ, by rw [← h]⟩ with ha | hb
-  · obtain ⟨a', rfl⟩ := ha
-    have hcancel : a' * b = ϖ := by
-      have h2 : ϖ * (a' * b) = ϖ * ϖ := by linear_combination h
-      exact mul_left_cancel₀ hne h2
-    rcases hϖ.2.2 a' b ⟨1, by rw [mul_one]; exact hcancel⟩ with ha' | hb'
-    · obtain ⟨a'', rfl⟩ := ha'
-      have h3 : a'' * b = 1 := by
-        have h2 : ϖ * (a'' * b) = ϖ * 1 := by rw [mul_one]; linear_combination hcancel
-        exact mul_left_cancel₀ hne h2
-      exact Or.inr (Or.inl (IsUnit.of_mul_eq_one_right a'' h3))
-    · obtain ⟨b', rfl⟩ := hb'
-      have h3 : a' * b' = 1 := by
-        have h2 : ϖ * (a' * b') = ϖ * 1 := by rw [mul_one]; linear_combination hcancel
-        exact mul_left_cancel₀ hne h2
-      exact Or.inr (Or.inr ⟨a', IsUnit.of_mul_eq_one b' h3, rfl⟩)
-  · obtain ⟨b', rfl⟩ := hb
-    have hcancel : a * b' = ϖ := by
-      have h2 : ϖ * (a * b') = ϖ * ϖ := by linear_combination h
-      exact mul_left_cancel₀ hne h2
-    rcases hϖ.2.2 a b' ⟨1, by rw [mul_one]; exact hcancel⟩ with ha' | hb''
-    · obtain ⟨a', rfl⟩ := ha'
-      have h3 : a' * b' = 1 := by
-        have h2 : ϖ * (a' * b') = ϖ * 1 := by rw [mul_one]; linear_combination hcancel
-        exact mul_left_cancel₀ hne h2
-      exact Or.inr (Or.inr ⟨a', IsUnit.of_mul_eq_one b' h3, rfl⟩)
-    · obtain ⟨b'', rfl⟩ := hb''
-      have h3 : a * b'' = 1 := by
-        have h2 : ϖ * (a * b'') = ϖ * 1 := by rw [mul_one]; linear_combination hcancel
-        exact mul_left_cancel₀ hne h2
-      exact Or.inl (IsUnit.of_mul_eq_one b'' h3)
+  obtain ⟨i, hi, u, hu⟩ := (dvd_prime_pow hϖ 2).mp ⟨b, by rw [sq, h]⟩
+  rcases i with _ | _ | _ | i
+  · exact Or.inl (IsUnit.of_mul_eq_one (u : R) (hu.trans (pow_zero ϖ)))
+  · exact Or.inr (Or.inr ⟨↑u⁻¹, (u⁻¹).isUnit, (Units.eq_mul_inv_iff_mul_eq u).mpr
+      (hu.trans (pow_one ϖ))⟩)
+  · have ha : a ≠ 0 := fun ha => hϖ.ne_zero (mul_self_eq_zero.mp (by rw [← h, ha, zero_mul]))
+    have hub : (u : R) = b := mul_left_cancel₀ ha (hu.trans ((sq ϖ).trans h.symm))
+    exact Or.inr (Or.inl (hub ▸ u.isUnit))
+  · omega
 
 omit [IsFractionRing R K] in
 theorem latticeMap_scalarGL_eq_self_of_isUnit {e : Kˣ} {u : R} (hu : IsUnit u)
@@ -447,7 +419,8 @@ theorem latticeMap_scalarGL_inv_le_of_mul_eq_unit {e : Kˣ} {ϖ : R} (hϖ : ϖ �
   rw [Pi.smul_apply, smul_eq_mul, hinv, ← hwi]
   ring
 
-/-- Two homothetic lattices strictly between `ϖ R²` and `R²` are equal. -/
+/-- For a prime `ϖ` of a domain `R` with fraction field `K`, two homothetic lattices `N` and `N'`
+with `ϖ R² < N ≤ R²` and `ϖ R² < N' ≤ R²` are equal. -/
 theorem eq_of_homothetic_of_mem_interval [IsDomain R] {ϖ : R} (hϖ : Prime ϖ)
     {N N' : Submodule R (Fin 2 → K)}
     (hNlow : latticeMap (scalarGL (unitOfNeZero (K := K) hϖ.ne_zero)) (stdLattice R K) < N)
@@ -489,18 +462,41 @@ theorem eq_of_homothetic_of_mem_interval [IsDomain R] {ϖ : R} (hϖ : Prime ϖ)
       exact mul_right_cancel₀ hϖK h2
     rw [← he, latticeMap_scalarGL_eq_self_of_isUnit hu heu]
 
-/-- If `M ∈ GL₂(R)` fixes the vertex of the neighbour through `(c, d)`, then `(c, d)` is an
-eigenvector of `M` modulo `ϖ`. -/
+omit [Algebra R K] [IsFractionRing R K] in
+/-- If `ϖ` divides both coordinates of `M (c, d)ᵀ` for `M ∈ GL₂(R)`, it divides `c` and `d`. -/
+private theorem dvd_and_dvd_of_dvd_mulVecPair (M : Matrix.GeneralLinearGroup (Fin 2) R)
+    {ϖ c d : R} (h : ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 ∧
+      ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1) :
+    ϖ ∣ c ∧ ϖ ∣ d := by
+  have hcomp : ∀ i : Fin 2, mulVecPair ((M⁻¹ : Matrix.GeneralLinearGroup (Fin 2) R) :
+        Matrix (Fin 2) (Fin 2) R)
+      (mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0)
+      (mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1) i = ![c, d] i := by
+    intro i
+    rw [← mulVecPair_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one]
+    change ((1 : Matrix (Fin 2) (Fin 2) R) *ᵥ ![c, d]) i = ![c, d] i
+    rw [Matrix.one_mulVec]
+  have h0 := hcomp 0
+  have h1 := hcomp 1
+  rw [mulVecPair_zero, Matrix.cons_val_zero] at h0
+  rw [mulVecPair_one, Matrix.cons_val_one, Matrix.cons_val_zero] at h1
+  exact ⟨h0 ▸ dvd_add (dvd_mul_of_dvd_right h.1 _) (dvd_mul_of_dvd_right h.2 _),
+    h1 ▸ dvd_add (dvd_mul_of_dvd_right h.1 _) (dvd_mul_of_dvd_right h.2 _)⟩
+
+/-- Let `M ∈ GL₂(R)`, let `ϖ` be prime and let `ϖ` not divide both `c` and `d`. If `M` fixes the
+vertex of `interLattice R K ϖ c d`, then `ϖ ∣ d x - c y` for `(x, y) = M (c, d)ᵀ`: the pairs
+`(c, d)` and `M (c, d)ᵀ` are linearly dependent modulo `ϖ`. -/
 theorem dvd_of_isFixedVertex_interLattice [IsDomain R]
     (M : Matrix.GeneralLinearGroup (Fin 2) R)
     {ϖ c d : R} (hϖ : Prime ϖ) (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d))
-    (hcd' : ¬(ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 ∧
-      ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1))
     {hL : Submodule.IsFullLattice K (interLattice R K ϖ c d)}
     (h : IsFixedVertex (Matrix.GeneralLinearGroup.map (algebraMap R K) M)
       (Vertex.mk R K (interLattice R K ϖ c d) hL)) :
     ϖ ∣ d * mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 -
       c * mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1 := by
+  have hcd' : ¬(ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 ∧
+      ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1) :=
+    fun h' => hcd (dvd_and_dvd_of_dvd_mulVecPair M h')
   rw [isFixedVertex_mk_iff, latticeMap_map_interLattice] at h
   have heq := eq_of_homothetic_of_mem_interval hϖ
     (latticeMap_scalarGL_lt_interLattice hϖ.ne_zero hcd')
@@ -512,14 +508,12 @@ theorem dvd_of_isFixedVertex_interLattice [IsDomain R]
 theorem not_isFixedVertex_interLattice_of_not_dvd [IsDomain R]
     (M : Matrix.GeneralLinearGroup (Fin 2) R)
     {ϖ c d : R} (hϖ : Prime ϖ) (hcd : ¬(ϖ ∣ c ∧ ϖ ∣ d))
-    (hcd' : ¬(ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 ∧
-      ϖ ∣ mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1))
     (hnofix : ¬ ϖ ∣ d * mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 0 -
       c * mulVecPair (M : Matrix (Fin 2) (Fin 2) R) c d 1)
     {hL : Submodule.IsFullLattice K (interLattice R K ϖ c d)} :
     ¬ IsFixedVertex (Matrix.GeneralLinearGroup.map (algebraMap R K) M)
       (Vertex.mk R K (interLattice R K ϖ c d) hL) :=
-  fun h => hnofix (dvd_of_isFixedVertex_interLattice M hϖ hcd hcd' h)
+  fun h => hnofix (dvd_of_isFixedVertex_interLattice M hϖ hcd h)
 
 end Rigidity
 
@@ -527,7 +521,8 @@ section FullLattice
 
 variable [IsFractionRing R K]
 
-/-- Over a Noetherian ring, a lattice between `ϖ R²` and `R²` is a full lattice. -/
+/-- Over a Noetherian ring `R` with fraction field `K`, for `ϖ ≠ 0` every lattice between `ϖ R²`
+and `R²` is a full lattice. -/
 theorem isFullLattice_of_le_of_le [IsNoetherianRing R] {ϖ : R} (hϖ : ϖ ≠ 0)
     {N : Submodule R (Fin 2 → K)}
     (hlow : latticeMap (scalarGL (unitOfNeZero (K := K) hϖ)) (stdLattice R K) ≤ N)
@@ -536,7 +531,8 @@ theorem isFullLattice_of_le_of_le [IsNoetherianRing R] {ϖ : R} (hϖ : ϖ ≠ 0)
     (scalarGL (unitOfNeZero (K := K) hϖ))
   Submodule.IsFullLattice.of_le_of_fg K hlow ((stdLattice_fg R K).of_le hup)
 
-/-- The neighbours of the standard lattice are full lattices. -/
+/-- Over a Noetherian ring `R` with fraction field `K`, for an irreducible `ϖ` every
+`interLattice R K ϖ c d` is a full lattice. -/
 theorem isFullLattice_interLattice [IsNoetherianRing R] {ϖ : R} (hϖ : Irreducible ϖ)
     (c d : R) : Submodule.IsFullLattice K (interLattice R K ϖ c d) :=
   isFullLattice_of_le_of_le hϖ.ne_zero
@@ -716,13 +712,13 @@ theorem twistedUnitOrbitalCount_eq_one_of_subsingleton_normTwo
   twistedUnitOrbitalCount_eq_one_of_subset_subsingleton
     (twistedFixedVertexSet_subset_fixedVertexSet_normTwo δ hσ) hsub hv₀
 
-section FundamentalLemma
+section SingletonCounts
 
 variable {R' : Type*} [CommRing R'] {K' : Type*} [Field K'] [Algebra R' K']
 
 /-- For `σ` of order three, if the norm of `δ` has at most one fixed vertex, `δ` has a twisted
-fixed vertex, and `γ` has exactly one fixed vertex, then the twisted and untwisted fixed-vertex
-counts agree. -/
+fixed vertex, and `γ` has exactly one fixed vertex, then the twisted fixed-vertex count of `(δ, σ)`
+equals the fixed-vertex count of `γ`: both are `1`. -/
 theorem twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton
     (δ : Matrix.GeneralLinearGroup (Fin 2) K) {σ : IntegralAut R K}
     (hσ : (σ.comp σ).comp σ = IntegralAut.refl R K)
@@ -748,7 +744,7 @@ theorem twistedUnitOrbitalCount_eq_unitOrbitalCount_of_subsingleton_two
   rw [twistedUnitOrbitalCount_eq_one_of_subsingleton_normTwo δ hσ hsub_up hv₀,
     unitOrbitalCount_eq_one_of_subsingleton hsub_down hw₀]
 
-end FundamentalLemma
+end SingletonCounts
 
 theorem latticeGal_interLattice_le (σ : IntegralAut R K) (ϖ c d : R) :
     latticeGal σ (interLattice R K ϖ c d) ≤
@@ -769,8 +765,8 @@ theorem latticeGal_interLattice_le (σ : IntegralAut R K) (ϖ c d : R) :
   rw [galVec_apply, galVec_apply]
   exact key
 
-/-- An integral automorphism maps the neighbour through `(c, d)` for `ϖ` to the neighbour through
-`(σ c, σ d)` for `σ ϖ`. -/
+/-- An integral automorphism `σ` maps `interLattice R K ϖ c d` onto
+`interLattice R K (σ ϖ) (σ c) (σ d)`. -/
 theorem latticeGal_interLattice (σ : IntegralAut R K) (ϖ c d : R) :
     latticeGal σ (interLattice R K ϖ c d) =
       interLattice R K (σ.toBase ϖ) (σ.toBase c) (σ.toBase d) := by

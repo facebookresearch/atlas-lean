@@ -32,13 +32,15 @@ public import MathlibExt.Combinatorics.SimpleGraph.GraphAction
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Projective
 
 /-!
-# The Bruhat-Tits tree
+# The lattice graph and the Bruhat-Tits tree
 
 For a commutative ring `R` and an `R`-algebra field `K`, `CerednikDrinfeld.BruhatTits.tree R K` is
 the simple graph on the homothety classes of full lattices in `K²` whose edges join classes with
-adjacent representatives (`ϖ L < L' < L` for an irreducible `ϖ`). The action of `GL₂(K)` on
-vertices factors through `PGL₂(K)`, and both groups act on the tree by graph automorphisms
-(`CerednikDrinfeld.Mumford.GraphAction`).
+adjacent representatives (`ϖ L < L' < L` for an irreducible `ϖ`). When `R` is a discrete valuation
+ring with fraction field `K`, this graph is the Bruhat-Tits tree of `PGL₂(K)` (Serre, *Trees*,
+Chapter II, §1); for other rings it need not be a tree. The action of `GL₂(K)` on vertices factors
+through `PGL₂(K)`, and when `K` is the fraction field of `R` both groups act on the graph by graph
+automorphisms (`CerednikDrinfeld.Mumford.GraphAction`).
 -/
 
 @[expose] public section
@@ -54,7 +56,7 @@ open Mumford LT.LatticeTree
 
 variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
-/-- `GL₂(K)` acts on the vertices of the lattice tree. -/
+/-- `GL₂(K)` acts on the vertices of the lattice graph. -/
 instance instMulActionGLVertex : MulAction (GL (Fin 2) K) (Vertex R K) where
   smul := Vertex.act
   one_smul := Vertex.act_one
@@ -115,8 +117,9 @@ def VertRel (x y : Vertex R K) : Prop :=
     Vertex.mk R K L hL = x ∧ Vertex.mk R K L' hL' = y ∧ AdjacentLattice L L'
 
 variable (R K) in
-/-- The Bruhat-Tits tree: the graph on vertices whose edges join classes with adjacent
-representative lattices. -/
+/-- The graph on vertices whose edges join classes with adjacent representative lattices. When `R`
+is a discrete valuation ring with fraction field `K`, it is the Bruhat-Tits tree of `PGL₂(K)`
+(Serre, *Trees*, Chapter II, §1). -/
 def tree : SimpleGraph (Vertex R K) := SimpleGraph.fromRel (VertRel R K)
 
 theorem tree_adj_iff (x y : Vertex R K) :
@@ -129,14 +132,14 @@ theorem VertRel.gl_smul (g : GL (Fin 2) K) {x y : Vertex R K} (h : VertRel R K x
   exact ⟨latticeMap g L, latticeMap g L', IsFullLattice.map hL g, IsFullLattice.map hL' g, rfl,
       rfl, adjacentLattice_latticeMap g hLL'⟩
 
-/-- `GL₂(K)` acts on the tree by graph automorphisms. -/
+/-- `GL₂(K)` acts on the graph `tree R K` by graph automorphisms. -/
 instance instGraphActionGLTree : GraphAction (GL (Fin 2) K) (tree R K) where
   smul_adj g {x y} h := by
     rw [tree_adj_iff] at h ⊢
     refine ⟨fun hxy => h.1 (MulAction.injective g hxy), ?_⟩
     exact h.2.imp (VertRel.gl_smul g) (VertRel.gl_smul g)
 
-/-- `PGL₂(K)` acts on the tree by graph automorphisms. -/
+/-- `PGL₂(K)` acts on the graph `tree R K` by graph automorphisms. -/
 instance instGraphActionPGLTree : GraphAction (Matrix.ProjGenLinGroup (Fin 2) K) (tree R K) where
   smul_adj q {x y} h := by
     induction q using Matrix.ProjGenLinGroup.induction_on with | mk g => ?_

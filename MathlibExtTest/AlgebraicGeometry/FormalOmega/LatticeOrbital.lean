@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeOrbital
 public import Mathlib.NumberTheory.Padics.PadicIntegers
+public import Mathlib.Basic.Complex.Basic
 
 @[expose] public section
 
@@ -17,6 +18,27 @@ open scoped Matrix
 open LT.LatticeTree
 
 universe u
+
+/-- `i ≠ -i` in `ℂ`. -/
+private theorem complex_I_ne_neg_I : Complex.I ≠ -Complex.I := by
+  intro h
+  have h2 : Complex.I.im = (-Complex.I).im := congrArg Complex.im h
+  rw [Complex.neg_im, Complex.I_im] at h2
+  norm_num at h2
+
+/-- Complex conjugation, as an integral automorphism of `ℂ` over itself. -/
+private noncomputable def conjAut : IntegralAut ℂ ℂ where
+  toField := starRingAut
+  toBase := starRingAut
+  commutes r := by
+    simp [Algebra.algebraMap_self]
+
+/-- Complex conjugation has order two. -/
+private theorem conjAut_comp_conjAut : conjAut.comp conjAut = IntegralAut.refl ℂ ℂ := by
+  unfold conjAut IntegralAut.comp IntegralAut.refl
+  congr 1 <;>
+  · ext x
+    exact star_star x
 
 /-- Consumer with the original binders: the fixed-vertex count is a conjugacy invariant. -/
 private theorem exactSource {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
@@ -67,15 +89,13 @@ example : ¬ IsFixedVertex
   have hv1 : mulVecPair (gammaZero : Matrix (Fin 2) (Fin 2) ℤ_[2]) 1 0 1 = 1 := by
     simp
   refine not_isFixedVertex_interLattice_of_not_dvd gammaZero PadicInt.prime_p
-    (fun h => not_two_dvd_one_padic h.1) ?_ ?_
-  · rw [hv0, hv1]
-    exact fun h => not_two_dvd_one_padic h.2
-  · rw [hv0, hv1]
-    intro hcon
-    apply not_two_dvd_one_padic
-    apply dvd_neg.mp
-    have hval : (0 : ℤ_[2]) * 0 - 1 * 1 = -1 := by ring
-    rwa [hval] at hcon
+    (fun h => not_two_dvd_one_padic h.1) ?_
+  rw [hv0, hv1]
+  intro hcon
+  apply not_two_dvd_one_padic
+  apply dvd_neg.mp
+  have hval : (0 : ℤ_[2]) * 0 - 1 * 1 = -1 := by ring
+  rwa [hval] at hcon
 
 example :
     latticeMap (Matrix.GeneralLinearGroup.map (algebraMap ℤ_[2] ℚ_[2]) gammaZero)

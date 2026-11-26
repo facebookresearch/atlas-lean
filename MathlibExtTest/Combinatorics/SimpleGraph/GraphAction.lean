@@ -25,7 +25,7 @@ private theorem exactSource {G : Type} [Group G] {W : Type} [MulAction G W] (�
   card_stabilizer_smul 𝒯 g d
 
 /-- Permutations act on the complete graph by graph automorphisms. -/
-instance : GraphAction (Equiv.Perm (Fin 3)) (⊤ : SimpleGraph (Fin 3)) :=
+private instance : GraphAction (Equiv.Perm (Fin 3)) (⊤ : SimpleGraph (Fin 3)) :=
   ⟨fun g v w h => (SimpleGraph.top_adj _ _).2 fun e =>
     (SimpleGraph.top_adj v w).1 h (MulAction.injective g e)⟩
 

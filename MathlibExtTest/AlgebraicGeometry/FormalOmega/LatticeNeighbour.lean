@@ -28,6 +28,13 @@ private theorem exactSource {R : Type*} [CommRing R] {K : Type*} [Field K] [Alge
           algebraMap R K d * v 0 - algebraMap R K c * v 1 = algebraMap R K ϖ * w :=
   mem_interLattice
 
+/-- `IsLocalization.isInteger_neg` and `IsLocalization.isInteger_sub` hold over any commutative
+ring, not only over fields. -/
+example {S : Type u} [CommRing S] [Algebra ℤ S] {a b : S} (ha : IsLocalization.IsInteger ℤ a)
+    (hb : IsLocalization.IsInteger ℤ b) :
+    IsLocalization.IsInteger ℤ (a - b) ∧ IsLocalization.IsInteger ℤ (-a) :=
+  ⟨IsLocalization.isInteger_sub ha hb, IsLocalization.isInteger_neg ha⟩
+
 /-- Higher-universe consumer: the neighbours are injectively parametrized. -/
 example {R : Type (u + 1)} [CommRing R] {K : Type (u + 1)} [Field K] [Algebra R K]
     [IsFractionRing R K] {ϖ : R} (hϖ : Irreducible ϖ) :
@@ -36,7 +43,7 @@ example {R : Type (u + 1)} [CommRing R] {K : Type (u + 1)} [Field K] [Algebra R 
 
 /-- Over `𝔽₂`, the plane `𝔽₂²` has `3` lines. -/
 example : Nat.card {W : Submodule (ZMod 2) (Fin 2 → ZMod 2) // W ≠ ⊥ ∧ W ≠ ⊤} = 3 := by
-  rw [card_submodule_ne_bot_ne_top_of_finrank_two (by simp), Nat.card_zmod]
+  rw [Submodule.card_ne_bot_ne_top_of_finrank_two (by simp), Nat.card_zmod]
 
 example : interLattice ℤ_[2] ℚ_[2] 2 1 0 ≠ interLattice ℤ_[2] ℚ_[2] 2 1 1 := by
   intro h

@@ -36,11 +36,13 @@ import Mathlib.Tactic.LinearCombination
 # Neighbours of the standard lattice
 
 The proper nonzero subspaces of a two-dimensional vector space are the points of its projective
-line, so over a finite field `k` there are `|k| + 1` of them. For `ϖ ∈ R` and `c, d ∈ R`, the
-lattice `LT.LatticeTree.interLattice R K ϖ c d` consists of the integral vectors whose residue lies
-on the line through `(c, d)`; `LT.LatticeTree.neighborOfOption` parametrizes these neighbours of the
-standard lattice by the projective line over `R / ϖ`, injectively when `ϖ` is irreducible and `K`
-is the fraction field of `R`.
+line, so over a finite field `k` there are `|k| + 1` of them. For `ϖ, c, d ∈ R`, the lattice
+`LT.LatticeTree.interLattice R K ϖ c d` consists of the vectors `v` with integral coordinates and
+`d v₀ - c v₁ ∈ ϖ R`. `LT.LatticeTree.neighborOfOption` indexes these lattices by
+`Option (R ⧸ (ϖ))`, with `none` for `(c, d) = (0, 1)` and `some a` for `(1, a)`; this index type is
+the projective line over `R ⧸ (ϖ)` when that ring is a field. When `K` is the fraction field of `R`
+and `ϖ` is irreducible, each of these lattices lies strictly between `ϖ R²` and `R²`, and the
+indexing is injective.
 -/
 
 @[expose] public section
@@ -49,12 +51,10 @@ noncomputable section
 
 open scoped Matrix
 
-namespace LT.LatticeTree
-
-attribute [local simp] mem_stdLattice latticeMap_one
-
 open Module
 open scoped LinearAlgebra.Projectivization
+
+namespace Submodule
 
 section ResiduePlane
 
@@ -77,7 +77,7 @@ theorem ne_bot_and_ne_top_iff_finrank_eq_one [FiniteDimensional k V]
 
 /-- In a two-dimensional vector space, proper nonzero subspaces correspond to points of the
 projective line. -/
-noncomputable def submoduleNeBotNeTopEquivProjectivization [FiniteDimensional k V]
+noncomputable def neBotNeTopEquivProjectivization [FiniteDimensional k V]
     (hV : finrank k V = 2) :
     {W : Submodule k V // W ≠ ⊥ ∧ W ≠ ⊤} ≃ ℙ k V :=
   (Equiv.subtypeEquivRight (ne_bot_and_ne_top_iff_finrank_eq_one hV)).trans
@@ -85,31 +85,43 @@ noncomputable def submoduleNeBotNeTopEquivProjectivization [FiniteDimensional k 
 
 /-- A two-dimensional vector space over a finite field `k` has `|k| + 1` proper nonzero subspaces.
 -/
-theorem card_submodule_ne_bot_ne_top_of_finrank_two [Finite k] [FiniteDimensional k V]
+theorem card_ne_bot_ne_top_of_finrank_two [Finite k] [FiniteDimensional k V]
     (hV : finrank k V = 2) :
     Nat.card {W : Submodule k V // W ≠ ⊥ ∧ W ≠ ⊤} = Nat.card k + 1 :=
-  (Nat.card_congr (submoduleNeBotNeTopEquivProjectivization hV)).trans
+  (Nat.card_congr (neBotNeTopEquivProjectivization hV)).trans
     (Projectivization.card_of_finrank_two k V hV)
 
 end ResiduePlane
+
+end Submodule
+
+namespace IsLocalization
+
+variable {R : Type*} [CommRing R] {S : Type*} [CommRing S] [Algebra R S]
+
+theorem isInteger_neg {a : S} (ha : IsInteger R a) : IsInteger R (-a) := by
+  obtain ⟨a', rfl⟩ := ha
+  exact ⟨-a', map_neg _ _⟩
+
+theorem isInteger_sub {a b : S} (ha : IsInteger R a) (hb : IsInteger R b) :
+    IsInteger R (a - b) := by
+  rw [sub_eq_add_neg]
+  exact isInteger_add ha (isInteger_neg hb)
+
+end IsLocalization
+
+namespace LT.LatticeTree
+
+attribute [local simp] mem_stdLattice latticeMap_one
 
 section NeighbourFamily
 
 variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
-theorem isInteger_neg {a : K} (ha : IsLocalization.IsInteger R a) :
-    IsLocalization.IsInteger R (-a) := by
-  obtain ⟨a', rfl⟩ := ha
-  exact ⟨-a', map_neg _ _⟩
-
-theorem isInteger_sub {a b : K} (ha : IsLocalization.IsInteger R a)
-    (hb : IsLocalization.IsInteger R b) : IsLocalization.IsInteger R (a - b) := by
-  rw [sub_eq_add_neg]
-  exact IsLocalization.isInteger_add ha (isInteger_neg hb)
-
 variable (R K) in
-/-- The lattice of `v ∈ R²` with `d v₀ - c v₁ ∈ ϖ R`: the neighbour of the standard lattice cut
-out by the residue line through `(c, d)`. -/
+/-- The lattice of the vectors `v ∈ K²` with integral coordinates and `d v₀ - c v₁ ∈ ϖ R`. When `K`
+is the fraction field of `R`, `ϖ ≠ 0` and `ϖ` does not divide both `c` and `d`, it lies strictly
+between `ϖ R²` and `R²`. -/
 def interLattice (ϖ c d : R) : Submodule R (Fin 2 → K) where
   carrier := {v | (∀ i, IsLocalization.IsInteger R (v i)) ∧
     ∃ w : K, IsLocalization.IsInteger R w ∧
@@ -199,7 +211,7 @@ theorem interLattice_one_eq_of_dvd_sub {ϖ a a' : R} (h : ϖ ∣ a - a') :
       interLattice R K ϖ 1 b ≤ interLattice R K ϖ 1 b' := by
     rintro b b' ⟨y, hy⟩ v ⟨hv, w, hw, hweq⟩
     obtain ⟨r, hr⟩ := hv 0
-    refine ⟨hv, w - algebraMap R K (y * r), isInteger_sub hw ⟨y * r, rfl⟩, ?_⟩
+    refine ⟨hv, w - algebraMap R K (y * r), IsLocalization.isInteger_sub hw ⟨y * r, rfl⟩, ?_⟩
     have hb : algebraMap R K b' =
         algebraMap R K b - algebraMap R K ϖ * algebraMap R K y := by
       rw [← map_mul, ← map_sub]
@@ -217,7 +229,7 @@ theorem latticeMap_scalarGL_le_interLattice {ϖ : R} (hϖ : ϖ ≠ 0) (c d : R) 
   choose w hw hw' using hv
   refine ⟨fun i => by rw [← hw' i]; exact IsLocalization.isInteger_mul ⟨ϖ, rfl⟩ (hw i),
     algebraMap R K d * w 0 - algebraMap R K c * w 1,
-    isInteger_sub (IsLocalization.isInteger_mul ⟨d, rfl⟩ (hw 0))
+    IsLocalization.isInteger_sub (IsLocalization.isInteger_mul ⟨d, rfl⟩ (hw 0))
       (IsLocalization.isInteger_mul ⟨c, rfl⟩ (hw 1)),
     by rw [← hw' 0, ← hw' 1]; ring⟩
 
@@ -260,8 +272,9 @@ theorem interLattice_lt_stdLattice {ϖ : R} {c d : R} (hcd : ¬(ϖ ∣ c ∧ ϖ 
     exact hd he
 
 variable (R K) in
-/-- The neighbours of the standard lattice indexed by the projective line over `R / ϖ`: `none`
-gives the line through `(0, 1)` and `some a` the line through `(1, a)`. -/
+/-- The lattices `interLattice R K ϖ c d` indexed by `Option (R ⧸ (ϖ))`: `none` gives
+`(c, d) = (0, 1)` and `some a` gives `(1, a')` for the chosen representative `a'` of `a`. The index
+type is the projective line over `R ⧸ (ϖ)` when that ring is a field. -/
 noncomputable def neighborOfOption (ϖ : R) (x : Option (R ⧸ Ideal.span {ϖ})) :
     Submodule R (Fin 2 → K) :=
   x.elim (interLattice R K ϖ 0 1) (fun y => interLattice R K ϖ 1 y.out)
@@ -282,8 +295,8 @@ theorem neighborOfOption_mem_interval {ϖ : R} (hϖ : Irreducible ϖ)
   | some y => exact ⟨latticeMap_scalarGL_lt_interLattice hϖ.ne_zero (hcd _),
       interLattice_lt_stdLattice (hcd _)⟩
 
-/-- For an irreducible `ϖ`, distinct points of the projective line over `R / ϖ` give distinct
-neighbours. -/
+/-- For an irreducible `ϖ`, distinct elements of `Option (R ⧸ (ϖ))` give distinct lattices
+`neighborOfOption R K ϖ x`. -/
 theorem neighborOfOption_injective {ϖ : R} (hϖ : Irreducible ϖ) :
     Function.Injective (neighborOfOption R K ϖ) := by
   have haff : ∀ (a : R), interLattice R K ϖ 0 1 ≠ interLattice R K ϖ 1 a := by
@@ -309,11 +322,6 @@ theorem neighborOfOption_injective_into_interval {ϖ : R} (hϖ : Irreducible ϖ)
             L < stdLattice R K})) :=
   fun _ _ h => neighborOfOption_injective hϖ (congrArg Subtype.val h)
 
-/-- The projective line over a finite residue ring `R / ϖ` has `|R / ϖ| + 1` points. -/
-theorem card_option_quotient (ϖ : R) [Finite (R ⧸ Ideal.span {ϖ})] :
-    Nat.card (Option (R ⧸ Ideal.span {ϖ})) = Nat.card (R ⧸ Ideal.span {ϖ}) + 1 :=
-  Finite.card_option
-
 end NeighbourFamily
 
 section Gates
@@ -326,7 +334,7 @@ theorem interLattice_zero_zero (ϖ : R) : interLattice R K ϖ 0 0 = stdLattice R
 
 variable [IsFractionRing R K]
 
-/-- The neighbour through `(1, 0)` is `diag(1, ϖ) R²`. -/
+/-- For `ϖ ≠ 0`, `interLattice ϖ 1 0` is `diag(1, ϖ) R²`. -/
 theorem interLattice_one_zero {ϖ : R} (hϖ : ϖ ≠ 0) :
     interLattice R K ϖ 1 0 =
       latticeMap (diagSnd (unitOfNeZero (K := K) hϖ)) (stdLattice R K) := by
@@ -335,11 +343,11 @@ theorem interLattice_one_zero {ϖ : R} (hϖ : ϖ ≠ 0) :
   constructor
   · rintro ⟨hv, w, hw, hweq⟩
     rw [map_zero, zero_mul, map_one, one_mul, zero_sub] at hweq
-    refine ⟨hv 0, -w, isInteger_neg hw, ?_⟩
+    refine ⟨hv 0, -w, IsLocalization.isInteger_neg hw, ?_⟩
     rw [unitOfNeZero_coe, mul_neg, ← hweq, neg_neg]
   · rintro ⟨h0, w, hw, hweq⟩
     rw [unitOfNeZero_coe] at hweq
-    refine ⟨fun i => ?_, -w, isInteger_neg hw, ?_⟩
+    refine ⟨fun i => ?_, -w, IsLocalization.isInteger_neg hw, ?_⟩
     · fin_cases i
       · exact h0
       · exact hweq ▸ IsLocalization.isInteger_mul ⟨ϖ, rfl⟩ hw

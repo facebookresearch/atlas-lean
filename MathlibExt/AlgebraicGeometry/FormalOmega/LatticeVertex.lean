@@ -30,13 +30,14 @@ module
 public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeStd
 
 /-!
-# Vertices of the lattice tree
+# Vertices of the lattice graph
 
-For a commutative ring `R` with an `R`-algebra field `K`, the vertices of the lattice tree are the
-homothety classes of full `R`-lattices in `K²` (`LT.LatticeTree.Vertex`), with the induced action
-of `GL₂(K)`. When `K` is the fraction field of `R`, the stabilizer of the standard vertex is
-`Kˣ · GL₂(R)`, and for an irreducible `ϖ` the matrices `diag(1, ϖ)` and `diag(1, ϖ)²` move the
-standard vertex to adjacent and distance-two lattices (`LT.LatticeTree.AdjacentLattice`).
+For a commutative ring `R` with an `R`-algebra field `K`, the vertices of the lattice graph
+(`CerednikDrinfeld.BruhatTits.tree`) are the homothety classes of full `R`-lattices in `K²`
+(`LT.LatticeTree.Vertex`), with the induced action of `GL₂(K)`. When `K` is the fraction field of
+`R`, the stabilizer of the standard vertex is `Kˣ · GL₂(R)`. For an irreducible `ϖ`, the lattices
+`R²` and `diag(1, ϖ) R²` are adjacent (`LT.LatticeTree.AdjacentLattice`), as are `diag(1, ϖ) R²`
+and `diag(1, ϖ)² R²`, and neither `diag(1, ϖ)` nor `diag(1, ϖ)²` fixes the standard vertex.
 -/
 
 @[expose] public section
@@ -56,7 +57,7 @@ def homothetySetoid : Setoid (FullLattice R K) where
   iseqv := ⟨fun L => Homothetic.refl L.1, Homothetic.symm, Homothetic.trans⟩
 
 variable (R K) in
-/-- The vertices of the lattice tree: homothety classes of full `R`-lattices in `K²`. -/
+/-- The vertices of the lattice graph: homothety classes of full `R`-lattices in `K²`. -/
 def Vertex : Type _ := Quotient (homothetySetoid R K)
 
 variable (R K) in
@@ -235,7 +236,7 @@ theorem latticeMap_scalarGL_ne_latticeMap_diagSnd {ϖ : R} (hϖ : Irreducible ϖ
   rw [Pi.single_eq_same] at hweq
   exact hϖ.not_isUnit (isUnit_of_algebraMap_mul_eq_one hw hweq)
 
-/-- The lattices `R²` and `diag(1, ϖ) R²` are adjacent. -/
+/-- For an irreducible `ϖ`, the lattices `R²` and `diag(1, ϖ) R²` are adjacent. -/
 theorem adjacentLattice_stdLattice_diagSnd {ϖ : R} (hϖ : Irreducible ϖ) :
     AdjacentLattice (stdLattice R K)
       (latticeMap (diagSnd (unitOfNeZero (K := K) hϖ.ne_zero)) (stdLattice R K)) :=

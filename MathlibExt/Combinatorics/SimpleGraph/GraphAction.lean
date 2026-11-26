@@ -85,12 +85,12 @@ instance dartAction : MulAction G 𝒯.Dart where
 
 theorem smul_dart_symm (g : G) (d : 𝒯.Dart) : (g • d).symm = g • d.symm := rfl
 
-/-- The darts of the quotient graph `G \ 𝒯`. -/
+/-- The orbits of `G` on the darts of `𝒯` (the darts of the quotient graph `G \ 𝒯`). -/
 abbrev QuotEdge (G : Type*) [Group G] {W : Type*} [MulAction G W] (𝒯 : SimpleGraph W)
     [GraphAction G 𝒯] :=
   orbitRel.Quotient G 𝒯.Dart
 
-/-- The vertices of the quotient graph `G \ 𝒯`. -/
+/-- The orbits of `G` on the vertices (the vertices of the quotient graph `G \ 𝒯`). -/
 abbrev QuotVert (G : Type*) [Group G] (W : Type*) [MulAction G W] := orbitRel.Quotient G W
 
 /-- Translating a dart does not change the cardinality of its stabilizer. -/

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeGalois
+public import Mathlib.Basic.Complex.Basic
 
 @[expose] public section
 
@@ -16,6 +17,65 @@ open scoped Matrix
 open LT.LatticeTree
 
 universe u
+
+/-- `i ≠ -i` in `ℂ`. -/
+private theorem complex_I_ne_neg_I : Complex.I ≠ -Complex.I := by
+  intro h
+  have h2 : Complex.I.im = (-Complex.I).im := congrArg Complex.im h
+  rw [Complex.neg_im, Complex.I_im] at h2
+  norm_num at h2
+
+/-- Complex conjugation, as an integral automorphism of `ℂ` over itself. -/
+private noncomputable def conjAut : IntegralAut ℂ ℂ where
+  toField := starRingAut
+  toBase := starRingAut
+  commutes r := by
+    simp [Algebra.algebraMap_self]
+
+/-- Complex conjugation has order two. -/
+private theorem conjAut_comp_conjAut : conjAut.comp conjAut = IntegralAut.refl ℂ ℂ := by
+  unfold conjAut IntegralAut.comp IntegralAut.refl
+  congr 1 <;>
+  · ext x
+    exact star_star x
+
+/-- Complex conjugation is not the identity of `ℂ`. -/
+example : conjAut.toField ≠ RingEquiv.refl ℂ := by
+  intro h
+  have hI : conjAut.toField Complex.I = Complex.I := by rw [h]; rfl
+  have hI' : conjAut.toField Complex.I = -Complex.I := Complex.conj_I
+  rw [hI'] at hI
+  exact complex_I_ne_neg_I hI.symm
+
+/-- Complex conjugation moves the vector `(1, i)`. -/
+example : galVec conjAut ![1, Complex.I] ≠ ![1, Complex.I] := by
+  intro h
+  have h1 : conjAut.toField (![1, Complex.I] 1) = ![1, Complex.I] 1 := congrFun h 1
+  have h2 : (![1, Complex.I] 1 : ℂ) = Complex.I := by simp
+  rw [h2] at h1
+  rw [show conjAut.toField Complex.I = -Complex.I from Complex.conj_I] at h1
+  exact complex_I_ne_neg_I h1.symm
+
+/-- Complex conjugation moves the complex line through `(1, i)`. -/
+private theorem latticeGal_conj_line_ne :
+    latticeGal conjAut (Submodule.span ℂ {![1, Complex.I]}) ≠
+      Submodule.span ℂ {![1, Complex.I]} := by
+  intro h
+  have hmem : galVec conjAut ![1, Complex.I] ∈
+      Submodule.span ℂ {![(1 : ℂ), Complex.I]} := by
+    rw [← h]
+    exact galVec_mem_latticeGal (Submodule.mem_span_singleton_self _)
+  rw [Submodule.mem_span_singleton] at hmem
+  obtain ⟨c, hc⟩ := hmem
+  have h0 : c * 1 = 1 := by
+    have := congrFun hc 0
+    simpa [galVec, conjAut, Pi.smul_apply, smul_eq_mul] using this
+  have h1 : c * Complex.I = -Complex.I := by
+    have := congrFun hc 1
+    simpa [galVec, conjAut, Pi.smul_apply, smul_eq_mul, Complex.conj_I] using this
+  rw [mul_one] at h0
+  rw [h0, one_mul] at h1
+  exact complex_I_ne_neg_I h1
 
 /-- Consumer with the original binders: the twisted action of an order-two automorphism iterates
 to the norm. -/

@@ -30,15 +30,14 @@ module
 public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeOrbital
 
 /-!
-# Base change and depth on the lattice tree
+# Base change and depth of lattices and vertices
 
 An `LT.LatticeTree.IntegralHom R' K' R K` is a ring homomorphism `K' → K` compatible with one
 `R' → R`. It base changes lattices (`LT.LatticeTree.latticeBaseChange`) and, when `K` is the
 fraction field of `R`, vertices, equivariantly for `GL₂`, so fixed vertices map to fixed vertices.
-For `c ∈ Kˣ`, `LT.LatticeTree.Vertex.IsWithin c n v w` says `v` and `w` have representatives
-`c^n L ≤ M ≤ L`; for a uniformizer `c` this is tree distance at most `n`. The (twisted) orbital
-balls are the vertices within depth `n` of their (twisted) translate, and at depth `0` they are
-the (twisted) fixed-vertex sets.
+For `c ∈ Kˣ`, `LT.LatticeTree.Vertex.IsWithin c n v w` says that `v` and `w` have representatives
+`L` and `M` with `c^n L ≤ M ≤ L`. The (twisted) orbital balls are the vertices within depth `n` of
+their (twisted) translate, and at depth `0` they are the (twisted) fixed-vertex sets.
 -/
 
 @[expose] public section
@@ -59,8 +58,11 @@ section BaseChangeVocabulary
 base change lattices and vertices. -/
 structure IntegralHom (R' K' R K : Type*) [CommRing R'] [Field K'] [Algebra R' K']
     [CommRing R] [Field K] [Algebra R K] where
+  /-- The homomorphism of fields `K' → K`. -/
   toField : K' →+* K
+  /-- The homomorphism of base rings `R' → R`. -/
   toBase : R' →+* R
+  /-- The two homomorphisms are compatible with the algebra maps. -/
   commutes : ∀ r : R', toField (algebraMap R' K' r) = algebraMap R K (toBase r)
 
 section BaseChange
@@ -342,8 +344,8 @@ variable {R : Type*} [CommRing R] {K : Type*} [Field K] [Algebra R K]
 def LatticeWithin (c : Kˣ) (n : ℕ) (L M : Submodule R (Fin 2 → K)) : Prop :=
   latticeMap (scalarGL (c ^ n)) L ≤ M ∧ M ≤ L
 
-/-- Vertices within depth `n`: represented by lattices with `c^n L ≤ M ≤ L`. For `c` a uniformizer
-this says the vertices are at tree distance at most `n`. -/
+/-- Vertices within depth `n`: `v` and `w` have representatives `L` and `M` with
+`c^n L ≤ M ≤ L`. -/
 def Vertex.IsWithin (c : Kˣ) (n : ℕ) (v w : Vertex R K) : Prop :=
   ∃ (L M : Submodule R (Fin 2 → K)) (hL : Submodule.IsFullLattice K L)
       (hM : Submodule.IsFullLattice K M),

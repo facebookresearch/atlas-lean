@@ -28,16 +28,14 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.FormalOmega.LatticeVertex
-public import Mathlib.Basic.Complex.Basic
 
 /-!
-# Integral automorphisms acting on the lattice tree
+# Integral automorphisms acting on lattices and vertices
 
 An `LT.LatticeTree.IntegralAut R K` is a ring automorphism of `K` with a compatible automorphism of
 `R`. It acts coordinatewise on `K²`, on `R`-lattices (`LT.LatticeTree.latticeGal`), on full
 lattices and on vertices. For `δ ∈ GL₂(K)` the twisted action `L ↦ δ σ(L)` iterates, for `σ` of
-order two or three, to the action of the norms `δ σ(δ)` and `δ σ(δ) σ²(δ)`. Complex conjugation
-(`LT.LatticeTree.conjAut`) gives an integral automorphism of order two.
+order two or three, to the action of the norms `δ σ(δ)` and `δ σ(δ) σ²(δ)`.
 -/
 
 @[expose] public section
@@ -56,8 +54,11 @@ variable {K : Type*} [Field K] [Algebra R K]
 /-- A ring automorphism of `K` together with a compatible ring automorphism of `R`, so that it
 preserves the `R`-integral elements of `K`. -/
 structure IntegralAut (R K : Type*) [CommRing R] [Field K] [Algebra R K] where
+  /-- The automorphism of the field `K`. -/
   toField : K ≃+* K
+  /-- The automorphism of the base ring `R`. -/
   toBase : R ≃+* R
+  /-- The two automorphisms are compatible with the algebra map. -/
   commutes : ∀ r : R, toField (algebraMap R K r) = algebraMap R K (toBase r)
 
 namespace IntegralAut
@@ -436,61 +437,6 @@ theorem latticeMap_norm_eq_self_of_twisted_fixed (δ : Matrix.GeneralLinearGroup
     {L : Submodule R (Fin 2 → K)} (hL : twistedLatticeMap δ σ L = L) :
     latticeMap (normThree δ σ) L = L := by
   rw [← twistedLatticeMap_three_of_orderThree δ hσ, hL, hL, hL]
-
-theorem complex_I_ne_neg_I : Complex.I ≠ -Complex.I := by
-  intro h
-  have h2 : Complex.I.im = (-Complex.I).im := congrArg Complex.im h
-  rw [Complex.neg_im, Complex.I_im] at h2
-  norm_num at h2
-
-/-- Complex conjugation, as an integral automorphism of `ℂ` over itself. -/
-def conjAut : IntegralAut ℂ ℂ where
-  toField := starRingAut
-  toBase := starRingAut
-  commutes r := by
-    simp [Algebra.algebraMap_self]
-
-theorem conjAut_toField_ne_refl : conjAut.toField ≠ RingEquiv.refl ℂ := by
-  intro h
-  have hI : conjAut.toField Complex.I = Complex.I := by rw [h]; rfl
-  have hI' : conjAut.toField Complex.I = -Complex.I := Complex.conj_I
-  rw [hI'] at hI
-  exact complex_I_ne_neg_I hI.symm
-
-theorem galVec_conjAut_ne : galVec conjAut ![1, Complex.I] ≠ ![1, Complex.I] := by
-  intro h
-  have h1 : conjAut.toField (![1, Complex.I] 1) = ![1, Complex.I] 1 := congrFun h 1
-  have h2 : (![1, Complex.I] 1 : ℂ) = Complex.I := by simp
-  rw [h2] at h1
-  rw [show conjAut.toField Complex.I = -Complex.I from Complex.conj_I] at h1
-  exact complex_I_ne_neg_I h1.symm
-
-/-- Complex conjugation moves the complex line through `(1, i)`. -/
-theorem latticeGal_conj_line_ne :
-    latticeGal conjAut (Submodule.span ℂ {![1, Complex.I]}) ≠
-      Submodule.span ℂ {![1, Complex.I]} := by
-  intro h
-  have hmem : galVec conjAut ![1, Complex.I] ∈
-      Submodule.span ℂ {![(1 : ℂ), Complex.I]} := by
-    rw [← h]
-    exact galVec_mem_latticeGal (Submodule.mem_span_singleton_self _)
-  rw [Submodule.mem_span_singleton] at hmem
-  obtain ⟨c, hc⟩ := hmem
-  have h0 : c * 1 = 1 := by
-    have := congrFun hc 0
-    simpa [galVec, conjAut, Pi.smul_apply, smul_eq_mul] using this
-  have h1 : c * Complex.I = -Complex.I := by
-    have := congrFun hc 1
-    simpa [galVec, conjAut, Pi.smul_apply, smul_eq_mul, Complex.conj_I] using this
-  rw [mul_one] at h0
-  rw [h0, one_mul] at h1
-  exact complex_I_ne_neg_I h1
-
-theorem conjAut_comp_conjAut : conjAut.comp conjAut = IntegralAut.refl ℂ ℂ := by
-  unfold conjAut IntegralAut.comp IntegralAut.refl
-  congr 1 <;>
-  · ext x
-    exact star_star x
 
 end LT.LatticeTree
 
