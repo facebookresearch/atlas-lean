@@ -19,6 +19,7 @@
 - [The variation is the eventual value of the truncated variations](zeck-adic-variation-eq-of-eventually.md)
 - [The variation for $r = 0$ vanishes](zeck-adic-variation-zero.md)
 - [Adding $r$ without low digits leaves the low digits unchanged](zeck-odometer-iterate-low-digits.md)
+- [The odometer adds on the natural numbers](zeck-odometer-iterate-zeck-adic-of-nat.md)
 - [Adding a small $r$ leaves the high digits unchanged](zeck-odometer-iterate-high-digits.md)
 - [Adding $r$ across a window of four zero digits](zeck-odometer-iterate-block-digits.md)
 - [Stopping condition for a block of size one](zeck-odometer-stopping-block-one.md)
