@@ -36,8 +36,9 @@ private theorem dvd_index_of_digit_sum {m p : ℕ} (hm : 1 ≤ m)
   apply Finset.dvd_prod_of_mem (fun i : ℕ => i)
   exact Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (by omega), hp, hn, hs⟩
 
-/-- If the units digit is maximal and a higher digit is nonzero, their sum reaches the base. -/
-private theorem le_digit_sum_of_last_digit {p m : ℕ} (hp : 1 < p) (hle : p ≤ m)
+/-- If `1 < p`, `p ≤ m` and `m % p + 1 = p`, then the sum of the base-`p` digits of `m` is at
+least `p`. -/
+public theorem le_digit_sum_of_last_digit {p m : ℕ} (hp : 1 < p) (hle : p ≤ m)
     (hmod : m % p + 1 = p) : p ≤ (p.digits m).sum := by
   have hdiv : m / p ≠ 0 := by
     have := (Nat.one_le_div_iff (by omega : 0 < p)).mpr hle
