@@ -9,12 +9,7 @@ Let $l_1 \to r_1$ and $l_2 \to r_2$ be rules of a term rewriting system, renamed
 ## Proof depends on
 
 - [Unification returns a most general unifier](../first-order-unification/is-mgu-unify.md)
-
-## Expansion
-
-This page becomes ready once these prerequisites are stated:
-
-- N-ary ranked-signature adapter for curried unification (proof prerequisite)
+- [Unification of ranked terms through the curried encoding](../first-order-unification/unification-of-ranked-terms-through-the-curried-encoding.md)
 
 ## Sources
 
