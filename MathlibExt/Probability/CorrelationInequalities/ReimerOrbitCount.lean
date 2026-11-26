@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.Probability.CorrelationInequalities.ReimerSwapInjection
 public import Mathlib.Combinatorics.Hall.Basic
+import MathlibExt.Probability.CorrelationInequalities.ReimerInequality
 
 /-!
 # Orbit counting: swap injections via Hall's theorem
@@ -26,7 +27,9 @@ For the top orbit `PerOrbitCard A B` is the counting inequality `|A □ B| ≤ |
 form of Reimer's theorem. Every other orbit is a sub-cube with the remaining coordinates frozen,
 and restricting `A`, `B` to it reduces that orbit to the same counting inequality for the
 restricted events (argument by hand, not formalized). So `PerOrbitCardAll` has the strength of
-Reimer's theorem itself. It is **not** proved here.
+Reimer's theorem itself. It is **not** proved here. Reimer's inequality does not depend on it: it is
+proved for all events as `MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`
+(`MathlibExt.Probability.CorrelationInequalities.ReimerInequality`).
 
 ## Main definitions
 
@@ -41,7 +44,8 @@ Reimer's theorem itself. It is **not** proved here.
 * `r2k_swapInjection_iff_perOrbitCard`: swap injections exist iff `PerOrbitCard` holds.
 * `reimer_wprob_of_perOrbitCard`: `PerOrbitCard A B → P(A □ B) ≤ P(A) P(B)`.
 * `reimer_wprob_core_of_perOrbitCard`, `reimer_inequality_of_perOrbitCard`: Reimer's inequality
-  **assuming** `PerOrbitCardAll`.
+  under `PerOrbitCardAll`, as corollaries of the unconditional `reimer_wprob_core`; the hypothesis
+  is not used.
 * `perOrbitCard_of_disjoint_support`, `perOrbitCard_of_box_empty`, `perOrbitCard_rbi`: cases
   where `PerOrbitCard` is proved.
 
@@ -253,19 +257,22 @@ here. -/
 def PerOrbitCardAll : Prop :=
   ∀ (n : ℕ) (A B : Set (ConfigSpace (Fin n))), PerOrbitCard A B
 
-/-- `ReimerWprobCore`, **assuming** `PerOrbitCardAll`. -/
+/-- `ReimerWprobCore` under `PerOrbitCardAll`. The hypothesis is not needed: this is
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`, which proves
+`ReimerWprobCore` outright. -/
 theorem reimer_wprob_core_of_perOrbitCard (h : PerOrbitCardAll) : ReimerWprobCore :=
-  r2k_reimer_wprob_core_of_swapInjection
-    (fun n A B => r2k_swapInjection_of_perOrbitCard A B (h n A B))
+  MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core
 
 set_option linter.unusedFintypeInType false in
 set_option linter.unusedDecidableInType false in
-/-- Reimer's inequality for `bernoulliProductMeasure p`, **assuming** `PerOrbitCardAll`. -/
+/-- Reimer's inequality for `bernoulliProductMeasure p` under `PerOrbitCardAll`. The hypothesis
+is not needed: this is `reimer_inequality_of_core` applied to
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`. -/
 theorem reimer_inequality_of_perOrbitCard (h : PerOrbitCardAll) {E : Type*}
     [Fintype E] [DecidableEq E] {p : ℝ≥0} (hp : p ≤ 1) (A B : Set (ConfigSpace E)) :
     (bernoulliProductMeasure (E := E) p hp).real (disjointOccurrence A B)
       ≤ (bernoulliProductMeasure (E := E) p hp).real A
         * (bernoulliProductMeasure (E := E) p hp).real B :=
-  reimer_inequality_of_core (reimer_wprob_core_of_perOrbitCard h) hp A B
+  reimer_inequality_of_core MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core hp A B
 
 end StatMech

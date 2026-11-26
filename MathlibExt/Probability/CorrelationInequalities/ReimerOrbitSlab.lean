@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.ReimerOrbitCount
+import MathlibExt.Probability.CorrelationInequalities.ReimerInequality
 
 /-!
 # Slab form of the orbit condition and the counting form of Reimer's theorem
@@ -17,7 +18,9 @@ flipping the coordinates where `k.1 ≠ k.2` (`poc_keyFlip`, `poc_snd_eq`). This
 `PerOrbitCard` into the equivalent slab condition `poc_SlabCard` on single configurations
 (`poc_perOrbitCard_iff_slabCard`). For the top key `(1, 0)` the slab condition is the counting
 inequality `poc_ReimerCardForm A B : |A □ B| ≤ |{ω ∈ A | ω̄ ∈ B}|`, the counting form of Reimer's
-theorem.
+theorem. `MathlibExt.Probability.CorrelationInequalities.ReimerInequality` proves this counting
+bound for all events, in a private lemma, and Reimer's inequality itself as
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`.
 
 The file also refutes a natural way to build swap injections: swapping off the `A`-witness of
 `ω` (`poc_WitnessInjection`) is not injective for the two-coordinate events `rbi_A`, `rbi_B`
@@ -35,8 +38,9 @@ The file also refutes a natural way to build swap injections: swapping off the `
 * `poc_perOrbitCard_iff_slabCard`; `poc_reimerCardForm_of_slabCard`.
 * `poc_witnessInjection_rbi_false`.
 * `reimer_wprob_of_slabCard`: `poc_SlabCard A B → P(A □ B) ≤ P(A) P(B)`.
-* `reimer_wprob_core_of_slabCard`, `reimer_inequality_of_slabCard`: Reimer's inequality
-  **assuming** `poc_SlabCardAll` (equivalent to `PerOrbitCardAll`, not proved here).
+* `reimer_wprob_core_of_slabCard`, `reimer_inequality_of_slabCard`: Reimer's inequality under
+  `poc_SlabCardAll` (equivalent to `PerOrbitCardAll`, not proved here), as corollaries of the
+  unconditional `reimer_wprob_core`; the hypothesis is not used.
 
 ## References
 
@@ -184,8 +188,9 @@ theorem poc_slabImg_top (A B : Set (ConfigSpace α)) :
   simp only [and_true]
 
 open Classical in
-/-- The counting form of Reimer's theorem: `|A □ B| ≤ |{ω ∈ A | ω̄ ∈ B}|`. Not proved here in
-general. -/
+/-- The counting form of Reimer's theorem: `|A □ B| ≤ |{ω ∈ A | ω̄ ∈ B}|`. This module derives it
+from the slab condition; `MathlibExt.Probability.CorrelationInequalities.ReimerInequality` proves
+it for all events, in a private lemma. -/
 def poc_ReimerCardForm (A B : Set (ConfigSpace α)) : Prop :=
   #(Finset.univ.filter (fun ω => ω ∈ disjointOccurrence A B)) ≤
     #(Finset.univ.filter (fun ω : ConfigSpace α => ω ∈ A ∧ (fun a => !ω a) ∈ B))
@@ -377,19 +382,22 @@ theorem reimer_wprob_of_slabCard (φ : α → Bool → ℝ) (hφ0 : ∀ x b, 0 �
 def poc_SlabCardAll : Prop :=
   ∀ (n : ℕ) (A B : Set (ConfigSpace (Fin n))), poc_SlabCard A B
 
-/-- `ReimerWprobCore`, **assuming** `poc_SlabCardAll`. -/
+/-- `ReimerWprobCore` under `poc_SlabCardAll`. The hypothesis is not needed: this is
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`, which proves
+`ReimerWprobCore` outright. -/
 theorem reimer_wprob_core_of_slabCard (h : poc_SlabCardAll) : ReimerWprobCore :=
-  reimer_wprob_core_of_perOrbitCard
-    (fun n A B => (poc_perOrbitCard_iff_slabCard A B).mpr (h n A B))
+  MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core
 
 set_option linter.unusedFintypeInType false in
 set_option linter.unusedDecidableInType false in
-/-- Reimer's inequality for `bernoulliProductMeasure p`, **assuming** `poc_SlabCardAll`. -/
+/-- Reimer's inequality for `bernoulliProductMeasure p` under `poc_SlabCardAll`. The hypothesis
+is not needed: this is `reimer_inequality_of_core` applied to
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`. -/
 theorem reimer_inequality_of_slabCard (h : poc_SlabCardAll) {E : Type*}
     [Fintype E] [DecidableEq E] {p : ℝ≥0} (hp : p ≤ 1) (A B : Set (ConfigSpace E)) :
     (bernoulliProductMeasure (E := E) p hp).real (disjointOccurrence A B)
       ≤ (bernoulliProductMeasure (E := E) p hp).real A
         * (bernoulliProductMeasure (E := E) p hp).real B :=
-  reimer_inequality_of_core (reimer_wprob_core_of_slabCard h) hp A B
+  reimer_inequality_of_core MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core hp A B
 
 end StatMech

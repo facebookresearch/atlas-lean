@@ -10,19 +10,19 @@ module
 public import MathlibExt.Dynamics.Ergodic.KingmanSigned.BirkhoffPointwise
 
 /-!
-# Birkhoff's ergodic theorem for ergodic maps: the limit is the mean
+# Birkhoff averages as explicit averages
 
-For an ergodic measure-preserving `T` on a probability space and integrable `f`, the ergodic
-averages `(1/n) ∑_{k<n} f ∘ T^k` converge to `∫ f dμ` almost everywhere. The convergence of
-`birkhoffAverage` itself is
-`MathlibExt.Dynamics.Ergodic.BirkhoffWanted.birkhoff_pointwise_ergodic`, and the pointwise
-limit form is `StatMech.BirkhoffAE.birkhoffLimit_ae_eq_integral_of_ergodic` (from
-`MathlibExt.Dynamics.Ergodic.KingmanSigned.BirkhoffPointwise`).
+The real Birkhoff average `birkhoffAverage ℝ T f n x` is the explicit average
+`n⁻¹ ∑_{k<n} f (T^[k] x)` (`StatMech.BirkhoffAE.birkhoffAverage_eq_inv_mul_sum`). Rewriting with it
+reads Birkhoff's ergodic theorem for ergodic maps,
+`MathlibExt.Dynamics.Ergodic.BirkhoffWanted.birkhoff_pointwise_ergodic`, and its pointwise limit
+form `StatMech.BirkhoffAE.birkhoffLimit_ae_eq_integral_of_ergodic` (from
+`MathlibExt.Dynamics.Ergodic.KingmanSigned.BirkhoffPointwise`) for the explicit averages.
 
 ## Main results
 
-* `StatMech.BirkhoffAE.Ergodic.tendsto_birkhoffSum_div_integral_ae`: the explicit averages
-  `n⁻¹ ∑_{k<n} f (T^[k] x)` tend to `∫ f dμ` a.e.
+* `StatMech.BirkhoffAE.birkhoffAverage_eq_inv_mul_sum`:
+  `birkhoffAverage ℝ T f n x = n⁻¹ ∑_{k<n} f (T^[k] x)`.
 
 ## References
 
@@ -31,31 +31,19 @@ limit form is `StatMech.BirkhoffAE.birkhoffLimit_ae_eq_integral_of_ergodic` (fro
 
 @[expose] public section
 
-open MeasureTheory Filter Finset Function MeasurableSpace
-open scoped Topology ENNReal
+open Finset
 
 namespace StatMech
 
 namespace BirkhoffAE
 
-namespace Ergodic
+variable {α : Type*}
 
-variable {α : Type*} [MeasurableSpace α] {μ : Measure α} {T : α → α} {f : α → ℝ}
-
-/-- **Birkhoff's ergodic theorem**, ergodic case, with explicit averages: `n⁻¹ ∑_{k<n} f (T^[k] x)`
-tends to `∫ f dμ` for a.e. `x`. Birkhoff, *Proof of the ergodic theorem*, 1931. -/
-theorem tendsto_birkhoffSum_div_integral_ae (hT : _root_.Ergodic T μ) [IsProbabilityMeasure μ]
-    (hf : Integrable f μ) :
-    ∀ᵐ x ∂μ, Tendsto (fun n : ℕ => (n : ℝ)⁻¹ * ∑ k ∈ Finset.range n, f (T^[k] x)) atTop
-      (𝓝 (∫ y, f y ∂μ)) := by
-  filter_upwards [MathlibExt.Dynamics.Ergodic.BirkhoffWanted.birkhoff_pointwise_ergodic hT hf]
-    with x hx
-  have heq : (fun n => birkhoffAverage ℝ T f n x)
-      = (fun n : ℕ => (n : ℝ)⁻¹ * ∑ k ∈ Finset.range n, f (T^[k] x)) := by
-    funext n; simp [birkhoffAverage, birkhoffSum, smul_eq_mul]
-  rwa [heq] at hx
-
-end Ergodic
+/-- The real Birkhoff average `birkhoffAverage ℝ T f n x` is the explicit average
+`n⁻¹ ∑_{k<n} f (T^[k] x)`. -/
+theorem birkhoffAverage_eq_inv_mul_sum (T : α → α) (f : α → ℝ) (n : ℕ) (x : α) :
+    birkhoffAverage ℝ T f n x = (n : ℝ)⁻¹ * ∑ k ∈ Finset.range n, f (T^[k] x) := by
+  simp [birkhoffAverage, birkhoffSum, smul_eq_mul]
 
 end BirkhoffAE
 

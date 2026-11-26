@@ -146,10 +146,11 @@ theorem kaCrossingTranslationInvariant_halfMeasure :
     KaCrossingTranslationInvariant halfMeasure where
   horiz τ a b := by
     rw [bxr_translatedHorizontalCrossing_invariant τ a b
-      (measurableSet_horizontalCrossingEvent 0 a 0 b), bxr_twoDim_horizontalCrossingEvent_eq]
+      (RSW.Box.measurableSet_horizontalCrossingEvent 0 a 0 b),
+      bxr_twoDim_horizontalCrossingEvent_eq]
   vert τ a b := by
     rw [bxr_translatedVerticalCrossing_invariant τ a b
-      (measurableSet_verticalCrossingEvent 0 a 0 b), bxr_twoDim_verticalCrossingEvent_eq]
+      (RSW.Box.measurableSet_verticalCrossingEvent 0 a 0 b), bxr_twoDim_verticalCrossingEvent_eq]
 
 /-- The RSW seed and translation invariance give the box-crossing property of `ℙ_{1/2}` with
 aspect ratio `2`. -/

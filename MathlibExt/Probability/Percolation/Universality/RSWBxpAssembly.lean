@@ -16,7 +16,9 @@ import MathlibExt.Probability.Percolation.Universality.FrameChangeIso
 
 Building blocks for Russo–Seymour–Welsh arguments on `ℤ²` for a positively associated measure `μ`:
 
-* crossing events of rectangles depend on finitely many edges and are measurable;
+* events determined by the edges inside a rectangle are measurable (for crossing events this is
+  `StatMech.RSW.Box.measurableSet_horizontalCrossingEvent` and
+  `StatMech.RSW.Box.measurableSet_verticalCrossingEvent`);
 * gluing: `μ(H[a, m']) μ(V[m, m']) μ(H[m, b]) ≤ μ(H[a, b])` for horizontal crossings `H` and the
   vertical crossing `V` of the overlap (`StatMech.Lattice.jec_rsw_strip_glue`), iterated once;
 * the square-root trick for two equiprobable increasing events;
@@ -30,8 +32,8 @@ nondegenerate instance.
 
 ## Main results
 
-* `StatMech.Universality.measurableSet_horizontalCrossingEvent`,
-  `StatMech.Universality.measurableSet_verticalCrossingEvent`.
+* `StatMech.Universality.measurableSet_of_rect_determined`: events determined by the edges inside
+  a rectangle are measurable.
 * `StatMech.Universality.rba_rsw_box_crossing_chain`: two gluing steps.
 * `StatMech.Universality.rba_sqrt_square_seed`: square-root trick for the two crossings of a box.
 * `StatMech.Universality.rba_glued_rectangle_lower_bound`.
@@ -87,24 +89,6 @@ theorem openSubgraphInduce_rect_congr {a b c d : ℤ} {ω ω' : ConfigSpace (Sym
   ext x y
   rw [openSubgraphInduce_adj, openSubgraphInduce_adj, openSubgraph_adj, openSubgraph_adj,
     h x x.2 y y.2]
-
-/-- The left–right crossing event of a rectangle is measurable. -/
-theorem measurableSet_horizontalCrossingEvent (a b c d : ℤ) :
-    MeasurableSet (horizontalCrossingEvent a b c d) := by
-  refine measurableSet_of_rect_determined (a := a) (b := b) (c := c) (d := d) ?_
-  intro ω ω' h hω
-  simp only [mem_horizontalCrossingEvent, HorizontalCrossing, ConnectedWithin,
-    openSubgraphInduce_rect_congr h] at hω ⊢
-  exact hω
-
-/-- The bottom–top crossing event of a rectangle is measurable. -/
-theorem measurableSet_verticalCrossingEvent (a b c d : ℤ) :
-    MeasurableSet (verticalCrossingEvent a b c d) := by
-  refine measurableSet_of_rect_determined (a := a) (b := b) (c := c) (d := d) ?_
-  intro ω ω' h hω
-  simp only [mem_verticalCrossingEvent, VerticalCrossing, ConnectedWithin,
-    openSubgraphInduce_rect_congr h] at hω ⊢
-  exact hω
 
 /-- Two gluing steps: crossings of `[a, m'] , [m, b]` glued through `[m, m']`, then the result and
 `[p, e]` glued through `[p, b]`, bound the crossing of `[a, e] × [c, d]` from below. -/

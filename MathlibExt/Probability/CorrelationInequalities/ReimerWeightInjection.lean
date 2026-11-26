@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.ReimerButterflyCounterexample
+import MathlibExt.Probability.CorrelationInequalities.ReimerInequality
 
 /-!
 # Weight-preserving injections and Reimer's inequality
@@ -23,6 +24,10 @@ Generalizes the butterfly double cover of `ReimerButterflyDoubleCover` in two di
   from `r2k_SwapInjectionAll` (`ReimerSwapInjection`), equivalently `PerOrbitCardAll`
   (`ReimerOrbitCount`).
 
+Reimer's inequality itself does not depend on `rpw_WeightInjectionAll`: it is proved for all
+events as `MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`
+(`MathlibExt.Probability.CorrelationInequalities.ReimerInequality`).
+
 ## Main definitions
 
 * `bfly2`: the butterfly map with a pair-dependent witness.
@@ -33,7 +38,8 @@ Generalizes the butterfly double cover of `ReimerButterflyDoubleCover` in two di
 * `rpw_pairDoubleCover_false`, `rpw_pairDoubleCoverAll_false`: the pair-witness butterfly fails.
 * `rpw_reimer_wprob_of_weightInjection`: `rpw_WeightInjection A B → P(A □ B) ≤ P(A) P(B)`.
 * `rpw_reimer_wprob_core_of_weightInjection`, `rpw_reimer_inequality_of_weightInjection`:
-  Reimer's inequality (`ReimerWprobCore`, Bernoulli form) **assuming** `rpw_WeightInjectionAll`.
+  Reimer's inequality (`ReimerWprobCore`, Bernoulli form) under `rpw_WeightInjectionAll`, as
+  corollaries of the unconditional `reimer_wprob_core`; the hypothesis is not used.
 -/
 
 @[expose] public section
@@ -201,20 +207,23 @@ here. -/
 def rpw_WeightInjectionAll : Prop :=
   ∀ (n : ℕ) (A B : Set (ConfigSpace (Fin n))), rpw_WeightInjection A B
 
-/-- `ReimerWprobCore`, **assuming** `rpw_WeightInjectionAll`. -/
+/-- `ReimerWprobCore` under `rpw_WeightInjectionAll`. The hypothesis is not needed: this is
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`, which proves
+`ReimerWprobCore` outright. -/
 theorem rpw_reimer_wprob_core_of_weightInjection (h : rpw_WeightInjectionAll) :
-    ReimerWprobCore := by
-  intro n φ hφ0 hφ1 A B
-  exact rpw_reimer_wprob_of_weightInjection φ hφ0 hφ1 (h n A B)
+    ReimerWprobCore :=
+  MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core
 
 set_option linter.unusedFintypeInType false in
 set_option linter.unusedDecidableInType false in
-/-- Reimer's inequality for `bernoulliProductMeasure p`, **assuming** `rpw_WeightInjectionAll`. -/
+/-- Reimer's inequality for `bernoulliProductMeasure p` under `rpw_WeightInjectionAll`. The
+hypothesis is not needed: this is `reimer_inequality_of_core` applied to
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`. -/
 theorem rpw_reimer_inequality_of_weightInjection (h : rpw_WeightInjectionAll) {E : Type*}
     [Fintype E] [DecidableEq E] {p : ℝ≥0} (hp : p ≤ 1) (A B : Set (ConfigSpace E)) :
     (bernoulliProductMeasure (E := E) p hp).real (disjointOccurrence A B)
       ≤ (bernoulliProductMeasure (E := E) p hp).real A
         * (bernoulliProductMeasure (E := E) p hp).real B :=
-  reimer_inequality_of_core (rpw_reimer_wprob_core_of_weightInjection h) hp A B
+  reimer_inequality_of_core MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core hp A B
 
 end StatMech

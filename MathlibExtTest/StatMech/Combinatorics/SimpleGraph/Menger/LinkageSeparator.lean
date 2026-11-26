@@ -44,13 +44,13 @@ example (S : Finset (Fin 2)) (hS : MfmIsABSeparator ⊤ Finset.univ Finset.univ 
 
 example : MfmIsABSeparator (⊤ : SimpleGraph (Fin 2)) {0} {1} {0} := by
   intro a b ha _ p
-  simp only [Finset.mem_singleton] at ha ⊢
+  simp only [Finset.coe_singleton, Set.mem_singleton_iff, Finset.mem_singleton] at ha ⊢
   exact ⟨a, p.start_mem_support, ha⟩
 
 example : Nonempty (MfmLinkage (⊤ : SimpleGraph (Fin 2)) {0} {1} 1) := by
   refine mfm_exists_linkage_one fun S hS => ?_
   have hadj : (⊤ : SimpleGraph (Fin 2)).Adj 0 1 := by simp
-  obtain ⟨v, -, hv⟩ := hS (by simp) (by simp) (SimpleGraph.Walk.cons hadj .nil)
+  obtain ⟨v, -, hv⟩ := hS 0 1 (by simp) (by simp) (SimpleGraph.Walk.cons hadj .nil)
   exact Finset.card_pos.mpr ⟨v, hv⟩
 
 example : MfmIsABSeparator (⊥ : SimpleGraph (Fin 2)) {0} {1} ∅ := by

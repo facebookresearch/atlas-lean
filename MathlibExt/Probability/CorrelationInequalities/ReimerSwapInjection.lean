@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CorrelationInequalities.ReimerWeightInjection
+import MathlibExt.Probability.CorrelationInequalities.ReimerInequality
 
 /-!
 # Coordinate-swap injections and Reimer's inequality
@@ -20,7 +21,10 @@ injection and gives Reimer's inequality (`r2k_reimer_wprob_of_swapInjection`). U
 butterfly double cover, the swap set need not come from a witness pair; the two-coordinate events
 `rbi_A`, `rbi_B` that defeat the butterfly do have a swap injection (`r2k_swapInjection_rbi`).
 Whether every pair of events has one (`r2k_SwapInjectionAll`) is equivalent to `PerOrbitCardAll`
-(`r2k_swapInjection_iff_perOrbitCard` in `ReimerOrbitCount`) and is not proved here.
+(`r2k_swapInjection_iff_perOrbitCard` in `ReimerOrbitCount`) and is not proved here. Reimer's
+inequality itself does not depend on it: it is proved for all events as
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`
+(`MathlibExt.Probability.CorrelationInequalities.ReimerInequality`).
 
 ## Main definitions
 
@@ -34,7 +38,8 @@ Whether every pair of events has one (`r2k_SwapInjectionAll`) is equivalent to `
 * `r2k_swapInjection_of_disjoint_support`, `r2k_swapInjection_of_box_empty`,
   `r2k_swapInjection_rbi`: cases where a swap injection exists.
 * `r2k_reimer_wprob_core_of_swapInjection`, `r2k_reimer_inequality_of_swapInjection`: Reimer's
-  inequality **assuming** `r2k_SwapInjectionAll`.
+  inequality under `r2k_SwapInjectionAll`, as corollaries of the unconditional `reimer_wprob_core`;
+  the hypothesis is not used.
 -/
 
 @[expose] public section
@@ -169,20 +174,23 @@ not proved here. -/
 def r2k_SwapInjectionAll : Prop :=
   ∀ (n : ℕ) (A B : Set (ConfigSpace (Fin n))), r2k_SwapInjection A B
 
-/-- `ReimerWprobCore`, **assuming** `r2k_SwapInjectionAll`. -/
-theorem r2k_reimer_wprob_core_of_swapInjection (h : r2k_SwapInjectionAll) : ReimerWprobCore := by
-  intro n φ hφ0 hφ1 A B
-  exact r2k_reimer_wprob_of_swapInjection φ hφ0 hφ1 (h n A B)
+/-- `ReimerWprobCore` under `r2k_SwapInjectionAll`. The hypothesis is not needed: this is
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`, which proves
+`ReimerWprobCore` outright. -/
+theorem r2k_reimer_wprob_core_of_swapInjection (h : r2k_SwapInjectionAll) : ReimerWprobCore :=
+  MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core
 
 set_option linter.unusedFintypeInType false in
 set_option linter.unusedDecidableInType false in
-/-- Reimer's inequality for `bernoulliProductMeasure p`, **assuming** `r2k_SwapInjectionAll`. -/
+/-- Reimer's inequality for `bernoulliProductMeasure p` under `r2k_SwapInjectionAll`. The
+hypothesis is not needed: this is `reimer_inequality_of_core` applied to
+`MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core`. -/
 theorem r2k_reimer_inequality_of_swapInjection (h : r2k_SwapInjectionAll) {E : Type*}
     [Fintype E] [DecidableEq E] {p : ℝ≥0} (hp : p ≤ 1) (A B : Set (ConfigSpace E)) :
     (bernoulliProductMeasure (E := E) p hp).real (disjointOccurrence A B)
       ≤ (bernoulliProductMeasure (E := E) p hp).real A
         * (bernoulliProductMeasure (E := E) p hp).real B :=
-  reimer_inequality_of_core (r2k_reimer_wprob_core_of_swapInjection h) hp A B
+  reimer_inequality_of_core MathlibExt.Probability.ReimerInequalityWanted.reimer_wprob_core hp A B
 
 /-- An explicit swap selector for the events `rbi_A`, `rbi_B`. -/
 def r2k_rbi_swap : ConfigSpace (Fin 2) × ConfigSpace (Fin 2) → (Fin 2 → Bool) :=

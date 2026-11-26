@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import MathlibExt.Combinatorics.SimpleGraph.SeparatorAPI
 
 /-!
 # Linkages and separators between vertex sets
@@ -22,7 +23,9 @@ exists. It does not prove the full max–min equality for sets `A`, `B`.
 
 ## Main definitions
 
-* `StatMech.Combinatorics.MfmIsABSeparator G A B S`: `S` meets every walk from `A` to `B`.
+* `StatMech.Combinatorics.MfmIsABSeparator G A B S`: `S` meets every walk from `A` to `B`; this is
+  `MathlibExt.Combinatorics.SimpleGraph.SeparatorAPI.SeparatesAB G ↑A ↑B S` for finite terminal
+  sets.
 * `StatMech.Combinatorics.MfmLinkage G A B n`: `n` pairwise vertex-disjoint `A`–`B` paths.
 
 ## Main results
@@ -55,9 +58,12 @@ open SimpleGraph
 variable {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
 
 /-- `S` separates `A` from `B` in `G`: every walk from a vertex of `A` to a vertex of `B` visits a
-vertex of `S`. Vertices of `A ∩ B` must lie in `S` (take the trivial walk). -/
-def MfmIsABSeparator (G : SimpleGraph V) (A B S : Finset V) : Prop :=
-  ∀ ⦃a b : V⦄, a ∈ A → b ∈ B → ∀ (p : G.Walk a b), ∃ v ∈ p.support, v ∈ S
+vertex of `S`. This is the walk-hitting predicate
+`MathlibExt.Combinatorics.SimpleGraph.SeparatorAPI.SeparatesAB G ↑A ↑B S` with finite terminal
+sets. Walk supports contain their endpoints, so vertices of `A ∩ B` must lie in `S` (take the
+trivial walk), and `S` may meet `A ∪ B`, unlike `SeparatorAPI.IsSeparatorAB`. -/
+abbrev MfmIsABSeparator (G : SimpleGraph V) (A B S : Finset V) : Prop :=
+  MathlibExt.Combinatorics.SimpleGraph.SeparatorAPI.SeparatesAB G ↑A ↑B S
 
 /-- An `A`–`B` linkage of size `n` in `G`: `n` paths, each from a vertex of `A` to a vertex of `B`,
 with pairwise disjoint vertex sets. -/
@@ -97,7 +103,7 @@ omit [Fintype V] [DecidableEq V] in
 theorem mfm_separator_mono {H : SimpleGraph V} (h : H ≤ G) {A B S : Finset V}
     (hS : MfmIsABSeparator G A B S) : MfmIsABSeparator H A B S := by
   intro a b ha hb p
-  obtain ⟨v, hv, hvS⟩ := hS ha hb (p.mapLe h)
+  obtain ⟨v, hv, hvS⟩ := hS _ _ ha hb (p.mapLe h)
   rw [Walk.support_mapLe_eq_support] at hv
   exact ⟨v, hv, hvS⟩
 
@@ -111,7 +117,7 @@ theorem mfm_card_le_separator {A B : Finset V} {n : ℕ}
   classical
   have hchoose : ∀ i : Fin n, ∃ v, v ∈ (L.walk i).support ∧ v ∈ S := by
     intro i
-    obtain ⟨v, hv, hvS⟩ := hS (L.src_mem i) (L.tgt_mem i) (L.walk i)
+    obtain ⟨v, hv, hvS⟩ := hS _ _ (L.src_mem i) (L.tgt_mem i) (L.walk i)
     exact ⟨v, hv, hvS⟩
   choose f hfp hfS using hchoose
   have hinj : Function.Injective f := by
@@ -133,7 +139,7 @@ theorem mfm_separator_nonempty_of_reachable {A B S : Finset V}
     (hS : MfmIsABSeparator G A B S) {a b : V} (ha : a ∈ A) (hb : b ∈ B)
     (h : G.Reachable a b) : S.Nonempty := by
   obtain ⟨p⟩ := h
-  obtain ⟨v, _, hvS⟩ := hS ha hb p
+  obtain ⟨v, _, hvS⟩ := hS _ _ ha hb p
   exact ⟨v, hvS⟩
 
 omit [Fintype V] [DecidableEq V] in

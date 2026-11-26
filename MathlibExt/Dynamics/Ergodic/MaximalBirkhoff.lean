@@ -14,15 +14,16 @@ public import MathlibExt.Dynamics.Ergodic.KingmanSigned.MaximalErgodic
 
 For `T : α → α` and `f : α → ℝ`, let `maxBirkhoff T f n x = max_{0 ≤ k ≤ n} S_k f x`, where
 `S_k f = ∑_{j<k} f ∘ T^j` and `S_0 f = 0`, so `maxBirkhoff ≥ 0`. For measure-preserving `T` and
-integrable `f` this file proves the maximal ergodic inequality `∫_{maxBirkhoff > 0} f dμ ≥ 0` and
-the Hopf maximal inequality `a μ(E_a) ≤ ∫_{E_a} f dμ` for the level set
-`E_a = {max_{k ≤ n} S_k (f - a) > 0}`.
+integrable `f` this file states the maximal ergodic inequality `∫_{maxBirkhoff > 0} f dμ ≥ 0`,
+derived from Garsia's form, and proves the Hopf maximal inequality `a μ(E_a) ≤ ∫_{E_a} f dμ` for
+the level set `E_a = {max_{k ≤ n} S_k (f - a) > 0}`.
 
 The set `{maxBirkhoff T f n > 0}` equals Garsia's `{max_{1 ≤ k ≤ n} S_k f > 0}` for `n ≥ 1`
-(`StatMech.Birkhoff.pos_maxBirkhoff_iff_pos_maxPartialSum`), so
-`StatMech.Birkhoff.maximal_ergodic_inequality` is `StatMech.GarsiaMax.garsia_maximal_inequality`
-(in `MathlibExt.Dynamics.Ergodic.KingmanSigned.MaximalErgodic`) in another form; the limiting form
-is `MathlibExt.Dynamics.Ergodic.BirkhoffWanted.maximal_ergodic`.
+(`StatMech.Birkhoff.pos_maxBirkhoff_iff_pos_maxPartialSum`), and is empty for `n = 0`, so
+`StatMech.Birkhoff.maximal_ergodic_inequality` follows from
+`StatMech.GarsiaMax.garsia_maximal_inequality` (in
+`MathlibExt.Dynamics.Ergodic.KingmanSigned.MaximalErgodic`); the limiting form is
+`MathlibExt.Dynamics.Ergodic.BirkhoffWanted.maximal_ergodic`.
 
 ## Main definitions
 
@@ -180,42 +181,23 @@ theorem integral_maxBirkhoff_comp (hT : MeasurePreserving T μ μ) (hf : Integra
     (integrable_maxBirkhoff hT hf n).aestronglyMeasurable
 
 /-- **Maximal ergodic inequality** (Hopf; Garsia's proof): `0 ≤ ∫_{maxBirkhoff T f n > 0} f dμ`.
-See also `StatMech.GarsiaMax.garsia_maximal_inequality` and
-`pos_maxBirkhoff_iff_pos_maxPartialSum`. -/
+It follows from `StatMech.GarsiaMax.garsia_maximal_inequality` by
+`pos_maxBirkhoff_iff_pos_maxPartialSum`; for `n = 0` the set is empty. -/
 theorem maximal_ergodic_inequality (hT : MeasurePreserving T μ μ) (hf : Integrable f μ) (n : ℕ) :
     0 ≤ ∫ x in {x | 0 < maxBirkhoff T f n x}, f x ∂μ := by
-  set M : α → ℝ := fun x => maxBirkhoff T f n x with hM
-  set MT : α → ℝ := fun x => maxBirkhoff T f n (T x) with hMT
-  set E : Set α := {x | 0 < maxBirkhoff T f n x} with hE
-  have hM_int : Integrable M μ := integrable_maxBirkhoff hT hf n
-  have hMT_int : Integrable MT μ := integrable_maxBirkhoff_comp hT hf n
-  have hMsub_int : Integrable (fun x => M x - MT x) μ := hM_int.sub hMT_int
-  have hE_meas : NullMeasurableSet E μ :=
-    nullMeasurableSet_lt aemeasurable_const hM_int.aestronglyMeasurable.aemeasurable
-  have step1 : ∫ x in E, (M x - MT x) ∂μ ≤ ∫ x in E, f x ∂μ := by
-    refine setIntegral_mono_ae_restrict hMsub_int.integrableOn hf.integrableOn ?_
-    rw [EventuallyLE, ae_restrict_iff'₀ hE_meas]
-    exact Eventually.of_forall fun x hx => by
-      have := maxBirkhoff_le_add_of_pos (T := T) (f := f) (n := n) (x := x) hx
-      simp only [hM, hMT]; linarith
-  have step2 : ∫ x in E, (M x - MT x) ∂μ = (∫ x in E, M x ∂μ) - ∫ x in E, MT x ∂μ :=
-    integral_sub hM_int.integrableOn hMT_int.integrableOn
-  have hM_off : ∀ x, x ∉ E → M x = 0 := by
-    intro x hx
-    simp only [hE, Set.mem_ofPred_eq, not_lt] at hx
-    exact le_antisymm hx (maxBirkhoff_nonneg n x)
-  have step3 : ∫ x in E, M x ∂μ = ∫ x, M x ∂μ :=
-    setIntegral_eq_integral_of_forall_compl_eq_zero hM_off
-  have hMT_nonneg : 0 ≤ᵐ[μ] MT :=
-    Eventually.of_forall fun x => maxBirkhoff_nonneg n (T x)
-  have step4 : ∫ x in E, MT x ∂μ ≤ ∫ x, MT x ∂μ :=
-    setIntegral_le_integral hMT_int hMT_nonneg
-  have step5 : ∫ x, MT x ∂μ = ∫ x, M x ∂μ := integral_maxBirkhoff_comp hT hf n
-  calc (0 : ℝ) = (∫ x, M x ∂μ) - ∫ x, M x ∂μ := by ring
-    _ = (∫ x, M x ∂μ) - ∫ x, MT x ∂μ := by rw [step5]
-    _ ≤ (∫ x in E, M x ∂μ) - ∫ x in E, MT x ∂μ := by rw [step3]; linarith [step4]
-    _ = ∫ x in E, (M x - MT x) ∂μ := step2.symm
-    _ ≤ ∫ x in E, f x ∂μ := step1
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · have hempty : {x | 0 < maxBirkhoff T f 0 x} = ∅ := by
+      refine Set.eq_empty_of_forall_notMem fun x hx => ?_
+      obtain ⟨k, hk, hkeq⟩ := exists_eq_maxBirkhoff (T := T) (f := f) 0 x
+      have hpos : 0 < maxBirkhoff T f 0 x := hx
+      rw [← hkeq, Nat.le_zero.mp hk, birkhoffSum_zero_apply] at hpos
+      exact lt_irrefl 0 hpos
+    rw [hempty, setIntegral_empty]
+  · have hn1 : 1 ≤ n := hn
+    have hset : {x | 0 < maxBirkhoff T f n x} = {x | 0 < GarsiaMax.maxPartialSum T f n hn1 x} :=
+      Set.ext fun x => pos_maxBirkhoff_iff_pos_maxPartialSum hn1 x
+    rw [hset]
+    exact GarsiaMax.garsia_maximal_inequality hT hf hn1
 
 variable [IsFiniteMeasure μ]
 
