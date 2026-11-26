@@ -419,9 +419,10 @@ section Generic
 
 variable {R : Type*} [Field R] (W : WeierstrassCurve R) (K : Type*) [Field K] [Algebra R K]
 
-/-- **Classical decidable equality on the function field.** Adding points over the function
-field needs `DecidableEq`. The instance is scoped to `WeierstrassCurve.Affine`, the namespace that
-also carries the `W⁄K` notation, so it is active only where that namespace is open. -/
+/-- **Decidable equality on the function field.** Points over the function field are added with
+this one classical instance, which takes precedence over Mathlib's `FractionRing.instDecidableEq`
+wherever `WeierstrassCurve.Affine` is open (as the `W⁄K` notation requires), so that every
+statement about such points uses the same group law. -/
 noncomputable scoped instance instDecidableEqFunctionField : DecidableEq (W⁄K).FunctionField :=
   Classical.decEq _
 
