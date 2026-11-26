@@ -1,0 +1,8 @@
+# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS is NP-complete
+
+The decision problem TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+
+## Sources
+
+- J. Du, J. Y.-T. Leung and G. H. Young, "Scheduling chain-structured tasks to minimize makespan and mean flow time", Information and Computation 92 (1991), 219-236, doi:10.1016/0890-5401(91)90009-Q.
+- P. Brucker, *Scheduling Algorithms*, 5th ed., Springer (2007), Chapter 10 (multi-purpose machines) and Table 5.3 (`P2|chains|C_max`, NP-hard in the strong sense, Du et al.).

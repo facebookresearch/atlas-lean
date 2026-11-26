@@ -3,14 +3,17 @@
 Differential-equation and matrix models of population growth, structure, species interaction and evolutionary change, such as logistic growth, predator–prey systems, metapopulations, replicator dynamics, quasispecies and Leslie matrices, and the life tables and direct standardization of demography.
 
 - [Beverton–Holt dynamics and the Cushing–Henson theorem](beverton-holt-dynamics-and-the-cushing-henson-th/README.md)
+- [Classification of adaptive-dynamics singular strategies](classification-of-adaptive-dynamics-singular-str/README.md)
 - [Coale–Lopez weak ergodicity of age structures](coale-lopez-weak-ergodicity-of-age-structures/README.md)
 - [Cole's paradox of semelparity and iteroparity](cole-s-paradox-of-semelparity-and-iteroparity/README.md)
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
 - [Fisher's reproductive value](fisher-s-reproductive-value/README.md)
+- [Folk theorem of evolutionary game theory](folk-theorem-of-evolutionary-game-theory/README.md)
 - [Furstenberg–Kesten stochastic population growth rate](furstenberg-kesten-stochastic-population-growth/README.md)
 - [Hamilton's force of selection](hamilton-s-force-of-selection/README.md)
 - [Hopf bifurcation of the delayed logistic equation](hopf-bifurcation-of-the-delayed-logistic-equatio/README.md)
 - [Hutchinson delayed logistic equation](hutchinson-delayed-logistic-equation/README.md)
+- [Isothermal theorem for evolutionary graph dynamics](isothermal-theorem-for-evolutionary-graph-dynami/README.md)
 - [Keyfitz's life-table entropy](keyfitz-s-life-table-entropy/README.md)
 - [Leslie matrix model](leslie-matrix-model/README.md)
 - [Levins metapopulation model](levins-metapopulation-model/README.md)
@@ -21,10 +24,12 @@ Differential-equation and matrix models of population growth, structure, species
 - [Lotka–Volterra predator–prey model](lotka-volterra-predator-prey-model/README.md)
 - [Replicator and Lotka–Volterra equivalence](replicator-and-lotka-volterra-equivalence/README.md)
 - [Replicator dynamics](replicator-dynamics/README.md)
+- [Stability of boundary evolutionarily stable strategies](stability-of-boundary-evolutionarily-stable-stra/README.md)
 
 - [Chemostat dynamics](chemostat/README.md)
 
 - [Matrix population models](matrix-population-models/README.md)
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
+- [Zero-determinant strategies in iterated games](zero-determinant-strategies-in-iterated-games/README.md)
 - [Life tables](life-tables/README.md)
 - [Sharpe–Lotka–Feller renewal theorem](tendsto-exp-neg-mul-births.md)
