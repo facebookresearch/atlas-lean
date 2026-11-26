@@ -54,9 +54,13 @@ variable (μ : Measure G) [μ.Regular]
 a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Assume additionally that `μ` is a Haar measure. for `f,g∈C_c(G,H)` with L²
-inclusion `i_μ`, the bounded functional `x ↦ ⟨i_μ f,P_x(i_μ g)⟩` belongs to `M_*`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Assume additionally that `μ` is a Haar measure. for
+`f,g∈C_c(G,H)` with L² inclusion `i_μ`, the bounded functional `x ↦ ⟨i_μ f,P_x(i_μ g)⟩`
+belongs to `M_*`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_compactVectorFunctional_mem_normalFunctionalSpace [μ.IsHaarMeasure]
     (α : NormalAction G M) (f g : C_c(G, H)) :
     representationCoefficient (regularCoefficientHom μ α)
@@ -206,9 +210,12 @@ theorem regularCoefficient_compactVectorFunctional_mem_normalFunctionalSpace [μ
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Assume additionally that `μ` is a Haar measure. for `ξ,η∈L`, the
-functional `x ↦ ⟨ξ,P_xη⟩` belongs to the normal-functional space `M_*`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Assume additionally that `μ` is a Haar measure. for `ξ,η∈L`,
+the functional `x ↦ ⟨ξ,P_xη⟩` belongs to the normal-functional space `M_*`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_vectorFunctional_mem_normalFunctionalSpace [μ.IsHaarMeasure]
     (α : NormalAction G M) (ξ η : Lp H 2 μ) :
     representationCoefficient (regularCoefficientHom μ α) η ξ ∈ normalFunctionalSpace M := by
@@ -258,10 +265,13 @@ theorem regularCoefficient_vectorFunctional_mem_normalFunctionalSpace [μ.IsHaar
 with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
 algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
 is a topological group. Assume `G` is locally compact with its Borel measurable structure,
-and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
-invariance is not assumed. Assume additionally that `μ` is a Haar measure.
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+Haar invariance is not assumed. Assume additionally that `μ` is a Haar measure.
 `regularCoefficientNormalHom μ α : NormalStarAlgHom M B(L)` is the ultraweakly continuous
-unital star map `x ↦ P_x`. -/
+unital star map `x ↦ P_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientNormalHom [μ.IsHaarMeasure] (α : NormalAction G M) :
     NormalStarAlgHom M (⊤ : VonNeumannAlgebra (Lp H 2 μ)) := by
   let r := regularCoefficientHom μ α
@@ -291,11 +301,14 @@ def regularCoefficientNormalHom [μ.IsHaarMeasure] (α : NormalAction G M) :
 with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
 algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
 is a topological group. Assume `G` is locally compact with its Borel measurable structure,
-and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
-invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. Assume additionally
-that `μ` is a Haar measure. `regularCoefficientSpatialNormalHom μ α : NormalStarAlgHom M
-(M ⊗̄ B(Lp ℂ 2 μ))` has operator value `x ↦ Q_x`. -/
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+Haar invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L`
+be `tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. Assume
+additionally that `μ` is a Haar measure. `regularCoefficientSpatialNormalHom μ α :
+NormalStarAlgHom M (M ⊗̄ B(Lp ℂ 2 μ))` has operator value `x ↦ Q_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientSpatialNormalHom [μ.IsHaarMeasure] (α : NormalAction G M) :
     NormalStarAlgHom M (spatialTensorProduct M (⊤ : VonNeumannAlgebra (Lp ℂ 2 μ))) := by
   let E := L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ

@@ -143,9 +143,12 @@ theorem regularCoefficientSourceMap_apply (α : NormalAction G M) (x : M) (f : C
 complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra, and `α` a normal
 action with norm-continuous inverse predual orbits. Assume `G` is a topological group.
 Assume `G` is locally compact with its Borel measurable structure, and `μ` is a regular
-measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance is not assumed.
-`regularCoefficient μ α x=P_x : L →L[ℂ] L` is the operator with almost-everywhere formula
-`P_xξ(s)=α_(s⁻¹)(x)ξ(s)`. -/
+measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar invariance is not
+assumed. `regularCoefficient μ α x=P_x : L →L[ℂ] L` is the operator with almost-everywhere
+formula `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficient (α : NormalAction G M) (x : M) : Lp H 2 μ →L[ℂ] Lp H 2 μ :=
   pointwiseOperator (fun s => (α s⁻¹ x : H →L[ℂ] H))
     (continuous_regularCoefficientField α x) μ ‖x‖ (regularCoefficientField_norm_le α x)
@@ -154,9 +157,12 @@ def regularCoefficient (α : NormalAction G M) (x : M) : Lp H 2 μ →L[ℂ] Lp 
 group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
 Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
 Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
-structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
-Haar invariance is not assumed. for `f∈C_c(G,H)`, `P_x(i_μ f)=i_μ(s ↦ α_(s⁻¹)(x)f(s))`,
-where `i_μ` is the L² inclusion. -/
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦
+α_(s⁻¹)(x)ξ(s))`. Haar invariance is not assumed. for `f∈C_c(G,H)`, `P_x(i_μ f)=i_μ(s ↦
+α_(s⁻¹)(x)f(s))`, where `i_μ` is the L² inclusion.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_apply_compactSupport (α : NormalAction G M) (x : M)
     (f : C_c(G, H)) :
     regularCoefficient μ α x (compactSupportInclusion μ f) =
@@ -168,9 +174,12 @@ theorem regularCoefficient_apply_compactSupport (α : NormalAction G M) (x : M)
 group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
 Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
 Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
-structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
-Haar invariance is not assumed. for `x∈M` and `ξ∈L`, `regularCoefficient μ α x ξ =ᵐ[μ] (s
-↦ α_(s⁻¹)(x)ξ(s))`. -/
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦
+α_(s⁻¹)(x)ξ(s))`. Haar invariance is not assumed. for `x∈M` and `ξ∈L`, `regularCoefficient
+μ α x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_ae_eq (α : NormalAction G M) (x : M) (ξ : Lp H 2 μ) :
     regularCoefficient μ α x ξ =ᵐ[μ] fun s : G => (α s⁻¹ x : H →L[ℂ] H) (ξ s) :=
   pointwiseOperator_ae_eq (fun s => (α s⁻¹ x : H →L[ℂ] H))
@@ -180,8 +189,11 @@ theorem regularCoefficient_ae_eq (α : NormalAction G M) (x : M) (ξ : Lp H 2 μ
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. for `x∈M` and `ξ∈L`, `‖P_xξ‖≤‖x‖‖ξ‖`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. for `x∈M` and `ξ∈L`, `‖P_xξ‖≤‖x‖‖ξ‖`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_norm_apply_le (α : NormalAction G M) (x : M) (ξ : Lp H 2 μ) :
     ‖regularCoefficient μ α x ξ‖ ≤ ‖x‖ * ‖ξ‖ :=
   pointwiseOperator_norm_apply_le (fun s => (α s⁻¹ x : H →L[ℂ] H))
@@ -191,10 +203,13 @@ theorem regularCoefficient_norm_apply_le (α : NormalAction G M) (x : M) (ξ : L
 group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
 Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
 Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
-structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
-Haar invariance is not assumed. let `C_μ` be the separated L² completion of `C_c(G,H)` and
-`J : C_μ ≃ₗᵢ[ℂ] L` its L² identification. Then `regularCoefficientOriginal μ α x=J⁻¹ P_x
-J`. -/
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦
+α_(s⁻¹)(x)ξ(s))`. Haar invariance is not assumed. let `C_μ` be the separated L² completion
+of `C_c(G,H)` and `J : C_μ ≃ₗᵢ[ℂ] L` its L² identification. Then
+`regularCoefficientOriginal μ α x=J⁻¹ P_x J`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientOriginal (α : NormalAction G M) (x : M) :
     CompletionCore (H := H) μ →L[ℂ] CompletionCore (H := H) μ :=
   (completionToLp (H := H) μ).symm.toLinearIsometry.toContinuousLinearMap.comp
@@ -205,10 +220,13 @@ def regularCoefficientOriginal (α : NormalAction G M) (x : M) :
 a group with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von
 Neumann algebra, and `α` a normal action with norm-continuous inverse predual orbits.
 Assume `G` is a topological group. Assume `G` is locally compact with its Borel measurable
-structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`.
-Haar invariance is not assumed. for `C_μ` the separated L² completion with dense map
-`j_μ`, `regularCoefficientOriginal μ α x (j_μ f)=j_μ(regularCoefficientCompactSupport α x
-f)` for `f∈C_c(G,H)`. -/
+structure, and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦
+α_(s⁻¹)(x)ξ(s))`. Haar invariance is not assumed. for `C_μ` the separated L² completion
+with dense map `j_μ`, `regularCoefficientOriginal μ α x (j_μ
+f)=j_μ(regularCoefficientCompactSupport α x f)` for `f∈C_c(G,H)`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientOriginal_apply (α : NormalAction G M) (x : M) (f : C_c(G, H)) :
     regularCoefficientOriginal μ α x (toCompletion μ f) =
       toCompletion μ (regularCoefficientCompactSupport α x f) := by

@@ -52,9 +52,12 @@ variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Assume additionally that `μ` is a Haar measure. `regularCoefficientHom μ α
-: M → B(L)` is injective. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Assume additionally that `μ` is a Haar measure.
+`regularCoefficientHom μ α : M → B(L)` is injective.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficient_injective (α : NormalAction G M) :
     Function.Injective (regularCoefficientHom μ α) := by
   classical
@@ -102,11 +105,14 @@ theorem regularCoefficient_injective (α : NormalAction G M) :
 with a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann
 algebra, and `α` a normal action with norm-continuous inverse predual orbits. Assume `G`
 is a topological group. Assume `G` is locally compact with its Borel measurable structure,
-and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar
-invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. Assume additionally
-that `μ` is a Haar measure. `regularCoefficientTensorHom μ α : M → B(T)` is injective
-because it is the unitary transport of the faithful regular coefficient map. -/
+and `μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`.
+Haar invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L`
+be `tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. Assume
+additionally that `μ` is a Haar measure. `regularCoefficientTensorHom μ α : M → B(T)` is
+injective because it is the unitary transport of the faithful regular coefficient map.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientTensor_injective (α : NormalAction G M) :
     Function.Injective (regularCoefficientTensorHom μ α) := by
   let Φ := L2.tensorToLpRight (𝕜 := ℂ) (H := H) μ
@@ -120,11 +126,14 @@ theorem regularCoefficientTensor_injective (α : NormalAction G M) :
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. Assume additionally
-that `μ` is a Haar measure. the normal homomorphism `regularCoefficientSpatialNormalHom μ
-α : M → M ⊗̄ B(Lp ℂ 2 μ)` is injective. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. Assume
+additionally that `μ` is a Haar measure. the normal homomorphism
+`regularCoefficientSpatialNormalHom μ α : M → M ⊗̄ B(Lp ℂ 2 μ)` is injective.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientSpatialNormalHom_injective (α : NormalAction G M) :
     Function.Injective (regularCoefficientSpatialNormalHom μ α) := by
   intro x y hxy

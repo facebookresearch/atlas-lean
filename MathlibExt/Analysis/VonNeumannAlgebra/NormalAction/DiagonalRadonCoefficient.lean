@@ -19,12 +19,17 @@ public import MathlibExt.Analysis.VonNeumannAlgebra.NormalAction.CoefficientNorm
 # First and difference coordinates in a Radon square
 
 For a normal action of a Hausdorff locally compact abelian group, use `Lp H 2 (radonProd μ μ)`
-on the Borel topological square. Pullback along `(s,t) ↦ s` gives the first coefficient `ξ(s,t)
-↦ α_(s⁻¹)(x)ξ(s,t)`.
+on the Borel topological square. Pullback along `(s,t) ↦ s` gives the first coefficient the L²
+class represented almost everywhere for `radonProd μ μ` by `(s,t) ↦ α_(s⁻¹)(x)ξ(s,t)`.
 
-Pullback along the continuous homomorphism `(s,t) ↦ st⁻¹` gives the difference coefficient
-`ξ(s,t) ↦ α_((st⁻¹)⁻¹)(x)ξ(s,t)`. Both define normal star homomorphisms into the full operator
-algebra of this Radon L² space. No Fourier transform or shear identification is assumed.
+Pullback along the continuous homomorphism `(s,t) ↦ st⁻¹` gives the difference coefficient the
+L² class represented almost everywhere for `radonProd μ μ` by `(s,t) ↦ α_((st⁻¹)⁻¹)(x)ξ(s,t)`.
+Both define normal star homomorphisms into the full operator algebra of this Radon L² space. No
+Fourier transform or shear identification is assumed.
+
+Here `=ᵐ[radonProd μ μ]` denotes equality of measurable representatives almost everywhere for
+the indicated Radon-product measure. The normal homomorphisms and operator identities are
+equalities of bounded operators.
 -/
 
 @[expose] public section
@@ -83,8 +88,12 @@ omit [μ.Regular] in
 compact abelian topological group with Borel structure and regular Haar measure `μ`, `H` a
 complete complex Hilbert space, and `α` a normal action on `M⊆B(H)` with norm-continuous
 inverse predual orbits. Put `L_R=Lp H 2 (radonProd μ μ)` on the Borel topological square.
-for `x∈M`, `ξ∈L_R`, `(firstRadonCoefficient μ α x)ξ(s,t)=α_(s⁻¹)(x)ξ(s,t)` almost
-everywhere for `radonProd μ μ`. -/
+for `x∈M`, `ξ∈L_R`, `firstRadonCoefficient μ α x ξ =ᵐ[radonProd μ μ] ((s,t) ↦
+α_(s⁻¹)(x)ξ(s,t))` almost everywhere for `radonProd μ μ`.
+
+Here `=ᵐ[radonProd μ μ]` denotes equality of measurable representatives almost everywhere
+for the indicated Radon-product measure. The normal homomorphisms and operator identities
+are equalities of bounded operators. -/
 theorem firstRadonCoefficient_ae_eq (α : NormalAction G M) (x : M)
     (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     firstRadonCoefficient μ α x ξ =ᵐ[Measure.radonProd μ μ]
@@ -129,8 +138,12 @@ omit [μ.Regular] in
 locally compact abelian topological group with Borel structure and regular Haar measure
 `μ`, `H` a complete complex Hilbert space, and `α` a normal action on `M⊆B(H)` with
 norm-continuous inverse predual orbits. Put `L_R=Lp H 2 (radonProd μ μ)` on the Borel
-topological square. for `x∈M`, `ξ∈L_R`, `(recoveredRadonCoefficient μ α
-x)ξ(s,t)=α_((st⁻¹)⁻¹)(x)ξ(s,t)` almost everywhere. -/
+topological square. for `x∈M`, `ξ∈L_R`, `recoveredRadonCoefficient μ α x ξ =ᵐ[radonProd μ
+μ] ((s,t) ↦ α_((st⁻¹)⁻¹)(x)ξ(s,t))` almost everywhere.
+
+Here `=ᵐ[radonProd μ μ]` denotes equality of measurable representatives almost everywhere
+for the indicated Radon-product measure. The normal homomorphisms and operator identities
+are equalities of bounded operators. -/
 theorem recoveredRadonCoefficient_ae_eq (α : NormalAction G M) (x : M)
     (ξ : Lp H 2 (Measure.radonProd μ μ)) :
     recoveredRadonCoefficient μ α x ξ =ᵐ[Measure.radonProd μ μ]

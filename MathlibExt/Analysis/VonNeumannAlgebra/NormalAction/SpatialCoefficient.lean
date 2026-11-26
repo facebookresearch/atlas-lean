@@ -50,10 +50,13 @@ variable (μ : Measure G) [μ.Regular]
 a topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
-`Q_x∈spatialTensorProduct M B(Lp ℂ 2 μ)`. -/
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`. for `x∈M`,
+`Q_x∈spatialTensorProduct M B(Lp ℂ 2 μ)`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 theorem regularCoefficientTensor_mem_spatialTensorProduct
     (α : NormalAction G M) (x : M) :
     regularCoefficientTensor μ α x ∈ spatialTensorProduct M (⊤ : VonNeumannAlgebra (Lp ℂ 2 μ)) := by
@@ -98,11 +101,14 @@ theorem regularCoefficientTensor_mem_spatialTensorProduct
 topology, `H` a complete complex Hilbert space, `M⊆B(H)` a concrete von Neumann algebra,
 and `α` a normal action with norm-continuous inverse predual orbits. Assume `G` is a
 topological group. Assume `G` is locally compact with its Borel measurable structure, and
-`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ(s)=α_(s⁻¹)(x)ξ(s)`. Haar invariance
-is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
-`tensorToLpRight μ`, with `U(ξ⊗f)(s)=f(s) • ξ`. Set `Q_x=U⁻¹ P_x U`.
+`μ` is a regular measure. On `L=Lp H 2 μ`, put `P_x ξ =ᵐ[μ] (s ↦ α_(s⁻¹)(x)ξ(s))`. Haar
+invariance is not assumed. Let `T=Completion(H ⊗[ℂ] Lp ℂ 2 μ)` and `U : T ≃ₗᵢ[ℂ] L` be
+`tensorToLpRight μ`, with `U(ξ⊗f) =ᵐ[μ] (s ↦ f(s) • ξ)`. Set `Q_x=U⁻¹ P_x U`.
 `regularCoefficientSpatialHom μ α : M →⋆ₐ[ℂ] (M ⊗̄ B(Lp ℂ 2 μ))` sends `x` to the element
-represented by `Q_x`. -/
+represented by `Q_x`.
+
+Here `=ᵐ[μ]` denotes equality of measurable representatives μ-almost everywhere, not point
+evaluation of an L² class. Operator identities are equalities of bounded operators. -/
 def regularCoefficientSpatialHom (α : NormalAction G M) :
     M →⋆ₐ[ℂ] spatialTensorProduct M (⊤ : VonNeumannAlgebra (Lp ℂ 2 μ)) where
   toFun x := ⟨regularCoefficientTensor μ α x, regularCoefficientTensor_mem_spatialTensorProduct μ α x⟩
