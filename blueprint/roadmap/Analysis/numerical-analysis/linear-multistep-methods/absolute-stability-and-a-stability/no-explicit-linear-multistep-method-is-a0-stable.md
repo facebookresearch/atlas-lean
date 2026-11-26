@@ -1,4 +1,4 @@
-# No explicit linear multistep method is A(0)-stable
+# No explicit consistent linear multistep method is A(0)-stable
 
 No explicit [consistent](../truncation-error-and-consistency.md) linear multistep method is [A(0)-stable](a-alpha-stability.md).
 
@@ -11,7 +11,7 @@ Consistency is needed, as for [A-stability](no-explicit-a-stable-linear-multiste
 
 ## Related topics
 
-- [No explicit linear multistep method is A-stable](no-explicit-a-stable-linear-multistep-method.md)
+- [No explicit consistent linear multistep method is A-stable](no-explicit-a-stable-linear-multistep-method.md)
 
 ## Sources
 

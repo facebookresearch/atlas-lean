@@ -12,7 +12,7 @@ Applied to the model problem $y' = \lambda y$, a linear multistep method becomes
 - [Schur's criterion](schur-criterion.md)
 - [Routh–Hurwitz criterion](routh-hurwitz-criterion.md)
 - [A(α)-stability](a-alpha-stability.md)
-- [No explicit linear multistep method is A(0)-stable](no-explicit-linear-multistep-method-is-a0-stable.md)
+- [No explicit consistent linear multistep method is A(0)-stable](no-explicit-linear-multistep-method-is-a0-stable.md)
 - [The trapezium rule is the only A(0)-stable k-step method of order greater than k](trapezium-rule-is-the-only-a0-stable-method-of-order-above-k.md)
 - [A(α)-stable methods of orders three and four exist for every α < π/2](a-alpha-stable-methods-of-orders-three-and-four.md)
 - [Stiff stability](stiff-stability.md)
