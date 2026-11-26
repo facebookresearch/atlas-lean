@@ -6,4 +6,4 @@ Every well-founded relation is H-well-founded, since an $R$-homogeneous sequence
 
 ## Sources
 
-- S. Berardi, P. Oliva and S. Steila, "Proving termination with transition invariants of height ω", arXiv:1407.4692v1, 2014, <https://arxiv.org/abs/1407.4692v1>, Section 1 (definition of $H(R)$ and of H-well-foundedness).
+- S. Berardi, P. Oliva and S. Steila, "Proving termination of programs having transition invariants of height ω", *Proceedings of the 15th Italian Conference on Theoretical Computer Science (ICTCS 2014)*, CEUR Workshop Proceedings 1231, 2014, pp. 237–240, <https://ceur-ws.org/Vol-1231/short1.pdf>, Section 3 (definition of $H(R)$ and of H-well-foundedness).

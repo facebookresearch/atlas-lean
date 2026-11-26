@@ -12,4 +12,4 @@ The problem of deciding, given $B \in \mathbb{Z}^{m \times n}$ and $b \in \mathb
 
 ## Sources
 
-- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", arXiv:1208.4041v4, 2025, <https://arxiv.org/abs/1208.4041v4>, Section 3.1, proof of Theorem 3.1 and the note after it (citing R. M. Karp, "Reducibility among combinatorial problems", 1972).
+- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", *Journal of the ACM* 61(4), Article 26, 2014, <https://doi.org/10.1145/2629488>, numbered as in the journal version (the revised arXiv:1208.4041v4, <https://arxiv.org/abs/1208.4041v4>, keeps this numbering and adds Lemma 5.31), Section 3.1, proof of Theorem 3.1 and the note after it (citing R. M. Karp, "Reducibility among combinatorial problems", 1972).

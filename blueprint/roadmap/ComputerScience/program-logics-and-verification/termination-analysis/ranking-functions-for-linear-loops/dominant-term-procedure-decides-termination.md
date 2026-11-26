@@ -19,4 +19,4 @@ This page becomes ready once these prerequisites are stated and checked:
 
 ## Sources
 
-- A. Tiwari, "Termination of linear programs", *Computer Aided Verification (CAV 2004)*, LNCS 3114, Springer, 2004, pp. 70–82, author copy <https://www.csl.sri.com/users/tiwari/papers/cav04.pdf>, Section 3, the three-step nondeterministic algorithm and Lemma 2 (stated without proof).
+- A. Tiwari, "Termination of linear programs", *Computer Aided Verification (CAV 2004)*, LNCS 3114, Springer, 2004, pp. 70–82, author copy <https://www.csl.sri.com/users/tiwari/papers/cav04.pdf>, Section 4, the three-step nondeterministic algorithm and Lemma 2 (stated without proof).

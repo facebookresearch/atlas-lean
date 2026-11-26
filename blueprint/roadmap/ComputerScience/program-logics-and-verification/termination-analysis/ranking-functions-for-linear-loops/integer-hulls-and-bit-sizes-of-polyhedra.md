@@ -4,4 +4,4 @@ The *integer hull* of a rational polyhedron $P \subseteq \mathbb{Q}^n$ is $P_I =
 
 ## Sources
 
-- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", arXiv:1208.4041v4, 2025, <https://arxiv.org/abs/1208.4041v4>, Section 2.1 (integer hull; bit size, facet size and vertex size).
+- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", *Journal of the ACM* 61(4), Article 26, 2014, <https://doi.org/10.1145/2629488>, numbered as in the journal version (the revised arXiv:1208.4041v4, <https://arxiv.org/abs/1208.4041v4>, keeps this numbering and adds Lemma 5.31), Section 2.1 (integer hull; bit size, facet size and vertex size).

@@ -1,14 +1,10 @@
 # Podelski–Rybalchenko certificates for linear ranking functions
 
-Consider a single-path [linear-constraint loop](linear-constraint-loops.md) over rational variables $x = (x_1, \dots, x_n)$ whose transitions $(x, x')$ are exactly the solutions of
+Consider a single-path [linear-constraint loop](linear-constraint-loops.md) over rational variables $x = (x_1, \dots, x_n)$ whose transition polyhedron $Q \subseteq \mathbb{Q}^{2n}$ is given by $A'' x'' \le c''$, where $x'' = (x, x')$, $c'' \in \mathbb{Q}^m$ and $A'' = (A\ A')$ with $A$ and $A'$ rational $m \times n$ matrices acting on $x$ and on $x'$. Let $\vec\mu$ and $\vec\eta$ be row vectors of $m$ rational variables, and let $\Gamma$ be the system
 
-$$A x + A' x' \le b,$$
+$$\vec\mu, \vec\eta \ge 0, \qquad \vec\mu \cdot A' = 0, \qquad (\vec\mu - \vec\eta) \cdot A = 0, \qquad \vec\eta \cdot (A + A') = 0, \qquad \vec\eta \cdot c'' \le -1 .$$
 
-with $A$, $A'$ rational $(r+s) \times n$ matrices and $b \in \mathbb{Q}^{r+s}$ (the first $r$ rows, with zero $A'$ part, being the loop condition), and assume this system is satisfiable. Then the loop has a [linear ranking function](linear-ranking-functions.md) if and only if there are vectors $\lambda_1, \lambda_2 \in \mathbb{Q}^{r+s}$ with $\lambda_1, \lambda_2 \ge 0$ and
-
-$$\lambda_1^\top A' = 0, \qquad (\lambda_1^\top - \lambda_2^\top) A = 0, \qquad \lambda_2^\top (A + A') = 0, \qquad \lambda_2^\top b < 0 .$$
-
-For every such pair, $x \mapsto \lambda_2^\top A' x$ decreases by at least $-\lambda_2^\top b > 0$ on every transition and is bounded below on the guard, so a positive multiple of it, shifted by a constant, is a linear ranking function; conversely every linear ranking function arises in this way from such a pair (the solutions are closed under positive scaling). Since the conditions form a linear program, existence of a linear ranking function for such a loop is decidable in polynomial time.
+Then $Q$ has a [linear ranking function](linear-ranking-functions.md) if and only if $\Gamma$ has a rational solution. More precisely, $\rho(x) = \vec\lambda \cdot x + \lambda_0$ is a linear ranking function for $Q$ if and only if $\Gamma$ has a solution with $\vec\lambda = \vec\eta \cdot A'$ and $\lambda_0 \ge \vec\mu \cdot c''$. Since $\Gamma$ is a system of linear inequalities, existence of a linear ranking function for a rational single-path loop is decidable in polynomial time.
 
 ## Depends on
 
@@ -17,9 +13,8 @@ For every such pair, $x \mapsto \lambda_2^\top A' x$ decreases by at least $-\la
 
 ## Proof depends on
 
-- [Farkas' lemma for inequality systems](../../../../Geometry/convex-geometry/linear-programming/exists-nonneg-mul-vec-le-iff.md)
 - [Linear programming is in P (Khachiyan)](../../../../TheoryOfComputation/polynomial-time-problems/linear-programming-feasibility/lp-in-p.md)
 
 ## Sources
 
-- R. Bagnara, F. Mesnard, A. Pescetti and E. Zaffanella, "The automatic synthesis of linear ranking functions: the complete unabridged version", arXiv:1004.0944v2, 2012, <https://arxiv.org/abs/1004.0944v2>, Section 5 (the method of Podelski and Rybalchenko, conditions (37a)–(37d) and the ranking function (38)), Theorem 4.4 and Theorem 6.1 (the ranking functions obtained by the method are exactly the linear ranking functions), and Corollary 4.5 (polynomial time).
+- A. M. Ben-Amram and S. Genaim, "Ranking functions for linear-constraint loops", *Journal of the ACM* 61(4), Article 26, 2014, <https://doi.org/10.1145/2629488>, numbered as in the journal version (the revised arXiv:1208.4041v4, <https://arxiv.org/abs/1208.4041v4>, keeps this numbering and adds Lemma 5.31), Section 4.4, Theorem 4.20 (after Podelski and Rybalchenko, with the required decrease $1$ in the last inequality), and Section 4.5, Lemma 4.23.

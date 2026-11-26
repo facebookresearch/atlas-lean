@@ -12,6 +12,7 @@ where $\mathrm{tr}(\pi)$ is the action trace of $\pi$ as on [regular safety prop
 - [Deterministic Rabin automata](deterministic-rabin-automata.md)
 - [End components](end-components.md)
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Sources
 

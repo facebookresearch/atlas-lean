@@ -17,4 +17,4 @@ terminates from every initial value $x \in \mathbb{R}^N$. The homogeneous case $
 
 ## Sources
 
-- A. Tiwari, "Termination of linear programs", *Computer Aided Verification (CAV 2004)*, LNCS 3114, Springer, 2004, pp. 70–82, author copy <https://www.csl.sri.com/users/tiwari/papers/cav04.pdf>, Section 3, Lemma 1; Section 4, Lemma 2 and Theorem 4 (homogeneous case); Section 5, Theorem 5 (general case).
+- A. Tiwari, "Termination of linear programs", *Computer Aided Verification (CAV 2004)*, LNCS 3114, Springer, 2004, pp. 70–82, author copy <https://www.csl.sri.com/users/tiwari/papers/cav04.pdf>, Section 3, Lemma 1; Section 4, Lemma 2 and Theorem 4 (homogeneous case); Section 5, Theorem 5 (nonhomogeneous case).

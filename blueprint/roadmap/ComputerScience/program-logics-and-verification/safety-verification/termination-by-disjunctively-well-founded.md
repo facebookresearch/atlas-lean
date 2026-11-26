@@ -10,4 +10,4 @@ Let $R$ be a transition relation and $\mathit{Reach}$ the set of states reachabl
 
 - A. Podelski and A. Rybalchenko, "Transition invariants", *Proceedings of the 19th IEEE LICS*, 2004
 - D. Kroening, N. Sharygina, A. Tsitovich and C. M. Wintersteiger, "Termination analysis with compositional transition invariants", *CAV 2010*, LNCS 6174, Springer, 2010, Section 2, Definitions 2 and 3 and Theorem 1 (restating Podelski and Rybalchenko), <https://ora.ox.ac.uk/objects/uuid:8b2f349e-62ee-4785-ad4f-56171d542797>
-- S. Berardi, P. Oliva and S. Steila, "Proving termination with transition invariants of height ω", arXiv:1407.4692v1, 2014, <https://arxiv.org/abs/1407.4692v1>, Section 1.
+- S. Berardi, P. Oliva and S. Steila, "Proving termination of programs having transition invariants of height ω", *Proceedings of the 15th Italian Conference on Theoretical Computer Science (ICTCS 2014)*, CEUR Workshop Proceedings 1231, 2014, pp. 237–240, <https://ceur-ws.org/Vol-1231/short1.pdf>, Section 1.

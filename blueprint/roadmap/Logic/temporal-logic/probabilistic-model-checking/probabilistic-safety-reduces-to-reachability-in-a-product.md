@@ -12,6 +12,7 @@ $$\Pr^{\min}_{M,s}(\Phi_P) = 1 - \Pr^{\max}_{M \otimes A^{\mathrm{err}}_P, (s, \
 
 - [Regular safety properties](regular-safety-properties.md)
 - [Extremal reachability probabilities](extremal-reachability-probabilities.md)
+- [Markov decision processes and adversaries](markov-decision-processes-and-adversaries.md)
 
 ## Sources
 
