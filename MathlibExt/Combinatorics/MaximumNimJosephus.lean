@@ -450,6 +450,21 @@ public theorem maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < 
     Nat.div_le_div hxx'.le le_rfl (by omega)
   exact Nat.succ_lt_succ (Nat.add_lt_add_of_lt_of_le hxx' hdiv)
 
+-- Keep the source's hypothesis and its binder name even though the bound holds for every `k`.
+set_option linter.unusedVariables false in
+/-- **The Maximum Nim map $h_k$ exceeds its argument.** Let $k \ge 2$ be a natural number and let
+$h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. Every natural
+number $x$ satisfies $x < x + 1 \le h_k(x)$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 6(ii) (`integers-2024-G5-lem-6`). -/
+public theorem maximumNimH_succ_le (k x : ℕ) (hk : 2 ≤ k) :
+    x < x + 1 ∧ x + 1 ≤ maximumNimH k x := by
+  refine ⟨Nat.lt_succ_self x, ?_⟩
+  unfold maximumNimH
+  generalize x / (k - 1) = q
+  omega
+
 /-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps
 $h_k^-(x) = x + \frac{x}{k-1}$ and $h_k^+(x) = x + \frac{x}{k-1} + 1$. Writing $g^p$ for the
