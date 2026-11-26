@@ -1,0 +1,3 @@
+# Gödel numbers of arithmetic sentences
+
+A sentence of the language of arithmetic (a formula with no free variables and no bound variables in scope) receives the Gödel number it has as a formula with $0$ bound variables in scope: $\ulcorner \bot \urcorner = 0$, $\ulcorner t_1 = t_2 \urcorner = \langle 1, \langle \ulcorner t_1 \urcorner, \ulcorner t_2 \urcorner \rangle \rangle$, $\ulcorner \varphi \to \psi \urcorner = \langle 2, \langle \ulcorner \varphi \urcorner, \ulcorner \psi \urcorner \rangle \rangle$ and $\ulcorner \forall x\, \varphi \urcorner = \langle 3, \ulcorner \varphi \urcorner \rangle$, with the pairing function $\langle a, b \rangle = b^2 + a$ if $a < b$ and $a^2 + a + b$ otherwise.

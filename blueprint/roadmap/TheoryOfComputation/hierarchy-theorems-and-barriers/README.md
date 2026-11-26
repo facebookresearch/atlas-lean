@@ -8,3 +8,7 @@ Time and space hierarchy theorems and diagonalization against time-bounded machi
 - [Space hierarchy theorem](space-hierarchy-theorem/README.md)
 - [Time hierarchy theorem](time-hierarchy-theorem/README.md)
 - [Nondeterministic time hierarchy](nondet-time-hierarchy.md)
+- [Blum's compression theorem](blum-compression.md)
+- [Blum's gap theorem](blum-gap.md)
+- [Blum's speedup theorem](blum-speedup.md)
+- [Blum's union theorem](blum-union.md)

@@ -14,3 +14,4 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Streaming and memory hierarchy models](streaming-and-memory-hierarchy-models/README.md)
 - [Monte Carlo estimation and variance reduction](monte-carlo-estimation/README.md)
 - [Probabilistic analysis tools](probabilistic-analysis-tools/README.md)
+- [Hajek's theorem](hajek-iff.md)

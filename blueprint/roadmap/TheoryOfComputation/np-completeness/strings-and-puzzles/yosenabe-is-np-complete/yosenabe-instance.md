@@ -1,0 +1,3 @@
+# Yosenabe instances
+
+A Yosenabe puzzle is given as a list of rows, each a list of cell contents $(k, a)$ of natural numbers: $k = 0$ is an empty white cell, $k = 1$ a white cell with a circle numbered $a$, and $k = 2$ a gray cell, labelled $a$ when $a \ne 0$.

@@ -17,3 +17,5 @@ String problems (closest string, longest common subsequence, shortest common sup
 - [Single-letter context-free language membership](single-letter-context-free-language-membership/README.md)
 - [Sudoku](sudoku/README.md)
 - [Unshuffling a square](unshuffling-a-square/README.md)
+- [YOSENABE is NP-complete](yosenabe-is-np-complete/README.md)
+- [ZEIGER is NP-complete](zeiger-is-np-complete/README.md)
