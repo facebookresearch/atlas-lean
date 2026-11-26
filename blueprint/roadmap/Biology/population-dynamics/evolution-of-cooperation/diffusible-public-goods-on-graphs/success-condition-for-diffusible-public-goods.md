@@ -1,12 +1,16 @@
 # Success condition for diffusible public goods
 
-Keep the weighted graph $G$ with $\sum_j e_{ij} = 1$, diffusion parameter $\lambda > 0$, and the [retention fractions](public-goods-diffusion-equilibrium.md) $\phi_0$ (share kept by the producer) and $\phi_1$ (edge-weighted share reaching one neighbour). Let the fecundity of cell $i$ be
+Keep the finite, connected, bi-transitive weighted graph $G$ on $N$ vertices (with $e_{ij} = e_{ji}$, $e_{ii} = 0$, and $\sum_j e_{ij} = 1$), diffusion parameter $\lambda > 0$, and the [retention fractions](public-goods-diffusion-equilibrium.md) $\phi_0$ (share kept by the producer) and $\phi_1$ (edge-weighted share reaching one neighbour). Let the fecundity of cell $i$ be
 
 $$F_i = 1 + b\,\psi_i - c\, s_i, \qquad b > 0,\; 0 < c < 1,$$
 
 and let the population evolve by death–birth updating: a uniformly chosen cell dies and its neighbours compete to fill the vacancy in proportion to fecundity times edge weight. Write $\rho_C$ and $\rho_D$ for the fixation probabilities of a single cooperator in a defector population and of a single defector in a cooperator population; cooperation is **favoured** when $\rho_C > \rho_D$.
 
-**Theorem.** Cooperation is favoured exactly when
+**Theorem (finite-$N$ and large-population limit).** On a finite bi-transitive graph of $N > 2$ vertices under weak selection ($b, c \to 0$), cooperation is favoured when
+
+$$\frac{b}{c} > \frac{N - 2}{N(\phi_0 + \phi_1) - 2}$$
+
+(assuming $N(\phi_0 + \phi_1) > 2$; on the complete graph $K_N$ this reduces to $b/c > 1 + N\lambda/(N-1)$ and holds for arbitrary selection strength). In the large-population limit $N \to \infty$, the threshold simplifies to (Eq. 2)
 
 $$\frac{b}{c} > \frac{1}{\phi_0 + \phi_1},$$
 
@@ -14,11 +18,11 @@ equivalently, using $(1+\lambda)\phi_0 = 1 + \lambda\phi_1$,
 
 $$\frac{b}{c} > \frac{\lambda}{\phi_0 (1 + 2\lambda) - 1}.$$
 
-The condition holds for arbitrary selection strength on complete graphs and on one-dimensional lattices, and under weak selection ($b, c \ll 1/\kappa$) on other graphs; it is unchanged under a variety of other diffusion processes, including diffusion along a graph different from the replacement graph, in which case $\phi_1$ is computed with the replacement graph's weights.
+In the $N \to \infty$ limit this holds for arbitrary selection strength on one-dimensional lattices and under weak selection on other bi-transitive graphs; it is unchanged under a variety of other diffusion processes, including diffusion along a graph different from the replacement graph, in which case $\phi_1$ is computed with the replacement graph's weights.
 
-**Reading.** The benefit a cooperator confers on itself, $b\phi_0$, plus the benefit it confers on one average neighbour, $b\phi_1$, must exceed the cost $c$ of production. Only the zeroth and first neighbourhood shells enter; benefits reaching cells at distance two or more are irrelevant to the outcome, however large they are in total.
+**Reading.** In the large-population limit, the benefit a cooperator confers on itself, $b\phi_0$, plus the benefit it confers on one average neighbour, $b\phi_1$, must exceed the cost $c$ of production. Only the zeroth and first neighbourhood shells enter; benefits reaching cells at distance two or more are irrelevant to the outcome, however large they are in total.
 
-**Regimes.** For $\lambda \ll 1$ the good is effectively private, $\phi_0 \to 1$, and production is favoured whenever $b/c > 1$. For $\lambda \gg 1$ the good is shared with everybody, $\phi_0 + \phi_1 \to 2/N$ on a graph of $N$ vertices, and production is favoured only if $b/c > N/2$, which in a large population means the good must be essential. Between these, the small-$\lambda$ expansion gives
+**Regimes.** For $\lambda \ll 1$ the good is effectively private, $\phi_0 \to 1$, and in the large-$N$ limit production is favoured whenever $b/c > 1$. On any finite graph of $N$ vertices, as $\lambda \to \infty$ the good is shared evenly ($\phi_0, \phi_1 \to 1/N$, so $N(\phi_0 + \phi_1) \to 2$) and the finite-$N$ threshold $(N-2)/(N(\phi_0 + \phi_1) - 2)$ diverges to $+\infty$, making cooperation unattainable for any finite $b/c$. In the $N \to \infty$ limit, the small-$\lambda$ expansion gives
 
 $$\frac{b}{c} > 1 + \frac{\lambda(\kappa - 1)}{\kappa} + O(\lambda^2),$$
 
