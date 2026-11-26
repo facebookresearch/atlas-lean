@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.BinomidAverage
 public import MathlibExt.NumberTheory.BinomidPartialSum
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
+public import MathlibExt.NumberTheory.BinomidIndexAdd
 public import MathlibExt.NumberTheory.BinomidIndexBinomidUpperAverageEqISup
 
 namespace MetaMathlibExt
@@ -62,20 +63,6 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 5
 public theorem_wanted isLexMinimalExtension_of_periodic {η : ℕ → ℕ}
     (hη : IsBinomidIndex η) {p : ℕ} (hp : 0 < p) (hper : ∀ i, η (i + p) = η i) :
     IsLexMinimalExtension η
-
-/-- **Lex-minimal extensions are closed under addition.** If $\eta_1$ and $\eta_2$ are
-lex-minimal extensions, then their componentwise sum $\eta_1 + \eta_2$ is a lex-minimal
-extension.
-
-Since the zero sequence is also a lex-minimal extension, the set $L$ of lex-minimal extensions
-is a monoid under componentwise addition.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 1
-(`integers-2024-A53-cor-1`). -/
-public theorem_wanted IsLexMinimalExtension.add {η₁ η₂ : ℕ → ℕ}
-    (h₁ : IsLexMinimalExtension η₁) (h₂ : IsLexMinimalExtension η₂) :
-    IsLexMinimalExtension (η₁ + η₂)
 
 /-- **Distinct shifts of lex-minimal extensions meet only in zero.** Let $L$ be the set of
 lex-minimal extensions, and for a natural number $l$ let $\sigma^l$ be the right shift that
