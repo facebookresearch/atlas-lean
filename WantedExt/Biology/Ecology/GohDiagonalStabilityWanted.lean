@@ -30,8 +30,7 @@ notes, §3.3.6.
 module
 
 public import Batteries.Util.ProofWanted
-public import Domains.Biology.Dynamics.ReplicatorLotkaVolterra
-public import Mathlib.Analysis.Calculus.Deriv.Pi
+public import WantedExt.Biology.Ecology.LotkaVolterraNoInteriorEquilibriumWanted
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 
@@ -40,13 +39,7 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 namespace WantedExt.Biology.Ecology.GohDiagonalStabilityWanted
 
 open Filter Topology Matrix
-open MathlibExt.Biology.Dynamics.ReplicatorLotkaVolterra (lvField)
-
-/-- `x` solves the **generalized Lotka–Volterra system** `xᵢ' = xᵢ (bᵢ + ∑ⱼ aᵢⱼ xⱼ)` on
-`[0, ∞)`, with the library's field `lvField b A`. -/
-def IsSolution {n : ℕ} (b : Fin n → ℝ) (A : Matrix (Fin n) (Fin n) ℝ) (x : ℝ → Fin n → ℝ) :
-    Prop :=
-  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (lvField b A (x t)) t
+open LotkaVolterraNoInteriorEquilibriumWanted (IsLVSolution)
 
 /-- `A` is **diagonally stable with weights `d`**: every `dᵢ > 0` and the symmetric matrix
 `D A + Aᵀ D`, with `D = diag(d)`, is negative definite: `vᵀ (D A + Aᵀ D) v < 0` for every
@@ -66,8 +59,8 @@ Sources: Goh (1977); Allesina, lecture notes §3.3.6. -/
 public theorem_wanted globally_stable {n : ℕ} (b : Fin n → ℝ) (A : Matrix (Fin n) (Fin n) ℝ)
     (xs : Fin n → ℝ) (hxs : ∀ i, 0 < xs i) (heq : b + A *ᵥ xs = 0) (d : Fin n → ℝ)
     (hd : IsDiagonallyStable A d) :
-    (∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin n → ℝ, IsSolution b A x →
+    (∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin n → ℝ, IsLVSolution b A x →
         (∀ i, 0 < x 0 i) → ‖x 0 - xs‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - xs‖ < ε) ∧
-      ∀ x : ℝ → Fin n → ℝ, IsSolution b A x → (∀ i, 0 < x 0 i) → Tendsto x atTop (𝓝 xs)
+      ∀ x : ℝ → Fin n → ℝ, IsLVSolution b A x → (∀ i, 0 < x 0 i) → Tendsto x atTop (𝓝 xs)
 
 end WantedExt.Biology.Ecology.GohDiagonalStabilityWanted
