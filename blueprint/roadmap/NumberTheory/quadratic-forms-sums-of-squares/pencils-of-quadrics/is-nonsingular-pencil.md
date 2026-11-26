@@ -1,3 +1,5 @@
-# Nonsingular intersections of two quadrics in seven-dimensional projective space
+# Independence test for two quadrics in eight variables
 
-For symmetric $8 \times 8$ matrices $M_1, M_2$ over a field $k$, the intersection $f_1 = f_2 = 0$ of the quadrics $f_i(x) = x^{\mathsf T} M_i x$ in $\mathbb{P}^7$ is nonsingular when at every nonzero common zero $x$ over an algebraic closure of $k$ the vectors $M_1 x$ and $M_2 x$ are linearly independent.
+For $8 \times 8$ matrices $M_1, M_2$ over a field $k$, with $f_i(x) = x^{\mathsf T} M_i x$, the test holds when at every nonzero $x$ over an algebraic closure $\bar k$ of $k$ with $f_1(x) = f_2(x) = 0$ the vectors $M_1 x$ and $M_2 x$ are linearly independent over $\bar k$. The matrices need not be symmetric and the characteristic of $k$ is arbitrary.
+
+For symmetric $M_1, M_2$ over a field of characteristic different from $2$, the gradient of $f_i$ is $2 M_i x$, so by the Jacobian criterion the test says that the intersection $f_1 = f_2 = 0$ in $\mathbb{P}^7$ is nonsingular. In characteristic $2$ the test does not detect smoothness: over the field of eight elements, take $M_1$ the identity and $M_2$ the diagonal matrix whose entries are the eight field elements. A nonzero $x$ with $M_1 x$ and $M_2 x$ dependent lies on a coordinate axis, where $f_1$ does not vanish, so the test holds; yet $f_1$ and $f_2$ are squares of linear forms, their gradients vanish, and the intersection is not smooth. The application to pencils over $p$-adic fields uses symmetric matrices in characteristic zero.

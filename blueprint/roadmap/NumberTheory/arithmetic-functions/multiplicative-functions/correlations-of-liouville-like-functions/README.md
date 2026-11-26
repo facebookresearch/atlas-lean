@@ -7,5 +7,5 @@
 - [Parity of the number of divisors from a set](divisor-parity.md)
 - [AimPL question on Liouville-like functions with vanishing correlations](exists-coprime-set-with-vanishing-correl.md)
 - [Liouville-like functions with vanishing correlations exist](exists-coprime-set-with-vanishing-correl-2.md)
-- [AimPL question on the binary Liouville correlation](liouville-binary-correlation-cancels.md)
+- [AimPL question on the binary Liouville correlation, for N ≥ 11](liouville-binary-correlation-cancels.md)
 - [Cancellation in the binary Liouville correlation](liouville-binary-correlation-cancels-hol.md)

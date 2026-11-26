@@ -2,6 +2,8 @@
 
 For every prime $p$, every finite extension $k$ of $\mathbb{Q}_p$ and all symmetric $8 \times 8$ matrices $M_1, M_2$ over $k$ such that the intersection of the quadrics $x^{\mathsf T} M_1 x = 0$ and $x^{\mathsf T} M_2 x = 0$ in $\mathbb{P}^7$ is nonsingular and has a nonzero common zero in $k^8$, there are $a, b \in k$ with $\det(aM_1 + bM_2) \ne 0$ such that the quadratic form $x^{\mathsf T}(aM_1 + bM_2)x$ vanishes on a $3$-dimensional subspace of $k^8$ (it contains three hyperbolic planes); here nonsingular means that at every nonzero common zero $x$ over an algebraic closure the vectors $M_1 x$ and $M_2 x$ are linearly independent.
 
+Question 3(b) as printed does not assume a common zero over $k$. This is the conditional variant with a nonzero common zero in $k^8$, the situation of the known local theorems; it does not settle Question 3(b) as printed.
+
 This resolves [Pencils of quadrics in eight variables with a common zero, as a statement](pencil-with-common-zero-splits-three-hyp.md), the statement recorded as a proposition, in the affirmative; the resolution is due to Colliot-Thélène (2024), cited under Sources.
 
 ## Sources
