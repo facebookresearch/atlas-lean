@@ -1,3 +1,3 @@
-# Dimension `k` in SHORTEST VECTOR PROBLEM IN THE MAX NORM
+# Dimension of a SHORTEST VECTOR PROBLEM IN THE MAX NORM instance
 
-For an instance `i` of SHORTEST VECTOR PROBLEM IN THE MAX NORM, the dimension `k`: the number of basis vectors, given by `i.1.length`.
+For an instance of SHORTEST VECTOR PROBLEM IN THE MAX NORM, the dimension $k$ is the number of stored rows, whatever their lengths. In a [well-formed](well-formed.md) instance it is both the number of basis vectors and the number of coordinates of each.

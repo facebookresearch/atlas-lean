@@ -2,7 +2,7 @@
 
 The RECOGNITION OF TRIANGLE GRAPHS (PI* GRAPHS) decision problem lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
-Instance: a graph `G = (V, E)`. Question: is `G` a triangle graph (a PI* graph), i.e. does it have an intersection model consisting of triangles between two parallel lines?
+Instance: a graph $G = (V, E)$. Question: is $G$ a [triangle graph](is-triangle-graph.md) (a PI* graph)? That is, can each vertex $v$ be assigned the convex hull of a closed interval on the line $y = 1$ and a closed interval on the line $y = 0$, at least one of the two a single point (both may be, giving a segment), so that two distinct vertices are adjacent exactly when their regions intersect?
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 - [Instances of TRAINING A 3-NODE NEURAL NETWORK](training-three-node-neural-network-insta.md)
 - [Linear threshold function with weights `a` and threshold `a₀` in TRAINING A 3-NODE NEURAL NETWORK](threshold.md)
-- [Input vector as real inputs `0` or `1` in TRAINING A 3-NODE NEURAL NETWORK](inputs.md)
+- [Real input vector of an example in TRAINING A 3-NODE NEURAL NETWORK](inputs.md)
 - [Output of the network in TRAINING A 3-NODE NEURAL NETWORK](output.md)
 - [Well-formed instances of TRAINING A 3-NODE NEURAL NETWORK](well-formed.md)
 - [Feasible instances of TRAINING A 3-NODE NEURAL NETWORK](training-three-node-neural-network-feasi.md)

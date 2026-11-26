@@ -1,4 +1,4 @@
-# CIRCLE GRAPH K-COLORABILITY is NP-complete
+# CIRCLE GRAPH K-COLORABILITY is NP-complete for every fixed K ≥ 4
 
 For every natural number $K \ge 4$, the decision problem CIRCLE GRAPH K-COLORABILITY belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 

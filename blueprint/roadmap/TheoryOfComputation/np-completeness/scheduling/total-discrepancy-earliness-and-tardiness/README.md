@@ -4,7 +4,7 @@
 - [Tasks of the instance in TOTAL DISCREPANCY](task.md)
 - [Length `lᵢ` of task `t` in TOTAL DISCREPANCY](task-length.md)
 - [Preferred midtime `Mᵢ` of task `t` in TOTAL DISCREPANCY](preferred-midtime.md)
-- [Starting times `s` form a one-processor schedule for positive lengths `l` in TOTAL DISCREPANCY](is-schedule.md)
+- [Real starting times forming a one-processor schedule in TOTAL DISCREPANCY](is-schedule.md)
 - [Well-formed instances of TOTAL DISCREPANCY](well-formed.md)
 - [Feasible instances of TOTAL DISCREPANCY](total-discrepancy-feasible.md)
 - [The TOTAL DISCREPANCY decision problem](total-discrepancy-dec.md)

@@ -1,4 +1,4 @@
-# ORIENTED k-COLORING is NP-complete
+# ORIENTED k-COLORING is NP-complete for every fixed k ≥ 4
 
 For every natural number $k \ge 4$, the decision problem ORIENTED $k$-COLORING belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 

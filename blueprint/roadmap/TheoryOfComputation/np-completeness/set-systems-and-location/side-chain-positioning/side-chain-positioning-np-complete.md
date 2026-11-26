@@ -2,7 +2,7 @@
 
 The SIDE-CHAIN POSITIONING (PROTEIN DESIGN) decision problem lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
-Instance: positions `1, …, p`, each with a finite set `Rᵢ` of rotamers (the sets pairwise disjoint); an integer self energy `E(r)` for every rotamer `r`; an integer pairwise energy `E(r, s)` for every pair of rotamers; an integer `K`. Question: is there a choice of one rotamer `rᵢ ∈ Rᵢ` at each position `i` whose total energy `∑ᵢ E(rᵢ) + ∑ᵢ ∑_{j < i} E(rᵢ, rⱼ)` is at most `K`?
+Instance: positions $1, \dots, p$, each with a finite **nonempty** set $R_i$ of rotamers (the sets pairwise disjoint, every rotamer belonging to exactly one position); an integer self energy $E(r)$ for every rotamer $r$; an integer pairwise energy $E(r, s)$ for every ordered pair of rotamers; an integer $K$. Question: is there a choice of one rotamer $r_i \in R_i$ at each position $i$ whose total energy $\sum_i E(r_i) + \sum_i \sum_{j < i} E(r_i, r_j)$ is at most $K$?
 
 ## Sources
 

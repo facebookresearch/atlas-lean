@@ -1,7 +1,6 @@
 # Side-chain positioning
 
 - [Instances of SIDE-CHAIN POSITIONING (PROTEIN DESIGN)](side-chain-positioning-instance.md)
-- [Integer `a - b` encoded by the pair `(a, b)` in SIDE-CHAIN POSITIONING (PROTEIN DESIGN)](int-of.md)
 - [Well-formed instances of SIDE-CHAIN POSITIONING (PROTEIN DESIGN)](well-formed.md)
 - [Self energy `E(r)` of rotamer `r` in SIDE-CHAIN POSITIONING (PROTEIN DESIGN)](self-energy.md)
 - [Pairwise energy `E(r, s)` of rotamers `r` and `s` in SIDE-CHAIN POSITIONING (PROTEIN DESIGN)](pair-energy.md)

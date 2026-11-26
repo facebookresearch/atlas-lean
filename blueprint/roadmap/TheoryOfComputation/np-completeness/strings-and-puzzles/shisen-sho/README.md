@@ -1,7 +1,7 @@
 # Shisen-Sho
 
 - [Instances of GENERALIZED SHISEN-SHO](shisen-sho-instance.md)
-- [Cells of the board, as integer points `(row, column)` in GENERALIZED SHISEN-SHO](cells.md)
+- [Cells of the board in GENERALIZED SHISEN-SHO](cells.md)
 - [Label of the tile at a board cell in GENERALIZED SHISEN-SHO](label.md)
 - [GENERALIZED SHISEN-SHO: Lattice point `q` lies on the axis-parallel segment from `p` to `p'`](on-segment.md)
 - [Connectable points in GENERALIZED SHISEN-SHO](connectable.md)

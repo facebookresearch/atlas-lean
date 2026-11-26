@@ -1,8 +1,8 @@
-# d-TRACK INTERVAL GRAPH RECOGNITION is NP-complete
+# d-TRACK INTERVAL GRAPH RECOGNITION is NP-complete for every fixed d ≥ 2
 
-For every natural number `d` with `2 ≤ d`, the d-TRACK INTERVAL GRAPH RECOGNITION decision problem with parameter `d` lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
+For every natural number $d$ with $2 \le d$, the d-TRACK INTERVAL GRAPH RECOGNITION decision problem with parameter $d$ lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
-Instance: a finite simple undirected graph `G = (V, E)`. Question: is `G` a `d`-track interval graph?
+Instance: a finite simple undirected graph $G = (V, E)$. Question: is $G$ a [$d$-track interval graph](is-track-interval-graph.md)?
 
 ## Sources
 

@@ -1,3 +1,3 @@
-# UNSAFE LOCKING POLICY for two distributed transactions: `σ` is legal
+# Legal schedules in UNSAFE LOCKING POLICY for two distributed transactions
 
-For an instance `i` of UNSAFE LOCKING POLICY for two distributed transactions, `σ` is legal, that is, between any two occurrences of `lock(x)` there is an occurrence of `unlock(x)`.
+For an instance of UNSAFE LOCKING POLICY for two distributed transactions, a list $\sigma$ of step addresses is legal when between any two occurrences of $\mathrm{lock}(x)$ there is an occurrence of $\mathrm{unlock}(x)$: for all positions $p < q < |\sigma|$ such that the steps at $p$ and at $q$ are both $\mathrm{lock}(x)$, some position $r$ with $p < r < q$ has step $\mathrm{unlock}(x)$. The step at a position is that of the step-at-a-position lookup, whichever transactions the two locks belong to; an address that names no step, possible only when $\sigma$ is not a schedule, reads as $\mathrm{lock}(0)$.

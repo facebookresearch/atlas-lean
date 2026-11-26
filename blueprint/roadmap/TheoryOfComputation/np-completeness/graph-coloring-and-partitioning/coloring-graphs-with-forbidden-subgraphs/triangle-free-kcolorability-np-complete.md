@@ -1,4 +1,4 @@
-# k-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete
+# k-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete for every fixed k ≥ 3
 
 For every natural number $k \ge 3$, the decision problem $k$-COLORABILITY OF TRIANGLE-FREE GRAPHS belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 

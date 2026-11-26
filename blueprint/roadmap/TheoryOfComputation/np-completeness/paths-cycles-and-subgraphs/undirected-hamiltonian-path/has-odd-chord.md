@@ -1,3 +1,3 @@
-# Closed walk `c` (a cycle of length `ℓ`) has an odd chord in HAMILTONIAN PATH on strongly chordal split graphs
+# Odd chord of a closed walk in HAMILTONIAN PATH on strongly chordal split graphs
 
-In HAMILTONIAN PATH on strongly chordal split graphs, the closed walk `c` (a cycle of length `ℓ`) has an odd chord: positions `i < j < ℓ` with `j - i` odd, `3 ≤ j - i` and `j - i + 3 ≤ ℓ`, whose vertices are adjacent. Subtraction is natural-number subtraction, so `a - b = 0` whenever `a ≤ b`.
+In HAMILTONIAN PATH on strongly chordal split graphs, a closed walk $c = (c_0, c_1, \dots, c_\ell)$ of length $\ell$ in a graph, so that $c_\ell = c_0$, has an odd chord when there are positions $i < j < \ell$ such that $j - i$ is odd, $3 \le j - i$, $j - i + 3 \le \ell$, and the vertices $c_i$ and $c_j$ are adjacent. The test applies to every closed walk, whether or not it is a cycle: on a single edge $ab$, the walk $a, b, a, b, a, b, a$ of length $6$ passes it at positions $0$ and $3$. [Strong chordality](is-strongly-chordal.md) applies the test only to cycles.

@@ -1,3 +1,3 @@
-# Well-formed instances of TOLERANCE GRAPH RECOGNITION
+# Well-formed CLIQUE GRAPH instances
 
-An instance of TOLERANCE GRAPH RECOGNITION is well formed when the edge list describes a simple graph on `0, …, n - 1` (no duplicate edges in either orientation, no self-loops, endpoints in range).
+An instance $(n, E)$ of CLIQUE GRAPH is well-formed when the edge list has no repeated edge, every edge joins two distinct vertices below $n$, and no edge appears in both orientations.

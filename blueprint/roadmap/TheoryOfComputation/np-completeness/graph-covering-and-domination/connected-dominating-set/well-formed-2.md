@@ -1,3 +1,3 @@
-# Well-formed instances of CONNECTED DOMINATING SET ON SPLIT GRAPHS
+# Well-formed CONNECTED DOMINATING SET on 4-regular graphs instances
 
-An instance of CONNECTED DOMINATING SET ON SPLIT GRAPHS is well formed when the edge list describes a simple graph on `Fin n` (no duplicate edges in either orientation, no self-loops, endpoints in range), the graph is a split graph (some vertex set `C` is a clique and its complement is an independent set), and `0 < K`.
+An instance $(n, E, K)$ of CONNECTED DOMINATING SET on 4-regular graphs is well-formed when the edge list has no repeated edge, every edge joins two distinct vertices below $n$, and no edge appears in both orientations, $0 < K \le n$, and its graph is regular of degree $4$.

@@ -1,0 +1,3 @@
+# The TREE t-SPANNER decision problem
+
+For each natural number $t$, the TREE t-SPANNER decision problem with parameter $t$ accepts a bitstring exactly when it decodes, under the canonical bitstring encoding, to an instance $(n, E)$ that is [well formed](../../graph-coloring-and-partitioning/partition-into-triangles/well-formed.md) ($E$ has no repeated entries and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$) and [feasible](tree-tspanner-feasible.md) for $t$. Bitstrings that do not decode to an instance are rejected. Each value of $t$ gives a separate decision problem.

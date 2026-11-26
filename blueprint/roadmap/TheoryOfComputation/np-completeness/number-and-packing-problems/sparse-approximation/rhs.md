@@ -1,3 +1,3 @@
-# Entry `b_r` of the vector in SPARSE APPROXIMATION
+# Right-hand side entry in SPARSE APPROXIMATION
 
-For an instance `i` of SPARSE APPROXIMATION, the entry `b_r` of the vector, given by `ratVal (i.2.2.1.getD r ((0, 0), 1))`. A position beyond the end of a list reads as the default entry `((0, 0), 1)`.
+For an instance of SPARSE APPROXIMATION and a natural number $r$, the entry $b_r$ is the value of the rational code at position $r$ of $b$, counted from $0$: the code $((p, q), d)$ gives $(p - q)/d$ when $d > 0$. A position beyond the end of $b$ reads as the code $((0, 0), 1)$, so it gives $0$; a code that is present but has denominator $d = 0$ also gives $0$.

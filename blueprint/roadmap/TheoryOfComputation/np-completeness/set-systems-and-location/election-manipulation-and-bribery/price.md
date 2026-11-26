@@ -1,3 +1,3 @@
-# Price `ρ(k)` of shifting `p` up by `k ≤ j` places, with `ρ(0) = 0` in SHIFT BRIBERY for Borda
+# Price of shifting the preferred candidate up in SHIFT BRIBERY for Borda
 
-In SHIFT BRIBERY for Borda, the price `ρ(k)` of shifting `p` up by `k ≤ j` places, with `ρ(0) = 0`, given by `(0 :: prices).getD k 0`. A position beyond the end of a list reads as the default entry `0`.
+In SHIFT BRIBERY for Borda, for a voter's price list $(\rho(1), \dots, \rho(\ell))$ and a natural number $k$, the price $\rho(k)$ of shifting $p$ up by $k$ places is $0$ for $k = 0$, the $k$-th entry of the list for $1 \le k \le \ell$, and $0$ for $k > \ell$ (a position beyond the end of the list reads as the default $0$). In a [well-formed](well-formed-2.md) instance, voter $i$'s list has exactly $j_i$ entries, where $j_i$ is the zero-based index of $p$ in voter $i$'s vote, so the listed prices are those of the shifts $1 \le k \le j_i$; [feasibility](shift-bribery-borda-feasible.md) allows voter $i$ only shifts $k \le j_i$.

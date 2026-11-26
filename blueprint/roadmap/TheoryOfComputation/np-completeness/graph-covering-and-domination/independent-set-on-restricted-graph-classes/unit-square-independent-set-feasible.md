@@ -1,3 +1,3 @@
 # Feasible instances of INDEPENDENT SET OF UNIT SQUARES
 
-An instance of INDEPENDENT SET OF UNIT SQUARES is feasible when some `K` of the squares are pairwise disjoint: an independent set of at least `K` vertices in the intersection graph. Feasibility does not include well-formedness; the decision problem requires both.
+An instance $(P, K)$ of INDEPENDENT SET OF UNIT SQUARES is feasible when the [intersection graph](unit-square-graph.md) of the listed squares has an independent set of at least $K$ vertices, that is, a set of at least $K$ list indices whose squares are pairwise disjoint. Feasibility does not include well-formedness; the decision problem requires both.

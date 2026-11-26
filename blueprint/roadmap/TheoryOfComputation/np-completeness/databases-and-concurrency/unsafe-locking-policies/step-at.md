@@ -1,3 +1,3 @@
-# Step at position `r` of the schedule `σ` in UNSAFE LOCKING POLICY for two distributed transactions
+# Step at a position of a schedule in UNSAFE LOCKING POLICY for two distributed transactions
 
-For an instance `i` of UNSAFE LOCKING POLICY for two distributed transactions, the step at position `r` of the schedule `σ`, given by `(txn i (σ.getD r (0, 0)).1).1.getD (σ.getD r (0, 0)).2 (0, 0)`. A position beyond the end of a list reads as the default entry `(0, 0)`.
+For an instance of UNSAFE LOCKING POLICY for two distributed transactions, a list $\sigma$ of addresses and a position $r$, the step at position $r$ is found in two lookups. First the address $(t, p)$ at position $r$ of $\sigma$ is read; when $r \ge |\sigma|$ this address is $(0, 0)$. Then step $p$ of transaction $T_t$ is returned, where $T_t$ is $T_0$ for $t = 0$ and $T_1$ for every other $t$; when that transaction has fewer than $p + 1$ steps, the result is the step $(0, 0)$, that is, $\mathrm{lock}(0)$. So for $r \ge |\sigma|$ the result is the first step of $T_0$ if $T_0$ has a step, and $\mathrm{lock}(0)$ otherwise.

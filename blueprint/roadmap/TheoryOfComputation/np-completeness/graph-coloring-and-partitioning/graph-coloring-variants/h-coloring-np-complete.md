@@ -1,4 +1,4 @@
-# H-COLORING is NP-complete
+# H-COLORING is NP-complete for every fixed simple non-bipartite H
 
 For every pattern $H = (m, hs)$ that is a simple edge list on $m$ vertices and not bipartite, the decision problem H-COLORING belongs to NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 

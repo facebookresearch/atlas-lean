@@ -56,4 +56,4 @@
 - [3-COLORABILITY OF LINEAR DOMINO GRAPHS OF MAXIMUM DEGREE 4 is NP-complete](three-colorability-linear-domino-np-comp.md)
 - [Well-formed instances of k-COLORABILITY OF TRIANGLE-FREE GRAPHS](well-formed-18.md)
 - [k-COLORABILITY OF TRIANGLE-FREE GRAPHS as a decision problem](triangle-free-kcolorability-dec.md)
-- [k-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete](triangle-free-kcolorability-np-complete.md)
+- [k-COLORABILITY OF TRIANGLE-FREE GRAPHS is NP-complete for every fixed k ≥ 3](triangle-free-kcolorability-np-complete.md)

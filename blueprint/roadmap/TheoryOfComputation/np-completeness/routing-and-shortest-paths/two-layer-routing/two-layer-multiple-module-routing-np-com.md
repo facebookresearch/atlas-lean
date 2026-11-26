@@ -2,7 +2,13 @@
 
 The TWO-LAYER MULTIPLE MODULE ROUTING decision problem lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it.
 
-Instance: a collection `{M₁, ..., Mₙ}` of non-intersecting modules (rectangles specified by their four integer-coordinate corners), a set `P` of terminals (grid points on the perimeters of the modules), a partition of `P` into nets `N₁, ..., Nₘ`, and an integer bound `B`. Question: is there a (reserved layer) routing for the nets that can be enclosed within a rectangle of area `B`, i.e., a set of grid segments `S = T₁ ∪ ... ∪ Tₘ` and a rectangle `R` such that (1) all the modules and all the grid segments in `S` are included in `R`, and none of the grid segments is contained in any of the modules, (2) for each `i`, the segments in `Tᵢ` make up a tree whose leaves are the points in net `Nᵢ`, and (3) no two trees `Tᵢ` and `Tⱼ` have any non-orthogonal intersections?
+The decision problem accepts exactly the encodings of the following yes-instances. Instance: a list of modules, axis-parallel rectangles with integer corners whose lower-left corner $(x_1, y_1)$ and upper-right corner $(x_2, y_2)$ satisfy $x_1 < x_2$ and $y_1 < y_2$, any two at different list positions having disjoint closed regions; a set $P$ of distinct terminals, grid points each on the perimeter of some module; a partition of $P$ into nonempty nets $N_0, \dots, N_{m-1}$; and a nonnegative integer bound $B$. Question: is there a reserved-layer routing enclosed in a rectangle of area at most $B$, that is, finite trees $T_0, \dots, T_{m-1}$ of grid segments and an axis-parallel rectangle $R$ with integer corners and area at most $B$ such that
+
+- $R$ includes every module and both ends of every segment, and no segment has both ends in the closed region of one module;
+- the leaves of each $T_k$ are exactly the points of $N_k$, where a leaf is a vertex with at most one neighbor in $T_k$, so a net with one point is routed by the one-vertex tree on it;
+- two different trees meet only in orthogonal intersections: at every common point one tree has exactly its two vertical segments and the other exactly its two horizontal segments?
+
+The exact conditions are those of [well-formedness](well-formed-2.md) and [feasibility](two-layer-multiple-module-routing-feasib.md). $B$ is encoded in binary, each coordinate as two naturals representing their difference, and the partition as a net label below $m$ on each terminal.
 
 ## Sources
 

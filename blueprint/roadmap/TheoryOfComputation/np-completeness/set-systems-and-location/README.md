@@ -2,7 +2,6 @@
 
 3-dimensional matching, exact cover, set cover, set packing, set splitting, maximum coverage, minimum test set, generalized and quadratic assignment, facility location, k-center and k-median.
 
-- [2-dimensional consecutive sets](2-dimensional-consecutive-sets/README.md)
 - [3-dimensional matching](3-dimensional-matching/README.md)
 - [Coalition formation](coalition-formation/README.md)
 - [Consecutive ones and block minimization](consecutive-ones-and-block-minimization/README.md)
@@ -25,3 +24,19 @@
 - [Side-chain positioning](side-chain-positioning/README.md)
 - [Stable matching with ties and in three dimensions](stable-matching-with-ties-and-in-three-dimension/README.md)
 - [Terrain guarding](terrain-guarding/README.md)
+- [Approval bribery](approval-bribery/README.md)
+- [Banks winner](banks-winner/README.md)
+- [Borda weighted coalitional manipulation with three candidates](borda-weighted-coalitional-manipulation-with-thr/README.md)
+- [Capacity representatives](capacity-representatives/README.md)
+- [Comparative containment](comparative-containment/README.md)
+- [Comparative containment with unit weights](comparative-containment-with-unit-weights/README.md)
+- [Condorcet constructive control by adding voters](condorcet-constructive-control-by-adding-voters/README.md)
+- [Condorcet constructive control by deleting voters](condorcet-constructive-control-by-deleting-voter/README.md)
+- [Copeland^α constructive control by adding voters](copeland-constructive-control-by-adding-voters/README.md)
+- [Copeland^α manipulation with two manipulators](copeland-manipulation-with-two-manipulators/README.md)
+- [Covering points by lines](covering-points-by-lines/README.md)
+- [Optimal mixed strategy to commit to in two-player Bayesian games](optimal-mixed-strategy-to-commit-to-in-two-playe/README.md)
+- [Unweighted coalitional manipulation under Borda with two manipulators](unweighted-coalitional-manipulation-under-borda/README.md)
+- [Veto weighted coalitional manipulation with three candidates](veto-weighted-coalitional-manipulation-with-thre/README.md)
+
+- [2-dimensional consecutive sets](2-dimensional-consecutive-sets/README.md)
