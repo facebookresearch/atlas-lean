@@ -10,7 +10,7 @@ Portions of this file are adapted from:
 
 `Definitions/Def_AlgebraicGeometry_DoubleComplex.lean`
 and
-`Theorems/Thm_DoubleComplex_subsingleton_HTot_of_forall_subsingleton_colH.lean
+`Theorems/Thm_DoubleComplex_subsingleton_HTot_of_forall_subsingleton_colH.lean`
 and
 `P2M/Sol/S_DoubleComplex_subsingleton_HTot_of_forall_subsingleton_colH.lean`
 (https://github.com/anthropics/fermats-last-theorem):
@@ -33,8 +33,40 @@ module
 public import Mathlib.Algebra.Module.LinearMap.Basic
 public import Mathlib.Algebra.Module.Submodule.Basic
 public import Mathlib.LinearAlgebra.Quotient.Basic
-public import Mathlib.Algebra.Group.Subgroup.Basic
-import Mathlib.Tactic
+public import MathlibExt.Algebra.Homology.BoundedDoubleComplex
+
+/-!
+# Total cohomology of bounded double complexes
+
+For a bounded first-quadrant double complex `D : DoubleComplex.Bounded R` of `R`-modules, from
+`MathlibExt.Algebra.Homology.BoundedDoubleComplex`, this file defines the cohomology of its
+total complex, the cohomology of its columns, its transpose and its two `E₂` pages, and proves
+that the total complex is acyclic when every column is.
+
+## Conventions
+
+* The indexing is cohomological and first-quadrant: `D.C p q` is the term in column `p` and
+  row `q` for `p q : ℕ`, the horizontal differential `D.dH p q` raises `p` and the vertical
+  differential `D.dV p q` raises `q`.
+* `D.N` bounds the support: `D.hBound` says that `D.C p q` is a subsingleton (a zero module)
+  whenever `D.N ≤ p` or `D.N ≤ q`.
+* The total complex is `Tot D n = ∏_{p + q = n} D.C p q` with differential
+  `dTot D n = dH + (-1) ^ p • dV`: the vertical part of `dTot` in column `p` carries the sign
+  `(-1) ^ p`, and the horizontal part carries no sign.
+* No differential enters degree `0`: `HTotB D 0 = ⊥`, `colB D p 0 = ⊥` and `E₂IB D 0 q = ⊥`,
+  so in degree `0` the groups `HTot D 0`, `colH D p 0` and `E₂I D 0 q` are the kernels of
+  `dTot D 0`, `D.dV p 0` and `colHdH D 0 q` modulo `⊥`.
+* `E₂I D p q` takes vertical cohomology first and horizontal cohomology second, at bidegree
+  `(p, q)`. `E₂II D p q`, defined as `E₂I (transpose D) q p`, takes horizontal cohomology
+  first and vertical cohomology second, at the same bidegree `(p, q)` of `D`.
+
+## Main results
+
+* `DoubleComplex.subsingleton_HTot_of_forall_subsingleton_colH`: if every column cohomology
+  group `colH D p q` vanishes, then every total cohomology group `HTot D n` vanishes. This is
+  a case of the acyclic assembly lemma (Weibel, *An Introduction to Homological Algebra*,
+  Lemma 2.7.3).
+-/
 
 @[expose] public section
 
@@ -42,138 +74,44 @@ universe u
 
 namespace DoubleComplex
 
-structure Bounded (R : Type u) [CommRing R] where
-
-  C : ℕ → ℕ → Type u
-  [abGrp : ∀ p q, AddCommGroup (C p q)]
-  [modR : ∀ p q, Module R (C p q)]
-
-  dH : ∀ p q, C p q →ₗ[R] C (p + 1) q
-
-  dV : ∀ p q, C p q →ₗ[R] C p (q + 1)
-  dH_sq : ∀ p q, dH (p + 1) q ∘ₗ dH p q = 0
-  dV_sq : ∀ p q, dV p (q + 1) ∘ₗ dV p q = 0
-
-  dHV_comm : ∀ p q, dV (p + 1) q ∘ₗ dH p q = dH p (q + 1) ∘ₗ dV p q
-
-  N : ℕ
-  hBound : ∀ p q, N ≤ p ∨ N ≤ q → Subsingleton (C p q)
-
-attribute [instance] Bounded.abGrp Bounded.modR
-
 section Tot
 
 variable {R : Type u} [CommRing R] (D : Bounded R)
 
-abbrev Diag (n : ℕ) : Type := {pq : ℕ × ℕ // pq.1 + pq.2 = n}
-
-abbrev Tot (n : ℕ) : Type u :=
-  ∀ i : Diag n, D.C i.1.1 i.1.2
-
-def dTotH {n : ℕ} (i : Diag (n + 1)) :
-    Tot D n →ₗ[R] D.C i.1.1 i.1.2 :=
-  match i with
-  | ⟨(0, _), _⟩ => 0
-  | ⟨(p' + 1, q), h⟩ => (D.dH p' q).comp
-      (LinearMap.proj (R := R)
-        (φ := fun j : Diag n => D.C j.1.1 j.1.2) ⟨(p', q), by omega⟩)
-
-def dTotV {n : ℕ} (i : Diag (n + 1)) :
-    Tot D n →ₗ[R] D.C i.1.1 i.1.2 :=
-  match i with
-  | ⟨(_, 0), _⟩ => 0
-  | ⟨(p, q' + 1), h⟩ => (D.dV p q').comp
-      (LinearMap.proj (R := R)
-        (φ := fun j : Diag n => D.C j.1.1 j.1.2) ⟨(p, q'), by omega⟩)
-
-def dTot (n : ℕ) :
-    Tot D n →ₗ[R] Tot D (n + 1) :=
-  LinearMap.pi fun i =>
-    dTotH D i + ((-1 : ℤ) ^ i.1.1) • dTotV D i
-
+/-- The coboundaries of the total complex, as a submodule of the cocycles
+`LinearMap.ker (dTot D n)`: in degree `n' + 1` the cocycles that lie in the image of
+`dTot D n'`, and `⊥` in degree `0`, which no differential enters. -/
 def HTotB : (n : ℕ) → Submodule R (LinearMap.ker (dTot D n))
   | 0 => ⊥
   | n' + 1 => (LinearMap.range (dTot D n')).comap
       (LinearMap.ker (dTot D (n' + 1))).subtype
 
+/-- The total cohomology group in degree `n`: the cocycles of `dTot D n` modulo the
+coboundaries `HTotB D n`. -/
 abbrev HTot (n : ℕ) : Type u :=
   LinearMap.ker (dTot D n) ⧸ HTotB D n
 
 end Tot
 
-section DTotGeneric
-
-variable {R : Type u} [CommRing R] {D : Bounded R}
-
-theorem dTot_apply_zero_succ {n q' : ℕ} (h : 0 + (q' + 1) = n + 1)
-    (c : Tot D n) :
-    dTot D n c ⟨(0, q' + 1), h⟩ = D.dV 0 q' (c ⟨(0, q'), by omega⟩) := by
-  simp only [dTot, LinearMap.pi_apply, LinearMap.add_apply,
-    LinearMap.smul_apply, dTotH, dTotV, LinearMap.zero_apply,
-    LinearMap.comp_apply, LinearMap.proj_apply, pow_zero, one_smul, zero_add]
-
-theorem dTot_apply_succ_zero {n p' : ℕ} (h : p' + 1 + 0 = n + 1)
-    (c : Tot D n) :
-    dTot D n c ⟨(p' + 1, 0), h⟩ = D.dH p' 0 (c ⟨(p', 0), by omega⟩) := by
-  simp only [dTot, LinearMap.pi_apply, LinearMap.add_apply,
-    LinearMap.smul_apply, dTotH, dTotV, LinearMap.zero_apply,
-    LinearMap.comp_apply, LinearMap.proj_apply, smul_zero, add_zero]
-
-theorem dTot_apply_succ_succ {n p' q' : ℕ} (h : p' + 1 + (q' + 1) = n + 1)
-    (c : Tot D n) :
-    dTot D n c ⟨(p' + 1, q' + 1), h⟩
-      = D.dH p' (q' + 1) (c ⟨(p', q' + 1), by omega⟩)
-        + ((-1 : ℤ) ^ (p' + 1)) • D.dV (p' + 1) q' (c ⟨(p' + 1, q'), by omega⟩) := by
-  rfl
-
-theorem dTot_comp_dTot (D : Bounded R) (n : ℕ) :
-    dTot D (n + 1) ∘ₗ dTot D n = 0 := by
-  refine LinearMap.ext fun c => funext fun ⟨⟨pp, q⟩, h⟩ => ?_
-  simp only [LinearMap.comp_apply, LinearMap.zero_apply, Pi.zero_apply]
-  match pp, q, h with
-  | 0, 0, h => omega
-  | 0, q' + 1, h =>
-    obtain ⟨q'', rfl⟩ : ∃ q'', q' = q'' + 1 := ⟨q' - 1, by omega⟩
-    rw [dTot_apply_zero_succ, dTot_apply_zero_succ,
-      ← LinearMap.comp_apply, D.dV_sq, LinearMap.zero_apply]
-  | p' + 1, 0, h =>
-    obtain ⟨p'', rfl⟩ : ∃ p'', p' = p'' + 1 := ⟨p' - 1, by omega⟩
-    rw [dTot_apply_succ_zero, dTot_apply_succ_zero,
-      ← LinearMap.comp_apply, D.dH_sq, LinearMap.zero_apply]
-  | p' + 1, q' + 1, h =>
-    rw [dTot_apply_succ_succ]
-    have hH : D.dH p' (q' + 1) (dTot D n c ⟨(p', q' + 1), by omega⟩)
-        = ((-1 : ℤ) ^ p') • D.dH p' (q' + 1) (D.dV p' q' (c ⟨(p', q'), by omega⟩)) := by
-      rcases p' with _ | p''
-      · rw [dTot_apply_zero_succ, pow_zero, one_smul]
-      · rw [dTot_apply_succ_succ, map_add, map_zsmul,
-          ← LinearMap.comp_apply, D.dH_sq, LinearMap.zero_apply, zero_add]
-    have hV : D.dV (p' + 1) q' (dTot D n c ⟨(p' + 1, q'), by omega⟩)
-        = D.dV (p' + 1) q' (D.dH p' q' (c ⟨(p', q'), by omega⟩)) := by
-      rcases q' with _ | q''
-      · rw [dTot_apply_succ_zero]
-      · rw [dTot_apply_succ_succ, map_add, map_zsmul,
-          show D.dV (p' + 1) (q'' + 1) (D.dV (p' + 1) q'' (c ⟨(p' + 1, q''), by omega⟩)) = 0 from
-            LinearMap.congr_fun (D.dV_sq (p' + 1) q'') _, smul_zero, add_zero]
-    rw [hH, hV,
-      show D.dV (p' + 1) q' (D.dH p' q' (c ⟨(p', q'), by omega⟩))
-        = D.dH p' (q' + 1) (D.dV p' q' (c ⟨(p', q'), by omega⟩)) from
-        LinearMap.congr_fun (D.dHV_comm p' q') _,
-      ← add_smul, show ((-1:ℤ)^p' + (-1)^(p'+1)) = 0 from by ring, zero_smul]
-
-end DTotGeneric
-
 section E2
 
 variable {R : Type u} [CommRing R] (D : Bounded R)
 
+/-- The vertical coboundaries in column `p`, as a submodule of the vertical cocycles
+`LinearMap.ker (D.dV p q)`: in row `q' + 1` the cocycles that lie in the image of
+`D.dV p q'`, and `⊥` in row `0`, which no vertical differential enters. -/
 def colB (p : ℕ) : (q : ℕ) → Submodule R (LinearMap.ker (D.dV p q))
   | 0 => ⊥
   | q' + 1 => (LinearMap.range (D.dV p q')).comap (LinearMap.ker (D.dV p (q' + 1))).subtype
 
+/-- The cohomology of column `p` in row `q`: the vertical cocycles `LinearMap.ker (D.dV p q)`
+modulo the vertical coboundaries `colB D p q`. -/
 abbrev colH (p q : ℕ) : Type u :=
   LinearMap.ker (D.dV p q) ⧸ colB D p q
 
+/-- The map `colH D p q →ₗ[R] colH D (p + 1) q` induced by the horizontal differential
+`D.dH p q`, which maps vertical cocycles to vertical cocycles and vertical coboundaries to
+vertical coboundaries because the two differentials commute. -/
 def colHdH (p q : ℕ) :
     colH D p q →ₗ[R] colH D (p + 1) q :=
   Submodule.mapQ _ _
@@ -185,18 +123,26 @@ def colHdH (p q : ℕ) :
       · simp only [colB]; exact bot_le
       · rintro x ⟨y, hy⟩
         exact ⟨D.dH p q' y, by
-          show D.dV (p + 1) q' (D.dH p q' y) = D.dH p (q' + 1) x.1
+          change D.dV (p + 1) q' (D.dH p q' y) = D.dH p (q' + 1) x.1
           rw [← LinearMap.comp_apply, D.dHV_comm, LinearMap.comp_apply, hy]; rfl⟩)
 
+/-- The coboundaries for `colHdH` at bidegree `(p, q)`, as a submodule of
+`LinearMap.ker (colHdH D p q)`: in column `p' + 1` the elements of that kernel that lie in the
+image of `colHdH D p' q`, and `⊥` in column `0`. -/
 def E₂IB :
     (p q : ℕ) → Submodule R (LinearMap.ker (colHdH D p q))
   | 0, _ => ⊥
   | p' + 1, q => (LinearMap.range (colHdH D p' q)).comap
       (LinearMap.ker (colHdH D (p' + 1) q)).subtype
 
+/-- The `E₂` term at bidegree `(p, q)` that takes vertical cohomology first and horizontal
+cohomology second: the kernel of `colHdH D p q` modulo `E₂IB D p q`, which is the cohomology
+of `colHdH` at `colH D p q`. -/
 abbrev E₂I (p q : ℕ) : Type u :=
   LinearMap.ker (colHdH D p q) ⧸ E₂IB D p q
 
+/-- The transpose of `D`: `(transpose D).C a b = D.C b a`, with the horizontal and vertical
+differentials exchanged and the same bound `D.N`. -/
 def transpose : Bounded R where
   C a b := D.C b a
   dH a b := D.dV b a
@@ -207,6 +153,9 @@ def transpose : Bounded R where
   N := D.N
   hBound a b h := D.hBound b a h.symm
 
+/-- The `E₂` term at bidegree `(p, q)` of `D` that takes horizontal cohomology first and
+vertical cohomology second, defined as `E₂I (transpose D) q p`: the rows of `D` are the columns
+of `transpose D`. -/
 abbrev E₂II (p q : ℕ) : Type u :=
   E₂I (transpose D) q p
 
@@ -235,7 +184,6 @@ private theorem neg_one_pow_smul_neg_one_pow_smul {M : Type u} [AddCommGroup M] 
   rw [smul_smul, ← pow_add, ← two_mul, pow_mul, neg_one_sq, one_pow, one_smul]
 
 open Classical in
-
 private theorem dTot_single_vert {n k q' : ℕ} (hk : k + q' = n) (w : D.C k q')
     (h : k + (q' + 1) = n + 1) :
     dTot D n (Pi.single (⟨(k, q'), hk⟩ : Diag n) w) ⟨(k, q' + 1), h⟩
@@ -257,7 +205,6 @@ private theorem dTot_single_vert {n k q' : ℕ} (hk : k + q' = n) (w : D.C k q')
     rw [h1, h2, map_zero, zero_add]
 
 open Classical in
-
 private theorem dTot_single_eq_zero {n k q' : ℕ} (hk : k + q' = n) (w : D.C k q') (j : Diag (n + 1))
     (hj : j.1.1 ≤ k) (hj' : ¬ (j.1.1 = k ∧ j.1.2 = q' + 1)) :
     dTot D n (Pi.single (⟨(k, q'), hk⟩ : Diag n) w) j = 0 := by
@@ -293,7 +240,6 @@ private theorem dTot_single_eq_zero {n k q' : ℕ} (hk : k + q' = n) (w : D.C k 
     rw [e1, e2, map_zero, map_zero, smul_zero, add_zero]
 
 open Classical in
-
 private theorem stair (n : ℕ)
     (hcol0 : ∀ (p : ℕ) (z : D.C p 0), D.dV p 0 z = 0 → z = 0)
     (hcolS : ∀ (p q' : ℕ) (z : D.C p (q' + 1)), D.dV p (q' + 1) z = 0 → ∃ y, D.dV p q' y = z)
@@ -339,8 +285,13 @@ private theorem stair (n : ℕ)
           Subtype.ext (Prod.ext heq (by have h2 := i.2; dsimp only at h2 heq ⊢; omega))
         rw [hi2, dTot_single_vert D, map_zsmul, neg_one_pow_smul_neg_one_pow_smul, hy, sub_self]
 
-/-- If every column cohomology group of a bounded double complex vanishes
-(as a subsingleton), then every total cohomology group vanishes. -/
+/-- **Acyclic assembly for bounded double complexes.** If every column cohomology group
+`colH D p q` of a bounded first-quadrant double complex vanishes (as a subsingleton), then
+every total cohomology group `HTot D n` vanishes. In row `0` the hypothesis says that each
+`D.dV p 0` is injective, and in degree `0` the conclusion says that `dTot D 0` is injective.
+The bound `D.N` plays no role: each antidiagonal `p + q = n` is finite, so the same holds for
+every first-quadrant double complex. This is a case of the acyclic assembly lemma (Weibel,
+*An Introduction to Homological Algebra*, Lemma 2.7.3). -/
 theorem subsingleton_HTot_of_forall_subsingleton_colH
     (h : ∀ p q : ℕ, Subsingleton (colH D p q)) (n : ℕ) :
     Subsingleton (HTot D n) := by
@@ -365,7 +316,7 @@ theorem subsingleton_HTot_of_forall_subsingleton_colH
     change (⟨c, hc⟩ : LinearMap.ker (dTot D 0)) ∈ (⊥ : Submodule R _)
     rw [Submodule.mem_bot]
     apply Subtype.ext
-    show c = 0
+    change c = 0
     funext i
     obtain ⟨⟨p, q⟩, hpq⟩ := i
     have hp : p = 0 := by simp only at hpq; omega
@@ -380,7 +331,7 @@ theorem subsingleton_HTot_of_forall_subsingleton_colH
       (LinearMap.range (dTot D n)).comap (LinearMap.ker (dTot D (n + 1))).subtype
     rw [Submodule.mem_comap, LinearMap.mem_range]
     refine ⟨b, ?_⟩
-    show dTot D n b = c
+    change dTot D n b = c
     have e : c - dTot D n b = 0 := funext fun i => hb i (by have := i.2; omega)
     exact (sub_eq_zero.1 e).symm
 
