@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliThreeTerm
-public import Mathlib.NumberTheory.Harmonic.Defs
+public import MathlibExt.NumberTheory.ModifiedDegenerateBernoulliMiki
 public import Mathlib.RingTheory.Binomial
 
 /-!
@@ -55,33 +55,6 @@ public theorem_wanted modifiedDegenerateBernoulli_symmetric_identity (m n : ℕ)
         Ring.choose ((n : ℂ) - ∑ j, r j) (k i) * modifiedDegenerateBernoulli lam (k i) (1 - x i) *
           ∏ j ∈ univ.erase i, Ring.choose (r j) (k j) *
             modifiedDegenerateBernoulli lam (k j) (x j - x i + if i < j then 1 else 0)
-
-/-- **Miki-type identity for modified degenerate Bernoulli numbers.** Let $n \ge 4$, let $\lambda$
-be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, write
-$\mathfrak{B}_{k,\lambda} = \mathfrak{B}_{k,\lambda}(0)$ for the value at $0$ of the modified
-degenerate Bernoulli polynomial $\mathfrak{B}_{k,\lambda}(x)$, and let $H_n = \sum_{k=1}^{n} 1/k$
-be the $n$-th harmonic number. Then
-
-$$
-\sum_{k=1}^{n-1} \frac{\mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda}}{k} -
-\sum_{k=1}^{n-1} \binom{n}{k} \frac{\mathfrak{B}_{k,\lambda} \mathfrak{B}_{n-k,\lambda}}{k} =
-\frac{\lambda}{\log(1+\lambda)}\, H_n\, \mathfrak{B}_{n,\lambda} +
-\frac{n}{2}\, \mathfrak{B}_{n-1,\lambda},
-$$
-
-where $\log$ is the principal branch.
-
-Source: Qi-Peng Su and Hao Pan, *Symmetric Identities on Modified Degenerate Bernoulli
-Polynomials*, Journal of Integer Sequences 27 (2024), Article 24.5.4, Corollary 2, equation
-(mikiD) (`jis-2024-24.5.4-cor-2`). -/
-public theorem_wanted modifiedDegenerateBernoulli_miki (n : ℕ) (hn : 4 ≤ n) (lam : ℂ)
-    (hlam : lam ≠ 0) (hlam1 : lam ≠ -1) :
-    ∑ k ∈ Icc 1 (n - 1), modifiedDegenerateBernoulli lam k 0 / k *
-        modifiedDegenerateBernoulli lam (n - k) 0 -
-      ∑ k ∈ Icc 1 (n - 1), (n.choose k : ℂ) * modifiedDegenerateBernoulli lam k 0 / k *
-        modifiedDegenerateBernoulli lam (n - k) 0 =
-      lam / Complex.log (1 + lam) * (harmonic n : ℂ) * modifiedDegenerateBernoulli lam n 0 +
-        n / 2 * modifiedDegenerateBernoulli lam (n - 1) 0
 
 /-- **A convolution lemma for modified degenerate Bernoulli polynomials.** Let $m \ge 2$, let
 $\lambda$ be a complex number with $\lambda \ne 0$ and $\lambda \ne -1$, let $s_1, \ldots, s_m$ be

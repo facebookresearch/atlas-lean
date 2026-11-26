@@ -38,15 +38,17 @@ import Mathlib.LinearAlgebra.Countable
 
 For a number field `F`, the box `NumberField.AdelicBox.adelicBox F` is a fundamental domain for
 the translation action of the principal adeles `F ⊆ 𝔸_F`. This file records the unfolding
-identities: summing the integrals over the box of all rational translates of a function recovers
+identities for a translation-invariant measure `μ` on `𝔸_F`, for instance an additive Haar
+measure: summing the integrals over the box of all rational translates of a function recovers
 its integral over the adeles, and for an integrable function the periodized function
 `t ↦ ∑' ξ : F, Φ (t + ξ)` is integrable on the box with the same integral.
 
 ## Main statements
 
-* `NumberField.AdelicPeriodization.tsum_lintegral_adelicBox_comp_add`
-* `NumberField.AdelicPeriodization.tsum_integral_adelicBox_comp_add`
-* `NumberField.AdelicPeriodization.integrableOn_and_setIntegral_tsum_translate`
+* `NumberField.AdelicPeriodization.tsum_setLIntegral_adelicBox_comp_add`
+* `NumberField.AdelicPeriodization.tsum_setIntegral_adelicBox_comp_add`
+* `NumberField.AdelicPeriodization.integrableOn_adelicBox_tsum_comp_add`
+* `NumberField.AdelicPeriodization.setIntegral_adelicBox_tsum_comp_add`
 -/
 
 @[expose] public section
@@ -66,19 +68,12 @@ variable (F : Type*) [Field F] [NumberField F]
 local notation "𝔸" => AdeleRing (𝓞 F) F
 local notation "ι" => algebraMap F (AdeleRing (𝓞 F) F)
 
-/-- The adele ring of a number field is nontrivial. -/
-instance nontrivial_adeleRing : Nontrivial 𝔸 := by
-  have : Inhabited (InfinitePlace F) := Classical.inhabited_of_nonempty inferInstance
-  have : Nontrivial (InfiniteAdeleRing F) :=
-    inferInstanceAs (Nontrivial ((w : InfinitePlace F) → w.Completion))
-  exact inferInstanceAs
-    (Nontrivial (InfiniteAdeleRing F × IsDedekindDomain.FiniteAdeleRing (𝓞 F) F))
-
-/-- The identification of the number field with the principal subgroup of the
-adele ring. -/
+/-- **The number field as the principal adeles.** For a number field `F`, the identification of
+`F` with the principal subgroup of its adele ring `𝔸_F`, sending `k` to the principal adele
+`k`. -/
 def principalEquiv : F ≃ AdeleRing.principalSubgroup (𝓞 F) F :=
   Equiv.ofBijective (fun k => ⟨ι k, k, rfl⟩)
-    ⟨fun a b h => (algebraMap F 𝔸).injective (congrArg Subtype.val h), by
+    ⟨fun _ _ h => AdeleRing.algebraMap_injective (𝓞 F) F (congrArg Subtype.val h), by
       rintro ⟨_, k, rfl⟩; exact ⟨k, rfl⟩⟩
 
 @[simp]
@@ -89,54 +84,51 @@ private theorem countable_principalSubgroup :
   have : Countable F := Countable.of_moduleFinite (R := ℚ)
   exact (principalEquiv F).symm.injective.countable
 
-/-- Unfolding for nonnegative functions: the sum over rational translates of the
-lower integrals over the adelic box is the lower integral over the adeles. -/
-theorem tsum_lintegral_adelicBox_comp_add (μ : Measure 𝔸) [μ.IsAddHaarMeasure]
+/-- **Unfolding over the adelic box, nonnegative functions.** Let `F` be a number field and `μ`
+a translation-invariant measure on its adele ring `𝔸_F`. For every `f : 𝔸_F → ℝ≥0∞`, the sum
+over `ξ ∈ F` of the lower Lebesgue integrals of `t ↦ f (t + ξ)` over the adelic box
+`adelicBox F` is the lower Lebesgue integral of `f` over `𝔸_F`. -/
+theorem tsum_setLIntegral_adelicBox_comp_add (μ : Measure 𝔸) [μ.IsAddLeftInvariant]
     (f : 𝔸 → ℝ≥0∞) :
     ∑' ξ : F, ∫⁻ t in adelicBox F, f (t + ι ξ) ∂μ = ∫⁻ t, f t ∂μ := by
   have := countable_principalSubgroup F
   rw [(isAddFundamentalDomain_adelicBox F μ).lintegral_eq_tsum'' f,
     ← (principalEquiv F).tsum_eq]
   refine tsum_congr fun ξ => lintegral_congr fun t => ?_
-  show f (t + ι ξ) = f (ι ξ + t)
+  change f (t + ι ξ) = f (ι ξ + t)
   rw [add_comm]
 
-/-- Unfolding for integrable functions: the sum over rational translates of the
-integrals over the adelic box is the integral over the adeles. -/
-theorem tsum_integral_adelicBox_comp_add (μ : Measure 𝔸) [μ.IsAddHaarMeasure]
+/-- **Unfolding over the adelic box, integrable functions.** Let `F` be a number field and `μ` a
+translation-invariant measure on its adele ring `𝔸_F`. For an integrable `Φ : 𝔸_F → ℂ`, the sum
+over `ξ ∈ F` of the integrals of `t ↦ Φ (t + ξ)` over the adelic box `adelicBox F` is the
+integral of `Φ` over `𝔸_F`. -/
+theorem tsum_setIntegral_adelicBox_comp_add (μ : Measure 𝔸) [μ.IsAddLeftInvariant]
     {Φ : 𝔸 → ℂ} (hΦ : Integrable Φ μ) :
     ∑' ξ : F, ∫ t in adelicBox F, Φ (t + ι ξ) ∂μ = ∫ t, Φ t ∂μ := by
   have := countable_principalSubgroup F
   rw [(isAddFundamentalDomain_adelicBox F μ).integral_eq_tsum'' Φ hΦ,
     ← (principalEquiv F).tsum_eq]
   refine tsum_congr fun ξ => integral_congr_ae (Eventually.of_forall fun t => ?_)
-  show Φ (t + ι ξ) = Φ (ι ξ + t)
+  change Φ (t + ι ξ) = Φ (ι ξ + t)
   rw [add_comm]
 
-/-- Periodization over the adelic fundamental box commutes with integration:
-for an integrable function on the adeles, the periodized sum over rational
-translates is integrable on the box, and its integral over the box equals the
-global integral. -/
-theorem integrableOn_and_setIntegral_tsum_translate (μ : Measure 𝔸) [μ.IsAddHaarMeasure]
-    {Φ : 𝔸 → ℂ}
-    (hΦ : Integrable Φ μ) :
-    IntegrableOn (fun t => ∑' ξ : F, Φ (t + ι ξ)) (adelicBox F) μ ∧
-      ∫ t in adelicBox F, (∑' ξ : F, Φ (t + ι ξ)) ∂μ = ∫ t, Φ t ∂μ := by
-  have := countable_principalSubgroup F
+/-- **The periodization is integrable on the adelic box.** Let `F` be a number field and `μ` a
+translation-invariant measure on its adele ring `𝔸_F`. For an integrable `Φ : 𝔸_F → ℂ`, the
+periodized function `t ↦ ∑' ξ : F, Φ (t + ξ)` is integrable on the adelic box `adelicBox F`. -/
+theorem integrableOn_adelicBox_tsum_comp_add (μ : Measure 𝔸) [μ.IsAddLeftInvariant]
+    {Φ : 𝔸 → ℂ} (hΦ : Integrable Φ μ) :
+    IntegrableOn (fun t => ∑' ξ : F, Φ (t + ι ξ)) (adelicBox F) μ := by
   have : Countable F := Countable.of_moduleFinite (R := ℚ)
   set ν : Measure 𝔸 := μ.restrict (adelicBox F) with hν
-  have hT : ∀ ξ : F, Integrable (fun t => Φ (t + ι ξ)) μ :=
-    fun ξ => hΦ.comp_add_right (ι ξ)
   have hmeas : ∀ ξ : F, AEStronglyMeasurable (fun t => Φ (t + ι ξ)) ν :=
-    fun ξ => (hT ξ).aestronglyMeasurable.restrict
+    fun ξ => (hΦ.comp_add_right (ι ξ)).aestronglyMeasurable.restrict
   have hgmeas : AEMeasurable (fun t => ∑' ξ : F, ‖Φ (t + ι ξ)‖ₑ) ν := by
     simp_rw [tsum_eq_iSup_sum]
     exact AEMeasurable.iSup fun s =>
       Finset.aemeasurable_fun_sum s fun ξ _ => (hmeas ξ).eNorm
-  have hsum : ∑' ξ : F, ∫⁻ t, ‖Φ (t + ι ξ)‖ₑ ∂ν = ∫⁻ t, ‖Φ t‖ₑ ∂μ := by
-    rw [hν, tsum_lintegral_adelicBox_comp_add F μ (fun t => ‖Φ t‖ₑ)]
   have hglint : ∫⁻ t, (∑' ξ : F, ‖Φ (t + ι ξ)‖ₑ) ∂ν < ∞ := by
-    rw [lintegral_tsum fun ξ => (hmeas ξ).eNorm, hsum]
+    rw [lintegral_tsum fun ξ => (hmeas ξ).eNorm, hν,
+      tsum_setLIntegral_adelicBox_comp_add F μ (fun t => ‖Φ t‖ₑ)]
     exact hΦ.2
   have hgint : Integrable (fun t => ∑' ξ : F, ‖Φ (t + ι ξ)‖ₑ) ν :=
     ⟨hgmeas.aestronglyMeasurable, by
@@ -153,12 +145,23 @@ theorem integrableOn_and_setIntegral_tsum_translate (μ : Measure 𝔸) [μ.IsAd
     aestronglyMeasurable_of_tendsto_ae (atTop : Filter (Finset F))
       (f := fun s : Finset F => fun t => ∑ ξ ∈ s, Φ (t + ι ξ))
       (fun s => Finset.aestronglyMeasurable_fun_sum s fun ξ _ => hmeas ξ) hae
-  refine ⟨hgint.mono'_eNorm hPmeas
-    (Eventually.of_forall fun t => eNorm_tsum_le_tsum_eNorm), ?_⟩
-  have hfin : ∑' ξ : F, ∫⁻ t, ‖Φ (t + ι ξ)‖ₑ ∂ν ≠ ∞ := by
-    rw [hsum]; exact hΦ.2.ne
-  show ∫ t, (∑' ξ : F, Φ (t + ι ξ)) ∂ν = ∫ t, Φ t ∂μ
-  rw [integral_tsum hmeas hfin, hν, tsum_integral_adelicBox_comp_add F μ hΦ]
+  exact hgint.mono'_eNorm hPmeas (Eventually.of_forall fun t => eNorm_tsum_le_tsum_eNorm)
+
+/-- **Periodization over the adelic box commutes with integration.** Let `F` be a number field
+and `μ` a translation-invariant measure on its adele ring `𝔸_F`. For an integrable
+`Φ : 𝔸_F → ℂ`, the integral over the adelic box `adelicBox F` of the periodized function
+`t ↦ ∑' ξ : F, Φ (t + ξ)` is the integral of `Φ` over `𝔸_F`. -/
+theorem setIntegral_adelicBox_tsum_comp_add (μ : Measure 𝔸) [μ.IsAddLeftInvariant]
+    {Φ : 𝔸 → ℂ} (hΦ : Integrable Φ μ) :
+    ∫ t in adelicBox F, (∑' ξ : F, Φ (t + ι ξ)) ∂μ = ∫ t, Φ t ∂μ := by
+  have : Countable F := Countable.of_moduleFinite (R := ℚ)
+  have hmeas : ∀ ξ : F,
+      AEStronglyMeasurable (fun t => Φ (t + ι ξ)) (μ.restrict (adelicBox F)) :=
+    fun ξ => (hΦ.comp_add_right (ι ξ)).aestronglyMeasurable.restrict
+  have hfin : ∑' ξ : F, ∫⁻ t in adelicBox F, ‖Φ (t + ι ξ)‖ₑ ∂μ ≠ ∞ := by
+    rw [tsum_setLIntegral_adelicBox_comp_add F μ (fun t => ‖Φ t‖ₑ)]
+    exact hΦ.2.ne
+  rw [integral_tsum hmeas hfin, tsum_setIntegral_adelicBox_comp_add F μ hΦ]
 
 end NumberField.AdelicPeriodization
 
