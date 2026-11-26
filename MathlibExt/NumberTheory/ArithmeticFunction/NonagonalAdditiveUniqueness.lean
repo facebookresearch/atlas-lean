@@ -24,6 +24,11 @@ nonagonal numbers fixes every natural number. Two decompositions each of 90 and 
 initial values. Equal sums of nonagonal numbers then determine the function on all nonagonal
 numbers by induction on the absolute value of the shifted index `14m - 5`. Representations of
 coprime multiples of prime powers as such sums extend the identity to all natural numbers.
+
+## References
+
+* Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
+  Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Lemma 1 and Theorems 1 and 5.
 -/
 
 namespace MetaMathlibExt
@@ -405,5 +410,25 @@ public theorem multiplicative_nonagonal_additive_eq_id
     | one => simpa using hf.map_one
     | coprime a b ha hb hc _ _ =>
       rw [hf.map_mul_of_coprime hc, ih a (by nlinarith), ih b (by nlinarith), Nat.cast_mul]
+
+-- The induction hypothesis is retained to match Theorem 5, though Theorem 1 suffices.
+set_option linter.unusedVariables false in
+/-- **Nonagonal additive uniqueness: the step at powers of 2.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Let $r$ be a natural number. If $f(n) = n$
+for every natural number $n < 2^r$, then $f(2^r) = 2^r$.
+
+Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
+Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 5
+(`integers-2025-A99-thm-5`). -/
+public theorem multiplicative_nonagonal_additive_two_pow
+    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, 0 < a → 0 < b →
+      (∃ m : ℤ, 2 * (a : ℤ) = m * (7 * m - 5)) → (∃ m : ℤ, 2 * (b : ℤ) = m * (7 * m - 5)) →
+        f (a + b) = f a + f b) (r : ℕ)
+    (hind : ∀ n : ℕ, n < 2 ^ r → f n = n) :
+    f (2 ^ r) = (2 ^ r : ℕ) :=
+  multiplicative_nonagonal_additive_eq_id f hf hadd (2 ^ r)
 
 end MetaMathlibExt
