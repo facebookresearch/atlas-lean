@@ -41,18 +41,13 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
+public import MathlibExt.NumberTheory.FkPerfect
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
-$\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
-divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) = n^k + d^k + \ell n$. -/
-def IsKLNearPerfect (k l n : ℕ) : Prop :=
-  ∃ d, KLNearPerfectWith k l n d
 
 /-- **Deficient $F_k$-perfect numbers.** For natural numbers $k$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is deficient $F_k$-perfect when it is
@@ -69,20 +64,6 @@ $\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divis
 No condition $k > 1$ is imposed here; the results that need it assume it. -/
 def IsNearFkPerfect (k n : ℕ) : Prop :=
   IsKLNearPerfect k 3 n
-
-/-- **Deficient $F$-perfect numbers.** For a natural number $n$, write
-$\sigma_2(n) = \sum_{e \mid n} e^2$. The number $n$ is deficient $F$-perfect when it is
-$[2,3]$-deficient-perfect, that is, when there is a divisor $d$ of $n$ with $d < n$ such that
-$\sigma_2(n) + d^2 = n^2 + 3n$. -/
-def IsDeficientFPerfect (n : ℕ) : Prop :=
-  IsKLDeficientPerfect 2 3 n
-
-/-- **Near $F$-perfect numbers.** A natural number $n$ is near $F$-perfect when it is
-$[2,3]$-near-perfect, that is, when some proper divisor $d$ of $n$ ($d \mid n$ and $d < n$)
-satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e^2$ is the sum
-of the squares of the divisors of $n$. -/
-def IsNearFPerfect (n : ℕ) : Prop :=
-  IsKLNearPerfect 2 3 n
 
 /-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
 $F$-perfect.
@@ -103,19 +84,6 @@ and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
 theorem_wanted not_isKLNearPerfect_of_prime (k l p : ℕ)
     (hl : 1 ≤ l) (hp : p.Prime) :
     ¬ IsKLNearPerfect k l p
-
-/-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
-every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
-$F$-perfect: there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) + d^2 = n^2 + 3n$, and
-no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the
-sum of the squares of the divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 1. -/
-theorem_wanted prime_pow_not_fPerfect (p a : ℕ)
-    (hp : p.Prime) :
-    ¬ IsDeficientFPerfect (p ^ a) ∧ ¬ IsNearFPerfect (p ^ a)
 
 /-- **Prime powers that are $[2,\ell]$-near-perfect.** Let $p$ be a prime, let $a$, $\ell$ and
 $d$ be natural numbers with $\ell \ge 1$, and write $\sigma_2(m)$ for the sum of the squares of
