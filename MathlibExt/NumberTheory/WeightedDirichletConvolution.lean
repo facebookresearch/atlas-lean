@@ -309,7 +309,8 @@ $$
 \sum_{1 \le j \le x/r} (u * v)(rj) =
 \sum_{d \mid r} u(d)\, v(r/d) \sum_{m \mid d} \mu(m)\, v(m)\, D\left(\frac{x}{mr}\right),
 $$
-where $d$ and $m$ run over positive divisors and $x/0 = 0$, so both sides vanish for $r = 0$.
+For $r>0$, the divisor sums run over positive divisors. For $r=0$, the outer divisor sum is
+empty by convention, and the left sum is empty because $x/0=0$.
 
 Both sides also vanish for $x < 1$; the source assumes $r \ge 1$ and $x \ge 1$.
 
