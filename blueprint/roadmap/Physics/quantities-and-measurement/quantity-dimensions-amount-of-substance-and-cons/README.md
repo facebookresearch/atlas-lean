@@ -34,8 +34,6 @@
 ## The constants bridge between counts and amounts
 
 - [Dimension of a dimensioned quantity](dim-of.md)
-- [Inverse amount times energy is molar energy](inv-amount-dim-mul-energy-dim.md)
-- [Avogadro times Boltzmann dimension is the gas constant dimension](inv-amount-dim-mul-energy-dim-div-temper.md)
 - [Dimension of the Avogadro constant](avogadro-dim.md)
 - [Dimension of the Boltzmann constant](boltzmann-dim.md)
 - [Amount of substance of a particle count](amount-of-count.md)

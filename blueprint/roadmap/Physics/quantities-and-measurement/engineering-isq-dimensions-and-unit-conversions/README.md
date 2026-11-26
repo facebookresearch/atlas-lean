@@ -52,13 +52,11 @@
 
 ## Dimension identities of the three formulas
 
-- [Force over area has the dimension of stress](force-dim-mul-inv-area.md)
 - [Torque times angular velocity has the dimension of power](torque-mul-angular-velocity.md)
 - [Density times velocity times area is mass flow rate](density-mul-velocity-mul-area.md)
 
 ## Rescaling of the three formulas
 
-- [Stress factor is the force factor over the area factor](dim-scale-force-dim-mul-inv-area.md)
 - [Power factor is the torque factor times the angular velocity factor](dim-scale-torque-mul-angular-velocity.md)
 - [Mass flow factor is the product of density, velocity and area factors](dim-scale-density-mul-velocity-mul-area.md)
 
