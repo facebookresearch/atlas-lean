@@ -8,7 +8,7 @@
 
 - [Homothety](homothety.md)
 - [Teichmüller action](teichmuller-act.md)
-- [Piece after `m + 1` shifts](pi-index.md)
+- [Index after `m + 1` shifts](pi-index.md)
 - [Homogeneous `V`-basis](is-homogeneous-vbasis.md)
 - [`V`-adic completeness](is-vadically-complete.md)
 - [Special Cartier module](is-special-cartier-module.md)

@@ -1,4 +1,4 @@
-# Piece after `m + 1` shifts
+# Index after `m + 1` shifts
 
-The graded piece reached from piece `i`
-after `m + 1` shifts: `(m + i + 1) mod 2`.
+The index `(m + i + 1) mod 2` of the graded
+piece reached from piece `i` after `m + 1` shifts.
