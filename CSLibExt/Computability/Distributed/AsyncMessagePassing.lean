@@ -46,7 +46,8 @@ with lossy channels.
 
 ## References
 
-* J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235, Chapter 2.
+* J. Aspnes, *Notes on Theory of Distributed Systems*, arXiv:2001.04235v6, Chapter 2,
+  Sections 2.1 and 2.2.
 * S. Gilbert and N. Lynch, *Brewer's conjecture and the feasibility of consistent, available,
   partition-tolerant web services*, ACM SIGACT News 33(2), 2002, Sections 2.3 and 3.1.
 -/
@@ -59,10 +60,9 @@ open Filter
 
 variable {P Q M : Type*}
 
-/-- **Configurations of an asynchronous message-passing system.** A configuration of processes
-`P` with states in `Q`, exchanging messages in `M`, gives the state `state i` of every process `i`
-and, for every ordered pair of processes `i, j`, the channel `chan i j`: the multiset of messages
-sent from `i` to `j` and not yet delivered. -/
+-- A configuration of processes `P` with states in `Q`, exchanging messages in `M`, gives the
+-- state `state i` of every process `i` and, for every ordered pair of processes `i, j`, the
+-- channel `chan i j`: the multiset of messages sent from `i` to `j` and not yet delivered.
 @[ext]
 structure Config (P Q M : Type*) where
   /-- The state of each process. -/
@@ -70,10 +70,9 @@ structure Config (P Q M : Type*) where
   /-- `chan i j` is the multiset of messages in transit from `i` to `j`. -/
   chan : P → P → Multiset M
 
-/-- **Events of an asynchronous message-passing system.** In an event, the process `proc`
-receives the multiset `delivered` of messages, each paired with its sender, and takes a step. It is
-a delivery event if it delivers at least one message, and a computation event if `delivered`
-is empty. -/
+-- In an event, the process `proc` receives the multiset `delivered` of messages, each paired
+-- with its sender, and takes a step. It is a delivery event if it delivers at least one message,
+-- and a computation event if `delivered` is empty.
 @[ext]
 structure Event (P M : Type*) where
   /-- The process that takes the step. -/
@@ -94,8 +93,8 @@ structure Protocol (G : Digraph P) (Q M : Type*) where
   /-- Every message is sent to an out-neighbour of its sender. -/
   adj_of_mem_trans : ∀ i q A x, x ∈ (trans i q A).2 → G.Adj i x.1
 
-theorem count_map_snd_filter_fst [DecidableEq P] [DecidableEq M] (A : Multiset (P × M)) (i : P)
-    (m : M) : ((A.filter (·.1 = i)).map Prod.snd).count m = A.count (i, m) := by
+private theorem count_map_snd_filter_fst [DecidableEq P] [DecidableEq M] (A : Multiset (P × M))
+    (i : P) (m : M) : ((A.filter (·.1 = i)).map Prod.snd).count m = A.count (i, m) := by
   rw [Multiset.count_map, Multiset.filter_filter, Multiset.count_eq_card_filter_eq]
   congr 1
   refine Multiset.filter_congr fun x _ => ?_
@@ -105,11 +104,6 @@ theorem count_map_snd_filter_fst [DecidableEq P] [DecidableEq M] (A : Multiset (
     rfl
   · rintro ⟨⟩
     exact ⟨rfl, rfl⟩
-
-theorem mem_map_snd_filter_fst [DecidableEq P] {A : Multiset (P × M)} {i : P} {m : M} :
-    m ∈ (A.filter (·.1 = i)).map Prod.snd ↔ (i, m) ∈ A := by
-  classical
-  rw [← Multiset.count_pos, count_map_snd_filter_fst, Multiset.count_pos]
 
 namespace Protocol
 
@@ -123,11 +117,11 @@ def IsInitial (π : Protocol G Q M) (C : Config P Q M) : Prop :=
 
 variable [DecidableEq P] [DecidableEq M]
 
-/-- **Applying an event to a configuration.** Let `e` be an event of process `p` delivering the
-multiset `A` of messages, each paired with its sender, in the configuration `C`, and let `(q, B)`
-be the value of the transition function of `p` at its state in `C` and `A`. The event removes from
-each channel `chan i p` the messages of `A` sent by `i`, sets the state of `p` to `q`, and adds to
-each channel `chan p j` the messages of `B` for `j`. -/
+-- Applying an event `e` of process `p`, delivering the multiset `A` of messages paired with their
+-- senders, to the configuration `C`: with `(q, B)` the value of the transition function of `p`
+-- at its state in `C` and `A`, the event removes from each channel `chan i p` the messages of `A`
+-- sent by `i`, sets the state of `p` to `q`, and adds to each channel `chan p j` the messages of
+-- `B` for `j`.
 def applyEvent (π : Protocol G Q M) (C : Config P Q M) (e : Event P M) : Config P Q M where
   state := Function.update C.state e.proc (π.trans e.proc (C.state e.proc) e.delivered).1
   chan i j :=
@@ -136,25 +130,33 @@ def applyEvent (π : Protocol G Q M) (C : Config P Q M) (e : Event P M) : Config
         ((π.trans e.proc (C.state e.proc) e.delivered).2.filter (·.1 = j)).map Prod.snd
       else 0
 
-/-- **The transition system of an asynchronous message-passing system.** An event `e` of process
-`p` takes the configuration `C` to `C'` if, for every process `i`, the messages it delivers from
-`i` form a sub-multiset of the channel `chan i p` of `C`, and `C'` is the result of applying `e`
-to `C`. -/
+-- The transition system of a protocol: an event `e` of process `p` takes the configuration `C` to
+-- `C'` if, for every process `i`, the messages it delivers from `i` form a sub-multiset of the
+-- channel `chan i p` of `C`, and `C'` is the result of applying `e` to `C`.
 def lts (π : Protocol G Q M) : LTS (Config P Q M) (Event P M) where
   Tr C e C' := (∀ i, (e.delivered.filter (·.1 = i)).map Prod.snd ≤ C.chan i e.proc) ∧
     C' = π.applyEvent C e
 
 /-- **Finite executions of an asynchronous message-passing system.** `π.IsExecution C₀ φs C Cs`
 says that the configurations `Cs = [C₀, C₁, …, Cₙ]`, with `Cₙ = C`, and the events
-`φs = [φ₁, …, φₙ]` form an execution of `π`: `C₀` is initial and each `Cₖ₊₁` results from
-applying `φₖ₊₁` to `Cₖ`, as a transition of `π.lts`. -/
+`φs = [φ₁, …, φₙ]` form an execution of `π`: `C₀` is initial, and each event `φₖ₊₁` can occur in
+`Cₖ` and `Cₖ₊₁` results from applying it, as a transition of `π.lts`. An event of process `p` can
+occur in a configuration if, for every process `i`, the messages it delivers from `i` are in the
+channel `chan i p`, with multiplicity. Applying it removes them from these channels, gives `p` the
+state its transition function assigns to its current state and the messages delivered, and adds
+each message that the transition function sends to the channel from `p` to its recipient. -/
 def IsExecution (π : Protocol G Q M) (C₀ : Config P Q M) (φs : List (Event P M))
     (C : Config P Q M) (Cs : List (Config P Q M)) : Prop :=
   π.IsInitial C₀ ∧ π.lts.Execution C₀ φs C Cs
 
 /-- **Infinite executions of an asynchronous message-passing system.** The configurations `Cs`
 and the events `φs` form an infinite execution of `π` if `Cs 0` is initial and, for every `n`, the
-event `φs n` takes `Cs n` to `Cs (n + 1)` as a transition of `π.lts`. -/
+event `φs n` can occur in `Cs n` and `Cs (n + 1)` results from applying it, as a transition of
+`π.lts`. An event of process `p` can occur in a configuration if, for every process `i`, the
+messages it delivers from `i` are in the channel `chan i p`, with multiplicity. Applying it removes
+them from these channels, gives `p` the state its transition function assigns to its current state
+and the messages delivered, and adds each message that the transition function sends to the
+channel from `p` to its recipient. -/
 def IsInfiniteExecution (π : Protocol G Q M) (Cs : ωSequence (Config P Q M))
     (φs : ωSequence (Event P M)) : Prop :=
   π.IsInitial (Cs 0) ∧ π.lts.OmegaExecution Cs φs
@@ -228,6 +230,13 @@ theorem IsExecution.chan_eq_zero_of_not_adj {π : Protocol G Q M} {C₀ C : Conf
   induction hex with
   | refl => exact hD
   | stepL htr _ ih => exact ih (chan_eq_zero_of_lts_tr htr hD)
+
+-- In an infinite execution, only the edges of the network carry messages.
+theorem IsInfiniteExecution.chan_eq_zero_of_not_adj {π : Protocol G Q M}
+    {Cs : ωSequence (Config P Q M)} {φs : ωSequence (Event P M)}
+    (h : π.IsInfiniteExecution Cs φs) (n : ℕ) {i j : P} (hij : ¬G.Adj i j) :
+    (Cs n).chan i j = 0 :=
+  IsExecution.chan_eq_zero_of_not_adj ⟨h.1, h.2.extract_execution (Nat.zero_le n)⟩ hij
 
 -- A message in a channel of an infinite execution stays there, unless it is delivered.
 theorem mem_chan_or_delivered {π : Protocol G Q M} {Cs : ωSequence (Config P Q M)}

@@ -230,6 +230,10 @@ theorem isLossyAdmissible_lossy : clientServer.IsLossyAdmissible lossyConfigs lo
     · exact ⟨2 * N, by omega, by simp [lossyEvents]⟩
     · exact ⟨2 * N + 1, by omega, by simp [lossyEvents, Nat.add_mod]⟩
 
+-- No configuration of an infinite execution has a message on a channel off the network.
+example (n : ℕ) : (lossyConfigs n).chan 1 1 = 0 :=
+  isLossyAdmissible_lossy.1.chan_eq_zero_of_not_adj n (by simp [net])
+
 theorem lossy_never_done (n : ℕ) : (lossyConfigs n).state 0 ≠ 2 := by
   change (if n = 0 then C₀ else C₁).state 0 ≠ 2
   split_ifs <;> decide
