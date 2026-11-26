@@ -160,4 +160,59 @@ private theorem t6_identity_values :
     rw [hfun]
     exact ciInf_const
 
+/-- The off-diagonal cost `1 / 2` on `Fin 2`: `0` on the diagonal and `1 / 2` off it. -/
+private noncomputable def dHalf : Fin 2 → Fin 2 → ℝ := fun x y => if x = y then 0 else 1 / 2
+
+/-- T7: the earthmover bound needs fairness for the cost on its right side. The identity
+classifier is individually fair for `d2` (T6), but for the opposite point masses its outcome
+distributions are `1` apart in total variation distance while their earthmover value for
+`dHalf` is `1 / 2`, so the bound fails for `dHalf` and the identity classifier is not
+individually fair with respect to `dHalf`. -/
+private theorem t7_bound_needs_same_cost :
+    earthmover dHalf delta0D delta1D = 1 / 2
+    ∧ ¬ tvDist
+        ((fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) ᵥ* Matrix.of idClassifier)
+        ((fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) ᵥ* Matrix.of idClassifier)
+      ≤ earthmover dHalf delta0D delta1D
+    ∧ ¬ IsLipschitzFair dHalf idClassifier := by
+  have hem : earthmover dHalf delta0D delta1D = 1 / 2 := by
+    have hcost : ∀ π : {π // IsCoupling delta0D.1 delta1D.1 π},
+        transportCost dHalf π.1 = 1 / 2 := by
+      intro π
+      obtain ⟨hnn, hrow, hcol⟩ := π.2
+      have r0 := hrow 0
+      have r1 := hrow 1
+      have c0 := hcol 0
+      have c1 := hcol 1
+      simp only [delta0D, delta1D, Fin.sum_univ_two] at r0 r1 c0 c1
+      norm_num at r0 r1 c0 c1
+      have n00 := hnn 0 0
+      have n01 := hnn 0 1
+      have n10 := hnn 1 0
+      have n11 := hnn 1 1
+      have h01 : π.1 0 1 = 1 := by linarith
+      have h00 : π.1 0 0 = 0 := by linarith
+      have h10 : π.1 1 0 = 0 := by linarith
+      have h11 : π.1 1 1 = 0 := by linarith
+      unfold transportCost
+      norm_num [Fin.sum_univ_two, dHalf, h00, h01, h10, h11]
+    unfold earthmover
+    have : Nonempty {π // IsCoupling delta0D.1 delta1D.1 π} :=
+      nonempty_couplingSubtype delta0D delta1D
+    have hfun : (fun π : {π // IsCoupling delta0D.1 delta1D.1 π} =>
+        transportCost dHalf π.1) = fun _ => (1 / 2 : ℝ) :=
+      funext hcost
+    rw [hfun]
+    exact ciInf_const
+  have htv := t6_identity_values.2.1
+  have hgap : ¬ tvDist
+      ((fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) ᵥ* Matrix.of idClassifier)
+      ((fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) ᵥ* Matrix.of idClassifier)
+      ≤ earthmover dHalf delta0D delta1D := by
+    rw [htv, hem]
+    norm_num
+  refine ⟨hem, hgap, fun h => ?_⟩
+  have h01 := h.2 0 1
+  norm_num [tvDist, idClassifier, dHalf, Fin.sum_univ_two] at h01
+
 end Cslib.MachineLearning.IndividualFairness
