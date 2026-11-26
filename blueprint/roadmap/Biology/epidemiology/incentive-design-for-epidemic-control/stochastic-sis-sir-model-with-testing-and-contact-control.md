@@ -3,6 +3,7 @@
 Fix a horizon $T > 0$, a birth rate $\lambda \ge 0$, a natural death rate $\mu \ge 0$, a disease death rate $\gamma \ge 0$, recovery rates $\nu \ge 0$ (back to susceptible) and $\rho \ge 0$ (to permanent immunity), and a volatility $\sigma > 0$. A government testing policy is a predictable process $\alpha_t$ with values in a set $A$ bounded and bounded below by some $\varepsilon > 0$; a population contact policy is a predictable process $\beta_t \in B = [0, \beta_{\max}]$. Under the measure $\mathbb P^{\alpha,\beta}$ with Brownian motion $W^\beta$, the susceptible and infected proportions satisfy
 
 $$dS_t = (\lambda - \mu S_t + \nu I_t - \beta_t\alpha_t S_t I_t)\,dt + \sigma\alpha_t S_t I_t\,dW^\beta_t,$$
+
 $$dI_t = \bigl(\beta_t\alpha_t S_t I_t - (\mu + \nu + \gamma + \rho) I_t\bigr)\,dt - \sigma\alpha_t S_t I_t\,dW^\beta_t, \tag{4.5}$$
 
 with $(S_0, I_0) = (s_0, i_0) \in (0, \infty)^2$. The case $\nu = 0$ is an SIR model, $\rho = 0$ an SIS model, and both positive give an SIR model with partial immunity (SISRS). The measure $\mathbb P^{\alpha,\beta}$ is obtained from the uncontrolled law $\mathbb P^\alpha$ (the same equations with $\beta = 0$ and Brownian motion $W$) by a Girsanov change of measure with a bounded kernel, chosen so that the noise term of $\mathbb P^\alpha$ produces the transmission drift $\mp\beta_t\alpha_t S_t I_t$.

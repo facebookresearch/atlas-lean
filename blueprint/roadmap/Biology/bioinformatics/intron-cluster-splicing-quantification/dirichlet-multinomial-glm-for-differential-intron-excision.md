@@ -1,9 +1,13 @@
 # Dirichlet-multinomial GLM for differential intron excision
 
 Fix an [intron cluster](intron-clusters-from-shared-splice-junctions.md) $C$ with $J \ge 2$ introns, intron counts $y_{ij}$ in sample $i$ with total $n_{iC} = \sum_{j} y_{ij}$, and a covariate row vector $x_i \in \mathbb{R}^P$. The **Dirichlet-multinomial GLM** is
+
 $$(y_{i1}, \dots, y_{iJ}) \mid n_{iC} \sim \mathcal{DM}\big(n_{iC};\ \alpha_1 p_{i1}, \dots, \alpha_J p_{iJ}\big), \qquad p_{ij} = \frac{\exp(x_i\beta_j + \mu_j)}{\sum_{j'}\exp(x_i\beta_{j'} + \mu_{j'})},$$
+
 with coefficient vectors $\beta_j \in \mathbb{R}^P$, intercepts $\mu_j$ and concentrations $\alpha_j > 0$, where for $a \in (0,\infty)^J$, $a_\cdot = \sum_j a_j$ and $y_\cdot = \sum_j y_j = n$,
+
 $$\mathcal{DM}(y \mid n, a) = \binom{n}{y_1, \dots, y_J}\frac{\Gamma(a_\cdot)}{\Gamma(a_\cdot + y_\cdot)}\prod_{j=1}^{J}\frac{\Gamma(a_j + y_j)}{\Gamma(a_j)} .$$
+
 Parameters are estimated by maximum likelihood with a weak $\mathrm{Gamma}(1 + 10^{-4}, 10^{-4})$ penalty on the concentrations.
 
 **Overdispersion.** If $a_j = \alpha_j p_j$ with all $\alpha_j \to \infty$ at fixed $p$, then $\mathcal{DM}(n, a) \to \mathrm{Multinomial}(n, p)$; smaller $\alpha_j$ give more overdispersion of intron usage across samples than binomial or multinomial sampling allows.

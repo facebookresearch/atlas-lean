@@ -1,6 +1,7 @@
 # Selection of the trait with the largest time-averaged growth rate
 
 Let $a(t,x)$ be $T$-periodic in $t$, bounded, and $C^3$ in $x \in \mathbb R^d$, with time average $\bar a(x) = \frac1T\int_0^T a(t,x)\,dt$ attaining its maximum at a unique point $x_m$ with $\bar a(x_m) > 0$, and let $0 \le n_0(x) \le e^{C_1 - C_2|x|}$. Consider
+
 $$\partial_t n - \sigma\Delta n = n\,[a(t,x) - \rho(t)], \qquad \rho(t) = \int_{\mathbb R^d} n(t,x)\,dx, \qquad n(0,\cdot) = n_0.$$
 
 **No mutation ($\sigma = 0$).** Assume further that the Hessian of $\bar a$ at $x_m$ is negative definite, that $a \le -\delta < 0$ for $|x| \ge R_0$, and that $n_0, a$ are bounded in $W^{3,\infty}$. Then $\|\rho(t) - \tilde\varrho(t)\|_{L^\infty} \to 0$, where $\tilde\varrho$ is the positive periodic solution of $\tilde\varrho' = \tilde\varrho\,(a(t,x_m) - \tilde\varrho)$, and $n(t,\cdot)/\rho(t) \rightharpoonup \delta_{x_m}$ weakly as measures. The trait with the largest *time-averaged* growth rate is selected, while the population size keeps oscillating.

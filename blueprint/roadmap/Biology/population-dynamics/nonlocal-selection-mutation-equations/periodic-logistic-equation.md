@@ -1,10 +1,13 @@
 # Periodic logistic equation
 
 Let $a:\mathbb R \to \mathbb R$ be continuous and $T$-periodic, with mean $\bar a = \frac1T\int_0^T a(s)\,ds$. Consider
+
 $$\frac{d\varrho}{dt} = \varrho(t)\bigl(a(t) - \varrho(t)\bigr).$$
 
 **Theorem.** If $\bar a > 0$, the equation has a unique positive $T$-periodic solution
+
 $$\tilde\varrho(t) = \frac{1 - \exp\!\left(-\int_0^T a(s)\,ds\right)}{\int_t^{t+T}\exp\!\left(-\int_s^{t+T} a(\theta)\,d\theta\right)ds},$$
+
 and every solution with $\varrho(0) > 0$ satisfies $|\varrho(t) - \tilde\varrho(t)| \to 0$ as $t\to\infty$. If $\bar a \le 0$, every non-negative solution tends to $0$. The time average of the periodic solution equals the mean growth rate: $\frac1T\int_0^T\tilde\varrho(t)\,dt = \bar a$.
 
 ## Depends on

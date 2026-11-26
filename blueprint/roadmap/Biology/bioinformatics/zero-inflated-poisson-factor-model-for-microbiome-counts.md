@@ -1,13 +1,21 @@
 # Zero-inflated Poisson factor model for microbiome read counts
 
 Let $A \in \mathbb N_0^{n \times m}$ hold read counts of $m$ taxa in $n$ samples, and let
+
 $$N_i = \frac{\sum_{j} A_{ij}}{\operatorname{median}_{i'} \sum_j A_{i'j}}$$
+
 be the relative library size of sample $i$. The **zero-inflated Poisson factor analysis (ZIPFA)** model of rank $K < \min(n, m)$ assumes independent entries with
+
 $$A_{ij} \sim \begin{cases} 0, & \text{with probability } p_{ij},\\ \mathrm{Poisson}(N_i \lambda_{ij}), & \text{with probability } 1 - p_{ij},\end{cases}$$
+
 $$\ln \lambda_{ij} = \sum_{k=1}^{K} u_{ik} v_{jk}, \qquad \operatorname{logit}(p_{ij}) = -\tau \ln \lambda_{ij}, \quad \tau > 0,$$
+
 so $\Lambda = (\ln\lambda_{ij}) = U V^{\top}$ with scores $U \in \mathbb R^{n \times K}$ and loadings $V \in \mathbb R^{m \times K}$. Equivalently $p_{ij} = 1/(1 + \lambda_{ij}^{\tau})$: the probability of a structural ("true") zero decreases as the normalized Poisson rate increases, with one shape parameter $\tau$ shared by all entries. The probability of observing a zero is
+
 $$\Pr(A_{ij} = 0) = p_{ij} + (1 - p_{ij})\, e^{-N_i \lambda_{ij}},$$
+
 and the likelihood is
+
 $$L(A) = \prod_{i,j} \left\{ p_{ij}\, \mathbf 1[a_{ij} = 0] + (1 - p_{ij})\, \frac{(N_i \lambda_{ij})^{a_{ij}} e^{-N_i \lambda_{ij}}}{a_{ij}!} \right\}.$$
 
 Parameters are fitted by alternating maximization: with $U$ fixed, $(V, \tau)$ solve a zero-inflated Poisson regression with offsets $\ln N_i$, fitted by an EM algorithm, and then the roles of $U$ and $V$ are swapped. Each step does not decrease $L(A)$, which is bounded by $1$, so the likelihood values converge. The rank $K$ is chosen by maximizing a cross-validated likelihood.

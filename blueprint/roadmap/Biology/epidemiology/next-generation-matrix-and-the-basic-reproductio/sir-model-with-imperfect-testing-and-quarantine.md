@@ -11,9 +11,13 @@ Q_R' &= \rho(1-\tau_A)R - \phi\sigma_B Q_R.
 \end{aligned}$$
 
 **Reproduction number.** With infected compartments $(I, Q_I)$, the next-generation matrices at a disease-free equilibrium are
+
 $$F = \begin{pmatrix}\beta & 0\\ 0 & 0\end{pmatrix}, \qquad V = \begin{pmatrix}\gamma + \rho\sigma_A & 0\\ -\rho\sigma_A & \gamma\end{pmatrix}, \qquad FV^{-1} = \begin{pmatrix}\dfrac{\beta}{\gamma + \rho\sigma_A} & 0\\ 0 & 0\end{pmatrix},$$
+
 so
+
 $$\mathcal R_0 = \frac{\beta}{\gamma + \rho\sigma_A}.$$
+
 Test sensitivity and testing rate lower $\mathcal R_0$ by shortening the infectious period outside quarantine; specificity and the antibody test do not enter $\mathcal R_0$, but they determine how many susceptible and recovered individuals sit in quarantine.
 
 ## Depends on

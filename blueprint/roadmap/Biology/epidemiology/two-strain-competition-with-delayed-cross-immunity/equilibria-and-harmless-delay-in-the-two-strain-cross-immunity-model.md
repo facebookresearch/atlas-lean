@@ -10,8 +10,11 @@ R_l' &= \gamma_1 I_1(t - \tau) - \beta_2 R_l I_2 - d R_l .
 Nonnegative initial data give nonnegative, bounded solutions.
 
 **Reproduction numbers and equilibria.** The next-generation method gives $R_i = a\beta_i/(d(d_i + \gamma_i))$, $i = 1, 2$. The equilibria are
+
 $$E_0 = \big(\tfrac ad, 0, 0, 0\big), \quad E_1 = \Big(\tfrac{\gamma_1 + d_1}{\beta_1}, \tfrac{d}{\beta_1}(R_1 - 1), 0, \tfrac{\gamma_1}{\beta_1}(R_1 - 1)\Big), \quad E_2 = \Big(\tfrac{\gamma_2 + d_2}{\beta_2}, 0, \tfrac{d}{\beta_2}(R_2 - 1), 0\Big),$$
+
 and a coexistence equilibrium $E_c$ with $S = (\gamma_1 + d_1)/\beta_1$. $E_0$ always exists, $E_i$ exists iff $R_i > 1$, and $E_c$ exists iff
+
 $$f(R_1) < R_2 < R_1 \quad\text{and}\quad R_2 < \frac{a\beta_1}{dd_1}, \qquad f(R_1) = \frac{a\beta_1}{d(\gamma_1 R_1 + d_1)} .$$
 
 **Local stability.**

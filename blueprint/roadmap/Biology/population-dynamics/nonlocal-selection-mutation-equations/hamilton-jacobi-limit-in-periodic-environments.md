@@ -1,16 +1,21 @@
 # Hamilton–Jacobi limit of periodic selection–mutation equations
 
 Under the assumptions of [selection of the time-averaged fittest trait](selection-of-the-time-averaged-fittest-trait.md) (periodic, bounded $a$; unique maximizer $x_m$ of $\bar a$ with $\bar a(x_m) > 0$; $a + \lambda \le -\delta$ at infinity), let $(n_\varepsilon, \rho_\varepsilon)$ be the unique positive $T$-periodic solution of
+
 $$\partial_t n_\varepsilon - \varepsilon^2\Delta n_\varepsilon = n_\varepsilon\,[a(t,x) - \rho_\varepsilon(t)], \qquad \rho_\varepsilon(t) = \int n_\varepsilon(t,x)\,dx,$$
+
 and write $n_\varepsilon = (2\pi\varepsilon)^{-d/2}\exp(u_\varepsilon/\varepsilon)$ (Hopf–Cole transformation).
 
 **Theorem.** As $\varepsilon \to 0$:
 1. $\|\rho_\varepsilon - \tilde\varrho\|_{L^\infty} \to 0$ and $n_\varepsilon(t,\cdot) - \tilde\varrho(t)\,\delta_{x_m} \rightharpoonup 0$ weakly as measures, pointwise in $t$, where $\tilde\varrho$ is the positive periodic solution of $\tilde\varrho' = \tilde\varrho\,(a(t,x_m) - \tilde\varrho)$;
 2. $u_\varepsilon \to u$ locally uniformly, where $u$ is time-independent and is the unique viscosity solution of the Hamilton–Jacobi equation with constraint
+
 $$-|\nabla u(x)|^2 = \frac1T\int_0^T\bigl(a(t,x) - \tilde\varrho(t)\bigr)\,dt = \bar a(x) - \bar\varrho, \qquad \max_{x}u(x) = u(x_m) = 0,$$
+
 with $\bar\varrho = \frac1T\int_0^T\tilde\varrho\,dt = \bar a(x_m)$.
 
 In dimension $d = 1$ the solution is classical:
+
 $$u(x) = -\left|\int_{x_m}^{x}\sqrt{\bar\varrho - \bar a(y)}\,dy\right|.$$
 
 ## Depends on
