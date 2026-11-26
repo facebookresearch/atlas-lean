@@ -10332,6 +10332,7 @@
   "Domains/Biology/StatisticalGenetics/FisherDecomposition": {"to": "Biology/quantitative-genetics", "title": "Fisher's decomposition of genetic variance"},
   "Domains/Biology/StatisticalGenetics/GeneConstraint": {"to": "Biology/statistical-genetics", "title": "Gene constraint scores (pLI and LOEUF)"},
   "Domains/Biology/StatisticalGenetics/GenomicPrediction": {"to": "Biology/statistical-genetics", "title": "Genomic prediction from summary statistics"},
+  "Domains/Biology/StatisticalGenetics/HendersonInverseInvEqSum": {"to": "Biology/quantitative-genetics", "title": "Henderson's rules for the inverse numerator relationship matrix"},
   "Domains/Biology/StatisticalGenetics/Kinship": {"to": "Biology/quantitative-genetics", "title": "Pedigree kinship and inbreeding"},
   "Domains/Biology/StatisticalGenetics/KinshipIBD": {"to": "Biology/quantitative-genetics", "title": "Gene dropping and identity by descent"},
   "Domains/Biology/StatisticalGenetics/LDOutlierTest": {"to": "Biology/statistical-genetics", "title": "Testing LD consistency of association statistics"},
