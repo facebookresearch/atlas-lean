@@ -86,6 +86,18 @@ example (k a : ℕ) (hk : 1 < k) : ¬ IsNearFkPerfect k (3 ^ a * 5) :=
   not_isNearFkPerfect_prime_pow_mul k 3 5 a hk (by decide) (by decide)
     (⟨1, rfl⟩ : Odd (3 : ℕ)) (⟨2, rfl⟩ : Odd (5 : ℕ)) (by decide)
 
+-- Primes are not `[k, ℓ]`-near-perfect for `1 ≤ ℓ`, at zero and positive exponents.
+example : ¬ IsKLNearPerfect 0 1 2 :=
+  not_isKLNearPerfect_of_prime 0 1 2 (by decide) (by decide)
+
+example : ¬ IsKLNearPerfect 2 3 5 :=
+  not_isKLNearPerfect_of_prime 2 3 5 (by decide) (by decide)
+
+-- At `ℓ = 0` every prime is `[k, 0]`-near-perfect with divisor `1`.
+example (k p : ℕ) (hp : p.Prime) : IsKLNearPerfect k 0 p := by
+  refine ⟨1, one_dvd p, hp.one_lt, ?_⟩
+  simp only [hp.sum_divisors, one_pow, zero_mul, add_zero]
+
 -- A concrete instance with a positive exponent.
 example : ¬ IsDeficientFkPerfect 2 (3 ^ 5 * 5) :=
   not_isDeficientFkPerfect_prime_pow_mul (k := 2) (p₁ := 3) (p₂ := 5) (a := 5)
