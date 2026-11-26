@@ -12034,6 +12034,7 @@
   "MathlibExt/Geometry/Euclidean/Varignon": {"to": "Geometry/euclidean-geometry/polygons", "title": "Varignon's theorem"},
   "MathlibExt/Geometry/Euclidean/Viviani": {"to": "Geometry/euclidean-geometry/triangle-geometry", "title": "Viviani's theorem"},
   "MathlibExt/Geometry/FalconerDistanceSet": {"to": "MeasureTheory/geometric-measure-theory", "title": "Falconer distance set problem"},
+  "MathlibExt/Geometry/FalconerDistanceSetLowerBound": {"to": "MeasureTheory/geometric-measure-theory", "title": "Falconer distance set problem"},
   "MathlibExt/Geometry/HippocratesLunes": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Lune of Hippocrates"},
   "MathlibExt/Geometry/HopfUmlaufsatz": {"to": "Geometry/curves-and-surfaces", "title": "Hopf's Umlaufsatz"},
   "MathlibExt/Geometry/GoodmanGoodman": {"to": "Geometry/packings-and-coverings", "title": "Goodman–Goodman circle covering theorem"},
