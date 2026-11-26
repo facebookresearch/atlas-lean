@@ -25,6 +25,9 @@ superadditive. After normalization by the string length, the expectations conver
 Chvátal–Sankoff constant. Two of the four one-bit pairs match, so superadditivity gives a lower
 bound of one half for the limit.
 
+V. Chvátal and D. Sankoff study this limit in *Longest common subsequences of two random
+sequences*, J. Appl. Probab. 12(2) (1975), 306–315.
+
 The catalogue bounds use the exact rational endpoints of the Optimization Problems entry
 `constants/31a.md` at revision `2c1968cd520b60f1cf3cf50749f7285e800e4e15`.
 -/
